@@ -16,8 +16,9 @@ namespace SX{
 class DTCorrection
 {
 public:
-	// ! Create a deadtime correction from first and second order correction a and b
-	//!  and respective errors
+	// ! Create a deadtime correction from of polynomial form
+	//!  and respective errors.
+	//! Dead time correction is such that \f$I_{new}=\frac{I_{old}}{1.0-\alpha*\frac{I_{old}}{t}+...}\f$
 	DTCorrection(const char* name=0);
 	~DTCorrection();
 	//! Set the term of degree N

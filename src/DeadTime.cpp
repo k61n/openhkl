@@ -38,7 +38,7 @@ std::pair<double,double> DTCorrection::getTerm(unsigned int N) const
 	return _ai[N-1];
 }
 
-void DTCorrection::apply(double& ccount,double& sccount, double time)
+void DTCorrection::apply(double& ccount,double& sccount, double time) const
 {
 	// Do nothing, no corrective terms
 	if (_ai.empty())

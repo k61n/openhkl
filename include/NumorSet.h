@@ -11,10 +11,10 @@
 #include <string>
 #include <map>
 #include <vector>
-#include <memory>
+#include <boost/shared_ptr.hpp>
 
 // A few typedefs.
-typedef std::shared_ptr<SX::Numor> sptrNumor;
+typedef boost::shared_ptr<SX::Numor> sptrNumor;
 typedef std::map<int,sptrNumor> numMap;
 typedef numMap::iterator numMapit;
 typedef numMap::const_iterator numMapconstit;

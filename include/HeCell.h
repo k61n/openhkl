@@ -10,13 +10,13 @@
 #include "NumorSet.h"
 #include "DeadTime.h"
 #include "Scan1D.h"
-#include <tuple>
-#include <memory>
+#include <boost/tuple/tuple.hpp>
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_multifit_nlin.h>
 #include <vector>
 #include <cmath>
+#include <boost/shared_ptr.hpp>
 
 
 namespace SX
@@ -93,9 +93,9 @@ public:
 	HeCell(const char* name=0);
 	virtual ~HeCell();
 	//! Set active deadtime correction
-	void setDeadTime(const std::shared_ptr<DTCorrection>& dt);
+	void setDeadTime(const boost::shared_ptr<DTCorrection>& dt);
 	// ! Attach a set of numors that characterizes this Cell
-	void setNumors(const std::shared_ptr<NumorSet>& numors);
+	void setNumors(const boost::shared_ptr<NumorSet>& numors);
 	//! Reset the numors currently attached.
 	void resetNumors();
 	//! Get the data in the form of time in seconds and polarisations
@@ -105,7 +105,7 @@ public:
 	//! sigmas for A0 and alpha Return 1 if success
 	int fitExponential(double& A0,double& A0s, double& alpha, double& alphas);
 	//! Get the scan
-	const std::shared_ptr<Scan1D>& getDecay() const;
+	const boost::shared_ptr<Scan1D>& getDecay() const;
 	//! Add a peak in the list to validate measurement of the Cell.
 	//! Data in the set are used only if they correspond to one of the listed peak.
 	void addPeak(double h, double k, double l);
@@ -115,11 +115,11 @@ public:
 	double normalizebpb(const Numor& numor, double& polar, double& polars);
 private:
 	std::string _name;
-	std::shared_ptr<NumorSet> _numors;
-	std::shared_ptr<DTCorrection> _deadt;
+	boost::shared_ptr<NumorSet> _numors;
+	boost::shared_ptr<DTCorrection> _deadt;
 	boost::posix_time::ptime _starttime;
-	std::shared_ptr<Scan1D> _pvst;
-	std::vector<std::tuple<double,double,double> > _peaks;
+	boost::shared_ptr<Scan1D> _pvst;
+	std::vector<boost::tuple<double,double,double> > _peaks;
 	//! Initial polarization of the cell and sigma and decay rate (s-1) and error.
 	double _P0, _P0s, _alpha0, _alpha0s;
 };

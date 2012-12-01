@@ -21,11 +21,11 @@ HeCell::~HeCell()
 {
 }
 
-void HeCell::setDeadTime(const std::shared_ptr<DTCorrection>& dt)
+void HeCell::setDeadTime(const boost::shared_ptr<DTCorrection>& dt)
 {
 	_deadt=dt;
 }
-void HeCell::setNumors(const std::shared_ptr<NumorSet>& numors)
+void HeCell::setNumors(const boost::shared_ptr<NumorSet>& numors)
 {
 	_numors=numors;
 }
@@ -53,9 +53,9 @@ void HeCell::calculateDecay()
 			std::size_t peaksize=_peaks.size();
 			for (std::size_t ii=0;ii<peaksize;ii++)
 			{
-				double ch=std::get<0>(_peaks[ii]);
-				double ck=std::get<1>(_peaks[ii]);
-				double cl=std::get<2>(_peaks[ii]);
+				double ch=boost::get<0>(_peaks[ii]);
+				double ck=boost::get<1>(_peaks[ii]);
+				double cl=boost::get<2>(_peaks[ii]);
 				if (h==ch && k==ck && l==cl)
 				{
 					found_peak=true;
@@ -83,13 +83,13 @@ void HeCell::calculateDecay()
 	_pvst->setData(time,polar,error);
 
 }
-const std::shared_ptr<Scan1D>& HeCell::getDecay() const
+const boost::shared_ptr<Scan1D>& HeCell::getDecay() const
 {
 	return _pvst;
 }
 void HeCell::addPeak(double h, double k, double l)
 {
-	_peaks.push_back(std::tuple<double,double,double>(h,k,l));
+	_peaks.push_back(boost::tuple<double,double,double>(h,k,l));
 }
 int HeCell::fitExponential(double& A0,double& A0s, double& alpha,double& alphas)
 {
@@ -97,7 +97,7 @@ int HeCell::fitExponential(double& A0,double& A0s, double& alpha,double& alphas)
 	const gsl_multifit_fdfsolver_type *T;
    gsl_multifit_fdfsolver *s;
    int status;
-   unsigned int i, iter = 0;
+   unsigned  iter = 0;
    const size_t n = _pvst->npoints();
    const size_t p = 2;
 
