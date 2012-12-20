@@ -9,7 +9,7 @@ IF(NOT CMAKE_BUILD_TYPE)
 ENDIF()
 
 ###### Find boost libraries (python) ##############
-FIND_PACKAGE(Boost 1.42.0)
+FIND_PACKAGE(Boost 1.42.0 COMPONENTS date_time filesystem REQUIRED)
 IF(Boost_FOUND)
   INCLUDE_DIRECTORIES("${Boost_INCLUDE_DIRS}")
   SET(Boost_USE_STATIC_LIBS OFF)
