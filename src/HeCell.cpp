@@ -72,6 +72,7 @@ void HeCell::calculateDecay()
 			boost::posix_time::time_duration deltat=nv[i]->getMetaData().getKey<boost::posix_time::ptime>("ptime")-_starttime;
 			double fr,frs;
 			calculateFlipping(*(nv[i]),fr,frs,*_deadt,true);
+			std::cout << nv[i]->getNo() << "\n ";
 			if (fr>0.5)
 			{
 			time.push_back(static_cast<double>(deltat.total_seconds()));
@@ -161,7 +162,9 @@ double HeCell::getPolar(const Numor& numor,double& Pcell, double& Pcells)
 	int dts=dt.total_seconds();
 	double expterm=exp(-_alpha0*dts);
 	Pcell=_P0*expterm;
-	double sigma=expterm*expterm*_P0s*_P0s+dts*dts*Pcell*Pcell*_alpha0s*_alpha0s;
+	double sigma=Pcell*(dts*_alpha0s); // dts is large (s) and alpha0  small
+	sigma*=sigma;
+	sigma+=std::pow(expterm*_P0s,2);
 	Pcells=sqrt(sigma);
 	return dts;
 }
