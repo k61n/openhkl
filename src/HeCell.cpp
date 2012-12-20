@@ -74,7 +74,7 @@ void HeCell::calculateDecay()
 			calculateFlipping(*(nv[i]),fr,frs,*_deadt,true);
 			if (fr>0.1)
 			{
-			time.push_back(static_cast<double>(deltat.total_seconds()));
+			time.push_back(static_cast<double	>(deltat.total_seconds()));
 			polar.push_back(fr);
 			error.push_back(frs);
 			}
@@ -103,6 +103,7 @@ int HeCell::fitExponential(double& A0,double& A0s, double& alpha,double& alphas)
 
    gsl_matrix *covar = gsl_matrix_alloc (p, p);
 
+   // This is OK since std::vector is garanteed contiguous
    struct data d = { n, &_pvst->getX()[0],&_pvst->getY()[0],&_pvst->getE()[0]};
    gsl_multifit_function_fdf f;
    double param_init[2] = { 1.0, 0.0 };
@@ -124,10 +125,7 @@ int HeCell::fitExponential(double& A0,double& A0s, double& alpha,double& alphas)
 	   iter++;
 	   status = gsl_multifit_fdfsolver_iterate (s);
 
-	   printf ("status = %s\n", gsl_strerror (status));
-
-
-	   if (status)
+	  if (status)
 		 break;
 
 	   status = gsl_multifit_test_delta (s->dx, s->x,
