@@ -8,7 +8,7 @@ IF(NOT CMAKE_BUILD_TYPE)
   SET(CMAKE_BUILD_TYPE "RELEASE")
 ENDIF()
 
-###### Find boost libraries (python) ##############
+###### Find boost libraries  ##############
 FIND_PACKAGE(Boost 1.42.0 COMPONENTS date_time filesystem REQUIRED)
 IF(Boost_FOUND)
   INCLUDE_DIRECTORIES("${Boost_INCLUDE_DIRS}")
@@ -20,6 +20,10 @@ IF(Boost_FOUND)
 ELSEIF(NOT Boost_FOUND)
   MESSAGE(FATAL_ERROR "Unable to find correct Boost version. Did you set BOOST_ROOT?")
 ENDIF()
+
+###### Find GSL and GSL_CBLAS ######
+FIND_LIBRARY(GSL gsl)
+FIND_LIBRARY(GSL_CBLAS gslcblas)
 
 IF(CMAKE_COMPILER_IS_GNUCXX)
   ADD_DEFINITIONS("-Wall")
