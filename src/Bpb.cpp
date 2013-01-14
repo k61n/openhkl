@@ -1,9 +1,3 @@
-/*
- * Bpb.cpp
- *
- *  Created on: Nov 30, 2012
- *      Author: chapon
- */
 #include <cmath>
 #include <stdexcept>
 #include "Bpb.h"

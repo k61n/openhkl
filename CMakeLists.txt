@@ -25,6 +25,13 @@ ENDIF()
 FIND_LIBRARY(GSL gsl)
 FIND_LIBRARY(GSL_CBLAS gslcblas)
 
+###### Find CGAL library (used for Convex Hull triangulations #######
+include("cmake/FindCGAL.cmake")
+FIND_LIBRARY(CGAL_LIBRARIES CGAL)
+IF (NOT CGAL_FOUND)
+  MESSAGE(FATAL_ERROR "Unable to find CGAL libraries")
+ENDIF()
+
 IF(CMAKE_COMPILER_IS_GNUCXX)
   ADD_DEFINITIONS("-Wall")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffast-math")

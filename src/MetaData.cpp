@@ -1,9 +1,3 @@
-/*
- * MetaData.cpp
- *
- *  Created on: Apr 27, 2012
- *      Author: chapon
- */
 #include "MetaData.h"
 
 namespace SX{

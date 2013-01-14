@@ -1,9 +1,3 @@
-/*
- * Deadtime.cpp
- *
- *  Created on: Jul 3, 2012
- *      Author: chapon
- */
 #include <cmath>
 #include <stdexcept>
 #include <algorithm>

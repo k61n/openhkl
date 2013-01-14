@@ -1,10 +1,3 @@
-/*
- * HeCell.cpp
- *
- *  Created on: Jul 8, 2012
- *      Author: chapon
- */
-
 #include "HeCell.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "Bpb.h"

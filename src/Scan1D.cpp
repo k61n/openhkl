@@ -1,10 +1,3 @@
-/*
- * Scan1D.cpp
- *
- *  Created on: Jul 18, 2012
- *      Author: chapon
- */
-
 #include "Scan1D.h"
 #include <stdexcept>
 

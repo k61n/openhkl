@@ -1,9 +1,3 @@
-/*
- * Numor.cpp
- *
- *  Created on: Apr 27, 2012
- *      Author: chapon
- */
 #include <string>
 #include <fstream>
 #include <streambuf>

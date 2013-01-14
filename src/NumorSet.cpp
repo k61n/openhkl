@@ -1,10 +1,3 @@
-/*
- * NumorSet.cpp
- *
- *  Created on: Jul 6, 2012
- *      Author: chapon
- */
-
 #include "NumorSet.h"
 #include <boost/filesystem.hpp>
 #include <boost/bind.hpp>
