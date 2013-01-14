@@ -32,6 +32,13 @@ IF (NOT CGAL_FOUND)
   MESSAGE(FATAL_ERROR "Unable to find CGAL libraries")
 ENDIF()
 
+###### Find GMP 
+include ("cmake/FindGMP.cmake")
+FIND_LIBRARY(GMP_LIBRARIES gmp)
+IF(NOT GMP_FOUND)
+  MESSAGE(FATAL_ERROR "Found gmp libraries")
+ENDIF()
+
 IF(CMAKE_COMPILER_IS_GNUCXX)
   ADD_DEFINITIONS("-Wall")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffast-math")
