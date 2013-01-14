@@ -34,12 +34,21 @@ namespace SX
 {
 namespace Constants
 {
-const double deg2rad=M_PI/180.0;
-const double rad2deg=180.0/M_PI;
-const double twopi=2.0*M_PI;
-const std::complex<double> twopij=std::complex<double>(0.0,twopi);
+	const double deg2rad=M_PI/180.0;
+	const double rad2deg=180.0/M_PI;
+	const double twopi=2.0*M_PI;
+	const std::complex<double> twopij=std::complex<double>(0.0,twopi);
 
 } // Namespace Constant
+
+namespace Units
+{
+	enum Angular {Rad=0,Deg=1};
+	enum Rotation {CCW=0,CW=1};
+
+} //namespace Units
+
+
 } //namespace SX
 
 #endif /*NSXTOOL_CONSTANTS_H_*/

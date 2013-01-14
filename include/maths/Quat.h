@@ -34,7 +34,7 @@ namespace SX
     //Forward declarations
     class V3D;
 
-    /** @class Quat Quat.h Geometry/Quat.h
+    /** @class Quat Quat.h maths/Quat.h
     @brief Class for quaternions
     @version 1.0
     @author Laurent C Chapon, ISIS RAL

@@ -26,6 +26,7 @@
  */
 #ifndef  NSXTOOL_ROTAXIS_H_
 #define NSXTOOL_ROTAXIS_H_
+#include "Constants.h"
 #include "V3D.h"
 #include "Quat.h"
 #include "Matrix33.h"
@@ -34,15 +35,18 @@
 namespace SX
 {
 
-// Rotation direction
-enum Rotation {CW=0,CCW=1};
-enum AngleUnit {Radians=0,Degrees=1};
-
+/* !
+ * \brief Class defining a rotation axis.
+ *
+ *  Allows to define an a rotation axis in 3D space , constructed by a direction vector
+ *  and a rotation direction (CW or CCW). The direction vector needs not to be normalized.
+ *
+ */
 class RotAxis
 {
 public:
 	//! Constructor
-	RotAxis(const std::string& label,const V3D& axis, Rotation direction);
+	RotAxis(const std::string& label,const V3D& axis, Units::Rotation direction);
 	//! Destructor
 	~RotAxis();
 	//! Get the label of this axis
@@ -51,11 +55,11 @@ public:
 	//! Get the rotation matrix associated with this rotation
 	//@param angle : rotation angle in radians by default
 	//@return rotation matrix
-	Matrix33<double> getMatrix(double angle,AngleUnit=Radians) const;
+	Matrix33<double> getMatrix(double angle,Units::Angular) const;
 	//! Get the quaternion associated with this rotation
 	//@param angle : rotation angle in radians by default
 	//@return rotation matrix
-	Quat getQuat(double angle,AngleUnit=Radians) const;
+	Quat getQuat(double angle,Units::Angular) const;
 	//! Print information into a stream
 	friend std::ostream& operator<<(std::ostream& os, const RotAxis&);
 private:
@@ -64,7 +68,7 @@ private:
 	//! Axis of rotation, normalized vector
 	V3D _axis;
 	//! Rotation direction
-	Rotation _dir;
+	Units::Rotation _dir;
 };
 
 } // End namespace SX
