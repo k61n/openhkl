@@ -5,6 +5,7 @@ namespace SX
 {
 RotAxis::RotAxis(const std::string& label,const V3D& axis, Units::Rotation direction):_name(label),_axis(axis),_dir(direction)
 {
+	_axis.normalize();
 }
 RotAxis::~RotAxis()
 {

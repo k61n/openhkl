@@ -38,7 +38,7 @@ namespace SX
 /* !
  * \brief Class defining a rotation axis.
  *
- *  Allows to define an a rotation axis in 3D space , constructed by a direction vector
+ *  Allows to define a rotation axis in 3D space , constructed by a direction vector
  *  and a rotation direction (CW or CCW). The direction vector needs not to be normalized.
  *
  */
@@ -51,6 +51,7 @@ public:
 	~RotAxis();
 	//! Get the label of this axis
 	std::string& getLabel();
+	//! Get the label of this axis
 	const std::string& getLabel() const;
 	//! Get the rotation matrix associated with this rotation
 	//@param angle : rotation angle in radians by default
