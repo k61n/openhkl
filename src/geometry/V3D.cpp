@@ -412,7 +412,7 @@ void V3D::read(std::istream& Ix)
   */
 void V3D::printSelf(std::ostream& os) const
 {
-  os  << v[0] <<" " << v[1] <<" " <<  v[2];
+  os  <<"[" << v[0] <<"," << v[1] <<"," <<  v[2] << "]";
   return;
 }
 

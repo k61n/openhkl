@@ -56,6 +56,8 @@ public:
 	//@param angle : rotation angle in radians by default
 	//@return rotation matrix
 	Quat getQuat(double angle,AngleUnit=Radians) const;
+	//! Print information into a stream
+	friend std::ostream& operator<<(std::ostream& os, const RotAxis&);
 private:
 	//! Label of the axis
 	std::string _name;

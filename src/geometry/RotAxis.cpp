@@ -33,6 +33,17 @@ Quat RotAxis::getQuat(double angle,AngleUnit unit) const
 	Quat temp(angle,_axis);
 	return temp;
 }
+std::ostream& operator<<(std::ostream& os, const RotAxis& Rot)
+{
+	os << "Rotation Axis: " << Rot._name << std::endl;
+	os << ", axis: " << Rot._axis << std::endl;
+	os << ", direction: ";
+	if (Rot._dir==CW)
+		os << " CW";
+	else
+		os << " CCW";
+	return os;
+}
 
 } // End namespace SX
 
