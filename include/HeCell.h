@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef HECELL_H_
-#define HECELL_H_
+#ifndef NSXTOOL_HECELL_H_
+#define NSXTOOL_HECELL_H_
 #include "NumorSet.h"
 #include "DeadTime.h"
 #include "Scan1D.h"
@@ -145,4 +145,4 @@ private:
 };
 
 } /* namespace SX */
-#endif /* HECELL_H_ */
+#endif /* NSXTOOL_HECELL_H_ */

@@ -24,8 +24,8 @@
 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-#ifndef DIFMAG_V3D_H_
-#define DIFMAG_V3D_H_
+#ifndef NSXTOOL_V3D_H_
+#define NSXTOOL_V3D_H_
 
 #include <iostream>
 
@@ -114,4 +114,4 @@ class V3D
 
 } // namespace SX
 
-#endif /*V3D_H_*/
+#endif /*NXSTOOL_V3D_H_*/

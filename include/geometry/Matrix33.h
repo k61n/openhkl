@@ -24,8 +24,8 @@
 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-#ifndef DIFMAG_MATRIX33_H_
-#define DIFMAG_MATRIX33_H_
+#ifndef NSXTOOL_MATRIX33_H_
+#define NSXTOOL_MATRIX33_H_
 #include <iostream>
 #include <stdexcept>
 #include "V3D.h"
@@ -285,5 +285,4 @@ std::pair<V3D,V3D> Matrix33<T>::operator*(const std::pair<V3D,V3D>& tin)
 
 }// namespace SX
 
-
-#endif
+#endif // NSXTOOL_MATRIX33_H_

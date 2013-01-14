@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef NUMOR_H_
-#define NUMOR_H_
+#ifndef  NSXTOOL_NUMOR_H_
+#define NSXTOOL_NUMOR_H_
 #include <string>
 #include <sstream>
 #include <vector>
@@ -87,4 +87,4 @@ private:
 };
 
 } /* namespace SX */
-#endif /* NUMOR_H_ */
+#endif /* NSXTOOL_NUMOR_H_ */

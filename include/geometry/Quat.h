@@ -24,8 +24,8 @@
 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-#ifndef  DIFMAG_QUAT_H_
-#define DIFMAG_QUAT_H_
+#ifndef  NSXTOOL_QUAT_H_
+#define NSXTOOL_QUAT_H_
 #include <iostream>
 #include "Matrix33.h"
 
@@ -63,7 +63,7 @@ namespace SX
       Quat(const V3D& vec1,const V3D& vec2);
       Quat(const Quat&);
       Quat& operator=(const Quat&);
-      //! Set quaternion form an angle in degrees and an axis
+      //! Set quaternion form an angle in radians and an axis
       Quat(const double _deg, const V3D& _axis);
       ~Quat();
       void operator()(const Quat&);
@@ -147,4 +147,4 @@ namespace SX
 
 } // namespace SX
 
-#endif /*DIFMAG_QUAT_H_*/
+#endif /*NSXTOOL_QUAT_H_*/

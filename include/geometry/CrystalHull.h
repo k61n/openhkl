@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef  CRYSTALHULL_H_
-#define CRYSTALHULL_H_
+#ifndef  NSXTOOL_CRYSTALHULL_H_
+#define NSXTOOL_CRYSTALHULL_H_
 
 #include <string>
 #include <vector>
@@ -131,4 +131,5 @@ private:
 std::ostream& operator<<(std::ostream& cout, const CrystalHull& hull);
 
 } /* namespace SX */
-#endif /* CRYSTALHULL_H_ */
+
+#endif /* NSXTOOL_CRYSTALHULL_H_ */

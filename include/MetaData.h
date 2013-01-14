@@ -24,8 +24,8 @@
 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-#ifndef  SX_METADATA_H_
-#define SX_METADATA_H_
+#ifndef  NSXTOOL_METADATA_H_
+#define NSXTOOL_METADATA_H_
 #include <map>
 #include <set>
 #include<string>
@@ -117,4 +117,4 @@ template <typename _type>
 	return getKey<_type>(std::string(key));
 }
 } // end namespace SX
-#endif /* SX_METADATA_H_ */
+#endif /* NSXTOOL_METADATA_H_ */

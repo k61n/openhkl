@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef  SX_NumorSet_H_
-#define SX_NumorSet_H_
+#ifndef  NSXTOOL_NumorSet_H_
+#define NSXTOOL_NumorSet_H_
 #include "Numor.h"
 #include <string>
 #include <map>
@@ -88,4 +88,4 @@ std::vector<T> NumorSet::getMValues(const std::string& key)
 
 
 } /* namespace SX */
-#endif /* SX_NumorSet_H_ */
+#endif /* NSXTOOL_NumorSet_H_ */

@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef SCAN1D_H_
-#define SCAN1D_H_
+#ifndef NSXTOOL_SCAN1D_H_
+#define NSXTOOL_SCAN1D_H_
 #include <vector>
 #include <string>
 
@@ -62,4 +62,4 @@ private:
 };
 
 } /* namespace SX */
-#endif /* SCAN1D_H_ */
+#endif /* NSXTOOL_SCAN1D_H_ */

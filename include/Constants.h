@@ -25,35 +25,21 @@
  *
  */
 
-#ifndef NSXTOOL_DEADTIME_H_
-#define NSXTOOL_DEADTIME_H_
-#include <vector>
+#ifndef  NSXTOOL_CONSTANTS_H_
+#define NSXTOOL_CONSTANTS_H_
+#include <cmath>
+#include <complex>
 
-namespace SX{
-
-//! Simple dead-time correction of polynomial form.
-//
-class DTCorrection
+namespace SX
 {
-public:
-	// ! Create a deadtime correction from of polynomial form
-	//!  and respective errors.
-	//! Dead time correction is such that \f$I_{new}=\frac{I_{old}}{1.0-\alpha*\frac{I_{old}}{t}+...}\f$
-	DTCorrection(const char* name=0);
-	~DTCorrection();
-	//! Set the term of degree N
-	void setTerm(unsigned int N, double alpha, double salpha);
-	//! Get the term of degree N
-	std::pair<double,double> getTerm(unsigned int N) const;
-	//! Apply the deadtime correction to a measurement of count/time.
-	void apply(double& count, double& scount, double time) const;
-private:
-	std::string _name;
-	//! The terms in the polynomial expansions and their sigmas
-	//! stores as a vector of pair.
-	std::vector<std::pair<double,double> > _ai;
-};
+namespace Constants
+{
+const double deg2rad=M_PI/180.0;
+const double rad2deg=180.0/M_PI;
+const double twopi=2.0*M_PI;
+const std::complex<double> twopij=std::complex<double>(0.0,twopi);
 
-} // end namespace SX
+} // Namespace Constant
+} //namespace SX
 
-#endif /* NSXTOOL_DEADTIME_H_ */
+#endif /*NSXTOOL_CONSTANTS_H_*/

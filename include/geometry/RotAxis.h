@@ -24,36 +24,47 @@
 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
+#ifndef  NSXTOOL_ROTAXIS_H_
+#define NSXTOOL_ROTAXIS_H_
+#include "V3D.h"
+#include "Quat.h"
+#include "Matrix33.h"
+#include <string>
 
-#ifndef NSXTOOL_DEADTIME_H_
-#define NSXTOOL_DEADTIME_H_
-#include <vector>
+namespace SX
+{
 
-namespace SX{
+// Rotation direction
+enum Rotation {CW=0,CCW=1};
+enum AngleUnit {Radians=0,Degrees=1};
 
-//! Simple dead-time correction of polynomial form.
-//
-class DTCorrection
+class RotAxis
 {
 public:
-	// ! Create a deadtime correction from of polynomial form
-	//!  and respective errors.
-	//! Dead time correction is such that \f$I_{new}=\frac{I_{old}}{1.0-\alpha*\frac{I_{old}}{t}+...}\f$
-	DTCorrection(const char* name=0);
-	~DTCorrection();
-	//! Set the term of degree N
-	void setTerm(unsigned int N, double alpha, double salpha);
-	//! Get the term of degree N
-	std::pair<double,double> getTerm(unsigned int N) const;
-	//! Apply the deadtime correction to a measurement of count/time.
-	void apply(double& count, double& scount, double time) const;
+	//! Constructor
+	RotAxis(const std::string& label,const V3D& axis, Rotation direction);
+	//! Destructor
+	~RotAxis();
+	//! Get the label of this axis
+	std::string& getLabel();
+	const std::string& getLabel() const;
+	//! Get the rotation matrix associated with this rotation
+	//@param angle : rotation angle in radians by default
+	//@return rotation matrix
+	Matrix33<double> getMatrix(double angle,AngleUnit=Radians) const;
+	//! Get the quaternion associated with this rotation
+	//@param angle : rotation angle in radians by default
+	//@return rotation matrix
+	Quat getQuat(double angle,AngleUnit=Radians) const;
 private:
+	//! Label of the axis
 	std::string _name;
-	//! The terms in the polynomial expansions and their sigmas
-	//! stores as a vector of pair.
-	std::vector<std::pair<double,double> > _ai;
+	//! Axis of rotation, normalized vector
+	V3D _axis;
+	//! Rotation direction
+	Rotation _dir;
 };
 
-} // end namespace SX
+} // End namespace SX
 
-#endif /* NSXTOOL_DEADTIME_H_ */
+#endif /* NSXTOOL_ROTAXIS_H_ */
