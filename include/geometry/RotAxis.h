@@ -46,7 +46,7 @@ class RotAxis
 {
 public:
 	//! Constructor
-	RotAxis(const std::string& label,const V3D& axis, Units::Rotation direction);
+	RotAxis(const V3D& axis, Units::Rotation direction=Units::CCW,const char* label=0);
 	//! Destructor
 	~RotAxis();
 	//! Get the label of this axis
@@ -64,12 +64,12 @@ public:
 	//! Print information into a stream
 	friend std::ostream& operator<<(std::ostream& os, const RotAxis&);
 private:
-	//! Label of the axis
-	std::string _name;
 	//! Axis of rotation, normalized vector
 	V3D _axis;
 	//! Rotation direction
 	Units::Rotation _dir;
+	//! Label of the axis
+	std::string _name;
 };
 
 } // End namespace SX

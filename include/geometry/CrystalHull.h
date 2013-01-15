@@ -103,7 +103,11 @@ public:
 	std::size_t nEdges() const;
 	//! Return the number of faces
 	std::size_t nFaces() const;
+	//! Get the list of vertices making up the Hull. Points inside the Hull will not be listed.
+	std::vector<V3D> getVertices() const;
+	//! Get the edges making up the Hull as a pair of vectors.
 	std::vector<std::pair<V3D,V3D> > getEdges() const;
+	//! Get the faces.
 	const std::vector<TriangleCache>& getFaces() const;
 	//! Compute intersection time of a ray with the Hull.
 	//! Return number of intersections

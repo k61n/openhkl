@@ -142,6 +142,21 @@ V3D CrystalHull::getCentroid() const
 	return result;
 }
 
+std::vector<V3D> CrystalHull::getVertices() const
+{
+	Vertexit it;
+	std::vector<V3D> result(_polyhedron.size_of_vertices());
+	int i=0;
+	for (it=_polyhedron.vertices_begin();it!=_polyhedron.vertices_end();++it)
+	{
+		const Point_3& p1=it->point();
+		result[i++](p1[0],p1[1],p1[2]);
+	}
+	return result;
+}
+
+
+
 int CrystalHull::rayIntersectFromOutside(double x, double y, double z,double& t1, double& t2) const
 {
 	int inters=0;
@@ -268,7 +283,7 @@ const std::vector<TriangleCache>& CrystalHull::getFaces() const
 std::ostream& operator<<(std::ostream& os,const  CrystalHull& hull)
 {
 	os << "Crystal triangulated from " << hull.nPoints() << " points" << std::endl;
-	os << " The triangulated polyhedron contains " << hull.nFaces() << " faces, "
+	os << "The triangulated polyhedron contains " << hull.nFaces() << " faces, "
 	<< hull.nVertices() << " vertices, and "
 	<< hull.nEdges() << " edges" << std::endl;
 	os <<  "Volume of the crystal: " << hull.getVolume() << " mm^3"  << std::endl;

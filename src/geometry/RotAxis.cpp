@@ -3,7 +3,7 @@
 
 namespace SX
 {
-RotAxis::RotAxis(const std::string& label,const V3D& axis, Units::Rotation direction):_name(label),_axis(axis),_dir(direction)
+RotAxis::RotAxis(const V3D& axis, Units::Rotation direction, const char* label):_axis(axis),_dir(direction),_name((label == 0)? " " : label)
 {
 	_axis.normalize();
 }
