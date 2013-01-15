@@ -34,6 +34,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
 #include "V3D.h"
+#include "Matrix33.h"
 
 namespace SX
 {
@@ -43,6 +44,7 @@ typedef Kernel::Point_3 Point_3;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
 typedef Polyhedron_3::Facet_const_iterator  Faceit;
 typedef Polyhedron_3::Edge_const_iterator Edgeit;
+typedef Polyhedron_3::Vertex_const_iterator Vertexit;
 
 struct TriangleCache
 {
@@ -84,12 +86,15 @@ public:
 	//! This method generate the Hull, and also compute
 	//! the plane equations for each face and compute the face normals.
 	std::size_t  generate();
+	void rotateHull(const Matrix33<double>& rot);
 	//! Rotate the hull with the rotation matrix. First index line, second column.
 	void rotateHull(double m01,double m02, double m03,
 			double m10, double m11, double m12,
 			double m20,double m21, double m22);
 	//! Compute the volume of the Hull
 	double getVolume() const;
+	//! Compute the centroid of the convex Hull
+	V3D getCentroid() const;
 	//! Return the number of points that were used to construct the Hull
 	std::size_t nPoints() const;
 	//! Return the number of vertices

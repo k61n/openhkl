@@ -28,8 +28,9 @@
 #define NSXTOOL_MATRIX33_H_
 #include <iostream>
 #include <stdexcept>
+#include <cmath>
 #include "V3D.h"
-#include <boost/tuple/tuple.hpp>
+
 
 namespace SX
 {
@@ -75,6 +76,8 @@ class Matrix33
   V3D operator*(const V3D&) const;
   std::pair<V3D,V3D> operator*(const std::pair<V3D,V3D>&);
   void transformV(V3D&) const;
+  //! Does this matrix represents a rotation
+  bool isRotation() const {return (std::fabs(determinant()-1)<1e-6);}
   private:
   T el[3][3];
 };

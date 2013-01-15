@@ -39,6 +39,13 @@ IF(NOT GMP_FOUND)
   MESSAGE(FATAL_ERROR "Found gmp libraries")
 ENDIF()
 
+###### Find MPFR 
+include ("cmake/FindMPFR.cmake")
+FIND_LIBRARY(MPFR_LIBRARIES mpfr)
+IF(NOT MPFR_FOUND)
+    MESSAGE(FATAL_ERROR "problem")
+ ENDIF()
+
 IF(CMAKE_COMPILER_IS_GNUCXX)
   ADD_DEFINITIONS("-Wall")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffast-math")

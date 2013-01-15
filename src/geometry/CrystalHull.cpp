@@ -14,7 +14,7 @@ TriangleCache::TriangleCache():_A(0,0,0),_AB(0,0,0),_AC(0,0,0),_normal(0,0,0),
 
 TriangleCache::~TriangleCache()
 {
-	}
+}
 TriangleCache TriangleCache::operator ()(Polyhedron_3::Facet& f)
 {
 	Polyhedron_3::Halfedge_handle h=f.halfedge();
@@ -53,7 +53,7 @@ TriangleCache TriangleCache::operator ()(Polyhedron_3::Facet& f)
 	return temp;
 }
 
-CrystalHull::CrystalHull(const char* name):_name(name)
+CrystalHull::CrystalHull(const char* name):_name((name==0) ? " " : name)
 {
 	//
 	_points.reserve(100);
@@ -126,6 +126,20 @@ double CrystalHull::getVolume() const
 	}
 	return volume;
 
+}
+
+V3D CrystalHull::getCentroid() const
+{
+	Vertexit it;
+	V3D result(0,0,0);
+	// Add all points coordinates / number of points
+	for (it=_polyhedron.vertices_begin();it!=_polyhedron.vertices_end();++it)
+	{
+		const Point_3& p1=it->point();
+		result.add(p1[0],p1[1],p1[2]);
+	}
+	result/=static_cast<double>(_polyhedron.size_of_vertices());
+	return result;
 }
 
 int CrystalHull::rayIntersectFromOutside(double x, double y, double z,double& t1, double& t2) const
@@ -218,12 +232,20 @@ double CrystalHull::scatteringPathLength(double x, double y, double z, double Sv
 	return l;
 }
 
-void CrystalHull::rotateHull(double m00, double m01, double m02, double m10, double m11, double m12, double m20, double m21, double m22)
+void CrystalHull::rotateHull(const Matrix33<double>& rot)
 {
-	CGAL::Aff_transformation_3<Kernel> rot(m00,m01,m02,m10,m11,m12,m20,m21,m22);
-	std::transform(_polyhedron.points_begin(),_polyhedron.points_end(),_polyhedron.points_begin(),rot);
+	if (!rot.isRotation())
+		throw std::runtime_error("Rotation not valid");
+	//
+	CGAL::Aff_transformation_3<Kernel> rotc(rot(0,0),rot(0,1),rot(0,2),rot(1,0),rot(1,1),rot(1,2),rot(2,0),rot(2,1),rot(2,2));
+	std::transform(_polyhedron.points_begin(),_polyhedron.points_end(),_polyhedron.points_begin(),rotc);
 	//Recalculate triangle cache.
 	std::transform(_polyhedron.facets_begin(),_polyhedron.facets_end(),_tcache.begin(),TriangleCache());
+}
+void CrystalHull::rotateHull(double m00, double m01, double m02, double m10, double m11, double m12, double m20, double m21, double m22)
+{
+	Matrix33<double> rot(m00,m01,m02,m10,m11,m12,m20,m21,m22);
+	rotateHull(rot);
 }
 std::vector<std::pair<V3D,V3D> > CrystalHull::getEdges() const
 {
@@ -249,7 +271,8 @@ std::ostream& operator<<(std::ostream& os,const  CrystalHull& hull)
 	os << " The triangulated polyhedron contains " << hull.nFaces() << " faces, "
 	<< hull.nVertices() << " vertices, and "
 	<< hull.nEdges() << " edges" << std::endl;
-	os <<  "Volume of the crystal: " << hull.getVolume() << " mm^3" ;
+	os <<  "Volume of the crystal: " << hull.getVolume() << " mm^3"  << std::endl;
+	os << "Centroid: " << hull.getCentroid();
 	return os;
 }
 
