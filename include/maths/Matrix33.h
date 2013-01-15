@@ -73,7 +73,10 @@ class Matrix33
   Matrix33<T> operator*(const Matrix33<T>&) const;                              
   Matrix33<T>& operator*=(const Matrix33<T>&);
   void printSelf(std::ostream&) const;
+  //! Right multiply by a vetor
   V3D operator*(const V3D&) const;
+  //! Left multiply by a vector
+  template <typename U> friend V3D operator*(const V3D&, const Matrix33<U>& m);
   std::pair<V3D,V3D> operator*(const std::pair<V3D,V3D>&);
   void transformV(V3D&) const;
   //! Does this matrix represents a rotation
@@ -270,6 +273,17 @@ V3D Matrix33<T>::operator *(const V3D& vect) const
 	
 	return V3D(xx,yy,zz);
 }
+
+template<typename U>
+V3D operator *(const V3D& vect,const Matrix33<U>& m)
+{
+	double xx=m.el[0][0]*vect[0]+m.el[1][0]*vect[1]+m.el[2][0]*vect[2];
+	double yy=m.el[0][1]*vect[0]+m.el[1][1]*vect[1]+m.el[2][1]*vect[2];
+	double zz=m.el[0][2]*vect[0]+m.el[1][2]*vect[1]+m.el[2][2]*vect[2];
+
+	return V3D(xx,yy,zz);
+}
+
 template<class T>
 void Matrix33<T>::transformV(V3D& vect) const
 {
@@ -285,6 +299,7 @@ std::pair<V3D,V3D> Matrix33<T>::operator*(const std::pair<V3D,V3D>& tin)
 	V3D v1=this->operator*(tin.second);
 	return std::make_pair<V3D,V3D>(v0,v1);
 }
+
 
 }// namespace SX
 
