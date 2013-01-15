@@ -35,6 +35,13 @@
 namespace SX
 {
 
+namespace Units
+{
+	enum Angular {Rad=0,Deg=1};
+	enum Rotation {CCW=0,CW=1};
+
+} //namespace Units
+
 /* !
  * \brief Class defining a rotation axis.
  *

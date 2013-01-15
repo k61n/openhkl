@@ -41,14 +41,6 @@ namespace Constants
 
 } // Namespace Constant
 
-namespace Units
-{
-	enum Angular {Rad=0,Deg=1};
-	enum Rotation {CCW=0,CW=1};
-
-} //namespace Units
-
-
 } //namespace SX
 
 #endif /*NSXTOOL_CONSTANTS_H_*/
