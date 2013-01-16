@@ -35,10 +35,11 @@ namespace SX
 {
 namespace Constants
 {
-	const double deg2rad=M_PI/180.0;
-	const double rad2deg=180.0/M_PI;
-	const double twopi=2.0*M_PI;
-	const std::complex<double> twopij=std::complex<double>(0.0,twopi);
+	static const double deg2rad=M_PI/180.0;
+	static const double rad2deg=180.0/M_PI;
+	static const double twopi=2.0*M_PI;
+	static const std::complex<double> twopij=std::complex<double>(0.0,twopi);
+	static const double avogadro=6.02214129*1e23;
 
 } // Namespace Constant
 

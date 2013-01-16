@@ -32,7 +32,11 @@
 
 namespace SX
 {
-
+//! Define the units used internally in NSXTOOL.
+//! The Units namespace allows users of the library to specify their units when defining variables.
+//! For example it is recommended to use statements such as : double x=34*deg and when using methods:
+//! a.Rotate(34*deg). This guarantees a self-consistent system of units in all calculations.
+//!
 namespace Units
 {
 	// Units of [L]
@@ -78,9 +82,11 @@ namespace Units
 	static const double ms=s*1e-3;
 	static const double us=s*1e-6;
 
-}
 
-}
+
+} //Namespace Units
+
+} //Namespace SX
 
 
 #endif /* NSXTOOL_UNITS_H_ */
