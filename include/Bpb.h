@@ -1,5 +1,5 @@
 /*
- * nsxtool : Neutron Single Crystal analysis toolkit
+ * nsxtool : Neutron Single Crystal analysis Toolkit
     ------------------------------------------------------------------------------------------
     Copyright (C)
     2012- Laurent C. Chapon Institut Laue-Langevin
@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef  SX_BPB_H_
-#define SX_BPB_H_
+#ifndef  NSXTOOL_BPB_H_
+#define NSXTOOL_BPB_H_
 #include <vector>
 #include <algorithm>
 #include "DeadTime.h"

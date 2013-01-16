@@ -58,13 +58,18 @@ namespace SX
     {
 
     public:
+    	//! Unit quaternion
       Quat();
+      //! Quaternion from the real and 3 imaginary values
       Quat(const double, const double, const double, const double);
+      //! Quaternion between two vectors
       Quat(const V3D& vec1,const V3D& vec2);
+      //! Copy constructor
       Quat(const Quat&);
+      //! Assignement constructor
       Quat& operator=(const Quat&);
       //! Set quaternion form an angle in radians and an axis
-      Quat(const double _deg, const V3D& _axis);
+      Quat(const double _rad, const V3D& _axis);
       ~Quat();
       void operator()(const Quat&);
       void operator()(const double ww, const double aa, const double bb, const double cc);
@@ -72,12 +77,12 @@ namespace SX
       // Set quaternion from a 3x3 matrix
       //void operator()(const M33&);
       void set(const double ww, const double aa, const double bb, const double cc);
+      //! Set quaterion from an angle and an axis.
       void setAngleAxis(const double _rad, const V3D& _axis);
-      void getAngleAxis(double& _deg,double& _axis1,double& _axis2,double& axis3) const;
-      //void setRotMatrix(const M33&);
-      //! Norm of a quaternion
+      void getAngleAxis(double& _rad,double& _axis1,double& _axis2,double& axis3) const;
       /// Set the rotation (both don't change rotation axis)
-      void setRotation(const double deg);
+      void setRotation(double rad);
+      //! Norm of a quaternion
       double len() const;
       //! Norm squared
       double len2() const;
@@ -100,10 +105,6 @@ namespace SX
       void setQuat(double[16]);
       //! Rotate a vector
       void rotate(V3D&) const;
-      //! Taking two points defining a cuboid bounding box (xmin,ymin,zmin) and (xmax,ymax,zmax)
-      // which means implicitly that the cube edges are parallel to the axes,
-      // find the smallest bounding box with the edges also parallel to the axes after rotation of the object.
-      void rotateBB(double& xmin,double& ymin,double& zmin,double& xmax,double& ymax, double& zmax) const;
       //! Overload operators
       Quat  operator+(const Quat&) const;
       Quat& operator+=(const Quat&);
@@ -115,8 +116,6 @@ namespace SX
       bool   operator!=(const Quat&) const;
       const double& operator[](int) const;
       double& operator[](int);
-
-
       /** @name Element access. */
       //@{
       /// Access the real part
@@ -128,9 +127,8 @@ namespace SX
       /// Access the coefficient of k
       inline double imagK() const { return c; }
       //@}
-
       void printSelf(std::ostream&) const;
-      void readPrinted(std::istream&);
+      void readSelf(std::istream&);
     private:
       /// Internal value
       double w;

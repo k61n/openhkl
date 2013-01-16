@@ -42,11 +42,10 @@ V3D::V3D(const V3D& _v)
   */
 void V3D::spherical(double R, double theta, double phi)
 {
-	double deg2rad=M_PI/180.0;
-	v[2]=R*cos(theta*deg2rad);
-	double ct=sin(theta*deg2rad);
-	v[0]=R*ct*cos(phi*deg2rad);
-	v[1]=R*ct*sin(phi*deg2rad);
+	v[2]=R*cos(theta);
+	double ct=sin(theta);
+	v[0]=R*ct*cos(phi);
+	v[1]=R*ct*sin(phi);
 }
 
   /**

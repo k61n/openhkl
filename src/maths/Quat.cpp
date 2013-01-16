@@ -60,9 +60,9 @@ Quat::Quat(const Quat& _q)
  * \param _deg :: angle of rotation
  * \param _axis :: axis to rotate about
  * */
-Quat::Quat(const double _deg,const V3D& _axis)
+Quat::Quat(const double _rad,const V3D& _axis)
 {
-	setAngleAxis(_deg,_axis);
+	setAngleAxis(_rad,_axis);
 }
 
 /** Assignment Operator
@@ -121,34 +121,31 @@ bool Quat::isNull(const double tolerance) const
 	return (std::fabs(pw)<tolerance);
 }
 
-void Quat::getAngleAxis(double& _deg,double& _ax0, double& _ax1, double& _ax2) const
+void Quat::getAngleAxis(double& _rad,double& _ax0, double& _ax1, double& _ax2) const
 {
 	// If it represents a rotation of 0(2\pi), get an angle of 0 and axis (0,0,1)
 	if (isNull(1e-5))
 	{
-		_deg=0;
+		_rad=0;
 		_ax0=0;
 		_ax1=0;
 		_ax2=1.0;
 		return;
 	}
-	// Semi-angle in radians
-	_deg=acos(w);
+	// Angle in radians
+	_rad=2*acos(w);
 	// Prefactor for the axis part
-	double s=sin(_deg);
-	// Angle in degrees
-	_deg*=360.0/M_PI;
+	double s=sin(_rad);
 	_ax0=a/s;_ax1=b/s;_ax2=c/s;
 	return;
 }
 
-/** Set the rotation (both don't change rotation axis). This method has an error
+/** Set the rotation (both don't change rotation axis).
  * \param deg :: angle of rotation
  */
-void Quat::setRotation(const double deg)
+void Quat::setRotation(const double rad)
 {
-	double deg2rad = M_PI/180.0;
-	w = cos(0.5*deg*deg2rad);
+	w = cos(0.5*rad);
 }
 
 /** Sets the quat values from four doubles
@@ -163,7 +160,7 @@ void Quat::operator()(const double ww, const double aa, const double bb, const d
 }
 
 /** Sets the quat values from an angle and a vector
- * @param angle the numbers of degrees
+ * @param angle in radians
  * @param axis the axis of rotation
  */
 void Quat::operator()(const double angle, const V3D& axis)
@@ -513,25 +510,13 @@ void Quat::printSelf(std::ostream& os) const
  *   @param IX :: Input Stream
  *   @throw std::runtime_error if the input is of wrong format
 */
-void Quat::readPrinted(std::istream& IX)
+void Quat::readSelf(std::istream& IX)
 {
-    std::string in;
-    std::getline(IX,in);
-    size_t i = in.find_first_of('[');
-    if (i == std::string::npos) throw std::runtime_error("Wrong format for Quat input: "+in);
-    size_t j = in.find_last_of(']');
-    if (j == std::string::npos || j < i + 8) throw std::runtime_error("Wrong format for Quat input: "+in);
-
-    size_t c1 = in.find_first_of(',');
-    size_t c2 = in.find_first_of(',',c1+1);
-    size_t c3 = in.find_first_of(',',c2+1);
-    if (c1 == std::string::npos || c2 == std::string::npos || c3 == std::string::npos)
-        throw std::runtime_error("Wrong format for Quat input: ["+in+"]");
-
-    w = atof(in.substr(i+1,c1-i-1).c_str());
-    a = atof(in.substr(c1+1,c2-c1-1).c_str());
-    b = atof(in.substr(c2+1,c3-c2-1).c_str());
-    c = atof(in.substr(c3+1,j-c3-1).c_str());
+    IX.ignore(1,'{'); IX >> w;
+    IX.ignore(1,','); IX >> a;
+    IX.ignore(1,','); IX >> b;
+    IX.ignore(1,','); IX >> c;
+    IX.ignore(1,'}');
 
     return;
 }
@@ -553,43 +538,10 @@ std::ostream& operator<<(std::ostream& os,const Quat& q)
  */
 std::istream& operator>>(std::istream& ins,Quat& q)
 {
-    q.readPrinted(ins);
+    q.readSelf(ins);
     return ins;
 }
 
-void Quat::rotateBB(double& xmin, double& ymin, double& zmin, double& xmax, double& ymax, double& zmax) const
-{
-	// Defensive
-	if (xmin>xmax) std::swap(xmin,xmax);
-	if (ymin>ymax) std::swap(ymin,ymax);
-	if (zmin>zmax) std::swap(zmin,zmax);
-	// Get the min and max of the cube, and remove centring offset
-	 V3D minT(xmin,ymin,zmin), maxT(xmax,ymax,zmax);
-	// Get the rotation matrix
-	double rotMatr[16];
-	GLMatrix(&rotMatr[0]);
-	// Now calculate new min and max depending on the sign of matrix components
-	// Much faster than creating 8 points and rotate them. The new min (max)
-	// can only be obtained by summing the smallest (largest) components
-	//
-	 V3D minV, maxV;
-	// Looping on rows of matrix
-	int index;
-	for (int i=0;i<3;i++)
-	{
-		for (int j=0;j<3;j++)
-		{
-			index=j+i*4; // The OpenGL matrix is linear and represent a 4x4 matrix but only the 3x3 upper-left inner part
-			// contains the rotation
-			minV[j]+=(rotMatr[index]>0)?rotMatr[index]*minT[i]:rotMatr[index]*maxT[i];
-			maxV[j]+=(rotMatr[index]>0)?rotMatr[index]*maxT[i]:rotMatr[index]*minT[i];
-		}
-	}
-	// Adjust value.
-	xmin=minV[0]; ymin=minV[1]; zmin=minV[2];
-	xmax=maxV[0]; ymax=maxV[1]; zmax=maxV[2];
-	return;
-}
 
 } // namespace SX
 
