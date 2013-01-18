@@ -36,14 +36,16 @@
 
 namespace SX
 {
-	using namespace boost::spirit::qi;
+	using namespace boost::spirit;
 	//! Element symbol, isotope (0 if natural), and content
 	typedef boost::fusion::vector3<std::string,unsigned int,double> element;
 	//! Formula as a vector of elements
 	typedef std::vector<element> formula;
 	//! @Class: ChemFormulaParser. Use to parse a chemical formula including isotopes.
 	//! The chemical formula is given following the usual conventions with isotopes in brackets.
-	//! For example Gd(156)Mn2O5. The parser is used as usual in spirit given two iterators (begin and end)
+	//! For example Gd(156)Mn2O5. This does not check the nature of the chemical element
+	//! or isotope validity. This is left to the periodic table.
+	//! The parser is used as usual in spirit given two iterators (begin and end)
 	//! : parse(begin,end,parser)
 	template <typename Iterator>
 	struct FormParser : qi::grammar<Iterator,formula() >

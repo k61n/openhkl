@@ -25,7 +25,7 @@
  *
  */
 
-#ifndef  NSXTOOL_CRYSTALHULL_H_
+#ifndef NSXTOOL_CRYSTALHULL_H_
 #define NSXTOOL_CRYSTALHULL_H_
 
 #include <string>
@@ -39,7 +39,7 @@
 namespace SX
 {
 // Define geometry Kernel
-typedef  CGAL::Exact_predicates_inexact_constructions_kernel  Kernel;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel  Kernel;
 typedef Kernel::Point_3 Point_3;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
 typedef Polyhedron_3::Facet_const_iterator  Faceit;

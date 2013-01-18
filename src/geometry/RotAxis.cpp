@@ -3,7 +3,7 @@
 
 namespace SX
 {
-RotAxis::RotAxis(const V3D& axis, Rotation::Direction direction, const char* label):_axis(axis),_dir(direction),_name((label == 0)? " " : label)
+RotAxis::RotAxis(const V3D& axis, Rotation::Direction direction):_axis(axis),_dir(direction)
 {
 	_axis.normalize();
 }
@@ -11,13 +11,21 @@ RotAxis::~RotAxis()
 {
 }
 
-std::string& RotAxis::getLabel()
+void RotAxis::setAxis(const V3D& v)
 {
-	return _name;
+	_axis=v;
 }
-const std::string& RotAxis::getLabel() const
+const V3D& RotAxis::getAxis() const
 {
-	return _name;
+	return _axis;
+}
+V3D& RotAxis::getAxis()
+{
+	return _axis;
+}
+void RotAxis::setRotationDirection(Rotation::Direction dir)
+{
+	_dir=dir;
 }
 Matrix33<double> RotAxis::getMatrix(double angle) const
 {
@@ -34,7 +42,7 @@ Quat RotAxis::getQuat(double angle) const
 }
 std::ostream& operator<<(std::ostream& os, const RotAxis& Rot)
 {
-	os << "Rotation Axis: " << Rot._name << std::endl;
+	os << "Rotation Axis: ";
 	os << ", axis: " << Rot._axis << std::endl;
 	os << ", direction: ";
 	if (Rot._dir==Rotation::CW)

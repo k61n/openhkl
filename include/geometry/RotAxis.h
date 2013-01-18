@@ -24,7 +24,7 @@
 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-#ifndef  NSXTOOL_ROTAXIS_H_
+#ifndef NSXTOOL_ROTAXIS_H_
 #define NSXTOOL_ROTAXIS_H_
 #include "V3D.h"
 #include "Quat.h"
@@ -51,13 +51,17 @@ class RotAxis
 {
 public:
 	//! Constructor
-	RotAxis(const V3D& axis, Rotation::Direction direction=Rotation::CCW,const char* label=0);
+	RotAxis(const V3D& axis, Rotation::Direction direction=Rotation::CCW);
 	//! Destructor
 	~RotAxis();
-	//! Get the label of this axis
-	std::string& getLabel();
-	//! Get the label of this axis
-	const std::string& getLabel() const;
+	//! Set the axis. V3D will be normalized.
+	void setAxis(const V3D&);
+	//! Get the rotation axis
+	const V3D& getAxis() const;
+	//! Get the rotation axis
+	V3D& getAxis();
+	//! get rotation direction.
+	void setRotationDirection(Rotation::Direction);
 	//! Get the rotation matrix associated with this rotation
 	//@param angle : rotation angle in radians by default, use Units to convert
 	//@return rotation matrix
@@ -68,13 +72,11 @@ public:
 	Quat getQuat(double angle) const;
 	//! Print information into a stream
 	friend std::ostream& operator<<(std::ostream& os, const RotAxis&);
-private:
+protected:
 	//! Axis of rotation, normalized vector
 	V3D _axis;
 	//! Rotation direction
 	Rotation::Direction _dir;
-	//! Label of the axis
-	std::string _name;
 };
 
 } // End namespace SX
