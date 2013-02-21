@@ -26,30 +26,19 @@ ENDIF()
 
 ###### Find GSL and GSL_CBLAS ######
 FIND_PACKAGE(GSL)
-#FIND_LIBRARY(GSL gsl)
-#FIND_LIBRARY(GSL_CBLAS gslcblas)
 
 
 ###### Find CGAL library (used for Convex Hull triangulations #######
 FIND_PACKAGE(CGAL)
-#FIND_LIBRARY(CGAL_LIBRARIES CGAL)
-#IF (NOT CGAL_FOUND)
-#  MESSAGE(FATAL_ERROR "Unable to find CGAL libraries")
-#ENDIF()
+
 
 ###### Find GMP 
 FIND_PACKAGE(GMP)
-#FIND_LIBRARY(GMP_LIBRARIES gmp)
-#IF(NOT GMP_FOUND)
-#  MESSAGE(FATAL_ERROR "Found gmp libraries")
-#ENDIF()
+
 
 ###### Find MPFR 
 FIND_PACKAGE (MPFR)
-#FIND_LIBRARY(MPFR_LIBRARIES mpfr)
-#IF(NOT MPFR_FOUND)
-#    MESSAGE(FATAL_ERROR "problem")
-#ENDIF()
+
 
 IF(CMAKE_COMPILER_IS_GNUCXX)
   ADD_DEFINITIONS("-Wall")
