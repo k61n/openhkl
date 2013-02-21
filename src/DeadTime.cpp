@@ -1,6 +1,8 @@
 #include <cmath>
 #include <stdexcept>
 #include <algorithm>
+// Eric: add this to make bind2nd and divides work on win32
+#include <functional>
 
 #include "DeadTime.h"
 
