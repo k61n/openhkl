@@ -22,3 +22,5 @@ for i in range(vandata.shape[1]):
     pfinal, success = opt.leastsq(resexp, pinit, args=(arange(2,253),vandata[2:253,i]))
     vanfit[:,i]=fitexp(pfinal,arange(256))
 
+# Normalize the fits to have approx. 1.0 in the center
+vanfit/=average(vanfit[128,:])*s/average(s)
