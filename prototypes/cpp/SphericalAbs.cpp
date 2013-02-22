@@ -12,10 +12,10 @@ using namespace SX;
 typedef boost::numeric::ublas::matrix<V3D> mpoints; 
 const double deg2rad=M_PI/180.0;
 
-struct SphericalDetector
+struct CylDetector
 {
-    SphericalDetector(double Radius, double th2min, double th2max, int hor_pix, int vert_pix)
-    :_radius(Radius),
+    CylDetector(double Radius,double h, double th2min, double th2max, int hor_pix, int vert_pix)
+    :_radius(Radius),_h(h),
     _th2min(th2min*deg2rad),_th2max(th2max*deg2rad),
     _hpix(hor_pix),_vpix(vert_pix),
     _normals(hor_pix),
