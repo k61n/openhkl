@@ -88,8 +88,8 @@ int main(int narg,char* argc[])
     double atte=ndens*(abs+inc);
     // D19 detector
     CylDetector D19(76,40,6.0,126.0,640,256);
-    // Vanadium diameter (cm) and height (cm)
-    double van_d=0.8, van_h=4.0;
+    // Vanadium diameter (cm)
+    double van_d=0.8;
     double R=0.5*van_d;
     
     // Boost generator
@@ -98,7 +98,8 @@ int main(int narg,char* argc[])
 	boost::variate_generator<boost::lagged_fibonacci19937&,boost::uniform_01<> > distrib01(mlagged,unif01);
 	// 
 	std::cout << atoi(argc[1]);
-	int xs=1;
+	int counter(0);
+    int xs=1;
 	double lf,l1,l2;
 	double A,B,C;
 	double solid_angle;
@@ -107,13 +108,20 @@ int main(int narg,char* argc[])
     for (int y=0;y<256;++y)
     {   
         double& intens=result[y];
-        for (int i=0;i<N;++i)
+        while (counter < N)
         {
+           // x coordinate of the point of intersection
+           P[0]=-(-0.5+distrib01())*van_d;;
            // y and z coordinates of the point of intersection
            P[1]=(-0.5+distrib01())*van_d;
-           P[2]=(-0.5+distrib01())*van_h;
-           // x coordinate of the point of intersection
-           P[0]=-sqrt(R*R-P[1]*P[1]);
+           // y and z coordinates of the point of intersection
+           P[2]=(-0.5+distrib01())*van_d;
+
+           if (P[0]*P[0] + P[1]*P[1] + P[2]*P[2] > R) {
+               continue
+           }
+           counter++;
+
            // Primary flight path
            lf=-2*P[0];
            l1=lf*distrib01();
