@@ -6,11 +6,13 @@
 #include <boost/numeric/ublas/matrix.hpp> 
 
 using namespace SX;
-// x along beam, y towards 90 deg detector, z-up 
+
+// x along beam, y towards 90 deg detector, z-up (left-handed system)
 
 // Matrix of points
 typedef boost::numeric::ublas::matrix<V3D> mpoints; 
 const double deg2rad=M_PI/180.0;
+
 
 struct CylDetector
 {
@@ -49,17 +51,16 @@ struct CylDetector
         }
     }
     // Return the position of the j, i pixel
-    V3D randomInPixel(int j, int i, double w01, double h01,const V3D& fromP, double& SA )
+    inline void randomInPixel(int j, int i, double w01, double h01,const V3D& fromP, double& SA,V3D& t)
     {
         // Choose a random point in the pixel
-        V3D t=_targets(j,i);
+        t=_targets(j,i);
         t[0]+=w01*(_tangents[i])[0];
         t[1]+=w01*(_tangents[i])[1];
         t[2]+=h01*_hv;
         t-=fromP;
         double d=t.normalize();
         SA=_pixSurface*t.scalar_prod(_normals[i])/(d*d);
-        return t;        
     }
     mpoints _targets; // Positions of pixels
     std::vector<V3D> _normals; //Pixel normals, depends only on Gamma
@@ -79,17 +80,17 @@ int main(int narg,char* argc[])
     if (narg!=2)
         exit(1);
     // Number of neutrons per pixel
-    const int N=1000000;
+    const int N=1e6;
     // Wavelength
-    const double wave=1.46;
+    const double wave=0.95;
     // Cross sections (barns) and number density
     const double abs=5.08/1.798*wave, inc=5.08, ndens=2.0/std::pow(3.03,3);
     double scat=ndens*inc;
     double atte=ndens*(abs+inc);
     // D19 detector
-    CylDetector D19(76,40,6.0,126.0,640,256);
-    // Vanadium diameter (cm)
-    double van_d=0.8;
+    CylDetector D19(76,40,7.49,127.49,640,256);
+    // Vanadium diameter (cm) and height (cm)
+    double van_d=0.8, van_h=1.0;
     double R=0.5*van_d;
     
     // Boost generator
@@ -97,31 +98,26 @@ int main(int narg,char* argc[])
 	boost::uniform_01<> unif01;
 	boost::variate_generator<boost::lagged_fibonacci19937&,boost::uniform_01<> > distrib01(mlagged,unif01);
 	// 
-	std::cout << atoi(argc[1]);
-	int counter(0);
-    int xs=1;
+	int xs=atoi(argc[1]);
 	double lf,l1,l2;
 	double A,B,C;
 	double solid_angle;
-	std::vector<double> result(256);
+	std::vector<double> result(32);
 	V3D P,V;
-    for (int y=0;y<256;++y)
+    double diaph=1.0; // Circular diaphragm of diameter 1.0 cm
+
+    for (int y=0;y<256;y+=8)
     {   
-        double& intens=result[y];
-        while (counter < N)
+        double& intens=result[y/8];
+        for (int i=0;i<N;++i)
         {
+           // y and z coordinates of the point of intersection
+           P[1]=(-0.5+distrib01());
+           P[2]=(-0.5+distrib01());
+           if ((P[1]*P[1]+P[2]*P[2])>R*R) // Not inside sphere
+             continue;
            // x coordinate of the point of intersection
-           P[0]=-(-0.5+distrib01())*van_d;;
-           // y and z coordinates of the point of intersection
-           P[1]=(-0.5+distrib01())*van_d;
-           // y and z coordinates of the point of intersection
-           P[2]=(-0.5+distrib01())*van_d;
-
-           if (P[0]*P[0] + P[1]*P[1] + P[2]*P[2] > R) {
-               continue
-           }
-           counter++;
-
+           P[0]=-sqrt(R*R-P[1]*P[1]-P[2]*P[2]);
            // Primary flight path
            lf=-2*P[0];
            l1=lf*distrib01();
@@ -129,14 +125,22 @@ int main(int narg,char* argc[])
            P[0]+=l1;
            double r1=distrib01();
            double r2=distrib01();
-           V=D19.randomInPixel(y,xs,r1,r2,P,solid_angle);
-           A=V[0]*V[0]+V[1]*V[1];
-           B=2.0*(P[0]*V[0]+P[1]*V[1]);
-           C=P[0]*P[0]+P[1]*P[1]-R*R;
+           D19.randomInPixel(y,xs,r1,r2,P,solid_angle,V);
+           A=1.0;
+           B=2.0*(P[0]*V[0]+P[1]*V[1]+P[2]*V[2]);
+           C=P[0]*P[0]+P[1]*P[1]+P[2]*P[2]-R*R;
            l2=0.5*(-B+sqrt(B*B-4*A*C))/A;
+           //double theta=0.5*acos(V[0]);
+           //double Q=4*M_PI*sin(theta)/wave;
+           //double DW=exp(-0.0072*Q*Q);
            intens+=solid_angle*lf*scat*exp(-atte*(l1+l2));   
         }                     
         intens/=(4.0*M_PI*N);
-        std::cout << y << " " << intens << std::endl;
-    }	 
+    }
+
+    // Print-out the result along this strip
+    int i=0;
+    std::for_each(result.begin(),result.end(),[&i](double a) { std::cout << i << " " << a << std::endl;i+=8;});
+
 }
+
