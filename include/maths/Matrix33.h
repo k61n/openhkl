@@ -29,6 +29,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <cmath>
+#include <utility>
 #include "V3D.h"
 
 
@@ -297,7 +298,7 @@ std::pair<V3D,V3D> Matrix33<T>::operator*(const std::pair<V3D,V3D>& tin)
 {
 	V3D v0=this->operator*(tin.first);
 	V3D v1=this->operator*(tin.second);
-	return std::make_pair<V3D,V3D>(v0,v1);
+	return std::pair<V3D,V3D>(v0,v1);
 }
 
 

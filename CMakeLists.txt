@@ -41,7 +41,10 @@ FIND_PACKAGE (MPFR)
 
 
 IF(CMAKE_COMPILER_IS_GNUCXX)
-  ADD_DEFINITIONS("-Wall")
+  ADD_DEFINITIONS(
+    -std=c++0x
+    -Wall
+)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffast-math")
 ENDIF()
 

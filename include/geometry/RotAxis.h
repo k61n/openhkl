@@ -29,7 +29,7 @@
 #include "V3D.h"
 #include "Quat.h"
 #include "Matrix33.h"
-#include <string>
+#include <iostream>
 
 namespace SX
 {
@@ -50,7 +50,9 @@ namespace Rotation
 class RotAxis
 {
 public:
-	//! Constructor
+	//! Constructor per default, rotation around z, CCW
+	RotAxis();
+	//! Explicit
 	RotAxis(const V3D& axis, Rotation::Direction direction=Rotation::CCW);
 	//! Destructor
 	~RotAxis();
@@ -78,6 +80,16 @@ protected:
 	//! Rotation direction
 	Rotation::Direction _dir;
 };
+
+namespace Rotation
+{
+	static const RotAxis AxisXCW=RotAxis(V3D(1,0,0),CW);
+	static const RotAxis AxisXCCW=RotAxis(V3D(1,0,0),CCW);
+	static const RotAxis AxisYCW=RotAxis(V3D(0,1,0),CW);
+	static const RotAxis AxisYCCW=RotAxis(V3D(0,1,0),CCW);
+	static const RotAxis AxisZCW=RotAxis(V3D(0,0,1),CW);
+	static const RotAxis AxisZCCW=RotAxis(V3D(0,0,1),CCW);
+}
 
 } // End namespace SX
 

@@ -112,6 +112,10 @@ class V3D
    std::istream& operator>>(std::istream&,V3D&);
    int colinear(const V3D& v1, const V3D& v2);
 
+   static const V3D UnitX=V3D(1,0,0);
+   static const V3D UnitY=V3D(0,1,0);
+   static const V3D UnitZ=V3D(0,0,1);
+
 } // namespace SX
 
 #endif /*NXSTOOL_V3D_H_*/

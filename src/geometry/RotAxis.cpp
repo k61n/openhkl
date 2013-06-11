@@ -3,6 +3,11 @@
 
 namespace SX
 {
+RotAxis::RotAxis():_axis(UnitZ),_dir(Rotation::CCW)
+{
+}
+
+
 RotAxis::RotAxis(const V3D& axis, Rotation::Direction direction):_axis(axis),_dir(direction)
 {
 	_axis.normalize();
@@ -42,9 +47,7 @@ Quat RotAxis::getQuat(double angle) const
 }
 std::ostream& operator<<(std::ostream& os, const RotAxis& Rot)
 {
-	os << "Rotation Axis: ";
-	os << ", axis: " << Rot._axis << std::endl;
-	os << ", direction: ";
+	os << "Rotation Axis: " << Rot._axis << ", direction: ";
 	if (Rot._dir==Rotation::CW)
 		os << " CW";
 	else
