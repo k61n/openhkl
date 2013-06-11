@@ -88,7 +88,7 @@ public:
 	std::size_t  generate();
 	void rotateHull(const Matrix33<double>& rot);
 	//! Rotate the hull with the rotation matrix. First index line, second column.
-	void rotateHull(double m01,double m02, double m03,
+	void rotateHull(double m00,double m01, double m02,
 			double m10, double m11, double m12,
 			double m20,double m21, double m22);
 	//! Compute the volume of the Hull
