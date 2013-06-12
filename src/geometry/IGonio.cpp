@@ -1,5 +1,4 @@
 #include "IGonio.h"
-#include <limits>
 #include <algorithm>
 #include <stdexcept>
 #include <Units.h>
@@ -9,9 +8,9 @@ namespace SX
 namespace Geometry
 {
 
-typedef std::numeric_limits<double> nld;
+using SX::Units::deg;
 
-IGonio::IGonio(unsigned int n):_labels(n,""),_axes(n),_limits(n,std::pair<double,double>(nld::min(),nld::max()))
+IGonio::IGonio(unsigned int n):_labels(n,""),_axes(n),_limits(n,std::pair<double,double>(-360.0*deg,360.0*deg))
 {
 }
 
@@ -33,7 +32,7 @@ IGonio::IGonio(std::initializer_list<const char*> labels):_labels(labels.begin()
 	//! Setting up limits from -infinity to +infinity by default
 	std::fill(_limits.begin(),
 			_limits.end(),
-			std::pair<double,double>(nld::min(),nld::max()));
+			std::pair<double,double>(-360.0*deg,360.0*deg));
 }
 
 IGonio::~IGonio()
@@ -97,16 +96,16 @@ Matrix33<double> IGonio::anglesToMatrix(std::initializer_list<double> l)
 		throw std::invalid_argument("Number of arguments angles different from the number of axes on the goniometer");
 	// Get rotation matrix of the right most angle
 	auto it=l.begin();
-
+	std::cout << "I am using Quat";
 	int i=0;
-	Matrix33<double> result=_axes[i++].getMatrix(*it);
+	Quat result=_axes[i++].getQuat(*it);
 	it++;
 
 	for(;it!=l.end();++it)
 	{
-		result=result*_axes[i++].getMatrix(*it);
+		result=result*_axes[i++].getQuat(*it);
 	}
-	return result;
+	return result.toMatrix();
 }
 
 std::ostream& operator<<(std::ostream& os,IGonio& g)
