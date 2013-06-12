@@ -77,7 +77,7 @@ public:
 	Matrix33<double> anglesToMatrix(std::initializer_list<double> angles);
 	//!
 	friend std::ostream& operator<<(std::ostream& os,IGonio&);
-private:
+protected:
 	void isAxisValid(unsigned int i) const;
 	unsigned int isAxisValid(const char*) const;
 	std::vector<std::string> _labels;
