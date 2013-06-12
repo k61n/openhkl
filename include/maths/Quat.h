@@ -32,8 +32,9 @@
 namespace SX
 {
     //Forward declarations
+	namespace Geometry{
     class V3D;
-
+	}
     /** @class Quat Quat.h maths/Quat.h
     @brief Class for quaternions
     @version 1.0

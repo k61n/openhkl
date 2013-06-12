@@ -6,6 +6,8 @@
 namespace SX
 {
 
+namespace Geometry
+{
 
   /// The default precision 1e-7
 const double Tolerance(1e-7);   
@@ -445,5 +447,6 @@ int colinear(const V3D& v1, const V3D& v2)
     return (pv.norm()<Tolerance) ? 1 : 0;
 }
 
+} //namespace Geometry
 } //namespace  SX
 

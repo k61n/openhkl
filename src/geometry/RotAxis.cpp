@@ -1,14 +1,20 @@
 #include "Units.h"
 #include "RotAxis.h"
 
+
+using SX::Quat;
+
 namespace SX
 {
-RotAxis::RotAxis():_axis(UnitZ),_dir(Rotation::CCW)
+namespace Geometry
+{
+
+RotAxis::RotAxis():_axis(UnitZ),_dir(CCW)
 {
 }
 
 
-RotAxis::RotAxis(const V3D& axis, Rotation::Direction direction):_axis(axis),_dir(direction)
+RotAxis::RotAxis(const V3D& axis, Direction direction):_axis(axis),_dir(direction)
 {
 	_axis.normalize();
 }
@@ -28,7 +34,7 @@ V3D& RotAxis::getAxis()
 {
 	return _axis;
 }
-void RotAxis::setRotationDirection(Rotation::Direction dir)
+void RotAxis::setRotationDirection(Direction dir)
 {
 	_dir=dir;
 }
@@ -39,7 +45,7 @@ Matrix33<double> RotAxis::getMatrix(double angle) const
 }
 Quat RotAxis::getQuat(double angle) const
 {
-	if (_dir==Rotation::CW)
+	if (_dir==CW)
 		angle*=-1;
 	// Create the quaternion representing this rotation
 	Quat temp(angle,_axis);
@@ -48,12 +54,14 @@ Quat RotAxis::getQuat(double angle) const
 std::ostream& operator<<(std::ostream& os, const RotAxis& Rot)
 {
 	os << "Rotation Axis: " << Rot._axis << ", direction: ";
-	if (Rot._dir==Rotation::CW)
+	if (Rot._dir==CW)
 		os << " CW";
 	else
 		os << " CCW";
 	return os;
 }
+
+} // End namespace Geometry
 
 } // End namespace SX
 

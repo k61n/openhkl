@@ -32,6 +32,7 @@
 #include <utility>
 #include "V3D.h"
 
+using SX::Geometry::V3D;
 
 namespace SX
 {
