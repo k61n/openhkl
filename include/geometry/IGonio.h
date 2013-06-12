@@ -40,11 +40,14 @@ namespace Geometry {
 
 
 /* !
- * \brief Class defining a goniometer.
- *
- *  Allows to define a rotation axis in 3D space , constructed by a direction vector
- *  and a rotation direction (CW or CCW). The direction vector needs not to be normalized.
- *
+ * \brief Class IGonio.
+ * Base class for all goniometers (system of several rotation axis). Any number of axis can be used.
+ * The rotation is applied in reverse order of the given order. For example, when defining a goniometer with
+ * 3 axes a,b,c, it is supposed that in such collection of axes, b is attached to the a shaft and c is attached to the
+ * b shaft. Such gonio will rotate a vector v into a.b.c.v.
+ * Once the IGonio is constructed, it is not allowed to change the number of axes.
+ * Axes, their labels and respective limits can be modified by the class methods or by template accessor:
+ * e.g. Axis<0>(g)=RotAxis(UnitZ,CW).
  */
 class IGonio {
 public:
