@@ -62,6 +62,13 @@ const RotAxis& IGonio::axis(unsigned int i) const
 	return _axes[i];
 }
 
+
+RotAxis& IGonio::axis(const char* label)
+{
+	unsigned int i=isAxisValid(label);
+	return _axes[i];
+}
+
 const RotAxis& IGonio::axis(const char* label) const
 {
 	unsigned int i=isAxisValid(label);
@@ -96,11 +103,10 @@ Matrix33<double> IGonio::anglesToMatrix(std::initializer_list<double> l)
 		throw std::invalid_argument("Number of arguments angles different from the number of axes on the goniometer");
 	// Get rotation matrix of the right most angle
 	auto it=l.begin();
-	std::cout << "I am using Quat";
 	int i=0;
 	Quat result=_axes[i++].getQuat(*it);
 	it++;
-
+	// Quat multiplication is faster than matrix.
 	for(;it!=l.end();++it)
 	{
 		result=result*_axes[i++].getQuat(*it);
@@ -110,11 +116,11 @@ Matrix33<double> IGonio::anglesToMatrix(std::initializer_list<double> l)
 
 std::ostream& operator<<(std::ostream& os,IGonio& g)
 {
-	os << "Goniometer with rotation \n";
+	os << "Goniometer with rotation: \n";
 	for (unsigned int i=0;i<g._labels.size();i++)
 	{
-		os << g._labels[i] << g._axes[i] << ", angular limits: "
-		   << g._limits[i].first/Units::deg << g._limits[i].second/Units::deg
+		os << g._labels[i] << " " << g._axes[i] << ", angular limits: "
+		   << g._limits[i].first/Units::deg << "," << g._limits[i].second/Units::deg
 		   <<  std::endl;
 	}
 	return os;
