@@ -29,16 +29,35 @@
 #define NSXTOOL_UNITS_H_
 #define _USE_MATH_DEFINES
 #include <cmath>
+#include <Singleton.h>
+#include <unordered_map>
+#include <string>
 
 namespace SX
 {
 //! Define the units used internally in NSXTOOL.
 //! The Units namespace allows users of the library to specify their units when defining variables.
 //! For example it is recommended to use statements such as : double x=34*deg and when using methods:
-//! a.Rotate(34*deg). This guarantees a self-consistent system of units in all calculations.
+//! a.Rotate(34*deg). This guarantees a self-consistent system of units in all calculations. This is inspired
+//! from the system of units in Geant4. Printing a property in a given unit requires to divide by the units.
+//! For example, if one wants an angle in degrees, angle/Units::deg needs to be used.
+//!
+//!
 //!
 namespace Units
 {
+	//! Singleton class to map the symbol of a Unit with its value in the internal reference system.
+	//! This is used for example when parsing values from input XML files.
+	class UnitsManager : public Singleton<UnitsManager>
+	{
+		public:
+		//! Get the value of a given unit with respect to the internal reference unit.
+		//! Throws std::invalid_argument if not present
+		static double get(const std::string&);
+		private:
+		//! Store pairs of symbols and values.
+		static std::unordered_map<std::string,double> _unitsMap;
+	};
 	// Units of [L]
 	static const double m=1.0;
 	static const double cm=m*0.01;
@@ -81,6 +100,10 @@ namespace Units
 	static const double s=1.0;
 	static const double ms=s*1e-3;
 	static const double us=s*1e-6;
+	static const double min=60*s;
+	static const double hour=3600*s;
+	static const double day=24*hour;
+	static const double year=364.25*day;
 
 
 
