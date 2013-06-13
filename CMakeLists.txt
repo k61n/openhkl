@@ -52,9 +52,26 @@ ENDIF()
 IF(WIN32 AND MSVC)
     ADD_DEFINITIONS(-DBOOST_ALL_NO_LIB)
 ENDIF()
-    
-add_subdirectory(analysis)
-add_subdirectory(data)
-add_subdirectory(geometry)
-add_subdirectory(maths)
-add_subdirectory(utils)
+
+include_directories( analysis/include
+                     data/include
+                     geometry/include
+                     maths/include
+                     utils/include)
+
+file(GLOB_RECURSE sources analysis/src/*.cpp
+                  data/src/*.cpp
+                  geometry/src/*.cpp
+                  maths/src/*.cpp
+                  utils/src/*.cpp)                   
+
+
+# Creating the library
+add_library(NSXTool SHARED ${sources})
+ 
+ # Link
+TARGET_LINK_LIBRARIES(NSXTool ${Boost_LIBRARIES} ${GSL} ${GSL_CBLAS} ${GSL_LIBRARIES} ${GMP_LIBRARIES} ${MPFR_LIBRARIES} ${CGAL_LIBRARIES})
+
+# Install section
+INSTALL(TARGETS NSXTool DESTINATION NSXTool)
+
