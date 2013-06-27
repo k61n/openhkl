@@ -43,7 +43,9 @@ std::unordered_map<std::string,double> UnitsManager::_unitsMap =
 		{"min",min },
 		{"hour",hour},
 		{"day",day },
-		{"year",year}
+		{"year",year},
+		{"perCent", perCent},
+		{"%", perCent}
 };
 
 double UnitsManager::get(const std::string& key)

@@ -105,7 +105,8 @@ namespace Units
 	static const double day=24*hour;
 	static const double year=364.25*day;
 
-
+	//
+	static const double perCent=0.01;
 
 } //Namespace Units
 
