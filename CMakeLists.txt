@@ -56,12 +56,14 @@ ENDIF()
 include_directories( analysis/include
                      data/include
                      geometry/include
+                     materials/include
                      maths/include
                      utils/include)
 
 file(GLOB_RECURSE sources analysis/src/*.cpp
                   data/src/*.cpp
                   geometry/src/*.cpp
+                  materials/*.cpp
                   maths/src/*.cpp
                   utils/src/*.cpp)                   
 
