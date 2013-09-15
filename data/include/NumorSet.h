@@ -25,7 +25,7 @@
  *
  */
 
-#ifndef  NSXTOOL_NumorSet_H_
+#ifndef NSXTOOL_NumorSet_H_
 #define NSXTOOL_NumorSet_H_
 #include "Numor.h"
 #include <string>
