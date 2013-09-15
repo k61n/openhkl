@@ -44,7 +44,7 @@ namespace Geometry
  * Blob objects in NSXTool records the total mass, the mass-weighted first and second moments
  * as new points are added to the blob. Knowledge about individual points is lost,
  * i.e Blob can only increase in size.
- * Blobs can be merged and propagate zero, first and second momentum.
+ * Blobs can be merged and maintain zero, first and second momentum.
  *
  */
 class Blob2D
