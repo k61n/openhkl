@@ -39,86 +39,365 @@ template <typename T> class V2D
     {
     public:
       V2D();
-      V2D(const V2D&);
-      V2D& operator=(const V2D&);
-      V2D(const double,const double);
-      V2D(const double*);
+      V2D(const V2D<T>&);
+      V2D& operator=(const V2D<T>&);
+      V2D(const T,const T);
+      V2D(const T*);
       ~V2D();
       // Arithmetic operators overloaded
-      V2D operator+(const V2D& v) const;
-      V2D& operator+=(const V2D& v);
-      void add(double x,double y,double z)
-		{
-    	  v[0]+=x;
-    	  v[1]+=y;
-    	  v[2]+=z;
-		}
-      V2D operator-(const V2D& v) const;
-      V2D& operator-=(const V2D& v);
+      V2D<T> operator+(const V2D<T>& v) const;
+      V2D<T>& operator+=(const V2D<T>& v);
+      void add(T x,T y);
+      V2D<T> operator-(const V2D<T>& v) const;
+      V2D<T>& operator-=(const V2D<T>& v);
       // Inner product
-      V2D operator*(const V2D& v) const;
-      V2D& operator*=(const V2D& v);
+      V2D<T> operator*(const V2D<T>& v) const;
+      V2D<T>& operator*=(const V2D<T>& v);
       // Inner division
-      V2D operator/(const V2D& v) const;
-      V2D& operator/=(const V2D& v);
+      V2D<T> operator/(const V2D<T>& v) const;
+      V2D<T>& operator/=(const V2D<T>& v);
       // Scale
-      V2D operator*(const double D) const;
-      V2D& operator*=(const double D);
-      V2D operator/(const double D) const;
-      V2D& operator/=(const double D);
+      V2D<T> operator*(const T D) const;
+      V2D<T>& operator*=(const T D);
+      V2D<T> operator/(const T D) const;
+      V2D<T>& operator/=(const T D);
       // Simple Comparison
-      bool operator==(const V2D&) const;
-      bool operator<(const V2D&) const;
+      bool operator==(const V2D<T>&) const;
+      bool operator<(const V2D<T>&) const;
       // Access
-      // Setting v[0], v[1] and v[2] values
-      void operator()(const double, const double, const double);
-      void operator()(const V2D& v);
-      void spherical(double R, double theta, double phi);
-      void addtimes(const V2D& _v,double factor)
-      {
-    	  v[0]+=_v.v[0]*factor;
-    	  v[1]+=_v.v[1]*factor;
-    	  v[2]+=_v.v[2]*factor;
-    	  return ;
-      }
-      const double& x() const { return v[0]; } ///< Get v[0]
-      const double& y() const { return v[1]; } ///< Get v[1]
-      const double& z() const { return v[2]; } ///< Get v[2]
-
-      const double& operator[](const int Index) const;
-      double& operator[](const int Index);
+      // Setting v[0], v[1] values
+      void operator()(const T, const T);
+      void operator()(const V2D<T>& v);
+      void addtimes(const V2D<T>& _v,T factor);
+      const T& x() const { return v[0]; } ///< Get v[0]
+      const T& y() const { return v[1]; } ///< Get v[1]
+      const T& operator[](const int Index) const;
+      T& operator[](const int Index);
       /// Make a normalized vector (return norm value)
-      double normalize();            // Vec3D::makeUnit
-      double norm() const;
-      double norm2() const;
+      T normalize();            // Vec3D::makeUnit
+      T norm() const;
+      T norm2() const;
       // Scalar product
-      inline double scalar_prod(double x, double y, double z) const { return (v[0]*x+v[1]*y+v[2]*z);}
-      inline double scalar_prod(const V2D& _v) const { return (v[0]*_v.v[0]+v[1]*_v.v[1]+v[2]*_v.v[2]);}
-      // Cross product
-      V2D cross_prod(const V2D&) const;
+      inline T scalar_prod(T x, T y) const { return (v[0]*x+v[1]*y);}
+      inline T scalar_prod(const V2D<T>& _v) const { return (v[0]*_v.v[0]+v[1]*_v.v[1]);}
       // Distance between two points defined as vectors
-      double distance(const V2D&) const;
+      T distance(const V2D<T>&) const;
+      //! Determine if the point is null
+      int nullVector(const T=1e-3) const;
       // Send to a stream
       void printSelf(std::ostream&) const;
-      void read(std::istream&);
-
-      int nullVector(const double=1e-3) const;              ///< Determine if the point is null
-      int coLinear(const V2D&,const V2D&) const;
-
     private:
 
-      double v[3];       ///< v value [unitless]
+      T v[2];       ///< v value [unitless]
     };
 
-    // Overload operator <<
-   std::ostream& operator<<(std::ostream&, const V2D&);
-   std::istream& operator>>(std::istream&,V2D&);
-   int colinear(const V2D& v1, const V2D& v2);
+// Overload operator <<
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const V2D<T>& v)
+{
+	v.printSelf(os);
+	return os;
+}
+// Determine whether two vectors are collinear
+template<typename T>
+int colinear(const V2D<T>& v1, const V2D<T>& v2);
+{
+	T res=v1[0]*v2[1]-v1[1]*v2[0];
+	return (res<1e-7) ? 1 : 0;
+}
+template<typename T>
+V2D<T>::V2D()
+{
+	v[0]=0;
+	v[1]=0;
+	v[2]=0;
+}
 
-   // Unit vectors
-   static const V2D UnitX=V2D(1,0,0);
-   static const V2D UnitY=V2D(0,1,0);
-   static const V2D UnitZ=V2D(0,0,1);
+/// Value constructor
+template<typename T>
+V2D<T>::V2D(const double _x, const double _y)
+{
+	v[0]=_x;
+	v[1]=_y;
+}
+
+/// Copv[1] constructor
+template<typename T>
+V2D<T>::V2D(const V2D<T>& _v)
+{
+	v[0]=_v.v[0];
+	v[1]=_v.v[1];
+}
+
+
+///Assignment
+template<typename T>
+V2D<T>& V2D<T>::operator=(const V2D<T>& A)
+{
+  if (this!=&A)
+    {
+      v[0]=A.v[0];
+      v[1]=A.v[1];
+    }
+  return *this;
+}
+
+/**
+  Constructor from a pointer.
+  requires that the point is assigned after this has
+  been allocated since vPtr[v[0]] mav[1] throw.
+*/
+template<typename T>
+V2D<T>::V2D(const double* vPtr)
+
+{
+  if (vPtr)
+    {
+      v[0]=vPtr[0];
+      v[1]=vPtr[1];
+    }
+}
+
+template<typename T>
+V2D<T>::~V2D()
+{}
+
+  /**
+    Addtion operator
+     \param v :: Vector to add
+     \return *this+v;
+  */
+template<typename T>
+V2D<T> V2D<T>::operator+(const V2D<T>& _v) const
+{
+  V2D<T> out(*this);
+  out+=_v;
+  return out;
+}
+
+  /**
+    Subtraction operator
+    \param v :: Vector to sub.
+    \return *this-v;
+  */
+template<typename T>
+V2D<T> V2D<T>::operator-(const V2D<T>& _v) const
+{
+  V2D<T> out(*this);
+  out-=_v;
+  return out;
+}
+
+  /**
+    Inner product
+    \param v :: Vector to sub.
+    \return *this * v;
+  */
+template<typename T>
+V2D<T> V2D<T>::operator*(const V2D<T>& _v) const
+{
+  V2D<T> out(*this);
+  out*=_v;
+  return out;
+}
+
+  /**
+    Inner division
+    \param v :: Vector to divide
+    \return *this * v;
+  */
+template<typename T>
+V2D<T> V2D<T>::operator/(const V2D<T>& _v) const
+{
+  V2D<T> out(*this);
+  out/=_v;
+  return out;
+}
+
+  /**
+    Self-Addition operator
+    \param v :: Vector to add.
+    \return *this+=v;
+  */
+template<typename T>
+V2D<T>& V2D<T>::operator+=(const V2D<T>& _v)
+{
+  v[0]+=_v.v[0];
+  v[1]+=_v.v[1];
+  return *this;
+}
+
+template<typename T>
+void V2D<T>::add(T x,T,y)
+{
+	  v[0]+=x;
+	  v[1]+=y;
+}
+
+  /**
+    Self-Subtraction operator
+    \param v :: Vector to sub.
+    \return *this-v;
+  */
+template<typename T>
+V2D<T>& V2D<T>::operator-=(const V2D<T>& _v)
+{
+  v[0]-=_v.v[0];
+  v[1]-=_v.v[1];
+  return *this;
+}
+
+template<typename T>
+V2D<T>& V2D<T>::operator*=(const V2D<T>& _v)
+{
+  v[0]*=_v.v[0];
+  v[1]*=_v.v[1];
+  return *this;
+}
+template<typename T>
+V2D<T>& V2D<T>::operator/=(const V2D<T>& _v)
+{
+  v[0]/=_v.v[0];
+  v[1]/=_v.v[1];
+  return *this;
+}
+
+template<typename T>
+V2D<T> V2D<T>::operator*(const double D) const
+{
+  V2D<T> out(*this);
+  out*=D;
+  return out;
+}
+
+template<typename T>
+V2D<T> V2D<T>::operator/(const double D) const
+{
+  V2D<T> out(*this);
+  out/=D;
+  return out;
+}
+
+template<typename T>
+V2D<T>& V2D<T>::operator*=(const double D)
+{
+  v[0]*=D;
+  v[1]*=D;
+  return *this;
+}
+
+template<typename T>
+V2D<T>& V2D<T>::operator/=(const double D)
+{
+  if (D!=0.0)
+    {
+      v[0]/=D;
+      v[1]/=D;
+    }
+  return *this;
+}
+template<typename T>
+void V2D<T>::addtimes(const V2D<T>& v,T factor)
+{
+	v[0]+=_v.v[0]*factor;
+	v[1]+=_v.v[1]*factor;
+	return ;
+}
+
+template<typename T>
+bool V2D<T>::operator==(const V2D<T>& v) const
+{
+  return (fabs(v[0]-v.v[0])>Tolerance ||
+	  fabs(v[1]-v.v[1])>Tolerance )  ?
+    false : true;
+}
+
+template<typename T>
+bool V2D<T>::operator<(const V2D<T>& V) const
+{
+  if (v[0]!=V.v[0])
+    return v[0]<V.v[0];
+  return v[1]<V.v[1];
+
+}
+
+template<typename T>
+void V2D<T>::operator()(const double _x, const double _y)
+{
+  v[0]=_x;
+  v[1]=_y;
+  return;
+}
+
+template<typename T>
+void V2D<T>::operator()(const V2D<T>& _v)
+{
+  v[0]=_v.v[0];
+  v[1]=_v.v[1];
+  return;
+}
+
+template<typename T>
+const double& V2D<T>::operator[](const int Index) const
+{
+  switch (Index)
+    {
+    case 0: return v[0];
+    case 1: return v[1];
+    default:
+      throw std::runtime_error("V2D::operator[] range error");
+    }
+}
+
+template<typename T>
+double& V2D<T>::operator[](const int Index)
+{
+  switch (Index)
+    {
+    case 0: return v[0];
+    case 1: return v[1];
+    default:
+      throw std::runtime_error("V2D::operator[] range error");
+    }
+}
+
+template<typename T>
+double V2D<T>::norm() const
+{
+   return sqrt(static_cast<double>(v[0]*v[0]+v[1]*v[1]));
+}
+
+template<typename T>
+double V2D<T>::norm2() const
+{
+	return static_cast<double>(v[0]*v[0]+v[1]*v[1]);
+}
+
+template<typename T>
+double V2D<T>::normalize()
+{
+  const double ND(norm());
+  this->operator/=(ND);
+  return ND;
+}
+
+template<typename T>
+double V2D<T>::distance(const V2D<T>& _v) const
+{
+  V2D<T> dif(*this);
+  dif-=_v;
+  return dif.norm();
+}
+  /**
+    Prints a tev[0]t representation of itself
+    \param os the Stream to output to
+  */
+template<typename T>
+void V2D<T>::printSelf(std::ostream& os) const
+{
+  os  <<"[" << v[0] <<"," << v[1]  << "]";
+  return;
+}
 
 } // Namespace Geometry
 } // namespace SX
