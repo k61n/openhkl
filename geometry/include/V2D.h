@@ -28,6 +28,8 @@
 #define NSXTOOL_V2D_H_
 
 #include <iostream>
+#include <stdexcept>
+#include <cmath>
 
 namespace SX
 {
@@ -74,22 +76,25 @@ template <typename T> class V2D
       const T& operator[](const int Index) const;
       T& operator[](const int Index);
       /// Make a normalized vector (return norm value)
-      T normalize();            // Vec3D::makeUnit
-      T norm() const;
-      T norm2() const;
+      double normalize();            // Vec3D::makeUnit
+      double norm() const;
+      double norm2() const;
       // Scalar product
       inline T scalar_prod(T x, T y) const { return (v[0]*x+v[1]*y);}
       inline T scalar_prod(const V2D<T>& _v) const { return (v[0]*_v.v[0]+v[1]*_v.v[1]);}
       // Distance between two points defined as vectors
-      T distance(const V2D<T>&) const;
+      double distance(const V2D<T>&) const;
       //! Determine if the point is null
       int nullVector(const T=1e-3) const;
       // Send to a stream
       void printSelf(std::ostream&) const;
     private:
-
+      static double Tolerance;
       T v[2];       ///< v value [unitless]
     };
+
+template<typename T>
+double V2D<T>::Tolerance=1e-7;
 
 // Overload operator <<
 template<typename T>
@@ -100,7 +105,7 @@ std::ostream& operator<<(std::ostream& os, const V2D<T>& v)
 }
 // Determine whether two vectors are collinear
 template<typename T>
-int colinear(const V2D<T>& v1, const V2D<T>& v2);
+int colinear(const V2D<T>& v1, const V2D<T>& v2)
 {
 	T res=v1[0]*v2[1]-v1[1]*v2[0];
 	return (res<1e-7) ? 1 : 0;
@@ -115,7 +120,7 @@ V2D<T>::V2D()
 
 /// Value constructor
 template<typename T>
-V2D<T>::V2D(const double _x, const double _y)
+V2D<T>::V2D(const T _x, const T _y)
 {
 	v[0]=_x;
 	v[1]=_y;
@@ -148,7 +153,7 @@ V2D<T>& V2D<T>::operator=(const V2D<T>& A)
   been allocated since vPtr[v[0]] mav[1] throw.
 */
 template<typename T>
-V2D<T>::V2D(const double* vPtr)
+V2D<T>::V2D(const T* vPtr)
 
 {
   if (vPtr)
@@ -228,7 +233,7 @@ V2D<T>& V2D<T>::operator+=(const V2D<T>& _v)
 }
 
 template<typename T>
-void V2D<T>::add(T x,T,y)
+void V2D<T>::add(T x,T y)
 {
 	  v[0]+=x;
 	  v[1]+=y;
@@ -263,7 +268,7 @@ V2D<T>& V2D<T>::operator/=(const V2D<T>& _v)
 }
 
 template<typename T>
-V2D<T> V2D<T>::operator*(const double D) const
+V2D<T> V2D<T>::operator*(const T D) const
 {
   V2D<T> out(*this);
   out*=D;
@@ -271,7 +276,7 @@ V2D<T> V2D<T>::operator*(const double D) const
 }
 
 template<typename T>
-V2D<T> V2D<T>::operator/(const double D) const
+V2D<T> V2D<T>::operator/(const T D) const
 {
   V2D<T> out(*this);
   out/=D;
@@ -279,7 +284,7 @@ V2D<T> V2D<T>::operator/(const double D) const
 }
 
 template<typename T>
-V2D<T>& V2D<T>::operator*=(const double D)
+V2D<T>& V2D<T>::operator*=(const T D)
 {
   v[0]*=D;
   v[1]*=D;
@@ -287,7 +292,7 @@ V2D<T>& V2D<T>::operator*=(const double D)
 }
 
 template<typename T>
-V2D<T>& V2D<T>::operator/=(const double D)
+V2D<T>& V2D<T>::operator/=(const T D)
 {
   if (D!=0.0)
     {
@@ -297,7 +302,7 @@ V2D<T>& V2D<T>::operator/=(const double D)
   return *this;
 }
 template<typename T>
-void V2D<T>::addtimes(const V2D<T>& v,T factor)
+void V2D<T>::addtimes(const V2D<T>& _v,T factor)
 {
 	v[0]+=_v.v[0]*factor;
 	v[1]+=_v.v[1]*factor;
@@ -322,7 +327,7 @@ bool V2D<T>::operator<(const V2D<T>& V) const
 }
 
 template<typename T>
-void V2D<T>::operator()(const double _x, const double _y)
+void V2D<T>::operator()(const T _x, const T _y)
 {
   v[0]=_x;
   v[1]=_y;
@@ -338,7 +343,7 @@ void V2D<T>::operator()(const V2D<T>& _v)
 }
 
 template<typename T>
-const double& V2D<T>::operator[](const int Index) const
+const T& V2D<T>::operator[](const int Index) const
 {
   switch (Index)
     {
@@ -350,7 +355,7 @@ const double& V2D<T>::operator[](const int Index) const
 }
 
 template<typename T>
-double& V2D<T>::operator[](const int Index)
+T& V2D<T>::operator[](const int Index)
 {
   switch (Index)
     {
