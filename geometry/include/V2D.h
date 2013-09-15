@@ -38,60 +38,60 @@ namespace Geometry
 {
 
 template <typename T> class V2D
-    {
-    public:
-      V2D();
-      V2D(const V2D<T>&);
-      V2D& operator=(const V2D<T>&);
-      V2D(const T,const T);
-      V2D(const T*);
-      ~V2D();
-      // Arithmetic operators overloaded
-      V2D<T> operator+(const V2D<T>& v) const;
-      V2D<T>& operator+=(const V2D<T>& v);
-      void add(T x,T y);
-      V2D<T> operator-(const V2D<T>& v) const;
-      V2D<T>& operator-=(const V2D<T>& v);
-      // Inner product
-      V2D<T> operator*(const V2D<T>& v) const;
-      V2D<T>& operator*=(const V2D<T>& v);
-      // Inner division
-      V2D<T> operator/(const V2D<T>& v) const;
-      V2D<T>& operator/=(const V2D<T>& v);
-      // Scale
-      V2D<T> operator*(const T D) const;
-      V2D<T>& operator*=(const T D);
-      V2D<T> operator/(const T D) const;
-      V2D<T>& operator/=(const T D);
-      // Simple Comparison
-      bool operator==(const V2D<T>&) const;
-      bool operator<(const V2D<T>&) const;
-      // Access
-      // Setting v[0], v[1] values
-      void operator()(const T, const T);
-      void operator()(const V2D<T>& v);
-      void addtimes(const V2D<T>& _v,T factor);
-      const T& x() const { return v[0]; } ///< Get v[0]
-      const T& y() const { return v[1]; } ///< Get v[1]
-      const T& operator[](const int Index) const;
-      T& operator[](const int Index);
-      /// Make a normalized vector (return norm value)
-      double normalize();            // Vec3D::makeUnit
-      double norm() const;
-      double norm2() const;
-      // Scalar product
-      inline T scalar_prod(T x, T y) const { return (v[0]*x+v[1]*y);}
-      inline T scalar_prod(const V2D<T>& _v) const { return (v[0]*_v.v[0]+v[1]*_v.v[1]);}
-      // Distance between two points defined as vectors
-      double distance(const V2D<T>&) const;
-      //! Determine if the point is null
-      int nullVector(const T=1e-3) const;
-      // Send to a stream
-      void printSelf(std::ostream&) const;
-    private:
-      static double Tolerance;
-      T v[2];       ///< v value [unitless]
-    };
+{
+public:
+  V2D();
+  V2D(const V2D<T>&);
+  V2D& operator=(const V2D<T>&);
+  V2D(const T,const T);
+  V2D(const T*);
+  ~V2D();
+  // Arithmetic operators overloaded
+  V2D<T> operator+(const V2D<T>& v) const;
+  V2D<T>& operator+=(const V2D<T>& v);
+  void add(T x,T y);
+  V2D<T> operator-(const V2D<T>& v) const;
+  V2D<T>& operator-=(const V2D<T>& v);
+  // Inner product
+  V2D<T> operator*(const V2D<T>& v) const;
+  V2D<T>& operator*=(const V2D<T>& v);
+  // Inner division
+  V2D<T> operator/(const V2D<T>& v) const;
+  V2D<T>& operator/=(const V2D<T>& v);
+  // Scale
+  V2D<T> operator*(const T D) const;
+  V2D<T>& operator*=(const T D);
+  V2D<T> operator/(const T D) const;
+  V2D<T>& operator/=(const T D);
+  // Simple Comparison
+  bool operator==(const V2D<T>&) const;
+  bool operator<(const V2D<T>&) const;
+  // Access
+  // Setting v[0], v[1] values
+  void operator()(const T, const T);
+  void operator()(const V2D<T>& v);
+  void addtimes(const V2D<T>& _v,T factor);
+  const T& x() const { return v[0]; } ///< Get v[0]
+  const T& y() const { return v[1]; } ///< Get v[1]
+  const T& operator[](const int Index) const;
+  T& operator[](const int Index);
+  /// Make a normalized vector (return norm value)
+  double normalize();            // Vec3D::makeUnit
+  double norm() const;
+  double norm2() const;
+  // Scalar product
+  inline T scalar_prod(T x, T y) const { return (v[0]*x+v[1]*y);}
+  inline T scalar_prod(const V2D<T>& _v) const { return (v[0]*_v.v[0]+v[1]*_v.v[1]);}
+  // Distance between two points defined as vectors
+  double distance(const V2D<T>&) const;
+  //! Determine if the point is null
+  int nullVector(const T=1e-3) const;
+  // Send to a stream
+  void printSelf(std::ostream&) const;
+private:
+  static double Tolerance;
+  T v[2];       ///< v value [unitless]
+};
 
 template<typename T>
 double V2D<T>::Tolerance=1e-7;
