@@ -64,10 +64,12 @@ public:
   void merge(const Blob2D&);
   //! Return the total mass
   double getMass() const;
+  //! Return the number of points
+  int getComponents() const;
   //! Return the center of Mass
   V2D<double> getCenterOfMass() const;
   //! Compute the contour ellipse of the Blob
-  void toEllipse(double& xc, double& yc, double& s_a, double& s_b, double& angle);
+  void toEllipse(double& xc, double& yc, double& s_a, double& s_b, double& angle) const;
 private:
   //! Total mass=zeroth order momentum
   double _m00;
@@ -75,6 +77,8 @@ private:
   double _m10, _m01;
   //! Second moments
   double _m20, _m02, _m11;
+  //! Number of points contributing
+  int _npoints;
 
 };
 
