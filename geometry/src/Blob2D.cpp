@@ -97,7 +97,6 @@ void Blob2D::toEllipse(double& xc, double& yc, double& s_a, double& s_b, double&
 	double Iyy=_m20/_m00-xc*xc;
 	double Ixy=-(_m11/_m00-xc*yc);
 	// Diagonalize the second moment tensor [[Ixx,Ixy],[Ixy,Iyy]]
-	std::cout << Ixx << " " << Iyy << " " << Ixy << std::endl;
 	double b=Ixx+Iyy;
 	double delta=b*b-4.0*(Ixx*Iyy-Ixy*Ixy);
 	if (delta<0)
