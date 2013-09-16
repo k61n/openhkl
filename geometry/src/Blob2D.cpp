@@ -40,6 +40,7 @@ Blob2D& Blob2D::operator=(const Blob2D& b)
 
 Blob2D::Blob2D(double x, double y, double m)
 {
+	_npoints=0;
 	addPoint(x,y,m);
 }
 
@@ -110,7 +111,22 @@ void Blob2D::toEllipse(double& xc, double& yc, double& s_a, double& s_b, double&
 	angle=atan2(s_a-Ixx,Ixy);
 }
 
+void Blob2D::printSelf(std::ostream& os) const
+{
+	os << "Blob center:" << _m10/_m00 << "," << _m01/_m00 << std::endl;
+	os << "Blob #points:" << _npoints << std::endl;
+	double a,b,c,d,e;
+	toEllipse(a,b,c,d,e);
+	os << "Blob bounding ellipse:" << a << " " << b << " " << c << " " << d << " " << e << std::endl;
 
+}
+
+
+std::ostream& operator<<(std::ostream& os, const Blob2D& b)
+{
+	b.printSelf(os);
+	return os;
+}
 
 } // End namespace Geometry
 } // End namspace SX

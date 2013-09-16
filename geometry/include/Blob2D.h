@@ -70,6 +70,8 @@ public:
   V2D<double> getCenterOfMass() const;
   //! Compute the contour ellipse of the Blob
   void toEllipse(double& xc, double& yc, double& s_a, double& s_b, double& angle) const;
+  //!
+  void printSelf(std::ostream& os) const;
 private:
   //! Total mass=zeroth order momentum
   double _m00;
@@ -81,6 +83,8 @@ private:
   int _npoints;
 
 };
+
+std::ostream& operator<<(std::ostream& os, const Blob2D& b);
 
 } // Namespace Geometry
 } // namespace SX
