@@ -40,8 +40,15 @@ Blob2D& Blob2D::operator=(const Blob2D& b)
 
 Blob2D::Blob2D(double x, double y, double m)
 {
-	_npoints=0;
-	addPoint(x,y,m);
+	_m00=m;
+	double mx=m*x;
+	double my=m*y;
+	_m10=mx;
+	_m01=my;
+	_m20=mx*x;
+	_m02=my*y;
+	_m11=mx*y;
+	_npoints=1;
 }
 
 void Blob2D::addPoint(double x, double y, double m)

@@ -171,14 +171,14 @@ template <typename _datatype> blob2DCollection findBlobs(_datatype* dataptr,unsi
 		}
 	}
 
-//	for (auto it=blobs.begin();it!=blobs.end();)
-//	{
-//		Blob2D& p=it->second;
-//		if (p.getComponents()<minComp || p.getComponents()>maxComp)
-//			it=blobs.erase(it);
-//		else
-//			it++;
-//	}
+	for (auto it=blobs.begin();it!=blobs.end();)
+	{
+		Blob2D& p=it->second;
+		if (p.getComponents()<minComp || p.getComponents()>maxComp)
+			it=blobs.erase(it);
+		else
+			it++;
+	}
 
 
 	return blobs;
