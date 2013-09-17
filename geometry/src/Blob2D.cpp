@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include <cmath>
 
+
 namespace SX
 {
 namespace Geometry
