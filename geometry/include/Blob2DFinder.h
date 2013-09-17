@@ -26,7 +26,7 @@
  */
 
 
-#include <unordered_map>
+#include <map>
 #include "Blob2D.h"
 #include <queue>
 #include <vector>
@@ -36,7 +36,7 @@ namespace SX
 {
 namespace Geometry
 {
-	typedef std::unordered_map<int,Blob2D> blob2DCollection;
+	typedef std::map<int,Blob2D> blob2DCollection;
 
 	//! Find blobs in a 2D image made of nrows*ncols data of type : _datatype. Blob are identified using a threashold,
 	//! and a limits in the number of connected components in each blob (minComp, maxComp).
@@ -45,7 +45,7 @@ template <typename _datatype> blob2DCollection findBlobs(_datatype* dataptr,unsi
 
 	// Map of Blobs (key : label, value : blob)
 	blob2DCollection blobs;
-	blobs.reserve(1000);
+	//blobs.reserve(1000);
 
 	// Change row and col. if necessary
 	if (!rowMajor)
