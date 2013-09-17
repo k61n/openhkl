@@ -176,6 +176,7 @@ namespace Geometry
 				}
 			}
 		// Now deals with equivalences, first sort them
+		}
 		std::sort(equivalences.begin(),
 			      equivalences.end(),
 			      [&](const std::pair<int,int>& a,const std::pair<int,int>& b)
@@ -235,9 +236,6 @@ namespace Geometry
 				it++;
 		}
 
-
-
-	}
 		return blobs;
 }
 
