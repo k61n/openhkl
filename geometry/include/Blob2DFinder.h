@@ -26,16 +26,14 @@
  */
 
 #include <map>
-#include <vector>
-#include "Blob3D.h"
-
+#include "Blob2D.h"
+#include <queue>
 
 namespace SX
 {
 namespace Geometry
 {
 	typedef std::map<int,Blob2D> blob2DCollection;
-	typedef std::map<int,Blob3D> blob3DCollection;
 
 	//! Find blobs in a 2D image made of nrows*ncols data of type : _datatype. Blob are identified using a threashold,
 	//! and a limits in the number of connected components in each blob (minComp, maxComp).
@@ -44,7 +42,7 @@ namespace Geometry
 
 		// Map of Blobs (key : label, value : blob)
 		blob2DCollection blobs;
-		//blobs.reserve(1000);
+
 
 		// Change row and col. if necessary
 		if (!rowMajor)
