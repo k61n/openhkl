@@ -132,6 +132,7 @@ public:
 	//! Calculate polarisation and error at the time given by a numor. Return the deltat in seconds
 	//! with respect to starting time of the cell.
 	double getPolar(const Numor& numor, double& Pcell, double& Pcells);
+	//! Get the normalization constant at time t of the numor
 	double normalizebpb(const Numor& numor, double& polar, double& polars);
 private:
 	std::string _name;

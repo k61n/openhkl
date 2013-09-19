@@ -5,9 +5,10 @@
 namespace SX
 {
 
-HeCell::HeCell(const char* name):_name(name), _pvst(new Scan1D("Time (s)", "Polar.")),_peaks(0)
+HeCell::HeCell(const char* name): _pvst(new Scan1D("Time (s)", "Polar.")),_peaks(0)
 {
-
+	if (name)
+		_name=name;
 }
 
 HeCell::~HeCell()
@@ -39,9 +40,9 @@ void HeCell::calculateDecay()
 	{
 		if (nv[i]->isbpb()) // Check that measurement are indeed bpbs
 		{
-			double h=nv[i]->getMetaData().getKey<double>("H(Hmin)");
-			double k=nv[i]->getMetaData().getKey<double>("K(Kmin)");
-			double l=nv[i]->getMetaData().getKey<double>("L(Lmin)");
+			double h=nv[i]->getMetaData().getKey<double>("qH");
+			double k=nv[i]->getMetaData().getKey<double>("qK");
+			double l=nv[i]->getMetaData().getKey<double>("qL");
 			bool found_peak=false;
 			std::size_t peaksize=_peaks.size();
 			for (std::size_t ii=0;ii<peaksize;ii++)

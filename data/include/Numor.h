@@ -46,7 +46,7 @@ namespace SX {
 class Numor {
 public:
 	//! Construct a numor from its mad file.
-	Numor()
+	Numor():_number(0)
 	{}
 	//! Construct a numor from its file.
 	Numor(const std::string& filename);
