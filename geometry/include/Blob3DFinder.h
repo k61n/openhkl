@@ -39,7 +39,7 @@ namespace Geometry
 {
 	typedef std::map<int,Blob3D> blob3DCollection;
 
-	void registerEquivalence(int a, int b,std::vector<std::pair<int,int> >& pairs)
+	inline void registerEquivalence(int a, int b,std::vector<std::pair<int,int> >& pairs)
 	{
 		if (a<b)
 			std::swap(a,b);
@@ -71,7 +71,7 @@ namespace Geometry
 		// Create empty equivalence table
 		typedef std::pair<int,int> pairs;
 		std::vector<pairs> equivalences;
-		equivalences.reserve(10000);
+		equivalences.reserve(100000);
 
 		int left, top, previous; // Labels of the left and top pixels with respect to current one and the one above in previous frame
 
@@ -98,10 +98,11 @@ namespace Geometry
 					// Discard pixel if value < threashold
 					if (value<threashold)
 					{
-						labels.push(0);
+
 						labels.pop();
-						labels2.push(0);
+						labels.push(0);
 						labels2.pop();
+						labels2.push(0);
 						continue;
 					}
 					newlabel=false;
@@ -161,10 +162,11 @@ namespace Geometry
 					{
 						label=previous;
 					}
-					labels.push(label);
+
 					labels.pop();
-					labels2.push(label);
+					labels.push(label);
 					labels2.pop();
+					labels2.push(label);
 					if (newlabel) // Create a new blob if necessary
 					{
 						blobs.insert(std::pair<int,Blob3D>(label,Blob3D(col,row,frame,value)));
