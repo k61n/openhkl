@@ -66,6 +66,10 @@ public:
   double getMass() const;
   //! Return the number of points
   int getComponents() const;
+  //! Return the minimumMass
+  double getMinimumMass() const;
+  //! Return the minimumMass
+  double getMaximumMass() const;
   //! Return the center of Mass
   V3D getCenterOfMass() const;
   //! Get the ellipsoid parameters
@@ -81,6 +85,7 @@ private:
   double _m200, _m020, _m002, _m110, _m101, _m011;
   //! Number of points contributing
   int _npoints;
+  double _minValue, _maxValue;
 
 };
 

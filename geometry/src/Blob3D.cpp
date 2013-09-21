@@ -3,13 +3,16 @@
 #include <cmath>
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_eigen.h>
+#include <limits>
 
 namespace SX
 {
 namespace Geometry
 {
 
-Blob3D::Blob3D():_m000(0),_m100(0),_m010(0),_m001(0),_m200(0),_m020(0),_m002(0),_m110(0),_m101(0),_m011(0),_npoints(0)
+Blob3D::Blob3D():_m000(0),_m100(0),_m010(0),_m001(0),_m200(0),_m020(0),_m002(0),_m110(0),_m101(0),_m011(0)
+,_npoints(0),_minValue(std::numeric_limits<double>::max()),_maxValue(std::numeric_limits<double>::min())
+
 {
 }
 
@@ -26,6 +29,8 @@ Blob3D::Blob3D(const Blob3D& b)
 	_m101=b._m101;
 	_m011=b._m011;
 	_npoints=b._npoints;
+	_minValue=b._minValue;
+	_maxValue=b._maxValue;
 }
 
 Blob3D& Blob3D::operator=(const Blob3D& b)
@@ -43,6 +48,8 @@ Blob3D& Blob3D::operator=(const Blob3D& b)
 		_m101=b._m101;
 		_m011=b._m011;
 		_npoints=b._npoints;
+		_minValue=b._minValue;
+		_maxValue=b._maxValue;
 	}
 	return *this;
 }
@@ -64,6 +71,8 @@ Blob3D::Blob3D(double x, double y,double z, double m)
 	_m101=mx*z;
 	_m011=my*z;
 	_npoints=1;
+	_minValue=m;
+	_maxValue=m;
 }
 
 void Blob3D::addPoint(double x, double y, double z, double m)
@@ -82,6 +91,10 @@ void Blob3D::addPoint(double x, double y, double z, double m)
 	_m101+=mx*z;
 	_m011+=my*z;
 	_npoints++;
+	if (m<_minValue)
+		_minValue=m;
+	if (m>_maxValue)
+		_maxValue=m;
 }
 
 void Blob3D::merge(const Blob3D& b)
@@ -97,6 +110,9 @@ void Blob3D::merge(const Blob3D& b)
 	_m101+=b._m101;
 	_m011+=b._m011;
 	_npoints+=b._npoints;
+	_minValue=(_minValue < b._minValue ? _minValue : b._minValue);
+	_maxValue=(_maxValue > b._maxValue ? _maxValue : b._maxValue);
+
 }
 
 double Blob3D::getMass() const
@@ -106,6 +122,16 @@ double Blob3D::getMass() const
 int Blob3D::getComponents() const
 {
 	return _npoints;
+}
+
+double Blob3D::getMinimumMass() const
+{
+	return _minValue;
+}
+
+double Blob3D::getMaximumMass() const
+{
+	return _maxValue;
 }
 
 V3D Blob3D::getCenterOfMass() const

@@ -3,13 +3,15 @@
 #include <cmath>
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_eigen.h>
+#include <limits>
 
 namespace SX
 {
 namespace Geometry
 {
 
-Blob2D::Blob2D():_m00(0),_m10(0),_m01(0),_m20(0),_m02(0),_m11(0),_npoints(0)
+Blob2D::Blob2D():_m00(0),_m10(0),_m01(0),_m20(0),_m02(0),_m11(0)
+,_npoints(0),_minValue(std::numeric_limits<double>::max()),_maxValue(std::numeric_limits<double>::min())
 {
 }
 
@@ -22,6 +24,8 @@ Blob2D::Blob2D(const Blob2D& b)
 	_m02=b._m02;
 	_m11=b._m11;
 	_npoints=b._npoints;
+	_minValue=b._minValue;
+	_maxValue=b._maxValue;
 }
 
 Blob2D& Blob2D::operator=(const Blob2D& b)
@@ -35,6 +39,8 @@ Blob2D& Blob2D::operator=(const Blob2D& b)
 		_m02=b._m02;
 		_m11=b._m11;
 		_npoints=b._npoints;
+		_minValue=b._minValue;
+		_maxValue=b._maxValue;
 	}
 	return *this;
 }
@@ -51,6 +57,8 @@ Blob2D::Blob2D(double x, double y, double m)
 	_m02=my*y;
 	_m11=mx*y;
 	_npoints=1;
+	_minValue=m;
+	_maxValue=m;
 }
 
 void Blob2D::addPoint(double x, double y, double m)
@@ -64,6 +72,10 @@ void Blob2D::addPoint(double x, double y, double m)
 	_m02+=my*y;
 	_m11+=mx*y;
 	_npoints++;
+	if (m<_minValue)
+		_minValue=m;
+	if (m>_maxValue)
+		_maxValue=m;
 }
 
 void Blob2D::merge(const Blob2D& b)
@@ -75,6 +87,8 @@ void Blob2D::merge(const Blob2D& b)
 	_m02+=b._m02;
 	_m11+=b._m11;
 	_npoints+=b._npoints;
+	_minValue=(_minValue < b._minValue ? _minValue : b._minValue);
+	_maxValue=(_maxValue > b._maxValue ? _maxValue : b._maxValue);
 }
 
 double Blob2D::getMass() const
@@ -84,6 +98,16 @@ double Blob2D::getMass() const
 int Blob2D::getComponents() const
 {
 	return _npoints;
+}
+
+double Blob2D::getMinimumMass() const
+{
+	return _minValue;
+}
+
+double Blob2D::getMaximumMass() const
+{
+	return _maxValue;
 }
 
 V2D<double> Blob2D::getCenterOfMass() const

@@ -66,6 +66,10 @@ public:
   double getMass() const;
   //! Return the number of points
   int getComponents() const;
+  //! Return the minimumMass
+  double getMinimumMass() const;
+  //! Return the minimumMass
+  double getMaximumMass() const;
   //! Return the center of Mass
   V2D<double> getCenterOfMass() const;
   //! Compute the contour ellipse of the Blob
@@ -81,6 +85,8 @@ private:
   double _m20, _m02, _m11;
   //! Number of points contributing
   int _npoints;
+  //! Minimum and maximum masses contributing to the blob.
+  double _minValue, _maxValue;
 
 };
 
