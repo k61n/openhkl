@@ -43,11 +43,6 @@ namespace Geometry
 		// Map of Blobs (key : label, value : blob)
 		blob2DCollection blobs;
 
-
-		// Change row and col. if necessary
-		if (!rowMajor)
-			std::swap(nrows,ncols);
-
 		// Create a queue that will store the ncols previous blob labels
 		std::queue<int> labels;
 		for (unsigned int col=0;col<ncols;++col)
@@ -64,11 +59,18 @@ namespace Geometry
 		int label;
 		bool newlabel;
 		// Iterate on all pixels in the image
+		_datatype* datastart=dataptr;
 		for (unsigned int row=0;row<nrows;++row)
 		{
+			if (!rowMajor)
+				dataptr=datastart+row;
 			for (unsigned int col=0;col<ncols;++col)
 			{
-				_datatype value=*(dataptr++);
+				_datatype value=*(dataptr);
+				if (!rowMajor)
+				  dataptr+=nrows;
+				else
+				  dataptr++;
 				// Discard pixel if value < threashold
 				if (value<threashold)
 				{

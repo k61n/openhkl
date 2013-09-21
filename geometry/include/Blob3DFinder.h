@@ -58,10 +58,6 @@ namespace Geometry
 		// Map of Blobs (key : label, value : blob)
 		blob3DCollection blobs;
 
-		// Change row and col. if necessary
-		if (!rowMajor)
-			std::swap(nrows,ncols);
-
 		// Create a queue that will store the blob labels for previous frame.
 		std::queue<int> labels;
 		for (unsigned int i=0;i<ncols*nrows;++i)
@@ -86,12 +82,19 @@ namespace Geometry
 		for (int frame=0;frame<nframes;++frame)
 		{
 			// Go the the beginning of data
-			_datatype* dataptr=ptrs[frame];
+			_datatype* datastart=ptrs[frame];
+			_datatype* dataptr;
 			for (unsigned int row=0;row<nrows;++row)
 			{
+				if (!rowMajor)
+					dataptr=datastart+row;
 				for (unsigned int col=0;col<ncols;++col)
 				{
-					_datatype value=*(dataptr++);
+					_datatype value=*(dataptr);
+					if (!rowMajor)
+					  dataptr+=nrows;
+					else
+					  dataptr++;
 					// Discard pixel if value < threashold
 					if (value<threashold)
 					{
