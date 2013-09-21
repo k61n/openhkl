@@ -1,7 +1,8 @@
 #include "Blob2D.h"
 #include <stdexcept>
 #include <cmath>
-
+#include <gsl/gsl_math.h>
+#include <gsl/gsl_eigen.h>
 
 namespace SX
 {
@@ -103,19 +104,31 @@ void Blob2D::toEllipse(double& xc, double& yc, double& s_a, double& s_b, double&
 	// Now compute second moment with respect to center of mass
 	double Ixx=_m02/_m00-yc*yc;
 	double Iyy=_m20/_m00-xc*xc;
-	double Ixy=-(_m11/_m00-xc*yc);
+	double Ixy=_m11/_m00-xc*yc;
 	// Diagonalize the second moment tensor [[Ixx,Ixy],[Ixy,Iyy]]
-	double b=Ixx+Iyy;
-	double delta=b*b-4.0*(Ixx*Iyy-Ixy*Ixy);
-	if (delta<0)
-		throw std::runtime_error("Can't diagonalize Blob second moment tensor");
-	// The semi_axis are twice the square-root of the eigenvalues
-	delta=sqrt(delta);
-	s_a=2.0*sqrt(0.5*(b+delta));
-	s_b=2.0*sqrt(0.5*(b-delta));
-	// Now compute the angle between the major axis and the x-axis
-	// First eigenvector is (Ixy,s_a-Ixx)
-	angle=atan2(s_a-Ixx,Ixy);
+	double inertia[] ={Ixx,-Ixy,-Ixy,Iyy};
+	gsl_matrix_view m = gsl_matrix_view_array(inertia, 2, 2);
+
+	gsl_vector *val = gsl_vector_alloc (2);
+	gsl_matrix *vec = gsl_matrix_alloc (2,2);
+
+	gsl_eigen_symmv_workspace * w = gsl_eigen_symmv_alloc (2);
+
+	gsl_eigen_symmv (&m.matrix, val, vec, w);
+	gsl_eigen_symmv_free(w);
+	gsl_eigen_symmv_sort(val,vec,GSL_EIGEN_SORT_ABS_ASC);
+
+	// 2.sqrt(Eigenvalues) = semi-axes
+	s_a= 2.0*sqrt(gsl_vector_get(val, 0));
+	s_b= 2.0*sqrt(gsl_vector_get(val, 1));
+
+	// Now get second eigenvector
+	gsl_vector_view vec_1 = gsl_matrix_column(vec, 1);
+	//
+	double v1x=gsl_vector_get(&vec_1.vector,0);
+	double v1y=gsl_vector_get(&vec_1.vector,1);
+	angle=atan2(v1y,v1x);
+
 }
 
 void Blob2D::printSelf(std::ostream& os) const
