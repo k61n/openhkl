@@ -69,16 +69,24 @@ typedef dense2D<double,matrix::parameters<tag::col_major> > mat;
 typedef dense2D<int,matrix::parameters<tag::col_major> > matint;
 typedef dense2D<bool,matrix::parameters<tag::col_major> > matbool;
 typedef adjacency_list <vecS, vecS, undirectedS> Graph;
-
+typedef std::vector<int> vint;
 
 
 
 void readDoublesFromChar(const char*, const char*, std::vector<double>&);
 
-inline PyObject* ublasMatrixToNumpy(const mat& m)
+inline PyObject* ublasMatrixToNumpy(const matint& m)
 {
-	npy_intp dim[2]={num_cols(m),num_rows(m)};
-	PyArrayObject * ndmatrix = (PyArrayObject*)PyArray_SimpleNewFromData(2, dim, NPY_DOUBLE,(void*)&(m(0,0)));
+	npy_intp dim[2]={num_rows(m),num_cols(m)};
+	PyArrayObject * ndmatrix = (PyArrayObject*)PyArray_SimpleNewFromData(2, dim, NPY_INT,(void*)&(m(0,0)));
+	ndmatrix->flags &= ~NPY_WRITEABLE;
+	return (PyObject*)ndmatrix;
+}
+
+inline PyObject* vectorToNumpyMatrix(const vint& v,int ncols, int nrows)
+{
+	npy_intp dim[2]={ncols,nrows};
+	PyArrayObject * ndmatrix = (PyArrayObject*)PyArray_SimpleNewFromData(2, dim, NPY_INT,(void*)&(v[0]));
 	ndmatrix->flags &= ~NPY_WRITEABLE;
 	return (PyObject*)ndmatrix;
 }
@@ -154,32 +162,6 @@ inline PyObject* copyublasMatrixToNumpyInt(const matint& m)
 }
 
 
-struct Alpha
-{
-    Alpha():_alpha(640,256)
-    {}
-const mat& readAlpha(const std::string& filename)
-{
-    std::ifstream f;
-    f.open(filename.c_str(),std::ios::in);
-    if (!f.is_open())
-        throw std::runtime_error("could not read"+filename);
-    f.seekg(0,std::ios_base::end);
-    std::size_t n=f.tellg();
-    f.seekg(0,std::ios_base::beg);
-    char* buffer=new char[n];
-    f.read(buffer,n);
-    f.close();
-    std::vector<double> v;
-    readDoublesFromChar(buffer,buffer+n,v);
-    double* ptemp=&(_alpha[0][0]);
-    std::for_each(v.begin(),v.end(),[&ptemp](double a) { *ptemp++=a;});
-    delete [] buffer;
-    return _alpha;
-}
-    mat _alpha;
-};
-
 inline void readIntsFromChar(const char* b, const char* e, std::vector<int>& v)
 {
    qi::phrase_parse(b, e,
@@ -217,13 +199,15 @@ inline int readIntsUsingAtoi(const char* b, mat& m)
 }
 
 
+
+
 class Scan2D
 {
     public:
-    Scan2D(int nframes, int nblocks):_nframes(nframes),_frames(nframes),_nblocks(nblocks),_sum(nframes)
+    Scan2D(int nframes):_nframes(nframes),_frames(nframes),_sum(nframes)
     {
-        for (int i=0;i<_nframes;++i)
-            _frames[i].change_dim(640,256);
+       for (int i=0;i<nframes;++i)
+        _frames[i].reserve(256*640);
     }
     void readFromFile(const std::string& filename)
     {
@@ -231,12 +215,7 @@ class Scan2D
             {
             // Do a mapping of the file
 			file_mapping m_file(filename.c_str(),read_only);
-			// Map the header.
-	        mapped_region regionh(m_file,read_only,0,49*81);
-	        const char* monitorp=reinterpret_cast<char*>(regionh.get_address());
-	        std::vector<double> a;
-	        readDoublesFromChar(monitorp+47*81+16,monitorp+47*81+32,a);
-	        _monitor=a[0];
+
 	        std::size_t header_offset;
 	        if (_nframes!=1)
 			    header_offset=42*81;
@@ -244,18 +223,17 @@ class Scan2D
 			    header_offset=43*81;
 			std::size_t block_size=16384*81;
 			std::size_t frame_size=16392*81;
-			for (int i=0;i<_nframes/_nblocks;++i)
+			#pragma omp parallel for
+			for (int i=0;i<_nframes;++i)
 			{
 
 			    // Map a region corresponding to a frame
-			    mapped_region region1(m_file,read_only,header_offset+frame_size*i,_nblocks*frame_size);
+			    mapped_region region1(m_file,read_only,header_offset+frame_size*i,frame_size);
 			    const char* b=reinterpret_cast<char*>(region1.get_address());
 			    // Get the virtual memory address of this block
-			    for (int j=0;j<_nblocks;++j)
-			    {
-                    const char* b1=b+8*81+j*frame_size;
-			        _sum[i]=readIntsUsingAtoi(b1,_frames[i]);
-		        }
+                const char* b1=b+8*81;
+                readIntsFromChar(b1,b1+block_size,_frames[i]);
+                _sum[i]=std::accumulate(_frames[i].begin(),_frames[i].end(),0);
 			}
 			}catch(...)
 			{
@@ -266,23 +244,36 @@ class Scan2D
 
 	PyObject* labelling(int frame, double s2n)
 	{
-	    double max=s2n*_sum[frame]/(640.0*256.0);
-	    mat& m=_frames[frame];
-	    double* ptr=&m(0,0);
-	    blob2DCollection blobs=findBlobs2D<double>(ptr,256,640,max,10,1000,1);
-	    std::cout << "Found " << blobs.size() << "blobs \n";
+	    int max=s2n*_sum[frame]/(640.0*256.0);
+	    vint& m=_frames[frame];
+	    int* ptr=&m[0];
+	    blob2DCollection blobs=findBlobs2D<int>(ptr,256,640,max,10,1000,0);
+	    for (auto it=blobs.begin();it!=blobs.end();)
+	    {
+	        Blob2D& p=it->second;
+	        if (p.getMaximumMass()<6.0*max)
+	            it=blobs.erase(it);
+	        else
+	            it++;
+	    }
+	    std::cout << "Found " << blobs.size() << " blobs \n";
+	    for (auto it=blobs.begin();it!=blobs.end();++it)
+	    {
+	        Blob2D& p=it->second;
+	        std::cout << p.getMaximumMass() << std::endl;
+	    }
 	    return BlobMapToNumPy(blobs);
 	}
 	PyObject* labelling3D(double s2n)
 	{
-	    std::vector<double*> ptr;
+	    std::vector<int*> ptr;
 	    for (int i=0;i<_nframes;++i)
 	    {
-	        mat& m=_frames[i];
-	        ptr.push_back(&m(0,0));
+	        vint& m=_frames[i];
+	        ptr.push_back(&m[0]);
 	    }
-	    blob3DCollection blobs=findBlobs3D<double>(ptr,256,640,s2n,20,1000,1);
-	    std::cout << "Found" << blobs.size() << "peaks" <<  std::endl;
+	    blob3DCollection blobs=findBlobs3D<int>(ptr,256,640,s2n,20,1000,0);
+	    std::cout << "Found" << blobs.size() << " peaks" <<  std::endl;
 	    // Results
 	    mat result;
 	    result.change_dim(16,blobs.size());
@@ -316,25 +307,17 @@ class Scan2D
 
     PyObject* getFrame(int i)
     {
-        ublasMatrixToNumpy(_frames[i]);
+        vectorToNumpyMatrix(_frames[i],640,256);
     }
-    void normalize(const std::string& filename)
-    {
-        Alpha a;
-        mat alphamat=a.readAlpha(filename);
-        std::for_each(_frames.begin(),_frames.end(),[&](mat f){ f*=alphamat;});
-    }
-    double getMonitor() const {return _monitor;}
+
     private:
-    int _nframes, _nblocks;
-    std::vector<mat> _frames;
+    int _nframes;
+    std::vector<vint> _frames;
     std::vector<int> _sum;
-    double _monitor;
-	static Timer tt;
 
 };
 
-Timer Scan2D::tt;
+
 
 BOOST_PYTHON_MODULE(libD19)
 {
@@ -343,12 +326,11 @@ BOOST_PYTHON_MODULE(libD19)
     import_array();
     boost::python::numeric::array::set_module_and_type("numpy","ndarray");
 
-    class_<Scan2D>("Scan2D",init<int,int>())
+    class_<Scan2D>("Scan2D",init<int>())
     .def("readFromFile",&Scan2D::readFromFile)
 	.def("getFrame", &Scan2D::getFrame)
-	.def("normalize",&Scan2D::normalize)
-	.def("getMonitor",&Scan2D::getMonitor)
 	.def("labelling",&Scan2D::labelling)
 	.def("labelling3D",&Scan2D::labelling3D)
 	;
 }
+
