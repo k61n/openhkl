@@ -53,7 +53,7 @@ class ClustersCollection
 public:
   //!Initialize the cluster
   ClustersCollection();
-  ClustersCollection(double rMax, double dr);
+  ClustersCollection(const double rMax, const double dr);
    
   void addVector(const V3D & v)
 

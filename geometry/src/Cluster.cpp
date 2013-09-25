@@ -15,7 +15,7 @@ Cluster::Cluster()
 }
 
 // Update the cluster by adding a vector.
-// This will reompute the center on the fly altogether with the size of the cluster.
+// This will recomputes the center on the fly altogether with the size of the cluster.
 Cluster::addVector(const V3D & v)
 {
 	_center = ((_center*_size) + v)/_size++;
