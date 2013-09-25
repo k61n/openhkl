@@ -33,7 +33,7 @@ ClustersCollection::ClustersCollection(const double rMax, const double dr)
 	_dr = dr;
 }
 
-void addVector(const V3D & v)
+void ClustersCollection::addVector(const V3D & v)
 {
 
 	double r;
