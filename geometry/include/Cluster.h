@@ -27,6 +27,7 @@
 #ifndef NSXTOOL_Cluster_H_
 #define NSXTOOL_Cluster_H_
 
+#include <vector>
 #include <map>
 #include "V3D.h"
 
@@ -39,29 +40,40 @@ class Cluster
 {
 public:
   Cluster()
+  Cluster(double tol)
+  Cluster(const V3D & v, double tol)
 
   void addVector(const V3D & v);
   
 private:
   V3D _center;
   double _size;
+  double _tolerance;
   
 };
 
-class ClustersCollection
+class UnitCellFinder
 {
 public:
-  //!Initialize the cluster
-  ClustersCollection();
-  ClustersCollection(const double rMax, const double dr);
-   
-  void addVector(const V3D & v)
 
+	UnitCellFinder();
+
+	UnitCellFinder(double threshold, double tolerance);	
+	
+	void addPeak(double x, double y, double z);
+	
+	void addPeaks(const vector<V3D> &);
+		
+	void run(void);
+	
 private:
-  double _rMax;  
-  double dr;
-  std::map<int,Cluster> _coll;
-};
+    double _threshold;
+    double _tolerance;
+	vector<V3D> _peaks;
+	std::multimap<double d, Cluster c> _cluster;
+	
+}
+
 } // Namespace Geometry
 } // Namespace SX
 
