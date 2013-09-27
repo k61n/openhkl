@@ -1,142 +1,276 @@
+#include <algorithm>
+#include <cmath>
 #include <vector>
+#include <stdexcept>
 #include "Cluster.h"
+#include "Matrix33.h"
 #include "Units.h"
-#include "V3D.h"
-
-using namespace SX::Units;
 
 namespace SX
 {
 namespace Geometry
 {
 
-Cluster::Cluster()
+Cluster::Cluster():_center(),_size(0),_tolerance(0.01)
 {
-    _center = v3D();
-    _size = 0;
-    _tolerance = 0.01/am;
+
 }
 
-Cluster::Cluster(double tolerance)
+Cluster::Cluster(double tolerance):_center(),_size(0),_tolerance(tolerance)
+{
+	if (tolerance < 0.0)
+	{
+		throw std::invalid_argument( "received negative value" );
+	}
+}
+
+Cluster::Cluster(const V3D & v, double tolerance):_center(v),_size(1),_tolerance(tolerance)
 {
 	if (tolerance < 0.0)
 	{
 		throw std::invalid_argument( "received negative value" );
 	}
 
-	_center = v3D();
-    _size = 0;
-    _tolerance = tolerance;
 }
 
-Cluster::Cluster(const V3D & v, double tolerance)
+bool Cluster::operator==(const Cluster& c) const
 {
-	if (tolerance < 0.0)
-	{
-		throw std::invalid_argument( "received negative value" );
-	}
+	V3D temp=getCenter();
+	temp-=c.getCenter();
+	if (temp.norm2()<_tolerance*c._tolerance)
+		return true;
+	return false;
+}
 
-	_center = v3D(v);
-    _size = 1;
-    _tolerance = tolerance;
+Cluster& Cluster::operator+=(const Cluster& c)
+{
+	_center+=c._center;
+	_size+=c._size;
+	_tolerance+=c._tolerance;
+	_tolerance/=2.0;
+	return *this;
 }
 
 
-Cluster::addVector(const V3D & vect)
+bool Cluster::addVector(const V3D & vect)
 {
-	double n2(v.norm2());
-	V3D v(_center-_size*vect);
-	
-	bool b(v.norm2() < -size*_size*_tolerance*_tolerance);
-	
-	if (b)
-	{
-		_center += vect;
-		_size++;
-	}
-	
-	return b;
+	V3D v(_center-vect*_size);
+	double tp=_size*_tolerance;
+	bool b=(v.norm2() < tp*tp);
+	if (!b)
+		return false;
+	_center += vect;
+	_size++;
+		return true;
 }
 
 /////////////////////////////////////////////////
-	
-UnitCellFinder::UnitCellFinder()
-{
-	_threshold = 1.0/am;
-	_tolerance = 0.1/am;
-}	
 
 UnitCellFinder::UnitCellFinder(double threshold, double tolerance)
 {
-	if (threshold < 0.0 or tolerance < or tolerance > threshold)
+	if ( (threshold < 0.0) ||  (tolerance < 0.0) || (tolerance > threshold))
 	{
-		throw std::invalid_argument( "received negative value" );
+		throw std::invalid_argument( "UnitCellFinder:: received invalid argument" );
 	}
 	_threshold = threshold;
 	_tolerance = tolerance;
 
 }
 
-UnitCellFinder::addPeaks(const vector<V3D> p &)
+void UnitCellFinder::addPeaks(const std::vector<V3D>& p )
 {
 	
-	if (_peaks.empty())
-	{
-		_peaks.reserve(p.size());	
-	}
+	_peaks.reserve(_peaks.size()+p.size());
 	
-	for (auto it=p.begin(), it<p.end(), it++)
+	for (auto it=p.begin(); it<p.end(); ++it)
 	{
 		_peaks.push_back(*it);	
 	}
 }
 
 // A voir les cas ou un peak est deja dans la liste
-UnitCellFinder::addPeak(double x, double y, double z)
+void UnitCellFinder::addPeak(double x, double y, double z)
 {
-    V3D v(x,y,z);
+    _peaks.push_back(V3D(x,y,z));
+}
+
+void UnitCellFinder::addPeak(const V3D& v)
+{
     _peaks.push_back(v);
 }
 
 // A faire le removeSinglePeak
 
-void UnitCellFinder::run(void)
+void UnitCellFinder::run(double cellmin)
 {
 
 	V3D diff;
 	double norm;	
-	
-	for (auto it1=peaks.begin(), it1<peaks.end()-1, it1++)
+	double rec_max=1.0/cellmin;
+
+	for (auto it1=_peaks.begin(); it1!=_peaks.end(); ++it1)
 	{
-		for (auto it2=it1+1, peaks.end(), it2++)
+		for (auto it2=it1+1; it2!=_peaks.end(); ++it2)
 		{
-			diff = *it2 - *it1;
+			diff = *it2;
+			diff-= *it1;
 			norm = diff.norm();
+			if (norm>rec_max || norm < 0.03)
+				continue;
 			auto itlow = _clusters.lower_bound(norm-_threshold);
-			auto itup = _clusters.lower_bound(norm+_threshold);
+			auto itup = _clusters.upper_bound(norm+_threshold);
 			
 			// No lower bound was found, add a new cluster to the multimap
 			if (itlow == _clusters.end())
 			{
-				_clusters.insert(itlow, std::make_pair(norm,Cluster(diff,_tolerance)));
+				_clusters.insert(std::make_pair(norm,Cluster(diff,_tolerance)));
 			}
 			else
 			{
-				for (auto it=itlow, it<itup, it++)
+				auto it=itlow;
+				for (; it!=itup; ++it)
 				{
-					if (it->second.addVector(diff))
+					if (it->second.addVector(diff) || it->second.addVector(diff*-1.0))
 					{
-						break;	
+						break;
 					}
-					if (it == _clusters.end())
-					{
-						_clusters.insert(std::make_pair(norm,Cluster(diff,_tolerance)));
-					}
+				}
+				if (it == itup)
+				{
+					_clusters.insert(std::make_pair(norm,Cluster(diff,_tolerance)));
 				}
 			}
 		}	
-	}	
-	
+	}
+
+	std::multimap<double,Cluster> m;
+	for (auto it=_clusters.begin();it!=_clusters.end();++it)
+	{
+		V3D tmp=it->second.getCenter();
+		double norm=tmp.norm();
+		m.insert(std::make_pair(norm,it->second));
+	}
+	_clusters.clear();
+	_clusters.insert(m.begin(),m.end());
+
+}
+
+double UnitCellFinder::costFunction(const V3D& v1, const V3D& v2, const V3D& v3, double epsilon, double delta) const
+{
+
+    V3D v1s, v2s, v3s;
+	double q;
+	double vol;
+	std::vector<int> h(3);
+	V3D zeta, delta1, delta2;
+    double temp1, temp2;
+
+    vol = v1.scalar_prod(v2.cross_prod(v3));
+
+    v1s = v2.cross_prod(v3);
+    v1s /= vol;
+
+    v2s = v3.cross_prod(v1);
+    v2s /= vol;
+
+    v3s = v1.cross_prod(v2);
+    v3s /= vol;
+
+
+	double bigQ=0.0;
+	int numberOfPeaks=0;
+    for (auto it=_clusters.begin(); it != _clusters.end(); ++it)
+    {
+    	q = 0.0;
+    	V3D center=it->second.getCenter();
+		zeta[0] = v1s.scalar_prod(center);
+		h[0] = round(zeta[0]);
+
+		zeta[1] = v2s.scalar_prod(center);
+		h[1] = round(zeta[1]);
+
+		zeta[2] = v3s.scalar_prod(center);
+		h[2] = round(zeta[2]);
+
+    	delta1[0] = std::abs(zeta[0]-h[0]);
+    	delta1[1] = std::abs(zeta[1]-h[1]);
+    	delta1[2] = std::abs(zeta[2]-h[2]);
+    	delta1 -= epsilon;
+
+    	delta2[0] = std::abs(h[0]);
+    	delta2[1] = std::abs(h[1]);
+    	delta2[2] = std::abs(h[2]);
+    	delta2 -= delta;
+
+    	for (int i=0; i<3; i++)
+    	{
+    		temp1 = std::max(delta1[i],0.0)/epsilon;
+    		temp2 = std::max(delta2[i],0.0);
+
+    		q += temp1*temp1 + temp2*temp2;
+
+    	}
+    	bigQ+=exp(-2.0*q)*it->second.getSize();
+    	numberOfPeaks+=it->second.getSize();
+    }
+
+    return bigQ/numberOfPeaks;
+}
+
+
+void UnitCellFinder::determineLattice(int clustermax) const
+{
+
+
+	std::vector<Cluster> clust;
+	clust.reserve(_clusters.size());
+	for (auto it=_clusters.begin();it!=_clusters.end();++it)
+		clust.push_back((it->second));
+
+	for (auto it=clust.begin();it!=clust.begin()+clustermax;++it)
+	{
+		int i=0;
+		V3D v1=(*it).getCenter();
+		for (auto it2=it+1;it2!=clust.begin()+clustermax;++it2)
+		{
+			V3D v2=(*it2).getCenter();
+			V3D t=v1.cross_prod(v2);
+			if (t.norm()<1e-2) // Two vectors are collinear
+				continue;
+			for (auto it3=it2+1;it3!=clust.begin()+clustermax;++it3)
+			{
+				V3D v3=(*it3).getCenter();
+				double vol=t.scalar_prod(v3);
+				if (std::abs(vol)<1e-5) // all coplanar
+					continue;
+
+
+				Matrix33<double> g_1;
+				double g00=v1.scalar_prod(v1);
+				double g11=v2.scalar_prod(v2);
+				double g22=v3.scalar_prod(v3);
+				double g01=v1.scalar_prod(v2);
+				double g02=v1.scalar_prod(v3);
+				double g12=v2.scalar_prod(v3);
+				g_1.set(g00,g01,g02,g01,g11,g12,g02,g12,g22);
+				g_1.invert();
+				double a=sqrt(g_1(0,0));
+				double b=sqrt(g_1(1,1));
+				double c=sqrt(g_1(2,2));
+				double gamma=acos(g_1(0,1)/a/b)/SX::Units::deg;
+				double beta=acos(g_1(0,2)/a/c)/SX::Units::deg;
+				double alpha=acos(g_1(1,2)/b/c)/SX::Units::deg;
+				double volr=sqrt(g_1.determinant());
+
+				double score=costFunction(v1,v2,v3,0.05,5);
+				if (score>0.98)
+					std::cout << a << " " << b << " " << c << " " << alpha << " " << beta << " " << gamma << "Vol: " << volr << " " << score <<   std::endl;
+
+
+			}
+		}
+
+	}
 }
 		
 } // Namespace Geometry

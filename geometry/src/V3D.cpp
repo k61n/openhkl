@@ -147,6 +147,37 @@ V3D& V3D::operator+=(const V3D& _v)
   return *this;
 }
 
+V3D& V3D::operator+=(double a)
+{
+  v[0]+=a;
+  v[1]+=a;
+  v[2]+=a;
+  return *this;
+}
+
+V3D& V3D::operator-=(double a)
+{
+  v[0]-=a;
+  v[1]-=a;
+  v[2]-=a;
+  return *this;
+}
+
+V3D V3D::operator+(double a) const
+{
+  V3D v(*this);
+  v+=a;
+  return v;
+}
+
+V3D V3D::operator-(double a) const
+{
+  V3D v(*this);
+  v-=a;
+  return v;
+}
+
+
   /**
     Self-Subtraction operator
     \param v :: Vector to sub.

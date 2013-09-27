@@ -2,12 +2,12 @@
  * nsxtool : Neutron Single Crystal analysis toolkit
     ------------------------------------------------------------------------------------------
     Copyright (C)
-    2012- Laurent C. Chapon Institut Laue-Langevin
+    2012- Laurent C. Chapon, Eric C. Pellegrini Institut Laue-Langevin
 	BP 156
 	6, rue Jules Horowitz
 	38042 Grenoble Cedex 9
 	France
-	chapon[at]ill.fr
+	chapon[at]ill.fr pellegrini[at]ill.fr
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU Lesser General Public

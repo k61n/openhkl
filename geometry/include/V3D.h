@@ -47,6 +47,10 @@ class V3D
       // Arithmetic operators overloaded
       V3D operator+(const V3D& v) const;
       V3D& operator+=(const V3D& v);
+      V3D operator+(double) const;
+      V3D& operator+=(double);
+      V3D operator-(double) const;
+      V3D& operator-=(double);
       void add(double x,double y,double z)
 		{
     	  v[0]+=x;
