@@ -58,14 +58,16 @@ include_directories( analysis/include
                      geometry/include
                      materials/include
                      maths/include
-                     utils/include)
+                     utils/include
+                     crystal/include)
 
 file(GLOB_RECURSE sources analysis/src/*.cpp
                   data/src/*.cpp
                   geometry/src/*.cpp
                   materials/*.cpp
                   maths/src/*.cpp
-                  utils/src/*.cpp)                   
+                  utils/src/*.cpp
+                  crystal/src/*.cpp)                   
 
 
 # Creating the library
