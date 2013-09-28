@@ -15,6 +15,7 @@ boost::test_tools::close_at_tolerance<double> lat_tol(boost::test_tools::percent
 
 UnitCell::UnitCell():a(1),b(1),c(1),alpha(90*deg),beta(90*deg),gamma(90*deg)
 {
+	recalculateAll();
 }
 
 UnitCell::UnitCell(double _a, double _b, double _c, double _alpha, double _beta, double _gamma):
@@ -168,6 +169,10 @@ void UnitCell::calculateBMatrix()
 	B.invert();
 	B.transpose();
 	return;
+}
+void UnitCell::calculateGTensors()
+{
+
 }
 void UnitCell::calculatesincos()
 {

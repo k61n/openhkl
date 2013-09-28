@@ -5,6 +5,7 @@
 #include "Cluster.h"
 #include "Matrix33.h"
 #include "Units.h"
+#include "NiggliReduction.h"
 
 namespace SX
 {
@@ -254,13 +255,14 @@ void UnitCellFinder::determineLattice(int clustermax) const
 				double g12=v2.scalar_prod(v3);
 				g_1.set(g00,g01,g02,g01,g11,g12,g02,g12,g22);
 				g_1.invert();
-				double a=sqrt(g_1(0,0));
-				double b=sqrt(g_1(1,1));
-				double c=sqrt(g_1(2,2));
-				double gamma=acos(g_1(0,1)/a/b)/SX::Units::deg;
-				double beta=acos(g_1(0,2)/a/c)/SX::Units::deg;
-				double alpha=acos(g_1(1,2)/b/c)/SX::Units::deg;
-				double volr=sqrt(g_1.determinant());
+				Matrix33<double> t=SX::Crystal::NiggliReduction(g_1,0.1);
+				double a=sqrt(t(0,0));
+				double b=sqrt(t(1,1));
+				double c=sqrt(t(2,2));
+				double gamma=acos(t(0,1)/a/b)/SX::Units::deg;
+				double beta=acos(t(0,2)/a/c)/SX::Units::deg;
+				double alpha=acos(t(1,2)/b/c)/SX::Units::deg;
+				double volr=sqrt(t.determinant());
 
 				double score=costFunction(v1,v2,v3,0.05,5);
 				if (score>0.98)

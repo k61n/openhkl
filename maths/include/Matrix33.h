@@ -53,7 +53,7 @@ class Matrix33
   //
   ~Matrix33();
   //! Set all matrix elements with values given in rows
-  void set(const T&,const T&,const T&,const T&,const T&,const T&,const T&,const T&,const T&); 
+  void set( T,T,T,T,T,T,T,T,T);
   //! Nullify the matrix
   void null();           
   //! Set the matrix to identity
@@ -132,9 +132,9 @@ Matrix33<T>& Matrix33<T>::operator=(const Matrix33<T>& m)
 	return *this;
 }
 template<class T>
-void Matrix33<T>::set(const T& a00,const T& a01,const T& a02,
-		                              const T& a10,const T& a11,const T& a12,
-		                              const T& a20,const T& a21,const T& a22)
+void Matrix33<T>::set(T a00,T a01,T a02,
+		                              T a10,T a11,T a12,
+		                              T a20,T a21,T a22)
 {
 	el[0][0]=a00;el[0][1]=a01;el[0][2]=a02;
 	el[1][0]=a10;el[1][1]=a11;el[1][2]=a12;

@@ -147,6 +147,7 @@ private:
 	void calculateAMatrix();
 	void calculateTMatrix();
 	void calculateBMatrix();
+	void calculateGTensors();
 	void calculateReciprocalParameters();
 	void calculateVolume();
 	void recalculateAll();
@@ -157,6 +158,10 @@ private:
 	Matrix33<double> A;
 	Matrix33<double> T;
 	Matrix33<double> B;
+	//! Metric tensor
+	Matrix33<double> _g;
+	//! Reciprocal metric tensor
+	Matrix33<double> _ginv;
 
 };
 std::ostream& operator<<(std::ostream&,const UnitCell&);
@@ -166,4 +171,5 @@ std::istream& operator>>(std::istream&, UnitCell&);
 }
 
 }
+
 #endif
