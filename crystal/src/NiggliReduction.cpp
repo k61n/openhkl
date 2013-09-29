@@ -6,143 +6,180 @@ namespace SX
 namespace Crystal
 {
 
-Matrix33<double> NiggliReduction(const Matrix33<double>& g, double epsilon)
+int NiggliReduction::_itermax=10000;
+
+NiggliReduction::NiggliReduction(const Matrix33<double>& g, double epsilon)
 {
+	_g=g;
 	if (epsilon<=0)
 		throw std::runtime_error("Niggli reduction: epsilon must be >0");
-	bool finished=false;
-	Matrix33<double> CM(1,0,0,0,1,0,0,0,1);
-	// Return matrix
-	Matrix33<double> result=g;
+	// Multiply tolerance by approximate Unit-cell length
+	_epsilon=epsilon*std::pow(sqrt(g.determinant()),1.0/3.0);
+	updateParameters();
 
-	bool first_time=true;
+}
+Matrix33<double> NiggliReduction::reduce()
+{
+
 	bool cond1,cond2,cond3;
-	do {
-		// No need first time since CM is Identity.
-		if (!first_time)
-		{
-		result=result*CM;
-		CM.invert();
-		result=CM*result;
-		}
-		first_time=false;
-		double A=result(0,0);
-		double B=result(1,1);
-		double C=result(2,2);
-		double zeta=0.5*result(0,1);
-		double eta=0.5*result(0,2);
-		double xi=0.5*result(1,2);
 
-		int l=0,m=0,n=0;
-		// Initialize the angles as acute or obtuse
-		if (xi<-epsilon)
-			l=-1;
-		else if (xi>epsilon)
-			l=1;
-		if (eta<-epsilon)
-			m=-1;
-		else if (eta> epsilon)
-			m=1;
-		if (zeta<-epsilon)
-			n=-1;
-		else if (zeta>epsilon)
-			n=1;
-		if (finished)
-			break;
-		// Now Starts the 8 conditional tests
+	for(int i=0;i<_itermax;++i)
+	{
+
+		// Starts the 8 conditional tests
 		// Step 1
-		if (A>B+epsilon || (!(std::abs(A-B)>epsilon) && (std::abs(xi)>std::abs(eta)+epsilon)))
+		if ((_A>_B+_epsilon) || (!(std::abs(_A-_B)>_epsilon) && (std::abs(_xi)>std::abs(_eta)+_epsilon)))
 		{
-			CM.set(0,-1,0,-1,0,0,0,0,-1);
-			finished=true;
-			continue;
+			_CMat.set(0,-1,0,-1,0,0,0,0,-1);
+			transformG();
+			updateParameters();
 		}
 		// Step 2
-		if (B>C+epsilon || (!(std::abs(B-C)>epsilon) && (std::abs(eta)>std::abs(zeta)+epsilon)))
+		if (_B>_C+_epsilon || (!(std::abs(_B-_C)>_epsilon) && (std::abs(_eta)>std::abs(_zeta)+_epsilon)))
 		{
-			CM.set(-1,0,0,0,0,-1,0,-1,0);
+			_CMat.set(-1,0,0,0,0,-1,0,-1,0);
+			transformG();
+			updateParameters();
 			continue;
 		}
 		// Step 3
-		int lmn=l*m*n;
+		int lmn=_l*_m*_n;
 		if (lmn==1)
 		{
 			int i=1,j=1,k=1;
-			if (l==-1)
+			if (_l==-1)
 				i=-1;
-			if (m==-1)
+			if (_m==-1)
 				j=-1;
-			if (n==-1)
+			if (_n==-1)
 				k=-1;
-			CM.set(i,0,0,0,j,0,0,0,k);
-			finished=true;
-			continue;
+			_CMat.set(i,0,0,0,j,0,0,0,k);
+			transformG();
+			updateParameters();
 		}
 		//Step 4
 		if (lmn==0 || lmn==-1)
 		{
 			int i=1,j=1,k=1;
-			if (l==1)
+			if (_l==1)
 				i=-1;
-			if (m==1)
+			if (_m==1)
 				j=-1;
-			if (n==1)
+			if (_n==1)
 				k=-1;
 			int ijk=i*j*k;
 			if (ijk==-1)
 			{
-				if (l==0)
+				if (_l==0)
 					i=-1;
-				if (m==0)
+				if (_m==0)
 					j=-1;
-				if (n==0)
+				if (_n==0)
 					k=-1;
 			}
-			CM.set(i,0,0,0,j,0,0,0,k);
-			finished=true;
-			continue;
+			_CMat.set(i,0,0,0,j,0,0,0,k);
+			transformG();
+			updateParameters();
 		}
 		// Step 5
-		cond1=std::abs(xi)>B+epsilon;
-		cond2=!(std::abs(B-xi)>epsilon) && ((2*eta)<(zeta-epsilon));
-		cond3=!(std::abs(B+xi)>epsilon) && (zeta<-epsilon);
+		cond1=std::abs(_xi)>_B+_epsilon;
+		cond2=!(std::abs(_B-_xi)>_epsilon) && ((2*_eta)<(_zeta-_epsilon));
+		cond3=!(std::abs(_B+_xi)>_epsilon) && (_zeta<-_epsilon);
 		if (cond1 || cond2 || cond3)
 		{
-			int sign=(xi>0? 1: -1);
-			CM.set(1,0,0,0,1,-sign,0,0,1);
+			int sign=0;
+			if (_xi>0)
+				sign=1;
+			if (_xi<0)
+				sign=-1;
+			_CMat.set(1,0,0,0,1,-sign,0,0,1);
+			transformG();
+			updateParameters();
 			continue;
 		}
 		// Step 6
-		cond1=std::abs(eta)>A+epsilon;
-		cond2=!(std::abs(A-eta)>epsilon) && ((2*xi)<(zeta-epsilon));
-		cond3=!(std::abs(A+eta)>epsilon) && (zeta<-epsilon);
+		cond1=std::abs(_eta)>_A+_epsilon;
+		cond2=!(std::abs(_A-_eta)>_epsilon) && ((2*_xi)<(_zeta-_epsilon));
+		cond3=!(std::abs(_A+_eta)>_epsilon) && (_zeta<-_epsilon);
 		if (cond1 || cond2 || cond3)
 		{
-			int sign=(eta>0? 1: -1);
-			CM.set(1,0,-sign,0,1,0,0,0,1);
+			int sign=0;
+			if (_eta>0)
+				sign=1;
+			if (_eta<0)
+				sign=-1;
+			_CMat.set(1,0,-sign,0,1,0,0,0,1);
+			transformG();
+			updateParameters();
 			continue;
 		}
 		//Step 7
-		cond1=std::abs(zeta)>A+epsilon;
-		cond2=!(std::abs(A-zeta)>epsilon) && ((2*xi)<(eta-epsilon));
-		cond3=!(std::abs(A+zeta)>epsilon) && (eta<-epsilon);
+		cond1=std::abs(_zeta)>_A+_epsilon;
+		cond2=!(std::abs(_A-_zeta)>_epsilon) && ((2*_xi)<(_eta-_epsilon));
+		cond3=!(std::abs(_A+_zeta)>_epsilon) && (_eta<-_epsilon);
 		if (cond1 || cond2 || cond3)
 		{
-			int sign=(zeta>0? 1: -1);
-			CM.set(1,-sign,0,0,1,0,0,0,1);
+			int sign=0;
+			if (_zeta>0)
+				sign=1;
+			if (_zeta<0)
+				sign=-1;
+			_CMat.set(1,-sign,0,0,1,0,0,0,1);
+			transformG();
+			updateParameters();
 			continue;
 		}
 		//Step 8
-		cond1=(xi+eta+zeta+A+B)<-epsilon;
-		cond2=!(std::abs(xi+eta+zeta+A+B)>epsilon) && ((2*(A+eta)+zeta)>epsilon);
+		cond1=(_xi+_eta+_zeta+_A+_B)<-_epsilon;
+		cond2=!(std::abs(_xi+_eta+_zeta+_A+_B)>_epsilon) && ((2*(_A+_eta)+_zeta)>_epsilon);
 		if (cond1 || cond2)
 		{
-			CM.set(1,0,1,0,1,1,0,0,1);
+			_CMat.set(1,0,1,0,1,1,0,0,1);
+			transformG();
+			updateParameters();
 			continue;
 		}
-	}while(!finished);
-	return result;
+		// If all 8 conditions are met, then cell is reduced.
+		break;
+	}
+	return _g;
 }
+
+void NiggliReduction::updateParameters()
+{
+	// Get the Niggli parameters
+	_A=_g(0,0);
+	_B=_g(1,1);
+	_C=_g(2,2);
+	_zeta=2.0*_g(0,1);
+	_eta=2.0*_g(0,2);
+	_xi=2.0*_g(1,2);
+
+	// Define the angles as acute or obtuse
+	if (_xi<-_epsilon)
+		_l=-1;
+	else if (_xi>_epsilon)
+		_l=1;
+	if (_eta<-_epsilon)
+		_m=-1;
+	else if (_eta> _epsilon)
+		_m=1;
+	if (_zeta<-_epsilon)
+		_n=-1;
+	else if (_zeta>_epsilon)
+		_n=1;
+	return;
+}
+
+void NiggliReduction::transformG()
+{
+	// Transform to new tensor G'=(CMat^T). G. CMat
+	_g=_g*_CMat;
+	_CMat.transpose();
+	_g=_CMat*_g;
+	return;
+}
+
 
 }
 }

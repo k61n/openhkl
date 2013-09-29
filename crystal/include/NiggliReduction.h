@@ -32,9 +32,38 @@
 namespace SX {
 namespace Crystal {
 
-Matrix33<double> NiggliReduction(const Matrix33<double>& g, double epsilon);
+/** Implementation of primitive unit-cell reduction using the method described in :
+ *	"Numerically stable algorithms for the computation of reduced Unit cells"
+ *	by R.W. Grosse-Kunstleve et al. , Acta Cryst., A60, 1-6, (2004)
+ */
 
+class NiggliReduction
+{
+public:
+	//! Niggli reduction of the metric tensor g, with relative error epsilon
+	//! The relative error is multiplied internally by the average unit dimension of g
+	NiggliReduction(const Matrix33<double>& g, double epsilon);
+	//! Reduce the unit-cell and output the reduced metric tensor
+	Matrix33<double> reduce();
+private:
+	//! Number of iteration max allowed in the reduction procedure.
+	static int _itermax;
+	//! Relative error
+	double _epsilon;
+	//! TransformG with current C-matrix transformation
+	void transformG();
+	//! Update the Niggli parameters
+	void updateParameters();
+	//! Current metric tensor
+	Matrix33<double> _g;
+	//! Store transformation matrix
+	Matrix33<double> _CMat;
+	//! Niggli parameters
+	double _A, _B, _C, _zeta, _eta, _xi;
+	//! Internal variables storing 1 0 or -1 for each angle (acute, right, or obtuse).
+	int _l,_m,_n;
+};
 
 }
 }
-#endif /* NSXTOOL_NIGGLIREDUCTION_H_ */
+#endif
