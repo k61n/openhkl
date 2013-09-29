@@ -34,7 +34,9 @@ namespace Crystal {
 
 /** Implementation of primitive unit-cell reduction using the method described in :
  *	"Numerically stable algorithms for the computation of reduced Unit cells"
- *	by R.W. Grosse-Kunstleve et al. , Acta Cryst., A60, 1-6, (2004)
+ *	by R.W. Grosse-Kunstleve et al. , Acta Cryst., A60, 1-6, (2004).
+ *	This is the similar with Krivy & Gruber's algorithm but with the additional
+ *	tolerance (epsilon).
  */
 
 class NiggliReduction
