@@ -25,7 +25,7 @@
  *
  */
 
-#ifndef NSXTOOL	_NIGGLIREDUCTION_H_
+#ifndef NSXTOOL_NIGGLIREDUCTION_H_
 #define NSXTOOL_NIGGLIREDUCTION_H_
 #include "Matrix33.h"
 
@@ -60,7 +60,7 @@ private:
 	Matrix33<double> _CMat;
 	//! Niggli parameters
 	double _A, _B, _C, _zeta, _eta, _xi;
-	//! Internal variables storing 1 0 or -1 for each angle (acute, right, or obtuse).
+	//! Internal variables storing 1 0 or -1 for each angle (acute, right, or obtuse)
 	int _l,_m,_n;
 };
 

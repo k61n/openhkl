@@ -25,7 +25,7 @@
  *
  */
 
-#ifndef NSXTOOL	_UNITCELL_H_
+#ifndef NSXTOOL_UNITCELL_H_
 #define NSXTOOL_UNITCELL_H_
 #include "Matrix33.h"
 #include <iostream>

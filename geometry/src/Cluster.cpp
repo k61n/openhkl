@@ -257,13 +257,6 @@ void UnitCellFinder::determineLattice(int clustermax) const
 				g_1.invert();
 				SX::Crystal::NiggliReduction n(g_1,1e-5);
 				Matrix33<double> t=n.reduce();
-				double ai=sqrt(g_1(0,0));
-				double bi=sqrt(g_1(1,1));
-				double ci=sqrt(g_1(2,2));
-				double gammai=acos(g_1(0,1)/ai/bi)/SX::Units::deg;
-				double betai=acos(g_1(0,2)/ai/ci)/SX::Units::deg;
-				double alphai=acos(g_1(1,2)/bi/ci)/SX::Units::deg;
-				double volri=sqrt(g_1.determinant());
 
 				double a=sqrt(t(0,0));
 				double b=sqrt(t(1,1));
@@ -276,7 +269,6 @@ void UnitCellFinder::determineLattice(int clustermax) const
 				double score=costFunction(v1,v2,v3,0.05,5);
 				if (score>0.95)
 				{
-					std::cout << "initial" << ai << " " << bi << " " << ci << " " << alphai << " " << betai << " " << gammai << "Vol: " << volri << std::endl;
 					std::cout << a << " " << b << " " << c << " " << alpha << " " << beta << " " << gamma << "Vol: " << volr << " " << score <<   std::endl;
 				}
 
