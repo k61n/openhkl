@@ -25,35 +25,26 @@
  *
  */
 
-#ifndef NSXTOOL_ILLASCIIMETAREADER_H_
-#define NSXTOOL_ILLASCIIMETAREADER_H_
-
-#include "Singleton.h"
-#include <sstream>
+#ifndef NSXTOOL	_MMILLASCIIREADER_H_
+#define NSXTOOL_MMILLASCIIREADER_H_
+#include <string>
+#include <boost/interprocess/file_mapping.hpp>
 
 namespace SX {
 
+//! Forward declaration
 class MetaData;
 
-class ILLAsciiMetaReader: public Singleton<ILLAsciiMetaReader>
-{
+class MMILLAsciiReader {
 public:
-	//! Reads MetaData from a chain of characters as written in legacy ILL format
-	//! return a MetaData Object
-	static MetaData* read(const char* buf);
+	MMILLAsciiReader(const std::string& filename);
+	//! Read the header of the file made of MetaData.
+	MetaData* readMetaDataBlock(int nlines=100);
+	//!
+	virtual ~MMILLAsciiReader();
 private:
-	//! current line in the file.
-	static int _currentline;
-	//! Read the file header containing the numor, user, instr, local contact, date and time
-	static void readHeader(std::stringstream&,MetaData*);
-	//! Read the control block containing all Integer Metadata.
-	static void readControlIBlock(std::stringstream&,MetaData*);
-	//! Read the control block containing all float parameters.
-	static void readControlFBlock(std::stringstream&,MetaData*);
-	//! Invoke seekg to beginning the line number, at position pos. First line is 1
-	static inline void gotoLine(std::stringstream& buffer, int line_number,int pos);
+	boost::interprocess::file_mapping _map;
 };
 
 }
-
 #endif

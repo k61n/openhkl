@@ -55,11 +55,6 @@ MetaData* ILLAsciiMetaReader::read(const char* buf)
 }
 
 
-bool ILLAsciiMetaReader::validLine(const std::string& str,const char* letter)
-{
-	return  (!str.compare(0,1,letter) && !str.compare(79,1,letter));
-}
-
 void ILLAsciiMetaReader::gotoLine(std::stringstream& buffer, int number,int pos)
 {
 	int char_number=81*(number-1)+pos;
