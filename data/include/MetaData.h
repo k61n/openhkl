@@ -102,12 +102,12 @@ template <typename _type>
 	// Search if this key is in the set.
 	keysetit it=_metakeys.find(key);
 	if (it==_metakeys.end())
-		throw std::runtime_error("Could not find key :"+key+" in numor");
+		throw std::runtime_error("Could not find key :"+key+" in MetaData");
 	// Then search in the map
 	const char* ptr=(*it).c_str();
 	heterit it2=_map.find(ptr);
 	if (it2==_map.end())
-		throw std::runtime_error("Could not find key :"+key+" in numor");
+		throw std::runtime_error("Could not find key :"+key+" in MetaData");
 	return boost::any_cast<_type>((*it2).second);
 }
 

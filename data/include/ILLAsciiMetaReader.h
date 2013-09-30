@@ -1,0 +1,60 @@
+/*
+ * nsxtool : Neutron Single Crystal analysis toolkit
+ ------------------------------------------------------------------------------------------
+ Copyright (C)
+ 2012- Laurent C. Chapon Institut Laue-Langevin
+ BP 156
+ 6, rue Jules Horowitz
+ 38042 Grenoble Cedex 9
+ France
+ chapon[at]ill.fr
+
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+
+ You should have received a copy of the GNU Lesser General Public
+ License along with this library; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ */
+
+#ifndef NSXTOOL_ILLASCIIMETAREADER_H_
+#define NSXTOOL_ILLASCIIMETAREADER_H_
+
+#include <Singleton.h>
+#include <sstream>
+
+namespace SX {
+
+class MetaData;
+
+class ILLAsciiMetaReader: public Singleton<ILLAsciiMetaReader>
+{
+public:
+	//! Reads MetaData from a chain of characters as written in legacy ILL format
+	MetaData* read(const char* buf);
+private:
+	//! current line in the file.
+	static int _currentline;
+	//! Read the file header containing the numor, user, instr, local contact, date and time
+	inline void readHeader(std::stringstream&,MetaData*);
+	//! Read the control block containing all Integer Metadata.
+	inline void readControlIBlock(std::stringstream&,MetaData*);
+	//! Read the control block containing all float parameters.
+	inline void readControlFBlock(std::stringstream&,MetaData*);
+	//! Invoke seekg to beginning the line number, at position pos. First line is 1
+	static inline void gotoLine(std::stringstream& buffer, int line_number,int pos);
+	//! Validate text line with 80 characters such as AAAA., RRRR., etc...
+	static inline bool validLine(const std::string& line,const char* letter);
+};
+
+}
+
+#endif
