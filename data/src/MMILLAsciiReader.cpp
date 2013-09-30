@@ -31,15 +31,18 @@ MMILLAsciiReader::~MMILLAsciiReader()
 
 MetaData* MMILLAsciiReader::readMetaDataBlock(int nlines)
 {
-	// 81 characters per line
+	//81 characters per line
 	std::size_t block_size=nlines*81;
+	//Map the region corresponding to the metadata block
 	boost::interprocess::mapped_region mdblock(_map,boost::interprocess::read_only,0,block_size);
+	//Beginning of the block
 	const char* b=reinterpret_cast<char*>(mdblock.get_address());
 	char* buffer=new char[block_size];
 	strncpy(buffer, b, block_size);
 	ILLAsciiMetaReader* metareader=ILLAsciiMetaReader::Instance();
-	return metareader->read(buffer);
+	MetaData* m=metareader->read(buffer);
 	delete [] buffer;
+	return m;
 }
 
 
