@@ -54,7 +54,7 @@ public:
 	UnitCell(double a, double b, double c, double alpha, double beta, double gamma);
 	UnitCell& operator=(const UnitCell&);
 	UnitCell(const UnitCell&);
-	///Destructor
+	/// Destructor
 	virtual ~UnitCell();
 	/** Set unit-cell parameter
 	 * @param a  a-axis (\f$ \AA \f$)

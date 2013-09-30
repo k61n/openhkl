@@ -18,6 +18,14 @@ NiggliReduction::NiggliReduction(const Matrix33<double>& g, double epsilon)
 	updateParameters();
 
 }
+
+void NiggliReduction::setIterMax(unsigned int max)
+{
+	if (max==0)
+		throw std::runtime_error("Niggli reduction: max iterations must be  > 0");
+	_itermax=max;
+}
+
 Matrix33<double> NiggliReduction::reduce()
 {
 

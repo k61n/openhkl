@@ -47,6 +47,8 @@ public:
 	NiggliReduction(const Matrix33<double>& g, double epsilon);
 	//! Reduce the unit-cell and output the reduced metric tensor
 	Matrix33<double> reduce();
+	//! Change the maximum allowed number of iterations
+	static void setIterMax(unsigned int max);
 private:
 	//! Number of iteration max allowed in the reduction procedure.
 	static int _itermax;
