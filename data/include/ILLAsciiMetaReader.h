@@ -28,7 +28,7 @@
 #ifndef NSXTOOL_ILLASCIIMETAREADER_H_
 #define NSXTOOL_ILLASCIIMETAREADER_H_
 
-#include <Singleton.h>
+#include "Singleton.h"
 #include <sstream>
 
 namespace SX {
@@ -39,16 +39,16 @@ class ILLAsciiMetaReader: public Singleton<ILLAsciiMetaReader>
 {
 public:
 	//! Reads MetaData from a chain of characters as written in legacy ILL format
-	MetaData* read(const char* buf);
+	static MetaData* read(const char* buf);
 private:
 	//! current line in the file.
 	static int _currentline;
 	//! Read the file header containing the numor, user, instr, local contact, date and time
-	inline void readHeader(std::stringstream&,MetaData*);
+	static void readHeader(std::stringstream&,MetaData*);
 	//! Read the control block containing all Integer Metadata.
-	inline void readControlIBlock(std::stringstream&,MetaData*);
+	static void readControlIBlock(std::stringstream&,MetaData*);
 	//! Read the control block containing all float parameters.
-	inline void readControlFBlock(std::stringstream&,MetaData*);
+	static void readControlFBlock(std::stringstream&,MetaData*);
 	//! Invoke seekg to beginning the line number, at position pos. First line is 1
 	static inline void gotoLine(std::stringstream& buffer, int line_number,int pos);
 	//! Validate text line with 80 characters such as AAAA., RRRR., etc...
