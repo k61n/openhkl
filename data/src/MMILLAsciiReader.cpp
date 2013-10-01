@@ -73,14 +73,25 @@ void MMILLAsciiReader::readBlock(unsigned int i,std::vector<int>& v) const
 		throw std::runtime_error("MMILLAsciireader: memory mapped filed is not initialized");
 	if (i>_nframes-1)
 		throw std::runtime_error("MMILLAsciiReader:readBlock, frame index not valid");
+
 	// Determine the beginning of the data block
 	std::size_t begin=_header_size+(i+1)*_skipchar+i*_datalength;
 	// Map the region of interest in the file
 	boost::interprocess::mapped_region mdblock(_map,boost::interprocess::read_only,begin,_datalength);
 	const char* b=reinterpret_cast<char*>(mdblock.get_address());
+	// Clean vector if not empty
+	if (!v.empty())
+		v.clear();
+	// try to reserve memory space
+	try
+	{
 	v.reserve(_datapoints);
+	}catch(...)
+	{
+		throw std::runtime_error("MMILLAsciiReader: problem reserving size");
+	}
 	readIntsFromChar(b,b+_datalength,v);
 }
 
 
-} // end namespace SX
+}

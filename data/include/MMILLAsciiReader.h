@@ -25,8 +25,9 @@
  *
  */
 
-#ifndef NSXTOOL	_MMILLASCIIREADER_H_
+#ifndef NSXTOOL_MMILLASCIIREADER_H_
 #define NSXTOOL_MMILLASCIIREADER_H_
+
 #include <string>
 #include <boost/interprocess/file_mapping.hpp>
 
