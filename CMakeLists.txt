@@ -45,7 +45,7 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
     -std=c++0x
     -Wall
 )
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffast-math")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ")
 ENDIF()
 
 # Disable auto-linking to allow dynamic linking with MSVC

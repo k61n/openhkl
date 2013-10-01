@@ -11,7 +11,7 @@ namespace SX
 
 int ILLAsciiMetaReader::_currentline=0;
 
-MetaData* ILLAsciiMetaReader::read(const char* buf)
+MetaData* ILLAsciiMetaReader::read(const char* buf,std::size_t& size)
 {
 
 	 std::string s(buf);
@@ -20,6 +20,8 @@ MetaData* ILLAsciiMetaReader::read(const char* buf)
 	 if (end_metadata==std::string::npos)
 	    throw std::runtime_error("Could not find end of metadata block");
 
+	 // Number of characters up to the "SSSS...." line
+	 size=end_metadata;
 
 	_currentline=0;
 	MetaData* meta=new MetaData;

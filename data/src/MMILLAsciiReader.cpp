@@ -6,11 +6,23 @@
 #include <boost/interprocess/mapped_region.hpp>
 #include <iostream>
 #include <cstring>
+#include <boost/spirit/include/qi.hpp>
+#include <cmath>
 
 namespace SX
 {
 
-MMILLAsciiReader::MMILLAsciiReader(const std::string& filename)
+// Method to read a vector of int values from two char pointers, using spirit
+// This is faster than the C atoi() function.
+void readIntsFromChar(const char* begin, const char* end, std::vector<int>& v)
+{
+	namespace qi = boost::spirit::qi;
+	namespace ascii = boost::spirit::ascii;
+	qi::phrase_parse(begin, end,
+        *qi::int_ >> qi::eoi, ascii::space, v);
+}
+
+MMILLAsciiReader::MMILLAsciiReader(const std::string& filename):_isInitialized(false),_nframes(0),_datapoints(0),_header_size(0)
 {
 	if ( !boost::filesystem::exists(filename.c_str()))
 		throw std::runtime_error("MMILLAsciiReader, file:"+filename+" does not exist");
@@ -22,6 +34,7 @@ MMILLAsciiReader::MMILLAsciiReader(const std::string& filename)
 	{
 		throw;
 	}
+
 
 }
 MMILLAsciiReader::~MMILLAsciiReader()
@@ -40,9 +53,33 @@ MetaData* MMILLAsciiReader::readMetaDataBlock(int nlines)
 	char* buffer=new char[block_size];
 	strncpy(buffer, b, block_size);
 	ILLAsciiMetaReader* metareader=ILLAsciiMetaReader::Instance();
-	MetaData* m=metareader->read(buffer);
+	MetaData* m=metareader->read(buffer,_header_size);
 	delete [] buffer;
+	//
+	_nframes=m->getKey<int>("npdone");
+	_datapoints=m->getKey<int>("nbdata");
+	_nangles=m->getKey<int>("nbang");
+	// Skip 8 or 9 lines to the beginning of data blocks
+	_skipchar=81*(8+(_nangles<=2 ? 0 : 1));
+	// ILL Ascii file for 2D detector store 10 values per line.
+	_datalength=static_cast<int>(std::ceil(_datapoints/10.0))*81;
+	_isInitialized=true;
 	return m;
+}
+
+void MMILLAsciiReader::readBlock(unsigned int i,std::vector<int>& v) const
+{
+	if (!_isInitialized)
+		throw std::runtime_error("MMILLAsciireader: memory mapped filed is not initialized");
+	if (i>_nframes-1)
+		throw std::runtime_error("MMILLAsciiReader:readBlock, frame index not valid");
+	// Determine the beginning of the data block
+	std::size_t begin=_header_size+(i+1)*_skipchar+i*_datalength;
+	// Map the region of interest in the file
+	boost::interprocess::mapped_region mdblock(_map,boost::interprocess::read_only,begin,_datalength);
+	const char* b=reinterpret_cast<char*>(mdblock.get_address());
+	v.reserve(_datapoints);
+	readIntsFromChar(b,b+_datalength,v);
 }
 
 

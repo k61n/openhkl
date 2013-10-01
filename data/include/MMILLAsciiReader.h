@@ -40,10 +40,21 @@ public:
 	MMILLAsciiReader(const std::string& filename);
 	//! Read the header of the file made of MetaData.
 	MetaData* readMetaDataBlock(int nlines=100);
-	//!
+	//! Return the number of blocks
+	std::size_t nBlocks() const {return _nframes;}
+	//! Read block number i. First frame starts at index 0
+	void readBlock(unsigned int i, std::vector<int>& data) const;
 	virtual ~MMILLAsciiReader();
 private:
+	bool _isInitialized;
+	std::size_t _nframes;
+	int _datapoints;
+	int _nangles;
+	std::size_t _header_size;
+	int _skipchar;
+	int _datalength;
 	boost::interprocess::file_mapping _map;
+
 };
 
 }

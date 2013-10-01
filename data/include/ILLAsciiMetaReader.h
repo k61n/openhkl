@@ -40,7 +40,7 @@ class ILLAsciiMetaReader: public Singleton<ILLAsciiMetaReader>
 public:
 	//! Reads MetaData from a chain of characters as written in legacy ILL format
 	//! return a MetaData Object
-	static MetaData* read(const char* buf);
+	static MetaData* read(const char* buf,std::size_t& size);
 private:
 	//! current line in the file.
 	static int _currentline;
