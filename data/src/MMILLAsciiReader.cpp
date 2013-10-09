@@ -67,7 +67,7 @@ MetaData* MMILLAsciiReader::readMetaDataBlock(int nlines)
 	return m;
 }
 
-void MMILLAsciiReader::readBlock(unsigned int i,std::vector<int>& v) const
+std::vector<int> MMILLAsciiReader::readBlock(unsigned int i) const
 {
 	if (!_isInitialized)
 		throw std::runtime_error("MMILLAsciireader: memory mapped filed is not initialized");
@@ -79,18 +79,17 @@ void MMILLAsciiReader::readBlock(unsigned int i,std::vector<int>& v) const
 	// Map the region of interest in the file
 	boost::interprocess::mapped_region mdblock(_map,boost::interprocess::read_only,begin,_datalength);
 	const char* b=reinterpret_cast<char*>(mdblock.get_address());
-	// Clean vector if not empty
-	if (!v.empty())
-		v.clear();
-	// try to reserve memory space
+	// Create vector and try to reseve a memory block
+	std::vector<int> v;
 	try
 	{
 	v.reserve(_datapoints);
 	}catch(...)
 	{
-		throw std::runtime_error("MMILLAsciiReader: problem reserving size");
+		throw std::runtime_error("MMILLAsciiReader: problem reserving size of vector");
 	}
 	readIntsFromChar(b,b+_datalength,v);
+	return v;
 }
 
 

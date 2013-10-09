@@ -147,6 +147,7 @@ void Blob3D::printSelf(std::ostream& os) const
 {
 	os << "Blob center:" << _m100/_m000 << "," << _m010/_m000 << "," << _m001/_m000 << std::endl;
 	os << "Blob #points:" << _npoints << std::endl;
+	os << "Intensity" << _m000 << std::endl;
 
 }
 void Blob3D::toEllipsoid(V3D& center, V3D& semi_axes, V3D& v0, V3D& v1, V3D& v2)

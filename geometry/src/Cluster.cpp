@@ -267,7 +267,7 @@ void UnitCellFinder::determineLattice(int clustermax) const
 				double volr=sqrt(t.determinant());
 
 				double score=costFunction(v1,v2,v3,0.05,5);
-				if (score>0.70)
+				if (score>0.90)
 				{
 					std::cout << a << " " << b << " " << c << " " << alpha << " " << beta << " " << gamma << "Vol: " << volr << " " << score <<   std::endl;
 				}

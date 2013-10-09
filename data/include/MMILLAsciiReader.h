@@ -44,7 +44,7 @@ public:
 	//! Return the number of blocks
 	std::size_t nBlocks() const {return _nframes;}
 	//! Read block number i. First frame starts at index 0
-	void readBlock(unsigned int i, std::vector<int>& data) const;
+	std::vector<int> readBlock(unsigned int i) const;
 	virtual ~MMILLAsciiReader();
 private:
 	bool _isInitialized;
