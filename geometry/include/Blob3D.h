@@ -75,7 +75,7 @@ public:
   //! Return the center of Mass
   V3D getCenterOfMass() const;
   //! Get the ellipsoid parameters
-  void toEllipsoid(V3D& center,V3D& semi_axes, V3D& v0, V3D& v1, V3D& v2);
+  void toEllipsoid(V3D& center,V3D& semi_axes, V3D& v0, V3D& v1, V3D& v2) const;
   //! Print
   void printSelf(std::ostream& os) const;
   //! Compute the intersection with a plane

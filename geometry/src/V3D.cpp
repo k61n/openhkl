@@ -478,6 +478,15 @@ int colinear(const V3D& v1, const V3D& v2)
     return (pv.norm()<Tolerance) ? 1 : 0;
 }
 
+V3D operator*(double D, const V3D& v)
+{
+	V3D res = v*D;
+	return res;
+}
+
+
+
+
 } //namespace Geometry
 } //namespace  SX
 

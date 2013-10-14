@@ -151,7 +151,7 @@ void Blob3D::printSelf(std::ostream& os) const
 	os << "Intensity" << _m000 << std::endl;
 
 }
-void Blob3D::toEllipsoid(V3D& center, V3D& semi_axes, V3D& v0, V3D& v1, V3D& v2)
+void Blob3D::toEllipsoid(V3D& center, V3D& semi_axes, V3D& v0, V3D& v1, V3D& v2) const
 {
 	if (_m000<1e-7)
 		throw std::runtime_error("No mass in Blob");
@@ -263,20 +263,15 @@ bool Blob3D::intersectionWithPlane(double a, double b, double c, double d, V3D& 
     	  blob_axis1.y(), blob_axis2.y(), blob_axis3.y(),
     	  blob_axis1.z(), blob_axis2.z(), blob_axis3.z());
 
-    Matrix33<double> D(1.0/blob_semi_axes.x(), 0.0                   , 0.0,
+    Matrix33<double> E(1.0/blob_semi_axes.x(), 0.0                   , 0.0,
     		            0.0                   , 1.0/blob_semi_axes.y(), 0.0,
     		            0.0                   , 0.0                   , 1.0/blob_semi_axes.z());
 
-    Matrix33<double> E;
-    E = D*Q;
-    Q.transpose();
-    E = Q*E;
+    E = Q.transpose()*E*Q;
 
     Matrix33<double> M, RM;
     M = E*R;
-    R.transpose();
-    RM = R*M;
-    R.transpose();
+    RM = R.transpose()*M;
 
     V3D v, w;
     v = E*u;

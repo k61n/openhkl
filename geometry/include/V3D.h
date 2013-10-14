@@ -68,6 +68,9 @@ class V3D
       // Scale
       V3D operator*(const double D) const;
       V3D& operator*=(const double D);
+      // Left multiply by a scalar
+      friend V3D operator*(const double D, const V3D& v);
+
       V3D operator/(const double D) const;
       V3D& operator/=(const double D);
       // Simple Comparison
