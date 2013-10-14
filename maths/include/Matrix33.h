@@ -63,13 +63,15 @@ class Matrix33
   //! Access the element i,j -const
   const T& operator()(int i, int j) const;
   //! Access the element i,j -non const
-    T& operator()(int i, int j);
+  T& operator()(int i, int j);
   //! Transpose the matrix
   void transpose();       
   //! Cofactor matrix
   void cofactor();
   //! Return the adjoint
-  void adjoint();        
+  void adjoint();
+  //! Return the trace
+  T trace() const;
   //! Invert the matrix
   void invert();                                                                   
   Matrix33<T> operator*(const Matrix33<T>&) const;                              
@@ -203,6 +205,11 @@ void Matrix33<T>::adjoint()
 	cofactor();
 	transpose();
 	return;
+}
+template<class T>
+T Matrix33<T>::trace() const
+{
+	return (el[0][0]+el[1][1]+el[2][2]);
 }
 template<class T>
 void Matrix33<T>::invert()

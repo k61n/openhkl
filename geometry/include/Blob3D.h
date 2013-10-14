@@ -28,6 +28,8 @@
 #define NSXTOOL_Blob3D_H_
 
 #include <iostream>
+
+#include "Matrix33.h"
 #include "V3D.h"
 
 namespace SX
@@ -76,6 +78,9 @@ public:
   void toEllipsoid(V3D& center,V3D& semi_axes, V3D& v0, V3D& v1, V3D& v2);
   //! Print
   void printSelf(std::ostream& os) const;
+  //! Compute the intersection with a plane
+  bool intersectionWithPlane(double a, double b, double c, double d, V3D& center, V3D& semi_axes, V3D& axis1, V3D& axis2) const;
+
 private:
   //! Total mass=zeroth order momentum
   double _m000;

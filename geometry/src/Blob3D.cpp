@@ -1,9 +1,10 @@
-#include "Blob3D.h"
 #include <stdexcept>
 #include <cmath>
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_eigen.h>
 #include <limits>
+
+#include "Blob3D.h"
 
 namespace SX
 {
@@ -199,6 +200,123 @@ void Blob3D::toEllipsoid(V3D& center, V3D& semi_axes, V3D& v0, V3D& v1, V3D& v2)
     //
 
 	return;
+}
+
+bool Blob3D::intersectionWithPlane(double a, double b, double c, double d, V3D& center, V3D& semi_axes, V3D& axis1, V3D& axis2) const
+{
+
+	// The blob ellipsoid parameters
+	V3D blob_semi_axes;
+	V3D blob_center;
+	V3D blob_axis1, blob_axis2, blob_axis3;
+
+	// Get the blob ellipsoid parameters
+	this->toEllipsoid(blob_center, blob_semi_axes, blob_axis1, blob_axis2, blob_axis3);
+
+	// The vector normal to the plane
+	V3D normal(a,b,c);
+	double norm = normal.normalize();
+
+	// This is the rotation matrix to align the normal to the plane with the z-axis
+	Matrix33<double> R;
+    V3D k_cp_n=UnitZ.cross_prod(normal);
+    // Check whether the normal to the plane is colinear with the z-axis
+    // If so, the rotation matrix is just the identity matrix
+    if (k_cp_n.nullVector() == 1)
+    {
+    	R.identity();
+    }
+    // Otherwise, define the matrix as the Gibbs matrix
+    else
+    {
+    	// Some intermediates variables useful for defining the Gibbs matrix
+    	double k_ip_n = UnitZ.scalar_prod(normal);
+    	double cd = cos(k_ip_n);
+    	double sd = sin(k_ip_n);
+    	double one_minus_cd = 1.0-cd;
+
+        double vx = k_cp_n.x();
+        double vy = k_cp_n.y();
+        double vz = k_cp_n.z();
+
+        double fx = vx*one_minus_cd;
+        double fy = vy*one_minus_cd;
+        double fz = vz*one_minus_cd;
+
+        double sx = vx*sd;
+        double sy = vy*sd;
+        double sz = vz*sd;
+
+    	R.set(cd+vx*fx,vy*fx+sz,vz*fx-sy, vx*fy-sz,cd+vy*fy,vz*fy+sx, vx*fz+sy,vy*fz-sx,cd+vz*fz);
+
+    }
+
+    // This is the intersection between the plane and the axis normal to the plane that passes through the origin
+    V3D rp = normal*(d/norm);
+
+    // The difference vector between the aformentionned point and the center of the blob ellipsoid
+    V3D u = rp-blob_center;
+
+    // The matrices that defines the blob ellipsoid in its matrix general form
+    Matrix33<double> Q;
+    Q.set(blob_axis1.x(), blob_axis2.x(), blob_axis3.x(),
+    	  blob_axis1.y(), blob_axis2.y(), blob_axis3.y(),
+    	  blob_axis1.z(), blob_axis2.z(), blob_axis3.z());
+
+    Matrix33<double> D(1.0/blob_semi_axes.x(), 0.0                   , 0.0,
+    		            0.0                   , 1.0/blob_semi_axes.y(), 0.0,
+    		            0.0                   , 0.0                   , 1.0/blob_semi_axes.z());
+
+    Matrix33<double> E;
+    E = D*Q;
+    Q.transpose();
+    E = Q*E;
+
+    Matrix33<double> M, RM;
+    M = E*R;
+    R.transpose();
+    RM = R*M;
+    R.transpose();
+
+    V3D v, w;
+    v = E*u;
+    w = v*R + u*M;
+
+    double r2mr1 = RM(0,0)*RM(1,1);
+
+    double den = 2.0*(r2mr1 - RM(0,1)*RM(0,1));
+
+    center[0] = (w[1]*RM(0,0)-w[0]*RM(1,1))/den;
+    center[1] = (w[0]*RM(0,1)-w[1]*RM(0,0))/den;
+    center[2] = 0.0;
+
+    center = R*center + rp;
+
+    double phi = 0.5*atan2(2.0*RM(0,1),r2mr1);
+
+    double cphi = cos(phi);
+    double sphi = sin(phi);
+
+    axis1[0] = cphi;
+    axis1[1] = sphi;
+    axis1[2] = 0.0;
+
+    axis2[0] = -sphi;
+    axis2[1] =  cphi;
+    axis2[2] =  0.0;
+
+    axis1 = R*axis1;
+    axis2 = R*axis2;
+
+    double cphi2 = cphi*cphi;
+    double sphi2 = sphi*sphi;
+    double s2phi = 2.0*cphi*sphi;
+    double r4s2phi = RM(0,1)*s2phi;
+
+    semi_axes[0] = sqrt(1.0/(RM(0,0)*cphi2 + RM(1,1)*sphi2-r4s2phi));
+    semi_axes[1] = sqrt(1.0/(RM(0,0)*sphi2 + RM(1,1)*cphi2+r4s2phi));
+
+	return true;
 }
 
 std::ostream& operator<<(std::ostream& os, const Blob3D& b)
