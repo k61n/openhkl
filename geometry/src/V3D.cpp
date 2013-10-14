@@ -484,8 +484,11 @@ V3D operator*(double D, const V3D& v)
 	return res;
 }
 
-
-
+V3D operator/(double D, const V3D& v)
+{
+	V3D res = v/D;
+	return res;
+}
 
 } //namespace Geometry
 } //namespace  SX
