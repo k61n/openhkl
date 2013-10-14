@@ -257,34 +257,34 @@ bool Blob3D::intersectionWithPlane(double a, double b, double c, double d, V3D& 
     // The difference vector between the aformentionned point and the center of the blob ellipsoid
     V3D u = rp-blob_center;
 
-    // The matrices that defines the blob ellipsoid in its matrix general form
+    // The matrix of the blob ellipsoid axis vectors
     Matrix33<double> Q;
     Q.set(blob_axis1.x(), blob_axis2.x(), blob_axis3.x(),
     	  blob_axis1.y(), blob_axis2.y(), blob_axis3.y(),
     	  blob_axis1.z(), blob_axis2.z(), blob_axis3.z());
 
-    Matrix33<double> E(1.0/blob_semi_axes.x(), 0.0                   , 0.0,
-    		            0.0                   , 1.0/blob_semi_axes.y(), 0.0,
-    		            0.0                   , 0.0                   , 1.0/blob_semi_axes.z());
-
+    // The matrix of the blob ellipsoid semi axis
+    double a2 = blob_semi_axes.x()*blob_semi_axes.x();
+    double b2 = blob_semi_axes.y()*blob_semi_axes.y();
+    double c2 = blob_semi_axes.z()*blob_semi_axes.z();
+    Matrix33<double> E(1.0/a2, 0.0, 0.0, 0.0, 1.0/b2, 0.0, 0.0, 0.0, 1.0/c2);
     E = Q.transpose()*E*Q;
 
-    Matrix33<double> M, RM;
-    M = E*R;
-    RM = R.transpose()*M;
+    Matrix33<double> M = E*R;
+    Matrix33<double> RM = R.transpose()*M;
 
-    V3D v, w;
-    v = E*u;
-    w = v*R + u*M;
+    V3D v = E*u;
+    V3D w = v*R + u*M;
 
     double r2mr1 = RM(0,0)*RM(1,1);
 
     double den = 2.0*(r2mr1 - RM(0,1)*RM(0,1));
 
+    // The center of the intersection ellipse in the frame where z=0
     center[0] = (w[1]*RM(0,0)-w[0]*RM(1,1))/den;
     center[1] = (w[0]*RM(0,1)-w[1]*RM(0,0))/den;
     center[2] = 0.0;
-
+    // The center of the intersection ellipse in the original frame
     center = R*center + rp;
 
     double phi = 0.5*atan2(2.0*RM(0,1),r2mr1);
@@ -292,6 +292,7 @@ bool Blob3D::intersectionWithPlane(double a, double b, double c, double d, V3D& 
     double cphi = cos(phi);
     double sphi = sin(phi);
 
+    // The axes of the intersection ellipse in the frame where z =0
     axis1[0] = cphi;
     axis1[1] = sphi;
     axis1[2] = 0.0;
@@ -300,6 +301,7 @@ bool Blob3D::intersectionWithPlane(double a, double b, double c, double d, V3D& 
     axis2[1] =  cphi;
     axis2[2] =  0.0;
 
+    // The axes of the intersection ellipse in the original frame
     axis1 = R*axis1;
     axis2 = R*axis2;
 
@@ -308,6 +310,7 @@ bool Blob3D::intersectionWithPlane(double a, double b, double c, double d, V3D& 
     double s2phi = 2.0*cphi*sphi;
     double r4s2phi = RM(0,1)*s2phi;
 
+    // The value of the semi axes of the intersection ellipse
     semi_axes[0] = sqrt(1.0/(RM(0,0)*cphi2 + RM(1,1)*sphi2-r4s2phi));
     semi_axes[1] = sqrt(1.0/(RM(0,0)*sphi2 + RM(1,1)*cphi2+r4s2phi));
 
