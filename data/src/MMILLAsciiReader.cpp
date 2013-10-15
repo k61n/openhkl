@@ -22,7 +22,8 @@ void readIntsFromChar(const char* begin, const char* end, std::vector<int>& v)
         *qi::int_ >> qi::eoi, ascii::space, v);
 }
 
-MMILLAsciiReader::MMILLAsciiReader(const std::string& filename):_isInitialized(false),_nframes(0),_datapoints(0),_header_size(0)
+MMILLAsciiReader::MMILLAsciiReader(const std::string& filename):
+		_isInitialized(false),_nframes(0),_datapoints(0),_nangles(0),_header_size(0),_skipchar(0),_datalength(0)
 {
 	if ( !boost::filesystem::exists(filename.c_str()))
 		throw std::runtime_error("MMILLAsciiReader, file:"+filename+" does not exist");
@@ -83,12 +84,14 @@ std::vector<int> MMILLAsciiReader::readBlock(unsigned int i) const
 	std::vector<int> v;
 	try
 	{
-	v.reserve(_datapoints);
+		v.reserve(_datapoints);
 	}catch(...)
 	{
 		throw std::runtime_error("MMILLAsciiReader: problem reserving size of vector");
 	}
 	readIntsFromChar(b,b+_datalength,v);
+	if (v.size()!=_datapoints)
+		throw std::runtime_error("MMILLAsciiReader::readBlock, number of data points read different from expected");
 	return v;
 }
 

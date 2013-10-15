@@ -116,7 +116,7 @@ void UnitCellFinder::run(double cellmin)
 			diff = *it2;
 			diff-= *it1;
 			norm = diff.norm();
-			if (norm>rec_max || norm < 0.03)
+			if (norm>rec_max || norm < 0.01)
 				continue;
 			auto itlow = _clusters.lower_bound(norm-_threshold);
 			auto itup = _clusters.upper_bound(norm+_threshold);
@@ -255,7 +255,17 @@ void UnitCellFinder::determineLattice(int clustermax) const
 				double g12=v2.scalar_prod(v3);
 				g_1.set(g00,g01,g02,g01,g11,g12,g02,g12,g22);
 				g_1.invert();
-				SX::Crystal::NiggliReduction n(g_1,1e-5);
+
+				double a1=sqrt(g_1(0,0));
+				double b1=sqrt(g_1(1,1));
+				double c1=sqrt(g_1(2,2));
+				double gamma1=acos(g_1(0,1)/a1/b1)/SX::Units::deg;
+				double beta1=acos(g_1(0,2)/a1/c1)/SX::Units::deg;
+				double alpha1=acos(g_1(1,2)/b1/c1)/SX::Units::deg;
+				double volr1=sqrt(g_1.determinant());
+
+
+				SX::Crystal::NiggliReduction n(g_1,1e-3);
 				Matrix33<double> t=n.reduce();
 
 				double a=sqrt(t(0,0));
@@ -267,8 +277,9 @@ void UnitCellFinder::determineLattice(int clustermax) const
 				double volr=sqrt(t.determinant());
 
 				double score=costFunction(v1,v2,v3,0.05,5);
-				if (score>0.90)
+				if (score>0.5)
 				{
+					std::cout << a1 << " " << b1 << " " << c1 << " " << alpha1 << " " << beta1 << " " << gamma1 << "Vol: " << volr1 << " "<<   std::endl;
 					std::cout << a << " " << b << " " << c << " " << alpha << " " << beta << " " << gamma << "Vol: " << volr << " " << score <<   std::endl;
 				}
 

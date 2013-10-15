@@ -49,11 +49,11 @@ public:
 private:
 	bool _isInitialized;
 	std::size_t _nframes;
-	int _datapoints;
-	int _nangles;
+	std::size_t _datapoints;
+	std::size_t _nangles;
 	std::size_t _header_size;
-	int _skipchar;
-	int _datalength;
+	std::size_t _skipchar;
+	std::size_t _datalength;
 	boost::interprocess::file_mapping _map;
 
 };

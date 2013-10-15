@@ -163,6 +163,9 @@ void NiggliReduction::updateParameters()
 	_eta=2.0*_g(0,2);
 	_xi=2.0*_g(1,2);
 
+	_l=0;
+	_m=0;
+	_n=0;
 	// Define the angles as acute or obtuse
 	if (_xi<-_epsilon)
 		_l=-1;
