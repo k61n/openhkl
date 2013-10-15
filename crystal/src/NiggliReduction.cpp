@@ -183,7 +183,7 @@ void NiggliReduction::transformG()
 {
 	// Transform to new tensor G'=(CMat^T). G. CMat
 	_g=_g*_CMat;
-	_CMat.transpose_inplace();
+	_CMat.transposeInplace();
 	_g=_CMat*_g;
 	return;
 }

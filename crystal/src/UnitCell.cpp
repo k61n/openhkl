@@ -167,7 +167,7 @@ void UnitCell::calculateBMatrix()
 {
 	B=A;
 	B.invert();
-	B.transpose_inplace();
+	B.transposeInplace();
 	return;
 }
 void UnitCell::calculateGTensors()

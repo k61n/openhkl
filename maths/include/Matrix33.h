@@ -65,7 +65,7 @@ class Matrix33
   //! Access the element i,j -non const
   T& operator()(int i, int j);
   //! Transpose the matrix
-  void transpose_inplace();
+  void transposeInplace();
   // Return a copy of the transposed matrix
   Matrix33<T> transpose() const;
   //! Cofactor matrix
@@ -171,7 +171,7 @@ T Matrix33<T>::determinant() const
 	        el[2][0]*el[1][1]*el[0][2]-el[1][0]*el[0][1]*el[2][2]-el[0][0]*el[2][1]*el[1][2]);
 }
 template<class T>
-void Matrix33<T>::transpose_inplace()
+void Matrix33<T>::transposeInplace()
 {
 	T a01,a02,a10,a12,a20,a21;
 	a01=el[1][0];a02=el[2][0];
@@ -186,7 +186,7 @@ template<class T>
 Matrix33<T> Matrix33<T>::transpose() const
 {
 	Matrix33<T> out = *this;
-	out.transpose_inplace();
+	out.transposeInplace();
 	return out;
 }
 template<class T>
@@ -212,7 +212,7 @@ template<class T>
 void Matrix33<T>::adjoint()
 {
 	cofactor();
-	transpose_inplace();
+	transposeInplace();
 	return;
 }
 template<class T>
