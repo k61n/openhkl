@@ -181,7 +181,7 @@ void Blob3D::toEllipsoid(V3D& center, V3D& semi_axes, V3D& v0, V3D& v1, V3D& v2)
 
 	gsl_eigen_symmv (&m.matrix, val, vec, w);
 	gsl_eigen_symmv_free(w);
-    gsl_eigen_symmv_sort(val,vec,GSL_EIGEN_SORT_ABS_ASC);
+//    gsl_eigen_symmv_sort(val,vec,GSL_EIGEN_SORT_ABS_ASC);
 
     // 2.sqrt(Eigenvalues) = semi-axes
 	semi_axes[0]= 2.0*sqrt(gsl_vector_get(val, 0));
@@ -212,6 +212,11 @@ bool Blob3D::intersectionWithPlane(double a, double b, double c, double d, V3D& 
 
 	// Get the blob ellipsoid parameters
 	this->toEllipsoid(blob_center, blob_semi_axes, blob_axis1, blob_axis2, blob_axis3);
+	std::cout<<"ELLIPSOID CENTER "<<blob_center<<std::endl;
+	std::cout<<"ELLIPSOID SEMI AXES "<<blob_semi_axes<<std::endl;
+	std::cout<<"ELLIPSOID AXIS1 "<<blob_axis1<<std::endl;
+	std::cout<<"ELLIPSOID AXIS2 "<<blob_axis2<<std::endl;
+	std::cout<<"ELLIPSOID AXIS3 "<<blob_axis3<<std::endl;
 
 	// The vector normal to the plane
 	V3D normal(a,b,c);
@@ -254,6 +259,8 @@ bool Blob3D::intersectionWithPlane(double a, double b, double c, double d, V3D& 
     // This is the intersection between the plane and the axis normal to the plane that passes through the origin
     V3D rp = normal*(d/norm);
 
+    std::cout<<"rp"<<rp<<std::endl;
+
     // The difference vector between the aformentionned point and the center of the blob ellipsoid
     V3D u = rp-blob_center;
 
@@ -270,15 +277,24 @@ bool Blob3D::intersectionWithPlane(double a, double b, double c, double d, V3D& 
     Matrix33<double> E(1.0/a2, 0.0, 0.0, 0.0, 1.0/b2, 0.0, 0.0, 0.0, 1.0/c2);
     E = (Q.transpose()*E)*Q;
 
+    std::cout<<"Q MATRIX"<<std::endl;
+    std::cout<<Q<<std::endl;
+
+    std::cout<<"E MATRIX"<<std::endl;
+    std::cout<<E<<std::endl;
+
     Matrix33<double> M = E*R;
     Matrix33<double> RM = R.transpose()*M;
+
+    std::cout<<"RM MATRIX"<<std::endl;
+    std::cout<<RM<<std::endl;
 
     V3D v = E*u;
     V3D w = v*R + u*M;
 
-    double r2mr1 = RM(0,0)*RM(1,1);
+    double r1r2 = RM(0,0)*RM(1,1);
 
-    double den = 2.0*(r2mr1 - RM(0,1)*RM(0,1));
+    double den = 2.0*(r1r2 - RM(0,1)*RM(0,1));
 
     // The center of the intersection ellipse in the frame where z=0
     center[0] = (w[1]*RM(0,0)-w[0]*RM(1,1))/den;
@@ -287,7 +303,7 @@ bool Blob3D::intersectionWithPlane(double a, double b, double c, double d, V3D& 
     // The center of the intersection ellipse in the original frame
     center = R*center + rp;
 
-    double phi = 0.5*atan2(2.0*RM(0,1),r2mr1);
+    double phi = 0.5*atan2(2.0*RM(0,1),RM(1,1)-RM(0,0));
 
     double cphi = cos(phi);
     double sphi = sin(phi);
@@ -307,8 +323,7 @@ bool Blob3D::intersectionWithPlane(double a, double b, double c, double d, V3D& 
 
     double cphi2 = cphi*cphi;
     double sphi2 = sphi*sphi;
-    double s2phi = 2.0*cphi*sphi;
-    double r4s2phi = RM(0,1)*s2phi;
+    double r4s2phi = 2.0*RM(0,1)*cphi*sphi;
 
     // The value of the semi axes of the intersection ellipse
     semi_axes[0] = sqrt(1.0/(RM(0,0)*cphi2 + RM(1,1)*sphi2-r4s2phi));
