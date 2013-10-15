@@ -412,6 +412,15 @@ double V3D::distance(const V3D& _v) const
   return dif.norm();
 }
 
+bool V3D::nullVector(const double tol) const
+{
+	if (std::abs(v[0])>tol) return false;
+	if (std::abs(v[1])>tol) return false;
+	if (std::abs(v[2])>tol) return false;
+
+	return true;
+}
+
 /*!
   Determines if this,B,C are collinear (returns 1 if true)
   \param Bv :: Vector to test

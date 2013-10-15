@@ -111,7 +111,7 @@ class V3D
       void printSelf(std::ostream&) const;
       void read(std::istream&);
 
-      int nullVector(const double=1e-3) const;              ///< Determine if the point is null
+      bool nullVector(const double=1e-3) const;              ///< Determine if the point is null
       int coLinear(const V3D&,const V3D&) const;
 
     private:

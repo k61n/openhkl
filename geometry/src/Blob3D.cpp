@@ -268,10 +268,11 @@ bool Blob3D::intersectionWithPlane(double a, double b, double c, double d, V3D& 
     double b2 = blob_semi_axes.y()*blob_semi_axes.y();
     double c2 = blob_semi_axes.z()*blob_semi_axes.z();
     Matrix33<double> E(1.0/a2, 0.0, 0.0, 0.0, 1.0/b2, 0.0, 0.0, 0.0, 1.0/c2);
-    E = Q.transpose()*E*Q;
+//    Matrix33<double> Qt = Q.Tr();
+    E = (Q.Tr()*E)*Q;
 
     Matrix33<double> M = E*R;
-    Matrix33<double> RM = R.transpose()*M;
+    Matrix33<double> RM = R.Tr()*M;
 
     V3D v = E*u;
     V3D w = v*R + u*M;
