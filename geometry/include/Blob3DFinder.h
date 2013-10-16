@@ -83,7 +83,7 @@ namespace Geometry
 		{
 			// Go the the beginning of data
 			_datatype* datastart=ptrs[frame];
-			_datatype* dataptr;
+			_datatype* dataptr=datastart;
 			for (unsigned int row=0;row<nrows;++row)
 			{
 				if (!rowMajor)
