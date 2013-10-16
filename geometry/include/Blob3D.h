@@ -78,7 +78,7 @@ public:
   void toEllipsoid(V3D& center,V3D& semi_axes, V3D& v0, V3D& v1, V3D& v2) const;
   //! Print
   void printSelf(std::ostream& os) const;
-  //! Compute the intersection with a plane
+  //! Compute the intersection with a plane of equation \f$ax+by+cz+d=0\f$
   bool intersectionWithPlane(double a, double b, double c, double d, V3D& center, V3D& semi_axes, V3D& axis1, V3D& axis2) const;
 
 private:
