@@ -17,7 +17,7 @@ class WorkspaceData(object):
         
         self._scan.readFromFile(str(filename))
         
-        self._scan.labelling3D(10.0)
+        self._scan.labelling3D(12.0)
         
         self._currentFrame = None
         

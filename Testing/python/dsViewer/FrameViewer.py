@@ -50,7 +50,7 @@ class FrameViewer(wx.Panel):
 
         self._figure.clear()
         self._subplot = self._figure.add_subplot( 111 )
-        self._ax = self._subplot.imshow(data.currentFrame.T, origin='lower', vmax=15)
+        self._ax = self._subplot.imshow(data.currentFrame.T, cmap='gray',origin='lower', vmax=5)
         if self._cb is None:
             self._cb = self._figure.colorbar(self._ax)
         
@@ -59,9 +59,10 @@ class FrameViewer(wx.Panel):
         if ell.any():            
             for i in range(ell.shape[0]):
                 e = Ellipse(xy=ell[i,:2], width=ell[i,3], height=ell[i,4], angle=ell[i,5])
-                e.set_alpha(0.5)
+                e.set_alpha(1.0)
+                e.set_fill(False)
+                e.set_linewidth(2)
                 e.set_edgecolor('r')
-                e.set_linewidth(2.0)
                 self._subplot.add_artist(e)
         
         self._canvas.draw()
