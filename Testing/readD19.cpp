@@ -223,9 +223,9 @@ class Scan2D
         return getPythonKey(_meta,name);
     }
 
-    int getNumberOfFrames()
+    int getNFrames()
     {
-    	return _frames;
+    	return _nframes;
     }
 
 
