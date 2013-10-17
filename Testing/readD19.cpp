@@ -1,32 +1,38 @@
-#include <iostream>
-#include <vector>
-#include <set>
 #include <algorithm>
-#include <boost/spirit/include/qi.hpp>
-#include <boost/python.hpp>
-#include <numpy/arrayobject.h>
-#include <boost/python/object.hpp>
-#include <boost/python/numeric.hpp>
-#include <string>
-#include <ctime>
+#include <cmath>
 #include <cstdlib>
 #include <cstring>
-#include <sstream>
-#include <boost/config.hpp>
-#include <utility>
-#include <unordered_map>
+#include <ctime>
+#include <iostream>
+#include <map>
 #include <queue>
+#include <set>
+#include <sstream>
+#include <string>
+#include <unordered_map>
+#include <utility>
+#include <vector>
+
+#include <boost/config.hpp>
+#include <boost/python.hpp>
+#include <boost/python/numeric.hpp>
+#include <boost/python/object.hpp>
+#include <boost/spirit/include/qi.hpp>
+
+#include <numpy/arrayobject.h>
+
 #include "Blob2D.h"
 #include "Blob2DFinder.h"
 #include "Blob3DFinder.h"
-#include "V3D.h"
-#include "Matrix33.h"
-#include "RotAxis.h"
-#include "Units.h"
 #include "Cluster.h"
-#include "MMILLAsciiReader.h"
+#include "Ellipse.h"
+#include "Matrix33.h"
 #include "MetaData.h"
 #include "MetaDataWrapper.h"
+#include "MMILLAsciiReader.h"
+#include "RotAxis.h"
+#include "Units.h"
+#include "V3D.h"
 
 using namespace boost;
 using namespace SX::Geometry;
@@ -159,7 +165,8 @@ class Scan2D
 	{
 	    _wave=lam;
 	}
-	PyObject* labelling3D(double s2n)
+
+	void labelling3D(double s2n)
 	{
 	    std::vector<int*> ptr;
 	    for (int i=0;i<_nframes;++i)
@@ -175,39 +182,104 @@ class Scan2D
 	    // }
 
 	    // Convert to Q
-	    double R=0.764;
-        double h=0.40;
+//	    double R=0.764;
+//        double h=0.40;
 
-	    UnitCellFinder finder(0.1,0.01);
-	    std::vector<V3D> points;
-	    for (auto it=blobs.begin();it!=blobs.end();++it)
-	    {
-	        V3D v=it->second.getCenterOfMass();
-	        double gamma=(((640.0-v[0])/640.0)*120+(_gamma-60.))*deg;
-            double nu=atan2((0.5-v[1]/256.0)*h,R);
-            double Qx=cos(nu)*sin(gamma);
-            double Qy=cos(nu)*cos(gamma)-1.0;
-            double Qz=sin(nu);
-            double omega=(_scanstart+v[2]*_scanstep)*deg;
-            double newQx=Qx*cos(omega)-Qy*sin(omega);
-            double newQy=Qx*sin(omega)+Qy*cos(omega);
-            double newQz=Qz;
-            newQx/=_wave;
-            newQy/=_wave;
-            newQz/=_wave;
-	        finder.addPeak(V3D(newQx,newQy,newQz));
-	        points.push_back(V3D(newQx,newQy,newQz));
-	    }
-	    finder.run(1.0);
-	    std::cout << "Found " << finder.getNumberOfClusters() << " clusters.";
+//	    UnitCellFinder finder(0.1,0.01);
+//	    std::vector<V3D> points;
+//	    for (auto it=blobs.begin();it!=blobs.end();++it)
+//	    {
+//
+//	        V3D v=it->second.getCenterOfMass();
+//	        double gamma=(((640.0-v[0])/640.0)*120+(_gamma-60.))*deg;
+//            double nu=atan2((0.5-v[1]/256.0)*h,R);
+//            double Qx=cos(nu)*sin(gamma);
+//            double Qy=cos(nu)*cos(gamma)-1.0;
+//            double Qz=sin(nu);
+//            double omega=(_scanstart+v[2]*_scanstep)*deg;
+//            double newQx=Qx*cos(omega)-Qy*sin(omega);
+//            double newQy=Qx*sin(omega)+Qy*cos(omega);
+//            double newQz=Qz;
+//            newQx/=_wave;
+//            newQy/=_wave;
+//            newQz/=_wave;
+//	        finder.addPeak(V3D(newQx,newQy,newQz));
+//	        points.push_back(V3D(newQx,newQy,newQz));
+//	    }
+//	    finder.run(1.0);
+//	    std::cout << "Found " << finder.getNumberOfClusters() << " clusters.";
 
 
-	    const std::multimap<double,Cluster>& mm=finder.getClusters();
-	    int total=0;
+//	    const std::multimap<double,Cluster>& mm=finder.getClusters();
+//	    int total=0;
 
-        finder.determineLattice(20);
-	    return V3DToNumpy(points);
+//        finder.determineLattice(20);
+//	    return V3DToNumpy(points);
+
+	for (int i=0; i<_nframes; ++i)
+	{
+		_ellipses.insert(std::pair<int,ellipseVector>(i,ellipseVector()));
+		ellipseVector& e = _ellipses[i];
+		for (auto b_it=blobs.begin(); b_it!=blobs.end(); ++b_it)
+		{
+			V3D center, semi_axes, axis1, axis2;
+			bool test = b_it->second.intersectionWithPlane(0,0,1,i,center,semi_axes,axis1,axis2);
+			if (test)
+			{
+				Ellipse ell(center,semi_axes, axis1, axis2);
+				e.push_back(ell);
+			}
+		}
+
 	}
+
+	}
+
+    PyObject* getEllipses(int idx)
+    {
+
+    	std::cout<<"Frame:" <<idx<<"  "<<_ellipses[idx].size()<<std::endl;
+    	auto e_it = _ellipses.find(idx);
+    	if (e_it != _ellipses.end())
+    	{
+    		int nEllipses = e_it->second.size();
+			std::cout<<nEllipses<<std::endl;
+        	npy_intp dim[2]={nEllipses,6};
+        	PyObject* ndarray=PyArray_ZEROS(2,dim,NPY_DOUBLE,0);
+			for (size_t i=0; i < nEllipses;i++)
+			{
+				Ellipse& ell = e_it->second[i];
+				const V3D& center = ell.getCenter();
+				const V3D& axes = 2.0*ell.getSemiAxes();
+				const V3D& axis1 = ell.getAxis1();
+				double angle = atan2(axis1[1],axis1[0])*180.0/M_PI;
+
+				double* temp=(double*)PyArray_GETPTR2(ndarray,i,0);
+				*temp = center[0];
+
+				temp=(double*)PyArray_GETPTR2(ndarray,i,1);
+				*temp = center[1];
+
+				temp=(double*)PyArray_GETPTR2(ndarray,i,2);
+				*temp = center[2];
+
+				temp=(double*)PyArray_GETPTR2(ndarray,i,3);
+				*temp = axes[0];
+
+				temp=(double*)PyArray_GETPTR2(ndarray,i,4);
+				*temp = axes[1];
+
+				temp=(double*)PyArray_GETPTR2(ndarray,i,5);
+				*temp = angle;
+			}
+
+			return ndarray;
+    	}
+
+    return 0;
+
+    }
+
 
     PyObject* getFrame(int i)
     {
@@ -238,6 +310,8 @@ class Scan2D
     std::vector<vint> _frames;
     std::vector<int> _sum;
 	SX::MetaData* _meta;
+	typedef std::vector<Ellipse> ellipseVector;
+	std::map<int,ellipseVector> _ellipses;
 };
 
 
@@ -258,5 +332,6 @@ BOOST_PYTHON_MODULE(libD19)
 	.def("getCounts",&Scan2D::getCounts)
 	.def("getkey",&Scan2D::getKey)
 	.def("getNFrames",&Scan2D::getNFrames)
+	.def("getEllipses",&Scan2D::getEllipses)
 	;
 }

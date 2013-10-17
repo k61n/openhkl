@@ -17,8 +17,12 @@ class WorkspaceData(object):
         
         self._scan.readFromFile(str(filename))
         
+        self._scan.labelling3D(15.0)
+        
         self._currentFrame = None
-                                        
+        
+        self._idx = None
+                                                
         pub.sendMessage("LOAD SCAN", self)
                         
         
@@ -32,9 +36,17 @@ class WorkspaceData(object):
     def currentFrame(self):
         
         return self._currentFrame
+
     
+    @property
+    def idx(self):
+        
+        return self._idx
+
     
     def set_frame(self, idx):
+        
+        self._idx = idx
         
         self._currentFrame = self._scan.getFrame(idx)
         
@@ -100,7 +112,7 @@ class WorkspaceController(object):
         if data != self._data:
             return       
                         
-        self._frameViewer.set_new_frame(data.currentFrame)
+        self._frameViewer.set_new_frame(data)
         
         
     def on_set_new_frame(self, event):

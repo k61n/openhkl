@@ -6,8 +6,10 @@ from vtk.util import numpy_support
 import wx
 from wx.lib.pubsub import Publisher as pub
 
+import matplotlib
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg, NavigationToolbar2WxAgg
 from matplotlib.figure import Figure
+from matplotlib.patches import Ellipse
 
 class FrameViewer(wx.Panel):
     
@@ -44,12 +46,24 @@ class FrameViewer(wx.Panel):
         self.Layout()
                                   
               
-    def set_new_frame(self, frame):
+    def set_new_frame(self, data):
 
+        self._figure.clear()
         self._subplot = self._figure.add_subplot( 111 )
-        self._ax = self._subplot.imshow(frame, interpolation='none', origin='lower')
+        self._ax = self._subplot.imshow(data.currentFrame.T, interpolation='none', origin='lower', vmax=15)
         if self._cb is None:
             self._cb = self._figure.colorbar(self._ax)
+        
+        ell = data.scan.getEllipses(data.idx)
+                                
+        if ell.any():            
+            for i in range(ell.shape[0]):
+                e = Ellipse(xy=ell[i,:2], width=ell[i,3], height=ell[i,4], angle=ell[i,5])
+                e.set_alpha(0.5)
+                e.set_edgecolor('r')
+                e.set_linewidth(2.0)
+                self._subplot.add_artist(e)
+        
         self._canvas.draw()
         
                 
