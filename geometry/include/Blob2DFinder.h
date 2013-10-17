@@ -183,8 +183,6 @@ namespace Geometry
 
 		return blobs;
 	}
-	//template <typename _datatype> blob3DCollection findBlobs3D(const std::vector<_datatype*>& dataptr,unsigned int nrows,unsigned int ncols, _datatype threashold, int minComp, int maxComp, bool rowMajor=1);
-
 
 
 

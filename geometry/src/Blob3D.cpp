@@ -182,11 +182,8 @@ void Blob3D::toEllipsoid(V3D& center, V3D& semi_axes, V3D& v0, V3D& v1, V3D& v2)
 
     gsl_eigen_symmv (&m.matrix, val, vec, w);
     gsl_eigen_symmv_free(w);
-//    gsl_eigen_symmv_sort(val,vec,GSL_EIGEN_SORT_ABS_ASC);
+    gsl_eigen_symmv_sort(val,vec,GSL_EIGEN_SORT_ABS_ASC);
 
-    // semi axes --> a = sqrt( 2.5*(lambda2+lambd3-lambda1) )
-    // semi axes --> b = sqrt( 2.5*(lambda1+lambd3-lambda2) )
-    // semi axes --> c = sqrt( 2.5*(lambda1+lambd2-lambda3) )
     double lam1 = gsl_vector_get(val, 0);
     double lam2 = gsl_vector_get(val, 1);
     double lam3 = gsl_vector_get(val, 2);
@@ -199,9 +196,9 @@ void Blob3D::toEllipsoid(V3D& center, V3D& semi_axes, V3D& v0, V3D& v1, V3D& v2)
     gsl_vector_view vec_1 = gsl_matrix_column(vec, 1);
     gsl_vector_view vec_2 = gsl_matrix_column(vec, 2);
     //
-v0(gsl_vector_get(&vec_0.vector,0),gsl_vector_get(&vec_0.vector,1),gsl_vector_get(&vec_0.vector,2));
-v1(gsl_vector_get(&vec_1.vector,0),gsl_vector_get(&vec_1.vector,1),gsl_vector_get(&vec_1.vector,2));
-v2(gsl_vector_get(&vec_2.vector,0),gsl_vector_get(&vec_2.vector,1),gsl_vector_get(&vec_2.vector,2));
+	v0(gsl_vector_get(&vec_0.vector,0),gsl_vector_get(&vec_0.vector,1),gsl_vector_get(&vec_0.vector,2));
+	v1(gsl_vector_get(&vec_1.vector,0),gsl_vector_get(&vec_1.vector,1),gsl_vector_get(&vec_1.vector,2));
+	v2(gsl_vector_get(&vec_2.vector,0),gsl_vector_get(&vec_2.vector,1),gsl_vector_get(&vec_2.vector,2));
 
     //
 
