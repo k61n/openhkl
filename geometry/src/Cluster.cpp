@@ -230,7 +230,6 @@ void UnitCellFinder::determineLattice(int clustermax) const
 
 	for (auto it=clust.begin();it!=clust.begin()+clustermax;++it)
 	{
-		int i=0;
 		V3D v1=(*it).getCenter();
 		for (auto it2=it+1;it2!=clust.begin()+clustermax;++it2)
 		{
