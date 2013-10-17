@@ -122,7 +122,18 @@ class Scan2D
 	    _gamma=_meta->getKey<double>("2theta(gamma)");
 	    _scanstart=_meta->getKey<double>("scanstart");
 	    _scanstep=_meta->getKey<double>("scanstep");
-	    std::cout << "Instrument:" << _meta->getKey<std::string>("Instrument") << std::endl;
+	    std::string instrument=_meta->getKey<std::string>("Instrument");
+	    if (instrument.compare("D19")==0)
+	    {
+	    	_nrows=256;
+	    	_ncols=640;
+	    }
+	    else if (instrument.compare("D10")==0 || instrument.compare("D9")==0)
+	    {
+	    	_nrows=32;
+	    	_ncols=32;
+	    }
+	    std::cout << "Instrument:" << instrument << std::endl;
 	    std::cout << "Wavelength:" << _wave << std::endl;
 	    std::cout << "Gamma:" << _gamma << std::endl;
 	    std::cout << "Start Omega:" << _scanstart << std::endl;
@@ -144,10 +155,10 @@ class Scan2D
 
     PyObject* labelling(int frame, double s2n)
 	{
-	    int max=s2n*_sum[frame]/(640.0*256.0);
+	    int max=s2n*_sum[frame]/(_nrows*_ncols);
 	    vint& m=_frames[frame];
 	    int* ptr=&m[0];
-	    blob2DCollection blobs=findBlobs2D<int>(ptr,256,640,max,10,1000,0);
+	    blob2DCollection blobs=findBlobs2D<int>(ptr,_nrows,_ncols,max,10,1000,0);
 	    //for (auto it=blobs.begin();it!=blobs.end();)
 	    //{
 	    //    Blob2D& p=it->second;
@@ -174,7 +185,7 @@ class Scan2D
 	        vint& m=_frames[i];
 	        ptr.push_back(&m[0]);
 	    }
-	    blob3DCollection blobs=findBlobs3D<int>(ptr,256,640,s2n,20,1000,0);
+	    blob3DCollection blobs=findBlobs3D<int>(ptr,_nrows,_ncols,s2n,20,1000,0);
 	    std::cout << "Found " << blobs.size() << " peaks" <<  std::endl;
 	    //for (auto it=blobs.begin();it!=blobs.end();++it)
 	    //{
@@ -283,7 +294,7 @@ class Scan2D
 
     PyObject* getFrame(int i)
     {
-        vectorToNumpyMatrix(_frames[i],640,256);
+        vectorToNumpyMatrix(_frames[i],_ncols,_nrows);
     }
 
     std::size_t getCounts(int i) const
@@ -312,6 +323,7 @@ class Scan2D
 	SX::MetaData* _meta;
 	typedef std::vector<Ellipse> ellipseVector;
 	std::map<int,ellipseVector> _ellipses;
+	int _nrows, _ncols;
 };
 
 

@@ -15,34 +15,34 @@ int main()
 	typedef std::vector<int> vint;
 
 	std::vector<vint> data;
-
-	data.resize(20);
+	const int N=100;
+	data.resize(N);
 
 	for (auto it=data.begin(); it != data.end(); ++it)
 	{
-		it->resize(400);
+		it->resize(N*N);
 
 	}
 
-	for (int i=0; i<20; ++i)
+	for (int i=0; i<N; ++i)
 	{
 		vint& frame=data[i];
-		double X = (i-10.0);
+		double X = (i-50.0);
 		double X2 = X*X/10.0;
-		for (int j=0; j<20; ++j)
+		for (int j=0; j<N; ++j)
 		{
-			double Y = (j-10.0);
-			double Y2 = Y*Y/20.0;
-			for (int k=0; k<20; ++k)
+			double Y = (j-50.0);
+			double Y2 = Y*Y/10.0;
+			for (int k=0; k<N; ++k)
 			{
-				double Z = (k-10.0);
-				double Z2 = Z*Z/2.0;
-				frame[j*20+k] = 1000.0*std::exp(-(X2 + Y2 + Z2));
+				double Z = (k-50.0);
+				double Z2 = Z*Z/10.0;
+				frame[j*N+k] = 1000.0*std::exp(-0.5*(X2 + Y2 + Z2));
 			}
 		}
 	}
     std::vector<int*> ptr;
-    for (int i=0;i<20;++i)
+    for (int i=0;i<N;++i)
     {
         vint& m=data[i];
         ptr.push_back(&m[0]);
