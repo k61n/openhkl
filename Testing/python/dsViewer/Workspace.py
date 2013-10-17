@@ -83,7 +83,7 @@ class WorkspaceController(object):
         pub.subscribe(self.msg_set_new_frame, "SET NEW FRAME")
 
 
-        self._settings.set_frame_range(self._data.scan.getNumberOfFrames())      
+        self._settings.set_frame_range(self._data.scan.getNFrames())      
         self._data.set_frame(0)
                 
         
