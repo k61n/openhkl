@@ -1,3 +1,4 @@
+
 #include "MetaData.h"
 
 namespace SX{
@@ -48,5 +49,22 @@ bool MetaData::isKey(const std::string& key) const
 		heterit it2=_map.find(ptr);
 		return  (it2!=_map.end());
 }
+
+boost::any MetaData::getKey(const std::string& key) const
+{
+	// Search if this key is in the set.
+	keysetcit it=_metakeys.find(key);
+		if (it==_metakeys.end())
+			throw std::runtime_error("Could not locate key "+key+ "in the set");
+		const char* ptr=(*it).c_str();
+		heterit it2=_map.find(ptr);
+		if (it2!=_map.end())
+		{
+			return it2->second;
+		}
+		else
+			throw std::runtime_error("Could not locate key "+key+ "in the set");
+}
+
 
 } // End namespace SX.

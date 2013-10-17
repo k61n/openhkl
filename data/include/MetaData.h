@@ -26,14 +26,17 @@
  */
 #ifndef NSXTOOL_METADATA_H_
 #define NSXTOOL_METADATA_H_
+
 #include <map>
 #include <set>
-#include<string>
+#include <string>
 #include <boost/any.hpp>
 #include <map>
 #include <stdexcept>
+
 namespace SX
 {
+
 
 // Maps
 typedef std::map<const char*,boost::any> hetermap;
@@ -66,7 +69,7 @@ public:
 	template <class _type>  _type getKey(const char* key) const;
 	//! Return the value as boost::any. Explicit casting with boost::any_cast must be performed.
 	//@ return : value corresponding to key
-	boost::any& getKey(const std::string& key);
+	boost::any getKey(const std::string& key) const;
 	//! Is this key in the metadata
 	bool  isKey(const std::string& key) const;
 	//!Is this key in the metadata
