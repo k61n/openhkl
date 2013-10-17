@@ -223,6 +223,10 @@ class Scan2D
         return getPythonKey(_meta,name);
     }
 
+    int getNumberOfFrames()
+    {
+    	return _frames;
+    }
 
 
     private:
@@ -253,5 +257,6 @@ BOOST_PYTHON_MODULE(libD19)
 	.def("setWavelength",&Scan2D::setWavelength)
 	.def("getCounts",&Scan2D::getCounts)
 	.def("getkey",&Scan2D::getKey)
+	.def("getNumberOfFrames",&Scan2D::getNumberOfFrames)
 	;
 }
