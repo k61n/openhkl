@@ -26,6 +26,7 @@
 #include "Cluster.h"
 #include "MMILLAsciiReader.h"
 #include "MetaData.h"
+#include "MetaDataWrapper.h"
 
 using namespace boost;
 using namespace SX::Geometry;
@@ -213,60 +214,13 @@ class Scan2D
         vectorToNumpyMatrix(_frames[i],640,256);
     }
 
-    void convertToQ()
-    {
-
-        std::vector<V3D> res(640*256*100);
-
-        double gammaC(60.0*deg), R(0.764*m), h(40*cm);
-
-        std::vector<double> gamma(640), nu(256), cg(640), sg(640), cn(256), sn(256);
-
-        for (int i=0; i<640;++i)
-        {
-            gamma[i] = 120.0*(((i++)+0.5)/640.0 - 60.0)*deg + gammaC;
-        }
-
-
-
-        for (int i=0; i<256; ++i)
-        {
-            nu[i] = atan2((-0.5 + (i+0.5)/256.0)*h,R);
-        }
-
-        std::transform(gamma.begin(), gamma.end(), cg.begin(), [](double a){return cos(a);});
-        std::transform(gamma.begin(), gamma.end(), sg.begin(), [](double a){return sin(a);});
-        std::transform(nu.begin(), nu.end(), cn.begin(), [](double a){return cos(a);});
-        std::transform(nu.begin(), nu.end(), sn.begin(), [](double a){return sin(a);});
-
-        SX::Matrix33<double> omega;
-
-        int incr=0;
-        #pragma omp parallel for
-        for (int i=0;i<100;++i)
-        {
-            omega = AxisZCCW.getMatrix(-33.0*deg + i*0.07*deg);
-
-            int* d = &((_frames[i])[0]);
-
-            for (int j=0; j<256; ++j)
-            {
-                double& ccn=cn[j];
-                double& scn=sn[j];
-                for (int k=0; k<640; ++k)
-                {
-                   V3D& v = res[incr++];
-                   v[0]=ccn*sg[k];
-                   v[1]=ccn*cg[k]-1.0;
-                   v[2]=scn;
-                   omega*v;
-                }
-            }
-        }
-    }
     std::size_t getCounts(int i) const
     {
         return _sum[i];
+    }
+    PyObject* getKey(const std::string& name)
+    {
+        return getPythonKey(_meta,name);
     }
 
 
@@ -296,8 +250,8 @@ BOOST_PYTHON_MODULE(libD19)
 	.def("getFrame", &Scan2D::getFrame)
 	.def("labelling",&Scan2D::labelling)
 	.def("labelling3D",&Scan2D::labelling3D)
-	.def("convertToQ",&Scan2D::convertToQ)
 	.def("setWavelength",&Scan2D::setWavelength)
 	.def("getCounts",&Scan2D::getCounts)
+	.def("getkey",&Scan2D::getKey)
 	;
 }
