@@ -306,6 +306,7 @@ class Scan2D
         return getPythonKey(_meta,name);
     }
 
+    // Return a selected meta data key as a python string
     PyObject* getKeyAsString(const std::string& name)
     {
         return getPythonKeyAsString(_meta,name);
@@ -316,6 +317,7 @@ class Scan2D
     	return _nframes;
     }
 
+    // Return all the meta data keys available as a python list
     boost::python::list getAllKeys()
     {
 
