@@ -37,6 +37,5 @@ namespace SX
 PyObject* getPythonKey(MetaData* m, const std::string& key);
 PyObject* getPythonKeyAsString(MetaData* m, const std::string& key);
 
-
 }
 #endif
