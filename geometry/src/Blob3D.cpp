@@ -164,15 +164,15 @@ void Blob3D::toEllipsoid(V3D& center, V3D& semi_axes, V3D& v0, V3D& v1, V3D& v2)
     center(xc,yc,zc);
 
     // Now compute second moment with respect to center of mass
-    double Ixx=(_m020+_m002)/_m000-yc*yc-zc*zc;
-    double Iyy=(_m200+_m002)/_m000-xc*xc-zc*zc;
-    double Izz=(_m200+_m020)/_m000-xc*xc-yc*yc;
+    double Ixx=_m200/_m000-xc*xc;
+    double Iyy=_m020/_m000-yc*yc;
+    double Izz=_m002/_m000-zc*zc;
     double Ixy=_m110/_m000-xc*yc;
     double Iyz=_m011/_m000-yc*zc;
     double Ixz=_m101/_m000-xc*zc;
 
     // Diagonalize the inertia tensor
-    double inertia[] ={Ixx,-Ixy,-Ixz,-Ixy, Iyy, -Iyz,-Ixz, -Iyz, Izz};
+    double inertia[] ={Ixx,Ixy,Ixz,Ixy, Iyy, Iyz,Ixz, Iyz, Izz};
     gsl_matrix_view m = gsl_matrix_view_array(inertia, 3, 3);
 
     gsl_vector *val = gsl_vector_alloc (3);
@@ -184,12 +184,10 @@ void Blob3D::toEllipsoid(V3D& center, V3D& semi_axes, V3D& v0, V3D& v1, V3D& v2)
     gsl_eigen_symmv_free(w);
     gsl_eigen_symmv_sort(val,vec,GSL_EIGEN_SORT_ABS_ASC);
 
-    double lam1 = gsl_vector_get(val, 0);
-    double lam2 = gsl_vector_get(val, 1);
-    double lam3 = gsl_vector_get(val, 2);
-    semi_axes[0]= sqrt(2.5*(lam2+lam3-lam1));
-    semi_axes[1]= sqrt(2.5*(lam1+lam3-lam2));
-    semi_axes[2]= sqrt(2.5*(lam1+lam2-lam3));
+    // This is the Gaussian sigma along three directions
+    semi_axes[0]= sqrt(gsl_vector_get(val, 0));
+    semi_axes[1]= sqrt(gsl_vector_get(val, 1));
+    semi_axes[2]= sqrt(gsl_vector_get(val, 2));
 
     // Now eigenvectors
     gsl_vector_view vec_0 = gsl_matrix_column(vec, 0);
