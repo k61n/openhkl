@@ -126,11 +126,11 @@ void Blob2D::toEllipse(double& xc, double& yc, double& s_a, double& s_b, double&
 	xc=_m10/_m00;
 	yc=_m01/_m00;
 	// Now compute second moment with respect to center of mass
-	double Ixx=_m02/_m00-yc*yc;
-	double Iyy=_m20/_m00-xc*xc;
+	double Ixx=_m20/_m00-xc*xc;
+	double Iyy=_m02/_m00-yc*yc;
 	double Ixy=_m11/_m00-xc*yc;
 	// Diagonalize the second moment tensor [[Ixx,Ixy],[Ixy,Iyy]]
-	double inertia[] ={Ixx,-Ixy,-Ixy,Iyy};
+	double inertia[] ={Ixx,Ixy,Ixy,Iyy};
 	gsl_matrix_view m = gsl_matrix_view_array(inertia, 2, 2);
 
 	gsl_vector *val = gsl_vector_alloc (2);
@@ -143,14 +143,14 @@ void Blob2D::toEllipse(double& xc, double& yc, double& s_a, double& s_b, double&
 	gsl_eigen_symmv_sort(val,vec,GSL_EIGEN_SORT_ABS_ASC);
 
 	// 2.sqrt(Eigenvalues) = semi-axes
-	s_a= 2.0*sqrt(gsl_vector_get(val, 0));
-	s_b= 2.0*sqrt(gsl_vector_get(val, 1));
+	s_a= sqrt(gsl_vector_get(val, 0));
+	s_b= sqrt(gsl_vector_get(val, 1));
 
-	// Now get second eigenvector
-	gsl_vector_view vec_1 = gsl_matrix_column(vec, 1);
+	// Now get first eigenvector
+	gsl_vector_view vec_0 = gsl_matrix_column(vec, 0);
 	//
-	double v1x=gsl_vector_get(&vec_1.vector,0);
-	double v1y=gsl_vector_get(&vec_1.vector,1);
+	double v1x=gsl_vector_get(&vec_0.vector,0);
+	double v1y=gsl_vector_get(&vec_0.vector,1);
 	angle=atan2(v1y,v1x);
 
 }
