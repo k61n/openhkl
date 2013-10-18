@@ -316,6 +316,23 @@ class Scan2D
     	return _nframes;
     }
 
+    boost::python::list getAllKeys()
+    {
+
+    	boost::python::list l;
+
+    	const std::set<std::string>& keys = _meta->getAllKeys();
+
+    	std::set<std::string>::const_iterator it;
+
+    	for (it = keys.begin(); it != keys.end(); ++it)
+    	{
+    		l.append(*it);
+    	}
+		return l;
+
+    }
+
 
     private:
     int _nframes;
@@ -347,8 +364,9 @@ BOOST_PYTHON_MODULE(libD19)
 	.def("labelling3D",&Scan2D::labelling3D)
 	.def("setWavelength",&Scan2D::setWavelength)
 	.def("getCounts",&Scan2D::getCounts)
-	.def("getkey",&Scan2D::getKey)
-	.def("getkeyAsString",&Scan2D::getKeyAsString)
+	.def("getKey",&Scan2D::getKey)
+	.def("getKeyAsString",&Scan2D::getKeyAsString)
+	.def("getAllKeys",&Scan2D::getAllKeys)
 	.def("getNFrames",&Scan2D::getNFrames)
 	.def("getEllipses",&Scan2D::getEllipses)
 	;
