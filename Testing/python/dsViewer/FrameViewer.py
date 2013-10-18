@@ -50,7 +50,7 @@ class FrameViewer(wx.Panel):
 
         self._figure.clear()
         self._subplot = self._figure.add_subplot( 111 )
-        self._ax = self._subplot.imshow(data.currentFrame.T, cmap='gray', vmax=5)
+        self._ax = self._subplot.imshow(data.currentFrame.T, vmax=5)
         if self._cb is None:
             self._cb = self._figure.colorbar(self._ax)
         

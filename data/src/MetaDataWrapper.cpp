@@ -17,4 +17,10 @@ PyObject* getPythonKey(MetaData* m, const std::string& key)
 		throw std::runtime_error("Key type not listed");
 }
 
+PyObject* getPythonKeyAsString(MetaData* m, const std::string& key)
+{
+	boost::any value=m->getKey(key);
+	return Py_BuildValue("s", boost::any_cast<std::string>(value).c_str());
+}
+
 }
