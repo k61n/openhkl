@@ -306,6 +306,11 @@ class Scan2D
         return getPythonKey(_meta,name);
     }
 
+    PyObject* getKeyAsString(const std::string& name)
+    {
+        return getPythonKeyAsString(_meta,name);
+    }
+
     int getNFrames()
     {
     	return _nframes;
@@ -343,6 +348,7 @@ BOOST_PYTHON_MODULE(libD19)
 	.def("setWavelength",&Scan2D::setWavelength)
 	.def("getCounts",&Scan2D::getCounts)
 	.def("getkey",&Scan2D::getKey)
+	.def("getkeyAsString",&Scan2D::getKeyAsString)
 	.def("getNFrames",&Scan2D::getNFrames)
 	.def("getEllipses",&Scan2D::getEllipses)
 	;
