@@ -6,30 +6,25 @@ import wx.aui as aui
 from wx.lib.pubsub import Publisher as pub
 
 from Workspace import WorkspaceController
+from Scan import Scan
 
-class Data(object):
-    
-    def __init__(self):
+class ScansCollection(collections.OrderedDict):
+
+    def add_scan(self, filename):
         
-        self._data = []
-
-
-    def add_data(self, name):
-        
-        if name in self._data:
+        if filename in self:
             return
+                
+        self[filename] = Scan(filename)
         
-        self._data.append(name)
-        
-        pub.sendMessage("ADD DATA", name)
-        
-        
-    def remove_data(self, name):
-        
-        idx = self._data.index(name)
-        
-        del self._data[idx]
+        pub.sendMessage("ADD SCAN", self[filename])
 
+        
+    def remove_scan(self, name):
+        
+        pass
+        
+        
 
 class MyMenuBar(wx.MenuBar):
 
@@ -60,6 +55,8 @@ class MyMenuBar(wx.MenuBar):
 class MainFrame(wx.Frame):
     
     def __init__(self, parent, title="Detector Space Viewer (demo version)"):
+
+        self._workspaces = collections.OrderedDict()
         
         wx.Frame.__init__(self, parent, wx.ID_ANY, title, size = (1300,800))
 
@@ -86,24 +83,20 @@ class MainFrame(wx.Frame):
     def menubar(self):
         return self._menubar
     
-            
-    def create_workspace(self, wksp, name):
 
-        self._notebook.AddPage(wksp, name)         
-        
+    def add_scan(self, scan):
 
-    def add_data(self, data):
+        name = os.path.basename(scan.filename)
        
-       key = os.path.basename(data)
-        
-       data = wx.TreeItemData(data) 
-       
-       self._dataTree.AppendItem(self._dataTreeRoot, key, data=data)
+        self._dataTree.AppendItem(self._dataTreeRoot, name)
+
+        self._workspaces[name] = WorkspaceController(self._notebook, scan)
+
+        self._notebook.AddPage(self._workspaces[name].workspace, name)         
 
         
     def load(self):
     
-        
         data = wx.TreeItemData(filename)
         
     
@@ -126,36 +119,21 @@ class MainController(object):
     
     def __init__(self, app):
         
-        self._data = Data()
+        self._scans = ScansCollection()
         
         self._mainFrame = MainFrame(None)
-        
-        self._workspaces = collections.OrderedDict()
-        
+                
         self._mainFrame.Show()
 
+        # wx events
         self._mainFrame.Bind(wx.EVT_MENU, self.on_load_data, self._mainFrame.menubar.load)
         self._mainFrame.Bind(wx.EVT_MENU, self.on_quit, self._mainFrame.menubar.quit)
-       
-        self._mainFrame.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self.on_create_workspace, self._mainFrame._dataTree)
-
-        pub.subscribe(self.on_add_data, "ADD DATA")
-        
-    
-    def on_add_data(self, message):
-        
-        self._mainFrame.add_data(message.data)
-        
-        
-    def on_create_workspace(self, event):
-        
-        filename = self._mainFrame._dataTree.GetItemData(event.GetItem()).GetData()
-        
-        self._workspaces[filename] = wksp = WorkspaceController(self._mainFrame._notebook, filename)
+        pub.subscribe(self.msg_add_scan, "ADD SCAN")
                 
-        name = os.path.basename(filename)
-
-        self._mainFrame.create_workspace(wksp.workspace, name)
+                
+    def msg_add_scan(self, message):
+        
+        self._mainFrame.add_scan(message.data)
         
         
     def on_load_data(self, event):
@@ -168,26 +146,14 @@ class MainController(object):
         filename = dialog.GetPath()
         
         if not filename:
-            return
+            return        
         
-        self._data.add_data(filename)
-
-    
+        self._scans.add_scan(filename)
+                                
         
     def on_quit(self, event):
         
         self._mainFrame.quit()
-        
-        
-        
-        
-#    def on_add_workspace(self, event):
-#        
-#        filename = self._main._dataTree.GetItemData(event.GetItem()).GetData()
-#
-#        self._main.add_workspace(filename)
-        
-
         
         
 if __name__ == "__main__":

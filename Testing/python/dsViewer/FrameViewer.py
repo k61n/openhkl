@@ -22,6 +22,8 @@ class FrameViewer(wx.Panel):
         
     def build_panel(self):
         
+        self._ellipses = []
+        
         self._sizer = wx.BoxSizer(wx.VERTICAL)
         
         self._figure = Figure(figsize=(5,4), dpi=None)
@@ -46,26 +48,29 @@ class FrameViewer(wx.Panel):
         self.Layout()
                                   
               
-    def set_new_frame(self, data):
+    def set_new_frame(self, scan):
 
         self._figure.clear()
         self._subplot = self._figure.add_subplot( 111 )
-        self._ax = self._subplot.imshow(data.currentFrame.T, vmax=5)
+        self._ax = self._subplot.imshow(scan.currentFrame.T, vmax=5)
+
         if self._cb is None:
             self._cb = self._figure.colorbar(self._ax)
+                                        
+        self._canvas.draw()
         
-        ell = data.scan.getEllipses(data.idx)
-                                
-        if ell.any():            
-            for i in range(ell.shape[0]):
-                e = Ellipse(xy=ell[i,:2], width=ell[i,3], height=ell[i,4], angle=ell[i,5])
+                
+    def show_ellipses(self, ellipses):
+
+        if ellipses.any():   
+            for i in range(ellipses.shape[0]):
+                e = Ellipse(xy=ellipses[i,:2], width=ellipses[i,3], height=ellipses[i,4], angle=ellipses[i,5])
                 e.set_alpha(1.0)
                 e.set_fill(False)
                 e.set_linewidth(2)
                 e.set_edgecolor('r')
                 self._subplot.add_artist(e)
         
-        self._canvas.draw()
         
                 
     def set_lut_range(self, mi, ma):
