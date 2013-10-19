@@ -16,9 +16,9 @@ class Settings(wx.ScrolledWindow):
         thresholdText = wx.StaticText(self, wx.ID_ANY, label="Threshold")
         self._threshold = wx.TextCtrl(self, wx.ID_ANY, style=wx.TE_PROCESS_ENTER, value="10.0")
         minSizeText = wx.StaticText(self, wx.ID_ANY, label="Min. size")
-        self._minSize = intctrl.IntCtrl(self, wx.ID_ANY, style=wx.TE_PROCESS_ENTER, value=1, min=1, limited=True)
+        self._minSize = intctrl.IntCtrl(self, wx.ID_ANY, style=wx.TE_PROCESS_ENTER, value=10, min=1, limited=True)
         maxSizeText = wx.StaticText(self, wx.ID_ANY, label="Max. size")
-        self._maxSize = intctrl.IntCtrl(self, wx.ID_ANY, style=wx.TE_PROCESS_ENTER, value=100, min=1, limited=True)
+        self._maxSize = intctrl.IntCtrl(self, wx.ID_ANY, style=wx.TE_PROCESS_ENTER, value=1000, min=1, limited=True)
         self._searchBlobs = wx.Button(self, wx.ID_ANY, label="Search")
 
         self._showEllipse = wx.CheckBox(self, wx.ID_ANY, label="Show ellipse")
@@ -98,4 +98,5 @@ class Settings(wx.ScrolledWindow):
         self._frameSlider.SetMin(0)
         self._frameSlider.SetMax(max)
         self._frameSlider.SetValue(0)
+        self._frameSlider.SetTickFreq(1)
                   

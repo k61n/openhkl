@@ -169,12 +169,12 @@ namespace Geometry
 					labels2.push(label);
 					if (newlabel) // Create a new blob if necessary
 					{
-						blobs.insert(std::pair<int,Blob3D>(label,Blob3D(row,col,frame,value)));
+						blobs.insert(std::pair<int,Blob3D>(label,Blob3D(col,row,frame,static_cast<double>(value))));
 					}
 					else
 					{
 						Blob3D& roi=blobs[label];
-						roi.addPoint(row,col,frame,value);
+						roi.addPoint(col,row,frame,static_cast<double>(value));
 					}
 
 

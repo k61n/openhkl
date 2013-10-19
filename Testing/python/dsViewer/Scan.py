@@ -83,11 +83,7 @@ class Scan(object):
                 
                 
     def get_ellipses(self):
-        
-        if self._ellipses is None:
-            return
-        
+                
         self._ellipses = self._scan.getEllipses(self._idx)
-        
         if self._ellipses.any():
             pub.sendMessage("GET ELLIPSES", self)

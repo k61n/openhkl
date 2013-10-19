@@ -52,7 +52,7 @@ class FrameViewer(wx.Panel):
 
         self._figure.clear()
         self._subplot = self._figure.add_subplot( 111 )
-        self._ax = self._subplot.imshow(scan.currentFrame.T, vmax=5)
+        self._ax = self._subplot.imshow(scan.currentFrame.T,cmap='Blues',interpolation='None', vmax=10)
 
         if self._cb is None:
             self._cb = self._figure.colorbar(self._ax)
@@ -68,6 +68,7 @@ class FrameViewer(wx.Panel):
                 e.set_alpha(1.0)
                 e.set_fill(False)
                 e.set_linewidth(2)
+                e.set_linestyle('dotted')
                 e.set_edgecolor('r')
                 self._subplot.add_artist(e)
             self._canvas.draw()
