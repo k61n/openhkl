@@ -147,9 +147,15 @@ V3D Blob3D::getCenterOfMass() const
 
 void Blob3D::printSelf(std::ostream& os) const
 {
-    os << "Blob center:" << _m100/_m000 << "," << _m010/_m000 << "," << _m001/_m000 << std::endl;
-    os << "Blob #points:" << _npoints << std::endl;
-    os << "Intensity" << _m000 << std::endl;
+	V3D center,semi_axes, v0,v1,v2;
+	toEllipsoid(center, semi_axes, v0, v1, v2);
+    os << "#Blob center:" << center << std::endl;
+    os << "Points in the blob:" << _npoints << std::endl;
+    os << "Intensity:" << _m000 << std::endl;
+    os << "Semi-axes lengths" << semi_axes << std::endl;
+    os << "Axe 1:" << v0 << std::endl;
+    os << "Axe 2:" << v1 << std::endl;
+    os << "Axe 3:" << v2 << std::endl;
 
 }
 void Blob3D::toEllipsoid(V3D& center, V3D& semi_axes, V3D& v0, V3D& v1, V3D& v2) const
@@ -214,6 +220,7 @@ bool Blob3D::intersectionWithPlane(double a, double b, double c, double d, V3D& 
     // Get the blob ellipsoid parameters
     this->toEllipsoid(blob_center, blob_semi_axes, blob_axis1, blob_axis2, blob_axis3);
 
+    blob_semi_axes*=3.0;
     // The vector normal to the plane
     V3D normal(a,b,c);
     double norm = normal.normalize();
@@ -260,9 +267,9 @@ bool Blob3D::intersectionWithPlane(double a, double b, double c, double d, V3D& 
 
     // The matrix of the blob ellipsoid axis vectors
     Matrix33<double> Q;
-    Q.set(blob_axis1.x(), blob_axis2.x(), blob_axis3.x(),
-          blob_axis1.y(), blob_axis2.y(), blob_axis3.y(),
-          blob_axis1.z(), blob_axis2.z(), blob_axis3.z());
+    Q.set(blob_axis1.x(), blob_axis1.y(), blob_axis1.z(),
+          blob_axis2.x(), blob_axis2.y(), blob_axis2.z(),
+          blob_axis3.x(), blob_axis3.y(), blob_axis3.z());
 
     // The matrix of the blob ellipsoid semi axis
     double a2 = blob_semi_axes.x()*blob_semi_axes.x();

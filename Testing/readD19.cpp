@@ -190,10 +190,10 @@ class Scan2D
 	    std::cout << "Search peaks above" << z*s2n << std::endl;
 	    blob3DCollection blobs=findBlobs3D<int>(ptr,_nrows,_ncols,s2n*z,minComp,maxComp,0);
 	    std::cout << "Found " << blobs.size() << " peaks" <<  std::endl;
-	    //for (auto it=blobs.begin();it!=blobs.end();++it)
-	    //{
-	    //    std::cout << (it->second);
-	    // }
+	    for (auto it=blobs.begin();it!=blobs.end();++it)
+	    {
+	        std::cout << (it->second);
+	    }
 
 	    // Convert to Q
 //	    double R=0.764;
