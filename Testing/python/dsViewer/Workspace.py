@@ -64,8 +64,10 @@ class WorkspaceController(object):
         self._workspace.Bind(wx.EVT_TEXT_ENTER, self.on_search_blobs, self._settings.threshold)
         self._workspace.Bind(wx.EVT_TEXT_ENTER, self.on_search_blobs, self._settings.minSize)
         self._workspace.Bind(wx.EVT_TEXT_ENTER, self.on_search_blobs, self._settings.maxSize)
+        self._workspace.Bind(wx.EVT_BUTTON, self.on_search_blobs, self._settings.searchBlobs)
         pub.subscribe(self.msg_set_new_frame, "SET NEW FRAME")
         pub.subscribe(self.msg_show_ellipses, "GET ELLIPSES")
+        pub.subscribe(self.msg_blobs_search, "BLOB SEARCH")
 
         self._settings.set_frame_range(self._scan.nFrames-1)
         
@@ -128,7 +130,13 @@ class WorkspaceController(object):
         minSize = self._settings.minSize.GetValue()
         maxSize = self._settings.maxSize.GetValue()
                 
-        self._scan.search_blobs(threshold, minSize, maxSize)
+        nBlobs = self._scan.search_blobs(threshold, minSize, maxSize)
+                
+        
+    def msg_blobs_search(self, message):
+        
+        self._frameViewer.update_blobs_search(message.data)
+                
         
         
         

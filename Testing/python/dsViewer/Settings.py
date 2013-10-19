@@ -52,6 +52,12 @@ class Settings(wx.ScrolledWindow):
 
 
     @property
+    def searchBlobs(self):
+        
+        return self._searchBlobs
+
+
+    @property
     def showEllipse(self):
         
         return self._showEllipse
@@ -73,12 +79,6 @@ class Settings(wx.ScrolledWindow):
     def maxSize(self):
         
         return self._maxSize
-
-        
-#     @property
-#     def showEllipse(self):
-#         
-#         return self._showEllipse
 
 
     @property

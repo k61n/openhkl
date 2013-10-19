@@ -81,3 +81,12 @@ class FrameViewer(wx.Panel):
         self._cb.update_bruteforce(self._ax)
         
         self._canvas.draw()
+        
+    
+    def update_blobs_search(self, nBlobs):
+        
+        message = "Blob search completed successfully.\n%d blobs founds." % nBlobs
+        
+        d = wx.MessageDialog(self, message, style=wx.OK)
+        
+        d.ShowModal()

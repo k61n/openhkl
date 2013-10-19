@@ -76,7 +76,10 @@ class Scan(object):
         
     def search_blobs(self, threshold, minSize, maxSize):
         
-        self._scan.labelling3D(threshold, minSize, maxSize)
+        nBlobs = self._scan.labelling3D(threshold, minSize, maxSize)
+
+        pub.sendMessage("BLOB SEARCH", nBlobs)
+        
                 
                 
     def get_ellipses(self):
