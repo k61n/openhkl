@@ -70,6 +70,7 @@ class FrameViewer(wx.Panel):
                 e.set_linewidth(2)
                 e.set_edgecolor('r')
                 self._subplot.add_artist(e)
+            self._canvas.draw()
         
         
                 

@@ -1,4 +1,5 @@
 import wx
+import wx.lib.intctrl as intctrl
 
 class Settings(wx.ScrolledWindow):
     
@@ -15,9 +16,10 @@ class Settings(wx.ScrolledWindow):
         thresholdText = wx.StaticText(self, wx.ID_ANY, label="Threshold")
         self._threshold = wx.TextCtrl(self, wx.ID_ANY, style=wx.TE_PROCESS_ENTER, value="10.0")
         minSizeText = wx.StaticText(self, wx.ID_ANY, label="Min. size")
-        self._minSize = wx.TextCtrl(self, wx.ID_ANY, style=wx.TE_PROCESS_ENTER, value="1.0")
+        self._minSize = intctrl.IntCtrl(self, wx.ID_ANY, style=wx.TE_PROCESS_ENTER, value=1, min=1, limited=True)
         maxSizeText = wx.StaticText(self, wx.ID_ANY, label="Max. size")
-        self._maxSize = wx.TextCtrl(self, wx.ID_ANY, style=wx.TE_PROCESS_ENTER, value="100")
+        self._maxSize = intctrl.IntCtrl(self, wx.ID_ANY, style=wx.TE_PROCESS_ENTER, value=100, min=1, limited=True)
+        self._searchBlobs = wx.Button(self, wx.ID_ANY, label="Search")
 
         self._showEllipse = wx.CheckBox(self, wx.ID_ANY, label="Show ellipse")
 
@@ -35,6 +37,7 @@ class Settings(wx.ScrolledWindow):
         gbSizer.Add(self._minSize, (1,1))
         gbSizer.Add(maxSizeText, (2,0), flag=wx.ALIGN_CENTER_VERTICAL)
         gbSizer.Add(self._maxSize, (2,1))
+        gbSizer.Add(self._searchBlobs, (0,2), span=(3,1), flag=wx.EXPAND)
         staticSizer.Add(gbSizer, 1, wx.ALL|wx.EXPAND, 5)
 
         self._sizer.Add(self._frameSizer, 0, wx.EXPAND|wx.ALL, 5)

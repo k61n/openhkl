@@ -62,6 +62,8 @@ class WorkspaceController(object):
         self._workspace.Bind(wx.EVT_SCROLL_CHANGED, self.on_set_new_frame, self._settings.frameSlider)
         self._workspace.Bind(wx.EVT_TEXT_ENTER, self.on_set_new_frame, self._settings.frameNumber)
         self._workspace.Bind(wx.EVT_TEXT_ENTER, self.on_search_blobs, self._settings.threshold)
+        self._workspace.Bind(wx.EVT_TEXT_ENTER, self.on_search_blobs, self._settings.minSize)
+        self._workspace.Bind(wx.EVT_TEXT_ENTER, self.on_search_blobs, self._settings.maxSize)
         pub.subscribe(self.msg_set_new_frame, "SET NEW FRAME")
         pub.subscribe(self.msg_show_ellipses, "GET ELLIPSES")
 
@@ -123,8 +125,10 @@ class WorkspaceController(object):
     def on_search_blobs(self, event):
         
         threshold = float(self._settings.threshold.GetValue())
+        minSize = self._settings.minSize.GetValue()
+        maxSize = self._settings.maxSize.GetValue()
                 
-        self._scan.search_blobs(threshold)
+        self._scan.search_blobs(threshold, minSize, maxSize)
         
         
         

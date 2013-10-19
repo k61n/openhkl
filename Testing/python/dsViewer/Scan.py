@@ -74,9 +74,9 @@ class Scan(object):
         pub.sendMessage("SET NEW FRAME", self)
         
         
-    def search_blobs(self, threshold):
+    def search_blobs(self, threshold, minSize, maxSize):
         
-        self._scan.labelling3D(threshold)
+        self._scan.labelling3D(threshold, minSize, maxSize)
                 
                 
     def get_ellipses(self):
