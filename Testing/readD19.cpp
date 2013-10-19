@@ -177,7 +177,7 @@ class Scan2D
 	    _wave=lam;
 	}
 
-	void labelling3D(double s2n)
+	int labelling3D(double s2n, int minComp=20, int maxComp=1000)
 	{
 	    std::vector<int*> ptr;
 	    for (int i=0;i<_nframes;++i)
@@ -185,7 +185,7 @@ class Scan2D
 	        vint& m=_frames[i];
 	        ptr.push_back(&m[0]);
 	    }
-	    blob3DCollection blobs=findBlobs3D<int>(ptr,_nrows,_ncols,s2n,20,1000,0);
+	    blob3DCollection blobs=findBlobs3D<int>(ptr,_nrows,_ncols,s2n,minComp,maxComp,0);
 	    std::cout << "Found " << blobs.size() << " peaks" <<  std::endl;
 	    //for (auto it=blobs.begin();it!=blobs.end();++it)
 	    //{
@@ -227,22 +227,25 @@ class Scan2D
 //        finder.determineLattice(20);
 //	    return V3DToNumpy(points);
 
-	for (int i=0; i<_nframes; ++i)
-	{
-		_ellipses.insert(std::pair<int,ellipseVector>(i,ellipseVector()));
-		ellipseVector& e = _ellipses[i];
-		for (auto b_it=blobs.begin(); b_it!=blobs.end(); ++b_it)
+		for (int i=0; i<_nframes; ++i)
 		{
-			V3D center, semi_axes, axis1, axis2;
-			bool test = b_it->second.intersectionWithPlane(0,0,1,i,center,semi_axes,axis1,axis2);
-			if (test)
+			_ellipses.insert(std::pair<int,ellipseVector>(i,ellipseVector()));
+			ellipseVector& e = _ellipses[i];
+			for (auto b_it=blobs.begin(); b_it!=blobs.end(); ++b_it)
 			{
-				Ellipse ell(center,semi_axes, axis1, axis2);
-				e.push_back(ell);
+				V3D center, semi_axes, axis1, axis2;
+				bool test = b_it->second.intersectionWithPlane(0,0,1,i,center,semi_axes,axis1,axis2);
+				if (test)
+				{
+					Ellipse ell(center,semi_axes, axis1, axis2);
+					e.push_back(ell);
+				}
 			}
+
+
 		}
 
-	}
+		return blobs.size();
 
 	}
 
