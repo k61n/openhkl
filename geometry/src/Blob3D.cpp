@@ -1,9 +1,11 @@
-
-#include <stdexcept>
 #include <cmath>
+#include <limits>
+#include <stdexcept>
+
+#include <boost/math/special_functions/erf.hpp>
+
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_eigen.h>
-#include <limits>
 
 #include "Blob3D.h"
 
@@ -209,7 +211,7 @@ void Blob3D::toEllipsoid(V3D& center, V3D& semi_axes, V3D& v0, V3D& v1, V3D& v2)
     return;
 }
 
-bool Blob3D::intersectionWithPlane(double a, double b, double c, double d, V3D& center, V3D& semi_axes, V3D& axis1, V3D& axis2) const
+bool Blob3D::intersectionWithPlane(double a, double b, double c, double d, V3D& center, V3D& semi_axes, V3D& axis1, V3D& axis2, double confidence) const
 {
 
     // The blob ellipsoid parameters
@@ -220,7 +222,8 @@ bool Blob3D::intersectionWithPlane(double a, double b, double c, double d, V3D& 
     // Get the blob ellipsoid parameters
     this->toEllipsoid(blob_center, blob_semi_axes, blob_axis1, blob_axis2, blob_axis3);
 
-    blob_semi_axes*=3.0;
+    blob_semi_axes*=sqrt(2.0)*boost::math::erf_inv(confidence);
+
     // The vector normal to the plane
     V3D normal(a,b,c);
     double norm = normal.normalize();

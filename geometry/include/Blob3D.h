@@ -79,7 +79,7 @@ public:
   //! Print
   void printSelf(std::ostream& os) const;
   //! Compute the intersection with a plane of equation \f$ax+by+cz+d=0\f$
-  bool intersectionWithPlane(double a, double b, double c, double d, V3D& center, V3D& semi_axes, V3D& axis1, V3D& axis2) const;
+  bool intersectionWithPlane(double a, double b, double c, double d, V3D& center, V3D& semi_axes, V3D& axis1, V3D& axis2, double confidence) const;
 
 private:
   //! Total mass=zeroth order momentum
