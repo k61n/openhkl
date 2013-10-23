@@ -31,16 +31,24 @@ class FrameViewer(wx.Panel):
         self._axes = self._figure.add_axes(frameon=True, axisbg='b')
         
         self._canvas = FigureCanvasWxAgg(self, wx.ID_ANY, self._figure )
+        
+        self._subplot = self._figure.add_subplot(111)
+        
+        self._background = self._figure.canvas.copy_from_bbox(self._subplot.bbox)
 
         self._toolbar = NavigationToolbar2WxAgg(self._canvas)
 
-        self._cb = None
+        self._ax = self._subplot.imshow(numpy.zeros((256,640)),cmap='Blues',interpolation='None', vmax=5, aspect='auto')
+
+        self._cb = self._figure.colorbar(self._ax)
 
         self._sizer.Add(self._canvas, 1, wx.ALL|wx.EXPAND, 5) 
         self._sizer.Add(self._toolbar, 0, wx.ALL|wx.EXPAND, 5)
 
         self._toolbar.Realize()
         
+        self._canvas.draw()
+                
         self.SetSizer(self._sizer)        
 
         self._sizer.Fit(self)
@@ -49,22 +57,22 @@ class FrameViewer(wx.Panel):
                                   
               
     def set_new_frame(self, scan):
+                
+        self._figure.canvas.restore_region(self._background)
 
-        self._figure.clear()
-        self._subplot = self._figure.add_subplot( 111 )
-        self._ax = self._subplot.imshow(scan.currentFrame.T,cmap='Blues',interpolation='None', vmax=5)
-
-        self._cb = self._figure.colorbar(self._ax)
+        self._ax.set_data(scan.currentFrame.T)
         
+        self._subplot.draw_artist(self._ax)
+                          
         self.build_ellipses(scan.ellipses)
                                         
-        self._canvas.draw()
+        self._figure.canvas.blit(self._subplot.bbox)
         
         
     def build_ellipses(self, ellipses):
 
         self._subplot.artists = []
-                
+                 
         if ellipses.any(): 
             for i in range(ellipses.shape[0]):
                 e = Ellipse(xy=ellipses[i,:2], width=ellipses[i,3], height=ellipses[i,4], angle=ellipses[i,5])
@@ -75,23 +83,21 @@ class FrameViewer(wx.Panel):
                 e.set_edgecolor('r')
                 e.set_visible(False)
                 self._subplot.add_artist(e)
-
-        self._canvas.draw()
                         
         
     def hide_show_ellipses(self, show=False):
-                
-        for a in self._subplot.artists:
-            a.set_visible(show)
-        self._canvas.draw()
+
+        if self._subplot.artists:                 
+            for a in self._subplot.artists:
+                a.set_visible(show)
+                self._subplot.draw_artist(a)
+            self._figure.canvas.blit(self._subplot.bbox)
          
                 
     def set_lut_range(self, mi, ma):
-                 
+                         
         self._ax.set_clim(mi,ma)
-         
         self._cb.update_bruteforce(self._ax)
-         
         self._canvas.draw()
         
     
