@@ -177,7 +177,7 @@ class Scan2D
 	    _wave=lam;
 	}
 
-	int labelling3D(double s2n, int minComp=20, int maxComp=1000)
+	int labelling3D(double s2n, int minComp=20, int maxComp=1000, double confidence=0.9)
 	{
 	    std::vector<int*> ptr;
 	    for (int i=0;i<_nframes;++i)
@@ -237,7 +237,7 @@ class Scan2D
 			for (auto b_it=blobs.begin(); b_it!=blobs.end(); ++b_it)
 			{
 				V3D center, semi_axes, axis1, axis2;
-				bool test = b_it->second.intersectionWithPlane(0,0,1,i,center,semi_axes,axis1,axis2);
+				bool test = b_it->second.intersectionWithPlane(0,0,1,i,center,semi_axes,axis1,axis2, confidence);
 				if (test)
 				{
 					Ellipse ell(center,semi_axes, axis1, axis2);
