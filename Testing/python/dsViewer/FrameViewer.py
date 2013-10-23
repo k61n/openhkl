@@ -75,6 +75,8 @@ class FrameViewer(wx.Panel):
                 e.set_edgecolor('r')
                 e.set_visible(False)
                 self._subplot.add_artist(e)
+
+        self._canvas.draw()
                         
         
     def hide_show_ellipses(self, show=False):
