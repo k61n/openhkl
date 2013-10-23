@@ -52,35 +52,43 @@ class FrameViewer(wx.Panel):
 
         self._figure.clear()
         self._subplot = self._figure.add_subplot( 111 )
-        self._ax = self._subplot.imshow(scan.currentFrame.T,cmap='Blues',interpolation='None', vmax=10)
+        self._ax = self._subplot.imshow(scan.currentFrame.T,cmap='Blues',interpolation='None', vmax=5)
 
-        if self._cb is None:
-            self._cb = self._figure.colorbar(self._ax)
+        self._cb = self._figure.colorbar(self._ax)
+        
+        self.build_ellipses(scan.ellipses)
                                         
         self._canvas.draw()
         
+        
+    def build_ellipses(self, ellipses):
                 
-    def show_ellipses(self, ellipses):
-
-        if ellipses.any():   
+        if ellipses.any(): 
             for i in range(ellipses.shape[0]):
+                self._subplot.artists = []
                 e = Ellipse(xy=ellipses[i,:2], width=ellipses[i,3], height=ellipses[i,4], angle=ellipses[i,5])
                 e.set_alpha(1.0)
                 e.set_fill(False)
                 e.set_linewidth(2)
                 e.set_linestyle('dotted')
                 e.set_edgecolor('r')
+                e.set_visible(False)
                 self._subplot.add_artist(e)
-            self._canvas.draw()
+                        
         
-        
+    def hide_show_ellipses(self, show=False):
+                
+        for a in self._subplot.artists:
+            a.set_visible(show)
+        self._canvas.draw()
+         
                 
     def set_lut_range(self, mi, ma):
-        
+                 
         self._ax.set_clim(mi,ma)
-        
+         
         self._cb.update_bruteforce(self._ax)
-        
+         
         self._canvas.draw()
         
     

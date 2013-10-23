@@ -8,9 +8,12 @@ class Settings(wx.ScrolledWindow):
         wx.ScrolledWindow.__init__(self, parent, *args, **kwargs)
 
         self._sizer = wx.BoxSizer(wx.VERTICAL)
+
+        maxIntensityText = wx.StaticText(self, wx.ID_ANY, label="Max. intensity")
+        self._maxIntensityValue = wx.TextCtrl(self, wx.ID_ANY, value="5.0", style=wx.TE_PROCESS_ENTER)
         
         frameStaticText = wx.StaticText(self, wx.ID_ANY, label="Frame")
-        self._frameNumber = wx.TextCtrl(self, wx.ID_ANY, style=wx.TE_PROCESS_ENTER, value="0")
+        self._frameNumber = intctrl.IntCtrl(self, wx.ID_ANY, style=wx.TE_PROCESS_ENTER, value=0, min=0, limited=True)
         self._frameSlider = wx.Slider(self, wx.ID_ANY, style=wx.SL_HORIZONTAL, value=100, minValue=0, maxValue=100)
 
         thresholdText = wx.StaticText(self, wx.ID_ANY, label="Threshold")
@@ -19,36 +22,55 @@ class Settings(wx.ScrolledWindow):
         self._minSize = intctrl.IntCtrl(self, wx.ID_ANY, style=wx.TE_PROCESS_ENTER, value=10, min=1, limited=True)
         maxSizeText = wx.StaticText(self, wx.ID_ANY, label="Max. size")
         self._maxSize = intctrl.IntCtrl(self, wx.ID_ANY, style=wx.TE_PROCESS_ENTER, value=1000, min=1, limited=True)
+        ciText = wx.StaticText(self, wx.ID_ANY, label="Confidence Interval")
+        self._ciValue = wx.TextCtrl(self, wx.ID_ANY, style=wx.TE_PROCESS_ENTER, value="0.9")
         self._searchBlobs = wx.Button(self, wx.ID_ANY, label="Search")
 
         self._showEllipse = wx.CheckBox(self, wx.ID_ANY, label="Show ellipse")
+
+        self._maxIntensitySizer = wx.BoxSizer(wx.HORIZONTAL)
+        self._maxIntensitySizer.Add(maxIntensityText, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5)
+        self._maxIntensitySizer.Add(self._maxIntensityValue, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5)
 
         self._frameSizer = wx.BoxSizer(wx.HORIZONTAL)
         self._frameSizer.Add(frameStaticText, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5)
         self._frameSizer.Add(self._frameNumber, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5)
         self._frameSizer.Add(self._frameSlider, 2, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5)
         
-        self._parameters = wx.StaticBox(self, wx.ID_ANY, "Blob search")
-        staticSizer = wx.StaticBoxSizer(self._parameters, wx.VERTICAL)
+        self._blobsStaticBox = wx.StaticBox(self, wx.ID_ANY, "Blob search")
+        self._blobsStaticSizer = wx.StaticBoxSizer(self._blobsStaticBox, wx.VERTICAL)
         gbSizer = wx.GridBagSizer(5,5)
+        gbSizer.AddGrowableCol(2)
+
         gbSizer.Add(thresholdText, (0,0), flag=wx.ALIGN_CENTER_VERTICAL)
         gbSizer.Add(self._threshold, (0,1))
         gbSizer.Add(minSizeText, (1,0), flag=wx.ALIGN_CENTER_VERTICAL)
         gbSizer.Add(self._minSize, (1,1))
         gbSizer.Add(maxSizeText, (2,0), flag=wx.ALIGN_CENTER_VERTICAL)
         gbSizer.Add(self._maxSize, (2,1))
-        gbSizer.Add(self._searchBlobs, (0,2), span=(3,1), flag=wx.EXPAND)
-        staticSizer.Add(gbSizer, 1, wx.ALL|wx.EXPAND, 5)
+        gbSizer.Add(ciText, (3,0), flag=wx.ALIGN_CENTER_VERTICAL)
+        gbSizer.Add(self._ciValue, (3,1), flag=wx.ALIGN_CENTER_VERTICAL)
+        gbSizer.Add(self._searchBlobs, (4,0), span=(1,3), flag=wx.EXPAND)
+        self._blobsStaticSizer.Add(gbSizer, 1, wx.ALL|wx.EXPAND, 5)
 
+        self._ellipsesStaticBox = wx.StaticBox(self, wx.ID_ANY, "Ellipses")
+        self._ellipsesStaticSizer = wx.StaticBoxSizer(self._ellipsesStaticBox, wx.VERTICAL)
+        gbSizer = wx.GridBagSizer(5,5)
+        gbSizer.Add(self._showEllipse, (0,0), flag=wx.ALIGN_CENTER_VERTICAL)
+        self._ellipsesStaticSizer.Add(gbSizer, 1, wx.ALL|wx.EXPAND, 5)
+
+        self._sizer.Add(self._maxIntensitySizer, 0, wx.EXPAND|wx.ALL, 5)
         self._sizer.Add(self._frameSizer, 0, wx.EXPAND|wx.ALL, 5)
-        self._sizer.Add(staticSizer, 0, wx.EXPAND|wx.ALL, 5)
-        self._sizer.Add(self._showEllipse, 0, wx.EXPAND|wx.ALL, 5)
+        self._sizer.Add(self._blobsStaticSizer, 0, wx.EXPAND|wx.ALL, 5)
+        self._sizer.Add(self._ellipsesStaticSizer, 0, wx.EXPAND|wx.ALL, 5)
          
         self.SetSizer(self._sizer)
 
         self._sizer.Fit(self)
         
         self.Layout()
+
+        self.SetScrollbars(pixelsPerUnitX=20, pixelsPerUnitY=20, noUnitsX=500, noUnitsY=500)
 
 
     @property
@@ -67,6 +89,24 @@ class Settings(wx.ScrolledWindow):
     def threshold(self):
         
         return self._threshold
+
+
+    @property
+    def minSize(self):
+        
+        return self._minSize
+
+
+    @property
+    def maxIntensityValue(self):
+        
+        return self._maxIntensityValue
+
+
+    @property
+    def ciValue(self):
+        
+        return self._ciValue
 
 
     @property

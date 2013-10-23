@@ -23,8 +23,7 @@ class ScansCollection(collections.OrderedDict):
     def remove_scan(self, name):
         
         pass
-        
-        
+                
 
 class MyMenuBar(wx.MenuBar):
 
