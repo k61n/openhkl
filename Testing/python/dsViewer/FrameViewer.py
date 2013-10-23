@@ -62,10 +62,11 @@ class FrameViewer(wx.Panel):
         
         
     def build_ellipses(self, ellipses):
+
+        self._subplot.artists = []
                 
         if ellipses.any(): 
             for i in range(ellipses.shape[0]):
-                self._subplot.artists = []
                 e = Ellipse(xy=ellipses[i,:2], width=ellipses[i,3], height=ellipses[i,4], angle=ellipses[i,5])
                 e.set_alpha(1.0)
                 e.set_fill(False)
