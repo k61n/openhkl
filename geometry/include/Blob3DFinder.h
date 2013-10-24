@@ -26,7 +26,7 @@
  */
 #ifndef __BLOB_3D
 #define __BLOB_3D
-#include <map>
+#include <unordered_map>
 #include <vector>
 #include "Blob3D.h"
 #include <queue>
@@ -37,7 +37,7 @@ namespace SX
 {
 namespace Geometry
 {
-	typedef std::map<int,Blob3D> blob3DCollection;
+	typedef std::unordered_map<int,Blob3D> blob3DCollection;
 
 	inline void registerEquivalence(int a, int b,std::vector<std::pair<int,int> >& pairs)
 	{
@@ -173,8 +173,8 @@ namespace Geometry
 					}
 					else
 					{
-						Blob3D& roi=blobs[label];
-						roi.addPoint(col,row,frame,static_cast<double>(value));
+						auto it=blobs.find(label);
+						it->second.addPoint(col,row,frame,static_cast<double>(value));
 					}
 
 
@@ -182,6 +182,8 @@ namespace Geometry
 			}
 		// Now deals with equivalences, first sort them
 		}
+		//
+
 		std::sort(equivalences.begin(),
 			      equivalences.end(),
 			      [&](const std::pair<int,int>& a,const std::pair<int,int>& b)
@@ -193,25 +195,22 @@ namespace Geometry
 			        return (a.second<b.second);
 			       });
 
+
 		auto beg=equivalences.begin();
 
 		// Remove duplicates
 		auto last=std::unique(equivalences.begin(),equivalences.end());
-
-		// Assign the smallest label to the second element of each equivalence class
-		for (auto it=beg;it!=last;++it)
-		{
-			for (auto it2=beg+1;it2!=last;++it2)
-			{
-				if (it2->second==it->first)
-				it2->second=it->second;
-			}
-		}
-
-		// Copy the equivalences into a map
+		// Copy to a map. This can't be an unordered_map in this case, ordering is important
 		std::map<int,int> mequiv;
-		for (auto it=equivalences.begin();it!=equivalences.end();++it)
-			mequiv.insert(*it);
+		for (auto it=beg;it!=last;++it)
+					mequiv.insert(*it);
+		// Reassign labels
+		for (auto it=mequiv.begin();it!=mequiv.end();++it)
+		{
+			auto found=mequiv.find(it->second);
+			if (found!=mequiv.end())
+				it->second=found->second;
+		}
 
 		// Iterate on blobs and merge equivalences
 		for (auto it=blobs.begin();it!=blobs.end();)

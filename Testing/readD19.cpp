@@ -189,7 +189,7 @@ class Scan2D
 	    double z=static_cast<double>(total)/(_nrows*_ncols*_nframes);
 	    std::cout << "Search peaks above" << z*s2n << std::endl;
 	    blob3DCollection blobs=findBlobs3D<int>(ptr,_nrows,_ncols,s2n*z,minComp,maxComp,0);
-
+        std::cout << "Found" << blobs.size() << " blobs \n";
 
 	    // Convert to Q
 //	    double R=0.764;
