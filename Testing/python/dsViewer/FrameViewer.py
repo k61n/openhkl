@@ -38,9 +38,9 @@ class FrameViewer(wx.Panel):
 
         self._toolbar = NavigationToolbar2WxAgg(self._canvas)
 
-        self._ax = self._subplot.imshow(numpy.zeros((256,640)),cmap='Blues',interpolation='None', vmax=5, aspect='auto')
+        self._ax = self._subplot.imshow(numpy.zeros((256,640)),cmap='Oranges',interpolation='None', vmax=5)
 
-        self._cb = self._figure.colorbar(self._ax)
+        self._cb = self._figure.colorbar(self._ax,orientation='horizontal')
 
         self._sizer.Add(self._canvas, 1, wx.ALL|wx.EXPAND, 5) 
         self._sizer.Add(self._toolbar, 0, wx.ALL|wx.EXPAND, 5)
@@ -78,9 +78,9 @@ class FrameViewer(wx.Panel):
                 e = Ellipse(xy=ellipses[i,:2], width=ellipses[i,3], height=ellipses[i,4], angle=ellipses[i,5])
                 e.set_alpha(1.0)
                 e.set_fill(False)
-                e.set_linewidth(2)
-                e.set_linestyle('dotted')
-                e.set_edgecolor('r')
+                e.set_linewidth(1)
+                e.set_linestyle('solid')
+                e.set_edgecolor('b')
                 e.set_visible(False)
                 self._subplot.add_artist(e)
                         

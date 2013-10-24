@@ -189,11 +189,7 @@ class Scan2D
 	    double z=static_cast<double>(total)/(_nrows*_ncols*_nframes);
 	    std::cout << "Search peaks above" << z*s2n << std::endl;
 	    blob3DCollection blobs=findBlobs3D<int>(ptr,_nrows,_ncols,s2n*z,minComp,maxComp,0);
-	    std::cout << "Found " << blobs.size() << " peaks" <<  std::endl;
-	    for (auto it=blobs.begin();it!=blobs.end();++it)
-	    {
-	        std::cout << (it->second);
-	    }
+
 
 	    // Convert to Q
 //	    double R=0.764;
@@ -255,12 +251,10 @@ class Scan2D
     PyObject* getEllipses(int idx)
     {
 
-    	std::cout<<"Frame:" <<idx<<"  "<<_ellipses[idx].size()<<std::endl;
     	auto e_it = _ellipses.find(idx);
     	if (e_it != _ellipses.end())
     	{
     		int nEllipses = e_it->second.size();
-			std::cout<<nEllipses<<std::endl;
         	npy_intp dim[2]={nEllipses,6};
         	PyObject* ndarray=PyArray_ZEROS(2,dim,NPY_DOUBLE,0);
 			for (size_t i=0; i < nEllipses;i++)
