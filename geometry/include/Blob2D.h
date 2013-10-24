@@ -7,7 +7,8 @@
 	6, rue Jules Horowitz
 	38042 Grenoble Cedex 9
 	France
-	chapon[at]ill.fr pellegrini[at]ill.fr
+	chapon[at]ill.fr
+    pellegrini[at]ill.fr
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU Lesser General Public
