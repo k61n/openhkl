@@ -41,13 +41,13 @@ namespace Geometry
 
 /* !
  * \brief Class Blob3D.
- * Blobs are used to store region of interest in a 2D image.
- * A Blob is constructed by adding points in the image with coordinates x,y
+ * Blob3D are used to store region of interest in a 3D image.
+ * A Blob is constructed by adding points in the image with coordinates x,y,z
  * and an associated mass that represents any scalar field such as intensity.
- * Blob objects in NSXTool records the total mass, the mass-weighted first and second moments
+ * Blob objects records the total mass, the mass-weighted first and second moments
  * as new points are added to the blob. Knowledge about individual points is lost,
- * i.e Blob can only increase in size.
- * Blobs can be merged and maintain zero, first and second momentum.
+ * i.e Blob can only increase in size.Blobs can be merged and maintain zero, first and second momentum.
+ * Blob3D can be transformed into an Ellipsoid, by diagonalizing the variance tensor.
  *
  */
 class Blob3D
@@ -55,7 +55,7 @@ class Blob3D
 public:
   //!Initialize an empty blob
   Blob3D();
-  //!Initialize a blob with a point of mass m at x,y
+  //!Initialize a blob with a point of mass m at x,y,z
   Blob3D(double x, double y,double z, double m);
   //! Copy constructor
   Blob3D(const Blob3D&);

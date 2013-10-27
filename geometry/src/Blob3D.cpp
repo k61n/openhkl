@@ -168,20 +168,22 @@ void Blob3D::toEllipsoid(V3D& center, V3D& semi_axes, V3D& v0, V3D& v1, V3D& v2)
     double xc=_m100/_m000;
     double yc=_m010/_m000;
     double zc=_m001/_m000;
-    // Center of the blob
+
+    // Center of the ellipsoid
     center(xc,yc,zc);
 
+    // Define the variance-covariance tensor
+    double variance[9];
     // Now compute second moment with respect to center of mass
-    double Ixx=_m200/_m000-xc*xc;
-    double Iyy=_m020/_m000-yc*yc;
-    double Izz=_m002/_m000-zc*zc;
-    double Ixy=_m110/_m000-xc*yc;
-    double Iyz=_m011/_m000-yc*zc;
-    double Ixz=_m101/_m000-xc*zc;
+    variance[0]=_m200/_m000-xc*xc;
+    variance[1]=variance[3]=_m110/_m000-xc*yc;
+    variance[2]=variance[6]=_m101/_m000-xc*zc;
+    variance[4]=_m020/_m000-yc*yc;
+    variance[5]=variance[7]=_m011/_m000-yc*zc;
+    variance[8]=_m002/_m000-zc*zc;
 
-    // Diagonalize the inertia tensor
-    double inertia[] ={Ixx,Ixy,Ixz,Ixy, Iyy, Iyz,Ixz, Iyz, Izz};
-    gsl_matrix_view m = gsl_matrix_view_array(inertia, 3, 3);
+    // Diagonalize the variance-covariance matrix
+    gsl_matrix_view m = gsl_matrix_view_array(variance, 3, 3);
 
     gsl_vector *val = gsl_vector_alloc (3);
     gsl_matrix *vec = gsl_matrix_alloc (3,3);
@@ -207,7 +209,6 @@ void Blob3D::toEllipsoid(V3D& center, V3D& semi_axes, V3D& v0, V3D& v1, V3D& v2)
 	v2(gsl_vector_get(&vec_2.vector,0),gsl_vector_get(&vec_2.vector,1),gsl_vector_get(&vec_2.vector,2));
 
     //
-
     return;
 }
 
