@@ -90,7 +90,7 @@ private:
   //! Second moments
   double _m200, _m020, _m002, _m110, _m101, _m011;
   //! Number of points contributing
-  int _npoints;
+  unsigned int _npoints;
   double _minValue, _maxValue;
 
 };
