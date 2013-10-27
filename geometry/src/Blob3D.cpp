@@ -16,25 +16,17 @@ namespace Geometry
 
 Blob3D::Blob3D():_m000(0),_m100(0),_m010(0),_m001(0),_m200(0),_m020(0),_m002(0),_m110(0),_m101(0),_m011(0)
 ,_npoints(0),_minValue(std::numeric_limits<double>::max()),_maxValue(std::numeric_limits<double>::min())
-
 {
 }
 
 Blob3D::Blob3D(const Blob3D& b)
+:	_m000(b._m000),
+ 	_m100(b._m100),_m010(b._m010),_m001(b._m001),
+    _m200(b._m200),_m020(b._m020),_m002(b._m002),
+    _m110(b._m110),_m101(b._m101),_m011(b._m011),
+    _npoints(b._npoints),
+    _minValue(b._minValue),_maxValue(b._maxValue)
 {
-    _m000=b._m000;
-    _m100=b._m100;
-    _m010=b._m010;
-    _m001=b._m001;
-    _m200=b._m200;
-    _m020=b._m020;
-    _m002=b._m002;
-    _m110=b._m110;
-    _m101=b._m101;
-    _m011=b._m011;
-    _npoints=b._npoints;
-    _minValue=b._minValue;
-    _maxValue=b._maxValue;
 }
 
 Blob3D& Blob3D::operator=(const Blob3D& b)
@@ -42,15 +34,9 @@ Blob3D& Blob3D::operator=(const Blob3D& b)
     if (this!=&b)
     {
         _m000=b._m000;
-        _m100=b._m100;
-        _m010=b._m010;
-        _m001=b._m001;
-        _m200=b._m200;
-        _m020=b._m020;
-        _m002=b._m002;
-        _m110=b._m110;
-        _m101=b._m101;
-        _m011=b._m011;
+        _m100=b._m100;_m010=b._m010;_m001=b._m001;
+        _m200=b._m200;_m020=b._m020;_m002=b._m002;
+        _m110=b._m110;_m101=b._m101;_m011=b._m011;
         _npoints=b._npoints;
         _minValue=b._minValue;
         _maxValue=b._maxValue;
@@ -65,35 +51,20 @@ Blob3D::Blob3D(double x, double y,double z, double m)
     double mx=m*x;
     double my=m*y;
     double mz=m*z;
-    _m100=mx;
-    _m010=my;
-    _m001=mz;
-    _m200=mx*x;
-    _m020=my*y;
-    _m002=mz*z;
-    _m110=mx*y;
-    _m101=mx*z;
-    _m011=my*z;
+    _m100=mx;_m010=my;_m001=mz;
+    _m200=mx*x;_m020=my*y;_m002=mz*z;
+    _m110=mx*y;_m101=mx*z;_m011=my*z;
     _npoints=1;
-    _minValue=m;
-    _maxValue=m;
+    _minValue=m;_maxValue=m;
 }
 
 void Blob3D::addPoint(double x, double y, double z, double m)
 {
     _m000+=m;
-    double mx=m*x;
-    double my=m*y;
-    double mz=m*z;
-    _m100+=mx;
-    _m010+=my;
-    _m001+=mz;
-    _m200+=mx*x;
-    _m020+=my*y;
-    _m002+=mz*z;
-    _m110+=mx*y;
-    _m101+=mx*z;
-    _m011+=my*z;
+    double mx=m*x;double my=m*y;double mz=m*z;
+    _m100+=mx;_m010+=my;_m001+=mz;
+    _m200+=mx*x;_m020+=my*y;_m002+=mz*z;
+    _m110+=mx*y;_m101+=mx*z;_m011+=my*z;
     _npoints++;
     if (m<_minValue)
         _minValue=m;
@@ -104,15 +75,9 @@ void Blob3D::addPoint(double x, double y, double z, double m)
 void Blob3D::merge(const Blob3D& b)
 {
     _m000+=b._m000;
-    _m100+=b._m100;
-    _m010+=b._m010;
-    _m001+=b._m001;
-    _m200+=b._m200;
-    _m020+=b._m020;
-    _m002+=b._m002;
-    _m110+=b._m110;
-    _m101+=b._m101;
-    _m011+=b._m011;
+    _m100+=b._m100;_m010+=b._m010;_m001+=b._m001;
+    _m200+=b._m200;_m020+=b._m020;_m002+=b._m002;
+    _m110+=b._m110;_m101+=b._m101;_m011+=b._m011;
     _npoints+=b._npoints;
     _minValue=(_minValue < b._minValue ? _minValue : b._minValue);
     _maxValue=(_maxValue > b._maxValue ? _maxValue : b._maxValue);
@@ -151,13 +116,13 @@ void Blob3D::printSelf(std::ostream& os) const
 {
 	V3D center,semi_axes, v0,v1,v2;
 	toEllipsoid(center, semi_axes, v0, v1, v2);
-    os << "#Blob center:" << center << std::endl;
-    os << "Points in the blob:" << _npoints << std::endl;
-    os << "Intensity:" << _m000 << std::endl;
-    os << "Semi-axes lengths" << semi_axes << std::endl;
-    os << "Axe 1:" << v0 << std::endl;
-    os << "Axe 2:" << v1 << std::endl;
-    os << "Axe 3:" << v2 << std::endl;
+    os << "#Blob center: " << center << std::endl;
+    os << "Points in the blob: " << _npoints << std::endl;
+    os << "Intensity: " << _m000 << std::endl;
+    os << "Semi-axes lengths: " << semi_axes << std::endl;
+    os << "Axe 1: " << v0 << std::endl;
+    os << "Axe 2: " << v1 << std::endl;
+    os << "Axe 3: " << v2 << std::endl;
 
 }
 void Blob3D::toEllipsoid(V3D& center, V3D& semi_axes, V3D& v0, V3D& v1, V3D& v2) const

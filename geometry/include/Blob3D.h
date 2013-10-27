@@ -25,8 +25,8 @@
 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-#ifndef NSXTOOL_Blob3D_H_
-#define NSXTOOL_Blob3D_H_
+#ifndef NSXTOOL_BLOB3D_H_
+#define NSXTOOL_BLOB3D_H_
 
 #include <iostream>
 
