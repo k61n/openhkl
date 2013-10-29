@@ -36,8 +36,6 @@ class EllipseInteractor(object):
 
     def on_rotate_ellipse(self, event):
         
-        print event
-                                
         if event.key == "+":
             ccw = -1.0
         elif event.key == "-":

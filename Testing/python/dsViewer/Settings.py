@@ -1,5 +1,51 @@
+import weakref
+
 import wx
+import wx.grid as wxgrid
 import wx.lib.intctrl as intctrl
+
+class EllipsesTable(wxgrid.PyGridTableBase):
+    
+    def __init__(self, data, *args, **kwargs):
+        
+        wxgrid.PyGridTableBase.__init__(self, *args, **kwargs)
+        
+        self._data = data
+    
+    def GetNumberRows(self):        
+
+        return 20
+
+    def GetNumberCols(self):
+
+        return 3
+
+    def IsEmptyCell(self, row, col):
+
+        return False
+
+    def GetTypeName(self, row, col):
+
+        return None
+
+    def GetValue(self, row, col):
+
+        return "a cell"
+
+    def SetValue(self, row, col, value):
+        
+        pass
+
+
+class EllipsesGrid(wxgrid.Grid):
+        
+        def SetTable( self, object, *args):
+                self.tableRef = weakref.ref(object)
+                return wxgrid.Grid.SetTable(self, object, *args)
+        
+        def GetTable( self ):
+                return self.tableRef()
+            
 
 class Settings(wx.ScrolledWindow):
     
@@ -28,6 +74,10 @@ class Settings(wx.ScrolledWindow):
 
         self._showEllipse = wx.CheckBox(self, wx.ID_ANY, label="Show ellipse")
 
+#         self._ellipsesTable = EllipsesTable()
+#         self._ellipsesGrid = EllipsesGrid(self, style=wxgrid.GRID_AUTOSIZE|wxgrid.GRID_DEFAULT_ROW_LABEL_WIDTH)
+#         self._ellipsesGrid.SetTable(self._ellipsesTable)
+
         self._maxIntensitySizer = wx.BoxSizer(wx.HORIZONTAL)
         self._maxIntensitySizer.Add(maxIntensityText, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5)
         self._maxIntensitySizer.Add(self._maxIntensityValue, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5)
@@ -51,18 +101,14 @@ class Settings(wx.ScrolledWindow):
         gbSizer.Add(ciText, (3,0), flag=wx.ALIGN_CENTER_VERTICAL)
         gbSizer.Add(self._ciValue, (3,1), flag=wx.ALIGN_CENTER_VERTICAL)
         gbSizer.Add(self._searchBlobs, (4,0), span=(1,3), flag=wx.EXPAND)
-        self._blobsStaticSizer.Add(gbSizer, 1, wx.ALL|wx.EXPAND, 5)
+        gbSizer.Add(self._showEllipse, (5,0), flag=wx.ALIGN_CENTER_VERTICAL)
+#         gbSizer.Add(self._ellipsesGrid, (6,0), flag=wx.ALIGN_CENTER_VERTICAL)
 
-        self._ellipsesStaticBox = wx.StaticBox(self, wx.ID_ANY, "Ellipses")
-        self._ellipsesStaticSizer = wx.StaticBoxSizer(self._ellipsesStaticBox, wx.VERTICAL)
-        gbSizer = wx.GridBagSizer(5,5)
-        gbSizer.Add(self._showEllipse, (0,0), flag=wx.ALIGN_CENTER_VERTICAL)
-        self._ellipsesStaticSizer.Add(gbSizer, 1, wx.ALL|wx.EXPAND, 5)
+        self._blobsStaticSizer.Add(gbSizer, 1, wx.ALL|wx.EXPAND, 5)
 
         self._sizer.Add(self._maxIntensitySizer, 0, wx.EXPAND|wx.ALL, 5)
         self._sizer.Add(self._frameSizer, 0, wx.EXPAND|wx.ALL, 5)
         self._sizer.Add(self._blobsStaticSizer, 0, wx.EXPAND|wx.ALL, 5)
-        self._sizer.Add(self._ellipsesStaticSizer, 0, wx.EXPAND|wx.ALL, 5)
          
         self.SetSizer(self._sizer)
 

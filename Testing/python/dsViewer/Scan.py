@@ -80,23 +80,24 @@ class Scan(object):
         
         self._currentFrame = self._scan.getFrame(idx)
         
+        self.set_ellipses()
+        
         pub.sendMessage("FRAME SELECTED", self)
         
         
     def search_blobs(self, threshold, minSize, maxSize, ci):
         
         self._nBlobs = self._scan.labelling3D(threshold, minSize, maxSize, ci)
+        
+        self.set_ellipses()
 
-        pub.sendMessage("BLOB FOUND", self._nBlobs)
-        
-        
-    def has_blobs(self):
-        
-        return self._nBlobs > 0
-        
+        pub.sendMessage("BLOBS FOUND", self._nBlobs)
                 
-    def define_ellipses(self):
-                        
-        self._ellipses = self._scan.getEllipses(self._idx)
-#         if self._ellipses.any():
-#             pub.sendMessage("ELLIPSES DEFINED", self)
+                
+    def set_ellipses(self):
+        
+        if self._nBlobs > 0:                        
+            self._ellipses = self._scan.getEllipses(self._idx)
+        else:
+            self._ellipses = numpy.array([], dtype=numpy.float64)
+            

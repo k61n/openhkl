@@ -22,8 +22,6 @@ class FrameViewer(wx.Panel):
         
     def build_panel(self):
         
-        self._ellipses = []
-        
         self._sizer = wx.BoxSizer(wx.VERTICAL)
         
         self._figure = Figure(figsize=(5,4), dpi=None)
@@ -48,13 +46,19 @@ class FrameViewer(wx.Panel):
         self._toolbar.Realize()
         
         self._canvas.draw()
-                
+        
         self.SetSizer(self._sizer)        
 
         self._sizer.Fit(self)
         
         self.Layout()
-                                  
+        
+        
+    @property
+    def figure(self):
+        
+        return self._figure
+                                          
               
     def set_new_frame(self, scan):
                 
@@ -67,7 +71,7 @@ class FrameViewer(wx.Panel):
         self.build_ellipses(scan.ellipses)
                                         
         self._figure.canvas.blit(self._subplot.bbox)
-        
+                
         
     def build_ellipses(self, ellipses):
 
@@ -75,21 +79,23 @@ class FrameViewer(wx.Panel):
                  
         if ellipses.any(): 
             for i in range(ellipses.shape[0]):
-                e = Ellipse(xy=ellipses[i,:2], width=ellipses[i,3], height=ellipses[i,4], angle=ellipses[i,5])
+                e = Ellipse(xy=ellipses[i,:2], width=ellipses[i,3], height=ellipses[i,4], angle=ellipses[i,5], picker=True)
                 e.set_alpha(1.0)
                 e.set_fill(False)
                 e.set_linewidth(1)
                 e.set_linestyle('solid')
-                e.set_edgecolor('b')
+                e.set_edgecolor((0,0,1))
                 e.set_visible(False)
                 self._subplot.add_artist(e)
                         
         
     def hide_show_ellipses(self, show=False):
-
+        
         if self._subplot.artists:                 
+#             self._figure.canvas.draw()
             for a in self._subplot.artists:
                 a.set_visible(show)
+#                 a.set_animated(True)
                 self._subplot.draw_artist(a)
             self._figure.canvas.blit(self._subplot.bbox)
          
@@ -108,3 +114,4 @@ class FrameViewer(wx.Panel):
         d = wx.MessageDialog(self, message, style=wx.OK)
         
         d.ShowModal()
+        
