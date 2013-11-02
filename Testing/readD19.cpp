@@ -232,6 +232,8 @@ class Scan2D
 			for (auto b_it=blobs.begin(); b_it!=blobs.end(); ++b_it)
 			{
 				b_it->second.toEllipsoid(center,semi_axes,v0,v1,v2);
+				if (semi_axes[0]<0.5)
+					continue;
 				double h=std::pow(semi_axes[0]*v0[2],2)+std::pow(semi_axes[1]*v1[2],2)+std::pow(semi_axes[2]*v2[0],2);
 				// bounding box along z
 				h=sqrt(2.0)*boost::math::erf_inv(confidence)*sqrt(h);
