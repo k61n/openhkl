@@ -18,7 +18,7 @@
 #include <boost/python/numeric.hpp>
 #include <boost/python/object.hpp>
 #include <boost/spirit/include/qi.hpp>
-
+#include <boost/math/special_functions/erf.hpp>
 #include <numpy/arrayobject.h>
 
 #include "Blob2D.h"
@@ -212,7 +212,7 @@ class Scan2D
 //            double newQz=Qz;
 //            newQx/=_wave;
 //            newQy/=_wave;
-//            newQz/=_wave;
+//            newQz/=_wave;Ellipse(center,semi_axes, axis1, axis2)
 //	        finder.addPeak(V3D(newQx,newQy,newQz));
 //	        points.push_back(V3D(newQx,newQy,newQz));
 //	    }
@@ -226,23 +226,33 @@ class Scan2D
 //        finder.determineLattice(20);
 //	    return V3DToNumpy(points);
 
-		for (int i=0; i<_nframes; ++i)
-		{
-			_ellipses.insert(std::pair<int,ellipseVector>(i,ellipseVector()));
-			ellipseVector& e = _ellipses[i];
+
+        	V3D center, semi_axes, v0,v1,v2,axis1,axis2;
+
 			for (auto b_it=blobs.begin(); b_it!=blobs.end(); ++b_it)
 			{
-				V3D center, semi_axes, axis1, axis2;
-				bool test = b_it->second.intersectionWithPlane(0,0,1,i,center,semi_axes,axis1,axis2, confidence);
-				if (test)
+				b_it->second.toEllipsoid(center,semi_axes,v0,v1,v2);
+				double h=std::pow(semi_axes[0]*v0[2],2)+std::pow(semi_axes[1]*v1[2],2)+std::pow(semi_axes[2]*v2[0],2);
+				// bounding box along z
+				h=sqrt(2.0)*boost::math::erf_inv(confidence)*sqrt(h);
+				int fmin=std::floor(center[2]-h);
+				int fmax=std::floor(center[2]+h);
+				for (int i=fmin; i<=fmax; ++i)
 				{
-					Ellipse ell(center,semi_axes, axis1, axis2);
-					e.push_back(ell);
+					_ellipses.insert(std::pair<int,ellipseVector>(i,ellipseVector()));
+
+					bool test = b_it->second.intersectionWithPlane(0,0,1.0,i,center,semi_axes,axis1,axis2, confidence);
+					if (test)
+					{
+						Ellipse ell(center,semi_axes, axis1, axis2);
+						auto match= _ellipses.find(i);
+						if (match==_ellipses.end())
+							_ellipses.insert(std::make_pair(i,ellipseVector(1,ell)));
+						else
+							match->second.push_back(ell);
+					}
 				}
 			}
-
-
-		}
 
 		return blobs.size();
 
