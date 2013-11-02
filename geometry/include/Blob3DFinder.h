@@ -30,9 +30,9 @@
 #include <unordered_map>
 #include <vector>
 #include "Blob3D.h"
-#include <queue>
 #include <algorithm>
 #include <stdexcept>
+#include "Timer.h"
 
 namespace SX
 {
@@ -50,7 +50,8 @@ namespace Geometry
 	//! and a limits in the number of connected components in each blob (minComp, maxComp).
 	template <typename _datatype> blob3DCollection findBlobs3D(const std::vector<_datatype*>& ptrs,unsigned int nrows,unsigned int ncols, _datatype threashold, int minComp, int maxComp, bool rowMajor=1)
 	{
-
+		Timer tt;
+		tt.start();
 		// Number of frames
 		int nframes=ptrs.size();
 		if (nframes<=1)
@@ -59,15 +60,9 @@ namespace Geometry
 		// Map of Blobs (key : label, value : blob)
 		blob3DCollection blobs;
 
-		// Create a queue that will store the blob labels for previous frame.
-		std::queue<int> labels;
-		for (unsigned int i=0;i<ncols*nrows;++i)
-			labels.push(0);
-
-		// Create a queue for labels of previous line.
-		std::queue<int> labels2;
-		for (unsigned int i=0;i<ncols;++i)
-			labels2.push(0);
+		// Store labels of current and previous frames.
+		std::vector<int> labels(nrows*ncols,0);
+		std::vector<int> labels2(nrows*ncols,0);
 
 		// Create empty equivalence table
 		typedef std::pair<int,int> pairs;
@@ -79,12 +74,17 @@ namespace Geometry
 		int currentlabel=0;
 		int label;
 		bool newlabel;
+		int index2D=0;
+
+		int code;
+
 		// Iterate on all pixels in the image
 		for (int frame=0;frame<nframes;++frame)
 		{
 			// Go the the beginning of data
 			_datatype* datastart=ptrs[frame];
 			_datatype* dataptr=datastart;
+			index2D=0;
 			for (unsigned int row=0;row<nrows;++row)
 			{
 				if (!rowMajor)
@@ -99,75 +99,71 @@ namespace Geometry
 					// Discard pixel if value < threashold
 					if (value<threashold)
 					{
-
-						labels.pop();
-						labels.push(0);
-						labels2.pop();
-						labels2.push(0);
+						labels[index2D]=0;
+						labels2[index2D++]=0;
 						continue;
 					}
 					newlabel=false;
 					// Get labels of adjacent pixels
-					left= (col == 0 ? 0 : labels.back());
-					previous=labels.front();
-					top=labels2.front();
-					// If none of the neighbors have labels, create new one
-					if (!(top || left || previous))
-					{
-						label=++currentlabel;
-						newlabel=true;
-					}
-					else if (top && left && previous) //three adjacent pixels have values
-					{
-						label=left;
-						if ((top==left) && (top!=previous))
-							registerEquivalence(top,previous,equivalences);
-						else if ((top==previous) && (top!=left))
-							registerEquivalence(top,left,equivalences);
-						else if ((left==previous) && (left!=top))
-							registerEquivalence(left,top,equivalences);
-						else if ((left!=previous) && (left!=top) && (top!=previous))
-						{
-							registerEquivalence(top,previous,equivalences);
-							registerEquivalence(top,left,equivalences);
-							registerEquivalence(left,previous,equivalences);
-						}
-					}
-					else if (top && left && (!previous))
-					{
-						label=top;
-						if (top!=left)
-							registerEquivalence(top,left,equivalences);
-					}
-					else if (top && previous && (!left))
-					{
-						label=top;
-						if (top!=previous)
-							registerEquivalence(top,previous,equivalences);
-					}
-					else if (left && previous && (!top))
-					{
-						label=left;
-						if (left!=previous)
-							registerEquivalence(left,previous,equivalences);
-					}
-					else if (left) // only left has label
-					{
-						label=left;
-					}
-					else if (top) // only left has label
-					{
-						label=top;
-					}
-					else if (previous) // only left has label
-					{
-						label=previous;
-					}
+					left= (col == 0 ? 0 : labels[index2D-1]);
+					top=  (row == 0 ? 0 : labels[index2D-ncols]) ;
+					previous= (frame == 0 ? 0 : labels2[index2D]);
+					code=0;
+					code |= ( (left!=0) << 0);
+					code |= ( (top!=0) << 1);
+					code |= ( (previous!=0)  << 2);
 
-					labels.pop();
-					labels.push(label);
-					labels2.pop();
-					labels2.push(label);
+					switch (code) {
+						case 0:
+							label=++currentlabel;
+							newlabel=true;
+							break;
+						case 1: // Only left pixel
+							label=left;
+							break;
+						case 2: // Only top pixel
+							label=top;
+							break;
+						case 3: // Top and left
+							label=top;
+							if (top!=left)
+								registerEquivalence(top,left,equivalences);
+							break;
+						case 4: // Only previous
+							label=previous;
+							break;
+						case 5: // Left and previous
+							label=left;
+							if (left!=previous)
+								registerEquivalence(left,previous,equivalences);
+							break;
+						case 6: // Top and previous
+							label=top;
+							if (top!=previous)
+								registerEquivalence(top,previous,equivalences);
+							break;
+						case 7: // All three
+							label=left;
+							if ((top==left) && (top!=previous))
+								registerEquivalence(top,previous,equivalences);
+							else if ((top==previous) && (top!=left))
+								registerEquivalence(top,left,equivalences);
+							else if ((left==previous) && (left!=top))
+								registerEquivalence(left,top,equivalences);
+							else if ((left!=previous) && (left!=top) && (top!=previous))
+							{
+								registerEquivalence(top,previous,equivalences);
+								registerEquivalence(top,left,equivalences);
+								registerEquivalence(left,previous,equivalences);
+							}
+							break;
+						default:
+							break;
+					}
+					// If none of the neighbors have labels, create new one
+
+					labels[index2D]=labels2[index2D]=label;
+					index2D++;
 					if (newlabel) // Create a new blob if necessary
 					{
 						blobs.insert(std::pair<int,Blob3D>(label,Blob3D(col,row,frame,static_cast<double>(value))));
@@ -240,10 +236,10 @@ namespace Geometry
 			else
 				it++;
 		}
-
+		tt.stop();
+		std::cout << "Time ellapsed blob search " << tt << std::endl;
 		return blobs;
 }
-
 
 
 
