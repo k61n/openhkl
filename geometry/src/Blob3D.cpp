@@ -146,8 +146,7 @@ void Blob3D::toEllipsoid(V3D& center, V3D& semi_axes, V3D& v0, V3D& v1, V3D& v2)
     variance[4]=_m020/_m000-yc*yc;
     variance[5]=variance[7]=_m011/_m000-yc*zc;
     variance[8]=_m002/_m000-zc*zc;
-    std::cout << "variance" << variance[0] << "," << variance[1] << "," << variance[2] << "," <<variance[3] << "," <<variance[4]
-                            << "," <<variance[5] << "," <<variance[6] << "," <<variance[7] << "," <<variance[8] << std::endl;
+
     // Diagonalize the variance-covariance matrix
     gsl_matrix_view m = gsl_matrix_view_array(variance, 3, 3);
 
