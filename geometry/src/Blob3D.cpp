@@ -146,7 +146,8 @@ void Blob3D::toEllipsoid(V3D& center, V3D& semi_axes, V3D& v0, V3D& v1, V3D& v2)
     variance[4]=_m020/_m000-yc*yc;
     variance[5]=variance[7]=_m011/_m000-yc*zc;
     variance[8]=_m002/_m000-zc*zc;
-
+    std::cout << "variance" << variance[0] << "," << variance[1] << "," << variance[2] << "," <<variance[3] << "," <<variance[4]
+                            << "," <<variance[5] << "," <<variance[6] << "," <<variance[7] << "," <<variance[8] << std::endl;
     // Diagonalize the variance-covariance matrix
     gsl_matrix_view m = gsl_matrix_view_array(variance, 3, 3);
 
@@ -160,9 +161,10 @@ void Blob3D::toEllipsoid(V3D& center, V3D& semi_axes, V3D& v0, V3D& v1, V3D& v2)
     gsl_eigen_symmv_sort(val,vec,GSL_EIGEN_SORT_ABS_ASC);
 
     // This is the Gaussian sigma along three directions
-    semi_axes[0]= sqrt(gsl_vector_get(val, 0));
-    semi_axes[1]= sqrt(gsl_vector_get(val, 1));
-    semi_axes[2]= sqrt(gsl_vector_get(val, 2));
+    // (fabs is a safe-guard against very small negative eigenvalues due to precision errors)
+    semi_axes[0]= sqrt(std::fabs(gsl_vector_get(val, 0)));
+    semi_axes[1]= sqrt(std::fabs(gsl_vector_get(val, 1)));
+    semi_axes[2]= sqrt(std::fabs(gsl_vector_get(val, 2)));
 
     // Now eigenvectors
     gsl_vector_view vec_0 = gsl_matrix_column(vec, 0);

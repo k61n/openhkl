@@ -142,9 +142,10 @@ void Blob2D::toEllipse(double& xc, double& yc, double& s_a, double& s_b, double&
 	gsl_eigen_symmv_free(w);
 	gsl_eigen_symmv_sort(val,vec,GSL_EIGEN_SORT_ABS_ASC);
 
-	// 2.sqrt(Eigenvalues) = semi-axes
-	s_a= sqrt(gsl_vector_get(val, 0));
-	s_b= sqrt(gsl_vector_get(val, 1));
+	// sqrt(Eigenvalues) = semi-axes
+	// (fabs is a safe-guard against very small negative eigenvalues due to precision errors)
+	s_a= sqrt(std::fabs(gsl_vector_get(val, 0)));
+	s_b= sqrt(std::fabs(gsl_vector_get(val, 1)));
 
 	// Now get first eigenvector
 	gsl_vector_view vec_0 = gsl_matrix_column(vec, 0);
