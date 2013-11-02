@@ -43,8 +43,10 @@ namespace Geometry
 	inline void registerEquivalence(int a, int b,std::vector<std::pair<int,int> >& pairs)
 	{
 		if (a<b)
-			std::swap(a,b);
-		pairs.push_back(std::pair<int,int>(a,b));
+			pairs.push_back(std::pair<int,int>(b,a));
+		else
+			pairs.push_back(std::pair<int,int>(a,b));
+
 	}
 	//! Find blobs in a 2D image made of nrows*ncols data of type : _datatype. Blob are identified using a threashold,
 	//! and a limits in the number of connected components in each blob (minComp, maxComp).
@@ -59,6 +61,7 @@ namespace Geometry
 
 		// Map of Blobs (key : label, value : blob)
 		blob3DCollection blobs;
+		blobs.reserve(1000000);
 
 		// Store labels of current and previous frames.
 		std::vector<int> labels(nrows*ncols,0);
@@ -76,7 +79,11 @@ namespace Geometry
 		bool newlabel;
 		int index2D=0;
 
+		// int representing the 8 possible nearest neighbor operations.
 		int code;
+
+		//
+		int row_inc=(rowMajor ? 1 : nrows);
 
 		// Iterate on all pixels in the image
 		for (int frame=0;frame<nframes;++frame)
@@ -92,15 +99,12 @@ namespace Geometry
 				for (unsigned int col=0;col<ncols;++col)
 				{
 					_datatype value=*(dataptr);
-					if (!rowMajor)
-					  dataptr+=nrows;
-					else
-					  dataptr++;
+					dataptr+=row_inc;
 					// Discard pixel if value < threashold
 					if (value<threashold)
 					{
-						labels[index2D]=0;
-						labels2[index2D++]=0;
+						labels[index2D]=labels2[index2D]=0;
+						index2D++;
 						continue;
 					}
 					newlabel=false;
@@ -108,6 +112,7 @@ namespace Geometry
 					left= (col == 0 ? 0 : labels[index2D-1]);
 					top=  (row == 0 ? 0 : labels[index2D-ncols]) ;
 					previous= (frame == 0 ? 0 : labels2[index2D]);
+					// Encode type of config.
 					code=0;
 					code |= ( (left!=0) << 0);
 					code |= ( (top!=0) << 1);
@@ -164,6 +169,7 @@ namespace Geometry
 
 					labels[index2D]=labels2[index2D]=label;
 					index2D++;
+					//
 					if (newlabel) // Create a new blob if necessary
 					{
 						blobs.insert(std::pair<int,Blob3D>(label,Blob3D(col,row,frame,static_cast<double>(value))));
@@ -183,7 +189,7 @@ namespace Geometry
 
 		std::sort(equivalences.begin(),
 			      equivalences.end(),
-			      [&](const std::pair<int,int>& a,const std::pair<int,int>& b)
+			      [&](const std::pair<int,int> a,const std::pair<int,int> b)
 			      {
 					if (a.first<b.first)
 						return true;
@@ -193,10 +199,11 @@ namespace Geometry
 			       });
 
 
-		auto beg=equivalences.begin();
 
 		// Remove duplicates
+		auto beg=equivalences.begin();
 		auto last=std::unique(equivalences.begin(),equivalences.end());
+
 		// Copy to a map. This can't be an unordered_map in this case, ordering is important
 		std::map<int,int> mequiv;
 		for (auto it=beg;it!=last;++it)
