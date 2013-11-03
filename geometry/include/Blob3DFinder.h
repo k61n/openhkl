@@ -39,13 +39,14 @@ namespace SX
 namespace Geometry
 {
 	typedef std::unordered_map<int,Blob3D> blob3DCollection;
+	typedef std::vector<std::pair<int,int> > pairints;
 
 	inline void registerEquivalence(int a, int b,std::vector<std::pair<int,int> >& pairs)
 	{
 		if (a<b)
-			pairs.push_back(std::pair<int,int>(b,a));
+			pairs.push_back(pairints::value_type(b,a));
 		else
-			pairs.push_back(std::pair<int,int>(a,b));
+			pairs.push_back(pairints::value_type(a,b));
 
 	}
 	//! Find blobs in a 2D image made of nrows*ncols data of type : _datatype. Blob are identified using a threashold,
@@ -172,12 +173,12 @@ namespace Geometry
 					//
 					if (newlabel) // Create a new blob if necessary
 					{
-						blobs.insert(std::pair<int,Blob3D>(label,Blob3D(col,row,frame,static_cast<double>(value))));
+						blobs.insert(blob3DCollection::value_type(label,Blob3D(col,row,frame,value)));
 					}
 					else
 					{
 						auto it=blobs.find(label);
-						it->second.addPoint(col,row,frame,static_cast<double>(value));
+						it->second.addPoint(col,row,frame,value);
 					}
 
 
