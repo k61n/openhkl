@@ -185,8 +185,9 @@ class Scan2D
 	        vint& m=_frames[i];
 	        ptr.push_back(&m[0]);
 	    }
-	    int total=std::accumulate(_sum.begin(),_sum.end(),0);
-	    double z=static_cast<double>(total)/(_nrows*_ncols*_nframes);
+	    //int total=std::accumulate(_sum.begin(),_sum.end(),0);
+	    //double z=static_cast<double>(total)/(_nrows*_ncols*_nframes);
+	    double z=1;
 	    std::cout << "Search peaks above" << z*s2n << std::endl;
 	    blob3DCollection blobs=findBlobs3D<int>(ptr,_nrows,_ncols,s2n*z,minComp,maxComp,0);
         std::cout << "Found" << blobs.size() << " blobs \n";
@@ -234,7 +235,7 @@ class Scan2D
 				b_it->second.toEllipsoid(center,semi_axes,v0,v1,v2);
 				if (semi_axes[0]<0.5)
 					continue;
-				double h=std::pow(semi_axes[0]*v0[2],2)+std::pow(semi_axes[1]*v1[2],2)+std::pow(semi_axes[2]*v2[0],2);
+				double h=std::pow(semi_axes[0]*v0[2],2)+std::pow(semi_axes[1]*v1[2],2)+std::pow(semi_axes[2]*v2[2],2);
 				// bounding box along z
 				h=sqrt(2.0)*boost::math::erf_inv(confidence)*sqrt(h);
 				int fmin=std::floor(center[2]-h);

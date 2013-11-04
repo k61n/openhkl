@@ -33,6 +33,7 @@
 #include <algorithm>
 #include <stdexcept>
 #include "Timer.h"
+#include <map>
 
 namespace SX
 {
@@ -40,6 +41,24 @@ namespace Geometry
 {
 	typedef std::unordered_map<int,Blob3D> blob3DCollection;
 	typedef std::vector<std::pair<int,int> > pairints;
+
+	struct AABB
+	{
+		AABB(const V3D& min, const V3D& max):_vmin(min),_vmax(max)
+		{}
+		inline bool intercept(const AABB& rhs) const
+		{
+			if (_vmin[0]>rhs._vmax[0] || rhs._vmin[0] > _vmax[0])
+				return false;
+			if (_vmin[1]>rhs._vmax[1] || rhs._vmin[1] > _vmax[1])
+				return false;
+			if (_vmin[2]>rhs._vmax[2] || rhs._vmin[2] > _vmax[2])
+				return false;
+			// All tests fail return true.
+			return true;
+		}
+		V3D _vmin,_vmax;
+	};
 
 	inline void registerEquivalence(int a, int b,std::vector<std::pair<int,int> >& pairs)
 	{
@@ -244,8 +263,60 @@ namespace Geometry
 			else
 				it++;
 		}
+
+		int npeaks;
+		do
+		{
+		npeaks=blobs.size();
+		// Determine the AABB of the blobs
+		typedef std::unordered_map<int,AABB> mapbox;
+		mapbox boxes;
+		boxes.reserve(blobs.size());
+		int i=0;
+		V3D center,semi_axes, v0, v1,v2;
+		V3D hw;
+		for (auto it=blobs.begin();it!=blobs.end();++it)
+		{
+			Blob3D& p=it->second;
+			p.toEllipsoid(center,semi_axes,v0,v1,v2);
+			double w=std::pow(semi_axes[0]*v0[0],2)+std::pow(semi_axes[1]*v1[0],2)+std::pow(semi_axes[2]*v2[0],2);
+			hw[0]=3.0*sqrt(w);
+			double h=std::pow(semi_axes[0]*v0[1],2)+std::pow(semi_axes[1]*v1[1],2)+std::pow(semi_axes[2]*v2[1],2);
+			hw[1]=3.0*sqrt(h);
+			double d=std::pow(semi_axes[0]*v0[2],2)+std::pow(semi_axes[1]*v1[2],2)+std::pow(semi_axes[2]*v2[2],2);
+			hw[2]=3.0*sqrt(d);
+			boxes.insert(mapbox::value_type(it->first,AABB(center-hw,center+hw)));
+		}
+
+
+		for (mapbox::iterator it=boxes.begin();it!=boxes.end();++it)
+		{
+
+			mapbox::iterator  it2=it;
+			it2++;
+			auto b=blobs.find(it->first);
+			for (;it2!=boxes.end();)
+			{
+				if (it->second.intercept(it2->second))
+				{
+					auto b2=blobs.find(it2->first);
+					b->second.merge(b2->second);
+					blobs.erase(b2);
+					it2=boxes.erase(it2);
+				}
+				else
+					it2++;
+			}
+		}
+		}while(blobs.size()!=npeaks);
+
+
 		tt.stop();
 		std::cout << "Time ellapsed blob search " << tt << std::endl;
+		for (auto it=blobs.begin();it!=blobs.end();++it)
+		{
+			std::cout << (it->second) << std::endl ;
+		}
 		return blobs;
 }
 
