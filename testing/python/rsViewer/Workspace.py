@@ -186,12 +186,12 @@ class WorkspaceController(object):
         self._workspace.Bind(wx.EVT_TEXT_ENTER, self.on_update_plane_settings, self._settings.point2[1])
         self._workspace.Bind(wx.EVT_TEXT_ENTER, self.on_update_plane_settings, self._settings.point2[2])
         
-        self._workspace.Bind(wx.EVT_SCROLL, self.on_update_plane_settings, self._settings.resolution)
+        self._workspace.Bind(wx.EVT_SCROLL_CHANGED, self.on_update_plane_settings, self._settings.resolution)
 
-        self._workspace.Bind(wx.EVT_SCROLL, self.on_update_volume_color, self._settings.colorSlider)
+        self._workspace.Bind(wx.EVT_SCROLL_CHANGED, self.on_update_volume_color, self._settings.colorSlider)
         self._workspace.Bind(wx.EVT_TEXT_ENTER, self.on_update_volume_color, self._settings.colorFactor)
         
-        self._workspace.Bind(wx.EVT_SCROLL, self.on_update_volume_opacity, self._settings.opacitySlider)
+        self._workspace.Bind(wx.EVT_SCROLL_CHANGED, self.on_update_volume_opacity, self._settings.opacitySlider)
         self._workspace.Bind(wx.EVT_TEXT_ENTER, self.on_update_volume_opacity, self._settings.opacityFactor)
         
         self._workspace.Bind(wx.EVT_SCROLL, self.on_update_plane_lut, self._settings.intensitySlider)

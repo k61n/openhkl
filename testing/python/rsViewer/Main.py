@@ -74,10 +74,10 @@ class MainFrame(wx.Frame):
         self._dataTree = wx.TreeCtrl(self, wx.ID_ANY, style=wx.TR_HIDE_ROOT)
         self._dataTreeRoot = self._dataTree.AddRoot("root")
 
-        self._paneManager.AddPane(self._dataTree, aui.AuiPaneInfo().Caption("Data").Name("data").Left().CloseButton(True).DestroyOnClose(False).MinSize((250,-1)))        
+        self._paneManager.AddPane(self._dataTree, aui.AuiPaneInfo().Caption("Data").Name("data").Left().CloseButton(False).DestroyOnClose(False).MinSize((250,-1)))        
 
         self._notebook = aui.AuiNotebook(self)
-        self._paneManager.AddPane(self._notebook, aui.AuiPaneInfo().Name("viewer").Center().CloseButton(True).DestroyOnClose(False).MinSize((250,-1)))        
+        self._paneManager.AddPane(self._notebook, aui.AuiPaneInfo().Name("viewer").Center().CloseButton(False).DestroyOnClose(False).MinSize((250,-1)))        
         
         self._paneManager.Update()
         
