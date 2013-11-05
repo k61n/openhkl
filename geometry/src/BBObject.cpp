@@ -52,9 +52,7 @@ V3D& BBObject::getUpperBound() const
 
 V3D BBObject::getCenter() const
 {
-	V3D center((_lowerBound + _upperBound)/2.0);
-
-	return center;
+	return (_lowerBound + _upperBound)/2.0;
 }
 
 std::vector<V3D> BBObject::getExtents() const
@@ -70,6 +68,12 @@ std::vector<V3D> BBObject::getExtents() const
 	return axis;
 }
 
+bool AABBObject::intercept(const AABBObject& other)
+{
+	if
+
+
+}
 
 }
 

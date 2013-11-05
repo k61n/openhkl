@@ -68,16 +68,24 @@ public:
 	// Return the extents of the BB
 	std::vector<V3D> getExtents() const;
 
-	void intercept(const BBObject& other) = 0;
+	virtual bool intercept(const BBObject& other) = 0;
 
 
-private:
+protected:
 	// The lower bound point
 	V3D _lowerBound;
 	// The upper bound point
 	V3D _upperBound;
 
 };
+
+class AABBObject : public BBObject
+{
+public:
+	bool intercept(const AABBObject& other);
+
+};
+
 
 } // namespace Geometry
 
