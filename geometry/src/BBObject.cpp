@@ -16,8 +16,8 @@ BBObject::BBObject(const V3D& lBound, const V3D& uBound): _lowerBound(lBound), _
 
 BBObject::BBObject(const BBObject& other)
 {
-	_lowerBound =other._lowerBound;
-	_upperBound =other._upperBound;
+	_lowerBound = other._lowerBound;
+	_upperBound = other._upperBound;
 }
 
 BBObject& BBObject::operator=(const BBObject& other)
@@ -71,8 +71,8 @@ std::vector<V3D> BBObject::getExtents() const
 bool AABBObject::intercept(const AABBObject& other)
 {
 	return (((_lowerBound[0] < other._upperBound[0]) and (_upperBound[0] < other._lowerBound[0])) and
-			 ((_lowerBound[1] < other._upperBound[1]) and (_lowerBound[1] < other._upperBound[1])) and
-			 ((_lowerBound[2] < other._upperBound[2]) and (_lowerBound[2] < other._upperBound[2])));
+			 ((_lowerBound[1] < other._upperBound[1]) and (_upperBound[1] < other._lowerBound[1])) and
+			 ((_lowerBound[2] < other._upperBound[2]) and (_upperBound[2] < other._lowerBound[2])));
 
 }
 
