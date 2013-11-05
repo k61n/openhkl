@@ -70,8 +70,9 @@ std::vector<V3D> BBObject::getExtents() const
 
 bool AABBObject::intercept(const AABBObject& other)
 {
-	if
-
+	return (((_lowerBound[0] < other._upperBound[0]) and (_upperBound[0] < other._lowerBound[0])) and
+			 ((_lowerBound[1] < other._upperBound[1]) and (_lowerBound[1] < other._upperBound[1])) and
+			 ((_lowerBound[2] < other._upperBound[2]) and (_lowerBound[2] < other._upperBound[2])));
 
 }
 
