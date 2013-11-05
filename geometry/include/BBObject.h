@@ -38,29 +38,29 @@ namespace SX
 namespace Geometry
 {
 
-class BBObject
+class AABBObject
 {
 public:
 	// Constructors and operators
-	BBObject();
+	AABBObject();
 
-	BBObject(const V3D& lBound, const V3D& uBound);
+	AABBObject(const V3D& lBound, const V3D& uBound);
 
-	BBObject(const BBObject& other);
+	AABBObject(const AABBObject& other);
 
-	BBObject& operator=(const BBObject& other);
+	AABBObject& operator=(const AABBObject& other);
 
 	// lower bound constant getter
 	const V3D& getLowerBound() const;
 
 	// lower bound getter
-	V3D& getLowerBound() const;
+	V3D& getLowerBound();
 
 	// upper bound constant getter
 	const V3D& getUpperBound() const;
 
 	// upper bound getter
-	V3D& getUpperBound() const;
+	V3D& getUpperBound();
 
 	// return the center of the BB
 	V3D getCenter() const;
@@ -68,23 +68,14 @@ public:
 	// Return the extents of the BB
 	std::vector<V3D> getExtents() const;
 
-	virtual bool intercept(const BBObject& other) = 0;
-
-	virtual ~BBObject();
+	bool intercept(const AABBObject& other) const;
 
 
-protected:
+private:
 	// The lower bound point
 	V3D _lowerBound;
 	// The upper bound point
 	V3D _upperBound;
-
-};
-
-class AABBObject : public BBObject
-{
-public:
-	bool intercept(const AABBObject& other);
 
 };
 

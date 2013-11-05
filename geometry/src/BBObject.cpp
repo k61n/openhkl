@@ -6,21 +6,21 @@ namespace SX
 namespace Geometry
 {
 
-BBObject::BBObject(): _lowerBound(0.0,0.0,0.0), _upperBound(1.0,1.0,1.0)
+AABBObject::AABBObject(): _lowerBound(0.0,0.0,0.0), _upperBound(1.0,1.0,1.0)
 {
 }
 
-BBObject::BBObject(const V3D& lBound, const V3D& uBound): _lowerBound(lBound), _upperBound(uBound)
+AABBObject::AABBObject(const V3D& lBound, const V3D& uBound): _lowerBound(lBound), _upperBound(uBound)
 {
 }
 
-BBObject::BBObject(const BBObject& other)
+AABBObject::AABBObject(const AABBObject& other)
 {
 	_lowerBound = other._lowerBound;
 	_upperBound = other._upperBound;
 }
 
-BBObject& BBObject::operator=(const BBObject& other)
+AABBObject& AABBObject::operator=(const AABBObject& other)
 {
   if (this != &other)
   {
@@ -30,50 +30,56 @@ BBObject& BBObject::operator=(const BBObject& other)
   return *this;
 }
 
-const V3D& BBObject::getLowerBound() const
+const V3D& AABBObject::getLowerBound() const
 {
 	return _lowerBound;
 }
 
-V3D& BBObject::getLowerBound() const
+V3D& AABBObject::getLowerBound()
 {
 	return _lowerBound;
 }
 
-const V3D& BBObject::getUpperBound() const
+const V3D& AABBObject::getUpperBound() const
 {
 	return _upperBound;
 }
 
-V3D& BBObject::getUpperBound() const
+V3D& AABBObject::getUpperBound()
 {
 	return _upperBound;
 }
 
-V3D BBObject::getCenter() const
+V3D AABBObject::getCenter() const
 {
 	return (_lowerBound + _upperBound)/2.0;
 }
 
-std::vector<V3D> BBObject::getExtents() const
+std::vector<V3D> AABBObject::getExtents() const
 {
-	std::vector<V3D> axis;
-	axis.reserve(2);
+	std::vector<V3D> extents;
+	extents.reserve(2);
 
 	V3D center(getCenter());
 
-	axis.push_back(_upperBound-center);
-	axis.push_back(_lowerBound-center);
+	extents.push_back(_upperBound-center);
+	extents.push_back(_lowerBound-center);
 
-	return axis;
+	return extents;
 }
 
-bool AABBObject::intercept(const AABBObject& other)
+bool AABBObject::intercept(const AABBObject& other) const
 {
-	return (((_lowerBound[0] < other._upperBound[0]) and (_upperBound[0] < other._lowerBound[0])) and
-			 ((_lowerBound[1] < other._upperBound[1]) and (_upperBound[1] < other._lowerBound[1])) and
-			 ((_lowerBound[2] < other._upperBound[2]) and (_upperBound[2] < other._lowerBound[2])));
+	if ((_lowerBound[0] > other._upperBound[0]) || (other._lowerBound[0] > _upperBound[0]))
+		return false;
 
+	if ((_lowerBound[1] > other._upperBound[1]) || (other._lowerBound[1] > _upperBound[1]))
+		return false;
+
+	if ((_lowerBound[2] > other._upperBound[2]) || (other._lowerBound[2] > _upperBound[2]))
+		return false;
+
+	return true;
 }
 
 }
