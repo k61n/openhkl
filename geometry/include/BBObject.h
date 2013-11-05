@@ -70,6 +70,8 @@ public:
 
 	virtual bool intercept(const BBObject& other) = 0;
 
+	virtual ~BBObject();
+
 
 protected:
 	// The lower bound point
