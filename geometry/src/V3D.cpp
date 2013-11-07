@@ -321,34 +321,34 @@ void V3D::operator()(const V3D& _v)
     \param Indev[0] 0=v[0], 1=v[1], 2=v[2]
     \returns a double value of the requested av[0]is
   */
-const double& V3D::operator[](const int Index) const
-{
-  switch (Index)
-    {
-    case 0: return v[0];
-    case 1: return v[1];
-    case 2: return v[2];
-    default:
-      throw std::runtime_error("V3D::operator[] range error");
-    }
-}
-
-  /**
-    Returns the av[0]is value based in the indev[0] provided
-    \param Indev[0] 0=v[0], 1=v[1], 2=v[2]
-    \returns a double value of the requested av[0]is
-  */
-double& V3D::operator[](const int Index)
-{
-  switch (Index)
-    {
-    case 0: return v[0];
-    case 1: return v[1];
-    case 2: return v[2];
-    default:
-      throw std::runtime_error("V3D::operator[] range error");
-    }
-}
+//const double& V3D::operator[](const int Index) const
+//{
+//  switch (Index)
+//    {
+//    case 0: return v[0];
+//    case 1: return v[1];
+//    case 2: return v[2];
+//    default:
+//      throw std::runtime_error("V3D::operator[] range error");
+//    }
+//}
+//
+//  /**
+//    Returns the av[0]is value based in the indev[0] provided
+//    \param Indev[0] 0=v[0], 1=v[1], 2=v[2]
+//    \returns a double value of the requested av[0]is
+//  */
+//double& V3D::operator[](const int Index)
+//{
+//  switch (Index)
+//    {
+//    case 0: return v[0];
+//    case 1: return v[1];
+//    case 2: return v[2];
+//    default:
+//      throw std::runtime_error("V3D::operator[] range error");
+//    }
+//}
 
   /**
     Vector length

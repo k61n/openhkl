@@ -28,19 +28,53 @@
 #ifndef NSXTOOL_OCTREE_H_
 #define NSXTOOL_OCTREE_H_
 
-#include "BBObject.h"
+#include <vector>
+
+#include "V3D.h"
+#include "AABBObject.h"
 
 namespace SX {
 
 namespace Geometry {
 
-class Octree {
+
+class Octree
+{
 public:
-	Octree();
 
+	Octree(const V3D& lBound, const V3D& uBound);
+
+	static void defineParameters(int maxStorage, int maxDepth);
+
+	void addData(AABBObject* data);
+
+	struct Node : public AABBObject
+	{
+		Node();
+		Node(const V3D& lBound, const V3D& uBound);
+		~Node();
+		void setLimits(const V3D& lBound, const V3D& uBound);
+		void setLimits(double xmin,double ymin, double zmin, double xmax, double ymax, double zmax);
+		void split(AABBObject* data);
+		bool hasChildren() const;
+		void addData(AABBObject* data);
+		Node* _children;
+		std::vector<AABBObject*> _data;
+		void printSelf(std::ostream& os) const;
+
+	};
+	Octree::Node* getRoot() { return _root;}
+
+	~Octree();
+
+public:
+	static int _nSplits;
+
+private:
+	static std::size_t _maxStorage;
+	static std::size_t _maxDepth;
+	Node* _root;
 };
-
-class Node : public AABBObject
 
 
 

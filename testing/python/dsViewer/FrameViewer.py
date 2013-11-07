@@ -82,9 +82,9 @@ class FrameViewer(wx.Panel):
                     e = Ellipse(xy=ellipses[i,:2], width=ellipses[i,3], height=ellipses[i,4], angle=ellipses[i,5], picker=True)
                     e.set_alpha(1.0)
                     e.set_fill(False)
-                    e.set_linewidth(1)
+                    e.set_linewidth(1.5)
                     e.set_linestyle('solid')
-                    e.set_edgecolor((0,0,1))
+                    e.set_edgecolor((0.0,0.0,1))
                     e.set_visible(False)
                     self._subplot.add_artist(e)
                         

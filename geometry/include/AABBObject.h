@@ -41,7 +41,7 @@ namespace Geometry
 class AABBObject
 {
 public:
-	// Constructors and operators
+	//! Constructors and operators
 	AABBObject();
 
 	AABBObject(const V3D& lBound, const V3D& uBound);
@@ -50,28 +50,37 @@ public:
 
 	AABBObject& operator=(const AABBObject& other);
 
-	// lower bound constant getter
+	//! lower bound constant getter
 	const V3D& getLowerBound() const;
 
-	// lower bound getter
+	//! lower bound getter
 	V3D& getLowerBound();
 
-	// upper bound constant getter
+	//! upper bound constant getter
 	const V3D& getUpperBound() const;
 
-	// upper bound getter
+	//! upper bound getter
 	V3D& getUpperBound();
 
-	// return the center of the BB
+	//! return the center of the BB
 	V3D getCenter() const;
 
-	// Return the extents of the BB
+	//! Return the extents of the BB
 	std::vector<V3D> getExtents() const;
 
-	bool intercept(const AABBObject& other) const;
+	//! Inline really makes a difference in speed here.
+	inline bool intercept(const AABBObject& other) const
+	{
+		return(_upperBound[0] > other._lowerBound[0] &&
+		    _lowerBound[0] < other._upperBound[0] &&
+		    _upperBound[1] > other._lowerBound[1] &&
+		    _lowerBound[1] < other._upperBound[1] &&
+		    _upperBound[2] > other._lowerBound[2] &&
+		    _lowerBound[2] < other._upperBound[2]);
+	}
 
 
-private:
+protected:
 	// The lower bound point
 	V3D _lowerBound;
 	// The upper bound point

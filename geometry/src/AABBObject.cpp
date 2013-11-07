@@ -1,4 +1,4 @@
-#include "BBObject.h"
+#include "AABBObject.h"
 
 namespace SX
 {
@@ -68,19 +68,7 @@ std::vector<V3D> AABBObject::getExtents() const
 	return extents;
 }
 
-bool AABBObject::intercept(const AABBObject& other) const
-{
-	if ((_lowerBound[0] > other._upperBound[0]) || (other._lowerBound[0] > _upperBound[0]))
-		return false;
 
-	if ((_lowerBound[1] > other._upperBound[1]) || (other._lowerBound[1] > _upperBound[1]))
-		return false;
-
-	if ((_lowerBound[2] > other._upperBound[2]) || (other._lowerBound[2] > _upperBound[2]))
-		return false;
-
-	return true;
-}
 
 }
 

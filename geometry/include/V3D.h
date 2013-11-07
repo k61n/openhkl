@@ -96,8 +96,8 @@ class V3D
       const double& y() const { return v[1]; } ///< Get v[1]
       const double& z() const { return v[2]; } ///< Get v[2]
 
-      const double& operator[](const int Index) const;
-      double& operator[](const int Index);
+      inline const double& operator[](const int Index) const { return v[Index];}
+      inline double& operator[](const int Index) { return v[Index];}
       /// Make a normalized vector (return norm value)
       double normalize();            // Vec3D::makeUnit
       double norm() const;
