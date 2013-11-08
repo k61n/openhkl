@@ -11,74 +11,80 @@ namespace SX
 namespace Geometry
 {
 
-template <typename T, size_t D> class NDVector
+template <typename T> class NDVector
 {
 public:
 	//! default constructor
 	NDVector();
 
+	//! default constructor
+	NDVector(size_t dim);
+
 	//! copy constructor
-	NDVector(const NDVector<T,D>&);
+	NDVector(size_t dim, const NDVector<T>&);
 
 	//! constructor from a pointer of type T
-	NDVector(const T*);
+	NDVector(size_t dim, const T*);
+
+	//! constructor from a constant value
+	NDVector(size_t dim, const T val);
 
 	//! destructor
 	~NDVector();
 
 	//! assignment operator
-	NDVector<T,D>& operator=(const NDVector<T,D>&);
+	NDVector<T>& operator=(const NDVector<T>&);
 
 	//! add two ND vectors
-	NDVector<T,D> operator+(const NDVector<T,D>& other) const;
+	NDVector<T> operator+(const NDVector<T>& other) const;
 
 	//! add a constant vector
-	NDVector<T,D> operator+(const T val) const;
+	NDVector<T> operator+(const T val) const;
 
 	//! subtract two ND vectors
-	NDVector<T,D> operator-(const NDVector<T,D>& other) const;
+	NDVector<T> operator-(const NDVector<T>& other) const;
 
 	//! substract a constant vector
-	NDVector<T,D> operator-(const T val) const;
+	NDVector<T> operator-(const T val) const;
 
 	//! multiply two ND vectors
-	NDVector<T,D> operator*(const NDVector<T,D>& other) const;
+	NDVector<T> operator*(const NDVector<T>& other) const;
 
 	//! multiply by a constant vector
-	NDVector<T,D> operator*(const T val) const;
+	NDVector<T> operator*(const T val) const;
 
 	//! divide two ND vectors
-	NDVector<T,D> operator/(const NDVector<T,D>& other) const;
+	NDVector<T> operator/(const NDVector<T>& other) const;
 
 	//! divide by a constant vector
-	NDVector<T,D> operator/(const T val) const;
+	NDVector<T> operator/(const T val) const;
 
 	//! inplace addition
-	NDVector<T,D>& operator+=(const NDVector<T,D>& other);
+	NDVector<T>& operator+=(const NDVector<T>& other);
 
 	//! inplace addition by a constant vector
-	NDVector<T,D>& operator+=(const T val);
+	NDVector<T>& operator+=(const T val);
 
 	//! inplace substraction
-	NDVector<T,D>& operator-=(const NDVector<T,D>& other);
+	NDVector<T>& operator-=(const NDVector<T>& other);
 
 	//! inplace substraction by a constant vector
-	NDVector<T,D>& operator-=(const T val);
+	NDVector<T>& operator-=(const T val);
 
 	//! inplace multiplication by another ND vector
-	NDVector<T,D>& operator*=(const NDVector<T,D>& other);
+	NDVector<T>& operator*=(const NDVector<T>& other);
 
 	//! inplace multiplication by a constant vector
-	NDVector<T,D>& operator*=(const T val);
+	NDVector<T>& operator*=(const T val);
 
 	//! inplace division by another ND vector
-	NDVector<T,D>& operator/=(const NDVector<T,D>& other);
+	NDVector<T>& operator/=(const NDVector<T>& other);
 
 	//! inplace division by a constant vector
-	NDVector<T,D>& operator/=(const T val);
+	NDVector<T>& operator/=(const T val);
 
 	//! Reset a ND vector from another vector
-	void operator()(const NDVector<T,D>& other);
+	void operator()(const NDVector<T>& other);
 
 	//! Reset a ND vector from a pointer of type T
 	void operator()(const T* ptr);
@@ -86,7 +92,7 @@ public:
 	//! constant access to one component of a ND vector
 	inline const T& operator[](const unsigned int index) const
 	{
-		if (index < 0 || index >= D)
+		if (index < 0 || index >= _dim)
 			throw std::runtime_error("NDVector::operator[] range error");
 		return _vect[index];
 	}
@@ -94,7 +100,7 @@ public:
 	//! access to one component of a ND vector
 	inline T& operator[](const unsigned int index)
 	{
-		if (index < 0 || index >= D)
+		if (index < 0 || index >= _dim)
 			throw std::runtime_error("NDVector::operator[] range error");
 		return _vect[index];
 	}
@@ -102,7 +108,7 @@ public:
 	//! constant access to one component of a ND vector
 	inline const T& operator()(const unsigned int index) const
 	{
-		if (index < 0 || index >= D)
+		if (index < 0 || index >= _dim)
 			throw std::runtime_error("NDVector::operator[] range error");
 		return _vect[index];
 	}
@@ -110,13 +116,13 @@ public:
 	//! access to one component of a ND vector
 	inline T& operator()(const unsigned int index)
 	{
-		if (index < 0 || index >= D)
+		if (index < 0 || index >= _dim)
 			throw std::runtime_error("NDVector::operator[] range error");
 		return _vect[index];
 	}
 
 	//! inplace addition by another ND vector
-	void add(const NDVector<T,D>& other);
+	void add(const NDVector<T>& other);
 
 	//! inplace addition by a pointer of type T
 	void add(const T* ptr);
@@ -125,10 +131,10 @@ public:
 	void add(const T val);
 
 	//! inplace addition by a scaled vector
-	void addtimes(const NDVector<T,D>& other, T val);
+	void addtimes(const NDVector<T>& other, T val);
 
 	//! inplace substraction by another ND vector
-	void substract(const NDVector<T,D>& other);
+	void substract(const NDVector<T>& other);
 
 	//! inplace substraction by a pointer of type T
 	void substract(const T* ptr);
@@ -137,7 +143,7 @@ public:
 	void substract(const T val);
 
 	//! inplace substraction by a scaled vector
-	void substracttimes(const NDVector<T,D>& other, T val);
+	void substracttimes(const NDVector<T>& other, T val);
 
 	//! inplace normalization
 	double normalize();
@@ -149,13 +155,13 @@ public:
 	double norm2() const;
 
 	// ND-distance between two points defined as vectors
-	double distance(const NDVector<T,D>&) const;
+	double distance(const NDVector<T>&) const;
 
 	//! scalar product between two ND vectors
-	inline T scalar_prod(const NDVector<T,D>& other) const
+	inline T scalar_prod(const NDVector<T>& other) const
 	{
 		T prod;
-		for (int i=0; i < D; ++i)
+		for (size_t i=0; i < _dim; ++i)
 		{
 			prod += _vect[i]*other._vect[i];
 		}
@@ -166,7 +172,7 @@ public:
 	inline T scalar_prod(const T* ptr) const
 	{
 		T prod;
-		for (int i=0; i < D; ++i)
+		for (size_t i=0; i < _dim; ++i)
 		{
 			prod += _vect[i]*ptr[i];
 		}
@@ -177,51 +183,70 @@ public:
 	void printSelf(std::ostream&) const;
 
 private:
+	size_t _dim;
 	T* _vect;
 };
 
-template<typename T, size_t D>
-NDVector<T,D>::NDVector() : _vect(new T[D])
+template<typename T>
+NDVector<T>::NDVector() : _dim(3), _vect(new T[3])
 {
-	for (int i=0;i<D;++i)
+	for (size_t i=0;i<_dim;++i)
 	{
 		_vect[i] = 0;
 	}
 }
 
-template<typename T, size_t D>
-NDVector<T,D>::NDVector(const NDVector<T,D>& other) : _vect(new T[D])
+template<typename T>
+NDVector<T>::NDVector(size_t dim) : _dim(dim), _vect(new T[dim])
 {
-	for (int i=0; i<D; ++i)
+	for (size_t i=0;i<_dim;++i)
+	{
+		_vect[i] = 0;
+	}
+}
+
+template<typename T>
+NDVector<T>::NDVector(size_t dim, const NDVector<T>& other) : _dim(dim), _vect(new T[dim])
+{
+	for (size_t i=0; i<_dim; ++i)
 	{
 		_vect[i]=other._vect[i];
 	}
 }
 
-template<typename T, size_t D>
-NDVector<T,D>::NDVector(const T* ptr) : _vect(new T[D])
+template<typename T>
+NDVector<T>::NDVector(size_t dim, const T* ptr) : _dim(dim), _vect(new T[dim])
 {
 	if (ptr)
     {
-		for (int i=0; i<D; ++i)
+		for (size_t i=0; i<_dim; ++i)
 		{
 			_vect[i] = ptr[i];
 		}
     }
 }
 
-template<typename T, size_t D>
-NDVector<T,D>::~NDVector()
+template<typename T>
+NDVector<T>::NDVector(size_t dim, const T val) : _dim(dim), _vect(new T[dim])
+{
+	for (size_t i=0; i<_dim; ++i)
+	{
+		_vect[i] = val;
+	}
+}
+
+template<typename T>
+NDVector<T>::~NDVector()
 {
 	delete [] _vect;
 }
 
-template<typename T, size_t D>
-NDVector<T,D>& NDVector<T,D>::operator=(const NDVector<T,D>& other)
+template<typename T>
+NDVector<T>& NDVector<T>::operator=(const NDVector<T>& other)
 {
 	if (this!=&other)
 	{
-		for (int i=0; i<D; ++i)
+		for (size_t i=0; i<_dim; ++i)
 		{
 			_vect[i] = other._vect[i];
 		}
@@ -229,124 +254,124 @@ NDVector<T,D>& NDVector<T,D>::operator=(const NDVector<T,D>& other)
 	return *this;
 }
 
-template<typename T, size_t D>
-NDVector<T,D> NDVector<T,D>::operator+(const NDVector<T,D>& other) const
+template<typename T>
+NDVector<T> NDVector<T>::operator+(const NDVector<T>& other) const
 {
-	NDVector<T,D> out(*this);
+	NDVector<T> out(*this);
 	out += other;
 	return out;
 }
 
-template<typename T, size_t D>
-NDVector<T,D> NDVector<T,D>::operator+(const T val) const
+template<typename T>
+NDVector<T> NDVector<T>::operator+(const T val) const
 {
-	NDVector<T,D> out(*this);
+	NDVector<T> out(*this);
 	out += val;
 	return out;
 }
 
-template<typename T, size_t D>
-NDVector<T,D> NDVector<T,D>::operator-(const NDVector<T,D>& other) const
+template<typename T>
+NDVector<T> NDVector<T>::operator-(const NDVector<T>& other) const
 {
-	NDVector<T,D> out(*this);
+	NDVector<T> out(*this);
 	out -= other;
 	return out;
 }
 
-template<typename T, size_t D>
-NDVector<T,D> NDVector<T,D>::operator-(const T val) const
+template<typename T>
+NDVector<T> NDVector<T>::operator-(const T val) const
 {
-	NDVector<T,D> out(*this);
+	NDVector<T> out(*this);
 	out -= val;
 	return out;
 }
 
-template<typename T, size_t D>
-NDVector<T,D> NDVector<T,D>::operator*(const NDVector<T,D>& other) const
+template<typename T>
+NDVector<T> NDVector<T>::operator*(const NDVector<T>& other) const
 {
-	NDVector<T,D> out(*this);
+	NDVector<T> out(*this);
 	out *= other;
 	return out;
 }
 
-template<typename T, size_t D>
-NDVector<T,D> NDVector<T,D>::operator*(const T val) const
+template<typename T>
+NDVector<T> NDVector<T>::operator*(const T val) const
 {
-	NDVector<T,D> out(*this);
+	NDVector<T> out(*this);
 	out *= val;
 	return out;
 }
 
-template<typename T, size_t D>
-NDVector<T,D> NDVector<T,D>::operator/(const NDVector<T,D>& other) const
+template<typename T>
+NDVector<T> NDVector<T>::operator/(const NDVector<T>& other) const
 {
-	NDVector<T,D> out(*this);
+	NDVector<T> out(*this);
 	out /= other;
 	return out;
 }
 
-template<typename T, size_t D>
-NDVector<T,D> NDVector<T,D>::operator/(const T fact) const
+template<typename T>
+NDVector<T> NDVector<T>::operator/(const T fact) const
 {
-	NDVector<T,D> out(*this);
+	NDVector<T> out(*this);
 	out /= fact;
 	return out;
 }
 
-template<typename T, size_t D>
-NDVector<T,D>& NDVector<T,D>::operator+=(const NDVector<T,D>& other)
+template<typename T>
+NDVector<T>& NDVector<T>::operator+=(const NDVector<T>& other)
 {
-	for (int i=0; i<D; ++i)
+	for (size_t i=0; i<_dim; ++i)
 	{
 		_vect[i] += other._vect[i];
 	}
 	return *this;
 }
 
-template<typename T, size_t D>
-NDVector<T,D>& NDVector<T,D>::operator+=(const T val)
+template<typename T>
+NDVector<T>& NDVector<T>::operator+=(const T val)
 {
-	for (int i=0; i<D; ++i)
+	for (size_t i=0; i<_dim; ++i)
 	{
 		_vect[i] += val;
 	}
 	return *this;
 }
 
-template<typename T, size_t D>
-NDVector<T,D>& NDVector<T,D>::operator-=(const NDVector<T,D>& other)
+template<typename T>
+NDVector<T>& NDVector<T>::operator-=(const NDVector<T>& other)
 {
-	for (int i=0; i<D; ++i)
+	for (size_t i=0; i<_dim; ++i)
 	{
 		_vect[i] -= other._vect[i];
 	}
 	return *this;
 }
 
-template<typename T, size_t D>
-NDVector<T,D>& NDVector<T,D>::operator-=(const T val)
+template<typename T>
+NDVector<T>& NDVector<T>::operator-=(const T val)
 {
-	for (int i=0; i<D; ++i)
+	for (size_t i=0; i<_dim; ++i)
 	{
 		_vect[i] -= val;
 	}
 	return *this;
 }
 
-template<typename T, size_t D>
-NDVector<T,D>& NDVector<T,D>::operator*=(const NDVector<T,D>& other)
+template<typename T>
+NDVector<T>& NDVector<T>::operator*=(const NDVector<T>& other)
 {
-	for (int i=0; i<D; ++i)
+	for (size_t i=0; i<_dim; ++i)
 	{
 		_vect[i] *= other._vect[i];
 	}
 	return *this;
 }
 
-template<typename T, size_t D>
-NDVector<T,D>& NDVector<T,D>::operator*=(const T fact)
+template<typename T>
+NDVector<T>& NDVector<T>::operator*=(const T fact)
 {
-	for (int i=0; i<D; ++i)
+	for (size_t i=0; i<_dim; ++i)
 	{
 		_vect[i] *= fact;
 	}
@@ -354,173 +379,170 @@ NDVector<T,D>& NDVector<T,D>::operator*=(const T fact)
 }
 
 
-template<typename T, size_t D>
-NDVector<T,D>& NDVector<T,D>::operator/=(const NDVector<T,D>& other)
+template<typename T>
+NDVector<T>& NDVector<T>::operator/=(const NDVector<T>& other)
 {
-	for (int i=0; i<D; ++i)
+	for (size_t i=0; i<_dim; ++i)
 	{
 		_vect[i] /= other._vect[i];
 	}
 	return *this;
 }
 
-template<typename T, size_t D>
-NDVector<T,D>& NDVector<T,D>::operator/=(const T fact)
+template<typename T>
+NDVector<T>& NDVector<T>::operator/=(const T fact)
 {
-	for (int i=0; i<D; ++i)
+	for (size_t i=0; i<_dim; ++i)
 	{
 		_vect[i] /= fact;
 	}
 	return *this;
 }
 
-
-
-
-template<typename T, size_t D>
-std::ostream& operator<<(std::ostream& os, const NDVector<T,D>& v)
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const NDVector<T>& v)
 {
 	v.printSelf(os);
 	return os;
 }
 
-template<typename T, size_t D>
-void NDVector<T,D>::operator()(const NDVector<T,D>& other)
+template<typename T>
+void NDVector<T>::operator()(const NDVector<T>& other)
 {
-	for (int i=0; i<D; ++i)
+	for (size_t i=0; i<_dim; ++i)
 	{
 		_vect[i] = other._vect[i];
 	}
 	return;
 }
 
-template<typename T, size_t D>
-void NDVector<T,D>::operator()(const T* ptr)
+template<typename T>
+void NDVector<T>::operator()(const T* ptr)
 {
-	for (int i=0; i<D; ++i)
+	for (size_t i=0; i<_dim; ++i)
 	{
 		_vect[i] = ptr[i];
 	}
 	return;
 }
 
-template<typename T, size_t D>
-void NDVector<T,D>::add(const NDVector<T,D>& other)
+template<typename T>
+void NDVector<T>::add(const NDVector<T>& other)
 {
-	for (int i=0; i<D; ++i)
+	for (size_t i=0; i<_dim; ++i)
 	{
 		_vect[i] += other[i];
 	}
 }
 
-template<typename T, size_t D>
-void NDVector<T,D>::add(const T* ptr)
+template<typename T>
+void NDVector<T>::add(const T* ptr)
 {
-	for (int i=0; i<D; ++i)
+	for (size_t i=0; i<_dim; ++i)
 	{
 		_vect[i] += ptr[i];
 	}
 }
 
-template<typename T, size_t D>
-void NDVector<T,D>::add(const T val)
+template<typename T>
+void NDVector<T>::add(const T val)
 {
-	for (int i=0; i<D; ++i)
+	for (size_t i=0; i<_dim; ++i)
 	{
 		_vect[i] += val;
 	}
 }
 
-template<typename T, size_t D>
-void NDVector<T,D>::addtimes(const NDVector<T,D>& other,T val)
+template<typename T>
+void NDVector<T>::addtimes(const NDVector<T>& other,T val)
 {
-	for (int i=0; i<D; ++i)
+	for (size_t i=0; i<_dim; ++i)
 	{
 		_vect[i] += other._vect[i]*val;
 	}
 	return;
 }
 
-template<typename T, size_t D>
-void NDVector<T,D>::substract(const NDVector<T,D>& other)
+template<typename T>
+void NDVector<T>::substract(const NDVector<T>& other)
 {
-	for (int i=0; i<D; ++i)
+	for (size_t i=0; i<_dim; ++i)
 	{
 		_vect[i] -= other[i];
 	}
 }
 
-template<typename T, size_t D>
-void NDVector<T,D>::substract(const T* ptr)
+template<typename T>
+void NDVector<T>::substract(const T* ptr)
 {
-	for (int i=0; i<D; ++i)
+	for (size_t i=0; i<_dim; ++i)
 	{
 		_vect[i] -= ptr[i];
 	}
 }
 
-template<typename T, size_t D>
-void NDVector<T,D>::substract(const T val)
+template<typename T>
+void NDVector<T>::substract(const T val)
 {
-	for (int i=0; i<D; ++i)
+	for (size_t i=0; i<_dim; ++i)
 	{
 		_vect[i] -= val;
 	}
 }
 
-template<typename T, size_t D>
-void NDVector<T,D>::substracttimes(const NDVector<T,D>& other,T fact)
+template<typename T>
+void NDVector<T>::substracttimes(const NDVector<T>& other,T fact)
 {
-	for (int i=0; i<D; ++i)
+	for (size_t i=0; i<_dim; ++i)
 	{
 		_vect[i] -= other._vect[i]*fact;
 	}
 	return;
 }
 
-template<typename T, size_t D>
-double NDVector<T,D>::normalize()
+template<typename T>
+double NDVector<T>::normalize()
 {
 	const double length(norm());
 	this->operator/=(length);
 	return length;
 }
 
-template<typename T, size_t D>
-double NDVector<T,D>::norm() const
+template<typename T>
+double NDVector<T>::norm() const
 {
 	T norm;
-	for (int i=0; i<D; ++i)
+	for (size_t i=0; i<_dim; ++i)
 	{
 		norm += _vect[i]*_vect[i];
 	}
  	return sqrt(static_cast<double>(norm));
 }
 
-template<typename T, size_t D>
-double NDVector<T,D>::norm2() const
+template<typename T>
+double NDVector<T>::norm2() const
 {
 	T norm;
-	for (int i=0; i<D; ++i)
+	for (size_t i=0; i<_dim; ++i)
 	{
 		norm += _vect[i]*_vect[i];
 	}
 	return static_cast<double>(norm);
 }
 
-template<typename T, size_t D>
-double NDVector<T,D>::distance(const NDVector<T,D>& other) const
+template<typename T>
+double NDVector<T>::distance(const NDVector<T>& other) const
 {
-	NDVector<T,D> dif(*this);
+	NDVector<T> dif(*this);
 	dif -= other;
 	return dif.norm();
 }
 
-template<typename T, size_t D>
-void NDVector<T,D>::printSelf(std::ostream& os) const
+template<typename T>
+void NDVector<T>::printSelf(std::ostream& os) const
 {
 	os << "[";
-	for (int i=0; i<D; ++i)
+	for (size_t i=0; i<_dim; ++i)
 	{
 		os << _vect[i] << " , ";
 	}
@@ -528,19 +550,19 @@ void NDVector<T,D>::printSelf(std::ostream& os) const
 	return;
 }
 
-typedef NDVector<double,1> V1D;
-typedef NDVector<double,2> V2D;
-typedef NDVector<double,3> V3D;
+typedef NDVector<double> V1D;
+typedef NDVector<double> V2D;
+typedef NDVector<double> V3D;
 
-typedef NDVector<int,1> V1DI;
-typedef NDVector<int,2> V2DI;
-typedef NDVector<int,3> V3DI;
-typedef NDVector<float,1> V1DF;
-typedef NDVector<float,2> V2DF;
-typedef NDVector<float,3> V3DF;
-typedef NDVector<double,1> V1DD;
-typedef NDVector<double,2> V2DD;
-typedef NDVector<double,3> V3DD;
+typedef NDVector<int> V1DI;
+typedef NDVector<int> V2DI;
+typedef NDVector<int> V3DI;
+typedef NDVector<float> V1DF;
+typedef NDVector<float> V2DF;
+typedef NDVector<float> V3DF;
+typedef NDVector<double> V1DD;
+typedef NDVector<double> V2DD;
+typedef NDVector<double> V3DD;
 
 } // Namespace Geometry
 
