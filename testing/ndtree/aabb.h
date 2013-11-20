@@ -59,7 +59,7 @@ public:
 	AABB(const bounded_vector<T,D>& lb, const bounded_vector<T,D>& ub);
 
 	//! constructor from two initializer_list
-	AABB(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub)
+	AABB(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub);
 
 	//! assignment operator
 	AABB<T,D>& operator=(const AABB<T,D>& other);

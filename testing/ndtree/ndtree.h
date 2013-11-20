@@ -44,7 +44,8 @@ class NDTree
 {
 public:
 
-	typedef std::pair< std::vector<AABB<T,D>*>::iterator , std::vector<AABB<T,D>*>::iterator > data_range_iterator;
+	typedef typename std::vector<AABB<T,D>*>::iterator data_iterator;
+	typedef std::pair< data_iterator , data_iterator > data_range_iterator;
 
 	class Node : public AABB<T,D>
 	{
@@ -171,7 +172,7 @@ void NDTree<T,D>::defineParameters(std::size_t maxStorage, std::size_t maxDepth)
 }
 
 template<typename T, std::size_t D>
-std::vector<NDTree<T,D>::data_range_iterator> NDTree<T,D>::getData() const
+std::vector<typename NDTree<T,D>::data_range_iterator> NDTree<T,D>::getData() const
 {
 	std::vector<NDTree<T,D>::data_range_iterator> tmp;
 	_root->getData(tmp);
@@ -325,7 +326,7 @@ void NDTree<T,D>::Node::printSelf(std::ostream& os) const
 		os << "possible collisions";
 		for (int i=0;i<_data.size();++i)
 		{
-		 os << _data[i];
+		 os << *(_data[i]);
 		}
 		os << std::endl;
 	}
@@ -334,6 +335,13 @@ void NDTree<T,D>::Node::printSelf(std::ostream& os) const
 		for (int i=0; i<_multiplicity; ++i)
 			_children[i].printSelf(os);
 	}
+}
+
+template<typename T, std::size_t D>
+std::ostream& operator<<(std::ostream& os, const NDTree<T,D>& tree)
+{
+	tree.printSelf(os);
+	return os;
 }
 
 } // namespace Geometry
