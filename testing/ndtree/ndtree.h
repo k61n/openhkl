@@ -45,7 +45,7 @@ class NDTree
 public:
 
 	typedef typename std::vector<AABB<T,D>*>::iterator data_iterator;
-	typedef std::pair< data_iterator , data_iterator > data_range_iterator;
+	typedef std::pair< data_iterator , data_iterator > data_range_pair;
 
 	class Node : public AABB<T,D>
 	{
@@ -64,7 +64,7 @@ public:
 		void addData(AABB<T,D>* data);
 
 		//! get the data bounded to a node (and its descendance)
-		void getData(std::vector<data_range_iterator>& treeData) const;
+		void getData(std::vector<data_range_pair>& treeData);
 
 		//! check whether the node has some children
 		bool hasChildren() const;
@@ -101,7 +101,7 @@ public:
 	void addData(AABB<T,D>* data);
 
 	//! Get the data bounded to all the nodes of the tree
-	std::vector<data_range_iterator> getData() const;
+	std::vector<data_range_pair> getData();
 
 	//! getter for the root node
 	NDTree<T,D>::Node* getRoot();
@@ -110,29 +110,36 @@ public:
 	void printSelf(std::ostream& os) const;
 
 
-public:
-	static int _nSplits;
-
 private:
-	static std::vector<std::size_t> createPowers();
+	static std::size_t _nSplits;
 	static std::size_t _maxStorage;
 	static std::size_t _maxDepth;
 	static std::size_t _multiplicity;
 	static std::vector<std::size_t> _powers;
+	static std::vector<std::size_t> createPowers();
 	Node* _root;
 };
 
 template<typename T, std::size_t D>
-int NDTree<T,D>::_nSplits(0);
+std::size_t NDTree<T,D>::_nSplits(0);
 
 template<typename T, std::size_t D>
-std::size_t NDTree<T,D>::_maxStorage(2);
+std::size_t NDTree<T,D>::_maxStorage(4);
 
 template<typename T, std::size_t D>
 std::size_t NDTree<T,D>::_maxDepth(10);
 
 template<typename T, std::size_t D>
 std::size_t NDTree<T,D>::_multiplicity(std::pow(2,D));
+
+template<typename T, std::size_t D>
+std::vector<std::size_t> NDTree<T,D>::createPowers()
+{
+	std::vector<std::size_t> p(D);
+	int i=0;
+	std::generate(p.begin(), p.end(), [&i]() {return std::pow(2,i++);});
+	return p;
+}
 
 template<typename T, std::size_t D>
 std::vector<std::size_t> NDTree<T,D>::_powers=createPowers();
@@ -156,15 +163,6 @@ void NDTree<T,D>::addData(AABB<T,D>* data)
 }
 
 template<typename T, std::size_t D>
-std::vector<std::size_t> NDTree<T,D>::createPowers()
-{
-	std::vector<std::size_t> p(D);
-	int i=0;
-	std::generate(p.begin(), p.end(), [&i]() {return std::pow(2,i++);});
-	return p;
-}
-
-template<typename T, std::size_t D>
 void NDTree<T,D>::defineParameters(std::size_t maxStorage, std::size_t maxDepth)
 {
 	_maxStorage = maxStorage;
@@ -172,9 +170,10 @@ void NDTree<T,D>::defineParameters(std::size_t maxStorage, std::size_t maxDepth)
 }
 
 template<typename T, std::size_t D>
-std::vector<typename NDTree<T,D>::data_range_iterator> NDTree<T,D>::getData() const
+std::vector<typename NDTree<T,D>::data_range_pair> NDTree<T,D>::getData()
 {
-	std::vector<NDTree<T,D>::data_range_iterator> tmp;
+	std::vector<NDTree<T,D>::data_range_pair> tmp;
+	tmp.reserve(100000);
 	_root->getData(tmp);
 	return tmp;
 }
@@ -188,7 +187,7 @@ typename NDTree<T,D>::Node* NDTree<T,D>::getRoot()
 template<typename T, std::size_t D>
 void NDTree<T,D>::printSelf(std::ostream& os) const
 {
-	_root->printSelf(os);
+	os<<"The tree has been splitted "<<_nSplits<<" times"<<std::endl;
 }
 
 // inner class methods definitions
@@ -237,10 +236,9 @@ void NDTree<T,D>::Node::addData(AABB<T,D>* data)
 }
 
 template<typename T, std::size_t D>
-void NDTree<T,D>::Node::getData(std::vector<NDTree<T,D>::data_range_iterator>& treeData) const
+void NDTree<T,D>::Node::getData(std::vector<NDTree<T,D>::data_range_pair>& treeData)
 {
-
-	if (_children!=nullptr)
+	if (_children != nullptr)
 	{
 		for (int i=0; i<_multiplicity; ++i)
 			_children[i].getData(treeData);
@@ -248,9 +246,7 @@ void NDTree<T,D>::Node::getData(std::vector<NDTree<T,D>::data_range_iterator>& t
 	else
 	{
 		if (_data.size() != 0)
-		{
-			treeData.push_back(std::pair<NDTree<T,D>::data_range_iterator,NDTree<T,D>::data_range_iterator>(_data.begin(),_data.end()));
-		}
+			treeData.push_back(std::make_pair(_data.begin(),_data.end()));
 	}
 }
 

@@ -79,6 +79,9 @@ public:
 	//! set a translation tranformation from a single value
 	void translation(T value);
 
+	//! set a rotation tranformation from an an axis and an angle
+	void rotation(const ublas::bounded_vector<T,D-1>& axis, double angle);
+
 
 };
 
@@ -121,7 +124,7 @@ template<typename T, std::size_t D>
 void HMatrix<T,D>::scaling(const ublas::bounded_vector<T,D-1>& scaleVector)
 {
 	this->clear();
-	for (std::size_t i=0; i<D-1;++i)
+	for (std::size_t i=0; i<D-1; ++i)
 		this->operator()(i,i) = scaleVector[i];
 	this->operator()(D-1,D-1) = 1.0;
 }

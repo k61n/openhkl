@@ -17,29 +17,55 @@ using namespace boost::numeric::ublas;
 
 int main()
 {
-    typedef AABB<double,3> BB3D;
 
-	bounded_vector<double,3> v1,v2;
-	v1<<=0,0,0;
-	v2<<=1000,1000,1000;
+	const std::size_t dim=2;
+    typedef AABB<double,dim> BB2D;
 
-	NDTree<double,3> tree(v1,v2);
-	std::vector<BB3D> vb;
-	vb.reserve(10000000);
+    const std::size_t N=1e4;
 
-	std::uniform_real_distribution<> d(5,995);
+	bounded_vector<double,dim> v1,v2;
+	v1<<=0,0;
+	v2<<=100,100;
+
+	NDTree<double,dim> tree(v1,v2);
+	tree.defineParameters(6,100000000);
+	std::vector<BB2D> vb;
+	vb.reserve(N);
+
+	std::uniform_real_distribution<> d(5,95);
 	std::mt19937 gen;
 
-    for (int i=0;i<100000;++i)
+    for (int i=0;i<N;++i)
     {
-    	v1<<=d(gen),d(gen),d(gen);
-        v2<<=1,1,1;
+    	v1<<=d(gen),d(gen);
+        v2<<=1,1;
         v2 += v1;
-        BB3D* ptr = new BB3D(v1,v2); // OK but (very ?) slow
+        BB2D* ptr = new BB2D(v1,v2);
         tree.addData(ptr);
     }
-    std::cout<<tree._nSplits<<std::endl;
     std::cout<<tree<<std::endl;
+
+//	typedef typename std::vector<AABB<double,3>*>::iterator data_iterator;
+//	typedef std::pair< data_iterator , data_iterator > data_range_pair;
+
+    std::vector<SX::Geometry::NDTree<double,dim>::data_range_pair> data;
+
+    data = tree.getData();
+
+    int intersection=0;
+    for(auto it=data.begin();it!=data.end();++it)
+    {
+    	std::cout<<"NEW BOX"<<std::endl;
+    	SX::Geometry::NDTree<double,dim>::data_range_pair& p=*it;
+    	std::size_t d=std::distance(p.first,p.second);
+    	intersection+=d*(d-1)/2;
+    		//std::cout<<*(*it2)<<std::endl;
+    }
+    std::cout << " Number of intersections" << intersection << std::endl;
+    std::cout << " Number of intersections brut force" << N*(N-1)/2 << std::endl;
+
+    std::cout<<data.size()<<std::endl;
+
 
 //    bounded_vector<double,5> v1;
 //    v1<<=1,2,3,4,5;
