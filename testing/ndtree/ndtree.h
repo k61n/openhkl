@@ -225,12 +225,9 @@ void NDTree<T,D>::Node::addData(AABB<T,D>* data)
 	else
 	{
 		if (_data.size() < _maxStorage)
-		{
 			_data.push_back(data);
-		} else
-		{
+		else
 			split(data);
-		}
 	}
 
 }
@@ -298,6 +295,7 @@ void NDTree<T,D>::Node::split(AABB<T,D>* data)
 			uL[j] = (b ? this->_upperBound[j] : center[j]);
 		}
 		_children[i].setBounds(lL,uL);
+		_children[i].setDepth(_depth+1);
 	}
 
 	_data.push_back(data);
@@ -306,10 +304,8 @@ void NDTree<T,D>::Node::split(AABB<T,D>* data)
 		for (std::size_t i=0; i<_multiplicity; ++i)
 		{
 			_children[i].addData(*ptr);
-			_children[i].setDepth(_depth+1);
 		}
 	}
-
 	_data.clear();
 
 }
