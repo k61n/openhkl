@@ -302,9 +302,7 @@ void NDTree<T,D>::Node::split(AABB<T,D>* data)
 	for (auto ptr=_data.begin(); ptr!=_data.end(); ++ptr)
 	{
 		for (std::size_t i=0; i<_multiplicity; ++i)
-		{
 			_children[i].addData(*ptr);
-		}
 	}
 	_data.clear();
 
@@ -317,9 +315,7 @@ void NDTree<T,D>::Node::printSelf(std::ostream& os) const
 	{
 		os << "possible collisions";
 		for (int i=0;i<_data.size();++i)
-		{
-		 os << *(_data[i]);
-		}
+			os << *(_data[i]);
 		os << std::endl;
 	}
 	if (_children!=nullptr)
