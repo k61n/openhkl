@@ -69,9 +69,10 @@ public:
 	inline bool intercept(const AABB<T,D>& other) const
 	{
 		for (std::size_t i=0; i<D; ++i)
+		{
 			if (_upperBound[i] < other._lowerBound[i] || _lowerBound[i] > other._upperBound[i])
 				return false;
-
+		}
 		return true;
 	}
 
@@ -80,8 +81,6 @@ public:
 
 	//! send the object to a stream
 	void printSelf(std::ostream&) const;
-
-	typedef boost::tuple< std::initializer_list<T>,std::initializer_list<T> > tuple;
 
 protected:
 	// The lower bound point
@@ -126,7 +125,6 @@ AABB<T,D>::AABB(const std::initializer_list<T>& lb, const std::initializer_list<
 		*(lbit++) = *it1;
 		*(ubit++) = *it2;
 	}
-
 }
 
 
@@ -158,7 +156,7 @@ void AABB<T,D>::setBounds(const bounded_vector<T,D>& lb, const bounded_vector<T,
 template<typename T, std::size_t D>
 void AABB<T,D>::printSelf(std::ostream& os) const
 {
-  os<<"AABB --> "<<"lower bound"<<_lowerBound<<" , "<<"upper bound"<<_upperBound;
+  os<<"AABB --> "<<"lower bound: "<<_lowerBound<<" , upper bound: "<<_upperBound;
   return;
 }
 

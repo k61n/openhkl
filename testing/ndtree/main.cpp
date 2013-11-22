@@ -21,16 +21,18 @@ int main()
 	const std::size_t dim=2;
     typedef AABB<double,dim> BB2D;
 
-    const std::size_t N=1e4;
+    const std::size_t N=1e5;
 
 	bounded_vector<double,dim> v1,v2;
 	v1<<=0,0;
 	v2<<=100,100;
 
 	NDTree<double,dim> tree(v1,v2);
-	tree.defineParameters(6,100000000);
-	std::vector<BB2D> vb;
-	vb.reserve(N);
+	tree.setDepth(6);
+	tree.setMaxStorage(6);
+
+	std::vector<BB2D> data;
+	data.reserve(N);
 
 	std::uniform_real_distribution<> d(5,95);
 	std::mt19937 gen;
@@ -40,31 +42,51 @@ int main()
     	v1<<=d(gen),d(gen);
         v2<<=1,1;
         v2 += v1;
-        BB2D* ptr = new BB2D(v1,v2);
-        tree.addData(ptr);
+        data.push_back(BB2D(v1,v2));
     }
-    std::cout<<tree<<std::endl;
+
+    for (int i=0;i<N;++i)
+    {
+        tree.addData(&(data[i]));
+    }
+
+	std::vector<NDTree<double,dim>::data_range_pair> treeData;
+	treeData.reserve(100000);
+	tree.getData(treeData);
+
+	int intersection=0;
+	for(auto it=treeData.begin();it!=treeData.end();++it)
+	{
+		SX::Geometry::NDTree<double,dim>::data_range_pair& p=*it;
+		std::size_t d=std::distance(p.first,p.second);
+		intersection += d*(d-1)/2;
+			//std::cout<<*(*it2)<<std::endl;
+	}
+	std::cout << " Number of intersections" << intersection << std::endl;
+	std::cout << " Number of intersections brut force" << N*(N-1)/2 << std::endl;
+
+
+//    std::cout<<tree<<std::endl;
 
 //	typedef typename std::vector<AABB<double,3>*>::iterator data_iterator;
 //	typedef std::pair< data_iterator , data_iterator > data_range_pair;
 
-    std::vector<SX::Geometry::NDTree<double,dim>::data_range_pair> data;
+//    std::vector<SX::Geometry::NDTree<double,dim>::data_range_pair> data;
 
-    data = tree.getData();
+//    data = tree.getData();
 
-    int intersection=0;
-    for(auto it=data.begin();it!=data.end();++it)
-    {
-    	std::cout<<"NEW BOX"<<std::endl;
-    	SX::Geometry::NDTree<double,dim>::data_range_pair& p=*it;
-    	std::size_t d=std::distance(p.first,p.second);
-    	intersection+=d*(d-1)/2;
-    		//std::cout<<*(*it2)<<std::endl;
-    }
-    std::cout << " Number of intersections" << intersection << std::endl;
-    std::cout << " Number of intersections brut force" << N*(N-1)/2 << std::endl;
-
-    std::cout<<data.size()<<std::endl;
+//    int intersection=0;
+//    for(auto it=data.begin();it!=data.end();++it)
+//    {
+//    	SX::Geometry::NDTree<double,dim>::data_range_pair& p=*it;
+//    	std::size_t d=std::distance(p.first,p.second);
+//    	intersection+=d*(d-1)/2;
+//    		//std::cout<<*(*it2)<<std::endl;
+//    }
+//    std::cout << " Number of intersections" << intersection << std::endl;
+//    std::cout << " Number of intersections brut force" << N*(N-1)/2 << std::endl;
+//
+//    std::cout<<data.size()<<std::endl;
 
 
 //    bounded_vector<double,5> v1;
