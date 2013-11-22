@@ -25,6 +25,7 @@
 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
+
 #ifndef NSXTOOL_AABB_H_
 #define NSXTOOL_AABB_H_
 
