@@ -74,6 +74,7 @@ public:
 	AABB<T,D>& operator=(const AABB<T,D>& other);
 
 	//! Check for intersection with another AABB
+	//! Return true if touch or overlap
 	inline bool intercept(const AABB<T,D>& other) const
 	{
 		for (std::size_t i=0; i<D; ++i)
@@ -163,6 +164,11 @@ std::ostream& operator<<(std::ostream& os, const AABB<T,D>& aabb)
 template<typename T, std::size_t D>
 void AABB<T,D>::setBounds(const bounded_vector<T,D>& lb, const bounded_vector<T,D>& ub)
 {
+	for (std::size_t i=0;i<D;++i)
+	{
+		if (lb[i]>ub[i])
+			throw std::invalid_argument("AABB: upper limit must be > lower limit");
+	}
 	_lowerBound = lb;
 	_upperBound = ub;
 }
