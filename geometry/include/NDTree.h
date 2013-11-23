@@ -173,7 +173,7 @@ template<typename T, std::size_t D>
 const std::size_t NDTree<T,D>::_MULTIPLICITY(std::pow(2,D));
 
 template<typename T, std::size_t D>
-std::vector<std::size_t> NDTree<T,D>::_POWERS=createPowers();
+std::vector<std::size_t> NDTree<T,D>::_POWERS=std::move(createPowers());
 
 
 template<typename T, std::size_t D>
@@ -192,31 +192,36 @@ NDTree<T,D>::NDTree() : AABB<T,D>(), _depth(0)
 }
 
 template<typename T, std::size_t D>
-NDTree<T,D>::NDTree(const ublas::bounded_vector<T,D>& lb, const ublas::bounded_vector<T,D>& ub) : AABB<T,D>(lb,ub), _depth(0)
+NDTree<T,D>::NDTree(const ublas::bounded_vector<T,D>& lb, const ublas::bounded_vector<T,D>& ub)
+: AABB<T,D>(lb,ub), _depth(0)
 {
 	nullifyChildren();
 	_data.reserve(_MAX_STORAGE);
 }
 
 template<typename T, std::size_t D>
-NDTree<T,D>::NDTree(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub): AABB<T,D>(lb,ub), _depth(0)
+NDTree<T,D>::NDTree(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub)
+: AABB<T,D>(lb,ub), _depth(0)
 {
 	nullifyChildren();
 	_data.reserve(_MAX_STORAGE);
 }
 
 template<typename T, std::size_t D>
-NDTree<T,D>::NDTree(const NDTree<T,D>* parent, std::size_t nd_dran) : AABB<T,D>(parent->_lowerBound, parent->_upperBound), _depth(parent->_depth+1)
+NDTree<T,D>::NDTree(const NDTree<T,D>* parent, std::size_t nd_dran)
+: AABB<T,D>(parent->_lowerBound, parent->_upperBound), _depth(parent->_depth+1)
 {
 	nullifyChildren();
 	_data.reserve(_MAX_STORAGE);
 
+	// Calculate the center of the current branch
 	ublas::bounded_vector<T,D> center((parent->AABB<T,D>::_lowerBound + parent->AABB<T,D>::_upperBound)*0.5);
 
-	bool b;
+	// The numbering of sub-voxels is encoded into bits of an int a follows:
+	// ....... | dim[2] | dim[1] | dim[0]
 	for (std::size_t i=0; i<D; ++i)
 	{
-		b = (nd_dran & _POWERS[i]);
+		bool b = (nd_dran & _POWERS[i]);
 		this->AABB<T,D>::_lowerBound[i] = (b ? center[i] : parent->AABB<T,D>::_lowerBound[i]);
 		this->AABB<T,D>::_upperBound[i] = (b ? parent->AABB<T,D>::_upperBound[i] : center[i]);
 	}
@@ -239,9 +244,11 @@ NDTree<T,D>::~NDTree()
 template<typename T, std::size_t D>
 void NDTree<T,D>::addData(AABB<T,D>* aabb)
 {
+	// AABB does not overlap with this branch
 	if (!intercept(*aabb))
 		return;
 
+	// AABB overlap with this node
 	if (hasChildren())
 	{
 		for (unsigned int i=0;i<_MULTIPLICITY;++i)
@@ -250,7 +257,7 @@ void NDTree<T,D>::addData(AABB<T,D>* aabb)
 	else
 	{
 		_data.push_back(aabb);
-		if (_data.size() > _MAX_STORAGE)
+		if (_data.size() >= _MAX_STORAGE)
 			split();
 	}
 
@@ -274,7 +281,7 @@ void NDTree<T,D>::getData(std::vector<NDTree<T,D>::data_range_pair>& treeData) c
 template<typename T, std::size_t D>
 bool NDTree<T,D>::hasChildren() const
 {
-	return (_children[0]);
+	return (_children[0]==nullptr);
 }
 
 template<typename T, std::size_t D>
@@ -378,7 +385,7 @@ void NDTree<T,D>::split()
 	if (_depth > _MAX_DEPTH)
 		return;
 
-	// Split the current node in to 2^D subranges
+	// Split the current node into 2^D subnodes
 	for (std::size_t i=0; i<_MULTIPLICITY; ++i)
 		_children[i]=new NDTree<T,D>(this,i);
 
@@ -401,4 +408,4 @@ std::ostream& operator<<(std::ostream& os, const NDTree<T,D>& tree)
 
 } // namespace SX
 
-#endif /* NSXTOOL_NDTree_H_ */
+#endif /* NSXTOOL_NDTREE_H_ */
