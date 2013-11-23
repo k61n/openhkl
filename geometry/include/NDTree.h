@@ -281,7 +281,7 @@ void NDTree<T,D>::getData(std::vector<NDTree<T,D>::data_range_pair>& treeData) c
 template<typename T, std::size_t D>
 bool NDTree<T,D>::hasChildren() const
 {
-	return (_children[0]==nullptr);
+	return (_children[0]!=nullptr);
 }
 
 template<typename T, std::size_t D>
