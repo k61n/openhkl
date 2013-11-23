@@ -45,28 +45,35 @@ namespace SX
 namespace Geometry
 {
 
+/*! \brief Axis-Aligned Bounding-Box in D dimension.
+ *
+ * AABB are used to bound objects in a simple-way since
+ * their axes are aligned with the coordinates of the world.
+ * Used for fast collision detection test, as well as a
+ * way to iterate quickly over region of interest in data
+ * from images or volumes.
+ */
 template<typename T, std::size_t D>
 class AABB
 {
 public:
 
-	//! default constructor
+	//! Default constructor
 	AABB();
 
-	//! copy constructor
+	//! Copy constructor
 	AABB(const AABB<T,D>& other);
 
-	//! constructor from two ublas vectors
+	//! Constructor from two ublas vectors
 	AABB(const bounded_vector<T,D>& lb, const bounded_vector<T,D>& ub);
 
-	//! constructor from two initializer_list
+	//! Constructor from two initializer_lists
 	AABB(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub);
 
-	//! assignment operator
+	//! Assignment operator
 	AABB<T,D>& operator=(const AABB<T,D>& other);
 
-	//! check for interception with another AABB
-	//! inline really makes a difference in speed here.
+	//! Check for intersection with another AABB
 	inline bool intercept(const AABB<T,D>& other) const
 	{
 		for (std::size_t i=0; i<D; ++i)
@@ -77,10 +84,13 @@ public:
 		return true;
 	}
 
-	//! setter for the lower and upper bounds of the AABB
+	//! Setter for the lower and upper bounds of the AABB
 	void setBounds(const bounded_vector<T,D>& lb, const bounded_vector<T,D>& ub);
 
-	//! send the object to a stream
+	//! Return the center of the bounding box
+	bounded_vector<T,D> getCenter() const;
+
+	//! Send the object to a stream
 	void printSelf(std::ostream&) const;
 
 protected:
@@ -94,11 +104,7 @@ protected:
 template<typename T, std::size_t D>
 AABB<T,D>::AABB()
 {
-	for (std::size_t i=0; i<D; ++i)
-	{
-		_lowerBound[i] = 0;
-		_upperBound[i] = 1;
-	}
+ // The bounded_vectors are left non-initialized.
 }
 
 template<typename T, std::size_t D>
@@ -111,6 +117,11 @@ AABB<T,D>::AABB(const AABB<T,D>& other)
 template<typename T, std::size_t D>
 AABB<T,D>::AABB(const bounded_vector<T,D>& lb, const bounded_vector<T,D>& ub) : _lowerBound(lb), _upperBound(ub)
 {
+	for (std::size_t i=0;i<D;++i)
+	{
+		if (_lowerBound[i]>_upperBound[i])
+			throw std::invalid_argument("AABB: upper limit must be > lower limit");
+	}
 }
 
 template<typename T, std::size_t D>
@@ -123,6 +134,8 @@ AABB<T,D>::AABB(const std::initializer_list<T>& lb, const std::initializer_list<
 
 	for(;it1!=lb.end();it1++,it2++)
 	{
+		if ((*it1)>(*it2))
+			throw std::invalid_argument("AABB: upper limit must be > lower limit");
 		*(lbit++) = *it1;
 		*(ubit++) = *it2;
 	}
@@ -152,6 +165,13 @@ void AABB<T,D>::setBounds(const bounded_vector<T,D>& lb, const bounded_vector<T,
 {
 	_lowerBound = lb;
 	_upperBound = ub;
+}
+
+template<typename T, std::size_t D>
+bounded_vector<T,D> AABB<T,D>::getCenter() const
+{
+	bounded_vector<T,D> center((_lowerBound + _upperBound)*0.5);
+	return center;
 }
 
 template<typename T, std::size_t D>

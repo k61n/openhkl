@@ -218,7 +218,7 @@ NDTree<T,D>::NDTree(const NDTree<T,D>* parent, std::size_t sector)
 	_data.reserve(_MAX_STORAGE);
 
 	// Calculate the center of the current branch
-	ublas::bounded_vector<T,D> center((parent->AABB<T,D>::_lowerBound + parent->AABB<T,D>::_upperBound)*0.5);
+	ublas::bounded_vector<T,D> center=parent->getCenter();
 
 	// The numbering of sub-voxels is encoded into bits of an int a follows:
 	// ....... | dim[2] | dim[1] | dim[0]
