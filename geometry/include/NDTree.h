@@ -71,10 +71,8 @@ class NDTree : public AABB<T,D>
 {
 public:
 
-	typedef typename std::vector<AABB<T,D>*>::const_iterator data_iterator;
-	typedef std::pair< data_iterator , data_iterator > data_range_pair;
+	//! Pair of AABB*
 	typedef typename std::pair< AABB<T,D>*,AABB<T,D>* > collision_pair;
-
 
 	//! Constructor from two ublas vectors, throw invalid_argument if lb < ub
 	NDTree(const ublas::bounded_vector<T,D>& lb, const ublas::bounded_vector<T,D>& ub);
@@ -82,43 +80,45 @@ public:
 	//! Constructor from two initializer lists, throw invalid_argument if lb< ub
 	NDTree(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub);
 
-	/*! Constructor from a parent node
-	 *
-	 */
-	NDTree(const NDTree* parent, std::size_t nd_dran);
-
 	//! destructor
 	~NDTree();
 
 	/*! Add a new AABB object to the deepest leaf.
-	 *
+	 * If the leaf has reached capacity of _MAX_STORAGE, then it will be split into
+	 * 2^D sub-NDTree, unless _MAX_DEPTH is reached, in which case data will simply
+	 * be added to this leaf.
 	 */
 	void addData(AABB<T,D>* aabb);
 
-	//! check whether the node has some children
+	//! Check whether the node has some children
 	bool hasChildren() const;
 
-	//! check whether the node has some data
+	//! Check whether the node has some data
 	bool hasData() const;
 
-	//! recursively send some information about the node (and its descendance) to a stream
+	//! Recursively send some information about the node (and children) to a stream
 	void printSelf(std::ostream& os) const;
 
-	//! setter for _MAX_DEPTH attribute
+	//! Change the _MAX_DEPTH property of the Tree
 	static void setDepth(std::size_t depth);
 
-	//! setter for _MAX_STORAGE attribute
+	//! Change the _MAX_STORAGE property of the Tree
 	static void setMaxStorage(std::size_t maxStorage);
 
-	//!
-	void getPossibleCollisions(std::set< NDTree<T,D>::collision_pair >& collisions) const;
+	//! Return the list of AABB* pairs that intercept.
+	void getPossibleCollisions(std::set<collision_pair>& collisions) const;
 
-	//! split the node into 2^D subnodes
+	//! Split the node into 2^D subnodes
 	void split();
 
 private:
 	//! Prevent defining tree with null world.
 	NDTree();
+
+	/*! Construct a new NDTree in the subregion i of
+	 *  the parent tree. For example i goes from 1 to 8 for voxels
+	 */
+	NDTree(const NDTree* parent, std::size_t i);
 
 	//! Set all children to nullptr
 	void nullifyChildren();
@@ -154,7 +154,14 @@ std::vector<std::size_t> NDTree<T,D>::createPowers()
 {
 	std::vector<std::size_t> p(D);
 	int i=0;
-	std::generate(p.begin(), p.end(), [&i]() {return std::pow(2,i++);});
+	// Powers of 2
+	std::generate(p.begin(),
+			      p.end(),
+			      [&i]()
+			      {
+					return std::pow(2,i++);
+			      }
+	);
 
 	return p;
 }
@@ -204,8 +211,8 @@ NDTree<T,D>::NDTree(const std::initializer_list<T>& lb, const std::initializer_l
 }
 
 template<typename T, std::size_t D>
-NDTree<T,D>::NDTree(const NDTree<T,D>* parent, std::size_t nd_dran)
-: AABB<T,D>(parent->_lowerBound, parent->_upperBound), _depth(parent->_depth+1)
+NDTree<T,D>::NDTree(const NDTree<T,D>* parent, std::size_t sector)
+: AABB<T,D>(), _depth(parent->_depth+1)
 {
 	nullifyChildren();
 	_data.reserve(_MAX_STORAGE);
@@ -217,9 +224,9 @@ NDTree<T,D>::NDTree(const NDTree<T,D>* parent, std::size_t nd_dran)
 	// ....... | dim[2] | dim[1] | dim[0]
 	for (std::size_t i=0; i<D; ++i)
 	{
-		bool b = (nd_dran & _POWERS[i]);
-		this->AABB<T,D>::_lowerBound[i] = (b ? center[i] : parent->AABB<T,D>::_lowerBound[i]);
-		this->AABB<T,D>::_upperBound[i] = (b ? parent->AABB<T,D>::_upperBound[i] : center[i]);
+		bool b = (sector & _POWERS[i]);
+		this->AABB<T,D>::_lowerBound(i) = (b ? center[i] : parent->AABB<T,D>::_lowerBound(i));
+		this->AABB<T,D>::_upperBound(i) = (b ? parent->AABB<T,D>::_upperBound(i) : center(i));
 	}
 
 }
@@ -253,7 +260,7 @@ void NDTree<T,D>::addData(AABB<T,D>* aabb)
 	else
 	{
 		_data.push_back(aabb);
-		if (_data.size() >= _MAX_STORAGE)
+		if (_data.size() > _MAX_STORAGE)
 			split();
 	}
 
@@ -277,32 +284,35 @@ void NDTree<T,D>::getPossibleCollisions(std::set<collision_pair >& collisions) c
 {
 	typedef std::set<std::pair<AABB<T,D>*,AABB<T,D>*> > setcol;
 
-	if (!hasChildren() && hasData())
+	if (hasData())
 	{
 		for (auto it1=_data.begin(); it1!=_data.end(); ++it1)
 		{
+			// First AABB
+			AABB<T,D>* bb1=*it1;
 			for (auto it2=it1+1; it2!=_data.end(); ++it2)
 			{
-				if ((*(it1))->AABB<T,D>::intercept(*(*it2)))
+				// Second AABB
+				AABB<T,D>* bb2=*it2;
+				// If two AABBs intersect, add to the set sorting the addresses
+				if (bb1->AABB<T,D>::intercept(*bb2))
 				{
-					if (&(*it1) < &(*it2))
-					{
-						collisions.insert(typename setcol::value_type(*it1,*it2));
-					}
+					if (bb1 < bb2)
+						collisions.insert(typename setcol::value_type(bb1,bb2));
 					else
-					{
-						collisions.insert(typename setcol::value_type(*it2,*it1));
-					}
+						collisions.insert(typename setcol::value_type(bb1,bb2));
 				}
 			}
 		}
-
 	}
-	else if (hasChildren())
+
+	if (hasChildren())
 	{
 		for (int i=0;i<_MULTIPLICITY;++i)
 			_children[i]->getPossibleCollisions(collisions);
 	}
+
+	return;
 }
 
 template<typename T, std::size_t D>
