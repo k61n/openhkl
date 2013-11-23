@@ -288,30 +288,13 @@ namespace Geometry
 		{
 			oct.addData(&(it->second));
 		}
-		std::vector<Octree::data_range_pair> treeData;
-		treeData.reserve(100000);
-		oct.getData(treeData);
 
-		int intersection=0;
-		for(auto it=treeData.begin();it!=treeData.end();++it)
-		{
-			Octree::data_range_pair& p=*it;
-			std::size_t d=std::distance(p.first,p.second);
-			std::cout << d <<std::endl;
-			intersection += d*(d-1)/2;
-				//std::cout<<*(*it2)<<std::endl;
-		}
-		int a=0;
-		oct.collisions(a);
 
 		std::set<Octree::collision_pair> collisions;
 
 		oct.getPossibleCollisions(collisions);
 
-		std::cout<<collisions.size()<<std::endl;
-
-		std::cout << " Number of intersections" << intersection << std::endl;
-		std::cout << " Number of intersections" << a << std::endl;
+		std::cout << " Number of possible intersections" << collisions.size() << std::endl;
 		tt.stop();
 		std::cout << "Time ellapsed tree:" << tt << std::endl;
 

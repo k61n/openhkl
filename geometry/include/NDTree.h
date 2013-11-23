@@ -95,9 +95,6 @@ public:
 	 */
 	void addData(AABB<T,D>* aabb);
 
-	//! get the data contained in the node
-	void getData(std::vector<NDTree<T,D>::data_range_pair>& treeData) const;
-
 	//! check whether the node has some children
 	bool hasChildren() const;
 
@@ -107,14 +104,13 @@ public:
 	//! recursively send some information about the node (and its descendance) to a stream
 	void printSelf(std::ostream& os) const;
 
-	void collisions(int& ) const;
-
 	//! setter for _MAX_DEPTH attribute
 	static void setDepth(std::size_t depth);
 
 	//! setter for _MAX_STORAGE attribute
 	static void setMaxStorage(std::size_t maxStorage);
 
+	//!
 	void getPossibleCollisions(std::set< NDTree<T,D>::collision_pair >& collisions) const;
 
 	//! split the node into 2^D subnodes
@@ -264,21 +260,6 @@ void NDTree<T,D>::addData(AABB<T,D>* aabb)
 }
 
 template<typename T, std::size_t D>
-void NDTree<T,D>::getData(std::vector<NDTree<T,D>::data_range_pair>& treeData) const
-{
-	if (hasChildren())
-	{
-		for (unsigned int i=0; i<_MULTIPLICITY; ++i)
-			_children[i]->getData(treeData);
-	}
-	else
-	{
-		if (_data.size() != 0)
-			treeData.push_back(std::make_pair(_data.begin(),_data.end()));
-	}
-}
-
-template<typename T, std::size_t D>
 bool NDTree<T,D>::hasChildren() const
 {
 	return (_children[0]!=nullptr);
@@ -290,21 +271,6 @@ bool NDTree<T,D>::hasData() const
 	return (_data.size() != 0);
 }
 
-
-template<typename T, std::size_t D>
-void NDTree<T,D>::collisions(int& col) const
-{
-
-	if (!hasChildren() && hasData())
-	{
-		col+=_data.size()*(_data.size()-1)/2;
-	}
-	else if (hasChildren())
-	{
-		for (int i=0;i<_MULTIPLICITY;++i)
-			_children[i]->collisions(col);
-	}
-}
 
 template<typename T, std::size_t D>
 void NDTree<T,D>::getPossibleCollisions(std::set<collision_pair >& collisions) const
