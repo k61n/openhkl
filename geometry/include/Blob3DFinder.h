@@ -34,6 +34,8 @@
 #include <stdexcept>
 #include "Timer.h"
 #include <map>
+#include "AABB.h"
+#include "NDTree.h"
 
 namespace SX
 {
@@ -41,24 +43,9 @@ namespace Geometry
 {
 	typedef std::unordered_map<int,Blob3D> blob3DCollection;
 	typedef std::vector<std::pair<int,int> > pairints;
+	typedef AABB<double,3> AABB3D;
+	typedef NDTree<double,3> Octree;
 
-	struct AABB
-	{
-		AABB(const V3D& min, const V3D& max):_vmin(min),_vmax(max)
-		{}
-		inline bool intercept(const AABB& rhs) const
-		{
-			if (_vmin[0]>rhs._vmax[0] || rhs._vmin[0] > _vmax[0])
-				return false;
-			if (_vmin[1]>rhs._vmax[1] || rhs._vmin[1] > _vmax[1])
-				return false;
-			if (_vmin[2]>rhs._vmax[2] || rhs._vmin[2] > _vmax[2])
-				return false;
-			// All tests fail return true.
-			return true;
-		}
-		V3D _vmin,_vmax;
-	};
 
 	inline void registerEquivalence(int a, int b,std::vector<std::pair<int,int> >& pairs)
 	{
@@ -264,17 +251,19 @@ namespace Geometry
 				it++;
 		}
 
+		std::cout << "Found the initial peaks :" << blobs.size() << "\n";
+
 		int npeaks;
-		do
-		{
+
 		npeaks=blobs.size();
 		// Determine the AABB of the blobs
-		typedef std::unordered_map<int,AABB> mapbox;
+		typedef std::unordered_map<int,AABB3D> mapbox;
 		mapbox boxes;
 		boxes.reserve(blobs.size());
 		int i=0;
 		V3D center,semi_axes, v0, v1,v2;
 		V3D hw;
+
 		for (auto it=blobs.begin();it!=blobs.end();++it)
 		{
 			Blob3D& p=it->second;
@@ -285,38 +274,47 @@ namespace Geometry
 			hw[1]=3.0*sqrt(h);
 			double d=std::pow(semi_axes[0]*v0[2],2)+std::pow(semi_axes[1]*v1[2],2)+std::pow(semi_axes[2]*v2[2],2);
 			hw[2]=3.0*sqrt(d);
-			boxes.insert(mapbox::value_type(it->first,AABB(center-hw,center+hw)));
+			V3D low=center-hw;
+			V3D high=center+hw;
+			boxes.insert(mapbox::value_type(it->first,AABB3D({low[0],low[1],low[2]},{high[0],high[1],high[2]})));
 		}
 
+		tt.start();
+		Octree oct({0.0,0.0,0.0},{640.0,256.0,1112.0});
+		oct.setDepth(6);
+		oct.setMaxStorage(6);
 
-		for (mapbox::iterator it=boxes.begin();it!=boxes.end();++it)
+		for (auto it=boxes.begin();it!=boxes.end();++it)
 		{
-
-			mapbox::iterator  it2=it;
-			it2++;
-			auto b=blobs.find(it->first);
-			for (;it2!=boxes.end();)
-			{
-				if (it->second.intercept(it2->second))
-				{
-					auto b2=blobs.find(it2->first);
-					b->second.merge(b2->second);
-					blobs.erase(b2);
-					it2=boxes.erase(it2);
-				}
-				else
-					it2++;
-			}
+			oct.addData(&(it->second));
 		}
-		}while(blobs.size()!=npeaks);
+		std::vector<Octree::data_range_pair> treeData;
+		treeData.reserve(100000);
+		oct.getData(treeData);
 
+		int intersection=0;
+		for(auto it=treeData.begin();it!=treeData.end();++it)
+		{
+			Octree::data_range_pair& p=*it;
+			std::size_t d=std::distance(p.first,p.second);
+			std::cout << d <<std::endl;
+			intersection += d*(d-1)/2;
+				//std::cout<<*(*it2)<<std::endl;
+		}
+		int a=0;
+		oct.collisions(a);
 
+		std::set<Octree::collision_pair> collisions;
+
+		oct.getPossibleCollisions(collisions);
+
+		std::cout<<collisions.size()<<std::endl;
+
+		std::cout << " Number of intersections" << intersection << std::endl;
+		std::cout << " Number of intersections" << a << std::endl;
 		tt.stop();
-		std::cout << "Time ellapsed blob search " << tt << std::endl;
-		for (auto it=blobs.begin();it!=blobs.end();++it)
-		{
-			std::cout << (it->second) << std::endl ;
-		}
+		std::cout << "Time ellapsed tree:" << tt << std::endl;
+
 		return blobs;
 }
 
