@@ -100,7 +100,7 @@ public:
 	void printSelf(std::ostream& os) const;
 
 	//! Change the _MAX_DEPTH property of the Tree
-	static void setDepth(std::size_t depth);
+	static void setMaxDepth(std::size_t maxDepth);
 
 	//! Change the _MAX_STORAGE property of the Tree
 	static void setMaxStorage(std::size_t maxStorage);
@@ -356,14 +356,14 @@ void NDTree<T,D>::removeData(const AABB<T,D>* data)
 }
 
 template<typename T, std::size_t D>
-void NDTree<T,D>::setDepth(std::size_t depth)
+void NDTree<T,D>::setMaxDepth(std::size_t maxDepth)
 {
-	if (depth ==0)
+	if (maxDepth ==0)
 		throw std::invalid_argument("Depth of the NDTree must be at least 1");
-	if (depth >10)
+	if (maxDepth >10)
 		throw std::invalid_argument("Depth of NDTree > 10 consume too much memory");
 
-	_MAX_DEPTH = depth;
+	_MAX_DEPTH = maxDepth;
 }
 
 template<typename T, std::size_t D>
