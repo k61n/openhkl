@@ -111,6 +111,10 @@ public:
 	//! Split the node into 2^D subnodes
 	void split();
 
+	//! Remove a data from the NDTree
+	void removeData(const AABB<T,D>* data);
+
+
 private:
 	//! Prevent defining tree with null world.
 	NDTree();
@@ -278,7 +282,6 @@ bool NDTree<T,D>::hasData() const
 	return (_data.size() != 0);
 }
 
-
 template<typename T, std::size_t D>
 void NDTree<T,D>::getPossibleCollisions(std::set<collision_pair >& collisions) const
 {
@@ -331,6 +334,25 @@ void NDTree<T,D>::printSelf(std::ostream& os) const
 		for (int i=0; i<_MULTIPLICITY; ++i)
 			_children[i]->printSelf(os);
 	}
+}
+
+template<typename T, std::size_t D>
+void NDTree<T,D>::removeData(const AABB<T,D>* data)
+{
+
+	if (hasData())
+	{
+		auto it = std::find(_data.begin(), _data.end(), data);
+		if (it!=_data.end())
+			_data.erase(it);
+	}
+
+	if (hasChildren())
+	{
+		for (auto i=0; i<_MULTUPLICITY; ++i)
+			_children[i]->removeData(data);
+	}
+
 }
 
 template<typename T, std::size_t D>
