@@ -115,7 +115,7 @@ class Scan2D
     }
     void readFromFile(const std::string& filename)
     {
-        SX::MMILLAsciiReader mm(filename.c_str());
+        SX::Data::MMILLAsciiReader mm(filename.c_str());
 	    _meta=mm.readMetaDataBlock();
 
 	    _wave=_meta->getKey<double>("wavelength");
@@ -357,7 +357,7 @@ class Scan2D
     double _scanstep;
     std::vector<vint> _frames;
     std::vector<int> _sum;
-	SX::MetaData* _meta;
+	SX::Data::MetaData* _meta;
 	typedef std::vector<Ellipse> ellipseVector;
 	std::map<int,ellipseVector> _ellipses;
 	int _nrows, _ncols;
