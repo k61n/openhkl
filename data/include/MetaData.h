@@ -38,6 +38,9 @@
 namespace SX
 {
 
+namespace Data
+{
+
 
 // Maps
 typedef std::map<const char*,boost::any> hetermap;
@@ -120,5 +123,11 @@ template <typename _type>
 {
 	return getKey<_type>(std::string(key));
 }
+
+} // end namespace Data
+
 } // end namespace SX
+
+
+
 #endif /* NSXTOOL_METADATA_H_ */

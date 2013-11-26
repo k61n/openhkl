@@ -35,8 +35,14 @@
 namespace SX
 {
 
+namespace Data
+{
+
 PyObject* getPythonKey(MetaData* m, const std::string& key);
 PyObject* getPythonKeyAsString(MetaData* m, const std::string& key);
 
-}
-#endif
+} // end namespace Data
+
+} // end namespace SX
+
+#endif NSXTOOL_METADATAWRAPPER_H_

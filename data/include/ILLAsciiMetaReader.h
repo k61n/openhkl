@@ -34,6 +34,8 @@
 
 namespace SX {
 
+namespace Data {
+
 class MetaData;
 
 class ILLAsciiMetaReader: public Singleton<ILLAsciiMetaReader>
@@ -55,6 +57,8 @@ private:
 	static inline void gotoLine(std::stringstream& buffer, int line_number,int pos);
 };
 
-}
+} // namespace Data
 
-#endif
+} // namespace SX
+
+#endif NSXTOOL_ILLASCIIMETAREADER_H_
