@@ -95,4 +95,4 @@ std::vector<T> NumorSet::getMValues(const std::string& key)
 
 } // end namespace SX
 
-#endif NSXTOOL_NUMORSET_H_
+#endif // NSXTOOL_NUMORSET_H_

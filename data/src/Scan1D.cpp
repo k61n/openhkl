@@ -4,6 +4,9 @@
 namespace SX
 {
 
+namespace Data
+{
+
 Scan1D::Scan1D(const char* xname,const char* yname):_xname(xname),_yname(yname)
 {
 
@@ -75,6 +78,6 @@ void Scan1D::clear()
 	_e.clear();
 }
 
+} // end namespace Data
 
-
-} /* namespace SX */
+} // end namespace SX

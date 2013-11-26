@@ -61,4 +61,4 @@ private:
 
 } // namespace SX
 
-#endif NSXTOOL_ILLASCIIMETAREADER_H_
+#endif // NSXTOOL_ILLASCIIMETAREADER_H_

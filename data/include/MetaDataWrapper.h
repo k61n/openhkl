@@ -45,4 +45,4 @@ PyObject* getPythonKeyAsString(MetaData* m, const std::string& key);
 
 } // end namespace SX
 
-#endif NSXTOOL_METADATAWRAPPER_H_
+#endif // NSXTOOL_METADATAWRAPPER_H_

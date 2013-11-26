@@ -62,4 +62,4 @@ private:
 
 } // namespace SX
 
-#endif /* NSXTOOL_DATA3D_H_ */
+#endif // NSXTOOL_DATA3D_H_

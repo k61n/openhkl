@@ -70,4 +70,4 @@ private:
 
 } // end namespace SX
 
-#endif NSXTOOL_SCAN1D_H_
+#endif // NSXTOOL_SCAN1D_H_

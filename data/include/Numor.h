@@ -95,4 +95,4 @@ private:
 
 } // end namespace SX
 
-#endif NSXTOOL_NUMOR_H_
+#endif // NSXTOOL_NUMOR_H_

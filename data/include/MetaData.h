@@ -130,4 +130,4 @@ template <typename _type>
 
 
 
-#endif /* NSXTOOL_METADATA_H_ */
+#endif // NSXTOOL_METADATA_H_

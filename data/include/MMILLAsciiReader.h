@@ -64,4 +64,4 @@ private:
 
 } // end namespace SX
 
-#endif NSXTOOL_MMILLASCIIREADER_H_
+#endif // NSXTOOL_MMILLASCIIREADER_H_
