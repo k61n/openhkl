@@ -37,13 +37,15 @@
 #include <boost/numeric/ublas/io.hpp>
 #include <boost/numeric/ublas/vector.hpp>
 
-using namespace boost::numeric::ublas;
-
 namespace SX
 {
 
 namespace Geometry
 {
+
+typedef unsigned int uint;
+
+namespace ublas=boost::numeric::ublas;
 
 /*! \brief Axis-Aligned Bounding-Box in D dimension.
  *
@@ -53,7 +55,7 @@ namespace Geometry
  * way to iterate quickly over region of interest in data
  * from images or volumes.
  */
-template<typename T, std::size_t D>
+template<typename T, uint D>
 class AABB
 {
 public:
@@ -65,7 +67,7 @@ public:
 	AABB(const AABB<T,D>& other);
 
 	//! Constructor from two ublas vectors
-	AABB(const bounded_vector<T,D>& lb, const bounded_vector<T,D>& ub);
+	AABB(const ublas::bounded_vector<T,D>& lb, const ublas::bounded_vector<T,D>& ub);
 
 	//! Constructor from two initializer_lists
 	AABB(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub);
@@ -77,7 +79,7 @@ public:
 	//! Return true if touch or overlap
 	inline bool intercept(const AABB<T,D>& other) const
 	{
-		for (std::size_t i=0; i<D; ++i)
+		for (uint i=0; i<D; ++i)
 		{
 			if (_upperBound[i] < other._lowerBound[i] || _lowerBound[i] > other._upperBound[i])
 				return false;
@@ -86,46 +88,46 @@ public:
 	}
 
 	//! Setter for the lower and upper bounds of the AABB
-	void setBounds(const bounded_vector<T,D>& lb, const bounded_vector<T,D>& ub);
+	void setBounds(const ublas::bounded_vector<T,D>& lb, const ublas::bounded_vector<T,D>& ub);
 
 	//! Return the center of the bounding box
-	bounded_vector<T,D> getCenter() const;
+	ublas::bounded_vector<T,D> getCenter() const;
 
 	//! Send the object to a stream
 	void printSelf(std::ostream&) const;
 
 protected:
 	// The lower bound point
-	bounded_vector<T,D> _lowerBound;
+	ublas::bounded_vector<T,D> _lowerBound;
 	// The upper bound point
-	bounded_vector<T,D> _upperBound;
+	ublas::bounded_vector<T,D> _upperBound;
 
 };
 
-template<typename T, std::size_t D>
+template<typename T, uint D>
 AABB<T,D>::AABB()
 {
  // The bounded_vectors are left non-initialized.
 }
 
-template<typename T, std::size_t D>
+template<typename T, uint D>
 AABB<T,D>::AABB(const AABB<T,D>& other)
 {
 	_lowerBound = other._lowerBound;
 	_upperBound = other._upperBound;
 }
 
-template<typename T, std::size_t D>
-AABB<T,D>::AABB(const bounded_vector<T,D>& lb, const bounded_vector<T,D>& ub) : _lowerBound(lb), _upperBound(ub)
+template<typename T, uint D>
+AABB<T,D>::AABB(const ublas::bounded_vector<T,D>& lb, const ublas::bounded_vector<T,D>& ub) : _lowerBound(lb), _upperBound(ub)
 {
-	for (std::size_t i=0;i<D;++i)
+	for (uint i=0;i<D;++i)
 	{
 		if (_lowerBound[i]>_upperBound[i])
 			throw std::invalid_argument("AABB: upper limit must be > lower limit");
 	}
 }
 
-template<typename T, std::size_t D>
+template<typename T, uint D>
 AABB<T,D>::AABB(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub)
 {
 	auto it1 = lb.begin();
@@ -143,7 +145,7 @@ AABB<T,D>::AABB(const std::initializer_list<T>& lb, const std::initializer_list<
 }
 
 
-template<typename T, std::size_t D>
+template<typename T, uint D>
 AABB<T,D>& AABB<T,D>::operator=(const AABB<T,D>& other)
 {
   if (this != &other)
@@ -154,17 +156,17 @@ AABB<T,D>& AABB<T,D>::operator=(const AABB<T,D>& other)
   return *this;
 }
 
-template<typename T, std::size_t D>
+template<typename T, uint D>
 std::ostream& operator<<(std::ostream& os, const AABB<T,D>& aabb)
 {
 	aabb.printSelf(os);
 	return os;
 }
 
-template<typename T, std::size_t D>
-void AABB<T,D>::setBounds(const bounded_vector<T,D>& lb, const bounded_vector<T,D>& ub)
+template<typename T, uint D>
+void AABB<T,D>::setBounds(const ublas::bounded_vector<T,D>& lb, const ublas::bounded_vector<T,D>& ub)
 {
-	for (std::size_t i=0;i<D;++i)
+	for (uint i=0;i<D;++i)
 	{
 		if (lb[i]>ub[i])
 			throw std::invalid_argument("AABB: upper limit must be > lower limit");
@@ -173,14 +175,14 @@ void AABB<T,D>::setBounds(const bounded_vector<T,D>& lb, const bounded_vector<T,
 	_upperBound = ub;
 }
 
-template<typename T, std::size_t D>
-bounded_vector<T,D> AABB<T,D>::getCenter() const
+template<typename T, uint D>
+ublas::bounded_vector<T,D> AABB<T,D>::getCenter() const
 {
-	bounded_vector<T,D> center((_lowerBound + _upperBound)*0.5);
+	ublas::bounded_vector<T,D> center((_lowerBound + _upperBound)*0.5);
 	return center;
 }
 
-template<typename T, std::size_t D>
+template<typename T, uint D>
 void AABB<T,D>::printSelf(std::ostream& os) const
 {
   os<<"AABB --> "<<"lower bound: "<<_lowerBound<<" , upper bound: "<<_upperBound;
