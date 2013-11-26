@@ -26,7 +26,7 @@
  *
  */
 
-#ifndef  NSXTOOL_NUMOR_H_
+#ifndef NSXTOOL_NUMOR_H_
 #define NSXTOOL_NUMOR_H_
 #include <string>
 #include <sstream>
@@ -35,7 +35,11 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "MetaData.h"
 
-namespace SX {
+namespace SX
+{
+
+namespace Data
+{
 
 //! Class for  Single Crystal Numors.
 // Numors contains a unique identifier, data and
@@ -87,5 +91,8 @@ private:
 	std::vector<double> _rawdata;
 };
 
-} /* namespace SX */
-#endif /* NSXTOOL_NUMOR_H_ */
+} // end namespace Data
+
+} // end namespace SX
+
+#endif NSXTOOL_NUMOR_H_

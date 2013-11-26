@@ -33,6 +33,8 @@
 
 namespace SX {
 
+namespace Data {
+
 //! Forward declaration
 class MetaData;
 
@@ -58,5 +60,8 @@ private:
 
 };
 
-}
-#endif
+} // end namespace Data
+
+} // end namespace SX
+
+#endif NSXTOOL_MMILLASCIIREADER_H_

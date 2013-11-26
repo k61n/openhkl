@@ -33,6 +33,10 @@
 
 namespace SX
 {
+
+namespace Data
+{
+
 //! Class to hold one-dimensional scans, of the form x,y,sigma.
 //! If sigma vector is not given, gaussian errors are assumed.
 //
@@ -62,5 +66,8 @@ private:
 	vdouble _x, _y, _e;
 };
 
-} /* namespace SX */
-#endif /* NSXTOOL_SCAN1D_H_ */
+} // end namespace Data
+
+} // end namespace SX
+
+#endif NSXTOOL_SCAN1D_H_

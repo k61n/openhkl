@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef NSXTOOL_NumorSet_H_
-#define NSXTOOL_NumorSet_H_
+#ifndef NSXTOOL_NUMORSET_H_
+#define NSXTOOL_NUMORSET_H_
 #include "Numor.h"
 #include <string>
 #include <map>
@@ -35,13 +35,17 @@
 #include <boost/shared_ptr.hpp>
 
 // A few typedefs.
-typedef boost::shared_ptr<SX::Numor> sptrNumor;
+typedef boost::shared_ptr<SX::Data::Numor> sptrNumor;
 typedef std::map<int,sptrNumor> numMap;
 typedef numMap::iterator numMapit;
 typedef numMap::const_iterator numMapconstit;
 
 namespace SX
 {
+
+namespace Data
+{
+
 //! Class to store and handle a set of Numor files.
 class NumorSet
 {
@@ -87,6 +91,8 @@ std::vector<T> NumorSet::getMValues(const std::string& key)
 	return result;
 }
 
+} // end namespace Data
 
-} /* namespace SX */
-#endif /* NSXTOOL_NumorSet_H_ */
+} // end namespace SX
+
+#endif NSXTOOL_NUMORSET_H_
