@@ -33,7 +33,7 @@ void NumorSet::addNumorFromFile(const std::string& filename)
 		throw std::runtime_error("Can't find file"+filename);
 	// Make sure there is no problem lading the numor
 
-	sptrNumor a(new SX::Numor(filename));
+	sptrNumor a(new SX::Data::Numor(filename));
 	// Insert in the map using the key/
 	_numors[a->getNo()]=a;
 }
@@ -76,7 +76,6 @@ std::vector<sptrNumor> NumorSet::getNumors()
 	std::transform(_numors.begin(),_numors.end(),std::back_inserter(temp),boost::bind(&numMap::value_type::second,_1));
 	return temp;
 }
-
 
 } // end namespace Data
 
