@@ -39,7 +39,8 @@ namespace SX
 namespace Data
 {
 
-class Data3D : public IData
+template<typename T>
+class Data3D : public IData<T>
 {
 public:
 
@@ -52,6 +53,26 @@ public:
 private:
 
 };
+
+template<typename T>
+Data3D<T>::Data3D() : IData<T>()
+{
+}
+
+template<typename T>
+Data3D<T>::~Data3D()
+{
+}
+
+template<typename T>
+void Data3D<T>::read(const std::string& filename)
+{
+
+	// Read the file using memory map
+    SX::Data::MMILLAsciiReader mm(filename.c_str());
+    _meta=mm.readMetaDataBlock();
+
+}
 
 } // namespace SX
 

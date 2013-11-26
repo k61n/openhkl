@@ -30,6 +30,9 @@
 #define NSXTOOL_IDATA_H_
 
 #include <string>
+#include <vector>
+
+#include "MMILLAsciiReader.h"
 
 namespace SX
 {
@@ -57,6 +60,18 @@ private:
 	SX::Data::MetaData* _meta;
 
 };
+
+template<typename T>
+IData<T>::IData() : _meta(nullptr), _nFrames(0)
+{
+	_frames.reserve(0);
+}
+
+template<typename T>
+IData<T>::~IData()
+{
+	delete _meta;
+}
 
 } //namespace Data
 
