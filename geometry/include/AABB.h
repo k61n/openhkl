@@ -72,6 +72,9 @@ public:
 	//! Constructor from two initializer_lists
 	AABB(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub);
 
+	//! Destructor
+	virtual ~AABB();
+
 	//! Assignment operator
 	AABB<T,D>& operator=(const AABB<T,D>& other);
 
@@ -92,6 +95,9 @@ public:
 
 	//! Return the center of the bounding box
 	ublas::bounded_vector<T,D> getCenter() const;
+
+	//! Return the extends of the bounding box
+	ublas::bounded_vector<T,D> getExtents() const;
 
 	//! Send the object to a stream
 	void printSelf(std::ostream&) const;
@@ -144,6 +150,11 @@ AABB<T,D>::AABB(const std::initializer_list<T>& lb, const std::initializer_list<
 	}
 }
 
+template<typename T, uint D>
+AABB<T,D>::~AABB()
+{
+}
+
 
 template<typename T, uint D>
 AABB<T,D>& AABB<T,D>::operator=(const AABB<T,D>& other)
@@ -180,6 +191,13 @@ ublas::bounded_vector<T,D> AABB<T,D>::getCenter() const
 {
 	ublas::bounded_vector<T,D> center((_lowerBound + _upperBound)*0.5);
 	return center;
+}
+
+template<typename T, uint D>
+ublas::bounded_vector<T,D> AABB<T,D>::getExtents() const
+{
+	ublas::bounded_vector<T,D> dim(_upperBound - _lowerBound);
+	return dim;
 }
 
 template<typename T, uint D>

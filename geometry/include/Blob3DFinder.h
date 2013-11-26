@@ -32,7 +32,6 @@
 #include "Blob3D.h"
 #include <algorithm>
 #include <stdexcept>
-#include "Timer.h"
 #include <map>
 #include "AABB.h"
 #include "NDTree.h"
@@ -59,8 +58,7 @@ namespace Geometry
 	//! and a limits in the number of connected components in each blob (minComp, maxComp).
 	template <typename _datatype> blob3DCollection findBlobs3D(const std::vector<_datatype*>& ptrs,unsigned int nrows,unsigned int ncols, _datatype threashold, int minComp, int maxComp, bool rowMajor=1)
 	{
-		Timer tt;
-		tt.start();
+
 		// Number of frames
 		int nframes=ptrs.size();
 		if (nframes<=1)
@@ -260,7 +258,7 @@ namespace Geometry
 		typedef std::unordered_map<int,AABB3D> mapbox;
 		mapbox boxes;
 		boxes.reserve(blobs.size());
-		int i=0;
+
 		V3D center,semi_axes, v0, v1,v2;
 		V3D hw;
 
@@ -279,9 +277,9 @@ namespace Geometry
 			boxes.insert(mapbox::value_type(it->first,AABB3D({low[0],low[1],low[2]},{high[0],high[1],high[2]})));
 		}
 
-		tt.start();
+
 		Octree oct({0.0,0.0,0.0},{640.0,256.0,1112.0});
-		oct.setDepth(6);
+		oct.setMaxDepth(6);
 		oct.setMaxStorage(6);
 
 		for (auto it=boxes.begin();it!=boxes.end();++it)
@@ -295,8 +293,7 @@ namespace Geometry
 		oct.getPossibleCollisions(collisions);
 
 		std::cout << " Number of possible intersections" << collisions.size() << std::endl;
-		tt.stop();
-		std::cout << "Time ellapsed tree:" << tt << std::endl;
+
 
 		return blobs;
 }
