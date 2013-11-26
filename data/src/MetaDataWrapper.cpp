@@ -4,10 +4,12 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-
-
 namespace SX
 {
+
+namespace Data
+{
+
 PyObject* getPythonKey(MetaData* m, const std::string& key)
 {
 	boost::any value=m->getKey(key);
@@ -34,4 +36,6 @@ PyObject* getPythonKeyAsString(MetaData* m, const std::string& key)
 
 }
 
-}
+} // end namespace Data
+
+} // end namespace SX

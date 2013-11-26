@@ -26,26 +26,35 @@
  *
  */
 
-#ifndef  NSXTOOL_BPB_H_
-#define NSXTOOL_BPB_H_
-#include <vector>
-#include <algorithm>
-#include "DeadTime.h"
-#include "Numor.h"
+#ifndef NSXTOOL_ROI_H_
+#define NSXTOOL_ROI_H_
+
+#include "AABB.h"
 
 namespace SX
 {
-	//! Calculate flipping ratios from raw data.
-    //! Data must consist of array with 18 elements:
-	//! Left background    : cl+, cl-, tl+, tl-, ml+, ml-
-	//! Peak                              : cp+, cp-, tp+, tp-, mp+, mp-
-	//! Right background  : cr+,cr-,tr+,tr-,mr+,mr-
-	void calculateFlipping(const std::vector<double>& data,double& FR, double& FRS,DTCorrection& correction,bool asymmetry=false );
-	//! Convert flipping ratio (and error) to asymmetry (and error)
-	void converttoAsymmetry(double& FR, double& FRS);
-	//! Get bpb measurement from a numor. Throws if not bpb
-	void calculateFlipping(const SX::Data::Numor& n, double& fr, double& frs,DTCorrection& correction, bool asymmetry=false);
-	//! Strip out a data array from a numor consisting of a bpb measurement
-	std::vector<double> getFlippingData(const SX::Data::Numor&);
-} /* namespace SX */
-#endif /* SX_BPB_H_ */
+
+namespace Integration
+{
+
+typedef unsigned int uint;
+
+template<typename T, uint D>
+class ROI<T,D> : public SX::Geometry::AABB<T,D>
+{
+public:
+
+private:
+
+	shared_ptr<IData*> _data;
+
+};
+
+
+} // namespace Integration
+
+} // namespace SX
+
+#endif /* NSXTOOL_ROI_H_ */
+
+

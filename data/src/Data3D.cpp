@@ -20,7 +20,8 @@ Data3D::~Data3D()
 void Data3D::read(const std::string& filename)
 {
 
-    SX::MMILLAsciiReader mm(filename.c_str());
+	// Read the file using memory map
+    SX::Data::MMILLAsciiReader mm(filename.c_str());
     _meta=mm.readMetaDataBlock();
 
 }

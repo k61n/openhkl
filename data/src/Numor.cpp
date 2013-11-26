@@ -12,6 +12,8 @@
 
 namespace SX {
 
+namespace Data {
+
 int Numor::_currentline=0;
 
 Numor::Numor(const std::string& filename)
@@ -334,5 +336,6 @@ bool Numor::isbpb() const
 	return  (kctrl==21 && iflip==1);
 }
 
+} //end namespace Data
 
-} /* namespace SX */
+} //end namespace SX

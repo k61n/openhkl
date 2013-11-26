@@ -5,7 +5,7 @@
 namespace SX
 {
 
-HeCell::HeCell(const char* name): _pvst(new Scan1D("Time (s)", "Polar.")),_peaks(0)
+HeCell::HeCell(const char* name): _pvst(new SX::Data::Scan1D("Time (s)", "Polar.")),_peaks(0)
 {
 	if (name)
 		_name=name;
@@ -19,7 +19,7 @@ void HeCell::setDeadTime(const boost::shared_ptr<DTCorrection>& dt)
 {
 	_deadt=dt;
 }
-void HeCell::setNumors(const boost::shared_ptr<NumorSet>& numors)
+void HeCell::setNumors(const boost::shared_ptr<SX::Data::NumorSet>& numors)
 {
 	_numors=numors;
 }
@@ -77,7 +77,7 @@ void HeCell::calculateDecay()
 	_pvst->setData(time,polar,error);
 
 }
-const boost::shared_ptr<Scan1D>& HeCell::getDecay() const
+const boost::shared_ptr<SX::Data::Scan1D>& HeCell::getDecay() const
 {
 	return _pvst;
 }
@@ -139,7 +139,7 @@ int HeCell::fitExponential(double& A0,double& A0s, double& alpha,double& alphas)
 	return 0;
 }
 
-double HeCell::getPolar(const Numor& numor,double& Pcell, double& Pcells)
+double HeCell::getPolar(const SX::Data::Numor& numor,double& Pcell, double& Pcells)
 {
 	boost::posix_time::ptime ntime;
 	try
@@ -159,7 +159,7 @@ double HeCell::getPolar(const Numor& numor,double& Pcell, double& Pcells)
 	Pcells=sqrt(sigma);
 	return dts;
 }
-double HeCell::normalizebpb(const Numor& numor,double& polar, double& polars)
+double HeCell::normalizebpb(const SX::Data::Numor& numor,double& polar, double& polars)
 {
 	double polarin=polar;
 	double pcell, pcells;

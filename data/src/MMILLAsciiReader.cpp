@@ -12,6 +12,9 @@
 namespace SX
 {
 
+namespace Data
+{
+
 // Method to read a vector of int values from two char pointers, using spirit
 // This is faster than the C atoi() function.
 void readIntsFromChar(const char* begin, const char* end, std::vector<int>& v)
@@ -95,5 +98,6 @@ std::vector<int> MMILLAsciiReader::readBlock(unsigned int i) const
 	return v;
 }
 
+} // end namespace Data
 
-}
+} // end namespace SX

@@ -9,6 +9,9 @@
 namespace SX
 {
 
+namespace Data
+{
+
 int ILLAsciiMetaReader::_currentline=0;
 
 MetaData* ILLAsciiMetaReader::read(const char* buf,std::size_t& size)
@@ -207,5 +210,7 @@ void ILLAsciiMetaReader::readControlFBlock(std::stringstream& buffer,MetaData* m
 	_currentline+=(full_lines+missing);
 
 }
+
+} // end namespace Data
 
 } // end namespace SX

@@ -6,11 +6,14 @@ namespace SX
 namespace Data
 {
 
-IData::IData() : _meta(nullptr)
+template<typename T>
+IData<T>::IData() : _meta(nullptr), _nFrames(0)
 {
+	_frames.reserve(0);
 }
 
-IData::~IData()
+template<typename T>
+IData<T>::~IData()
 {
 	delete _meta;
 }

@@ -5,6 +5,9 @@
 namespace SX
 {
 
+namespace Data
+{
+
 NumorSet::NumorSet(const char* name):_name(name)
 {
 	// TODO Auto-generated constructor stub
@@ -75,4 +78,6 @@ std::vector<sptrNumor> NumorSet::getNumors()
 }
 
 
-} /* namespace SX */
+} // end namespace Data
+
+} // end namespace SX

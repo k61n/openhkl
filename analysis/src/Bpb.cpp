@@ -88,13 +88,13 @@ void converttoAsymmetry(double& fr, double& frs)
 	frs=std::fabs(frs);
 }
 
-void calculateFlipping(const Numor& n, double& fr, double& frs,DTCorrection& correction, bool asymmetry)
+void calculateFlipping(const SX::Data::Numor& n, double& fr, double& frs,DTCorrection& correction, bool asymmetry)
 {
 		std::vector<double> data=getFlippingData(n);
 		calculateFlipping(data,fr,frs,correction,asymmetry);
 }
 
-std::vector<double> getFlippingData(const Numor& n)
+std::vector<double> getFlippingData(const SX::Data::Numor& n)
 {
 		if (!n.isbpb())
 				throw std::runtime_error("Not a bpb measurement");

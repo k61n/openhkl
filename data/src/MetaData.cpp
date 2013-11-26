@@ -1,8 +1,11 @@
 
 #include "MetaData.h"
 
-namespace SX{
+namespace SX
+{
 
+namespace Data
+{
 
 // Static that contains all available keys.
 keyset MetaData::_metakeys=std::set<std::string>();
@@ -66,5 +69,6 @@ boost::any MetaData::getKey(const std::string& key) const
 			throw std::runtime_error("Could not locate key "+key+ " in the set of available keys");
 }
 
+} // end namespace Data
 
-} // End namespace SX.
+} // End namespace SX

@@ -37,6 +37,9 @@ namespace SX
 namespace Data
 {
 
+typedef unsigned int uint;
+
+template<typename T>
 class IData
 {
 public:
@@ -48,8 +51,10 @@ public:
 	virtual void read(const std::string& filename)=0;
 
 private:
-	SX::MetaData* _meta;
 
+	int _nFrames;
+	std::vector<T> _frames;
+	SX::Data::MetaData* _meta;
 
 };
 

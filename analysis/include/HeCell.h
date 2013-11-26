@@ -116,7 +116,7 @@ public:
 	//! Set active deadtime correction
 	void setDeadTime(const boost::shared_ptr<DTCorrection>& dt);
 	// ! Attach a set of numors that characterizes this Cell
-	void setNumors(const boost::shared_ptr<NumorSet>& numors);
+	void setNumors(const boost::shared_ptr<SX::Data::NumorSet>& numors);
 	//! Reset the numors currently attached.
 	void resetNumors();
 	//! Get the data in the form of time in seconds and polarisations
@@ -126,21 +126,21 @@ public:
 	//! sigmas for A0 and alpha Return 1 if success
 	int fitExponential(double& A0,double& A0s, double& alpha, double& alphas);
 	//! Get the scan
-	const boost::shared_ptr<Scan1D>& getDecay() const;
+	const boost::shared_ptr<SX::Data::Scan1D>& getDecay() const;
 	//! Add a peak in the list to validate measurement of the Cell.
 	//! Data in the set are used only if they correspond to one of the listed peak.
 	void addPeak(double h, double k, double l);
 	//! Calculate polarisation and error at the time given by a numor. Return the deltat in seconds
 	//! with respect to starting time of the cell.
-	double getPolar(const Numor& numor, double& Pcell, double& Pcells);
+	double getPolar(const SX::Data::Numor& numor, double& Pcell, double& Pcells);
 	//! Get the normalization constant at time t of the numor
-	double normalizebpb(const Numor& numor, double& polar, double& polars);
+	double normalizebpb(const SX::Data::Numor& numor, double& polar, double& polars);
 private:
 	std::string _name;
-	boost::shared_ptr<NumorSet> _numors;
+	boost::shared_ptr<SX::Data::NumorSet> _numors;
 	boost::shared_ptr<DTCorrection> _deadt;
 	boost::posix_time::ptime _starttime;
-	boost::shared_ptr<Scan1D> _pvst;
+	boost::shared_ptr<SX::Data::Scan1D> _pvst;
 	std::vector<boost::tuple<double,double,double> > _peaks;
 	//! Initial polarization of the cell and sigma and decay rate (s-1) and error.
 	double _P0, _P0s, _alpha0, _alpha0s;
