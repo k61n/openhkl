@@ -111,6 +111,9 @@ public:
 	//! Return the list of AABB* pairs that intercept.
 	void getPossibleCollisions(std::set<collision_pair>& collisions) const;
 
+	//! Get the voxels of the tree
+	void getVoxels(std::vector<AABB<T,D>* >& voxels);
+
 	//! Split the node into 2^D subnodes
 	void split();
 
@@ -314,12 +317,27 @@ void NDTree<T,D>::getPossibleCollisions(std::set<collision_pair >& collisions) c
 
 	if (hasChildren())
 	{
-		for (int i=0;i<_MULTIPLICITY;++i)
+		for (uint i=0;i<_MULTIPLICITY;++i)
 			_children[i]->getPossibleCollisions(collisions);
 	}
 
 	return;
 }
+
+template<typename T, uint D>
+void NDTree<T,D>::getVoxels(std::vector<AABB<T,D>* >& voxels)
+{
+	voxels.push_back(this);
+	if (hasChildren())
+	{
+		for (uint i=0;i<_MULTIPLICITY;++i)
+			_children[i]->getVoxels(voxels);
+	}
+	return;
+}
+
+
+
 
 template<typename T, uint D>
 void NDTree<T,D>::printSelf(std::ostream& os) const

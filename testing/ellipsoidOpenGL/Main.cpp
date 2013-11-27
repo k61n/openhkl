@@ -15,7 +15,8 @@
 #include <boost/numeric/ublas/io.hpp>
 #include <GL/glut.h>
 #include <unordered_map>
-#include <set>
+#include "zpr.h"
+
 #define VIEWING_DISTANCE_MIN  3.0
 
 using namespace std;
@@ -135,7 +136,7 @@ struct Data
 	{}
 	void fromFile(const std::string& filename)
 	{
-	SX::MMILLAsciiReader mm(filename.c_str());
+	SX::Data::MMILLAsciiReader mm(filename.c_str());
 	mm.readMetaDataBlock();
 	_frames.resize(mm.nBlocks());
 	#pragma omp parallel for
@@ -223,13 +224,7 @@ void initRendering() {
 	glEnable(GL_COLOR_MATERIAL);
 }
 
-void handleResize(int w, int h) {
-	glViewport(0, 0, w, h);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(10.0, w/h, g_nearPlane, g_farPlane);
-	//glOrtho(-100.0,740,-100,356,-100,1272);
-}
+
 
 typedef NDTree<double,3> Octree;
 Data d;
@@ -241,16 +236,27 @@ GLuint ball, ballwire;
 GLuint cube;
 std::vector<AABB3D*> treeAABBs;
 std::set<std::pair<AABB3D*,AABB3D*> > collisions;
+bool show_tree;
 
-void initData()
+void HandleKeys(unsigned char key, int x, int y)
+{
+	if (key=='t')
+	{
+		show_tree=!show_tree;
+	}
+	glutPostRedisplay();
+	return;
+
+}
+void initData(const char* file)
 {
 	// Load display list for sphere and  cube
 	ball=createUnitSphere(true);
 	ballwire=createUnitSphere(false);
 	cube=createUnitCube();
 	// Read the data and search for blobs
-	d.fromFile("/home/chapon/Data/D19/Zonta/069184");
-	blobs=d.getEllipsoids(15.0);
+	d.fromFile(file);
+	blobs=d.getEllipsoids(10.0);
 	std::cout << "Found : " << blobs.size() << std::endl;
 	// Transform blobs to Ellipsoids
 	V3D center;
@@ -271,7 +277,7 @@ void initData()
 		tree.addData(&(*it));
 	}
 	// Get the octreeAABBs
-	//tree.getBoxes(treeAABBs);
+	tree.getVoxels(treeAABBs);
 	tree.getPossibleCollisions(collisions);
 	for(auto it=collisions.begin();it!=collisions.end();++it)
 	{
@@ -290,11 +296,11 @@ void drawScene() {
 
 	glMatrixMode(GL_MODELVIEW);
 
-    glLoadIdentity();
-    glTranslatef(-220.0f,-100.0f,-g_fViewDistance-5000.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glRotatef(0.0,0.0,1.0,0.0);
 
+	// Move the scene to center of the D19 frame
+	glPushMatrix();
+    glTranslatef(-320.f,-128.0f,-586.0f);
 
 	GLfloat ambientColor[] = {0.5f, 0.5f, 0.5f, 1.0f};
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientColor);
@@ -316,18 +322,20 @@ void drawScene() {
 			it->plot(ball,cube,true);
 	}
 	// To vizualize the tree
-//	for (auto it=treeAABBs.begin();it!=treeAABBs.end();++it)
-//	{
-//		glPushMatrix();
-//		bounded_vector<double,3> center=(*it)->getCenter();
-//		bounded_vector<double,3> dim=(*it)->getDimensions();
-//		glColor3f(1.0f,1.0f,0.0f);
-//		glTranslated(center(0),center(1),center(2));
-//		glScaled(dim(0),dim(1),dim(2));
-//		glCallList(cube);
-//		glPopMatrix();
-//	}
-	//glPopMatrix();
+	if (show_tree)
+	{
+		for (auto it=treeAABBs.begin();it!=treeAABBs.end();++it)
+		{
+			glPushMatrix();
+			bounded_vector<double,3> center=(*it)->getCenter();
+			bounded_vector<double,3> dim=(*it)->getExtents();
+			glColor3f(1.0f,1.0f,0.0f);
+			glTranslated(center(0),center(1),center(2));
+			glScaled(dim(0),dim(1),dim(2));
+			glCallList(cube);
+			glPopMatrix();
+		}
+	}
 
 	glPushMatrix();
 	glColor3f(0.0f,1.0f,0.0f);
@@ -335,53 +343,28 @@ void drawScene() {
 	glScalef(640.0f,256.0f,1172.0f);
 	glCallList(cube);
 	glPopMatrix();
-
+	glPopMatrix();
 
 	glutSwapBuffers();
 }
 
-void MouseButton(int button, int state, int x, int y)
+
+int main(int argc, char** argv)
 {
-  // Respond to mouse button presses.
-  // If button1 pressed, mark this state so we know in motion function.
-  if (button == GLUT_LEFT_BUTTON)
-    {
-      g_bButton1Down = (state == GLUT_DOWN) ? true : false;
-      g_yClick = y - 0.1 * g_fViewDistance;
-    }
-}
-void MouseMotion(int x, int y)
-{
-  // If button1 pressed, zoom in/out if mouse is moved up/down.
-  if (g_bButton1Down)
-    {
-      g_fViewDistance = (y - g_yClick) / 0.1;
-      glutPostRedisplay();
-    }
-}
-
-
-int main(int argc, char** argv) {
-
-	srand((unsigned int)time(0)); //Seed the random number generator
-
-
-
+	if (argc!=2)
+		exit(1);
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	glutInitWindowSize(600, 600);
-
 	glutCreateWindow("Collision Detection - Test NDTree");
-
-	initData();
-
 	glutDisplayFunc(drawScene);
+	glutKeyboardFunc(HandleKeys);
+	initData(argv[1]);
+	glScalef(0.01f,0.01f,0.01f);
+	zprInit();
 
 	initRendering();
 
-	glutReshapeFunc(handleResize);
-	glutMouseFunc (MouseButton);
-	glutMotionFunc (MouseMotion);
 	glutMainLoop();
 	return 0;
 }

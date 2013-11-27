@@ -251,9 +251,6 @@ namespace Geometry
 
 		std::cout << "Found the initial peaks :" << blobs.size() << "\n";
 
-		int npeaks;
-
-		npeaks=blobs.size();
 		// Determine the AABB of the blobs
 		typedef std::unordered_map<int,AABB3D> mapbox;
 		mapbox boxes;
