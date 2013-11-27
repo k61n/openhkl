@@ -262,9 +262,9 @@ void initData(const char* file)
 	V3D center;
 	V3D sa;
 	V3D v0,v1,v2;
-	for (auto it=blobs.begin();it!=blobs.end();++it)
+	for (auto& it : blobs)
 	{
-		(it->second).toEllipsoid(center,sa,v0,v1,v2);
+		it.second.toEllipsoid(center,sa,v0,v1,v2);
 		v2=v0.cross_prod(v1);
 		ell.push_back(Ellipsoid(center,sa,v0,v1,v2));
 	}
@@ -279,12 +279,12 @@ void initData(const char* file)
 	// Get the octreeAABBs
 	tree.getVoxels(treeAABBs);
 	tree.getPossibleCollisions(collisions);
-	for(auto it=collisions.begin();it!=collisions.end();++it)
+	for(auto& it : collisions)
 	{
-		Ellipsoid* temp=dynamic_cast<Ellipsoid*>((*it).first);
+		Ellipsoid* temp=dynamic_cast<Ellipsoid*>(it.first);
 		if (temp)
 			temp->setIntercept(true);
-		temp=dynamic_cast<Ellipsoid*>((*it).second);
+		temp=dynamic_cast<Ellipsoid*>(it.second);
 		if (temp)
 			temp->setIntercept(true);
 	}
@@ -314,21 +314,21 @@ void drawScene() {
 	glShadeModel(GL_SMOOTH);
 	glDisable(GL_TEXTURE_2D);
 
-	for (auto it=ell.begin();it!=ell.end();++it)
+	for (auto& it : ell )
 	{
-		if (it->_intercept)
-			it->plot(ballwire,cube,true);
+		if (it._intercept)
+			it.plot(ballwire,cube,true);
 		else
-			it->plot(ball,cube,true);
+			it.plot(ball,cube,true);
 	}
 	// To vizualize the tree
 	if (show_tree)
 	{
-		for (auto it=treeAABBs.begin();it!=treeAABBs.end();++it)
+		for (auto& it : treeAABBs )
 		{
 			glPushMatrix();
-			bounded_vector<double,3> center=(*it)->getCenter();
-			bounded_vector<double,3> dim=(*it)->getExtents();
+			bounded_vector<double,3> center=it->getCenter();
+			bounded_vector<double,3> dim=it->getExtents();
 			glColor3f(1.0f,1.0f,0.0f);
 			glTranslated(center(0),center(1),center(2));
 			glScaled(dim(0),dim(1),dim(2));
@@ -355,12 +355,12 @@ int main(int argc, char** argv)
 		exit(1);
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
-	glutInitWindowSize(600, 600);
+	glutInitWindowSize(800, 600);
 	glutCreateWindow("Collision Detection - Test NDTree");
 	glutDisplayFunc(drawScene);
 	glutKeyboardFunc(HandleKeys);
 	initData(argv[1]);
-	glScalef(0.01f,0.01f,0.01f);
+	glScalef(0.004f,0.004f,0.004f);
 	zprInit();
 
 	initRendering();
@@ -368,3 +368,4 @@ int main(int argc, char** argv)
 	glutMainLoop();
 	return 0;
 }
+
