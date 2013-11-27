@@ -32,7 +32,7 @@
 #include <string>
 #include <vector>
 
-#include "MMILLAsciiReader.h"
+#include "MetaData.h"
 
 namespace SX
 {
@@ -53,11 +53,11 @@ public:
 
 	virtual void read(const std::string& filename)=0;
 
-private:
+protected:
 
-	int _nFrames;
 	std::vector<T> _frames;
-	SX::Data::MetaData* _meta;
+	MetaData* _meta;
+	int _nFrames;
 
 };
 
@@ -77,4 +77,4 @@ IData<T>::~IData()
 
 } // namespace SX
 
-#endif // NSXTOOL_DATA3D_H_
+#endif // NSXTOOL_IDATA_H_

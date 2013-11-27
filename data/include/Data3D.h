@@ -31,6 +31,7 @@
 
 #include <string>
 
+#include "MMILLAsciiReader.h"
 #include "IData.h"
 
 namespace SX
@@ -50,8 +51,6 @@ public:
 
 	void read(const std::string& filename);
 
-private:
-
 };
 
 template<typename T>
@@ -69,13 +68,21 @@ void Data3D<T>::read(const std::string& filename)
 {
 
 	// Read the file using memory map
-    SX::Data::MMILLAsciiReader mm(filename.c_str());
-    _meta=mm.readMetaDataBlock();
+    MMILLAsciiReader mm(filename.c_str());
+    this->_meta=mm.readMetaDataBlock();
+
+    this->_nFrames = mm.nBlocks();
+
+    this->_frames.resize(this->_nFrames);
+
+//    #pragma omp parallel for
+    for (std::size_t i=0;i<mm.nBlocks();++i)
+	    this->_frames[i]=std::move(mm.readBlock(i));
 
 }
 
-} // namespace SX
-
 } // namespace Data
+
+} // namespace SX
 
 #endif // NSXTOOL_DATA3D_H_

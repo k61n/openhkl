@@ -44,6 +44,8 @@ class ROI<T,D> : public SX::Geometry::AABB<T,D>
 {
 public:
 
+//	void bind_data();
+
 private:
 
 	shared_ptr<IData*> _data;
