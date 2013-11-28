@@ -109,7 +109,7 @@ struct Ellipsoid : public AABB3D
 			glPushMatrix();
 			bounded_vector<double,3> center=this->getCenter();
 			bounded_vector<double,3> dim=this->getExtents();
-			glColor3f(0.0f,1.0f,0.0f);
+			glColor3f(0.0f,1.0f,1.0f);
 			glTranslated(center(0),center(1),center(2));
 			glScaled(dim(0),dim(1),dim(2));
 			glCallList(dlist2);
@@ -236,13 +236,18 @@ GLuint ball, ballwire;
 GLuint cube;
 std::vector<AABB3D*> treeAABBs;
 std::set<std::pair<AABB3D*,AABB3D*> > collisions;
-bool show_tree;
+bool show_tree=false;
+bool show_bb=false;
 
 void HandleKeys(unsigned char key, int x, int y)
 {
 	if (key=='t')
 	{
 		show_tree=!show_tree;
+	}
+	if (key=='b')
+	{
+		show_bb=!show_bb;
 	}
 	glutPostRedisplay();
 	return;
@@ -317,9 +322,9 @@ void drawScene() {
 	for (auto& it : ell )
 	{
 		if (it._intercept)
-			it.plot(ballwire,cube,true);
+			it.plot(ballwire,cube,show_bb);
 		else
-			it.plot(ball,cube,true);
+			it.plot(ball,cube,show_bb);
 	}
 	// To vizualize the tree
 	if (show_tree)
@@ -368,4 +373,3 @@ int main(int argc, char** argv)
 	glutMainLoop();
 	return 0;
 }
-
