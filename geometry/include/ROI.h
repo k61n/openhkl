@@ -40,7 +40,7 @@ namespace Integration
 typedef unsigned int uint;
 
 template<typename T, uint D>
-class ROI<T,D> : public SX::Geometry::AABB<T,D>
+class ROI : public SX::Geometry::AABB<T,D>
 {
 public:
 

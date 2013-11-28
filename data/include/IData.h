@@ -40,14 +40,16 @@ namespace SX
 namespace Data
 {
 
-typedef unsigned int uint;
-
 template<typename T>
 class IData
 {
 public:
 
+	typedef std::vector<T> TVect;
+
 	IData();
+
+	int getNFrames() const;
 
 	virtual ~IData();
 
@@ -55,7 +57,7 @@ public:
 
 protected:
 
-	std::vector<T> _frames;
+	std::vector<TVect> _frames;
 	MetaData* _meta;
 	int _nFrames;
 
@@ -71,6 +73,12 @@ template<typename T>
 IData<T>::~IData()
 {
 	delete _meta;
+}
+
+template<typename T>
+int IData<T>::getNFrames() const
+{
+	return _nFrames;
 }
 
 } //namespace Data
