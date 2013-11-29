@@ -33,7 +33,6 @@
 #include <iostream>
 #include <vector>
 
-#include <boost/iterator/zip_iterator.hpp>
 #include <boost/numeric/ublas/io.hpp>
 #include <boost/numeric/ublas/vector.hpp>
 

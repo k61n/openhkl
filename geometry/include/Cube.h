@@ -26,12 +26,12 @@
  *
  */
 
-#ifndef NSXTOOL_PRIMITIVEROI_H_
-#define NSXTOOL_PRIMITIVEROI_H_
+#ifndef NSXTOOL_CUBE_H_
+#define NSXTOOL_CUBE_H_
 
 #include <boost/numeric/ublas/vector.hpp>
 
-#include "AABB.h"
+#include "ROI.h"
 
 namespace SX
 {
@@ -43,41 +43,28 @@ namespace ublas=boost::numeric::ublas;
 
 typedef unsigned int uint;
 
-template<typename T, uint D>
-class PrimitiveROI : public AABB<T,D>
+class Cube : public ROI<double,3>
 {
 public:
 
-	PrimitiveROI();
+	Cube();
 
-	PrimitiveROI(const ublas::bounded_vector<double,3>& lb, const ublas::bounded_vector<double,3>& ub);
-
-	virtual ~PrimitiveROI();
-
-	virtual T integrate()=0;
-
+	Cube(const ublas::bounded_vector<double,3>& lb, const ublas::bounded_vector<double,3>& ub);
 
 private:
 
-	shared_ptr<IData<T>*> _data;
-
 };
 
-template<typename T, uint D>
-PrimitiveROI<T,D>::PrimitiveROI()
+Cube::Cube() : ROI<double,3>()
 {
 }
 
-template<typename T, uint D>
-PrimitiveROI<T,D>::~PrimitiveROI()
+Cube::Cube(const ublas::bounded_vector<double,3>& lb, const ublas::bounded_vector<double,3>& ub) : ROI<double,3>(lb,ub)
 {
-	delete _data;
 }
 
-} // namespace Geometry
+} // end namespace Geometry
 
-} // namespace SX
+} // end namespace SX
 
-#endif // NSXTOOL_PRIMITIVEROI_H_
-
-
+#endif // NSXTOOL_CUBE_H_
