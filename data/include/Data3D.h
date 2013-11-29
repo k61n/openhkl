@@ -30,6 +30,7 @@
 #define NSXTOOL_DATA3D_H_
 
 #include <string>
+#include <utility>
 
 #include "MMILLAsciiReader.h"
 #include "IData.h"
@@ -75,7 +76,7 @@ void Data3D<T>::read(const std::string& filename)
 
     this->_frames.resize(this->_nFrames);
 
-//    #pragma omp parallel for
+    #pragma omp parallel for
     for (std::size_t i=0;i<mm.nBlocks();++i)
 	    this->_frames[i]=std::move(mm.readBlock(i));
 
