@@ -32,7 +32,7 @@ PyObject* getPythonKeyAsString(MetaData* m, const std::string& key)
 
 	PyObject* temp = getPythonKey(m, key);
 
-	return PyObject_Str(temp);;
+	return PyObject_Str(temp);
 
 }
 
