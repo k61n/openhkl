@@ -31,6 +31,8 @@
 
 #include <boost/numeric/ublas/vector.hpp>
 
+#include <memory>
+
 #include "AABB.h"
 
 namespace SX
@@ -59,7 +61,7 @@ public:
 
 private:
 
-	shared_ptr<IData<T>*> _data;
+	std::shared_ptr<IData<T>*> _data;
 
 };
 
