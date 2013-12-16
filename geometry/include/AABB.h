@@ -89,6 +89,9 @@ public:
 		return true;
 	}
 
+	//! Check whether a given point is inside the AABB
+	bool is_inside_aabb(const std::initializer_list<T>& point) const;
+
 	//! Setter for the lower and upper bounds of the AABB
 	void setBounds(const ublas::bounded_vector<T,D>& lb, const ublas::bounded_vector<T,D>& ub);
 
@@ -171,6 +174,27 @@ std::ostream& operator<<(std::ostream& os, const AABB<T,D>& aabb)
 {
 	aabb.printSelf(os);
 	return os;
+}
+
+template<typename T,uint D>
+bool AABB<T,D>::is_inside_aabb(const std::initializer_list<T>& point) const
+{
+
+	if (point.size() != D)
+		throw("AABB: invalid point size");
+
+	auto it = point.begin();
+	auto lbit = _lowerBound.begin();
+	auto ubit = _upperBound.begin();
+
+
+	for(auto it=point.begin(); it!=point.end(); it++,lbit++,ubit++)
+	{
+		if (*it < *lbit || *it > *ubit)
+			return false;
+	}
+
+	return true;
 }
 
 template<typename T, uint D>

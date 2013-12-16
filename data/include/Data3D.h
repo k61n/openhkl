@@ -29,6 +29,7 @@
 #ifndef NSXTOOL_DATA3D_H_
 #define NSXTOOL_DATA3D_H_
 
+#include <initializer_list>
 #include <string>
 #include <utility>
 
@@ -41,8 +42,10 @@ namespace SX
 namespace Data
 {
 
+typedef unsigned int uint;
+
 template<typename T>
-class Data3D : public IData<T>
+class Data3D : public IData<T,3>
 {
 public:
 
@@ -50,12 +53,14 @@ public:
 
 	~Data3D();
 
+	T get(const std::initializer_list<uint>& indices) const;
+
 	void read(const std::string& filename);
 
 };
 
 template<typename T>
-Data3D<T>::Data3D() : IData<T>()
+Data3D<T>::Data3D() : IData<T,3>()
 {
 }
 
@@ -76,10 +81,15 @@ void Data3D<T>::read(const std::string& filename)
 
     this->_frames.resize(this->_nFrames);
 
-    #pragma omp parallel for
-    for (std::size_t i=0;i<mm.nBlocks();++i)
-	    this->_frames[i]=std::move(mm.readBlock(i));
+//    #pragma omp parallel for
+//    for (std::size_t i=0;i<mm.nBlocks();++i)
+//	    this->_frames[i]=std::move(mm.readBlock(i));
+}
 
+template<typename T>
+T Data3D<T>::get(const std::initializer_list<uint>& indices) const
+{
+	return 1.0;
 }
 
 } // namespace Data

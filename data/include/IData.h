@@ -30,6 +30,7 @@
 #define NSXTOOL_IDATA_H_
 
 #include <string>
+#include <initializer_list>
 #include <vector>
 
 #include "MetaData.h"
@@ -40,7 +41,9 @@ namespace SX
 namespace Data
 {
 
-template<typename T>
+typedef unsigned int uint;
+
+template<typename T, unsigned int D>
 class IData
 {
 public:
@@ -50,6 +53,8 @@ public:
 	IData();
 
 	int getNFrames() const;
+
+	virtual T get(const std::initializer_list<uint>& indices) const=0;
 
 	virtual ~IData();
 
@@ -63,20 +68,20 @@ protected:
 
 };
 
-template<typename T>
-IData<T>::IData() : _meta(nullptr), _nFrames(0)
+template<typename T,uint D>
+IData<T,D>::IData() : _meta(nullptr), _nFrames(0)
 {
 	_frames.reserve(0);
 }
 
-template<typename T>
-IData<T>::~IData()
+template<typename T,uint D>
+IData<T,D>::~IData()
 {
 	delete _meta;
 }
 
-template<typename T>
-int IData<T>::getNFrames() const
+template<typename T,uint D>
+int IData<T,D>::getNFrames() const
 {
 	return _nFrames;
 }
