@@ -55,7 +55,7 @@ public:
 	virtual bool is_inside(const std::initializer_list<T>& point) const;
 
 	//! return whether or not a given shape contains a given point
-	virtual bool is_inside(const IPShape<T,D>* shape, const std::initializer_list<T>& point) const;
+	virtual bool is_inside(IPShape<T,D>* shape, const std::initializer_list<T>& point) const;
 
 	//! return a vector of the primitive shapes that contains a given point
 	std::vector<IPShape<T,D>*> where_is(const std::initializer_list<T>& point) const;
@@ -100,11 +100,11 @@ bool CShape<T,D>::is_inside(const std::initializer_list<T>& point) const
 }
 
 template<typename T, uint D>
-bool CShape<T,D>::is_inside(const IPShape<T,D>* shape, const std::initializer_list<T>& point) const
+bool CShape<T,D>::is_inside(IPShape<T,D>* shape, const std::initializer_list<T>& point) const
 {
 
 	auto it=std::find(_shapes.begin(), _shapes.end(), shape);
-	if (it=_shapes.end())
+	if (it==_shapes.end())
 		throw std::invalid_argument("CShape: the input shape is not stored in the composite shape");
 
 	return (*it)->is_inside(point);
