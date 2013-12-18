@@ -49,33 +49,33 @@ public:
 	ShapeCollection();
 
 	//! add a primitive shape
-	void add_shape(IPShape<T,D>* shape);
+	void add_shape(const IPShape<T,D>& shape);
 
 	//! return whether or not a given point is inside one of the primitive shape the collection
 	virtual bool is_inside(const std::initializer_list<T>& point) const;
 
 	//! return whether or not a given shape contains a given point
-	virtual bool is_inside(IPShape<T,D>* shape, const std::initializer_list<T>& point) const;
+	virtual bool is_inside(const IPShape<T,D>& shape, const std::initializer_list<T>& point) const;
 
 	//! return a vector of the primitive shapes that contains a given point
-	std::vector<IPShape<T,D>*> where_is(const std::initializer_list<T>& point) const;
+	std::vector<IPShape<T,D>> where_is(const std::initializer_list<T>& point) const;
 
 	//! return the current number of shapes
 	int n_shapes() const;
 
 protected:
 	//! store pointers to the primitive shapes
-	std::vector<IPShape<T,D>*> _shapes;
+	std::vector<IPShape<T,D>> _shapes;
 };
 
 template<typename T, uint D>
 ShapeCollection<T,D>::ShapeCollection() : AABB<T,D>()
 {
-	_shapes.reserve(10);
+	_shapes.reserve(3);
 }
 
 template<typename T,uint D>
-void ShapeCollection<T,D>::add_shape(IPShape<T,D>* shape)
+void ShapeCollection<T,D>::add_shape(const IPShape<T,D>& shape)
 {
 	_shapes.push_back(shape);
 }
@@ -91,33 +91,33 @@ bool ShapeCollection<T,D>::is_inside(const std::initializer_list<T>& point) cons
 {
 	for (auto it=_shapes.begin(); it!=_shapes.end(); ++it)
 	{
-		if ((*it)->is_inside(point))
+		if ((*it).is_inside(point))
 			return true;
 	}
 	return false;
 }
 
 template<typename T, uint D>
-bool ShapeCollection<T,D>::is_inside(IPShape<T,D>* shape, const std::initializer_list<T>& point) const
+bool ShapeCollection<T,D>::is_inside(const IPShape<T,D>& shape, const std::initializer_list<T>& point) const
 {
 
 	auto it=std::find(_shapes.begin(), _shapes.end(), shape);
 	if (it==_shapes.end())
 		throw std::invalid_argument("ShapeCollection: the input shape is not stored in the composite shape");
 
-	return (*it)->is_inside(point);
+	return (*it).is_inside(point);
 
 }
 
 template<typename T, uint D>
-std::vector<IPShape<T,D>*> ShapeCollection<T,D>::where_is(const std::initializer_list<T>& point) const
+std::vector<IPShape<T,D>> ShapeCollection<T,D>::where_is(const std::initializer_list<T>& point) const
 {
 
-	std::vector<IPShape<T,D>*> sh;
+	std::vector<IPShape<T,D>> sh;
 	sh.reserve(_shapes.size());
 	for (auto it=_shapes.begin(); it!=_shapes.end(); ++it)
 	{
-		if ((*it)->is_inside(point))
+		if ((*it).is_inside(point))
 			sh.push_back(*it);
 	}
 	return sh;
