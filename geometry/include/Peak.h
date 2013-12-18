@@ -47,10 +47,10 @@ public:
 	Peak();
 
 	//! add the background region to the peak
-	void add_background(IPShape<TYPE,DIM>* bg);
+	void add_background(const IPShape<TYPE,DIM>& bg);
 
 	//! add the signal region to the peak
-	void add_signal(IPShape<TYPE,DIM>* peak);
+	void add_signal(const IPShape<TYPE,DIM>& peak);
 
 	//! return whether or not a given point is inside the peak region (peak+bg)
 	virtual bool is_inside(const std::initializer_list<TYPE>& point) const;
@@ -70,7 +70,7 @@ Peak<TYPE,DATATYPE,DIM>::Peak() : IROI<TYPE,DATATYPE,DIM>()
 }
 
 template<typename TYPE, typename DATATYPE, uint DIM>
-void Peak<TYPE,DATATYPE,DIM>::add_signal(IPShape<TYPE,DIM>* peak)
+void Peak<TYPE,DATATYPE,DIM>::add_signal(const IPShape<TYPE,DIM>& peak)
 {
 	if (!(this->_shapes.empty()))
 		throw("Peak:the signal must be the first region to be inserted");
@@ -79,7 +79,7 @@ void Peak<TYPE,DATATYPE,DIM>::add_signal(IPShape<TYPE,DIM>* peak)
 }
 
 template<typename TYPE, typename DATATYPE, uint DIM>
-void Peak<TYPE,DATATYPE,DIM>::add_background(IPShape<TYPE,DIM>* bg)
+void Peak<TYPE,DATATYPE,DIM>::add_background(const IPShape<TYPE,DIM>& bg)
 {
 	if (this->_shapes.size()!=1)
 		throw("Peak:the background must be inserted after the signal");
