@@ -45,17 +45,19 @@ class PeakCollection : public IROI<TYPE,DATATYPE,DIM>
 {
 public:
 
+	typedef std::vector< Peak<TYPE,DATATYPE,DIM> > peakVect;
+
 	PeakCollection();
 
 	//! return whether or not a given point is inside one of the peak of the collection
 	virtual bool is_inside(const std::initializer_list<TYPE>& point) const;
 
 	//! add a peak to the collection
-	void add_peak(Peak<TYPE,DATATYPE,DIM>* peak);
+	void add_peak(const Peak<TYPE,DATATYPE,DIM>& peak);
 
 private:
 	//! store pointers to the peaks
-	std::vector<Peak<TYPE,DATATYPE,DIM>*> _peaks;
+	peakVect _peaks;
 
 };
 
@@ -66,7 +68,7 @@ PeakCollection<TYPE,DATATYPE,DIM>::PeakCollection() : IROI<TYPE,DATATYPE,DIM>()
 }
 
 template<typename TYPE, typename DATATYPE, uint DIM>
-void PeakCollection<TYPE,DATATYPE,DIM>::add_peak(Peak<TYPE,DATATYPE,DIM>* peak)
+void PeakCollection<TYPE,DATATYPE,DIM>::add_peak(const Peak<TYPE,DATATYPE,DIM>& peak)
 {
 	_peaks.push_back(peak);
 }
