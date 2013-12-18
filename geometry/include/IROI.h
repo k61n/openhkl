@@ -31,7 +31,7 @@
 
 #include <memory>
 
-#include "CShape.h"
+#include "ShapeCollection.h"
 #include "IData.h"
 
 namespace SX
@@ -43,7 +43,7 @@ namespace Geometry
 typedef unsigned int uint;
 
 template<typename TYPE, typename DATATYPE, uint DIM>
-class IROI : public CShape<TYPE,DIM>
+class IROI : public ShapeCollection<TYPE,DIM>
 {
 public:
 
@@ -62,7 +62,7 @@ private:
 };
 
 template<typename TYPE, typename DATATYPE, uint DIM>
-IROI<TYPE,DATATYPE,DIM>::IROI() : CShape<TYPE,DIM>()
+IROI<TYPE,DATATYPE,DIM>::IROI() : ShapeCollection<TYPE,DIM>()
 {
 
 }
