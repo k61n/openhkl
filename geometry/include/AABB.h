@@ -187,8 +187,7 @@ bool AABB<T,D>::is_inside_aabb(const std::initializer_list<T>& point) const
 	auto lbit = _lowerBound.begin();
 	auto ubit = _upperBound.begin();
 
-
-	for(auto it=point.begin(); it!=point.end(); it++,lbit++,ubit++)
+	for(; it!=point.end(); it++,lbit++,ubit++)
 	{
 		if (*it < *lbit || *it > *ubit)
 			return false;

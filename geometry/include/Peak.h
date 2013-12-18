@@ -61,12 +61,18 @@ public:
 	//! return whether or not a given point is inside the background region
 	bool is_inside_background(const std::initializer_list<TYPE>& point) const;
 
+	virtual ~Peak();
+
 };
 
 template<typename TYPE, typename DATATYPE, uint DIM>
 Peak<TYPE,DATATYPE,DIM>::Peak() : IROI<TYPE,DATATYPE,DIM>()
 {
+}
 
+template<typename TYPE, typename DATATYPE, uint DIM>
+Peak<TYPE,DATATYPE,DIM>::~Peak()
+{
 }
 
 template<typename TYPE, typename DATATYPE, uint DIM>

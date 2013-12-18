@@ -32,6 +32,7 @@
 #include <initializer_list>
 
 #include "AABB.h"
+#include "NDBox.h"
 
 namespace SX
 {
@@ -52,7 +53,10 @@ public:
 
 	virtual ~IPShape();
 
-	virtual bool is_inside(const std::initializer_list<T>& point) const=0;
+	virtual bool is_inside(const std::initializer_list<T>& point) const =0;
+
+    virtual bool collide(const IPShape<T,D>& rhs) const =0;
+    virtual bool collide(const NDBox<T,D>& rhs) const =0;
 
 };
 
@@ -62,14 +66,21 @@ IPShape<T,D>::IPShape() : AABB<T,D>()
 }
 
 template<typename T,uint D>
-IPShape<T,D>::~IPShape()
+IPShape<T,D>::IPShape(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub) : AABB<T,D>(lb,ub)
 {
 }
 
 template<typename T,uint D>
-IPShape<T,D>::IPShape(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub) : AABB<T,D>(lb,ub)
+IPShape<T,D>::~IPShape()
 {
 }
+
+template<typename T, unsigned int D>
+bool collisionBoxBox(const NDBox<T,D>& b1, const NDBox<T,D>& b2)
+{
+	return b1.intercept(b2);
+}
+
 
 } // namespace Geometry
 

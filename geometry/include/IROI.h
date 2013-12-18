@@ -53,11 +53,11 @@ public:
 
 	virtual ~IROI();
 
-	void attach_data(idata* data);
+	void attach_data(std::shared_ptr<idata> data);
 
 private:
 
-	std::shared_ptr<idata*> _data;
+	std::shared_ptr<idata> _data;
 
 };
 
@@ -74,7 +74,7 @@ IROI<TYPE,DATATYPE,DIM>::~IROI()
 }
 
 template<typename TYPE, typename DATATYPE, uint DIM>
-void IROI<TYPE,DATATYPE,DIM>::attach_data(idata* data)
+void IROI<TYPE,DATATYPE,DIM>::attach_data(std::shared_ptr<idata> data)
 {
 	_data = data;
 }

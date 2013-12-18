@@ -51,27 +51,43 @@ public:
 
 	~NDBox();
 
+	bool collide(const IPShape<T,D>& rhs) const;
+	bool collide(const NDBox<T,D>& rhs) const;
+
 	bool is_inside(const std::initializer_list<T>& point) const;
 
 };
 
 template<typename T,uint D>
-NDBox<T>::NDBox() : IPShape<T,D>()
+NDBox<T,D>::NDBox() : IPShape<T,D>()
 {
 }
 
 template<typename T,uint D>
-NDBox<T>::NDBox(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub) : IPShape<T,D>(lb,ub)
+NDBox<T,D>::NDBox(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub) : IPShape<T,D>(lb,ub)
 {
 }
 
 template<typename T,uint D>
-NDBox<T>::~NDBox()
+NDBox<T,D>::~NDBox()
 {
 }
 
 template<typename T,uint D>
-bool NDBox<T>::is_inside(const std::initializer_list<T>& point) const
+bool collide(const IPShape<T,D>& rhs) const
+{
+    rhs.collide(*this);
+}
+
+template<typename T,uint D>
+bool collide(const NDBox<T,D>& rhs) const
+{
+    return collisionBoxBox<T,D>(*this,rhs);
+}
+
+
+template<typename T,uint D>
+bool NDBox<T,D>::is_inside(const std::initializer_list<T>& point) const
 {
 	return this->is_inside_aabb(point);
 }
