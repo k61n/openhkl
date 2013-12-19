@@ -40,45 +40,54 @@ namespace SX
 namespace Geometry
 {
 
+template<typename T, unsigned int D> class NDBox;
+template<typename T, unsigned int D> class ShapeCollection;
+
 typedef unsigned int uint;
 
 template<typename T,uint D>
-class IPShape : public AABB<T,D>
+class IShape : public AABB<T,D>
 {
 public:
 
-	IPShape();
+	IShape();
 
-	IPShape(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub);
+	IShape(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub);
 
-	virtual ~IPShape();
+	virtual ~IShape();
 
 	virtual bool is_inside(const std::initializer_list<T>& point) const =0;
 
-    virtual bool collide(const IPShape<T,D>& rhs) const =0;
+    virtual bool collide(const IShape<T,D>& rhs) const =0;
     virtual bool collide(const NDBox<T,D>& rhs) const =0;
-
+    virtual bool collide(const ShapeCollection<T,D>& rhs) =0;
 };
 
 template<typename T,uint D>
-IPShape<T,D>::IPShape() : AABB<T,D>()
+IShape<T,D>::IShape() : AABB<T,D>()
 {
 }
 
 template<typename T,uint D>
-IPShape<T,D>::IPShape(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub) : AABB<T,D>(lb,ub)
+IShape<T,D>::IShape(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub) : AABB<T,D>(lb,ub)
 {
 }
 
 template<typename T,uint D>
-IPShape<T,D>::~IPShape()
+IShape<T,D>::~IShape()
 {
 }
 
 template<typename T, unsigned int D>
 bool collisionBoxBox(const NDBox<T,D>& b1, const NDBox<T,D>& b2)
 {
-	return b1.intercept(b2);
+	return b1.collide(b2);
+}
+
+template<typename T, unsigned int D>
+bool collisionBoxShapeCollection(const NDBox<T,D>& b1, const ShapeCollection<T,D>& b2)
+{
+	return b1.collide(b2);
 }
 
 
