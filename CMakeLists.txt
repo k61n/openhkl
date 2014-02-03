@@ -82,16 +82,21 @@ file(GLOB_RECURSE sources analysis/src/*.cpp
                   utils/src/*.cpp
                   crystal/src/*.cpp)                   
 
-enable_testing()
 # Creating the library
 add_library(NSXTool SHARED ${sources})
-add_executable(test1 tests/test1.cpp)
  
- # Link
+# Link
 TARGET_LINK_LIBRARIES(NSXTool ${Boost_LIBRARIES} ${GSL} ${GSL_CBLAS} ${GSL_LIBRARIES} ${GMP_LIBRARIES} ${MPFR_LIBRARIES} ${PYTHON_LIBRARIES})
-TARGET_LINK_LIBRARIES(test1 ${Boost_LIBRARIES})
 
-add_test(test1 test1)
+# Enable unit testing with ctest. This must be called before any calls to add_subdirectory 
+enable_testing()
+# Directory with all the unit-tests. 
+add_subdirectory(tests)
+
+
+
+
+
 # Install section
 INSTALL(TARGETS NSXTool DESTINATION NSXTool)
 
