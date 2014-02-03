@@ -28,10 +28,6 @@ ENDIF()
 FIND_PACKAGE(GSL)
 
 
-###### Find CGAL library (used for Convex Hull triangulations #######
-FIND_PACKAGE(CGAL)
-
-
 ###### Find GMP 
 FIND_PACKAGE(GMP)
 
@@ -88,7 +84,7 @@ file(GLOB_RECURSE sources analysis/src/*.cpp
 add_library(NSXTool SHARED ${sources})
  
  # Link
-TARGET_LINK_LIBRARIES(NSXTool ${Boost_LIBRARIES} ${GSL} ${GSL_CBLAS} ${GSL_LIBRARIES} ${GMP_LIBRARIES} ${MPFR_LIBRARIES} ${CGAL_LIBRARIES} ${PYTHON_LIBRARIES})
+TARGET_LINK_LIBRARIES(NSXTool ${Boost_LIBRARIES} ${GSL} ${GSL_CBLAS} ${GSL_LIBRARIES} ${GMP_LIBRARIES} ${MPFR_LIBRARIES} ${PYTHON_LIBRARIES})
 
 # Install section
 INSTALL(TARGETS NSXTool DESTINATION NSXTool)
