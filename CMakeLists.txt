@@ -12,7 +12,7 @@ IF(NOT CMAKE_BUILD_TYPE)
 ENDIF()
 
 ###### Find boost libraries  ##############
-FIND_PACKAGE(Boost 1.42.0 COMPONENTS date_time filesystem system REQUIRED)
+FIND_PACKAGE(Boost 1.42.0 COMPONENTS date_time filesystem system unit_test_framework REQUIRED)
 IF(Boost_FOUND)
   INCLUDE_DIRECTORIES("${Boost_INCLUDE_DIRS}")
   SET(Boost_USE_STATIC_LIBS OFF)
@@ -82,13 +82,16 @@ file(GLOB_RECURSE sources analysis/src/*.cpp
                   utils/src/*.cpp
                   crystal/src/*.cpp)                   
 
-
+enable_testing()
 # Creating the library
 add_library(NSXTool SHARED ${sources})
+add_executable(test1 tests/test1.cpp)
  
  # Link
 TARGET_LINK_LIBRARIES(NSXTool ${Boost_LIBRARIES} ${GSL} ${GSL_CBLAS} ${GSL_LIBRARIES} ${GMP_LIBRARIES} ${MPFR_LIBRARIES} ${PYTHON_LIBRARIES})
+TARGET_LINK_LIBRARIES(test1 ${Boost_LIBRARIES})
 
+add_test(test1 test1)
 # Install section
 INSTALL(TARGETS NSXTool DESTINATION NSXTool)
 

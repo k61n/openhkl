@@ -21,139 +21,140 @@
   </calendars>
   <tasks>
     <task id="1" name="Start" note="" work="0" start="20140131T000000Z" end="20140131T000000Z" work-start="20140131T080000Z" percent-complete="0" priority="0" type="milestone" scheduling="fixed-work"/>
-    <task id="2" name="Test compilation NXSTool Windows" note="" work="144000" start="20140203T000000Z" end="20140207T170000Z" work-start="20140203T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
-      <constraint type="must-start-on" time="20140203T000000Z"/>
-    </task>
-    <task id="3" name="Evaluate build server +UnitTest" note="" work="288000" start="20140301T000000Z" end="20140307T170000Z" work-start="20140303T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+    <task id="2" name="Evaluate build server +UnitTest" note="" work="288000" start="20140301T000000Z" end="20140307T170000Z" work-start="20140303T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
       <constraint type="must-start-on" time="20140301T000000Z"/>
     </task>
-    <task id="4" name="Implement build server with SI" note="" work="1584000" start="20140315T000000Z" end="20140410T104000Z" work-start="20140317T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+    <task id="3" name="Implement build server with SI" note="" work="1584000" start="20140315T000000Z" end="20140410T104000Z" work-start="20140317T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
       <constraint type="start-no-earlier-than" time="20140315T000000Z"/>
     </task>
-    <task id="5" name="BuildServer Operational" note="" work="0" start="20140601T000000Z" end="20140601T000000Z" work-start="20140602T080000Z" percent-complete="0" priority="0" type="milestone" scheduling="fixed-work">
+    <task id="4" name="BuildServer Operational" note="" work="0" start="20140601T000000Z" end="20140601T000000Z" work-start="20140602T080000Z" percent-complete="0" priority="0" type="milestone" scheduling="fixed-work">
       <constraint type="must-start-on" time="20140601T000000Z"/>
     </task>
-    <task id="6" name="Design prototype for Vizualization Soft" note="" work="259200" start="20140210T000000Z" end="20140214T120000Z" work-start="20140210T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+    <task id="5" name="Design prototype for Vizualization Soft" note="" work="259200" start="20140210T000000Z" end="20140214T120000Z" work-start="20140210T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
       <constraint type="must-start-on" time="20140210T000000Z"/>
     </task>
-    <task id="7" name="Start Viz. project" note="" work="0" start="20140217T000000Z" end="20140217T000000Z" work-start="20140217T080000Z" percent-complete="0" priority="0" type="milestone" scheduling="fixed-work">
+    <task id="6" name="Start Viz. project" note="" work="0" start="20140217T000000Z" end="20140217T000000Z" work-start="20140217T080000Z" percent-complete="0" priority="0" type="milestone" scheduling="fixed-work">
       <constraint type="must-start-on" time="20140217T000000Z"/>
       <predecessors>
-        <predecessor id="1" predecessor-id="6" type="FS"/>
+        <predecessor id="1" predecessor-id="5" type="FS"/>
       </predecessors>
     </task>
-    <task id="8" name="Alpha released" note="" work="0" start="20140602T000000Z" end="20140602T000000Z" work-start="20140602T080000Z" percent-complete="0" priority="0" type="milestone" scheduling="fixed-work">
+    <task id="7" name="Alpha released" note="" work="0" start="20140602T000000Z" end="20140602T000000Z" work-start="20140602T080000Z" percent-complete="0" priority="0" type="milestone" scheduling="fixed-work">
       <constraint type="must-start-on" time="20140602T000000Z"/>
     </task>
-    <task id="9" name="Test Phase" note="" work="576000" start="20140602T000000Z" end="20140606T170000Z" work-start="20140602T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+    <task id="8" name="Test Phase" note="" work="576000" start="20140602T000000Z" end="20140606T170000Z" work-start="20140602T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
       <constraint type="must-start-on" time="20140602T000000Z"/>
     </task>
-    <task id="10" name="Release of absorption correction" note="" work="0" start="20140501T000000Z" end="20140501T000000Z" work-start="20140501T080000Z" percent-complete="0" priority="0" type="milestone" scheduling="fixed-work">
+    <task id="9" name="Release of absorption correction" note="" work="0" start="20140501T000000Z" end="20140501T000000Z" work-start="20140501T080000Z" percent-complete="0" priority="0" type="milestone" scheduling="fixed-work">
       <constraint type="must-start-on" time="20140501T000000Z"/>
     </task>
-    <task id="11" name="Beta released" note="" work="0" start="20140628T000000Z" end="20140628T000000Z" work-start="20140630T080000Z" percent-complete="0" priority="0" type="milestone" scheduling="fixed-work">
+    <task id="10" name="Beta released" note="" work="0" start="20140628T000000Z" end="20140628T000000Z" work-start="20140630T080000Z" percent-complete="0" priority="0" type="milestone" scheduling="fixed-work">
       <constraint type="must-start-on" time="20140628T000000Z"/>
     </task>
-    <task id="12" name="Build server" note="" work="2390400" start="20140204T000000Z" end="20140602T000000Z" work-start="20140204T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
-      <task id="13" name="Test build on windows" note="" work="115200" start="20140204T000000Z" end="20140207T170000Z" work-start="20140204T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+    <task id="11" name="Build server" note="" work="2390400" start="20140204T000000Z" end="20140602T000000Z" work-start="20140204T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <task id="12" name="Test build on windows" note="" work="115200" start="20140204T000000Z" end="20140207T170000Z" work-start="20140204T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
         <constraint type="must-start-on" time="20140204T000000Z"/>
         <predecessors>
+          <predecessor id="1" predecessor-id="19" type="FS"/>
+        </predecessors>
+      </task>
+      <task id="13" name="Evaluate test server+unit test" note="" work="288000" start="20140210T000000Z" end="20140221T170000Z" work-start="20140210T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <constraint type="start-no-earlier-than" time="20140210T000000Z"/>
+        <predecessors>
+          <predecessor id="1" predecessor-id="12" type="FS"/>
           <predecessor id="1" predecessor-id="20" type="FS"/>
         </predecessors>
       </task>
-      <task id="14" name="Evaluate test server+unit test" note="" work="288000" start="20140210T000000Z" end="20140221T170000Z" work-start="20140210T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
-        <constraint type="start-no-earlier-than" time="20140210T000000Z"/>
+      <task id="14" name="Implementation of jenkins build server Linux+Windows" note="" work="403200" start="20140221T170000Z" end="20140313T170000Z" work-start="20140224T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
         <predecessors>
           <predecessor id="1" predecessor-id="13" type="FS"/>
-          <predecessor id="1" predecessor-id="21" type="FS"/>
         </predecessors>
       </task>
-      <task id="15" name="Implementation of jenkins build server Linux+Windows" note="" work="403200" start="20140221T170000Z" end="20140313T170000Z" work-start="20140224T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <task id="15" name="Build server operational on local machines" note="" work="0" start="20140314T000000Z" end="20140314T000000Z" work-start="20140314T080000Z" percent-complete="0" priority="0" type="milestone" scheduling="fixed-work">
+        <constraint type="must-start-on" time="20140314T000000Z"/>
         <predecessors>
           <predecessor id="1" predecessor-id="14" type="FS"/>
         </predecessors>
       </task>
-      <task id="16" name="Build server operational on local machines" note="" work="0" start="20140314T000000Z" end="20140314T000000Z" work-start="20140314T080000Z" percent-complete="0" priority="0" type="milestone" scheduling="fixed-work">
-        <constraint type="must-start-on" time="20140314T000000Z"/>
+      <task id="16" name="Implement build server with SI" note="" work="1584000" start="20140317T000000Z" end="20140530T170000Z" work-start="20140317T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <constraint type="must-start-on" time="20140317T000000Z"/>
         <predecessors>
           <predecessor id="1" predecessor-id="15" type="FS"/>
         </predecessors>
       </task>
-      <task id="17" name="Implement build server with SI" note="" work="1584000" start="20140317T000000Z" end="20140530T170000Z" work-start="20140317T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
-        <constraint type="must-start-on" time="20140317T000000Z"/>
+      <task id="17" name="Build server fully operationnal" note="" work="0" start="20140602T000000Z" end="20140602T000000Z" work-start="20140602T080000Z" percent-complete="0" priority="0" type="milestone" scheduling="fixed-work">
+        <constraint type="must-start-on" time="20140602T000000Z"/>
         <predecessors>
           <predecessor id="1" predecessor-id="16" type="FS"/>
         </predecessors>
       </task>
-      <task id="18" name="Build server fully operationnal" note="" work="0" start="20140602T000000Z" end="20140602T000000Z" work-start="20140602T080000Z" percent-complete="0" priority="0" type="milestone" scheduling="fixed-work">
-        <constraint type="must-start-on" time="20140602T000000Z"/>
-        <predecessors>
-          <predecessor id="1" predecessor-id="17" type="FS"/>
-        </predecessors>
-      </task>
     </task>
-    <task id="19" name="NSXTool development" note="" work="172800" start="20140203T000000Z" end="20140207T170000Z" work-start="20140203T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
-      <task id="20" name="Move CGAL to sxtalhull" note="" work="28800" start="20140203T000000Z" end="20140203T170000Z" work-start="20140203T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+    <task id="18" name="NSXTool development" note="" work="288000" start="20140131T000000Z" end="20140207T170000Z" work-start="20140131T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <task id="19" name="Move CGAL to sxtalhull" note="" work="28800" start="20140203T000000Z" end="20140203T170000Z" work-start="20140203T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
         <constraint type="must-start-on" time="20140203T000000Z"/>
       </task>
-      <task id="21" name="Evaluate boost UnitTest Framework, create 1 unit test" note="" work="144000" start="20140203T000000Z" end="20140207T170000Z" work-start="20140203T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <task id="20" name="Evaluate boost UnitTest Framework, create 1 unit test" note="" work="144000" start="20140203T000000Z" end="20140207T170000Z" work-start="20140203T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
         <constraint type="must-start-on" time="20140203T000000Z"/>
       </task>
+      <task id="21" name="Symmetry Package" note="" work="28800" start="20140131T000000Z" end="20140131T170000Z" work-start="20140131T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+      <task id="22" name="Integration" note="" work="28800" start="20140131T000000Z" end="20140131T170000Z" work-start="20140131T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+      <task id="23" name="UBMatrix" note="" work="28800" start="20140131T000000Z" end="20140131T170000Z" work-start="20140131T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+      <task id="24" name="Instrument Geometry" note="" work="28800" start="20140131T000000Z" end="20140131T170000Z" work-start="20140131T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
     </task>
-    <task id="22" name="SXTalhull" note="" work="892800" start="20140207T170000Z" end="20140508T170000Z" work-start="20140210T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
-      <task id="23" name="Clean-up sxtalhull and create stand-alone application" note="" work="144000" start="20140207T170000Z" end="20140214T170000Z" work-start="20140210T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+    <task id="25" name="SXTalhull" note="" work="892800" start="20140207T170000Z" end="20140508T170000Z" work-start="20140210T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <task id="26" name="Clean-up sxtalhull and create stand-alone application" note="" work="144000" start="20140207T170000Z" end="20140214T170000Z" work-start="20140210T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
         <predecessors>
-          <predecessor id="1" predecessor-id="21" type="FS"/>
+          <predecessor id="1" predecessor-id="20" type="FS"/>
         </predecessors>
       </task>
-      <task id="24" name="Define common format for sxtal movies" note="" work="28800" start="20140210T000000Z" end="20140210T120000Z" work-start="20140210T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <task id="27" name="Define common format for sxtal movies" note="" work="28800" start="20140210T000000Z" end="20140210T120000Z" work-start="20140210T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
         <constraint type="must-start-on" time="20140210T000000Z"/>
       </task>
-      <task id="25" name="Scientific Unit-tests" note="" work="144000" start="20140217T000000Z" end="20140221T170000Z" work-start="20140217T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <task id="28" name="Scientific Unit-tests" note="" work="144000" start="20140217T000000Z" end="20140221T170000Z" work-start="20140217T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
         <constraint type="must-start-on" time="20140217T000000Z"/>
-        <predecessors>
-          <predecessor id="1" predecessor-id="23" type="FS"/>
-        </predecessors>
-      </task>
-      <task id="26" name="Beta testing D19" note="" work="432000" start="20140221T170000Z" end="20140305T120000Z" work-start="20140224T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
-        <predecessors>
-          <predecessor id="1" predecessor-id="25" type="FS"/>
-        </predecessors>
-      </task>
-      <task id="27" name="Stable Release of sxtalhull" note="" work="0" start="20140305T120000Z" end="20140305T120000Z" work-start="20140305T120000Z" percent-complete="0" priority="0" type="milestone" scheduling="fixed-work">
         <predecessors>
           <predecessor id="1" predecessor-id="26" type="FS"/>
         </predecessors>
       </task>
-      <task id="28" name="Merge sxtalhull with viewer" note="" work="144000" start="20140502T000000Z" end="20140508T170000Z" work-start="20140502T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
-        <constraint type="must-start-on" time="20140502T000000Z"/>
-      </task>
-      <task id="29" name="sxtalhull closes" note="" work="0" start="20140508T170000Z" end="20140508T170000Z" work-start="20140508T170000Z" percent-complete="0" priority="0" type="milestone" scheduling="fixed-work">
+      <task id="29" name="Beta testing D19" note="" work="432000" start="20140221T170000Z" end="20140305T120000Z" work-start="20140224T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
         <predecessors>
           <predecessor id="1" predecessor-id="28" type="FS"/>
         </predecessors>
       </task>
-    </task>
-    <task id="30" name="Viewer" note="" work="1612800" start="20140205T000000Z" end="20140414T000000Z" work-start="20140205T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
-      <task id="31" name="Layout prototype" note="" work="460800" start="20140205T000000Z" end="20140214T170000Z" work-start="20140205T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
-        <constraint type="must-start-on" time="20140205T000000Z"/>
+      <task id="30" name="Stable Release of sxtalhull" note="" work="0" start="20140305T120000Z" end="20140305T120000Z" work-start="20140305T120000Z" percent-complete="0" priority="0" type="milestone" scheduling="fixed-work">
+        <predecessors>
+          <predecessor id="1" predecessor-id="29" type="FS"/>
+        </predecessors>
       </task>
-      <task id="32" name="Meeting with D19 team" note="" work="28800" start="20140217T000000Z" end="20140217T100000Z" work-start="20140217T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
-        <constraint type="must-start-on" time="20140217T000000Z"/>
+      <task id="31" name="Merge sxtalhull with viewer" note="" work="144000" start="20140502T000000Z" end="20140508T170000Z" work-start="20140502T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <constraint type="must-start-on" time="20140502T000000Z"/>
+      </task>
+      <task id="32" name="sxtalhull closes" note="" work="0" start="20140508T170000Z" end="20140508T170000Z" work-start="20140508T170000Z" percent-complete="0" priority="0" type="milestone" scheduling="fixed-work">
         <predecessors>
           <predecessor id="1" predecessor-id="31" type="FS"/>
         </predecessors>
       </task>
-      <task id="33" name="Implementation of prototype" note="" work="1123200" start="20140218T000000Z" end="20140411T170000Z" work-start="20140218T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
-        <constraint type="must-start-on" time="20140218T000000Z"/>
+    </task>
+    <task id="33" name="Viewer" note="" work="1612800" start="20140205T000000Z" end="20140414T000000Z" work-start="20140205T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <task id="34" name="Layout prototype" note="" work="460800" start="20140205T000000Z" end="20140214T170000Z" work-start="20140205T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <constraint type="must-start-on" time="20140205T000000Z"/>
+      </task>
+      <task id="35" name="Meeting with D19 team" note="" work="28800" start="20140217T000000Z" end="20140217T100000Z" work-start="20140217T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+        <constraint type="must-start-on" time="20140217T000000Z"/>
         <predecessors>
-          <predecessor id="1" predecessor-id="32" type="FS"/>
+          <predecessor id="1" predecessor-id="34" type="FS"/>
         </predecessors>
       </task>
-      <task id="34" name="Working prototype" note="" work="0" start="20140414T000000Z" end="20140414T000000Z" work-start="20140414T080000Z" percent-complete="0" priority="0" type="milestone" scheduling="fixed-work">
+      <task id="36" name="Implementation of prototype" note="" work="1123200" start="20140218T000000Z" end="20140411T170000Z" work-start="20140218T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <constraint type="must-start-on" time="20140218T000000Z"/>
+        <predecessors>
+          <predecessor id="1" predecessor-id="35" type="FS"/>
+        </predecessors>
+      </task>
+      <task id="37" name="Working prototype" note="" work="0" start="20140414T000000Z" end="20140414T000000Z" work-start="20140414T080000Z" percent-complete="0" priority="0" type="milestone" scheduling="fixed-work">
         <constraint type="must-start-on" time="20140414T000000Z"/>
         <predecessors>
-          <predecessor id="1" predecessor-id="33" type="FS"/>
+          <predecessor id="1" predecessor-id="36" type="FS"/>
         </predecessors>
       </task>
     </task>
@@ -169,49 +170,48 @@
     <resource id="7" name="John Allibon" short-name="" type="1" units="0" email="" note="" std-rate="0"/>
   </resources>
   <allocations>
-    <allocation task-id="33" resource-id="1" units="100"/>
-    <allocation task-id="32" resource-id="1" units="100"/>
-    <allocation task-id="31" resource-id="1" units="100"/>
-    <allocation task-id="15" resource-id="1" units="100"/>
+    <allocation task-id="36" resource-id="1" units="100"/>
+    <allocation task-id="35" resource-id="1" units="100"/>
+    <allocation task-id="34" resource-id="1" units="100"/>
     <allocation task-id="14" resource-id="1" units="100"/>
-    <allocation task-id="18" resource-id="1" units="100"/>
-    <allocation task-id="16" resource-id="1" units="100"/>
     <allocation task-id="13" resource-id="1" units="100"/>
-    <allocation task-id="8" resource-id="1" units="100"/>
-    <allocation task-id="6" resource-id="1" units="100"/>
+    <allocation task-id="17" resource-id="1" units="100"/>
+    <allocation task-id="15" resource-id="1" units="100"/>
+    <allocation task-id="12" resource-id="1" units="100"/>
+    <allocation task-id="7" resource-id="1" units="100"/>
     <allocation task-id="5" resource-id="1" units="100"/>
-    <allocation task-id="1" resource-id="1" units="100"/>
-    <allocation task-id="9" resource-id="1" units="100"/>
     <allocation task-id="4" resource-id="1" units="100"/>
+    <allocation task-id="1" resource-id="1" units="100"/>
+    <allocation task-id="8" resource-id="1" units="100"/>
     <allocation task-id="3" resource-id="1" units="100"/>
     <allocation task-id="2" resource-id="1" units="100"/>
-    <allocation task-id="7" resource-id="1" units="100"/>
-    <allocation task-id="32" resource-id="2" units="100"/>
-    <allocation task-id="31" resource-id="2" units="100"/>
-    <allocation task-id="25" resource-id="2" units="100"/>
-    <allocation task-id="24" resource-id="2" units="100"/>
-    <allocation task-id="23" resource-id="2" units="100"/>
-    <allocation task-id="21" resource-id="2" units="100"/>
+    <allocation task-id="6" resource-id="1" units="100"/>
+    <allocation task-id="35" resource-id="2" units="100"/>
+    <allocation task-id="34" resource-id="2" units="100"/>
+    <allocation task-id="28" resource-id="2" units="100"/>
+    <allocation task-id="27" resource-id="2" units="100"/>
+    <allocation task-id="26" resource-id="2" units="100"/>
     <allocation task-id="20" resource-id="2" units="100"/>
+    <allocation task-id="19" resource-id="2" units="100"/>
+    <allocation task-id="7" resource-id="2" units="100"/>
+    <allocation task-id="5" resource-id="2" units="100"/>
+    <allocation task-id="1" resource-id="2" units="100"/>
     <allocation task-id="8" resource-id="2" units="100"/>
     <allocation task-id="6" resource-id="2" units="100"/>
-    <allocation task-id="1" resource-id="2" units="100"/>
-    <allocation task-id="9" resource-id="2" units="100"/>
-    <allocation task-id="7" resource-id="2" units="100"/>
-    <allocation task-id="18" resource-id="3" units="100"/>
-    <allocation task-id="16" resource-id="3" units="100"/>
-    <allocation task-id="4" resource-id="3" units="100"/>
-    <allocation task-id="5" resource-id="3" units="100"/>
+    <allocation task-id="17" resource-id="3" units="100"/>
+    <allocation task-id="15" resource-id="3" units="100"/>
     <allocation task-id="3" resource-id="3" units="100"/>
-    <allocation task-id="18" resource-id="4" units="100"/>
-    <allocation task-id="5" resource-id="4" units="100"/>
+    <allocation task-id="4" resource-id="3" units="100"/>
+    <allocation task-id="2" resource-id="3" units="100"/>
+    <allocation task-id="17" resource-id="4" units="100"/>
     <allocation task-id="4" resource-id="4" units="100"/>
-    <allocation task-id="32" resource-id="5" units="100"/>
-    <allocation task-id="26" resource-id="5" units="100"/>
-    <allocation task-id="9" resource-id="5" units="100"/>
-    <allocation task-id="32" resource-id="6" units="100"/>
-    <allocation task-id="26" resource-id="6" units="100"/>
-    <allocation task-id="9" resource-id="6" units="100"/>
-    <allocation task-id="24" resource-id="7" units="100"/>
+    <allocation task-id="3" resource-id="4" units="100"/>
+    <allocation task-id="35" resource-id="5" units="100"/>
+    <allocation task-id="29" resource-id="5" units="100"/>
+    <allocation task-id="8" resource-id="5" units="100"/>
+    <allocation task-id="35" resource-id="6" units="100"/>
+    <allocation task-id="29" resource-id="6" units="100"/>
+    <allocation task-id="8" resource-id="6" units="100"/>
+    <allocation task-id="27" resource-id="7" units="100"/>
   </allocations>
 </project>
