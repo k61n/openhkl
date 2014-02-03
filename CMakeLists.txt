@@ -54,6 +54,9 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
     -D__GXX_EXPERIMENTAL_CXX0X__ 
 )
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ")
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
+    ADD_DEFINITIONS(-std=c++11
+    )
 ENDIF()
 
 # Disable auto-linking to allow dynamic linking with MSVC
