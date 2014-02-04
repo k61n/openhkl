@@ -93,7 +93,7 @@
       <task id="19" name="Move CGAL to sxtalhull" note="" work="28800" start="20140203T000000Z" end="20140203T170000Z" work-start="20140203T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
         <constraint type="must-start-on" time="20140203T000000Z"/>
       </task>
-      <task id="20" name="Evaluate boost UnitTest Framework, create 1 unit test" note="" work="144000" start="20140203T000000Z" end="20140207T170000Z" work-start="20140203T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <task id="20" name="Evaluate boost UnitTest Framework, create 1 unit test" note="" work="144000" start="20140203T000000Z" end="20140207T170000Z" work-start="20140203T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
         <constraint type="must-start-on" time="20140203T000000Z"/>
       </task>
       <task id="21" name="Symmetry Package" note="" work="28800" start="20140131T000000Z" end="20140131T170000Z" work-start="20140131T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>

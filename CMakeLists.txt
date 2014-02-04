@@ -97,6 +97,16 @@ add_subdirectory(tests)
 
 
 
-# Install section
+# Install section, installing libraries 
 INSTALL(TARGETS NSXTool DESTINATION NSXTool)
+
+# 
+IF(UNIX)
+	SET(INCLUDE_DIR "/usr/local/include/NSXTool/")
+	file(GLOB_RECURSE all_headers *.h)
+	INSTALL(CODE "MESSAGE(\"Installing headers...\")")
+	INSTALL(FILES ${all_headers}	DESTINATION ${INCLUDE_DIR})
+ENDIF(UNIX)
+
+
 
