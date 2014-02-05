@@ -18,6 +18,7 @@ BOOST_AUTO_TEST_CASE(Test_ILLAscii_Meta_Reader)
 	// MetaData block should be 42 lines long
 	BOOST_CHECK(sof==81*42);
 
-	//
+	// Check that 2 angles are scanned
+	BOOST_CHECK(m->getKey<int>("nbang")==2);
 
 }

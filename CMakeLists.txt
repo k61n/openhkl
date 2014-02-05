@@ -97,6 +97,7 @@ add_subdirectory(tests)
 
 
 
+
 # Install section, installing libraries 
 INSTALL(TARGETS NSXTool DESTINATION NSXTool)
 
