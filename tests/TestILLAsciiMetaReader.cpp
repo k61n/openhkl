@@ -21,4 +21,7 @@ BOOST_AUTO_TEST_CASE(Test_ILLAscii_Meta_Reader)
 	// Check that 2 angles are scanned
 	BOOST_CHECK(m->getKey<int>("nbang")==2);
 
+	// Check number of pixels =1024 (32*32)
+	BOOST_CHECK(m->getKey<int>("nbdata")==1024);
+
 }
