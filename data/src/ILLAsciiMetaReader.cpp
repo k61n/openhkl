@@ -5,6 +5,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/algorithm/string.hpp>
 #include <string>
+#include <fstream>
 
 namespace SX
 {
@@ -57,6 +58,25 @@ MetaData* ILLAsciiMetaReader::read(const char* buf,std::size_t& size)
 		throw std::runtime_error("ILLAsciiMetaReader: Fail to read FBlock in stream");
 	}
 	return meta;
+}
+
+MetaData* ILLAsciiMetaReader::read(const std::string& filename,std::size_t& size)
+{
+	std::fstream ifs (filename.c_str(),std::ios::in);
+	if (!ifs.is_open())
+		throw std::runtime_error("Can't open file:"+filename);
+
+	std::filebuf* pbuf = ifs.rdbuf();
+	size = pbuf->pubseekoff (0,ifs.end,ifs.in);
+	pbuf->pubseekpos (0,ifs.in);
+	// allocate memory to contain file data
+	char* buffer=new char[size];
+	// get file data
+	pbuf->sgetn (buffer,size);
+	ifs.close();
+	MetaData* md=read(buffer,size);
+	delete [] buffer;
+	return md;
 }
 
 

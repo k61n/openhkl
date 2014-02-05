@@ -44,6 +44,8 @@ public:
 	//! Reads MetaData from a chain of characters as written in legacy ILL format
 	//! return a MetaData Object
 	static MetaData* read(const char* buf,std::size_t& size);
+	//! Reads MetaData from a file, return MetaData Object
+	static MetaData* read(const std::string& filename, std::size_t& size);
 private:
 	//! current line in the file.
 	static int _currentline;
