@@ -25,9 +25,10 @@
  *
  */
 
-#ifndef NSXTOOL	_SYSTEM_H_
+#ifndef NSXTOOL_SYSTEM_H_
 #define NSXTOOL_SYSTEM_H_
 
+// Define necessary symbols for exporting symbols in dll table.
 
 #ifdef _WIN32
 // Export/Import declarations
