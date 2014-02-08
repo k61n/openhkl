@@ -24,21 +24,16 @@ ELSEIF(NOT Boost_FOUND)
   MESSAGE(FATAL_ERROR "Unable to find correct Boost version. Did you set BOOST_ROOT?")
 ENDIF()
 
-###### Find GSL and GSL_CBLAS ######
-FIND_PACKAGE(GSL)
-
-
-###### Find GMP 
-FIND_PACKAGE(GMP)
-
-
-###### Find MPFR 
-FIND_PACKAGE (MPFR)
-
 
 ###### Find OPENMP 
-FIND_PACKAGE (OPENMP)
+FIND_PACKAGE (OpenMP)
 
+###### Find CMinpack
+FIND_PACKAGE(CMinpack)
+
+###### Find the Eigen3 
+FIND_PACKAGE(Eigen3)
+include_directories(${EIGEN3_INCLUDE_DIR})
 
 ###### Find Python 
 find_package(PythonLibs REQUIRED)
@@ -86,14 +81,12 @@ file(GLOB_RECURSE sources analysis/src/*.cpp
 add_library(NSXTool SHARED ${sources})
  
 # Link
-TARGET_LINK_LIBRARIES(NSXTool ${Boost_LIBRARIES} ${GSL} ${GSL_CBLAS} ${GSL_LIBRARIES} ${GMP_LIBRARIES} ${MPFR_LIBRARIES} ${PYTHON_LIBRARIES})
+TARGET_LINK_LIBRARIES(NSXTool ${Boost_LIBRARIES} ${PYTHON_LIBRARIES} ${CMINPACK_LIBRARIES})
 
 # Enable unit testing with ctest. This must be called before any calls to add_subdirectory 
 enable_testing()
 # Directory with all the unit-tests. 
 add_subdirectory(tests)
-
-
 
 # Install section, installing libraries 
 INSTALL(TARGETS NSXTool DESTINATION NSXTool)

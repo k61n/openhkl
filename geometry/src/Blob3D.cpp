@@ -1,13 +1,14 @@
 #include <cmath>
 #include <limits>
 #include <stdexcept>
-
 #include <boost/math/special_functions/erf.hpp>
-
-#include <gsl/gsl_math.h>
-#include <gsl/gsl_eigen.h>
-
+#include <Eigen/Eigenvalues>
+#include <Eigen/Dense>
 #include "Blob3D.h"
+
+using Eigen::MatrixXd;
+using Eigen::VectorXd;
+using Eigen::SelfAdjointEigenSolver;
 
 namespace SX
 {
@@ -138,42 +139,34 @@ void Blob3D::toEllipsoid(V3D& center, V3D& semi_axes, V3D& v0, V3D& v1, V3D& v2)
     center(xc,yc,zc);
 
     // Define the variance-covariance tensor
-    double variance[9];
-    // Now compute second moment with respect to center of mass
-    variance[0]=_m200/_m000-xc*xc;
-    variance[1]=variance[3]=_m110/_m000-xc*yc;
-    variance[2]=variance[6]=_m101/_m000-xc*zc;
-    variance[4]=_m020/_m000-yc*yc;
-    variance[5]=variance[7]=_m011/_m000-yc*zc;
-    variance[8]=_m002/_m000-zc*zc;
+    MatrixXd inertia(3,3);
+    inertia(0,0)=_m200/_m000-xc*xc;
+    inertia(1,1)=_m020/_m000-yc*yc;
+    inertia(2,2)=_m002/_m000-zc*zc;
+    inertia(0,1)=inertia(1,0)=_m110/_m000-xc*yc;
+    inertia(0,2)=inertia(2,0)=_m101/_m000-xc*zc;
+    inertia(1,2)=inertia(2,1)=_m011/_m000-yc*zc;
 
-    // Diagonalize the variance-covariance matrix
-    gsl_matrix_view m = gsl_matrix_view_array(variance, 3, 3);
+	SelfAdjointEigenSolver<MatrixXd> solver;
+	solver.compute(inertia);
 
-    gsl_vector *val = gsl_vector_alloc (3);
-    gsl_matrix *vec = gsl_matrix_alloc (3,3);
-
-    gsl_eigen_symmv_workspace * w = gsl_eigen_symmv_alloc (3);
-
-    gsl_eigen_symmv (&m.matrix, val, vec, w);
-    gsl_eigen_symmv_free(w);
-    gsl_eigen_symmv_sort(val,vec,GSL_EIGEN_SORT_ABS_ASC);
 
     // This is the Gaussian sigma along three directions
     // (fabs is a safe-guard against very small negative eigenvalues due to precision errors)
-    semi_axes[0]= sqrt(std::fabs(gsl_vector_get(val, 0)));
-    semi_axes[1]= sqrt(std::fabs(gsl_vector_get(val, 1)));
-    semi_axes[2]= sqrt(std::fabs(gsl_vector_get(val, 2)));
+    semi_axes[0]= sqrt(std::fabs(solver.eigenvalues()[0]));
+    semi_axes[1]= sqrt(std::fabs(solver.eigenvalues()[1]));
+    semi_axes[2]= sqrt(std::fabs(solver.eigenvalues()[2]));
 
     // Now eigenvectors
-    gsl_vector_view vec_0 = gsl_matrix_column(vec, 0);
-    gsl_vector_view vec_1 = gsl_matrix_column(vec, 1);
-    gsl_vector_view vec_2 = gsl_matrix_column(vec, 2);
-    //
-	v0(gsl_vector_get(&vec_0.vector,0),gsl_vector_get(&vec_0.vector,1),gsl_vector_get(&vec_0.vector,2));
-	v1(gsl_vector_get(&vec_1.vector,0),gsl_vector_get(&vec_1.vector,1),gsl_vector_get(&vec_1.vector,2));
-	v2(gsl_vector_get(&vec_2.vector,0),gsl_vector_get(&vec_2.vector,1),gsl_vector_get(&vec_2.vector,2));
 
+    VectorXd vec_0 = solver.eigenvectors().col(0);
+    VectorXd vec_1 = solver.eigenvectors().col(1);
+    VectorXd vec_2 = solver.eigenvectors().col(2);
+
+    //
+	v0(vec_0(0),vec_0(1),vec_0(2));
+	v1(vec_1(1),vec_1(1),vec_2(2));
+	v2(vec_2(2),vec_2(1),vec_2(2));
     //
     return;
 }
@@ -282,25 +275,19 @@ bool Blob3D::intersectionWithPlane(double a, double b, double c, double d, V3D& 
         return false;
     }
 
-    double A33[] ={Aq,Bq,Bq,Cq};
-    gsl_matrix_view m = gsl_matrix_view_array(A33, 2, 2);
-
-    gsl_vector *valq = gsl_vector_alloc (2);
-    gsl_matrix *vecq = gsl_matrix_alloc (2,2);
-
-    gsl_eigen_symmv_workspace * wq = gsl_eigen_symmv_alloc (2);
-
-    gsl_eigen_symmv (&m.matrix, valq, vecq, wq);
-    gsl_eigen_symmv_free(wq);
-    gsl_eigen_symmv_sort(valq,vecq,GSL_EIGEN_SORT_ABS_ASC);
+    SelfAdjointEigenSolver<MatrixXd> solver;
+    MatrixXd A33(2,2);
+    A33(0,0)=Aq; A33(0,1)=Bq;
+    A33(1,0)=Bq; A33(1,1)=Cq;
+    solver.compute(A33);
 
     double fact = -detAq/detA33;
 
-    semi_axes[0] = sqrt(fact/gsl_vector_get(valq, 0));
-    semi_axes[1] = sqrt(fact/gsl_vector_get(valq, 1));
+    semi_axes[0] = sqrt(fact/solver.eigenvalues()[0]);
+    semi_axes[1] = sqrt(fact/solver.eigenvalues()[1]);
+    VectorXd vec_0=solver.eigenvectors().col(0);
+    VectorXd vec_1=solver.eigenvectors().col(1);
 
-    gsl_vector_view vec_0 = gsl_matrix_column(vecq, 0);
-    gsl_vector_view vec_1 = gsl_matrix_column(vecq, 1);
 
     center[0] = (Bq*Eq - Cq*Dq)/detA33;
     center[1] = (Dq*Bq - Aq*Eq)/detA33;
@@ -309,12 +296,12 @@ bool Blob3D::intersectionWithPlane(double a, double b, double c, double d, V3D& 
     // The center of the intersection ellipse in the original frame
     center = R*center + rp;
 
-    axis1[0] = gsl_vector_get(&vec_0.vector,0);
-    axis1[1] = gsl_vector_get(&vec_0.vector,1);
+    axis1[0] = vec_0(0);
+    axis1[1] = vec_0(1);
     axis1[2] = 0.0;
 
-    axis2[0] = gsl_vector_get(&vec_1.vector,0);
-    axis2[1] = gsl_vector_get(&vec_1.vector,1);
+    axis2[0] = vec_1(0);
+    axis2[1] = vec_1(1);
     axis2[2] = 0.0;
 
     // The axes of the intersection ellipse in the original frame

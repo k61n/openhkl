@@ -32,13 +32,10 @@
 #include "DeadTime.h"
 #include "Scan1D.h"
 #include <boost/tuple/tuple.hpp>
-#include <gsl/gsl_vector.h>
-#include <gsl/gsl_matrix.h>
-#include <gsl/gsl_multifit_nlin.h>
 #include <vector>
 #include <cmath>
 #include <boost/shared_ptr.hpp>
-
+#include <cminpack-1/cminpack.h>
 
 namespace SX
 {
@@ -50,62 +47,24 @@ struct data
 	double* y;
 	double* sigma;
 };
+
 // Fit with A*exp(-a*t)
-
-int exp_f(const gsl_vector* params, void* data, gsl_vector* f)
+int ExpDecay(void* p, int m,int n,const double* x, double* fvec, int iflag)
 {
-	size_t n = ((struct data *)data)->n;
-   double *x=((struct data *)data)->x;
-   double *y = ((struct data *)data)->y;
-   double *sigma = ((struct data *) data)->sigma;
+	double a=x[0];
+	double b=x[1];
+	const double *y = ((data*)p)->y;
+	const double *t = ((data*)p)->x;
+	const double *s = ((data*)p)->sigma;
 
-   double A = gsl_vector_get (params, 0);
-   double alpha = gsl_vector_get (params, 1);
+	const int nn=((data*)p)->n;
+	for (int i = 0; i < nn; ++i)
+	{
+	  fvec[i] = y[i] - ((x[0]*exp(-x[1]*t[i]))/s[i]);
+	}
+		  return 0;
 
-   for (std::size_t  i = 0; i < n; i++)
-	 {
-	   /* Model Yi = A * exp(-lambda * i)  */
-	   double Yi = A * exp (-alpha * x[i]);
-	   gsl_vector_set (f, i, (Yi - y[i])/sigma[i]);
-	 }
-
-   return GSL_SUCCESS;
 }
-
-int  exp_df (const gsl_vector * params, void *data,
-              gsl_matrix * J)
- {
-   size_t n = ((struct data *)data)->n;
-   double *x=((struct data *) data)->x;
-   double *sigma = ((struct data *) data)->sigma;
-
-   double A = gsl_vector_get (params, 0);
-   double alpha = gsl_vector_get (params, 1);
-
-
-   for (std::size_t i = 0; i < n; i++)
-	 {
-	   /* Jacobian matrix J(i,j) = dfi / dxj, */
-	   /* where fi = (Yi - yi)/sigma[i],      */
-	   /*       Yi = A * exp(-lambda * i) + b  */
-	   /* and the xj are the parameters (A,lambda,b) */
-
-	   double s = sigma[i];
-	   double e = exp(-alpha * x[i]);
-	   gsl_matrix_set (J, i, 0, e/s);
-	   gsl_matrix_set (J, i, 1, -x[i] * A * e/s);
-	 }
-   return GSL_SUCCESS;
- }
-
-int    exp_fdf (const gsl_vector * x, void *data,
-               gsl_vector * f, gsl_matrix * J)
-     {
-       exp_f (x, data, f);
-       exp_df (x, data, J);
-
-       return GSL_SUCCESS;
-     }
 
 
 class HeCell

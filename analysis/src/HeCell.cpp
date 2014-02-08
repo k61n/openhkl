@@ -88,55 +88,37 @@ void HeCell::addPeak(double h, double k, double l)
 int HeCell::fitExponential(double& A0,double& A0s, double& alpha,double& alphas)
 {
 
-	const gsl_multifit_fdfsolver_type *T;
-   gsl_multifit_fdfsolver *s;
-   int status;
-   unsigned  iter = 0;
-   const size_t n = _pvst->npoints();
-   const size_t p = 2;
+	const size_t n = _pvst->npoints();
+	// This is OK since std::vector is garanteed contiguous
+	struct data d = {(int)n, &_pvst->getX()[0],&_pvst->getY()[0],&_pvst->getE()[0]};
+	// Number of parameters
+	const int m=2;
+	int i, j, maxfev, mode, nprint, info, nfev, ldfjac;
+	int ipvt[m];
+	double ftol, xtol, gtol, epsfcn, factor, fnorm;
+	double x[m], fvec[m], diag[m], fjac[n*m], qtf[m],
+	wa1[m], wa2[m], wa3[m], wa4[n];
+	int k;
+	// Initial guesses
+	x[0] = 1.0;
+	x[1] = 0.0;
 
-   gsl_matrix *covar = gsl_matrix_alloc (p, p);
+	ldfjac = n;
+	ftol = sqrt(dpmpar(1));
+	xtol = sqrt(dpmpar(1));
+	gtol = 0.;
 
-   // This is OK since std::vector is garanteed contiguous
-   struct data d = {(int)n, &_pvst->getX()[0],&_pvst->getY()[0],&_pvst->getE()[0]};
-   gsl_multifit_function_fdf f;
-   double param_init[2] = { 1.0, 0.0 };
-   gsl_vector_view param = gsl_vector_view_array (param_init, p);
-
-   f.f = &exp_f;
-   f.df = &exp_df;
-   f.fdf = &exp_fdf;
-   f.n = n;
-   f.p = p;
-   f.params = &d;
-
-   T = gsl_multifit_fdfsolver_lmsder;
-   s = gsl_multifit_fdfsolver_alloc (T, n, p);
-   gsl_multifit_fdfsolver_set (s, &f, &param.vector);
-
-   do
-	 {
-	   iter++;
-	   status = gsl_multifit_fdfsolver_iterate (s);
-
-	  if (status)
-		 break;
-
-	   status = gsl_multifit_test_delta (s->dx, s->x,
-										 1e-4, 1e-4);
-	 }
-   while (status == GSL_CONTINUE && iter < 500);
-
-   gsl_multifit_covar (s->J, 0.0, covar);
-    _P0= gsl_vector_get(s->x,0);
-    _P0s=sqrt(gsl_matrix_get(covar,0,0)) ;
-    _alpha0= gsl_vector_get(s->x,1);
-     _alpha0s=sqrt(gsl_matrix_get(covar,1,1)) ;
-     A0=_P0;
-     A0s=_P0s;
-     alpha=_alpha0;
-     alphas=_alpha0s;
-	return 0;
+	maxfev = 800;
+	epsfcn = 0.;
+	mode = 1;
+	factor = 1.e2;
+	nprint = 0;
+	info = lmdif(ExpDecay,&d, n, m, x, fvec, ftol, xtol, gtol, maxfev, epsfcn,
+	diag, mode, factor, nprint, &nfev, fjac, ldfjac,
+	ipvt, qtf, wa1, wa2, wa3, wa4);
+	A0=x[0];
+	alpha=x[1];
+	return info;
 }
 
 double HeCell::getPolar(const SX::Data::Numor& numor,double& Pcell, double& Pcells)

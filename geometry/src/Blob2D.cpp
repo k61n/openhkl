@@ -1,9 +1,13 @@
 #include "Blob2D.h"
 #include <stdexcept>
 #include <cmath>
-#include <gsl/gsl_math.h>
-#include <gsl/gsl_eigen.h>
 #include <limits>
+#include <Eigen/Eigenvalues>
+#include <Eigen/Dense>
+
+
+using Eigen::MatrixXd;
+using Eigen::SelfAdjointEigenSolver;
 
 namespace SX
 {
@@ -129,29 +133,16 @@ void Blob2D::toEllipse(double& xc, double& yc, double& s_a, double& s_b, double&
 	double Ixx=_m20/_m00-xc*xc;
 	double Iyy=_m02/_m00-yc*yc;
 	double Ixy=_m11/_m00-xc*yc;
-	// Diagonalize the second moment tensor [[Ixx,Ixy],[Ixy,Iyy]]
-	double inertia[] ={Ixx,Ixy,Ixy,Iyy};
-	gsl_matrix_view m = gsl_matrix_view_array(inertia, 2, 2);
 
-	gsl_vector *val = gsl_vector_alloc (2);
-	gsl_matrix *vec = gsl_matrix_alloc (2,2);
+	SelfAdjointEigenSolver<MatrixXd> solver;
+	MatrixXd inertia(2,2);
+	inertia(0,0)=Ixx; inertia(0,1)=Ixy;inertia(1,0)=Ixy; inertia(1,1)=Iyy;
+	solver.compute(inertia);
+	s_a=sqrt(std::abs(solver.eigenvalues()[0]));
+	s_b=sqrt(std::abs(solver.eigenvalues()[1]));
 
-	gsl_eigen_symmv_workspace * w = gsl_eigen_symmv_alloc (2);
-
-	gsl_eigen_symmv (&m.matrix, val, vec, w);
-	gsl_eigen_symmv_free(w);
-	gsl_eigen_symmv_sort(val,vec,GSL_EIGEN_SORT_ABS_ASC);
-
-	// sqrt(Eigenvalues) = semi-axes
-	// (fabs is a safe-guard against very small negative eigenvalues due to precision errors)
-	s_a= sqrt(std::fabs(gsl_vector_get(val, 0)));
-	s_b= sqrt(std::fabs(gsl_vector_get(val, 1)));
-
-	// Now get first eigenvector
-	gsl_vector_view vec_0 = gsl_matrix_column(vec, 0);
-	//
-	double v1x=gsl_vector_get(&vec_0.vector,0);
-	double v1y=gsl_vector_get(&vec_0.vector,1);
+	double v1x=(solver.eigenvectors().col(0))(0);
+	double v1y=(solver.eigenvectors().col(0))(0);
 	angle=atan2(v1y,v1x);
 
 }
