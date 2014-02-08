@@ -7,7 +7,8 @@
 #include "Blob3D.h"
 
 using Eigen::MatrixXd;
-using Eigen::VectorXd;
+using Eigen::Vector3d;
+using Eigen::Vector2d;
 using Eigen::SelfAdjointEigenSolver;
 
 namespace SX
@@ -159,9 +160,9 @@ void Blob3D::toEllipsoid(V3D& center, V3D& semi_axes, V3D& v0, V3D& v1, V3D& v2)
 
     // Now eigenvectors
 
-    VectorXd vec_0 = solver.eigenvectors().col(0);
-    VectorXd vec_1 = solver.eigenvectors().col(1);
-    VectorXd vec_2 = solver.eigenvectors().col(2);
+    Vector3d vec_0 = solver.eigenvectors().col(0);
+    Vector3d vec_1 = solver.eigenvectors().col(1);
+    Vector3d vec_2 = solver.eigenvectors().col(2);
 
     //
 	v0(vec_0(0),vec_0(1),vec_0(2));
@@ -285,8 +286,8 @@ bool Blob3D::intersectionWithPlane(double a, double b, double c, double d, V3D& 
 
     semi_axes[0] = sqrt(fact/solver.eigenvalues()[0]);
     semi_axes[1] = sqrt(fact/solver.eigenvalues()[1]);
-    VectorXd vec_0=solver.eigenvectors().col(0);
-    VectorXd vec_1=solver.eigenvectors().col(1);
+    Vector2d vec_0=solver.eigenvectors().col(0);
+    Vector2d vec_1=solver.eigenvectors().col(1);
 
 
     center[0] = (Bq*Eq - Cq*Dq)/detA33;
