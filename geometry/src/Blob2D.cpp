@@ -142,7 +142,7 @@ void Blob2D::toEllipse(double& xc, double& yc, double& s_a, double& s_b, double&
 	s_b=sqrt(std::abs(solver.eigenvalues()[1]));
 
 	double v1x=(solver.eigenvectors().col(0))(0);
-	double v1y=(solver.eigenvectors().col(0))(0);
+	double v1y=(solver.eigenvectors().col(0))(1);
 	angle=atan2(v1y,v1x);
 
 }
