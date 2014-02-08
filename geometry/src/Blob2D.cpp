@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include <cmath>
 #include <limits>
+#include <boost/math/special_functions/erf.hpp>
 #include <Eigen/Eigenvalues>
 #include <Eigen/Dense>
 
@@ -138,6 +139,7 @@ void Blob2D::toEllipse(double& xc, double& yc, double& s_a, double& s_b, double&
 	MatrixXd inertia(2,2);
 	inertia(0,0)=Ixx; inertia(0,1)=Ixy;inertia(1,0)=Ixy; inertia(1,1)=Iyy;
 	solver.compute(inertia);
+	//
 	s_a=sqrt(std::abs(solver.eigenvalues()[0]));
 	s_b=sqrt(std::abs(solver.eigenvalues()[1]));
 
