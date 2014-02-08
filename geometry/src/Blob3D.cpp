@@ -165,8 +165,8 @@ void Blob3D::toEllipsoid(V3D& center, V3D& semi_axes, V3D& v0, V3D& v1, V3D& v2)
 
     //
 	v0(vec_0(0),vec_0(1),vec_0(2));
-	v1(vec_1(1),vec_1(1),vec_2(2));
-	v2(vec_2(2),vec_2(1),vec_2(2));
+	v1(vec_1(0),vec_1(1),vec_2(2));
+	v2(vec_2(0),vec_2(1),vec_2(2));
     //
     return;
 }
