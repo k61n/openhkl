@@ -30,7 +30,7 @@ FIND_PACKAGE (OpenMP)
 
 ###### Find CMinpack
 FIND_PACKAGE(CMinpack)
-
+include_directories(${CMINPACK_INCLUDE_DIR})
 ###### Find the Eigen3 
 FIND_PACKAGE(Eigen3)
 include_directories(${EIGEN3_INCLUDE_DIR})
@@ -49,14 +49,18 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
     -D__GXX_EXPERIMENTAL_CXX0X__ 
 )
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ")
-elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
-    ADD_DEFINITIONS(-std=c++11
-    )
 ENDIF()
+
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
+    ADD_DEFINITIONS(-std=c++11
+)
+endif()
+
 
 # Disable auto-linking to allow dynamic linking with MSVC
 IF(WIN32 AND MSVC)
     ADD_DEFINITIONS(-DBOOST_ALL_NO_LIB)
+    ADD_DEFINITIONS(-D_USE_MATH_DEFINES)
 ENDIF()
 
 include_directories( analysis/include
