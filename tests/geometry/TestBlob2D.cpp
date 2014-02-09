@@ -8,7 +8,7 @@ using namespace SX::Geometry;
 
 const double tolerance=1e-5;
 
-BOOST_AUTO_TEST_CASE(Test_Rot_Axis)
+BOOST_AUTO_TEST_CASE(Test_Blob2D)
 {
 	Blob2D blob;
 	// Create a set of points for a 2D Gaussian.
