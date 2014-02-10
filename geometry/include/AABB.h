@@ -58,22 +58,16 @@ public:
 	typedef typename Eigen::Matrix<T,D,1> vector;
 	//! Default constructor
 	AABB();
-
 	//! Copy constructor
 	AABB(const AABB<T,D>& other);
-
 	//! Constructor from two ublas vectors
 	AABB(const vector& lb, const vector& ub);
-
 	//! Constructor from two initializer_lists
 	AABB(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub);
-
 	//! Destructor
 	virtual ~AABB();
-
 	//! Assignment operator
 	AABB<T,D>& operator=(const AABB<T,D>& other);
-
 	//! Check for intersection with another AABB
 	//! Return true if touch or overlap
 	inline bool intercept(const AABB<T,D>& other) const
@@ -85,19 +79,22 @@ public:
 		}
 		return true;
 	}
-
+	//! Return the volume
+	T volumeND() const;
 	//! Check whether a given point is inside the AABB
-	bool is_inside_aabb(const std::initializer_list<T>& point) const;
-
+	bool isInsideAABB(const std::initializer_list<T>& point) const;
+	//! Check whether a given point is inside the AABB
+	bool isInsideAABB(const vector& point) const;
 	//! Setter for the lower and upper bounds of the AABB
 	void setBounds(const vector& lb, const vector& ub);
-
+	//! Setter for the lower limit of the box
+	void setLower(const vector& lb);
+	//! Setter for the upper limit of the box
+	void setUpper(const vector& lb);
 	//! Return the center of the bounding box
 	vector getCenter() const;
-
 	//! Return the extends of the bounding box
 	vector getExtents() const;
-
 	//! Send the object to a stream
 	void printSelf(std::ostream&) const;
 
@@ -167,6 +164,14 @@ AABB<T,D>& AABB<T,D>::operator=(const AABB<T,D>& other)
 }
 
 template<typename T, uint D>
+T AABB<T,D>::volumeND() const
+{
+	return (_upperBound-_lowerBound).prod();
+}
+
+
+
+template<typename T, uint D>
 std::ostream& operator<<(std::ostream& os, const AABB<T,D>& aabb)
 {
 	aabb.printSelf(os);
@@ -174,17 +179,34 @@ std::ostream& operator<<(std::ostream& os, const AABB<T,D>& aabb)
 }
 
 template<typename T,uint D>
-bool AABB<T,D>::is_inside_aabb(const std::initializer_list<T>& point) const
+bool AABB<T,D>::isInsideAABB(const std::initializer_list<T>& point) const
 {
 
 	if (point.size() != D)
 		throw("AABB: invalid point size");
 
 	auto it = point.begin();
-	auto lbit = _lowerBound.begin();
-	auto ubit = _upperBound.begin();
+	auto lbit = _lowerBound.data();
+	auto ubit = _upperBound.data();
 
 	for(; it!=point.end(); it++,lbit++,ubit++)
+	{
+		if (*it < *lbit || *it > *ubit)
+			return false;
+	}
+
+	return true;
+}
+
+template<typename T,uint D>
+bool AABB<T,D>::isInsideAABB(const vector& point) const
+{
+
+	auto it = point.data();
+	auto lbit = _lowerBound.data();
+	auto ubit = _upperBound.data();
+
+	for(unsigned int i=0; i<D; i++,lbit++,ubit++)
 	{
 		if (*it < *lbit || *it > *ubit)
 			return false;
@@ -202,6 +224,28 @@ void AABB<T,D>::setBounds(const vector& lb, const vector& ub)
 			throw std::invalid_argument("AABB: upper limit must be > lower limit");
 	}
 	_lowerBound = lb;
+	_upperBound = ub;
+}
+
+template<typename T, uint D>
+void AABB<T,D>::setLower(const vector& lb)
+{
+	for (uint i=0;i<D;++i)
+	{
+		if (lb(i)>_upperBound(i))
+			throw std::invalid_argument("AABB: upper limit must be > lower limit");
+	}
+	_lowerBound = lb;
+}
+
+template<typename T, uint D>
+void AABB<T,D>::setUpper(const vector& ub)
+{
+	for (uint i=0;i<D;++i)
+	{
+		if (_lowerBound(i)>ub(i))
+			throw std::invalid_argument("AABB: upper limit must be > lower limit");
+	}
 	_upperBound = ub;
 }
 
