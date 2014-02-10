@@ -12,7 +12,7 @@ IF(NOT CMAKE_BUILD_TYPE)
 ENDIF()
 
 ###### Find boost libraries  ##############
-FIND_PACKAGE(Boost 1.42.0 COMPONENTS date_time filesystem unit_test_framework REQUIRED)
+FIND_PACKAGE(Boost 1.42.0 COMPONENTS date_time system filesystem unit_test_framework REQUIRED)
 IF(Boost_FOUND)
   INCLUDE_DIRECTORIES("${Boost_INCLUDE_DIRS}")
   SET(Boost_USE_STATIC_LIBS OFF)
