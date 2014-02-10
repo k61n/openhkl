@@ -28,7 +28,6 @@
 
 #ifndef NSXTOOL_UNITS_H_
 #define NSXTOOL_UNITS_H_
-#define _USE_MATH_DEFINES
 #include <cmath>
 #include <Singleton.h>
 #include <unordered_map>
