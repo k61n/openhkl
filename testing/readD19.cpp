@@ -32,7 +32,7 @@
 #include "MMILLAsciiReader.h"
 #include "RotAxis.h"
 #include "Units.h"
-#include "V3D.h"
+#include <Eigen/Dense>
 
 using namespace boost;
 using namespace SX::Geometry;
@@ -228,7 +228,7 @@ class Scan2D
 //	    return V3DToNumpy(points);
 
 
-        	V3D center, semi_axes, v0,v1,v2,axis1,axis2;
+        	Eigen::Vector3d center, semi_axes, v0,v1,v2,axis1,axis2;
 
 			for (auto b_it=blobs.begin(); b_it!=blobs.end(); ++b_it)
 			{
@@ -273,9 +273,9 @@ class Scan2D
 			for (size_t i=0; i < nEllipses;i++)
 			{
 				Ellipse& ell = e_it->second[i];
-				const V3D& center = ell.getCenter();
-				const V3D& axes = 2.0*ell.getSemiAxes();
-				const V3D& axis1 = ell.getAxis1();
+				const Vector3d& center = ell.getCenter();
+				const Vector3d& axes = 2.0*ell.getSemiAxes();
+				const Vector3d& axis1 = ell.getAxis1();
 				double angle = atan2(axis1[1],axis1[0])*180.0/M_PI;
 
 				double* temp=(double*)PyArray_GETPTR2(ndarray,i,0);

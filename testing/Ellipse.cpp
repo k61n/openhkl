@@ -10,7 +10,7 @@ Ellipse::Ellipse()
 {
 }
 
-Ellipse::Ellipse(const V3D& center, const V3D& semi_axes, const V3D& axis1, const V3D& axis2):
+Ellipse::Ellipse(const Vector3d& center, const Vector3d& semi_axes, const Vector3d& axis1, const Vector3d& axis2):
 _center(center), _semi_axes(semi_axes), _axis1(axis1), _axis2(axis2)
 {
 }
@@ -39,23 +39,23 @@ Ellipse::~Ellipse()
 {
 }
 
-const V3D& Ellipse::getCenter(void) const
+const Vector3d& Ellipse::getCenter(void) const
 {
 	return _center;
 }
 
-const V3D& Ellipse::getSemiAxes(void) const
+const Vector3d& Ellipse::getSemiAxes(void) const
 {
 	return _semi_axes;
 
 }
 
-const V3D& Ellipse::getAxis1(void) const
+const Vector3d& Ellipse::getAxis1(void) const
 {
 	return _axis1;
 }
 
-const V3D& Ellipse::getAxis2(void) const
+const Vector3d& Ellipse::getAxis2(void) const
 {
 	return _axis2;
 }

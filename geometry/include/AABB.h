@@ -28,13 +28,11 @@
 
 #ifndef NSXTOOL_AABB_H_
 #define NSXTOOL_AABB_H_
-
 #include <initializer_list>
+#include <stdexcept>
+#include <Eigen/Dense>
 #include <iostream>
 #include <vector>
-
-#include <boost/numeric/ublas/io.hpp>
-#include <boost/numeric/ublas/vector.hpp>
 
 namespace SX
 {
@@ -44,7 +42,6 @@ namespace Geometry
 
 typedef unsigned int uint;
 
-namespace ublas=boost::numeric::ublas;
 
 /*! \brief Axis-Aligned Bounding-Box in D dimension.
  *
@@ -58,7 +55,7 @@ template<typename T, uint D>
 class AABB
 {
 public:
-
+	typedef typename Eigen::Matrix<T,D,1> vector;
 	//! Default constructor
 	AABB();
 
@@ -66,7 +63,7 @@ public:
 	AABB(const AABB<T,D>& other);
 
 	//! Constructor from two ublas vectors
-	AABB(const ublas::bounded_vector<T,D>& lb, const ublas::bounded_vector<T,D>& ub);
+	AABB(const vector& lb, const vector& ub);
 
 	//! Constructor from two initializer_lists
 	AABB(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub);
@@ -83,7 +80,7 @@ public:
 	{
 		for (uint i=0; i<D; ++i)
 		{
-			if (_upperBound[i] < other._lowerBound[i] || _lowerBound[i] > other._upperBound[i])
+			if (_upperBound(i) < other._lowerBound(i) || _lowerBound(i) > other._upperBound(i))
 				return false;
 		}
 		return true;
@@ -93,22 +90,22 @@ public:
 	bool is_inside_aabb(const std::initializer_list<T>& point) const;
 
 	//! Setter for the lower and upper bounds of the AABB
-	void setBounds(const ublas::bounded_vector<T,D>& lb, const ublas::bounded_vector<T,D>& ub);
+	void setBounds(const vector& lb, const vector& ub);
 
 	//! Return the center of the bounding box
-	ublas::bounded_vector<T,D> getCenter() const;
+	vector getCenter() const;
 
 	//! Return the extends of the bounding box
-	ublas::bounded_vector<T,D> getExtents() const;
+	vector getExtents() const;
 
 	//! Send the object to a stream
 	void printSelf(std::ostream&) const;
 
 protected:
 	// The lower bound point
-	ublas::bounded_vector<T,D> _lowerBound;
+	vector _lowerBound;
 	// The upper bound point
-	ublas::bounded_vector<T,D> _upperBound;
+	vector _upperBound;
 
 };
 
@@ -126,11 +123,11 @@ AABB<T,D>::AABB(const AABB<T,D>& other)
 }
 
 template<typename T, uint D>
-AABB<T,D>::AABB(const ublas::bounded_vector<T,D>& lb, const ublas::bounded_vector<T,D>& ub) : _lowerBound(lb), _upperBound(ub)
+AABB<T,D>::AABB(const vector& lb, const vector& ub) : _lowerBound(lb), _upperBound(ub)
 {
 	for (uint i=0;i<D;++i)
 	{
-		if (_lowerBound[i]>_upperBound[i])
+		if (_lowerBound(i)>_upperBound(i))
 			throw std::invalid_argument("AABB: upper limit must be > lower limit");
 	}
 }
@@ -140,8 +137,8 @@ AABB<T,D>::AABB(const std::initializer_list<T>& lb, const std::initializer_list<
 {
 	auto it1 = lb.begin();
 	auto it2 = ub.begin();
-	auto lbit = _lowerBound.begin();
-	auto ubit = _upperBound.begin();
+	auto lbit = _lowerBound.data();
+	auto ubit = _upperBound.data();
 
 	for(;it1!=lb.end();it1++,it2++)
 	{
@@ -197,11 +194,11 @@ bool AABB<T,D>::is_inside_aabb(const std::initializer_list<T>& point) const
 }
 
 template<typename T, uint D>
-void AABB<T,D>::setBounds(const ublas::bounded_vector<T,D>& lb, const ublas::bounded_vector<T,D>& ub)
+void AABB<T,D>::setBounds(const vector& lb, const vector& ub)
 {
 	for (uint i=0;i<D;++i)
 	{
-		if (lb[i]>ub[i])
+		if (lb(i)>ub(i))
 			throw std::invalid_argument("AABB: upper limit must be > lower limit");
 	}
 	_lowerBound = lb;
@@ -209,16 +206,16 @@ void AABB<T,D>::setBounds(const ublas::bounded_vector<T,D>& lb, const ublas::bou
 }
 
 template<typename T, uint D>
-ublas::bounded_vector<T,D> AABB<T,D>::getCenter() const
+typename AABB<T,D>::vector AABB<T,D>::getCenter() const
 {
-	ublas::bounded_vector<T,D> center((_lowerBound + _upperBound)*0.5);
+	vector center((_lowerBound + _upperBound)*0.5);
 	return center;
 }
 
 template<typename T, uint D>
-ublas::bounded_vector<T,D> AABB<T,D>::getExtents() const
+typename AABB<T,D>::vector AABB<T,D>::getExtents() const
 {
-	ublas::bounded_vector<T,D> dim(_upperBound - _lowerBound);
+	vector dim(_upperBound - _lowerBound);
 	return dim;
 }
 

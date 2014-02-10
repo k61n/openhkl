@@ -3,12 +3,12 @@
 #include <stdexcept>
 #include <boost/math/special_functions/erf.hpp>
 #include <Eigen/Eigenvalues>
-#include <Eigen/Dense>
 #include "Blob3D.h"
 
-using Eigen::MatrixXd;
 using Eigen::Vector3d;
 using Eigen::Vector2d;
+using Eigen::Matrix3d;
+using Eigen::Matrix2d;
 using Eigen::SelfAdjointEigenSolver;
 
 namespace SX
@@ -105,18 +105,19 @@ double Blob3D::getMaximumMass() const
     return _maxValue;
 }
 
-V3D Blob3D::getCenterOfMass() const
+Eigen::Vector3d Blob3D::getCenterOfMass() const
 {
     if (_m000<1e-7)
         throw std::runtime_error("No mass in Blob");
-
-    return V3D(_m100/_m000,_m010/_m000,_m001/_m000);
+    Vector3d result;
+    result << _m100/_m000,_m010/_m000,_m001/_m000;
+    return result;
 }
 
 
 void Blob3D::printSelf(std::ostream& os) const
 {
-	V3D center,semi_axes, v0,v1,v2;
+	Eigen::Vector3d center,semi_axes, v0,v1,v2;
 	toEllipsoid(center, semi_axes, v0, v1, v2);
     os << "#Blob center: " << center << std::endl;
     os << "Points in the blob: " << _npoints << std::endl;
@@ -127,7 +128,7 @@ void Blob3D::printSelf(std::ostream& os) const
     os << "Axe 3: " << v2 << std::endl;
 
 }
-void Blob3D::toEllipsoid(V3D& center, V3D& semi_axes, V3D& v0, V3D& v1, V3D& v2) const
+void Blob3D::toEllipsoid(Vector3d& center, Vector3d& semi_axes, Vector3d& v0, Vector3d& v1, Vector3d& v2) const
 {
     if (_m000<1e-7)
         throw std::runtime_error("No mass in Blob");
@@ -137,10 +138,10 @@ void Blob3D::toEllipsoid(V3D& center, V3D& semi_axes, V3D& v0, V3D& v1, V3D& v2)
     double zc=_m001/_m000;
 
     // Center of the ellipsoid
-    center(xc,yc,zc);
+    center << xc,yc,zc;
 
     // Define the variance-covariance tensor
-    MatrixXd inertia(3,3);
+    Matrix3d inertia;
     inertia(0,0)=_m200/_m000-xc*xc;
     inertia(1,1)=_m020/_m000-yc*yc;
     inertia(2,2)=_m002/_m000-zc*zc;
@@ -148,37 +149,32 @@ void Blob3D::toEllipsoid(V3D& center, V3D& semi_axes, V3D& v0, V3D& v1, V3D& v2)
     inertia(0,2)=inertia(2,0)=_m101/_m000-xc*zc;
     inertia(1,2)=inertia(2,1)=_m011/_m000-yc*zc;
 
-	SelfAdjointEigenSolver<MatrixXd> solver;
+	SelfAdjointEigenSolver<Matrix3d> solver;
 	solver.compute(inertia);
 
 
     // This is the Gaussian sigma along three directions
     // (fabs is a safe-guard against very small negative eigenvalues due to precision errors)
-    semi_axes[0]= sqrt(std::fabs(solver.eigenvalues()[0]));
-    semi_axes[1]= sqrt(std::fabs(solver.eigenvalues()[1]));
-    semi_axes[2]= sqrt(std::fabs(solver.eigenvalues()[2]));
+    semi_axes <<  sqrt(std::fabs(solver.eigenvalues()[0])),
+    			  sqrt(std::fabs(solver.eigenvalues()[1])),
+    			  sqrt(std::fabs(solver.eigenvalues()[2]));
 
     // Now eigenvectors
 
-    Vector3d vec_0 = solver.eigenvectors().col(0);
-    Vector3d vec_1 = solver.eigenvectors().col(1);
-    Vector3d vec_2 = solver.eigenvectors().col(2);
+    v0 = solver.eigenvectors().col(0);
+    v1 = solver.eigenvectors().col(1);
+    v2 = solver.eigenvectors().col(2);
 
-    //
-	v0(vec_0(0),vec_0(1),vec_0(2));
-	v1(vec_1(0),vec_1(1),vec_2(2));
-	v2(vec_2(0),vec_2(1),vec_2(2));
-    //
     return;
 }
 
-bool Blob3D::intersectionWithPlane(double a, double b, double c, double d, V3D& center, V3D& semi_axes, V3D& axis1, V3D& axis2, double confidence) const
+bool Blob3D::intersectionWithPlane(double a, double b, double c, double d, Vector3d& center, Vector3d& semi_axes, Vector3d& axis1, Vector3d& axis2, double confidence) const
 {
 
     // The blob ellipsoid parameters
-    V3D blob_semi_axes;
-    V3D blob_center;
-    V3D blob_axis1, blob_axis2, blob_axis3;
+    Vector3d blob_semi_axes;
+    Vector3d blob_center;
+    Vector3d blob_axis1, blob_axis2, blob_axis3;
 
     // Get the blob ellipsoid parameters
     this->toEllipsoid(blob_center, blob_semi_axes, blob_axis1, blob_axis2, blob_axis3);
@@ -186,30 +182,31 @@ bool Blob3D::intersectionWithPlane(double a, double b, double c, double d, V3D& 
     blob_semi_axes*=sqrt(2.0)*boost::math::erf_inv(confidence);
 
     // The vector normal to the plane
-    V3D normal(a,b,c);
-    double norm = normal.normalize();
-
+    Vector3d normal;
+    normal << a,b,c;
+    double norm = normal.norm();
+    normal/=norm;
     // This is the rotation matrix to align the normal to the plane with the z-axis
-    Matrix33<double> R;
-    V3D k_cp_n=UnitZ.cross_prod(normal);
-    // Check whether the normal to the plane is colinear with the z-axis
+    Matrix3d R=Matrix3d::Identity();
+    Vector3d k_cp_n=Vector3d::UnitZ().cross(normal);
+    // Check whether the normal to the plane is collinear with the z-axis
     // If so, the rotation matrix is just the identity matrix
-    if (k_cp_n.nullVector())
+    if (k_cp_n.isZero(1e-5))
     {
-        R.identity();
+        R.Identity();
     }
     // Otherwise, define the matrix as the Gibbs matrix
     else
     {
         k_cp_n.normalize();
         // Some intermediates variables useful for defining the Gibbs matrix
-        double cd = UnitZ.scalar_prod(normal);
+        double cd = Vector3d::UnitZ().dot(normal);
         double sd = sqrt(1.0-cd*cd);
         double one_minus_cd = 1.0-cd;
 
-        double vx = k_cp_n.x();
-        double vy = k_cp_n.y();
-        double vz = k_cp_n.z();
+        double vx = k_cp_n(0);
+        double vy = k_cp_n(1);
+        double vz = k_cp_n(2);
 
         double fx = vx*one_minus_cd;
         double fy = vy*one_minus_cd;
@@ -219,43 +216,50 @@ bool Blob3D::intersectionWithPlane(double a, double b, double c, double d, V3D& 
         double sy = vy*sd;
         double sz = vz*sd;
 
-        R.set(cd+vx*fx, vx*fy-sz, vx*fz+sy, vy*fx+sz, cd+vy*fy, vy*fz-sx, vz*fx-sy, vz*fy+sx, cd+vz*fz);
+        R << cd+vx*fx, vx*fy-sz, vx*fz+sy,
+        	 vy*fx+sz, cd+vy*fy, vy*fz-sx,
+        	 vz*fx-sy, vz*fy+sx, cd+vz*fz;
 
     }
 
     // This is the intersection between the plane and the axis normal to the plane that passes through the origin
-    V3D rp = normal*(d/norm);
+    Vector3d rp = normal*(d/norm);
 
-    // The difference vector between the aformentionned point and the center of the blob ellipsoid
-    V3D u = rp-blob_center;
+    // The difference vector between the aforementionned point and the center of the blob ellipsoid
+    Vector3d u = rp-blob_center;
 
     // The matrix of the blob ellipsoid axis vectors
-    Matrix33<double> Q;
-    Q.set(blob_axis1.x(), blob_axis1.y(), blob_axis1.z(),
+    Matrix3d Q;
+    Q <<  blob_axis1.x(), blob_axis1.y(), blob_axis1.z(),
           blob_axis2.x(), blob_axis2.y(), blob_axis2.z(),
-          blob_axis3.x(), blob_axis3.y(), blob_axis3.z());
+          blob_axis3.x(), blob_axis3.y(), blob_axis3.z();
 
-    // The matrix of the blob ellipsoid semi axis
-    double a2 = blob_semi_axes.x()*blob_semi_axes.x();
-    double b2 = blob_semi_axes.y()*blob_semi_axes.y();
-    double c2 = blob_semi_axes.z()*blob_semi_axes.z();
-    Matrix33<double> E(1.0/a2, 0.0, 0.0, 0.0, 1.0/b2, 0.0, 0.0, 0.0, 1.0/c2);
-    E = (Q.transpose()*E)*Q;
+    // The matrix of the blob ellipsoid semi-axis
+    double a2 = std::pow(blob_semi_axes(0),2);
+    double b2 = std::pow(blob_semi_axes(1),2);
+    double c2 = std::pow(blob_semi_axes(2),2);
+    Matrix3d E;
+    E << 1.0/a2, 0.0, 0.0,
+         0.0, 1.0/b2, 0.0,
+         0.0, 0.0, 1.0/c2;
+    E = Q.transpose()*E*Q;
 
-    Matrix33<double> M = E*R;
-    Matrix33<double> RM = R.transpose()*M;
+    Matrix3d M = E*R;
+    Matrix3d RM = R.transpose()*M;
 
-    V3D v = E*u;
-    V3D w = v*R + u*M;
+    Vector3d v = E*u;
+    Vector3d w = v.transpose()*R + u.transpose()*M;
 
-    Matrix33<double> AQ;
     double Aq = RM(0,0);
     double Bq = RM(0,1);
     double Cq = RM(1,1);
-    double Dq = w[0]/2.0;
-    double Eq = w[1]/2.0;
-    double Fq = u.scalar_prod(v) - 1.0;
-    AQ.set(Aq,Bq,Dq,Bq,Cq,Eq,Dq,Eq,Fq);
+    double Dq = w(0)/2.0;
+    double Eq = w(1)/2.0;
+    double Fq = u.transpose()*v - 1.0;
+    Matrix3d AQ;
+    AQ <<Aq,Bq,Dq,
+    	 Bq,Cq,Eq,
+    	 Dq,Eq,Fq;
 
     double detAq = AQ.determinant();
 
@@ -276,34 +280,34 @@ bool Blob3D::intersectionWithPlane(double a, double b, double c, double d, V3D& 
         return false;
     }
 
-    SelfAdjointEigenSolver<MatrixXd> solver;
-    MatrixXd A33(2,2);
-    A33(0,0)=Aq; A33(0,1)=Bq;
-    A33(1,0)=Bq; A33(1,1)=Cq;
+    //
+    SelfAdjointEigenSolver<Matrix2d> solver;
+    Matrix2d A33;
+    A33 << Aq, Bq,
+    	   Bq, Cq;
     solver.compute(A33);
 
     double fact = -detAq/detA33;
 
-    semi_axes[0] = sqrt(fact/solver.eigenvalues()[0]);
-    semi_axes[1] = sqrt(fact/solver.eigenvalues()[1]);
+    semi_axes(0) = sqrt(fact/solver.eigenvalues()[0]);
+    semi_axes(1) = sqrt(fact/solver.eigenvalues()[1]);
     Vector2d vec_0=solver.eigenvectors().col(0);
     Vector2d vec_1=solver.eigenvectors().col(1);
 
-
-    center[0] = (Bq*Eq - Cq*Dq)/detA33;
-    center[1] = (Dq*Bq - Aq*Eq)/detA33;
-    center[2] = 0.0;
+    center << (Bq*Eq - Cq*Dq)/detA33,
+              (Dq*Bq - Aq*Eq)/detA33,
+               0.0;
 
     // The center of the intersection ellipse in the original frame
     center = R*center + rp;
 
-    axis1[0] = vec_0(0);
-    axis1[1] = vec_0(1);
-    axis1[2] = 0.0;
+    axis1 << vec_0(0),
+             vec_0(1),
+             0.0;
 
-    axis2[0] = vec_1(0);
-    axis2[1] = vec_1(1);
-    axis2[2] = 0.0;
+    axis2 << vec_1(0),
+             vec_1(1),
+             0.0;
 
     // The axes of the intersection ellipse in the original frame
     axis1 = R*axis1;

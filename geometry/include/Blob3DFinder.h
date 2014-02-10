@@ -35,6 +35,7 @@
 #include <map>
 #include "AABB.h"
 #include "NDTree.h"
+#include <Eigen/Dense>
 
 namespace SX
 {
@@ -256,8 +257,8 @@ namespace Geometry
 		mapbox boxes;
 		boxes.reserve(blobs.size());
 
-		V3D center,semi_axes, v0, v1,v2;
-		V3D hw;
+		Eigen::Vector3d center,semi_axes, v0, v1,v2;
+		Eigen::Vector3d hw;
 
 		for (auto it=blobs.begin();it!=blobs.end();++it)
 		{
@@ -269,9 +270,9 @@ namespace Geometry
 			hw[1]=3.0*sqrt(h);
 			double d=std::pow(semi_axes[0]*v0[2],2)+std::pow(semi_axes[1]*v1[2],2)+std::pow(semi_axes[2]*v2[2],2);
 			hw[2]=3.0*sqrt(d);
-			V3D low=center-hw;
-			V3D high=center+hw;
-			boxes.insert(mapbox::value_type(it->first,AABB3D({low[0],low[1],low[2]},{high[0],high[1],high[2]})));
+			Eigen::Vector3d low=center-hw;
+			Eigen::Vector3d high=center+hw;
+			boxes.insert(mapbox::value_type(it->first,AABB3D(low,high)));
 		}
 
 

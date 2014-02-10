@@ -4,7 +4,7 @@
 #include <limits>
 #include <boost/math/special_functions/erf.hpp>
 #include <Eigen/Eigenvalues>
-#include <Eigen/Dense>
+
 
 
 using Eigen::MatrixXd;
@@ -115,12 +115,13 @@ double Blob2D::getMaximumMass() const
 	return _maxValue;
 }
 
-V2D<double> Blob2D::getCenterOfMass() const
+Eigen::Vector2d Blob2D::getCenterOfMass() const
 {
 	if (_m00<1e-7)
 		throw std::runtime_error("No mass in Blob");
-
-	return V2D<double>(_m10/_m00,_m01/_m00);
+	Eigen::Vector2d result;
+	result << _m10/_m00, _m01/_m00;
+	return result;
 }
 
 void Blob2D::toEllipse(double& xc, double& yc, double& s_a, double& s_b, double& angle) const

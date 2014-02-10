@@ -32,7 +32,7 @@
 #include <set>
 #include <vector>
 #include <initializer_list>
-#include <boost/numeric/ublas/vector.hpp>
+#include <Eigen/Dense>
 #include "AABB.h"
 
 
@@ -43,7 +43,6 @@ namespace Geometry {
 //! Typedef for unsigned integer
 typedef unsigned int uint;
 
-namespace ublas=boost::numeric::ublas;
 
 
 // Constant expression necessary to initialize
@@ -73,12 +72,12 @@ template<typename T, uint D>
 class NDTree : public AABB<T,D>
 {
 public:
-
+	typedef Eigen::Matrix<T,D,1> vector;
 	//! Pair of AABB*
 	typedef typename std::pair< AABB<T,D>*,AABB<T,D>* > collision_pair;
 
 	//! Constructor from two ublas vectors, throw invalid_argument if lb < ub
-	NDTree(const ublas::bounded_vector<T,D>& lb, const ublas::bounded_vector<T,D>& ub);
+	NDTree(const vector& lb, const vector& ub);
 
 	//! Constructor from two initializer lists, throw invalid_argument if lb< ub
 	NDTree(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub);
@@ -205,7 +204,7 @@ NDTree<T,D>::NDTree() : AABB<T,D>(), _depth(0)
 }
 
 template<typename T, uint D>
-NDTree<T,D>::NDTree(const ublas::bounded_vector<T,D>& lb, const ublas::bounded_vector<T,D>& ub)
+NDTree<T,D>::NDTree(const vector& lb, const vector& ub)
 : AABB<T,D>(lb,ub), _depth(0)
 {
 	nullifyChildren();
@@ -228,7 +227,7 @@ NDTree<T,D>::NDTree(const NDTree<T,D>* parent, uint sector)
 	_data.reserve(_MAX_STORAGE);
 
 	// Calculate the center of the current branch
-	ublas::bounded_vector<T,D> center=parent->getCenter();
+	vector center=parent->getCenter();
 
 	// The numbering of sub-voxels is encoded into bits of an int a follows:
 	// ....... | dim[2] | dim[1] | dim[0]

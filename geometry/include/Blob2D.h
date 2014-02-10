@@ -27,9 +27,8 @@
  */
 #ifndef NSXTOOL_Blob2D_H_
 #define NSXTOOL_Blob2D_H_
-
 #include <iostream>
-#include "V2D.h"
+#include <Eigen/Dense>
 
 namespace SX
 {
@@ -72,7 +71,7 @@ public:
   //! Return the minimumMass
   double getMaximumMass() const;
   //! Return the center of Mass
-  V2D<double> getCenterOfMass() const;
+  Eigen::Vector2d getCenterOfMass() const;
   //! Compute the contour ellipse of the Blob
   void toEllipse(double& xc, double& yc, double& s_a, double& s_b, double& angle) const;
   //!
