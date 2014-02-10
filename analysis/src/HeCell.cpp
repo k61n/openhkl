@@ -93,12 +93,21 @@ int HeCell::fitExponential(double& A0,double& A0s, double& alpha,double& alphas)
 	struct data d = {(int)n, &_pvst->getX()[0],&_pvst->getY()[0],&_pvst->getE()[0]};
 	// Number of parameters
 	const int m=2;
-	int i, j, maxfev, mode, nprint, info, nfev, ldfjac;
+	int maxfev, mode, nprint, info, nfev, ldfjac;
 	int ipvt[m];
-	double ftol, xtol, gtol, epsfcn, factor, fnorm;
-	double x[m], fvec[m], diag[m], fjac[n*m], qtf[m],
-	wa1[m], wa2[m], wa3[m], wa4[n];
-	int k;
+	double ftol, xtol, gtol, epsfcn, factor;
+	//double x[m], fvec[m], diag[m], fjac[n*m], qtf[m],
+	//wa1[m], wa2[m], wa3[m], wa4[n];
+	double *x, *fvec, *diag, *fjac, *qtf, *wa1, *wa2, *wa3, *wa4;
+	x= new double[m];
+	fvec= new double [m];
+	diag =new double [m];
+	fjac =new double [n*m];
+	qtf= new double [m];
+	wa1= new double [m];
+	wa2= new double [m];
+	wa3 = new double [m];
+	wa4= new double [n];
 	// Initial guesses
 	x[0] = 1.0;
 	x[1] = 0.0;
@@ -118,6 +127,16 @@ int HeCell::fitExponential(double& A0,double& A0s, double& alpha,double& alphas)
 	ipvt, qtf, wa1, wa2, wa3, wa4);
 	A0=x[0];
 	alpha=x[1];
+	delete [] x;
+	delete [] fvec;
+	delete [] diag;
+  	delete [] fjac;
+  	delete [] qtf;
+	delete [] wa1;
+	delete [] wa2;
+	delete [] wa3;
+	delete [] wa4;
+
 	return info;
 }
 

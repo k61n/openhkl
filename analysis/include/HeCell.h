@@ -35,7 +35,7 @@
 #include <vector>
 #include <cmath>
 #include <boost/shared_ptr.hpp>
-#include <cminpack-1/cminpack.h>
+#include <cminpack.h>
 
 namespace SX
 {
@@ -60,7 +60,7 @@ int ExpDecay(void* p, int m,int n,const double* x, double* fvec, int iflag)
 	const int nn=((data*)p)->n;
 	for (int i = 0; i < nn; ++i)
 	{
-	  fvec[i] = y[i] - ((x[0]*exp(-x[1]*t[i]))/s[i]);
+	  fvec[i] = y[i] - ((a*exp(-b*t[i]))/s[i]);
 	}
 		  return 0;
 
