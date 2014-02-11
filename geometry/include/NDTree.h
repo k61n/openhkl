@@ -72,11 +72,14 @@ template<typename T, uint D>
 class NDTree : public AABB<T,D>
 {
 public:
+
+	// A typedef for 1D vector
 	typedef Eigen::Matrix<T,D,1> vector;
+
 	//! Pair of AABB*
 	typedef typename std::pair< AABB<T,D>*,AABB<T,D>* > collision_pair;
 
-	//! Constructor from two ublas vectors, throw invalid_argument if lb < ub
+	//! Constructor from two Eigen3 vectors, throw invalid_argument if lb < ub
 	NDTree(const vector& lb, const vector& ub);
 
 	//! Constructor from two initializer lists, throw invalid_argument if lb< ub
@@ -113,9 +116,6 @@ public:
 	//! Get the voxels of the tree
 	void getVoxels(std::vector<AABB<T,D>* >& voxels);
 
-	//! Split the node into 2^D subnodes
-	void split();
-
 	//! Remove a data from the NDTree
 	void removeData(const AABB<T,D>* data);
 
@@ -131,6 +131,9 @@ private:
 
 	//! Set all children to nullptr
 	void nullifyChildren();
+
+	//! Split the node into 2^D subnodes
+	void split();
 
 	//! Method to initialize vector of powers 2^D
 	static std::vector<uint> createPowers();
