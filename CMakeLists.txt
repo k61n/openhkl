@@ -83,7 +83,13 @@ file(GLOB_RECURSE sources analysis/src/*.cpp
                   crystal/src/*.cpp)                   
 
 # Creating the library
-add_library(NSXTool SHARED ${sources})
+# Under Windows and Miscrosoft Visual Studio the library will be static to avoid
+# the DLL_EXPORT mess
+IF(MSVC)
+    add_library(NSXTool STATIC ${sources})
+ELSE(MSVC)
+    add_library(NSXTool SHARED ${sources})
+ENDIF(MSVC)
  
 # Link
 TARGET_LINK_LIBRARIES(NSXTool ${Boost_LIBRARIES} ${PYTHON_LIBRARIES} ${CMINPACK_LIBRARIES})
