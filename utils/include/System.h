@@ -35,7 +35,7 @@
 #    else
 #        define DLLEXport __declspec(dllimport)
 #    endif
-#else if
+#else
 #    define DLLExport
 #endif
 

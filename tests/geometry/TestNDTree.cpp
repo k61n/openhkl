@@ -55,8 +55,8 @@ BOOST_AUTO_TEST_CASE(Test_NDTree)
 	BOOST_CHECK_EQUAL(tree.hasData(),false);
 
 	std::vector<AABB<double,3>*> voxels;
-	tree.get_voxels(voxels);
-	for (auto it=voxels.begin();it!=voxels.end();++it)
+	//tree.get_voxels(voxels);
+	//for (auto it=voxels.begin();it!=voxels.end();++it)
 
 
 
