@@ -43,8 +43,6 @@ namespace Geometry {
 //! Typedef for unsigned integer
 typedef unsigned int uint;
 
-
-
 // Constant expression necessary to initialize
 // _children attribute in the NDTree class
 // which requires a constant literal.
@@ -68,12 +66,26 @@ constexpr int getPow (int factor)
  *
 */
 
+// ! Forward declaration of the iterator class
+template<typename T, uint D> class NDTreeIterator;
+
 template<typename T, uint D>
 class NDTree : public AABB<T,D>
 {
 public:
 
-	// A typedef for 1D vector
+	//! The NDTree iterator class is made friend with NDTree in order to access some of its private data
+	friend class NDTreeIterator<T,D>;
+
+	// These typedefs insure compatibility with STL
+	typedef NDTreeIterator<T,D> iterator;
+	typedef ptrdiff_t difference_type;
+	typedef size_t size_type;
+	typedef T value_type;
+	typedef T * pointer;
+	typedef T & reference;
+
+	// ! A typedef for 1D vector
 	typedef Eigen::Matrix<T,D,1> vector;
 
 	//! Pair of AABB*
@@ -118,6 +130,10 @@ public:
 
 	//! Remove a data from the NDTree
 	void removeData(const AABB<T,D>* data);
+
+	iterator begin();
+
+	iterator end();
 
 
 private:
@@ -338,9 +354,6 @@ void NDTree<T,D>::getVoxels(std::vector<AABB<T,D>* >& voxels)
 	return;
 }
 
-
-
-
 template<typename T, uint D>
 void NDTree<T,D>::printSelf(std::ostream& os) const
 {
@@ -418,12 +431,66 @@ void NDTree<T,D>::split()
 	_data.clear();
 }
 
+template<typename T, unit D>
+NDTree<T,D>::iterator NDTree<T,D>::begin()
+{
+	return *this;
+}
+
+template<typename T, unit D>
+NDTree<T,D>::iterator NDTree<T,D>::end()
+{
+	return nullptr;
+}
+
 template<typename T, uint D>
 std::ostream& operator<<(std::ostream& os, const NDTree<T,D>& tree)
 {
 	tree.printSelf(os);
 	return os;
 }
+
+template<typename T, uint D>
+class NDTreeIterator
+{
+public:
+
+	NDTreeIterator(NDTree<T,D>& tree);
+
+	bool operator==(const NDTreeIterator<T,D>& other);
+
+	bool operator!=(const NDTreeIterator<T,D>& other);
+
+	NDTree<T,D>& operator*();
+
+private:
+
+	NDTree<T,D>& _tree;
+};
+
+template<typename T, uint D>
+NDTreeIterator<T,D>::NDTreeIterator(NDTree<T,D>& tree) : _tree(tree)
+{
+}
+
+template<typename T, uint D>
+bool NDTreeIterator<T,D>::operator==(const NDTreeIterator<T,D>& other)
+{
+	return (_tree == other._tree);
+}
+
+template<typename T, uint D>
+bool NDTreeIterator<T,D>::operator!=(const NDTreeIterator<T,D>& other)
+{
+	return (_tree != other._tree);
+}
+
+template<typename T, uint D>
+NDTree<T,D>& NDTreeIterator<T,D>::operator*()
+{
+	return _tree;
+}
+
 
 } // namespace Geometry
 
