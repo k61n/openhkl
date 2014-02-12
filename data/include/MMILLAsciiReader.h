@@ -27,7 +27,6 @@
  */
 #ifndef NSXTOOL_MMILLASCIIREADER_H_
 #define NSXTOOL_MMILLASCIIREADER_H_
-
 #include <string>
 #include <boost/interprocess/file_mapping.hpp>
 
@@ -38,17 +37,20 @@ namespace Data {
 //! Forward declaration
 class MetaData;
 
-class MMILLAsciiReader {
+class MMILLAsciiReader
+{
 public:
-	MMILLAsciiReader(const std::string& filename);
+	MMILLAsciiReader();
+	void mapFile(const std::string& filename);
 	//! Read the header of the file made of MetaData.
-	MetaData* readMetaDataBlock(int nlines=100);
+	MetaData* getMetaData() { return _metadata;}
 	//! Return the number of blocks
 	std::size_t nBlocks() const {return _nframes;}
 	//! Read block number i. First frame starts at index 0
 	std::vector<int> readBlock(unsigned int i) const;
 	virtual ~MMILLAsciiReader();
 private:
+	MetaData* _metadata;
 	bool _isInitialized;
 	std::size_t _nframes;
 	std::size_t _datapoints;

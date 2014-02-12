@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <QFileDialog>
 #include <QThread>
+#include <QGraphicsEllipseItem>
 
 QImage Mat2QImage(int* src, int rows, int cols,double max=10.0)
 {
@@ -27,8 +28,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     scene->setParent(ui->_dview);
     ui->_dview->setScene(scene);
-    ui->_dview->setRenderHint( QPainter::Antialiasing );
-    ui->_dview->setDragMode(ui->_dview->ScrollHandDrag);
+    ui->_dview->setRenderHint( QPainter::Antialiasing, true );
+    //ui->_dview->setDragMode(ui->_dview->ScrollHandDrag);
     ui->progressBar->setVisible(false);
     ui->progressBar->setValue(0);
 }
@@ -55,16 +56,36 @@ void MainWindow::on_action_Open_triggered()
     _data.fromFile(fileName.toStdString(),ui->progressBar);
     thread.quit();
     ui->progressBar->setVisible(false);
-    ui->horizontalScrollBar->setRange(0,_data._frames.size()-1);
+    ui->horizontalScrollBar->setRange(0,_data._nblocks-1);
     ui->dial->setRange(1,100);
 
     int pos=ui->horizontalScrollBar->value();
-    QImage image=QImage(Mat2QImage(&((_data._frames[0])[0]),256,640,10));
+    QImage image=QImage(Mat2QImage(&((_data._frames)[0]),256,640,10));
     ui->dial->setValue(10);
     QPixmap pix=QPixmap::fromImage(image);
     pix=pix.scaled(ui->_dview->width(),ui->_dview->height(),Qt::IgnoreAspectRatio);
     scene->clear();
     scene->addPixmap(pix);
+    QGraphicsEllipseItem* el1=new QGraphicsEllipseItem(50,50,20,20);
+    el1->setToolTip(QString("(1,0,2) \n I: 123(4)"));
+    el1->setRotation(20.0);
+    scene->addItem(el1);
+    el1->setPos(50,50);
+    el1->setRotation(20.0);
+    el1->setPen(QPen(QColor(Qt::blue)));
+    el1->setFlag(QGraphicsItem::ItemIsSelectable);
+    el1->setSelected(true);
+    el1->update();
+
+    QGraphicsEllipseItem* el2=new QGraphicsEllipseItem(100,100,40,40);
+    el2->setRotation(20.0);
+    scene->addItem(el2);
+    el2->setPos(50,50);
+    el2->setRotation(20.0);
+    el2->setPen(QPen(QColor(Qt::blue)));
+    el2->setFlag(QGraphicsItem::ItemIsSelectable);
+    el2->setSelected(true);
+    el2->update();
     ui->_dview->setScene(scene);
 
 }
@@ -74,7 +95,8 @@ void MainWindow::on_action_Open_triggered()
 void MainWindow::on_horizontalScrollBar_valueChanged(int value)
 {
     double max=ui->dial->value();
-    QImage image=QImage(Mat2QImage(&((_data._frames[value])[0]),256,640,max));
+    _data.readBlock(value);
+    QImage image=QImage(Mat2QImage(&((_data._frames)[0]),256,640,max));
     QPixmap pix=QPixmap::fromImage(image);
     pix=pix.scaled(ui->_dview->width(),ui->_dview->height(),Qt::IgnoreAspectRatio);
     scene->clear();
@@ -85,7 +107,7 @@ void MainWindow::on_horizontalScrollBar_valueChanged(int value)
 void MainWindow::on_dial_valueChanged(int value)
 {
     int pos=ui->horizontalScrollBar->value();
-    QImage image=QImage(Mat2QImage(&((_data._frames[pos])[0]),256,640,value));
+    QImage image=QImage(Mat2QImage(&((_data._frames)[0]),256,640,value));
     QPixmap pix=QPixmap::fromImage(image);
     pix=pix.scaled(ui->_dview->width(),ui->_dview->height(),Qt::IgnoreAspectRatio);
     scene->clear();

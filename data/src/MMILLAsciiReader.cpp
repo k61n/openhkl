@@ -25,8 +25,13 @@ void readIntsFromChar(const char* begin, const char* end, std::vector<int>& v)
         *qi::int_ >> qi::eoi, ascii::space, v);
 }
 
-MMILLAsciiReader::MMILLAsciiReader(const std::string& filename):
-		_isInitialized(false),_nframes(0),_datapoints(0),_nangles(0),_header_size(0),_skipchar(0),_datalength(0)
+MMILLAsciiReader::MMILLAsciiReader():
+		_metadata(nullptr),_isInitialized(false),_nframes(0),_datapoints(0),_nangles(0),_header_size(0),_skipchar(0),_datalength(0)
+{
+
+}
+
+void MMILLAsciiReader::mapFile(const std::string& filename)
 {
 	if ( !boost::filesystem::exists(filename.c_str()))
 		throw std::runtime_error("MMILLAsciiReader, file:"+filename+" does not exist");
@@ -38,18 +43,8 @@ MMILLAsciiReader::MMILLAsciiReader(const std::string& filename):
 	{
 		throw;
 	}
-
-
-}
-MMILLAsciiReader::~MMILLAsciiReader()
-{
-
-}
-
-MetaData* MMILLAsciiReader::readMetaDataBlock(int nlines)
-{
 	//81 characters per line
-	std::size_t block_size=nlines*81;
+	std::size_t block_size=100*81;
 	//Map the region corresponding to the metadata block
 	boost::interprocess::mapped_region mdblock(_map,boost::interprocess::read_only,0,block_size);
 	//Beginning of the block
@@ -57,19 +52,24 @@ MetaData* MMILLAsciiReader::readMetaDataBlock(int nlines)
 	char* buffer=new char[block_size];
 	strncpy(buffer, b, block_size);
 	ILLAsciiMetaReader* metareader=ILLAsciiMetaReader::Instance();
-	MetaData* m=metareader->read(buffer,_header_size);
+	_metadata=metareader->read(buffer,_header_size);
 	delete [] buffer;
 	//
-	_nframes=m->getKey<int>("npdone");
-	_datapoints=m->getKey<int>("nbdata");
-	_nangles=m->getKey<int>("nbang");
+	_nframes=_metadata->getKey<int>("npdone");
+	_datapoints=_metadata->getKey<int>("nbdata");
+	_nangles=_metadata->getKey<int>("nbang");
 	// Skip 8 or 9 lines to the beginning of data blocks
 	_skipchar=81*(8+(_nangles<=2 ? 0 : 1));
 	// ILL Ascii file for 2D detector store 10 values per line.
 	_datalength=static_cast<int>(std::ceil(_datapoints/10.0))*81;
 	_isInitialized=true;
-	return m;
+
 }
+MMILLAsciiReader::~MMILLAsciiReader()
+{
+
+}
+
 
 std::vector<int> MMILLAsciiReader::readBlock(unsigned int i) const
 {
@@ -83,7 +83,7 @@ std::vector<int> MMILLAsciiReader::readBlock(unsigned int i) const
 	// Map the region of interest in the file
 	boost::interprocess::mapped_region mdblock(_map,boost::interprocess::read_only,begin,_datalength);
 	const char* b=reinterpret_cast<char*>(mdblock.get_address());
-	// Create vector and try to reseve a memory block
+	// Create vector and try to reserve a memory block
 	std::vector<int> v;
 	try
 	{

@@ -13,8 +13,9 @@ using namespace SX::Data;
 
 BOOST_AUTO_TEST_CASE(Test_Ascii_Reader)
 {
-	MMILLAsciiReader* reader= new MMILLAsciiReader(std::string("D10_ascii_example"));
-	MetaData* meta=reader->readMetaDataBlock();
+	MMILLAsciiReader* reader= new MMILLAsciiReader();
+	reader->mapFile(std::string("D10_ascii_example"));
+	MetaData* meta=reader->getMetaData();
 
 	//
 	Eigen::MatrixXi m;

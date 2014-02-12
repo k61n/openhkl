@@ -17,23 +17,18 @@ struct Data
     {}
     void fromFile(const std::string& filename,QProgressBar* bar)
     {
-    SX::Data::MMILLAsciiReader mm(filename.c_str());
-    mm.readMetaDataBlock();
-    _frames.resize(mm.nBlocks());
-    int executed=0;
-    #pragma omp parallel for
-    for (std::size_t i=0;i<mm.nBlocks();++i)
+        mm.mapFile(filename.c_str());
+        _nblocks=mm.nBlocks();
+        _frames=std::move(mm.readBlock(0));
+
+    }
+    void readBlock(int i)
     {
-
-
-        _frames[i]=std::move(mm.readBlock(i));
-
-    #pragma omp critical
-    bar->setValue(executed++*100/mm.nBlocks());
+        _frames=std::move(mm.readBlock(i));
     }
-
-    }
-std::vector<vint> _frames;
+    int _nblocks;
+    SX::Data::MMILLAsciiReader mm;
+    vint _frames;
 
 };
 
