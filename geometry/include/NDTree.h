@@ -175,6 +175,10 @@ private:
 	//! Depth of this branch with respect to root node.
 	uint _depth;
 
+	NDTree<T,D>* _parent;
+
+	NDTree<T,D>* _right;
+
 };
 
 template<typename T, uint D>
@@ -215,7 +219,8 @@ void NDTree<T,D>::nullifyChildren()
 }
 
 template<typename T, uint D>
-NDTree<T,D>::NDTree() : AABB<T,D>(), _depth(0)
+NDTree<T,D>::NDTree()
+: AABB<T,D>(), _depth(0), _parent(nullptr), _right(nullptr)
 {
 	nullifyChildren();
 	_data.reserve(_MAX_STORAGE);
@@ -224,7 +229,7 @@ NDTree<T,D>::NDTree() : AABB<T,D>(), _depth(0)
 
 template<typename T, uint D>
 NDTree<T,D>::NDTree(const vector& lb, const vector& ub)
-: AABB<T,D>(lb,ub), _depth(0)
+: AABB<T,D>(lb,ub), _depth(0), _parent(nullptr), _right(nullptr)
 {
 	nullifyChildren();
 	_data.reserve(_MAX_STORAGE);
@@ -232,7 +237,7 @@ NDTree<T,D>::NDTree(const vector& lb, const vector& ub)
 
 template<typename T, uint D>
 NDTree<T,D>::NDTree(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub)
-: AABB<T,D>(lb,ub), _depth(0)
+: AABB<T,D>(lb,ub), _depth(0), _parent(nullptr), _right(nullptr)
 {
 	nullifyChildren();
 	_data.reserve(_MAX_STORAGE);
@@ -240,13 +245,22 @@ NDTree<T,D>::NDTree(const std::initializer_list<T>& lb, const std::initializer_l
 
 template<typename T, uint D>
 NDTree<T,D>::NDTree(const NDTree<T,D>* parent, uint sector)
-: AABB<T,D>(), _depth(parent->_depth+1)
+: AABB<T,D>(), _depth(parent->_depth+1), _parent(parent)
 {
 	nullifyChildren();
 	_data.reserve(_MAX_STORAGE);
 
+	if (sector == _MULTIPLICITY)
+	{
+		_right = nullptr;
+	}
+	else
+	{
+		_right = &(parent->_children[sector+1])
+	}
+
 	// Calculate the center of the current branch
-	vector center=parent->getCenter();
+	vector center = parent->getCenter();
 
 	// The numbering of sub-voxels is encoded into bits of an int a follows:
 	// ....... | dim[2] | dim[1] | dim[0]
@@ -269,6 +283,7 @@ NDTree<T,D>::~NDTree()
 			delete _children[i];
 		}
 	}
+
 	return;
 }
 
@@ -463,34 +478,57 @@ public:
 
 	NDTree<T,D>& operator*();
 
+	NDTreeIterator<T,D>& operator++();
+
+
 private:
 
-	NDTree<T,D>& _tree;
+	NDTree<T,D>& _node;
+
 };
 
 template<typename T, uint D>
-NDTreeIterator<T,D>::NDTreeIterator(NDTree<T,D>& tree) : _tree(tree)
+NDTreeIterator<T,D>::NDTreeIterator(NDTree<T,D>& node) : _node(node)
 {
 }
 
 template<typename T, uint D>
 bool NDTreeIterator<T,D>::operator==(const NDTreeIterator<T,D>& other)
 {
-	return (_tree == other._tree);
+	return (_node == other._node);
 }
 
 template<typename T, uint D>
 bool NDTreeIterator<T,D>::operator!=(const NDTreeIterator<T,D>& other)
 {
-	return (_tree != other._tree);
+	return (_node != other._node);
 }
 
 template<typename T, uint D>
 NDTree<T,D>& NDTreeIterator<T,D>::operator*()
 {
-	return _tree;
+	return _node;
 }
 
+template<typename T, uint D>
+NDTree<T,D>& NDTreeIterator<T,D>::operator++()
+{
+	if (_node.hasChildren())
+	{
+		_node = _node._children[0];
+	}
+	else
+	{
+		while (_node._right == nullptr)
+		{
+			if (_node._parent == nullptr)
+				return nullptr;
+			_node = _node._parent;
+		}
+		_node = _node._right;
+	}
+	return (*this);
+}
 
 } // namespace Geometry
 
