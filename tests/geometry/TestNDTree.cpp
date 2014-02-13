@@ -61,8 +61,8 @@ BOOST_AUTO_TEST_CASE(Test_NDTree)
 
 
 	// Remove all the data stored in the NDTree
-	for (uint i=0;i<=maxStorage;++i)
-		tree.removeData(&bb[i]);
+	//for (uint i=0;i<=maxStorage;++i)
+	//	tree.removeData(&bb[i]);
 
 	// Test: the root node amd its children does not have any data anymore once all the data have been removed
 	BOOST_CHECK_EQUAL(tree.hasData(),false);
