@@ -472,7 +472,7 @@ public:
 
 	NDTreeIterator(NDTree<T,D>& tree);
 
-	NDTreeIterator<T,D>& operator+=(const NDTreeIterator<T,D>& other);
+	NDTreeIterator<T,D>& operator=(const NDTreeIterator<T,D>& other);
 
 	bool operator==(const NDTreeIterator<T,D>& other);
 
@@ -485,12 +485,12 @@ public:
 
 private:
 
-	NDTree<T,D>& _node;
+	NDTree<T,D>* _node;
 
 };
 
 template<typename T, uint D>
-NDTreeIterator<T,D>::NDTreeIterator(NDTree<T,D>& node) : _node(node)
+NDTreeIterator<T,D>::NDTreeIterator(NDTree<T,D>& node) : _node(&node)
 {
 }
 
@@ -519,25 +519,25 @@ bool NDTreeIterator<T,D>::operator==(const NDTreeIterator<T,D>& other)
 template<typename T, uint D>
 NDTree<T,D>& NDTreeIterator<T,D>::operator*()
 {
-	return _node;
+	return *_node;
 }
 
 template<typename T, uint D>
 NDTreeIterator<T,D>& NDTreeIterator<T,D>::operator++()
 {
-	if (_node.hasChildren())
+	if (_node->hasChildren())
 	{
-		_node = _node._children[0];
+		_node = _node->_children[0];
 	}
 	else
 	{
-		while (_node._right == nullptr)
+		while (_node->_right == nullptr)
 		{
-			if (_node._parent == nullptr)
-				return nullptr;
-			_node = _node._parent;
+//			if (_node->_parent == nullptr)
+//				return nullptr;
+			_node = _node->_parent;
 		}
-		_node = _node._right;
+		_node = _node->_right;
 	}
 	return (*this);
 }
