@@ -256,7 +256,7 @@ NDTree<T,D>::NDTree(const NDTree<T,D>* parent, uint sector)
 	}
 	else
 	{
-		_right = &(parent->_children[sector+1])
+		_right = &(parent->_children[sector+1]);
 	}
 
 	// Calculate the center of the current branch
@@ -446,14 +446,14 @@ void NDTree<T,D>::split()
 	_data.clear();
 }
 
-template<typename T, unit D>
-NDTree<T,D>::iterator NDTree<T,D>::begin()
+template<typename T, uint D>
+typename NDTree<T,D>::iterator NDTree<T,D>::begin()
 {
 	return *this;
 }
 
-template<typename T, unit D>
-NDTree<T,D>::iterator NDTree<T,D>::end()
+template<typename T, uint D>
+typename NDTree<T,D>::iterator NDTree<T,D>::end()
 {
 	return nullptr;
 }
@@ -471,6 +471,8 @@ class NDTreeIterator
 public:
 
 	NDTreeIterator(NDTree<T,D>& tree);
+
+	NDTreeIterator<T,D>& operator+=(const NDTreeIterator<T,D>& other);
 
 	bool operator==(const NDTreeIterator<T,D>& other);
 
@@ -493,9 +495,13 @@ NDTreeIterator<T,D>::NDTreeIterator(NDTree<T,D>& node) : _node(node)
 }
 
 template<typename T, uint D>
-bool NDTreeIterator<T,D>::operator==(const NDTreeIterator<T,D>& other)
+NDTreeIterator<T,D>& NDTreeIterator<T,D>::operator=(const NDTreeIterator<T,D>& other)
 {
-	return (_node == other._node);
+  if (this != &other)
+    {
+	  _node = other._node;
+    }
+  return *this;
 }
 
 template<typename T, uint D>
@@ -505,13 +511,19 @@ bool NDTreeIterator<T,D>::operator!=(const NDTreeIterator<T,D>& other)
 }
 
 template<typename T, uint D>
+bool NDTreeIterator<T,D>::operator==(const NDTreeIterator<T,D>& other)
+{
+	return (_node == other._node);
+}
+
+template<typename T, uint D>
 NDTree<T,D>& NDTreeIterator<T,D>::operator*()
 {
 	return _node;
 }
 
 template<typename T, uint D>
-NDTree<T,D>& NDTreeIterator<T,D>::operator++()
+NDTreeIterator<T,D>& NDTreeIterator<T,D>::operator++()
 {
 	if (_node.hasChildren())
 	{
