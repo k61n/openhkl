@@ -92,13 +92,26 @@ public:
 	void setLower(const vector& lb);
 	//! Setter for the upper limit of the box
 	void setUpper(const vector& lb);
+	//! Const reference to lowerBound
+	const vector& getLower() const;
+	//! Reference to lower bound
+	vector& getLower();
+	//! Const reference to upperBound
+	const vector& getUpper() const;
+	//! Reference to upperBound
+	vector& getUpper();
 	//! Return the center of the bounding box
 	vector getCenter() const;
 	//! Return the extends of the bounding box
 	vector getExtents() const;
 	//! Send the object to a stream
 	void printSelf(std::ostream&) const;
-
+	//! Translate the bounding box
+	void translate(const vector&);
+	//! Scale the bounding box
+	void scale(const vector&);
+	//! Scale by a constant factor
+	void scale(T);
 protected:
 	// The lower bound point
 	vector _lowerBound;
@@ -249,6 +262,54 @@ void AABB<T,D>::setUpper(const vector& ub)
 	}
 	_upperBound = ub;
 }
+
+template<typename T, uint D>
+const typename AABB<T,D>::vector& AABB<T,D>::getLower() const
+{
+	return _lowerBound;
+}
+
+template<typename T, uint D>
+typename AABB<T,D>::vector& AABB<T,D>::getLower()
+{
+	return _lowerBound;
+}
+
+template<typename T, uint D>
+const typename AABB<T,D>::vector& AABB<T,D>::getUpper() const
+{
+	return _upperBound;
+}
+
+template<typename T, uint D>
+typename AABB<T,D>::vector& AABB<T,D>::getUpper()
+{
+	return _upperBound;
+}
+
+template<typename T, uint D>
+void AABB<T,D>::translate(const vector& t)
+{
+	_lowerBound+=t;
+	_upperBound+=t;
+}
+
+template<typename T, uint D>
+void AABB<T,D>::scale(const vector& s)
+{
+	vector center=getCenter();
+	_lowerBound=center+(_lowerBound-center).cwiseProduct(s);
+	_upperBound=center+(_upperBound-center).cwiseProduct(s);
+}
+
+template<typename T, uint D>
+void AABB<T,D>::scale(T s)
+{
+	vector center=getCenter();
+	_lowerBound=center+(_lowerBound-center)*s;
+	_upperBound=center+(_upperBound-center)*s;
+}
+
 
 template<typename T, uint D>
 typename AABB<T,D>::vector AABB<T,D>::getCenter() const

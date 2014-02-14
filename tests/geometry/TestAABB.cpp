@@ -31,7 +31,7 @@ BOOST_AUTO_TEST_CASE(Test_AABB)
 	BOOST_CHECK(bb.isInsideAABB(Vector3d(center)));
 	// Check that a given point is outside
 	BOOST_CHECK(!bb.isInsideAABB(Vector3d(2,3,4)));
-	//A second bounding box, just touching.
+	//A second bounding box, just touching
 	AABB<double,3> bb2(Vector3d(1,2,3),Vector3d(2,3,4));
 	BOOST_CHECK(bb2.intercept(bb));
 	// Second bounding box overlaps .
@@ -40,6 +40,37 @@ BOOST_AUTO_TEST_CASE(Test_AABB)
 	// No overlap
 	bb2.setBounds(Vector3d(2,3,4),Vector3d(4,5,6));
 	BOOST_CHECK(!(bb2.intercept(bb)));
+
+	// Translate and scale operations
+	bb.translate(Vector3d(1,2,3));
+	Vector3d& lower=bb.getLower();
+	Vector3d& upper=bb.getUpper();
+	BOOST_CHECK_CLOSE(lower[0], 1.0, tolerance);
+	BOOST_CHECK_CLOSE(lower[1], 2.0, tolerance);
+	BOOST_CHECK_CLOSE(lower[2], 3.0, tolerance);
+	BOOST_CHECK_CLOSE(upper[0], 2.0, tolerance);
+	BOOST_CHECK_CLOSE(upper[1], 4.0, tolerance);
+	BOOST_CHECK_CLOSE(upper[2], 6.0, tolerance);
+	bb.scale(Vector3d(1,2,3));
+	lower=bb.getLower();
+	upper=bb.getUpper();
+	BOOST_CHECK_CLOSE(lower[0], 1.0, tolerance);
+	BOOST_CHECK_CLOSE(lower[1], 1.0, tolerance);
+	BOOST_CHECK_CLOSE(lower[2], 0.0, tolerance);
+	BOOST_CHECK_CLOSE(upper[0], 2.0, tolerance);
+	BOOST_CHECK_CLOSE(upper[1], 5.0, tolerance);
+	BOOST_CHECK_CLOSE(upper[2], 9.0, tolerance);
+	bb.scale(0.5);
+	lower=bb.getLower();
+	upper=bb.getUpper();
+	BOOST_CHECK_CLOSE(lower[0], 1.25, tolerance);
+	BOOST_CHECK_CLOSE(lower[1], 2.0, tolerance);
+	BOOST_CHECK_CLOSE(lower[2], 2.25, tolerance);
+	BOOST_CHECK_CLOSE(upper[0], 1.75, tolerance);
+	BOOST_CHECK_CLOSE(upper[1], 4.0, tolerance);
+	BOOST_CHECK_CLOSE(upper[2], 6.75, tolerance);
+
+
 
 
 }
