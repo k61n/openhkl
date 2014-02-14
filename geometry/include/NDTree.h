@@ -469,7 +469,10 @@ template<typename T, uint D>
 class NDTreeIterator
 {
 public:
+	//; The default constructor. Used only for end condition.
 	NDTreeIterator();
+
+	//; The constructor from a reference to the NDTree to be iterated.
 	NDTreeIterator(NDTree<T,D>& tree);
 
 	NDTreeIterator<T,D>& operator=(const NDTreeIterator<T,D>& other);
@@ -482,6 +485,7 @@ public:
 
 	NDTreeIterator<T,D>& operator++();
 
+	NDTreeIterator<T,D>& operator++(int);
 
 private:
 
@@ -545,6 +549,14 @@ NDTreeIterator<T,D>& NDTreeIterator<T,D>::operator++()
 		_node = _node->_right;
 	}
 	return (*this);
+}
+
+template<typename T, uint D>
+NDTreeIterator<T,D>& NDTreeIterator<T,D>::operator++(int)
+{
+	NDTreeIterator<T,D> tmp(*this);
+	++(*this);
+	return (tmp);
 }
 
 } // namespace Geometry
