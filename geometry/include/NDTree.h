@@ -377,7 +377,7 @@ void NDTree<T,D>::printSelf(std::ostream& os) const
 	if (!hasChildren())
 	{
 		std::cout << " has no children" <<std::endl;
-		std::cout << "... and has " << _data.size() << "data" <<  std::endl;
+		std::cout << "... and has " << _data.size() << " data" <<  std::endl;
 	}
 	else
 	{
@@ -474,11 +474,11 @@ public:
 
 	NDTreeIterator<T,D>& operator=(const NDTreeIterator<T,D>& other);
 
-	bool operator==(const NDTreeIterator<T,D>& other);
+	bool operator==(const NDTreeIterator<T,D>& other) const;
 
-	bool operator!=(const NDTreeIterator<T,D>& other);
+	bool operator!=(const NDTreeIterator<T,D>& other) const;
 
-	const NDTree<T,D>& operator*();
+	const NDTree<T,D>& operator*() const;
 
 	NDTreeIterator<T,D>& operator++();
 
@@ -510,19 +510,19 @@ NDTreeIterator<T,D>& NDTreeIterator<T,D>::operator=(const NDTreeIterator<T,D>& o
 }
 
 template<typename T, uint D>
-bool NDTreeIterator<T,D>::operator!=(const NDTreeIterator<T,D>& other)
+bool NDTreeIterator<T,D>::operator!=(const NDTreeIterator<T,D>& other) const
 {
 	return (_node != other._node);
 }
 
 template<typename T, uint D>
-bool NDTreeIterator<T,D>::operator==(const NDTreeIterator<T,D>& other)
+bool NDTreeIterator<T,D>::operator==(const NDTreeIterator<T,D>& other) const
 {
 	return (_node == other._node);
 }
 
 template<typename T, uint D>
-const NDTree<T,D>& NDTreeIterator<T,D>::operator*()
+const NDTree<T,D>& NDTreeIterator<T,D>::operator*() const
 {
 	return *_node;
 }
@@ -538,8 +538,8 @@ NDTreeIterator<T,D>& NDTreeIterator<T,D>::operator++()
 	{
 		while (_node->_right == nullptr)
 		{
-//			if (_node->_parent == nullptr)
-//				return nullptr;
+			if (_node->_parent == nullptr)
+				break;
 			_node = _node->_parent;
 		}
 		_node = _node->_right;
