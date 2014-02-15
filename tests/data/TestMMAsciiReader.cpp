@@ -15,12 +15,11 @@ BOOST_AUTO_TEST_CASE(Test_Ascii_Reader)
 {
 	MMILLAsciiReader* reader= new MMILLAsciiReader();
 	reader->mapFile(std::string("D10_ascii_example"));
-	MetaData* meta=reader->getMetaData();
-
 	//
 	Eigen::MatrixXi m;
-	// Make sure that total counts for the first frame is 66.
+	// Make sure that total counts for the first frame is 65.
 	std::vector<int> v=reader->readBlock(0);
+	// Map the vector to a matrix (no copying)
 	Eigen::Map<Eigen::MatrixXi> map(&(v[0]),32,32);
 	//
 	BOOST_CHECK(map.sum()==65);
