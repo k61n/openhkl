@@ -8,6 +8,11 @@ add_executable(TestBlob2D TestBlob2D.cpp)
 TARGET_LINK_LIBRARIES(TestBlob2D ${Boost_LIBRARIES} NSXTool)
 add_test(TestBlob2D TestBlob2D)
 
+# unit test for Blob3D class
+add_executable(TestBlob3D TestBlob3D.cpp)
+TARGET_LINK_LIBRARIES(TestBlob3D ${Boost_LIBRARIES} NSXTool)
+add_test(TestBlob3D TestBlob3D)
+
 # unit test for RotAxis class
 add_executable(TestRotAxis TestRotAxis.cpp)
 TARGET_LINK_LIBRARIES(TestRotAxis ${Boost_LIBRARIES} NSXTool)

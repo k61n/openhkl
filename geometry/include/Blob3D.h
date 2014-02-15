@@ -37,6 +37,7 @@ namespace Geometry
 {
 
 using Eigen::Vector3d;
+using Eigen::Matrix3d;
 /* !
  * \brief Class Blob3D.
  * Blob3D are used to store region of interest in a 3D image.
@@ -74,7 +75,7 @@ public:
   //! Return the center of Mass
   Vector3d getCenterOfMass() const;
   //! Get the ellipsoid parameters
-  void toEllipsoid(Vector3d& center,Vector3d& semi_axes, Vector3d& v0, Vector3d& v1, Vector3d& v2) const;
+  void toEllipsoid(double confidence, Vector3d& center,Vector3d& eigenvalues,Matrix3d& eigenvectors) const;
   //! Print
   void printSelf(std::ostream& os) const;
   //! Compute the intersection with a plane of equation \f$ax+by+cz+d=0\f$

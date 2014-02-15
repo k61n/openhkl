@@ -118,17 +118,12 @@ Eigen::Vector3d Blob3D::getCenterOfMass() const
 void Blob3D::printSelf(std::ostream& os) const
 {
 	Eigen::Vector3d center,semi_axes, v0,v1,v2;
-	toEllipsoid(center, semi_axes, v0, v1, v2);
     os << "#Blob center: " << center << std::endl;
+    os << "Mass: " << _m000 << std::endl;
     os << "Points in the blob: " << _npoints << std::endl;
-    os << "Intensity: " << _m000 << std::endl;
-    os << "Semi-axes lengths: " << semi_axes << std::endl;
-    os << "Axe 1: " << v0 << std::endl;
-    os << "Axe 2: " << v1 << std::endl;
-    os << "Axe 3: " << v2 << std::endl;
 
 }
-void Blob3D::toEllipsoid(Vector3d& center, Vector3d& semi_axes, Vector3d& v0, Vector3d& v1, Vector3d& v2) const
+void Blob3D::toEllipsoid(double confidence,Vector3d& center, Vector3d& eigenvalues, Matrix3d& eigenvectors) const
 {
     if (_m000<1e-7)
         throw std::runtime_error("No mass in Blob");
@@ -152,18 +147,15 @@ void Blob3D::toEllipsoid(Vector3d& center, Vector3d& semi_axes, Vector3d& v0, Ve
 	SelfAdjointEigenSolver<Matrix3d> solver;
 	solver.compute(inertia);
 
-
+	double factor=sqrt(2.0)*boost::math::erf_inv(confidence);
     // This is the Gaussian sigma along three directions
     // (fabs is a safe-guard against very small negative eigenvalues due to precision errors)
-    semi_axes <<  sqrt(std::fabs(solver.eigenvalues()[0])),
-    			  sqrt(std::fabs(solver.eigenvalues()[1])),
-    			  sqrt(std::fabs(solver.eigenvalues()[2]));
+    eigenvalues <<  sqrt(std::fabs(solver.eigenvalues()[0]))*factor,
+    			    sqrt(std::fabs(solver.eigenvalues()[1]))*factor,
+    			    sqrt(std::fabs(solver.eigenvalues()[2]))*factor;
 
     // Now eigenvectors
-
-    v0 = solver.eigenvectors().col(0);
-    v1 = solver.eigenvectors().col(1);
-    v2 = solver.eigenvectors().col(2);
+    eigenvectors= solver.eigenvectors();
 
     return;
 }
@@ -174,12 +166,10 @@ bool Blob3D::intersectionWithPlane(double a, double b, double c, double d, Vecto
     // The blob ellipsoid parameters
     Vector3d blob_semi_axes;
     Vector3d blob_center;
-    Vector3d blob_axis1, blob_axis2, blob_axis3;
+    Matrix3d eigvect;
 
     // Get the blob ellipsoid parameters
-    this->toEllipsoid(blob_center, blob_semi_axes, blob_axis1, blob_axis2, blob_axis3);
-
-    blob_semi_axes*=sqrt(2.0)*boost::math::erf_inv(confidence);
+    this->toEllipsoid(confidence, blob_center, blob_semi_axes, eigvect);
 
     // The vector normal to the plane
     Vector3d normal;
@@ -228,12 +218,6 @@ bool Blob3D::intersectionWithPlane(double a, double b, double c, double d, Vecto
     // The difference vector between the aforementionned point and the center of the blob ellipsoid
     Vector3d u = rp-blob_center;
 
-    // The matrix of the blob ellipsoid axis vectors
-    Matrix3d Q;
-    Q <<  blob_axis1.x(), blob_axis1.y(), blob_axis1.z(),
-          blob_axis2.x(), blob_axis2.y(), blob_axis2.z(),
-          blob_axis3.x(), blob_axis3.y(), blob_axis3.z();
-
     // The matrix of the blob ellipsoid semi-axis
     double a2 = std::pow(blob_semi_axes(0),2);
     double b2 = std::pow(blob_semi_axes(1),2);
@@ -242,7 +226,7 @@ bool Blob3D::intersectionWithPlane(double a, double b, double c, double d, Vecto
     E << 1.0/a2, 0.0, 0.0,
          0.0, 1.0/b2, 0.0,
          0.0, 0.0, 1.0/c2;
-    E = Q.transpose()*E*Q;
+    E = eigvect*E*eigvect.transpose();
 
     Matrix3d M = E*R;
     Matrix3d RM = R.transpose()*M;
