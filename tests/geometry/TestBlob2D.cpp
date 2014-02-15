@@ -40,6 +40,6 @@ BOOST_AUTO_TEST_CASE(Test_Blob2D)
 	BOOST_CHECK_CLOSE(eigVal(0),sqrt(2.0),tolerance);
 	BOOST_CHECK_CLOSE(eigVal(1),sqrt(3.0),tolerance);
 	// Check the eigenVectors
-	BOOST_CHECK_CLOSE((eigVec.col(0))(0),1.0,tolerance);
-	BOOST_CHECK_CLOSE((eigVec.col(0))(1),0.0,tolerance);
+	BOOST_CHECK_CLOSE(std::abs((eigVec.col(0))(0)),1.0,tolerance);
+	BOOST_CHECK_CLOSE(std::abs((eigVec.col(1))(1)),1.0,tolerance);
 }
