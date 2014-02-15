@@ -124,13 +124,13 @@ Eigen::Vector2d Blob2D::getCenterOfMass() const
 	return result;
 }
 
-void Blob2D::toEllipse(double& xc, double& yc, double& s_a, double& s_b, double& angle) const
+void Blob2D::toEllipse(double confidence,Eigen::Vector2d& center, Eigen::Vector2d& eigenvalues,Eigen::Matrix2d& eigenvectors) const
 {
 	if (_m00<1e-7)
 		throw std::runtime_error("No mass in Blob");
 	// Center of mass
-	xc=_m10/_m00;
-	yc=_m01/_m00;
+	double xc=_m10/_m00;
+	double yc=_m01/_m00;
 	// Now compute second moment with respect to center of mass
 	double Ixx=_m20/_m00-xc*xc;
 	double Iyy=_m02/_m00-yc*yc;
@@ -141,22 +141,19 @@ void Blob2D::toEllipse(double& xc, double& yc, double& s_a, double& s_b, double&
 	inertia << Ixx, Ixy, Ixy, Iyy;
 	solver.compute(inertia);
 	//
-	s_a=sqrt(std::abs(solver.eigenvalues()[0]));
-	s_b=sqrt(std::abs(solver.eigenvalues()[1]));
+	center(0)=xc;
+	center(1)=yc;
+	eigenvalues(0)=sqrt(std::abs(solver.eigenvalues()[0]))*sqrt(2.0)*boost::math::erf_inv(confidence);
+	eigenvalues(1)=sqrt(std::abs(solver.eigenvalues()[1]))*sqrt(2.0)*boost::math::erf_inv(confidence);
 
-	double v1x=(solver.eigenvectors().col(0))(0);
-	double v1y=(solver.eigenvectors().col(0))(1);
-	angle=atan2(v1y,v1x);
-
+	eigenvectors=solver.eigenvectors();
 }
 
 void Blob2D::printSelf(std::ostream& os) const
 {
 	os << "Blob center:" << _m10/_m00 << "," << _m01/_m00 << std::endl;
+	os << "Blob mass:" << _m00 << std::endl;
 	os << "Blob #points:" << _npoints << std::endl;
-	double a,b,c,d,e;
-	toEllipse(a,b,c,d,e);
-	os << "Blob bounding ellipse:" << a << " " << b << " " << c << " " << d << " " << e << std::endl;
 
 }
 
