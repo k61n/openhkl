@@ -2,6 +2,7 @@
 #define BOOST_TEST_DYN_LINK
 #include "Blob2D.h"
 #include <cmath>
+#include <Eigen/Dense>
 #include <boost/test/unit_test.hpp>
 
 using namespace SX::Geometry;
@@ -28,14 +29,17 @@ BOOST_AUTO_TEST_CASE(Test_Blob2D)
 	}
 	BOOST_CHECK_CLOSE(tot,1.0,tolerance);
 	BOOST_CHECK_CLOSE(tot,blob.getMass(),tolerance);
-	double xc,yc,sa,sb,angle;
-	blob.toEllipse(xc,yc,sa,sb,angle);
+	Eigen::Vector2d center,eigVal;
+	Eigen::Matrix2d eigVec;
+	double sigma1=0.682689492;
+	blob.toEllipse(sigma1,center,eigVal,eigVec);
 	// Check that the center is OK
-	BOOST_CHECK_CLOSE(xc,c_x,tolerance);
-	BOOST_CHECK_CLOSE(yc,c_y,tolerance);
+	BOOST_CHECK_CLOSE(center(0),c_x,tolerance);
+	BOOST_CHECK_CLOSE(center(1),c_y,tolerance);
 	// Check the semi_axes
-	BOOST_CHECK_CLOSE(sa,sqrt(2.0),tolerance);
-	BOOST_CHECK_CLOSE(sb,sqrt(3.0),tolerance);
-	BOOST_CHECK_CLOSE(angle,0.0,tolerance);
-
+	BOOST_CHECK_CLOSE(eigVal(0),sqrt(2.0),tolerance);
+	BOOST_CHECK_CLOSE(eigVal(1),sqrt(3.0),tolerance);
+	// Check the eigenVectors
+	BOOST_CHECK_CLOSE((eigVec.col(0))(0),1.0,tolerance);
+	BOOST_CHECK_CLOSE((eigVec.col(0))(1),0.0,tolerance);
 }

@@ -73,7 +73,7 @@ public:
   //! Return the center of Mass
   Eigen::Vector2d getCenterOfMass() const;
   //! Compute the contour ellipse of the Blob
-  void toEllipse(double& xc, double& yc, double& s_a, double& s_b, double& angle) const;
+  void toEllipse(double confidence,Eigen::Vector2d& center, Eigen::Vector2d& eigenvalues,Eigen::Matrix2d& eigenvectors) const;
   //!
   void printSelf(std::ostream& os) const;
 private:
