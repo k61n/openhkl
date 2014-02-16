@@ -28,7 +28,6 @@
 
 #ifndef NSXTOOL_AABB_H_
 #define NSXTOOL_AABB_H_
-#include "System.h"
 #include <initializer_list>
 #include <stdexcept>
 #include <Eigen/Dense>
@@ -53,7 +52,7 @@ typedef unsigned int uint;
  * from images or volumes.
  */
 template<typename T, uint D>
-class DLLExport AABB
+class AABB
 {
 public:
 	typedef typename Eigen::Matrix<T,D,1> vector;
