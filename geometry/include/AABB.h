@@ -107,11 +107,11 @@ public:
 	//! Send the object to a stream
 	void printSelf(std::ostream&) const;
 	//! Translate the bounding box
-	void translate(const vector&);
+	void translateAABB(const vector&);
 	//! Scale the bounding box
-	void scale(const vector&);
+	void scaleAABB(const vector&);
 	//! Scale by a constant factor
-	void scale(T);
+	void scaleAABB(T);
 protected:
 	// The lower bound point
 	vector _lowerBound;
@@ -288,14 +288,14 @@ typename AABB<T,D>::vector& AABB<T,D>::getUpper()
 }
 
 template<typename T, uint D>
-void AABB<T,D>::translate(const vector& t)
+void AABB<T,D>::translateAABB(const vector& t)
 {
 	_lowerBound+=t;
 	_upperBound+=t;
 }
 
 template<typename T, uint D>
-void AABB<T,D>::scale(const vector& s)
+void AABB<T,D>::scaleAABB(const vector& s)
 {
 	vector center=getCenter();
 	_lowerBound=center+(_lowerBound-center).cwiseProduct(s);
@@ -303,7 +303,7 @@ void AABB<T,D>::scale(const vector& s)
 }
 
 template<typename T, uint D>
-void AABB<T,D>::scale(T s)
+void AABB<T,D>::scaleAABB(T s)
 {
 	vector center=getCenter();
 	_lowerBound=center+(_lowerBound-center)*s;

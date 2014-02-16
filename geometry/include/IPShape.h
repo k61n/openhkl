@@ -32,7 +32,6 @@
 #include <initializer_list>
 
 #include "AABB.h"
-#include "NDBox.h"
 
 namespace SX
 {
@@ -48,28 +47,18 @@ typedef unsigned int uint;
 template<typename T,uint D>
 class IShape : public AABB<T,D>
 {
+	typedef Eigen::Matrix<T,D+1,1> HomVector;
 public:
-
 	IShape();
-
-	IShape(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub);
-
 	virtual ~IShape();
-
-	virtual bool is_inside(const std::initializer_list<T>& point) const =0;
-
-    virtual bool collide(const IShape<T,D>& rhs) const =0;
-    virtual bool collide(const NDBox<T,D>& rhs) const =0;
-    virtual bool collide(const ShapeCollection<T,D>& rhs) =0;
+	virtual bool isInside(const HomVector& vector) const =0;
+    //virtual bool collide(const IShape<T,D>& rhs) const =0;
+    //virtual bool collide(const NDBox<T,D>& rhs) const =0;
+    //virtual bool collide(const ShapeCollection<T,D>& rhs) =0;
 };
 
 template<typename T,uint D>
 IShape<T,D>::IShape() : AABB<T,D>()
-{
-}
-
-template<typename T,uint D>
-IShape<T,D>::IShape(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub) : AABB<T,D>(lb,ub)
 {
 }
 

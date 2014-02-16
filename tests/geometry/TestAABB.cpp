@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE(Test_AABB)
 	BOOST_CHECK(!(bb2.intercept(bb)));
 
 	// Translate and scale operations
-	bb.translate(Vector3d(1,2,3));
+	bb.translateAABB(Vector3d(1,2,3));
 	Vector3d& lower=bb.getLower();
 	Vector3d& upper=bb.getUpper();
 	BOOST_CHECK_CLOSE(lower[0], 1.0, tolerance);
@@ -51,7 +51,7 @@ BOOST_AUTO_TEST_CASE(Test_AABB)
 	BOOST_CHECK_CLOSE(upper[0], 2.0, tolerance);
 	BOOST_CHECK_CLOSE(upper[1], 4.0, tolerance);
 	BOOST_CHECK_CLOSE(upper[2], 6.0, tolerance);
-	bb.scale(Vector3d(1,2,3));
+	bb.scaleAABB(Vector3d(1,2,3));
 	lower=bb.getLower();
 	upper=bb.getUpper();
 	BOOST_CHECK_CLOSE(lower[0], 1.0, tolerance);
@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE(Test_AABB)
 	BOOST_CHECK_CLOSE(upper[0], 2.0, tolerance);
 	BOOST_CHECK_CLOSE(upper[1], 5.0, tolerance);
 	BOOST_CHECK_CLOSE(upper[2], 9.0, tolerance);
-	bb.scale(0.5);
+	bb.scaleAABB(0.5);
 	lower=bb.getLower();
 	upper=bb.getUpper();
 	BOOST_CHECK_CLOSE(lower[0], 1.25, tolerance);
@@ -69,8 +69,6 @@ BOOST_AUTO_TEST_CASE(Test_AABB)
 	BOOST_CHECK_CLOSE(upper[0], 1.75, tolerance);
 	BOOST_CHECK_CLOSE(upper[1], 4.0, tolerance);
 	BOOST_CHECK_CLOSE(upper[2], 6.75, tolerance);
-
-
 
 
 }

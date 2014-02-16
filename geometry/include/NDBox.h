@@ -42,7 +42,7 @@ namespace Geometry
 typedef unsigned int uint;
 
 template<typename T,uint D>
-class NDBox : public IPShape<T,D>
+class NDBox : public IShape<T,D>
 {
 public:
 	NDBox();
@@ -51,7 +51,7 @@ public:
 
 	~NDBox();
 
-	bool collide(const IPShape<T,D>& rhs) const;
+	bool collide(const IShape<T,D>& rhs) const;
 	bool collide(const NDBox<T,D>& rhs) const;
 
 	bool is_inside(const std::initializer_list<T>& point) const;
@@ -59,12 +59,12 @@ public:
 };
 
 template<typename T,uint D>
-NDBox<T,D>::NDBox() : IPShape<T,D>()
+NDBox<T,D>::NDBox() : IShape<T,D>()
 {
 }
 
 template<typename T,uint D>
-NDBox<T,D>::NDBox(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub) : IPShape<T,D>(lb,ub)
+NDBox<T,D>::NDBox(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub) : IShape<T,D>(lb,ub)
 {
 }
 
@@ -74,7 +74,7 @@ NDBox<T,D>::~NDBox()
 }
 
 template<typename T,uint D>
-bool collide(const IPShape<T,D>& rhs) const
+bool collide(const IShape<T,D>& rhs) const
 {
     rhs.collide(*this);
 }
