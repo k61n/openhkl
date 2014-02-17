@@ -148,7 +148,7 @@ NDEllipsoid<T,D>::NDEllipsoid(const vector& center, const vector& eigenvalues, c
 template<typename T,uint D>
 void NDEllipsoid<T,D>::scale(T value)
 {
-	_eigenVal*=T;
+	_eigenVal*=value;
 	Eigen::DiagonalMatrix<T,D+1> Sinv;
 	for (unsigned int i=0;i<D;++i)
 		Sinv.diagonal()[i]=1.0/value;
