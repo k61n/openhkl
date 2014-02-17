@@ -483,6 +483,8 @@ public:
 
 	const NDTree<T,D>& operator*() const;
 
+	const NDTree<T,D>* operator->() const;
+
 	NDTreeIterator<T,D>& operator++();
 
 	NDTreeIterator<T,D>& operator++(int);
@@ -529,6 +531,12 @@ template<typename T, uint D>
 const NDTree<T,D>& NDTreeIterator<T,D>::operator*() const
 {
 	return *_node;
+}
+
+template<typename T, uint D>
+const NDTree<T,D>* NDTreeIterator<T,D>::operator->() const
+{
+	return _node;
 }
 
 template<typename T, uint D>
