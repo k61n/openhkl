@@ -77,26 +77,14 @@ BOOST_AUTO_TEST_CASE(Test_NDTree)
 	BOOST_CHECK_CLOSE(extents(1),100.0,tolerance);
 	BOOST_CHECK_CLOSE(extents(2),100.0,tolerance);
 
-
-
-//	std::vector<AABB<double,3>*> voxels;
-	//tree.get_voxels(voxels);
-	//for (auto it=voxels.begin();it!=voxels.end();++it)
-
-
+	std::vector<AABB<double,3>>::const_iterator it1;
 
 	// Remove all the data stored in the NDTree
-	//for (uint i=0;i<=maxStorage;++i)
-	//	tree.removeData(&bb[i]);
+	for (it1=bb.begin();it1!=bb.end();++it1)
+		tree.removeData(&(*it1));
 
 	// Test: the root node amd its children does not have any data anymore once all the data have been removed
-	//BOOST_CHECK_EQUAL(tree.hasData(),false);
-//	for (uint i=0;i<8;++i)
-//		BOOST_CHECK_EQUAL(tree.children[i].hasData(),false);
-
-	// Test: the root node still has some children once of the data has been removed
-	//BOOST_CHECK_EQUAL(tree.hasChildren(),true);
-
+	BOOST_CHECK_EQUAL(tree.hasData(),false);
 
 
 }
