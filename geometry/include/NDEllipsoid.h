@@ -30,6 +30,7 @@
 #include "IPShape.h"
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
+#include <Eigen/Eigenvalues>
 
 namespace SX
 {
@@ -70,55 +71,75 @@ private:
 	vector _eigenVal;
 };
 
-template<typename T,uint N=3> bool collideEllipsoidEllipsoid(const NDEllipsoid<T,3>& eA, const NDEllipsoid<T,3>& eB)
+template<typename T,uint D=2> bool collideEllipsoidEllipsoid(const NDEllipsoid<T,2>& eA, const NDEllipsoid<T,2>& eB)
 {
 	// Get the (TRS)^-1 matrices from object A and B
-	const Eigen::Matrix<T,N+1,N+1>& trsA=eA.getTRSInverseMatrix();
-	const Eigen::Matrix<T,N,1>& eigA=eA.getSemiAxes();
-	const Eigen::Matrix<T,N+1,N+1>& trsB=eB.getTRSInverseMatrix();
-	const Eigen::Matrix<T,N,1>& eigB=eB.getSemiAxes();
+	const Eigen::Matrix<T,3,3>& trsA=eA.getTRSInverseMatrix();
+	const Eigen::Matrix<T,2,1>& eigA=eA.getSemiAxes();
+	const Eigen::Matrix<T,3,3>& trsB=eB.getTRSInverseMatrix();
+	const Eigen::Matrix<T,2,1>& eigB=eB.getSemiAxes();
 
 	// Reconstruct the S matrices
-	Eigen::DiagonalMatrix<T,4> A;
-	A.diagonal() << eigA(0), eigA(1), eigA(2),1.0;
-	Eigen::DiagonalMatrix<T,4> B;
-	B.diagonal() << eigB(0), eigB(1) , eigB(2), 1.0;
+	Eigen::DiagonalMatrix<T,3> SA;
+	SA.diagonal() << eigA(0), eigA(1),1.0;
+	Eigen::DiagonalMatrix<T,3> SB;
+	SB.diagonal() << eigB(0), eigB(1),1.0;
 	// Recover the (TR)^-1=Minv matrices
-	Eigen::Matrix<T,N+1,N+1> MA=A*trsA;
+	Eigen::Matrix<T,3,3> A=SA*trsA;
 	//MA.block<0,0>(N,N).tranposeInPlace();
-	Eigen::Matrix<T,N+1,N+1> MBinv=B*trsB;
-	// B is now the characteristic matrix of the ellipsoid in its frame of references
-	B.diagonal() << 1.0/std::pow(eigB(0),2), 1.0/std::pow(eigB(1),2), 1.0/std::pow(eigB(2),2),-1.0;
+	Eigen::Matrix<T,3,3> B=SB*trsB;
+	// A and B are  now the characteristic matrix of the ellipsoids in their frame of references.
+	SA.diagonal() << 1.0/std::pow(eigA(0),2), 1.0/std::pow(eigA(1),2),-1.0;
+	SB.diagonal() << 1.0/std::pow(eigB(0),2), 1.0/std::pow(eigB(1),2),-1.0;
 
-	Eigen::Matrix<T,N+1,N+1> D=MA.transpose()*MBinv.transpose()*B*MBinv*MA;
+	A=A.transpose()*SA*A;
+	B=B.transpose()*SB*B;
 
-	T ea=1.0/std::pow(eigA(0),2);
-	T eb=1.0/std::pow(eigA(1),2);
-	T ec=1.0/std::pow(eigA(2),2);
-	T ab=ea*eb, ac=ea*ec, bc=eb*ec,abc=ea*eb*ec;
-	T b12s = D(0,1) * D(0,1);
-	T b13s = D(0,2) * D(0,2);
-	T b14s = D(0,3) * D(0,3);
-	T b23s = D(1,2) * D(1,2);
-	T b24s = D(1,3) * D(1,3);
-	T b34s = D(2,3) * D(2,3);
-	T b2233 = D(1,1) * D(2,2);
-	T termA = D(0,0) * bc + D(1,1) * ac + D(2,2) * ab;
-	T termB = (b2233-b23s)*ea + (D(0,0) * D(2,2)- b13s)*eb+ (D(0,0) * D(1,1) - b12s)*ec;
-	T T4 =-abc;
-	T T3 = termA - D(3,3) * abc;
-	T T2 = termA * D(3,3) - termB - b34s * ab - b14s * bc
-	- b24s * ac;
-	T tmp1 = termB * D(3,3);
-	T tmp2 = D(0,0)*(b2233 + eb * b34s + ec * b24s - b23s);
-	T tmp3 = D(1,1)*(ea * b34s + ec * b14s - b13s);
-	T tmp4 = D(2,2)*(ea * b24s + eb * b14s - b12s);
-	T tmp5 = D(2,3)*(ea * D(1,2) * D(1,3) + eb * D(0,2) * D(0,3))
-	+ D(0,1)*(ec * D(0,3) * D(1,3) - D(0,2) * D(1,2));
-	tmp5 += tmp5; // multiply by 2
-	T T1 = -tmp1 + tmp2 + tmp3 + tmp4 - tmp5;
-	T T0 = -D.determinant();
+	// Now calculates the coefficients of the characteristic polynomial f(lambda)=det|lambda*A-B|
+	// The third degree term is det(A) and the constant term is det(B). The polynomial is normalized
+	// by det(A) to become of the form : lambda^3+term2*lambda^2+term1*lambda+term0
+	T term3=A.determinant();
+	T term2=-A(0,0)*A(1,1)*B(2,2)+A(0,1)*A(1,0)*B(2,2)-A(0,0)*B(1,1)*A(2,2)-B(0,0)*A(1,1)*A(2,2)+
+			 A(0,1)*B(1,0)*A(2,2)+B(0,1)*A(1,0)*A(2,2)+A(0,0)*A(1,2)*B(2,1)-A(0,2)*A(1,0)*B(2,1)+
+			 A(0,0)*B(1,2)*A(2,1)+B(0,0)*A(1,2)*A(2,1)-A(0,2)*B(1,0)*A(2,1)-B(0,2)*A(1,0)*A(2,1)-
+			 A(0,1)*A(1,2)*B(2,0)+A(0,2)*A(1,1)*B(2,0)-A(0,1)*B(1,2)*A(2,0)-B(0,1)*A(1,2)*A(2,0)+
+			 A(0,2)*B(1,1)*A(2,0)+B(0,2)*A(1,1)*A(2,0);
+	term2/=term3;
+	T term1= A(0,0)*B(1,1)*B(2,2)+B(0,0)*A(1,1)*B(2,2)-A(0,1)*B(1,0)*B(2,2)-B(0,1)*A(1,0)*B(2,2)+
+			 B(0,0)*B(1,1)*A(2,2)-B(0,1)*B(1,0)*A(2,2)-A(0,0)*B(1,2)*B(2,1)-B(0,0)*A(1,2)*B(2,1)+
+			 A(0,2)*B(1,0)*B(2,1)+B(0,2)*A(1,0)*B(2,1)-B(0,0)*B(1,2)*A(2,1)+B(0,2)*B(1,0)*A(2,1)+
+			 A(0,1)*B(1,2)*B(2,0)+B(0,1)*A(1,2)*B(2,0)-A(0,2)*B(1,1)*B(2,0)-B(0,2)*A(1,1)*B(2,0)+
+			 B(0,1)*B(1,2)*A(2,0)-B(0,2)*B(1,1)*A(2,0);
+	term1/=term3;
+	T term0=-B.determinant()/term3;
+	// Construct the companion matrix: |0 0 -term0|
+	//                                 |1 0 -term1|
+	//								   |0 1 -term2|
+	// from which the roots of the polynomial are derived.
+	Eigen::Matrix<T,3,3> companion;
+	companion << 0,0,-term0,
+				 1,0,-term1,
+				 0,1,-term2;
+	// Solve the eigenvalues problem
+	Eigen::ComplexEigenSolver<Eigen::Matrix<T,3,3>> solver;
+	solver.compute(companion);
 
+	const std::complex<T>& val0=solver.eigenvalues()(0);
+	const std::complex<T>& val1=solver.eigenvalues()(1);
+	const std::complex<T>& val2=solver.eigenvalues()(2);
+
+	// One of the root is always positive.
+    // Check whether two of the roots are negative and distinct, in which case the Ellipse do not collide.
+	int count=0;
+	T sol[2];
+	if (std::fabs(imag(val0))< 1e-5 && real(val0)<0)
+		sol[count++]=real(val0);
+	if (std::fabs(imag(val1))< 1e-5 && real(val1)<0)
+		sol[count++]=real(val1);
+	if (std::fabs(imag(val2))< 1e-5 && real(val2)<0)
+		sol[count++]=real(val2);
+
+	return (!(count==2 && std::fabs(sol[0]-sol[1])>1e-5));
 
 }
 
