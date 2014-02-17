@@ -400,7 +400,7 @@ void NDTree<T,D>::removeData(const AABB<T,D>* data)
 
 	if (hasChildren())
 	{
-		for (auto i=0; i<_MULTIPLICITY; ++i)
+		for (uint i=0; i<_MULTIPLICITY; ++i)
 			_children[i]->removeData(data);
 	}
 
