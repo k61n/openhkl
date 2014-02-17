@@ -54,7 +54,32 @@ BOOST_AUTO_TEST_CASE(Test_NDTree)
 	// Test: the root node does not have any data anymore once it has been splitted
 	BOOST_CHECK_EQUAL(tree.hasData(),false);
 
-	std::vector<AABB<double,3>*> voxels;
+	//Test: the iterator on a NDTree begins with the root node
+	NDTree<double,3>::iterator it(tree.begin());
+
+	Eigen::Vector3d center(it->getCenter());
+	BOOST_CHECK_CLOSE(center(0),50.0,tolerance);
+	BOOST_CHECK_CLOSE(center(1),50.0,tolerance);
+	BOOST_CHECK_CLOSE(center(2),50.0,tolerance);
+
+	Eigen::Vector3d lower((*it).getLower());
+	BOOST_CHECK_CLOSE(lower(0),0.0,tolerance);
+	BOOST_CHECK_CLOSE(lower(1),0.0,tolerance);
+	BOOST_CHECK_CLOSE(lower(2),0.0,tolerance);
+
+	Eigen::Vector3d upper((*it).getUpper());
+	BOOST_CHECK_CLOSE(upper(0),100.0,tolerance);
+	BOOST_CHECK_CLOSE(upper(1),100.0,tolerance);
+	BOOST_CHECK_CLOSE(upper(2),100.0,tolerance);
+
+	Eigen::Vector3d extents((*it).getExtents());
+	BOOST_CHECK_CLOSE(extents(0),100.0,tolerance);
+	BOOST_CHECK_CLOSE(extents(1),100.0,tolerance);
+	BOOST_CHECK_CLOSE(extents(2),100.0,tolerance);
+
+
+
+//	std::vector<AABB<double,3>*> voxels;
 	//tree.get_voxels(voxels);
 	//for (auto it=voxels.begin();it!=voxels.end();++it)
 
@@ -65,12 +90,12 @@ BOOST_AUTO_TEST_CASE(Test_NDTree)
 	//	tree.removeData(&bb[i]);
 
 	// Test: the root node amd its children does not have any data anymore once all the data have been removed
-	BOOST_CHECK_EQUAL(tree.hasData(),false);
+	//BOOST_CHECK_EQUAL(tree.hasData(),false);
 //	for (uint i=0;i<8;++i)
 //		BOOST_CHECK_EQUAL(tree.children[i].hasData(),false);
 
 	// Test: the root node still has some children once of the data has been removed
-	BOOST_CHECK_EQUAL(tree.hasChildren(),true);
+	//BOOST_CHECK_EQUAL(tree.hasChildren(),true);
 
 
 
