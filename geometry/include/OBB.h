@@ -65,7 +65,7 @@ public:
 	//; Check whether a point given as Homogeneous coordinate in the (D+1) dimension is inside the OBB.
 	bool isInside(const HomVector& vector) const;
 	//; Scale isotropically the OBB.
-	//void scale(T value);
+	void scale(T value);
 	//; Scale anisotropically the OBB.
 	//void scale(const vector& scale);
 	//; Translate the OBB.
@@ -116,6 +116,18 @@ template<typename T, uint D>
 bool OBB<T,D>::isInside(const HomVector& vector) const
 {
 	return true;
+}
+
+template<typename T, uint D>
+void OBB<T,D>::scale(T value)
+{
+	_eigenVal*=value;
+	Eigen::DiagonalMatrix<T,D+1> Sinv;
+	for (unsigned int i=0;i<D;++i)
+		Sinv.diagonal()[i]=1.0/value;
+	Sinv.diagonal()[D]=1.0;
+	_TRSinv=Sinv*_TRSinv;
+	scaleAABB(value);
 }
 
 template<typename T, uint D>
