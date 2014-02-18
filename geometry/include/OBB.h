@@ -69,7 +69,7 @@ public:
 	//; Scale anisotropically the OBB.
 	void scale(const vector& scale);
 	//; Translate the OBB.
-	//void translate(const vector& t);
+	void translate(const vector& t);
 
 private:
 
@@ -80,7 +80,7 @@ private:
 	//; Translation.
 	vector _center;
 
-	// Method to update the closest fit AABB to the OBB
+	//; Update the closest fit AABB to the OBB
 	void updateAABB();
 
 };
@@ -142,6 +142,15 @@ void OBB<T,D>::scale(const vector& v)
 	updateAABB();
 }
 
+template<typename T,uint D>
+void OBB<T,D>::translate(const vector& t)
+{
+	Eigen::Matrix<T,D+1,D+1> tinv=Eigen::Matrix<T,D+1,D+1>::Constant(0.0);
+	tinv.block(0,D,D,1)=-t;
+	_TRSinv=_TRSinv*tinv;
+	translateAABB(t);
+}
+
 template<typename T, uint D>
 void OBB<T,D>::updateAABB()
 {
@@ -153,8 +162,7 @@ void OBB<T,D>::updateAABB()
 	S.diagonal()[D]=1.0;
 
 	// Reconstruct T
-	Eigen::Matrix<T,D+1,D+1> Tmat;
-	Tmat.setZero();
+	Eigen::Matrix<T,D+1,D+1> Tmat=Eigen::Matrix<T,D+1,D+1>::Constant(0.0);
 	for (uint i=0;i<D+1;++i)
 		Tmat(i,i)=1.0;
 	Tmat.block(0,D,D,1)=_center;
