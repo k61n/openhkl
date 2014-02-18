@@ -28,4 +28,8 @@ add_executable(TestNDTree TestNDTree.cpp)
 TARGET_LINK_LIBRARIES(TestNDTree ${Boost_LIBRARIES} NSXTool)
 add_test(TestNDTree TestNDTree)
 
+# unit test for OBB class
+add_executable(TestOBB TestOBB.cpp)
+TARGET_LINK_LIBRARIES(TestOBB ${Boost_LIBRARIES} NSXTool)
+add_test(TestOBB TestOBB)
 
