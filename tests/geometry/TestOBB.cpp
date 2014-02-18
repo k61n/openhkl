@@ -52,5 +52,24 @@ BOOST_AUTO_TEST_CASE(Test_OBB)
 	BOOST_CHECK_CLOSE(upper[1],22.0,tolerance);
 	BOOST_CHECK_CLOSE(upper[2],14.0,tolerance);
 
+	center << 2,2,1;
+	semi_axes << sqrt(2)/2,sqrt(2),2;
+	eigen_values << 1,-1 ,0,
+			        1, 1 ,0,
+			        0, 0 ,1;
+
+	OBB<double,3> obb3(center,semi_axes,eigen_values);
+	obb3.scale(Vector3d(3,2,5));
+
+	lower = obb3.getLower();
+	upper = obb3.getUpper();
+
+	BOOST_CHECK_CLOSE(lower[0],-1.5,tolerance);
+	BOOST_CHECK_CLOSE(lower[1],-1.5,tolerance);
+	BOOST_CHECK_CLOSE(lower[2],-9.0,tolerance);
+
+	BOOST_CHECK_CLOSE(upper[0], 5.5,tolerance);
+	BOOST_CHECK_CLOSE(upper[1], 5.5,tolerance);
+	BOOST_CHECK_CLOSE(upper[2],11.0,tolerance);
 
 }

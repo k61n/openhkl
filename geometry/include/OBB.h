@@ -67,7 +67,7 @@ public:
 	//; Scale isotropically the OBB.
 	void scale(T value);
 	//; Scale anisotropically the OBB.
-	//void scale(const vector& scale);
+	void scale(const vector& scale);
 	//; Translate the OBB.
 	//void translate(const vector& t);
 
@@ -128,6 +128,18 @@ void OBB<T,D>::scale(T value)
 	Sinv.diagonal()[D]=1.0;
 	_TRSinv=Sinv*_TRSinv;
 	scaleAABB(value);
+}
+
+template<typename T,uint D>
+void OBB<T,D>::scale(const vector& v)
+{
+	_eigenVal=_eigenVal.cwiseProduct(v);
+	Eigen::DiagonalMatrix<T,D+1> Sinv;
+	for (unsigned int i=0;i<D;++i)
+		Sinv.diagonal()[i]=1.0/v[i];
+	Sinv.diagonal()[D]=1.0;
+	_TRSinv=Sinv*_TRSinv;
+	updateAABB();
 }
 
 template<typename T, uint D>
