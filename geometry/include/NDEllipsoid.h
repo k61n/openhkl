@@ -199,9 +199,6 @@ void NDEllipsoid<T,D>::translate(const vector& t)
 	translateAABB(t);
 }
 
-
-
-
 template<typename T,uint D>
 bool NDEllipsoid<T,D>::isInside(const HomVector& point) const
 {
@@ -215,10 +212,8 @@ bool NDEllipsoid<T,D>::isInside(const HomVector& point) const
 	T value=0;
 	for (unsigned int i=0;i<D;++i)
 		value+=p[i]*p[i];
-	if (value<=1)
-		return true;
-	else
-		return false;
+
+	return (value<=1);
 }
 
 template<typename T,uint D>
