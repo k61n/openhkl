@@ -52,6 +52,7 @@ class OBB : public IShape<T,D>
 	typedef Eigen::Matrix<T,D,D> matrix;
 	typedef Eigen::Matrix<T,D,1> vector;
 	typedef Eigen::Matrix<T,D+1,1> HomVector;
+	typedef Eigen::Matrix<T,D+1,D+1> HomMatrix;
 
 	//; Get rid of AABB resolution for protected attributes of AABB
 	using AABB<T,D>::_lowerBound;
@@ -72,22 +73,18 @@ public:
 	void translate(const vector& t);
 
 private:
-
+	//; The inverse of the homogeneous transformation matrix.
 	Eigen::Matrix<T,D+1,D+1> _TRSinv;
-	//; EigenValues.
+	//; The scale value.
 	vector _eigenVal;
-
-	//; Translation.
-	vector _center;
-
-	//; Update the closest fit AABB to the OBB
+	//; Update the closest fit AABB to the OBB.
 	void updateAABB();
 
 };
 
 template<typename T,uint D>
 OBB<T,D>::OBB(const vector& center, const vector& eigenvalues, const matrix& eigenvectors)
-: IShape<T,D>(), _eigenVal(eigenvalues), _center(center)
+: IShape<T,D>(), _eigenVal(eigenvalues)
 {
 	// Define the inverse scale matrix from the eigenvalues
 	Eigen::DiagonalMatrix<T,D+1> Sinv;
@@ -95,14 +92,15 @@ OBB<T,D>::OBB(const vector& center, const vector& eigenvalues, const matrix& eig
 		Sinv.diagonal()[i]=1.0/eigenvalues[i];
 	Sinv.diagonal()[D]=1.0;
 
-	_TRSinv(D,D)=1.0;
 	// Now prepare the R^-1.T^-1 (rotation,translation)
-	_TRSinv.block(0,D,D,1)=-center;
 	for (unsigned int i=0;i<D;++i)
 	{
 		_TRSinv(D,i)=0.0;
 		_TRSinv.block(i,0,1,D)=eigenvectors.col(i).transpose().normalized();
 	}
+	_TRSinv.block(0,D,D,1)=-_TRSinv.block(0,0,D,D)*center;
+
+	// Finally compute (TRS)^-1 by left-multiplying (TR)^-1 by S^-1
 	_TRSinv=Sinv*_TRSinv;
 	updateAABB();
 }
@@ -113,8 +111,16 @@ OBB<T,D>::~OBB()
 }
 
 template<typename T, uint D>
-bool OBB<T,D>::isInside(const HomVector& vector) const
+bool OBB<T,D>::isInside(const HomVector& point) const
 {
+	HomVector p=_TRSinv*point;
+
+	for(unsigned int i=0; i<D; ++i)
+	{
+		if (p[i] < -1 || p[i] > 1)
+			return false;
+	}
+
 	return true;
 }
 
@@ -127,7 +133,7 @@ void OBB<T,D>::scale(T value)
 		Sinv.diagonal()[i]=1.0/value;
 	Sinv.diagonal()[D]=1.0;
 	_TRSinv=Sinv*_TRSinv;
-	scaleAABB(value);
+	updateAABB();
 }
 
 template<typename T,uint D>
@@ -146,9 +152,11 @@ template<typename T,uint D>
 void OBB<T,D>::translate(const vector& t)
 {
 	Eigen::Matrix<T,D+1,D+1> tinv=Eigen::Matrix<T,D+1,D+1>::Constant(0.0);
+	for (uint i=0;i<D+1;++i)
+		tinv(i,i)=1.0;
 	tinv.block(0,D,D,1)=-t;
 	_TRSinv=_TRSinv*tinv;
-	translateAABB(t);
+	updateAABB();
 }
 
 template<typename T, uint D>
@@ -161,28 +169,24 @@ void OBB<T,D>::updateAABB()
 		S.diagonal()[i]=_eigenVal[i];
 	S.diagonal()[D]=1.0;
 
-	// Reconstruct T
-	Eigen::Matrix<T,D+1,D+1> Tmat=Eigen::Matrix<T,D+1,D+1>::Constant(0.0);
-	for (uint i=0;i<D+1;++i)
-		Tmat(i,i)=1.0;
-	Tmat.block(0,D,D,1)=_center;
+	// Reconstruct R from TRinv
+	HomMatrix TRinv=S*_TRSinv;
+	matrix R(TRinv.block(0,0,D,D).transpose());
 
-	// Reconstruct the R^{-1} matrix to obtain the eigenvectors and center
-	Eigen::Matrix<T,D+1,D+1> Rinv=S*_TRSinv*Tmat;
+	// Extract T matrix from TRinv
+	vector Tmat=-R*TRinv.block(0,D,D,1);
 
 	// Calculate the width of the bounding box
 	vector width=vector::Constant(0.0);
 	for (uint i=0;i<D;++i)
 	{
 		for (uint j=0;j<D;++j)
-		{
-			width[i]+=std::abs(_eigenVal[j]*Rinv(j,i));
-		}
+			width[i]+=std::abs(_eigenVal[j]*R(j,i));
 	}
 
 	// Update the upper and lower bound of the AABB
-	_lowerBound=Tmat.block(0,D,D,1)-width;
-	_upperBound=Tmat.block(0,D,D,1)+width;
+	_lowerBound=Tmat-width;
+	_upperBound=Tmat+width;
 
 }
 
