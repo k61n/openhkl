@@ -64,8 +64,8 @@ public:
 	// Return the semi-axes of the Ellipsoids
 	const vector& getSemiAxes() const;
 private:
-	// Method to recalculate the closest fit AABB to the Ellipsoid
-	void recalculateAABB();
+	// Method to update the closest fit AABB to the Ellipsoid
+	void updateAABB();
 	Eigen::Matrix<T,D+1,D+1> _TRSinv;
 	// EigenValues
 	vector _eigenVal;
@@ -149,21 +149,24 @@ NDEllipsoid<T,D>::NDEllipsoid(const vector& center, const vector& eigenvalues, c
 :IShape<T,D>(),
  _eigenVal(eigenvalues)
 {
+
+	// Define the inverse scale matrix from the eigenvalues
 	Eigen::DiagonalMatrix<T,D+1> Sinv;
 	for (unsigned int i=0;i<D;++i)
-		Sinv.diagonal()[i]=1.0/eigenvalues(i);
+		Sinv.diagonal()[i]=1.0/eigenvalues[i];
 	Sinv.diagonal()[D]=1.0;
 
-	_TRSinv(D,D)=1.0;
 	// Now prepare the R^-1.T^-1 (rotation,translation)
-	_TRSinv.block(0,D,D,1)=-center;
 	for (unsigned int i=0;i<D;++i)
 	{
 		_TRSinv(D,i)=0.0;
-		_TRSinv.block(i,0,1,D)=eigenvectors.col(i).transpose();
+		_TRSinv.block(i,0,1,D)=eigenvectors.col(i).transpose().normalized();
 	}
+	_TRSinv.block(0,D,D,1)=-_TRSinv.block(0,0,D,D)*center;
+
+	// Finally compute (TRS)^-1 by left-multiplying (TR)^-1 by S^-1
 	_TRSinv=Sinv*_TRSinv;
-	recalculateAABB();
+	updateAABB();
 }
 
 template<typename T,uint D>
@@ -235,7 +238,7 @@ bool NDEllipsoid<T,D>::collide(const NDEllipsoid<T,D>& other) const
 }
 
 template<typename T,uint D>
-void NDEllipsoid<T,D>::recalculateAABB()
+void NDEllipsoid<T,D>::updateAABB()
 {
 	// Reconstruct the R^{-1}.T^{-1} matrix to obtain the eigenvectors and center
 	Eigen::DiagonalMatrix<T,D+1> S; // Reconstruct S
