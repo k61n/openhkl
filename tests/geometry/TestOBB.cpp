@@ -18,7 +18,7 @@ BOOST_AUTO_TEST_CASE(Test_OBB)
 {
 
 	// Test: the construction onf an OBB
-	Vector3d center(3,2,4);
+	Vector3d center(3,3,4);
 	Vector3d semi_axes(sqrt(2),sqrt(2),1);
 	Matrix3d eigen_values;
 	eigen_values << 1,-1 ,0,
@@ -29,10 +29,10 @@ BOOST_AUTO_TEST_CASE(Test_OBB)
 	Vector3d upper(obb1.getUpper());
 
 	BOOST_CHECK_CLOSE(lower[0],1.0,tolerance);
-	BOOST_CHECK_CLOSE(lower[1],0.0,tolerance);
+	BOOST_CHECK_CLOSE(lower[1],1.0,tolerance);
 	BOOST_CHECK_CLOSE(lower[2],3.0,tolerance);
 	BOOST_CHECK_CLOSE(upper[0],5.0,tolerance);
-	BOOST_CHECK_CLOSE(upper[1],4.0,tolerance);
+	BOOST_CHECK_CLOSE(upper[1],5.0,tolerance);
 	BOOST_CHECK_CLOSE(upper[2],5.0,tolerance);
 
 	// Test: the isotropic scaling of an OBB
@@ -80,47 +80,40 @@ BOOST_AUTO_TEST_CASE(Test_OBB)
 	BOOST_CHECK_CLOSE(upper[1], 7.5,tolerance);
 	BOOST_CHECK_CLOSE(upper[2],15.0,tolerance);
 
-//	// Test: a given point falls inside the OBB
-//
-//	obb3.translate(Vector3d(1,-2,-4));
-//	lower = obb3.getLower();
-//	upper = obb3.getUpper();
-//
-//	BOOST_CHECK_CLOSE(lower[0],-1.5,tolerance);
-//	BOOST_CHECK_CLOSE(lower[1],-1.5,tolerance);
-//	BOOST_CHECK_CLOSE(lower[2],-9.0,tolerance);
-//	BOOST_CHECK_CLOSE(upper[0], 5.5,tolerance);
-//	BOOST_CHECK_CLOSE(upper[1], 5.5,tolerance);
-//	BOOST_CHECK_CLOSE(upper[2],11.0,tolerance);
-//
-//	Vector2d center1(0,0);
-//	Vector2d semi_axes1(1,2);
-//	Matrix2d eigen_values1;
-//	eigen_values1 << 1,-1,
-//			         1, 1;
-//	OBB<double,2> obb4(center1,semi_axes1,eigen_values1);
+	// Test: a given point falls inside the OBB
+
+	obb3.translate(Vector3d(1,-2,-4));
+	lower = obb3.getLower();
+	upper = obb3.getUpper();
+
+	BOOST_CHECK_CLOSE(lower[0],-1.5,tolerance);
+	BOOST_CHECK_CLOSE(lower[1],-1.5,tolerance);
+	BOOST_CHECK_CLOSE(lower[2],-9.0,tolerance);
+	BOOST_CHECK_CLOSE(upper[0], 5.5,tolerance);
+	BOOST_CHECK_CLOSE(upper[1], 5.5,tolerance);
+	BOOST_CHECK_CLOSE(upper[2],11.0,tolerance);
 
 
-//	int nSteps(4);
-//	Vector3d delta=(upper-lower)/nSteps;
-//
-//	Vector4d point(0,0,0,0);
-//	double sum(0.0);
-//	for(int i=0;i<=nSteps;++i)
-//	{
-//		for(int j=0;j<=nSteps;++j)
-//		{
-//			for(int k=0;k<=nSteps;++k)
-//			{
-//				point << lower[0]+i*delta[0],lower[1]+j*delta[1],lower[2]+k*delta[2],1;
-//
-//				std::cout<<"Hit: "<<point[0]<<" "<<point[1]<<" "<<point[2]<<" --> "<<obb3.isInside(point)<<std::endl;
-//				if (obb3.isInside(point))
-//					sum+=1.0;
-//			}
-//		}
-//	}
-//	std::cout << "SUM: " << sum << std::endl;
+	int nSteps(1000);
+	Vector3d delta=(upper-lower)/nSteps;
+	Vector4d point(0,0,0,1);
+	double sum(0.0);
+	for(int i=0;i<=nSteps;++i)
+	{
+		point.x() = lower[0]+i*delta[0];
+		for(int j=0;j<=nSteps;++j)
+		{
+			point.y() = lower[1]+j*delta[1];
+			for(int k=0;k<=nSteps;++k)
+			{
+				point.z() = lower[2]+k*delta[2];
+				if (obb3.isInside(point))
+//					std::cout<<"HIT: "<<point.transpose()<<" --> "<<obb3.isInside(point)<<std::endl;
+					sum+=1.0;
+			}
+		}
+	}
+	std::cout << "SUM: " << sum << std::endl;
 
 
 }
