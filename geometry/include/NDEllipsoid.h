@@ -74,77 +74,10 @@ public:
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
-template<typename T,uint D=2> bool collideEllipsoidEllipsoid(const NDEllipsoid<T,2>& eA, const NDEllipsoid<T,2>& eB)
-{
-	// Get the (TRS)^-1 matrices from object A and B
-	const Eigen::Matrix<T,3,3>& trsA=eA.getTRSInverseMatrix();
-	const Eigen::Matrix<T,2,1>& eigA=eA.getSemiAxes();
-	const Eigen::Matrix<T,3,3>& trsB=eB.getTRSInverseMatrix();
-	const Eigen::Matrix<T,2,1>& eigB=eB.getSemiAxes();
-
-	// Reconstruct the S matrices
-	Eigen::DiagonalMatrix<T,3> SA;
-	SA.diagonal() << eigA(0), eigA(1),1.0;
-	Eigen::DiagonalMatrix<T,3> SB;
-	SB.diagonal() << eigB(0), eigB(1),1.0;
-	// Recover the (TR)^-1=Minv matrices
-	Eigen::Matrix<T,3,3> A=SA*trsA;
-	//MA.block<0,0>(N,N).tranposeInPlace();
-	Eigen::Matrix<T,3,3> B=SB*trsB;
-	// A and B are  now the characteristic matrix of the ellipsoids in their frame of references.
-	SA.diagonal() << 1.0/std::pow(eigA(0),2), 1.0/std::pow(eigA(1),2),-1.0;
-	SB.diagonal() << 1.0/std::pow(eigB(0),2), 1.0/std::pow(eigB(1),2),-1.0;
-
-	A=A.transpose()*SA*A;
-	B=B.transpose()*SB*B;
-
-	// Now calculates the coefficients of the characteristic polynomial f(lambda)=det|lambda*A-B|
-	// The third degree term is det(A) and the constant term is det(B). The polynomial is normalized
-	// by det(A) to become of the form : lambda^3+term2*lambda^2+term1*lambda+term0
-	T term3=A.determinant();
-
-	T term2=-A(0,0)*A(1,1)*B(2,2)+A(0,1)*A(1,0)*B(2,2)-A(0,0)*B(1,1)*A(2,2)-B(0,0)*A(1,1)*A(2,2)+
-			 A(0,1)*B(1,0)*A(2,2)+B(0,1)*A(1,0)*A(2,2)+A(0,0)*A(1,2)*B(2,1)-A(0,2)*A(1,0)*B(2,1)+
-			 A(0,0)*B(1,2)*A(2,1)+B(0,0)*A(1,2)*A(2,1)-A(0,2)*B(1,0)*A(2,1)-B(0,2)*A(1,0)*A(2,1)-
-			 A(0,1)*A(1,2)*B(2,0)+A(0,2)*A(1,1)*B(2,0)-A(0,1)*B(1,2)*A(2,0)-B(0,1)*A(1,2)*A(2,0)+
-			 A(0,2)*B(1,1)*A(2,0)+B(0,2)*A(1,1)*A(2,0);
-	term2/=term3;
-	T term1= A(0,0)*B(1,1)*B(2,2)+B(0,0)*A(1,1)*B(2,2)-A(0,1)*B(1,0)*B(2,2)-B(0,1)*A(1,0)*B(2,2)+
-			 B(0,0)*B(1,1)*A(2,2)-B(0,1)*B(1,0)*A(2,2)-A(0,0)*B(1,2)*B(2,1)-B(0,0)*A(1,2)*B(2,1)+
-			 A(0,2)*B(1,0)*B(2,1)+B(0,2)*A(1,0)*B(2,1)-B(0,0)*B(1,2)*A(2,1)+B(0,2)*B(1,0)*A(2,1)+
-			 A(0,1)*B(1,2)*B(2,0)+B(0,1)*A(1,2)*B(2,0)-A(0,2)*B(1,1)*B(2,0)-B(0,2)*A(1,1)*B(2,0)+
-			 B(0,1)*B(1,2)*A(2,0)-B(0,2)*B(1,1)*A(2,0);
-	term1/=term3;
-	T term0=-B.determinant()/term3;
-	// Construct the companion matrix: |0 0 -term0|
-	//                                 |1 0 -term1|
-	//								   |0 1 -term2|
-	// from which the roots of the polynomial are derived.
-	Eigen::Matrix<T,3,3> companion;
-	companion << 0,0,-term0,
-				 1,0,-term1,
-				 0,1,-term2;
-	// Solve the eigenvalues problem
-	Eigen::ComplexEigenSolver<Eigen::Matrix<T,3,3>> solver;
-	solver.compute(companion);
-
-	const std::complex<T>& val0=solver.eigenvalues()(0);
-	const std::complex<T>& val1=solver.eigenvalues()(1);
-	const std::complex<T>& val2=solver.eigenvalues()(2);
-
-	// One of the root is always positive.
-    // Check whether two of the roots are negative and distinct, in which case the Ellipse do not collide.
-	int count=0;
-	T sol[2];
-	if (std::fabs(imag(val0))< 1e-5 && real(val0)<0)
-		sol[count++]=real(val0);
-	if (std::fabs(imag(val1))< 1e-5 && real(val1)<0)
-		sol[count++]=real(val1);
-	if (std::fabs(imag(val2))< 1e-5 && real(val2)<0)
-		sol[count++]=real(val2);
-	return (!(count==2 && std::fabs(sol[0]-sol[1])>1e-5));
-
-}
+// Collision detection in the 2D case.
+template<typename T,uint D=2> bool collideEllipsoidEllipsoid(const NDEllipsoid<T,2>&, const NDEllipsoid<T,2>&);
+// Collision detection in the 3D case.
+template<typename T,uint D=3> bool collideEllipsoidEllipsoid(const NDEllipsoid<T,3>&, const NDEllipsoid<T,3>&);
 
 
 template<typename T,uint D>
@@ -269,6 +202,102 @@ void NDEllipsoid<T,D>::updateAABB()
 	// Update the upper and lower bound of the AABB
 	_lowerBound=Tmat-width;
 	_upperBound=Tmat+width;
+
+}
+
+/** Based on the method describe in:
+ "Continuous collision detection for elliptic disks"
+  by Yi-king Choi , Wenping Wang , Yang Liu , Myung-soo Kim
+  IEEE Transactions on Robotics, (2006).
+  However, resolving the roots of the characteristic polynomial is
+  done here using the diagonalization of the companion matrix, rather
+  than using the Sturm's sequence
+  */
+
+template<typename T,uint D=2> bool collideEllipsoidEllipsoid(const NDEllipsoid<T,2>& eA, const NDEllipsoid<T,2>& eB)
+{
+	// Get the (TRS)^-1 matrices from object A and B
+	const Eigen::Matrix<T,3,3>& trsA=eA.getTRSInverseMatrix();
+	const Eigen::Matrix<T,2,1>& eigA=eA.getSemiAxes();
+	const Eigen::Matrix<T,3,3>& trsB=eB.getTRSInverseMatrix();
+	const Eigen::Matrix<T,2,1>& eigB=eB.getSemiAxes();
+
+	// Reconstruct the S matrices
+	Eigen::DiagonalMatrix<T,3> SA;
+	SA.diagonal() << eigA(0), eigA(1),1.0;
+	Eigen::DiagonalMatrix<T,3> SB;
+	SB.diagonal() << eigB(0), eigB(1),1.0;
+	// Recover the (TR)^-1=Minv matrices
+	Eigen::Matrix<T,3,3> A=SA*trsA;
+	//MA.block<0,0>(N,N).tranposeInPlace();
+	Eigen::Matrix<T,3,3> B=SB*trsB;
+	// A and B are  now the characteristic matrix of the ellipsoids in their frame of references.
+	SA.diagonal() << 1.0/std::pow(eigA(0),2), 1.0/std::pow(eigA(1),2),-1.0;
+	SB.diagonal() << 1.0/std::pow(eigB(0),2), 1.0/std::pow(eigB(1),2),-1.0;
+
+	A=A.transpose()*SA*A;
+	B=B.transpose()*SB*B;
+
+	// Now calculates the coefficients of the characteristic polynomial f(lambda)=det|lambda*A-B|
+	// The third degree term is det(A) and the constant term is det(B). The polynomial is normalized
+	// by det(A) to become of the form : lambda^3+term2*lambda^2+term1*lambda+term0
+	T term3=A.determinant(); //det(A) must be negative by definition of the ellipsoid equation
+
+	T term2=-A(0,0)*A(1,1)*B(2,2)+A(0,1)*A(1,0)*B(2,2)-A(0,0)*B(1,1)*A(2,2)-B(0,0)*A(1,1)*A(2,2)+
+			 A(0,1)*B(1,0)*A(2,2)+B(0,1)*A(1,0)*A(2,2)+A(0,0)*A(1,2)*B(2,1)-A(0,2)*A(1,0)*B(2,1)+
+			 A(0,0)*B(1,2)*A(2,1)+B(0,0)*A(1,2)*A(2,1)-A(0,2)*B(1,0)*A(2,1)-B(0,2)*A(1,0)*A(2,1)-
+			 A(0,1)*A(1,2)*B(2,0)+A(0,2)*A(1,1)*B(2,0)-A(0,1)*B(1,2)*A(2,0)-B(0,1)*A(1,2)*A(2,0)+
+			 A(0,2)*B(1,1)*A(2,0)+B(0,2)*A(1,1)*A(2,0);
+	term2/=term3;
+	T term1= A(0,0)*B(1,1)*B(2,2)+B(0,0)*A(1,1)*B(2,2)-A(0,1)*B(1,0)*B(2,2)-B(0,1)*A(1,0)*B(2,2)+
+			 B(0,0)*B(1,1)*A(2,2)-B(0,1)*B(1,0)*A(2,2)-A(0,0)*B(1,2)*B(2,1)-B(0,0)*A(1,2)*B(2,1)+
+			 A(0,2)*B(1,0)*B(2,1)+B(0,2)*A(1,0)*B(2,1)-B(0,0)*B(1,2)*A(2,1)+B(0,2)*B(1,0)*A(2,1)+
+			 A(0,1)*B(1,2)*B(2,0)+B(0,1)*A(1,2)*B(2,0)-A(0,2)*B(1,1)*B(2,0)-B(0,2)*A(1,1)*B(2,0)+
+			 B(0,1)*B(1,2)*A(2,0)-B(0,2)*B(1,1)*A(2,0);
+	term1/=term3;
+	T term0=-B.determinant()/term3;
+	// Construct the companion matrix: |0 0 -term0|
+	//                                 |1 0 -term1|
+	//								   |0 1 -term2|
+	// from which the roots of the polynomial are derived.
+	Eigen::Matrix<T,3,3> companion;
+	companion << 0,0,-term0,
+				 1,0,-term1,
+				 0,1,-term2;
+	// Solve the eigenvalues problem
+	Eigen::ComplexEigenSolver<Eigen::Matrix<T,3,3>> solver;
+	solver.compute(companion);
+
+	const std::complex<T>& val0=solver.eigenvalues()(0);
+	const std::complex<T>& val1=solver.eigenvalues()(1);
+	const std::complex<T>& val2=solver.eigenvalues()(2);
+
+	// One of the root is always positive.
+    // Check whether two of the roots are negative and distinct, in which case the Ellipse do not collide.
+	int count=0;
+	T sol[2];
+	if (std::fabs(imag(val0))< 1e-5 && real(val0)<0)
+		sol[count++]=real(val0);
+	if (std::fabs(imag(val1))< 1e-5 && real(val1)<0)
+		sol[count++]=real(val1);
+	if (std::fabs(imag(val2))< 1e-5 && real(val2)<0)
+		sol[count++]=real(val2);
+	return (!(count==2 && std::fabs(sol[0]-sol[1])>1e-5));
+
+}
+
+/** Based on the method described in:
+ *  "Continuous Collision Detection for Ellipsoids"
+ *	Choi, Yi-King; Jung-Woo Chang; Wenping Wang; Myung-Soo Kim; Elber, G.,
+ *	Visualization and Computer Graphics, IEEE Transactions on , vol.15, no.2, pp.311,325, March-April 2009
+ *  However, resolving the roots of the characteristic polynomial is
+ *  done here using the diagonalization of the companion matrix, rather
+ *  than using the Sturm's sequence
+ */
+
+template<typename T,uint D=3> bool collideEllipsoidEllipsoid(const NDEllipsoid<T,3>& eA, const NDEllipsoid<T,3>& eB)
+{
+
 
 }
 
