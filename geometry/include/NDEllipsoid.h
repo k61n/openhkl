@@ -69,6 +69,9 @@ private:
 	Eigen::Matrix<T,D+1,D+1> _TRSinv;
 	// EigenValues
 	vector _eigenVal;
+public:
+	// Macro to ensure that NDEllipsoid can be dynamically allocated.
+	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
 template<typename T,uint D=2> bool collideEllipsoidEllipsoid(const NDEllipsoid<T,2>& eA, const NDEllipsoid<T,2>& eB)
@@ -99,6 +102,7 @@ template<typename T,uint D=2> bool collideEllipsoidEllipsoid(const NDEllipsoid<T
 	// The third degree term is det(A) and the constant term is det(B). The polynomial is normalized
 	// by det(A) to become of the form : lambda^3+term2*lambda^2+term1*lambda+term0
 	T term3=A.determinant();
+
 	T term2=-A(0,0)*A(1,1)*B(2,2)+A(0,1)*A(1,0)*B(2,2)-A(0,0)*B(1,1)*A(2,2)-B(0,0)*A(1,1)*A(2,2)+
 			 A(0,1)*B(1,0)*A(2,2)+B(0,1)*A(1,0)*A(2,2)+A(0,0)*A(1,2)*B(2,1)-A(0,2)*A(1,0)*B(2,1)+
 			 A(0,0)*B(1,2)*A(2,1)+B(0,0)*A(1,2)*A(2,1)-A(0,2)*B(1,0)*A(2,1)-B(0,2)*A(1,0)*A(2,1)-
@@ -138,7 +142,6 @@ template<typename T,uint D=2> bool collideEllipsoidEllipsoid(const NDEllipsoid<T
 		sol[count++]=real(val1);
 	if (std::fabs(imag(val2))< 1e-5 && real(val2)<0)
 		sol[count++]=real(val2);
-
 	return (!(count==2 && std::fabs(sol[0]-sol[1])>1e-5));
 
 }
@@ -157,11 +160,10 @@ NDEllipsoid<T,D>::NDEllipsoid(const vector& center, const vector& eigenvalues, c
 	Sinv.diagonal()[D]=1.0;
 
 	// Now prepare the R^-1.T^-1 (rotation,translation)
+	_TRSinv=Eigen::Matrix<T,D+1,D+1>::Constant(0.0);
+	_TRSinv(D,D)=1.0;
 	for (unsigned int i=0;i<D;++i)
-	{
-		_TRSinv(D,i)=0.0;
 		_TRSinv.block(i,0,1,D)=eigenvectors.col(i).transpose().normalized();
-	}
 	_TRSinv.block(0,D,D,1)=-_TRSinv.block(0,0,D,D)*center;
 
 	// Finally compute (TRS)^-1 by left-multiplying (TR)^-1 by S^-1
@@ -198,6 +200,9 @@ void NDEllipsoid<T,D>::translate(const vector& t)
 {
 	Eigen::Matrix<T,D+1,D+1> tinv=Eigen::Matrix<T,D+1,D+1>::Constant(0.0);
 	tinv.block(0,D,D,1)=-t;
+	for (uint i=0;i<D+1;++i)
+		tinv(i,i)=1.0;
+	tinv(D,D)=1.0;
 	_TRSinv=_TRSinv*tinv;
 	translateAABB(t);
 }
@@ -240,27 +245,30 @@ bool NDEllipsoid<T,D>::collide(const NDEllipsoid<T,D>& other) const
 template<typename T,uint D>
 void NDEllipsoid<T,D>::updateAABB()
 {
-	// Reconstruct the R^{-1}.T^{-1} matrix to obtain the eigenvectors and center
-	Eigen::DiagonalMatrix<T,D+1> S; // Reconstruct S
+	// Reconstruct S
+	Eigen::DiagonalMatrix<T,D+1> S;
 	for (unsigned int i=0;i<D;++i)
 		S.diagonal()[i]=_eigenVal[i];
 	S.diagonal()[D]=1.0;
 
-	Eigen::Matrix<T,D+1,D+1> TRinv=S*_TRSinv; // Get R^{-1}.T^{-1}
+	// Reconstruct R from TRinv
+	HomMatrix TRinv=S*_TRSinv;
+	matrix R(TRinv.block(0,0,D,D).transpose());
+
+	// Extract T matrix from TRinv
+	vector Tmat=-R*TRinv.block(0,D,D,1);
 
 	// Calculate the width of the bounding box
 	vector width=vector::Constant(0.0);
-	for (int i=0;i<D;++i)
+	for (uint i=0;i<D;++i)
 	{
-		for (int j=0;j<D;++j)
-		{
-			width[i]+=std::pow(_eigenVal[j]*TRinv(j,i),2);
-		}
-		width[i]=sqrt(width[i]);
+		for (uint j=0;j<D;++j)
+			width[i]+=std::abs(_eigenVal[j]*R(j,i));
 	}
+
 	// Update the upper and lower bound of the AABB
-	_lowerBound=-TRinv.block(0,D,D,1)-width;
-	_upperBound=-TRinv.block(0,D,D,1)+width;
+	_lowerBound=Tmat-width;
+	_upperBound=Tmat+width;
 
 }
 
