@@ -309,7 +309,7 @@ template<typename T,uint D=3> bool collideEllipsoidEllipsoid(const NDEllipsoid<T
 	SB.diagonal() << eigB(0), eigB(1), eigB(2), 1.0;
 	// Recover the MA matrix
 	Eigen::Matrix<T,4,4> MA=SA*trsA;
-	MA.block(0,0,D,D)=MA.block(0,0,D,D).transpose();
+	MA.block(0,0,D,D).transposeInPlace();
 	MA.block(0,D,D,1)=-MA.block(0,0,D,D)*MA.block(0,D,D,1);
 	// Recover the MB^-1 matrix
 	Eigen::Matrix<T,4,4> B=SB*trsB;
@@ -331,11 +331,9 @@ template<typename T,uint D=3> bool collideEllipsoidEllipsoid(const NDEllipsoid<T
 	T b2233=B(1,1)*B(2,2);
 	T termA=B(0,0)*bc+B(1,1)*ac+B(2,2)*ab;
 	T termB=(b2233-b23s)*ea+(B(0,0)*B(2,2)-b13s)*eb+(B(0,0)*B(1,1)-b12s)*ec;
-	T T4=1;
+	T T4=-abc;
 	T T3=termA-B(3,3)*abc;
-	T3/=T4;
 	T T2 = termA*B(3,3)-termB-b34s*ab-b14s*bc-b24s*ac;
-	T2/=T4;
 	T tmp1=termB*B(3,3);
 	T tmp2=B(0,0)*(b2233+eb*b34s+ec*b24s-b23s);
 	T tmp3=B(1,1)*(ea*b34s+ec*b14s-b13s);
@@ -344,10 +342,10 @@ template<typename T,uint D=3> bool collideEllipsoidEllipsoid(const NDEllipsoid<T
 	+ B(0,1)*(ec*B(0,3)*B(1,3)-B(0,2)*B(1,2));
 	tmp5+= tmp5;
 	T T1=-tmp1+tmp2+tmp3+tmp4-tmp5;
-	T1/=T4;
-	T T0 = -B.determinant();
-	T0/=T4;
-
+	T T0 = (-B).determinant();
+	// Normalize the polynomial coeffs.
+	T3/=T4;T2/=T4;T1/=T4;T0/=T4;T4=1.0;
+	// Solve roots of the polynomial equation
 	Eigen::Matrix<T,4,4> companion;
 	companion << 0,0,0,-T0,
 				 1,0,0,-T1,
