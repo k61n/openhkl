@@ -74,6 +74,7 @@ public:
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
+// Specialization of collision detection is necessary here to avoid heavy maths.
 // Collision detection in the 2D case.
 template<typename T,uint D=2> bool collideEllipsoidEllipsoid(const NDEllipsoid<T,2>&, const NDEllipsoid<T,2>&);
 // Collision detection in the 3D case.
@@ -262,8 +263,8 @@ template<typename T,uint D=2> bool collideEllipsoidEllipsoid(const NDEllipsoid<T
 	// from which the roots of the polynomial are derived.
 	Eigen::Matrix<T,3,3> companion;
 	companion << 0,0,-term0,
-				 1,0,-term1,
-				 0,1,-term2;
+			     1,0,-term1,
+			     0,1,-term2;
 	// Solve the eigenvalues problem
 	Eigen::ComplexEigenSolver<Eigen::Matrix<T,3,3>> solver;
 	solver.compute(companion);
@@ -297,8 +298,10 @@ template<typename T,uint D=2> bool collideEllipsoidEllipsoid(const NDEllipsoid<T
 
 template<typename T,uint D=3> bool collideEllipsoidEllipsoid(const NDEllipsoid<T,3>& eA, const NDEllipsoid<T,3>& eB)
 {
-
-
+	//
+	const Eigen::Matrix<T,3,1>& eigA=eA.getSemiAxes();
+	Eigen::DiagonalMatrix<T,4> A;
+	A.diagonal() << 1.0/std::pow(eigA(0),2), 1.0/std::pow(eigA(1),2), 1.0/std::pow(eigA(2),2), -1.0;
 }
 
 
