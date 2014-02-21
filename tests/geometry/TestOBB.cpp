@@ -115,5 +115,7 @@ BOOST_AUTO_TEST_CASE(Test_OBB)
 	}
 	std::cout << "SUM: " << sum << std::endl;
 
+	std::cout<<obb3.collide(obb2)<<std::endl;
+
 
 }
