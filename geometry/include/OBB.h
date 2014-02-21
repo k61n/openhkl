@@ -92,7 +92,7 @@ private:
 	void updateAABB();
 
 public:
-	// Macro to ensure that NDEllipsoid can be dynamically allocated.
+	// Macro to ensure that an OBB object can be dynamically allocated.
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
 
@@ -358,5 +358,5 @@ template<typename T,uint D=3> bool collideOBBOBB(const OBB<T,3>& a, const OBB<T,
 
 } // namespace SX
 
-#endif // NSXTOOL_NDBOX_H_
+#endif // NSXTOOL_OBB_H_
 
