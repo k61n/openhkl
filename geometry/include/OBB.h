@@ -255,7 +255,7 @@ template<typename T,uint D=3> bool collideOBBOBB(const OBB<T,3>& a, const OBB<T,
 	Eigen::Matrix<T,3,1> ta=-ra*trinva.block(0,D,D,1);
 	Eigen::Matrix<T,3,1> tb=-rb*trinvb.block(0,D,D,1);
 
-	Eigen::Matrix<T,3,3> C=ra*rb;
+	Eigen::Matrix<T,3,3> C=ra.transpose()*rb;
 	Eigen::Matrix<T,3,3> Cabs=C.array().abs();
 
 	// The difference vector between the centers of OBB2 and OBB1
@@ -270,8 +270,8 @@ template<typename T,uint D=3> bool collideOBBOBB(const OBB<T,3>& a, const OBB<T,
 		R0=eiga[i];
 		R1=(Cabs.block(i,0,1,D)*eigb)(0,0);
 		R=std::abs((diff.transpose()*ra.block(0,i,D,1))(0,0));
-		if (R<=R0+R1)
-			return true;
+		if (R>(R0+R1))
+			return false;
 	}
 
 	// condition 4,5,6
@@ -280,78 +280,78 @@ template<typename T,uint D=3> bool collideOBBOBB(const OBB<T,3>& a, const OBB<T,
 		R0=(Cabs.block(i,0,1,D)*eiga)(0,0);
 		R1=eigb[i];
 		R=std::abs((diff.transpose()*rb.block(0,i,D,1))(0,0));
-		if (R<=R0+R1)
-			return true;
+		if (R>(R0+R1))
+			return false;
 	}
 
 	T A0D((diff.transpose()*ra.block(0,0,D,1))(0,0));
-	T A1D((diff.transpose()*ra.block(0,0,D,1))(0,0));
-	T A2D((diff.transpose()*ra.block(0,0,D,1))(0,0));
+	T A1D((diff.transpose()*ra.block(0,1,D,1))(0,0));
+	T A2D((diff.transpose()*ra.block(0,2,D,1))(0,0));
 
 	// condition 7
 	R0=eiga[1]*Cabs(2,0)+eiga[2]*Cabs(1,0);
 	R1=eigb[1]*Cabs(0,2)+eigb[2]*Cabs(0,1);
 	R=std::abs(C(1,0)*A2D-C(2,0)*A1D);
-	if (R<=R0+R1)
-		return true;
+	if (R>(R0+R1))
+		return false;
 
 	// condition 8
 	R0=eiga[1]*Cabs(2,1)+eiga[2]*Cabs(1,1);
 	R1=eigb[0]*Cabs(0,2)+eigb[2]*Cabs(0,0);
 	R=std::abs(C(1,1)*A2D-C(2,1)*A1D);
-	if (R<=R0+R1)
-		return true;
+	if (R>(R0+R1))
+		return false;
 
 	// condition 9
 	R0=eiga[1]*Cabs(2,2)+eiga[2]*Cabs(1,2);
 	R1=eigb[0]*Cabs(0,1)+eigb[1]*Cabs(0,0);
 	R=std::abs(C(1,2)*A2D-C(2,2)*A1D);
-	if (R<=R0+R1)
-		return true;
+	if (R>(R0+R1))
+		return false;
 
 	// condition 10
 	R0=eiga[0]*Cabs(2,0)+eiga[2]*Cabs(0,0);
 	R1=eigb[1]*Cabs(1,2)+eigb[2]*Cabs(1,1);
 	R=std::abs(C(2,0)*A0D-C(0,0)*A2D);
-	if (R<=R0+R1)
-		return true;
+	if (R>(R0+R1))
+		return false;
 
 	// condition 11
 	R0=eiga[0]*Cabs(2,1)+eiga[2]*Cabs(0,1);
 	R1=eigb[0]*Cabs(1,2)+eigb[2]*Cabs(1,0);
 	R=std::abs(C(2,1)*A0D-C(0,1)*A2D);
-	if (R<=R0+R1)
-		return true;
+	if (R>(R0+R1))
+		return false;
 
 	// condition 12
 	R0=eiga[0]*Cabs(2,2)+eiga[2]*Cabs(0,2);
 	R1=eigb[0]*Cabs(1,1)+eigb[1]*Cabs(1,0);
 	R=std::abs(C(2,2)*A0D-C(0,2)*A2D);
-	if (R<=R0+R1)
-		return true;
+	if (R>(R0+R1))
+		return false;
 
 	// condition 13
 	R0=eiga[0]*Cabs(1,0)+eiga[1]*Cabs(0,0);
 	R1=eigb[1]*Cabs(2,2)+eigb[2]*Cabs(2,1);
 	R=std::abs(C(0,0)*A1D-C(1,0)*A0D);
-	if (R<=R0+R1)
-		return true;
+	if (R>(R0+R1))
+		return false;
 
 	// condition 14
 	R0=eiga[0]*Cabs(1,1)+eiga[1]*Cabs(0,1);
 	R1=eigb[0]*Cabs(2,2)+eigb[2]*Cabs(2,0);
 	R=std::abs(C(0,1)*A1D-C(1,1)*A0D);
-	if (R<=R0+R1)
-		return true;
+	if (R>(R0+R1))
+		return false;
 
 	// condition 15
 	R0=eiga[0]*Cabs(1,2)+eiga[1]*Cabs(0,2);
 	R1=eigb[0]*Cabs(2,1)+eigb[1]*Cabs(2,0);
 	R=std::abs(C(0,2)*A1D-C(1,2)*A0D);
-	if (R<=R0+R1)
-		return true;
+	if (R>(R0+R1))
+		return false;
 
-	return false;
+	return true;
 }
 
 } // namespace Geometry
