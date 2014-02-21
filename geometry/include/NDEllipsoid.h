@@ -299,9 +299,83 @@ template<typename T,uint D=2> bool collideEllipsoidEllipsoid(const NDEllipsoid<T
 template<typename T,uint D=3> bool collideEllipsoidEllipsoid(const NDEllipsoid<T,3>& eA, const NDEllipsoid<T,3>& eB)
 {
 	//
+	const Eigen::Matrix<T,4,4>& trsA=eA.getTRSInverseMatrix();
 	const Eigen::Matrix<T,3,1>& eigA=eA.getSemiAxes();
-	Eigen::DiagonalMatrix<T,4> A;
-	A.diagonal() << 1.0/std::pow(eigA(0),2), 1.0/std::pow(eigA(1),2), 1.0/std::pow(eigA(2),2), -1.0;
+	const Eigen::Matrix<T,4,4>& trsB=eB.getTRSInverseMatrix();
+	const Eigen::Matrix<T,3,1>& eigB=eB.getSemiAxes();
+	Eigen::DiagonalMatrix<T,4> SA;
+	SA.diagonal() << eigA(0), eigA(1), eigA(2), 1.0;
+	Eigen::DiagonalMatrix<T,4> SB;
+	SB.diagonal() << eigB(0), eigB(1), eigB(2), 1.0;
+	// Recover the MA matrix
+	Eigen::Matrix<T,4,4> MA=SA*trsA;
+	MA.block(0,0,D,D)=MA.block(0,0,D,D).transpose();
+	MA.block(0,D,D,1)=-MA.block(0,0,D,D)*MA.block(0,D,D,1);
+	// Recover the MB^-1 matrix
+	Eigen::Matrix<T,4,4> B=SB*trsB;
+	// Define the characteristic matrix of B in its frame of reference.
+	SA.diagonal() << 1.0/std::pow(eigA(0),2), 1.0/std::pow(eigA(1),2), 1.0/std::pow(eigA(2),2), -1.0;
+	SB.diagonal() << 1.0/std::pow(eigB(0),2), 1.0/std::pow(eigB(1),2), 1.0/std::pow(eigB(2),2), -1.0;
+	// Calculate the [bij] matrix (reference to publication).
+	B=MA.transpose()*B.transpose()*SB*B*MA;
+	//
+	T ea=SA.diagonal()[0],eb=SA.diagonal()[1],ec=SA.diagonal()[2];
+	T ab=ea*eb, ac=ea*ec, bc= eb*ec;
+	T abc=ea*eb*ec;
+	T b12s=B(0,1)*B(0,1);
+	T b13s=B(0,2)*B(0,2);
+	T b14s=B(0,3)*B(0,3);
+	T b23s=B(1,2)*B(1,2);
+	T b24s=B(1,3)*B(1,3);
+	T b34s=B(2,3)*B(2,3);
+	T b2233=B(1,1)*B(2,2);
+	T termA=B(0,0)*bc+B(1,1)*ac+B(2,2)*ab;
+	T termB=(b2233-b23s)*ea+(B(0,0)*B(2,2)-b13s)*eb+(B(0,0)*B(1,1)-b12s)*ec;
+	T T4=1;
+	T T3=termA-B(3,3)*abc;
+	T3/=T4;
+	T T2 = termA*B(3,3)-termB-b34s*ab-b14s*bc-b24s*ac;
+	T2/=T4;
+	T tmp1=termB*B(3,3);
+	T tmp2=B(0,0)*(b2233+eb*b34s+ec*b24s-b23s);
+	T tmp3=B(1,1)*(ea*b34s+ec*b14s-b13s);
+	T tmp4=B(2,2)*(ea*b24s+eb*b14s-b12s);
+	T tmp5=B(2,3)*(ea*B(1,2)*B(1,3)+eb*B(0,2)*B(0,3))
+	+ B(0,1)*(ec*B(0,3)*B(1,3)-B(0,2)*B(1,2));
+	tmp5+= tmp5;
+	T T1=-tmp1+tmp2+tmp3+tmp4-tmp5;
+	T1/=T4;
+	T T0 = -B.determinant();
+	T0/=T4;
+
+	Eigen::Matrix<T,4,4> companion;
+	companion << 0,0,0,-T0,
+				 1,0,0,-T1,
+				 0,1,0,-T2,
+				 0,0,1,-T3;
+	// Solve the eigenvalues problem
+	Eigen::ComplexEigenSolver<Eigen::Matrix<T,4,4>> solver;
+	solver.compute(companion);
+
+	const std::complex<T>& val0=solver.eigenvalues()(0);
+	const std::complex<T>& val1=solver.eigenvalues()(1);
+	const std::complex<T>& val2=solver.eigenvalues()(2);
+	const std::complex<T>& val3=solver.eigenvalues()(3);
+
+	// One of the root is always positive.
+	// Check whether two of the roots are negative and distinct, in which case the Ellipse do not collide.
+	int count=0;
+	T sol[2];
+	if (std::fabs(imag(val0))< 1e-5 && real(val0)<0)
+		sol[count++]=real(val0);
+	if (std::fabs(imag(val1))< 1e-5 && real(val1)<0)
+		sol[count++]=real(val1);
+	if (std::fabs(imag(val2))< 1e-5 && real(val2)<0)
+		sol[count++]=real(val2);
+	if (std::fabs(imag(val3))< 1e-5 && real(val3)<0)
+		sol[count++]=real(val3);
+	return (!(count==2 && std::fabs(sol[0]-sol[1])>1e-5));
+
 }
 
 
