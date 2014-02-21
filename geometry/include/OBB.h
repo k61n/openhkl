@@ -269,7 +269,7 @@ template<typename T,uint D=3> bool collideOBBOBB(const OBB<T,3>& a, const OBB<T,
 	{
 		R0=eiga[i];
 		R1=(Cabs.block(i,0,1,D)*eigb)(0,0);
-		R=std::abs((diff*ra.block(0,i,D,1))(0,0));
+		R=std::abs((diff.transpose()*ra.block(0,i,D,1))(0,0));
 		if (R<=R0+R1)
 			return true;
 	}
@@ -279,14 +279,14 @@ template<typename T,uint D=3> bool collideOBBOBB(const OBB<T,3>& a, const OBB<T,
 	{
 		R0=(Cabs.block(i,0,1,D)*eiga)(0,0);
 		R1=eigb[i];
-		R=std::abs((diff*rb.block(0,i,D,1))(0,0));
+		R=std::abs((diff.transpose()*rb.block(0,i,D,1))(0,0));
 		if (R<=R0+R1)
 			return true;
 	}
 
-	T A0D((diff*ra.block(0,0,D,1))(0,0));
-	T A1D((diff*ra.block(0,0,D,1))(0,0));
-	T A2D((diff*ra.block(0,0,D,1))(0,0));
+	T A0D((diff.transpose()*ra.block(0,0,D,1))(0,0));
+	T A1D((diff.transpose()*ra.block(0,0,D,1))(0,0));
+	T A2D((diff.transpose()*ra.block(0,0,D,1))(0,0));
 
 	// condition 7
 	R0=eiga[1]*Cabs(2,0)+eiga[2]*Cabs(1,0);
