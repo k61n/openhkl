@@ -18,6 +18,11 @@ add_executable(TestNDEllipsoid TestNDEllipsoid.cpp)
 TARGET_LINK_LIBRARIES(TestNDEllipsoid ${Boost_LIBRARIES} NSXTool)
 add_test(TestNDEllipsoid TestNDEllipsoid)
 
+# unit test for NDEllipsoid class (2D case)
+add_executable(TestEllipse TestEllipse.cpp)
+TARGET_LINK_LIBRARIES(TestEllipse ${Boost_LIBRARIES} NSXTool)
+add_test(TestEllipse TestEllipse)
+
 # unit test for RotAxis class
 add_executable(TestRotAxis TestRotAxis.cpp)
 TARGET_LINK_LIBRARIES(TestRotAxis ${Boost_LIBRARIES} NSXTool)
