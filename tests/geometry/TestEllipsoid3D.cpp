@@ -1,6 +1,6 @@
 #define BOOST_TEST_MODULE "Test Multi-dimensional Ellipsoid"
 #define BOOST_TEST_DYN_LINK
-#include "NDEllipsoid.h"
+#include "Ellipsoid.h"
 #include <cmath>
 #include <boost/test/unit_test.hpp>
 #include <Eigen/Dense>
@@ -22,7 +22,7 @@ BOOST_AUTO_TEST_CASE(Test_NDEllipsoid)
 	eigV << 1,0,0,
 			0,1,0,
 			0,0,1;
-	NDEllipsoid<double,3> e(center,semi_axes,eigV);
+	Ellipsoid<double,3> e(center,semi_axes,eigV);
 	e.translate(Vector3d(1,0,0));
 	std::cout << e.getLower() << std::endl;
 	std::cout << e.getUpper() << std::endl;

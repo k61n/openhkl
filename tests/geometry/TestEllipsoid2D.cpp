@@ -1,6 +1,6 @@
 #define BOOST_TEST_MODULE "Test 2-dimensional Ellipsoid"
 #define BOOST_TEST_DYN_LINK
-#include "NDEllipsoid.h"
+#include "Ellipsoid.h"
 #include <cmath>
 #include <boost/test/unit_test.hpp>
 #include <Eigen/Dense>
@@ -21,7 +21,7 @@ BOOST_AUTO_TEST_CASE(Test_NDEllipsoid)
 	Matrix2d eigV;
 	eigV << 1,0,
 			0,1;
-	NDEllipsoid<double,2> e1(center1,semi_axes,eigV);
-	NDEllipsoid<double,2> e2(center2,semi_axes,eigV);
+	Ellipsoid<double,2> e1(center1,semi_axes,eigV);
+	Ellipsoid<double,2> e2(center2,semi_axes,eigV);
 	std::cout << " I am here" << e1.collide(e2) << std::endl;
 }

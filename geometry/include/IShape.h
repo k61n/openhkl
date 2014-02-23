@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef NSXTOOL_IPSHAPE_H_
-#define NSXTOOL_IPSHAPE_H_
+#ifndef NSXTOOL_ISHAPE_H_
+#define NSXTOOL_ISHAPE_H_
 
 #include <initializer_list>
 
@@ -84,4 +84,4 @@ bool collisionBoxShapeCollection(const NDBox<T,D>& b1, const ShapeCollection<T,D
 
 } // namespace SX
 
-#endif // NSXTOOL_IPSHAPE_H_
+#endif // NSXTOOL_ISHAPE_H_

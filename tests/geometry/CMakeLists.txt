@@ -13,15 +13,15 @@ add_executable(TestBlob3D TestBlob3D.cpp)
 TARGET_LINK_LIBRARIES(TestBlob3D ${Boost_LIBRARIES} NSXTool)
 add_test(TestBlob3D TestBlob3D)
 
-# unit test for NDEllipsoid class
-add_executable(TestNDEllipsoid TestNDEllipsoid.cpp)
-TARGET_LINK_LIBRARIES(TestNDEllipsoid ${Boost_LIBRARIES} NSXTool)
-add_test(TestNDEllipsoid TestNDEllipsoid)
+# unit test for Ellipsoid class (3D case)
+add_executable(TestEllipsoid3D TestEllipsoid3D.cpp)
+TARGET_LINK_LIBRARIES(TestEllipsoid3D ${Boost_LIBRARIES} NSXTool)
+add_test(TestEllipsoid3D TestEllipsoid3D)
 
-# unit test for NDEllipsoid class (2D case)
-add_executable(TestEllipse TestEllipse.cpp)
-TARGET_LINK_LIBRARIES(TestEllipse ${Boost_LIBRARIES} NSXTool)
-add_test(TestEllipse TestEllipse)
+# unit test for Ellipsoid class (2D case)
+add_executable(TestEllipsoid2D TestEllipsoid2D.cpp)
+TARGET_LINK_LIBRARIES(TestEllipsoid2D ${Boost_LIBRARIES} NSXTool)
+add_test(TestEllipsoid2D TestEllipsoid2D)
 
 # unit test for RotAxis class
 add_executable(TestRotAxis TestRotAxis.cpp)

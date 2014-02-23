@@ -25,9 +25,10 @@
  *
  */
 
-#ifndef NSXTOOL_NDELLIPSOID_H_
-#define NSXTOOL_NDELLIPSOID_H_
-#include "IPShape.h"
+#ifndef NSXTOOL_ELLIPSOID_H_
+#define NSXTOOL_ELLIPSOID_H_
+#include "IShape.h"
+#include "OBB.h"
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
 #include <Eigen/Eigenvalues>
@@ -38,7 +39,7 @@ namespace Geometry
 {
 
 template<typename T,uint D>
-class NDEllipsoid : public IShape<T,D>
+class Ellipsoid : public IShape<T,D>
 {
 	typedef Eigen::Matrix<T,D,1> vector;
 	typedef Eigen::Matrix<T,D+1,1> HomVector;
@@ -48,7 +49,7 @@ class NDEllipsoid : public IShape<T,D>
 	using AABB<T,D>::_upperBound;
 public:
 	// Construct a N-dimensional ellipsoid from its center, semi-axes, and eigenvectors ()
-	NDEllipsoid(const vector& center, const vector& eigenvalues, const matrix& eigenvectors);
+	Ellipsoid(const vector& center, const vector& eigenvalues, const matrix& eigenvectors);
 	// Scale the ELlipsoid by the same value along each direction.
 	void scale(T value);
 	// Anisotropic scale.
@@ -58,7 +59,7 @@ public:
 	// Check whether a point given as Homogeneous coordinate in the (D+1) dimension is Inside the Ellipsoid.
 	bool isInside(const HomVector& vector) const;
 	// Intersection test. Return true if the objects touch or overlap.
-	bool collide(const NDEllipsoid& other) const;
+	bool collide(const Ellipsoid& other) const;
 	// Return the inverse of the Mapping matrix (\f$ S^{-1}.R^{-1}.T^{-1} \f$)
 	const HomMatrix& getTRSInverseMatrix() const;
 	// Return the semi-axes of the Ellipsoids
@@ -70,19 +71,19 @@ private:
 	// EigenValues
 	vector _eigenVal;
 public:
-	// Macro to ensure that NDEllipsoid can be dynamically allocated.
+	// Macro to ensure that Ellipsoid can be dynamically allocated.
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
 // Specialization of collision detection is necessary here to avoid heavy maths.
 // Collision detection in the 2D case.
-template<typename T,uint D=2> bool collideEllipsoidEllipsoid(const NDEllipsoid<T,2>&, const NDEllipsoid<T,2>&);
+template<typename T,uint D=2> bool collideEllipsoidEllipsoid(const Ellipsoid<T,2>&, const Ellipsoid<T,2>&);
 // Collision detection in the 3D case.
-template<typename T,uint D=3> bool collideEllipsoidEllipsoid(const NDEllipsoid<T,3>&, const NDEllipsoid<T,3>&);
+template<typename T,uint D=3> bool collideEllipsoidEllipsoid(const Ellipsoid<T,3>&, const Ellipsoid<T,3>&);
 
 
 template<typename T,uint D>
-NDEllipsoid<T,D>::NDEllipsoid(const vector& center, const vector& eigenvalues, const matrix& eigenvectors)
+Ellipsoid<T,D>::Ellipsoid(const vector& center, const vector& eigenvalues, const matrix& eigenvectors)
 :IShape<T,D>(),
  _eigenVal(eigenvalues)
 {
@@ -106,7 +107,7 @@ NDEllipsoid<T,D>::NDEllipsoid(const vector& center, const vector& eigenvalues, c
 }
 
 template<typename T,uint D>
-void NDEllipsoid<T,D>::scale(T value)
+void Ellipsoid<T,D>::scale(T value)
 {
 	_eigenVal*=value;
 	Eigen::DiagonalMatrix<T,D+1> Sinv;
@@ -118,7 +119,7 @@ void NDEllipsoid<T,D>::scale(T value)
 }
 
 template<typename T,uint D>
-void NDEllipsoid<T,D>::scale(const vector& v)
+void Ellipsoid<T,D>::scale(const vector& v)
 {
 	_eigenVal=_eigenVal.cwiseProduct(v);
 	Eigen::DiagonalMatrix<T,D+1> Sinv;
@@ -130,7 +131,7 @@ void NDEllipsoid<T,D>::scale(const vector& v)
 }
 
 template<typename T,uint D>
-void NDEllipsoid<T,D>::translate(const vector& t)
+void Ellipsoid<T,D>::translate(const vector& t)
 {
 	Eigen::Matrix<T,D+1,D+1> tinv=Eigen::Matrix<T,D+1,D+1>::Constant(0.0);
 	tinv.block(0,D,D,1)=-t;
@@ -142,7 +143,7 @@ void NDEllipsoid<T,D>::translate(const vector& t)
 }
 
 template<typename T,uint D>
-bool NDEllipsoid<T,D>::isInside(const HomVector& point) const
+bool Ellipsoid<T,D>::isInside(const HomVector& point) const
 {
 	HomVector p=_TRSinv*point;
 	// Is the transformed point in the bounding box of the sphere
@@ -159,25 +160,25 @@ bool NDEllipsoid<T,D>::isInside(const HomVector& point) const
 }
 
 template<typename T,uint D>
-const typename NDEllipsoid<T,D>::HomMatrix& NDEllipsoid<T,D>::getTRSInverseMatrix() const
+const typename Ellipsoid<T,D>::HomMatrix& Ellipsoid<T,D>::getTRSInverseMatrix() const
 {
 	return _TRSinv;
 }
 
 template<typename T,uint D>
-const typename NDEllipsoid<T,D>::vector& NDEllipsoid<T,D>::getSemiAxes() const
+const typename Ellipsoid<T,D>::vector& Ellipsoid<T,D>::getSemiAxes() const
 {
 	return _eigenVal;
 }
 
 template<typename T,uint D>
-bool NDEllipsoid<T,D>::collide(const NDEllipsoid<T,D>& other) const
+bool Ellipsoid<T,D>::collide(const Ellipsoid<T,D>& other) const
 {
 	return collideEllipsoidEllipsoid<T,D>(*this,other);
 }
 
 template<typename T,uint D>
-void NDEllipsoid<T,D>::updateAABB()
+void Ellipsoid<T,D>::updateAABB()
 {
 	// Reconstruct S
 	Eigen::DiagonalMatrix<T,D+1> S;
@@ -215,7 +216,7 @@ void NDEllipsoid<T,D>::updateAABB()
   than using the Sturm's sequence
   */
 
-template<typename T,uint D=2> bool collideEllipsoidEllipsoid(const NDEllipsoid<T,2>& eA, const NDEllipsoid<T,2>& eB)
+template<typename T,uint D=2> bool collideEllipsoidEllipsoid(const Ellipsoid<T,2>& eA, const Ellipsoid<T,2>& eB)
 {
 	// Get the (TRS)^-1 matrices from object A and B
 	const Eigen::Matrix<T,3,3>& trsA=eA.getTRSInverseMatrix();
@@ -296,7 +297,7 @@ template<typename T,uint D=2> bool collideEllipsoidEllipsoid(const NDEllipsoid<T
  *  than using the Sturm's sequence
  */
 
-template<typename T,uint D=3> bool collideEllipsoidEllipsoid(const NDEllipsoid<T,3>& eA, const NDEllipsoid<T,3>& eB)
+template<typename T,uint D=3> bool collideEllipsoidEllipsoid(const Ellipsoid<T,3>& eA, const Ellipsoid<T,3>& eB)
 {
 	//
 	const Eigen::Matrix<T,4,4>& trsA=eA.getTRSInverseMatrix();
@@ -380,4 +381,4 @@ template<typename T,uint D=3> bool collideEllipsoidEllipsoid(const NDEllipsoid<T
 } // Namespace Geometry
 } // Namespace SX
 
-#endif /* NSXTOOL_NDELLIPSOID_H_ */
+#endif /* NSXTOOL_ELLIPSOID_H_ */

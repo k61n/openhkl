@@ -37,7 +37,7 @@
 #include <Eigen/Geometry>
 #include <unsupported/Eigen/MatrixFunctions>
 
-#include "IPShape.h"
+#include "IShape.h"
 
 namespace SX
 {
