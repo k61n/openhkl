@@ -183,6 +183,7 @@ void Ellipsoid<T,D>::updateAABB()
 {
 	Eigen::Matrix<T,D+1,D+1> TRS=getTRSInverseMatrix().inverse();
 
+	// The width of the AABB in one direction is the norm of corresponding TRS matrix row
 	vector width=vector::Constant(0.0);
 	for (unsigned int i=0;i<D;++i)
 	{
@@ -192,12 +193,13 @@ void Ellipsoid<T,D>::updateAABB()
 		}
 		width[i]=sqrt(width[i]);
 	}
+	// Reconstruct TR, to get the center
 	Eigen::DiagonalMatrix<T,D+1> Sinv;
 	for (unsigned int i=0;i<D;++i)
 		Sinv.diagonal()[i]=1.0/_eigenVal[i];
 	Sinv.diagonal()[D]=1.0;
 	TRS=TRS*Sinv;
-	// Update the upper and lower bound of the AABB
+	// Update the upper and lower bound of the AABB from center +-width
 	_lowerBound=TRS.block(0,D,D,1)-width;
 	_upperBound=TRS.block(0,D,D,1)+width;
 
