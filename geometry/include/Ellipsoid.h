@@ -64,6 +64,7 @@ public:
 	const HomMatrix& getTRSInverseMatrix() const;
 	// Return the semi-axes of the Ellipsoids
 	const vector& getSemiAxes() const;
+	//
 private:
 	// Method to update the closest fit AABB to the Ellipsoid
 	void updateAABB();
@@ -180,30 +181,25 @@ bool Ellipsoid<T,D>::collide(const Ellipsoid<T,D>& other) const
 template<typename T,uint D>
 void Ellipsoid<T,D>::updateAABB()
 {
-	// Reconstruct S
-	Eigen::DiagonalMatrix<T,D+1> S;
-	for (unsigned int i=0;i<D;++i)
-		S.diagonal()[i]=_eigenVal[i];
-	S.diagonal()[D]=1.0;
+	Eigen::Matrix<T,D+1,D+1> TRS=getTRSInverseMatrix().inverse();
 
-	// Reconstruct R from TRinv
-	HomMatrix TRinv=S*_TRSinv;
-	matrix R(TRinv.block(0,0,D,D).transpose());
-
-	// Extract T matrix from TRinv
-	vector Tmat=-R*TRinv.block(0,D,D,1);
-
-	// Calculate the width of the bounding box
 	vector width=vector::Constant(0.0);
-	for (uint i=0;i<D;++i)
+	for (unsigned int i=0;i<D;++i)
 	{
-		for (uint j=0;j<D;++j)
-			width[i]+=std::abs(_eigenVal[j]*R(j,i));
+		for (unsigned int j=0;j<D;++j)
+		{
+			width[i]+=std::pow(TRS(i,j),2);
+		}
+		width[i]=sqrt(width[i]);
 	}
-
+	Eigen::DiagonalMatrix<T,D+1> Sinv;
+	for (unsigned int i=0;i<D;++i)
+		Sinv.diagonal()[i]=1.0/_eigenVal[i];
+	Sinv.diagonal()[D]=1.0;
+	TRS=TRS*Sinv;
 	// Update the upper and lower bound of the AABB
-	_lowerBound=Tmat-width;
-	_upperBound=Tmat+width;
+	_lowerBound=TRS.block(0,D,D,1)-width;
+	_upperBound=TRS.block(0,D,D,1)+width;
 
 }
 
