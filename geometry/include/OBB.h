@@ -259,7 +259,7 @@ template<typename T,uint D=3> bool collideOBBOBB(const OBB<T,3>& a, const OBB<T,
 	Eigen::Matrix<T,3,3> Cabs=C.array().abs();
 
 	// The difference vector between the centers of OBB2 and OBB1
-	Eigen::Matrix<T,3,1> diff=tb-ta;
+	Eigen::Matrix<T,1,3> diff=(tb-ta).transpose();
 
 	// If for one of the following 15 conditions, R<=(R0+R1) then the two OBBs collide.
 	T R0, R, R1;
@@ -269,7 +269,7 @@ template<typename T,uint D=3> bool collideOBBOBB(const OBB<T,3>& a, const OBB<T,
 	{
 		R0=eiga[i];
 		R1=(Cabs.block(i,0,1,D)*eigb)(0,0);
-		R=std::abs((diff.transpose()*ra.block(0,i,D,1))(0,0));
+		R=std::abs((diff*ra.block(0,i,D,1))(0,0));
 		if (R>(R0+R1))
 			return false;
 	}
@@ -279,14 +279,14 @@ template<typename T,uint D=3> bool collideOBBOBB(const OBB<T,3>& a, const OBB<T,
 	{
 		R0=(Cabs.block(i,0,1,D)*eiga)(0,0);
 		R1=eigb[i];
-		R=std::abs((diff.transpose()*rb.block(0,i,D,1))(0,0));
+		R=std::abs((diff*rb.block(0,i,D,1))(0,0));
 		if (R>(R0+R1))
 			return false;
 	}
 
-	T A0D((diff.transpose()*ra.block(0,0,D,1))(0,0));
-	T A1D((diff.transpose()*ra.block(0,1,D,1))(0,0));
-	T A2D((diff.transpose()*ra.block(0,2,D,1))(0,0));
+	T A0D((diff*ra.block(0,0,D,1))(0,0));
+	T A1D((diff*ra.block(0,1,D,1))(0,0));
+	T A2D((diff*ra.block(0,2,D,1))(0,0));
 
 	// condition 7
 	R0=eiga[1]*Cabs(2,0)+eiga[2]*Cabs(1,0);
