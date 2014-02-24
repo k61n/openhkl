@@ -226,6 +226,67 @@ void OBB<T,D>::updateAABB()
 
 }
 
+template<typename T,uint D=2> bool collideOBBOBB(const OBB<T,2>& a, const OBB<T,2>& b)
+{
+
+	// Get the (TRS)^-1 matrices of the two OBBs
+	const Eigen::Matrix<T,3,3>& trsinva=a.getTRSInverseMatrix();
+	const Eigen::Matrix<T,3,3>& trsinvb=b.getTRSInverseMatrix();
+
+	// Get the extent of the two OBBs
+	const Eigen::Matrix<T,2,1>& eiga=a.getSemiAxes();
+	const Eigen::Matrix<T,2,1>& eigb=b.getSemiAxes();
+
+	// Reconstruct the S matrices for the two OBBs
+	Eigen::DiagonalMatrix<T,3> sa;
+	Eigen::DiagonalMatrix<T,3> sb;
+	sa.diagonal() << eiga[0], eiga[1],1;
+	sb.diagonal() << eigb[0], eigb[1],1;
+
+	// Reconstruct the (TR)^-1 matrices for the two OBBs
+	const Eigen::Matrix<T,3,3> trinva(sa*trsinva);
+	const Eigen::Matrix<T,3,3> trinvb(sb*trsinvb);
+
+	// Reconstruct R for the two OBBs
+	Eigen::Matrix<T,2,2> ra(trinva.block(0,0,D,D).transpose());
+	Eigen::Matrix<T,2,2> rb(trinvb.block(0,0,D,D).transpose());
+
+	// Extract T matrix from TRinv
+	Eigen::Matrix<T,2,1> ta=-ra*trinva.block(0,D,D,1);
+	Eigen::Matrix<T,2,1> tb=-rb*trinvb.block(0,D,D,1);
+
+	Eigen::Matrix<T,2,2> C=ra.transpose()*rb;
+	Eigen::Matrix<T,2,2> Cabs=C.array().abs();
+
+	// The difference vector between the centers of OBB2 and OBB1
+	Eigen::Matrix<T,1,2> diff=(tb-ta).transpose();
+
+	// If for one of the following 15 conditions, R<=(R0+R1) then the two OBBs collide.
+	T R0, R, R1;
+
+	// condition 1,2,3
+	for (unsigned int i=0;i<D;++i)
+	{
+		R0=eiga[i];
+		R1=(Cabs.block(i,0,1,D)*eigb)(0,0);
+		R=std::abs((diff*ra.block(0,i,D,1))(0,0));
+		if (R>(R0+R1))
+			return false;
+	}
+
+	// condition 4,5,6
+	for (unsigned int i=0;i<D;++i)
+	{
+		R0=(Cabs.block(i,0,1,D)*eiga)(0,0);
+		R1=eigb[i];
+		R=std::abs((diff*rb.block(0,i,D,1))(0,0));
+		if (R>(R0+R1))
+			return false;
+	}
+
+	return true;
+}
+
 template<typename T,uint D=3> bool collideOBBOBB(const OBB<T,3>& a, const OBB<T,3>& b)
 {
 

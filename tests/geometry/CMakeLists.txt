@@ -33,8 +33,12 @@ add_executable(TestNDTree TestNDTree.cpp)
 TARGET_LINK_LIBRARIES(TestNDTree ${Boost_LIBRARIES} NSXTool)
 add_test(TestNDTree TestNDTree)
 
-# unit test for OBB class
-add_executable(TestOBB TestOBB.cpp)
-TARGET_LINK_LIBRARIES(TestOBB ${Boost_LIBRARIES} NSXTool)
-add_test(TestOBB TestOBB)
+# unit test for 2D-OBB class
+add_executable(TestOBB_2D TestOBB_2D.cpp)
+TARGET_LINK_LIBRARIES(TestOBB_2D ${Boost_LIBRARIES} NSXTool)
+add_test(TestOBB_2D TestOBB_2D)
 
+# unit test for 3D-OBB class
+add_executable(TestOBB_3D TestOBB_3D.cpp)
+TARGET_LINK_LIBRARIES(TestOBB_3D ${Boost_LIBRARIES} NSXTool)
+add_test(TestOBB_3D TestOBB_3D)

@@ -13,6 +13,7 @@ using Eigen::Matrix2d;
 using Eigen::Matrix3d;
 
 const double tolerance=1e-5;
+const double tolerance_large=1.0;
 
 BOOST_AUTO_TEST_CASE(Test_OBB)
 {
@@ -94,7 +95,7 @@ BOOST_AUTO_TEST_CASE(Test_OBB)
 	BOOST_CHECK_CLOSE(upper[2],11.0,tolerance);
 
 
-	int nSteps(1000);
+	int nSteps(500);
 	Vector3d delta=(upper-lower)/nSteps;
 	Vector4d point(0,0,0,1);
 	double sum(0.0);
@@ -108,14 +109,14 @@ BOOST_AUTO_TEST_CASE(Test_OBB)
 			{
 				point.z() = lower[2]+k*delta[2];
 				if (obb3.isInside(point))
-//					std::cout<<"HIT: "<<point.transpose()<<" --> "<<obb3.isInside(point)<<std::endl;
 					sum+=1.0;
 			}
 		}
 	}
-	std::cout << "SUM: " << sum << std::endl;
 
-	std::cout<<obb3.collide(obb2)<<std::endl;
+	sum *= ((upper[0]-lower[0])*(upper[1]-lower[1])*(upper[2]-lower[2]))/(nSteps*nSteps*nSteps);
+
+	BOOST_CHECK_CLOSE(sum,480,tolerance_large);
 
 
 }
