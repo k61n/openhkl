@@ -180,8 +180,8 @@ template<typename T,uint D>
 bool collideSphereSphere(const Sphere<T,D>& a, const Sphere<T,D>& b)
 {
 
-	const Eigen::Matrix<T,D,1>& ca=a.getCenter();
-	const Eigen::Matrix<T,D,1>& diff=b.getCenter();
+	Eigen::Matrix<T,D,1> ca=a.getCenter();
+	Eigen::Matrix<T,D,1> diff=b.getCenter();
 
 	diff -= ca;
 

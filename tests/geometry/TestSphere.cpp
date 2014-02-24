@@ -77,4 +77,26 @@ BOOST_AUTO_TEST_CASE(Test_Sphere)
 	sum *= ((upper[0]-lower[0])*(upper[1]-lower[1])*(upper[2]-lower[2]))/(nSteps*nSteps*nSteps);
 	BOOST_CHECK_CLOSE(sum,523.6,tolerance_large);
 
+	s1.translate(-s1.getCenter());
+	Sphere<double,3> s2(Vector3d(10,0,0),1.0);
+	BOOST_CHECK_EQUAL(s1.collide(s2),false);
+	s2.translate(Vector3d(-2,0,0));
+	BOOST_CHECK_EQUAL(s1.collide(s2),false);
+	s2.translate(Vector3d(-2,0,0));
+	BOOST_CHECK_EQUAL(s1.collide(s2),false);
+	s2.translate(Vector3d(-2,0,0));
+	BOOST_CHECK_EQUAL(s1.collide(s2),true);
+	s2.translate(Vector3d(-2,0,0));
+	BOOST_CHECK_EQUAL(s1.collide(s2),true);
+	s2.translate(Vector3d(-2,0,0));
+	BOOST_CHECK_EQUAL(s1.collide(s2),true);
+	s2.translate(Vector3d(-2,0,0));
+	BOOST_CHECK_EQUAL(s1.collide(s2),true);
+	s2.translate(Vector3d(-2,0,0));
+	BOOST_CHECK_EQUAL(s1.collide(s2),true);
+	s2.translate(Vector3d(-2,0,0));
+	BOOST_CHECK_EQUAL(s1.collide(s2),false);
+
+
+
 }
