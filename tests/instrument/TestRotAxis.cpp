@@ -32,13 +32,13 @@ BOOST_AUTO_TEST_CASE(Test_Rot_Axis)
 	BOOST_CHECK_CLOSE(transf[1],0.5*sqrt(2.0),tolerance);
 	BOOST_CHECK_CLOSE(transf[2],0.0,tolerance);
 
-	// Switch rotation direction
+	// Switch rotation direction CW
 	a.setRotationDirection(CW);
 	transf=a.getMatrix(45.0*deg)*Vector3d(1,0,0);
 	BOOST_CHECK_CLOSE(transf[0],0.5*sqrt(2.0),tolerance);
 	BOOST_CHECK_CLOSE(transf[1],-0.5*sqrt(2.0),tolerance);
 	BOOST_CHECK_CLOSE(transf[2],0.0,tolerance);
-	// Check same for CCW of 0,1,0
+	// Check same for CW of 0,1,0
 	transf=a.getMatrix(45.0*deg)*Vector3d(0,1,0);
 	BOOST_CHECK_CLOSE(transf[0],0.5*sqrt(2.0),tolerance);
 	BOOST_CHECK_CLOSE(transf[1],0.5*sqrt(2.0),tolerance);
@@ -51,4 +51,14 @@ BOOST_AUTO_TEST_CASE(Test_Rot_Axis)
 	BOOST_CHECK_CLOSE(transf[0],0.5*sqrt(2.0),tolerance);
 	BOOST_CHECK_CLOSE(transf[1],0.5*sqrt(2.0),tolerance);
 	BOOST_CHECK_CLOSE(transf[2],0.0,tolerance);
+
+	// Switch rotation axis to y
+	a.setOffset(0.0);
+	a.setAxis(Vector3d(0,1,0));
+	transf=a.getMatrix(45.0*deg)*Vector3d(1,0,0);
+	BOOST_CHECK_CLOSE(transf[0],0.5*sqrt(2.0),tolerance);
+	BOOST_CHECK_CLOSE(transf[1],0.0,tolerance);
+	BOOST_CHECK_CLOSE(transf[2],-0.5*sqrt(2.0),tolerance);
+
+
 }
