@@ -60,5 +60,10 @@ BOOST_AUTO_TEST_CASE(Test_Rot_Axis)
 	BOOST_CHECK_CLOSE(transf[1],0.0,tolerance);
 	BOOST_CHECK_CLOSE(transf[2],-0.5*sqrt(2.0),tolerance);
 
+	// Test with Homogeneous matrix
+	transf=a.getHomMatrix(45.0*deg)*Vector3d(1,0,0);
+	BOOST_CHECK_CLOSE(transf[0],0.5*sqrt(2.0),tolerance);
+	BOOST_CHECK_CLOSE(transf[1],0.0,tolerance);
+	BOOST_CHECK_CLOSE(transf[2],-0.5*sqrt(2.0),tolerance);
 
 }

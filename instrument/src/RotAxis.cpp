@@ -53,6 +53,13 @@ Matrix3d RotAxis::getMatrix(double angle) const
 	Quaterniond temp=getQuat(angle);
 	return temp.toRotationMatrix();
 }
+Eigen::Transform<double,3,Eigen::Affine> RotAxis::getHomMatrix(double angle) const
+{
+	Eigen::Transform<double,3,Eigen::Affine> hom;
+	Quaterniond temp=getQuat(angle);
+	hom.linear()=temp.toRotationMatrix();
+	return hom;
+}
 Quaterniond RotAxis::getQuat(double angle) const
 {
 	//Apply offset first (offset in the same direction).

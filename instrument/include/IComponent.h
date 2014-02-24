@@ -44,6 +44,7 @@ public:
 	virtual void toXML(std::ostream&);
 	//!
 	virtual void fromXML(std::istream&);
+
 	void setPos(const Eigen::Vector3d& pos,const Eigen::Vector3d& temp=Eigen::Vector3d::Constant(0.0));
 private:
 	std::string _name;

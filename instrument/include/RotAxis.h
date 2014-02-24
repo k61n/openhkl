@@ -75,6 +75,8 @@ public:
 	//@param angle : rotation angle in radians by default, use Units to convert
 	//@return rotation matrix
 	Matrix3d getMatrix(double angle) const;
+	//! Return the 4x4 Homogeous matrix corresponding to this transformation.
+	Eigen::Transform<double,3,Eigen::Affine> getHomMatrix(double angle) const;
 	//! Get the rotation matrix associated with this rotation
 	//@param angle : rotation angle in radians by default, use Units to convert
 	//@return rotation matrix
