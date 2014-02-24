@@ -37,7 +37,7 @@
 #include <Eigen/Geometry>
 #include <unsupported/Eigen/MatrixFunctions>
 
-#include "IPShape.h"
+#include "IShape.h"
 
 namespace SX
 {
@@ -72,9 +72,9 @@ public:
 	// Return the center of the sphere
 	const vector& getCenter() const;
 	// Return the radius of the sphere
-	const vector& getRadius() const;
+	const T& getRadius() const;
 	// Return the inverse of the Mapping matrix (\f$ S^{-1}.R^{-1}.T^{-1} \f$)
-	const HomMatrix& getTRSInverseMatrix() const;
+	HomMatrix getTRSInverseMatrix() const;
 	//; Check whether a point given as Homogeneous coordinate in the (D+1) dimension is inside the sphere.
 	bool isInside(const HomVector& vector) const;
 	//; Scale the sphere.
@@ -121,19 +121,19 @@ bool Sphere<T,D>::collide(const Sphere<T,D>& other) const
 }
 
 template<typename T,uint D>
-const typename Sphere<T,D>::vector Sphere<T,D>::getCenter() const
+const typename Sphere<T,D>::vector& Sphere<T,D>::getCenter() const
 {
 	return _center;
 }
 
 template<typename T,uint D>
-const T Sphere<T,D>::getRadius() const
+const T& Sphere<T,D>::getRadius() const
 {
 	return _radius;
 }
 
 template<typename T,uint D>
-const typename Sphere<T,D>::HomMatrix Sphere<T,D>::getTRSInverseMatrix() const
+typename Sphere<T,D>::HomMatrix Sphere<T,D>::getTRSInverseMatrix() const
 {
 	Eigen::Matrix<T,D+1,D+1> mat=Eigen::Matrix<T,D+1,D+1>::Constant(0.0);
 	mat(D,D)=1.0;
@@ -148,9 +148,9 @@ template<typename T, uint D>
 bool Sphere<T,D>::isInside(const HomVector& point) const
 {
 
-	vector diff=point.segment(0,3)-_center
+	vector diff=point.segment(0,3)-_center;
 
-	return (diff.norm()<_radius);
+	return (diff.squaredNorm()<(_radius*_radius));
 }
 
 template<typename T, uint D>
@@ -171,8 +171,8 @@ template<typename T, uint D>
 void Sphere<T,D>::updateAABB()
 {
 	// Update the upper and lower bound of the AABB
-	_lowerBound=_center-_radius;
-	_upperBound=_center+_radius;
+	_lowerBound=_center.array()-_radius;
+	_upperBound=_center.array()+_radius;
 
 }
 
@@ -185,7 +185,9 @@ bool collideSphereSphere(const Sphere<T,D>& a, const Sphere<T,D>& b)
 
 	diff -= ca;
 
-	return (diff.norm()<(a.getRadius()+b.getRadius()));
+	T sumRadii=a.getRadius()+b.getRadius();
+
+	return (diff.squaredNorm()<(sumRadii*sumRadii));
 }
 
 } // namespace Geometry

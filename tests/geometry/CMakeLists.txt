@@ -42,3 +42,8 @@ add_test(TestOBB_2D TestOBB_2D)
 add_executable(TestOBB_3D TestOBB_3D.cpp)
 TARGET_LINK_LIBRARIES(TestOBB_3D ${Boost_LIBRARIES} NSXTool)
 add_test(TestOBB_3D TestOBB_3D)
+
+# unit test for ND sphere
+add_executable(TestSphere TestSphere.cpp)
+TARGET_LINK_LIBRARIES(TestSphere ${Boost_LIBRARIES} NSXTool)
+add_test(TestSphere TestSphere)
