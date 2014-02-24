@@ -32,7 +32,7 @@ BOOST_AUTO_TEST_CASE(Test_Sphere)
 	BOOST_CHECK_CLOSE(upper[1],  8.0,tolerance);
 	BOOST_CHECK_CLOSE(upper[2], 14.0,tolerance);
 
-	// Test: the isotropic scaling of an OBB
+	// Test: the isotropic scaling of a Sphere
 	s1.scale(0.5);
 	lower = s1.getLower();
 	upper = s1.getUpper();
@@ -43,7 +43,7 @@ BOOST_AUTO_TEST_CASE(Test_Sphere)
 	BOOST_CHECK_CLOSE(upper[1], 3.0,tolerance);
 	BOOST_CHECK_CLOSE(upper[2], 9.0,tolerance);
 
-	// Test: the translation of an OBB
+	// Test: the translation of a Sphere
 	s1.translate(Vector3d(3,1,-2));
 	lower = s1.getLower();
 	upper = s1.getUpper();
@@ -54,8 +54,7 @@ BOOST_AUTO_TEST_CASE(Test_Sphere)
 	BOOST_CHECK_CLOSE(upper[1], 4.0,tolerance);
 	BOOST_CHECK_CLOSE(upper[2], 7.0,tolerance);
 
-	// Test: a given point falls inside the OBB
-
+	// Test: a given point falls inside the Sphere
 	int nSteps(500);
 	Vector3d delta=(upper-lower)/nSteps;
 	Vector4d point(0,0,0,1);
