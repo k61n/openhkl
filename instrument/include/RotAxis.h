@@ -28,18 +28,19 @@
 
 #ifndef NSXTOOL_ROTAXIS_H_
 #define NSXTOOL_ROTAXIS_H_
-#include "V3D.h"
-#include "Quat.h"
-#include "Matrix33.h"
 #include <iostream>
+#include <Eigen/Dense>
+#include <Eigen/Geometry>
 
 namespace SX
 {
 
-namespace Geometry
+namespace Instrument
 {
 	enum Direction {CCW=0,CW=1};
-
+	using Eigen::Vector3d;
+	using Eigen::Matrix3d;
+	using Eigen::Quaterniond;
 /* !
  * \brief Class defining a rotation axis.
  *
@@ -53,40 +54,52 @@ public:
 	//! Constructor per default, rotation around z, CCW
 	RotAxis();
 	//! Explicit
-	RotAxis(const V3D& axis, Direction direction=CCW);
+	RotAxis(const Vector3d& axis, Direction direction=CCW, double offset=0.0);
 	//! Destructor
 	~RotAxis();
 	//! Set the axis. V3D will be normalized.
-	void setAxis(const V3D&);
+	void setAxis(const Vector3d&);
 	//! Get the rotation axis
-	const V3D& getAxis() const;
+	const Vector3d& getAxis() const;
 	//! Get the rotation axis
-	V3D& getAxis();
-	//! get rotation direction.
+	Vector3d& getAxis();
+	//! Get rotation direction.
 	void setRotationDirection(Direction);
+	// ! Return 0 for CCW and 1 for CW
+	Direction getRotationDirection() const;
+	//! Set the angular offset (radians) of this axis
+	void setOffset(double offset);
+	//! Get the angular offset of this axis (radians).
+	double getOffset() const;
 	//! Get the rotation matrix associated with this rotation
 	//@param angle : rotation angle in radians by default, use Units to convert
 	//@return rotation matrix
-	Matrix33<double> getMatrix(double angle) const;
+	Matrix3d getMatrix(double angle) const;
+	//! Get the rotation matrix associated with this rotation
+	//@param angle : rotation angle in radians by default, use Units to convert
+	//@return rotation matrix
+	//Eigen::Transform<double,3,Eigen::Affine> getHomMatrix(double angle) const;
 	//! Get the quaternion associated with this rotation
 	//@param angle : rotation angle in radians by default
 	//@return rotation matrix
-	Quat getQuat(double angle) const;
+	Quaterniond getQuat(double angle) const;
 	//! Print information into a stream
 	friend std::ostream& operator<<(std::ostream& os, const RotAxis&);
 protected:
 	//! Axis of rotation, normalized vector
-	V3D _axis;
+	Vector3d _axis;
 	//! Rotation direction
 	Direction _dir;
+	//! Angular offset
+	double _offset;
 };
 
-	static const RotAxis AxisXCW=RotAxis(V3D(1,0,0),CW);
-	static const RotAxis AxisXCCW=RotAxis(V3D(1,0,0),CCW);
-	static const RotAxis AxisYCW=RotAxis(V3D(0,1,0),CW);
-	static const RotAxis AxisYCCW=RotAxis(V3D(0,1,0),CCW);
-	static const RotAxis AxisZCW=RotAxis(V3D(0,0,1),CW);
-	static const RotAxis AxisZCCW=RotAxis(V3D(0,0,1),CCW);
+	static const RotAxis AxisXCW=RotAxis(Vector3d(1,0,0),CW);
+	static const RotAxis AxisXCCW=RotAxis(Vector3d(1,0,0),CCW);
+	static const RotAxis AxisYCW=RotAxis(Vector3d(0,1,0),CW);
+	static const RotAxis AxisYCCW=RotAxis(Vector3d(0,1,0),CCW);
+	static const RotAxis AxisZCW=RotAxis(Vector3d(0,0,1),CW);
+	static const RotAxis AxisZCCW=RotAxis(Vector3d(0,0,1),CCW);
 
 } //namespace Geometry
 

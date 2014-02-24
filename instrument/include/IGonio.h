@@ -32,14 +32,15 @@
 #include <vector>
 #include <initializer_list>
 #include <utility>
-#include <Matrix33.h>
-#include <RotAxis.h>
+#include <Eigen/Dense>
+#include "RotAxis.h"
 
 
 namespace SX {
-namespace Geometry {
 
+namespace Instrument {
 
+using Eigen::Matrix3d;
 /* !
  * \brief Class IGonio.
  * Base class for all goniometers (system of several rotation axis). Any number of axis can be used.
@@ -75,7 +76,7 @@ public:
 	double& highLimit(const char* label);
 	//! Limits as initializer_list
 	//! Return the rotation matrix corresponding to this set of angles. Throw if angles outside limits.
-	Matrix33<double> anglesToMatrix(std::initializer_list<double> angles);
+	Matrix3d anglesToMatrix(std::initializer_list<double> angles);
 	//!
 	friend std::ostream& operator<<(std::ostream& os,IGonio&);
 protected:
@@ -86,25 +87,6 @@ protected:
 	std::vector<std::pair<double,double> > _limits;
 };
 
-template<unsigned int _N> RotAxis& Axis(IGonio& g)
-{
-	return g.axis(_N);
-}
-
-template<unsigned int _N> std::string& AxisLabel(IGonio& g)
-{
-	return g.axisLabel(_N);
-}
-
-template<unsigned int _N> double& LowLimit(IGonio& g)
-{
-	return g.lowLimit(_N);
-}
-
-template<unsigned int _N> double& HighLimit(IGonio& g)
-{
-	return g.highLimit(_N);
-}
 
 } // End namespace Geometry
 } // End namespace SX

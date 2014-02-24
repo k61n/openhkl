@@ -71,7 +71,8 @@ include_directories( analysis/include
                      materials/include
                      maths/include
                      utils/include
-                     crystal/include)
+                     crystal/include
+                     instrument/include)
 
 file(GLOB_RECURSE sources analysis/src/*.cpp
                   data/src/*.cpp
@@ -80,7 +81,9 @@ file(GLOB_RECURSE sources analysis/src/*.cpp
                   materials/*.cpp
                   maths/src/*.cpp
                   utils/src/*.cpp
-                  crystal/src/*.cpp)                   
+                  crystal/src/*.cpp
+                  instrument/src/*.cpp
+                  )                   
 
 # Creating the library
 # Under Windows and Miscrosoft Visual Studio the library will be static to avoid

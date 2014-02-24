@@ -39,7 +39,7 @@ namespace SX
 namespace Geometry
 {
 
-template<typename T, unsigned int D> class NDBox;
+template<typename T, unsigned int D> class OBB;
 template<typename T, unsigned int D> class ShapeCollection;
 
 typedef unsigned int uint;
@@ -67,17 +67,17 @@ IShape<T,D>::~IShape()
 {
 }
 
-template<typename T, unsigned int D>
-bool collisionBoxBox(const NDBox<T,D>& b1, const NDBox<T,D>& b2)
-{
-	return b1.collide(b2);
-}
-
-template<typename T, unsigned int D>
-bool collisionBoxShapeCollection(const NDBox<T,D>& b1, const ShapeCollection<T,D>& b2)
-{
-	return b1.collide(b2);
-}
+//template<typename T, unsigned int D>
+//bool collisionBoxBox(const NDBox<T,D>& b1, const NDBox<T,D>& b2)
+//{
+//	return b1.collide(b2);
+//}
+//
+//template<typename T, unsigned int D>
+//bool collisionBoxShapeCollection(const NDBox<T,D>& b1, const ShapeCollection<T,D>& b2)
+//{
+//	return b1.collide(b2);
+//}
 
 
 } // namespace Geometry

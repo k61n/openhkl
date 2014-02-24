@@ -2,14 +2,15 @@
 #include <algorithm>
 #include <stdexcept>
 #include <Units.h>
+#include <Eigen/Geometry>
 
 namespace SX
 {
-namespace Geometry
+namespace Instrument
 {
 
 using SX::Units::deg;
-
+using Eigen::Quaterniond;
 IGonio::IGonio(unsigned int n):_labels(n,""),_axes(n),_limits(n,std::pair<double,double>(-360.0*deg,360.0*deg))
 {
 }
@@ -97,21 +98,21 @@ double& IGonio::highLimit(const char* label)
 }
 
 
-Matrix33<double> IGonio::anglesToMatrix(std::initializer_list<double> l)
+Matrix3d IGonio::anglesToMatrix(std::initializer_list<double> l)
 {
 	if (l.size()!=_labels.size())
 		throw std::invalid_argument("Number of arguments angles different from the number of axes on the goniometer");
 	// Get rotation matrix of the right most angle
 	auto it=l.begin();
 	int i=0;
-	Quat result=_axes[i++].getQuat(*it);
+	Quaterniond result=_axes[i++].getQuat(*it);
 	it++;
 	// Quat multiplication is faster than matrix.
 	for(;it!=l.end();++it)
 	{
 		result=result*_axes[i++].getQuat(*it);
 	}
-	return result.toMatrix();
+	return result.toRotationMatrix();
 }
 
 std::ostream& operator<<(std::ostream& os,IGonio& g)

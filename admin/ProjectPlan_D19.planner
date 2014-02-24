@@ -58,7 +58,7 @@
           <predecessor id="1" predecessor-id="19" type="FS"/>
         </predecessors>
       </task>
-      <task id="13" name="Evaluate test server+unit test" note="" work="288000" start="20140210T000000Z" end="20140221T170000Z" work-start="20140210T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <task id="13" name="Evaluate test server+unit test" note="" work="288000" start="20140210T000000Z" end="20140221T170000Z" work-start="20140210T080000Z" percent-complete="99" priority="0" type="normal" scheduling="fixed-work">
         <constraint type="start-no-earlier-than" time="20140210T000000Z"/>
         <predecessors>
           <predecessor id="1" predecessor-id="12" type="FS"/>
@@ -98,13 +98,13 @@
       </task>
       <task id="21" name="Symmetry Package" note="" work="28800" start="20140131T000000Z" end="20140131T170000Z" work-start="20140131T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
       <task id="22" name="Integration" note="" work="316800" start="20140218T000000Z" end="20140225T120000Z" work-start="20140218T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
-        <task id="23" name="Implement NDEllipsoid+Unit test" note="" work="144000" start="20140218T000000Z" end="20140224T170000Z" work-start="20140218T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <task id="23" name="Implement NDEllipsoid+Unit test" note="" work="144000" start="20140218T000000Z" end="20140224T170000Z" work-start="20140218T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
           <constraint type="must-start-on" time="20140218T000000Z"/>
         </task>
-        <task id="24" name="Implement NDBox+Unit test" note="" work="144000" start="20140218T000000Z" end="20140224T170000Z" work-start="20140218T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <task id="24" name="Implement NDBox+Unit test" note="" work="144000" start="20140218T000000Z" end="20140224T170000Z" work-start="20140218T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
           <constraint type="must-start-on" time="20140218T000000Z"/>
         </task>
-        <task id="25" name="Implement NDSphere+Unit test" note="" work="28800" start="20140225T000000Z" end="20140225T120000Z" work-start="20140225T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <task id="25" name="Implement NDSphere+Unit test" note="" work="28800" start="20140225T000000Z" end="20140225T120000Z" work-start="20140225T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
           <constraint type="must-start-on" time="20140225T000000Z"/>
         </task>
       </task>
