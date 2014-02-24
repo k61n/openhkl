@@ -69,6 +69,10 @@ public:
 	~Sphere();
 	//; Check whether two spheres collide.
 	bool collide(const Sphere& other) const;
+	// Return the center of the sphere
+	const vector& getCenter() const;
+	// Return the radius of the sphere
+	const vector& getRadius() const;
 	// Return the inverse of the Mapping matrix (\f$ S^{-1}.R^{-1}.T^{-1} \f$)
 	const HomMatrix& getTRSInverseMatrix() const;
 	//; Check whether a point given as Homogeneous coordinate in the (D+1) dimension is inside the sphere.
@@ -81,7 +85,9 @@ public:
 
 private:
 	//; The inverse of the homogeneous transformation matrix.
-	Eigen::Matrix<T,D+1,D+1> _TRSinv;
+//	Eigen::Matrix<T,D+1,D+1> _TRSinv;
+	//; The center.
+	vector _center;
 	//; The scale value.
 	T _radius;
 	//; Update the closest fit AABB to the sphere.
@@ -91,30 +97,15 @@ public:
 	// Macro to ensure that Sphere object can be dynamically allocated.
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-
 };
 
-// Collision detection in the 3D case.
-template<typename T,uint D=3> bool collideSphereSphere(const Sphere<T,3>&, const Sphere<T,3>&);
+template<typename T,uint D>
+bool collideSphereSphere(const Sphere<T,D>&, const Sphere<T,D>&);
 
 template<typename T,uint D>
 Sphere<T,D>::Sphere(const vector& center, T radius)
-: IShape<T,D>(), _radius(radius)
+: IShape<T,D>(), _center(center), _radius(radius)
 {
-	// Define the inverse scale matrix from the eigenvalues
-	Eigen::DiagonalMatrix<T,D+1> Sinv;
-	for (unsigned int i=0;i<D;++i)
-		Sinv.diagonal()[i]=1.0/eigenvalues[i];
-	Sinv.diagonal()[D]=1.0;
-
-	// Now prepare the R^-1.T^-1 (rotation,translation)
-	_TRSinv=Eigen::Matrix<T,D+1,D+1>::Constant(0.0);
-	for (unsigned int i=0;i<D+1;++i)
-		_TRSinv.block(i,0,1,D)=1.0;
-	_TRSinv.block(0,D,D,1)=-_TRSinv.block(0,0,D,D)*center;
-
-	// Finally compute (TRS)^-1 by left-multiplying (TR)^-1 by S^-1
-	_TRSinv=Sinv*_TRSinv;
 	updateAABB();
 }
 
@@ -130,70 +121,71 @@ bool Sphere<T,D>::collide(const Sphere<T,D>& other) const
 }
 
 template<typename T,uint D>
-const typename Sphere<T,D>::HomMatrix& Sphere<T,D>::getTRSInverseMatrix() const
+const typename Sphere<T,D>::vector Sphere<T,D>::getCenter() const
 {
-	return _TRSinv;
+	return _center;
+}
+
+template<typename T,uint D>
+const T Sphere<T,D>::getRadius() const
+{
+	return _radius;
+}
+
+template<typename T,uint D>
+const typename Sphere<T,D>::HomMatrix Sphere<T,D>::getTRSInverseMatrix() const
+{
+	Eigen::Matrix<T,D+1,D+1> mat=Eigen::Matrix<T,D+1,D+1>::Constant(0.0);
+	mat(D,D)=1.0;
+	for (unsigned int i=0;i<D+1;++i)
+		mat(i,i)=1.0/_radius;
+	mat.block(0,D,D,1)=-_center/_radius;
+
+	return mat;
 }
 
 template<typename T, uint D>
 bool Sphere<T,D>::isInside(const HomVector& point) const
 {
-	return true;
+
+	vector diff=point.segment(0,3)-_center
+
+	return (diff.norm()<_radius);
 }
 
 template<typename T, uint D>
 void Sphere<T,D>::scale(T value)
 {
-	_eigenVal*=value;
-	Eigen::DiagonalMatrix<T,D+1> Sinv;
-	for (unsigned int i=0;i<D;++i)
-		Sinv.diagonal()[i]=1.0/value;
-	Sinv.diagonal()[D]=1.0;
-	_TRSinv=Sinv*_TRSinv;
+	_radius*=value;
 	updateAABB();
 }
 
 template<typename T,uint D>
 void Sphere<T,D>::translate(const vector& t)
 {
-	Eigen::Matrix<T,D+1,D+1> tinv=Eigen::Matrix<T,D+1,D+1>::Constant(0.0);
-	for (uint i=0;i<D+1;++i)
-		tinv(i,i)=1.0;
-	tinv.block(0,D,D,1)=-t;
-	_TRSinv=_TRSinv*tinv;
+	_center += t;
 	updateAABB();
 }
 
 template<typename T, uint D>
 void Sphere<T,D>::updateAABB()
 {
-
-	// Reconstruct S
-	Eigen::DiagonalMatrix<T,D+1> S;
-	for (unsigned int i=0;i<D;++i)
-		S.diagonal()[i]=_eigenVal[i];
-	S.diagonal()[D]=1.0;
-
-	// Extract T matrix from TRinv
-	vector Tmat=-TRinv.block(0,D,D,1);
-
-	// Calculate the width of the bounding box
-	vector width=vector::Constant(0.0);
-	for (uint i=0;i<D;++i)
-	{
-		width[i]+=std::abs(_eigenVal[i]);
-	}
-
 	// Update the upper and lower bound of the AABB
-	_lowerBound=Tmat-width;
-	_upperBound=Tmat+width;
+	_lowerBound=_center-_radius;
+	_upperBound=_center+_radius;
 
 }
 
-template<typename T,uint D=3> bool collideSphereSphere(const Sphere<T,3>& a, const Sphere<T,3>& b)
+template<typename T,uint D>
+bool collideSphereSphere(const Sphere<T,D>& a, const Sphere<T,D>& b)
 {
 
-	return false;
+	const Eigen::Matrix<T,D,1>& ca=a.getCenter();
+	const Eigen::Matrix<T,D,1>& diff=b.getCenter();
+
+	diff -= ca;
+
+	return (diff.norm()<(a.getRadius()+b.getRadius()));
 }
 
 } // namespace Geometry
