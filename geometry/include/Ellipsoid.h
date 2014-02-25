@@ -416,9 +416,9 @@ bool collideEllipsoidOBB(const Ellipsoid<T,D>& ell, const OBB<T,D>& obb)
 
 	// Get the TRS inverse matrix of the ellipsoid
 	HomMatrix ellTRSinv=ell.getTRSInverseMatrix();
-
+	HomMatrix obbTRSinv=obb.getTRSInverseMatrix();
 	// Reconstruct the S matrices of the ellipsoid and the OBB
-	Eigen::DiagonalMatrix<T,D+1> ellS,obbS;
+	Eigen::DiagonalMatrix<T,D+1> ellS,obbS,ellSinv;
 	ellS.diagonal().segment(0,D) = ell.getSemiAxes();
 	ellS.diagonal()[D] = 1.0;
 	ellSinv.diagonal() << 1.0/ellS.diagonal();
@@ -462,8 +462,10 @@ bool collideEllipsoidOBB(const Ellipsoid<T,D>& ell, const OBB<T,D>& obb)
 	vector s;
 	vector PmC = vector::Constant(0.0);
 	for (uint i=0; i<D;++i)
+	{
 		s(i) = (x(i) >= 0 ? 1 : -1);
 		PmC(i) += s(i)*obbS.diagonal()[i]*obbRinv.row(i);
+	}
 
 	vector Delta = KmC-PmC;
 	vector MDelta = M*Delta;
@@ -485,7 +487,10 @@ bool collideEllipsoidOBB(const Ellipsoid<T,D>& ell, const OBB<T,D>& obb)
 	{
 		product << M*obbRinv.row(i).transpose();
  		for (uint j=0; j<D;++j)
-			m.part<Eigen::UpperTriangular>().coeffRef(i,j)=obbRinv*product;
+ 		{
+ 			// Need to use template here for disambiguation of the triangularView method.
+ 			UMU.template triangularView<Eigen::Upper>().coeffRef(i,j)=obbRinv*product;
+ 		}
 	}
 
 	if ((s(0)*(UMD(0)*UMU(2,2)-UMD(2)*UMU(0,2)) > 0) &&
@@ -509,9 +514,9 @@ bool collideEllipsoidOBB(const Ellipsoid<T,D>& ell, const OBB<T,D>& obb)
 
 	if (((s(0)*UMD(0))>0.0) && ((s(1)*UMD(1))>0.0) && ((s(2)*UMD(2))>0.0) && ((rsqr.sum())>1.0))
 		// K is outside the ellipsoid at P
-		return false
+		return false;
 
-	return true
+	return true;
 
 }
 
