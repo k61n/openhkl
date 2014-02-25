@@ -405,7 +405,6 @@ bool collideEllipsoidSphere(const Ellipsoid<T,D>& eA, const Sphere<T,D>& s)
  *	Geometric Tools, LLC
  *	http://www.geometrictools.com
  */
-
 template<typename T,uint D>
 bool collideEllipsoidOBB(const Ellipsoid<T,D>& ell, const OBB<T,D>& obb)
 {

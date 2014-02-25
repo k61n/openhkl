@@ -297,6 +297,12 @@ template<typename T,uint D=2> bool collideOBBOBB(const OBB<T,2>& a, const OBB<T,
 	return true;
 }
 
+/** Based on the method described in:
+ *  "Dynamic Collision Detection using Oriented Bounding Boxes"
+ *	Eberly, David.,
+ *	Geometric Tools, LLC
+ *	http://www.geometrictools.com
+ */
 template<typename T,uint D=3> bool collideOBBOBB(const OBB<T,3>& a, const OBB<T,3>& b)
 {
 
