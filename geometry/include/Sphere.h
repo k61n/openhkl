@@ -38,6 +38,8 @@
 #include <unsupported/Eigen/MatrixFunctions>
 
 #include "IShape.h"
+#include "Ellipsoid.h"
+#include "OBB.h"
 
 namespace SX
 {
@@ -45,35 +47,34 @@ namespace SX
 namespace Geometry
 {
 
-
-typedef unsigned int uint;
-
 template<typename T, uint D>
 class Sphere : public IShape<T,D>
 {
 
-	//; Some useful typedefs;
+	// Some useful typedefs;
 	typedef Eigen::Matrix<T,D,D> matrix;
 	typedef Eigen::Matrix<T,D,1> vector;
 	typedef Eigen::Matrix<T,D+1,1> HomVector;
 	typedef Eigen::Matrix<T,D+1,D+1> HomMatrix;
 
-	//; Get rid of AABB resolution for protected attributes of AABB
+	// Get rid of AABB resolution for protected attributes of AABB
 	using AABB<T,D>::_lowerBound;
 	using AABB<T,D>::_upperBound;
 
 public:
-	// Construct a N-dimensional sphere from its center and radius
+	// Construct a N-dimensional sphere from its center and radius.
 	Sphere(const vector& center, T radius);
 	//; The destructor.
 	~Sphere();
 	//; Check whether two spheres collide.
-	bool collide(const Sphere& other) const;
-	// Return the center of the sphere
+	bool collide(const Sphere<T,D>& other) const;
+	//; Check whether a sphere collides with an ellipsoid.
+	bool collide(const Ellipsoid<T,D>&) const;
+	//; Return the center of the sphere.
 	const vector& getCenter() const;
-	// Return the radius of the sphere
-	const T& getRadius() const;
-	// Return the inverse of the Mapping matrix (\f$ S^{-1}.R^{-1}.T^{-1} \f$)
+	//; Return the radius of the sphere.
+	T getRadius() const;
+	//; Return the inverse of the Mapping matrix (\f$ S^{-1}.R^{-1}.T^{-1} \f$)
 	HomMatrix getTRSInverseMatrix() const;
 	//; Check whether a point given as Homogeneous coordinate in the (D+1) dimension is inside the sphere.
 	bool isInside(const HomVector& vector) const;
@@ -84,13 +85,11 @@ public:
 
 
 private:
-	//; The inverse of the homogeneous transformation matrix.
-//	Eigen::Matrix<T,D+1,D+1> _TRSinv;
 	//; The center.
 	vector _center;
 	//; The scale value.
 	T _radius;
-	//; Update the closest fit AABB to the sphere.
+	//; Update the AABB bound to the sphere.
 	void updateAABB();
 
 public:
@@ -99,8 +98,8 @@ public:
 
 };
 
-template<typename T,uint D>
-bool collideSphereSphere(const Sphere<T,D>&, const Sphere<T,D>&);
+template<typename T,uint D> bool collideSphereSphere(const Sphere<T,D>&, const Sphere<T,D>&);
+template<typename T,uint D> bool collideSphereEllipsoid(const Sphere<T,D>&, const Ellipsoid<T,D>&);
 
 template<typename T,uint D>
 Sphere<T,D>::Sphere(const vector& center, T radius)
@@ -121,13 +120,19 @@ bool Sphere<T,D>::collide(const Sphere<T,D>& other) const
 }
 
 template<typename T,uint D>
+bool Sphere<T,D>::collide(const Ellipsoid<T,D>& other) const
+{
+	return collideSphereEllipsoid<T,D>(*this,other);
+}
+
+template<typename T,uint D>
 const typename Sphere<T,D>::vector& Sphere<T,D>::getCenter() const
 {
 	return _center;
 }
 
 template<typename T,uint D>
-const T& Sphere<T,D>::getRadius() const
+T Sphere<T,D>::getRadius() const
 {
 	return _radius;
 }
@@ -180,14 +185,17 @@ template<typename T,uint D>
 bool collideSphereSphere(const Sphere<T,D>& a, const Sphere<T,D>& b)
 {
 
-	Eigen::Matrix<T,D,1> ca=a.getCenter();
-	Eigen::Matrix<T,D,1> diff=b.getCenter();
-
-	diff -= ca;
+	Eigen::Matrix<T,D,1> diff=b.getCenter()-a.getCenter();
 
 	T sumRadii=a.getRadius()+b.getRadius();
 
-	return (diff.squaredNorm()<(sumRadii*sumRadii));
+    return (diff.squaredNorm()<(sumRadii*sumRadii));
+}
+
+template<typename T,uint D>
+bool collideSphereEllipsoid(const Sphere<T,D>& s, const Ellipsoid<T,D>& eB)
+{
+	return collideEllipsoidSphere(eB,s);
 }
 
 } // namespace Geometry

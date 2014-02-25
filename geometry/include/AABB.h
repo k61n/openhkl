@@ -164,7 +164,6 @@ AABB<T,D>::~AABB()
 {
 }
 
-
 template<typename T, uint D>
 AABB<T,D>& AABB<T,D>::operator=(const AABB<T,D>& other)
 {
@@ -181,8 +180,6 @@ T AABB<T,D>::volumeND() const
 {
 	return (_upperBound-_lowerBound).prod();
 }
-
-
 
 template<typename T, uint D>
 std::ostream& operator<<(std::ostream& os, const AABB<T,D>& aabb)

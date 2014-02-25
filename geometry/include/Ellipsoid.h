@@ -27,11 +27,16 @@
 
 #ifndef NSXTOOL_ELLIPSOID_H_
 #define NSXTOOL_ELLIPSOID_H_
-#include "IShape.h"
-#include "OBB.h"
+
+#include <cmath>
+
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
 #include <Eigen/Eigenvalues>
+
+#include "IShape.h"
+#include "OBB.h"
+#include "Sphere.h"
 
 namespace SX
 {
@@ -58,8 +63,12 @@ public:
 	void translate(const vector& t);
 	// Check whether a point given as Homogeneous coordinate in the (D+1) dimension is Inside the Ellipsoid.
 	bool isInside(const HomVector& vector) const;
-	// Intersection test. Return true if the objects touch or overlap.
+	//; Return true if the ellipsoid intersects another ellipsoid.
 	bool collide(const Ellipsoid& other) const;
+	//; Return true if the ellipsoid intersects an OBB.
+	bool collide(const OBB<T,D>& other) const;
+	//; Return true if the ellipsoid intersects a Sphere.
+	bool collide(const Sphere<T,D>& other) const;
 	// Return the inverse of the Mapping matrix (\f$ S^{-1}.R^{-1}.T^{-1} \f$)
 	const HomMatrix& getTRSInverseMatrix() const;
 	// Return the semi-axes of the Ellipsoids
@@ -81,7 +90,8 @@ public:
 template<typename T,uint D=2> bool collideEllipsoidEllipsoid(const Ellipsoid<T,2>&, const Ellipsoid<T,2>&);
 // Collision detection in the 3D case.
 template<typename T,uint D=3> bool collideEllipsoidEllipsoid(const Ellipsoid<T,3>&, const Ellipsoid<T,3>&);
-
+template<typename T,uint D> bool collideEllipsoidSphere(const Ellipsoid<T,D>&, const Sphere<T,D>&);
+template<typename T,uint D> bool collideEllipsoidOBB(const Ellipsoid<T,D>&, const OBB<T,D>&);
 
 template<typename T,uint D>
 Ellipsoid<T,D>::Ellipsoid(const vector& center, const vector& eigenvalues, const matrix& eigenvectors)
@@ -375,6 +385,129 @@ template<typename T,uint D=3> bool collideEllipsoidEllipsoid(const Ellipsoid<T,3
 
 }
 
+template<typename T,uint D>
+bool collideEllipsoidSphere(const Ellipsoid<T,D>& eA, const Sphere<T,D>& s)
+{
+
+	Eigen::Matrix<T,D,1> scale=Eigen::Matrix<T,D,1>::Constant(s.getRadius());
+
+	Eigen::Matrix<T,D,D> rot=Eigen::Matrix<T,D,D>::Identity();
+
+	Ellipsoid<T,D> eB(s.getCenter(),scale,rot);
+
+	return collideEllipsoidEllipsoid<T,D>(eA,eB);
+
+}
+
+template<typename T,uint D>
+bool collideEllipsoidOBB(const Ellipsoid<T,D>& ell, const OBB<T,D>& obb)
+{
+
+	typedef unsigned int uint;
+	typedef Eigen::Matrix<T,D,1> vector;
+	typedef Eigen::Matrix<T,D,D> matrix;
+	typedef Eigen::Matrix<T,D+1,D+1> HomMatrix;
+
+	// Get the TRS inverse matrix of the ellipsoid
+	HomMatrix ellTRSinv=ell.getTRSInverseMatrix();
+
+	// Reconstruct the S matrices of the ellipsoid and the OBB
+	Eigen::DiagonalMatrix<T,D+1> ellS,obbS;
+	ellS.diagonal().segment(0,D) = ell.getSemiAxes();
+	ellS.diagonal()[D] = 1.0;
+	ellSinv.diagonal() << 1.0/ellS.diagonal();
+	obbS.diagonal().segment(0,D) = obb.getSemiAxes();
+	obbS.diagonal()[D] = 1.0;
+
+	// Reconstruct the (TR)^-1 matrices of the ellipsoid and the OBB
+	HomMatrix ellTRinv(ellS*ellTRSinv);
+	HomMatrix obbTRinv(obbS*obbTRSinv);
+
+	// Construct the V matrix for the ellipsoid
+	Eigen::DiagonalMatrix<T,D+1> D2;
+	D2.diagonal() << 1.0/ellS.diagonal();
+	D2 *= D2;
+	matrix M=(ellTRinv.block(0,0,D,D).transpose())*D2*ellTRinv.block(0,0,D,D);
+	matrix ellRinv=ellTRinv.block(0,0,D,D);
+	matrix obbRinv=obbTRinv.block(0,0,D,D);
+
+	// Extract T vector for the ellipsoid and the OBB
+	vector ellT=-ellRinv.transpose()*ellTRinv.block(0,D,D,1);
+	vector obbT=-obbRinv.transpose()*obbTRinv.block(0,D,D,1);
+
+	// Compute the increase in extents for the OBB
+	vector L;
+	for (uint i=0; i<D;++i)
+		L(i)=sqrt(obbRinv.row(i)*(M.inverse())*obbRinv.row(i).transpose());
+
+	// Transform the ellipsoid center to the OBB coordinate system
+	vector KmC=ellT-obbT;
+	vector x;
+	for (uint i=0; i<D;++i)
+		x(i)=obbRinv.row(i)*KmC;
+
+	for (uint i=0; i<D;++i)
+	{
+		// The ellipsoid center is outside the OBB
+		if (std::abs(x(i))>(obbS.diagonal()[i]+L(i)))
+			return false;
+	}
+
+	vector s;
+	vector PmC = vector::Constant(0.0);
+	for (uint i=0; i<D;++i)
+		s(i) = (x(i) >= 0 ? 1 : -1);
+		PmC(i) += s(i)*obbS.diagonal()[i]*obbRinv.row(i);
+
+	vector Delta = KmC-PmC;
+	vector MDelta = M*Delta;
+
+	vector rsqr;
+	for (uint i=0; i<D;++i)
+	{
+		T r=(ellRinv.row(i)*Delta)/ellS.diagonal()[i];
+		rsqr(i)=r*r;
+	}
+
+	vector UMD;
+	for (uint i=0; i<D;++i)
+		UMD(i)=obbRinv.row(i)*MDelta;
+
+	matrix UMU;
+	vector product;
+	for (uint i=0; i<D;++i)
+	{
+		product << M*obbRinv.row(i).transpose();
+ 		for (uint j=0; j<D;++j)
+			m.part<Eigen::UpperTriangular>().coeffRef(i,j)=obbRinv*product;
+	}
+
+	if ((s(0)*(UMD(0)*UMU(2,2)-UMD(2)*UMU(0,2)) > 0) &&
+		(s(1)*(UMD(1)*UMU(2,2)-UMD(2)*UMU(1,2)) > 0) &&
+		((rsqr(0)+rsqr(1)) > 1.0))
+		// K is outside the elliptical cylinder <P,U2>
+		return false;
+
+	if ((s(0)*(UMD(0)*UMU(1,1)-UMD(1)*UMU(0,1)) > 0) &&
+		(s(2)*(UMD(2)*UMU(1,1)-UMD(1)*UMU(1,2)) > 0) &&
+		((rsqr(0)+rsqr(2)) > 1.0))
+		// K is outside the elliptical cylinder <P,U1>
+		return false;
+
+	if ((s(1)*(UMD(1)*UMU(0,0)-UMD(0)*UMU(0,1)) > 0) &&
+		(s(2)*(UMD(2)*UMU(0,0)-UMD(0)*UMU(0,2)) > 0) &&
+		((rsqr(1)+rsqr(2)) > 1.0))
+		// K is outside the elliptical cylinder <P,U0>
+		return false;
+
+
+	if (((s(0)*UMD(0))>0.0) && ((s(1)*UMD(1))>0.0) && ((s(2)*UMD(2))>0.0) && ((rsqr.sum())>1.0))
+		// K is outside the ellipsoid at P
+		return false
+
+	return true
+
+}
 
 } // Namespace Geometry
 } // Namespace SX

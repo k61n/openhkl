@@ -97,6 +97,4 @@ BOOST_AUTO_TEST_CASE(Test_Sphere)
 	s2.translate(Vector3d(-2,0,0));
 	BOOST_CHECK_EQUAL(s1.collide(s2),false);
 
-
-
 }

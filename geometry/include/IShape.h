@@ -39,10 +39,12 @@ namespace SX
 namespace Geometry
 {
 
-template<typename T, unsigned int D> class OBB;
-template<typename T, unsigned int D> class ShapeCollection;
-
 typedef unsigned int uint;
+
+template<typename T, uint D> class Ellipsoid;
+template<typename T, uint D> class OBB;
+template<typename T, uint D> class Sphere;
+template<typename T, uint D> class ShapeCollection;
 
 template<typename T,uint D>
 class IShape : public AABB<T,D>

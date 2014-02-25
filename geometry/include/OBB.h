@@ -45,9 +45,6 @@ namespace SX
 namespace Geometry
 {
 
-
-typedef unsigned int uint;
-
 template<typename T, uint D>
 class OBB : public IShape<T,D>
 {
@@ -67,8 +64,10 @@ public:
 	OBB(const vector& center, const vector& eigenvalues, const matrix& eigenvectors);
 	//; The destructor.
 	~OBB();
-	//; Check whether two OBBs collide.
+	//; Returns true if the sphere collides with an OBB.
 	bool collide(const OBB& other) const;
+	//; Returns true if the sphere collides with an Ellipsoid.
+	bool collide(const Ellipsoid<T,D>&) const;
 	//; Return the extents of the OBB
 	const vector& getSemiAxes() const;
 	// Return the inverse of the Mapping matrix (\f$ S^{-1}.R^{-1}.T^{-1} \f$)
@@ -100,6 +99,7 @@ public:
 
 // Collision detection in the 3D case.
 template<typename T,uint D=3> bool collideOBBOBB(const OBB<T,3>&, const OBB<T,3>&);
+template<typename T,uint D> bool collideOBBEllipsoid(const OBB<T,D>&, const Ellipsoid<T,D>&);
 
 template<typename T,uint D>
 OBB<T,D>::OBB(const vector& center, const vector& eigenvalues, const matrix& eigenvectors)
@@ -413,6 +413,12 @@ template<typename T,uint D=3> bool collideOBBOBB(const OBB<T,3>& a, const OBB<T,
 		return false;
 
 	return true;
+}
+
+template<typename T,uint D>
+bool collideOBBEllipsoid(const OBB<T,D>& obb, const Ellipsoid<T,D>& ell)
+{
+	return collideEllipsoidOBB(ell,obb);
 }
 
 } // namespace Geometry
