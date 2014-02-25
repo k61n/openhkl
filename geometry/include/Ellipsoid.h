@@ -433,9 +433,9 @@ bool collideEllipsoidOBB(const Ellipsoid<T,D>& ell, const OBB<T,D>& obb)
 	Eigen::DiagonalMatrix<T,D+1> D2;
 	D2.diagonal() << 1.0/ellS.diagonal();
 	D2 *= D2;
-	matrix M=(ellTRinv.block(0,0,D,D).transpose())*D2*ellTRinv.block(0,0,D,D);
 	matrix ellRinv=ellTRinv.block(0,0,D,D);
 	matrix obbRinv=obbTRinv.block(0,0,D,D);
+	matrix M=(ellRinv.block(0,0,D,D).transpose())*D2*ellRinv.block(0,0,D,D);
 
 	// Extract T vector for the ellipsoid and the OBB
 	vector ellT=-ellRinv.transpose()*ellTRinv.block(0,D,D,1);
