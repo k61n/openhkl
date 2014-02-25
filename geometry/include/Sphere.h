@@ -70,6 +70,8 @@ public:
 	bool collide(const Sphere<T,D>& other) const;
 	//; Check whether a sphere collides with an ellipsoid.
 	bool collide(const Ellipsoid<T,D>&) const;
+	//; Check whether a sphere collides with an OBB.
+	bool collide(const OBB<T,D>&) const;
 	//; Return the center of the sphere.
 	const vector& getCenter() const;
 	//; Return the radius of the sphere.
@@ -98,8 +100,9 @@ public:
 
 };
 
-template<typename T,uint D> bool collideSphereSphere(const Sphere<T,D>&, const Sphere<T,D>&);
 template<typename T,uint D> bool collideSphereEllipsoid(const Sphere<T,D>&, const Ellipsoid<T,D>&);
+template<typename T,uint D> bool collideSphereOBB(const Sphere<T,D>&, const OBB<T,D>&);
+template<typename T,uint D> bool collideSphereSphere(const Sphere<T,D>&, const Sphere<T,D>&);
 
 template<typename T,uint D>
 Sphere<T,D>::Sphere(const vector& center, T radius)
@@ -196,6 +199,18 @@ template<typename T,uint D>
 bool collideSphereEllipsoid(const Sphere<T,D>& s, const Ellipsoid<T,D>& eB)
 {
 	return collideEllipsoidSphere(eB,s);
+}
+
+template<typename T,uint D>
+bool collideSphereOBB(const Sphere<T,D>& s, const Ellipsoid<T,D>& obb)
+{
+	Eigen::Matrix<T,D,1> scale=Eigen::Matrix<T,D,1>::Constant(s.getRadius());
+
+	Eigen::Matrix<T,D,D> rot=Eigen::Matrix<T,D,D>::Identity();
+
+	Ellipsoid<T,D> ell(s.getCenter(),scale,rot);
+
+	return collideEllipsoidOBB(ell,obb);
 }
 
 } // namespace Geometry

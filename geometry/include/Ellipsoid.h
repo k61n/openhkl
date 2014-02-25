@@ -90,8 +90,8 @@ public:
 template<typename T,uint D=2> bool collideEllipsoidEllipsoid(const Ellipsoid<T,2>&, const Ellipsoid<T,2>&);
 // Collision detection in the 3D case.
 template<typename T,uint D=3> bool collideEllipsoidEllipsoid(const Ellipsoid<T,3>&, const Ellipsoid<T,3>&);
-template<typename T,uint D> bool collideEllipsoidSphere(const Ellipsoid<T,D>&, const Sphere<T,D>&);
 template<typename T,uint D> bool collideEllipsoidOBB(const Ellipsoid<T,D>&, const OBB<T,D>&);
+template<typename T,uint D> bool collideEllipsoidSphere(const Ellipsoid<T,D>&, const Sphere<T,D>&);
 
 template<typename T,uint D>
 Ellipsoid<T,D>::Ellipsoid(const vector& center, const vector& eigenvalues, const matrix& eigenvectors)

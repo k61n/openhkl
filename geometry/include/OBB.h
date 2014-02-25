@@ -68,6 +68,8 @@ public:
 	bool collide(const OBB& other) const;
 	//; Returns true if the sphere collides with an Ellipsoid.
 	bool collide(const Ellipsoid<T,D>&) const;
+	//; Returns true if the OBB collides with a Sphere.
+	bool collide(const Sphere<T,D>&) const;
 	//; Return the extents of the OBB
 	const vector& getSemiAxes() const;
 	// Return the inverse of the Mapping matrix (\f$ S^{-1}.R^{-1}.T^{-1} \f$)
@@ -98,8 +100,10 @@ public:
 };
 
 // Collision detection in the 3D case.
+template<typename T,uint D=2> bool collideOBBOBB(const OBB<T,2>&, const OBB<T,2>&);
 template<typename T,uint D=3> bool collideOBBOBB(const OBB<T,3>&, const OBB<T,3>&);
 template<typename T,uint D> bool collideOBBEllipsoid(const OBB<T,D>&, const Ellipsoid<T,D>&);
+template<typename T,uint D> bool collideOBBSphere(const OBB<T,D>&, const Sphere<T,D>&);
 
 template<typename T,uint D>
 OBB<T,D>::OBB(const vector& center, const vector& eigenvalues, const matrix& eigenvectors)
@@ -132,6 +136,12 @@ template<typename T,uint D>
 bool OBB<T,D>::collide(const OBB<T,D>& other) const
 {
 	return collideOBBOBB<T,D>(*this,other);
+}
+
+template<typename T,uint D>
+bool OBB<T,D>::collide(const Sphere<T,D>& other) const
+{
+	return collideOBBSphere<T,D>(*this,other);
 }
 
 template<typename T,uint D>
@@ -419,6 +429,12 @@ template<typename T,uint D>
 bool collideOBBEllipsoid(const OBB<T,D>& obb, const Ellipsoid<T,D>& ell)
 {
 	return collideEllipsoidOBB(ell,obb);
+}
+
+template<typename T,uint D>
+bool collideOBBSphere(const OBB<T,D>& obb, const Sphere<T,D>& s)
+{
+	return collideSphereOBB(s,obb);
 }
 
 } // namespace Geometry
