@@ -63,8 +63,8 @@ public:
 	void translate(const vector& t);
 	// Check whether a point given as Homogeneous coordinate in the (D+1) dimension is Inside the Ellipsoid.
 	bool isInside(const HomVector& vector) const;
-	//; Return true if the ellipsoid intersects another ellipsoid.
-	bool collide(const Ellipsoid& other) const;
+	//; Return true if the ellipsoid intersects an ellipsoid.
+	bool collide(const Ellipsoid<T,D>& other) const;
 	//; Return true if the ellipsoid intersects an OBB.
 	bool collide(const OBB<T,D>& other) const;
 	//; Return true if the ellipsoid intersects a Sphere.
@@ -236,7 +236,8 @@ void Ellipsoid<T,D>::updateAABB()
   than using the Sturm's sequence
   */
 
-template<typename T,uint D=2> bool collideEllipsoidEllipsoid(const Ellipsoid<T,2>& eA, const Ellipsoid<T,2>& eB)
+template<typename T,uint D=2>
+bool collideEllipsoidEllipsoid(const Ellipsoid<T,2>& eA, const Ellipsoid<T,2>& eB)
 {
 	// Get the (TRS)^-1 matrices from object A and B
 	const Eigen::Matrix<T,3,3>& trsA=eA.getTRSInverseMatrix();
@@ -317,7 +318,8 @@ template<typename T,uint D=2> bool collideEllipsoidEllipsoid(const Ellipsoid<T,2
  *  than using the Sturm's sequence
  */
 
-template<typename T,uint D=3> bool collideEllipsoidEllipsoid(const Ellipsoid<T,3>& eA, const Ellipsoid<T,3>& eB)
+template<typename T,uint D=3>
+bool collideEllipsoidEllipsoid(const Ellipsoid<T,3>& eA, const Ellipsoid<T,3>& eB)
 {
 	//
 	const Eigen::Matrix<T,4,4>& trsA=eA.getTRSInverseMatrix();
@@ -397,20 +399,6 @@ template<typename T,uint D=3> bool collideEllipsoidEllipsoid(const Ellipsoid<T,3
 
 }
 
-template<typename T,uint D>
-bool collideEllipsoidSphere(const Ellipsoid<T,D>& eA, const Sphere<T,D>& s)
-{
-
-	Eigen::Matrix<T,D,1> scale=Eigen::Matrix<T,D,1>::Constant(s.getRadius());
-
-	Eigen::Matrix<T,D,D> rot=Eigen::Matrix<T,D,D>::Identity();
-
-	Ellipsoid<T,D> eB(s.getCenter(),scale,rot);
-
-	return collideEllipsoidEllipsoid<T,D>(eA,eB);
-
-}
-
 /** Based on the method described in:
  *  "Intersection of Box and Ellipsoid"
  *	Eberly, David.,
@@ -428,44 +416,60 @@ bool collideEllipsoidOBB(const Ellipsoid<T,D>& ell, const OBB<T,D>& obb)
 
 	// Get the TRS inverse matrix of the ellipsoid
 	HomMatrix ellTRSinv=ell.getTRSInverseMatrix();
+
+	// Get the TRS inverse matrix of the OBB
 	HomMatrix obbTRSinv=obb.getTRSInverseMatrix();
-	// Reconstruct the S matrices of the ellipsoid and the OBB
-	Eigen::DiagonalMatrix<T,D+1> ellS,obbS,ellSinv;
+
+	// Construct the S matrice for the ellipsoid
+	Eigen::DiagonalMatrix<T,D+1> ellS;
 	ellS.diagonal().segment(0,D) = ell.getSemiAxes();
 	ellS.diagonal()[D] = 1.0;
-    for (uint i=0;i<D;++i)
-        ellSinv.diagonal()[i] = 1.0/ellS.diagonal()[i];
+
+	// Construct the S matrice for the OBB
+	Eigen::DiagonalMatrix<T,D+1> obbS;
 	obbS.diagonal().segment(0,D) = obb.getSemiAxes();
 	obbS.diagonal()[D] = 1.0;
 
-	// Reconstruct the (TR)^-1 matrices of the ellipsoid and the OBB
+	// Construct the (TR)^-1 matrices for the ellipsoid
 	HomMatrix ellTRinv(ellS*ellTRSinv);
+
+	// Construct the (TR)^-1 matrices for the OBB
 	HomMatrix obbTRinv(obbS*obbTRSinv);
 
-	// Construct the V matrix for the ellipsoid
+	// Construct the R^-1 matrix (non-homogeneous version) for the ellipsoid
+	matrix ellRinv=ellTRinv.block(0,0,D,D);
+
+	// Construct the R^-1 matrix (non-homogeneous version) for the obb
+	matrix obbRinv=obbTRinv.block(0,0,D,D);
+
+	// Construct T vector for the ellipsoid
+	vector ellT=-(ellRinv.transpose())*(ellTRinv.block(0,D,D,1));
+
+	// Construct T vector for the OBB
+	vector obbT=-(obbRinv.transpose())*(obbTRinv.block(0,D,D,1));
+
+	// Compute the D2 and M matrices (defined in p.2 of the documentation)
 	Eigen::DiagonalMatrix<T,D> D2;
     for (uint i=0;i<D;++i)
         D2.diagonal()[i] = 1.0/(ellS.diagonal()[i]*ellS.diagonal()[i]);
-	matrix ellRinv=ellTRinv.block(0,0,D,D);
-	matrix obbRinv=obbTRinv.block(0,0,D,D);
-	matrix M=(ellRinv.block(0,0,D,D).transpose())*D2*ellRinv.block(0,0,D,D);
+	matrix M=(ellRinv.transpose())*D2*ellRinv;
 
-	// Extract T vector for the ellipsoid and the OBB
-	vector ellT=-ellRinv.transpose()*ellTRinv.block(0,D,D,1);
-	vector obbT=-obbRinv.transpose()*obbTRinv.block(0,D,D,1);
+	/*
+	 * Here actually starts the Minkowski sum of box and ellipsoid algorithm (defined in p.6 of the documentation)
+	*/
 
 	// Compute the increase in extents for the OBB
 	vector L;
-	for (uint i=0; i<D;++i)
-		L(i)=sqrt(obbRinv.row(i)*(M.inverse())*obbRinv.row(i).transpose());
+	for (uint i=0;i<D;++i)
+		L(i)=sqrt((obbRinv.row(i)*(M.inverse())*obbRinv.row(i).transpose())(0,0));
 
 	// Transform the ellipsoid center to the OBB coordinate system
 	vector KmC=ellT-obbT;
 	vector x;
 	for (uint i=0; i<D;++i)
-		x(i)=obbRinv.row(i)*KmC;
+		x(i)=(obbRinv.row(i)*KmC)(0,0);
 
-	for (uint i=0; i<D;++i)
+	for (uint i=0;i<D;++i)
 	{
 		// The ellipsoid center is outside the OBB
 		if (std::abs(x(i))>(obbS.diagonal()[i]+L(i)))
@@ -492,7 +496,7 @@ bool collideEllipsoidOBB(const Ellipsoid<T,D>& ell, const OBB<T,D>& obb)
 
 	vector UMD;
 	for (uint i=0; i<D;++i)
-		UMD(i)=obbRinv.row(i)*MDelta;
+		UMD(i)=(obbRinv.row(i)*MDelta)(0,0);
 
 	matrix UMU;
 	vector product;
@@ -530,6 +534,25 @@ bool collideEllipsoidOBB(const Ellipsoid<T,D>& ell, const OBB<T,D>& obb)
 		return false;
 
 	return true;
+
+}
+
+/*
+ * To compute the intersection between an ellipsoid and a sphere a little trick is done.
+ * It consists in building up a ellipsoid from the input sphere and just checking for
+ * the intersection between two ellipsoids
+ */
+template<typename T,uint D>
+bool collideEllipsoidSphere(const Ellipsoid<T,D>& eA, const Sphere<T,D>& s)
+{
+
+	Eigen::Matrix<T,D,1> scale=Eigen::Matrix<T,D,1>::Constant(s.getRadius());
+
+	Eigen::Matrix<T,D,D> rot=Eigen::Matrix<T,D,D>::Identity();
+
+	Ellipsoid<T,D> eB(s.getCenter(),scale,rot);
+
+	return collideEllipsoidEllipsoid<T,D>(eA,eB);
 
 }
 

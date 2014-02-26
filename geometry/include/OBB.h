@@ -217,7 +217,7 @@ void OBB<T,D>::updateAABB()
 
 	// Reconstruct R from TRinv
 	HomMatrix TRinv=S*_TRSinv;
-	matrix R(TRinv.block(0,0,D,D).transpose());
+	matrix R=TRinv.block(0,0,D,D).transpose();
 
 	// Extract T matrix from TRinv
 	vector Tmat=-R*TRinv.block(0,D,D,1);
