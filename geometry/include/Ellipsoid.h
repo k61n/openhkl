@@ -118,6 +118,24 @@ Ellipsoid<T,D>::Ellipsoid(const vector& center, const vector& eigenvalues, const
 }
 
 template<typename T,uint D>
+bool Ellipsoid<T,D>::collide(const Ellipsoid<T,D>& other) const
+{
+	return collideEllipsoidEllipsoid<T,D>(*this,other);
+}
+
+template<typename T,uint D>
+bool Ellipsoid<T,D>::collide(const OBB<T,D>& other) const
+{
+	return collideEllipsoidOBB<T,D>(*this,other);
+}
+
+template<typename T,uint D>
+bool Ellipsoid<T,D>::collide(const Sphere<T,D>& other) const
+{
+	return collideEllipsoidSphere<T,D>(*this,other);
+}
+
+template<typename T,uint D>
 void Ellipsoid<T,D>::scale(T value)
 {
 	_eigenVal*=value;
@@ -180,12 +198,6 @@ template<typename T,uint D>
 const typename Ellipsoid<T,D>::vector& Ellipsoid<T,D>::getSemiAxes() const
 {
 	return _eigenVal;
-}
-
-template<typename T,uint D>
-bool Ellipsoid<T,D>::collide(const Ellipsoid<T,D>& other) const
-{
-	return collideEllipsoidEllipsoid<T,D>(*this,other);
 }
 
 template<typename T,uint D>
@@ -421,7 +433,8 @@ bool collideEllipsoidOBB(const Ellipsoid<T,D>& ell, const OBB<T,D>& obb)
 	Eigen::DiagonalMatrix<T,D+1> ellS,obbS,ellSinv;
 	ellS.diagonal().segment(0,D) = ell.getSemiAxes();
 	ellS.diagonal()[D] = 1.0;
-	ellSinv.diagonal() << 1.0/ellS.diagonal();
+    for (uint i=0;i<D;++i)
+        ellSinv.diagonal()[i] = 1.0/ellS.diagonal()[i];
 	obbS.diagonal().segment(0,D) = obb.getSemiAxes();
 	obbS.diagonal()[D] = 1.0;
 
@@ -430,9 +443,9 @@ bool collideEllipsoidOBB(const Ellipsoid<T,D>& ell, const OBB<T,D>& obb)
 	HomMatrix obbTRinv(obbS*obbTRSinv);
 
 	// Construct the V matrix for the ellipsoid
-	Eigen::DiagonalMatrix<T,D+1> D2;
-	D2.diagonal() << 1.0/ellS.diagonal();
-	D2 *= D2;
+	Eigen::DiagonalMatrix<T,D> D2;
+    for (uint i=0;i<D;++i)
+        D2.diagonal()[i] = 1.0/(ellS.diagonal()[i]*ellS.diagonal()[i]);
 	matrix ellRinv=ellTRinv.block(0,0,D,D);
 	matrix obbRinv=obbTRinv.block(0,0,D,D);
 	matrix M=(ellRinv.block(0,0,D,D).transpose())*D2*ellRinv.block(0,0,D,D);
@@ -464,7 +477,7 @@ bool collideEllipsoidOBB(const Ellipsoid<T,D>& ell, const OBB<T,D>& obb)
 	for (uint i=0; i<D;++i)
 	{
 		s(i) = (x(i) >= 0 ? 1 : -1);
-		PmC(i) += s(i)*obbS.diagonal()[i]*obbRinv.row(i);
+		PmC.array() += s(i)*obbS.diagonal()[i]*obbRinv.row(i).array();
 	}
 
 	vector Delta = KmC-PmC;
@@ -473,7 +486,7 @@ bool collideEllipsoidOBB(const Ellipsoid<T,D>& ell, const OBB<T,D>& obb)
 	vector rsqr;
 	for (uint i=0; i<D;++i)
 	{
-		T r=(ellRinv.row(i)*Delta)/ellS.diagonal()[i];
+        T r=((ellRinv.row(i)*Delta)/ellS.diagonal()[i])(0,0);
 		rsqr(i)=r*r;
 	}
 
@@ -489,7 +502,7 @@ bool collideEllipsoidOBB(const Ellipsoid<T,D>& ell, const OBB<T,D>& obb)
  		for (uint j=0; j<D;++j)
  		{
  			// Need to use template here for disambiguation of the triangularView method.
- 			UMU.template triangularView<Eigen::Upper>().coeffRef(i,j)=obbRinv*product;
+            UMU.template triangularView<Eigen::Upper>().coeffRef(i,j)=(obbRinv*product)(0,0);
  		}
 	}
 
