@@ -44,19 +44,22 @@ typedef unsigned int uint;
 template<typename T, uint D> class Ellipsoid;
 template<typename T, uint D> class OBB;
 template<typename T, uint D> class Sphere;
-template<typename T, uint D> class ShapeCollection;
 
 template<typename T,uint D>
 class IShape : public AABB<T,D>
 {
+	typedef Eigen::Matrix<T,D,1> vector;
 	typedef Eigen::Matrix<T,D+1,1> HomVector;
 public:
 	IShape();
 	virtual ~IShape();
 	virtual bool isInside(const HomVector& vector) const =0;
-    //virtual bool collide(const IShape<T,D>& rhs) const =0;
-    //virtual bool collide(const NDBox<T,D>& rhs) const =0;
-    //virtual bool collide(const ShapeCollection<T,D>& rhs) =0;
+    virtual bool collide(const IShape<T,D>& rhs) const =0;
+    virtual bool collide(const Ellipsoid<T,D>& rhs) const =0;
+    virtual bool collide(const OBB<T,D>& rhs) const =0;
+    virtual bool collide(const Sphere<T,D>& rhs) const =0;
+
+	virtual void translate(const vector& t) =0;
 };
 
 template<typename T,uint D>
@@ -68,19 +71,6 @@ template<typename T,uint D>
 IShape<T,D>::~IShape()
 {
 }
-
-//template<typename T, unsigned int D>
-//bool collisionBoxBox(const NDBox<T,D>& b1, const NDBox<T,D>& b2)
-//{
-//	return b1.collide(b2);
-//}
-//
-//template<typename T, unsigned int D>
-//bool collisionBoxShapeCollection(const NDBox<T,D>& b1, const ShapeCollection<T,D>& b2)
-//{
-//	return b1.collide(b2);
-//}
-
 
 } // namespace Geometry
 

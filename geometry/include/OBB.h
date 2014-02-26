@@ -38,6 +38,8 @@
 #include <unsupported/Eigen/MatrixFunctions>
 
 #include "IShape.h"
+#include "Ellipsoid.h"
+#include "Sphere.h"
 
 namespace SX
 {
@@ -60,14 +62,16 @@ class OBB : public IShape<T,D>
 	using AABB<T,D>::_upperBound;
 
 public:
-	// Construct a N-dimensional box from its center, semi-axes, and eigenvectors ()
+	//; Construct a N-dimensional box from its center, semi-axes, and eigenvectors ()
 	OBB(const vector& center, const vector& eigenvalues, const matrix& eigenvectors);
 	//; The destructor.
 	~OBB();
-	//; Returns true if the sphere collides with an OBB.
-	bool collide(const OBB& other) const;
+	//; Return true if the OBB intersects any kind of shape.
+	bool collide(const IShape<T,D>& other) const;
 	//; Returns true if the sphere collides with an Ellipsoid.
 	bool collide(const Ellipsoid<T,D>&) const;
+	//; Returns true if the sphere collides with an OBB.
+	bool collide(const OBB<T,D>& other) const;
 	//; Returns true if the OBB collides with a Sphere.
 	bool collide(const Sphere<T,D>&) const;
 	//; Return the extents of the OBB
@@ -100,8 +104,7 @@ public:
 };
 
 // Collision detection in the 3D case.
-template<typename T,uint D=2> bool collideOBBOBB(const OBB<T,2>&, const OBB<T,2>&);
-template<typename T,uint D=3> bool collideOBBOBB(const OBB<T,3>&, const OBB<T,3>&);
+template<typename T,uint D> bool collideOBBOBB(const OBB<T,D>&, const OBB<T,D>&);
 template<typename T,uint D> bool collideOBBEllipsoid(const OBB<T,D>&, const Ellipsoid<T,D>&);
 template<typename T,uint D> bool collideOBBSphere(const OBB<T,D>&, const Sphere<T,D>&);
 
@@ -130,6 +133,18 @@ OBB<T,D>::OBB(const vector& center, const vector& eigenvalues, const matrix& eig
 template<typename T, uint D>
 OBB<T,D>::~OBB()
 {
+}
+
+template<typename T,uint D>
+bool OBB<T,D>::collide(const IShape<T,D>& other) const
+{
+	return other.collide(*this);
+}
+
+template<typename T,uint D>
+bool OBB<T,D>::collide(const Ellipsoid<T,D>& other) const
+{
+	return collideOBBEllipsoid<T,D>(*this,other);
 }
 
 template<typename T,uint D>
@@ -236,7 +251,8 @@ void OBB<T,D>::updateAABB()
 
 }
 
-template<typename T,uint D=2> bool collideOBBOBB(const OBB<T,2>& a, const OBB<T,2>& b)
+template<typename T,uint D=2>
+bool collideOBBOBB(const OBB<T,2>& a, const OBB<T,2>& b)
 {
 
 	// Get the (TRS)^-1 matrices of the two OBBs
@@ -303,7 +319,8 @@ template<typename T,uint D=2> bool collideOBBOBB(const OBB<T,2>& a, const OBB<T,
  *	Geometric Tools, LLC
  *	http://www.geometrictools.com
  */
-template<typename T,uint D=3> bool collideOBBOBB(const OBB<T,3>& a, const OBB<T,3>& b)
+template<typename T,uint D=3>
+bool collideOBBOBB(const OBB<T,3>& a, const OBB<T,3>& b)
 {
 
 	// Get the (TRS)^-1 matrices of the two OBBs

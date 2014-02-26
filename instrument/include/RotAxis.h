@@ -87,6 +87,7 @@ public:
 	Quaterniond getQuat(double angle) const;
 	//! Print information into a stream
 	friend std::ostream& operator<<(std::ostream& os, const RotAxis&);
+	void readXML(std::istream&);
 protected:
 	//! Axis of rotation, normalized vector
 	Vector3d _axis;

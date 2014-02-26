@@ -62,16 +62,18 @@ class Sphere : public IShape<T,D>
 	using AABB<T,D>::_upperBound;
 
 public:
-	// Construct a N-dimensional sphere from its center and radius.
+	//; Construct a N-dimensional sphere from its center and radius.
 	Sphere(const vector& center, T radius);
 	//; The destructor.
 	~Sphere();
-	//; Check whether two spheres collide.
-	bool collide(const Sphere<T,D>& other) const;
+	//; Return true if the sphere intersects any kind of shape.
+	bool collide(const IShape<T,D>& other) const;
 	//; Check whether a sphere collides with an ellipsoid.
 	bool collide(const Ellipsoid<T,D>&) const;
 	//; Check whether a sphere collides with an OBB.
 	bool collide(const OBB<T,D>&) const;
+	//; Check whether two spheres collide.
+	bool collide(const Sphere<T,D>& other) const;
 	//; Return the center of the sphere.
 	const vector& getCenter() const;
 	//; Return the radius of the sphere.
@@ -117,15 +119,27 @@ Sphere<T,D>::~Sphere()
 }
 
 template<typename T,uint D>
-bool Sphere<T,D>::collide(const Sphere<T,D>& other) const
+bool Sphere<T,D>::collide(const IShape<T,D>& other) const
 {
-	return collideSphereSphere<T,D>(*this,other);
+	return other.collide(*this);
 }
 
 template<typename T,uint D>
 bool Sphere<T,D>::collide(const Ellipsoid<T,D>& other) const
 {
 	return collideSphereEllipsoid<T,D>(*this,other);
+}
+
+template<typename T,uint D>
+bool Sphere<T,D>::collide(const OBB<T,D>& other) const
+{
+	return collideSphereOBB<T,D>(*this,other);
+}
+
+template<typename T,uint D>
+bool Sphere<T,D>::collide(const Sphere<T,D>& other) const
+{
+	return collideSphereSphere<T,D>(*this,other);
 }
 
 template<typename T,uint D>
@@ -202,7 +216,7 @@ bool collideSphereEllipsoid(const Sphere<T,D>& s, const Ellipsoid<T,D>& eB)
 }
 
 template<typename T,uint D>
-bool collideSphereOBB(const Sphere<T,D>& s, const Ellipsoid<T,D>& obb)
+bool collideSphereOBB(const Sphere<T,D>& s, const OBB<T,D>& obb)
 {
 	Eigen::Matrix<T,D,1> scale=Eigen::Matrix<T,D,1>::Constant(s.getRadius());
 

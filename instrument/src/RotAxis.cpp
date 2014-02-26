@@ -1,6 +1,9 @@
 #include "Units.h"
 #include "RotAxis.h"
-
+#include <boost/property_tree/xml_parser.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <iostream>
+#include <boost/foreach.hpp>
 
 namespace SX
 {
@@ -80,6 +83,35 @@ std::ostream& operator<<(std::ostream& os, const RotAxis& Rot)
 	else
 		os << " CCW";
 	return os;
+}
+
+void RotAxis::readXML(std::istream& is)
+{
+	using boost::property_tree::ptree;
+	ptree pt;
+	read_xml(is, pt);
+
+	// traverse pt
+	BOOST_FOREACH( ptree::value_type const& v, pt.get_child("Modifier") ) {
+		if( v.first == "RotAxis" ) {
+			_axis[0]=v.second.get<double>("x");
+			_axis[1]=v.second.get<double>("y");
+			_axis[2]=v.second.get<double>("z");
+			std::string direction=v.second.get<std::string>("Direction");
+			std::cout << direction << std::endl;
+			if (direction.compare("CCW")==0)
+			{
+				_dir=CCW;
+				std::cout << "CCW";
+			}
+			else if (direction.compare("CW")==0)
+			{
+				_dir=CW;
+				std::cout << "CW";
+			}
+		}
+	}
+	std::cout << _axis;
 }
 
 } // End namespace Geometry

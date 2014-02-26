@@ -53,16 +53,18 @@ class Ellipsoid : public IShape<T,D>
 	using AABB<T,D>::_lowerBound;
 	using AABB<T,D>::_upperBound;
 public:
-	// Construct a N-dimensional ellipsoid from its center, semi-axes, and eigenvectors ()
+	//; Construct a N-dimensional ellipsoid from its center, semi-axes, and eigenvectors ()
 	Ellipsoid(const vector& center, const vector& eigenvalues, const matrix& eigenvectors);
-	// Scale the ELlipsoid by the same value along each direction.
+	//; Scale the ELlipsoid by the same value along each direction.
 	void scale(T value);
-	// Anisotropic scale.
+	//; Anisotropic scale.
 	void scale(const vector& scale);
-	// Translate the ellipsoid
+	//; Translate the ellipsoid
 	void translate(const vector& t);
-	// Check whether a point given as Homogeneous coordinate in the (D+1) dimension is Inside the Ellipsoid.
+	//; Check whether a point given as Homogeneous coordinate in the (D+1) dimension is Inside the Ellipsoid.
 	bool isInside(const HomVector& vector) const;
+	//; Return true if the ellipsoid intersects any kind of shape.
+	bool collide(const IShape<T,D>& other) const;
 	//; Return true if the ellipsoid intersects an ellipsoid.
 	bool collide(const Ellipsoid<T,D>& other) const;
 	//; Return true if the ellipsoid intersects an OBB.
@@ -85,11 +87,7 @@ public:
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
-// Specialization of collision detection is necessary here to avoid heavy maths.
-// Collision detection in the 2D case.
-template<typename T,uint D=2> bool collideEllipsoidEllipsoid(const Ellipsoid<T,2>&, const Ellipsoid<T,2>&);
-// Collision detection in the 3D case.
-template<typename T,uint D=3> bool collideEllipsoidEllipsoid(const Ellipsoid<T,3>&, const Ellipsoid<T,3>&);
+template<typename T,uint D> bool collideEllipsoidEllipsoid(const Ellipsoid<T,D>&, const Ellipsoid<T,D>&);
 template<typename T,uint D> bool collideEllipsoidOBB(const Ellipsoid<T,D>&, const OBB<T,D>&);
 template<typename T,uint D> bool collideEllipsoidSphere(const Ellipsoid<T,D>&, const Sphere<T,D>&);
 
@@ -115,6 +113,12 @@ Ellipsoid<T,D>::Ellipsoid(const vector& center, const vector& eigenvalues, const
 	// Finally compute (TRS)^-1 by left-multiplying (TR)^-1 by S^-1
 	_TRSinv=Sinv*_TRSinv;
 	updateAABB();
+}
+
+template<typename T,uint D>
+bool Ellipsoid<T,D>::collide(const IShape<T,D>& other) const
+{
+	return other.collide(*this);
 }
 
 template<typename T,uint D>
@@ -502,10 +506,10 @@ bool collideEllipsoidOBB(const Ellipsoid<T,D>& ell, const OBB<T,D>& obb)
 	for (uint i=0; i<D;++i)
 	{
 		product << M*(obbRinv.row(i).transpose());
- 		for (uint j=0; j<D;++j)
+ 		for (uint j=i; j<D;++j)
  		{
  			// Need to use template here for disambiguation of the triangularView method.
-            UMU.template triangularView<Eigen::Upper>().coeffRef(i,j)=(obbRinv*product)(0,0);
+            UMU.template triangularView<Eigen::Upper>().coeffRef(i,j)=(obbRinv.row(j)*product)(0,0);
  		}
 	}
 

@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<Instrument>
+<Name>D19</Name>
+<Component></Component> 
+</Instrument>
+
+<Modifier>
+  <RotAxis>
+  <Name>Omega</Name>
+  <x>0.0</x>
+  <y>0.0</y>
+  <z>1.0</z>
+  <Direction>CW</Direction>
+  </RotAxis>
+</Modifier>
