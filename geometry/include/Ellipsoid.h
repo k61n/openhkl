@@ -461,7 +461,7 @@ bool collideEllipsoidOBB(const Ellipsoid<T,D>& ell, const OBB<T,D>& obb)
 	// Compute the increase in extents for the OBB
 	vector L;
 	for (uint i=0;i<D;++i)
-		L(i)=sqrt((obbRinv.row(i)*(M.inverse())*obbRinv.row(i).transpose())(0,0));
+		L(i)=sqrt((obbRinv.row(i)*(M.inverse())*(obbRinv.row(i).transpose()))(0,0));
 
 	// Transform the ellipsoid center to the OBB coordinate system
 	vector KmC=ellT-obbT;
@@ -489,7 +489,7 @@ bool collideEllipsoidOBB(const Ellipsoid<T,D>& ell, const OBB<T,D>& obb)
 	T r;
 	for (uint i=0; i<D;++i)
 	{
-        r=((ellRinv.row(i)*Delta)/ellS.diagonal()[i])(0,0);
+        r=((ellRinv.row(i)*Delta)(0,0)/ellS.diagonal()[i]);
 		rsqr(i)=r*r;
 	}
 
