@@ -465,9 +465,7 @@ bool collideEllipsoidOBB(const Ellipsoid<T,D>& ell, const OBB<T,D>& obb)
 
 	// Transform the ellipsoid center to the OBB coordinate system
 	vector KmC=ellT-obbT;
-	vector x;
-	for (uint i=0; i<D;++i)
-		x(i)=(obbRinv.row(i)*KmC)(0,0);
+	vector x=obbRinv*KmC;
 
 	for (uint i=0;i<D;++i)
 	{
@@ -477,7 +475,7 @@ bool collideEllipsoidOBB(const Ellipsoid<T,D>& ell, const OBB<T,D>& obb)
 	}
 
 	vector s;
-	vector PmC = vector::Constant(0.0);
+	vector PmC = vector::Zero();
 	for (uint i=0; i<D;++i)
 	{
 		s(i) = (x(i) >= 0 ? 1 : -1);
@@ -488,9 +486,10 @@ bool collideEllipsoidOBB(const Ellipsoid<T,D>& ell, const OBB<T,D>& obb)
 	vector MDelta = M*Delta;
 
 	vector rsqr;
+	T r;
 	for (uint i=0; i<D;++i)
 	{
-        T r=((ellRinv.row(i)*Delta)/ellS.diagonal()[i])(0,0);
+        r=((ellRinv.row(i)*Delta)/ellS.diagonal()[i])(0,0);
 		rsqr(i)=r*r;
 	}
 
@@ -502,7 +501,7 @@ bool collideEllipsoidOBB(const Ellipsoid<T,D>& ell, const OBB<T,D>& obb)
 	vector product;
 	for (uint i=0; i<D;++i)
 	{
-		product << M*obbRinv.row(i).transpose();
+		product << M*(obbRinv.row(i).transpose());
  		for (uint j=0; j<D;++j)
  		{
  			// Need to use template here for disambiguation of the triangularView method.
