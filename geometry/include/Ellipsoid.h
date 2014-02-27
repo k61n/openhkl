@@ -404,13 +404,112 @@ bool collideEllipsoidEllipsoid(const Ellipsoid<T,3>& eA, const Ellipsoid<T,3>& e
 }
 
 /** Based on the method described in:
+ *  "Intersection of Rectangle and Ellipse"
+ *	Eberly, David.,
+ *	Geometric Tools, LLC
+ *	http://www.geometrictools.com
+ */
+template<typename T,uint D=2>
+bool collideEllipsoidOBB(const Ellipsoid<T,2>& ell, const OBB<T,2>& obb)
+{
+
+	typedef unsigned int uint;
+	typedef Eigen::Matrix<T,D,1> vector;
+	typedef Eigen::Matrix<T,D,D> matrix;
+	typedef Eigen::Matrix<T,D+1,D+1> HomMatrix;
+
+	// Get the TRS inverse matrix of the ellipsoid
+	HomMatrix ellTRSinv=ell.getTRSInverseMatrix();
+
+	// Get the TRS inverse matrix of the OBB
+	HomMatrix obbTRSinv=obb.getTRSInverseMatrix();
+
+	// Construct the S matrice for the ellipsoid
+	Eigen::DiagonalMatrix<T,D+1> ellS;
+	ellS.diagonal().segment(0,D) = ell.getSemiAxes();
+	ellS.diagonal()[D] = 1.0;
+
+	// Construct the S matrice for the OBB
+	Eigen::DiagonalMatrix<T,D+1> obbS;
+	obbS.diagonal().segment(0,D) = obb.getSemiAxes();
+	obbS.diagonal()[D] = 1.0;
+
+	// Construct the (TR)^-1 matrices for the ellipsoid
+	HomMatrix ellTRinv(ellS*ellTRSinv);
+
+	// Construct the (TR)^-1 matrices for the OBB
+	HomMatrix obbTRinv(obbS*obbTRSinv);
+
+	// Construct the R^-1 matrix (non-homogeneous version) for the ellipsoid
+	matrix ellRinv=ellTRinv.block(0,0,D,D);
+
+	// Construct the R^-1 matrix (non-homogeneous version) for the obb
+	matrix obbRinv=obbTRinv.block(0,0,D,D);
+
+	// Construct T vector for the ellipsoid
+	vector ellT=-(ellRinv.transpose())*(ellTRinv.block(0,D,D,1));
+
+	// Construct T vector for the OBB
+	vector obbT=-(obbRinv.transpose())*(obbTRinv.block(0,D,D,1));
+
+	// Compute the D2 and M matrices (defined in p.2 of the documentation)
+	Eigen::DiagonalMatrix<T,D> D2;
+    for (uint i=0;i<D;++i)
+        D2.diagonal()[i] = 1.0/(ellS.diagonal()[i]*ellS.diagonal()[i]);
+	matrix M=(ellRinv.transpose())*D2*ellRinv;
+
+	/*
+	 * Here actually starts the Minkowski sum of box and ellipsoid algorithm (defined in p.6 of the documentation)
+	*/
+
+	// Compute the increase in extents for the OBB
+	vector L;
+	for (uint i=0;i<D;++i)
+		L(i)=sqrt((obbRinv.row(i)*(M.inverse())*(obbRinv.row(i).transpose()))(0,0));
+
+	// Transform the ellipsoid center to the OBB coordinate system
+	vector KmC=ellT-obbT;
+	vector x=obbRinv*KmC;
+
+	// The ellipsoid center is outside the OBB
+	if (std::abs(x(0))<=(obbS.diagonal()[0]+L(0)) &&
+		std::abs(x(1))<=(obbS.diagonal()[1]+L(1)))
+	{
+		vector s;
+		vector PmC = vector::Zero();
+		for (uint i=0; i<D;++i)
+		{
+			s(i) = (x(i) >= 0 ? 1 : -1);
+			PmC.array() += s(i)*obbS.diagonal()[i]*obbRinv.row(i).array();
+		}
+		vector MDelta = M*(KmC-PmC);
+		for (uint i=0; i<D;++i)
+		{
+			if (s(i)*(obbRinv*MDelta)(0,0) <= 0.0)
+				return true;
+		}
+		return false;
+	}
+
+	for (uint i=0;i<D;++i)
+	{
+		// The ellipsoid center is outside the OBB
+		if (std::abs(x(i))>(obbS.diagonal()[i]+L(i)))
+			return false;
+	}
+
+	return true;
+
+}
+
+/** Based on the method described in:
  *  "Intersection of Box and Ellipsoid"
  *	Eberly, David.,
  *	Geometric Tools, LLC
  *	http://www.geometrictools.com
  */
-template<typename T,uint D>
-bool collideEllipsoidOBB(const Ellipsoid<T,D>& ell, const OBB<T,D>& obb)
+template<typename T,uint D=3>
+bool collideEllipsoidOBB(const Ellipsoid<T,3>& ell, const OBB<T,3>& obb)
 {
 
 	typedef unsigned int uint;
