@@ -482,23 +482,18 @@ bool collideEllipsoidOBB(const Ellipsoid<T,2>& ell, const OBB<T,2>& obb)
 			s(i) = (x(i) >= 0 ? 1 : -1);
 			PmC.array() += s(i)*obbS.diagonal()[i]*obbRinv.row(i).array();
 		}
-		vector MDelta = M*(KmC-PmC);
+		vector Delta=KmC-PmC;
+		vector MDelta = M*Delta;
 		for (uint i=0; i<D;++i)
 		{
-			if (s(i)*(obbRinv*MDelta)(0,0) <= 0.0)
+			if (s(i)*((obbRinv.row(i))*MDelta)(0,0) <= 0.0)
 				return true;
 		}
-		return false;
+		return ((Delta.transpose()*(M*Delta))(0,0) <= 1);
+
 	}
 
-	for (uint i=0;i<D;++i)
-	{
-		// The ellipsoid center is outside the OBB
-		if (std::abs(x(i))>(obbS.diagonal()[i]+L(i)))
-			return false;
-	}
-
-	return true;
+	return false;
 
 }
 
