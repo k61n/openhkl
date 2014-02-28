@@ -29,16 +29,21 @@ TARGET_LINK_LIBRARIES(TestNDTree ${Boost_LIBRARIES} NSXTool)
 add_test(TestNDTree TestNDTree)
 
 # unit test for 2D-OBB class
-add_executable(TestOBB_2D TestOBB_2D.cpp)
-TARGET_LINK_LIBRARIES(TestOBB_2D ${Boost_LIBRARIES} NSXTool)
-add_test(TestOBB_2D TestOBB_2D)
+add_executable(TestOBB2D TestOBB2D.cpp)
+TARGET_LINK_LIBRARIES(TestOBB2D ${Boost_LIBRARIES} NSXTool)
+add_test(TestOBB2D TestOBB2D)
 
 # unit test for 3D-OBB class
-add_executable(TestOBB_3D TestOBB_3D.cpp)
-TARGET_LINK_LIBRARIES(TestOBB_3D ${Boost_LIBRARIES} NSXTool)
-add_test(TestOBB_3D TestOBB_3D)
+add_executable(TestOBB3D TestOBB3D.cpp)
+TARGET_LINK_LIBRARIES(TestOBB3D ${Boost_LIBRARIES} NSXTool)
+add_test(TestOBB3D TestOBB3D)
 
-# unit test for ND sphere
-add_executable(TestSphere TestSphere.cpp)
-TARGET_LINK_LIBRARIES(TestSphere ${Boost_LIBRARIES} NSXTool)
-add_test(TestSphere TestSphere)
+# unit test for 2D-sphere
+add_executable(TestSphere2D TestSphere2D.cpp)
+TARGET_LINK_LIBRARIES(TestSphere2D ${Boost_LIBRARIES} NSXTool)
+add_test(TestSphere2D TestSphere2D)
+
+# unit test for 3D-sphere
+add_executable(TestSphere3D TestSphere3D.cpp)
+TARGET_LINK_LIBRARIES(TestSphere3D ${Boost_LIBRARIES} NSXTool)
+add_test(TestSphere3D TestSphere3D)
