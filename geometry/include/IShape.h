@@ -48,6 +48,7 @@ template<typename T, uint D> class Sphere;
 template<typename T,uint D>
 class IShape : public AABB<T,D>
 {
+	typedef Eigen::Matrix<T,D,D> matrix;
 	typedef Eigen::Matrix<T,D,1> vector;
 	typedef Eigen::Matrix<T,D+1,1> HomVector;
 public:
@@ -59,6 +60,8 @@ public:
     virtual bool collide(const OBB<T,D>& rhs) const =0;
     virtual bool collide(const Sphere<T,D>& rhs) const =0;
 
+	virtual void rotate(const matrix& eigenvectors) =0;
+	virtual void scale(T value) =0;
 	virtual void translate(const vector& t) =0;
 };
 

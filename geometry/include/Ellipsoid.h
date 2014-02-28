@@ -64,9 +64,9 @@ public:
 	//! Return true if the ellipsoid intersects a Sphere.
 	bool collide(const Sphere<T,D>& other) const;
 	//! Return the semi-axes of the Ellipsoids
-	const vector& getSemiAxes() const;
+	const vector& getExtents() const;
 	//! Return the inverse of the Mapping matrix (\f$ S^{-1}.R^{-1}.T^{-1} \f$)
-	const HomMatrix& getTRSInverseMatrix() const;
+	const HomMatrix& getInverseTransformation() const;
 	//! Check whether a point given as Homogeneous coordinate in the (D+1) dimension is Inside the Ellipsoid.
 	bool isInside(const HomVector& vector) const;
 	//! Rotate the ellipsoid.
@@ -225,13 +225,13 @@ bool Ellipsoid<T,D>::isInside(const HomVector& point) const
 }
 
 template<typename T,uint D>
-const typename Ellipsoid<T,D>::HomMatrix& Ellipsoid<T,D>::getTRSInverseMatrix() const
+const typename Ellipsoid<T,D>::HomMatrix& Ellipsoid<T,D>::getInverseTransformation() const
 {
 	return _TRSinv;
 }
 
 template<typename T,uint D>
-const typename Ellipsoid<T,D>::vector& Ellipsoid<T,D>::getSemiAxes() const
+const typename Ellipsoid<T,D>::vector& Ellipsoid<T,D>::getExtents() const
 {
 	return _eigenVal;
 }
@@ -239,7 +239,7 @@ const typename Ellipsoid<T,D>::vector& Ellipsoid<T,D>::getSemiAxes() const
 template<typename T,uint D>
 void Ellipsoid<T,D>::updateAABB()
 {
-	Eigen::Matrix<T,D+1,D+1> TRS=getTRSInverseMatrix().inverse();
+	Eigen::Matrix<T,D+1,D+1> TRS=getInverseTransformation().inverse();
 
 	// The width of the AABB in one direction is the norm of corresponding TRS matrix row
 	vector width=vector::Constant(0.0);
@@ -276,10 +276,10 @@ template<typename T,uint D=2>
 bool collideEllipsoidEllipsoid(const Ellipsoid<T,2>& eA, const Ellipsoid<T,2>& eB)
 {
 	// Get the (TRS)^-1 matrices from object A and B
-	const Eigen::Matrix<T,3,3>& trsA=eA.getTRSInverseMatrix();
-	const Eigen::Matrix<T,2,1>& eigA=eA.getSemiAxes();
-	const Eigen::Matrix<T,3,3>& trsB=eB.getTRSInverseMatrix();
-	const Eigen::Matrix<T,2,1>& eigB=eB.getSemiAxes();
+	const Eigen::Matrix<T,3,3>& trsA=eA.getInverseTransformation();
+	const Eigen::Matrix<T,2,1>& eigA=eA.getExtents();
+	const Eigen::Matrix<T,3,3>& trsB=eB.getInverseTransformation();
+	const Eigen::Matrix<T,2,1>& eigB=eB.getExtents();
 
 	// Reconstruct the S matrices
 	Eigen::DiagonalMatrix<T,3> SA;
@@ -358,10 +358,10 @@ template<typename T,uint D=3>
 bool collideEllipsoidEllipsoid(const Ellipsoid<T,3>& eA, const Ellipsoid<T,3>& eB)
 {
 	//
-	const Eigen::Matrix<T,4,4>& trsA=eA.getTRSInverseMatrix();
-	const Eigen::Matrix<T,3,1>& eigA=eA.getSemiAxes();
-	const Eigen::Matrix<T,4,4>& trsB=eB.getTRSInverseMatrix();
-	const Eigen::Matrix<T,3,1>& eigB=eB.getSemiAxes();
+	const Eigen::Matrix<T,4,4>& trsA=eA.getInverseTransformation();
+	const Eigen::Matrix<T,3,1>& eigA=eA.getExtents();
+	const Eigen::Matrix<T,4,4>& trsB=eB.getInverseTransformation();
+	const Eigen::Matrix<T,3,1>& eigB=eB.getExtents();
 	Eigen::DiagonalMatrix<T,4> SA;
 	SA.diagonal() << eigA(0), eigA(1), eigA(2), 1.0;
 	Eigen::DiagonalMatrix<T,4> SB;
@@ -451,19 +451,19 @@ bool collideEllipsoidOBB(const Ellipsoid<T,2>& ell, const OBB<T,2>& obb)
 	typedef Eigen::Matrix<T,D+1,D+1> HomMatrix;
 
 	// Get the TRS inverse matrix of the ellipsoid
-	HomMatrix ellTRSinv=ell.getTRSInverseMatrix();
+	HomMatrix ellTRSinv=ell.getInverseTransformation();
 
 	// Get the TRS inverse matrix of the OBB
-	HomMatrix obbTRSinv=obb.getTRSInverseMatrix();
+	HomMatrix obbTRSinv=obb.getInverseTransformation();
 
 	// Construct the S matrice for the ellipsoid
 	Eigen::DiagonalMatrix<T,D+1> ellS;
-	ellS.diagonal().segment(0,D) = ell.getSemiAxes();
+	ellS.diagonal().segment(0,D) = ell.getExtents();
 	ellS.diagonal()[D] = 1.0;
 
 	// Construct the S matrice for the OBB
 	Eigen::DiagonalMatrix<T,D+1> obbS;
-	obbS.diagonal().segment(0,D) = obb.getSemiAxes();
+	obbS.diagonal().segment(0,D) = obb.getExtents();
 	obbS.diagonal()[D] = 1.0;
 
 	// Construct the (TR)^-1 matrices for the ellipsoid
@@ -545,19 +545,19 @@ bool collideEllipsoidOBB(const Ellipsoid<T,3>& ell, const OBB<T,3>& obb)
 	typedef Eigen::Matrix<T,D+1,D+1> HomMatrix;
 
 	// Get the TRS inverse matrix of the ellipsoid
-	HomMatrix ellTRSinv=ell.getTRSInverseMatrix();
+	HomMatrix ellTRSinv=ell.getInverseTransformation();
 
 	// Get the TRS inverse matrix of the OBB
-	HomMatrix obbTRSinv=obb.getTRSInverseMatrix();
+	HomMatrix obbTRSinv=obb.getInverseTransformation();
 
 	// Construct the S matrice for the ellipsoid
 	Eigen::DiagonalMatrix<T,D+1> ellS;
-	ellS.diagonal().segment(0,D) = ell.getSemiAxes();
+	ellS.diagonal().segment(0,D) = ell.getExtents();
 	ellS.diagonal()[D] = 1.0;
 
 	// Construct the S matrice for the OBB
 	Eigen::DiagonalMatrix<T,D+1> obbS;
-	obbS.diagonal().segment(0,D) = obb.getSemiAxes();
+	obbS.diagonal().segment(0,D) = obb.getExtents();
 	obbS.diagonal()[D] = 1.0;
 
 	// Construct the (TR)^-1 matrices for the ellipsoid

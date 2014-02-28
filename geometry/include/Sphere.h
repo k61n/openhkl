@@ -62,38 +62,40 @@ class Sphere : public IShape<T,D>
 	using AABB<T,D>::_upperBound;
 
 public:
-	//; Construct a N-dimensional sphere from its center and radius.
+	//! Construct a N-dimensional sphere from its center and radius.
 	Sphere(const vector& center, T radius);
-	//; The destructor.
+	//! The destructor.
 	~Sphere();
-	//; Return true if the sphere intersects any kind of shape.
+	//! Return true if the sphere intersects any kind of shape.
 	bool collide(const IShape<T,D>& other) const;
-	//; Check whether a sphere collides with an ellipsoid.
+	//! Check whether a sphere collides with an ellipsoid.
 	bool collide(const Ellipsoid<T,D>&) const;
-	//; Check whether a sphere collides with an OBB.
+	//! Check whether a sphere collides with an OBB.
 	bool collide(const OBB<T,D>&) const;
-	//; Check whether two spheres collide.
+	//! Check whether two spheres collide.
 	bool collide(const Sphere<T,D>& other) const;
-	//; Return the center of the sphere.
+	//! Return the center of the sphere.
 	const vector& getCenter() const;
-	//; Return the radius of the sphere.
+	//! Return the radius of the sphere.
 	T getRadius() const;
-	//; Return the inverse of the Mapping matrix (\f$ S^{-1}.R^{-1}.T^{-1} \f$)
-	HomMatrix getTRSInverseMatrix() const;
-	//; Check whether a point given as Homogeneous coordinate in the (D+1) dimension is inside the sphere.
+	//! Return the inverse of the Mapping matrix (\f$ S^{-1}.R^{-1}.T^{-1} \f$)
+	HomMatrix getInverseTransformation() const;
+	//! Check whether a point given as Homogeneous coordinate in the (D+1) dimension is inside the sphere.
 	bool isInside(const HomVector& vector) const;
-	//; Scale the sphere.
+	//! Rotate the sphere
+	void rotate(const matrix& eigenvectors);
+	//! Scale the sphere.
 	void scale(T value);
-	//; Translate the sphere.
+	//! Translate the sphere.
 	void translate(const vector& t);
 
 
 private:
-	//; The center.
+	//! The center.
 	vector _center;
-	//; The scale value.
+	//! The scale value.
 	T _radius;
-	//; Update the AABB bound to the sphere.
+	//! Update the AABB bound to the sphere.
 	void updateAABB();
 
 public:
@@ -155,7 +157,7 @@ T Sphere<T,D>::getRadius() const
 }
 
 template<typename T,uint D>
-typename Sphere<T,D>::HomMatrix Sphere<T,D>::getTRSInverseMatrix() const
+typename Sphere<T,D>::HomMatrix Sphere<T,D>::getInverseTransformation() const
 {
 	Eigen::Matrix<T,D+1,D+1> mat=Eigen::Matrix<T,D+1,D+1>::Constant(0.0);
 	mat(D,D)=1.0;
@@ -173,6 +175,11 @@ bool Sphere<T,D>::isInside(const HomVector& point) const
 	vector diff=point.segment(0,3)-_center;
 
 	return (diff.squaredNorm()<(_radius*_radius));
+}
+
+template<typename T, uint D>
+void Sphere<T,D>::rotate(const matrix& eigenvectors)
+{
 }
 
 template<typename T, uint D>

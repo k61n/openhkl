@@ -75,13 +75,13 @@ public:
 	//! Returns true if the OBB collides with a Sphere.
 	bool collide(const Sphere<T,D>&) const;
 	//! Return the extents of the OBB
-	const vector& getSemiAxes() const;
-	// Return the inverse of the Mapping matrix (\f$ S^{-1}.R^{-1}.T^{-1} \f$)
-	const HomMatrix& getTRSInverseMatrix() const;
+	const vector& getExtents() const;
+	//! Return the inverse of the Mapping matrix (\f$ S^{-1}.R^{-1}.T^{-1} \f$)
+	const HomMatrix& getInverseTransformation() const;
 	//! Check whether a point given as Homogeneous coordinate in the (D+1) dimension is inside the OBB.
 	bool isInside(const HomVector& vector) const;
 	//! Rotate the OBB.
-	void rotate( const matrix& eigenvectors);
+	void rotate(const matrix& eigenvectors);
 	//! Scale isotropically the OBB.
 	void scale(T value);
 	//! Scale anisotropically the OBB.
@@ -162,13 +162,13 @@ bool OBB<T,D>::collide(const Sphere<T,D>& other) const
 }
 
 template<typename T,uint D>
-const typename OBB<T,D>::vector& OBB<T,D>::getSemiAxes() const
+const typename OBB<T,D>::vector& OBB<T,D>::getExtents() const
 {
 	return _eigenVal;
 }
 
 template<typename T,uint D>
-const typename OBB<T,D>::HomMatrix& OBB<T,D>::getTRSInverseMatrix() const
+const typename OBB<T,D>::HomMatrix& OBB<T,D>::getInverseTransformation() const
 {
 	return _TRSinv;
 }
@@ -289,12 +289,12 @@ bool collideOBBOBB(const OBB<T,2>& a, const OBB<T,2>& b)
 {
 
 	// Get the (TRS)^-1 matrices of the two OBBs
-	const Eigen::Matrix<T,3,3>& trsinva=a.getTRSInverseMatrix();
-	const Eigen::Matrix<T,3,3>& trsinvb=b.getTRSInverseMatrix();
+	const Eigen::Matrix<T,3,3>& trsinva=a.getInverseTransformation();
+	const Eigen::Matrix<T,3,3>& trsinvb=b.getInverseTransformation();
 
 	// Get the extent of the two OBBs
-	const Eigen::Matrix<T,2,1>& eiga=a.getSemiAxes();
-	const Eigen::Matrix<T,2,1>& eigb=b.getSemiAxes();
+	const Eigen::Matrix<T,2,1>& eiga=a.getExtents();
+	const Eigen::Matrix<T,2,1>& eigb=b.getExtents();
 
 	// Reconstruct the S matrices for the two OBBs
 	Eigen::DiagonalMatrix<T,3> sa;
@@ -357,12 +357,12 @@ bool collideOBBOBB(const OBB<T,3>& a, const OBB<T,3>& b)
 {
 
 	// Get the (TRS)^-1 matrices of the two OBBs
-	const Eigen::Matrix<T,4,4>& trsinva=a.getTRSInverseMatrix();
-	const Eigen::Matrix<T,4,4>& trsinvb=b.getTRSInverseMatrix();
+	const Eigen::Matrix<T,4,4>& trsinva=a.getInverseTransformation();
+	const Eigen::Matrix<T,4,4>& trsinvb=b.getInverseTransformation();
 
 	// Get the extent of the two OBBs
-	const Eigen::Matrix<T,3,1>& eiga=a.getSemiAxes();
-	const Eigen::Matrix<T,3,1>& eigb=b.getSemiAxes();
+	const Eigen::Matrix<T,3,1>& eiga=a.getExtents();
+	const Eigen::Matrix<T,3,1>& eigb=b.getExtents();
 
 	// Reconstruct the S matrices for the two OBBs
 	Eigen::DiagonalMatrix<T,4> sa;
