@@ -53,29 +53,31 @@ class Ellipsoid : public IShape<T,D>
 	using AABB<T,D>::_lowerBound;
 	using AABB<T,D>::_upperBound;
 public:
-	//; Construct a N-dimensional ellipsoid from its center, semi-axes, and eigenvectors ()
+	//! Construct a N-dimensional ellipsoid from its center, semi-axes, and eigenvectors ()
 	Ellipsoid(const vector& center, const vector& eigenvalues, const matrix& eigenvectors);
-	//; Scale the ELlipsoid by the same value along each direction.
-	void scale(T value);
-	//; Anisotropic scale.
-	void scale(const vector& scale);
-	//; Translate the ellipsoid
-	void translate(const vector& t);
-	//; Check whether a point given as Homogeneous coordinate in the (D+1) dimension is Inside the Ellipsoid.
-	bool isInside(const HomVector& vector) const;
-	//; Return true if the ellipsoid intersects any kind of shape.
+	//! Return true if the ellipsoid intersects any kind of shape.
 	bool collide(const IShape<T,D>& other) const;
-	//; Return true if the ellipsoid intersects an ellipsoid.
+	//! Return true if the ellipsoid intersects an ellipsoid.
 	bool collide(const Ellipsoid<T,D>& other) const;
-	//; Return true if the ellipsoid intersects an OBB.
+	//! Return true if the ellipsoid intersects an OBB.
 	bool collide(const OBB<T,D>& other) const;
-	//; Return true if the ellipsoid intersects a Sphere.
+	//! Return true if the ellipsoid intersects a Sphere.
 	bool collide(const Sphere<T,D>& other) const;
-	// Return the inverse of the Mapping matrix (\f$ S^{-1}.R^{-1}.T^{-1} \f$)
-	const HomMatrix& getTRSInverseMatrix() const;
-	// Return the semi-axes of the Ellipsoids
+	//! Return the semi-axes of the Ellipsoids
 	const vector& getSemiAxes() const;
-	//
+	//! Return the inverse of the Mapping matrix (\f$ S^{-1}.R^{-1}.T^{-1} \f$)
+	const HomMatrix& getTRSInverseMatrix() const;
+	//! Check whether a point given as Homogeneous coordinate in the (D+1) dimension is Inside the Ellipsoid.
+	bool isInside(const HomVector& vector) const;
+	//! Rotate the ellipsoid.
+	void rotate(const matrix& eigenvectors);
+	//! Scale isotropically the ellipsoid.
+	void scale(T value);
+	//! Scale anisotropically the ellipsoid.
+	void scale(const vector& scale);
+	//! Translate the ellipsoid
+	void translate(const vector& t);
+
 private:
 	// Method to update the closest fit AABB to the Ellipsoid
 	void updateAABB();
@@ -137,6 +139,36 @@ template<typename T,uint D>
 bool Ellipsoid<T,D>::collide(const Sphere<T,D>& other) const
 {
 	return collideEllipsoidSphere<T,D>(*this,other);
+}
+
+template<typename T, uint D>
+void Ellipsoid<T,D>::rotate(const matrix& eigenvectors)
+{
+	// Reconstruct S
+	Eigen::DiagonalMatrix<T,D+1> S;
+	for (unsigned int i=0;i<D;++i)
+		S.diagonal()[i]=_eigenVal[i];
+	S.diagonal()[D]=1.0;
+
+	_TRSinv=S*_TRSinv;
+
+	// Construct the inverse of the new rotation matrix
+	HomMatrix Rnewinv=HomMatrix::Zero();
+	Rnewinv(D,D) = 1.0;
+	for (unsigned int i=0;i<D;++i)
+		Rnewinv.block(i,0,1,D)=eigenvectors.col(i).transpose().normalized();
+	_TRSinv=Rnewinv*_TRSinv;
+
+	// Reconstruct Sinv
+	for (unsigned int i=0;i<D;++i)
+		S.diagonal()[i]=1.0/_eigenVal[i];
+	S.diagonal()[D]=1.0;
+
+	// Reconstruct the complete TRS inverse
+	_TRSinv = S*_TRSinv;
+
+	// Update the bounds of the AABB
+	updateAABB();
 }
 
 template<typename T,uint D>
