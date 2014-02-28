@@ -51,49 +51,51 @@ template<typename T, uint D>
 class OBB : public IShape<T,D>
 {
 
-	//; Some useful typedefs;
+	//! Some useful typedefs;
 	typedef Eigen::Matrix<T,D,D> matrix;
 	typedef Eigen::Matrix<T,D,1> vector;
 	typedef Eigen::Matrix<T,D+1,1> HomVector;
 	typedef Eigen::Matrix<T,D+1,D+1> HomMatrix;
 
-	//; Get rid of AABB resolution for protected attributes of AABB
+	//! Get rid of AABB resolution for protected attributes of AABB
 	using AABB<T,D>::_lowerBound;
 	using AABB<T,D>::_upperBound;
 
 public:
-	//; Construct a N-dimensional box from its center, semi-axes, and eigenvectors ()
+	//! Construct a N-dimensional box from its center, semi-axes, and eigenvectors ()
 	OBB(const vector& center, const vector& eigenvalues, const matrix& eigenvectors);
-	//; The destructor.
+	//! The destructor.
 	~OBB();
-	//; Return true if the OBB intersects any kind of shape.
+	//! Return true if the OBB intersects any kind of shape.
 	bool collide(const IShape<T,D>& other) const;
-	//; Returns true if the sphere collides with an Ellipsoid.
+	//! Returns true if the sphere collides with an Ellipsoid.
 	bool collide(const Ellipsoid<T,D>&) const;
-	//; Returns true if the sphere collides with an OBB.
+	//! Returns true if the sphere collides with an OBB.
 	bool collide(const OBB<T,D>& other) const;
-	//; Returns true if the OBB collides with a Sphere.
+	//! Returns true if the OBB collides with a Sphere.
 	bool collide(const Sphere<T,D>&) const;
-	//; Return the extents of the OBB
+	//! Return the extents of the OBB
 	const vector& getSemiAxes() const;
 	// Return the inverse of the Mapping matrix (\f$ S^{-1}.R^{-1}.T^{-1} \f$)
 	const HomMatrix& getTRSInverseMatrix() const;
-	//; Check whether a point given as Homogeneous coordinate in the (D+1) dimension is inside the OBB.
+	//! Check whether a point given as Homogeneous coordinate in the (D+1) dimension is inside the OBB.
 	bool isInside(const HomVector& vector) const;
-	//; Scale isotropically the OBB.
+	//! Rotate the OBB.
+	void rotate( const matrix& eigenvectors);
+	//! Scale isotropically the OBB.
 	void scale(T value);
-	//; Scale anisotropically the OBB.
+	//! Scale anisotropically the OBB.
 	void scale(const vector& scale);
-	//; Translate the OBB.
+	//! Translate the OBB.
 	void translate(const vector& t);
 
 
 private:
-	//; The inverse of the homogeneous transformation matrix.
+	//! The inverse of the homogeneous transformation matrix.
 	Eigen::Matrix<T,D+1,D+1> _TRSinv;
-	//; The scale value.
+	//! The scale value.
 	vector _eigenVal;
-	//; Update the closest fit AABB to the OBB.
+	//! Update the closest fit AABB to the OBB.
 	void updateAABB();
 
 public:
@@ -186,6 +188,37 @@ bool OBB<T,D>::isInside(const HomVector& point) const
 }
 
 template<typename T, uint D>
+void OBB<T,D>::rotate(const matrix& eigenvectors)
+{
+	// Reconstruct S
+	Eigen::DiagonalMatrix<T,D+1> S;
+	for (unsigned int i=0;i<D;++i)
+		S.diagonal()[i]=_eigenVal[i];
+	S.diagonal()[D]=1.0;
+
+	_TRSinv=S*_TRSinv;
+
+	// Construct the inverse of the new rotation matrix
+	HomMatrix Rnewinv=HomMatrix::Zero();
+	Rnewinv(D,D) = 1.0;
+	for (unsigned int i=0;i<D;++i)
+		Rnewinv.block(i,0,1,D)=eigenvectors.col(i).transpose().normalized();
+	_TRSinv=Rnewinv*_TRSinv;
+
+	// Reconstruct Sinv
+	for (unsigned int i=0;i<D;++i)
+		S.diagonal()[i]=1.0/_eigenVal[i];
+	S.diagonal()[D]=1.0;
+
+	// Reconstruct the complete TRS inverse
+	_TRSinv = S*_TRSinv;
+
+	// Update the bounds of the AABB
+	updateAABB();
+}
+
+
+template<typename T, uint D>
 void OBB<T,D>::scale(T value)
 {
 	_eigenVal*=value;
@@ -212,7 +245,7 @@ void OBB<T,D>::scale(const vector& v)
 template<typename T,uint D>
 void OBB<T,D>::translate(const vector& t)
 {
-	Eigen::Matrix<T,D+1,D+1> tinv=Eigen::Matrix<T,D+1,D+1>::Constant(0.0);
+	HomMatrix tinv=HomMatrix::Zero();
 	for (uint i=0;i<D+1;++i)
 		tinv(i,i)=1.0;
 	tinv.block(0,D,D,1)=-t;
