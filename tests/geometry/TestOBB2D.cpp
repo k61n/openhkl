@@ -19,26 +19,38 @@ BOOST_AUTO_TEST_CASE(Test_OBB)
 {
 
 	// Test: the construction onf an OBB
-	Vector2d center(3,3);
-	Vector2d semi_axes(sqrt(2),sqrt(2));
-	Matrix2d eigen_values;
-	eigen_values << 1,-1,
-			        1, 1;
-	OBB<double,2> obb1(center,semi_axes,eigen_values);
+	Vector2d center(3,4);
+	Vector2d extent(sqrt(2),sqrt(2));
+	Matrix2d axis;
+	axis << 1,0,
+			0,1;
+	OBB<double,2> obb1(center,extent,axis);
 	Vector2d lower(obb1.getLower());
 	Vector2d upper(obb1.getUpper());
 
+	BOOST_CHECK_CLOSE(lower[0],3-sqrt(2),tolerance);
+	BOOST_CHECK_CLOSE(lower[1],4-sqrt(2),tolerance);
+	BOOST_CHECK_CLOSE(upper[0],3+sqrt(2),tolerance);
+	BOOST_CHECK_CLOSE(upper[1],4+sqrt(2),tolerance);
+
+	// Test: the rotation of an OBB
+	Matrix2d r;
+	r << 1,-1,
+		 1, 1;
+	obb1.rotate(r);
+	lower=obb1.getLower();
+	upper=obb1.getUpper();
 	BOOST_CHECK_CLOSE(lower[0],1.0,tolerance);
-	BOOST_CHECK_CLOSE(lower[1],1.0,tolerance);
+	BOOST_CHECK_CLOSE(lower[1],2.0,tolerance);
 	BOOST_CHECK_CLOSE(upper[0],5.0,tolerance);
-	BOOST_CHECK_CLOSE(upper[1],5.0,tolerance);
+	BOOST_CHECK_CLOSE(upper[1],6.0,tolerance);
 
 	// Test: the isotropic scaling of an OBB
 	center << 3,2;
-	semi_axes << 1,4;
-	eigen_values << 1, 0,
-			        0, 1;
-	OBB<double,2> obb2(center,semi_axes,eigen_values);
+	extent << 1,4;
+	axis << 1, 0,
+			0, 1;
+	OBB<double,2> obb2(center,extent,axis);
 	obb2.scale(5);
 	lower = obb2.getLower();
 	upper = obb2.getUpper();
@@ -49,10 +61,10 @@ BOOST_AUTO_TEST_CASE(Test_OBB)
 
 	// Test: the anisotropic scaling of an OBB
 	center << 2,2;
-	semi_axes << sqrt(2)/2,sqrt(2);
-	eigen_values << 1,-1,
-			        1, 1;
-	OBB<double,2> obb3(center,semi_axes,eigen_values);
+	extent << sqrt(2)/2,sqrt(2);
+	axis << 1,-1,
+			1, 1;
+	OBB<double,2> obb3(center,extent,axis);
 	obb3.scale(Vector2d(3,2));
 	lower = obb3.getLower();
 	upper = obb3.getUpper();

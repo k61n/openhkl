@@ -19,30 +19,47 @@ BOOST_AUTO_TEST_CASE(Test_OBB)
 {
 
 	// Test: the construction onf an OBB
-	Vector3d center(3,3,4);
-	Vector3d semi_axes(sqrt(2),sqrt(2),1);
-	Matrix3d eigen_values;
-	eigen_values << 1,-1 ,0,
-			        1, 1 ,0,
-			        0, 0 ,1;
-	OBB<double,3> obb1(center,semi_axes,eigen_values);
+	Vector3d center(3,4,7);
+	Vector3d extent(sqrt(2),sqrt(2),1);
+	Matrix3d axis;
+	axis << 1,0,0,
+			0,1,0,
+			0,0,1;
+	OBB<double,3> obb1(center,extent,axis);
 	Vector3d lower(obb1.getLower());
 	Vector3d upper(obb1.getUpper());
 
+	BOOST_CHECK_CLOSE(lower[0],3.0-sqrt(2),tolerance);
+	BOOST_CHECK_CLOSE(lower[1],4.0-sqrt(2),tolerance);
+	BOOST_CHECK_CLOSE(lower[2],6.0,tolerance);
+	BOOST_CHECK_CLOSE(upper[0],3.0+sqrt(2),tolerance);
+	BOOST_CHECK_CLOSE(upper[1],4.0+sqrt(2),tolerance);
+	BOOST_CHECK_CLOSE(upper[2],8.0,tolerance);
+
+	// Test: the rotation of an OBB
+	Matrix3d r;
+	r << 1,-1,0,
+		 1, 1,0,
+		 0, 0,1;
+	obb1.rotate(r);
+	lower=obb1.getLower();
+	upper=obb1.getUpper();
+
 	BOOST_CHECK_CLOSE(lower[0],1.0,tolerance);
-	BOOST_CHECK_CLOSE(lower[1],1.0,tolerance);
-	BOOST_CHECK_CLOSE(lower[2],3.0,tolerance);
+	BOOST_CHECK_CLOSE(lower[1],2.0,tolerance);
+	BOOST_CHECK_CLOSE(lower[2],6.0,tolerance);
 	BOOST_CHECK_CLOSE(upper[0],5.0,tolerance);
-	BOOST_CHECK_CLOSE(upper[1],5.0,tolerance);
-	BOOST_CHECK_CLOSE(upper[2],5.0,tolerance);
+	BOOST_CHECK_CLOSE(upper[1],6.0,tolerance);
+	BOOST_CHECK_CLOSE(upper[2],8.0,tolerance);
 
 	// Test: the isotropic scaling of an OBB
 	center << 3,2,4;
-	semi_axes << 1,4,2;
-	eigen_values << 1, 0 ,0,
-			        0, 1 ,0,
-			        0, 0 ,1;
-	OBB<double,3> obb2(center,semi_axes,eigen_values);
+	extent << 1,4,2;
+	axis << 1, 0 ,0,
+			0, 1 ,0,
+			0, 0 ,1;
+
+	OBB<double,3> obb2(center,extent,axis);
 	obb2.scale(5);
 	lower = obb2.getLower();
 	upper = obb2.getUpper();
@@ -55,14 +72,14 @@ BOOST_AUTO_TEST_CASE(Test_OBB)
 
 	// Test: the anisotropic scaling of an OBB
 	center << 2,2,1;
-	semi_axes << sqrt(2)/2,sqrt(2),2;
-	eigen_values << 1,-1 ,0,
-			        1, 1 ,0,
-			        0, 0 ,1;
-	OBB<double,3> obb3(center,semi_axes,eigen_values);
+	extent << sqrt(2)/2,sqrt(2),2;
+	axis << 1,-1 ,0,
+			1, 1 ,0,
+			0, 0 ,1;
+	OBB<double,3> obb3(center,extent,axis);
 	obb3.scale(Vector3d(3,2,5));
-	lower = obb3.getLower();
-	upper = obb3.getUpper();
+	lower=obb3.getLower();
+	upper=obb3.getUpper();
 	BOOST_CHECK_CLOSE(lower[0],-1.5,tolerance);
 	BOOST_CHECK_CLOSE(lower[1],-1.5,tolerance);
 	BOOST_CHECK_CLOSE(lower[2],-9.0,tolerance);
@@ -84,8 +101,8 @@ BOOST_AUTO_TEST_CASE(Test_OBB)
 	// Test: a given point falls inside the OBB
 
 	obb3.translate(Vector3d(1,-2,-4));
-	lower = obb3.getLower();
-	upper = obb3.getUpper();
+	lower=obb3.getLower();
+	upper=obb3.getUpper();
 
 	BOOST_CHECK_CLOSE(lower[0],-1.5,tolerance);
 	BOOST_CHECK_CLOSE(lower[1],-1.5,tolerance);
@@ -93,7 +110,6 @@ BOOST_AUTO_TEST_CASE(Test_OBB)
 	BOOST_CHECK_CLOSE(upper[0], 5.5,tolerance);
 	BOOST_CHECK_CLOSE(upper[1], 5.5,tolerance);
 	BOOST_CHECK_CLOSE(upper[2],11.0,tolerance);
-
 
 	int nSteps(500);
 	Vector3d delta=(upper-lower)/nSteps;
