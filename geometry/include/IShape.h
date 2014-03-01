@@ -30,7 +30,7 @@
 #define NSXTOOL_ISHAPE_H_
 
 #include <initializer_list>
-
+#include <Eigen/Geometry>
 #include "AABB.h"
 
 namespace SX
@@ -44,6 +44,8 @@ typedef unsigned int uint;
 template<typename T, uint D> class Ellipsoid;
 template<typename T, uint D> class OBB;
 template<typename T, uint D> class Sphere;
+
+enum Direction {CW,CCW};
 
 template<typename T,uint D>
 class IShape : public AABB<T,D>
@@ -62,6 +64,7 @@ public:
 
 	virtual bool isInside(const HomVector& vector) const =0;
 	virtual void rotate(const matrix& eigenvectors) =0;
+	void rotate(T angle,const vector& axis,Direction=CCW);
 	virtual void scale(T value) =0;
 	virtual void translate(const vector& t) =0;
 };
@@ -74,6 +77,19 @@ IShape<T,D>::IShape() : AABB<T,D>()
 template<typename T,uint D>
 IShape<T,D>::~IShape()
 {
+}
+
+template<typename T,uint D>
+void IShape<T,D>::rotate(T angle,const vector& axis,Direction dir)
+{
+	if (dir==CW)
+		angle*=-1;
+	// Create the quaternion representing this rotation
+	T hc=cos(0.5*angle);
+	T hs=sin(0.5*angle);
+	T norm=axis.norm();
+	Eigen::Quaterniond temp(hc,axis(0)*hs/norm,axis(1)*hs/norm,axis(2)*hs/norm);
+	return rotate(temp.toRotationMatrix());
 }
 
 } // namespace Geometry
