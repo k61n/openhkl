@@ -58,9 +58,9 @@ public:
 	virtual ~IShape();
 
 	virtual bool collide(const IShape<T,D>& rhs) const =0;
-    virtual bool collide(const Ellipsoid<T,D>& rhs) const =0;
-    virtual bool collide(const OBB<T,D>& rhs) const =0;
-    virtual bool collide(const Sphere<T,D>& rhs) const =0;
+	virtual bool collide(const Ellipsoid<T,D>& rhs) const =0;
+	virtual bool collide(const OBB<T,D>& rhs) const =0;
+	virtual bool collide(const Sphere<T,D>& rhs) const =0;
 
 	virtual bool isInside(const HomVector& vector) const =0;
 	virtual void rotate(const matrix& eigenvectors) =0;
