@@ -1,28 +1,27 @@
-#include "MMILLAsciiReader.h"
-#include "Blob3D.h"
-#include "Matrix33.h"
-#include "Blob3DFinder.h"
-#include "V3D.h"
-#include "AABB.h"
-#include "NDTree.h"
-#include <cstdlib>
 #include <ctime>
+#include <cstdlib>
 #include <iostream>
 #include <set>
 #include <stdlib.h>
-#include <vector>
-#include <boost/numeric/ublas/matrix.hpp>
-#include <boost/numeric/ublas/io.hpp>
-#include <GL/glut.h>
 #include <unordered_map>
+#include <vector>
+
+#include <GL/glut.h>
+
+#include <Eigen/Dense>
+
 #include "zpr.h"
+
+#include "AABB.h"
+#include "Blob3D.h"
+#include "Blob3DFinder.h"
+#include "MMILLAsciiReader.h"
+#include "NDTree.h"
 
 #define VIEWING_DISTANCE_MIN  3.0
 
 using namespace std;
-using namespace boost::numeric::ublas;
 using namespace SX::Geometry;
-
 
 static bool g_bButton1Down = false;
 static GLfloat g_fViewDistance = 3 * VIEWING_DISTANCE_MIN;
@@ -33,10 +32,13 @@ static int g_Height = 600;                         // Initial window height
 static int g_yClick = 0;
 
 typedef AABB<double,3> AABB3D;
-//
+typedef Eigen::Matrix<double,3,1> vector3d;
+typedef Eigen::Matrix<double,3,3> matrix3d;
+typedef Eigen::Matrix<double,4,4> HomMatrix;
+
 struct Ellipsoid : public AABB3D
 {
-	Ellipsoid(const V3D& center, const V3D& semi_Axes, const V3D& v0, const V3D& v1, const V3D& v2)
+	Ellipsoid(const vector3d& center, const vector3d& extents, const matrix3d& axis)
 	{
 		// Setup the 4x4 matrix, Ellipsoid  is plotted at 3 sigma
 		_trans(0,3)=center[0];
@@ -45,28 +47,26 @@ struct Ellipsoid : public AABB3D
 		_trans(3,3)=1.0;
 		_trans(3,0)=_trans(3,1)=_trans(3,2)=0.0;
 		//
-		_trans(0,0)=v0[0]*semi_Axes[0]*3.0;
-		_trans(1,0)=v0[1]*semi_Axes[0]*3.0;
-		_trans(2,0)=v0[2]*semi_Axes[0]*3.0;
+		_trans(0,0)=axis(0,0)*extents(0)*3.0;
+		_trans(1,0)=axis(1,0)*extents(0)*3.0;
+		_trans(2,0)=axis(2,0)*extents(0)*3.0;
 		//
-		_trans(0,1)=v1[0]*semi_Axes[1]*3.0;
-		_trans(1,1)=v1[1]*semi_Axes[1]*3.0;
-		_trans(2,1)=v1[2]*semi_Axes[1]*3.0;
+		_trans(0,1)=axis(0,1)*extents(1)*3.0;
+		_trans(1,1)=axis(1,1)*extents(1)*3.0;
+		_trans(2,1)=axis(2,1)*extents(1)*3.0;
 
-		_trans(0,2)=v2[0]*semi_Axes[2]*3.0;
-		_trans(1,2)=v2[1]*semi_Axes[2]*3.0;
-		_trans(2,2)=v2[2]*semi_Axes[2]*3.0;
+		_trans(0,2)=axis(0,2)*extents(2)*3.0;
+		_trans(1,2)=axis(1,2)*extents(2)*3.0;
+		_trans(2,2)=axis(2,2)*extents(2)*3.0;
 
 		// Calculate the bounding boxes
-		V3D hw;
-		double w=std::pow(semi_Axes[0]*v0[0],2)+std::pow(semi_Axes[1]*v1[0],2)+std::pow(semi_Axes[2]*v2[0],2);
-		hw[0]=3.0*sqrt(w);
-		double h=std::pow(semi_Axes[0]*v0[1],2)+std::pow(semi_Axes[1]*v1[1],2)+std::pow(semi_Axes[2]*v2[1],2);
-		hw[1]=3.0*sqrt(h);
-		double d=std::pow(semi_Axes[0]*v0[2],2)+std::pow(semi_Axes[1]*v1[2],2)+std::pow(semi_Axes[2]*v2[2],2);
-		hw[2]=3.0*sqrt(d);
-		V3D low=center-hw;
-		V3D high=center+hw;
+		vector3d hw;
+		double w=std::pow(extents[0]*axis(0,0),2)+std::pow(extents[1]*axis(0,1),2)+std::pow(extents[2]*axis(0,2),2);
+		double h=std::pow(extents[0]*axis(1,0),2)+std::pow(extents[1]*axis(1,1),2)+std::pow(extents[2]*axis(1,2),2);
+		double d=std::pow(extents[0]*axis(2,0),2)+std::pow(extents[1]*axis(2,1),2)+std::pow(extents[2]*axis(2,2),2);
+		hw<<3.0*sqrt(w),3.0*sqrt(h),3.0*sqrt(d);
+		vector3d low=center-hw;
+		vector3d high=center+hw;
 
 		// Setup the AABB
 
@@ -97,7 +97,7 @@ struct Ellipsoid : public AABB3D
 	void plot(GLuint dlist1, GLuint dlist2=0, bool bounding_box_on=true)
 	{
 		glPushMatrix();
-		glMultMatrixd((GLdouble*)(&(*(_trans.data().begin()))));
+		glMultMatrixd((GLdouble*)(&(_trans(0,0))));
 		if (!_intercept)
 			glColor3f(1.0f,0.0f,0.0f);
 		else
@@ -107,8 +107,8 @@ struct Ellipsoid : public AABB3D
 		if (bounding_box_on)
 		{
 			glPushMatrix();
-			bounded_vector<double,3> center=this->getCenter();
-			bounded_vector<double,3> dim=this->getExtents();
+			vector3d center=this->getCenter();
+			vector3d dim=this->getBoxExtents();
 			glColor3f(0.0f,1.0f,1.0f);
 			glTranslated(center(0),center(1),center(2));
 			glScaled(dim(0),dim(1),dim(2));
@@ -123,7 +123,7 @@ struct Ellipsoid : public AABB3D
 		_intercept=intercept;
 	}
 
-	bounded_matrix<double,4,4,column_major> _trans;
+	HomMatrix _trans;
 	bool _intercept;
 };
 
@@ -136,14 +136,15 @@ struct Data
 	{}
 	void fromFile(const std::string& filename)
 	{
-	SX::Data::MMILLAsciiReader mm(filename.c_str());
-	mm.readMetaDataBlock();
+	SX::Data::MMILLAsciiReader mm;
+	mm.mapFile(filename.c_str());
+
 	_frames.resize(mm.nBlocks());
 	#pragma omp parallel for
 	for (std::size_t i=0;i<mm.nBlocks();++i)
 		_frames[i]=std::move(mm.readBlock(i));
 	}
-	blob3DCollection getEllipsoids(double threashold)
+	blob3DCollection getEllipsoids(double threshold, double confidence)
 	{
 		std::vector<int*> ptr;
 		for (unsigned int i=0;i<_frames.size();++i)
@@ -151,7 +152,7 @@ struct Data
 			vint& m=_frames[i];
 			ptr.push_back(&m[0]);
 		}
-		blob3DCollection blobs=findBlobs3D<int>(ptr,256,640,threashold,5,100000000,0);
+		blob3DCollection blobs=findBlobs3D<int>(ptr,256,640,threshold,5,100000000,confidence,0);
 		return blobs;
 	}
 std::vector<vint> _frames;
@@ -238,6 +239,8 @@ std::vector<AABB3D*> treeAABBs;
 std::set<std::pair<AABB3D*,AABB3D*> > collisions;
 bool show_tree=false;
 bool show_bb=false;
+double threshold=10.0;
+double confidence=0.99;
 
 void HandleKeys(unsigned char key, int x, int y)
 {
@@ -261,17 +264,17 @@ void initData(const char* file)
 	cube=createUnitCube();
 	// Read the data and search for blobs
 	d.fromFile(file);
-	blobs=d.getEllipsoids(10.0);
+	blobs=d.getEllipsoids(threshold,confidence);
 	std::cout << "Found : " << blobs.size() << std::endl;
 	// Transform blobs to Ellipsoids
-	V3D center;
-	V3D sa;
-	V3D v0,v1,v2;
-	for (auto& it : blobs)
+	vector3d center;
+	vector3d extents;
+	matrix3d axis;
+	vector3d v0,v1,v2;
+	for (auto it=blobs.begin();it!=blobs.end();++it)
 	{
-		it.second.toEllipsoid(center,sa,v0,v1,v2);
-		v2=v0.cross_prod(v1);
-		ell.push_back(Ellipsoid(center,sa,v0,v1,v2));
+		it->second.toEllipsoid(confidence,center,extents,axis);
+		ell.push_back(Ellipsoid(center,extents,axis));
 	}
 	// Populate the Octree
 	tree.setMaxDepth(10);
@@ -332,8 +335,8 @@ void drawScene() {
 		for (auto& it : treeAABBs )
 		{
 			glPushMatrix();
-			bounded_vector<double,3> center=it->getCenter();
-			bounded_vector<double,3> dim=it->getExtents();
+			vector3d center=it->getCenter();
+			vector3d dim=it->getBoxExtents();
 			glColor3f(1.0f,1.0f,0.0f);
 			glTranslated(center(0),center(1),center(2));
 			glScaled(dim(0),dim(1),dim(2));
