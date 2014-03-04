@@ -123,7 +123,9 @@ Sphere<T,D>::~Sphere()
 template<typename T,uint D>
 bool Sphere<T,D>::collide(const IShape<T,D>& other) const
 {
-	return other.collide(*this);
+	if (this->intercept(other))
+		return other.collide(*this);
+	return false;
 }
 
 template<typename T,uint D>
@@ -172,7 +174,7 @@ template<typename T, uint D>
 bool Sphere<T,D>::isInside(const HomVector& point) const
 {
 
-	vector diff=point.segment(0,3)-_center;
+	vector diff=point.segment(0,D)-_center;
 
 	return (diff.squaredNorm()<(_radius*_radius));
 }

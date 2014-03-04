@@ -78,15 +78,15 @@ public:
 	//! Translate the ellipsoid
 	void translate(const vector& t);
 
-private:
-	// Method to update the closest fit AABB to the Ellipsoid
-	void updateAABB();
-	Eigen::Matrix<T,D+1,D+1> _TRSinv;
-	// EigenValues
-	vector _eigenVal;
-public:
 	// Macro to ensure that Ellipsoid can be dynamically allocated.
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+private:
+	Eigen::Matrix<T,D+1,D+1> _TRSinv;
+	// Method to update the closest fit AABB to the Ellipsoid
+	void updateAABB();
+	// EigenValues
+	vector _eigenVal;
 };
 
 template<typename T,uint D> bool collideEllipsoidEllipsoid(const Ellipsoid<T,D>&, const Ellipsoid<T,D>&);
@@ -120,7 +120,9 @@ Ellipsoid<T,D>::Ellipsoid(const vector& center, const vector& eigenvalues, const
 template<typename T,uint D>
 bool Ellipsoid<T,D>::collide(const IShape<T,D>& other) const
 {
-	return other.collide(*this);
+	if (this->intercept(other))
+		return other.collide(*this);
+	return false;
 }
 
 template<typename T,uint D>

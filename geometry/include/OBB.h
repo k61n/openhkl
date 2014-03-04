@@ -140,7 +140,9 @@ OBB<T,D>::~OBB()
 template<typename T,uint D>
 bool OBB<T,D>::collide(const IShape<T,D>& other) const
 {
-	return other.collide(*this);
+	if (this->intercept(other))
+		return other.collide(*this);
+	return false;
 }
 
 template<typename T,uint D>
