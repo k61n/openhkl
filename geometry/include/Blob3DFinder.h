@@ -55,9 +55,9 @@ namespace Geometry
 			pairs.push_back(pairints::value_type(a,b));
 
 	}
-	//! Find blobs in a 2D image made of nrows*ncols data of type : _datatype. Blob are identified using a threashold,
+	//! Find blobs in a 2D image made of nrows*ncols data of type : _datatype. Blob are identified using a threshold,
 	//! and a limits in the number of connected components in each blob (minComp, maxComp).
-	template <typename _datatype> blob3DCollection findBlobs3D(const std::vector<_datatype*>& ptrs,unsigned int nrows,unsigned int ncols, _datatype threashold, int minComp, int maxComp, bool rowMajor=1)
+	template <typename _datatype> blob3DCollection findBlobs3D(const std::vector<_datatype*>& ptrs,unsigned int nrows,unsigned int ncols, _datatype threshold, int minComp, int maxComp, double confidence, bool rowMajor=1)
 	{
 
 		// Number of frames
@@ -106,8 +106,8 @@ namespace Geometry
 				{
 					_datatype value=*(dataptr);
 					dataptr+=row_inc;
-					// Discard pixel if value < threashold
-					if (value<threashold)
+					// Discard pixel if value < threshold
+					if (value<threshold)
 					{
 						labels[index2D]=labels2[index2D]=0;
 						index2D++;
@@ -213,7 +213,8 @@ namespace Geometry
 		// Copy to a map. This can't be an unordered_map in this case, ordering is important
 		std::map<int,int> mequiv;
 		for (auto it=beg;it!=last;++it)
-					mequiv.insert(*it);
+			mequiv.insert(*it);
+
 		// Reassign labels
 		for (auto it=mequiv.begin();it!=mequiv.end();++it)
 		{
@@ -257,18 +258,18 @@ namespace Geometry
 		mapbox boxes;
 		boxes.reserve(blobs.size());
 
-		Eigen::Vector3d center,semi_axes, v0, v1,v2;
-		Eigen::Vector3d hw;
+		Eigen::Vector3d center,extents,hw;
+		Eigen::Matrix3d axis;
 
 		for (auto it=blobs.begin();it!=blobs.end();++it)
 		{
 			Blob3D& p=it->second;
-			p.toEllipsoid(center,semi_axes,v0,v1,v2);
-			double w=std::pow(semi_axes[0]*v0[0],2)+std::pow(semi_axes[1]*v1[0],2)+std::pow(semi_axes[2]*v2[0],2);
+			p.toEllipsoid(confidence,center,extents,axis);
+			double w=std::pow(extents[0]*axis(0,0),2)+std::pow(extents[1]*axis(0,1),2)+std::pow(extents[2]*axis(0,2),2);
 			hw[0]=3.0*sqrt(w);
-			double h=std::pow(semi_axes[0]*v0[1],2)+std::pow(semi_axes[1]*v1[1],2)+std::pow(semi_axes[2]*v2[1],2);
+			double h=std::pow(extents[0]*axis(1,0),2)+std::pow(extents[1]*axis(1,1),2)+std::pow(extents[2]*axis(1,2),2);
 			hw[1]=3.0*sqrt(h);
-			double d=std::pow(semi_axes[0]*v0[2],2)+std::pow(semi_axes[1]*v1[2],2)+std::pow(semi_axes[2]*v2[2],2);
+			double d=std::pow(extents[0]*axis(2,0),2)+std::pow(extents[1]*axis(2,1),2)+std::pow(extents[2]*axis(2,2),2);
 			hw[2]=3.0*sqrt(d);
 			Eigen::Vector3d low=center-hw;
 			Eigen::Vector3d high=center+hw;
