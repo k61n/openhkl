@@ -28,6 +28,7 @@
 #ifndef NSXTOOL_MMILLASCIIREADER_H_
 #define NSXTOOL_MMILLASCIIREADER_H_
 #include <string>
+#include <vector>
 #include <boost/interprocess/file_mapping.hpp>
 
 namespace SX {
