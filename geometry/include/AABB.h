@@ -102,7 +102,7 @@ public:
 	//! Return the center of the bounding box
 	vector getCenter() const;
 	//! Return the extends of the bounding box
-	vector getExtents() const;
+	vector getBoxExtents() const;
 	//! Send the object to a stream
 	void printSelf(std::ostream&) const;
 	//! Translate the bounding box
@@ -315,7 +315,7 @@ typename AABB<T,D>::vector AABB<T,D>::getCenter() const
 }
 
 template<typename T, uint D>
-typename AABB<T,D>::vector AABB<T,D>::getExtents() const
+typename AABB<T,D>::vector AABB<T,D>::getBoxExtents() const
 {
 	vector dim(_upperBound - _lowerBound);
 	return dim;
