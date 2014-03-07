@@ -46,6 +46,7 @@ namespace SX
 {
 namespace Geometry
 {
+
 	typedef std::unordered_map<int,Blob3D> blob3DCollection;
 	typedef std::vector<std::pair<int,int> > pairints;
 	typedef AABB<double,3> AABB3D;
@@ -261,7 +262,7 @@ namespace Geometry
 		std::cout << "Found the initial peaks :" << blobs.size() << "\n";
 
 		// Determine the AABB of the blobs
-		typedef std::unordered_map<int,AABB3D*> mapbox;
+		typedef std::unordered_map<int,IShape3D*> mapbox;
 		mapbox boxes;
 		boxes.reserve(blobs.size());
 
@@ -272,6 +273,9 @@ namespace Geometry
 		{
 			Blob3D& p=it->second;
 			p.toEllipsoid(confidence,center,extents,axis);
+
+			if (extents.minCoeff()<1.0e-6)
+				continue;
 			boxes.insert(mapbox::value_type(it->first,new Ellipsoid3D(center,extents,axis)));
 		}
 
@@ -287,7 +291,6 @@ namespace Geometry
 		oct.getPossibleCollisions(collisions);
 
 		std::cout << " Number of possible intersections" << collisions.size() << std::endl;
-
 
 		return blobs;
 }
