@@ -72,7 +72,7 @@ BOOST_AUTO_TEST_CASE(Test_NDTree)
 	BOOST_CHECK_CLOSE(upper(1),100.0,tolerance);
 	BOOST_CHECK_CLOSE(upper(2),100.0,tolerance);
 
-	Eigen::Vector3d extents((*it).getExtents());
+	Eigen::Vector3d extents((*it).getBoxExtents());
 	BOOST_CHECK_CLOSE(extents(0),100.0,tolerance);
 	BOOST_CHECK_CLOSE(extents(1),100.0,tolerance);
 	BOOST_CHECK_CLOSE(extents(2),100.0,tolerance);

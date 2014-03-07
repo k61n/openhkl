@@ -16,7 +16,7 @@ BOOST_AUTO_TEST_CASE(Test_AABB)
 	bb.setBounds(Vector3d(0,0,0),Vector3d(1,2,3));
 	Eigen::Vector3d center, extends;
 	center=bb.getCenter();
-	extends=bb.getExtents();
+	extends=bb.getBoxExtents();
 
 	BOOST_CHECK_CLOSE(center[0], 0.5, tolerance);
 	BOOST_CHECK_CLOSE(center[1], 1.0, tolerance);
