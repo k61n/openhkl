@@ -27,15 +27,20 @@
  */
 #ifndef __BLOB_3D
 #define __BLOB_3D
-#include <unordered_map>
-#include <vector>
-#include "Blob3D.h"
+
 #include <algorithm>
-#include <stdexcept>
 #include <map>
-#include "AABB.h"
-#include "NDTree.h"
+#include <unordered_map>
+#include <stdexcept>
+#include <vector>
+
 #include <Eigen/Dense>
+
+#include "AABB.h"
+#include "Blob3D.h"
+#include "Ellipsoid.h"
+#include "IShape.h"
+#include "NDTree.h"
 
 namespace SX
 {
@@ -44,6 +49,8 @@ namespace Geometry
 	typedef std::unordered_map<int,Blob3D> blob3DCollection;
 	typedef std::vector<std::pair<int,int> > pairints;
 	typedef AABB<double,3> AABB3D;
+	typedef Ellipsoid<double,3> Ellipsoid3D;
+	typedef IShape<double,3> IShape3D;
 	typedef NDTree<double,3> Octree;
 
 
@@ -254,38 +261,26 @@ namespace Geometry
 		std::cout << "Found the initial peaks :" << blobs.size() << "\n";
 
 		// Determine the AABB of the blobs
-		typedef std::unordered_map<int,AABB3D> mapbox;
+		typedef std::unordered_map<int,AABB3D*> mapbox;
 		mapbox boxes;
 		boxes.reserve(blobs.size());
 
-		Eigen::Vector3d center,extents,hw;
+		Eigen::Vector3d center,extents;
 		Eigen::Matrix3d axis;
 
 		for (auto it=blobs.begin();it!=blobs.end();++it)
 		{
 			Blob3D& p=it->second;
 			p.toEllipsoid(confidence,center,extents,axis);
-			double w=std::pow(extents[0]*axis(0,0),2)+std::pow(extents[1]*axis(0,1),2)+std::pow(extents[2]*axis(0,2),2);
-			hw[0]=3.0*sqrt(w);
-			double h=std::pow(extents[0]*axis(1,0),2)+std::pow(extents[1]*axis(1,1),2)+std::pow(extents[2]*axis(1,2),2);
-			hw[1]=3.0*sqrt(h);
-			double d=std::pow(extents[0]*axis(2,0),2)+std::pow(extents[1]*axis(2,1),2)+std::pow(extents[2]*axis(2,2),2);
-			hw[2]=3.0*sqrt(d);
-			Eigen::Vector3d low=center-hw;
-			Eigen::Vector3d high=center+hw;
-			boxes.insert(mapbox::value_type(it->first,AABB3D(low,high)));
+			boxes.insert(mapbox::value_type(it->first,new Ellipsoid3D(center,extents,axis)));
 		}
 
-
-		Octree oct({0.0,0.0,0.0},{640.0,256.0,1112.0});
+		Octree oct({0.0,0.0,0.0},{static_cast<double>(ncols),static_cast<double>(nrows),static_cast<double>(nframes)});
 		oct.setMaxDepth(6);
 		oct.setMaxStorage(6);
 
 		for (auto it=boxes.begin();it!=boxes.end();++it)
-		{
-			oct.addData(&(it->second));
-		}
-
+			oct.addData(it->second);
 
 		std::set<Octree::collision_pair> collisions;
 
