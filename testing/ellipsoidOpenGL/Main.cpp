@@ -13,7 +13,7 @@
 #include "zpr.h"
 
 #include "Blob3D.h"
-#include "Blob3DFinder.h"
+#include "BlobFinder.h"
 #include "Ellipsoid.h"
 #include "MMILLAsciiReader.h"
 #include "NDTree.h"
@@ -220,7 +220,7 @@ std::vector<AABB3D*> treeAABBs;
 std::set<std::pair<AABB3D*,AABB3D*> > collisions;
 bool show_tree=false;
 bool show_bb=false;
-double threshold=10.0;
+double threshold=8.0;
 double confidence=0.99;
 
 void HandleKeys(unsigned char key, int x, int y)
