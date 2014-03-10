@@ -220,7 +220,6 @@ std::vector<AABB3D*> treeAABBs;
 std::set<std::pair<AABB3D*,AABB3D*> > collisions;
 bool show_tree=false;
 bool show_bb=false;
-double threshold=8.0;
 double confidence=0.99;
 
 void HandleKeys(unsigned char key, int x, int y)
@@ -237,7 +236,7 @@ void HandleKeys(unsigned char key, int x, int y)
 	return;
 
 }
-void initData(const char* file)
+void initData(const char* file,double threashold)
 {
 	// Load display list for sphere and  cube
 	ball=createUnitSphere(true);
@@ -247,7 +246,7 @@ void initData(const char* file)
 	d.fromFile(file);
 	tree.setLower({0,0,0});
 	tree.setUpper({640.0,256.0,static_cast<double>(d.getNumberOfFrames())});
-	blobs=d.getEllipsoids(threshold,confidence);
+	blobs=d.getEllipsoids(threashold,confidence);
 	std::cout << "Found : " << blobs.size() << std::endl;
 	// Transform blobs to Ellipsoids
 	vector3d center;
@@ -339,7 +338,7 @@ void drawScene()
 
 int main(int argc, char** argv)
 {
-	if (argc!=2)
+	if (argc!=3)
 		exit(1);
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
@@ -347,7 +346,7 @@ int main(int argc, char** argv)
 	glutCreateWindow("Collision Detection - Test NDTree");
 	glutDisplayFunc(drawScene);
 	glutKeyboardFunc(HandleKeys);
-	initData(argv[1]);
+	initData(argv[1],atof(argv[2]));
 	glScalef(0.004f,0.004f,0.004f);
 	zprInit();
 
