@@ -9,10 +9,14 @@ namespace SX
 namespace Geometry
 {
 
+	typedef Ellipsoid<double,2> Ellipsoid2D;
 	typedef Ellipsoid<double,3> Ellipsoid3D;
+	typedef IShape<double,2> IShape2D;
 	typedef IShape<double,3> IShape3D;
+	typedef NDTree<double,2> Quadtree;
 	typedef NDTree<double,3> Octree;
-	typedef std::unordered_map<IShape3D*,int> shapemap;
+	typedef std::unordered_map<IShape2D*,int> shape2Dmap;
+	typedef std::unordered_map<IShape3D*,int> shape3Dmap;
 
 	void registerEquivalence(int a, int b, vipairs& equivalences)
 	{
@@ -166,7 +170,6 @@ namespace Geometry
 					roi.addPoint(col,row,value);
 				}
 
-
 			}
 		}
 
@@ -180,6 +183,61 @@ namespace Geometry
 			else
 				it++;
 		}
+
+		std::cout << "Found the initial peaks :" << blobs.size() << "\n";
+
+		// Determine the AABB of the blobs
+		shape2Dmap boxes;
+		boxes.reserve(blobs.size());
+
+		Eigen::Vector3d center,extents;
+		Eigen::Matrix3d axis;
+
+		for (auto it=blobs.begin();it!=blobs.end();)
+		{
+			Blob3D& p=it->second;
+			p.toEllipsoid(confidence,center,extents,axis);
+			if (extents.minCoeff()<1.0e-9)
+				it=blobs.erase(it);
+			else
+			{
+				boxes.insert(shape2Dmap::value_type(new Ellipsoid2D(center,extents,axis),it->first));
+				it++;
+			}
+		}
+
+		std::cout << "Reduced initial peaks to:" << boxes.size() << "\n";
+
+		Quadtree oct({0.0,0.0},{double(ncols),double(nrows)});
+		oct.setMaxDepth(6);
+		oct.setMaxStorage(6);
+
+		for (auto it=boxes.begin();it!=boxes.end();++it)
+			oct.addData(it->first);
+
+		std::set<Quadtree::collision_pair> collisions;
+		oct.getPossibleCollisions(collisions);
+
+		std::cout << "Number of possible collisions" << collisions.size() << std::endl;
+
+		// Clear the equivalence vectors for reuse purpose
+		equivalences.clear();
+
+		IShape2D *pt1, *pt2;
+		for (auto it=collisions.begin();it!=collisions.end();++it)
+		{
+			pt1=dynamic_cast<IShape2D*>(it->first);
+			pt2=dynamic_cast<IShape2D*>(it->second);
+			if (pt1->collide(*(pt2)))
+			{
+				auto bit1=boxes.find(pt1);
+				auto bit2=boxes.find(pt2);
+				std::cout<<bit1->second<<" "<<bit2->second<<std::endl;
+				registerEquivalence(bit1->second,bit2->second,equivalences);
+			}
+		}
+
+		mergeBlobs(blobs,equivalences);
 
 		return blobs;
 	}
@@ -331,7 +389,7 @@ namespace Geometry
 		std::cout << "Found the initial peaks :" << blobs.size() << "\n";
 
 		// Determine the AABB of the blobs
-		shapemap boxes;
+		shape3Dmap boxes;
 		boxes.reserve(blobs.size());
 
 		Eigen::Vector3d center,extents;
@@ -345,7 +403,7 @@ namespace Geometry
 				it=blobs.erase(it);
 			else
 			{
-				boxes.insert(shapemap::value_type(new Ellipsoid3D(center,extents,axis),it->first));
+				boxes.insert(shape3Dmap::value_type(new Ellipsoid3D(center,extents,axis),it->first));
 				it++;
 			}
 		}
