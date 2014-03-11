@@ -135,7 +135,7 @@ blob3DCollection Data::getEllipsoids(double threshold, double confidence)
 		vint& m=_frames[i];
 		ptr.push_back(&m[0]);
 	}
-	blob3DCollection blobs=findBlobs3D<int>(ptr,256,640,threshold,5,100000000,confidence,0);
+	blob3DCollection blobs=findBlobs3D<int>(ptr,256,640,threshold,5,1000,confidence,0);
 	return blobs;
 }
 
