@@ -29,34 +29,76 @@
 #ifndef NSXTOOL_SINGLETON_H_
 #define NSXTOOL_SINGLETON_H_
 
-//! Simple templated singleton class using S. Meyers's implementation
-template <typename T> class Singleton
+namespace SX
+{
+/**
+ * @brief generic singleton class templated on the type of the object to be singletonized,
+ * a constructor class and a destructor class.
+ *
+ * The concrete construction and destruction of the singleton instance are assigned to external
+ * classes in order to provide singleton mechanism for classes with a level of inheritance
+ * deepar than 1.
+ */
+template <typename T,template<class> class Constructor,template <class> class Destructor>
+class Singleton
 {
 public:
+	//! retun an instance of the of the class to be singletonized
 	static T* Instance();
-protected:
-	Singleton();
-	Singleton(const Singleton&);
-	Singleton& operator=(const Singleton&);
-	virtual ~Singleton();
+	//! destroy (if its has been instanciated) the instance of the class to be singletonized
+    static void DestroyInstance();
+private:
+	static T* _instance;
 };
 
+template <typename T,template <class> class Constructor,template <class> class Destructor>
+T* Singleton<T,Constructor,Destructor>::_instance=nullptr;
 
-template <typename T>
-T* Singleton<T>::Instance()
+template <typename T,template <class> class Constructor,template <class> class Destructor>
+T* Singleton<T,Constructor,Destructor>::Instance()
 {
-	static T instance;
-	return &instance;
-}
-template <typename T>
-Singleton<T>::Singleton()
-{
+    return Constructor<T>::construct();
 }
 
-template <typename T>
-Singleton<T>::~Singleton()
+template <typename T,template <class> class Constructor,template <class> class Destructor>
+void Singleton<T,Constructor,Destructor>::DestroyInstance()
 {
+if (_instance)
+	Destructor<T>::destroy(_instance);
 }
 
+/**
+ * @brief actually constructs the unique instance of the class to be singletonized
+ */
+template <class T>
+class Constructor
+{
+public:
+    static T* construct();
+};
+
+template <class T>
+T* Constructor<T>::construct()
+{
+    return new T;
+}
+
+/**
+ * @brief actually destructs the unique instance of the class to be singletonized
+ */
+template <class T>
+class Destructor
+{
+public:
+    static void destroy(T* instance);
+};
+
+template <typename T>
+void Destructor<T>::destroy(T* instance)
+{
+    delete instance;
+}
+
+} // end namespace SX
 
 #endif /* NSXTOOL_SINGLETON_H_ */

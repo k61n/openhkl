@@ -42,7 +42,6 @@ namespace SX
 /**
  * @brief generic factory class templated on the return type, the key and accepts any number
  * and kind of parameters using variadic templates for the callback.
- * Factory inherits from a Singleton class.
  */
 template <typename returnType, typename keytype, typename ...args>
 class Factory

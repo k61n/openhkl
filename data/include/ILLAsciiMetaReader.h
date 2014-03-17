@@ -38,7 +38,7 @@ namespace Data {
 
 class MetaData;
 
-class ILLAsciiMetaReader: public Singleton<ILLAsciiMetaReader>
+class ILLAsciiMetaReader: public Singleton<ILLAsciiMetaReader,Constructor,Destructor>
 {
 public:
 	//! Reads MetaData from a chain of characters as written in legacy ILL format

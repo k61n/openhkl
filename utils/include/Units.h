@@ -48,7 +48,7 @@ namespace Units
 {
 	//! Singleton class to map the symbol of a Unit with its value in the internal reference system.
 	//! This is used for example when parsing values from input XML files.
-	class UnitsManager : public Singleton<UnitsManager>
+	class UnitsManager : public Singleton<UnitsManager,Constructor,Destructor>
 	{
 		public:
 		//! Get the value of a given unit with respect to the internal reference unit.
