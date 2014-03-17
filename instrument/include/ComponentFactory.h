@@ -46,7 +46,7 @@ class IComponent;
 
 using boost::property_tree::ptree;
 
-class ComponentFactory : public Factory<IComponent,std::string,ptree>, public Singleton<ComponentFactory>
+class ComponentFactory : public Factory<IComponent,std::string,ptree>, public Singleton<ComponentFactory,Constructor,Destructor>
 {
 private:
 	ComponentFactory(){}
