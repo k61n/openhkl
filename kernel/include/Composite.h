@@ -8,7 +8,7 @@
 	38042 Grenoble Cedex 9
 	France
 	chapon[at]ill.fr
-	pellegrini[at]ill.fr
+    pellegrini[at]ill.fr
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU Lesser General Public
@@ -26,41 +26,68 @@
  *
  */
 
-#ifndef NSXTOOL_ICOMPONENT_H_
-#define NSXTOOL_ICOMPONENT_H_
+#ifndef NSXTOOL_COMPOSITE_H_
+#define NSXTOOL_COMPOSITE_H_
 
-#include <string>
-
-#include <boost/foreach.hpp>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-
-#include "Composite.h"
-#include "IModifier.h"
+#include <vector>
 
 namespace SX
 {
 
-namespace Instrument
+namespace Kernel
 {
 
-using namespace SX::Kernel;
-using boost::property_tree::ptree;
-
-class IComponent
+template <typename component>
+class Composite : public component
 {
-
 public:
-	void load(const ptree& pt);
+
+	Composite();
+	virtual ~Composite()=0;
+
+	void add(component*);
+	void remove(component*);
+	void clear();
 
 protected:
-
-	Composite<IModifier> *_modifiers;
-	std::string _name;
+	std::vector<component*> _components;
 };
 
-} // end namespace Instrument
+template <typename component>
+Composite<component>::Composite()
+{
+}
+
+template <typename component>
+void Composite<component>::add(component* comp)
+{
+
+	auto it = std::find(_components.begin(),_components.end(),comp);
+	if (it == _components.end())
+		_components.push_back(comp);
+}
+
+template <typename component>
+void Composite<component>::remove(component* comp)
+{
+	auto it = std::find(_components.begin(),_components.end(),comp);
+	if (it != _components.end())
+		_components.erase(it);
+}
+
+template <typename component>
+void Composite<component>::clear()
+{
+	_components.clear();
+}
+
+template <typename component>
+Composite<component>::~Composite()
+{
+}
+
+} // end namespace Kernel
 
 } // end namespace SX
 
-#endif /* NSXTOOL_ICOMPONENT_H_ */
+#endif /* NSXTOOL_COMPOSITE_H_ */

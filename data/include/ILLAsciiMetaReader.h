@@ -36,6 +36,8 @@ namespace SX {
 
 namespace Data {
 
+using namespace SX::Kernel;
+
 class MetaData;
 
 class ILLAsciiMetaReader: public Singleton<ILLAsciiMetaReader,Constructor,Destructor>

@@ -31,6 +31,10 @@
 
 namespace SX
 {
+
+namespace Kernel
+{
+
 /**
  * @brief generic singleton class templated on the type of the object to be singletonized,
  * a constructor class and a destructor class.
@@ -98,6 +102,8 @@ void Destructor<T>::destroy(T* instance)
 {
     delete instance;
 }
+
+} // end namespace Kernel
 
 } // end namespace SX
 

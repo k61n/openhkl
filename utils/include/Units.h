@@ -46,67 +46,70 @@ namespace SX
 //!
 namespace Units
 {
-	//! Singleton class to map the symbol of a Unit with its value in the internal reference system.
-	//! This is used for example when parsing values from input XML files.
-	class UnitsManager : public Singleton<UnitsManager,Constructor,Destructor>
-	{
-		public:
-		//! Get the value of a given unit with respect to the internal reference unit.
-		//! Throws std::invalid_argument if not present
-		static double get(const std::string&);
-		private:
-		//! Store pairs of symbols and values.
-		static std::unordered_map<std::string,double> _unitsMap;
-	};
-	// Units of [L]
-	static const double m=1.0;
-	static const double cm=m*0.01;
-	static const double mm=m*1e-3;
-	static const double um=m*1e-6;
-	static const double nm=m*1e-9;
-	static const double pm=m*1e-12;
-	static const double fm=m*1e-15;
-	static const double am=m*1e-10;
 
-	// Units of [L]^2
-	static const double m2=m*m;
-	static const double cm2=cm*cm;
-	static const double mm2=mm*mm;
-	static const double um2=um*um;
-	static const double nm2=nm*nm;
-	static const double pm2=pm*pm;
-	static const double am2=am*am;
-	static const double barn=m2*1e-24;
+using namespace SX::Kernel;
 
-	// Units of [L]^3
-	static const double m3=m*m*m;
-	static const double cm3=cm*cm*cm;
-	static const double mm3=mm*mm*mm;
-	static const double um3=um*um*um;
-	static const double nm3=nm*nm*nm;
-	static const double pm3=pm*pm*pm;
-	static const double fm3=fm*fm*fm;
-	static const double am3=am*am*am;
+//! Singleton class to map the symbol of a Unit with its value in the internal reference system.
+//! This is used for example when parsing values from input XML files.
+class UnitsManager : public Singleton<UnitsManager,Constructor,Destructor>
+{
+	public:
+	//! Get the value of a given unit with respect to the internal reference unit.
+	//! Throws std::invalid_argument if not present
+	static double get(const std::string&);
+	private:
+	//! Store pairs of symbols and values.
+	static std::unordered_map<std::string,double> _unitsMap;
+};
+// Units of [L]
+static const double m=1.0;
+static const double cm=m*0.01;
+static const double mm=m*1e-3;
+static const double um=m*1e-6;
+static const double nm=m*1e-9;
+static const double pm=m*1e-12;
+static const double fm=m*1e-15;
+static const double am=m*1e-10;
 
-	// Units of angle
-	static const double rad=1.0;
-	static const double deg=rad*M_PI/180.0;
-	static const double mrad=rad*0.001;
+// Units of [L]^2
+static const double m2=m*m;
+static const double cm2=cm*cm;
+static const double mm2=mm*mm;
+static const double um2=um*um;
+static const double nm2=nm*nm;
+static const double pm2=pm*pm;
+static const double am2=am*am;
+static const double barn=m2*1e-24;
 
-	// Solid angle
-	static const double str=1.0;
+// Units of [L]^3
+static const double m3=m*m*m;
+static const double cm3=cm*cm*cm;
+static const double mm3=mm*mm*mm;
+static const double um3=um*um*um;
+static const double nm3=nm*nm*nm;
+static const double pm3=pm*pm*pm;
+static const double fm3=fm*fm*fm;
+static const double am3=am*am*am;
 
-	// Units of [T]
-	static const double s=1.0;
-	static const double ms=s*1e-3;
-	static const double us=s*1e-6;
-	static const double min=60*s;
-	static const double hour=3600*s;
-	static const double day=24*hour;
-	static const double year=364.25*day;
+// Units of angle
+static const double rad=1.0;
+static const double deg=rad*M_PI/180.0;
+static const double mrad=rad*0.001;
 
-	//
-	static const double perCent=0.01;
+// Solid angle
+static const double str=1.0;
+
+// Units of [T]
+static const double s=1.0;
+static const double ms=s*1e-3;
+static const double us=s*1e-6;
+static const double min=60*s;
+static const double hour=3600*s;
+static const double day=24*hour;
+static const double year=364.25*day;
+
+//
+static const double perCent=0.01;
 
 } //Namespace Units
 

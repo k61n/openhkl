@@ -26,17 +26,17 @@
  *
  */
 
-#ifndef NSXTOOL_ICOMPONENT_H_
-#define NSXTOOL_ICOMPONENT_H_
+#ifndef NSXTOOL_INSTRUMENT_H_
+#define NSXTOOL_INSTRUMENT_H_
 
-#include <string>
+#include <iostream>
 
 #include <boost/foreach.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
+#include "IComponent.h"
 #include "Composite.h"
-#include "IModifier.h"
 
 namespace SX
 {
@@ -47,20 +47,47 @@ namespace Instrument
 using namespace SX::Kernel;
 using boost::property_tree::ptree;
 
-class IComponent
+class Instrument : Composite<IComponent>
 {
-
 public:
+	static Instrument* build(const std::string& key);
 	void load(const ptree& pt);
+	int nComponents() const;
 
-protected:
-
-	Composite<IModifier> *_modifiers;
-	std::string _name;
+private:
+	Instrument(const std::string& key);
 };
+
+Instrument* Instrument::build(const std::string& key)
+{
+	return new Instrument(key);
+}
+
+Instrument::Instrument(const std::string& key)
+{
+	std::string xml=key;
+	xml.append(".xml");
+	std::ifstream is(xml);
+	if (is.is_open())
+	{
+		ptree pt;
+		read_xml(is, pt);
+		load(pt.get_child("instrument"));
+	}
+}
+
+void Instrument::load(const ptree& pt)
+{
+}
+
+int Instrument::nComponents() const
+{
+	return _components.size();
+}
+
 
 } // end namespace Instrument
 
 } // end namespace SX
 
-#endif /* NSXTOOL_ICOMPONENT_H_ */
+#endif /* INSTRUMENT_H_ */

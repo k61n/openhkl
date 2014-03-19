@@ -8,7 +8,7 @@
 	38042 Grenoble Cedex 9
 	France
 	chapon[at]ill.fr
-    pellegrini[at]ill.fr
+	pellegrini[at]ill.fr
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU Lesser General Public
@@ -26,59 +26,11 @@
  *
  */
 
-#ifndef NSXTOOL_COMPOSITE_H_
-#define NSXTOOL_COMPOSITE_H_
+#ifndef NSXTOOL_IMODIFIER_H_
+#define NSXTOOL_IMODIFIER_H_
 
-
-namespace SX
+class IModifier
 {
-
-namespace SX
-{
-
-template <typename component>
-class Composite : public component
-{
-public:
-
-	virtual ~Composite();
-
-	void add(component*);
-	void remove(component*);
-	void clear();
-
-protected:
-	std::vector<component*> _components;
 };
 
-template <typename component>
-void Composite<component>::add(component* comp)
-{
-
-	auto it = std::find(_components.begin(),_components.end(),comp);
-	if (it == _components.end())
-		_components.push_back(comp);
-}
-
-template <typename component>
-void Composite<component>::remove(component* comp)
-{
-	auto it = std::find(_components.begin(),_components.end(),comp);
-	if (it != _components.end())
-		_components.erase(it);
-}
-
-template <typename component>
-void Composite<component>::clear()
-{
-	_components.clear();
-}
-
-template <typename component>
-Composite<component>::~Composite()
-{
-}
-
-} // end namespace SX
-}
-#endif /* NSXTOOL_COMPOSITE_H_ */
+#endif /* NSXTOOL_IMODIFIER_H_ */
