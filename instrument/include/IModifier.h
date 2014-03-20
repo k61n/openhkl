@@ -29,8 +29,30 @@
 #ifndef NSXTOOL_IMODIFIER_H_
 #define NSXTOOL_IMODIFIER_H_
 
+#include <Eigen/Dense>
+
+namespace SX
+{
+
+namespace Instrument
+{
+
+typedef Eigen::Matrix<double,4,4> HomMatrix;
+
 class IModifier
 {
+public:
+	virtual HomMatrix getTransformation()=0;
+
+	virtual ~IModifier()=0;
 };
+
+IModifier::~IModifier()
+{
+}
+
+} // end namespace Instrument
+
+} // end namespace SX
 
 #endif /* NSXTOOL_IMODIFIER_H_ */

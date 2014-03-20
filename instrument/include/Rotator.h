@@ -8,7 +8,7 @@
 	38042 Grenoble Cedex 9
 	France
 	chapon[at]ill.fr
-    pellegrini[at]ill.fr
+	pellegrini[at]ill.fr
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU Lesser General Public
@@ -26,15 +26,12 @@
  *
  */
 
-#ifndef NSXTOOL_COMPONENTFACTORY_H_
-#define NSXTOOL_COMPONENTFACTORY_H_
+#ifndef NSXTOOL_ROTATOR_H_
+#define NSXTOOL_ROTATOR_H_
 
-#include <string>
+#include <Eigen/Dense>
 
-#include <boost/property_tree/ptree.hpp>
-
-#include "Factory.h"
-#include "Singleton.h"
+#include "IModifier.h"
 
 namespace SX
 {
@@ -42,20 +39,29 @@ namespace SX
 namespace Instrument
 {
 
-class IComponent;
+typedef Eigen::Matrix<double,4,4> HomMatrix;
 
-using namespace SX::Kernel;
-using boost::property_tree::ptree;
-
-class ComponentFactory : public Factory<IComponent,std::string,ptree>, public Singleton<ComponentFactory,Constructor,Destructor>
+class Rotator : public IModifier
 {
-private:
-	ComponentFactory(){}
-	~ComponentFactory(){}
+public:
+
+	Rotator();
+
+	HomMatrix getTransformation();
+
 };
 
-} //end namespace Instrument
+Rotator::Rotator()
+{
+}
 
-} //end namespace SX
+HomMatrix Rotator::getTransformation()
+{
+}
 
-#endif /* NSXTOOL_COMPONENTFACTORY_H_ */
+
+} // end namespace Instrument
+
+} // end namespace SX
+
+#endif /* ROTATOR_H_ */

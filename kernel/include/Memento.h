@@ -8,7 +8,7 @@
 	38042 Grenoble Cedex 9
 	France
 	chapon[at]ill.fr
-    pellegrini[at]ill.fr
+	pellegrini[at]ill.fr
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU Lesser General Public
@@ -26,36 +26,53 @@
  *
  */
 
-#ifndef NSXTOOL_COMPONENTFACTORY_H_
-#define NSXTOOL_COMPONENTFACTORY_H_
-
-#include <string>
-
-#include <boost/property_tree/ptree.hpp>
-
-#include "Factory.h"
-#include "Singleton.h"
+#ifndef NSXTOOL_MEMENTO_H_
+#define NSXTOOL_MEMENTO_H_
 
 namespace SX
 {
 
-namespace Instrument
+namespace Kernel
 {
 
-class IComponent;
-
-using namespace SX::Kernel;
-using boost::property_tree::ptree;
-
-class ComponentFactory : public Factory<IComponent,std::string,ptree>, public Singleton<ComponentFactory,Constructor,Destructor>
+template <typename statetype>
+class Memento
 {
+public:
+	Memento(const statetype& s);
+	const statetype& getState();
+
+	virtual ~Memento();
+
 private:
-	ComponentFactory(){}
-	~ComponentFactory(){}
+	Memento();
+
+	statetype _state;
 };
 
-} //end namespace Instrument
+template <typename statetype>
+Memento<statetype>::Memento()
+{
+}
 
-} //end namespace SX
+template <typename statetype>
+Memento<statetype>::Memento(const statetype& s) : _state(s)
+{
+}
 
-#endif /* NSXTOOL_COMPONENTFACTORY_H_ */
+template <typename statetype>
+const statetype& Memento<statetype>::getState()
+{
+	return _state;
+}
+
+template <typename statetype>
+Memento<statetype>::~Memento()
+{
+}
+
+} // end namespace Kernel
+
+} // end namespace SX
+
+#endif /* MEMENTO_H_ */

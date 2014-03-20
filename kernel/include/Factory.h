@@ -39,6 +39,10 @@
 
 namespace SX
 {
+
+namespace Kernel
+{
+
 /**
  * @brief generic factory class templated on the return type, the key and accepts any number
  * and kind of parameters using variadic templates for the callback.
@@ -115,6 +119,7 @@ std::size_t Factory<base,keytype,args...>::remove(const keytype& key)
 	return _map.erase(key);
 }
 
+} // end namespace Kernel
 
 } // end namespace SX
 

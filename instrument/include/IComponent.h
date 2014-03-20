@@ -55,7 +55,7 @@ public:
 
 protected:
 
-	Composite<IModifier> *_modifiers;
+	IModifier *_modifier;
 	std::string _name;
 };
 
