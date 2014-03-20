@@ -46,12 +46,12 @@ template <typename ...Ts>
 class Rotator : public IModifier<Vector3d,double>
 {
 public:
-	Rotator();
+	Rotator(Ts... vals);
 	const HomMatrix& getTransformation() const;
 };
 
 template <typename ...Ts>
-Rotator<Ts...>::Rotator()
+Rotator<Ts...>::Rotator(Ts... vals) : IModifier(vals...)
 {
 }
 
@@ -59,7 +59,6 @@ template <typename ...Ts>
 const HomMatrix& Rotator<Ts...>::getTransformation() const
 {
 }
-
 
 } // end namespace Instrument
 

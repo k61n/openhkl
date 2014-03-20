@@ -31,6 +31,7 @@
 
 #include <Eigen/Dense>
 
+#include "Memento.h"
 #include "State.h"
 
 namespace SX
@@ -47,14 +48,40 @@ template <typename ...Ts>
 class IModifier
 {
 public:
-	virtual const HomMatrix& getTransformation() const=0;
 
+    typedef Memento< State<Ts...> > MementoType;
+
+	IModifier(Ts... vals);
+
+    void loadMemento(MementoType* state);
+    MementoType* saveMemento();
+
+	virtual const HomMatrix& getTransformation() const=0;
 	virtual ~IModifier()=0;
 
 private:
     State<Ts...> _state;
 
 };
+
+template <typename ...Ts>
+IModifier<Ts...>::IModifier(Ts... vals)
+{
+	_state.set(vals...);
+}
+
+template <typename ...Ts>
+void IModifier<Ts...>::loadMemento(MementoType* m)
+{
+	_state = m->getState();
+}
+
+
+template <typename ...Ts>
+typename IModifier<Ts...>::MementoType* IModifier<Ts...>::saveMemento()
+{
+    return new MementoType(_state);
+}
 
 template <typename ...Ts>
 IModifier<Ts...>::~IModifier()
