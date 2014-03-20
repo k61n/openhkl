@@ -39,23 +39,24 @@ namespace SX
 namespace Instrument
 {
 
+typedef Eigen::Matrix<double,3,1> Vector3d;
 typedef Eigen::Matrix<double,4,4> HomMatrix;
 
-class Rotator : public IModifier
+template <typename ...Ts>
+class Rotator : public IModifier<Vector3d,double>
 {
 public:
-
 	Rotator();
-
-	HomMatrix getTransformation();
-
+	const HomMatrix& getTransformation() const;
 };
 
-Rotator::Rotator()
+template <typename ...Ts>
+Rotator<Ts...>::Rotator()
 {
 }
 
-HomMatrix Rotator::getTransformation()
+template <typename ...Ts>
+const HomMatrix& Rotator<Ts...>::getTransformation() const
 {
 }
 

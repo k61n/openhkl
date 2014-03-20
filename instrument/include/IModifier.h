@@ -31,23 +31,33 @@
 
 #include <Eigen/Dense>
 
+#include "State.h"
+
 namespace SX
 {
 
 namespace Instrument
 {
 
+using namespace SX::Kernel;
+
 typedef Eigen::Matrix<double,4,4> HomMatrix;
 
+template <typename ...Ts>
 class IModifier
 {
 public:
-	virtual HomMatrix getTransformation()=0;
+	virtual const HomMatrix& getTransformation() const=0;
 
 	virtual ~IModifier()=0;
+
+private:
+    State<Ts...> _state;
+
 };
 
-IModifier::~IModifier()
+template <typename ...Ts>
+IModifier<Ts...>::~IModifier()
 {
 }
 
