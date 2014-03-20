@@ -56,10 +56,10 @@ public:
     void loadMemento(MementoType* state);
     MementoType* saveMemento();
 
-	virtual const HomMatrix& getTransformation() const=0;
+	virtual HomMatrix getTransformation() const=0;
 	virtual ~IModifier()=0;
 
-private:
+protected:
     State<Ts...> _state;
 
 };

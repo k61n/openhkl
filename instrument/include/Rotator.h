@@ -30,6 +30,7 @@
 #define NSXTOOL_ROTATOR_H_
 
 #include <Eigen/Dense>
+#include <Eigen/Geometry>
 
 #include "IModifier.h"
 
@@ -47,7 +48,7 @@ class Rotator : public IModifier<Vector3d,double>
 {
 public:
 	Rotator(Ts... vals);
-	const HomMatrix& getTransformation() const;
+	HomMatrix getTransformation() const;
 };
 
 template <typename ...Ts>
@@ -56,8 +57,16 @@ Rotator<Ts...>::Rotator(Ts... vals) : IModifier(vals...)
 }
 
 template <typename ...Ts>
-const HomMatrix& Rotator<Ts...>::getTransformation() const
+HomMatrix Rotator<Ts...>::getTransformation() const
 {
+    Eigen::Quaternion<double> quat(Eigen::AngleAxis<double>(std::get<1>(_state.get()),std::get<0>(_state.get())));
+
+	HomMatrix trans=HomMatrix::Zero();
+	trans(3,3) = 1.0;
+	trans.block(0,0,3,3)=quat.toRotationMatrix();
+
+	return trans;
+
 }
 
 } // end namespace Instrument
