@@ -50,6 +50,8 @@ using boost::property_tree::ptree;
 class ComponentFactory : public Factory<IComponent,std::string,ptree>, public Singleton<ComponentFactory,Constructor,Destructor>
 {
 private:
+	friend class Constructor<ComponentFactory>;
+	friend class Destructor<ComponentFactory>;
 	ComponentFactory(){}
 	~ComponentFactory(){}
 };

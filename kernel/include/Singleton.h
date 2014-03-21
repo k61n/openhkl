@@ -41,15 +41,15 @@ namespace Kernel
  *
  * The concrete construction and destruction of the singleton instance are assigned to external
  * classes in order to provide singleton mechanism for classes with a level of inheritance
- * deepar than 1.
+ * deeper than 1.
  */
 template <typename T,template<class> class Constructor,template <class> class Destructor>
 class Singleton
 {
 public:
-	//! retun an instance of the of the class to be singletonized
+	//! retun an instance of the class to be singletonized
 	static T* Instance();
-	//! destroy (if its has been instanciated) the instance of the class to be singletonized
+	//! destroy (if it has been instanciated) the instance of the class to be singletonized
     static void DestroyInstance();
 private:
 	static T* _instance;

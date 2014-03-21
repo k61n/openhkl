@@ -45,7 +45,9 @@ using namespace SX::Kernel;
 
 class DetectorMappingFactory : public Factory<IDetectorMapping,std::string>, public Singleton<DetectorMappingFactory,Constructor,Destructor>
 {
-public:
+private:
+	friend class Constructor<DetectorMappingFactory>;
+	friend class Destructor<DetectorMappingFactory>;
 	DetectorMappingFactory(){}
 	~DetectorMappingFactory(){}
 };
