@@ -71,4 +71,4 @@ HomMatrix Translator<Ts...>::getTransformation() const
 
 } // end namespace SX
 
-#endif /* ROTATOR_H_ */
+#endif /* NSXTOOL_ROTATOR_H_ */

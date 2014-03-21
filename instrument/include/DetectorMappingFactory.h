@@ -54,4 +54,4 @@ public:
 
 } // end namespace SX
 
-#endif /* DETECTORMAPPINGFACTORY_H_ */
+#endif /* NSXTOOL_DETECTORMAPPINGFACTORY_H_ */

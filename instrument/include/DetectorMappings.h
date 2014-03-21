@@ -144,4 +144,4 @@ void TopRightMapping::operator()(const uint nrows, const uint ncols, const uint 
 
 } // end namespace SX
 
-#endif /* IDETECTORMAPPING_H_ */
+#endif /* NSXTOOL_IDETECTORMAPPING_H_ */

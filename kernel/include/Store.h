@@ -125,4 +125,4 @@ bool Store<storable>::hasObject(const storable* object) const
 
 } // end namespace SX
 
-#endif /* STORE_H_ */
+#endif /* NSXTOOL_STORE_H_ */

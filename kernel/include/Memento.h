@@ -75,4 +75,4 @@ Memento<statetype>::~Memento()
 
 } // end namespace SX
 
-#endif /* MEMENTO_H_ */
+#endif /* NSXTOOL_MEMENTO_H_ */

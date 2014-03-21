@@ -66,4 +66,4 @@ void State<Ts...>::set(Ts... vals)
 
 
 
-#endif /* STATE_H_ */
+#endif /* NSXTOOL_STATE_H_ */
