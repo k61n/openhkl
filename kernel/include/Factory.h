@@ -30,12 +30,11 @@
 #define NSXTOOL_FACTORY_H_
 
 #include <algorithm>
-#include <exception>
 #include <functional>
 #include <iostream>
+#include <stdexcept>
 #include <unordered_map>
 #include <vector>
-
 
 namespace SX
 {
