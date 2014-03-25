@@ -41,7 +41,7 @@ class IDetectorMapping
 {
 public:
 
-	virtual void operator()(const uint i, const uint j, uint& newi, uint& newj) const=0;
+	virtual void operator()(const uint px, const uint py, uint& newpx, uint& newpy) const=0;
 
 	virtual ~IDetectorMapping()=0;
 
@@ -56,7 +56,7 @@ IDetectorMapping::IDetectorMapping(const uint nrows, const uint ncols) : _nrows(
 {
 }
 
-void IDetectorMapping::operator()(const uint i, const uint j, uint& newi, uint& newj) const
+void IDetectorMapping::operator()(const uint px, const uint py, uint& newpx, uint& newpy) const
 {
 }
 
@@ -66,118 +66,234 @@ IDetectorMapping::~IDetectorMapping()
 
 ///////////////////////////////////////////////
 
-class BottomLeftMapping : public IDetectorMapping
+class BottomLeftMappingCCW : public IDetectorMapping
 {
 public:
 
 	static IDetectorMapping* construct(const uint nrows, const uint ncols);
-	void operator()(const uint i, const uint j, uint& newi, uint& newj) const;
+	void operator()(const uint px, const uint py, uint& newpx, uint& newpy) const;
 
 protected:
-	BottomLeftMapping(const uint nrows, const uint ncols);
+	BottomLeftMappingCCW(const uint nrows, const uint ncols);
 
 };
 
-BottomLeftMapping::BottomLeftMapping(const uint nrows, const uint ncols) : IDetectorMapping(nrows,ncols)
+BottomLeftMappingCCW::BottomLeftMappingCCW(const uint nrows, const uint ncols) : IDetectorMapping(nrows,ncols)
 {
 }
 
-IDetectorMapping* BottomLeftMapping::construct(const uint nrows, const uint ncols)
+IDetectorMapping* BottomLeftMappingCCW::construct(const uint nrows, const uint ncols)
 {
-	return new BottomLeftMapping(nrows,ncols);
+	return new BottomLeftMappingCCW(nrows,ncols);
 }
 
-void BottomLeftMapping::operator()(const uint i, const uint j, uint& newi, uint& newj) const
+void BottomLeftMappingCCW::operator()(const uint px, const uint py, uint& newpx, uint& newpy) const
 {
-	newi=i;
-	newj=j;
+	newpx=px;
+	newpy=py;
 }
 
 ///////////////////////////////////////////////
 
-class TopLeftMapping : public IDetectorMapping
+class BottomLeftMappingCW : public IDetectorMapping
 {
 public:
 
 	static IDetectorMapping* construct(const uint nrows, const uint ncols);
-	void operator()(const uint i, const uint j, uint& newi, uint& newj) const;
+	void operator()(const uint px, const uint py, uint& newpx, uint& newpy) const;
 
 protected:
-	TopLeftMapping(const uint nrows, const uint ncols);
+	BottomLeftMappingCW(const uint nrows, const uint ncols);
 
 };
 
-TopLeftMapping::TopLeftMapping(const uint nrows, const uint ncols) : IDetectorMapping(nrows,ncols)
+BottomLeftMappingCW::BottomLeftMappingCW(const uint nrows, const uint ncols) : IDetectorMapping(nrows,ncols)
 {
 }
 
-IDetectorMapping* TopLeftMapping::construct(const uint nrows, const uint ncols)
+IDetectorMapping* BottomLeftMappingCW::construct(const uint nrows, const uint ncols)
 {
-	return new TopLeftMapping(nrows,ncols);
+	return new BottomLeftMappingCW(nrows,ncols);
 }
 
-void TopLeftMapping::operator()(const uint i, const uint j, uint& newi, uint& newj) const
+void BottomLeftMappingCW::operator()(const uint px, const uint py, uint& newpx, uint& newpy) const
 {
-	newi=_nrows-i;
-	newj=j;
+	newpx=py;
+	newpy=px;
 }
 
 ///////////////////////////////////////////////
 
-class BottomRightMapping : public IDetectorMapping
+class TopLeftMappingCCW : public IDetectorMapping
 {
 public:
 
 	static IDetectorMapping* construct(const uint nrows, const uint ncols);
-	void operator()(const uint i, const uint j, uint& newi, uint& newj) const;
+	void operator()(const uint px, const uint py, uint& newpx, uint& newpy) const;
 
 protected:
-	BottomRightMapping(const uint nrows, const uint ncols);
+	TopLeftMappingCCW(const uint nrows, const uint ncols);
 
 };
 
-BottomRightMapping::BottomRightMapping(const uint nrows, const uint ncols) : IDetectorMapping(nrows,ncols)
+TopLeftMappingCCW::TopLeftMappingCCW(const uint nrows, const uint ncols) : IDetectorMapping(nrows,ncols)
 {
 }
 
-IDetectorMapping* BottomRightMapping::construct(const uint nrows, const uint ncols)
+IDetectorMapping* TopLeftMappingCCW::construct(const uint nrows, const uint ncols)
 {
-	return new BottomRightMapping(nrows,ncols);
+	return new TopLeftMappingCCW(nrows,ncols);
 }
 
-void BottomRightMapping::operator()(const uint i, const uint j, uint& newi, uint& newj) const
+void TopLeftMappingCCW::operator()(const uint px, const uint py, uint& newpx, uint& newpy) const
 {
-	newi=i;
-	newj=_ncols-j;
+	newpx=py;
+	newpy=_nrows-px;
 }
 
 ///////////////////////////////////////////////
 
-class TopRightMapping : public IDetectorMapping
+class TopLeftMappingCW : public IDetectorMapping
 {
 public:
 
 	static IDetectorMapping* construct(const uint nrows, const uint ncols);
-	void operator()(const uint i, const uint j, uint& newi, uint& newj) const;
+	void operator()(const uint px, const uint py, uint& newpx, uint& newpy) const;
 
 protected:
-	TopRightMapping(const uint nrows, const uint ncols);
+	TopLeftMappingCW(const uint nrows, const uint ncols);
 
 };
 
-TopRightMapping::TopRightMapping(const uint nrows, const uint ncols) : IDetectorMapping(nrows,ncols)
+TopLeftMappingCW::TopLeftMappingCW(const uint nrows, const uint ncols) : IDetectorMapping(nrows,ncols)
 {
 }
 
-IDetectorMapping* TopRightMapping::construct(const uint nrows, const uint ncols)
+IDetectorMapping* TopLeftMappingCW::construct(const uint nrows, const uint ncols)
 {
-	return new TopRightMapping(nrows,ncols);
+	return new TopLeftMappingCW(nrows,ncols);
 }
 
-void TopRightMapping::operator()(const uint i, const uint j, uint& newi, uint& newj) const
+void TopLeftMappingCW::operator()(const uint px, const uint py, uint& newpx, uint& newpy) const
 {
-	newi=_nrows-i;
-	newj=_ncols-j;
+	newpx=px;
+	newpy=_nrows-py;
+}
+
+///////////////////////////////////////////////
+
+class BottomRightMappingCCW : public IDetectorMapping
+{
+public:
+
+	static IDetectorMapping* construct(const uint nrows, const uint ncols);
+	void operator()(const uint px, const uint py, uint& newpx, uint& newpy) const;
+
+protected:
+	BottomRightMappingCCW(const uint nrows, const uint ncols);
+
+};
+
+BottomRightMappingCCW::BottomRightMappingCCW(const uint nrows, const uint ncols) : IDetectorMapping(nrows,ncols)
+{
+}
+
+IDetectorMapping* BottomRightMappingCCW::construct(const uint nrows, const uint ncols)
+{
+	return new BottomRightMappingCCW(nrows,ncols);
+}
+
+void BottomRightMappingCCW::operator()(const uint px, const uint py, uint& newpx, uint& newpy) const
+{
+	newpx=_ncols-py;
+	newpy=px;
+}
+
+///////////////////////////////////////////////
+
+class BottomRightMappingCW : public IDetectorMapping
+{
+public:
+
+	static IDetectorMapping* construct(const uint nrows, const uint ncols);
+	void operator()(const uint px, const uint py, uint& newpx, uint& newpy) const;
+
+protected:
+	BottomRightMappingCW(const uint nrows, const uint ncols);
+
+};
+
+BottomRightMappingCW::BottomRightMappingCW(const uint nrows, const uint ncols) : IDetectorMapping(nrows,ncols)
+{
+}
+
+IDetectorMapping* BottomRightMappingCW::construct(const uint nrows, const uint ncols)
+{
+	return new BottomRightMappingCW(nrows,ncols);
+}
+
+void BottomRightMappingCW::operator()(const uint px, const uint py, uint& newpx, uint& newpy) const
+{
+	newpx=_ncols-px;
+	newpy=py;
+}
+
+///////////////////////////////////////////////
+
+class TopRightMappingCCW : public IDetectorMapping
+{
+public:
+
+	static IDetectorMapping* construct(const uint nrows, const uint ncols);
+	void operator()(const uint px, const uint py, uint& newpx, uint& newpy) const;
+
+protected:
+	TopRightMappingCCW(const uint nrows, const uint ncols);
+
+};
+
+TopRightMappingCCW::TopRightMappingCCW(const uint nrows, const uint ncols) : IDetectorMapping(nrows,ncols)
+{
+}
+
+IDetectorMapping* TopRightMappingCCW::construct(const uint nrows, const uint ncols)
+{
+	return new TopRightMappingCCW(nrows,ncols);
+}
+
+void TopRightMappingCCW::operator()(const uint px, const uint py, uint& newpx, uint& newpy) const
+{
+	newpx=_ncols-px;
+	newpy=_nrows-py;
+}
+
+///////////////////////////////////////////////
+
+class TopRightMappingCW : public IDetectorMapping
+{
+public:
+
+	static IDetectorMapping* construct(const uint nrows, const uint ncols);
+	void operator()(const uint px, const uint py, uint& newpx, uint& newpy) const;
+
+protected:
+	TopRightMappingCW(const uint nrows, const uint ncols);
+
+};
+
+TopRightMappingCW::TopRightMappingCW(const uint nrows, const uint ncols) : IDetectorMapping(nrows,ncols)
+{
+}
+
+IDetectorMapping* TopRightMappingCW::construct(const uint nrows, const uint ncols)
+{
+	return new TopRightMappingCW(nrows,ncols);
+}
+
+void TopRightMappingCW::operator()(const uint px, const uint py, uint& newpx, uint& newpy) const
+{
+	newpx=_ncols-py;
+	newpy=_nrows-px;
 }
 
 } // end namespace Instrument
