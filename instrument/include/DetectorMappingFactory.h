@@ -41,9 +41,11 @@ namespace SX
 namespace Instrument
 {
 
+typedef unsigned int uint;
+
 using namespace SX::Kernel;
 
-class DetectorMappingFactory : public Factory<IDetectorMapping,std::string>, public Singleton<DetectorMappingFactory,Constructor,Destructor>
+class DetectorMappingFactory : public Factory<IDetectorMapping,std::string,uint,uint>, public Singleton<DetectorMappingFactory,Constructor,Destructor>
 {
 private:
 	friend class Constructor<DetectorMappingFactory>;

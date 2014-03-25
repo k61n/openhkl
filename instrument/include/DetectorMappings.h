@@ -41,19 +41,22 @@ class IDetectorMapping
 {
 public:
 
-	template <typename ...args>
-	virtual IDetectorMapping* construct(args...)=0;
-
-	virtual void operator()(const uint nrows, const uint ncols, const uint i, const uint j, uint& newi, uint& newj) const=0;
+	virtual void operator()(const uint i, const uint j, uint& newi, uint& newj) const=0;
 
 	virtual ~IDetectorMapping()=0;
 
 protected:
-	IDetectorMapping();
+	IDetectorMapping(const uint nrows, const uint ncols);
+	uint _nrows;
+	uint _ncols;
 
 };
 
-IDetectorMapping::IDetectorMapping()
+IDetectorMapping::IDetectorMapping(const uint nrows, const uint ncols) : _nrows(nrows), _ncols(ncols)
+{
+}
+
+void IDetectorMapping::operator()(const uint i, const uint j, uint& newi, uint& newj) const
 {
 }
 
@@ -61,87 +64,121 @@ IDetectorMapping::~IDetectorMapping()
 {
 }
 
+///////////////////////////////////////////////
+
 class BottomLeftMapping : public IDetectorMapping
 {
 public:
 
-	template <typename ...args>
-	IDetectorMapping* construct(args...);
-	void operator()(const uint nrows, const uint ncols, const uint i, const uint j, uint& newi, uint& newj) const;
+	static IDetectorMapping* construct(const uint nrows, const uint ncols);
+	void operator()(const uint i, const uint j, uint& newi, uint& newj) const;
+
+protected:
+	BottomLeftMapping(const uint nrows, const uint ncols);
 
 };
 
-template <typename ...args>
-IDetectorMapping* BottomLeftMapping::construct(args...)
+BottomLeftMapping::BottomLeftMapping(const uint nrows, const uint ncols) : IDetectorMapping(nrows,ncols)
 {
-	return new BottomLeftMapping;
 }
 
-void BottomLeftMapping::operator()(const uint nrows, const uint ncols, const uint i, const uint j, uint& newi, uint& newj) const
+IDetectorMapping* BottomLeftMapping::construct(const uint nrows, const uint ncols)
+{
+	return new BottomLeftMapping(nrows,ncols);
+}
+
+void BottomLeftMapping::operator()(const uint i, const uint j, uint& newi, uint& newj) const
 {
 	newi=i;
 	newj=j;
 }
 
-//class TopLeftMapping : public IDetectorMapping
-//{
-//public:
-//
-//	IDetectorMapping* construct();
-//	void operator()(const uint nrows, const uint ncols, const uint i, const uint j, uint& newi, uint& newj) const;
-//
-//};
-//
-//IDetectorMapping* TopLeftMapping::construct()
-//{
-//	return new BottomLeftMapping;
-//}
-//
-//void TopLeftMapping::operator()(const uint nrows, const uint ncols, const uint i, const uint j, uint& newi, uint& newj) const
-//{
-//	newi=nrows-i;
-//	newj=j;
-//}
-//
-//class BottomRightMapping : public IDetectorMapping
-//{
-//public:
-//
-//	IDetectorMapping* construct();
-//	void operator()(const uint nrows, const uint ncols, const uint i, const uint j, uint& newi, uint& newj) const;
-//
-//};
-//
-//IDetectorMapping* BottomRightMapping::construct()
-//{
-//	return new BottomLeftMapping;
-//}
-//
-//void BottomRightMapping::operator()(const uint nrows, const uint ncols, const uint i, const uint j, uint& newi, uint& newj) const
-//{
-//	newi=i;
-//	newj=ncols-j;
-//}
-//
-//class TopRightMapping : public IDetectorMapping
-//{
-//public:
-//
-//	IDetectorMapping* construct();
-//	void operator()(const uint nrows, const uint ncols, const uint i, const uint j, uint& newi, uint& newj) const;
-//
-//};
-//
-//IDetectorMapping* TopRightMapping::construct()
-//{
-//	return new BottomLeftMapping;
-//}
-//
-//void TopRightMapping::operator()(const uint nrows, const uint ncols, const uint i, const uint j, uint& newi, uint& newj) const
-//{
-//	newi=nrows-i;
-//	newj=ncols-j;
-//}
+///////////////////////////////////////////////
+
+class TopLeftMapping : public IDetectorMapping
+{
+public:
+
+	static IDetectorMapping* construct(const uint nrows, const uint ncols);
+	void operator()(const uint i, const uint j, uint& newi, uint& newj) const;
+
+protected:
+	TopLeftMapping(const uint nrows, const uint ncols);
+
+};
+
+TopLeftMapping::TopLeftMapping(const uint nrows, const uint ncols) : IDetectorMapping(nrows,ncols)
+{
+}
+
+IDetectorMapping* TopLeftMapping::construct(const uint nrows, const uint ncols)
+{
+	return new TopLeftMapping(nrows,ncols);
+}
+
+void TopLeftMapping::operator()(const uint i, const uint j, uint& newi, uint& newj) const
+{
+	newi=_nrows-i;
+	newj=j;
+}
+
+///////////////////////////////////////////////
+
+class BottomRightMapping : public IDetectorMapping
+{
+public:
+
+	static IDetectorMapping* construct(const uint nrows, const uint ncols);
+	void operator()(const uint i, const uint j, uint& newi, uint& newj) const;
+
+protected:
+	BottomRightMapping(const uint nrows, const uint ncols);
+
+};
+
+BottomRightMapping::BottomRightMapping(const uint nrows, const uint ncols) : IDetectorMapping(nrows,ncols)
+{
+}
+
+IDetectorMapping* BottomRightMapping::construct(const uint nrows, const uint ncols)
+{
+	return new BottomRightMapping(nrows,ncols);
+}
+
+void BottomRightMapping::operator()(const uint i, const uint j, uint& newi, uint& newj) const
+{
+	newi=i;
+	newj=_ncols-j;
+}
+
+///////////////////////////////////////////////
+
+class TopRightMapping : public IDetectorMapping
+{
+public:
+
+	static IDetectorMapping* construct(const uint nrows, const uint ncols);
+	void operator()(const uint i, const uint j, uint& newi, uint& newj) const;
+
+protected:
+	TopRightMapping(const uint nrows, const uint ncols);
+
+};
+
+TopRightMapping::TopRightMapping(const uint nrows, const uint ncols) : IDetectorMapping(nrows,ncols)
+{
+}
+
+IDetectorMapping* TopRightMapping::construct(const uint nrows, const uint ncols)
+{
+	return new TopRightMapping(nrows,ncols);
+}
+
+void TopRightMapping::operator()(const uint i, const uint j, uint& newi, uint& newj) const
+{
+	newi=_nrows-i;
+	newj=_ncols-j;
+}
 
 } // end namespace Instrument
 
