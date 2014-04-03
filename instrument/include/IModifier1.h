@@ -45,7 +45,13 @@ class IModifier1
 {
 public:
     typedef Memento<mem_type> MementoType;
-	void loadMemento(MementoType* state);
+
+    IModifier1();
+    IModifier1(const mem_type& state);
+
+	const mem_type& getState() const;
+
+    void loadMemento(MementoType* state);
     MementoType* saveMemento();
 
     virtual ~IModifier1();
@@ -53,6 +59,22 @@ public:
 protected:
 	mem_type _state;
 };
+
+template <typename mem_type>
+IModifier1<mem_type>::IModifier1()
+{
+}
+
+template <typename mem_type>
+IModifier1<mem_type>::IModifier1(const mem_type& state) : _state(state)
+{
+}
+
+template <typename mem_type>
+const mem_type& IModifier1<mem_type>::getState() const
+{
+	return _state;
+}
 
 template <typename mem_type>
 void IModifier1<mem_type>::loadMemento(MementoType* m)
@@ -91,17 +113,17 @@ private:
 	Vector3D _axis;
 };
 
-Rotator1::Rotator1() : _axis(0,0,0), _state(HomMatrix::Identity())
+Rotator1::Rotator1() : _axis(0,0,0), IModifier1(HomMatrix::Identity())
 {
 }
 
-Rotator1::Rotator1(const Vector3D& axis) : _axis(axis), _state(HomMatrix::Identity())
+Rotator1::Rotator1(const Vector3D& axis) : _axis(axis), IModifier1(HomMatrix::Identity())
 {
 }
 
 Rotator1::Rotator1(const Vector3D& axis, double angle) : _axis(axis)
 {
-    Eigen::Quaternion<double> quat(Eigen::AngleAxis<double>(_axis,angle));
+    Eigen::Quaternion<double> quat(Eigen::AngleAxis<double>(angle,_axis));
 	_state=HomMatrix::Zero();
 	_state(3,3) = 1.0;
 	_state.block(0,0,3,3)=quat.toRotationMatrix();
@@ -109,7 +131,7 @@ Rotator1::Rotator1(const Vector3D& axis, double angle) : _axis(axis)
 
 void Rotator1::setAngle(double angle)
 {
-    Eigen::Quaternion<double> quat(Eigen::AngleAxis<double>(_axis,angle));
+    Eigen::Quaternion<double> quat(Eigen::AngleAxis<double>(angle,_axis));
 	_state=HomMatrix::Zero();
 	_state(3,3) = 1.0;
 	_state.block(0,0,3,3)=quat.toRotationMatrix();
