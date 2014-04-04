@@ -49,10 +49,11 @@ public:
     IModifier1();
     IModifier1(const mem_type& state);
 
-	const mem_type& getState() const;
+	virtual const mem_type& getState() const;
+	virtual void setState(const mem_type& state);
 
-    void loadMemento(MementoType* state);
-    MementoType* saveMemento();
+    void loadMemento(const MementoType& state);
+    MementoType saveMemento();
 
     virtual ~IModifier1();
 
@@ -77,15 +78,21 @@ const mem_type& IModifier1<mem_type>::getState() const
 }
 
 template <typename mem_type>
-void IModifier1<mem_type>::loadMemento(MementoType* m)
+void IModifier1<mem_type>::setState(const mem_type& state)
 {
-	_state = m->getState();
+	_state=state;;
 }
 
 template <typename mem_type>
-typename IModifier1<mem_type>::MementoType* IModifier1<mem_type>::saveMemento()
+void IModifier1<mem_type>::loadMemento(const MementoType& m)
 {
-    return new MementoType(_state);
+	_state = m.getState();
+}
+
+template <typename mem_type>
+typename IModifier1<mem_type>::MementoType IModifier1<mem_type>::saveMemento()
+{
+    return MementoType(_state);
 }
 
 template <typename mem_type>

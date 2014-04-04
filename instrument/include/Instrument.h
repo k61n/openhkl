@@ -29,8 +29,6 @@
 #ifndef NSXTOOL_INSTRUMENT_H_
 #define NSXTOOL_INSTRUMENT_H_
 
-#include <iostream>
-
 #include <boost/foreach.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>

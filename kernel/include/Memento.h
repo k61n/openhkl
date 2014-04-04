@@ -29,6 +29,9 @@
 #ifndef NSXTOOL_MEMENTO_H_
 #define NSXTOOL_MEMENTO_H_
 
+#include <stdexcept>
+#include <unordered_map>
+
 namespace SX
 {
 
@@ -40,7 +43,7 @@ class Memento
 {
 public:
 	Memento(const statetype& s);
-	const statetype& getState();
+	const statetype& getState() const;
 
 	virtual ~Memento();
 
@@ -61,7 +64,7 @@ Memento<statetype>::Memento(const statetype& s) : _state(s)
 }
 
 template <typename statetype>
-const statetype& Memento<statetype>::getState()
+const statetype& Memento<statetype>::getState() const
 {
 	return _state;
 }
@@ -69,6 +72,55 @@ const statetype& Memento<statetype>::getState()
 template <typename statetype>
 Memento<statetype>::~Memento()
 {
+}
+
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+
+template <typename key_type, typename mem_type>
+class CareTaker
+{
+public:
+	CareTaker();
+	void add(const key_type& key,const mem_type& mem);
+	const mem_type& get(const key_type& key) const;
+	void remove(const key_type& key);
+
+private:
+	std::unordered_map<key_type,mem_type> _mementos;
+};
+
+template <typename key_type, typename mem_type>
+CareTaker<key_type,mem_type>::CareTaker()
+{
+}
+
+template <typename key_type, typename mem_type>
+void CareTaker<key_type,mem_type>::add(const key_type& key,const mem_type& mem)
+{
+	auto it=_mementos.find(key);
+	if (it!=_mementos.end())
+		throw std::invalid_argument("Key already in use.");
+	_mementos.insert({key,mem});
+}
+
+template <typename key_type, typename mem_type>
+const mem_type& CareTaker<key_type,mem_type>::get(const key_type& key) const
+{
+	auto it=_mementos.find(key);
+	if (it==_mementos.end())
+		throw std::invalid_argument("Key not found.");
+	return it->second;
+}
+
+template <typename key_type, typename mem_type>
+void CareTaker<key_type,mem_type>::remove(const key_type& key)
+{
+	auto it=_mementos.find(key);
+	if (it==_mementos.end())
+		throw std::invalid_argument("Key not found.");
+	_mementos.erase(key);
 }
 
 } // end namespace Kernel
