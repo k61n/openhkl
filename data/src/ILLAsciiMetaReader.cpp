@@ -46,7 +46,7 @@ MetaData* ILLAsciiMetaReader::read(const char* buf,std::size_t& size)
 		readControlIBlock(buffer,meta);
 	}catch(...)
 	{
-		throw std::runtime_error("ILLAsciiMetaEeader: Fail to read IBlock in stream");
+		throw std::runtime_error("ILLAsciiMetaReader: Fail to read IBlock in stream");
 	}
 
 	// Read the block containing float metadata
