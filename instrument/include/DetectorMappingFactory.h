@@ -31,7 +31,7 @@
 
 #include <string>
 
-#include "DetectorMappings.h"
+#include "DetectorMapping.h"
 #include "Factory.h"
 #include "Singleton.h"
 
