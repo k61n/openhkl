@@ -41,11 +41,9 @@ namespace SX
 namespace Data
 {
 
-typedef unsigned int uint;
-
 using namespace SX::Kernel;
 
-class ReaderFactory : public Factory<IReader,std::string,uint,uint>, public Singleton<ReaderFactory,Constructor,Destructor>
+class ReaderFactory : public Factory<IReader,std::string>, public Singleton<ReaderFactory,Constructor,Destructor>
 {
 private:
 	friend class Constructor<ReaderFactory>;
