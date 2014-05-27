@@ -61,7 +61,11 @@ T* Singleton<T,Constructor,Destructor>::_instance=nullptr;
 template <typename T,template <class> class Constructor,template <class> class Destructor>
 T* Singleton<T,Constructor,Destructor>::Instance()
 {
-    return Constructor<T>::construct();
+	if (_instance)
+		return _instance;
+	else
+		return Constructor<T>::construct();
+
 }
 
 template <typename T,template <class> class Constructor,template <class> class Destructor>
