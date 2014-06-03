@@ -26,53 +26,44 @@
  *
  */
 
-#ifndef NSXTOOL_STORE_H_
-#define NSXTOOL_STORE_H_
+#ifndef NSXTOOL_INSTRUMENTSTORE_H_
+#define NSXTOOL_INSTRUMENTSTORE_H_
 
-#include <map>
 #include <string>
+#include <unistd.h>
+
+#include "Instrument.h"
+#include "Singleton.h"
+#include "Store.h"
+
+using namespace SX::Kernel;
 
 namespace SX
 {
 
-namespace Kernel
+namespace Instrument
 {
 
-template <typename storable>
-class Store : public std::map<std::string,storable>
+class InstrumentStore : public Store<std::shared_ptr<Instrument>>,Singleton<InstrumentStore,Constructor,EmptyDestructor>
 {
+private:
+	std::string _basePath;
+	InstrumentStore();
 
-public:
-	Store();
-	virtual ~Store();
-
-	void add(const std::string& key);
 };
 
-template <typename storable>
-Store<storable>::Store() : map<std::string,storable>()
+InstrumentStore::InstrumentStore()
 {
-}
-
-template <typename storable>
-Store<storable>::~Store()
-{
-}
-
-template <typename storable>
-void Store<storable>::add(const std::string& key)
-{
-	auto it=_store.find(key);
-	if (it == _store.end())
+	char * ppath;
+	ppath = getenv ("NSXTOOL");
+	if (ppath!=NULL)
 	{
-		storable* s=storable::build(key);
-		if (s != nullptr)
-			_store[key] = s;
+		_basePath->loadj0(*this,type,std::string(ppath)+"/resources/Form_factor_j0.dat");
 	}
 }
 
-} // end namespace Kernel
+} // end namespace Instrument
 
 } // end namespace SX
 
-#endif /* NSXTOOL_STORE_H_ */
+#endif /* NSXTOOL_INSTRUMENTSTORE_H_ */

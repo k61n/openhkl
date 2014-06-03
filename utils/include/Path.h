@@ -26,53 +26,41 @@
  *
  */
 
-#ifndef NSXTOOL_STORE_H_
-#define NSXTOOL_STORE_H_
+#ifndef NSXTOOL_PATH_H_
+#define NSXTOOL_PATH_H_
 
-#include <map>
 #include <string>
+#include <unistd.h>
+
+#include <boost/filesystem.hpp>
 
 namespace SX
 {
 
-namespace Kernel
+namespace Utils
 {
 
-template <typename storable>
-class Store : public std::map<std::string,storable>
+using namespace boost::filesystem;
+
+std::string getInstallationPath()
 {
-
-public:
-	Store();
-	virtual ~Store();
-
-	void add(const std::string& key);
-};
-
-template <typename storable>
-Store<storable>::Store() : map<std::string,storable>()
-{
+	char* ppath;
+	ppath = getenv("NSXTOOL");
+	if (ppath!=NULL)
+		return std::string(ppath);
+	else
+		return "";
 }
 
-template <typename storable>
-Store<storable>::~Store()
+std::string getResourcesPath()
 {
+	path p(getInstallationPath());
+	p /= "resources";
+	return p.string();
 }
 
-template <typename storable>
-void Store<storable>::add(const std::string& key)
-{
-	auto it=_store.find(key);
-	if (it == _store.end())
-	{
-		storable* s=storable::build(key);
-		if (s != nullptr)
-			_store[key] = s;
-	}
-}
-
-} // end namespace Kernel
+} // end namespace Utils
 
 } // end namespace SX
 
-#endif /* NSXTOOL_STORE_H_ */
+#endif

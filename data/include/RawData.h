@@ -46,16 +46,17 @@ class RawData {
 public:
 	RawData(const std::string& filename, const std::string& filetype, accessType access)
 {
-//		DataReaderFactory* factory=DataReaderFactory::Instance();
-//		_reader=factory->create(filetype);
-//		_reader->open(filename);
-//		_metadata=std::unique_ptr<MetaData>(_reader->getMetaData());
-//		if (access==InMemory)
-//		{
-//			_frames=_reader->nFrames();
-//			_data.resize(_frames);
-//
-//		}
+		DataReaderFactory* factory=DataReaderFactory::Instance();
+		_reader=factory->create(filetype);
+		_reader->open(filename);
+		_metadata=std::unique_ptr<MetaData>(_reader->getMetaData());
+		if (access==InMemory)
+		{
+			_frames=_reader->nFrames();
+			_data.resize(_frames);
+
+		}
+		std::string instrument=_metadata->getKey<std::string>("Instrument");
 
 }
 	virtual ~RawData();

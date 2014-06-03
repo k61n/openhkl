@@ -47,9 +47,9 @@ template <typename T,template<class> class Constructor,template <class> class De
 class Singleton
 {
 public:
-	//! retun an instance of the class to be singletonized
+	//! return an instance of the class to be singletonized
 	static T* Instance();
-	//! destroy (if it has been instanciated) the instance of the class to be singletonized
+	//! destroy (if it has been instantiated) the instance of the class to be singletonized
     static void DestroyInstance();
 private:
 	static T* _instance;
@@ -90,7 +90,7 @@ T* Constructor<T>::construct()
 }
 
 /**
- * @brief actually destructs the unique instance of the class to be singletonized
+ * @brief actually destroys the unique instance of the class to be singletonized
  */
 template <class T>
 class Destructor
@@ -103,6 +103,21 @@ template <typename T>
 void Destructor<T>::destroy(T* instance)
 {
     delete instance;
+}
+
+/**
+ * @brief actually does not destroy the unique instance of the class to be singletonized
+ */
+template <class T>
+class EmptyDestructor
+{
+public:
+    static void destroy(T* instance);
+};
+
+template <typename T>
+void EmptyDestructor<T>::destroy(T* instance)
+{
 }
 
 } // end namespace Kernel
