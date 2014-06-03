@@ -7,7 +7,7 @@
 #include <boost/interprocess/mapped_region.hpp>
 #include <boost/spirit/include/qi.hpp>
 
-#include "ILLAsciiReader.h"
+#include "ILLAsciiDataReader.h"
 #include "ILLAsciiMetaReader.h"
 #include "MetaData.h"
 
@@ -26,15 +26,14 @@ void readIntsFromChar(const char* begin, const char* end, std::vector<int>& v)
 	qi::phrase_parse(begin, end, *qi::int_ >> qi::eoi, ascii::space, v);
 }
 
-ILLAsciiReader::ILLAsciiReader(std::string& filename) : _nframes(0),_datapoints(0),_nangles(0),_header_size(0),_skipchar(0),_datalength(0)
+ILLAsciiDataReader::ILLAsciiDataReader() : IDataReader(), _nframes(0),_datapoints(0),_nangles(0),_header_size(0),_skipchar(0),_datalength(0)
 {
-	mapFile(filename);
 }
 
-std::vector<int> ILLAsciiReader::getFrame(uint i) const
+std::vector<int> ILLAsciiDataReader::getFrame(uint i) const
 {
 	if (i>_nframes-1)
-		throw std::runtime_error("ILLAsciiReader:readBlock, frame index not valid");
+		throw std::runtime_error("ILLAsciiDataReader:readBlock, frame index not valid");
 
 	// Determine the beginning of the data block
 	std::size_t begin=_header_size+(i+1)*_skipchar+i*_datalength;
@@ -42,7 +41,6 @@ std::vector<int> ILLAsciiReader::getFrame(uint i) const
 	// Map the region of interest in the file
 	boost::interprocess::mapped_region mdblock(_map,boost::interprocess::read_only,begin,_datalength);
 
-	const char* b=reinterpret_cast<char*>(mdblock.get_address());
 	// Create vector and try to reserve a memory block
 	std::vector<int> v;
 	try
@@ -51,17 +49,17 @@ std::vector<int> ILLAsciiReader::getFrame(uint i) const
 	}
 	catch(...)
 	{
-		throw std::runtime_error("ILLAsciiReader: problem reserving size of vector");
+		throw std::runtime_error("ILLAsciiDataReader: problem reserving size of vector");
 	}
 	const char* b=reinterpret_cast<char*>(mdblock.get_address());
 	readIntsFromChar(b,b+_datalength,v);
 	if (v.size()!=_datapoints)
-		throw std::runtime_error("ILLAsciiReader::readBlock, number of data points read different from expected");
+		throw std::runtime_error("ILLAsciiDataReader::readBlock, number of data points read different from expected");
 
 	return v;
 }
 
-MetaData* ILLAsciiReader::getMetaData() const
+MetaData* ILLAsciiDataReader::getMetaData()
 {
 	// 81 characters per line
 	std::size_t block_size=100*81;
@@ -69,7 +67,7 @@ MetaData* ILLAsciiReader::getMetaData() const
 	// Map the region corresponding to the metadata block
 	boost::interprocess::mapped_region mdblock(_map,boost::interprocess::read_only,0,block_size);
 
-	// Beginning of the block
+	// Beginning of the blockILLAsciiDataReader
 	const char* b=reinterpret_cast<char*>(mdblock.get_address());
 	char* buffer=new char[block_size];
 	strncpy(buffer, b, block_size);
@@ -80,10 +78,11 @@ MetaData* ILLAsciiReader::getMetaData() const
 	return metadata;
 }
 
-void ILLAsciiReader::mapFile(const std::string& filename)
+void ILLAsciiDataReader::open(const std::string& filename)
 {
+	_filename=filename;
 	if ( !boost::filesystem::exists(filename.c_str()))
-		throw std::runtime_error("ILLAsciiReader, file:"+filename+" does not exist");
+		throw std::runtime_error("ILLAsciiDataReader, file:"+filename+" does not exist");
 	try
 	{
 		_map=boost::interprocess::file_mapping(filename.c_str(), boost::interprocess::read_only);
@@ -105,12 +104,12 @@ void ILLAsciiReader::mapFile(const std::string& filename)
 	_datalength=static_cast<int>(std::ceil(_datapoints/10.0))*81;
 }
 
-uint ILLAsciiReader::nFrames() const
+uint ILLAsciiDataReader::nFrames() const
 {
 	return _nframes;
 }
 
-ILLAsciiReader::~ILLAsciiReader()
+ILLAsciiDataReader::~ILLAsciiDataReader()
 {
 
 }

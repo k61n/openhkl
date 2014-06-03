@@ -25,40 +25,49 @@
 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-#ifndef NSXTOOL_MMILLASCIIREADER_H_
-#define NSXTOOL_MMILLASCIIREADER_H_
+#ifndef NSXTOOL_ILLASCIIDATAREADER_H_
+#define NSXTOOL_ILLASCIIDATAREADER_H_
+
 #include <string>
 #include <vector>
+
 #include <boost/interprocess/file_mapping.hpp>
+
+#include "IDataReader.h"
+#include "MetaData.h"
 
 namespace SX {
 
 namespace Data {
 
-//! Forward declaration
-class MetaData;
+typedef unsigned int uint;
 
-class MMILLAsciiReader
+class ILLAsciiDataReader : public IDataReader
 {
 public:
-	MMILLAsciiReader();
-	void mapFile(const std::string& filename);
-	//! Read the header of the file made of MetaData.
-	MetaData* getMetaData() { return _metadata;}
-	//! Return the number of blocks
-	std::size_t nBlocks() const {return _nframes;}
+	static IDataReader* create()
+	{
+		return new ILLAsciiDataReader();
+	}
+	void open(const std::string& filename);
 	//! Read block number i. First frame starts at index 0
-	std::vector<int> readBlock(unsigned int i) const;
-	virtual ~MMILLAsciiReader();
+	std::vector<int> getFrame(uint i) const;
+	//! Read the header of the file made of MetaData.
+	MetaData* getMetaData();
+	//! Return the number of frames
+	uint nFrames() const;
+	virtual ~ILLAsciiDataReader();
+protected:
+	ILLAsciiDataReader();
 private:
-	MetaData* _metadata;
-	bool _isInitialized;
+
 	std::size_t _nframes;
 	std::size_t _datapoints;
 	std::size_t _nangles;
 	std::size_t _header_size;
 	std::size_t _skipchar;
 	std::size_t _datalength;
+
 	boost::interprocess::file_mapping _map;
 
 };
@@ -67,4 +76,4 @@ private:
 
 } // end namespace SX
 
-#endif // NSXTOOL_MMILLASCIIREADER_H_
+#endif // NSXTOOL_ILLASCIIREADER_H_

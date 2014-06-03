@@ -39,18 +39,18 @@ namespace Kernel
 {
 
 template <typename storable>
-class Store
+class Store : public std::map
 {
 
 public:
 	Store();
 	virtual ~Store();
 
-	const storable* findObject(const std::string& key) const;
-	const storable* findObject(const storable* object) const;
-	const storable* retrieveObject(const std::string& key);
-	bool hasObject(const std::string& key) const;
-	bool hasObject(const storable* key) const;
+	const storable* find(const std::string& key) const;
+	const storable* find(const storable* object) const;
+	void add(const std::string& key);
+	bool isStored(const std::string& key) const;
+	bool isStored(const storable* object) const;
 
 private:
 	std::map<std::string,storable*> _store;
@@ -67,7 +67,7 @@ Store<storable>::~Store()
 }
 
 template <typename storable>
-const storable* Store<storable>::findObject(const std::string& key) const
+const storable* Store<storable>::find(const std::string& key) const
 {
 	auto it=_store.find(key);
 	if (it != _store.end())
@@ -77,7 +77,7 @@ const storable* Store<storable>::findObject(const std::string& key) const
 }
 
 template <typename storable>
-const storable* Store<storable>::findObject(const storable* object) const
+const storable* Store<storable>::find(const storable* object) const
 {
 	for (auto it=_store.begin();it!=_store.end();++it)
 	{
@@ -89,29 +89,26 @@ const storable* Store<storable>::findObject(const storable* object) const
 
 
 template <typename storable>
-const storable* Store<storable>::retrieveObject(const std::string& key)
+void Store<storable>::add(const std::string& key)
 {
 	auto it=_store.find(key);
-	if (it != _store.end())
-		return it->second;
-	else
+	if (it == _store.end())
 	{
 		storable* s=storable::build(key);
 		if (s != nullptr)
 			_store[key] = s;
-		return s;
 	}
 }
 
 template <typename storable>
-bool Store<storable>::hasObject(const std::string& key) const
+bool Store<storable>::isStored(const std::string& key) const
 {
 	auto it=_store.find(key);
 	return (it != _store.end());
 }
 
 template <typename storable>
-bool Store<storable>::hasObject(const storable* object) const
+bool Store<storable>::isStored(const storable* object) const
 {
 	for (auto it=_store.begin();it!=_store.end();++it)
 	{

@@ -26,9 +26,9 @@
  *
  */
 
-#ifndef NSXTOOL_IREADER_H_
-#define NSXTOOL_IREADER_H_
-
+#ifndef NSXTOOL_IDATAREADER_H_
+#define NSXTOOL_IDATAREADER_H_
+#include <string>
 #include <vector>
 
 #include "MetaData.h"
@@ -41,27 +41,27 @@ namespace Data
 
 typedef unsigned int uint;
 
-class IReader
+class IDataReader
 {
 public:
-
+	static IDataReader* create();
 	//! Return the 1D vectors of counts for a given frame.
+	virtual void open(const std::string& filename) = 0;
 	virtual std::vector<int> getFrame(uint i) const=0;
 	//! Return the metadata.
-	virtual MetaData* getMetaData() const=0;
+	virtual MetaData* getMetaData()=0;
 	//! Returns the number of frames.
 	virtual uint nFrames() const=0;
 	//! The virtual abstract destructor.
-	virtual ~IReader()=0;
-
+	virtual ~IDataReader()=0;
+protected:
+	IDataReader();
+	std::string _filename;
 };
 
-IReader::~IReader()
-{
-}
 
 } // end namespace Data
 
 } // end namespace SX
 
-#endif /* NSXTOOL_IREADER_H_ */
+#endif /* NSXTOOL_IDATAREADER_H_ */

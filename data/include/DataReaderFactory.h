@@ -26,13 +26,12 @@
  *
  */
 
-#ifndef NSXTOOL_READERFACTORY_H_
-#define NSXTOOL_READERFACTORY_H_
+#ifndef NSXTOOL_DATAREADERFACTORY_H_
+#define NSXTOOL_DATAREADERFACTORY_H_
 
 #include <string>
-
+#include "ILLAsciiDataReader.h"
 #include "Factory.h"
-#include "IReader.h"
 #include "Singleton.h"
 
 namespace SX
@@ -43,13 +42,16 @@ namespace Data
 
 using namespace SX::Kernel;
 
-class ReaderFactory : public Factory<IReader,std::string>, public Singleton<ReaderFactory,Constructor,Destructor>
+class DataReaderFactory : public Factory<IDataReader,std::string>, public Singleton<DataReaderFactory,Constructor,Destructor>
 {
 private:
-	friend class Constructor<ReaderFactory>;
-	friend class Destructor<ReaderFactory>;
-	ReaderFactory(){}
-	~ReaderFactory(){}
+	friend class Constructor<DataReaderFactory>;
+	friend class Destructor<DataReaderFactory>;
+	DataReaderFactory()
+	{
+		registerCallback("ILL-Ascii",&ILLAsciiDataReader::create);
+	}
+	~DataReaderFactory(){}
 };
 
 } // end namespace Data

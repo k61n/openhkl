@@ -44,7 +44,7 @@ namespace Kernel
 
 /**
  * @brief generic factory class templated on the return type, the key and accepts any number
- * and kind of parameters using variadic templates for the callback.
+ * and/or type of parameters using variadic templates for the callback.
  */
 template <typename returnType, typename keytype, typename ...args>
 class Factory
@@ -59,7 +59,7 @@ public:
 	//! register a new callback for constructing an object of type returnType
 	//@param key : key representing how the callback will be stored
 	//@param cb  : address of the function for the callback
-	void add(const keytype& key,callback cb);
+	void registerCallback(const keytype& key,callback cb);
 	//! remove all entries registered in the factory
 	void clear();
 	//! create dynamically an object
@@ -70,7 +70,7 @@ public:
 	std::vector<keytype> list() const;
 	//! remove a key from the factory
 	//@param key : key representing how the callback is stored
-	std::size_t remove(const keytype& key);
+	std::size_t unregisterCallback(const keytype& key);
 
 protected:
 	callbackmap _map;
@@ -78,7 +78,7 @@ protected:
 };
 
 template <typename base, typename keytype, typename ...args>
-void Factory<base,keytype,args...>::add(const keytype& key, callback cb)
+void Factory<base,keytype,args...>::registerCallback(const keytype& key, callback cb)
 {
 	auto it=_map.find(key);
 	if (it == _map.end())
@@ -100,7 +100,7 @@ base* Factory<base,keytype,args...>::create(const keytype& key, args...arg)
 	if (it != _map.end())
 		return ((it->second)(arg...));
 	else
-		throw std::invalid_argument("Unknown base class.");
+		throw std::invalid_argument("Factory error: callback not registered for this type of class:"+key);
 }
 
 template <typename base, typename keytype, typename ...args>
@@ -113,7 +113,7 @@ std::vector<keytype> Factory<base,keytype,args...>::list() const
 }
 
 template <typename base, typename keytype, typename ...args>
-std::size_t Factory<base,keytype,args...>::remove(const keytype& key)
+std::size_t Factory<base,keytype,args...>::unregisterCallback(const keytype& key)
 {
 	return _map.erase(key);
 }
