@@ -16,7 +16,12 @@ BOOST_AUTO_TEST_CASE(Test_Path)
 	std::string p=getInstallationPath();
 	std::cout<<p<<std::endl;
 
+	p.clear();
 	p=getResourcesPath();
+	std::cout<<p<<std::endl;
+
+	p.clear();
+	p=expandUser("~/toto");
 	std::cout<<p<<std::endl;
 
 }

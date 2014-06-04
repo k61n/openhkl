@@ -59,6 +59,27 @@ std::string getResourcesPath()
 	return p.string();
 }
 
+std::string expandUser(std::string path)
+{
+	// the path must start with ~ to be user expanded.
+	if (not path.empty() and path[0] == '~')
+	{
+		char const* home = getenv("HOME");
+		if (home or ((home = getenv("USERPROFILE"))))
+			path.replace(0, 1, home);
+		else
+		{
+			char const *hdrive = getenv("HOMEDRIVE"),
+			*hpath = getenv("HOMEPATH");
+			assert(hdrive);
+			assert(hpath);
+			path.replace(0, 1, std::string(hdrive) + hpath);
+		}
+		assert(portable_name(path));
+	}
+	return path;
+}
+
 } // end namespace Utils
 
 } // end namespace SX
