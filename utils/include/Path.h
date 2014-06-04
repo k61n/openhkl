@@ -48,7 +48,7 @@ std::string expandUser(std::string path)
 	if (not path.empty() and path[0] == '~')
 	{
 		char const* home = getenv("HOME");
-		if (home or ((home = getenv("USERPROFILE"))))
+		if (home || ((home = getenv("USERPROFILE"))))
 			path.replace(0, 1, home);
 		// This should only happen on windows platform where USERPROFILE env var is not defined.
 		else
@@ -68,7 +68,7 @@ std::string expandUser(std::string path)
 std::string getHomeDirectory()
 {
 	char const* home = getenv("HOME");
-	if (home or ((home = getenv("USERPROFILE"))))
+	if (home || ((home = getenv("USERPROFILE"))))
 		return std::string(home);
 	// This should only happen on windows platform where USERPROFILE env var is not defined.
 	else
