@@ -30,7 +30,7 @@
 #define NSXTOOL_PATH_H_
 
 #include <string>
-#include <unistd.h>
+#include <cstdlib>
 
 #include <boost/filesystem.hpp>
 
