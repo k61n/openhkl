@@ -42,6 +42,45 @@ namespace Utils
 
 using namespace boost::filesystem;
 
+std::string expandUser(std::string path)
+{
+	// the path must start with ~ to be user expanded.
+	if (not path.empty() and path[0] == '~')
+	{
+		char const* home = getenv("HOME");
+		if (home or ((home = getenv("USERPROFILE"))))
+			path.replace(0, 1, home);
+		// This should only happen on windows platform where USERPROFILE env var is not defined.
+		else
+		{
+			char const *hdrive = getenv("HOMEDRIVE");
+			char const *hpath = getenv("HOMEPATH");
+			assert(hdrive);
+			assert(hpath);
+			path.replace(0, 1, std::string(hdrive) + hpath);
+		}
+		// The expanded path must be valid
+		assert(portable_name(path));
+	}
+	return path;
+}
+
+std::string getHomeDirectory()
+{
+	char const* home = getenv("HOME");
+	if (home or ((home = getenv("USERPROFILE"))))
+		return std::string(home);
+	// This should only happen on windows platform where USERPROFILE env var is not defined.
+	else
+	{
+		char const *hdrive = getenv("HOMEDRIVE");
+		char const *hpath = getenv("HOMEPATH");
+		assert(hdrive);
+		assert(hpath);
+		return std::string(hdrive) + hpath;
+	}
+}
+
 std::string getInstallationPath()
 {
 	char* ppath;
@@ -57,27 +96,6 @@ std::string getResourcesPath()
 	path p(getInstallationPath());
 	p /= "resources";
 	return p.string();
-}
-
-std::string expandUser(std::string path)
-{
-	// the path must start with ~ to be user expanded.
-	if (not path.empty() and path[0] == '~')
-	{
-		char const* home = getenv("HOME");
-		if (home or ((home = getenv("USERPROFILE"))))
-			path.replace(0, 1, home);
-		else
-		{
-			char const *hdrive = getenv("HOMEDRIVE"),
-			*hpath = getenv("HOMEPATH");
-			assert(hdrive);
-			assert(hpath);
-			path.replace(0, 1, std::string(hdrive) + hpath);
-		}
-		assert(portable_name(path));
-	}
-	return path;
 }
 
 } // end namespace Utils

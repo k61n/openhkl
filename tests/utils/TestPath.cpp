@@ -24,4 +24,8 @@ BOOST_AUTO_TEST_CASE(Test_Path)
 	p=expandUser("~/toto");
 	std::cout<<p<<std::endl;
 
+	p.clear();
+	p=getHomeDirectory();
+	std::cout<<p<<std::endl;
+
 }
