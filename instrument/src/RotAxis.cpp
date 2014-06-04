@@ -114,7 +114,7 @@ void RotAxis::readXML(std::istream& is)
 	std::cout << _axis;
 }
 
-} // End namespace Geometry
+} // End namespace Instrument
 
 } // End namespace SX
 

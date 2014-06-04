@@ -30,13 +30,11 @@
 #define NSXTOOL_INSTRUMENTSTORE_H_
 
 #include <string>
-#include <unistd.h>
+#include <vector>
 
 #include "Instrument.h"
 #include "Singleton.h"
 #include "Store.h"
-
-using namespace SX::Kernel;
 
 namespace SX
 {
@@ -44,23 +42,26 @@ namespace SX
 namespace Instrument
 {
 
+using namespace SX::Kernel;
+
 class InstrumentStore : public Store<std::shared_ptr<Instrument>>,Singleton<InstrumentStore,Constructor,EmptyDestructor>
 {
+public:
+	//! Add a path to the to the instrument path list.
+	static void addPath(const std::string& p);
+
 private:
-	std::string _basePath;
+
+	// The private constructor can be called from those classes
+	friend class Constructor<InstrumentStore>;
+	friend class EmptyDestructor<InstrumentStore>;
+
 	InstrumentStore();
 
-};
+	//! The paths where to find instrument definition files.
+	static std::vector<std::string> _paths;
 
-InstrumentStore::InstrumentStore()
-{
-	char * ppath;
-	ppath = getenv ("NSXTOOL");
-	if (ppath!=NULL)
-	{
-		_basePath->loadj0(*this,type,std::string(ppath)+"/resources/Form_factor_j0.dat");
-	}
-}
+};
 
 } // end namespace Instrument
 

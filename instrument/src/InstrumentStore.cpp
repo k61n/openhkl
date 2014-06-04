@@ -26,17 +26,12 @@
  *
  */
 
-#ifndef NSXTOOL_ICOMPONENT_H_
-#define NSXTOOL_ICOMPONENT_H_
-
+#include <algorithm>
 #include <string>
+#include <vector>
 
-#include <boost/foreach.hpp>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-
-#include "Composite.h"
-#include "IModifier.h"
+#include "InstrumentStore.h"
+#include "Path.h"
 
 namespace SX
 {
@@ -44,23 +39,22 @@ namespace SX
 namespace Instrument
 {
 
-using namespace SX::Kernel;
-using boost::property_tree::ptree;
+using namespace SX::Utils;
 
-class IComponent
+std::vector<std::string> InstrumentStore::_paths = {getInstrumentsPath(),getHomeDirectory()};
+
+void InstrumentStore::addPath(const std::string& p)
 {
+	auto it=std::find(_paths.begin(),_paths.end(),p);
+	if (it == _paths.end())
+		_paths.push_back(p);
+}
 
-public:
-	void load(const ptree& pt);
+InstrumentStore::InstrumentStore()
+{
+}
 
-protected:
+} // End namespace Instrument
 
-//	IModifier *_modifier;
-	std::string _name;
-};
+} // End namespace SX
 
-} // end namespace Instrument
-
-} // end namespace SX
-
-#endif /* NSXTOOL_ICOMPONENT_H_ */

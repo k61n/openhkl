@@ -50,7 +50,7 @@ public:
 };
 
 template <typename storable>
-Store<storable>::Store() : map<std::string,storable>()
+Store<storable>::Store() : std::map<std::string,storable>()
 {
 }
 
@@ -62,13 +62,13 @@ Store<storable>::~Store()
 template <typename storable>
 void Store<storable>::add(const std::string& key)
 {
-	auto it=_store.find(key);
-	if (it == _store.end())
-	{
-		storable* s=storable::build(key);
-		if (s != nullptr)
-			_store[key] = s;
-	}
+//	auto it=_store.find(key);
+//	if (it == _store.end())
+//	{
+//		storable* s=storable::build(key);
+//		if (s != nullptr)
+//			_store[key] = s;
+//	}
 }
 
 } // end namespace Kernel

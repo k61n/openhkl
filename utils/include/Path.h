@@ -98,6 +98,13 @@ std::string getResourcesPath()
 	return p.string();
 }
 
+std::string getInstrumentsPath()
+{
+	path p(getResourcesPath());
+	p /= "instruments";
+	return p.string();
+}
+
 } // end namespace Utils
 
 } // end namespace SX
