@@ -45,10 +45,10 @@ using namespace boost::filesystem;
 std::string expandUser(std::string path)
 {
 	// the path must start with ~ to be user expanded.
-	if (not path.empty() and path[0] == '~')
+    if (!path.empty() && path[0] == '~')
 	{
 		char const* home = getenv("HOME");
-		if (home || ((home = getenv("USERPROFILE"))))
+        if (home || ((home = getenv("USERPROFILE"))))
 			path.replace(0, 1, home);
 		// This should only happen on windows platform where USERPROFILE env var is not defined.
 		else
