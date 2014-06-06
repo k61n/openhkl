@@ -43,11 +43,16 @@ using namespace SX::Utils;
 
 std::vector<std::string> InstrumentStore::_paths = {getInstrumentsPath(),getHomeDirectory()};
 
-void InstrumentStore::addPath(const std::string& p)
+void InstrumentStore::addPath(const std::string& p, bool prepend)
 {
 	auto it=std::find(_paths.begin(),_paths.end(),p);
 	if (it == _paths.end())
-		_paths.push_back(p);
+	{
+		if (prepend)
+			_paths.insert(_paths.begin(),p);
+		else
+			_paths.push_back(p);
+	}
 }
 
 InstrumentStore::InstrumentStore()
