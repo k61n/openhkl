@@ -69,7 +69,9 @@ std::shared_ptr<Instrument> InstrumentStore::get(const std::string& key)
 		std::string instrFile = p.leaf() + ".xml";
 		if (exists(instrFile))
 		{
-			return std::shared_ptr<Instrument>(new Instrument(instrFile));
+			std::shared_ptr<Instrument> instr=std::shared_ptr<Instrument>(new Instrument());
+			instr->open(instrFile);
+			return instr;
 		}
 	}
 	throw std::runtime_error("No instrument file found for "+key+" instrument.");

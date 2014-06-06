@@ -37,17 +37,21 @@ namespace SX
 namespace Kernel
 {
 
+typedef unsigned int uint;
+
 template <typename component>
 class Composite : public component
 {
 public:
 
 	Composite();
-	virtual ~Composite()=0;
 
 	void add(component*);
-	void remove(component*);
 	void clear();
+	uint nComponents() const;
+	void remove(component*);
+
+	virtual ~Composite()=0;
 
 protected:
 	std::vector<component*> _components;
@@ -68,17 +72,23 @@ void Composite<component>::add(component* comp)
 }
 
 template <typename component>
+void Composite<component>::clear()
+{
+	_components.clear();
+}
+
+template <typename component>
+uint Composite<component>::nComponents() const
+{
+	return _components.size();
+}
+
+template <typename component>
 void Composite<component>::remove(component* comp)
 {
 	auto it = std::find(_components.begin(),_components.end(),comp);
 	if (it != _components.end())
 		_components.erase(it);
-}
-
-template <typename component>
-void Composite<component>::clear()
-{
-	_components.clear();
 }
 
 template <typename component>
