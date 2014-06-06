@@ -38,7 +38,7 @@ namespace SX
 namespace Kernel
 {
 
-template <typename storable>
+template <typename keytype,typename storable>
 class Store : public std::map<std::string,storable>
 {
 
@@ -46,29 +46,22 @@ public:
 	Store();
 	virtual ~Store();
 
-	void add(const std::string& key);
+	virtual storable get(const keytype& key)=0;
 };
 
-template <typename storable>
-Store<storable>::Store() : std::map<std::string,storable>()
+template <typename keytype,typename storable>
+Store<keytype,storable>::Store() : std::map<keytype,storable>()
 {
 }
 
-template <typename storable>
-Store<storable>::~Store()
+template <typename keytype,typename storable>
+Store<keytype,storable>::~Store()
 {
 }
 
-template <typename storable>
-void Store<storable>::add(const std::string& key)
+template <typename keytype,typename storable>
+storable Store<keytype,storable>::get(const keytype& key)
 {
-//	auto it=_store.find(key);
-//	if (it == _store.end())
-//	{
-//		storable* s=storable::build(key);
-//		if (s != nullptr)
-//			_store[key] = s;
-//	}
 }
 
 } // end namespace Kernel

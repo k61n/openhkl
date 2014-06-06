@@ -48,24 +48,14 @@ using boost::property_tree::ptree;
 class Instrument : Composite<IComponent>
 {
 public:
-	static Instrument* build(const std::string& key);
+	Instrument(const std::string& instrFile);
 	void load(const ptree& pt);
 	int nComponents() const;
-
-private:
-	Instrument(const std::string& key);
 };
 
-Instrument* Instrument::build(const std::string& key)
+Instrument::Instrument(const std::string& instrFile)
 {
-	return new Instrument(key);
-}
-
-Instrument::Instrument(const std::string& key)
-{
-	std::string xml=key;
-	xml.append(".xml");
-	std::ifstream is(xml);
+	std::ifstream is(instrFile);
 	if (is.is_open())
 	{
 		ptree pt;

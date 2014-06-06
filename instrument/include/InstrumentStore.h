@@ -44,11 +44,13 @@ namespace Instrument
 
 using namespace SX::Kernel;
 
-class InstrumentStore : public Store<std::shared_ptr<Instrument>>,Singleton<InstrumentStore,Constructor,EmptyDestructor>
+class InstrumentStore : public Store<std::string,std::shared_ptr<Instrument>>,Singleton<InstrumentStore,Constructor,EmptyDestructor>
 {
 public:
 	//! Add a path to the list of paths where to search for instrument definition files.
 	static void addPath(const std::string& p, bool prepend=true);
+
+	std::shared_ptr<Instrument> get(const std::string& key);
 
 private:
 

@@ -27,9 +27,13 @@
  */
 
 #include <algorithm>
+#include <exception>
 #include <string>
 #include <vector>
 
+#include <boost/filesystem.hpp>
+
+#include "Instrument.h"
 #include "InstrumentStore.h"
 #include "Path.h"
 
@@ -39,6 +43,7 @@ namespace SX
 namespace Instrument
 {
 
+using namespace boost::filesystem;
 using namespace SX::Utils;
 
 std::vector<std::string> InstrumentStore::_paths = {getInstrumentsPath(),getHomeDirectory()};
@@ -53,6 +58,21 @@ void InstrumentStore::addPath(const std::string& p, bool prepend)
 		else
 			_paths.push_back(p);
 	}
+}
+
+std::shared_ptr<Instrument> InstrumentStore::get(const std::string& key)
+{
+	for (auto it=_paths.begin();it!=_paths.end();++it)
+	{
+		path p(*it);
+		p /= key;
+		std::string instrFile = p.leaf() + ".xml";
+		if (exists(instrFile))
+		{
+			return std::shared_ptr<Instrument>(new Instrument(instrFile));
+		}
+	}
+	throw std::runtime_error("No instrument file found for "+key+" instrument.");
 }
 
 InstrumentStore::InstrumentStore()
