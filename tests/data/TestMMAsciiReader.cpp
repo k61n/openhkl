@@ -16,10 +16,8 @@ BOOST_AUTO_TEST_CASE(Test_Ascii_Reader)
 	IDataReader* reader=readers->create("ILL-Ascii");
 	reader->open(std::string("D10_ascii_example"));
 
-	//	Eigen::MatrixXi m;
 	// Make sure that total counts for the first frame is 65.
 	MetaData* meta=reader->getMetaData();
-
 
 	BOOST_CHECK(meta->getKey<int>("nbang")==2);
 
@@ -28,5 +26,7 @@ BOOST_AUTO_TEST_CASE(Test_Ascii_Reader)
 	Eigen::Map<Eigen::MatrixXi> map(&(v[0]),32,32);
 	//
 	BOOST_CHECK(map.sum()==65);
+
+	delete meta;
 
 }

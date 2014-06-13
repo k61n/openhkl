@@ -26,15 +26,8 @@
  *
  */
 
-#ifndef NSXTOOL_INSTRUMENTSTORE_H_
-#define NSXTOOL_INSTRUMENTSTORE_H_
-
-#include <string>
-#include <vector>
-
-#include "Instrument.h"
-#include "Singleton.h"
-#include "Store.h"
+#include "ComponentFactory.h"
+#include "DetectorComponent.h"
 
 namespace SX
 {
@@ -42,31 +35,16 @@ namespace SX
 namespace Instrument
 {
 
-using namespace SX::Kernel;
-
-class InstrumentStore : public Store<std::string,std::shared_ptr<Instrument>>, public Singleton<InstrumentStore,Constructor,EmptyDestructor>
+ComponentFactory::ComponentFactory()
 {
-public:
-	//! Add a path to the list of paths where to search for instrument definition files.
-	static void addPath(const std::string& p, bool prepend=true);
+	registerCallback("detector",&DetectorComponent::create);
+}
 
-	std::shared_ptr<Instrument> get(const std::string& key);
+ComponentFactory::~ComponentFactory()
+{
+}
 
-private:
+} // End namespace Instrument
 
-	// The private constructor can be called from those classes
-	friend class Constructor<InstrumentStore>;
-	friend class EmptyDestructor<InstrumentStore>;
+} // End namespace SX
 
-	InstrumentStore();
-
-	//! The paths where to find instrument definition files.
-	static std::vector<std::string> _paths;
-
-};
-
-} // end namespace Instrument
-
-} // end namespace SX
-
-#endif /* NSXTOOL_INSTRUMENTSTORE_H_ */

@@ -13,9 +13,11 @@ keyset MetaData::_metakeys=std::set<std::string>();
 MetaData::MetaData()
 {
 }
+
 MetaData::~MetaData()
 {
 }
+
 MetaData::MetaData(const MetaData& rhs)
 {
 	_map=rhs._map;

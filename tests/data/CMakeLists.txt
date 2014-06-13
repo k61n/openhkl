@@ -1,3 +1,7 @@
+add_executable(TestMetaData TestMetaData.cpp)
+TARGET_LINK_LIBRARIES(TestMetaData ${Boost_LIBRARIES} NSXTool)
+add_test(TestMetaData TestMetaData)
+
 add_executable(TestILLAsciiMetaReader TestILLAsciiMetaReader.cpp)
 TARGET_LINK_LIBRARIES(TestILLAsciiMetaReader ${Boost_LIBRARIES} NSXTool)
 add_test(TestILLAsciiMetaReader TestILLAsciiMetaReader)

@@ -26,17 +26,14 @@
  *
  */
 
-#ifndef NSXTOOL_ICOMPONENT_H_
-#define NSXTOOL_ICOMPONENT_H_
-
-#include <string>
+#include <fstream>
 
 #include <boost/foreach.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
-#include "Composite.h"
-#include "IModifier.h"
+#include "Instrument.h"
+#include "ComponentFactory.h"
 
 namespace SX
 {
@@ -44,23 +41,42 @@ namespace SX
 namespace Instrument
 {
 
-using namespace SX::Kernel;
-using boost::property_tree::ptree;
+using namespace boost::property_tree;
 
-class IComponent
+Instrument::Instrument()
 {
+}
 
-public:
-	void load(const ptree& pt);
+void Instrument::load(const std::string& instrFile)
+{
+	std::ifstream is(instrFile);
+	if (is.is_open())
+	{
+		ptree pt;
+		read_xml(is, pt);
+		parse(pt);
+		is.close();
+	}
+}
 
-protected:
+void Instrument::parse(const ptree& pt)
+{
+	// Call (or create) an instance of the instrument component factory.
+	ComponentFactory* compFactory = ComponentFactory::Instance();
 
-//	IModifier *_modifier;
-	std::string _name;
-};
+	// Loop over the "component" nodes of the XML file.
+	BOOST_FOREACH(ptree::value_type v, pt.get_child("instrument"))
+	{
+		if (v.first == "component")
+		{
+			// Fetch the "type" component node attribute and get the corresponding Component object from the component factory.
+			std::string cType=v.second.get_child("<xmlattr>").get<std::string>("type");
+			Component* comp=compFactory->create(cType,v.second);
+		}
+	}
+}
 
-} // end namespace Instrument
+} // End namespace Instrument
 
-} // end namespace SX
+} // End namespace SX
 
-#endif /* NSXTOOL_ICOMPONENT_H_ */

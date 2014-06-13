@@ -30,8 +30,9 @@
 #define NSXTOOL_DATAREADERFACTORY_H_
 
 #include <string>
-#include "ILLAsciiDataReader.h"
+
 #include "Factory.h"
+#include "ILLAsciiDataReader.h"
 #include "Singleton.h"
 
 namespace SX

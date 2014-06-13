@@ -26,15 +26,11 @@
  *
  */
 
-#ifndef NSXTOOL_INSTRUMENTSTORE_H_
-#define NSXTOOL_INSTRUMENTSTORE_H_
+#include <iostream>
 
-#include <string>
-#include <vector>
+#include <boost/property_tree/ptree.hpp>
 
-#include "Instrument.h"
-#include "Singleton.h"
-#include "Store.h"
+#include "DetectorComponent.h"
 
 namespace SX
 {
@@ -42,31 +38,28 @@ namespace SX
 namespace Instrument
 {
 
-using namespace SX::Kernel;
+using namespace boost::property_tree;
 
-class InstrumentStore : public Store<std::string,std::shared_ptr<Instrument>>, public Singleton<InstrumentStore,Constructor,EmptyDestructor>
+Component* DetectorComponent::create(const ptree& pt)
 {
-public:
-	//! Add a path to the list of paths where to search for instrument definition files.
-	static void addPath(const std::string& p, bool prepend=true);
+	return new DetectorComponent(pt);
+}
 
-	std::shared_ptr<Instrument> get(const std::string& key);
+DetectorComponent::DetectorComponent(const ptree& pt) : Component(), _nrows(0), _ncols(0), _width(0.0), _height(0.0), _shape(planar), _origin(bottom_left), _order(column_major)
+{
+	parse(pt);
+}
 
-private:
+void DetectorComponent::parse(const ptree& p)
+{
+	std::cout<<"I PARSE A DETECTOR"<<std::endl;
+}
 
-	// The private constructor can be called from those classes
-	friend class Constructor<InstrumentStore>;
-	friend class EmptyDestructor<InstrumentStore>;
+DetectorComponent::~DetectorComponent()
+{
+}
 
-	InstrumentStore();
+} // End namespace Instrument
 
-	//! The paths where to find instrument definition files.
-	static std::vector<std::string> _paths;
+} // End namespace SX
 
-};
-
-} // end namespace Instrument
-
-} // end namespace SX
-
-#endif /* NSXTOOL_INSTRUMENTSTORE_H_ */

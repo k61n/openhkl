@@ -23,49 +23,49 @@ BOOST_AUTO_TEST_CASE(Test_Detector_Mapping)
 
     DetectorMappingFactory *f=DetectorMappingFactory::Instance();
 
-    f->registerCallback("bottomleft-ccw",&BottomLeftMappingCCW::construct);
+    f->registerCallback("bottomleft-ccw",&BottomLeftMappingCCW::create);
     map=f->create("bottomleft-ccw",nrows,ncols);
     (*map)(px,py,newpx,newpy);
     BOOST_CHECK_EQUAL(newpx,px);
     BOOST_CHECK_EQUAL(newpy,py);
 
-    f->registerCallback("bottomleft-cw",&BottomLeftMappingCW::construct);
+    f->registerCallback("bottomleft-cw",&BottomLeftMappingCW::create);
     map=f->create("bottomleft-cw",nrows,ncols);
     (*map)(px,py,newpx,newpy);
     BOOST_CHECK_EQUAL(newpx,py);
     BOOST_CHECK_EQUAL(newpy,px);
 
-    f->registerCallback("bottomright-ccw",&BottomRightMappingCCW::construct);
+    f->registerCallback("bottomright-ccw",&BottomRightMappingCCW::create);
     map=f->create("bottomright-ccw",nrows,ncols);
     (*map)(px,py,newpx,newpy);
     BOOST_CHECK_EQUAL(newpx,ncols-py);
     BOOST_CHECK_EQUAL(newpy,px);
 
-    f->registerCallback("bottomright-cw",&BottomRightMappingCW::construct);
+    f->registerCallback("bottomright-cw",&BottomRightMappingCW::create);
     map=f->create("bottomright-cw",nrows,ncols);
     (*map)(px,py,newpx,newpy);
     BOOST_CHECK_EQUAL(newpx,ncols-px);
     BOOST_CHECK_EQUAL(newpy,py);
 
-    f->registerCallback("topleft-ccw",&TopLeftMappingCCW::construct);
+    f->registerCallback("topleft-ccw",&TopLeftMappingCCW::create);
     map=f->create("topleft-ccw",nrows,ncols);
     (*map)(px,py,newpx,newpy);
     BOOST_CHECK_EQUAL(newpx,py);
     BOOST_CHECK_EQUAL(newpy,nrows-px);
 
-    f->registerCallback("topleft-cw",&TopLeftMappingCW::construct);
+    f->registerCallback("topleft-cw",&TopLeftMappingCW::create);
     map=f->create("topleft-cw",nrows,ncols);
     (*map)(px,py,newpx,newpy);
     BOOST_CHECK_EQUAL(newpx,px);
     BOOST_CHECK_EQUAL(newpy,nrows-py);
 
-    f->registerCallback("topright-ccw",&TopRightMappingCCW::construct);
+    f->registerCallback("topright-ccw",&TopRightMappingCCW::create);
     map=f->create("topright-ccw",nrows,ncols);
     (*map)(px,py,newpx,newpy);
     BOOST_CHECK_EQUAL(newpx,ncols-px);
     BOOST_CHECK_EQUAL(newpy,nrows-py);
 
-    f->registerCallback("topright-cw",&TopRightMappingCW::construct);
+    f->registerCallback("topright-cw",&TopRightMappingCW::create);
     map=f->create("topright-cw",nrows,ncols);
     (*map)(px,py,newpx,newpy);
     BOOST_CHECK_EQUAL(newpx,ncols-py);

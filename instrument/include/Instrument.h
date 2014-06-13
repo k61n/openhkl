@@ -29,12 +29,8 @@
 #ifndef NSXTOOL_INSTRUMENT_H_
 #define NSXTOOL_INSTRUMENT_H_
 
-#include <boost/foreach.hpp>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-
-#include "IComponent.h"
 #include "Composite.h"
+#include "Component.h"
 
 namespace SX
 {
@@ -45,35 +41,17 @@ namespace Instrument
 using namespace SX::Kernel;
 using boost::property_tree::ptree;
 
-class Instrument : Composite<IComponent>
+class Instrument : Composite<Component>
 {
 public:
 	Instrument();
-	void open(const std::string& instrFile);
-	void read(const ptree& pt);
+	void load(const std::string& instrFile);
+protected:
+	void parse(const ptree& pt);
 };
-
-Instrument::Instrument()
-{
-}
-
-void Instrument::open(const std::string& instrFile)
-{
-	std::ifstream is(instrFile);
-	if (is.is_open())
-	{
-		ptree pt;
-		read_xml(is, pt);
-		read(pt.get_child("instrument"));
-	}
-}
-
-void Instrument::read(const ptree& pt)
-{
-}
 
 } // end namespace Instrument
 
 } // end namespace SX
 
-#endif /* INSTRUMENT_H_ */
+#endif /* NSXTOOL_INSTRUMENT_H_ */

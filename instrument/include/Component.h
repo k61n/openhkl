@@ -26,15 +26,17 @@
  *
  */
 
-#ifndef NSXTOOL_INSTRUMENTSTORE_H_
-#define NSXTOOL_INSTRUMENTSTORE_H_
+#ifndef NSXTOOL_COMPONENT_H_
+#define NSXTOOL_COMPONENT_H_
 
 #include <string>
-#include <vector>
 
-#include "Instrument.h"
-#include "Singleton.h"
-#include "Store.h"
+#include <boost/property_tree/ptree.hpp>
+
+#include <Eigen/Dense>
+
+#include "Composite.h"
+#include "IModifier.h"
 
 namespace SX
 {
@@ -42,26 +44,38 @@ namespace SX
 namespace Instrument
 {
 
-using namespace SX::Kernel;
+typedef unsigned int uint;
 
-class InstrumentStore : public Store<std::string,std::shared_ptr<Instrument>>, public Singleton<InstrumentStore,Constructor,EmptyDestructor>
+using namespace SX::Kernel;
+using boost::property_tree::ptree;
+
+/*
+ * Interface for the components of an instrument (e.g. detector, goniometer, source ...).
+ */
+class Component
 {
 public:
-	//! Add a path to the list of paths where to search for instrument definition files.
-	static void addPath(const std::string& p, bool prepend=true);
 
-	std::shared_ptr<Instrument> get(const std::string& key);
+	static Component* create(const ptree& pt);
+	virtual ~Component()=0;
 
-private:
+protected:
 
-	// The private constructor can be called from those classes
-	friend class Constructor<InstrumentStore>;
-	friend class EmptyDestructor<InstrumentStore>;
+	Component();
 
-	InstrumentStore();
+	Component(const ptree& pt);
 
-	//! The paths where to find instrument definition files.
-	static std::vector<std::string> _paths;
+	//! Parse the XML component node.
+	virtual void parse(const ptree& pt)=0;
+
+//	IModifier *_modifier;
+
+	//! The name of the component.
+	std::string _name;
+
+	uint _id;
+
+	Eigen::Vector3d _position;
 
 };
 
@@ -69,4 +83,4 @@ private:
 
 } // end namespace SX
 
-#endif /* NSXTOOL_INSTRUMENTSTORE_H_ */
+#endif /* NSXTOOL_COMPONENT_H_ */

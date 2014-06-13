@@ -28,12 +28,12 @@
 
 #include <algorithm>
 #include <exception>
+#include <iostream>
 #include <string>
 #include <vector>
 
 #include <boost/filesystem.hpp>
 
-#include "Instrument.h"
 #include "InstrumentStore.h"
 #include "Path.h"
 
@@ -64,13 +64,12 @@ std::shared_ptr<Instrument> InstrumentStore::get(const std::string& key)
 {
 	for (auto it=_paths.begin();it!=_paths.end();++it)
 	{
-		path p(*it);
-		p /= key;
-		std::string instrFile = p.leaf() + ".xml";
+		path instrFile(*it);
+		instrFile /= key + ".xml";
 		if (exists(instrFile))
 		{
 			std::shared_ptr<Instrument> instr=std::shared_ptr<Instrument>(new Instrument());
-			instr->open(instrFile);
+			instr->load(instrFile.string());
 			return instr;
 		}
 	}

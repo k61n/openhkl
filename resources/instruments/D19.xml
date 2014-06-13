@@ -1,20 +1,21 @@
 <instrument name='D19'>
     <component type='detector'>
+        <id>1234</id>
         <name>banana</name>
         <position units='m'>
             <x>0</x>
             <y>0.764</y>
             <z>0</z>
         </position>
-        <nrows>256</nrows>
-        <ncols>640</ncols>
+        <colstart>0</colstart>
+        <colend>255</colend>
+        <rowstart>0</rowstart>
+        <rowend>639</rowend>
         <shape>cylindrical</shape>
         <width units='m'>1.6</width>
         <height units='m'>0.4</height>
-        <data>
-            <layout>columnn</layout>
-            <origin>topright</origin>
-        </data>
+        <data_layout>columnn</data_layout>
+        <data_origin>top_right</data_origin>
         <modifier type="rotation">
             <name>Gamma</name>
             <mad_id>1</mad_id>
@@ -23,48 +24,5 @@
             <axis_z>1.0</axis_z>
             <direction>CW</direction>
         </modifier>
-    </component>
-    <component type="sample">
-        <name>sucrose</name>
-        <position units='m'>
-            <x>0</x>
-            <y>0</y>
-            <z>0</z>
-        </position>
-        <modifier type="gonio">
-            <name>EulerCradle</name>
-            <modifier type="rotation">
-                <name>Omega</name>
-                <mad_id>2</mad_id>
-                <axis_x>0.0</axis_x>
-                <axis_y>0.0</axis_y>
-                <axis_z>1.0</axis_z>
-                <offset units="deg">0</offset>
-                <direction>CW</direction>
-            </modifier>
-            <modifier type="rotation">
-                <name>Chi</name>
-                <mad_id>3</mad_id>
-                <axis_x>1.0</axis_x>
-                <axis_y>0.0</axis_y>
-                <axis_z>0.0</axis_z>
-                <direction>CCW</direction>
-            </modifier>
-            <modifier type="rotation">
-                <name>Phi</name>
-                <mad_id>4</mad_id>
-                <axis_x>0.0</axis_x>
-                <axis_y>0.0</axis_y>
-                <axis_z>1.0</axis_z>
-                <direction>CW</direction>
-            </modifier>
-        </modifier>
-    </component>
-    <component type="source">
-        <name>monochromator</name>
-        <wavelength units="ang">1.29</wavelength>
-        <x>0</x>
-        <y>-10</y>
-        <z>0</z>
     </component>
 </instrument>

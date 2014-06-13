@@ -70,7 +70,7 @@ class BottomLeftMappingCCW : public IDetectorMapping
 {
 public:
 
-	static IDetectorMapping* construct(const uint nrows, const uint ncols);
+	static IDetectorMapping* create(const uint nrows, const uint ncols);
 	void operator()(const uint px, const uint py, uint& newpx, uint& newpy) const;
 
 protected:
@@ -82,7 +82,7 @@ BottomLeftMappingCCW::BottomLeftMappingCCW(const uint nrows, const uint ncols) :
 {
 }
 
-IDetectorMapping* BottomLeftMappingCCW::construct(const uint nrows, const uint ncols)
+IDetectorMapping* BottomLeftMappingCCW::create(const uint nrows, const uint ncols)
 {
 	return new BottomLeftMappingCCW(nrows,ncols);
 }
@@ -99,7 +99,7 @@ class BottomLeftMappingCW : public IDetectorMapping
 {
 public:
 
-	static IDetectorMapping* construct(const uint nrows, const uint ncols);
+	static IDetectorMapping* create(const uint nrows, const uint ncols);
 	void operator()(const uint px, const uint py, uint& newpx, uint& newpy) const;
 
 protected:
@@ -111,7 +111,7 @@ BottomLeftMappingCW::BottomLeftMappingCW(const uint nrows, const uint ncols) : I
 {
 }
 
-IDetectorMapping* BottomLeftMappingCW::construct(const uint nrows, const uint ncols)
+IDetectorMapping* BottomLeftMappingCW::create(const uint nrows, const uint ncols)
 {
 	return new BottomLeftMappingCW(nrows,ncols);
 }
@@ -128,7 +128,7 @@ class TopLeftMappingCCW : public IDetectorMapping
 {
 public:
 
-	static IDetectorMapping* construct(const uint nrows, const uint ncols);
+	static IDetectorMapping* create(const uint nrows, const uint ncols);
 	void operator()(const uint px, const uint py, uint& newpx, uint& newpy) const;
 
 protected:
@@ -140,7 +140,7 @@ TopLeftMappingCCW::TopLeftMappingCCW(const uint nrows, const uint ncols) : IDete
 {
 }
 
-IDetectorMapping* TopLeftMappingCCW::construct(const uint nrows, const uint ncols)
+IDetectorMapping* TopLeftMappingCCW::create(const uint nrows, const uint ncols)
 {
 	return new TopLeftMappingCCW(nrows,ncols);
 }
@@ -157,7 +157,7 @@ class TopLeftMappingCW : public IDetectorMapping
 {
 public:
 
-	static IDetectorMapping* construct(const uint nrows, const uint ncols);
+	static IDetectorMapping* create(const uint nrows, const uint ncols);
 	void operator()(const uint px, const uint py, uint& newpx, uint& newpy) const;
 
 protected:
@@ -169,7 +169,7 @@ TopLeftMappingCW::TopLeftMappingCW(const uint nrows, const uint ncols) : IDetect
 {
 }
 
-IDetectorMapping* TopLeftMappingCW::construct(const uint nrows, const uint ncols)
+IDetectorMapping* TopLeftMappingCW::create(const uint nrows, const uint ncols)
 {
 	return new TopLeftMappingCW(nrows,ncols);
 }
@@ -186,7 +186,7 @@ class BottomRightMappingCCW : public IDetectorMapping
 {
 public:
 
-	static IDetectorMapping* construct(const uint nrows, const uint ncols);
+	static IDetectorMapping* create(const uint nrows, const uint ncols);
 	void operator()(const uint px, const uint py, uint& newpx, uint& newpy) const;
 
 protected:
@@ -198,7 +198,7 @@ BottomRightMappingCCW::BottomRightMappingCCW(const uint nrows, const uint ncols)
 {
 }
 
-IDetectorMapping* BottomRightMappingCCW::construct(const uint nrows, const uint ncols)
+IDetectorMapping* BottomRightMappingCCW::create(const uint nrows, const uint ncols)
 {
 	return new BottomRightMappingCCW(nrows,ncols);
 }
@@ -215,7 +215,7 @@ class BottomRightMappingCW : public IDetectorMapping
 {
 public:
 
-	static IDetectorMapping* construct(const uint nrows, const uint ncols);
+	static IDetectorMapping* create(const uint nrows, const uint ncols);
 	void operator()(const uint px, const uint py, uint& newpx, uint& newpy) const;
 
 protected:
@@ -227,7 +227,7 @@ BottomRightMappingCW::BottomRightMappingCW(const uint nrows, const uint ncols) :
 {
 }
 
-IDetectorMapping* BottomRightMappingCW::construct(const uint nrows, const uint ncols)
+IDetectorMapping* BottomRightMappingCW::create(const uint nrows, const uint ncols)
 {
 	return new BottomRightMappingCW(nrows,ncols);
 }
@@ -244,7 +244,7 @@ class TopRightMappingCCW : public IDetectorMapping
 {
 public:
 
-	static IDetectorMapping* construct(const uint nrows, const uint ncols);
+	static IDetectorMapping* create(const uint nrows, const uint ncols);
 	void operator()(const uint px, const uint py, uint& newpx, uint& newpy) const;
 
 protected:
@@ -256,7 +256,7 @@ TopRightMappingCCW::TopRightMappingCCW(const uint nrows, const uint ncols) : IDe
 {
 }
 
-IDetectorMapping* TopRightMappingCCW::construct(const uint nrows, const uint ncols)
+IDetectorMapping* TopRightMappingCCW::create(const uint nrows, const uint ncols)
 {
 	return new TopRightMappingCCW(nrows,ncols);
 }
@@ -273,7 +273,7 @@ class TopRightMappingCW : public IDetectorMapping
 {
 public:
 
-	static IDetectorMapping* construct(const uint nrows, const uint ncols);
+	static IDetectorMapping* create(const uint nrows, const uint ncols);
 	void operator()(const uint px, const uint py, uint& newpx, uint& newpy) const;
 
 protected:
@@ -285,7 +285,7 @@ TopRightMappingCW::TopRightMappingCW(const uint nrows, const uint ncols) : IDete
 {
 }
 
-IDetectorMapping* TopRightMappingCW::construct(const uint nrows, const uint ncols)
+IDetectorMapping* TopRightMappingCW::create(const uint nrows, const uint ncols)
 {
 	return new TopRightMappingCW(nrows,ncols);
 }

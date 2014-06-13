@@ -33,6 +33,7 @@
 
 #include <boost/property_tree/ptree.hpp>
 
+#include "Component.h"
 #include "Factory.h"
 #include "Singleton.h"
 
@@ -42,18 +43,16 @@ namespace SX
 namespace Instrument
 {
 
-class IComponent;
-
+using namespace boost::property_tree;
 using namespace SX::Kernel;
-using boost::property_tree::ptree;
 
-class ComponentFactory : public Factory<IComponent,std::string,ptree>, public Singleton<ComponentFactory,Constructor,Destructor>
+class ComponentFactory : public Factory<Component,std::string,ptree>, public Singleton<ComponentFactory,Constructor,Destructor>
 {
 private:
 	friend class Constructor<ComponentFactory>;
 	friend class Destructor<ComponentFactory>;
-	ComponentFactory(){}
-	~ComponentFactory(){}
+	ComponentFactory();
+	~ComponentFactory();
 };
 
 } //end namespace Instrument

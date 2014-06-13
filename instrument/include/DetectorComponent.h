@@ -26,15 +26,14 @@
  *
  */
 
-#ifndef NSXTOOL_INSTRUMENTSTORE_H_
-#define NSXTOOL_INSTRUMENTSTORE_H_
+#ifndef NSXTOOL_DETECTORCOMPONENT_H_
+#define NSXTOOL_DETECTORCOMPONENT_H_
 
-#include <string>
-#include <vector>
+#include <boost/property_tree/ptree.hpp>
 
-#include "Instrument.h"
-#include "Singleton.h"
-#include "Store.h"
+#include <Eigen/Dense>
+
+#include "Component.h"
 
 namespace SX
 {
@@ -42,26 +41,40 @@ namespace SX
 namespace Instrument
 {
 
-using namespace SX::Kernel;
+typedef unsigned int uint;
 
-class InstrumentStore : public Store<std::string,std::shared_ptr<Instrument>>, public Singleton<InstrumentStore,Constructor,EmptyDestructor>
+using namespace boost::property_tree;
+
+class DetectorComponent : public Component
 {
 public:
-	//! Add a path to the list of paths where to search for instrument definition files.
-	static void addPath(const std::string& p, bool prepend=true);
 
-	std::shared_ptr<Instrument> get(const std::string& key);
+	//! Enumerates the possible orders of data storage in memory.
+	enum dataOrder {column_major=1,row_major=2};
 
-private:
+	//! Enumerates the possible positions of the origin of the detector.
+	enum detectorOrigin {bottom_left=1,bottom_right=2,top_left=3,top_right=4};
 
-	// The private constructor can be called from those classes
-	friend class Constructor<InstrumentStore>;
-	friend class EmptyDestructor<InstrumentStore>;
+	//! Enumerates the possible detector shapes.
+	enum detectorShape {planar=1,cylindrical=2,flat_cone=3};
 
-	InstrumentStore();
+	static Component* create(const ptree& pt);
 
-	//! The paths where to find instrument definition files.
-	static std::vector<std::string> _paths;
+	void parse(const ptree& pt);
+
+	virtual ~DetectorComponent();
+
+protected:
+
+	DetectorComponent();
+
+	DetectorComponent(const ptree& pt);
+
+	uint _nrows, _ncols;
+	double _width, _height;
+	dataOrder _order;
+	detectorOrigin _origin;
+	detectorShape _shape;
 
 };
 
@@ -69,4 +82,4 @@ private:
 
 } // end namespace SX
 
-#endif /* NSXTOOL_INSTRUMENTSTORE_H_ */
+#endif /* NSXTOOL_DETECTORCOMPONENT_H_ */

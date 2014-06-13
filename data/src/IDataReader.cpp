@@ -2,6 +2,7 @@
 
 namespace SX
 {
+
 namespace Data
 {
 
@@ -13,6 +14,6 @@ IDataReader::~IDataReader()
 {
 }
 
-
 } // end namespace Data
+
 } // end namespace SX
