@@ -7,15 +7,13 @@
             <y>0.764</y>
             <z>0</z>
         </position>
-        <colstart>0</colstart>
-        <colend>255</colend>
-        <rowstart>0</rowstart>
-        <rowend>639</rowend>
+        <nrows>256</nrows>
+        <ncols>640</ncols>
+        <start_index>0</start_index>
         <shape>cylindrical</shape>
         <width units='m'>1.6</width>
         <height units='m'>0.4</height>
-        <data_layout>columnn</data_layout>
-        <data_origin>top_right</data_origin>
+        <layout>by_columnn</layout>
         <modifier type="rotation">
             <name>Gamma</name>
             <mad_id>1</mad_id>

@@ -26,7 +26,6 @@
  *
  */
 
-#include "DetectorMappingFactory.h"
 #include "DetectorMapping.h"
 
 namespace SX
@@ -35,12 +34,25 @@ namespace SX
 namespace Instrument
 {
 
-DetectorMappingFactory::DetectorMappingFactory()
+DetectorMapping::DetectorMapping()
 {
-//	registerCallback("bottom_left",&BottomLeftMappingCW::create);
 }
 
-DetectorMappingFactory::~DetectorMappingFactory()
+DetectorMapping::DetectorMapping(const uint nRows, const uint nCols, const uint startingIndex, const bool rowMajor)
+: _nRows(nRows), _nCols(nCols), _startingIndex(startingIndex), _rowMajor(rowMajor), _blockSize(_rowMajor ? _nCols : _nRows)
+{
+}
+
+void DetectorMapping::operator()(uint idx, uint& px, uint& py) const
+{
+	idx -= _startingIndex;
+	div_t divresult;
+	divresult = div(idx,_blockSize);
+	px=divresult.quot;
+	py=divresult.rem;
+}
+
+DetectorMapping::~DetectorMapping()
 {
 }
 

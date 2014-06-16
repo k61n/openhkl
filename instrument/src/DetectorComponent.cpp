@@ -26,8 +26,10 @@
  *
  */
 
+#include <exception>
 #include <iostream>
 
+#include <boost/foreach.hpp>
 #include <boost/property_tree/ptree.hpp>
 
 #include "DetectorComponent.h"
@@ -38,21 +40,59 @@ namespace SX
 namespace Instrument
 {
 
-using namespace boost::property_tree;
+std::unordered_map<std::string,DetectorComponent::shape> DetectorComponent::shapeMap=map_list_of("planar",shape::PLANAR)("cylindrical",shape::CYLINDRICAL);
+
+std::unordered_map<std::string,DetectorComponent::layout> DetectorComponent::layoutMap=map_list_of("by_column",layout::BY_COLUMN)("by_row",layout::BY_ROW);
 
 Component* DetectorComponent::create(const ptree& pt)
 {
 	return new DetectorComponent(pt);
 }
 
-DetectorComponent::DetectorComponent(const ptree& pt) : Component(), _nrows(0), _ncols(0), _width(0.0), _height(0.0), _shape(planar), _origin(bottom_left), _order(column_major)
+DetectorComponent::DetectorComponent(const ptree& pt) : Component()
 {
 	parse(pt);
 }
 
-void DetectorComponent::parse(const ptree& p)
+void DetectorComponent::parse(const ptree& node)
 {
-	std::cout<<"I PARSE A DETECTOR"<<std::endl;
+
+	_name=node.get<std::string>("name");
+
+	_nRows=node.get<uint>("nrows");
+	if (_nRows<=0)
+		throw std::runtime_error("The number of rows of a detector must be a strictly positive number.");
+
+	_nCols=node.get<uint>("ncols");
+	if (_nRows<=0)
+		throw std::runtime_error("The number of columns of a detector must be a strictly positive number.");
+
+	_startIndex=node.get<uint>("start_index",0);
+
+	_width=node.get<double>("width");
+	if (_width<=0)
+		throw std::runtime_error("The width of a detector must be a strictly positive number.");
+
+	_pixelWidth=_width/_nCols;
+
+	_height=node.get<double>("height");
+	if (_height<=0)
+		throw std::runtime_error("The height of a detector must be a strictly positive number.");
+
+	_pixelWidth=_height/_nRows;
+
+	auto it=shapeMap.find(node.get<std::string>("shape","planar"));
+	if (it==shapeMap.end())
+		throw std::runtime_error("Invalid detector shape.");
+	_shape=it->second;
+
+	auto it1=layoutMap.find(node.get<std::string>("layout","by_row"));
+	if (it1==layoutMap.end())
+		throw std::runtime_error("Invalid data layout.");
+	_layout=it1->second;
+
+	_mapping = DetectorMapping(_nRows,_nCols,_startIndex,static_cast<bool>(_layout));
+
 }
 
 DetectorComponent::~DetectorComponent()

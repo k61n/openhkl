@@ -29,11 +29,16 @@
 #ifndef NSXTOOL_DETECTORCOMPONENT_H_
 #define NSXTOOL_DETECTORCOMPONENT_H_
 
+#include <unordered_map>
+#include <string>
+
+#include <boost/assign/list_of.hpp>
 #include <boost/property_tree/ptree.hpp>
 
 #include <Eigen/Dense>
 
 #include "Component.h"
+#include "DetectorMapping.h"
 
 namespace SX
 {
@@ -43,20 +48,21 @@ namespace Instrument
 
 typedef unsigned int uint;
 
+using namespace boost::assign;
 using namespace boost::property_tree;
 
 class DetectorComponent : public Component
 {
 public:
 
-	//! Enumerates the possible orders of data storage in memory.
-	enum dataOrder {column_major=1,row_major=2};
-
-	//! Enumerates the possible positions of the origin of the detector.
-	enum detectorOrigin {bottom_left=1,bottom_right=2,top_left=3,top_right=4};
-
 	//! Enumerates the possible detector shapes.
-	enum detectorShape {planar=1,cylindrical=2,flat_cone=3};
+	enum class shape {PLANAR=1,CYLINDRICAL=2};
+
+	enum class layout {BY_COLUMN=false,BY_ROW=true};
+
+	static std::unordered_map<std::string,shape> shapeMap;
+
+	static std::unordered_map<std::string,layout> layoutMap;
 
 	static Component* create(const ptree& pt);
 
@@ -70,11 +76,13 @@ protected:
 
 	DetectorComponent(const ptree& pt);
 
-	uint _nrows, _ncols;
+	uint _nRows, _nCols;
+	uint _startIndex;
 	double _width, _height;
-	dataOrder _order;
-	detectorOrigin _origin;
-	detectorShape _shape;
+	double _pixelWidth, _pixelHeight;
+	shape _shape;
+	layout _layout;
+	DetectorMapping _mapping;
 
 };
 
