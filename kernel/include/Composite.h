@@ -46,7 +46,7 @@ public:
 
 	Composite();
 
-	void add(component*);
+	virtual void add(component*);
 	void clear();
 	uint nComponents() const;
 	void remove(component*);

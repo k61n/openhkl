@@ -50,6 +50,17 @@ Instrument::Instrument()
 {
 }
 
+void Instrument::add(Component* comp)
+{
+	// Check that the component name is not already used. If not add it to the components vector.
+	for (auto it=_components.begin();it!=_components.end();++it)
+	{
+		if (comp->getName() == (*it)->getName())
+			throw std::runtime_error("Component name "+comp->getName()+" already in use.");
+	}
+	_components.push_back(comp);
+}
+
 void Instrument::load(const std::string& instrFile)
 {
 	std::ifstream is(instrFile);
@@ -75,13 +86,6 @@ void Instrument::parse(const ptree& pt)
 			// Fetch the "type" component node attribute and get the corresponding Component object from the component factory.
 			std::string cType=v.second.get_child("<xmlattr>").get<std::string>("type");
 			Component* comp=compFactory->create(cType,v.second);
-
-			// Check that the component name is not already used. If not add it to the components vector.
-			for (auto it=_components.begin();it!=_components.end();++it)
-			{
-				if (comp->getName() == (*it)->getName())
-					throw std::runtime_error("Component name "+comp->getName()+" already in use.");
-			}
 			add(comp);
 		}
 	}
