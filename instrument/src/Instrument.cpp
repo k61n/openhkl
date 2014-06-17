@@ -52,11 +52,12 @@ Instrument::Instrument()
 
 void Instrument::add(Component* comp)
 {
+	std::string compName = comp->getName();
 	// Check that the component name is not already used. If not add it to the components vector.
 	for (auto it=_components.begin();it!=_components.end();++it)
 	{
-		if (comp->getName() == (*it)->getName())
-			throw std::runtime_error("Component name "+comp->getName()+" already in use.");
+		if (compName == (*it)->getName())
+			throw std::runtime_error("Component name "+compName+" already in use.");
 	}
 	_components.push_back(comp);
 }
