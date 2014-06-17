@@ -88,7 +88,7 @@ void DetectorComponent::parse(const ptree& node)
 	unit =node.get_child("height.<xmlattr>").get<std::string>("units");
 	_height *= unitManager->get(unit);
 
-	_pixelWidth=_height/_nRows;
+	_pixelHeight=_height/_nRows;
 
 	auto it=shapeMap.find(node.get<std::string>("shape","planar"));
 	if (it==shapeMap.end())
