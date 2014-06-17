@@ -33,12 +33,15 @@
 #include <boost/property_tree/ptree.hpp>
 
 #include "DetectorComponent.h"
+#include "Units.h"
 
 namespace SX
 {
 
 namespace Instrument
 {
+
+using namespace SX::Units;
 
 std::unordered_map<std::string,DetectorComponent::shape> DetectorComponent::shapeMap=map_list_of("planar",shape::PLANAR)("cylindrical",shape::CYLINDRICAL);
 
@@ -57,6 +60,8 @@ DetectorComponent::DetectorComponent(const ptree& pt) : Component()
 void DetectorComponent::parse(const ptree& node)
 {
 
+	UnitsManager* unitManager=UnitsManager::Instance();
+
 	_name=node.get<std::string>("name");
 
 	_nRows=node.get<uint>("nrows");
@@ -72,12 +77,16 @@ void DetectorComponent::parse(const ptree& node)
 	_width=node.get<double>("width");
 	if (_width<=0)
 		throw std::runtime_error("The width of a detector must be a strictly positive number.");
+	std::string unit =node.get_child("width.<xmlattr>").get<std::string>("units");
+	_width *= unitManager->get(unit);
 
 	_pixelWidth=_width/_nCols;
 
 	_height=node.get<double>("height");
 	if (_height<=0)
 		throw std::runtime_error("The height of a detector must be a strictly positive number.");
+	unit =node.get_child("height.<xmlattr>").get<std::string>("units");
+	_height *= unitManager->get(unit);
 
 	_pixelWidth=_height/_nRows;
 
