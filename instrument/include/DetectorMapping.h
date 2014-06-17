@@ -60,7 +60,6 @@ private:
 	uint _startingIndex;
 	//! Indicates whether or not the data are row- or column-major ordered.
 	bool _rowMajor;
-	uint _blockSize;
 };
 
 } // end namespace Instrument

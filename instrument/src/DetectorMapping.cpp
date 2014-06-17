@@ -35,7 +35,7 @@ namespace Instrument
 {
 
 DetectorMapping::DetectorMapping(const uint nRows, const uint nCols, const uint startingIndex, const bool rowMajor)
-: _nRows(nRows), _nCols(nCols), _startingIndex(startingIndex), _rowMajor(rowMajor), _blockSize(_rowMajor ? _nCols : _nRows)
+: _nRows(nRows), _nCols(nCols), _startingIndex(startingIndex), _rowMajor(rowMajor)
 {
 }
 
@@ -43,9 +43,18 @@ void DetectorMapping::operator()(uint idx, uint& px, uint& py) const
 {
 	idx -= _startingIndex;
 	div_t divresult;
-	divresult = div(idx,_blockSize);
-	px=divresult.quot;
-	py=divresult.rem;
+	if (_rowMajor)
+	{
+		divresult = div(idx,_nCols);
+		px=divresult.quot;
+		py=divresult.rem;
+	}
+	else
+	{
+		divresult = div(idx,_nRows);
+		px=divresult.rem;
+		py=divresult.quot;
+	}
 }
 
 DetectorMapping::~DetectorMapping()
