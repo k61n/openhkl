@@ -34,10 +34,6 @@ namespace SX
 namespace Instrument
 {
 
-DetectorMapping::DetectorMapping()
-{
-}
-
 DetectorMapping::DetectorMapping(const uint nRows, const uint nCols, const uint startingIndex, const bool rowMajor)
 : _nRows(nRows), _nCols(nCols), _startingIndex(startingIndex), _rowMajor(rowMajor), _blockSize(_rowMajor ? _nCols : _nRows)
 {

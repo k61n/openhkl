@@ -57,6 +57,9 @@ class Component
 public:
 
 	static Component* create(const ptree& pt);
+
+	const std::string& getName() const;
+
 	virtual ~Component()=0;
 
 protected:
@@ -72,8 +75,6 @@ protected:
 
 	//! The name of the component.
 	std::string _name;
-
-	uint _id;
 
 	Eigen::Vector3d _position;
 

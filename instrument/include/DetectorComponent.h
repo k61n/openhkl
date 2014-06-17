@@ -82,7 +82,7 @@ protected:
 	double _pixelWidth, _pixelHeight;
 	shape _shape;
 	layout _layout;
-	DetectorMapping _mapping;
+	DetectorMapping* _mapping;
 
 };
 

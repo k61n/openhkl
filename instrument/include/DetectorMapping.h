@@ -43,8 +43,6 @@ class DetectorMapping
 {
 public:
 
-	DetectorMapping();
-
 	//! Constructs a mapping that will match 1D indexes with 2D pixels.
 	DetectorMapping(const uint nRows, const uint nCols, const uint startingIndex=0, bool rowMajor=true);
 

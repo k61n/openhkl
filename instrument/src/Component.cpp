@@ -42,6 +42,11 @@ Component::Component(const ptree& pt)
 {
 }
 
+const std::string& Component::getName() const
+{
+	return _name;
+}
+
 Component::~Component()
 {
 }

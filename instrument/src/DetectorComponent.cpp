@@ -91,12 +91,13 @@ void DetectorComponent::parse(const ptree& node)
 		throw std::runtime_error("Invalid data layout.");
 	_layout=it1->second;
 
-	_mapping = DetectorMapping(_nRows,_nCols,_startIndex,static_cast<bool>(_layout));
+	_mapping = new DetectorMapping(_nRows,_nCols,_startIndex,static_cast<bool>(_layout));
 
 }
 
 DetectorComponent::~DetectorComponent()
 {
+	delete _mapping;
 }
 
 } // End namespace Instrument

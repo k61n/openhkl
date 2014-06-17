@@ -13,7 +13,7 @@
         <shape>cylindrical</shape>
         <width units='m'>1.6</width>
         <height units='m'>0.4</height>
-        <layout>by_columnn</layout>
+        <layout>by_column</layout>
         <modifier type="rotation">
             <name>Gamma</name>
             <mad_id>1</mad_id>

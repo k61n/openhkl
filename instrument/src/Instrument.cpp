@@ -26,7 +26,10 @@
  *
  */
 
+#include <exception>
 #include <fstream>
+#include <iostream>
+#include <string>
 
 #include <boost/foreach.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -72,6 +75,14 @@ void Instrument::parse(const ptree& pt)
 			// Fetch the "type" component node attribute and get the corresponding Component object from the component factory.
 			std::string cType=v.second.get_child("<xmlattr>").get<std::string>("type");
 			Component* comp=compFactory->create(cType,v.second);
+
+			// Check that the component name is not already used. If not add it to the components vector.
+			for (auto it=_components.begin();it!=_components.end();++it)
+			{
+				if (comp->getName() == (*it)->getName())
+					throw std::runtime_error("Component name "+comp->getName()+" already in use.");
+			}
+			add(comp);
 		}
 	}
 }
