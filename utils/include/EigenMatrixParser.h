@@ -1,7 +1,9 @@
-#ifndef NSXTOOL_ASCIIPARSER_H_
-#define NSXTOOL_ASCIIPARSER_H_
+#ifndef NSXTOOL_EIGENMATRIXPARSER_H_
+#define NSXTOOL_EIGENMATRIXPARSER_H_
+
 #define BOOST_SPIRIT_USE_PHOENIX_V3
 #define BOOST_RESULT_OF_USE_DECLTYPE
+
 #include <boost/spirit/include/qi.hpp>
 #include <boost/phoenix/function/adapt_callable.hpp>
 #include <boost/spirit/include/phoenix.hpp>
