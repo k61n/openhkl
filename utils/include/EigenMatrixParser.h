@@ -224,7 +224,7 @@ bool operator()(Matrix &m, Row& r, Col& c, Value v) const
 
 // Parser to read a chain of character (It can be a const char* or std::string::iterator)
 // into a Eigen rowMajor matrix. Templated on the mapper depending on how the order
-// of writing of the data.
+// of writing of the data. Return characters are skipped.
 template<typename It, typename mapper>
 struct EigenMatrixParser : qi::grammar<It, Eigen::Matrix<int,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor>(), qi::blank_type, qi::locals<size_t,size_t> >
 {
