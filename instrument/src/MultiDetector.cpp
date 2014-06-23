@@ -26,8 +26,7 @@
  *
  */
 
-#include "ComponentFactory.h"
-#include "Detector.h"
+#include "MultiDetector.h"
 
 namespace SX
 {
@@ -35,16 +34,33 @@ namespace SX
 namespace Instrument
 {
 
-ComponentFactory::ComponentFactory()
+const Detector* MultiDetector::findDetector(uint px, uint py) const
 {
-	registerCallback("detector",&Detector::create);
+
+	for (component_const_iterator it=_components.begin();it!=_components.end();++it)
+	{
+		if ((*it)->hasPixel(px,py))
+			return *it;
+	}
+	return nullptr;
 }
 
-ComponentFactory::~ComponentFactory()
+bool MultiDetector::hasPixel(uint px, uint py) const
+{
+	for (auto it=_components.begin();it!=_components.end();++it)
+	{
+		if ((*it)->hasPixel(px,py))
+			return true;
+	}
+	return false;
+}
+
+MultiDetector::~MultiDetector()
 {
 }
 
-} // End namespace Instrument
 
-} // End namespace SX
+} // end namespace Instrument
+
+} // end namespace SX
 

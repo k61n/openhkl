@@ -44,6 +44,9 @@ class Composite : public component
 {
 public:
 
+	typedef typename std::vector<component*>::const_iterator component_const_iterator;
+	typedef typename std::vector<component*>::iterator component_iterator;
+
 	Composite();
 
 	virtual void add(component*);

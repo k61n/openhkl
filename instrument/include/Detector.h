@@ -26,8 +26,19 @@
  *
  */
 
-#include "ComponentFactory.h"
-#include "Detector.h"
+#ifndef NSXTOOL_DETECTOR_H_
+#define NSXTOOL_DETECTOR_H_
+
+#include <unordered_map>
+#include <string>
+
+#include <boost/assign/list_of.hpp>
+#include <boost/property_tree/ptree.hpp>
+
+#include <Eigen/Dense>
+
+#include "Component.h"
+#include "DetectorMapping.h"
 
 namespace SX
 {
@@ -35,16 +46,49 @@ namespace SX
 namespace Instrument
 {
 
-ComponentFactory::ComponentFactory()
+typedef unsigned int uint;
+
+using namespace boost::assign;
+using namespace boost::property_tree;
+
+class Detector : public Component
 {
-	registerCallback("detector",&Detector::create);
-}
+public:
 
-ComponentFactory::~ComponentFactory()
-{
-}
+	//! Enumerates the possible detector shapes.
+	enum class shape {PLANAR=1,CYLINDRICAL=2};
 
-} // End namespace Instrument
+	enum class layout {BY_COLUMN=false,BY_ROW=true};
 
-} // End namespace SX
+	static std::unordered_map<std::string,shape> shapeMap;
 
+	static std::unordered_map<std::string,layout> layoutMap;
+
+	static Component* create(const ptree& pt);
+
+	bool hasPixel(uint px, uint py) const;
+
+	void parse(const ptree& pt);
+
+	virtual ~Detector()=0;
+
+protected:
+
+	Detector();
+
+	Detector(const ptree& pt);
+
+	uint _nRows, _nCols;
+	uint _rowMin,_colMin, _rowMax, _colMax;
+	double _width, _height;
+	double _pixelWidth, _pixelHeight;
+	shape _shape;
+	layout _layout;
+
+};
+
+} // end namespace Instrument
+
+} // end namespace SX
+
+#endif /* NSXTOOL_DETECTOR_H_ */

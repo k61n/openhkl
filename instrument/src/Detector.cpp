@@ -32,7 +32,7 @@
 #include <boost/foreach.hpp>
 #include <boost/property_tree/ptree.hpp>
 
-#include "DetectorComponent.h"
+#include "Detector.h"
 #include "Units.h"
 
 namespace SX
@@ -43,21 +43,26 @@ namespace Instrument
 
 using namespace SX::Units;
 
-std::unordered_map<std::string,DetectorComponent::shape> DetectorComponent::shapeMap=map_list_of("planar",shape::PLANAR)("cylindrical",shape::CYLINDRICAL);
+std::unordered_map<std::string,Detector::shape> Detector::shapeMap=map_list_of("planar",shape::PLANAR)("cylindrical",shape::CYLINDRICAL);
 
-std::unordered_map<std::string,DetectorComponent::layout> DetectorComponent::layoutMap=map_list_of("by_column",layout::BY_COLUMN)("by_row",layout::BY_ROW);
+std::unordered_map<std::string,Detector::layout> Detector::layoutMap=map_list_of("by_column",layout::BY_COLUMN)("by_row",layout::BY_ROW);
 
-Component* DetectorComponent::create(const ptree& pt)
+Component* Detector::create(const ptree& pt)
 {
-	return new DetectorComponent(pt);
+	return new Detector(pt);
 }
 
-DetectorComponent::DetectorComponent(const ptree& pt) : Component()
+Detector::Detector(const ptree& pt) : Component()
 {
 	parse(pt);
 }
 
-void DetectorComponent::parse(const ptree& node)
+bool Detector::hasPixel(uint px, uint py) const
+{
+	return (px>=_rowMin) & (px<_rowMax) & (py>=_colMin) & (py<_colMax);
+}
+
+void Detector::parse(const ptree& node)
 {
 
 	UnitsManager* unitManager=UnitsManager::Instance();
@@ -72,7 +77,11 @@ void DetectorComponent::parse(const ptree& node)
 	if (_nRows<=0)
 		throw std::runtime_error("The number of columns of a detector must be a strictly positive number.");
 
-	_startIndex=node.get<uint>("start_index",0);
+	_rowMin=node.get<uint>("row_min",0);
+	_colMin=node.get<uint>("col_min",0);
+
+	_rowMax = _rowMin + _nRows;
+	_colMax = _colMin + _nCols;
 
 	_width=node.get<double>("width");
 	if (_width<=0)
@@ -100,13 +109,10 @@ void DetectorComponent::parse(const ptree& node)
 		throw std::runtime_error("Invalid data layout.");
 	_layout=it1->second;
 
-	_mapping = new DetectorMapping(_nRows,_nCols,_startIndex,static_cast<bool>(_layout));
-
 }
 
-DetectorComponent::~DetectorComponent()
+Detector::~Detector()
 {
-	delete _mapping;
 }
 
 } // End namespace Instrument
