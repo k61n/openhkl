@@ -50,6 +50,7 @@ typedef unsigned int uint;
 
 using namespace boost::assign;
 using namespace boost::property_tree;
+using namespace Eigen;
 
 class Detector : public Component
 {
@@ -65,6 +66,8 @@ public:
 	static std::unordered_map<std::string,layout> layoutMap;
 
 	static Component* create(const ptree& pt);
+
+	Vector3d getQVector(uint px, uint py) const;
 
 	bool hasPixel(uint px, uint py) const;
 

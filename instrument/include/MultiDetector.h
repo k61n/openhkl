@@ -29,6 +29,8 @@
 #ifndef NSXTOOL_MULTIDETECTOR_H_
 #define NSXTOOL_MULTIDETECTOR_H_
 
+#include <Eigen/Dense>
+
 #include "Detector.h"
 
 namespace SX
@@ -37,6 +39,8 @@ namespace SX
 namespace Instrument
 {
 
+using namespace Eigen;
+
 typedef unsigned int uint;
 
 class MultiDetector : public Composite<Detector>
@@ -44,6 +48,7 @@ class MultiDetector : public Composite<Detector>
 public:
 
 	const Detector* findDetector(uint px, uint py) const;
+	Vector3d getQVector(uint px, uint py);
 	bool hasPixel(uint px, uint py) const;
 
 	~MultiDetector();

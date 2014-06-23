@@ -57,6 +57,11 @@ Detector::Detector(const ptree& pt) : Component()
 	parse(pt);
 }
 
+Vector3d Detector::getQVector(uint px, uint py) const
+{
+
+}
+
 bool Detector::hasPixel(uint px, uint py) const
 {
 	return (px>=_rowMin) & (px<_rowMax) & (py>=_colMin) & (py<_colMax);

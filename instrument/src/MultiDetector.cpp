@@ -45,6 +45,15 @@ const Detector* MultiDetector::findDetector(uint px, uint py) const
 	return nullptr;
 }
 
+Vector3d MultiDetector::getQVector(uint px, uint py)
+{
+	for (auto it=_components.begin();it!=_components.end();++it)
+	{
+		if ((*it)->hasPixel(px,py))
+			return (*it)->getQVector(px,py);
+	}
+}
+
 bool MultiDetector::hasPixel(uint px, uint py) const
 {
 	for (auto it=_components.begin();it!=_components.end();++it)
