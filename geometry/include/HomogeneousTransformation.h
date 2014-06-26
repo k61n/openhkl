@@ -1,0 +1,74 @@
+/*
+ * nsxtool : Neutron Single Crystal analysis toolkit
+    ------------------------------------------------------------------------------------------
+    Copyright (C)
+    2012- Laurent C. Chapon Institut Laue-Langevin
+	BP 156
+	6, rue Jules Horowitz
+	38042 Grenoble Cedex 9
+	France
+	chapon[at]ill.fr
+	pellegrini[at]ill.fr
+
+	This library is free software; you can redistribute it and/or
+	modify it under the terms of the GNU Lesser General Public
+	License as published by the Free Software Foundation; either
+	version 2.1 of the License, or (at your option) any later version.
+
+	This library is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+	Lesser General Public License for more details.
+
+	You should have received a copy of the GNU Lesser General Public
+	License along with this library; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ */
+
+#ifndef NSXTOOL_HOMOGENEOUSTRANSFORMATION_H_
+#define NSXTOOL_HOMOGENEOUSTRANSFORMATION_H_
+
+#include <Eigen/Dense>
+
+namespace SX
+{
+
+namespace Geometry
+{
+
+using Eigen::Affine;
+using Eigen::Matrix3d;
+using Eigen::Transform;
+using Eigen::Vector3d;
+
+typedef Transform<double,3,3,Affine> HomMatrix;
+
+/*
+ * Define an interface for homogeneous transformations (e.g. Rotation, Translation, Scaling)
+ */
+class HomogeneousTransformation
+{
+public:
+	//! The default constructor.
+	HomogeneousTransformation();
+
+	//! Returns the rotation part of the homogeneous matrix.
+	Matrix3d getRotation(double parameter) const=0;
+	//! Returns the homogeneous matrix.
+	HomMatrix getTransformation(double parameter) const=0;
+	//! Returns the translation part of the homogeneous matrix.
+	Vector3d getTranslation(double parameter) const=0;
+
+	//! The destructor.
+	virtual ~HomogeneousTransformation()=0;
+
+};
+
+} // end namespace Geometry
+
+} // end namespace SX
+
+
+
+#endif /* NSXTOOL_HOMOGENEOUSTRANSFORMATION_H_ */
