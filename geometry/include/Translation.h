@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef NSXTOOL_ROTATION_H_
-#define NSXTOOL_ROTATION_H_
+#ifndef NSXTOOL_TRANSLATION_H_
+#define NSXTOOL_TRANSLATION_H_
 
 #include "HomogeneousTransformation.h"
 
@@ -37,47 +37,39 @@ namespace SX
 namespace Geometry
 {
 
-class Rotation : public HomogeneousTransformation
+class Translation : public HomogeneousTransformation
 {
 public:
 
-	//! Enumerates the possible rotation directions (clockwise-->CW or counter clockwise-->CCW).
-	enum class Direction {CW=0,CCW=1};
 	//! The default constructor.
-	Rotation();
+	Translation();
 	//! The explicit constructor.
-	Rotation(const Vector3d&, Direction, double);
+	Translation(const Vector3d&, double);
 	//! The destructor.
-	~Rotation();
+	~Translation();
 
-	//! Get the rotation axis.
+	//! Get the translation axis.
 	Vector3d& getAxis();
-	//! Get the rotation axis.
+	//! Get the translation axis.
 	const Vector3d& getAxis() const;
-	//! Get the angular offset of this axis (radians).
+	//! Get the angular offset of this axis (m).
 	double getOffset() const;
 	//! Returns the rotation part of the homogeneous matrix.
 	Matrix3d getRotation(double) const;
-	// ! Return 0 for CCW and 1 for CW.
-	Direction getRotationDirection() const;
 	//! Set the axis.
 	void setAxis(const Vector3d&);
-	//! Set the angular offset (radians) of this axis.
+	//! Set the angular offset (m) of this axis.
 	void setOffset(double);
-	//! Get rotation direction.
-	void setRotationDirection(Direction);
 	//! Returns the homogeneous matrix.
 	HomMatrix getTransformation(double) const;
 	//! Returns the translation part of the homogeneous matrix.
 	Vector3d getTranslation(double) const;
 
 private:
-	//! The rotation axis.
+	//! The translation axis.
 	Vector3d _axis;
-	//! The rotation angle offset.
+	//! The translation angle offset.
 	double _offset;
-	//! The direction of the rotation.
-	Direction _dir;
 
 };
 
@@ -85,4 +77,4 @@ private:
 
 } // end namespace SX
 
-#endif /* NSXTOOL_ROTATION_H_ */
+#endif /* NSXTOOL_TRANSLATION_H_ */
