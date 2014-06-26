@@ -26,21 +26,16 @@
  *
  */
 
-#ifndef NSXTOOL_HOMOGENEOUSTRANSFORMATION_H_
-#define NSXTOOL_HOMOGENEOUSTRANSFORMATION_H_
-
-#include <vector>
+#ifndef NSXTOOL_PRIMITIVETRANSFORMATION_H_
+#define NSXTOOL_PRIMITIVETRANSFORMATION_H_
 
 #include <Eigen/Dense>
-#include <Eigen/Geometry>
 
 namespace SX
 {
 
 namespace Geometry
 {
-
-class PrimitiveTransformation;
 
 using Eigen::Affine;
 using Eigen::Matrix3d;
@@ -50,30 +45,24 @@ using Eigen::Vector3d;
 typedef Transform<double,3,3,Affine> HomMatrix;
 
 /*
- * Defines a composite of primitive transformations.
+ * Defines an interface for primitive transformations (e.g. Rotation, Translation, Scaling) that will be the building block for
+ * any homogeneous transformation.
  */
-class HomogeneousTransformation
+class PrimitiveTransformation
 {
-
 public:
 	//! The default constructor.
-	HomogeneousTransformation();
+	PrimitiveTransformation();
+
+	//! Returns the rotation part of the homogeneous matrix.
+	Matrix3d getRotation(double parameter) const=0;
+	//! Returns the homogeneous matrix.
+	HomMatrix getTransformation(double parameter) const=0;
+	//! Returns the translation part of the homogeneous matrix.
+	Vector3d getTranslation(double parameter) const=0;
 
 	//! The destructor.
-	virtual ~HomogeneousTransformation()=0;
-
-	//! Add a new primitive transformation.
-	void addTransformation(PrimitiveTransformation*);
-	//! Returns the rotation part of the homogeneous matrix build from the composition of the primitive transformations.
-	Matrix3d getRotation(const std::vector<double>&) const;
-	//! Returns the homogeneous matrix build from the composition of the primitive transformations.
-	HomMatrix getTransformation(const std::vector<double>&) const;
-	//! Returns the translation part of the homogeneous matrix build from the composition of the primitive transformations.
-	Vector3d getTranslation(const std::vector<double>&) const;
-
-
-private:
-	std::vector<PrimitiveTransformation*> _trans;
+	virtual ~PrimitiveTransformation()=0;
 
 };
 
@@ -81,6 +70,4 @@ private:
 
 } // end namespace SX
 
-
-
-#endif /* NSXTOOL_HOMOGENEOUSTRANSFORMATION_H_ */
+#endif /* NSXTOOL_PRIMITIVETRANSFORMATION_H_ */
