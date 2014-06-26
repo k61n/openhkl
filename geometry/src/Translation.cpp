@@ -6,11 +6,11 @@ namespace SX
 namespace Geometry
 {
 
-Translation::Translation() : _axis(Vector3d(0,0,1)) ,_offset(0.0)
+Translation::Translation() : PrimitiveTransformation(), _axis(Vector3d(0,0,1)), _offset(0.0)
 {
 }
 
-Translation::Translation(const Vector3d& axis, double offset) : _axis(axis), _offset(offset)
+Translation::Translation(const Vector3d& axis, double offset) : PrimitiveTransformation(), _axis(axis), _offset(offset)
 {
 	_axis.normalize();
 }

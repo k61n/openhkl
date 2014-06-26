@@ -6,11 +6,11 @@ namespace SX
 namespace Geometry
 {
 
-Rotation::Rotation() : _axis(Vector3d(0,0,1)) , _dir(CCW) ,_offset(0.0)
+Rotation::Rotation() : PrimitiveTransformation(), _axis(Vector3d(0,0,1)), _offset(0.0), _dir(Rotation::Direction::CCW)
 {
 }
 
-Rotation::Rotation(const Vector3d& axis, Direction direction, double offset) : _axis(axis) , _dir(direction) , _offset(offset)
+Rotation::Rotation(const Vector3d& axis, Rotation::Direction dir, double offset) : PrimitiveTransformation(), _axis(axis), _offset(offset), _dir(dir)
 {
 	_axis.normalize();
 }
@@ -62,7 +62,7 @@ HomMatrix Rotation::getTransformation(double angle) const
     Eigen::Quaternion<double> quat(Eigen::AngleAxis<double>(angle,_axis));
 
     // Set the rotation part of the homogeneous matrix with the quaternion-based matrix.
-    trans.rotation()=quat.toRotationMatrix();
+    trans.linear() = quat.toRotationMatrix();
 
 	return trans;
 }
@@ -79,7 +79,7 @@ void Rotation::setOffset(double offset)
 	_offset=offset;
 }
 
-void Rotation::setRotationDirection(Direction dir)
+void Rotation::setRotationDirection(Rotation::Direction dir)
 {
 	_dir=dir;
 }

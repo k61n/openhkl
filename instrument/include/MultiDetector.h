@@ -51,6 +51,8 @@ public:
 	Vector3d getQVector(uint px, uint py);
 	bool hasPixel(uint px, uint py) const;
 
+	void parse(const ptree& pt);
+
 	~MultiDetector();
 
 };

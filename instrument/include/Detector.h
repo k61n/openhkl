@@ -71,9 +71,9 @@ public:
 
 	bool hasPixel(uint px, uint py) const;
 
-	void parse(const ptree& pt);
+	virtual void parse(const ptree& pt);
 
-	virtual ~Detector()=0;
+	virtual ~Detector();
 
 protected:
 

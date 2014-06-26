@@ -71,7 +71,6 @@ public:
 	//! Returns the translation part of the homogeneous matrix build from the composition of the primitive transformations.
 	Vector3d getTranslation(const std::vector<double>&) const;
 
-
 private:
 	std::vector<PrimitiveTransformation*> _trans;
 
@@ -80,7 +79,5 @@ private:
 } // end namespace Geometry
 
 } // end namespace SX
-
-
 
 #endif /* NSXTOOL_HOMOGENEOUSTRANSFORMATION_H_ */

@@ -55,11 +55,11 @@ public:
 	PrimitiveTransformation();
 
 	//! Returns the rotation part of the homogeneous matrix.
-	Matrix3d getRotation(double parameter) const=0;
+	virtual Matrix3d getRotation(double) const=0;
 	//! Returns the homogeneous matrix.
-	HomMatrix getTransformation(double parameter) const=0;
+	virtual HomMatrix getTransformation(double) const=0;
 	//! Returns the translation part of the homogeneous matrix.
-	Vector3d getTranslation(double parameter) const=0;
+	virtual Vector3d getTranslation(double) const=0;
 
 	//! The destructor.
 	virtual ~PrimitiveTransformation()=0;

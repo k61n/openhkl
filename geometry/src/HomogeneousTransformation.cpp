@@ -1,5 +1,5 @@
-#include "PrimitiveTransformation.h"
 #include "HomogeneousTransformation.h"
+#include "PrimitiveTransformation.h"
 
 namespace SX
 {
@@ -30,13 +30,12 @@ HomMatrix HomogeneousTransformation::getTransformation(const std::vector<double>
 	HomMatrix mat;
 	mat.setIdentity();
 
-	std::vector<PrimitiveTransformation*>::reverse_iterator it=_trans.rbegin();
-	std::vector<double>::reverse_iterator pit=parameters.rbegin();
+	std::vector<PrimitiveTransformation*>::const_reverse_iterator it=_trans.rbegin();
+	std::vector<double>::const_reverse_iterator pit=parameters.rbegin();
 
 	for (;it!=_trans.rend();++it,++pit)
-	{
-		mat *= (*it)->getTransformation(*pit);
-	}
+		mat.matrix() *= (*it)->getTransformation(*pit).matrix();
+
 	return mat;
 }
 

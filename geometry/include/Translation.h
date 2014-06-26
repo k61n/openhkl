@@ -29,7 +29,7 @@
 #ifndef NSXTOOL_TRANSLATION_H_
 #define NSXTOOL_TRANSLATION_H_
 
-#include "HomogeneousTransformation.h"
+#include "PrimitiveTransformation.h"
 
 namespace SX
 {
@@ -37,7 +37,7 @@ namespace SX
 namespace Geometry
 {
 
-class Translation : public HomogeneousTransformation
+class Translation : public PrimitiveTransformation
 {
 public:
 

@@ -29,7 +29,7 @@
 #ifndef NSXTOOL_ROTATION_H_
 #define NSXTOOL_ROTATION_H_
 
-#include "HomogeneousTransformation.h"
+#include "PrimitiveTransformation.h"
 
 namespace SX
 {
@@ -37,7 +37,7 @@ namespace SX
 namespace Geometry
 {
 
-class Rotation : public HomogeneousTransformation
+class Rotation : public PrimitiveTransformation
 {
 public:
 
