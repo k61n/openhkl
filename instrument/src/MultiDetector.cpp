@@ -26,6 +26,9 @@
  *
  */
 
+#include <iostream>
+#include <stdexcept>
+
 #include "Component.h"
 #include "MultiDetector.h"
 
@@ -81,7 +84,16 @@ bool MultiDetector::hasPixel(uint px, uint py) const
 
 void MultiDetector::parse(const ptree& node)
 {
+	std::cout<<"I AM PARSING A MULTIDETECTOR"<<std::endl;
+	_name=node.get<std::string>("name");
 
+	_nRows=node.get<uint>("nrows");
+	if (_nRows<=0)
+		throw std::runtime_error("The number of rows of a detector must be a strictly positive number.");
+
+	_nCols=node.get<uint>("ncols");
+	if (_nRows<=0)
+		throw std::runtime_error("The number of columns of a detector must be a strictly positive number.");
 }
 
 } // end namespace Instrument

@@ -26,8 +26,8 @@
  *
  */
 
-#include <exception>
 #include <iostream>
+#include <stdexcept>
 
 #include <boost/foreach.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -51,6 +51,36 @@ Detector::Detector()
 Detector::Detector(const ptree& pt) : Component()
 {
 	parse(pt);
+}
+
+double Detector::getHeigth() const
+{
+	return _height;
+}
+
+uint Detector::getNCols() const
+{
+	return _nCols;
+}
+
+uint Detector::getNRows() const
+{
+	return _nRows;
+}
+
+double Detector::getPixelHeigth() const
+{
+	return _pixelHeight;
+}
+
+double Detector::getPixelWidth() const
+{
+	return _pixelWidth;
+}
+
+double Detector::getWidth() const
+{
+	return _width;
 }
 
 Vector3d Detector::getQVector(uint px, uint py) const

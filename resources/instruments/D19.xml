@@ -1,9 +1,9 @@
 <instrument name='D19'>
-    <component type='detector'>
+    <component type='multi_detector'>
         <name>banana</name>
         <nrows>256</nrows>
         <ncols>640</ncols>
-	    <component type='detector_panel'>
+	    <component type='planar_detector'>
 	        <name>panel1</name>
 	        <position units='m'>
 	            <x>0</x>

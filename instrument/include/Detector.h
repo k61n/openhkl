@@ -56,13 +56,25 @@ class Detector : public Component
 {
 public:
 
+	virtual ~Detector()=0;
+
+	//! Returns the detector height.
+	double getHeigth() const;
+	//! Returns the number of columns of the detector.
+	uint getNCols() const;
+	//! Returns the number of rows of the detector.
+	uint getNRows() const;
+	//! Returns the height of a detector pixel.
+	double getPixelHeigth() const;
+	//! Returns the width of a detector pixel.
+	double getPixelWidth() const;
+	//! Returns the detector width.
+	double getWidth() const;
 	virtual Vector3d getQVector(uint px, uint py) const;
-
 	bool hasPixel(uint px, uint py) const;
-
 	virtual void parse(const ptree& pt);
 
-	virtual ~Detector()=0;
+
 
 protected:
 
