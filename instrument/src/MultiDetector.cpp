@@ -40,7 +40,7 @@ Component* MultiDetector::create(const ptree& node)
 	return new MultiDetector(node);
 }
 
-MultiDetector::MultiDetector(const ptree& node)
+MultiDetector::MultiDetector(const ptree& node) : Composite<Detector>()
 {
 	parse(node);
 }
