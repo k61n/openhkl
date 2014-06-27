@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef NSXTOOL_MULTIDETECTOR_H_
-#define NSXTOOL_MULTIDETECTOR_H_
+#ifndef NSXTOOL_CYLINDRICALDETECTOR_H_
+#define NSXTOOL_CYLINDRICALDETECTOR_H_
 
 #include <boost/property_tree/ptree.hpp>
 
@@ -42,32 +42,28 @@ namespace Instrument
 {
 
 using boost::property_tree::ptree;
-using Eigen::Vector3d;;
+using Eigen::Vector3d;
 
 typedef unsigned int uint;
 
 class Component;
 
-class MultiDetector : public Composite<Detector>
+class CylindricalDetector : public Detector
 {
 public:
+	static Component* create(const ptree& pt);
 
-	static Component* create(const ptree&);
+	~CylindricalDetector();
 
-	~MultiDetector();
-
-	const Detector* findDetector(uint, uint) const;
-	Vector3d getQVector(uint, uint) const;
-	bool hasPixel(uint, uint) const;
-	void parse(const ptree&);
+	virtual Vector3d getQVector(uint px, uint py) const;
+	virtual void parse(const ptree& pt);
 
 protected:
-	MultiDetector(const ptree&);
-
+	CylindricalDetector(const ptree& pt);
 };
 
 } // end namespace Instrument
 
 } // end namespace SX
 
-#endif /* NSXTOOL_MULTIDETECTOR_H_ */
+#endif /* NSXTOOL_CYLINDRICALDETECTOR_H_ */

@@ -27,7 +27,9 @@
  */
 
 #include "ComponentFactory.h"
-#include "Detector.h"
+#include "CylindricalDetector.h"
+#include "MultiDetector.h"
+#include "PlanarDetector.h"
 
 namespace SX
 {
@@ -37,7 +39,10 @@ namespace Instrument
 
 ComponentFactory::ComponentFactory()
 {
-	registerCallback("detector",&Detector::create);
+	// Register in the component factory all the component instanciation callbacks.
+	registerCallback("cylindrical_detector",&CylindricalDetector::create);
+	registerCallback("planar_detector",&PlanarDetector::create);
+	registerCallback("multi_detector",&MultiDetector::create);
 }
 
 ComponentFactory::~ComponentFactory()

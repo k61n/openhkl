@@ -26,6 +26,7 @@
  *
  */
 
+#include "Component.h"
 #include "MultiDetector.h"
 
 namespace SX
@@ -33,6 +34,20 @@ namespace SX
 
 namespace Instrument
 {
+
+Component* MultiDetector::create(const ptree& node)
+{
+	return new MultiDetector(node);
+}
+
+MultiDetector::MultiDetector(const ptree& node)
+{
+	parse(node);
+}
+
+MultiDetector::~MultiDetector()
+{
+}
 
 const Detector* MultiDetector::findDetector(uint px, uint py) const
 {
@@ -45,7 +60,7 @@ const Detector* MultiDetector::findDetector(uint px, uint py) const
 	return nullptr;
 }
 
-Vector3d MultiDetector::getQVector(uint px, uint py)
+Vector3d MultiDetector::getQVector(uint px, uint py) const
 {
 	for (auto it=_components.begin();it!=_components.end();++it)
 	{
@@ -64,10 +79,10 @@ bool MultiDetector::hasPixel(uint px, uint py) const
 	return false;
 }
 
-MultiDetector::~MultiDetector()
+void MultiDetector::parse(const ptree& node)
 {
-}
 
+}
 
 } // end namespace Instrument
 

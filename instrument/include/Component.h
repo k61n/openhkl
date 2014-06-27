@@ -36,7 +36,6 @@
 #include <Eigen/Dense>
 
 #include "Composite.h"
-#include "IModifier.h"
 
 namespace SX
 {
@@ -44,10 +43,12 @@ namespace SX
 namespace Instrument
 {
 
-typedef unsigned int uint;
-
 using namespace SX::Kernel;
 using boost::property_tree::ptree;
+
+typedef unsigned int uint;
+
+class HomogeneousTransformation;
 
 /*
  * Interface for the components of an instrument (e.g. detector, goniometer, source ...).
@@ -71,7 +72,7 @@ protected:
 	//! Parse the XML component node.
 	virtual void parse(const ptree& pt)=0;
 
-//	IModifier *_modifier;
+	HomogeneousTransformation* _transformation;
 
 	//! The name of the component.
 	std::string _name;

@@ -47,6 +47,7 @@ public:
 	Instrument();
 	void add(Component* comp);
 	void load(const std::string& instrFile);
+
 protected:
 	void parse(const ptree& pt);
 };

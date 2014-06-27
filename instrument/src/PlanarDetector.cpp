@@ -26,14 +26,8 @@
  *
  */
 
-#ifndef NSXTOOL_MULTIDETECTOR_H_
-#define NSXTOOL_MULTIDETECTOR_H_
-
-#include <boost/property_tree/ptree.hpp>
-
-#include <Eigen/Dense>
-
-#include "Detector.h"
+#include "Component.h"
+#include "PlanarDetector.h"
 
 namespace SX
 {
@@ -41,33 +35,31 @@ namespace SX
 namespace Instrument
 {
 
-using boost::property_tree::ptree;
-using Eigen::Vector3d;;
-
-typedef unsigned int uint;
-
-class Component;
-
-class MultiDetector : public Composite<Detector>
+Component* PlanarDetector::create(const ptree& node)
 {
-public:
+	return new PlanarDetector(node);
+}
 
-	static Component* create(const ptree&);
+PlanarDetector::PlanarDetector(const ptree& node) : Detector()
+{
+	parse(node);
+}
 
-	~MultiDetector();
+PlanarDetector::~PlanarDetector()
+{
+}
 
-	const Detector* findDetector(uint, uint) const;
-	Vector3d getQVector(uint, uint) const;
-	bool hasPixel(uint, uint) const;
-	void parse(const ptree&);
+Vector3d PlanarDetector::getQVector(uint px, uint py) const
+{
 
-protected:
-	MultiDetector(const ptree&);
+}
 
-};
+void PlanarDetector::parse(const ptree& node)
+{
+
+}
 
 } // end namespace Instrument
 
 } // end namespace SX
 
-#endif /* NSXTOOL_MULTIDETECTOR_H_ */

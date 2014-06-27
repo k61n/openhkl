@@ -43,13 +43,9 @@ namespace Instrument
 
 using namespace SX::Units;
 
-std::unordered_map<std::string,Detector::shape> Detector::shapeMap=map_list_of("planar",shape::PLANAR)("cylindrical",shape::CYLINDRICAL);
-
-std::unordered_map<std::string,Detector::layout> Detector::layoutMap=map_list_of("by_column",layout::BY_COLUMN)("by_row",layout::BY_ROW);
-
-Component* Detector::create(const ptree& pt)
+Detector::Detector()
+: _nRows(0), _nCols(0), _rowMin(0), _colMin(0), _rowMax(0), _colMax(0), _width(0.0), _height(0.0), _pixelWidth(0.0), _pixelHeight(0.0)
 {
-	return new Detector(pt);
 }
 
 Detector::Detector(const ptree& pt) : Component()
@@ -103,16 +99,6 @@ void Detector::parse(const ptree& node)
 	_height *= unitManager->get(unit);
 
 	_pixelHeight=_height/_nRows;
-
-	auto it=shapeMap.find(node.get<std::string>("shape","planar"));
-	if (it==shapeMap.end())
-		throw std::runtime_error("Invalid detector shape.");
-	_shape=it->second;
-
-	auto it1=layoutMap.find(node.get<std::string>("layout","by_row"));
-	if (it1==layoutMap.end())
-		throw std::runtime_error("Invalid data layout.");
-	_layout=it1->second;
 
 }
 

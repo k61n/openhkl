@@ -56,37 +56,24 @@ class Detector : public Component
 {
 public:
 
-	//! Enumerates the possible detector shapes.
-	enum class shape {PLANAR=1,CYLINDRICAL=2};
-
-	enum class layout {BY_COLUMN=false,BY_ROW=true};
-
-	static std::unordered_map<std::string,shape> shapeMap;
-
-	static std::unordered_map<std::string,layout> layoutMap;
-
-	static Component* create(const ptree& pt);
-
-	Vector3d getQVector(uint px, uint py) const;
+	virtual Vector3d getQVector(uint px, uint py) const;
 
 	bool hasPixel(uint px, uint py) const;
 
 	virtual void parse(const ptree& pt);
 
-	virtual ~Detector();
+	virtual ~Detector()=0;
 
 protected:
 
-	Detector();
-
 	Detector(const ptree& pt);
+
+	Detector();
 
 	uint _nRows, _nCols;
 	uint _rowMin,_colMin, _rowMax, _colMax;
 	double _width, _height;
 	double _pixelWidth, _pixelHeight;
-	shape _shape;
-	layout _layout;
 
 };
 
