@@ -29,14 +29,20 @@
 #include <iostream>
 #include <stdexcept>
 
+#include <boost/foreach.hpp>
+
 #include "Component.h"
+#include "ComponentFactory.h"
 #include "MultiDetector.h"
+#include "Units.h"
 
 namespace SX
 {
 
 namespace Instrument
 {
+
+using SX::Units::UnitsManager;
 
 Component* MultiDetector::create(const ptree& node)
 {
@@ -84,16 +90,25 @@ bool MultiDetector::hasPixel(uint px, uint py) const
 
 void MultiDetector::parse(const ptree& node)
 {
-	std::cout<<"I AM PARSING A MULTIDETECTOR"<<std::endl;
+
+	// Call (or create) an instance of the instrument component factory.
+	ComponentFactory* compFactory = ComponentFactory::Instance();
+
 	_name=node.get<std::string>("name");
 
-	_nRows=node.get<uint>("nrows");
-	if (_nRows<=0)
-		throw std::runtime_error("The number of rows of a detector must be a strictly positive number.");
+	// Loop over the "component" nodes of the "multi_detector" XML node.
+	BOOST_FOREACH(ptree::value_type v, node)
+	{
 
-	_nCols=node.get<uint>("ncols");
-	if (_nRows<=0)
-		throw std::runtime_error("The number of columns of a detector must be a strictly positive number.");
+		if (v.first == "detector")
+		{
+			// Fetch the "type" component node attribute and get the corresponding Component object from the component factory.
+			std::string cType=v.second.get_child("<xmlattr>").get<std::string>("type");
+			Component* comp=compFactory->create(cType,v.second);
+			add(dynamic_cast<Detector*>(comp));
+		}
+	}
+
 }
 
 } // end namespace Instrument

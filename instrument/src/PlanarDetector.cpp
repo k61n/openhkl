@@ -26,6 +26,8 @@
  *
  */
 
+#include <iostream>
+
 #include "Component.h"
 #include "PlanarDetector.h"
 
@@ -56,7 +58,7 @@ Vector3d PlanarDetector::getQVector(uint px, uint py) const
 
 void PlanarDetector::parse(const ptree& node)
 {
-
+	Detector::parse(node);
 }
 
 } // end namespace Instrument

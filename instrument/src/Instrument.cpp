@@ -92,7 +92,7 @@ void Instrument::parse(const ptree& pt)
 	}
 }
 
-} // End namespace Instrument
+} // end namespace Instrument
 
-} // End namespace SX
+} // end namespace SX
 

@@ -27,6 +27,7 @@
  */
 
 #include "Component.h"
+#include "HomogeneousTransformation.h"
 
 namespace SX
 {
@@ -34,17 +35,27 @@ namespace SX
 namespace Instrument
 {
 
-Component::Component()
+using SX::Geometry::HomogeneousTransformation;
+
+Component::Component() : _transformation(nullptr)
 {
 }
 
-Component::Component(const ptree& pt)
+Component::Component(const ptree& node)
 {
 }
 
 const std::string& Component::getName() const
 {
 	return _name;
+}
+
+void Component::parseTransformationNode(const ptree& node)
+{
+
+	if (_transformation == nullptr)
+		_transformation = new HomogeneousTransformation();
+
 }
 
 Component::~Component()

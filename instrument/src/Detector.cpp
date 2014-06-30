@@ -96,6 +96,8 @@ bool Detector::hasPixel(uint px, uint py) const
 void Detector::parse(const ptree& node)
 {
 
+	std::cout<<"PARSE DETECTOR"<<std::endl;
+
 	UnitsManager* unitManager=UnitsManager::Instance();
 
 	_name=node.get<std::string>("name");

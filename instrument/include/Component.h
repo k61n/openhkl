@@ -40,6 +40,11 @@
 namespace SX
 {
 
+namespace Geometry
+{
+	class HomogeneousTransformation;
+}
+
 namespace Instrument
 {
 
@@ -48,7 +53,7 @@ using boost::property_tree::ptree;
 
 typedef unsigned int uint;
 
-class HomogeneousTransformation;
+using SX::Geometry::HomogeneousTransformation;
 
 /*
  * Interface for the components of an instrument (e.g. detector, goniometer, source ...).
@@ -71,6 +76,8 @@ protected:
 
 	//! Parse the XML component node.
 	virtual void parse(const ptree& pt)=0;
+
+	void parseTransformationNode(const ptree& pt);
 
 	HomogeneousTransformation* _transformation;
 

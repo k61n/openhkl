@@ -58,6 +58,8 @@ public:
 
 	virtual ~Detector()=0;
 
+	virtual void parse(const ptree& pt);
+
 	//! Returns the detector height.
 	double getHeigth() const;
 	//! Returns the number of columns of the detector.
@@ -72,9 +74,6 @@ public:
 	double getWidth() const;
 	virtual Vector3d getQVector(uint px, uint py) const;
 	bool hasPixel(uint px, uint py) const;
-	virtual void parse(const ptree& pt);
-
-
 
 protected:
 
