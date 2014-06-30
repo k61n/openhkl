@@ -1,9 +1,7 @@
 <instrument name='D19'>
     <component type='multi_detector'>
         <name>banana</name>
-        <nrows>256</nrows>
-        <ncols>640</ncols>
-	    <component type='planar_detector'>
+	    <detector type='planar_detector'>
 	        <name>panel1</name>
 	        <position units='m'>
 	            <x>0</x>
@@ -14,18 +12,20 @@
 	        <ncols>640</ncols>
 	        <row_min>0</row_min>
 	        <col_min>0</col_min>
-	        <shape>cylindrical</shape>
 	        <width units='m'>1.6</width>
 	        <height units='m'>0.4</height>
 	        <layout>by_column</layout>
 	        <modifier type="rotation">
 	            <name>Gamma</name>
 	            <mad_id>1</mad_id>
-	            <axis_x>0.0</axis_x>
-	            <axis_y>0.0</axis_y>
-	            <axis_z>1.0</axis_z>
+	            <axis>
+	            	<x>0.0</x>
+	            	<y>0.0</y>
+	            	<z>1.0</z>
+	            </axis>_x>0.0</axis_x>
+	            <offset>2.0</offset>
 	            <direction>CW</direction>
 	        </modifier>
-	    </component>	        
+	    </detector>	        
     </component>
 </instrument>

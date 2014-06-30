@@ -60,7 +60,7 @@ public:
 	HomogeneousTransformation();
 
 	//! The destructor.
-	virtual ~HomogeneousTransformation()=0;
+	~HomogeneousTransformation();
 
 	//! Add a new primitive transformation.
 	void addTransformation(PrimitiveTransformation*);
