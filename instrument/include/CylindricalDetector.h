@@ -55,8 +55,8 @@ public:
 
 	~CylindricalDetector();
 
-	virtual Vector3d getQVector(uint px, uint py) const;
-	virtual void parse(const ptree& pt);
+	Vector3d getQVector(uint px, uint py) const;
+	void parse(const ptree& pt);
 
 protected:
 	CylindricalDetector(const ptree& pt);

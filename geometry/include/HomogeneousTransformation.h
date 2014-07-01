@@ -40,14 +40,14 @@ namespace SX
 namespace Geometry
 {
 
-class PrimitiveTransformation;
-
 using Eigen::Affine;
 using Eigen::Matrix3d;
 using Eigen::Transform;
 using Eigen::Vector3d;
 
 typedef Transform<double,3,3,Affine> HomMatrix;
+
+class PrimitiveTransformation;
 
 /*
  * Defines a composite of primitive transformations.

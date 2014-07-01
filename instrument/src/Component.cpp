@@ -41,7 +41,7 @@ Component::Component() : _transformation(nullptr)
 {
 }
 
-Component::Component(const ptree& node)
+Component::Component(const ptree& node) : _transformation(nullptr)
 {
 }
 
@@ -50,13 +50,13 @@ const std::string& Component::getName() const
 	return _name;
 }
 
-void Component::parseTransformationNode(const ptree& node)
-{
-
-	if (_transformation == nullptr)
-		_transformation = new HomogeneousTransformation();
-
-}
+//void Component::parseTransformationNode(const ptree& node)
+//{
+//
+//	if (_transformation == nullptr)
+//		_transformation = new HomogeneousTransformation();
+//
+//}
 
 Component::~Component()
 {

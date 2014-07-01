@@ -77,8 +77,6 @@ protected:
 	//! Parse the XML component node.
 	virtual void parse(const ptree& pt)=0;
 
-	void parseTransformationNode(const ptree& pt);
-
 	HomogeneousTransformation* _transformation;
 
 	//! The name of the component.

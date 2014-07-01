@@ -45,7 +45,7 @@ using Eigen::Vector3d;
 typedef Transform<double,3,3,Affine> HomMatrix;
 
 /*
- * Defines an interface for primitive transformations (e.g. Rotation, Translation, Scaling) that will be the building block for
+ * Defines an interface for primitive transformations (e.g. Rotation, Scaling, Translation) that will be the building block for
  * any homogeneous transformation.
  */
 class PrimitiveTransformation
