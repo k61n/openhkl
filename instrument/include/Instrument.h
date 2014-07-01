@@ -29,6 +29,8 @@
 #ifndef NSXTOOL_INSTRUMENT_H_
 #define NSXTOOL_INSTRUMENT_H_
 
+#include <boost/property_tree/ptree.hpp>
+
 #include "Composite.h"
 #include "Component.h"
 
