@@ -33,6 +33,7 @@
 
 #include <Eigen/Dense>
 
+#include "Composite.h"
 #include "Detector.h"
 
 namespace SX
@@ -43,6 +44,7 @@ namespace Instrument
 
 using boost::property_tree::ptree;
 using Eigen::Vector3d;;
+using SX::Kernel::Composite;
 
 typedef unsigned int uint;
 
@@ -52,17 +54,19 @@ class MultiDetector : public Composite<Detector>
 {
 public:
 
-	static Component* create(const ptree&);
+	static Component* Create(const ptree&);
 
 	~MultiDetector();
 
-	const Detector* findDetector(uint, uint) const;
+	const Detector* const findDetector(uint, uint) const;
 	Vector3d getQVector(uint, uint) const;
 	bool hasPixel(uint, uint) const;
-	void parse(const ptree&);
 
 protected:
 	MultiDetector(const ptree&);
+
+private:
+	void _parse(const ptree&);
 
 };
 

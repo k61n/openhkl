@@ -69,23 +69,24 @@ void Instrument::load(const std::string& instrFile)
 	{
 		ptree pt;
 		read_xml(is, pt);
-		parse(pt);
+		parse(pt.get_child("instrument"));
 		is.close();
 	}
 }
 
-void Instrument::parse(const ptree& pt)
+void Instrument::_parse(const ptree& node)
 {
+
 	// Call (or create) an instance of the instrument component factory.
 	ComponentFactory* compFactory = ComponentFactory::Instance();
 
 	// Loop over the "component" nodes of the XML file.
-	BOOST_FOREACH(ptree::value_type v, pt.get_child("instrument"))
+	BOOST_FOREACH(ptree::value_type v, node)
 	{
 		if (v.first == "component")
 		{
 			// Fetch the "type" component node attribute and get the corresponding Component object from the component factory.
-			std::string cType=v.second.get_child("<xmlattr>").get<std::string>("type");
+			std::string cType=v.second.get<std::string>("<xmlattr>.type");
 			Component* comp=compFactory->create(cType,v.second);
 			add(comp);
 		}

@@ -47,11 +47,11 @@ class Instrument : Composite<Component>
 {
 public:
 	Instrument();
-	void add(Component* comp);
-	void load(const std::string& instrFile);
+	void add(Component*);
+	void load(const std::string&);
 
-protected:
-	void parse(const ptree& pt);
+private:
+	void _parse(const ptree&);
 };
 
 } // end namespace Instrument

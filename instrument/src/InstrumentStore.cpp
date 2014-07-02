@@ -32,7 +32,7 @@
 #include <string>
 #include <vector>
 
-#include <boost/filesystem.hpp>
+#include <boost/filesystem/operations.hpp>
 
 #include "InstrumentStore.h"
 #include "Path.h"

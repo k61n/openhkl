@@ -26,8 +26,12 @@
  *
  */
 
+#include <iostream>
+
+#include <boost/foreach.hpp>
+
 #include "Component.h"
-#include "HomogeneousTransformation.h"
+#include "Modifier.h"
 
 namespace SX
 {
@@ -35,13 +39,11 @@ namespace SX
 namespace Instrument
 {
 
-using SX::Geometry::HomogeneousTransformation;
-
-Component::Component() : _transformation(nullptr)
+Component::Component() : _modifier(nullptr), _name(), _position()
 {
 }
 
-Component::Component(const ptree& node) : _transformation(nullptr)
+Component::~Component()
 {
 }
 
@@ -50,19 +52,32 @@ const std::string& Component::getName() const
 	return _name;
 }
 
-//void Component::parseTransformationNode(const ptree& node)
-//{
-//
-//	if (_transformation == nullptr)
-//		_transformation = new HomogeneousTransformation();
-//
-//}
-
-Component::~Component()
+void Component::parse(const ptree& node)
 {
+
+	// A component must have a name in its XML node.
+	_name=node.get<std::string>("name");
+
+	// A component may have a x, y and z position in their corresponding XML node. If not, their position is set to the origin.
+	_position[0] = node.get<double>("position.<xmlattr>.x",0.0);
+	_position[1] = node.get<double>("position.<xmlattr>.y",0.0);
+	_position[2] = node.get<double>("position.<xmlattr>.z",0.0);
+
+	// Loop over the inner nodes to detect any "modifier" node. There must at most one such node.
+	BOOST_FOREACH(ptree::value_type v, node)
+	{
+		if (v.first == "modifier")
+		{
+			if (_modifier == nullptr)
+				_modifier=new Modifier(v.second);
+		}
+	}
+
+	// Parse the XML nodes that are specific to the components.
+	_parse(node);
 }
 
-} // End namespace Instrument
+} // end namespace Instrument
 
-} // End namespace SX
+} // end namespace SX
 

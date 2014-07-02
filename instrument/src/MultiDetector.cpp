@@ -44,7 +44,7 @@ namespace Instrument
 
 using SX::Units::UnitsManager;
 
-Component* MultiDetector::create(const ptree& node)
+Component* MultiDetector::Create(const ptree& node)
 {
 	return new MultiDetector(node);
 }
@@ -58,7 +58,7 @@ MultiDetector::~MultiDetector()
 {
 }
 
-const Detector* MultiDetector::findDetector(uint px, uint py) const
+const Detector* const MultiDetector::findDetector(uint px, uint py) const
 {
 
 	for (component_const_iterator it=_components.begin();it!=_components.end();++it)
@@ -88,22 +88,20 @@ bool MultiDetector::hasPixel(uint px, uint py) const
 	return false;
 }
 
-void MultiDetector::parse(const ptree& node)
+void MultiDetector::_parse(const ptree& node)
 {
 
 	// Call (or create) an instance of the instrument component factory.
 	ComponentFactory* compFactory = ComponentFactory::Instance();
 
-	_name=node.get<std::string>("name");
-
 	// Loop over the "component" nodes of the "multi_detector" XML node.
 	BOOST_FOREACH(ptree::value_type v, node)
 	{
 
-		if (v.first == "detector")
+		if (v.first == "component")
 		{
 			// Fetch the "type" component node attribute and get the corresponding Component object from the component factory.
-			std::string cType=v.second.get_child("<xmlattr>").get<std::string>("type");
+			std::string cType=v.second.get<std::string>("<xmlattr>.type");
 			Component* comp=compFactory->create(cType,v.second);
 			add(dynamic_cast<Detector*>(comp));
 		}
