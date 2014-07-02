@@ -51,15 +51,15 @@ class Component;
 class CylindricalDetector : public Detector
 {
 public:
-	static Component* create(const ptree& pt);
+	static Component* Create(const ptree& pt);
 
 	~CylindricalDetector();
 
 	Vector3d getQVector(uint px, uint py) const;
-	void parse(const ptree& pt);
 
 protected:
 	CylindricalDetector(const ptree& pt);
+
 };
 
 } // end namespace Instrument

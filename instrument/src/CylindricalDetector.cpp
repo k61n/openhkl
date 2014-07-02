@@ -26,6 +26,8 @@
  *
  */
 
+#include <iostream>
+
 #include "Component.h"
 #include "CylindricalDetector.h"
 
@@ -35,7 +37,7 @@ namespace SX
 namespace Instrument
 {
 
-Component* CylindricalDetector::create(const ptree& node)
+Component* CylindricalDetector::Create(const ptree& node)
 {
 	return new CylindricalDetector(node);
 }
@@ -50,11 +52,6 @@ CylindricalDetector::~CylindricalDetector()
 }
 
 Vector3d CylindricalDetector::getQVector(uint px, uint py) const
-{
-
-}
-
-void CylindricalDetector::parse(const ptree& node)
 {
 
 }
