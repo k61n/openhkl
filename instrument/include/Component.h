@@ -35,54 +35,58 @@
 
 #include <Eigen/Dense>
 
-#include "Composite.h"
+#include "XMLConfigurable.h"
 
 namespace SX
 {
 
-namespace Geometry
-{
-	class HomogeneousTransformation;
-}
-
 namespace Instrument
 {
 
-using namespace SX::Kernel;
 using boost::property_tree::ptree;
+using SX::Kernel::XMLConfigurable;
+
+class Modifier;
 
 typedef unsigned int uint;
-
-using SX::Geometry::HomogeneousTransformation;
 
 /*
  * Interface for the components of an instrument (e.g. detector, goniometer, source ...).
  */
-class Component
+class Component : public XMLConfigurable
 {
 public:
 
-	static Component* create(const ptree& pt);
+	static Component* Create(const ptree& pt);
 
+	//! The destructor.
+	virtual ~Component()=0;
+
+	//! Returns the name of the component.
 	const std::string& getName() const;
 
-	virtual ~Component()=0;
+	//! Parse the XML component node.
+	void parse(const ptree& pt);
 
 protected:
 
+	//! Default constructor.
 	Component();
 
+	//! Constructs a component from an XML node.
 	Component(const ptree& pt);
 
-	//! Parse the XML component node.
-	virtual void parse(const ptree& pt)=0;
-
-	HomogeneousTransformation* _transformation;
+	Modifier* _modifier;
 
 	//! The name of the component.
 	std::string _name;
 
+	//! The position of the component.
 	Eigen::Vector3d _position;
+
+private:
+	//! Parse the XML component node.
+	virtual void _parse(const ptree& pt)=0;
 
 };
 
