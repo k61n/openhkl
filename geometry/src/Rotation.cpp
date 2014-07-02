@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "Rotation.h"
 
 namespace SX
@@ -6,32 +8,26 @@ namespace SX
 namespace Geometry
 {
 
-Rotation::Rotation() : PrimitiveTransformation(), _axis(Vector3d(0,0,1)), _offset(0.0), _dir(Rotation::Direction::CCW)
+PrimitiveTransformation* Rotation::Create(const ptree& node)
+{
+	return new Rotation(node);
+}
+
+Rotation::Rotation() : PrimitiveTransformation(), _dir(Rotation::Direction::CCW)
 {
 }
 
-Rotation::Rotation(const Vector3d& axis, Rotation::Direction dir, double offset) : PrimitiveTransformation(), _axis(axis), _offset(offset), _dir(dir)
+Rotation::Rotation(const Vector3d& axis, Rotation::Direction dir, double offset) : PrimitiveTransformation(axis,offset), _dir(dir)
 {
-	_axis.normalize();
+}
+
+Rotation::Rotation(const ptree& node)
+{
+	parse(node);
 }
 
 Rotation::~Rotation()
 {
-}
-
-const Vector3d& Rotation::getAxis() const
-{
-	return _axis;
-}
-
-Vector3d& Rotation::getAxis()
-{
-	return _axis;
-}
-
-double Rotation::getOffset() const
-{
-	return _offset;
 }
 
 Rotation::Direction Rotation::getRotationDirection() const
@@ -67,16 +63,9 @@ HomMatrix Rotation::getTransformation(double angle) const
 	return trans;
 }
 
-void Rotation::setAxis(const Vector3d& v)
+void Rotation::_parse(const ptree& node)
 {
-	_axis=v;
-	// Normalize the axis in case it was not.
-	_axis.normalize();
-}
-
-void Rotation::setOffset(double offset)
-{
-	_offset=offset;
+	std::cout<<"I PARSE A ROTATION NODE"<<std::endl;
 }
 
 void Rotation::setRotationDirection(Rotation::Direction dir)

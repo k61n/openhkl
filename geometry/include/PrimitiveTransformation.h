@@ -29,7 +29,11 @@
 #ifndef NSXTOOL_PRIMITIVETRANSFORMATION_H_
 #define NSXTOOL_PRIMITIVETRANSFORMATION_H_
 
+#include <boost/property_tree/ptree.hpp>
+
 #include <Eigen/Dense>
+
+#include "XMLConfigurable.h"
 
 namespace SX
 {
@@ -37,10 +41,14 @@ namespace SX
 namespace Geometry
 {
 
+using boost::property_tree::ptree;
+
 using Eigen::Affine;
 using Eigen::Matrix3d;
 using Eigen::Transform;
 using Eigen::Vector3d;
+
+using SX::Kernel::XMLConfigurable;
 
 typedef Transform<double,3,3,Affine> HomMatrix;
 
@@ -48,11 +56,20 @@ typedef Transform<double,3,3,Affine> HomMatrix;
  * Defines an interface for primitive transformations (e.g. Rotation, Scaling, Translation) that will be the building block for
  * any homogeneous transformation.
  */
-class PrimitiveTransformation
+class PrimitiveTransformation : public XMLConfigurable
 {
 public:
-	//! The default constructor.
+
+	static PrimitiveTransformation* Create(const ptree&);
+
+	//! Default constructor.
 	PrimitiveTransformation();
+	//! Explicit constructor.
+	PrimitiveTransformation(const Vector3d&, double);
+	//! Constructor from an XML node.
+	PrimitiveTransformation(const ptree&);
+	//! Destructor.
+	virtual ~PrimitiveTransformation()=0;
 
 	//! Returns the rotation part of the homogeneous matrix.
 	virtual Matrix3d getRotation(double) const=0;
@@ -61,8 +78,29 @@ public:
 	//! Returns the translation part of the homogeneous matrix.
 	virtual Vector3d getTranslation(double) const=0;
 
-	//! The destructor.
-	virtual ~PrimitiveTransformation()=0;
+	//! Get the rotation axis.
+	const Vector3d& getAxis() const;
+	//! Get the rotation axis.
+	Vector3d& getAxis();
+	//! Get the angular offset of this axis (radians).
+	double getOffset() const;
+	void parse(const ptree&);
+	//! Set the transformation axis.
+	void setAxis(const Vector3d&);
+	//! Set the transformation offset.
+	void setOffset(double);
+
+protected:
+
+	std::string _name;
+
+	//! The transformation axis.
+	Vector3d _axis;
+
+	//! The offset (angle for rotation, distance for translation).
+	double _offset;
+
+	virtual void _parse(const ptree&)=0;
 
 };
 

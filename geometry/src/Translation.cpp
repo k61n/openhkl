@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "Translation.h"
 
 namespace SX
@@ -6,32 +8,26 @@ namespace SX
 namespace Geometry
 {
 
-Translation::Translation() : PrimitiveTransformation(), _axis(Vector3d(0,0,1)), _offset(0.0)
+PrimitiveTransformation* Translation::Create(const ptree& node)
+{
+	return new Translation(node);
+}
+
+Translation::Translation() : PrimitiveTransformation()
 {
 }
 
-Translation::Translation(const Vector3d& axis, double offset) : PrimitiveTransformation(), _axis(axis), _offset(offset)
+Translation::Translation(const Vector3d& axis, double offset) : PrimitiveTransformation(axis,offset)
 {
-	_axis.normalize();
+}
+
+Translation::Translation(const ptree& node)
+{
+	parse(node);
 }
 
 Translation::~Translation()
 {
-}
-
-const Vector3d& Translation::getAxis() const
-{
-	return _axis;
-}
-
-Vector3d& Translation::getAxis()
-{
-	return _axis;
-}
-
-double Translation::getOffset() const
-{
-	return _offset;
 }
 
 Matrix3d Translation::getRotation(double angle) const
@@ -56,16 +52,9 @@ HomMatrix Translation::getTransformation(double angle) const
 	return trans;
 }
 
-void Translation::setAxis(const Vector3d& v)
+void Translation::_parse(const ptree& node)
 {
-	_axis=v;
-	// Normalize the axis in case it was not.
-	_axis.normalize();
-}
-
-void Translation::setOffset(double offset)
-{
-	_offset=offset;
+	std::cout<<"I PARSE A TRANSLATION NODE"<<std::endl;
 }
 
 } // end namespace Geometry

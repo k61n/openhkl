@@ -29,6 +29,8 @@
 #ifndef NSXTOOL_ROTATION_H_
 #define NSXTOOL_ROTATION_H_
 
+#include <boost/property_tree/ptree.hpp>
+
 #include "PrimitiveTransformation.h"
 
 namespace SX
@@ -37,33 +39,30 @@ namespace SX
 namespace Geometry
 {
 
+using boost::property_tree::ptree;
+
 class Rotation : public PrimitiveTransformation
 {
 public:
 
 	//! Enumerates the possible rotation directions (clockwise-->CW or counter clockwise-->CCW).
 	enum class Direction {CW=0,CCW=1};
-	//! The default constructor.
+
+	static PrimitiveTransformation* Create(const ptree&);
+
+	//! Default constructor.
 	Rotation();
-	//! The explicit constructor.
+	//! Explicit constructor.
 	Rotation(const Vector3d&, Direction, double);
+	//! Constructor from an XML node.
+	Rotation(const ptree&);
 	//! The destructor.
 	~Rotation();
 
-	//! Get the rotation axis.
-	Vector3d& getAxis();
-	//! Get the rotation axis.
-	const Vector3d& getAxis() const;
-	//! Get the angular offset of this axis (radians).
-	double getOffset() const;
 	//! Returns the rotation part of the homogeneous matrix.
 	Matrix3d getRotation(double) const;
 	// ! Return 0 for CCW and 1 for CW.
 	Direction getRotationDirection() const;
-	//! Set the axis.
-	void setAxis(const Vector3d&);
-	//! Set the angular offset (radians) of this axis.
-	void setOffset(double);
 	//! Get rotation direction.
 	void setRotationDirection(Direction);
 	//! Returns the homogeneous matrix.
@@ -72,12 +71,10 @@ public:
 	Vector3d getTranslation(double) const;
 
 private:
-	//! The rotation axis.
-	Vector3d _axis;
-	//! The rotation angle offset.
-	double _offset;
 	//! The direction of the rotation.
 	Direction _dir;
+
+	void _parse(const ptree&);
 
 };
 

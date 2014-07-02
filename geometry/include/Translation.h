@@ -29,6 +29,8 @@
 #ifndef NSXTOOL_TRANSLATION_H_
 #define NSXTOOL_TRANSLATION_H_
 
+#include <boost/property_tree/ptree.hpp>
+
 #include "PrimitiveTransformation.h"
 
 namespace SX
@@ -37,39 +39,32 @@ namespace SX
 namespace Geometry
 {
 
+using boost::property_tree::ptree;
+
 class Translation : public PrimitiveTransformation
 {
 public:
 
-	//! The default constructor.
+	static PrimitiveTransformation* Create(const ptree&);
+
+	//! Default constructor.
 	Translation();
-	//! The explicit constructor.
+	//! Explicit constructor.
 	Translation(const Vector3d&, double);
+	//! Constructor from an XML node.
+	Translation(const ptree&);
 	//! The destructor.
 	~Translation();
 
-	//! Get the translation axis.
-	Vector3d& getAxis();
-	//! Get the translation axis.
-	const Vector3d& getAxis() const;
-	//! Get the angular offset of this axis (m).
-	double getOffset() const;
 	//! Returns the rotation part of the homogeneous matrix.
 	Matrix3d getRotation(double) const;
-	//! Set the axis.
-	void setAxis(const Vector3d&);
-	//! Set the angular offset (m) of this axis.
-	void setOffset(double);
 	//! Returns the homogeneous matrix.
 	HomMatrix getTransformation(double) const;
 	//! Returns the translation part of the homogeneous matrix.
 	Vector3d getTranslation(double) const;
 
 private:
-	//! The translation axis.
-	Vector3d _axis;
-	//! The translation angle offset.
-	double _offset;
+	void _parse(const ptree&);
 
 };
 
