@@ -30,6 +30,8 @@
 #include "CylindricalDetector.h"
 #include "MultiDetector.h"
 #include "PlanarDetector.h"
+#include "Rotation.h"
+#include "Translation.h"
 
 namespace SX
 {
@@ -37,19 +39,22 @@ namespace SX
 namespace Instrument
 {
 
+using SX::Geometry::Rotation;
+using SX::Geometry::Translation;
+
 ComponentFactory::ComponentFactory()
 {
-	// Register in the component factory all the component instanciation callbacks.
-	registerCallback("cylindrical_detector",&CylindricalDetector::create);
-	registerCallback("planar_detector",&PlanarDetector::create);
-	registerCallback("multi_detector",&MultiDetector::create);
+	// Register the component instanciation callbacks.
+	registerCallback("cylindrical_detector",&CylindricalDetector::Create);
+	registerCallback("planar_detector",&PlanarDetector::Create);
+	registerCallback("multi_detector",&MultiDetector::Create);
 }
 
 ComponentFactory::~ComponentFactory()
 {
 }
 
-} // End namespace Instrument
+} // end namespace Instrument
 
-} // End namespace SX
+} // end namespace SX
 
