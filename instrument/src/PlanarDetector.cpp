@@ -37,7 +37,7 @@ namespace SX
 namespace Instrument
 {
 
-Component* PlanarDetector::create(const ptree& node)
+Component* PlanarDetector::Create(const ptree& node)
 {
 	return new PlanarDetector(node);
 }
@@ -54,11 +54,6 @@ PlanarDetector::~PlanarDetector()
 Vector3d PlanarDetector::getQVector(uint px, uint py) const
 {
 
-}
-
-void PlanarDetector::parse(const ptree& node)
-{
-	Detector::parse(node);
 }
 
 } // end namespace Instrument

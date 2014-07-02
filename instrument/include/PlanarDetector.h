@@ -51,15 +51,11 @@ class Component;
 class PlanarDetector : public Detector
 {
 public:
-	static Component* create(const ptree& pt);
-
+	static Component* Create(const ptree& pt);
 	~PlanarDetector();
-
 	virtual Vector3d getQVector(uint px, uint py) const;
-	void parse(const ptree& pt);
 
 protected:
-
 	PlanarDetector(const ptree& pt);
 
 };
