@@ -56,9 +56,9 @@ class Detector : public Component
 {
 public:
 
-	virtual ~Detector()=0;
+	static Component* Create(const ptree& pt);
 
-	virtual void parse(const ptree& pt);
+	virtual ~Detector()=0;
 
 	//! Returns the detector height.
 	double getHeigth() const;
@@ -72,7 +72,9 @@ public:
 	double getPixelWidth() const;
 	//! Returns the detector width.
 	double getWidth() const;
+
 	virtual Vector3d getQVector(uint px, uint py) const;
+
 	bool hasPixel(uint px, uint py) const;
 
 protected:
@@ -85,6 +87,11 @@ protected:
 	uint _rowMin,_colMin, _rowMax, _colMax;
 	double _width, _height;
 	double _pixelWidth, _pixelHeight;
+
+protected:
+
+	virtual void _parse(const ptree& pt);
+
 
 };
 

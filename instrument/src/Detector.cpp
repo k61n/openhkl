@@ -44,7 +44,7 @@ namespace Instrument
 using namespace SX::Units;
 
 Detector::Detector()
-: _nRows(0), _nCols(0), _rowMin(0), _colMin(0), _rowMax(0), _colMax(0), _width(0.0), _height(0.0), _pixelWidth(0.0), _pixelHeight(0.0)
+: Component(), _nRows(0), _nCols(0), _rowMin(0), _colMin(0), _rowMax(0), _colMax(0), _width(0.0), _height(0.0), _pixelWidth(0.0), _pixelHeight(0.0)
 {
 }
 
@@ -93,27 +93,21 @@ bool Detector::hasPixel(uint px, uint py) const
 	return (px>=_rowMin) & (px<_rowMax) & (py>=_colMin) & (py<_colMax);
 }
 
-void Detector::parse(const ptree& node)
+void Detector::_parse(const ptree& node)
 {
 
-	std::cout<<"PARSE DETECTOR"<<std::endl;
-
 	UnitsManager* unitManager=UnitsManager::Instance();
-
-	_name=node.get<std::string>("name");
 
 	_nRows=node.get<uint>("nrows");
 	if (_nRows<=0)
 		throw std::runtime_error("The number of rows of a detector must be a strictly positive number.");
+	_rowMin=node.get<uint>("row_min",0);
+	_rowMax = _rowMin + _nRows;
 
 	_nCols=node.get<uint>("ncols");
 	if (_nRows<=0)
 		throw std::runtime_error("The number of columns of a detector must be a strictly positive number.");
-
-	_rowMin=node.get<uint>("row_min",0);
 	_colMin=node.get<uint>("col_min",0);
-
-	_rowMax = _rowMin + _nRows;
 	_colMax = _colMin + _nCols;
 
 	_width=node.get<double>("width");
@@ -121,7 +115,6 @@ void Detector::parse(const ptree& node)
 		throw std::runtime_error("The width of a detector must be a strictly positive number.");
 	std::string unit =node.get_child("width.<xmlattr>").get<std::string>("units");
 	_width *= unitManager->get(unit);
-
 	_pixelWidth=_width/_nCols;
 
 	_height=node.get<double>("height");
@@ -129,7 +122,6 @@ void Detector::parse(const ptree& node)
 		throw std::runtime_error("The height of a detector must be a strictly positive number.");
 	unit =node.get_child("height.<xmlattr>").get<std::string>("units");
 	_height *= unitManager->get(unit);
-
 	_pixelHeight=_height/_nRows;
 
 }
