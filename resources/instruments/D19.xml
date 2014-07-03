@@ -1,31 +1,31 @@
-<instrument name='D19'>
-    <component type='multi_detector'>
+<instrument>
+	<name>D19</name>
+    <component type="multi_detector">
         <name>banana</name>
-	    <detector type='planar_detector'>
+	    <component type="planar_detector">
 	        <name>panel1</name>
-	        <position units='m'>
-	            <x>0</x>
-	            <y>0.764</y>
-	            <z>0</z>
-	        </position>
+	        <position x="0.000" y="0.764" z="0.000" units="m"></position>
 	        <nrows>256</nrows>
 	        <ncols>640</ncols>
 	        <row_min>0</row_min>
 	        <col_min>0</col_min>
-	        <width units='m'>1.6</width>
-	        <height units='m'>0.4</height>
+	        <width units="m">1.6</width>
+	        <height units="m">0.4</height>
 	        <layout>by_column</layout>
-	        <modifier type="rotation">
-	            <name>Gamma</name>
-	            <mad_id>1</mad_id>
-	            <axis>
-	            	<x>0.0</x>
-	            	<y>0.0</y>
-	            	<z>1.0</z>
-	            </axis>_x>0.0</axis_x>
-	            <offset>2.0</offset>
-	            <direction>CW</direction>
+	        <modifier>
+	        	<name>my_modifier</name>
+	        	<transformation type="rotation">
+		            <name>gamma</name>
+		            <mad_id>1</mad_id>
+		            <axis x="0.000" y="0.000" z="1.000"></axis>
+		            <offset>2.0</offset>
+		            <direction>CW</direction>
+	            </transformation>
+	        	<transformation type="translation">
+		            <name>guide</name>
+		            <axis x="1.000" y="0.000" z="0.000"></axis>
+	            </transformation>
 	        </modifier>
-	    </detector>	        
+	    </component>	        
     </component>
 </instrument>

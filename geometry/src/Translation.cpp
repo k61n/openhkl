@@ -54,7 +54,6 @@ HomMatrix Translation::getTransformation(double angle) const
 
 void Translation::_parse(const ptree& node)
 {
-	std::cout<<"I PARSE A TRANSLATION NODE"<<std::endl;
 }
 
 } // end namespace Geometry

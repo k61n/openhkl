@@ -47,6 +47,8 @@ void PrimitiveTransformation::parse(const ptree& node)
 	_axis[1] = node.get<double>("axis.<xmlattr>.y");
 	_axis[2] = node.get<double>("axis.<xmlattr>.z");
 
+	_offset = node.get<double>("offset",0.0);
+
 	_parse(node);
 }
 

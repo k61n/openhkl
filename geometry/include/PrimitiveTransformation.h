@@ -32,6 +32,7 @@
 #include <boost/property_tree/ptree.hpp>
 
 #include <Eigen/Dense>
+#include <Eigen/Geometry>
 
 #include "XMLConfigurable.h"
 

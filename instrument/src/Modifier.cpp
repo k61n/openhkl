@@ -72,7 +72,6 @@ void Modifier::parse(const ptree& node)
 		{
 			// Fetch the "type" attribute if the running transformation node and get the corresponding PrimitiveTransformation object from the factory.
 			std::string tType=v.second.get<std::string>("<xmlattr>.type");
-			std::cout<<"aaa"<<tType<<std::endl;
 			PrimitiveTransformation* trans=factory->create(tType,v.second);
 		}
 	}

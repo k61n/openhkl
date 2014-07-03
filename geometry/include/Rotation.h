@@ -29,6 +29,9 @@
 #ifndef NSXTOOL_ROTATION_H_
 #define NSXTOOL_ROTATION_H_
 
+#include <map>
+#include <string>
+
 #include <boost/property_tree/ptree.hpp>
 
 #include "PrimitiveTransformation.h"
@@ -38,6 +41,8 @@ namespace SX
 
 namespace Geometry
 {
+
+typedef unsigned int uint;
 
 using boost::property_tree::ptree;
 
@@ -71,8 +76,13 @@ public:
 	Vector3d getTranslation(double) const;
 
 private:
+
+	static std::map<std::string,Direction> StringToDirection;
+
 	//! The direction of the rotation.
 	Direction _dir;
+
+	uint _madId;
 
 	void _parse(const ptree&);
 

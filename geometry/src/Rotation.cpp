@@ -8,16 +8,18 @@ namespace SX
 namespace Geometry
 {
 
+std::map<std::string,Rotation::Direction> Rotation::StringToDirection= {{"CW",Rotation::Direction::CW},{"CCW",Rotation::Direction::CCW}};
+
 PrimitiveTransformation* Rotation::Create(const ptree& node)
 {
 	return new Rotation(node);
 }
 
-Rotation::Rotation() : PrimitiveTransformation(), _dir(Rotation::Direction::CCW)
+Rotation::Rotation() : PrimitiveTransformation(), _dir(Rotation::Direction::CCW), _madId(0)
 {
 }
 
-Rotation::Rotation(const Vector3d& axis, Rotation::Direction dir, double offset) : PrimitiveTransformation(axis,offset), _dir(dir)
+Rotation::Rotation(const Vector3d& axis, Rotation::Direction dir, double offset) : PrimitiveTransformation(axis,offset), _dir(dir), _madId(0)
 {
 }
 
@@ -65,7 +67,8 @@ HomMatrix Rotation::getTransformation(double angle) const
 
 void Rotation::_parse(const ptree& node)
 {
-	std::cout<<"I PARSE A ROTATION NODE"<<std::endl;
+	_madId=node.get<uint>("mad_id",0);
+	_dir = StringToDirection[node.get<std::string>("direction","CW")];
 }
 
 void Rotation::setRotationDirection(Rotation::Direction dir)
