@@ -21,21 +21,13 @@
 #include <boost/math/special_functions/erf.hpp>
 #include <numpy/arrayobject.h>
 
-#include "Blob2D.h"
-#include "Blob2DFinder.h"
-#include "Blob3DFinder.h"
-#include "Cluster.h"
-#include "Ellipse.h"
-#include "Matrix33.h"
 #include "MetaData.h"
 #include "MetaDataWrapper.h"
-#include "MMILLAsciiReader.h"
-#include "RotAxis.h"
+#include "ILLAsciiDataReader.h"
 #include "Units.h"
 #include <Eigen/Dense>
 
 using namespace boost;
-using namespace SX::Geometry;
 using namespace SX::Units;
 
 // Attempt to read D19 ascii files using standard C++ is relatively slow (at
@@ -55,56 +47,7 @@ inline PyObject* vectorToNumpyMatrix(const vint& v,int ncols, int nrows)
 	return (PyObject*)ndmatrix;
 }
 
-inline PyObject* V3DToNumpy(const std::vector<V3D>& v)
-{
-    npy_intp dim[2]={v.size(),3};
-	PyObject* ndarray=PyArray_ZEROS(2,dim,NPY_DOUBLE,0);
-	for (size_t i=0;i<v.size();i++)
-	{
-		for (size_t j=0;j<3;j++)
-		{
-		// Access element number i, and cast from void* to double*
-		double* temp=(double*)PyArray_GETPTR2(ndarray,i,j);
-		// Copy element of v into the numpy vector
-		*temp=(v[i])[j];
-		}
-	}
-	return ndarray;
-}
 
-inline PyObject* BlobMapToNumPy(const blob2DCollection& m)
-{
-	npy_intp dim[2]={m.size(),6};
-	//Create an empty vector of the same size
-	PyObject* ndarray=PyArray_ZEROS(2,dim,NPY_DOUBLE,0);
-	int i=0;
-	for (auto it=m.begin();it!=m.end();++it)
-	{
-		const Blob2D& p=it->second;
-		double xc, yc, sa, sb, angle;
-		p.toEllipse(xc,yc,sa,sb,angle);
-		angle*=180.0/M_PI;
-		// Access element number i, and cast from void* to double*
-		double* temp=(double*)PyArray_GETPTR2(ndarray,i,0);
-		// Copy element of v into the numpy vector
-		*temp=xc;
-		temp=(double*)PyArray_GETPTR2(ndarray,i,1);
-		// Copy element of v into the numpy vector
-		*temp=yc;
-		temp=(double*)PyArray_GETPTR2(ndarray,i,2);
-		// Copy element of v into the numpy vector
-		*temp=sa;
-		temp=(double*)PyArray_GETPTR2(ndarray,i,3);
-		// Copy element of v into the numpy vector
-		*temp=sb;
-		temp=(double*)PyArray_GETPTR2(ndarray,i,4);
-		// Copy element of v into the numpy vector
-		*temp=angle;
-		temp=(double*)PyArray_GETPTR2(ndarray,i++,5);
-		*temp=p.getMass();
-	}
-	return ndarray;
-}
 
 
 class Scan2D
@@ -115,8 +58,9 @@ class Scan2D
     }
     void readFromFile(const std::string& filename)
     {
-        SX::Data::MMILLAsciiReader mm(filename.c_str());
-	    _meta=mm.readMetaDataBlock();
+        SX::Data::IDataReader* mm=SX::Data::ILLAsciiDataReader::create();
+        mm->open(filename.c_str());
+	    _meta=mm->getMetaData();
 
 	    _wave=_meta->getKey<double>("wavelength");
 	    _gamma=_meta->getKey<double>("2theta(gamma)");
@@ -140,169 +84,26 @@ class Scan2D
 	    std::cout << "Step omega:" << _scanstep << std::endl;
 	    std::cout << "Number of frames:" << _meta->getKey<int>("npdone") << std::endl;
 
-	    _frames.resize(mm.nBlocks());
-	    _sum.resize(mm.nBlocks());
-	    _nframes=mm.nBlocks();
+	    
+	    _nframes=mm->nFrames();
+	    _frames.resize(_nframes);
+	    _sum.resize(_nframes);
 	    #pragma omp parallel for
-	    for (std::size_t i=0;i<mm.nBlocks();++i)
+	    for (std::size_t i=0;i<mm->nFrames();++i)
 	    {
-		    _frames[i]=std::move(mm.readBlock(i));
+		    _frames[i]=std::move(mm->getFrame(i));
 		    _sum[i]=std::accumulate(_frames[i].begin(),_frames[i].end(),0);
 	    }
 
 	}
 
 
-    PyObject* labelling(int frame, double s2n)
-	{
-	    int max=s2n*_sum[frame]/(_nrows*_ncols);
-	    vint& m=_frames[frame];
-	    int* ptr=&m[0];
-	    blob2DCollection blobs=findBlobs2D<int>(ptr,_nrows,_ncols,max,10,1000,0);
-	    //for (auto it=blobs.begin();it!=blobs.end();)
-	    //{
-	    //    Blob2D& p=it->second;
-	    //    if (p.getMaximumMass()<6.0*max)
-	    //        it=blobs.erase(it);
-	    //    else
-	    //        it++;
-	    //}
-	    std::cout << "Found " << blobs.size() << " blobs \n";
-
-	    return BlobMapToNumPy(blobs);
-	}
 
 	void setWavelength(double lam)
 	{
 	    _wave=lam;
 	}
 
-	int labelling3D(double s2n, int minComp=20, int maxComp=1000, double confidence=0.9)
-	{
-	    std::vector<int*> ptr;
-	    for (int i=0;i<_nframes;++i)
-	    {
-	        vint& m=_frames[i];
-	        ptr.push_back(&m[0]);
-	    }
-	    //int total=std::accumulate(_sum.begin(),_sum.end(),0);
-	    //double z=static_cast<double>(total)/(_nrows*_ncols*_nframes);
-	    double z=1;
-	    std::cout << "Search peaks above" << z*s2n << std::endl;
-	    blob3DCollection blobs=findBlobs3D<int>(ptr,_nrows,_ncols,s2n*z,minComp,maxComp,0);
-        std::cout << "Found" << blobs.size() << " blobs \n";
-
-	    // Convert to Q
-//	    double R=0.764;
-//        double h=0.40;
-
-//	    UnitCellFinder finder(0.1,0.01);
-//	    std::vector<V3D> points;
-//	    for (auto it=blobs.begin();it!=blobs.end();++it)
-//	    {
-//
-//	        V3D v=it->second.getCenterOfMass();
-//	        double gamma=(((640.0-v[0])/640.0)*120+(_gamma-60.))*deg;
-//            double nu=atan2((0.5-v[1]/256.0)*h,R);
-//            double Qx=cos(nu)*sin(gamma);
-//            double Qy=cos(nu)*cos(gamma)-1.0;
-//            double Qz=sin(nu);
-//            double omega=(_scanstart+v[2]*_scanstep)*deg;
-//            double newQx=Qx*cos(omega)-Qy*sin(omega);
-//            double newQy=Qx*sin(omega)+Qy*cos(omega);
-//            double newQz=Qz;
-//            newQx/=_wave;
-//            newQy/=_wave;
-//            newQz/=_wave;Ellipse(center,semi_axes, axis1, axis2)
-//	        finder.addPeak(V3D(newQx,newQy,newQz));
-//	        points.push_back(V3D(newQx,newQy,newQz));
-//	    }
-//	    finder.run(1.0);
-//	    std::cout << "Found " << finder.getNumberOfClusters() << " clusters.";
-
-
-//	    const std::multimap<double,Cluster>& mm=finder.getClusters();
-//	    int total=0;
-
-//        finder.determineLattice(20);
-//	    return V3DToNumpy(points);
-
-
-        	Eigen::Vector3d center, semi_axes, v0,v1,v2,axis1,axis2;
-
-			for (auto b_it=blobs.begin(); b_it!=blobs.end(); ++b_it)
-			{
-				b_it->second.toEllipsoid(center,semi_axes,v0,v1,v2);
-				if (semi_axes[0]<0.5)
-					continue;
-				double h=std::pow(semi_axes[0]*v0[2],2)+std::pow(semi_axes[1]*v1[2],2)+std::pow(semi_axes[2]*v2[2],2);
-				// bounding box along z
-				h=sqrt(2.0)*boost::math::erf_inv(confidence)*sqrt(h);
-				int fmin=std::floor(center[2]-h);
-				int fmax=std::floor(center[2]+h);
-				for (int i=fmin; i<=fmax; ++i)
-				{
-					_ellipses.insert(std::pair<int,ellipseVector>(i,ellipseVector()));
-
-					bool test = b_it->second.intersectionWithPlane(0,0,1.0,i,center,semi_axes,axis1,axis2, confidence);
-					if (test)
-					{
-						Ellipse ell(center,semi_axes, axis1, axis2);
-						auto match= _ellipses.find(i);
-						if (match==_ellipses.end())
-							_ellipses.insert(std::make_pair(i,ellipseVector(1,ell)));
-						else
-							match->second.push_back(ell);
-					}
-				}
-			}
-
-		return blobs.size();
-
-	}
-
-    PyObject* getEllipses(int idx)
-    {
-
-    	auto e_it = _ellipses.find(idx);
-    	if (e_it != _ellipses.end())
-    	{
-    		int nEllipses = e_it->second.size();
-        	npy_intp dim[2]={nEllipses,6};
-        	PyObject* ndarray=PyArray_ZEROS(2,dim,NPY_DOUBLE,0);
-			for (size_t i=0; i < nEllipses;i++)
-			{
-				Ellipse& ell = e_it->second[i];
-				const Vector3d& center = ell.getCenter();
-				const Vector3d& axes = 2.0*ell.getSemiAxes();
-				const Vector3d& axis1 = ell.getAxis1();
-				double angle = atan2(axis1[1],axis1[0])*180.0/M_PI;
-
-				double* temp=(double*)PyArray_GETPTR2(ndarray,i,0);
-				*temp = center[0];
-
-				temp=(double*)PyArray_GETPTR2(ndarray,i,1);
-				*temp = center[1];
-
-				temp=(double*)PyArray_GETPTR2(ndarray,i,2);
-				*temp = center[2];
-
-				temp=(double*)PyArray_GETPTR2(ndarray,i,3);
-				*temp = axes[0];
-
-				temp=(double*)PyArray_GETPTR2(ndarray,i,4);
-				*temp = axes[1];
-
-				temp=(double*)PyArray_GETPTR2(ndarray,i,5);
-				*temp = angle;
-			}
-
-			return ndarray;
-    	}
-
-    return 0;
-
-    }
 
 
     PyObject* getFrame(int i)
@@ -358,8 +159,6 @@ class Scan2D
     std::vector<vint> _frames;
     std::vector<int> _sum;
 	SX::Data::MetaData* _meta;
-	typedef std::vector<Ellipse> ellipseVector;
-	std::map<int,ellipseVector> _ellipses;
 	int _nrows, _ncols;
 };
 
@@ -375,14 +174,11 @@ BOOST_PYTHON_MODULE(libD19)
     class_<Scan2D>("Scan2D",init<>())
     .def("readFromFile",&Scan2D::readFromFile)
 	.def("getFrame", &Scan2D::getFrame)
-	.def("labelling",&Scan2D::labelling)
-	.def("labelling3D",&Scan2D::labelling3D)
 	.def("setWavelength",&Scan2D::setWavelength)
 	.def("getCounts",&Scan2D::getCounts)
 	.def("getKey",&Scan2D::getKey)
 	.def("getKeyAsString",&Scan2D::getKeyAsString)
 	.def("getAllKeys",&Scan2D::getAllKeys)
 	.def("getNFrames",&Scan2D::getNFrames)
-	.def("getEllipses",&Scan2D::getEllipses)
 	;
 }
