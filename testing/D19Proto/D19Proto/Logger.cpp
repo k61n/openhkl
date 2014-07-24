@@ -9,12 +9,17 @@ std::unordered_map<Logger::LEVEL,std::string, std::hash<int> > Logger::Levels = 
 
 Logger::Logger(QWidget* parent):QTextEdit(parent)
 {
+
 }
 
 bool Logger::canInsertFromMimeData(const QMimeData* source) const
 {
     return source->hasImage() || source->hasUrls() ||
         QTextEdit::canInsertFromMimeData(source);
+}
+Logger::~Logger()
+{
+
 }
 
 void Logger::insertFromMimeData(const QMimeData* source)
@@ -46,6 +51,23 @@ std::ostringstream& Logger::log(Logger::LEVEL level)
 {
     boost::posix_time::ptime now=boost::posix_time::second_clock::local_time();
 
+    switch(level)
+    {
+    case(DEBUG):
+        setTextColor( QColor( "green" ) );
+        break;
+    case(INFO):
+        setTextColor( QColor( "blue" ) );
+        break;
+    case(WARNING):
+        setTextColor( QColor( "orange" ) );
+        break;
+
+    case(ERROR):
+        setTextColor( QColor( "red" ) );
+        break;
+    };
+
     os << boost::posix_time::to_simple_string(now).c_str() << " (" << Levels[level] << ") --> ";
 
     return os;
@@ -65,4 +87,12 @@ void Logger::dropTextFile(const QUrl& url)
     QFile file(url.toLocalFile());
     if (file.open(QIODevice::ReadOnly | QIODevice::Text))
         textCursor().insertText(file.readAll());
+}
+
+void Logger::flush()
+{
+    append(QString::fromStdString(os.str()));
+    os.str("");
+    os.clear();
+    setTextColor(QColor("black"));
 }

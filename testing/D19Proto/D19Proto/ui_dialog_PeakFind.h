@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'dialog_PeakFind.ui'
 **
-** Created: Thu Jul 24 11:59:14 2014
+** Created: Thu Jul 24 14:27:23 2014
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!

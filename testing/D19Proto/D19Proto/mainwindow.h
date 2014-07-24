@@ -36,8 +36,6 @@ private slots:
 
     void on_doubleSpinBox_valueChanged(double arg1);
 
-    void on_numor_Widget_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
-
     void on_pushButton_openFile_pressed();
 
     void on_spinBox_max_valueChanged(int arg1);
@@ -53,6 +51,7 @@ private slots:
     void on_pushButton_PeakFind_clicked();
 
     void on_textLogger_customContextMenuRequested(const QPoint &pos);
+
 
 private:
     void updatePlot(const std::string& numor);

@@ -15,12 +15,15 @@ struct Data
     void readInMemory();
     // Release the data from memory
     void releaseMemory();
-
+    // Get the histogram of intensity distribution
+    std::vector<int> getCountsHistogram();
 
     int _nblocks;
     std::unique_ptr<SX::Data::IDataReader> mm;
     vint _frames;
     std::vector<vint> _data;
+    std::vector<int> _sum;
+    int _maxCount;
     bool _inmemory;
 
 };

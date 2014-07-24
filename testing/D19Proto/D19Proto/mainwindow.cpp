@@ -122,7 +122,7 @@ void MainWindow::on_action_Open_triggered()
 
            ui->textLogger->log(Logger::INFO) << "File: " << fileNames[i].toStdString() << " is not readable as a Numor";
            ui->textLogger->flush();
-           ui->textLogger->update();
+
            continue;
         }
         ui->numor_Widget->addItem(litem);
@@ -198,19 +198,6 @@ void MainWindow::on_doubleSpinBox_valueChanged(double arg1)
     ui->_dview->setGraphicsEffect(_blur);
 }
 
-void MainWindow::on_numor_Widget_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous)
-{
-    ui->numor_Widget->setSelectionMode(QAbstractItemView::MultiSelection);
-    if (current==previous || current == nullptr)
-        return;
-    std::string numor=current->text().toStdString();
-    int nmax=_data[numor]._nblocks-1;
-    ui->horizontalScrollBar->setMaximum(nmax);
-    ui->spinBox_Frame->setMaximum(nmax);
-    updatePlot(numor);
-
-}
-
 void MainWindow::updatePlot(const std::string& numor)
 {
     auto it=_data.find(numor);
@@ -249,11 +236,11 @@ void MainWindow::deleteNumors()
     updatePlot(std::string());
     ui->textLogger->log(Logger::INFO) <<  selNumors.size() << " file(s) have been deleted\n";
     ui->textLogger->flush();
+    ui->_dview->setCurrentData(nullptr);
 
 }
 
 
-void on_pushButton_PeakFind_clicked();
 
 void MainWindow::on_spinBox_max_valueChanged(int arg1)
 {
@@ -281,6 +268,7 @@ void MainWindow::on_numor_Widget_itemDoubleClicked(QListWidgetItem *item)
     updatePlot(numor);
     ui->textLogger->log(Logger::INFO) <<  "File " << numor << " selected \n";
     ui->textLogger->flush();
+    ui->_dview->setCurrentData(&_data[numor]);
 }
 
 void MainWindow::on_numor_Widget_itemActivated(QListWidgetItem *item)
@@ -289,6 +277,8 @@ void MainWindow::on_numor_Widget_itemActivated(QListWidgetItem *item)
     if (item == nullptr)
         return;
     std::string numor=item->text().toStdString();
+    ui->textLogger->log(Logger::INFO) << numor << std::endl;
+    ui->textLogger->flush();
     int nmax=_data[numor]._nblocks-1;
     ui->horizontalScrollBar->setMaximum(nmax);
     ui->spinBox_Frame->setMaximum(nmax);
@@ -323,24 +313,36 @@ void MainWindow::on_pushButton_PeakFind_clicked()
     {
         Data& d=(*it).second;
         d.readInMemory();
+        ui->textLogger->log(Logger::DEBUG) << "Finish reading" << std::endl;
+        ui->textLogger->flush();
         std::vector<int*> temp(d._nblocks);
+
         for (int i=0;i<d._nblocks;++i)
         {
             vint& v=d._data[i];
             temp[i]=&(v[0]);
         }
+
+        std::vector<int> v=d.getCountsHistogram();
+        for (auto i=0;i<v.size();++i)
+        {
+            ui->textLogger->log(Logger::DEBUG) << v[i] << std::endl;
+
+        }
+        ui->textLogger->flush();
         SX::Geometry::blob3DCollection blobs;
         try
         {
             blobs=std::move(SX::Geometry::findBlobs3D<int>(temp, 256,640, threshold, 5, 10000, confidence, 0));
         }catch(std::bad_alloc& e)
         {
-            std::cout << "Bad alloc detected " << std::endl;
+            ui->textLogger->log(Logger::WARNING) << e.what() << "(Peak find, memory allocation error. Increase Threshold level)";
+            ui->textLogger->flush();
         }
 
-        //std::cout << "Found" << blobs.size() << " peaks " << std::endl;
-        //std::for_each(blobs.begin(),blobs.end(),
-        //              [](std::pair<int,SX::Geometry::Blob3D> b){ std::cout << b.second << std::endl;});
+        ui->textLogger->log(Logger::INFO) << "Found " << blobs.size() << " peaks";
+        ui->textLogger->flush();
+
         // Now free the memory
         (*it).second.releaseMemory();
     }

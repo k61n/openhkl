@@ -20,19 +20,14 @@ public:
     static std::unordered_map<LEVEL,std::string, std::hash<int>> Levels;
 
     Logger(QWidget* parent=0);
-
-    std::ostringstream& log(LEVEL level=INFO);
-
-    void flush()
-    {
-        append(QString::fromStdString(os.str()));
-        os.str("");
-        os.clear();
-    }
+    virtual ~Logger();
 
     bool canInsertFromMimeData(const QMimeData* source) const;
 
     void insertFromMimeData(const QMimeData* source);
+    std::ostringstream& log(LEVEL level=INFO);
+
+    void flush();
 
 private:
 

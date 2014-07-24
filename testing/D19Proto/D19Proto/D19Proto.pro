@@ -7,8 +7,6 @@
 QT       += core gui
 QMAKE_CXXFLAGS += -std=c++0x -fopenmp
 QMAKE_CFLAGS_DEBUG += -fopenmp
-QT += widgets
-
 
 TARGET = D19Proto
 TEMPLATE = app

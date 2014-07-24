@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'DialogPeakFind.h'
 **
-** Created: Thu Jul 24 11:59:30 2014
+** Created: Thu Jul 24 14:27:37 2014
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.1)
 **
 ** WARNING! All changes made in this file will be lost!

@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'mainwindow.h'
 **
-** Created: Thu Jul 24 12:40:17 2014
+** Created: Thu Jul 24 16:28:11 2014
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.1)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ static const uint qt_meta_data_MainWindow[] = {
        6,       // revision
        0,       // classname
        0,    0, // classinfo
-      13,   14, // methods
+      12,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -35,15 +35,14 @@ static const uint qt_meta_data_MainWindow[] = {
       45,   39,   11,   11, 0x08,
       86,   39,   11,   11, 0x08,
      117,  112,   11,   11, 0x08,
-     172,  155,   11,   11, 0x08,
-     242,   11,   11,   11, 0x08,
-     275,  112,   11,   11, 0x08,
-     308,   11,   11,   11, 0x08,
-     328,  323,   11,   11, 0x08,
-     380,  323,   11,   11, 0x08,
-     432,  428,   11,   11, 0x08,
-     456,   11,   11,   11, 0x08,
-     489,  428,   11,   11, 0x08,
+     155,   11,   11,   11, 0x08,
+     188,  112,   11,   11, 0x08,
+     221,   11,   11,   11, 0x08,
+     241,  236,   11,   11, 0x08,
+     293,  236,   11,   11, 0x08,
+     345,  341,   11,   11, 0x08,
+     369,   11,   11,   11, 0x08,
+     402,  341,   11,   11, 0x08,
 
        0        // eod
 };
@@ -53,8 +52,6 @@ static const char qt_meta_stringdata_MainWindow[] = {
     "value\0on_horizontalScrollBar_valueChanged(int)\0"
     "on_dial_valueChanged(int)\0arg1\0"
     "on_doubleSpinBox_valueChanged(double)\0"
-    "current,previous\0"
-    "on_numor_Widget_currentItemChanged(QListWidgetItem*,QListWidgetItem*)\0"
     "on_pushButton_openFile_pressed()\0"
     "on_spinBox_max_valueChanged(int)\0"
     "deleteNumors()\0item\0"
@@ -75,15 +72,14 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 1: _t->on_horizontalScrollBar_valueChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 2: _t->on_dial_valueChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 3: _t->on_doubleSpinBox_valueChanged((*reinterpret_cast< double(*)>(_a[1]))); break;
-        case 4: _t->on_numor_Widget_currentItemChanged((*reinterpret_cast< QListWidgetItem*(*)>(_a[1])),(*reinterpret_cast< QListWidgetItem*(*)>(_a[2]))); break;
-        case 5: _t->on_pushButton_openFile_pressed(); break;
-        case 6: _t->on_spinBox_max_valueChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 7: _t->deleteNumors(); break;
-        case 8: _t->on_numor_Widget_itemDoubleClicked((*reinterpret_cast< QListWidgetItem*(*)>(_a[1]))); break;
-        case 9: _t->on_numor_Widget_itemActivated((*reinterpret_cast< QListWidgetItem*(*)>(_a[1]))); break;
-        case 10: _t->ShowContextMenu((*reinterpret_cast< const QPoint(*)>(_a[1]))); break;
-        case 11: _t->on_pushButton_PeakFind_clicked(); break;
-        case 12: _t->on_textLogger_customContextMenuRequested((*reinterpret_cast< const QPoint(*)>(_a[1]))); break;
+        case 4: _t->on_pushButton_openFile_pressed(); break;
+        case 5: _t->on_spinBox_max_valueChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 6: _t->deleteNumors(); break;
+        case 7: _t->on_numor_Widget_itemDoubleClicked((*reinterpret_cast< QListWidgetItem*(*)>(_a[1]))); break;
+        case 8: _t->on_numor_Widget_itemActivated((*reinterpret_cast< QListWidgetItem*(*)>(_a[1]))); break;
+        case 9: _t->ShowContextMenu((*reinterpret_cast< const QPoint(*)>(_a[1]))); break;
+        case 10: _t->on_pushButton_PeakFind_clicked(); break;
+        case 11: _t->on_textLogger_customContextMenuRequested((*reinterpret_cast< const QPoint(*)>(_a[1]))); break;
         default: ;
         }
     }
@@ -121,9 +117,9 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 13)
+        if (_id < 12)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 13;
+        _id -= 12;
     }
     return _id;
 }
