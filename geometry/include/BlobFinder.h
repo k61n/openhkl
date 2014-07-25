@@ -374,12 +374,12 @@ namespace Geometry
 						//
 						if (newlabel) // Create a new blob if necessary
 						{
-							blobs.insert(blob3DCollection::value_type(label,Blob3D(col,row,frame,1)));
+							blobs.insert(blob3DCollection::value_type(label,Blob3D(col,row,frame,value)));
 						}
 						else
 						{
 							auto it=blobs.find(label);
-							it->second.addPoint(col,row,frame,1);
+							it->second.addPoint(col,row,frame,value);
 						}
 					}
 				}

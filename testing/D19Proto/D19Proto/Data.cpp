@@ -2,6 +2,9 @@
 #include "ILLAsciiDataReader.h"
 #include <algorithm>
 #include <iostream>
+#include <QProgressBar>
+
+
 
 Data::Data():mm(SX::Data::ILLAsciiDataReader::create()),_inmemory(false),_maxCount(0)
 {
@@ -16,28 +19,32 @@ void Data::fromFile(const std::string& filename)
     mm->open(filename.c_str());
     _nblocks=mm->nFrames();
     _sum.resize(_nblocks);
-    _frames=std::move(mm->getFrame(0));
-    _sum[0]=std::accumulate(_frames.begin(),_frames.end(),0,std::plus<int>());
+    _currentFrame=std::move(mm->getFrame(0));
+    _sum[0]=std::accumulate(_currentFrame.begin(),_currentFrame.end(),0,std::plus<int>());
 }
 void Data::readBlock(int i)
 {
     if (!_inmemory)
     {
-        _frames=std::move(mm->getFrame(i));
-        _sum[i]=std::accumulate(_frames.begin(),_frames.end(),0,std::plus<int>());
+        _currentFrame=std::move(mm->getFrame(i));
+        _sum[i]=std::accumulate(_currentFrame.begin(),_currentFrame.end(),0,std::plus<int>());
     }
     else
     {
-        _frames=_data[i];
+        _currentFrame=_data[i];
     }
 }
-void Data::readInMemory()
+void Data::readInMemory(QProgressBar* bar)
 {
     if (!_inmemory)
     {
         _data.resize(_nblocks);
 
         int count=0;
+
+int counter=0;
+
+
 #pragma omp parallel for shared(count)
         for (int i=0;i<_nblocks;++i)
         {
@@ -47,6 +54,21 @@ void Data::readInMemory()
             auto it=std::max_element(_data[i].begin(),_data[i].end(),std::less<int>());
             if ((*it)>count)
                 count=(*it);
+            if (bar)
+            {
+#pragma omp critical
+                {
+                int progress=static_cast<int>(100.0*counter++/_nblocks);
+                //bar->setFormat("Reading Numor: "+QString::number(progress)+"%");
+                //bar->setValue(progress);
+                }
+            }
+        }
+        if (bar)
+        {
+            bar->setFormat("");
+            bar->setValue(0);
+            bar->setEnabled(false);
         }
         _maxCount=count;
         _inmemory=true;
@@ -62,16 +84,17 @@ void Data::releaseMemory()
         _data[i].empty();
     }
     _data.empty();
+    _sum.empty();
     _inmemory=false;
     _maxCount=0;
 }
 
-std::vector<int> Data::getCountsHistogram()
+void Data::getCountsHistogram(std::vector<int>& histo)
 {
     if (!_inmemory)
-        readInMemory();
+        readInMemory(nullptr);
     //
-    std::vector<int> histo(_maxCount);
+    histo.resize(_maxCount);
 
     for (auto i=0;i<_nblocks;++i)
     {
@@ -81,5 +104,4 @@ std::vector<int> Data::getCountsHistogram()
             histo[d[j]]++;
         }
     }
-    return histo;
 }

@@ -9,52 +9,9 @@
 #include <QMessageBox>
 #include <QMouseEvent>
 #include "BlobFinder.h"
+#include <Ellipsoid.h>
 
-typedef struct {
-    double r,g,b;
-} COLOUR;
 
-COLOUR GetColour(double v,double vmin,double vmax)
-{
-   COLOUR c = {1.0,1.0,1.0}; // white
-   double dv;
-
-   if (v < vmin)
-      v = vmin;
-   if (v > vmax)
-      v = vmax;
-   dv = vmax - vmin;
-
-   if (v < (vmin + 0.4 * dv)) {
-      c.r = 2.5*(v-vmin) / dv;
-      c.g = 0;
-      c.b = 0;
-   } else if (v < (vmin + 0.8 * dv)) {
-      c.r = 1;
-      c.g = 1 + 2.5 * (-vmin - 0.4 * dv + v) / dv;
-      c.b=  0.;
-   } else {
-      c.r = 1;
-      c.g = 1;
-      c.b = 1 + 4 * (-vmin - 0.8 * dv +v) / dv;
-    }
-   return c;
-}
-
-QImage Mat2QImage(int* src, int rows, int cols,double max=10.0)
-{
-        QImage dest(cols, rows, QImage::Format_RGB32);
-        for (int y = 0; y < rows; ++y) {
-            const int* srcrow = src+y;
-                QRgb *destrow = reinterpret_cast<QRgb*>(dest.scanLine(y));
-                for (int x = 0; x < cols; ++x) {
-                        double temp=*(srcrow+x*rows);
-                        COLOUR cc=GetColour(temp,0.0,max);
-                        destrow[x] = qRgb(cc.r*255,cc.g*255,cc.b*255);
-                }
-        }
-        return dest;
-}
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),scene(new QGraphicsScene)
@@ -63,7 +20,6 @@ MainWindow::MainWindow(QWidget *parent) :
     scene->setParent(ui->_dview);
     ui->_dview->setScene(scene);
     ui->_dview->setInteractive(true);
-    _blur=new QGraphicsBlurEffect();
     ui->_dview->setDragMode(QGraphicsView::RubberBandDrag);
     //ui->_dview->setDragMode(ui->_dview->ScrollHandDrag);
     ui->dial->setRange(0,15);
@@ -75,7 +31,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->numor_Widget->setSelectionMode(QAbstractItemView::MultiSelection);
     QShortcut* shortcut = new QShortcut(QKeySequence(Qt::Key_Delete), ui->numor_Widget);
     connect(shortcut, SIGNAL(activated()), this, SLOT(deleteNumors()));
-
+    ui->progressBar->setVisible(false);
 //    ui->textLogger->setContextMenuPolicy(Qt::CustomContextMenu);
 //    loggerContextMenu = ui->textLogger->createStandardContextMenu();
 //    loggerContextMenu->clear();
@@ -120,7 +76,7 @@ void MainWindow::on_action_Open_triggered()
         }catch(...)
         {
 
-           ui->textLogger->log(Logger::INFO) << "File: " << fileNames[i].toStdString() << " is not readable as a Numor";
+           ui->textLogger->log(Logger::WARNING) << "File: " << fileNames[i].toStdString() << " is not readable as a Numor";
            ui->textLogger->flush();
 
            continue;
@@ -133,7 +89,7 @@ void MainWindow::on_action_Open_triggered()
     if (!first)
         return;
 
-    ui->textLogger->log(Logger::INFO) << "Read " << fileNames.size() << " files"<<std::endl;
+    ui->textLogger->log(Logger::INFO) << "Read " << fileNames.size() << " file(s)";
     ui->textLogger->flush();
 
     ui->numor_Widget->setCurrentItem(first);
@@ -141,81 +97,36 @@ void MainWindow::on_action_Open_triggered()
     int b=_data[firstNumor]._nblocks;
     ui->horizontalScrollBar->setRange(0,b-1);
     ui->dial->setRange(1,100);
-    ui->dial->setValue(10);    update();
-    QImage image=QImage(Mat2QImage(&((_data[firstNumor]._frames)[0]),256,640,ui->dial->value()));
-    QPixmap pix=QPixmap::fromImage(image);
-    pix=pix.scaled(ui->_dview->width(),ui->_dview->height(),Qt::IgnoreAspectRatio);
-    scene->clear();
-    scene->addPixmap(pix);
+    ui->dial->setValue(10);
+    updatePlot();
+}
 
-//    QGraphicsEllipseItem* el1=new QGraphicsEllipseItem(50,50,10,20);
-//    el1->setToolTip(QString("(1,0,2) \n I: 123(4)"));
-//    el1->setRotation(20.0);
-//    scene->addItem(el1);
-//    el1->setPos(50,50);
-//    el1->setRotation(20.0);
-//    el1->setPen(QPen(QColor(Qt::white)));
-//    el1->setFlag(QGraphicsItem::ItemIsSelectable);
-//    el1->setSelected(true);
-//    el1->update();
-
-//    QGraphicsEllipseItem* el2=new QGraphicsElli    update();pseItem(100,100,40,40);
-//    el2->setRotation(20.0);
-//    scene->addItem(el2);value_typ
-//    el2->setPos(50,50);
-//    el2->setRotation(20.0);
-//    el2->setPen(QPen(QColor(Qt::white)));
-//    el2->setFlag(QGraphicsItem::ItemIsSelectable);
-//    el2->setSelected(true);
-//    el2->update();
-    ui->_dview->setScene(scene);
-
+void MainWindow::updatePlot()
+{
+    QListWidgetItem* item=ui->numor_Widget->currentItem();
+    std::string numor=item->text().toStdString();
+    auto it=_data.find(numor);
+    if (it!=_data.end())
+    {
+        Data* ptr=&(it->second);
+        int frame= ui->horizontalScrollBar->value();
+        int colormax= ui->dial->value();
+        ui->_dview->updateView(ptr,frame,colormax);
+    }
+    else
+        ui->_dview->updateView(0,0,0);
 }
 
 void MainWindow::on_horizontalScrollBar_valueChanged(int value)
 {
-    if (_data.size()==0)
-        return;
-    QListWidgetItem* item=ui->numor_Widget->currentItem();
-    std::string numor=item->text().toStdString();
-    _data[numor].readBlock(value);
-    updatePlot(numor);
+    updatePlot();
 }
 
 void MainWindow::on_dial_valueChanged(int value)
 {
-    if (_data.size()==0)
-        return;
-    QListWidgetItem* item=ui->numor_Widget->currentItem();
-    std::string numor=item->text().toStdString();
-    ui->horizontalScrollBar->setMouseTracking(true);
-    updatePlot(numor);
+    updatePlot();
 }
 
-void MainWindow::on_doubleSpinBox_valueChanged(double arg1)
-{
-  _blur->setBlurRadius(arg1);
-    ui->_dview->setGraphicsEffect(_blur);
-}
-
-void MainWindow::updatePlot(const std::string& numor)
-{
-    auto it=_data.find(numor);
-    if (it!=_data.end())
-    {
-    QImage image=QImage(Mat2QImage(&(((*it).second._frames)[0]),256,640,ui->dial->value()));
-    QPixmap pix=QPixmap::fromImage(image);
-    pix=pix.scaled(ui->_dview->width(),ui->_dview->height(),Qt::IgnoreAspectRatio);
-    scene->clear();
-    scene->addPixmap(pix);
-    ui->_dview->setScene(scene);
-    }
-    else
-    {
-        scene->clear();
-//        ui->_dview->setScene(scene);
-    }
-}
 
 void MainWindow::on_pushButton_openFile_pressed()
 {
@@ -233,24 +144,17 @@ void MainWindow::deleteNumors()
             _data.erase(it1);
         delete *it;
     }
-    updatePlot(std::string());
-    ui->textLogger->log(Logger::INFO) <<  selNumors.size() << " file(s) have been deleted\n";
+    ui->textLogger->log(Logger::INFO) <<  selNumors.size() << " file(s) have been deleted";
     ui->textLogger->flush();
-    ui->_dview->setCurrentData(nullptr);
+    updatePlot();
 
 }
-
 
 
 void MainWindow::on_spinBox_max_valueChanged(int arg1)
 {
     ui->dial->setValue(arg1);
-     QListWidgetItem* item=ui->numor_Widget->currentItem();
-    if (item)
-    {
-    std::string numor=item->text().toStdString();
-    updatePlot(numor);
-    }
+    updatePlot();
 }
 
 
@@ -265,10 +169,9 @@ void MainWindow::on_numor_Widget_itemDoubleClicked(QListWidgetItem *item)
     int nmax=_data[numor]._nblocks-1;
     ui->horizontalScrollBar->setMaximum(nmax);
     ui->spinBox_Frame->setMaximum(nmax);
-    updatePlot(numor);
-    ui->textLogger->log(Logger::INFO) <<  "File " << numor << " selected \n";
+    ui->textLogger->log(Logger::INFO) <<  "File " << numor << " selected ";
     ui->textLogger->flush();
-    ui->_dview->setCurrentData(&_data[numor]);
+    updatePlot();
 }
 
 void MainWindow::on_numor_Widget_itemActivated(QListWidgetItem *item)
@@ -277,12 +180,11 @@ void MainWindow::on_numor_Widget_itemActivated(QListWidgetItem *item)
     if (item == nullptr)
         return;
     std::string numor=item->text().toStdString();
-    ui->textLogger->log(Logger::INFO) << numor << std::endl;
     ui->textLogger->flush();
     int nmax=_data[numor]._nblocks-1;
     ui->horizontalScrollBar->setMaximum(nmax);
     ui->spinBox_Frame->setMaximum(nmax);
-    updatePlot(numor);
+    updatePlot();
 
 }
 
@@ -296,55 +198,85 @@ void MainWindow::ShowContextMenu(const QPoint& pos)
 
 void MainWindow::on_pushButton_PeakFind_clicked()
 {
-    DialogPeakFind* dialog= new DialogPeakFind();
+    DialogPeakFind* dialog= new DialogPeakFind(this);
 
     //
     if (!dialog->exec())
         return;
+
+    // Get Confidence and threshold
     double confidence=dialog->getConfidence();
     double threshold=dialog->getThreshold();
 
+    // Get current Numor
     QListWidgetItem* current=ui->numor_Widget->currentItem();
     if (!current)
         return;
+
+    //
     std::string numor=current->text().toStdString();
+    ui->textLogger->log(Logger::INFO) << "Searching peaks in numor:" << numor;
+    ui->textLogger->flush();
+
+    // Get the corresponding data
     auto it=_data.find(numor);
-    if (it!=_data.end())
+    if (it==_data.end())
+        return;
+
+    Data& d=(*it).second;
+    ui->textLogger->log(Logger::INFO) << "Reading numor in memory";
+    ui->textLogger->flush();
+    ui->progressBar->setVisible(true);
+    d.readInMemory(ui->progressBar);
+
+
+    // Analyse background
+    std::vector<int> v;
+    d.getCountsHistogram(v);
+    auto max=std::max_element(v.begin(),v.end());
+    int background_level=std::distance(v.begin(),max)+1;
+
+    ui->textLogger->log(Logger::INFO) << "Background estimated at "  << background_level << "cts/pixel";
+    ui->textLogger->flush();
+
+    // Get pointers to start of each frame
+    std::vector<int*> temp(d._nblocks);
+    for (int i=0;i<d._nblocks;++i)
     {
-        Data& d=(*it).second;
-        d.readInMemory();
-        ui->textLogger->log(Logger::DEBUG) << "Finish reading" << std::endl;
+        vint& v=d._data[i];
+        temp[i]=&(v[0]);
+    }
+
+
+    // Finding peaks
+    SX::Geometry::blob3DCollection blobs;
+    ui->progressBar->setFormat("Locating peaks...");
+    try
+    {
+      blobs=SX::Geometry::findBlobs3D<int>(temp, 256,640, threshold*background_level, 5, 10000, confidence, 0);
+    }catch(std::bad_alloc& e) // Warning if RAM error
+    {
+        ui->textLogger->log(Logger::WARNING) << e.what() << "(Peak find, memory allocation error. Increase Threshold level)";
         ui->textLogger->flush();
-        std::vector<int*> temp(d._nblocks);
+    }
 
-        for (int i=0;i<d._nblocks;++i)
-        {
-            vint& v=d._data[i];
-            temp[i]=&(v[0]);
-        }
+    ui->textLogger->log(Logger::INFO) << "Found: " << blobs.size() << " peaks";
+    ui->textLogger->flush();
 
-        std::vector<int> v=d.getCountsHistogram();
-        for (auto i=0;i<v.size();++i)
-        {
-            ui->textLogger->log(Logger::DEBUG) << v[i] << std::endl;
+    // Now free the memory
+    d.releaseMemory();
+    ui->progressBar->setVisible(false);
 
-        }
-        ui->textLogger->flush();
-        SX::Geometry::blob3DCollection blobs;
-        try
-        {
-            blobs=std::move(SX::Geometry::findBlobs3D<int>(temp, 256,640, threshold, 5, 10000, confidence, 0));
-        }catch(std::bad_alloc& e)
-        {
-            ui->textLogger->log(Logger::WARNING) << e.what() << "(Peak find, memory allocation error. Increase Threshold level)";
-            ui->textLogger->flush();
-        }
-
-        ui->textLogger->log(Logger::INFO) << "Found " << blobs.size() << " peaks";
-        ui->textLogger->flush();
-
-        // Now free the memory
-        (*it).second.releaseMemory();
+    //
+    int i=0;
+    for(auto& blob : blobs)
+    {
+        double confidence;
+        Eigen::Vector3d center, eigenvalues;
+        Eigen::Matrix3d eigenvectors;
+        blob.second.toEllipsoid(confidence, center,eigenvalues,eigenvectors);
+        SX::Geometry::Ellipsoid<double,3> a(center,eigenvalues,eigenvectors);
+        d._peaks[i++]=a;
     }
 }
 

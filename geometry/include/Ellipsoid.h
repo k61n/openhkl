@@ -53,6 +53,7 @@ class Ellipsoid : public IShape<T,D>
 	using AABB<T,D>::_lowerBound;
 	using AABB<T,D>::_upperBound;
 public:
+	Ellipsoid();
 	//! Construct a N-dimensional ellipsoid from its center, semi-axes, and eigenvectors ()
 	Ellipsoid(const vector& center, const vector& eigenvalues, const matrix& eigenvectors);
 	//! Return true if the ellipsoid intersects any kind of shape.
@@ -92,6 +93,13 @@ private:
 template<typename T,uint D> bool collideEllipsoidEllipsoid(const Ellipsoid<T,D>&, const Ellipsoid<T,D>&);
 template<typename T,uint D> bool collideEllipsoidOBB(const Ellipsoid<T,D>&, const OBB<T,D>&);
 template<typename T,uint D> bool collideEllipsoidSphere(const Ellipsoid<T,D>&, const Sphere<T,D>&);
+
+
+template<typename T,uint D>
+Ellipsoid<T,D>::Ellipsoid()
+:IShape<T,D>()
+ {
+ }
 
 template<typename T,uint D>
 Ellipsoid<T,D>::Ellipsoid(const vector& center, const vector& eigenvalues, const matrix& eigenvectors)

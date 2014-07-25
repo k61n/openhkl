@@ -15,13 +15,16 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     Data.cpp \
-    Logger.cpp
+    Logger.cpp \
+    DetectorView.cpp \
+    ColorMap.cpp
 
 HEADERS  += mainwindow.h \
     DetectorView.h \
     DialogPeakFind.h \
     Data.h \
-    Logger.h
+    Logger.h \
+    ColorMap.h
 
 FORMS    += mainwindow.ui \
     dialog_PeakFind.ui

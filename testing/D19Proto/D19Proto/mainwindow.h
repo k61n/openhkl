@@ -6,7 +6,6 @@
 #include <vector>
 #include "ILLAsciiDataReader.h"
 #include <QProgressBar>
-#include <QGraphicsBlurEffect>
 #include <unordered_map>
 #include "Logger.h"
 #include <QMenu>
@@ -34,8 +33,6 @@ private slots:
 
     void on_dial_valueChanged(int value);
 
-    void on_doubleSpinBox_valueChanged(double arg1);
-
     void on_pushButton_openFile_pressed();
 
     void on_spinBox_max_valueChanged(int arg1);
@@ -54,11 +51,10 @@ private slots:
 
 
 private:
-    void updatePlot(const std::string& numor);
+    void updatePlot();
     Ui::MainWindow *ui;
     QGraphicsScene* scene;
     std::unordered_map<std::string,Data> _data;
-    QGraphicsBlurEffect* _blur;
     QMenu* loggerContextMenu;
 protected:
 };

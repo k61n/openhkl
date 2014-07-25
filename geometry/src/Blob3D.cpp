@@ -117,8 +117,9 @@ Eigen::Vector3d Blob3D::getCenterOfMass() const
 
 void Blob3D::printSelf(std::ostream& os) const
 {
-	Eigen::Vector3d center,semi_axes, v0,v1,v2;
-    os << "#Blob center: " << center << std::endl;
+	Eigen::Vector3d center;
+	center << _m100/_m000, _m010/_m000, _m001/_m000;
+    os << "#Blob center: " << center.transpose() << std::endl;
     os << "Mass: " << _m000 << std::endl;
     os << "Points in the blob: " << _npoints << std::endl;
 
