@@ -32,8 +32,9 @@ MainWindow::MainWindow(QWidget *parent) :
     QShortcut* shortcut = new QShortcut(QKeySequence(Qt::Key_Delete), ui->numor_Widget);
     connect(shortcut, SIGNAL(activated()), this, SLOT(deleteNumors()));
     ui->progressBar->setVisible(false);
-    ui->_dview->setDimensions(640,256);
-
+    ui->_dview->setNpixels(640,256);
+    ui->_dview->setDimensions(120.0,0.4);
+    ui->_dview->setDetectorDistance(0.764);
 }
 
 MainWindow::~MainWindow()
@@ -46,9 +47,10 @@ MainWindow::~MainWindow()
 void MainWindow::on_action_Open_triggered()
 {
     QFileDialog dialog;
+    dialog.setDirectory("/home/chapon/Data/D19/July2014/data/DKDP/");
     dialog.setFileMode(QFileDialog::ExistingFiles);
     QStringList fileNames;
-    fileNames= dialog.getOpenFileNames(this);
+    fileNames= dialog.getOpenFileNames(this,"select numors","/home/chapon/Data/D19/July2014/data/DKDP/");
     dialog.close();
     for (int i=0;i<fileNames.size();++i)
     {
@@ -199,7 +201,7 @@ void MainWindow::on_pushButton_PeakFind_clicked()
     //
     if (!dialog->exec())
         return;
-
+    setCursor(Qt::WaitCursor);
     // Get Confidence and threshold
     double confidence=dialog->getConfidence();
     double threshold=dialog->getThreshold();
@@ -214,16 +216,19 @@ void MainWindow::on_pushButton_PeakFind_clicked()
     ui->textLogger->log(Logger::INFO) << "Searching peaks in numor:" << numor;
     ui->textLogger->flush();
 
+
     // Get the corresponding data
     auto it=_data.find(numor);
     if (it==_data.end())
         return;
 
     Data& d=(*it).second;
+
     ui->textLogger->log(Logger::INFO) << "Reading numor in memory";
     ui->textLogger->flush();
     ui->progressBar->setVisible(true);
-    d.readInMemory(ui->progressBar);
+
+    d.readInMemory();
 
 
     // Analyse background
@@ -265,7 +270,8 @@ void MainWindow::on_pushButton_PeakFind_clicked()
 
     //
     int i=0;
-    for(auto& blob : blobs)
+    d._peaks.clear();
+    for (auto& blob : blobs)
     {
         Eigen::Vector3d center, eigenvalues;
         Eigen::Matrix3d eigenvectors;
@@ -276,11 +282,13 @@ void MainWindow::on_pushButton_PeakFind_clicked()
 
     //Update the plot to show the axes
     updatePlot();
+
+    //
+    setCursor(Qt::ArrowCursor);
 }
 
 void MainWindow::on_textLogger_customContextMenuRequested(const QPoint &pos)
 {
     std::cout  << pos.x() << std::endl;
 }
-
 

@@ -34,7 +34,7 @@ void Data::readBlock(int i)
         _currentFrame=_data[i];
     }
 }
-void Data::readInMemory(QProgressBar* bar)
+void Data::readInMemory()
 {
     if (!_inmemory)
     {
@@ -54,21 +54,6 @@ int counter=0;
             auto it=std::max_element(_data[i].begin(),_data[i].end(),std::less<int>());
             if ((*it)>count)
                 count=(*it);
-            if (bar)
-            {
-#pragma omp critical
-                {
-                int progress=static_cast<int>(100.0*counter++/_nblocks);
-                //bar->setFormat("Reading Numor: "+QString::number(progress)+"%");
-                //bar->setValue(progress);
-                }
-            }
-        }
-        if (bar)
-        {
-            bar->setFormat("");
-            bar->setValue(0);
-            bar->setEnabled(false);
         }
         _maxCount=count;
         _inmemory=true;
@@ -92,7 +77,7 @@ void Data::releaseMemory()
 void Data::getCountsHistogram(std::vector<int>& histo)
 {
     if (!_inmemory)
-        readInMemory(nullptr);
+        readInMemory();
     //
     histo.resize(_maxCount);
 
@@ -109,4 +94,9 @@ void Data::getCountsHistogram(std::vector<int>& histo)
 bool Data::has3DEllipsoid() const
 {
     return (_peaks.size()!=0);
+}
+
+void Data::clear3DEllipsoids()
+{
+    _peaks.clear();
 }
