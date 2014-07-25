@@ -91,7 +91,9 @@ void Logger::dropTextFile(const QUrl& url)
 
 void Logger::flush()
 {
-    append(QString::fromStdString(os.str()));
+    std::string s=os.str();
+    QString qs=QString::fromStdString(s);
+    //append(QString::fromStdString(os.str()));
     os.str("");
     os.clear();
     setTextColor(QColor("black"));

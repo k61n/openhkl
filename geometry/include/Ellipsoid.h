@@ -56,7 +56,11 @@ public:
 	Ellipsoid();
 	//! Construct a N-dimensional ellipsoid from its center, semi-axes, and eigenvectors ()
 	Ellipsoid(const vector& center, const vector& eigenvalues, const matrix& eigenvectors);
-	//! Return true if the ellipsoid intersects any kind of shape.
+	//! Assignment
+	Ellipsoid& operator=(const Ellipsoid&);
+	//! Copy constructor
+	Ellipsoid(const Ellipsoid&);
+	//! Return true if the ellipsoid intersects any kind of shape
 	bool collide(const IShape<T,D>& other) const;
 	//! Return true if the ellipsoid intersects an ellipsoid.
 	bool collide(const Ellipsoid<T,D>& other) const;
@@ -100,6 +104,27 @@ Ellipsoid<T,D>::Ellipsoid()
 :IShape<T,D>()
  {
  }
+
+template<typename T,uint D>
+Ellipsoid<T,D>::Ellipsoid(const Ellipsoid<T,D>& rhs)
+ {
+	_eigenVal=rhs._eigenVal;
+	_TRSinv=rhs._TRSinv;
+	updateAABB();
+ }
+
+template<typename T,uint D>
+Ellipsoid<T,D>& Ellipsoid<T,D>::operator=(const Ellipsoid<T,D>& rhs)
+{
+	if (this!=&rhs)
+	{
+		_eigenVal=rhs._eigenVal;
+		_TRSinv=rhs._TRSinv;
+		updateAABB();
+	}
+	return *this;
+ }
+
 
 template<typename T,uint D>
 Ellipsoid<T,D>::Ellipsoid(const vector& center, const vector& eigenvalues, const matrix& eigenvectors)

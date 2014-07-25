@@ -5,7 +5,7 @@
 #include <QToolTip>
 #include "Data.h"
 #include "ColorMap.h"
-
+#include <QGraphicsRectItem>
 
     DetectorView::DetectorView(QWidget* parent): QGraphicsView(parent), _ptrData(nullptr), _scene(new QGraphicsScene(this))
     {
@@ -31,6 +31,29 @@
             _scene->clear();
             _scene->addPixmap(pix);
             setScene(_scene);
+            if (_ptrData->has3DEllipsoid())
+            {
+                for (auto el : _ptrData->_peaks)
+                {
+                    SX::Geometry::Ellipsoid<double,3>& peak=el.second;
+                    const Eigen::Vector3d& lower=peak.getLower();
+                    const Eigen::Vector3d& upper=peak.getUpper();
+                    // Plot bounding box
+                    if (frame > lower[2] && frame < upper[2])
+                    {
+
+                        double left=lower[0];
+                        double top=lower[1];
+                        detectorToScene(left,top);
+                        double w=upper[0]-lower[0];
+                        double h=upper[1]-lower[1];
+                        detectorToScene(w,h);
+                        QGraphicsRectItem* bb=_scene->addRect(left,top,w,h,QPen(QColor("cyan")));
+                        bb->setToolTip(QString::number(el.first));
+
+                    }
+                }
+            }
         }
         else
         {
@@ -40,6 +63,18 @@
 
     void DetectorView::mouseMoveEvent(QMouseEvent* event)
     {
+        // If peak is detected
+        QGraphicsRectItem* peak=dynamic_cast<QGraphicsRectItem*>(_scene->itemAt(event->x(),event->y()));
+
+        if (peak)
+        {
+            peak->setActive(true);
+            peak->setCursor(Qt::PointingHandCursor);
+            return;
+        }
+        // If not on peak
+        this->setCursor(Qt::CrossCursor);
+
         std::ostringstream os;
         double posx=static_cast<double>(event->x())/this->width()*pixels_h;
         double posy=static_cast<double>(event->y())/this->height()*pixels_v;
@@ -63,6 +98,20 @@
     void DetectorView::mouseDoubleClickEvent(QMouseEvent* event)
     {
         QGraphicsScene* scene=this->scene();
-        scene->addRect(event->x()-6,event->y()-6,12,12,QPen(QColor("magenta")));
+        scene->addRect(event->x()-6,event->y()-6,12,12,QPen(QColor("green")));
     }
+
+    void DetectorView::sceneToDetector(double& x, double& y)
+    {
+        x/=(static_cast<double>(this->width())/pixels_h);
+        y/=(static_cast<double>(this->height())/pixels_v);
+        return;
+    }
+    void DetectorView::detectorToScene(double& x, double& y)
+    {
+        x*=(static_cast<double>(this->width())/pixels_h);
+        y*=(static_cast<double>(this->height())/pixels_v);
+        return;
+    }
+
 

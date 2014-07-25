@@ -87,7 +87,7 @@
       <x>180</x>
       <y>140</y>
       <width>899</width>
-      <height>321</height>
+      <height>361</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -1074,9 +1074,9 @@
     <property name="geometry">
      <rect>
       <x>180</x>
-      <y>470</y>
+      <y>510</y>
       <width>901</width>
-      <height>261</height>
+      <height>171</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -1092,24 +1092,14 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>920</x>
-      <y>730</y>
+      <x>180</x>
+      <y>690</y>
       <width>161</width>
       <height>23</height>
      </rect>
     </property>
     <property name="value">
      <number>0</number>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="comboBox">
-    <property name="geometry">
-     <rect>
-      <x>300</x>
-      <y>80</y>
-      <width>51</width>
-      <height>51</height>
-     </rect>
     </property>
    </widget>
   </widget>

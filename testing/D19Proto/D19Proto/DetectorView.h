@@ -21,6 +21,8 @@ public slots:
 protected:
     void mouseMoveEvent(QMouseEvent* event);
     void mouseDoubleClickEvent(QMouseEvent* event);
+    void detectorToScene(double& x, double& y);
+    void sceneToDetector(double& x, double& y);
 private:
     // Pointer to Data
     Data* _ptrData;

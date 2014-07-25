@@ -32,16 +32,6 @@ MainWindow::MainWindow(QWidget *parent) :
     QShortcut* shortcut = new QShortcut(QKeySequence(Qt::Key_Delete), ui->numor_Widget);
     connect(shortcut, SIGNAL(activated()), this, SLOT(deleteNumors()));
     ui->progressBar->setVisible(false);
-//    ui->textLogger->setContextMenuPolicy(Qt::CustomContextMenu);
-//    loggerContextMenu = ui->textLogger->createStandardContextMenu();
-//    loggerContextMenu->clear();
-//    loggerContextMenu ->addAction("Clear LogFile");
-//    loggerContextMenu->addSeparator();
-//    loggerContextMenu ->addAction("Save LogFile");
-
-//    ui->textLogger->setContextMenuPolicy(Qt::CustomContextMenu);
-
-//    connect(ui->textLogger, SIGNAL(customContextMenuRequested(const QPoint&)),this, SLOT(ShowContextMenu(const QPoint&)));
     ui->_dview->setDimensions(640,256);
 
 }
@@ -95,7 +85,8 @@ void MainWindow::on_action_Open_triggered()
     ui->numor_Widget->setCurrentItem(first);
     std::string firstNumor = first->text().toStdString();
     int b=_data[firstNumor]._nblocks;
-    ui->horizontalScrollBar->setRange(0,b-1);
+    ui->horizontalScrollBar->setMaximum(b-1);
+    ui->spinBox_Frame->setMaximum(b-1);
     ui->dial->setRange(1,100);
     ui->dial->setValue(10);
     updatePlot();
@@ -104,6 +95,12 @@ void MainWindow::on_action_Open_triggered()
 void MainWindow::updatePlot()
 {
     QListWidgetItem* item=ui->numor_Widget->currentItem();
+    if (!item)
+    {
+        ui->_dview->updateView(0,0,0);
+        return;
+    }
+
     std::string numor=item->text().toStdString();
     auto it=_data.find(numor);
     if (it!=_data.end())
@@ -113,8 +110,7 @@ void MainWindow::updatePlot()
         int colormax= ui->dial->value();
         ui->_dview->updateView(ptr,frame,colormax);
     }
-    else
-        ui->_dview->updateView(0,0,0);
+
 }
 
 void MainWindow::on_horizontalScrollBar_valueChanged(int value)
@@ -271,13 +267,15 @@ void MainWindow::on_pushButton_PeakFind_clicked()
     int i=0;
     for(auto& blob : blobs)
     {
-        double confidence;
         Eigen::Vector3d center, eigenvalues;
         Eigen::Matrix3d eigenvectors;
         blob.second.toEllipsoid(confidence, center,eigenvalues,eigenvectors);
         SX::Geometry::Ellipsoid<double,3> a(center,eigenvalues,eigenvectors);
         d._peaks[i++]=a;
     }
+
+    //Update the plot to show the axes
+    updatePlot();
 }
 
 void MainWindow::on_textLogger_customContextMenuRequested(const QPoint &pos)

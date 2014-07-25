@@ -105,3 +105,8 @@ void Data::getCountsHistogram(std::vector<int>& histo)
         }
     }
 }
+
+bool Data::has3DEllipsoid() const
+{
+    return (_peaks.size()!=0);
+}

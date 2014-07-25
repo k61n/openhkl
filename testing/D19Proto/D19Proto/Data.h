@@ -23,6 +23,8 @@ struct Data
     void releaseMemory();
     // Get the histogram of intensity distribution
     void getCountsHistogram(std::vector<int>&);
+    //
+    bool has3DEllipsoid() const;
 
     int _nblocks;
     std::unique_ptr<SX::Data::IDataReader> mm;
