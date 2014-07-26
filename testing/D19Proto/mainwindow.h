@@ -50,6 +50,8 @@ private slots:
     void on_textLogger_customContextMenuRequested(const QPoint &pos);
 
 
+    void on_pushButton_Plotter_clicked();
+
 private:
     void updatePlot();
     Ui::MainWindow *ui;

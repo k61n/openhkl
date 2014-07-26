@@ -10,7 +10,7 @@
 #include <QMouseEvent>
 #include "BlobFinder.h"
 #include <Ellipsoid.h>
-
+#include <Plotter1D.h>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -32,9 +32,17 @@ MainWindow::MainWindow(QWidget *parent) :
     QShortcut* shortcut = new QShortcut(QKeySequence(Qt::Key_Delete), ui->numor_Widget);
     connect(shortcut, SIGNAL(activated()), this, SLOT(deleteNumors()));
     ui->progressBar->setVisible(false);
+
+    // Specific to D19 detector
     ui->_dview->setNpixels(640,256);
     ui->_dview->setDimensions(120.0,0.4);
     ui->_dview->setDetectorDistance(0.764);
+    //
+
+    ui->comboBox_selectionmode->addItem(QIcon("cutlineIcon.png"),"");
+    ui->comboBox_selectionmode->addItem(QIcon("cutellipseIcon.png"),"");
+
+    connect(ui->comboBox_selectionmode,SIGNAL(currentIndexChanged(int)),ui->_dview,SLOT(setCutterMode(int)));
 }
 
 MainWindow::~MainWindow()
@@ -51,7 +59,10 @@ void MainWindow::on_action_Open_triggered()
     dialog.setFileMode(QFileDialog::ExistingFiles);
     QStringList fileNames;
     fileNames= dialog.getOpenFileNames(this,"select numors","/home/chapon/Data/D19/July2014/data/DKDP/");
-    dialog.close();
+    // No files selected
+    if (fileNames.isEmpty())
+        return;
+    // Deal with files
     for (int i=0;i<fileNames.size();++i)
     {
         QFileInfo fileinfo(fileNames[i]);
@@ -86,29 +97,34 @@ void MainWindow::on_action_Open_triggered()
 
     ui->numor_Widget->setCurrentItem(first);
     std::string firstNumor = first->text().toStdString();
-    int b=_data[firstNumor]._nblocks;
-    ui->horizontalScrollBar->setMaximum(b-1);
-    ui->spinBox_Frame->setMaximum(b-1);
-    ui->dial->setRange(1,100);
-    ui->dial->setValue(10);
+    Data& d=_data[firstNumor];
+    ui->horizontalScrollBar->setMaximum(d._nblocks-1);
+    ui->spinBox_Frame->setMaximum(d._nblocks-1);
+    ui->dial->setRange(1,3000);
+    ui->dial->setValue(20);
     updatePlot();
 }
 
 void MainWindow::updatePlot()
 {
+    // Get the numor currently selected, return if void
     QListWidgetItem* item=ui->numor_Widget->currentItem();
     if (!item)
     {
         ui->_dview->updateView(0,0,0);
         return;
     }
-
+    // Update the data in the detector view
     std::string numor=item->text().toStdString();
     auto it=_data.find(numor);
     if (it!=_data.end())
     {
         Data* ptr=&(it->second);
         int frame= ui->horizontalScrollBar->value();
+        // Make sure that the frame value for previously selected file is valid for current one
+        if (frame>ptr->_nblocks-1)
+            frame=0;
+        // Keep previous color
         int colormax= ui->dial->value();
         ui->_dview->updateView(ptr,frame,colormax);
     }
@@ -201,7 +217,6 @@ void MainWindow::on_pushButton_PeakFind_clicked()
     //
     if (!dialog->exec())
         return;
-    setCursor(Qt::WaitCursor);
     // Get Confidence and threshold
     double confidence=dialog->getConfidence();
     double threshold=dialog->getThreshold();
@@ -210,17 +225,18 @@ void MainWindow::on_pushButton_PeakFind_clicked()
     QListWidgetItem* current=ui->numor_Widget->currentItem();
     if (!current)
         return;
-
     //
     std::string numor=current->text().toStdString();
-    ui->textLogger->log(Logger::INFO) << "Searching peaks in numor:" << numor;
-    ui->textLogger->flush();
-
 
     // Get the corresponding data
     auto it=_data.find(numor);
     if (it==_data.end())
         return;
+
+    setCursor(Qt::WaitCursor);
+    ui->textLogger->log(Logger::INFO) << "Searching peaks in numor:" << numor;
+    ui->textLogger->flush();
+
 
     Data& d=(*it).second;
 
@@ -234,6 +250,7 @@ void MainWindow::on_pushButton_PeakFind_clicked()
     // Analyse background
     std::vector<int> v;
     d.getCountsHistogram(v);
+
     auto max=std::max_element(v.begin(),v.end());
     int background_level=std::distance(v.begin(),max)+1;
 
@@ -292,3 +309,9 @@ void MainWindow::on_textLogger_customContextMenuRequested(const QPoint &pos)
     std::cout  << pos.x() << std::endl;
 }
 
+
+void MainWindow::on_pushButton_Plotter_clicked()
+{
+    Plotter1D* d=new Plotter1D(this);
+    d->show();
+}

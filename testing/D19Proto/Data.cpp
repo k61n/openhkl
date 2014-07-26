@@ -33,6 +33,8 @@ void Data::readBlock(int i)
     {
         _currentFrame=_data[i];
     }
+    auto it=std::max_element(_currentFrame.begin(),_currentFrame.end());
+    _maxCurrentFrame=(*it);
 }
 void Data::readInMemory()
 {
@@ -41,8 +43,6 @@ void Data::readInMemory()
         _data.resize(_nblocks);
 
         int count=0;
-
-int counter=0;
 
 
 #pragma omp parallel for shared(count)
@@ -84,7 +84,7 @@ void Data::getCountsHistogram(std::vector<int>& histo)
     for (auto i=0;i<_nblocks;++i)
     {
         std::vector<int>& d=_data[i];
-        for (auto j=0;j<d.size();++j)
+        for (unsigned int j=0;j<d.size();++j)
         {
             histo[d[j]]++;
         }

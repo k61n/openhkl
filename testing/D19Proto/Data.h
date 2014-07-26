@@ -34,6 +34,7 @@ struct Data
     std::vector<int> _sum;
     bool _inmemory;
     int _maxCount;
+    int _maxCurrentFrame;
     std::map<int,SX::Geometry::Ellipsoid<double,3>,std::less<int>, Eigen::aligned_allocator<std::pair<const int, Eigen::Matrix4d> >> _peaks;
 
 };

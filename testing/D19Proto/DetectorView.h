@@ -10,8 +10,11 @@
 
 class DetectorView : public QGraphicsView
 {
+    Q_OBJECT
 public:
     enum CrossMode {THETA, GAMMA, D, PIXEL};
+    //
+    enum CutterMode {LINE=0, ELLIPSE=1, BOX=2};
 
     DetectorView(QWidget* parent);
     // Set the number of pixels in the detector
@@ -20,12 +23,16 @@ public:
     void setDimensions(double gammaRange, double height);
     // Set the detector distance
     void setDetectorDistance(double distance);
+    // Is Data present
+    bool hasData() const;
 public slots:
     void updateView(Data* ptr,int frame, double colormax);
-
+    void setCutterMode(int i);
 protected:
+    // Mouse events
+    void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent* event);
-    void mouseDoubleClickEvent(QMouseEvent* event);
+    void mouseReleaseEvent(QMouseEvent *event);
     void detectorToScene(double& x, double& y);
     void sceneToDetector(double& x, double& y);
     void keyPressEvent(QKeyEvent* event);
@@ -36,6 +43,10 @@ private:
     void get2Theta(double x, double y, double& th2);
     // Get d-spacing for a pixel (x,y) in detector space
     void getDSpacing(double x, double y, double& dspacing);
+    // Update line cutter, x and y in scene coordinates
+    void updateLineCutter(const QPointF&);
+    // Check pixel x y is in the detector scene
+    bool pointInScene(const QPointF&);
     // Pointer to Data
     Data* _ptrData;
     int pixels_h;
@@ -50,6 +61,9 @@ private:
     QGraphicsScene* _scene;
     // Mode for cursor information
     CrossMode _mode;
+    //
+    CutterMode _cutterMode;
+    QGraphicsLineItem* _line;
 };
 
 #endif // DETECTORVIEW_H
