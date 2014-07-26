@@ -105,9 +105,9 @@ void DetectorView::mousePressEvent(QMouseEvent* event)
         {
             case(ZOOM):
             {
-                _zoom=_scene->addRect(event->x(),event->y(),1,1);
+                _zoom=_scene->addRect(event->x(),event->y(),0,0);
                 _zoom->setVisible(true);
-                _zoom->setPen(QPen(QBrush(QColor("red")),1.0));
+                _zoom->setPen(QPen(QBrush(QColor("gray")),1.0));
                 break;
             }
             case(LINE):
@@ -237,21 +237,22 @@ void DetectorView::mouseReleaseEvent(QMouseEvent *event)
                 _zoom->setVisible(false);
                 // This is the rectangle in scene coordinates
                 QRectF rectf=_zoom->rect();
-                double xmin=rectf.left();
-                double ymin=rectf.top();
-                sceneToDetector(xmin,ymin);
-                double xmax=rectf.right();
-                double ymax=rectf.bottom();
-                sceneToDetector(xmax,ymax);
-                if (xmin>xmax)
-                    std::swap(xmin,xmax);
-                if (ymin>ymax)
-                    std::swap(ymin,ymax);
-                if (xmax==xmin || ymin==ymax)
-                    return;
-                registerZoomLevel(xmin,xmax,ymin,ymax);
-                setZoom(xmin,ymin,xmax,ymax);
-                plotIntensityMap();
+                double xmind=rectf.left();
+                double ymind=rectf.top();
+                sceneToDetector(xmind,ymind);
+                double xmaxd=rectf.right();
+                double ymaxd=rectf.bottom();
+                sceneToDetector(xmaxd,ymaxd);
+                int xmin=static_cast<int>(xmind);
+                int ymin=static_cast<int>(ymind);
+                int xmax=static_cast<int>(xmaxd);
+                int ymax=static_cast<int>(ymaxd);
+                if (xmin!=xmax && ymin!=ymax)
+                {
+                    registerZoomLevel(xmin,xmax,ymin,ymax);
+                    setZoom(xmin,ymin,xmax,ymax);
+                    plotIntensityMap();
+                }
                 break;
             }
             case(LINE):
@@ -403,7 +404,6 @@ void DetectorView::setZoom(int x1, int y1, int x2, int y2)
     _zoomTop=y1;
     _zoomRight=x2;
     _zoomBottom=y2;
-    std::cout << "Setting zoom to " << x1 << "," << y1 << "," << x2 << "," << y2 << std::endl;
 }
 
 void DetectorView::plotIntensityMap()
@@ -437,5 +437,10 @@ void DetectorView::setPreviousZoomLevel()
 
 void DetectorView::registerZoomLevel(int xmin, int xmax, int ymin, int ymax)
 {
+    // Swap coordinates for swapped rectangle view.
+    if (xmin>xmax)
+        std::swap(xmin,xmax);
+    if (ymin>ymax)
+        std::swap(ymin,ymax);
     _zoomStack.push(QRect(xmin,ymin,xmax-xmin+1,ymax-ymin+1));
 }
