@@ -9,7 +9,9 @@ typedef struct {
 
 COLOUR GetColour(double v,double vmin,double vmax);
 
-QImage Mat2QImage(int* src, int rows, int cols,double max);
+// Get an image from an 2D arrays of (rows,cols) with range (xmin:xmax,ymin:ymax) and
+// intensity coded with colorMax as brightest.
+QImage Mat2QImage(int* src, int rows, int cols,int xmin, int xmax, int ymin, int ymax,double colorMax);
 
 
 #endif // COLORMAP_H

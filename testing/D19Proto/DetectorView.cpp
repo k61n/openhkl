@@ -7,19 +7,24 @@
 #include "ColorMap.h"
 #include <QGraphicsRectItem>
 #include <cmath>
+#include "Plotter1D.h"
 
 DetectorView::DetectorView(QWidget* parent): QGraphicsView(parent),
     _ptrData(nullptr),
     _scene(new QGraphicsScene(this)),
     _mode(PIXEL),
-    _cutterMode(LINE),
-    _line(0)
+    _cutterMode(ZOOM),
+    _line(0),_zoom(0),_currentImage(0),
+    _cutPloter(0),_maxIntensity(1)
 {
 }
 void DetectorView::setNpixels(int hor,int vert)
 {
     pixels_h=hor;
     pixels_v=vert;
+    setZoom(0,0,hor,vert);
+    registerZoomLevel(0,hor,0,vert);
+
 }
 void DetectorView::setDimensions(double hor,double vert)
 {
@@ -32,49 +37,48 @@ void DetectorView::setDetectorDistance(double distance)
 }
 
 
-void DetectorView::updateView(Data* ptr,int frame, double colormax)
+void DetectorView::updateView(Data* ptr,int frame)
 {
     _ptrData=ptr;
-    // Replot the detector image
-    if (_ptrData)
+
+    // No data
+    if (!_ptrData)
     {
-        _ptrData->readBlock(frame);
-        QImage image=QImage(Mat2QImage(&(_ptrData->_currentFrame[0]),256,640,colormax));
-        QPixmap pix=QPixmap::fromImage(image);
-        pix=pix.scaled(width(),height(),Qt::IgnoreAspectRatio);
         _scene->clear();
-        _scene->addPixmap(pix);
-        setScene(_scene);
-        if (_ptrData->has3DEllipsoid())
+        delete _currentImage;
+    }
+
+    _ptrData->readBlock(frame);
+
+    plotIntensityMap();
+
+
+    if (_ptrData->has3DEllipsoid())
+    {
+        for (auto el : _ptrData->_peaks)
         {
-            for (auto el : _ptrData->_peaks)
+            SX::Geometry::Ellipsoid<double,3>& peak=el.second;
+            const Eigen::Vector3d& lower=peak.getLower();
+            const Eigen::Vector3d& upper=peak.getUpper();
+            // Plot bounding box
+            if (frame > lower[2] && frame < upper[2])
             {
-                SX::Geometry::Ellipsoid<double,3>& peak=el.second;
-                const Eigen::Vector3d& lower=peak.getLower();
-                const Eigen::Vector3d& upper=peak.getUpper();
-                // Plot bounding box
-                if (frame > lower[2] && frame < upper[2])
-                {
 
-                    double left=lower[0];
-                    double top=lower[1];
-                    detectorToScene(left,top);
-                    double w=upper[0]-lower[0];
-                    double h=upper[1]-lower[1];
-                    detectorToScene(w,h);
-                    // Plot the bounding box
-                    QGraphicsRectItem* bb=_scene->addRect(left-1,top-1,w+1,h+1,QPen(QBrush(QColor("yellow")),2.0));
-                    bb->setToolTip(QString::number(el.first));
-                    bb->setFlags(QGraphicsItem::ItemIsSelectable);
+                double left=lower[0];
+                double top=lower[1];
+                detectorToScene(left,top);
+                double w=upper[0]-lower[0];
+                double h=upper[1]-lower[1];
+                detectorToScene(w,h);
+                // Plot the bounding box
+                QGraphicsRectItem* bb=_scene->addRect(left-1,top-1,w+1,h+1,QPen(QBrush(QColor("yellow")),2.0));
+                bb->setToolTip(QString::number(el.first));
+                bb->setFlags(QGraphicsItem::ItemIsSelectable);
 
-                }
             }
         }
     }
-    else
-    {
-        _scene->clear();
-    }
+
 }
 
 
@@ -84,7 +88,7 @@ void DetectorView::mousePressEvent(QMouseEvent* event)
     if (!_ptrData)
         return;
 
-    if (event->button() ==Qt::LeftButton)
+    if (event->button() == Qt::LeftButton)
     {
         QGraphicsItem* item=_scene->itemAt(event->x(),event->y());
         // Any Graphic object other than the base pixmap can be selected and deselected
@@ -94,18 +98,33 @@ void DetectorView::mousePressEvent(QMouseEvent* event)
             return; // Nothing else need to be done
         }
 
-        // Enter different selection modes
+        // Only one cut line allowed
+        if (_line)
+            delete _line;
         switch (_cutterMode)
         {
-        case(LINE):
-            _line=_scene->addLine(event->x(),event->y(),event->x(),event->y());
-            _line->setVisible(true);
-            _line->setPen(QPen(QBrush(QColor("blue")),2.0));
-            _line->setFlags(QGraphicsItem::ItemIsSelectable);
-
-            setScene(_scene);
-            break;
+            case(ZOOM):
+            {
+                _zoom=_scene->addRect(event->x(),event->y(),1,1);
+                _zoom->setVisible(true);
+                _zoom->setPen(QPen(QBrush(QColor("red")),1.0));
+                break;
+            }
+            case(LINE):
+            {
+                _line=_scene->addLine(event->x(),event->y(),event->x(),event->y());
+                _line->setVisible(true);
+                _line->setPen(QPen(QBrush(QColor("blue")),2.0));
+                _line->setFlags(QGraphicsItem::ItemIsSelectable);
+                break;
+            }
         };
+         setScene(_scene);
+    } // Unzoom mode
+    else if (event->button() == Qt::RightButton)
+    {
+        if (_cutterMode==ZOOM)
+            setPreviousZoomLevel();
     }
 }
 
@@ -122,14 +141,20 @@ void DetectorView::mouseMoveEvent(QMouseEvent* event)
     {
     switch(_cutterMode)
     {
+    case(ZOOM):
+        if (_zoom)
+        {
+            updateZoomCutter(pos);
+            break;
+        }
     case(LINE):
         if (_line)
         {
            updateLineCutter(pos);
-           setScene(_scene);
            break;
         }
     };
+    setScene(_scene);
     }
 
     // If peak is detected
@@ -199,26 +224,65 @@ void DetectorView::mouseReleaseEvent(QMouseEvent *event)
     if (!_ptrData)
         return;
 
-    switch(_cutterMode)
-    {
-    case(LINE):
-        if (_line)
+
+    if (event->button() == Qt::RightButton)
+        return;
+
+        switch(_cutterMode)
         {
-           break;
-        }
-    };
+            case(ZOOM):
+            {
+                if (!_zoom)
+                    return;
+                _zoom->setVisible(false);
+                // This is the rectangle in scene coordinates
+                QRectF rectf=_zoom->rect();
+                double xmin=rectf.left();
+                double ymin=rectf.top();
+                sceneToDetector(xmin,ymin);
+                double xmax=rectf.right();
+                double ymax=rectf.bottom();
+                sceneToDetector(xmax,ymax);
+                if (xmin>xmax)
+                    std::swap(xmin,xmax);
+                if (ymin>ymax)
+                    std::swap(ymin,ymax);
+                if (xmax==xmin || ymin==ymax)
+                    return;
+                registerZoomLevel(xmin,xmax,ymin,ymax);
+                setZoom(xmin,ymin,xmax,ymax);
+                plotIntensityMap();
+                break;
+            }
+            case(LINE):
+            {
+                if (!_cutPloter)
+                    _cutPloter=new Plotter1D(this);
+                _cutPloter->show();
+                break;
+            }
+        };
 }
 
 void DetectorView::sceneToDetector(double& x, double& y)
 {
-    x/=(static_cast<double>(this->width())/pixels_h);
-    y/=(static_cast<double>(this->height())/pixels_v);
+    x/=static_cast<double>(this->width());
+    y/=static_cast<double>(this->height());
+    double hrange=_zoomRight-_zoomLeft;
+    double vrange=_zoomBottom-_zoomTop;
+    x*=hrange;y*=vrange;
+    x+=_zoomLeft;
+    y+=_zoomTop;
     return;
 }
 void DetectorView::detectorToScene(double& x, double& y)
 {
-    x*=(static_cast<double>(this->width())/pixels_h);
-    y*=(static_cast<double>(this->height())/pixels_v);
+    x-=_zoomLeft;
+    y-=_zoomTop;
+    double hrange=_zoomRight-_zoomLeft;
+    double vrange=_zoomBottom-_zoomTop;
+    x*=(static_cast<double>(this->width())/hrange);
+    y*=(static_cast<double>(this->height())/vrange);
     return;
 }
 
@@ -283,6 +347,12 @@ void DetectorView::getDSpacing(double x, double y, double &dspacing)
 void DetectorView::setCutterMode(int i)
 {
     _cutterMode=static_cast<CutterMode>(i);
+    switch(_cutterMode)
+    {
+    case(ZOOM):
+        if (_line) delete _line;
+        break;
+    };
 
 }
 
@@ -298,6 +368,18 @@ void DetectorView::updateLineCutter(const QPointF& pos)
     }
 }
 
+void DetectorView::updateZoomCutter(const QPointF& pos)
+{
+    if (_zoom)
+    {
+        if (!pointInScene(pos))
+            return;
+       QRectF rect=_zoom->rect();
+       rect.setBottomRight(pos);
+       _zoom->setRect(rect);
+    }
+}
+
 bool DetectorView::pointInScene(const QPointF& pos)
 {
     return (pos.x()<_scene->width() && pos.y()<_scene->height() && pos.x() >0 && pos.y() >0);
@@ -307,4 +389,53 @@ bool DetectorView::pointInScene(const QPointF& pos)
 bool DetectorView::hasData() const
 {
     return (_ptrData!=nullptr);
+}
+
+
+void DetectorView::setZoom(int x1, int y1, int x2, int y2)
+{
+    // Swap coordinates for swapped rectangle view.
+    if (x1>x2)
+        std::swap(x1,x2);
+    if (y1>y2)
+        std::swap(y1,y2);
+    _zoomLeft=x1;
+    _zoomTop=y1;
+    _zoomRight=x2;
+    _zoomBottom=y2;
+    std::cout << "Setting zoom to " << x1 << "," << y1 << "," << x2 << "," << y2 << std::endl;
+}
+
+void DetectorView::plotIntensityMap()
+{
+    QImage image=Mat2QImage(&(_ptrData->_currentFrame[0]),256,640,_zoomLeft,_zoomRight,_zoomTop,_zoomBottom,_maxIntensity);
+    QPixmap pix=QPixmap::fromImage(image);
+    pix=pix.scaled(width(),height(),Qt::IgnoreAspectRatio);
+    _scene->clear();
+    _scene->addPixmap(pix);
+    setScene(_scene);
+}
+
+void DetectorView::setMaxIntensity(int intensity)
+{
+    _maxIntensity=intensity;
+}
+
+void DetectorView::setPreviousZoomLevel()
+{
+    if (_zoomStack.size()>1)
+    {
+        _zoomStack.pop(); // Go the previous zoom mode
+        if (!_zoomStack.isEmpty()) // If not root, then assign
+        {
+            QRect rect=_zoomStack.top();
+            setZoom(rect.left(),rect.top(),rect.right(),rect.bottom());
+            plotIntensityMap();
+        }
+    }
+}
+
+void DetectorView::registerZoomLevel(int xmin, int xmax, int ymin, int ymax)
+{
+    _zoomStack.push(QRect(xmin,ymin,xmax-xmin+1,ymax-ymin+1));
 }
