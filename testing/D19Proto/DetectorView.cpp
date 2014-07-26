@@ -49,35 +49,9 @@ void DetectorView::updateView(Data* ptr,int frame)
     }
 
     _ptrData->readBlock(frame);
+    _currentFrame=frame;
 
-    plotIntensityMap();
-
-
-    if (_ptrData->has3DEllipsoid())
-    {
-        for (auto el : _ptrData->_peaks)
-        {
-            SX::Geometry::Ellipsoid<double,3>& peak=el.second;
-            const Eigen::Vector3d& lower=peak.getLower();
-            const Eigen::Vector3d& upper=peak.getUpper();
-            // Plot bounding box
-            if (frame > lower[2] && frame < upper[2])
-            {
-
-                double left=lower[0];
-                double top=lower[1];
-                detectorToScene(left,top);
-                double w=upper[0]-lower[0];
-                double h=upper[1]-lower[1];
-                detectorToScene(w,h);
-                // Plot the bounding box
-                QGraphicsRectItem* bb=_scene->addRect(left-1,top-1,w+1,h+1,QPen(QBrush(QColor("yellow")),2.0));
-                bb->setToolTip(QString::number(el.first));
-                bb->setFlags(QGraphicsItem::ItemIsSelectable);
-
-            }
-        }
-    }
+    updatePlot();
 
 }
 
@@ -119,7 +93,7 @@ void DetectorView::mousePressEvent(QMouseEvent* event)
                 break;
             }
         };
-         setScene(_scene);
+
     } // Unzoom mode
     else if (event->button() == Qt::RightButton)
     {
@@ -154,7 +128,7 @@ void DetectorView::mouseMoveEvent(QMouseEvent* event)
            break;
         }
     };
-    setScene(_scene);
+
     }
 
     // If peak is detected
@@ -251,7 +225,7 @@ void DetectorView::mouseReleaseEvent(QMouseEvent *event)
                 {
                     registerZoomLevel(xmin,xmax,ymin,ymax);
                     setZoom(xmin,ymin,xmax,ymax);
-                    plotIntensityMap();
+                    updatePlot();
                 }
                 break;
             }
@@ -410,10 +384,37 @@ void DetectorView::plotIntensityMap()
 {
     QImage image=Mat2QImage(&(_ptrData->_currentFrame[0]),256,640,_zoomLeft,_zoomRight,_zoomTop,_zoomBottom,_maxIntensity);
     QPixmap pix=QPixmap::fromImage(image);
-    pix=pix.scaled(width(),height(),Qt::IgnoreAspectRatio);
-    _scene->clear();
+    pix=pix.scaled(width(),height(),Qt::IgnoreAspectRatio);\
     _scene->addPixmap(pix);
-    setScene(_scene);
+
+}
+
+void DetectorView::plotEllipsoids()
+{
+    if (_ptrData->has3DEllipsoid())
+    {
+        for (auto el : _ptrData->_peaks)
+        {
+            SX::Geometry::Ellipsoid<double,3>& peak=el.second;
+            const Eigen::Vector3d& lower=peak.getLower();
+            const Eigen::Vector3d& upper=peak.getUpper();
+            // Plot bounding box
+            if (_currentFrame > lower[2] && _currentFrame < upper[2])
+            {
+
+                double left=lower[0];
+                double top=lower[1];
+                detectorToScene(left,top);
+                double right=upper[0];
+                double bottom=upper[1];
+                detectorToScene(right,bottom);
+                // Plot the bounding box
+                QGraphicsRectItem* bb=_scene->addRect(left-1,top-1,right-left+1,bottom-top+1,QPen(QBrush(QColor("yellow")),2.0));
+                bb->setToolTip(QString::number(el.first));
+                bb->setFlags(QGraphicsItem::ItemIsSelectable);
+            }
+        }
+    }
 }
 
 void DetectorView::setMaxIntensity(int intensity)
@@ -430,7 +431,7 @@ void DetectorView::setPreviousZoomLevel()
         {
             QRect rect=_zoomStack.top();
             setZoom(rect.left(),rect.top(),rect.right(),rect.bottom());
-            plotIntensityMap();
+            updatePlot();
         }
     }
 }
@@ -443,4 +444,14 @@ void DetectorView::registerZoomLevel(int xmin, int xmax, int ymin, int ymax)
     if (ymin>ymax)
         std::swap(ymin,ymax);
     _zoomStack.push(QRect(xmin,ymin,xmax-xmin+1,ymax-ymin+1));
+}
+
+void DetectorView::updatePlot()
+{
+  _scene->clear();
+  //
+  plotIntensityMap();
+  plotEllipsoids();
+  //
+  setScene(_scene);
 }

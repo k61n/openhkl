@@ -46,6 +46,10 @@ protected:
 private:
     //
     void plotIntensityMap();
+    //
+    void plotEllipsoids();
+    //
+    void updatePlot();
     // Get gamma,nu in degrees for a pixel at (x,y) in detector space
     void getGammaNu(double x, double y, double& gamma, double& nu);
     // Get 2theta in degrees for a pixel (x,y) in detector space.
@@ -87,6 +91,7 @@ private:
     double _maxIntensity;
     // Maintain the stack of zoom levels
     QStack<QRect> _zoomStack;
+    int _currentFrame;
 };
 
 #endif // DETECTORVIEW_H
