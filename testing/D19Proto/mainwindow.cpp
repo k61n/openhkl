@@ -11,7 +11,7 @@
 #include "BlobFinder.h"
 #include <Ellipsoid.h>
 #include <Plotter1D.h>
-
+#include <QDebug>
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),scene(new QGraphicsScene)
@@ -80,8 +80,7 @@ void MainWindow::on_action_Open_triggered()
         }catch(...)
         {
 
-           ui->textLogger->log(Logger::WARNING) << "File: " << fileNames[i].toStdString() << " is not readable as a Numor";
-           ui->textLogger->flush();
+           qDebug() << "File: " << fileNames[i] << " is not readable as a Numor";
 
            continue;
         }
@@ -93,8 +92,8 @@ void MainWindow::on_action_Open_triggered()
     if (!first)
         return;
 
-    ui->textLogger->log(Logger::INFO) << "Read " << fileNames.size() << " file(s)";
-    ui->textLogger->flush();
+    qDebug() << "Read " << fileNames.size() << " file(s)";
+
 
     ui->numor_Widget->setCurrentItem(first);
     std::string firstNumor = first->text().toStdString();
@@ -159,8 +158,8 @@ void MainWindow::deleteNumors()
             _data.erase(it1);
         delete *it;
     }
-    ui->textLogger->log(Logger::INFO) <<  selNumors.size() << " file(s) have been deleted";
-    ui->textLogger->flush();
+    qDebug() <<  selNumors.size() << " file(s) have been deleted";
+
     updatePlot();
 
 }
@@ -184,8 +183,8 @@ void MainWindow::on_numor_Widget_itemDoubleClicked(QListWidgetItem *item)
     int nmax=_data[numor]._nblocks-1;
     ui->horizontalScrollBar->setMaximum(nmax);
     ui->spinBox_Frame->setMaximum(nmax);
-    ui->textLogger->log(Logger::INFO) <<  "File " << numor << " selected ";
-    ui->textLogger->flush();
+
+
     updatePlot();
 }
 
@@ -195,7 +194,7 @@ void MainWindow::on_numor_Widget_itemActivated(QListWidgetItem *item)
     if (item == nullptr)
         return;
     std::string numor=item->text().toStdString();
-    ui->textLogger->flush();
+
     int nmax=_data[numor]._nblocks-1;
     ui->horizontalScrollBar->setMaximum(nmax);
     ui->spinBox_Frame->setMaximum(nmax);
@@ -213,7 +212,7 @@ void MainWindow::ShowContextMenu(const QPoint& pos)
 
 void MainWindow::on_pushButton_PeakFind_clicked()
 {
-    DialogPeakFind* dialog= new DialogPeakFind(this);
+    DialogPeakFind* dialog= new DialogPeakFind();
 
     //
     if (!dialog->exec())
@@ -235,28 +234,28 @@ void MainWindow::on_pushButton_PeakFind_clicked()
         return;
 
     setCursor(Qt::WaitCursor);
-    ui->textLogger->log(Logger::INFO) << "Searching peaks in numor:" << numor;
-    ui->textLogger->flush();
+
+
 
 
     Data& d=(*it).second;
 
-    ui->textLogger->log(Logger::INFO) << "Reading numor in memory";
-    ui->textLogger->flush();
+
+
     ui->progressBar->setVisible(true);
 
     d.readInMemory();
 
 
     // Analyse background
-    std::vector<int> v;
-    d.getCountsHistogram(v);
+//    std::vector<int> v;
+//    d.getCountsHistogram(v);
 
-    auto max=std::max_element(v.begin(),v.end());
-    int background_level=std::distance(v.begin(),max)+1;
+//    auto max=std::max_element(v.begin(),v.end());
+//    int background_level=std::distance(v.begin(),max)+1;
+//    std::cout << v[0] << std::endl;
+//    qDebug() << "Background estimated at "  << background_level << "cts/pixel";
 
-    ui->textLogger->log(Logger::INFO) << "Background estimated at "  << background_level << "cts/pixel";
-    ui->textLogger->flush();
 
     // Get pointers to start of each frame
     std::vector<int*> temp(d._nblocks);
@@ -272,15 +271,14 @@ void MainWindow::on_pushButton_PeakFind_clicked()
     ui->progressBar->setFormat("Locating peaks...");
     try
     {
-      blobs=SX::Geometry::findBlobs3D<int>(temp, 256,640, threshold*background_level, 5, 10000, confidence, 0);
-    }catch(std::bad_alloc& e) // Warning if RAM error
+      blobs=SX::Geometry::findBlobs3D<int>(temp, 256,640, threshold*3, 5, 10000, confidence, 0);
+    }catch(std::exception& e) // Warning if RAM error
     {
-        ui->textLogger->log(Logger::WARNING) << e.what() << "(Peak find, memory allocation error. Increase Threshold level)";
-        ui->textLogger->flush();
+
+
     }
 
-    ui->textLogger->log(Logger::INFO) << "Found: " << blobs.size() << " peaks";
-    ui->textLogger->flush();
+
 
     // Now free the memory
     d.releaseMemory();
@@ -298,11 +296,12 @@ void MainWindow::on_pushButton_PeakFind_clicked()
         d._peaks[i++]=a;
     }
 
-    //Update the plot to show the axes
-    updatePlot();
 
     //
     setCursor(Qt::ArrowCursor);
+
+    std::cout << "J ai fini et j ai trouve" << blobs.size() <<  std::endl;
+    updatePlot();
 }
 
 void MainWindow::on_textLogger_customContextMenuRequested(const QPoint &pos)
@@ -311,8 +310,3 @@ void MainWindow::on_textLogger_customContextMenuRequested(const QPoint &pos)
 }
 
 
-void MainWindow::on_pushButton_Plotter_clicked()
-{
-    Plotter1D* d=new Plotter1D(this);
-    d->show();
-}

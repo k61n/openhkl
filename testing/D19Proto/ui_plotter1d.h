@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'plotter1d.ui'
 **
-** Created: Sun Jul 27 01:13:15 2014
+** Created: Sun Jul 27 08:43:57 2014
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
