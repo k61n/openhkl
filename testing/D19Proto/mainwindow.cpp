@@ -222,6 +222,8 @@ void MainWindow::on_action_peak_find_triggered()
 {
     DialogPeakFind* dialog= new DialogPeakFind();
 
+    dialog->setFixedSize(400,200);
+
     //
     if (!dialog->exec())
         return;
@@ -243,12 +245,7 @@ void MainWindow::on_action_peak_find_triggered()
 
     setCursor(Qt::WaitCursor);
 
-
-
-
     Data& d=(*it).second;
-
-
 
     ui->progressBar->setVisible(true);
 
