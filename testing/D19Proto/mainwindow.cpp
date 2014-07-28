@@ -23,10 +23,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->_dview->setDragMode(QGraphicsView::RubberBandDrag);
     //ui->_dview->setDragMode(ui->_dview->ScrollHandDrag);
     ui->dial->setRange(0,15);
-    ui->pushButton_openFile->setIcon(QIcon("/home/chapon/Programming/C++/Qt/D19Proto/D19Proto/IconopenFile.jpg"));
+    ui->pushButton_openFile->setIcon(QIcon(":/IconopenFile.jpg"));
     ui->pushButton_openFile->setIconSize(QSize(55, 55));
 
-    ui->pushButton_PeakFind->setIcon(QIcon("/home/chapon/Programming/C++/Qt/D19Proto/D19Proto/IconfindPeak.jpg"));
+    ui->pushButton_PeakFind->setIcon(QIcon(":/IconfindPeak.jpg"));
     ui->pushButton_PeakFind->setIconSize(QSize(55, 55));
     ui->numor_Widget->setSelectionMode(QAbstractItemView::MultiSelection);
     QShortcut* shortcut = new QShortcut(QKeySequence(Qt::Key_Delete), ui->numor_Widget);

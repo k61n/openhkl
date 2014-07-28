@@ -12,6 +12,9 @@ TARGET = D19Proto
 TEMPLATE = app
 
 
+RESOURCES = D19Proto.qrc \
+    D19Proto.qrc
+
 SOURCES += main.cpp\
         mainwindow.cpp \
     Data.cpp \
@@ -41,4 +44,8 @@ else:unix: LIBS += -L/usr/local/NSXTool/ -lNSXTool -lgomp -lboost_date_time
 INCLUDEPATH += $$PWD/ /usr/local/include/NSXTool
 INCLUDEPATH += $$PWD/ /usr/local/include/eigen3
 DEPENDPATH += $$PWD/ /usr/local/include/NSXTool
+
+
+INCLUDEPATH += $$PWD/../../../../../../usr/include/eigen3
+DEPENDPATH += $$PWD/../../../../../../usr/include/eigen3
 

@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>IconfindPeak.jpg</file>
+        <file>IconopenFile.jpg</file>
+        <file>cutellipseIcon.png</file>
+        <file>cutlineIcon.png</file>
+        <file>zoomIcon.png</file>
+    </qresource>
+</RCC>
