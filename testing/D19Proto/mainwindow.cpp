@@ -21,6 +21,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->mainToolBar->setIconSize(QSize(32,32));
 
+    ui->frameFrame->setEnabled(false);
+    ui->intensityFrame->setEnabled(false);
+
     scene->setParent(ui->_dview);
     ui->_dview->setScene(scene);
     ui->_dview->setInteractive(true);
@@ -97,6 +100,8 @@ void MainWindow::on_action_open_triggered()
 
     qDebug() << "Read " << fileNames.size() << " file(s)";
 
+    ui->frameFrame->setEnabled(true);
+    ui->intensityFrame->setEnabled(true);
 
     ui->numor_Widget->setCurrentItem(first);
     std::string firstNumor = first->text().toStdString();
@@ -158,6 +163,12 @@ void MainWindow::deleteNumors()
     qDebug() <<  selNumors.size() << " file(s) have been deleted";
 
     updatePlot();
+
+    if (!ui->numor_Widget->count())
+    {
+        ui->frameFrame->setEnabled(false);
+        ui->intensityFrame->setEnabled(false);
+    }
 
 }
 

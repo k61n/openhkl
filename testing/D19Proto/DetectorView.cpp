@@ -47,6 +47,7 @@ void DetectorView::updateView(Data* ptr,int frame)
     {
         _scene->clear();
         delete _currentImage;
+        return;
     }
 
     _ptrData->readBlock(frame);
