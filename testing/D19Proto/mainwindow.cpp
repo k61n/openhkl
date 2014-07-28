@@ -12,22 +12,22 @@
 #include <Ellipsoid.h>
 #include <Plotter1D.h>
 #include <QDebug>
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),scene(new QGraphicsScene)
 {
     ui->setupUi(this);
+
+    ui->mainToolBar->setIconSize(QSize(32,32));
+
     scene->setParent(ui->_dview);
     ui->_dview->setScene(scene);
     ui->_dview->setInteractive(true);
     ui->_dview->setDragMode(QGraphicsView::RubberBandDrag);
     //ui->_dview->setDragMode(ui->_dview->ScrollHandDrag);
     ui->dial->setRange(0,15);
-    ui->pushButton_openFile->setIcon(QIcon(":/IconopenFile.jpg"));
-    ui->pushButton_openFile->setIconSize(QSize(55, 55));
 
-    ui->pushButton_PeakFind->setIcon(QIcon(":/IconfindPeak.jpg"));
-    ui->pushButton_PeakFind->setIconSize(QSize(55, 55));
     ui->numor_Widget->setSelectionMode(QAbstractItemView::MultiSelection);
     QShortcut* shortcut = new QShortcut(QKeySequence(Qt::Key_Delete), ui->numor_Widget);
     connect(shortcut, SIGNAL(activated()), this, SLOT(deleteNumors()));
@@ -38,13 +38,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->_dview->setDimensions(120.0,0.4);
     ui->_dview->setDetectorDistance(0.764);
     //
-    ui->comboBox_selectionmode->addItem(QIcon(":/zoomIcon.png"),"");
-    ui->comboBox_selectionmode->addItem(QIcon(":/cutlineIcon.png"),"");
-    ui->comboBox_selectionmode->addItem(QIcon(":/cutellipseIcon.png"),"");
-    ui->comboBox_selectionmode->addItem(QIcon(":/horizontalsliceIcon.png"),"");
-    ui->comboBox_selectionmode->addItem(QIcon(":/verticalsliceIcon.png"),"");
 
-    connect(ui->comboBox_selectionmode,SIGNAL(currentIndexChanged(int)),ui->_dview,SLOT(setCutterMode(int)));
+    ui->selectionMode->addItem(QIcon(":/zoomIcon.png"),"");
+    ui->selectionMode->addItem(QIcon(":/cutlineIcon.png"),"");
+    ui->selectionMode->addItem(QIcon(":/cutellipseIcon.png"),"");
+    ui->selectionMode->addItem(QIcon(":/horizontalsliceIcon.png"),"");
+    ui->selectionMode->addItem(QIcon(":/verticalsliceIcon.png"),"");
+
+    connect(ui->selectionMode,SIGNAL(currentIndexChanged(int)),ui->_dview,SLOT(setCutterMode(int)));
     connect(ui->dial,SIGNAL(valueChanged(int)),ui->_dview,SLOT(setMaxIntensity(int)));
 }
 
@@ -55,7 +56,7 @@ MainWindow::~MainWindow()
 
 
 
-void MainWindow::on_action_Open_triggered()
+void MainWindow::on_action_open_triggered()
 {
     QFileDialog dialog;
     dialog.setDirectory("/home/chapon/Data/D19/July2014/data/DKDP/");
@@ -143,12 +144,6 @@ void MainWindow::on_dial_valueChanged(int value)
     updatePlot();
 }
 
-
-void MainWindow::on_pushButton_openFile_pressed()
-{
-    on_action_Open_triggered();
-}
-
 void MainWindow::deleteNumors()
 {
     QList<QListWidgetItem*> selNumors = ui->numor_Widget->selectedItems();
@@ -212,7 +207,7 @@ void MainWindow::ShowContextMenu(const QPoint& pos)
 }
 
 
-void MainWindow::on_pushButton_PeakFind_clicked()
+void MainWindow::on_action_peak_find_triggered()
 {
     DialogPeakFind* dialog= new DialogPeakFind();
 

@@ -14,7 +14,6 @@
 
 class QListWidgetItem;
 
-
 namespace Ui {
 class MainWindow;
 }
@@ -28,12 +27,13 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_action_Open_triggered();
+    void on_action_open_triggered();
+
+    void on_action_peak_find_triggered();
+
     void on_horizontalScrollBar_valueChanged(int value);
 
     void on_dial_valueChanged(int value);
-
-    void on_pushButton_openFile_pressed();
 
     void on_spinBox_max_valueChanged(int arg1);
 
@@ -44,8 +44,6 @@ private slots:
     void on_numor_Widget_itemActivated(QListWidgetItem *item);
 
     void ShowContextMenu(const QPoint& pos);
-
-    void on_pushButton_PeakFind_clicked();
 
     void on_textLogger_customContextMenuRequested(const QPoint &pos);
 
