@@ -5,5 +5,7 @@
         <file>cutellipseIcon.png</file>
         <file>cutlineIcon.png</file>
         <file>zoomIcon.png</file>
+        <file>horizontalsliceIcon.png</file>
+        <file>verticalsliceIcon.png</file>
     </qresource>
 </RCC>
