@@ -100,3 +100,4 @@ void Data::clear3DEllipsoids()
 {
     _peaks.clear();
 }
+

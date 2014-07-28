@@ -41,6 +41,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->comboBox_selectionmode->addItem(QIcon("zoomIcon.png"),"");
     ui->comboBox_selectionmode->addItem(QIcon("cutlineIcon.png"),"");
     ui->comboBox_selectionmode->addItem(QIcon("cutellipseIcon.png"),"");
+    ui->comboBox_selectionmode->addItem(QIcon("horizontalsliceIcon.png"),"");
+    ui->comboBox_selectionmode->addItem(QIcon("verticalsliceIcon.png"),"");
 
     connect(ui->comboBox_selectionmode,SIGNAL(currentIndexChanged(int)),ui->_dview,SLOT(setCutterMode(int)));
     connect(ui->dial,SIGNAL(valueChanged(int)),ui->_dview,SLOT(setMaxIntensity(int)));

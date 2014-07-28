@@ -14,7 +14,7 @@ class DetectorView : public QGraphicsView
 public:
     enum CrossMode {THETA, GAMMA, D, PIXEL};
     //
-    enum CutterMode {ZOOM=0, LINE=1, ELLIPSE=1, BOX=2};
+    enum CutterMode {ZOOM=0, LINE=1, ELLIPSE=2, HORIZONTALSLICE=3, VERTICALSLICE=4};
 
     DetectorView(QWidget* parent);
     // Set the number of pixels in the detector
@@ -35,6 +35,8 @@ public slots:
     void registerZoomLevel(int xmin, int xmax, int ymin, int ymax);
     // Go to previous zoom level
     void setPreviousZoomLevel();
+    // Integrate in vertical direction
+    void integrateVertical(int xmin,int xmax, int ymin, int ymax, QVector<double>& projection, QVector<double>& error);
 protected:
     // Mouse events
     void mousePressEvent(QMouseEvent *event);
@@ -43,6 +45,7 @@ protected:
     void detectorToScene(double& x, double& y);
     void sceneToDetector(double& x, double& y);
     void keyPressEvent(QKeyEvent* event);
+    void wheelEvent(QWheelEvent *event);
 private:
     //
     void plotIntensityMap();
@@ -62,6 +65,8 @@ private:
     void updateZoomCutter(const QPointF&);
     // Check pixel x y is in the detector scene
     bool pointInScene(const QPointF&);
+    //
+    void updateSliceIntegrator();
     // Pointer to Data
     Data* _ptrData;
     int pixels_h;
@@ -92,6 +97,9 @@ private:
     // Maintain the stack of zoom levels
     QStack<QRect> _zoomStack;
     int _currentFrame;
+    double _previousX, _previousY;
+    Plotter1D* _plotter;
+    int _sliceThickness;
 };
 
 #endif // DETECTORVIEW_H

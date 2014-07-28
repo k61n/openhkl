@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'plotter1d.ui'
 **
-** Created: Sun Jul 27 08:43:57 2014
+** Created: Mon Jul 28 00:08:13 2014
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -15,7 +15,9 @@
 #include <QtGui/QApplication>
 #include <QtGui/QButtonGroup>
 #include <QtGui/QDialog>
+#include <QtGui/QHBoxLayout>
 #include <QtGui/QHeaderView>
+#include <QtGui/QWidget>
 #include "qcustomplot.h"
 
 QT_BEGIN_NAMESPACE
@@ -23,6 +25,8 @@ QT_BEGIN_NAMESPACE
 class Ui_Plotter1D
 {
 public:
+    QWidget *horizontalLayoutWidget;
+    QHBoxLayout *horizontalLayout;
     QCustomPlot *plot;
 
     void setupUi(QDialog *Plotter1D)
@@ -30,9 +34,18 @@ public:
         if (Plotter1D->objectName().isEmpty())
             Plotter1D->setObjectName(QString::fromUtf8("Plotter1D"));
         Plotter1D->resize(625, 493);
-        plot = new QCustomPlot(Plotter1D);
+        horizontalLayoutWidget = new QWidget(Plotter1D);
+        horizontalLayoutWidget->setObjectName(QString::fromUtf8("horizontalLayoutWidget"));
+        horizontalLayoutWidget->setGeometry(QRect(10, 10, 601, 471));
+        horizontalLayout = new QHBoxLayout(horizontalLayoutWidget);
+        horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
+        horizontalLayout->setContentsMargins(0, 0, 0, 0);
+        plot = new QCustomPlot(horizontalLayoutWidget);
         plot->setObjectName(QString::fromUtf8("plot"));
-        plot->setGeometry(QRect(70, 60, 401, 321));
+        plot->setMaximumSize(QSize(702, 300));
+
+        horizontalLayout->addWidget(plot);
+
 
         retranslateUi(Plotter1D);
 

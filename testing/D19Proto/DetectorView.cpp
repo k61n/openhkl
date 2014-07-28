@@ -15,7 +15,8 @@ DetectorView::DetectorView(QWidget* parent): QGraphicsView(parent),
     _mode(PIXEL),
     _cutterMode(ZOOM),
     _line(0),_zoom(0),_currentImage(0),
-    _cutPloter(0),_maxIntensity(1)
+    _cutPloter(0),_maxIntensity(1),_plotter(0),
+    _sliceThickness(5)
 {
 }
 void DetectorView::setNpixels(int hor,int vert)
@@ -92,6 +93,17 @@ void DetectorView::mousePressEvent(QMouseEvent* event)
                 _line->setFlags(QGraphicsItem::ItemIsSelectable);
                 break;
             }
+            case(HORIZONTALSLICE):
+            {
+                if (!_zoom)
+                  _zoom=_scene->addRect(0,event->y(),width(),_sliceThickness);
+                else
+                    _zoom->setRect(0,event->y(),width(),_sliceThickness);
+                _zoom->setVisible(true);
+                _zoom->setPen(QPen(QBrush(QColor("gray")),1.0));
+                updateSliceIntegrator();
+                break;
+            }
         };
 
     } // Unzoom mode
@@ -127,6 +139,13 @@ void DetectorView::mouseMoveEvent(QMouseEvent* event)
            updateLineCutter(pos);
            break;
         }
+    case(HORIZONTALSLICE):
+        if (_zoom)
+        {   
+            _zoom->setRect(0,event->y(),width(),_sliceThickness);
+            updateSliceIntegrator();
+        }
+        break;
     };
 
     }
@@ -192,6 +211,25 @@ void DetectorView::mouseMoveEvent(QMouseEvent* event)
     QToolTip::showText(event->globalPos(),QString::fromStdString(os.str()),this,QRect());
 }
 
+void DetectorView::wheelEvent(QWheelEvent *event)
+{
+    if (_cutterMode==HORIZONTALSLICE)
+    {
+        // One mouse delta=120
+        _sliceThickness+=event->delta()/60;
+        // Minimum slice thickness
+        if (_sliceThickness<1)
+            _sliceThickness==1;
+
+        if (_zoom)
+        {
+            QRectF rect=_zoom->rect();
+            _zoom->setRect(0,rect.top(),width(),_sliceThickness);
+        }
+            updateSliceIntegrator();
+    }
+}
+
 void DetectorView::mouseReleaseEvent(QMouseEvent *event)
 {
     // Act only if data are present
@@ -231,10 +269,11 @@ void DetectorView::mouseReleaseEvent(QMouseEvent *event)
             }
             case(LINE):
             {
-                if (!_cutPloter)
-                    _cutPloter=new Plotter1D(this);
-                _cutPloter->show();
                 break;
+            }
+            case(HORIZONTALSLICE):
+            {
+               break;
             }
         };
 }
@@ -455,3 +494,68 @@ void DetectorView::updatePlot()
   //
   setScene(_scene);
 }
+
+void DetectorView::integrateVertical(int xmin, int xmax, int ymin, int ymax,
+                                     QVector<double> &projection, QVector<double> &error)
+{
+    assert(xmin>=0 && xmin<pixels_h && ymin>=0 && ymin<pixels_v);
+    assert(xmax>=0 && xmax<pixels_h && ymax>=0 && ymax<pixels_v);
+    if (xmin>xmax)
+        std::swap(xmin,xmax);
+    if (ymin>ymax)
+        std::swap(ymin,ymax);
+    projection.resize(xmax-xmin);
+    error.resize(xmax-xmin);
+
+    int* d=&(_ptrData->_currentFrame[0]);
+    for (int i=0;i<pixels_h;++i)
+    {
+        for (int j=0;j<pixels_v;++j)
+        {
+            if (i>=xmin && i<xmax && j>=ymin && j<ymax)
+            {
+                projection[i-xmin]+=*d;
+            }
+            d++;
+        }
+    }
+
+    for (int i=0;i<(xmax-xmin);++i)
+        error[i]=sqrt(projection[i]);
+    return;
+}
+
+void DetectorView::updateSliceIntegrator()
+{
+    QRectF rect=_zoom->rect();
+    double xmind=rect.left();
+    double xmaxd=rect.right();
+    double ymind=rect.top();
+    double ymaxd=rect.bottom();
+    sceneToDetector(xmind,ymind);
+    sceneToDetector(xmaxd,ymaxd);
+    int xmin=static_cast<int>(xmind);
+    int xmax=static_cast<int>(xmaxd);
+    int ymin=static_cast<int>(ymind);
+    int ymax=static_cast<int>(ymaxd);
+    if (xmin < 0  || xmax > pixels_h || ymin <0 || ymax > pixels_v-1)
+        return;
+
+    QVector<double> x,y,e;
+    x.resize(xmax-xmin);
+    for (int i=0;i<xmax-xmin;++i)
+        x[i]=xmin+i;
+    integrateVertical(xmin,xmax-1,ymin,ymax,y,e);
+    if (!_plotter)
+    {
+        _plotter=new Plotter1D(this);
+        _plotter->addCurve(x,y,e);
+    }
+    else
+    {
+        _plotter->modifyCurve(0,x,y,e);
+    }
+        _plotter->show();
+}
+
+

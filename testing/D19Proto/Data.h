@@ -6,6 +6,7 @@
 #include <memory>
 #include <map>
 #include <Ellipsoid.h>
+#include <QVector>
 
 typedef std::vector<int> vint;
 
@@ -36,7 +37,6 @@ struct Data
     int _maxCount;
     int _maxCurrentFrame;
     std::map<int,SX::Geometry::Ellipsoid<double,3>,std::less<int>, Eigen::aligned_allocator<std::pair<const int, Eigen::Matrix4d> >> _peaks;
-
 };
 
 #endif // DATA_H
