@@ -16,7 +16,8 @@ DetectorView::DetectorView(QWidget* parent): QGraphicsView(parent),
     _cutterMode(ZOOM),
     _line(nullptr),_zoom(nullptr),_currentImage(nullptr),_slice(nullptr),
     _cutPloter(0),_maxIntensity(1),_plotter(0),
-    _sliceThickness(5)
+    _sliceThickness(5),
+    _pixmap(nullptr)
 {
 }
 
@@ -257,12 +258,18 @@ void DetectorView::mousePressEvent(QMouseEvent* event)
         }
 
         // Only one cut line allowed
-//        if (_line)
-//            delete _line;
+        if (_line)
+        {
+            _scene->removeItem(_line);
+            delete _line;
+        }
 
         // Only one slice allowed
         if (_slice)
+        {
+            _scene->removeItem(_slice);
             delete _slice;
+        }
 
         switch (_cutterMode)
         {
@@ -394,7 +401,7 @@ void DetectorView::plotIntensityMap()
     QPixmap pix=QPixmap::fromImage(image);
     pix=pix.scaled(width(),height(),Qt::IgnoreAspectRatio);
 
-    _scene->addPixmap(pix);
+    _pixmap = _scene->addPixmap(pix);
 }
 
 bool DetectorView::pointInScene(const QPointF& pos)
@@ -564,7 +571,6 @@ void DetectorView::updateView(Data* ptr,int frame)
     _currentFrame=frame;
 
     updatePlot();
-
 }
 
 void DetectorView::updateZoomCutter(const QPointF& pos)

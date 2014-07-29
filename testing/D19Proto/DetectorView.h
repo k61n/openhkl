@@ -103,6 +103,8 @@ private:
     Plotter1D* _plotter;
     int _sliceThickness;
 
+    QGraphicsPixmapItem *_pixmap;
+
 };
 
 #endif // DETECTORVIEW_H
