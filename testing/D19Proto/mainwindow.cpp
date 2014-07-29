@@ -50,6 +50,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->selectionMode,SIGNAL(currentIndexChanged(int)),ui->_dview,SLOT(setCutterMode(int)));
     connect(ui->dial,SIGNAL(valueChanged(int)),ui->_dview,SLOT(setMaxIntensity(int)));
+
 }
 
 MainWindow::~MainWindow()
@@ -299,20 +300,29 @@ void MainWindow::on_action_peak_find_triggered()
         Eigen::Matrix3d eigenvectors;
         blob.second.toEllipsoid(confidence, center,eigenvalues,eigenvectors);
         SX::Geometry::Ellipsoid<double,3> a(center,eigenvalues,eigenvectors);
-        d._peaks[i++]=a;
+        d._peaks[i]=a;
+        SX::Geometry::Peak3D p(&d);
+        p.setPeak(new SX::Geometry::Ellipsoid3D(center,eigenvalues,eigenvectors));
+        p.setBackground(new SX::Geometry::Ellipsoid3D(center,eigenvalues*3,eigenvectors));
+        d._rpeaks.insert(Data::maprealPeaks::value_type(i++,p));
     }
-
+    std::cout << d._rpeaks.size() << "inserted";
+    for (int i=0;i<d._rpeaks.size();++i)
+        d._rpeaks[i].integrate();
 
     //
     setCursor(Qt::ArrowCursor);
-
-    std::cout << "J ai fini et j ai trouve" << blobs.size() <<  std::endl;
     updatePlot();
 }
 
 void MainWindow::on_textLogger_customContextMenuRequested(const QPoint &pos)
 {
     std::cout  << pos.x() << std::endl;
+}
+
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+    updatePlot();
 }
 
 

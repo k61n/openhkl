@@ -15,7 +15,7 @@ DetectorView::DetectorView(QWidget* parent): QGraphicsView(parent),
     _mode(PIXEL),
     _cutterMode(ZOOM),
     _line(nullptr),_zoom(nullptr),_currentImage(nullptr),_slice(nullptr),
-    _cutPloter(0),_maxIntensity(1),_plotter(0),
+    _cutPloter(nullptr),_maxIntensity(1),_plotter(nullptr),
     _sliceThickness(5),
     _pixmap(nullptr)
 {
@@ -262,6 +262,7 @@ void DetectorView::mousePressEvent(QMouseEvent* event)
         {
             _scene->removeItem(_line);
             delete _line;
+            _line=nullptr;
         }
 
         // Only one slice allowed
@@ -269,6 +270,7 @@ void DetectorView::mousePressEvent(QMouseEvent* event)
         {
             _scene->removeItem(_slice);
             delete _slice;
+            _slice=nullptr;
         }
 
         switch (_cutterMode)
@@ -401,7 +403,11 @@ void DetectorView::plotIntensityMap()
     QPixmap pix=QPixmap::fromImage(image);
     pix=pix.scaled(width(),height(),Qt::IgnoreAspectRatio);
 
-    _pixmap = _scene->addPixmap(pix);
+    // If no pixmap is present, create a new one and add to scene
+    if (!_pixmap)
+        _pixmap = _scene->addPixmap(pix);
+    else // update the pixmap with new image
+        _pixmap->setPixmap(pix);
 }
 
 bool DetectorView::pointInScene(const QPointF& pos)
@@ -501,8 +507,6 @@ void DetectorView::updateLineCutter(const QPointF& pos)
 
 void DetectorView::updatePlot()
 {
-    _scene->clear();
-    //
     plotIntensityMap();
     plotEllipsoids();
     //
@@ -522,7 +526,7 @@ void DetectorView::updateSliceIntegrator()
     int xmax=static_cast<int>(xmaxd);
     int ymin=static_cast<int>(ymind);
     int ymax=static_cast<int>(ymaxd);
-    std::cout<<xmin<<" "<<xmax<<" "<<ymin<<" "<<ymax<<" "<<" "<<pixels_h<<" "<<pixels_v<<std::endl;
+
     if (xmin < 0  || xmax > pixels_h || ymin <0 || ymax > pixels_v)
         return;
 
@@ -593,7 +597,7 @@ void DetectorView::wheelEvent(QWheelEvent *event)
         _sliceThickness+=event->delta()/60;
         // Minimum slice thickness
         if (_sliceThickness<1)
-            _sliceThickness==1;
+            _sliceThickness=1;
 
         if (_slice)
         {
@@ -608,7 +612,7 @@ void DetectorView::wheelEvent(QWheelEvent *event)
         _sliceThickness+=event->delta()/60;
         // Minimum slice thickness
         if (_sliceThickness<1)
-            _sliceThickness==1;
+            _sliceThickness=1;
 
         if (_slice)
         {

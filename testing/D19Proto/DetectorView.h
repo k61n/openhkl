@@ -102,7 +102,6 @@ private:
     double _previousX, _previousY;
     Plotter1D* _plotter;
     int _sliceThickness;
-
     QGraphicsPixmapItem *_pixmap;
 
 };

@@ -47,7 +47,7 @@ private slots:
 
     void on_textLogger_customContextMenuRequested(const QPoint &pos);
 
-
+    void resizeEvent(QResizeEvent *);
 private:
     void updatePlot();
     Ui::MainWindow *ui;

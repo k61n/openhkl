@@ -7,13 +7,14 @@
 #include <map>
 #include <Ellipsoid.h>
 #include <QVector>
+#include "Peak3D.h"
 
 typedef std::vector<int> vint;
 
 
 class QProgressBar;
 
-struct Data
+struct Data: public SX::Geometry::IData
 {
     Data();
     ~Data();
@@ -28,6 +29,7 @@ struct Data
     bool has3DEllipsoid() const;
     // clear
     void clear3DEllipsoids();
+    int dataAt(int x, int y, int z);
     int _nblocks;
     std::unique_ptr<SX::Data::IDataReader> mm;
     vint _currentFrame;
@@ -37,6 +39,8 @@ struct Data
     int _maxCount;
     int _maxCurrentFrame;
     std::map<int,SX::Geometry::Ellipsoid<double,3>,std::less<int>, Eigen::aligned_allocator<std::pair<const int, Eigen::Matrix4d> >> _peaks;
+    typedef std::map<int,SX::Geometry::Peak3D> maprealPeaks;
+    maprealPeaks _rpeaks;
 };
 
 #endif // DATA_H

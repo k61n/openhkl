@@ -101,3 +101,10 @@ void Data::clear3DEllipsoids()
     _peaks.clear();
 }
 
+int Data::dataAt(int x, int y, int z)
+{
+    if (z<0 || z>=_nblocks || y<0 || y>=256 || x<0 || x>=640)
+        return 0;
+    return (_data[z])[x*256+y];
+}
+
