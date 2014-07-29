@@ -178,12 +178,12 @@ namespace Geometry
 					labels.pop();
 					if (newlabel) // Create a new blob if necessary
 					{
-						blobs.insert(std::pair<int,Blob2D>(label,Blob2D(col,row,value)));
+						blobs.insert(std::pair<int,Blob2D>(label,Blob2D(col+0.5,row+0.5,value)));
 					}
 					else
 					{
 						Blob2D& roi=blobs[label];
-						roi.addPoint(col,row,value);
+						roi.addPoint(col+0.5,row+0.5,value);
 					}
 
 				}
@@ -374,12 +374,12 @@ namespace Geometry
 						//
 						if (newlabel) // Create a new blob if necessary
 						{
-							blobs.insert(blob3DCollection::value_type(label,Blob3D(col,row,frame,value)));
+							blobs.insert(blob3DCollection::value_type(label,Blob3D(col+0.5,row+0.5,frame,value)));
 						}
 						else
 						{
 							auto it=blobs.find(label);
-							it->second.addPoint(col,row,frame,value);
+							it->second.addPoint(col+0.5,row+0.5,frame,value);
 						}
 					}
 				}
