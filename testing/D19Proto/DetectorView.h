@@ -37,6 +37,8 @@ public slots:
     void setPreviousZoomLevel();
     // Integrate in vertical direction
     void integrateVertical(int xmin,int xmax, int ymin, int ymax, QVector<double>& projection, QVector<double>& error);
+    // Integrate in horizontal direction
+    void integrateHorizontal(int xmin,int xmax, int ymin, int ymax, QVector<double>& projection, QVector<double>& error);
 protected:
     // Mouse events
     void mousePressEvent(QMouseEvent *event);
@@ -84,7 +86,7 @@ private:
     //
     CutterMode _cutterMode;
     QGraphicsLineItem* _line;
-    QGraphicsRectItem* _zoom;
+    QGraphicsRectItem *_zoom, *_slice;
 
     //
     QImage* _currentImage;
@@ -100,6 +102,7 @@ private:
     double _previousX, _previousY;
     Plotter1D* _plotter;
     int _sliceThickness;
+
 };
 
 #endif // DETECTORVIEW_H

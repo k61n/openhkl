@@ -220,6 +220,7 @@ void MainWindow::ShowContextMenu(const QPoint& pos)
 
 void MainWindow::on_action_peak_find_triggered()
 {
+
     DialogPeakFind* dialog= new DialogPeakFind();
 
     dialog->setFixedSize(400,200);
