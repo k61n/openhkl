@@ -22,7 +22,8 @@ SOURCES += main.cpp\
     DetectorView.cpp \
     ColorMap.cpp \
     qcustomplot.cpp \
-    Plotter1D.cpp
+    Plotter1D.cpp \
+    PeakPlotter.cpp
 
 HEADERS  += mainwindow.h \
     DetectorView.h \
@@ -31,11 +32,13 @@ HEADERS  += mainwindow.h \
     Logger.h \
     ColorMap.h \
     qcustomplot.h \
-    Plotter1D.h
+    Plotter1D.h \
+    PeakPlotter.h
 
 FORMS    += mainwindow.ui \
     dialog_PeakFind.ui \
-    plotter1d.ui
+    plotter1d.ui \
+    peakplotter.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../usr/local/NSXTool/ -lNSXTool
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../usr/local/NSXTool/ -lNSXTool

@@ -251,18 +251,13 @@ void MainWindow::on_action_peak_find_triggered()
 
     ui->progressBar->setVisible(true);
 
+    ui->textLogger->log(Logger::INFO) << "Start reading " << numor << " in memory";
+    ui->textLogger->flush();
     d.readInMemory();
+    ui->textLogger->log(Logger::INFO) << "Finished reading" << numor << " in memory";
+    ui->textLogger->flush();
 
-
-    // Analyse background
-//    std::vector<int> v;
-//    d.getCountsHistogram(v);
-
-//    auto max=std::max_element(v.begin(),v.end());
-//    int background_level=std::distance(v.begin(),max)+1;
-//    std::cout << v[0] << std::endl;
-//    qDebug() << "Background estimated at "  << background_level << "cts/pixel";
-
+    int background_level=2;
 
     // Get pointers to start of each frame
     std::vector<int*> temp(d._nblocks);
@@ -275,21 +270,22 @@ void MainWindow::on_action_peak_find_triggered()
 
     // Finding peaks
     SX::Geometry::blob3DCollection blobs;
-    ui->progressBar->setFormat("Locating peaks...");
+    ui->textLogger->log(Logger::INFO) << "Peak find starts";
+    ui->textLogger->flush();
     try
     {
-      blobs=SX::Geometry::findBlobs3D<int>(temp, 256,640, threshold*3, 5, 10000, confidence, 0);
+      blobs=SX::Geometry::findBlobs3D<int>(temp, 256,640, threshold*background_level, 5, 10000, confidence, 0);
     }catch(std::exception& e) // Warning if RAM error
     {
 
 
     }
-
+    ui->textLogger->log(Logger::INFO) << "Peak find finished, found " << blobs.size() << "peaks";
+    ui->textLogger->flush();
 
 
     // Now free the memory
     d.releaseMemory();
-    ui->progressBar->setVisible(false);
 
     //
     int i=0;
@@ -306,10 +302,13 @@ void MainWindow::on_action_peak_find_triggered()
         p.setBackground(new SX::Geometry::Ellipsoid3D(center,eigenvalues*3,eigenvectors));
         d._rpeaks.insert(Data::maprealPeaks::value_type(i++,p));
     }
-    std::cout << d._rpeaks.size() << "inserted";
+
+    ui->textLogger->log(Logger::INFO) << "Start integrating peaks";
+    ui->textLogger->flush();
     for (int i=0;i<d._rpeaks.size();++i)
         d._rpeaks[i].integrate();
-
+    ui->textLogger->log(Logger::INFO) << "Finished integrating peaks";
+    ui->textLogger->flush();
     //
     setCursor(Qt::ArrowCursor);
     updatePlot();

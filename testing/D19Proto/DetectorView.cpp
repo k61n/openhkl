@@ -17,8 +17,10 @@ DetectorView::DetectorView(QWidget* parent): QGraphicsView(parent),
     _line(nullptr),_zoom(nullptr),_currentImage(nullptr),_slice(nullptr),
     _cutPloter(nullptr),_maxIntensity(1),_plotter(nullptr),
     _sliceThickness(5),
-    _pixmap(nullptr)
+    _pixmap(nullptr),
+    _peakplotter(nullptr)
 {
+    this->setScene(_scene);
 }
 
 void DetectorView::detectorToScene(double& x, double& y)
@@ -254,6 +256,16 @@ void DetectorView::mousePressEvent(QMouseEvent* event)
         if (!dynamic_cast<QGraphicsPixmapItem*>(item))
         {
             item->setSelected(!item->isSelected());
+            if (QGraphicsRectItem* p=dynamic_cast<QGraphicsRectItem*>(item))
+            {
+                QString s=p->toolTip();
+                int peak_number=s.toInt();
+                std::cout << peak_number << std::endl;
+                if (!_peakplotter)
+                    _peakplotter=new PeakPlotter(this);
+                _peakplotter->setPeak(_ptrData->_rpeaks[peak_number]);
+                _peakplotter->show();
+            }
             return; // Nothing else need to be done
         }
 
@@ -371,6 +383,13 @@ void DetectorView::mouseReleaseEvent(QMouseEvent *event)
 
 void DetectorView::plotEllipsoids()
 {
+    if (!_currentPeaks.isEmpty())
+    {
+        for (int i=0;i<_currentPeaks.size();++i)
+        {
+            _scene->removeItem(_currentPeaks[i]);
+        }
+    }
     if (_ptrData->has3DEllipsoid())
     {
         for (auto el : _ptrData->_peaks)
@@ -392,6 +411,7 @@ void DetectorView::plotEllipsoids()
                 QGraphicsRectItem* bb=_scene->addRect(left-1,top-1,right-left+1,bottom-top+1,QPen(QBrush(QColor("yellow")),2.0));
                 bb->setToolTip(QString::number(el.first));
                 bb->setFlags(QGraphicsItem::ItemIsSelectable);
+                _currentPeaks.push_back(bb);
             }
         }
     }
@@ -509,7 +529,6 @@ void DetectorView::updatePlot()
 {
     plotIntensityMap();
     plotEllipsoids();
-    //
     setScene(_scene);
 }
 

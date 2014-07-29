@@ -108,3 +108,11 @@ int Data::dataAt(int x, int y, int z)
     return (_data[z])[x*256+y];
 }
 
+int Data::getBackgroundLevel()
+{
+    std::vector<int> v;
+    getCountsHistogram(v);
+    auto max=std::max_element(v.begin(),v.end());
+    int background_level=std::distance(v.begin(),max)+1;
+    return background_level;
+}

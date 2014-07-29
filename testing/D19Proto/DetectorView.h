@@ -7,6 +7,7 @@
 #include "Data.h"
 #include "Plotter1D.h"
 #include <QStack>
+#include "PeakPlotter.h"
 
 class DetectorView : public QGraphicsView
 {
@@ -87,7 +88,6 @@ private:
     CutterMode _cutterMode;
     QGraphicsLineItem* _line;
     QGraphicsRectItem *_zoom, *_slice;
-
     //
     QImage* _currentImage;
 
@@ -103,7 +103,8 @@ private:
     Plotter1D* _plotter;
     int _sliceThickness;
     QGraphicsPixmapItem *_pixmap;
-
+    QList<QGraphicsRectItem*> _currentPeaks;
+    PeakPlotter* _peakplotter;
 };
 
 #endif // DETECTORVIEW_H

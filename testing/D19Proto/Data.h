@@ -29,6 +29,7 @@ struct Data: public SX::Geometry::IData
     bool has3DEllipsoid() const;
     // clear
     void clear3DEllipsoids();
+    int getBackgroundLevel();
     int dataAt(int x, int y, int z);
     int _nblocks;
     std::unique_ptr<SX::Data::IDataReader> mm;
