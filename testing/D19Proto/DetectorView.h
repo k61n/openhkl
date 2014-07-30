@@ -63,7 +63,7 @@ private:
     // Get d-spacing for a pixel (x,y) in detector space
     void getDSpacing(double x, double y, double& dspacing);
     // Update line cutter, x and y in scene coordinates
-    void updateLineCutter(const QPointF&);
+    void updateLineCutter();
     // Update zoom cutter, x and y in scene coordinates
     void updateZoomCutter(const QPointF&);
     // Check pixel x y is in the detector scene
@@ -105,6 +105,7 @@ private:
     QGraphicsPixmapItem *_pixmap;
     QList<QGraphicsRectItem*> _currentPeaks;
     PeakPlotter* _peakplotter;
+    double _dr;
 };
 
 #endif // DETECTORVIEW_H

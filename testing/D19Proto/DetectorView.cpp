@@ -18,7 +18,9 @@ DetectorView::DetectorView(QWidget* parent): QGraphicsView(parent),
     _cutPloter(nullptr),_maxIntensity(1),_plotter(nullptr),
     _sliceThickness(0),
     _pixmap(nullptr),
-    _peakplotter(nullptr)
+    _peakplotter(nullptr),
+    _dr(1.0)
+
 {
     this->setScene(_scene);
 }
@@ -169,7 +171,14 @@ void DetectorView::mouseMoveEvent(QMouseEvent* event)
 
             case(LINE):
                 if (_line)
-                    updateLineCutter(pos);
+                {
+                    if (!pointInScene(pos))
+                        return;
+                    QLineF l=_line->line();
+                    l.setP2(pos);
+                    _line->setLine(l);
+                    updateLineCutter();
+                }
                 break;
 
             case(HORIZONTALSLICE):
@@ -519,29 +528,70 @@ void DetectorView::setZoom(int x1, int y1, int x2, int y2)
     _zoomBottom=y2;
 }
 
-void DetectorView::updateLineCutter(const QPointF& pos)
+void DetectorView::updateLineCutter()
 {
-    if (_line)
+
+    QLineF l=_line->line();
+
+    int nPoints = static_cast<int>(l.length()/_dr) + 1;
+
+    QVector<double> x,projection,e;
+    x.resize(nPoints);
+    projection.resize(nPoints);
+    e.resize(nPoints);
+
+    for (int i=0; i<nPoints; ++i)
     {
-        if (!pointInScene(pos))
-            return;
-        QLineF l=_line->line();
-        l.setP2(pos);
-        _line->setLine(l);
+        x[i] = i*_dr;
+        QPointF point=l.pointAt(i/static_cast<double>(nPoints));
+        sceneToDetector(point.rx(),point.ry());
+        int ipx=static_cast<int>(point.x());
+        int ipy=static_cast<int>(point.y());
+        QPoint lowestCorner=QPoint(ipx,ipy);
+        double sdist2 = 0.0;
+        for (int pi=0;pi<2;++pi)
+        {
+            for (int pj=0;pj<2;++pj)
+            {
+                QPoint currentCorner = lowestCorner + QPoint(pi,pj);
+                QPointF dp = point - currentCorner;
+                double dist2 = dp.x()*dp.x() + dp.y()*dp.y();
+                int count=_ptrData->_currentFrame[currentCorner.x()*256+currentCorner.y()];
+                projection[i] += dist2*count;
+                sdist2 += dist2;
+            }
+        }
+        projection[i] /= sdist2;
+        e[i] = sqrt(projection[i]);
     }
+
+    if (!_plotter)
+    {
+        _plotter=new Plotter1D(this);
+        _plotter->addCurve(x,projection,e);
+    }
+    else
+    {
+        _plotter->modifyCurve(0,x,projection,e);
+    }
+    _plotter->show();
+
 }
 
 void DetectorView::updatePlot()
 {
     plotIntensityMap();
-    if (_slice)
-        updateSliceIntegrator();
+    updateSliceIntegrator();
     plotEllipsoids();
     setScene(_scene);
 }
 
 void DetectorView::updateSliceIntegrator()
 {
+
+    if (!_slice)
+        return;
+
     QRectF rect=_slice->rect();
     double xmind=rect.left();
     double xmaxd=rect.right();
@@ -618,10 +668,15 @@ void DetectorView::updateZoomCutter(const QPointF& pos)
 
 void DetectorView::wheelEvent(QWheelEvent *event)
 {
-    if (_cutterMode==HORIZONTALSLICE)
+    if (_cutterMode==LINE)
+    {
+        _dr *= event->delta()>0 ? 2.0 : 0.5;
+        updateLineCutter();
+    }
+    else if (_cutterMode==HORIZONTALSLICE)
     {
         // One mouse delta=120
-        _sliceThickness+=event->delta()/60;
+        _sliceThickness+=event->delta()/120;
 
         if (_slice)
         {
@@ -633,7 +688,7 @@ void DetectorView::wheelEvent(QWheelEvent *event)
     else if (_cutterMode==VERTICALSLICE)
     {
         // One mouse delta=120
-        _sliceThickness+=event->delta()/60;
+        _sliceThickness+=event->delta()/120;
         if (_slice)
         {
             QRectF rect=_slice->rect();
