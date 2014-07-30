@@ -16,7 +16,7 @@ DetectorView::DetectorView(QWidget* parent): QGraphicsView(parent),
     _cutterMode(ZOOM),
     _line(nullptr),_zoom(nullptr),_currentImage(nullptr),_slice(nullptr),
     _cutPloter(nullptr),_maxIntensity(1),_plotter(nullptr),
-    _sliceThickness(5),
+    _sliceThickness(0),
     _pixmap(nullptr),
     _peakplotter(nullptr)
 {
@@ -260,7 +260,6 @@ void DetectorView::mousePressEvent(QMouseEvent* event)
             {
                 QString s=p->toolTip();
                 int peak_number=s.toInt();
-                std::cout << peak_number << std::endl;
                 if (!_peakplotter)
                     _peakplotter=new PeakPlotter(this);
                 _peakplotter->setPeak(_ptrData->_rpeaks[peak_number]);
@@ -616,9 +615,6 @@ void DetectorView::wheelEvent(QWheelEvent *event)
     {
         // One mouse delta=120
         _sliceThickness+=event->delta()/60;
-        // Minimum slice thickness
-        if (_sliceThickness<1)
-            _sliceThickness=1;
 
         if (_slice)
         {
@@ -631,10 +627,6 @@ void DetectorView::wheelEvent(QWheelEvent *event)
     {
         // One mouse delta=120
         _sliceThickness+=event->delta()/60;
-        // Minimum slice thickness
-        if (_sliceThickness<1)
-            _sliceThickness=1;
-
         if (_slice)
         {
             QRectF rect=_slice->rect();
