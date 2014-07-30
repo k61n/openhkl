@@ -1096,7 +1096,7 @@
   <action name="action_open">
    <property name="icon">
     <iconset resource="D19Proto.qrc">
-     <normaloff>:/IconopenFile.jpg</normaloff>:/IconopenFile.jpg</iconset>
+     <normaloff>:/openfileIcon.png</normaloff>:/openfileIcon.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Open</string>

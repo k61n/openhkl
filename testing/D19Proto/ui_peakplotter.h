@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'peakplotter.ui'
 **
-** Created: Tue Jul 29 23:11:19 2014
+** Created: Wed Jul 30 16:32:56 2014
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
