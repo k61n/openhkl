@@ -105,7 +105,7 @@ private:
     QGraphicsPixmapItem *_pixmap;
     QList<QGraphicsRectItem*> _currentPeaks;
     PeakPlotter* _peakplotter;
-    double _dr;
+    int _nCutPoints;
 };
 
 #endif // DETECTORVIEW_H

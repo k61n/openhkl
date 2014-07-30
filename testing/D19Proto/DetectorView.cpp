@@ -19,7 +19,7 @@ DetectorView::DetectorView(QWidget* parent): QGraphicsView(parent),
     _sliceThickness(0),
     _pixmap(nullptr),
     _peakplotter(nullptr),
-    _dr(1.0)
+    _nCutPoints(10)
 
 {
     this->setScene(_scene);
@@ -533,17 +533,17 @@ void DetectorView::updateLineCutter()
 
     QLineF l=_line->line();
 
-    int nPoints = static_cast<int>(l.length()/_dr) + 1;
-
     QVector<double> x,projection,e;
-    x.resize(nPoints);
-    projection.resize(nPoints);
-    e.resize(nPoints);
+    x.resize(_nCutPoints);
+    projection.resize(_nCutPoints);
+    e.resize(_nCutPoints);
 
-    for (int i=0; i<nPoints; ++i)
+    double dr = l.length()/_nCutPoints;
+
+    for (int i=0; i<_nCutPoints; ++i)
     {
-        x[i] = i*_dr;
-        QPointF point=l.pointAt(i/static_cast<double>(nPoints));
+        x[i] = i*dr;
+        QPointF point=l.pointAt(i/static_cast<double>(_nCutPoints));
         sceneToDetector(point.rx(),point.ry());
         int ipx=static_cast<int>(point.x());
         int ipy=static_cast<int>(point.y());
@@ -670,7 +670,9 @@ void DetectorView::wheelEvent(QWheelEvent *event)
 {
     if (_cutterMode==LINE)
     {
-        _dr *= event->delta()>0 ? 2.0 : 0.5;
+        _nCutPoints += event->delta()>0 ? 1 : -1;
+        if (_nCutPoints <= 0)
+            _nCutPoints = 1;
         updateLineCutter();
     }
     else if (_cutterMode==HORIZONTALSLICE)
