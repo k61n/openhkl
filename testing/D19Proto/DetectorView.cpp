@@ -173,9 +173,16 @@ void DetectorView::mouseMoveEvent(QMouseEvent* event)
                 break;
 
             case(HORIZONTALSLICE):
-                if (_zoom)
+                if (_slice)
                 {
-                    _zoom->setRect(0,event->y(),width(),_sliceThickness);
+                    _slice->setRect(0,event->y(),width(),_sliceThickness);
+                    updateSliceIntegrator();
+                }
+                break;
+            case(VERTICALSLICE):
+                if (_slice)
+                {
+                    _slice->setRect(event->x(),0,_sliceThickness,height());
                     updateSliceIntegrator();
                 }
                 break;
