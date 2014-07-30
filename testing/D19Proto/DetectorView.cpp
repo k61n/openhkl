@@ -528,6 +528,8 @@ void DetectorView::updateLineCutter(const QPointF& pos)
 void DetectorView::updatePlot()
 {
     plotIntensityMap();
+    if (_slice)
+        updateSliceIntegrator();
     plotEllipsoids();
     setScene(_scene);
 }
