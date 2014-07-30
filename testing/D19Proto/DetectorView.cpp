@@ -126,29 +126,40 @@ void DetectorView::keyPressEvent(QKeyEvent* event)
 
     switch (event->key())
     {
-
     case(Qt::Key_D):
+    {
         _mode=D;
         break;
+    }
+
     case(Qt::Key_T):
+    {
         _mode=THETA;
         break;
+    }
+
     case(Qt::Key_P):
+    {
         _mode=PIXEL;
         break;
+    }
+
     case(Qt::Key_G):
+    {
         _mode=GAMMA;
         break;
+    }
+
     case(Qt::Key_Escape):
+    {
+        QList<QGraphicsItem*> items=_scene->selectedItems();
+        for (auto item : items)
         {
-            QList<QGraphicsItem*> items=_scene->selectedItems();
-            for (auto item : items)
-            {
-                _scene->removeItem(item);
-            }
-            break;
+            _scene->removeItem(item);
         }
-    };
+        break;
+    }
+    }
 }
 
 void DetectorView::mouseMoveEvent(QMouseEvent* event)
@@ -164,38 +175,38 @@ void DetectorView::mouseMoveEvent(QMouseEvent* event)
     {
         switch(_cutterMode)
         {
-            case(ZOOM):
-                if (_zoom)
-                    updateZoomCutter(pos);
-                break;
+        case(ZOOM):
+        {
+            if (_zoom)
+                updateZoomCutter(pos);
+            break;
+        }
 
-            case(LINE):
-                if (_line)
-                {
-                    if (!pointInScene(pos))
-                        return;
-                    QLineF l=_line->line();
-                    l.setP2(pos);
-                    _line->setLine(l);
-                    updateLineCutter();
-                }
-                break;
+        case(LINE):
+        {
+            break;
+        }
 
-            case(HORIZONTALSLICE):
-                if (_slice)
-                {
-                    _slice->setRect(0,event->y(),width(),_sliceThickness);
-                    updateSliceIntegrator();
-                }
-                break;
-            case(VERTICALSLICE):
-                if (_slice)
-                {
-                    _slice->setRect(event->x(),0,_sliceThickness,height());
-                    updateSliceIntegrator();
-                }
-                break;
-        };
+        case(HORIZONTALSLICE):
+        {
+            if (_slice)
+            {
+                _slice->setRect(0,event->y(),width(),_sliceThickness);
+                updateSliceIntegrator();
+            }
+            break;
+        }
+
+        case(VERTICALSLICE):
+        {
+            if (_slice)
+            {
+                _slice->setRect(event->x(),0,_sliceThickness,height());
+                updateSliceIntegrator();
+            }
+            break;
+        }
+        }
     }
 
     // If peak is detected
@@ -221,6 +232,7 @@ void DetectorView::mouseMoveEvent(QMouseEvent* event)
     {
         switch(_mode)
         {
+
         case(D):
         {
             double d;
@@ -228,6 +240,7 @@ void DetectorView::mouseMoveEvent(QMouseEvent* event)
             os << "d-Spacing:"  << d << "\n" ;
             break;
         }
+
         case(GAMMA):
         {
             double gamma,nu;
@@ -235,6 +248,7 @@ void DetectorView::mouseMoveEvent(QMouseEvent* event)
             os << "g,n: (" << gamma << "," <<nu << ")\n" ;
             break;
         }
+
         case(THETA):
         {
             double th2;
@@ -242,12 +256,13 @@ void DetectorView::mouseMoveEvent(QMouseEvent* event)
             os << "th2: (" << th2 << ")\n" ;
             break;
         }
+
         case(PIXEL):
         {
             os << "x,y: (" << posx << "," << posy << ")\n";
             break;
         }
-        };
+        }
 
         int count=0;
         if (_ptrData && pointInScene(pos))
@@ -302,39 +317,40 @@ void DetectorView::mousePressEvent(QMouseEvent* event)
 
         switch (_cutterMode)
         {
-            case(ZOOM):
-            {
-                _zoom=_scene->addRect(event->x(),event->y(),0,0);
-                _zoom->setVisible(true);
-                _zoom->setPen(QPen(QBrush(QColor("gray")),1.0));
-                break;
-            }
-            case(LINE):
-            {
-                _line=_scene->addLine(event->x(),event->y(),event->x(),event->y());
-                _line->setVisible(true);
-                _line->setPen(QPen(QBrush(QColor("blue")),2.0));
-                _line->setFlags(QGraphicsItem::ItemIsSelectable);
-                break;
-            }
-            case(HORIZONTALSLICE):
-            {
-                _slice=_scene->addRect(0,event->y(),width(),_sliceThickness);
-                _slice->setVisible(true);
-                _slice->setPen(QPen(QBrush(QColor("gray")),1.0));
-                updateSliceIntegrator();
-                break;
-            }
-            case(VERTICALSLICE):
-            {
-                _slice=_scene->addRect(event->x(),0,_sliceThickness,height());
-                _slice->setVisible(true);
-                _slice->setPen(QPen(QBrush(QColor("gray")),1.0));
-                updateSliceIntegrator();
-                break;
-            }
+        case(ZOOM):
+        {
+            _zoom=_scene->addRect(event->x(),event->y(),0,0);
+            _zoom->setVisible(true);
+            _zoom->setPen(QPen(QBrush(QColor("gray")),1.0));
+            break;
+        }
 
-        };
+        case(LINE):
+        {
+            _line=_scene->addLine(event->x(),event->y(),event->x(),event->y());
+            _line->setPen(QPen(QBrush(QColor("blue")),2.0));
+
+            break;
+        }
+
+        case(HORIZONTALSLICE):
+        {
+            _slice=_scene->addRect(0,event->y(),width(),_sliceThickness);
+            _slice->setVisible(true);
+            _slice->setPen(QPen(QBrush(QColor("gray")),1.0));
+            updateSliceIntegrator();
+            break;
+        }
+
+        case(VERTICALSLICE):
+        {
+            _slice=_scene->addRect(event->x(),0,_sliceThickness,height());
+            _slice->setVisible(true);
+            _slice->setPen(QPen(QBrush(QColor("gray")),1.0));
+            updateSliceIntegrator();
+            break;
+        }
+        }
 
     } // Unzoom mode
     else if (event->button() == Qt::RightButton)
@@ -350,50 +366,61 @@ void DetectorView::mouseReleaseEvent(QMouseEvent *event)
     if (!_ptrData)
         return;
 
+    QPointF pos=event->posF();
 
-    if (event->button() == Qt::RightButton)
+    if (event->button() != Qt::LeftButton)
         return;
 
-        switch(_cutterMode)
+    switch(_cutterMode)
+    {
+
+    case(ZOOM):
+    {
+        if (!_zoom)
+            return;
+        _zoom->setVisible(false);
+        // This is the rectangle in scene coordinates
+        QRectF rectf=_zoom->rect();
+        double xmind=rectf.left();
+        double ymind=rectf.top();
+        sceneToDetector(xmind,ymind);
+        double xmaxd=rectf.right();
+        double ymaxd=rectf.bottom();
+        sceneToDetector(xmaxd,ymaxd);
+        int xmin=static_cast<int>(xmind);
+        int ymin=static_cast<int>(ymind);
+        int xmax=static_cast<int>(xmaxd);
+        int ymax=static_cast<int>(ymaxd);
+        if (xmin!=xmax && ymin!=ymax)
         {
-            case(ZOOM):
-            {
-                if (!_zoom)
-                    return;
-                _zoom->setVisible(false);
-                // This is the rectangle in scene coordinates
-                QRectF rectf=_zoom->rect();
-                double xmind=rectf.left();
-                double ymind=rectf.top();
-                sceneToDetector(xmind,ymind);
-                double xmaxd=rectf.right();
-                double ymaxd=rectf.bottom();
-                sceneToDetector(xmaxd,ymaxd);
-                int xmin=static_cast<int>(xmind);
-                int ymin=static_cast<int>(ymind);
-                int xmax=static_cast<int>(xmaxd);
-                int ymax=static_cast<int>(ymaxd);
-                if (xmin!=xmax && ymin!=ymax)
-                {
-                    registerZoomLevel(xmin,xmax,ymin,ymax);
-                    setZoom(xmin,ymin,xmax,ymax);
-                    updatePlot();
-                }
-                break;
-            }
-            case(LINE):
-            {
-                break;
-            }
-            case(HORIZONTALSLICE):
-            {
-               break;
-            }
-            case(VERTICALSLICE):
-            {
-               break;
-            }
-        };
+            registerZoomLevel(xmin,xmax,ymin,ymax);
+            setZoom(xmin,ymin,xmax,ymax);
+            updatePlot();
+        }
+        break;
+    }
+
+    case(LINE):
+    {
+        if (!pointInScene(pos))
+            return;
+        _line->setVisible(true);
+        QLineF l=_line->line();
+        l.setP2(pos);
+        _line->setLine(l);
+        updateLineCutter();
+        break;
+    }
+
+    case(HORIZONTALSLICE):
+    {
+       break;
+    }
+    case(VERTICALSLICE):
+    {
+       break;
+    }
+    }
 }
 
 void DetectorView::plotEllipsoids()
