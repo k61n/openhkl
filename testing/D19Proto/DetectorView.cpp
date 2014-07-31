@@ -536,14 +536,21 @@ void DetectorView::sceneToDetector(double& x, double& y)
 void DetectorView::setCutterMode(int i)
 {
     _cutterMode=static_cast<CutterMode>(i);
+
+    if (_cutterMode==HORIZONTALSLICE || _cutterMode==VERTICALSLICE)
+    {
+        if (!_slices.isEmpty())
+        {
+            for (auto s=_slices.begin();s!=_slices.end();++s)
+                _scene->removeItem(*s);
+            _slices.clear();
+        }
+    }
     clearPlotter();
 }
 
 void DetectorView::clearPlotter()
 {
-    for (auto s=_slices.begin();s!=_slices.end();++s)
-        _scene->removeItem(*s);
-    _slices.clear();
     if (_plotter)
         _plotter->clear();
 }
