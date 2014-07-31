@@ -536,6 +536,14 @@ void DetectorView::sceneToDetector(double& x, double& y)
 void DetectorView::setCutterMode(int i)
 {
     _cutterMode=static_cast<CutterMode>(i);
+    clearPlotter();
+}
+
+void DetectorView::clearPlotter()
+{
+    for (auto s=_slices.begin();s!=_slices.end();++s)
+        _scene->removeItem(*s);
+    _slices.clear();
     if (_plotter)
         _plotter->clear();
 }

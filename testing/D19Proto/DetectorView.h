@@ -29,6 +29,7 @@ public:
     // Is Data present
     bool hasData() const;
 public slots:
+    void clearPlotter();
     void updateView(Data* ptr,int frame);
     void setCutterMode(int i);
     // Set the zoom window to (x1,x2,y1,y2) in detector space coordinates;
