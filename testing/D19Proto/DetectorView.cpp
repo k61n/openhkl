@@ -7,20 +7,23 @@
 #include "ColorMap.h"
 #include <QGraphicsRectItem>
 #include <cmath>
+#include <QColor>
 #include "Plotter1D.h"
+#include "slicerect.h"
 
 DetectorView::DetectorView(QWidget* parent): QGraphicsView(parent),
     _ptrData(nullptr),
     _scene(new QGraphicsScene(this)),
     _mode(PIXEL),
     _cutterMode(ZOOM),
-    _line(nullptr),_zoom(nullptr),_currentImage(nullptr),_slice(nullptr),
+    _line(nullptr),_zoom(nullptr),_currentImage(nullptr),
     _cutPloter(nullptr),_maxIntensity(1),_plotter(nullptr),
     _sliceThickness(0),
     _pixmap(nullptr),
     _peakplotter(nullptr),
-    _nCutPoints(10)
-
+    _nCutPoints(10),
+    _slices(),
+    _selectedSlice(0)
 {
     this->setScene(_scene);
 }
@@ -189,9 +192,9 @@ void DetectorView::mouseMoveEvent(QMouseEvent* event)
 
         case(HORIZONTALSLICE):
         {
-            if (_slice)
+            if (!_slices.isEmpty())
             {
-                _slice->setRect(0,event->y(),width(),_sliceThickness);
+                _slices[_selectedSlice]->setRect(0,event->y(),width(),_sliceThickness);
                 updateSliceIntegrator();
             }
             break;
@@ -199,9 +202,9 @@ void DetectorView::mouseMoveEvent(QMouseEvent* event)
 
         case(VERTICALSLICE):
         {
-            if (_slice)
+            if (!_slices.isEmpty())
             {
-                _slice->setRect(event->x(),0,_sliceThickness,height());
+                _slices[_selectedSlice]->setRect(event->x(),0,_sliceThickness,height());
                 updateSliceIntegrator();
             }
             break;
@@ -210,7 +213,8 @@ void DetectorView::mouseMoveEvent(QMouseEvent* event)
     }
 
     // If peak is detected
-    QGraphicsRectItem* peak=dynamic_cast<QGraphicsRectItem*>(_scene->itemAt(pos.x(),pos.y()));
+    QGraphicsItem* item=_scene->itemAt(pos.x(),pos.y());
+    QGraphicsRectItem* peak=dynamic_cast<QGraphicsRectItem*>(item);
 
     if (peak)
     {
@@ -218,8 +222,10 @@ void DetectorView::mouseMoveEvent(QMouseEvent* event)
         peak->setCursor(Qt::PointingHandCursor);
         return;
     }
+
     // If not on peak
-    this->setCursor(Qt::CrossCursor);
+    item->setActive(true);
+    item->setCursor(Qt::CrossCursor);
 
     std::ostringstream os;
 
@@ -286,15 +292,23 @@ void DetectorView::mousePressEvent(QMouseEvent* event)
         // Any Graphic object other than the base pixmap can be selected and deselected
         if (!dynamic_cast<QGraphicsPixmapItem*>(item))
         {
-            item->setSelected(!item->isSelected());
-            if (QGraphicsRectItem* p=dynamic_cast<QGraphicsRectItem*>(item))
+
+            if (dynamic_cast<SliceRect*>(item))
             {
-                QString s=p->toolTip();
-                int peak_number=s.toInt();
-                if (!_peakplotter)
-                    _peakplotter=new PeakPlotter(this);
-                _peakplotter->setPeak(_ptrData->_rpeaks[peak_number]);
-                _peakplotter->show();
+                _selectedSlice = _slices.indexOf(dynamic_cast<SliceRect*>(item));
+            }
+            else
+            {
+                item->setSelected(!item->isSelected());
+                if (QGraphicsRectItem* p=dynamic_cast<QGraphicsRectItem*>(item))
+                {
+                    QString s=p->toolTip();
+                    int peak_number=s.toInt();
+                    if (!_peakplotter)
+                        _peakplotter=new PeakPlotter(this);
+                    _peakplotter->setPeak(_ptrData->_rpeaks[peak_number]);
+                    _peakplotter->show();
+                }
             }
             return; // Nothing else need to be done
         }
@@ -308,12 +322,12 @@ void DetectorView::mousePressEvent(QMouseEvent* event)
         }
 
         // Only one slice allowed
-        if (_slice)
-        {
-            _scene->removeItem(_slice);
-            delete _slice;
-            _slice=nullptr;
-        }
+//        if (_slice)
+//        {
+//            _scene->removeItem(_slice);
+//            delete _slice;
+//            _slice=nullptr;
+//        }
 
         switch (_cutterMode)
         {
@@ -335,26 +349,45 @@ void DetectorView::mousePressEvent(QMouseEvent* event)
 
         case(HORIZONTALSLICE):
         {
-            _slice=_scene->addRect(0,event->y(),width(),_sliceThickness);
-            _slice->setVisible(true);
-            _slice->setPen(QPen(QBrush(QColor("gray")),1.0));
+            _scene->addItem(new SliceRect(0,event->y(),width(),_sliceThickness));
+            _slices.push_back(dynamic_cast<SliceRect*>(_scene->items().first()));
+            _slices.last()->setVisible(true);
+            _selectedSlice = _slices.size()-1;
+            int cId = (_selectedSlice) % QColor::colorNames().size();
+            QColor sliceColor = QColor(QColor::colorNames()[cId]);
+            _slices.last()->setPen(QPen(QBrush(QColor(sliceColor)),1.0));
             updateSliceIntegrator();
+
+//            _slice=_scene->addRect(0,event->y(),width(),_sliceThickness);
+//            _slice->setVisible(true);
+//            _slice->setPen(QPen(QBrush(QColor("gray")),1.0));
+//            updateSliceIntegrator();
             break;
         }
 
         case(VERTICALSLICE):
         {
-            _slice=_scene->addRect(event->x(),0,_sliceThickness,height());
-            _slice->setVisible(true);
-            _slice->setPen(QPen(QBrush(QColor("gray")),1.0));
+            _scene->addItem(new SliceRect(event->x(),0,_sliceThickness,height()));
+            _slices.push_back(dynamic_cast<SliceRect*>(_scene->items().first()));
+            _slices.last()->setVisible(true);
+            _selectedSlice = _slices.size()-1;
+            int cId = (_selectedSlice) % QColor::colorNames().size();
+            QColor sliceColor = QColor(QColor::colorNames()[cId]);
+            _slices.last()->setPen(QPen(QBrush(QColor(sliceColor)),1.0));
             updateSliceIntegrator();
+
+//            _slice=_scene->addRect(event->x(),0,_sliceThickness,height());
+//            _slice->setVisible(true);
+//            _slice->setPen(QPen(QBrush(QColor("gray")),1.0));
+//            updateSliceIntegrator();
             break;
         }
         }
 
-    } // Unzoom mode
+    }
     else if (event->button() == Qt::RightButton)
     {
+        // Unzoom mode
         if (_cutterMode==ZOOM)
             setPreviousZoomLevel();
     }
@@ -421,6 +454,7 @@ void DetectorView::mouseReleaseEvent(QMouseEvent *event)
        break;
     }
     }
+
 }
 
 void DetectorView::plotEllipsoids()
@@ -502,6 +536,8 @@ void DetectorView::sceneToDetector(double& x, double& y)
 void DetectorView::setCutterMode(int i)
 {
     _cutterMode=static_cast<CutterMode>(i);
+    if (_plotter)
+        _plotter->clear();
 }
 
 void DetectorView::setDetectorDistance(double distance)
@@ -616,10 +652,10 @@ void DetectorView::updatePlot()
 void DetectorView::updateSliceIntegrator()
 {
 
-    if (!_slice)
+    if (_slices.isEmpty())
         return;
 
-    QRectF rect=_slice->rect();
+    QRectF rect=_slices[_selectedSlice]->rect();
     double xmind=rect.left();
     double xmaxd=rect.right();
     double ymind=rect.top();
@@ -654,11 +690,14 @@ void DetectorView::updateSliceIntegrator()
     if (!_plotter)
     {
         _plotter=new Plotter1D(this);
-        _plotter->addCurve(x,y,e);
+        _plotter->addCurve(x,y,e, _slices[_selectedSlice]->pen().color());
     }
     else
     {
-        _plotter->modifyCurve(0,x,y,e);
+        if (_selectedSlice >= _plotter->nGraphs())
+            _plotter->addCurve(x,y,e, _slices[_selectedSlice]->pen().color());
+        else
+            _plotter->modifyCurve(_selectedSlice,x,y,e);
     }
     _plotter->show();
 }
@@ -704,25 +743,25 @@ void DetectorView::wheelEvent(QWheelEvent *event)
     }
     else if (_cutterMode==HORIZONTALSLICE)
     {
+
+        if (_slices.isEmpty())
+            return;
+
         // One mouse delta=120
         _sliceThickness+=event->delta()/120;
-
-        if (_slice)
-        {
-            QRectF rect=_slice->rect();
-            _slice->setRect(0,rect.top(),width(),_sliceThickness);
-        }
+        QRectF rect=_slices[_selectedSlice]->rect();
+        _slices[_selectedSlice]->setRect(0,rect.top(),width(),_sliceThickness);
         updateSliceIntegrator();
     }
     else if (_cutterMode==VERTICALSLICE)
     {
+        if (_slices.isEmpty())
+            return;
+
         // One mouse delta=120
         _sliceThickness+=event->delta()/120;
-        if (_slice)
-        {
-            QRectF rect=_slice->rect();
-            _slice->setRect(rect.left(),0,_sliceThickness,height());
-        }
+        QRectF rect=_slices[_selectedSlice]->rect();
+        _slices[_selectedSlice]->setRect(rect.left(),0,_sliceThickness,height());
         updateSliceIntegrator();
     }
 }

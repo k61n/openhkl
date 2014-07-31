@@ -9,6 +9,8 @@
 #include <QStack>
 #include "PeakPlotter.h"
 
+class SliceRect;
+
 class DetectorView : public QGraphicsView
 {
     Q_OBJECT
@@ -87,7 +89,7 @@ private:
     //
     CutterMode _cutterMode;
     QGraphicsLineItem* _line;
-    QGraphicsRectItem *_zoom, *_slice;
+    QGraphicsRectItem *_zoom;
     //
     QImage* _currentImage;
 
@@ -106,6 +108,10 @@ private:
     QList<QGraphicsRectItem*> _currentPeaks;
     PeakPlotter* _peakplotter;
     int _nCutPoints;
+
+    QList<SliceRect*> _slices;
+    int _selectedSlice;
+
 };
 
 #endif // DETECTORVIEW_H

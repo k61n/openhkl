@@ -14,8 +14,10 @@ class Plotter1D : public QDialog
 public:
     explicit Plotter1D(QWidget *parent = 0);
     ~Plotter1D();
-    void addCurve(const QVector<double>& x, const QVector<double>& y, const QVector<double>& e);
+    void addCurve(const QVector<double>& x, const QVector<double>& y, const QVector<double>& e, QColor color=QColor("blue"));
     void modifyCurve(int number, const QVector<double>& x, const QVector<double>& y, const QVector<double>& e);
+    int nGraphs() const;
+    void clear();
     
 private:
     Ui::Plotter1D *ui;

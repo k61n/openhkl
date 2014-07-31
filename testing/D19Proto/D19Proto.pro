@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     ColorMap.cpp \
     qcustomplot.cpp \
     Plotter1D.cpp \
-    PeakPlotter.cpp
+    PeakPlotter.cpp \
+    slicerect.cpp
 
 HEADERS  += mainwindow.h \
     DetectorView.h \
@@ -33,7 +34,8 @@ HEADERS  += mainwindow.h \
     ColorMap.h \
     qcustomplot.h \
     Plotter1D.h \
-    PeakPlotter.h
+    PeakPlotter.h \
+    slicerect.h
 
 FORMS    += mainwindow.ui \
     dialog_PeakFind.ui \

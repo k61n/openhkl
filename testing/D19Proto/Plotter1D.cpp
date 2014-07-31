@@ -15,15 +15,16 @@ Plotter1D::~Plotter1D()
     delete ui;
 }
 
-void Plotter1D::addCurve(const QVector<double> &x, const QVector<double> &y, const QVector<double> &e)
+void Plotter1D::addCurve(const QVector<double> &x, const QVector<double> &y, const QVector<double> &e, QColor color)
 {
     QCustomPlot* customPlot=ui->plot;
     customPlot->addGraph();
-    customPlot->graph(0)->setErrorPen(QPen(QColor("black")));
-    customPlot->graph(0)->setErrorType(QCPGraph::etBoth);
-    customPlot->graph(0)->setLineStyle(QCPGraph::lsNone);
-    customPlot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssSquare, 4));
-    customPlot->graph(0)->setDataValueError(x, y, e);
+    customPlot->graph()->setPen(QPen(color));
+    customPlot->graph()->setErrorPen(QPen(color));
+    customPlot->graph()->setErrorType(QCPGraph::etBoth);
+    customPlot->graph()->setLineStyle(QCPGraph::lsNone);
+    customPlot->graph()->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssSquare, 4));
+    customPlot->graph()->setDataValueError(x, y, e);
     // give the axes some labels:
     customPlot->xAxis->setLabel("x");
     customPlot->yAxis->setLabel("y");
@@ -31,8 +32,7 @@ void Plotter1D::addCurve(const QVector<double> &x, const QVector<double> &y, con
     customPlot->xAxis->setRange(x.first(),x.last());
     QVector<double>::const_iterator it=std::max_element(y.begin(),y.end());
     customPlot->yAxis->setRange(0,*it);
-    customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes |
-                                      QCP::iMultiSelect | QCP::iSelectPlottables );
+    customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes | QCP::iMultiSelect | QCP::iSelectPlottables );
     customPlot->replot();
 }
 
@@ -47,4 +47,15 @@ void Plotter1D::modifyCurve(int number, const QVector<double> &x, const QVector<
     QVector<double>::const_iterator it=std::max_element(y.begin(),y.end());
     customPlot->yAxis->setRange(0,*it);
     customPlot->replot();
+}
+
+int Plotter1D::nGraphs() const
+{
+    return ui->plot->graphCount();
+}
+
+void Plotter1D::clear()
+{
+    ui->plot->clearGraphs();
+    ui->plot->replot();
 }
