@@ -16,14 +16,15 @@ DetectorView::DetectorView(QWidget* parent): QGraphicsView(parent),
     _scene(new QGraphicsScene(this)),
     _mode(PIXEL),
     _cutterMode(ZOOM),
-    _line(nullptr),_zoom(nullptr),_currentImage(nullptr),
+    _zoom(nullptr),_currentImage(nullptr),
     _cutPloter(nullptr),_maxIntensity(1),_plotter(nullptr),
     _sliceThickness(0),
     _pixmap(nullptr),
     _peakplotter(nullptr),
     _nCutPoints(10),
     _slices(),
-    _selectedSlice(0)
+    _selectedSlice(0),
+    _selectedLine(0)
 {
     this->setScene(_scene);
 }
@@ -294,9 +295,9 @@ void DetectorView::mousePressEvent(QMouseEvent* event)
         {
 
             if (dynamic_cast<SliceRect*>(item))
-            {
                 _selectedSlice = _slices.indexOf(dynamic_cast<SliceRect*>(item));
-            }
+            else if (dynamic_cast<QGraphicsLineItem*>(item))
+                _selectedLine = _lines.indexOf(dynamic_cast<QGraphicsLineItem*>(item));
             else
             {
                 item->setSelected(!item->isSelected());
@@ -313,14 +314,6 @@ void DetectorView::mousePressEvent(QMouseEvent* event)
             return; // Nothing else need to be done
         }
 
-        // Only one cut line allowed
-        if (_line)
-        {
-            _scene->removeItem(_line);
-            delete _line;
-            _line=nullptr;
-        }
-
         switch (_cutterMode)
         {
         case(ZOOM):
@@ -333,9 +326,11 @@ void DetectorView::mousePressEvent(QMouseEvent* event)
 
         case(LINE):
         {
-            _line=_scene->addLine(event->x(),event->y(),event->x(),event->y());
-            _line->setPen(QPen(QBrush(QColor("blue")),2.0));
-
+            _lines.push_back(_scene->addLine(event->x(),event->y(),event->x(),event->y()));
+            int cId = (_selectedLine) % QColor::colorNames().size();
+            QColor lineColor = QColor(QColor::colorNames()[cId]);
+            _lines.last()->setPen(QPen(QBrush(QColor(lineColor)),2.0));
+            _selectedLine = _lines.size()-1;
             break;
         }
 
@@ -372,6 +367,16 @@ void DetectorView::mousePressEvent(QMouseEvent* event)
         // Unzoom mode
         if (_cutterMode==ZOOM)
             setPreviousZoomLevel();
+        else if (_cutterMode==LINE)
+        {
+            if (!_lines.isEmpty())
+            {
+                _scene->removeItem(_lines[_selectedLine]);
+                _lines.removeAt(_selectedLine);
+                _selectedLine=_lines.size()-1;
+                updateLineCutter();
+            }
+        }
         else if (_cutterMode==HORIZONTALSLICE || _cutterMode==VERTICALSLICE)
         {
             if (!_slices.isEmpty())
@@ -427,13 +432,14 @@ void DetectorView::mouseReleaseEvent(QMouseEvent *event)
 
     case(LINE):
     {
-        if (!pointInScene(pos))
-            return;
-        _line->setVisible(true);
-        QLineF l=_line->line();
-        l.setP2(pos);
-        _line->setLine(l);
-        updateLineCutter();
+        if (!_lines.isEmpty())
+        {
+            _lines[_selectedLine]->setVisible(true);
+            QLineF l=_lines[_selectedLine]->line();
+            l.setP2(pos);
+            _lines[_selectedLine]->setLine(l);
+            updateLineCutter();
+        }
         break;
     }
 
@@ -525,20 +531,36 @@ void DetectorView::sceneToDetector(double& x, double& y)
     return;
 }
 
+void DetectorView::clearCutLines()
+{
+    if (!_lines.isEmpty())
+    {
+        for (auto l=_lines.begin();l!=_lines.end();++l)
+            _scene->removeItem(*l);
+        _lines.clear();
+    }
+    clearPlotter();
+}
+
+void DetectorView::clearCutSlices()
+{
+    if (!_slices.isEmpty())
+    {
+        for (auto s=_slices.begin();s!=_slices.end();++s)
+            _scene->removeItem(*s);
+        _slices.clear();
+    }
+    clearPlotter();
+}
+
 void DetectorView::setCutterMode(int i)
 {
     _cutterMode=static_cast<CutterMode>(i);
 
-    if (_cutterMode==HORIZONTALSLICE || _cutterMode==VERTICALSLICE)
-    {
-        if (!_slices.isEmpty())
-        {
-            for (auto s=_slices.begin();s!=_slices.end();++s)
-                _scene->removeItem(*s);
-            _slices.clear();
-        }
-    }
-    clearPlotter();
+    if (_cutterMode!=LINE)
+        clearCutLines();
+    else if (_cutterMode!=HORIZONTALSLICE && _cutterMode!=VERTICALSLICE)
+        clearCutSlices();
 }
 
 void DetectorView::clearPlotter()
@@ -601,7 +623,10 @@ void DetectorView::setZoom(int x1, int y1, int x2, int y2)
 void DetectorView::updateLineCutter()
 {
 
-    QLineF l=_line->line();
+    if (_lines.isEmpty())
+        return;
+
+    QLineF l=_lines[_selectedLine]->line();
 
     QVector<double> x,projection,e;
     x.resize(_nCutPoints);
@@ -638,11 +663,14 @@ void DetectorView::updateLineCutter()
     if (!_plotter)
     {
         _plotter=new Plotter1D(this);
-        _plotter->addCurve(x,projection,e);
+        _plotter->addCurve(x,projection,e, _lines[_selectedLine]->pen().color());
     }
     else
     {
-        _plotter->modifyCurve(0,x,projection,e);
+        if (_selectedLine >= _plotter->nGraphs())
+            _plotter->addCurve(x,projection,e, _lines[_selectedLine]->pen().color());
+        else
+            _plotter->modifyCurve(_selectedLine,x,projection,e);
     }
     _plotter->show();
 

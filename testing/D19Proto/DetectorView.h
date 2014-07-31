@@ -17,7 +17,7 @@ class DetectorView : public QGraphicsView
 public:
     enum CrossMode {THETA, GAMMA, D, PIXEL};
     //
-    enum CutterMode {ZOOM=0, LINE=1, ELLIPSE=2, HORIZONTALSLICE=3, VERTICALSLICE=4};
+    enum CutterMode {ZOOM=0, LINE=1, HORIZONTALSLICE=2, VERTICALSLICE=3};
 
     DetectorView(QWidget* parent);
     // Set the number of pixels in the detector
@@ -29,6 +29,8 @@ public:
     // Is Data present
     bool hasData() const;
 public slots:
+    void clearCutLines();
+    void clearCutSlices();
     void clearPlotter();
     void updateView(Data* ptr,int frame);
     void setCutterMode(int i);
@@ -89,7 +91,6 @@ private:
     CrossMode _mode;
     //
     CutterMode _cutterMode;
-    QGraphicsLineItem* _line;
     QGraphicsRectItem *_zoom;
     //
     QImage* _currentImage;
@@ -111,7 +112,9 @@ private:
     int _nCutPoints;
 
     QList<SliceRect*> _slices;
-    int _selectedSlice;
+    int _selectedSlice, _selectedLine;
+
+    QList<QGraphicsLineItem*> _lines;
 
 };
 
