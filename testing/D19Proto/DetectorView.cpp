@@ -321,14 +321,6 @@ void DetectorView::mousePressEvent(QMouseEvent* event)
             _line=nullptr;
         }
 
-        // Only one slice allowed
-//        if (_slice)
-//        {
-//            _scene->removeItem(_slice);
-//            delete _slice;
-//            _slice=nullptr;
-//        }
-
         switch (_cutterMode)
         {
         case(ZOOM):
@@ -357,11 +349,6 @@ void DetectorView::mousePressEvent(QMouseEvent* event)
             QColor sliceColor = QColor(QColor::colorNames()[cId]);
             _slices.last()->setPen(QPen(QBrush(QColor(sliceColor)),1.0));
             updateSliceIntegrator();
-
-//            _slice=_scene->addRect(0,event->y(),width(),_sliceThickness);
-//            _slice->setVisible(true);
-//            _slice->setPen(QPen(QBrush(QColor("gray")),1.0));
-//            updateSliceIntegrator();
             break;
         }
 
@@ -375,11 +362,6 @@ void DetectorView::mousePressEvent(QMouseEvent* event)
             QColor sliceColor = QColor(QColor::colorNames()[cId]);
             _slices.last()->setPen(QPen(QBrush(QColor(sliceColor)),1.0));
             updateSliceIntegrator();
-
-//            _slice=_scene->addRect(event->x(),0,_sliceThickness,height());
-//            _slice->setVisible(true);
-//            _slice->setPen(QPen(QBrush(QColor("gray")),1.0));
-//            updateSliceIntegrator();
             break;
         }
         }
@@ -390,6 +372,16 @@ void DetectorView::mousePressEvent(QMouseEvent* event)
         // Unzoom mode
         if (_cutterMode==ZOOM)
             setPreviousZoomLevel();
+        else if (_cutterMode==HORIZONTALSLICE || _cutterMode==VERTICALSLICE)
+        {
+            if (!_slices.isEmpty())
+            {
+                _scene->removeItem(_slices[_selectedSlice]);
+                _slices.removeAt(_selectedSlice);
+                _selectedSlice=_slices.size()-1;
+                updateSliceIntegrator();
+            }
+        }
     }
 }
 
