@@ -196,7 +196,7 @@ void DetectorView::mouseMoveEvent(QMouseEvent* event)
             if (!_slices.isEmpty())
             {
                 _slices[_selectedSlice]->setRect(0,event->y(),width(),_sliceThickness);
-                updateSliceIntegrator();
+                updateSliceCutter();
             }
             break;
         }
@@ -206,7 +206,7 @@ void DetectorView::mouseMoveEvent(QMouseEvent* event)
             if (!_slices.isEmpty())
             {
                 _slices[_selectedSlice]->setRect(event->x(),0,_sliceThickness,height());
-                updateSliceIntegrator();
+                updateSliceCutter();
             }
             break;
         }
@@ -343,7 +343,7 @@ void DetectorView::mousePressEvent(QMouseEvent* event)
             int cId = (_selectedSlice) % QColor::colorNames().size();
             QColor sliceColor = QColor(QColor::colorNames()[cId]);
             _slices.last()->setPen(QPen(QBrush(QColor(sliceColor)),1.0));
-            updateSliceIntegrator();
+            updateSliceCutter();
             break;
         }
 
@@ -356,7 +356,7 @@ void DetectorView::mousePressEvent(QMouseEvent* event)
             int cId = (_selectedSlice) % QColor::colorNames().size();
             QColor sliceColor = QColor(QColor::colorNames()[cId]);
             _slices.last()->setPen(QPen(QBrush(QColor(sliceColor)),1.0));
-            updateSliceIntegrator();
+            updateSliceCutter();
             break;
         }
         }
@@ -384,7 +384,7 @@ void DetectorView::mousePressEvent(QMouseEvent* event)
                 _scene->removeItem(_slices[_selectedSlice]);
                 _slices.removeAt(_selectedSlice);
                 _selectedSlice=_slices.size()-1;
-                updateSliceIntegrator();
+                updateSliceCutter();
             }
         }
     }
@@ -679,12 +679,12 @@ void DetectorView::updateLineCutter()
 void DetectorView::updatePlot()
 {
     plotIntensityMap();
-    updateSliceIntegrator();
+    updateSliceCutter();
     plotEllipsoids();
     setScene(_scene);
 }
 
-void DetectorView::updateSliceIntegrator()
+void DetectorView::updateSliceCutter()
 {
 
     if (_slices.isEmpty())
@@ -786,7 +786,7 @@ void DetectorView::wheelEvent(QWheelEvent *event)
         _sliceThickness+=event->delta()/120;
         QRectF rect=_slices[_selectedSlice]->rect();
         _slices[_selectedSlice]->setRect(0,rect.top(),width(),_sliceThickness);
-        updateSliceIntegrator();
+        updateSliceCutter();
     }
     else if (_cutterMode==VERTICALSLICE)
     {
@@ -797,6 +797,6 @@ void DetectorView::wheelEvent(QWheelEvent *event)
         _sliceThickness+=event->delta()/120;
         QRectF rect=_slices[_selectedSlice]->rect();
         _slices[_selectedSlice]->setRect(rect.left(),0,_sliceThickness,height());
-        updateSliceIntegrator();
+        updateSliceCutter();
     }
 }

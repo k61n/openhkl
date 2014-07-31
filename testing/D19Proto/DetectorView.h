@@ -74,7 +74,7 @@ private:
     // Check pixel x y is in the detector scene
     bool pointInScene(const QPointF&);
     //
-    void updateSliceIntegrator();
+    void updateSliceCutter();
     // Pointer to Data
     Data* _ptrData;
     int pixels_h;
