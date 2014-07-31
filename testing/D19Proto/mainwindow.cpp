@@ -44,7 +44,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->selectionMode->addItem(QIcon(":/zoomIcon.png"),"");
     ui->selectionMode->addItem(QIcon(":/cutlineIcon.png"),"");
-    ui->selectionMode->addItem(QIcon(":/cutellipseIcon.png"),"");
     ui->selectionMode->addItem(QIcon(":/horizontalsliceIcon.png"),"");
     ui->selectionMode->addItem(QIcon(":/verticalsliceIcon.png"),"");
 
