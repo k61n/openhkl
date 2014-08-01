@@ -11,6 +11,8 @@
 #include "Plotter1D.h"
 #include "slicerect.h"
 
+QStringList DetectorView::_lineColors = {"aqua","aquamarine","blue","burlywood","cadetblue","chartreuse","cornflowerblue","cornsilk","cyan","darkcyan","lavender","hotpink"};
+
 DetectorView::DetectorView(QWidget* parent): QGraphicsView(parent),
     _ptrData(nullptr),
     _scene(new QGraphicsScene(this)),
@@ -18,7 +20,7 @@ DetectorView::DetectorView(QWidget* parent): QGraphicsView(parent),
     _cutterMode(ZOOM),
     _zoom(nullptr),_currentImage(nullptr),
     _cutPloter(nullptr),_maxIntensity(1),_plotter(nullptr),
-    _sliceThickness(0),
+    _sliceThickness(10),
     _pixmap(nullptr),
     _peakplotter(nullptr),
     _nCutPoints(10),
@@ -27,6 +29,25 @@ DetectorView::DetectorView(QWidget* parent): QGraphicsView(parent),
     _selectedLine(0)
 {
     this->setScene(_scene);
+}
+
+void DetectorView::addCutLine(double xstart, double ystart, double xend, double yend)
+{
+    int colorId = _lines.size()%_lineColors.size();
+    _lines.push_back(_scene->addLine(xstart,ystart,xend,yend));
+    _lines.last()->setPen(QPen(QBrush(QColor(_lineColors[colorId])),2.0));
+    _selectedLine = _lines.size()-1;
+}
+
+void DetectorView::addCutSlice(double x, double y, double width, double height)
+{
+    int colorId = _slices.size()%_lineColors.size();
+    _scene->addItem(new SliceRect(x,y,width,height));
+    _slices.push_back(dynamic_cast<SliceRect*>(_scene->items().first()));
+    _slices.last()->setVisible(true);
+    _slices.last()->setPen(QPen(QBrush(QColor(_lineColors[colorId])),1.0));
+    _selectedSlice = _slices.size()-1;
+    QColor::colorNames();
 }
 
 void DetectorView::detectorToScene(double& x, double& y)
@@ -293,11 +314,12 @@ void DetectorView::mousePressEvent(QMouseEvent* event)
         // Any Graphic object other than the base pixmap can be selected and deselected
         if (!dynamic_cast<QGraphicsPixmapItem*>(item))
         {
-
-            if (dynamic_cast<SliceRect*>(item))
-                _selectedSlice = _slices.indexOf(dynamic_cast<SliceRect*>(item));
-            else if (dynamic_cast<QGraphicsLineItem*>(item))
-                _selectedLine = _lines.indexOf(dynamic_cast<QGraphicsLineItem*>(item));
+            if (auto p=dynamic_cast<SliceRect*>(item))
+            {
+                _selectedSlice = _slices.indexOf(p);
+            }
+            else if (auto p=dynamic_cast<QGraphicsLineItem*>(item))
+                _selectedLine = _lines.indexOf(p);
             else
             {
                 item->setSelected(!item->isSelected());
@@ -326,37 +348,21 @@ void DetectorView::mousePressEvent(QMouseEvent* event)
 
         case(LINE):
         {
-            _lines.push_back(_scene->addLine(event->x(),event->y(),event->x(),event->y()));
-            int cId = (_selectedLine) % QColor::colorNames().size();
-            QColor lineColor = QColor(QColor::colorNames()[cId]);
-            _lines.last()->setPen(QPen(QBrush(QColor(lineColor)),2.0));
-            _selectedLine = _lines.size()-1;
+            addCutLine(event->x(),event->y(),event->x(),event->y());
+            updateSliceCutter();
             break;
         }
 
         case(HORIZONTALSLICE):
         {
-            _scene->addItem(new SliceRect(0,event->y(),width(),_sliceThickness));
-            _slices.push_back(dynamic_cast<SliceRect*>(_scene->items().first()));
-            _slices.last()->setVisible(true);
-            _selectedSlice = _slices.size()-1;
-            int cId = (_selectedSlice) % QColor::colorNames().size();
-            QColor sliceColor = QColor(QColor::colorNames()[cId]);
-            _slices.last()->setPen(QPen(QBrush(QColor(sliceColor)),1.0));
+            addCutSlice(0,event->y(),width(),_sliceThickness);
             updateSliceCutter();
             break;
         }
 
         case(VERTICALSLICE):
         {
-            _scene->addItem(new SliceRect(event->x(),0,_sliceThickness,height()));
-            _slices.push_back(dynamic_cast<SliceRect*>(_scene->items().first()));
-            _slices.last()->setVisible(true);
-            _selectedSlice = _slices.size()-1;
-            int cId = (_selectedSlice) % QColor::colorNames().size();
-            QColor sliceColor = QColor(QColor::colorNames()[cId]);
-            _slices.last()->setPen(QPen(QBrush(QColor(sliceColor)),1.0));
-            updateSliceCutter();
+            addCutSlice(event->x(),0,_sliceThickness,height());
             break;
         }
         }
@@ -369,23 +375,13 @@ void DetectorView::mousePressEvent(QMouseEvent* event)
             setPreviousZoomLevel();
         else if (_cutterMode==LINE)
         {
-            if (!_lines.isEmpty())
-            {
-                _scene->removeItem(_lines[_selectedLine]);
-                _lines.removeAt(_selectedLine);
-                _selectedLine=_lines.size()-1;
-                updateLineCutter();
-            }
+            removeCutLine(_selectedLine);
+            _selectedLine=_lines.size()-1;
         }
         else if (_cutterMode==HORIZONTALSLICE || _cutterMode==VERTICALSLICE)
         {
-            if (!_slices.isEmpty())
-            {
-                _scene->removeItem(_slices[_selectedSlice]);
-                _slices.removeAt(_selectedSlice);
-                _selectedSlice=_slices.size()-1;
-                updateSliceCutter();
-            }
+            removeCutSlice(_selectedSlice);
+            _selectedSlice=_slices.size()-1;
         }
     }
 }
@@ -517,6 +513,44 @@ void DetectorView::registerZoomLevel(int xmin, int xmax, int ymin, int ymax)
     if (ymin>ymax)
         std::swap(ymin,ymax);
     _zoomStack.push(QRect(xmin,ymin,xmax-xmin+1,ymax-ymin+1));
+}
+
+void DetectorView::removeCutLine(int idx)
+{
+    // If no lines have been defined just leave.
+    if (_lines.isEmpty())
+        return;
+
+    // Check that the index of the line to be removed is valid.
+    if (idx<0 || idx>=_lines.size())
+        return;
+
+    // Remove the line.
+    _scene->removeItem(_lines[idx]);
+    _lines.removeAt(idx);
+
+    // If a plotter is opened, remove the curve corresponding to the cut line to be removed.
+    if (_plotter)
+        _plotter->removeCurve(idx);
+}
+
+void DetectorView::removeCutSlice(int idx)
+{
+    // If no slices have been defined just leave.
+    if (_slices.isEmpty())
+        return;
+
+    // Check that the index of the slice to be removed is valid.
+    if (idx<0 || idx>=_slices.size())
+        return;
+
+    // Remove the slice.
+    _scene->removeItem(_slices[idx]);
+    _slices.removeAt(idx);
+
+    // If a plotter is opened, remove the curve corresponding to the cut slice to be removed.
+    if (_plotter)
+        _plotter->removeCurve(idx);
 }
 
 void DetectorView::sceneToDetector(double& x, double& y)
@@ -679,6 +713,7 @@ void DetectorView::updateLineCutter()
 void DetectorView::updatePlot()
 {
     plotIntensityMap();
+    updateLineCutter();
     updateSliceCutter();
     plotEllipsoids();
     setScene(_scene);

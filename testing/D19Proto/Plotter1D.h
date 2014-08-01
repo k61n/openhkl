@@ -16,6 +16,7 @@ public:
     ~Plotter1D();
     void addCurve(const QVector<double>& x, const QVector<double>& y, const QVector<double>& e, QColor color=QColor("blue"));
     void modifyCurve(int number, const QVector<double>& x, const QVector<double>& y, const QVector<double>& e);
+    void removeCurve(int idx);
     int nGraphs() const;
     void clear();
     

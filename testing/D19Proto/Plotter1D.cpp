@@ -49,6 +49,12 @@ void Plotter1D::modifyCurve(int number, const QVector<double> &x, const QVector<
     customPlot->replot();
 }
 
+void Plotter1D::removeCurve(int idx)
+{
+    ui->plot->removeGraph(idx);
+    ui->plot->replot();
+}
+
 int Plotter1D::nGraphs() const
 {
     return ui->plot->graphCount();

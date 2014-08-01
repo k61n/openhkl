@@ -29,6 +29,10 @@ public:
     // Is Data present
     bool hasData() const;
 public slots:
+    void addCutLine(double xstart, double ystart, double xend, double yend);
+    void addCutSlice(double x, double y, double width, double height);
+    void removeCutLine(int idx);
+    void removeCutSlice(int idx);
     void clearCutLines();
     void clearCutSlices();
     void clearPlotter();
@@ -115,6 +119,8 @@ private:
     int _selectedSlice, _selectedLine;
 
     QList<QGraphicsLineItem*> _lines;
+
+    static QStringList _lineColors;
 
 };
 
