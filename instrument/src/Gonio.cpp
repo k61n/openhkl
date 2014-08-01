@@ -28,11 +28,12 @@ Axis* Gonio::axis(unsigned int i)
 }
 
 
-Axis* Gonio::axis(const char* label)
+Axis* Gonio::axis(const std::string& label)
 {
 	unsigned int i=isAxisValid(label);
 	return _axes[i];
 }
+
 
 Axis* Gonio::addRotation(const std::string& label, const Vector3d& axis,RotAxis::Direction dir)
 {
@@ -53,16 +54,43 @@ void Gonio::isAxisValid(unsigned int i) const
 		throw std::invalid_argument("Trying to access non-valid axis");
 }
 
-unsigned int Gonio::isAxisValid(const char* label) const
+unsigned int Gonio::isAxisValid(const std::string& label) const
 {
-	std::string rhs(label);
 	for (unsigned int i=0;i<_axes.size();++i)
 	{
-		if (_axes[i]->getLabel().compare(rhs)==0)
+		if (_axes[i]->getLabel().compare(label)==0)
 			return i;
 	}
 	//! If not found
-	throw std::invalid_argument("Could not find the label "+rhs+" as a goniometer axis");
+	throw std::invalid_argument("Could not find the label "+label+" as a goniometer axis in "+_label);
+}
+
+Eigen::Transform<double,3,Eigen::Affine> Gonio::getHomMatrix(const std::vector<double>& values)
+{
+	if (values.size()!=_axes.size())
+		throw std::range_error("Trying to set Gonio "+_label+" with wrong number of parameters");
+
+	Eigen::Transform<double,3,Eigen::Affine> result=Eigen::Transform<double,3,Eigen::Affine>::Identity();
+	std::vector<Axis*>::const_reverse_iterator it;
+	std::vector<double>::const_reverse_iterator itv=values.rbegin();
+
+	for (it=_axes.rbegin();it!=_axes.rend();++it,++itv)
+	{
+		result=(*it)->getHomMatrix(*itv)*result;
+	}
+	return result;
+}
+
+Eigen::Transform<double,3,Eigen::Affine> Gonio::getInverseHomMatrix(const std::vector<double>& values)
+{
+	Eigen::Transform<double,3,Eigen::Affine> result=getHomMatrix(values);
+	return result.inverse();
+}
+
+Vector3d Gonio::transform(const std::vector<double>& values,const Vector3d& v)
+{
+	Eigen::Transform<double,3,Eigen::Affine> result=getHomMatrix(values);
+	return (result*v.homogeneous());
 }
 
 

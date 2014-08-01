@@ -30,7 +30,6 @@
 #define SX_GONIO_H_
 #include <string>
 #include <vector>
-#include <initializer_list>
 #include <utility>
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
@@ -55,25 +54,25 @@ using Eigen::Matrix3d;
 class Gonio {
 public:
 	//! Initialize an empty Gonio with naxes
-	Gonio(const std::string& name);
+	Gonio(const std::string& label);
 	//! Destructor
 	~Gonio();
 	Axis* addRotation(const std::string& label,const Vector3d& axis, RotAxis::Direction dir);
 	Axis* addTranslation(const std::string& label,const Vector3d& axis);
 	//! Accesor to Axis number _I
 	Axis* axis(unsigned int i);
-	Axis* axis(const char* label);
-	//! Const-accessor to Axis _I
-	const Axis* axis(unsigned int i) const;
-	const Axis* axis(const char* label) const;
+	Axis* axis(const std::string& label);
 	//! Limits as initializer_list
 	//! Return the homogeneous matrix corresponding to this set of angles. Throw if angles outside limits.
-	Eigen::Transform<double,3,Eigen::Affine> getHomMatrix(std::initializer_list<double> values);
+	Eigen::Transform<double,3,Eigen::Affine> getHomMatrix(const std::vector<double>& values);
 	//!
+	Eigen::Transform<double,3,Eigen::Affine> getInverseHomMatrix(const std::vector<double>& values);
+
+	Vector3d transform(const std::vector<double>& values,const Vector3d& v);
 protected:
 	std::string _label;
 	void isAxisValid(unsigned int i) const;
-	unsigned int isAxisValid(const char*) const;
+	unsigned int isAxisValid(const std::string&) const;
 	std::vector<Axis*> _axes;
 };
 
