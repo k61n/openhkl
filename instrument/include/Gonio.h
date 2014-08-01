@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef SX_IGONIO_H_
-#define SX_IGONIO_H_
+#ifndef SX_GONIO_H_
+#define SX_GONIO_H_
 #include <string>
 #include <vector>
 #include <initializer_list>
@@ -43,21 +43,21 @@ namespace Instrument {
 
 using Eigen::Matrix3d;
 /* !
- * \brief Class IGonio.
+ * \brief Class Gonio.
  * Base class for all goniometers (system of several rotation axis). Any number of axis can be used.
  * The rotation is applied in reverse order of the given order. For example, when defining a goniometer with
  * 3 axes a,b,c, it is supposed that in such collection of axes, b is attached to the a shaft and c is attached to the
  * b shaft. Such gonio will rotate a vector v into a.b.c.v.
- * Once the IGonio is constructed, it is not allowed to change the number of axes.
+ * Once the Gonio is constructed, it is not allowed to change the number of axes.
  * Axes, their labels and respective limits can be modified by the class methods or by template accessor:
  * e.g. Axis<0>(g)=RotAxis(UnitZ,CW).
  */
-class IGonio {
+class Gonio {
 public:
 	//! Initialize an empty Gonio with naxes
-	IGonio(const std::string& name);
+	Gonio(const std::string& name);
 	//! Destructor
-	~IGonio();
+	~Gonio();
 	Axis* addRotation(const std::string& label,const Vector3d& axis, RotAxis::Direction dir);
 	Axis* addTranslation(const std::string& label,const Vector3d& axis);
 	//! Accesor to Axis number _I
@@ -81,4 +81,4 @@ protected:
 } // End namespace Geometry
 } // End namespace SX
 
-#endif /* SX_IGONIO_H_ */
+#endif /* SX_GONIO_H_ */
