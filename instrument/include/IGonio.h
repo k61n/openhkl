@@ -33,8 +33,9 @@
 #include <initializer_list>
 #include <utility>
 #include <Eigen/Dense>
+#include <Eigen/Geometry>
+#include "Axis.h"
 #include "RotAxis.h"
-
 
 namespace SX {
 
@@ -54,37 +55,26 @@ using Eigen::Matrix3d;
 class IGonio {
 public:
 	//! Initialize an empty Gonio with naxes
-	IGonio(unsigned int naxes);
-	//! Initialize a gonio from a list of labels of the axis, (e.g omega, chi, phi) parsed as {"omega","chi","phi"}
-	IGonio(std::initializer_list<const char*> labels);
+	IGonio(const std::string& name);
 	//! Destructor
-	virtual ~IGonio();
-	//! Get the label for axis # _I
-	const std::string& axisLabel(unsigned int i) const;
-	std::string& axisLabel(unsigned int i);
+	~IGonio();
+	Axis* addRotation(const std::string& label,const Vector3d& axis, RotAxis::Direction dir);
+	Axis* addTranslation(const std::string& label,const Vector3d& axis);
 	//! Accesor to Axis number _I
-	RotAxis& axis(unsigned int i);
-	RotAxis& axis(const char* label);
+	Axis* axis(unsigned int i);
+	Axis* axis(const char* label);
 	//! Const-accessor to Axis _I
-	const RotAxis& axis(unsigned int i) const;
-	const RotAxis& axis(const char* label) const;
-	//! Lower limit for Axis _I
-	double& lowLimit(unsigned int i);
-	double& lowLimit(const char * label);
-	//! Upper limits for Axis _I
-	double& highLimit(unsigned int i);
-	double& highLimit(const char* label);
+	const Axis* axis(unsigned int i) const;
+	const Axis* axis(const char* label) const;
 	//! Limits as initializer_list
-	//! Return the rotation matrix corresponding to this set of angles. Throw if angles outside limits.
-	Matrix3d anglesToMatrix(std::initializer_list<double> angles);
+	//! Return the homogeneous matrix corresponding to this set of angles. Throw if angles outside limits.
+	Eigen::Transform<double,3,Eigen::Affine> getHomMatrix(std::initializer_list<double> values);
 	//!
-	friend std::ostream& operator<<(std::ostream& os,IGonio&);
 protected:
+	std::string _label;
 	void isAxisValid(unsigned int i) const;
 	unsigned int isAxisValid(const char*) const;
-	std::vector<std::string> _labels;
-	std::vector<RotAxis> _axes;
-	std::vector<std::pair<double,double> > _limits;
+	std::vector<Axis*> _axes;
 };
 
 

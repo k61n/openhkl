@@ -28,6 +28,7 @@
 
 #ifndef NSXTOOL_ROTAXIS_H_
 #define NSXTOOL_ROTAXIS_H_
+#include "Axis.h"
 #include <iostream>
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
@@ -37,7 +38,6 @@ namespace SX
 
 namespace Instrument
 {
-	enum Direction {CCW=0,CW=1};
 	using Eigen::Vector3d;
 	using Eigen::Matrix3d;
 	using Eigen::Quaterniond;
@@ -48,39 +48,26 @@ namespace Instrument
  *  and a rotation direction (CW or CCW). The direction vector needs not to be normalized.
  *
  */
-class RotAxis
+class RotAxis : public Axis
 {
 public:
+	enum Direction {CCW,CW};
 	//! Constructor per default, rotation around z, CCW
-	RotAxis();
+	explicit RotAxis(const std::string& label);
 	//! Explicit
-	RotAxis(const Vector3d& axis, Direction direction=CCW, double offset=0.0);
+	explicit RotAxis(const std::string& label, const Vector3d& axis, Direction direction=CCW, double offset=0.0);
 	//! Destructor
 	~RotAxis();
-	//! Set the axis. V3D will be normalized.
-	void setAxis(const Vector3d&);
-	//! Get the rotation axis
-	const Vector3d& getAxis() const;
-	//! Get the rotation axis
-	Vector3d& getAxis();
 	//! Get rotation direction.
 	void setRotationDirection(Direction);
 	// ! Return 0 for CCW and 1 for CW
 	Direction getRotationDirection() const;
-	//! Set the angular offset (radians) of this axis
-	void setOffset(double offset);
-	//! Get the angular offset of this axis (radians).
-	double getOffset() const;
 	//! Get the rotation matrix associated with this rotation
 	//@param angle : rotation angle in radians by default, use Units to convert
 	//@return rotation matrix
-	Matrix3d getMatrix(double angle) const;
+	Matrix3d getRotationMatrix(double angle) const;
 	//! Return the 4x4 Homogeous matrix corresponding to this transformation.
 	Eigen::Transform<double,3,Eigen::Affine> getHomMatrix(double angle) const;
-	//! Get the rotation matrix associated with this rotation
-	//@param angle : rotation angle in radians by default, use Units to convert
-	//@return rotation matrix
-	//Eigen::Transform<double,3,Eigen::Affine> getHomMatrix(double angle) const;
 	//! Get the quaternion associated with this rotation
 	//@param angle : rotation angle in radians by default
 	//@return rotation matrix
@@ -89,20 +76,16 @@ public:
 	friend std::ostream& operator<<(std::ostream& os, const RotAxis&);
 	void readXML(std::istream&);
 protected:
-	//! Axis of rotation, normalized vector
-	Vector3d _axis;
 	//! Rotation direction
 	Direction _dir;
-	//! Angular offset
-	double _offset;
 };
 
-	static const RotAxis AxisXCW=RotAxis(Vector3d(1,0,0),CW);
-	static const RotAxis AxisXCCW=RotAxis(Vector3d(1,0,0),CCW);
-	static const RotAxis AxisYCW=RotAxis(Vector3d(0,1,0),CW);
-	static const RotAxis AxisYCCW=RotAxis(Vector3d(0,1,0),CCW);
-	static const RotAxis AxisZCW=RotAxis(Vector3d(0,0,1),CW);
-	static const RotAxis AxisZCCW=RotAxis(Vector3d(0,0,1),CCW);
+	static const RotAxis AxisXCW=RotAxis("XCW",Vector3d(1,0,0),RotAxis::CW);
+	static const RotAxis AxisXCCW=RotAxis("XCCW",Vector3d(1,0,0),RotAxis::CCW);
+	static const RotAxis AxisYCW=RotAxis("YCW",Vector3d(0,1,0),RotAxis::CW);
+	static const RotAxis AxisYCCW=RotAxis("YCCW",Vector3d(0,1,0),RotAxis::CCW);
+	static const RotAxis AxisZCW=RotAxis("ZCW",Vector3d(0,0,1),RotAxis::CW);
+	static const RotAxis AxisZCCW=RotAxis("ZCCW",Vector3d(0,0,1),RotAxis::CCW);
 
 } //namespace Geometry
 
