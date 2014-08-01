@@ -29,12 +29,27 @@ public:
     // Is Data present
     bool hasData() const;
 public slots:
+    // Add a cut line to the scene.
     void addCutLine(double xstart, double ystart, double xend, double yend);
-    void addCutSlice(double x, double y, double width, double height);
+    // Add a horizontal cut slicer to the scene.
+    void addHorizontalCutSlice(double x, double y, double width, double height);
+    // Add a vertical cut slicer to the scene.
+    void addVerticalCutSlice(double x, double y, double width, double height);
+    // Remove a cut line from the scene.
     void removeCutLine(int idx);
-    void removeCutSlice(int idx);
+    // Remove a horizontal cut slicer from the scene.
+    void removeHorizontalCutSlice(int idx);
+    // Remove a vertical cut slicer from the scene.
+    void removeVerticalCutSlice(int idx);
+    // Remove all cut objects (line/horizontal/vertical cutters) from the scene.
+    void clearCutObjects();
+    // Remove all cut line from the scene.
     void clearCutLines();
-    void clearCutSlices();
+    // Remove all horizontal cut slicers from the scene.
+    void clearHorizontalCutSlices();
+    // Remove all vertical cut slicers from the scene.
+    void clearVerticalCutSlices();
+    // Remove all graphs from the plotter.
     void clearPlotter();
     void updateView(Data* ptr,int frame);
     void setCutterMode(int i);
@@ -71,14 +86,16 @@ private:
     void get2Theta(double x, double y, double& th2);
     // Get d-spacing for a pixel (x,y) in detector space
     void getDSpacing(double x, double y, double& dspacing);
+    // Update the horizontal cut slicer.
+    void updateHorizontalSliceCutter();
     // Update line cutter, x and y in scene coordinates
     void updateLineCutter();
+    // Update the vertical cut slicer.
+    void updateVerticalSliceCutter();
     // Update zoom cutter, x and y in scene coordinates
     void updateZoomCutter(const QPointF&);
     // Check pixel x y is in the detector scene
     bool pointInScene(const QPointF&);
-    //
-    void updateSliceCutter();
     // Pointer to Data
     Data* _ptrData;
     int pixels_h;
@@ -115,7 +132,7 @@ private:
     PeakPlotter* _peakplotter;
     int _nCutPoints;
 
-    QList<SliceRect*> _slices;
+    QList<SliceRect*> _hSlices,_vSlices;
     int _selectedSlice, _selectedLine;
 
     QList<QGraphicsLineItem*> _lines;

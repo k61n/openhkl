@@ -18,13 +18,17 @@ DetectorView::DetectorView(QWidget* parent): QGraphicsView(parent),
     _scene(new QGraphicsScene(this)),
     _mode(PIXEL),
     _cutterMode(ZOOM),
-    _zoom(nullptr),_currentImage(nullptr),
-    _cutPloter(nullptr),_maxIntensity(1),_plotter(nullptr),
+    _zoom(nullptr),
+    _currentImage(nullptr),
+    _cutPloter(nullptr),
+    _maxIntensity(1),
+    _plotter(nullptr),
     _sliceThickness(10),
     _pixmap(nullptr),
     _peakplotter(nullptr),
     _nCutPoints(10),
-    _slices(),
+    _hSlices(),
+    _vSlices(),
     _selectedSlice(0),
     _selectedLine(0)
 {
@@ -39,15 +43,24 @@ void DetectorView::addCutLine(double xstart, double ystart, double xend, double 
     _selectedLine = _lines.size()-1;
 }
 
-void DetectorView::addCutSlice(double x, double y, double width, double height)
+void DetectorView::addHorizontalCutSlice(double x, double y, double width, double height)
 {
-    int colorId = _slices.size()%_lineColors.size();
+    int colorId = _hSlices.size()%_lineColors.size();
     _scene->addItem(new SliceRect(x,y,width,height));
-    _slices.push_back(dynamic_cast<SliceRect*>(_scene->items().first()));
-    _slices.last()->setVisible(true);
-    _slices.last()->setPen(QPen(QBrush(QColor(_lineColors[colorId])),1.0));
-    _selectedSlice = _slices.size()-1;
-    QColor::colorNames();
+    _hSlices.push_back(dynamic_cast<SliceRect*>(_scene->items().first()));
+    _hSlices.last()->setVisible(true);
+    _hSlices.last()->setPen(QPen(QBrush(QColor(_lineColors[colorId])),1.0));
+    _selectedSlice = _hSlices.size()-1;
+}
+
+void DetectorView::addVerticalCutSlice(double x, double y, double width, double height)
+{
+    int colorId = _vSlices.size()%_lineColors.size();
+    _scene->addItem(new SliceRect(x,y,width,height));
+    _vSlices.push_back(dynamic_cast<SliceRect*>(_scene->items().first()));
+    _vSlices.last()->setVisible(true);
+    _vSlices.last()->setPen(QPen(QBrush(QColor(_lineColors[colorId])),1.0));
+    _selectedSlice = _vSlices.size()-1;
 }
 
 void DetectorView::detectorToScene(double& x, double& y)
@@ -214,20 +227,20 @@ void DetectorView::mouseMoveEvent(QMouseEvent* event)
 
         case(HORIZONTALSLICE):
         {
-            if (!_slices.isEmpty())
+            if (!_hSlices.isEmpty())
             {
-                _slices[_selectedSlice]->setRect(0,event->y(),width(),_sliceThickness);
-                updateSliceCutter();
+                _hSlices[_selectedSlice]->setRect(0,event->y(),width(),_sliceThickness);
+                updateHorizontalSliceCutter();
             }
             break;
         }
 
         case(VERTICALSLICE):
         {
-            if (!_slices.isEmpty())
+            if (!_vSlices.isEmpty())
             {
-                _slices[_selectedSlice]->setRect(event->x(),0,_sliceThickness,height());
-                updateSliceCutter();
+                _vSlices[_selectedSlice]->setRect(event->x(),0,_sliceThickness,height());
+                updateVerticalSliceCutter();
             }
             break;
         }
@@ -316,7 +329,10 @@ void DetectorView::mousePressEvent(QMouseEvent* event)
         {
             if (auto p=dynamic_cast<SliceRect*>(item))
             {
-                _selectedSlice = _slices.indexOf(p);
+                if (_cutterMode==HORIZONTALSLICE)
+                    _selectedSlice = _hSlices.indexOf(p);
+                else if (_cutterMode==VERTICALSLICE)
+                    _selectedSlice = _vSlices.indexOf(p);
             }
             else if (auto p=dynamic_cast<QGraphicsLineItem*>(item))
                 _selectedLine = _lines.indexOf(p);
@@ -349,20 +365,21 @@ void DetectorView::mousePressEvent(QMouseEvent* event)
         case(LINE):
         {
             addCutLine(event->x(),event->y(),event->x(),event->y());
-            updateSliceCutter();
+            updateLineCutter();
             break;
         }
 
         case(HORIZONTALSLICE):
         {
-            addCutSlice(0,event->y(),width(),_sliceThickness);
-            updateSliceCutter();
+            addHorizontalCutSlice(0,event->y(),width(),_sliceThickness);
+            updateHorizontalSliceCutter();
             break;
         }
 
         case(VERTICALSLICE):
         {
-            addCutSlice(event->x(),0,_sliceThickness,height());
+            addVerticalCutSlice(event->x(),0,_sliceThickness,height());
+            updateVerticalSliceCutter();
             break;
         }
         }
@@ -370,18 +387,35 @@ void DetectorView::mousePressEvent(QMouseEvent* event)
     }
     else if (event->button() == Qt::RightButton)
     {
+        switch(_cutterMode)
+        {
         // Unzoom mode
-        if (_cutterMode==ZOOM)
+        case(ZOOM):
+        {
             setPreviousZoomLevel();
-        else if (_cutterMode==LINE)
+            break;
+        }
+
+        case(LINE):
         {
             removeCutLine(_selectedLine);
             _selectedLine=_lines.size()-1;
+            break;
         }
-        else if (_cutterMode==HORIZONTALSLICE || _cutterMode==VERTICALSLICE)
+
+        case(HORIZONTALSLICE):
         {
-            removeCutSlice(_selectedSlice);
-            _selectedSlice=_slices.size()-1;
+            removeHorizontalCutSlice(_selectedSlice);
+            _selectedSlice=_hSlices.size()-1;
+            break;
+        }
+
+        case(VERTICALSLICE):
+        {
+            removeVerticalCutSlice(_selectedSlice);
+            _selectedSlice=_vSlices.size()-1;
+            break;
+        }
         }
     }
 }
@@ -534,19 +568,38 @@ void DetectorView::removeCutLine(int idx)
         _plotter->removeCurve(idx);
 }
 
-void DetectorView::removeCutSlice(int idx)
+void DetectorView::removeHorizontalCutSlice(int idx)
 {
     // If no slices have been defined just leave.
-    if (_slices.isEmpty())
+    if (_hSlices.isEmpty())
         return;
 
     // Check that the index of the slice to be removed is valid.
-    if (idx<0 || idx>=_slices.size())
+    if (idx<0 || idx>=_hSlices.size())
         return;
 
     // Remove the slice.
-    _scene->removeItem(_slices[idx]);
-    _slices.removeAt(idx);
+    _scene->removeItem(_hSlices[idx]);
+    _hSlices.removeAt(idx);
+
+    // If a plotter is opened, remove the curve corresponding to the cut slice to be removed.
+    if (_plotter)
+        _plotter->removeCurve(idx);
+}
+
+void DetectorView::removeVerticalCutSlice(int idx)
+{
+    // If no slices have been defined just leave.
+    if (_vSlices.isEmpty())
+        return;
+
+    // Check that the index of the slice to be removed is valid.
+    if (idx<0 || idx>=_vSlices.size())
+        return;
+
+    // Remove the slice.
+    _scene->removeItem(_vSlices[idx]);
+    _vSlices.removeAt(idx);
 
     // If a plotter is opened, remove the curve corresponding to the cut slice to be removed.
     if (_plotter)
@@ -573,28 +626,66 @@ void DetectorView::clearCutLines()
             _scene->removeItem(*l);
         _lines.clear();
     }
-    clearPlotter();
 }
 
-void DetectorView::clearCutSlices()
+void DetectorView::clearHorizontalCutSlices()
 {
-    if (!_slices.isEmpty())
+    if (!_hSlices.isEmpty())
     {
-        for (auto s=_slices.begin();s!=_slices.end();++s)
-            _scene->removeItem(*s);
-        _slices.clear();
+        for (auto hs=_hSlices.begin();hs!=_hSlices.end();++hs)
+            _scene->removeItem(*hs);
+        _hSlices.clear();
     }
-    clearPlotter();
+}
+
+void DetectorView::clearVerticalCutSlices()
+{
+    if (!_vSlices.isEmpty())
+    {
+        for (auto vs=_vSlices.begin();vs!=_vSlices.end();++vs)
+            _scene->removeItem(*vs);
+        _vSlices.clear();
+    }
+}
+
+void DetectorView::clearCutObjects()
+{
+    clearCutLines();
+    clearHorizontalCutSlices();
+    clearVerticalCutSlices();
 }
 
 void DetectorView::setCutterMode(int i)
 {
     _cutterMode=static_cast<CutterMode>(i);
 
-    if (_cutterMode!=LINE)
+    switch(_cutterMode)
+    {
+    case(ZOOM):
+    {
+        return;
+    }
+    case(LINE):
+    {
+        clearHorizontalCutSlices();
+        clearVerticalCutSlices();
+        break;
+    }
+    case(HORIZONTALSLICE):
+    {
         clearCutLines();
-    else if (_cutterMode!=HORIZONTALSLICE && _cutterMode!=VERTICALSLICE)
-        clearCutSlices();
+        clearVerticalCutSlices();
+        break;
+    }
+    case(VERTICALSLICE):
+    {
+        clearCutLines();
+        clearHorizontalCutSlices();
+        break;
+    }
+    }
+
+    clearPlotter();
 }
 
 void DetectorView::clearPlotter()
@@ -714,18 +805,19 @@ void DetectorView::updatePlot()
 {
     plotIntensityMap();
     updateLineCutter();
-    updateSliceCutter();
+    updateHorizontalSliceCutter();
+    updateVerticalSliceCutter();
     plotEllipsoids();
     setScene(_scene);
 }
 
-void DetectorView::updateSliceCutter()
+void DetectorView::updateHorizontalSliceCutter()
 {
 
-    if (_slices.isEmpty())
+    if (_hSlices.isEmpty())
         return;
 
-    QRectF rect=_slices[_selectedSlice]->rect();
+    QRectF rect=_hSlices[_selectedSlice]->rect();
     double xmind=rect.left();
     double xmaxd=rect.right();
     double ymind=rect.top();
@@ -742,30 +834,63 @@ void DetectorView::updateSliceCutter()
 
     QVector<double> x,y,e;
 
-    if (_cutterMode==HORIZONTALSLICE)
-    {
-        x.resize(xmax-xmin);
-        for (int i=0;i<xmax-xmin;++i)
-            x[i]=xmin+i;
-        integrateVertical(xmin,xmax-1,ymin,ymax,y,e);
-    }
-    else if (_cutterMode==VERTICALSLICE)
-    {
-        x.resize(ymax-ymin);
-        for (int i=0;i<ymax-ymin;++i)
-            x[i]=ymin+i;
-        integrateHorizontal(xmin,xmax-1,ymin,ymax,y,e);
-    }
+    x.resize(xmax-xmin);
+    for (int i=0;i<xmax-xmin;++i)
+        x[i]=xmin+i;
+    integrateVertical(xmin,xmax-1,ymin,ymax,y,e);
 
     if (!_plotter)
     {
         _plotter=new Plotter1D(this);
-        _plotter->addCurve(x,y,e, _slices[_selectedSlice]->pen().color());
+        _plotter->addCurve(x,y,e, _hSlices[_selectedSlice]->pen().color());
     }
     else
     {
         if (_selectedSlice >= _plotter->nGraphs())
-            _plotter->addCurve(x,y,e, _slices[_selectedSlice]->pen().color());
+            _plotter->addCurve(x,y,e, _hSlices[_selectedSlice]->pen().color());
+        else
+            _plotter->modifyCurve(_selectedSlice,x,y,e);
+    }
+    _plotter->show();
+}
+
+void DetectorView::updateVerticalSliceCutter()
+{
+
+    if (_vSlices.isEmpty())
+        return;
+
+    QRectF rect=_vSlices[_selectedSlice]->rect();
+    double xmind=rect.left();
+    double xmaxd=rect.right();
+    double ymind=rect.top();
+    double ymaxd=rect.bottom();
+    sceneToDetector(xmind,ymind);
+    sceneToDetector(xmaxd,ymaxd);
+    int xmin=static_cast<int>(xmind);
+    int xmax=static_cast<int>(xmaxd);
+    int ymin=static_cast<int>(ymind);
+    int ymax=static_cast<int>(ymaxd);
+
+    if (xmin < 0  || xmax > pixels_h || ymin <0 || ymax > pixels_v)
+        return;
+
+    QVector<double> x,y,e;
+
+    x.resize(ymax-ymin);
+    for (int i=0;i<ymax-ymin;++i)
+        x[i]=ymin+i;
+    integrateHorizontal(xmin,xmax-1,ymin,ymax,y,e);
+
+    if (!_plotter)
+    {
+        _plotter=new Plotter1D(this);
+        _plotter->addCurve(x,y,e, _vSlices[_selectedSlice]->pen().color());
+    }
+    else
+    {
+        if (_selectedSlice >= _plotter->nGraphs())
+            _plotter->addCurve(x,y,e, _vSlices[_selectedSlice]->pen().color());
         else
             _plotter->modifyCurve(_selectedSlice,x,y,e);
     }
@@ -814,24 +939,24 @@ void DetectorView::wheelEvent(QWheelEvent *event)
     else if (_cutterMode==HORIZONTALSLICE)
     {
 
-        if (_slices.isEmpty())
+        if (_hSlices.isEmpty())
             return;
 
         // One mouse delta=120
         _sliceThickness+=event->delta()/120;
-        QRectF rect=_slices[_selectedSlice]->rect();
-        _slices[_selectedSlice]->setRect(0,rect.top(),width(),_sliceThickness);
-        updateSliceCutter();
+        QRectF rect=_hSlices[_selectedSlice]->rect();
+        _hSlices[_selectedSlice]->setRect(0,rect.top(),width(),_sliceThickness);
+        updateHorizontalSliceCutter();
     }
     else if (_cutterMode==VERTICALSLICE)
     {
-        if (_slices.isEmpty())
+        if (_vSlices.isEmpty())
             return;
 
         // One mouse delta=120
         _sliceThickness+=event->delta()/120;
-        QRectF rect=_slices[_selectedSlice]->rect();
-        _slices[_selectedSlice]->setRect(rect.left(),0,_sliceThickness,height());
-        updateSliceCutter();
+        QRectF rect=_vSlices[_selectedSlice]->rect();
+        _vSlices[_selectedSlice]->setRect(rect.left(),0,_sliceThickness,height());
+        updateVerticalSliceCutter();
     }
 }
