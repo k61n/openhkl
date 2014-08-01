@@ -40,6 +40,7 @@ void DetectorView::addCutLine(double xstart, double ystart, double xend, double 
     int colorId = _lines.size()%_lineColors.size();
     _lines.push_back(_scene->addLine(xstart,ystart,xend,yend));
     _lines.last()->setPen(QPen(QBrush(QColor(_lineColors[colorId])),2.0));
+    _lines.last()->setFlag(QGraphicsItem::ItemIsSelectable);
     _selectedLine = _lines.size()-1;
 }
 
@@ -249,18 +250,17 @@ void DetectorView::mouseMoveEvent(QMouseEvent* event)
 
     // If peak is detected
     QGraphicsItem* item=_scene->itemAt(pos.x(),pos.y());
-    QGraphicsRectItem* peak=dynamic_cast<QGraphicsRectItem*>(item);
-
-    if (peak)
+    if (dynamic_cast<QGraphicsRectItem*>(item) || dynamic_cast<QGraphicsLineItem*>(item))
     {
-        peak->setActive(true);
-        peak->setCursor(Qt::PointingHandCursor);
+        item->setActive(true);
+        item->setCursor(Qt::PointingHandCursor);
         return;
     }
-
-    // If not on peak
-    item->setActive(true);
-    item->setCursor(Qt::CrossCursor);
+    else
+    {
+        item->setActive(true);
+        item->setCursor(Qt::CrossCursor);
+    }
 
     std::ostringstream os;
 
@@ -398,21 +398,21 @@ void DetectorView::mousePressEvent(QMouseEvent* event)
 
         case(LINE):
         {
-            removeCutLine(_selectedLine);
+            removeCutLine(_lines.size()-1);
             _selectedLine=_lines.size()-1;
             break;
         }
 
         case(HORIZONTALSLICE):
         {
-            removeHorizontalCutSlice(_selectedSlice);
+            removeHorizontalCutSlice(_hSlices.size()-1);
             _selectedSlice=_hSlices.size()-1;
             break;
         }
 
         case(VERTICALSLICE):
         {
-            removeVerticalCutSlice(_selectedSlice);
+            removeVerticalCutSlice(_vSlices.size()-1);
             _selectedSlice=_vSlices.size()-1;
             break;
         }
@@ -464,11 +464,15 @@ void DetectorView::mouseReleaseEvent(QMouseEvent *event)
     {
         if (!_lines.isEmpty())
         {
-            _lines[_selectedLine]->setVisible(true);
-            QLineF l=_lines[_selectedLine]->line();
-            l.setP2(pos);
-            _lines[_selectedLine]->setLine(l);
-            updateLineCutter();
+            QGraphicsItem* item=_scene->itemAt(pos.x(),pos.y());
+            if (item->cursor().shape() == Qt::CrossCursor)
+            {
+                _lines[_selectedLine]->setVisible(true);
+                QLineF l=_lines[_selectedLine]->line();
+                l.setP2(pos);
+                _lines[_selectedLine]->setLine(l);
+                updateLineCutter();
+            }
         }
         break;
     }
