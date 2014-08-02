@@ -18,7 +18,7 @@ BOOST_AUTO_TEST_CASE(Test_Trans_Axis)
 
 		TransAxis t("x",Vector3d(1,0,0));
 		// Translate the vector 0,1,2 by 0.4
-		Vector3d v=t.transform(0.4,Vector3d(0,1,2));
+		Vector3d v=t.transform(Vector3d(0,1,2),0.4);
 		BOOST_CHECK_CLOSE(v[0],0.4,tolerance);
 		BOOST_CHECK_CLOSE(v[1],1.0,tolerance);
 		BOOST_CHECK_CLOSE(v[2],2.0,tolerance);

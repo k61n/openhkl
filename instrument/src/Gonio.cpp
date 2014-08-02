@@ -11,8 +11,8 @@ namespace SX
 namespace Instrument
 {
 
-using SX::Units::deg;
 using Eigen::Quaterniond;
+
 Gonio::Gonio(const std::string& label):_label(label)
 {
 }
@@ -21,14 +21,14 @@ Gonio::~Gonio()
 {
 }
 
-Axis* Gonio::axis(unsigned int i)
+const Axis* Gonio::getAxis(unsigned int i)
 {
 	isAxisValid(i);
 	return _axes[i];
 }
 
 
-Axis* Gonio::axis(const std::string& label)
+const Axis* Gonio::getAxis(const std::string& label)
 {
 	unsigned int i=isAxisValid(label);
 	return _axes[i];
@@ -87,7 +87,7 @@ Eigen::Transform<double,3,Eigen::Affine> Gonio::getInverseHomMatrix(const std::v
 	return result.inverse();
 }
 
-Vector3d Gonio::transform(const std::vector<double>& values,const Vector3d& v)
+Vector3d Gonio::transform(const Vector3d& v,const std::vector<double>& values)
 {
 	Eigen::Transform<double,3,Eigen::Affine> result=getHomMatrix(values);
 	return (result*v.homogeneous());

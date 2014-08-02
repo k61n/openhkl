@@ -38,7 +38,11 @@ using Eigen::Transform;
 namespace SX {
 namespace Instrument{
 
-
+// @Brief interface use for homogeneous transform such as Rotation and translation (scale)
+// Each axis define a normalized direction (about which one rotates or along which one translates).
+// An offset can be defined and a valid range of parameters (lowLimit, HighLimit). The Axis class
+// does not maintain a given state and only return the homogeneous matrix for a input value, i.e.
+// for a rotation of M_PI about the axis, the method getHomMatrix(M_PI) will return the hom. Matrix.
 class Axis {
 public:
 	Axis(const std::string& label);
@@ -61,18 +65,20 @@ public:
 	//! Set the range of values accessible for this axis
 	void setLimits(double, double);
 	//! Set the  max value of the range
-	void setMax(double);
+	void setHighLimit(double);
 	//! Set the min value of the range
-	void setMin(double);
+	void setLowLimit(double);
 	//! Get minimum of the range
-	double getMin() const;
+	double getHighLimit() const;
 	//! Get maximum of the range
-	double getMax() const;
+	double getLowLimit() const;
 	//! Get the homogeneous (4x4) matrix corresponding to the value
 	virtual Transform<double,3,Eigen::Affine> getHomMatrix(double value) const=0;
 	//! Transform vector
-	Vector3d transform(double value, const Vector3d& v);
+	Vector3d transform(const Vector3d& v, double value);
 protected:
+	//! Check whether a value is within the authorized limits of this axis, throw otherwise.
+	void checkRange(double value);
 	//! Label of the axis
 	std::string _label;
 	//! Axis direction, a normalized vector

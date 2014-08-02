@@ -59,16 +59,16 @@ public:
 	~Gonio();
 	Axis* addRotation(const std::string& label,const Vector3d& axis, RotAxis::Direction dir);
 	Axis* addTranslation(const std::string& label,const Vector3d& axis);
-	//! Accesor to Axis number _I
-	Axis* axis(unsigned int i);
-	Axis* axis(const std::string& label);
-	//! Limits as initializer_list
-	//! Return the homogeneous matrix corresponding to this set of angles. Throw if angles outside limits.
+	//! Pointer to axis i, throw range_error if not found
+	const Axis* getAxis(unsigned int i);
+	//! Pointer to axis with label, throw range_error if not found
+	const Axis* getAxis(const std::string& label);
+	//! Return the homogeneous matrix corresponding to this set of parameters. Throw if angles outside limits.
 	Eigen::Transform<double,3,Eigen::Affine> getHomMatrix(const std::vector<double>& values);
-	//!
+	//! Return the inverse of the homogeneous matrix corresponding to this set of parameters. Throw if angles outside limits.
 	Eigen::Transform<double,3,Eigen::Affine> getInverseHomMatrix(const std::vector<double>& values);
-
-	Vector3d transform(const std::vector<double>& values,const Vector3d& v);
+	//! Transform a point in 3D space, given a vector of parameters
+	Vector3d transform(const Vector3d& v,const std::vector<double>& values);
 protected:
 	std::string _label;
 	void isAxisValid(unsigned int i) const;

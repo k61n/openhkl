@@ -12,8 +12,6 @@ namespace Instrument
 
 RotAxis::RotAxis(const std::string& label):Axis(label),_dir(CCW)
 {
-	_min=-2.0*M_PI;
-	_max=2.0*M_PI;
 }
 
 
