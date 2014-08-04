@@ -41,14 +41,14 @@ class Gonio;
 class GonioState {
 public:
 	const std::vector<double>& getValues() const;
+	~GonioState();
 private:
 	//! Only Gonio class can create a state
 	GonioState();
-	~GonioState();
 	//! Gonio must be able to access GonioState
 	friend class Gonio;
 	//! Pointer to the Goniometer that has created the state
-	Gonio* _gonio;
+	const Gonio* _gonio;
 	//! Values for each axis of the Goniometer
 	std::vector<double> _values;
 	//! Homogeneous transformation matrix corresponding to this state

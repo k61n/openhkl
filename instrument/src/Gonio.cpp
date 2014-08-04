@@ -70,7 +70,7 @@ const Eigen::Transform<double,3,Eigen::Affine>& Gonio::getCurrentHomMatrix() con
 	return _currenTransform;
 }
 
-Eigen::Transform<double,3,Eigen::Affine> Gonio::getHomMatrix(const std::vector<double>& values)
+Eigen::Transform<double,3,Eigen::Affine> Gonio::getHomMatrix(const std::vector<double>& values) const
 {
 	if (values.size()!=_axes.size())
 		throw std::range_error("Trying to set Gonio "+_label+" with wrong number of parameters");
@@ -86,7 +86,7 @@ Eigen::Transform<double,3,Eigen::Affine> Gonio::getHomMatrix(const std::vector<d
 	return result;
 }
 
-Eigen::Transform<double,3,Eigen::Affine> Gonio::getInverseHomMatrix(const std::vector<double>& values)
+Eigen::Transform<double,3,Eigen::Affine> Gonio::getInverseHomMatrix(const std::vector<double>& values) const
 {
 	Eigen::Transform<double,3,Eigen::Affine> result=getHomMatrix(values);
 	return result.inverse();
@@ -109,6 +109,35 @@ void Gonio::transformInPlace(Vector3d& v)
 	return;
 }
 
+void Gonio::setState(const GonioState& g)
+{
+	if (this!=g._gonio)
+		throw std::runtime_error("Trying to set a GonioState to a different Gonio");
+	_currentValues=g._values;
+	_currenTransform=g._transformation;
+}
+void Gonio::setCurrentValues(const std::vector<double>& v)
+{
+	_currenTransform=getHomMatrix(v);
+}
+
+GonioState Gonio::copyCurrentState() const
+{
+	GonioState g;
+	g._gonio=this;
+	g._values=_currentValues;
+	g._transformation=_currenTransform;
+	return g;
+}
+
+GonioState Gonio::createState(const std::vector<double>& values) const
+{
+	GonioState g;
+	g._gonio=this;
+	g._values=values;
+	g._transformation=getHomMatrix(values);
+	return g;
+}
 
 }
 }

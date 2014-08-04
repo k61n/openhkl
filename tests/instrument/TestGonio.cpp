@@ -1,6 +1,7 @@
 #define BOOST_TEST_MODULE "Test Gonio"
 #define BOOST_TEST_DYN_LINK
 #include "Gonio.h"
+#include "GonioState.h"
 #include "Units.h"
 #include <cmath>
 #include <Eigen/Dense>
@@ -69,5 +70,14 @@ BOOST_AUTO_TEST_CASE(Test_Gonio)
 	BOOST_CHECK_CLOSE(result[2],result1[2],tolerance);
 
 
-
+	GonioState s1=g.createState({om,chi,phi});
+	// Change the values
+	g.setCurrentValues({1,2,3});
+	//Retrieve the values
+	g.setState(s1);
+	// Test previous result
+	result=g.transform(Vector3d(1,0,0));
+	BOOST_CHECK_CLOSE(result[0],result1[0],tolerance);
+	BOOST_CHECK_CLOSE(result[1],result1[1],tolerance);
+	BOOST_CHECK_CLOSE(result[2],result1[2],tolerance);
 }

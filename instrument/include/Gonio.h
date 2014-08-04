@@ -67,9 +67,9 @@ public:
 	//! Get the current homogeneous transform
 	const Eigen::Transform<double,3,Eigen::Affine>& getCurrentHomMatrix() const;
 	//! Return the homogeneous matrix corresponding to this set of parameters. Throw if angles outside limits.
-	Eigen::Transform<double,3,Eigen::Affine> getHomMatrix(const std::vector<double>& values);
+	Eigen::Transform<double,3,Eigen::Affine> getHomMatrix(const std::vector<double>& values) const;
 	//! Return the inverse of the homogeneous matrix corresponding to this set of parameters. Throw if angles outside limits.
-	Eigen::Transform<double,3,Eigen::Affine> getInverseHomMatrix(const std::vector<double>& values);
+	Eigen::Transform<double,3,Eigen::Affine> getInverseHomMatrix(const std::vector<double>& values) const;
 	//! Transform a point in 3D space, given a vector of parameters
 	Vector3d transform(const Vector3d& v,const std::vector<double>& values);
 	//! Transform a point with current setting
@@ -77,9 +77,9 @@ public:
 	//! Transform a point by reference
 	void transformInPlace(Vector3d& v);
 	//! Create a state from a set of values
-	GonioState createState(const std::vector<double>& values);
+	GonioState createState(const std::vector<double>& values) const;
 	//! Copy the current state to a GonioState object
-	GonioState copyCurrentState();
+	GonioState copyCurrentState() const;
 	//! Set the current state from recorded state
 	void setState(const GonioState& g);
 	//! Set the state of gonio to a new state corresponding to the Axis parameters in v
