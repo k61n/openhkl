@@ -35,12 +35,13 @@
 #include <Eigen/Geometry>
 #include "Axis.h"
 #include "RotAxis.h"
+#include "GonioState.h"
 
 namespace SX {
 
 namespace Instrument {
 
-using Eigen::Matrix3d;
+using Eigen::Vector3d;
 /* !
  * \brief Class Gonio.
  * Base class for all goniometers (system of several rotation axis). Any number of axis can be used.
@@ -63,17 +64,39 @@ public:
 	const Axis* getAxis(unsigned int i);
 	//! Pointer to axis with label, throw range_error if not found
 	const Axis* getAxis(const std::string& label);
+	//! Get the current homogeneous transform
+	const Eigen::Transform<double,3,Eigen::Affine>& getCurrentHomMatrix() const;
 	//! Return the homogeneous matrix corresponding to this set of parameters. Throw if angles outside limits.
 	Eigen::Transform<double,3,Eigen::Affine> getHomMatrix(const std::vector<double>& values);
 	//! Return the inverse of the homogeneous matrix corresponding to this set of parameters. Throw if angles outside limits.
 	Eigen::Transform<double,3,Eigen::Affine> getInverseHomMatrix(const std::vector<double>& values);
 	//! Transform a point in 3D space, given a vector of parameters
 	Vector3d transform(const Vector3d& v,const std::vector<double>& values);
+	//! Transform a point with current setting
+	Vector3d transform(const Vector3d& v);
+	//! Transform a point by reference
+	void transformInPlace(Vector3d& v);
+	//! Create a state from a set of values
+	GonioState createState(const std::vector<double>& values);
+	//! Copy the current state to a GonioState object
+	GonioState copyCurrentState();
+	//! Set the current state from recorded state
+	void setState(const GonioState& g);
+	//! Set the state of gonio to a new state corresponding to the Axis parameters in v
+	void setCurrentValues(const std::vector<double>& v);
 protected:
+	//! Given name of the gonio
 	std::string _label;
+	//! Check whether axis i within the range of Axis
 	void isAxisValid(unsigned int i) const;
-	unsigned int isAxisValid(const std::string&) const;
+	//! Check whether s names a valid axis
+	unsigned int isAxisValid(const std::string& s) const;
+	//! Set of axis
 	std::vector<Axis*> _axes;
+	//! Current values of each axis parameter
+	std::vector<double> _currentValues;
+	//! Current transformation matrix
+	Eigen::Transform<double,3,Eigen::Affine> _currenTransform;
 };
 
 

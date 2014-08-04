@@ -65,6 +65,11 @@ unsigned int Gonio::isAxisValid(const std::string& label) const
 	throw std::invalid_argument("Could not find the label "+label+" as a goniometer axis in "+_label);
 }
 
+const Eigen::Transform<double,3,Eigen::Affine>& Gonio::getCurrentHomMatrix() const
+{
+	return _currenTransform;
+}
+
 Eigen::Transform<double,3,Eigen::Affine> Gonio::getHomMatrix(const std::vector<double>& values)
 {
 	if (values.size()!=_axes.size())
@@ -91,6 +96,17 @@ Vector3d Gonio::transform(const Vector3d& v,const std::vector<double>& values)
 {
 	Eigen::Transform<double,3,Eigen::Affine> result=getHomMatrix(values);
 	return (result*v.homogeneous());
+}
+
+Vector3d Gonio::transform(const Vector3d& v)
+{
+	return (_currenTransform*v.homogeneous());
+}
+
+void Gonio::transformInPlace(Vector3d& v)
+{
+	v=_currenTransform*v.homogeneous();
+	return;
 }
 
 

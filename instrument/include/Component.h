@@ -28,14 +28,11 @@
 
 #ifndef NSXTOOL_COMPONENT_H_
 #define NSXTOOL_COMPONENT_H_
-
 #include <string>
-
 #include <boost/property_tree/ptree.hpp>
-
-#include <Eigen/Dense>
-
 #include "XMLConfigurable.h"
+#include <memory>
+#include <Eigen/Dense>
 
 namespace SX
 {
@@ -43,10 +40,10 @@ namespace SX
 namespace Instrument
 {
 
+class Gonio;
+
 using boost::property_tree::ptree;
 using SX::Kernel::XMLConfigurable;
-
-class Modifier;
 
 typedef unsigned int uint;
 
@@ -56,37 +53,33 @@ typedef unsigned int uint;
 class Component : public XMLConfigurable
 {
 public:
-
-	static Component* Create(const ptree& pt);
-
-	//! The destructor.
+	Component();
+	Component(const std::string& name);
+	//! Destructor.
 	virtual ~Component()=0;
-
 	//! Returns the name of the component.
 	const std::string& getName() const;
-
 	//! Parse the XML component node.
 	void parse(const ptree& pt);
-
+	//! Attach a modifier to the component.
+	void setGonio(std::shared_ptr<Gonio>);
+	//! Return true if a geometryic modifier is attached
+	bool hasGonio() const;
+	//! Return the goniometer attached to this component
+	std::shared_ptr<Gonio> getGonio() const;
+	//! Set the rest position
+	void setRestPosition(const Eigen::Vector3d& pos);
+	//! Get the absolute position at rest (unmodified by gonio)
+	const Eigen::Vector3d& getRestPosition() const;
+	//! Get the absolute position of the component for a set of goniometer values
+	Eigen::Vector3d getPosition(const std::vector<double>& goniosetup);
 protected:
-
-	//! Default constructor.
-	Component();
-
-	//! Constructs a component from an XML node.
-	Component(const ptree& pt);
-
-	Modifier* _modifier;
-
-	//! The name of the component.
+	//! Name of the component
 	std::string _name;
-
-	//! The position of the component.
+	//! Pointer to the goniometer attached to the component
+	std::shared_ptr<Gonio> _gonio;
+	//! The position of the component at rest, i.e. not modified by the Gonio.
 	Eigen::Vector3d _position;
-
-private:
-	//! Parse the XML component node.
-	virtual void _parse(const ptree& pt)=0;
 
 };
 

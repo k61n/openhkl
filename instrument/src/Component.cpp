@@ -1,37 +1,8 @@
-/*
- * nsxtool : Neutron Single Crystal analysis toolkit
-    ------------------------------------------------------------------------------------------
-    Copyright (C)
-    2012- Laurent C. Chapon Institut Laue-Langevin
-	BP 156
-	6, rue Jules Horowitz
-	38042 Grenoble Cedex 9
-	France
-	chapon[at]ill.fr
-	pellegrini[at]ill.fr
-
-	This library is free software; you can redistribute it and/or
-	modify it under the terms of the GNU Lesser General Public
-	License as published by the Free Software Foundation; either
-	version 2.1 of the License, or (at your option) any later version.
-
-	This library is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-	Lesser General Public License for more details.
-
-	You should have received a copy of the GNU Lesser General Public
-	License along with this library; if not, write to the Free Software
-	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- *
- */
-
 #include <iostream>
-
 #include <boost/foreach.hpp>
-
 #include "Component.h"
-#include "Modifier.h"
+#include "Gonio.h"
+
 
 namespace SX
 {
@@ -39,7 +10,11 @@ namespace SX
 namespace Instrument
 {
 
-Component::Component() : _modifier(nullptr), _name(), _position()
+Component::Component():_name(""),_gonio(),_position(Eigen::Vector3d::Zero())
+{
+}
+
+Component::Component(const std::string& name) : _name(name), _gonio(), _position(Eigen::Vector3d::Zero())
 {
 }
 
@@ -52,9 +27,42 @@ const std::string& Component::getName() const
 	return _name;
 }
 
+void Component::setGonio(std::shared_ptr<Gonio> gonio)
+{
+	if (gonio.get()!=nullptr)
+		_gonio=gonio;
+}
+
+std::shared_ptr<Gonio> Component::getGonio() const
+{
+	return _gonio;
+}
+
+void Component::setRestPosition(const Vector3d& v)
+{
+	_position=v;
+}
+
+const Eigen::Vector3d& Component::getRestPosition() const
+{
+	return _position;
+}
+
+Eigen::Vector3d Component::getPosition(const std::vector<double>& goniosetup)
+{
+	if (_gonio.get()==nullptr)
+		return _position;
+	else
+		return _gonio->transform(_position,goniosetup);
+}
+
+bool Component::hasGonio() const
+{
+	return (_gonio.get()!=nullptr);
+}
+
 void Component::parse(const ptree& node)
 {
-
 	// A component must have a name in its XML node.
 	_name=node.get<std::string>("name");
 
@@ -64,17 +72,17 @@ void Component::parse(const ptree& node)
 	_position[2] = node.get<double>("position.<xmlattr>.z",0.0);
 
 	// Loop over the inner nodes to detect any "modifier" node. There must at most one such node.
-	BOOST_FOREACH(ptree::value_type v, node)
-	{
-		if (v.first == "modifier")
-		{
-			if (_modifier == nullptr)
-				_modifier=new Modifier(v.second);
-		}
-	}
-
-	// Parse the XML nodes that are specific to the components.
-	_parse(node);
+//	BOOST_FOREACH(ptree::value_type v, node)
+//	{
+//		if (v.first == "modifier")
+//		{
+//			if (_gonio.get() == nullptr)
+//				_gonio=new Gonio(v.second);
+//		}
+//	}
+//
+//	// Parse the XML nodes that are specific to the components.
+//	_parse(node);
 }
 
 } // end namespace Instrument

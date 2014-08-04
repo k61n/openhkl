@@ -29,16 +29,9 @@
 #ifndef NSXTOOL_DETECTOR_H_
 #define NSXTOOL_DETECTOR_H_
 
-#include <unordered_map>
 #include <string>
-
-#include <boost/assign/list_of.hpp>
-#include <boost/property_tree/ptree.hpp>
-
 #include <Eigen/Dense>
-
 #include "Component.h"
-#include "DetectorMapping.h"
 
 namespace SX
 {
@@ -48,51 +41,89 @@ namespace Instrument
 
 typedef unsigned int uint;
 
-using namespace boost::assign;
-using namespace boost::property_tree;
-using namespace Eigen;
-
+//!
 class Detector : public Component
 {
 public:
-
-	static Component* Create(const ptree& pt);
-
+	//
+	Detector();
+	Detector(const std::string& name);
 	virtual ~Detector()=0;
-
+	//! Set the dimensions of the detector (meters).
+	void setDimensions(double width, double height);
+	//! Set the width (meters)
+	void setWidth(double width);
+	//! Set the height (meters)
+	void setHeight(double height);
 	//! Returns the detector height.
 	double getHeigth() const;
+	//! Returns the detector width
+	double getWidth() const;
+	//! Set the size of the detector using angular units (radians) rather than lengths. Converted internally in width and height.
+	//! Use Units::deg for easy conversion
+	virtual void setAngularRange(double widthAngle, double heightAngle)=0;
+	//! Return the width in angular units (radians) covered by the detector
+	virtual double getWidthAngle() const=0;
+	//! Return the height in angular units (radians) covered by the detector
+	virtual double getHeightAngle() const=0;
+	//! Set the number of pixels of the detector
+	void setNPixels(unsigned int cols,unsigned int rows);
+	//! Set the number of columns
+	void setNCols(unsigned int cols);
+	//! Set the number of rows
+	void setNRows(unsigned int rows);
 	//! Returns the number of columns of the detector.
-	uint getNCols() const;
+	int getNCols() const;
 	//! Returns the number of rows of the detector.
-	uint getNRows() const;
+	int getNRows() const;
 	//! Returns the height of a detector pixel.
 	double getPixelHeigth() const;
 	//! Returns the width of a detector pixel.
 	double getPixelWidth() const;
-	//! Returns the detector width.
-	double getWidth() const;
-
-	virtual Vector3d getQVector(uint px, uint py) const;
-
-	bool hasPixel(uint px, uint py) const;
-
+	/**
+	 *  @brief Get the position of a scattering event at px, py.
+	 *  @param px horizontal position of the scattering event in pixels unit
+	 *  @param py vertical position of the scattering event in pixels units
+	 *  @return spatial position of this event
+	 */
+	virtual Eigen::Vector3d getEventPosition(double px, double py) const =0;
+	/**
+	 *  @brief Get the scattered wavenumber for an event on a detector
+	 *  @param px horizontal position of the scattering event in pixels unit
+	 *  @param py vertical position of the scattering event in pixels units
+	 *  @param wave incident wavelength in \f$ \AA^{-1} \f$
+	 *  @return Scattered wavenumber s=\f$ \frac{k_f}{2\pi} \f$
+	 */
+	Eigen::Vector3d getKf(double px, double py, double wave) const;
+	/**
+	 *  @brief Get the transferred wavenumber for an event on a detector
+	 *  @param px horizontal position of the scattering event in pixels unit
+	 *  @param py vertical position of the scattering event in pixels units
+	 *  @param si incident wavenumber si=\f$ \frac{k_i}{2\pi} \f$
+	 *  @return Transferred wavenumber s=\f$ \frac{k_f-k_i}{2\pi} \f$
+	 */
+	Eigen::Vector3d getQ(double px, double py,const Eigen::Vector3d& si) const;
+	/**
+	 *  @brief Get the scattering angles for an event on the detector
+	 *  @param px horizontal position of the scattering event in pixels unit
+	 *  @param py vertical position of the scattering event in pixels units
+	 *  @param gamma reference to angle in the yx-plane (gamma=0 along y)
+	 *  @param nu reference to elevation angle
+	 */
+	void getGammaNu(double px, double py, double& gamma, double& nu);
+	/**
+	 *  @brief Get 2\f$ \theta \f$
+	 *  @param px horizontal position of the scattering event in pixels unit
+	 *  @param py vertical position of the scattering event in pixels units
+	 */
+	double get2Theta(double px, double py, const Eigen::Vector3d& si) const;
+	//! Pointer to function that maps data indexing with detector indexing
+	void setDataMapping(std::function<void(double,double,double&,double&)>);
 protected:
-
-	Detector(const ptree& pt);
-
-	Detector();
-
+	void convertCoordinates(double, double , double&, double&);
 	uint _nRows, _nCols;
-	uint _rowMin,_colMin, _rowMax, _colMax;
 	double _width, _height;
-	double _pixelWidth, _pixelHeight;
-
-protected:
-
-	virtual void _parse(const ptree& pt);
-
-
+	std::function<void(double,double,double&,double&)> _mapping;
 };
 
 } // end namespace Instrument
