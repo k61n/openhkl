@@ -70,10 +70,29 @@ BOOST_AUTO_TEST_CASE(Test_Gonio)
 	BOOST_CHECK_CLOSE(result[2],result1[2],tolerance);
 
 
+	// Create a state with these values
 	GonioState s1=g.createState({om,chi,phi});
 	// Change the values
-	g.setCurrentValues({1,2,3});
-	//Retrieve the values
+	om=31.5*deg;
+	chi=12.7*deg;
+	phi=-44.3*deg;
+	g.setCurrentValues({om,chi,phi});
+	OM << cos(om), sin(om), 0,
+		 -sin(om), cos(om), 0,
+		  0      ,  0      , 1;
+	CH << cos(chi), 0, sin(chi),
+		  0 ,       1,      0,
+		 -sin(chi), 0, cos(chi);
+	PH << cos(phi), sin(phi), 0,
+		 -sin(phi), cos(phi), 0,
+		  0      ,  0      , 1;
+	Vector3d result2=OM*CH*PH*Vector3d(1,0,0);
+	result=g.transform(Vector3d(1,0,0));
+	BOOST_CHECK_CLOSE(result[0],result2[0],tolerance);
+	BOOST_CHECK_CLOSE(result[1],result2[1],tolerance);
+	BOOST_CHECK_CLOSE(result[2],result2[2],tolerance);
+
+	//Retrieve the previous state
 	g.setState(s1);
 	// Test previous result
 	result=g.transform(Vector3d(1,0,0));
