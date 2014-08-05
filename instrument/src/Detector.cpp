@@ -14,12 +14,12 @@ using namespace SX::Units;
 
 Detector::Detector()
 : Component(), _nRows(0), _nCols(0),
-  _width(0.0), _height(0.0),_mapping(nullptr)
+  _width(0.0), _height(0.0),_distance(0),_mapping(nullptr)
 {
 }
 
 Detector::Detector(const std::string& name):Component(name),_nRows(0), _nCols(0),
-		  _width(0.0), _height(0.0)
+		  _width(0.0), _height(0.0),_distance(0),_mapping(nullptr)
 {
 
 }
@@ -49,6 +49,17 @@ void Detector::setHeight(double height)
 	if (height<=0)
 		throw std::range_error("Detector "+Component::_name+" dimensions must be positive");
 	_height=height;
+}
+
+void Detector::setDistance(double d)
+{
+	_distance=d;
+	_position=Eigen::Vector3d(0,d,0);
+}
+void Detector::setRestPosition(const Eigen::Vector3d& pos)
+{
+	_position=pos;
+	_distance=pos.norm();
 }
 
 double Detector::getHeigth() const
@@ -124,7 +135,7 @@ Eigen::Vector3d Detector::getQ(double px, double py, const Eigen::Vector3d& si) 
 void Detector::getGammaNu(double px, double py, double& gamma, double& nu)
 {
 	Eigen::Vector3d p=getEventPosition(px,py);
-	gamma=atan2(p[1],p[0]);
+	gamma=atan2(p[0],p[1]);
 	nu=asin(p[2]/p.norm());
 }
 
@@ -140,7 +151,7 @@ void Detector::setDataMapping(std::function<void(double,double,double&,double&)>
 	_mapping=rhs;
 }
 
-void Detector::convertCoordinates(double px,double py,double& mx,double& my)
+void Detector::convertCoordinates(double px,double py,double& mx,double& my) const
 {
 	if (_mapping!=nullptr)
 		_mapping(px,py,mx,my);

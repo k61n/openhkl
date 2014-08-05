@@ -118,6 +118,7 @@ void Gonio::setState(const GonioState& g)
 }
 void Gonio::setCurrentValues(const std::vector<double>& v)
 {
+	_currentValues=v;
 	_currenTransform=getHomMatrix(v);
 }
 

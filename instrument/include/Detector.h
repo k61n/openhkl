@@ -51,6 +51,10 @@ public:
 	virtual ~Detector()=0;
 	//! Set the dimensions of the detector (meters).
 	void setDimensions(double width, double height);
+	//! Set sample to detector distance (overwrites Component::setRestPosition)
+	void setDistance(double d);
+	//! Set the rest position of the detector (along y in Busing Levy convention)
+	void setRestPosition(const Eigen::Vector3d& p);
 	//! Set the width (meters)
 	void setWidth(double width);
 	//! Set the height (meters)
@@ -62,6 +66,10 @@ public:
 	//! Set the size of the detector using angular units (radians) rather than lengths. Converted internally in width and height.
 	//! Use Units::deg for easy conversion
 	virtual void setAngularRange(double widthAngle, double heightAngle)=0;
+	//! Set the full width of the detector in Angle, assume the distance is set before
+	virtual void setWidthAngle(double wangle)=0;
+	//! Set the full height using angular dimension
+	virtual void setHeightAngle(double hangle)=0;
 	//! Return the width in angular units (radians) covered by the detector
 	virtual double getWidthAngle() const=0;
 	//! Return the height in angular units (radians) covered by the detector
@@ -115,14 +123,19 @@ public:
 	 *  @brief Get 2\f$ \theta \f$
 	 *  @param px horizontal position of the scattering event in pixels unit
 	 *  @param py vertical position of the scattering event in pixels units
+	 *  @param si Incident wavenumber
 	 */
 	double get2Theta(double px, double py, const Eigen::Vector3d& si) const;
 	//! Pointer to function that maps data indexing with detector indexing
 	void setDataMapping(std::function<void(double,double,double&,double&)>);
+	//!
+	virtual void parse(const ptree&)=0;
 protected:
-	void convertCoordinates(double, double , double&, double&);
+	void convertCoordinates(double, double , double&, double&) const;
 	uint _nRows, _nCols;
 	double _width, _height;
+	// Sample to detector distance
+	double _distance;
 	std::function<void(double,double,double&,double&)> _mapping;
 };
 

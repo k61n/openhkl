@@ -60,7 +60,7 @@ public:
 	//! Returns the name of the component.
 	const std::string& getName() const;
 	//! Parse the XML component node.
-	void parse(const ptree& pt);
+	virtual void parse(const ptree& pt);
 	//! Attach a modifier to the component.
 	void setGonio(std::shared_ptr<Gonio>);
 	//! Return true if a geometryic modifier is attached
@@ -68,7 +68,7 @@ public:
 	//! Return the goniometer attached to this component
 	std::shared_ptr<Gonio> getGonio() const;
 	//! Set the rest position
-	void setRestPosition(const Eigen::Vector3d& pos);
+	virtual void setRestPosition(const Eigen::Vector3d& pos);
 	//! Get the absolute position at rest (unmodified by gonio)
 	const Eigen::Vector3d& getRestPosition() const;
 	//! Get the absolute position of the component for a set of goniometer values

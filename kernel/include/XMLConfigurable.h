@@ -50,8 +50,6 @@ public:
 	virtual ~XMLConfigurable()=0;
 	//! Parse an XMl node.
 	virtual void parse(const ptree&)=0;
-private:
-	virtual void _parse(const ptree& node)=0;
 
 };
 

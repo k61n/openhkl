@@ -73,7 +73,7 @@ void Peak3D::integrate()
 	int start_y=static_cast<int>(std::ceil(lower[1]));
 	int end_y=static_cast<int>(std::floor(upper[1]));
 
-	Eigen::Vector4d point;
+	Eigen::Vector4d point1, point2, point3, point4;
 
 	// Allocate all vectors
 	_projection=Eigen::VectorXd::Zero(data_end-data_start+1);
@@ -89,15 +89,17 @@ void Peak3D::integrate()
 			{
 				int intensity=_data->dataAt(x,y,z);
 				_projection[z-data_start]+=intensity;
-				point << x,y,z,1;
-				bool inpeak=_peak->isInside(point);
+				point1 << x,y,z,1;
+				point2 << x+1,y,z,1;
+				point3 << x,y+1,z,1;
+				point4 << x+1,y+1,z,1;
+				bool inpeak=(_peak->isInside(point1) || _peak->isInside(point2) || _peak->isInside(point3) || _peak->isInside(point4));
 				if (inpeak)
 					_projectionPeak[z-data_start]+=intensity;
-				if (!inpeak && _bkg->isInside(point))
-					_projectionBkg[z-data_start]+=intensity;
 			}
 		}
 	}
+	_projectionBkg=_projection-_projectionPeak;
 	return;
 }
 
