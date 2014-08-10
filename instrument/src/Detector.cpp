@@ -114,21 +114,21 @@ double Detector::getPixelWidth() const
 }
 
 
-Eigen::Vector3d Detector::getKf(double px, double py, double wave) const
+Eigen::Vector3d Detector::getKf(double px, double py, double wave,const Eigen::Vector3d& from) const
 {
 	// Get the event position x,y,z, taking into account the Gonio current setting
 	Eigen::Vector3d p=getEventPosition(px,py);
+	p-=from;
 	p.normalize();
 	return (p/wave);
 }
 
-Eigen::Vector3d Detector::getQ(double px, double py, const Eigen::Vector3d& si) const
+Eigen::Vector3d Detector::getQ(double px, double py,double wave,const Eigen::Vector3d& from) const
 {
-	if (si.isZero())
-		throw std::runtime_error("Detector:getQ incident wavevector is null");
-	double wave=1.0/si.norm();
-	Eigen::Vector3d q=getKf(px,py,wave);
-	q-=si;
+	if (wave<=0)
+		throw std::runtime_error("Detector:getQ incident wavelength error, must be >0");
+	Eigen::Vector3d q=getKf(px,py,wave,from);
+	q-=Eigen::Vector3d(0.0,1/wave,0.0);
 	return q;
 }
 
@@ -143,7 +143,7 @@ double Detector::get2Theta(double px, double py, const Eigen::Vector3d& si) cons
 {
 	Eigen::Vector3d p=getEventPosition(px,py);
 	double proj=p.dot(si);
-	return asin(proj/p.norm()/si.norm());
+	return acos(proj/p.norm()/si.norm());
 }
 
 void Detector::setDataMapping(std::function<void(double,double,double&,double&)> rhs)

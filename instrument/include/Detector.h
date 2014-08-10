@@ -100,17 +100,19 @@ public:
 	 *  @param px horizontal position of the scattering event in pixels unit
 	 *  @param py vertical position of the scattering event in pixels units
 	 *  @param wave incident wavelength in \f$ \AA^{-1} \f$
+	 *  @param from Optional scattering point position
 	 *  @return Scattered wavenumber s=\f$ \frac{k_f}{2\pi} \f$
 	 */
-	Eigen::Vector3d getKf(double px, double py, double wave) const;
+	Eigen::Vector3d getKf(double px, double py, double wave, const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
 	/**
 	 *  @brief Get the transferred wavenumber for an event on a detector
 	 *  @param px horizontal position of the scattering event in pixels unit
 	 *  @param py vertical position of the scattering event in pixels units
 	 *  @param si incident wavenumber si=\f$ \frac{k_i}{2\pi} \f$
+	 *  @param from Optional scattering point position
 	 *  @return Transferred wavenumber s=\f$ \frac{k_f-k_i}{2\pi} \f$
 	 */
-	Eigen::Vector3d getQ(double px, double py,const Eigen::Vector3d& si) const;
+	Eigen::Vector3d getQ(double px, double py, double wave,const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
 	/**
 	 *  @brief Get the scattering angles for an event on the detector
 	 *  @param px horizontal position of the scattering event in pixels unit
