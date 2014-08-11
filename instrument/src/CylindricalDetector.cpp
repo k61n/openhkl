@@ -49,7 +49,7 @@ double CylindricalDetector::getWidthAngle()const
 
 double CylindricalDetector::getHeightAngle() const
 {
-	return 2.0*asin(0.5*_height/_distance);
+	return 2.0*atan(0.5*_height/_distance);
 }
 
 Eigen::Vector3d CylindricalDetector::getEventPosition(double px, double py) const
