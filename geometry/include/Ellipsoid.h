@@ -215,7 +215,7 @@ void Ellipsoid<T,D>::scale(T value)
 		Sinv.diagonal()[i]=1.0/value;
 	Sinv.diagonal()[D]=1.0;
 	_TRSinv=Sinv*_TRSinv;
-	scaleAABB(value);
+	this->scaleAABB(value);
 }
 
 template<typename T,uint D>
@@ -227,7 +227,7 @@ void Ellipsoid<T,D>::scale(const vector& v)
 		Sinv.diagonal()[i]=1.0/v[i];
 	Sinv.diagonal()[D]=1.0;
 	_TRSinv=Sinv*_TRSinv;
-	scaleAABB(v);
+	this->scaleAABB(v);
 }
 
 template<typename T,uint D>
@@ -239,7 +239,7 @@ void Ellipsoid<T,D>::translate(const vector& t)
 		tinv(i,i)=1.0;
 	tinv(D,D)=1.0;
 	_TRSinv=_TRSinv*tinv;
-	translateAABB(t);
+	this->translateAABB(t);
 }
 
 template<typename T,uint D>

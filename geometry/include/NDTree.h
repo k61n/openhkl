@@ -291,7 +291,7 @@ template<typename T, uint D>
 void NDTree<T,D>::addData(AABB<T,D>* aabb)
 {
 	// AABB does not overlap with this branch
-	if (!intercept(*aabb))
+	if (!this->intercept(*aabb))
 		return;
 
 	// AABB overlap with this node
