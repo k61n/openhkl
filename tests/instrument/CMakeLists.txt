@@ -24,3 +24,8 @@ add_test(TestGonio TestGonio)
 add_executable(TestCylindricalDetector TestCylindricalDetector.cpp)
 TARGET_LINK_LIBRARIES(TestCylindricalDetector ${Boost_LIBRARIES} NSXTool)
 add_test(TestCylindricalDetector TestCylindricalDetector)
+
+# unit test for Flat detector
+add_executable(TestFlatDetector TestFlatDetector.cpp)
+TARGET_LINK_LIBRARIES(TestFlatDetector ${Boost_LIBRARIES} NSXTool)
+add_test(TestFlatDetector TestFlatDetector)
