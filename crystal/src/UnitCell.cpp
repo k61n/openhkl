@@ -203,7 +203,7 @@ void UnitCell::calculateBMatrix()
 }
 void UnitCell::calculateGTensors()
 {
-	_G=_A*_A.transpose();
+	_G=_A.transpose()*_A;
 }
 void UnitCell::calculatesincos()
 {
