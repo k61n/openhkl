@@ -53,50 +53,63 @@ public:
 	enum Centring {P,A,B,C,I,F,R};
 	/// Constructor
 	UnitCell();
+	//! Build Unit Cell from lattice parameters. Angles given in radians.
 	UnitCell(double a, double b, double c, double alpha, double beta, double gamma, Centring type=P);
-	UnitCell& operator=(const UnitCell&);
+	//! Build Unit-cell from 3 non-coplanar vectors. Throw if coplanars.
+	UnitCell(const Eigen::Vector3d& v1,const Eigen::Vector3d& v2,const Eigen::Vector3d& v3, Centring type=P);
+	//! Copy constructor
 	UnitCell(const UnitCell&);
-	/// Destructor
+	//! Assignment
+	UnitCell& operator=(const UnitCell&);
+	//! Destructor
 	virtual ~UnitCell();
 	/** Set unit-cell parameter
 	 * @param a  a-axis (\f$ \AA \f$)
 	 * @param b  b-axis (\f$ \AA \f$)
 	 * @param c  c-axis (\f$ \AA \f$)
-	 * @param alpha Alpha angle in degrees
-	 * @param beta Beta angle in degrees
-	 * @param gamma Gamma angle in degrees
+	 * @param alpha Alpha angle in radians
+	 * @param beta Beta angle in radians
+	 * @param gamma Gamma angle in radians
 	 */
 	void setCell(double a, double b, double c, double alpha, double beta, double gamma);
+	//! Set the a lattice parameter
+	void setA(double);
+	//! Set the b lattice parameter
+	void setB(double);
+	//! Set the c lattice parameter
+	void setC(double);
+	//! Set the \f$ \alpha \f$ lattice parameter
+	void setAlpha(double);
+	//! Set the \f$ \beta \f$ lattice parameter
+	void setBeta(double);
+	//! Set the \f$ \gamma \f$ lattice parameter
+	void setGamma(double);
+	//! Set Bravais lattice type
 	void setCentringType(Centring type);
 	/** Get the direct-cell volume
 	 * @return vol in \f$ \AA^3 \f$
 	 */
-	Centring getType() const;
 	double getVolume() const;
-	/// Setters
-	void setA(double);
-	void setB(double);
-	void setC(double);
-	void setAlpha(double);
-	void setBeta(double);
-	void setGamma(double);
+	//! Get Lattice Bravais type
+	Centring getType() const;
 	/// Get the a parameter (\f$ \AA \f$)
 	double getA() const;
 	/// Get the b parameter (\f$ \AA \f$)
 	double getB() const;
 	/// Get the c parameter (\f$ \AA \f$)
 	double getC() const;
-	/// Get the alpha angle (degrees)
+	/// Get the alpha angle (radians)
 	double getAlpha() const;
-	/// Get the beta angle (degrees)
+	/// Get the beta angle (radians)
 	double getBeta() const;
-	/// Get the gamma angle (degrees)
+	/// Get the gamma angle (radians)
 	double getGamma() const;
 	/** @brief Get the A-matrix
 	 *
 	 * @return AMatrix
 	 * The A-matrix allows to convert from unit-cell fractional coordinates
-	 * to coordinates in the associated right-angle axis system.
+	 * to coordinates in the associated right-angle axis system. The convention
+	 * chosen is a along the x-axis, b in the xy plane, right handed.
 	 */
 	const Eigen::Matrix3d& getAMatrix() const;
 	/** @brief Get the B-matrix
@@ -106,12 +119,13 @@ public:
 	* (h,k,l) to coordinates in the associated right-angle axis system.
 	*/
 	const Eigen::Matrix3d& getBMatrix() const;
-	/** @brief Get the Unitary-transformation Matrix
+	/** @brief Get the Unitary-transformation Matrix (unitary A-matrix)
 	 *
 	 * @return TMatrix
 	 *  The T-matrix allows to convert
 	 */
 	const Eigen::Matrix3d& getTMatrix() const;
+	//! Return the metric tensor
 	const Eigen::Matrix3d& getMetricTensor() const;
 	/** @brief Transform a vector in UnitCell coordinates to right handed coordinate system
 	 *
@@ -128,21 +142,24 @@ public:
 	* @param vect Reference to vector to be transformed
 	*/
 	void transformT(Eigen::Vector3d& vect) const;
-	/** @brief PrintInformation into a stream
-	 *
-	 * @param os Output stream
-	 */
+	//! Return a new UnitCell using the transformation matrix P. P is
+	//! written in column from the old basis to the new basis
 	UnitCell transformLattice(const Eigen::Matrix3d& P);
+	//! Transform the UnitCell using the transformation matrix P. P is
+	//! written in column from the old basis to the new basis
 	void  transformLatticeInPlace(const Eigen::Matrix3d& P);
+	//! Print to a stream
 	void printSelf(std::ostream& os) const;
 	/** @brief Read Parameters from a stream (verbose)
 	 *
 	 * @param os Output stream
 	 */
 	void read(std::istream&);
-	//
+	//! Apply B-matrix to a vector (i.e. (h,k,l))
 	Eigen::Vector3d convertB(const Eigen::Vector3d&);
+	//! Apply T-matrix to a vector
 	Eigen::Vector3d convertT(const Eigen::Vector3d&);
+	//! Apply A-matrix to a vector (i.e. (x,y,z))
 	Eigen::Vector3d convertA(const Eigen::Vector3d&);
 private:
 	void calculatesincos();
