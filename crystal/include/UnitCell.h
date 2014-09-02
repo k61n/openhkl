@@ -28,9 +28,8 @@
 
 #ifndef NSXTOOL_UNITCELL_H_
 #define NSXTOOL_UNITCELL_H_
-#include "Matrix33.h"
 #include <iostream>
-#include "V3D.h"
+#include <Eigen/Dense>
 
 namespace SX
 {
@@ -50,9 +49,11 @@ namespace Crystal
 class UnitCell
 {
 public:
+	//! Centering type of the corresponding Bravais lattice
+	enum Centring {P,A,B,C,I,F,R};
 	/// Constructor
 	UnitCell();
-	UnitCell(double a, double b, double c, double alpha, double beta, double gamma);
+	UnitCell(double a, double b, double c, double alpha, double beta, double gamma, Centring type=P);
 	UnitCell& operator=(const UnitCell&);
 	UnitCell(const UnitCell&);
 	/// Destructor
@@ -65,11 +66,13 @@ public:
 	 * @param beta Beta angle in degrees
 	 * @param gamma Gamma angle in degrees
 	 */
-	void set(double a, double b, double c, double alpha, double beta, double gamma);
+	void setCell(double a, double b, double c, double alpha, double beta, double gamma);
+	void setCentringType(Centring type);
 	/** Get the direct-cell volume
 	 * @return vol in \f$ \AA^3 \f$
 	 */
-	double volume() const;
+	Centring getType() const;
+	double getVolume() const;
 	/// Setters
 	void setA(double);
 	void setB(double);
@@ -95,54 +98,52 @@ public:
 	 * The A-matrix allows to convert from unit-cell fractional coordinates
 	 * to coordinates in the associated right-angle axis system.
 	 */
-	const Matrix33<double>& AMatrix() const;
+	const Eigen::Matrix3d& getAMatrix() const;
 	/** @brief Get the B-matrix
 	*
 	*  @return BMatrix
 	 * The B-matrix allows to convert from reciprocal cell fractional coordinates
 	* (h,k,l) to coordinates in the associated right-angle axis system.
 	*/
-	const Matrix33<double>& BMatrix() const;
+	const Eigen::Matrix3d& getBMatrix() const;
 	/** @brief Get the Unitary-transformation Matrix
 	 *
 	 * @return TMatrix
 	 *  The T-matrix allows to convert
 	 */
-	const Matrix33<double>& TMatrix() const;
+	const Eigen::Matrix3d& getTMatrix() const;
+	const Eigen::Matrix3d& getMetricTensor() const;
 	/** @brief Transform a vector in UnitCell coordinates to right handed coordinate system
 	 *
 	 * @param vect Reference to vector to be transformed
 	 */
-	void transformA(V3D& vect) const;
+	void transformA(Eigen::Vector3d& vect) const;
 	/** @brief Transform a vector in Reciprocal Lattice coordinates to right handed coordinate system
 	 *
 	* @param vect Reference to vector to be transformed
 	*/
-	void transformB(V3D& vect) const;
+	void transformB(Eigen::Vector3d& vect) const;
 	/** @brief Transform a vector in Reciprocal Lattice coordinates to right handed coordinate system
 	 *
 	* @param vect Reference to vector to be transformed
 	*/
-	void transformT(V3D& vect) const;
+	void transformT(Eigen::Vector3d& vect) const;
 	/** @brief PrintInformation into a stream
 	 *
 	 * @param os Output stream
 	 */
+	UnitCell transformLattice(const Eigen::Matrix3d& P);
+	void  transformLatticeInPlace(const Eigen::Matrix3d& P);
 	void printSelf(std::ostream& os) const;
-	/** @brief Print Debug Information into a stream (verbose)
-	 *
-	 * @param os Output stream
-	 */
-	void printDebug(std::ostream& os) const;
 	/** @brief Read Parameters from a stream (verbose)
 	 *
 	 * @param os Output stream
 	 */
 	void read(std::istream&);
 	//
-	V3D convertB(const V3D&);
-	V3D convertT(const V3D&);
-	V3D convertA(const V3D&);
+	Eigen::Vector3d convertB(const Eigen::Vector3d&);
+	Eigen::Vector3d convertT(const Eigen::Vector3d&);
+	Eigen::Vector3d convertA(const Eigen::Vector3d&);
 private:
 	void calculatesincos();
 	void calculateAMatrix();
@@ -152,18 +153,16 @@ private:
 	void calculateReciprocalParameters();
 	void calculateVolume();
 	void recalculateAll();
-	double a, b, c, alpha, beta, gamma;
-	double astar, bstar, cstar, alphastar, betastar, gammastar;
-	double ca,cb,cc,sa,sb,sc;
-	double vol;
-	Matrix33<double> A;
-	Matrix33<double> T;
-	Matrix33<double> B;
+	double _a, _b, _c, _alpha, _beta, _gamma;
+	double _astar, _bstar, _cstar, _alphastar, _betastar, _gammastar;
+	double _ca,_cb,_cc,_sa,_sb,_sc;
+	double _volume;
+	Eigen::Matrix3d _A;
+	Eigen::Matrix3d _T;
+	Eigen::Matrix3d _B;
 	//! Metric tensor
-	Matrix33<double> _g;
-	//! Reciprocal metric tensor
-	Matrix33<double> _ginv;
-
+	Eigen::Matrix3d _G;
+	Centring _type;
 };
 std::ostream& operator<<(std::ostream&,const UnitCell&);
 std::istream& operator>>(std::istream&, UnitCell&);
