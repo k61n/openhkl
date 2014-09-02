@@ -1,5 +1,6 @@
 #include "NiggliReduction.h"
 #include <cmath>
+#include <iostream>
 
 namespace SX
 {
@@ -16,7 +17,6 @@ NiggliReduction::NiggliReduction(const Eigen::Matrix3d& g, double epsilon)
 	// Multiply tolerance by approximate Unit-cell length
 	_epsilon=epsilon*std::pow(sqrt(g.determinant()),1.0/3.0);
 	updateParameters();
-
 }
 
 void NiggliReduction::setIterMax(unsigned int max)
@@ -26,10 +26,13 @@ void NiggliReduction::setIterMax(unsigned int max)
 	_itermax=max;
 }
 
-Eigen::Matrix3d NiggliReduction::reduce()
+void NiggliReduction::reduce(Eigen::Matrix3d& newg, Eigen::Matrix3d& P)
 {
 
 	bool cond1,cond2,cond3;
+
+	_P=Eigen::Matrix3d::Identity();
+	updateParameters();
 
 	for(int i=0;i<_itermax;++i)
 	{
@@ -66,24 +69,26 @@ Eigen::Matrix3d NiggliReduction::reduce()
 			updateParameters();
 		}
 		//Step 4
-		if (lmn==0 || lmn==-1)
+		else if (lmn==0 || lmn==-1)
 		{
 			int i=1,j=1,k=1;
+			int* p;
 			if (_l==1)
 				i=-1;
+			else if (_l==0)
+				p=&i;
 			if (_m==1)
 				j=-1;
+			else if (_l==0)
+				p=&j;
 			if (_n==1)
 				k=-1;
+			else if (_n==0)
+				p=&k;
 			int ijk=i*j*k;
 			if (ijk==-1)
 			{
-				if (_l==0)
-					i=-1;
-				if (_m==0)
-					j=-1;
-				if (_n==0)
-					k=-1;
+				*p=-1;
 			}
 			_CMat << i,0,0,0,j,0,0,0,k;
 			transformG();
@@ -150,7 +155,8 @@ Eigen::Matrix3d NiggliReduction::reduce()
 		// If all 8 conditions are met, then cell is reduced.
 		break;
 	}
-	return _g;
+	newg=_g;
+	P=_P;
 }
 
 void NiggliReduction::updateParameters()
@@ -184,10 +190,9 @@ void NiggliReduction::updateParameters()
 
 void NiggliReduction::transformG()
 {
+	_P=_P*_CMat;
 	// Transform to new tensor G'=(CMat^T). G. CMat
-	_g=_g*_CMat;
-	_CMat.transposeInPlace();
-	_g=_CMat*_g;
+	_g=_CMat.transpose()*_g*_CMat;
 	return;
 }
 
