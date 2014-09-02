@@ -30,6 +30,21 @@ UnitCell::UnitCell(const UnitCell& rhs)
 	_type=rhs._type;
 	recalculateAll();
 }
+
+UnitCell::UnitCell(const Eigen::Matrix3d& g)
+{
+	setMetricTensor(g);
+}
+void UnitCell::setMetricTensor(const Eigen::Matrix3d& g)
+{
+	_a=sqrt(g(0,0));
+	_b=sqrt(g(1,1));
+	_c=sqrt(g(2,2));
+	_alpha=acos(g(1,2)/_b/_c);
+	_beta=acos(g(0,2)/_a/_c);
+	_gamma=acos(g(0,1)/_a/_b);
+	recalculateAll();
+}
 UnitCell& UnitCell::operator=(const UnitCell& rhs)
 {
 	if (this!=&rhs)

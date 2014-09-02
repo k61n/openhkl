@@ -8,7 +8,7 @@ namespace Crystal
 
 int NiggliReduction::_itermax=10000;
 
-NiggliReduction::NiggliReduction(const Matrix33<double>& g, double epsilon)
+NiggliReduction::NiggliReduction(const Eigen::Matrix3d& g, double epsilon)
 {
 	_g=g;
 	if (epsilon<=0)
@@ -26,7 +26,7 @@ void NiggliReduction::setIterMax(unsigned int max)
 	_itermax=max;
 }
 
-Matrix33<double> NiggliReduction::reduce()
+Eigen::Matrix3d NiggliReduction::reduce()
 {
 
 	bool cond1,cond2,cond3;
@@ -38,14 +38,14 @@ Matrix33<double> NiggliReduction::reduce()
 		// Step 1
 		if ((_A>_B+_epsilon) || (!(std::abs(_A-_B)>_epsilon) && (std::abs(_xi)>std::abs(_eta)+_epsilon)))
 		{
-			_CMat.set(0,-1,0,-1,0,0,0,0,-1);
+			_CMat << 0,-1,0,-1,0,0,0,0,-1;
 			transformG();
 			updateParameters();
 		}
 		// Step 2
 		if (_B>_C+_epsilon || (!(std::abs(_B-_C)>_epsilon) && (std::abs(_eta)>std::abs(_zeta)+_epsilon)))
 		{
-			_CMat.set(-1,0,0,0,0,-1,0,-1,0);
+			_CMat << -1,0,0,0,0,-1,0,-1,0;
 			transformG();
 			updateParameters();
 			continue;
@@ -61,7 +61,7 @@ Matrix33<double> NiggliReduction::reduce()
 				j=-1;
 			if (_n==-1)
 				k=-1;
-			_CMat.set(i,0,0,0,j,0,0,0,k);
+			_CMat << i,0,0,0,j,0,0,0,k;
 			transformG();
 			updateParameters();
 		}
@@ -85,7 +85,7 @@ Matrix33<double> NiggliReduction::reduce()
 				if (_n==0)
 					k=-1;
 			}
-			_CMat.set(i,0,0,0,j,0,0,0,k);
+			_CMat << i,0,0,0,j,0,0,0,k;
 			transformG();
 			updateParameters();
 		}
@@ -100,7 +100,7 @@ Matrix33<double> NiggliReduction::reduce()
 				sign=1;
 			if (_xi<0)
 				sign=-1;
-			_CMat.set(1,0,0,0,1,-sign,0,0,1);
+			_CMat << 1,0,0,0,1,-sign,0,0,1;
 			transformG();
 			updateParameters();
 			continue;
@@ -116,7 +116,7 @@ Matrix33<double> NiggliReduction::reduce()
 				sign=1;
 			if (_eta<0)
 				sign=-1;
-			_CMat.set(1,0,-sign,0,1,0,0,0,1);
+			_CMat << 1,0,-sign,0,1,0,0,0,1;
 			transformG();
 			updateParameters();
 			continue;
@@ -132,7 +132,7 @@ Matrix33<double> NiggliReduction::reduce()
 				sign=1;
 			if (_zeta<0)
 				sign=-1;
-			_CMat.set(1,-sign,0,0,1,0,0,0,1);
+			_CMat << 1,-sign,0,0,1,0,0,0,1;
 			transformG();
 			updateParameters();
 			continue;
@@ -142,7 +142,7 @@ Matrix33<double> NiggliReduction::reduce()
 		cond2=!(std::abs(_xi+_eta+_zeta+_A+_B)>_epsilon) && ((2*(_A+_eta)+_zeta)>_epsilon);
 		if (cond1 || cond2)
 		{
-			_CMat.set(1,0,1,0,1,1,0,0,1);
+			_CMat << 1,0,1,0,1,1,0,0,1;
 			transformG();
 			updateParameters();
 			continue;
@@ -186,7 +186,7 @@ void NiggliReduction::transformG()
 {
 	// Transform to new tensor G'=(CMat^T). G. CMat
 	_g=_g*_CMat;
-	_CMat.transposeInplace();
+	_CMat.transposeInPlace();
 	_g=_CMat*_g;
 	return;
 }

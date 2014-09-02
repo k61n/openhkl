@@ -59,6 +59,8 @@ public:
 	UnitCell(const Eigen::Vector3d& v1,const Eigen::Vector3d& v2,const Eigen::Vector3d& v3, Centring type=P);
 	//! Copy constructor
 	UnitCell(const UnitCell&);
+	//!
+	UnitCell(const Eigen::Matrix3d& metricTensor);
 	//! Assignment
 	UnitCell& operator=(const UnitCell&);
 	//! Destructor
@@ -72,6 +74,8 @@ public:
 	 * @param gamma Gamma angle in radians
 	 */
 	void setCell(double a, double b, double c, double alpha, double beta, double gamma);
+	//!
+	void setMetricTensor(const Eigen::Matrix3d& metricTensor);
 	//! Set the a lattice parameter
 	void setA(double);
 	//! Set the b lattice parameter
