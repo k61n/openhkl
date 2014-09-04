@@ -111,58 +111,97 @@ double Basis::getReciprocalVolume() const
 	return sqrt(gs.determinant());
 }
 
-Vector3d Basis::fromStandardBasis(const Vector3d& v) const
+Vector3d Basis::fromStandard(const Vector3d& v) const
 {
 	if (!_reference)
 		return _B*v;
 	else
-		return _B*_reference->fromStandardBasis(v);
+		return _B*_reference->fromStandard(v);
 }
 
-Vector3d Basis::toStandardBasis(const Vector3d& v) const
+Vector3d Basis::toStandard(const Vector3d& v) const
 {
 	if (!_reference)
 		return _A*v;
 	else
-		return _reference->toStandardBasis(_A*v);
+		return _reference->toStandard(_A*v);
 }
 
-Vector3d Basis::fromReferenceBasis(const Vector3d& v) const
+Vector3d Basis::fromReference(const Vector3d& v) const
 {
 	return _B*v;
 }
 
-Vector3d Basis::toReferenceBasis(const Vector3d& v) const
+Vector3d Basis::toReference(const Vector3d& v) const
 {
 	return _A*v;
 }
 
-RowVector3d Basis::fromReciprocalStandardBasis(const RowVector3d& rv) const
+RowVector3d Basis::fromReciprocalStandard(const RowVector3d& rv) const
 {
 	if (!_reference)
 		return rv*_A;
 	else
-		return _reference->fromReciprocalStandardBasis(rv)*_A;
+		return _reference->fromReciprocalStandard(rv)*_A;
 }
 
-RowVector3d Basis::toReciprocalStandardBasis(const RowVector3d& rv) const
+RowVector3d Basis::toReciprocalStandard(const RowVector3d& rv) const
 {
 	if (!_reference)
 		return rv*_B;
 	else
-		return _reference->toReciprocalStandardBasis(rv*_B);
+		return _reference->toReciprocalStandard(rv*_B);
 }
 
-RowVector3d Basis::fromReciprocalReferenceBasis(const RowVector3d& rv) const
+RowVector3d Basis::fromReciprocalReference(const RowVector3d& rv) const
 {
 	return rv*_A;
 }
 
-RowVector3d Basis::toReciprocalReferenceBasis(const RowVector3d& rv) const
+RowVector3d Basis::toReciprocalReference(const RowVector3d& rv) const
 {
 	return rv*_B;
 }
 
+Matrix3d Basis::getStandardM() const
+{
+
+	if (!_reference)
+		return _A;
+	else
+		return _reference->getStandardM()*_A;
+}
+
+const Matrix3d& Basis::getReferenceM() const
+{
+	return _A;
+}
+
+Matrix3d Basis::getM(const Basis& other) const
+{
+	Matrix3d A = getStandardM();
+	Matrix3d Aother = other.getStandardM();
+	return Aother.inverse()*A;
+}
+
+void Basis::rebaseToStandard()
+{
+	_A = getStandardM();
+	_B = _A.inverse();
+	_reference.reset();
+}
+
+void Basis::rebaseTo(std::shared_ptr<Basis> other)
+{
+	if (other != nullptr)
+	{
+		_A = getM(*other);
+		_B = _A.inverse();
+		_reference = other;
+	}
+	else
+		rebaseToStandard();
+}
 
 Basis::~Basis() {
 }

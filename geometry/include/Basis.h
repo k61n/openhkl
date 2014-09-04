@@ -76,9 +76,6 @@ public:
 	//! Build a basis from a set of three reciprocal vectors.
 	static Basis fromReciprocalVectors(const Vector3d& e1, const Vector3d& e2, const Vector3d& e3, ptrBasis reference=nullptr);
 
-	//! Returns the transformation matrix that relates the current basis to another one.
-	Matrix3d getTransformationMatrix(const Basis& other) const;
-
 	//! Returns the current basis' metric tensor.
 	Matrix3d getMetricTensor() const;
 	//! Returns the current reciprocal basis' metric tensor.
@@ -94,18 +91,47 @@ public:
 	//! Returns the reciprocal volume.
 	double getReciprocalVolume() const;
 
-	//! Returns the coordinates in the current basis of a column vector v defined in the standard basis.
-	Vector3d fromStandardBasis(const Vector3d& v) const;
-	//! Returns the coordinates in the standard basis of a column vector v defined in the current basis.
-	Vector3d toStandardBasis(const Vector3d& v) const;
-	//! Returns the coordinates in the current basis of a column vector v defined in the reference basis.
-	Vector3d fromReferenceBasis(const Vector3d& v) const;
-	//! Returns the coordinates in the reference basis of a column vector v defined in the current basis.
-	Vector3d toReferenceBasis(const Vector3d& v) const;
-	RowVector3d fromReciprocalStandardBasis(const RowVector3d& rv) const;
-	RowVector3d toReciprocalStandardBasis(const RowVector3d& rv) const;
-	RowVector3d fromReciprocalReferenceBasis(const RowVector3d& rv) const;
-	RowVector3d toReciprocalReferenceBasis(const RowVector3d& rv) const;
+	//! Transform direct (contravariant) coordinates from the standard basis to the current one.
+	//! The coordinates triplet v = (x,y,z)^T must be given as a column vector.
+	Vector3d fromStandard(const Vector3d& v) const;
+	//! Transform direct (contravariant) coordinates from the current basis to the standard one.
+	//! The coordinates triplet v = (x,y,z)^T must be given as a column vector.
+	Vector3d toStandard(const Vector3d& v) const;
+	//! Transform direct (contravariant) coordinates from the reference basis to the current one.
+	//! The coordinates triplet v = (x,y,z)^T must be given as a column vector.
+	Vector3d fromReference(const Vector3d& v) const;
+	//! Transform direct (contravariant) coordinates from the current basis to the reference one.
+	//! The coordinates triplet v = (x,y,z)^T must be given as a column vector.
+	Vector3d toReference(const Vector3d& v) const;
+
+	//! Transform reciprocal (covariant) coordinates from the standard basis to the current one.
+	//! The coordinates triplet rv = (h,k,l) can be given as a row vector or a column vector.
+	RowVector3d fromReciprocalStandard(const RowVector3d& rv) const;
+	//! Transform reciprocal (covariant) coordinates from the current basis to the standard one.
+	//! The coordinates triplet rv = (h,k,l) can be given as a row vector or a column vector.
+	RowVector3d toReciprocalStandard(const RowVector3d& rv) const;
+	//! Transform reciprocal (covariant) coordinates from the reference basis to the current one.
+	//! The coordinates triplet rv = (h,k,l) can be given as a row vector or a column vector.
+	RowVector3d fromReciprocalReference(const RowVector3d& rv) const;
+	//! Transform reciprocal (covariant) coordinates from the current basis to the reference one.
+	//! The coordinates triplet rv = (h,k,l) can be given as a row vector or a column vector.
+	RowVector3d toReciprocalReference(const RowVector3d& rv) const;
+
+	//! Returns the transformation matrix that relates the current basis to another one.
+	Matrix3d getM(const Basis& other) const;
+
+	//! Returns the transformation matrix that relates the current basis to the standard basis.
+	Matrix3d getStandardM() const;
+
+	//! Returns the transformation matrix that relates the current basis to the reference basis.
+	const Matrix3d& getReferenceM() const;
+
+	//! Rebase the current basis to the standard orthonormal basis by conjugating all intermediate basis.
+	//! The reference basis is lost and set to nullptr.
+	void rebaseToStandard();
+
+	//! Rebase the current basis to a new one which becomes the new reference.
+	void rebaseTo(std::shared_ptr<Basis> other);
 
 	friend std::ostream& operator<<(std::ostream& os,const Basis& b);
 
