@@ -47,3 +47,8 @@ add_test(TestSphere2D TestSphere2D)
 add_executable(TestSphere3D TestSphere3D.cpp)
 TARGET_LINK_LIBRARIES(TestSphere3D ${Boost_LIBRARIES} NSXTool)
 add_test(TestSphere3D TestSphere3D)
+
+# unit test for Basis
+add_executable(TestBasis TestBasis.cpp)
+TARGET_LINK_LIBRARIES(TestBasis ${Boost_LIBRARIES} NSXTool)
+add_test(TestBasis TestBasis)
