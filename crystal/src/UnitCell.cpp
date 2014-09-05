@@ -35,6 +35,18 @@ UnitCell::UnitCell(const Eigen::Matrix3d& g)
 {
 	setMetricTensor(g);
 }
+
+UnitCell::UnitCell(const Eigen::Vector3d& v1,const Eigen::Vector3d& v2,const Eigen::Vector3d& v3, Centring type)
+{
+	double a=v1.norm();
+	double b=v2.norm();
+	double c=v3.norm();
+	double alpha=acos(v2.dot(v3)/b/c);
+	double beta=acos(v1.dot(v3)/a/c);
+	double gamma=acos(v1.dot(v2)/a/b);
+	setCell(a,b,c,alpha,beta,gamma);
+}
+
 void UnitCell::setMetricTensor(const Eigen::Matrix3d& g)
 {
 	_a=sqrt(g(0,0));
