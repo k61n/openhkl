@@ -60,37 +60,48 @@ public:
 
 	//! Constructor from a set of three non coplanar vectors.
 	//! These vectors will be used column-wised for building the transformation matrix from the reference basis to the current one.
-	Basis(const Vector3d& e1, const Vector3d& e2, const Vector3d& e3, ptrBasis reference=nullptr);
-
+	Basis(const Vector3d& a, const Vector3d& b, const Vector3d& c, ptrBasis reference=nullptr);
 	//! Copy constructor.
 	Basis(const Basis& other);
-
 	//! Assignment operator.
 	Basis& operator=(const Basis& other);
-
 	//! Destructor.
 	virtual ~Basis();
-
 	//! Build a basis from a set of three direct vectors.
-	static Basis fromDirectVectors(const Vector3d& e1, const Vector3d& e2, const Vector3d& e3, ptrBasis reference=nullptr);
+	static Basis fromDirectVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c, ptrBasis reference=nullptr);
 	//! Build a basis from a set of three reciprocal vectors.
-	static Basis fromReciprocalVectors(const Vector3d& e1, const Vector3d& e2, const Vector3d& e3, ptrBasis reference=nullptr);
-
+	static Basis fromReciprocalVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c, ptrBasis reference=nullptr);
+	//! Returns the a basis vector.
+	//Vector3d geta() const;
+	//! Returns the a basis vector.
+	double gete1Norm() const;
+	double gete2Norm() const;
+	double gete3Norm() const;
+	double gete1e2Angle() const;
+	double gete2e3Angle() const;
+	double gete1e3Angle() const;
+//	//! Returns the b basis vector.
+//	const Vector3d& getb() const;
+//	//! Returns the c basis vector.
+//	const Vector3d& getc() const;
+//	//! Returns the a* basis vector.
+//	const RowVector3d& getastar() const;
+//	//! Returns the b* basis vector.
+//	const RowVector3d& getbstar() const;
+//	//! Returns the c* basis vector.
+//	const RowVector3d& getcstar() const;
 	//! Returns the current basis' metric tensor.
 	Matrix3d getMetricTensor() const;
 	//! Returns the current reciprocal basis' metric tensor.
 	Matrix3d getReciprocalMetricTensor() const;
-
 	//! Returns the direct volume fraction with respect to the reference volume.
 	double getFractionalVolume() const;
 	//! Returns the reciprocal volume fraction with respect to the reference volume.
 	double getFractionalReciprocalVolume() const;
-
 	//! Returns the direct volume.
 	double getVolume() const;
 	//! Returns the reciprocal volume.
 	double getReciprocalVolume() const;
-
 	//! Transform direct (contravariant) coordinates from the standard basis to the current one.
 	//! The coordinates triplet v = (x,y,z)^T must be given as a column vector.
 	Vector3d fromStandard(const Vector3d& v) const;
@@ -117,22 +128,22 @@ public:
 	//! The coordinates triplet rv = (h,k,l) can be given as a row vector or a column vector.
 	RowVector3d toReciprocalReference(const RowVector3d& rv) const;
 
-	//! Returns the transformation matrix that relates the current basis to another one.
+	//! Returns the transformation matrix that relates the current basis to other.
 	Matrix3d getM(const Basis& other) const;
-
 	//! Returns the transformation matrix that relates the current basis to the standard basis.
 	Matrix3d getStandardM() const;
-
 	//! Returns the transformation matrix that relates the current basis to the reference basis.
 	const Matrix3d& getReferenceM() const;
 
 	//! Rebase the current basis to the standard orthonormal basis by conjugating all intermediate basis.
 	//! The reference basis is lost and set to nullptr.
 	void rebaseToStandard();
-
 	//! Rebase the current basis to a new one which becomes the new reference.
 	void rebaseTo(std::shared_ptr<Basis> other);
-
+	//! Transform the current Basis given a new transformation matrix M.
+	//! M represents the components of new basis vectors with respect the old ones, given in columns.
+	//! Reference is preserved, only A and B are recalculated.
+	void transform(const Matrix3d& M);
 	friend std::ostream& operator<<(std::ostream& os,const Basis& b);
 
 private:

@@ -12,7 +12,8 @@ IData::~IData()
 
 Peak3D::Peak3D(IData* data):
 		_data(data),
-		_h(0),_k(0),_l(0),
+		_hkl(Eigen::Vector3d::Zero()),
+		_q(Eigen::Vector3d::Zero()),
 		_peak(nullptr),
 		_bkg(nullptr)
 {
@@ -45,14 +46,22 @@ void Peak3D::setBackground(IShape<double,3>* b)
 {
 	_bkg=b;
 }
+void Peak3D::setQ(const Eigen::RowVector3d& q)
+{
+	_q=q;
+}
+const Eigen::RowVector3d& Peak3D::getQ() const
+{
+	return _q;
+}
 
 void Peak3D::setMillerIndices(double h, double k, double l)
 {
-	_h=h;_k=k;_l=l;
+	_hkl << h,k,l;
 }
-void Peak3D::getMillerIndices(double& h, double& k, double& l)
+const Eigen::RowVector3d& Peak3D::getMillerIndices() const
 {
-	h=_h; k=_k, l=_l;
+	return _hkl;
 }
 
 void Peak3D::integrate()
@@ -114,6 +123,31 @@ const Eigen::VectorXd& Peak3D::getPeakProjection() const
 const Eigen::VectorXd& Peak3D::getBkgProjection() const
 {
 	return _projectionBkg;
+}
+
+void Peak3D::setBasis(std::shared_ptr<Basis> basis)
+{
+	_basis=basis;
+	_hkl=_basis->fromReciprocalStandard(_q);
+	_hkl[0]=std::round(_hkl[0]);
+	_hkl[1]=std::round(_hkl[1]);
+	_hkl[2]=std::round(_hkl[2]);
+}
+
+void Peak3D::setGammaNu(double gamma,double nu)
+{
+	_gamma=gamma;
+	_nu=nu;
+}
+
+double Peak3D::peakTotalCounts() const
+{
+	return _projectionPeak.sum();
+}
+
+double Peak3D::getLorentzFactor() const
+{
+	return 1.0/(sin(_gamma)*cos(_nu));
 }
 
 }

@@ -8,15 +8,15 @@ namespace SX
 namespace Geometry
 {
 
-Basis::Basis(const Vector3d& e1, const Vector3d& e2, const Vector3d& e3, ptrBasis reference) : _reference(reference)
+Basis::Basis(const Vector3d& a, const Vector3d& b, const Vector3d& c, ptrBasis reference) : _reference(reference)
 {
 
-	if (coplanar(e1,e2,e3))
+	if (coplanar(a,b,c))
 		throw std::runtime_error("The basis vectors are coplanar.");
 
-	_A.col(0) = e1;
-	_A.col(1) = e2;
-	_A.col(2) = e3;
+	_A.col(0) = a;
+	_A.col(1) = b;
+	_A.col(2) = c;
 
 	_B = _A.inverse();
 }
@@ -40,24 +40,29 @@ Basis& Basis::operator=(const Basis& other)
 	return *this;
 }
 
-Basis Basis::fromDirectVectors(const Vector3d& e1, const Vector3d& e2, const Vector3d& e3, ptrBasis reference)
+
+Basis::~Basis()
 {
-	return Basis(e1,e2,e3,reference);
 }
 
-Basis Basis::fromReciprocalVectors(const Vector3d& e1, const Vector3d& e2, const Vector3d& e3, ptrBasis reference)
+Basis Basis::fromDirectVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c, ptrBasis reference)
+{
+	return Basis(a,b,c,reference);
+}
+
+Basis Basis::fromReciprocalVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c, ptrBasis reference)
 {
 
-	if (coplanar(e1,e2,e3))
+	if (coplanar(a,b,c))
 		throw std::runtime_error("The reciprocal basis vectors are coplanar.");
 
-	double rVolume = std::abs(e1.dot(e2.cross(e3)));
+	double rVolume = std::abs(a.dot(b.cross(c)));
 
-	Vector3d a=e2.cross(e3)/rVolume;
-	Vector3d b=e3.cross(e1)/rVolume;
-	Vector3d c=e1.cross(e2)/rVolume;
+	Vector3d av=b.cross(c)/rVolume;
+	Vector3d bv=c.cross(a)/rVolume;
+	Vector3d cv=a.cross(b)/rVolume;
 
-	return Basis(a,b,c,reference);
+	return Basis(av,bv,cv,reference);
 }
 
 bool Basis::coplanar(const Vector3d& v1, const Vector3d& v2, const Vector3d& v3, double tolerance)
@@ -71,6 +76,62 @@ std::ostream& operator<<(std::ostream& os,const Basis& b)
 
 	return os;
 }
+
+//Vector3d Basis::geta() const
+//{
+//	return _A.col(0);
+//}
+
+double Basis::gete1Norm() const
+{
+	return _A.col(0).norm();
+}
+double Basis::gete2Norm() const
+{
+	return _A.col(1).norm();
+}
+double Basis::gete3Norm() const
+{
+	return _A.col(2).norm();
+}
+double Basis::gete1e2Angle() const
+{
+	return acos(_A.col(0).dot(_A.col(1)))/gete1Norm()/gete2Norm();
+}
+double Basis::gete2e3Angle() const
+{
+	return acos(_A.col(1).dot(_A.col(2)))/gete2Norm()/gete3Norm();
+}
+double Basis::gete1e3Angle() const
+{
+	return acos(_A.col(0).dot(_A.col(2)))/gete1Norm()/gete3Norm();
+}
+
+
+//const Vector3d& Basis::getb() const
+//{
+//	return _A.col(1);
+//}
+//
+//const Vector3d& Basis::getc() const
+//{
+//	return _A.col(2);
+//}
+//
+//const RowVector3d& Basis::getastar() const
+//{
+//	return _B.row(0);
+//}
+//
+//const RowVector3d& Basis::getbstar() const
+//{
+//	return _B.row(1);
+//}
+//
+//const RowVector3d& Basis::getcstar() const
+//{
+//	return _B.row(2);
+//}
 
 Matrix3d Basis::getMetricTensor() const
 {
@@ -203,8 +264,12 @@ void Basis::rebaseTo(std::shared_ptr<Basis> other)
 		rebaseToStandard();
 }
 
-Basis::~Basis() {
+void Basis::transform(const Matrix3d& M)
+{
+	_A=_A*M;
+	_B=_A.inverse();
 }
+
 
 } // end namespace Geometry
 

@@ -33,7 +33,7 @@
 #include <map>
 #include <memory>
 #include "IShape.h"
-
+#include "Basis.h"
 namespace SX
 {
 namespace Geometry
@@ -67,27 +67,39 @@ public:
 	//! Set the Miller indices of the peak (double to allow integration of incommensurate peaks)
 	void setMillerIndices(double h, double k, double l);
 	//! Get the Miller indices of the peak (double to allow integration of incommensurate peaks)
-	void getMillerIndices(double& h, double& k, double& l);
+	const Eigen::RowVector3d& getMillerIndices() const;
+	//! Set the q vector in the frame of reference of the diffractometer
+	void setQ(const Eigen::RowVector3d& q);
+	//! Get q vector in the frame of reference of the diffractometer
+	const Eigen::RowVector3d& getQ() const;
 	//! Run the integration of the peak; iterate over the data
 	void integrate();
+
+	void setGammaNu(double gamma,double nu);
 	//! Get the projection of total data in the bounding box
 	const Eigen::VectorXd& getProjection() const;
 	const Eigen::VectorXd& getPeakProjection() const;
 	const Eigen::VectorXd& getBkgProjection() const;
+	const IShape<double,3>* getPeak() const { return _peak;}
+	const IShape<double,3>* getBackground() const {return _bkg;}
 	//! Total intensity in the peak
-//	double peakTotalCounts() const;
+   	double peakTotalCounts() const;
+   	//!
+   	double getLorentzFactor() const;
 //	//! Total intensity in the background
 //	double bkgTotalCounts() const;
 //	//! Volume of the peak
 //	double peakVolume() const;
 //	//!  Volume of the background
 //	double bkgVolume() const;
-
+	void setBasis(std::shared_ptr<Basis> basis);
 private:
 	//! Pointer to the data containing the peak
 	IData* _data;
 	//! Miller indices of the peak
-	double _h, _k, _l;
+	Eigen::RowVector3d _hkl;
+	//! Q Vector
+	Eigen::RowVector3d _q;
 	//! Shape describing the Peak zone
 	IShape<double,3>* _peak;
 	//! Shape describing the background zone (must fully contain peak)
@@ -96,6 +108,8 @@ private:
 	Eigen::VectorXd _projection;
 	Eigen::VectorXd _projectionPeak;
 	Eigen::VectorXd _projectionBkg;
+	std::shared_ptr<SX::Geometry::Basis> _basis;
+	double _gamma,_nu;
 };
 
 }
