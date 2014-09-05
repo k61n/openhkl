@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>719</width>
-    <height>402</height>
+    <width>642</width>
+    <height>494</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,10 +17,29 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>10</y>
-     <width>691</width>
-     <height>371</height>
+     <y>90</y>
+     <width>621</width>
+     <height>391</height>
     </rect>
+   </property>
+  </widget>
+  <widget class="QTextBrowser" name="textBrowser">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>501</width>
+     <height>71</height>
+    </rect>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::NoFrame</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Plain</enum>
    </property>
   </widget>
  </widget>

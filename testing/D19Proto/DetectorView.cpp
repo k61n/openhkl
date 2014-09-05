@@ -10,6 +10,8 @@
 #include <QColor>
 #include "Plotter1D.h"
 #include "slicerect.h"
+#include "Detector.h"
+#include "Units.h"
 
 QStringList DetectorView::_lineColors = {"aqua","aquamarine","blue","burlywood","cadetblue","chartreuse","cornflowerblue","cornsilk","cyan","darkcyan","lavender","hotpink"};
 
@@ -95,11 +97,17 @@ void DetectorView::getDSpacing(double x, double y, double &dspacing)
 
 void DetectorView::getGammaNu(double x, double y, double &gamma, double &nu)
 {
+    double gammanew,newnu;
+    _ptrData->_detector->getGammaNu(x,y,gammanew,newnu);
+    gammanew /= SX::Units::deg;
+    newnu /= SX::Units::deg;
+
     SX::Data::MetaData* meta=_ptrData->mm->getMetaData();
     double gammacenter=meta->getKey<double>("2theta(gamma)");
     gamma=gammacenter+_gammawidth*(0.5-x/pixels_h);
     double h=(0.5*pixels_v-y-0.5)/pixels_v*_height;
     nu=atan2(h,_distance)*180/M_PI;
+
 }
 
 bool DetectorView::hasData() const
@@ -208,7 +216,7 @@ void DetectorView::mouseMoveEvent(QMouseEvent* event)
     if (!_ptrData)
         return;
 
-    QPointF pos=event->posF();
+    QPointF pos=event->localPos();
 
     if (event->buttons() & Qt::LeftButton)
     {
@@ -249,19 +257,21 @@ void DetectorView::mouseMoveEvent(QMouseEvent* event)
     }
 
     // If peak is detected
-    QGraphicsItem* item=_scene->itemAt(pos.x(),pos.y());
-    if (dynamic_cast<QGraphicsRectItem*>(item) || dynamic_cast<QGraphicsLineItem*>(item))
+    QGraphicsItem* item=_scene->itemAt(pos.x(),pos.y(),QTransform());
+    if (item)
     {
-        item->setActive(true);
-        item->setCursor(Qt::PointingHandCursor);
-        return;
+        if (dynamic_cast<QGraphicsRectItem*>(item) || dynamic_cast<QGraphicsLineItem*>(item))
+        {
+            item->setActive(true);
+            item->setCursor(Qt::PointingHandCursor);
+            return;
+        }
+        else
+        {
+            item->setActive(true);
+            item->setCursor(Qt::CrossCursor);
+        }
     }
-    else
-    {
-        item->setActive(true);
-        item->setCursor(Qt::CrossCursor);
-    }
-
     std::ostringstream os;
 
     // Get the coordinates of the current pixel in detector space
@@ -323,7 +333,7 @@ void DetectorView::mousePressEvent(QMouseEvent* event)
 
     if (event->button() == Qt::LeftButton)
     {
-        QGraphicsItem* item=_scene->itemAt(event->x(),event->y());
+        QGraphicsItem* item=_scene->itemAt(event->x(),event->y(),QTransform());
         // Any Graphic object other than the base pixmap can be selected and deselected
         if (!dynamic_cast<QGraphicsPixmapItem*>(item))
         {
@@ -426,7 +436,7 @@ void DetectorView::mouseReleaseEvent(QMouseEvent *event)
     if (!_ptrData)
         return;
 
-    QPointF pos=event->posF();
+    QPointF pos=event->localPos();
 
     if (event->button() != Qt::LeftButton)
         return;
@@ -464,7 +474,7 @@ void DetectorView::mouseReleaseEvent(QMouseEvent *event)
     {
         if (!_lines.isEmpty())
         {
-            QGraphicsItem* item=_scene->itemAt(pos.x(),pos.y());
+            QGraphicsItem* item=_scene->itemAt(pos.x(),pos.y(),QTransform());
             if (item->cursor().shape() == Qt::CrossCursor)
             {
                 _lines[_selectedLine]->setVisible(true);
@@ -491,13 +501,6 @@ void DetectorView::mouseReleaseEvent(QMouseEvent *event)
 
 void DetectorView::plotEllipsoids()
 {
-    if (!_currentPeaks.isEmpty())
-    {
-        for (int i=0;i<_currentPeaks.size();++i)
-        {
-            _scene->removeItem(_currentPeaks[i]);
-        }
-    }
     if (_ptrData->has3DEllipsoid())
     {
         for (auto el : _ptrData->_peaks)
@@ -532,10 +535,9 @@ void DetectorView::plotIntensityMap()
     pix=pix.scaled(width(),height(),Qt::IgnoreAspectRatio);
 
     // If no pixmap is present, create a new one and add to scene
-    if (!_pixmap)
-        _pixmap = _scene->addPixmap(pix);
-    else // update the pixmap with new image
-        _pixmap->setPixmap(pix);
+    _pixmap = _scene->addPixmap(pix);
+    setScene(_scene);
+    update();
 }
 
 bool DetectorView::pointInScene(const QPointF& pos)
@@ -807,6 +809,7 @@ void DetectorView::updateLineCutter()
 
 void DetectorView::updatePlot()
 {
+    _scene->clear();
     plotIntensityMap();
     updateLineCutter();
     updateHorizontalSliceCutter();

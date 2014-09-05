@@ -8,8 +8,18 @@
 #include <Ellipsoid.h>
 #include <QVector>
 #include "Peak3D.h"
+#include "Gonio.h"
+
 
 typedef std::vector<int> vint;
+
+namespace SX
+{
+namespace Instrument
+{
+class Detector;
+}
+}
 
 
 class QProgressBar;
@@ -18,6 +28,7 @@ struct Data: public SX::Geometry::IData
 {
     Data();
     ~Data();
+    Data(const Data& rhs);
     void fromFile(const std::string& filename);
     void readBlock(int i);
     void readInMemory();
@@ -42,6 +53,13 @@ struct Data: public SX::Geometry::IData
     std::map<int,SX::Geometry::Ellipsoid<double,3>,std::less<int>, Eigen::aligned_allocator<std::pair<const int, Eigen::Matrix4d> >> _peaks;
     typedef std::map<int,SX::Geometry::Peak3D> maprealPeaks;
     maprealPeaks _rpeaks;
+    SX::Instrument::Detector* _detector;
+    SX::Instrument::Gonio* _sample;
+    double _wavelength;
+    double _chi;
+    double _phi;
+    std::vector<double> _omegas;
+
 };
 
 #endif // DATA_H

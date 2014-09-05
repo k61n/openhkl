@@ -1,11 +1,14 @@
 <RCC>
     <qresource prefix="/">
-        <file>IconfindPeak.jpg</file>
         <file>cutellipseIcon.png</file>
         <file>cutlineIcon.png</file>
         <file>zoomIcon.png</file>
         <file>horizontalsliceIcon.png</file>
         <file>verticalsliceIcon.png</file>
         <file>openfileIcon.png</file>
+        <file>unitcellIcon.png</file>
+        <file>iconFindPeak.png</file>
+        <file>unitcellTransformIcon.png</file>
+        <file>iconPeakList.png</file>
     </qresource>
 </RCC>

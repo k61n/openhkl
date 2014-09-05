@@ -1,5 +1,6 @@
 #include "PeakPlotter.h"
 #include "ui_peakplotter.h"
+#include <IShape.h>
 
 PeakPlotter::PeakPlotter(QWidget *parent) :
     QDialog(parent),
@@ -7,6 +8,8 @@ PeakPlotter::PeakPlotter(QWidget *parent) :
 {
     ui->setupUi(this);
     QCustomPlot* customPlot=ui->widget;
+    customPlot->plotLayout()->insertRow(0);
+    customPlot->plotLayout()->addElement(0, 0, new QCPPlotTitle(customPlot, "Peak:"));
     customPlot->addGraph();
     customPlot->graph(0)->setPen(QPen(QColor("black")));
     customPlot->graph(0)->setErrorType(QCPGraph::etBoth);
@@ -63,4 +66,17 @@ void PeakPlotter::setPeak(const SX::Geometry::Peak3D& peak)
     customPlot->graph(2)->setData(qx,qbkg);
     customPlot->rescaleAxes();
     customPlot->replot();
+
+    // Now update text info:
+
+    const Eigen::RowVector3d& hkl=peak.getMillerIndices();
+    const SX::Geometry::IShape<double,3>* shape=peak.getPeak();
+
+    QString info="(h,k,l):"+QString::number(hkl[0])+","+QString::number(hkl[1])+","+QString::number(hkl[2])+"\n";
+    double intensity=peak.peakTotalCounts();
+    double sI=sqrt(intensity);
+    info+="Intensity ("+QString((QChar) 0x03C3)+"I): "+QString::number(intensity)+" ("+QString::number(sI,'f',2)+")\n";
+    double l=peak.getLorentzFactor();
+    info+="Lor. Cor. int. ("+QString((QChar) 0x03C3)+"I): "+QString::number(intensity/l,'f',2)+" ("+QString::number(sI/l,'f',2)+")\n";
+    ui->textBrowser->setText(info);
 }

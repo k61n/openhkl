@@ -12,6 +12,19 @@
 #include <Ellipsoid.h>
 #include <Plotter1D.h>
 #include <QDebug>
+#include "IShape.h"
+#include "ILLAsciiDataReader.h"
+#include "Units.h"
+#include "Detector.h"
+#include "Cluster.h"
+#include "UnitCell.h"
+#include "NiggliReduction.h"
+#include "GruberReduction.h"
+#include <Eigen/Dense>
+#include "Basis.h"
+#include <QProgressDialog>
+
+using namespace SX::Units;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -34,7 +47,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->numor_Widget->setSelectionMode(QAbstractItemView::MultiSelection);
     QShortcut* shortcut = new QShortcut(QKeySequence(Qt::Key_Delete), ui->numor_Widget);
     connect(shortcut, SIGNAL(activated()), this, SLOT(deleteNumors()));
-    ui->progressBar->setVisible(false);
 
     // Specific to D19 detector
     ui->_dview->setNpixels(640,256);
@@ -230,39 +242,59 @@ void MainWindow::on_action_peak_find_triggered()
         return;
     // Get Confidence and threshold
     double confidence=dialog->getConfidence();
-    double threshold=dialog->getThreshold();
+    double threshold=dialog->getThreshold();   
 
-    // Get current Numor
-    QListWidgetItem* current=ui->numor_Widget->currentItem();
-    if (!current)
-        return;
-    //
-    std::string numor=current->text().toStdString();
+    std::vector<Data*> numors=selectedNumors();
 
-    // Get the corresponding data
-    auto it=_data.find(numor);
-    if (it==_data.end())
-        return;
+    int max=numors.size();
+    int i=0;
+    QProgressDialog progress("Copying files...", "Abort Copy", 0, max, this);
+    progress.show();
+    progress.setValue(i);
+    progress.setWindowModality(Qt::WindowModal);
+    progress.setStyleSheet(QLatin1String("QProgressBar {\n"
+                                         "border: 1px solid black;\n"
+                                         "text-align: top;\n"
+                                         "padding: 1px;\n"
+                                         "border-bottom-right-radius: 7px;\n"
+                                         "border-bottom-left-radius: 7px;\n"
+                                         "background: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0,\n"
+                                         "stop: 0 #fff,\n"
+                                         "stop: 0.4999 #eee,\n"
+                                         "stop: 0.5 #ddd,\n"
+                                         "stop: 1 #eee );\n"
+                                         "width: 15px;\n"
+                                         "}\n"
+                                         "\n"
+                                         "QProgressBar::chunk {\n"
+                                         "background: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0,\n"
+                                         "stop: 0 #78d,\n"
+                                         "stop: 0.4999 #46a,\n"
+                                         "stop: 0.5 #45a,\n"
+                                         "stop: 1 #238 );\n"
+                                         "border-bottom-right-radius: 7px;\n"
+                                         "border-bottom-left-radius: 7px;\n"
+                                         "border: 1px solid black;\n"
+                                         "}"));
+    QCoreApplication::processEvents();
 
-    setCursor(Qt::WaitCursor);
-
-    Data& d=(*it).second;
-
-    ui->progressBar->setVisible(true);
-
-    ui->textLogger->log(Logger::INFO) << "Start reading " << numor << " in memory";
-    ui->textLogger->flush();
-    d.readInMemory();
-    ui->textLogger->log(Logger::INFO) << "Finished reading" << numor << " in memory";
-    ui->textLogger->flush();
+    for (auto& numor : numors)
+    {
+      progress.setValue(i++);
+      QCoreApplication::processEvents();
+//    ui->textLogger->log(Logger::INFO) << "Start reading " << numor-> << " in memory";
+//    ui->textLogger->flush();
+      numor->readInMemory();
+//    ui->textLogger->log(Logger::INFO) << "Finished reading" << numor << " in memory";
+//    ui->textLogger->flush();
 
     int background_level=2;
 
     // Get pointers to start of each frame
-    std::vector<int*> temp(d._nblocks);
-    for (int i=0;i<d._nblocks;++i)
+    std::vector<int*> temp(numor->_nblocks);
+    for (int i=0;i<numor->_nblocks;++i)
     {
-        vint& v=d._data[i];
+        vint& v=numor->_data[i];
         temp[i]=&(v[0]);
     }
 
@@ -282,35 +314,42 @@ void MainWindow::on_action_peak_find_triggered()
     ui->textLogger->log(Logger::INFO) << "Peak find finished, found " << blobs.size() << "peaks";
     ui->textLogger->flush();
 
-
-    // Now free the memory
-    d.releaseMemory();
-
     //
     int i=0;
-    d._peaks.clear();
+    numor->_peaks.clear();
+
     for (auto& blob : blobs)
     {
         Eigen::Vector3d center, eigenvalues;
         Eigen::Matrix3d eigenvectors;
         blob.second.toEllipsoid(confidence, center,eigenvalues,eigenvectors);
         SX::Geometry::Ellipsoid<double,3> a(center,eigenvalues,eigenvectors);
-        d._peaks[i]=a;
-        SX::Geometry::Peak3D p(&d);
+        numor->_peaks[i]=a;
+        SX::Geometry::Peak3D p(numor);
         p.setPeak(new SX::Geometry::Ellipsoid3D(center,eigenvalues,eigenvectors));
         p.setBackground(new SX::Geometry::Ellipsoid3D(center,eigenvalues*3,eigenvectors));
-        d._rpeaks.insert(Data::maprealPeaks::value_type(i++,p));
+        Eigen::Vector3d Q=numor->_detector->getQ(center[0],center[1],numor->_wavelength);
+        double gamma,nu;
+        numor->_detector->getGammaNu(center[0],center[1],gamma,nu);
+        int f=std::floor(center[2]);
+        double omega=numor->_omegas[f]+(center[2]-f)*(numor->_omegas[f+1]-numor->_omegas[f]);
+        Eigen::Transform<double,3,Eigen::Affine> t=numor->_sample->getInverseHomMatrix({omega,numor->_chi,numor->_phi});
+        Eigen::Vector3d realQ=t*Q;
+        p.setQ(realQ);
+        p.setGammaNu(gamma,nu);
+        numor->_rpeaks.insert(Data::maprealPeaks::value_type(i++,p));
     }
 
     ui->textLogger->log(Logger::INFO) << "Start integrating peaks";
     ui->textLogger->flush();
-    for (int i=0;i<d._rpeaks.size();++i)
-        d._rpeaks[i].integrate();
+    for (int i=0;i<numor->_rpeaks.size();++i)
+        numor->_rpeaks[i].integrate();
     ui->textLogger->log(Logger::INFO) << "Finished integrating peaks";
     ui->textLogger->flush();
     //
     setCursor(Qt::ArrowCursor);
-    updatePlot();
+    numor->releaseMemory();
+    }
 }
 
 void MainWindow::on_textLogger_customContextMenuRequested(const QPoint &pos)
@@ -324,3 +363,69 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 }
 
 
+
+
+
+void MainWindow::on_actionUnit_Cell_triggered()
+{
+     SX::Geometry::LatticeFinder finder(0.02,0.01);
+
+    // Get the numor
+    std::vector<Data*> numors=selectedNumors();
+    for (auto ptr : numors)
+    {
+        // Add peaks present in this numor to the LatticeFinder
+        for (auto& peak : ptr->_rpeaks)
+        {
+            Eigen::Vector3d realQ=peak.second.getQ();
+            finder.addPoint(realQ[0],realQ[1],realQ[2]);
+        }
+    }
+
+    finder.run(3.0);
+    Eigen::Vector3d as,bs,cs;
+    if (!finder.determineLattice(as,bs,cs,30))
+        return;
+
+    SX::Geometry::Basis b=SX::Geometry::Basis::fromReciprocalVectors(as,bs,cs);
+    SX::Crystal::NiggliReduction n(b.getMetricTensor(),1e-3);
+    Eigen::Matrix3d newg,P;
+    n.reduce(newg,P);
+    b.transform(P);
+    SX::Geometry::Basis niggli=b;
+    SX::Crystal::GruberReduction gr(b.getMetricTensor(),1.0);
+    Eigen::Matrix3d Pprime;
+    SX::Crystal::UnitCell::Centring type;
+    gr.reduce(Pprime,type);
+    b.transform(Pprime);
+    std::shared_ptr<SX::Geometry::Basis> conventional(new SX::Geometry::Basis(b));
+    Eigen::Matrix3d M=niggli.getStandardM();
+    SX::Crystal::UnitCell cell(M.col(0),M.col(1),M.col(2));
+    std::cout << "Unit cell: " << cell << std::endl;
+    for (auto ptr : numors)
+    {
+        for (auto& peak : ptr->_rpeaks)
+        {
+            peak.second.setBasis(conventional);
+        }
+    }
+
+}
+
+std::vector<Data*> MainWindow::selectedNumors()
+{
+    QList<QListWidgetItem*> selNumors = ui->numor_Widget->selectedItems();
+    std::vector<Data*> list;
+    for (auto it=selNumors.begin();it!=selNumors.end();++it)
+    {
+        auto it1 = _data.find((*it)->text().toStdString());
+        if (it1!= _data.end())
+            list.push_back(&(it1->second));
+    }
+        return list;
+}
+
+void MainWindow::on_action_Peak_List_triggered()
+{
+
+}

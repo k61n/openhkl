@@ -10,8 +10,9 @@
 #include "Logger.h"
 #include <QMenu>
 #include <DialogPeakFind.h>
+#include <DialogProgress.h>
 #include "Data.h"
-
+#include "ui_dialog_Progress.h"
 class QListWidgetItem;
 
 namespace Ui {
@@ -48,7 +49,13 @@ private slots:
     void on_textLogger_customContextMenuRequested(const QPoint &pos);
 
     void resizeEvent(QResizeEvent *);
+    void on_actionUnit_Cell_triggered();
+
+    void on_action_Peak_List_triggered();
+
 private:
+    //! Return a list of numors currently selected
+    std::vector<Data*> selectedNumors();
     void updatePlot();
     Ui::MainWindow *ui;
     QGraphicsScene* scene;

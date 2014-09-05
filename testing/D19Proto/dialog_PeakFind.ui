@@ -33,7 +33,7 @@
        <rect>
         <x>29</x>
         <y>40</y>
-        <width>231</width>
+        <width>236</width>
         <height>80</height>
        </rect>
       </property>
@@ -50,6 +50,12 @@
        </item>
        <item row="1" column="1">
         <widget class="QDoubleSpinBox" name="confidenceSpinBox">
+         <property name="frame">
+          <bool>false</bool>
+         </property>
+         <property name="buttonSymbols">
+          <enum>QAbstractSpinBox::PlusMinus</enum>
+         </property>
          <property name="decimals">
           <number>4</number>
          </property>
@@ -73,6 +79,12 @@
        </item>
        <item row="0" column="1">
         <widget class="QDoubleSpinBox" name="thresholdSpinBox">
+         <property name="frame">
+          <bool>false</bool>
+         </property>
+         <property name="buttonSymbols">
+          <enum>QAbstractSpinBox::PlusMinus</enum>
+         </property>
          <property name="minimum">
           <double>1.500000000000000</double>
          </property>

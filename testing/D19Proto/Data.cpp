@@ -3,15 +3,38 @@
 #include <algorithm>
 #include <iostream>
 #include <QProgressBar>
+#include <string>
+#include "CylindricalDetector.h"
+#include "Units.h"
+#include "Gonio.h"
 
+using namespace SX::Units;
 
+void D19Mapping(double x, double y, double& newx, double& newy)
+{
+    newx = 640 - x;
+    newy = 256 - y;
+}
 
-Data::Data():mm(SX::Data::ILLAsciiDataReader::create()),_inmemory(false),_maxCount(0)
+Data::Data():mm(SX::Data::ILLAsciiDataReader::create()),_inmemory(false),_maxCount(0),_detector(nullptr),_sample(nullptr)
 {
 
 }
 Data::~Data()
 {
+    if (_detector)
+        delete _detector;
+    if (_sample)
+        delete _sample;
+}
+
+Data::Data(const Data& rhs):mm(SX::Data::ILLAsciiDataReader::create())
+{
+    _inmemory=rhs._inmemory;
+    _maxCount=rhs._maxCount;
+    _detector=rhs._detector;
+    _sample=rhs._sample;
+
 }
 
 void Data::fromFile(const std::string& filename)
@@ -21,7 +44,51 @@ void Data::fromFile(const std::string& filename)
     _sum.resize(_nblocks);
     _currentFrame=std::move(mm->getFrame(0));
     _sum[0]=std::accumulate(_currentFrame.begin(),_currentFrame.end(),0,std::plus<int>());
+
+    SX::Data::MetaData* meta=mm->getMetaData();
+    std::string instrName = meta->getKey<std::string>("Instrument");
+
+    if (instrName.compare("D19")==0)
+    {
+        _detector = new SX::Instrument::CylindricalDetector();
+
+        _detector->setDistance(764*SX::Units::mm);
+        _detector->setWidthAngle(120.0*deg);
+        _detector->setHeight(40.0*cm);
+        _detector->setNPixels(640,256);
+
+        _detector->setDataMapping(&D19Mapping);
+
+        _chi=meta->getKey<double>("chi")*deg;
+        _phi=meta->getKey<double>("phi")*deg;
+
+        double scanstart=meta->getKey<double>("scanstart")*deg;
+        double scanwidth=meta->getKey<double>("scanwidth")*deg;
+        double scanstep=meta->getKey<double>("scanstep")*deg;
+        int npdone=meta->getKey<int>("npdone");
+
+        _omegas.resize(npdone);
+        int i=0;
+        std::generate(_omegas.begin(),_omegas.end(),[&i,scanstart,scanstep](){return scanstart+(i++)*scanstep;});
+
+        _wavelength = meta->getKey<double>("wavelength");
+
+        // Attach a gonio to the detector
+        std::shared_ptr<SX::Instrument::Gonio> g(new SX::Instrument::Gonio("gamma-arm"));
+        g->addRotation("gamma",Eigen::Vector3d(0,0,1),SX::Instrument::RotAxis::CW);
+        _detector->setGonio(g);
+        double gamma = meta->getKey<double>("2theta(gamma)")*deg;
+        g->setCurrentValues({gamma});
+
+        //Sample gonio
+        _sample= new SX::Instrument::Gonio("Busing Levy convention");
+        _sample->addRotation("omega",Vector3d(0,0,1),SX::Instrument::RotAxis::CW);
+        _sample->addRotation("chi",Vector3d(0,1,0),SX::Instrument::RotAxis::CCW);
+        _sample->addRotation("phi",Vector3d(0,0,1),SX::Instrument::RotAxis::CW);
+    }
+
 }
+
 void Data::readBlock(int i)
 {
     if (!_inmemory)
@@ -66,10 +133,10 @@ void Data::releaseMemory()
         return;
     for (auto i=0;i<_nblocks;++i)
     {
-        _data[i].empty();
+        _data[i].clear();
     }
-    _data.empty();
-    _sum.empty();
+    _data.clear();
+    _sum.clear();
     _inmemory=false;
     _maxCount=0;
 }
