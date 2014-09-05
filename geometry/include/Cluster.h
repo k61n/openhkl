@@ -30,7 +30,7 @@
 
 #include <vector>
 #include <map>
-#include "V3D.h"
+#include <Eigen/Dense>
 
 namespace SX
 {
@@ -43,43 +43,37 @@ class Cluster
 public:
   Cluster();
   Cluster(double tol);
-  Cluster(const V3D & v, double tol);
-  V3D getCenter() const { return _center/static_cast<double>(_size);}
+  Cluster(const Eigen::Vector3d& v, double tol);
+  Eigen::Vector3d getCenter() const { return _center/static_cast<double>(_size);}
   int getSize() const { return _size;}
-  bool addVector(const V3D & v);
+  bool addVector(const Eigen::Vector3d& v);
   bool operator==(const Cluster& c) const;
   Cluster& operator+=(const Cluster& c);
 private:
   //! center of the
-  V3D _center;
+  Eigen::Vector3d _center;
   int _size;
   double _tolerance;
 
 };
 
-class UnitCellFinder
+class LatticeFinder
 {
 public:
-
-	UnitCellFinder(double threshold, double tolerance);
-	
-	void addPeak(double x, double y, double z);
-	void addPeak(const V3D& v);
-	
-	void addPeaks(const std::vector<V3D>& );
-		
+	LatticeFinder(double threshold, double tolerance);
+	void addPoint(double x, double y, double z);
+	void addPoint(const Eigen::Vector3d& v);
+	void addPoints(const std::vector<Eigen::Vector3d>&);
 	void run(double cellmin=2.0);
-	void determineLattice(int clustermax=20) const;
+	bool determineLattice(Eigen::Vector3d& a, Eigen::Vector3d& b,Eigen::Vector3d& c,int clustermax=20) const;
 	int getNumberOfClusters() { return _clusters.size();}
 	const std::multimap<double,Cluster>& getClusters() const { return _clusters;}
-	double costFunction(const V3D& v1, const V3D& v2, const V3D& v3, double epsilon,  double delta) const;
-
+	double costFunction(const Eigen::Vector3d& v1, const Eigen::Vector3d& v2, const Eigen::Vector3d& v3, double epsilon,  double delta) const;
 private:
     double _threshold;
     double _tolerance;
-	std::vector<V3D> _peaks;
+	std::vector<Eigen::Vector3d> _peaks;
 	std::multimap<double,Cluster> _clusters;
-	
 };
 
 } // Namespace Geometry

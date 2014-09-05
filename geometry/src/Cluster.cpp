@@ -25,7 +25,7 @@ Cluster::Cluster(double tolerance):_center(),_size(0),_tolerance(tolerance)
 	}
 }
 
-Cluster::Cluster(const V3D & v, double tolerance):_center(v),_size(1),_tolerance(tolerance)
+Cluster::Cluster(const Eigen::Vector3d & v, double tolerance):_center(v),_size(1),_tolerance(tolerance)
 {
 	if (tolerance < 0.0)
 	{
@@ -36,9 +36,9 @@ Cluster::Cluster(const V3D & v, double tolerance):_center(v),_size(1),_tolerance
 
 bool Cluster::operator==(const Cluster& c) const
 {
-	V3D temp=getCenter();
+	Eigen::Vector3d temp=getCenter();
 	temp-=c.getCenter();
-	if (temp.norm2()<_tolerance*c._tolerance)
+	if (temp.squaredNorm()<_tolerance*c._tolerance)
 		return true;
 	return false;
 }
@@ -53,32 +53,32 @@ Cluster& Cluster::operator+=(const Cluster& c)
 }
 
 
-bool Cluster::addVector(const V3D & vect)
+bool Cluster::addVector(const Eigen::Vector3d& vect)
 {
-	V3D v(_center-vect*_size);
+	Eigen::Vector3d v(_center-vect*_size);
 	double tp=_size*_tolerance;
-	bool b=(v.norm2() < tp*tp);
+	bool b=(v.squaredNorm() < tp*tp);
 	if (!b)
 		return false;
 	_center += vect;
 	_size++;
-		return true;
+	return true;
 }
 
 /////////////////////////////////////////////////
 
-UnitCellFinder::UnitCellFinder(double threshold, double tolerance)
+LatticeFinder::LatticeFinder(double threshold, double tolerance)
 {
 	if ( (threshold < 0.0) ||  (tolerance < 0.0) || (tolerance > threshold))
 	{
-		throw std::invalid_argument( "UnitCellFinder:: received invalid argument" );
+		throw std::invalid_argument( "LatticeFinder:: received invalid argument" );
 	}
 	_threshold = threshold;
 	_tolerance = tolerance;
 
 }
 
-void UnitCellFinder::addPeaks(const std::vector<V3D>& p )
+void LatticeFinder::addPoints(const std::vector<Eigen::Vector3d>& p )
 {
 	
 	_peaks.reserve(_peaks.size()+p.size());
@@ -90,22 +90,22 @@ void UnitCellFinder::addPeaks(const std::vector<V3D>& p )
 }
 
 // A voir les cas ou un peak est deja dans la liste
-void UnitCellFinder::addPeak(double x, double y, double z)
+void LatticeFinder::addPoint(double x, double y, double z)
 {
-    _peaks.push_back(V3D(x,y,z));
+    _peaks.push_back(Eigen::Vector3d(x,y,z));
 }
 
-void UnitCellFinder::addPeak(const V3D& v)
+void LatticeFinder::addPoint(const Eigen::Vector3d& v)
 {
     _peaks.push_back(v);
 }
 
 // A faire le removeSinglePeak
 
-void UnitCellFinder::run(double cellmin)
+void LatticeFinder::run(double cellmin)
 {
 
-	V3D diff;
+	Eigen::Vector3d diff;
 	double norm;	
 	double rec_max=1.0/cellmin;
 
@@ -147,7 +147,7 @@ void UnitCellFinder::run(double cellmin)
 	std::multimap<double,Cluster> m;
 	for (auto it=_clusters.begin();it!=_clusters.end();++it)
 	{
-		V3D tmp=it->second.getCenter();
+		Eigen::Vector3d tmp=it->second.getCenter();
 		double norm=tmp.norm();
 		m.insert(std::make_pair(norm,it->second));
 	}
@@ -156,25 +156,25 @@ void UnitCellFinder::run(double cellmin)
 
 }
 
-double UnitCellFinder::costFunction(const V3D& v1, const V3D& v2, const V3D& v3, double epsilon, double delta) const
+double LatticeFinder::costFunction(const Eigen::Vector3d& v1, const Eigen::Vector3d& v2, const Eigen::Vector3d& v3, double epsilon, double delta) const
 {
 
-    V3D v1s, v2s, v3s;
+    Eigen::Vector3d v1s, v2s, v3s;
 	double q;
 	double vol;
 	std::vector<int> h(3);
-	V3D zeta, delta1, delta2;
+	Eigen::Vector3d zeta, delta1, delta2;
     double temp1, temp2;
 
-    vol = v1.scalar_prod(v2.cross_prod(v3));
+    vol = v1.dot(v2.cross(v3));
 
-    v1s = v2.cross_prod(v3);
+    v1s = v2.cross(v3);
     v1s /= vol;
 
-    v2s = v3.cross_prod(v1);
+    v2s = v3.cross(v1);
     v2s /= vol;
 
-    v3s = v1.cross_prod(v2);
+    v3s = v1.cross(v2);
     v3s /= vol;
 
 
@@ -183,25 +183,25 @@ double UnitCellFinder::costFunction(const V3D& v1, const V3D& v2, const V3D& v3,
     for (auto it=_clusters.begin(); it != _clusters.end(); ++it)
     {
     	q = 0.0;
-    	V3D center=it->second.getCenter();
-		zeta[0] = v1s.scalar_prod(center);
+    	Eigen::Vector3d center=it->second.getCenter();
+		zeta[0] = v1s.dot(center);
 		h[0] = round(zeta[0]);
 
-		zeta[1] = v2s.scalar_prod(center);
+		zeta[1] = v2s.dot(center);
 		h[1] = round(zeta[1]);
 
-		zeta[2] = v3s.scalar_prod(center);
+		zeta[2] = v3s.dot(center);
 		h[2] = round(zeta[2]);
 
     	delta1[0] = std::abs(zeta[0]-h[0]);
     	delta1[1] = std::abs(zeta[1]-h[1]);
     	delta1[2] = std::abs(zeta[2]-h[2]);
-    	delta1 -= epsilon;
+    	delta1 -= Eigen::Vector3d::Constant(epsilon);
 
     	delta2[0] = std::abs(h[0]);
     	delta2[1] = std::abs(h[1]);
     	delta2[2] = std::abs(h[2]);
-    	delta2 -= delta;
+    	delta2 -= Eigen::Vector3d::Constant(delta);
 
     	for (int i=0; i<3; i++)
     	{
@@ -219,73 +219,48 @@ double UnitCellFinder::costFunction(const V3D& v1, const V3D& v2, const V3D& v3,
 }
 
 
-void UnitCellFinder::determineLattice(int clustermax) const
+bool LatticeFinder::determineLattice(Eigen::Vector3d& a, Eigen::Vector3d& b, Eigen::Vector3d& c,int clustermax) const
 {
-
+	bool success=false;
 
 	std::vector<Cluster> clust;
 	clust.reserve(_clusters.size());
 	for (auto it=_clusters.begin();it!=_clusters.end();++it)
 		clust.push_back((it->second));
 
+	double scoremax=0.0;
 	for (auto it=clust.begin();it!=clust.begin()+clustermax;++it)
 	{
-		V3D v1=(*it).getCenter();
+		Eigen::Vector3d v1=(*it).getCenter();
 		for (auto it2=it+1;it2!=clust.begin()+clustermax;++it2)
 		{
-			V3D v2=(*it2).getCenter();
-			V3D t=v1.cross_prod(v2);
+			Eigen::Vector3d v2=(*it2).getCenter();
+			Eigen::Vector3d t=v1.cross(v2);
 			if (t.norm()<1e-2) // Two vectors are collinear
 				continue;
 			for (auto it3=it2+1;it3!=clust.begin()+clustermax;++it3)
 			{
-				V3D v3=(*it3).getCenter();
-				double vol=t.scalar_prod(v3);
+				Eigen::Vector3d v3=(*it3).getCenter();
+				double vol=t.dot(v3);
 				if (std::abs(vol)<1e-5) // all coplanar
 					continue;
-
-
-				Matrix33<double> g_1;
-				double g00=v1.scalar_prod(v1);
-				double g11=v2.scalar_prod(v2);
-				double g22=v3.scalar_prod(v3);
-				double g01=v1.scalar_prod(v2);
-				double g02=v1.scalar_prod(v3);
-				double g12=v2.scalar_prod(v3);
-				g_1.set(g00,g01,g02,g01,g11,g12,g02,g12,g22);
-				g_1.invert();
-
-				double a1=sqrt(g_1(0,0));
-				double b1=sqrt(g_1(1,1));
-				double c1=sqrt(g_1(2,2));
-				double gamma1=acos(g_1(0,1)/a1/b1)/SX::Units::deg;
-				double beta1=acos(g_1(0,2)/a1/c1)/SX::Units::deg;
-				double alpha1=acos(g_1(1,2)/b1/c1)/SX::Units::deg;
-				double volr1=sqrt(g_1.determinant());
-
-
-				SX::Crystal::NiggliReduction n(g_1,1e-3);
-				Matrix33<double> t=n.reduce();
-
-				double a=sqrt(t(0,0));
-				double b=sqrt(t(1,1));
-				double c=sqrt(t(2,2));
-				double gamma=acos(t(0,1)/a/b)/SX::Units::deg;
-				double beta=acos(t(0,2)/a/c)/SX::Units::deg;
-				double alpha=acos(t(1,2)/b/c)/SX::Units::deg;
-				double volr=sqrt(t.determinant());
+				if (vol<0)
+					v3*=-1.0;
 
 				double score=costFunction(v1,v2,v3,0.05,5);
-				if (score>0.5)
+				if (score>scoremax)
 				{
-					std::cout << a1 << " " << b1 << " " << c1 << " " << alpha1 << " " << beta1 << " " << gamma1 << "Vol: " << volr1 << " "<<   std::endl;
-					std::cout << a << " " << b << " " << c << " " << alpha << " " << beta << " " << gamma << "Vol: " << volr << " " << score <<   std::endl;
+					a=v1;
+					b=v2;
+					c=v3;
+					success=true;
+					scoremax=score;
 				}
-
 			}
 		}
 
 	}
+	return success;
 }
 		
 } // Namespace Geometry
