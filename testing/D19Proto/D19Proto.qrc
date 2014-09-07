@@ -10,5 +10,6 @@
         <file>iconFindPeak.png</file>
         <file>unitcellTransformIcon.png</file>
         <file>iconPeakList.png</file>
+        <file>IconSinglePeak.png</file>
     </qresource>
 </RCC>

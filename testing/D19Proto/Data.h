@@ -43,7 +43,6 @@ struct Data: public SX::Geometry::IData
     int getBackgroundLevel();
     int dataAt(int x, int y, int z);
     int _nblocks;
-    std::unique_ptr<SX::Data::IDataReader> mm;
     vint _currentFrame;
     std::vector<vint> _data;
     std::vector<int> _sum;

@@ -79,7 +79,7 @@ void DetectorView::detectorToScene(double& x, double& y)
 
 void DetectorView::get2Theta(double x, double y, double &th2)
 {
-    SX::Data::MetaData* meta=_ptrData->mm->getMetaData();
+    SX::Data::MetaData* meta=_ptrData->_mm->getMetaData();
     double gammacenter=meta->getKey<double>("2theta(gamma)");
     double gamma=gammacenter+_gammawidth*(0.5-x/pixels_h);
     double h=(0.5*pixels_v-y-0.5)/pixels_v*_height;
@@ -88,7 +88,7 @@ void DetectorView::get2Theta(double x, double y, double &th2)
 
 void DetectorView::getDSpacing(double x, double y, double &dspacing)
 {
-    SX::Data::MetaData* meta=_ptrData->mm->getMetaData();
+    SX::Data::MetaData* meta=_ptrData->_mm->getMetaData();
     double wavelength=meta->getKey<double>("wavelength");
     double th2;
     get2Theta(x,y,th2);
@@ -102,7 +102,7 @@ void DetectorView::getGammaNu(double x, double y, double &gamma, double &nu)
     gammanew /= SX::Units::deg;
     newnu /= SX::Units::deg;
 
-    SX::Data::MetaData* meta=_ptrData->mm->getMetaData();
+    SX::Data::MetaData* meta=_ptrData->_mm->getMetaData();
     double gammacenter=meta->getKey<double>("2theta(gamma)");
     gamma=gammacenter+_gammawidth*(0.5-x/pixels_h);
     double h=(0.5*pixels_v-y-0.5)/pixels_v*_height;
@@ -357,6 +357,7 @@ void DetectorView::mousePressEvent(QMouseEvent* event)
                         _peakplotter=new PeakPlotter(this);
                     _peakplotter->setPeak(_ptrData->_rpeaks[peak_number]);
                     _peakplotter->show();
+                    return;
                 }
             }
             return; // Nothing else need to be done
@@ -519,7 +520,7 @@ void DetectorView::plotEllipsoids()
                 double bottom=upper[1];
                 detectorToScene(right,bottom);
                 // Plot the bounding box
-                QGraphicsRectItem* bb=_scene->addRect(left-1,top-1,right-left+1,bottom-top+1,QPen(QBrush(QColor("yellow")),2.0));
+                QGraphicsRectItem* bb=_scene->addRect(left-1,top-1,right-left+1,bottom-top+1,QPen(QBrush(QColor("green")),2.0));
                 bb->setToolTip(QString::number(el.first));
                 bb->setFlags(QGraphicsItem::ItemIsSelectable);
                 _currentPeaks.push_back(bb);

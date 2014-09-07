@@ -18,11 +18,11 @@ PeakPlotter::PeakPlotter(QWidget *parent) :
 
     customPlot->addGraph();
     customPlot->graph(1)->setPen(QPen(QColor("red")));
-    customPlot->graph(1)->setBrush(QBrush(QColor(255,0,0,40)));
+    customPlot->graph(1)->setBrush(QBrush(QColor(255,0,0,80)));
 
     customPlot->addGraph();
     customPlot->graph(2)->setPen(QPen(QColor("blue")));
-    customPlot->graph(2)->setBrush(QBrush(QColor(0,255,0,40)));
+    customPlot->graph(2)->setBrush(QBrush(QColor(0,0,255,40)));
 
     // Setup legends
     customPlot->legend->setVisible(true);

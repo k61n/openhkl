@@ -51,7 +51,7 @@ private slots:
     void resizeEvent(QResizeEvent *);
     void on_actionUnit_Cell_triggered();
 
-    void on_action_Peak_List_triggered();
+    void on_actionPeak_List_triggered();
 
 private:
     //! Return a list of numors currently selected

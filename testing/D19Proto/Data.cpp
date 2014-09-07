@@ -16,7 +16,7 @@ void D19Mapping(double x, double y, double& newx, double& newy)
     newy = 256 - y;
 }
 
-Data::Data():mm(SX::Data::ILLAsciiDataReader::create()),_inmemory(false),_maxCount(0),_detector(nullptr),_sample(nullptr)
+Data::Data():SX::Geometry::IData(SX::Data::ILLAsciiDataReader::create()),_inmemory(false),_maxCount(0),_detector(nullptr),_sample(nullptr)
 {
 
 }
@@ -28,7 +28,7 @@ Data::~Data()
         delete _sample;
 }
 
-Data::Data(const Data& rhs):mm(SX::Data::ILLAsciiDataReader::create())
+Data::Data(const Data& rhs):SX::Geometry::IData(SX::Data::ILLAsciiDataReader::create())
 {
     _inmemory=rhs._inmemory;
     _maxCount=rhs._maxCount;
@@ -39,13 +39,13 @@ Data::Data(const Data& rhs):mm(SX::Data::ILLAsciiDataReader::create())
 
 void Data::fromFile(const std::string& filename)
 {
-    mm->open(filename.c_str());
-    _nblocks=mm->nFrames();
+    _mm->open(filename.c_str());
+    _nblocks=_mm->nFrames();
     _sum.resize(_nblocks);
-    _currentFrame=std::move(mm->getFrame(0));
+    _currentFrame=std::move(_mm->getFrame(0));
     _sum[0]=std::accumulate(_currentFrame.begin(),_currentFrame.end(),0,std::plus<int>());
 
-    SX::Data::MetaData* meta=mm->getMetaData();
+    SX::Data::MetaData* meta=_mm->getMetaData();
     std::string instrName = meta->getKey<std::string>("Instrument");
 
     if (instrName.compare("D19")==0)
@@ -93,7 +93,7 @@ void Data::readBlock(int i)
 {
     if (!_inmemory)
     {
-        _currentFrame=std::move(mm->getFrame(i));
+        _currentFrame=std::move(_mm->getFrame(i));
         _sum[i]=std::accumulate(_currentFrame.begin(),_currentFrame.end(),0,std::plus<int>());
     }
     else
@@ -116,7 +116,7 @@ void Data::readInMemory()
         for (int i=0;i<_nblocks;++i)
         {
             _data[i].reserve(640*256);
-            _data[i]=std::move(mm->getFrame(i));
+            _data[i]=std::move(_mm->getFrame(i));
             _sum[i]=std::accumulate(_data[i].begin(),_data[i].end(),0,std::plus<int>());
             auto it=std::max_element(_data[i].begin(),_data[i].end(),std::less<int>());
             if ((*it)>count)

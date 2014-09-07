@@ -33,7 +33,7 @@
        <rect>
         <x>29</x>
         <y>40</y>
-        <width>236</width>
+        <width>247</width>
         <height>80</height>
        </rect>
       </property>
@@ -79,6 +79,9 @@
        </item>
        <item row="0" column="1">
         <widget class="QDoubleSpinBox" name="thresholdSpinBox">
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
          <property name="frame">
           <bool>false</bool>
          </property>
@@ -92,7 +95,7 @@
           <double>100000.000000000000000</double>
          </property>
          <property name="value">
-          <double>8.000000000000000</double>
+          <double>3.000000000000000</double>
          </property>
         </widget>
        </item>

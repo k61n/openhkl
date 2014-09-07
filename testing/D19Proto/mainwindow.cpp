@@ -23,6 +23,8 @@
 #include <Eigen/Dense>
 #include "Basis.h"
 #include <QProgressDialog>
+#include <functional>
+#include <PeakTableView.h>
 
 using namespace SX::Units;
 
@@ -269,8 +271,6 @@ void MainWindow::on_action_peak_find_triggered()
                                          "QProgressBar::chunk {\n"
                                          "background: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0,\n"
                                          "stop: 0 #78d,\n"
-                                         "stop: 0.4999 #46a,\n"
-                                         "stop: 0.5 #45a,\n"
                                          "stop: 1 #238 );\n"
                                          "border-bottom-right-radius: 7px;\n"
                                          "border-bottom-left-radius: 7px;\n"
@@ -424,8 +424,10 @@ std::vector<Data*> MainWindow::selectedNumors()
     }
         return list;
 }
-
-void MainWindow::on_action_Peak_List_triggered()
+void MainWindow::on_actionPeak_List_triggered()
 {
-
+    std::vector<Data*> numors=selectedNumors();
+    PeakTableView* table=new PeakTableView();
+    table->setData(numors);
+    table->show();
 }

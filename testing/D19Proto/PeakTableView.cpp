@@ -1,0 +1,103 @@
+#include "PeakTableView.h"
+#include <QStandardItemModel>
+#include <QHeaderView>
+#include "IData.h"
+
+PeakTableView::PeakTableView(QWidget *parent)
+    :QTableView(parent),_plotter(nullptr)
+{
+    setFocusPolicy(Qt::StrongFocus);
+    QHeaderView* horizontal=this->horizontalHeader();
+    connect(horizontal,SIGNAL(sectionClicked(int)),this,SLOT(sortByColumn(int)));
+    QHeaderView* vertical=this->verticalHeader();
+    connect(vertical,SIGNAL(sectionClicked(int)),this,SLOT(plotPeak(int)));
+    this->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(this, SIGNAL(customContextMenuRequested(QPoint)),
+    SLOT(customMenuRequested(QPoint)));
+}
+
+void PeakTableView::setData(const std::vector<Data *> numors)
+{
+    for (Data* ptr : numors)
+    {
+        // Add peaks present in this numor to the LatticeFinder
+        for (const auto& peak : ptr->_rpeaks)
+        {
+            _peaks.push_back(std::cref(peak.second));
+        }
+    }
+    constructTable();
+
+}
+
+void PeakTableView::plotPeak(int i)
+{
+    if (!_plotter)
+        _plotter=new PeakPlotter(this);
+    _plotter->setPeak(_peaks[i].get());
+    _plotter->show();
+}
+
+void PeakTableView::sortByColumn(int i)
+{
+    if (i==0) // Sort by HKL
+        std::sort(_peaks.begin(),_peaks.end());
+    if (i==1)
+        std::sort(_peaks.begin(),_peaks.end(),
+                  [&](const SX::Geometry::Peak3D& p1, const SX::Geometry::Peak3D& p2)
+        {
+            return (p1.peakTotalCounts()<p2.peakTotalCounts());
+        });
+    constructTable();
+}
+
+void PeakTableView::constructTable()
+{
+    QStandardItemModel* model=new QStandardItemModel(_peaks.size(),5,this);
+    model->setHorizontalHeaderItem(0,new QStandardItem("h,k,l"));
+    model->setHorizontalHeaderItem(1,new QStandardItem("I"));
+    model->setHorizontalHeaderItem(2,new QStandardItem(QString((QChar) 0x03C3)+"I: "));
+    model->setHorizontalHeaderItem(3,new QStandardItem("Numor"));
+    model->setHorizontalHeaderItem(4,new QStandardItem("Selected"));
+    int i=0;
+    for (const SX::Geometry::Peak3D& peak : _peaks)
+    {
+        const Eigen::RowVector3d& hkl=peak.getMillerIndices();
+        double l=peak.getLorentzFactor();
+        QStandardItem* col1=new QStandardItem(QString::number(hkl[0])+","+QString::number(hkl[1])+","+QString::number(hkl[2]));
+        QStandardItem* col2=new QStandardItem(QString::number(peak.peakTotalCounts()/l));
+        QStandardItem* col3=new QStandardItem(QString::number(sqrt(peak.peakTotalCounts()/l)));
+        QStandardItem* col4=new QStandardItem(QString::number(peak.getData()->_mm->getMetaData()->getKey<int>("Numor")));
+        model->setVerticalHeaderItem(i,new QStandardItem(QIcon(":/IconSinglePeak.png"),QString::number(i)));
+        model->setItem(i,0,col1);
+        model->setItem(i,1,col2);
+        model->setItem(i,2,col3);
+        model->setItem(i++,3,col4);
+    }
+    setModel(model);
+}
+
+
+void PeakTableView::customMenuRequested(QPoint pos)
+{
+    QMenu* menu=new QMenu(this);
+    QMenu* writeMenu=menu->addMenu("Write");
+    QAction* writeFullProf=new QAction("FullProf file",writeMenu);
+    QAction* writeShelX=new QAction("SHELX file",writeMenu);
+    writeMenu->addAction(writeFullProf);
+    writeMenu->addAction(writeShelX);
+    connect(writeFullProf,SIGNAL(triggered()),this,SLOT(writeFullProf()));
+    connect(writeShelX,SIGNAL(triggered()),this,SLOT(writeShelX()));
+    menu->popup(viewport()->mapToGlobal(pos));
+}
+
+void PeakTableView::writeFullProf()
+{
+    std::cout << "Writing FullProf" << std::endl;
+}
+
+
+void PeakTableView::writeShelX()
+{
+    std::cout << "Writing ShelX" << std::endl;
+}

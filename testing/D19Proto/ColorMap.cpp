@@ -11,10 +11,10 @@ COLOUR GetColour(double v,double vmin,double vmax)
       v = vmax;
    dv = vmax - vmin;
 
-   if (v <= (vmin + 0.4 * dv)) {
-      c.r = 2.5*(v-vmin) / dv;
-      c.g = 0;
-      c.b = 0;
+   if (v <= (vmin + 1.0 * dv)) {
+      c.r = 1-(v-vmin) / dv;
+      c.g = 1-(v-vmin) / dv;
+      c.b = 1.0;
    } else if (v <= (vmin + 0.8 * dv)) {
       c.r = 1;
       c.g = 1 + 2.5 * (-vmin - 0.4 * dv + v) / dv;

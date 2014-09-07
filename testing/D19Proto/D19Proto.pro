@@ -17,14 +17,14 @@ RESOURCES = D19Proto.qrc \
 SOURCES += main.cpp\
         mainwindow.cpp \
     Data.cpp \
-    Logger.cpp \
     DetectorView.cpp \
     ColorMap.cpp \
     qcustomplot.cpp \
     Plotter1D.cpp \
     PeakPlotter.cpp \
     slicerect.cpp \
-    dialogpeaklist.cpp
+    PeakTableView.cpp \
+    Logger.cpp
 
 HEADERS  += mainwindow.h \
     DetectorView.h \
@@ -37,15 +37,14 @@ HEADERS  += mainwindow.h \
     PeakPlotter.h \
     slicerect.h \
     DialogProgress.h \
-    dialogpeaklist.h
+    PeakTableView.h
 
 FORMS    += mainwindow.ui \
     dialog_PeakFind.ui \
     plotter1d.ui \
     peakplotter.ui \
     dialog_UnitCell.ui \
-    dialog_Progress.ui \
-    dialogpeaklist.ui
+    dialog_Progress.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../usr/local/NSXTool/ -lNSXTool
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../usr/local/NSXTool/ -lNSXTool
