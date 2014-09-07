@@ -11,5 +11,6 @@
         <file>unitcellTransformIcon.png</file>
         <file>iconPeakList.png</file>
         <file>IconSinglePeak.png</file>
+        <file>IconToHKL.png</file>
     </qresource>
 </RCC>

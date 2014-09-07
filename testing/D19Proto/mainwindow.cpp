@@ -381,49 +381,20 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 void MainWindow::on_actionUnit_Cell_triggered()
 {
     DialogUnitCell* dialog=new DialogUnitCell(this);
+
+    std::vector<std::reference_wrapper<SX::Geometry::Peak3D>> peaks;
+    std::vector<Data*> numors=selectedNumors();
+    for (auto ptr : numors)
+    {
+      // Add peaks present in this numor
+      for (auto& peak : ptr->_rpeaks)
+      {
+          peaks.push_back(std::ref(peak.second));
+
+      }
+    }
+    dialog->setPeaks(peaks);
     dialog->show();
-    //widget->show();
-//     SX::Geometry::LatticeFinder finder(0.02,0.01);
-
-//    // Get the numor
-//    std::vector<Data*> numors=selectedNumors();
-//    for (auto ptr : numors)
-//    {
-//        // Add peaks present in this numor to the LatticeFinder
-//        for (auto& peak : ptr->_rpeaks)
-//        {
-//            Eigen::Vector3d realQ=peak.second.getQ();
-//            finder.addPoint(realQ[0],realQ[1],realQ[2]);
-//        }
-//    }
-//    finder.run(3.0);
-//    Eigen::Vector3d as,bs,cs;
-//    if (!finder.determineLattice(as,bs,cs,30))
-//        return;
-
-//    SX::Geometry::Basis b=SX::Geometry::Basis::fromReciprocalVectors(as,bs,cs);
-//    SX::Crystal::NiggliReduction n(b.getMetricTensor(),1e-3);
-//    Eigen::Matrix3d newg,P;
-//    n.reduce(newg,P);
-//    b.transform(P);
-//    SX::Geometry::Basis niggli=b;
-//    SX::Crystal::GruberReduction gr(b.getMetricTensor(),1.0);
-//    Eigen::Matrix3d Pprime;
-//    SX::Crystal::UnitCell::Centring type;
-//    gr.reduce(Pprime,type);
-//    b.transform(Pprime);
-//    std::shared_ptr<SX::Geometry::Basis> conventional(new SX::Geometry::Basis(b));
-//    Eigen::Matrix3d M=niggli.getStandardM();
-//    SX::Crystal::UnitCell cell(M.col(0),M.col(1),M.col(2));
-//    std::cout << "Unit cell: " << cell << std::endl;
-//    for (auto ptr : numors)
-//    {
-//        for (auto& peak : ptr->_rpeaks)
-//        {
-//            peak.second.setBasis(conventional);
-//        }
-//    }
-
 }
 
 std::vector<Data*> MainWindow::selectedNumors()

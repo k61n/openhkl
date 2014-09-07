@@ -3,10 +3,6 @@
 #include "ui_dialog_PeakFind.h"
 #include <QDialog>
 
-//namespace Ui
-//{
-// class Ui::DialogPeakFind;
-//}
 
 class DialogPeakFind : public QDialog
 {
