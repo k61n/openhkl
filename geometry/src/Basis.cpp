@@ -96,15 +96,15 @@ double Basis::gete3Norm() const
 }
 double Basis::gete1e2Angle() const
 {
-	return acos(_A.col(0).dot(_A.col(1)))/gete1Norm()/gete2Norm();
+	return acos(_A.col(0).dot(_A.col(1))/gete1Norm()/gete2Norm());
 }
 double Basis::gete2e3Angle() const
 {
-	return acos(_A.col(1).dot(_A.col(2)))/gete2Norm()/gete3Norm();
+	return acos(_A.col(1).dot(_A.col(2))/gete2Norm()/gete3Norm());
 }
 double Basis::gete1e3Angle() const
 {
-	return acos(_A.col(0).dot(_A.col(2)))/gete1Norm()/gete3Norm();
+	return acos(_A.col(0).dot(_A.col(2))/gete1Norm()/gete3Norm());
 }
 
 
