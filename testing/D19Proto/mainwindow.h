@@ -26,6 +26,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+signals:
 
 private slots:
     void on_action_open_triggered();
@@ -52,7 +53,8 @@ private slots:
     void on_actionUnit_Cell_triggered();
 
     void on_actionPeak_List_triggered();
-
+public slots:
+     void plotUpdate(int numor,int frame);
 private:
     //! Return a list of numors currently selected
     std::vector<Data*> selectedNumors();

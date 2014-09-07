@@ -20,7 +20,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Search Peaks</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
@@ -33,8 +33,8 @@
        <rect>
         <x>29</x>
         <y>40</y>
-        <width>247</width>
-        <height>80</height>
+        <width>281</width>
+        <height>81</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout">
@@ -44,7 +44,7 @@
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Confidence interval for the 3D &lt;/p&gt;&lt;p&gt;distribution of points. &lt;/p&gt;&lt;p&gt;0.997 corresponds to 3 Sigma&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
-          <string>Confidence : </string>
+          <string>Gaussian Confidence : </string>
          </property>
         </widget>
        </item>

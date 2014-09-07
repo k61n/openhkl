@@ -404,6 +404,7 @@ void DetectorView::mousePressEvent(QMouseEvent* event)
         case(ZOOM):
         {
             setPreviousZoomLevel();
+            _zoom=nullptr;
             break;
         }
 
@@ -468,7 +469,7 @@ void DetectorView::mouseReleaseEvent(QMouseEvent *event)
             setZoom(xmin,ymin,xmax,ymax);
             updatePlot();
         }
-        break;
+        _zoom=nullptr;
     }
 
     case(LINE):

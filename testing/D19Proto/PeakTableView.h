@@ -5,14 +5,15 @@
 #include <QMenu>
 #include <PeakPlotter.h>
 #include <QFileDialog>
+#include <mainwindow.h>
 class PeakTableView : public QTableView
 {
     Q_OBJECT
 public:
-    explicit PeakTableView(QWidget* parent = 0);
+    explicit PeakTableView(MainWindow* main,QWidget* parent = 0);
     void setData(const std::vector<Data*>);
 signals:
-
+    void plot2DUpdate(int numor,int frame);
 public slots:
     //! Plot the peak at index i in vector
     void plotPeak(int i);
@@ -24,7 +25,9 @@ public slots:
     void writeFullProf();
     //! Write the currrent list to ShelX
     void writeShelX();
+    //!
 private:
+    MainWindow* _main;
     PeakPlotter* _plotter;
     void constructTable();
     std::vector<std::reference_wrapper<const SX::Geometry::Peak3D>> _peaks;

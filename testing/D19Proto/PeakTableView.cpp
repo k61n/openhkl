@@ -2,9 +2,12 @@
 #include <QStandardItemModel>
 #include <QHeaderView>
 #include "IData.h"
+#include <fstream>
+#include <QMessageBox>
+#include <iomanip>
 
-PeakTableView::PeakTableView(QWidget *parent)
-    :QTableView(parent),_plotter(nullptr)
+PeakTableView::PeakTableView(MainWindow* main,QWidget *parent)
+    :_main(main),QTableView(parent),_plotter(nullptr)
 {
     setFocusPolicy(Qt::StrongFocus);
     QHeaderView* horizontal=this->horizontalHeader();
@@ -14,6 +17,7 @@ PeakTableView::PeakTableView(QWidget *parent)
     this->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this, SIGNAL(customContextMenuRequested(QPoint)),
     SLOT(customMenuRequested(QPoint)));
+    connect(this,SIGNAL(plot2DUpdate(int,int)),_main,SLOT(plotUpdate(int,int)));
 }
 
 void PeakTableView::setData(const std::vector<Data *> numors)
@@ -32,10 +36,12 @@ void PeakTableView::setData(const std::vector<Data *> numors)
 
 void PeakTableView::plotPeak(int i)
 {
+    const SX::Geometry::Peak3D& peak=_peaks[i].get();
     if (!_plotter)
         _plotter=new PeakPlotter(this);
-    _plotter->setPeak(_peaks[i].get());
+    _plotter->setPeak(peak);
     _plotter->show();
+    emit plot2DUpdate(peak.getData()->_mm->getMetaData()->getKey<int>("Numor"),std::round(peak.getPeak()->getCenter()[2]));
 }
 
 void PeakTableView::sortByColumn(int i)
@@ -93,7 +99,29 @@ void PeakTableView::customMenuRequested(QPoint pos)
 
 void PeakTableView::writeFullProf()
 {
-    std::cout << "Writing FullProf" << std::endl;
+    if (!_peaks.size())
+        QMessageBox::critical(this,"Error writing","No peaks in the table");
+    QString fileName = QFileDialog::getSaveFileName(this,
+        tr("Save FullProf file"), "", tr("FullProd Files (*.int)"));
+    std::fstream file(fileName.toStdString().c_str(),std::ios::out);
+    if (!file.is_open())
+        QMessageBox::critical(this,"Error writing","Error writing to this file, please check write permisions");
+    file << "TITLE File written by ...\n";
+    file << "(3i4,2F14.4,i5,4f8.2)\n";
+    //file << _peaks[0].get().getData()->_wavelength;
+    for (const SX::Geometry::Peak3D& peak : _peaks)
+    {
+        const Eigen::RowVector3d& hkl=peak.getMillerIndices();
+
+        file << std::setprecision(0);
+        file << std::setw(4);
+        file << hkl[0] << std::setw(4) <<  hkl[1] << std::setw(4) << hkl[2];
+         double l=peak.getLorentzFactor();
+        file << std::fixed << std::setw(14) << std::setprecision(4) << peak.peakTotalCounts()/l;
+        file << std::fixed << std::setw(14) << std::setprecision(4) << sqrt(peak.peakTotalCounts())/l;
+        file << std::setprecision(0) << std::setw(5) << 1  << std::endl;
+    }
+    file.close();
 }
 
 

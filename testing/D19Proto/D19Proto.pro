@@ -37,7 +37,8 @@ HEADERS  += mainwindow.h \
     PeakPlotter.h \
     slicerect.h \
     DialogProgress.h \
-    PeakTableView.h
+    PeakTableView.h \
+    DialogUnitCell.h
 
 FORMS    += mainwindow.ui \
     dialog_PeakFind.ui \
