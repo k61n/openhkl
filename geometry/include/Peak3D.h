@@ -34,6 +34,7 @@
 #include <memory>
 #include "IShape.h"
 #include "Basis.h"
+#include "IDataReader.h"
 namespace SX
 {
 namespace Geometry
@@ -43,11 +44,12 @@ namespace Geometry
 class IData
 {
 public:
-	IData()
+	IData(SX::Data::IDataReader* reader):_mm(reader)
 	{}
 	// Return the intensity at point x,y,z.
 	virtual int dataAt(int x, int y, int z)=0;
 	virtual ~IData()=0;
+	std::unique_ptr<SX::Data::IDataReader> _mm;
 };
 
 
@@ -74,7 +76,8 @@ public:
 	const Eigen::RowVector3d& getQ() const;
 	//! Run the integration of the peak; iterate over the data
 	void integrate();
-
+	//!
+	const IData* getData() const { return _data;}
 	void setGammaNu(double gamma,double nu);
 	//! Get the projection of total data in the bounding box
 	const Eigen::VectorXd& getProjection() const;
@@ -93,6 +96,22 @@ public:
 //	//!  Volume of the background
 //	double bkgVolume() const;
 	void setBasis(std::shared_ptr<Basis> basis);
+	friend bool operator<(const Peak3D& p1, const Peak3D& p2)
+	{
+		if (p1._hkl[0]<p2._hkl[0])
+			return true;
+		else if (p1._hkl[0]>p2._hkl[0])
+			return false;
+		if (p1._hkl[1]<p2._hkl[1])
+			return true;
+		else if (p1._hkl[1]>p2._hkl[1])
+			return false;
+		if (p1._hkl[2]<p2._hkl[2])
+			return true;
+		else if (p1._hkl[2]>p2._hkl[2])
+			return false;
+		return false;
+	}
 private:
 	//! Pointer to the data containing the peak
 	IData* _data;
@@ -111,6 +130,7 @@ private:
 	std::shared_ptr<SX::Geometry::Basis> _basis;
 	double _gamma,_nu;
 };
+
 
 }
 }
