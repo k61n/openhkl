@@ -95,7 +95,7 @@ public:
 //	double peakVolume() const;
 //	//!  Volume of the background
 //	double bkgVolume() const;
-	void setBasis(std::shared_ptr<Basis> basis);
+	bool setBasis(std::shared_ptr<Basis> basis);
 	friend bool operator<(const Peak3D& p1, const Peak3D& p2)
 	{
 		if (p1._hkl[0]<p2._hkl[0])
