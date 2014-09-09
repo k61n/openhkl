@@ -410,22 +410,22 @@ void DetectorView::mousePressEvent(QMouseEvent* event)
 
         case(LINE):
         {
-            removeCutLine(_lines.size()-1);
             _selectedLine=_lines.size()-1;
+            removeCutLine(_selectedLine);
             break;
         }
 
         case(HORIZONTALSLICE):
         {
-            removeHorizontalCutSlice(_hSlices.size()-1);
             _selectedSlice=_hSlices.size()-1;
+            removeHorizontalCutSlice(_selectedSlice);
             break;
         }
 
         case(VERTICALSLICE):
         {
-            removeVerticalCutSlice(_vSlices.size()-1);
             _selectedSlice=_vSlices.size()-1;
+            removeVerticalCutSlice(_selectedSlice);
             break;
         }
         }
