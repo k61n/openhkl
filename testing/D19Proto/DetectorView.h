@@ -64,6 +64,7 @@ public slots:
     void integrateVertical(int xmin,int xmax, int ymin, int ymax, QVector<double>& projection, QVector<double>& error);
     // Integrate in horizontal direction
     void integrateHorizontal(int xmin,int xmax, int ymin, int ymax, QVector<double>& projection, QVector<double>& error);
+
 protected:
     // Mouse events
     void mousePressEvent(QMouseEvent *event);
@@ -74,6 +75,8 @@ protected:
     void keyPressEvent(QKeyEvent* event);
     void wheelEvent(QWheelEvent *event);
 private:
+    // Copy the current view to the clipboard.
+    void copyViewToClipboard();
     //
     void plotIntensityMap();
     //

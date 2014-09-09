@@ -1,14 +1,19 @@
-#include "DetectorView.h"
+#include <cmath>
+
+#include <QApplication>
+#include <QClipboard>
+#include <QColor>
+#include <QMenu>
+#include <QGraphicsRectItem>
 #include <QGraphicsView>
-#include <QWidget>
 #include <QMouseEvent>
 #include <QToolTip>
+#include <QWidget>
+
 #include "Data.h"
 #include "ColorMap.h"
-#include <QGraphicsRectItem>
-#include <cmath>
-#include <QColor>
 #include "Plotter1D.h"
+#include "DetectorView.h"
 #include "slicerect.h"
 #include "Detector.h"
 #include "Units.h"
@@ -35,6 +40,7 @@ DetectorView::DetectorView(QWidget* parent): QGraphicsView(parent),
     _selectedLine(0)
 {
     this->setScene(_scene);
+
 }
 
 void DetectorView::addCutLine(double xstart, double ystart, double xend, double yend)
@@ -64,6 +70,19 @@ void DetectorView::addVerticalCutSlice(double x, double y, double width, double 
     _vSlices.last()->setVisible(true);
     _vSlices.last()->setPen(QPen(QBrush(QColor(_lineColors[colorId])),1.0));
     _selectedSlice = _vSlices.size()-1;
+}
+
+void DetectorView::copyViewToClipboard()
+{
+    // Create the image with the exact size of the shrunk scene
+    QImage image(_scene->sceneRect().size().toSize(), QImage::Format_ARGB32);
+    image.fill(Qt::transparent);
+    QPainter painter;
+    painter.begin(&image);
+    painter.setRenderHint(QPainter::Antialiasing);
+    _scene->render(&painter);
+    painter.end();
+    QApplication::clipboard()->setImage(image,QClipboard::Clipboard);
 }
 
 void DetectorView::detectorToScene(double& x, double& y)
@@ -206,6 +225,11 @@ void DetectorView::keyPressEvent(QKeyEvent* event)
         }
         break;
     }
+    }
+
+    if (event->matches(QKeySequence::Copy))
+    {
+        copyViewToClipboard();
     }
 }
 
@@ -671,6 +695,13 @@ void DetectorView::setCutterMode(int i)
     {
     case(ZOOM):
     {
+        if (_plotter)
+        {
+            delete _plotter;
+            _plotter = nullptr;
+        }
+
+        clearCutObjects();
         return;
     }
     case(LINE):

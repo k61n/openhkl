@@ -23,6 +23,9 @@ public:
     {
         ui->setupUi(this);
         this->setModal(true);
+        ui->labelalpha->setText(QString((QChar) 0x03B1));
+        ui->labelbeta->setText(QString((QChar) 0x03B2));
+        ui->labelgamma->setText(QString((QChar) 0x03B3));
         connect(ui->pushButtonFindUnitCell,SIGNAL(clicked()),this,SLOT(getUnitCell()));
         connect(ui->pushButtonFindReindexHKL,SIGNAL(clicked()),this,SLOT(reindexHKL()));
 
@@ -57,20 +60,35 @@ public slots:
         n.reduce(newg,P);
         b.transform(P);
         SX::Geometry::Basis niggli=b;
-        SX::Crystal::GruberReduction gr(b.getMetricTensor(),1.0);
+        SX::Crystal::GruberReduction gr(b.getMetricTensor(),4.0);
         Eigen::Matrix3d Pprime;
         SX::Crystal::UnitCell::Centring type;
         gr.reduce(Pprime,type);
         b.transform(Pprime);
         std::shared_ptr<SX::Geometry::Basis> conventional(new SX::Geometry::Basis(b));
-        ui->doubleSpinBoxa->setValue(conventional->gete1Norm());
-        ui->doubleSpinBoxb->setValue(conventional->gete2Norm());
-        ui->doubleSpinBoxc->setValue(conventional->gete3Norm());
-        ui->doubleSpinBoxalpha->setValue(conventional->gete2e3Angle()/SX::Units::deg);
-        ui->doubleSpinBoxbeta->setValue(conventional->gete1e3Angle()/SX::Units::deg);
-        ui->doubleSpinBoxgamma->setValue(conventional->gete1e2Angle()/SX::Units::deg);
         _basis=conventional;
+        setUpValues();
     }
+    void setUpValues()
+    {
+        ui->doubleSpinBoxa->setValue(_basis->gete1Norm());
+        ui->doubleSpinBoxb->setValue(_basis->gete2Norm());
+        ui->doubleSpinBoxc->setValue(_basis->gete3Norm());
+        ui->doubleSpinBoxalpha->setValue(_basis->gete2e3Angle()/SX::Units::deg);
+        ui->doubleSpinBoxbeta->setValue(_basis->gete1e3Angle()/SX::Units::deg);
+        ui->doubleSpinBoxgamma->setValue(_basis->gete1e2Angle()/SX::Units::deg);
+        Eigen::Matrix3d M=_basis->getStandardM().inverse();
+        ui->doubleSpinBoxUB00->setValue(M(0,0));
+        ui->doubleSpinBoxUB01->setValue(M(0,1));
+        ui->doubleSpinBoxUB02->setValue(M(0,2));
+        ui->doubleSpinBoxUB10->setValue(M(1,0));
+        ui->doubleSpinBoxUB11->setValue(M(1,1));
+        ui->doubleSpinBoxUB12->setValue(M(1,2));
+        ui->doubleSpinBoxUB20->setValue(M(2,0));
+        ui->doubleSpinBoxUB21->setValue(M(2,1));
+        ui->doubleSpinBoxUB22->setValue(M(2,2));
+    }
+
     void reindexHKL()
     {
         int success=0;

@@ -57,10 +57,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->_dview->setDetectorDistance(0.764);
     //
 
-    ui->selectionMode->addItem(QIcon(":/zoomIcon.png"),"");
-    ui->selectionMode->addItem(QIcon(":/cutlineIcon.png"),"");
-    ui->selectionMode->addItem(QIcon(":/horizontalsliceIcon.png"),"");
-    ui->selectionMode->addItem(QIcon(":/verticalsliceIcon.png"),"");
+    ui->selectionMode->addItem(QIcon(":/resources/zoomIcon.png"),"");
+    ui->selectionMode->addItem(QIcon(":/resources/cutlineIcon.png"),"");
+    ui->selectionMode->addItem(QIcon(":/resources/horizontalSliceIcon.png"),"");
+    ui->selectionMode->addItem(QIcon(":/resources/verticalSliceIcon.png"),"");
 
     connect(ui->selectionMode,SIGNAL(currentIndexChanged(int)),ui->_dview,SLOT(setCutterMode(int)));
     connect(ui->dial,SIGNAL(valueChanged(int)),ui->_dview,SLOT(setMaxIntensity(int)));
@@ -79,7 +79,8 @@ void MainWindow::on_action_open_triggered()
     QFileDialog dialog;
     dialog.setDirectory("/home/chapon/Data/D19/July2014/data/DKDP/");
     dialog.setFileMode(QFileDialog::ExistingFiles);
-    QStringList fileNames;
+    QStringList fileNames;qDebug() << "Read " << fileNames.size() << " file(s)";
+
     fileNames= dialog.getOpenFileNames(this,"select numors","/home/chapon/Data/D19/July2014/data/DKDP/");
     // No files selected
     if (fileNames.isEmpty())
@@ -113,8 +114,6 @@ void MainWindow::on_action_open_triggered()
     if (!first)
         return;
 
-    qDebug() << "Read " << fileNames.size() << " file(s)";
-
     ui->frameFrame->setEnabled(true);
     ui->intensityFrame->setEnabled(true);
 
@@ -137,6 +136,7 @@ void MainWindow::plotUpdate(int numor,int frame)
         Data* ptr=&(it->second);
         ui->_dview->updateView(ptr,frame);
     }
+    ui->horizontalScrollBar->setValue(frame);
 }
 
 void MainWindow::updatePlot()
@@ -262,45 +262,20 @@ void MainWindow::on_action_peak_find_triggered()
 
     int max=numors.size();
     int i=0;
-    QProgressDialog progress("Copying files...", "Abort Copy", 0, max, this);
-    progress.show();
-    progress.setValue(i);
-    progress.setWindowModality(Qt::WindowModal);
-    progress.setStyleSheet(QLatin1String("QProgressBar {\n"
-                                         "border: 1px solid black;\n"
-                                         "text-align: top;\n"
-                                         "padding: 1px;\n"
-                                         "border-bottom-right-radius: 7px;\n"
-                                         "border-bottom-left-radius: 7px;\n"
-                                         "background: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0,\n"
-                                         "stop: 0 #fff,\n"
-                                         "stop: 0.4999 #eee,\n"
-                                         "stop: 0.5 #ddd,\n"
-                                         "stop: 1 #eee );\n"
-                                         "width: 15px;\n"
-                                         "}\n"
-                                         "\n"
-                                         "QProgressBar::chunk {\n"
-                                         "background: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0,\n"
-                                         "stop: 0 #78d,\n"
-                                         "stop: 1 #238 );\n"
-                                         "border-bottom-right-radius: 7px;\n"
-                                         "border-bottom-left-radius: 7px;\n"
-                                         "border: 1px solid black;\n"
-                                         "}"));
+
     QCoreApplication::processEvents();
+    ui->progressBar->setEnabled(true);
+    ui->progressBar->setMaximum(max);
 
     for (auto& numor : numors)
     {
-      progress.setValue(i++);
-      QCoreApplication::processEvents();
-//    ui->textLogger->log(Logger::INFO) << "Start reading " << numor-> << " in memory";
-//    ui->textLogger->flush();
-      numor->readInMemory();
-//    ui->textLogger->log(Logger::INFO) << "Finished reading" << numor << " in memory";
-//    ui->textLogger->flush();
 
-    int background_level=2;
+      ui->progressBar->setValue(i++);
+      ui->textLogger->log(Logger::INFO) << "Reading " << numor->_mm->getMetaData()->getKey<int>("Numor") << " in memory";
+      ui->textLogger->flush();
+      QCoreApplication::processEvents();
+      numor->readInMemory();
+
 
     // Get pointers to start of each frame
     std::vector<int*> temp(numor->_nblocks);
@@ -313,18 +288,17 @@ void MainWindow::on_action_peak_find_triggered()
 
     // Finding peaks
     SX::Geometry::blob3DCollection blobs;
-    ui->textLogger->log(Logger::INFO) << "Peak find starts";
-    ui->textLogger->flush();
     try
     {
-      blobs=SX::Geometry::findBlobs3D<int>(temp, 256,640, threshold*background_level, 5, 10000, confidence, 0);
+      blobs=SX::Geometry::findBlobs3D<int>(temp, 256,640, threshold+1, 5, 10000, confidence, 0);
     }catch(std::exception& e) // Warning if RAM error
     {
 
 
     }
-    ui->textLogger->log(Logger::INFO) << "Peak find finished, found " << blobs.size() << "peaks";
+    ui->textLogger->log(Logger::INFO) << "Found " << blobs.size() << " peaks";
     ui->textLogger->flush();
+    QCoreApplication::processEvents();
 
     //
     int i=0;
@@ -352,16 +326,19 @@ void MainWindow::on_action_peak_find_triggered()
         numor->_rpeaks.insert(Data::maprealPeaks::value_type(i++,p));
     }
 
-    ui->textLogger->log(Logger::INFO) << "Start integrating peaks";
+    ui->textLogger->log(Logger::INFO) << "Integrating peaks...";
     ui->textLogger->flush();
-    for (int i=0;i<numor->_rpeaks.size();++i)
-        numor->_rpeaks[i].integrate();
-    ui->textLogger->log(Logger::INFO) << "Finished integrating peaks";
-    ui->textLogger->flush();
+    QCoreApplication::processEvents();
+    for (auto& peak : numor->_rpeaks)
+        peak.second.integrate();
     //
     setCursor(Qt::ArrowCursor);
     numor->releaseMemory();
     }
+    updatePlot();
+    ui->progressBar->setValue(0);
+    ui->progressBar->setEnabled(false);
+
 }
 
 void MainWindow::on_textLogger_customContextMenuRequested(const QPoint &pos)
