@@ -36,7 +36,6 @@ HEADERS  += mainwindow.h \
     Plotter1D.h \
     PeakPlotter.h \
     slicerect.h \
-    DialogProgress.h \
     PeakTableView.h \
     DialogUnitCell.h
 
@@ -44,8 +43,7 @@ FORMS    += mainwindow.ui \
     dialog_PeakFind.ui \
     plotter1d.ui \
     peakplotter.ui \
-    dialog_UnitCell.ui \
-    dialog_Progress.ui
+    dialog_UnitCell.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../usr/local/NSXTool/ -lNSXTool
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../usr/local/NSXTool/ -lNSXTool

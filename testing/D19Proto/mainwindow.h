@@ -10,9 +10,8 @@
 #include "Logger.h"
 #include <QMenu>
 #include <DialogPeakFind.h>
-#include <DialogProgress.h>
 #include "Data.h"
-#include "ui_dialog_Progress.h"
+
 class QListWidgetItem;
 
 namespace Ui {
