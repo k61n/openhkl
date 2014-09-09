@@ -1,7 +1,10 @@
-#include "UnitCell.h"
 #include <cmath>
-#include "Units.h"
+#include <stdexcept>
+
 #include <boost/test/floating_point_comparison.hpp>
+
+#include "UnitCell.h"
+#include "Units.h"
 
 namespace SX
 {

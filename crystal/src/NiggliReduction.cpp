@@ -1,6 +1,8 @@
-#include "NiggliReduction.h"
 #include <cmath>
+#include <stdexcept>
 #include <iostream>
+
+#include "NiggliReduction.h"
 
 namespace SX
 {
