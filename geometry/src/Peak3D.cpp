@@ -73,14 +73,14 @@ void Peak3D::integrate()
 	const Eigen::Vector3d& upper=_bkg->getUpper();
 
 	//
-	int data_start=static_cast<int>(std::ceil(lower[2]));
-	int data_end=static_cast<int>(std::floor(upper[2]));
+	int data_start=static_cast<int>(std::floor(lower[2]));
+	int data_end=static_cast<int>(std::ceil(upper[2]));
 
-	int start_x=static_cast<int>(std::ceil(lower[0]));
-	int end_x=static_cast<int>(std::floor(upper[0]));
+	int start_x=static_cast<int>(std::floor(lower[0]));
+	int end_x=static_cast<int>(std::ceil(upper[0]));
 
-	int start_y=static_cast<int>(std::ceil(lower[1]));
-	int end_y=static_cast<int>(std::floor(upper[1]));
+	int start_y=static_cast<int>(std::floor(lower[1]));
+	int end_y=static_cast<int>(std::ceil(upper[1]));
 
 	Eigen::Vector4d point1, point2, point3, point4;
 
@@ -108,7 +108,53 @@ void Peak3D::integrate()
 			}
 		}
 	}
+	// Quick fix determine the limits of the peak range
+	int datastart=0;
+	int dataend=0;
+	bool startfound=false;
+	for (int i=0;i<_projectionPeak.size();++i)
+	{
+		if (!startfound && std::fabs(_projectionPeak[i])>1e-6)
+		{
+			datastart=i;
+			startfound=true;
+		}
+		if (startfound)
+		{
+			if (std::fabs(_projectionPeak[i])<1e-6)
+			{
+				dataend=i;
+				break;
+			}
+		}
+
+	}
+	//
+
+	Eigen::VectorXd bkg=_projection-_projectionPeak;
+	// Add one point left and right of the peak in omega
+	int max=_data->_mm->getMetaData()->getKey<int>("npdone");
+	if (datastart>1)
+		datastart--;
+	if (dataend<max-1)
+		dataend++;
+
+	// Safety check
+	if (datastart==dataend)
+		return;
+
+	double bkg_left=bkg[datastart];
+	double bkg_right=bkg[dataend];
+	double diff;
+	for (int i=datastart;i<=dataend;++i)
+	{
+		diff=bkg[i]-(bkg_left+static_cast<double>((i-datastart))/static_cast<double>((dataend-datastart))*(bkg_right-bkg_left));
+		if (diff>0)
+			_projectionPeak[i]+=diff;
+	}
 	_projectionBkg=_projection-_projectionPeak;
+
+
 	return;
 }
 
@@ -125,19 +171,29 @@ const Eigen::VectorXd& Peak3D::getBkgProjection() const
 	return _projectionBkg;
 }
 
-void Peak3D::setBasis(std::shared_ptr<Basis> basis)
+bool Peak3D::setBasis(std::shared_ptr<Basis> basis)
 {
 	_basis=basis;
 	_hkl=_basis->fromReciprocalStandard(_q);
 	_hkl[0]=std::round(_hkl[0]);
 	_hkl[1]=std::round(_hkl[1]);
 	_hkl[2]=std::round(_hkl[2]);
+
+	return (std::fabs(_hkl[0]-std::round(_hkl[0]))<0.05 && std::fabs(_hkl[1]-std::round(_hkl[1]))<0.05 && std::fabs(_hkl[2]-std::round(_hkl[2]))<0.05);
 }
 
 void Peak3D::setGammaNu(double gamma,double nu)
 {
 	_gamma=gamma;
 	_nu=nu;
+}
+double Peak3D::getGamma() const
+{
+	return _gamma;
+}
+double Peak3D::getNu() const
+{
+	return _nu;
 }
 
 double Peak3D::peakTotalCounts() const
@@ -147,7 +203,7 @@ double Peak3D::peakTotalCounts() const
 
 double Peak3D::getLorentzFactor() const
 {
-	return 1.0/(sin(_gamma)*cos(_nu));
+	return 1.0/(sin(std::fabs(_gamma))*cos(_nu));
 }
 
 }

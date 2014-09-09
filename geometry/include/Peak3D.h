@@ -79,6 +79,8 @@ public:
 	//!
 	const IData* getData() const { return _data;}
 	void setGammaNu(double gamma,double nu);
+	double getGamma() const;
+	double getNu() const;
 	//! Get the projection of total data in the bounding box
 	const Eigen::VectorXd& getProjection() const;
 	const Eigen::VectorXd& getPeakProjection() const;
