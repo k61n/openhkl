@@ -14,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Unit cell</string>
   </property>
   <property name="modal">
    <bool>true</bool>
@@ -228,7 +228,7 @@
      <string/>
     </property>
     <property name="icon">
-     <iconset resource="NSXQt.qrc">
+     <iconset resource="../NSXQt.qrc">
       <normaloff>:/resources/unitCellIcon.png</normaloff>:/resources/unitCellIcon.png</iconset>
     </property>
     <property name="iconSize">
@@ -251,7 +251,7 @@
      <string/>
     </property>
     <property name="icon">
-     <iconset resource="NSXQt.qrc">
+     <iconset resource="../NSXQt.qrc">
       <normaloff>:/resources/unitCellTransformIcon.png</normaloff>:/resources/unitCellTransformIcon.png</iconset>
     </property>
     <property name="iconSize">
@@ -549,7 +549,7 @@
      <string/>
     </property>
     <property name="icon">
-     <iconset resource="NSXQt.qrc">
+     <iconset resource="../NSXQt.qrc">
       <normaloff>:/resources/toHKLIcon.png</normaloff>:/resources/toHKLIcon.png</iconset>
     </property>
     <property name="iconSize">
@@ -562,7 +562,7 @@
   </widget>
  </widget>
  <resources>
-  <include location="NSXQt.qrc"/>
+  <include location="../NSXQt.qrc"/>
  </resources>
  <connections/>
 </ui>
