@@ -44,7 +44,9 @@ PeakPlotter::PeakPlotter(QWidget *parent) :
     QVBoxLayout* vbox = new QVBoxLayout( this );
     vbox->addWidget(ui->widget);
     ui->widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
+    QCPPlotTitle* element=new QCPPlotTitle(customPlot, "");
+    element->setFont(QFont("Arial",12,-1,true));
+    customPlot->plotLayout()->addElement(0, 0, element);
 }
 
 PeakPlotter::~PeakPlotter()
@@ -119,9 +121,13 @@ void PeakPlotter::setPeak(const SX::Geometry::Peak3D& peak)
     double l=peak.getLorentzFactor();
     info+="Cor. int. ("+QString((QChar) 0x03C3)+"I): "+QString::number(intensity/l,'f',2)+" ("+QString::number(sI/l,'f',2)+")\n";
 
-    QCPPlotTitle* element=new QCPPlotTitle(customPlot, info);
-    element->setFont(QFont("times",12,-1,true));
-    customPlot->plotLayout()->addElement(0, 0, element);
+
+    QCPPlotTitle* title=dynamic_cast<QCPPlotTitle*>(customPlot->plotLayout()->element(0,0));
+    if (title)
+    {
+        title->setText(info);
+    }
+    customPlot->replot();
 }
 
 void PeakPlotter::mousePress()

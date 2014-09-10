@@ -237,13 +237,6 @@ void MainWindow::on_numor_Widget_itemActivated(QListWidgetItem *item)
 }
 
 
-
-void MainWindow::ShowContextMenu(const QPoint& pos)
-{
-    loggerContextMenu ->exec(QCursor::pos());
-}
-
-
 void MainWindow::on_action_peak_find_triggered()
 {
 
@@ -290,7 +283,7 @@ void MainWindow::on_action_peak_find_triggered()
     SX::Geometry::blob3DCollection blobs;
     try
     {
-      blobs=SX::Geometry::findBlobs3D<int>(temp, 256,640, threshold+1, 5, 10000, confidence, 0);
+      blobs=SX::Geometry::findBlobs3D<int>(temp, 256,640, threshold+2, 30, 10000, confidence, 0);
     }catch(std::exception& e) // Warning if RAM error
     {
 
@@ -339,11 +332,6 @@ void MainWindow::on_action_peak_find_triggered()
     ui->progressBar->setValue(0);
     ui->progressBar->setEnabled(false);
 
-}
-
-void MainWindow::on_textLogger_customContextMenuRequested(const QPoint &pos)
-{
-    std::cout  << pos.x() << std::endl;
 }
 
 void MainWindow::resizeEvent(QResizeEvent *event)

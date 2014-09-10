@@ -13,6 +13,7 @@
 
 class Logger : public QTextEdit
 {
+    Q_OBJECT
 public:
 
     enum LEVEL {DEBUG,INFO,WARNING,ERROR};
@@ -26,7 +27,6 @@ public:
 
     void insertFromMimeData(const QMimeData* source);
     std::ostringstream& log(LEVEL level=INFO);
-
     void flush();
 
 private:
@@ -36,5 +36,9 @@ private:
     void dropTextFile(const QUrl& url);
 
     std::ostringstream os;
+public slots:
+    void customMenuRequested(QPoint pos);
+    void write2pdf();
+
 };
 #endif // LOGGER_H

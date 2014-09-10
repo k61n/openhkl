@@ -44,10 +44,6 @@ private slots:
 
     void on_numor_Widget_itemActivated(QListWidgetItem *item);
 
-    void ShowContextMenu(const QPoint& pos);
-
-    void on_textLogger_customContextMenuRequested(const QPoint &pos);
-
     void resizeEvent(QResizeEvent *);
     void on_actionUnit_Cell_triggered();
 
@@ -61,7 +57,7 @@ private:
     Ui::MainWindow *ui;
     QGraphicsScene* scene;
     std::unordered_map<std::string,Data> _data;
-    QMenu* loggerContextMenu;
+//    QMenu* loggerContextMenu;
 protected:
 };
 

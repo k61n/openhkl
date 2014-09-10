@@ -22,7 +22,6 @@ public:
     explicit DialogUnitCell(QWidget *parent = 0):QDialog(parent),ui(new Ui::DialogUnitCell)
     {
         ui->setupUi(this);
-        this->setModal(true);
         ui->labelalpha->setText(QString((QChar) 0x03B1));
         ui->labelbeta->setText(QString((QChar) 0x03B2));
         ui->labelgamma->setText(QString((QChar) 0x03B3));

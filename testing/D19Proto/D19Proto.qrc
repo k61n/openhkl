@@ -11,5 +11,8 @@
         <file>resources/unitCellTransformIcon.png</file>
         <file>resources/verticalSliceIcon.png</file>
         <file>resources/zoomIcon.png</file>
+        <file>resources/writeToPDFIcon.png</file>
+        <file>resources/splashScreen.png</file>
+        <file>resources/NSXToolIcon.png</file>
     </qresource>
 </RCC>

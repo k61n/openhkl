@@ -1,7 +1,10 @@
-#include "Logger.h"
-
+#include <QAction>
+#include <QMenu>
+#include <QPrinter>
+#include <QFileDialog>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
+#include "Logger.h"
 std::unordered_map<Logger::LEVEL,std::string, std::hash<int> > Logger::Levels = { {Logger::LEVEL::DEBUG,"DEBUG"},
                                                                                   {Logger::LEVEL::INFO,"INFO"},
                                                                                   {Logger::LEVEL::WARNING,"WARNING"},
@@ -9,7 +12,8 @@ std::unordered_map<Logger::LEVEL,std::string, std::hash<int> > Logger::Levels = 
 
 Logger::Logger(QWidget* parent):QTextEdit(parent)
 {
-
+    this->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(this,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(customMenuRequested(QPoint)));
 }
 
 bool Logger::canInsertFromMimeData(const QMimeData* source) const
@@ -97,4 +101,25 @@ void Logger::flush()
     os.str("");
     os.clear();
     setTextColor(QColor("black"));
+}
+
+void Logger::customMenuRequested(QPoint pos)
+{
+    QMenu* menu=this->createStandardContextMenu();
+    menu->addSeparator();
+    QAction* write2pdf=menu->addAction(QIcon(":/resources/writeToPDFIcon.png"),"Save to pdf");
+    write2pdf->setShortcut(QKeySequence::Save);
+    menu->popup(viewport()->mapToGlobal(pos));
+    connect(write2pdf,SIGNAL(triggered()),this,SLOT(write2pdf()));
+}
+
+void Logger::write2pdf()
+{
+    QString fileName = QFileDialog::getSaveFileName(this,
+        tr("save as pdf"), "", tr("PDF Files (*.pdf)"));
+    QPrinter printer;
+    printer.setPageSize(QPrinter::Letter);
+    printer.setOutputFormat(QPrinter::PdfFormat);
+    printer.setOutputFileName(fileName);
+    this->print(&printer);
 }

@@ -3,7 +3,7 @@
  <class>DialogPeakFind</class>
  <widget class="QDialog" name="DialogPeakFind">
   <property name="windowModality">
-   <enum>Qt::WindowModal</enum>
+   <enum>Qt::ApplicationModal</enum>
   </property>
   <property name="geometry">
    <rect>
@@ -21,6 +21,9 @@
   </property>
   <property name="windowTitle">
    <string>Search Peaks</string>
+  </property>
+  <property name="modal">
+   <bool>true</bool>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
@@ -40,7 +43,7 @@
       <property name="styleSheet">
        <string notr="true">QGroupBox {
      background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                       stop: 0 #E0E0E0, stop: 1 #BBBBFF);
+                                       stop: 0 #FFFFFF, stop: 1 #DDDDFF);
      border: 1px solid black;
      border-radius: 5px;
      margin-top: 1ex; /* leave space at the top for the title */
