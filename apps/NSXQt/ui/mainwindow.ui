@@ -23,7 +23,7 @@
    <string>Integration Software Alpha version (Sept 2014)</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="NSXQt.qrc">
+   <iconset resource="../NSXQt.qrc">
     <normaloff>:/resources/NSXToolIcon.png</normaloff>:/resources/NSXToolIcon.png</iconset>
   </property>
   <property name="windowOpacity">
@@ -1239,7 +1239,7 @@ QDockWidget::title {
   </widget>
   <action name="action_open">
    <property name="icon">
-    <iconset resource="NSXQt.qrc">
+    <iconset resource="../NSXQt.qrc">
      <normaloff>:/resources/openFileIcon.png</normaloff>:/resources/openFileIcon.png</iconset>
    </property>
    <property name="text">
@@ -1251,7 +1251,7 @@ QDockWidget::title {
   </action>
   <action name="action_peak_find">
    <property name="icon">
-    <iconset resource="NSXQt.qrc">
+    <iconset resource="../NSXQt.qrc">
      <normaloff>:/resources/findPeakIcon.png</normaloff>:/resources/findPeakIcon.png</iconset>
    </property>
    <property name="text">
@@ -1305,7 +1305,7 @@ QDockWidget::title {
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="NSXQt.qrc"/>
+  <include location="../NSXQt.qrc"/>
  </resources>
  <connections>
   <connection>

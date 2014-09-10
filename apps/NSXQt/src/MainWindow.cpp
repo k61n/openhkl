@@ -77,11 +77,10 @@ MainWindow::~MainWindow()
 void MainWindow::on_action_open_triggered()
 {
     QFileDialog dialog;
-    dialog.setDirectory("/home/chapon/Data/D19/July2014/data/DKDP/");
     dialog.setFileMode(QFileDialog::ExistingFiles);
     QStringList fileNames;qDebug() << "Read " << fileNames.size() << " file(s)";
 
-    fileNames= dialog.getOpenFileNames(this,"select numors","/home/chapon/Data/D19/July2014/data/DKDP/");
+    fileNames= dialog.getOpenFileNames(this,"select numors","");
     // No files selected
     if (fileNames.isEmpty())
         return;

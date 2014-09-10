@@ -7,12 +7,12 @@
         <file>resources/openFileIcon.png</file>
         <file>resources/peakListIcon.png</file>
         <file>resources/singlePeakIcon.png</file>
-        <file>resources/splashScreen.png</file>
         <file>resources/toHKLIcon.png</file>
         <file>resources/unitCellIcon.png</file>
         <file>resources/unitCellTransformIcon.png</file>
         <file>resources/verticalSliceIcon.png</file>
         <file>resources/writeToPDFIcon.png</file>
         <file>resources/zoomIcon.png</file>
+        <file>resources/splashScreen.png</file>
     </qresource>
 </RCC>
