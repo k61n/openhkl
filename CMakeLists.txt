@@ -35,10 +35,6 @@ include_directories(${CMINPACK_INCLUDE_DIR})
 FIND_PACKAGE(Eigen3)
 include_directories(${EIGEN3_INCLUDE_DIR})
 
-###### Find Python 
-find_package(PythonLibs REQUIRED)
-include_directories(${PYTHON_INCLUDE_DIRS})
-
 
 IF(CMAKE_COMPILER_IS_GNUCXX)
   ADD_DEFINITIONS(
@@ -111,7 +107,7 @@ INSTALL(TARGETS NSXTool DESTINATION NSXTool)
 # 
 IF(UNIX)
 	SET(INCLUDE_DIR "/usr/local/include/NSXTool/")
-	file(GLOB_RECURSE all_headers *.h)
+	file(GLOB_RECURSE all_headers */include/*.h)
 	INSTALL(CODE "MESSAGE(\"Installing headers...\")")
 	INSTALL(FILES ${all_headers}	DESTINATION ${INCLUDE_DIR})
 ENDIF(UNIX)
