@@ -23,15 +23,15 @@ SOURCES += src/Main.cpp \
     src/PeakPlotter.cpp \
     src/SliceRect.cpp \
     src/PeakTableView.cpp \
-    src/Logger.cpp \
     src/DialogTransformationMatrix.cpp \
-    src/DialogUnitCell.cpp
+    src/DialogUnitCell.cpp \
+    src/NoteBook.cpp \
+    src/Logger.cpp
 
 HEADERS  += include/MainWindow.h \
     include/DetectorView.h \
     include/DialogPeakFind.h \
     include/Data.h \
-    include/Logger.h \
     include/ColorMap.h \
     externals/include/qcustomplot.h \
     include/Plotter1D.h \
@@ -39,7 +39,9 @@ HEADERS  += include/MainWindow.h \
     include/SliceRect.h \
     include/PeakTableView.h \
     include/DialogUnitCell.h \
-    include/DialogTransformationMatrix.h
+    include/DialogTransformationMatrix.h \
+    include/NoteBook.h \
+    include/Logger.h
 
 FORMS    += ui/mainwindow.ui \
     ui/dialog_PeakFind.ui \

@@ -1,44 +1,27 @@
 #ifndef LOGGER_H
 #define LOGGER_H
+#include <QtMessageHandler>
+#include "Singleton.h"
 
-#include <sstream>
-#include <string>
-#include <unordered_map>
+// Forwards
+class QTextEdit;
 
-#include <QTextEdit>
-#include <QMimeData>
-#include <QUrl>
-#include <QFileInfo>
-#include <QImageReader>
+// Function to handle calls from qDebug(), qWarning(), qCritical() and qFatal()
+void customMessageHandler(QtMsgType type, const QMessageLogContext& context, const QString& msg);
 
-class Logger : public QTextEdit
+// A singleton Logger class to log all applications output
+class Logger : public SX::Kernel::Singleton<Logger,SX::Kernel::Constructor,SX::Kernel::Destructor>
 {
-    Q_OBJECT
 public:
-
-    enum LEVEL {DEBUG,INFO,WARNING,ERROR};
-
-    static std::unordered_map<LEVEL,std::string, std::hash<int>> Levels;
-
-    Logger(QWidget* parent=0);
-    virtual ~Logger();
-
-    bool canInsertFromMimeData(const QMimeData* source) const;
-
-    void insertFromMimeData(const QMimeData* source);
-    std::ostringstream& log(LEVEL level=INFO);
-    void flush();
-
+    // Attach a QTextEdit to the logger
+    void setNoteBook(QTextEdit* editor);
+    // Return the current text editor
+    QTextEdit* getNoteBook();
 private:
-
-    void dropImage(const QUrl& url, const QImage& image);
-
-    void dropTextFile(const QUrl& url);
-
-    std::ostringstream os;
-public slots:
-    void customMenuRequested(QPoint pos);
-    void write2pdf();
+    // The notebook that will receive string messages
+    QTextEdit* _notebook;
 
 };
+
+
 #endif // LOGGER_H

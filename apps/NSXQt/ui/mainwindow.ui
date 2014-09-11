@@ -1202,7 +1202,7 @@ QDockWidget::title {
     <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
    </property>
    <property name="allowedAreas">
-    <set>Qt::BottomDockWidgetArea|Qt::TopDockWidgetArea</set>
+    <set>Qt::BottomDockWidgetArea|Qt::RightDockWidgetArea|Qt::TopDockWidgetArea</set>
    </property>
    <property name="windowTitle">
     <string>Logger</string>
@@ -1213,7 +1213,7 @@ QDockWidget::title {
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
-      <widget class="Logger" name="textLogger">
+      <widget class="NoteBook" name="noteBook">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -1294,14 +1294,14 @@ QDockWidget::title {
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>Logger</class>
-   <extends>QTextEdit</extends>
-   <header>Logger.h</header>
-  </customwidget>
-  <customwidget>
    <class>DetectorView</class>
    <extends>QGraphicsView</extends>
    <header>DetectorView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>NoteBook</class>
+   <extends>QTextEdit</extends>
+   <header>NoteBook.h</header>
   </customwidget>
  </customwidgets>
  <resources>

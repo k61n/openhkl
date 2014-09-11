@@ -11,7 +11,6 @@
 #include "BlobFinder.h"
 #include <Ellipsoid.h>
 #include <Plotter1D.h>
-#include <QDebug>
 #include "IShape.h"
 #include "ILLAsciiDataReader.h"
 #include "Units.h"
@@ -26,14 +25,22 @@
 #include <functional>
 #include <PeakTableView.h>
 #include <DialogUnitCell.h>
+#include "Logger.h"
+#include "NoteBook.h"
+#include <QtDebug>
 
 using namespace SX::Units;
+
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),scene(new QGraphicsScene)
 {
     ui->setupUi(this);
+
+    Logger::Instance()->setNoteBook(ui->noteBook);
+    qInstallMessageHandler(customMessageHandler);
 
     ui->mainToolBar->setIconSize(QSize(32,32));
 
@@ -73,6 +80,7 @@ MainWindow::~MainWindow()
 
 
 
+
 void MainWindow::on_action_open_triggered()
 {
     QFileDialog dialog;
@@ -98,9 +106,7 @@ void MainWindow::on_action_open_triggered()
             _data[index].fromFile(fileNames[i].toStdString());
         }catch(std::exception& e)
         {
-           ui->textLogger->log(Logger::ERROR) << "Error reading numor: " << fileNames[i].toStdString() << std::endl << e.what();
-           ui->textLogger->flush();
-
+           qWarning() << "Error reading numor: " + fileNames[i] + " " + QString(e.what());
            continue;
         }
         ui->numor_Widget->addItem(litem);
@@ -155,8 +161,6 @@ void MainWindow::updatePlot()
         // Make sure that the frame value for previously selected file is valid for current one
         if (frame>ptr->_nblocks-1)
             frame=0;
-        // Keep previous color
-        int colormax= ui->dial->value();
         ui->_dview->updateView(ptr,frame);
     }
 
@@ -261,9 +265,7 @@ void MainWindow::on_action_peak_find_triggered()
     {
 
       ui->progressBar->setValue(i++);
-      ui->textLogger->log(Logger::INFO) << "Reading " << numor->_mm->getMetaData()->getKey<int>("Numor") << " in memory";
-      ui->textLogger->flush();
-      QCoreApplication::processEvents();
+      qDebug() << "Reading " << numor->_mm->getMetaData()->getKey<int>("Numor") << " in memory";
       numor->readInMemory();
 
 
@@ -286,9 +288,7 @@ void MainWindow::on_action_peak_find_triggered()
 
 
     }
-    ui->textLogger->log(Logger::INFO) << "Found " << blobs.size() << " peaks";
-    ui->textLogger->flush();
-    QCoreApplication::processEvents();
+    qDebug() << "Found " << blobs.size() << " peaks";
 
     //
     int i=0;
@@ -316,9 +316,7 @@ void MainWindow::on_action_peak_find_triggered()
         numor->_rpeaks.insert(Data::maprealPeaks::value_type(i++,p));
     }
 
-    ui->textLogger->log(Logger::INFO) << "Integrating peaks...";
-    ui->textLogger->flush();
-    QCoreApplication::processEvents();
+    qDebug() << "Integrating peaks...";
     for (auto& peak : numor->_rpeaks)
         peak.second.integrate();
     //
@@ -335,10 +333,6 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 {
     updatePlot();
 }
-
-
-
-
 
 void MainWindow::on_actionUnit_Cell_triggered()
 {

@@ -1,3 +1,5 @@
+#include <QtDebug>
+
 #include "DialogUnitCell.h"
 
 DialogUnitCell::DialogUnitCell(QWidget *parent):QDialog(parent),ui(new Ui::DialogUnitCell)
@@ -9,7 +11,6 @@ DialogUnitCell::DialogUnitCell(QWidget *parent):QDialog(parent),ui(new Ui::Dialo
     connect(ui->pushButtonFindUnitCell,SIGNAL(clicked()),this,SLOT(getUnitCell()));
     connect(ui->pushButtonFindReindexHKL,SIGNAL(clicked()),this,SLOT(reindexHKL()));
     connect(ui->pushButtonGivePMatrix,SIGNAL(clicked()),this,SLOT(setTransformationMatrix()));
-
 }
 void DialogUnitCell::setPeaks(const std::vector<std::reference_wrapper<SX::Geometry::Peak3D>>& peaks)
 {
@@ -47,6 +48,7 @@ void DialogUnitCell::getUnitCell()
     std::shared_ptr<SX::Geometry::Basis> conventional(new SX::Geometry::Basis(b));
     _basis=conventional;
     setUpValues();
+
 }
 void DialogUnitCell::setUpValues()
 {

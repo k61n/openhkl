@@ -30,7 +30,6 @@ public slots:
     void setUpValues();
     void setTransformationMatrix();
     void reindexHKL();
-
 private slots:
 
 private:
