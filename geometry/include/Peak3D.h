@@ -81,16 +81,34 @@ public:
 	void setGammaNu(double gamma,double nu);
 	double getGamma() const;
 	double getNu() const;
-	//! Get the projection of total data in the bounding box
-	const Eigen::VectorXd& getProjection() const;
-	const Eigen::VectorXd& getPeakProjection() const;
-	const Eigen::VectorXd& getBkgProjection() const;
+	//! Get the projection of total data in the bounding box.
+	Eigen::VectorXd getProjection() const;
+	Eigen::VectorXd getPeakProjection() const;
+	Eigen::VectorXd getBkgProjection() const;
+	Eigen::VectorXd getProjectionSigma() const;
+	Eigen::VectorXd getPeakProjectionSigma() const;
+	Eigen::VectorXd getBkgProjectionSigma() const;
 	const IShape<double,3>* getPeak() const { return _peak;}
 	const IShape<double,3>* getBackground() const {return _bkg;}
-	//! Total intensity in the peak
-   	double peakTotalCounts() const;
-   	//!
+	//! Return the scaled intensity of the peak.
+   	double getScaledIntensity() const;
+	//! Return the raw intensity of the peak.
+   	double getRawIntensity() const;
+	//! Returns the error on the raw intensity.
+   	double getRawSigma() const;
+	//! Returns the error on the scaled intensity.
+   	double getScaledSigma() const;
+   	//! Return the lorentz factor of the peak.
    	double getLorentzFactor() const;
+
+   	//! Return the scaling factor.
+   	double getScale() const;
+   	//! Rescale the current scaling factor by scale.
+   	void rescale(double factor);
+   	//! Set the scaling factor.
+   	void setScale(double factor);
+
+
 //	//! Total intensity in the background
 //	double bkgTotalCounts() const;
 //	//! Volume of the peak
@@ -131,6 +149,10 @@ private:
 	Eigen::VectorXd _projectionBkg;
 	std::shared_ptr<SX::Geometry::Basis> _basis;
 	double _gamma,_nu;
+
+	double _counts, _countsSigma;
+
+	double _scale;
 };
 
 

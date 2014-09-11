@@ -1,5 +1,7 @@
-#include "Peak3D.h"
 #include <cmath>
+#include <stdexcept>
+
+#include "Peak3D.h"
 
 namespace SX
 {
@@ -15,7 +17,8 @@ Peak3D::Peak3D(IData* data):
 		_hkl(Eigen::Vector3d::Zero()),
 		_q(Eigen::Vector3d::Zero()),
 		_peak(nullptr),
-		_bkg(nullptr)
+		_bkg(nullptr),
+		_scale(1.0)
 {
 }
 
@@ -154,21 +157,41 @@ void Peak3D::integrate()
 	}
 	_projectionBkg=_projection-_projectionPeak;
 
+	_counts = _projectionPeak.sum();
+	_countsSigma = std::sqrt(_counts);
+
 
 	return;
 }
 
-const Eigen::VectorXd& Peak3D::getProjection() const
+Eigen::VectorXd Peak3D::getProjection() const
 {
-	return _projection;
+	return _scale*_projection;
 }
-const Eigen::VectorXd& Peak3D::getPeakProjection() const
+
+Eigen::VectorXd Peak3D::getPeakProjection() const
 {
-	return _projectionPeak;
+	return _scale*_projectionPeak;
 }
-const Eigen::VectorXd& Peak3D::getBkgProjection() const
+
+Eigen::VectorXd Peak3D::getBkgProjection() const
 {
-	return _projectionBkg;
+	return _scale*_projectionBkg;
+}
+
+Eigen::VectorXd Peak3D::getProjectionSigma() const
+{
+	return _scale*(_projection.array().sqrt());
+}
+
+Eigen::VectorXd Peak3D::getPeakProjectionSigma() const
+{
+	return _scale*(_projectionPeak.array().sqrt());
+}
+
+Eigen::VectorXd Peak3D::getBkgProjectionSigma() const
+{
+	return _scale*(_projectionBkg.array().sqrt());
 }
 
 bool Peak3D::setBasis(std::shared_ptr<Basis> basis)
@@ -196,14 +219,45 @@ double Peak3D::getNu() const
 	return _nu;
 }
 
-double Peak3D::peakTotalCounts() const
+double Peak3D::getRawIntensity() const
 {
-	return _projectionPeak.sum();
+	return _counts;
+}
+
+double Peak3D::getScaledIntensity() const
+{
+	return _scale*_counts;
+}
+
+double Peak3D::getRawSigma() const
+{
+	return _countsSigma;
+}
+
+double Peak3D::getScaledSigma() const
+{
+	return _scale*_countsSigma;
 }
 
 double Peak3D::getLorentzFactor() const
 {
 	return 1.0/(sin(std::fabs(_gamma))*cos(_nu));
+}
+
+double Peak3D::getScale() const
+{
+	return _scale;
+}
+
+void Peak3D::rescale(double scale)
+{
+	_scale *= scale;
+}
+
+void Peak3D::setScale(double scale)
+{
+	_scale = scale;
+
 }
 
 }
