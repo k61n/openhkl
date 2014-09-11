@@ -63,7 +63,6 @@ void Data::fromFile(const std::string& filename)
         _phi=meta->getKey<double>("phi")*deg;
 
         double scanstart=meta->getKey<double>("scanstart")*deg;
-        double scanwidth=meta->getKey<double>("scanwidth")*deg;
         double scanstep=meta->getKey<double>("scanstep")*deg;
         int npdone=meta->getKey<int>("npdone");
 

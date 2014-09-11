@@ -64,7 +64,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->selectionMode,SIGNAL(currentIndexChanged(int)),ui->_dview,SLOT(setCutterMode(int)));
     connect(ui->dial,SIGNAL(valueChanged(int)),ui->_dview,SLOT(setMaxIntensity(int)));
-
 }
 
 MainWindow::~MainWindow()
@@ -78,8 +77,7 @@ void MainWindow::on_action_open_triggered()
 {
     QFileDialog dialog;
     dialog.setFileMode(QFileDialog::ExistingFiles);
-    QStringList fileNames;qDebug() << "Read " << fileNames.size() << " file(s)";
-
+    QStringList fileNames;
     fileNames= dialog.getOpenFileNames(this,"select numors","");
     // No files selected
     if (fileNames.isEmpty())
@@ -98,10 +96,10 @@ void MainWindow::on_action_open_triggered()
         try
         {
             _data[index].fromFile(fileNames[i].toStdString());
-        }catch(...)
+        }catch(std::exception& e)
         {
-
-           qDebug() << "File: " << fileNames[i] << " is not readable as a Numor";
+           ui->textLogger->log(Logger::ERROR) << "Error reading numor: " << fileNames[i].toStdString() << std::endl << e.what();
+           ui->textLogger->flush();
 
            continue;
         }
