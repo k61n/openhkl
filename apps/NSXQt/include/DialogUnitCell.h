@@ -14,6 +14,7 @@
 #include "GruberReduction.h"
 #include "Units.h"
 #include <QMessageBox>
+#include <DialogTransformationMatrix.h>
 
 class DialogUnitCell : public QDialog
 {
@@ -27,6 +28,7 @@ public:
         ui->labelgamma->setText(QString((QChar) 0x03B3));
         connect(ui->pushButtonFindUnitCell,SIGNAL(clicked()),this,SLOT(getUnitCell()));
         connect(ui->pushButtonFindReindexHKL,SIGNAL(clicked()),this,SLOT(reindexHKL()));
+        connect(ui->pushButtonGivePMatrix,SIGNAL(clicked()),this,SLOT(setTransformationMatrix()));
 
     }
     void setPeaks(const std::vector<std::reference_wrapper<SX::Geometry::Peak3D>>& peaks)
@@ -86,6 +88,12 @@ public slots:
         ui->doubleSpinBoxUB20->setValue(M(2,0));
         ui->doubleSpinBoxUB21->setValue(M(2,1));
         ui->doubleSpinBoxUB22->setValue(M(2,2));
+    }
+
+    void setTransformationMatrix()
+    {
+        DialogTransformationmatrix* dialog=new DialogTransformationmatrix(this);
+        dialog->exec();
     }
 
     void reindexHKL()

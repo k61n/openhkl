@@ -11,8 +11,7 @@ TARGET = nsxtool
 TEMPLATE = app
 
 
-RESOURCES = \
-    NSXQt.qrc
+RESOURCES = NSXQt.qrc \
 
 SOURCES += src/Main.cpp \
     src/MainWindow.cpp \
@@ -24,7 +23,8 @@ SOURCES += src/Main.cpp \
     src/PeakPlotter.cpp \
     src/SliceRect.cpp \
     src/PeakTableView.cpp \
-    src/Logger.cpp
+    src/Logger.cpp \
+    src/DialogTransformationMatrix.cpp
 
 HEADERS  += include/MainWindow.h \
     include/DetectorView.h \
@@ -37,13 +37,15 @@ HEADERS  += include/MainWindow.h \
     include/PeakPlotter.h \
     include/SliceRect.h \
     include/PeakTableView.h \
-    include/DialogUnitCell.h
+    include/DialogUnitCell.h \
+    include/DialogTransformationMatrix.h
 
 FORMS    += ui/mainwindow.ui \
     ui/dialog_PeakFind.ui \
     ui/plotter1d.ui \
     ui/peakplotter.ui \
-    ui/dialog_UnitCell.ui
+    ui/dialog_UnitCell.ui \
+    ui/dialogtransformationmatrix.ui
 
 win32:CONFIG(release, debug|release): LIBS += -lNSXTool
 else:unix: LIBS += -lNSXTool -lgomp -lboost_date_time

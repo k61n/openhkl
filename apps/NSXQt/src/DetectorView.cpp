@@ -379,7 +379,7 @@ void DetectorView::mousePressEvent(QMouseEvent* event)
                     int peak_number=s.toInt();
                     if (!_peakplotter)
                         _peakplotter=new PeakPlotter(this);
-                    _peakplotter->setPeak(_ptrData->_rpeaks[peak_number]);
+                    _peakplotter->setPeak(&_ptrData->_rpeaks[peak_number]);
                     _peakplotter->show();
                     return;
                 }

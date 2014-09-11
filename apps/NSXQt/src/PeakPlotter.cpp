@@ -4,7 +4,7 @@
 #include "Units.h"
 
 PeakPlotter::PeakPlotter(QWidget *parent) :
-    QDialog(parent),
+    QDialog(parent), _current(nullptr),
     ui(new Ui::PeakPlotter)
 {
     ui->setupUi(this);
@@ -47,6 +47,7 @@ PeakPlotter::PeakPlotter(QWidget *parent) :
     QCPPlotTitle* element=new QCPPlotTitle(customPlot, "");
     element->setFont(QFont("Arial",12,-1,true));
     customPlot->plotLayout()->addElement(0, 0, element);
+
 }
 
 PeakPlotter::~PeakPlotter()
@@ -75,13 +76,24 @@ void PeakPlotter::keyPressEvent(QKeyEvent* event)
     }
 }
 
-void PeakPlotter::setPeak(const SX::Geometry::Peak3D& peak)
+void PeakPlotter::setPeak(SX::Geometry::Peak3D *peak)
+{
+    _current = peak;
+    update();
+}
+
+void PeakPlotter::update()
 {
     QCustomPlot* customPlot=ui->widget;
     // Get the data
-    const Eigen::VectorXd& total=peak.getProjection();
-    const Eigen::VectorXd& peake=peak.getPeakProjection();
-    const Eigen::VectorXd& bkge=peak.getBkgProjection();
+    const Eigen::VectorXd& total=_current->getProjection();
+    const Eigen::VectorXd& peak=_current->getPeakProjection();
+    const Eigen::VectorXd& bkg=_current->getBkgProjection();
+
+    const Eigen::VectorXd& totalSigma=_current->getProjectionSigma();
+    const Eigen::VectorXd& peakSigma=_current->getPeakProjectionSigma();
+    const Eigen::VectorXd& bkgSigma=_current->getBkgProjectionSigma();
+
     // Transform to QDouble
     QVector<double> qx(total.size());
     QVector<double> qtotal(total.size());
@@ -90,15 +102,15 @@ void PeakPlotter::setPeak(const SX::Geometry::Peak3D& peak)
     QVector<double> qbkg(total.size());
 
     //Copy the data
-    double min=std::floor(peak.getBackground()->getLower()[2]);
-    double max=std::ceil(peak.getBackground()->getUpper()[2]);
+    double min=std::floor(_current->getBackground()->getLower()[2]);
+    double max=std::ceil(_current->getBackground()->getUpper()[2]);
     for (int i=0;i<total.size();++i)
     {
         qx[i]= min + static_cast<double>(i)*(max-min)/(total.size()-1);
         qtotal[i]=total[i];
-        qtotalE[i]=sqrt(total[i]);
-        qpeak[i]=peake[i];
-        qbkg[i]=bkge[i];
+        qtotalE[i]=totalSigma[i];
+        qpeak[i]=peak[i];
+        qbkg[i]=bkg[i];
     }
 
     customPlot->graph(0)->setDataValueError(qx, qtotal, qtotalE);
@@ -109,16 +121,16 @@ void PeakPlotter::setPeak(const SX::Geometry::Peak3D& peak)
 
     // Now update text info:
 
-    const Eigen::RowVector3d& hkl=peak.getMillerIndices();
+    const Eigen::RowVector3d& hkl=_current->getMillerIndices();
 
     QString info="(h,k,l):"+QString::number(hkl[0])+","+QString::number(hkl[1])+","+QString::number(hkl[2])+"\n";
-    double gamma=peak.getGamma()/SX::Units::deg;
-    double nu=peak.getNu()/SX::Units::deg;
+    double gamma=_current->getGamma()/SX::Units::deg;
+    double nu=_current->getNu()/SX::Units::deg;
     info+=QString((QChar) 0x03B3)+","+QString((QChar) 0x03BD)+":"+QString::number(gamma,'f',2)+","+QString::number(nu,'f',2)+"\n";
-    double intensity=peak.peakTotalCounts();
-    double sI=sqrt(intensity);
+    double intensity=_current->getScaledIntensity();
+    double sI=_current->getScaledSigma();
     info+="Intensity ("+QString((QChar) 0x03C3)+"I): "+QString::number(intensity)+" ("+QString::number(sI,'f',2)+")\n";
-    double l=peak.getLorentzFactor();
+    double l=_current->getLorentzFactor();
     info+="Cor. int. ("+QString((QChar) 0x03C3)+"I): "+QString::number(intensity/l,'f',2)+" ("+QString::number(sI/l,'f',2)+")\n";
 
 
@@ -128,6 +140,8 @@ void PeakPlotter::setPeak(const SX::Geometry::Peak3D& peak)
         title->setText(info);
     }
     customPlot->replot();
+
+    QDialog::update();
 }
 
 void PeakPlotter::mousePress()

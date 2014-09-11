@@ -14,5 +14,7 @@
         <file>resources/writeToPDFIcon.png</file>
         <file>resources/zoomIcon.png</file>
         <file>resources/splashScreen.png</file>
+        <file>resources/transformationMatrixImage.png</file>
+        <file>resources/matrixIcon.png</file>
     </qresource>
 </RCC>

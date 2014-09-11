@@ -25,12 +25,13 @@ public slots:
     void writeFullProf();
     //! Write the currrent list to ShelX
     void writeShelX();
-    //!
+    //! Normalize to monitor.
+    void normalizeToMonitor();
 private:
     MainWindow* _main;
     PeakPlotter* _plotter;
     void constructTable();
-    std::vector<std::reference_wrapper<const SX::Geometry::Peak3D>> _peaks;
+    std::vector<std::reference_wrapper<SX::Geometry::Peak3D>> _peaks;
 };
 
 #endif // PEAKTABLEVIEW_H
