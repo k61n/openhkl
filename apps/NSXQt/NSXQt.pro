@@ -24,7 +24,8 @@ SOURCES += src/Main.cpp \
     src/SliceRect.cpp \
     src/PeakTableView.cpp \
     src/Logger.cpp \
-    src/DialogTransformationMatrix.cpp
+    src/DialogTransformationMatrix.cpp \
+    src/DialogUnitCell.cpp
 
 HEADERS  += include/MainWindow.h \
     include/DetectorView.h \
