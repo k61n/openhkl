@@ -10,6 +10,8 @@
 #include "DataReaderFactory.h"
 using namespace SX::Data;
 
+const double tolerance=1e-6;
+
 BOOST_AUTO_TEST_CASE(Test_Ascii_Reader)
 {
 	DataReaderFactory* readers=DataReaderFactory::Instance();
@@ -26,6 +28,8 @@ BOOST_AUTO_TEST_CASE(Test_Ascii_Reader)
 	Eigen::Map<Eigen::MatrixXi> map(&(v[0]),32,32);
 	//
 	BOOST_CHECK(map.sum()==65);
+
+	BOOST_CHECK_CLOSE(meta->getKey<double>("monitor"),20000,tolerance);
 
 	delete meta;
 

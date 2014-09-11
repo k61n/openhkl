@@ -55,6 +55,7 @@ public:
 	//! The virtual abstract destructor.
 	virtual ~IDataReader()=0;
 protected:
+	MetaData* _metadata;
 	IDataReader();
 	std::string _filename;
 };

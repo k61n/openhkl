@@ -52,15 +52,13 @@ public:
 	void open(const std::string& filename);
 	//! Read block number i. First frame starts at index 0
 	std::vector<int> getFrame(uint i) const;
-	//! Read the header of the file made of MetaData.
-	MetaData* getMetaData();
+	MetaData* getMetaData() {return _metadata;}
 	//! Return the number of frames
 	uint nFrames() const;
 	virtual ~ILLAsciiDataReader();
 protected:
 	ILLAsciiDataReader();
 private:
-
 	std::size_t _nframes;
 	std::size_t _datapoints;
 	std::size_t _nangles;

@@ -1,4 +1,5 @@
 #include "IDataReader.h"
+#include <iostream>
 
 namespace SX
 {
@@ -6,13 +7,14 @@ namespace SX
 namespace Data
 {
 
-IDataReader::IDataReader()
+IDataReader::IDataReader():_metadata(nullptr)
 {
 }
 
 IDataReader::~IDataReader()
 {
 }
+
 
 } // end namespace Data
 

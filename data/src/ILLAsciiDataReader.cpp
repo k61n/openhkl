@@ -26,6 +26,13 @@ void readIntsFromChar(const char* begin, const char* end, std::vector<int>& v)
 	qi::phrase_parse(begin, end, *qi::int_ >> qi::eoi, ascii::space, v);
 }
 
+void readDoublesFromChar(const char* begin, const char* end, std::vector<double>& v)
+{
+	namespace qi = boost::spirit::qi;
+	namespace ascii = boost::spirit::ascii;
+	qi::phrase_parse(begin, end, *qi::double_ >> qi::eoi, ascii::space, v);
+}
+
 ILLAsciiDataReader::ILLAsciiDataReader() : IDataReader(), _nframes(0),_datapoints(0),_nangles(0),_header_size(0),_skipchar(0),_datalength(0)
 {
 }
@@ -59,24 +66,7 @@ std::vector<int> ILLAsciiDataReader::getFrame(uint i) const
 	return v;
 }
 
-MetaData* ILLAsciiDataReader::getMetaData()
-{
-	// 81 characters per line
-	std::size_t block_size=100*81;
 
-	// Map the region corresponding to the metadata block
-	boost::interprocess::mapped_region mdblock(_map,boost::interprocess::read_only,0,block_size);
-
-	// Beginning of the blockILLAsciiDataReader
-	const char* b=reinterpret_cast<char*>(mdblock.get_address());
-	char* buffer=new char[block_size];
-	strncpy(buffer, b, block_size);
-	ILLAsciiMetaReader* metareader=ILLAsciiMetaReader::Instance();
-	MetaData* metadata=metareader->read(buffer,_header_size);
-	delete [] buffer;
-
-	return metadata;
-}
 
 void ILLAsciiDataReader::open(const std::string& filename)
 {
@@ -92,16 +82,46 @@ void ILLAsciiDataReader::open(const std::string& filename)
 		throw;
 	}
 
-	MetaData* metadata=getMetaData();
+    // 81 characters per line
+	std::size_t block_size=100*81;
 
+	// Map the region corresponding to the metadata block
+	boost::interprocess::mapped_region mdblock(_map,boost::interprocess::read_only,0,block_size);
+	// Beginning of the blockILLAsciiDataReader
+	const char* b=reinterpret_cast<char*>(mdblock.get_address());
+	char* buffer=new char[block_size];
+	strncpy(buffer, b, block_size);
+	ILLAsciiMetaReader* metareader=ILLAsciiMetaReader::Instance();
+	_metadata=metareader->read(buffer,_header_size);
+	delete [] buffer;
 	// Extract some variables from the metadata
-	_nframes=metadata->getKey<int>("npdone");
-	_datapoints=metadata->getKey<int>("nbdata");
-	_nangles=metadata->getKey<int>("nbang");
+	_nframes=_metadata->getKey<int>("npdone");
+	_datapoints=_metadata->getKey<int>("nbdata");
+	_nangles=_metadata->getKey<int>("nbang");
 	// Skip 8 or 9 lines to the beginning of data blocks
 	_skipchar=81*(8+(_nangles<=2 ? 0 : 1));
 	// ILL Ascii file for 2D detector store 10 values per line.
 	_datalength=static_cast<int>(std::ceil(_datapoints/10.0))*81;
+
+	//
+	int skip3lines =3*81;
+	std::vector<int> vi;
+
+	readIntsFromChar(b+_header_size+skip3lines,b+_header_size+skip3lines+16,vi);
+
+	if ((vi.size() != 2) && (vi[0] != (_nangles-3)))
+		throw std::runtime_error("Problem parsing numor: mismatch between number of angles in header and datablock1.");
+
+	const char* beginvalues=b+_header_size+skip3lines +(vi[1]+1)*81;
+
+	std::vector<double> vd;
+	int numberoflinestoread=vi[0]/5+1;
+	readDoublesFromChar(beginvalues,beginvalues+numberoflinestoread*81,vd);
+
+	if (vd.size() != _nangles+3)
+		throw std::runtime_error("Problem parsing numor: mismatch between number of angles in header and datablock2.");
+
+	_metadata->add<double>("monitor",vd[1]);
 }
 
 uint ILLAsciiDataReader::nFrames() const
