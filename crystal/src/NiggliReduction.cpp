@@ -74,7 +74,7 @@ void NiggliReduction::reduce(Eigen::Matrix3d& newg, Eigen::Matrix3d& P)
 		else if (lmn==0 || lmn==-1)
 		{
 			int i=1,j=1,k=1;
-			int* p;
+			int* p=nullptr;
 			if (_l==1)
 				i=-1;
 			else if (_l==0)
