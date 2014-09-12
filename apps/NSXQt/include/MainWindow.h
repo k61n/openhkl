@@ -32,9 +32,9 @@ private slots:
 
     void on_action_peak_find_triggered();
 
-    void on_horizontalScrollBar_valueChanged(int value);
+    void on_horizontalScrollBar_valueChanged();
 
-    void on_dial_valueChanged(int value);
+    void on_dial_valueChanged();
 
     void on_spinBox_max_valueChanged(int arg1);
 

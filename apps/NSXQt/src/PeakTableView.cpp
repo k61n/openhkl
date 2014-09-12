@@ -9,8 +9,7 @@
 
 #include "IData.h"
 
-PeakTableView::PeakTableView(MainWindow* main,QWidget *parent)
-    :_main(main),QTableView(parent),_plotter(nullptr)
+PeakTableView::PeakTableView(MainWindow* main,QWidget *parent) :QTableView(parent),_main(main),_plotter(nullptr)
 {
     setBaseSize(400,300);
     setFocusPolicy(Qt::StrongFocus);

@@ -166,12 +166,12 @@ void MainWindow::updatePlot()
 
 }
 
-void MainWindow::on_horizontalScrollBar_valueChanged(int value)
+void MainWindow::on_horizontalScrollBar_valueChanged()
 {
     updatePlot();
 }
 
-void MainWindow::on_dial_valueChanged(int value)
+void MainWindow::on_dial_valueChanged()
 {
     updatePlot();
 }
