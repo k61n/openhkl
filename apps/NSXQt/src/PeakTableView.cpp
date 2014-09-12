@@ -94,6 +94,10 @@ void PeakTableView::sortByColumn(int i)
     {
         sortByIntensity(up);
     }
+    else if (i==3)
+    {
+        sortByNumor(up);
+    }
     constructTable();
     QStandardItemModel* model=dynamic_cast<QStandardItemModel*>(this->model());
     QStandardItem* columni=model->horizontalHeaderItem(i);
@@ -262,16 +266,16 @@ void PeakTableView::sortByNumor(bool up)
         std::sort(_peaks.begin(),_peaks.end(),
               [&](const SX::Geometry::Peak3D& p1, const SX::Geometry::Peak3D& p2)
                 {
-                    int numor1=p1.getData()->_mm->getMetaData()->getKey<int>("numor");
-                    int numor2=p2.getData()->_mm->getMetaData()->getKey<int>("numor");
+                    int numor1=p1.getData()->_mm->getMetaData()->getKey<int>("Numor");
+                    int numor2=p2.getData()->_mm->getMetaData()->getKey<int>("Numor");
                     return (numor1>numor2);
                 });
     else
         std::sort(_peaks.begin(),_peaks.end(),
               [&](const SX::Geometry::Peak3D& p1, const SX::Geometry::Peak3D& p2)
                 {
-                    int numor1=p1.getData()->_mm->getMetaData()->getKey<int>("numor");
-                    int numor2=p2.getData()->_mm->getMetaData()->getKey<int>("numor");
+                    int numor1=p1.getData()->_mm->getMetaData()->getKey<int>("Numor");
+                    int numor2=p2.getData()->_mm->getMetaData()->getKey<int>("Numor");
                     return (numor1<numor2);
                 });
 }

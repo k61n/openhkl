@@ -110,8 +110,8 @@ void Data::readInMemory()
 
         int count=0;
 
-
-#pragma omp parallel for shared(count)
+omp_set_dynamic(0);
+#pragma omp parallel for shared(count) num_threads(3)
         for (int i=0;i<_nblocks;++i)
         {
             _data[i].reserve(640*256);

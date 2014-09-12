@@ -12,7 +12,7 @@ PeakPlotter::PeakPlotter(QWidget *parent) : QDialog(parent), ui(new Ui::PeakPlot
     customPlot->graph(0)->setPen(QPen(QColor("black")));
     customPlot->graph(0)->setErrorType(QCPGraph::etBoth);
     customPlot->graph(0)->setLineStyle(QCPGraph::lsLine);
-    customPlot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssSquare, 4));
+    customPlot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 6));
 
     customPlot->addGraph();
     customPlot->graph(1)->setPen(QPen(QColor("red")));
