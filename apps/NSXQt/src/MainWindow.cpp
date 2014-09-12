@@ -138,10 +138,7 @@ void MainWindow::plotUpdate(int numor,int frame)
     QList<QListWidgetItem*> matches=ui->numor_Widget->findItems(number,Qt::MatchExactly);
     if (matches.size() == 1)
     {
-        std::cout<<"fsdmnfm,sdnfm,sdn"<<std::endl;
         ui->numor_Widget->setCurrentItem(matches[0]);
-        QListWidgetItem* item=ui->numor_Widget->currentItem();
-        std::cout<<item->text().toStdString()<<std::endl;
         ui->horizontalScrollBar->setValue(frame);
     }
 }
