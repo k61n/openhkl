@@ -90,7 +90,8 @@ void NiggliReduction::reduce(Eigen::Matrix3d& newg, Eigen::Matrix3d& P)
 			int ijk=i*j*k;
 			if (ijk==-1)
 			{
-				*p=-1;
+				if (p)
+					*p=-1;
 			}
 			_CMat << i,0,0,0,j,0,0,0,k;
 			transformG();
