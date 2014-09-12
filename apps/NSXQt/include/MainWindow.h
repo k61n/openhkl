@@ -44,7 +44,7 @@ private slots:
 
     void on_numor_Widget_itemActivated(QListWidgetItem *item);
 
-    void resizeEvent(QResizeEvent *);
+    void resizeEvent();
     void on_actionUnit_Cell_triggered();
 
     void on_actionPeak_List_triggered();
