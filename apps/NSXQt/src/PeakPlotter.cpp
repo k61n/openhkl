@@ -3,9 +3,7 @@
 #include <IShape.h>
 #include "Units.h"
 
-PeakPlotter::PeakPlotter(QWidget *parent) :
-    QDialog(parent), _current(nullptr),
-    ui(new Ui::PeakPlotter)
+PeakPlotter::PeakPlotter(QWidget *parent) : QDialog(parent), ui(new Ui::PeakPlotter), _current(nullptr)
 {
     ui->setupUi(this);
     QCustomPlot* customPlot=ui->widget;
@@ -91,8 +89,6 @@ void PeakPlotter::update()
     const Eigen::VectorXd& bkg=_current->getBkgProjection();
 
     const Eigen::VectorXd& totalSigma=_current->getProjectionSigma();
-    const Eigen::VectorXd& peakSigma=_current->getPeakProjectionSigma();
-    const Eigen::VectorXd& bkgSigma=_current->getBkgProjectionSigma();
 
     // Transform to QDouble
     QVector<double> qx(total.size());
