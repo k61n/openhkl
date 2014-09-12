@@ -11,6 +11,9 @@
 #include <QFileInfo>
 #include <QImageReader>
 
+/*
+ * A QtextEdit inherited class in which image and text can be dragged and dropped in.
+ * */
 class NoteBook : public QTextEdit
 {
     Q_OBJECT
