@@ -6,6 +6,8 @@
 #include <PeakPlotter.h>
 #include <QFileDialog>
 #include <MainWindow.h>
+#include <tuple>
+
 class PeakTableView : public QTableView
 {
     Q_OBJECT
@@ -15,6 +17,8 @@ public:
 signals:
     void plot2DUpdate(int numor,int frame);
 public slots:
+    //! Slection of peak is changed
+    void peakChanged(QModelIndex current,QModelIndex last);
     //! Plot the peak at index i in vector
     void plotPeak(int i);
     //! Display context menu
@@ -28,10 +32,17 @@ public slots:
     //! Normalize to monitor.
     void normalizeToMonitor();
 private:
+    void sortByHKL(bool up);
+    void sortByIntensity(bool up);
+    void sortByNumor(bool up);
     MainWindow* _main;
     PeakPlotter* _plotter;
     void constructTable();
     std::vector<std::reference_wrapper<SX::Geometry::Peak3D>> _peaks;
+    //! Which column is sorted and up or down
+    std::tuple<int,bool> _columnUp;
+    QIcon _sortUpIcon;
+    QIcon _sortDownIcon;
 };
 
 #endif // PEAKTABLEVIEW_H

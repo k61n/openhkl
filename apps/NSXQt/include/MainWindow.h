@@ -44,12 +44,12 @@ private slots:
 
     void on_numor_Widget_itemActivated(QListWidgetItem *item);
 
-    void resizeEvent();
     void on_actionUnit_Cell_triggered();
 
     void on_actionPeak_List_triggered();
 public slots:
      void plotUpdate(int numor,int frame);
+     void resizeEvent(QResizeEvent *);
 private:
     //! Return a list of numors currently selected
     std::vector<Data*> selectedNumors();

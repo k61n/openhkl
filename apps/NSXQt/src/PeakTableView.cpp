@@ -3,25 +3,41 @@
 #include <QHeaderView>
 #include <fstream>
 #include <iomanip>
-
 #include <QMessageBox>
 #include <QInputDialog>
-
 #include "IData.h"
+#include "Peak3D.h"
 
-PeakTableView::PeakTableView(MainWindow* main,QWidget *parent) :QTableView(parent),_main(main),_plotter(nullptr)
+PeakTableView::PeakTableView(MainWindow* main,QWidget *parent)
+    :QTableView(parent),_main(main),_plotter(nullptr),_columnUp(-1,false),
+      _sortUpIcon(":/resources/sortUpIcon.png"),
+      _sortDownIcon(":/resources/sortDownIcon.png")
 {
-    setBaseSize(400,300);
+    // Make sure that the user can not edit the content of the table
+    this->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    // Selection of a cellin the table select the whole line.
+    this->setSelectionBehavior(QAbstractItemView::SelectRows);
+    //
+    setBaseSize(500,500);
     setFocusPolicy(Qt::StrongFocus);
+
+    // Signal sent when sorting by column
     QHeaderView* horizontal=this->horizontalHeader();
     connect(horizontal,SIGNAL(sectionClicked(int)),this,SLOT(sortByColumn(int)));
+
+    // Signal sent when clicking on a row to plot peak
     QHeaderView* vertical=this->verticalHeader();
     connect(vertical,SIGNAL(sectionClicked(int)),this,SLOT(plotPeak(int)));
-    connect(vertical,SIGNAL(sectionEntered(int)),this,SLOT(plotPeak(int)));
+
+    // Context menu policy
     this->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this, SIGNAL(customContextMenuRequested(QPoint)),
     SLOT(customMenuRequested(QPoint)));
-    connect(this,SIGNAL(plot2DUpdate(int,int)),_main,SLOT(plotUpdate(int,int)));   
+
+    // Send an update of the detector view when a pick is clicked.
+    connect(this,SIGNAL(plot2DUpdate(int,int)),_main,SLOT(plotUpdate(int,int)));
+
+    //
 }
 
 void PeakTableView::setData(const std::vector<Data *> numors)
@@ -38,6 +54,13 @@ void PeakTableView::setData(const std::vector<Data *> numors)
 
 }
 
+
+void PeakTableView::peakChanged(QModelIndex current, QModelIndex last)
+{
+    if (current.row()!=last.row())
+        plotPeak(current.row());
+}
+
 void PeakTableView::plotPeak(int i)
 {
     SX::Geometry::Peak3D& peak=_peaks[i].get();
@@ -50,25 +73,48 @@ void PeakTableView::plotPeak(int i)
 
 void PeakTableView::sortByColumn(int i)
 {
+    // Only 5 columns || no sorting by sigma || check if peak
+    if (i>4 || i==2 || _peaks.size()==0)
+        return;
+
+    int& column=std::get<0>(_columnUp);
+    bool& up=std::get<1>(_columnUp);
+    // If column already sorted, swith direction
+    if (i==column)
+    {
+        up=!up;
+    }
+    column=i;
+
     if (i==0) // Sort by HKL
-        std::sort(_peaks.begin(),_peaks.end());
-    if (i==1) //Sort by Intensity
-        std::sort(_peaks.begin(),_peaks.end(),
-                  [&](const SX::Geometry::Peak3D& p1, const SX::Geometry::Peak3D& p2)
-        {
-            return (p1.getScaledIntensity()<p2.getScaledIntensity());
-        });
+    {
+        sortByHKL(up);
+    }
+    else if (i==1)
+    {
+        sortByIntensity(up);
+    }
     constructTable();
+    QStandardItemModel* model=dynamic_cast<QStandardItemModel*>(this->model());
+    QStandardItem* columni=model->horizontalHeaderItem(i);
+    if (up)
+        columni->setIcon(QIcon(":/resources/sortUpIcon.png"));
+    else
+        columni->setIcon(QIcon(":/resources/sortDownIcon.png"));
 }
 
 void PeakTableView::constructTable()
 {
+    // Create table with 5 columns
     QStandardItemModel* model=new QStandardItemModel(_peaks.size(),5,this);
     model->setHorizontalHeaderItem(0,new QStandardItem("h,k,l"));
     model->setHorizontalHeaderItem(1,new QStandardItem("I"));
     model->setHorizontalHeaderItem(2,new QStandardItem(QString((QChar) 0x03C3)+"I"));
     model->setHorizontalHeaderItem(3,new QStandardItem("Numor"));
     model->setHorizontalHeaderItem(4,new QStandardItem("Selected"));
+
+
+    // Setup content of the table
     int i=0;
     for (SX::Geometry::Peak3D& peak : _peaks)
     {
@@ -85,11 +131,15 @@ void PeakTableView::constructTable()
         model->setItem(i++,3,col4);
     }
     setModel(model);
+    // Signal sent when the user navigates the table (e.g. up down arrow )
+    connect(this->selectionModel(),SIGNAL(currentChanged(QModelIndex,QModelIndex)),this,SLOT(peakChanged(QModelIndex,QModelIndex)));
 }
 
 
 void PeakTableView::customMenuRequested(QPoint pos)
 {
+    // Show all peaks as selected when contet menu is requested
+    this->selectAll();
     QMenu* menu=new QMenu(this);
     QAction* normalize=new QAction("Normalize to monitor",menu);
     menu->addSeparator();
@@ -176,3 +226,54 @@ void PeakTableView::writeShelX()
     }
     file.close();
 }
+
+void PeakTableView::sortByHKL(bool up)
+{
+    if (up)
+        std::sort(_peaks.begin(),_peaks.end(),
+              [&](const SX::Geometry::Peak3D& p1, const SX::Geometry::Peak3D& p2)
+              {
+                return (p2<p1);
+              }
+              );
+    else
+        std::sort(_peaks.begin(),_peaks.end());
+}
+
+void PeakTableView::sortByIntensity(bool up)
+{
+    if (up)
+        std::sort(_peaks.begin(),_peaks.end(),
+              [&](const SX::Geometry::Peak3D& p1, const SX::Geometry::Peak3D& p2)
+                {
+                    return (p1.getScaledIntensity()>p2.getScaledIntensity());
+                });
+    else
+        std::sort(_peaks.begin(),_peaks.end(),
+                  [&](const SX::Geometry::Peak3D& p1, const SX::Geometry::Peak3D& p2)
+                    {
+                        return (p1.getScaledIntensity()<p2.getScaledIntensity());
+                    });
+}
+
+void PeakTableView::sortByNumor(bool up)
+{
+    if (up)
+        std::sort(_peaks.begin(),_peaks.end(),
+              [&](const SX::Geometry::Peak3D& p1, const SX::Geometry::Peak3D& p2)
+                {
+                    int numor1=p1.getData()->_mm->getMetaData()->getKey<int>("numor");
+                    int numor2=p2.getData()->_mm->getMetaData()->getKey<int>("numor");
+                    return (numor1>numor2);
+                });
+    else
+        std::sort(_peaks.begin(),_peaks.end(),
+              [&](const SX::Geometry::Peak3D& p1, const SX::Geometry::Peak3D& p2)
+                {
+                    int numor1=p1.getData()->_mm->getMetaData()->getKey<int>("numor");
+                    int numor2=p2.getData()->_mm->getMetaData()->getKey<int>("numor");
+                    return (numor1<numor2);
+                });
+}
+
+

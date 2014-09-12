@@ -16,11 +16,12 @@ QTextEdit* Logger::getNoteBook()
 void customMessageHandler(QtMsgType type, const QMessageLogContext& context, const QString& msg)
 {
     QString txt;
+
     QTextEdit* log=Logger::Instance()->getNoteBook();
     switch (type) {
     case QtDebugMsg:
         txt = QString("%1").arg(msg);
-        log->setTextColor("black");
+        log->setTextColor("dark blue");
         break;
     case QtWarningMsg:
         txt = QString("%1 %2 @line %3").arg(msg,context.file, QString::number(context.line));
@@ -34,7 +35,8 @@ void customMessageHandler(QtMsgType type, const QMessageLogContext& context, con
         abort();
     }
     log->append(txt);
-    log->setTextColor(QColor("blue"));
+    // Return to black color for user input in the notebook
+    log->setTextColor(QColor("black"));
     QCoreApplication::processEvents();
 
 }

@@ -16,5 +16,7 @@
         <file>resources/splashScreen.png</file>
         <file>resources/transformationMatrixImage.png</file>
         <file>resources/matrixIcon.png</file>
+        <file>resources/sortDownIcon.png</file>
+        <file>resources/sortUpIcon.png</file>
     </qresource>
 </RCC>
