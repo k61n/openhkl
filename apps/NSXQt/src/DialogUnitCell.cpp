@@ -2,6 +2,14 @@
 
 #include "DialogUnitCell.h"
 
+QDebug& operator<<(QDebug &dbg, const Eigen::Matrix3d& m)
+{
+    std::ostringstream os;
+    os <<m;
+    dbg << QString::fromStdString(os.str());
+    return dbg;
+}
+
 DialogUnitCell::DialogUnitCell(QWidget *parent):QDialog(parent),ui(new Ui::DialogUnitCell)
 {
     ui->setupUi(this);
@@ -40,6 +48,11 @@ void DialogUnitCell::getUnitCell()
     n.reduce(newg,P);
     b.transform(P);
     SX::Geometry::Basis niggli=b;
+    qDebug() << "Found Niggli Unit Cell:"
+             << niggli.gete1Norm() << " " << niggli.gete2Norm() << " " << niggli.gete3Norm() << " "
+             << niggli.gete2e3Angle()/SX::Units::deg << " " << niggli.gete1e3Angle()/SX::Units::deg << " " << niggli.gete1e2Angle()/SX::Units::deg;
+    Eigen::Matrix3d a;
+    qDebug() << " " <<  niggli.getReferenceM();
     SX::Crystal::GruberReduction gr(b.getMetricTensor(),4.0);
     Eigen::Matrix3d Pprime;
     SX::Crystal::UnitCell::Centring type;

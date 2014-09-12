@@ -16,23 +16,25 @@ QTextEdit* Logger::getNoteBook()
 void customMessageHandler(QtMsgType type, const QMessageLogContext& context, const QString& msg)
 {
     QString txt;
+    QTextEdit* log=Logger::Instance()->getNoteBook();
     switch (type) {
     case QtDebugMsg:
         txt = QString("%1").arg(msg);
-        Logger::Instance()->getNoteBook()->setTextColor("black");
+        log->setTextColor("black");
         break;
     case QtWarningMsg:
         txt = QString("%1 %2 @line %3").arg(msg,context.file, QString::number(context.line));
-        Logger::Instance()->getNoteBook()->setTextColor("orange");
+        log->setTextColor("orange");
         break;
     case QtCriticalMsg:
         txt = QString("%1").arg(msg);
-        Logger::Instance()->getNoteBook()->setTextColor("red");
+        log->setTextColor("red");
         break;
     case QtFatalMsg:
         abort();
     }
-    Logger::Instance()->getNoteBook()->setFontItalic(true);
-    Logger::Instance()->getNoteBook()->append(txt);
+    log->append(txt);
+    log->setTextColor(QColor("blue"));
     QCoreApplication::processEvents();
+
 }
