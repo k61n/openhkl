@@ -132,14 +132,18 @@ void MainWindow::on_action_open_triggered()
 
 void MainWindow::plotUpdate(int numor,int frame)
 {
-    std::string number=QString::number(numor).toStdString();
-    auto it=_data.find(number);
-    if (it!=_data.end())
+
+    QString number = QString::number(numor).rightJustified(6, '0');;
+
+    QList<QListWidgetItem*> matches=ui->numor_Widget->findItems(number,Qt::MatchExactly);
+    if (matches.size() == 1)
     {
-        Data* ptr=&(it->second);
-        ui->_dview->updateView(ptr,frame);
+        std::cout<<"fsdmnfm,sdnfm,sdn"<<std::endl;
+        ui->numor_Widget->setCurrentItem(matches[0]);
+        QListWidgetItem* item=ui->numor_Widget->currentItem();
+        std::cout<<item->text().toStdString()<<std::endl;
+        ui->horizontalScrollBar->setValue(frame);
     }
-    ui->horizontalScrollBar->setValue(frame);
 }
 
 void MainWindow::updatePlot()
