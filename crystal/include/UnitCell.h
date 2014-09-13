@@ -30,12 +30,15 @@
 #define NSXTOOL_UNITCELL_H_
 #include <iostream>
 #include <Eigen/Dense>
+#include "Basis.h"
 
 namespace SX
 {
 
 namespace Crystal
 {
+
+using Eigen::Vector3d;
 
 /** @brief Class to define a crystallographic unit-cell.
  *
@@ -46,148 +49,54 @@ namespace Crystal
  * are given in degrees.
  * The a axis is chosen as pointing along the x-direction, and the b-axis is in the xy-plane.
  */
-class UnitCell
+
+//! Centering type of the Bravais lattice
+enum  class LatticeCentring : char  {P='P',A='A',B='B',C='C',I='I',F='F',R='R'};
+//! Bravais type
+enum  class BravaisType : char  {Triclinic='a',Monolinic='m',Orthorhombic='o',Tetragonal='t',Hexagonal='h',Cubic='c'};
+
+class UnitCell : public SX::Geometry::Basis
 {
 public:
-	//! Centering type of the corresponding Bravais lattice
-	enum Centring {P,A,B,C,I,F,R};
-	/// Constructor
+	//! Empty UnitCell, initialiazed to right-handed orthonormal system
 	UnitCell();
-	//! Build Unit Cell from lattice parameters. Angles given in radians.
-	UnitCell(double a, double b, double c, double alpha, double beta, double gamma, Centring type=P);
+	//! Construct unitCell from lattice parameters, the A matrix is built with avector along x, bvector in the xy-plane.
+	UnitCell(double a, double b, double c, double alpha, double beta, double gamma,LatticeCentring centring=LatticeCentring::P, BravaisType bravais=BravaisType::Triclinic, std::shared_ptr<SX::Geometry::Basis> reference=nullptr);
 	//! Build Unit-cell from 3 non-coplanar vectors. Throw if coplanars.
-	UnitCell(const Eigen::Vector3d& v1,const Eigen::Vector3d& v2,const Eigen::Vector3d& v3, Centring type=P);
+	UnitCell(const Vector3d& v1,const Vector3d& v2,const Vector3d& v3, LatticeCentring centring=LatticeCentring::P, BravaisType bravais=BravaisType::Triclinic,std::shared_ptr<SX::Geometry::Basis> reference=nullptr );
 	//! Copy constructor
 	UnitCell(const UnitCell&);
-	//!
-	UnitCell(const Eigen::Matrix3d& metricTensor);
 	//! Assignment
 	UnitCell& operator=(const UnitCell&);
-	//! Destructor
-	virtual ~UnitCell();
-	/** Set unit-cell parameter
-	 * @param a  a-axis (\f$ \AA \f$)
-	 * @param b  b-axis (\f$ \AA \f$)
-	 * @param c  c-axis (\f$ \AA \f$)
-	 * @param alpha Alpha angle in radians
-	 * @param beta Beta angle in radians
-	 * @param gamma Gamma angle in radians
-	 */
-	void setCell(double a, double b, double c, double alpha, double beta, double gamma);
-	//!
-	void setMetricTensor(const Eigen::Matrix3d& metricTensor);
-	//! Set the a lattice parameter
-	void setA(double);
-	//! Set the b lattice parameter
-	void setB(double);
-	//! Set the c lattice parameter
-	void setC(double);
-	//! Set the \f$ \alpha \f$ lattice parameter
-	void setAlpha(double);
-	//! Set the \f$ \beta \f$ lattice parameter
-	void setBeta(double);
-	//! Set the \f$ \gamma \f$ lattice parameter
-	void setGamma(double);
-	//! Set Bravais lattice type
-	void setCentringType(Centring type);
-	/** Get the direct-cell volume
-	 * @return vol in \f$ \AA^3 \f$
-	 */
-	double getVolume() const;
-	//! Get Lattice Bravais type
-	Centring getType() const;
+	~UnitCell();
+	//! Build a UnitCell from a set of three direct vectors.
+	static UnitCell fromDirectVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c, LatticeCentring centring=LatticeCentring::P, BravaisType bravais=BravaisType::Triclinic,std::shared_ptr<SX::Geometry::Basis> reference=nullptr);
+	//! Build a UnitCell from a set of three reciprocal vectors.
+	static UnitCell fromReciprocalVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c,LatticeCentring centring=LatticeCentring::P, BravaisType bravais=BravaisType::Triclinic,std::shared_ptr<SX::Geometry::Basis> reference=nullptr);
 	/// Get the a parameter (\f$ \AA \f$)
 	double getA() const;
 	/// Get the b parameter (\f$ \AA \f$)
-	double getB() const;
-	/// Get the c parameter (\f$ \AA \f$)
-	double getC() const;
+ 	double getB() const;
+ 	/// Get the c parameter (\f$ \AA \f$)
+ 	double getC() const;
 	/// Get the alpha angle (radians)
-	double getAlpha() const;
+ 	double getAlpha() const;
 	/// Get the beta angle (radians)
-	double getBeta() const;
+ 	double getBeta() const;
 	/// Get the gamma angle (radians)
-	double getGamma() const;
-	/** @brief Get the A-matrix
-	 *
-	 * @return AMatrix
-	 * The A-matrix allows to convert from unit-cell fractional coordinates
-	 * to coordinates in the associated right-angle axis system. The convention
-	 * chosen is a along the x-axis, b in the xy plane, right handed.
-	 */
-	const Eigen::Matrix3d& getAMatrix() const;
-	/** @brief Get the B-matrix
-	*
-	*  @return BMatrix
-	 * The B-matrix allows to convert from reciprocal cell fractional coordinates
-	* (h,k,l) to coordinates in the associated right-angle axis system.
-	*/
-	const Eigen::Matrix3d& getBMatrix() const;
-	/** @brief Get the Unitary-transformation Matrix (unitary A-matrix)
-	 *
-	 * @return TMatrix
-	 *  The T-matrix allows to convert
-	 */
-	const Eigen::Matrix3d& getTMatrix() const;
-	//! Return the metric tensor
-	const Eigen::Matrix3d& getMetricTensor() const;
-	/** @brief Transform a vector in UnitCell coordinates to right handed coordinate system
-	 *
-	 * @param vect Reference to vector to be transformed
-	 */
-	void transformA(Eigen::Vector3d& vect) const;
-	/** @brief Transform a vector in Reciprocal Lattice coordinates to right handed coordinate system
-	 *
-	* @param vect Reference to vector to be transformed
-	*/
-	void transformB(Eigen::Vector3d& vect) const;
-	/** @brief Transform a vector in Reciprocal Lattice coordinates to right handed coordinate system
-	 *
-	* @param vect Reference to vector to be transformed
-	*/
-	void transformT(Eigen::Vector3d& vect) const;
-	//! Return a new UnitCell using the transformation matrix P. P is
-	//! written in column from the old basis to the new basis
-	UnitCell transformLattice(const Eigen::Matrix3d& P);
-	//! Transform the UnitCell using the transformation matrix P. P is
-	//! written in column from the old basis to the new basis
-	void  transformLatticeInPlace(const Eigen::Matrix3d& P);
-	//! Print to a stream
-	void printSelf(std::ostream& os) const;
-	/** @brief Read Parameters from a stream (verbose)
-	 *
-	 * @param os Output stream
-	 */
-	void read(std::istream&);
-	//! Apply B-matrix to a vector (i.e. (h,k,l))
-	Eigen::Vector3d convertB(const Eigen::Vector3d&);
-	//! Apply T-matrix to a vector
-	Eigen::Vector3d convertT(const Eigen::Vector3d&);
-	//! Apply A-matrix to a vector (i.e. (x,y,z))
-	Eigen::Vector3d convertA(const Eigen::Vector3d&);
+ 	double getGamma() const;
+	//!
+ 	void setLatticeCentring(LatticeCentring centring);
+ 	//!
+ 	void setBravaisType(BravaisType bravais);
+ 	//! Print to a stream
+ 	void printSelf(std::ostream& os) const;
 private:
-	void calculatesincos();
-	void calculateAMatrix();
-	void calculateTMatrix();
-	void calculateBMatrix();
-	void calculateGTensors();
-	void calculateReciprocalParameters();
-	void calculateVolume();
-	void recalculateAll();
-	double _a, _b, _c, _alpha, _beta, _gamma;
-	double _astar, _bstar, _cstar, _alphastar, _betastar, _gammastar;
-	double _ca,_cb,_cc,_sa,_sb,_sc;
-	double _volume;
-	Eigen::Matrix3d _A;
-	Eigen::Matrix3d _T;
-	Eigen::Matrix3d _B;
-	//! Metric tensor
-	Eigen::Matrix3d _G;
-	Centring _type;
+	LatticeCentring _centring;
+	BravaisType _bravaisType;
 };
+//! Print to a stream
 std::ostream& operator<<(std::ostream&,const UnitCell&);
-std::istream& operator>>(std::istream&, UnitCell&);
-
 
 }
 

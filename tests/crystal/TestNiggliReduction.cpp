@@ -26,13 +26,11 @@ BOOST_AUTO_TEST_CASE(Test_Niggli_Reduction)
 	n.reduce(gprime,P);
 
 	// Check that the Unit Cell is 1 , 2 , 3
-	cell.setMetricTensor(gprime);
+	cell.transform(P);
 	BOOST_CHECK_CLOSE(cell.getA(),1.0,tolerance);
 	BOOST_CHECK_CLOSE(cell.getB(),2.0,tolerance);
 	BOOST_CHECK_CLOSE(cell.getC(),3.0,tolerance);
 	BOOST_CHECK_CLOSE(cell.getAlpha(),90*deg,tolerance);
 	BOOST_CHECK_CLOSE(cell.getBeta(),90*deg,tolerance);
 	BOOST_CHECK_CLOSE(cell.getGamma(),90*deg,tolerance);
-
-	std::cout << P <<std::endl;
 }

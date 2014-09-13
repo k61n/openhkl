@@ -97,6 +97,8 @@ protected:
 	std::vector<double> _currentValues;
 	//! Current transformation matrix
 	Eigen::Transform<double,3,Eigen::Affine> _currenTransform;
+public:
+	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
 

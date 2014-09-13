@@ -1,8 +1,4 @@
 #include <cmath>
-#include <stdexcept>
-
-#include <boost/test/floating_point_comparison.hpp>
-
 #include "UnitCell.h"
 #include "Units.h"
 
@@ -12,314 +8,126 @@ namespace SX
 namespace Crystal
 {
 
-using SX::Units::deg;
-
-boost::test_tools::close_at_tolerance<double> lat_tol(boost::test_tools::percent_tolerance(1e-6));
-
-UnitCell::UnitCell():_a(1),_b(1),_c(1),_alpha(90*deg),_beta(90*deg),_gamma(90*deg)
+UnitCell::UnitCell():SX::Geometry::Basis(),_centring(LatticeCentring::P),_bravaisType(BravaisType::Triclinic)
 {
-	recalculateAll();
 }
 
-UnitCell::UnitCell(double a, double b, double c, double alpha, double beta, double gamma, Centring type):
-_a(a),_b(b),_c(c),_alpha(alpha),_beta(beta),_gamma(gamma),_type(type)
+
+UnitCell::UnitCell(double a, double b, double c, double alpha, double beta, double gamma, LatticeCentring centring,BravaisType bravais,std::shared_ptr<SX::Geometry::Basis> reference)
+:_centring(centring),_bravaisType(bravais)
 {
-	recalculateAll();
+	double ca=cos(alpha), cb=cos(beta), cc=cos(gamma), sc=sin(gamma);
+    double a32=c/sin(gamma)*(ca-cb*cc);
+	double volume=a*b*c*sqrt(1.0-ca*ca-cb*cb-cc*cc+2.0*ca*cb*cc);
+	double a33=volume/(a*b*sc);
+	_A << a,b*cc,c*cb,
+	       0,b*sc,a32,
+	       0,0   ,a33;
+	_B=_A.inverse();
+	SX::Geometry::Basis::_reference=reference;
 }
 UnitCell::UnitCell(const UnitCell& rhs)
 {
-	_a=rhs._a;_b=rhs._b;_c=rhs._c;
-	_alpha=rhs._alpha;_beta=rhs._beta;_gamma=rhs._gamma;
-	_type=rhs._type;
-	recalculateAll();
+	_A=rhs._A;
+	_B=rhs._B;
+	_reference=rhs._reference;
+	_centring=rhs._centring;
+	_bravaisType=rhs._bravaisType;
 }
 
-UnitCell::UnitCell(const Eigen::Matrix3d& g)
-{
-	setMetricTensor(g);
-}
-
-UnitCell::UnitCell(const Eigen::Vector3d& v1,const Eigen::Vector3d& v2,const Eigen::Vector3d& v3, Centring type)
-{
-	double a=v1.norm();
-	double b=v2.norm();
-	double c=v3.norm();
-	double alpha=acos(v2.dot(v3)/b/c);
-	double beta=acos(v1.dot(v3)/a/c);
-	double gamma=acos(v1.dot(v2)/a/b);
-	setCell(a,b,c,alpha,beta,gamma);
-}
-
-void UnitCell::setMetricTensor(const Eigen::Matrix3d& g)
-{
-	_a=sqrt(g(0,0));
-	_b=sqrt(g(1,1));
-	_c=sqrt(g(2,2));
-	_alpha=acos(g(1,2)/_b/_c);
-	_beta=acos(g(0,2)/_a/_c);
-	_gamma=acos(g(0,1)/_a/_b);
-	recalculateAll();
-}
 UnitCell& UnitCell::operator=(const UnitCell& rhs)
 {
 	if (this!=&rhs)
 	{
-		_a=rhs._a;_b=rhs._b;_c=rhs._c;
-		_alpha=rhs._alpha;_beta=rhs._beta;_gamma=rhs._gamma;
-		_type=rhs._type;
-		recalculateAll();
+	_A=rhs._A;
+	_B=rhs._B;
+	_reference=rhs._reference;
+	_centring=rhs._centring;
+	_bravaisType=rhs._bravaisType;
 	}
 	return *this;
 }
+
+UnitCell::UnitCell(const Eigen::Vector3d& v1,const Eigen::Vector3d& v2,const Eigen::Vector3d& v3, LatticeCentring centring,BravaisType bravais,std::shared_ptr<SX::Geometry::Basis> reference)
+:SX::Geometry::Basis(v1,v2,v3,reference),_centring(centring),_bravaisType(bravais)
+{
+
+}
+
+UnitCell UnitCell::fromDirectVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c, LatticeCentring centring, BravaisType bravais,std::shared_ptr<SX::Geometry::Basis> reference)
+{
+	if (coplanar(a,b,c))
+		throw std::runtime_error("The direct vectors are coplanar.");
+	return UnitCell(a,b,c,centring,bravais,reference);
+}
+	//! Build a basis from a set of three reciprocal vectors.
+UnitCell UnitCell::fromReciprocalVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c,LatticeCentring centring, BravaisType bravais,std::shared_ptr<SX::Geometry::Basis> reference)
+{
+	if (coplanar(a,b,c))
+			throw std::runtime_error("The reciprocal vectors are coplanar.");
+	double rVolume = std::abs(a.dot(b.cross(c)));
+
+	Vector3d av=b.cross(c)/rVolume;
+	Vector3d bv=c.cross(a)/rVolume;
+	Vector3d cv=a.cross(b)/rVolume;
+
+	return UnitCell(av,bv,cv,centring,bravais,reference);
+
+}
+
 UnitCell::~UnitCell()
 {
 }
-void UnitCell::setCell(double a, double b, double c, double alpha, double beta, double gamma)
-{
-	if (a<0 || b<0 || c<0 || alpha<0 || alpha>M_PI || beta<0 || beta>M_PI || gamma<0 || gamma>M_PI)
-		throw std::range_error("UnitCell::set, some cell parameter(s) invalid(s)");
-	if (a<1e-6 || b<1e-6 || c<1e-6 || alpha<1e-6 || beta<1e-6 || gamma<1e-6)
-		throw std::range_error("UnitCell::set, some cell parameter(s) too close to zero (Maybe missing?)");
-	_a=a;_b=b;_c=c;
-	_alpha=alpha;_beta=beta;_gamma=gamma;
-	recalculateAll();
 
-}
-void UnitCell::setCentringType(Centring type)
-{
-	_type=type;
-}
-
-void UnitCell::setA(double a)
-{
-	if (a<1e-6)
-		throw std::range_error("UnitCell::seta, a<0 or too small");
-	_a=a;
-	recalculateAll();
-}
-void UnitCell::setB(double b)
-{
-	if (_b<1e-6)
-		throw std::range_error("UnitCell::setb, b<0 or too small");
-	_b=b;
-	recalculateAll();
-}
-void UnitCell::setC(double c)
-{
-	if (c<1e-6)
-		throw std::range_error("UnitCell::setc, c<0 or too small");
-	_c=c;
-	recalculateAll();
-}
-void UnitCell::setAlpha(double alpha)
-{
-	if (alpha<0 || alpha>M_PI)
-		throw std::range_error("UnitCell::setalpha, alpha<0 or alpha>180");
-	_alpha=alpha;
-	recalculateAll();
-}
-void UnitCell::setBeta(double beta)
-{
-	if (beta<0 || beta>M_PI)
-		throw std::range_error("UnitCell::setalpha, beta<0 or beta>180");
-	_beta=beta;
-	recalculateAll();
-}
-void UnitCell::setGamma(double gamma)
-{
-	if (gamma<0 || gamma>M_PI)
-		throw std::range_error("UnitCell::setgamma, gamma<0 or gamma>180");
-	_gamma=gamma;
-	recalculateAll();
-}
 double UnitCell::getA() const
 {
-	return _a;
+	return gete1Norm();
 }
 double UnitCell::getB() const
 {
-	return _b;
+	return gete2Norm();
 }
 double UnitCell::getC() const
 {
-	return _c;
+	return gete3Norm();
 }
 double UnitCell::getAlpha() const
 {
-	return _alpha;
+	return gete2e3Angle();
 }
 double UnitCell::getBeta() const
 {
-	return _beta;
+	return gete1e3Angle();
 }
 double UnitCell::getGamma() const
 {
-	return _gamma;
+	return gete1e2Angle();
 }
-UnitCell::Centring UnitCell::getType() const
+
+void UnitCell::setLatticeCentring(LatticeCentring centring)
 {
-	return _type;
+	_centring=centring;
 }
-double UnitCell::getVolume() const
+
+void UnitCell::setBravaisType(BravaisType bravais)
 {
-	return _volume;
+	_bravaisType=bravais;
 }
-const Eigen::Matrix3d& UnitCell::getAMatrix() const
-{
-	return _A;
-}
-const Eigen::Matrix3d& UnitCell::getBMatrix() const
-{
-	return _B;
-}
-const Eigen::Matrix3d& UnitCell::getTMatrix() const
-{
-	return _T;
-}
-const Eigen::Matrix3d& UnitCell::getMetricTensor() const
-{
-	return _G;
-}
-void UnitCell::calculateVolume()
-{
-	_volume=_a*_b*_c*sqrt(1.0-_ca*_ca-_cb*_cb-_cc*_cc+2.0*_ca*_cb*_cc);
-}
-void UnitCell::calculateReciprocalParameters()
-{
-	_astar=_b*_c*_sa/_volume;
-	_bstar=_a*_c*_sb/_volume;
-    _cstar=_a*_b*_sc/_volume;
-    _alphastar=(_cb*_cc-_ca)/(_sb*_sc);
-    _betastar=(_ca-_cc*_cb)/(_sa*_sc);
-    _gammastar=(_cb*_ca-_cc)/(_sb*_sa);
-    _alphastar=acos(_alphastar);
-    _betastar=acos(_betastar);
-    _gammastar=acos(_gammastar);
-}
-void UnitCell::calculateAMatrix()
-{
-	double a32=_c/_sc*(_ca-_cb*_cc);
-	double a33=_volume/(_a*_b*_sc);
-	_A << _a,_b*_cc,_c*_cb,
-		   0,_b*_sc,a32,
-		   0,0     ,a33;
-}
-void UnitCell::calculateTMatrix()
-{
-	double a32=1.0/_sc*(_ca-_cb*_cc);
-	double a33=_volume/(_a*_b*_c*_sc);
-	_T << 1.0,_cc,_cb,0,_sc,a32,0,0,a33;
-}
-void UnitCell::calculateBMatrix()
-{
-	_B=_A.inverse();
-	_B.transposeInPlace();
-	return;
-}
-void UnitCell::calculateGTensors()
-{
-	_G=_A.transpose()*_A;
-}
-void UnitCell::calculatesincos()
-{
-	_ca=cos(_alpha);_cb=cos(_beta);_cc=cos(_gamma);
-	_sa=sin(_alpha);_sb=sin(_beta);_sc=sin(_gamma);
-	return;
-}
-void UnitCell::recalculateAll()
-{
-	calculatesincos();
-	calculateVolume();
-	calculateReciprocalParameters();
-	calculateAMatrix();
-	calculateBMatrix();
-	calculateTMatrix();
-	calculateGTensors();
-	return;
-}
+
 void UnitCell::printSelf(std::ostream& os) const
 {
-	os << "CELL " << _a << " "<<  _b << " " << _c << " " <<
-	_alpha/deg << " " << _beta/deg << " " << _gamma/deg;
+	os << "Cell parameters: " << getA() << ", " << getB() << ", " << getC() << ", " << getAlpha()/SX::Units::deg << ", " <<getBeta()/SX::Units::deg << ", "<< getGamma()/SX::Units::deg <<std::endl;
+	os << "Lattice centring: " << static_cast<char>(_centring) << std::endl;
+	os << "Bravais type: "     << static_cast<char>(_bravaisType) << std::endl;
+
 }
 
-void UnitCell::read(std::istream& is)
+std::ostream& operator<<(std::ostream& os,const UnitCell& rhs)
 {
-	is >> _a >> _b >> _c >> _alpha >> _beta >> _gamma;
-	_alpha*=deg;
-	_beta*=deg;
-	_gamma*=deg;
-    recalculateAll();
-	return;
-}
-void UnitCell::transformA(Eigen::Vector3d& vect) const
-{
-	vect=_A*vect;
-}
-void UnitCell::transformB(Eigen::Vector3d& vect) const
-{
-	vect=_B*vect;
-}
-void UnitCell::transformT(Eigen::Vector3d& vect) const
-{
-	vect=_T*vect;
-}
-Eigen::Vector3d UnitCell::convertB(const Eigen::Vector3d& vect)
-{
-	return _B*vect;
-}
-Eigen::Vector3d UnitCell::convertT(const Eigen::Vector3d& vect)
-{
-	return _T*vect;
-}
-Eigen::Vector3d UnitCell::convertA(const Eigen::Vector3d& vect)
-{
-	return _A*vect;
-}
-
-std::ostream& operator<<(std::ostream& os,const UnitCell& uc)
-{
-	uc.printSelf(os);
+	rhs.printSelf(os);
 	return os;
 }
-std::istream& operator>>(std::istream& is, UnitCell& uc)
-{
-	uc.read(is);
-	return is;
-}
 
-UnitCell UnitCell::transformLattice(const Eigen::Matrix3d& P)
-{
-	UnitCell newcell=*this;
-	newcell._A=newcell._A*P;
-	const Eigen::Vector3d& av=newcell._A.col(0);
-	const Eigen::Vector3d& bv=newcell._A.col(1);
-	const Eigen::Vector3d& cv=newcell._A.col(2);
-	double a=av.norm();
-	double b=bv.norm();
-	double c=cv.norm();
-	double alpha=acos(bv.dot(cv)/b/c);
-	double beta=acos(av.dot(cv)/a/c);
-	double gamma=acos(av.dot(bv)/a/b);
-	newcell.setCell(a,b,c,alpha,beta,gamma);
-	return newcell;
-}
-
-void UnitCell::transformLatticeInPlace(const Eigen::Matrix3d& P)
-{
-
-	_A=_A*P;
-	const Eigen::Vector3d& av=_A.col(0);
-	const Eigen::Vector3d& bv=_A.col(1);
-	const Eigen::Vector3d& cv=_A.col(2);
-	double a=av.norm();
-	double b=bv.norm();
-	double c=cv.norm();
-	double alpha=acos(bv.dot(cv)/b/c);
-	double beta=acos(av.dot(cv)/a/c);
-	double gamma=acos(av.dot(bv)/a/b);
-	setCell(a,b,c,alpha,beta,gamma);
-}
 
 }
 }

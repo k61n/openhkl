@@ -57,7 +57,7 @@ class Basis {
 typedef std::shared_ptr<Basis> ptrBasis;
 
 public:
-
+	Basis();
 	//! Constructor from a set of three non coplanar vectors.
 	//! These vectors will be used column-wised for building the transformation matrix from the reference basis to the current one.
 	Basis(const Vector3d& a, const Vector3d& b, const Vector3d& c, ptrBasis reference=nullptr);
@@ -135,6 +135,13 @@ public:
 	//! Returns the transformation matrix that relates the current basis to the reference basis.
 	const Matrix3d& getReferenceM() const;
 
+	//! Returns the transformation matrix that relates the current basis to other.
+	Matrix3d getReciprocalM(const Basis& other) const;
+	//! Returns the transformation matrix that relates the current basis to the standard basis.
+	Matrix3d getReciprocalStandardM() const;
+	//! Returns the transformation matrix that relates the current basis to the reference basis.
+	const Matrix3d& getReciprocalReferenceM() const;
+
 	//! Rebase the current basis to the standard orthonormal basis by conjugating all intermediate basis.
 	//! The reference basis is lost and set to nullptr.
 	void rebaseToStandard();
@@ -146,16 +153,16 @@ public:
 	void transform(const Matrix3d& M);
 	friend std::ostream& operator<<(std::ostream& os,const Basis& b);
 
-private:
+protected:
 
 	//! Returns true if three vectors are coplanar within a given tolerance.
 	static bool coplanar(const Vector3d& v1, const Vector3d& v2, const Vector3d& v3, double tolerance=1.0e-6);
-	//! A shared pointer to the reference basis. If null assume that the reference is the standard basis.
-	ptrBasis _reference;
 	//! The transformation matrix form the direct reference basis to the current one.
 	Matrix3d _A;
 	//! The transformation matrix form the reciprocal reference basis to the current one.
 	Matrix3d _B;
+	//! A shared pointer to the reference basis. If null assume that the reference is the standard basis.
+	ptrBasis _reference;
 };
 
 } // end namespace Geometry

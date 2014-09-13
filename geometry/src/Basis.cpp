@@ -8,7 +8,10 @@ namespace SX
 namespace Geometry
 {
 
-Basis::Basis(const Vector3d& a, const Vector3d& b, const Vector3d& c, ptrBasis reference) : _reference(reference)
+Basis::Basis():_A(Eigen::Matrix3d::Identity()),_B(Eigen::Matrix3d::Identity()),_reference(nullptr)
+{
+}
+Basis::Basis(const Vector3d& a, const Vector3d& b, const Vector3d& c, ptrBasis reference): _reference(reference)
 {
 
 	if (coplanar(a,b,c))
@@ -47,6 +50,8 @@ Basis::~Basis()
 
 Basis Basis::fromDirectVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c, ptrBasis reference)
 {
+	if (coplanar(a,b,c))
+			throw std::runtime_error("The direct vectors are coplanar.");
 	return Basis(a,b,c,reference);
 }
 
@@ -233,9 +238,21 @@ Matrix3d Basis::getStandardM() const
 		return _reference->getStandardM()*_A;
 }
 
+Matrix3d Basis::getReciprocalStandardM() const
+{
+
+	return getStandardM().inverse();
+}
+
 const Matrix3d& Basis::getReferenceM() const
 {
 	return _A;
+}
+
+const Matrix3d& Basis::getReciprocalReferenceM() const
+{
+
+	return _B;
 }
 
 Matrix3d Basis::getM(const Basis& other) const
@@ -243,6 +260,11 @@ Matrix3d Basis::getM(const Basis& other) const
 	Matrix3d A = getStandardM();
 	Matrix3d Aother = other.getStandardM();
 	return Aother.inverse()*A;
+}
+
+Matrix3d Basis::getReciprocalM(const Basis& other) const
+{
+	return getM(other).inverse();
 }
 
 void Basis::rebaseToStandard()

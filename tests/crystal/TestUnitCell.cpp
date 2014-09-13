@@ -26,7 +26,7 @@ BOOST_AUTO_TEST_CASE(Test_Unit_Cell)
 
 	BOOST_CHECK_CLOSE(cell.getVolume(),a*b*c,tolerance);
 
-	const Eigen::Matrix3d& A=cell.getAMatrix();
+	const Eigen::Matrix3d& A=cell.getStandardM();
 	BOOST_CHECK_CLOSE(A(0,0),a,tolerance);
 	BOOST_CHECK_SMALL(A(1,0),tolerance);
 	BOOST_CHECK_SMALL(A(2,0),tolerance);
@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_CASE(Test_Unit_Cell)
 	BOOST_CHECK_SMALL(A(1,2),tolerance);
 	BOOST_CHECK_CLOSE(A(2,2),c,tolerance);
 
-	const Eigen::Matrix3d& B=cell.getBMatrix();
+	const Eigen::Matrix3d& B=cell.getReciprocalStandardM();
 	BOOST_CHECK_CLOSE(B(0,0),1/a,tolerance);
 	BOOST_CHECK_SMALL(B(1,0),tolerance);
 	BOOST_CHECK_SMALL(B(2,0),tolerance);
@@ -60,15 +60,10 @@ BOOST_AUTO_TEST_CASE(Test_Unit_Cell)
 	BOOST_CHECK_SMALL(G(1,2),tolerance);
 	BOOST_CHECK_CLOSE(G(2,2),c*c,tolerance);
 
-	cell.setCell(6.32,6.32,6.32,107.5*deg,107.5*deg,113.2*deg);
-	Eigen::Matrix3d P;
-	P << 0, 1, 1,
-	     1, 0, 1,
-	     1, 1, 0;
-	UnitCell newcell=cell.transformLattice(P);
-	std::cout << "Newcell" << newcell;
+	cell.setLatticeCentring(LatticeCentring::I);
+	cell.setBravaisType(BravaisType::Tetragonal);
 
-
+	std::cout << cell;
 
 
 
