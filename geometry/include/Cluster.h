@@ -28,8 +28,6 @@
 #ifndef NSXTOOL_Cluster_H_
 #define NSXTOOL_Cluster_H_
 
-#include <vector>
-#include <map>
 #include <Eigen/Dense>
 
 namespace SX
@@ -37,17 +35,26 @@ namespace SX
 
 namespace Geometry
 {
-
+//! Class to group peaks in clusters in 3Dimensions.
 class Cluster
 {
 public:
   Cluster();
+  Cluster(const Cluster&);
+  Cluster& operator=(const Cluster&);
+  //! Create a cluster with a tolerance on the norm
   Cluster(double tol);
+  //! Create a cluster from a fist vector with a tolerance on the norm
   Cluster(const Eigen::Vector3d& v, double tol);
-  Eigen::Vector3d getCenter() const { return _center/static_cast<double>(_size);}
+  //! Get the center of a cluster
+  Eigen::Vector3d getCenter() const;
+  //! Get the number of vectors in the Cluster
   int getSize() const { return _size;}
+  //! Add a vector
   bool addVector(const Eigen::Vector3d& v);
+  //! Check whether two clusters are equivalent within their norms
   bool operator==(const Cluster& c) const;
+  //! Merge two clusters
   Cluster& operator+=(const Cluster& c);
 private:
   //! center of the
@@ -55,25 +62,6 @@ private:
   int _size;
   double _tolerance;
 
-};
-
-class LatticeFinder
-{
-public:
-	LatticeFinder(double threshold, double tolerance);
-	void addPoint(double x, double y, double z);
-	void addPoint(const Eigen::Vector3d& v);
-	void addPoints(const std::vector<Eigen::Vector3d>&);
-	void run(double cellmin=2.0);
-	bool determineLattice(Eigen::Vector3d& a, Eigen::Vector3d& b,Eigen::Vector3d& c,int clustermax=20) const;
-	int getNumberOfClusters() { return _clusters.size();}
-	const std::multimap<double,Cluster>& getClusters() const { return _clusters;}
-	double costFunction(const Eigen::Vector3d& v1, const Eigen::Vector3d& v2, const Eigen::Vector3d& v3, double epsilon,  double delta) const;
-private:
-    double _threshold;
-    double _tolerance;
-	std::vector<Eigen::Vector3d> _peaks;
-	std::multimap<double,Cluster> _clusters;
 };
 
 } // Namespace Geometry

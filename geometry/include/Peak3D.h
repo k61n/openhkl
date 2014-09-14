@@ -108,6 +108,7 @@ public:
    	//! Set the scaling factor.
    	void setScale(double factor);
 
+   	//!
 
 //	//! Total intensity in the background
 //	double bkgTotalCounts() const;

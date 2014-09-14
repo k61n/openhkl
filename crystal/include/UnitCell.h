@@ -31,7 +31,7 @@
 #include <iostream>
 #include <Eigen/Dense>
 #include "Basis.h"
-
+#include <string>
 namespace SX
 {
 
@@ -39,6 +39,13 @@ namespace Crystal
 {
 
 using Eigen::Vector3d;
+
+
+
+//! Centering type of the Bravais lattice
+enum  class LatticeCentring : char  {P='P',A='A',B='B',C='C',I='I',F='F',R='R'};
+//! Bravais type
+enum  class BravaisType : char  {Triclinic='a',Monolinic='m',Orthorhombic='o',Tetragonal='t',Hexagonal='h',Cubic='c'};
 
 /** @brief Class to define a crystallographic unit-cell.
  *
@@ -49,12 +56,6 @@ using Eigen::Vector3d;
  * are given in degrees.
  * The a axis is chosen as pointing along the x-direction, and the b-axis is in the xy-plane.
  */
-
-//! Centering type of the Bravais lattice
-enum  class LatticeCentring : char  {P='P',A='A',B='B',C='C',I='I',F='F',R='R'};
-//! Bravais type
-enum  class BravaisType : char  {Triclinic='a',Monolinic='m',Orthorhombic='o',Tetragonal='t',Hexagonal='h',Cubic='c'};
-
 class UnitCell : public SX::Geometry::Basis
 {
 public:
@@ -89,6 +90,8 @@ public:
  	void setLatticeCentring(LatticeCentring centring);
  	//!
  	void setBravaisType(BravaisType bravais);
+ 	//!
+ 	std::string getBravaisTypeSymbol() const;
  	//! Print to a stream
  	void printSelf(std::ostream& os) const;
 private:

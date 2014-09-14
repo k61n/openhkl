@@ -113,6 +113,12 @@ void UnitCell::setBravaisType(BravaisType bravais)
 {
 	_bravaisType=bravais;
 }
+std::string UnitCell::getBravaisTypeSymbol() const
+{
+	std::ostringstream os;
+	os << static_cast<char>(_bravaisType) << static_cast<char>(_centring);
+	return os.str();
+}
 
 void UnitCell::printSelf(std::ostream& os) const
 {
