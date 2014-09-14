@@ -78,6 +78,13 @@ void DialogUnitCell::setPeaks(const std::vector<std::reference_wrapper<SX::Geome
         }
         _unitcells.push_back(std::pair<SX::Crystal::UnitCell,double>(cell,quality/_peaks.size()));
     }
+    // Sort the Quality of the solutions decreasing
+    std::sort(_unitcells.begin(),
+              _unitcells.end(),
+              [](const std::pair<SX::Crystal::UnitCell,double>& cell1,const std::pair<SX::Crystal::UnitCell,double>& cell2)->bool
+                {
+                    return (cell1.second>cell2.second);
+                });
 }
 
 DialogUnitCell::~DialogUnitCell()

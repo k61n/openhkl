@@ -143,7 +143,6 @@ void PeakTableView::constructTable()
 void PeakTableView::customMenuRequested(QPoint pos)
 {
     // Show all peaks as selected when contet menu is requested
-    this->selectAll();
     QMenu* menu=new QMenu(this);
     QAction* normalize=new QAction("Normalize to monitor",menu);
     menu->addSeparator();
