@@ -121,7 +121,7 @@
            <enum>QAbstractSpinBox::UpDownArrows</enum>
           </property>
           <property name="minimum">
-           <double>1.500000000000000</double>
+           <double>1.000000000000000</double>
           </property>
           <property name="maximum">
            <double>100000.000000000000000</double>

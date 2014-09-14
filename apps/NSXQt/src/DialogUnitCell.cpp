@@ -1,6 +1,21 @@
 #include <QtDebug>
-
+#include <QMessageBox>
+#include <Eigen/Dense>
+#include "DialogTransformationMatrix.h"
 #include "DialogUnitCell.h"
+#include "LatticeFinder.h"
+#include "NiggliReduction.h"
+#include "GruberReduction.h"
+#include "Units.h"
+#include "DialogUnitCellSolutions.h"
+
+QDebug& operator<<(QDebug &dbg, const SX::Crystal::UnitCell& cell)
+{
+    std::ostringstream os;
+    os <<cell;
+    dbg << QString::fromStdString(os.str());
+    return dbg;
+}
 
 QDebug& operator<<(QDebug &dbg, const Eigen::Matrix3d& m)
 {
@@ -9,6 +24,7 @@ QDebug& operator<<(QDebug &dbg, const Eigen::Matrix3d& m)
     dbg << QString::fromStdString(os.str());
     return dbg;
 }
+
 
 DialogUnitCell::DialogUnitCell(QWidget *parent):QDialog(parent),ui(new Ui::DialogUnitCell)
 {
@@ -22,8 +38,46 @@ DialogUnitCell::DialogUnitCell(QWidget *parent):QDialog(parent),ui(new Ui::Dialo
 }
 void DialogUnitCell::setPeaks(const std::vector<std::reference_wrapper<SX::Geometry::Peak3D>>& peaks)
 {
+    _peaks.clear();
     _peaks=peaks;
-    ui->spinBoxNumberPeaks->setValue(peaks.size());
+    ui->spinBoxNumberPeaks->setValue(_peaks.size());
+
+    SX::Crystal::LatticeFinder finder(0.02,0.01);
+    for (auto peak : _peaks)
+    {
+        Eigen::Vector3d realQ=peak.get().getQ();
+        finder.addPoint(realQ[0],realQ[1],realQ[2]);
+    }
+
+    finder.run(3.0);
+    Eigen::Vector3d as,bs,cs;
+    std::vector<SX::Crystal::LatticeSolution> solutions=finder.determineLattice(30,30);
+
+    for (auto solution : solutions)
+    {
+        SX::Crystal::UnitCell cell=SX::Crystal::UnitCell::fromReciprocalVectors(std::get<0>(solution),std::get<1>(solution),std::get<2>(solution));
+        SX::Crystal::NiggliReduction n(cell.getMetricTensor(),0.02);
+        Eigen::Matrix3d newg,P;
+        n.reduce(newg,P);
+        cell.transform(P);
+        SX::Crystal::UnitCell niggli=cell;
+        SX::Crystal::GruberReduction gr(cell.getMetricTensor(),1.5);
+        Eigen::Matrix3d Pprime;
+        SX::Crystal::LatticeCentring centring;
+        SX::Crystal::BravaisType bravais;
+        gr.reduce(Pprime,centring,bravais);
+        cell.transform(Pprime);
+        cell.setLatticeCentring(centring);
+        cell.setBravaisType(bravais);
+        double quality=0.0;
+        std::shared_ptr<SX::Crystal::UnitCell> pcell(new SX::Crystal::UnitCell(cell));
+        for (auto peak: _peaks)
+        {
+            if (peak.get().setBasis(pcell))
+                quality+=1.0;
+        }
+        _unitcells.push_back(std::pair<SX::Crystal::UnitCell,double>(cell,quality/_peaks.size()));
+    }
 }
 
 DialogUnitCell::~DialogUnitCell()
@@ -31,47 +85,28 @@ DialogUnitCell::~DialogUnitCell()
 
 void DialogUnitCell::getUnitCell()
 {
-    SX::Geometry::LatticeFinder finder(0.02,0.01);
-    for (SX::Geometry::Peak3D& peak : _peaks)
-    {
-        Eigen::Vector3d realQ=peak.getQ();
-        finder.addPoint(realQ[0],realQ[1],realQ[2]);
-    }
-    finder.run(3.0);
-    Eigen::Vector3d as,bs,cs;
-    if (!finder.determineLattice(as,bs,cs,30))
-        return;
 
-    SX::Geometry::Basis b=SX::Geometry::Basis::fromReciprocalVectors(as,bs,cs);
-    SX::Crystal::NiggliReduction n(b.getMetricTensor(),1e-3);
-    Eigen::Matrix3d newg,P;
-    n.reduce(newg,P);
-    b.transform(P);
-    SX::Geometry::Basis niggli=b;
-    qDebug() << "Found Niggli Unit Cell:"
-             << niggli.gete1Norm() << " " << niggli.gete2Norm() << " " << niggli.gete3Norm() << " "
-             << niggli.gete2e3Angle()/SX::Units::deg << " " << niggli.gete1e3Angle()/SX::Units::deg << " " << niggli.gete1e2Angle()/SX::Units::deg;
-    Eigen::Matrix3d a;
-    qDebug() << " " <<  niggli.getReferenceM();
-    SX::Crystal::GruberReduction gr(b.getMetricTensor(),4.0);
-    Eigen::Matrix3d Pprime;
-    SX::Crystal::UnitCell::Centring type;
-    gr.reduce(Pprime,type);
-    b.transform(Pprime);
-    std::shared_ptr<SX::Geometry::Basis> conventional(new SX::Geometry::Basis(b));
-    _basis=conventional;
-    setUpValues();
-
+    DialogUnitCellSolutions* ucs=new DialogUnitCellSolutions(this);
+    ucs->setSolutions(_unitcells);
+    ucs->show();
+    connect(ucs,SIGNAL(selectSolution(int)),this,SLOT(acceptSolution(int)));
 }
+
+void DialogUnitCell::acceptSolution(int i)
+{
+    _basis=_unitcells[i].first;
+    setUpValues();
+}
+
 void DialogUnitCell::setUpValues()
 {
-    ui->doubleSpinBoxa->setValue(_basis->gete1Norm());
-    ui->doubleSpinBoxb->setValue(_basis->gete2Norm());
-    ui->doubleSpinBoxc->setValue(_basis->gete3Norm());
-    ui->doubleSpinBoxalpha->setValue(_basis->gete2e3Angle()/SX::Units::deg);
-    ui->doubleSpinBoxbeta->setValue(_basis->gete1e3Angle()/SX::Units::deg);
-    ui->doubleSpinBoxgamma->setValue(_basis->gete1e2Angle()/SX::Units::deg);
-    Eigen::Matrix3d M=_basis->getStandardM().inverse();
+    ui->doubleSpinBoxa->setValue(_basis.gete1Norm());
+    ui->doubleSpinBoxb->setValue(_basis.gete2Norm());
+    ui->doubleSpinBoxc->setValue(_basis.gete3Norm());
+    ui->doubleSpinBoxalpha->setValue(_basis.gete2e3Angle()/SX::Units::deg);
+    ui->doubleSpinBoxbeta->setValue(_basis.gete1e3Angle()/SX::Units::deg);
+    ui->doubleSpinBoxgamma->setValue(_basis.gete1e2Angle()/SX::Units::deg);
+    Eigen::Matrix3d M=_basis.getStandardM().inverse();
     ui->doubleSpinBoxUB00->setValue(M(0,0));
     ui->doubleSpinBoxUB01->setValue(M(0,1));
     ui->doubleSpinBoxUB02->setValue(M(0,2));
@@ -92,9 +127,11 @@ void DialogUnitCell::setTransformationMatrix()
 void DialogUnitCell::reindexHKL()
 {
     int success=0;
+
+    std::shared_ptr<SX::Crystal::UnitCell> sptr(new SX::Crystal::UnitCell(_basis));
     for (SX::Geometry::Peak3D& peak : _peaks)
     {
-        if (peak.setBasis(_basis))
+        if (peak.setBasis(sptr))
             success++;
     }
     QMessageBox::information(this,"Indexation","Successfully indexed"+QString::number(success)+" peaks out of "+QString::number(_peaks.size()));

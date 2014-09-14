@@ -89,6 +89,7 @@ void MainWindow::on_action_open_triggered()
     dialog.setFileMode(QFileDialog::ExistingFiles);
     QStringList fileNames;
     fileNames= dialog.getOpenFileNames(this,"select numors","");
+    //
     // No files selected
     if (fileNames.isEmpty())
         return;
@@ -337,7 +338,6 @@ void MainWindow::on_action_peak_find_triggered()
 
 void MainWindow::resizeEvent(QResizeEvent* event)
 {
-    std::cout << "I am here" <<std::endl;
     updatePlot();
 }
 

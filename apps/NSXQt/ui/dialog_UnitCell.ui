@@ -220,8 +220,8 @@
      <rect>
       <x>20</x>
       <y>90</y>
-      <width>160</width>
-      <height>62</height>
+      <width>231</width>
+      <height>61</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_2">

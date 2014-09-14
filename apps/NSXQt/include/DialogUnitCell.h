@@ -5,17 +5,10 @@
 #include <vector>
 #include <functional>
 #include <memory>
-#include <functional>
-#include "Peak3D.h"
 #include <vector>
-#include <Eigen/Dense>
-#include "Cluster.h"
-#include "NiggliReduction.h"
-#include "GruberReduction.h"
-#include "Units.h"
-#include <QMessageBox>
-#include <DialogTransformationMatrix.h>
-
+#include "UnitCell.h"
+#include "Peak3D.h"
+#include "LatticeFinder.h"
 class DialogUnitCell : public QDialog
 {
     Q_OBJECT
@@ -24,16 +17,18 @@ public:
     void setPeaks(const std::vector<std::reference_wrapper<SX::Geometry::Peak3D>>& peaks);
     ~DialogUnitCell();
 signals:
-
+    void hasSolutions(const std::vector<SX::Crystal::UnitCell>&);
 public slots:
     void getUnitCell();
     void setUpValues();
     void setTransformationMatrix();
     void reindexHKL();
+    void acceptSolution(int i);
 private slots:
 
 private:
-    std::shared_ptr<SX::Geometry::Basis> _basis;
+    std::vector<std::pair<SX::Crystal::UnitCell,double>> _unitcells;
+    SX::Crystal::UnitCell _basis;
     Ui::DialogUnitCell* ui;
     std::vector<std::reference_wrapper<SX::Geometry::Peak3D>> _peaks;
 };

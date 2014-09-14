@@ -26,7 +26,8 @@ SOURCES += src/Main.cpp \
     src/DialogTransformationMatrix.cpp \
     src/DialogUnitCell.cpp \
     src/NoteBook.cpp \
-    src/Logger.cpp
+    src/Logger.cpp \
+    src/DialogUnitCellSolutions.cpp
 
 HEADERS  += include/MainWindow.h \
     include/DetectorView.h \
@@ -41,14 +42,16 @@ HEADERS  += include/MainWindow.h \
     include/DialogUnitCell.h \
     include/DialogTransformationMatrix.h \
     include/NoteBook.h \
-    include/Logger.h
+    include/Logger.h \
+    include/DialogUnitCellSolutions.h
 
 FORMS    += ui/mainwindow.ui \
     ui/dialog_PeakFind.ui \
     ui/plotter1d.ui \
     ui/peakplotter.ui \
     ui/dialog_UnitCell.ui \
-    ui/dialogtransformationmatrix.ui
+    ui/dialogtransformationmatrix.ui \
+    dialogunitcellsolutions.ui
 
 win32:CONFIG(release, debug|release): LIBS += -lNSXTool
 else:unix: LIBS += -lNSXTool -lgomp -lboost_date_time

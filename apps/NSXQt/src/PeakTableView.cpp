@@ -124,7 +124,7 @@ void PeakTableView::constructTable()
     {
         const Eigen::RowVector3d& hkl=peak.getMillerIndices();
         double l=peak.getLorentzFactor();
-        QStandardItem* col1=new QStandardItem(QString::number(hkl[0])+","+QString::number(hkl[1])+","+QString::number(hkl[2]));
+        QStandardItem* col1=new QStandardItem(QString::number(hkl[0],'f',2)+","+QString::number(hkl[1],'f',2)+","+QString::number(hkl[2],'f',2));
         QStandardItem* col2=new QStandardItem(QString::number(peak.getScaledIntensity()/l));
         QStandardItem* col3=new QStandardItem(QString::number(peak.getScaledSigma()/l));
         QStandardItem* col4=new QStandardItem(QString::number(peak.getData()->_mm->getMetaData()->getKey<int>("Numor")));
