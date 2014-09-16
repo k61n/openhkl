@@ -4,12 +4,11 @@
 #
 #-------------------------------------------------
 
-QT       += core widgets printsupport
+QT       += core widgets printsupport opengl
 CONFIG   += debug_and_release
 QMAKE_CXXFLAGS += -std=c++0x -fopenmp
 TARGET = nsxtool
 TEMPLATE = app
-
 
 RESOURCES = NSXQt.qrc \
 
@@ -27,7 +26,8 @@ SOURCES += src/Main.cpp \
     src/DialogUnitCell.cpp \
     src/NoteBook.cpp \
     src/Logger.cpp \
-    src/DialogUnitCellSolutions.cpp
+    src/DialogUnitCellSolutions.cpp \
+    src/peakview.cpp
 
 HEADERS  += include/MainWindow.h \
     include/DetectorView.h \
@@ -43,7 +43,8 @@ HEADERS  += include/MainWindow.h \
     include/DialogTransformationMatrix.h \
     include/NoteBook.h \
     include/Logger.h \
-    include/DialogUnitCellSolutions.h
+    include/DialogUnitCellSolutions.h \
+    include/peakview.h
 
 FORMS    += ui/mainwindow.ui \
     ui/dialog_PeakFind.ui \

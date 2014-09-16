@@ -1,4 +1,6 @@
 #include <cmath>
+#include <stdexcept>
+
 #include "UnitCell.h"
 #include "Units.h"
 

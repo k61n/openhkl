@@ -1,5 +1,7 @@
-#include "LatticeFinder.h"
 #include <iostream>
+#include <stdexcept>
+
+#include "LatticeFinder.h"
 
 namespace SX
 {
