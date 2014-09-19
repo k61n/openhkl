@@ -21,6 +21,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 	double D=_g(1,2);
 	double E=_g(0,2);
 	double F=_g(0,1);
+	_epsilon*=1.0/3*(A+B+C);
 
 	bool typeI=(D*E*F>0);
 
