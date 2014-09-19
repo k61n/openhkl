@@ -84,6 +84,8 @@ public:
 	void setState(const GonioState& g);
 	//! Set the state of gonio to a new state corresponding to the Axis parameters in v
 	void setCurrentValues(const std::vector<double>& v);
+	//! Get the number of Axis
+	int numberOfAxes() const;
 protected:
 	//! Given name of the gonio
 	std::string _label;

@@ -3,7 +3,7 @@
 #include <cmath>
 #include "Detector.h"
 #include "Units.h"
-
+#include "Gonio.h"
 namespace SX
 {
 
@@ -161,6 +161,18 @@ void Detector::convertCoordinates(double px,double py,double& mx,double& my) con
 	}
 	return;
 
+}
+
+DetectorEvent Detector::createDetectorEvent(double x, double y, const std::vector<double>& values) const
+{
+	if (values.size()!=this->Component::_gonio->numberOfAxes())
+		throw std::runtime_error("Trying to create a DetectorEvent with invalid number of Goniometer Axes");
+	DetectorEvent result;
+	result._detector=this;
+	result._x=x;
+	result._y=y;
+	result._values=values;
+	return result;
 }
 
 

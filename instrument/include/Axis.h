@@ -38,11 +38,13 @@ using Eigen::Transform;
 namespace SX {
 namespace Instrument{
 
-// @Brief interface use for homogeneous transform such as Rotation and translation (scale)
-// Each axis define a normalized direction (about which one rotates or along which one translates).
-// An offset can be defined and a valid range of parameters (lowLimit, HighLimit). The Axis class
-// does not maintain a given state and only return the homogeneous matrix for a input value, i.e.
-// for a rotation of M_PI about the axis, the method getHomMatrix(M_PI) will return the hom. Matrix.
+/** @brief Interface use for homogeneous transform, Rotation and translation, scale
+*
+* Each axis define a normalized direction (about which one rotates or along which one translates).
+* An offset can be defined and a valid range of parameters (lowLimit, HighLimit). The Axis class
+* does not maintain a given state and only return the homogeneous matrix for a input value, i.e.
+* for a rotation of M_PI about the axis, the method getHomMatrix(M_PI) will return the hom. Matrix.
+*/
 class Axis {
 public:
 	Axis(const std::string& label);

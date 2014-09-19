@@ -32,7 +32,7 @@
 #include <string>
 #include <Eigen/Dense>
 #include "Component.h"
-
+#include "DetectorEvent.h"
 namespace SX
 {
 
@@ -130,7 +130,8 @@ public:
 	double get2Theta(double px, double py, const Eigen::Vector3d& si) const;
 	//! Pointer to function that maps data indexing with detector indexing
 	void setDataMapping(std::function<void(double,double,double&,double&)>);
-	//!
+	//! Create a detector event, a small object with state of the event on the detector and gonio setup
+	DetectorEvent createDetectorEvent(double x, double y, const std::vector<double>& goniosetup) const;
 	virtual void parse(const ptree&)=0;
 protected:
 	void convertCoordinates(double, double , double&, double&) const;

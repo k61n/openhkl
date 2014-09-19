@@ -140,5 +140,12 @@ GonioState Gonio::createState(const std::vector<double>& values) const
 	return g;
 }
 
+int Gonio::numberOfAxes() const
+{
+	return _axes.size();
+}
+
+
+
 }
 }

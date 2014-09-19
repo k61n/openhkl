@@ -41,11 +41,11 @@ namespace Instrument
 	using Eigen::Vector3d;
 	using Eigen::Matrix3d;
 	using Eigen::Quaterniond;
-/* !
- * \brief Class defining a rotation axis.
+/**
+ * @brief Class defining a rotation axis.
  *
  *  Allows to define a rotation axis in 3D space , constructed by a direction vector
- *  and a rotation direction (CW or CCW). The direction vector needs not to be normalized.
+ *  and a rotation direction (CW or CCW). The direction vector needs not be normalized.
  *
  */
 class RotAxis : public Axis
