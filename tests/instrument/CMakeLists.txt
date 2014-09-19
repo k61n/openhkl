@@ -29,3 +29,4 @@ add_test(TestCylindricalDetector TestCylindricalDetector)
 add_executable(TestFlatDetector TestFlatDetector.cpp)
 TARGET_LINK_LIBRARIES(TestFlatDetector ${Boost_LIBRARIES} NSXTool)
 add_test(TestFlatDetector TestFlatDetector)
+
