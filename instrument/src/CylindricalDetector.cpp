@@ -52,7 +52,7 @@ double CylindricalDetector::getHeightAngle() const
 	return 2.0*atan(0.5*_height/_distance);
 }
 
-Eigen::Vector3d CylindricalDetector::getEventPosition(double px, double py) const
+Eigen::Vector3d CylindricalDetector::getPos(double x, double y) const
 {
 	if (_nCols==0 || _nRows==0)
 		throw std::runtime_error("Detector: number of rows or cols must >0");
@@ -66,7 +66,7 @@ Eigen::Vector3d CylindricalDetector::getEventPosition(double px, double py) cons
 	// Convert coordinates due to detector mapping,
 	// mx,my nows in the internal convention
 	double mx,my;
-	convertCoordinates(px,py,mx,my);
+	convertCoordinates(x,y,mx,my);
 	Eigen::Vector3d result;
 	// take the center of the bin
 	result[2]=((my+0.5)/_nRows-0.5)*_height;
@@ -74,11 +74,8 @@ Eigen::Vector3d CylindricalDetector::getEventPosition(double px, double py) cons
 	// Angle
 	result[1]=_distance*cos(gamma);
 	result[0]=_distance*sin(gamma);
-	if (_gonio)
-		_gonio->transformInPlace(result);
 	return result;
 }
-
 
 }
 }

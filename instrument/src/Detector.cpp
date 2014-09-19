@@ -113,11 +113,40 @@ double Detector::getPixelWidth() const
 	return _width/_nCols;
 }
 
+Eigen::Vector3d Detector::getEventPosition(double px, double py) const
+{
+	Eigen::Vector3d v=getPos(px,py);
+	if (_gonio)
+		_gonio->transformInPlace(v);
+	return v;
+}
+
+Eigen::Vector3d Detector::getEventPosition(const DetectorEvent& event) const
+{
+	if (event._detector!=this)
+		throw std::runtime_error("Trying to assign DetectorEvent to a different detector");
+
+	if (!_gonio && event._values.size()!=0)
+		throw std::runtime_error("Number of Gonio values ");
+
+	Eigen::Vector3d v=getPos(event._x,event._y);
+	_gonio->transformInPlace(v,event._values);
+	return v;
+}
 
 Eigen::Vector3d Detector::getKf(double px, double py, double wave,const Eigen::Vector3d& from) const
 {
 	// Get the event position x,y,z, taking into account the Gonio current setting
 	Eigen::Vector3d p=getEventPosition(px,py);
+	p-=from;
+	p.normalize();
+	return (p/wave);
+}
+
+Eigen::Vector3d Detector::getKf(const DetectorEvent& event, double wave,const Eigen::Vector3d& from) const
+{
+	// Get the event position x,y,z, taking into account the Gonio current setting
+	Eigen::Vector3d p=getEventPosition(event);
 	p-=from;
 	p.normalize();
 	return (p/wave);
@@ -132,6 +161,15 @@ Eigen::Vector3d Detector::getQ(double px, double py,double wave,const Eigen::Vec
 	return q;
 }
 
+Eigen::Vector3d Detector::getQ(const DetectorEvent& event,double wave,const Eigen::Vector3d& from) const
+{
+	if (wave<=0)
+		throw std::runtime_error("Detector:getQ incident wavelength error, must be >0");
+	Eigen::Vector3d q=getKf(event,wave,from);
+	q-=Eigen::Vector3d(0.0,1/wave,0.0);
+	return q;
+}
+
 void Detector::getGammaNu(double px, double py, double& gamma, double& nu)
 {
 	Eigen::Vector3d p=getEventPosition(px,py);
@@ -139,9 +177,24 @@ void Detector::getGammaNu(double px, double py, double& gamma, double& nu)
 	nu=asin(p[2]/p.norm());
 }
 
+void Detector::getGammaNu(const DetectorEvent& event, double& gamma, double& nu)
+{
+	Eigen::Vector3d p=getEventPosition(event);
+	gamma=atan2(p[0],p[1]);
+	nu=asin(p[2]/p.norm());
+}
+
+
 double Detector::get2Theta(double px, double py, const Eigen::Vector3d& si) const
 {
 	Eigen::Vector3d p=getEventPosition(px,py);
+	double proj=p.dot(si);
+	return acos(proj/p.norm()/si.norm());
+}
+
+double Detector::get2Theta(const DetectorEvent& event, const Eigen::Vector3d& si) const
+{
+	Eigen::Vector3d p=getEventPosition(event);
 	double proj=p.dot(si);
 	return acos(proj/p.norm()/si.norm());
 }

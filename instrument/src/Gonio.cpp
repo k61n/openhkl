@@ -98,6 +98,12 @@ Vector3d Gonio::transform(const Vector3d& v,const std::vector<double>& values)
 	return (result*v.homogeneous());
 }
 
+void Gonio::transformInPlace(Vector3d& v,const std::vector<double>& values)
+{
+	Eigen::Transform<double,3,Eigen::Affine> result=getHomMatrix(values);
+	v=result*v.homogeneous();
+}
+
 Vector3d Gonio::transform(const Vector3d& v)
 {
 	return (_currenTransform*v.homogeneous());

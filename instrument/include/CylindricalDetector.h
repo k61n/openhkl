@@ -48,13 +48,13 @@ public:
 	double getWidthAngle() const;
 	//! Return the height in angular units (radians) covered by the detector
 	double getHeightAngle() const;
-	Eigen::Vector3d getEventPosition(double px, double py) const;
 	virtual ~CylindricalDetector();
 	void parse(const ptree& node)
 	{
 
 	}
 private:
+	Eigen::Vector3d getPos(double x,double y) const;
 	double _widthAngle;
 };
 

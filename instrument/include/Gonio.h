@@ -76,6 +76,8 @@ public:
 	Vector3d transform(const Vector3d& v);
 	//! Transform a point by reference
 	void transformInPlace(Vector3d& v);
+	//! Transform a vector inplace, for a values of Gonio parameters
+	void transformInPlace(Vector3d& v,const std::vector<double>& values);
 	//! Create a state from a set of values
 	GonioState createState(const std::vector<double>& values) const;
 	//! Copy the current state to a GonioState object

@@ -94,7 +94,8 @@ public:
 	 *  @param py vertical position of the scattering event in pixels units
 	 *  @return spatial position of this event
 	 */
-	virtual Eigen::Vector3d getEventPosition(double px, double py) const =0;
+	Eigen::Vector3d getEventPosition(double px, double py) const;
+	Eigen::Vector3d getEventPosition(const DetectorEvent& event) const;
 	/**
 	 *  @brief Get the scattered wavenumber for an event on a detector
 	 *  @param px horizontal position of the scattering event in pixels unit
@@ -105,6 +106,10 @@ public:
 	 */
 	Eigen::Vector3d getKf(double px, double py, double wave, const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
 	/**
+	 *
+	 */
+	Eigen::Vector3d getKf(const DetectorEvent& event,double wave, const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
+	/**
 	 *  @brief Get the transferred wavenumber for an event on a detector
 	 *  @param px horizontal position of the scattering event in pixels unit
 	 *  @param py vertical position of the scattering event in pixels units
@@ -113,6 +118,7 @@ public:
 	 *  @return Transferred wavenumber s=\f$ \frac{k_f-k_i}{2\pi} \f$
 	 */
 	Eigen::Vector3d getQ(double px, double py, double wave,const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
+	Eigen::Vector3d getQ(const DetectorEvent& event, double wave,const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
 	/**
 	 *  @brief Get the scattering angles for an event on the detector
 	 *  @param px horizontal position of the scattering event in pixels unit
@@ -121,6 +127,7 @@ public:
 	 *  @param nu reference to elevation angle
 	 */
 	void getGammaNu(double px, double py, double& gamma, double& nu);
+	void getGammaNu(const DetectorEvent& event, double& gamma, double& nu);
 	/**
 	 *  @brief Get 2\f$ \theta \f$
 	 *  @param px horizontal position of the scattering event in pixels unit
@@ -128,6 +135,7 @@ public:
 	 *  @param si Incident wavenumber
 	 */
 	double get2Theta(double px, double py, const Eigen::Vector3d& si) const;
+	double get2Theta(const DetectorEvent& event, const Eigen::Vector3d& si) const;
 	//! Pointer to function that maps data indexing with detector indexing
 	void setDataMapping(std::function<void(double,double,double&,double&)>);
 	//! Create a detector event, a small object with state of the event on the detector and gonio setup
@@ -140,6 +148,8 @@ protected:
 	// Sample to detector distance
 	double _distance;
 	std::function<void(double,double,double&,double&)> _mapping;
+private:
+	virtual Eigen::Vector3d getPos(double x, double y) const=0;
 };
 
 } // end namespace Instrument

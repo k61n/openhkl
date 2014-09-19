@@ -49,7 +49,7 @@ double FlatDetector::getHeightAngle() const
 	return 2.0*atan(0.5*_height/_distance);
 }
 
-Eigen::Vector3d FlatDetector::getEventPosition(double px, double py) const
+Eigen::Vector3d FlatDetector::getPos(double px, double py) const
 {
 	if (_nCols==0 || _nRows==0)
 		throw std::runtime_error("Detector: number of rows or cols must >0");
@@ -69,8 +69,6 @@ Eigen::Vector3d FlatDetector::getEventPosition(double px, double py) const
 	result[0]=((mx+0.5)/_nCols-0.5)*_width;
 	result[1]=_distance;
 	result[2]=((my+0.5)/_nRows-0.5)*_height;
-	if (_gonio)
-		_gonio->transformInPlace(result);
 	return result;
 }
 
