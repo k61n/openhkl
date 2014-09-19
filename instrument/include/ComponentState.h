@@ -2,8 +2,7 @@
  * nsxtool : Neutron Single Crystal analysis toolkit
  ------------------------------------------------------------------------------------------
  Copyright (C)
- 2012- Laurent C. Chapon Eric Pellegrini
- Institut Laue-Langevin
+ 2012- Laurent C. Chapon Institut Laue-Langevin
  BP 156
  6, rue Jules Horowitz
  38042 Grenoble Cedex 9
@@ -26,34 +25,36 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-#ifndef NSXTOOL_DETECTOREVENT_H_
-#define NSXTOOL_DETECTOREVENT_H_
+
+#ifndef NSXTOOL_COMPONENTSTATE_H_
+#define NSXTOOL_COMPONENTSTATE_H_
+
 #include <vector>
+#include <Eigen/Geometry>
 
-namespace SX
-{
-namespace Instrument
-{
+namespace SX {
+namespace Instrument{
 
+// Forward declare
+class Component;
 
-// Forward declaration of detector class
-class Detector;
-
-class DetectorEvent {
+//! Maintain a state of a goniometer, following the memento pattern.
+class ComponentState {
 public:
-	~DetectorEvent();
-	const Detector* getParent()const {return _detector;}
+	const std::vector<double>& getValues() const;
+	~ComponentState();
+	const Component* getParent() const;
 private:
-	DetectorEvent();
-	friend class Detector;
-	const Detector* _detector;
-	//! Position of the event on the detector
-	double _x, _y;
-	//! Setup of the detector Gonio
+	//! Only Component class can create a state
+	ComponentState();
+	//! Component must be able to access ComponentState
+	friend class Component;
+	//! Pointer to the Componentmeter that has created the state
+	const Component* _ptrComp;
+	//! Values for each axis of the Componentmeter
 	std::vector<double> _values;
-
 };
 
-} // Namespace Instrument
-}  // Namespace SX
-#endif /* NSXTOOL_DETECTOREVENT_H_ */
+}
+}
+#endif /* NSXTOOL_GONIOSTATE_H_ */

@@ -10,5 +10,9 @@ add_executable(TestNiggliReduction TestNiggliReduction.cpp)
 TARGET_LINK_LIBRARIES(TestNiggliReduction ${Boost_LIBRARIES} NSXTool)
 add_test(TestNiggliReduction TestNiggliReduction)
 
+add_executable(TestFFTIndexing TestFFTIndexing.cpp)
+TARGET_LINK_LIBRARIES(TestFFTIndexing ${Boost_LIBRARIES} NSXTool)
+add_test(TestFFTIndexing TestFFTIndexing)
+
 
 

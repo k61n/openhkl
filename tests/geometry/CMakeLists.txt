@@ -52,3 +52,8 @@ add_test(TestSphere3D TestSphere3D)
 add_executable(TestBasis TestBasis.cpp)
 TARGET_LINK_LIBRARIES(TestBasis ${Boost_LIBRARIES} NSXTool)
 add_test(TestBasis TestBasis)
+
+# unit test for Cluster
+add_executable(TestCluster TestCluster.cpp)
+TARGET_LINK_LIBRARIES(TestCluster ${Boost_LIBRARIES} NSXTool)
+add_test(TestCluster TestCluster)

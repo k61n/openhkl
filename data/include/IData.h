@@ -32,62 +32,29 @@
 #include <string>
 #include <initializer_list>
 #include <vector>
-
+#include <memory>
 #include "MetaData.h"
+#include "IDataReader.h"
 
 namespace SX
 {
 
 namespace Data
 {
-
-typedef unsigned int uint;
-
-template<typename T, unsigned int D>
 class IData
 {
 public:
-
-	typedef std::vector<T> TVect;
-
-	IData();
-
-	int getNFrames() const;
-
-	virtual T get(const std::initializer_list<uint>& indices) const=0;
-
-	virtual ~IData();
-
-	virtual void read(const std::string& filename)=0;
-
-protected:
-
-	std::vector<TVect> _frames;
-	MetaData* _meta;
-	int _nFrames;
-
+	IData(){}
+	IData(SX::Data::IDataReader* reader):_mm(reader)
+	{}
+	// Return the intensity at point x,y,z.
+	virtual int dataAt(int x, int y, int z)=0;
+	virtual ~IData()=0;
+	std::unique_ptr<SX::Data::IDataReader> _mm;
 };
 
-template<typename T,uint D>
-IData<T,D>::IData() : _meta(nullptr), _nFrames(0)
-{
-	_frames.reserve(0);
+}
 }
 
-template<typename T,uint D>
-IData<T,D>::~IData()
-{
-	delete _meta;
-}
-
-template<typename T,uint D>
-int IData<T,D>::getNFrames() const
-{
-	return _nFrames;
-}
-
-} //namespace Data
-
-} // namespace SX
 
 #endif // NSXTOOL_IDATA_H_

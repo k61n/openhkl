@@ -21,14 +21,14 @@ Gonio::~Gonio()
 {
 }
 
-const Axis* Gonio::getAxis(unsigned int i)
+Axis*const Gonio::getAxis(unsigned int i)
 {
 	isAxisValid(i);
 	return _axes[i];
 }
 
 
-const Axis* Gonio::getAxis(const std::string& label)
+Axis*const Gonio::getAxis(const std::string& label)
 {
 	unsigned int i=isAxisValid(label);
 	return _axes[i];
@@ -65,16 +65,14 @@ unsigned int Gonio::isAxisValid(const std::string& label) const
 	throw std::invalid_argument("Could not find the label "+label+" as a goniometer axis in "+_label);
 }
 
-const Eigen::Transform<double,3,Eigen::Affine>& Gonio::getCurrentHomMatrix() const
-{
-	return _currenTransform;
-}
 
 Eigen::Transform<double,3,Eigen::Affine> Gonio::getHomMatrix(const std::vector<double>& values) const
 {
 	if (values.size()!=_axes.size())
+	{
+		std::cout << values.size() << " " << _axes.size() << std::endl;
 		throw std::range_error("Trying to set Gonio "+_label+" with wrong number of parameters");
-
+	}
 	Eigen::Transform<double,3,Eigen::Affine> result=Eigen::Transform<double,3,Eigen::Affine>::Identity();
 	std::vector<Axis*>::const_reverse_iterator it;
 	std::vector<double>::const_reverse_iterator itv=values.rbegin();
@@ -104,49 +102,7 @@ void Gonio::transformInPlace(Vector3d& v,const std::vector<double>& values)
 	v=result*v.homogeneous();
 }
 
-Vector3d Gonio::transform(const Vector3d& v)
-{
-	return (_currenTransform*v.homogeneous());
-}
-
-void Gonio::transformInPlace(Vector3d& v)
-{
-	v=_currenTransform*v.homogeneous();
-	return;
-}
-
-void Gonio::setState(const GonioState& g)
-{
-	if (this!=g._gonio)
-		throw std::runtime_error("Trying to set a GonioState to a different Gonio");
-	_currentValues=g._values;
-	_currenTransform=g._transformation;
-}
-void Gonio::setCurrentValues(const std::vector<double>& v)
-{
-	_currentValues=v;
-	_currenTransform=getHomMatrix(v);
-}
-
-GonioState Gonio::copyCurrentState() const
-{
-	GonioState g;
-	g._gonio=this;
-	g._values=_currentValues;
-	g._transformation=_currenTransform;
-	return g;
-}
-
-GonioState Gonio::createState(const std::vector<double>& values) const
-{
-	GonioState g;
-	g._gonio=this;
-	g._values=values;
-	g._transformation=getHomMatrix(values);
-	return g;
-}
-
-int Gonio::numberOfAxes() const
+std::size_t Gonio::numberOfAxes() const
 {
 	return _axes.size();
 }

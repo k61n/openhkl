@@ -28,59 +28,56 @@
 
 #ifndef NSXTOOL_SIMPLEPEAK_H_
 #define NSXTOOL_SIMPLEPEAK_H_
-#include <vector>
 #include <Eigen/Dense>
 #include <map>
 #include <memory>
-#include "IShape.h"
 #include "Basis.h"
-#include "IDataReader.h"
+#include "IShape.h"
+
+
 namespace SX
 {
-namespace Geometry
+namespace Data
 {
+	class IData;
+}
+namespace Instrument
+{
+	class Diffractometer;
+	class ComponentState;
+	class DetectorEvent;
+}
 
 
-class IData
+namespace Crystal
 {
-public:
-	IData(SX::Data::IDataReader* reader):_mm(reader)
-	{}
-	// Return the intensity at point x,y,z.
-	virtual int dataAt(int x, int y, int z)=0;
-	virtual ~IData()=0;
-	std::unique_ptr<SX::Data::IDataReader> _mm;
-};
 
 
 class Peak3D
 {
 public:
-	Peak3D(IData* data=0);
+	Peak3D(SX::Data::IData* data=0);
 	~Peak3D();
 	//! Attach the data
-	void linkData(IData* data);
+	void linkData(SX::Data::IData* data);
 	//! Detach the data
 	void unlinkData();
 	//! Set the Peak region. Peak shaped is owned after setting
-	void setPeak(IShape<double,3>* peak);
+	void setPeakShape(SX::Geometry::IShape<double,3>* peak);
 	//! set the background region. Bkg region is owned after setting
-	void setBackground(IShape<double,3>* background);
+	void setBackgroundShape(SX::Geometry::IShape<double,3>* background);
 	//! Set the Miller indices of the peak (double to allow integration of incommensurate peaks)
 	void setMillerIndices(double h, double k, double l);
 	//! Get the Miller indices of the peak (double to allow integration of incommensurate peaks)
 	const Eigen::RowVector3d& getMillerIndices() const;
-	//! Set the q vector in the frame of reference of the diffractometer
-	void setQ(const Eigen::RowVector3d& q);
+	//!
 	//! Get q vector in the frame of reference of the diffractometer
-	const Eigen::RowVector3d& getQ() const;
+	Eigen::RowVector3d getQ() const;
+	void getGammaNu(double& gamma,double& nu) const;
 	//! Run the integration of the peak; iterate over the data
 	void integrate();
 	//!
-	const IData* getData() const { return _data;}
-	void setGammaNu(double gamma,double nu);
-	double getGamma() const;
-	double getNu() const;
+	const SX::Data::IData* getData() const { return _data;}
 	//! Get the projection of total data in the bounding box.
 	Eigen::VectorXd getProjection() const;
 	Eigen::VectorXd getPeakProjection() const;
@@ -88,8 +85,8 @@ public:
 	Eigen::VectorXd getProjectionSigma() const;
 	Eigen::VectorXd getPeakProjectionSigma() const;
 	Eigen::VectorXd getBkgProjectionSigma() const;
-	const IShape<double,3>* getPeak() const { return _peak;}
-	const IShape<double,3>* getBackground() const {return _bkg;}
+	const SX::Geometry::IShape<double,3>* getPeak() const { return _peak;}
+	const SX::Geometry::IShape<double,3>* getBackground() const {return _bkg;}
 	//! Return the scaled intensity of the peak.
    	double getScaledIntensity() const;
 	//! Return the raw intensity of the peak.
@@ -100,23 +97,19 @@ public:
    	double getScaledSigma() const;
    	//! Return the lorentz factor of the peak.
    	double getLorentzFactor() const;
-
    	//! Return the scaling factor.
    	double getScale() const;
    	//! Rescale the current scaling factor by scale.
    	void rescale(double factor);
    	//! Set the scaling factor.
    	void setScale(double factor);
-
    	//!
-
-//	//! Total intensity in the background
-//	double bkgTotalCounts() const;
-//	//! Volume of the peak
-//	double peakVolume() const;
-//	//!  Volume of the background
-//	double bkgVolume() const;
-	bool setBasis(std::shared_ptr<Basis> basis);
+   	void setSampleState(SX::Instrument::ComponentState* gstate);
+   	//!
+   	void setDetectorEvent(SX::Instrument::DetectorEvent* event);
+   	//!
+   	void setWavelength(double wave);
+	bool setBasis(std::shared_ptr<SX::Geometry::Basis> basis);
 	friend bool operator<(const Peak3D& p1, const Peak3D& p2)
 	{
 		if (p1._hkl[0]<p2._hkl[0])
@@ -133,26 +126,28 @@ public:
 			return false;
 		return false;
 	}
+
 private:
 	//! Pointer to the data containing the peak
-	IData* _data;
+	SX::Data::IData* _data;
 	//! Miller indices of the peak
 	Eigen::RowVector3d _hkl;
-	//! Q Vector
-	Eigen::RowVector3d _q;
 	//! Shape describing the Peak zone
-	IShape<double,3>* _peak;
+	SX::Geometry::IShape<double,3>* _peak;
 	//! Shape describing the background zone (must fully contain peak)
-	IShape<double,3>* _bkg;
+	SX::Geometry::IShape<double,3>* _bkg;
 	//!
 	Eigen::VectorXd _projection;
 	Eigen::VectorXd _projectionPeak;
 	Eigen::VectorXd _projectionBkg;
+	//!
 	std::shared_ptr<SX::Geometry::Basis> _basis;
-	double _gamma,_nu;
-
+	//! Pointer to the state of the Sample Component
+	SX::Instrument::ComponentState* _sampleState;
+	//! Pointer to a Detector Event state
+	SX::Instrument::DetectorEvent* _event;
 	double _counts, _countsSigma;
-
+	double _wave;
 	double _scale;
 };
 

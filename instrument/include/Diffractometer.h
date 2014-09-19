@@ -26,34 +26,37 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-#ifndef NSXTOOL_DETECTOREVENT_H_
-#define NSXTOOL_DETECTOREVENT_H_
-#include <vector>
+#ifndef NSXTOOL_DIFFRACTOMETER_H_
+#define NSXTOOL_DIFFRACTOMETER_H_
+#include <string>
 
 namespace SX
 {
+
 namespace Instrument
 {
 
-
-// Forward declaration of detector class
 class Detector;
+class Sample;
 
-class DetectorEvent {
+
+class Diffractometer
+{
 public:
-	~DetectorEvent();
-	const Detector* getParent()const {return _detector;}
-private:
-	DetectorEvent();
-	friend class Detector;
-	const Detector* _detector;
-	//! Position of the event on the detector
-	double _x, _y;
-	//! Setup of the detector Gonio
-	std::vector<double> _values;
+	Diffractometer(const std::string& name);
+	~Diffractometer();
+	void setDetector(Detector*);
+	Detector* getDetector();
+	void setSample(Sample*);
+	Sample* getSample();
 
+private:
+	std::string _name;
+	Detector* _detector;
+	Sample* _sample;
 };
 
 } // Namespace Instrument
-}  // Namespace SX
-#endif /* NSXTOOL_DETECTOREVENT_H_ */
+} /* Namespace SX */
+
+#endif /* NSXTOOL_DIFFRACTOMETER_H_ */

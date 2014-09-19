@@ -33,6 +33,7 @@
 #include "XMLConfigurable.h"
 #include <memory>
 #include <Eigen/Dense>
+#include "ComponentState.h"
 
 namespace SX
 {
@@ -72,7 +73,10 @@ public:
 	//! Get the absolute position at rest (unmodified by gonio)
 	const Eigen::Vector3d& getRestPosition() const;
 	//! Get the absolute position of the component for a set of goniometer values
-	Eigen::Vector3d getPosition(const std::vector<double>& goniosetup);
+	Eigen::Vector3d getPosition(const std::vector<double>& goniosetup) const;
+	Eigen::Vector3d getPosition(const ComponentState& state) const;
+	//! Create a state
+	ComponentState createState(const std::vector<double>& values);
 protected:
 	//! Name of the component
 	std::string _name;

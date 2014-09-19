@@ -48,7 +48,7 @@ const Eigen::Vector3d& Component::getRestPosition() const
 	return _position;
 }
 
-Eigen::Vector3d Component::getPosition(const std::vector<double>& goniosetup)
+Eigen::Vector3d Component::getPosition(const std::vector<double>& goniosetup) const
 {
 	if (_gonio.get()==nullptr)
 		return _position;
@@ -56,9 +56,27 @@ Eigen::Vector3d Component::getPosition(const std::vector<double>& goniosetup)
 		return _gonio->transform(_position,goniosetup);
 }
 
+Eigen::Vector3d Component::getPosition(const ComponentState& state) const
+{
+	if (_gonio.get()==nullptr)
+		return _position;
+
+		return _gonio->transform(_position,state._values);
+}
+
 bool Component::hasGonio() const
 {
 	return (_gonio.get()!=nullptr);
+}
+
+ComponentState Component::createState(const std::vector<double>& values)
+{
+	ComponentState state;
+	state._ptrComp=this;
+	if (values.size()!=_gonio->numberOfAxes())
+		throw std::runtime_error("Trying to create a state from component "+_name+" with wrong number of Goniometer values");
+	state._values=values;
+	return state;
 }
 
 void Component::parse(const ptree& node)

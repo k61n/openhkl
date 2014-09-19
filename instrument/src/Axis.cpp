@@ -50,11 +50,13 @@ bool Axis::hasOffsetFixed() const
 }
 void Axis::setOffset(double offset)
 {
-	_offset=offset;
+	if (!_offsetFixed)
+		_offset=offset;
 }
 void Axis::addOffset(double offset)
 {
-	_offset+=offset;
+	if (!_offsetFixed)
+		_offset+=offset;
 }
 double Axis::getOffset() const
 {

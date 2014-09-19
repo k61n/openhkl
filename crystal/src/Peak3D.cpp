@@ -1,24 +1,27 @@
 #include <cmath>
 #include <stdexcept>
-
+#include "IData.h"
 #include "Peak3D.h"
+#include "Diffractometer.h"
+#include "ComponentState.h"
+#include "DetectorEvent.h"
+#include "Detector.h"
+#include "Sample.h"
 
 namespace SX
 {
-namespace Geometry
+namespace Crystal
 {
 
-IData::~IData()
-{
-}
-
-Peak3D::Peak3D(IData* data):
+Peak3D::Peak3D(SX::Data::IData* data):
 		_data(data),
 		_hkl(Eigen::Vector3d::Zero()),
-		_q(Eigen::Vector3d::Zero()),
 		_peak(nullptr),
 		_bkg(nullptr),
-		_scale(1.0)
+		_scale(1.0),
+		_sampleState(nullptr),
+		_event(nullptr),
+		_wave(0.0)
 {
 }
 
@@ -30,7 +33,7 @@ Peak3D::~Peak3D()
 	//	delete _bkg;
 }
 
-void Peak3D::linkData(IData* data)
+void Peak3D::linkData(SX::Data::IData* data)
 {
 	_data=data;
 }
@@ -40,23 +43,16 @@ void Peak3D::unlinkData()
 	_data=nullptr;
 }
 
-void Peak3D::setPeak(IShape<double,3>* p)
+void Peak3D::setPeakShape(SX::Geometry::IShape<double,3>* p)
 {
 	_peak=p;
 }
 
-void Peak3D::setBackground(IShape<double,3>* b)
+void Peak3D::setBackgroundShape(SX::Geometry::IShape<double,3>* b)
 {
 	_bkg=b;
 }
-void Peak3D::setQ(const Eigen::RowVector3d& q)
-{
-	_q=q;
-}
-const Eigen::RowVector3d& Peak3D::getQ() const
-{
-	return _q;
-}
+
 
 void Peak3D::setMillerIndices(double h, double k, double l)
 {
@@ -194,11 +190,11 @@ Eigen::VectorXd Peak3D::getBkgProjectionSigma() const
 	return _scale*(_projectionBkg.array().sqrt());
 }
 
-bool Peak3D::setBasis(std::shared_ptr<Basis> basis)
+bool Peak3D::setBasis(std::shared_ptr<SX::Geometry::Basis> basis)
 {
 	_basis=basis;
-	_hkl=_basis->fromReciprocalStandard(_q);
-	if (std::fabs(_hkl[0]-std::round(_hkl[0]))<0.05 && std::fabs(_hkl[1]-std::round(_hkl[1]))<0.05 && std::fabs(_hkl[2]-std::round(_hkl[2]))<0.05)
+	_hkl=_basis->fromReciprocalStandard(this->getQ());
+	if (std::fabs(_hkl[0]-std::round(_hkl[0]))<0.12 && std::fabs(_hkl[1]-std::round(_hkl[1]))<0.12 && std::fabs(_hkl[2]-std::round(_hkl[2]))<0.12)
 	{
 		_hkl[0]=std::round(_hkl[0]);
 		_hkl[1]=std::round(_hkl[1]);
@@ -208,19 +204,6 @@ bool Peak3D::setBasis(std::shared_ptr<Basis> basis)
 	return false;
 }
 
-void Peak3D::setGammaNu(double gamma,double nu)
-{
-	_gamma=gamma;
-	_nu=nu;
-}
-double Peak3D::getGamma() const
-{
-	return _gamma;
-}
-double Peak3D::getNu() const
-{
-	return _nu;
-}
 
 double Peak3D::getRawIntensity() const
 {
@@ -244,7 +227,9 @@ double Peak3D::getScaledSigma() const
 
 double Peak3D::getLorentzFactor() const
 {
-	return 1.0/(sin(std::fabs(_gamma))*cos(_nu));
+	double gamma,nu;
+	this->getGammaNu(gamma,nu);
+	return 1.0/(sin(std::fabs(gamma))*cos(nu));
 }
 
 double Peak3D::getScale() const
@@ -262,6 +247,32 @@ void Peak3D::setScale(double scale)
 	_scale = scale;
 
 }
+
+Eigen::RowVector3d Peak3D::getQ() const
+{
+	return _event->getParent()->getQ(*_event,_wave,_sampleState->getParent()->getPosition(*_sampleState));
+}
+
+void Peak3D::setWavelength(double wave)
+{
+	_wave=wave;
+}
+
+void Peak3D::setSampleState(SX::Instrument::ComponentState* sstate)
+{
+	_sampleState=sstate;
+}
+
+void Peak3D::setDetectorEvent(SX::Instrument::DetectorEvent* event)
+{
+	_event=event;
+}
+
+void Peak3D::getGammaNu(double& gamma,double& nu) const
+{
+	_event->getParent()->getGammaNu(*_event,gamma,nu,_sampleState->getParent()->getPosition(*_sampleState));
+}
+
 
 }
 }

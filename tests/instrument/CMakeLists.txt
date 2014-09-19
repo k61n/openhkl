@@ -30,3 +30,8 @@ add_executable(TestFlatDetector TestFlatDetector.cpp)
 TARGET_LINK_LIBRARIES(TestFlatDetector ${Boost_LIBRARIES} NSXTool)
 add_test(TestFlatDetector TestFlatDetector)
 
+# unit test for Sample Component
+add_executable(TestSample TestSample.cpp)
+TARGET_LINK_LIBRARIES(TestSample ${Boost_LIBRARIES} NSXTool)
+add_test(TestSample TestSample)
+

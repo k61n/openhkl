@@ -2,7 +2,8 @@
  * nsxtool : Neutron Single Crystal analysis toolkit
  ------------------------------------------------------------------------------------------
  Copyright (C)
- 2012- Laurent C. Chapon Institut Laue-Langevin
+ 2012- Laurent C. Chapon Eric Pellegrini
+ Institut Laue-Langevin
  BP 156
  6, rue Jules Horowitz
  38042 Grenoble Cedex 9
@@ -25,36 +26,23 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
+#ifndef NSXTOOL_SAMPLE_H_
+#define NSXTOOL_SAMPLE_H_
+#include "Component.h"
 
-#ifndef NSXTOOL_GONIOSTATE_H_
-#define NSXTOOL_GONIOSTATE_H_
-#include <vector>
-#include <Eigen/Geometry>
+namespace SX
+{
+namespace Instrument
+{
 
-namespace SX {
-namespace Instrument{
-
-// Forward declare
-class Gonio;
-
-//! Maintain a state of a goniometer, following the memento pattern.
-class GonioState {
+class Sample : public Component
+{
 public:
-	const std::vector<double>& getValues() const;
-	~GonioState();
-private:
-	//! Only Gonio class can create a state
-	GonioState();
-	//! Gonio must be able to access GonioState
-	friend class Gonio;
-	//! Pointer to the Goniometer that has created the state
-	const Gonio* _gonio;
-	//! Values for each axis of the Goniometer
-	std::vector<double> _values;
-	//! Homogeneous transformation matrix corresponding to this state
-	Eigen::Transform<double,3,Eigen::Affine> _transformation;
+	Sample();
+	virtual ~Sample();
 };
 
-}
-}
-#endif /* NSXTOOL_GONIOSTATE_H_ */
+} // Namespace Instrument
+} /* namespace SX */
+
+#endif /* NSXTOOL_SAMPLE_H_ */
