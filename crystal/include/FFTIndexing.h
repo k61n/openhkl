@@ -28,7 +28,7 @@
 
 #ifndef NSXTOOL_FFTINDEXING_H_
 #define NSXTOOL_FFTINDEXING_H_
-
+#include <functional>
 #include <vector>
 
 #include <Eigen/Dense>
@@ -58,15 +58,19 @@ struct tVector
 class FFTIndexing
 {
 public:
-	FFTIndexing(double amax=100.0,double thetaStep=1.8*deg,double phiStep=1.8*deg);
-	std::vector<tVector> find(std::vector<Eigen::Vector3d> qVectors);
+	FFTIndexing(double amax=50.0);
+	//! Add a Q vector to the list of observables
+	void addVector(const Eigen::Vector3d& v);
+	void addVectors(const std::vector<Eigen::Vector3d>& v);
+	//! Find a tVector in real space along the normalized direction N
+	tVector findtVector(const Eigen::Vector3d& N) const;
+	std::vector<tVector> findOnSphere(int nstacks,int nsolutions) const;
 	virtual ~FFTIndexing();
 
 private:
+	std::vector<std::reference_wrapper<const Eigen::Vector3d>> _qVectors;
 	static int nSubdiv;
 	double _amax;
-	double _thetaStep;
-	double _phiStep;
 };
 
 } // end namespace Crystal
