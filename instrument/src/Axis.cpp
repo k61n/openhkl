@@ -8,7 +8,7 @@ namespace SX
 namespace Instrument
 {
 
-Axis::Axis(const std::string& label):_label(label),_axis(Eigen::Vector3d::Zero()),_offset(0),_min(-std::numeric_limits<double>::infinity()),_max(std::numeric_limits<double>::infinity())
+Axis::Axis(const std::string& label):_label(label),_axis(Eigen::Vector3d::Zero()),_offset(0),_min(-std::numeric_limits<double>::infinity()),_max(std::numeric_limits<double>::infinity()),_offsetFixed(false)
 {
 }
 
@@ -38,6 +38,15 @@ void Axis::setAxis(const Vector3d& axis)
 const Eigen::Vector3d& Axis::getAxis() const
 {
 	return _axis;
+}
+
+void Axis::setOffsetFixed(bool fixed)
+{
+	_offsetFixed=fixed;
+}
+bool Axis::hasOffsetFixed() const
+{
+	return _offsetFixed;
 }
 void Axis::setOffset(double offset)
 {

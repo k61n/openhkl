@@ -58,6 +58,10 @@ public:
 	void setAxis(const Vector3d& axis);
 	//! Get the normalized direction of this axis
 	const Vector3d& getAxis() const;
+	//! Set the axis as offsetable or not
+	void setOffsetFixed(bool fixed=true);
+	//! Return true if the axis offset can't be modidied
+	bool hasOffsetFixed() const;
 	//! Set the current offset
 	void setOffset(double offset);
 	//! Add an offset to the existing one
@@ -89,6 +93,8 @@ protected:
 	double _offset;
 	//! Limits
 	double _min, _max;
+	//!
+	bool _offsetFixed;
 };
 
 } // End namespace Instrument
