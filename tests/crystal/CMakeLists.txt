@@ -14,5 +14,9 @@ add_executable(TestFFTIndexing TestFFTIndexing.cpp)
 TARGET_LINK_LIBRARIES(TestFFTIndexing ${Boost_LIBRARIES} NSXTool)
 add_test(TestFFTIndexing TestFFTIndexing)
 
+add_executable(TestPeak3D TestPeak3D.cpp)
+TARGET_LINK_LIBRARIES(TestPeak3D ${Boost_LIBRARIES} NSXTool)
+add_test(TestPeak3D TestPeak3D)
+
 
 

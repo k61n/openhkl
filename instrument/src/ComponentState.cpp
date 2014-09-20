@@ -16,6 +16,11 @@ const Component* ComponentState::getParent() const
 	return _ptrComp;
 }
 
+const std::vector<double>& ComponentState::getValues() const
+{
+	return _values;
+}
+
 
 } // end namespace Instrument
 } // End namespace SX

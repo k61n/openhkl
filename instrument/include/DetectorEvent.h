@@ -41,6 +41,8 @@ class Detector;
 
 class DetectorEvent {
 public:
+	DetectorEvent(const DetectorEvent&);
+	DetectorEvent& operator=(const DetectorEvent&);
 	~DetectorEvent();
 	const Detector* getParent()const {return _detector;}
 private:

@@ -70,8 +70,10 @@ public:
 	Eigen::Transform<double,3,Eigen::Affine> getInverseHomMatrix(const std::vector<double>& values) const;
 	//! Transform a point in 3D space, given a vector of parameters
 	Vector3d transform(const Vector3d& v,const std::vector<double>& values);
+	Vector3d transformInverse(const Vector3d& v,const std::vector<double>& values);
 	//! Transform a vector inplace, for a values of Gonio parameters
 	void transformInPlace(Vector3d& v,const std::vector<double>& values);
+	void transformInverseInPlace(Vector3d& v,const std::vector<double>& values);
 	//! Get the number of Axis
 	std::size_t numberOfAxes() const;
 protected:

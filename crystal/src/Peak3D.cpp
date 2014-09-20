@@ -7,6 +7,7 @@
 #include "DetectorEvent.h"
 #include "Detector.h"
 #include "Sample.h"
+#include "Gonio.h"
 
 namespace SX
 {
@@ -250,7 +251,17 @@ void Peak3D::setScale(double scale)
 
 Eigen::RowVector3d Peak3D::getQ() const
 {
-	return _event->getParent()->getQ(*_event,_wave,_sampleState->getParent()->getPosition(*_sampleState));
+	// If sample state is not set, assume sample is at the origin
+	if (!_sampleState)
+	{
+		return _event->getParent()->getQ(*_event,_wave);
+	}
+	else // otherwise scattering point is deducted from the sample
+	{
+		Eigen::Vector3d q=_event->getParent()->getQ(*_event,_wave,_sampleState->getParent()->getPosition(*_sampleState));
+		_sampleState->getParent()->getGonio()->transformInverseInPlace(q,_sampleState->getValues());
+		return q;
+	}
 }
 
 void Peak3D::setWavelength(double wave)

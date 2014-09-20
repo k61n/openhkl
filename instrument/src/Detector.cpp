@@ -125,11 +125,19 @@ Eigen::Vector3d Detector::getEventPosition(const DetectorEvent& event) const
 {
 	if (event._detector!=this)
 		throw std::runtime_error("Trying to assign DetectorEvent to a different detector");
-
-	if (!_gonio && event._values.size()!=0)
-		throw std::runtime_error("Number of Gonio values ");
-
 	Eigen::Vector3d v=getPos(event._x,event._y);
+	// No gonio and no values set
+	if (!_gonio)
+	{
+		if (event._values.size())
+			throw std::runtime_error("Trying to assign a DetectorEvent with values to a Component with no Goniometer");
+		else
+			return v;
+	}
+	else if (_gonio->numberOfAxes()!=event._values.size())
+	{
+		throw std::runtime_error("Trying to assign a DetectorEvent with ring number of values");
+	}
 	_gonio->transformInPlace(v,event._values);
 	return v;
 }
@@ -218,8 +226,14 @@ void Detector::convertCoordinates(double px,double py,double& mx,double& my) con
 
 DetectorEvent Detector::createDetectorEvent(double x, double y, const std::vector<double>& values) const
 {
-	if (values.size()!=this->Component::_gonio->numberOfAxes())
+	if (!_gonio)
+	{
+		if (values.size())
+			throw std::runtime_error("Trying to create a DetectorEvent with Goniometer values whilst no gonio is set");
+	}
+	else if (values.size()!=_gonio->numberOfAxes())
 		throw std::runtime_error("Trying to create a DetectorEvent with invalid number of Goniometer Axes");
+
 	DetectorEvent result;
 	result._detector=this;
 	result._x=x;
