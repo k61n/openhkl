@@ -21,6 +21,8 @@ Peak3D::Peak3D(SX::Data::IData* data):
 		_bkg(nullptr),
 		_sampleState(nullptr),
 		_event(nullptr),
+		_counts(0.0),
+		_countsSigma(0.0),
 		_wave(0.0),
 		_scale(1.0)
 {
