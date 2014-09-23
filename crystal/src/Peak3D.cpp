@@ -284,6 +284,23 @@ void Peak3D::getGammaNu(double& gamma,double& nu) const
 	_event->getParent()->getGammaNu(*_event,gamma,nu,_sampleState->getParent()->getPosition(*_sampleState));
 }
 
+bool operator<(const Peak3D& p1, const Peak3D& p2)
+{
+	if (p1._hkl[0]<p2._hkl[0])
+		return true;
+	else if (p1._hkl[0]>p2._hkl[0])
+		return false;
+	if (p1._hkl[1]<p2._hkl[1])
+		return true;
+	else if (p1._hkl[1]>p2._hkl[1])
+		return false;
+	if (p1._hkl[2]<p2._hkl[2])
+		return true;
+	else if (p1._hkl[2]>p2._hkl[2])
+		return false;
+	return false;
+}
+
 
 }
 }

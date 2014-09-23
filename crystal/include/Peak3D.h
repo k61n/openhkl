@@ -110,22 +110,7 @@ public:
    	//!
    	void setWavelength(double wave);
 	bool setBasis(std::shared_ptr<SX::Geometry::Basis> basis);
-	friend bool operator<(const Peak3D& p1, const Peak3D& p2)
-	{
-		if (p1._hkl[0]<p2._hkl[0])
-			return true;
-		else if (p1._hkl[0]>p2._hkl[0])
-			return false;
-		if (p1._hkl[1]<p2._hkl[1])
-			return true;
-		else if (p1._hkl[1]>p2._hkl[1])
-			return false;
-		if (p1._hkl[2]<p2._hkl[2])
-			return true;
-		else if (p1._hkl[2]>p2._hkl[2])
-			return false;
-		return false;
-	}
+	friend bool operator<(const Peak3D& p1, const Peak3D& p2);
 
 private:
 	//! Pointer to the data containing the peak
