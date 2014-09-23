@@ -30,9 +30,13 @@
 #define NSXTOOL_DETECTOR_H_
 
 #include <string>
+#include <vector>
+
 #include <Eigen/Dense>
+
 #include "Component.h"
 #include "DetectorEvent.h"
+
 namespace SX
 {
 
@@ -94,7 +98,7 @@ public:
 	 *  @param py vertical position of the scattering event in pixels units
 	 *  @return spatial position of this event
 	 */
-	Eigen::Vector3d getEventPosition(double px, double py,const std::vector<double>& values={}) const;
+	Eigen::Vector3d getEventPosition(double px, double py,const std::vector<double>& values=std::vector<double>()) const;
 	Eigen::Vector3d getEventPosition(const DetectorEvent& event) const;
 	/**
 	 *  @brief Get the scattered wavenumber for an event on a detector
@@ -104,7 +108,7 @@ public:
 	 *  @param from Optional scattering point position
 	 *  @return Scattered wavenumber s=\f$ \frac{k_f}{2\pi} \f$
 	 */
-	Eigen::Vector3d getKf(double px, double py,double wave, const std::vector<double>& values={}, const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
+	Eigen::Vector3d getKf(double px, double py,double wave, const std::vector<double>& values=std::vector<double>(), const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
 	/**
 	 *
 	 */
@@ -117,7 +121,7 @@ public:
 	 *  @param from Optional scattering point position
 	 *  @return Transferred wavenumber s=\f$ \frac{k_f-k_i}{2\pi} \f$
 	 */
-	Eigen::Vector3d getQ(double px, double py,double wave, const std::vector<double>& values={}, const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
+	Eigen::Vector3d getQ(double px, double py,double wave, const std::vector<double>& values=std::vector<double>(), const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
 	Eigen::Vector3d getQ(const DetectorEvent& event, double wave,const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
 	/**
 	 *  @brief Get the scattering angles for an event on the detector
@@ -126,7 +130,7 @@ public:
 	 *  @param gamma reference to angle in the yx-plane (gamma=0 along y)
 	 *  @param nu reference to elevation angle
 	 */
-	void getGammaNu(double px, double py, double& gamma, double& nu,  const std::vector<double>& values={}, const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
+	void getGammaNu(double px, double py, double& gamma, double& nu,  const std::vector<double>& values=std::vector<double>(), const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
 	void getGammaNu(const DetectorEvent& event, double& gamma, double& nu,const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
 	/**
 	 *  @brief Get 2\f$ \theta \f$
@@ -134,12 +138,12 @@ public:
 	 *  @param py vertical position of the scattering event in pixels units
 	 *  @param si Incident wavenumber
 	 */
-	double get2Theta(double px, double py, const std::vector<double>& values={}, const Eigen::Vector3d& si=Eigen::Vector3d(0,1,0)) const;
+	double get2Theta(double px, double py, const std::vector<double>& values=std::vector<double>(), const Eigen::Vector3d& si=Eigen::Vector3d(0,1,0)) const;
 	double get2Theta(const DetectorEvent& event, const Eigen::Vector3d& si) const;
 	//! Pointer to function that maps data indexing with detector indexing
 	void setDataMapping(std::function<void(double,double,double&,double&)>);
 	//! Create a detector event, a small object with state of the event on the detector and gonio setup
-	DetectorEvent createDetectorEvent(double x, double y, const std::vector<double>& goniosetup={}) const;
+	DetectorEvent createDetectorEvent(double x, double y, const std::vector<double>& goniosetup=std::vector<double>()) const;
 	virtual void parse(const ptree&)=0;
 protected:
 	void convertCoordinates(double, double , double&, double&) const;

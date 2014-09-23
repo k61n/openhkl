@@ -19,10 +19,10 @@ Peak3D::Peak3D(SX::Data::IData* data):
 		_hkl(Eigen::Vector3d::Zero()),
 		_peak(nullptr),
 		_bkg(nullptr),
-		_scale(1.0),
 		_sampleState(nullptr),
 		_event(nullptr),
-		_wave(0.0)
+		_wave(0.0),
+		_scale(1.0)
 {
 }
 
