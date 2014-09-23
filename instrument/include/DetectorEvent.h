@@ -44,7 +44,7 @@ public:
 	DetectorEvent(const DetectorEvent&);
 	DetectorEvent& operator=(const DetectorEvent&);
 	~DetectorEvent();
-	const Detector* getParent()const {return _detector;}
+	const Detector* getParent() const;
 private:
 	DetectorEvent();
 	friend class Detector;

@@ -26,10 +26,13 @@ DetectorEvent& DetectorEvent::operator=(const DetectorEvent& rhs)
 }
 
 
-
-
 DetectorEvent::~DetectorEvent()
 {
+}
+
+const Detector* DetectorEvent::getParent() const
+{
+	return _detector;
 }
 
 } /* namespace Instrument */
