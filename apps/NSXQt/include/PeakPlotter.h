@@ -14,7 +14,7 @@ class PeakPlotter : public QDialog
     
 public:
     explicit PeakPlotter(QWidget *parent = 0);
-    void setPeak(SX::Geometry::Peak3D *peak);
+    void setPeak(SX::Crystal::Peak3D *peak);
     void keyPressEvent(QKeyEvent* event);
     ~PeakPlotter();
 public slots:
@@ -25,7 +25,7 @@ private:
     // Copy the current view to the clipboard.
     void copyViewToClipboard();
     Ui::PeakPlotter *ui;
-    SX::Geometry::Peak3D *_current;
+    SX::Crystal::Peak3D *_current;
 };
 
 #endif // PEAKPLOTTER_H

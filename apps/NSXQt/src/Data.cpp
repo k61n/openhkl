@@ -16,7 +16,7 @@ void D19Mapping(double x, double y, double& newx, double& newy)
     newy = 256 - y;
 }
 
-Data::Data():SX::Geometry::IData(SX::Data::ILLAsciiDataReader::create()),_inmemory(false),_maxCount(0),_detector(nullptr),_sample(nullptr)
+Data::Data():SX::Data::IData(SX::Data::ILLAsciiDataReader::create()),_inmemory(false),_maxCount(0),_detector(nullptr),_sample(nullptr)
 {
 
 }
@@ -28,7 +28,7 @@ Data::~Data()
         delete _sample;
 }
 
-Data::Data(const Data& rhs):SX::Geometry::IData(SX::Data::ILLAsciiDataReader::create())
+Data::Data(const Data& rhs):SX::Data::IData(SX::Data::ILLAsciiDataReader::create())
 {
     _inmemory=rhs._inmemory;
     _maxCount=rhs._maxCount;
@@ -61,7 +61,7 @@ void Data::fromFile(const std::string& filename)
 
         _chi=meta->getKey<double>("chi")*deg;
         _phi=meta->getKey<double>("phi")*deg;
-
+        _gamma=meta->getKey<double>("2theta(gamma)")*deg;
         double scanstart=meta->getKey<double>("scanstart")*deg;
         double scanstep=meta->getKey<double>("scanstep")*deg;
         int npdone=meta->getKey<int>("npdone");
@@ -76,14 +76,14 @@ void Data::fromFile(const std::string& filename)
         std::shared_ptr<SX::Instrument::Gonio> g(new SX::Instrument::Gonio("gamma-arm"));
         g->addRotation("gamma",Eigen::Vector3d(0,0,1),SX::Instrument::RotAxis::CW);
         _detector->setGonio(g);
-        double gamma = meta->getKey<double>("2theta(gamma)")*deg;
-        g->setCurrentValues({gamma});
 
         //Sample gonio
-        _sample= new SX::Instrument::Gonio("Busing Levy convention");
-        _sample->addRotation("omega",Vector3d(0,0,1),SX::Instrument::RotAxis::CW);
-        _sample->addRotation("chi",Vector3d(0,1,0),SX::Instrument::RotAxis::CCW);
-        _sample->addRotation("phi",Vector3d(0,0,1),SX::Instrument::RotAxis::CW);
+        _sample= new SX::Instrument::Sample();
+        std::shared_ptr<SX::Instrument::Gonio> bl(new SX::Instrument::Gonio("Busing-Levy"));
+        bl->addRotation("omega",Vector3d(0,0,1),SX::Instrument::RotAxis::CW);
+        bl->addRotation("chi",Vector3d(0,1,0),SX::Instrument::RotAxis::CCW);
+        bl->addRotation("phi",Vector3d(0,0,1),SX::Instrument::RotAxis::CW);
+        _sample->setGonio(bl);
     }
 
 }

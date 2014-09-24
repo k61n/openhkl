@@ -45,7 +45,10 @@ namespace Instrument
 
 typedef unsigned int uint;
 
-//!
+/** @brief Base class for Detectors.
+ *
+ *
+ */
 class Detector : public Component
 {
 public:
@@ -145,6 +148,7 @@ public:
 	//! Create a detector event, a small object with state of the event on the detector and gonio setup
 	DetectorEvent createDetectorEvent(double x, double y, const std::vector<double>& goniosetup=std::vector<double>()) const;
 	virtual void parse(const ptree&)=0;
+	//
 protected:
 	void convertCoordinates(double, double , double&, double&) const;
 	uint _nRows, _nCols;

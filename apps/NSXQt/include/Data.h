@@ -2,13 +2,13 @@
 #define DATA_H
 #include <vector>
 #include <string>
-#include "IDataReader.h"
+#include "IData.h"
 #include <memory>
 #include <map>
 #include <Ellipsoid.h>
 #include <QVector>
 #include "Peak3D.h"
-#include "Gonio.h"
+#include "Sample.h"
 
 
 typedef std::vector<int> vint;
@@ -24,7 +24,7 @@ class Detector;
 
 class QProgressBar;
 
-struct Data: public SX::Geometry::IData
+struct Data: public SX::Data::IData
 {
     Data();
     ~Data();
@@ -50,11 +50,12 @@ struct Data: public SX::Geometry::IData
     int _maxCount;
     int _maxCurrentFrame;
     std::map<int,SX::Geometry::Ellipsoid<double,3>,std::less<int>, Eigen::aligned_allocator<std::pair<const int, Eigen::Matrix4d> >> _peaks;
-    typedef std::map<int,SX::Geometry::Peak3D> maprealPeaks;
+    typedef std::map<int,SX::Crystal::Peak3D> maprealPeaks;
     maprealPeaks _rpeaks;
     SX::Instrument::Detector* _detector;
-    SX::Instrument::Gonio* _sample;
+    SX::Instrument::Sample* _sample;
     double _wavelength;
+    double _gamma;
     double _chi;
     double _phi;
     std::vector<double> _omegas;

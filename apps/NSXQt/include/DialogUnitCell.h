@@ -14,7 +14,7 @@ class DialogUnitCell : public QDialog
     Q_OBJECT
 public:
     explicit DialogUnitCell(QWidget *parent = 0);
-    void setPeaks(const std::vector<std::reference_wrapper<SX::Geometry::Peak3D>>& peaks);
+    void setPeaks(const std::vector<std::reference_wrapper<SX::Crystal::Peak3D>>& peaks);
     ~DialogUnitCell();
 signals:
     void hasSolutions(const std::vector<SX::Crystal::UnitCell>&);
@@ -30,7 +30,7 @@ private:
     std::vector<std::pair<SX::Crystal::UnitCell,double>> _unitcells;
     SX::Crystal::UnitCell _basis;
     Ui::DialogUnitCell* ui;
-    std::vector<std::reference_wrapper<SX::Geometry::Peak3D>> _peaks;
+    std::vector<std::reference_wrapper<SX::Crystal::Peak3D>> _peaks;
 };
 
 #endif // DialogUnitCell_H

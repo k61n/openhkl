@@ -63,7 +63,7 @@ void PeakTableView::peakChanged(QModelIndex current, QModelIndex last)
 
 void PeakTableView::plotPeak(int i)
 {
-    SX::Geometry::Peak3D& peak=_peaks[i].get();
+    SX::Crystal::Peak3D& peak=_peaks[i].get();
     if (!_plotter)
         _plotter=new PeakPlotter(this);
     _plotter->setPeak(&peak);
@@ -120,7 +120,7 @@ void PeakTableView::constructTable()
 
     // Setup content of the table
     int i=0;
-    for (SX::Geometry::Peak3D& peak : _peaks)
+    for (SX::Crystal::Peak3D& peak : _peaks)
     {
         const Eigen::RowVector3d& hkl=peak.getMillerIndices();
         double l=peak.getLorentzFactor();
@@ -165,7 +165,7 @@ void PeakTableView::normalizeToMonitor()
     int factor = QInputDialog::getInt(this,"Enter normalization factor","",1,1,100000000,1,&ok);
     if (ok)
     {
-        for (SX::Geometry::Peak3D& peak : _peaks)
+        for (SX::Crystal::Peak3D& peak : _peaks)
             peak.setScale(factor/peak.getData()->_mm->getMetaData()->getKey<double>("monitor"));
         constructTable();
         if (_plotter)
@@ -188,7 +188,7 @@ void PeakTableView::writeFullProf()
     file << "(3i4,2F14.4,i5,4f8.2)\n";
     double wave=_peaks[0].get().getData()->_mm->getMetaData()->getKey<double>("wavelength");
     file << std::fixed << std::setw(8) << std::setprecision(3) << wave << " 0 0" << std::endl;
-    for (const SX::Geometry::Peak3D& peak : _peaks)
+    for (const SX::Crystal::Peak3D& peak : _peaks)
     {
         const Eigen::RowVector3d& hkl=peak.getMillerIndices();
 
@@ -216,7 +216,7 @@ void PeakTableView::writeShelX()
     if (!file.is_open())
         QMessageBox::critical(this,"Error writing","Error writing to this file, please check write permisions");
 
-    for (const SX::Geometry::Peak3D& peak : _peaks)
+    for (const SX::Crystal::Peak3D& peak : _peaks)
     {
         const Eigen::RowVector3d& hkl=peak.getMillerIndices();
 
@@ -234,7 +234,7 @@ void PeakTableView::sortByHKL(bool up)
 {
     if (up)
         std::sort(_peaks.begin(),_peaks.end(),
-              [&](const SX::Geometry::Peak3D& p1, const SX::Geometry::Peak3D& p2)
+              [&](const SX::Crystal::Peak3D& p1, const SX::Crystal::Peak3D& p2)
               {
                 return (p2<p1);
               }
@@ -247,13 +247,13 @@ void PeakTableView::sortByIntensity(bool up)
 {
     if (up)
         std::sort(_peaks.begin(),_peaks.end(),
-              [&](const SX::Geometry::Peak3D& p1, const SX::Geometry::Peak3D& p2)
+              [&](const SX::Crystal::Peak3D& p1, const SX::Crystal::Peak3D& p2)
                 {
                     return (p1.getScaledIntensity()>p2.getScaledIntensity());
                 });
     else
         std::sort(_peaks.begin(),_peaks.end(),
-                  [&](const SX::Geometry::Peak3D& p1, const SX::Geometry::Peak3D& p2)
+                  [&](const SX::Crystal::Peak3D& p1, const SX::Crystal::Peak3D& p2)
                     {
                         return (p1.getScaledIntensity()<p2.getScaledIntensity());
                     });
@@ -263,7 +263,7 @@ void PeakTableView::sortByNumor(bool up)
 {
     if (up)
         std::sort(_peaks.begin(),_peaks.end(),
-              [&](const SX::Geometry::Peak3D& p1, const SX::Geometry::Peak3D& p2)
+              [&](const SX::Crystal::Peak3D& p1, const SX::Crystal::Peak3D& p2)
                 {
                     int numor1=p1.getData()->_mm->getMetaData()->getKey<int>("Numor");
                     int numor2=p2.getData()->_mm->getMetaData()->getKey<int>("Numor");
@@ -271,7 +271,7 @@ void PeakTableView::sortByNumor(bool up)
                 });
     else
         std::sort(_peaks.begin(),_peaks.end(),
-              [&](const SX::Geometry::Peak3D& p1, const SX::Geometry::Peak3D& p2)
+              [&](const SX::Crystal::Peak3D& p1, const SX::Crystal::Peak3D& p2)
                 {
                     int numor1=p1.getData()->_mm->getMetaData()->getKey<int>("Numor");
                     int numor2=p2.getData()->_mm->getMetaData()->getKey<int>("Numor");

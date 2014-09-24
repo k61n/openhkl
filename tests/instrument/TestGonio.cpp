@@ -1,7 +1,6 @@
 #define BOOST_TEST_MODULE "Test Gonio"
 #define BOOST_TEST_DYN_LINK
 #include "Gonio.h"
-#include "GonioState.h"
 #include "Units.h"
 #include <cmath>
 #include <Eigen/Dense>

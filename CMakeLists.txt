@@ -38,12 +38,13 @@ include_directories(${EIGEN3_INCLUDE_DIR})
 
 IF(CMAKE_COMPILER_IS_GNUCXX)
   ADD_DEFINITIONS(
+  	-msse2
     -std=c++0x
     -Wall
     -DNDEBUG
-    -DBOOST_UBLAS_MOVE_SEMANTICS
     -D__GXX_EXPERIMENTAL_CXX0X__ 
     -DEIGEN_DONT_ALIGN_STATICALLY
+    -DEIGEN_FFTW_DEFAULT
 )
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ")
 ENDIF()
@@ -67,7 +68,6 @@ include_directories( analysis/include
                      kernel/include
                      integration/include
                      materials/include
-                     maths/include
                      utils/include
                      crystal/include
                      instrument/include)
@@ -78,7 +78,6 @@ file(GLOB_RECURSE sources analysis/src/*.cpp
                   kernel/src/*.cpp
                   integration/src/*.cpp
                   materials/*.cpp
-                  maths/src/*.cpp
                   utils/src/*.cpp
                   crystal/src/*.cpp
                   instrument/src/*.cpp
@@ -92,9 +91,12 @@ IF(MSVC)
 ELSE(MSVC)
     add_library(NSXTool SHARED ${sources})
 ENDIF(MSVC)
+
+FIND_LIBRARY(FFTW3_LIBRARIES NAMES fftw3 libfftw3)
  
+
 # Link
-TARGET_LINK_LIBRARIES(NSXTool ${Boost_LIBRARIES} ${PYTHON_LIBRARIES} ${CMINPACK_LIBRARIES})
+TARGET_LINK_LIBRARIES(NSXTool ${Boost_LIBRARIES} ${PYTHON_LIBRARIES} ${CMINPACK_LIBRARIES} ${FFTW3_LIBRARIES})
 
 # Enable unit testing with ctest. This must be called before any calls to add_subdirectory 
 enable_testing()

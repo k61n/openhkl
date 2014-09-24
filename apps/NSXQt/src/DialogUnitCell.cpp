@@ -3,11 +3,16 @@
 #include <Eigen/Dense>
 #include "DialogTransformationMatrix.h"
 #include "DialogUnitCell.h"
-#include "LatticeFinder.h"
+#include "FFTIndexing.h"
 #include "NiggliReduction.h"
 #include "GruberReduction.h"
 #include "Units.h"
 #include "DialogUnitCellSolutions.h"
+#include <unsupported/Eigen/FFT>
+
+using namespace SX::Crystal;
+using namespace SX::Geometry;
+
 
 QDebug& operator<<(QDebug &dbg, const SX::Crystal::UnitCell& cell)
 {
@@ -36,55 +41,12 @@ DialogUnitCell::DialogUnitCell(QWidget *parent):QDialog(parent),ui(new Ui::Dialo
     connect(ui->pushButtonFindReindexHKL,SIGNAL(clicked()),this,SLOT(reindexHKL()));
     connect(ui->pushButtonGivePMatrix,SIGNAL(clicked()),this,SLOT(setTransformationMatrix()));
 }
-void DialogUnitCell::setPeaks(const std::vector<std::reference_wrapper<SX::Geometry::Peak3D>>& peaks)
+void DialogUnitCell::setPeaks(const std::vector<std::reference_wrapper<SX::Crystal::Peak3D>>& peaks)
 {
     _peaks.clear();
     _peaks=peaks;
     ui->spinBoxNumberPeaks->setValue(_peaks.size());
 
-    SX::Crystal::LatticeFinder finder(0.02,0.01);
-    for (auto peak : _peaks)
-    {
-        Eigen::Vector3d realQ=peak.get().getQ();
-        finder.addPoint(realQ[0],realQ[1],realQ[2]);
-    }
-
-    finder.run(3.0);
-    Eigen::Vector3d as,bs,cs;
-    std::vector<SX::Crystal::LatticeSolution> solutions=finder.determineLattice(30,30);
-
-    for (auto solution : solutions)
-    {
-        SX::Crystal::UnitCell cell=SX::Crystal::UnitCell::fromReciprocalVectors(std::get<0>(solution),std::get<1>(solution),std::get<2>(solution));
-        SX::Crystal::NiggliReduction n(cell.getMetricTensor(),0.02);
-        Eigen::Matrix3d newg,P;
-        n.reduce(newg,P);
-        cell.transform(P);
-        SX::Crystal::UnitCell niggli=cell;
-        SX::Crystal::GruberReduction gr(cell.getMetricTensor(),1.5);
-        Eigen::Matrix3d Pprime;
-        SX::Crystal::LatticeCentring centring;
-        SX::Crystal::BravaisType bravais;
-        gr.reduce(Pprime,centring,bravais);
-        cell.transform(Pprime);
-        cell.setLatticeCentring(centring);
-        cell.setBravaisType(bravais);
-        double quality=0.0;
-        std::shared_ptr<SX::Crystal::UnitCell> pcell(new SX::Crystal::UnitCell(cell));
-        for (auto peak: _peaks)
-        {
-            if (peak.get().setBasis(pcell))
-                quality+=1.0;
-        }
-        _unitcells.push_back(std::pair<SX::Crystal::UnitCell,double>(cell,quality/_peaks.size()));
-    }
-    // Sort the Quality of the solutions decreasing
-    std::sort(_unitcells.begin(),
-              _unitcells.end(),
-              [](const std::pair<SX::Crystal::UnitCell,double>& cell1,const std::pair<SX::Crystal::UnitCell,double>& cell2)->bool
-                {
-                    return (cell1.second>cell2.second);
-                });
 }
 
 DialogUnitCell::~DialogUnitCell()
@@ -92,7 +54,58 @@ DialogUnitCell::~DialogUnitCell()
 
 void DialogUnitCell::getUnitCell()
 {
+    std::vector<Eigen::Vector3d> qvects;
+    qvects.reserve(_peaks.size());
+    for (auto peak : _peaks)
+    qvects.push_back(peak.get().getQ());
 
+    FFTIndexing indexing(50.0);
+    indexing.addVectors(qvects);
+    std::vector<tVector> tvects=indexing.findOnSphere(60,20);
+
+    for (int i=0;i<20;++i)
+    {
+    for (int j=i+1;j<20;++j)
+    {
+    for (int k=j+1;k<20;++k)
+    {
+        Eigen::Vector3d& v1=tvects[i]._vect;
+        Eigen::Vector3d& v2=tvects[j]._vect;
+        Eigen::Vector3d& v3=tvects[k]._vect;
+
+        if (v1.dot(v2.cross(v3))>20.0)
+        {
+                UnitCell cell=UnitCell::fromDirectVectors(v1,v2,v3);
+                NiggliReduction niggli(cell.getMetricTensor(),1e-3);
+                Eigen::Matrix3d newg,P;
+                niggli.reduce(newg,P);
+                cell.transform(P);
+                GruberReduction gruber(cell.getMetricTensor(),0.05);
+                LatticeCentring c;
+                BravaisType b;
+                gruber.reduce(P,c,b);
+                cell.setLatticeCentring(c);
+                cell.setBravaisType(b);
+                cell.transform(P);
+                //_unitcells.push_back(std::make_pair(cell,1.0))
+                int index=0;
+                for (auto& peak : _peaks)
+                {
+                    if (peak.get().setBasis(std::shared_ptr<UnitCell>(new UnitCell(cell))))
+                        index++;
+                }
+                _unitcells.push_back(std::make_pair(cell,index));
+        }
+    }
+    }
+    }
+     //Sort the Quality of the solutions decreasing
+    std::sort(_unitcells.begin(),
+              _unitcells.end(),
+              [](const std::pair<SX::Crystal::UnitCell,double>& cell1,const std::pair<SX::Crystal::UnitCell,double>& cell2)->bool
+                {
+                    return (cell1.second>cell2.second);
+                });
     DialogUnitCellSolutions* ucs=new DialogUnitCellSolutions(this);
     ucs->setSolutions(_unitcells);
     ucs->show();
@@ -136,7 +149,7 @@ void DialogUnitCell::reindexHKL()
     int success=0;
 
     std::shared_ptr<SX::Crystal::UnitCell> sptr(new SX::Crystal::UnitCell(_basis));
-    for (SX::Geometry::Peak3D& peak : _peaks)
+    for (SX::Crystal::Peak3D& peak : _peaks)
     {
         if (peak.setBasis(sptr))
             success++;

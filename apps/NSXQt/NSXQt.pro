@@ -6,7 +6,7 @@
 
 QT       += core widgets printsupport opengl
 CONFIG   += debug_and_release
-QMAKE_CXXFLAGS += -std=c++0x -fopenmp
+QMAKE_CXXFLAGS += -std=c++0x -fopenmp -DNDEBUG -DEIGEN_FFTW_DEFAULT
 TARGET = nsxtool
 TEMPLATE = app
 
@@ -27,7 +27,6 @@ SOURCES += src/Main.cpp \
     src/NoteBook.cpp \
     src/Logger.cpp \
     src/DialogUnitCellSolutions.cpp \
-    src/peakview.cpp
 
 HEADERS  += include/MainWindow.h \
     include/DetectorView.h \
@@ -44,7 +43,6 @@ HEADERS  += include/MainWindow.h \
     include/NoteBook.h \
     include/Logger.h \
     include/DialogUnitCellSolutions.h \
-    include/peakview.h
 
 FORMS    += ui/mainwindow.ui \
     ui/dialog_PeakFind.ui \
@@ -55,7 +53,7 @@ FORMS    += ui/mainwindow.ui \
     dialogunitcellsolutions.ui
 
 win32:CONFIG(release, debug|release): LIBS += -lNSXTool
-else:unix: LIBS += -lNSXTool -lgomp -lboost_date_time
+else:unix: LIBS += -lNSXTool -lgomp -lboost_date_time -lfftw3
 
 INCLUDEPATH += $$PWD include externals/include
 

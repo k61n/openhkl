@@ -66,9 +66,9 @@ Eigen::Vector3d FlatDetector::getPos(double px, double py) const
 	convertCoordinates(px,py,mx,my);
 	Eigen::Vector3d result;
 	// take the center of the bin
-	result[0]=((mx+0.5)/_nCols-0.5)*_width;
+	result[0]=(mx/(_nCols-1.0)-0.5)*_width;
 	result[1]=_distance;
-	result[2]=((my+0.5)/_nRows-0.5)*_height;
+	result[2]=(my/(_nRows-1.0)-0.5)*_height;
 	return result;
 }
 

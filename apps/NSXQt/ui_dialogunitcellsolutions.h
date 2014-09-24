@@ -38,6 +38,7 @@ public:
         DialogUnitCellSolutions->setSizePolicy(sizePolicy);
         DialogUnitCellSolutions->setMinimumSize(QSize(577, 345));
         DialogUnitCellSolutions->setMaximumSize(QSize(577, 345));
+        DialogUnitCellSolutions->setWindowOpacity(0.9);
         gridLayout = new QGridLayout(DialogUnitCellSolutions);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
         tableView = new QTableView(DialogUnitCellSolutions);
@@ -53,7 +54,7 @@ public:
 
     void retranslateUi(QDialog *DialogUnitCellSolutions)
     {
-        DialogUnitCellSolutions->setWindowTitle(QApplication::translate("DialogUnitCellSolutions", "Dialog", 0));
+        DialogUnitCellSolutions->setWindowTitle(QApplication::translate("DialogUnitCellSolutions", "Unit-cells", 0));
     } // retranslateUi
 
 };

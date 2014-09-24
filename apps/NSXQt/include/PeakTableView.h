@@ -38,7 +38,7 @@ private:
     MainWindow* _main;
     PeakPlotter* _plotter;
     void constructTable();
-    std::vector<std::reference_wrapper<SX::Geometry::Peak3D>> _peaks;
+    std::vector<std::reference_wrapper<SX::Crystal::Peak3D>> _peaks;
     //! Which column is sorted and up or down
     std::tuple<int,bool> _columnUp;
     QIcon _sortUpIcon;

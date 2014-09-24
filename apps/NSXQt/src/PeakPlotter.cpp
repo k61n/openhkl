@@ -2,6 +2,7 @@
 #include "ui_peakplotter.h"
 #include <IShape.h>
 #include "Units.h"
+#include "IData.h"
 
 PeakPlotter::PeakPlotter(QWidget *parent) : QDialog(parent), ui(new Ui::PeakPlotter), _current(nullptr)
 {
@@ -74,7 +75,7 @@ void PeakPlotter::keyPressEvent(QKeyEvent* event)
     }
 }
 
-void PeakPlotter::setPeak(SX::Geometry::Peak3D *peak)
+void PeakPlotter::setPeak(SX::Crystal::Peak3D *peak)
 {
     _current = peak;
     update();
@@ -120,8 +121,10 @@ void PeakPlotter::update()
     const Eigen::RowVector3d& hkl=_current->getMillerIndices();
 
     QString info="(h,k,l):"+QString::number(hkl[0])+","+QString::number(hkl[1])+","+QString::number(hkl[2])+"\n";
-    double gamma=_current->getGamma()/SX::Units::deg;
-    double nu=_current->getNu()/SX::Units::deg;
+    double gamma,nu;
+    _current->getGammaNu(gamma,nu);
+    gamma/=SX::Units::deg;
+    nu/=SX::Units::deg;
     info+=QString((QChar) 0x03B3)+","+QString((QChar) 0x03BD)+":"+QString::number(gamma,'f',2)+","+QString::number(nu,'f',2)+"\n";
     double intensity=_current->getScaledIntensity();
     double sI=_current->getScaledSigma();

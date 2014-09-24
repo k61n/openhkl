@@ -69,8 +69,8 @@ Eigen::Vector3d CylindricalDetector::getPos(double x, double y) const
 	convertCoordinates(x,y,mx,my);
 	Eigen::Vector3d result;
 	// take the center of the bin
-	result[2]=((my+0.5)/_nRows-0.5)*_height;
-	double gamma=((mx+0.5)/_nCols-0.5)*_widthAngle;
+	result[2]=(my/(_nRows-1.0)-0.5)*_height;
+	double gamma=(mx/(_nCols-1.0)-0.5)*_widthAngle;
 	// Angle
 	result[1]=_distance*cos(gamma);
 	result[0]=_distance*sin(gamma);

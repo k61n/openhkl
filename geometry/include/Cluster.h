@@ -39,13 +39,12 @@ namespace Geometry
 class Cluster
 {
 public:
-  Cluster();
+	//! Create a cluster with a tolerance on the norm
+	//! Create a cluster from a fist vector with a tolerance on the norm
+  Cluster(const Eigen::Vector3d& v, double tol);
   Cluster(const Cluster&);
   Cluster& operator=(const Cluster&);
-  //! Create a cluster with a tolerance on the norm
-  Cluster(double tol);
-  //! Create a cluster from a fist vector with a tolerance on the norm
-  Cluster(const Eigen::Vector3d& v, double tol);
+
   //! Get the center of a cluster
   Eigen::Vector3d getCenter() const;
   //! Get the number of vectors in the Cluster

@@ -35,7 +35,6 @@
 #include <Eigen/Geometry>
 #include "Axis.h"
 #include "RotAxis.h"
-#include "GonioState.h"
 
 namespace SX {
 

@@ -29,6 +29,9 @@
 #include "NoteBook.h"
 #include <QtDebug>
 #include <QDateTime>
+#include "Peak3D.h"
+#include "Sample.h"
+#include "Data.h"
 
 using namespace SX::Units;
 
@@ -305,18 +308,15 @@ void MainWindow::on_action_peak_find_triggered()
         blob.second.toEllipsoid(confidence, center,eigenvalues,eigenvectors);
         SX::Geometry::Ellipsoid<double,3> a(center,eigenvalues,eigenvectors);
         numor->_peaks[i]=a;
-        SX::Geometry::Peak3D p(numor);
-        p.setPeak(new SX::Geometry::Ellipsoid3D(center,eigenvalues,eigenvectors));
-        p.setBackground(new SX::Geometry::Ellipsoid3D(center,eigenvalues.cwiseProduct(Eigen::Vector3d(1.5,1.5,3)),eigenvectors));
-        Eigen::Vector3d Q=numor->_detector->getQ(center[0],center[1],numor->_wavelength);
-        double gamma,nu;
-        numor->_detector->getGammaNu(center[0],center[1],gamma,nu);
+        SX::Crystal::Peak3D p(numor);
+        p.setPeakShape(new SX::Geometry::Ellipsoid3D(center,eigenvalues,eigenvectors));
+        p.setBackgroundShape(new SX::Geometry::Ellipsoid3D(center,eigenvalues.cwiseProduct(Eigen::Vector3d(1.5,1.5,3)),eigenvectors));
+        //
         int f=std::floor(center[2]);
         double omega=numor->_omegas[f]+(center[2]-f)*(numor->_omegas[f+1]-numor->_omegas[f]);
-        Eigen::Transform<double,3,Eigen::Affine> t=numor->_sample->getInverseHomMatrix({omega,numor->_chi,numor->_phi});
-        Eigen::Vector3d realQ=t*Q;
-        p.setQ(realQ);
-        p.setGammaNu(gamma,nu);
+        p.setSampleState(new SX::Instrument::ComponentState(numor->_sample->createState({omega,numor->_chi,numor->_phi})));
+        p.setDetectorEvent(new SX::Instrument::DetectorEvent(numor->_detector->createDetectorEvent(center[0],center[1],{numor->_gamma})));
+        p.setWavelength(numor->_wavelength);
         numor->_rpeaks.insert(Data::maprealPeaks::value_type(i++,p));
     }
 
@@ -345,7 +345,7 @@ void MainWindow::on_actionUnit_Cell_triggered()
 {
     DialogUnitCell* dialog=new DialogUnitCell(this);
 
-    std::vector<std::reference_wrapper<SX::Geometry::Peak3D>> peaks;
+    std::vector<std::reference_wrapper<SX::Crystal::Peak3D>> peaks;
     std::vector<Data*> numors=selectedNumors();
     for (auto ptr : numors)
     {

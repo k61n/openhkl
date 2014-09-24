@@ -10,7 +10,7 @@ namespace Crystal
 
 LatticeFinder::LatticeFinder(double threshold, double tolerance)
 {
-	if ( (threshold < 0.0) ||  (tolerance < 0.0) || (tolerance > threshold))
+	if ( (threshold < 0.0) ||  (tolerance < 0.0) )
 	{
 		throw std::invalid_argument( "LatticeFinder:: received invalid argument" );
 	}
@@ -49,15 +49,17 @@ void LatticeFinder::run(double cellmin)
 	double norm;
 	double rec_max=1.0/cellmin;
 
+	int i=0;
 	for (auto it1=_peaks.begin(); it1!=_peaks.end(); ++it1)
 	{
 		for (auto it2=it1+1; it2!=_peaks.end(); ++it2)
 		{
+			i++;
 			diff = *it2;
 			diff-= *it1;
 			norm = diff.norm();
-			if (norm>rec_max || norm < 0.01)
-				continue;
+//			if (norm>rec_max || norm < 0.01)
+//				continue;
 			auto itlow = _clusters.lower_bound(norm-_threshold);
 			auto itup = _clusters.upper_bound(norm+_threshold);
 
@@ -83,6 +85,7 @@ void LatticeFinder::run(double cellmin)
 			}
 		}
 	}
+	std::cout << "Number of insertions" << i << std::endl;
 
 	std::multimap<double,Cluster> m;
 	for (auto it=_clusters.begin();it!=_clusters.end();++it)
@@ -174,8 +177,23 @@ std::vector<LatticeSolution> LatticeFinder::determineLattice(std::size_t cluster
 	if (clust.size()<clustermax)
 		clustermax=clust.size();
 
+	// Sorting clusters in decreasing order of density
+	std::sort(clust.begin(),clust.end(),
+			[](const Cluster& c1, const Cluster& c2)->bool
+			{
+				return (c1.getSize()>c2.getSize());
+			});
+
+	std::cout << "Cluster size" << clust.size() << std::endl;
+	std::for_each(clust.begin(),clust.end(),
+			[](const Cluster& c1)
+			{
+			std::cout << c1.getSize() << " " << c1.getCenter().transpose() <<  std::endl;
+			}
+			 );
 
 	// Iterate through triplets of clusters and determine lattice and cost function
+	int i=0,j=0,k=0;
 	for (auto it=clust.begin();it!=clust.begin()+clustermax;++it)
 	{
 		Eigen::Vector3d v1=(*it).getCenter();
@@ -193,8 +211,11 @@ std::vector<LatticeSolution> LatticeFinder::determineLattice(std::size_t cluster
 					continue;
 				double score=costFunction(v1,v2,v3,0.05,5);
 				solutions.push_back(LatticeSolution(v1,v2,v3,score));
+				++k;
 			}
+			++j;
 		}
+		++i;
 	}
 	// Sort solutions from best to worse
 	std::sort(solutions.begin(),

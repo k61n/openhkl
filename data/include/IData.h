@@ -44,9 +44,8 @@ namespace Data
 class IData
 {
 public:
-	IData(){}
-	IData(SX::Data::IDataReader* reader):_mm(reader)
-	{}
+	IData();
+	IData(SX::Data::IDataReader* reader);
 	// Return the intensity at point x,y,z.
 	virtual int dataAt(int x, int y, int z)=0;
 	virtual ~IData()=0;

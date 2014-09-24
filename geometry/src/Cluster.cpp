@@ -3,7 +3,6 @@
 #include <vector>
 #include <stdexcept>
 #include "Cluster.h"
-#include "Matrix33.h"
 #include "Units.h"
 #include "NiggliReduction.h"
 
@@ -12,18 +11,7 @@ namespace SX
 namespace Geometry
 {
 
-Cluster::Cluster():_center(),_size(0),_tolerance(0.01)
-{
 
-}
-
-Cluster::Cluster(double tolerance):_center(),_size(0),_tolerance(tolerance)
-{
-	if (tolerance < 0.0)
-	{
-		throw std::invalid_argument( "received negative value" );
-	}
-}
 Cluster::Cluster(const Cluster& rhs)
 {
 	_center=rhs._center;
@@ -77,10 +65,10 @@ Cluster& Cluster::operator+=(const Cluster& c)
 bool Cluster::addVector(const Eigen::Vector3d& vect)
 {
 	Eigen::Vector3d v(_center-vect*_size);
-	double tp=_size*_tolerance;
-	bool b=(v.squaredNorm() < tp*tp);
-	if (!b)
+	if (v.squaredNorm()>_tolerance*_tolerance*_center.squaredNorm())
 		return false;
+//	double tp=_size*_tolerance;
+//	bool b=(v.squaredNorm() < tp*tp);
 	_center += vect;
 	_size++;
 	return true;

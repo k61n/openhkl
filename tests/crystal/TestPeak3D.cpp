@@ -66,6 +66,10 @@ BOOST_AUTO_TEST_CASE(Test_Peak3D)
 	BOOST_CHECK_CLOSE(Q[1],1,tolerance);
 	BOOST_CHECK_SMALL(Q[2],tolerance);
 
+	sample.setRestPosition(Eigen::Vector3d(0,0,0.01*m));
+	Q=peak.getQ();
+	std::cout << Q <<std::endl;
+
 
 
 
