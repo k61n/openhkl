@@ -44,11 +44,11 @@ public:
 	DetectorEvent(const DetectorEvent&);
 	DetectorEvent& operator=(const DetectorEvent&);
 	~DetectorEvent();
-	const Detector* getParent() const;
+	Detector* getParent();
 private:
 	DetectorEvent();
 	friend class Detector;
-	const Detector* _detector;
+	Detector* _detector;
 	//! Position of the event on the detector
 	double _x, _y;
 	//! Setup of the detector Gonio

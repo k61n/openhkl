@@ -224,7 +224,7 @@ void Detector::convertCoordinates(double px,double py,double& mx,double& my) con
 
 }
 
-DetectorEvent Detector::createDetectorEvent(double x, double y, const std::vector<double>& values) const
+DetectorEvent Detector::createDetectorEvent(double x, double y, const std::vector<double>& values)
 {
 	if (!_gonio)
 	{

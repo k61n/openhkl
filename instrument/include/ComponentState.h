@@ -43,14 +43,14 @@ class ComponentState {
 public:
 	const std::vector<double>& getValues() const;
 	~ComponentState();
-	const Component* getParent() const;
+     Component* getParent() const;
 private:
 	//! Only Component class can create a state
 	ComponentState();
 	//! Component must be able to access ComponentState
 	friend class Component;
 	//! Pointer to the Componentmeter that has created the state
-	const Component* _ptrComp;
+	Component* _ptrComp;
 	//! Values for each axis of the Componentmeter
 	std::vector<double> _values;
 };

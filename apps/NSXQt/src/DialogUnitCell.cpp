@@ -7,8 +7,11 @@
 #include "NiggliReduction.h"
 #include "GruberReduction.h"
 #include "Units.h"
+#include "UBMinimizer.h"
 #include "DialogUnitCellSolutions.h"
 #include <unsupported/Eigen/FFT>
+#include <unsupported/Eigen/NonLinearOptimization>
+#include <unsupported/Eigen/NumericalDiff>
 
 using namespace SX::Crystal;
 using namespace SX::Geometry;
@@ -29,6 +32,7 @@ QDebug& operator<<(QDebug &dbg, const Eigen::Matrix3d& m)
     dbg << QString::fromStdString(os.str());
     return dbg;
 }
+
 
 
 DialogUnitCell::DialogUnitCell(QWidget *parent):QDialog(parent),ui(new Ui::DialogUnitCell)
@@ -148,11 +152,33 @@ void DialogUnitCell::reindexHKL()
 {
     int success=0;
 
+    UBMinimizer minimizer;
+    minimizer.setSample(dynamic_cast<SX::Instrument::Sample*>(_peaks[0].get().getSampleState()->getParent()));
+    minimizer.setDetector(_peaks[0].get().getDetectorEvent()->getParent());
+
     std::shared_ptr<SX::Crystal::UnitCell> sptr(new SX::Crystal::UnitCell(_basis));
     for (SX::Crystal::Peak3D& peak : _peaks)
     {
         if (peak.setBasis(sptr))
+        {
+            minimizer.addPeak(peak);
             success++;
+        }
     }
+
+    Eigen::NumericalDiff<UBMinimizer> numDiff(minimizer);
+    Eigen::LevenbergMarquardt<Eigen::NumericalDiff<UBMinimizer>,double> lm(numDiff);
+    lm.parameters.maxfev = 2000;
+    lm.parameters.xtol = 1.0e-10;
+
+    Eigen::MatrixXd M=_basis.getReciprocalStandardM();
+    Eigen::VectorXd x=Eigen::VectorXd::Zero(17);
+    x[12] = 1.0;
+
+    int ret = lm.minimize(x);
+
+    std::cout << x.transpose() << std::endl;
+
     QMessageBox::information(this,"Indexation","Successfully indexed"+QString::number(success)+" peaks out of "+QString::number(_peaks.size()));
+
 }

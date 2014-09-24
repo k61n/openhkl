@@ -97,6 +97,8 @@ public:
    	double getScaledSigma() const;
    	//! Return the lorentz factor of the peak.
    	double getLorentzFactor() const;
+    SX::Instrument::ComponentState* getSampleState();
+    SX::Instrument::DetectorEvent* getDetectorEvent();
    	//! Return the scaling factor.
    	double getScale() const;
    	//! Rescale the current scaling factor by scale.

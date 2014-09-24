@@ -338,6 +338,7 @@ void MainWindow::on_action_peak_find_triggered()
 
 void MainWindow::resizeEvent(QResizeEvent* event)
 {
+    Q_UNUSED(event);
     updatePlot();
 }
 

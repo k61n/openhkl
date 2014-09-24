@@ -30,7 +30,7 @@ DetectorEvent::~DetectorEvent()
 {
 }
 
-const Detector* DetectorEvent::getParent() const
+Detector* DetectorEvent::getParent()
 {
 	return _detector;
 }

@@ -251,6 +251,16 @@ void Peak3D::setScale(double scale)
 
 }
 
+SX::Instrument::DetectorEvent* Peak3D::getDetectorEvent()
+{
+	return _event;
+}
+
+SX::Instrument::ComponentState* Peak3D::getSampleState()
+{
+	return _sampleState;
+}
+
 Eigen::RowVector3d Peak3D::getQ() const
 {
 	// If sample state is not set, assume sample is at the origin

@@ -11,7 +11,7 @@ ComponentState::~ComponentState()
 {
 }
 
-const Component* ComponentState::getParent() const
+Component* ComponentState::getParent() const
 {
 	return _ptrComp;
 }
