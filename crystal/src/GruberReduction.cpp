@@ -10,7 +10,11 @@ namespace Crystal
 GruberReduction::GruberReduction(const Eigen::Matrix3d& g, double epsilon)
 {
 	_g=g;
-	_epsilon=epsilon;
+	if (epsilon<=0 || epsilon>1)
+		throw std::runtime_error("Gruber reduction: epsilon must be in the range ]0,1]");
+
+	// Multiply tolerance by approximate Unit-cell length
+	_epsilon=epsilon*std::pow(sqrt(g.determinant()),1.0/3.0);
 }
 
 void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,BravaisType& bravais)
@@ -21,7 +25,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 	double D=_g(1,2);
 	double E=_g(0,2);
 	double F=_g(0,1);
-	_epsilon*=1.0/3*(A+B+C);
+
 
 	bool typeI=(D*E*F>0);
 

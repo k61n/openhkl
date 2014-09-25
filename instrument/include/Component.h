@@ -77,6 +77,7 @@ public:
 	Eigen::Vector3d getPosition(const ComponentState& state) const;
 	//! Create a state
 	ComponentState createState(const std::vector<double>& values);
+	std::size_t numberOfAxes() const;
 protected:
 	//! Name of the component
 	std::string _name;

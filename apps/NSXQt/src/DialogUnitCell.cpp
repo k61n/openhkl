@@ -80,29 +80,73 @@ void DialogUnitCell::getUnitCell()
         if (v1.dot(v2.cross(v3))>20.0)
         {
                 UnitCell cell=UnitCell::fromDirectVectors(v1,v2,v3);
-                NiggliReduction niggli(cell.getMetricTensor(),1e-3);
+                std::shared_ptr<UnitCell> pcell(new UnitCell(cell));
+                UBMinimizer minimizer;
+                minimizer.setSample(dynamic_cast<SX::Instrument::Sample*>(_peaks[0].get().getSampleState()->getParent()));
+                minimizer.setDetector(_peaks[0].get().getDetectorEvent()->getParent());
+                minimizer.setParameterFixed(13);
+                int comp=0;
+                for (auto& peak : _peaks)
+                {
+                    if (peak.get().setBasis(pcell))
+                    {
+                        minimizer.addPeak(peak);
+                        ++comp;
+                    }
+                }
+
+                if (comp < 10)
+                    continue;
+
+                Eigen::NumericalDiff<UBMinimizer> numDiff(minimizer);
+                Eigen::LevenbergMarquardt<Eigen::NumericalDiff<UBMinimizer>,double> lm(numDiff);
+                lm.parameters.maxfev = 10;
+                lm.parameters.xtol = 1.0e-10;
+
+                Eigen::MatrixXd M=_basis.getReciprocalStandardM();
+                Eigen::VectorXd x=Eigen::VectorXd::Zero(17);
+
+
+                int ret = lm.minimize(x);
+
+                Eigen::Map<Eigen::Matrix<double,3,3,Eigen::RowMajor>> m(x.data());
+                Eigen::Matrix<double,3,3> ubb=m;
+                SX::Crystal::UnitCell cc;
+                try
+                {
+                    cc=SX::Crystal::UnitCell::fromReciprocalVectors(ubb.row(0),ubb.row(1),ubb.row(2));
+                    std::cout << ret << x.transpose() << std::endl;
+                }catch(...)
+                {
+                    continue;
+                }
+                NiggliReduction niggli(cc.getMetricTensor(),0.03);
                 Eigen::Matrix3d newg,P;
                 niggli.reduce(newg,P);
-                cell.transform(P);
-                GruberReduction gruber(cell.getMetricTensor(),0.05);
+                cc.transform(P);
+                GruberReduction gruber(cc.getMetricTensor(),0.05);
                 LatticeCentring c;
                 BravaisType b;
                 gruber.reduce(P,c,b);
-                cell.setLatticeCentring(c);
-                cell.setBravaisType(b);
-                cell.transform(P);
-                //_unitcells.push_back(std::make_pair(cell,1.0))
-                int index=0;
+                cc.setLatticeCentring(c);
+                cc.setBravaisType(b);
+                cc.transform(P);
+
+                double score=0.0;
+                std::shared_ptr<UnitCell> pcc(new UnitCell(cc));
                 for (auto& peak : _peaks)
                 {
-                    if (peak.get().setBasis(std::shared_ptr<UnitCell>(new UnitCell(cell))))
-                        index++;
+                    if (peak.get().setBasis(pcc))
+                        score++;
                 }
-                _unitcells.push_back(std::make_pair(cell,index));
+                minimizer.reset();
+                score /= 0.01*_peaks.size();
+                _unitcells.push_back(std::make_pair(cc,score));
         }
     }
     }
     }
+
      //Sort the Quality of the solutions decreasing
     std::sort(_unitcells.begin(),
               _unitcells.end(),
@@ -110,6 +154,11 @@ void DialogUnitCell::getUnitCell()
                 {
                     return (cell1.second>cell2.second);
                 });
+
+
+
+
+
     DialogUnitCellSolutions* ucs=new DialogUnitCellSolutions(this);
     ucs->setSolutions(_unitcells);
     ucs->show();
@@ -152,32 +201,11 @@ void DialogUnitCell::reindexHKL()
 {
     int success=0;
 
-    UBMinimizer minimizer;
-    minimizer.setSample(dynamic_cast<SX::Instrument::Sample*>(_peaks[0].get().getSampleState()->getParent()));
-    minimizer.setDetector(_peaks[0].get().getDetectorEvent()->getParent());
-
-    std::shared_ptr<SX::Crystal::UnitCell> sptr(new SX::Crystal::UnitCell(_basis));
-    for (SX::Crystal::Peak3D& peak : _peaks)
+    for (auto& peak : _peaks)
     {
-        if (peak.setBasis(sptr))
-        {
-            minimizer.addPeak(peak);
-            success++;
-        }
+        if (peak.get().setBasis(std::shared_ptr<UnitCell>(new UnitCell(_basis))))
+            ++success;
     }
-
-    Eigen::NumericalDiff<UBMinimizer> numDiff(minimizer);
-    Eigen::LevenbergMarquardt<Eigen::NumericalDiff<UBMinimizer>,double> lm(numDiff);
-    lm.parameters.maxfev = 2000;
-    lm.parameters.xtol = 1.0e-10;
-
-    Eigen::MatrixXd M=_basis.getReciprocalStandardM();
-    Eigen::VectorXd x=Eigen::VectorXd::Zero(17);
-    x[12] = 1.0;
-
-    int ret = lm.minimize(x);
-
-    std::cout << x.transpose() << std::endl;
 
     QMessageBox::information(this,"Indexation","Successfully indexed"+QString::number(success)+" peaks out of "+QString::number(_peaks.size()));
 

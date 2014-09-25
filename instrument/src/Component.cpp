@@ -103,6 +103,13 @@ void Component::parse(const ptree& node)
 //	_parse(node);
 }
 
+std::size_t Component::numberOfAxes() const
+{
+	if (!_gonio)
+		return 0;
+	return _gonio->numberOfAxes();
+}
+
 } // end namespace Instrument
 
 } // end namespace SX

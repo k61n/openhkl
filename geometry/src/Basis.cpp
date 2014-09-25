@@ -51,7 +51,7 @@ Basis::~Basis()
 Basis Basis::fromDirectVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c, ptrBasis reference)
 {
 	if (coplanar(a,b,c))
-			throw std::runtime_error("The direct vectors are coplanar.");
+			throw std::runtime_error("Class Basis: the direct vectors are coplanar.");
 	return Basis(a,b,c,reference);
 }
 
@@ -59,7 +59,7 @@ Basis Basis::fromReciprocalVectors(const Vector3d& a, const Vector3d& b, const V
 {
 
 	if (coplanar(a,b,c))
-		throw std::runtime_error("The reciprocal basis vectors are coplanar.");
+		throw std::runtime_error("Class Basis: the reciprocal basis vectors are coplanar.");
 
 	double rVolume = std::abs(a.dot(b.cross(c)));
 

@@ -14,8 +14,8 @@ int NiggliReduction::_itermax=10000;
 NiggliReduction::NiggliReduction(const Eigen::Matrix3d& g, double epsilon)
 {
 	_g=g;
-	if (epsilon<=0)
-		throw std::runtime_error("Niggli reduction: epsilon must be >0");
+	if (epsilon<=0 || epsilon>1)
+		throw std::runtime_error("Niggli reduction: epsilon must be in the range ]0,1]");
 	// Multiply tolerance by approximate Unit-cell length
 	_epsilon=epsilon*std::pow(sqrt(g.determinant()),1.0/3.0);
 	updateParameters();

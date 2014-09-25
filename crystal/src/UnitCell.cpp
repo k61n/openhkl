@@ -59,14 +59,14 @@ UnitCell::UnitCell(const Eigen::Vector3d& v1,const Eigen::Vector3d& v2,const Eig
 UnitCell UnitCell::fromDirectVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c, LatticeCentring centring, BravaisType bravais,std::shared_ptr<SX::Geometry::Basis> reference)
 {
 	if (coplanar(a,b,c))
-		throw std::runtime_error("The direct vectors are coplanar.");
+		throw std::runtime_error("Class UnitCell: the direct vectors are coplanar.");
 	return UnitCell(a,b,c,centring,bravais,reference);
 }
 	//! Build a basis from a set of three reciprocal vectors.
 UnitCell UnitCell::fromReciprocalVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c,LatticeCentring centring, BravaisType bravais,std::shared_ptr<SX::Geometry::Basis> reference)
 {
 	if (coplanar(a,b,c))
-			throw std::runtime_error("The reciprocal vectors are coplanar.");
+			throw std::runtime_error("Class UnitCell: the reciprocal vectors are coplanar.");
 	double rVolume = std::abs(a.dot(b.cross(c)));
 
 	Vector3d av=b.cross(c)/rVolume;

@@ -23,12 +23,20 @@ UBMinimizer::~UBMinimizer() {
 
 int UBMinimizer::operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const
 {
-	_detector->setDistance(x[12]);
-	_detector->getGonio()->getAxis(0)->setOffset(x[13]);
-	_sample->getGonio()->getAxis(0)->setOffset(x[14]);
-	_sample->getGonio()->getAxis(1)->setOffset(x[15]);
-	_sample->getGonio()->getAxis(2)->setOffset(x[16]);
-	_sample->setRestPosition(Eigen::Vector3d(x[9],x[10],x[11]));
+	int naxes=9;
+	SX::Instrument::Gonio* dgonio=_detector->getGonio().get();
+	if (dgonio)
+	{
+		for (unsigned int i=0;i<dgonio->numberOfAxes();++i)
+			dgonio->getAxis(i)->setOffset(x[naxes++]);
+	}
+	SX::Instrument::Gonio* sgonio=_sample->getGonio().get();
+	if (sgonio)
+	{
+		for (unsigned int i=0;i<sgonio->numberOfAxes();++i)
+			sgonio->getAxis(i)->setOffset(x[naxes++]);
+	}
+
 	for (unsigned int i=0; i<_peaks.size();++i)
 	{
 		Eigen::RowVector3d qVector=_peaks[i].getQ();
@@ -63,7 +71,7 @@ double UBMinimizer::calcSSE(const Eigen::VectorXd& x)
 
 int UBMinimizer::inputs() const
 {
-	return 17;
+	return 9+_detector->numberOfAxes()+_sample->numberOfAxes();
 }
 
 int UBMinimizer::values() const
@@ -79,6 +87,38 @@ void UBMinimizer::setDetector(SX::Instrument::Detector* detector)
 void UBMinimizer::setSample(SX::Instrument::Sample* sample)
 {
 	_sample=sample;
+}
+
+void UBMinimizer::reset()
+{
+	SX::Instrument::Gonio* dgonio=_detector->getGonio().get();
+	if (dgonio)
+	{
+		for (unsigned int i=0;i<dgonio->numberOfAxes();++i)
+			dgonio->getAxis(i)->setOffset(0.0);
+	}
+	SX::Instrument::Gonio* sgonio=_sample->getGonio().get();
+	if (sgonio)
+	{
+		for (unsigned int i=0;i<sgonio->numberOfAxes();++i)
+			sgonio->getAxis(i)->setOffset(0.0);
+	}
+}
+
+void UBMinimizer::setParameterFixed(int i)
+{
+	int ii=i-9;
+	if (ii<_detector->numberOfAxes())
+	{
+		_detector->getGonio()->getAxis(ii)->setOffsetFixed(true);
+		return;
+	}
+	ii-=_detector->numberOfAxes();
+	if (ii<_sample->numberOfAxes())
+	{
+		_sample->getGonio()->getAxis(ii)->setOffsetFixed(true);
+	}
+
 }
 
 } // end namespace Crystal

@@ -109,7 +109,8 @@ public:
 
 	void setDetector(SX::Instrument::Detector* detector);
 	void setSample(SX::Instrument::Sample* sample);
-
+	void reset();
+	void setParameterFixed(int i);
 private:
 	std::vector<Peak3D> _peaks;
 	SX::Instrument::Detector* _detector;

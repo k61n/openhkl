@@ -53,7 +53,7 @@ void Data::fromFile(const std::string& filename)
         _detector = new SX::Instrument::CylindricalDetector();
 
         _detector->setDistance(764*SX::Units::mm);
-        _detector->setWidthAngle(120.0*deg);
+        _detector->setWidthAngle(119.8*deg);
         _detector->setHeight(40.0*cm);
         _detector->setNPixels(640,256);
 
@@ -75,6 +75,7 @@ void Data::fromFile(const std::string& filename)
         // Attach a gonio to the detector
         std::shared_ptr<SX::Instrument::Gonio> g(new SX::Instrument::Gonio("gamma-arm"));
         g->addRotation("gamma",Eigen::Vector3d(0,0,1),SX::Instrument::RotAxis::CW);
+        g->addTranslation("y-offset",Eigen::Vector3d(0,1,0));
         _detector->setGonio(g);
 
         //Sample gonio
@@ -83,6 +84,9 @@ void Data::fromFile(const std::string& filename)
         bl->addRotation("omega",Vector3d(0,0,1),SX::Instrument::RotAxis::CW);
         bl->addRotation("chi",Vector3d(0,1,0),SX::Instrument::RotAxis::CCW);
         bl->addRotation("phi",Vector3d(0,0,1),SX::Instrument::RotAxis::CW);
+        bl->addTranslation("x-sample",Vector3d(1,0,0));
+        bl->addTranslation("y-sample",Vector3d(0,1,0));
+        bl->addTranslation("z-sample",Vector3d(0,0,1));
         _sample->setGonio(bl);
     }
 
