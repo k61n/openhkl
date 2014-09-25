@@ -81,41 +81,40 @@ void DialogUnitCell::getUnitCell()
         {
                 UnitCell cell=UnitCell::fromDirectVectors(v1,v2,v3);
                 std::shared_ptr<UnitCell> pcell(new UnitCell(cell));
-                UBMinimizer minimizer;
-                minimizer.setSample(dynamic_cast<SX::Instrument::Sample*>(_peaks[0].get().getSampleState()->getParent()));
-                minimizer.setDetector(_peaks[0].get().getDetectorEvent()->getParent());
-                minimizer.setParameterFixed(13);
-                int comp=0;
+                UBFunctor functor;
+                functor.setSample(dynamic_cast<SX::Instrument::Sample*>(_peaks[0].get().getSampleState()->getParent()));
+                functor.setDetector(_peaks[0].get().getDetectorEvent()->getParent());
+                functor.setParameterFixed(13);
+                int success=0;
                 for (auto& peak : _peaks)
                 {
                     if (peak.get().setBasis(pcell))
                     {
-                        minimizer.addPeak(peak);
-                        ++comp;
+                        functor.addPeak(peak);
+                        ++success;
                     }
                 }
 
-                if (comp < 10)
+                if (success < 10)
                     continue;
 
-                Eigen::NumericalDiff<UBMinimizer> numDiff(minimizer);
-                Eigen::LevenbergMarquardt<Eigen::NumericalDiff<UBMinimizer>,double> lm(numDiff);
-                lm.parameters.maxfev = 10;
-                lm.parameters.xtol = 1.0e-10;
+                UBMinimizer minimizer(functor);
 
                 Eigen::MatrixXd M=_basis.getReciprocalStandardM();
-                Eigen::VectorXd x=Eigen::VectorXd::Zero(17);
+//                Eigen::VectorXd x=Eigen::VectorXd::Zero(17);
+
+                int ret = minimizer.run();
+
+                if (ret != 1)
+                    continue;
 
 
-                int ret = lm.minimize(x);
+                UBSolution solution=minimizer.getSolution();
 
-                Eigen::Map<Eigen::Matrix<double,3,3,Eigen::RowMajor>> m(x.data());
-                Eigen::Matrix<double,3,3> ubb=m;
                 SX::Crystal::UnitCell cc;
                 try
                 {
-                    cc=SX::Crystal::UnitCell::fromReciprocalVectors(ubb.row(0),ubb.row(1),ubb.row(2));
-                    std::cout << ret << x.transpose() << std::endl;
+                    cc=SX::Crystal::UnitCell::fromReciprocalVectors(solution._ub.row(0),solution._ub.row(1),solution._ub.row(2));
                 }catch(...)
                 {
                     continue;
@@ -139,7 +138,7 @@ void DialogUnitCell::getUnitCell()
                     if (peak.get().setBasis(pcc))
                         score++;
                 }
-                minimizer.reset();
+                functor.reset();
                 score /= 0.01*_peaks.size();
                 _unitcells.push_back(std::make_pair(cc,score));
         }

@@ -1,6 +1,7 @@
 #include "GruberReduction.h"
+
 #include <cmath>
-#include <iostream>
+#include <stdexcept>
 
 namespace SX
 {
@@ -25,7 +26,6 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 	double D=_g(1,2);
 	double E=_g(0,2);
 	double F=_g(0,1);
-
 
 	bool typeI=(D*E*F>0);
 

@@ -27,7 +27,12 @@
  *
  */
 
+#include <set>
+#include <vector>
+
 #include <Eigen/Dense>
+#include <unsupported/Eigen/NonLinearOptimization>
+#include <unsupported/Eigen/NumericalDiff>
 
 #include <Detector.h>
 #include <Peak3D.h>
@@ -44,7 +49,7 @@ namespace Crystal
 
 // Generic functor
 template<typename _Scalar, int NX = Eigen::Dynamic, int NY = Eigen::Dynamic>
-class Minimizer
+class Functor
 {
 public:
     typedef _Scalar Scalar;
@@ -53,14 +58,14 @@ public:
     typedef Eigen::Matrix<Scalar,ValuesAtCompileTime,1> ValueType;
     typedef Eigen::Matrix<Scalar,ValuesAtCompileTime,InputsAtCompileTime> JacobianType;
 
-    Minimizer();
-    Minimizer(int inputs, int values);
+    Functor();
+    Functor(int inputs, int values);
 
     virtual int operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const=0;
 
     virtual int inputs() const;
     virtual int values() const;
-    virtual ~Minimizer()=0;;
+    virtual ~Functor()=0;;
 
 protected:
     int m_inputs, m_values;
@@ -68,39 +73,39 @@ protected:
 };
 
 template<typename _Scalar, int NX, int NY>
-Minimizer<_Scalar,NX,NY>::Minimizer() : m_inputs(InputsAtCompileTime), m_values(ValuesAtCompileTime)
+Functor<_Scalar,NX,NY>::Functor() : m_inputs(InputsAtCompileTime), m_values(ValuesAtCompileTime)
 {
 }
 
 template<typename _Scalar, int NX, int NY>
-Minimizer<_Scalar,NX,NY>::Minimizer(int inputs, int values) : m_inputs(inputs), m_values(values)
+Functor<_Scalar,NX,NY>::Functor(int inputs, int values) : m_inputs(inputs), m_values(values)
 {
 }
 
 template<typename _Scalar, int NX, int NY>
-Minimizer<_Scalar,NX,NY>::~Minimizer()
+Functor<_Scalar,NX,NY>::~Functor()
 {
 }
 
 template<typename _Scalar, int NX, int NY>
-int Minimizer<_Scalar,NX,NY>::inputs() const
+int Functor<_Scalar,NX,NY>::inputs() const
 {
 	return m_inputs;
 }
 
 template<typename _Scalar, int NX, int NY>
-int Minimizer<_Scalar,NX,NY>::values() const {
+int Functor<_Scalar,NX,NY>::values() const {
     return m_values;
 }
 
-class UBMinimizer : public Minimizer<double>
+class UBFunctor : public Functor<double>
 {
 public:
-	UBMinimizer();
-	~UBMinimizer();
+	UBFunctor();
+	~UBFunctor();
 	int operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const;
 
-	double calcSSE(const Eigen::VectorXd& x);
+//	double calcSSE(const Eigen::VectorXd& x);
 
 	void addPeak(const Peak3D& peak);
 
@@ -110,12 +115,49 @@ public:
 	void setDetector(SX::Instrument::Detector* detector);
 	void setSample(SX::Instrument::Sample* sample);
 	void reset();
-	void setParameterFixed(int i);
-private:
+	void setParameterFixed(unsigned int i);
+
 	std::vector<Peak3D> _peaks;
 	SX::Instrument::Detector* _detector;
 	SX::Instrument::Sample* _sample;
+	std::set<int> _fixedParameters;
+
 };
+
+class UBMinimizer;
+
+struct UBSolution
+{
+	UBSolution(const UBSolution& ubsol);
+	friend class UBMinimizer;
+	UBSolution();
+	UBSolution(SX::Instrument::Detector* detector,SX::Instrument::Sample* sample, Eigen::VectorXd values, Eigen::VectorXd sigmas, std::vector<bool> fixedParameters);
+	UBSolution& operator=(const UBSolution& ubsol);
+	SX::Instrument::Detector* _detector;
+	SX::Instrument::Sample* _sample;
+    Eigen::Matrix3d _ub;
+    Eigen::Matrix3d _sigmaub;
+	Eigen::VectorXd _detectorOffsets;
+	Eigen::VectorXd _sigmaDetectorOffsets;
+	Eigen::VectorXd _sampleOffsets;
+	Eigen::VectorXd _sigmaSampleOffsets;
+	std::vector<bool> _fixedParameters;
+};
+
+class UBMinimizer
+{
+public:
+	UBMinimizer(const UBFunctor& functor);
+	void setMaxIter(unsigned int max);
+	int run();
+	const UBSolution& getSolution() const;
+private:
+	UBFunctor _functor;
+	Eigen::NumericalDiff<UBFunctor> _numDiff;
+	Eigen::LevenbergMarquardt<Eigen::NumericalDiff<UBFunctor>,double> _minimizer;
+	UBSolution _solution;
+};
+
 
 } // end namespace Crystal
 
