@@ -85,10 +85,10 @@ int UBFunctor::inputs() const
 
 	int nInputs=9;
 
-	if (!_detector)
+	if (_detector)
 		nInputs += _detector->numberOfAxes();
 
-	if (!_sample)
+	if (_sample)
 		nInputs += _sample->numberOfAxes();
 
 	return nInputs;
@@ -298,6 +298,18 @@ UBSolution& UBSolution::operator=(const UBSolution& other)
 		_fixedParameters = other._fixedParameters;
 	}
 	return *this;
+}
+
+std::ostream& operator<<(std::ostream& os, const UBSolution& solution)
+{
+	os<<"UB matrix:"<<std::endl;
+	os<<solution._ub<<"\n\n";
+	os<<"Detector offsets:"<<std::endl;
+	os<<solution._detectorOffsets<<"\n\n";
+	os<<"Sample offsets:"<<std::endl;
+	os<<solution._sampleOffsets<<std::endl;
+
+	return os;
 }
 
 } // end namespace Crystal

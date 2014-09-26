@@ -98,16 +98,20 @@ void DialogUnitCell::getUnitCell()
                 if (success < 10)
                     continue;
 
-                Eigen::MatrixXd M=_basis.getReciprocalStandardM();
+                Eigen::MatrixXd M=cell.getReciprocalStandardM();
                 minimizer.setStartingUBMatrix(M);
 
                 int ret = minimizer.run();
+
+                std::cout<<ret<<std::endl;
 
                 if (ret != 1)
                     continue;
 
 
                 UBSolution solution=minimizer.getSolution();
+
+                std::cout<<solution<<std::endl;
 
                 SX::Crystal::UnitCell cc;
                 try
@@ -136,7 +140,6 @@ void DialogUnitCell::getUnitCell()
                     if (peak.get().setBasis(pcc))
                         score++;
                 }
-                minimizer.resetParameters();
                 score /= 0.01*_peaks.size();
                 _unitcells.push_back(std::make_pair(cc,score));
         }

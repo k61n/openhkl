@@ -28,6 +28,7 @@
  */
 
 #include <map>
+#include <ostream>
 #include <set>
 #include <vector>
 
@@ -172,6 +173,7 @@ struct UBSolution
 	Eigen::VectorXd _sampleOffsets;
 	Eigen::VectorXd _sigmaSampleOffsets;
 	std::vector<bool> _fixedParameters;
+	friend std::ostream& operator<<(std::ostream& os, const UBSolution& solution);
 };
 
 class UBMinimizer
