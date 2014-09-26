@@ -27,6 +27,7 @@
  *
  */
 
+#include <map>
 #include <set>
 #include <vector>
 
@@ -149,6 +150,9 @@ public:
 	void setDetector(SX::Instrument::Detector* detector);
 	void setMaxIter(unsigned int max);
 	void setSample(SX::Instrument::Sample* sample);
+	void setStartingUBMatrix(const Eigen::Matrix3d& ub);
+	void setStartingValue(unsigned int idx, double value);
+	void unsetStartingValue(unsigned int idx);
 	int run();
 	const UBSolution& getSolution() const;
 private:
@@ -156,6 +160,7 @@ private:
 	Eigen::NumericalDiff<UBFunctor> _numDiff;
 	Eigen::LevenbergMarquardt<Eigen::NumericalDiff<UBFunctor>,double> _minimizer;
 	UBSolution _solution;
+	std::map<unsigned int,double> _start;
 };
 
 

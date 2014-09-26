@@ -1,12 +1,15 @@
+#include "UBMinimizer.h"
+
 #include <Eigen/Dense>
 
 #include "Component.h"
 #include "ComponentState.h"
 #include "Detector.h"
+#include "Gonio.h"
+#include "Error.h"
+#include "Gonio.h"
 #include "Peak3D.h"
 #include "Sample.h"
-#include "UBMinimizer.h"
-#include "Gonio.h"
 
 namespace SX
 {
@@ -24,7 +27,7 @@ UBFunctor::~UBFunctor() {
 int UBFunctor::operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const
 {
 	if (!_detector || !_sample)
-		throw std::runtime_error("class UBFunctor: a detector and a sample must be specified prior to calculate residuals.");
+		throw SX::Error::CrystalError<UBFunctor>("A detector and a sample must be specified prior to calculate residuals.");
 
 	int naxes=9;
 	SX::Instrument::Gonio* dgonio=_detector->getGonio().get();
@@ -59,7 +62,16 @@ void UBFunctor::addPeak(const Peak3D& peak)
 
 int UBFunctor::inputs() const
 {
-	return 9+_detector->numberOfAxes()+_sample->numberOfAxes();
+
+	int nInputs=9;
+
+	if (!_detector)
+		nInputs += _detector->numberOfAxes();
+
+	if (!_sample)
+		nInputs += _sample->numberOfAxes();
+
+	return nInputs;
 }
 
 int UBFunctor::values() const
@@ -93,14 +105,17 @@ void UBFunctor::reset()
 	}
 }
 
-void UBFunctor::setParameterFixed(unsigned int i)
+void UBFunctor::setParameterFixed(unsigned int idx)
 {
 	if (!_detector || !_sample)
-		throw std::runtime_error("class UBFunctor: a detector and a sample must be specified prior to fixing parameters.");
+		throw SX::Error::CrystalError<UBFunctor>("A detector and a sample must be specified prior to fixing parameters.");
 
-	_fixedParameters.insert(i);
+	if (idx>=inputs())
+		return;
 
-	unsigned int ii=i-9;
+	_fixedParameters.insert(idx);
+
+	unsigned int ii=idx-9;
 	if (ii<_detector->numberOfAxes())
 	{
 		_detector->getGonio()->getAxis(ii)->setOffsetFixed(true);
@@ -138,7 +153,10 @@ int UBMinimizer::run()
 {
 
 	int nParams=_functor.inputs();
-	Eigen::VectorXd x(nParams);
+	Eigen::VectorXd x=Eigen::VectorXd::Zero(nParams);
+
+	for (auto it=_start.begin();it!=_start.end();++it)
+		x[it->first] = it->second;
 
 	int status = _minimizer.minimize(x);
 
@@ -167,6 +185,33 @@ int UBMinimizer::run()
 const UBSolution& UBMinimizer::getSolution() const
 {
 	return _solution;
+}
+
+void UBMinimizer::setStartingUBMatrix(const Eigen::Matrix3d& ub)
+{
+	setStartingValue(0,ub(0,0));
+	setStartingValue(1,ub(0,1));
+	setStartingValue(2,ub(0,2));
+	setStartingValue(3,ub(1,0));
+	setStartingValue(4,ub(1,1));
+	setStartingValue(5,ub(1,2));
+	setStartingValue(6,ub(2,0));
+	setStartingValue(7,ub(2,1));
+	setStartingValue(8,ub(2,2));
+}
+
+void UBMinimizer::setStartingValue(unsigned int idx, double value)
+{
+	if (idx >=_functor.inputs())
+		return;
+	_start.at(idx) = value;
+}
+
+void UBMinimizer::unsetStartingValue(unsigned int idx)
+{
+	if (idx >=_functor.inputs())
+		return;
+	_start.erase(idx);
 }
 
 UBSolution::UBSolution() : _detector(nullptr), _sample(nullptr)

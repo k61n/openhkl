@@ -136,7 +136,7 @@ Eigen::Vector3d Detector::getEventPosition(const DetectorEvent& event) const
 	}
 	else if (_gonio->numberOfAxes()!=event._values.size())
 	{
-		throw std::runtime_error("Trying to assign a DetectorEvent with ring number of values");
+		throw std::runtime_error("Trying to assign a DetectorEvent with wrong number of values");
 	}
 	_gonio->transformInPlace(v,event._values);
 	return v;
