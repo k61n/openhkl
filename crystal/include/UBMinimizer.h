@@ -162,7 +162,7 @@ struct UBSolution
 	UBSolution(const UBSolution& ubsol);
 	friend class UBMinimizer;
 	UBSolution();
-	UBSolution(SX::Instrument::Detector* detector,SX::Instrument::Sample* sample, Eigen::VectorXd values, Eigen::VectorXd sigmas, std::vector<bool> fixedParameters);
+	UBSolution(SX::Instrument::Detector* detector,SX::Instrument::Sample* sample,const Eigen::VectorXd& values,const Eigen::VectorXd& sigmas,const std::vector<bool>& fixedParameters);
 	UBSolution& operator=(const UBSolution& ubsol);
 	SX::Instrument::Detector* _detector;
 	SX::Instrument::Sample* _sample;
@@ -199,11 +199,6 @@ public:
 	 */
 	void setFixedParameters(unsigned int idx);
 	/*
-	 * @brief Set the maximum number of iteration used by the LM engine
-	 * @param max the maximum number of iteration
-	 */
-	void setMaxIter(unsigned int max);
-	/*
 	 * @brief Set the sample related to the peaks collected for the minimization
 	 * @param sample the sample
 	 */
@@ -228,7 +223,7 @@ public:
 	 * @brief Run the minimization
 	 * @return the status of the minimization (1 if everything OK)
 	 */
-	int run();
+	int run(unsigned int maxIter);
 	/*
 	 * @brief Returns the solution of the last minization
 	 * @return the solution
@@ -236,8 +231,6 @@ public:
 	const UBSolution& getSolution() const;
 private:
 	UBFunctor _functor;
-	Eigen::NumericalDiff<UBFunctor> _numDiff;
-	Eigen::LevenbergMarquardt<Eigen::NumericalDiff<UBFunctor>,double> _minimizer;
 	UBSolution _solution;
 	std::map<unsigned int,double> _start;
 };

@@ -50,13 +50,13 @@ int UBFunctor::operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const
 		throw SX::Error::CrystalError<UBFunctor>("A detector and a sample must be specified prior to calculate residuals.");
 
 	int naxes=9;
-	SX::Instrument::Gonio* dgonio=_detector->getGonio().get();
+	auto dgonio=_detector->getGonio();
 	if (dgonio)
 	{
 		for (unsigned int i=0;i<dgonio->numberOfAxes();++i)
 			dgonio->getAxis(i)->setOffset(x[naxes++]);
 	}
-	SX::Instrument::Gonio* sgonio=_sample->getGonio().get();
+	auto sgonio=_sample->getGonio();
 	if (sgonio)
 	{
 		for (unsigned int i=0;i<sgonio->numberOfAxes();++i)
@@ -111,13 +111,13 @@ void UBFunctor::setSample(SX::Instrument::Sample* sample)
 
 void UBFunctor::resetParameters()
 {
-	SX::Instrument::Gonio* dgonio=_detector->getGonio().get();
+	auto dgonio=_detector->getGonio();
 	if (dgonio)
 	{
 		for (unsigned int i=0;i<dgonio->numberOfAxes();++i)
 			dgonio->getAxis(i)->setOffset(0.0);
 	}
-	SX::Instrument::Gonio* sgonio=_sample->getGonio().get();
+	auto sgonio=_sample->getGonio();
 	if (sgonio)
 	{
 		for (unsigned int i=0;i<sgonio->numberOfAxes();++i)
@@ -148,10 +148,9 @@ void UBFunctor::setFixedParameters(unsigned int idx)
 	}
 }
 
-UBMinimizer::UBMinimizer() : _functor(UBFunctor()),_numDiff(_functor), _minimizer(_numDiff), _solution(), _start()
+UBMinimizer::UBMinimizer() : _functor(UBFunctor()), _solution(), _start()
 {
-	_minimizer.parameters.maxfev = 1000;
-    _minimizer.parameters.xtol = 1.0e-10;
+
 }
 
 void UBMinimizer::addPeak(const Peak3D& peak)
@@ -174,17 +173,13 @@ void UBMinimizer::setFixedParameters(unsigned int idx)
 	_functor.setFixedParameters(idx);
 }
 
-void UBMinimizer::setMaxIter(unsigned int max)
-{
-	_minimizer.parameters.maxfev = max;
-}
 
 void UBMinimizer::setSample(SX::Instrument::Sample* sample)
 {
 	_functor.setSample(sample);
 }
 
-int UBMinimizer::run()
+int UBMinimizer::run(unsigned int maxIter)
 {
 
 	int nParams=_functor.inputs();
@@ -193,16 +188,23 @@ int UBMinimizer::run()
 	for (auto it=_start.begin();it!=_start.end();++it)
 		x[it->first] = it->second;
 
-	int status = _minimizer.minimize(x);
 
-	if (status==1)
-	{
+	typedef Eigen::NumericalDiff<UBFunctor> NumDiffType;
+	NumDiffType numdiff(_functor);
+	Eigen::LevenbergMarquardt<NumDiffType> minimizer(numdiff);
+	minimizer.parameters.xtol=1e-10;
+	minimizer.parameters.maxfev=maxIter;
+
+	int status = minimizer.minimize(x);
+
+
+	std::cout << "solution" << x.transpose() << std::endl;
 		Eigen::VectorXd fvec(_functor.values());
 		_functor(x,fvec);
 		double sse = fvec.squaredNorm();
 		sse /= (_functor.values()-_functor.inputs());
 
-	    Eigen::MatrixXd covMatrix = (_minimizer.fjac.transpose()*_minimizer.fjac).inverse();
+	    Eigen::MatrixXd covMatrix = (minimizer.fjac.transpose()*minimizer.fjac).inverse();
 
 	    Eigen::VectorXd sigmas = (sse*covMatrix.diagonal()).cwiseSqrt();
 
@@ -211,7 +213,7 @@ int UBMinimizer::run()
 	    	fParams[it] = true;
 
 	    _solution = UBSolution(_functor._detector, _functor._sample, x, sigmas, fParams);
-	}
+
 
 	return status;
 
@@ -253,21 +255,21 @@ UBSolution::UBSolution() : _detector(nullptr), _sample(nullptr)
 {
 }
 
-UBSolution::UBSolution(SX::Instrument::Detector* detector,SX::Instrument::Sample* sample, Eigen::VectorXd values, Eigen::VectorXd sigmas, std::vector<bool> fixedParameters)
+UBSolution::UBSolution(SX::Instrument::Detector* detector,SX::Instrument::Sample* sample,const Eigen::VectorXd& values,const Eigen::VectorXd& sigmas,const std::vector<bool>& fixedParameters)
 : _detector(detector), _sample(sample), _fixedParameters(fixedParameters)
 {
-
 	unsigned int idx = 0;
-	_ub = Eigen::Map<Eigen::Matrix<double,3,3>>(values.segment(9,idx).data());
-	_sigmaub = Eigen::Map<Eigen::Matrix<double,3,3>>(sigmas.segment(9,idx).data());
+	std::cout << "x vector" << values << std::endl;
+	_ub  << values.segment(idx,9);
+	_sigmaub << sigmas.segment(idx,9);
 
 	idx += 9;
-	_detectorOffsets = values.segment(_detector->numberOfAxes(),idx);
-	_sigmaDetectorOffsets = sigmas.segment(_detector->numberOfAxes(),idx);
+	_detectorOffsets = values.segment(idx,_detector->numberOfAxes());
+	_sigmaDetectorOffsets = sigmas.segment(idx,_detector->numberOfAxes());
 
 	idx+=_detector->numberOfAxes();
-	_sampleOffsets = values.segment(_sample->numberOfAxes(),idx);
-	_sigmaSampleOffsets = sigmas.segment(_sample->numberOfAxes(),idx);
+	_sampleOffsets = values.segment(idx,_sample->numberOfAxes());
+	_sigmaSampleOffsets = sigmas.segment(idx,_sample->numberOfAxes());
 }
 
 UBSolution::UBSolution(const UBSolution& other)
