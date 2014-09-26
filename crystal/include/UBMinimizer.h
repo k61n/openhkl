@@ -146,17 +146,57 @@ struct UBSolution
 class UBMinimizer
 {
 public:
+	//! Default constructor
 	UBMinimizer();
+	//! Add a Peak3D (e.g. an observation) to the minimizer
 	void addPeak(const Peak3D& peak);
+	//! Reset all the parameters (e.g. UB matrix + detector and sample offsets) to zero
 	void resetParameters();
+	/*
+	 * @brief Set the detector related to the peaks collected for the minimization
+	 * @param detector the detector
+	 */
 	void setDetector(SX::Instrument::Detector* detector);
+	/*
+	 * @brief Set the offsets that will be fixed during the minization
+	 * @param idx the index of the offset (starting from 9)
+	 */
 	void setFixedParameters(unsigned int idx);
+	/*
+	 * @brief Set the maximum number of iteration used by the LM engine
+	 * @param max the maximum number of iteration
+	 */
 	void setMaxIter(unsigned int max);
+	/*
+	 * @brief Set the sample related to the peaks collected for the minimization
+	 * @param sample the sample
+	 */
 	void setSample(SX::Instrument::Sample* sample);
+	/*
+	 * @brief Set the starting values of the UB matrix
+	 * @param ub the UB matrix
+	 */
 	void setStartingUBMatrix(const Eigen::Matrix3d& ub);
+	/*
+	 * @brief Set the starting value for a given parameter
+	 * @param idx the index of the parameter
+	 * @param value the value of the parameter to be fixed
+	 */
 	void setStartingValue(unsigned int idx, double value);
+	/*
+	 * @brief Unset the starting value for a given parameter
+	 * @param idx the index of the parameter
+	 */
 	void unsetStartingValue(unsigned int idx);
+	/*
+	 * @brief Run the minimization
+	 * @return the status of the minimization (1 if everything OK)
+	 */
 	int run();
+	/*
+	 * @brief Returns the solution of the last minization
+	 * @return the solution
+	 */
 	const UBSolution& getSolution() const;
 private:
 	UBFunctor _functor;
