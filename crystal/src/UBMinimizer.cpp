@@ -21,6 +21,26 @@ UBFunctor::UBFunctor() : Functor<double>(), _peaks(0), _detector(nullptr), _samp
 {
 }
 
+UBFunctor::UBFunctor(const UBFunctor& other)
+{
+	_peaks = other._peaks;
+	_detector = other._detector;
+	_sample = other._sample;
+	_fixedParameters = other._fixedParameters;
+}
+
+UBFunctor& UBFunctor::operator=(const UBFunctor& other)
+{
+	if (this != &other)
+	{
+		_peaks = other._peaks;
+		_detector = other._detector;
+		_sample = other._sample;
+		_fixedParameters = other._fixedParameters;
+	}
+	return *this;
+}
+
 UBFunctor::~UBFunctor() {
 }
 
