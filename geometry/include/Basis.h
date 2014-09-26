@@ -80,16 +80,6 @@ public:
 	double gete1e2Angle() const;
 	double gete2e3Angle() const;
 	double gete1e3Angle() const;
-//	//! Returns the b basis vector.
-//	const Vector3d& getb() const;
-//	//! Returns the c basis vector.
-//	const Vector3d& getc() const;
-//	//! Returns the a* basis vector.
-//	const RowVector3d& getastar() const;
-//	//! Returns the b* basis vector.
-//	const RowVector3d& getbstar() const;
-//	//! Returns the c* basis vector.
-//	const RowVector3d& getcstar() const;
 	//! Returns the current basis' metric tensor.
 	Matrix3d getMetricTensor() const;
 	//! Returns the current reciprocal basis' metric tensor.

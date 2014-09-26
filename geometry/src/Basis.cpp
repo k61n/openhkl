@@ -82,11 +82,6 @@ std::ostream& operator<<(std::ostream& os,const Basis& b)
 	return os;
 }
 
-//Vector3d Basis::geta() const
-//{
-//	return _A.col(0);
-//}
-
 double Basis::gete1Norm() const
 {
 	return _A.col(0).norm();
@@ -111,32 +106,6 @@ double Basis::gete1e3Angle() const
 {
 	return acos(_A.col(0).dot(_A.col(2))/gete1Norm()/gete3Norm());
 }
-
-
-//const Vector3d& Basis::getb() const
-//{
-//	return _A.col(1);
-//}
-//
-//const Vector3d& Basis::getc() const
-//{
-//	return _A.col(2);
-//}
-//
-//const RowVector3d& Basis::getastar() const
-//{
-//	return _B.row(0);
-//}
-//
-//const RowVector3d& Basis::getbstar() const
-//{
-//	return _B.row(1);
-//}
-//
-//const RowVector3d& Basis::getcstar() const
-//{
-//	return _B.row(2);
-//}
 
 Matrix3d Basis::getMetricTensor() const
 {
