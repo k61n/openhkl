@@ -35,48 +35,52 @@
 
 namespace SX {
 
-namespace Kernel
+namespace Error
 {
 
 template<typename T>
 class Error : public std::exception
 {
 public:
-	Error(const char* message);
-	virtual ~Error();
+	Error(const std::string& message);
 
-	virtual const char* what() const noexcept;
+	virtual ~Error() throw()=0;
+
+	const char* what() const noexcept;
 
 private:
 	std::string _message;
 };
 
 template<typename T>
-Error<T>::Error(const char* message) : std::exception(),_message(message)
+Error<T>::Error(const std::string& message) : std::exception(),_message(message)
 {
 }
 
 template<typename T>
-Error<T>::~Error()
+Error<T>::~Error() throw()
 {
 }
 
 template<typename T>
 const char* Error<T>::what() const noexcept
 {
-	return _message;
+	return _message.c_str();
 }
 
-namespace Crystal
+template<typename T>
+class CrystalError : public Error<T>
 {
-template <typename T>
-class CrystalError : public SX::Kernel::Error<T>
-{
+public:
+	CrystalError(const std::string& message);
 };
 
-} // end namespace Crystal
+template<typename T>
+CrystalError<T>::CrystalError(const std::string& message) : Error<T>(message)
+{
+}
 
-} // end namespace Kernel
+} // end namespace Error
 
 } // end namespace SX
 
