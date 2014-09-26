@@ -81,16 +81,16 @@ void DialogUnitCell::getUnitCell()
         {
                 UnitCell cell=UnitCell::fromDirectVectors(v1,v2,v3);
                 std::shared_ptr<UnitCell> pcell(new UnitCell(cell));
-                UBFunctor functor;
-                functor.setSample(dynamic_cast<SX::Instrument::Sample*>(_peaks[0].get().getSampleState()->getParent()));
-                functor.setDetector(_peaks[0].get().getDetectorEvent()->getParent());
-                functor.setParameterFixed(13);
+                UBMinimizer minimizer;
+                minimizer.setSample(dynamic_cast<SX::Instrument::Sample*>(_peaks[0].get().getSampleState()->getParent()));
+                minimizer.setDetector(_peaks[0].get().getDetectorEvent()->getParent());
+//                minimizer.setFixedParameters(13);
                 int success=0;
                 for (auto& peak : _peaks)
                 {
                     if (peak.get().setBasis(pcell))
                     {
-                        functor.addPeak(peak);
+                        minimizer.addPeak(peak);
                         ++success;
                     }
                 }
@@ -98,10 +98,8 @@ void DialogUnitCell::getUnitCell()
                 if (success < 10)
                     continue;
 
-                UBMinimizer minimizer(functor);
-
                 Eigen::MatrixXd M=_basis.getReciprocalStandardM();
-//                Eigen::VectorXd x=Eigen::VectorXd::Zero(17);
+                minimizer.setStartingUBMatrix(M);
 
                 int ret = minimizer.run();
 
@@ -138,7 +136,7 @@ void DialogUnitCell::getUnitCell()
                     if (peak.get().setBasis(pcc))
                         score++;
                 }
-                functor.reset();
+                minimizer.resetParameters();
                 score /= 0.01*_peaks.size();
                 _unitcells.push_back(std::make_pair(cc,score));
         }
