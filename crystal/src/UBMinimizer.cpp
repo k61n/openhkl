@@ -219,14 +219,14 @@ void UBMinimizer::setStartingValue(unsigned int idx, double value)
 {
 	if (idx >=_functor.inputs())
 		return;
-	_start.at(idx) = value;
+	_start[idx] = value;
 }
 
 void UBMinimizer::unsetStartingValue(unsigned int idx)
 {
-	if (idx >=_functor.inputs())
-		return;
-	_start.erase(idx);
+	auto it = _start.find(idx);
+	if(it != _start.end())
+		_start.erase (it);
 }
 
 UBSolution::UBSolution() : _detector(nullptr), _sample(nullptr)
