@@ -99,28 +99,59 @@ int Functor<_Scalar,NX,NY>::values() const {
     return m_values;
 }
 
-class UBFunctor : public Functor<double>
+struct UBFunctor : public Functor<double>
 {
-public:
+	//! Default constructor
 	UBFunctor();
+	//! Copy constructor
+	UBFunctor(const UBFunctor& other);
+	//! Assignment operator
+	UBFunctor& operator=(const UBFunctor& other);
+	//! Destructor
 	~UBFunctor();
+	/*
+	 * @brief Call operator
+	 * @param x the input parameters
+	 * @param fvec the residuals
+	 */
 	int operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const;
-
+	/*
+	 * @brief Add a peak (e.g. an observation) to the minimizer
+	 * @param peak the peak to be added
+	 */
 	void addPeak(const Peak3D& peak);
-
+	/*
+	 * @brief Returns the number of inputs of the functor (e.g. the number of parameters)
+	 * @return the number of inputs
+	 */
 	int inputs() const;
+	/*
+	 * @brief Returns the number of values of the functor (e.g. the number of observations)
+	 * @return the number of inputs
+	 */
 	int values() const;
-
+	/*
+	 * @brief Set the detector related to the peaks collected for the minimization
+	 * @param detector the detector
+	 */
 	void setDetector(SX::Instrument::Detector* detector);
+	/*
+	 * @brief Set the sample related to the peaks collected for the minimization
+	 * @param sample the sample
+	 */
 	void setSample(SX::Instrument::Sample* sample);
+	//! Reset all the parameters (e.g. UB matrix + detector and sample offsets) to zero
 	void resetParameters();
+	/*
+	 * @brief Set the offsets that will be fixed during the minization
+	 * @param idx the index of the offset (starting from 9)
+	 */
 	void setFixedParameters(unsigned int idx);
 
 	std::vector<Peak3D> _peaks;
 	SX::Instrument::Detector* _detector;
 	SX::Instrument::Sample* _sample;
 	std::set<int> _fixedParameters;
-
 };
 
 class UBMinimizer;
@@ -148,7 +179,10 @@ class UBMinimizer
 public:
 	//! Default constructor
 	UBMinimizer();
-	//! Add a Peak3D (e.g. an observation) to the minimizer
+	/*
+	 * @brief Add a peak (e.g. an observation) to the minimizer
+	 * @param peak the peak to be added
+	 */
 	void addPeak(const Peak3D& peak);
 	//! Reset all the parameters (e.g. UB matrix + detector and sample offsets) to zero
 	void resetParameters();
