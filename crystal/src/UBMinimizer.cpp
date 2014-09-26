@@ -57,36 +57,6 @@ void UBFunctor::addPeak(const Peak3D& peak)
 	_peaks.push_back(peak);
 }
 
-//double UBFunctor::calcSSE(const Eigen::VectorXd& x)
-//{
-//
-//	int naxes=9;
-//	SX::Instrument::Gonio* dgonio=_detector->getGonio().get();
-//	if (dgonio)
-//	{
-//		for (unsigned int i=0;i<dgonio->numberOfAxes();++i)
-//			dgonio->getAxis(i)->setOffset(x[naxes++]);
-//	}
-//	SX::Instrument::Gonio* sgonio=_sample->getGonio().get();
-//	if (sgonio)
-//	{
-//		for (unsigned int i=0;i<sgonio->numberOfAxes();++i)
-//			sgonio->getAxis(i)->setOffset(x[naxes++]);
-//	}
-//
-//	double SSE=0.0;
-//	for (unsigned int i=0; i<_peaks.size();++i)
-//	{
-//		Eigen::RowVector3d qVector=_peaks[i].getQ();
-//		Eigen::RowVector3d hkl=_peaks[i].getMillerIndices();
-//		double temp1=(x[0]*hkl[0] + x[3]*hkl[1] + x[6]*hkl[2] - qVector[0]);
-//		double temp2=(x[1]*hkl[0] + x[4]*hkl[1] + x[7]*hkl[2] - qVector[1]);
-//		double temp3=(x[2]*hkl[0] + x[5]*hkl[1] + x[8]*hkl[2] - qVector[2]);
-//		SSE+=temp1*temp1+temp2*temp2+temp3*temp3;
-//	}
-//	return SSE/(values()-inputs());
-//}
-
 int UBFunctor::inputs() const
 {
 	return 9+_detector->numberOfAxes()+_sample->numberOfAxes();
@@ -141,18 +111,27 @@ void UBFunctor::setParameterFixed(unsigned int i)
 	{
 		_sample->getGonio()->getAxis(ii)->setOffsetFixed(true);
 	}
-
 }
 
-UBMinimizer::UBMinimizer(const UBFunctor& functor) : _functor(functor),_numDiff(functor),_minimizer(_numDiff), _solution()
+UBMinimizer::UBMinimizer() : _functor(UBFunctor()),_numDiff(_functor), _minimizer(_numDiff), _solution()
 {
 	_minimizer.parameters.maxfev = 1000;
     _minimizer.parameters.xtol = 1.0e-10;
 }
 
+void UBMinimizer::setDetector(SX::Instrument::Detector* detector)
+{
+	_functor.setDetector(detector);
+}
+
 void UBMinimizer::setMaxIter(unsigned int max)
 {
 	_minimizer.parameters.maxfev = max;
+}
+
+void UBMinimizer::setSample(SX::Instrument::Sample* sample)
+{
+	_functor.setSample(sample);
 }
 
 int UBMinimizer::run()
@@ -165,14 +144,14 @@ int UBMinimizer::run()
 
 	if (status==1)
 	{
-		Eigen::VectorXd fvec(nParams);
+		Eigen::VectorXd fvec(_functor.values());
 		_functor(x,fvec);
 		double sse = fvec.squaredNorm();
 		sse /= (_functor.values()-_functor.inputs());
 
 	    Eigen::MatrixXd covMatrix = (_minimizer.fjac.transpose()*_minimizer.fjac).inverse();
 
-	    Eigen::VectorXd sigmas = sse*covMatrix.diagonal().cwiseSqrt();
+	    Eigen::VectorXd sigmas = (sse*covMatrix.diagonal()).cwiseSqrt();
 
 	    std::vector<bool> fParams(sigmas.size(),false);
 	    for (auto it : _functor._fixedParameters)

@@ -105,8 +105,6 @@ public:
 	~UBFunctor();
 	int operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const;
 
-//	double calcSSE(const Eigen::VectorXd& x);
-
 	void addPeak(const Peak3D& peak);
 
 	int inputs() const;
@@ -147,8 +145,10 @@ struct UBSolution
 class UBMinimizer
 {
 public:
-	UBMinimizer(const UBFunctor& functor);
+	UBMinimizer();
+	void setDetector(SX::Instrument::Detector* detector);
 	void setMaxIter(unsigned int max);
+	void setSample(SX::Instrument::Sample* sample);
 	int run();
 	const UBSolution& getSolution() const;
 private:
