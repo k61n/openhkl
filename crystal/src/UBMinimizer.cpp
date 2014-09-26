@@ -128,7 +128,7 @@ void UBFunctor::setParameterFixed(unsigned int idx)
 	}
 }
 
-UBMinimizer::UBMinimizer() : _functor(UBFunctor()),_numDiff(_functor), _minimizer(_numDiff), _solution()
+UBMinimizer::UBMinimizer() : _functor(UBFunctor()),_numDiff(_functor), _minimizer(_numDiff), _solution(), _start()
 {
 	_minimizer.parameters.maxfev = 1000;
     _minimizer.parameters.xtol = 1.0e-10;
