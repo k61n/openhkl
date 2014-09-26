@@ -113,8 +113,8 @@ public:
 
 	void setDetector(SX::Instrument::Detector* detector);
 	void setSample(SX::Instrument::Sample* sample);
-	void reset();
-	void setParameterFixed(unsigned int i);
+	void resetParameters();
+	void setFixedParameters(unsigned int idx);
 
 	std::vector<Peak3D> _peaks;
 	SX::Instrument::Detector* _detector;
@@ -147,7 +147,10 @@ class UBMinimizer
 {
 public:
 	UBMinimizer();
+	void addPeak(const Peak3D& peak);
+	void resetParameters();
 	void setDetector(SX::Instrument::Detector* detector);
+	void setFixedParameters(unsigned int idx);
 	void setMaxIter(unsigned int max);
 	void setSample(SX::Instrument::Sample* sample);
 	void setStartingUBMatrix(const Eigen::Matrix3d& ub);

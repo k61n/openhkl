@@ -89,7 +89,7 @@ void UBFunctor::setSample(SX::Instrument::Sample* sample)
 	_sample=sample;
 }
 
-void UBFunctor::reset()
+void UBFunctor::resetParameters()
 {
 	SX::Instrument::Gonio* dgonio=_detector->getGonio().get();
 	if (dgonio)
@@ -105,7 +105,7 @@ void UBFunctor::reset()
 	}
 }
 
-void UBFunctor::setParameterFixed(unsigned int idx)
+void UBFunctor::setFixedParameters(unsigned int idx)
 {
 	if (!_detector || !_sample)
 		throw SX::Error::CrystalError<UBFunctor>("A detector and a sample must be specified prior to fixing parameters.");
@@ -134,9 +134,24 @@ UBMinimizer::UBMinimizer() : _functor(UBFunctor()),_numDiff(_functor), _minimize
     _minimizer.parameters.xtol = 1.0e-10;
 }
 
+void UBMinimizer::addPeak(const Peak3D& peak)
+{
+	_functor.addPeak(peak);
+}
+
+void UBMinimizer::resetParameters()
+{
+	_functor.resetParameters();
+}
+
 void UBMinimizer::setDetector(SX::Instrument::Detector* detector)
 {
 	_functor.setDetector(detector);
+}
+
+void UBMinimizer::setFixedParameters(unsigned int idx)
+{
+	_functor.setFixedParameters(idx);
 }
 
 void UBMinimizer::setMaxIter(unsigned int max)
