@@ -17,6 +17,7 @@ namespace SX
 namespace Crystal
 {
 
+
 UBFunctor::UBFunctor() : Functor<double>(), _peaks(0), _detector(nullptr), _sample(nullptr), _fixedParameters()
 {
 }
@@ -130,7 +131,7 @@ void UBFunctor::setFixedParameters(unsigned int idx)
 	if (!_detector || !_sample)
 		throw SX::Error::CrystalError<UBFunctor>("A detector and a sample must be specified prior to fixing parameters.");
 
-	if (idx>=inputs())
+	if (idx>=static_cast<unsigned int>(inputs()))
 		return;
 
 	_fixedParameters.insert(idx);
@@ -198,22 +199,42 @@ int UBMinimizer::run(unsigned int maxIter)
 	int status = minimizer.minimize(x);
 
 
-	std::cout << "solution" << x.transpose() << std::endl;
+	if (status==1)
+	{
+		std::vector<bool> fParams(x.size(),false);
+		for (auto it : _functor._fixedParameters)
+			fParams[it] = true;
+
+		// Create a vector to calculate final residuals
 		Eigen::VectorXd fvec(_functor.values());
+		// Calculate final residuals
 		_functor(x,fvec);
+		// Sum of squared residuals
 		double sse = fvec.squaredNorm();
-		sse /= (_functor.values()-_functor.inputs());
 
-	    Eigen::MatrixXd covMatrix = (minimizer.fjac.transpose()*minimizer.fjac).inverse();
+		int freeParameters=_functor.inputs()-_functor._fixedParameters.size();
+		// Divide by the DOF
+		sse /= (_functor.values()-freeParameters);
 
-	    Eigen::VectorXd sigmas = (sse*covMatrix.diagonal()).cwiseSqrt();
+		// Covariance matrix only for non-fixed parameters
 
-	    std::vector<bool> fParams(sigmas.size(),false);
-	    for (auto it : _functor._fixedParameters)
-	    	fParams[it] = true;
+	    Eigen::MatrixXd covMatrix = (minimizer.fjac.transpose()*minimizer.fjac).block(0,0,freeParameters,freeParameters).inverse();
+
+	    // Sigma for non-fixed parameters
+	    Eigen::VectorXd partialsigmas = (sse*covMatrix.diagonal()).cwiseSqrt();
+	    Eigen::VectorXd sigmas(x.size());
+
+	    int count=0;
+	    for (int i=0;i<sigmas.size();++i)
+	    {
+	    	if (!fParams[i])
+	    		sigmas[i]=partialsigmas[count++];
+	    	else
+	    		sigmas[i]=0.0;
+	    }
 
 	    _solution = UBSolution(_functor._detector, _functor._sample, x, sigmas, fParams);
-
+	}
 
 	return status;
 
@@ -239,7 +260,7 @@ void UBMinimizer::setStartingUBMatrix(const Eigen::Matrix3d& ub)
 
 void UBMinimizer::setStartingValue(unsigned int idx, double value)
 {
-	if (idx >=_functor.inputs())
+	if (idx >=static_cast<unsigned int>(_functor.inputs()))
 		return;
 	_start[idx] = value;
 }
@@ -313,6 +334,7 @@ std::ostream& operator<<(std::ostream& os, const UBSolution& solution)
 
 	return os;
 }
+
 
 } // end namespace Crystal
 
