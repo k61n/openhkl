@@ -15,7 +15,7 @@ BOOST_AUTO_TEST_CASE(Test_Basis)
 
 	std::shared_ptr<Basis> bprime(new Basis(Vector3d(2,0,0),Vector3d(0,2,0),Vector3d(0,0,1)));
 
-	Basis bsecond=Basis::fromDirectVectors(Vector3d(1,1,0),Vector3d(-1,1,0),Vector3d(0,0,1),bprime);
+	Basis bsecond(Vector3d(1,1,0),Vector3d(-1,1,0),Vector3d(0,0,1),bprime);
 
 	Vector3d x(1,0,0);
 
@@ -101,6 +101,7 @@ BOOST_AUTO_TEST_CASE(Test_Basis)
 	BOOST_CHECK_SMALL(xr(2),tolerance);
 
 	std::shared_ptr<Basis> reference(new Basis(Basis::fromDirectVectors(Vector3d(1,0,0),Vector3d(0,2,0),Vector3d(0,0,3))));
+
 	Basis b=Basis::fromDirectVectors(Vector3d(0,0,2),Vector3d(0,-1,0),Vector3d(1,0,0),reference);
 
 	BOOST_CHECK_CLOSE(b.getVolume(),12.0,tolerance);
@@ -111,6 +112,18 @@ BOOST_AUTO_TEST_CASE(Test_Basis)
 	b.transform(P);
 	BOOST_CHECK_CLOSE(b.getVolume(),120.0,tolerance);
 
+	// Check sigmas and error propagations
+	BOOST_CHECK(!reference->hasSigmas());
+
+	reference->setDirectSigmas(Vector3d(0.01,0.001,0.002),Vector3d(0.003,0.02,0.001),Vector3d(0.04,0.004,0.03));
+	BOOST_CHECK(reference->hasSigmas());
+
+	Matrix3d m=reference->getReciprocalSigmas();
+	reference->setReciprocalSigmas(m);
+
+	P << 0,2,0,1,0,0,0,0,-1;
+	reference->transform(P);
+	std::cout << reference->getDirectSigmas() <<std::endl;
 
 
 }

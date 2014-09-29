@@ -136,14 +136,33 @@ public:
 	//! The reference basis is lost and set to nullptr.
 	void rebaseToStandard();
 	//! Rebase the current basis to a new one which becomes the new reference.
-	void rebaseTo(std::shared_ptr<Basis> other);
+	void rebaseTo(std::shared_ptr<Basis> other,bool sigmasFromReference=false);
 	//! Transform the current Basis given a new transformation matrix M.
 	//! M represents the components of new basis vectors with respect the old ones, given in columns.
 	//! Reference is preserved, only A and B are recalculated.
 	void transform(const Matrix3d& M);
+
+	//! Set the errors on the A matrix
+	void setDirectSigmas(const Eigen::Vector3d& sa,const Eigen::Vector3d& sb,const Eigen::Vector3d& sc);
+	//! Set the errors on the B matrix
+	void setReciprocalSigmas(const Eigen::Vector3d& sas,const Eigen::Vector3d& sbs,const Eigen::Vector3d& scs);
+	//! Set the errors on the A matrix
+	void setDirectSigmas(const Matrix3d& sigmas);
+	//! Set the errors on the B matrix
+	void setReciprocalSigmas(const Matrix3d& sigmas);
+	//! Get direct Sigmas
+	Eigen::Matrix3d getDirectSigmas();
+	Eigen::Matrix3d getReciprocalSigmas();
 	friend std::ostream& operator<<(std::ostream& os,const Basis& b);
 
+	bool hasSigmas() const;
+	// Macro
+	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 protected:
+
+	void calculateSigmasDirectToReciprocal(bool direction=true);
+
+	void propagateSigmas(const Matrix3d& P);
 
 	//! Returns true if three vectors are coplanar within a given tolerance.
 	static bool coplanar(const Vector3d& v1, const Vector3d& v2, const Vector3d& v3, double tolerance=1.0e-6);
@@ -153,6 +172,13 @@ protected:
 	Matrix3d _B;
 	//! A shared pointer to the reference basis. If null assume that the reference is the standard basis.
 	ptrBasis _reference;
+	//! Stores the errors on A matrix parameters
+	Matrix3d* _Asigmas;
+	//! Stores the errors on B matrix parameters
+	Matrix3d* _Bsigmas;
+	//! Define whtehr or not errors have been defined for the basis.
+	bool _hasSigmas;
+
 };
 
 } // end namespace Geometry

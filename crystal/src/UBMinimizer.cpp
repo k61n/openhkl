@@ -327,10 +327,13 @@ std::ostream& operator<<(std::ostream& os, const UBSolution& solution)
 {
 	os<<"UB matrix:"<<std::endl;
 	os<<solution._ub<<"\n\n";
+	os<<solution._sigmaub << std::endl;
 	os<<"Detector offsets:"<<std::endl;
-	os<<solution._detectorOffsets<<"\n\n";
+	os<<solution._detectorOffsets.transpose()<<"\n\n";
+	os<<solution._sigmaDetectorOffsets.transpose() << std::endl;
 	os<<"Sample offsets:"<<std::endl;
-	os<<solution._sampleOffsets<<std::endl;
+	os<<solution._sampleOffsets.transpose()<<std::endl;
+	os<<solution._sigmaSampleOffsets.transpose() << std::endl;
 
 	return os;
 }

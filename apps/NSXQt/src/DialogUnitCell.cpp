@@ -84,7 +84,7 @@ void DialogUnitCell::getUnitCell()
                 UBMinimizer minimizer;
                 minimizer.setSample(dynamic_cast<SX::Instrument::Sample*>(_peaks[0].get().getSampleState()->getParent()));
                 minimizer.setDetector(_peaks[0].get().getDetectorEvent()->getParent());
-//                minimizer.setFixedParameters(13);
+                minimizer.setFixedParameters(13);
                 int success=0;
                 for (auto& peak : _peaks)
                 {
@@ -102,39 +102,41 @@ void DialogUnitCell::getUnitCell()
                 minimizer.setStartingUBMatrix(M);
 
                 int ret = minimizer.run(100);
-                UBSolution solution=minimizer.getSolution();
 
+                if (ret==1)
+                {
+                    UBSolution solution=minimizer.getSolution();
+                    std::cout << solution <<std::endl;
+                    SX::Crystal::UnitCell cc;
+                    try
+                    {
+                        cc=SX::Crystal::UnitCell::fromReciprocalVectors(solution._ub.row(0),solution._ub.row(1),solution._ub.row(2));
+                    }catch(...)
+                    {
+                        continue;
+                    }
+                    NiggliReduction niggli(cc.getMetricTensor(),0.03);
+                    Eigen::Matrix3d newg,P;
+                    niggli.reduce(newg,P);
+                    cc.transform(P);
+                    GruberReduction gruber(cc.getMetricTensor(),0.05);
+                    LatticeCentring c;
+                    BravaisType b;
+                    gruber.reduce(P,c,b);
+                    cc.setLatticeCentring(c);
+                    cc.setBravaisType(b);
+                    cc.transform(P);
 
-                std::cout << solution._ub  << std::endl;
-                SX::Crystal::UnitCell cc;
-                try
-                {
-                    cc=SX::Crystal::UnitCell::fromReciprocalVectors(solution._ub.row(0),solution._ub.row(1),solution._ub.row(2));
-                }catch(...)
-                {
-                    continue;
+                    double score=0.0;
+                    std::shared_ptr<UnitCell> pcc(new UnitCell(cc));
+                    for (auto& peak : _peaks)
+                    {
+                        if (peak.get().setBasis(pcc))
+                            score++;
+                    }
+                    score /= 0.01*_peaks.size();
+                    _unitcells.push_back(std::make_pair(cc,score));
                 }
-                NiggliReduction niggli(cc.getMetricTensor(),0.03);
-                Eigen::Matrix3d newg,P;
-                niggli.reduce(newg,P);
-                cc.transform(P);
-                GruberReduction gruber(cc.getMetricTensor(),0.05);
-                LatticeCentring c;
-                BravaisType b;
-                gruber.reduce(P,c,b);
-                cc.setLatticeCentring(c);
-                cc.setBravaisType(b);
-                cc.transform(P);
-
-                double score=0.0;
-                std::shared_ptr<UnitCell> pcc(new UnitCell(cc));
-                for (auto& peak : _peaks)
-                {
-                    if (peak.get().setBasis(pcc))
-                        score++;
-                }
-                score /= 0.01*_peaks.size();
-                _unitcells.push_back(std::make_pair(cc,score));
                  minimizer.resetParameters();
         }
     }
