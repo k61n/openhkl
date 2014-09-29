@@ -6,11 +6,13 @@ namespace SX
 namespace Instrument
 {
 
-Source::Source() {
+Source::Source() : _wavelength(1.00)
+{
 
 }
 
-Source::~Source() {
+Source::~Source()
+{
 }
 
 } // end namespace Instrument
