@@ -100,6 +100,16 @@ BOOST_AUTO_TEST_CASE(Test_Basis)
 	BOOST_CHECK_SMALL(xr(1),tolerance);
 	BOOST_CHECK_SMALL(xr(2),tolerance);
 
+	std::shared_ptr<Basis> reference(new Basis(Basis::fromDirectVectors(Vector3d(1,0,0),Vector3d(0,2,0),Vector3d(0,0,3))));
+	Basis b=Basis::fromDirectVectors(Vector3d(0,0,2),Vector3d(0,-1,0),Vector3d(1,0,0),reference);
+
+	BOOST_CHECK_CLOSE(b.getVolume(),12.0,tolerance);
+	Eigen::Matrix3d P;
+	P << 1,0,0,
+		 0,2,0,
+		 0,0,5;
+	b.transform(P);
+	BOOST_CHECK_CLOSE(b.getVolume(),120.0,tolerance);
 
 
 

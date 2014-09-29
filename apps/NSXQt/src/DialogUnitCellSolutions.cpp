@@ -50,7 +50,7 @@ void DialogUnitCellSolutions::setSolutions(const std::vector<std::pair<SX::Cryst
         QStandardItem* col4=new QStandardItem(QString::number(cell.getAlpha()/deg,'f',2));
         QStandardItem* col5=new QStandardItem(QString::number(cell.getBeta()/deg,'f',2));
         QStandardItem* col6=new QStandardItem(QString::number(cell.getGamma()/deg,'f',2));
-        QStandardItem* col7=new QStandardItem(QString::number(cell.getVolume()/deg,'f',3));
+        QStandardItem* col7=new QStandardItem(QString::number(cell.getVolume(),'f',3));
         QStandardItem* col8=new QStandardItem(QString::fromStdString(cell.getBravaisTypeSymbol()));
         QStandardItem* col9=new QStandardItem(QString::number(Quality,'f',2));
         model->setItem(i,0,col1);
