@@ -8,11 +8,11 @@ namespace SX
 namespace Geometry
 {
 
-Basis::Basis():_A(Eigen::Matrix3d::Identity()),_B(Eigen::Matrix3d::Identity()),_reference(nullptr), _Asigmas(nullptr), _Bsigmas(nullptr), _hasSigmas(false)
+Basis::Basis():_A(Eigen::Matrix3d::Identity()),_B(Eigen::Matrix3d::Identity()),_reference(nullptr), _Acov(nullptr), _Bcov(nullptr), _hasSigmas(false)
 {
 }
 
-Basis::Basis(const Vector3d& a, const Vector3d& b, const Vector3d& c, ptrBasis reference): _reference(reference),_Asigmas(nullptr),_Bsigmas(nullptr)
+Basis::Basis(const Vector3d& a, const Vector3d& b, const Vector3d& c, ptrBasis reference): _reference(reference),_Acov(nullptr),_Bcov(nullptr)
 {
 
 	if (coplanar(a,b,c))
@@ -29,8 +29,8 @@ Basis::Basis(const Vector3d& a, const Vector3d& b, const Vector3d& c, ptrBasis r
 		_hasSigmas = reference->_hasSigmas;
 		if (reference->hasSigmas())
 		{
-			_Asigmas = new Matrix3d(*(reference->_Asigmas));
-			_Bsigmas = new Matrix3d();
+			_Acov = new covMat(*(reference->_Acov));
+			_Bcov = new covMat(covMat::Zero());
 			propagateSigmas(_A);
 		}
 	}
@@ -48,8 +48,8 @@ Basis::Basis(const Basis& other)
 	if (_reference)
 	{
 		_hasSigmas = _reference->_hasSigmas;
-		_Asigmas = new Matrix3d(*(_reference->_Asigmas));
-		_Bsigmas = new Matrix3d(*(_reference->_Bsigmas));
+		_Acov = new covMat(*(_reference->_Acov));
+		_Bcov = new covMat(*(_reference->_Bcov));
 	}
 	else
 		_hasSigmas = false;
@@ -67,8 +67,8 @@ Basis& Basis::operator=(const Basis& other)
 		if (_reference)
 		{
 			_hasSigmas = _reference->_hasSigmas;
-			_Asigmas = new Matrix3d(*(_reference->_Asigmas));
-			_Bsigmas = new Matrix3d(*(_reference->_Bsigmas));
+			_Acov = new covMat(*(_reference->_Acov));
+			_Bcov = new covMat(*(_reference->_Bcov));
 		}
 		else
 			_hasSigmas = false;
@@ -80,11 +80,11 @@ Basis& Basis::operator=(const Basis& other)
 
 Basis::~Basis()
 {
-	if (_Asigmas)
-		delete _Asigmas;
+	if (_Acov)
+		delete _Acov;
 
-	if (_Bsigmas)
-		delete _Bsigmas;
+	if (_Bcov)
+		delete _Bcov;
 }
 
 Basis Basis::fromDirectVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c, ptrBasis reference)
@@ -144,6 +144,104 @@ double Basis::gete2e3Angle() const
 double Basis::gete1e3Angle() const
 {
 	return acos(_A.col(0).dot(_A.col(2))/gete1Norm()/gete3Norm());
+}
+
+void Basis::getParameters(double& a,double& b,double& c,double& alpha,double& beta,double& gamma)
+{
+	a=gete1Norm();
+	b=gete2Norm();
+	c=gete3Norm();
+	alpha=gete2e3Angle();
+	beta=gete1e3Angle();
+	gamma=gete1e2Angle();
+}
+
+void Basis::getParametersSigmas(double& sa,double& sb ,double& sc,double& salpha, double& sbeta, double& sgamma)
+{
+	if (!hasSigmas())
+	{
+		sa=0;sb=0;sc=0;
+		salpha=0;sbeta=0;sgamma=0;
+		return;
+	}
+	double norma=_A.col(0).norm();
+	double normb=_A.col(1).norm();
+	double normc=_A.col(2).norm();
+	Eigen::Vector3d dfda=_A.col(0)/norma;
+	Eigen::Matrix3d mdfda=dfda*dfda.transpose();
+	sa = (mdfda.cwiseProduct(_Acov->block(0,0,3,3))).sum();
+	sa= sqrt(sa);
+	Eigen::Vector3d dfdb=_A.col(1)/normb;
+	Eigen::Matrix3d mdfdb=dfdb*dfdb.transpose();
+	sb = (mdfdb.cwiseProduct(_Acov->block(3,3,3,3))).sum();
+	sb= sqrt(sb);
+	Eigen::Vector3d dfdc=_A.col(2)/normc;
+	Eigen::Matrix3d mdfdc=dfdc*dfdc.transpose();
+	sc = (mdfdc.cwiseProduct(_Acov->block(6,6,3,3))).sum();
+	sc= sqrt(sc);
+
+	// Now errors on angles, gamma=acos(a.b/(|a||b|))
+	double scalar_ab=_A.col(1).transpose()*_A.col(0);
+	double scalar_ac=_A.col(2).transpose()*_A.col(0);
+	double scalar_bc=_A.col(1).transpose()*_A.col(2);
+	double norma2=norma*norma;
+	double normb2=normb*normb;
+	double normc2=normc*normc;
+	double denom_ab=sqrt(norma2*normb2-scalar_ab*scalar_ab);
+	double denom_ac=sqrt(norma2*normc2-scalar_ac*scalar_ac);
+	double denom_bc=sqrt(normb2*normc2-scalar_bc*scalar_bc);
+	const double& ax=_A(0,0);
+	const double& ay=_A(1,0);
+	const double& az=_A(2,0);
+	const double& bx=_A(0,1);
+	const double& by=_A(1,1);
+	const double& bz=_A(2,1);
+	const double& cx=_A(0,2);
+	const double& cy=_A(1,2);
+	const double& cz=_A(2,2);
+
+	Eigen::VectorXd dalpha(6);
+
+	dalpha(0)=(-cx+bx*scalar_bc/normb2)/denom_bc;
+	dalpha(1)=(-cy+by*scalar_bc/normb2)/denom_bc;
+	dalpha(2)=(-cz+bz*scalar_bc/normb2)/denom_bc;
+	dalpha(3)=(-bx+cx*scalar_bc/normc2)/denom_bc;
+	dalpha(4)=(-by+cy*scalar_bc/normc2)/denom_bc;
+	dalpha(5)=(-bz+cz*scalar_bc/normc2)/denom_bc;
+
+	salpha=((dalpha*dalpha.transpose()).cwiseProduct(_Acov->block(3,3,6,6))).sum();
+	salpha=sqrt(salpha);
+
+	Eigen::VectorXd dbeta(6);
+
+	dbeta(0)=(-cx+ax*scalar_ac/norma2)/denom_ac;
+	dbeta(1)=(-cy+ay*scalar_ac/norma2)/denom_ac;
+	dbeta(2)=(-cz+az*scalar_ac/norma2)/denom_ac;
+	dbeta(3)=(-ax+cx*scalar_ac/normc2)/denom_ac;
+	dbeta(4)=(-ay+cy*scalar_ac/normc2)/denom_ac;
+	dbeta(5)=(-az+cz*scalar_ac/normc2)/denom_ac;
+
+	Eigen::Matrix<double,6,6> covBeta;
+	covBeta.block(0,0,3,3)=_Acov->block(0,0,3,3);
+	covBeta.block(3,0,3,3)=_Acov->block(6,0,3,3);
+	covBeta.block(0,3,3,3)=_Acov->block(0,6,3,3);
+	covBeta.block(3,3,3,3)=_Acov->block(6,6,3,3);
+
+	sbeta=((dbeta*dbeta.transpose()).cwiseProduct(covBeta)).sum();
+	sbeta=sqrt(sbeta);
+
+	Eigen::VectorXd dgamma(6);
+
+	dgamma(0)=(-bx+ax*scalar_ab/norma2)/denom_ab;
+	dgamma(1)=(-by+ay*scalar_ab/norma2)/denom_ab;
+	dgamma(2)=(-bz+az*scalar_ab/norma2)/denom_ab;
+	dgamma(3)=(-ax+bx*scalar_ab/normb2)/denom_ab;
+	dgamma(4)=(-ay+by*scalar_ab/normb2)/denom_ab;
+	dgamma(5)=(-az+bz*scalar_ab/normb2)/denom_ab;
+
+	sgamma=((dgamma*dgamma.transpose()).cwiseProduct(_Acov->block(0,0,6,6))).sum();
+	sgamma=sqrt(sgamma);
+
 }
 
 Matrix3d Basis::getMetricTensor() const
@@ -295,8 +393,8 @@ void Basis::rebaseTo(std::shared_ptr<Basis> other,bool sigmasFromReference)
 			if (!hasSigmas())
 			{
 				_hasSigmas = true;
-				_Asigmas = new Matrix3d(*(_reference->_Asigmas));
-				_Bsigmas = new Matrix3d();
+				_Acov = new covMat(*(_reference->_Acov));
+				_Bcov = new covMat();
 			}
 			propagateSigmas(_A);
 		}
@@ -311,15 +409,26 @@ void Basis::transform(const Matrix3d& M)
 	_B=_A.inverse();
 
 	if (hasSigmas())
-	{
-		*(_Asigmas) = (((*_Asigmas).cwiseProduct(*_Asigmas))*(M.cwiseProduct(M))).cwiseSqrt();
-		calculateSigmasDirectToReciprocal(true);
-	}
+		propagateSigmas(M);
 }
 
-void Basis::propagateSigmas(const Matrix3d& P)
+void Basis::propagateSigmas(const Matrix3d& M)
 {
-	(*_Asigmas) = (((*_Asigmas).cwiseProduct((*_Asigmas)))*(P.cwiseProduct(P))).cwiseSqrt();
+	Eigen::Matrix<double,9,9> MM=Eigen::Matrix<double,9,9>::Zero();
+
+	MM.block(0,0,3,3).diagonal() = Eigen::Vector3d::Constant(M(0,0));
+	MM.block(3,0,3,3).diagonal() = Eigen::Vector3d::Constant(M(1,0));
+	MM.block(6,0,3,3).diagonal() = Eigen::Vector3d::Constant(M(2,0));
+
+	MM.block(0,3,3,3).diagonal() = Eigen::Vector3d::Constant(M(0,1));
+	MM.block(3,3,3,3).diagonal() = Eigen::Vector3d::Constant(M(1,1));
+	MM.block(6,3,3,3).diagonal() = Eigen::Vector3d::Constant(M(2,1));
+
+	MM.block(0,6,3,3).diagonal() = Eigen::Vector3d::Constant(M(0,2));
+	MM.block(3,6,3,3).diagonal() = Eigen::Vector3d::Constant(M(1,2));
+	MM.block(6,6,3,3).diagonal() = Eigen::Vector3d::Constant(M(2,2));
+
+	(*_Acov) = MM.transpose()*(*_Acov)*MM;
 	calculateSigmasDirectToReciprocal(true);
 }
 
@@ -337,45 +446,62 @@ void Basis::calculateSigmasDirectToReciprocal(bool direction)
 	// Explained in M. Lefebvre, R.K. Keeler, R. Sobie, J. White, Propagation of errors for matrix inversion,
 	// Nuclear Instruments and Methods in Physics Research Section A: Accelerators, Spectrometers, Detectors and Associated Equipment, Volume 451, Issue 2, 1 September 2000, Pages 520-528
 
-	Eigen::Matrix3d input, inputS, *outputS;
+	Matrix3d input;
+	covMat *inputS, *outputS;
 	if (direction)
 	{
 		input   = getReciprocalStandardM();
-		inputS  = *_Asigmas;
-		outputS = _Bsigmas;
+		inputS  = _Acov;
+		outputS = _Bcov;
 	}
 	else
 	{
 		input   = getStandardM();
-		inputS  = *_Bsigmas;
-		outputS = _Asigmas;
+		inputS  = _Bcov;
+		outputS = _Acov;
 	}
 
-	// Calculate [A-1]^2
-	input=input.cwiseProduct(input);
-	// Calculate [sigmaA]^2
-	inputS=inputS.cwiseProduct(inputS);
+	*outputS = covMat::Zero();
 
-	for (int i=0;i<3;++i)
+	for (int alpha=0;alpha<3;++alpha)
 	{
-		for (int j=0;j<3;++j)
+		for (int beta=0;beta<3;++beta)
 		{
-			(*outputS)(i,j)=sqrt(input.row(i)*inputS*input.col(j));
+			int u=3*alpha+beta;
+			for (int a=0;a<3;++a)
+			{
+				for (int b=0;b<3;++b)
+				{
+					int v=3*a+b;
+
+					for (int i=0;i<3;++i)
+					{
+						for (int j=0;j<3;++j)
+						{
+							for (int k=0;k<3;++k)
+							{
+								for (int l=0;l<3;++l)
+									(*outputS)(u,v)+=input(alpha,i)*input(j,beta)*input(a,k)*input(l,b)*(*inputS)(3*i+j,3*k+l);
+							}
+						}
+					}
+
+				}
+			}
 		}
 	}
-
 }
 
 void Basis::setReciprocalSigmas(const Eigen::Vector3d& sas,const Eigen::Vector3d& sbs,const Eigen::Vector3d& scs)
 {
 	if (!hasSigmas())
 	{
-		_Asigmas = new Matrix3d();
-		_Bsigmas = new Matrix3d();
+		_Acov = new covMat(covMat::Zero());
+		_Bcov = new covMat(covMat::Zero());
 	}
-	_Bsigmas->row(0) = sas;
-	_Bsigmas->row(1) = sbs;
-	_Bsigmas->row(2) = scs;
+	_Bcov->block(0,0,3,3).diagonal() = sas;
+	_Bcov->block(3,3,3,3).diagonal() = sbs;
+	_Bcov->block(6,6,3,3).diagonal() = scs;
 
 	calculateSigmasDirectToReciprocal(false);
 
@@ -386,11 +512,32 @@ void Basis::setReciprocalSigmas(const Matrix3d& sigmas)
 {
 	if (!hasSigmas())
 	{
-		_Asigmas = new Matrix3d();
-		_Bsigmas = new Matrix3d();
+		_Acov = new covMat(covMat::Zero());
+		_Bcov = new covMat(covMat::Zero());
 	}
 
-	*_Bsigmas = sigmas;
+	const Eigen::Vector3d& r0 = sigmas.row(0);
+	const Eigen::Vector3d& r1 = sigmas.row(1);
+	const Eigen::Vector3d& r2 = sigmas.row(2);
+
+	_Bcov->block(0,0,3,3).diagonal() = r0.cwiseProduct(r0);
+	_Bcov->block(3,3,3,3).diagonal() = r1.cwiseProduct(r1);
+	_Bcov->block(6,6,3,3).diagonal() = r2.cwiseProduct(r2);
+
+	calculateSigmasDirectToReciprocal(false);
+
+	_hasSigmas = true;
+}
+
+void Basis::setReciprocalCovariance(const covMat& rCov)
+{
+	if (!hasSigmas())
+	{
+		_Acov = new covMat(covMat::Zero());
+		_Bcov = new covMat(rCov);
+	}
+	else
+		*_Bcov = rCov;
 
 	calculateSigmasDirectToReciprocal(false);
 
@@ -401,12 +548,12 @@ void Basis::setDirectSigmas(const Eigen::Vector3d& sa,const Eigen::Vector3d& sb,
 {
 	if (!hasSigmas())
 	{
-		_Asigmas = new Matrix3d();
-		_Bsigmas = new Matrix3d();
+		_Acov = new covMat(covMat::Zero());
+		_Bcov = new covMat(covMat::Zero());
 	}
-	_Asigmas->col(0) = sa;
-	_Asigmas->col(1) = sb;
-	_Asigmas->col(2) = sc;
+	_Acov->block(0,0,3,3).diagonal() = sa.cwiseProduct(sa);
+	_Acov->block(3,3,3,3).diagonal() = sb.cwiseProduct(sb);
+	_Acov->block(6,6,3,3).diagonal() = sc.cwiseProduct(sc);
 
 	calculateSigmasDirectToReciprocal(true);
 
@@ -418,31 +565,52 @@ void Basis::setDirectSigmas(const Matrix3d& sigmas)
 {
 	if (!hasSigmas())
 	{
-		_Asigmas = new Matrix3d();
-		_Bsigmas = new Matrix3d();
+		_Acov = new covMat(covMat::Zero());
+		_Bcov = new covMat(covMat::Zero());
 	}
 
-	*_Asigmas = sigmas;
+	const Eigen::Vector3d& c0 = sigmas.col(0);
+	const Eigen::Vector3d& c1 = sigmas.col(1);
+	const Eigen::Vector3d& c2 = sigmas.col(2);
+
+	_Acov->block(0,0,3,3).diagonal() = c0.cwiseProduct(c0);
+	_Acov->block(3,3,3,3).diagonal() = c1.cwiseProduct(c1);
+	_Acov->block(6,6,3,3).diagonal() = c2.cwiseProduct(c2);
 
 	calculateSigmasDirectToReciprocal(true);
 
 	_hasSigmas = true;
 }
 
-Matrix3d  Basis::getDirectSigmas()
+void Basis::setDirectCovariance(const covMat& dCov)
 {
-	if (_hasSigmas)
-		return *_Asigmas;
+	if (!hasSigmas())
+	{
+		_Acov = new covMat(dCov);
+		_Bcov = new covMat(covMat::Zero());
+	}
 	else
-		return Matrix3d::Zero();
+		*_Acov = dCov;
+
+	calculateSigmasDirectToReciprocal(true);
+
+	_hasSigmas = true;
 }
 
-Matrix3d  Basis::getReciprocalSigmas()
+Basis::covMat  Basis::getDirectCovariance()
 {
 	if (_hasSigmas)
-		return *_Bsigmas;
+		return *_Acov;
 	else
-		return Matrix3d::Zero();
+		return covMat::Zero();
+}
+
+Basis::covMat  Basis::getReciprocalCovariance()
+{
+	if (_hasSigmas)
+		return *_Bcov;
+	else
+		return covMat::Zero();
 
 }
 

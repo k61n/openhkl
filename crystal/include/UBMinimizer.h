@@ -49,7 +49,11 @@ namespace SX
 namespace Crystal
 {
 
-// Generic functor
+/** @brief Functor that complies with the interface of Eigen Minimizer
+ *
+ * Nx : number of inputs (parameters) at compile time
+ * Ny : number of values (points) at compile time
+ */
 template<typename _Scalar, int NX = Eigen::Dynamic, int NY = Eigen::Dynamic>
 class Functor
 {
@@ -100,6 +104,9 @@ int Functor<_Scalar,NX,NY>::values() const {
     return m_values;
 }
 
+
+/** @brief UB functor is used to refine UB-matrix and instrument offsets
+ */
 struct UBFunctor : public Functor<double>
 {
 	//! Default constructor

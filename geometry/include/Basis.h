@@ -52,9 +52,11 @@ using Eigen::Matrix3d;
  * that the parent is the Standard orthonormal basis of a right-handed system.
  *
  */
+
 class Basis {
 
 typedef std::shared_ptr<Basis> ptrBasis;
+typedef Eigen::Matrix<double,9,9> covMat;
 
 public:
 	Basis();
@@ -80,6 +82,9 @@ public:
 	double gete1e2Angle() const;
 	double gete2e3Angle() const;
 	double gete1e3Angle() const;
+	//!
+	void getParameters(double& a,double& b ,double& c,double& alpha, double& beta, double& gamma);
+	void getParametersSigmas(double& sa,double& sb ,double& sc,double& salpha, double& sbeta, double& sgamma);
 	//! Returns the current basis' metric tensor.
 	Matrix3d getMetricTensor() const;
 	//! Returns the current reciprocal basis' metric tensor.
@@ -142,7 +147,7 @@ public:
 	//! Reference is preserved, only A and B are recalculated.
 	void transform(const Matrix3d& M);
 
-	//! Set the errors on the A matrix
+	//! Set the errors on the A matrix, assume that
 	void setDirectSigmas(const Eigen::Vector3d& sa,const Eigen::Vector3d& sb,const Eigen::Vector3d& sc);
 	//! Set the errors on the B matrix
 	void setReciprocalSigmas(const Eigen::Vector3d& sas,const Eigen::Vector3d& sbs,const Eigen::Vector3d& scs);
@@ -150,9 +155,14 @@ public:
 	void setDirectSigmas(const Matrix3d& sigmas);
 	//! Set the errors on the B matrix
 	void setReciprocalSigmas(const Matrix3d& sigmas);
-	//! Get direct Sigmas
-	Eigen::Matrix3d getDirectSigmas();
-	Eigen::Matrix3d getReciprocalSigmas();
+	//! Set the errors on the A matrix
+	void setDirectCovariance(const covMat& sigmas);
+	//! Set the errors on the B matrix
+	void setReciprocalCovariance(const covMat& sigmas);
+	//! Get direct covariance matrix
+	covMat getDirectCovariance();
+	//! Get reciprocal covariance matrix
+	covMat getReciprocalCovariance();
 	friend std::ostream& operator<<(std::ostream& os,const Basis& b);
 
 	bool hasSigmas() const;
@@ -162,7 +172,7 @@ protected:
 
 	void calculateSigmasDirectToReciprocal(bool direction=true);
 
-	void propagateSigmas(const Matrix3d& P);
+	void propagateSigmas(const Matrix3d& M);
 
 	//! Returns true if three vectors are coplanar within a given tolerance.
 	static bool coplanar(const Vector3d& v1, const Vector3d& v2, const Vector3d& v3, double tolerance=1.0e-6);
@@ -173,9 +183,9 @@ protected:
 	//! A shared pointer to the reference basis. If null assume that the reference is the standard basis.
 	ptrBasis _reference;
 	//! Stores the errors on A matrix parameters
-	Matrix3d* _Asigmas;
+	covMat* _Acov;
 	//! Stores the errors on B matrix parameters
-	Matrix3d* _Bsigmas;
+	covMat* _Bcov;
 	//! Define whtehr or not errors have been defined for the basis.
 	bool _hasSigmas;
 

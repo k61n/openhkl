@@ -169,8 +169,8 @@ std::vector<tVector> FFTIndexing::findOnSphere(int nstacks,int nsolutions) const
 				else
 					break;
 			}
-
-			result.push_back(tVector(N*(pos_max)*static_cast<double>(nSubdiv*_amax)/nPoints,value));
+			if (pos_max>nSubdiv)
+				result.push_back(tVector(N*(pos_max)*static_cast<double>(nSubdiv*_amax)/nPoints,value));
 		}
 	}
 
