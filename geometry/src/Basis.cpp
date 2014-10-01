@@ -499,9 +499,9 @@ void Basis::setReciprocalSigmas(const Eigen::Vector3d& sas,const Eigen::Vector3d
 		_Acov = new covMat(covMat::Zero());
 		_Bcov = new covMat(covMat::Zero());
 	}
-	_Bcov->block(0,0,3,3).diagonal() = sas;
-	_Bcov->block(3,3,3,3).diagonal() = sbs;
-	_Bcov->block(6,6,3,3).diagonal() = scs;
+	_Bcov->block(0,0,3,3).diagonal() = sas.cwiseProduct(sas);
+	_Bcov->block(3,3,3,3).diagonal() = sbs.cwiseProduct(sbs);
+	_Bcov->block(6,6,3,3).diagonal() = scs.cwiseProduct(scs);
 
 	calculateSigmasDirectToReciprocal(false);
 
