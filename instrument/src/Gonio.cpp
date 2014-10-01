@@ -86,8 +86,7 @@ Eigen::Transform<double,3,Eigen::Affine> Gonio::getHomMatrix(const std::vector<d
 
 Eigen::Transform<double,3,Eigen::Affine> Gonio::getInverseHomMatrix(const std::vector<double>& values) const
 {
-	Eigen::Transform<double,3,Eigen::Affine> result=getHomMatrix(values);
-	return result.inverse();
+	return getHomMatrix(values).inverse();
 }
 
 Vector3d Gonio::transform(const Vector3d& v,const std::vector<double>& values)
@@ -110,8 +109,7 @@ void Gonio::transformInPlace(Vector3d& v,const std::vector<double>& values)
 
 void Gonio::transformInverseInPlace(Vector3d& v,const std::vector<double>& values)
 {
-	Eigen::Transform<double,3,Eigen::Affine> result=getInverseHomMatrix(values);
-	v=result*v.homogeneous();
+	v=getInverseHomMatrix(values)*v.homogeneous();
 }
 
 std::size_t Gonio::numberOfAxes() const
