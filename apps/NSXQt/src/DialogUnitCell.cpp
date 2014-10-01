@@ -13,34 +13,11 @@
 #include <unsupported/Eigen/NonLinearOptimization>
 #include <unsupported/Eigen/NumericalDiff>
 #include "Gonio.h"
+#include "Logger.h"
+
 
 using namespace SX::Crystal;
 using namespace SX::Geometry;
-
-
-QDebug& operator<<(QDebug &dbg, const SX::Crystal::UnitCell& cell)
-{
-    std::ostringstream os;
-    os <<cell;
-    dbg << QString::fromStdString(os.str());
-    return dbg;
-}
-
-QDebug& operator<<(QDebug &dbg, const Eigen::Matrix3d& m)
-{
-    std::ostringstream os;
-    os <<m;
-    dbg << QString::fromStdString(os.str());
-    return dbg;
-}
-
-QDebug& operator<<(QDebug &dbg, const SX::Crystal::UBSolution& solution)
-{
-    std::ostringstream os;
-    os <<solution;
-    dbg << QString::fromStdString(os.str());
-    return dbg;
-}
 
 
 
@@ -66,25 +43,27 @@ DialogUnitCell::~DialogUnitCell()
 
 void DialogUnitCell::getUnitCell()
 {
+    _unitcells.clear();
+
     if (!_peaks.size())
         return;
     std::vector<Eigen::Vector3d> qvects;
     qvects.reserve(_peaks.size());
-    for (auto peak : _peaks)
+    for (const auto& peak : _peaks)
     qvects.push_back(peak.get().getQ());
 
     qDebug() << "Searching direct lattice vectors using" << _peaks.size() << "peaks";
     FFTIndexing indexing(50.0);
     indexing.addVectors(qvects);
+    qDebug() << "Running 7000 FFTs, keeping best 10 tvectors";
     std::vector<tVector> tvects=indexing.findOnSphere(50,20);
-    qDebug() << "Running 7000 FFTs, keeping best 20 tvectors";
     qDebug() << "Refining solutions and diffractometers offsets";
-
-    for (int i=0;i<20;++i)
+    int soluce=0;
+    for (int i=0;i<10;++i)
     {
-    for (int j=i+1;j<20;++j)
+    for (int j=i+1;j<10;++j)
     {
-    for (int k=j+1;k<20;++k)
+    for (int k=j+1;k<10;++k)
     {
         Eigen::Vector3d& v1=tvects[i]._vect;
         Eigen::Vector3d& v2=tvects[j]._vect;
@@ -118,6 +97,7 @@ void DialogUnitCell::getUnitCell()
 
                 if (ret==1)
                 {
+                    qDebug() << "Refining solution... " << ++soluce << " ... convergence reached";
                     UBSolution solution=minimizer.getSolution();
                     SX::Crystal::UnitCell cc;
                     try
