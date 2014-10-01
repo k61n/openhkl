@@ -527,13 +527,13 @@ void DetectorView::mouseReleaseEvent(QMouseEvent *event)
 
 void DetectorView::plotEllipsoids()
 {
-    if (_ptrData->has3DEllipsoid())
+    if (_ptrData->_rpeaks.size())
     {
-        for (auto el : _ptrData->_peaks)
+        for (auto& el : _ptrData->_rpeaks)
         {
-            SX::Geometry::Ellipsoid<double,3>& peak=el.second;
-            const Eigen::Vector3d& lower=peak.getLower();
-            const Eigen::Vector3d& upper=peak.getUpper();
+            const SX::Geometry::IShape<double,3>* peak=el.second.getPeak();
+            const Eigen::Vector3d& lower=peak->getLower();
+            const Eigen::Vector3d& upper=peak->getUpper();
             // Plot bounding box
             if (_currentFrame > lower[2] && _currentFrame < upper[2])
             {

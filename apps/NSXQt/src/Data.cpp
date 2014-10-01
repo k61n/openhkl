@@ -16,7 +16,7 @@ void D19Mapping(double x, double y, double& newx, double& newy)
     newy = 256 - y;
 }
 
-Data::Data():SX::Data::IData(SX::Data::ILLAsciiDataReader::create()),_inmemory(false),_maxCount(0),_detector(nullptr),_sample(nullptr)
+Data::Data():SX::Data::IData(SX::Data::ILLAsciiDataReader::create()),_inmemory(false),_detector(nullptr),_sample(nullptr)
 {
 
 }
@@ -31,7 +31,6 @@ Data::~Data()
 Data::Data(const Data& rhs):SX::Data::IData(SX::Data::ILLAsciiDataReader::create())
 {
     _inmemory=rhs._inmemory;
-    _maxCount=rhs._maxCount;
     _detector=rhs._detector;
     _sample=rhs._sample;
 
@@ -41,9 +40,7 @@ void Data::fromFile(const std::string& filename)
 {
     _mm->open(filename.c_str());
     _nblocks=_mm->nFrames();
-    _sum.resize(_nblocks);
     _currentFrame=std::move(_mm->getFrame(0));
-    _sum[0]=std::accumulate(_currentFrame.begin(),_currentFrame.end(),0,std::plus<int>());
 
     SX::Data::MetaData* meta=_mm->getMetaData();
     std::string instrName = meta->getKey<std::string>("Instrument");
@@ -97,7 +94,6 @@ void Data::readBlock(int i)
     if (!_inmemory)
     {
         _currentFrame=std::move(_mm->getFrame(i));
-        _sum[i]=std::accumulate(_currentFrame.begin(),_currentFrame.end(),0,std::plus<int>());
     }
     else
     {
@@ -112,19 +108,12 @@ void Data::readInMemory()
     {
         _data.resize(_nblocks);
 
-        int count=0;
-
-#pragma omp parallel for shared(count)
+#pragma omp parallel for
         for (int i=0;i<_nblocks;++i)
         {
             _data[i].reserve(640*256);
             _data[i]=std::move(_mm->getFrame(i));
-            _sum[i]=std::accumulate(_data[i].begin(),_data[i].end(),0,std::plus<int>());
-            auto it=std::max_element(_data[i].begin(),_data[i].end(),std::less<int>());
-            if ((*it)>count)
-                count=(*it);
         }
-        _maxCount=count;
         _inmemory=true;
     }
 }
@@ -138,36 +127,7 @@ void Data::releaseMemory()
         _data[i].clear();
     }
     _data.clear();
-    _sum.clear();
     _inmemory=false;
-    _maxCount=0;
-}
-
-void Data::getCountsHistogram(std::vector<int>& histo)
-{
-    if (!_inmemory)
-        readInMemory();
-    //
-    histo.resize(_maxCount);
-
-    for (auto i=0;i<_nblocks;++i)
-    {
-        std::vector<int>& d=_data[i];
-        for (unsigned int j=0;j<d.size();++j)
-        {
-            histo[d[j]]++;
-        }
-    }
-}
-
-bool Data::has3DEllipsoid() const
-{
-    return (_peaks.size()!=0);
-}
-
-void Data::clear3DEllipsoids()
-{
-    _peaks.clear();
 }
 
 int Data::dataAt(int x, int y, int z)
@@ -177,11 +137,3 @@ int Data::dataAt(int x, int y, int z)
     return (_data[z])[x*256+y];
 }
 
-int Data::getBackgroundLevel()
-{
-    std::vector<int> v;
-    getCountsHistogram(v);
-    auto max=std::max_element(v.begin(),v.end());
-    int background_level=std::distance(v.begin(),max)+1;
-    return background_level;
-}

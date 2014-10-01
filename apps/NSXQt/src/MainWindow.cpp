@@ -299,15 +299,12 @@ void MainWindow::on_action_peak_find_triggered()
 
     //
     int i=0;
-    numor->_peaks.clear();
 
     for (auto& blob : blobs)
     {
         Eigen::Vector3d center, eigenvalues;
         Eigen::Matrix3d eigenvectors;
         blob.second.toEllipsoid(confidence, center,eigenvalues,eigenvectors);
-        SX::Geometry::Ellipsoid<double,3> a(center,eigenvalues,eigenvectors);
-        numor->_peaks[i]=a;
         SX::Crystal::Peak3D p(numor);
         p.setPeakShape(new SX::Geometry::Ellipsoid3D(center,eigenvalues,eigenvectors));
         p.setBackgroundShape(new SX::Geometry::Ellipsoid3D(center,eigenvalues.cwiseProduct(Eigen::Vector3d(1.5,1.5,3)),eigenvectors));
