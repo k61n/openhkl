@@ -67,7 +67,7 @@ int UBFunctor::operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const
 	for (unsigned int i=0; i<_peaks.size();++i)
 	{
 		Eigen::RowVector3d qVector=_peaks[i].getQ();
-		Eigen::RowVector3d hkl=_peaks[i].getMillerIndices();
+		const Eigen::RowVector3d& hkl=_peaks[i].getMillerIndices();
 		fvec(3*i)   = (x[0]*hkl[0] + x[3]*hkl[1] + x[6]*hkl[2] - qVector[0]);
 		fvec(3*i+1) = (x[1]*hkl[0] + x[4]*hkl[1] + x[7]*hkl[2] - qVector[1]);
 		fvec(3*i+2) = (x[2]*hkl[0] + x[5]*hkl[1] + x[8]*hkl[2] - qVector[2]);

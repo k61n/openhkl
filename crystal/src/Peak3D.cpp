@@ -30,10 +30,10 @@ Peak3D::Peak3D(SX::Data::IData* data):
 
 Peak3D::~Peak3D()
 {
-	//if (_peak)
-	//	delete _peak;
-	//if (_bkg)
-	//	delete _bkg;
+//	if (_peak)
+//		delete _peak;
+//	if (_bkg)
+//		delete _bkg;
 }
 
 void Peak3D::linkData(SX::Data::IData* data)
