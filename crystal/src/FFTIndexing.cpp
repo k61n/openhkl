@@ -159,7 +159,7 @@ std::vector<tVector> FFTIndexing::findOnSphere(int nstacks,int nsolutions) const
 			for (int i=nSubdiv;i<nPointsHalf;++i)
 			{
 				double current=std::abs(spectrum[i]);
-				if (current<0.7*FZero)
+				if (current<0.9*FZero)
 					continue;
 				if (current>value)
 				{

@@ -1,9 +1,10 @@
 #ifndef DIALOGUNITCELLSOLUTIONS_H
 #define DIALOGUNITCELLSOLUTIONS_H
 #include <LatticeFinder.h>
-#include <UnitCell.h>
-
+#include <UBMinimizer.h>
+#include <tuple>
 #include <QDialog>
+#include "UnitCell.h"
 
 namespace Ui {
 class DialogUnitCellSolutions;
@@ -20,7 +21,7 @@ public:
 private:
     Ui::DialogUnitCellSolutions *ui;
 public slots:
-    void setSolutions(const std::vector<std::pair<SX::Crystal::UnitCell,double>>& solutions);
+    void setSolutions(const std::vector<std::tuple<SX::Crystal::UnitCell,SX::Crystal::UBSolution,double>>& solutions);
     void selectLine(int i);
 signals:
     void selectSolution(int i);

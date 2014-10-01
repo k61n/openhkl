@@ -12,6 +12,7 @@
 #include <unsupported/Eigen/FFT>
 #include <unsupported/Eigen/NonLinearOptimization>
 #include <unsupported/Eigen/NumericalDiff>
+#include "Gonio.h"
 
 using namespace SX::Crystal;
 using namespace SX::Geometry;
@@ -33,6 +34,14 @@ QDebug& operator<<(QDebug &dbg, const Eigen::Matrix3d& m)
     return dbg;
 }
 
+QDebug& operator<<(QDebug &dbg, const SX::Crystal::UBSolution& solution)
+{
+    std::ostringstream os;
+    os <<solution;
+    dbg << QString::fromStdString(os.str());
+    return dbg;
+}
+
 
 
 DialogUnitCell::DialogUnitCell(QWidget *parent):QDialog(parent),ui(new Ui::DialogUnitCell)
@@ -42,7 +51,6 @@ DialogUnitCell::DialogUnitCell(QWidget *parent):QDialog(parent),ui(new Ui::Dialo
     ui->labelbeta->setText(QString((QChar) 0x03B2));
     ui->labelgamma->setText(QString((QChar) 0x03B3));
     connect(ui->pushButtonFindUnitCell,SIGNAL(clicked()),this,SLOT(getUnitCell()));
-    connect(ui->pushButtonFindReindexHKL,SIGNAL(clicked()),this,SLOT(reindexHKL()));
     connect(ui->pushButtonGivePMatrix,SIGNAL(clicked()),this,SLOT(setTransformationMatrix()));
 }
 void DialogUnitCell::setPeaks(const std::vector<std::reference_wrapper<SX::Crystal::Peak3D>>& peaks)
@@ -58,14 +66,19 @@ DialogUnitCell::~DialogUnitCell()
 
 void DialogUnitCell::getUnitCell()
 {
+    if (!_peaks.size())
+        return;
     std::vector<Eigen::Vector3d> qvects;
     qvects.reserve(_peaks.size());
     for (auto peak : _peaks)
     qvects.push_back(peak.get().getQ());
 
+    qDebug() << "Searching direct lattice vectors using" << _peaks.size() << "peaks";
     FFTIndexing indexing(50.0);
     indexing.addVectors(qvects);
-    std::vector<tVector> tvects=indexing.findOnSphere(60,20);
+    std::vector<tVector> tvects=indexing.findOnSphere(50,20);
+    qDebug() << "Running 7000 FFTs, keeping best 20 tvectors";
+    qDebug() << "Refining solutions and diffractometers offsets";
 
     for (int i=0;i<20;++i)
     {
@@ -88,7 +101,7 @@ void DialogUnitCell::getUnitCell()
                 int success=0;
                 for (auto& peak : _peaks)
                 {
-                    if (peak.get().setBasis(pcell))
+                    if (peak.get().hasIntegerHKL(pcell))
                     {
                         minimizer.addPeak(peak);
                         ++success;
@@ -106,11 +119,11 @@ void DialogUnitCell::getUnitCell()
                 if (ret==1)
                 {
                     UBSolution solution=minimizer.getSolution();
-                    std::cout << solution <<std::endl;
                     SX::Crystal::UnitCell cc;
                     try
                     {
                         cc=SX::Crystal::UnitCell::fromReciprocalVectors(solution._ub.row(0),solution._ub.row(1),solution._ub.row(2));
+                        cc.setReciprocalSigmas(solution._sigmaub.row(0),solution._sigmaub.row(1),solution._sigmaub.row(2));
                     }catch(...)
                     {
                         continue;
@@ -126,7 +139,10 @@ void DialogUnitCell::getUnitCell()
                     cc.setLatticeCentring(c);
                     cc.setBravaisType(b);
                     cc.transform(P);
-
+                    double ap,bp,cp,alpha,beta,gamma;
+                    double as,bs,cs,alphas,betas,gammas;
+                    cc.getParameters(ap,bp,cp,alpha,beta,gamma);
+                    cc.getParametersSigmas(as,bs,cs,alphas,betas,gammas);
                     double score=0.0;
                     std::shared_ptr<UnitCell> pcc(new UnitCell(cc));
                     for (auto& peak : _peaks)
@@ -135,25 +151,20 @@ void DialogUnitCell::getUnitCell()
                             score++;
                     }
                     score /= 0.01*_peaks.size();
-                    _unitcells.push_back(std::make_pair(cc,score));
+                    _unitcells.push_back(std::make_tuple(cc,solution,score));
                 }
                  minimizer.resetParameters();
         }
     }
     }
     }
-
-     //Sort the Quality of the solutions decreasing
+    //Sort the Quality of the solutions decreasing
     std::sort(_unitcells.begin(),
               _unitcells.end(),
-              [](const std::pair<SX::Crystal::UnitCell,double>& cell1,const std::pair<SX::Crystal::UnitCell,double>& cell2)->bool
+              [](const std::tuple<SX::Crystal::UnitCell,SX::Crystal::UBSolution,double>& cell1,const std::tuple<SX::Crystal::UnitCell,SX::Crystal::UBSolution,double>& cell2)->bool
                 {
-                    return (cell1.second>cell2.second);
+                    return (std::get<2>(cell1)>std::get<2>(cell2));
                 });
-
-
-
-
 
     DialogUnitCellSolutions* ucs=new DialogUnitCellSolutions(this);
     ucs->setSolutions(_unitcells);
@@ -163,8 +174,31 @@ void DialogUnitCell::getUnitCell()
 
 void DialogUnitCell::acceptSolution(int i)
 {
-    _basis=_unitcells[i].first;
+    _basis=std::get<0>(_unitcells[i]);
+    const SX::Crystal::UBSolution& sol=std::get<1>(_unitcells[i]);
     setUpValues();
+    SX::Instrument::Component* s=_peaks[0].get().getSampleState()->getParent();
+    for (int i=0;i<s->numberOfAxes();++i)
+    {
+        s->getGonio()->getAxis(i)->setOffset(sol._sampleOffsets[i]);
+    }
+    SX::Instrument::Detector* d=_peaks[0].get().getDetectorEvent()->getParent();
+    for (int i=0;i<d->numberOfAxes();++i)
+    {
+        d->getGonio()->getAxis(i)->setOffset(sol._detectorOffsets[i]);
+    }
+
+    int success=0;
+
+    for (auto& peak : _peaks)
+    {
+        if (peak.get().setBasis(std::shared_ptr<UnitCell>(new UnitCell(_basis))))
+            ++success;
+    }
+
+    QMessageBox::information(this,"Indexation","Successfully indexed"+QString::number(success)+" peaks out of "+QString::number(_peaks.size()));
+
+    qDebug() << "Selected solution:" << _basis << sol;
 }
 
 void DialogUnitCell::setUpValues()
@@ -193,16 +227,3 @@ void DialogUnitCell::setTransformationMatrix()
     dialog->exec();
 }
 
-void DialogUnitCell::reindexHKL()
-{
-    int success=0;
-
-    for (auto& peak : _peaks)
-    {
-        if (peak.get().setBasis(std::shared_ptr<UnitCell>(new UnitCell(_basis))))
-            ++success;
-    }
-
-    QMessageBox::information(this,"Indexation","Successfully indexed"+QString::number(success)+" peaks out of "+QString::number(_peaks.size()));
-
-}

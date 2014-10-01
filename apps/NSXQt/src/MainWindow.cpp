@@ -270,7 +270,7 @@ void MainWindow::on_action_peak_find_triggered()
 
     for (auto& numor : numors)
     {
-
+      numor->_rpeaks.clear();
       ui->progressBar->setValue(i++);
       qDebug() << "Reading " << numor->_mm->getMetaData()->getKey<int>("Numor") << " in memory";
       numor->readInMemory();

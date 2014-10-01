@@ -94,6 +94,8 @@ public:
  	std::string getBravaisTypeSymbol() const;
  	//! Print to a stream
  	void printSelf(std::ostream& os) const;
+
+
 private:
 	LatticeCentring _centring;
 	BravaisType _bravaisType;

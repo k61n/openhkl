@@ -112,6 +112,7 @@ public:
    	//!
    	void setWavelength(double wave);
 	bool setBasis(std::shared_ptr<SX::Geometry::Basis> basis);
+	bool hasIntegerHKL(std::shared_ptr<SX::Geometry::Basis> basis);
 	friend bool operator<(const Peak3D& p1, const Peak3D& p2);
 
 private:

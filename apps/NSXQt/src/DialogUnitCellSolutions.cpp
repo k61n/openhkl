@@ -23,7 +23,7 @@ DialogUnitCellSolutions::~DialogUnitCellSolutions()
     delete ui;
 }
 
-void DialogUnitCellSolutions::setSolutions(const std::vector<std::pair<SX::Crystal::UnitCell,double>> &solutions)
+void DialogUnitCellSolutions::setSolutions(const std::vector<std::tuple<SX::Crystal::UnitCell,SX::Crystal::UBSolution,double>> &solutions)
 {
     // Create table with 9 columns
     QStandardItemModel* model=new QStandardItemModel(solutions.size(),9,this);
@@ -39,20 +39,27 @@ void DialogUnitCellSolutions::setSolutions(const std::vector<std::pair<SX::Cryst
 
     // Setup content of the table
     int i=0;
-    for (const auto& solution : solutions)
+    for (auto& solution : solutions)
     {
-        const SX::Crystal::UnitCell& cell=solution.first;
-        double Quality=solution.second;
+        SX::Crystal::UnitCell cell=std::get<0>(solution);
+        double quality=std::get<2>(solution);
 
-        QStandardItem* col1=new QStandardItem(QString::number(cell.getA(),'f',3));
-        QStandardItem* col2=new QStandardItem(QString::number(cell.getB(),'f',3));
-        QStandardItem* col3=new QStandardItem(QString::number(cell.getC(),'f',3));
-        QStandardItem* col4=new QStandardItem(QString::number(cell.getAlpha()/deg,'f',2));
-        QStandardItem* col5=new QStandardItem(QString::number(cell.getBeta()/deg,'f',2));
-        QStandardItem* col6=new QStandardItem(QString::number(cell.getGamma()/deg,'f',2));
+        double a, b, c, alpha, beta, gamma;
+        double sa, sb, sc, salpha, sbeta, sgamma;
+        cell.getParameters(a,b,c,alpha,beta,gamma);
+        cell.getParametersSigmas(sa,sb,sc,salpha,sbeta,sgamma);
+
+//        std::cout<<sa<<" "<<sb<<" "<<sc<<" "<<salpha<<" "<<sbeta<<" "<<sgamma<<" "<<cell.hasSigmas()<<std::endl;
+
+        QStandardItem* col1=new QStandardItem(QString::number(a,'f',4) + "("+ QString::number(sa*10000,'f',0)+")");
+        QStandardItem* col2=new QStandardItem(QString::number(b,'f',4) + "("+ QString::number(sb*10000,'f',0)+")");
+        QStandardItem* col3=new QStandardItem(QString::number(c,'f',4) + "("+ QString::number(sc*10000,'f',0)+")");
+        QStandardItem* col4=new QStandardItem(QString::number(alpha/deg,'f',4)+ "("+ QString::number(salpha/deg*10000,'f',0)+")");
+        QStandardItem* col5=new QStandardItem(QString::number(beta/deg,'f',4)+"("+ QString::number(sbeta/deg*10000,'f',0)+")");
+        QStandardItem* col6=new QStandardItem(QString::number(gamma/deg,'f',4)+ "("+ QString::number(sgamma/deg*10000,'f',0)+")");
         QStandardItem* col7=new QStandardItem(QString::number(cell.getVolume(),'f',3));
         QStandardItem* col8=new QStandardItem(QString::fromStdString(cell.getBravaisTypeSymbol()));
-        QStandardItem* col9=new QStandardItem(QString::number(Quality,'f',2));
+        QStandardItem* col9=new QStandardItem(QString::number(quality,'f',2));
         model->setItem(i,0,col1);
         model->setItem(i,1,col2);
         model->setItem(i,2,col3);
@@ -62,7 +69,6 @@ void DialogUnitCellSolutions::setSolutions(const std::vector<std::pair<SX::Cryst
         model->setItem(i,6,col7);
         model->setItem(i,7,col8);
         model->setItem(i++,8,col9);
-
     }
     ui->tableView->setModel(model);
     connect(ui->tableView->verticalHeader(),SIGNAL(sectionDoubleClicked(int)),this,SLOT(selectLine(int)));

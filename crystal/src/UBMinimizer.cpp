@@ -219,7 +219,6 @@ int UBMinimizer::run(unsigned int maxIter)
 		// Covariance matrix only for non-fixed parameters
 
 	    Eigen::MatrixXd covMatrix = (minimizer.fjac.transpose()*minimizer.fjac).block(0,0,freeParameters,freeParameters).inverse();
-
 	    // Sigma for non-fixed parameters
 	    Eigen::VectorXd partialsigmas = (sse*covMatrix.diagonal()).cwiseSqrt();
 	    Eigen::VectorXd sigmas(x.size());
@@ -326,12 +325,23 @@ UBSolution& UBSolution::operator=(const UBSolution& other)
 std::ostream& operator<<(std::ostream& os, const UBSolution& solution)
 {
 	os<<"UB matrix:"<<std::endl;
-	os<<solution._ub<<"\n\n";
+	os<<solution._ub<< std::endl;
+	os<<"UB error:" << std::endl;
 	os<<solution._sigmaub << std::endl;
-	os<<"Detector offsets:"<<std::endl;
-	os<<solution._detectorOffsets.transpose()<<"\n\n";
+	os<<"Detector offsets: ";
+	for (int i=0;i<solution._detector->getGonio()->numberOfAxes();++i)
+	{
+		os << solution._detector->getGonio()->getAxis(i)->getLabel() << " ";
+	}
+	os << std::endl;
+	os<<solution._detectorOffsets.transpose()<< std::endl;
 	os<<solution._sigmaDetectorOffsets.transpose() << std::endl;
-	os<<"Sample offsets:"<<std::endl;
+	os<<"Sample offsets:";
+	for (int i=0;i<solution._sample->getGonio()->numberOfAxes();++i)
+	{
+		os << solution._sample->getGonio()->getAxis(i)->getLabel() << " ";
+	}
+	os<<std::endl;
 	os<<solution._sampleOffsets.transpose()<<std::endl;
 	os<<solution._sigmaSampleOffsets.transpose() << std::endl;
 

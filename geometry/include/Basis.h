@@ -55,10 +55,11 @@ using Eigen::Matrix3d;
 
 class Basis {
 
-typedef std::shared_ptr<Basis> ptrBasis;
-typedef Eigen::Matrix<double,9,9> covMat;
-
 public:
+
+	typedef std::shared_ptr<Basis> ptrBasis;
+	typedef Eigen::Matrix<double,9,9> covMat;
+
 	Basis();
 	//! Constructor from a set of three non coplanar vectors.
 	//! These vectors will be used column-wised for building the transformation matrix from the reference basis to the current one.
@@ -83,8 +84,8 @@ public:
 	double gete2e3Angle() const;
 	double gete1e3Angle() const;
 	//!
-	void getParameters(double& a,double& b ,double& c,double& alpha, double& beta, double& gamma);
-	void getParametersSigmas(double& sa,double& sb ,double& sc,double& salpha, double& sbeta, double& sgamma);
+	void getParameters(double& a,double& b ,double& c,double& alpha, double& beta, double& gamma) const;
+	void getParametersSigmas(double& sa,double& sb ,double& sc,double& salpha, double& sbeta, double& sgamma) const;
 	//! Returns the current basis' metric tensor.
 	Matrix3d getMetricTensor() const;
 	//! Returns the current reciprocal basis' metric tensor.
@@ -160,14 +161,13 @@ public:
 	//! Set the errors on the B matrix
 	void setReciprocalCovariance(const covMat& sigmas);
 	//! Get direct covariance matrix
-	covMat getDirectCovariance();
+	const covMat& getDirectCovariance();
 	//! Get reciprocal covariance matrix
-	covMat getReciprocalCovariance();
+	const covMat& getReciprocalCovariance();
 	friend std::ostream& operator<<(std::ostream& os,const Basis& b);
 
 	bool hasSigmas() const;
 	// Macro
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 protected:
 
 	void calculateSigmasDirectToReciprocal(bool direction=true);
@@ -183,9 +183,9 @@ protected:
 	//! A shared pointer to the reference basis. If null assume that the reference is the standard basis.
 	ptrBasis _reference;
 	//! Stores the errors on A matrix parameters
-	covMat* _Acov;
+	covMat _Acov;
 	//! Stores the errors on B matrix parameters
-	covMat* _Bcov;
+	covMat _Bcov;
 	//! Define whtehr or not errors have been defined for the basis.
 	bool _hasSigmas;
 

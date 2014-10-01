@@ -9,6 +9,9 @@
 #include "UnitCell.h"
 #include "Peak3D.h"
 #include "LatticeFinder.h"
+#include <tuple>
+#include <UBMinimizer.h>
+
 class DialogUnitCell : public QDialog
 {
     Q_OBJECT
@@ -22,12 +25,11 @@ public slots:
     void getUnitCell();
     void setUpValues();
     void setTransformationMatrix();
-    void reindexHKL();
     void acceptSolution(int i);
 private slots:
 
 private:
-    std::vector<std::pair<SX::Crystal::UnitCell,double>> _unitcells;
+    std::vector<std::tuple<SX::Crystal::UnitCell,SX::Crystal::UBSolution,double>> _unitcells;
     SX::Crystal::UnitCell _basis;
     Ui::DialogUnitCell* ui;
     std::vector<std::reference_wrapper<SX::Crystal::Peak3D>> _peaks;

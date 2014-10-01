@@ -21,7 +21,8 @@ void customMessageHandler(QtMsgType type, const QMessageLogContext& context, con
     switch (type) {
     case QtDebugMsg:
         txt = QString("%1").arg(msg);
-        log->setTextColor("dark blue");
+        log->setTextColor("darkBlue");
+        log->setFontItalic(true);
         break;
     case QtWarningMsg:
         txt = QString("%1 %2 @line %3").arg(msg,context.file, QString::number(context.line));
@@ -37,6 +38,7 @@ void customMessageHandler(QtMsgType type, const QMessageLogContext& context, con
     log->append(txt);
     // Return to black color for user input in the notebook
     log->setTextColor(QColor("black"));
+    log->setFontItalic(false);
     QCoreApplication::processEvents();
 
 }

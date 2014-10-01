@@ -100,7 +100,7 @@ BOOST_AUTO_TEST_CASE(Test_Basis)
 	BOOST_CHECK_SMALL(xr(1),tolerance);
 	BOOST_CHECK_SMALL(xr(2),tolerance);
 
-	std::shared_ptr<Basis> reference(new Basis(Basis::fromDirectVectors(Vector3d(1,0,0),Vector3d(0,2,0),Vector3d(0,0,3))));
+	std::shared_ptr<Basis> reference(new Basis(Basis::fromDirectVectors(Vector3d(1,0.0,0),Vector3d(0,1,0),Vector3d(0,0,1))));
 
 	Basis b=Basis::fromDirectVectors(Vector3d(0,0,2),Vector3d(0,-1,0),Vector3d(1,0,0),reference);
 
@@ -115,15 +115,11 @@ BOOST_AUTO_TEST_CASE(Test_Basis)
 	// Check sigmas and error propagations
 	BOOST_CHECK(!reference->hasSigmas());
 
-	reference->setDirectSigmas(Vector3d(0.01,0.001,0.002),Vector3d(0.003,0.02,0.001),Vector3d(0.04,0.004,0.03));
+	reference->setDirectSigmas(Vector3d(0.,0.01,0.0),Vector3d(0.0,0.0,0.0),Vector3d(0.0,0.0,0.0));
 	BOOST_CHECK(reference->hasSigmas());
 
-	Matrix3d m=reference->getReciprocalSigmas();
-	reference->setReciprocalSigmas(m);
-
-	P << 0,2,0,1,0,0,0,0,-1;
-	reference->transform(P);
-	std::cout << reference->getDirectSigmas() <<std::endl;
-
-
+	double sa,sb,sc,salpha,sbeta,sgamma;
+	reference->getParametersSigmas(sa,sb,sc,salpha,sbeta,sgamma);
+	std::cout << sa << " " << sb << " " << sc << " " << salpha << " " << sbeta << " " << sgamma << std::endl;
+//
 }

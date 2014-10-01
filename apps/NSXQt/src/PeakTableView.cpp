@@ -36,7 +36,6 @@ PeakTableView::PeakTableView(MainWindow* main,QWidget *parent)
 
     // Send an update of the detector view when a pick is clicked.
     connect(this,SIGNAL(plot2DUpdate(int,int)),_main,SLOT(plotUpdate(int,int)));
-
     //
 }
 

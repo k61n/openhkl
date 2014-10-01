@@ -8,11 +8,11 @@ namespace SX
 namespace Geometry
 {
 
-Basis::Basis():_A(Eigen::Matrix3d::Identity()),_B(Eigen::Matrix3d::Identity()),_reference(nullptr), _Acov(nullptr), _Bcov(nullptr), _hasSigmas(false)
+Basis::Basis():_A(Eigen::Matrix3d::Identity()),_B(Eigen::Matrix3d::Identity()),_reference(nullptr), _Acov(covMat::Zero()), _Bcov(covMat::Zero()), _hasSigmas(false)
 {
 }
 
-Basis::Basis(const Vector3d& a, const Vector3d& b, const Vector3d& c, ptrBasis reference): _reference(reference),_Acov(nullptr),_Bcov(nullptr)
+Basis::Basis(const Vector3d& a, const Vector3d& b, const Vector3d& c, ptrBasis reference): _reference(reference),_Acov(covMat::Zero()),_Bcov(covMat::Zero())
 {
 
 	if (coplanar(a,b,c))
@@ -27,10 +27,10 @@ Basis::Basis(const Vector3d& a, const Vector3d& b, const Vector3d& c, ptrBasis r
 	if (reference)
 	{
 		_hasSigmas = reference->_hasSigmas;
-		if (reference->hasSigmas())
+		if (_hasSigmas)
 		{
-			_Acov = new covMat(*(reference->_Acov));
-			_Bcov = new covMat(covMat::Zero());
+			_Acov = covMat(reference->_Acov);
+			_Bcov = covMat(covMat::Zero());
 			propagateSigmas(_A);
 		}
 	}
@@ -45,14 +45,13 @@ Basis::Basis(const Basis& other)
 	_A = other._A;
 	_B = other._B;
 
-	if (_reference)
-	{
-		_hasSigmas = _reference->_hasSigmas;
-		_Acov = new covMat(*(_reference->_Acov));
-		_Bcov = new covMat(*(_reference->_Bcov));
-	}
-	else
-		_hasSigmas = false;
+    _hasSigmas = other._hasSigmas;
+
+    if (_hasSigmas)
+    {
+        _Acov = covMat(other._Acov);
+        _Bcov = covMat(other._Bcov);
+    }
 
 }
 
@@ -64,14 +63,13 @@ Basis& Basis::operator=(const Basis& other)
 		_A = other._A;
 		_B = other._B;
 
-		if (_reference)
-		{
-			_hasSigmas = _reference->_hasSigmas;
-			_Acov = new covMat(*(_reference->_Acov));
-			_Bcov = new covMat(*(_reference->_Bcov));
-		}
-		else
-			_hasSigmas = false;
+        _hasSigmas = other._hasSigmas;
+
+        if (_hasSigmas)
+        {
+            _Acov = covMat(other._Acov);
+            _Bcov = covMat(other._Bcov);
+        }
 
 	}
 	return *this;
@@ -80,11 +78,7 @@ Basis& Basis::operator=(const Basis& other)
 
 Basis::~Basis()
 {
-	if (_Acov)
-		delete _Acov;
 
-	if (_Bcov)
-		delete _Bcov;
 }
 
 Basis Basis::fromDirectVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c, ptrBasis reference)
@@ -146,7 +140,7 @@ double Basis::gete1e3Angle() const
 	return acos(_A.col(0).dot(_A.col(2))/gete1Norm()/gete3Norm());
 }
 
-void Basis::getParameters(double& a,double& b,double& c,double& alpha,double& beta,double& gamma)
+void Basis::getParameters(double& a,double& b,double& c,double& alpha,double& beta,double& gamma) const
 {
 	a=gete1Norm();
 	b=gete2Norm();
@@ -156,7 +150,7 @@ void Basis::getParameters(double& a,double& b,double& c,double& alpha,double& be
 	gamma=gete1e2Angle();
 }
 
-void Basis::getParametersSigmas(double& sa,double& sb ,double& sc,double& salpha, double& sbeta, double& sgamma)
+void Basis::getParametersSigmas(double& sa,double& sb ,double& sc,double& salpha, double& sbeta, double& sgamma) const
 {
 	if (!hasSigmas())
 	{
@@ -169,15 +163,15 @@ void Basis::getParametersSigmas(double& sa,double& sb ,double& sc,double& salpha
 	double normc=_A.col(2).norm();
 	Eigen::Vector3d dfda=_A.col(0)/norma;
 	Eigen::Matrix3d mdfda=dfda*dfda.transpose();
-	sa = (mdfda.cwiseProduct(_Acov->block(0,0,3,3))).sum();
+	sa = (mdfda.cwiseProduct(_Acov.block(0,0,3,3))).sum();
 	sa= sqrt(sa);
 	Eigen::Vector3d dfdb=_A.col(1)/normb;
 	Eigen::Matrix3d mdfdb=dfdb*dfdb.transpose();
-	sb = (mdfdb.cwiseProduct(_Acov->block(3,3,3,3))).sum();
+	sb = (mdfdb.cwiseProduct(_Acov.block(3,3,3,3))).sum();
 	sb= sqrt(sb);
 	Eigen::Vector3d dfdc=_A.col(2)/normc;
 	Eigen::Matrix3d mdfdc=dfdc*dfdc.transpose();
-	sc = (mdfdc.cwiseProduct(_Acov->block(6,6,3,3))).sum();
+	sc = (mdfdc.cwiseProduct(_Acov.block(6,6,3,3))).sum();
 	sc= sqrt(sc);
 
 	// Now errors on angles, gamma=acos(a.b/(|a||b|))
@@ -209,7 +203,7 @@ void Basis::getParametersSigmas(double& sa,double& sb ,double& sc,double& salpha
 	dalpha(4)=(-by+cy*scalar_bc/normc2)/denom_bc;
 	dalpha(5)=(-bz+cz*scalar_bc/normc2)/denom_bc;
 
-	salpha=((dalpha*dalpha.transpose()).cwiseProduct(_Acov->block(3,3,6,6))).sum();
+	salpha=((dalpha*dalpha.transpose()).cwiseProduct(_Acov.block(3,3,6,6))).sum();
 	salpha=sqrt(salpha);
 
 	Eigen::VectorXd dbeta(6);
@@ -222,10 +216,10 @@ void Basis::getParametersSigmas(double& sa,double& sb ,double& sc,double& salpha
 	dbeta(5)=(-az+cz*scalar_ac/normc2)/denom_ac;
 
 	Eigen::Matrix<double,6,6> covBeta;
-	covBeta.block(0,0,3,3)=_Acov->block(0,0,3,3);
-	covBeta.block(3,0,3,3)=_Acov->block(6,0,3,3);
-	covBeta.block(0,3,3,3)=_Acov->block(0,6,3,3);
-	covBeta.block(3,3,3,3)=_Acov->block(6,6,3,3);
+	covBeta.block(0,0,3,3)=_Acov.block(0,0,3,3);
+	covBeta.block(3,0,3,3)=_Acov.block(6,0,3,3);
+	covBeta.block(0,3,3,3)=_Acov.block(0,6,3,3);
+	covBeta.block(3,3,3,3)=_Acov.block(6,6,3,3);
 
 	sbeta=((dbeta*dbeta.transpose()).cwiseProduct(covBeta)).sum();
 	sbeta=sqrt(sbeta);
@@ -239,7 +233,7 @@ void Basis::getParametersSigmas(double& sa,double& sb ,double& sc,double& salpha
 	dgamma(4)=(-ay+by*scalar_ab/normb2)/denom_ab;
 	dgamma(5)=(-az+bz*scalar_ab/normb2)/denom_ab;
 
-	sgamma=((dgamma*dgamma.transpose()).cwiseProduct(_Acov->block(0,0,6,6))).sum();
+	sgamma=((dgamma*dgamma.transpose()).cwiseProduct(_Acov.block(0,0,6,6))).sum();
 	sgamma=sqrt(sgamma);
 
 }
@@ -393,8 +387,8 @@ void Basis::rebaseTo(std::shared_ptr<Basis> other,bool sigmasFromReference)
 			if (!hasSigmas())
 			{
 				_hasSigmas = true;
-				_Acov = new covMat(*(_reference->_Acov));
-				_Bcov = new covMat();
+				_Acov = covMat(_reference->_Acov);
+				_Bcov = covMat();
 			}
 			propagateSigmas(_A);
 		}
@@ -428,7 +422,7 @@ void Basis::propagateSigmas(const Matrix3d& M)
 	MM.block(3,6,3,3).diagonal() = Eigen::Vector3d::Constant(M(1,2));
 	MM.block(6,6,3,3).diagonal() = Eigen::Vector3d::Constant(M(2,2));
 
-	(*_Acov) = MM.transpose()*(*_Acov)*MM;
+	_Acov = MM.transpose()*_Acov*MM;
 	calculateSigmasDirectToReciprocal(true);
 }
 
@@ -447,12 +441,11 @@ void Basis::calculateSigmasDirectToReciprocal(bool direction)
 	// Nuclear Instruments and Methods in Physics Research Section A: Accelerators, Spectrometers, Detectors and Associated Equipment, Volume 451, Issue 2, 1 September 2000, Pages 520-528
 
 	Matrix3d input;
-	covMat *inputS, *outputS;
+	covMat& inputS=_Acov;
+	covMat& outputS=_Bcov;
 	if (direction)
 	{
 		input   = getReciprocalStandardM();
-		inputS  = _Acov;
-		outputS = _Bcov;
 	}
 	else
 	{
@@ -461,7 +454,7 @@ void Basis::calculateSigmasDirectToReciprocal(bool direction)
 		outputS = _Acov;
 	}
 
-	*outputS = covMat::Zero();
+	outputS = covMat::Zero();
 
 	for (int alpha=0;alpha<3;++alpha)
 	{
@@ -481,7 +474,7 @@ void Basis::calculateSigmasDirectToReciprocal(bool direction)
 							for (int k=0;k<3;++k)
 							{
 								for (int l=0;l<3;++l)
-									(*outputS)(u,v)+=input(alpha,i)*input(j,beta)*input(a,k)*input(l,b)*(*inputS)(3*i+j,3*k+l);
+									outputS(u,v)+=input(alpha,i)*input(j,beta)*input(a,k)*input(l,b)*inputS(3*i+j,3*k+l);
 							}
 						}
 					}
@@ -496,12 +489,12 @@ void Basis::setReciprocalSigmas(const Eigen::Vector3d& sas,const Eigen::Vector3d
 {
 	if (!hasSigmas())
 	{
-		_Acov = new covMat(covMat::Zero());
-		_Bcov = new covMat(covMat::Zero());
+		_Acov = covMat::Zero();
+		_Bcov = covMat::Zero();
 	}
-	_Bcov->block(0,0,3,3).diagonal() = sas.cwiseProduct(sas);
-	_Bcov->block(3,3,3,3).diagonal() = sbs.cwiseProduct(sbs);
-	_Bcov->block(6,6,3,3).diagonal() = scs.cwiseProduct(scs);
+	_Bcov.block(0,0,3,3).diagonal() = sas.cwiseProduct(sas);
+	_Bcov.block(3,3,3,3).diagonal() = sbs.cwiseProduct(sbs);
+	_Bcov.block(6,6,3,3).diagonal() = scs.cwiseProduct(scs);
 
 	calculateSigmasDirectToReciprocal(false);
 
@@ -512,17 +505,17 @@ void Basis::setReciprocalSigmas(const Matrix3d& sigmas)
 {
 	if (!hasSigmas())
 	{
-		_Acov = new covMat(covMat::Zero());
-		_Bcov = new covMat(covMat::Zero());
+		_Acov = covMat::Zero();
+		_Bcov = covMat::Zero();
 	}
 
 	const Eigen::Vector3d& r0 = sigmas.row(0);
 	const Eigen::Vector3d& r1 = sigmas.row(1);
 	const Eigen::Vector3d& r2 = sigmas.row(2);
 
-	_Bcov->block(0,0,3,3).diagonal() = r0.cwiseProduct(r0);
-	_Bcov->block(3,3,3,3).diagonal() = r1.cwiseProduct(r1);
-	_Bcov->block(6,6,3,3).diagonal() = r2.cwiseProduct(r2);
+	_Bcov.block(0,0,3,3).diagonal() = r0.cwiseProduct(r0);
+	_Bcov.block(3,3,3,3).diagonal() = r1.cwiseProduct(r1);
+	_Bcov.block(6,6,3,3).diagonal() = r2.cwiseProduct(r2);
 
 	calculateSigmasDirectToReciprocal(false);
 
@@ -533,11 +526,11 @@ void Basis::setReciprocalCovariance(const covMat& rCov)
 {
 	if (!hasSigmas())
 	{
-		_Acov = new covMat(covMat::Zero());
-		_Bcov = new covMat(rCov);
+		_Acov = covMat::Zero();
+		_Bcov = rCov;
 	}
 	else
-		*_Bcov = rCov;
+		_Bcov = rCov;
 
 	calculateSigmasDirectToReciprocal(false);
 
@@ -548,12 +541,12 @@ void Basis::setDirectSigmas(const Eigen::Vector3d& sa,const Eigen::Vector3d& sb,
 {
 	if (!hasSigmas())
 	{
-		_Acov = new covMat(covMat::Zero());
-		_Bcov = new covMat(covMat::Zero());
+		_Acov = covMat::Zero();
+		_Bcov = covMat::Zero();
 	}
-	_Acov->block(0,0,3,3).diagonal() = sa.cwiseProduct(sa);
-	_Acov->block(3,3,3,3).diagonal() = sb.cwiseProduct(sb);
-	_Acov->block(6,6,3,3).diagonal() = sc.cwiseProduct(sc);
+	_Acov.block(0,0,3,3).diagonal() = sa.cwiseProduct(sa);
+	_Acov.block(3,3,3,3).diagonal() = sb.cwiseProduct(sb);
+	_Acov.block(6,6,3,3).diagonal() = sc.cwiseProduct(sc);
 
 	calculateSigmasDirectToReciprocal(true);
 
@@ -565,17 +558,17 @@ void Basis::setDirectSigmas(const Matrix3d& sigmas)
 {
 	if (!hasSigmas())
 	{
-		_Acov = new covMat(covMat::Zero());
-		_Bcov = new covMat(covMat::Zero());
+		_Acov = covMat::Zero();
+		_Bcov = covMat::Zero();
 	}
 
 	const Eigen::Vector3d& c0 = sigmas.col(0);
 	const Eigen::Vector3d& c1 = sigmas.col(1);
 	const Eigen::Vector3d& c2 = sigmas.col(2);
 
-	_Acov->block(0,0,3,3).diagonal() = c0.cwiseProduct(c0);
-	_Acov->block(3,3,3,3).diagonal() = c1.cwiseProduct(c1);
-	_Acov->block(6,6,3,3).diagonal() = c2.cwiseProduct(c2);
+	_Acov.block(0,0,3,3).diagonal() = c0.cwiseProduct(c0);
+	_Acov.block(3,3,3,3).diagonal() = c1.cwiseProduct(c1);
+	_Acov.block(6,6,3,3).diagonal() = c2.cwiseProduct(c2);
 
 	calculateSigmasDirectToReciprocal(true);
 
@@ -586,32 +579,25 @@ void Basis::setDirectCovariance(const covMat& dCov)
 {
 	if (!hasSigmas())
 	{
-		_Acov = new covMat(dCov);
-		_Bcov = new covMat(covMat::Zero());
+		_Acov = dCov;
+		_Bcov = covMat::Zero();
 	}
 	else
-		*_Acov = dCov;
+		_Acov = dCov;
 
 	calculateSigmasDirectToReciprocal(true);
 
 	_hasSigmas = true;
 }
 
-Basis::covMat  Basis::getDirectCovariance()
+const Basis::covMat&  Basis::getDirectCovariance()
 {
-	if (_hasSigmas)
-		return *_Acov;
-	else
-		return covMat::Zero();
+		return _Acov;
 }
 
-Basis::covMat  Basis::getReciprocalCovariance()
+const Basis::covMat&  Basis::getReciprocalCovariance()
 {
-	if (_hasSigmas)
-		return *_Bcov;
-	else
-		return covMat::Zero();
-
+	return _Bcov;
 }
 
 } // end namespace Geometry

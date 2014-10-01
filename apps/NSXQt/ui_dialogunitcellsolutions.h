@@ -31,18 +31,20 @@ public:
         if (DialogUnitCellSolutions->objectName().isEmpty())
             DialogUnitCellSolutions->setObjectName(QStringLiteral("DialogUnitCellSolutions"));
         DialogUnitCellSolutions->resize(577, 345);
-        QSizePolicy sizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
         sizePolicy.setHeightForWidth(DialogUnitCellSolutions->sizePolicy().hasHeightForWidth());
         DialogUnitCellSolutions->setSizePolicy(sizePolicy);
-        DialogUnitCellSolutions->setMinimumSize(QSize(577, 345));
-        DialogUnitCellSolutions->setMaximumSize(QSize(577, 345));
+        DialogUnitCellSolutions->setMinimumSize(QSize(100, 100));
+        DialogUnitCellSolutions->setMaximumSize(QSize(1000000, 1000000));
         DialogUnitCellSolutions->setWindowOpacity(0.9);
         gridLayout = new QGridLayout(DialogUnitCellSolutions);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
         tableView = new QTableView(DialogUnitCellSolutions);
         tableView->setObjectName(QStringLiteral("tableView"));
+        sizePolicy.setHeightForWidth(tableView->sizePolicy().hasHeightForWidth());
+        tableView->setSizePolicy(sizePolicy);
 
         gridLayout->addWidget(tableView, 0, 0, 1, 1);
 

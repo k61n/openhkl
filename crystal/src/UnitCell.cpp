@@ -22,17 +22,15 @@ UnitCell::UnitCell(double a, double b, double c, double alpha, double beta, doub
     double a32=c/sin(gamma)*(ca-cb*cc);
 	double volume=a*b*c*sqrt(1.0-ca*ca-cb*cb-cc*cc+2.0*ca*cb*cc);
 	double a33=volume/(a*b*sc);
-	_A << a,b*cc,c*cb,
+	_A <<  a,b*cc,c*cb,
 	       0,b*sc,a32,
 	       0,0   ,a33;
 	_B=_A.inverse();
 	SX::Geometry::Basis::_reference=reference;
 }
-UnitCell::UnitCell(const UnitCell& rhs)
+
+UnitCell::UnitCell(const UnitCell& rhs) : SX::Geometry::Basis(rhs)
 {
-	_A=rhs._A;
-	_B=rhs._B;
-	_reference=rhs._reference;
 	_centring=rhs._centring;
 	_bravaisType=rhs._bravaisType;
 }
@@ -41,11 +39,17 @@ UnitCell& UnitCell::operator=(const UnitCell& rhs)
 {
 	if (this!=&rhs)
 	{
-	_A=rhs._A;
-	_B=rhs._B;
-	_reference=rhs._reference;
-	_centring=rhs._centring;
-	_bravaisType=rhs._bravaisType;
+		_A=rhs._A;
+		_B=rhs._B;
+		_reference=rhs._reference;
+		_hasSigmas=rhs._hasSigmas;
+		if (_hasSigmas)
+		{
+			_Acov = rhs._Acov;
+			_Bcov = rhs._Bcov;
+		}
+		_centring=rhs._centring;
+		_bravaisType=rhs._bravaisType;
 	}
 	return *this;
 }
@@ -124,7 +128,13 @@ std::string UnitCell::getBravaisTypeSymbol() const
 
 void UnitCell::printSelf(std::ostream& os) const
 {
-	os << "Cell parameters: " << getA() << ", " << getB() << ", " << getC() << ", " << getAlpha()/SX::Units::deg << ", " <<getBeta()/SX::Units::deg << ", "<< getGamma()/SX::Units::deg <<std::endl;
+	os << "Cell parameters: \n" << getA() << ", " << getB() << ", " << getC() << ", " << getAlpha()/SX::Units::deg << ", " <<getBeta()/SX::Units::deg << ", "<< getGamma()/SX::Units::deg <<std::endl;
+	if (hasSigmas())
+	{
+		double as,bs,cs,alphas,betas,gammas;
+		getParametersSigmas( as,bs,cs,alphas,betas,gammas);
+		os << as << ", " << bs << ", " << cs << ", " << alphas/SX::Units::deg << ", " << betas/SX::Units::deg << ", " << gammas/SX::Units::deg << std::endl;
+	}
 	os << "Lattice centring: " << static_cast<char>(_centring) << std::endl;
 	os << "Bravais type: "     << static_cast<char>(_bravaisType) << std::endl;
 
