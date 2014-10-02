@@ -88,8 +88,10 @@ public:
 	double gete2e3Angle() const;
 	//! Get the direct basis parameters
 	void getParameters(double& a,double& b ,double& c,double& alpha, double& beta, double& gamma) const;
-	//! Get the erros on direct basis parameters
+	//! Get the errors on direct basis parameters
 	void getParametersSigmas(double& sa,double& sb ,double& sc,double& salpha, double& sbeta, double& sgamma) const;
+	//! Get the errors on reciprocal basis parameters
+	void getReciprocalParametersSigmas(double& sas,double& sbs ,double& scs,double& salphas, double& sbetas, double& sgammas) const;
 	//! Returns the current basis' metric tensor.
 	Matrix3d getMetricTensor() const;
 	//! Returns the current reciprocal basis' metric tensor.

@@ -154,25 +154,29 @@ void Basis::getParametersSigmas(double& sa,double& sb ,double& sc,double& salpha
 {
 	if (!hasSigmas())
 	{
-		sa=0;sb=0;sc=0;
-		salpha=0;sbeta=0;sgamma=0;
+		sa = 0;
+		sb = 0;
+		sc = 0;
+		salpha = 0;
+		sbeta = 0;
+		sgamma = 0;
 		return;
 	}
-	double norma=_A.col(0).norm();
-	double normb=_A.col(1).norm();
-	double normc=_A.col(2).norm();
-	Eigen::Vector3d dfda=_A.col(0)/norma;
-	Eigen::Matrix3d mdfda=dfda*dfda.transpose();
+	double norma = _A.col(0).norm();
+	double normb = _A.col(1).norm();
+	double normc = _A.col(2).norm();
+	Eigen::Vector3d dfda =_A.col(0)/norma;
+	Eigen::Matrix3d mdfda = dfda*dfda.transpose();
 	sa = (mdfda.cwiseProduct(_Acov.block(0,0,3,3))).sum();
-	sa= sqrt(sa);
+	sa = sqrt(sa);
 	Eigen::Vector3d dfdb=_A.col(1)/normb;
 	Eigen::Matrix3d mdfdb=dfdb*dfdb.transpose();
 	sb = (mdfdb.cwiseProduct(_Acov.block(3,3,3,3))).sum();
-	sb= sqrt(sb);
+	sb = sqrt(sb);
 	Eigen::Vector3d dfdc=_A.col(2)/normc;
 	Eigen::Matrix3d mdfdc=dfdc*dfdc.transpose();
 	sc = (mdfdc.cwiseProduct(_Acov.block(6,6,3,3))).sum();
-	sc= sqrt(sc);
+	sc = sqrt(sc);
 
 	// Now errors on angles, gamma=acos(a.b/(|a||b|))
 	double scalar_ab=_A.col(1).transpose()*_A.col(0);
@@ -235,6 +239,101 @@ void Basis::getParametersSigmas(double& sa,double& sb ,double& sc,double& salpha
 
 	sgamma=((dgamma*dgamma.transpose()).cwiseProduct(_Acov.block(0,0,6,6))).sum();
 	sgamma=sqrt(sgamma);
+
+}
+
+void Basis::getReciprocalParametersSigmas(double& sas,double& sbs ,double& scs,double& salphas, double& sbetas, double& sgammas) const
+{
+	if (!hasSigmas())
+	{
+		sas = 0;
+		sbs = 0;
+		scs = 0;
+		salphas = 0;
+		sbetas = 0;
+		sgammas = 0;
+		return;
+	}
+
+	double normas = _B.row(0).norm();
+	Eigen::RowVector3d dfdas = _B.row(0)/normas;
+	Eigen::Matrix3d mdfdas=dfdas.transpose()*dfdas;
+	sas = (mdfdas.cwiseProduct(_Bcov.block(0,0,3,3))).sum();
+	sas = sqrt(sas);
+
+	double normbs = _B.row(1).norm();
+	Eigen::RowVector3d dfdbs=_B.row(1)/normbs;
+	Eigen::Matrix3d mdfdbs=dfdbs.transpose()*dfdbs;
+	sbs = (mdfdbs.cwiseProduct(_Bcov.block(3,3,3,3))).sum();
+	sbs = sqrt(sbs);
+
+	double normcs = _B.row(2).norm();
+	Eigen::RowVector3d dfdcs=_B.row(2)/normcs;
+	Eigen::Matrix3d mdfdcs=dfdcs.transpose()*dfdcs;
+	scs = (mdfdcs.cwiseProduct(_Bcov.block(6,6,3,3))).sum();
+	scs = sqrt(scs);
+
+	// Now errors on angles, gamma=acos(a.b/(|a||b|))
+	double scalar_asbs=_B.row(1)*_B.row(0).transpose();
+	double scalar_ascs=_B.row(2)*_B.row(0).transpose();
+	double scalar_bscs=_B.row(1)*_B.row(2).transpose();
+	double normas2=normas*normas;
+	double normbs2=normbs*normbs;
+	double normcs2=normcs*normcs;
+	double denom_asbs=sqrt(normas2*normbs2-scalar_asbs*scalar_asbs);
+	double denom_ascs=sqrt(normas2*normcs2-scalar_ascs*scalar_ascs);
+	double denom_bscs=sqrt(normbs2*normcs2-scalar_bscs*scalar_bscs);
+	const double& asx=_B(0,0);
+	const double& asy=_B(0,1);
+	const double& asz=_B(0,2);
+	const double& bsx=_B(1,0);
+	const double& bsy=_B(1,1);
+	const double& bsz=_B(1,2);
+	const double& csx=_B(2,0);
+	const double& csy=_B(2,1);
+	const double& csz=_B(2,2);
+
+	Eigen::VectorXd dalphas(6);
+
+	dalphas(0)=(-csx+bsx*scalar_bscs/normbs2)/denom_bscs;
+	dalphas(1)=(-csy+bsy*scalar_bscs/normbs2)/denom_bscs;
+	dalphas(2)=(-csz+bsz*scalar_bscs/normbs2)/denom_bscs;
+	dalphas(3)=(-bsx+csx*scalar_bscs/normcs2)/denom_bscs;
+	dalphas(4)=(-bsy+csy*scalar_bscs/normcs2)/denom_bscs;
+	dalphas(5)=(-bsz+csz*scalar_bscs/normcs2)/denom_bscs;
+
+	salphas = ((dalphas*dalphas.transpose()).cwiseProduct(_Bcov.block(3,3,6,6))).sum();
+	salphas = sqrt(salphas);
+
+	Eigen::VectorXd dbetas(6);
+
+	dbetas(0)=(-csx+asx*scalar_ascs/normas2)/denom_ascs;
+	dbetas(1)=(-csy+asy*scalar_ascs/normas2)/denom_ascs;
+	dbetas(2)=(-csz+asz*scalar_ascs/normas2)/denom_ascs;
+	dbetas(3)=(-asx+csx*scalar_ascs/normcs2)/denom_ascs;
+	dbetas(4)=(-asy+csy*scalar_ascs/normcs2)/denom_ascs;
+	dbetas(5)=(-asz+csz*scalar_ascs/normcs2)/denom_ascs;
+
+	Eigen::Matrix<double,6,6> covBeta;
+	covBeta.block(0,0,3,3)=_Bcov.block(0,0,3,3);
+	covBeta.block(3,0,3,3)=_Bcov.block(6,0,3,3);
+	covBeta.block(0,3,3,3)=_Bcov.block(0,6,3,3);
+	covBeta.block(3,3,3,3)=_Bcov.block(6,6,3,3);
+
+	sbetas = ((dbetas*dbetas.transpose()).cwiseProduct(covBeta)).sum();
+	sbetas = sqrt(sbetas);
+
+	Eigen::VectorXd dgammas(6);
+
+	dgammas(0)=(-bsx+asx*scalar_asbs/normas2)/denom_asbs;
+	dgammas(1)=(-bsy+asy*scalar_asbs/normas2)/denom_asbs;
+	dgammas(2)=(-bsz+asz*scalar_asbs/normas2)/denom_asbs;
+	dgammas(3)=(-asx+bsx*scalar_asbs/normbs2)/denom_asbs;
+	dgammas(4)=(-asy+bsy*scalar_asbs/normbs2)/denom_asbs;
+	dgammas(5)=(-asz+bsz*scalar_asbs/normbs2)/denom_asbs;
+
+	sgammas = ((dgammas*dgammas.transpose()).cwiseProduct(_Bcov.block(0,0,6,6))).sum();
+	sgammas = sqrt(sgammas);
 
 }
 
