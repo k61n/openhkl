@@ -586,11 +586,9 @@ void Basis::calculateSigmasDirectToReciprocal(bool direction)
 
 void Basis::setReciprocalSigmas(const Eigen::Vector3d& sas,const Eigen::Vector3d& sbs,const Eigen::Vector3d& scs)
 {
-	if (!hasSigmas())
-	{
-		_Acov = covMat::Zero();
-		_Bcov = covMat::Zero();
-	}
+	_Acov.setZero();
+	_Bcov.setZero();
+
 	_Bcov.block(0,0,3,3).diagonal() = sas.cwiseProduct(sas);
 	_Bcov.block(3,3,3,3).diagonal() = sbs.cwiseProduct(sbs);
 	_Bcov.block(6,6,3,3).diagonal() = scs.cwiseProduct(scs);
@@ -602,11 +600,8 @@ void Basis::setReciprocalSigmas(const Eigen::Vector3d& sas,const Eigen::Vector3d
 
 void Basis::setReciprocalSigmas(const Matrix3d& sigmas)
 {
-	if (!hasSigmas())
-	{
-		_Acov = covMat::Zero();
-		_Bcov = covMat::Zero();
-	}
+	_Acov.setZero();
+	_Bcov.setZero();
 
 	const Eigen::Vector3d& r0 = sigmas.row(0);
 	const Eigen::Vector3d& r1 = sigmas.row(1);
@@ -623,13 +618,8 @@ void Basis::setReciprocalSigmas(const Matrix3d& sigmas)
 
 void Basis::setReciprocalCovariance(const covMat& rCov)
 {
-	if (!hasSigmas())
-	{
-		_Acov = covMat::Zero();
-		_Bcov = rCov;
-	}
-	else
-		_Bcov = rCov;
+	_Acov.setZero();
+	_Bcov = rCov;
 
 	calculateSigmasDirectToReciprocal(false);
 
@@ -638,11 +628,9 @@ void Basis::setReciprocalCovariance(const covMat& rCov)
 
 void Basis::setDirectSigmas(const Eigen::Vector3d& sa,const Eigen::Vector3d& sb,const Eigen::Vector3d& sc)
 {
-	if (!hasSigmas())
-	{
-		_Acov = covMat::Zero();
-		_Bcov = covMat::Zero();
-	}
+	_Acov.setZero();
+	_Bcov.setZero();
+
 	_Acov.block(0,0,3,3).diagonal() = sa.cwiseProduct(sa);
 	_Acov.block(3,3,3,3).diagonal() = sb.cwiseProduct(sb);
 	_Acov.block(6,6,3,3).diagonal() = sc.cwiseProduct(sc);
@@ -655,11 +643,8 @@ void Basis::setDirectSigmas(const Eigen::Vector3d& sa,const Eigen::Vector3d& sb,
 
 void Basis::setDirectSigmas(const Matrix3d& sigmas)
 {
-	if (!hasSigmas())
-	{
-		_Acov = covMat::Zero();
-		_Bcov = covMat::Zero();
-	}
+	_Acov.setZero();
+	_Bcov.setZero();
 
 	const Eigen::Vector3d& c0 = sigmas.col(0);
 	const Eigen::Vector3d& c1 = sigmas.col(1);
@@ -676,13 +661,8 @@ void Basis::setDirectSigmas(const Matrix3d& sigmas)
 
 void Basis::setDirectCovariance(const covMat& dCov)
 {
-	if (!hasSigmas())
-	{
-		_Acov = dCov;
-		_Bcov = covMat::Zero();
-	}
-	else
-		_Acov = dCov;
+	_Acov = dCov;
+	_Bcov.setZero();
 
 	calculateSigmasDirectToReciprocal(true);
 
