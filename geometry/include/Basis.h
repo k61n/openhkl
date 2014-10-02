@@ -74,17 +74,21 @@ public:
 	static Basis fromDirectVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c, ptrBasis reference=nullptr);
 	//! Build a basis from a set of three reciprocal vectors.
 	static Basis fromReciprocalVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c, ptrBasis reference=nullptr);
-	//! Returns the a basis vector.
-	//Vector3d geta() const;
-	//! Returns the a basis vector.
+	//! Returns the norm of e1 basis vector.
 	double gete1Norm() const;
+	//! Returns the norm of e2 basis vector.
 	double gete2Norm() const;
+	//! Returns the norm of e3 basis vector.
 	double gete3Norm() const;
+	//! Returns the angle between e1 and e2 basis vectors (radian)
 	double gete1e2Angle() const;
-	double gete2e3Angle() const;
+	//! Returns the angle between e1 and e3 basis vectors (radian)
 	double gete1e3Angle() const;
-	//!
+	//! Returns the angle between e2 and e3 basis vectors (radian)
+	double gete2e3Angle() const;
+	//! Get the direct basis parameters
 	void getParameters(double& a,double& b ,double& c,double& alpha, double& beta, double& gamma) const;
+	//! Get the erros on direct basis parameters
 	void getParametersSigmas(double& sa,double& sb ,double& sc,double& salpha, double& sbeta, double& sgamma) const;
 	//! Returns the current basis' metric tensor.
 	Matrix3d getMetricTensor() const;
@@ -164,14 +168,19 @@ public:
 	const covMat& getDirectCovariance();
 	//! Get reciprocal covariance matrix
 	const covMat& getReciprocalCovariance();
+
+	//! Return whether or not some erros have been assigned on basis (direct & reciprocal) parameters.
+	bool hasSigmas() const;
+
+	//! Stream output operator.
 	friend std::ostream& operator<<(std::ostream& os,const Basis& b);
 
-	bool hasSigmas() const;
-	// Macro
 protected:
 
+	//! Computes the direct (direction=false) or reciprocal (direction=true) covariance matrix
 	void calculateSigmasDirectToReciprocal(bool direction=true);
 
+	//! Propagates the errors on direct and reciprocal covariance matrices under a basis transformation
 	void propagateSigmas(const Matrix3d& M);
 
 	//! Returns true if three vectors are coplanar within a given tolerance.
