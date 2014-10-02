@@ -100,26 +100,42 @@ BOOST_AUTO_TEST_CASE(Test_Basis)
 	BOOST_CHECK_SMALL(xr(1),tolerance);
 	BOOST_CHECK_SMALL(xr(2),tolerance);
 
-	std::shared_ptr<Basis> reference(new Basis(Basis::fromDirectVectors(Vector3d(1,0.0,0),Vector3d(0,1,0),Vector3d(0,0,1))));
+	std::shared_ptr<Basis> reference(new Basis(Basis::fromDirectVectors(Vector3d(1,0,0),Vector3d(0,1,0),Vector3d(0,0,1))));
 
-	Basis b=Basis::fromDirectVectors(Vector3d(0,0,2),Vector3d(0,-1,0),Vector3d(1,0,0),reference);
-
-	BOOST_CHECK_CLOSE(b.getVolume(),12.0,tolerance);
-	Eigen::Matrix3d P;
-	P << 1,0,0,
-		 0,2,0,
-		 0,0,5;
-	b.transform(P);
-	BOOST_CHECK_CLOSE(b.getVolume(),120.0,tolerance);
+//	Basis b=Basis::fromDirectVectors(Vector3d(0,0,2),Vector3d(0,-1,0),Vector3d(1,0,0),reference);
+//
+//	BOOST_CHECK_CLOSE(b.getVolume(),12.0,tolerance);
+//	Eigen::Matrix3d P;
+//	P << 1,0,0,
+//		 0,2,0,
+//		 0,0,5;
+//	b.transform(P);
+//	BOOST_CHECK_CLOSE(b.getVolume(),120.0,tolerance);
 
 	// Check sigmas and error propagations
 	BOOST_CHECK(!reference->hasSigmas());
 
-	reference->setDirectSigmas(Vector3d(0.,0.01,0.0),Vector3d(0.0,0.0,0.0),Vector3d(0.0,0.0,0.0));
+	// Set some errors along each direction of the basis vector.
+	reference->setDirectSigmas(Vector3d(0.010,0.000,0.000),Vector3d(0.000,0.080,0.000),Vector3d(0.000,0.000,0.030));
+
 	BOOST_CHECK(reference->hasSigmas());
 
-	double sa,sb,sc,salpha,sbeta,sgamma;
-	reference->getParametersSigmas(sa,sb,sc,salpha,sbeta,sgamma);
-	std::cout << sa << " " << sb << " " << sc << " " << salpha << " " << sbeta << " " << sgamma << std::endl;
-//
+	double err_a, err_b, err_c, err_alpha, err_beta, err_gamma;
+	reference->getParametersSigmas(err_a,err_b,err_c,err_alpha,err_beta,err_gamma);
+
+	BOOST_CHECK_CLOSE(err_a,0.01,tolerance);
+	BOOST_CHECK_CLOSE(err_b,0.08,tolerance);
+	BOOST_CHECK_CLOSE(err_c,0.03,tolerance);
+	BOOST_CHECK_SMALL(err_alpha,tolerance);
+	BOOST_CHECK_SMALL(err_beta,tolerance);
+	BOOST_CHECK_SMALL(err_gamma,tolerance);
+
+//	Matrix3d m=reference->getReciprocalSigmas();
+//	reference->setReciprocalSigmas(m);
+
+//	P << 0,2,0,1,0,0,0,0,-1;
+//	reference->transform(P);
+//	std::cout << reference->getDirectSigmas() <<std::endl;
+
+
 }
