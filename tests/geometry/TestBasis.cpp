@@ -103,9 +103,9 @@ BOOST_AUTO_TEST_CASE(Test_Basis)
 	std::shared_ptr<Basis> reference(new Basis(Basis::fromDirectVectors(Vector3d(1,0,0),Vector3d(0,1,0),Vector3d(0,0,1))));
 
 //	Basis b=Basis::fromDirectVectors(Vector3d(0,0,2),Vector3d(0,-1,0),Vector3d(1,0,0),reference);
-//
+
 //	BOOST_CHECK_CLOSE(b.getVolume(),12.0,tolerance);
-//	Eigen::Matrix3d P;
+	Eigen::Matrix3d P;
 //	P << 1,0,0,
 //		 0,2,0,
 //		 0,0,5;
@@ -116,7 +116,7 @@ BOOST_AUTO_TEST_CASE(Test_Basis)
 	BOOST_CHECK(!reference->hasSigmas());
 
 	// Set some errors along each direction of the basis vector.
-	reference->setDirectSigmas(Vector3d(0.010,0.000,0.000),Vector3d(0.000,0.080,0.000),Vector3d(0.000,0.000,0.030));
+	reference->setDirectSigmas(Vector3d(0.010,0.000,0.000),Vector3d(0.000,0.010,0.000),Vector3d(0.000,0.000,0.010));
 
 	BOOST_CHECK(reference->hasSigmas());
 
@@ -124,18 +124,24 @@ BOOST_AUTO_TEST_CASE(Test_Basis)
 	reference->getParametersSigmas(err_a,err_b,err_c,err_alpha,err_beta,err_gamma);
 
 	BOOST_CHECK_CLOSE(err_a,0.01,tolerance);
-	BOOST_CHECK_CLOSE(err_b,0.08,tolerance);
-	BOOST_CHECK_CLOSE(err_c,0.03,tolerance);
+	BOOST_CHECK_CLOSE(err_b,0.01,tolerance);
+	BOOST_CHECK_CLOSE(err_c,0.01,tolerance);
 	BOOST_CHECK_SMALL(err_alpha,tolerance);
 	BOOST_CHECK_SMALL(err_beta,tolerance);
 	BOOST_CHECK_SMALL(err_gamma,tolerance);
 
-//	Matrix3d m=reference->getReciprocalSigmas();
-//	reference->setReciprocalSigmas(m);
+	P << 0,2,0,4,0,0,0,0,-1;
+	reference->transform(P);
 
-//	P << 0,2,0,1,0,0,0,0,-1;
-//	reference->transform(P);
-//	std::cout << reference->getDirectSigmas() <<std::endl;
+	//	std::cout << reference->getDirectSigmas() <<std::endl;
+
+	reference->getParametersSigmas(err_a,err_b,err_c,err_alpha,err_beta,err_gamma);
+	std::cout<<err_a<<" "<<err_b<<" "<<err_c<<" "<<err_alpha<<" "<<err_beta<<" "<<err_gamma<<std::endl;
+
+	double err_as, err_bs, err_cs, err_alphas, err_betas, err_gammas;
+	reference->getReciprocalParametersSigmas(err_as,err_bs,err_cs,err_alphas,err_betas,err_gammas);
+
+	std::cout<<err_as<<" "<<err_bs<<" "<<err_cs<<" "<<err_alphas<<" "<<err_betas<<" "<<err_gammas<<std::endl;
 
 
 }
