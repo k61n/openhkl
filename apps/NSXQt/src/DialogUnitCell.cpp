@@ -51,7 +51,10 @@ void DialogUnitCell::getUnitCell()
     std::vector<Eigen::Vector3d> qvects;
     qvects.reserve(_peaks.size());
     for (const auto& peak : _peaks)
-    qvects.push_back(peak.get().getQ());
+    {
+        if (peak.get().isSelected())
+            qvects.push_back(peak.get().getQ());
+    }
 
     qDebug() << "Searching direct lattice vectors using" << _peaks.size() << "peaks";
     FFTIndexing indexing(50.0);
@@ -130,6 +133,8 @@ void DialogUnitCell::getUnitCell()
                     {
                         if (peak.get().setBasis(pcc))
                             score++;
+                        else
+                            peak.get().setSelected(false);
                     }
                     score /= 0.01*_peaks.size();
                     _unitcells.push_back(std::make_tuple(cc,solution,score));

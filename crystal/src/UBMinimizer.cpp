@@ -307,9 +307,6 @@ UBSolution::UBSolution(SX::Instrument::Detector* detector,SX::Instrument::Sample
 	_ub  << values(0),values(1),values(2),values(3),values(4), values(5), values(6),values(7),values(8);
 	_sigmaub << sigmas(0),sigmas(1),sigmas(2),sigmas(3),sigmas(4), sigmas(5), sigmas(6), sigmas(7), sigmas(8);
 
-	std::cout<<_ub<<std::endl;
-	std::cout<<_sigmaub<<std::endl;
-
 	idx += 9;
 	_detectorOffsets = values.segment(idx,_detector->numberOfAxes());
 	_sigmaDetectorOffsets = sigmas.segment(idx,_detector->numberOfAxes());

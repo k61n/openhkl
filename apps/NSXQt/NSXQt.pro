@@ -26,7 +26,7 @@ SOURCES += src/Main.cpp \
     src/DialogUnitCell.cpp \
     src/NoteBook.cpp \
     src/Logger.cpp \
-    src/DialogUnitCellSolutions.cpp \
+    src/DialogUnitCellSolutions.cpp
 
 HEADERS  += include/MainWindow.h \
     include/DetectorView.h \
@@ -42,7 +42,7 @@ HEADERS  += include/MainWindow.h \
     include/DialogTransformationMatrix.h \
     include/NoteBook.h \
     include/Logger.h \
-    include/DialogUnitCellSolutions.h \
+    include/DialogUnitCellSolutions.h
 
 FORMS    += ui/mainwindow.ui \
     ui/dialog_PeakFind.ui \
