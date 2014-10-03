@@ -36,24 +36,28 @@ namespace SX
 namespace Instrument
 {
 
+// Forwards
 class Detector;
 class Sample;
-
+class Source;
 
 class Diffractometer
 {
 public:
+	//!
 	Diffractometer(const std::string& name);
 	~Diffractometer();
 	void setDetector(Detector*);
 	Detector* getDetector();
 	void setSample(Sample*);
 	Sample* getSample();
-
+	void setSource(Source*);
+	Source* getSource();
 private:
 	std::string _name;
 	Detector* _detector;
 	Sample* _sample;
+	Source* _source;
 };
 
 } // Namespace Instrument

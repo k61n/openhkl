@@ -7,9 +7,8 @@ namespace SX
 namespace Instrument
 {
 
-Diffractometer::Diffractometer(const std::string& name):_name(name),_detector(nullptr),_sample(nullptr)
+Diffractometer::Diffractometer(const std::string& name):_name(name),_detector(nullptr),_sample(nullptr),_source(nullptr)
 {
-
 }
 
 Diffractometer::~Diffractometer()
@@ -29,6 +28,10 @@ void Diffractometer::setSample(Sample* s)
 {
 	_sample=s;
 }
+void Diffractometer::setSource(Source* s)
+{
+	_source=s;
+}
 
 Detector* Diffractometer::getDetector()
 {
@@ -39,6 +42,12 @@ Sample* Diffractometer::getSample()
 {
 	return _sample;
 }
+
+Source* Diffractometer::getSource()
+{
+	return _source;
+}
+
 
 
 

@@ -16,7 +16,7 @@ QTextEdit* Logger::getNoteBook()
 void customMessageHandler(QtMsgType type, const QMessageLogContext& context, const QString& msg)
 {
     QString txt;
-
+    Q_UNUSED(context);
     QTextEdit* log=Logger::Instance()->getNoteBook();
     switch (type) {
     case QtDebugMsg:

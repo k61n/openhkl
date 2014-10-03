@@ -211,6 +211,17 @@ void DialogUnitCell::setUpValues()
 void DialogUnitCell::setTransformationMatrix()
 {
     DialogTransformationmatrix* dialog=new DialogTransformationmatrix(this);
-    dialog->exec();
+    if (dialog->exec())
+    {
+            _basis.transform(dialog->getTransformation());
+    }
+    setUpValues();
+    int success=0;
+    for (auto& peak : _peaks)
+    {
+        if (peak.get().setBasis(std::shared_ptr<UnitCell>(new UnitCell(_basis))))
+            ++success;
+    }
+    QMessageBox::information(this,"Indexation","Successfully indexed"+QString::number(success)+" peaks out of "+QString::number(_peaks.size()));
 }
 

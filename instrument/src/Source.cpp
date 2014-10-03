@@ -6,7 +6,7 @@ namespace SX
 namespace Instrument
 {
 
-Source::Source() : _wavelength(1.00)
+Source::Source(const std::string& label): Component(label)
 {
 
 }

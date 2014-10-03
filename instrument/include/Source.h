@@ -41,11 +41,9 @@ namespace Instrument
 class Source : public Component
 {
 public:
-	Source();
+	Source(const std::string& label);
 	virtual ~Source();
-
 private:
-	double _wavelength;
 };
 
 } // end namespace Instrument
