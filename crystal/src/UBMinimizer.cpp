@@ -17,6 +17,17 @@ namespace SX
 namespace Crystal
 {
 
+void removeColumn(Eigen::MatrixXd& matrix, unsigned int colToRemove)
+{
+    unsigned int numRows = matrix.rows();
+    unsigned int numCols = matrix.cols()-1;
+
+    if( colToRemove < numCols )
+        matrix.block(0,colToRemove,numRows,numCols-colToRemove) = matrix.block(0,colToRemove+1,numRows,numCols-colToRemove);
+
+    matrix.conservativeResize(numRows,numCols);
+}
+
 
 UBFunctor::UBFunctor() : Functor<double>(), _peaks(0), _detector(nullptr), _sample(nullptr), _fixedParameters()
 {
@@ -201,6 +212,7 @@ int UBMinimizer::run(unsigned int maxIter)
 
 	if (status==1)
 	{
+
 		std::vector<bool> fParams(x.size(),false);
 		for (auto it : _functor._fixedParameters)
 			fParams[it] = true;
@@ -211,14 +223,26 @@ int UBMinimizer::run(unsigned int maxIter)
 		_functor(x,fvec);
 		// Sum of squared residuals
 		double sse = fvec.squaredNorm();
-
 		int freeParameters=_functor.inputs()-_functor._fixedParameters.size();
 		// Divide by the DOF
 		sse /= (_functor.values()-freeParameters);
 
-		// Covariance matrix only for non-fixed parameters
+		// Create a reordered jacobian
+		Eigen::MatrixXd fjac=minimizer.fjac;
+		auto& indices=minimizer.permutation.indices();
+		for (int i=0;i<indices.size();++i)
+		{
+			int index=indices[i];
+			fjac.col(index)=minimizer.fjac.col(i);
+		}
 
-	    Eigen::MatrixXd covMatrix = (minimizer.fjac.transpose()*minimizer.fjac).block(0,0,freeParameters,freeParameters).inverse();
+		for (int i=0;i<fParams.size();++i)
+		{
+			if (fParams[i])
+				removeColumn(fjac,i);
+		}
+
+	    Eigen::MatrixXd covMatrix = (fjac.transpose()*fjac).inverse();
 	    // Sigma for non-fixed parameters
 	    Eigen::VectorXd partialsigmas = (sse*covMatrix.diagonal()).cwiseSqrt();
 	    Eigen::VectorXd sigmas(x.size());
@@ -282,6 +306,9 @@ UBSolution::UBSolution(SX::Instrument::Detector* detector,SX::Instrument::Sample
 
 	_ub  << values(0),values(1),values(2),values(3),values(4), values(5), values(6),values(7),values(8);
 	_sigmaub << sigmas(0),sigmas(1),sigmas(2),sigmas(3),sigmas(4), sigmas(5), sigmas(6), sigmas(7), sigmas(8);
+
+	std::cout<<_ub<<std::endl;
+	std::cout<<_sigmaub<<std::endl;
 
 	idx += 9;
 	_detectorOffsets = values.segment(idx,_detector->numberOfAxes());

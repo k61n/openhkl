@@ -197,7 +197,7 @@ bool Peak3D::setBasis(std::shared_ptr<SX::Geometry::Basis> basis)
 {
 	_basis=basis;
 	_hkl=_basis->fromReciprocalStandard(this->getQ());
-	if (std::fabs(_hkl[0]-std::round(_hkl[0]))<0.12 && std::fabs(_hkl[1]-std::round(_hkl[1]))<0.12 && std::fabs(_hkl[2]-std::round(_hkl[2]))<0.12)
+	if (std::fabs(_hkl[0]-std::round(_hkl[0]))<0.2 && std::fabs(_hkl[1]-std::round(_hkl[1]))<0.2 && std::fabs(_hkl[2]-std::round(_hkl[2]))<0.2)
 	{
 		_hkl[0]=std::round(_hkl[0]);
 		_hkl[1]=std::round(_hkl[1]);
@@ -210,7 +210,7 @@ bool Peak3D::setBasis(std::shared_ptr<SX::Geometry::Basis> basis)
 bool Peak3D::hasIntegerHKL(std::shared_ptr<SX::Geometry::Basis> basis)
 {
 	_hkl=basis->fromReciprocalStandard(this->getQ());
-	if (std::fabs(_hkl[0]-std::round(_hkl[0]))<0.12 && std::fabs(_hkl[1]-std::round(_hkl[1]))<0.12 && std::fabs(_hkl[2]-std::round(_hkl[2]))<0.12)
+	if (std::fabs(_hkl[0]-std::round(_hkl[0]))<0.2 && std::fabs(_hkl[1]-std::round(_hkl[1]))<0.2 && std::fabs(_hkl[2]-std::round(_hkl[2]))<0.2)
 	{
 		_hkl[0]=std::round(_hkl[0]);
 		_hkl[1]=std::round(_hkl[1]);
