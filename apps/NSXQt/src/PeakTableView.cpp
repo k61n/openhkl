@@ -203,15 +203,18 @@ void PeakTableView::writeFullProf()
     file << std::fixed << std::setw(8) << std::setprecision(3) << wave << " 0 0" << std::endl;
     for (const SX::Crystal::Peak3D& peak : _peaks)
     {
-        const Eigen::RowVector3d& hkl=peak.getMillerIndices();
+        if (peak.isSelected())
+        {
+            const Eigen::RowVector3d& hkl=peak.getMillerIndices();
 
-        file << std::setprecision(0);
-        file << std::setw(4);
-        file << hkl[0] << std::setw(4) <<  hkl[1] << std::setw(4) << hkl[2];
-         double l=peak.getLorentzFactor();
-        file << std::fixed << std::setw(14) << std::setprecision(4) << peak.getScaledIntensity()/l;
-        file << std::fixed << std::setw(14) << std::setprecision(4) << peak.getScaledSigma()/l;
-        file << std::setprecision(0) << std::setw(5) << 1  << std::endl;
+            file << std::setprecision(0);
+            file << std::setw(4);
+            file << hkl[0] << std::setw(4) <<  hkl[1] << std::setw(4) << hkl[2];
+             double l=peak.getLorentzFactor();
+            file << std::fixed << std::setw(14) << std::setprecision(4) << peak.getScaledIntensity()/l;
+            file << std::fixed << std::setw(14) << std::setprecision(4) << peak.getScaledSigma()/l;
+            file << std::setprecision(0) << std::setw(5) << 1  << std::endl;
+        }
     }
     if (file.is_open())
         file.close();
@@ -222,6 +225,7 @@ void PeakTableView::writeShelX()
 {
     if (!_peaks.size())
         QMessageBox::critical(this,"Error writing","No peaks in the table");
+
     QFileDialog dialog(this);
     dialog.setDefaultSuffix("hkl");
     QString fileName = dialog.getSaveFileName(this,tr("Save ShelX file"), "", tr("ShelX Files (*.hkl)"));
@@ -232,14 +236,17 @@ void PeakTableView::writeShelX()
 
     for (const SX::Crystal::Peak3D& peak : _peaks)
     {
-        const Eigen::RowVector3d& hkl=peak.getMillerIndices();
+        if (peak.isSelected())
+        {
+            const Eigen::RowVector3d& hkl=peak.getMillerIndices();
 
-        file << std::setprecision(0);
-        file << std::setw(4);
-        file << hkl[0] << std::setw(4) <<  hkl[1] << std::setw(4) << hkl[2];
-         double l=peak.getLorentzFactor();
-        file << std::fixed << std::setw(8) << std::setprecision(2) << peak.getScaledIntensity()/l;
-        file << std::fixed << std::setw(8) << std::setprecision(2) << peak.getScaledSigma()/l <<std::endl;
+            file << std::setprecision(0);
+            file << std::setw(4);
+            file << hkl[0] << std::setw(4) <<  hkl[1] << std::setw(4) << hkl[2];
+             double l=peak.getLorentzFactor();
+            file << std::fixed << std::setw(8) << std::setprecision(2) << peak.getScaledIntensity()/l;
+            file << std::fixed << std::setw(8) << std::setprecision(2) << peak.getScaledSigma()/l <<std::endl;
+            }
     }
     if (file.is_open())
         file.close();
