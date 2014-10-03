@@ -545,7 +545,11 @@ void DetectorView::plotEllipsoids()
                 double bottom=upper[1];
                 detectorToScene(right,bottom);
                 // Plot the bounding box
-                QGraphicsRectItem* bb=_scene->addRect(left-1,top-1,right-left+1,bottom-top+1,QPen(QBrush(QColor("green")),2.0));
+                QGraphicsRectItem* bb;
+                if (el.second.isSelected())
+                    bb=_scene->addRect(left-1,top-1,right-left+1,bottom-top+1,QPen(QBrush(QColor("green")),2.0));
+                else
+                    bb=_scene->addRect(left-1,top-1,right-left+1,bottom-top+1,QPen(QBrush(QColor("red")),2.0));
                 bb->setToolTip(QString::number(el.first));
                 bb->setFlags(QGraphicsItem::ItemIsSelectable);
                 _currentPeaks.push_back(bb);

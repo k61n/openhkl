@@ -35,6 +35,7 @@ private:
     void sortByHKL(bool up);
     void sortByIntensity(bool up);
     void sortByNumor(bool up);
+    void sortBySelected(bool up);
     MainWindow* _main;
     PeakPlotter* _plotter;
     void constructTable();

@@ -51,12 +51,12 @@ void DialogUnitCellSolutions::setSolutions(const std::vector<std::tuple<SX::Crys
 
 //        std::cout<<sa<<" "<<sb<<" "<<sc<<" "<<salpha<<" "<<sbeta<<" "<<sgamma<<" "<<cell.hasSigmas()<<std::endl;
 
-        QStandardItem* col1=new QStandardItem(QString::number(a,'f',4) + "("+ QString::number(sa*10000,'f',0)+")");
-        QStandardItem* col2=new QStandardItem(QString::number(b,'f',4) + "("+ QString::number(sb*10000,'f',0)+")");
-        QStandardItem* col3=new QStandardItem(QString::number(c,'f',4) + "("+ QString::number(sc*10000,'f',0)+")");
-        QStandardItem* col4=new QStandardItem(QString::number(alpha/deg,'f',4)+ "("+ QString::number(salpha/deg*10000,'f',0)+")");
-        QStandardItem* col5=new QStandardItem(QString::number(beta/deg,'f',4)+"("+ QString::number(sbeta/deg*10000,'f',0)+")");
-        QStandardItem* col6=new QStandardItem(QString::number(gamma/deg,'f',4)+ "("+ QString::number(sgamma/deg*10000,'f',0)+")");
+        QStandardItem* col1=new QStandardItem(QString::number(a,'f',3) + "("+ QString::number(sa*1000,'f',0)+")");
+        QStandardItem* col2=new QStandardItem(QString::number(b,'f',3) + "("+ QString::number(sb*1000,'f',0)+")");
+        QStandardItem* col3=new QStandardItem(QString::number(c,'f',3) + "("+ QString::number(sc*1000,'f',0)+")");
+        QStandardItem* col4=new QStandardItem(QString::number(alpha/deg,'f',3)+ "("+ QString::number(salpha/deg*1000,'f',0)+")");
+        QStandardItem* col5=new QStandardItem(QString::number(beta/deg,'f',3)+"("+ QString::number(sbeta/deg*1000,'f',0)+")");
+        QStandardItem* col6=new QStandardItem(QString::number(gamma/deg,'f',3)+ "("+ QString::number(sgamma/deg*1000,'f',0)+")");
         QStandardItem* col7=new QStandardItem(QString::number(cell.getVolume(),'f',3));
         QStandardItem* col8=new QStandardItem(QString::fromStdString(cell.getBravaisTypeSymbol()));
         QStandardItem* col9=new QStandardItem(QString::number(quality,'f',2));

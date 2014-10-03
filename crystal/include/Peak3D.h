@@ -114,7 +114,8 @@ public:
 	bool setBasis(std::shared_ptr<SX::Geometry::Basis> basis);
 	bool hasIntegerHKL(std::shared_ptr<SX::Geometry::Basis> basis);
 	friend bool operator<(const Peak3D& p1, const Peak3D& p2);
-
+	void setSelected(bool);
+	bool isSelected() const;
 private:
 	//! Pointer to the data containing the peak
 	SX::Data::IData* _data;
@@ -137,6 +138,7 @@ private:
 	double _counts, _countsSigma;
 	double _wave;
 	double _scale;
+	bool _selected;
 };
 
 

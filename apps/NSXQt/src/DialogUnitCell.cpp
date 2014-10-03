@@ -43,6 +43,7 @@ DialogUnitCell::~DialogUnitCell()
 
 void DialogUnitCell::getUnitCell()
 {
+    qWarning() << "Find possible Unit-Cells";
     _unitcells.clear();
 
     if (!_peaks.size())
@@ -154,6 +155,7 @@ void DialogUnitCell::getUnitCell()
 
 void DialogUnitCell::acceptSolution(int i)
 {
+    qWarning() << "Selection of Unit Cell and UB-matrix";
     _basis=std::get<0>(_unitcells[i]);
     const SX::Crystal::UBSolution& sol=std::get<1>(_unitcells[i]);
     setUpValues();
@@ -178,7 +180,7 @@ void DialogUnitCell::acceptSolution(int i)
 
     QMessageBox::information(this,"Indexation","Successfully indexed"+QString::number(success)+" peaks out of "+QString::number(_peaks.size()));
 
-    qDebug() << "Selected solution:" << _basis << sol;
+    qDebug() << "" << _basis << sol;
 }
 
 void DialogUnitCell::setUpValues()

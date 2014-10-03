@@ -97,6 +97,10 @@ void PeakTableView::sortByColumn(int i)
     {
         sortByNumor(up);
     }
+    else if (i==4)
+    {
+        sortBySelected(up);
+    }
     constructTable();
     QStandardItemModel* model=dynamic_cast<QStandardItemModel*>(this->model());
     QStandardItem* columni=model->horizontalHeaderItem(i);
@@ -127,11 +131,21 @@ void PeakTableView::constructTable()
         QStandardItem* col2=new QStandardItem(QString::number(peak.getScaledIntensity()/l));
         QStandardItem* col3=new QStandardItem(QString::number(peak.getScaledSigma()/l));
         QStandardItem* col4=new QStandardItem(QString::number(peak.getData()->_mm->getMetaData()->getKey<int>("Numor")));
+        QStandardItem* col5;
+        if (peak.isSelected())
+        {
+            col5= new QStandardItem(QIcon(":/resources/peakSelectedIcon.png"),"");
+        }
+        else
+        {
+            col5= new QStandardItem(QIcon(":/resources/peakDeselectedIcon.png"),"");
+        }
         model->setVerticalHeaderItem(i,new QStandardItem(QIcon(":/resources/singlePeakIcon.png"),QString::number(i)));
         model->setItem(i,0,col1);
         model->setItem(i,1,col2);
         model->setItem(i,2,col3);
-        model->setItem(i++,3,col4);
+        model->setItem(i,3,col4);
+        model->setItem(i++,4,col5);
     }
     setModel(model);
     // Signal sent when the user navigates the table (e.g. up down arrow )
@@ -199,7 +213,8 @@ void PeakTableView::writeFullProf()
         file << std::fixed << std::setw(14) << std::setprecision(4) << peak.getScaledSigma()/l;
         file << std::setprecision(0) << std::setw(5) << 1  << std::endl;
     }
-    file.close();
+    if (file.is_open())
+        file.close();
 }
 
 
@@ -226,7 +241,8 @@ void PeakTableView::writeShelX()
         file << std::fixed << std::setw(8) << std::setprecision(2) << peak.getScaledIntensity()/l;
         file << std::fixed << std::setw(8) << std::setprecision(2) << peak.getScaledSigma()/l <<std::endl;
     }
-    file.close();
+    if (file.is_open())
+        file.close();
 }
 
 void PeakTableView::sortByHKL(bool up)
@@ -240,6 +256,24 @@ void PeakTableView::sortByHKL(bool up)
               );
     else
         std::sort(_peaks.begin(),_peaks.end());
+}
+
+void PeakTableView::sortBySelected(bool up)
+{
+    if (up)
+        std::sort(_peaks.begin(),_peaks.end(),
+              [&](const SX::Crystal::Peak3D& p1, const SX::Crystal::Peak3D& p2)
+              {
+                return (p2.isSelected()<p1.isSelected());
+              }
+              );
+    else
+        std::sort(_peaks.begin(),_peaks.end(),
+              [&](const SX::Crystal::Peak3D& p1, const SX::Crystal::Peak3D& p2)
+              {
+                return (p2.isSelected()>p1.isSelected());
+              }
+              );
 }
 
 void PeakTableView::sortByIntensity(bool up)

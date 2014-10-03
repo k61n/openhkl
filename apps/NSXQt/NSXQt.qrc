@@ -18,5 +18,7 @@
         <file>resources/matrixIcon.png</file>
         <file>resources/sortDownIcon.png</file>
         <file>resources/sortUpIcon.png</file>
+        <file>resources/peakDeselectedIcon.png</file>
+        <file>resources/peakSelectedIcon.png</file>
     </qresource>
 </RCC>

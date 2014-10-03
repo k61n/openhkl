@@ -521,7 +521,7 @@ void Basis::propagateSigmas(const Matrix3d& M)
 	MM.block(3,6,3,3).diagonal() = Eigen::Vector3d::Constant(M(1,2));
 	MM.block(6,6,3,3).diagonal() = Eigen::Vector3d::Constant(M(2,2));
 
-	_Acov = MM.transpose()*_Acov*MM;
+	_Acov = MM*_Acov*MM.transpose();
 	calculateSigmasDirectToReciprocal(true);
 }
 

@@ -32,6 +32,7 @@
 #include "Peak3D.h"
 #include "Sample.h"
 #include "Data.h"
+#include "AABB.h"
 
 using namespace SX::Units;
 
@@ -247,7 +248,6 @@ void MainWindow::on_numor_Widget_itemActivated(QListWidgetItem *item)
 
 void MainWindow::on_action_peak_find_triggered()
 {
-
     DialogPeakFind* dialog= new DialogPeakFind();
 
     dialog->setFixedSize(400,200);
@@ -258,7 +258,7 @@ void MainWindow::on_action_peak_find_triggered()
     // Get Confidence and threshold
     double confidence=dialog->getConfidence();
     double threshold=dialog->getThreshold();   
-
+    qWarning() << "Peak find algorithm";
     std::vector<Data*> numors=selectedNumors();
 
     int max=numors.size();
@@ -299,7 +299,8 @@ void MainWindow::on_action_peak_find_triggered()
 
     //
     int i=0;
-
+    SX::Geometry::AABB<double,3> dAABB(Eigen::Vector3d(0,0,0),Eigen::Vector3d(numor->_detector->getNCols(),numor->_detector->getNRows(),numor->_nblocks-1));
+    std::cout << std::endl;
     for (auto& blob : blobs)
     {
         Eigen::Vector3d center, eigenvalues;
@@ -314,6 +315,11 @@ void MainWindow::on_action_peak_find_triggered()
         p.setSampleState(new SX::Instrument::ComponentState(numor->_sample->createState({omega,numor->_chi,numor->_phi,0,0,0})));
         p.setDetectorEvent(new SX::Instrument::DetectorEvent(numor->_detector->createDetectorEvent(center[0],center[1],{numor->_gamma,0.0})));
         p.setWavelength(numor->_wavelength);
+
+        if (!dAABB.contains(*p.getPeak()))
+        {
+            p.setSelected(false);
+        }
         numor->_rpeaks.insert(Data::maprealPeaks::value_type(i++,p));
     }
 

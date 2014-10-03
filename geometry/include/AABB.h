@@ -79,6 +79,15 @@ public:
 		}
 		return true;
 	}
+	inline bool contains(const AABB<T,D>& other) const
+	{
+		for (uint i=0; i<D; ++i)
+		{
+			if (_lowerBound(i) >= other._lowerBound(i) || _upperBound(i) <= other._upperBound(i))
+				return false;
+		}
+		return true;
+	}
 	//! Return the volume
 	T volumeND() const;
 	//! Check whether a given point is inside the AABB

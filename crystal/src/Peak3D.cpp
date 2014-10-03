@@ -24,7 +24,8 @@ Peak3D::Peak3D(SX::Data::IData* data):
 		_counts(0.0),
 		_countsSigma(0.0),
 		_wave(0.0),
-		_scale(1.0)
+		_scale(1.0),
+		_selected(true)
 {
 }
 
@@ -324,6 +325,16 @@ bool operator<(const Peak3D& p1, const Peak3D& p2)
 	else if (p1._hkl[2]>p2._hkl[2])
 		return false;
 	return false;
+}
+
+bool Peak3D::isSelected() const
+{
+	return _selected;
+}
+
+void Peak3D::setSelected(bool s)
+{
+	_selected=s;
 }
 
 
