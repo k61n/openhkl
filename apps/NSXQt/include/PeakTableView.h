@@ -31,6 +31,8 @@ public slots:
     void writeShelX();
     //! Normalize to monitor.
     void normalizeToMonitor();
+    //! Change selected status of peak when double-clicked
+    void deselectPeak(QModelIndex index);
 private:
     void sortByHKL(bool up);
     void sortByIntensity(bool up);

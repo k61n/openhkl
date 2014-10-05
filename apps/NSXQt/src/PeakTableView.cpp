@@ -37,6 +37,8 @@ PeakTableView::PeakTableView(MainWindow* main,QWidget *parent)
     // Send an update of the detector view when a pick is clicked.
     connect(this,SIGNAL(plot2DUpdate(int,int)),_main,SLOT(plotUpdate(int,int)));
     //
+
+    connect(this,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(deselectPeak(QModelIndex)));
 }
 
 void PeakTableView::setData(const std::vector<Data *> numors)
@@ -317,6 +319,13 @@ void PeakTableView::sortByNumor(bool up)
                     int numor2=p2.getData()->_mm->getMetaData()->getKey<int>("Numor");
                     return (numor1<numor2);
                 });
+}
+
+void PeakTableView::deselectPeak(QModelIndex index)
+{
+    auto& peak=_peaks[index.row()];
+    peak.get().setSelected(!peak.get().isSelected());
+    constructTable();
 }
 
 
