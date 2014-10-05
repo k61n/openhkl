@@ -204,7 +204,7 @@ int UBMinimizer::run(unsigned int maxIter)
 	typedef Eigen::NumericalDiff<UBFunctor> NumDiffType;
 	NumDiffType numdiff(_functor);
 	Eigen::LevenbergMarquardt<NumDiffType> minimizer(numdiff);
-	minimizer.parameters.xtol=1e-10;
+	minimizer.parameters.xtol=1e-11;
 	minimizer.parameters.maxfev=maxIter;
 
 	int status = minimizer.minimize(x);

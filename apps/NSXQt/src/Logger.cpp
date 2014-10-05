@@ -1,6 +1,7 @@
 #include "Logger.h"
 #include <QCoreApplication>
 #include <QTextEdit>
+#include <QScrollBar>
 
 void Logger::setNoteBook(QTextEdit *nb)
 {
@@ -38,9 +39,13 @@ void customMessageHandler(QtMsgType type, const QMessageLogContext& context, con
     }
     log->append(txt);
     // Return to black color for user input in the notebook
+    QCoreApplication::processEvents();
+
+    // Reinitialze the text color and font
     log->setTextColor(QColor("black"));
     log->setFontItalic(false);
     log->setFontUnderline(false);
-    QCoreApplication::processEvents();
+    // Ensure that textEdit is at the bottom
+    log->verticalScrollBar()->setValue(log->verticalScrollBar()->maximum());
 
 }
