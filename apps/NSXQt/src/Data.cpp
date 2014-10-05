@@ -7,7 +7,7 @@
 #include "CylindricalDetector.h"
 #include "Units.h"
 #include "Gonio.h"
-
+#include <QtDebug>
 using namespace SX::Units;
 
 void D19Mapping(double x, double y, double& newx, double& newy)
@@ -104,11 +104,11 @@ void Data::readBlock(int i)
 }
 void Data::readInMemory()
 {
+
     if (!_inmemory)
     {
         _data.resize(_nblocks);
         _inmemory=true;
-
 #pragma omp parallel for
         for (int i=0;i<_nblocks;++i)
         {

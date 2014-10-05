@@ -59,7 +59,7 @@ void DialogUnitCellSolutions::setSolutions(const std::vector<std::tuple<SX::Crys
         QStandardItem* col6=new QStandardItem(QString::number(gamma/deg,'f',3)+ "("+ QString::number(sgamma/deg*1000,'f',0)+")");
         QStandardItem* col7=new QStandardItem(QString::number(cell.getVolume(),'f',3));
         QStandardItem* col8=new QStandardItem(QString::fromStdString(cell.getBravaisTypeSymbol()));
-        QStandardItem* col9=new QStandardItem(QString::number(quality,'f',2));
+        QStandardItem* col9=new QStandardItem(QString::number(quality,'f',2)+"%");
         model->setItem(i,0,col1);
         model->setItem(i,1,col2);
         model->setItem(i,2,col3);

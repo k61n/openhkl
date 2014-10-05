@@ -70,7 +70,6 @@ Eigen::Transform<double,3,Eigen::Affine> Gonio::getHomMatrix(const std::vector<d
 {
 	if (values.size()!=_axes.size())
 	{
-		std::cout << values.size() << " " << _axes.size() << std::endl;
 		throw std::range_error("Trying to set Gonio "+_label+" with wrong number of parameters");
 	}
 	Eigen::Transform<double,3,Eigen::Affine> result=Eigen::Transform<double,3,Eigen::Affine>::Identity();
@@ -117,6 +116,14 @@ std::size_t Gonio::numberOfAxes() const
 	return _axes.size();
 }
 
+
+void Gonio::resetOffsets()
+{
+	for (int i=0;i<_axes.size();++i)
+	{
+		_axes[i]->setOffset(0.0);
+	}
+}
 
 
 }

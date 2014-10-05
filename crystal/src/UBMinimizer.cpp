@@ -360,15 +360,11 @@ std::ostream& operator<<(std::ostream& os, const UBSolution& solution)
 	for (int i=0;i<detectorG->numberOfAxes();++i)
 	{
 		os << detectorG->getAxis(i)->getLabel() << " ";
-	}
-	os << std::endl;
-	for (int i=0;i<detectorG->numberOfAxes();++i)
-	{
 		SX::Instrument::Axis* axis=detectorG->getAxis(i);
 		if (dynamic_cast<SX::Instrument::TransAxis*>(axis))
-			os << solution._detectorOffsets[i]/SX::Units::mm << "(" << solution._sigmaDetectorOffsets[i]/SX::Units::mm << ") mm ";
+			os << solution._detectorOffsets[i]/SX::Units::mm << "(" << solution._sigmaDetectorOffsets[i]/SX::Units::mm << ") mm " << std::endl;
 		else if (dynamic_cast<SX::Instrument::RotAxis*>(axis))
-			os << solution._detectorOffsets[i]/SX::Units::deg << "(" << solution._sigmaDetectorOffsets[i]/SX::Units::deg << ") deg ";
+			os << solution._detectorOffsets[i]/SX::Units::deg << "(" << solution._sigmaDetectorOffsets[i]/SX::Units::deg << ") deg " << std::endl;
 	}
 	os <<std::endl;
 	os<<"Sample offsets:" << std::endl;
@@ -376,15 +372,11 @@ std::ostream& operator<<(std::ostream& os, const UBSolution& solution)
 	for (int i=0;i<sampleG->numberOfAxes();++i)
 	{
 		os << sampleG->getAxis(i)->getLabel() << " ";
-	}
-	os << std::endl;
-	for (int i=0;i<sampleG->numberOfAxes();++i)
-	{
 		SX::Instrument::Axis* axis=sampleG->getAxis(i);
 		if (dynamic_cast<SX::Instrument::TransAxis*>(axis))
-			os << solution._sampleOffsets[i]/SX::Units::mm << "(" << solution._sigmaSampleOffsets[i]/SX::Units::mm << ") mm ";
+			os << solution._sampleOffsets[i]/SX::Units::mm << "(" << solution._sigmaSampleOffsets[i]/SX::Units::mm << ") mm " << std::endl;
 		else if (dynamic_cast<SX::Instrument::RotAxis*>(axis))
-			os << solution._sampleOffsets[i]/SX::Units::deg << "(" << solution._sigmaSampleOffsets[i]/SX::Units::deg << ") deg ";
+			os << solution._sampleOffsets[i]/SX::Units::deg << "(" << solution._sigmaSampleOffsets[i]/SX::Units::deg << ") deg " << std::endl;
 	}
 	os<<std::endl;
 

@@ -75,6 +75,8 @@ public:
 	void transformInverseInPlace(Vector3d& v,const std::vector<double>& values);
 	//! Get the number of Axis
 	std::size_t numberOfAxes() const;
+	//! Reset all offsets
+	void resetOffsets();
 protected:
 	//! Given name of the gonio
 	std::string _label;

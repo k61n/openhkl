@@ -11,9 +11,13 @@ ComponentState::~ComponentState()
 {
 }
 
-Component* ComponentState::getParent() const
+Component* ComponentState::getParent()
 {
 	return _ptrComp;
+}
+void ComponentState::setParent(Component* c)
+{
+	_ptrComp=c;
 }
 
 const std::vector<double>& ComponentState::getValues() const

@@ -43,7 +43,8 @@ class ComponentState {
 public:
 	const std::vector<double>& getValues() const;
 	~ComponentState();
-     Component* getParent() const;
+     Component* getParent();
+     void setParent(Component*);
 private:
 	//! Only Component class can create a state
 	ComponentState();

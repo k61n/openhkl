@@ -45,6 +45,7 @@ public:
 	DetectorEvent& operator=(const DetectorEvent&);
 	~DetectorEvent();
 	Detector* getParent();
+	void setParent(Detector*);
 private:
 	DetectorEvent();
 	friend class Detector;

@@ -337,6 +337,15 @@ void Peak3D::setSelected(bool s)
 	_selected=s;
 }
 
+void Peak3D::setSample(SX::Instrument::Sample* sample)
+{
+	_sampleState->setParent(sample);
+}
+void Peak3D::setDetector(SX::Instrument::Detector* detector)
+{
+	_event->setParent(detector);
+}
+
 
 }
 }

@@ -35,5 +35,10 @@ Detector* DetectorEvent::getParent()
 	return _detector;
 }
 
+void DetectorEvent::setParent(Detector* d)
+{
+	_detector=d;
+}
+
 } /* namespace Instrument */
 } // Namespace SX

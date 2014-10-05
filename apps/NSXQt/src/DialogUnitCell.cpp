@@ -50,10 +50,19 @@ void DialogUnitCell::getUnitCell()
         return;
     std::vector<Eigen::Vector3d> qvects;
     qvects.reserve(_peaks.size());
-    for (const auto& peak : _peaks)
+
+    SX::Instrument::Sample* sample=dynamic_cast<SX::Instrument::Sample*>(_peaks[0].get().getSampleState()->getParent());
+    SX::Instrument::Detector* detector=_peaks[0].get().getDetectorEvent()->getParent();
+
+    sample->getGonio()->resetOffsets();
+    detector->getGonio()->resetOffsets();
+
+   for (SX::Crystal::Peak3D& peak : _peaks)
     {
-        if (peak.get().isSelected())
-            qvects.push_back(peak.get().getQ());
+        if (peak.isSelected())
+            qvects.push_back(peak.getQ());
+        peak.setSample(sample);
+        peak.setDetector(detector);
     }
 
     qDebug() << "Searching direct lattice vectors using" << _peaks.size() << "peaks";
@@ -63,6 +72,7 @@ void DialogUnitCell::getUnitCell()
     std::vector<tVector> tvects=indexing.findOnSphere(50,20);
     qDebug() << "Refining solutions and diffractometers offsets";
     int soluce=0;
+
     for (int i=0;i<10;++i)
     {
     for (int j=i+1;j<10;++j)
@@ -78,13 +88,13 @@ void DialogUnitCell::getUnitCell()
                 UnitCell cell=UnitCell::fromDirectVectors(v1,v2,v3);
                 std::shared_ptr<UnitCell> pcell(new UnitCell(cell));
                 UBMinimizer minimizer;
-                minimizer.setSample(dynamic_cast<SX::Instrument::Sample*>(_peaks[0].get().getSampleState()->getParent()));
-                minimizer.setDetector(_peaks[0].get().getDetectorEvent()->getParent());
+                minimizer.setSample(sample);
+                minimizer.setDetector(detector);
                 minimizer.setFixedParameters(13);
                 int success=0;
-                for (auto& peak : _peaks)
+                for (SX::Crystal::Peak3D& peak : _peaks)
                 {
-                    if (peak.get().hasIntegerHKL(pcell))
+                    if (peak.hasIntegerHKL(pcell))
                     {
                         minimizer.addPeak(peak);
                         ++success;
@@ -129,12 +139,10 @@ void DialogUnitCell::getUnitCell()
                     cc.getParametersSigmas(as,bs,cs,alphas,betas,gammas);
                     double score=0.0;
                     std::shared_ptr<UnitCell> pcc(new UnitCell(cc));
-                    for (auto& peak : _peaks)
+                    for (SX::Crystal::Peak3D& peak : _peaks)
                     {
-                        if (peak.get().setBasis(pcc))
+                        if (peak.setBasis(pcc))
                             score++;
-                        else
-                            peak.get().setSelected(false);
                     }
                     score /= 0.01*_peaks.size();
                     _unitcells.push_back(std::make_tuple(cc,solution,score));
@@ -219,8 +227,13 @@ void DialogUnitCell::setTransformationMatrix()
     int success=0;
     for (auto& peak : _peaks)
     {
-        if (peak.get().setBasis(std::shared_ptr<UnitCell>(new UnitCell(_basis))))
-            ++success;
+        if (peak.get().isSelected())
+        {
+            if (peak.get().setBasis(std::shared_ptr<UnitCell>(new UnitCell(_basis))))
+                ++success;
+            else
+                peak.get().setSelected(false);
+        }
     }
     QMessageBox::information(this,"Indexation","Successfully indexed"+QString::number(success)+" peaks out of "+QString::number(_peaks.size()));
 }

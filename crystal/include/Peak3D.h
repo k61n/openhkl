@@ -46,6 +46,8 @@ namespace Instrument
 	class Diffractometer;
 	class ComponentState;
 	class DetectorEvent;
+	class Sample;
+	class Detector;
 }
 
 
@@ -116,6 +118,8 @@ public:
 	friend bool operator<(const Peak3D& p1, const Peak3D& p2);
 	void setSelected(bool);
 	bool isSelected() const;
+	void setSample(SX::Instrument::Sample*);
+	void setDetector(SX::Instrument::Detector*);
 private:
 	//! Pointer to the data containing the peak
 	SX::Data::IData* _data;

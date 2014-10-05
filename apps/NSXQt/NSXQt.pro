@@ -7,6 +7,7 @@
 QT       += core widgets printsupport opengl
 CONFIG   += debug_and_release
 QMAKE_CXXFLAGS += -std=c++0x -fopenmp -DNDEBUG -DEIGEN_FFTW_DEFAULT
+QMAKE_LFLAGS += -fopenmp
 TARGET = nsxtool
 TEMPLATE = app
 
@@ -53,7 +54,7 @@ FORMS    += ui/mainwindow.ui \
     dialogunitcellsolutions.ui
 
 win32:CONFIG(release, debug|release): LIBS += -lNSXTool
-else:unix: LIBS += -lNSXTool -lgomp -lboost_date_time -lfftw3
+else:unix: LIBS += -lNSXTool -lboost_date_time -lfftw3
 
 INCLUDEPATH += $$PWD include externals/include
 
