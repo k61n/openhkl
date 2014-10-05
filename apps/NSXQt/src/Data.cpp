@@ -107,14 +107,14 @@ void Data::readInMemory()
     if (!_inmemory)
     {
         _data.resize(_nblocks);
+        _inmemory=true;
 
 #pragma omp parallel for
         for (int i=0;i<_nblocks;++i)
         {
-            _data[i].reserve(640*256);
+            _data[i].reserve(_detector->getNCols()*_detector->getNRows());
             _data[i]=std::move(_mm->getFrame(i));
         }
-        _inmemory=true;
     }
 }
 // Release the Data from memory
@@ -132,8 +132,8 @@ void Data::releaseMemory()
 
 int Data::dataAt(int x, int y, int z)
 {
-    if (z<0 || z>=_nblocks || y<0 || y>=256 || x<0 || x>=640)
+    if (z<0 || z>=_nblocks || y<0 || y>=_detector->getNRows() || x<0 || x>=_detector->getNCols())
         return 0;
-    return (_data[z])[x*256+y];
+    return (_data[z])[x*_detector->getNRows()+y];
 }
 

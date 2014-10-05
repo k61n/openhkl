@@ -216,6 +216,12 @@ void DetectorView::keyPressEvent(QKeyEvent* event)
         break;
     }
 
+    case(Qt::Key_H):
+    {
+        _mode=HKL;
+        break;
+    }
+
     case(Qt::Key_Escape):
     {
         QList<QGraphicsItem*> items=_scene->selectedItems();
@@ -330,6 +336,11 @@ void DetectorView::mouseMoveEvent(QMouseEvent* event)
             get2Theta(posx,posy,th2);
             os << "th2: (" << th2 << ")\n" ;
             break;
+        }
+
+        case(HKL):
+        {
+
         }
 
         case(PIXEL):
@@ -560,7 +571,7 @@ void DetectorView::plotEllipsoids()
 
 void DetectorView::plotIntensityMap()
 {
-    QImage image=Mat2QImage(&(_ptrData->_currentFrame[0]),256,640,_zoomLeft,_zoomRight,_zoomTop,_zoomBottom,_maxIntensity);
+    QImage image=Mat2QImage(&(_ptrData->_currentFrame[0]),_ptrData->_detector->getNRows(),_ptrData->_detector->getNCols(),_zoomLeft,_zoomRight,_zoomTop,_zoomBottom,_maxIntensity);
     QPixmap pix=QPixmap::fromImage(image);
     pix=pix.scaled(width(),height(),Qt::IgnoreAspectRatio);
 

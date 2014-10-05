@@ -290,7 +290,7 @@ void MainWindow::on_action_peak_find_triggered()
     SX::Geometry::blob3DCollection blobs;
     try
     {
-      blobs=SX::Geometry::findBlobs3D<int>(temp, 256,640, threshold+2, 30, 10000, confidence, 0);
+      blobs=SX::Geometry::findBlobs3D<int>(temp, numor->_detector->getNRows(),numor->_detector->getNCols(), threshold+2, 30, 10000, confidence, 0);
     }catch(std::exception& e) // Warning if RAM error
     {
         qCritical() << "Peak finder caused a memory exception" << e.what();

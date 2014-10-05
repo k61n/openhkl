@@ -15,7 +15,7 @@ class DetectorView : public QGraphicsView
 {
     Q_OBJECT
 public:
-    enum CrossMode {THETA, GAMMA, D, PIXEL};
+    enum CrossMode {THETA, GAMMA, D, PIXEL, HKL};
     //
     enum CutterMode {ZOOM=0, LINE=1, HORIZONTALSLICE=2, VERTICALSLICE=3};
 
