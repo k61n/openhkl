@@ -10,6 +10,9 @@
 #include "Gonio.h"
 #include "Peak3D.h"
 #include "Sample.h"
+#include "TransAxis.h"
+#include "RotAxis.h"
+#include "Units.h"
 
 namespace SX
 {
@@ -352,22 +355,38 @@ std::ostream& operator<<(std::ostream& os, const UBSolution& solution)
 	os<<solution._ub<< std::endl;
 	os<<"UB error:" << std::endl;
 	os<<solution._sigmaub << std::endl;
-	os<<"Detector offsets: ";
-	for (int i=0;i<solution._detector->getGonio()->numberOfAxes();++i)
+	os<<"Detector offsets: " << std::endl;
+	auto detectorG=solution._detector->getGonio();
+	for (int i=0;i<detectorG->numberOfAxes();++i)
 	{
-		os << solution._detector->getGonio()->getAxis(i)->getLabel() << " ";
+		os << detectorG->getAxis(i)->getLabel() << " ";
 	}
 	os << std::endl;
-	os<<solution._detectorOffsets.transpose()<< std::endl;
-	os<<solution._sigmaDetectorOffsets.transpose() << std::endl;
-	os<<"Sample offsets:";
-	for (int i=0;i<solution._sample->getGonio()->numberOfAxes();++i)
+	for (int i=0;i<detectorG->numberOfAxes();++i)
 	{
-		os << solution._sample->getGonio()->getAxis(i)->getLabel() << " ";
+		SX::Instrument::Axis* axis=detectorG->getAxis(i);
+		if (dynamic_cast<SX::Instrument::TransAxis*>(axis))
+			os << solution._detectorOffsets[i]/SX::Units::mm << "(" << solution._sigmaDetectorOffsets[i]/SX::Units::mm << ") mm ";
+		else if (dynamic_cast<SX::Instrument::RotAxis*>(axis))
+			os << solution._detectorOffsets[i]/SX::Units::deg << "(" << solution._sigmaDetectorOffsets[i]/SX::Units::deg << ") deg ";
+	}
+	os <<std::endl;
+	os<<"Sample offsets:" << std::endl;
+	auto sampleG=solution._sample->getGonio();
+	for (int i=0;i<sampleG->numberOfAxes();++i)
+	{
+		os << sampleG->getAxis(i)->getLabel() << " ";
+	}
+	os << std::endl;
+	for (int i=0;i<sampleG->numberOfAxes();++i)
+	{
+		SX::Instrument::Axis* axis=sampleG->getAxis(i);
+		if (dynamic_cast<SX::Instrument::TransAxis*>(axis))
+			os << solution._sampleOffsets[i]/SX::Units::mm << "(" << solution._sigmaSampleOffsets[i]/SX::Units::mm << ") mm ";
+		else if (dynamic_cast<SX::Instrument::RotAxis*>(axis))
+			os << solution._sampleOffsets[i]/SX::Units::deg << "(" << solution._sigmaSampleOffsets[i]/SX::Units::deg << ") deg ";
 	}
 	os<<std::endl;
-	os<<solution._sampleOffsets.transpose()<<std::endl;
-	os<<solution._sigmaSampleOffsets.transpose() << std::endl;
 
 	return os;
 }
