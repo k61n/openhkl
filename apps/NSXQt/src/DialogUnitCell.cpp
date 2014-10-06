@@ -69,7 +69,7 @@ void DialogUnitCell::getUnitCell()
     FFTIndexing indexing(50.0);
     indexing.addVectors(qvects);
     qDebug() << "Running 7000 FFTs, keeping best 10 tvectors";
-    std::vector<tVector> tvects=indexing.findOnSphere(50,20);
+    std::vector<tVector> tvects=indexing.findOnSphere(40,10);
     qDebug() << "Refining solutions and diffractometers offsets";
     int soluce=0;
 
@@ -122,11 +122,11 @@ void DialogUnitCell::getUnitCell()
                     {
                         continue;
                     }
-                    NiggliReduction niggli(cc.getMetricTensor(),0.03);
+                    NiggliReduction niggli(cc.getMetricTensor(),1e-3);
                     Eigen::Matrix3d newg,P;
                     niggli.reduce(newg,P);
                     cc.transform(P);
-                    GruberReduction gruber(cc.getMetricTensor(),0.05);
+                    GruberReduction gruber(cc.getMetricTensor(),0.07);
                     LatticeCentring c;
                     BravaisType b;
                     gruber.reduce(P,c,b);
@@ -137,14 +137,21 @@ void DialogUnitCell::getUnitCell()
                     double as,bs,cs,alphas,betas,gammas;
                     cc.getParameters(ap,bp,cp,alpha,beta,gamma);
                     cc.getParametersSigmas(as,bs,cs,alphas,betas,gammas);
+
                     double score=0.0;
+                    double maxscore=0.0;
                     std::shared_ptr<UnitCell> pcc(new UnitCell(cc));
                     for (SX::Crystal::Peak3D& peak : _peaks)
                     {
-                        if (peak.setBasis(pcc))
+                        if (peak.isSelected())
+                        {
+                            maxscore++;
+                        if (peak.hasIntegerHKL(pcc))
                             score++;
+                        }
                     }
-                    score /= 0.01*_peaks.size();
+                    // Percentage of indexing
+                    score /= 0.01*maxscore;
                     _unitcells.push_back(std::make_tuple(cc,solution,score));
                 }
                  minimizer.resetParameters();
@@ -173,25 +180,24 @@ void DialogUnitCell::acceptSolution(int i)
     const SX::Crystal::UBSolution& sol=std::get<1>(_unitcells[i]);
     setUpValues();
     SX::Instrument::Component* s=_peaks[0].get().getSampleState()->getParent();
-    for (int i=0;i<s->numberOfAxes();++i)
+    for (unsigned int i=0;i<s->numberOfAxes();++i)
     {
         s->getGonio()->getAxis(i)->setOffset(sol._sampleOffsets[i]);
     }
     SX::Instrument::Detector* d=_peaks[0].get().getDetectorEvent()->getParent();
-    for (int i=0;i<d->numberOfAxes();++i)
+    for (unsigned int i=0;i<d->numberOfAxes();++i)
     {
         d->getGonio()->getAxis(i)->setOffset(sol._detectorOffsets[i]);
     }
 
     int success=0;
-
     for (auto& peak : _peaks)
     {
         if (peak.get().setBasis(std::shared_ptr<UnitCell>(new UnitCell(_basis))))
             ++success;
     }
 
-    QMessageBox::information(this,"Indexation","Successfully indexed"+QString::number(success)+" peaks out of "+QString::number(_peaks.size()));
+    QMessageBox::information(this,"Indexation","Successfully indexed "+QString::number(success)+" peaks out of "+QString::number(_peaks.size()));
 
     qDebug() << "" << _basis << sol;
 }

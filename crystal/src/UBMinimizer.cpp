@@ -232,6 +232,7 @@ int UBMinimizer::run(unsigned int maxIter)
 
 		// Create a reordered jacobian
 		Eigen::MatrixXd fjac=minimizer.fjac;
+
 		auto& indices=minimizer.permutation.indices();
 		for (int i=0;i<indices.size();++i)
 		{

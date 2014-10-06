@@ -10,7 +10,10 @@ PeakPlotter::PeakPlotter(QWidget *parent) : QDialog(parent), ui(new Ui::PeakPlot
     QCustomPlot* customPlot=ui->widget;
     customPlot->plotLayout()->insertRow(0);
     customPlot->addGraph();
-    customPlot->graph(0)->setPen(QPen(QColor("black")));
+    QPen pen;
+    pen.setColor(QColor("black"));
+    pen.setWidth(2.0);
+    customPlot->graph(0)->setPen(pen);
     customPlot->graph(0)->setErrorType(QCPGraph::etBoth);
     customPlot->graph(0)->setLineStyle(QCPGraph::lsLine);
     customPlot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 6));
@@ -20,8 +23,8 @@ PeakPlotter::PeakPlotter(QWidget *parent) : QDialog(parent), ui(new Ui::PeakPlot
     customPlot->graph(1)->setBrush(QBrush(QColor(255,40,0,80)));
 
     customPlot->addGraph();
-    customPlot->graph(2)->setPen(QPen(QColor("blue")));
-    customPlot->graph(2)->setBrush(QBrush(QColor(0,0,255,40)));
+    customPlot->graph(2)->setPen(QPen(QColor("green")));
+    customPlot->graph(2)->setBrush(QBrush(QColor(0,255,0,40)));
 
     customPlot->xAxis->setLabel("Frame (a.u.)");
     customPlot->yAxis->setLabel("Intensity (counts)");
