@@ -70,6 +70,7 @@ static const double nm=m*1e-9;
 static const double pm=m*1e-12;
 static const double fm=m*1e-15;
 static const double am=m*1e-10;
+static const double ang=m*1e-10;
 
 // Units of [L]^2
 static const double m2=m*m;
@@ -79,6 +80,7 @@ static const double um2=um*um;
 static const double nm2=nm*nm;
 static const double pm2=pm*pm;
 static const double am2=am*am;
+static const double ang2=ang*ang;
 static const double barn=m2*1e-24;
 
 // Units of [L]^3
@@ -90,6 +92,7 @@ static const double nm3=nm*nm*nm;
 static const double pm3=pm*pm*pm;
 static const double fm3=fm*fm*fm;
 static const double am3=am*am*am;
+static const double ang3=ang*ang*ang;
 
 // Units of angle
 static const double rad=1.0;

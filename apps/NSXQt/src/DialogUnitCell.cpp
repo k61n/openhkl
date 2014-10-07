@@ -90,7 +90,14 @@ void DialogUnitCell::getUnitCell()
                 UBMinimizer minimizer;
                 minimizer.setSample(sample);
                 minimizer.setDetector(detector);
+                minimizer.setFixedParameters(9);
+                minimizer.setFixedParameters(10);
+                minimizer.setFixedParameters(11);
+                minimizer.setFixedParameters(12);
                 minimizer.setFixedParameters(13);
+                minimizer.setFixedParameters(14);
+                minimizer.setFixedParameters(15);
+                minimizer.setFixedParameters(16);
                 int success=0;
                 for (SX::Crystal::Peak3D& peak : _peaks)
                 {
@@ -117,26 +124,29 @@ void DialogUnitCell::getUnitCell()
                     try
                     {
                         cc=SX::Crystal::UnitCell::fromReciprocalVectors(solution._ub.row(0),solution._ub.row(1),solution._ub.row(2));
-                        cc.setReciprocalSigmas(solution._sigmaub.row(0),solution._sigmaub.row(1),solution._sigmaub.row(2));
+//                        cc.setReciprocalSigmas(solution._sigmaub.row(0),solution._sigmaub.row(1),solution._sigmaub.row(2));
+                        cc.setReciprocalCovariance(solution._covub);
+                        std::cout << solution._ub << std::endl;
+                        std::cout << solution._covub << std::endl;
                     }catch(...)
                     {
                         continue;
                     }
-                    NiggliReduction niggli(cc.getMetricTensor(),1e-3);
-                    Eigen::Matrix3d newg,P;
-                    niggli.reduce(newg,P);
-                    cc.transform(P);
-                    GruberReduction gruber(cc.getMetricTensor(),0.07);
-                    LatticeCentring c;
-                    BravaisType b;
-                    gruber.reduce(P,c,b);
-                    cc.setLatticeCentring(c);
-                    cc.setBravaisType(b);
-                    cc.transform(P);
-                    double ap,bp,cp,alpha,beta,gamma;
-                    double as,bs,cs,alphas,betas,gammas;
-                    cc.getParameters(ap,bp,cp,alpha,beta,gamma);
-                    cc.getParametersSigmas(as,bs,cs,alphas,betas,gammas);
+//                    NiggliReduction niggli(cc.getMetricTensor(),1e-3);
+//                    Eigen::Matrix3d newg,P;
+//                    niggli.reduce(newg,P);
+//                    cc.transform(P);
+//                    GruberReduction gruber(cc.getMetricTensor(),0.07);
+//                    LatticeCentring c;
+//                    BravaisType b;
+//                    gruber.reduce(P,c,b);
+//                    cc.setLatticeCentring(c);
+//                    cc.setBravaisType(b);
+//                    cc.transform(P);
+//                    double ap,bp,cp,alpha,beta,gamma;
+//                    double as,bs,cs,alphas,betas,gammas;
+//                    cc.getParameters(ap,bp,cp,alpha,beta,gamma);
+//                    cc.getParametersSigmas(as,bs,cs,alphas,betas,gammas);
 
                     double score=0.0;
                     double maxscore=0.0;

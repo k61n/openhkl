@@ -169,12 +169,15 @@ struct UBSolution
 	UBSolution(const UBSolution& ubsol);
 	friend class UBMinimizer;
 	UBSolution();
-	UBSolution(SX::Instrument::Detector* detector,SX::Instrument::Sample* sample,const Eigen::VectorXd& values,const Eigen::VectorXd& sigmas,const std::vector<bool>& fixedParameters);
+	UBSolution(SX::Instrument::Detector* detector,SX::Instrument::Sample* sample,const Eigen::VectorXd& values,const Eigen::MatrixXd& cov,const std::vector<bool>& fixedParameters);
 	UBSolution& operator=(const UBSolution& ubsol);
 	SX::Instrument::Detector* _detector;
 	SX::Instrument::Sample* _sample;
     Eigen::Matrix3d _ub;
-    Eigen::Matrix3d _sigmaub;
+
+    Eigen::Matrix<double,9,9> _covub;
+
+//    Eigen::Matrix3d _sigmaub;
 	Eigen::VectorXd _detectorOffsets;
 	Eigen::VectorXd _sigmaDetectorOffsets;
 	Eigen::VectorXd _sampleOffsets;

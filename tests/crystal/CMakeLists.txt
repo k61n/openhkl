@@ -18,5 +18,9 @@ add_executable(TestPeak3D TestPeak3D.cpp)
 TARGET_LINK_LIBRARIES(TestPeak3D ${Boost_LIBRARIES} NSXTool)
 add_test(TestPeak3D TestPeak3D)
 
+add_executable(TestUBMinimizer TestUBMinimizer.cpp)
+TARGET_LINK_LIBRARIES(TestUBMinimizer ${Boost_LIBRARIES} NSXTool)
+add_test(TestUBMinimizer TestUBMinimizer)
 
-
+configure_file(CsOsO_15K.raf CsOsO_15K.raf COPYONLY)
+configure_file(CsOsO_15K.lpt CsOsO_15K.lpt COPYONLY)

@@ -224,11 +224,14 @@ int UBMinimizer::run(unsigned int maxIter)
 		Eigen::VectorXd fvec(_functor.values());
 		// Calculate final residuals
 		_functor(x,fvec);
+//		std::cout<<fvec.transpose()<<std::endl;
 		// Sum of squared residuals
 		double sse = fvec.squaredNorm();
 		int freeParameters=_functor.inputs()-_functor._fixedParameters.size();
 		// Divide by the DOF
 		sse /= (_functor.values()-freeParameters);
+
+		std::cout<<"MSE = "<<sse<<std::endl;
 
 		// Create a reordered jacobian
 		Eigen::MatrixXd fjac=minimizer.fjac;
@@ -246,21 +249,8 @@ int UBMinimizer::run(unsigned int maxIter)
 				removeColumn(fjac,i);
 		}
 
-	    Eigen::MatrixXd covMatrix = (fjac.transpose()*fjac).inverse();
-	    // Sigma for non-fixed parameters
-	    Eigen::VectorXd partialsigmas = (sse*covMatrix.diagonal()).cwiseSqrt();
-	    Eigen::VectorXd sigmas(x.size());
-
-	    int count=0;
-	    for (int i=0;i<sigmas.size();++i)
-	    {
-	    	if (!fParams[i])
-	    		sigmas[i]=partialsigmas[count++];
-	    	else
-	    		sigmas[i]=0.0;
-	    }
-
-	    _solution = UBSolution(_functor._detector, _functor._sample, x, sigmas, fParams);
+	    Eigen::MatrixXd covMatrix = sse*(fjac.transpose()*fjac).inverse();
+	    _solution = UBSolution(_functor._detector, _functor._sample, x, covMatrix, fParams);
 	}
 
 	return status;
@@ -303,21 +293,26 @@ UBSolution::UBSolution() : _detector(nullptr), _sample(nullptr)
 {
 }
 
-UBSolution::UBSolution(SX::Instrument::Detector* detector,SX::Instrument::Sample* sample,const Eigen::VectorXd& values,const Eigen::VectorXd& sigmas,const std::vector<bool>& fixedParameters)
+UBSolution::UBSolution(SX::Instrument::Detector* detector,SX::Instrument::Sample* sample,const Eigen::VectorXd& values,const Eigen::MatrixXd& cov,const std::vector<bool>& fixedParameters)
 : _detector(detector), _sample(sample), _fixedParameters(fixedParameters)
 {
 	unsigned int idx = 0;
 
 	_ub  << values(0),values(1),values(2),values(3),values(4), values(5), values(6),values(7),values(8);
-	_sigmaub << sigmas(0),sigmas(1),sigmas(2),sigmas(3),sigmas(4), sigmas(5), sigmas(6), sigmas(7), sigmas(8);
+
+	_covub = cov.block(0,0,9,9);
+
+//	_sigmaub << sigmas(0),sigmas(1),sigmas(2),sigmas(3),sigmas(4), sigmas(5), sigmas(6), sigmas(7), sigmas(8);
 
 	idx += 9;
 	_detectorOffsets = values.segment(idx,_detector->numberOfAxes());
-	_sigmaDetectorOffsets = sigmas.segment(idx,_detector->numberOfAxes());
+//	_sigmaDetectorOffsets = sigmas.segment(idx,_detector->numberOfAxes());
+//	_sigmaDetectorOffsets = cov.diagonal().segment(idx,_detector->numberOfAxes());
 
 	idx+=_detector->numberOfAxes();
 	_sampleOffsets = values.segment(idx,_sample->numberOfAxes());
-	_sigmaSampleOffsets = sigmas.segment(idx,_sample->numberOfAxes());
+//	_sigmaSampleOffsets = sigmas.segment(idx,_sample->numberOfAxes());
+//	_sigmaSampleOffsets = cov.diagonal().segment(idx,_sample->numberOfAxes());
 }
 
 UBSolution::UBSolution(const UBSolution& other)
@@ -325,7 +320,8 @@ UBSolution::UBSolution(const UBSolution& other)
 	_detector = other._detector;
 	_sample = other._sample;
 	_ub = other._ub;
-	_sigmaub = other._sigmaub;
+	_covub = other._covub;
+//	_sigmaub = other._sigmaub;
 	_detectorOffsets = other._detectorOffsets;
 	_sigmaDetectorOffsets = other._sigmaDetectorOffsets;
 	_sampleOffsets = other._sampleOffsets;
@@ -340,7 +336,8 @@ UBSolution& UBSolution::operator=(const UBSolution& other)
 		_detector = other._detector;
 		_sample = other._sample;
 		_ub = other._ub;
-		_sigmaub = other._sigmaub;
+		_covub = other._covub;
+//		_sigmaub = other._sigmaub;
 		_detectorOffsets = other._detectorOffsets;
 		_sigmaDetectorOffsets = other._sigmaDetectorOffsets;
 		_sampleOffsets = other._sampleOffsets;
@@ -355,7 +352,8 @@ std::ostream& operator<<(std::ostream& os, const UBSolution& solution)
 	os<<"UB matrix:"<<std::endl;
 	os<<solution._ub<< std::endl;
 	os<<"UB error:" << std::endl;
-	os<<solution._sigmaub << std::endl;
+	os<<solution._covub << std::endl;
+//	os<<solution._sigmaub << std::endl;
 	os<<"Detector offsets: " << std::endl;
 	auto detectorG=solution._detector->getGonio();
 	for (int i=0;i<detectorG->numberOfAxes();++i)
