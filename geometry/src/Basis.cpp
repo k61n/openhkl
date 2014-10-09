@@ -539,21 +539,24 @@ void Basis::calculateSigmasDirectToReciprocal(bool direction)
 	// Explained in M. Lefebvre, R.K. Keeler, R. Sobie, J. White, Propagation of errors for matrix inversion,
 	// Nuclear Instruments and Methods in Physics Research Section A: Accelerators, Spectrometers, Detectors and Associated Equipment, Volume 451, Issue 2, 1 September 2000, Pages 520-528
 
+
 	Matrix3d input;
-	covMat& inputS=_Acov;
-	covMat& outputS=_Bcov;
+	covMat* inputS;
+	covMat* outputS;
 	if (direction)
 	{
 		input   = getReciprocalStandardM();
+		inputS=&_Acov;
+		outputS=&_Bcov;
 	}
 	else
 	{
 		input   = getStandardM();
-		inputS  = _Bcov;
-		outputS = _Acov;
+		inputS  = &_Bcov;
+		outputS = &_Acov;
 	}
 
-	outputS = covMat::Zero();
+	*outputS = covMat::Zero();
 
 	for (int alpha=0;alpha<3;++alpha)
 	{
@@ -573,7 +576,7 @@ void Basis::calculateSigmasDirectToReciprocal(bool direction)
 							for (int k=0;k<3;++k)
 							{
 								for (int l=0;l<3;++l)
-									outputS(u,v)+=input(alpha,i)*input(j,beta)*input(a,k)*input(l,b)*inputS(3*i+j,3*k+l);
+									(*outputS)(u,v)+=input(alpha,i)*input(j,beta)*input(a,k)*input(l,b)*(*inputS)(3*i+j,3*k+l);
 							}
 						}
 					}
