@@ -4,7 +4,6 @@
 
 #include <boost/filesystem.hpp>
 #include <boost/interprocess/exceptions.hpp>
-#include <boost/interprocess/mapped_region.hpp>
 #include <boost/spirit/include/qi.hpp>
 
 #include "ILLAsciiDataReader.h"
@@ -33,36 +32,21 @@ void readDoublesFromChar(const char* begin, const char* end, std::vector<double>
 	qi::phrase_parse(begin, end, *qi::double_ >> qi::eoi, ascii::space, v);
 }
 
-ILLAsciiDataReader::ILLAsciiDataReader() : IDataReader(), _nframes(0),_datapoints(0),_nangles(0),_header_size(0),_skipchar(0),_datalength(0)
+ILLAsciiDataReader::ILLAsciiDataReader() : IDataReader(), _nframes(0),_datapoints(0),_nangles(0),_header_size(0),_skipchar(0),_datalength(0),_map(),_map_address(nullptr)
 {
 }
 
 std::vector<int> ILLAsciiDataReader::getFrame(uint i) const
 {
-	if (i>_nframes-1)
-		throw std::runtime_error("ILLAsciiDataReader:readBlock, frame index not valid");
+	assert(i<_nframes);
 
 	// Determine the beginning of the data block
 	std::size_t begin=_header_size+(i+1)*_skipchar+i*_datalength;
 
-	// Map the region of interest in the file
-	boost::interprocess::mapped_region mdblock(_map,boost::interprocess::read_only,begin,_datalength);
-
 	// Create vector and try to reserve a memory block
 	std::vector<int> v;
-	try
-	{
-		v.reserve(_datapoints);
-	}
-	catch(...)
-	{
-		throw std::runtime_error("ILLAsciiDataReader: problem reserving size of vector");
-	}
-	const char* b=reinterpret_cast<char*>(mdblock.get_address());
-	readIntsFromChar(b,b+_datalength,v);
-	if (v.size()!=_datapoints)
-		throw std::runtime_error("ILLAsciiDataReader::readBlock, number of data points read different from expected");
-
+	v.reserve(_datapoints);
+	readIntsFromChar(_map_address+begin,_map_address+begin+_datalength,v);
 	return v;
 }
 
@@ -75,22 +59,21 @@ void ILLAsciiDataReader::open(const std::string& filename)
 		throw std::runtime_error("ILLAsciiDataReader, file:"+filename+" does not exist");
 	try
 	{
-		_map=boost::interprocess::file_mapping(filename.c_str(), boost::interprocess::read_only);
+		boost::interprocess::file_mapping filemap(filename.c_str(), boost::interprocess::read_only);
+		_map=boost::interprocess::mapped_region(filemap,boost::interprocess::read_only);
 	}
 	catch(...)
 	{
 		throw;
 	}
 
-    // 81 characters per line
+    // 81 characters per line, at least 100 lines of header
 	std::size_t block_size=100*81;
-
-	// Map the region corresponding to the metadata block
-	boost::interprocess::mapped_region mdblock(_map,boost::interprocess::read_only,0,block_size);
 	// Beginning of the blockILLAsciiDataReader
-	const char* b=reinterpret_cast<char*>(mdblock.get_address());
+	_map_address=reinterpret_cast<char*>(_map.get_address());
+
 	char* buffer=new char[block_size];
-	strncpy(buffer, b, block_size);
+	strncpy(buffer, _map_address, block_size);
 	ILLAsciiMetaReader* metareader=ILLAsciiMetaReader::Instance();
 	_metadata=metareader->read(buffer,_header_size);
 	delete [] buffer;
@@ -107,12 +90,12 @@ void ILLAsciiDataReader::open(const std::string& filename)
 	int skip3lines =3*81;
 	std::vector<int> vi;
 
-	readIntsFromChar(b+_header_size+skip3lines,b+_header_size+skip3lines+16,vi);
+	readIntsFromChar(_map_address+_header_size+skip3lines,_map_address+_header_size+skip3lines+16,vi);
 
-	if ((vi.size() != 2) && (vi[0] != (_nangles-3)))
+	if ((int)(vi.size() != 2) && (vi[0] != (int)(_nangles-3)))
 		throw std::runtime_error("Problem parsing numor: mismatch between number of angles in header and datablock1.");
 
-	const char* beginvalues=b+_header_size+skip3lines +(vi[1]+1)*81;
+	const char* beginvalues=_map_address+_header_size+skip3lines +(vi[1]+1)*81;
 
 	std::vector<double> vd;
 	int numberoflinestoread=vi[0]/5+1;

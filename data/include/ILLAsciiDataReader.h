@@ -32,6 +32,7 @@
 #include <vector>
 
 #include <boost/interprocess/file_mapping.hpp>
+#include <boost/interprocess/mapped_region.hpp>
 
 #include "IDataReader.h"
 #include "MetaData.h"
@@ -66,8 +67,8 @@ private:
 	std::size_t _skipchar;
 	std::size_t _datalength;
 
-	boost::interprocess::file_mapping _map;
-
+	boost::interprocess::mapped_region _map;
+	const char* _map_address;
 };
 
 } // end namespace Data
