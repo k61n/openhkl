@@ -20,6 +20,17 @@ namespace SX
 namespace Crystal
 {
 
+void removeRow(Eigen::MatrixXd& matrix, unsigned int rowToRemove)
+{
+    unsigned int numRows = matrix.rows()-1;
+    unsigned int numCols = matrix.cols();
+
+    if( rowToRemove < numRows )
+        matrix.block(rowToRemove,0,numRows-rowToRemove,numCols) = matrix.block(rowToRemove+1,0,numRows-rowToRemove,numCols);
+
+    matrix.conservativeResize(numRows,numCols);
+}
+
 void removeColumn(Eigen::MatrixXd& matrix, unsigned int colToRemove)
 {
     unsigned int numRows = matrix.rows();
@@ -212,7 +223,6 @@ int UBMinimizer::run(unsigned int maxIter)
 
 	int status = minimizer.minimize(x);
 
-
 	if (status==1)
 	{
 
@@ -224,33 +234,53 @@ int UBMinimizer::run(unsigned int maxIter)
 		Eigen::VectorXd fvec(_functor.values());
 		// Calculate final residuals
 		_functor(x,fvec);
-//		std::cout<<fvec.transpose()<<std::endl;
-		// Sum of squared residuals
-		double sse = fvec.squaredNorm();
-		int freeParameters=_functor.inputs()-_functor._fixedParameters.size();
-		// Divide by the DOF
-		sse /= (_functor.values()-freeParameters);
 
-		std::cout<<"MSE = "<<sse<<std::endl;
+		// The MSE is computed as SSE/dof where dof is the number of degrees of freedom
+		int nFreeParameters=_functor.inputs()-_functor._fixedParameters.size();
+		double mse = fvec.squaredNorm()/(_functor.values()-nFreeParameters);
 
-		// Create a reordered jacobian
-		Eigen::MatrixXd fjac=minimizer.fjac;
+		// Computation of the covariance matrix
+		// The covariance matrix is obtained from the estimated jacobian computed through a QR decomposition
+		// (see for example:
+		// 		- http://en.wikipedia.org/wiki/Non-linear_least_squares
+		// 		- https://github.com/scipy/scipy/blob/v0.14.0/scipy/optimize/minpack.py#L256
+		// 		- http://osdir.com/ml/python.scientific.user/2005-03/msg00067.html)
 
-		auto& indices=minimizer.permutation.indices();
-		for (int i=0;i<indices.size();++i)
-		{
-			int index=indices[i];
-			fjac.col(index)=minimizer.fjac.col(i);
-		}
+		// CMinPack does not provide directly the jacobian but the so called FJAC that is NOT the jacobian
+		// FJAC is an output M by N array where M is the number of observations (_functor.values()) and N the number of parameters (_functor.inputs()).
+		// The upper N by N submatrix of FJAC contains the upper triangular matrix R with diagonal elements of nonincreasing magnitude such that
+		//
+		//		P^t * (J^t * J) * P = R^t * R,
+		//
+		// where P is a permutation matrix and J is the final calculated jacobian
+		// From (J^t * J) we can get directly get the covariance matrix C using the formula
+		//
+		// 		C = (J^t * J)^-1
 
-		for (int i=0;i<fParams.size();++i)
+		// A copy of the CMINPACK FJAC matrix
+		Eigen::MatrixXd fjac=minimizer.fjac.block(0,0,_functor.inputs(),_functor.inputs());
+
+		// The R * P^t matrix
+		Eigen::MatrixXd RPt = fjac.triangularView<Eigen::Upper>()*(minimizer.permutation.toDenseMatrix().cast<double>().transpose());
+
+		Eigen::MatrixXd JtJ = RPt.transpose()*RPt;
+
+		// Remove the fixed parameters before inverting J^t * J
+		for (unsigned int i=0;i<fParams.size();++i)
 		{
 			if (fParams[i])
-				removeColumn(fjac,i);
+			{
+				removeColumn(JtJ,i);
+				removeRow(JtJ,i);
+			}
 		}
 
-	    Eigen::MatrixXd covMatrix = sse*(fjac.transpose()*fjac).inverse();
-	    _solution = UBSolution(_functor._detector, _functor._sample, x, covMatrix, fParams);
+		// The covariance matrix
+		Eigen::MatrixXd covariance=JtJ.inverse();
+
+	    covariance *= mse;
+
+	    _solution = UBSolution(_functor._detector, _functor._sample, x, covariance, fParams);
 	}
 
 	return status;
@@ -356,7 +386,7 @@ std::ostream& operator<<(std::ostream& os, const UBSolution& solution)
 //	os<<solution._sigmaub << std::endl;
 	os<<"Detector offsets: " << std::endl;
 	auto detectorG=solution._detector->getGonio();
-	for (int i=0;i<detectorG->numberOfAxes();++i)
+	for (unsigned int i=0;i<detectorG->numberOfAxes();++i)
 	{
 		os << detectorG->getAxis(i)->getLabel() << " ";
 		SX::Instrument::Axis* axis=detectorG->getAxis(i);
@@ -368,7 +398,7 @@ std::ostream& operator<<(std::ostream& os, const UBSolution& solution)
 	os <<std::endl;
 	os<<"Sample offsets:" << std::endl;
 	auto sampleG=solution._sample->getGonio();
-	for (int i=0;i<sampleG->numberOfAxes();++i)
+	for (unsigned int i=0;i<sampleG->numberOfAxes();++i)
 	{
 		os << sampleG->getAxis(i)->getLabel() << " ";
 		SX::Instrument::Axis* axis=sampleG->getAxis(i);
