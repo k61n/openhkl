@@ -34,7 +34,9 @@ public slots:
     //! Change selected status of peak when double-clicked
     void deselectPeak(QModelIndex index);
 private:
-    void sortByHKL(bool up);
+    void sortByH(bool up);
+    void sortByK(bool up);
+    void sortByL(bool up);
     void sortByIntensity(bool up);
     void sortByNumor(bool up);
     void sortBySelected(bool up);

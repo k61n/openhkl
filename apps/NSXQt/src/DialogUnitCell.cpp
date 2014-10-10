@@ -19,8 +19,6 @@
 using namespace SX::Crystal;
 using namespace SX::Geometry;
 
-
-
 DialogUnitCell::DialogUnitCell(QWidget *parent):QDialog(parent),ui(new Ui::DialogUnitCell)
 {
     ui->setupUi(this);
