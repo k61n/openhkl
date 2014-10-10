@@ -43,6 +43,7 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
 	// Build a detector
 	std::shared_ptr<Gonio> detectorGonio(new Gonio("Gamma"));
 	detectorGonio->addRotation("Gamma",Vector3d(0,0,1),RotAxis::CW);
+	detectorGonio->addTranslation("y-offset",Vector3d(0,1,0));
 	D9->setGonio(detectorGonio);
 
 	Sample* sample=new Sample();
@@ -68,7 +69,7 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
 		// Create a peak
 		Peak3D peak;
 		// Create the detector event matching that peak (the px and py are given in mm in the RAFUB input file)
-		peak.setDetectorEvent(new DetectorEvent(D9->createDetectorEvent(px/2,py/2,{gamma*deg})));
+		peak.setDetectorEvent(new DetectorEvent(D9->createDetectorEvent(px/2,py/2,{gamma*deg,0.0})));
 		// set the miller indices corresponding to the peak
 		peak.setMillerIndices(h,k,l);
 		// Set the wavelength
@@ -82,29 +83,20 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
     UBMinimizer minimizer;
     minimizer.setDetector(D9);
     minimizer.setSample(sample);
-    minimizer.setFixedParameters(9);
-    minimizer.setFixedParameters(10);
     minimizer.setFixedParameters(11);
-    minimizer.setFixedParameters(12);
 
     for (auto& peak : _peaks)
 		minimizer.addPeak(peak);
 
     Eigen::Matrix3d M=Eigen::Matrix3d::Ones();
-	minimizer.setStartingUBMatrix(M);
+    minimizer.setStartingUBMatrix(M);
 
     int ret = minimizer.run(100);
 
     UBSolution solution=minimizer.getSolution();
 
-//    std::cout<<solution<<std::endl;
-
     SX::Crystal::UnitCell uc=SX::Crystal::UnitCell::fromReciprocalVectors(solution._ub.row(0),solution._ub.row(1),solution._ub.row(2));
 
     uc.setReciprocalCovariance(solution._covub);
-
-    std::cout<<uc<<std::endl;
-
-
 
 }
