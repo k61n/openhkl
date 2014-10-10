@@ -336,13 +336,11 @@ UBSolution::UBSolution(SX::Instrument::Detector* detector,SX::Instrument::Sample
 
 	idx += 9;
 	_detectorOffsets = values.segment(idx,_detector->numberOfAxes());
-//	_sigmaDetectorOffsets = sigmas.segment(idx,_detector->numberOfAxes());
-//	_sigmaDetectorOffsets = cov.diagonal().segment(idx,_detector->numberOfAxes());
+	_sigmaDetectorOffsets = Eigen::VectorXd::Zero(idx,_detector->numberOfAxes());
 
 	idx+=_detector->numberOfAxes();
 	_sampleOffsets = values.segment(idx,_sample->numberOfAxes());
-//	_sigmaSampleOffsets = sigmas.segment(idx,_sample->numberOfAxes());
-//	_sigmaSampleOffsets = cov.diagonal().segment(idx,_sample->numberOfAxes());
+	_sigmaSampleOffsets = Eigen::VectorXd::Zero(idx,_sample->numberOfAxes());
 }
 
 UBSolution::UBSolution(const UBSolution& other)
