@@ -38,14 +38,17 @@ include_directories(${EIGEN3_INCLUDE_DIR})
 
 IF(CMAKE_COMPILER_IS_GNUCXX)
   ADD_DEFINITIONS(
-  	-msse2
+    -msse2
     -std=c++0x
     -Wall
     -DNDEBUG
     -D__GXX_EXPERIMENTAL_CXX0X__ 
-    -DEIGEN_DONT_ALIGN_STATICALLY
+    -funroll-loops
+    -mfpmath=sse
+    -ftree-vectorize
     -DEIGEN_FFTW_DEFAULT
 )
+  SET(CMAKE_CXX_FLAGS_RELEASE "-O2") 
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ")
 ENDIF()
 
