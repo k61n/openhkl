@@ -95,7 +95,7 @@ public:
 	NDTree(const NDTree<T,D>& other);
 
 	//! Assignment operator
-	NDTree<T,D> operator=(const NDTree<T,D>& other);
+	NDTree<T,D>& operator=(const NDTree<T,D>& other);
 
 	//! Constructor from two Eigen3 vectors, throw invalid_argument if lb < ub
 	NDTree(const vector& lb, const vector& ub);
@@ -234,17 +234,32 @@ NDTree<T,D>::NDTree()
 }
 
 template<typename T, uint D>
-NDTree<T,D>::NDTree(const NDTree<T,D>& other)
+NDTree<T,D>::NDTree(const NDTree<T,D>& other):
+AABB<T,D>(other),
+_depth(other._depth),
+_parent(new NDTree<T,D>(*(other._parent))),
+_right(new NDTree<T,D>(*(other._right)))
 {
-	_depth = other._depth;
-	_parent = new NDTree<T,D>(*(other._parent));
-	_right = new NDTree<T,D>(*(other._right));
-
 	_data.reserve(_MAX_STORAGE);
 	for (auto d : other._data)
 		_data.push_back(new AABB<T,D>(*d));
 }
 
+template<typename T, uint D>
+NDTree<T,D>& NDTree<T,D>::operator=(const NDTree<T,D>& other)
+{
+	if (this!=&other)
+	{
+		AABB<T,D>::operator=(other);
+		_depth=other._depth;
+		_parent=new NDTree<T,D>(*(other._parent));
+		_right=new NDTree<T,D>(*(other._right));
+		_data.reserve(_MAX_STORAGE);
+		for (auto d : other._data)
+			_data.push_back(new AABB<T,D>(*d));
+	}
+	return *this;
+}
 
 template<typename T, uint D>
 NDTree<T,D>::NDTree(const vector& lb, const vector& ub)
