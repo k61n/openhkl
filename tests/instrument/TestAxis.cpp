@@ -16,7 +16,7 @@ const double tolerance=1e-6;
 class TestAxis: public Axis
 {
 public:
-	TestAxis(const std::string& label): Axis(label)
+	TestAxis(const std::string& label, bool physical): Axis(label,physical)
 	{}
 	~TestAxis(){};
 	Transform<double,3,Eigen::Affine> getHomMatrix(double value) const
@@ -27,7 +27,7 @@ public:
 
 BOOST_AUTO_TEST_CASE(Tests_Axis)
 {
-	TestAxis axis("Omega");
+	TestAxis axis("Omega",true);
 	const std::string& label=axis.getLabel();
 
 	BOOST_CHECK_EQUAL(label,"Omega");
