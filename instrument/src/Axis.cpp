@@ -8,8 +8,41 @@ namespace SX
 namespace Instrument
 {
 
-Axis::Axis(const std::string& label):_label(label),_axis(Eigen::Vector3d::Zero()),_offset(0),_min(-std::numeric_limits<double>::infinity()),_max(std::numeric_limits<double>::infinity()),_offsetFixed(false)
+Axis::Axis(const std::string& label, bool physical)
+: _label(label),
+  _axis(Eigen::Vector3d::Zero()),
+  _offset(0),
+  _min(-std::numeric_limits<double>::infinity()),
+  _max(std::numeric_limits<double>::infinity()),
+  _offsetFixed(false),
+  _physical(physical)
 {
+}
+
+Axis::Axis(const Axis& other)
+: _label(other._label),
+  _axis(other._axis),
+  _offset(other._offset),
+  _min(other._min),
+  _max(other._max),
+  _offsetFixed(other._offsetFixed),
+  _physical(other._physical)
+{
+}
+
+Axis& Axis::operator=(const Axis& other)
+{
+	if (this != &other)
+	{
+		_label       = other._label;
+		_axis        = other._axis;
+		_offset      = other._offset;
+		_min         = other._min;
+		_max         = other._max;
+		_offsetFixed = other._offsetFixed;
+		_physical    = other._physical;
+	}
+	return *this;
 }
 
 Axis::~Axis()
@@ -96,6 +129,11 @@ void Axis::checkRange(double value)
 	if (value<_min || value>_max)
 		throw std::range_error("Axis "+_label+": value given for transformation not within limits");
 	return;
+}
+
+bool Axis::isPhysical() const
+{
+	return _physical;
 }
 
 }

@@ -46,8 +46,13 @@ namespace Instrument{
 * for a rotation of M_PI about the axis, the method getHomMatrix(M_PI) will return the hom. Matrix.
 */
 class Axis {
+
 public:
-	Axis(const std::string& label);
+	Axis(const std::string& label, bool physical);
+	//! Copy constructor
+	Axis(const Axis& other);
+	//! Assignment operator
+	Axis& operator=(const Axis& other);
 	virtual ~Axis()=0;
 	//! Give a label to this axis
 	void setLabel(const std::string& label);
@@ -82,6 +87,8 @@ public:
 	virtual Transform<double,3,Eigen::Affine> getHomMatrix(double value) const=0;
 	//! Transform vector
 	Vector3d transform(const Vector3d& v, double value);
+	//! Return whether or not the axis is physical or not
+	bool isPhysical() const;
 protected:
 	//! Check whether a value is within the authorized limits of this axis, throw otherwise.
 	void checkRange(double value);
@@ -95,6 +102,9 @@ protected:
 	double _min, _max;
 	//!
 	bool _offsetFixed;
+	//! true for a physical axis, false for a virtual
+	bool _physical;
+
 };
 
 } // End namespace Instrument
