@@ -57,7 +57,7 @@ public:
 	Gonio(const std::string& label);
 	//! Destructor
 	~Gonio();
-	Axis* addRotation(const std::string& label,const Vector3d& axis, RotAxis::Direction dir, bool physical=true);
+	Axis* addRotation(const std::string& label,const Vector3d& axis, RotAxis::Direction dir, double offset=0.0, bool physical=true);
 	Axis* addTranslation(const std::string& label,const Vector3d& axis, bool physical=true);
 	//! Pointer to axis i, throw range_error if not found
 	Axis* const getAxis(unsigned int i);

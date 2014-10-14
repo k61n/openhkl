@@ -35,9 +35,9 @@ Axis*const Gonio::getAxis(const std::string& label)
 }
 
 
-Axis* Gonio::addRotation(const std::string& label, const Vector3d& axis,RotAxis::Direction dir, bool physical)
+Axis* Gonio::addRotation(const std::string& label, const Vector3d& axis,RotAxis::Direction dir, double offset, bool physical)
 {
-	_axes.push_back(new RotAxis(label,axis,dir,0.0,physical));
+	_axes.push_back(new RotAxis(label,axis,dir,offset,physical));
 	return _axes.back();
 }
 
