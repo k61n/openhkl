@@ -10,19 +10,37 @@ namespace SX
 namespace Instrument
 {
 
-RotAxis::RotAxis(const std::string& label):Axis(label),_dir(CCW)
+RotAxis::RotAxis(const std::string& label, bool physical) : Axis(label,physical),_dir(CCW)
 {
 }
 
 
-RotAxis::RotAxis(const std::string& label, const Vector3d& axis, Direction direction, double offset):
-		Axis(label)
+RotAxis::RotAxis(const std::string& label, const Vector3d& axis, Direction direction, double offset,bool physical) : Axis(label,physical)
 {
-	_axis=axis;
-	_dir=direction;
-	_offset=offset;
+	_axis = axis;
+	_dir = direction;
+	_offset = offset;
 	_axis.normalize();
 }
+
+RotAxis::RotAxis(const RotAxis& other) : Axis(other)
+{
+	_axis = other._axis;
+	_dir = other._dir;
+	_offset = other._offset;
+	_axis.normalize();
+}
+
+RotAxis& RotAxis::operator=(const RotAxis& other)
+{
+	if (this != &other)
+	{
+		Axis::operator=(other);
+		_dir = other._dir;
+	}
+	return *this;
+}
+
 RotAxis::~RotAxis()
 {
 }
