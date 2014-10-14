@@ -63,15 +63,15 @@ class Sphere : public IShape<T,D>
 
 public:
 	//! The copy constructor
-	Sphere(const Sphere& other);
+	Sphere(const Sphere<T,D>& other);
 	//! Construct a N-dimensional sphere from its center and radius.
 	Sphere(const vector& center, T radius);
 	//! Return a copy of this Sphere
 	IShape<T,D>* clone() const;
 	//! The destructor.
 	~Sphere();
-	//! The copy constructor
-	Sphere& operator=(const Sphere& other);
+	//! The assignement operator
+	Sphere<T,D>& operator=(const Sphere<T,D>& other);
 	//! Return true if the sphere intersects any kind of shape.
 	bool collide(const IShape<T,D>& other) const;
 	//! Check whether a sphere collides with an ellipsoid.

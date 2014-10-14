@@ -63,11 +63,11 @@ class OBB : public IShape<T,D>
 
 public:
 	//! Copy constructor
-	OBB(const OBB&);
+	OBB(const OBB<T,D>&);
 	//! Construct a N-dimensional box from its center, semi-axes, and eigenvectors ()
 	OBB(const vector& center, const vector& eigenvalues, const matrix& eigenvectors);
 	//! Assignment
-	OBB& operator=(const OBB&);
+	OBB<T,D>& operator=(const OBB<T,D>& other);
 	//! Return a copy of this OBB
 	IShape<T,D>* clone() const;
 	//! The destructor.
