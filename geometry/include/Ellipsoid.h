@@ -54,12 +54,14 @@ class Ellipsoid : public IShape<T,D>
 	using AABB<T,D>::_upperBound;
 public:
 	Ellipsoid();
+	//! Copy constructor
+	Ellipsoid(const Ellipsoid&);
 	//! Construct a N-dimensional ellipsoid from its center, semi-axes, and eigenvectors ()
 	Ellipsoid(const vector& center, const vector& eigenvalues, const matrix& eigenvectors);
 	//! Assignment
 	Ellipsoid& operator=(const Ellipsoid&);
-	//! Copy constructor
-	Ellipsoid(const Ellipsoid&);
+	//! Return a copy of this ellipsoid object
+	IShape<T,D>* clone() const;
 	//! Return true if the ellipsoid intersects any kind of shape
 	bool collide(const IShape<T,D>& other) const;
 	//! Return true if the ellipsoid intersects an ellipsoid.
@@ -123,8 +125,13 @@ Ellipsoid<T,D>& Ellipsoid<T,D>::operator=(const Ellipsoid<T,D>& rhs)
 		updateAABB();
 	}
 	return *this;
- }
+}
 
+template<typename T,uint D>
+IShape<T,D>* Ellipsoid<T,D>::clone() const
+{
+	return new Ellipsoid(*this);
+}
 
 template<typename T,uint D>
 Ellipsoid<T,D>::Ellipsoid(const vector& center, const vector& eigenvalues, const matrix& eigenvectors)

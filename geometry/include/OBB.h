@@ -62,8 +62,14 @@ class OBB : public IShape<T,D>
 	using AABB<T,D>::_upperBound;
 
 public:
+	//! Copy constructor
+	OBB(const OBB&);
 	//! Construct a N-dimensional box from its center, semi-axes, and eigenvectors ()
 	OBB(const vector& center, const vector& eigenvalues, const matrix& eigenvectors);
+	//! Assignment
+	OBB& operator=(const OBB&);
+	//! Return a copy of this OBB
+	IShape<T,D>* clone() const;
 	//! The destructor.
 	~OBB();
 	//! Return true if the OBB intersects any kind of shape.
@@ -111,6 +117,26 @@ template<typename T,uint D> bool collideOBBEllipsoid(const OBB<T,D>&, const Elli
 template<typename T,uint D> bool collideOBBSphere(const OBB<T,D>&, const Sphere<T,D>&);
 
 template<typename T,uint D>
+OBB<T,D>::OBB(const OBB<T,D>& rhs)
+ {
+	_eigenVal=rhs._eigenVal;
+	_TRSinv=rhs._TRSinv;
+	updateAABB();
+ }
+
+template<typename T,uint D>
+OBB<T,D>& OBB<T,D>::operator=(const OBB<T,D>& rhs)
+{
+	if (this!=&rhs)
+	{
+		_eigenVal=rhs._eigenVal;
+		_TRSinv=rhs._TRSinv;
+		updateAABB();
+	}
+	return *this;
+}
+
+template<typename T,uint D>
 OBB<T,D>::OBB(const vector& center, const vector& eigenvalues, const matrix& eigenvectors)
 : IShape<T,D>(), _eigenVal(eigenvalues)
 {
@@ -130,6 +156,12 @@ OBB<T,D>::OBB(const vector& center, const vector& eigenvalues, const matrix& eig
 	// Finally compute (TRS)^-1 by left-multiplying (TR)^-1 by S^-1
 	_TRSinv=Sinv*_TRSinv;
 	updateAABB();
+}
+
+template<typename T,uint D>
+IShape<T,D>* OBB<T,D>::clone() const
+{
+	return new OBB(*this);
 }
 
 template<typename T, uint D>

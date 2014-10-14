@@ -57,6 +57,9 @@ public:
 	IShape();
 	virtual ~IShape();
 
+	//! Implementation of the virtual constructor idiom
+	virtual IShape<T,D>* clone() const=0;
+
 	virtual bool collide(const IShape<T,D>& rhs) const =0;
 	virtual bool collide(const Ellipsoid<T,D>& rhs) const =0;
 	virtual bool collide(const OBB<T,D>& rhs) const =0;

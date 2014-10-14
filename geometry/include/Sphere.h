@@ -62,10 +62,16 @@ class Sphere : public IShape<T,D>
 	using AABB<T,D>::_upperBound;
 
 public:
+	//! The copy constructor
+	Sphere(const Sphere& other);
 	//! Construct a N-dimensional sphere from its center and radius.
 	Sphere(const vector& center, T radius);
+	//! Return a copy of this Sphere
+	IShape<T,D>* clone() const;
 	//! The destructor.
 	~Sphere();
+	//! The copy constructor
+	Sphere& operator=(const Sphere& other);
 	//! Return true if the sphere intersects any kind of shape.
 	bool collide(const IShape<T,D>& other) const;
 	//! Check whether a sphere collides with an ellipsoid.
@@ -108,6 +114,14 @@ template<typename T,uint D> bool collideSphereEllipsoid(const Sphere<T,D>&, cons
 template<typename T,uint D> bool collideSphereOBB(const Sphere<T,D>&, const OBB<T,D>&);
 template<typename T,uint D> bool collideSphereSphere(const Sphere<T,D>&, const Sphere<T,D>&);
 
+template<typename T, uint D>
+Sphere<T,D>::Sphere(const Sphere<T,D>& other)
+{
+	_center = other._center;
+	_radius = other._radius;
+	updateAABB();
+}
+
 template<typename T,uint D>
 Sphere<T,D>::Sphere(const vector& center, T radius)
 : IShape<T,D>(), _center(center), _radius(radius)
@@ -118,6 +132,24 @@ Sphere<T,D>::Sphere(const vector& center, T radius)
 template<typename T, uint D>
 Sphere<T,D>::~Sphere()
 {
+}
+
+template<typename T, uint D>
+Sphere<T,D>& Sphere<T,D>::operator=(const Sphere<T,D>& other)
+{
+	if (this != &other)
+	{
+		_center = other._center;
+		_radius = other._radius;
+		updateAABB();
+	}
+	return *this;
+}
+
+template<typename T,uint D>
+IShape<T,D>* Sphere<T,D>::clone() const
+{
+	return new Sphere(*this);
 }
 
 template<typename T,uint D>
