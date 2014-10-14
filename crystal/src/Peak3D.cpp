@@ -7,6 +7,7 @@
 #include "DetectorEvent.h"
 #include "Detector.h"
 #include "Sample.h"
+#include "IShape.h"
 #include "Gonio.h"
 
 namespace SX
@@ -29,12 +30,51 @@ Peak3D::Peak3D(SX::Data::IData* data):
 {
 }
 
+Peak3D::Peak3D(const Peak3D& other):
+		_data(other._data),
+		_hkl(other._hkl),
+		_peak(other._peak->clone()),
+		_bkg(other._bkg->clone()),
+		_sampleState(new SX::Instrument::ComponentState(*(other._sampleState))),
+		_event(new SX::Instrument::DetectorEvent(*(other._event))),
+		_counts(other._counts),
+		_countsSigma(other._countsSigma),
+		_wave(other._wave),
+		_scale(other._scale),
+		_selected(other._selected)
+{
+}
+
+Peak3D& Peak3D::operator=(const Peak3D& other)
+{
+
+	if (this != &other)
+	{
+
+		_data = other._data;
+		_hkl = other._hkl;
+		_peak = other._peak->clone();
+		_bkg = other._bkg->clone();
+		_sampleState = new SX::Instrument::ComponentState(*(other._sampleState));
+		_event = new SX::Instrument::DetectorEvent(*(other._event));
+		_counts = other._counts;
+		_countsSigma = other._countsSigma;
+		_wave = other._wave;
+		_scale = other._scale;
+		_selected = other._selected;
+
+	}
+
+	return *this;
+
+}
+
 Peak3D::~Peak3D()
 {
-//	if (_peak)
-//		delete _peak;
-//	if (_bkg)
-//		delete _bkg;
+    if (_peak)
+        delete _peak;
+    if (_bkg)
+        delete _bkg;
 }
 
 void Peak3D::linkData(SX::Data::IData* data)
@@ -139,8 +179,6 @@ void Peak3D::integrate()
 	int max=_data->_mm->getMetaData()->getKey<int>("npdone");
 	if (datastart>1)
 		datastart--;
-	if (dataend<max-1)
-		dataend++;
 
 	// Safety check
 	if (datastart==dataend)
@@ -149,8 +187,8 @@ void Peak3D::integrate()
 	double bkg_left=bkg[datastart];
 	double bkg_right=bkg[dataend];
 	double diff;
-	for (int i=datastart;i<=dataend;++i)
-	{
+    for (int i=datastart;i<dataend;++i)
+    {
 		diff=bkg[i]-(bkg_left+static_cast<double>((i-datastart))/static_cast<double>((dataend-datastart))*(bkg_right-bkg_left));
 		if (diff>0)
 			_projectionPeak[i]+=diff;

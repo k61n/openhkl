@@ -59,6 +59,8 @@ class Peak3D
 {
 public:
 	Peak3D(SX::Data::IData* data=0);
+	Peak3D(const Peak3D& other);
+	Peak3D& operator=(const Peak3D& other);
 	~Peak3D();
 	//! Attach the data
 	void linkData(SX::Data::IData* data);
