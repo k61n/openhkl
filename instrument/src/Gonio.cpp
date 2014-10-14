@@ -37,7 +37,7 @@ Axis*const Gonio::getAxis(const std::string& label)
 
 Axis* Gonio::addRotation(const std::string& label, const Vector3d& axis,RotAxis::Direction dir, bool physical)
 {
-	_axes.push_back(new RotAxis(label,axis,dir,physical));
+	_axes.push_back(new RotAxis(label,axis,dir,0.0,physical));
 	return _axes.back();
 }
 
@@ -76,10 +76,13 @@ Eigen::Transform<double,3,Eigen::Affine> Gonio::getHomMatrix(const std::vector<d
 	std::vector<Axis*>::const_reverse_iterator it;
 	std::vector<double>::const_reverse_iterator itv=values.rbegin();
 
-	for (it=_axes.rbegin();it!=_axes.rend();++it,++itv)
+	for (it=_axes.rbegin();it!=_axes.rend();++it)
 	{
 		if ((*it)->isPhysical())
+		{
 			result=(*it)->getHomMatrix(*itv)*result;
+			itv++;
+		}
 		else
 			result=(*it)->getHomMatrix(0.0)*result;
 	}
