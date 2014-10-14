@@ -35,15 +35,15 @@ Axis*const Gonio::getAxis(const std::string& label)
 }
 
 
-Axis* Gonio::addRotation(const std::string& label, const Vector3d& axis,RotAxis::Direction dir)
+Axis* Gonio::addRotation(const std::string& label, const Vector3d& axis,RotAxis::Direction dir, bool physical)
 {
-	_axes.push_back(new RotAxis(label,axis,dir));
+	_axes.push_back(new RotAxis(label,axis,dir,physical));
 	return _axes.back();
 }
 
-Axis* Gonio::addTranslation(const std::string& label, const Vector3d& axis)
+Axis* Gonio::addTranslation(const std::string& label, const Vector3d& axis, bool physical)
 {
-	_axes.push_back(new TransAxis(label,axis));
+	_axes.push_back(new TransAxis(label,axis,physical));
 	return _axes.back();
 }
 
@@ -68,7 +68,7 @@ unsigned int Gonio::isAxisValid(const std::string& label) const
 
 Eigen::Transform<double,3,Eigen::Affine> Gonio::getHomMatrix(const std::vector<double>& values) const
 {
-	if (values.size()!=_axes.size())
+	if (values.size() != nPhysicalAxis())
 	{
 		throw std::range_error("Trying to set Gonio "+_label+" with wrong number of parameters");
 	}
@@ -78,7 +78,10 @@ Eigen::Transform<double,3,Eigen::Affine> Gonio::getHomMatrix(const std::vector<d
 
 	for (it=_axes.rbegin();it!=_axes.rend();++it,++itv)
 	{
-		result=(*it)->getHomMatrix(*itv)*result;
+		if ((*it)->isPhysical())
+			result=(*it)->getHomMatrix(*itv)*result;
+		else
+			result=(*it)->getHomMatrix(0.0)*result;
 	}
 	return result;
 }
@@ -125,6 +128,16 @@ void Gonio::resetOffsets()
 	}
 }
 
+std::size_t Gonio::nPhysicalAxis() const
+{
+	std::size_t nPhysAxis = 0;
+	for (auto a : _axes)
+	{
+		if (a->isPhysical())
+			nPhysAxis++;
+	}
+	return nPhysAxis;
+}
 
 }
 }

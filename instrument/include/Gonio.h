@@ -57,8 +57,8 @@ public:
 	Gonio(const std::string& label);
 	//! Destructor
 	~Gonio();
-	Axis* addRotation(const std::string& label,const Vector3d& axis, RotAxis::Direction dir);
-	Axis* addTranslation(const std::string& label,const Vector3d& axis);
+	Axis* addRotation(const std::string& label,const Vector3d& axis, RotAxis::Direction dir, bool physical=true);
+	Axis* addTranslation(const std::string& label,const Vector3d& axis, bool physical=true);
 	//! Pointer to axis i, throw range_error if not found
 	Axis* const getAxis(unsigned int i);
 	//! Pointer to axis with label, throw range_error if not found
@@ -77,6 +77,8 @@ public:
 	std::size_t numberOfAxes() const;
 	//! Reset all offsets
 	void resetOffsets();
+	//! Return the number of physical axis defined in the gonio
+	std::size_t nPhysicalAxis() const;
 protected:
 	//! Given name of the gonio
 	std::string _label;
