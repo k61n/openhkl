@@ -3,14 +3,28 @@
 namespace SX{
 namespace Instrument{
 
-TransAxis::TransAxis(const std::string& label):Axis(label)
+TransAxis::TransAxis(const std::string& label, bool physical) : Axis(label,physical)
 {
 }
 
-TransAxis::TransAxis(const std::string& label, const Vector3d& axis):Axis(label)
+TransAxis::TransAxis(const std::string& label, const Vector3d& axis, bool physical) : Axis(label,physical)
 {
-	_axis=axis;
+	_axis = axis;
 	_axis.normalize();
+}
+
+TransAxis::TransAxis(const TransAxis& other) : Axis(other)
+{
+	_axis.normalize();
+}
+
+TransAxis& TransAxis::operator=(const TransAxis& other)
+{
+	if (this != &other)
+	{
+		Axis::operator=(other);
+	}
+	return *this;
 }
 
 TransAxis::~TransAxis()

@@ -39,8 +39,10 @@ namespace Instrument {
 class TransAxis : public Axis
 {
 public:
-	TransAxis(const std::string& label);
-	TransAxis(const std::string& label,const Vector3d& axis);
+	TransAxis(const std::string& label,bool physical=true);
+	TransAxis(const std::string& label,const Vector3d& axis,bool physical=true);
+	TransAxis(const TransAxis& other);
+	TransAxis& operator=(const TransAxis& other);
 	~TransAxis();
 	Eigen::Transform<double,3,Eigen::Affine> getHomMatrix(double value) const;
 
