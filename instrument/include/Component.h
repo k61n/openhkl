@@ -61,7 +61,7 @@ public:
 	// Copy constructor
 	Component(const Component& other);
 	//! Assignment operator
-	virtual Component& operator=(const Component& other)=0;
+	virtual Component& operator=(const Component& other);
 	//! Destructor.
 	virtual ~Component()=0;
 	//! Returns the name of the component.

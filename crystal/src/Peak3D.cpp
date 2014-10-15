@@ -33,6 +33,8 @@ Peak3D::Peak3D(SX::Data::IData* data):
 Peak3D::Peak3D(const Peak3D& other):
 		_data(other._data),
 		_hkl(other._hkl),
+		_peak(other._peak == nullptr ? nullptr : other._peak->clone()),
+		_bkg(other._bkg == nullptr ? nullptr : other._bkg->clone()),
 		_sampleState(other._sampleState),
 		_event(other._event),
 		_counts(other._counts),
@@ -41,15 +43,6 @@ Peak3D::Peak3D(const Peak3D& other):
 		_scale(other._scale),
 		_selected(other._selected)
 {
-	if (other._peak == nullptr)
-		_peak = nullptr;
-	else
-		_peak = other._peak->clone();
-
-	if (other._bkg == nullptr)
-		_bkg = nullptr;
-	else
-		_bkg = other._bkg->clone();
 }
 
 Peak3D& Peak3D::operator=(const Peak3D& other)

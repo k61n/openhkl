@@ -26,6 +26,18 @@ Component::~Component()
 {
 }
 
+Component& Component::operator=(const Component& other)
+{
+	if (this != &other)
+	{
+		_name = other._name;
+		_gonio = other._gonio;
+		_position = other._position;
+	}
+
+	return *this;
+}
+
 const std::string& Component::getName() const
 {
 	return _name;
