@@ -18,6 +18,10 @@ Component::Component(const std::string& name) : _name(name), _gonio(), _position
 {
 }
 
+Component::Component(const Component& other) : _name(other._name), _gonio(other._gonio), _position(other._position)
+{
+}
+
 Component::~Component()
 {
 }

@@ -54,8 +54,14 @@ typedef unsigned int uint;
 class Component : public XMLConfigurable
 {
 public:
+	//! Default constructor
 	Component();
+	//! Constructs a component with a given name
 	Component(const std::string& name);
+	// Copy constructor
+	Component(const Component& other);
+	//! Assignment operator
+	virtual Component& operator=(const Component& other)=0;
 	//! Destructor.
 	virtual ~Component()=0;
 	//! Returns the name of the component.
