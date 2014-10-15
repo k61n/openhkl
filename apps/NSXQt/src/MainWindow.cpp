@@ -66,7 +66,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(shortcut, SIGNAL(activated()), this, SLOT(deleteNumors()));
 
     // Specific to D19 detector
-    ui->_dview->setNpixels(640,256);
+    ui->_dview->setNpixels(32,32);
     ui->_dview->setDimensions(120.0,0.4);
     ui->_dview->setDetectorDistance(0.764);
     //
@@ -259,9 +259,9 @@ void MainWindow::on_action_peak_find_triggered()
     // Get Confidence and threshold
     double confidence=dialog->getConfidence();
     double threshold=dialog->getThreshold();   
-    qWarning() << "Peak find algorithm";
-    std::vector<Data*> numors=selectedNumors();
 
+    std::vector<Data*> numors=selectedNumors();
+    qWarning() << "Peak find algorithm: Searching peaks in " << numors.size() << " files";
     int max=numors.size();
     int i=0;
 
@@ -269,11 +269,11 @@ void MainWindow::on_action_peak_find_triggered()
     ui->progressBar->setEnabled(true);
     ui->progressBar->setMaximum(max);
 
+    std::size_t npeaks=0;
     for (auto& numor : numors)
     {
       numor->_rpeaks.clear();
       ui->progressBar->setValue(i++);
-      qDebug() << "Reading " << numor->_mm->getMetaData()->getKey<int>("Numor") << " in memory";
       numor->readInMemory();
 
 
@@ -296,7 +296,7 @@ void MainWindow::on_action_peak_find_triggered()
         qCritical() << "Peak finder caused a memory exception" << e.what();
 
     }
-    qDebug() << "Found " << blobs.size() << " peaks";
+
 
     //
     int i=0;
@@ -321,15 +321,15 @@ void MainWindow::on_action_peak_find_triggered()
             p.setSelected(false);
         }
         numor->_rpeaks.insert(Data::maprealPeaks::value_type(i++,p));
+        npeaks++;
     }
 
 
     for (auto& peak : numor->_rpeaks)
         peak.second.integrate();
-    //
-    qDebug() << "Peaks integrated";
     numor->releaseMemory();
     }
+    qDebug() << "Found " << npeaks << " peaks";
     updatePlot();
     // Reinitialise progress bar
     ui->progressBar->setValue(0);

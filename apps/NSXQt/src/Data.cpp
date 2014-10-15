@@ -8,12 +8,20 @@
 #include "Units.h"
 #include "Gonio.h"
 #include <QtDebug>
+#include "FlatDetector.h"
+
 using namespace SX::Units;
 
 void D19Mapping(double x, double y, double& newx, double& newy)
 {
     newx = 640 - x;
     newy = 256 - y;
+}
+
+void D9Mapping(double x, double y, double& newx, double& newy)
+{
+    newx = 32 - x;
+    newy = 32 - y;
 }
 
 Data::Data():SX::Data::IData(SX::Data::ILLAsciiDataReader::create()),_inmemory(false),_detector(nullptr),_sample(nullptr)
@@ -55,6 +63,51 @@ void Data::fromFile(const std::string& filename)
         _detector->setNPixels(640,256);
 
         _detector->setDataMapping(&D19Mapping);
+
+        _chi=meta->getKey<double>("chi")*deg;
+        _phi=meta->getKey<double>("phi")*deg;
+        _gamma=meta->getKey<double>("2theta(gamma)")*deg;
+        double scanstart=meta->getKey<double>("scanstart")*deg;
+        double scanstep=meta->getKey<double>("scanstep")*deg;
+        int npdone=meta->getKey<int>("npdone");
+
+        _omegas.resize(npdone);
+        int i=0;
+        std::generate(_omegas.begin(),_omegas.end(),[&i,scanstart,scanstep](){return scanstart+(i++)*scanstep;});
+
+        _wavelength = meta->getKey<double>("wavelength");
+
+        // Attach a gonio to the detector
+        std::shared_ptr<SX::Instrument::Gonio> g(new SX::Instrument::Gonio("gamma-arm"));
+        g->addRotation("gamma",Eigen::Vector3d(0,0,1),SX::Instrument::RotAxis::CW);
+        g->addTranslation("y-offset",Eigen::Vector3d(0,1,0));
+        g->getAxis("y-offset")->setPhysical(false);
+        _detector->setGonio(g);
+
+        //Sample gonio
+        _sample= new SX::Instrument::Sample();
+        std::shared_ptr<SX::Instrument::Gonio> bl(new SX::Instrument::Gonio("Busing-Levy"));
+        bl->addRotation("omega",Vector3d(0,0,1),SX::Instrument::RotAxis::CW);
+        bl->addRotation("chi",Vector3d(0,1,0),SX::Instrument::RotAxis::CCW);
+        bl->addRotation("phi",Vector3d(0,0,1),SX::Instrument::RotAxis::CW);
+        bl->addTranslation("x-sample",Vector3d(1,0,0));
+        bl->getAxis("x-sample")->setPhysical(false);
+        bl->addTranslation("y-sample",Vector3d(0,1,0));
+        bl->getAxis("y-sample")->setPhysical(false);
+        bl->addTranslation("z-sample",Vector3d(0,0,1));
+        bl->getAxis("z-sample")->setPhysical(false);
+        _sample->setGonio(bl);
+    }
+    else if (instrName.compare("D9")==0)
+    {
+        _detector = new SX::Instrument::FlatDetector();
+
+        _detector->setDistance(488*SX::Units::mm);
+        _detector->setWidth(64*mm);
+        _detector->setHeight(64*mm);
+        _detector->setNPixels(32,32);
+
+        _detector->setDataMapping(&D9Mapping);
 
         _chi=meta->getKey<double>("chi")*deg;
         _phi=meta->getKey<double>("phi")*deg;
