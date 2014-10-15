@@ -16,14 +16,24 @@ const double tolerance=1e-6;
 class TestAxis: public Axis
 {
 public:
-	TestAxis(const std::string& label, bool physical): Axis(label,physical)
-	{}
-	~TestAxis(){};
-	Transform<double,3,Eigen::Affine> getHomMatrix(double value) const
-	{
-		return Eigen::Transform<double,3,Eigen::Affine>();
-	}
+	TestAxis(const std::string& label, bool physical);
+	~TestAxis();
+	Transform<double,3,Eigen::Affine> getHomMatrix(double value) const;
 };
+
+TestAxis::TestAxis(const std::string& label, bool physical) : Axis(label)
+{
+	setPhysical(physical);
+}
+
+TestAxis::~TestAxis()
+{
+}
+
+Transform<double,3,Eigen::Affine> TestAxis::getHomMatrix(double value) const
+{
+	return Eigen::Transform<double,3,Eigen::Affine>();
+}
 
 BOOST_AUTO_TEST_CASE(Tests_Axis)
 {
