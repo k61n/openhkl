@@ -73,6 +73,7 @@ void Data::fromFile(const std::string& filename)
         std::shared_ptr<SX::Instrument::Gonio> g(new SX::Instrument::Gonio("gamma-arm"));
         g->addRotation("gamma",Eigen::Vector3d(0,0,1),SX::Instrument::RotAxis::CW);
         g->addTranslation("y-offset",Eigen::Vector3d(0,1,0));
+        g->getAxis("y-offset")->setPhysical(false);
         _detector->setGonio(g);
 
         //Sample gonio
