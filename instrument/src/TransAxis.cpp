@@ -3,19 +3,16 @@
 namespace SX{
 namespace Instrument{
 
-TransAxis::TransAxis(const std::string& label, bool physical) : Axis(label,physical)
+TransAxis::TransAxis(const std::string& label) : Axis(label)
 {
 }
 
-TransAxis::TransAxis(const std::string& label, const Vector3d& axis, bool physical) : Axis(label,physical)
+TransAxis::TransAxis(const std::string& label, const Vector3d& axis) : Axis(label,axis)
 {
-	_axis = axis;
-	_axis.normalize();
 }
 
 TransAxis::TransAxis(const TransAxis& other) : Axis(other)
 {
-	_axis.normalize();
 }
 
 TransAxis& TransAxis::operator=(const TransAxis& other)
