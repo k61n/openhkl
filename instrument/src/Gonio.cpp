@@ -117,7 +117,7 @@ void Gonio::transformInverseInPlace(Vector3d& v,const std::vector<double>& value
 	v=getInverseHomMatrix(values)*v.homogeneous();
 }
 
-std::size_t Gonio::numberOfAxes() const
+std::size_t Gonio::nAxes() const
 {
 	return _axes.size();
 }

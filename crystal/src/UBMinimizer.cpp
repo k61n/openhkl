@@ -79,13 +79,13 @@ int UBFunctor::operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const
 	auto dgonio=_detector->getGonio();
 	if (dgonio)
 	{
-		for (unsigned int i=0;i<dgonio->numberOfAxes();++i)
+		for (unsigned int i=0;i<dgonio->nAxes();++i)
 			dgonio->getAxis(i)->setOffset(x[naxes++]);
 	}
 	auto sgonio=_sample->getGonio();
 	if (sgonio)
 	{
-		for (unsigned int i=0;i<sgonio->numberOfAxes();++i)
+		for (unsigned int i=0;i<sgonio->nAxes();++i)
 			sgonio->getAxis(i)->setOffset(x[naxes++]);
 	}
 
@@ -112,10 +112,10 @@ int UBFunctor::inputs() const
 	int nInputs=9;
 
 	if (_detector)
-		nInputs += _detector->numberOfAxes();
+		nInputs += _detector->nAxes();
 
 	if (_sample)
-		nInputs += _sample->numberOfAxes();
+		nInputs += _sample->nAxes();
 
 	return nInputs;
 }
@@ -140,13 +140,13 @@ void UBFunctor::resetParameters()
 	auto dgonio=_detector->getGonio();
 	if (dgonio)
 	{
-		for (unsigned int i=0;i<dgonio->numberOfAxes();++i)
+		for (unsigned int i=0;i<dgonio->nAxes();++i)
 			dgonio->getAxis(i)->setOffset(0.0);
 	}
 	auto sgonio=_sample->getGonio();
 	if (sgonio)
 	{
-		for (unsigned int i=0;i<sgonio->numberOfAxes();++i)
+		for (unsigned int i=0;i<sgonio->nAxes();++i)
 			sgonio->getAxis(i)->setOffset(0.0);
 	}
 }
@@ -162,13 +162,13 @@ void UBFunctor::setFixedParameters(unsigned int idx)
 	_fixedParameters.insert(idx);
 
 	unsigned int ii=idx-9;
-	if (ii<_detector->numberOfAxes())
+	if (ii<_detector->nAxes())
 	{
 		_detector->getGonio()->getAxis(ii)->setOffsetFixed(true);
 		return;
 	}
-	ii-=_detector->numberOfAxes();
-	if (ii<_sample->numberOfAxes())
+	ii-=_detector->nAxes();
+	if (ii<_sample->nAxes())
 	{
 		_sample->getGonio()->getAxis(ii)->setOffsetFixed(true);
 	}
@@ -335,12 +335,12 @@ UBSolution::UBSolution(SX::Instrument::Detector* detector,SX::Instrument::Sample
 //	_sigmaub << sigmas(0),sigmas(1),sigmas(2),sigmas(3),sigmas(4), sigmas(5), sigmas(6), sigmas(7), sigmas(8);
 
 	idx += 9;
-	_detectorOffsets = values.segment(idx,_detector->numberOfAxes());
-	_sigmaDetectorOffsets = Eigen::VectorXd::Zero(idx,_detector->numberOfAxes());
+	_detectorOffsets = values.segment(idx,_detector->nAxes());
+	_sigmaDetectorOffsets = Eigen::VectorXd::Zero(idx,_detector->nAxes());
 
-	idx+=_detector->numberOfAxes();
-	_sampleOffsets = values.segment(idx,_sample->numberOfAxes());
-	_sigmaSampleOffsets = Eigen::VectorXd::Zero(idx,_sample->numberOfAxes());
+	idx+=_detector->nAxes();
+	_sampleOffsets = values.segment(idx,_sample->nAxes());
+	_sigmaSampleOffsets = Eigen::VectorXd::Zero(idx,_sample->nAxes());
 }
 
 UBSolution::UBSolution(const UBSolution& other)
@@ -384,7 +384,7 @@ std::ostream& operator<<(std::ostream& os, const UBSolution& solution)
 //	os<<solution._sigmaub << std::endl;
 	os<<"Detector offsets: " << std::endl;
 	auto detectorG=solution._detector->getGonio();
-	for (unsigned int i=0;i<detectorG->numberOfAxes();++i)
+	for (unsigned int i=0;i<detectorG->nAxes();++i)
 	{
 		os << detectorG->getAxis(i)->getLabel() << " ";
 		SX::Instrument::Axis* axis=detectorG->getAxis(i);
@@ -396,7 +396,7 @@ std::ostream& operator<<(std::ostream& os, const UBSolution& solution)
 	os <<std::endl;
 	os<<"Sample offsets:" << std::endl;
 	auto sampleG=solution._sample->getGonio();
-	for (unsigned int i=0;i<sampleG->numberOfAxes();++i)
+	for (unsigned int i=0;i<sampleG->nAxes();++i)
 	{
 		os << sampleG->getAxis(i)->getLabel() << " ";
 		SX::Instrument::Axis* axis=sampleG->getAxis(i);

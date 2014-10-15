@@ -73,7 +73,7 @@ ComponentState Component::createState(const std::vector<double>& values)
 {
 	ComponentState state;
 	state._ptrComp=this;
-	if (values.size()!=_gonio->numberOfAxes())
+	if (values.size()!=_gonio->nAxes())
 		throw std::runtime_error("Trying to create a state from component "+_name+" with wrong number of Goniometer values");
 	state._values=values;
 	return state;
@@ -103,11 +103,11 @@ void Component::parse(const ptree& node)
 //	_parse(node);
 }
 
-std::size_t Component::numberOfAxes() const
+std::size_t Component::nAxes() const
 {
 	if (!_gonio)
 		return 0;
-	return _gonio->numberOfAxes();
+	return _gonio->nAxes();
 }
 
 } // end namespace Instrument

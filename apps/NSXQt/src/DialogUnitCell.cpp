@@ -186,12 +186,12 @@ void DialogUnitCell::acceptSolution(int i)
     const SX::Crystal::UBSolution& sol=std::get<1>(_unitcells[i]);
     setUpValues();
     SX::Instrument::Component* s=_peaks[0].get().getSampleState()->getParent();
-    for (unsigned int i=0;i<s->numberOfAxes();++i)
+    for (unsigned int i=0;i<s->nAxes();++i)
     {
         s->getGonio()->getAxis(i)->setOffset(sol._sampleOffsets[i]);
     }
     SX::Instrument::Detector* d=_peaks[0].get().getDetectorEvent()->getParent();
-    for (unsigned int i=0;i<d->numberOfAxes();++i)
+    for (unsigned int i=0;i<d->nAxes();++i)
     {
         d->getGonio()->getAxis(i)->setOffset(sol._detectorOffsets[i]);
     }

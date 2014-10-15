@@ -73,8 +73,8 @@ public:
 	//! Transform a vector inplace, for a values of Gonio parameters
 	void transformInPlace(Vector3d& v,const std::vector<double>& values);
 	void transformInverseInPlace(Vector3d& v,const std::vector<double>& values);
-	//! Get the number of Axis
-	std::size_t numberOfAxes() const;
+	//! Return the number of axes attached to this goniometer
+	std::size_t nAxes() const;
 	//! Reset all offsets
 	void resetOffsets();
 	//! Return the number of physical axis defined in the gonio
