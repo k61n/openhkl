@@ -37,8 +37,16 @@ namespace Instrument{
 class FlatDetector : public Detector
 {
 public:
+	//! Constructs a default flat detector
 	FlatDetector();
+	//! Copy constructor
+	FlatDetector(const FlatDetector& other);
+	//! Constructs a default flat detector with a given name
 	FlatDetector(const std::string& name);
+	//! Destructor
+	virtual ~FlatDetector();
+	//! Assignment operator
+	FlatDetector& operator=(const FlatDetector& other);
 	//! Set the size of the detector using angular units (radians) rather than lengths. Converted internally in width and height.
 	//! Use Units::deg for easy conversion
 	void setAngularRange(double widthAngle, double heightAngle);
@@ -48,11 +56,7 @@ public:
 	double getWidthAngle() const;
 	//! Return the height in angular units (radians) covered by the detector
 	double getHeightAngle() const;
-	virtual ~FlatDetector();
-	void parse(const ptree& node)
-	{
-
-	}
+	void parse(const ptree& node);
 private:
 	Eigen::Vector3d getPos(double x,double y) const;
 };

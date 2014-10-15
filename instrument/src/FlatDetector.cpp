@@ -6,19 +6,29 @@ namespace SX
 namespace Instrument
 {
 
-FlatDetector::FlatDetector():Detector()
+FlatDetector::FlatDetector() : Detector()
 {
+}
 
+FlatDetector::FlatDetector(const FlatDetector& other) : Detector(other)
+{
 }
 
 FlatDetector::FlatDetector(const std::string& name):Detector(name)
 {
-
 }
 
 FlatDetector::~FlatDetector()
 {
+}
 
+FlatDetector& FlatDetector::operator=(const FlatDetector& other)
+{
+	if (this != &other)
+	{
+		Detector::operator=(other);
+	}
+	return *this;
 }
 
 void FlatDetector::setAngularRange(double w, double h)
@@ -72,6 +82,9 @@ Eigen::Vector3d FlatDetector::getPos(double px, double py) const
 	return result;
 }
 
+void FlatDetector::parse(const ptree& node)
+{
+}
 
 }
 }

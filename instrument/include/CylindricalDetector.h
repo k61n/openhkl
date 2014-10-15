@@ -43,6 +43,8 @@ public:
 	CylindricalDetector(const CylindricalDetector& other);
 	//! Constructs a cylindrical detector with a given name
 	CylindricalDetector(const std::string& name);
+	//! Destructor
+	virtual ~CylindricalDetector();
 	//! Assignment operator
 	CylindricalDetector& operator=(const CylindricalDetector& other);
 	//! Set the size of the detector using angular units (radians) rather than lengths. Converted internally in width and height.
@@ -54,7 +56,6 @@ public:
 	double getWidthAngle() const;
 	//! Return the height in angular units (radians) covered by the detector
 	double getHeightAngle() const;
-	virtual ~CylindricalDetector();
 	void parse(const ptree& node)
 	{
 
