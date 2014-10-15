@@ -13,13 +13,35 @@ namespace Instrument
 using namespace SX::Units;
 
 Detector::Detector()
-: Component(), _nRows(0), _nCols(0),
-  _width(0.0), _height(0.0),_distance(0),_mapping(nullptr)
+: Component(),
+  _nRows(0),
+  _nCols(0),
+  _width(0.0),
+  _height(0.0),
+  _distance(0),
+  _mapping(nullptr)
 {
 }
 
-Detector::Detector(const std::string& name):Component(name),_nRows(0), _nCols(0),
-		  _width(0.0), _height(0.0),_distance(0),_mapping(nullptr)
+Detector::Detector(const Detector& other)
+: Component(other),
+  _nRows(other._nRows),
+  _nCols(other._nCols),
+  _width(other._width),
+  _height(other._height),
+  _distance(other._distance),
+  _mapping(other._mapping)
+{
+}
+
+Detector::Detector(const std::string& name)
+: Component(name),
+  _nRows(0),
+  _nCols(0),
+  _width(0.0),
+  _height(0.0),
+  _distance(0),
+  _mapping(nullptr)
 {
 
 }

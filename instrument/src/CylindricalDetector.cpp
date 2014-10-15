@@ -11,6 +11,11 @@ CylindricalDetector::CylindricalDetector():Detector(),_widthAngle(0)
 
 }
 
+CylindricalDetector::CylindricalDetector(const CylindricalDetector& other) : Detector(other), _widthAngle(other._widthAngle)
+{
+}
+
+
 CylindricalDetector::CylindricalDetector(const std::string& name):Detector(name), _widthAngle(0)
 {
 
@@ -18,7 +23,17 @@ CylindricalDetector::CylindricalDetector(const std::string& name):Detector(name)
 
 CylindricalDetector::~CylindricalDetector()
 {
+}
 
+CylindricalDetector& CylindricalDetector::operator=(const CylindricalDetector& other)
+{
+	if (this != &other)
+	{
+		Detector::operator=(other);
+		_widthAngle = other._widthAngle;
+
+	}
+	return *this;
 }
 
 void CylindricalDetector::setAngularRange(double w, double h)

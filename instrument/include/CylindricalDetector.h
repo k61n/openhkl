@@ -37,8 +37,14 @@ namespace Instrument{
 class CylindricalDetector : public Detector
 {
 public:
+	//! Default constructor
 	CylindricalDetector();
+	//! Copy constructor
+	CylindricalDetector(const CylindricalDetector& other);
+	//! Constructs a cylindrical detector with a given name
 	CylindricalDetector(const std::string& name);
+	//! Assignment operator
+	CylindricalDetector& operator=(const CylindricalDetector& other);
 	//! Set the size of the detector using angular units (radians) rather than lengths. Converted internally in width and height.
 	//! Use Units::deg for easy conversion
 	void setAngularRange(double widthAngle, double heightAngle);

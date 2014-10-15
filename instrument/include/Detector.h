@@ -52,10 +52,13 @@ typedef unsigned int uint;
 class Detector : public Component
 {
 public:
-	//
+	//! Default constructor
 	Detector();
+	//! Copy constructor
+	Detector(const Detector& other);
 	Detector(const std::string& name);
 	virtual ~Detector()=0;
+	virtual Detector& operator=(const Detector& other)=0;
 	//! Set the dimensions of the detector (meters).
 	void setDimensions(double width, double height);
 	//! Set sample to detector distance (overwrites Component::setRestPosition)
