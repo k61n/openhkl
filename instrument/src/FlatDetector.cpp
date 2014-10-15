@@ -31,6 +31,11 @@ FlatDetector& FlatDetector::operator=(const FlatDetector& other)
 	return *this;
 }
 
+Detector* FlatDetector::clone() const
+{
+	return new FlatDetector(*this);
+}
+
 void FlatDetector::setAngularRange(double w, double h)
 {
 	// Full width

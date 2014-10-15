@@ -36,6 +36,11 @@ CylindricalDetector& CylindricalDetector::operator=(const CylindricalDetector& o
 	return *this;
 }
 
+Detector* CylindricalDetector::clone() const
+{
+	return new CylindricalDetector(*this);
+}
+
 void CylindricalDetector::setAngularRange(double w, double h)
 {
 	_widthAngle=w;

@@ -31,6 +31,12 @@ Source& Source::operator=(const Source& other)
 	return *this;
 }
 
+Component* Source::clone() const
+{
+	return new Source(*this);
+}
+
+
 } // end namespace Instrument
 
 } // end namespace SX

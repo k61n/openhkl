@@ -64,6 +64,8 @@ public:
 	virtual Component& operator=(const Component& other);
 	//! Destructor.
 	virtual ~Component()=0;
+	//! Virtual copy constructor
+	virtual Component* clone() const=0;
 	//! Returns the name of the component.
 	const std::string& getName() const;
 	//! Parse the XML component node.

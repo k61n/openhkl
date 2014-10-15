@@ -30,5 +30,10 @@ Sample& Sample::operator=(const Sample& other)
 	return *this;
 }
 
+Component* Sample::clone() const
+{
+	return new Sample(*this);
+}
+
 }
 } /* namespace SX */

@@ -44,9 +44,16 @@ class Source;
 class Diffractometer
 {
 public:
-	//!
+	//! Constructs a default diffractometer
+	Diffractometer();
+	//! Constructs a diffractometer from another one
+	Diffractometer(const Diffractometer& other);
+	//! Constructs a diffractometer with a given name
 	Diffractometer(const std::string& name);
+	//! Destructor
 	~Diffractometer();
+	//! Assignment operator
+	Diffractometer& operator=(const Diffractometer& other);
 	void setDetector(Detector*);
 	Detector* getDetector();
 	void setSample(Sample*);

@@ -53,6 +53,8 @@ public:
 	virtual ~Source();
 	//! Assignment operator
 	Source& operator=(const Source& other);
+	//! Virtual copy constructor
+	Component* clone() const;
 private:
 };
 
