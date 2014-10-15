@@ -33,8 +33,8 @@ Peak3D::Peak3D(SX::Data::IData* data):
 Peak3D::Peak3D(const Peak3D& other):
 		_data(other._data),
 		_hkl(other._hkl),
-		_sampleState(new SX::Instrument::ComponentState(*(other._sampleState))),
-		_event(new SX::Instrument::DetectorEvent(*(other._event))),
+		_sampleState(other._sampleState),
+		_event(other._event),
 		_counts(other._counts),
 		_countsSigma(other._countsSigma),
 		_wave(other._wave),
@@ -71,8 +71,8 @@ Peak3D& Peak3D::operator=(const Peak3D& other)
 		else
 			_bkg = other._bkg->clone();
 
-		_sampleState = new SX::Instrument::ComponentState(*(other._sampleState));
-		_event = new SX::Instrument::DetectorEvent(*(other._event));
+		_sampleState = other._sampleState;
+		_event = other._event;
 		_counts = other._counts;
 		_countsSigma = other._countsSigma;
 		_wave = other._wave;
