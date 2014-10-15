@@ -134,7 +134,7 @@ Eigen::Vector3d Detector::getEventPosition(const DetectorEvent& event) const
 		else
 			return v;
 	}
-	else if (_gonio->numberOfAxes()!=event._values.size())
+	else if (_gonio->nPhysicalAxes()!=event._values.size())
 	{
 		throw std::runtime_error("Trying to assign a DetectorEvent with wrong number of values");
 	}
@@ -231,7 +231,7 @@ DetectorEvent Detector::createDetectorEvent(double x, double y, const std::vecto
 		if (values.size())
 			throw std::runtime_error("Trying to create a DetectorEvent with Goniometer values whilst no gonio is set");
 	}
-	else if (values.size()!=_gonio->numberOfAxes())
+	else if (values.size()!=_gonio->nPhysicalAxes())
 		throw std::runtime_error("Trying to create a DetectorEvent with invalid number of Goniometer Axes");
 
 	DetectorEvent result;

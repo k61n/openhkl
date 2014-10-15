@@ -78,7 +78,7 @@ public:
 	//! Reset all offsets
 	void resetOffsets();
 	//! Return the number of physical axis defined in the gonio
-	std::size_t nPhysicalAxis() const;
+	std::size_t nPhysicalAxes() const;
 protected:
 	//! Given name of the gonio
 	std::string _label;

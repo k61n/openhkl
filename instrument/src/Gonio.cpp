@@ -68,7 +68,7 @@ unsigned int Gonio::isAxisValid(const std::string& label) const
 
 Eigen::Transform<double,3,Eigen::Affine> Gonio::getHomMatrix(const std::vector<double>& values) const
 {
-	if (values.size() != nPhysicalAxis())
+	if (values.size() != nPhysicalAxes())
 	{
 		throw std::range_error("Trying to set Gonio "+_label+" with wrong number of parameters");
 	}
@@ -131,7 +131,7 @@ void Gonio::resetOffsets()
 	}
 }
 
-std::size_t Gonio::nPhysicalAxis() const
+std::size_t Gonio::nPhysicalAxes() const
 {
 	std::size_t nPhysAxis = 0;
 	for (auto a : _axes)
