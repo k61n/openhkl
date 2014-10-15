@@ -28,6 +28,9 @@
  */
 #ifndef NSXTOOL_SAMPLE_H_
 #define NSXTOOL_SAMPLE_H_
+
+#include <string>
+
 #include "Component.h"
 
 namespace SX
@@ -38,8 +41,16 @@ namespace Instrument
 class Sample : public Component
 {
 public:
+	//! Construct a default sample
 	Sample();
+	//! Constructs a sample from another one
+	Sample(const Sample& other);
+	//! Constructs a default sample with a given name
+	Sample(const std::string& name);
+	//! Destructor
 	virtual ~Sample();
+	//! Assignment operator
+	Sample& operator=(const Sample& other);
 };
 
 } // Namespace Instrument

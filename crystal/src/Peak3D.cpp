@@ -184,8 +184,6 @@ void Peak3D::integrate()
 	//
 
 	Eigen::VectorXd bkg=_projection-_projectionPeak;
-	// Add one point left and right of the peak in omega
-	int max=_data->_mm->getMetaData()->getKey<int>("npdone");
 	if (datastart>1)
 		datastart--;
 
