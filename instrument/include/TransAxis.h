@@ -39,8 +39,8 @@ namespace Instrument {
 class TransAxis : public Axis
 {
 public:
-	TransAxis(const std::string& label,bool physical=true);
-	TransAxis(const std::string& label,const Vector3d& axis,bool physical=true);
+	TransAxis(const std::string& label);
+	TransAxis(const std::string& label,const Vector3d& axis);
 	TransAxis(const TransAxis& other);
 	TransAxis& operator=(const TransAxis& other);
 	~TransAxis();

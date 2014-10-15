@@ -48,7 +48,9 @@ namespace Instrument{
 class Axis {
 
 public:
+	//! Contruct a default z-axis
 	Axis(const std::string& label);
+	Axis(const std::string& label, const Eigen::Vector3d& axis);
 	//! Copy constructor
 	Axis(const Axis& other);
 	//! Assignment operator

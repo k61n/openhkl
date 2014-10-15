@@ -10,13 +10,24 @@ namespace Instrument
 
 Axis::Axis(const std::string& label)
 : _label(label),
-  _axis(Eigen::Vector3d::Ones()),
+  _axis(Eigen::Vector3d(0.0,0.0,1.0)),
   _offset(0.0),
   _min(-std::numeric_limits<double>::infinity()),
   _max(std::numeric_limits<double>::infinity()),
   _offsetFixed(false),
   _physical(true)
 {
+}
+
+Axis::Axis(const std::string& label, const Eigen::Vector3d& axis)
+: _label(label),
+  _offset(0.0),
+  _min(-std::numeric_limits<double>::infinity()),
+  _max(std::numeric_limits<double>::infinity()),
+  _offsetFixed(false),
+  _physical(true)
+{
+	setAxis(axis);
 }
 
 Axis::Axis(const Axis& other)

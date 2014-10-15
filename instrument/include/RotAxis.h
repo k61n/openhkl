@@ -53,9 +53,9 @@ class RotAxis : public Axis
 public:
 	enum Direction {CCW,CW};
 	//! Constructor per default, rotation around z, CCW
-	explicit RotAxis(const std::string& label, bool physical=true);
+	explicit RotAxis(const std::string& label);
 	//! Explicit
-	explicit RotAxis(const std::string& label, const Vector3d& axis, Direction direction=CCW, double offset=0.0, bool physical=true);
+	explicit RotAxis(const std::string& label, const Vector3d& axis, Direction direction=CCW);
 	//! Copy constructor
 	RotAxis(const RotAxis& other);
 	//! Assignment operator
