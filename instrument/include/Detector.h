@@ -57,8 +57,10 @@ public:
 	//! Copy constructor
 	Detector(const Detector& other);
 	Detector(const std::string& name);
+	// Destructor
 	virtual ~Detector()=0;
-	virtual Detector& operator=(const Detector& other)=0;
+	//! Assignment operator
+	virtual Detector& operator=(const Detector& other);
 	//! Set the dimensions of the detector (meters).
 	void setDimensions(double width, double height);
 	//! Set sample to detector distance (overwrites Component::setRestPosition)

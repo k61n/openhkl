@@ -43,12 +43,25 @@ Detector::Detector(const std::string& name)
   _distance(0),
   _mapping(nullptr)
 {
-
 }
 
 Detector::~Detector()
 {
+}
 
+Detector& Detector::operator=(const Detector& other)
+{
+	if (this != &other)
+	{
+		Component::operator=(other);
+		_nRows = other._nRows;
+		_nCols = other._nCols;
+		_width = other._width;
+		_height = other._height;
+		_distance = other._distance;
+		_mapping = other._mapping;
+	}
+	return *this;
 }
 
 void Detector::setDimensions(double width, double height)
