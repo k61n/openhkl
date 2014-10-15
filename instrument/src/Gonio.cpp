@@ -17,6 +17,26 @@ Gonio::Gonio(const std::string& label):_label(label)
 {
 }
 
+Gonio::Gonio(const Gonio& other) : _label(other._label)
+{
+	_axes.reserve(other._axes.size());
+	for (auto ax : other._axes)
+		_axes.push_back(ax->clone());
+}
+
+Gonio& Gonio::operator=(const Gonio& other)
+{
+	if (this != &other)
+	{
+		_label = other._label;
+		_axes.reserve(other._axes.size());
+		for (auto ax : other._axes)
+			_axes.push_back(ax->clone());
+	}
+
+	return *this;
+}
+
 Gonio::~Gonio()
 {
 }

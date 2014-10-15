@@ -44,6 +44,8 @@ public:
 	TransAxis(const TransAxis& other);
 	TransAxis& operator=(const TransAxis& other);
 	~TransAxis();
+	//! Virtual copy constructor
+	Axis* clone() const;
 	Eigen::Transform<double,3,Eigen::Affine> getHomMatrix(double value) const;
 
 };

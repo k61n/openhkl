@@ -51,10 +51,15 @@ using Eigen::Vector3d;
  * Axes, their labels and respective limits can be modified by the class methods or by template accessor:
  * e.g. Axis<0>(g)=RotAxis(UnitZ,CW).
  */
-class Gonio {
+class Gonio
+{
 public:
-	//! Initialize an empty Gonio with naxes
+	//! Initialize an empty Gonio
 	Gonio(const std::string& label);
+	//! Copy constructor
+	Gonio(const Gonio& other);
+	//! Assignment operator
+	Gonio& operator=(const Gonio& other);
 	//! Destructor
 	~Gonio();
 	Axis* addRotation(const std::string& label,const Vector3d& axis, RotAxis::Direction dir);

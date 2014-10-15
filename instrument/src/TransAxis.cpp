@@ -1,7 +1,10 @@
 #include "TransAxis.h"
 
-namespace SX{
-namespace Instrument{
+namespace SX
+{
+
+namespace Instrument
+{
 
 TransAxis::TransAxis(const std::string& label) : Axis(label)
 {
@@ -26,6 +29,11 @@ TransAxis& TransAxis::operator=(const TransAxis& other)
 
 TransAxis::~TransAxis()
 {
+}
+
+Axis* TransAxis::clone() const
+{
+	return new TransAxis(*this);
 }
 
 Eigen::Transform<double,3,Eigen::Affine> TransAxis::getHomMatrix(double value) const

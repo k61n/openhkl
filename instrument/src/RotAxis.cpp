@@ -39,6 +39,11 @@ RotAxis::~RotAxis()
 {
 }
 
+Axis* RotAxis::clone() const
+{
+	return new RotAxis(*this);
+}
+
 void RotAxis::setRotationDirection(Direction dir)
 {
 	_dir=dir;

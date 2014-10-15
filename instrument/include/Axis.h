@@ -45,17 +45,22 @@ namespace Instrument{
 * does not maintain a given state and only return the homogeneous matrix for a input value, i.e.
 * for a rotation of M_PI about the axis, the method getHomMatrix(M_PI) will return the hom. Matrix.
 */
-class Axis {
+class Axis
+{
 
 public:
-	//! Contruct a default z-axis
+	//! Contruct a labelized default z-axis
 	Axis(const std::string& label);
+	//! Construct a labelized axis from a vector
 	Axis(const std::string& label, const Eigen::Vector3d& axis);
 	//! Copy constructor
 	Axis(const Axis& other);
 	//! Assignment operator
 	Axis& operator=(const Axis& other);
+	//! Destructor
 	virtual ~Axis()=0;
+	//! Virtual copy constructor
+	virtual Axis* clone() const=0;
 	//! Give a label to this axis
 	void setLabel(const std::string& label);
 	//! Return the axis label

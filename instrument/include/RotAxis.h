@@ -62,6 +62,8 @@ public:
 	RotAxis& operator=(const RotAxis& other);
 	//! Destructor
 	~RotAxis();
+	//! Virtual copy constructor
+	Axis* clone() const;
 	//! Get rotation direction.
 	void setRotationDirection(Direction);
 	// ! Return 0 for CCW and 1 for CW
