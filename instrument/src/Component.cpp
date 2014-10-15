@@ -73,7 +73,7 @@ ComponentState Component::createState(const std::vector<double>& values)
 {
 	ComponentState state;
 	state._ptrComp=this;
-	if (values.size()!=_gonio->nAxes())
+	if (values.size()!=_gonio->nPhysicalAxes())
 		throw std::runtime_error("Trying to create a state from component "+_name+" with wrong number of Goniometer values");
 	state._values=values;
 	return state;

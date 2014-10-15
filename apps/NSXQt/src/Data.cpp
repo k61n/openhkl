@@ -83,8 +83,11 @@ void Data::fromFile(const std::string& filename)
         bl->addRotation("chi",Vector3d(0,1,0),SX::Instrument::RotAxis::CCW);
         bl->addRotation("phi",Vector3d(0,0,1),SX::Instrument::RotAxis::CW);
         bl->addTranslation("x-sample",Vector3d(1,0,0));
+        bl->getAxis("x-sample")->setPhysical(false);
         bl->addTranslation("y-sample",Vector3d(0,1,0));
+        bl->getAxis("y-sample")->setPhysical(false);
         bl->addTranslation("z-sample",Vector3d(0,0,1));
+        bl->getAxis("z-sample")->setPhysical(false);
         _sample->setGonio(bl);
     }
 

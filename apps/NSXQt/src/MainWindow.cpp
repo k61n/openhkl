@@ -312,7 +312,7 @@ void MainWindow::on_action_peak_find_triggered()
         //
         int f=std::floor(center[2]);
         double omega=numor->_omegas[f]+(center[2]-f)*(numor->_omegas[f+1]-numor->_omegas[f]);
-        p.setSampleState(new SX::Instrument::ComponentState(numor->_sample->createState({omega,numor->_chi,numor->_phi,0,0,0})));
+        p.setSampleState(new SX::Instrument::ComponentState(numor->_sample->createState({omega,numor->_chi,numor->_phi})));
         p.setDetectorEvent(new SX::Instrument::DetectorEvent(numor->_detector->createDetectorEvent(center[0],center[1],{numor->_gamma})));
         p.setWavelength(numor->_wavelength);
 
