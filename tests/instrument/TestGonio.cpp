@@ -19,9 +19,14 @@ BOOST_AUTO_TEST_CASE(Test_Gonio)
 
 	// A simple translation table
 	Gonio t("Translation table");
-	t.addTranslation("x",Vector3d(1,0,0),true);
-	t.addTranslation("y",Vector3d(0,1,0),true);
-	t.addTranslation("z",Vector3d(0,0,1),true);
+	t.addTranslation("x",Vector3d(1,0,0));
+	t.addTranslation("y",Vector3d(0,1,0));
+	t.addTranslation("z",Vector3d(0,0,1));
+
+	t.getAxis("x")->setPhysical(true);
+	t.getAxis("y")->setPhysical(true);
+	t.getAxis("z")->setPhysical(true);
+
 	// Transform (0,0,0)
 	Vector3d result=t.transform(Vector3d(0,0,0),{1,2,3});
 	BOOST_CHECK_CLOSE(result[0],1,tolerance);

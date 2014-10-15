@@ -35,20 +35,15 @@ Axis*const Gonio::getAxis(const std::string& label)
 }
 
 
-Axis* Gonio::addRotation(const std::string& label, const Vector3d& axis,RotAxis::Direction dir, double offset, bool physical)
+Axis* Gonio::addRotation(const std::string& label, const Vector3d& axis,RotAxis::Direction dir)
 {
-	Axis* ax = new RotAxis(label,axis,dir);
-	ax->setOffset(offset);
-	ax->setPhysical(physical);
-	_axes.push_back(ax);
+	_axes.push_back(new RotAxis(label,axis,dir));
 	return _axes.back();
 }
 
-Axis* Gonio::addTranslation(const std::string& label, const Vector3d& axis, bool physical)
+Axis* Gonio::addTranslation(const std::string& label, const Vector3d& axis)
 {
-	Axis* ax = new TransAxis(label,axis);
-	ax->setPhysical(physical);
-	_axes.push_back(ax);
+	_axes.push_back(new TransAxis(label,axis));
 	return _axes.back();
 }
 
