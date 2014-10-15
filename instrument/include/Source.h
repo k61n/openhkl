@@ -30,6 +30,8 @@
 #ifndef NSXTOOL_SOURCE_H_
 #define NSXTOOL_SOURCE_H_
 
+#include <string>
+
 #include "Component.h"
 
 namespace SX
@@ -41,8 +43,16 @@ namespace Instrument
 class Source : public Component
 {
 public:
-	Source(const std::string& label);
+	//! Constructs a default source
+	Source();
+	//! Constructs a source from another one
+	Source(const Source& other);
+	//! Constructs a default source with a given name
+	Source(const std::string& name);
+	//! Destructor
 	virtual ~Source();
+	//! Assignment operator
+	Source& operator=(const Source& other);
 private:
 };
 
