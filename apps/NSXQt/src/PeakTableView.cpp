@@ -90,21 +90,15 @@ void PeakTableView::sortByColumn(int i)
     switch (i)
     {
     case 0:
-        sortByH(up);
+        sortByHKL(up);
         break;
     case 1:
-        sortByK(up);
-        break;
-    case 2:
-        sortByL(up);
-        break;
-    case 3:
         sortByIntensity(up);
         break;
-    case 5:
+    case 3:
         sortByNumor(up);
         break;
-    case 6:
+    case 4:
         sortBySelected(up);
         break;
     }
@@ -121,14 +115,12 @@ void PeakTableView::sortByColumn(int i)
 void PeakTableView::constructTable()
 {
     // Create table with 5 columns
-    QStandardItemModel* model=new QStandardItemModel(_peaks.size(),7,this);
-    model->setHorizontalHeaderItem(0,new QStandardItem("h"));
-    model->setHorizontalHeaderItem(1,new QStandardItem("k"));
-    model->setHorizontalHeaderItem(2,new QStandardItem("l"));
-    model->setHorizontalHeaderItem(3,new QStandardItem("I"));
-    model->setHorizontalHeaderItem(4,new QStandardItem(QString((QChar) 0x03C3)+"I"));
-    model->setHorizontalHeaderItem(5,new QStandardItem("Numor"));
-    model->setHorizontalHeaderItem(6,new QStandardItem("Selected"));
+    QStandardItemModel* model=new QStandardItemModel(_peaks.size(),5,this);
+    model->setHorizontalHeaderItem(0,new QStandardItem("h k l"));
+    model->setHorizontalHeaderItem(1,new QStandardItem("I"));
+    model->setHorizontalHeaderItem(2,new QStandardItem(QString((QChar) 0x03C3)+"I"));
+    model->setHorizontalHeaderItem(3,new QStandardItem("Numor"));
+    model->setHorizontalHeaderItem(4,new QStandardItem("Selected"));
 
 
     // Setup content of the table
@@ -137,35 +129,29 @@ void PeakTableView::constructTable()
     {
         const Eigen::RowVector3d& hkl=peak.getMillerIndices();
         double l=peak.getLorentzFactor();
-        QStandardItem* col1=new QStandardItem(QString::number(hkl[0],'f',2));
-        QStandardItem* col2=new QStandardItem(QString::number(hkl[1],'f',2));
-        QStandardItem* col3=new QStandardItem(QString::number(hkl[2],'f',2));
-        QStandardItem* col4=new QStandardItem(QString::number(peak.getScaledIntensity()/l));
-        QStandardItem* col5=new QStandardItem(QString::number(peak.getScaledSigma()/l));
-        QStandardItem* col6=new QStandardItem(QString::number(peak.getData()->_mm->getMetaData()->getKey<int>("Numor")));
-        QStandardItem* col7;
+        QStandardItem* col1=new QStandardItem(QString::number(hkl[0],'f',2) + "  " + QString::number(hkl[1],'f',2) + "  " + QString::number(hkl[2],'f',2));
+        QStandardItem* col2=new QStandardItem(QString::number(peak.getScaledIntensity()/l,'f',2));
+        QStandardItem* col3=new QStandardItem(QString::number(peak.getScaledSigma()/l,'f',2));
+        QStandardItem* col4=new QStandardItem(QString::number(peak.getData()->_mm->getMetaData()->getKey<int>("Numor")));
+        QStandardItem* col5;
         if (peak.isSelected())
         {
-            col7= new QStandardItem(QIcon(":/resources/peakSelectedIcon.png"),"");
+            col5= new QStandardItem(QIcon(":/resources/peakSelectedIcon.png"),"");
         }
         else
         {
-            col7= new QStandardItem(QIcon(":/resources/peakDeselectedIcon.png"),"");
+            col5= new QStandardItem(QIcon(":/resources/peakDeselectedIcon.png"),"");
         }
         model->setVerticalHeaderItem(i,new QStandardItem(QIcon(":/resources/singlePeakIcon.png"),QString::number(i)));
         model->setItem(i,0,col1);
         model->setItem(i,1,col2);
         model->setItem(i,2,col3);
         model->setItem(i,3,col4);
-        model->setItem(i,4,col5);
-        model->setItem(i,5,col6);
-        model->setItem(i++,6,col7);
+        model->setItem(i++,4,col5);
     }
     setModel(model);
 
-    this->setColumnWidth(0,50);
-    this->setColumnWidth(1,50);
-    this->setColumnWidth(2,50);
+    this->setColumnWidth(0,150);
 
     // Signal sent when the user navigates the table (e.g. up down arrow )
     connect(this->selectionModel(),SIGNAL(currentChanged(QModelIndex,QModelIndex)),this,SLOT(peakChanged(QModelIndex,QModelIndex)));
@@ -259,10 +245,22 @@ void PeakTableView::writeShelX()
         {
             const Eigen::RowVector3d& hkl=peak.getMillerIndices();
 
+            file << std::fixed;
             file << std::setprecision(0);
             file << std::setw(4);
-            file << hkl[0] << std::setw(4) <<  hkl[1] << std::setw(4) << hkl[2];
-             double l=peak.getLorentzFactor();
+            file << hkl[0];
+
+            file << std::fixed;
+            file << std::setprecision(0);
+            file << std::setw(4);
+            file <<  hkl[1];
+
+            file << std::fixed;
+            file << std::setprecision(0);
+            file << std::setw(4);
+            file << hkl[2];
+
+            double l=peak.getLorentzFactor();
             file << std::fixed << std::setw(8) << std::setprecision(2) << peak.getScaledIntensity()/l;
             file << std::fixed << std::setw(8) << std::setprecision(2) << peak.getScaledSigma()/l <<std::endl;
             }
@@ -271,60 +269,18 @@ void PeakTableView::writeShelX()
         file.close();
 }
 
-void PeakTableView::sortByH(bool up)
+void PeakTableView::sortByHKL(bool up)
 {
     if (up)
         std::sort(_peaks.begin(),_peaks.end(),
               [&](const SX::Crystal::Peak3D& p1, const SX::Crystal::Peak3D& p2)
               {
-                return (p2.getMillerIndices()[0]<p1.getMillerIndices()[0]);
+                return (p2<p1);
               }
               );
     else
-        std::sort(_peaks.begin(),_peaks.end(),
-              [&](const SX::Crystal::Peak3D& p1, const SX::Crystal::Peak3D& p2)
-              {
-                return (p2.getMillerIndices()[0]>p1.getMillerIndices()[0]);
-              }
-              );
+        std::sort(_peaks.begin(),_peaks.end());
 }
-
-void PeakTableView::sortByK(bool up)
-{
-    if (up)
-        std::sort(_peaks.begin(),_peaks.end(),
-              [&](const SX::Crystal::Peak3D& p1, const SX::Crystal::Peak3D& p2)
-              {
-                return (p2.getMillerIndices()[1]<p1.getMillerIndices()[1]);
-              }
-              );
-    else
-        std::sort(_peaks.begin(),_peaks.end(),
-              [&](const SX::Crystal::Peak3D& p1, const SX::Crystal::Peak3D& p2)
-              {
-                return (p2.getMillerIndices()[1]>p1.getMillerIndices()[1]);
-              }
-              );
-}
-
-void PeakTableView::sortByL(bool up)
-{
-    if (up)
-        std::sort(_peaks.begin(),_peaks.end(),
-              [&](const SX::Crystal::Peak3D& p1, const SX::Crystal::Peak3D& p2)
-              {
-                return (p2.getMillerIndices()[2]<p1.getMillerIndices()[2]);
-              }
-              );
-    else
-        std::sort(_peaks.begin(),_peaks.end(),
-              [&](const SX::Crystal::Peak3D& p1, const SX::Crystal::Peak3D& p2)
-              {
-                return (p2.getMillerIndices()[1]>p1.getMillerIndices()[1]);
-              }
-              );
-}
-
 
 void PeakTableView::sortBySelected(bool up)
 {

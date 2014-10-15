@@ -49,8 +49,6 @@ void DialogUnitCellSolutions::setSolutions(const std::vector<std::tuple<SX::Crys
         cell.getParameters(a,b,c,alpha,beta,gamma);
         cell.getParametersSigmas(sa,sb,sc,salpha,sbeta,sgamma);
 
-//        std::cout<<sa<<" "<<sb<<" "<<sc<<" "<<salpha<<" "<<sbeta<<" "<<sgamma<<" "<<cell.hasSigmas()<<std::endl;
-
         QStandardItem* col1=new QStandardItem(QString::number(a,'f',3) + "("+ QString::number(sa*1000,'f',0)+")");
         QStandardItem* col2=new QStandardItem(QString::number(b,'f',3) + "("+ QString::number(sb*1000,'f',0)+")");
         QStandardItem* col3=new QStandardItem(QString::number(c,'f',3) + "("+ QString::number(sc*1000,'f',0)+")");
