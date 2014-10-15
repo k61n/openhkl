@@ -44,6 +44,7 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
 	std::shared_ptr<Gonio> detectorGonio(new Gonio("Gamma"));
 	detectorGonio->addRotation("Gamma",Vector3d(0,0,1),RotAxis::CW);
 	detectorGonio->addTranslation("y-offset",Vector3d(0,1,0));
+	detectorGonio->getAxis("y-offset")->setPhysical(false);
 	D9->setGonio(detectorGonio);
 
 	Sample* sample=new Sample();
@@ -69,7 +70,7 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
 		// Create a peak
 		Peak3D peak;
 		// Create the detector event matching that peak (the px and py are given in mm in the RAFUB input file)
-		peak.setDetectorEvent(new DetectorEvent(D9->createDetectorEvent(px/2,py/2,{gamma*deg,0.0})));
+		peak.setDetectorEvent(new DetectorEvent(D9->createDetectorEvent(px/2,py/2,{gamma*deg})));
 		// set the miller indices corresponding to the peak
 		peak.setMillerIndices(h,k,l);
 		// Set the wavelength
