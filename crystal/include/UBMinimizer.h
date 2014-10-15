@@ -177,7 +177,6 @@ struct UBSolution
 
     Eigen::Matrix<double,9,9> _covub;
 
-//    Eigen::Matrix3d _sigmaub;
 	Eigen::VectorXd _detectorOffsets;
 	Eigen::VectorXd _sigmaDetectorOffsets;
 	Eigen::VectorXd _sampleOffsets;

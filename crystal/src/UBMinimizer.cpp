@@ -280,6 +280,8 @@ int UBMinimizer::run(unsigned int maxIter)
 
 	    covariance *= mse;
 
+	    std::cout << std::endl << covariance <<std::endl;
+
 	    _solution = UBSolution(_functor._detector, _functor._sample, x, covariance, fParams);
 	}
 
@@ -326,21 +328,41 @@ UBSolution::UBSolution() : _detector(nullptr), _sample(nullptr)
 UBSolution::UBSolution(SX::Instrument::Detector* detector,SX::Instrument::Sample* sample,const Eigen::VectorXd& values,const Eigen::MatrixXd& cov,const std::vector<bool>& fixedParameters)
 : _detector(detector), _sample(sample), _fixedParameters(fixedParameters)
 {
-	unsigned int idx = 0;
-
 	_ub  << values(0),values(1),values(2),values(3),values(4), values(5), values(6),values(7),values(8);
 
 	_covub = cov.block(0,0,9,9);
 
-//	_sigmaub << sigmas(0),sigmas(1),sigmas(2),sigmas(3),sigmas(4), sigmas(5), sigmas(6), sigmas(7), sigmas(8);
-
-	idx += 9;
+	unsigned int idx = 9;
 	_detectorOffsets = values.segment(idx,_detector->nAxes());
-	_sigmaDetectorOffsets = Eigen::VectorXd::Zero(idx,_detector->nAxes());
+	_sigmaDetectorOffsets = Eigen::VectorXd(_detector->nAxes());
 
 	idx+=_detector->nAxes();
 	_sampleOffsets = values.segment(idx,_sample->nAxes());
-	_sigmaSampleOffsets = Eigen::VectorXd::Zero(idx,_sample->nAxes());
+	_sigmaSampleOffsets = Eigen::VectorXd(_sample->nAxes());
+
+	idx = 9;
+	for (unsigned int i=0;i<_detector->nAxes();++i)
+	{
+		if (_detector->getGonio()->getAxis(i)->hasOffsetFixed())
+			_sigmaDetectorOffsets[i] = 0.0;
+		else
+		{
+			_sigmaDetectorOffsets[i] = std::sqrt(cov(idx,idx));
+			idx++;
+		}
+	}
+
+	for (unsigned int i=0;i<_sample->nAxes();++i)
+	{
+		if (_sample->getGonio()->getAxis(i)->hasOffsetFixed())
+			_sigmaSampleOffsets[i] = 0.0;
+		else
+		{
+			_sigmaSampleOffsets[i] = std::sqrt(cov(idx,idx));
+			idx++;
+		}
+	}
+
 }
 
 UBSolution::UBSolution(const UBSolution& other)
@@ -349,7 +371,6 @@ UBSolution::UBSolution(const UBSolution& other)
 	_sample = other._sample;
 	_ub = other._ub;
 	_covub = other._covub;
-//	_sigmaub = other._sigmaub;
 	_detectorOffsets = other._detectorOffsets;
 	_sigmaDetectorOffsets = other._sigmaDetectorOffsets;
 	_sampleOffsets = other._sampleOffsets;
@@ -365,7 +386,6 @@ UBSolution& UBSolution::operator=(const UBSolution& other)
 		_sample = other._sample;
 		_ub = other._ub;
 		_covub = other._covub;
-//		_sigmaub = other._sigmaub;
 		_detectorOffsets = other._detectorOffsets;
 		_sigmaDetectorOffsets = other._sigmaDetectorOffsets;
 		_sampleOffsets = other._sampleOffsets;
