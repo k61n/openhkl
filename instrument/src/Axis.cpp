@@ -8,14 +8,14 @@ namespace SX
 namespace Instrument
 {
 
-Axis::Axis(const std::string& label, bool physical)
+Axis::Axis(const std::string& label)
 : _label(label),
-  _axis(Eigen::Vector3d::Zero()),
-  _offset(0),
+  _axis(Eigen::Vector3d::Ones()),
+  _offset(0.0),
   _min(-std::numeric_limits<double>::infinity()),
   _max(std::numeric_limits<double>::infinity()),
   _offsetFixed(false),
-  _physical(physical)
+  _physical(true)
 {
 }
 
@@ -129,6 +129,11 @@ void Axis::checkRange(double value)
 	if (value<_min || value>_max)
 		throw std::range_error("Axis "+_label+": value given for transformation not within limits");
 	return;
+}
+
+void Axis::setPhysical(bool physical)
+{
+	_physical = physical;
 }
 
 bool Axis::isPhysical() const

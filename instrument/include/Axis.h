@@ -48,7 +48,7 @@ namespace Instrument{
 class Axis {
 
 public:
-	Axis(const std::string& label, bool physical);
+	Axis(const std::string& label);
 	//! Copy constructor
 	Axis(const Axis& other);
 	//! Assignment operator
@@ -87,6 +87,8 @@ public:
 	virtual Transform<double,3,Eigen::Affine> getHomMatrix(double value) const=0;
 	//! Transform vector
 	Vector3d transform(const Vector3d& v, double value);
+	//! Set the axis to physical (true) or virtual (true)
+	void setPhysical(bool physical);
 	//! Return whether or not the axis is physical or not
 	bool isPhysical() const;
 protected:
