@@ -62,7 +62,7 @@ public:
 	Gonio& operator=(const Gonio& other);
 	//! Destructor
 	~Gonio();
-	Axis* addRotation(const std::string& label,const Vector3d& axis, RotAxis::Direction dir);
+	Axis* addRotation(const std::string& label,const Vector3d& axis, RotAxis::Direction dir=RotAxis::Direction::CCW);
 	Axis* addTranslation(const std::string& label,const Vector3d& axis);
 	//! Pointer to axis i, throw range_error if not found
 	Axis* const getAxis(unsigned int i);

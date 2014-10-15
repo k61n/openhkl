@@ -39,6 +39,8 @@ Gonio& Gonio::operator=(const Gonio& other)
 
 Gonio::~Gonio()
 {
+	for (auto ax : _axes)
+		delete ax;
 }
 
 Axis*const Gonio::getAxis(unsigned int i)
