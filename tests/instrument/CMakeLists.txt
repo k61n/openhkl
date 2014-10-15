@@ -35,3 +35,8 @@ add_executable(TestSample TestSample.cpp)
 TARGET_LINK_LIBRARIES(TestSample ${Boost_LIBRARIES} NSXTool)
 add_test(TestSample TestSample)
 
+# unit test for Component state
+add_executable(TestComponentState TestComponentState.cpp)
+TARGET_LINK_LIBRARIES(TestComponentState ${Boost_LIBRARIES} NSXTool)
+add_test(TestComponentState TestComponentState)
+
