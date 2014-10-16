@@ -31,7 +31,7 @@ Source& Source::operator=(const Source& other)
 	return *this;
 }
 
-Component* Source::clone() const
+Source* Source::clone() const
 {
 	return new Source(*this);
 }

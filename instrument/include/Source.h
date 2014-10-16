@@ -54,7 +54,7 @@ public:
 	//! Assignment operator
 	Source& operator=(const Source& other);
 	//! Virtual copy constructor
-	Component* clone() const;
+	Source* clone() const;
 private:
 };
 

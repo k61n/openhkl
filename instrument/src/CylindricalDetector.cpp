@@ -36,7 +36,7 @@ CylindricalDetector& CylindricalDetector::operator=(const CylindricalDetector& o
 	return *this;
 }
 
-Detector* CylindricalDetector::clone() const
+CylindricalDetector* CylindricalDetector::clone() const
 {
 	return new CylindricalDetector(*this);
 }

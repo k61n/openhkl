@@ -31,7 +31,7 @@ TransAxis::~TransAxis()
 {
 }
 
-Axis* TransAxis::clone() const
+TransAxis* TransAxis::clone() const
 {
 	return new TransAxis(*this);
 }

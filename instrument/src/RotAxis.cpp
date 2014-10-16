@@ -39,7 +39,7 @@ RotAxis::~RotAxis()
 {
 }
 
-Axis* RotAxis::clone() const
+RotAxis* RotAxis::clone() const
 {
 	return new RotAxis(*this);
 }

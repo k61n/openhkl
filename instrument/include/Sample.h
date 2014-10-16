@@ -52,7 +52,7 @@ public:
 	//! Assignment operator
 	Sample& operator=(const Sample& other);
 	//! Virtual copy constructor
-	Component* clone() const;
+	Sample* clone() const;
 };
 
 } // Namespace Instrument

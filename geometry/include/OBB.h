@@ -67,9 +67,9 @@ public:
 	//! Construct a N-dimensional box from its center, semi-axes, and eigenvectors ()
 	OBB(const vector& center, const vector& eigenvalues, const matrix& eigenvectors);
 	//! Assignment
-	OBB<T,D>& operator=(const OBB<T,D>& other);
+	OBB& operator=(const OBB<T,D>& other);
 	//! Return a copy of this OBB
-	IShape<T,D>* clone() const;
+	OBB* clone() const;
 	//! The destructor.
 	~OBB();
 	//! Return true if the OBB intersects any kind of shape.
@@ -159,7 +159,7 @@ OBB<T,D>::OBB(const vector& center, const vector& eigenvalues, const matrix& eig
 }
 
 template<typename T,uint D>
-IShape<T,D>* OBB<T,D>::clone() const
+OBB<T,D>* OBB<T,D>::clone() const
 {
 	return new OBB(*this);
 }

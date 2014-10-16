@@ -63,7 +63,7 @@ public:
 	//! Destructor
 	~RotAxis();
 	//! Virtual copy constructor
-	Axis* clone() const;
+	RotAxis* clone() const;
 	//! Get rotation direction.
 	void setRotationDirection(Direction);
 	// ! Return 0 for CCW and 1 for CW

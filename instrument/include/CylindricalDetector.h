@@ -48,7 +48,7 @@ public:
 	//! Assignment operator
 	CylindricalDetector& operator=(const CylindricalDetector& other);
 	//! Virtual copy constructor
-	Detector* clone() const;
+	CylindricalDetector* clone() const;
 	//! Set the size of the detector using angular units (radians) rather than lengths. Converted internally in width and height.
 	//! Use Units::deg for easy conversion
 	void setAngularRange(double widthAngle, double heightAngle);

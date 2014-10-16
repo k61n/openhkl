@@ -46,7 +46,7 @@ public:
 	//! Destructor
 	virtual ~FlatDetector();
 	//! Virtual copy constructor
-	Detector* clone() const;
+	FlatDetector* clone() const;
 	//! Assignment operator
 	FlatDetector& operator=(const FlatDetector& other);
 	//! Set the size of the detector using angular units (radians) rather than lengths. Converted internally in width and height.

@@ -31,7 +31,7 @@ FlatDetector& FlatDetector::operator=(const FlatDetector& other)
 	return *this;
 }
 
-Detector* FlatDetector::clone() const
+FlatDetector* FlatDetector::clone() const
 {
 	return new FlatDetector(*this);
 }
