@@ -32,21 +32,27 @@
 
 namespace SX
 {
+
 namespace Instrument
 {
-
 
 // Forward declaration of detector class
 class Detector;
 
 class DetectorEvent {
 public:
-	DetectorEvent(const DetectorEvent&);
-	DetectorEvent& operator=(const DetectorEvent&);
+	//! Copy constructor
+	DetectorEvent(const DetectorEvent& other);
+	//! Assignment operator
+	DetectorEvent& operator=(const DetectorEvent& other);
+	//! Destructor
 	~DetectorEvent();
+	//! return a pointer to the detector related to this detector event
 	Detector* getParent();
+	//! Set the parent related to this detector event
 	void setParent(Detector*);
 private:
+	//! Default constructor
 	DetectorEvent();
 	friend class Detector;
 	Detector* _detector;
