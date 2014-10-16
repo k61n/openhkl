@@ -257,7 +257,7 @@ int UBMinimizer::run(unsigned int maxIter)
 		//
 		// 		C = (J^t * J)^-1
 
-		// A copy of the CMINPACK FJAC matrix
+		// The upper N*N block of the FJAC matrix
 		Eigen::MatrixXd fjac=minimizer.fjac.block(0,0,_functor.inputs(),_functor.inputs());
 
 		// The R * P^t matrix
@@ -279,8 +279,6 @@ int UBMinimizer::run(unsigned int maxIter)
 		Eigen::MatrixXd covariance=JtJ.inverse();
 
 	    covariance *= mse;
-
-	    std::cout << std::endl << covariance <<std::endl;
 
 	    _solution = UBSolution(_functor._detector, _functor._sample, x, covariance, fParams);
 	}
