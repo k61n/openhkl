@@ -12,8 +12,10 @@
 #include <unsupported/Eigen/FFT>
 #include <unsupported/Eigen/NonLinearOptimization>
 #include <unsupported/Eigen/NumericalDiff>
+#include "IData.h"
 #include "Gonio.h"
 #include "Logger.h"
+#include <set>
 
 
 using namespace SX::Crystal;
@@ -63,107 +65,111 @@ void DialogUnitCell::getUnitCell()
         peak.setDetector(detector);
     }
 
-    qDebug() << "Searching direct lattice vectors using" << _peaks.size() << "peaks";
+    qDebug() << "Searching direct lattice vectors using" << _peaks.size() << "peaks defined on numors:";
+    std::set<int> numors;
+    for (SX::Crystal::Peak3D& p : _peaks)
+        numors.insert(p.getData()->_mm->getMetaData()->getKey<int>("Numor"));
+    for (auto n : numors)
+        qDebug() << n;
     FFTIndexing indexing(50.0);
     indexing.addVectors(qvects);
-    qDebug() << "Running 7000 FFTs, keeping best 10 tvectors";
     std::vector<tVector> tvects=indexing.findOnSphere(40,10);
     qDebug() << "Refining solutions and diffractometers offsets";
     int soluce=0;
 
     for (int i=0;i<10;++i)
     {
-    for (int j=i+1;j<10;++j)
-    {
-    for (int k=j+1;k<10;++k)
-    {
-        Eigen::Vector3d& v1=tvects[i]._vect;
-        Eigen::Vector3d& v2=tvects[j]._vect;
-        Eigen::Vector3d& v3=tvects[k]._vect;
-
-        if (v1.dot(v2.cross(v3))>20.0)
+        for (int j=i+1;j<10;++j)
         {
-                UnitCell cell=UnitCell::fromDirectVectors(v1,v2,v3);
-                std::shared_ptr<UnitCell> pcell(new UnitCell(cell));
-                UBMinimizer minimizer;
-                minimizer.setSample(sample);
-                minimizer.setDetector(detector);
-                minimizer.setFixedParameters(9);
-                minimizer.setFixedParameters(10);
-                minimizer.setFixedParameters(11);
-                minimizer.setFixedParameters(12);
-                minimizer.setFixedParameters(13);
-                minimizer.setFixedParameters(14);
-                minimizer.setFixedParameters(15);
-                minimizer.setFixedParameters(16);
-                int success=0;
-                for (SX::Crystal::Peak3D& peak : _peaks)
+            for (int k=j+1;k<10;++k)
+            {
+                Eigen::Vector3d& v1=tvects[i]._vect;
+                Eigen::Vector3d& v2=tvects[j]._vect;
+                Eigen::Vector3d& v3=tvects[k]._vect;
+
+                if (v1.dot(v2.cross(v3))>20.0)
                 {
-                    if (peak.hasIntegerHKL(pcell))
-                    {
-                        minimizer.addPeak(peak);
-                        ++success;
-                    }
-                }
-
-                if (success < 10)
-                    continue;
-
-                Eigen::Matrix3d M=cell.getReciprocalStandardM();
-                minimizer.setStartingUBMatrix(M);
-
-                int ret = minimizer.run(100);
-
-                if (ret==1)
-                {
-                    qDebug() << "Refining solution... " << ++soluce << " ... convergence reached";
-                    UBSolution solution=minimizer.getSolution();
-                    SX::Crystal::UnitCell cc;
-                    try
-                    {
-                        cc=SX::Crystal::UnitCell::fromReciprocalVectors(solution._ub.row(0),solution._ub.row(1),solution._ub.row(2));
-                        cc.setReciprocalCovariance(solution._covub);
-
-                    }catch(...)
-                    {
-                        continue;
-                    }
-                    NiggliReduction niggli(cc.getMetricTensor(),1e-3);
-                    Eigen::Matrix3d newg,P;
-                    niggli.reduce(newg,P);
-                    cc.transform(P);
-                    GruberReduction gruber(cc.getMetricTensor(),0.07);
-                    LatticeCentring c;
-                    BravaisType b;
-                    gruber.reduce(P,c,b);
-                    cc.setLatticeCentring(c);
-                    cc.setBravaisType(b);
-                    cc.transform(P);
-                    double ap,bp,cp,alpha,beta,gamma;
-                    double as,bs,cs,alphas,betas,gammas;
-                    cc.getParameters(ap,bp,cp,alpha,beta,gamma);
-                    cc.getParametersSigmas(as,bs,cs,alphas,betas,gammas);
-
-                    double score=0.0;
-                    double maxscore=0.0;
-                    std::shared_ptr<UnitCell> pcc(new UnitCell(cc));
-                    for (SX::Crystal::Peak3D& peak : _peaks)
-                    {
-                        if (peak.isSelected())
+                        UnitCell cell=UnitCell::fromDirectVectors(v1,v2,v3);
+                        std::shared_ptr<UnitCell> pcell(new UnitCell(cell));
+                        UBMinimizer minimizer;
+                        minimizer.setSample(sample);
+                        minimizer.setDetector(detector);
+                        minimizer.setFixedParameters(9);
+                        minimizer.setFixedParameters(10);
+                        minimizer.setFixedParameters(11);
+                        minimizer.setFixedParameters(12);
+                        minimizer.setFixedParameters(13);
+                        minimizer.setFixedParameters(14);
+                        minimizer.setFixedParameters(15);
+                        minimizer.setFixedParameters(16);
+                        int success=0;
+                        for (SX::Crystal::Peak3D& peak : _peaks)
                         {
-                            maxscore++;
-                        if (peak.hasIntegerHKL(pcc))
-                            score++;
+                            if (peak.hasIntegerHKL(pcell))
+                            {
+                                minimizer.addPeak(peak);
+                                ++success;
+                            }
                         }
-                    }
-                    // Percentage of indexing
-                    score /= 0.01*maxscore;
-                    _unitcells.push_back(std::make_tuple(cc,solution,score));
+
+                        if (success < 10)
+                            continue;
+
+                        Eigen::Matrix3d M=cell.getReciprocalStandardM();
+                        minimizer.setStartingUBMatrix(M);
+
+                        int ret = minimizer.run(100);
+
+                        if (ret==1)
+                        {
+                            qDebug() << "Refining solution... " << ++soluce << " ... convergence reached";
+                            UBSolution solution=minimizer.getSolution();
+                            SX::Crystal::UnitCell cc;
+                            try
+                            {
+                                cc=SX::Crystal::UnitCell::fromReciprocalVectors(solution._ub.row(0),solution._ub.row(1),solution._ub.row(2));
+                                cc.setReciprocalCovariance(solution._covub);
+
+                            }catch(...)
+                            {
+                                continue;
+                            }
+                            NiggliReduction niggli(cc.getMetricTensor(),1e-3);
+                            Eigen::Matrix3d newg,P;
+                            niggli.reduce(newg,P);
+                            cc.transform(P);
+                            GruberReduction gruber(cc.getMetricTensor(),0.07);
+                            LatticeCentring c;
+                            BravaisType b;
+                            gruber.reduce(P,c,b);
+                            cc.setLatticeCentring(c);
+                            cc.setBravaisType(b);
+                            cc.transform(P);
+                            double ap,bp,cp,alpha,beta,gamma;
+                            double as,bs,cs,alphas,betas,gammas;
+                            cc.getParameters(ap,bp,cp,alpha,beta,gamma);
+                            cc.getParametersSigmas(as,bs,cs,alphas,betas,gammas);
+
+                            double score=0.0;
+                            double maxscore=0.0;
+                            std::shared_ptr<UnitCell> pcc(new UnitCell(cc));
+                            for (SX::Crystal::Peak3D& peak : _peaks)
+                            {
+                                if (peak.isSelected())
+                                {
+                                    maxscore++;
+                                if (peak.hasIntegerHKL(pcc))
+                                    score++;
+                                }
+                            }
+                            // Percentage of indexing
+                            score /= 0.01*maxscore;
+                            _unitcells.push_back(std::make_tuple(cc,solution,score));
+                        }
+                         minimizer.resetParameters();
                 }
-                 minimizer.resetParameters();
+            }
         }
-    }
-    }
     }
     //Sort the Quality of the solutions decreasing
     std::sort(_unitcells.begin(),

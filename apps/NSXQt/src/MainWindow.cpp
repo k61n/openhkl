@@ -66,7 +66,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(shortcut, SIGNAL(activated()), this, SLOT(deleteNumors()));
 
     // Specific to D19 detector
-    ui->_dview->setNpixels(32,32);
+    ui->_dview->setNpixels(640,256);
     ui->_dview->setDimensions(120.0,0.4);
     ui->_dview->setDetectorDistance(0.764);
     //
