@@ -3,12 +3,28 @@
 namespace SX {
 namespace Instrument {
 
-ComponentState::ComponentState():_ptrComp(nullptr),
-		_values()
+ComponentState::ComponentState() : _ptrComp(nullptr), _values()
 {
 }
+
+ComponentState::ComponentState(const ComponentState& other) : _ptrComp(other._ptrComp), _values(other._values)
+{
+}
+
 ComponentState::~ComponentState()
 {
+}
+
+ComponentState& ComponentState::operator=(const ComponentState& other)
+{
+	if (this != &other)
+	{
+		_ptrComp = other._ptrComp;
+		_values = other._values;
+	}
+
+	return *this;
+
 }
 
 Component* ComponentState::getParent()

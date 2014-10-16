@@ -41,18 +41,24 @@ class Component;
 //! Maintain a state of a goniometer, following the memento pattern.
 class ComponentState {
 public:
-	const std::vector<double>& getValues() const;
+	//! Copy constructor
+	ComponentState(const ComponentState& other);
+	//! Destructor
 	~ComponentState();
+	//! Assignment operator
+	ComponentState& operator=(const ComponentState& other);
+	//! Return a pointer to the component related to this component state
      Component* getParent();
+ 	const std::vector<double>& getValues() const;
      void setParent(Component*);
 private:
 	//! Only Component class can create a state
 	ComponentState();
 	//! Component must be able to access ComponentState
 	friend class Component;
-	//! Pointer to the Componentmeter that has created the state
+	//! Pointer to the Component that has created the state
 	Component* _ptrComp;
-	//! Values for each axis of the Componentmeter
+	//! Values for each axis of the Component
 	std::vector<double> _values;
 };
 
