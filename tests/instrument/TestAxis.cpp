@@ -18,7 +18,7 @@ class TestAxis: public Axis
 public:
 	TestAxis(const std::string& label, bool physical);
 	~TestAxis();
-	Axis* clone() const;
+	TestAxis* clone() const;
 	Transform<double,3,Eigen::Affine> getHomMatrix(double value) const;
 };
 
@@ -31,7 +31,7 @@ TestAxis::~TestAxis()
 {
 }
 
-Axis* TestAxis::clone() const
+TestAxis* TestAxis::clone() const
 {
 	return new TestAxis(*this);
 }
