@@ -28,11 +28,8 @@ void Plotter1D::addCurve(const QVector<double> &x, const QVector<double> &y, con
     // give the axes some labels:
     customPlot->xAxis->setLabel("x");
     customPlot->yAxis->setLabel("y");
-    // set axes ranges, so we see all data:
-    customPlot->xAxis->setRange(x.first(),x.last());
-    QVector<double>::const_iterator it=std::max_element(y.begin(),y.end());
-    customPlot->yAxis->setRange(0,*it);
     customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes | QCP::iMultiSelect | QCP::iSelectPlottables );
+    customPlot->rescaleAxes();
     customPlot->replot();
 }
 
@@ -43,9 +40,6 @@ void Plotter1D::modifyCurve(int number, const QVector<double> &x, const QVector<
     if (!graph)
         return;
     graph->setDataValueError(x, y, e);
-    customPlot->xAxis->setRange(x.first(),x.last());
-    QVector<double>::const_iterator it=std::max_element(y.begin(),y.end());
-    customPlot->yAxis->setRange(0,*it);
     customPlot->rescaleAxes();
     customPlot->replot();
 }

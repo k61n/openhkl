@@ -69,8 +69,11 @@ void DialogUnitCell::getUnitCell()
     std::set<int> numors;
     for (SX::Crystal::Peak3D& p : _peaks)
         numors.insert(p.getData()->_mm->getMetaData()->getKey<int>("Numor"));
+    QString numorstring("[");
     for (auto n : numors)
-        qDebug() << n;
+        numorstring += QString::number(n)+",";
+    numorstring +="]";
+        qDebug() << numorstring;
     FFTIndexing indexing(50.0);
     indexing.addVectors(qvects);
     std::vector<tVector> tvects=indexing.findOnSphere(40,10);
