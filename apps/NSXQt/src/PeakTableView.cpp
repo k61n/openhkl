@@ -7,6 +7,8 @@
 #include <QInputDialog>
 #include "IData.h"
 #include "Peak3D.h"
+#include "Plotter1D.h"
+#include <set>
 
 PeakTableView::PeakTableView(MainWindow* main,QWidget *parent)
     :QTableView(parent),_main(main),_plotter(nullptr),_columnUp(-1,false),
@@ -20,6 +22,9 @@ PeakTableView::PeakTableView(MainWindow* main,QWidget *parent)
     //
     setBaseSize(500,500);
     setFocusPolicy(Qt::StrongFocus);
+
+    // Set selection model
+    setSelectionMode(QAbstractItemView::MultiSelection);
 
     // Signal sent when sorting by column
     QHeaderView* horizontal=this->horizontalHeader();
@@ -154,7 +159,7 @@ void PeakTableView::constructTable()
     this->setColumnWidth(0,150);
 
     // Signal sent when the user navigates the table (e.g. up down arrow )
-    connect(this->selectionModel(),SIGNAL(currentChanged(QModelIndex,QModelIndex)),this,SLOT(peakChanged(QModelIndex,QModelIndex)));
+    connect(this->selectionModel(),SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),this,SLOT(peakChanged(QModelIndex,QModelIndex)));
 }
 
 
@@ -170,6 +175,30 @@ void PeakTableView::customMenuRequested(QPoint pos)
     QAction* writeShelX=new QAction("SHELX file",writeMenu);
     writeMenu->addAction(writeFullProf);
     writeMenu->addAction(writeShelX);
+
+    // Menu to plot against metadata
+    QModelIndexList indexList = selectionModel()->selectedIndexes();
+    if (indexList.size()) //at least on peak
+    {
+        QMenu* plotasmenu=menu->addMenu("Plot as");
+        SX::Data::MetaData* met=_peaks[indexList[0].row()].get().getData()->_mm->getMetaData();
+        const std::set<std::string>& keys=met->getAllKeys();
+        for (const auto& key : keys)
+        {
+             try
+             {
+                met->getKey<double>(key); //Ensure metadata is a Numeric tyoe
+             }catch(std::exception& e)
+            {
+                continue;
+            }
+             QAction* newparam=new QAction(QString::fromStdString(key),plotasmenu);
+             connect(newparam,&QAction::triggered,this,[&](){plotAs(key);}); // New way to connect slot using C++ 2011 lambda sicne Qt 5
+             plotasmenu->addAction(newparam);
+        }
+    }
+
+    // Connections
     connect(normalize,SIGNAL(triggered()),this,SLOT(normalizeToMonitor()));
     connect(writeFullProf,SIGNAL(triggered()),this,SLOT(writeFullProf()));
     connect(writeShelX,SIGNAL(triggered()),this,SLOT(writeShelX()));
@@ -341,6 +370,33 @@ void PeakTableView::deselectPeak(QModelIndex index)
     auto& peak=_peaks[index.row()];
     peak.get().setSelected(!peak.get().isSelected());
     constructTable();
+}
+
+void PeakTableView::plotAs(const std::string& key)
+{
+     QModelIndexList indexList = selectionModel()->selectedIndexes();
+     if (!indexList.size())
+         return;
+
+    std::size_t npoints=indexList.size();
+
+    QVector<double> x(npoints);
+    QVector<double> y(npoints);
+    QVector<double> e(npoints);
+
+    for (int i=0;i<npoints;++i)
+    {
+        x[i]=_peaks[indexList[i].row()].get().getData()->_mm->getMetaData()->getKey<double>(key);
+        y[i]=_peaks[indexList[i].row()].get().getScaledIntensity();
+        e[i]=_peaks[indexList[i].row()].get().getScaledSigma();
+    }
+
+    Plotter1D* plot=new Plotter1D(this);
+    plot->addCurve(x,y,e);
+    plot->setXlabel(key);
+    plot->setYlabel("Intensity");
+    plot->show();
+
 }
 
 

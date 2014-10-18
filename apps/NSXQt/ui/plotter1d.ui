@@ -23,15 +23,15 @@
    <item>
     <widget class="QCustomPlot" name="plot" native="true">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-       <horstretch>1</horstretch>
-       <verstretch>1</verstretch>
+      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
       </sizepolicy>
      </property>
      <property name="maximumSize">
       <size>
-       <width>702</width>
-       <height>300</height>
+       <width>150000</width>
+       <height>150000</height>
       </size>
      </property>
     </widget>

@@ -46,7 +46,21 @@ void Plotter1D::modifyCurve(int number, const QVector<double> &x, const QVector<
     customPlot->xAxis->setRange(x.first(),x.last());
     QVector<double>::const_iterator it=std::max_element(y.begin(),y.end());
     customPlot->yAxis->setRange(0,*it);
+    customPlot->rescaleAxes();
     customPlot->replot();
+}
+
+void Plotter1D::setXlabel(const std::string& label)
+{
+    QCustomPlot* customPlot=ui->plot;
+    customPlot->xAxis->setLabel(QString::fromStdString(label));
+}
+
+
+void Plotter1D::setYlabel(const std::string& label)
+{
+    QCustomPlot* customPlot=ui->plot;
+    customPlot->yAxis->setLabel(QString::fromStdString(label));
 }
 
 void Plotter1D::removeCurve(int idx)

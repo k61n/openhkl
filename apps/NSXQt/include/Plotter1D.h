@@ -2,6 +2,7 @@
 #define PLOTTER1D_H
 
 #include <QDialog>
+#include <string>
 
 namespace Ui {
 class Plotter1D;
@@ -16,6 +17,8 @@ public:
     ~Plotter1D();
     void addCurve(const QVector<double>& x, const QVector<double>& y, const QVector<double>& e, QColor color=QColor("blue"));
     void modifyCurve(int number, const QVector<double>& x, const QVector<double>& y, const QVector<double>& e);
+    void setXlabel(const std::string& label);
+    void setYlabel(const std::string& label);
     void removeCurve(int idx);
     int nGraphs() const;
     void clear();

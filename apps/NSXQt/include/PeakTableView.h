@@ -33,6 +33,8 @@ public slots:
     void normalizeToMonitor();
     //! Change selected status of peak when double-clicked
     void deselectPeak(QModelIndex index);
+    //! Plot as function of parameter. Needs to be a numeric type
+    void plotAs(const std::string& key);
 private:
     void sortByHKL(bool up);
     void sortByIntensity(bool up);
