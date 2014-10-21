@@ -29,8 +29,8 @@ ENDIF()
 FIND_PACKAGE (OpenMP)
 
 ###### Find CMinpack
-FIND_PACKAGE(CMinpack)
-include_directories(${CMINPACK_INCLUDE_DIR})
+#FIND_PACKAGE(CMinpack)
+#include_directories(${CMINPACK_INCLUDE_DIR})
 ###### Find the Eigen3 
 FIND_PACKAGE(Eigen3)
 include_directories(${EIGEN3_INCLUDE_DIR})

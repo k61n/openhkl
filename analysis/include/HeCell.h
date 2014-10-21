@@ -35,7 +35,6 @@
 #include <vector>
 #include <cmath>
 #include <boost/shared_ptr.hpp>
-#include <cminpack.h>
 
 namespace SX
 {
