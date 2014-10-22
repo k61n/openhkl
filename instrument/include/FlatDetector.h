@@ -37,6 +37,9 @@ namespace Instrument{
 class FlatDetector : public Detector
 {
 public:
+
+	// Constructors and destructor
+
 	//! Constructs a default flat detector
 	FlatDetector();
 	//! Copy constructor
