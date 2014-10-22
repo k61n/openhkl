@@ -28,6 +28,9 @@
 
 #ifndef NSXTOOL_DEADTIME_H_
 #define NSXTOOL_DEADTIME_H_
+
+#include <string>
+#include <utility>
 #include <vector>
 
 namespace SX{
