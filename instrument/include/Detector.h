@@ -52,57 +52,36 @@ typedef unsigned int uint;
 class Detector : public Component
 {
 public:
-	//! Default constructor
-	Detector();
+
+	// Constructors and destructor
+
+	//! Default constructor (deleted)
+	Detector()=delete;
 	//! Copy constructor
 	Detector(const Detector& other);
 	//! Constructs a detector with a given name
 	Detector(const std::string& name);
 	// Destructor
 	virtual ~Detector()=0;
-	//! Assignment operator
-	virtual Detector& operator=(const Detector& other);
 	//! Virtual copy constructor
 	virtual Detector* clone() const=0;
-	//! Set the dimensions of the detector (meters).
-	void setDimensions(double width, double height);
-	//! Set sample to detector distance (overwrites Component::setRestPosition)
-	void setDistance(double d);
-	//! Set the rest position of the detector (along y in Busing Levy convention)
-	void setRestPosition(const Eigen::Vector3d& p);
-	//! Set the width (meters)
-	void setWidth(double width);
-	//! Set the height (meters)
-	void setHeight(double height);
-	//! Returns the detector height.
-	double getHeigth() const;
-	//! Returns the detector width
-	double getWidth() const;
-	//! Set the size of the detector using angular units (radians) rather than lengths. Converted internally in width and height.
-	//! Use Units::deg for easy conversion
-	virtual void setAngularRange(double widthAngle, double heightAngle)=0;
-	//! Set the full width of the detector in Angle, assume the distance is set before
-	virtual void setWidthAngle(double wangle)=0;
-	//! Set the full height using angular dimension
-	virtual void setHeightAngle(double hangle)=0;
-	//! Return the width in angular units (radians) covered by the detector
-	virtual double getWidthAngle() const=0;
-	//! Return the height in angular units (radians) covered by the detector
-	virtual double getHeightAngle() const=0;
-	//! Set the number of pixels of the detector
-	void setNPixels(unsigned int cols,unsigned int rows);
-	//! Set the number of columns
-	void setNCols(unsigned int cols);
-	//! Set the number of rows
-	void setNRows(unsigned int rows);
-	//! Returns the number of columns of the detector.
-	int getNCols() const;
-	//! Returns the number of rows of the detector.
-	int getNRows() const;
-	//! Returns the height of a detector pixel.
-	double getPixelHeigth() const;
-	//! Returns the width of a detector pixel.
-	double getPixelWidth() const;
+
+	// Operators
+
+	//! Assignment operator
+	virtual Detector& operator=(const Detector& other);
+
+	// Getters and setters
+
+	/**
+	 *  @brief Get 2\f$ \theta \f$
+	 *  @param px horizontal position of the scattering event in pixels unit
+	 *  @param py vertical position of the scattering event in pixels units
+	 *  @param si Incident wavenumber
+	 */
+	double get2Theta(double px, double py, const std::vector<double>& values=std::vector<double>(), const Eigen::Vector3d& si=Eigen::Vector3d(0,1,0)) const;
+	//! Get 2\f$ \theta \f$ from an event on the detector
+	double get2Theta(const DetectorEvent& event, const Eigen::Vector3d& si) const;
 	/**
 	 *  @brief Get the position of a scattering event at px, py.
 	 *  @param px horizontal position of the scattering event in pixels unit
@@ -110,7 +89,22 @@ public:
 	 *  @return spatial position of this event
 	 */
 	Eigen::Vector3d getEventPosition(double px, double py,const std::vector<double>& values=std::vector<double>()) const;
+	//! Get the position of a scattering event
 	Eigen::Vector3d getEventPosition(const DetectorEvent& event) const;
+	/**
+	 *  @brief Get the scattering angles for an event on the detector
+	 *  @param px horizontal position of the scattering event in pixels unit
+	 *  @param py vertical position of the scattering event in pixels units
+	 *  @param gamma reference to angle in the yx-plane (gamma=0 along y)
+	 *  @param nu reference to elevation angle
+	 */
+	void getGammaNu(double px, double py, double& gamma, double& nu,  const std::vector<double>& values=std::vector<double>(), const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
+	//! Get the scattering angles for an event on the detector
+	void getGammaNu(const DetectorEvent& event, double& gamma, double& nu,const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
+	//! Returns the detector height.
+	double getHeigth() const;
+	//! Return the height in angular units (radians) covered by the detector
+	virtual double getHeightAngle() const=0;
 	/**
 	 *  @brief Get the scattered wavenumber for an event on a detector
 	 *  @param px horizontal position of the scattering event in pixels unit
@@ -121,9 +115,17 @@ public:
 	 */
 	Eigen::Vector3d getKf(double px, double py,double wave, const std::vector<double>& values=std::vector<double>(), const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
 	/**
-	 *
+	 * Get the scattered wavenumber for an event on this detector
 	 */
 	Eigen::Vector3d getKf(const DetectorEvent& event,double wave, const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
+	//! Returns the number of columns of the detector.
+	int getNCols() const;
+	//! Returns the number of rows of the detector.
+	int getNRows() const;
+	//! Returns the height of a detector pixel.
+	double getPixelHeigth() const;
+	//! Returns the width of a detector pixel.
+	double getPixelWidth() const;
 	/**
 	 *  @brief Get the transferred wavenumber for an event on a detector
 	 *  @param px horizontal position of the scattering event in pixels unit
@@ -133,30 +135,44 @@ public:
 	 *  @return Transferred wavenumber s=\f$ \frac{k_f-k_i}{2\pi} \f$
 	 */
 	Eigen::Vector3d getQ(double px, double py,double wave, const std::vector<double>& values=std::vector<double>(), const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
+	//! Get the transferred wavenumber for an event on this detector
 	Eigen::Vector3d getQ(const DetectorEvent& event, double wave,const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
-	/**
-	 *  @brief Get the scattering angles for an event on the detector
-	 *  @param px horizontal position of the scattering event in pixels unit
-	 *  @param py vertical position of the scattering event in pixels units
-	 *  @param gamma reference to angle in the yx-plane (gamma=0 along y)
-	 *  @param nu reference to elevation angle
-	 */
-	void getGammaNu(double px, double py, double& gamma, double& nu,  const std::vector<double>& values=std::vector<double>(), const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
-	void getGammaNu(const DetectorEvent& event, double& gamma, double& nu,const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
-	/**
-	 *  @brief Get 2\f$ \theta \f$
-	 *  @param px horizontal position of the scattering event in pixels unit
-	 *  @param py vertical position of the scattering event in pixels units
-	 *  @param si Incident wavenumber
-	 */
-	double get2Theta(double px, double py, const std::vector<double>& values=std::vector<double>(), const Eigen::Vector3d& si=Eigen::Vector3d(0,1,0)) const;
-	double get2Theta(const DetectorEvent& event, const Eigen::Vector3d& si) const;
+	//! Returns the detector width
+	double getWidth() const;
+	//! Return the width in angular units (radians) covered by the detector
+	virtual double getWidthAngle() const=0;
+	//! Set the size of the detector using angular units (radians) rather than lengths. Converted internally in width and height.
+	//! Use Units::deg for easy conversion
+	virtual void setAngularRange(double widthAngle, double heightAngle)=0;
 	//! Pointer to function that maps data indexing with detector indexing
 	void setDataMapping(std::function<void(double,double,double&,double&)>);
+	//! Set the dimensions of the detector (meters).
+	void setDimensions(double width, double height);
+	//! Set sample to detector distance (overwrites Component::setRestPosition)
+	void setDistance(double d);
+	//! Set the height (meters)
+	void setHeight(double height);
+	//! Set the full height using angular dimension
+	virtual void setHeightAngle(double hangle)=0;
+	//! Set the number of columns
+	void setNCols(unsigned int cols);
+	//! Set the number of pixels of the detector
+	void setNPixels(unsigned int cols,unsigned int rows);
+	//! Set the rest position of the detector (along y in Busing Levy convention)
+	void setRestPosition(const Eigen::Vector3d& p);
+	//! Set the number of rows
+	void setNRows(unsigned int rows);
+	//! Set the width (meters)
+	void setWidth(double width);
+	//! Set the full width of the detector in Angle, assume the distance is set before
+	virtual void setWidthAngle(double wangle)=0;
+
+	// Other methods
+
 	//! Create a detector event, a small object with state of the event on the detector and gonio setup
 	DetectorEvent createDetectorEvent(double x, double y, const std::vector<double>& goniosetup=std::vector<double>());
 	virtual void parse(const ptree&)=0;
-	//
+
 protected:
 	void convertCoordinates(double, double , double&, double&) const;
 	uint _nRows, _nCols;
@@ -164,6 +180,7 @@ protected:
 	// Sample to detector distance
 	double _distance;
 	std::function<void(double,double,double&,double&)> _mapping;
+
 private:
 	virtual Eigen::Vector3d getPos(double x, double y) const=0;
 };

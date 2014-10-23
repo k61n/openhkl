@@ -1,9 +1,11 @@
 #include <iostream>
 #include <stdexcept>
 #include <cmath>
+
 #include "Detector.h"
 #include "Units.h"
 #include "Gonio.h"
+
 namespace SX
 {
 
@@ -11,17 +13,6 @@ namespace Instrument
 {
 
 using namespace SX::Units;
-
-Detector::Detector()
-: Component(),
-  _nRows(0),
-  _nCols(0),
-  _width(0.0),
-  _height(0.0),
-  _distance(0),
-  _mapping(nullptr)
-{
-}
 
 Detector::Detector(const Detector& other)
 : Component(other),
@@ -169,7 +160,7 @@ Eigen::Vector3d Detector::getEventPosition(const DetectorEvent& event) const
 		else
 			return v;
 	}
-	else if (_gonio->nPhysicalAxes()!=event._values.size())
+	else if (_gonio->getNPhysicalAxes()!=event._values.size())
 	{
 		throw std::runtime_error("Trying to assign a DetectorEvent with wrong number of values");
 	}
@@ -216,15 +207,15 @@ Eigen::Vector3d Detector::getQ(const DetectorEvent& event,double wave,const Eige
 void Detector::getGammaNu(double px, double py, double& gamma, double& nu,const std::vector<double>& values,const Eigen::Vector3d& from) const
 {
 	Eigen::Vector3d p=getEventPosition(px,py,values)-from;
-	gamma=atan2(p[0],p[1]);
-	nu=asin(p[2]/p.norm());
+	gamma=std::atan2(p[0],p[1]);
+	nu=std::asin(p[2]/p.norm());
 }
 
 void Detector::getGammaNu(const DetectorEvent& event, double& gamma, double& nu,const Eigen::Vector3d& from) const
 {
 	Eigen::Vector3d p=getEventPosition(event)-from;
-	gamma=atan2(p[0],p[1]);
-	nu=asin(p[2]/p.norm());
+	gamma=std::atan2(p[0],p[1]);
+	nu=std::asin(p[2]/p.norm());
 }
 
 
@@ -266,7 +257,7 @@ DetectorEvent Detector::createDetectorEvent(double x, double y, const std::vecto
 		if (values.size())
 			throw std::runtime_error("Trying to create a DetectorEvent with Goniometer values whilst no gonio is set");
 	}
-	else if (values.size()!=_gonio->nPhysicalAxes())
+	else if (values.size()!=_gonio->getNPhysicalAxes())
 		throw std::runtime_error("Trying to create a DetectorEvent with invalid number of Goniometer Axes");
 
 	DetectorEvent result;
