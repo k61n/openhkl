@@ -5,10 +5,6 @@ namespace SX
 namespace Instrument
 {
 
-Sample::Sample() : Component()
-{
-}
-
 Sample::Sample(const Sample& other) : Component(other)
 {
 }
@@ -30,7 +26,7 @@ Sample& Sample::operator=(const Sample& other)
 	return *this;
 }
 
-Sample* Sample::clone() const
+Component* Sample::clone() const
 {
 	return new Sample(*this);
 }

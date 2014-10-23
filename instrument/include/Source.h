@@ -43,18 +43,26 @@ namespace Instrument
 class Source : public Component
 {
 public:
-	//! Constructs a default source
-	Source();
-	//! Constructs a source from another one
+
+	// Constructors and destructor
+
+	// Default constructor (deleted)
+	Source()=delete;
+	//! Copy constructor
 	Source(const Source& other);
 	//! Constructs a default source with a given name
 	Source(const std::string& name);
 	//! Destructor
 	virtual ~Source();
+	//! Virtual copy constructor
+	Component* clone() const;
+
+	// Operators
+
 	//! Assignment operator
 	Source& operator=(const Source& other);
-	//! Virtual copy constructor
-	Source* clone() const;
+
+
 private:
 };
 

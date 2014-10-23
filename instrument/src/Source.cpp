@@ -6,10 +6,6 @@ namespace SX
 namespace Instrument
 {
 
-Source::Source() : Component()
-{
-}
-
 Source::Source(const Source& other) : Component(other)
 {
 }
@@ -31,7 +27,7 @@ Source& Source::operator=(const Source& other)
 	return *this;
 }
 
-Source* Source::clone() const
+Component* Source::clone() const
 {
 	return new Source(*this);
 }

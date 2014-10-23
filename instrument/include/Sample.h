@@ -41,18 +41,24 @@ namespace Instrument
 class Sample : public Component
 {
 public:
-	//! Construct a default sample
-	Sample();
-	//! Constructs a sample from another one
+
+	// Constructors and destructor
+
+	// The default constructor is forbidden
+	Sample()=delete;
+	//! Copy constructor
 	Sample(const Sample& other);
 	//! Constructs a default sample with a given name
 	Sample(const std::string& name);
 	//! Destructor
 	virtual ~Sample();
+	//! Virtual copy constructor
+	Component* clone() const;
+
+	// Operators
+
 	//! Assignment operator
 	Sample& operator=(const Sample& other);
-	//! Virtual copy constructor
-	Sample* clone() const;
 };
 
 } // Namespace Instrument
