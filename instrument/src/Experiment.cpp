@@ -1,3 +1,6 @@
+#include <stdexcept>
+#include <utility>
+
 #include "Experiment.h"
 #include "IData.h"
 
@@ -42,6 +45,15 @@ std::vector<std::string> Experiment::getDataNames() const
 	                                         {v.push_back(p.first);});
 
 	return v;
+}
+
+IData* const Experiment::getData(std::string name)
+{
+	auto it=_data.find(name);
+	if (it == _data.end())
+		throw std::runtime_error("The data "+name+" could not be found in the experiment "+_name);
+
+	return _data[name];
 }
 
 std::string Experiment::getName() const

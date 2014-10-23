@@ -38,5 +38,7 @@ BOOST_AUTO_TEST_CASE(Test_Experiment)
 	exp.addData(data);
 	BOOST_CHECK_EQUAL(exp.getDataNames().size(),1);
 
+	BOOST_CHECK_EQUAL(exp.getData("D10_ascii_example")->getBasename(),"D10_ascii_example");
+
 }
 

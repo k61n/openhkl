@@ -75,6 +75,8 @@ public:
 
 	//! Gets a shared pointer to the diffractometer related to the experiment
 	std::shared_ptr<Diffractometer> getDiffractometer() const;
+	//! Gets the pointer to a given data stored in the experiment
+	IData* const getData(std::string name);
 	//! Gets the names of the data stored in the experiment
 	std::vector<std::string> getDataNames() const;
 	//! Gets the name of the experiment
