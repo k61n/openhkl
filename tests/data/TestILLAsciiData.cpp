@@ -8,13 +8,16 @@
 #include <Eigen/Dense>
 #include <iostream>
 
+#include <boost/test/unit_test.hpp>
+
+#include "ComponentState.h"
 #include "DiffractometerFactory.h"
 #include "ILLAsciiData.h"
-
-#include <boost/test/unit_test.hpp>
+#include "Units.h"
 
 using namespace SX::Data;
 using namespace SX::Instrument;
+using namespace SX::Units;
 
 const double tolerance=1e-6;
 
@@ -41,5 +44,22 @@ BOOST_AUTO_TEST_CASE(Test_ILL_Data)
 
 	// Check the value of the monitor
 	BOOST_CHECK_CLOSE(meta->getKey<double>("monitor"),20000,tolerance);
+
+	const std::vector<ComponentState> detectorStates=reader.getDetectorStates();
+	const std::vector<ComponentState> sampleStates=reader.getSampleStates();
+
+	BOOST_CHECK_CLOSE(detectorStates[3].getValues()[0],0.54347000E+05*deg/1000.0,tolerance);
+	BOOST_CHECK_CLOSE(sampleStates[2].getValues()[0],0.26572000E+05*deg/1000.0,tolerance);
+	BOOST_CHECK_CLOSE(sampleStates[2].getValues()[1],0.48923233E+02*deg,tolerance);
+	BOOST_CHECK_CLOSE(sampleStates[2].getValues()[2],-0.48583171E+02*deg,tolerance);
+
+	ComponentState cs=reader.getDetectorInterpolatedState(0.0);
+	BOOST_CHECK_CLOSE(cs.getValues()[0],detectorStates[0].getValues()[0],tolerance);
+
+	cs=reader.getDetectorInterpolatedState(0.5);
+	BOOST_CHECK_CLOSE(cs.getValues()[0],detectorStates[0].getValues()[0]+0.5*(detectorStates[1].getValues()[0]-detectorStates[0].getValues()[0]),tolerance);
+
+	cs=reader.getDetectorInterpolatedState(2.3);
+	BOOST_CHECK_CLOSE(cs.getValues()[0],detectorStates[2].getValues()[0]+0.3*(detectorStates[3].getValues()[0]-detectorStates[2].getValues()[0]),tolerance);
 
 }

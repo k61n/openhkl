@@ -79,12 +79,6 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, std::shared_ptr<Diffract
 
 	_metadata->add<double>("monitor",vd[1]);
 
-	std::vector<std::string> dAxisNames(_diffractometer->getDetector()->getGonio()->getPhysicalAxesNames());
-	std::vector<std::string> sAxisNames(_diffractometer->getSample()->getGonio()->getPhysicalAxesNames());
-
-	_detectorStates.reserve(_nFrames);
-	_sampleStates.reserve(_nFrames);
-
 	std::vector<std::string> scans(_nAngles);
 
 	for (std::size_t i=0;i<_nAngles;++i)
@@ -96,6 +90,7 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, std::shared_ptr<Diffract
 
 	std::vector<double*> varAngles(_nAngles);
 
+	std::vector<std::string> dAxisNames(_diffractometer->getDetector()->getGonio()->getPhysicalAxesNames());
 	std::vector<double> dval(dAxisNames.size());
 	int comp=0;
 	for (const auto& n : dAxisNames)
@@ -108,17 +103,23 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, std::shared_ptr<Diffract
 		comp++;
 	}
 
+	std::vector<std::string> sAxisNames(_diffractometer->getSample()->getGonio()->getPhysicalAxesNames());
 	std::vector<double> sval(sAxisNames.size());
 	comp=0;
 	for (const auto& n : sAxisNames)
 	{
 		auto it=std::find(scans.begin(),scans.end(),n);
 		if (it == scans.end())
+		{
 			sval[comp]=_metadata->getKey<double>(n)*deg;
+		}
 		else
 			varAngles[std::distance(scans.begin(),it)] = &sval[comp];
 		comp++;
 	}
+
+	_detectorStates.reserve(_nFrames);
+	_sampleStates.reserve(_nFrames);
 
 	const char* start = _mapAddress+_headerSize;
 	for (std::size_t frame=0; frame<_nFrames;++frame)

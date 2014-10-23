@@ -67,7 +67,7 @@ ComponentState IData::getDetectorInterpolatedState(double frame)
 	const std::vector<double> nextState=_detectorStates[idx+1].getValues();
 	std::vector<double> state(nPhysicalAxes);
 	for (std::size_t i=0;i<nPhysicalAxes;++i)
-		state[i] = prevState[i] + (frame-static_cast<double>(idx)*(nextState[i]-nextState[i]));
+		state[i] = prevState[i] + (frame-static_cast<double>(idx))*(nextState[i]-prevState[i]);
 
 	return _diffractometer->getDetector()->createState(state);
 
@@ -87,7 +87,7 @@ ComponentState IData::getSampleInterpolatedState(double frame)
 	const std::vector<double> nextState=_sampleStates[idx+1].getValues();
 	std::vector<double> state(nPhysicalAxes);
 	for (std::size_t i=0;i<nPhysicalAxes;++i)
-		state[i] = prevState[i] + (frame-static_cast<double>(idx)*(nextState[i]-nextState[i]));
+		state[i] = prevState[i] + (frame-static_cast<double>(idx))*(nextState[i]-prevState[i]);
 
 	return _diffractometer->getSample()->createState(state);
 
