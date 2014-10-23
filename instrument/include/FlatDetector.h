@@ -40,8 +40,8 @@ public:
 
 	// Constructors and destructor
 
-	//! Constructs a default flat detector
-	FlatDetector();
+	//! Default Constructor (deleted)
+	FlatDetector()=delete;
 	//! Copy constructor
 	FlatDetector(const FlatDetector& other);
 	//! Constructs a default flat detector with a given name
@@ -49,24 +49,34 @@ public:
 	//! Destructor
 	virtual ~FlatDetector();
 	//! Virtual copy constructor
-	FlatDetector* clone() const;
+	Detector* clone() const;
+
+	// Operators
+
 	//! Assignment operator
 	FlatDetector& operator=(const FlatDetector& other);
+
+	// Getters and setters
+
+	//! Return the height in angular units (radians) covered by the detector
+	double getHeightAngle() const;
+	//! Return the width in angular units (radians) covered by the detector
+	double getWidthAngle() const;
 	//! Set the size of the detector using angular units (radians) rather than lengths. Converted internally in width and height.
 	//! Use Units::deg for easy conversion
 	void setAngularRange(double widthAngle, double heightAngle);
 	void setWidthAngle(double wangle);
 	void setHeightAngle(double hangle);
-	//! Return the width in angular units (radians) covered by the detector
-	double getWidthAngle() const;
-	//! Return the height in angular units (radians) covered by the detector
-	double getHeightAngle() const;
+
+	// Other methods
+
 	void parse(const ptree& node);
+
 private:
 	Eigen::Vector3d getPos(double x,double y) const;
 };
 
-} //End namespace Instrument
+} // end namespace Instrument
 } // End namespace SX
 
 

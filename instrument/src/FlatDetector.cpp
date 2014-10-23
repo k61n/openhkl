@@ -6,10 +6,6 @@ namespace SX
 namespace Instrument
 {
 
-FlatDetector::FlatDetector() : Detector()
-{
-}
-
 FlatDetector::FlatDetector(const FlatDetector& other) : Detector(other)
 {
 }
@@ -31,7 +27,7 @@ FlatDetector& FlatDetector::operator=(const FlatDetector& other)
 	return *this;
 }
 
-FlatDetector* FlatDetector::clone() const
+Detector* FlatDetector::clone() const
 {
 	return new FlatDetector(*this);
 }
