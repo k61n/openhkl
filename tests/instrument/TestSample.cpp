@@ -17,7 +17,7 @@ const double tolerance=1e-6;
 
 BOOST_AUTO_TEST_CASE(Test_Sample)
 {
-	Sample s1;
+	Sample s1("sample 1");
 	std::shared_ptr<Gonio> g(new Gonio("Busing Levy convention"));
 	g->addRotation("omega",Vector3d(0,0,1),RotAxis::CW);
 	g->addRotation("chi",Vector3d(0,1,0),RotAxis::CCW);

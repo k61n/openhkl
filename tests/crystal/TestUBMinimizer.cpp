@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
 	detectorGonio->getAxis("y-offset")->setPhysical(false);
 	D9->setGonio(detectorGonio);
 
-	Sample* sample=new Sample();
+	Sample* sample=new Sample("sample");
 	std::shared_ptr<Gonio> sampleGonio(new Gonio("Busing Levy convention"));
 	sampleGonio->addRotation("omega",Vector3d(0,0,1),RotAxis::CW);
 	sampleGonio->addRotation("chi",Vector3d(0,1,0),RotAxis::CCW);

@@ -51,7 +51,7 @@ BOOST_AUTO_TEST_CASE(Test_Peak3D)
 	BOOST_CHECK_CLOSE(Q[1],-1,tolerance);
 	BOOST_CHECK_SMALL(Q[2],tolerance);
 
-	Sample sample;
+	Sample sample("sample");
 	std::shared_ptr<Gonio> bl(new Gonio("Busing Levy convention"));
 	bl->addRotation("omega",Vector3d(0,0,1),RotAxis::CW);
 	bl->addRotation("chi",Vector3d(0,1,0),RotAxis::CCW);

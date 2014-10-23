@@ -10,6 +10,10 @@ add_executable(TestMMAsciiReader TestMMAsciiReader.cpp)
 TARGET_LINK_LIBRARIES(TestMMAsciiReader ${Boost_LIBRARIES} NSXTool)
 add_test(TestMMAsciiReader TestMMAsciiReader)
 
+add_executable(TestILLAsciiData TestILLAsciiData.cpp)
+TARGET_LINK_LIBRARIES(TestILLAsciiData ${Boost_LIBRARIES} NSXTool)
+add_test(TestILLAsciiData TestILLAsciiData)
+
 configure_file(D10_ascii_example D10_ascii_example COPYONLY)
 
 
