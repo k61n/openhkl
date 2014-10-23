@@ -28,12 +28,17 @@
 
 #ifndef NSXTOOL_COMPONENT_H_
 #define NSXTOOL_COMPONENT_H_
+
+#include <map>
 #include <string>
-#include <boost/property_tree/ptree.hpp>
-#include "XMLConfigurable.h"
 #include <memory>
+
+#include <boost/property_tree/ptree.hpp>
+
 #include <Eigen/Dense>
+
 #include "ComponentState.h"
+#include "XMLConfigurable.h"
 
 namespace SX
 {
@@ -54,39 +59,57 @@ typedef unsigned int uint;
 class Component : public XMLConfigurable
 {
 public:
-	//! Default constructor
-	Component();
-	//! Constructs a component with a given name
-	Component(const std::string& name);
+
+	// Constructors and destructor
+
+	//! Default constructor (deleted)
+	Component()=delete;
 	// Copy constructor
 	Component(const Component& other);
-	//! Assignment operator
-	virtual Component& operator=(const Component& other);
-	//! Destructor.
-	virtual ~Component()=0;
+	//! Constructs a component with a given name
+	Component(const std::string& name);
 	//! Virtual copy constructor
 	virtual Component* clone() const=0;
-	//! Returns the name of the component.
-	const std::string& getName() const;
-	//! Parse the XML component node.
-	virtual void parse(const ptree& pt);
-	//! Attach a modifier to the component.
-	void setGonio(std::shared_ptr<Gonio>);
-	//! Return true if a geometryic modifier is attached
-	bool hasGonio() const;
+	//! Destructor.
+	virtual ~Component()=0;
+
+	// Operators
+
+	//! Assignment operator
+	virtual Component& operator=(const Component& other);
+
+	// Getters and setters
+
 	//! Return the goniometer attached to this component
 	std::shared_ptr<Gonio> getGonio() const;
-	//! Set the rest position
-	virtual void setRestPosition(const Eigen::Vector3d& pos);
-	//! Get the absolute position at rest (unmodified by gonio)
-	const Eigen::Vector3d& getRestPosition() const;
+	//! Returns the name of the component.
+	const std::string& getName() const;
+	//! Return the number of axes attached to this component
+	std::size_t getNAxes() const;
+	//! Return the number of physical axes attached to this component
+	std::size_t getNPhysicalAxes() const;
 	//! Get the absolute position of the component for a set of goniometer values
 	Eigen::Vector3d getPosition(const std::vector<double>& goniosetup) const;
+	//! Get the absolute position from a state of this component
 	Eigen::Vector3d getPosition(const ComponentState& state) const;
-	//! Create a state
+	//! Get the absolute position at rest (unmodified by gonio)
+	const Eigen::Vector3d& getRestPosition() const;
+	//! Attach a modifier to the component.
+	void setGonio(std::shared_ptr<Gonio>);
+	//! Set the rest position
+	virtual void setRestPosition(const Eigen::Vector3d& pos);
+
+	// Other methods
+
+	//! Parse the XML component node.
+	virtual void parse(const ptree& pt);
+	//! Create a state from a vector of values
 	ComponentState createState(const std::vector<double>& values);
-	//! Return the number of axes attached to this component
-	std::size_t nAxes() const;
+	//! Create a state from a map of values
+	ComponentState createState(const std::map<std::string,double>& values);
+	//! Return true if a geometric modifier is attached
+	bool hasGonio() const;
+
 protected:
 	//! Name of the component
 	std::string _name;

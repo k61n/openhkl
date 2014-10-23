@@ -10,10 +10,6 @@ namespace SX
 namespace Instrument
 {
 
-Component::Component():_name(""),_gonio(),_position(Eigen::Vector3d::Zero())
-{
-}
-
 Component::Component(const std::string& name) : _name(name), _gonio(), _position(Eigen::Vector3d::Zero())
 {
 }
@@ -76,7 +72,7 @@ Eigen::Vector3d Component::getPosition(const ComponentState& state) const
 {
 	if (_gonio.get()==nullptr)
 		return _position;
-
+	else
 		return _gonio->transform(_position,state._values);
 }
 
@@ -89,9 +85,30 @@ ComponentState Component::createState(const std::vector<double>& values)
 {
 	ComponentState state;
 	state._ptrComp=this;
-	if (values.size()!=_gonio->nPhysicalAxes())
+	if (values.size()!=_gonio->getNPhysicalAxes())
 		throw std::runtime_error("Trying to create a state from component "+_name+" with wrong number of Goniometer values");
 	state._values=values;
+	return state;
+}
+
+ComponentState Component::createState(const std::map<std::string,double>& values)
+{
+	ComponentState state;
+	state._ptrComp=this;
+
+	std::vector<double> v(_gonio->getNPhysicalAxes());
+	if (_gonio)
+	{
+		std::size_t comp=0;
+		for (auto a : _gonio->getAxes())
+		{
+			if (!a->isPhysical())
+				continue;
+			auto it=values.find(a->getLabel());
+			v[comp++] = (it != values.end()) ? it->second : 0.0;
+		}
+	}
+	state._values=v;
 	return state;
 }
 
@@ -119,11 +136,18 @@ void Component::parse(const ptree& node)
 //	_parse(node);
 }
 
-std::size_t Component::nAxes() const
+std::size_t Component::getNAxes() const
 {
 	if (!_gonio)
 		return 0;
-	return _gonio->nAxes();
+	return _gonio->getNAxes();
+}
+
+std::size_t Component::getNPhysicalAxes() const
+{
+	if (!_gonio)
+		return 0;
+	return _gonio->getNPhysicalAxes();
 }
 
 } // end namespace Instrument
