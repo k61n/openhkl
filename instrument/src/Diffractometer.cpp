@@ -1,5 +1,6 @@
 #include "Diffractometer.h"
 #include "Detector.h"
+#include "Gonio.h"
 #include "Sample.h"
 #include "Source.h"
 
@@ -61,6 +62,11 @@ void Diffractometer::setSource(Source* s)
 	_source=s;
 }
 
+const std::string& Diffractometer::getName() const
+{
+	return _name;
+}
+
 Detector* Diffractometer::getDetector()
 {
 	return _detector;
@@ -75,9 +81,6 @@ Source* Diffractometer::getSource()
 {
 	return _source;
 }
-
-
-
 
 }
 } /* namespace SX */
