@@ -27,7 +27,7 @@ BOOST_AUTO_TEST_CASE(Test_ILL_Data)
 
 	ILLAsciiData reader(std::string("D10_ascii_example"),diff,false);
 
-	MetaData* meta=reader.metadata();
+	MetaData* meta=reader.getMetadata();
 
 	BOOST_CHECK(meta->getKey<int>("nbang")==2);
 

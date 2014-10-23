@@ -29,31 +29,86 @@
 #ifndef NSXTOOL_IDATA_H_
 #define NSXTOOL_IDATA_H_
 
-#include <string>
-#include <initializer_list>
-#include <vector>
+#include <map>
 #include <memory>
+#include <string>
+#include <vector>
+
+#include "ComponentState.h"
 #include "MetaData.h"
-#include "IDataReader.h"
+#include "Diffractometer.h"
 
 namespace SX
 {
 
+namespace Instrument
+{
+	class Component;
+}
+
 namespace Data
 {
+
+using namespace SX::Instrument;
+
 class IData
 {
 public:
-	IData();
-	IData(SX::Data::IDataReader* reader);
-	// Return the intensity at point x,y,z.
-	virtual int dataAt(int x, int y, int z)=0;
+
+	typedef std::vector<int> vint;
+
+	// Constructors and destructor
+
+	//! Constructor
+	IData(const std::string& filename, std::shared_ptr<Diffractometer> instrument, bool inMemory=false);
+	//! Copy constructor
+	IData(const IData& other)=delete;
+	//! Destructor
 	virtual ~IData()=0;
-	std::unique_ptr<SX::Data::IDataReader> _mm;
+
+	// Operators
+
+	//! Assignment operator
+	IData& operator=(const IData& other)=delete;
+
+	// Getters and setters
+
+    //! Interpolate between two consecutive detector states
+    ComponentState getDetectorInterpolatedState(double frame);
+	const std::string& getFilename() const;
+	std::shared_ptr<Diffractometer> getDiffractometer() const;
+	MetaData* const getMetadata() const;
+    //! Interpolate between two consecutive sample states
+    ComponentState getSampleInterpolatedState(double frame);
+
+	// Other methods
+
+	//! Return true if the file is stored in memory
+	bool isInMemory() const;
+	//! Return the intensity at point x,y,z.
+	virtual int dataAt(int x=0, int y=0, int z=0)=0;
+    //! Read a given Frame of the data
+    virtual std::vector<int> getFrame(std::size_t i)=0;
+    //! Read all the frames in memory
+    virtual void readInMemory()=0;
+    // Release the data from memory
+    virtual void releaseMemory()=0;
+
+protected:
+
+	std::string _filename;
+	std::shared_ptr<Diffractometer> _diffractometer;
+	MetaData* _metadata;
+	bool _inMemory;
+	std::vector<vint> _data;
+	std::vector<ComponentState> _detectorStates;
+	std::vector<ComponentState> _sampleStates;
+
 };
 
-}
-}
+} // end namespace Data
+
+} // end namespace SX
 
 
 #endif // NSXTOOL_IDATA_H_
