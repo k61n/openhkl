@@ -2,6 +2,7 @@
 #include <stdexcept>
 
 #include <boost/filesystem.hpp>
+#include<boost/filesystem/operations.hpp>
 
 #include "IData.h"
 #include "Detector.h"
@@ -13,6 +14,8 @@ namespace SX
 
 namespace Data
 {
+
+using namespace boost::filesystem;
 
 IData::IData(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer, bool inMemory)
 : _filename(filename),
@@ -31,6 +34,12 @@ IData::IData(const std::string& filename, std::shared_ptr<Diffractometer> diffra
 IData::~IData()
 {
 	delete _metadata;
+}
+
+std::string IData::getBasename() const
+{
+	path pathname(_filename);
+	return pathname.filename().string();
 }
 
 const std::string& IData::getFilename() const

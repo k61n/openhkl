@@ -73,6 +73,8 @@ public:
 
 	// Getters and setters
 
+    //! Gets the data basename
+	std::string getBasename() const;
     //! Gets the interpolated state between two consecutive detector states
     ComponentState getDetectorInterpolatedState(double frame);
 	//! Gets the the detector states.
