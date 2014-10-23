@@ -37,7 +37,10 @@ namespace Instrument{
 class CylindricalDetector : public Detector
 {
 public:
-	//! Default constructor
+
+	// Constructors and destructor
+
+	//! Default constructor (deleted)
 	CylindricalDetector();
 	//! Copy constructor
 	CylindricalDetector(const CylindricalDetector& other);
@@ -45,23 +48,32 @@ public:
 	CylindricalDetector(const std::string& name);
 	//! Destructor
 	virtual ~CylindricalDetector();
+	//! Virtual copy constructor
+	Detector* clone() const;
+
+	// Operators
+
 	//! Assignment operator
 	CylindricalDetector& operator=(const CylindricalDetector& other);
-	//! Virtual copy constructor
-	CylindricalDetector* clone() const;
+
+	// Getters and setters
+
+	//! Return the height in angular units (radians) covered by the detector
+	double getHeightAngle() const;
+	//! Return the width in angular units (radians) covered by the detector
+	double getWidthAngle() const;
 	//! Set the size of the detector using angular units (radians) rather than lengths. Converted internally in width and height.
 	//! Use Units::deg for easy conversion
 	void setAngularRange(double widthAngle, double heightAngle);
-	void setWidthAngle(double wangle);
+	//! Set the full height of the detector in Angle, assume the distance is set before
 	void setHeightAngle(double hangle);
-	//! Return the width in angular units (radians) covered by the detector
-	double getWidthAngle() const;
-	//! Return the height in angular units (radians) covered by the detector
-	double getHeightAngle() const;
-	void parse(const ptree& node)
-	{
+	//! Set the full width of the detector in Angle, assume the distance is set before
+	void setWidthAngle(double wangle);
 
-	}
+	// Other methods
+
+	void parse(const ptree& node);
+
 private:
 	Eigen::Vector3d getPos(double x,double y) const;
 	double _widthAngle;
