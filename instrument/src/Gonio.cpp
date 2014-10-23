@@ -43,12 +43,37 @@ Gonio::~Gonio()
 		delete ax;
 }
 
+const std::vector<Axis*>& Gonio::getAxes() const
+{
+	return _axes;
+}
+
+std::vector<std::string> Gonio::getPhysicalAxesNames() const
+{
+	std::vector<std::string> names;
+	names.reserve(getNPhysicalAxes());
+	for (auto a : _axes)
+	{
+		if (a->isPhysical())
+			names.push_back(a->getLabel());
+	}
+	return names;
+}
+
+std::vector<std::string> Gonio::getAxesNames() const
+{
+	std::vector<std::string> names;
+	names.reserve(getNAxes());
+	for (auto a : _axes)
+			names.push_back(a->getLabel());
+	return names;
+}
+
 Axis*const Gonio::getAxis(unsigned int i)
 {
 	isAxisValid(i);
 	return _axes[i];
 }
-
 
 Axis*const Gonio::getAxis(const std::string& label)
 {
@@ -90,7 +115,7 @@ unsigned int Gonio::isAxisValid(const std::string& label) const
 
 Eigen::Transform<double,3,Eigen::Affine> Gonio::getHomMatrix(const std::vector<double>& values) const
 {
-	if (values.size() != nPhysicalAxes())
+	if (values.size() != getNPhysicalAxes())
 	{
 		throw std::range_error("Trying to set Gonio "+_label+" with wrong number of parameters");
 	}
@@ -116,34 +141,21 @@ Eigen::Transform<double,3,Eigen::Affine> Gonio::getInverseHomMatrix(const std::v
 	return getHomMatrix(values).inverse();
 }
 
-Vector3d Gonio::transform(const Vector3d& v,const std::vector<double>& values)
-{
-	Eigen::Transform<double,3,Eigen::Affine> result=getHomMatrix(values);
-	return (result*v.homogeneous());
-}
-
-Vector3d Gonio::transformInverse(const Vector3d& v,const std::vector<double>& values)
-{
-	Eigen::Transform<double,3,Eigen::Affine> result=getInverseHomMatrix(values);
-	return (result*v.homogeneous());
-}
-
-void Gonio::transformInPlace(Vector3d& v,const std::vector<double>& values)
-{
-	Eigen::Transform<double,3,Eigen::Affine> result=getHomMatrix(values);
-	v=result*v.homogeneous();
-}
-
-void Gonio::transformInverseInPlace(Vector3d& v,const std::vector<double>& values)
-{
-	v=getInverseHomMatrix(values)*v.homogeneous();
-}
-
-std::size_t Gonio::nAxes() const
+std::size_t Gonio::getNAxes() const
 {
 	return _axes.size();
 }
 
+std::size_t Gonio::getNPhysicalAxes() const
+{
+	std::size_t nPhysAxis = 0;
+	for (auto a : _axes)
+	{
+		if (a->isPhysical())
+			nPhysAxis++;
+	}
+	return nPhysAxis;
+}
 
 void Gonio::resetOffsets()
 {
@@ -153,15 +165,27 @@ void Gonio::resetOffsets()
 	}
 }
 
-std::size_t Gonio::nPhysicalAxes() const
+Vector3d Gonio::transform(const Vector3d& v,const std::vector<double>& values)
 {
-	std::size_t nPhysAxis = 0;
-	for (auto a : _axes)
-	{
-		if (a->isPhysical())
-			nPhysAxis++;
-	}
-	return nPhysAxis;
+	Eigen::Transform<double,3,Eigen::Affine> result=getHomMatrix(values);
+	return (result*v.homogeneous());
+}
+
+void Gonio::transformInPlace(Vector3d& v,const std::vector<double>& values)
+{
+	Eigen::Transform<double,3,Eigen::Affine> result=getHomMatrix(values);
+	v=result*v.homogeneous();
+}
+
+Vector3d Gonio::transformInverse(const Vector3d& v,const std::vector<double>& values)
+{
+	Eigen::Transform<double,3,Eigen::Affine> result=getInverseHomMatrix(values);
+	return (result*v.homogeneous());
+}
+
+void Gonio::transformInverseInPlace(Vector3d& v,const std::vector<double>& values)
+{
+	v=getInverseHomMatrix(values)*v.homogeneous();
 }
 
 }

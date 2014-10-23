@@ -54,45 +54,71 @@ using Eigen::Vector3d;
 class Gonio
 {
 public:
-	//! Initialize an empty Gonio
-	Gonio(const std::string& label);
+
+	// Constructors and destructor
+
+	// Default constructor (deleted)
+	Gonio()=delete;
 	//! Copy constructor
 	Gonio(const Gonio& other);
-	//! Assignment operator
-	Gonio& operator=(const Gonio& other);
+	//! Constructs a gonio with a gieven name
+	Gonio(const std::string& name);
 	//! Destructor
 	~Gonio();
-	Axis* addRotation(const std::string& label,const Vector3d& axis, RotAxis::Direction dir=RotAxis::Direction::CCW);
-	Axis* addTranslation(const std::string& label,const Vector3d& axis);
-	//! Pointer to axis i, throw range_error if not found
+
+	// Operators
+
+	//! Assignment operator
+	Gonio& operator=(const Gonio& other);
+
+	// Getters and setters
+	//! Gets the axes of this goniometer
+	const std::vector<Axis*>& getAxes() const;
+	//! Gets the names of the axes of this goniometer
+	std::vector<std::string> getAxesNames() const;
+	//! Gets the names of the physical axes of this goniometer
+	std::vector<std::string> getPhysicalAxesNames() const;
+	//! Get a pointer to axis i, throw range_error if not found
 	Axis* const getAxis(unsigned int i);
-	//! Pointer to axis with label, throw range_error if not found
+	//! Get a pointer to axis with label, throw range_error if not found
     Axis* const getAxis(const std::string& label);
 	//! Return the homogeneous matrix corresponding to this set of parameters. Throw if angles outside limits.
 	Eigen::Transform<double,3,Eigen::Affine> getHomMatrix(const std::vector<double>& values) const;
+	//! Return the number of axes attached to this goniometer
+	std::size_t getNAxes() const;
+	//! Return the number of physical axis defined in the gonio
+	std::size_t getNPhysicalAxes() const;
+
+	// Other methods
+
+	//! Add a rotation axis to this goniometer
+	Axis* addRotation(const std::string& label,const Vector3d& axis, RotAxis::Direction dir=RotAxis::Direction::CCW);
+	//! Add a translation axis to this goniometer
+	Axis* addTranslation(const std::string& label,const Vector3d& axis);
 	//! Return the inverse of the homogeneous matrix corresponding to this set of parameters. Throw if angles outside limits.
 	Eigen::Transform<double,3,Eigen::Affine> getInverseHomMatrix(const std::vector<double>& values) const;
 	//! Transform a point in 3D space, given a vector of parameters
 	Vector3d transform(const Vector3d& v,const std::vector<double>& values);
+	//! Reverse transform a point in 3D space, given a vector of parameters
 	Vector3d transformInverse(const Vector3d& v,const std::vector<double>& values);
 	//! Transform a vector inplace, for a values of Gonio parameters
 	void transformInPlace(Vector3d& v,const std::vector<double>& values);
+	//! Reverse transform a vector inplace, for a values of Gonio parameters
 	void transformInverseInPlace(Vector3d& v,const std::vector<double>& values);
-	//! Return the number of axes attached to this goniometer
-	std::size_t nAxes() const;
 	//! Reset all offsets
 	void resetOffsets();
-	//! Return the number of physical axis defined in the gonio
-	std::size_t nPhysicalAxes() const;
+
 protected:
-	//! Given name of the gonio
-	std::string _label;
 	//! Check whether axis i within the range of Axis
 	void isAxisValid(unsigned int i) const;
 	//! Check whether s names a valid axis
 	unsigned int isAxisValid(const std::string& s) const;
+
+	//! Given name of the gonio
+	std::string _label;
 	//! Set of axis
 	std::vector<Axis*> _axes;
+
 public:
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
