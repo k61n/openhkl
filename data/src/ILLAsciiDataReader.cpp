@@ -38,6 +38,7 @@ ILLAsciiDataReader::ILLAsciiDataReader() : IDataReader(), _nframes(0),_datapoint
 
 std::vector<int> ILLAsciiDataReader::getFrame(uint i) const
 {
+
 	assert(i<_nframes);
 
 	// Determine the beginning of the data block
