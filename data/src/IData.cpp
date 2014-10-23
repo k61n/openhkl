@@ -93,6 +93,16 @@ ComponentState IData::getSampleInterpolatedState(double frame)
 
 }
 
+const std::vector<ComponentState>& IData::getDetectorStates() const
+{
+	return _detectorStates;
+}
+
+const std::vector<ComponentState>& IData::getSampleStates() const
+{
+	return _sampleStates;
+}
+
 } // end namespace Data
 
 } // end namespace SX

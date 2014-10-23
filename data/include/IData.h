@@ -73,13 +73,20 @@ public:
 
 	// Getters and setters
 
-    //! Interpolate between two consecutive detector states
+    //! Gets the interpolated state between two consecutive detector states
     ComponentState getDetectorInterpolatedState(double frame);
+	//! Gets the the detector states.
+	const std::vector<ComponentState>& getDetectorStates() const;
+    //! Gets the data filename
 	const std::string& getFilename() const;
+	//! Gets a shared pointer to the diffractometer used to collect the data
 	std::shared_ptr<Diffractometer> getDiffractometer() const;
+	//! Gets a pointer to the metadata of the data
 	MetaData* const getMetadata() const;
-    //! Interpolate between two consecutive sample states
+    //! Gets the interpolated state between two consecutive sample states
     ComponentState getSampleInterpolatedState(double frame);
+	//! Gets the the detector states.
+	const std::vector<ComponentState>& getSampleStates() const;
 
 	// Other methods
 
