@@ -69,7 +69,7 @@ public:
 	//! Assignment
 	OBB& operator=(const OBB<T,D>& other);
 	//! Return a copy of this OBB
-	OBB* clone() const;
+	IShape<T,D>* clone() const;
 	//! The destructor.
 	~OBB();
 	//! Return true if the OBB intersects any kind of shape.
@@ -159,7 +159,7 @@ OBB<T,D>::OBB(const vector& center, const vector& eigenvalues, const matrix& eig
 }
 
 template<typename T,uint D>
-OBB<T,D>* OBB<T,D>::clone() const
+IShape<T,D>* OBB<T,D>::clone() const
 {
 	return new OBB(*this);
 }

@@ -67,7 +67,7 @@ public:
 	//! Construct a N-dimensional sphere from its center and radius.
 	Sphere(const vector& center, T radius);
 	//! Return a copy of this Sphere
-	Sphere* clone() const;
+	IShape<T,D>* clone() const;
 	//! The destructor.
 	~Sphere();
 	//! The assignement operator
@@ -146,7 +146,7 @@ Sphere<T,D>& Sphere<T,D>::operator=(const Sphere<T,D>& other)
 }
 
 template<typename T,uint D>
-Sphere<T,D>* Sphere<T,D>::clone() const
+IShape<T,D>* Sphere<T,D>::clone() const
 {
 	return new Sphere(*this);
 }

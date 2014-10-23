@@ -61,7 +61,7 @@ public:
 	//! Assignment
 	Ellipsoid& operator=(const Ellipsoid&);
 	//! Return a copy of this ellipsoid object
-	Ellipsoid* clone() const;
+	IShape<T,D>* clone() const;
 	//! Return true if the ellipsoid intersects any kind of shape
 	bool collide(const IShape<T,D>& other) const;
 	//! Return true if the ellipsoid intersects an ellipsoid.
@@ -128,7 +128,7 @@ Ellipsoid<T,D>& Ellipsoid<T,D>::operator=(const Ellipsoid<T,D>& rhs)
 }
 
 template<typename T,uint D>
-Ellipsoid<T,D>* Ellipsoid<T,D>::clone() const
+IShape<T,D>* Ellipsoid<T,D>::clone() const
 {
 	return new Ellipsoid(*this);
 }
