@@ -23,6 +23,11 @@ Diffractometer* D19FourCircles::create(const std::string& name)
 	return new D19FourCircles(name);
 }
 
+Diffractometer* D19FourCircles::clone() const
+{
+	return new D19FourCircles(*this);
+}
+
 D19FourCircles::D19FourCircles(const std::string& name) : Diffractometer(name)
 {
 
@@ -66,6 +71,11 @@ D19FourCircles::D19FourCircles(const std::string& name) : Diffractometer(name)
 }
 
 D19FourCircles::~D19FourCircles() {
+}
+
+std::string D19FourCircles::getType() const
+{
+	return "D19";
 }
 
 } // end namespace Instrument

@@ -53,8 +53,10 @@ public:
 
 	//! Constructs a diffractometer from another one
 	Diffractometer(const Diffractometer& other);
+	// Virtual copy constructor
+	virtual Diffractometer* clone() const=0;
 	//! Destructor
-	~Diffractometer();
+	virtual ~Diffractometer()=0;
 
 	// Operators
 
@@ -77,6 +79,8 @@ public:
 	Sample* getSample();
 	//! Get the source of this diffractometer
 	Source* getSource();
+	//! Get the type of the diffractometer
+	virtual std::string getType() const=0;
 
 protected:
 

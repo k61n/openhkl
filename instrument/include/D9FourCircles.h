@@ -45,8 +45,11 @@ class D9FourCircles : public Diffractometer
 public:
 
 	static Diffractometer* create(const std::string& name);
-
+	// Virtual copy constructor
+	Diffractometer* clone() const;
 	virtual ~D9FourCircles();
+
+	std::string getType() const;
 
 private:
 	D9FourCircles(const std::string& name);

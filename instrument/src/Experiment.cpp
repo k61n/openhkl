@@ -26,7 +26,7 @@ Experiment::Experiment(const std::string& name, std::string diffractometerName)
   _data()
 {
 	DiffractometerFactory* f=DiffractometerFactory::Instance();
-	_diffractometer = std::shared_ptr<Diffractometer>(new Diffractometer(*(f->create(diffractometerName,""))));
+	_diffractometer = std::shared_ptr<Diffractometer>(f->create(diffractometerName,"")->clone());
 }
 
 Experiment::~Experiment()
@@ -88,6 +88,11 @@ void Experiment::addData(IData* data)
 	auto it=_data.find(basename);
 	if (it != _data.end())
 		return;
+
+	std::string diffName = data->getMetadata()->getKey<std::string>("Instrument");
+
+	if (!(diffName.compare(_diffractometer->getType())==0))
+		throw std::runtime_error("Mismatch between the diffractometers assigned to the experiment and the data");
 
 	_data.insert(std::pair<std::string,IData*>(basename,data));
 

@@ -30,6 +30,8 @@
 #ifndef NSXTOOL_D19FOURCIRCLES_H_
 #define NSXTOOL_D19FOURCIRCLES_H_
 
+#include <string>
+
 #include <Diffractometer.h>
 
 namespace SX
@@ -42,7 +44,12 @@ class D19FourCircles : public Diffractometer
 {
 public:
 	static Diffractometer* create(const std::string& name);
+	// Virtual copy constructor
+	Diffractometer* clone() const;
 	virtual ~D19FourCircles();
+
+	std::string getType() const;
+
 private:
 	//! Default constructor
 	D19FourCircles(const std::string& name);
