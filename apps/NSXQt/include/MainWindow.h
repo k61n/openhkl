@@ -10,13 +10,17 @@
 #include "Logger.h"
 #include <QMenu>
 #include <DialogPeakFind.h>
-#include "Data.h"
+//#include "Data.h"
+#include "Experiment.h"
 
 class QListWidgetItem;
 
 namespace Ui {
+
 class MainWindow;
 }
+
+using namespace SX::Instrument;
 
 class MainWindow : public QMainWindow
 {
@@ -51,12 +55,17 @@ public slots:
      void plotUpdate(int numor,int frame);
      void resizeEvent(QResizeEvent *);
 private:
+
     //! Return a list of numors currently selected
-    std::vector<Data*> selectedNumors();
+    std::vector<IData*> selectedNumors();
+
+
+    std::unordered_map<std::string,Experiment> _experiments;
+
     void updatePlot();
     Ui::MainWindow *ui;
     QGraphicsScene* scene;
-    std::unordered_map<std::string,Data> _data;
+//    std::unordered_map<std::string,Data> _data;
 //    QMenu* loggerContextMenu;
 protected:
 };

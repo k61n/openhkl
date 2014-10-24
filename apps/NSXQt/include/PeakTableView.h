@@ -1,7 +1,7 @@
 #ifndef PEAKTABLEVIEW_H
 #define PEAKTABLEVIEW_H
 #include <QTableView>
-#include <Data.h>
+#include <IData.h>
 #include <QMenu>
 #include <PeakPlotter.h>
 #include <QFileDialog>
@@ -13,7 +13,7 @@ class PeakTableView : public QTableView
     Q_OBJECT
 public:
     explicit PeakTableView(MainWindow* main,QWidget* parent = 0);
-    void setData(const std::vector<Data*>);
+    void setData(const std::vector<IData*>);
 signals:
     void plot2DUpdate(int numor,int frame);
 public slots:

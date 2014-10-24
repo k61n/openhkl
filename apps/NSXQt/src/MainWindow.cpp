@@ -12,7 +12,7 @@
 #include <Ellipsoid.h>
 #include <Plotter1D.h>
 #include "IShape.h"
-#include "ILLAsciiDataReader.h"
+#include "ILLAsciiData.h"
 #include "Units.h"
 #include "Detector.h"
 #include "Cluster.h"
@@ -33,10 +33,12 @@
 #include "Sample.h"
 #include "Data.h"
 #include "AABB.h"
-
+#include "Source.h"
+#include "ComponentState.h"
+#include <utility>
 
 using namespace SX::Units;
-
+using namespace SX::Instrument;
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -65,10 +67,12 @@ MainWindow::MainWindow(QWidget *parent) :
     QShortcut* shortcut = new QShortcut(QKeySequence(Qt::Key_Delete), ui->numor_Widget);
     connect(shortcut, SIGNAL(activated()), this, SLOT(deleteNumors()));
 
-    // Specific to D19 detector
-    ui->_dview->setNpixels(640,256);
-    ui->_dview->setDimensions(120.0,0.4);
-    ui->_dview->setDetectorDistance(0.764);
+    // LAURENT TEMPORARY PATCH
+    _experiments.insert(std::make_pair<std::string,Experiment>("my-exp",Experiment("my-exp","D19-4c")));
+
+    ui->_dview->setNpixels(_experiments["my_exp"].getDiffractometer()->getDetector()->getNRows(),_experiments["my_exp"].getDiffractometer()->getDetector()->getNCols());
+    ui->_dview->setDimensions(_experiments["my_exp"].getDiffractometer()->getDetector()->getWidthAngle(),_experiments["my_exp"].getDiffractometer()->getDetector()->getHeigth());
+    ui->_dview->setDetectorDistance(_experiments["my_exp"].getDiffractometer()->getDetector()->getDistance());
     //
 
     ui->selectionMode->addItem(QIcon(":/resources/zoomIcon.png"),"");
@@ -104,20 +108,21 @@ void MainWindow::on_action_open_triggered()
         QFileInfo fileinfo(fileNames[i]);
         QString numor = fileinfo.baseName(); // Return only a file name
         std::string index=numor.toStdString();
-        auto it=_data.find(index);
-        if (it==_data.end()) // Add numor only if not already in the list
+        if (!_experiments["my-exp"].hasData(index)) // Add numor only if not already in the list
         {
-        QListWidgetItem* litem=new QListWidgetItem(numor);
-        _data.insert(std::unordered_map<std::string,Data>::value_type(index,Data()));
-        try
-        {
-            _data[index].fromFile(fileNames[i].toStdString());
-        }catch(std::exception& e)
-        {
-           qWarning() << "Error reading numor: " + fileNames[i] + " " + QString(e.what());
-           continue;
-        }
-        ui->numor_Widget->addItem(litem);
+            QListWidgetItem* litem=new QListWidgetItem(numor);
+//            _data.insert(std::unordered_map<std::string,Data>::value_type(index,Data()));
+            try
+            {
+                ILLAsciiData* d = new ILLAsciiData(fileNames[i].toStdString(),_experiments["my-exp"].getDiffractometer(),false);
+                _experiments["my-exp"].addData(d);
+//                _data[index].fromFile(fileNames[i].toStdString());
+            }catch(std::exception& e)
+            {
+               qWarning() << "Error reading numor: " + fileNames[i] + " " + QString(e.what());
+               continue;
+            }
+            ui->numor_Widget->addItem(litem);
         }
     }
     QListWidgetItem* first=ui->numor_Widget->item(0);
@@ -129,10 +134,11 @@ void MainWindow::on_action_open_triggered()
     ui->intensityFrame->setEnabled(true);
 
     ui->numor_Widget->setCurrentItem(first);
-    std::string firstNumor = first->text().toStdString();
-    Data& d=_data[firstNumor];
-    ui->horizontalScrollBar->setMaximum(d._nblocks-1);
-    ui->spinBox_Frame->setMaximum(d._nblocks-1);
+//    std::string firstNumor = first->text().toStdString();
+//    Data& d=_data[firstNumor];
+    IData* it=_experiments["my-exp"].getData().begin()->second;
+    ui->horizontalScrollBar->setMaximum(it->getNFrames()-1);
+    ui->spinBox_Frame->setMaximum(it->getNFrames()-1);
     ui->dial->setRange(1,3000);
     ui->dial->setValue(20);
     updatePlot();
@@ -162,16 +168,12 @@ void MainWindow::updatePlot()
     }
     // Update the data in the detector view
     std::string numor=item->text().toStdString();
-    auto it=_data.find(numor);
-    if (it!=_data.end())
-    {
-        Data* ptr=&(it->second);
-        int frame= ui->horizontalScrollBar->value();
-        // Make sure that the frame value for previously selected file is valid for current one
-        if (frame>ptr->_nblocks-1)
-            frame=0;
-        ui->_dview->updateView(ptr,frame);
-    }
+    auto it=_experiments["my-exp"].getData(numor);
+    int frame= ui->horizontalScrollBar->value();
+    // Make sure that the frame value for previously selected file is valid for current one
+    if (frame>(it->getNFrames()-1))
+        frame=0;
+    ui->_dview->updateView(it,frame);
 
 }
 
@@ -191,9 +193,7 @@ void MainWindow::deleteNumors()
 
     for (auto it=selNumors.begin();it!=selNumors.end();++it)
     {
-        auto it1 = _data.find((*it)->text().toStdString());
-        if (it1 != _data.end())
-            _data.erase(it1);
+        _experiments["my-exp"].removeData((*it)->text().toStdString());
         delete *it;
     }
     qDebug() <<  selNumors.size() << " file(s) have been deleted";
@@ -224,7 +224,7 @@ void MainWindow::on_numor_Widget_itemDoubleClicked(QListWidgetItem *item)
     if (!item)
        return;
     std::string numor=item->text().toStdString();
-    int nmax=_data[numor]._nblocks-1;
+    int nmax=_experiments["my-exp"].getData(numor)->getNFrames()-1;
     ui->horizontalScrollBar->setMaximum(nmax);
     ui->spinBox_Frame->setMaximum(nmax);
 
@@ -239,7 +239,7 @@ void MainWindow::on_numor_Widget_itemActivated(QListWidgetItem *item)
         return;
     std::string numor=item->text().toStdString();
 
-    int nmax=_data[numor]._nblocks-1;
+    int nmax=_experiments["my-exp"].getData(numor)->getNFrames()-1;
     ui->horizontalScrollBar->setMaximum(nmax);
     ui->spinBox_Frame->setMaximum(nmax);
     updatePlot();
@@ -260,7 +260,7 @@ void MainWindow::on_action_peak_find_triggered()
     double confidence=dialog->getConfidence();
     double threshold=dialog->getThreshold();   
 
-    std::vector<Data*> numors=selectedNumors();
+    std::vector<IData*> numors=selectedNumors();
     qWarning() << "Peak find algorithm: Searching peaks in " << numors.size() << " files";
     int max=numors.size();
     int i=0;
@@ -272,16 +272,16 @@ void MainWindow::on_action_peak_find_triggered()
     std::size_t npeaks=0;
     for (auto& numor : numors)
     {
-      numor->_rpeaks.clear();
+      numor->clearPeaks();
       ui->progressBar->setValue(i++);
       numor->readInMemory();
 
 
     // Get pointers to start of each frame
-    std::vector<int*> temp(numor->_nblocks);
-    for (int i=0;i<numor->_nblocks;++i)
+    std::vector<int*> temp(numor->getNFrames());
+    for (int i=0;i<numor->getNFrames();++i)
     {
-        vint& v=numor->_data[i];
+        vint& v=numor->getData(i);
         temp[i]=&(v[0]);
     }
 
@@ -290,7 +290,7 @@ void MainWindow::on_action_peak_find_triggered()
     SX::Geometry::blob3DCollection blobs;
     try
     {
-      blobs=SX::Geometry::findBlobs3D<int>(temp, numor->_detector->getNRows(),numor->_detector->getNCols(), threshold+2, 30, 10000, confidence, 0);
+      blobs=SX::Geometry::findBlobs3D<int>(temp, numor->getDiffractometer()->getDetector()->getNRows(),numor->getDiffractometer()->getDetector()->getNCols(), threshold+2, 30, 10000, confidence, 0);
     }catch(std::exception& e) // Warning if RAM error
     {
         qCritical() << "Peak finder caused a memory exception" << e.what();
@@ -300,7 +300,7 @@ void MainWindow::on_action_peak_find_triggered()
 
     //
     int i=0;
-    SX::Geometry::AABB<double,3> dAABB(Eigen::Vector3d(0,0,0),Eigen::Vector3d(numor->_detector->getNCols(),numor->_detector->getNRows(),numor->_nblocks-1));
+    SX::Geometry::AABB<double,3> dAABB(Eigen::Vector3d(0,0,0),Eigen::Vector3d(numor->getDiffractometer()->getDetector()->getNCols(),numor->getDiffractometer()->getDetector()->getNRows(),numor->getNFrames()-1));
     for (auto& blob : blobs)
     {
         Eigen::Vector3d center, eigenvalues;
@@ -311,21 +311,22 @@ void MainWindow::on_action_peak_find_triggered()
         p.setBackgroundShape(new SX::Geometry::Ellipsoid3D(center,eigenvalues.cwiseProduct(Eigen::Vector3d(1.5,1.5,3)),eigenvectors));
         //
         int f=std::floor(center[2]);
-        double omega=numor->_omegas[f]+(center[2]-f)*(numor->_omegas[f+1]-numor->_omegas[f]);
-        p.setSampleState(new SX::Instrument::ComponentState(numor->_sample->createState({omega,numor->_chi,numor->_phi})));
-        p.setDetectorEvent(new SX::Instrument::DetectorEvent(numor->_detector->createDetectorEvent(center[0],center[1],{numor->_gamma})));
-        p.setWavelength(numor->_wavelength);
+//        double omega=numor->_omegas[f]+(center[2]-f)*(numor->_omegas[f+1]-numor->_omegas[f]);
+        p.setSampleState(new SX::Instrument::ComponentState(numor->getSampleInterpolatedState(f)));
+        ComponentState detState=numor->getDetectorInterpolatedState(f);
+        p.setDetectorEvent(new SX::Instrument::DetectorEvent(numor->getDiffractometer()->getDetector()->createDetectorEvent(center[0],center[1],detState.getValues())));
+        p.setWavelength(numor->getDiffractometer()->getSource()->getWavelength());
 
         if (!dAABB.contains(*p.getPeak()))
         {
             p.setSelected(false);
         }
-        numor->_rpeaks.insert(Data::maprealPeaks::value_type(i++,p));
+        numor->addPeak(p);
         npeaks++;
     }
 
 
-    for (auto& peak : numor->_rpeaks)
+    for (auto& peak : numor->getPeaks())
         peak.second.integrate();
     numor->releaseMemory();
     }
@@ -348,11 +349,11 @@ void MainWindow::on_actionUnit_Cell_triggered()
     DialogUnitCell* dialog=new DialogUnitCell(this);
 
     std::vector<std::reference_wrapper<SX::Crystal::Peak3D>> peaks;
-    std::vector<Data*> numors=selectedNumors();
+    std::vector<IData*> numors=selectedNumors();
     for (auto ptr : numors)
     {
       // Add peaks present in this numor
-      for (auto& peak : ptr->_rpeaks)
+      for (auto& peak : ptr->getPeaks())
       {
           peaks.push_back(std::ref(peak.second));
 
@@ -362,21 +363,20 @@ void MainWindow::on_actionUnit_Cell_triggered()
     dialog->show();
 }
 
-std::vector<Data*> MainWindow::selectedNumors()
+std::vector<IData*> MainWindow::selectedNumors()
 {
     QList<QListWidgetItem*> selNumors = ui->numor_Widget->selectedItems();
-    std::vector<Data*> list;
+    std::vector<IData*> list;
     for (auto it=selNumors.begin();it!=selNumors.end();++it)
     {
-        auto it1 = _data.find((*it)->text().toStdString());
-        if (it1!= _data.end())
-            list.push_back(&(it1->second));
+        auto it1 = _experiments["my-exp"].getData((*it)->text().toStdString());
+        list.push_back(it1);
     }
         return list;
 }
 void MainWindow::on_actionPeak_List_triggered()
 {
-    std::vector<Data*> numors=selectedNumors();
+    std::vector<IData*> numors=selectedNumors();
     PeakTableView* table=new PeakTableView(this);
     table->setData(numors);
     table->show();

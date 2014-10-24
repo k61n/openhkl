@@ -46,7 +46,7 @@ PeakTableView::PeakTableView(MainWindow* main,QWidget *parent)
     connect(this,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(deselectPeak(QModelIndex)));
 }
 
-void PeakTableView::setData(const std::vector<Data *> numors)
+void PeakTableView::setData(const std::vector<IData *> numors)
 {
     for (Data* ptr : numors)
     {

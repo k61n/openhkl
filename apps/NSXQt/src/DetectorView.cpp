@@ -98,7 +98,7 @@ void DetectorView::detectorToScene(double& x, double& y)
 
 void DetectorView::get2Theta(double x, double y, double &th2)
 {
-    SX::Data::MetaData* meta=_ptrData->_mm->getMetaData();
+    SX::Data::MetaData* meta=_ptrData->getMetadata();
     double gammacenter=meta->getKey<double>("2theta(gamma)");
     double gamma=gammacenter+_gammawidth*(0.5-x/pixels_h);
     double h=(0.5*pixels_v-y-0.5)/pixels_v*_height;
@@ -107,7 +107,7 @@ void DetectorView::get2Theta(double x, double y, double &th2)
 
 void DetectorView::getDSpacing(double x, double y, double &dspacing)
 {
-    SX::Data::MetaData* meta=_ptrData->_mm->getMetaData();
+    SX::Data::MetaData* meta=_ptrData->getMetadata();
     double wavelength=meta->getKey<double>("wavelength");
     double th2;
     get2Theta(x,y,th2);
@@ -117,11 +117,11 @@ void DetectorView::getDSpacing(double x, double y, double &dspacing)
 void DetectorView::getGammaNu(double x, double y, double &gamma, double &nu)
 {
     double gammanew,newnu;
-    _ptrData->_detector->getGammaNu(x,y,gammanew,newnu);
+    _ptrData->getDiffractometer()->getDetector()->getGammaNu(x,y,gammanew,newnu);
     gammanew /= SX::Units::deg;
     newnu /= SX::Units::deg;
 
-    SX::Data::MetaData* meta=_ptrData->_mm->getMetaData();
+    SX::Data::MetaData* meta=_ptrData->getMetadata();
     double gammacenter=meta->getKey<double>("2theta(gamma)");
     gamma=gammacenter+_gammawidth*(0.5-x/pixels_h);
     double h=(0.5*pixels_v-y-0.5)/pixels_v*_height;
@@ -137,52 +137,52 @@ bool DetectorView::hasData() const
 void DetectorView::integrateHorizontal(int xmin, int xmax, int ymin, int ymax, QVector<double> &projection, QVector<double> &error)
 {
 
-    if (xmin>xmax)
-        std::swap(xmin,xmax);
-    if (ymin>ymax)
-        std::swap(ymin,ymax);
-    projection.resize(ymax-ymin);
-    error.resize(ymax-ymin);
+//    if (xmin>xmax)
+//        std::swap(xmin,xmax);
+//    if (ymin>ymax)
+//        std::swap(ymin,ymax);
+//    projection.resize(ymax-ymin);
+//    error.resize(ymax-ymin);
 
-    int* d=&(_ptrData->_currentFrame[0]);
-    for (int i=0;i<pixels_h;++i)
-    {
-        for (int j=0;j<pixels_v;++j)
-        {
-            if (i>=xmin && i<xmax && j>=ymin && j<ymax)
-                projection[j-ymin]+=*d;
-            d++;
-        }
-    }
+//    int* d=&(_ptrData->_currentFrame[0]);
+//    for (int i=0;i<pixels_h;++i)
+//    {
+//        for (int j=0;j<pixels_v;++j)
+//        {
+//            if (i>=xmin && i<xmax && j>=ymin && j<ymax)
+//                projection[j-ymin]+=*d;
+//            d++;
+//        }
+//    }
 
-    for (int i=0;i<(ymax-ymin);++i)
-        error[i]=sqrt(projection[i]);
+//    for (int i=0;i<(ymax-ymin);++i)
+//        error[i]=sqrt(projection[i]);
 
     return;
 }
 
 void DetectorView::integrateVertical(int xmin, int xmax, int ymin, int ymax, QVector<double> &projection, QVector<double> &error)
 {
-    if (xmin>xmax)
-        std::swap(xmin,xmax);
-    if (ymin>ymax)
-        std::swap(ymin,ymax);
-    projection.resize(xmax-xmin);
-    error.resize(xmax-xmin);
+//    if (xmin>xmax)
+//        std::swap(xmin,xmax);
+//    if (ymin>ymax)
+//        std::swap(ymin,ymax);
+//    projection.resize(xmax-xmin);
+//    error.resize(xmax-xmin);
 
-    int* d=&(_ptrData->_currentFrame[0]);
-    for (int i=0;i<pixels_h;++i)
-    {
-        for (int j=0;j<pixels_v;++j)
-        {
-            if (i>=xmin && i<xmax && j>=ymin && j<ymax)
-                projection[i-xmin]+=*d;
-            d++;
-        }
-    }
+//    int* d=&(_ptrData->_currentFrame[0]);
+//    for (int i=0;i<pixels_h;++i)
+//    {
+//        for (int j=0;j<pixels_v;++j)
+//        {
+//            if (i>=xmin && i<xmax && j>=ymin && j<ymax)
+//                projection[i-xmin]+=*d;
+//            d++;
+//        }
+//    }
 
-    for (int i=0;i<(xmax-xmin);++i)
-        error[i]=sqrt(projection[i]);
+//    for (int i=0;i<(xmax-xmin);++i)
+//        error[i]=sqrt(projection[i]);
 
     return;
 }
@@ -351,8 +351,8 @@ void DetectorView::mouseMoveEvent(QMouseEvent* event)
         }
 
         int count=0;
-        if (_ptrData && pointInScene(pos))
-            count=_ptrData->_currentFrame[static_cast<int>(posx)*256+static_cast<int>(posy)];
+//        if (_ptrData && pointInScene(pos))
+//            count=_ptrData->_currentFrame[static_cast<int>(posx)*256+static_cast<int>(posy)];
         os << "I: " << count;
 
     }
@@ -390,7 +390,7 @@ void DetectorView::mousePressEvent(QMouseEvent* event)
                     int peak_number=s.toInt();
                     if (!_peakplotter)
                         _peakplotter=new PeakPlotter(this);
-                    _peakplotter->setPeak(&_ptrData->_rpeaks[peak_number]);
+                    _peakplotter->setPeak(&_ptrData->getPeaks()[peak_number]);
                     _peakplotter->show();
                     return;
                 }
@@ -538,9 +538,9 @@ void DetectorView::mouseReleaseEvent(QMouseEvent *event)
 
 void DetectorView::plotEllipsoids()
 {
-    if (_ptrData->_rpeaks.size())
+    if (_ptrData->getPeaks().size())
     {
-        for (auto& el : _ptrData->_rpeaks)
+        for (auto& el : _ptrData->getPeaks())
         {
             const SX::Geometry::IShape<double,3>* peak=el.second.getPeak();
             const Eigen::Vector3d& lower=peak->getLower();
@@ -952,7 +952,7 @@ void DetectorView::updateVerticalSliceCutter()
     _plotter->show();
 }
 
-void DetectorView::updateView(Data* ptr,int frame)
+void DetectorView::updateView(IData* ptr,int frame)
 {
     _ptrData=ptr;
 

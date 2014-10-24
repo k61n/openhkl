@@ -4,10 +4,12 @@
 #include <QWidget>
 #include <QMouseEvent>
 #include <QToolTip>
-#include "Data.h"
+#include "IData.h"
 #include "Plotter1D.h"
 #include <QStack>
 #include "PeakPlotter.h"
+
+using namespace SX::Data;
 
 class SliceRect;
 
@@ -51,7 +53,7 @@ public slots:
     void clearVerticalCutSlices();
     // Remove all graphs from the plotter.
     void clearPlotter();
-    void updateView(Data* ptr,int frame);
+    void updateView(IData* ptr,int frame);
     void setCutterMode(int i);
     // Set the zoom window to (x1,x2,y1,y2) in detector space coordinates;
     void setZoom(int x1,int y1, int x2, int y2);
@@ -100,7 +102,7 @@ private:
     // Check pixel x y is in the detector scene
     bool pointInScene(const QPointF&);
     // Pointer to Data
-    Data* _ptrData;
+    IData* _ptrData;
     int pixels_h;
     int pixels_v;
     // Width of detector in gamma
