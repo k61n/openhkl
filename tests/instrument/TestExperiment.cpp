@@ -37,5 +37,10 @@ BOOST_AUTO_TEST_CASE(Test_Experiment)
 
 	BOOST_CHECK_EQUAL(exp.getData("D10_ascii_example")->getBasename(),"D10_ascii_example");
 
+	// Remove the data from the experiment
+	exp.removeData("D10_ascii_example");
+	// The data must be empty again after data deletion
+	BOOST_CHECK_EQUAL(exp.getDataNames().size(),0);
+
 }
 

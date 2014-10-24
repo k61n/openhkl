@@ -26,7 +26,7 @@ BOOST_AUTO_TEST_CASE(Test_ILL_Data)
 
 	DiffractometerFactory* factory = DiffractometerFactory::Instance();
 
-	std::shared_ptr<Diffractometer> diff = std::shared_ptr<Diffractometer>(new Diffractometer(*(factory->create("D10-4c","D10 diffractometer"))));
+	std::shared_ptr<Diffractometer> diff = std::shared_ptr<Diffractometer>(factory->create("D10-4c","D10 diffractometer")->clone());
 
 	ILLAsciiData reader(std::string("D10_ascii_example"),diff,false);
 
