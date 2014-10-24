@@ -62,8 +62,13 @@ public:
 	//! Assignment operator
 	Source& operator=(const Source& other);
 
+	// Getters and setters
+	double getWavelength() const;
+	void setWavelength(double wavelength);
 
 private:
+
+	double _wavelength;
 };
 
 } // end namespace Instrument

@@ -58,7 +58,7 @@ public:
 	// Constructors & Destructors
 
 	//! Default constructor (deleted)
-	Experiment()=delete;
+	Experiment(){};
 	//! Copy constructor
 	Experiment(const Experiment& other);
 	//! Construct an empty experiment from a given name and diffractometer
@@ -75,6 +75,8 @@ public:
 
 	//! Gets a shared pointer to the diffractometer related to the experiment
 	std::shared_ptr<Diffractometer> getDiffractometer() const;
+	//! Get a reference to the dat
+	const std::map<std::string,IData*>& getData() const;
 	//! Gets the pointer to a given data stored in the experiment
 	IData* const getData(std::string name);
 	//! Gets the names of the data stored in the experiment
@@ -88,6 +90,10 @@ public:
 
 	//! Add some data to the experiment
 	void addData(IData* data);
+	//! Check whether the experiment has a data
+	bool hasData(const std::string& name) const;
+	//! Remove from a data from the experiment
+	void removeData(const std::string& name);
 
 private:
 	//! The name of this experiment

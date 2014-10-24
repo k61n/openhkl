@@ -61,6 +61,11 @@ std::vector<std::string> Experiment::getDataNames() const
 	return v;
 }
 
+const std::map<std::string,IData*>& Experiment::getData() const
+{
+	return _data;
+}
+
 IData* const Experiment::getData(std::string name)
 {
 	auto it=_data.find(name);
@@ -95,6 +100,20 @@ void Experiment::addData(IData* data)
 		throw std::runtime_error("Mismatch between the diffractometers assigned to the experiment and the data");
 
 	_data.insert(std::pair<std::string,IData*>(basename,data));
+
+}
+
+bool Experiment::hasData(const std::string& name) const
+{
+	auto it=_data.find(name);
+	return (it != _data.end());
+}
+
+void Experiment::removeData(const std::string& name)
+{
+	auto it=_data.find(name);
+	if (it != _data.end())
+		_data.erase(it);
 
 }
 

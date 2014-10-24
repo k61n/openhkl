@@ -233,6 +233,11 @@ double Detector::get2Theta(const DetectorEvent& event, const Eigen::Vector3d& si
 	return acos(proj/p.norm()/si.norm());
 }
 
+double Detector::getDistance() const
+{
+	return _distance;
+}
+
 void Detector::setDataMapping(std::function<void(double,double,double&,double&)> rhs)
 {
 	_mapping=rhs;

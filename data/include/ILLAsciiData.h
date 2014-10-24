@@ -64,11 +64,6 @@ public:
 	//! Assignment operator
 	ILLAsciiData& operator=(const ILLAsciiData& other)=delete;
 
-	// Setters and getters
-
-	//! Return the number of frames
-	std::size_t nFrames() const;
-
 	// Other methods
 
 	//! Return the intensity at point x,y,z
@@ -99,7 +94,6 @@ private:
 	//! return a MetaData Object
 	void readMetaData(const char* buf);
 
-	std::size_t _nFrames;
 	std::size_t _dataPoints;
 	std::size_t _nAngles;
 	std::size_t _headerSize;

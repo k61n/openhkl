@@ -82,6 +82,8 @@ public:
 	double get2Theta(double px, double py, const std::vector<double>& values=std::vector<double>(), const Eigen::Vector3d& si=Eigen::Vector3d(0,1,0)) const;
 	//! Get 2\f$ \theta \f$ from an event on the detector
 	double get2Theta(const DetectorEvent& event, const Eigen::Vector3d& si) const;
+	//! Returns the sample to detector distance
+	double getDistance() const;
 	/**
 	 *  @brief Get the position of a scattering event at px, py.
 	 *  @param px horizontal position of the scattering event in pixels unit

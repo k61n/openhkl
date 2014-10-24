@@ -32,6 +32,15 @@ Component* Source::clone() const
 	return new Source(*this);
 }
 
+double Source::getWavelength() const
+{
+	return _wavelength;
+}
+
+void Source::setWavelength(double wavelength)
+{
+	_wavelength=wavelength;
+}
 
 } // end namespace Instrument
 

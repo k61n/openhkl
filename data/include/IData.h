@@ -37,6 +37,7 @@
 #include "ComponentState.h"
 #include "MetaData.h"
 #include "Diffractometer.h"
+#include "Peak3D.h"
 
 namespace SX
 {
@@ -49,13 +50,14 @@ namespace Instrument
 namespace Data
 {
 
+using namespace SX::Crystal;
 using namespace SX::Instrument;
+
+typedef std::vector<int> vint;
 
 class IData
 {
 public:
-
-	typedef std::vector<int> vint;
 
 	// Constructors and destructor
 
@@ -75,6 +77,10 @@ public:
 
     //! Gets the data basename
 	std::string getBasename() const;
+	//! Gets a pointer to the data
+	const std::vector<vint>& getData() const;
+	//! Gets a pointer to the ith data
+	vint& getData(std::size_t idx);
     //! Gets the interpolated state between two consecutive detector states
     ComponentState getDetectorInterpolatedState(double frame);
 	//! Gets the the detector states.
@@ -83,8 +89,12 @@ public:
 	const std::string& getFilename() const;
 	//! Gets a shared pointer to the diffractometer used to collect the data
 	std::shared_ptr<Diffractometer> getDiffractometer() const;
+	//! Return the number of frames
+	std::size_t getNFrames() const;
 	//! Gets a pointer to the metadata of the data
 	MetaData* const getMetadata() const;
+	//! Return the peaks
+	std::map<int,Peak3D>& getPeaks();
     //! Gets the interpolated state between two consecutive sample states
     ComponentState getSampleInterpolatedState(double frame);
 	//! Gets the the detector states.
@@ -92,6 +102,9 @@ public:
 
 	// Other methods
 
+	void addPeak(const Peak3D& peak);
+	//! Clear the peaks collected for this data
+	void clearPeaks();
 	//! Return true if the file is stored in memory
 	bool isInMemory() const;
 	//! Return the intensity at point x,y,z.
@@ -106,12 +119,14 @@ public:
 protected:
 
 	std::string _filename;
+	std::size_t _nFrames;
 	std::shared_ptr<Diffractometer> _diffractometer;
 	MetaData* _metadata;
 	bool _inMemory;
 	std::vector<vint> _data;
 	std::vector<ComponentState> _detectorStates;
 	std::vector<ComponentState> _sampleStates;
+    std::map<int,Peak3D> _rpeaks;
 
 };
 

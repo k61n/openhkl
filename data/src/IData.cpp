@@ -19,12 +19,14 @@ using namespace boost::filesystem;
 
 IData::IData(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer, bool inMemory)
 : _filename(filename),
+  _nFrames(0),
   _diffractometer(diffractometer),
   _metadata(new MetaData()),
   _inMemory(inMemory),
   _data(),
   _detectorStates(),
-  _sampleStates()
+  _sampleStates(),
+  _rpeaks()
 {
 	if ( !boost::filesystem::exists(_filename.c_str()))
 		throw std::runtime_error("ILLAsciiData, file:"+_filename+" does not exist");
@@ -42,6 +44,16 @@ std::string IData::getBasename() const
 	return pathname.filename().string();
 }
 
+const std::vector<vint>& IData::getData() const
+{
+	return _data;
+}
+
+vint& IData::getData(std::size_t idx)
+{
+	return _data[idx];
+}
+
 const std::string& IData::getFilename() const
 {
 	return _filename;
@@ -55,6 +67,26 @@ std::shared_ptr<Diffractometer> IData::getDiffractometer() const
 MetaData* const IData::getMetadata() const
 {
 	return _metadata;
+}
+
+std::size_t IData::getNFrames() const
+{
+	return _nFrames;
+}
+
+std::map<int,Peak3D>& IData::getPeaks()
+{
+	return _rpeaks;
+}
+
+void IData::addPeak(const Peak3D& peak)
+{
+	_rpeaks.insert(std::pair<int,Peak3D>(_rpeaks.size(),peak));
+}
+
+void IData::clearPeaks()
+{
+	_rpeaks.clear();
 }
 
 bool IData::isInMemory() const
