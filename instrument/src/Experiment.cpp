@@ -1,6 +1,8 @@
 #include <stdexcept>
 #include <utility>
 
+#include "Diffractometer.h"
+#include "DiffractometerFactory.h"
 #include "Experiment.h"
 #include "IData.h"
 
@@ -10,15 +12,25 @@ namespace SX
 namespace Instrument
 {
 
-Experiment::Experiment(const Experiment& other) : _name(other._name), _diffractometer(other._diffractometer)
+Experiment::Experiment(const Experiment& other)
+: _name(other._name),
+  _diffractometerName(other._diffractometerName),
+  _diffractometer(other._diffractometer),
+  _data(other._data)
 {
 }
 
-Experiment::Experiment(const std::string& name, std::shared_ptr<Diffractometer> diffractometer) : _name(name), _diffractometer(diffractometer)
+Experiment::Experiment(const std::string& name, std::string diffractometerName)
+: _name(name),
+  _diffractometerName(diffractometerName),
+  _data()
 {
+	DiffractometerFactory* f=DiffractometerFactory::Instance();
+	_diffractometer = std::shared_ptr<Diffractometer>(new Diffractometer(*(f->create(diffractometerName,""))));
 }
 
-Experiment::~Experiment() {
+Experiment::~Experiment()
+{
 }
 
 Experiment& Experiment::operator=(const Experiment& other)
@@ -26,7 +38,9 @@ Experiment& Experiment::operator=(const Experiment& other)
 	if (this != &other)
 	{
 		_name = other._name;
+		_diffractometerName = other._diffractometerName;
 		_diffractometer = other._diffractometer;
+		_data = other._data;
 	}
 	return *this;
 }
@@ -59,6 +73,11 @@ IData* const Experiment::getData(std::string name)
 std::string Experiment::getName() const
 {
 	return _name;
+}
+
+void Experiment::setName(const std::string& name)
+{
+	_name = name;
 }
 
 void Experiment::addData(IData* data)

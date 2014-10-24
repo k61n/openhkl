@@ -62,7 +62,7 @@ public:
 	//! Copy constructor
 	Experiment(const Experiment& other);
 	//! Construct an empty experiment from a given name and diffractometer
-	Experiment(const std::string& name, std::shared_ptr<Diffractometer> diffractometer);
+	Experiment(const std::string& name, std::string diffractometerName);
 	//! Destructor
 	virtual ~Experiment();
 
@@ -81,6 +81,8 @@ public:
 	std::vector<std::string> getDataNames() const;
 	//! Gets the name of the experiment
 	std::string getName() const;
+	//! Sets the name of the experiment
+	void setName(const std::string& name);
 
 	// Other methods
 
@@ -90,8 +92,11 @@ public:
 private:
 	//! The name of this experiment
 	std::string _name;
-	//! A shared pointer to the detector assigned to this experiment
+	//! The name of the diffractometer assigned to the experiment
+	std::string _diffractometerName;
+	//! A pointer to the detector assigned to this experiment
 	std::shared_ptr<Diffractometer> _diffractometer;
+	//! A map of the data related to the experiment. The keys are the basename of their corresponding file.
 	std::map<std::string,IData*> _data;
 };
 
