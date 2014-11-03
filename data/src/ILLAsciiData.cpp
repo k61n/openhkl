@@ -306,6 +306,8 @@ void ILLAsciiData::readControlFBlock(std::stringstream& buffer)
 	}
 	_currentLine+=(fullLines+missing);
 
+    _diffractometer->getSource()->setWavelength(_metadata->getKey<double>("wavelength"));
+
 }
 
 void ILLAsciiData::readHeader(std::stringstream& buffer)
@@ -361,8 +363,6 @@ void ILLAsciiData::readHeader(std::stringstream& buffer)
 	std::string fulltime=time+std::string(".000");
 	boost::posix_time::ptime pos_time(boost::gregorian::from_uk_string(full_date),boost::posix_time::duration_from_string(fulltime));
 	_metadata->add<boost::posix_time::ptime>("ptime",pos_time);
-
-    _diffractometer->getSource()->setWavelength(_metadata->getKey<double>("wavelength"));
 
 }
 
