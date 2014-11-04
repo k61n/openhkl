@@ -20,5 +20,6 @@
         <file>resources/sortUpIcon.png</file>
         <file>resources/peakDeselectedIcon.png</file>
         <file>resources/peakSelectedIcon.png</file>
+        <file>resources/newExperiment.png</file>
     </qresource>
 </RCC>
