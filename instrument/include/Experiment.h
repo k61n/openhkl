@@ -62,7 +62,9 @@ public:
 	//! Copy constructor
 	Experiment(const Experiment& other);
 	//! Construct an empty experiment from a given name and diffractometer
-	Experiment(const std::string& name, std::string diffractometerName);
+	Experiment(const std::string& name, const std::string& diffractometerName);
+	//! Construct an empty experiment from a diffractometer name
+	Experiment(const std::string& diffractometerName);
 	//! Destructor
 	virtual ~Experiment();
 

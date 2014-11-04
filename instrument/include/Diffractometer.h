@@ -84,7 +84,7 @@ public:
 
 protected:
 
-	//! Constructs a default diffractometer
+	//! Default constructor
 	Diffractometer();
 	//! Constructs a diffractometer with a given name
 	Diffractometer(const std::string& name);

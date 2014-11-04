@@ -20,8 +20,17 @@ Experiment::Experiment(const Experiment& other)
 {
 }
 
-Experiment::Experiment(const std::string& name, std::string diffractometerName)
+Experiment::Experiment(const std::string& name, const std::string& diffractometerName)
 : _name(name),
+  _diffractometerName(diffractometerName),
+  _data()
+{
+	DiffractometerFactory* f=DiffractometerFactory::Instance();
+	_diffractometer = std::shared_ptr<Diffractometer>(f->create(diffractometerName,"")->clone());
+}
+
+Experiment::Experiment(const std::string& diffractometerName)
+: _name("experiment"),
   _diffractometerName(diffractometerName),
   _data()
 {
