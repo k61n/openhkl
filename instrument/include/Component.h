@@ -62,8 +62,8 @@ public:
 
 	// Constructors and destructor
 
-	//! Default constructor (deleted)
-	Component()=delete;
+	//! Default constructor
+	Component();
 	// Copy constructor
 	Component(const Component& other);
 	//! Constructs a component with a given name
@@ -96,6 +96,8 @@ public:
 	const Eigen::Vector3d& getRestPosition() const;
 	//! Attach a modifier to the component.
 	void setGonio(std::shared_ptr<Gonio>);
+	//! Set the name of the component
+	void setName(const std::string& name);
 	//! Set the rest position
 	virtual void setRestPosition(const Eigen::Vector3d& pos);
 

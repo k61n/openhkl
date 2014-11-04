@@ -10,6 +10,10 @@ namespace SX
 namespace Instrument
 {
 
+Component::Component() : _name(""), _gonio(), _position(Eigen::Vector3d::Zero())
+{
+}
+
 Component::Component(const std::string& name) : _name(name), _gonio(), _position(Eigen::Vector3d::Zero())
 {
 }
@@ -34,30 +38,14 @@ Component& Component::operator=(const Component& other)
 	return *this;
 }
 
-const std::string& Component::getName() const
-{
-	return _name;
-}
-
-void Component::setGonio(std::shared_ptr<Gonio> gonio)
-{
-	if (gonio.get()!=nullptr)
-		_gonio=gonio;
-}
-
 std::shared_ptr<Gonio> Component::getGonio() const
 {
 	return _gonio;
 }
 
-void Component::setRestPosition(const Vector3d& v)
+const std::string& Component::getName() const
 {
-	_position=v;
-}
-
-const Eigen::Vector3d& Component::getRestPosition() const
-{
-	return _position;
+	return _name;
 }
 
 Eigen::Vector3d Component::getPosition(const std::vector<double>& goniosetup) const
@@ -74,6 +62,27 @@ Eigen::Vector3d Component::getPosition(const ComponentState& state) const
 		return _position;
 	else
 		return _gonio->transform(_position,state._values);
+}
+
+const Eigen::Vector3d& Component::getRestPosition() const
+{
+	return _position;
+}
+
+void Component::setGonio(std::shared_ptr<Gonio> gonio)
+{
+	if (gonio.get()!=nullptr)
+		_gonio=gonio;
+}
+
+void Component::setName(const std::string& name)
+{
+	_name = name;
+}
+
+void Component::setRestPosition(const Vector3d& v)
+{
+	_position=v;
 }
 
 bool Component::hasGonio() const
