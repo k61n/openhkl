@@ -8,6 +8,17 @@ namespace SX
 namespace Instrument
 {
 
+Axis::Axis()
+: _label("axis"),
+  _axis(Eigen::Vector3d(0.0,0.0,1.0)),
+  _offset(0.0),
+  _min(-std::numeric_limits<double>::infinity()),
+  _max(std::numeric_limits<double>::infinity()),
+  _offsetFixed(false),
+  _physical(true)
+{
+}
+
 Axis::Axis(const std::string& label)
 : _label(label),
   _axis(Eigen::Vector3d(0.0,0.0,1.0)),

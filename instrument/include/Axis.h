@@ -49,12 +49,14 @@ class Axis
 {
 
 public:
+	//! Default constructor
+	Axis();
+	//! Copy constructor
+	Axis(const Axis& other);
 	//! Contruct a labelized default z-axis
 	Axis(const std::string& label);
 	//! Construct a labelized axis from a vector
 	Axis(const std::string& label, const Eigen::Vector3d& axis);
-	//! Copy constructor
-	Axis(const Axis& other);
 	//! Assignment operator
 	Axis& operator=(const Axis& other);
 	//! Destructor

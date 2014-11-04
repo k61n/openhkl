@@ -5,15 +5,20 @@
 #include <iostream>
 #include <boost/foreach.hpp>
 #include <cmath>
+
 namespace SX
 {
+
 namespace Instrument
 {
+
+RotAxis::RotAxis() : Axis("rotation"), _dir(CCW)
+{
+}
 
 RotAxis::RotAxis(const std::string& label) : Axis(label),_dir(CCW)
 {
 }
-
 
 RotAxis::RotAxis(const std::string& label, const Vector3d& axis, Direction direction) : Axis(label,axis)
 {

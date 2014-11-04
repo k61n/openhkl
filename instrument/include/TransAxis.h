@@ -39,13 +39,26 @@ namespace Instrument {
 class TransAxis : public Axis
 {
 public:
-	TransAxis(const std::string& label);
-	TransAxis(const std::string& label,const Vector3d& axis);
+
+	// Constructors and destructor
+
+	//! Default constructor
+	TransAxis();
+	//! Copy constructor
 	TransAxis(const TransAxis& other);
-	TransAxis& operator=(const TransAxis& other);
+	//! Constructs a translation axis with a given label
+	TransAxis(const std::string& label);
+	//! Constructs a translation axis with a given label and axis
+	TransAxis(const std::string& label,const Vector3d& axis);
+	// Destructor
 	~TransAxis();
 	//! Virtual copy constructor
 	TransAxis* clone() const;
+
+	// Operators
+
+	//! Assignment operator
+	TransAxis& operator=(const TransAxis& other);
 	Eigen::Transform<double,3,Eigen::Affine> getHomMatrix(double value) const;
 
 };
