@@ -57,8 +57,8 @@ public:
 
 	// Constructors and destructor
 
-	// Default constructor (deleted)
-	Gonio()=delete;
+	// Default constructor
+	Gonio();
 	//! Copy constructor
 	Gonio(const Gonio& other);
 	//! Constructs a gonio with a gieven name

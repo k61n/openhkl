@@ -8,12 +8,17 @@
 
 namespace SX
 {
+
 namespace Instrument
 {
 
 using Eigen::Quaterniond;
 
-Gonio::Gonio(const std::string& label):_label(label)
+Gonio::Gonio() : _label("goniometer")
+{
+}
+
+Gonio::Gonio(const std::string& label) : _label(label)
 {
 }
 
