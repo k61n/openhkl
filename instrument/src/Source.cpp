@@ -6,11 +6,11 @@ namespace SX
 namespace Instrument
 {
 
-Source::Source(const Source& other) : Component(other)
+Source::Source(const Source& other) : Component(other), _wavelength(other._wavelength)
 {
 }
 
-Source::Source(const std::string& name): Component(name)
+Source::Source(const std::string& name): Component(name), _wavelength(1.0)
 {
 }
 
@@ -23,6 +23,7 @@ Source& Source::operator=(const Source& other)
 	if (this != &other)
 	{
 		Component::operator=(other);
+		_wavelength = other._wavelength;
 	}
 	return *this;
 }
