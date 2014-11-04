@@ -56,7 +56,7 @@ public:
 	// Constructors and destructor
 
 	//! Default constructor (deleted)
-	Detector()=delete;
+	Detector();
 	//! Copy constructor
 	Detector(const Detector& other);
 	//! Constructs a detector with a given name

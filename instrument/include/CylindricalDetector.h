@@ -40,7 +40,7 @@ public:
 
 	// Constructors and destructor
 
-	//! Default constructor (deleted)
+	//! Default constructor
 	CylindricalDetector();
 	//! Copy constructor
 	CylindricalDetector(const CylindricalDetector& other);

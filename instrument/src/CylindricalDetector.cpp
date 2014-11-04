@@ -6,12 +6,16 @@ namespace SX
 namespace Instrument
 {
 
+CylindricalDetector::CylindricalDetector() : Detector(), _widthAngle(0.0)
+{
+}
+
 CylindricalDetector::CylindricalDetector(const CylindricalDetector& other) : Detector(other), _widthAngle(other._widthAngle)
 {
 }
 
 
-CylindricalDetector::CylindricalDetector(const std::string& name):Detector(name), _widthAngle(0)
+CylindricalDetector::CylindricalDetector(const std::string& name):Detector(name), _widthAngle(0.0)
 {
 
 }

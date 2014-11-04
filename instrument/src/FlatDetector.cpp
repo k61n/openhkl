@@ -3,8 +3,13 @@
 
 namespace SX
 {
+
 namespace Instrument
 {
+
+FlatDetector::FlatDetector() : Detector()
+{
+}
 
 FlatDetector::FlatDetector(const FlatDetector& other) : Detector(other)
 {
@@ -21,9 +26,8 @@ FlatDetector::~FlatDetector()
 FlatDetector& FlatDetector::operator=(const FlatDetector& other)
 {
 	if (this != &other)
-	{
 		Detector::operator=(other);
-	}
+
 	return *this;
 }
 

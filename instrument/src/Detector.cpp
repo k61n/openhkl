@@ -14,6 +14,17 @@ namespace Instrument
 
 using namespace SX::Units;
 
+Detector::Detector()
+: Component("detector"),
+  _nRows(0),
+  _nCols(0),
+  _width(0.0),
+  _height(0.0),
+  _distance(0),
+  _mapping(nullptr)
+{
+}
+
 Detector::Detector(const Detector& other)
 : Component(other),
   _nRows(other._nRows),

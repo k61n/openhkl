@@ -40,8 +40,8 @@ public:
 
 	// Constructors and destructor
 
-	//! Default Constructor (deleted)
-	FlatDetector()=delete;
+	//! Default Constructor
+	FlatDetector();
 	//! Copy constructor
 	FlatDetector(const FlatDetector& other);
 	//! Constructs a default flat detector with a given name
