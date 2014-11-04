@@ -120,6 +120,8 @@ private:
     QGraphicsRectItem *_zoom;
     //
     QImage* _currentImage;
+    std::vector<int> _cFrame;
+
 
     //
     Plotter1D* _cutPloter;

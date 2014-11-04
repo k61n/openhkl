@@ -137,52 +137,53 @@ bool DetectorView::hasData() const
 void DetectorView::integrateHorizontal(int xmin, int xmax, int ymin, int ymax, QVector<double> &projection, QVector<double> &error)
 {
 
-//    if (xmin>xmax)
-//        std::swap(xmin,xmax);
-//    if (ymin>ymax)
-//        std::swap(ymin,ymax);
-//    projection.resize(ymax-ymin);
-//    error.resize(ymax-ymin);
+    if (xmin>xmax)
+        std::swap(xmin,xmax);
+    if (ymin>ymax)
+        std::swap(ymin,ymax);
+    projection.resize(ymax-ymin);
+    error.resize(ymax-ymin);
 
-//    int* d=&(_ptrData->_currentFrame[0]);
-//    for (int i=0;i<pixels_h;++i)
-//    {
-//        for (int j=0;j<pixels_v;++j)
-//        {
-//            if (i>=xmin && i<xmax && j>=ymin && j<ymax)
-//                projection[j-ymin]+=*d;
-//            d++;
-//        }
-//    }
+    int* d=&(_cFrame[0]);
+    for (int i=0;i<pixels_h;++i)
+    {
+        for (int j=0;j<pixels_v;++j)
+        {
+            if (i>=xmin && i<xmax && j>=ymin && j<ymax)
+                projection[j-ymin]+=*d;
+            d++;
+        }
+    }
 
-//    for (int i=0;i<(ymax-ymin);++i)
-//        error[i]=sqrt(projection[i]);
+    for (int i=0;i<(ymax-ymin);++i)
+        error[i]=sqrt(projection[i]);
 
     return;
 }
 
 void DetectorView::integrateVertical(int xmin, int xmax, int ymin, int ymax, QVector<double> &projection, QVector<double> &error)
 {
-//    if (xmin>xmax)
-//        std::swap(xmin,xmax);
-//    if (ymin>ymax)
-//        std::swap(ymin,ymax);
-//    projection.resize(xmax-xmin);
-//    error.resize(xmax-xmin);
+    if (xmin>xmax)
+        std::swap(xmin,xmax);
+    if (ymin>ymax)
+        std::swap(ymin,ymax);
 
-//    int* d=&(_ptrData->_currentFrame[0]);
-//    for (int i=0;i<pixels_h;++i)
-//    {
-//        for (int j=0;j<pixels_v;++j)
-//        {
-//            if (i>=xmin && i<xmax && j>=ymin && j<ymax)
-//                projection[i-xmin]+=*d;
-//            d++;
-//        }
-//    }
+    projection.resize(xmax-xmin);
+    error.resize(xmax-xmin);
 
-//    for (int i=0;i<(xmax-xmin);++i)
-//        error[i]=sqrt(projection[i]);
+    int* d=&(_cFrame[0]);
+    for (int i=0;i<pixels_h;++i)
+    {
+        for (int j=0;j<pixels_v;++j)
+        {
+            if (i>=xmin && i<xmax && j>=ymin && j<ymax)
+                projection[i-xmin]+=*d;
+            d++;
+        }
+    }
+
+    for (int i=0;i<(xmax-xmin);++i)
+        error[i]=sqrt(projection[i]);
 
     return;
 }
@@ -351,8 +352,8 @@ void DetectorView::mouseMoveEvent(QMouseEvent* event)
         }
 
         int count=0;
-//        if (_ptrData && pointInScene(pos))
-//            count=_ptrData->_currentFrame[static_cast<int>(posx)*256+static_cast<int>(posy)];
+        if (_ptrData && pointInScene(pos))
+            count=_cFrame[static_cast<int>(posx)*256+static_cast<int>(posy)];
         os << "I: " << count;
 
     }
@@ -571,12 +572,13 @@ void DetectorView::plotEllipsoids()
 
 void DetectorView::plotIntensityMap()
 {
-    QImage image=Mat2QImage(&(_ptrData->_currentFrame[0]),_ptrData->_detector->getNRows(),_ptrData->_detector->getNCols(),_zoomLeft,_zoomRight,_zoomTop,_zoomBottom,_maxIntensity);
+    QImage image=Mat2QImage(&(_cFrame[0]),_ptrData->getDiffractometer()->getDetector()->getNRows(),_ptrData->getDiffractometer()->getDetector()->getNCols(),_zoomLeft,_zoomRight,_zoomTop,_zoomBottom,_maxIntensity);
     QPixmap pix=QPixmap::fromImage(image);
     pix=pix.scaled(width(),height(),Qt::IgnoreAspectRatio);
-
     // If no pixmap is present, create a new one and add to scene
     _pixmap = _scene->addPixmap(pix);
+    // The pixmap is always "behind" the other graphics items of the scene
+    _pixmap->setZValue(-1);
     setScene(_scene);
     update();
 }
@@ -830,7 +832,7 @@ void DetectorView::updateLineCutter()
                 QPoint currentCorner = lowestCorner + QPoint(pi,pj);
                 QPointF dp = point - currentCorner;
                 double dist2 = dp.x()*dp.x() + dp.y()*dp.y();
-                int count=_ptrData->_currentFrame[currentCorner.x()*256+currentCorner.y()];
+                int count=_cFrame[currentCorner.x()*256+currentCorner.y()];
                 projection[i] += dist2*count;
                 sdist2 += dist2;
             }
@@ -857,7 +859,9 @@ void DetectorView::updateLineCutter()
 
 void DetectorView::updatePlot()
 {
-    _scene->clear();
+    // If a pixmap has already been added to the scene, remove it.
+    if (_pixmap)
+        _scene->removeItem(_pixmap);
     plotIntensityMap();
     updateLineCutter();
     updateHorizontalSliceCutter();
@@ -877,12 +881,15 @@ void DetectorView::updateHorizontalSliceCutter()
     double xmaxd=rect.right();
     double ymind=rect.top();
     double ymaxd=rect.bottom();
+
     sceneToDetector(xmind,ymind);
     sceneToDetector(xmaxd,ymaxd);
+
     int xmin=static_cast<int>(xmind);
     int xmax=static_cast<int>(xmaxd);
     int ymin=static_cast<int>(ymind);
     int ymax=static_cast<int>(ymaxd);
+
 
     if (xmin < 0  || xmax > pixels_h || ymin <0 || ymax > pixels_v)
         return;
@@ -964,8 +971,9 @@ void DetectorView::updateView(IData* ptr,int frame)
         return;
     }
 
-    _ptrData->readBlock(frame);
     _currentFrame=frame;
+
+    _cFrame = _ptrData->getFrame(_currentFrame);
 
     updatePlot();
 }

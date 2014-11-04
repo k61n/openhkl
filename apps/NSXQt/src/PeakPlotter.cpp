@@ -136,7 +136,7 @@ void PeakPlotter::update()
     info+="Cor. int. ("+QString((QChar) 0x03C3)+"I): "+QString::number(intensity/l,'f',2)+" ("+QString::number(sI/l,'f',2)+")\n";
 
     double scale=_current->getScale();
-    double monitor=_current->getData()->_mm->getMetaData()->getKey<double>("monitor");
+    double monitor=_current->getData()->getMetadata()->getKey<double>("monitor");
     info+="Monitor "+QString::number(monitor*scale)+" counts";
     QCPPlotTitle* title=dynamic_cast<QCPPlotTitle*>(customPlot->plotLayout()->element(0,0));
     if (title)

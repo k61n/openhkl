@@ -48,10 +48,10 @@ PeakTableView::PeakTableView(MainWindow* main,QWidget *parent)
 
 void PeakTableView::setData(const std::vector<IData *> numors)
 {
-    for (Data* ptr : numors)
+    for (IData* ptr : numors)
     {
         // Add peaks present in this numor to the LatticeFinder
-        for (auto& peak : ptr->_rpeaks)
+        for (auto& peak : ptr->getPeaks())
         {
             _peaks.push_back(std::ref(peak.second));
         }
@@ -74,7 +74,7 @@ void PeakTableView::plotPeak(int i)
         _plotter=new PeakPlotter(this);
     _plotter->setPeak(&peak);
     _plotter->show();
-    emit plot2DUpdate(peak.getData()->_mm->getMetaData()->getKey<int>("Numor"),std::round(peak.getPeak()->getCenter()[2]));
+    emit plot2DUpdate(peak.getData()->getMetadata()->getKey<int>("Numor"),std::round(peak.getPeak()->getCenter()[2]));
 }
 
 void PeakTableView::sortByColumn(int i)
@@ -137,7 +137,7 @@ void PeakTableView::constructTable()
         QStandardItem* col1=new QStandardItem(QString::number(hkl[0],'f',2) + "  " + QString::number(hkl[1],'f',2) + "  " + QString::number(hkl[2],'f',2));
         QStandardItem* col2=new QStandardItem(QString::number(peak.getScaledIntensity()/l,'f',2));
         QStandardItem* col3=new QStandardItem(QString::number(peak.getScaledSigma()/l,'f',2));
-        QStandardItem* col4=new QStandardItem(QString::number(peak.getData()->_mm->getMetaData()->getKey<int>("Numor")));
+        QStandardItem* col4=new QStandardItem(QString::number(peak.getData()->getMetadata()->getKey<int>("Numor")));
         QStandardItem* col5;
         if (peak.isSelected())
         {
@@ -181,7 +181,7 @@ void PeakTableView::customMenuRequested(QPoint pos)
     if (indexList.size()) //at least on peak
     {
         QMenu* plotasmenu=menu->addMenu("Plot as");
-        SX::Data::MetaData* met=_peaks[indexList[0].row()].get().getData()->_mm->getMetaData();
+        SX::Data::MetaData* met=_peaks[indexList[0].row()].get().getData()->getMetadata();
         const std::set<std::string>& keys=met->getAllKeys();
         for (const auto& key : keys)
         {
@@ -213,7 +213,7 @@ void PeakTableView::normalizeToMonitor()
     if (ok)
     {
         for (SX::Crystal::Peak3D& peak : _peaks)
-            peak.setScale(factor/peak.getData()->_mm->getMetaData()->getKey<double>("monitor"));
+            peak.setScale(factor/peak.getData()->getMetadata()->getKey<double>("monitor"));
         constructTable();
         if (_plotter)
             _plotter->update();
@@ -233,7 +233,7 @@ void PeakTableView::writeFullProf()
         QMessageBox::critical(this,"Error writing","Error writing to this file, please check write permisions");
     file << "TITLE File written by ...\n";
     file << "(3i4,2F14.4,i5,4f8.2)\n";
-    double wave=_peaks[0].get().getData()->_mm->getMetaData()->getKey<double>("wavelength");
+    double wave=_peaks[0].get().getData()->getMetadata()->getKey<double>("wavelength");
     file << std::fixed << std::setw(8) << std::setprecision(3) << wave << " 0 0" << std::endl;
     for (const SX::Crystal::Peak3D& peak : _peaks)
     {
@@ -351,16 +351,16 @@ void PeakTableView::sortByNumor(bool up)
         std::sort(_peaks.begin(),_peaks.end(),
               [&](const SX::Crystal::Peak3D& p1, const SX::Crystal::Peak3D& p2)
                 {
-                    int numor1=p1.getData()->_mm->getMetaData()->getKey<int>("Numor");
-                    int numor2=p2.getData()->_mm->getMetaData()->getKey<int>("Numor");
+                    int numor1=p1.getData()->getMetadata()->getKey<int>("Numor");
+                    int numor2=p2.getData()->getMetadata()->getKey<int>("Numor");
                     return (numor1>numor2);
                 });
     else
         std::sort(_peaks.begin(),_peaks.end(),
               [&](const SX::Crystal::Peak3D& p1, const SX::Crystal::Peak3D& p2)
                 {
-                    int numor1=p1.getData()->_mm->getMetaData()->getKey<int>("Numor");
-                    int numor2=p2.getData()->_mm->getMetaData()->getKey<int>("Numor");
+                    int numor1=p1.getData()->getMetadata()->getKey<int>("Numor");
+                    int numor2=p2.getData()->getMetadata()->getKey<int>("Numor");
                     return (numor1<numor2);
                 });
 }
@@ -386,7 +386,7 @@ void PeakTableView::plotAs(const std::string& key)
 
     for (int i=0;i<npoints;++i)
     {
-        x[i]=_peaks[indexList[i].row()].get().getData()->_mm->getMetaData()->getKey<double>(key);
+        x[i]=_peaks[indexList[i].row()].get().getData()->getMetadata()->getKey<double>(key);
         y[i]=_peaks[indexList[i].row()].get().getScaledIntensity();
         e[i]=_peaks[indexList[i].row()].get().getScaledSigma();
     }
