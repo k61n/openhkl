@@ -44,8 +44,8 @@ public:
 
 	// Constructors and destructor
 
-	// The default constructor is forbidden
-	Sample()=delete;
+	// Default constructor
+	Sample();
 	//! Copy constructor
 	Sample(const Sample& other);
 	//! Constructs a default sample with a given name

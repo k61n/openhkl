@@ -2,8 +2,13 @@
 
 namespace SX
 {
+
 namespace Instrument
 {
+
+Sample::Sample() : Component("sample")
+{
+}
 
 Sample::Sample(const Sample& other) : Component(other)
 {

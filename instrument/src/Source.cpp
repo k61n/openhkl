@@ -6,6 +6,10 @@ namespace SX
 namespace Instrument
 {
 
+Source::Source() : Component("source"), _wavelength(1.0)
+{
+}
+
 Source::Source(const Source& other) : Component(other), _wavelength(other._wavelength)
 {
 }

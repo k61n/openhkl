@@ -46,8 +46,8 @@ public:
 
 	// Constructors and destructor
 
-	// Default constructor (deleted)
-	Source()=delete;
+	// Default constructor
+	Source();
 	//! Copy constructor
 	Source(const Source& other);
 	//! Constructs a default source with a given name
