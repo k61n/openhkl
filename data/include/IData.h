@@ -111,8 +111,10 @@ public:
 	virtual int dataAt(int x=0, int y=0, int z=0)=0;
     //! Read a given Frame of the data
     virtual std::vector<int> getFrame(std::size_t i)=0;
-    //! Read all the frames in memory
-    virtual void readInMemory()=0;
+    //! Read a single frame
+    virtual std::vector<int> readFrame(std::size_t idx) const=0;
+    //! Load all the frames in memory
+    virtual void loadAllFrames()=0;
     // Release the data from memory
     virtual void releaseMemory()=0;
 

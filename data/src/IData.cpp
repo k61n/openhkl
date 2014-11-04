@@ -29,7 +29,7 @@ IData::IData(const std::string& filename, std::shared_ptr<Diffractometer> diffra
   _rpeaks()
 {
 	if ( !boost::filesystem::exists(_filename.c_str()))
-		throw std::runtime_error("ILLAsciiData, file:"+_filename+" does not exist");
+		throw std::runtime_error("ILLAsciiData, file: "+_filename+" does not exist");
 
 }
 

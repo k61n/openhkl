@@ -69,9 +69,11 @@ public:
 	//! Return the intensity at point x,y,z
     int dataAt(int x=0, int y=0, int z=0);
     //! Read a given Frame of the data
-    std::vector<int> getFrame(std::size_t i);
+    std::vector<int> getFrame(std::size_t idx);
+    //! Read a single frame
+    std::vector<int> readFrame(std::size_t idx) const;
     //! Read all the frames in memory
-    void readInMemory();
+    void loadAllFrames();
     //! Release the data from memory
     void releaseMemory();
 

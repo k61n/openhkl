@@ -146,32 +146,35 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, std::shared_ptr<Diffract
 ILLAsciiData::~ILLAsciiData() {
 }
 
-std::vector<int> ILLAsciiData::getFrame(std::size_t i)
+std::vector<int> ILLAsciiData::getFrame(std::size_t idx)
 {
 
 	if (_inMemory)
-		return _data[i];
+		return _data[idx];
 	else
-	{
-		assert(i<_nFrames);
-
-		// Determine the beginning of the data block
-		std::size_t begin=_headerSize+(i+1)*_skipChar+i*_dataLength;
-
-		// Create vector and try to reserve a memory block
-		std::vector<int> v;
-		v.reserve(_dataPoints);
-		readIntsFromChar(_mapAddress+begin,_mapAddress+begin+_dataLength,v);
-
-		return v;
-	}
+		return readFrame(idx);
 }
 
-void ILLAsciiData::readInMemory()
+std::vector<int> ILLAsciiData::readFrame(std::size_t idx) const
+{
+	assert(idx<_nFrames);
+
+	// Determine the beginning of the data block
+	std::size_t begin=_headerSize+(idx+1)*_skipChar+idx*_dataLength;
+
+	// Create vector and try to reserve a memory block
+	std::vector<int> v;
+	v.reserve(_dataPoints);
+	readIntsFromChar(_mapAddress+begin,_mapAddress+begin+_dataLength,v);
+
+	return v;
+}
+
+void ILLAsciiData::loadAllFrames()
 {
 
 	if (_inMemory)
-		return
+        return;
 
 	_data.resize(_nFrames);
 	_inMemory=true;
@@ -183,7 +186,7 @@ void ILLAsciiData::readInMemory()
 	for (std::size_t i=0;i<_nFrames;++i)
 	{
 		_data[i].reserve(nPixels);
-		_data[i]=std::move(getFrame(i));
+		_data[i]=std::move(readFrame(i));
 	}
 
 	return;
@@ -191,7 +194,7 @@ void ILLAsciiData::readInMemory()
 
 void ILLAsciiData::releaseMemory()
 {
-	if (_inMemory == false)
+	if (!_inMemory)
         return;
 
     for (auto& d : _data)
