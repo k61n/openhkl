@@ -1258,7 +1258,7 @@ QDockWidget::title {
   <action name="action_open">
    <property name="icon">
     <iconset resource="../NSXQt.qrc">
-     <normaloff>:/resources/openFileIcon.png</normaloff>:/resources/openFileIcon.png</iconset>
+     <normaloff>:/resources/newExperiment.png</normaloff>:/resources/newExperiment.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Open</string>
@@ -1333,12 +1333,12 @@ QDockWidget::title {
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>839</x>
-     <y>521</y>
+     <x>831</x>
+     <y>539</y>
     </hint>
     <hint type="destinationlabel">
-     <x>952</x>
-     <y>518</y>
+     <x>885</x>
+     <y>546</y>
     </hint>
    </hints>
   </connection>
@@ -1349,12 +1349,12 @@ QDockWidget::title {
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>946</x>
-     <y>529</y>
+     <x>885</x>
+     <y>546</y>
     </hint>
     <hint type="destinationlabel">
-     <x>703</x>
-     <y>514</y>
+     <x>820</x>
+     <y>539</y>
     </hint>
    </hints>
   </connection>
@@ -1365,12 +1365,12 @@ QDockWidget::title {
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1057</x>
-     <y>100</y>
+     <x>980</x>
+     <y>126</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1020</x>
-     <y>191</y>
+     <x>949</x>
+     <y>324</y>
     </hint>
    </hints>
   </connection>
@@ -1381,12 +1381,12 @@ QDockWidget::title {
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1037</x>
-     <y>261</y>
+     <x>949</x>
+     <y>394</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1080</x>
-     <y>104</y>
+     <x>980</x>
+     <y>126</y>
     </hint>
    </hints>
   </connection>
