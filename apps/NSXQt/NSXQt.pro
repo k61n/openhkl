@@ -28,7 +28,15 @@ SOURCES += src/Main.cpp \
     src/NoteBook.cpp \
     src/Logger.cpp \
     src/DialogUnitCellSolutions.cpp \
-    src/ExperimentDialog.cpp
+    src/ExperimentTree.cpp \
+    src/DialogExperiment.cpp \
+    src/DataItem.cpp \
+    src/DetectorItem.cpp \
+    src/ExperimentItem.cpp \
+    src/InstrumentItem.cpp \
+    src/NumorItem.cpp \
+    src/SampleItem.cpp \
+    src/SourceItem.cpp
 
 HEADERS  += include/MainWindow.h \
     include/DetectorView.h \
@@ -45,7 +53,16 @@ HEADERS  += include/MainWindow.h \
     include/NoteBook.h \
     include/Logger.h \
     include/DialogUnitCellSolutions.h \
-    include/ExperimentDialog.h
+    include/ExperimentTree.h \
+    include/DialogExperiment.h \
+    include/DataItem.h \
+    include/DetectorItem.h \
+    include/ExperimentItem.h \
+    include/InstrumentItem.h \
+    include/NumorItem.h \
+    include/SampleItem.h \
+    include/SourceItem.h
+
 
 FORMS    += ui/mainwindow.ui \
     ui/dialog_PeakFind.ui \
@@ -53,8 +70,8 @@ FORMS    += ui/mainwindow.ui \
     ui/peakplotter.ui \
     ui/dialog_UnitCell.ui \
     ui/dialogtransformationmatrix.ui \
-    dialogunitcellsolutions.ui \
-    ui/ExperimentDialog.ui
+    ui/dialogunitcellsolutions.ui \
+    ui/DialogExperiment.ui
 
 win32:CONFIG(release, debug|release): LIBS += -lNSXTool
 else:unix: LIBS += -lNSXTool -lboost_date_time -lfftw3
