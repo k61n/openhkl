@@ -20,6 +20,11 @@
         <file>resources/sortUpIcon.png</file>
         <file>resources/peakDeselectedIcon.png</file>
         <file>resources/peakSelectedIcon.png</file>
-        <file>resources/newExperiment.png</file>
+        <file>resources/experimentIcon.png</file>
+        <file>resources/instrumentIcon.png</file>
+        <file>resources/sourceIcon.png</file>
+        <file>resources/sampleIcon.png</file>
+        <file>resources/detectorIcon.png</file>
+        <file>resources/dataIcon.png</file>
     </qresource>
 </RCC>
