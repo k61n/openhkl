@@ -1069,34 +1069,6 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="0">
-       <widget class="QListWidget" name="numor_Widget">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>1</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>100</width>
-          <height>999999</height>
-         </size>
-        </property>
-        <property name="mouseTracking">
-         <bool>true</bool>
-        </property>
-        <property name="focusPolicy">
-         <enum>Qt::StrongFocus</enum>
-        </property>
-        <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;- Double Click to select a numor to plot&lt;/p&gt;&lt;p&gt;- Single click to select multiple numors for deletion&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="0">
        <widget class="QProgressBar" name="progressBar">
         <property name="enabled">
@@ -1129,6 +1101,22 @@
         <property name="value">
          <number>0</number>
         </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="ExperimentTree" name="experimentTree">
+        <property name="iconSize">
+         <size>
+          <width>16</width>
+          <height>16</height>
+         </size>
+        </property>
+        <property name="sortingEnabled">
+         <bool>true</bool>
+        </property>
+        <attribute name="headerVisible">
+         <bool>false</bool>
+        </attribute>
        </widget>
       </item>
      </layout>
@@ -1258,7 +1246,7 @@ QDockWidget::title {
   <action name="action_open">
    <property name="icon">
     <iconset resource="../NSXQt.qrc">
-     <normaloff>:/resources/newExperiment.png</normaloff>:/resources/newExperiment.png</iconset>
+     <normaloff>:/resources/experimentIcon.png</normaloff>:/resources/experimentIcon.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Open</string>
@@ -1320,6 +1308,11 @@ QDockWidget::title {
    <class>NoteBook</class>
    <extends>QTextEdit</extends>
    <header>NoteBook.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ExperimentTree</class>
+   <extends>QTreeView</extends>
+   <header>ExperimentTree.h</header>
   </customwidget>
  </customwidgets>
  <resources>
