@@ -52,6 +52,7 @@ public:
 	std::string getType() const;
 
 private:
+	D9FourCircles();
 	D9FourCircles(const std::string& name);
 
 };

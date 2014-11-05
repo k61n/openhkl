@@ -51,7 +51,8 @@ public:
 	std::string getType() const;
 
 private:
-	//! Default constructor
+	D19FourCircles();
+	//! Constructs D19 diffractometer with a given name
 	D19FourCircles(const std::string& name);
 
 };

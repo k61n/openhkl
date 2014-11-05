@@ -19,6 +19,11 @@ namespace Instrument
 
 using namespace SX::Units;
 
+
+D9FourCircles::D9FourCircles() : Diffractometer("D9-4c")
+{
+}
+
 Diffractometer* D9FourCircles::create(const std::string& name)
 {
 	return new D9FourCircles(name);
@@ -32,7 +37,7 @@ Diffractometer* D9FourCircles::clone() const
 D9FourCircles::D9FourCircles(const std::string& name) : Diffractometer(name)
 {
 
-    _detector = new SX::Instrument::FlatDetector("detector");
+    _detector = new SX::Instrument::FlatDetector("d19-detector");
 
     _detector->setDistance(488*mm);
     _detector->setWidth(64*mm);
@@ -55,7 +60,7 @@ D9FourCircles::D9FourCircles(const std::string& name) : Diffractometer(name)
 
     //Sample gonio
     _sample= new Sample("sample");
-    std::shared_ptr<Gonio> bl(new Gonio("Busing-Levy"));
+    std::shared_ptr<Gonio> bl(new Gonio("busing-levy"));
     bl->addRotation("omega",Vector3d(0,0,1),RotAxis::CW);
     bl->addRotation("chi",Vector3d(0,1,0),RotAxis::CCW);
     bl->addRotation("phi",Vector3d(0,0,1),RotAxis::CW);

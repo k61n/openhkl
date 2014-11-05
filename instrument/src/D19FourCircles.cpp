@@ -18,6 +18,10 @@ namespace Instrument
 
 using namespace SX::Units;
 
+D19FourCircles::D19FourCircles() : Diffractometer("D19-4c")
+{
+}
+
 Diffractometer* D19FourCircles::create(const std::string& name)
 {
 	return new D19FourCircles(name);
