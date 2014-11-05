@@ -98,10 +98,8 @@ void ExperimentTree::importData()
     if (!dynamic_cast<DataItem*>(dataItem))
         return;
 
-    QFileDialog dialog;
-    dialog.setFileMode(QFileDialog::ExistingFiles);
     QStringList fileNames;
-    fileNames= dialog.getOpenFileNames(this,"select numors","");
+    fileNames= QFileDialog::getOpenFileNames(this,"select numors","","",nullptr,QFileDialog::Option::DontUseNativeDialog);
 
     // No files selected, do nothing
     if (fileNames.isEmpty())
