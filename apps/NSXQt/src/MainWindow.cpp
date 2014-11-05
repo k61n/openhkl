@@ -1,45 +1,49 @@
 #include "MainWindow.h"
 #include "ui_mainwindow.h"
+
 #include <cstdlib>
+#include <functional>
+#include <stdexcept>
+#include <utility>
+
+#include <Eigen/Dense>
+
+#include <QDateTime>
 #include <QFileDialog>
+#include <QGraphicsBlurEffect>
+#include <QGraphicsEllipseItem>
 #include <QShortcut>
 #include <QThread>
-#include <QGraphicsEllipseItem>
-#include <QGraphicsBlurEffect>
-#include <QMessageBox>
 #include <QMouseEvent>
-#include "BlobFinder.h"
-#include <Ellipsoid.h>
-#include <Plotter1D.h>
-#include "IShape.h"
-#include "ILLAsciiData.h"
-#include "Units.h"
-#include "Detector.h"
-#include "Cluster.h"
-#include "UnitCell.h"
-#include "NiggliReduction.h"
-#include "GruberReduction.h"
-#include <Eigen/Dense>
-#include "Basis.h"
 #include <QProgressDialog>
-#include <functional>
-#include <PeakTableView.h>
-#include <DialogUnitCell.h>
-#include "Logger.h"
-#include "NoteBook.h"
 #include <QtDebug>
-#include <QDateTime>
-#include "Peak3D.h"
-#include "Sample.h"
-#include "Data.h"
+
 #include "AABB.h"
-#include "Source.h"
+#include "Basis.h"
+#include "BlobFinder.h"
+#include "Cluster.h"
+#include "Detector.h"
 #include "ComponentState.h"
-#include <utility>
+#include "DialogExperiment.h"
+#include "DialogUnitCell.h"
+#include "Ellipsoid.h"
+#include "ExperimentTree.h"
+#include "GruberReduction.h"
+#include "ILLAsciiData.h"
+#include "IShape.h"
+#include "Logger.h"
+#include "NiggliReduction.h"
+#include "NoteBook.h"
+#include "Peak3D.h"
+#include "PeakTableView.h"
+#include "Plotter1D.h"
+#include "Sample.h"
+#include "Source.h"
+#include "UnitCell.h"
+#include "Units.h"
 
 using namespace SX::Units;
 using namespace SX::Instrument;
-
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -62,9 +66,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->_dview->setDragMode(QGraphicsView::RubberBandDrag);
     ui->dial->setRange(0,15);
 
-    ui->numor_Widget->setSelectionMode(QAbstractItemView::MultiSelection);
-    QShortcut* shortcut = new QShortcut(QKeySequence(Qt::Key_Delete), ui->numor_Widget);
-    connect(shortcut, SIGNAL(activated()), this, SLOT(deleteNumors()));
+//    ui->numor_Widget->setSelectionMode(QAbstractItemView::MultiSelection);
+//    QShortcut* shortcut = new QShortcut(QKeySequence(Qt::Key_Delete), ui->numor_Widget);
+//    connect(shortcut, SIGNAL(activated()), this, SLOT(deleteNumors()));
 
     _experiments.insert(std::make_pair<std::string,Experiment>("my_exp",Experiment("my_exp","D19-4c")));    
 
@@ -79,6 +83,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->selectionMode,SIGNAL(currentIndexChanged(int)),ui->_dview,SLOT(setCutterMode(int)));
     connect(ui->dial,SIGNAL(valueChanged(int)),ui->_dview,SLOT(setMaxIntensity(int)));
+    connect(ui->experimentTree,SIGNAL(sig_plot_data(IData*)),this,SLOT(plotData(IData*)));
 }
 
 MainWindow::~MainWindow()
@@ -88,84 +93,74 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_action_open_triggered()
 {
-    QFileDialog dialog;
-    dialog.setFileMode(QFileDialog::ExistingFiles);
-    QStringList fileNames;
-    fileNames= dialog.getOpenFileNames(this,"select numors","");
 
-    // No files selected, do nothing
-    if (fileNames.isEmpty())
+    DialogExperiment* dlg = new DialogExperiment();
+
+    // The user pressed cancel, return
+    if (!dlg->exec())
         return;
 
-    // Deal with files
-    for (int i=0;i<fileNames.size();++i)
+    // If no experiment name is provided, pop up a warning
+    if (dlg->getExperimentName().isEmpty())
     {
-        QFileInfo fileinfo(fileNames[i]);
-        QString numor = fileinfo.baseName(); // Return only a file name
-        std::string index=numor.toStdString();
-        if (!_experiments.at("my_exp").hasData(index)) // Add numor only if not already in the list
-        {
-            QListWidgetItem* litem=new QListWidgetItem(numor);
-            try
-            {
-                ILLAsciiData* d = new ILLAsciiData(fileNames[i].toStdString(),_experiments.at("my_exp").getDiffractometer(),false);
-                _experiments.at("my_exp").addData(d);
-            }catch(std::exception& e)
-            {
-               qWarning() << "Error reading numor: " + fileNames[i] + " " + QString(e.what());
-               continue;
-            }
-            ui->numor_Widget->addItem(litem);
-        }
-    }
-    QListWidgetItem* first=ui->numor_Widget->item(0);
-
-    if (!first)
+        qWarning() << "Empty experiment name";
         return;
+    }
 
+    // Add the experiment
+    try
+    {
+        ui->experimentTree->addExperiment(dlg->getExperimentName().toStdString(),dlg->getInstrumentName().toStdString());
+    }
+    catch(const std::runtime_error& e)
+    {
+        qWarning() << e.what();
+        return;
+    }
+}
+
+void MainWindow::plotData(IData* data)
+{
+    std::cout<<data->getFilename()<<std::endl;
     ui->frameFrame->setEnabled(true);
     ui->intensityFrame->setEnabled(true);
 
-    ui->numor_Widget->setCurrentItem(first);
-    IData* it=_experiments.at("my_exp").getData().begin()->second;
-    ui->horizontalScrollBar->setMaximum(it->getNFrames()-1);
-    ui->spinBox_Frame->setMaximum(it->getNFrames()-1);
+    ui->horizontalScrollBar->setMaximum(data->getNFrames()-1);
+    ui->spinBox_Frame->setMaximum(data->getNFrames()-1);
     ui->dial->setRange(1,3000);
     ui->dial->setValue(20);
-    updatePlot();
+    ui->_dview->updateView(data,0);
 }
 
 void MainWindow::plotUpdate(int numor,int frame)
 {
+//    QString number = QString::number(numor).rightJustified(6, '0');;
 
-    QString number = QString::number(numor).rightJustified(6, '0');;
-
-    QList<QListWidgetItem*> matches=ui->numor_Widget->findItems(number,Qt::MatchExactly);
-    if (matches.size() == 1)
-    {
-        ui->numor_Widget->setCurrentItem(matches[0]);
-        ui->horizontalScrollBar->setValue(frame);
-    }
+//    QList<QListWidgetItem*> matches=ui->numor_Widget->findItems(number,Qt::MatchExactly);
+//    if (matches.size() == 1)
+//    {
+//        ui->numor_Widget->setCurrentItem(matches[0]);
+//        ui->horizontalScrollBar->setValue(frame);
+//    }
 }
 
 void MainWindow::updatePlot()
 {
-    // Get the numor currently selected, return if void
-    QListWidgetItem* item=ui->numor_Widget->currentItem();
-    if (!item)
-    {
-        ui->_dview->updateView(0,0);
-        return;
-    }
-    // Update the data in the detector view
-    std::string numor=item->text().toStdString();
-    auto it=_experiments.at("my_exp").getData(numor);
-    int frame= ui->horizontalScrollBar->value();
-    // Make sure that the frame value for previously selected file is valid for current one
-    if (frame>(it->getNFrames()-1))
-        frame=0;
-    ui->_dview->updateView(it,frame);
-
+//    // Get the numor currently selected, return if void
+//    QListWidgetItem* item=ui->numor_Widget->currentItem();
+//    if (!item)
+//    {
+//        ui->_dview->updateView(0,0);
+//        return;
+//    }
+//    // Update the data in the detector view
+//    std::string numor=item->text().toStdString();
+//    auto it=_experiments.at("my_exp").getData(numor);
+//    int frame= ui->horizontalScrollBar->value();
+//    // Make sure that the frame value for previously selected file is valid for current one
+//    if (frame>(it->getNFrames()-1))
+//        frame=0;
+//    ui->_dview->updateView(it,frame);
 }
 
 void MainWindow::on_horizontalScrollBar_valueChanged()
@@ -180,23 +175,22 @@ void MainWindow::on_dial_valueChanged()
 
 void MainWindow::deleteNumors()
 {
-    QList<QListWidgetItem*> selNumors = ui->numor_Widget->selectedItems();
+//    QList<QListWidgetItem*> selNumors = ui->numor_Widget->selectedItems();
 
-    for (auto it=selNumors.begin();it!=selNumors.end();++it)
-    {
-        _experiments.at("my_exp").removeData((*it)->text().toStdString());
-        delete *it;
-    }
-    qDebug() <<  selNumors.size() << " file(s) have been deleted";
+//    for (auto it=selNumors.begin();it!=selNumors.end();++it)
+//    {
+//        _experiments.at("my_exp").removeData((*it)->text().toStdString());
+//        delete *it;
+//    }
+//    qDebug() <<  selNumors.size() << " file(s) have been deleted";
 
-    updatePlot();
+//    updatePlot();
 
-    if (!ui->numor_Widget->count())
-    {
-        ui->frameFrame->setEnabled(false);
-        ui->intensityFrame->setEnabled(false);
-    }
-
+//    if (!ui->numor_Widget->count())
+//    {
+//        ui->frameFrame->setEnabled(false);
+//        ui->intensityFrame->setEnabled(false);
+//    }
 }
 
 void MainWindow::on_spinBox_max_valueChanged(int arg1)
@@ -208,32 +202,31 @@ void MainWindow::on_spinBox_max_valueChanged(int arg1)
 
 void MainWindow::on_numor_Widget_itemDoubleClicked(QListWidgetItem *item)
 {
-    ui->numor_Widget->clearSelection();
-    ui->numor_Widget->setSelectionMode(QAbstractItemView::SingleSelection);
-    ui->numor_Widget->setItemSelected(item,true);
-    if (!item)
-       return;
-    std::string numor=item->text().toStdString();
-    int nmax=_experiments.at("my_exp").getData(numor)->getNFrames()-1;
-    ui->horizontalScrollBar->setMaximum(nmax);
-    ui->spinBox_Frame->setMaximum(nmax);
+//    ui->numor_Widget->clearSelection();
+//    ui->numor_Widget->setSelectionMode(QAbstractItemView::SingleSelection);
+//    ui->numor_Widget->setItemSelected(item,true);
+//    if (!item)
+//       return;
+//    std::string numor=item->text().toStdString();
+//    int nmax=_experiments.at("my_exp").getData(numor)->getNFrames()-1;
+//    ui->horizontalScrollBar->setMaximum(nmax);
+//    ui->spinBox_Frame->setMaximum(nmax);
 
-
-    updatePlot();
+//    updatePlot();
 }
 
 void MainWindow::on_numor_Widget_itemActivated(QListWidgetItem *item)
 {
-    ui->numor_Widget->setSelectionMode(QAbstractItemView::MultiSelection);
-    if (item == nullptr)
-        return;
-    std::string numor=item->text().toStdString();
+//    ui->numor_Widget->setSelectionMode(QAbstractItemView::MultiSelection);
+//    if (item == nullptr)
+//        return;
+//    std::string numor=item->text().toStdString();
 
-    int nmax=_experiments.at("my_exp").getData(numor)->getNFrames()-1;
-    ui->horizontalScrollBar->setMaximum(nmax);
-    ui->spinBox_Frame->setMaximum(nmax);
-    updatePlot();
+//    int nmax=_experiments.at("my_exp").getData(numor)->getNFrames()-1;
+//    ui->horizontalScrollBar->setMaximum(nmax);
+//    ui->spinBox_Frame->setMaximum(nmax);
 
+//    updatePlot();
 }
 
 
@@ -350,15 +343,16 @@ void MainWindow::on_actionUnit_Cell_triggered()
 
 std::vector<IData*> MainWindow::selectedNumors()
 {
-    QList<QListWidgetItem*> selNumors = ui->numor_Widget->selectedItems();
-    std::vector<IData*> list;
-    for (auto it=selNumors.begin();it!=selNumors.end();++it)
-    {
-        auto it1 = _experiments.at("my_exp").getData((*it)->text().toStdString());
-        list.push_back(it1);
-    }
-        return list;
+//    QList<QListWidgetItem*> selNumors = ui->numor_Widget->selectedItems();
+//    std::vector<IData*> list;
+//    for (auto it=selNumors.begin();it!=selNumors.end();++it)
+//    {
+//        auto it1 = _experiments.at("my_exp").getData((*it)->text().toStdString());
+//        list.push_back(it1);
+//    }
+//    return list;
 }
+
 void MainWindow::on_actionPeak_List_triggered()
 {
     std::vector<IData*> numors=selectedNumors();
