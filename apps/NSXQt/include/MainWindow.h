@@ -1,16 +1,19 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
-#include <boost/numeric/ublas/matrix.hpp>
-#include <QMainWindow>
-#include <QGraphicsScene>
-#include <vector>
-#include "ILLAsciiDataReader.h"
-#include <QProgressBar>
+
 #include <unordered_map>
-#include "Logger.h"
+#include <vector>
+
+#include <QGraphicsScene>
+#include <QMainWindow>
 #include <QMenu>
+#include <QProgressBar>
+
+#include <IData.h>
 #include <DialogPeakFind.h>
 #include "Experiment.h"
+#include "ILLAsciiDataReader.h"
+#include "Logger.h"
 
 class QListWidgetItem;
 
@@ -19,6 +22,7 @@ namespace Ui {
 class MainWindow;
 }
 
+using namespace SX::Data;
 using namespace SX::Instrument;
 
 class MainWindow : public QMainWindow
@@ -43,8 +47,6 @@ private slots:
 
     void deleteNumors();
 
-    void on_numor_Widget_itemDoubleClicked(QListWidgetItem *item);
-
     void on_numor_Widget_itemActivated(QListWidgetItem *item);
 
     void on_actionUnit_Cell_triggered();
@@ -52,7 +54,7 @@ private slots:
     void on_actionPeak_List_triggered();
 
 public slots:
-    void plotData(IData*);
+    void onPlotData(IData*);
     void plotUpdate(int numor,int frame);
     void resizeEvent(QResizeEvent *);
 
@@ -60,12 +62,13 @@ private:
 
     //! Return a list of numors currently selected
     std::vector<IData*> selectedNumors();
-
-    std::unordered_map<std::string,Experiment> _experiments;
-
     void updatePlot();
-    Ui::MainWindow *ui;
-    QGraphicsScene* scene;
+
+
+    Ui::MainWindow* _ui;
+    QGraphicsScene* _scene;
+    std::unordered_map<std::string,Experiment> _experiments;
+    IData* _currentData;
 
 protected:
 };

@@ -54,10 +54,10 @@ public slots:
     // Remove all graphs from the plotter.
     void clearPlotter();
     void updateView(IData* ptr,int frame);
-    void setCutterMode(int i);
+    void onSetCutterMode(int i);
     // Set the zoom window to (x1,x2,y1,y2) in detector space coordinates;
     void setZoom(int x1,int y1, int x2, int y2);
-    void setMaxIntensity(int);
+    void onSetMaxIntensity(int);
     // Register this zoom level in the stack
     void registerZoomLevel(int xmin, int xmax, int ymin, int ymax);
     // Go to previous zoom level
