@@ -75,6 +75,8 @@ public:
 
 	// Getters and setters
 
+	//! Gets the type of the diffractomer used in the experiment
+	const std::string& getDiffractometerType() const;
 	//! Gets a shared pointer to the diffractometer related to the experiment
 	std::shared_ptr<Diffractometer> getDiffractometer() const;
 	//! Get a reference to the dat
@@ -94,7 +96,7 @@ public:
 	void addData(IData* data);
 	//! Check whether the experiment has a data
 	bool hasData(const std::string& name) const;
-	//! Remove from a data from the experiment
+	//! Remove a data from the experiment
 	void removeData(const std::string& name);
 
 private:

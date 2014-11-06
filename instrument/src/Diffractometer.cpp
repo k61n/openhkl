@@ -53,6 +53,11 @@ void Diffractometer::setDetector(Detector* d)
 	_detector=d;
 }
 
+void Diffractometer::setName(const std::string& name)
+{
+	_name = name;
+}
+
 void Diffractometer::setSample(Sample* s)
 {
 	_sample=s;

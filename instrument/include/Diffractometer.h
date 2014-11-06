@@ -65,12 +65,6 @@ public:
 
 	// Getters and setters
 
-	//! Set the detector of this diffractometer
-	void setDetector(Detector*);
-	//! Set the sample of this diffractometer
-	void setSample(Sample*);
-	//! Set the source of this diffractometer
-	void setSource(Source*);
 	//! Get the name of this diffractometer
 	const std::string& getName() const;
 	//! Get the detector of this diffractometer
@@ -81,6 +75,14 @@ public:
 	Source* getSource();
 	//! Get the type of the diffractometer
 	virtual std::string getType() const=0;
+	//! Set the detector of this diffractometer
+	void setDetector(Detector*);
+	//! Set the name of the diffractometer
+	void setName(const std::string& name);
+	//! Set the sample of this diffractometer
+	void setSample(Sample*);
+	//! Set the source of this diffractometer
+	void setSource(Source*);
 
 protected:
 

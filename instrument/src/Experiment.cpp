@@ -26,7 +26,7 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
   _data()
 {
 	DiffractometerFactory* f=DiffractometerFactory::Instance();
-	_diffractometer = std::shared_ptr<Diffractometer>(f->create(diffractometerName,"")->clone());
+	_diffractometer = std::shared_ptr<Diffractometer>(f->create(diffractometerName,"instrument")->clone());
 }
 
 Experiment::Experiment(const std::string& diffractometerName)
@@ -35,7 +35,7 @@ Experiment::Experiment(const std::string& diffractometerName)
   _data()
 {
 	DiffractometerFactory* f=DiffractometerFactory::Instance();
-	_diffractometer = std::shared_ptr<Diffractometer>(f->create(diffractometerName,"")->clone());
+	_diffractometer = std::shared_ptr<Diffractometer>(f->create(diffractometerName,"instrument")->clone());
 }
 
 Experiment::~Experiment()
@@ -57,6 +57,11 @@ Experiment& Experiment::operator=(const Experiment& other)
 std::shared_ptr<Diffractometer> Experiment::getDiffractometer() const
 {
 	return _diffractometer;
+}
+
+const std::string& Experiment::getDiffractometerType() const
+{
+	return _diffractometerName;
 }
 
 std::vector<std::string> Experiment::getDataNames() const
