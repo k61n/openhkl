@@ -74,8 +74,7 @@ tVector FFTIndexing::findtVector(const Eigen::Vector3d& N) const
 
 	//
 	double FZero=std::abs(spectrum[0]);
-	double integral;
-	int pos_max;
+	int pos_max=0;
 	double value=0;
 	for (int i=nSubdiv;i<nPointsHalf;++i)
 	{
