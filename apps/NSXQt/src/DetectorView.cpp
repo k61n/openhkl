@@ -704,7 +704,7 @@ void DetectorView::clearCutObjects()
     clearVerticalCutSlices();
 }
 
-void DetectorView::setCutterMode(int i)
+void DetectorView::onSetCutterMode(int i)
 {
     _cutterMode=static_cast<CutterMode>(i);
 
@@ -761,7 +761,7 @@ void DetectorView::setDimensions(double hor,double vert)
     _height=vert;
 }
 
-void DetectorView::setMaxIntensity(int intensity)
+void DetectorView::onSetMaxIntensity(int intensity)
 {
     _maxIntensity=intensity;
 }

@@ -30,6 +30,7 @@ SOURCES += src/Main.cpp \
     src/DialogUnitCellSolutions.cpp \
     src/ExperimentTree.cpp \
     src/DialogExperiment.cpp \
+    src/TreeItem.cpp \
     src/DataItem.cpp \
     src/DetectorItem.cpp \
     src/ExperimentItem.cpp \
@@ -55,6 +56,7 @@ HEADERS  += include/MainWindow.h \
     include/DialogUnitCellSolutions.h \
     include/ExperimentTree.h \
     include/DialogExperiment.h \
+    include/TreeItem.h \
     include/DataItem.h \
     include/DetectorItem.h \
     include/ExperimentItem.h \
