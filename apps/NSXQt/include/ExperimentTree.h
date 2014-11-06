@@ -2,9 +2,10 @@
 #define EXPERIMENTTREE_H
 
 #include <string>
-#include <map>
+#include <vector>
 
 #include <QPoint>
+#include <QStandardItem>
 #include <QStandardItemModel>
 #include <QTreeView>
 
@@ -14,12 +15,10 @@ using namespace SX::Instrument;
 
 namespace SX
 {
-
 namespace Data
 {
     class IData;
 }
-
 }
 
 using namespace SX::Data;
@@ -31,9 +30,10 @@ public:
     explicit ExperimentTree(QWidget *parent = 0);
 
     void addExperiment(const std::string& experimentName, const std::string& instrumentName);
+    std::vector<std::string> getSelectedNumors() const;
 
 signals:
-    void sig_plot_data(IData* data);
+    void plotData(IData* data);
 
 public slots:
     void keyPressEvent(QKeyEvent* event);
@@ -46,7 +46,6 @@ public slots:
 private:
 
     QStandardItemModel* _model;
-    std::map<std::string,Experiment> _experiments;
 
 };
 

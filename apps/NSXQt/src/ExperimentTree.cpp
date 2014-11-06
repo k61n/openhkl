@@ -11,14 +11,17 @@
 #include <QIcon>
 #include <QKeyEvent>
 #include <QMenu>
+#include <QModelIndexList>
 #include <QStandardItem>
 #include <QString>
 
+#include "Detector.h"
 #include "Diffractometer.h"
 #include "InstrumentItem.h"
 #include "DataItem.h"
 #include "Detector.h"
 #include "DetectorItem.h"
+#include "TreeItem.h"
 #include "ExperimentItem.h"
 #include "ILLAsciiData.h"
 #include "NumorItem.h"
@@ -43,37 +46,42 @@ ExperimentTree::ExperimentTree(QWidget *parent) : QTreeView(parent)
 void ExperimentTree::addExperiment(const std::string& experimentName, const std::string& instrumentName)
 {
 
-    // Throw if an experiment with the same name is already stored in the tree
-    auto it = _experiments.find(experimentName);
-    if (it != _experiments.end())
-        throw std::runtime_error("Duplicate name for "+experimentName+" experiment");
-
-    // Insert the new experiment in the _experiments map
-    std::pair<std::string,Experiment> exp(experimentName,instrumentName);
-    auto it1=_experiments.insert(exp);
-
-    // Update the experiments tree
-    ExperimentItem* expt=new ExperimentItem(experimentName);
+    Experiment* expPtr = new Experiment(experimentName,instrumentName);
+    ExperimentItem* expt = new ExperimentItem(expPtr);
 
     // The instrument related sections
-    InstrumentItem* instr = new InstrumentItem(instrumentName);
-    std::shared_ptr<Diffractometer> diff = it1.first->second.getDiffractometer();
+    InstrumentItem* instr = new InstrumentItem(expPtr);
 
-    SampleItem* sample = new SampleItem(diff->getSample()->getName());
-    SourceItem* source = new SourceItem(diff->getSource()->getName());
-    DetectorItem* detector = new DetectorItem(diff->getDetector()->getName());
+    SampleItem* sample = new SampleItem(expPtr);
+    SourceItem* source = new SourceItem(expPtr);
+    DetectorItem* detector = new DetectorItem(expPtr);
+
     instr->appendRow(detector);
     instr->appendRow(sample);
     instr->appendRow(source);
 
     // The data related section
-    DataItem* data = new DataItem("data");
+    DataItem* data = new DataItem(expPtr);
 
     expt->appendRow(instr);
     expt->appendRow(data);
     _model->appendRow(expt);
     update();
 
+}
+
+std::vector<std::string> ExperimentTree::getSelectedNumors() const
+{
+    QModelIndexList selIndexes = selectedIndexes();
+
+    std::vector<std::string> numors;
+
+    for (auto idx : selIndexes)
+    {
+        QStandardItem* item = _model->itemFromIndex(idx);
+        if (auto ptr=dynamic_cast<NumorItem*>(item))
+            numors.push_back(ptr->getExperiment()->getData(ptr->text().toStdString())->getFilename());
+    }
 }
 
 void ExperimentTree::onCustomMenuRequested(const QPoint& point)
@@ -106,34 +114,34 @@ void ExperimentTree::importData()
         return;
 
     QModelIndex parentIndex = _model->parent(currentIndex());
-    QStandardItem* exptItem=_model->itemFromIndex(parentIndex);
+    auto expItem=dynamic_cast<ExperimentItem*>(_model->itemFromIndex(parentIndex));
 
     for (int i=0;i<fileNames.size();++i)
     {
         // Get the basename of the current numor
         QFileInfo fileinfo(fileNames[i]);
-        std::string index=fileinfo.baseName().toStdString();
+        std::string basename=fileinfo.baseName().toStdString();
 
-        // Get the name of the experience that will hold the data
-        std::string expName=exptItem->text().toStdString();
-
-        Experiment& expt = _experiments.at(expName);
+        Experiment* exp = expItem->getExperiment();
 
         // If the experience already stores the current numor, skip it
-        if (expt.hasData(index))
+        if (exp->hasData(basename))
             continue;
 
         try
         {
-            ILLAsciiData* d = new ILLAsciiData(fileNames[i].toStdString(),expt.getDiffractometer(),false);
-            expt.addData(d);
-        }catch(std::exception& e)
+            ILLAsciiData* d = new ILLAsciiData(fileNames[i].toStdString(),exp->getDiffractometer(),false);
+            exp->addData(d);
+        }
+        catch(std::exception& e)
         {
            qWarning() << "Error reading numor: " + fileNames[i] + " " + QString(e.what());
            continue;
         }
 
-        dataItem->appendRow(new NumorItem(index));
+        QStandardItem* item = new NumorItem(exp);
+        item->setText(QString::fromStdString(basename));
+        dataItem->appendRow(item);
     }
 
 }
@@ -147,24 +155,15 @@ void ExperimentTree::onDoubleClick(const QModelIndex& index)
         return;
 
     QModelIndex parentIndex = _model->parent(currentIndex());
-    QStandardItem* exptItem=_model->itemFromIndex(_model->parent(parentIndex));
-    std::string expName=exptItem->text().toStdString();
-    Experiment& expt = _experiments.at(expName);
+    auto expItem=dynamic_cast<ExperimentItem*>(_model->itemFromIndex(_model->parent(parentIndex)));
+//    std::string expName=exptItem->text().toStdString();
+    Experiment* exp = expItem->getExperiment();
 
-    IData* data=expt.getData(item->text().toStdString());
+    IData* data=exp->getData(item->text().toStdString());
 
-    emit sig_plot_data(data);
+    emit plotData(data);
 
 }
-
-//void ExperimentTree::treat(QModelIndex newitem,QModelIndex olditem)
-//{
-//    Q_UNUSED(olditem);
-//    QStandardItemModel* m=dynamic_cast<QStandardItemModel*>(model());
-//    QStandardItem* item=m->itemFromIndex(newitem);
-//    if (dynamic_cast<InstrumentItem*>(item))
-//            std::cout << "Instrument" << std::endl;
-//}
 
 void ExperimentTree::keyPressEvent(QKeyEvent *event)
 {
