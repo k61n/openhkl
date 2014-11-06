@@ -202,23 +202,16 @@ void MainWindow::on_spinBox_max_valueChanged(int arg1)
     updatePlot();
 }
 
-void MainWindow::on_numor_Widget_itemActivated(QListWidgetItem *item)
-{
-//    ui->numor_Widget->setSelectionMode(QAbstractItemView::MultiSelection);
-//    if (item == nullptr)
-//        return;
-//    std::string numor=item->text().toStdString();
-
-//    int nmax=_experiments.at("my_exp").getData(numor)->getNFrames()-1;
-//    ui->horizontalScrollBar->setMaximum(nmax);
-//    ui->spinBox_Frame->setMaximum(nmax);
-
-//    updatePlot();
-}
-
-
 void MainWindow::on_action_peak_find_triggered()
 {
+
+    std::vector<IData*> numors = _ui->experimentTree->getSelectedNumors();
+    if (numors.empty())
+    {
+        qWarning() << "No numors selected for finding peaks";
+        return;
+    }
+
     DialogPeakFind* dialog= new DialogPeakFind();
 
     dialog->setFixedSize(400,200);
@@ -229,7 +222,6 @@ void MainWindow::on_action_peak_find_triggered()
     double confidence=dialog->getConfidence();
     double threshold=dialog->getThreshold();   
 
-    std::vector<IData*> numors=selectedNumors();
     qWarning() << "Peak find algorithm: Searching peaks in " << numors.size() << " files";
     int max=numors.size();
 
@@ -310,43 +302,31 @@ void MainWindow::resizeEvent(QResizeEvent* event)
 
 void MainWindow::on_actionUnit_Cell_triggered()
 {
+
+    std::vector<IData*> numors = _ui->experimentTree->getSelectedNumors();
+    if (numors.empty())
+    {
+        qWarning() << "No numors selected for finding peaks";
+        return;
+    }
+
     DialogUnitCell* dialog=new DialogUnitCell(this);
 
     std::vector<std::reference_wrapper<SX::Crystal::Peak3D>> peaks;
-    std::vector<IData*> numors=selectedNumors();
     for (auto ptr : numors)
     {
       // Add peaks present in this numor
       for (auto& peak : ptr->getPeaks())
-      {
           peaks.push_back(std::ref(peak.second));
-
-      }
     }
     dialog->setPeaks(peaks);
     dialog->show();
 }
 
-std::vector<IData*> MainWindow::selectedNumors()
-{
-//    QModelIndexList selIndexes = _ui->experimentTree->selectedIndexes();
-
-
-
-//    QList<QListWidgetItem*> selNumors = ui->numor_Widget->selectedItems();
-//    std::vector<IData*> list;
-//    for (auto it=selNumors.begin();it!=selNumors.end();++it)
-//    {
-//        auto it1 = _experiments.at("my_exp").getData((*it)->text().toStdString());
-//        list.push_back(it1);
-//    }
-//    return list;
-}
-
 void MainWindow::on_actionPeak_List_triggered()
 {
-    std::vector<IData*> numors=selectedNumors();
-    PeakTableView* table=new PeakTableView(this);
-    table->setData(numors);
-    table->show();
+//    std::vector<IData*> numors=selectedNumors();
+//    PeakTableView* table=new PeakTableView(this);
+//    table->setData(numors);
+//    table->show();
 }

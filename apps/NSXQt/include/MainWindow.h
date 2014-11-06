@@ -47,8 +47,6 @@ private slots:
 
     void deleteNumors();
 
-    void on_numor_Widget_itemActivated(QListWidgetItem *item);
-
     void on_actionUnit_Cell_triggered();
 
     void on_actionPeak_List_triggered();
@@ -60,8 +58,6 @@ public slots:
 
 private:
 
-    //! Return a list of numors currently selected
-    std::vector<IData*> selectedNumors();
     void updatePlot();
 
 

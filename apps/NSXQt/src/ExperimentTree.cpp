@@ -46,42 +46,54 @@ ExperimentTree::ExperimentTree(QWidget *parent) : QTreeView(parent)
 void ExperimentTree::addExperiment(const std::string& experimentName, const std::string& instrumentName)
 {
 
+    // Create an experiment
     Experiment* expPtr = new Experiment(experimentName,instrumentName);
-    ExperimentItem* expt = new ExperimentItem(expPtr);
 
-    // The instrument related sections
+    // Create an instrument item
     InstrumentItem* instr = new InstrumentItem(expPtr);
 
-    SampleItem* sample = new SampleItem(expPtr);
-    SourceItem* source = new SourceItem(expPtr);
+    // Create a detector item and add it to the instrument item
     DetectorItem* detector = new DetectorItem(expPtr);
-
     instr->appendRow(detector);
+
+    // Create a sample item and add it to the instrument item
+    SampleItem* sample = new SampleItem(expPtr);
     instr->appendRow(sample);
+
+    // Create a source item and add it to the instrument leaf
+    SourceItem* source = new SourceItem(expPtr);
     instr->appendRow(source);
 
-    // The data related section
-    DataItem* data = new DataItem(expPtr);
+    // Create an experiment item
+    ExperimentItem* expt = new ExperimentItem(expPtr);
 
+    // Add the instrument item to the experiment item
     expt->appendRow(instr);
+
+    // Create a data item and add it to the experiment item
+    DataItem* data = new DataItem(expPtr);
     expt->appendRow(data);
+
+    // Add the experiment item to the root of the experiment tree
     _model->appendRow(expt);
+
     update();
 
 }
 
-std::vector<std::string> ExperimentTree::getSelectedNumors() const
+std::vector<IData*> ExperimentTree::getSelectedNumors() const
 {
     QModelIndexList selIndexes = selectedIndexes();
 
-    std::vector<std::string> numors;
+    std::vector<IData*> numors;
 
     for (auto idx : selIndexes)
     {
         QStandardItem* item = _model->itemFromIndex(idx);
         if (auto ptr=dynamic_cast<NumorItem*>(item))
-            numors.push_back(ptr->getExperiment()->getData(ptr->text().toStdString())->getFilename());
+            numors.push_back(ptr->getExperiment()->getData(ptr->text().toStdString()));
     }
+    return numors;
 }
 
 void ExperimentTree::onCustomMenuRequested(const QPoint& point)

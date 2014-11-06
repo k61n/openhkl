@@ -30,7 +30,7 @@ public:
     explicit ExperimentTree(QWidget *parent = 0);
 
     void addExperiment(const std::string& experimentName, const std::string& instrumentName);
-    std::vector<std::string> getSelectedNumors() const;
+    std::vector<IData*> getSelectedNumors() const;
 
 signals:
     void plotData(IData* data);
