@@ -11,10 +11,6 @@ class DataItem : public TreeItem
 public:
     explicit DataItem(Experiment* experiment);
 
-signals:
-
-public slots:
-
 };
 
 #endif // DATAITEM_H

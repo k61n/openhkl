@@ -26,7 +26,7 @@ IData::IData(const std::string& filename, std::shared_ptr<Diffractometer> diffra
   _data(),
   _detectorStates(),
   _sampleStates(),
-  _rpeaks()
+  _peaks()
 {
 	if ( !boost::filesystem::exists(_filename.c_str()))
 		throw std::runtime_error("ILLAsciiData, file: "+_filename+" does not exist");
@@ -74,19 +74,19 @@ std::size_t IData::getNFrames() const
 	return _nFrames;
 }
 
-std::map<int,Peak3D>& IData::getPeaks()
+std::vector<Peak3D>& IData::getPeaks()
 {
-	return _rpeaks;
+	return _peaks;
 }
 
 void IData::addPeak(const Peak3D& peak)
 {
-	_rpeaks.insert(std::pair<int,Peak3D>(_rpeaks.size(),peak));
+	_peaks.push_back(peak);
 }
 
 void IData::clearPeaks()
 {
-	_rpeaks.clear();
+	_peaks.clear();
 }
 
 bool IData::isInMemory() const

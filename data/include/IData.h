@@ -29,7 +29,6 @@
 #ifndef NSXTOOL_IDATA_H_
 #define NSXTOOL_IDATA_H_
 
-#include <map>
 #include <memory>
 #include <string>
 #include <vector>
@@ -94,7 +93,7 @@ public:
 	//! Gets a pointer to the metadata of the data
 	MetaData* const getMetadata() const;
 	//! Return the peaks
-	std::map<int,Peak3D>& getPeaks();
+	std::vector<Peak3D>& getPeaks();
     //! Gets the interpolated state between two consecutive sample states
     ComponentState getSampleInterpolatedState(double frame);
 	//! Gets the the detector states.
@@ -128,7 +127,7 @@ protected:
 	std::vector<vint> _data;
 	std::vector<ComponentState> _detectorStates;
 	std::vector<ComponentState> _sampleStates;
-    std::map<int,Peak3D> _rpeaks;
+    std::vector<Peak3D> _peaks;
 
 };
 

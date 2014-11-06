@@ -10,10 +10,6 @@ class NumorItem : public TreeItem
 public:
     explicit NumorItem(Experiment* experiment);
 
-signals:
-
-public slots:
-
 };
 
 #endif // NUMORITEM_H

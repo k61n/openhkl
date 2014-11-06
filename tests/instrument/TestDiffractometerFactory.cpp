@@ -13,12 +13,12 @@ BOOST_AUTO_TEST_CASE(Test_Diffractometer_Factory)
 
 	DiffractometerFactory* factory = DiffractometerFactory::Instance();
 
-	Diffractometer* diff = factory->create("D19-4c","my d19 diff");
+	Diffractometer* diff = factory->create("D19 4-circles","my d19 diff");
 
 	BOOST_CHECK_EQUAL(diff->getDetector()->getNCols(),640);
 	BOOST_CHECK_EQUAL(diff->getDetector()->getNRows(),256);
 
-	diff = factory->create("D9-4c","my d9 diff");
+	diff = factory->create("D9 4-circles","my d9 diff");
 
 	BOOST_CHECK_EQUAL(diff->getDetector()->getNCols(),32);
 	BOOST_CHECK_EQUAL(diff->getDetector()->getNRows(),32);

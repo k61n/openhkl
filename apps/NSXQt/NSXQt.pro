@@ -36,6 +36,8 @@ SOURCES += src/Main.cpp \
     src/ExperimentItem.cpp \
     src/InstrumentItem.cpp \
     src/NumorItem.cpp \
+    src/PeakItem.cpp \
+    src/PeakListItem.cpp \
     src/SampleItem.cpp \
     src/SourceItem.cpp
 
@@ -62,6 +64,8 @@ HEADERS  += include/MainWindow.h \
     include/ExperimentItem.h \
     include/InstrumentItem.h \
     include/NumorItem.h \
+    include/PeakItem.h \
+    include/PeakListItem.h \
     include/SampleItem.h \
     include/SourceItem.h
 

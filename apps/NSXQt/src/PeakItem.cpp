@@ -1,10 +1,10 @@
-#include "DataItem.h"
+#include "PeakItem.h"
 
 #include <QIcon>
 
-DataItem::DataItem(Experiment* experiment) : TreeItem(experiment)
+PeakItem::PeakItem(Experiment* experiment) : TreeItem(experiment)
 {
-    setText("Data");
+//    setText("Data");
 
     QIcon icon(":/resources/dataIcon.png");
     setIcon(icon);

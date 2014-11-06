@@ -8,8 +8,9 @@
 #include <QDebug>
 #include <QFileDialog>
 #include <QFileInfo>
-#include <QIcon>
 #include <QKeyEvent>
+#include <QList>
+#include <QListIterator>
 #include <QMenu>
 #include <QModelIndexList>
 #include <QStandardItem>
@@ -25,6 +26,8 @@
 #include "ExperimentItem.h"
 #include "ILLAsciiData.h"
 #include "NumorItem.h"
+#include "PeakItem.h"
+#include "PeakListItem.h"
 #include "Sample.h"
 #include "SampleItem.h"
 #include "Source.h"
@@ -74,6 +77,10 @@ void ExperimentTree::addExperiment(const std::string& experimentName, const std:
     DataItem* data = new DataItem(expPtr);
     expt->appendRow(data);
 
+    // Create a peaks item and add it to the experiment item
+    PeakListItem* peaks = new PeakListItem(expPtr);
+    expt->appendRow(peaks);
+
     // Add the experiment item to the root of the experiment tree
     _model->appendRow(expt);
 
@@ -83,16 +90,23 @@ void ExperimentTree::addExperiment(const std::string& experimentName, const std:
 
 std::vector<IData*> ExperimentTree::getSelectedNumors() const
 {
-    QModelIndexList selIndexes = selectedIndexes();
 
     std::vector<IData*> numors;
 
-    for (auto idx : selIndexes)
+    QList<QStandardItem*> dataItems = _model->findItems(QString("Data"),Qt::MatchCaseSensitive|Qt::MatchRecursive);
+
+    for (const auto& it : dataItems)
     {
-        QStandardItem* item = _model->itemFromIndex(idx);
-        if (auto ptr=dynamic_cast<NumorItem*>(item))
-            numors.push_back(ptr->getExperiment()->getData(ptr->text().toStdString()));
+        for (auto i=0;i<_model->rowCount(it->index());++i)
+        {
+            if (it->child(i)->checkState() == Qt::Checked)
+            {
+                if (auto ptr = dynamic_cast<NumorItem*>(it->child(i)))
+                    numors.push_back(ptr->getExperiment()->getData(ptr->text().toStdString()));
+            }
+        }
     }
+
     return numors;
 }
 
@@ -153,6 +167,7 @@ void ExperimentTree::importData()
 
         QStandardItem* item = new NumorItem(exp);
         item->setText(QString::fromStdString(basename));
+        item->setCheckable(true);
         dataItem->appendRow(item);
     }
 
@@ -160,27 +175,46 @@ void ExperimentTree::importData()
 
 void ExperimentTree::onDoubleClick(const QModelIndex& index)
 {
-
     // Get the current item and check that is actually a Numor item. Otherwise, return.
     QStandardItem* item=_model->itemFromIndex(index);
-    if (!dynamic_cast<NumorItem*>(item))
-        return;
 
-    QModelIndex parentIndex = _model->parent(currentIndex());
-    auto expItem=dynamic_cast<ExperimentItem*>(_model->itemFromIndex(_model->parent(parentIndex)));
-//    std::string expName=exptItem->text().toStdString();
-    Experiment* exp = expItem->getExperiment();
-
-    IData* data=exp->getData(item->text().toStdString());
-
-    emit plotData(data);
-
+    if (auto ptr=dynamic_cast<DataItem*>(item))
+    {
+        for (auto i=0;i<ptr->model()->rowCount(ptr->index());++i)
+        {
+            if (ptr->child(i)->checkState() == Qt::Unchecked)
+                ptr->child(i)->setCheckState(Qt::Checked);
+            else
+                ptr->child(i)->setCheckState(Qt::Unchecked);
+        }
+    }
+    else if (auto ptr=dynamic_cast<NumorItem*>(item))
+    {
+        Experiment* exp = ptr->getExperiment();
+        IData* data=exp->getData(item->text().toStdString());
+        emit plotData(data);
+    }
 }
 
 void ExperimentTree::keyPressEvent(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_Delete)
     {
-        std::cout<<"I DELETE"<<std::endl;
+        QList<QModelIndex> selIndexes = selectedIndexes();
+
+        QListIterator<QModelIndex> it(selIndexes);
+        it.toBack();
+        while (it.hasPrevious())
+        {
+            QStandardItem* item = _model->itemFromIndex(it.previous());
+
+            if (auto ptr=dynamic_cast<NumorItem*>(item))
+            {
+                ptr->getExperiment()->removeData(ptr->text().toStdString());
+                _model->removeRow(ptr->row(),ptr->parent()->index());
+            }
+            else if (auto ptr=dynamic_cast<ExperimentItem*>(item))
+                _model->removeRow(ptr->row());
+        }
     }
 }

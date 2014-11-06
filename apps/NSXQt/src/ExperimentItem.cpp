@@ -19,3 +19,10 @@ void ExperimentItem::setData(const QVariant &value, int role)
     QStandardItem::setData(value,role);
     _experiment->setName(text().toStdString());
 }
+
+ExperimentItem::~ExperimentItem()
+{
+    std::cout<<"I DELETE THE EXEPERIMENT ITEM"<<std::endl;
+    if (_experiment)
+        delete _experiment;
+}

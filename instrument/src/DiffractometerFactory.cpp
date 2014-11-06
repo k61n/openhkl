@@ -11,9 +11,9 @@ namespace Instrument
 
 DiffractometerFactory::DiffractometerFactory()
 {
-	registerCallback("D9-4c",&D9FourCircles::create);
-	registerCallback("D10-4c",&D10FourCircles::create);
-	registerCallback("D19-4c",&D19FourCircles::create);
+	registerCallback("D9 4-circles" ,&D9FourCircles::create);
+	registerCallback("D10 4-circles",&D10FourCircles::create);
+	registerCallback("D19 4-circles",&D19FourCircles::create);
 }
 
 DiffractometerFactory::~DiffractometerFactory() {

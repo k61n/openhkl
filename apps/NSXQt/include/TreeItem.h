@@ -16,6 +16,8 @@ public:
     explicit TreeItem(Experiment* experiment);
     Experiment* getExperiment();
 
+    virtual ~TreeItem();
+
 protected:
     Experiment* _experiment;
 

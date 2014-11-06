@@ -32,6 +32,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
 signals:
 
 private slots:
@@ -44,8 +45,6 @@ private slots:
     void on_dial_valueChanged();
 
     void on_spinBox_max_valueChanged(int arg1);
-
-    void deleteNumors();
 
     void on_actionUnit_Cell_triggered();
 
@@ -60,13 +59,11 @@ private:
 
     void updatePlot();
 
-
     Ui::MainWindow* _ui;
     QGraphicsScene* _scene;
     std::unordered_map<std::string,Experiment> _experiments;
     IData* _currentData;
 
-protected:
 };
 
 #endif // MAINWINDOW_H

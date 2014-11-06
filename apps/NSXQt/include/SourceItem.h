@@ -11,10 +11,6 @@ class SourceItem : public TreeItem
 public:
     explicit SourceItem(Experiment* experiment);
 
-signals:
-
-public slots:
-
 };
 
 #endif // SOURCEITEM_H

@@ -52,14 +52,10 @@ void PeakTableView::setData(const std::vector<IData *> numors)
     {
         // Add peaks present in this numor to the LatticeFinder
         for (auto& peak : ptr->getPeaks())
-        {
-            _peaks.push_back(std::ref(peak.second));
-        }
+            _peaks.push_back(std::ref(peak));
     }
     constructTable();
-
 }
-
 
 void PeakTableView::peakChanged(QModelIndex current, QModelIndex last)
 {

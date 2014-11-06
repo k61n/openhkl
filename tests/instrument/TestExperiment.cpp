@@ -12,7 +12,7 @@ using namespace SX::Instrument;
 BOOST_AUTO_TEST_CASE(Test_Experiment)
 {
 
-	Experiment exp("my-exp","D10-4c");
+	Experiment exp("my-exp","D10 4-circles");
 
 	BOOST_CHECK_EQUAL(exp.getName(),"my-exp");
 

@@ -69,10 +69,6 @@ MainWindow::MainWindow(QWidget *parent) :
     _ui->_dview->setDragMode(QGraphicsView::RubberBandDrag);
     _ui->dial->setRange(0,15);
 
-//    ui->numor_Widget->setSelectionMode(QAbstractItemView::MultiSelection);
-//    QShortcut* shortcut = new QShortcut(QKeySequence(Qt::Key_Delete), ui->numor_Widget);
-//    connect(shortcut, SIGNAL(activated()), this, SLOT(deleteNumors()));
-
     _ui->selectionMode->addItem(QIcon(":/resources/zoomIcon.png"),"");
     _ui->selectionMode->addItem(QIcon(":/resources/cutlineIcon.png"),"");
     _ui->selectionMode->addItem(QIcon(":/resources/horizontalSliceIcon.png"),"");
@@ -176,26 +172,6 @@ void MainWindow::on_dial_valueChanged()
     updatePlot();
 }
 
-void MainWindow::deleteNumors()
-{
-//    QList<QListWidgetItem*> selNumors = ui->numor_Widget->selectedItems();
-
-//    for (auto it=selNumors.begin();it!=selNumors.end();++it)
-//    {
-//        _experiments.at("my_exp").removeData((*it)->text().toStdString());
-//        delete *it;
-//    }
-//    qDebug() <<  selNumors.size() << " file(s) have been deleted";
-
-//    updatePlot();
-
-//    if (!ui->numor_Widget->count())
-//    {
-//        ui->frameFrame->setEnabled(false);
-//        ui->intensityFrame->setEnabled(false);
-//    }
-}
-
 void MainWindow::on_spinBox_max_valueChanged(int arg1)
 {
     _ui->dial->setValue(arg1);
@@ -279,7 +255,7 @@ void MainWindow::on_action_peak_find_triggered()
         }
 
         for (auto& peak : numor->getPeaks())
-            peak.second.integrate();
+            peak.integrate();
 
         numor->releaseMemory();
 
@@ -317,7 +293,7 @@ void MainWindow::on_actionUnit_Cell_triggered()
     {
       // Add peaks present in this numor
       for (auto& peak : ptr->getPeaks())
-          peaks.push_back(std::ref(peak.second));
+          peaks.push_back(std::ref(peak));
     }
     dialog->setPeaks(peaks);
     dialog->show();

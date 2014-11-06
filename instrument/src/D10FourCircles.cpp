@@ -20,7 +20,7 @@ namespace Instrument
 
 using namespace SX::Units;
 
-D10FourCircles::D10FourCircles() : Diffractometer("D10-4c")
+D10FourCircles::D10FourCircles() : Diffractometer("D10 4-circles")
 {
 }
 
@@ -37,7 +37,7 @@ Diffractometer* D10FourCircles::clone() const
 D10FourCircles::D10FourCircles(const std::string& name) : Diffractometer(name)
 {
 
-    _detector = new SX::Instrument::FlatDetector("detector");
+    _detector = new SX::Instrument::FlatDetector("32x32 flat detector");
 
     _detector->setDistance(488*mm);
     _detector->setWidth(64*mm);

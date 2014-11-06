@@ -14,4 +14,6 @@ InstrumentItem::InstrumentItem(Experiment* experiment) : TreeItem(experiment)
 
     setDragEnabled(true);
     setDropEnabled(true);
+
+    setSelectable(false);
 }

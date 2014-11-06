@@ -543,7 +543,7 @@ void DetectorView::plotEllipsoids()
     {
         for (auto& el : _ptrData->getPeaks())
         {
-            const SX::Geometry::IShape<double,3>* peak=el.second.getPeak();
+            const SX::Geometry::IShape<double,3>* peak=el.getPeak();
             const Eigen::Vector3d& lower=peak->getLower();
             const Eigen::Vector3d& upper=peak->getUpper();
             // Plot bounding box
@@ -558,11 +558,11 @@ void DetectorView::plotEllipsoids()
                 detectorToScene(right,bottom);
                 // Plot the bounding box
                 QGraphicsRectItem* bb;
-                if (el.second.isSelected())
+                if (el.isSelected())
                     bb=_scene->addRect(left-1,top-1,right-left+1,bottom-top+1,QPen(QBrush(QColor("green")),2.0));
                 else
                     bb=_scene->addRect(left-1,top-1,right-left+1,bottom-top+1,QPen(QBrush(QColor("red")),2.0));
-                bb->setToolTip(QString::number(el.first));
+//                bb->setToolTip(QString::number(el.first));
                 bb->setFlags(QGraphicsItem::ItemIsSelectable);
                 _currentPeaks.push_back(bb);
             }

@@ -9,6 +9,11 @@ TreeItem::TreeItem(Experiment* experiment) : QStandardItem(), _experiment(experi
 {
 }
 
+TreeItem::~TreeItem()
+{
+    std::cout<<"I DELETE THE ITEM"<<std::endl;
+}
+
 Experiment* TreeItem::getExperiment()
 {
     return _experiment;

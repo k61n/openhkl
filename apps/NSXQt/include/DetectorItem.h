@@ -13,10 +13,6 @@ class DetectorItem : public TreeItem
 public:
     explicit DetectorItem(Experiment* experiment);
 
-signals:
-
-public slots:
-
 };
 
 #endif // DETECTORITEM_H

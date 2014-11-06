@@ -1,3 +1,4 @@
+#include <iostream>
 #include <stdexcept>
 #include <utility>
 
@@ -40,6 +41,7 @@ Experiment::Experiment(const std::string& diffractometerName)
 
 Experiment::~Experiment()
 {
+	std::cout<<"I SHOULD BE DELETED"<<std::endl;
 }
 
 Experiment& Experiment::operator=(const Experiment& other)
