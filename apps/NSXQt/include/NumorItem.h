@@ -1,14 +1,14 @@
 #ifndef NUMORITEM_H
 #define NUMORITEM_H
 
-#include <QStandardItem>
-
 #include <string>
 
-class NumorItem : public QStandardItem
+#include <TreeItem.h>
+
+class NumorItem : public TreeItem
 {
 public:
-    explicit NumorItem(const std::string& name);
+    explicit NumorItem(Experiment* experiment);
 
 signals:
 

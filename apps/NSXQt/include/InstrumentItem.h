@@ -1,19 +1,17 @@
 #ifndef INSTRUMENTITEM_H
 #define INSTRUMENTITEM_H
 
-#include <QStandardItem>
-
 #include <string>
 
-class InstrumentItem : public QStandardItem
+#include <TreeItem.h>
+#include "Experiment.h"
+
+class InstrumentItem : public TreeItem
 {
 public:
-    explicit InstrumentItem(const std::string& name);
+    explicit InstrumentItem(Experiment* experiment);
 
 signals:
-
-public:
-    void appendRow(QStandardItem *item);
 
 };
 

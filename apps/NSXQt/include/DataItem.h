@@ -1,14 +1,15 @@
 #ifndef DATAITEM_H
 #define DATAITEM_H
 
-#include <QStandardItem>
-
 #include <string>
 
-class DataItem : public QStandardItem
+#include "TreeItem.h"
+#include "Experiment.h"
+
+class DataItem : public TreeItem
 {
 public:
-    explicit DataItem(const std::string& name);
+    explicit DataItem(Experiment* experiment);
 
 signals:
 

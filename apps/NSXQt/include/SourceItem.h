@@ -1,14 +1,15 @@
 #ifndef SOURCEITEM_H
 #define SOURCEITEM_H
 
-#include <QStandardItem>
-
 #include <string>
 
-class SourceItem : public QStandardItem
+#include "TreeItem.h"
+#include "Experiment.h"
+
+class SourceItem : public TreeItem
 {
 public:
-    explicit SourceItem(const std::string& name);
+    explicit SourceItem(Experiment* experiment);
 
 signals:
 

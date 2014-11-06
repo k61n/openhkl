@@ -1,14 +1,17 @@
 #ifndef DETECTORITEM_H
 #define DETECTORITEM_H
 
-#include <QStandardItem>
-
 #include <string>
 
-class DetectorItem : public QStandardItem
+#include <QString>
+
+#include "TreeItem.h"
+#include "Experiment.h"
+
+class DetectorItem : public TreeItem
 {
 public:
-    explicit DetectorItem(const std::string& name);
+    explicit DetectorItem(Experiment* experiment);
 
 signals:
 

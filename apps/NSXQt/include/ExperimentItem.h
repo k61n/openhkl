@@ -1,19 +1,21 @@
 #ifndef EXPERIMENTITEM_H
 #define EXPERIMENTITEM_H
 
-#include <QStandardItem>
-
 #include <string>
 
-class ExperimentItem : public QStandardItem
+#include "TreeItem.h"
+#include "Experiment.h"
+
+using namespace SX::Instrument;
+
+class ExperimentItem : public TreeItem
 {
 public:
-    explicit ExperimentItem(const std::string& name);
+    explicit ExperimentItem(Experiment* experiment);
+
+    void setData(const QVariant & value, int role=Qt::UserRole + 1 );
 
 signals:
-
-public:
-    void appendRow(QStandardItem *item);
 
 };
 

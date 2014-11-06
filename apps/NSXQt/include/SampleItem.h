@@ -1,14 +1,18 @@
 #ifndef SAMPLEITEM_H
 #define SAMPLEITEM_H
 
-#include <QStandardItem>
-
 #include <string>
 
-class SampleItem : public QStandardItem
+#include "TreeItem.h"
+
+using namespace SX::Instrument;
+
+class SampleItem : public TreeItem
 {
 public:
-    explicit SampleItem(const std::string& name);
+    explicit SampleItem(Experiment* experiment);
+
+    void setData(const QVariant & value, int role=Qt::UserRole + 1 );
 
 signals:
 
