@@ -1,14 +1,25 @@
 #include "SampleItem.h"
 
 #include <QIcon>
-#include <QString>
 
-SampleItem::SampleItem(const std::string& name) : QStandardItem()
+#include "Diffractometer.h"
+#include "Sample.h"
+
+SampleItem::SampleItem(Experiment* experiment) : TreeItem(experiment)
 {
-    setEditable(false);
-    QIcon icon(":/sampleIcon.png");
-    setText(QString::fromStdString(name));
+    setText(QString::fromStdString(_experiment->getDiffractometer()->getSample()->getName()));
+    QIcon icon(":/resources/sampleIcon.png");
     setIcon(icon);
-    setDragEnabled(true);
-    setDropEnabled(true);
+
+    setEditable(true);
+
+    setDragEnabled(false);
+    setDropEnabled(false);
 }
+
+void SampleItem::setData(const QVariant &value, int role)
+{
+    QStandardItem::setData(value,role);
+    _experiment->getDiffractometer()->getSample()->setName(text().toStdString());
+}
+

@@ -3,12 +3,15 @@
 #include <QIcon>
 #include <QString>
 
-DataItem::DataItem(const std::string& name) : QStandardItem()
+DataItem::DataItem(Experiment* experiment) : TreeItem(experiment)
 {
-    setEditable(false);
+    setText("Data");
+
     QIcon icon(":/resources/dataIcon.png");
-    setText(QString::fromStdString(name));
     setIcon(icon);
+
+    setEditable(false);
+
     setDragEnabled(true);
     setDropEnabled(true);
 }

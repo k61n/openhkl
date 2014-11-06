@@ -1,19 +1,21 @@
 #include "ExperimentItem.h"
+#include <iostream>
 
 #include <QIcon>
-#include <QString>
 
-ExperimentItem::ExperimentItem(const std::string& name) : QStandardItem()
+ExperimentItem::ExperimentItem(Experiment* experiment) : TreeItem(experiment)
 {
-    setEditable(false);
+    setText(QString::fromStdString(_experiment->getName()));
+
     QIcon icon(":/resources/experimentIcon.png");
-    setText(QString::fromStdString(name));
     setIcon(icon);
     setDragEnabled(true);
     setDropEnabled(true);
+    setEditable(true);
 }
 
-void ExperimentItem::appendRow(QStandardItem *item)
+void ExperimentItem::setData(const QVariant &value, int role)
 {
-    QStandardItem::appendRow(item);
+    QStandardItem::setData(value,role);
+    _experiment->setName(text().toStdString());
 }

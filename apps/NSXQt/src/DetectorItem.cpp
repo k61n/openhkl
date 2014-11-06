@@ -3,12 +3,18 @@
 #include <QIcon>
 #include <QString>
 
-DetectorItem::DetectorItem(const std::string& name) : QStandardItem()
+#include "Detector.h"
+#include "Diffractometer.h"
+
+DetectorItem::DetectorItem(Experiment* experiment) : TreeItem(experiment)
 {
-    setEditable(false);
+    setText(QString::fromStdString(_experiment->getDiffractometer()->getDetector()->getName()));
+
     QIcon icon(":/resources/detectorIcon.png");
-    setText(QString::fromStdString(name));
     setIcon(icon);
-    setDragEnabled(true);
-    setDropEnabled(true);
+
+    setEditable(false);
+
+    setDragEnabled(false);
+    setDropEnabled(false);
 }
