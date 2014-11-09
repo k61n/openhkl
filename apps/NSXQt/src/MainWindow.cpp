@@ -24,6 +24,7 @@
 #include "Cluster.h"
 #include "Detector.h"
 #include "ComponentState.h"
+#include "DetectorScene.h"
 #include "DialogExperiment.h"
 #include "DialogUnitCell.h"
 #include "Ellipsoid.h"
@@ -48,7 +49,6 @@ using namespace SX::Instrument;
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     _ui(new Ui::MainWindow),
-    _scene(new QGraphicsScene),
     _experiments(),
     _currentData(nullptr)
 {
@@ -63,20 +63,20 @@ MainWindow::MainWindow(QWidget *parent) :
     _ui->frameFrame->setEnabled(false);
     _ui->intensityFrame->setEnabled(false);
 
-    _scene->setParent(_ui->_dview);
-    _ui->_dview->setScene(_scene);
-    _ui->_dview->setInteractive(true);
-    _ui->_dview->setDragMode(QGraphicsView::RubberBandDrag);
-    _ui->dial->setRange(0,15);
-
     _ui->selectionMode->addItem(QIcon(":/resources/zoomIcon.png"),"");
     _ui->selectionMode->addItem(QIcon(":/resources/cutlineIcon.png"),"");
     _ui->selectionMode->addItem(QIcon(":/resources/horizontalSliceIcon.png"),"");
     _ui->selectionMode->addItem(QIcon(":/resources/verticalSliceIcon.png"),"");
 
+    _ui->splitter->setStretchFactor(0,10);
+    _ui->splitter->setStretchFactor(1,90);
+
+
     connect(_ui->selectionMode,SIGNAL(currentIndexChanged(int)),_ui->_dview,SLOT(onSetCutterMode(int)));
-    connect(_ui->dial,SIGNAL(valueChanged(int)),_ui->_dview,SLOT(onSetMaxIntensity(int)));
-    connect(_ui->experimentTree,SIGNAL(plotData(IData*)),this,SLOT(onPlotData(IData*)));
+    connect(_ui->experimentTree,SIGNAL(plotData(IData*)),_ui->_dview->getScene(),SLOT(setData(IData*)));
+    connect(_ui->experimentTree,SIGNAL(plotData(IData*)),this,SLOT(changeData(IData*)));
+    connect(_ui->horizontalScrollBar,SIGNAL(valueChanged(int)),_ui->_dview->getScene(),SLOT(changeFrame(int)));
+    connect(_ui->dial,SIGNAL(valueChanged(int)),_ui->_dview->getScene(),SLOT(setMaxIntensity(int)));
 }
 
 MainWindow::~MainWindow()
@@ -112,70 +112,26 @@ void MainWindow::on_action_open_triggered()
     }
 }
 
-void MainWindow::onPlotData(IData* data)
+void MainWindow::changeData(IData* data)
 {
-
-    if (data == _currentData)
-        return;
-
-    _currentData = data;
-
-    Detector* detector = data->getDiffractometer()->getDetector();
-    _ui->_dview->setNpixels(detector->getNCols(),detector->getNRows());
-    _ui->_dview->setDimensions(detector->getWidthAngle(),detector->getHeigth());
-    _ui->_dview->setDetectorDistance(detector->getDistance());
-
     _ui->frameFrame->setEnabled(true);
     _ui->intensityFrame->setEnabled(true);
 
-    _ui->horizontalScrollBar->setMaximum(_currentData->getNFrames()-1);
-    _ui->spinBox_Frame->setMaximum(_currentData->getNFrames()-1);
-    _ui->dial->setRange(1,3000);
-    _ui->dial->setValue(20);
-    _ui->_dview->updateView(data,0);
-}
-
-void MainWindow::plotUpdate(int numor,int frame)
-{
-//    QString number = QString::number(numor).rightJustified(6, '0');;
-
-//    QList<QListWidgetItem*> matches=ui->numor_Widget->findItems(number,Qt::MatchExactly);
-//    if (matches.size() == 1)
-//    {
-//        ui->numor_Widget->setCurrentItem(matches[0]);
-//        ui->horizontalScrollBar->setValue(frame);
-//    }
-}
-
-void MainWindow::updatePlot()
-{
-    if (!_currentData)
-    {
-        _ui->_dview->updateView(0,0);
-        return;
-    }
+    int frameMax = data->getNFrames()-1;
 
     int frame = _ui->horizontalScrollBar->value();
-    // Make sure that the frame value for previously selected file is valid for current one
-    if (frame>(_currentData->getNFrames()-1))
-        frame=0;
-    _ui->_dview->updateView(_currentData,frame);
-}
 
-void MainWindow::on_horizontalScrollBar_valueChanged()
-{
-    updatePlot();
-}
+    if (frame > frameMax)
+        frame = frameMax;
 
-void MainWindow::on_dial_valueChanged()
-{
-    updatePlot();
-}
+    _ui->horizontalScrollBar->setValue(frame);
 
-void MainWindow::on_spinBox_max_valueChanged(int arg1)
-{
-    _ui->dial->setValue(arg1);
-    updatePlot();
+    _ui->horizontalScrollBar->setMaximum(frameMax);
+
+    _ui->spinBox_Frame->setMaximum(frameMax);
+
+    _ui->dial->setRange(1,3000);
+
 }
 
 void MainWindow::on_action_peak_find_triggered()
@@ -263,17 +219,10 @@ void MainWindow::on_action_peak_find_triggered()
     }
 
     qDebug() << "Found " << npeaks << " peaks";
-    updatePlot();
     // Reinitialise progress bar
     _ui->progressBar->setValue(0);
     _ui->progressBar->setEnabled(false);
 
-}
-
-void MainWindow::resizeEvent(QResizeEvent* event)
-{
-    Q_UNUSED(event);
-    updatePlot();
 }
 
 void MainWindow::on_actionUnit_Cell_triggered()

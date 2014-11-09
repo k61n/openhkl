@@ -6,7 +6,7 @@
 ExperimentItem::ExperimentItem(Experiment* experiment) : TreeItem(experiment)
 {
     setText(QString::fromStdString(_experiment->getName()));
-
+    setForeground(QBrush(QColor("blue")));
     QIcon icon(":/resources/experimentIcon.png");
     setIcon(icon);
     setDragEnabled(true);
