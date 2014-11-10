@@ -114,6 +114,13 @@ ComponentState IData::getDetectorInterpolatedState(double frame)
 
 }
 
+const ComponentState& IData::getDetectorState(int frame) const
+{
+	if (frame>(_detectorStates.size()-1) || frame<0)
+			throw std::runtime_error("Error when returning detector state: invalid frame value");
+	return _detectorStates[frame];
+}
+
 ComponentState IData::getSampleInterpolatedState(double frame)
 {
 
@@ -132,6 +139,13 @@ ComponentState IData::getSampleInterpolatedState(double frame)
 
 	return _diffractometer->getSample()->createState(state);
 
+}
+
+const ComponentState& IData::getSampleState(int frame) const
+{
+	if (frame>(_sampleStates.size()-1) || frame<0)
+			throw std::runtime_error("Error when returning sample state: invalid frame value");
+	return _sampleStates[frame];
 }
 
 const std::vector<ComponentState>& IData::getDetectorStates() const
