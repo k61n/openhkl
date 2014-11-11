@@ -17,13 +17,22 @@
 
 class QListWidgetItem;
 
-namespace Ui {
-
-class MainWindow;
+namespace Ui
+{
+    class MainWindow;
 }
 
-using namespace SX::Data;
-using namespace SX::Instrument;
+namespace SX
+{
+    namespace Data
+    {
+        class IData;
+    }
+    namespace Instrument
+    {
+        class Experiment;
+    }
+}
 
 class MainWindow : public QMainWindow
 {
@@ -44,13 +53,21 @@ private slots:
 
     void on_actionPeak_List_triggered();
 
+    void on_actionPixel_position_triggered();
+
+    void on_actionGamma_Nu_triggered();
+
+    void on_action2_Theta_triggered();
+
+    void on_actionD_spacing_triggered();
+
 public slots:
-    void changeData(IData*);
+    void changeData(SX::Data::IData*);
 
 private:
     Ui::MainWindow* _ui;
-    std::unordered_map<std::string,Experiment> _experiments;
-    IData* _currentData;
+    std::unordered_map<std::string,SX::Instrument::Experiment> _experiments;
+    SX::Data::IData* _currentData;
 
 };
 

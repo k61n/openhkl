@@ -21,8 +21,6 @@ namespace Data
 }
 }
 
-using namespace SX::Data;
-
 class ExperimentTree : public QTreeView
 {
     Q_OBJECT
@@ -30,10 +28,10 @@ public:
     explicit ExperimentTree(QWidget *parent = 0);
 
     void addExperiment(const std::string& experimentName, const std::string& instrumentName);
-    std::vector<IData*> getSelectedNumors() const;
+    std::vector<SX::Data::IData*> getSelectedNumors() const;
 
 signals:
-    void plotData(IData* data);
+    void plotData(SX::Data::IData* data);
 
 public slots:
     void keyPressEvent(QKeyEvent* event);

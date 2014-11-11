@@ -72,11 +72,15 @@ MainWindow::MainWindow(QWidget *parent) :
     _ui->splitter->setStretchFactor(1,90);
 
 
-    connect(_ui->selectionMode,SIGNAL(currentIndexChanged(int)),_ui->_dview,SLOT(onSetCutterMode(int)));
-    connect(_ui->experimentTree,SIGNAL(plotData(IData*)),_ui->_dview->getScene(),SLOT(setData(IData*)));
-    connect(_ui->experimentTree,SIGNAL(plotData(IData*)),this,SLOT(changeData(IData*)));
+    connect(_ui->experimentTree,SIGNAL(plotData(SX::Data::IData*)),_ui->_dview->getScene(),SLOT(setData(SX::Data::IData*)));
+    connect(_ui->experimentTree,SIGNAL(plotData(SX::Data::IData*)),this,SLOT(changeData(SX::Data::IData*)));
     connect(_ui->horizontalScrollBar,SIGNAL(valueChanged(int)),_ui->_dview->getScene(),SLOT(changeFrame(int)));
     connect(_ui->dial,SIGNAL(valueChanged(int)),_ui->_dview->getScene(),SLOT(setMaxIntensity(int)));
+
+    // Pass interaction mode to Detector Scene
+    connect(_ui->selectionMode,SIGNAL(currentIndexChanged(int)),_ui->_dview->getScene(),SLOT(changeInteractionMode(int)));
+
+    connect(_ui->realSizePushButton,SIGNAL(pressed()),_ui->_dview,SLOT(resizeToDetector()));
 }
 
 MainWindow::~MainWindow()
@@ -254,4 +258,25 @@ void MainWindow::on_actionPeak_List_triggered()
 //    PeakTableView* table=new PeakTableView(this);
 //    table->setData(numors);
 //    table->show();
+}
+
+void MainWindow::on_actionPixel_position_triggered()
+{
+   _ui->_dview->getScene()->changeCursorMode(DetectorScene::PIXEL);
+}
+
+void MainWindow::on_actionGamma_Nu_triggered()
+{
+    _ui->_dview->getScene()->changeCursorMode(DetectorScene::GAMMA);
+}
+
+void MainWindow::on_action2_Theta_triggered()
+{
+     _ui->_dview->getScene()->changeCursorMode(DetectorScene::THETA);
+}
+
+
+void MainWindow::on_actionD_spacing_triggered()
+{
+  _ui->_dview->getScene()->changeCursorMode(DetectorScene::DSPACING);
 }

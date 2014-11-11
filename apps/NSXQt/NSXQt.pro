@@ -41,7 +41,9 @@ SOURCES += src/Main.cpp \
     src/SampleItem.cpp \
     src/SourceItem.cpp \
     src/DetectorGraphicsView.cpp \
-    src/DetectorScene.cpp
+    src/DetectorScene.cpp \
+    src/PeakGraphicsItem.cpp \
+    src/SliceGraphicsItem.cpp
 
 HEADERS  += include/MainWindow.h \
     include/DetectorView.h \
@@ -71,7 +73,9 @@ HEADERS  += include/MainWindow.h \
     include/SampleItem.h \
     include/SourceItem.h \
     include/DetectorGraphicsView.h \
-    include/DetectorScene.h
+    include/DetectorScene.h \
+    include/PeakGraphicsItem.h \
+    include/SliceGraphicsItem.h
 
 
 FORMS    += ui/mainwindow.ui \

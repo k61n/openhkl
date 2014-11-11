@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
     QSize screenSize = QApplication::desktop()->geometry().size();
     splashScrWindow.move(screenSize.width()/2-300,screenSize.height()/2-150);
     splashScrWindow.show();
-    QTimer::singleShot(3500, &splashScrWindow ,SLOT(close()));
+    QTimer::singleShot(1000, &splashScrWindow ,SLOT(close()));
     w.showMaximized();
     w.show();
 

@@ -10,12 +10,11 @@ class DetectorGraphicsView : public QGraphicsView
 public:
     explicit DetectorGraphicsView(QWidget *parent = 0);
     void resizeEvent(QResizeEvent *event);
-    DetectorScene* const getScene();
-
+    DetectorScene* getScene();
 signals:
 
 public slots:
-
+    void resizeToDetector();
 private:
     DetectorScene* _scene;
 };

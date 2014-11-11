@@ -46,9 +46,9 @@ PeakTableView::PeakTableView(MainWindow* main,QWidget *parent)
     connect(this,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(deselectPeak(QModelIndex)));
 }
 
-void PeakTableView::setData(const std::vector<IData *> numors)
+void PeakTableView::setData(const std::vector<SX::Data::IData*> numors)
 {
-    for (IData* ptr : numors)
+    for (SX::Data::IData* ptr : numors)
     {
         // Add peaks present in this numor to the LatticeFinder
         for (auto& peak : ptr->getPeaks())
