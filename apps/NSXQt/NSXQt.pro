@@ -77,12 +77,10 @@ HEADERS  += include/MainWindow.h \
 FORMS    += ui/mainwindow.ui \
     ui/dialog_PeakFind.ui \
     ui/plotter1d.ui \
-    ui/peakplotter.ui \
     ui/dialog_UnitCell.ui \
     ui/dialogtransformationmatrix.ui \
     ui/dialogunitcellsolutions.ui \
-    ui/DialogExperiment.ui \
-    ui/PlotterDockWidget.ui
+    ui/DialogExperiment.ui
 
 win32:CONFIG(release, debug|release): LIBS += -lNSXTool
 else:unix: LIBS += -lNSXTool -lboost_date_time -lfftw3
