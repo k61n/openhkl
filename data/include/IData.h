@@ -31,7 +31,7 @@
 
 #include <memory>
 #include <string>
-#include <vector>
+#include <set>
 
 #include "ComponentState.h"
 #include "MetaData.h"
@@ -94,7 +94,7 @@ public:
 	//! Gets a pointer to the metadata of the data
 	MetaData* const getMetadata() const;
 	//! Return the peaks
-	std::vector<Peak3D>& getPeaks();
+	std::set<Peak3D*>& getPeaks();
 	//! Get the sample state for frame
 	const ComponentState& getSampleState(int frame) const;
     //! Gets the interpolated state between two consecutive sample states
@@ -104,7 +104,9 @@ public:
 
 	// Other methods
 
-	void addPeak(const Peak3D& peak);
+	void addPeak(Peak3D* peak);
+	//!
+	bool removePeak(Peak3D* peak);
 	//! Clear the peaks collected for this data
 	void clearPeaks();
 	//! Return true if the file is stored in memory
@@ -130,7 +132,7 @@ protected:
 	std::vector<vint> _data;
 	std::vector<ComponentState> _detectorStates;
 	std::vector<ComponentState> _sampleStates;
-    std::vector<Peak3D> _peaks;
+    std::set<Peak3D*> _peaks;
 
 };
 

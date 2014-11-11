@@ -35,6 +35,7 @@ IData::IData(const std::string& filename, std::shared_ptr<Diffractometer> diffra
 
 IData::~IData()
 {
+	clearPeaks();
 	delete _metadata;
 }
 
@@ -74,18 +75,20 @@ std::size_t IData::getNFrames() const
 	return _nFrames;
 }
 
-std::vector<Peak3D>& IData::getPeaks()
+std::set<Peak3D*>& IData::getPeaks()
 {
 	return _peaks;
 }
 
-void IData::addPeak(const Peak3D& peak)
+void IData::addPeak(Peak3D* peak)
 {
-	_peaks.push_back(peak);
+	_peaks.insert(peak);
 }
 
 void IData::clearPeaks()
 {
+	for (auto ptr : _peaks)
+		delete ptr;
 	_peaks.clear();
 }
 
@@ -156,6 +159,17 @@ const std::vector<ComponentState>& IData::getDetectorStates() const
 const std::vector<ComponentState>& IData::getSampleStates() const
 {
 	return _sampleStates;
+}
+
+bool IData::removePeak(Peak3D* peak)
+{
+	auto it=_peaks.find(peak);
+	if (it==_peaks.end())
+		return false;
+
+	delete *it;
+    _peaks.erase(it);
+	return true;
 }
 
 } // end namespace Data
