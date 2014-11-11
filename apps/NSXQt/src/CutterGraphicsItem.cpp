@@ -1,6 +1,7 @@
 #include "CutterGraphicsItem.h"
 #include <QCursor>
-
+#include <QtDebug>
+#include <QGraphicsSceneMoveEvent>
 
 CutterGraphicsItem::CutterGraphicsItem(QGraphicsItem *parent)
 :QGraphicsItem(parent),
@@ -11,6 +12,7 @@ _x0(0),_y0(0),_x1(0),_y1(0)
     _pen.setStyle(Qt::SolidLine);
 
      setAcceptHoverEvents(true);
+
 }
 
 
@@ -44,11 +46,14 @@ void CutterGraphicsItem::to(qreal x, qreal y)
 
 void CutterGraphicsItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
+    Q_UNUSED(event);
     setCursor(QCursor(Qt::PointingHandCursor));
 }
 
 void CutterGraphicsItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
+    Q_UNUSED(event);
     setCursor(QCursor(Qt::CrossCursor));
 }
+
 

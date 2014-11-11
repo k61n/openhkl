@@ -6,6 +6,9 @@
 #include <QMouseEvent>
 #include "IData.h"
 #include "Detector.h"
+#include <QApplication>
+#include <QClipboard>
+#include <QPainter>
 
 DetectorGraphicsView::DetectorGraphicsView(QWidget* parent) : QGraphicsView(parent), _scene(new DetectorScene(this))
 {
@@ -26,5 +29,26 @@ void DetectorGraphicsView::resizeEvent(QResizeEvent *event)
 DetectorScene* DetectorGraphicsView::getScene()
 {
     return _scene;
+}
+
+void DetectorGraphicsView::copyViewToClipboard()
+{
+    // Create the image with the exact size of the shrunk scene
+    QImage image(this->rect().size(), QImage::Format_ARGB32);
+    image.fill(Qt::transparent);
+    QPainter painter;
+    painter.begin(&image);
+    painter.setRenderHint(QPainter::Antialiasing);
+    this->render(&painter);
+    painter.end();
+    QApplication::clipboard()->setImage(image,QClipboard::Clipboard);
+}
+
+void DetectorGraphicsView::keyPressEvent(QKeyEvent* event)
+{
+    if (event->matches(QKeySequence::Copy))
+    {
+        copyViewToClipboard();
+    }
 }
 

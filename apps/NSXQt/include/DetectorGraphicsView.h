@@ -11,11 +11,11 @@ public:
     explicit DetectorGraphicsView(QWidget *parent = 0);
     void resizeEvent(QResizeEvent *event);
     DetectorScene* getScene();
+    void keyPressEvent(QKeyEvent* event);
 signals:
-
 public slots:
-
 private:
+    void copyViewToClipboard();
     DetectorScene* _scene;
 };
 
