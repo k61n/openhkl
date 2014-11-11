@@ -37,11 +37,12 @@
 #include "NoteBook.h"
 #include "Peak3D.h"
 #include "PeakTableView.h"
-#include "Plotter1D.h"
 #include "Sample.h"
 #include "Source.h"
 #include "UnitCell.h"
 #include "Units.h"
+#include "SXCustomPlot.h"
+#include "PeakCustomPlot.h"
 
 using namespace SX::Units;
 using namespace SX::Instrument;
@@ -80,7 +81,10 @@ MainWindow::MainWindow(QWidget *parent) :
     // Pass interaction mode to Detector Scene
     connect(_ui->selectionMode,SIGNAL(currentIndexChanged(int)),_ui->_dview->getScene(),SLOT(changeInteractionMode(int)));
 
-    connect(_ui->realSizePushButton,SIGNAL(pressed()),_ui->_dview,SLOT(resizeToDetector()));
+    _ui->plotterDockWidget_2->hide();
+
+    connect(_ui->_dview->getScene(),SIGNAL(plotPeak(SX::Crystal::Peak3D*)),this,SLOT(plotPeak(SX::Crystal::Peak3D*)));
+
 }
 
 MainWindow::~MainWindow()
@@ -167,11 +171,11 @@ void MainWindow::on_action_peak_find_triggered()
 
     std::size_t npeaks=0;
     int comp = 0;
+
     for (auto& numor : numors)
     {
         numor->clearPeaks();
         numor->loadAllFrames();
-
         // Get pointers to start of each frame
         std::vector<int*> temp(numor->getNFrames());
         for (unsigned int i=0;i<numor->getNFrames();++i)
@@ -197,25 +201,25 @@ void MainWindow::on_action_peak_find_triggered()
             Eigen::Vector3d center, eigenvalues;
             Eigen::Matrix3d eigenvectors;
             blob.second.toEllipsoid(confidence, center,eigenvalues,eigenvectors);
-            SX::Crystal::Peak3D p(numor);
-            p.setPeakShape(new SX::Geometry::Ellipsoid3D(center,eigenvalues,eigenvectors));
-            p.setBackgroundShape(new SX::Geometry::Ellipsoid3D(center,eigenvalues.cwiseProduct(Eigen::Vector3d(1.5,1.5,3)),eigenvectors));
+            SX::Crystal::Peak3D* p = new Peak3D(numor);
+            p->setPeakShape(new SX::Geometry::Ellipsoid3D(center,eigenvalues,eigenvectors));
+            p->setBackgroundShape(new SX::Geometry::Ellipsoid3D(center,eigenvalues.cwiseProduct(Eigen::Vector3d(1.5,1.5,3)),eigenvectors));
             //
             int f=std::floor(center[2]);
-            p.setSampleState(new SX::Instrument::ComponentState(numor->getSampleInterpolatedState(f)));
+            p->setSampleState(new SX::Instrument::ComponentState(numor->getSampleInterpolatedState(f)));
             ComponentState detState=numor->getDetectorInterpolatedState(f);
-            p.setDetectorEvent(new SX::Instrument::DetectorEvent(numor->getDiffractometer()->getDetector()->createDetectorEvent(center[0],center[1],detState.getValues())));
-            p.setWavelength(numor->getDiffractometer()->getSource()->getWavelength());
+            p->setDetectorEvent(new SX::Instrument::DetectorEvent(numor->getDiffractometer()->getDetector()->createDetectorEvent(center[0],center[1],detState.getValues())));
+            p->setWavelength(numor->getDiffractometer()->getSource()->getWavelength());
 
-            if (!dAABB.contains(*p.getPeak()))
-                p.setSelected(false);
+            if (!dAABB.contains(*(p->getPeak())))
+                p->setSelected(false);
 
             numor->addPeak(p);
             npeaks++;
         }
 
         for (auto& peak : numor->getPeaks())
-            peak.integrate();
+            peak->integrate();
 
         numor->releaseMemory();
 
@@ -246,7 +250,7 @@ void MainWindow::on_actionUnit_Cell_triggered()
     {
       // Add peaks present in this numor
       for (auto& peak : ptr->getPeaks())
-          peaks.push_back(std::ref(peak));
+          peaks.push_back(std::ref(*peak));
     }
     dialog->setPeaks(peaks);
     dialog->show();
@@ -279,4 +283,26 @@ void MainWindow::on_action2_Theta_triggered()
 void MainWindow::on_actionD_spacing_triggered()
 {
   _ui->_dview->getScene()->changeCursorMode(DetectorScene::DSPACING);
+}
+
+void MainWindow::on_actionLogger_triggered()
+{
+    if (_ui->loggerDockWidget->isHidden())
+        _ui->loggerDockWidget->show();
+    else
+        _ui->loggerDockWidget->hide();
+}
+
+void MainWindow::on_action1D_Peak_Ploter_triggered()
+{
+    if (_ui->plotterDockWidget_2->isHidden())
+        _ui->plotterDockWidget_2->show();
+    else
+        _ui->plotterDockWidget_2->hide();
+}
+
+void MainWindow::plotPeak(SX::Crystal::Peak3D* peak)
+{
+    _ui->plot1D->setPeak(peak);
+
 }

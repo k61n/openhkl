@@ -14,7 +14,7 @@ public:
 signals:
 
 public slots:
-    void resizeToDetector();
+
 private:
     DetectorScene* _scene;
 };

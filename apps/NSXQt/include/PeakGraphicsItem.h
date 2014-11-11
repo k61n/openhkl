@@ -20,17 +20,22 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     void setFrame(int);
     static void showLabel(bool);
+    //! Return the peak Object
     SX::Crystal::Peak3D* getPeak();
 private:
+    //! Turn _hoverOn true
     virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
+    //! Turn _hoverOn false
     virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
+    //! Pointer to the Peak3D object
     SX::Crystal::Peak3D* _peak;
+    //! Pen
     QPen _pen;
-    //! Whether this peak is visible or not depends on frame
-    bool _isVisible;
+    //! Text child object that contains hkl label
     QGraphicsTextItem* _hklText;
-    //!
+    //! True when label of peak is visible
     static bool _labelVisible;
+    //! True when object is hover by MouseEvent
     bool _hoverOn;
 };
 

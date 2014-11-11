@@ -26,7 +26,6 @@
 #include "ExperimentItem.h"
 #include "ILLAsciiData.h"
 #include "NumorItem.h"
-#include "PeakItem.h"
 #include "PeakListItem.h"
 #include "Sample.h"
 #include "SampleItem.h"

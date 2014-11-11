@@ -61,8 +61,13 @@ private slots:
 
     void on_actionD_spacing_triggered();
 
+    void on_actionLogger_triggered();
+
+    void on_action1D_Peak_Ploter_triggered();
+
 public slots:
     void changeData(SX::Data::IData*);
+    void plotPeak(SX::Crystal::Peak3D*);
 
 private:
     Ui::MainWindow* _ui;

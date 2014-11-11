@@ -13,18 +13,21 @@
 #include "Sample.h"
 #include "Source.h"
 #include "PeakGraphicsItem.h"
-#include "PeakPlotter.h"
-
+#include "SliceGraphicsItem.h"
+#include "LineCutGraphicsItem.h"
+#include <QtDebug>
 
 DetectorScene::DetectorScene(QObject *parent) :
     QGraphicsScene(parent),
-    _image(nullptr),
     _currentData(nullptr),
     _currentFrameIndex(0),
     _currentIntensity(10),
     _currentFrame(),
     _cursorMode(PIXEL),
-    _plotter(nullptr)
+    _mode(ZOOM),
+    _currentCut(nullptr),
+    _itemSelected(false),
+    _image(nullptr)
 {
 }
 
@@ -37,7 +40,6 @@ void DetectorScene::changeFrame(int frame)
     if (frame == _currentFrameIndex)
         return;
     _currentFrameIndex = frame;
-
 
     for (auto peak : _peaks)
     {
@@ -70,24 +72,26 @@ void DetectorScene::setData(SX::Data::IData* data)
 
      _zoomStack.clear();
      _zoomStack.push_back(QRect(0,0,ncols,nrows));
-     loadCurrentImage();
-     // Make sure that new bounding region is sent to the view
-     setSceneRect(_image->boundingRect());
 
-     for (auto p : _peaks)
+     QList<QGraphicsItem*> all=items();
+     for (auto item : all)
      {
-         removeItem(p);
+         removeItem(item);
+         delete item;
      }
+     _image=nullptr;
+
+     loadCurrentImage();
+
      _peaks.clear();
-     _peaks.shrink_to_fit();
      auto& peaks=_currentData->getPeaks();
-     _peaks.reserve(peaks.size());
+
      for (auto& peak : peaks)
      {
-         PeakGraphicsItem* p=new PeakGraphicsItem(&peak);
+         PeakGraphicsItem* p=new PeakGraphicsItem(peak);
          p->setFrame(_currentFrameIndex);
          addItem(p);
-         _peaks.push_back(p);
+         _peaks.insert(p);
      }
 }
 
@@ -96,16 +100,64 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
     // Zoom mode starts
     if (event->buttons() & Qt::LeftButton)
     {
-        _zoomstart=event->lastScenePos().toPoint();
-        _zoomend=_zoomstart;
-        QRect zoom(_zoomstart,_zoomend);
-        _zoomrect=addRect(zoom);
-        QPen pen1(QBrush(QColor("gray")),1.0);
-        pen1.setWidth(1);
-        pen1.setCosmetic(true);
-        _zoomrect->setPen(pen1);
-        _zoomrect->setBrush(QBrush(QColor(255,0,0,30)));
-    } // Move up in the zoom stack
+        // Select GraphicItem if not detector image
+        auto item=itemAt(event->lastScenePos(),QTransform());
+        if (!dynamic_cast<QGraphicsPixmapItem*>(item))
+        {
+            item->setSelected(!item->isSelected());
+            _itemSelected=true;
+            return;
+        }
+        _itemSelected=false;
+
+       if (_mode==ZOOM)
+       {
+           _zoomstart=event->lastScenePos().toPoint();
+           _zoomend=_zoomstart;
+           QRect zoom(_zoomstart,_zoomend);
+           _zoomrect=addRect(zoom);
+           QPen pen1(QBrush(QColor("gray")),1.0);
+           pen1.setWidth(1);
+           pen1.setCosmetic(true);
+           _zoomrect->setPen(pen1);
+           _zoomrect->setBrush(QBrush(QColor(255,0,0,30)));
+           return;
+       }
+
+       // Slice starts here
+       if (_currentCut)
+       {
+           if (_currentCut->scene()==this)
+           {
+               removeItem(_currentCut);
+           }
+       }
+
+       switch(_mode)
+       {
+           case(HORIZONTALSLICE):
+           {
+               _currentCut=new SliceGraphicsItem(_currentData,true);
+               _currentCut->from(event->lastScenePos().x(),event->lastScenePos().y());
+               break;
+           }
+           case(VERTICALSLICE):
+           {
+               _currentCut=new SliceGraphicsItem(_currentData,false);
+               _currentCut->from(event->lastScenePos().x(),event->lastScenePos().y());
+               break;
+           }
+           case(LINE):
+           {
+               _currentCut=new LineCutGraphicsItem(_currentData);
+               _currentCut->from(event->lastScenePos().x(),event->lastScenePos().y());
+               break;
+            }
+       }
+
+       addItem(_currentCut);
+
+    }   // Move up in the zoom stack
     else if (event->buttons() & Qt::RightButton)
     {
         if (_zoomStack.size()>1)
@@ -128,51 +180,109 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
     createToolTipText(event);
 
+    if (_itemSelected)
+        return;
+
     if (event->buttons() & Qt::LeftButton)
     {
-        QRectF zoom=_zoomrect->rect();
-        zoom.setBottomRight(event->lastScenePos());
-        _zoomrect->setRect(zoom);
+        if (_mode==ZOOM)
+        {
+                QRectF zoom=_zoomrect->rect();
+                zoom.setBottomRight(event->lastScenePos());
+                _zoomrect->setRect(zoom);
+        }
+        else
+        {
+            // Slice mode, ensure that point is in View
+           auto& rect=_zoomStack.front();
+           QPoint point = event->lastScenePos().toPoint();
+           if (point.x()>rect.left() && point.x()<rect.right() && point.y() > rect.top() && point.y() <rect.bottom())
+           _currentCut->to(event->lastScenePos().x(),event->lastScenePos().y());
+        }
     }
-    QGraphicsScene::mouseMoveEvent(event);
-    PeakGraphicsItem* item=dynamic_cast<PeakGraphicsItem*>(itemAt(event->lastScenePos().toPoint(),QTransform()));
-    if (!item)
-           return;
-    if (!item->isVisible())
-            return;
-    if (!_plotter)
-        _plotter=new PeakPlotter();
-    _plotter->setPeak(item->getPeak());
-    _plotter->show();
+    else
+    {
+        QGraphicsScene::mouseMoveEvent(event);
+
+        PeakGraphicsItem* item=dynamic_cast<PeakGraphicsItem*>(itemAt(event->lastScenePos().toPoint(),QTransform()));
+        if (!item)
+               return;
+        if (!item->isVisible())
+                return;
+        emit plotPeak(item->getPeak());
+    }
+}
+
+void DetectorScene::keyPressEvent(QKeyEvent *event)
+{
+    switch (event->key())
+    {
+    case(Qt::Key_Delete):
+    {
+        QList<QGraphicsItem*> items=selectedItems();
+        int i=0;
+        for (auto item : items)
+        {
+            removeItem(item);
+            PeakGraphicsItem* peak=dynamic_cast<PeakGraphicsItem*>(item);
+            if (peak)
+            {
+                bool remove=_currentData->removePeak(peak->getPeak());
+                if (remove)
+                    i++;
+                qDebug() << "Removed "<< i << " peaks";
+                _peaks.erase(peak);
+            }
+
+            delete item;
+
+        }
+        break;
+    }
+    }
 }
 
 void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
+    if (_itemSelected)
+    {
+        _itemSelected=false;
+        return;
+    }
+
     if (event->button() == Qt::LeftButton)
     {
-        qreal top=_zoomrect->rect().top();
-        qreal bot=_zoomrect->rect().bottom();
-        qreal left=_zoomrect->rect().left();
-        qreal right=_zoomrect->rect().right();
-        if (top > bot)
-            std::swap(top,bot);
-        if (right < left)
-            std::swap(left,right);
-        QRect max=_zoomStack.front();
-        if (top<max.top())
-            top=max.top();
-        if (bot>max.bottom())
-            bot=max.bottom();
-        if (left<max.left())
-            left=max.left();
-        if (right>max.right())
-            right=max.right();
+        switch(_mode)
+        {
+            case(ZOOM):
+            {
+                qreal top=_zoomrect->rect().top();
+                qreal bot=_zoomrect->rect().bottom();
+                qreal left=_zoomrect->rect().left();
+                qreal right=_zoomrect->rect().right();
+                if (top > bot)
+                    std::swap(top,bot);
+                if (right < left)
+                    std::swap(left,right);
+                QRect max=_zoomStack.front();
+                if (top<max.top())
+                    top=max.top();
+                if (bot>max.bottom())
+                    bot=max.bottom();
+                if (left<max.left())
+                    left=max.left();
+                if (right>max.right())
+                    right=max.right();
 
-        _zoomrect->setRect(left,top,right-left,bot-top);
-        setSceneRect(_zoomrect->rect());
-        removeItem(_zoomrect);
-        _zoomStack.push_back(_zoomrect->rect().toRect());
-        emit dataChanged();
+                _zoomrect->setRect(left,top,right-left,bot-top);
+                setSceneRect(_zoomrect->rect());
+                removeItem(_zoomrect);
+                _zoomStack.push_back(_zoomrect->rect().toRect());
+                emit dataChanged();
+            }
+        }
+
+
     }
 }
 
@@ -249,10 +359,14 @@ void DetectorScene::loadCurrentImage()
     _currentFrame =_currentData->getFrame(_currentFrameIndex);
     QImage image=Mat2QImage(&_currentFrame[0], nrows, ncols, full.left(), full.right(), full.top(), full.bottom(), _currentIntensity);
     if (!_image)
+    {
         _image=addPixmap(QPixmap::fromImage(image));
+        _image->setZValue(-1);
+    }
     else
         _image->setPixmap(QPixmap::fromImage(image));
 
+    setSceneRect(_image->boundingRect());
     emit dataChanged();
 
 }

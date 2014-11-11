@@ -3,7 +3,6 @@
 #include <QTableView>
 #include <IData.h>
 #include <QMenu>
-#include <PeakPlotter.h>
 #include <QFileDialog>
 #include <MainWindow.h>
 #include <tuple>
@@ -41,7 +40,6 @@ private:
     void sortByNumor(bool up);
     void sortBySelected(bool up);
     MainWindow* _main;
-    PeakPlotter* _plotter;
     void constructTable();
     std::vector<std::reference_wrapper<SX::Crystal::Peak3D>> _peaks;
     //! Which column is sorted and up or down

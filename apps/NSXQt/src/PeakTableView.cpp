@@ -7,11 +7,10 @@
 #include <QInputDialog>
 #include "IData.h"
 #include "Peak3D.h"
-#include "Plotter1D.h"
 #include <set>
 
 PeakTableView::PeakTableView(MainWindow* main,QWidget *parent)
-    :QTableView(parent),_main(main),_plotter(nullptr),_columnUp(-1,false),
+    :QTableView(parent),_main(main),_columnUp(-1,false),
       _sortUpIcon(":/resources/sortUpIcon.png"),
       _sortDownIcon(":/resources/sortDownIcon.png")
 {
@@ -52,7 +51,7 @@ void PeakTableView::setData(const std::vector<SX::Data::IData*> numors)
     {
         // Add peaks present in this numor to the LatticeFinder
         for (auto& peak : ptr->getPeaks())
-            _peaks.push_back(std::ref(peak));
+            _peaks.push_back(std::ref(*peak));
     }
     constructTable();
 }
@@ -65,12 +64,12 @@ void PeakTableView::peakChanged(QModelIndex current, QModelIndex last)
 
 void PeakTableView::plotPeak(int i)
 {
-    SX::Crystal::Peak3D& peak=_peaks[i].get();
-    if (!_plotter)
-        _plotter=new PeakPlotter(this);
-    _plotter->setPeak(&peak);
-    _plotter->show();
-    emit plot2DUpdate(peak.getData()->getMetadata()->getKey<int>("Numor"),std::round(peak.getPeak()->getCenter()[2]));
+//    SX::Crystal::Peak3D& peak=_peaks[i].get();
+//    if (!_plotter)
+//        _plotter=new PeakPlotter(this);
+//    _plotter->setPeak(&peak);
+//    _plotter->show();
+//    emit plot2DUpdate(peak.getData()->getMetadata()->getKey<int>("Numor"),std::round(peak.getPeak()->getCenter()[2]));
 }
 
 void PeakTableView::sortByColumn(int i)
@@ -203,18 +202,16 @@ void PeakTableView::customMenuRequested(QPoint pos)
 
 void PeakTableView::normalizeToMonitor()
 {
-
-    bool ok;
-    int factor = QInputDialog::getInt(this,"Enter normalization factor","",1,1,100000000,1,&ok);
-    if (ok)
-    {
-        for (SX::Crystal::Peak3D& peak : _peaks)
-            peak.setScale(factor/peak.getData()->getMetadata()->getKey<double>("monitor"));
-        constructTable();
-        if (_plotter)
-            _plotter->update();
-    }
-
+//    bool ok;
+//    int factor = QInputDialog::getInt(this,"Enter normalization factor","",1,1,100000000,1,&ok);
+//    if (ok)
+//    {
+//        for (SX::Crystal::Peak3D& peak : _peaks)
+//            peak.setScale(factor/peak.getData()->getMetadata()->getKey<double>("monitor"));
+//        constructTable();
+//        if (_plotter)
+//            _plotter->update();
+//    }
 }
 
 void PeakTableView::writeFullProf()
@@ -370,28 +367,28 @@ void PeakTableView::deselectPeak(QModelIndex index)
 
 void PeakTableView::plotAs(const std::string& key)
 {
-     QModelIndexList indexList = selectionModel()->selectedIndexes();
-     if (!indexList.size())
-         return;
+//     QModelIndexList indexList = selectionModel()->selectedIndexes();
+//     if (!indexList.size())
+//         return;
 
-    std::size_t npoints=indexList.size();
+//    std::size_t npoints=indexList.size();
 
-    QVector<double> x(npoints);
-    QVector<double> y(npoints);
-    QVector<double> e(npoints);
+//    QVector<double> x(npoints);
+//    QVector<double> y(npoints);
+//    QVector<double> e(npoints);
 
-    for (int i=0;i<npoints;++i)
-    {
-        x[i]=_peaks[indexList[i].row()].get().getData()->getMetadata()->getKey<double>(key);
-        y[i]=_peaks[indexList[i].row()].get().getScaledIntensity();
-        e[i]=_peaks[indexList[i].row()].get().getScaledSigma();
-    }
+//    for (int i=0;i<npoints;++i)
+//    {
+//        x[i]=_peaks[indexList[i].row()].get().getData()->getMetadata()->getKey<double>(key);
+//        y[i]=_peaks[indexList[i].row()].get().getScaledIntensity();
+//        e[i]=_peaks[indexList[i].row()].get().getScaledSigma();
+//    }
 
-    Plotter1D* plot=new Plotter1D(this);
-    plot->addCurve(x,y,e);
-    plot->setXlabel(key);
-    plot->setYlabel("Intensity");
-    plot->show();
+//    Plotter1D* plot=new Plotter1D(this);
+//    plot->addCurve(x,y,e);
+//    plot->setXlabel(key);
+//    plot->setYlabel("Intensity");
+//    plot->show();
 
 }
 

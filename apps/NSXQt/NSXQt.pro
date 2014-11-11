@@ -15,13 +15,8 @@ RESOURCES = NSXQt.qrc \
 
 SOURCES += src/Main.cpp \
     src/MainWindow.cpp \
-    src/Data.cpp \
-    src/DetectorView.cpp \
     src/ColorMap.cpp \
     externals/src/qcustomplot.cpp \
-    src/Plotter1D.cpp \
-    src/PeakPlotter.cpp \
-    src/SliceRect.cpp \
     src/PeakTableView.cpp \
     src/DialogTransformationMatrix.cpp \
     src/DialogUnitCell.cpp \
@@ -36,24 +31,22 @@ SOURCES += src/Main.cpp \
     src/ExperimentItem.cpp \
     src/InstrumentItem.cpp \
     src/NumorItem.cpp \
-    src/PeakItem.cpp \
     src/PeakListItem.cpp \
     src/SampleItem.cpp \
     src/SourceItem.cpp \
     src/DetectorGraphicsView.cpp \
     src/DetectorScene.cpp \
     src/PeakGraphicsItem.cpp \
-    src/SliceGraphicsItem.cpp
+    src/SliceGraphicsItem.cpp \
+    src/PeakCustomPlot.cpp \
+    src/SXCustomPlot.cpp \
+    src/LineCutGraphicsItem.cpp \
+    src/CutterGraphicsItem.cpp
 
 HEADERS  += include/MainWindow.h \
-    include/DetectorView.h \
     include/DialogPeakFind.h \
-    include/Data.h \
     include/ColorMap.h \
     externals/include/qcustomplot.h \
-    include/Plotter1D.h \
-    include/PeakPlotter.h \
-    include/SliceRect.h \
     include/PeakTableView.h \
     include/DialogUnitCell.h \
     include/DialogTransformationMatrix.h \
@@ -68,14 +61,17 @@ HEADERS  += include/MainWindow.h \
     include/ExperimentItem.h \
     include/InstrumentItem.h \
     include/NumorItem.h \
-    include/PeakItem.h \
     include/PeakListItem.h \
     include/SampleItem.h \
     include/SourceItem.h \
     include/DetectorGraphicsView.h \
     include/DetectorScene.h \
     include/PeakGraphicsItem.h \
-    include/SliceGraphicsItem.h
+    include/SliceGraphicsItem.h \
+    include/PeakCustomPlot.h \
+    include/SXCustomPlot.h \
+    include/LineCutGraphicsItem.h \
+    include/CutterGraphicsItem.h
 
 
 FORMS    += ui/mainwindow.ui \
@@ -85,7 +81,8 @@ FORMS    += ui/mainwindow.ui \
     ui/dialog_UnitCell.ui \
     ui/dialogtransformationmatrix.ui \
     ui/dialogunitcellsolutions.ui \
-    ui/DialogExperiment.ui
+    ui/DialogExperiment.ui \
+    ui/PlotterDockWidget.ui
 
 win32:CONFIG(release, debug|release): LIBS += -lNSXTool
 else:unix: LIBS += -lNSXTool -lboost_date_time -lfftw3
