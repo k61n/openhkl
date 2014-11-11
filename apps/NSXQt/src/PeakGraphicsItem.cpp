@@ -24,7 +24,7 @@ PeakGraphicsItem::PeakGraphicsItem(SX::Crystal::Peak3D* p):_peak(p),_hoverOn(fal
 
     QString hkl;
     _hklText=new QGraphicsTextItem(this);
-    _hklText->setFlag(QGraphicsItem::ItemIgnoresTransformations);
+    _hklText->setFlag(QGraphicsItem::ItemIgnoresTransformations); //Ensure text is alwyas real size despite zoom
     auto& v=_peak->getMillerIndices();
     hkl=QString("%1,%2,%3").arg(v[0]).arg(v[1]).arg(v[2]);
     _hklText->setPlainText(hkl);
@@ -116,12 +116,15 @@ void PeakGraphicsItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event);
     _hoverOn=true;
+    setCursor(QCursor(Qt::PointingHandCursor));
     update();
+
 }
 
 void PeakGraphicsItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event);
     _hoverOn=false;
+    setCursor(QCursor(Qt::CrossCursor));
     update();
 }

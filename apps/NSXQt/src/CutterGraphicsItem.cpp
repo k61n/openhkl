@@ -1,5 +1,5 @@
 #include "CutterGraphicsItem.h"
-
+#include <QCursor>
 
 
 CutterGraphicsItem::CutterGraphicsItem(QGraphicsItem *parent)
@@ -9,6 +9,8 @@ _x0(0),_y0(0),_x1(0),_y1(0)
     _pen.setWidth(1);
     _pen.setCosmetic(true);
     _pen.setStyle(Qt::SolidLine);
+
+     setAcceptHoverEvents(true);
 }
 
 
@@ -39,3 +41,14 @@ void CutterGraphicsItem::to(qreal x, qreal y)
     update();
 
 }
+
+void CutterGraphicsItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+    setCursor(QCursor(Qt::PointingHandCursor));
+}
+
+void CutterGraphicsItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    setCursor(QCursor(Qt::CrossCursor));
+}
+

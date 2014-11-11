@@ -76,7 +76,6 @@ HEADERS  += include/MainWindow.h \
 
 FORMS    += ui/mainwindow.ui \
     ui/dialog_PeakFind.ui \
-    ui/plotter1d.ui \
     ui/dialog_UnitCell.ui \
     ui/dialogtransformationmatrix.ui \
     ui/dialogunitcellsolutions.ui \

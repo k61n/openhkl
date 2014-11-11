@@ -13,6 +13,8 @@ public:
     //! Called when moving or finalizing drawing
     void to(qreal x, qreal z);
     QRectF boundingRect() const;
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 protected:
     //! Top left coordinate of the slice
     qreal _x0,_y0;
