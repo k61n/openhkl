@@ -13,6 +13,8 @@
 
 using namespace SX::Instrument;
 
+class ExperimentItem;
+
 namespace SX
 {
 namespace Data
@@ -29,17 +31,18 @@ public:
 
     void addExperiment(const std::string& experimentName, const std::string& instrumentName);
     std::vector<SX::Data::IData*> getSelectedNumors() const;
+    std::vector<SX::Data::IData*> getSelectedNumors(ExperimentItem* item) const;
+    ExperimentItem* getExperimentItem(Experiment* exp);
 
 signals:
-    void plotData(SX::Data::IData* data);
+    void plotData(SX::Data::IData*);
+    void showPeakList(std::vector<SX::Data::IData*>);
 
 public slots:
     void keyPressEvent(QKeyEvent* event);
     void onCustomMenuRequested(const QPoint& point);
     void onDoubleClick(const QModelIndex& index);
     void importData();
-
-//    void treat(QModelIndex, QModelIndex);
 
 private:
 

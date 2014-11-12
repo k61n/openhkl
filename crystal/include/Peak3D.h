@@ -82,6 +82,7 @@ public:
 	void integrate();
 	//!
 	const SX::Data::IData* getData() const { return _data;}
+	SX::Data::IData* getData() { return _data;}
 	//! Get the projection of total data in the bounding box.
 	Eigen::VectorXd getProjection() const;
 	Eigen::VectorXd getPeakProjection() const;

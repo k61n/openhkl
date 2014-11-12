@@ -40,4 +40,5 @@ void LineCutGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsIte
     qreal w=_x1-_x0;
     qreal h=_y1-_y0;
     painter->drawLine(-w/2,-h/2,w/2,h/2);
+
 }

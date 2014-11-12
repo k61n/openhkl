@@ -97,6 +97,10 @@ void DetectorScene::setData(SX::Data::IData* data)
 
 void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+
+    if (!_currentData)
+        return;
+
     // Zoom mode starts
     if (event->buttons() & Qt::LeftButton)
     {
@@ -215,6 +219,10 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void DetectorScene::keyPressEvent(QKeyEvent *event)
 {
+
+    if (!_currentData)
+        return;
+
     switch (event->key())
     {
     case(Qt::Key_Delete):
@@ -244,6 +252,10 @@ void DetectorScene::keyPressEvent(QKeyEvent *event)
 
 void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
+
+    if (!_currentData)
+        return;
+
     if (_itemSelected)
     {
         _itemSelected=false;

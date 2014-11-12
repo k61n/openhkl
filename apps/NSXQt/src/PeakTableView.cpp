@@ -1,18 +1,23 @@
 #include "PeakTableView.h"
-#include <QStandardItemModel>
-#include <QHeaderView>
+
 #include <fstream>
 #include <iomanip>
-#include <QMessageBox>
-#include <QInputDialog>
-#include "IData.h"
-#include "Peak3D.h"
 #include <set>
 
-PeakTableView::PeakTableView(MainWindow* main,QWidget *parent)
-    :QTableView(parent),_main(main),_columnUp(-1,false),
-      _sortUpIcon(":/resources/sortUpIcon.png"),
-      _sortDownIcon(":/resources/sortDownIcon.png")
+#include <QHeaderView>
+#include <QInputDialog>
+#include <QMessageBox>
+#include <QStandardItemModel>
+
+#include "IData.h"
+#include "Peak3D.h"
+#include "PeakCustomPlot.h"
+
+PeakTableView::PeakTableView(QWidget *parent)
+: QTableView(parent),
+  _columnUp(-1,false),
+  _sortUpIcon(":/resources/sortUpIcon.png"),
+  _sortDownIcon(":/resources/sortDownIcon.png")
 {
     // Make sure that the user can not edit the content of the table
     this->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -35,19 +40,18 @@ PeakTableView::PeakTableView(MainWindow* main,QWidget *parent)
 
     // Context menu policy
     this->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(this, SIGNAL(customContextMenuRequested(QPoint)),
-    SLOT(customMenuRequested(QPoint)));
+    connect(this, SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(customMenuRequested(QPoint)));
 
     // Send an update of the detector view when a pick is clicked.
-    connect(this,SIGNAL(plot2DUpdate(int,int)),_main,SLOT(plotUpdate(int,int)));
+    //connect(this,SIGNAL(plot2DUpdate(int,int)),_main,SLOT(plotUpdate(int,int)));
     //
 
     connect(this,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(deselectPeak(QModelIndex)));
 }
 
-void PeakTableView::setData(const std::vector<SX::Data::IData*> numors)
+void PeakTableView::setData(std::vector<SX::Data::IData*> data)
 {
-    for (SX::Data::IData* ptr : numors)
+    for (auto ptr : data)
     {
         // Add peaks present in this numor to the LatticeFinder
         for (auto& peak : ptr->getPeaks())
@@ -60,13 +64,15 @@ void PeakTableView::peakChanged(QModelIndex current, QModelIndex last)
 {
     if (current.row()!=last.row())
         plotPeak(current.row());
+        SX::Crystal::Peak3D& peak=_peaks[current.row()].get();
+        emit plotPeak(&peak);
 }
 
 void PeakTableView::plotPeak(int i)
 {
 //    SX::Crystal::Peak3D& peak=_peaks[i].get();
 //    if (!_plotter)
-//        _plotter=new PeakPlotter(this);
+//        _plotter=new PeakCustomPlot(this);
 //    _plotter->setPeak(&peak);
 //    _plotter->show();
 //    emit plot2DUpdate(peak.getData()->getMetadata()->getKey<int>("Numor"),std::round(peak.getPeak()->getCenter()[2]));

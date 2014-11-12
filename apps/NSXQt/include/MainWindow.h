@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <map>
 #include <unordered_map>
 #include <vector>
 
@@ -68,6 +69,7 @@ private slots:
 public slots:
     void changeData(SX::Data::IData*);
     void plotPeak(SX::Crystal::Peak3D*);
+    void showPeakList(std::vector<SX::Data::IData*>);
 
 private:
     Ui::MainWindow* _ui;

@@ -27,6 +27,7 @@
 #include "ILLAsciiData.h"
 #include "NumorItem.h"
 #include "PeakListItem.h"
+#include "PeakTableView.h"
 #include "Sample.h"
 #include "SampleItem.h"
 #include "Source.h"
@@ -85,6 +86,30 @@ void ExperimentTree::addExperiment(const std::string& experimentName, const std:
 
     update();
 
+}
+
+std::vector<IData*> ExperimentTree::getSelectedNumors(ExperimentItem* item) const
+{
+    std::vector<IData*> numors;
+
+    QList<QStandardItem*> dataItems = _model->findItems(QString("Data"),Qt::MatchCaseSensitive|Qt::MatchRecursive);
+
+    for (const auto& it : dataItems)
+    {
+        for (auto i=0;i<_model->rowCount(it->index());++i)
+        {
+            if (it->child(i)->checkState() == Qt::Checked)
+            {
+                if (auto ptr = dynamic_cast<NumorItem*>(it->child(i)))
+                {
+                    if (it->parent() == item)
+                        numors.push_back(ptr->getExperiment()->getData(ptr->text().toStdString()));
+                }
+            }
+        }
+    }
+
+    return numors;
 }
 
 std::vector<IData*> ExperimentTree::getSelectedNumors() const
@@ -193,6 +218,11 @@ void ExperimentTree::onDoubleClick(const QModelIndex& index)
         IData* data=exp->getData(item->text().toStdString());
         emit plotData(data);
     }
+    else if (auto ptr=dynamic_cast<PeakListItem*>(item))
+    {
+        std::vector<SX::Data::IData*> data=getSelectedNumors(dynamic_cast<ExperimentItem*>(ptr->parent()));
+        emit showPeakList(data);
+    }
 }
 
 void ExperimentTree::keyPressEvent(QKeyEvent *event)
@@ -216,4 +246,21 @@ void ExperimentTree::keyPressEvent(QKeyEvent *event)
                 _model->removeRow(ptr->row());
         }
     }
+}
+
+ExperimentItem* ExperimentTree::getExperimentItem(Experiment* exp)
+{
+
+    QModelIndex rootIdx = rootIndex();
+
+    for (auto i=0;i<_model->rowCount(rootIdx);++i)
+    {
+        auto idx = _model->index(i,0,rootIdx);
+        auto ptr=dynamic_cast<ExperimentItem*>(_model->itemFromIndex(idx));
+        if (ptr && ptr->getExperiment()==exp)
+            return ptr;
+    }
+
+    return nullptr;
+
 }
