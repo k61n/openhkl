@@ -34,8 +34,6 @@ signals:
 public slots:
     //! Slection of peak is changed
     void peakChanged(QModelIndex current,QModelIndex last);
-    //! Plot the peak at index i in vector
-    void plotPeak(int i);
     //! Display context menu
     void customMenuRequested(QPoint pos);
     //! Sort the current table by column inde

@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <iomanip>
+#include <iostream>
 #include <set>
 
 #include <QHeaderView>
@@ -36,15 +37,17 @@ PeakTableView::PeakTableView(QWidget *parent)
 
     // Signal sent when clicking on a row to plot peak
     QHeaderView* vertical=this->verticalHeader();
-    connect(vertical,SIGNAL(sectionClicked(int)),this,SLOT(plotPeak(int)));
+//    connect(vertical,SIGNAL(sectionClicked(int)),this,SLOT(plotPeak(int)));
+
+    connect(vertical, &QHeaderView::sectionClicked, [&](int index)
+                                                 {
+                                                  SX::Crystal::Peak3D& peak=_peaks[index].get();
+                                                  emit plotPeak(&peak);
+                                                 });
 
     // Context menu policy
     this->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this, SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(customMenuRequested(QPoint)));
-
-    // Send an update of the detector view when a pick is clicked.
-    //connect(this,SIGNAL(plot2DUpdate(int,int)),_main,SLOT(plotUpdate(int,int)));
-    //
 
     connect(this,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(deselectPeak(QModelIndex)));
 }
@@ -63,19 +66,10 @@ void PeakTableView::setData(std::vector<SX::Data::IData*> data)
 void PeakTableView::peakChanged(QModelIndex current, QModelIndex last)
 {
     if (current.row()!=last.row())
-        plotPeak(current.row());
+    {
         SX::Crystal::Peak3D& peak=_peaks[current.row()].get();
         emit plotPeak(&peak);
-}
-
-void PeakTableView::plotPeak(int i)
-{
-//    SX::Crystal::Peak3D& peak=_peaks[i].get();
-//    if (!_plotter)
-//        _plotter=new PeakCustomPlot(this);
-//    _plotter->setPeak(&peak);
-//    _plotter->show();
-//    emit plot2DUpdate(peak.getData()->getMetadata()->getKey<int>("Numor"),std::round(peak.getPeak()->getCenter()[2]));
+    }
 }
 
 void PeakTableView::sortByColumn(int i)
@@ -163,7 +157,6 @@ void PeakTableView::constructTable()
     connect(this->selectionModel(),SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),this,SLOT(peakChanged(QModelIndex,QModelIndex)));
 }
 
-
 void PeakTableView::customMenuRequested(QPoint pos)
 {
     // Show all peaks as selected when contet menu is requested
@@ -208,16 +201,16 @@ void PeakTableView::customMenuRequested(QPoint pos)
 
 void PeakTableView::normalizeToMonitor()
 {
-//    bool ok;
-//    int factor = QInputDialog::getInt(this,"Enter normalization factor","",1,1,100000000,1,&ok);
-//    if (ok)
-//    {
-//        for (SX::Crystal::Peak3D& peak : _peaks)
-//            peak.setScale(factor/peak.getData()->getMetadata()->getKey<double>("monitor"));
-//        constructTable();
-//        if (_plotter)
-//            _plotter->update();
-//    }
+    bool ok;
+    int factor = QInputDialog::getInt(this,"Enter normalization factor","",1,1,100000000,1,&ok);
+    if (ok)
+    {
+        for (SX::Crystal::Peak3D& peak : _peaks)
+            peak.setScale(factor/peak.getData()->getMetadata()->getKey<double>("monitor"));
+        constructTable();
+        SX::Crystal::Peak3D& peak=_peaks[currentIndex().row()].get();
+        emit plotPeak(&peak);
+    }
 }
 
 void PeakTableView::writeFullProf()
