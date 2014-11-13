@@ -13,6 +13,8 @@
 #include <MainWindow.h>
 
 class PeakCustomPlot;
+class QContextMenuEvent;
+class QMouseEvent;
 
 namespace SX
 {
@@ -28,6 +30,8 @@ class PeakTableView : public QTableView
 public:
     explicit PeakTableView(QWidget* parent = 0);
     void setData(std::vector<SX::Data::IData*>);
+    void contextMenuEvent(QContextMenuEvent *);
+    void mousePressEvent(QMouseEvent *event);
 signals:
     void plot2DUpdate(int numor,int frame);
     void plotPeak(SX::Crystal::Peak3D*);
@@ -35,7 +39,7 @@ public slots:
     //! Slection of peak is changed
     void peakChanged(QModelIndex current,QModelIndex last);
     //! Display context menu
-    void customMenuRequested(QPoint pos);
+//    void customMenuRequested(QPoint pos);
     //! Sort the current table by column inde
     void sortByColumn(int column);
     //! Write the current list to FullProf
@@ -57,8 +61,6 @@ private:
     std::vector<std::reference_wrapper<SX::Crystal::Peak3D>> _peaks;
     //! Which column is sorted and up or down
     std::tuple<int,bool> _columnUp;
-    QIcon _sortUpIcon;
-    QIcon _sortDownIcon;
     PeakCustomPlot* _plotter;
 
 };

@@ -5,9 +5,11 @@
 #include <iostream>
 #include <set>
 
+#include <QContextMenuEvent>
 #include <QHeaderView>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <QMouseEvent>
 #include <QStandardItemModel>
 
 #include "IData.h"
@@ -16,9 +18,7 @@
 
 PeakTableView::PeakTableView(QWidget *parent)
 : QTableView(parent),
-  _columnUp(-1,false),
-  _sortUpIcon(":/resources/sortUpIcon.png"),
-  _sortDownIcon(":/resources/sortDownIcon.png")
+  _columnUp(-1,false)
 {
     // Make sure that the user can not edit the content of the table
     this->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -37,16 +37,11 @@ PeakTableView::PeakTableView(QWidget *parent)
 
     // Signal sent when clicking on a row to plot peak
     QHeaderView* vertical=this->verticalHeader();
-//    connect(vertical,SIGNAL(sectionClicked(int)),this,SLOT(plotPeak(int)));
     connect(vertical, &QHeaderView::sectionClicked, [&](int index)
                                                  {
                                                   SX::Crystal::Peak3D& peak=_peaks[index].get();
                                                   emit plotPeak(&peak);
                                                  });
-
-    // Context menu policy
-    this->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(this, SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(customMenuRequested(QPoint)));
 
     connect(this,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(deselectPeak(QModelIndex)));
 }
@@ -156,7 +151,15 @@ void PeakTableView::constructTable()
     connect(this->selectionModel(),SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),this,SLOT(peakChanged(QModelIndex,QModelIndex)));
 }
 
-void PeakTableView::customMenuRequested(QPoint pos)
+void PeakTableView::mousePressEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::RightButton)
+        return;
+
+    QTableView::mousePressEvent(event);
+}
+
+void PeakTableView::contextMenuEvent(QContextMenuEvent* event)
 {
     // Show all peaks as selected when contet menu is requested
     QMenu* menu=new QMenu(this);
@@ -195,23 +198,25 @@ void PeakTableView::customMenuRequested(QPoint pos)
     connect(normalize,SIGNAL(triggered()),this,SLOT(normalizeToMonitor()));
     connect(writeFullProf,SIGNAL(triggered()),this,SLOT(writeFullProf()));
     connect(writeShelX,SIGNAL(triggered()),this,SLOT(writeShelX()));
-    menu->popup(viewport()->mapToGlobal(pos));
+    menu->popup(event->globalPos());
 }
 
 void PeakTableView::normalizeToMonitor()
 {
     bool ok;
-    int factor = QInputDialog::getInt(this,"Enter normalization factor","",1,1,100000000,1,&ok);
+    double factor = QInputDialog::getDouble(this,"Enter normalization factor","",1,1,100000000,1,&ok);
     if (ok)
     {
         for (SX::Crystal::Peak3D& peak : _peaks)
             peak.setScale(factor/peak.getData()->getMetadata()->getKey<double>("monitor"));
+        // Keep track of the last selected index before rebuilding the table
+        QModelIndex index=currentIndex();
         constructTable();
-        int index=currentIndex().row();
+        selectRow(index.row());
         // If no row selected do nothing else.
-        if (index < 0)
+        if (!index.isValid() < 0)
             return;
-        SX::Crystal::Peak3D& peak=_peaks[index].get();
+        SX::Crystal::Peak3D& peak=_peaks[index.row()].get();
         emit plotPeak(&peak);
     }
 }
@@ -220,12 +225,20 @@ void PeakTableView::writeFullProf()
 {
     if (!_peaks.size())
         QMessageBox::critical(this,"Error writing","No peaks in the table");
+
     QFileDialog dialog(this);
     dialog.setDefaultSuffix("int");
-    QString fileName = dialog.getSaveFileName(this,tr("Save FullProf file"), "", tr("FullProf Files (*.int)"));
-    std::fstream file(fileName.toStdString(),std::ios::out);
+
+    QString filename = dialog.getSaveFileName(this,tr("Save FullProf file"), "", tr("FullProf Files (*.int)"));
+
+    if (filename.isEmpty())
+        return;
+
+    std::fstream file(filename.toStdString(),std::ios::out);
+
     if (!file.is_open())
         QMessageBox::critical(this,"Error writing","Error writing to this file, please check write permisions");
+
     file << "TITLE File written by ...\n";
     file << "(3i4,2F14.4,i5,4f8.2)\n";
     double wave=_peaks[0].get().getData()->getMetadata()->getKey<double>("wavelength");
@@ -239,7 +252,7 @@ void PeakTableView::writeFullProf()
             file << std::setprecision(0);
             file << std::setw(4);
             file << hkl[0] << std::setw(4) <<  hkl[1] << std::setw(4) << hkl[2];
-             double l=peak.getLorentzFactor();
+            double l=peak.getLorentzFactor();
             file << std::fixed << std::setw(14) << std::setprecision(4) << peak.getScaledIntensity()/l;
             file << std::fixed << std::setw(14) << std::setprecision(4) << peak.getScaledSigma()/l;
             file << std::setprecision(0) << std::setw(5) << 1  << std::endl;
@@ -257,9 +270,12 @@ void PeakTableView::writeShelX()
 
     QFileDialog dialog(this);
     dialog.setDefaultSuffix("hkl");
-    QString fileName = dialog.getSaveFileName(this,tr("Save ShelX file"), "", tr("ShelX Files (*.hkl)"));
+    QString filename = dialog.getSaveFileName(this,tr("Save ShelX file"), "", tr("ShelX Files (*.hkl)"));
 
-    std::fstream file(fileName.toStdString().c_str(),std::ios::out);
+    if (filename.isEmpty())
+        return;
+
+    std::fstream file(filename.toStdString().c_str(),std::ios::out);
     if (!file.is_open())
         QMessageBox::critical(this,"Error writing","Error writing to this file, please check write permisions");
 
