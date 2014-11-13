@@ -150,7 +150,9 @@ void MainWindow::showPeakList(std::vector<SX::Data::IData*> data)
     PeakTableView* table=new PeakTableView();
     table->setData(data);
     table->show();
+    // Ensure plot1D is updated
     connect(table,SIGNAL(plotPeak(SX::Crystal::Peak3D*)),this,SLOT(plotPeak(SX::Crystal::Peak3D*)));
+    // Ensure DetectorScene is updated
 }
 
 
@@ -243,6 +245,9 @@ void MainWindow::on_action_peak_find_triggered()
     _ui->progressBar->setValue(0);
     _ui->progressBar->setEnabled(false);
 
+    //
+    _ui->_dview->getScene()->updatePeaks();
+
 }
 
 void MainWindow::on_actionUnit_Cell_triggered()
@@ -315,11 +320,12 @@ void MainWindow::on_action1D_Peak_Ploter_triggered()
 
 void MainWindow::plotPeak(SX::Crystal::Peak3D* peak)
 {
-    _ui->_dview->getScene()->setData(peak->getData());
-    changeData(peak->getData());
-    int frame = peak->getPeak()->getCenter()[2];
-    _ui->_dview->getScene()->changeFrame(frame);
-    _ui->horizontalScrollBar->setValue(frame);
+//    emit ExperimentTree::plotData(peak);
+//    _ui->_dview->getScene()->setData(peak->getData());
+//    changeData(peak->getData());
+//    int frame = peak->getPeak()->getCenter()[2];
+//    _ui->_dview->getScene()->changeFrame(frame);
+//    _ui->horizontalScrollBar->setValue(frame);
 
     _ui->plot1D->setPeak(peak);
 }

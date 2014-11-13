@@ -143,7 +143,10 @@ void Peak3D::integrate()
 
 	for (int z=data_start;z<=data_end;++z)
 	{
-
+		double pointsinpeak=0;
+		double pointsinbkg=0;
+		double intensityP=0;
+		double intensityBkg=0;
 		for (int x=start_x;x<=end_x;++x)
 		{
 			for (int y=start_y;y<=end_y;++y)
@@ -156,10 +159,23 @@ void Peak3D::integrate()
 				point4 << x+1,y+1,z,1;
 				bool inpeak=(_peak->isInside(point1) || _peak->isInside(point2) || _peak->isInside(point3) || _peak->isInside(point4));
 				if (inpeak)
-					_projectionPeak[z-data_start]+=intensity;
+				{
+					intensityP+=intensity;
+					pointsinpeak++;
+				}
+				bool inbackground=(_bkg->isInside(point1) || _bkg->isInside(point2) || _bkg->isInside(point3) || _bkg->isInside(point4));
+				if (inbackground && !inpeak)
+				{
+					intensityBkg+=intensity;
+					pointsinbkg++;
+				}
 			}
 		}
+		if (pointsinpeak>0)
+			_projectionPeak[z-data_start]=intensityP-intensityBkg*pointsinpeak/pointsinbkg;
+
 	}
+
 	// Quick fix determine the limits of the peak range
 	int datastart=0;
 	int dataend=0;

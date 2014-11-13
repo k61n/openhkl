@@ -50,5 +50,6 @@ void DetectorGraphicsView::keyPressEvent(QKeyEvent* event)
     {
         copyViewToClipboard();
     }
+    QGraphicsView::keyPressEvent(event);
 }
 

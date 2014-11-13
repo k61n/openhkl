@@ -1,8 +1,6 @@
 #include <vector>
-
 #include <QGraphicsSceneMouseEvent>
 #include <QPixmap>
-
 #include "ColorMap.h"
 #include "Detector.h"
 #include "DetectorScene.h"
@@ -61,6 +59,9 @@ void DetectorScene::setMaxIntensity(int intensity)
 
 void DetectorScene::setData(SX::Data::IData* data)
 {
+    if (_currentData==data)
+        return;
+
     _currentData = data;
 
     if (!_currentData)
@@ -73,26 +74,28 @@ void DetectorScene::setData(SX::Data::IData* data)
      _zoomStack.clear();
      _zoomStack.push_back(QRect(0,0,ncols,nrows));
 
-     QList<QGraphicsItem*> all=items();
-     for (auto item : all)
+
+     if (_image)
      {
-         removeItem(item);
-         delete item;
+         removeItem(_image);
+         delete _image;
      }
-     _image=nullptr;
+
+     if (_currentCut)
+     {
+         removeItem(_currentCut);
+         delete _currentCut;
+     }
 
      loadCurrentImage();
+     updatePeaks();
 
-     _peaks.clear();
-     auto& peaks=_currentData->getPeaks();
+}
 
-     for (auto& peak : peaks)
-     {
-         PeakGraphicsItem* p=new PeakGraphicsItem(peak);
-         p->setFrame(_currentFrameIndex);
-         addItem(p);
-         _peaks.insert(p);
-     }
+void DetectorScene::setData(SX::Data::IData* data, int frame)
+{
+    setData(data);
+    changeFrame(frame);
 }
 
 void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -378,7 +381,7 @@ void DetectorScene::loadCurrentImage()
     else
         _image->setPixmap(QPixmap::fromImage(image));
 
-    setSceneRect(_image->boundingRect());
+    setSceneRect(_zoomStack.back());
     emit dataChanged();
 
 }
@@ -391,5 +394,26 @@ SX::Data::IData* DetectorScene::getData()
 void DetectorScene::changeCursorMode(int mode)
 {
     _cursorMode=static_cast<CURSORMODE>(mode);
+}
+
+void DetectorScene::updatePeaks()
+{
+    for (auto peak : _peaks)
+    {
+        removeItem(peak);
+        delete peak;
+    }
+
+    _peaks.clear();
+
+    auto& peaks=_currentData->getPeaks();
+
+    for (auto peak : peaks)
+    {
+        PeakGraphicsItem* p=new PeakGraphicsItem(peak);
+        p->setFrame(_currentFrameIndex);
+        addItem(p);
+        _peaks.insert(p);
+    }
 }
 

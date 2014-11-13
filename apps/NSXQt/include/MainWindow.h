@@ -44,7 +44,7 @@ public:
     ~MainWindow();
 
 signals:
-
+    void plotDetectorData(SX::Data::IData*,int frame);
 private slots:
     void on_action_open_triggered();
 

@@ -74,7 +74,7 @@ void DialogUnitCell::getUnitCell()
         numorstring += QString::number(n)+",";
     numorstring +="]";
         qDebug() << numorstring;
-    FFTIndexing indexing(50.0);
+    FFTIndexing indexing(130.0);
     indexing.addVectors(qvects);
     std::vector<tVector> tvects=indexing.findOnSphere(40,10);
     qDebug() << "Refining solutions and diffractometers offsets";

@@ -49,9 +49,11 @@ protected:
     void keyPressEvent(QKeyEvent *event);
 public slots:
     // To be called to update detector image
+    void setData(SX::Data::IData*,int frame);
     void setData(SX::Data::IData*);
     void changeFrame(int frame=0);
     void setMaxIntensity(int);
+    void updatePeaks();
     //! Change interaction mode in the scene
     void changeInteractionMode(int);
     //!

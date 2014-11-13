@@ -31,7 +31,6 @@ public:
 signals:
     void plot2DUpdate(int numor,int frame);
     void plotPeak(SX::Crystal::Peak3D*);
-
 public slots:
     //! Slection of peak is changed
     void peakChanged(QModelIndex current,QModelIndex last);

@@ -18,11 +18,11 @@ PeakCustomPlot::PeakCustomPlot(QWidget *parent) :
 
     addGraph();
     graph(1)->setPen(QPen(QColor("red")));
-    graph(1)->setBrush(QBrush(QColor(255,40,0,80)));
+    graph(1)->setBrush(QBrush(QColor(255,0,0,80)));
 
     addGraph();
-    graph(2)->setPen(QPen(QColor("green")));
-    graph(2)->setBrush(QBrush(QColor(0,255,0,40)));
+    graph(2)->setPen(QPen(QColor("blue")));
+    graph(2)->setBrush(QBrush(QColor(0,100,255,40)));
 
     xAxis->setLabel("Frame (a.u.)");
     yAxis->setLabel("Intensity (counts)");
@@ -38,7 +38,7 @@ PeakCustomPlot::PeakCustomPlot(QWidget *parent) :
     setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes | QCP::iSelectLegend | QCP::iSelectPlottables);
 
     QCPPlotTitle* element=new QCPPlotTitle(this, "");
-    element->setFont(QFont("Arial",12,-1,true));
+    element->setFont(QFont("Arial",8,-1,true));
     plotLayout()->addElement(0, 0, element);
 }
 
@@ -109,12 +109,12 @@ void PeakCustomPlot::update()
 
     const Eigen::RowVector3d& hkl=_current->getMillerIndices();
 
-    QString info="(h,k,l):"+QString::number(hkl[0])+","+QString::number(hkl[1])+","+QString::number(hkl[2])+"\n";
+    QString info="(h,k,l):"+QString::number(hkl[0])+","+QString::number(hkl[1])+","+QString::number(hkl[2]);
     double gamma,nu;
     _current->getGammaNu(gamma,nu);
     gamma/=SX::Units::deg;
     nu/=SX::Units::deg;
-    info+=QString((QChar) 0x03B3)+","+QString((QChar) 0x03BD)+":"+QString::number(gamma,'f',2)+","+QString::number(nu,'f',2)+"\n";
+    info+=" "+QString((QChar) 0x03B3)+","+QString((QChar) 0x03BD)+":"+QString::number(gamma,'f',2)+","+QString::number(nu,'f',2)+"\n";
     double intensity=_current->getScaledIntensity();
     double sI=_current->getScaledSigma();
     info+="Intensity ("+QString((QChar) 0x03C3)+"I): "+QString::number(intensity)+" ("+QString::number(sI,'f',2)+")\n";
