@@ -237,7 +237,10 @@ void PeakTableView::writeFullProf()
     std::fstream file(filename.toStdString(),std::ios::out);
 
     if (!file.is_open())
+    {
         QMessageBox::critical(this,"Error writing","Error writing to this file, please check write permisions");
+        return;
+    }
 
     file << "TITLE File written by ...\n";
     file << "(3i4,2F14.4,i5,4f8.2)\n";
@@ -271,13 +274,15 @@ void PeakTableView::writeShelX()
     QFileDialog dialog(this);
     dialog.setDefaultSuffix("hkl");
     QString filename = dialog.getSaveFileName(this,tr("Save ShelX file"), "", tr("ShelX Files (*.hkl)"));
-
     if (filename.isEmpty())
         return;
 
     std::fstream file(filename.toStdString().c_str(),std::ios::out);
     if (!file.is_open())
+    {
         QMessageBox::critical(this,"Error writing","Error writing to this file, please check write permisions");
+        return;
+    }
 
     for (const SX::Crystal::Peak3D& peak : _peaks)
     {
