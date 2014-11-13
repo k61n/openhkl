@@ -46,7 +46,7 @@ public:
 signals:
     void plotDetectorData(SX::Data::IData*,int frame);
 private slots:
-    void on_action_open_triggered();
+//    void on_action_open_triggered();
 
     void on_action_peak_find_triggered();
 

@@ -88,6 +88,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(_ui->_dview->getScene(),SIGNAL(plotPeak(SX::Crystal::Peak3D*)),this,SLOT(plotPeak(SX::Crystal::Peak3D*)));
 
+    connect(_ui->action_open,SIGNAL(triggered()),_ui->experimentTree,SLOT(createNewExperiment()));
+
 }
 
 MainWindow::~MainWindow()
@@ -95,33 +97,33 @@ MainWindow::~MainWindow()
     delete _ui;
 }
 
-void MainWindow::on_action_open_triggered()
-{
+//void MainWindow::on_action_open_triggered()
+//{
 
-    DialogExperiment* dlg = new DialogExperiment();
+//    DialogExperiment* dlg = new DialogExperiment();
 
-    // The user pressed cancel, return
-    if (!dlg->exec())
-        return;
+//    // The user pressed cancel, return
+//    if (!dlg->exec())
+//        return;
 
-    // If no experiment name is provided, pop up a warning
-    if (dlg->getExperimentName().isEmpty())
-    {
-        qWarning() << "Empty experiment name";
-        return;
-    }
+//    // If no experiment name is provided, pop up a warning
+//    if (dlg->getExperimentName().isEmpty())
+//    {
+//        qWarning() << "Empty experiment name";
+//        return;
+//    }
 
-    // Add the experiment
-    try
-    {
-        _ui->experimentTree->addExperiment(dlg->getExperimentName().toStdString(),dlg->getInstrumentName().toStdString());
-    }
-    catch(const std::runtime_error& e)
-    {
-        qWarning() << e.what();
-        return;
-    }
-}
+//    // Add the experiment
+//    try
+//    {
+//        _ui->experimentTree->addExperiment(dlg->getExperimentName().toStdString(),dlg->getInstrumentName().toStdString());
+//    }
+//    catch(const std::runtime_error& e)
+//    {
+//        qWarning() << e.what();
+//        return;
+//    }
+//}
 
 void MainWindow::changeData(IData* data)
 {
@@ -147,6 +149,10 @@ void MainWindow::changeData(IData* data)
 
 void MainWindow::showPeakList(std::vector<SX::Data::IData*> data)
 {
+
+    if (data.empty())
+        return;
+
     PeakTableView* table=new PeakTableView();
     table->setData(data);
     table->show();

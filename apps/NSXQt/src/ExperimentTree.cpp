@@ -15,8 +15,10 @@
 #include <QModelIndexList>
 #include <QStandardItem>
 #include <QString>
+#include <QtDebug>
 
 #include "Detector.h"
+#include "DialogExperiment.h"
 #include "Diffractometer.h"
 #include "InstrumentItem.h"
 #include "DataItem.h"
@@ -45,6 +47,35 @@ ExperimentTree::ExperimentTree(QWidget *parent) : QTreeView(parent)
     connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(onCustomMenuRequested(const QPoint&)));
     connect(this, SIGNAL(doubleClicked(const QModelIndex&)),this,SLOT(onDoubleClick(const QModelIndex&)));
 }
+
+void ExperimentTree::createNewExperiment()
+{
+
+    DialogExperiment* dlg = new DialogExperiment();
+
+    // The user pressed cancel, return
+    if (!dlg->exec())
+        return;
+
+    // If no experiment name is provided, pop up a warning
+    if (dlg->getExperimentName().isEmpty())
+    {
+        qWarning() << "Empty experiment name";
+        return;
+    }
+
+    // Add the experiment
+    try
+    {
+        addExperiment(dlg->getExperimentName().toStdString(),dlg->getInstrumentName().toStdString());
+    }
+    catch(const std::runtime_error& e)
+    {
+        qWarning() << e.what();
+        return;
+    }
+}
+
 
 void ExperimentTree::addExperiment(const std::string& experimentName, const std::string& instrumentName)
 {
@@ -138,13 +169,25 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
 {
 
     QModelIndex index = indexAt(point);
-    QStandardItem* item=_model->itemFromIndex(index);
-    if (dynamic_cast<DataItem*>(item))
+
+    if (index == rootIndex())
     {
         QMenu* menu = new QMenu(this);
-        QAction* import=menu->addAction("Import");
+        QAction* newexp=menu->addAction("Add new experiment");
         menu->popup(viewport()->mapToGlobal(point));
-        connect(import,SIGNAL(triggered()),this,SLOT(importData()));
+        connect(newexp,SIGNAL(triggered()),this,SLOT(createNewExperiment()));
+
+    }
+    else
+    {
+        QStandardItem* item=_model->itemFromIndex(index);
+        if (dynamic_cast<DataItem*>(item))
+        {
+            QMenu* menu = new QMenu(this);
+            QAction* import=menu->addAction("Import");
+            menu->popup(viewport()->mapToGlobal(point));
+            connect(import,SIGNAL(triggered()),this,SLOT(importData()));
+        }
     }
 }
 

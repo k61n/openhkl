@@ -38,7 +38,6 @@ PeakTableView::PeakTableView(QWidget *parent)
     // Signal sent when clicking on a row to plot peak
     QHeaderView* vertical=this->verticalHeader();
 //    connect(vertical,SIGNAL(sectionClicked(int)),this,SLOT(plotPeak(int)));
-
     connect(vertical, &QHeaderView::sectionClicked, [&](int index)
                                                  {
                                                   SX::Crystal::Peak3D& peak=_peaks[index].get();
@@ -75,7 +74,7 @@ void PeakTableView::peakChanged(QModelIndex current, QModelIndex last)
 void PeakTableView::sortByColumn(int i)
 {
     // Only 5 columns || no sorting by sigma || check if peak
-    if (i>6 || i==4 || _peaks.size()==0)
+    if (i>6 || i==2 || _peaks.size()==0)
         return;
 
     int& column=std::get<0>(_columnUp);
@@ -208,7 +207,11 @@ void PeakTableView::normalizeToMonitor()
         for (SX::Crystal::Peak3D& peak : _peaks)
             peak.setScale(factor/peak.getData()->getMetadata()->getKey<double>("monitor"));
         constructTable();
-        SX::Crystal::Peak3D& peak=_peaks[currentIndex().row()].get();
+        int index=currentIndex().row();
+        // If no row selected do nothing else.
+        if (index < 0)
+            return;
+        SX::Crystal::Peak3D& peak=_peaks[index].get();
         emit plotPeak(&peak);
     }
 }
