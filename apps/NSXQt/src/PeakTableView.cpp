@@ -8,7 +8,6 @@
 #include <QContextMenuEvent>
 #include <QHeaderView>
 #include <QInputDialog>
-#include <QMessageBox>
 #include <QMouseEvent>
 #include <QStandardItemModel>
 
@@ -224,7 +223,7 @@ void PeakTableView::normalizeToMonitor()
 void PeakTableView::writeFullProf()
 {
     if (!_peaks.size())
-        QMessageBox::critical(this,"Error writing","No peaks in the table");
+        qCritical()<<"No peaks in the table";
 
     QFileDialog dialog(this);
     dialog.setDefaultSuffix("int");
@@ -238,7 +237,7 @@ void PeakTableView::writeFullProf()
 
     if (!file.is_open())
     {
-        QMessageBox::critical(this,"Error writing","Error writing to this file, please check write permisions");
+        qCritical()<<"Error writing to this file, please check write permisions";
         return;
     }
 
@@ -269,7 +268,10 @@ void PeakTableView::writeFullProf()
 void PeakTableView::writeShelX()
 {
     if (!_peaks.size())
-        QMessageBox::critical(this,"Error writing","No peaks in the table");
+    {
+        qCritical()<<"No peaks in the table";
+        return;
+    }
 
     QFileDialog dialog(this);
     dialog.setDefaultSuffix("hkl");
@@ -280,7 +282,7 @@ void PeakTableView::writeShelX()
     std::fstream file(filename.toStdString().c_str(),std::ios::out);
     if (!file.is_open())
     {
-        QMessageBox::critical(this,"Error writing","Error writing to this file, please check write permisions");
+        qCritical()<<"Error writing to this file, please check write permisions";
         return;
     }
 
