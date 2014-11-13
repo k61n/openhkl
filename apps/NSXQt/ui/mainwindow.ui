@@ -1127,8 +1127,7 @@ QTreeView {
                 <bool>false</bool>
                </property>
                <property name="styleSheet">
-                <string notr="true">
-</string>
+                <string notr="true"/>
                </property>
                <property name="maximum">
                 <number>1000000</number>
@@ -1240,7 +1239,6 @@ QTreeView {
    <addaction name="action_open"/>
    <addaction name="action_peak_find"/>
    <addaction name="actionUnit_Cell"/>
-   <addaction name="actionPeak_List"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QDockWidget" name="loggerDockWidget">
@@ -1370,8 +1368,7 @@ QDockWidget::title {
         <enum>Qt::StrongFocus</enum>
        </property>
        <property name="styleSheet">
-        <string notr="true">
-</string>
+        <string notr="true"/>
        </property>
       </widget>
      </item>
@@ -1413,22 +1410,6 @@ QDockWidget::title {
    </property>
    <property name="toolTip">
     <string>Unit Cell</string>
-   </property>
-  </action>
-  <action name="actionPeak_List">
-   <property name="checked">
-    <bool>false</bool>
-   </property>
-   <property name="icon">
-    <iconset>
-     <normaloff>:/iconPeakList.png</normaloff>
-     <normalon>:/resources/peakListIcon.png</normalon>:/iconPeakList.png</iconset>
-   </property>
-   <property name="text">
-    <string>Peak List</string>
-   </property>
-   <property name="toolTip">
-    <string>Peak list</string>
    </property>
   </action>
   <action name="actionPixel_position">

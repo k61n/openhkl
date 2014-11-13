@@ -398,6 +398,10 @@ void DetectorScene::changeCursorMode(int mode)
 
 void DetectorScene::updatePeaks()
 {
+
+    if (!_currentData)
+        return;
+
     for (auto peak : _peaks)
     {
         removeItem(peak);

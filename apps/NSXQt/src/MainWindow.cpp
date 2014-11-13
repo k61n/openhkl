@@ -245,7 +245,6 @@ void MainWindow::on_action_peak_find_triggered()
     _ui->progressBar->setValue(0);
     _ui->progressBar->setEnabled(false);
 
-    //
     _ui->_dview->getScene()->updatePeaks();
 
 }
@@ -271,14 +270,6 @@ void MainWindow::on_actionUnit_Cell_triggered()
     }
     dialog->setPeaks(peaks);
     dialog->show();
-}
-
-void MainWindow::on_actionPeak_List_triggered()
-{
-//    std::vector<IData*> numors=selectedNumors();
-//    PeakTableView* table=new PeakTableView(this);
-//    table->setData(numors);
-//    table->show();
 }
 
 void MainWindow::on_actionPixel_position_triggered()

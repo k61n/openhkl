@@ -52,8 +52,6 @@ private slots:
 
     void on_actionUnit_Cell_triggered();
 
-    void on_actionPeak_List_triggered();
-
     void on_actionPixel_position_triggered();
 
     void on_actionGamma_Nu_triggered();
