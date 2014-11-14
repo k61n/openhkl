@@ -96,15 +96,8 @@ void DialogUnitCell::getUnitCell()
                         std::shared_ptr<UnitCell> pcell(new UnitCell(cell));
                         UBMinimizer minimizer;
                         minimizer.setSample(sample);
-                        minimizer.setDetector(detector);
-                        minimizer.setFixedParameters(9);
-                        minimizer.setFixedParameters(10);
-                        minimizer.setFixedParameters(11);
-                        minimizer.setFixedParameters(12);
+                        minimizer.setDetector(detector);                    
                         minimizer.setFixedParameters(13);
-                        minimizer.setFixedParameters(14);
-                        minimizer.setFixedParameters(15);
-                        minimizer.setFixedParameters(16);
                         int success=0;
                         for (SX::Crystal::Peak3D& peak : _peaks)
                         {

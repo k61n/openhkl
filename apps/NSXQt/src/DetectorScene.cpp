@@ -35,6 +35,9 @@ void DetectorScene::changeFrame(int frame)
     if (!_currentData)
         return;
 
+    if (!_currentData->isMapped())
+        _currentData->map();
+
     if (frame == _currentFrameIndex)
         return;
     _currentFrameIndex = frame;
@@ -62,10 +65,13 @@ void DetectorScene::setData(SX::Data::IData* data)
     if (_currentData==data)
         return;
 
+    if (_currentData)
+        _currentData->unMap();
+
     _currentData = data;
 
-    if (!_currentData)
-        return ;
+    if (!_currentData->isMapped())
+        _currentData->map();
 
     SX::Instrument::Detector* det=_currentData->getDiffractometer()->getDetector();
     std::size_t nrows=det->getNRows();
@@ -75,16 +81,11 @@ void DetectorScene::setData(SX::Data::IData* data)
      _zoomStack.push_back(QRect(0,0,ncols,nrows));
 
 
-     if (_image)
-     {
-         removeItem(_image);
-         delete _image;
-     }
-
-     if (_currentCut)
+    if (_currentCut)
      {
          removeItem(_currentCut);
          delete _currentCut;
+         _currentCut=nullptr;
      }
 
      loadCurrentImage();
@@ -359,7 +360,7 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
 
 void DetectorScene::changeInteractionMode(int mode)
 {
-    _mode=static_cast<MODE>(mode);
+    _mode=static_cast<MODE>(mode);_peaks.clear();
 }
 
 void DetectorScene::loadCurrentImage()

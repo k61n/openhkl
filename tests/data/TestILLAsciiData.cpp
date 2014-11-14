@@ -34,6 +34,8 @@ BOOST_AUTO_TEST_CASE(Test_ILL_Data)
 
 	BOOST_CHECK(meta->getKey<int>("nbang")==2);
 
+	reader.map();
+
 	std::vector<int> v=reader.getFrame(0);
 
 	// Map the vector to a matrix (no copying)

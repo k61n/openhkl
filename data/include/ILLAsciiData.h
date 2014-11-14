@@ -65,7 +65,8 @@ public:
 	ILLAsciiData& operator=(const ILLAsciiData& other)=delete;
 
 	// Other methods
-
+	void map();
+	void unMap();
 	//! Return the intensity at point x,y,z
     int dataAt(int x=0, int y=0, int z=0);
     //! Read a given Frame of the data
@@ -104,6 +105,7 @@ private:
 	boost::interprocess::mapped_region _map;
 	const char* _mapAddress;
 	std::size_t _currentLine;
+
 
 };
 

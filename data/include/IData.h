@@ -122,8 +122,11 @@ public:
     // Release the data from memory
     virtual void releaseMemory()=0;
 
+    virtual void map()=0;
+    virtual void unMap()=0;
+    bool isMapped() const;
 protected:
-
+    bool _isMapped;
 	std::string _filename;
 	std::size_t _nFrames;
 	std::shared_ptr<Diffractometer> _diffractometer;

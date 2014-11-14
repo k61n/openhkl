@@ -8,6 +8,7 @@
 #include <QContextMenuEvent>
 #include <QHeaderView>
 #include <QInputDialog>
+#include <QItemSelectionModel>
 #include <QMouseEvent>
 #include <QStandardItemModel>
 

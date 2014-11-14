@@ -123,29 +123,59 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, std::shared_ptr<Diffract
 	_sampleStates.reserve(_nFrames);
 
 	const char* start = _mapAddress+_headerSize;
-	for (std::size_t frame=0; frame<_nFrames;++frame)
-	{
-		vd.clear();
-		vd.shrink_to_fit();
 
-		beginValues = start  + frame*(_dataLength+_skipChar) + fromStoFData;
-		readDoublesFromChar(beginValues,beginValues+FData,vd);
+	std::size_t frameB=0,frameE=_nFrames-1;
 
-		if (vd.size() != (_nAngles+3))
+	std::vector<double> bb,be;
+
+	beginValues = start  + frameB*(_dataLength+_skipChar) + fromStoFData;
+	readDoublesFromChar(beginValues,beginValues+FData,bb);
+
+	if (bb.size() != (_nAngles+3))
+		throw std::runtime_error("Problem parsing numor: mismatch between number of angles in header and datablock 2.");
+
+
+	beginValues = start  + frameE*(_dataLength+_skipChar) + fromStoFData;
+		readDoublesFromChar(beginValues,beginValues+FData,be);
+
+		if (be.size() != (_nAngles+3))
 			throw std::runtime_error("Problem parsing numor: mismatch between number of angles in header and datablock 2.");
 
+
+	for (std::size_t f=0;f<_nFrames;++f)
+	{
 		for (std::size_t i=0;i<_nAngles;++i)
-			*(varAngles[i]) = vd[3+i]*deg/1000.0;
+			*(varAngles[i]) = (bb[3+i]+(be[3+i]-bb[3+i])*static_cast<double>(f)/static_cast<double>(_nFrames-1))*deg/1000.0;
 
 		_detectorStates.push_back(_diffractometer->getDetector()->createState(dval));
 		_sampleStates.push_back(_diffractometer->getSample()->createState(sval));
-
 	}
+
+	unMap();
 }
 
 ILLAsciiData::~ILLAsciiData() {
 }
 
+void ILLAsciiData::map()
+{
+	try
+	{
+		boost::interprocess::file_mapping filemap(_filename.c_str(), boost::interprocess::read_only);
+		_map=boost::interprocess::mapped_region(filemap,boost::interprocess::read_only);
+	}
+	catch(...)
+	{
+		throw;
+	}
+	_isMapped=true;
+}
+
+void ILLAsciiData::unMap()
+{
+	_map=std::move(boost::interprocess::mapped_region());
+	_isMapped=false;
+}
 std::vector<int> ILLAsciiData::getFrame(std::size_t idx)
 {
 

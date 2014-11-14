@@ -194,6 +194,8 @@ void MainWindow::on_action_peak_find_triggered()
 
     for (auto& numor : numors)
     {
+        if (!numor->isMapped())
+            numor->map();
         numor->clearPeaks();
         numor->loadAllFrames();
         // Get pointers to start of each frame
@@ -242,7 +244,7 @@ void MainWindow::on_action_peak_find_triggered()
             peak->integrate();
 
         numor->releaseMemory();
-
+        numor->unMap();
         _ui->progressBar->setValue(++comp);
     }
 
