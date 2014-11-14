@@ -73,7 +73,6 @@ MainWindow::MainWindow(QWidget *parent) :
     _ui->splitter->setStretchFactor(0,10);
     _ui->splitter->setStretchFactor(1,90);
 
-
     connect(_ui->experimentTree,SIGNAL(plotData(SX::Data::IData*)),_ui->_dview->getScene(),SLOT(setData(SX::Data::IData*)));
     connect(_ui->experimentTree,SIGNAL(plotData(SX::Data::IData*)),this,SLOT(changeData(SX::Data::IData*)));
     connect(_ui->experimentTree,SIGNAL(showPeakList(std::vector<SX::Data::IData*>)),this,SLOT(showPeakList(std::vector<SX::Data::IData*>)));
@@ -96,34 +95,6 @@ MainWindow::~MainWindow()
 {
     delete _ui;
 }
-
-//void MainWindow::on_action_open_triggered()
-//{
-
-//    DialogExperiment* dlg = new DialogExperiment();
-
-//    // The user pressed cancel, return
-//    if (!dlg->exec())
-//        return;
-
-//    // If no experiment name is provided, pop up a warning
-//    if (dlg->getExperimentName().isEmpty())
-//    {
-//        qWarning() << "Empty experiment name";
-//        return;
-//    }
-
-//    // Add the experiment
-//    try
-//    {
-//        _ui->experimentTree->addExperiment(dlg->getExperimentName().toStdString(),dlg->getInstrumentName().toStdString());
-//    }
-//    catch(const std::runtime_error& e)
-//    {
-//        qWarning() << e.what();
-//        return;
-//    }
-//}
 
 void MainWindow::changeData(IData* data)
 {
