@@ -25,9 +25,6 @@ PeakGraphicsItem::PeakGraphicsItem(SX::Crystal::Peak3D* p):_peak(p),_hoverOn(fal
     QString hkl;
     _hklText=new QGraphicsTextItem(this);
     _hklText->setFlag(QGraphicsItem::ItemIgnoresTransformations); //Ensure text is alwyas real size despite zoom
-    auto& v=_peak->getMillerIndices();
-    hkl=QString("%1,%2,%3").arg(v[0]).arg(v[1]).arg(v[2]);
-    _hklText->setPlainText(hkl);
     _hklText->setParentItem(this);
     setBoundingRegionGranularity(0.0);
 }
@@ -94,6 +91,10 @@ void PeakGraphicsItem::setFrame(int frame)
     {
         setVisible(true);
         _hklText->setVisible(_labelVisible);
+        auto& v=_peak->getMillerIndices();
+        QString hkl;
+        hkl=QString("%1,%2,%3").arg(v[0]).arg(v[1]).arg(v[2]);
+        _hklText->setPlainText(hkl);
     }
     else
     {

@@ -27,7 +27,8 @@ IData::IData(const std::string& filename, std::shared_ptr<Diffractometer> diffra
   _detectorStates(),
   _sampleStates(),
   _peaks(),
-  _isMapped(false)
+  _isMapped(false),
+  _fileSize(0)
 {
 	if ( !boost::filesystem::exists(_filename.c_str()))
 		throw std::runtime_error("ILLAsciiData, file: "+_filename+" does not exist");
@@ -176,6 +177,11 @@ bool IData::removePeak(Peak3D* peak)
 bool IData::isMapped() const
 {
 	return _isMapped;
+}
+
+std::size_t IData::getFileSize() const
+{
+	return _fileSize;
 }
 
 } // end namespace Data

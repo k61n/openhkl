@@ -150,6 +150,7 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, std::shared_ptr<Diffract
 		_detectorStates.push_back(_diffractometer->getDetector()->createState(dval));
 		_sampleStates.push_back(_diffractometer->getSample()->createState(sval));
 	}
+	_fileSize=_map.get_size();
 
 	unMap();
 }
@@ -159,10 +160,14 @@ ILLAsciiData::~ILLAsciiData() {
 
 void ILLAsciiData::map()
 {
+	if (_isMapped)
+		return;
 	try
 	{
 		boost::interprocess::file_mapping filemap(_filename.c_str(), boost::interprocess::read_only);
-		_map=boost::interprocess::mapped_region(filemap,boost::interprocess::read_only);
+		boost::interprocess::mapped_region reg(filemap,boost::interprocess::read_only);
+		_map.swap(reg);
+		_mapAddress=reinterpret_cast<char*>(_map.get_address());
 	}
 	catch(...)
 	{
@@ -173,7 +178,7 @@ void ILLAsciiData::map()
 
 void ILLAsciiData::unMap()
 {
-	_map=std::move(boost::interprocess::mapped_region());
+	_map=boost::move(boost::interprocess::mapped_region());
 	_isMapped=false;
 }
 std::vector<int> ILLAsciiData::getFrame(std::size_t idx)
@@ -196,7 +201,6 @@ std::vector<int> ILLAsciiData::readFrame(std::size_t idx) const
 	std::vector<int> v;
 	v.reserve(_dataPoints);
 	readIntsFromChar(_mapAddress+begin,_mapAddress+begin+_dataLength,v);
-
 	return v;
 }
 
@@ -215,8 +219,7 @@ void ILLAsciiData::loadAllFrames()
 	#pragma omp parallel for
 	for (std::size_t i=0;i<_nFrames;++i)
 	{
-		_data[i].reserve(nPixels);
-		_data[i]=std::move(readFrame(i));
+		_data[i]=readFrame(i);
 	}
 
 	return;

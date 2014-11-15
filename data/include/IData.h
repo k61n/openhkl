@@ -121,10 +121,12 @@ public:
     virtual void loadAllFrames()=0;
     // Release the data from memory
     virtual void releaseMemory()=0;
-
+    //
     virtual void map()=0;
     virtual void unMap()=0;
     bool isMapped() const;
+    //
+    std::size_t getFileSize() const;
 protected:
     bool _isMapped;
 	std::string _filename;
@@ -136,6 +138,7 @@ protected:
 	std::vector<ComponentState> _detectorStates;
 	std::vector<ComponentState> _sampleStates;
     std::set<Peak3D*> _peaks;
+    std::size_t _fileSize;
 
 };
 
