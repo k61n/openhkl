@@ -1,29 +1,29 @@
-//#define BOOST_TEST_MODULE "Test XML Instrument Parser"
-//#define BOOST_TEST_DYN_LINK
-//
-//#include <iostream>
-//#include <memory>
-//#include <string>
-//
-//#include <boost/foreach.hpp>
-//#include <boost/test/unit_test.hpp>
-//#include <boost/property_tree/ptree.hpp>
-//#include <boost/property_tree/xml_parser.hpp>
-//
-//#include "DetectorFactory.h"
-//#include "Diffractometer.h"
-//#include "FlatDetector.h"
-//#include "Gonio.h"
-//#include "Units.h"
-//
-//using boost::property_tree::ptree;
-//
-//using namespace SX::Instrument;
-//using SX::Units::UnitsManager;
-//
-//BOOST_AUTO_TEST_CASE(Tests_XML_Instrument_Parser)
-//{
-//
+#define BOOST_TEST_MODULE "Test XML Instrument Parser"
+#define BOOST_TEST_DYN_LINK
+
+#include <iostream>
+#include <memory>
+#include <string>
+
+#include <boost/foreach.hpp>
+#include <boost/test/unit_test.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
+
+#include "DetectorFactory.h"
+#include "Diffractometer.h"
+#include "FlatDetector.h"
+#include "Gonio.h"
+#include "Units.h"
+
+using boost::property_tree::ptree;
+
+using namespace SX::Instrument;
+using SX::Units::UnitsManager;
+
+BOOST_AUTO_TEST_CASE(Tests_XML_Instrument_Parser)
+{
+
 //	UnitsManager* um = UnitsManager::Instance();
 //
 //	Diffractometer* diff=Diffractometer::create();
@@ -84,12 +84,5 @@
 ////			}
 //		}
 //	}
-//
-//
-//
-//
-//
-//
-//
-//
-//}
+
+}
