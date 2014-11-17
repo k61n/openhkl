@@ -53,14 +53,21 @@ class Detector : public Component
 {
 public:
 
+	// Static methods
+
+	// Static constructor (not implemented)
+	static Detector* create(const std::string& name);
+
 	// Constructors and destructor
 
-	//! Default constructor (deleted)
+	//! Default constructor
 	Detector();
 	//! Copy constructor
 	Detector(const Detector& other);
 	//! Constructs a detector with a given name
 	Detector(const std::string& name);
+	//! Constructs a detector from an XML node
+	Detector(const ptree& node);
 	// Destructor
 	virtual ~Detector()=0;
 	//! Virtual copy constructor
@@ -173,7 +180,6 @@ public:
 
 	//! Create a detector event, a small object with state of the event on the detector and gonio setup
 	DetectorEvent createDetectorEvent(double x, double y, const std::vector<double>& goniosetup=std::vector<double>());
-	virtual void parse(const ptree&)=0;
 
 protected:
 	void convertCoordinates(double, double , double&, double&) const;
