@@ -30,13 +30,20 @@
 #define NSXTOOL_CYLINDRICALDETECTOR_H_
 #include "Detector.h"
 
-namespace SX {
-namespace Instrument{
+namespace SX
+{
 
+namespace Instrument
+{
 
 class CylindricalDetector : public Detector
 {
 public:
+
+	// Static methods
+
+	// Static constructor
+	static Detector* create(const std::string& name);
 
 	// Constructors and destructor
 
@@ -46,6 +53,8 @@ public:
 	CylindricalDetector(const CylindricalDetector& other);
 	//! Constructs a cylindrical detector with a given name
 	CylindricalDetector(const std::string& name);
+	//! Constructs a detector from an XML node
+	CylindricalDetector(const ptree& node);
 	//! Destructor
 	virtual ~CylindricalDetector();
 	//! Virtual copy constructor
@@ -70,9 +79,6 @@ public:
 	//! Set the full width of the detector in Angle, assume the distance is set before
 	void setWidthAngle(double wangle);
 
-	// Other methods
-
-	void parse(const ptree& node);
 
 private:
 	Eigen::Vector3d getPos(double x,double y) const;

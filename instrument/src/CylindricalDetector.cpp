@@ -3,8 +3,14 @@
 
 namespace SX
 {
+
 namespace Instrument
 {
+
+Detector* CylindricalDetector::create(const std::string& name)
+{
+	return new CylindricalDetector(name);
+}
 
 CylindricalDetector::CylindricalDetector() : Detector(), _widthAngle(0.0)
 {
@@ -13,7 +19,6 @@ CylindricalDetector::CylindricalDetector() : Detector(), _widthAngle(0.0)
 CylindricalDetector::CylindricalDetector(const CylindricalDetector& other) : Detector(other), _widthAngle(other._widthAngle)
 {
 }
-
 
 CylindricalDetector::CylindricalDetector(const std::string& name):Detector(name), _widthAngle(0.0)
 {
@@ -94,10 +99,6 @@ Eigen::Vector3d CylindricalDetector::getPos(double x, double y) const
 	result[1]=_distance*cos(gamma);
 	result[0]=_distance*sin(gamma);
 	return result;
-}
-
-void CylindricalDetector::parse(const ptree& node)
-{
 }
 
 }
