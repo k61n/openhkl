@@ -38,7 +38,6 @@
 #include <Eigen/Dense>
 
 #include "ComponentState.h"
-#include "XMLConfigurable.h"
 
 namespace SX
 {
@@ -49,14 +48,13 @@ namespace Instrument
 class Gonio;
 
 using boost::property_tree::ptree;
-using SX::Kernel::XMLConfigurable;
 
 typedef unsigned int uint;
 
 /*
  * Interface for the components of an instrument (e.g. detector, goniometer, source ...).
  */
-class Component : public XMLConfigurable
+class Component
 {
 public:
 
