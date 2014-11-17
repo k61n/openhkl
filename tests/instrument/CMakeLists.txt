@@ -50,4 +50,10 @@ add_executable(TestExperiment TestExperiment.cpp)
 TARGET_LINK_LIBRARIES(TestExperiment ${Boost_LIBRARIES} NSXTool)
 add_test(TestExperiment TestExperiment)
 
+# unit test for Instrument Parser
+add_executable(TestXMLInstrumentParser TestXMLInstrumentParser.cpp)
+TARGET_LINK_LIBRARIES(TestXMLInstrumentParser ${Boost_LIBRARIES} NSXTool)
+add_test(TestXMLInstrumentParser TestXMLInstrumentParser)
+
 configure_file(D10_ascii_example D10_ascii_example COPYONLY)
+configure_file(Instrument.xml Instrument.xml COPYONLY)

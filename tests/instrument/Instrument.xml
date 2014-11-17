@@ -1,0 +1,28 @@
+<instrument name="my-diff">
+
+    <detector type="flat">
+        <name>toto</name>
+        <sample_distance units="mm">380.0</sample_distance>
+        <npixels_x>32</npixels_x>
+        <npixels_y>32</npixels_y>
+        
+        <gonio>
+        	<axis type="rotation">
+	        	<name>gamma</name>name>
+	        	<nx>0</nx>>
+	        	<ny>0</ny>>
+	        	<nz>1</nz>>
+	        	<physical>1</physical>
+        	</axis>
+        	<axis type="translation">
+	        	<name>y-offset</name>name>
+	        	<nx>0</nx>>
+	        	<ny>1</ny>>
+	        	<nz>0</nz>>
+	        	<physical>0</physical>
+	        	<offset units="m">0.12</offset>offset>
+        	</axis>
+        </gonio>
+    </detector>
+
+</instrument>
