@@ -57,6 +57,9 @@ void DetectorScene::setMaxIntensity(int intensity)
     if (!_currentData)
         return;
 
+    if (!_currentData->isMapped())
+        _currentData->map();
+
     loadCurrentImage();
 }
 
