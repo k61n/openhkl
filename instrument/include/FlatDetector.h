@@ -30,13 +30,20 @@
 #define NSXTOOL_FLATDETECTOR_H_
 #include "Detector.h"
 
-namespace SX {
-namespace Instrument{
+namespace SX
+{
 
+namespace Instrument
+{
 
 class FlatDetector : public Detector
 {
 public:
+
+	// Static methods
+
+	// Static constructor
+	static Detector* create(const std::string& name);
 
 	// Constructors and destructor
 
@@ -46,6 +53,8 @@ public:
 	FlatDetector(const FlatDetector& other);
 	//! Constructs a default flat detector with a given name
 	FlatDetector(const std::string& name);
+	//! Constructs a detector from an XML node
+	FlatDetector(const ptree& node);
 	//! Destructor
 	virtual ~FlatDetector();
 	//! Virtual copy constructor
@@ -67,10 +76,6 @@ public:
 	void setAngularRange(double widthAngle, double heightAngle);
 	void setWidthAngle(double wangle);
 	void setHeightAngle(double hangle);
-
-	// Other methods
-
-	void parse(const ptree& node);
 
 private:
 	Eigen::Vector3d getPos(double x,double y) const;

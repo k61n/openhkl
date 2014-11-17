@@ -7,6 +7,11 @@ namespace SX
 namespace Instrument
 {
 
+Detector* FlatDetector::create(const std::string& name)
+{
+	return new FlatDetector(name);
+}
+
 FlatDetector::FlatDetector() : Detector()
 {
 }
@@ -85,10 +90,6 @@ Eigen::Vector3d FlatDetector::getPos(double px, double py) const
 	result[1]=_distance;
 	result[2]=(my/(_nRows-1.0)-0.5)*_height;
 	return result;
-}
-
-void FlatDetector::parse(const ptree& node)
-{
 }
 
 }
