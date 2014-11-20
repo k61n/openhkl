@@ -229,7 +229,7 @@ QTreeView {
               <number>1</number>
              </property>
              <item>
-              <widget class="QScrollBar" name="horizontalScrollBar">
+              <widget class="QScrollBar" name="frame">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                  <horstretch>1</horstretch>
@@ -704,7 +704,7 @@ QTreeView {
               </widget>
              </item>
              <item>
-              <widget class="QSlider" name="dial">
+              <widget class="QSlider" name="intensity">
                <property name="palette">
                 <palette>
                  <active>
@@ -1322,7 +1322,7 @@ QDockWidget::title {
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="plotterDockWidget_2">
+  <widget class="QDockWidget" name="plotterDockWidget">
    <property name="sizePolicy">
     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
      <horstretch>0</horstretch>
@@ -1357,7 +1357,7 @@ QDockWidget::title {
    <widget class="QWidget" name="dockWidgetContents_4">
     <layout class="QHBoxLayout" name="horizontalLayout_4">
      <item>
-      <widget class="PeakCustomPlot" name="plot1D" native="true">
+      <widget class="SXCustomPlot" name="plot1D" native="true">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -1487,9 +1487,9 @@ QDockWidget::title {
    <header>DetectorGraphicsView.h</header>
   </customwidget>
   <customwidget>
-   <class>PeakCustomPlot</class>
+   <class>SXCustomPlot</class>
    <extends>QWidget</extends>
-   <header>PeakCustomPlot.h</header>
+   <header>include/SXCustomPlot.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
@@ -1498,7 +1498,7 @@ QDockWidget::title {
  </resources>
  <connections>
   <connection>
-   <sender>horizontalScrollBar</sender>
+   <sender>frame</sender>
    <signal>valueChanged(int)</signal>
    <receiver>spinBox_Frame</receiver>
    <slot>setValue(int)</slot>
@@ -1516,7 +1516,7 @@ QDockWidget::title {
   <connection>
    <sender>spinBox_Frame</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>horizontalScrollBar</receiver>
+   <receiver>frame</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1532,7 +1532,7 @@ QDockWidget::title {
   <connection>
    <sender>spinBox_max</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>dial</receiver>
+   <receiver>intensity</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1546,7 +1546,7 @@ QDockWidget::title {
    </hints>
   </connection>
   <connection>
-   <sender>dial</sender>
+   <sender>intensity</sender>
    <signal>valueChanged(int)</signal>
    <receiver>spinBox_max</receiver>
    <slot>setValue(int)</slot>
