@@ -5,11 +5,13 @@
 
 namespace SX
 {
-    namespace Crystal
-    {
-        class Peak3D;
-    }
+namespace Crystal
+{
+class Peak3D;
 }
+}
+
+class PlottableGraphicsItem;
 
 class PeakCustomPlot : public SXCustomPlot
 {
@@ -20,7 +22,7 @@ public:
 signals:
 
 public slots:
-    void update();
+    void update(PlottableGraphicsItem* item);
     void setPeak(SX::Crystal::Peak3D*);
     void mousePress(QMouseEvent *event);
     void mouseWheel(QWheelEvent *event);

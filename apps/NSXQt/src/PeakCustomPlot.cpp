@@ -1,10 +1,11 @@
+#include "PlottableGraphicsItem.h"
+#include "PeakGraphicsItem.h"
 #include "PeakCustomPlot.h"
 #include "Peak3D.h"
 #include "IData.h"
 #include "Units.h"
 
-PeakCustomPlot::PeakCustomPlot(QWidget *parent) :
-    SXCustomPlot(parent)
+PeakCustomPlot::PeakCustomPlot(QWidget *parent) : SXCustomPlot(parent)
 {
     plotLayout()->insertRow(0);
     addGraph();
@@ -52,6 +53,7 @@ void PeakCustomPlot::mousePress(QMouseEvent *event)
     else
     axisRect()->setRangeDrag(Qt::Horizontal|Qt::Vertical);
 }
+
 void PeakCustomPlot::mouseWheel(QWheelEvent* event)
 {
     Q_UNUSED(event);
@@ -63,22 +65,20 @@ void PeakCustomPlot::mouseWheel(QWheelEvent* event)
       axisRect()->setRangeZoom(Qt::Horizontal|Qt::Vertical);
 }
 
-void PeakCustomPlot::setPeak(SX::Crystal::Peak3D* peak)
+void PeakCustomPlot::update(PlottableGraphicsItem* item)
 {
-    if (_current==peak)
+
+    auto p=dynamic_cast<PeakGraphicsItem*>(item);
+    if (!p)
         return;
 
-    _current=peak;
-    update();
-}
+    SX::Crystal::Peak3D* peak=p->getPeak();
 
-void PeakCustomPlot::update()
-{
-    const Eigen::VectorXd& total=_current->getProjection();
-    const Eigen::VectorXd& peak=_current->getPeakProjection();
-    const Eigen::VectorXd& bkg=_current->getBkgProjection();
+    const Eigen::VectorXd& total=peak->getProjection();
+    const Eigen::VectorXd& peak=peak->getPeakProjection();
+    const Eigen::VectorXd& bkg=peak->getBkgProjection();
 
-    const Eigen::VectorXd& totalSigma=_current->getProjectionSigma();
+    const Eigen::VectorXd& totalSigma=peak->getProjectionSigma();
 
     // Transform to QDouble
     QVector<double> qx(total.size());
@@ -88,8 +88,8 @@ void PeakCustomPlot::update()
     QVector<double> qbkg(total.size());
 
     //Copy the data
-    double min=std::floor(_current->getBackground()->getLower()[2]);
-    double max=std::ceil(_current->getBackground()->getUpper()[2]);
+    double min=std::floor(peak->getBackground()->getLower()[2]);
+    double max=std::ceil(peak->getBackground()->getUpper()[2]);
     for (int i=0;i<total.size();++i)
     {
         qx[i]= min + static_cast<double>(i)*(max-min)/(total.size()-1);
@@ -115,14 +115,14 @@ void PeakCustomPlot::update()
     gamma/=SX::Units::deg;
     nu/=SX::Units::deg;
     info+=" "+QString((QChar) 0x03B3)+","+QString((QChar) 0x03BD)+":"+QString::number(gamma,'f',2)+","+QString::number(nu,'f',2)+"\n";
-    double intensity=_current->getScaledIntensity();
-    double sI=_current->getScaledSigma();
+    double intensity=peak->getScaledIntensity();
+    double sI=peak->getScaledSigma();
     info+="Intensity ("+QString((QChar) 0x03C3)+"I): "+QString::number(intensity)+" ("+QString::number(sI,'f',2)+")\n";
-    double l=_current->getLorentzFactor();
+    double l=peak->getLorentzFactor();
     info+="Cor. int. ("+QString((QChar) 0x03C3)+"I): "+QString::number(intensity/l,'f',2)+" ("+QString::number(sI/l,'f',2)+")\n";
 
-    double scale=_current->getScale();
-    double monitor=_current->getData()->getMetadata()->getKey<double>("monitor");
+    double scale=peak->getScale();
+    double monitor=peak->getData()->getMetadata()->getKey<double>("monitor");
     info+="Monitor "+QString::number(monitor*scale)+" counts";
     QCPPlotTitle* title=dynamic_cast<QCPPlotTitle*>(plotLayout()->element(0,0));
     if (title)
