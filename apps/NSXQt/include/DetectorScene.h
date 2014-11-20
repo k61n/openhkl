@@ -8,23 +8,22 @@
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
 
-
 // Forward declarations
 namespace SX
 {
-    namespace Data
-    {
-        class IData;
-    }
-    namespace Crystal
-    {
-        class Peak3D;
-    }
+namespace Data
+{
+class IData;
 }
-
+namespace Crystal
+{
+class Peak3D;
+}
+}
 class QImage;
+class QGraphicsSceneWheelEvent;
 class PeakGraphicsItem;
-class CutterGraphicsItem;
+class PlottableGraphicsItem;
 
 //! Master Scene containing the pixmap of the detector counts
 //! peaks, and other Graphics Items
@@ -37,9 +36,12 @@ public:
     enum CURSORMODE {THETA=0, GAMMA=1, DSPACING=2, PIXEL=3, HKL=4};
     explicit DetectorScene(QObject *parent = 0);
     SX::Data::IData* getData();
+    const std::vector<int>& getCurrentFrame() const;
+
 signals:
      //! Signal emitted for all changes of the image
     void dataChanged();
+    void updatePlot(PlottableGraphicsItem* cutter);
     //!
     void plotPeak(SX::Crystal::Peak3D*);
 protected:
@@ -47,6 +49,8 @@ protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     void keyPressEvent(QKeyEvent *event);
+    void wheelEvent(QGraphicsSceneWheelEvent *event);
+
 public slots:
     // To be called to update detector image
     void setData(SX::Data::IData*,int frame);
@@ -81,7 +85,7 @@ private:
     CURSORMODE _cursorMode;
     //! Contains peaks item of current data, reinitialized with new data set.
     std::set<PeakGraphicsItem*> _peaks;
-    CutterGraphicsItem* _currentCut;
+    PlottableGraphicsItem* _currentItem;
     bool _itemSelected;
     QGraphicsPixmapItem* _image;
 };
