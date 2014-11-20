@@ -8,6 +8,7 @@
 
 #include <Eigen/Dense>
 
+#include <CutterGraphicsItem.h>
 #include <QDateTime>
 #include <QFileDialog>
 #include <QGraphicsBlurEffect>
@@ -44,15 +45,21 @@
 #include "SXCustomPlot.h"
 #include "PeakCustomPlot.h"
 #include "PeakTableView.h"
+#include "LineCutGraphicsItem.h"
+#include "SliceGraphicsItem.h"
+#include "LineCutterCustomPlot.h"
+#include "SliceCutterCustomPlot.h"
+#include "CutterCustomPlot.h"
+#include "PlottableGraphicsItem.h"
 
 using namespace SX::Units;
 using namespace SX::Instrument;
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    _ui(new Ui::MainWindow),
-    _experiments(),
-    _currentData(nullptr)
+MainWindow::MainWindow(QWidget *parent)
+: QMainWindow(parent),
+  _ui(new Ui::MainWindow),
+  _experiments(),
+  _currentData(nullptr)
 {
     _ui->setupUi(this);
 
@@ -73,21 +80,18 @@ MainWindow::MainWindow(QWidget *parent) :
     _ui->splitter->setStretchFactor(0,10);
     _ui->splitter->setStretchFactor(1,90);
 
+    // signals and slots
     connect(_ui->experimentTree,SIGNAL(plotData(SX::Data::IData*)),_ui->_dview->getScene(),SLOT(setData(SX::Data::IData*)));
     connect(_ui->experimentTree,SIGNAL(plotData(SX::Data::IData*)),this,SLOT(changeData(SX::Data::IData*)));
     connect(_ui->experimentTree,SIGNAL(showPeakList(std::vector<SX::Data::IData*>)),this,SLOT(showPeakList(std::vector<SX::Data::IData*>)));
-
-    connect(_ui->horizontalScrollBar,SIGNAL(valueChanged(int)),_ui->_dview->getScene(),SLOT(changeFrame(int)));
-    connect(_ui->dial,SIGNAL(valueChanged(int)),_ui->_dview->getScene(),SLOT(setMaxIntensity(int)));
-
-    // Pass interaction mode to Detector Scene
+    connect(_ui->frame,SIGNAL(valueChanged(int)),_ui->_dview->getScene(),SLOT(changeFrame(int)));
+    connect(_ui->intensity,SIGNAL(valueChanged(int)),_ui->_dview->getScene(),SLOT(setMaxIntensity(int)));
     connect(_ui->selectionMode,SIGNAL(currentIndexChanged(int)),_ui->_dview->getScene(),SLOT(changeInteractionMode(int)));
-
-    _ui->plotterDockWidget_2->hide();
-
-    connect(_ui->_dview->getScene(),SIGNAL(plotPeak(SX::Crystal::Peak3D*)),this,SLOT(plotPeak(SX::Crystal::Peak3D*)));
-
+//    connect(_ui->_dview->getScene(),SIGNAL(plotPeak(SX::Crystal::Peak3D*)),this,SLOT(plotPeak(SX::Crystal::Peak3D*)));
+    connect(_ui->_dview->getScene(),SIGNAL(updatePlot(PlottableGraphicsItem*)),this,SLOT(updatePlot(PlottableGraphicsItem*)));
     connect(_ui->action_open,SIGNAL(triggered()),_ui->experimentTree,SLOT(createNewExperiment()));
+
+    _ui->plotterDockWidget->hide();
 
 }
 
@@ -103,18 +107,18 @@ void MainWindow::changeData(IData* data)
 
     int frameMax = data->getNFrames()-1;
 
-    int frame = _ui->horizontalScrollBar->value();
+    int frame = _ui->frame->value();
 
     if (frame > frameMax)
         frame = frameMax;
 
-    _ui->horizontalScrollBar->setValue(frame);
+    _ui->frame->setValue(frame);
 
-    _ui->horizontalScrollBar->setMaximum(frameMax);
+    _ui->frame->setMaximum(frameMax);
 
     _ui->spinBox_Frame->setMaximum(frameMax);
 
-    _ui->dial->setRange(1,3000);
+    _ui->intensity->setRange(1,3000);
 
 }
 
@@ -282,20 +286,26 @@ void MainWindow::on_actionLogger_triggered()
 
 void MainWindow::on_action1D_Peak_Ploter_triggered()
 {
-    if (_ui->plotterDockWidget_2->isHidden())
-        _ui->plotterDockWidget_2->show();
+    if (_ui->plotterDockWidget->isHidden())
+        _ui->plotterDockWidget->show();
     else
-        _ui->plotterDockWidget_2->hide();
+        _ui->plotterDockWidget->hide();
 }
 
-void MainWindow::plotPeak(SX::Crystal::Peak3D* peak)
+void MainWindow::updatePlot(PlottableGraphicsItem* item)
 {
-//    emit ExperimentTree::plotData(peak);
-//    _ui->_dview->getScene()->setData(peak->getData());
-//    changeData(peak->getData());
-//    int frame = peak->getPeak()->getCenter()[2];
-//    _ui->_dview->getScene()->changeFrame(frame);
-//    _ui->horizontalScrollBar->setValue(frame);
+    if (!item)
+        return;
 
-    _ui->plot1D->setPeak(peak);
+    QSizePolicy oldSizePolicy = _ui->plot1D->sizePolicy();
+    _ui->horizontalLayout_4->removeWidget(_ui->plot1D);
+    delete _ui->plot1D;
+
+    _ui->plot1D = item->createPlot(_ui->dockWidgetContents_4);
+    _ui->plot1D->setObjectName(QStringLiteral("plot1D"));
+    _ui->plot1D->setSizePolicy(oldSizePolicy);
+    _ui->plot1D->setFocusPolicy(Qt::StrongFocus);
+    _ui->plot1D->setStyleSheet(QStringLiteral(""));
+    _ui->horizontalLayout_4->addWidget(_ui->plot1D);
+    _ui->plot1D->update(item);
 }

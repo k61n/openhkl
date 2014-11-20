@@ -6,20 +6,36 @@
 
 namespace SX
 {
-    namespace Data
-    {
-        class IData;
-    }
+namespace Data
+{
+class IData;
+}
 }
 
+class QGraphicsSceneWheelEvent;
+class QWidget;
+class SXCustomPlot;
 
 class LineCutGraphicsItem : public CutterGraphicsItem
 {
 public:
+
     explicit LineCutGraphicsItem(SX::Data::IData*);
+
+    ~LineCutGraphicsItem();
+
+    SXCustomPlot* createPlot(QWidget* parent=0);
+
+    void wheelEvent(QGraphicsSceneWheelEvent* event);
+
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+
+    int getNPoints() const;
+
+    void setNPoints(int nPoints);
+
 private:
-    SX::Data::IData* _data;
+    int _nPoints;
 
 };
 

@@ -17,6 +17,7 @@
 #include "Logger.h"
 
 class QListWidgetItem;
+class CutterGraphicsItem;
 
 namespace Ui
 {
@@ -63,6 +64,8 @@ private slots:
     void on_actionLogger_triggered();
 
     void on_action1D_Peak_Ploter_triggered();
+
+    void plotDataCut(CutterGraphicsItem* cutter);
 
 public slots:
     void changeData(SX::Data::IData*);

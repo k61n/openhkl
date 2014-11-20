@@ -38,8 +38,12 @@ SOURCES += src/Main.cpp \
     src/DetectorScene.cpp \
     src/PeakGraphicsItem.cpp \
     src/SliceGraphicsItem.cpp \
+    src/SliceCutterCustomPlot.cpp \
+    src/CutterCustomPlot.cpp \
+    src/LineCutterCustomPlot.cpp \
     src/PeakCustomPlot.cpp \
     src/SXCustomPlot.cpp \
+    src/PlottableGraphicsItem.cpp \
     src/LineCutGraphicsItem.cpp \
     src/CutterGraphicsItem.cpp
 
@@ -68,8 +72,12 @@ HEADERS  += include/MainWindow.h \
     include/DetectorScene.h \
     include/PeakGraphicsItem.h \
     include/SliceGraphicsItem.h \
+    include/SliceCutterCustomPlot.h \
+    include/CutterCustomPlot.h \
+    include/LineCutterCustomPlot.h \
     include/PeakCustomPlot.h \
     include/SXCustomPlot.h \
+    include/PlottableGraphicsItem.h \
     include/LineCutGraphicsItem.h \
     include/CutterGraphicsItem.h
 
