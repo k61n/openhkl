@@ -28,3 +28,29 @@ void SXCustomPlot::keyPressEvent(QKeyEvent* event)
         copyViewToClipboard();
     }
 }
+
+void SXCustomPlot::mousePress(QMouseEvent *event)
+{
+    Q_UNUSED(event);
+    if (xAxis->selectedParts().testFlag(QCPAxis::spAxis))
+        axisRect()->setRangeDrag(xAxis->orientation());
+    else if (yAxis->selectedParts().testFlag(QCPAxis::spAxis))
+        axisRect()->setRangeDrag(yAxis->orientation());
+    else
+        axisRect()->setRangeDrag(Qt::Horizontal|Qt::Vertical);
+}
+
+void SXCustomPlot::mouseWheel(QWheelEvent* event)
+{
+    Q_UNUSED(event);
+    if (xAxis->selectedParts().testFlag(QCPAxis::spAxis))
+        axisRect()->setRangeZoom(xAxis->orientation());
+    else if (yAxis->selectedParts().testFlag(QCPAxis::spAxis))
+        axisRect()->setRangeZoom(yAxis->orientation());
+    else
+        axisRect()->setRangeZoom(Qt::Horizontal|Qt::Vertical);
+}
+
+SXCustomPlot::~SXCustomPlot()
+{
+}

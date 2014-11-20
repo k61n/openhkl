@@ -6,17 +6,28 @@
 #include <QDrag>
 #include <QGraphicsSceneMouseEvent>
 #include <QMimeData>
+#include <QWidget>
+#include <QGraphicsSceneWheelEvent>
 
-SliceGraphicsItem::SliceGraphicsItem(SX::Data::IData* ptrData, bool horizontal):CutterGraphicsItem(nullptr)
+#include "SliceCutterCustomPlot.h"
+#include "SXCustomPlot.h"
+
+SliceGraphicsItem::SliceGraphicsItem(SX::Data::IData* data, bool horizontal) : CutterGraphicsItem(data), _horizontal(horizontal)
 {
-    _data=ptrData;
-    _horizontal=horizontal;
-    setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
-    // Make sure it's on top
-    setZValue(1);
-    // Cosmetic, i.e. width is one in sceen coordinates
-    _pen.setWidth(1);
+}
 
+SliceGraphicsItem::~SliceGraphicsItem()
+{
+}
+
+SXCustomPlot* SliceGraphicsItem::createPlot(QWidget *parent)
+{
+    return new SliceCutterCustomPlot(parent);
+}
+
+bool SliceGraphicsItem::isHorizontal() const
+{
+    return _horizontal;
 }
 
 void SliceGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,QWidget *widget)
@@ -37,8 +48,8 @@ void SliceGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem 
 
    painter->setRenderHint(QPainter::HighQualityAntialiasing);
    painter->setPen(_pen);
-   int w=_x1-_x0;
-   int h=_y1-_y0;
+   qreal w=_to.x()-_from.x();
+   qreal h=_to.y()-_from.y();
    painter->drawRect(-w/2.0,-h/2.0,w,h);
 
    if (_horizontal)
@@ -57,6 +68,33 @@ void SliceGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem 
    }
 }
 
+void SliceGraphicsItem::wheelEvent(QGraphicsSceneWheelEvent *event)
+{
+
+    if (!isVisible())
+        return;
+
+    if (!isSelected())
+        return;
+
+    int step=event->delta()/120;
+
+    QPointF from=pos()+boundingRect().bottomLeft();
+    QPointF to=pos()+boundingRect().topRight();
+
+    if (_horizontal)
+    {
+        from += QPointF(0,-step);
+        to += QPointF(0,step);
+    }
+    else
+    {
+        from += QPointF(-step,0);
+        to += QPointF(step,0);
+    }
+    setFrom(from);
+    setTo(to);
+}
 
 
 
