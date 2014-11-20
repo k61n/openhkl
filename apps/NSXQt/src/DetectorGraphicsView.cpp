@@ -18,6 +18,7 @@ DetectorGraphicsView::DetectorGraphicsView(QWidget* parent) : QGraphicsView(pare
     connect(_scene,&DetectorScene::dataChanged,this,[&](){fitInView(_scene->sceneRect());});
     setMouseTracking(true);
     viewport()->setMouseTracking(true);
+    setInteractive(true);
 }
 
 void DetectorGraphicsView::resizeEvent(QResizeEvent *event)
