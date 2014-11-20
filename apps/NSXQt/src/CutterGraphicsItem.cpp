@@ -1,59 +1,72 @@
-#include "CutterGraphicsItem.h"
-#include <QCursor>
+#include <QGraphicsSceneMouseEvent>
+#include <QGraphicsSceneHoverEvent>
 #include <QtDebug>
-#include <QGraphicsSceneMoveEvent>
 
-CutterGraphicsItem::CutterGraphicsItem(QGraphicsItem *parent)
-:QGraphicsItem(parent),
-_x0(0),_y0(0),_x1(0),_y1(0)
+#include "CutterGraphicsItem.h"
+
+CutterGraphicsItem::CutterGraphicsItem(SX::Data::IData* data) : PlottableGraphicsItem(nullptr), _data(data), _from(0,0), _to(0,0)
 {
-    _pen.setWidth(1);
+    setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
+
+    setZValue(1);
+
+    _pen.setWidth(2);
     _pen.setCosmetic(true);
     _pen.setStyle(Qt::SolidLine);
 
-     setAcceptHoverEvents(true);
+}
+
+CutterGraphicsItem::~CutterGraphicsItem()
+{
+}
+
+void CutterGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+
+    qDebug()<<"I ENTER IN CUTTER MOVE EVENT";
+
+    if (event->buttons())
+    {
+        if (Qt::LeftButton)
+        {
+            qDebug()<<"I ENTER IN CUTTER MOVE EVENT WITH LEFT BUTTON CLICKED";
+            if (!isInScene(event->lastScenePos()))
+                return;
+            setTo(event->lastScenePos());
+        }
+    }
+    else
+    {
+        PlottableGraphicsItem::mouseMoveEvent(event);
+    }
 
 }
 
+
+SX::Data::IData* CutterGraphicsItem::getData()
+{
+    return _data;
+}
 
 QRectF CutterGraphicsItem::boundingRect() const
 {
     qreal pw=_pen.width();
-    qreal w=_x1-_x0;
-    qreal h=_y1-_y0;
+    qreal w=_to.x()-_from.x();
+    qreal h=_to.y()-_from.y();
     return QRectF(-w/2-pw/2.0,-h/2-pw/2,w+pw/2.0,h+pw/2.0);
 }
 
-void CutterGraphicsItem::from(qreal x, qreal y)
+void CutterGraphicsItem::setFrom(const QPointF& pos)
 {
-    _x0=x;
-    _y0=y;
-    _x1=x;
-    _y1=y;
-    setPos(_x0,_y0);
+    _from=pos;
+    _to=pos;
+    setPos(_from);
     update();
-
 }
 
-void CutterGraphicsItem::to(qreal x, qreal y)
+void CutterGraphicsItem::setTo(const QPointF& pos)
 {
-    _x1=x;
-    _y1=y;
-    setPos(0.5*(_x0+_x1),0.5*(_y0+_y1));
+    _to=pos;
+    setPos(0.5*(_from+_to));
     update();
-
 }
-
-void CutterGraphicsItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
-{
-    Q_UNUSED(event);
-    setCursor(QCursor(Qt::PointingHandCursor));
-}
-
-void CutterGraphicsItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
-{
-    Q_UNUSED(event);
-    setCursor(QCursor(Qt::CrossCursor));
-}
-
-
