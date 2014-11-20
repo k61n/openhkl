@@ -1,7 +1,6 @@
 #ifndef SLICEGRAPHICSITEM_H
 #define SLICEGRAPHICSITEM_H
 
-#include <QPen>
 #include <CutterGraphicsItem.h>
 
 namespace SX
@@ -12,15 +11,26 @@ namespace SX
     }
 }
 
+class QGraphicsSceneWheelEvent;
+class QWidget;
+class SXCustomPlot;
+
 class SliceGraphicsItem : public CutterGraphicsItem
 {
 public:
-    explicit SliceGraphicsItem(SX::Data::IData*, bool horizontal=true);
+    SliceGraphicsItem(SX::Data::IData*, bool horizontal=true);
+
+    ~SliceGraphicsItem();
+
+    SXCustomPlot* createPlot(QWidget* parent=0);
+
     //! Paint the slice
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-               QWidget *widget);
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,QWidget *widget);
+    void wheelEvent(QGraphicsSceneWheelEvent* event);
+
+    bool isHorizontal() const;
+
 private:
-    SX::Data::IData* _data;
     //! Horizontal or vertical integration
     bool _horizontal;
 };
