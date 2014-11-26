@@ -17,7 +17,7 @@
 #include "Logger.h"
 
 class QListWidgetItem;
-class CutterGraphicsItem;
+class PlottableGraphicsItem;
 
 namespace Ui
 {
@@ -65,11 +65,10 @@ private slots:
 
     void on_action1D_Peak_Ploter_triggered();
 
-    void plotDataCut(CutterGraphicsItem* cutter);
+    void updatePlot(PlottableGraphicsItem* cutter);
 
 public slots:
     void changeData(SX::Data::IData*);
-    void plotPeak(SX::Crystal::Peak3D*);
     void showPeakList(std::vector<SX::Data::IData*>);
 
 private:

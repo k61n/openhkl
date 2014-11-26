@@ -1,23 +1,27 @@
-#ifndef CUTTERCUSTOMPLOT_H
-#define CUTTERCUSTOMPLOT_H
+//#ifndef CUTTERCUSTOMPLOT_H
+//#define CUTTERCUSTOMPLOT_H
 
-#include "SXCustomPlot.h"
-#include "CutterGraphicsItem.h"
+//#include <string>
 
-class PlottableGraphicsItem;
-class DetectorScene;
+//#include "SXCustomPlot.h"
+//#include "CutterGraphicsItem.h"
 
-class CutterCustomPlot : public SXCustomPlot
-{
-    Q_OBJECT
-public:
-    explicit CutterCustomPlot(QWidget *parent = 0);
-    virtual CutterCustomPlot* create(QWidget *parent=0)=0;
-    virtual ~CutterCustomPlot()=0;
+//class PlottableGraphicsItem;
+//class DetectorScene;
 
-public slots:
-    virtual void update(PlottableGraphicsItem* cutter)=0;
+//class CutterCustomPlot : public SXCustomPlot
+//{
+//    Q_OBJECT
+//public:
+//    explicit CutterCustomPlot(QWidget *parent = 0);
+//    virtual CutterCustomPlot* create(QWidget *parent=0)=0;
+//    virtual ~CutterCustomPlot()=0;
 
-};
+//    std::string getType() const=0;
 
-#endif // CUTTERCUSTOMPLOT_H
+//public slots:
+//    virtual void update(PlottableGraphicsItem* cutter)=0;
+
+//};
+
+//#endif // CUTTERCUSTOMPLOT_H

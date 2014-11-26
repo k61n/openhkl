@@ -27,5 +27,6 @@
         <file>resources/detectorIcon.png</file>
         <file>resources/dataIcon.png</file>
         <file>resources/addExperimentIcon.png</file>
+        <file>resources/selectionIcon.png</file>
     </qresource>
 </RCC>

@@ -31,7 +31,7 @@ class DetectorScene : public QGraphicsScene
 {
     Q_OBJECT
 public:
-    enum MODE {ZOOM=0, LINE=1, HORIZONTALSLICE=2, VERTICALSLICE=3};
+    enum MODE {ZOOM=0, LINE=1, HORIZONTALSLICE=2, VERTICALSLICE=3, SELECTION=4};
     //! Which mode is the cursor diplaying
     enum CURSORMODE {THETA=0, GAMMA=1, DSPACING=2, PIXEL=3, HKL=4};
     explicit DetectorScene(QObject *parent = 0);
@@ -42,8 +42,6 @@ signals:
      //! Signal emitted for all changes of the image
     void dataChanged();
     void updatePlot(PlottableGraphicsItem* cutter);
-    //!
-    void plotPeak(SX::Crystal::Peak3D*);
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
@@ -64,6 +62,7 @@ public slots:
     void changeCursorMode(int);
 private:
 
+    void unselectItems();
     //! Load image from current Data and frame
     void loadCurrentImage();
     //! Create the text of the tooltip depending on Scene Mode.

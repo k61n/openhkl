@@ -21,10 +21,10 @@ LineCutGraphicsItem::~LineCutGraphicsItem()
 {
 }
 
-SXCustomPlot* LineCutGraphicsItem::createPlot(QWidget *parent)
-{
-    return new LineCutterCustomPlot(parent);
-}
+//SXCustomPlot* LineCutGraphicsItem::createPlot(QWidget *parent)
+//{
+//    return new LineCutterCustomPlot(parent);
+//}
 
 void LineCutGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,QWidget *widget)
 {
@@ -66,3 +66,9 @@ void LineCutGraphicsItem::wheelEvent(QGraphicsSceneWheelEvent *event)
     if (_nPoints <= 0)
         _nPoints = 1;
 }
+
+std::string LineCutGraphicsItem::getPlotType() const
+{
+    return "simple";
+}
+

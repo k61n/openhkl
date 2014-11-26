@@ -29,6 +29,8 @@ PeakGraphicsItem::PeakGraphicsItem(SX::Crystal::Peak3D* p) : PlottableGraphicsIt
     _label->setParentItem(this);
     setBoundingRegionGranularity(0.0);
 
+    setZValue(2);
+
     setMovable(false);
 }
 
@@ -36,10 +38,10 @@ PeakGraphicsItem::~PeakGraphicsItem()
 {
 }
 
-SXCustomPlot* PeakGraphicsItem::createPlot(QWidget *parent)
-{
-    return new PeakCustomPlot(parent);
-}
+//SXCustomPlot* PeakGraphicsItem::createPlot(QWidget *parent)
+//{
+//    return new PeakCustomPlot(parent);
+//}
 
 QRectF PeakGraphicsItem::boundingRect() const
 {
@@ -64,9 +66,9 @@ void PeakGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 
     painter->setRenderHint(QPainter::Antialiasing);
 
-    if (_hover)
+    if (_hoverable)
         painter->setBrush(QBrush(QColor(255,255,0,120)));
-    _label->setVisible(_hover);
+    _label->setVisible(_hoverable);
 
     if (_peak->isSelected())
         _pen.setColor("green");
@@ -102,6 +104,11 @@ void PeakGraphicsItem::setFrame(int frame)
     }
 }
 
+std::string PeakGraphicsItem::getPlotType() const
+{
+    return "peak";
+}
+
 SX::Crystal::Peak3D* PeakGraphicsItem::getPeak()
 {
     return _peak;
@@ -110,7 +117,7 @@ SX::Crystal::Peak3D* PeakGraphicsItem::getPeak()
 void PeakGraphicsItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event);
-    _hover=true;
+    _hoverable=true;
     setCursor(QCursor(Qt::PointingHandCursor));
     update();
 
@@ -119,7 +126,7 @@ void PeakGraphicsItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 void PeakGraphicsItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event);
-    _hover=false;
+    _hoverable=false;
     setCursor(QCursor(Qt::CrossCursor));
     update();
 }

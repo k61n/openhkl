@@ -1,24 +1,24 @@
-#ifndef LINECUTTERCUSTOMPLOT_H
-#define LINECUTTERCUSTOMPLOT_H
+//#ifndef LINECUTTERCUSTOMPLOT_H
+//#define LINECUTTERCUSTOMPLOT_H
 
-#include "CutterCustomPlot.h"
+//#include "CutterCustomPlot.h"
 
-class PlottableGraphicsItem;
+//class PlottableGraphicsItem;
 
-class LineCutterCustomPlot : public CutterCustomPlot
-{
-    Q_OBJECT
+//class LineCutterCustomPlot : public CutterCustomPlot
+//{
+//    Q_OBJECT
 
-public:
-    explicit LineCutterCustomPlot(QWidget *parent=0);
-    virtual CutterCustomPlot* create(QWidget *parent=0);
+//public:
+//    explicit LineCutterCustomPlot(QWidget *parent=0);
+//    virtual CutterCustomPlot* create(QWidget *parent=0);
 
-public slots:
-    void update(PlottableGraphicsItem* cutter);
+//public slots:
+//    void update(PlottableGraphicsItem* cutter);
 
-private:
-    int _nPoints;
+//private:
+//    int _nPoints;
 
-};
+//};
 
-#endif // LINECUTTERCUSTOMPLOT_H
+//#endif // LINECUTTERCUSTOMPLOT_H

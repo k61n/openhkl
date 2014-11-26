@@ -8,6 +8,15 @@ SXCustomPlot::SXCustomPlot(QWidget *parent) :
 {
 }
 
+void SXCustomPlot::update(PlottableGraphicsItem *item)
+{
+}
+
+std::string SXCustomPlot::getType() const
+{
+    return "";
+}
+
 void SXCustomPlot::copyViewToClipboard()
 {
     // Create the image with the exact size of the shrunk scene

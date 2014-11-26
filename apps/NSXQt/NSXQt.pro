@@ -45,7 +45,10 @@ SOURCES += src/Main.cpp \
     src/SXCustomPlot.cpp \
     src/PlottableGraphicsItem.cpp \
     src/LineCutGraphicsItem.cpp \
-    src/CutterGraphicsItem.cpp
+    src/CutterGraphicsItem.cpp \
+    src/PlotFactory.cpp \
+    src/SimplePlot.cpp \
+    src/PeakPlot.cpp
 
 HEADERS  += include/MainWindow.h \
     include/DialogPeakFind.h \
@@ -79,8 +82,10 @@ HEADERS  += include/MainWindow.h \
     include/SXCustomPlot.h \
     include/PlottableGraphicsItem.h \
     include/LineCutGraphicsItem.h \
-    include/CutterGraphicsItem.h
-
+    include/CutterGraphicsItem.h \
+    include/PlotFactory.h \
+    include/SimplePlot.h \
+    include/PeakPlot.h
 
 FORMS    += ui/mainwindow.ui \
     ui/dialog_PeakFind.ui \

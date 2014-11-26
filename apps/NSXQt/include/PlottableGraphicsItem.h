@@ -8,6 +8,8 @@
 class QGraphicsSceneHoverEvent;
 class QGraphicsSceneMouseEvent;
 class QGraphicsTextItem;
+class QGraphicsSceneWheelEvent;
+class QKeyEvent;
 class QWidget;
 class SXCustomPlot;
 
@@ -20,7 +22,8 @@ public:
 
     virtual QRectF boundingRect() const=0;
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)=0;
-    virtual SXCustomPlot* createPlot(QWidget* parent=0)=0;
+    virtual void plot(SXCustomPlot* plot){};
+//    virtual SXCustomPlot* createPlot(QWidget* parent=0)=0;
 
     // Events
 
@@ -28,9 +31,12 @@ public:
     virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent* event);
     virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
     virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
+    virtual void wheelEvent(QGraphicsSceneWheelEvent *event);
 
     // Getters and setters
 
+    //! Returns the type of plot related to the item
+    virtual std::string getPlotType() const=0;
     //! Set whether or not the item is deletable
     void setDeletable(bool deletable);
     //! Set whether or not the item is movable
@@ -38,6 +44,7 @@ public:
 
     // Other methods
 
+    bool isPlottable(SXCustomPlot* plot) const;
     //! Returns whether or not the item is deletable
     bool isDeletable() const;
     //! Return whether or not the item at the given position is fully inside the scene
@@ -49,7 +56,7 @@ public:
 
 protected:
     bool _deletable;
-    bool _hover;
+    bool _hoverable;
     bool _movable;
     QPen _pen;
 

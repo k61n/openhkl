@@ -47,8 +47,8 @@ public:
 
     // Other methods
 
-    //! Return an instance of the plot related to the item [pure virtual]
-    virtual SXCustomPlot* createPlot(QWidget* parent=0)=0;
+//    //! Return an instance of the plot related to the item [pure virtual]
+//    virtual SXCustomPlot* createPlot(QWidget* parent=0)=0;
     //! Paint the contents of the item [pure virtual]
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)=0;
 

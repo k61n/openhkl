@@ -51,6 +51,7 @@
 #include "SliceCutterCustomPlot.h"
 #include "CutterCustomPlot.h"
 #include "PlottableGraphicsItem.h"
+#include "PlotFactory.h"
 
 using namespace SX::Units;
 using namespace SX::Instrument;
@@ -76,6 +77,7 @@ MainWindow::MainWindow(QWidget *parent)
     _ui->selectionMode->addItem(QIcon(":/resources/cutlineIcon.png"),"");
     _ui->selectionMode->addItem(QIcon(":/resources/horizontalSliceIcon.png"),"");
     _ui->selectionMode->addItem(QIcon(":/resources/verticalSliceIcon.png"),"");
+    _ui->selectionMode->addItem(QIcon(":/resources/selectionIcon.png"),"");
 
     _ui->splitter->setStretchFactor(0,10);
     _ui->splitter->setStretchFactor(1,90);
@@ -297,15 +299,33 @@ void MainWindow::updatePlot(PlottableGraphicsItem* item)
     if (!item)
         return;
 
-    QSizePolicy oldSizePolicy = _ui->plot1D->sizePolicy();
-    _ui->horizontalLayout_4->removeWidget(_ui->plot1D);
-    delete _ui->plot1D;
+    if (!item->isPlottable(_ui->plot1D))
+    {
+        // Store the old size policy
+        QSizePolicy oldSizePolicy = _ui->plot1D->sizePolicy();
+        // Remove the current plotter from the ui
+        _ui->horizontalLayout_4->removeWidget(_ui->plot1D);
+        // Delete the plotter instance
+        delete _ui->plot1D;
 
-    _ui->plot1D = item->createPlot(_ui->dockWidgetContents_4);
-    _ui->plot1D->setObjectName(QStringLiteral("plot1D"));
-    _ui->plot1D->setSizePolicy(oldSizePolicy);
-    _ui->plot1D->setFocusPolicy(Qt::StrongFocus);
-    _ui->plot1D->setStyleSheet(QStringLiteral(""));
-    _ui->horizontalLayout_4->addWidget(_ui->plot1D);
-    _ui->plot1D->update(item);
+        PlotFactory* pFactory=PlotFactory::Instance();
+
+        _ui->plot1D = pFactory->create(item->getPlotType(),_ui->dockWidgetContents_4);
+
+        // Restore the size policy
+        _ui->plot1D->setSizePolicy(oldSizePolicy);
+
+        // Sets some properties of the plotter
+        _ui->plot1D->setObjectName(QStringLiteral("1D plotter"));
+        _ui->plot1D->setFocusPolicy(Qt::StrongFocus);
+        _ui->plot1D->setStyleSheet(QStringLiteral(""));
+
+        // Add the plot to the ui
+        _ui->horizontalLayout_4->addWidget(_ui->plot1D);
+
+    }
+
+    // Plot the data
+    item->plot(_ui->plot1D);
+
 }

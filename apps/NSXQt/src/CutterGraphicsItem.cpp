@@ -1,3 +1,6 @@
+#include <iostream>
+
+#include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneHoverEvent>
 #include <QtDebug>
@@ -6,8 +9,6 @@
 
 CutterGraphicsItem::CutterGraphicsItem(SX::Data::IData* data) : PlottableGraphicsItem(nullptr), _data(data), _from(0,0), _to(0,0)
 {
-    setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
-
     setZValue(1);
 
     _pen.setWidth(2);
@@ -18,30 +19,24 @@ CutterGraphicsItem::CutterGraphicsItem(SX::Data::IData* data) : PlottableGraphic
 
 CutterGraphicsItem::~CutterGraphicsItem()
 {
+    scene()->removeItem(this);
 }
 
 void CutterGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
 
-    qDebug()<<"I ENTER IN CUTTER MOVE EVENT";
-
-    if (event->buttons())
+    if (event->buttons() & Qt::LeftButton)
     {
-        if (Qt::LeftButton)
+        if (!isSelected())
         {
-            qDebug()<<"I ENTER IN CUTTER MOVE EVENT WITH LEFT BUTTON CLICKED";
-            if (!isInScene(event->lastScenePos()))
-                return;
-            setTo(event->lastScenePos());
+            if (isInScene(event->lastScenePos()))
+                setTo(event->lastScenePos());
         }
-    }
-    else
-    {
-        PlottableGraphicsItem::mouseMoveEvent(event);
+        else
+            PlottableGraphicsItem::mouseMoveEvent(event);
     }
 
 }
-
 
 SX::Data::IData* CutterGraphicsItem::getData()
 {
@@ -51,9 +46,9 @@ SX::Data::IData* CutterGraphicsItem::getData()
 QRectF CutterGraphicsItem::boundingRect() const
 {
     qreal pw=_pen.width();
-    qreal w=_to.x()-_from.x();
-    qreal h=_to.y()-_from.y();
-    return QRectF(-w/2-pw/2.0,-h/2-pw/2,w+pw/2.0,h+pw/2.0);
+    qreal w=std::abs(_to.x()-_from.x());
+    qreal h=std::abs(_to.y()-_from.y());
+    return QRectF(-w/2,-h/2,w,h);
 }
 
 void CutterGraphicsItem::setFrom(const QPointF& pos)

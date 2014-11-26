@@ -76,11 +76,9 @@ void DetectorScene::setData(SX::Data::IData* data)
         _currentData->map();
 
     SX::Instrument::Detector* det=_currentData->getDiffractometer()->getDetector();
-    std::size_t nrows=det->getNRows();
-    std::size_t ncols=det->getNCols();
 
      _zoomStack.clear();
-     _zoomStack.push_back(QRect(0,0,ncols,nrows));
+     _zoomStack.push_back(QRect(0,0,det->getNCols(),det->getNRows()));
 
 
     if (_currentItem)
@@ -104,73 +102,62 @@ void DetectorScene::setData(SX::Data::IData* data, int frame)
 void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
 
+    // If no data is loaded, do nothing
     if (!_currentData)
         return;
 
     createToolTipText(event);
-    QGraphicsScene::mouseMoveEvent(event);
 
+    // The left button was pressed
     if (event->buttons() & Qt::LeftButton)
     {
+        // Case of the Zoom mode, update the scene
         if (_mode==ZOOM)
         {
             QRectF zoom=_zoomrect->rect();
             zoom.setBottomRight(event->lastScenePos());
             _zoomrect->setRect(zoom);
         }
+        // Case of the cutting modes
         else
         {
-//            // Slice mode, ensure that point is in View
-//           auto& rect=_zoomStack.front();
-//           QPoint point = event->lastScenePos().toPoint();
-//           if (point.x()>rect.left() && point.x()<rect.right() && point.y() > rect.top() && point.y() <rect.bottom())
-//               _currentCut->setTo(event->lastScenePos());
+            if (!_currentItem)
+                return;
+            _currentItem->mouseMoveEvent(event);
+            emit updatePlot(_currentItem);
         }
     }
-    else
+    else if (!event->buttons())
     {
         QGraphicsScene::mouseMoveEvent(event);
 
         QGraphicsItem* gItem=itemAt(event->lastScenePos().toPoint(),QTransform());
-        if (auto item=dynamic_cast<PeakGraphicsItem*>(gItem))
-        {
-            if (!item)
-                   return;
-            if (!item->isVisible())
-                    return;
-            emit plotPeak(item->getPeak());
-        }
-        else if (auto item=dynamic_cast<CutterGraphicsItem*>(gItem))
-        {
-            if (!item)
-                   return;
-            if (!item->isVisible())
-                    return;
-//            emit plotDataCut(item);
-        }
+        auto p=dynamic_cast<PlottableGraphicsItem*>(gItem);
+        if (p)
+            emit updatePlot(p);
     }
+}
+
+void DetectorScene::unselectItems()
+{
+    QList<QGraphicsItem*> items=selectedItems();
+    for (auto item : items)
+        item->setSelected(false);
+    _itemSelected=false;
 }
 
 void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
 
+    // If no data is loaded, do nothing
     if (!_currentData)
         return;
 
-    // Zoom mode starts
+    // The left button was pressed
     if (event->buttons() & Qt::LeftButton)
     {
-        // Check whether the clicked point is inside an item other that the background pixmap
-        auto item=itemAt(event->lastScenePos(),QTransform());
-        if (!dynamic_cast<QGraphicsPixmapItem*>(item))
-        {
-            item->setSelected(!item->isSelected());
-            _itemSelected=true;
-             QGraphicsScene::mousePressEvent(event);
-            return;
-        }
-        _itemSelected=false;
 
+        // Case of the Zoom mode
         if (_mode==ZOOM)
         {
             _zoomstart=event->lastScenePos().toPoint();
@@ -182,40 +169,48 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             pen1.setCosmetic(true);
             _zoomrect->setPen(pen1);
             _zoomrect->setBrush(QBrush(QColor(255,0,0,30)));
-            return;
         }
+        else if (_mode==SELECTION)
+        {
+            // Case where the user clicked outside a graphics item, deselected the currently selected item
+            auto item=itemAt(event->lastScenePos(),QTransform());
+            if (!dynamic_cast<QGraphicsPixmapItem*>(item))
+                item->setSelected(!item->isSelected());
+            else
+                unselectItems();
+        }
+        // Case of Cuttings mode (horizontal/vertical slices, line cut)
         else
         {
+
+            // If there is already a cutter item on the scene, delete it
             if (_currentItem)
             {
-                if (_currentItem->scene()==this)
-                {
-                    removeItem(_currentItem);
-                    delete _currentItem;
-                    _currentItem=nullptr;
-                }
+                delete _currentItem;
+                _currentItem=nullptr;
             }
-
-            if (_mode== HORIZONTALSLICE)
+            // Create the cutter item corresponding to the seleced cutting mode
+            if (_mode==HORIZONTALSLICE)
                 _currentItem=new SliceGraphicsItem(_currentData,true);
             else if (_mode==VERTICALSLICE)
                 _currentItem=new SliceGraphicsItem(_currentData,false);
             else if (_mode==LINE)
                 _currentItem=new LineCutGraphicsItem(_currentData);
-
-            auto p = dynamic_cast<CutterGraphicsItem*>(_currentItem);
+            auto p=dynamic_cast<CutterGraphicsItem*>(_currentItem);
             p->setFrom(event->lastScenePos());
             addItem(_currentItem);
-            QGraphicsScene::mousePressEvent(event);
         }
 
-    }   // Move up in the zoom stack
+    }
+    // The right button was pressed
     else if (event->buttons() & Qt::RightButton)
     {
         if (_zoomStack.size()>1)
         {
-            _zoomStack.pop(); // Go the previous zoom mode
-            if (!_zoomStack.isEmpty()) // If not root, then assign
+            // Remove the last zoom area stored in the stack
+            _zoomStack.pop();
+            // If not root, then update the scene
+            if (!_zoomStack.isEmpty())
             {
                 setSceneRect(_zoomStack.top());
                 emit dataChanged();
@@ -227,18 +222,23 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
 
+    // If no data is loaded, do nothing
     if (!_currentData)
         return;
 
-    if (_itemSelected)
-    {
-        if (_mode!=ZOOM)
-//            emit plotDataCut(_currentCut);
-        _itemSelected=false;
+    // Case of Selection mode, do nothing
+    if (_mode==SELECTION)
         return;
-    }
 
-    if (event->button() == Qt::LeftButton)
+//    if (_itemSelected)
+//    {
+//        if (_mode!=ZOOM)
+//            emit updatePlot(_currentItem);
+//        _itemSelected=false;
+//        return;
+//    }
+
+    if (event->button() & Qt::LeftButton)
     {
         if(_mode==ZOOM)
         {
@@ -278,95 +278,48 @@ void DetectorScene::wheelEvent(QGraphicsSceneWheelEvent* event)
     if (!_currentData)
         return;
 
-    if (_itemSelected)
-        return;
-
     if (_mode==ZOOM)
         return;
 
-    switch(_mode)
-    {
-        case(HORIZONTALSLICE):
-        {
-//            auto p=dynamic_cast<SliceGraphicsItem*>(_currentCut);
-//            if (!p)
-//                return;
-//            int step=event->delta()/120;
+    if (_currentItem)
+        _currentItem->wheelEvent(event);
 
-//            QPointF from=p->pos()+p->boundingRect().bottomLeft();
-//            QPointF to=p->pos()+p->boundingRect().topRight();
-//            from += QPointF(0,-step);
-//            to += QPointF(0,step);
-//            p->setFrom(from);
-//            p->setTo(to);
-//            emit plotDataCut(p);
-            break;
-        }
-        case(VERTICALSLICE):
-        {
-//            auto p=dynamic_cast<SliceGraphicsItem*>(_currentCut);
-//            if (!p)
-//                return;
-//            int step=event->delta()/120;
-
-//            QPointF from=p->pos()+p->boundingRect().bottomLeft();
-//            QPointF to=p->pos()+p->boundingRect().topRight();
-//            from += QPointF(-step,0);
-//            to += QPointF(step,0);
-//            p->setFrom(from);
-//            p->setTo(to);
-//            emit plotDataCut(p);
-            break;
-        }
-        case(LINE):
-        {
-//            auto p=dynamic_cast<LineCutGraphicsItem*>(_currentCut);
-//            if (!p)
-//                return;
-//            int nPoints = p->getNPoints();
-//            nPoints += event->delta()>0 ? 1 : -1;
-//            if (nPoints <= 0)
-//                nPoints = 1;
-//            p->setNPoints(nPoints);
-//            emit plotDataCut(p);
-            break;
-        }
-    }
-
+    emit updatePlot(_currentItem);
 
 }
 
-void DetectorScene::keyPressEvent(QKeyEvent *event)
+void DetectorScene::keyPressEvent(QKeyEvent* event)
 {
 
     if (!_currentData)
         return;
 
-    switch (event->key())
-    {
-    case(Qt::Key_Delete):
-    {
-        QList<QGraphicsItem*> items=selectedItems();
-        int i=0;
-        for (auto item : items)
-        {
-            removeItem(item);
-            PeakGraphicsItem* peak=dynamic_cast<PeakGraphicsItem*>(item);
-            if (peak)
-            {
-                bool remove=_currentData->removePeak(peak->getPeak());
-                if (remove)
-                    i++;
-                qDebug() << "Removed "<< i << " peaks";
-                _peaks.erase(peak);
-            }
+//    switch (event->key())
+//    {
+//    case(Qt::Key_Delete):
+//    {
+//        QList<QGraphicsItem*> items=selectedItems();
+//        int i=0;
+//        for (auto item : items)
+//        {
+//            removeItem(item);
+//            PeakGraphicsItem* peak=dynamic_cast<PeakGraphicsItem*>(item);
+//            if (peak)
+//            {
+//                bool remove=_currentData->removePeak(peak->getPeak());
+//                if (remove)
+//                    i++;
+//                qDebug() << "Removed "<< i << " peaks";
+//                _peaks.erase(peak);
+//            }
 
-            delete item;
+//            delete item;
 
-        }
-        break;
-    }
-    }
+//        }
+//        break;
+//    }
+//    }
+
 }
 
 void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
@@ -427,7 +380,7 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
 
 void DetectorScene::changeInteractionMode(int mode)
 {
-    _mode=static_cast<MODE>(mode);_peaks.clear();
+    _mode=static_cast<MODE>(mode);
 }
 
 void DetectorScene::loadCurrentImage()
@@ -451,7 +404,7 @@ void DetectorScene::loadCurrentImage()
 
     setSceneRect(_zoomStack.back());
     emit dataChanged();
-//    emit plotDataCut(_currentCut);
+    emit updatePlot(_currentItem);
 
 }
 

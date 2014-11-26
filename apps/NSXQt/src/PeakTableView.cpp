@@ -11,6 +11,7 @@
 #include <QItemSelectionModel>
 #include <QMouseEvent>
 #include <QStandardItemModel>
+#include <QtDebug>
 
 #include "IData.h"
 #include "Peak3D.h"

@@ -1,6 +1,8 @@
 #ifndef LINECUTGRAPHICSITEM_H
 #define LINECUTGRAPHICSITEM_H
 
+#include <string>
+
 #include <QGraphicsItem>
 #include <CutterGraphicsItem.h>
 
@@ -24,7 +26,7 @@ public:
 
     ~LineCutGraphicsItem();
 
-    SXCustomPlot* createPlot(QWidget* parent=0);
+//    SXCustomPlot* createPlot(QWidget* parent=0);
 
     void wheelEvent(QGraphicsSceneWheelEvent* event);
 
@@ -33,6 +35,10 @@ public:
     int getNPoints() const;
 
     void setNPoints(int nPoints);
+
+    // Getters and setters
+    std::string getPlotType() const;
+
 
 private:
     int _nPoints;

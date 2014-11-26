@@ -4,20 +4,24 @@
 #include <QtDebug>
 #include <QGraphicsSceneHoverEvent>
 #include <QGraphicsSceneMouseEvent>
-
 #include "DetectorScene.h"
 #include "PlottableGraphicsItem.h"
+#include "SXCustomPlot.h"
 
 PlottableGraphicsItem::PlottableGraphicsItem(QGraphicsItem *parent)
 : QGraphicsItem(parent),
   _deletable(false),
-  _hover(true),
+  _hoverable(true),
   _movable(true),
   _label(nullptr)
 {
+
     _pen.setWidth(1);
     _pen.setCosmetic(true);
     _pen.setStyle(Qt::SolidLine);
+
+    // By default a plottable graphics can be selected and moved
+    setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
 
     // By default a plottable graphics accepts hove event.
     setAcceptHoverEvents(true);
@@ -31,6 +35,7 @@ void PlottableGraphicsItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event);
     setCursor(QCursor(Qt::PointingHandCursor));
+    update();
 }
 
 void PlottableGraphicsItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
@@ -41,10 +46,9 @@ void PlottableGraphicsItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 
 bool PlottableGraphicsItem::isInScene(const QPointF& pos) const
 {
-    QRectF sceneRect=scene()->sceneRect();
-    QRectF itemRect=boundingRect();
-    itemRect.moveCenter(pos);
-    return sceneRect.contains(itemRect);
+    QRectF rect=scene()->sceneRect();
+
+    return (pos.x()>rect.left() && pos.x()<rect.right() && pos.y() > rect.top() && pos.y() <rect.bottom());
 }
 
 void PlottableGraphicsItem::setDeletable(bool deletable)
@@ -74,7 +78,10 @@ void PlottableGraphicsItem::showLabel(bool show)
 
 void PlottableGraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
-    qDebug() << "Pressed event";
+}
+
+void PlottableGraphicsItem::wheelEvent(QGraphicsSceneWheelEvent *event)
+{
 }
 
 void PlottableGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
@@ -92,13 +99,23 @@ void PlottableGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     if (!isSelected())
         return;
 
-    // At target position the item must be fully inside the scene
-    if (!isInScene(event->lastScenePos()))
-        return;
-
-    // Update the position of the item
+    // The translation vector
     QPointF dr = event->lastScenePos() - pos();
-    moveBy(dr.x(),dr.y());
+
+    QRectF itemRect=sceneBoundingRect();
+    itemRect.translate(dr);
+
+    // At target position the item must be fully inside the scene
+    if (scene()->sceneRect().contains(itemRect.topLeft()) && scene()->sceneRect().contains(itemRect.bottomRight()))
+        moveBy(dr.x(),dr.y());
 
 }
 
+bool PlottableGraphicsItem::isPlottable(SXCustomPlot* plot) const
+{
+
+    if (!plot)
+        return false;
+    else
+        return (getPlotType().compare(plot->getType())==0);
+}

@@ -1,6 +1,8 @@
 #ifndef PEAKGRAPHICSITEM_H
 #define PEAKGRAPHICSITEM_H
 
+#include <string>
+
 #include "PlottableGraphicsItem.h"
 
 namespace SX
@@ -22,13 +24,16 @@ public:
 
     ~PeakGraphicsItem();
 
-    SXCustomPlot* createPlot(QWidget* parent=0);
+//    SXCustomPlot* createPlot(QWidget* parent=0);
 
     QRectF boundingRect() const;
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
     void setFrame(int);
+
+    //! Returns the type of plot related to the item
+    std::string getPlotType() const;
 
     //! Return the peak object
     SX::Crystal::Peak3D* getPeak();
