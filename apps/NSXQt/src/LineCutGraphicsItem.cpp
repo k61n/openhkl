@@ -1,3 +1,8 @@
+#include <algorithm>
+#include <numeric>
+
+#include <Eigen/Dense>
+
 #include <QGraphicsSceneWheelEvent>
 #include <QPen>
 #include <QStyleOptionGraphicsItem>
@@ -9,8 +14,12 @@
 #include <QtDebug>
 #include <QWidget>
 
+#include "Detector.h"
+#include "DetectorScene.h"
+#include "IData.h"
 #include "LineCutterCustomPlot.h"
 #include "LineCutGraphicsItem.h"
+#include "SimplePlot.h"
 #include "SXCustomPlot.h"
 
 LineCutGraphicsItem::LineCutGraphicsItem(SX::Data::IData* data) : CutterGraphicsItem(data), _nPoints(10)
@@ -21,10 +30,69 @@ LineCutGraphicsItem::~LineCutGraphicsItem()
 {
 }
 
-//SXCustomPlot* LineCutGraphicsItem::createPlot(QWidget *parent)
-//{
-//    return new LineCutterCustomPlot(parent);
-//}
+void LineCutGraphicsItem::plot(SXCustomPlot* plot)
+{
+
+    auto p=dynamic_cast<SimplePlot*>(plot);
+    if (!p)
+        return;
+
+    // Set the pointer to the detector scene to the scene that holds the cutter
+    auto detPtr=dynamic_cast<DetectorScene*>(scene());
+    if (!detPtr)
+        return;
+
+    QVector<double> x(_nPoints);
+    QVector<double> y(_nPoints);
+    QVector<double> e(_nPoints);
+
+    QLineF line;
+    line.setP1(sceneBoundingRect().bottomLeft());
+    line.setP2(sceneBoundingRect().topRight());
+
+    SX::Data::IData* dataPtr=detPtr->getData();
+
+    const Eigen::MatrixXi& currentFrame=detPtr->getCurrentFrame();
+
+    std::iota(x.begin(),x.end(),0);
+
+    for (int i=0; i<_nPoints; ++i)
+    {
+
+        QPointF point=line.pointAt(i/static_cast<double>(_nPoints));
+
+        int ipx=static_cast<int>(point.x());
+
+        int ipy=static_cast<int>(point.y());
+
+        QPoint lowestCorner=QPoint(ipx,ipy);
+
+        double sdist2 = 0.0;
+
+        for (int pi=0;pi<2;++pi)
+        {
+            for (int pj=0;pj<2;++pj)
+            {
+                QPoint currentCorner = lowestCorner + QPoint(pi,pj);
+                QPointF dp = point - currentCorner;
+                double dist2 = dp.x()*dp.x() + dp.y()*dp.y();
+                int count=currentFrame(currentCorner.x(),currentCorner.y());
+                y[i] += dist2*count;
+                sdist2 += dist2;
+            }
+        }
+        y[i] /= sdist2;
+    }
+
+    std::transform(y.begin(),y.end(),e.begin(),[](double p){ return sqrt(p);});
+
+    p->graph(0)->setDataValueError(x, y, e);
+
+    p->rescaleAxes();
+
+    p->replot();
+
+}
 
 void LineCutGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,QWidget *widget)
 {

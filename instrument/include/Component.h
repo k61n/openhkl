@@ -109,7 +109,6 @@ public:
 	ComponentState createState(const std::map<std::string,double>& values);
 	//! Return true if a geometric modifier is attached
 	bool hasGonio() const;
-
 protected:
 	//! Name of the component
 	std::string _name;

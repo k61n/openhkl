@@ -96,8 +96,9 @@ void DialogUnitCell::getUnitCell()
                         std::shared_ptr<UnitCell> pcell(new UnitCell(cell));
                         UBMinimizer minimizer;
                         minimizer.setSample(sample);
-                        minimizer.setDetector(detector);                    
-                        minimizer.setFixedParameters(13);
+                        minimizer.setDetector(detector);
+                        for (int i=9;i<=16;++i)
+                            minimizer.setFixedParameters(i);
                         int success=0;
                         for (SX::Crystal::Peak3D& peak : _peaks)
                         {
@@ -126,8 +127,9 @@ void DialogUnitCell::getUnitCell()
                                 cc=SX::Crystal::UnitCell::fromReciprocalVectors(solution._ub.row(0),solution._ub.row(1),solution._ub.row(2));
                                 cc.setReciprocalCovariance(solution._covub);
 
-                            }catch(...)
+                            }catch(std::exception& e)
                             {
+                                qDebug() << e.what();
                                 continue;
                             }
                             NiggliReduction niggli(cc.getMetricTensor(),1e-3);

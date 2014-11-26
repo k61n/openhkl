@@ -33,6 +33,8 @@
 #include <string>
 #include <set>
 
+#include <Eigen/Dense>
+
 #include "ComponentState.h"
 #include "MetaData.h"
 #include "Diffractometer.h"
@@ -51,8 +53,6 @@ namespace Data
 
 using namespace SX::Crystal;
 using namespace SX::Instrument;
-
-typedef std::vector<int> vint;
 
 class IData
 {
@@ -77,9 +77,9 @@ public:
     //! Gets the data basename
 	std::string getBasename() const;
 	//! Gets a pointer to the data
-	const std::vector<vint>& getData() const;
+	const std::vector<Eigen::MatrixXi>& getData() const;
 	//! Gets a pointer to the ith data
-	vint& getData(std::size_t idx);
+	Eigen::MatrixXi& getData(std::size_t idx);
     //! Gets the interpolated state between two consecutive detector states
     ComponentState getDetectorInterpolatedState(double frame);
 	//! Gets the the detector states.
@@ -114,9 +114,9 @@ public:
 	//! Return the intensity at point x,y,z.
 	virtual int dataAt(int x=0, int y=0, int z=0)=0;
     //! Read a given Frame of the data
-    virtual std::vector<int> getFrame(std::size_t i)=0;
+    virtual Eigen::MatrixXi getFrame(std::size_t i)=0;
     //! Read a single frame
-    virtual std::vector<int> readFrame(std::size_t idx) const=0;
+    virtual Eigen::MatrixXi readFrame(std::size_t idx) const=0;
     //! Load all the frames in memory
     virtual void loadAllFrames()=0;
     // Release the data from memory
@@ -126,7 +126,9 @@ public:
     virtual void unMap()=0;
     bool isMapped() const;
     //
-    std::size_t getFileSize() const;
+    std::size_t getFileSize() const;//
+    void saveHDF5(const std::string& filename);
+    void readHDF5(const std::string& filename);
 protected:
     bool _isMapped;
 	std::string _filename;
@@ -134,7 +136,7 @@ protected:
 	std::shared_ptr<Diffractometer> _diffractometer;
 	MetaData* _metadata;
 	bool _inMemory;
-	std::vector<vint> _data;
+	std::vector<Eigen::MatrixXi> _data;
 	std::vector<ComponentState> _detectorStates;
 	std::vector<ComponentState> _sampleStates;
     std::set<Peak3D*> _peaks;

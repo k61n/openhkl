@@ -19,6 +19,9 @@ DetectorGraphicsView::DetectorGraphicsView(QWidget* parent) : QGraphicsView(pare
     setMouseTracking(true);
     viewport()->setMouseTracking(true);
     setInteractive(true);
+    // Invert the y-axis so that (0,0) coordinate is at bottom left (and not top left)
+    // This match detector coordinates in NSXTool
+    scale(1,-1);
 }
 
 void DetectorGraphicsView::resizeEvent(QResizeEvent *event)
@@ -52,5 +55,10 @@ void DetectorGraphicsView::keyPressEvent(QKeyEvent* event)
         copyViewToClipboard();
     }
     QGraphicsView::keyPressEvent(event);
+}
+
+void DetectorGraphicsView::fitScene()
+{
+    fitInView(_scene->sceneRect());
 }
 

@@ -226,7 +226,7 @@ bool operator()(Matrix &m, Row& r, Col& c, Value v) const
 // into a Eigen rowMajor matrix. Templated on the mapper depending on how the order
 // of writing of the data. Return characters are skipped.
 template<typename It, typename mapper>
-struct EigenMatrixParser : qi::grammar<It, Eigen::Matrix<int,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor>(), qi::blank_type, qi::locals<size_t,size_t> >
+struct EigenMatrixParser : qi::grammar<It, Eigen::Matrix<int,Eigen::Dynamic,Eigen::Dynamic,Eigen::ColMajor>(), qi::blank_type, qi::locals<size_t,size_t> >
 {
     EigenMatrixParser() : EigenMatrixParser::base_type(matrix)
     {
@@ -237,7 +237,7 @@ struct EigenMatrixParser : qi::grammar<It, Eigen::Matrix<int,Eigen::Dynamic,Eige
         matrix = eps [_a=-1, _b=-1] >> (+(int_ [ _pass = matrix_insert(_val, _a, _b, _1) ])) % eol;
 
     }
-    qi::rule<It, Eigen::Matrix<int,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor>(), qi::blank_type, qi::locals<std::size_t,std::size_t> > matrix;
+    qi::rule<It, Eigen::Matrix<int,Eigen::Dynamic,Eigen::Dynamic,Eigen::ColMajor>(), qi::blank_type, qi::locals<std::size_t,std::size_t> > matrix;
 };
 
 } //end namespace Utils

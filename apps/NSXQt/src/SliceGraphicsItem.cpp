@@ -1,20 +1,21 @@
-#include "SliceGraphicsItem.h"
+#include <algorithm>
+#include <numeric>
+
+#include <Eigen/Dense>
+
+#include <QPainter>
+#include <QGraphicsSceneWheelEvent>
 #include <QPen>
 #include <QStyleOptionGraphicsItem>
-#include <QPainter>
-#include <iostream>
-#include <QDrag>
-#include <QGraphicsSceneMouseEvent>
-#include <QMimeData>
 #include <QWidget>
-#include <QGraphicsSceneWheelEvent>
 
 #include "Detector.h"
-#include "IData.h"
 #include "DetectorScene.h"
-#include "SliceCutterCustomPlot.h"
-#include "SXCustomPlot.h"
+#include "IData.h"
 #include "SimplePlot.h"
+#include "SliceCutterCustomPlot.h"
+#include "SliceGraphicsItem.h"
+#include "SXCustomPlot.h"
 
 SliceGraphicsItem::SliceGraphicsItem(SX::Data::IData* data, bool horizontal) : CutterGraphicsItem(data), _horizontal(horizontal)
 {
@@ -26,10 +27,17 @@ SliceGraphicsItem::~SliceGraphicsItem()
 
 void SliceGraphicsItem::plot(SXCustomPlot* plot)
 {
+
     auto p=dynamic_cast<SimplePlot*>(plot);
     if (!p)
         return;
 
+    p->setNotAntialiasedElements(QCP::aeAll);
+    QFont font;
+    font.setStyleStrategy(QFont::NoAntialias);
+    p->xAxis->setTickLabelFont(font);
+    p->yAxis->setTickLabelFont(font);
+    p->legend->setFont(font);
 
     // Set the pointer to the detector scene to the scene that holds the cutter
     auto detPtr=dynamic_cast<DetectorScene*>(scene());
@@ -38,32 +46,37 @@ void SliceGraphicsItem::plot(SXCustomPlot* plot)
 
     SX::Data::IData* dataPtr=detPtr->getData();
     SX::Instrument::Detector* det=dataPtr->getDiffractometer()->getDetector();
+    int nrows=det->getNRows();
+    int ncols=det->getNCols();
 
     // Define the position on the scene of the cutter
-    int xmin = pos().x()+boundingRect().left();
-    int xmax = pos().x()+boundingRect().right();
-    int ymin = pos().y()+boundingRect().top();
-    int ymax = pos().y()+boundingRect().bottom();
-    int nRows=det->getNRows();
-    int nCols=det->getNCols();
+    int xmin = sceneBoundingRect().left();
+    int xmax = sceneBoundingRect().right();
+    int ymin = sceneBoundingRect().top();
+    int ymax = sceneBoundingRect().bottom();
+
+
     xmin = std::max(xmin,0);
-    xmax = std::min(xmax,nCols);
+    xmax = std::min(xmax,ncols);
     ymin = std::max(ymin,0);
-    ymax = std::min(ymax,nRows);
+    ymax = std::min(ymax,nrows);
 
     int length;
     int start;
 
     bool horizontal=isHorizontal();
 
+    int dx=xmax-xmin;
+    int dy=ymax-ymin;
+
     if (horizontal)
     {
-        length=xmax-xmin;
+        length=dx;
         start=xmin;
     }
     else
     {
-        length=ymax-ymin;
+        length=dy;
         start=ymin;
     }
 
@@ -71,36 +84,33 @@ void SliceGraphicsItem::plot(SXCustomPlot* plot)
     QVector<double> y(length);
     QVector<double> e(length);
 
-    int z=0;
-    std::generate(x.begin(),x.end(),[&z](){return z++;});
-//    for (int i=0;i<length;++i)
-//        x[i]=start+i;
+    std::iota(x.begin(),x.end(),start);
 
-//    const std::vector<int>& currentFrame=detPtr->getCurrentFrame();
+    const Eigen::MatrixXi& currentFrame=detPtr->getCurrentFrame();
 
-//    for (int i=xmin;i<xmax;++i)
-//    {
-//        for (int j=ymin;j<ymax;++j)
-//        {
-//            int idx=horizontal?i:j;
-//            idx -=start;
-//            y[idx] += currentFrame[i*nRows+j];
-//        }
-//    }
-//    std::transform(y.begin(),y.end(),e.begin(),[](double p){ return sqrt(p);});
+    if (horizontal)
+    {
+        int comp=0;
+        for (int i=xmin;i<xmax;++i)
+            y[comp++] = currentFrame.col(i).segment(ymin,dy).sum();
 
-    p->graph(0)->setDataValueError(x, y, e);
+    }
+    else
+    {
+        int comp=0;
+        for (int i=ymin;i<ymax;++i)
+            y[comp++] = currentFrame.row(i).segment(xmin,dx).sum();
+    }
+
+    std::transform(y.begin(),y.end(),e.begin(),[](double p){ return sqrt(p);});
+
+    p->graph(0)->setDataValueError(x,y,e);
     p->rescaleAxes();
 
-    p->replot(QCustomPlot::rpImmediate);
+    p->replot(QCustomPlot::rpHint);
 
 }
 
-
-//SXCustomPlot* SliceGraphicsItem::createPlot(QWidget *parent)
-//{
-//    return new SliceCutterCustomPlot(parent);
-//}
 
 bool SliceGraphicsItem::isHorizontal() const
 {

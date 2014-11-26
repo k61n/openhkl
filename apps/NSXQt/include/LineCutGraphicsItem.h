@@ -26,7 +26,7 @@ public:
 
     ~LineCutGraphicsItem();
 
-//    SXCustomPlot* createPlot(QWidget* parent=0);
+    void plot(SXCustomPlot* plot);
 
     void wheelEvent(QGraphicsSceneWheelEvent* event);
 

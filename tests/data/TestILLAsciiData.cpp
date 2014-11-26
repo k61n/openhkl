@@ -19,7 +19,7 @@ using namespace SX::Data;
 using namespace SX::Instrument;
 using namespace SX::Units;
 
-const double tolerance=1e-6;
+const double tolerance=1e-2;
 
 BOOST_AUTO_TEST_CASE(Test_ILL_Data)
 {
@@ -36,13 +36,10 @@ BOOST_AUTO_TEST_CASE(Test_ILL_Data)
 
 	reader.map();
 
-	std::vector<int> v=reader.getFrame(0);
-
-	// Map the vector to a matrix (no copying)
-	Eigen::Map<Eigen::MatrixXi> map(&(v[0]),32,32);
+	Eigen::MatrixXi v=reader.getFrame(0);
 
 	// Check the total number of count in the frame 0
-	BOOST_CHECK_EQUAL(map.sum(),65);
+	BOOST_CHECK_EQUAL(v.sum(),65);
 
 	// Check the value of the monitor
 	BOOST_CHECK_CLOSE(meta->getKey<double>("monitor"),20000,tolerance);

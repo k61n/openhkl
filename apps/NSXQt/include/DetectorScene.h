@@ -3,6 +3,8 @@
 
 #include <set>
 
+#include <Eigen/Dense>
+
 #include <QRect>
 #include <QStack>
 #include <QGraphicsScene>
@@ -36,7 +38,7 @@ public:
     enum CURSORMODE {THETA=0, GAMMA=1, DSPACING=2, PIXEL=3, HKL=4};
     explicit DetectorScene(QObject *parent = 0);
     SX::Data::IData* getData();
-    const std::vector<int>& getCurrentFrame() const;
+    const Eigen::MatrixXi& getCurrentFrame() const;
 
 signals:
      //! Signal emitted for all changes of the image
@@ -78,7 +80,7 @@ private:
     SX::Data::IData* _currentData;
     int _currentFrameIndex;
     int _currentIntensity;
-    std::vector<int> _currentFrame;
+    Eigen::MatrixXi _currentFrame;
     //! Current interaction mode
     MODE _mode;
     CURSORMODE _cursorMode;

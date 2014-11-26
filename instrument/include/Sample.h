@@ -32,6 +32,7 @@
 #include <string>
 
 #include "Component.h"
+#include "UnitCell.h"
 
 namespace SX
 {
@@ -54,11 +55,12 @@ public:
 	virtual ~Sample();
 	//! Virtual copy constructor
 	Component* clone() const;
-
 	// Operators
-
 	//! Assignment operator
 	Sample& operator=(const Sample& other);
+
+	//!
+private:
 };
 
 } // Namespace Instrument

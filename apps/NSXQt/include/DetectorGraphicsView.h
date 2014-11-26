@@ -14,6 +14,7 @@ public:
     void keyPressEvent(QKeyEvent* event);
 signals:
 public slots:
+    void fitScene();
 private:
     void copyViewToClipboard();
     DetectorScene* _scene;

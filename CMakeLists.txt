@@ -33,6 +33,10 @@ FIND_PACKAGE (OpenMP)
 #include_directories(${CMINPACK_INCLUDE_DIR})
 ###### Find the Eigen3 
 FIND_PACKAGE(Eigen3)
+###### Search the HDF5 library
+FIND_PACKAGE(HDF5 COMPONENTS CXX)
+FIND_PACKAGE(Blosc)
+######
 include_directories(${EIGEN3_INCLUDE_DIR})
 
 
@@ -48,8 +52,9 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
     -ftree-vectorize
     -DEIGEN_FFTW_DEFAULT
     -fopenmp
+    -pthread
 )
-  SET(CMAKE_CXX_FLAGS_RELEASE "-O2") 
+  SET(CMAKE_CXX_FLAGS_RELEASE "-O3") 
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp ")
 ENDIF()
 
@@ -57,6 +62,7 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
     ADD_DEFINITIONS(-std=c++11
 )
 endif()
+
 
 
 # Disable auto-linking to allow dynamic linking with MSVC
@@ -100,7 +106,7 @@ FIND_LIBRARY(FFTW3_LIBRARIES NAMES fftw3 libfftw3)
  
 
 # Link
-TARGET_LINK_LIBRARIES(NSXTool ${Boost_LIBRARIES} ${PYTHON_LIBRARIES} ${CMINPACK_LIBRARIES} ${FFTW3_LIBRARIES})
+TARGET_LINK_LIBRARIES(NSXTool ${Boost_LIBRARIES} ${PYTHON_LIBRARIES} ${CMINPACK_LIBRARIES} ${FFTW3_LIBRARIES} ${HDF5_CXX_LIBRARIES} ${BLOSC_LIBRARY})
 
 # Enable unit testing with ctest. This must be called before any calls to add_subdirectory 
 enable_testing()

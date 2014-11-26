@@ -29,18 +29,20 @@ COLOUR GetColour(double v,double vmin,double vmax)
 
 QImage Mat2QImage(int* src, int rows, int cols,int xmin, int xmax, int ymin, int ymax,double colorMax)
 {
-        if (xmin<0 || xmax> cols || ymin<0 || ymax>rows)
-            return QImage();
+    if (xmin<0 || xmax> cols || ymin<0 || ymax>rows)
+        return QImage();
 
-        QImage dest(xmax-xmin, ymax-ymin, QImage::Format_RGB32);
-        for (int y = ymin; y < ymax; ++y) {
-            const int* srcrow = src+y;
-                QRgb *destrow = reinterpret_cast<QRgb*>(dest.scanLine(y-ymin));
-                for (int x = xmin; x < xmax; ++x) {
-                        double temp=*(srcrow+x*rows);
-                        COLOUR cc=GetColour(temp,0.0,colorMax);
-                        destrow[x-xmin] = qRgb(cc.r*255,cc.g*255,cc.b*255);
-                }
+    QImage dest(xmax-xmin, ymax-ymin, QImage::Format_RGB32);
+    for (int y = ymin; y < ymax; ++y)
+    {
+        const int* srcrow = src+y;
+        QRgb *destrow = reinterpret_cast<QRgb*>(dest.scanLine(y-ymin));
+        for (int x = xmin; x < xmax; ++x)
+        {
+            double temp=*(srcrow+x*rows);
+            COLOUR cc=GetColour(temp,0.0,colorMax);
+            destrow[x-xmin] = qRgb(cc.r*255,cc.g*255,cc.b*255);
         }
-        return dest;
+    }
+    return dest;
 }

@@ -7,6 +7,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/interprocess/file_mapping.hpp>
 
+#include "EigenMatrixParser.h"
 #include "ILLAsciiData.h"
 #include "Component.h"
 #include "Detector.h"
@@ -181,7 +182,8 @@ void ILLAsciiData::unMap()
 	_map=boost::move(boost::interprocess::mapped_region());
 	_isMapped=false;
 }
-std::vector<int> ILLAsciiData::getFrame(std::size_t idx)
+
+Eigen::MatrixXi ILLAsciiData::getFrame(std::size_t idx)
 {
 
 	if (_inMemory)
@@ -190,7 +192,7 @@ std::vector<int> ILLAsciiData::getFrame(std::size_t idx)
 		return readFrame(idx);
 }
 
-std::vector<int> ILLAsciiData::readFrame(std::size_t idx) const
+Eigen::MatrixXi ILLAsciiData::readFrame(std::size_t idx) const
 {
 	assert(idx<_nFrames);
 
@@ -198,9 +200,14 @@ std::vector<int> ILLAsciiData::readFrame(std::size_t idx) const
 	std::size_t begin=_headerSize+(idx+1)*_skipChar+idx*_dataLength;
 
 	// Create vector and try to reserve a memory block
-	std::vector<int> v;
-	v.reserve(_dataPoints);
-	readIntsFromChar(_mapAddress+begin,_mapAddress+begin+_dataLength,v);
+	Eigen::MatrixXi v;
+	int nrows=_diffractometer->getDetector()->getNRows();
+	int ncols=_diffractometer->getDetector()->getNCols();
+	v.resize(nrows,ncols);
+
+	EigenMatrixParser<const char*,TopRightColMajorMapper> parser;
+	qi::phrase_parse(_mapAddress+begin,_mapAddress+begin+_dataLength,parser,qi::blank, v);
+
 	return v;
 }
 
@@ -218,9 +225,7 @@ void ILLAsciiData::loadAllFrames()
 
 	#pragma omp parallel for
 	for (std::size_t i=0;i<_nFrames;++i)
-	{
 		_data[i]=readFrame(i);
-	}
 
 	return;
 }
@@ -231,7 +236,7 @@ void ILLAsciiData::releaseMemory()
         return;
 
     for (auto& d : _data)
-        d.clear();
+        d.resize(0,0);
     _data.clear();
 
     _inMemory=false;
@@ -241,7 +246,7 @@ int ILLAsciiData::dataAt(int x, int y, int z)
 {
     if (z<0 || z>=_nFrames || y<0 || y>=_diffractometer->getDetector()->getNRows() || x<0 || x>=_diffractometer->getDetector()->getNCols())
         return 0;
-    return (_data[z])[x*_diffractometer->getDetector()->getNRows()+y];
+    return (_data[z])(x,y);
 }
 
 void ILLAsciiData::goToLine(std::stringstream& buffer, int number,int pos)

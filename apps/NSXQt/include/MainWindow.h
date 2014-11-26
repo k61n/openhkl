@@ -67,6 +67,10 @@ private slots:
 
     void updatePlot(PlottableGraphicsItem* cutter);
 
+    void on_actionFrom_Sample_triggered();
+
+    void on_actionBehind_Detector_triggered();
+
 public slots:
     void changeData(SX::Data::IData*);
     void showPeakList(std::vector<SX::Data::IData*>);

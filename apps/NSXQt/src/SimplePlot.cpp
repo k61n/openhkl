@@ -17,7 +17,7 @@ SimplePlot::SimplePlot(QWidget *parent) : SXCustomPlot(parent)
     pen.setColor(QColor("black"));
     pen.setWidth(2.0);
     graph(0)->setPen(pen);
-    graph(0)->setErrorType(QCPGraph::etBoth);
+    graph(0)->setErrorType(QCPGraph::etValue);
     graph(0)->setLineStyle(QCPGraph::lsLine);
     graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 6));
 

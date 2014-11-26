@@ -324,48 +324,48 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
 
 void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
 {
-    QString ttip;
-    std::size_t xpos=static_cast<std::size_t>(event->scenePos().x());
-    std::size_t ypos=static_cast<std::size_t>(event->scenePos().y());
     auto instr=_currentData->getDiffractometer();
-
     SX::Instrument::Detector* det=instr->getDetector();
     std::size_t nrows=det->getNRows();
     std::size_t ncols=det->getNCols();
 
-    int intensity=0;
-    if (xpos<ncols-1 && ypos<nrows-1)
-        intensity=_currentFrame[xpos*nrows+ypos];
+    std::size_t col=static_cast<std::size_t>(event->scenePos().x());
+    std::size_t row=static_cast<std::size_t>(event->scenePos().y()); // Scene has (0,0) as top left (so vertical direction is switched)
 
+    int intensity=0;
+    if (col<ncols-1 && row<nrows-1)
+        intensity=_currentFrame(row,col);
 
     const auto& samplev=_currentData->getSampleState(_currentFrameIndex).getValues();
     const auto& detectorv=_currentData->getDetectorState(_currentFrameIndex).getValues();
     SX::Instrument::Sample* sample=instr->getSample();
     double wave=instr->getSource()->getWavelength();
 
+
+    QString ttip;
     switch (_cursorMode)
     {
         case(PIXEL):
         {
-            ttip=QString("(%1,%2) I:%3").arg(xpos).arg(ypos).arg(intensity);
+            ttip=QString("(%1,%2) I:%3").arg(col).arg(row).arg(intensity);
             break;
         }
         case(GAMMA):
         {
             double gamma,nu;
-            det->getGammaNu(xpos,ypos,gamma,nu,detectorv,sample->getPosition(samplev));
+            det->getGammaNu(col,row,gamma,nu,detectorv,sample->getPosition(samplev));
             ttip=QString("(%1,%2) I: %3").arg(gamma/SX::Units::deg).arg(nu/SX::Units::deg).arg(intensity);
             break;
         }
         case(THETA):
         {
-            double th2=det->get2Theta(xpos,ypos,detectorv,Eigen::Vector3d(0,1.0/wave,0));
+            double th2=det->get2Theta(col,row,detectorv,Eigen::Vector3d(0,1.0/wave,0));
             ttip=QString("(%1) I: %2").arg(th2/SX::Units::deg).arg(intensity);
             break;
         }
         case(DSPACING):
         {
-            double th2=det->get2Theta(xpos,ypos,detectorv,Eigen::Vector3d(0,1.0/wave,0));
+            double th2=det->get2Theta(col,row,detectorv,Eigen::Vector3d(0,1.0/wave,0));
             ttip=QString("(%1) I: %2").arg(wave/(2*sin(0.5*th2))).arg(intensity);
             break;
         }
@@ -393,7 +393,7 @@ void DetectorScene::loadCurrentImage()
     std::size_t ncols=det->getNCols();
 
     _currentFrame =_currentData->getFrame(_currentFrameIndex);
-    QImage image=Mat2QImage(&_currentFrame[0], nrows, ncols, full.left(), full.right(), full.top(), full.bottom(), _currentIntensity);
+    QImage image=Mat2QImage(_currentFrame.data(), nrows, ncols, full.left(), full.right(), full.top(), full.bottom(), _currentIntensity);
     if (!_image)
     {
         _image=addPixmap(QPixmap::fromImage(image));
@@ -413,7 +413,7 @@ SX::Data::IData* DetectorScene::getData()
     return _currentData;
 }
 
-const std::vector<int>& DetectorScene::getCurrentFrame() const
+const Eigen::MatrixXi& DetectorScene::getCurrentFrame() const
 {
     return _currentFrame;
 }

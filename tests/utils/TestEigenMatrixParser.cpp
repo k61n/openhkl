@@ -15,7 +15,7 @@ using namespace Eigen;
 BOOST_AUTO_TEST_CASE(Test_EigenMatrixParser)
 {
 
-	Matrix<int,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> m;
+	Matrix<int,Eigen::Dynamic,Eigen::Dynamic,Eigen::ColMajor> m;
 	m.resize(3,4);
 	std::string s("1 2 3 4 5 6 7 8 9 10 11 12");
 

@@ -1206,8 +1206,16 @@ QTreeView {
      <addaction name="actionLogger"/>
      <addaction name="action1D_Peak_Ploter"/>
     </widget>
+    <widget class="QMenu" name="menuSet_View">
+     <property name="title">
+      <string>Set View</string>
+     </property>
+     <addaction name="actionFrom_Sample"/>
+     <addaction name="actionBehind_Detector"/>
+    </widget>
     <addaction name="menuGraphics"/>
     <addaction name="menuShow_Window"/>
+    <addaction name="menuSet_View"/>
    </widget>
    <addaction name="menu_Options"/>
   </widget>
@@ -1466,6 +1474,22 @@ QDockWidget::title {
    </property>
    <property name="text">
     <string>1D Peak Ploter</string>
+   </property>
+  </action>
+  <action name="actionFrom_Sample">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>From Sample</string>
+   </property>
+  </action>
+  <action name="actionBehind_Detector">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Behind Detector</string>
    </property>
   </action>
  </widget>

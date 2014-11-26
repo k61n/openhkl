@@ -18,6 +18,7 @@
 #include <QMouseEvent>
 #include <QProgressDialog>
 #include <QtDebug>
+#include <QTransform>
 
 #include "AABB.h"
 #include "Basis.h"
@@ -93,7 +94,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(_ui->_dview->getScene(),SIGNAL(updatePlot(PlottableGraphicsItem*)),this,SLOT(updatePlot(PlottableGraphicsItem*)));
     connect(_ui->action_open,SIGNAL(triggered()),_ui->experimentTree,SLOT(createNewExperiment()));
 
-    _ui->plotterDockWidget->hide();
+    _ui->plotterDockWidget->show();
 
 }
 
@@ -169,7 +170,7 @@ void MainWindow::on_action_peak_find_triggered()
     std::size_t npeaks=0;
     int comp = 0;
 
-    for (auto& numor : numors)
+    for (auto numor : numors)
     {
         if (!numor->isMapped())
             numor->map();
@@ -179,8 +180,8 @@ void MainWindow::on_action_peak_find_triggered()
         std::vector<int*> temp(numor->getNFrames());
         for (unsigned int i=0;i<numor->getNFrames();++i)
         {
-            vint& v=numor->getData(i);
-            temp[i]=&(v[0]);
+            Eigen::MatrixXi& v=numor->getData(i);
+            temp[i]=v.data();
         }
 
         // Finding peaks
@@ -230,7 +231,7 @@ void MainWindow::on_action_peak_find_triggered()
     _ui->progressBar->setValue(0);
     _ui->progressBar->setEnabled(false);
 
-    _ui->_dview->getScene()->updatePeaks();
+    //_ui->_dview->getScene()->updatePeaks();
 
 }
 
@@ -328,4 +329,20 @@ void MainWindow::updatePlot(PlottableGraphicsItem* item)
     // Plot the data
     item->plot(_ui->plot1D);
 
+}
+
+void MainWindow::on_actionFrom_Sample_triggered()
+{
+    QTransform trans;
+    trans.scale(1,-1);
+    _ui->_dview->setTransform(trans);
+    _ui->_dview->fitScene();
+}
+
+void MainWindow::on_actionBehind_Detector_triggered()
+{
+    QTransform trans;
+    trans.scale(-1,-1);
+    _ui->_dview->setTransform(trans);
+    _ui->_dview->fitScene();
 }
