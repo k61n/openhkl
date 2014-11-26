@@ -62,6 +62,8 @@ public slots:
     void changeInteractionMode(int);
     //!
     void changeCursorMode(int);
+    //!
+    void showPeakLabels(bool);
 private:
 
     void unselectItems();

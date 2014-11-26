@@ -10,8 +10,12 @@
 #include "SXCustomPlot.h"
 #include "PeakCustomPlot.h"
 
+
+bool PeakGraphicsItem::_labelVisible=false;
+
 PeakGraphicsItem::PeakGraphicsItem(SX::Crystal::Peak3D* p) : PlottableGraphicsItem(nullptr), _peak(p)
 {
+    _hoverable=false;
     if (_peak)
     {
         Eigen::Vector3d c=_peak->getPeak()->getCenter();
@@ -68,7 +72,8 @@ void PeakGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 
     if (_hoverable)
         painter->setBrush(QBrush(QColor(255,255,0,120)));
-    _label->setVisible(_hoverable);
+
+    _label->setVisible(_hoverable || _labelVisible);
 
     if (_peak->isSelected())
         _pen.setColor("green");
@@ -81,7 +86,7 @@ void PeakGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
     qreal w=u[0]-l[0];
     qreal h=u[1]-l[1];
     painter->drawRect(-w/2,-h/2,w,h);
-    _label->setPos(w/2,-h/2);
+    _label->setPos(w/2,h/2);
 }
 
 void PeakGraphicsItem::setFrame(int frame)
@@ -91,7 +96,7 @@ void PeakGraphicsItem::setFrame(int frame)
     if (frame>=l[2] && frame<=u[2])
     {
         setVisible(true);
-        _label->setVisible(true);
+        _label->setVisible(_labelVisible);
         auto& v=_peak->getMillerIndices();
         QString hkl;
         hkl=QString("%1,%2,%3").arg(v[0]).arg(v[1]).arg(v[2]);
@@ -129,4 +134,9 @@ void PeakGraphicsItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
     _hoverable=false;
     setCursor(QCursor(Qt::CrossCursor));
     update();
+}
+
+void PeakGraphicsItem::setLabelVisible(bool flag)
+{
+    _labelVisible=flag;
 }

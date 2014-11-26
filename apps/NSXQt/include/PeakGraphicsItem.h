@@ -37,7 +37,7 @@ public:
 
     //! Return the peak object
     SX::Crystal::Peak3D* getPeak();
-
+    static void setLabelVisible(bool flag=true);
 private:
 
     //! Turn _hoverOn true
@@ -48,6 +48,8 @@ private:
 
     //! Pointer to the Peak3D object
     SX::Crystal::Peak3D* _peak;
+    //! (h,k,l) index visible in GraphicsScene
+    static bool _labelVisible;
 
 };
 

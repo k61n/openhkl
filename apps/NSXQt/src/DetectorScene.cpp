@@ -65,7 +65,10 @@ void DetectorScene::setMaxIntensity(int intensity)
 void DetectorScene::setData(SX::Data::IData* data)
 {
     if (_currentData==data)
+    {
+        updatePeaks();
         return;
+    }
 
     if (_currentData)
         _currentData->unMap();
@@ -329,18 +332,18 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
     std::size_t nrows=det->getNRows();
     std::size_t ncols=det->getNCols();
 
-    std::size_t col=static_cast<std::size_t>(event->scenePos().x());
-    std::size_t row=static_cast<std::size_t>(event->scenePos().y()); // Scene has (0,0) as top left (so vertical direction is switched)
+    std::size_t col=static_cast<std::size_t>(event->lastScenePos().x());
+    std::size_t row=static_cast<std::size_t>(event->lastScenePos().y());
 
-    int intensity=0;
-    if (col<ncols-1 && row<nrows-1)
-        intensity=_currentFrame(row,col);
+    if (col<0 || col>ncols-1 || row<0 || row>nrows-1)
+        return;
+
+    int intensity=_currentFrame(row,col);
 
     const auto& samplev=_currentData->getSampleState(_currentFrameIndex).getValues();
     const auto& detectorv=_currentData->getDetectorState(_currentFrameIndex).getValues();
     SX::Instrument::Sample* sample=instr->getSample();
     double wave=instr->getSource()->getWavelength();
-
 
     QString ttip;
     switch (_cursorMode)
@@ -446,5 +449,15 @@ void DetectorScene::updatePeaks()
         addItem(p);
         _peaks.insert(p);
     }
+}
+
+void DetectorScene::showPeakLabels(bool peaklabel)
+{
+    if (_peaks.size())
+    {
+        const auto& it=_peaks.begin();
+        (*it)->setLabelVisible(peaklabel);
+    }
+    return;
 }
 

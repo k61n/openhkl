@@ -1213,9 +1213,16 @@ QTreeView {
      <addaction name="actionFrom_Sample"/>
      <addaction name="actionBehind_Detector"/>
     </widget>
+    <widget class="QMenu" name="menuPeak">
+     <property name="title">
+      <string>Peak</string>
+     </property>
+     <addaction name="actionShow_labels"/>
+    </widget>
     <addaction name="menuGraphics"/>
     <addaction name="menuShow_Window"/>
     <addaction name="menuSet_View"/>
+    <addaction name="menuPeak"/>
    </widget>
    <addaction name="menu_Options"/>
   </widget>
@@ -1490,6 +1497,14 @@ QDockWidget::title {
    </property>
    <property name="text">
     <string>Behind Detector</string>
+   </property>
+  </action>
+  <action name="actionShow_labels">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show labels</string>
    </property>
   </action>
  </widget>

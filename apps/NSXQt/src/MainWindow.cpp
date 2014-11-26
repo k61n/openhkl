@@ -176,6 +176,7 @@ void MainWindow::on_action_peak_find_triggered()
             numor->map();
         numor->clearPeaks();
         numor->loadAllFrames();
+        qDebug() << "Read data";
         // Get pointers to start of each frame
         std::vector<int*> temp(numor->getNFrames());
         for (unsigned int i=0;i<numor->getNFrames();++i)
@@ -345,4 +346,9 @@ void MainWindow::on_actionBehind_Detector_triggered()
     trans.scale(-1,-1);
     _ui->_dview->setTransform(trans);
     _ui->_dview->fitScene();
+}
+
+void MainWindow::on_actionShow_labels_triggered()
+{
+    _ui->_dview->getScene()->showPeakLabels(true);
 }
