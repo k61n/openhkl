@@ -44,13 +44,6 @@ D10FourCircles::D10FourCircles(const std::string& name) : Diffractometer(name)
     _detector->setHeight(64*mm);
     _detector->setNPixels(32,32);
 
-    _detector->setDataMapping([]
-                               (double x, double y, double& newx, double& newy)
-                               {
-									newx = 32 - x;
-									newy = 32 - y;
-                               });
-
     // Attach a gonio to the detector
     std::shared_ptr<Gonio> g(new Gonio("gamma-arm"));
     g->addRotation("2theta(gamma)",Vector3d(0,0,1),RotAxis::CCW);
