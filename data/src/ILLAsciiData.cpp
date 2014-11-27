@@ -2,12 +2,13 @@
 #include <cstring>
 #include <stdexcept>
 
+#include "EigenMatrixParser.h"
 #include <boost/algorithm/string.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/interprocess/file_mapping.hpp>
 
-#include "EigenMatrixParser.h"
+
 #include "ILLAsciiData.h"
 #include "Component.h"
 #include "Detector.h"
