@@ -34,6 +34,7 @@ PlottableGraphicsItem::~PlottableGraphicsItem()
 void PlottableGraphicsItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event);
+    _hoverable=true;
     setCursor(QCursor(Qt::PointingHandCursor));
     update();
 }
@@ -41,7 +42,9 @@ void PlottableGraphicsItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 void PlottableGraphicsItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event);
+    _hoverable=false;
     setCursor(QCursor(Qt::CrossCursor));
+    update();
 }
 
 bool PlottableGraphicsItem::isInScene(const QPointF& pos) const

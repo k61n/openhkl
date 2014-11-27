@@ -5,10 +5,12 @@
 #include <QStyleOptionGraphicsItem>
 #include <QWidget>
 
+#include "IData.h"
 #include "PeakGraphicsItem.h"
 #include "Peak3D.h"
 #include "SXCustomPlot.h"
-#include "PeakCustomPlot.h"
+#include "PeakPlot.h"
+#include "Units.h"
 
 
 bool PeakGraphicsItem::_labelVisible=false;
@@ -41,11 +43,6 @@ PeakGraphicsItem::PeakGraphicsItem(SX::Crystal::Peak3D* p) : PlottableGraphicsIt
 PeakGraphicsItem::~PeakGraphicsItem()
 {
 }
-
-//SXCustomPlot* PeakGraphicsItem::createPlot(QWidget *parent)
-//{
-//    return new PeakCustomPlot(parent);
-//}
 
 QRectF PeakGraphicsItem::boundingRect() const
 {
@@ -119,24 +116,89 @@ SX::Crystal::Peak3D* PeakGraphicsItem::getPeak()
     return _peak;
 }
 
-void PeakGraphicsItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
-{
-    Q_UNUSED(event);
-    _hoverable=true;
-    setCursor(QCursor(Qt::PointingHandCursor));
-    update();
+//void PeakGraphicsItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+//{
+//    Q_UNUSED(event);
+//    _hoverable=true;
+//    setCursor(QCursor(Qt::PointingHandCursor));
+//    update();
 
-}
+//}
 
-void PeakGraphicsItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
-{
-    Q_UNUSED(event);
-    _hoverable=false;
-    setCursor(QCursor(Qt::CrossCursor));
-    update();
-}
+//void PeakGraphicsItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+//{
+//    Q_UNUSED(event);
+//    _hoverable=false;
+//    setCursor(QCursor(Qt::CrossCursor));
+//    update();
+//}
 
 void PeakGraphicsItem::setLabelVisible(bool flag)
 {
     _labelVisible=flag;
+}
+
+void PeakGraphicsItem::plot(SXCustomPlot* plot)
+{
+
+    auto p=dynamic_cast<PeakPlot*>(plot);
+    if (!p)
+        return;
+
+    const Eigen::VectorXd& total=_peak->getProjection();
+    const Eigen::VectorXd& signal=_peak->getPeakProjection();
+    const Eigen::VectorXd& bkg=_peak->getBkgProjection();
+
+    const Eigen::VectorXd& totalSigma=_peak->getProjectionSigma();
+
+    // Transform to QDouble
+    QVector<double> qx(total.size());
+    QVector<double> qtotal(total.size());
+    QVector<double> qtotalE(total.size());
+    QVector<double> qpeak(total.size());
+    QVector<double> qbkg(total.size());
+
+    //Copy the data
+    double min=std::floor(_peak->getBackground()->getLower()[2]);
+    double max=std::ceil(_peak->getBackground()->getUpper()[2]);
+    for (int i=0;i<total.size();++i)
+    {
+        qx[i]= min + static_cast<double>(i)*(max-min)/(total.size()-1);
+        qtotal[i]=total[i];
+        qtotalE[i]=totalSigma[i];
+        qpeak[i]=signal[i];
+        qbkg[i]=bkg[i];
+    }
+
+    p->graph(0)->setDataValueError(qx, qtotal, qtotalE);
+    p->graph(1)->setData(qx,qpeak);
+    p->graph(2)->setData(qx,qbkg);
+
+    // Now update text info:
+
+    const Eigen::RowVector3d& hkl=_peak->getMillerIndices();
+
+    QString info="(h,k,l):"+QString::number(hkl[0])+","+QString::number(hkl[1])+","+QString::number(hkl[2]);
+    double gamma,nu;
+    _peak->getGammaNu(gamma,nu);
+    gamma/=SX::Units::deg;
+    nu/=SX::Units::deg;
+    info+=" "+QString((QChar) 0x03B3)+","+QString((QChar) 0x03BD)+":"+QString::number(gamma,'f',2)+","+QString::number(nu,'f',2)+"\n";
+    double intensity=_peak->getScaledIntensity();
+    double sI=_peak->getScaledSigma();
+    info+="Intensity ("+QString((QChar) 0x03C3)+"I): "+QString::number(intensity)+" ("+QString::number(sI,'f',2)+")\n";
+    double l=_peak->getLorentzFactor();
+    info+="Cor. int. ("+QString((QChar) 0x03C3)+"I): "+QString::number(intensity/l,'f',2)+" ("+QString::number(sI/l,'f',2)+")\n";
+
+    double scale=_peak->getScale();
+    double monitor=_peak->getData()->getMetadata()->getKey<double>("monitor");
+    info+="Monitor "+QString::number(monitor*scale)+" counts";
+    QCPPlotTitle* title=dynamic_cast<QCPPlotTitle*>(p->plotLayout()->element(0,0));
+    if (title)
+        title->setText(info);
+
+    p->rescaleAxes();
+
+    p->replot();
+
 }

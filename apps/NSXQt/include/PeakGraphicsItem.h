@@ -24,7 +24,7 @@ public:
 
     ~PeakGraphicsItem();
 
-//    SXCustomPlot* createPlot(QWidget* parent=0);
+    void plot(SXCustomPlot* plot);
 
     QRectF boundingRect() const;
 
@@ -40,11 +40,11 @@ public:
     static void setLabelVisible(bool flag=true);
 private:
 
-    //! Turn _hoverOn true
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
+//    //! Turn _hoverOn true
+//    void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
 
-    //! Turn _hoverOn false
-    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
+//    //! Turn _hoverOn false
+//    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 
     //! Pointer to the Peak3D object
     SX::Crystal::Peak3D* _peak;
