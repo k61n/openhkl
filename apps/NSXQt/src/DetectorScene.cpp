@@ -122,7 +122,7 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             _zoomrect->setRect(zoom);
         }
         // Case of the cutting modes
-        else
+        else if (_mode==HORIZONTALSLICE || _mode==VERTICALSLICE || _mode==LINE)
         {
             if (!_currentItem)
                 return;
@@ -130,6 +130,7 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             emit updatePlot(_currentItem);
         }
     }
+    // No button was pressed, just a mouse move
     else if (!event->buttons())
     {
         QGraphicsScene::mouseMoveEvent(event);
@@ -173,52 +174,65 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             _zoomrect->setPen(pen1);
             _zoomrect->setBrush(QBrush(QColor(255,0,0,30)));
         }
-        else if (_mode==SELECTION)
-        {
-            // Case where the user clicked outside a graphics item, deselected the currently selected item
-            auto item=itemAt(event->lastScenePos(),QTransform());
-            if (!dynamic_cast<QGraphicsPixmapItem*>(item))
-                item->setSelected(!item->isSelected());
-            else
-                unselectItems();
-        }
-        // Case of Cuttings mode (horizontal/vertical slices, line cut)
         else
         {
 
-            // If there is already a cutter item on the scene, delete it
-            if (_currentItem)
-            {
-                delete _currentItem;
-                _currentItem=nullptr;
-            }
-            // Create the cutter item corresponding to the seleced cutting mode
-            if (_mode==HORIZONTALSLICE)
-                _currentItem=new SliceGraphicsItem(_currentData,true);
-            else if (_mode==VERTICALSLICE)
-                _currentItem=new SliceGraphicsItem(_currentData,false);
-            else if (_mode==LINE)
-                _currentItem=new LineCutGraphicsItem(_currentData);
-            auto p=dynamic_cast<CutterGraphicsItem*>(_currentItem);
-            p->setFrom(event->lastScenePos());
-            addItem(_currentItem);
-        }
+            // Get the graphics item on which the user has clicked
+            auto item=itemAt(event->lastScenePos(),QTransform());
+            // If the item is not the background pixmap, return
+            if (!dynamic_cast<QGraphicsPixmapItem*>(item))
+                return;
 
+            // Case of Cuttings mode (horizontal/vertical slices, line cut)
+            if (_mode==HORIZONTALSLICE || _mode==VERTICALSLICE || _mode==LINE)
+            {
+
+                // If there is already a cutter item on the scene, delete it
+                if (_currentItem)
+                {
+                    delete _currentItem;
+                    _currentItem=nullptr;
+                }
+                // Create the cutter item corresponding to the seleced cutting mode
+                if (_mode==HORIZONTALSLICE)
+                    _currentItem=new SliceGraphicsItem(_currentData,true);
+                else if (_mode==VERTICALSLICE)
+                    _currentItem=new SliceGraphicsItem(_currentData,false);
+                else if (_mode==LINE)
+                    _currentItem=new LineCutGraphicsItem(_currentData);
+                auto p=dynamic_cast<CutterGraphicsItem*>(_currentItem);
+                p->setFrom(event->lastScenePos());
+                addItem(_currentItem);
+            }
+            // Case of Mask mode
+            else if (_mode==MASK)
+            {
+
+            }
+        }
     }
     // The right button was pressed
     else if (event->buttons() & Qt::RightButton)
     {
-        if (_zoomStack.size()>1)
+
+        // Get the graphics item on which the user has clicked
+        auto item=itemAt(event->lastScenePos(),QTransform());
+        if (dynamic_cast<QGraphicsPixmapItem*>(item))
         {
-            // Remove the last zoom area stored in the stack
-            _zoomStack.pop();
-            // If not root, then update the scene
-            if (!_zoomStack.isEmpty())
+            if (_zoomStack.size()>1)
             {
-                setSceneRect(_zoomStack.top());
-                emit dataChanged();
+                // Remove the last zoom area stored in the stack
+                _zoomStack.pop();
+                // If not root, then update the scene
+                if (!_zoomStack.isEmpty())
+                {
+                    setSceneRect(_zoomStack.top());
+                    emit dataChanged();
+                }
             }
         }
+        else
+            item->setSelected(!item->isSelected());
     }
 }
 
@@ -229,20 +243,10 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     if (!_currentData)
         return;
 
-    // Case of Selection mode, do nothing
-    if (_mode==SELECTION)
-        return;
-
-//    if (_itemSelected)
-//    {
-//        if (_mode!=ZOOM)
-//            emit updatePlot(_currentItem);
-//        _itemSelected=false;
-//        return;
-//    }
-
+    // The user released the left mouse button
     if (event->button() & Qt::LeftButton)
     {
+        // Case of the Zoom mode, the zoom is updated and added on top of the zoom stack
         if(_mode==ZOOM)
         {
             qreal top=_zoomrect->rect().top();
@@ -269,8 +273,14 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             _zoomStack.push_back(_zoomrect->rect().toRect());
             emit dataChanged();
         }
-        else
+        // Case of of the cutting modes, the cut plot are updated
+        else if (_mode==HORIZONTALSLICE || _mode==VERTICALSLICE || _mode==LINE)
             emit updatePlot(_currentItem);
+        // Case of the Mask mode
+        else if (_mode==MASK)
+        {
+
+        }
     }
 }
 
@@ -281,13 +291,17 @@ void DetectorScene::wheelEvent(QGraphicsSceneWheelEvent* event)
     if (!_currentData)
         return;
 
+    // Zoo mode, does nothing
     if (_mode==ZOOM)
         return;
-
-    if (_currentItem)
+    // Cut modes, process the wheel event and update the cut plot
+    else if (_mode==HORIZONTALSLICE || _mode==VERTICALSLICE || _mode==LINE)
+    {
+        if (!_currentItem)
+            return;
         _currentItem->wheelEvent(event);
-
-    emit updatePlot(_currentItem);
+        emit updatePlot(_currentItem);
+    }
 
 }
 

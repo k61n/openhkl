@@ -33,7 +33,7 @@ class DetectorScene : public QGraphicsScene
 {
     Q_OBJECT
 public:
-    enum MODE {ZOOM=0, LINE=1, HORIZONTALSLICE=2, VERTICALSLICE=3, SELECTION=4};
+    enum MODE {ZOOM=0, LINE=1, HORIZONTALSLICE=2, VERTICALSLICE=3, MASK=4};
     //! Which mode is the cursor diplaying
     enum CURSORMODE {THETA=0, GAMMA=1, DSPACING=2, PIXEL=3, HKL=4};
     explicit DetectorScene(QObject *parent = 0);

@@ -116,23 +116,6 @@ SX::Crystal::Peak3D* PeakGraphicsItem::getPeak()
     return _peak;
 }
 
-//void PeakGraphicsItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
-//{
-//    Q_UNUSED(event);
-//    _hoverable=true;
-//    setCursor(QCursor(Qt::PointingHandCursor));
-//    update();
-
-//}
-
-//void PeakGraphicsItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
-//{
-//    Q_UNUSED(event);
-//    _hoverable=false;
-//    setCursor(QCursor(Qt::CrossCursor));
-//    update();
-//}
-
 void PeakGraphicsItem::setLabelVisible(bool flag)
 {
     _labelVisible=flag;
