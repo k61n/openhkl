@@ -3,16 +3,16 @@
 
 #include <string>
 
-#include "SXCustomPlot.h"
+#include "SXPlot.h"
 
 class QWidget;
 
-class PeakPlot : public SXCustomPlot
+class PeakPlot : public SXPlot
 {
     Q_OBJECT
 public:
 
-    static SXCustomPlot* create(QWidget* parent);
+    static SXPlot* create(QWidget* parent);
 
     explicit PeakPlot(QWidget* parent = 0);
 
@@ -21,4 +21,4 @@ public:
 
 };
 
-#endif // PEAKCUSTOMPLOT_H
+#endif // PEAKPLOT_H

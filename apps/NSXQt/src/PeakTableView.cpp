@@ -15,7 +15,6 @@
 
 #include "IData.h"
 #include "Peak3D.h"
-#include "PeakCustomPlot.h"
 
 PeakTableView::PeakTableView(QWidget *parent)
 : QTableView(parent),

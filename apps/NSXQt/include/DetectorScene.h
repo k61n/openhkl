@@ -25,6 +25,8 @@ class Peak3D;
 class QImage;
 class QGraphicsSceneWheelEvent;
 class PeakGraphicsItem;
+class CutterGraphicsItem;
+class MaskGraphicsItem;
 class PlottableGraphicsItem;
 
 //! Master Scene containing the pixmap of the detector counts
@@ -88,9 +90,11 @@ private:
     CURSORMODE _cursorMode;
     //! Contains peaks item of current data, reinitialized with new data set.
     std::set<PeakGraphicsItem*> _peaks;
-    PlottableGraphicsItem* _currentItem;
+    CutterGraphicsItem* _currentCutter;
     bool _itemSelected;
     QGraphicsPixmapItem* _image;
+    QList<MaskGraphicsItem*> _masks;
+
 };
 
 #endif // DETECTORSCENE_H

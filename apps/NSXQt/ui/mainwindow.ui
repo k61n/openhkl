@@ -1372,7 +1372,7 @@ QDockWidget::title {
    <widget class="QWidget" name="dockWidgetContents_4">
     <layout class="QHBoxLayout" name="horizontalLayout_4">
      <item>
-      <widget class="SXCustomPlot" name="plot1D" native="true">
+      <widget class="SXPlot" name="plot1D" native="true">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -1526,9 +1526,9 @@ QDockWidget::title {
    <header>DetectorGraphicsView.h</header>
   </customwidget>
   <customwidget>
-   <class>SXCustomPlot</class>
+   <class>SXPlot</class>
    <extends>QWidget</extends>
-   <header>include/SXCustomPlot.h</header>
+   <header>SXPlot.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

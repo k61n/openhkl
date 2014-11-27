@@ -1,5 +1,5 @@
-#ifndef SLICEGRAPHICSITEM_H
-#define SLICEGRAPHICSITEM_H
+#ifndef CUTSLICEGRAPHICSITEM_H
+#define CUTSLICEGRAPHICSITEM_H
 
 #include <string>
 
@@ -13,23 +13,24 @@ namespace Data
 class IData;
 }
 }
-class SXCustomPlot;
+
 class QGraphicsSceneMouseEvent;
 class QGraphicsSceneWheelEvent;
 class QPainter;
 class QStyleOptionGraphicsItem;
 class QWidget;
+class SXPlot;
 
-class SliceGraphicsItem : public CutterGraphicsItem
+class CutSliceGraphicsItem : public CutterGraphicsItem
 {
 public:
 
     // Constructors and destructor
 
     //! Construct a data slicer
-    SliceGraphicsItem(SX::Data::IData*, bool horizontal=true);
+    CutSliceGraphicsItem(SX::Data::IData*, bool horizontal=true);
     //! The destructor
-    ~SliceGraphicsItem();
+    ~CutSliceGraphicsItem();
 
     // Events
 
@@ -42,9 +43,7 @@ public:
 
     // Other methods
 
-    void plot(SXCustomPlot*);
-//    //! Returns a slice plot
-//    SXCustomPlot* createPlot(QWidget* parent=0);
+    void plot(SXPlot*);
     //! Return true if the slice is horizontal.
     bool isHorizontal() const;
     //! Paint the slice
@@ -55,4 +54,4 @@ private:
     bool _horizontal;
 };
 
-#endif // SLICEGRAPHICSITEM_H
+#endif // CUTSLICEGRAPHICSITEM_H

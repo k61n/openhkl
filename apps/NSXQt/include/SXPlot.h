@@ -1,5 +1,5 @@
-#ifndef SXCUSTOMPLOT_H
-#define SXCUSTOMPLOT_H
+#ifndef SXPLOT_H
+#define SXPLOT_H
 
 #include <string>
 
@@ -7,16 +7,16 @@
 
 class PlottableGraphicsItem;
 
-class SXCustomPlot : public QCustomPlot
+class SXPlot : public QCustomPlot
 {
     Q_OBJECT
 public:
 
-    static SXCustomPlot* create(QWidget* parent);
+    static SXPlot* create(QWidget* parent);
 
-    explicit SXCustomPlot(QWidget *parent = 0);
+    explicit SXPlot(QWidget *parent = 0);
     void keyPressEvent(QKeyEvent *);
-    virtual ~SXCustomPlot();
+    virtual ~SXPlot();
 
     // Getters and setters
 
@@ -32,4 +32,4 @@ private:
 
 };
 
-#endif // SXCUSTOMPLOT_H
+#endif // SXCPLOT_H

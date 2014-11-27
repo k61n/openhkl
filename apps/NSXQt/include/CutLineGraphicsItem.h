@@ -1,5 +1,5 @@
-#ifndef LINECUTGRAPHICSITEM_H
-#define LINECUTGRAPHICSITEM_H
+#ifndef CUTLINEGRAPHICSITEM_H
+#define CUTLINEGRAPHICSITEM_H
 
 #include <string>
 
@@ -16,17 +16,17 @@ class IData;
 
 class QGraphicsSceneWheelEvent;
 class QWidget;
-class SXCustomPlot;
+class SXPlot;
 
-class LineCutGraphicsItem : public CutterGraphicsItem
+class CutLineGraphicsItem : public CutterGraphicsItem
 {
 public:
 
-    explicit LineCutGraphicsItem(SX::Data::IData*);
+    explicit CutLineGraphicsItem(SX::Data::IData*);
 
-    ~LineCutGraphicsItem();
+    ~CutLineGraphicsItem();
 
-    void plot(SXCustomPlot* plot);
+    void plot(SXPlot* plot);
 
     void wheelEvent(QGraphicsSceneWheelEvent* event);
 
@@ -45,4 +45,4 @@ private:
 
 };
 
-#endif // LINECUTGRAPHICSITEM_H
+#endif // CUTLINEGRAPHICSITEM_H

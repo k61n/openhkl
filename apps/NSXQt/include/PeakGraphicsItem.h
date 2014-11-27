@@ -14,7 +14,7 @@ class Peak3D;
 }
 
 class QWidget;
-class SXCustomPlot;
+class SXPlot;
 
 class PeakGraphicsItem : public PlottableGraphicsItem
 {
@@ -24,7 +24,7 @@ public:
 
     ~PeakGraphicsItem();
 
-    void plot(SXCustomPlot* plot);
+    void plot(SXPlot* plot);
 
     QRectF boundingRect() const;
 

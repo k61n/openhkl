@@ -1,18 +1,18 @@
-#ifndef SIMPLECUSTOMPLOT_H
-#define SIMPLECUSTOMPLOT_H
+#ifndef SIMPLEPLOT_H
+#define SIMPLEPLOT_H
 
 #include <string>
 
-#include "SXCustomPlot.h"
+#include "SXPlot.h"
 
 class QWidget;
 
-class SimplePlot : public SXCustomPlot
+class SimplePlot : public SXPlot
 {
     Q_OBJECT
 public:
 
-    static SXCustomPlot* create(QWidget* parent);
+    static SXPlot* create(QWidget* parent);
 
     explicit SimplePlot(QWidget *parent = 0);
 
@@ -21,4 +21,4 @@ public:
 
 };
 
-#endif // SIMPLECUSTOMPLOT_H
+#endif // SIMPLEPLOT_H

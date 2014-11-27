@@ -37,17 +37,15 @@ SOURCES += src/Main.cpp \
     src/DetectorGraphicsView.cpp \
     src/DetectorScene.cpp \
     src/PeakGraphicsItem.cpp \
-    src/SliceGraphicsItem.cpp \
-    src/SliceCutterCustomPlot.cpp \
-    src/CutterCustomPlot.cpp \
-    src/LineCutterCustomPlot.cpp \
-    src/PeakCustomPlot.cpp \
-    src/SXCustomPlot.cpp \
+    src/CutSliceGraphicsItem.cpp \
+    src/SXPlot.cpp \
     src/PlottableGraphicsItem.cpp \
-    src/LineCutGraphicsItem.cpp \
+    src/CutLineGraphicsItem.cpp \
     src/CutterGraphicsItem.cpp \
     src/PlotFactory.cpp \
     src/SimplePlot.cpp \
+    src/MaskGraphicsItem.cpp \
+    src/SXGraphicsItem.cpp \
     src/PeakPlot.cpp
 
 HEADERS  += include/MainWindow.h \
@@ -74,16 +72,15 @@ HEADERS  += include/MainWindow.h \
     include/DetectorGraphicsView.h \
     include/DetectorScene.h \
     include/PeakGraphicsItem.h \
-    include/SliceGraphicsItem.h \
-    include/SliceCutterCustomPlot.h \
-    include/CutterCustomPlot.h \
-    include/LineCutterCustomPlot.h \
+    include/CutSliceGraphicsItem.h \
     include/PeakCustomPlot.h \
-    include/SXCustomPlot.h \
     include/PlottableGraphicsItem.h \
-    include/LineCutGraphicsItem.h \
+    include/CutLineGraphicsItem.h \
     include/CutterGraphicsItem.h \
     include/PlotFactory.h \
+    include/SXPlot.h \
+    include/MaskGraphicsItem.h \
+    include/SXGraphicsItem.h \
     include/SimplePlot.h \
     include/PeakPlot.h
 

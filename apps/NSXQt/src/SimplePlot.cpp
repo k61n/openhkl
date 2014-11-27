@@ -1,15 +1,15 @@
 #include <QWidget>
 
 #include "SimplePlot.h"
-#include "SXCustomPlot.h"
+#include "SXPlot.h"
 
-SXCustomPlot* SimplePlot::create(QWidget *parent)
+SXPlot* SimplePlot::create(QWidget *parent)
 {
     return new SimplePlot(parent);
 }
 
 
-SimplePlot::SimplePlot(QWidget *parent) : SXCustomPlot(parent)
+SimplePlot::SimplePlot(QWidget *parent) : SXPlot(parent)
 {
     plotLayout()->insertRow(0);
     addGraph();

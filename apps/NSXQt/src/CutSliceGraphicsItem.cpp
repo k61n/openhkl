@@ -13,19 +13,18 @@
 #include "DetectorScene.h"
 #include "IData.h"
 #include "SimplePlot.h"
-#include "SliceCutterCustomPlot.h"
-#include "SliceGraphicsItem.h"
-#include "SXCustomPlot.h"
+#include "CutSliceGraphicsItem.h"
+#include "SXPlot.h"
 
-SliceGraphicsItem::SliceGraphicsItem(SX::Data::IData* data, bool horizontal) : CutterGraphicsItem(data), _horizontal(horizontal)
+CutSliceGraphicsItem::CutSliceGraphicsItem(SX::Data::IData* data, bool horizontal) : CutterGraphicsItem(data), _horizontal(horizontal)
 {
 }
 
-SliceGraphicsItem::~SliceGraphicsItem()
+CutSliceGraphicsItem::~CutSliceGraphicsItem()
 {
 }
 
-void SliceGraphicsItem::plot(SXCustomPlot* plot)
+void CutSliceGraphicsItem::plot(SXPlot* plot)
 {
 
     auto p=dynamic_cast<SimplePlot*>(plot);
@@ -112,12 +111,12 @@ void SliceGraphicsItem::plot(SXCustomPlot* plot)
 }
 
 
-bool SliceGraphicsItem::isHorizontal() const
+bool CutSliceGraphicsItem::isHorizontal() const
 {
     return _horizontal;
 }
 
-void SliceGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,QWidget *widget)
+void CutSliceGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,QWidget *widget)
 {
     Q_UNUSED(widget);
 
@@ -155,12 +154,12 @@ void SliceGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem 
    }
 }
 
-std::string SliceGraphicsItem::getPlotType() const
+std::string CutSliceGraphicsItem::getPlotType() const
 {
     return "simple";
 }
 
-void SliceGraphicsItem::wheelEvent(QGraphicsSceneWheelEvent *event)
+void CutSliceGraphicsItem::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
 
     if (!isVisible())

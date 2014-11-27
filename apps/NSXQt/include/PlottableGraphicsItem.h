@@ -5,63 +5,33 @@
 #include <QPen>
 #include <QRectF>
 
+#include "SXGraphicsItem.h"
+
 class QGraphicsSceneHoverEvent;
 class QGraphicsSceneMouseEvent;
 class QGraphicsTextItem;
 class QGraphicsSceneWheelEvent;
 class QKeyEvent;
 class QWidget;
-class SXCustomPlot;
+class SXPlot;
 
-class PlottableGraphicsItem : public QGraphicsItem
+class PlottableGraphicsItem : public SXGraphicsItem
 {
 public:
 
     PlottableGraphicsItem(QGraphicsItem *parent=0);
     virtual ~PlottableGraphicsItem();
 
-    virtual QRectF boundingRect() const=0;
-    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)=0;
-    virtual void plot(SXCustomPlot* plot){};
-//    virtual SXCustomPlot* createPlot(QWidget* parent=0)=0;
-
-    // Events
-
-    virtual void hoverEnterEvent(QGraphicsSceneHoverEvent* event);
-    virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent* event);
-    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
-    virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
-    virtual void wheelEvent(QGraphicsSceneWheelEvent *event);
+    virtual void plot(SXPlot* plot)=0;
 
     // Getters and setters
 
     //! Returns the type of plot related to the item
     virtual std::string getPlotType() const=0;
-    //! Set whether or not the item is deletable
-    void setDeletable(bool deletable);
-    //! Set whether or not the item is movable
-    void setMovable(bool movable);
 
     // Other methods
 
-    bool isPlottable(SXCustomPlot* plot) const;
-    //! Returns whether or not the item is deletable
-    bool isDeletable() const;
-    //! Return whether or not the item at the given position is fully inside the scene
-    virtual bool isInScene(const QPointF& pos) const;
-    //! Returns whether or not the item is movable
-    bool isMovable() const;
-    //! Show or does not show the label bound to the item
-    void showLabel(bool);
-
-protected:
-    bool _deletable;
-    bool _hoverable;
-    bool _movable;
-    QPen _pen;
-
-    //! Text child object that contains hkl label
-    QGraphicsTextItem* _label;
+    bool isPlottable(SXPlot* plot) const;
 
 };
 

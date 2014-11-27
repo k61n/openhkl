@@ -1,11 +1,11 @@
 #include "PeakPlot.h"
 
-SXCustomPlot* PeakPlot::create(QWidget *parent)
+SXPlot* PeakPlot::create(QWidget *parent)
 {
     return new PeakPlot(parent);
 }
 
-PeakPlot::PeakPlot(QWidget *parent) : SXCustomPlot(parent)
+PeakPlot::PeakPlot(QWidget *parent) : SXPlot(parent)
 {
     plotLayout()->insertRow(0);
     addGraph();

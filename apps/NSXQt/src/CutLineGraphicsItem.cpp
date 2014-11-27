@@ -17,20 +17,19 @@
 #include "Detector.h"
 #include "DetectorScene.h"
 #include "IData.h"
-#include "LineCutterCustomPlot.h"
-#include "LineCutGraphicsItem.h"
+#include "CutLineGraphicsItem.h"
 #include "SimplePlot.h"
-#include "SXCustomPlot.h"
+#include "SXPlot.h"
 
-LineCutGraphicsItem::LineCutGraphicsItem(SX::Data::IData* data) : CutterGraphicsItem(data), _nPoints(10)
+CutLineGraphicsItem::CutLineGraphicsItem(SX::Data::IData* data) : CutterGraphicsItem(data), _nPoints(10)
 {
 }
 
-LineCutGraphicsItem::~LineCutGraphicsItem()
+CutLineGraphicsItem::~CutLineGraphicsItem()
 {
 }
 
-void LineCutGraphicsItem::plot(SXCustomPlot* plot)
+void CutLineGraphicsItem::plot(SXPlot* plot)
 {
 
     auto p=dynamic_cast<SimplePlot*>(plot);
@@ -49,8 +48,6 @@ void LineCutGraphicsItem::plot(SXCustomPlot* plot)
     QLineF line;
     line.setP1(sceneBoundingRect().bottomLeft());
     line.setP2(sceneBoundingRect().topRight());
-
-    SX::Data::IData* dataPtr=detPtr->getData();
 
     const Eigen::MatrixXi& currentFrame=detPtr->getCurrentFrame();
 
@@ -94,7 +91,7 @@ void LineCutGraphicsItem::plot(SXCustomPlot* plot)
 
 }
 
-void LineCutGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,QWidget *widget)
+void CutLineGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,QWidget *widget)
 {
     Q_UNUSED(widget);
 
@@ -112,17 +109,17 @@ void LineCutGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsIte
 
 }
 
-int LineCutGraphicsItem::getNPoints() const
+int CutLineGraphicsItem::getNPoints() const
 {
     return _nPoints;
 }
 
-void LineCutGraphicsItem::setNPoints(int nPoints)
+void CutLineGraphicsItem::setNPoints(int nPoints)
 {
     _nPoints = nPoints;
 }
 
-void LineCutGraphicsItem::wheelEvent(QGraphicsSceneWheelEvent *event)
+void CutLineGraphicsItem::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
     if (!isVisible())
         return;
@@ -135,7 +132,7 @@ void LineCutGraphicsItem::wheelEvent(QGraphicsSceneWheelEvent *event)
         _nPoints = 1;
 }
 
-std::string LineCutGraphicsItem::getPlotType() const
+std::string CutLineGraphicsItem::getPlotType() const
 {
     return "simple";
 }

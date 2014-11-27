@@ -8,7 +8,7 @@
 #include "IData.h"
 #include "PeakGraphicsItem.h"
 #include "Peak3D.h"
-#include "SXCustomPlot.h"
+#include "SXPlot.h"
 #include "PeakPlot.h"
 #include "Units.h"
 
@@ -121,7 +121,7 @@ void PeakGraphicsItem::setLabelVisible(bool flag)
     _labelVisible=flag;
 }
 
-void PeakGraphicsItem::plot(SXCustomPlot* plot)
+void PeakGraphicsItem::plot(SXPlot* plot)
 {
 
     auto p=dynamic_cast<PeakPlot*>(plot);

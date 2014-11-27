@@ -11,9 +11,10 @@
 #include "Sample.h"
 #include "Source.h"
 #include "PeakGraphicsItem.h"
-#include "SliceGraphicsItem.h"
-#include "LineCutGraphicsItem.h"
+#include "CutSliceGraphicsItem.h"
+#include "CutLineGraphicsItem.h"
 #include <QtDebug>
+#include "MaskGraphicsItem.h"
 
 DetectorScene::DetectorScene(QObject *parent)
 : QGraphicsScene(parent),
@@ -23,7 +24,7 @@ DetectorScene::DetectorScene(QObject *parent)
   _currentFrame(),
   _cursorMode(PIXEL),
   _mode(ZOOM),
-  _currentItem(nullptr),
+  _currentCutter(nullptr),
   _itemSelected(false),
   _image(nullptr)
 {
@@ -84,11 +85,11 @@ void DetectorScene::setData(SX::Data::IData* data)
      _zoomStack.push_back(QRect(0,0,det->getNCols(),det->getNRows()));
 
 
-    if (_currentItem)
+    if (_currentCutter)
      {
-         removeItem(_currentItem);
-         delete _currentItem;
-         _currentItem=nullptr;
+         removeItem(_currentCutter);
+         delete _currentCutter;
+         _currentCutter=nullptr;
      }
 
      loadCurrentImage();
@@ -124,11 +125,13 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         // Case of the cutting modes
         else if (_mode==HORIZONTALSLICE || _mode==VERTICALSLICE || _mode==LINE)
         {
-            if (!_currentItem)
+            if (!_currentCutter)
                 return;
-            _currentItem->mouseMoveEvent(event);
-            emit updatePlot(_currentItem);
+            _currentCutter->mouseMoveEvent(event);
+            emit updatePlot(_currentCutter);
         }
+        else if (_mode==MASK)
+            _masks.last()->setTo(event->lastScenePos());
     }
     // No button was pressed, just a mouse move
     else if (!event->buttons())
@@ -188,26 +191,30 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             {
 
                 // If there is already a cutter item on the scene, delete it
-                if (_currentItem)
+                if (_currentCutter)
                 {
-                    delete _currentItem;
-                    _currentItem=nullptr;
+                    delete _currentCutter;
+                    _currentCutter=nullptr;
                 }
                 // Create the cutter item corresponding to the seleced cutting mode
                 if (_mode==HORIZONTALSLICE)
-                    _currentItem=new SliceGraphicsItem(_currentData,true);
+                    _currentCutter=new CutSliceGraphicsItem(_currentData,true);
                 else if (_mode==VERTICALSLICE)
-                    _currentItem=new SliceGraphicsItem(_currentData,false);
+                    _currentCutter=new CutSliceGraphicsItem(_currentData,false);
                 else if (_mode==LINE)
-                    _currentItem=new LineCutGraphicsItem(_currentData);
-                auto p=dynamic_cast<CutterGraphicsItem*>(_currentItem);
+                    _currentCutter=new CutLineGraphicsItem(_currentData);
+                auto p=dynamic_cast<CutterGraphicsItem*>(_currentCutter);
                 p->setFrom(event->lastScenePos());
-                addItem(_currentItem);
+                addItem(_currentCutter);
             }
             // Case of Mask mode
             else if (_mode==MASK)
             {
-
+                MaskGraphicsItem* mask = new MaskGraphicsItem(_currentData);
+                mask->setFrom(event->lastScenePos());
+                mask->setTo(event->lastScenePos());
+                _masks.append(mask);
+                addItem(_masks.last());
             }
         }
     }
@@ -275,12 +282,10 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         }
         // Case of of the cutting modes, the cut plot are updated
         else if (_mode==HORIZONTALSLICE || _mode==VERTICALSLICE || _mode==LINE)
-            emit updatePlot(_currentItem);
+            emit updatePlot(_currentCutter);
         // Case of the Mask mode
         else if (_mode==MASK)
-        {
-
-        }
+            updatePeaks();
     }
 }
 
@@ -297,10 +302,10 @@ void DetectorScene::wheelEvent(QGraphicsSceneWheelEvent* event)
     // Cut modes, process the wheel event and update the cut plot
     else if (_mode==HORIZONTALSLICE || _mode==VERTICALSLICE || _mode==LINE)
     {
-        if (!_currentItem)
+        if (!_currentCutter)
             return;
-        _currentItem->wheelEvent(event);
-        emit updatePlot(_currentItem);
+        _currentCutter->wheelEvent(event);
+        emit updatePlot(_currentCutter);
     }
 
 }
@@ -421,7 +426,7 @@ void DetectorScene::loadCurrentImage()
 
     setSceneRect(_zoomStack.back());
     emit dataChanged();
-    emit updatePlot(_currentItem);
+    emit updatePlot(_currentCutter);
 
 }
 

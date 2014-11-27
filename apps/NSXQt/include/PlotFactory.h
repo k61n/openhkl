@@ -5,13 +5,13 @@
 
 #include "Factory.h"
 #include "Singleton.h"
-#include "SXCustomPlot.h"
+#include "SXPlot.h"
 
 class QWidget;
 
 using namespace SX::Kernel;
 
-class PlotFactory : public Factory<SXCustomPlot,std::string,QWidget*>, public Singleton<PlotFactory,Constructor,Destructor>
+class PlotFactory : public Factory<SXPlot,std::string,QWidget*>, public Singleton<PlotFactory,Constructor,Destructor>
 {
 private:
     friend class Constructor<PlotFactory>;
