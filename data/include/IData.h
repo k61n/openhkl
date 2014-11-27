@@ -112,7 +112,7 @@ public:
 	//! Return true if the file is stored in memory
 	bool isInMemory() const;
 	//! Return the intensity at point x,y,z.
-	virtual int dataAt(int x=0, int y=0, int z=0)=0;
+	int dataAt(int x=0, int y=0, int z=0);
     //! Read a given Frame of the data
     virtual Eigen::MatrixXi getFrame(std::size_t i)=0;
     //! Read a single frame
@@ -133,6 +133,8 @@ protected:
     bool _isMapped;
 	std::string _filename;
 	std::size_t _nFrames;
+	std::size_t _nrows;
+	std::size_t _ncols;
 	std::shared_ptr<Diffractometer> _diffractometer;
 	MetaData* _metadata;
 	bool _inMemory;

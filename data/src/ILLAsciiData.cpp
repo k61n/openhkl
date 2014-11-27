@@ -243,13 +243,6 @@ void ILLAsciiData::releaseMemory()
     _inMemory=false;
 }
 
-int ILLAsciiData::dataAt(int x, int y, int z)
-{
-    if (z<0 || z>=_nFrames || y<0 || y>=_diffractometer->getDetector()->getNRows() || x<0 || x>=_diffractometer->getDetector()->getNCols())
-        return 0;
-    return (_data[z])(x,y);
-}
-
 void ILLAsciiData::goToLine(std::stringstream& buffer, int number,int pos)
 {
 	int char_number=81*(number-1)+pos;

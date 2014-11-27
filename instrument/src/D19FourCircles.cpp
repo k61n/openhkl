@@ -42,7 +42,6 @@ D19FourCircles::D19FourCircles(const std::string& name) : Diffractometer(name)
     _detector->setHeight(40.0*cm);
     _detector->setNPixels(640,256);
 
-
     // Define the goniometer bound to the detector
     std::shared_ptr<Gonio> g(new Gonio("gamma-arm"));
     g->addRotation("2theta(gamma)",Vector3d(0,0,1),RotAxis::CW);

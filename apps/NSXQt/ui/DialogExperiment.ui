@@ -49,7 +49,7 @@
    <property name="styleSheet">
     <string notr="true"> QGroupBox {
      background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                       stop: 0 #FFFFFF, stop: 1 #DDDDFF);
+                                       stop: 0 #FFFFFF, stop: 1 #DDFFDD);
      border: 1px solid black;
      border-radius: 5px;
      margin-top: 1ex; /* leave space at the top for the title */
@@ -152,10 +152,6 @@
      </item>
     </layout>
    </widget>
-   <zorder>instrument</zorder>
-   <zorder>buttonBox</zorder>
-   <zorder>layoutWidget</zorder>
-   <zorder>layoutWidget</zorder>
   </widget>
  </widget>
  <resources/>

@@ -69,8 +69,6 @@ public:
 	// Other methods
 	void map();
 	void unMap();
-	//! Return the intensity at point x,y,z
-    int dataAt(int x=0, int y=0, int z=0);
     //! Read a given Frame of the data
     Eigen::MatrixXi getFrame(std::size_t idx);
     //! Read a single frame

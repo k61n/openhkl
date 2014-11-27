@@ -22,6 +22,8 @@ using namespace boost::filesystem;
 IData::IData(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer, bool inMemory)
 : _filename(filename),
   _nFrames(0),
+  _nrows(0),
+  _ncols(0),
   _diffractometer(diffractometer),
   _metadata(new MetaData()),
   _inMemory(inMemory),
@@ -33,8 +35,10 @@ IData::IData(const std::string& filename, std::shared_ptr<Diffractometer> diffra
   _fileSize(0)
 {
 	if ( !boost::filesystem::exists(_filename.c_str()))
-		throw std::runtime_error("ILLAsciiData, file: "+_filename+" does not exist");
+		throw std::runtime_error("IData, file: "+_filename+" does not exist");
 
+	_nrows=_diffractometer->getDetector()->getNRows();
+	_ncols=_diffractometer->getDetector()->getNCols();
 }
 
 IData::~IData()
@@ -57,6 +61,13 @@ const std::vector<Eigen::MatrixXi>& IData::getData() const
 Eigen::MatrixXi& IData::getData(std::size_t idx)
 {
 	return _data[idx];
+}
+
+int IData::dataAt(int x, int y, int z)
+{
+    if (z<0 || z>=_nFrames || y<0 || y>=_nrows || x<0 || x>_ncols)
+        return 0;
+    return (_data[z])(y,x);
 }
 
 const std::string& IData::getFilename() const
