@@ -130,6 +130,7 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             _currentCutter->mouseMoveEvent(event);
             emit updatePlot(_currentCutter);
         }
+        // Case of mask mode, update the mask graphics item and the list of the peaks to be excluded
         else if (_mode==MASK)
             _masks.last()->setTo(event->lastScenePos());
     }
@@ -180,12 +181,6 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
         else
         {
 
-            // Get the graphics item on which the user has clicked
-            auto item=itemAt(event->lastScenePos(),QTransform());
-            // If the item is not the background pixmap, return
-            if (!dynamic_cast<QGraphicsPixmapItem*>(item))
-                return;
-
             // Case of Cuttings mode (horizontal/vertical slices, line cut)
             if (_mode==HORIZONTALSLICE || _mode==VERTICALSLICE || _mode==LINE)
             {
@@ -193,6 +188,8 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
                 // If there is already a cutter item on the scene, delete it
                 if (_currentCutter)
                 {
+                    if (_currentCutter->isSelected())
+                        return;
                     delete _currentCutter;
                     _currentCutter=nullptr;
                 }
@@ -283,7 +280,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         // Case of of the cutting modes, the cut plot are updated
         else if (_mode==HORIZONTALSLICE || _mode==VERTICALSLICE || _mode==LINE)
             emit updatePlot(_currentCutter);
-        // Case of the Mask mode
+        // Case of the Mask mode, update the scene with the new selection status of the peaks
         else if (_mode==MASK)
             updatePeaks();
     }
