@@ -65,9 +65,10 @@ Eigen::MatrixXi& IData::getData(std::size_t idx)
 
 int IData::dataAt(int x, int y, int z)
 {
-    if (z<0 || z>=_nFrames || y<0 || y>=_nrows || x<0 || x>_ncols)
+    if (z<0 || z>=_nFrames || y<0 || y>=_nrows || x<0 || x>=_ncols)
         return 0;
-    return (_data[z])(y,x);
+
+    return (_data[z])(x,y);
 }
 
 const std::string& IData::getFilename() const

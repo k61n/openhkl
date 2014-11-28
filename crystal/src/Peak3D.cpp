@@ -151,7 +151,7 @@ void Peak3D::integrate()
 		{
 			for (int y=start_y;y<=end_y;++y)
 			{
-				int intensity=_data->dataAt(x,y,z);
+				int intensity=_data->dataAt(y,x,z);
 				_projection[z-data_start]+=intensity;
 				point1 << x,y,z,1;
 				point2 << x+1,y,z,1;

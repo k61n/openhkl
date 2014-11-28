@@ -19,7 +19,6 @@ CutterGraphicsItem::CutterGraphicsItem(SX::Data::IData* data) : PlottableGraphic
 
 CutterGraphicsItem::~CutterGraphicsItem()
 {
-    scene()->removeItem(this);
 }
 
 void CutterGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)

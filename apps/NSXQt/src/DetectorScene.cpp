@@ -190,6 +190,7 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
                 {
                     if (_currentCutter->isSelected())
                         return;
+                    removeItem(_currentCutter);
                     delete _currentCutter;
                     _currentCutter=nullptr;
                 }
@@ -313,32 +314,25 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
     if (!_currentData)
         return;
 
-//    switch (event->key())
-//    {
-//    case(Qt::Key_Delete):
-//    {
-//        QList<QGraphicsItem*> items=selectedItems();
-//        int i=0;
-//        for (auto item : items)
-//        {
-//            removeItem(item);
-//            PeakGraphicsItem* peak=dynamic_cast<PeakGraphicsItem*>(item);
-//            if (peak)
-//            {
-//                bool remove=_currentData->removePeak(peak->getPeak());
-//                if (remove)
-//                    i++;
-//                qDebug() << "Removed "<< i << " peaks";
-//                _peaks.erase(peak);
-//            }
-
-//            delete item;
-
-//        }
-//        break;
-//    }
-//    }
-
+    if (event->key() & Qt::Key_Delete)
+    {
+        QList<QGraphicsItem*> items=selectedItems();
+        int nPeaksErased=_peaks.size();
+        for (auto item : items)
+        {
+            removeItem(item);
+            if (auto p=dynamic_cast<PeakGraphicsItem*>(item))
+            {
+                bool remove=_currentData->removePeak(p->getPeak());
+                if (remove)
+                    _peaks.erase(p);
+            }
+            delete item;
+        }
+        nPeaksErased -= _peaks.size();
+        if (nPeaksErased > 0)
+            qDebug() << "Removed "<< nPeaksErased << " peaks";
+    }
 }
 
 void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
