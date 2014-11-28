@@ -2,6 +2,7 @@
 #define DETECTORSCENE_H
 
 #include <set>
+#include <list>
 
 #include <Eigen/Dense>
 

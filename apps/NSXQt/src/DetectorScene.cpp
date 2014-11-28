@@ -26,7 +26,9 @@ DetectorScene::DetectorScene(QObject *parent)
   _mode(ZOOM),
   _currentCutter(nullptr),
   _itemSelected(false),
-  _image(nullptr)
+  _image(nullptr),
+  _peaks(),
+  _masks()
 {
 }
 
@@ -212,7 +214,7 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
                 mask->setFrom(event->lastScenePos());
                 mask->setTo(event->lastScenePos());
                 _masks.append(mask);
-                addItem(_masks.last());
+                addItem(mask);
             }
         }
     }
@@ -321,12 +323,18 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
         for (auto item : items)
         {
             removeItem(item);
+
             if (auto p=dynamic_cast<PeakGraphicsItem*>(item))
             {
                 bool remove=_currentData->removePeak(p->getPeak());
                 if (remove)
                     _peaks.erase(p);
             }
+            else if (auto p=dynamic_cast<MaskGraphicsItem*>(item))
+                _masks.removeOne(p);
+            else if (auto p=dynamic_cast<CutterGraphicsItem*>(item))
+                _currentCutter=nullptr;
+
             delete item;
         }
         nPeaksErased -= _peaks.size();
