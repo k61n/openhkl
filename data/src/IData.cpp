@@ -70,7 +70,7 @@ int IData::dataAt(int x, int y, int z)
     if (z<0 || z>=_nFrames || y<0 || y>=_nrows || x<0 || x>=_ncols)
         return 0;
 
-    return (_data[z])(x,y);
+    return (_data[z])(y,x);
 }
 
 const std::string& IData::getFilename() const
@@ -207,7 +207,7 @@ void IData::saveHDF5(const std::string& filename)
 	blosc_set_nthreads(4);
 
 	if (!_inMemory)
-		throw std::runtime_error("Can't save "+_filename+" as HDF5, file not in memory");
+	throw std::runtime_error("Can't save "+_filename+" as HDF5, file not in memory");
 
 	hsize_t dims[3] = {_nFrames, _nrows,_ncols};
 	hsize_t chunk[3] = {1, _nrows,_ncols};
@@ -224,40 +224,40 @@ void IData::saveHDF5(const std::string& filename)
 	char *version, *date;
 	int r;
 	unsigned int cd_values[7];
-	cd_values[4] = 9;       // Highest compression level
+	cd_values[4] = 5;       // Highest compression level
 	cd_values[5] = 1;       // Bit shuffling active
-	cd_values[6] = BLOSC_BLOSCLZ; // Seem to be the best compromise speed/compression for diffraction data
+	cd_values[6] = BLOSC_LZ4; // Seem to be the best compromise speed/compression for diffraction data
 
 	r = register_blosc(&version, &date);
 	if (r<=0)
-			throw std::runtime_error("Problem registering BLOSC filter in HDF5 library");
+		throw std::runtime_error("Problem registering BLOSC filter in HDF5 library");
 
 	plist->setFilter(FILTER_BLOSC, H5Z_FLAG_OPTIONAL, 7, cd_values);
 
 	H5::DataSpace* memspace=new H5::DataSpace(3,count,NULL);
 
-	H5::DataSet* dset=new H5::DataSet(file.createDataSet("counts", H5::PredType::NATIVE_INT, *space, *plist));
+	H5::DataSet* dset=new H5::DataSet(file.createDataSet("counts", H5::PredType::NATIVE_INT32, *space, *plist));
 
-	  hsize_t offset[3];
-	  offset[0] = 0;
-	  offset[1] = 0;
-	  offset[2] = 0;
+	hsize_t offset[3];
+	offset[0] = 0;
+	offset[1] = 0;
+	offset[2] = 0;
 
-	  for(offset[0]=0; offset[0]<_data.size(); offset[0] += count[0])
-		{
-		  space->selectHyperslab(H5S_SELECT_SET,count,offset,NULL,NULL);
-		  dset->write(_data.at(offset[0]).data(),H5::PredType::NATIVE_INT,*memspace,*space);
-		}
+	for(offset[0]=0; offset[0]<_data.size(); offset[0] += count[0])
+	{
+	  space->selectHyperslab(H5S_SELECT_SET,count,offset,NULL,NULL);
+	  dset->write(_data.at(offset[0]).data(),H5::PredType::NATIVE_INT32,*memspace,*space);
+	}
 
 
-	  delete dset;
-	  delete memspace;
-	  delete space;
-	  delete plist;
-	  file.close();
+	delete dset;
+	delete memspace;
+	delete space;
+	delete plist;
+	file.close();
 
-	  //
-	  blosc_destroy();
+	//
+	blosc_destroy();
 }
 
 void IData::readHDF5(const std::string& filename)
@@ -314,7 +314,7 @@ void IData::readHDF5(const std::string& filename)
 	for(offset[0]=0; offset[0] < _nFrames; offset[0] += count[0])
 	{
 	  space->selectHyperslab(H5S_SELECT_SET,count,offset,NULL,NULL);
-	  dset->read(_data.at(offset[0]).data(),H5::PredType::NATIVE_INT,*memspace,*space);
+	  dset->read(_data.at(offset[0]).data(),H5::PredType::NATIVE_INT32,*memspace,*space);
 	}
 
 	delete memspace;
