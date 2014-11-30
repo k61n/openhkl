@@ -224,7 +224,7 @@ void IData::saveHDF5(const std::string& filename)
 	char *version, *date;
 	int r;
 	unsigned int cd_values[7];
-	cd_values[4] = 5;       // Highest compression level
+	cd_values[4] = 9;       // Highest compression level
 	cd_values[5] = 1;       // Bit shuffling active
 	cd_values[6] = BLOSC_LZ4; // Seem to be the best compromise speed/compression for diffraction data
 

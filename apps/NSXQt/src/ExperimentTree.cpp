@@ -224,6 +224,9 @@ void ExperimentTree::importData()
         try
         {
             ILLAsciiData* d = new ILLAsciiData(fileNames[i].toStdString(),exp->getDiffractometer(),false);
+            d->map();
+            d->loadAllFrames();
+            d->saveHDF5(fileNames[i].toStdString()+".h5");
             exp->addData(d);
         }
         catch(std::exception& e)
