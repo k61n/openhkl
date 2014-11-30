@@ -5,6 +5,11 @@
 
 SXPlot::SXPlot(QWidget *parent) : QCustomPlot(parent)
 {
+   legend->setSelectableParts(QCPLegend::spItems);
+   connect(this, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(mousePress()));
+   connect(this, SIGNAL(mouseWheel(QWheelEvent*)), this, SLOT(mouseWheel()));
+   connect(this, SIGNAL(titleDoubleClick(QMouseEvent*,QCPPlotTitle*)), this, SLOT(titleDoubleClick(QMouseEvent*,QCPPlotTitle*)));
+   connect(this, SIGNAL(legendDoubleClick(QCPLegend*,QCPAbstractLegendItem*,QMouseEvent*)), this, SLOT(legendDoubleClick(QCPLegend*,QCPAbstractLegendItem*)));
 }
 
 void SXPlot::update(PlottableGraphicsItem *item)
@@ -36,9 +41,8 @@ void SXPlot::keyPressEvent(QKeyEvent* event)
         copyViewToClipboard();
 }
 
-void SXPlot::mousePress(QMouseEvent *event)
+void SXPlot::mousePress()
 {
-    Q_UNUSED(event);
     if (xAxis->selectedParts().testFlag(QCPAxis::spAxis))
         axisRect()->setRangeDrag(xAxis->orientation());
     else if (yAxis->selectedParts().testFlag(QCPAxis::spAxis))
@@ -47,9 +51,8 @@ void SXPlot::mousePress(QMouseEvent *event)
         axisRect()->setRangeDrag(Qt::Horizontal|Qt::Vertical);
 }
 
-void SXPlot::mouseWheel(QWheelEvent* event)
+void SXPlot::mouseWheel()
 {
-    Q_UNUSED(event);
     if (xAxis->selectedParts().testFlag(QCPAxis::spAxis))
         axisRect()->setRangeZoom(xAxis->orientation());
     else if (yAxis->selectedParts().testFlag(QCPAxis::spAxis))
@@ -60,4 +63,34 @@ void SXPlot::mouseWheel(QWheelEvent* event)
 
 SXPlot::~SXPlot()
 {
+}
+
+void SXPlot::titleDoubleClick(QMouseEvent* event, QCPPlotTitle* title)
+{
+  Q_UNUSED(event)
+  // Set the plot title by double clicking on it
+  bool ok;
+  QString newTitle = QInputDialog::getText(this, "NSXTool", "New plot title:", QLineEdit::Normal, title->text(), &ok);
+  if (ok)
+  {
+    title->setText(newTitle);
+    replot();
+  }
+}
+
+void SXPlot::legendDoubleClick(QCPLegend *legend, QCPAbstractLegendItem *item)
+{
+  // Rename a graph by double clicking on its legend item
+  Q_UNUSED(legend)
+  if (item) // only react if item was clicked (user could have clicked on border padding of legend where there is no item, then item is 0)
+  {
+    QCPPlottableLegendItem *plItem = qobject_cast<QCPPlottableLegendItem*>(item);
+    bool ok;
+    QString newName = QInputDialog::getText(this, "NSXTool", "New legent:", QLineEdit::Normal, plItem->plottable()->name(), &ok);
+    if (ok)
+    {
+      plItem->plottable()->setName(newName);
+      replot();
+    }
+  }
 }

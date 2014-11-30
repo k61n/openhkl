@@ -23,10 +23,11 @@ public:
     virtual std::string getType() const;
 
 public slots:
-    void mousePress(QMouseEvent *event);
-    void mouseWheel(QWheelEvent *event);
+    void mousePress();
+    void mouseWheel();
     virtual void update(PlottableGraphicsItem* item);
-
+    void titleDoubleClick(QMouseEvent *event, QCPPlotTitle *title);
+    void legendDoubleClick(QCPLegend *legend, QCPAbstractLegendItem *item);
 private:
     void copyViewToClipboard();
 
