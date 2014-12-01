@@ -51,19 +51,26 @@ typedef std::set<std::string> keyset;
 typedef keyset::iterator keysetit;
 typedef keyset::const_iterator keysetcit;
 
-//! MetaData class allow to store metadata associated with a data file  into a map indexed by the string
-//! of the entry. Any parameter type can be stored, using a template argument. Internally, MetaData
-//! stores the value using boost::any.
-//! A specific key can be retrieved using the templated type if known.
-//! From C++0x onwards, a parameter can be retrieved even if its type is unknown by the user
-//! using auto.
+
+/*! \brief Class to store MetaData of a DataSet stored by a map of key/value pair
+ *
+ *  MetaData class allow to store metadata associated with a data file  into a map indexed by the string
+ * of the entry. Any parameter type can be stored, using a template argument. Internally, MetaData
+ * stores the value using boost::any.
+ * A specific key can be retrieved using the templated type if known.
+ * From C++0x onwards, a parameter can be retrieved even if its type is unknown by the user
+ * using auto.
+ */
 class MetaData
 {
 public:
-	//! Constructors
+	//! Constructor
 	MetaData();
+	//! Destructor
 	~MetaData();
+	//! Copy
 	MetaData(const MetaData&);
+	//! Assignment
 	MetaData& operator=(const MetaData&);
 	//! Add a pair of key and value.
 	template <class _type> void add(const std::string& key, const _type& value);
@@ -84,7 +91,7 @@ public:
 	//! Get all the keys available.
 	const keyset& getAllKeys() const;
 private:
-	//! Contains the map of all metadata.
+	//! Contains the map of all key/value pairs.
 	hetermap _map;
 	//! Contains all available keys so far.
 	static keyset  _metakeys;
