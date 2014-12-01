@@ -6,23 +6,23 @@
 #include "SXGraphicsItem.h"
 #include "SXPlot.h"
 
-SXGraphicsItem::SXGraphicsItem(QGraphicsItem *parent)
+SXGraphicsItem::SXGraphicsItem(QGraphicsItem *parent, bool deletable, bool hoverable, bool movable)
 : QGraphicsItem(parent),
-  _deletable(false),
-  _hoverable(true),
-  _movable(true),
+  _deletable(deletable),
+  _hoverable(hoverable),
+  _movable(movable),
   _label(nullptr)
 {
-
     _pen.setWidth(1);
     _pen.setCosmetic(true);
     _pen.setStyle(Qt::SolidLine);
 
-    // By default a plottable graphics can be selected and moved
-    setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
+    // By default a plottable graphics can be selected
+    setFlags(QGraphicsItem::ItemIsSelectable);
+    if (_movable)
+    	setFlags(getFlags() | QGraphicsItem::ItemIsMovable);
 
-    // By default a plottable graphics accepts hove event.
-    setAcceptHoverEvents(true);
+    setAcceptHoverEvents(_hoverable);
 }
 
 SXGraphicsItem::~SXGraphicsItem()
@@ -57,14 +57,26 @@ void SXGraphicsItem::setDeletable(bool deletable)
     _deletable = deletable;
 }
 
+void SXGraphicsItem::setHoverable(bool hoverable)
+{
+	_hoverable=hoverable;
+	setAcceptHoverEvents(_hoverable);
+}
+
 void SXGraphicsItem::setMovable(bool movable)
 {
     _movable = movable;
+    removeFlags(QGraphicsItem::ItemIsMovable);
 }
 
 bool SXGraphicsItem::isDeletable() const
 {
     return _deletable;
+}
+
+bool SXGraphicsItem::isHoverable() const
+{
+    return _hoverable;
 }
 
 bool SXGraphicsItem::isMovable() const

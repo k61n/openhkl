@@ -16,11 +16,12 @@ class SXGraphicsItem : public QGraphicsItem
 {
 public:
 
-    SXGraphicsItem(QGraphicsItem *parent=0);
-    virtual ~SXGraphicsItem();
+	// Constructors and destructor
 
-    virtual QRectF boundingRect() const=0;
-    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)=0;
+	// Construct a SX graphics item
+    SXGraphicsItem(QGraphicsItem *parent=0, bool deletable=false, hoverable=false, movable=false);
+    // Destructor
+    virtual ~SXGraphicsItem();
 
     // Events
 
@@ -32,8 +33,11 @@ public:
 
     // Getters and setters
 
+    virtual QRectF boundingRect() const=0;
     //! Set whether or not the item is deletable
     void setDeletable(bool deletable);
+    //! Set whether or not the item is hoverable
+    void setHoverable(bool hoverable);
     //! Set whether or not the item is movable
     void setMovable(bool movable);
 
@@ -41,10 +45,14 @@ public:
 
     //! Returns whether or not the item is deletable
     bool isDeletable() const;
+    //! Returns whether or not the item is hoverable
+    bool isHoverable() const;
     //! Return whether or not the item at the given position is fully inside the scene
     virtual bool isInScene(const QPointF& pos) const;
     //! Returns whether or not the item is movable
     bool isMovable() const;
+    //! Paint the graphics item
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)=0;
     //! Show or does not show the label bound to the item
     void showLabel(bool);
 

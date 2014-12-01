@@ -21,7 +21,9 @@
 #include "SimplePlot.h"
 #include "SXPlot.h"
 
-CutLineGraphicsItem::CutLineGraphicsItem(SX::Data::IData* data) : CutterGraphicsItem(data), _nPoints(10)
+CutLineGraphicsItem::CutLineGraphicsItem(SX::Data::IData* data)
+: CutterGraphicsItem(data),
+  _nPoints(10)
 {
 }
 

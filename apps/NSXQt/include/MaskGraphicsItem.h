@@ -24,21 +24,37 @@ class QWidget;
 
 using SX::Geometry::AABB;
 
+/*! Creates a mask that will be used to unselect/select peaks whether their intercept or
+ * not the mask
+ */
 class MaskGraphicsItem : public SXGraphicsItem
 {
 public:
 
     // Constructors and destructor
 
+	// Constructs a mask
     MaskGraphicsItem(SX::Data::IData* data);
     //! The destructor
     ~MaskGraphicsItem();
 
-    //! Returns the bounding rectangle of the item
+    // Events
+
+    //! The mouse move event.
+    //! If the item is selected when the event is triggered then the item will be moved on the scene
+    //! Otherwise, that means that the item is being drawn and then the move event corresponds to a resize
+    void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
+    //! Handles a mouse wheel event
+    void wheelEvent(QGraphicsSceneWheelEvent* event);
+
+    // Getters and setters
+
+    //! Returns the bounding rectangle of the mask
     QRectF boundingRect() const;
-    //! Sets the top left corner of the item
+    AABB<double,3>* getAABB();
+    //! Sets the starting corner of the mask
     void setFrom(const QPointF& pos);
-    //! Sets the bottom right corner of the item
+    //! Sets the ending corner of the mask
     void setTo(const QPointF& pos);
 
     // Other methods
@@ -46,18 +62,13 @@ public:
     //! Paint the slice
     void paint(QPainter *painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
 
-    void excludePeaks() const;
-
 protected:
     //! The data on which the cutter will act upon
     SX::Data::IData* _data;
-
-    //! The top left coordinates of the slice
-    QPointF _from;
-    //! The bottom right coordinates of the slice
-    QPointF _to;
-
-    AABB<double,3> _boundaries;
+    //! The AABB of the peak
+    AABB<double,3>* _aabb;
+    //! The diagonal of the bounding rect of the mask
+    QLine _diagonal;
 
 };
 

@@ -34,7 +34,8 @@ IData::IData(const std::string& filename, std::shared_ptr<Diffractometer> diffra
   _sampleStates(),
   _peaks(),
   _isMapped(false),
-  _fileSize(0)
+  _fileSize(0),
+  _masks()
 {
 	if ( !boost::filesystem::exists(_filename.c_str()))
 		throw std::runtime_error("IData, file: "+_filename+" does not exist");
@@ -323,6 +324,92 @@ void IData::readHDF5(const std::string& filename)
 	file.close();
 
 	blosc_destroy();
+
+}
+
+void IData::addMask(AABB<double,3>* mask)
+{
+	// Insert the mask
+	_masks.insert(mask);
+	// Update the peaks with this mask
+	maskPeaks(*mask);
+}
+
+void IData::removeMask(AABB<double,3>* mask)
+{
+	auto p=_masks.find(mask);
+	if (p!=_masks.end())
+		_masks.erase(mask);
+	// Update the peaks selection status.
+	unmaskPeaks();
+}
+
+void IData::maskPeaks() const
+{
+	for (auto p : _peaks)
+	{
+		// If the peak is already unselected, no need to mask it.
+		if (!p->isSelected())
+			continue;
+		for (auto m : _masks)
+		{
+			// If the background of the peak intercept the mask, unselected the peak
+			if (m->intercept(p->getBackground()))
+			{
+				p->setSelected(false);
+				break;
+			}
+		}
+	}
+}
+
+void IData::unmaskPeaks() const
+{
+	for (auto p : _peaks)
+	{
+		// If the peak is already selected, no need to unmask it.
+		if (p->isSelected())
+			continue;
+		for (auto m : _masks)
+		{
+			// If the background of the peak intercept the mask, unselected the peak
+			if (m->intercept(p->getBackground()))
+			{
+				p->setSelected(true);
+				break;
+			}
+		}
+	}
+}
+
+void IData::maskPeaks(const AABB<double,3>& mask) const
+{
+	// Loop over the peaks and check for each of them if it intercepts the mask
+	for (auto p : _peaks)
+	{
+		// If the peak is already unselected, no need to mask it.
+		if (!p->isSelected())
+			continue;
+		// If the background of the peak intercept the mask, unselected the peak
+		if (mask.intercept(p->getBackground()))
+		{
+			p->setSelected(false);
+			break;
+		}
+	}
+}
+
+bool IData::isMasked(const Eigen::Vector3d& point) const
+{
+
+	// Loop over the defined masks and return true if one of them contains the point
+	for (auto m : _masks)
+	{
+		if (m->isInsideAABB(point))
+			return true;
+	}
+	// No mask contains the point, return false
+	return false;
 
 }
 

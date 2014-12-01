@@ -16,7 +16,9 @@
 #include "CutSliceGraphicsItem.h"
 #include "SXPlot.h"
 
-CutSliceGraphicsItem::CutSliceGraphicsItem(SX::Data::IData* data, bool horizontal) : CutterGraphicsItem(data), _horizontal(horizontal)
+CutSliceGraphicsItem::CutSliceGraphicsItem(SX::Data::IData* data, bool horizontal)
+: CutterGraphicsItem(data),
+  _horizontal(horizontal)
 {
 }
 

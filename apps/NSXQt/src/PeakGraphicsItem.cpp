@@ -16,9 +16,10 @@
 
 bool PeakGraphicsItem::_labelVisible=false;
 
-PeakGraphicsItem::PeakGraphicsItem(SX::Crystal::Peak3D* p) : PlottableGraphicsItem(nullptr), _peak(p)
+PeakGraphicsItem::PeakGraphicsItem(SX::Crystal::Peak3D* p)
+: PlottableGraphicsItem(nullptr,true,true,false),
+  _peak(p)
 {
-    _hoverable=false;
     if (_peak)
     {
         Eigen::Vector3d c=_peak->getPeak()->getCenter();
@@ -28,17 +29,16 @@ PeakGraphicsItem::PeakGraphicsItem(SX::Crystal::Peak3D* p) : PlottableGraphicsIt
     _pen.setCosmetic(true);
     _pen.setStyle(Qt::SolidLine);
     _pen.setColor(QColor(0,0,255,255));
-    setFlags(QGraphicsItem::ItemIsSelectable);
 
     QString hkl;
     _label=new QGraphicsTextItem(this);
-    _label->setFlag(QGraphicsItem::ItemIgnoresTransformations); //Ensure text is alwyas real size despite zoom
+    //Ensure text is alwyas real size despite zoom
+    _label->setFlag(QGraphicsItem::ItemIgnoresTransformations);
     _label->setParentItem(this);
     setBoundingRegionGranularity(0.0);
 
+    // A peak item is always put on foreground of the scene
     setZValue(2);
-
-    setMovable(false);
 }
 
 PeakGraphicsItem::~PeakGraphicsItem()

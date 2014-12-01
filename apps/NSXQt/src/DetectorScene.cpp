@@ -134,7 +134,7 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         }
         // Case of mask mode, update the mask graphics item and the list of the peaks to be excluded
         else if (_mode==MASK)
-            _masks.last()->setTo(event->lastScenePos());
+        	_masks.last()->mouseMoveEvent(event);
     }
     // No button was pressed, just a mouse move
     else if (!event->buttons())
@@ -146,14 +146,6 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         if (p)
             emit updatePlot(p);
     }
-}
-
-void DetectorScene::unselectItems()
-{
-    QList<QGraphicsItem*> items=selectedItems();
-    for (auto item : items)
-        item->setSelected(false);
-    _itemSelected=false;
 }
 
 void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -182,11 +174,9 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
         }
         else
         {
-
             // Case of Cuttings mode (horizontal/vertical slices, line cut)
             if (_mode==HORIZONTALSLICE || _mode==VERTICALSLICE || _mode==LINE)
             {
-
                 // If there is already a cutter item on the scene, delete it
                 if (_currentCutter)
                 {
@@ -285,18 +275,20 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             emit updatePlot(_currentCutter);
         // Case of the Mask mode, update the scene with the new selection status of the peaks
         else if (_mode==MASK)
+        {
+        	_currentData->addMask(_masks.last()->getAABB());
             updatePeaks();
+        }
     }
 }
 
 void DetectorScene::wheelEvent(QGraphicsSceneWheelEvent* event)
 {
-    Q_UNUSED(event);
-
+    // If no data, returns
     if (!_currentData)
         return;
 
-    // Zoo mode, does nothing
+    // Zoom mode, does nothing
     if (_mode==ZOOM)
         return;
     // Cut modes, process the wheel event and update the cut plot
@@ -306,37 +298,62 @@ void DetectorScene::wheelEvent(QGraphicsSceneWheelEvent* event)
             return;
         _currentCutter->wheelEvent(event);
         emit updatePlot(_currentCutter);
+    // Mask mode, resize the mask
+    } else if (_mode==MASK)
+    {
+        auto p=dynamic_cast<MaskGraphicsItem*>(item);
+        if (p)
+        {
+        	p->wheelEvent(event);
+        	updatePeaks();
+        }
     }
-
 }
 
 void DetectorScene::keyPressEvent(QKeyEvent* event)
 {
 
+	// If no data, returns
     if (!_currentData)
         return;
 
+    // The user pressed on Delete key
     if (event->key() & Qt::Key_Delete)
     {
         QList<QGraphicsItem*> items=selectedItems();
         int nPeaksErased=_peaks.size();
         for (auto item : items)
         {
-            removeItem(item);
+        	// The item must be deletable ... to be deleted
+        	if (!item->isDeletable())
+        		continue;
 
+        	// If the item is a peak graphics item, remove its corresponding peak from the data,
+        	// update the set of peak graphics items and update the scene
             if (auto p=dynamic_cast<PeakGraphicsItem*>(item))
             {
                 bool remove=_currentData->removePeak(p->getPeak());
                 if (remove)
                     _peaks.erase(p);
+                updatePeaks();
             }
+            // If the item is a mask graphics item, remove its corresponding mask from the data,
+            // update the QList of mask graphics items and update the scene
             else if (auto p=dynamic_cast<MaskGraphicsItem*>(item))
+            {
+            	_currentData->removeMask(p->getAABB());
                 _masks.removeOne(p);
+                updatePeaks();
+            }
+            // If the item is a cutter graphics item, set its pointer to null
             else if (auto p=dynamic_cast<CutterGraphicsItem*>(item))
                 _currentCutter=nullptr;
-
+            // Remove the item from the scene
+            removeItem(item);
+            // Delete the item
             delete item;
         }
+        // Computes the new number of peaks, and if it changes log it
         nPeaksErased -= _peaks.size();
         if (nPeaksErased > 0)
             qDebug() << "Removed "<< nPeaksErased << " peaks";

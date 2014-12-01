@@ -37,12 +37,14 @@ public:
     //! Handles a mouse wheel event
     void wheelEvent(QGraphicsSceneWheelEvent* event);
 
-
     // Getters and setters
+
+    //! Returns the type of plot related to this item
     std::string getPlotType() const;
 
     // Other methods
 
+    //! Plot the item
     void plot(SXPlot*);
     //! Return true if the slice is horizontal.
     bool isHorizontal() const;

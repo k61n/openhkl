@@ -35,6 +35,7 @@
 
 #include <Eigen/Dense>
 
+#include "AABB.h"
 #include "ComponentState.h"
 #include "MetaData.h"
 #include "Diffractometer.h"
@@ -52,6 +53,7 @@ namespace Data
 {
 
 using namespace SX::Crystal;
+using namespace SX::Geometry;
 using namespace SX::Instrument;
 
 class IData
@@ -104,13 +106,26 @@ public:
 
 	// Other methods
 
+	//! Add a new mask to the data
+	void addMask(AABB<double,3>* mask);
+	//! Add a new peak to the data
 	void addPeak(Peak3D* peak);
-	//!
+	//! Remove a mask from the data
+	void removeMask(AABB<double,3>* mask);
+	//! Remove a peak from the data
 	bool removePeak(Peak3D* peak);
 	//! Clear the peaks collected for this data
 	void clearPeaks();
 	//! Return true if the file is stored in memory
 	bool isInMemory() const;
+	//! Return true if a given point (in detector space) belong to a mask
+	bool isMasked(const Eigen<double,3>& point) const;
+	//! Mask the peaks collected in the data with the masks defined up to now
+	void maskPeaks() const;
+	//! Unmask the peaks collected in the data with the masks defined up to now
+	void unmaskPeaks() const;
+	//! Mask the peaks collected up to now with a given mask
+	void maskPeaks(const AABB<double,3>& mask) const;
 	//! Return the intensity at point x,y,z.
 	int dataAt(int x=0, int y=0, int z=0);
     //! Read a given Frame of the data
@@ -143,6 +158,8 @@ protected:
 	std::vector<ComponentState> _sampleStates;
     std::set<Peak3D*> _peaks;
     std::size_t _fileSize;
+    //! The set of masks bound to the data
+    std::set<AABB<double,3>> _masks;
 
 };
 

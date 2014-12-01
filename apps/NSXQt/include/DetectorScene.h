@@ -31,7 +31,7 @@ class MaskGraphicsItem;
 class PlottableGraphicsItem;
 
 //! Master Scene containing the pixmap of the detector counts
-//! peaks, and other Graphics Items
+//! and overlayed graphics items (peaks, data cutters, masks ...)
 class DetectorScene : public QGraphicsScene
 {
     Q_OBJECT
@@ -69,7 +69,6 @@ public slots:
     void showPeakLabels(bool);
 private:
 
-    void unselectItems();
     //! Load image from current Data and frame
     void loadCurrentImage();
     //! Create the text of the tooltip depending on Scene Mode.

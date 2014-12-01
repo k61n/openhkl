@@ -16,7 +16,11 @@
 #include "Peak3D.h"
 #include "MaskGraphicsItem.h"
 
-MaskGraphicsItem::MaskGraphicsItem(SX::Data::IData* data) : SXGraphicsItem(), _data(data), _from(0,0), _to(0,0), _boundaries()
+MaskGraphicsItem::MaskGraphicsItem(SX::Data::IData* data)
+: SXGraphicsItem(nullptr,true,false,true),
+  _data(data),
+  _aabb(new AABB<double,3>),
+  _diagonal()
 {
 }
 
@@ -38,65 +42,77 @@ void MaskGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 
    painter->setRenderHint(QPainter::HighQualityAntialiasing);
    painter->setPen(_pen);
-   qreal w=_to.x()-_from.x();
-   qreal h=_to.y()-_from.y();
-   painter->drawRect(-w/2.0,-h/2.0,w,h);
-
+   painter->drawRect(_diagonal.boundingRect());
 }
 
 QRectF MaskGraphicsItem::boundingRect() const
 {
-    qreal w=std::abs(_to.x()-_from.x());
-    qreal h=std::abs(_to.y()-_from.y());
-    return QRectF(-w/2,-h/2,w,h);
+    return _diagonal.boundingRect();
 }
 
 void MaskGraphicsItem::setFrom(const QPointF& pos)
 {
-    _from=pos;
-    _to=_from;
-    _boundaries.setUpper(Eigen::Vector3d(_to.x(),_to.y(),static_cast<double>(_data->getNFrames())));
-    _boundaries.setLower(Eigen::Vector3d(_from.x(),_from.y(),static_cast<double>(_data->getNFrames())));
+    _diagonal.setP1(pos);
+    _diagonal.setP2(pos);
+	QPointF bl=_diagonal.sceneBoundingRect().bottomLeft();
+	QPointF tr=_diagonal.sceneBoundingRect().topRight();
+	int nFrames=_data->getNFrames();
+    _aabb->setLower({bl.x(),bl.y(),nFrames});
+    _aabb->setUpper({tr.x(),tr.y(),nFrames});
     setPos(pos);
     update();
 }
 
 void MaskGraphicsItem::setTo(const QPointF& pos)
 {
-    _to=pos;
-    if (_to.x()>=_from.x())
-    {
-        if (_to.y() >= _from.y())
-            _boundaries.setUpper(Eigen::Vector3d(_to.x(),_to.y(),static_cast<double>(_data->getNFrames())));
-        else
-        {
-            _boundaries.setUpper(Eigen::Vector3d(_to.x(),_from.y(),static_cast<double>(_data->getNFrames())));
-            _boundaries.setLower(Eigen::Vector3d(_from.x(),_to.y(),static_cast<double>(_data->getNFrames())));
-        }
-    }
-    else
-    {
-        if (_to.y() >= _from.y())
-        {
-            _boundaries.setUpper(Eigen::Vector3d(_from.x(),_to.y(),static_cast<double>(_data->getNFrames())));
-            _boundaries.setLower(Eigen::Vector3d(_to.x(),_from.y(),static_cast<double>(_data->getNFrames())));
-        }
-        else
-            _boundaries.setLower(Eigen::Vector3d(_to.x(),_to.y(),static_cast<double>(_data->getNFrames())));
-    }
-
-    setPos(0.5*(_from+_to));
+	_diagonal.setP2(pos);
+	QPointF bl=_diagonal.sceneBoundingRect().bottomLeft();
+	QPointF tr=_diagonal.sceneBoundingRect().topRight();
+	int nFrames=_data->getNFrames();
+    _aabb->setLower({bl.x(),bl.y(),nFrames});
+    _aabb->setUpper({tr.x(),tr.y(),nFrames});
+    setPos(0.5*(_diagonal.P1()+_diagonal.P2()));
     update();
-
-    excludePeaks();
-
 }
 
-void MaskGraphicsItem::excludePeaks() const
+AABB<double,3>* MaskGraphicsItem::getAABB()
 {
-    auto& peaks=_data->getPeaks();
+	return _aabb;
+}
 
-    for (auto peak : peaks)
-        peak->setSelected(!_boundaries.intercept(*(peak->getBackground())));
+void MaskGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
 
+    if (event->buttons() & Qt::LeftButton)
+    {
+    	// If the mask is not selected, the move event corresponds to a modification of the size of mask
+        if (!isSelected())
+        {
+            if (isInScene(event->lastScenePos()))
+                setTo(event->lastScenePos());
+        }
+        // Otherwise it is a standard move of the item
+        else
+            SXGraphicsItem::mouseMoveEvent(event);
+    }
+}
+
+void MaskGraphicsItem::wheelEvent(QGraphicsSceneWheelEvent *event)
+{
+
+	// The item must be visible to be wheeled
+    if (!isVisible())
+        return;
+
+    // The item must selected to be wheeled
+    if (!isSelected())
+        return;
+
+    int step=std::abs(event->delta()/120);
+
+    QPointF bl=sceneBoundingRect().bottomLeft();
+    QPointF tr=sceneBoundingRect().topRight();
+
+    setFrom(bl-QPointF(step,step));
+    setFrom(tr+QPointF(step,step));
 }

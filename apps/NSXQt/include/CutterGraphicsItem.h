@@ -31,6 +31,9 @@ public:
 
     // Events
 
+    //! The mouse move event.
+    //! If the item is selected when the event is triggered then the item will be moved on the scene
+    //! Otherwise, that means that the item is being drawn and then the move event corresponds to a resize
     virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
 
     // Getters and setters

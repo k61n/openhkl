@@ -7,8 +7,18 @@
 
 #include "CutterGraphicsItem.h"
 
-CutterGraphicsItem::CutterGraphicsItem(SX::Data::IData* data) : PlottableGraphicsItem(nullptr), _data(data), _from(0,0), _to(0,0)
+CutterGraphicsItem::CutterGraphicsItem(SX::Data::IData* data)
+: PlottableGraphicsItem(nullptr),
+  _data(data),
+  _from(0,0),
+  _to(0,0)
 {
+
+	// The standard behaviour of a cutter: deletable, not hoverable and movable
+	setDeletable(true);
+	setHoverable(false);
+	setMovable(true);
+
     setZValue(1);
 
     _pen.setWidth(2);
@@ -26,15 +36,16 @@ void CutterGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
     if (event->buttons() & Qt::LeftButton)
     {
+    	// If the cutter is not selected, the move event corresponds to a modification of the size of cutter
         if (!isSelected())
         {
             if (isInScene(event->lastScenePos()))
                 setTo(event->lastScenePos());
         }
+        // Otherwise it is a standard move of the item
         else
-            PlottableGraphicsItem::mouseMoveEvent(event);
+            SXGraphicsItem::mouseMoveEvent(event);
     }
-
 }
 
 SX::Data::IData* CutterGraphicsItem::getData()
