@@ -23,6 +23,9 @@ MaskGraphicsItem::MaskGraphicsItem(SX::Data::IData* data)
   _from(0,0),
   _to(0,0)
 {
+    _pen.setWidth(2);
+    _pen.setCosmetic(true);
+    _pen.setStyle(Qt::SolidLine);
 }
 
 MaskGraphicsItem::~MaskGraphicsItem()
@@ -60,38 +63,46 @@ void MaskGraphicsItem::setFrom(const QPointF& pos)
     _from=pos;
     _to=pos;
     double nFrames=_data->getNFrames();
-    _aabb->setLower({_from.x(),_from.y(),nFrames});
     _aabb->setUpper({_to.x(),_to.y(),nFrames});
+    _aabb->setLower({_from.x(),_from.y(),0});
     setPos(pos);
     update();
 }
 
 void MaskGraphicsItem::setTo(const QPointF& pos)
 {
-    _from=pos;
+
     _to=pos;
+
+    double nFrames=_data->getNFrames();
 
     if (_from.x() < _to.x())
     {
-        if (_from.y() > _to.y())
+        if (_from.y() < _to.y())
         {
-            _from=QPointF(_from.x(),_to.y());
-            _to=QPointF(_to.x(),_from.y());
+            _aabb->setLower({_from.x(),_from.y(),0});
+            _aabb->setUpper({_to.x(),_to.y(),nFrames});
+        }
+        else
+        {
+            _aabb->setLower({_from.x(),_to.y(),0});
+            _aabb->setUpper({_to.x(),_from.y(),nFrames});
         }
     }
     else
     {
         if (_from.y() < _to.y())
         {
-            _from=QPointF(_to.x(),_from.y());
-            _to=QPointF(_from.x(),_to.y());
+            _aabb->setLower({_to.x(),_from.y(),0});
+            _aabb->setUpper({_from.x(),_to.y(),nFrames});
         }
         else
-            std::swap(_from,_to);
+        {
+            _aabb->setLower({_to.x(),_to.y(),0});
+            _aabb->setUpper({_from.x(),_from.y(),nFrames});
+        }
     }
-    double nFrames=_data->getNFrames();
-    _aabb->setLower({_from.x(),_from.y(),nFrames});
-    _aabb->setUpper({_to.x(),_to.y(),nFrames});
+
     setPos(0.5*(_from+_to));
     update();
 }
@@ -135,5 +146,5 @@ void MaskGraphicsItem::wheelEvent(QGraphicsSceneWheelEvent *event)
     QPointF tr=sceneBoundingRect().topRight();
 
     setFrom(bl-QPointF(step,step));
-    setFrom(tr+QPointF(step,step));
+    setTo(tr+QPointF(step,step));
 }
