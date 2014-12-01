@@ -46,9 +46,7 @@ void MaskGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 
    painter->setRenderHint(QPainter::HighQualityAntialiasing);
    painter->setPen(_pen);
-   qreal w=_to.x()-_from.x();
-   qreal h=_to.y()-_from.y();
-   painter->drawRect(-w/2.0,-h/2.0,w,h);
+   painter->drawRect(boundingRect());
 }
 
 QRectF MaskGraphicsItem::boundingRect() const
@@ -62,49 +60,20 @@ void MaskGraphicsItem::setFrom(const QPointF& pos)
 {
     _from=pos;
     _to=pos;
-    double nFrames=_data->getNFrames();
-    _aabb->setUpper({_to.x(),_to.y(),nFrames});
-    _aabb->setLower({_from.x(),_from.y(),0});
+//    double nFrames=_data->getNFrames();
+//    _aabb->setUpper({_to.x(),_to.y(),nFrames});
+//    _aabb->setLower({_from.x(),_from.y(),0});
     setPos(pos);
     update();
+    updateAABB();
 }
 
 void MaskGraphicsItem::setTo(const QPointF& pos)
 {
-
     _to=pos;
-
-    double nFrames=_data->getNFrames();
-
-    if (_from.x() < _to.x())
-    {
-        if (_from.y() < _to.y())
-        {
-            _aabb->setLower({_from.x(),_from.y(),0});
-            _aabb->setUpper({_to.x(),_to.y(),nFrames});
-        }
-        else
-        {
-            _aabb->setLower({_from.x(),_to.y(),0});
-            _aabb->setUpper({_to.x(),_from.y(),nFrames});
-        }
-    }
-    else
-    {
-        if (_from.y() < _to.y())
-        {
-            _aabb->setLower({_to.x(),_from.y(),0});
-            _aabb->setUpper({_from.x(),_to.y(),nFrames});
-        }
-        else
-        {
-            _aabb->setLower({_to.x(),_to.y(),0});
-            _aabb->setUpper({_from.x(),_from.y(),nFrames});
-        }
-    }
-
     setPos(0.5*(_from+_to));
     update();
+    updateAABB();
 }
 
 AABB<double,3>* MaskGraphicsItem::getAABB()
@@ -129,6 +98,13 @@ void MaskGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     }
 }
 
+void MaskGraphicsItem::updateAABB()
+{
+    QPointF tl=sceneBoundingRect().topLeft();
+    QPointF br=sceneBoundingRect().bottomRight();
+    _aabb->setBounds({tl.x(),tl.y(),0},{br.x(),br.y(),static_cast<double>(_data->getNFrames())});
+}
+
 void MaskGraphicsItem::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
 
@@ -140,11 +116,36 @@ void MaskGraphicsItem::wheelEvent(QGraphicsSceneWheelEvent *event)
     if (!isSelected())
         return;
 
-    int step=std::abs(event->delta()/120);
+    int step=event->delta()/120;
 
-    QPointF bl=sceneBoundingRect().bottomLeft();
-    QPointF tr=sceneBoundingRect().topRight();
+    if (_from.x() < _to.x())
+    {
+        if (_from.y() < _to.y())
+        {
+            _from += QPointF(-step,-step);
+            _to += QPointF(step,step);
+        }
+        else
+        {
+            _from += QPointF(-step,step);
+            _to += QPointF(step,-step);
+        }
+    }
+    else
+    {
+        if (_from.y() < _to.y())
+        {
+            _from += QPointF(step,-step);
+            _to += QPointF(-step,step);
+        }
+        else
+        {
+            _from += QPointF(step,step);
+            _to += QPointF(-step,-step);
+        }
+    }
 
-    setFrom(bl-QPointF(step,step));
-    setTo(tr+QPointF(step,step));
+    update();
+
+    updateAABB();
 }

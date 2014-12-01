@@ -136,8 +136,8 @@ void CutSliceGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsIt
 
    painter->setRenderHint(QPainter::HighQualityAntialiasing);
    painter->setPen(_pen);
-   qreal w=_to.x()-_from.x();
-   qreal h=_to.y()-_from.y();
+   qreal w=std::abs(_to.x()-_from.x());
+   qreal h=std::abs(_to.y()-_from.y());
    painter->drawRect(-w/2.0,-h/2.0,w,h);
 
    if (_horizontal)

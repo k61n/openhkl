@@ -70,6 +70,9 @@ protected:
     QPointF _from;
     QPointF _to;
 
+private:
+    void updateAABB();
+
 };
 
 #endif // MASkGRAPHICSITEM_H
