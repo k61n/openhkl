@@ -67,8 +67,8 @@ protected:
     SX::Data::IData* _data;
     //! The AABB of the peak
     AABB<double,3>* _aabb;
-    //! The diagonal of the bounding rect of the mask
-    QLine _diagonal;
+    QPointF _from;
+    QPointF _to;
 
 };
 

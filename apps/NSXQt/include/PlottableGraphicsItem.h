@@ -19,7 +19,7 @@ class PlottableGraphicsItem : public SXGraphicsItem
 {
 public:
 
-    PlottableGraphicsItem(QGraphicsItem *parent=0);
+    PlottableGraphicsItem(QGraphicsItem *parent=0, bool deletable=true, bool hoverable=false, bool movable=false);
     virtual ~PlottableGraphicsItem();
 
     virtual void plot(SXPlot* plot)=0;

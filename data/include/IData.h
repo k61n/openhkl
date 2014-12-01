@@ -119,7 +119,7 @@ public:
 	//! Return true if the file is stored in memory
 	bool isInMemory() const;
 	//! Return true if a given point (in detector space) belong to a mask
-	bool isMasked(const Eigen<double,3>& point) const;
+	bool isMasked(const Eigen::Vector3d& point) const;
 	//! Mask the peaks collected in the data with the masks defined up to now
 	void maskPeaks() const;
 	//! Unmask the peaks collected in the data with the masks defined up to now
@@ -159,7 +159,7 @@ protected:
     std::set<Peak3D*> _peaks;
     std::size_t _fileSize;
     //! The set of masks bound to the data
-    std::set<AABB<double,3>> _masks;
+    std::set<AABB<double,3>*> _masks;
 
 };
 

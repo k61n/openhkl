@@ -55,7 +55,6 @@ SX::Data::IData* CutterGraphicsItem::getData()
 
 QRectF CutterGraphicsItem::boundingRect() const
 {
-    qreal pw=_pen.width();
     qreal w=std::abs(_to.x()-_from.x());
     qreal h=std::abs(_to.y()-_from.y());
     return QRectF(-w/2,-h/2,w,h);

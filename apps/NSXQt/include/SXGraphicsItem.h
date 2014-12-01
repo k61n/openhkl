@@ -19,7 +19,7 @@ public:
 	// Constructors and destructor
 
 	// Construct a SX graphics item
-    SXGraphicsItem(QGraphicsItem *parent=0, bool deletable=false, hoverable=false, movable=false);
+    SXGraphicsItem(QGraphicsItem *parent=0, bool deletable=false, bool hoverable=false, bool movable=false);
     // Destructor
     virtual ~SXGraphicsItem();
 

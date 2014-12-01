@@ -20,7 +20,8 @@ MaskGraphicsItem::MaskGraphicsItem(SX::Data::IData* data)
 : SXGraphicsItem(nullptr,true,false,true),
   _data(data),
   _aabb(new AABB<double,3>),
-  _diagonal()
+  _from(0,0),
+  _to(0,0)
 {
 }
 
@@ -42,36 +43,56 @@ void MaskGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 
    painter->setRenderHint(QPainter::HighQualityAntialiasing);
    painter->setPen(_pen);
-   painter->drawRect(_diagonal.boundingRect());
+   qreal w=_to.x()-_from.x();
+   qreal h=_to.y()-_from.y();
+   painter->drawRect(-w/2.0,-h/2.0,w,h);
 }
 
 QRectF MaskGraphicsItem::boundingRect() const
 {
-    return _diagonal.boundingRect();
+    qreal w=std::abs(_to.x()-_from.x());
+    qreal h=std::abs(_to.y()-_from.y());
+    return QRectF(-w/2,-h/2,w,h);
 }
 
 void MaskGraphicsItem::setFrom(const QPointF& pos)
 {
-    _diagonal.setP1(pos);
-    _diagonal.setP2(pos);
-	QPointF bl=_diagonal.sceneBoundingRect().bottomLeft();
-	QPointF tr=_diagonal.sceneBoundingRect().topRight();
-	int nFrames=_data->getNFrames();
-    _aabb->setLower({bl.x(),bl.y(),nFrames});
-    _aabb->setUpper({tr.x(),tr.y(),nFrames});
+    _from=pos;
+    _to=pos;
+    double nFrames=_data->getNFrames();
+    _aabb->setLower({_from.x(),_from.y(),nFrames});
+    _aabb->setUpper({_to.x(),_to.y(),nFrames});
     setPos(pos);
     update();
 }
 
 void MaskGraphicsItem::setTo(const QPointF& pos)
 {
-	_diagonal.setP2(pos);
-	QPointF bl=_diagonal.sceneBoundingRect().bottomLeft();
-	QPointF tr=_diagonal.sceneBoundingRect().topRight();
-	int nFrames=_data->getNFrames();
-    _aabb->setLower({bl.x(),bl.y(),nFrames});
-    _aabb->setUpper({tr.x(),tr.y(),nFrames});
-    setPos(0.5*(_diagonal.P1()+_diagonal.P2()));
+    _from=pos;
+    _to=pos;
+
+    if (_from.x() < _to.x())
+    {
+        if (_from.y() > _to.y())
+        {
+            _from=QPointF(_from.x(),_to.y());
+            _to=QPointF(_to.x(),_from.y());
+        }
+    }
+    else
+    {
+        if (_from.y() < _to.y())
+        {
+            _from=QPointF(_to.x(),_from.y());
+            _to=QPointF(_from.x(),_to.y());
+        }
+        else
+            std::swap(_from,_to);
+    }
+    double nFrames=_data->getNFrames();
+    _aabb->setLower({_from.x(),_from.y(),nFrames});
+    _aabb->setUpper({_to.x(),_to.y(),nFrames});
+    setPos(0.5*(_from+_to));
     update();
 }
 

@@ -299,8 +299,11 @@ void DetectorScene::wheelEvent(QGraphicsSceneWheelEvent* event)
         _currentCutter->wheelEvent(event);
         emit updatePlot(_currentCutter);
     // Mask mode, resize the mask
-    } else if (_mode==MASK)
+    }
+    else if (_mode==MASK)
     {
+        // Get the graphics item on which the user has performed the wheel event
+        auto item=itemAt(event->scenePos(),QTransform());
         auto p=dynamic_cast<MaskGraphicsItem*>(item);
         if (p)
         {
@@ -324,8 +327,10 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
         int nPeaksErased=_peaks.size();
         for (auto item : items)
         {
+
+            auto p=dynamic_cast<SXGraphicsItem*>(item);
         	// The item must be deletable ... to be deleted
-        	if (!item->isDeletable())
+            if (!p->isDeletable())
         		continue;
 
         	// If the item is a peak graphics item, remove its corresponding peak from the data,

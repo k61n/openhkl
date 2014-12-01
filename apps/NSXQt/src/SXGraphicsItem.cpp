@@ -19,8 +19,7 @@ SXGraphicsItem::SXGraphicsItem(QGraphicsItem *parent, bool deletable, bool hover
 
     // By default a plottable graphics can be selected
     setFlags(QGraphicsItem::ItemIsSelectable);
-    if (_movable)
-    	setFlags(getFlags() | QGraphicsItem::ItemIsMovable);
+    setFlag(QGraphicsItem::ItemIsMovable,_movable);
 
     setAcceptHoverEvents(_hoverable);
 }
@@ -66,7 +65,7 @@ void SXGraphicsItem::setHoverable(bool hoverable)
 void SXGraphicsItem::setMovable(bool movable)
 {
     _movable = movable;
-    removeFlags(QGraphicsItem::ItemIsMovable);
+    setFlag(QGraphicsItem::ItemIsMovable,_movable);
 }
 
 bool SXGraphicsItem::isDeletable() const

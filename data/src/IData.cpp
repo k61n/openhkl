@@ -2,7 +2,7 @@
 #include <stdexcept>
 
 #include <boost/filesystem.hpp>
-#include<boost/filesystem/operations.hpp>
+#include <boost/filesystem/operations.hpp>
 
 #include "IData.h"
 #include "Detector.h"
@@ -354,7 +354,7 @@ void IData::maskPeaks() const
 		for (auto m : _masks)
 		{
 			// If the background of the peak intercept the mask, unselected the peak
-			if (m->intercept(p->getBackground()))
+			if (m->intercept(*(p->getBackground())))
 			{
 				p->setSelected(false);
 				break;
@@ -373,7 +373,7 @@ void IData::unmaskPeaks() const
 		for (auto m : _masks)
 		{
 			// If the background of the peak intercept the mask, unselected the peak
-			if (m->intercept(p->getBackground()))
+			if (m->intercept(*(p->getBackground())))
 			{
 				p->setSelected(true);
 				break;
@@ -391,7 +391,7 @@ void IData::maskPeaks(const AABB<double,3>& mask) const
 		if (!p->isSelected())
 			continue;
 		// If the background of the peak intercept the mask, unselected the peak
-		if (mask.intercept(p->getBackground()))
+		if (mask.intercept(*(p->getBackground())))
 		{
 			p->setSelected(false);
 			break;
