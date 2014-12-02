@@ -90,10 +90,12 @@ void SXGraphicsItem::showLabel(bool show)
 
 void SXGraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
+    Q_UNUSED(event)
 }
 
 void SXGraphicsItem::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
+    Q_UNUSED(event)
 }
 
 void SXGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)

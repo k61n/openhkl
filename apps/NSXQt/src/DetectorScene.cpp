@@ -24,6 +24,10 @@ DetectorScene::DetectorScene(QObject *parent)
   _currentFrame(),
   _cursorMode(PIXEL),
   _mode(ZOOM),
+  _zoomstart(0,0),
+  _zoomend(0,0),
+  _zoomrect(),
+  _zoomStack(),
   _currentCutter(nullptr),
   _itemSelected(false),
   _image(nullptr),
@@ -359,11 +363,11 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
 {
     auto instr=_currentData->getDiffractometer();
     SX::Instrument::Detector* det=instr->getDetector();
-    std::size_t nrows=det->getNRows();
-    std::size_t ncols=det->getNCols();
+    int nrows=det->getNRows();
+    int ncols=det->getNCols();
 
-    std::size_t col=static_cast<std::size_t>(event->lastScenePos().x());
-    std::size_t row=static_cast<std::size_t>(event->lastScenePos().y());
+    int col=static_cast<int>(event->lastScenePos().x());
+    int row=static_cast<int>(event->lastScenePos().y());
 
     if (col<0 || col>ncols-1 || row<0 || row>nrows-1)
         return;

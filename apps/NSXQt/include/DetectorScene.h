@@ -75,6 +75,14 @@ private:
     void loadCurrentImage();
     //! Create the text of the tooltip depending on Scene Mode.
     void createToolTipText(QGraphicsSceneMouseEvent*);
+
+    SX::Data::IData* _currentData;
+    int _currentFrameIndex;
+    int _currentIntensity;
+    Eigen::MatrixXi _currentFrame;
+    CURSORMODE _cursorMode;
+    //! Current interaction mode
+    MODE _mode;
     //! Point coordinates of the start of zoom region
     QPoint _zoomstart;
     //! Point coordinates of the end of zoom regiom
@@ -83,19 +91,14 @@ private:
     QGraphicsRectItem* _zoomrect;
     // Stack of zoom
     QStack<QRect> _zoomStack;
-    SX::Data::IData* _currentData;
-    int _currentFrameIndex;
-    int _currentIntensity;
-    Eigen::MatrixXi _currentFrame;
-    //! Current interaction mode
-    MODE _mode;
-    CURSORMODE _cursorMode;
-    //! Contains peaks item of current data, reinitialized with new data set.
-    std::map<SX::Crystal::Peak3D*,PeakGraphicsItem*> _peaks;
     CutterGraphicsItem* _currentCutter;
     bool _itemSelected;
     QGraphicsPixmapItem* _image;
+    //! Contains peaks item of current data, reinitialized with new data set.
+    std::map<SX::Crystal::Peak3D*,PeakGraphicsItem*> _peaks;
     QList<MaskGraphicsItem*> _masks;
+
+
 
 };
 
