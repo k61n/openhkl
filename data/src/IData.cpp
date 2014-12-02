@@ -372,12 +372,15 @@ void IData::unmaskPeaks() const
 		// If the peak is already selected, no need to unmask it.
 		if (p->isSelected())
 			continue;
-		for (auto m : _masks)
+		// If the peak is not selected, select it and check among the mask whether one of them intercepts the current peak
+		// If none intercept, the peak is kept as selected
+		p->setSelected(true);
+		for (auto& m : _masks)
 		{
-			// If the background of the peak intercept the mask, unselected the peak
+			// If the background of the peak intercept the mask, no need to continue
 			if (m->intercept(*(p->getBackground())))
 			{
-				p->setSelected(true);
+				p->setSelected(false);
 				break;
 			}
 		}
