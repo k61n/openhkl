@@ -289,28 +289,17 @@ void DetectorScene::wheelEvent(QGraphicsSceneWheelEvent* event)
     if (!_currentData)
         return;
 
-    // Zoom mode, does nothing
-    if (_mode==ZOOM)
-        return;
-    // Cut modes, process the wheel event and update the cut plot
-    else if (_mode==HORIZONTALSLICE || _mode==VERTICALSLICE || _mode==LINE)
+    // Get the graphics item on which the user has performed the wheel event
+    auto item=itemAt(event->scenePos(),QTransform());
+    if (auto p=dynamic_cast<CutterGraphicsItem*>(item))
     {
-        if (!_currentCutter)
-            return;
-        _currentCutter->wheelEvent(event);
-        emit updatePlot(_currentCutter);
-    // Mask mode, resize the mask
+        p->wheelEvent(event);
+        emit updatePlot(p);
     }
-    else if (_mode==MASK)
+    else if (auto p=dynamic_cast<MaskGraphicsItem*>(item))
     {
-        // Get the graphics item on which the user has performed the wheel event
-        auto item=itemAt(event->scenePos(),QTransform());
-        auto p=dynamic_cast<MaskGraphicsItem*>(item);
-        if (p)
-        {
-        	p->wheelEvent(event);
-        	updatePeaks();
-        }
+        p->wheelEvent(event);
+        updatePeaks();
     }
 }
 
