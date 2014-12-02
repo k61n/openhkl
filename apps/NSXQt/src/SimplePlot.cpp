@@ -16,18 +16,25 @@ SimplePlot::SimplePlot(QWidget *parent) : SXPlot(parent)
     QPen pen;
     pen.setColor(QColor("black"));
     pen.setWidth(2.0);
+
+    setNotAntialiasedElements(QCP::aeAll);
+    QFont font;
+    font.setStyleStrategy(QFont::NoAntialias);
+    xAxis->setTickLabelFont(font);
+    yAxis->setTickLabelFont(font);
+
     graph(0)->setPen(pen);
     graph(0)->setErrorType(QCPGraph::etValue);
     graph(0)->setLineStyle(QCPGraph::lsLine);
     graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 6));
 
-    xAxis->setLabel("Frame (a.u.)");
-    yAxis->setLabel("Intensity (counts)");
+//    xAxis->setLabel("Frame (a.u.)");
+//    yAxis->setLabel("Intensity (counts)");
 
-    // Setup legends
-    legend->setVisible(true);
-    legend->setFont(QFont("Helvetica",9));
-    graph(0)->setName("Total");
+//    // Setup legends
+//    legend->setVisible(true);
+//    legend->setFont(QFont("Helvetica",9));
+//    graph(0)->setName("Total");
 
     //
     setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes | QCP::iSelectLegend | QCP::iSelectPlottables);

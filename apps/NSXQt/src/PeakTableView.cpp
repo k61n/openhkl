@@ -393,22 +393,25 @@ void PeakTableView::deselectPeak(QModelIndex index)
 
 void PeakTableView::plotAs(const std::string& key)
 {
-//     QModelIndexList indexList = selectionModel()->selectedIndexes();
-//     if (!indexList.size())
-//         return;
+     QModelIndexList indexList = selectionModel()->selectedIndexes();
+     if (!indexList.size())
+         return;
 
-//    std::size_t npoints=indexList.size();
+    int nPoints=indexList.size();
 
-//    QVector<double> x(npoints);
-//    QVector<double> y(npoints);
-//    QVector<double> e(npoints);
+    QVector<double> x(nPoints);
+    QVector<double> y(nPoints);
+    QVector<double> e(nPoints);
 
-//    for (int i=0;i<npoints;++i)
-//    {
-//        x[i]=_peaks[indexList[i].row()].get().getData()->getMetadata()->getKey<double>(key);
-//        y[i]=_peaks[indexList[i].row()].get().getScaledIntensity();
-//        e[i]=_peaks[indexList[i].row()].get().getScaledSigma();
-//    }
+    for (int i=0;i<nPoints;++i)
+    {
+        SX::Crystal::Peak3D p=_peaks[indexList[i].row()].get();
+        x[i]=p.getData()->getMetadata()->getKey<double>(key);
+        y[i]=p.getScaledIntensity();
+        e[i]=p.getScaledSigma();
+    }
+
+    emit plotData(x,y,e);
 
 //    Plotter1D* plot=new Plotter1D(this);
 //    plot->addCurve(x,y,e);

@@ -88,7 +88,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(_ui->frame,SIGNAL(valueChanged(int)),_ui->_dview->getScene(),SLOT(changeFrame(int)));
     connect(_ui->intensity,SIGNAL(valueChanged(int)),_ui->_dview->getScene(),SLOT(setMaxIntensity(int)));
     connect(_ui->selectionMode,SIGNAL(currentIndexChanged(int)),_ui->_dview->getScene(),SLOT(changeInteractionMode(int)));
-//    connect(_ui->_dview->getScene(),SIGNAL(plotPeak(SX::Crystal::Peak3D*)),this,SLOT(plotPeak(SX::Crystal::Peak3D*)));
     connect(_ui->_dview->getScene(),SIGNAL(updatePlot(PlottableGraphicsItem*)),this,SLOT(updatePlot(PlottableGraphicsItem*)));
     connect(_ui->action_open,SIGNAL(triggered()),_ui->experimentTree,SLOT(createNewExperiment()));
 
@@ -134,6 +133,10 @@ void MainWindow::showPeakList(std::vector<SX::Data::IData*> data)
     table->show();
     // Ensure plot1D is updated
     connect(table,SIGNAL(plotPeak(SX::Crystal::Peak3D*)),this,SLOT(plotPeak(SX::Crystal::Peak3D*)));
+    connect(table,
+            SIGNAL(plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&)),
+            this,
+            SLOT(plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&)));
 }
 
 void MainWindow::plotPeak(SX::Crystal::Peak3D* peak)
@@ -146,7 +149,6 @@ void MainWindow::plotPeak(SX::Crystal::Peak3D* peak)
     {
         scenePtr->setData(peak->getData(),std::round(peak->getPeak()->getCenter()[2]));
         pgi=scenePtr->findPeakGraphicsItem(peak);;
-//        pgi=dynamic_cast<PlottableGraphicsItem*>(it->second);
         updatePlot(pgi);
     }
 }
@@ -305,6 +307,41 @@ void MainWindow::on_action1D_Peak_Ploter_triggered()
         _ui->plotterDockWidget->show();
     else
         _ui->plotterDockWidget->hide();
+}
+
+void MainWindow::plotData(const QVector<double>& x,const QVector<double>& y,const QVector<double>& e)
+{
+
+    if (_ui->plot1D->getType().compare("simple")!=0)
+    {
+        // Store the old size policy
+        QSizePolicy oldSizePolicy = _ui->plot1D->sizePolicy();
+        // Remove the current plotter from the ui
+        _ui->horizontalLayout_4->removeWidget(_ui->plot1D);
+        // Delete the plotter instance
+        delete _ui->plot1D;
+
+        PlotFactory* pFactory=PlotFactory::Instance();
+
+        _ui->plot1D = pFactory->create("simple",_ui->dockWidgetContents_4);
+
+        // Restore the size policy
+        _ui->plot1D->setSizePolicy(oldSizePolicy);
+
+        // Sets some properties of the plotter
+        _ui->plot1D->setObjectName(QStringLiteral("1D plotter"));
+        _ui->plot1D->setFocusPolicy(Qt::StrongFocus);
+        _ui->plot1D->setStyleSheet(QStringLiteral(""));
+
+        // Add the plot to the ui
+        _ui->horizontalLayout_4->addWidget(_ui->plot1D);
+    }
+
+    _ui->plot1D->graph(0)->setDataValueError(x,y,e);
+    _ui->plot1D->rescaleAxes();
+
+    _ui->plot1D->replot();
+
 }
 
 void MainWindow::updatePlot(PlottableGraphicsItem* item)

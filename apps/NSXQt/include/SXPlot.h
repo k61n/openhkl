@@ -33,4 +33,4 @@ private:
 
 };
 
-#endif // SXCPLOT_H
+#endif // SXPLOT_H

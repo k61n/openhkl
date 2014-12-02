@@ -8,10 +8,17 @@ SXPlot* PeakPlot::create(QWidget *parent)
 PeakPlot::PeakPlot(QWidget *parent) : SXPlot(parent)
 {
     plotLayout()->insertRow(0);
-    addGraph();
     QPen pen;
     pen.setColor(QColor("black"));
     pen.setWidth(2.0);
+
+    setNotAntialiasedElements(QCP::aeAll);
+    QFont font;
+    font.setStyleStrategy(QFont::NoAntialias);
+    xAxis->setTickLabelFont(font);
+    yAxis->setTickLabelFont(font);
+
+    addGraph();
     graph(0)->setPen(pen);
     graph(0)->setErrorType(QCPGraph::etBoth);
     graph(0)->setLineStyle(QCPGraph::lsLine);

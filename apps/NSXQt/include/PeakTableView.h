@@ -33,7 +33,7 @@ public:
     void contextMenuEvent(QContextMenuEvent *);
     void mousePressEvent(QMouseEvent *event);
 signals:
-    void plot2DUpdate(int numor,int frame);
+    void plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&);
     void plotPeak(SX::Crystal::Peak3D*);
 public slots:
     //! Slection of peak is changed

@@ -77,6 +77,7 @@ public slots:
     void changeData(SX::Data::IData*);
     void showPeakList(std::vector<SX::Data::IData*>);
     void plotPeak(SX::Crystal::Peak3D*);
+    void plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&);
 
 private:
     Ui::MainWindow* _ui;

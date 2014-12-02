@@ -33,12 +33,8 @@ void CutSliceGraphicsItem::plot(SXPlot* plot)
     if (!p)
         return;
 
-    p->setNotAntialiasedElements(QCP::aeAll);
-    QFont font;
-    font.setStyleStrategy(QFont::NoAntialias);
-    p->xAxis->setTickLabelFont(font);
-    p->yAxis->setTickLabelFont(font);
-    p->legend->setFont(font);
+    p->xAxis->setLabel("Frame (a.u.)");
+    p->yAxis->setLabel("Intensity (counts)");
 
     // Set the pointer to the detector scene to the scene that holds the cutter
     auto detPtr=dynamic_cast<DetectorScene*>(scene());
@@ -55,7 +51,6 @@ void CutSliceGraphicsItem::plot(SXPlot* plot)
     int xmax = sceneBoundingRect().right();
     int ymin = sceneBoundingRect().top();
     int ymax = sceneBoundingRect().bottom();
-
 
     xmin = std::max(xmin,0);
     xmax = std::min(xmax,ncols);
