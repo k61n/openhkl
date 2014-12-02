@@ -1,6 +1,7 @@
 #include "MainWindow.h"
 #include "ui_mainwindow.h"
 
+#include <cmath>
 #include <cstdlib>
 #include <functional>
 #include <stdexcept>
@@ -48,6 +49,7 @@
 #include "CutLineGraphicsItem.h"
 #include "CutSliceGraphicsItem.h"
 #include "PlottableGraphicsItem.h"
+#include "PeakGraphicsItem.h"
 #include "PlotFactory.h"
 
 using namespace SX::Units;
@@ -132,9 +134,22 @@ void MainWindow::showPeakList(std::vector<SX::Data::IData*> data)
     table->show();
     // Ensure plot1D is updated
     connect(table,SIGNAL(plotPeak(SX::Crystal::Peak3D*)),this,SLOT(plotPeak(SX::Crystal::Peak3D*)));
-    // Ensure DetectorScene is updated
 }
 
+void MainWindow::plotPeak(SX::Crystal::Peak3D* peak)
+{
+    auto scenePtr=dynamic_cast<DetectorScene*>(_ui->_dview->scene());
+    if (!scenePtr)
+        return;
+    auto pgi=scenePtr->findPeakGraphicsItem(peak);
+    if (pgi)
+    {
+        scenePtr->setData(peak->getData(),std::round(peak->getPeak()->getCenter()[2]));
+        pgi=scenePtr->findPeakGraphicsItem(peak);;
+//        pgi=dynamic_cast<PlottableGraphicsItem*>(it->second);
+        updatePlot(pgi);
+    }
+}
 
 void MainWindow::on_action_peak_find_triggered()
 {
@@ -228,7 +243,7 @@ void MainWindow::on_action_peak_find_triggered()
     _ui->progressBar->setValue(0);
     _ui->progressBar->setEnabled(false);
 
-    //_ui->_dview->getScene()->updatePeaks();
+    _ui->_dview->getScene()->updatePeaks();
 
 }
 

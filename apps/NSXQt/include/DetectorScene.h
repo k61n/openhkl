@@ -1,7 +1,7 @@
 #ifndef DETECTORSCENE_H
 #define DETECTORSCENE_H
 
-#include <set>
+#include <map>
 #include <list>
 
 #include <Eigen/Dense>
@@ -42,6 +42,7 @@ public:
     explicit DetectorScene(QObject *parent = 0);
     SX::Data::IData* getData();
     const Eigen::MatrixXi& getCurrentFrame() const;
+    const std::map<SX::Crystal::Peak3D*,PeakGraphicsItem*>& getPeaksGraphicsItems() const;
 
 signals:
      //! Signal emitted for all changes of the image
@@ -60,6 +61,7 @@ public slots:
     void setData(SX::Data::IData*);
     void changeFrame(int frame=0);
     void setMaxIntensity(int);
+    PeakGraphicsItem* findPeakGraphicsItem(SX::Crystal::Peak3D* peak);
     void updatePeaks();
     //! Change interaction mode in the scene
     void changeInteractionMode(int);
@@ -89,7 +91,7 @@ private:
     MODE _mode;
     CURSORMODE _cursorMode;
     //! Contains peaks item of current data, reinitialized with new data set.
-    std::set<PeakGraphicsItem*> _peaks;
+    std::map<SX::Crystal::Peak3D*,PeakGraphicsItem*> _peaks;
     CutterGraphicsItem* _currentCutter;
     bool _itemSelected;
     QGraphicsPixmapItem* _image;

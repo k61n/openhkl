@@ -45,8 +45,8 @@ void DetectorScene::changeFrame(int frame)
         return;
     _currentFrameIndex = frame;
 
-    for (auto peak : _peaks)
-        peak->setFrame(_currentFrameIndex);
+    for (auto& peak : _peaks)
+        (peak.second)->setFrame(_currentFrameIndex);
 
     loadCurrentImage();
 }
@@ -67,6 +67,7 @@ void DetectorScene::setMaxIntensity(int intensity)
 
 void DetectorScene::setData(SX::Data::IData* data)
 {
+
     if (_currentData==data)
     {
         updatePeaks();
@@ -339,7 +340,7 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
             {
                 bool remove=_currentData->removePeak(p->getPeak());
                 if (remove)
-                    _peaks.erase(p);
+                    _peaks.erase(p->getPeak());
                 updatePeaks();
             }
             // If the item is a mask graphics item, remove its corresponding mask from the data,
@@ -351,7 +352,7 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
                 updatePeaks();
             }
             // If the item is a cutter graphics item, set its pointer to null
-            else if (auto p=dynamic_cast<CutterGraphicsItem*>(item))
+            else if (dynamic_cast<CutterGraphicsItem*>(item))
                 _currentCutter=nullptr;
             // Remove the item from the scene
             removeItem(item);
@@ -456,6 +457,11 @@ SX::Data::IData* DetectorScene::getData()
     return _currentData;
 }
 
+const std::map<SX::Crystal::Peak3D*,PeakGraphicsItem*>& DetectorScene::getPeaksGraphicsItems() const
+{
+    return _peaks;
+}
+
 const Eigen::MatrixXi& DetectorScene::getCurrentFrame() const
 {
     return _currentFrame;
@@ -466,28 +472,38 @@ void DetectorScene::changeCursorMode(int mode)
     _cursorMode=static_cast<CURSORMODE>(mode);
 }
 
+PeakGraphicsItem* DetectorScene::findPeakGraphicsItem(SX::Crystal::Peak3D *peak)
+{
+    auto it=_peaks.find(peak);
+    if (it!=_peaks.end())
+        return it->second;
+    else
+        return nullptr;
+
+}
+
 void DetectorScene::updatePeaks()
 {
 
     if (!_currentData)
         return;
 
-    for (auto peak : _peaks)
+    for (auto& peak : _peaks)
     {
-        removeItem(peak);
-        delete peak;
+        removeItem(peak.second);
+        delete peak.second;
     }
 
     _peaks.clear();
 
-    auto& peaks=_currentData->getPeaks();
+    auto peaks=_currentData->getPeaks();
 
     for (auto peak : peaks)
     {
-        PeakGraphicsItem* p=new PeakGraphicsItem(peak);
-        p->setFrame(_currentFrameIndex);
-        addItem(p);
-        _peaks.insert(p);
+        PeakGraphicsItem* pgi=new PeakGraphicsItem(peak);
+        pgi->setFrame(_currentFrameIndex);
+        addItem(pgi);
+        _peaks.insert(std::pair<SX::Crystal::Peak3D*,PeakGraphicsItem*>(peak,pgi));
     }
 }
 
@@ -496,7 +512,7 @@ void DetectorScene::showPeakLabels(bool peaklabel)
     if (_peaks.size())
     {
         const auto& it=_peaks.begin();
-        (*it)->setLabelVisible(peaklabel);
+        it->second->setLabelVisible(peaklabel);
     }
     return;
 }
