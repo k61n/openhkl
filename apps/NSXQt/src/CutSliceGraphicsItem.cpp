@@ -117,16 +117,18 @@ void CutSliceGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsIt
 {
     Q_UNUSED(widget);
 
+    painter->setBrush(QBrush(QColor(0,255,0,100)));
+
     // Color depending on selection
     if (option->state & QStyle::State_Selected)
     {
-       _pen.setStyle(Qt::DashLine);
-       painter->setBrush(QBrush(QColor(0,255,0,5)));
+        _pen.setStyle(Qt::DashLine);
+        _pen.setWidth(4);
     }
     else
     {
-       _pen.setStyle(Qt::SolidLine);
-       _pen.setColor(QColor("black"));
+        _pen.setStyle(Qt::SolidLine);
+        _pen.setWidth(2);
     }
 
    painter->setRenderHint(QPainter::HighQualityAntialiasing);

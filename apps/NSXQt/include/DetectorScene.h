@@ -29,6 +29,7 @@ class PeakGraphicsItem;
 class CutterGraphicsItem;
 class MaskGraphicsItem;
 class PlottableGraphicsItem;
+class SXGraphicsItem;
 
 //! Master Scene containing the pixmap of the detector counts
 //! and overlayed graphics items (peaks, data cutters, masks ...)
@@ -91,15 +92,12 @@ private:
     QGraphicsRectItem* _zoomrect;
     // Stack of zoom
     QStack<QRect> _zoomStack;
-    CutterGraphicsItem* _currentCutter;
     bool _itemSelected;
     QGraphicsPixmapItem* _image;
     //! Contains peaks item of current data, reinitialized with new data set.
     std::map<SX::Crystal::Peak3D*,PeakGraphicsItem*> _peaks;
     QList<MaskGraphicsItem*> _masks;
-
-
-
+    SXGraphicsItem* _lastClickedGI;
 };
 
 #endif // DETECTORSCENE_H

@@ -32,21 +32,27 @@ MaskGraphicsItem::~MaskGraphicsItem()
 {
 }
 
-void MaskGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,QWidget *widget)
+void MaskGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(widget);
 
-    painter->setBrush(QBrush(QColor(255,0,0,140)));
+    painter->setBrush(QBrush(QColor(255,0,0,100)));
 
     // Color depending on selection
     if (option->state & QStyle::State_Selected)
+    {
         _pen.setStyle(Qt::DashLine);
+        _pen.setWidth(4);
+    }
     else
+    {
         _pen.setStyle(Qt::SolidLine);
+        _pen.setWidth(2);
+    }
 
-   painter->setRenderHint(QPainter::HighQualityAntialiasing);
-   painter->setPen(_pen);
-   painter->drawRect(boundingRect());
+    painter->setRenderHint(QPainter::HighQualityAntialiasing);
+    painter->setPen(_pen);
+    painter->drawRect(boundingRect());
 }
 
 QRectF MaskGraphicsItem::boundingRect() const
@@ -60,9 +66,6 @@ void MaskGraphicsItem::setFrom(const QPointF& pos)
 {
     _from=pos;
     _to=pos;
-//    double nFrames=_data->getNFrames();
-//    _aabb->setUpper({_to.x(),_to.y(),nFrames});
-//    _aabb->setLower({_from.x(),_from.y(),0});
     setPos(pos);
     update();
     updateAABB();

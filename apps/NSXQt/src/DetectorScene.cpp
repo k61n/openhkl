@@ -28,11 +28,11 @@ DetectorScene::DetectorScene(QObject *parent)
   _zoomend(0,0),
   _zoomrect(),
   _zoomStack(),
-  _currentCutter(nullptr),
   _itemSelected(false),
   _image(nullptr),
   _peaks(),
-  _masks()
+  _masks(),
+  _lastClickedGI(nullptr)
 {
 }
 
@@ -92,11 +92,11 @@ void DetectorScene::setData(SX::Data::IData* data)
      _zoomStack.push_back(QRect(0,0,det->getNCols(),det->getNRows()));
 
 
-    if (_currentCutter)
+    if (_lastClickedGI)
      {
-         removeItem(_currentCutter);
-         delete _currentCutter;
-         _currentCutter=nullptr;
+         removeItem(_lastClickedGI);
+         delete _lastClickedGI;
+         _lastClickedGI=nullptr;
      }
 
      loadCurrentImage();
@@ -130,16 +130,15 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             _zoomrect->setRect(zoom);
         }
         // Case of the cutting modes
-        else if (_mode==HORIZONTALSLICE || _mode==VERTICALSLICE || _mode==LINE)
+        else
         {
-            if (!_currentCutter)
+            if (!_lastClickedGI)
                 return;
-            _currentCutter->mouseMoveEvent(event);
-            emit updatePlot(_currentCutter);
+            _lastClickedGI->mouseMoveEvent(event);
+
+            if (auto p=dynamic_cast<PlottableGraphicsItem*>(_lastClickedGI))
+                emit updatePlot(p);
         }
-        // Case of mask mode, update the mask graphics item and the list of the peaks to be excluded
-        else if (_mode==MASK)
-        	_masks.last()->mouseMoveEvent(event);
     }
     // No button was pressed, just a mouse move
     else if (!event->buttons())
@@ -164,6 +163,18 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
     if (event->buttons() & Qt::LeftButton)
     {
 
+        // Get the graphics item on which the user has clicked
+        auto item=itemAt(event->lastScenePos(),QTransform());
+        // If the item is a NSXTools GI and is selectedit will become the current active GI
+        if (auto p=dynamic_cast<SXGraphicsItem*>(item))
+        {
+            if (p->isSelected())
+            {
+                _lastClickedGI = p;
+                return;
+            }
+        }
+
         // Case of the Zoom mode
         if (_mode==ZOOM)
         {
@@ -182,25 +193,17 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             // Case of Cuttings mode (horizontal/vertical slices, line cut)
             if (_mode==HORIZONTALSLICE || _mode==VERTICALSLICE || _mode==LINE)
             {
-                // If there is already a cutter item on the scene, delete it
-                if (_currentCutter)
-                {
-                    if (_currentCutter->isSelected())
-                        return;
-                    removeItem(_currentCutter);
-                    delete _currentCutter;
-                    _currentCutter=nullptr;
-                }
                 // Create the cutter item corresponding to the seleced cutting mode
+                CutterGraphicsItem* cutter;
                 if (_mode==HORIZONTALSLICE)
-                    _currentCutter=new CutSliceGraphicsItem(_currentData,true);
+                    cutter=new CutSliceGraphicsItem(_currentData,true);
                 else if (_mode==VERTICALSLICE)
-                    _currentCutter=new CutSliceGraphicsItem(_currentData,false);
-                else if (_mode==LINE)
-                    _currentCutter=new CutLineGraphicsItem(_currentData);
-                auto p=dynamic_cast<CutterGraphicsItem*>(_currentCutter);
-                p->setFrom(event->lastScenePos());
-                addItem(_currentCutter);
+                    cutter=new CutSliceGraphicsItem(_currentData,false);
+                else
+                    cutter=new CutLineGraphicsItem(_currentData);
+                cutter->setFrom(event->lastScenePos());
+                addItem(cutter);
+                _lastClickedGI=cutter;
             }
             // Case of Mask mode
             else if (_mode==MASK)
@@ -210,6 +213,7 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
                 mask->setTo(event->lastScenePos());
                 _masks.append(mask);
                 addItem(mask);
+                _lastClickedGI=mask;
             }
         }
     }
@@ -275,14 +279,16 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             _zoomStack.push_back(_zoomrect->rect().toRect());
             emit dataChanged();
         }
-        // Case of of the cutting modes, the cut plot are updated
-        else if (_mode==HORIZONTALSLICE || _mode==VERTICALSLICE || _mode==LINE)
-            emit updatePlot(_currentCutter);
-        // Case of the Mask mode, update the scene with the new selection status of the peaks
-        else if (_mode==MASK)
+        else
         {
-        	_currentData->addMask(_masks.last()->getAABB());
-            updatePeaks();
+            if (auto p=dynamic_cast<PlottableGraphicsItem*>(_lastClickedGI))
+                emit updatePlot(p);
+            else if (auto p=dynamic_cast<MaskGraphicsItem*>(_lastClickedGI))
+            {
+                if (_lastClickedGI == _masks.last())
+                    _currentData->addMask(p->getAABB());
+                updatePeaks();
+            }
         }
     }
 }
@@ -295,16 +301,17 @@ void DetectorScene::wheelEvent(QGraphicsSceneWheelEvent* event)
 
     // Get the graphics item on which the user has performed the wheel event
     auto item=itemAt(event->scenePos(),QTransform());
+
+    auto p=dynamic_cast<SXGraphicsItem*>(item);
+    if (!p->isSelected())
+        return;
+
+    p->wheelEvent(event);
+
     if (auto p=dynamic_cast<CutterGraphicsItem*>(item))
-    {
-        p->wheelEvent(event);
         emit updatePlot(p);
-    }
-    else if (auto p=dynamic_cast<MaskGraphicsItem*>(item))
-    {
-        p->wheelEvent(event);
+    else if (dynamic_cast<MaskGraphicsItem*>(item))
         updatePeaks();
-    }
 }
 
 void DetectorScene::keyPressEvent(QKeyEvent* event)
@@ -344,9 +351,8 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
                 _masks.removeOne(p);
                 updatePeaks();
             }
-            // If the item is a cutter graphics item, set its pointer to null
-            else if (dynamic_cast<CutterGraphicsItem*>(item))
-                _currentCutter=nullptr;
+            if (p==_lastClickedGI)
+                _lastClickedGI=nullptr;
             // Remove the item from the scene
             removeItem(item);
             // Delete the item
@@ -441,7 +447,9 @@ void DetectorScene::loadCurrentImage()
 
     setSceneRect(_zoomStack.back());
     emit dataChanged();
-    emit updatePlot(_currentCutter);
+
+    if (auto p=dynamic_cast<PlottableGraphicsItem*>(_lastClickedGI))
+        emit updatePlot(p);
 
 }
 

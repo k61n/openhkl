@@ -102,9 +102,15 @@ void CutLineGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsIte
 
     // Color depending on selection
     if (option->state & QStyle::State_Selected)
+    {
        _pen.setStyle(Qt::DashLine);
+       _pen.setWidth(4);
+    }
     else
+    {
        _pen.setStyle(Qt::SolidLine);
+       _pen.setWidth(2);
+    }
 
     painter->setRenderHint(QPainter::HighQualityAntialiasing);
     painter->setPen(_pen);
