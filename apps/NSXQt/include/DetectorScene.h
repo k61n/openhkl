@@ -31,6 +31,11 @@ class MaskGraphicsItem;
 class PlottableGraphicsItem;
 class SXGraphicsItem;
 
+
+// For the plotting part, better to have RowMajor matrix to use QImage scanline function and
+// optimize cache hit.
+typedef Eigen::Matrix<int,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> rowMatrix;
+
 //! Master Scene containing the pixmap of the detector counts
 //! and overlayed graphics items (peaks, data cutters, masks ...)
 class DetectorScene : public QGraphicsScene
@@ -42,7 +47,7 @@ public:
     enum CURSORMODE {THETA=0, GAMMA=1, DSPACING=2, PIXEL=3, HKL=4};
     explicit DetectorScene(QObject *parent = 0);
     SX::Data::IData* getData();
-    const Eigen::MatrixXi& getCurrentFrame() const;
+    const rowMatrix& getCurrentFrame() const;
     const std::map<SX::Crystal::Peak3D*,PeakGraphicsItem*>& getPeaksGraphicsItems() const;
 
 signals:
@@ -81,7 +86,7 @@ private:
     SX::Data::IData* _currentData;
     int _currentFrameIndex;
     int _currentIntensity;
-    Eigen::MatrixXi _currentFrame;
+    rowMatrix _currentFrame;
     CURSORMODE _cursorMode;
     //! Current interaction mode
     MODE _mode;

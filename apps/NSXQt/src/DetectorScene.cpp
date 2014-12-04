@@ -286,6 +286,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             {
                 if (_lastClickedGI == _masks.last())
                     _currentData->addMask(p->getAABB());
+                _currentData->maskPeaks();
                 updatePeaks();
             }
         }
@@ -309,12 +310,11 @@ void DetectorScene::wheelEvent(QGraphicsSceneWheelEvent* event)
     if (!(p->isSelected()))
         return;
 
-    p->wheelEvent(event);
-
     if (auto p=dynamic_cast<CutterGraphicsItem*>(item))
+    {
+        p->wheelEvent(event);
         emit updatePlot(p);
-    else if (dynamic_cast<MaskGraphicsItem*>(item))
-        updatePeaks();
+    }
 }
 
 void DetectorScene::keyPressEvent(QKeyEvent* event)
@@ -466,7 +466,7 @@ const std::map<SX::Crystal::Peak3D*,PeakGraphicsItem*>& DetectorScene::getPeaksG
     return _peaks;
 }
 
-const Eigen::MatrixXi& DetectorScene::getCurrentFrame() const
+const rowMatrix& DetectorScene::getCurrentFrame() const
 {
     return _currentFrame;
 }

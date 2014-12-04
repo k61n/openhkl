@@ -21,7 +21,7 @@ CutterGraphicsItem::CutterGraphicsItem(SX::Data::IData* data)
 
     setZValue(1);
 
-    _pen.setWidth(2);
+    _pen.setWidth(1);
     _pen.setCosmetic(true);
     _pen.setStyle(Qt::SolidLine);
 

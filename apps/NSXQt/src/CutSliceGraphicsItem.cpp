@@ -82,7 +82,7 @@ void CutSliceGraphicsItem::plot(SXPlot* plot)
 
     std::iota(x.begin(),x.end(),start);
 
-    const Eigen::MatrixXi& currentFrame=detPtr->getCurrentFrame();
+    const rowMatrix& currentFrame=detPtr->getCurrentFrame();
 
     if (horizontal)
     {
@@ -119,23 +119,21 @@ void CutSliceGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsIt
 
     if (_horizontal)
     {
-       painter->setBrush(QBrush(QColor(0,255,0,100)));
+       painter->setBrush(QBrush(QColor(0,255,0,50)));
     }
     else
     {
-       painter->setBrush(QBrush(QColor(0,0,255,100)));
+       painter->setBrush(QBrush(QColor(0,0,255,50)));
     }
 
     // Color depending on selection
     if (option->state & QStyle::State_Selected)
     {
         _pen.setStyle(Qt::DashLine);
-        _pen.setWidth(4);
     }
     else
     {
         _pen.setStyle(Qt::SolidLine);
-        _pen.setWidth(2);
     }
 
    painter->setRenderHint(QPainter::Antialiasing);

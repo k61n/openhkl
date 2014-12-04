@@ -61,9 +61,6 @@ void MaskGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
     QPointF br=sceneBoundingRect().bottomRight();
     QString text2=QString::number(tl.x())+"\n"+QString::number(tl.y())+"\n"+QString::number(br.x())+"\n"+QString::number(br.y());
 
-    _text->setPlainText(text2);
-
-
 }
 
 QRectF MaskGraphicsItem::boundingRect() const
@@ -108,7 +105,10 @@ void MaskGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         }
         // Otherwise it is a standard move of the item
         else
+        {
             SXGraphicsItem::mouseMoveEvent(event);
+            updateAABB();
+        }
     }
 }
 

@@ -51,7 +51,7 @@ QRectF PeakGraphicsItem::boundingRect() const
     const Eigen::Vector3d& u=_peak->getBackground()->getUpper();
     qreal w=u[0]-l[0];
     qreal h=u[1]-l[1];
-    return QRectF(-w/2.0-1,-h/2.0-1,w+2,h+2);
+    return QRectF(-w/2.0,-h/2.0,w,h);
 }
 
 void PeakGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
