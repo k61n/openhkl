@@ -56,21 +56,25 @@ using namespace SX::Crystal;
 using namespace SX::Geometry;
 using namespace SX::Instrument;
 
+/*! \brief Interface for diffraction data
+ *
+ * Base interface for all diffraction data. IData handles the IO
+ */
 class IData
 {
 public:
 
 	// Constructors and destructor
 
-	//! Constructor
+	/*! Construct a IData Object from a file on disk, and pointer to a diffractometer.
+	 *  @param inMemory: whether the file should be loaded in memory straight away or kept on disk
+	 */
 	IData(const std::string& filename, std::shared_ptr<Diffractometer> instrument, bool inMemory=false);
 	//! Copy constructor
 	IData(const IData& other)=delete;
 	//! Destructor
 	virtual ~IData()=0;
-
 	// Operators
-
 	//! Assignment operator
 	IData& operator=(const IData& other)=delete;
 

@@ -229,7 +229,7 @@ void IData::saveHDF5(const std::string& filename)
 	unsigned int cd_values[7];
 	cd_values[4] = 9;       // Highest compression level
 	cd_values[5] = 1;       // Bit shuffling active
-	cd_values[6] = BLOSC_LZ4; // Seem to be the best compromise speed/compression for diffraction data
+	cd_values[6] = BLOSC_BLOSCLZ; // Seem to be the best compromise speed/compression for diffraction data
 
 	r = register_blosc(&version, &date);
 	if (r<=0)
@@ -267,30 +267,28 @@ void IData::readHDF5(const std::string& filename)
 {
 	// Needed
 	blosc_init();
-	blosc_set_nthreads(4);
 
+	// Register blosc filter dynamically with HDF5
 	char *version, *date;
 	int r= register_blosc(&version, &date);
-
 	if (r<=0)
 		throw std::runtime_error("Problem registering BLOSC filter in HDF5 library");
 
-	blosc_init();
-	blosc_set_nthreads(8);
-
+	// Open HDF5 file
 	H5::H5File file(filename.c_str(), H5F_ACC_RDONLY);
-
+	// Create new data set
     H5::DataSet* dset=new H5::DataSet(file.openDataSet("/counts"));
-
+    // Dataspace of the dataset /counts
 	H5::DataSpace* space=new H5::DataSpace(dset->getSpace());
 
 	// Get rank of data
 	const hsize_t ndims=space->getSimpleExtentNdims();
 	hsize_t dims[ndims];
 	hsize_t maxdims[ndims];
-	// Get dimensions
+	// Get dimensions of data
 	space->getSimpleExtentDims(dims,maxdims);
 
+	// Throw if data rea
 	if (dims[0]!=_nFrames || dims[1]!=_nrows || dims[2]!=_ncols)
 		throw std::range_error("IData: Data dimensions in HDF5 different from previsouly defined");
 
