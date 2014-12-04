@@ -416,6 +416,20 @@ bool IData::isMasked(const Eigen::Vector3d& point) const
 
 }
 
+void IData::releaseMemory()
+{
+	if (!_inMemory)
+        return;
+
+    for (auto& d : _data)
+        d.resize(0,0);
+    _data.clear();
+
+	_data.shrink_to_fit();
+
+    _inMemory=false;
+}
+
 } // end namespace Data
 
 } // end namespace SX

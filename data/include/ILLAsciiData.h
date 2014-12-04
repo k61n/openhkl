@@ -75,8 +75,6 @@ public:
     Eigen::MatrixXi readFrame(std::size_t idx) const;
     //! Read all the frames in memory
     void loadAllFrames();
-    //! Release the data from memory
-    void releaseMemory();
 
 private:
 

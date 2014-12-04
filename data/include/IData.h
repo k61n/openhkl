@@ -139,7 +139,7 @@ public:
     //! Load all the frames in memory
     virtual void loadAllFrames()=0;
     // Release the data from memory
-    virtual void releaseMemory()=0;
+    void releaseMemory();
     //
     virtual void map()=0;
     virtual void unMap()=0;

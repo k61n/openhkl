@@ -1,20 +1,14 @@
-/*
- * TiffData.cpp
- *
- *  Created on: Dec 3, 2014
- *      Author: chapon
- */
-
 #include "TiffData.h"
 
 namespace SX
 {
+
 namespace Data
 {
 
 
 TiffData::TiffData(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer, bool inMemory)
-:IData(filename,diffractometer,inMemory)
+: IData(filename,diffractometer,inMemory)
  {
 	uint32 w,h;
 
@@ -33,11 +27,12 @@ TiffData::TiffData(const std::string& filename, std::shared_ptr<Diffractometer> 
 	}
 	TIFFGetField(_file, TIFFTAG_BITSPERSAMPLE, &_bits);
 	TIFFClose(_file);
+
 	_nFrames=1;
+
 	_data.reserve(_nFrames);
 
 	_metadata->add<std::string>("Instrument",diffractometer->getType());
-	_inMemory=false;
 
 }
 
@@ -49,7 +44,7 @@ void TiffData::map()
 {
 	try
 	{
-	_file=TIFFOpen(_filename.c_str(),"r");
+		_file=TIFFOpen(_filename.c_str(),"r");
 	}catch(...)
 	{
 		throw;
@@ -64,11 +59,13 @@ void TiffData::unMap()
 void TiffData::loadAllFrames()
 {
 	Eigen::Matrix<uint16,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> data16(_nrows,_ncols);
+
 	// Read line per line
 	for(unsigned short int i=0; i< _nrows; ++i)
 		TIFFReadScanline(_file, (char*)&data16(i,0), i);
 
 	_data[0].resize(_nrows,_ncols);
+
 	// Not very nice, but need to copy the 16bits data to int
 	_data[0]=data16.cast<int>();
 

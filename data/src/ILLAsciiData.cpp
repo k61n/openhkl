@@ -231,18 +231,6 @@ void ILLAsciiData::loadAllFrames()
 	return;
 }
 
-void ILLAsciiData::releaseMemory()
-{
-	if (!_inMemory)
-        return;
-
-    for (auto& d : _data)
-        d.resize(0,0);
-    _data.clear();
-
-    _inMemory=false;
-}
-
 void ILLAsciiData::goToLine(std::stringstream& buffer, int number,int pos)
 {
 	int char_number=81*(number-1)+pos;
