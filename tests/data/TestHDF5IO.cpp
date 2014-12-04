@@ -27,32 +27,13 @@ BOOST_AUTO_TEST_CASE(Test_HDF5_IO)
 
 	std::shared_ptr<Diffractometer> diff = std::shared_ptr<Diffractometer>(factory->create("D10 4-circles","D10 diffractometer")->clone());
 
-	ILLAsciiData reader(std::string("D10_ascii_example"),diff,false);
+	ILLAsciiData dataf(std::string("D10_ascii_example"),diff);
 
-	reader.map();
-	reader.loadAllFrames();
-	const std::vector<Eigen::MatrixXi>& data=reader.getData();
+	dataf.open();
+	dataf.readInMemory();
+	const std::vector<Eigen::MatrixXi>& data=dataf.getData();
 
-	// Store sum of counts in each frame
-	std::vector<int> sumsbefore(data.size());
-	for (std::size_t i=0;i<data.size();++i)
-	{
-		sumsbefore[i]=data[i].sum();
-	}
 
-	reader.saveHDF5("114047.h5");
-	// Read back the data
-	reader.readHDF5("114047.h5");
-
-	const std::vector<Eigen::MatrixXi>& data2=reader.getData();
-
-	assert(data.size()==data2.size());
-
-	std::vector<int> sumsafter(data2.size());
-	for (std::size_t i=0;i<data2.size();++i)
-	{
-		sumsafter[i]=data[i].sum();
-		assert(sumsafter[i]==sumsbefore[i]);
-	}
-
+	dataf.saveHDF5("114047.h5");
+	dataf.close();
 }

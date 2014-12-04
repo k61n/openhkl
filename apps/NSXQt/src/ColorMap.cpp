@@ -6,7 +6,7 @@ COLOUR GetColour(double v,double vmin,double vmax)
    double dv;
 
    if (v < vmin)
-      v = vmin;
+      return c;
    if (v > vmax)
       v = vmax;
    dv = vmax - vmin;
@@ -29,6 +29,7 @@ COLOUR GetColour(double v,double vmin,double vmax)
 
 QImage Mat2QImage(int* src, int rows, int cols,int xmin, int xmax, int ymin, int ymax,double colorMax)
 {
+
     if (xmin<0 || xmax> cols || ymin<0 || ymax>rows)
         return QImage();
 

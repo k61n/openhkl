@@ -51,6 +51,7 @@
 #include "PlottableGraphicsItem.h"
 #include "PeakGraphicsItem.h"
 #include "PlotFactory.h"
+#include <ctime>
 
 using namespace SX::Units;
 using namespace SX::Instrument;
@@ -141,20 +142,21 @@ void MainWindow::showPeakList(std::vector<SX::Data::IData*> data)
 
 void MainWindow::plotPeak(SX::Crystal::Peak3D* peak)
 {
-    auto scenePtr=dynamic_cast<DetectorScene*>(_ui->_dview->scene());
-    if (!scenePtr)
-        return;
+    auto scenePtr=_ui->_dview->getScene();
+    // Ensure that frames
+    changeData(peak->getData());
+    scenePtr->setData(peak->getData(),std::round(peak->getPeak()->getCenter()[2]));
     auto pgi=scenePtr->findPeakGraphicsItem(peak);
     if (pgi)
     {
-        scenePtr->setData(peak->getData(),std::round(peak->getPeak()->getCenter()[2]));
-        pgi=scenePtr->findPeakGraphicsItem(peak);;
         updatePlot(pgi);
     }
 }
 
 void MainWindow::on_action_peak_find_triggered()
 {
+
+    _ui->_dview->getScene()->clearPeaks();
 
     std::vector<IData*> numors = _ui->experimentTree->getSelectedNumors();
     if (numors.empty())
@@ -185,10 +187,8 @@ void MainWindow::on_action_peak_find_triggered()
 
     for (auto numor : numors)
     {
-        if (!numor->isMapped())
-            numor->map();
         numor->clearPeaks();
-        numor->loadAllFrames();
+        numor->readInMemory();
         qDebug() << "Read data";
         // Get pointers to start of each frame
         std::vector<int*> temp(numor->getNFrames());
@@ -202,7 +202,9 @@ void MainWindow::on_action_peak_find_triggered()
         SX::Geometry::blob3DCollection blobs;
         try
         {
+            clock_t t1=clock();
             blobs=SX::Geometry::findBlobs3D<int>(temp, numor->getDiffractometer()->getDetector()->getNRows(),numor->getDiffractometer()->getDetector()->getNCols(), threshold+2, 30, 10000, confidence, 0);
+            qDebug() << static_cast<double>(clock()-t1)/CLOCKS_PER_SEC;
         }
         catch(std::exception& e) // Warning if RAM error
         {
@@ -217,7 +219,10 @@ void MainWindow::on_action_peak_find_triggered()
             blob.second.toEllipsoid(confidence, center,eigenvalues,eigenvectors);
             SX::Crystal::Peak3D* p = new Peak3D(numor);
             p->setPeakShape(new SX::Geometry::Ellipsoid3D(center,eigenvalues,eigenvectors));
-            p->setBackgroundShape(new SX::Geometry::Ellipsoid3D(center,eigenvalues.cwiseProduct(Eigen::Vector3d(1.5,1.5,3)),eigenvectors));
+            eigenvalues[0]*=2.0;
+            eigenvalues[1]*=2.0;
+            eigenvalues[2]*=3.0;
+            p->setBackgroundShape(new SX::Geometry::Ellipsoid3D(center,eigenvalues,eigenvectors));
             //
             int f=std::floor(center[2]);
             p->setSampleState(new SX::Instrument::ComponentState(numor->getSampleInterpolatedState(f)));
@@ -236,7 +241,7 @@ void MainWindow::on_action_peak_find_triggered()
             peak->integrate();
 
         numor->releaseMemory();
-        numor->unMap();
+        numor->close();
         _ui->progressBar->setValue(++comp);
     }
 

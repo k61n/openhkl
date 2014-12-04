@@ -6,9 +6,14 @@ namespace SX
 namespace Data
 {
 
+IData* TiffData::create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer)
+{
+	return new TiffData(filename,diffractometer);
+}
 
-TiffData::TiffData(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer, bool inMemory)
-: IData(filename,diffractometer,inMemory)
+
+TiffData::TiffData(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer)
+: IData(filename,diffractometer)
  {
 	uint32 w,h;
 
@@ -23,8 +28,10 @@ TiffData::TiffData(const std::string& filename, std::shared_ptr<Diffractometer> 
 	if (w!=_ncols || h!=_nrows)
 	{
 		TIFFClose(_file);
+		_isOpened=false;
 		throw std::range_error("Tiff file "+filename+ " not consistent with diffractometer definition");
 	}
+	_isOpened=false;
 	TIFFGetField(_file, TIFFTAG_BITSPERSAMPLE, &_bits);
 	TIFFClose(_file);
 
@@ -40,8 +47,10 @@ TiffData::~TiffData()
 {
 }
 
-void TiffData::map()
+void TiffData::open()
 {
+	if (_isOpened)
+		return;
 	try
 	{
 		_file=TIFFOpen(_filename.c_str(),"r");
@@ -49,15 +58,26 @@ void TiffData::map()
 	{
 		throw;
 	}
+	_isOpened=true;
 }
 
-void TiffData::unMap()
+void TiffData::close()
 {
-	TIFFClose(_file);
+	if (_isOpened)
+		TIFFClose(_file);
+	_isOpened=false;
 }
 
-void TiffData::loadAllFrames()
+void TiffData::readInMemory()
 {
+	if (_inMemory)
+		return;
+	if (!_isOpened)
+		open();
+
+	if (_bits!=16 || _bits!=32)
+		throw std::runtime_error("Can't read TIFF file "+_filename+" : only 16/32bits format supported");
+
 	Eigen::Matrix<uint16,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> data16(_nrows,_ncols);
 
 	// Read line per line
@@ -81,23 +101,18 @@ Eigen::MatrixXi TiffData::getFrame(std::size_t idx)
 		return readFrame(idx);
 }
 
-Eigen::MatrixXi TiffData::readFrame(std::size_t idx) const
+Eigen::MatrixXi TiffData::readFrame(std::size_t idx)
 {
-	assert(idx<_nFrames);
+
+	if (!_isOpened)
+		open();
 
 	Eigen::Matrix<uint16,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> data16(_nrows,_ncols);
-		// Read line per line
-		for(unsigned short int i=0; i< _nrows; ++i)
-			TIFFReadScanline(_file, (char*)&data16(i,0), i);
-		// Not very nice, but need to copy the 16bits data to int
-		return data16.cast<int>();
-}
-
-void TiffData::releaseMemory()
-{
-	_data[0].resize(0,0);
-	_data.clear();
-	_data.shrink_to_fit();
+	// Read line per line
+	for(unsigned short int i=0; i< _nrows; ++i)
+		TIFFReadScanline(_file, (char*)&data16(i,0), i);
+	// Not very nice, but need to copy the 16bits data to int
+	return data16.cast<int>();
 }
 
 } // Namespace Data

@@ -24,7 +24,7 @@ BOOST_AUTO_TEST_CASE(Test_Experiment)
 	BOOST_CHECK_EQUAL(exp.getDataNames().size(),0);
 
 	// Add some data
-	ILLAsciiData* data = new ILLAsciiData(std::string("D10_ascii_example"),exp.getDiffractometer(),false);
+	ILLAsciiData* data = new ILLAsciiData(std::string("D10_ascii_example"),exp.getDiffractometer());
 	exp.addData(data);
 	BOOST_CHECK_EQUAL(exp.getDataNames().size(),1);
 	BOOST_CHECK_EQUAL(exp.getDataNames()[0],"D10_ascii_example");

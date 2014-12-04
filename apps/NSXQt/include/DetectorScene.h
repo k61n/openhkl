@@ -70,6 +70,7 @@ public slots:
     void changeCursorMode(int);
     //!
     void showPeakLabels(bool);
+    void clearPeaks();
 private:
 
     //! Load image from current Data and frame

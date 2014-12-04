@@ -28,15 +28,15 @@ BOOST_AUTO_TEST_CASE(Test_ILL_Data)
 
 	std::shared_ptr<Diffractometer> diff = std::shared_ptr<Diffractometer>(factory->create("D10 4-circles","D10 diffractometer")->clone());
 
-	ILLAsciiData reader(std::string("D10_ascii_example"),diff,false);
+	ILLAsciiData dataf(std::string("D10_ascii_example"),diff);
 
-	MetaData* meta=reader.getMetadata();
+	MetaData* meta=dataf.getMetadata();
 
 	BOOST_CHECK(meta->getKey<int>("nbang")==2);
 
-	reader.map();
+	dataf.open();
 
-	Eigen::MatrixXi v=reader.getFrame(0);
+	Eigen::MatrixXi v=dataf.getFrame(0);
 
 	// Check the total number of count in the frame 0
 	BOOST_CHECK_EQUAL(v.sum(),65);
@@ -44,21 +44,23 @@ BOOST_AUTO_TEST_CASE(Test_ILL_Data)
 	// Check the value of the monitor
 	BOOST_CHECK_CLOSE(meta->getKey<double>("monitor"),20000,tolerance);
 
-	const std::vector<ComponentState> detectorStates=reader.getDetectorStates();
-	const std::vector<ComponentState> sampleStates=reader.getSampleStates();
+	const std::vector<ComponentState> detectorStates=dataf.getDetectorStates();
+	const std::vector<ComponentState> sampleStates=dataf.getSampleStates();
 
 	BOOST_CHECK_CLOSE(detectorStates[3].getValues()[0],0.54347000E+05*deg/1000.0,tolerance);
 	BOOST_CHECK_CLOSE(sampleStates[2].getValues()[0],0.26572000E+05*deg/1000.0,tolerance);
 	BOOST_CHECK_CLOSE(sampleStates[2].getValues()[1],0.48923233E+02*deg,tolerance);
 	BOOST_CHECK_CLOSE(sampleStates[2].getValues()[2],-0.48583171E+02*deg,tolerance);
 
-	ComponentState cs=reader.getDetectorInterpolatedState(0.0);
+	ComponentState cs=dataf.getDetectorInterpolatedState(0.0);
 	BOOST_CHECK_CLOSE(cs.getValues()[0],detectorStates[0].getValues()[0],tolerance);
 
-	cs=reader.getDetectorInterpolatedState(0.5);
+	cs=dataf.getDetectorInterpolatedState(0.5);
 	BOOST_CHECK_CLOSE(cs.getValues()[0],detectorStates[0].getValues()[0]+0.5*(detectorStates[1].getValues()[0]-detectorStates[0].getValues()[0]),tolerance);
 
-	cs=reader.getDetectorInterpolatedState(2.3);
+	cs=dataf.getDetectorInterpolatedState(2.3);
 	BOOST_CHECK_CLOSE(cs.getValues()[0],detectorStates[2].getValues()[0]+0.3*(detectorStates[3].getValues()[0]-detectorStates[2].getValues()[0]),tolerance);
+
+	dataf.close();
 
 }

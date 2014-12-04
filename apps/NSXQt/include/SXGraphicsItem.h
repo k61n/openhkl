@@ -5,6 +5,7 @@
 #include <QPen>
 #include <QRectF>
 
+class DetectorScene;
 class QGraphicsSceneHoverEvent;
 class QGraphicsSceneMouseEvent;
 class QGraphicsTextItem;
@@ -34,6 +35,7 @@ public:
     // Getters and setters
 
     virtual QRectF boundingRect() const=0;
+    DetectorScene* getScene() const;
     //! Set whether or not the item is deletable
     void setDeletable(bool deletable);
     //! Set whether or not the item is hoverable

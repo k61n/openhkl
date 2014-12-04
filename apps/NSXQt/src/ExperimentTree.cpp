@@ -26,7 +26,7 @@
 #include "DetectorItem.h"
 #include "TreeItem.h"
 #include "ExperimentItem.h"
-#include "ILLAsciiData.h"
+#include "DataReaderFactory.h"
 #include "NumorItem.h"
 #include "PeakListItem.h"
 #include "PeakTableView.h"
@@ -213,9 +213,8 @@ void ExperimentTree::importData()
     {
         // Get the basename of the current numor
         QFileInfo fileinfo(fileNames[i]);
-        std::string basename=fileinfo.baseName().toStdString();
-
-        Experiment* exp = expItem->getExperiment();
+        std::string basename=fileinfo.fileName().toStdString();
+         Experiment* exp = expItem->getExperiment();
 
         // If the experience already stores the current numor, skip it
         if (exp->hasData(basename))
@@ -223,10 +222,8 @@ void ExperimentTree::importData()
 
         try
         {
-            ILLAsciiData* d = new ILLAsciiData(fileNames[i].toStdString(),exp->getDiffractometer(),false);
-            d->map();
-            d->loadAllFrames();
-            d->saveHDF5(fileNames[i].toStdString()+".h5");
+            std::string extension=fileinfo.completeSuffix().toStdString();
+            IData* d = DataReaderFactory::Instance()->create(extension,fileNames[i].toStdString(),exp->getDiffractometer());
             exp->addData(d);
         }
         catch(std::exception& e)

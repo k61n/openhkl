@@ -69,7 +69,7 @@ protected:
     AABB<double,3>* _aabb;
     QPointF _from;
     QPointF _to;
-
+    QGraphicsTextItem* _text;
 private:
     void updateAABB();
 

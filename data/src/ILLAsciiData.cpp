@@ -33,8 +33,13 @@ std::size_t ILLAsciiData::BlockSize=100*81;
 
 std::map<std::size_t,std::string> ILLAsciiData::MADAngles = {{1,"2theta(gamma)"},{2,"omega"},{3,"chi"},{4,"phi"},{5,"nu"}};
 
-ILLAsciiData::ILLAsciiData(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer, bool inMemory)
-: IData(filename,diffractometer,inMemory)
+IData* ILLAsciiData::create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer)
+{
+	return new ILLAsciiData(filename,diffractometer);
+}
+
+ILLAsciiData::ILLAsciiData(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer)
+: IData(filename,diffractometer)
 {
 	try
 	{
@@ -154,15 +159,15 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, std::shared_ptr<Diffract
 	}
 	_fileSize=_map.get_size();
 
-	unMap();
+	close();
 }
 
 ILLAsciiData::~ILLAsciiData() {
 }
 
-void ILLAsciiData::map()
+void ILLAsciiData::open()
 {
-	if (_isMapped)
+	if (_isOpened)
 		return;
 	try
 	{
@@ -175,13 +180,13 @@ void ILLAsciiData::map()
 	{
 		throw;
 	}
-	_isMapped=true;
+	_isOpened=true;
 }
 
-void ILLAsciiData::unMap()
+void ILLAsciiData::close()
 {
 	_map=boost::move(boost::interprocess::mapped_region());
-	_isMapped=false;
+	_isOpened=false;
 }
 
 Eigen::MatrixXi ILLAsciiData::getFrame(std::size_t idx)
@@ -193,7 +198,7 @@ Eigen::MatrixXi ILLAsciiData::getFrame(std::size_t idx)
 		return readFrame(idx);
 }
 
-Eigen::MatrixXi ILLAsciiData::readFrame(std::size_t idx) const
+Eigen::MatrixXi ILLAsciiData::readFrame(std::size_t idx)
 {
 	assert(idx<_nFrames);
 
@@ -202,9 +207,7 @@ Eigen::MatrixXi ILLAsciiData::readFrame(std::size_t idx) const
 
 	// Create vector and try to reserve a memory block
 	Eigen::MatrixXi v;
-	int nrows=_diffractometer->getDetector()->getNRows();
-	int ncols=_diffractometer->getDetector()->getNCols();
-	v.resize(nrows,ncols);
+	v.resize(_nrows,_ncols);
 
 	EigenMatrixParser<const char*,TopRightColMajorMapper> parser;
 	qi::phrase_parse(_mapAddress+begin,_mapAddress+begin+_dataLength,parser,qi::blank, v);
@@ -212,21 +215,22 @@ Eigen::MatrixXi ILLAsciiData::readFrame(std::size_t idx) const
 	return v;
 }
 
-void ILLAsciiData::loadAllFrames()
+void ILLAsciiData::readInMemory()
 {
 
 	if (_inMemory)
         return;
 
-	_data.resize(_nFrames);
-	_inMemory=true;
+	if (!_isOpened)
+		open();
 
-	// The number of pixel of the detector is stored un der the nbdata metadata key
-	std::size_t nPixels=_metadata->getKey<int>("nbdata");
+	_data.resize(_nFrames);
 
 	#pragma omp parallel for
 	for (std::size_t i=0;i<_nFrames;++i)
 		_data[i]=readFrame(i);
+
+	_inMemory=true;
 
 	return;
 }

@@ -17,7 +17,7 @@
 #include "MaskGraphicsItem.h"
 
 MaskGraphicsItem::MaskGraphicsItem(SX::Data::IData* data)
-: SXGraphicsItem(nullptr,true,false,true),
+: SXGraphicsItem(nullptr,true,true,true),
   _data(data),
   _aabb(new AABB<double,3>),
   _from(0,0),
@@ -26,6 +26,9 @@ MaskGraphicsItem::MaskGraphicsItem(SX::Data::IData* data)
     _pen.setWidth(2);
     _pen.setCosmetic(true);
     _pen.setStyle(Qt::SolidLine);
+    _text=new QGraphicsTextItem(this);
+    _text->setFlag(QGraphicsItem::ItemIgnoresTransformations);
+    _text->setParentItem(this);
 }
 
 MaskGraphicsItem::~MaskGraphicsItem()
@@ -53,6 +56,14 @@ void MaskGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
     painter->setRenderHint(QPainter::HighQualityAntialiasing);
     painter->setPen(_pen);
     painter->drawRect(boundingRect());
+
+    QPointF tl=sceneBoundingRect().topLeft();
+    QPointF br=sceneBoundingRect().bottomRight();
+    QString text2=QString::number(tl.x())+"\n"+QString::number(tl.y())+"\n"+QString::number(br.x())+"\n"+QString::number(br.y());
+
+    _text->setPlainText(text2);
+
+
 }
 
 QRectF MaskGraphicsItem::boundingRect() const
@@ -151,4 +162,5 @@ void MaskGraphicsItem::wheelEvent(QGraphicsSceneWheelEvent *event)
     update();
 
     updateAABB();
+
 }

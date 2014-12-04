@@ -22,6 +22,7 @@ SXGraphicsItem::SXGraphicsItem(QGraphicsItem *parent, bool deletable, bool hover
     setFlag(QGraphicsItem::ItemIsMovable,_movable);
 
     setAcceptHoverEvents(_hoverable);
+
 }
 
 SXGraphicsItem::~SXGraphicsItem()

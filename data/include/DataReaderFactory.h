@@ -32,8 +32,10 @@
 #include <string>
 
 #include "Factory.h"
-#include "ILLAsciiDataReader.h"
+#include "IData.h"
 #include "Singleton.h"
+#include <memory>
+#include "Diffractometer.h"
 
 namespace SX
 {
@@ -43,16 +45,19 @@ namespace Data
 
 using namespace SX::Kernel;
 
-class DataReaderFactory : public Factory<IDataReader,std::string>, public Singleton<DataReaderFactory,Constructor,Destructor>
+typedef typename std::shared_ptr<SX::Instrument::Diffractometer> ptrInstrument;
+
+/** \brief DataReaderFactory. All IData formats must register their "create" method with the factory in order to
+ * choose the correct DataReader at runtime. Reader selection is based on the extension of the datafile.
+ *
+ */
+class DataReaderFactory : public Factory<IData,std::string,std::string,std::shared_ptr<SX::Instrument::Diffractometer> >, public Singleton<DataReaderFactory,Constructor,Destructor>
 {
 private:
 	friend class Constructor<DataReaderFactory>;
 	friend class Destructor<DataReaderFactory>;
-	DataReaderFactory()
-	{
-		registerCallback("ILL-Ascii",&ILLAsciiDataReader::create);
-	}
-	~DataReaderFactory(){}
+	DataReaderFactory();
+	~DataReaderFactory();
 };
 
 } // end namespace Data

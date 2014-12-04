@@ -42,14 +42,14 @@ namespace Data
 class TiffData : public IData
 {
 public:
-	TiffData(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer, bool inMemory=false);
+	static IData* create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer);
+	TiffData(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer);
 	virtual ~TiffData();
-	void map();
-	void unMap();
-	void loadAllFrames();
-	void releaseMemory();
+	void open();
+	void close();
+	void readInMemory();
 	Eigen::MatrixXi getFrame(std::size_t frame);
-	Eigen::MatrixXi readFrame(std::size_t frame) const;
+	Eigen::MatrixXi readFrame(std::size_t frame);
 private:
 	//! Type of encoding for each pixel.
 	uint16 _bits;

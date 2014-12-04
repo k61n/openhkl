@@ -117,7 +117,14 @@ void CutSliceGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsIt
 {
     Q_UNUSED(widget);
 
-    painter->setBrush(QBrush(QColor(0,255,0,100)));
+    if (_horizontal)
+    {
+       painter->setBrush(QBrush(QColor(0,255,0,100)));
+    }
+    else
+    {
+       painter->setBrush(QBrush(QColor(0,0,255,100)));
+    }
 
     // Color depending on selection
     if (option->state & QStyle::State_Selected)
@@ -131,26 +138,13 @@ void CutSliceGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsIt
         _pen.setWidth(2);
     }
 
-   painter->setRenderHint(QPainter::HighQualityAntialiasing);
+   painter->setRenderHint(QPainter::Antialiasing);
    painter->setPen(_pen);
    qreal w=std::abs(_to.x()-_from.x());
    qreal h=std::abs(_to.y()-_from.y());
    painter->drawRect(-w/2.0,-h/2.0,w,h);
 
-   if (_horizontal)
-   {
-       painter->drawLine(-w/2.0,-h/2.0,-w/2.0+5,-h/2.0+2);
-       painter->drawLine(-w/2.0,-h/2.0,-w/2.0+5,-h/2.0-2);
-       painter->drawLine(w/2.0,-h/2.0,w/2.0-5,-h/2.0+2);
-       painter->drawLine(w/2.0,-h/2.0,w/2.0-5,-h/2.0-2);
-   }
-   else
-   {
-       painter->drawLine(-w/2.0,-h/2.0,-w/2.0+2,-h/2.0+5);
-       painter->drawLine(-w/2.0,-h/2.0,-w/2.0-2,-h/2.0+5);
-       painter->drawLine(-w/2.0, h/2.0,-w/2.0+2, h/2.0-5);
-       painter->drawLine(-w/2.0, h/2.0,-w/2.0-2, h/2.0-5);
-   }
+
 }
 
 std::string CutSliceGraphicsItem::getPlotType() const

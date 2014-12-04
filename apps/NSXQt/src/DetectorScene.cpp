@@ -42,8 +42,8 @@ void DetectorScene::changeFrame(int frame)
     if (!_currentData)
         return;
 
-    if (!_currentData->isMapped())
-        _currentData->map();
+    if (!_currentData->isOpened())
+        _currentData->open();
 
     if (frame == _currentFrameIndex)
         return;
@@ -63,8 +63,8 @@ void DetectorScene::setMaxIntensity(int intensity)
     if (!_currentData)
         return;
 
-    if (!_currentData->isMapped())
-        _currentData->map();
+    if (!_currentData->isOpened())
+        _currentData->open();
 
     loadCurrentImage();
 }
@@ -79,12 +79,12 @@ void DetectorScene::setData(SX::Data::IData* data)
     }
 
     if (_currentData)
-        _currentData->unMap();
+        _currentData->close();
 
     _currentData = data;
 
-    if (!_currentData->isMapped())
-        _currentData->map();
+    if (!_currentData->isOpened())
+        _currentData->open();
 
     SX::Instrument::Detector* det=_currentData->getDiffractometer()->getDetector();
 
@@ -129,7 +129,6 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             zoom.setBottomRight(event->lastScenePos());
             _zoomrect->setRect(zoom);
         }
-        // Case of the cutting modes
         else
         {
             if (!_lastClickedGI)
@@ -303,7 +302,11 @@ void DetectorScene::wheelEvent(QGraphicsSceneWheelEvent* event)
     auto item=itemAt(event->scenePos(),QTransform());
 
     auto p=dynamic_cast<SXGraphicsItem*>(item);
-    if (!p->isSelected())
+
+    if (!p)
+        return;
+
+    if (!(p->isSelected()))
         return;
 
     p->wheelEvent(event);
@@ -486,6 +489,22 @@ PeakGraphicsItem* DetectorScene::findPeakGraphicsItem(SX::Crystal::Peak3D *peak)
 void DetectorScene::updatePeaks()
 {
 
+    clearPeaks();
+
+    auto& peaks=_currentData->getPeaks();
+
+    for (auto peak : peaks)
+    {
+        PeakGraphicsItem* pgi=new PeakGraphicsItem(peak);
+        pgi->setFrame(_currentFrameIndex);
+        addItem(pgi);
+        _peaks.insert(std::pair<SX::Crystal::Peak3D*,PeakGraphicsItem*>(peak,pgi));
+    }
+}
+
+void DetectorScene::clearPeaks()
+{
+
     if (!_currentData)
         return;
 
@@ -497,15 +516,6 @@ void DetectorScene::updatePeaks()
 
     _peaks.clear();
 
-    auto peaks=_currentData->getPeaks();
-
-    for (auto peak : peaks)
-    {
-        PeakGraphicsItem* pgi=new PeakGraphicsItem(peak);
-        pgi->setFrame(_currentFrameIndex);
-        addItem(pgi);
-        _peaks.insert(std::pair<SX::Crystal::Peak3D*,PeakGraphicsItem*>(peak,pgi));
-    }
 }
 
 void DetectorScene::showPeakLabels(bool peaklabel)

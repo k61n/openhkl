@@ -52,10 +52,10 @@ class ILLAsciiData : public IData
 {
 public:
 
-	// Constructors and destructor
+	static IData* create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer);
 
 	//! Default constructor
-	ILLAsciiData(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer, bool inMemory=false);
+	ILLAsciiData(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer);
 	//! Copy constructor
 	ILLAsciiData(const ILLAsciiData& other)=delete;
 	//! Destructor
@@ -67,14 +67,14 @@ public:
 	ILLAsciiData& operator=(const ILLAsciiData& other)=delete;
 
 	// Other methods
-	void map();
-	void unMap();
+	void open();
+	void close();
     //! Read a given Frame of the data
     Eigen::MatrixXi getFrame(std::size_t idx);
     //! Read a single frame
-    Eigen::MatrixXi readFrame(std::size_t idx) const;
+    Eigen::MatrixXi readFrame(std::size_t idx);
     //! Read all the frames in memory
-    void loadAllFrames();
+    void readInMemory();
 
 private:
 

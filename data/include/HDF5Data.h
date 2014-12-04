@@ -31,6 +31,7 @@
 #include <string>
 #include <memory>
 #include "IData.h"
+#include "H5Cpp.h"
 
 namespace SX
 {
@@ -40,8 +41,20 @@ namespace Data
 class HDF5Data : public IData
 {
 public:
-	HDF5Data(const std::string& filename, std::shared_ptr<Diffractometer> instrument, bool inMemory=false);
+	static IData* create(const std::string& filename, std::shared_ptr<Diffractometer> instrument);
+	HDF5Data(const std::string& filename, std::shared_ptr<Diffractometer> instrument);
 	virtual ~HDF5Data();
+	Eigen::MatrixXi getFrame(std::size_t frame);
+    Eigen::MatrixXi readFrame(std::size_t frame);
+    void readInMemory();
+    void open();
+    void close();
+private:
+    H5::H5File* _file;
+    H5::DataSet* _dataset;
+    H5::DataSpace* _space;
+    H5::DataSpace* _memspace;
+
 };
 
 } // Namespace Data

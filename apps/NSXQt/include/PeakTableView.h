@@ -8,7 +8,6 @@
 #include <QFileDialog>
 #include <QMenu>
 #include <QTableView>
-
 #include <IData.h>
 #include <MainWindow.h>
 

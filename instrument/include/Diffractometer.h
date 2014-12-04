@@ -47,7 +47,7 @@ public:
 
 	// Statics
 
-	static Diffractometer* create();
+	//static Diffractometer* create(const std::string&);
 
 	// Constructors and destructor
 

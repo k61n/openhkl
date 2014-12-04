@@ -69,7 +69,7 @@ public:
 	/*! Construct a IData Object from a file on disk, and pointer to a diffractometer.
 	 *  @param inMemory: whether the file should be loaded in memory straight away or kept on disk
 	 */
-	IData(const std::string& filename, std::shared_ptr<Diffractometer> instrument, bool inMemory=false);
+	IData(const std::string& filename, std::shared_ptr<Diffractometer> instrument);
 	//! Copy constructor
 	IData(const IData& other)=delete;
 	//! Destructor
@@ -122,6 +122,10 @@ public:
 	void clearPeaks();
 	//! Return true if the file is stored in memory
 	bool isInMemory() const;
+	 //! Load all the frames in memory
+	virtual void readInMemory()=0;
+  // Release the data from memory
+	void releaseMemory();
 	//! Return true if a given point (in detector space) belong to a mask
 	bool isMasked(const Eigen::Vector3d& point) const;
 	//! Mask the peaks collected in the data with the masks defined up to now
@@ -135,21 +139,19 @@ public:
     //! Read a given Frame of the data
     virtual Eigen::MatrixXi getFrame(std::size_t i)=0;
     //! Read a single frame
-    virtual Eigen::MatrixXi readFrame(std::size_t idx) const=0;
-    //! Load all the frames in memory
-    virtual void loadAllFrames()=0;
-    // Release the data from memory
-    void releaseMemory();
-    //
-    virtual void map()=0;
-    virtual void unMap()=0;
-    bool isMapped() const;
-    //
+    virtual Eigen::MatrixXi readFrame(std::size_t idx)=0;
+    //! Get the file handle. Necessary to call before readInMemory or any IO of data.
+    virtual void open()=0;
+    //! Close file and release handle
+    virtual void close()=0;
+    //! True if file is open
+    bool isOpened() const;
+    //!
     std::size_t getFileSize() const;//
-    void saveHDF5(const std::string& filename);
-    void readHDF5(const std::string& filename);
+    void saveHDF5(const std::string& filename) const;
+
 protected:
-    bool _isMapped;
+    bool _isOpened;
 	std::string _filename;
 	std::size_t _nFrames;
 	std::size_t _nrows;

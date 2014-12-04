@@ -21,19 +21,19 @@ namespace Data
 
 using namespace boost::filesystem;
 
-IData::IData(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer, bool inMemory)
+IData::IData(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer)
 : _filename(filename),
   _nFrames(0),
   _nrows(0),
   _ncols(0),
   _diffractometer(diffractometer),
   _metadata(new MetaData()),
-  _inMemory(inMemory),
+  _inMemory(false),
   _data(),
   _detectorStates(),
   _sampleStates(),
   _peaks(),
-  _isMapped(false),
+  _isOpened(false),
   _fileSize(0),
   _masks()
 {
@@ -115,7 +115,7 @@ void IData::clearPeaks()
 
 bool IData::isInMemory() const
 {
-	return (!_inMemory);
+	return (_inMemory);
 }
 
 ComponentState IData::getDetectorInterpolatedState(double frame)
@@ -193,9 +193,9 @@ bool IData::removePeak(Peak3D* peak)
 	return true;
 }
 
-bool IData::isMapped() const
+bool IData::isOpened() const
 {
-	return _isMapped;
+	return _isOpened;
 }
 
 std::size_t IData::getFileSize() const
@@ -203,7 +203,7 @@ std::size_t IData::getFileSize() const
 	return _fileSize;
 }
 
-void IData::saveHDF5(const std::string& filename)
+void IData::saveHDF5(const std::string& filename) const
 {
 
 	blosc_init();
@@ -263,69 +263,7 @@ void IData::saveHDF5(const std::string& filename)
 	blosc_destroy();
 }
 
-void IData::readHDF5(const std::string& filename)
-{
-	// Needed
-	blosc_init();
 
-	// Register blosc filter dynamically with HDF5
-	char *version, *date;
-	int r= register_blosc(&version, &date);
-	if (r<=0)
-		throw std::runtime_error("Problem registering BLOSC filter in HDF5 library");
-
-	// Open HDF5 file
-	H5::H5File file(filename.c_str(), H5F_ACC_RDONLY);
-	// Create new data set
-    H5::DataSet* dset=new H5::DataSet(file.openDataSet("/counts"));
-    // Dataspace of the dataset /counts
-	H5::DataSpace* space=new H5::DataSpace(dset->getSpace());
-
-	// Get rank of data
-	const hsize_t ndims=space->getSimpleExtentNdims();
-	hsize_t dims[ndims];
-	hsize_t maxdims[ndims];
-	// Get dimensions of data
-	space->getSimpleExtentDims(dims,maxdims);
-
-	// Throw if data rea
-	if (dims[0]!=_nFrames || dims[1]!=_nrows || dims[2]!=_ncols)
-		throw std::range_error("IData: Data dimensions in HDF5 different from previsouly defined");
-
-	_data.resize(_nFrames);
-	for (std::size_t i=0;i<_nFrames;++i)
-	{
-		_data[i].resize(_nrows,_ncols);
-	}
-
-	// Size of one hyperslab
-	hsize_t  count[3];
-	count[0] = 1;
-	count[1] = dims[1];
-	count[2] = dims[2];
-
-	H5::DataSpace* memspace=new H5::DataSpace(3,count,NULL);
-
-	hsize_t offset[3];
-	offset[0] = 0;
-	offset[1] = 0;
-	offset[2] = 0;
-
-	// Read data Slab by slab
-	for(offset[0]=0; offset[0] < _nFrames; offset[0] += count[0])
-	{
-	  space->selectHyperslab(H5S_SELECT_SET,count,offset,NULL,NULL);
-	  dset->read(_data.at(offset[0]).data(),H5::PredType::NATIVE_INT32,*memspace,*space);
-	}
-
-	delete memspace;
-	delete space;
-	delete dset;
-	file.close();
-
-	blosc_destroy();
-
-}
 
 void IData::addMask(AABB<double,3>* mask)
 {
