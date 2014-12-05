@@ -105,6 +105,8 @@ public:
 	virtual void parse(const ptree& pt);
 	//! Create a state from a vector of values
 	ComponentState createState(const std::vector<double>& values);
+	//! Create a state from an Eigen Vector
+	ComponentState createStateFromEigen(const Eigen::VectorXd& values);
 	//! Create a state from a map of values
 	ComponentState createState(const std::map<std::string,double>& values);
 	//! Return true if a geometric modifier is attached

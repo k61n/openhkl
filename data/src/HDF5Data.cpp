@@ -1,6 +1,10 @@
 #include "HDF5Data.h"
 #include "blosc.h"
 #include "blosc_filter.h"
+#include "Detector.h"
+#include "Gonio.h"
+#include "Sample.h"
+#include "Units.h"
 
 namespace SX
 {
@@ -16,7 +20,100 @@ IData* HDF5Data::create(const std::string& filename, std::shared_ptr<Diffractome
 HDF5Data::HDF5Data(const std::string& filename, std::shared_ptr<Diffractometer> instrument)
 :IData(filename,instrument)
 {
-	_metadata->add<std::string>("Instrument",instrument->getType());
+	_file=new H5::H5File(_filename.c_str(), H5F_ACC_RDONLY);
+
+	// Read the info group and store in metadata
+	H5::Group infoGroup(_file->openGroup("/Info"));
+	int ninfo=infoGroup.getNumAttrs();
+	for (int i=0;i<ninfo;++i)
+	{
+		H5::Attribute attr=infoGroup.openAttribute(i);
+		H5::DataType typ=attr.getDataType();
+		std::string value;
+		attr.read(typ,value);
+		_metadata->add<std::string>(attr.getName(),value);
+	}
+
+	// Read the experiment group and store all int and double attributes in metadata
+	H5::Group experimentGroup(_file->openGroup("/Experiment"));
+	int nexps=experimentGroup.getNumAttrs();
+	for (int i=0;i<nexps;++i)
+	{
+		H5::Attribute attr=experimentGroup.openAttribute(i);
+		H5::DataType typ=attr.getDataType();
+		if (typ==H5::PredType::NATIVE_INT32)
+		{
+			int value;
+			attr.read(typ,&value);
+			_metadata->add<int>(attr.getName(),value);
+		}
+		if (typ==H5::PredType::NATIVE_DOUBLE)
+		{
+			double value;
+			attr.read(typ,&value);
+			_metadata->add<double>(attr.getName(),value);
+		}
+	}
+
+	_nFrames=_metadata->getKey<int>("npdone");
+
+
+	// Getting Scan parameters for the detector
+	H5::Group detectorGroup(_file->openGroup("/Data/Scan/Detector"));
+	int nAxes=detectorGroup.getNumAttrs();
+
+	if (nAxes!=_diffractometer->getDetector()->getNPhysicalAxes())
+	{
+		_file->close();
+		throw std::runtime_error("Number of Detector Axes in HDF5 definition different from Diffractometer definition");
+	}
+	std::vector<std::string> axesS=_diffractometer->getDetector()->getGonio()->getPhysicalAxesNames();
+
+	Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> dm(nAxes,_nFrames);
+	for (int i=0;i<nAxes;++i)
+	{
+		H5::Attribute attr=detectorGroup.openAttribute(axesS[i]);
+		attr.read(H5::PredType::NATIVE_DOUBLE,&dm(i,0));
+	}
+
+	// Use natural units internally (rad)
+	dm*=SX::Units::deg;
+
+	_detectorStates.reserve(_nFrames);
+	for (int i=0;i<_nFrames;++i)
+	{
+		_detectorStates.push_back(_diffractometer->getDetector()->createStateFromEigen(dm.col(i)));
+	}
+
+	// Getting Scan parameters for the sample
+	H5::Group sampleGroup(_file->openGroup("/Data/Scan/Sample"));
+	nAxes=sampleGroup.getNumAttrs();
+
+	if (nAxes!=_diffractometer->getSample()->getNPhysicalAxes())
+	{
+		_file->close();
+		throw std::runtime_error("Number of Sample Axes in HDF5 definition different from Diffractometer definition");
+	}
+	axesS=_diffractometer->getSample()->getGonio()->getPhysicalAxesNames();
+
+	dm.resize(nAxes,_nFrames);
+	for (int i=0;i<nAxes;++i)
+	{
+		H5::Attribute attr=sampleGroup.openAttribute(axesS[i]);
+		attr.read(H5::PredType::NATIVE_DOUBLE,&dm(i,0));
+	}
+
+	// Use natural units internally (rad)
+	dm*=SX::Units::deg;
+
+	_sampleStates.reserve(_nFrames);
+	for (int i=0;i<_nFrames;++i)
+	{
+		_sampleStates.push_back(_diffractometer->getSample()->createStateFromEigen(dm.col(i)));
+	}
+
+	_file->close();
+	delete _file;
 }
 
 HDF5Data::~HDF5Data()
@@ -52,7 +149,7 @@ void HDF5Data::open()
 	// Create new data set
 	try
 	{
-	_dataset=new H5::DataSet(_file->openDataSet("/counts"));
+	_dataset=new H5::DataSet(_file->openDataSet("/Data/Counts"));
 	// Dataspace of the dataset /counts
 	_space=new H5::DataSpace(_dataset->getSpace());
 	}catch(...)
@@ -91,8 +188,6 @@ void HDF5Data::close()
 	delete _space;
 	delete _dataset;
 	delete _file;
-
-	blosc_destroy();
 
 	_isOpened=false;
 }

@@ -255,6 +255,8 @@ void IData::saveHDF5(const std::string& filename) const
 	}
 
 
+	// Saving the scans parameters (detector angles and sample angles)
+
 	H5::Group* scanGroup=new H5::Group(dataGroup->createGroup("Scan"));
 	H5::Group* detectorGroup=new H5::Group(scanGroup->createGroup("Detector"));
 
@@ -292,22 +294,16 @@ void IData::saveHDF5(const std::string& filename) const
 		}
 	}
 
-	std::cout << valsSamples;
-
 	for (int j=0;j<samplenames.size();++j)
 	{
 		H5::Attribute sampleScan(sampleGroup->createAttribute(samplenames[j],H5::PredType::NATIVE_DOUBLE,scanSpace));
 		sampleScan.write(H5::PredType::NATIVE_DOUBLE,&valsSamples(j,0));
 	}
 
-
-
-
-
 	const auto& map=_metadata->getMap();
 
 
-	// Write all string into the info group
+	// Write all string metadata into the "Info" group
 	H5::Group* infogroup=new H5::Group(file.createGroup("/Info"));
 	H5::DataSpace metaSpace(H5S_SCALAR);
 	H5::StrType str80(H5::PredType::C_S1, 80);
@@ -326,7 +322,7 @@ void IData::saveHDF5(const std::string& filename) const
 		}
 	}
 
-	// Write all other metadata (int and double) into the
+	// Write all other metadata (int and double) into the "Experiment" Group
 	H5::Group* metadatagroup=new H5::Group(file.createGroup("/Experiment"));
 	//
 	for (const auto& item : map)

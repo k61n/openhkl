@@ -13,6 +13,7 @@
 #include "ComponentState.h"
 #include "DiffractometerFactory.h"
 #include "ILLAsciiData.h"
+#include "HDF5Data.h"
 #include "Units.h"
 
 using namespace SX::Data;
@@ -36,4 +37,9 @@ BOOST_AUTO_TEST_CASE(Test_HDF5_IO)
 
 	dataf.saveHDF5("D10_HDF5_example.h5");
 	dataf.close();
+
+	HDF5Data datahdf(std::string("D10_HDF5_example.h5"),diff);
+	datahdf.readInMemory();
+	datahdf.saveHDF5("D10_HDF5_example_2.h5");
+
 }

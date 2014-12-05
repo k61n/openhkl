@@ -37,7 +37,9 @@ namespace SX
 {
 namespace Data
 {
-
+/*! \brief HDF5 Data Format.
+ *
+ */
 class HDF5Data : public IData
 {
 public:

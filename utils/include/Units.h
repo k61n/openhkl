@@ -35,22 +35,23 @@
 
 namespace SX
 {
-//! Define the units used internally in NSXTOOL.
-//! The Units namespace allows users of the library to specify their units when defining variables.
-//! For example it is recommended to use statements such as : double x=34*deg and when using methods:
-//! a.Rotate(34*deg). This guarantees a self-consistent system of units in all calculations. This is inspired
-//! from the system of units in Geant4. Printing a property in a given unit requires to divide by the units.
-//! For example, if one wants an angle in degrees, angle/Units::deg needs to be used.
-//!
-//!
-//!
+/*! \brief Define the units used internally in NSXTOOL.
+ *
+ * The Units namespace allows users of the library to specify their units when defining variables.
+ * For example it is recommended to use statements such as : double x=34*deg and when using methods:
+ * a.Rotate(34*deg). This guarantees a self-consistent system of units in all calculations. This is inspired
+ * from the system of units in Geant4. Printing a property in a given unit requires to divide by the units.
+ * For example, if one wants an angle in degrees, angle/Units::deg needs to be used.
+ */
+
 namespace Units
 {
 
 using namespace SX::Kernel;
 
-//! Singleton class to map the symbol of a Unit with its value in the internal reference system.
-//! This is used for example when parsing values from input XML files.
+/*! Singleton class to map the symbol of a Unit with its value in the internal reference system.
+* This is used for example when parsing values from input XML files.
+*/
 class UnitsManager : public Singleton<UnitsManager,Constructor,Destructor>
 {
 	public:

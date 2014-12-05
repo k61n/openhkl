@@ -47,7 +47,9 @@ namespace SX
 
 namespace Data
 {
-
+/*! \brief Legacy ILL Data in ASCII format.
+ *
+ */
 class ILLAsciiData : public IData
 {
 public:
