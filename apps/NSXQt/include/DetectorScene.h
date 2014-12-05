@@ -79,7 +79,7 @@ public slots:
 private:
 
     //! Load image from current Data and frame
-    void loadCurrentImage();
+    void loadCurrentImage(bool newimage=true);
     //! Create the text of the tooltip depending on Scene Mode.
     void createToolTipText(QGraphicsSceneMouseEvent*);
 

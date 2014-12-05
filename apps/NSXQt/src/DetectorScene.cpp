@@ -15,6 +15,7 @@
 #include "CutLineGraphicsItem.h"
 #include <QtDebug>
 #include "MaskGraphicsItem.h"
+#include <ctime>
 
 DetectorScene::DetectorScene(QObject *parent)
 : QGraphicsScene(parent),
@@ -66,7 +67,7 @@ void DetectorScene::setMaxIntensity(int intensity)
     if (!_currentData->isOpened())
         _currentData->open();
 
-    loadCurrentImage();
+    loadCurrentImage(false);
 }
 
 void DetectorScene::setData(SX::Data::IData* data)
@@ -429,7 +430,7 @@ void DetectorScene::changeInteractionMode(int mode)
     _mode=static_cast<MODE>(mode);
 }
 
-void DetectorScene::loadCurrentImage()
+void DetectorScene::loadCurrentImage(bool newimage)
 {
     // Full image size, front of the stack
     QRect& full=_zoomStack.front();
@@ -438,15 +439,16 @@ void DetectorScene::loadCurrentImage()
     std::size_t nrows=det->getNRows();
     std::size_t ncols=det->getNCols();
 
-    _currentFrame =_currentData->getFrame(_currentFrameIndex);
-    QImage image=Mat2QImage(_currentFrame.data(), nrows, ncols, full.left(), full.right(), full.top(), full.bottom(), _currentIntensity);
+    if (newimage)
+        _currentFrame =_currentData->getFrame(_currentFrameIndex);
+
     if (!_image)
     {
-        _image=addPixmap(QPixmap::fromImage(image));
+        _image=addPixmap(QPixmap::fromImage(Mat2QImage(_currentFrame.data(), nrows, ncols, full.left(), full.right(), full.top(), full.bottom(), _currentIntensity)));
         _image->setZValue(-1);
     }
     else
-        _image->setPixmap(QPixmap::fromImage(image));
+        _image->setPixmap(QPixmap::fromImage(Mat2QImage(_currentFrame.data(), nrows, ncols, full.left(), full.right(), full.top(), full.bottom(), _currentIntensity)));
 
     setSceneRect(_zoomStack.back());
     emit dataChanged();

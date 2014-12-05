@@ -279,24 +279,22 @@ void IData::removeMask(AABB<double,3>* mask)
 	if (p!=_masks.end())
 		_masks.erase(mask);
 	// Update the peaks selection status.
-	unmaskPeaks();
+	maskPeaks();
 }
 
 void IData::maskPeaks() const
 {
 	for (auto p : _peaks)
 	{
-		// If the peak is already unselected, no need to mask it.
-		if (!p->isSelected())
-			continue;
+//		// If the peak is already unselected, no need to mask it.
+//		if (!p->isSelected())
+//			continue;
+//		p->setSelected(true);
 		for (auto m : _masks)
 		{
 			// If the background of the peak intercept the mask, unselected the peak
 			if (m->intercept(*(p->getBackground())))
-			{
 				p->setSelected(false);
-				break;
-			}
 		}
 	}
 }
@@ -305,9 +303,9 @@ void IData::unmaskPeaks() const
 {
 	for (auto p : _peaks)
 	{
-		// If the peak is already selected, no need to unmask it.
-		if (p->isSelected())
-			continue;
+//		// If the peak is already selected, no need to unmask it.
+//		if (p->isSelected())
+//			continue;
 		// If the peak is not selected, select it and check among the mask whether one of them intercepts the current peak
 		// If none intercept, the peak is kept as selected
 		p->setSelected(true);

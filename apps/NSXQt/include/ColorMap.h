@@ -3,14 +3,11 @@
 #include <QImage>
 
 
-inline QRgb BlueMap(int v,int vmin,int vmax)
+inline QRgb BlueWhite(int v,int vmax)
 {
-    if (v>vmax)
-        return 0xff0000ff;
-    if (v<vmin)
-        return 0xffffffff;
-    int r=(v-vmin)*255/(vmax-vmin);
-    return ((0xff << 24) | ((255-r) & 0xff)<< 16 | ((255-r) & 0xff)<< 8 | 0xff );
+    double mm=1.0/(double)vmax;
+    int r=255-v*255*mm;
+    return (v>vmax ? 0xff0000ff : ((0xff << 24) | r << 16 | r << 8 | 0xff ) );
 }
 
 // Get an image from an 2D arrays of (rows,cols) with range (xmin:xmax,ymin:ymax) and
