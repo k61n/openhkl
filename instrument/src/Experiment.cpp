@@ -115,7 +115,6 @@ void Experiment::addData(IData* data)
 	if (!(diffName.compare(_diffractometer->getType())==0))
 		throw std::runtime_error("Mismatch between the diffractometers assigned to the experiment and the data");
 
-	std::cout << basename << std::endl;
 	_data.insert(std::pair<std::string,IData*>(basename,data));
 
 }
