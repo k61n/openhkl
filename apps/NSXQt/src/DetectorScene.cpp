@@ -494,6 +494,9 @@ PeakGraphicsItem* DetectorScene::findPeakGraphicsItem(SX::Crystal::Peak3D *peak)
 void DetectorScene::updatePeaks()
 {
 
+    if (!_currentData)
+        return;
+
     clearPeaks();
 
     auto& peaks=_currentData->getPeaks();

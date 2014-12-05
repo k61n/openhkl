@@ -254,7 +254,6 @@ void IData::saveHDF5(const std::string& filename) const
 	  dset->write(_data.at(offset[0]).data(),H5::PredType::NATIVE_INT32,*memspace,*space);
 	}
 
-
 	// Saving the scans parameters (detector angles and sample angles)
 
 	H5::Group* scanGroup=new H5::Group(dataGroup->createGroup("Scan"));
@@ -462,7 +461,6 @@ void IData::releaseMemory()
     for (auto& d : _data)
         d.resize(0,0);
     _data.clear();
-
 	_data.shrink_to_fit();
 
     _inMemory=false;

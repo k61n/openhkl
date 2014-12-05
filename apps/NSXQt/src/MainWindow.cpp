@@ -187,7 +187,9 @@ void MainWindow::on_action_peak_find_triggered()
     for (auto numor : numors)
     {
         numor->clearPeaks();
+        clock_t t1=clock();
         numor->readInMemory();
+        qDebug() << static_cast<double>(clock()-t1)/CLOCKS_PER_SEC;
         qDebug() << "Read data";
         // Get pointers to start of each frame
         std::vector<int*> temp(numor->getNFrames());
