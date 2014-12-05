@@ -1,5 +1,6 @@
 #include <utility>
 #include <stdexcept>
+#include "Units.h"
 
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -239,7 +240,8 @@ void IData::saveHDF5(const std::string& filename) const
 
 	H5::DataSpace* memspace=new H5::DataSpace(3,count,NULL);
 
-	H5::DataSet* dset=new H5::DataSet(file.createDataSet("counts", H5::PredType::NATIVE_INT32, *space, *plist));
+	H5::Group* dataGroup=new H5::Group(file.createGroup("/Data"));
+	H5::DataSet* dset=new H5::DataSet(dataGroup->createDataSet("Counts", H5::PredType::NATIVE_INT32, *space, *plist));
 
 	hsize_t offset[3];
 	offset[0] = 0;
@@ -253,6 +255,110 @@ void IData::saveHDF5(const std::string& filename) const
 	}
 
 
+	H5::Group* scanGroup=new H5::Group(dataGroup->createGroup("Scan"));
+	H5::Group* detectorGroup=new H5::Group(scanGroup->createGroup("Detector"));
+
+	std::vector<std::string> names=_diffractometer->getDetector()->getGonio()->getPhysicalAxesNames();
+	hsize_t nf[1]={_nFrames};
+	H5::DataSpace scanSpace(1,nf);
+	Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> vals(names.size(),_nFrames);
+
+	for (int i=0;i<_detectorStates.size();++i)
+	{
+		const std::vector<double>& v=_detectorStates[i].getValues();
+		for (int j=0;j<names.size();++j)
+		{
+			vals(j,i)=v[j]/SX::Units::deg;
+		}
+	}
+
+	for (int j=0;j<names.size();++j)
+	{
+		H5::Attribute detectorScan(detectorGroup->createAttribute(names[j],H5::PredType::NATIVE_DOUBLE,scanSpace));
+		detectorScan.write(H5::PredType::NATIVE_DOUBLE,&vals(j,0));
+	}
+
+	H5::Group* sampleGroup=new H5::Group(scanGroup->createGroup("Sample"));
+
+	std::vector<std::string> samplenames=_diffractometer->getSample()->getGonio()->getPhysicalAxesNames();
+	Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> valsSamples(samplenames.size(),_nFrames);
+
+	for (int i=0;i<_sampleStates.size();++i)
+	{
+		const std::vector<double>& v=_sampleStates[i].getValues();
+		for (int j=0;j<samplenames.size();++j)
+		{
+			valsSamples(j,i)=v[j]/SX::Units::deg;
+		}
+	}
+
+	std::cout << valsSamples;
+
+	for (int j=0;j<samplenames.size();++j)
+	{
+		H5::Attribute sampleScan(sampleGroup->createAttribute(samplenames[j],H5::PredType::NATIVE_DOUBLE,scanSpace));
+		sampleScan.write(H5::PredType::NATIVE_DOUBLE,&valsSamples(j,0));
+	}
+
+
+
+
+
+	const auto& map=_metadata->getMap();
+
+
+	// Write all string into the info group
+	H5::Group* infogroup=new H5::Group(file.createGroup("/Info"));
+	H5::DataSpace metaSpace(H5S_SCALAR);
+	H5::StrType str80(H5::PredType::C_S1, 80);
+	std::string info;
+	for (const auto& item : map)
+	{
+		std::string info;
+		try
+		{
+			info=boost::any_cast<std::string>(item.second);
+			H5::Attribute intAtt(infogroup->createAttribute(item.first,str80,metaSpace));
+			intAtt.write(str80,info);
+		}
+		catch(...)
+		{
+		}
+	}
+
+	// Write all other metadata (int and double) into the
+	H5::Group* metadatagroup=new H5::Group(file.createGroup("/Experiment"));
+	//
+	for (const auto& item : map)
+	{
+		int value;
+		try
+		{
+			value=boost::any_cast<int>(item.second);
+			H5::Attribute intAtt(metadatagroup->createAttribute(item.first,H5::PredType::NATIVE_INT32,metaSpace));
+			intAtt.write(H5::PredType::NATIVE_INT,&value);
+		}
+		catch(...)
+		{
+			try
+			{
+				double dvalue;
+				dvalue=boost::any_cast<double>(item.second);
+				H5::Attribute intAtt(metadatagroup->createAttribute(item.first,H5::PredType::NATIVE_DOUBLE,metaSpace));
+				intAtt.write(H5::PredType::NATIVE_DOUBLE,&dvalue);
+			}catch(...)
+			{
+
+			}
+		}
+
+	}
+	delete dataGroup;
+	delete scanGroup;
+	delete detectorGroup;
+	delete sampleGroup;
+	delete infogroup;
+	delete metadatagroup;
 	delete dset;
 	delete memspace;
 	delete space;

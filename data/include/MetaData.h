@@ -90,6 +90,8 @@ public:
 	std::size_t size() const;
 	//! Get all the keys available.
 	const keyset& getAllKeys() const;
+	//! Get the full map of parameters
+	const hetermap& getMap() const;
 private:
 	//! Contains the map of all key/value pairs.
 	hetermap _map;

@@ -71,6 +71,11 @@ boost::any MetaData::getKey(const std::string& key) const
 			throw std::runtime_error("Could not locate key "+key+ " in the set of available keys");
 }
 
+const hetermap& MetaData::getMap() const
+{
+	return _map;
+}
+
 } // end namespace Data
 
 } // End namespace SX

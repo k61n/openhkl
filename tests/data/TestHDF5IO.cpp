@@ -34,6 +34,6 @@ BOOST_AUTO_TEST_CASE(Test_HDF5_IO)
 	const std::vector<Eigen::MatrixXi>& data=dataf.getData();
 
 
-	dataf.saveHDF5("114047.h5");
+	dataf.saveHDF5("D10_HDF5_example.h5");
 	dataf.close();
 }

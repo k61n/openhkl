@@ -59,6 +59,9 @@ void DetectorScene::changeFrame(int frame)
 void DetectorScene::setMaxIntensity(int intensity)
 {
 
+    if (_currentIntensity==intensity)
+        return;
+
     _currentIntensity = intensity;
 
     if (!_currentData)

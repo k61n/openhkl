@@ -1186,7 +1186,7 @@ border-radius: 4px;
                 <number>1000</number>
                </property>
                <property name="singleStep">
-                <number>10</number>
+                <number>1</number>
                </property>
                <property name="orientation">
                 <enum>Qt::Vertical</enum>

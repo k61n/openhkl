@@ -7,7 +7,6 @@ QImage Mat2QImage(int* src, int rows, int cols,int xmin, int xmax, int ymin, int
     if (xmin<0 || xmax> cols || ymin<0 || ymax>rows)
         return QImage();
 
-
     QImage dest(xmax-xmin, ymax-ymin, QImage::Format_RGB32);
 
     src+=ymin*cols;

@@ -2,7 +2,6 @@
 #include "ui_mainwindow.h"
 
 #include <cmath>
-#include <cstdlib>
 #include <functional>
 #include <stdexcept>
 #include <utility>
@@ -119,7 +118,7 @@ void MainWindow::changeData(IData* data)
 
     _ui->spinBox_Frame->setMaximum(frameMax);
 
-    _ui->intensity->setRange(1,3000);
+    _ui->intensity->setValue(10);
 
 }
 
