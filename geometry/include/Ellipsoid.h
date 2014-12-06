@@ -252,10 +252,12 @@ void Ellipsoid<T,D>::translate(const vector& t)
 template<typename T,uint D>
 bool Ellipsoid<T,D>::isInside(const HomVector& point) const
 {
-	HomVector p=_TRSinv*point;
+
+	HomVector p;
 	// Is the transformed point in the bounding box of the sphere
 	for (unsigned int i=0;i<D;++i)
 	{
+		p[i]=_TRSinv.row(i).dot(point);
 		if (p[i]<-1 || p[i]> 1)
 			return false;
 	}

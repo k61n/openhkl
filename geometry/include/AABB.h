@@ -56,6 +56,8 @@ class AABB
 {
 public:
 	typedef typename Eigen::Matrix<T,D,1> vector;
+	typedef Eigen::Matrix<T,D+1,1> HomVector;
+
 	//! Default constructor
 	AABB();
 	//! Copy constructor
@@ -94,6 +96,8 @@ public:
 	bool isInsideAABB(const std::initializer_list<T>& point) const;
 	//! Check whether a given point is inside the AABB
 	bool isInsideAABB(const vector& point) const;
+	//! Check whether a given Homogeneous vector is inside the AABB
+	bool isInsideAABB(const HomVector& point) const;
 	//! Setter for the lower and upper bounds of the AABB
 	void setBounds(const vector& lb, const vector& ub);
 	//! Setter for the lower limit of the box
@@ -225,7 +229,24 @@ bool AABB<T,D>::isInsideAABB(const vector& point) const
 	auto lbit = _lowerBound.data();
 	auto ubit = _upperBound.data();
 
-	for(unsigned int i=0; i<D; i++,lbit++,ubit++)
+	for(unsigned int i=0; i<D; i++,lbit++,ubit++,it++)
+	{
+		if (*it < *lbit || *it > *ubit)
+			return false;
+	}
+
+	return true;
+}
+
+template<typename T,uint D>
+bool AABB<T,D>::isInsideAABB(const HomVector& point) const
+{
+
+	auto it = point.data();
+	auto lbit = _lowerBound.data();
+	auto ubit = _upperBound.data();
+
+	for(unsigned int i=0; i<D; i++,lbit++,ubit++,it++)
 	{
 		if (*it < *lbit || *it > *ubit)
 			return false;
