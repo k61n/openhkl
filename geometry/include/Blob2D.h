@@ -56,6 +56,8 @@ public:
   Blob2D(double x, double y, double m);
   //! Copy constructor
   Blob2D(const Blob2D&);
+  //! Move
+  Blob2D(Blob2D&&) = default;
   //! Assignment
   Blob2D& operator=(const Blob2D&);
   //! Add point to the Blob

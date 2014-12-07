@@ -58,6 +58,7 @@ public:
   Blob3D(double x, double y,double z, double m);
   //! Copy constructor
   Blob3D(const Blob3D&);
+  Blob3D(Blob3D&&) = default;
   //! Assignment
   Blob3D& operator=(const Blob3D&);
   //! Add point to the Blob
