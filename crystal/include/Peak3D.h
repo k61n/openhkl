@@ -58,6 +58,7 @@ namespace Crystal
 class Peak3D
 {
 public:
+
 	Peak3D(SX::Data::IData* data=0);
 	Peak3D(const Peak3D& other);
 	Peak3D& operator=(const Peak3D& other);
@@ -116,11 +117,13 @@ public:
    	void setDetectorEvent(SX::Instrument::DetectorEvent* event);
    	//!
    	void setWavelength(double wave);
-	bool setBasis(std::shared_ptr<SX::Geometry::Basis> basis);
+   	bool setBasis(std::shared_ptr<SX::Geometry::Basis> basis);
 	bool hasIntegerHKL(std::shared_ptr<SX::Geometry::Basis> basis);
 	friend bool operator<(const Peak3D& p1, const Peak3D& p2);
 	void setSelected(bool);
 	bool isSelected() const;
+	void setMasked(bool masked);
+	bool isMasked() const;
 	void setSample(SX::Instrument::Sample*);
 	void setDetector(SX::Instrument::Detector*);
 private:
@@ -146,6 +149,7 @@ private:
 	double _wave;
 	double _scale;
 	bool _selected;
+	bool _masked;
 };
 
 

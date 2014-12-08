@@ -26,7 +26,8 @@ Peak3D::Peak3D(SX::Data::IData* data):
 		_countsSigma(0.0),
 		_wave(0.0),
 		_scale(1.0),
-		_selected(true)
+		_selected(true),
+		_masked(false)
 {
 }
 
@@ -390,7 +391,7 @@ bool operator<(const Peak3D& p1, const Peak3D& p2)
 
 bool Peak3D::isSelected() const
 {
-	return _selected;
+	return (!_masked && _selected);
 }
 
 void Peak3D::setSelected(bool s)
@@ -407,6 +408,15 @@ void Peak3D::setDetector(SX::Instrument::Detector* detector)
 	_event->setParent(detector);
 }
 
+void Peak3D::setMasked(bool masked)
+{
+	_masked=masked;
+}
+
+bool Peak3D::isMasked() const
+{
+	return _masked;
+}
 
 }
 }
