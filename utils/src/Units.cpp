@@ -48,12 +48,12 @@ std::unordered_map<std::string,double> UnitsManager::_unitsMap =
 		{"%", perCent}
 };
 
-double UnitsManager::get(const std::string& key)
+double UnitsManager::get(const std::string& units)
 {
-	auto it=_unitsMap.find(key);
+	auto it=_unitsMap.find(units);
 	if (it==_unitsMap.end())
-		throw std::invalid_argument("Unit "+key+" not registered in the database");
-	return (*it).second;
+		throw std::invalid_argument("Unit "+units+" not registered in the database");
+	return it->second;
 }
 
 } // End namespace Units
