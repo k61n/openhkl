@@ -135,41 +135,60 @@ void Peak3D::integrate()
 	int start_y=static_cast<int>(std::floor(lower[1]));
 	int end_y=static_cast<int>(std::ceil(upper[1]));
 
-	Eigen::Vector4d point1, point2, point3, point4;
+	if (lower[0] < 0)
+		start_x=0;
+	if (lower[1] < 0)
+		start_y=0;
+	if (lower[2] < 0)
+		data_start=0;
+
+	if (upper[0] >= _data->getNCols())
+		end_x=_data->getNCols()-1;
+	if (upper[1] >= _data->getNRows())
+		end_y=_data->getNRows()-1;
+	if (upper[2] >= _data->getNFrames())
+		data_end=_data->getNFrames()-1;
+
+	Eigen::Vector4d point1;
 
 	// Allocate all vectors
 	_projection=Eigen::VectorXd::Zero(data_end-data_start+1);
 	_projectionPeak=Eigen::VectorXd::Zero(data_end-data_start+1);
 	_projectionBkg=Eigen::VectorXd::Zero(data_end-data_start+1);
 
+	int dx = end_x-start_x;
+	int dy = end_y-start_y;
+
 	for (int z=data_start;z<=data_end;++z)
 	{
+		const Eigen::MatrixXi& frame=_data->getData(z);
 		double pointsinpeak=0;
 		double pointsinbkg=0;
 		double intensityP=0;
 		double intensityBkg=0;
+		_projection[z-data_start]+=frame.block(start_y,start_x,dy,dx).sum();
 		for (int x=start_x;x<=end_x;++x)
 		{
 			for (int y=start_y;y<=end_y;++y)
 			{
-				int intensity=_data->dataAt(y,x,z);
-				_projection[z-data_start]+=intensity;
-				point1 << x,y,z,1;
-				point2 << x+1,y,z,1;
-				point3 << x,y+1,z,1;
-				point4 << x+1,y+1,z,1;
-				bool inpeak=(_peak->isInside(point1) || _peak->isInside(point2) || _peak->isInside(point3) || _peak->isInside(point4));
-				if (inpeak)
-				{
-					intensityP+=intensity;
-					pointsinpeak++;
-				}
-				bool inbackground=(_bkg->isInside(point1) || _bkg->isInside(point2) || _bkg->isInside(point3) || _bkg->isInside(point4));
-				if (inbackground && !inpeak)
+				int intensity=frame(y,x);
+				point1 << x+0.5,y+0.5,z,1;
+				bool inbackground=(_bkg->isInside(point1));
+				if (inbackground)
 				{
 					intensityBkg+=intensity;
 					pointsinbkg++;
+
+					bool inpeak=(_peak->isInsideAABB(point1) && _peak->isInside(point1));
+					if (inpeak)
+					{
+						intensityP+=intensity;
+						pointsinpeak++;
+						continue;
+					}
 				}
+				else
+					continue;
 			}
 		}
 		if (pointsinpeak>0)

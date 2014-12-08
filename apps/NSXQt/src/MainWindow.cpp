@@ -195,8 +195,8 @@ void MainWindow::on_action_peak_find_triggered()
         std::vector<int*> temp(numor->getNFrames());
         for (unsigned int i=0;i<numor->getNFrames();++i)
         {
-            Eigen::MatrixXi& v=numor->getData(i);
-            temp[i]=v.data();
+            const Eigen::MatrixXi& v=numor->getData(i);
+            temp[i]=const_cast<int*>(v.data());
         }
 
         // Finding peaks
@@ -238,8 +238,12 @@ void MainWindow::on_action_peak_find_triggered()
             npeaks++;
         }
 
+        clock_t c=clock();
+
         for (auto& peak : numor->getPeaks())
             peak->integrate();
+
+        qDebug()<<static_cast<double>((clock()-c))/CLOCKS_PER_SEC;
 
         numor->releaseMemory();
         numor->close();

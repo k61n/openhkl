@@ -258,7 +258,7 @@ bool Ellipsoid<T,D>::isInside(const HomVector& point) const
 	for (unsigned int i=0;i<D;++i)
 	{
 		p[i]=_TRSinv.row(i).dot(point);
-		if (p[i]<-1 || p[i]> 1)
+		if (p[i]<-1 || p[i]>1)
 			return false;
 	}
 	T value=0;
