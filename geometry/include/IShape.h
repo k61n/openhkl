@@ -47,6 +47,13 @@ template<typename T, uint D> class Sphere;
 
 enum Direction {CW,CCW};
 
+/*! \brief Interface for Geometric Shapes in D dimensions.
+ *
+ * IShape is the interface for all Geometric Shapes in 2D and 3D.
+ * Shape can receive homogeneous transformations such as scaling,
+ * rotation and translation. Collisions with other shapes is
+ * coded by double-dispatching.
+ */
 template<typename T,uint D>
 class IShape : public AABB<T,D>
 {
@@ -59,13 +66,19 @@ public:
 
 	//! Implementation of the virtual constructor idiom
 	virtual IShape<T,D>* clone() const=0;
-
+	//! Double dispatching
 	virtual bool collide(const IShape<T,D>& rhs) const =0;
+	//! Interface for Ellipsoid collisions
 	virtual bool collide(const Ellipsoid<T,D>& rhs) const =0;
+	//! Interface for OBB collisions
 	virtual bool collide(const OBB<T,D>& rhs) const =0;
+	//! Interface for SPhere collisions
 	virtual bool collide(const Sphere<T,D>& rhs) const =0;
-
+	//! True if the vector is inside the Shape
+	//! @param vector : Homogeneous vector representing the point (x,y,z,1);
 	virtual bool isInside(const HomVector& vector) const =0;
+	//! Rotate the shape
+	//! @param eigenvectors:
 	virtual void rotate(const matrix& eigenvectors) =0;
 	void rotate(T angle,const vector& axis,Direction=CCW);
 	virtual void scale(T value) =0;

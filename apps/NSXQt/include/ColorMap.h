@@ -6,8 +6,8 @@
 inline QRgb BlueWhite(int v,int vmax)
 {
     double mm=1.0/(double)vmax;
-    int r=255-v*255*mm;
-    return (v>vmax ? 0xff0000ff : ((0xff << 24) | r << 16 | r << 8 | 0xff ) );
+    int r=255-v*(255*mm);
+    return (v>vmax ? 0xff0000ff : ((0xffu << 24) | r << 16 | r << 8 | 0xff ) );
 }
 
 // Get an image from an 2D arrays of (rows,cols) with range (xmin:xmax,ymin:ymax) and

@@ -79,18 +79,14 @@ void PeakGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
         _pen.setColor("red");
 
     painter->setPen(_pen);
-    const Eigen::Vector3d& l=_peak->getBackground()->getLower();
-    const Eigen::Vector3d& u=_peak->getBackground()->getUpper();
-    qreal w=u[0]-l[0];
-    qreal h=u[1]-l[1];
-    painter->drawRect(-w/2,-h/2,w,h);
 
     const Eigen::Vector3d& l2=_peak->getPeak()->getLower();
     const Eigen::Vector3d& u2=_peak->getPeak()->getUpper();
     qreal w2=u2[0]-l2[0];
     qreal h2=u2[1]-l2[1];
     painter->drawRect(-w2/2,-h2/2,w2,h2);
-    _label->setPos(w/2,h/2);
+    _label->setPos(w2/2,h2/2);
+
 }
 
 void PeakGraphicsItem::setFrame(int frame)

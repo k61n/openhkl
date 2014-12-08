@@ -190,7 +190,6 @@ void MainWindow::on_action_peak_find_triggered()
         clock_t t1=clock();
         numor->readInMemory();
         qDebug() << static_cast<double>(clock()-t1)/CLOCKS_PER_SEC;
-        qDebug() << "Read data";
         // Get pointers to start of each frame
         std::vector<int*> temp(numor->getNFrames());
         for (unsigned int i=0;i<numor->getNFrames();++i)
@@ -237,12 +236,12 @@ void MainWindow::on_action_peak_find_triggered()
             numor->addPeak(p);
             npeaks++;
         }
-
+        t1=clock();
         clock_t c=clock();
 
         for (auto& peak : numor->getPeaks())
             peak->integrate();
-
+        qDebug() << "Integration" << static_cast<double>(clock()-t1)/CLOCKS_PER_SEC;
         qDebug()<<static_cast<double>((clock()-c))/CLOCKS_PER_SEC;
 
         numor->releaseMemory();

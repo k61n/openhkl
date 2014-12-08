@@ -1,9 +1,9 @@
 #include "ColorMap.h"
 #include <ctime>
-#include <QtDebug>
 
 QImage Mat2QImage(int* src, int rows, int cols,int xmin, int xmax, int ymin, int ymax,int colorMax)
 {
+
     if (xmin<0 || xmax> cols || ymin<0 || ymax>rows)
         return QImage();
 
