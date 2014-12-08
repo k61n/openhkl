@@ -127,13 +127,9 @@ public:
   // Release the data from memory
 	void releaseMemory();
 	//! Return true if a given point (in detector space) belong to a mask
-	bool isMasked(const Eigen::Vector3d& point) const;
+	bool inMasked(const Eigen::Vector3d& point) const;
 	//! Mask the peaks collected in the data with the masks defined up to now
 	void maskPeaks() const;
-	//! Unmask the peaks collected in the data with the masks defined up to now
-	void unmaskPeaks() const;
-	//! Mask the peaks collected up to now with a given mask
-	void maskPeaks(const AABB<double,3>& mask) const;
 	//! Return the intensity at point x,y,z.
 	int dataAt(int x=0, int y=0, int z=0);
     //! Read a given Frame of the data

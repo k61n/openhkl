@@ -81,7 +81,7 @@ static const double mega  = 1.0e6;
 static const double giga  = 1.0e9;
 static const double tera  = 1.0e12;
 static const double peta  = 1.0e15;
-static const double peta  = 1.0e18;
+static const double exa   = 1.0e18;
 static const double zetta = 1.0e21;
 static const double yotta = 1.0e24;
 
@@ -99,6 +99,7 @@ static const double perCent=0.01;
 
 // Length units
 static const double m=1.0;
+static const double dm=m*deci;
 static const double cm=m*centi;
 static const double mm=m*milli;
 static const double um=m*micro;
@@ -128,11 +129,12 @@ static const double uma=g/Nav;
 // Temperature units
 static const double Kelvin=1.0;
 
-// Constants
-static const double c = 299792458.0*m/s;
-static const double h=6.626176e-34*J*s;
-static const double hbar=h/twopi;
-static const double kB = 1.3806513e-23*J/K;
+// Energy units
+static const double J=mm*kg/s/s;
+static const double J_per_mole=1.66055927e-24*J;
+static const double cal=4.184*J;
+static const double cal_per_mole=6.94778e-24*J;
+static const double eV=Q*J;
 
 // Angle units
 static const double rad=1.0;
@@ -153,13 +155,6 @@ static const double Pa=N/m/m;
 
 // Power units
 static const double W=m*m*kg/s/s/s;
-
-// Energy units
-static const double J=mm*kg/s/s;
-static const double J_per_mole=1.66055927e-24*J;
-static const double cal=4.184*J;
-static const double cal_per_mole=6.94778e-24*J;
-static const double eV=Q*J;
 
 // Surface units
 static const double m2=m*m;
@@ -184,6 +179,15 @@ static const double pm3=pm*pm*pm;
 static const double fm3=fm*fm*fm;
 static const double am3=am*am*am;
 static const double ang3=ang*ang*ang;
+
+// Temperature units
+static const double K=1.0;
+
+// Constants
+static const double c = 299792458.0*m/s;
+static const double h=6.626176e-34*J*s;
+static const double hbar=h/twopi;
+static const double kB = 1.3806513e-23*J/K;
 
 
 } //Namespace Units

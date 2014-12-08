@@ -36,7 +36,7 @@ std::unordered_map<std::string,double> UnitsManager::_unitsMap =
 		{"rad",rad },
 		{"deg",deg },
 		{"mrad",mrad},
-		{"str",str },
+		{"sr",sr },
 		{"s",s   },
 		{"ms",ms  },
 		{"us",us  },

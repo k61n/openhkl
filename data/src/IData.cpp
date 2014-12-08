@@ -371,7 +371,7 @@ void IData::addMask(AABB<double,3>* mask)
 	// Insert the mask
 	_masks.insert(mask);
 	// Update the peaks with this mask
-	maskPeaks(*mask);
+	maskPeaks();
 }
 
 void IData::removeMask(AABB<double,3>* mask)
@@ -387,59 +387,20 @@ void IData::maskPeaks() const
 {
 	for (auto p : _peaks)
 	{
-//		// If the peak is already unselected, no need to mask it.
-//		if (!p->isSelected())
-//			continue;
-//		p->setSelected(true);
+		p->setMasked(false);
 		for (auto m : _masks)
 		{
 			// If the background of the peak intercept the mask, unselected the peak
 			if (m->intercept(*(p->getBackground())))
-				p->setSelected(false);
-		}
-	}
-}
-
-void IData::unmaskPeaks() const
-{
-	for (auto p : _peaks)
-	{
-//		// If the peak is already selected, no need to unmask it.
-//		if (p->isSelected())
-//			continue;
-		// If the peak is not selected, select it and check among the mask whether one of them intercepts the current peak
-		// If none intercept, the peak is kept as selected
-		p->setSelected(true);
-		for (auto& m : _masks)
-		{
-			// If the background of the peak intercept the mask, no need to continue
-			if (m->intercept(*(p->getBackground())))
 			{
-				p->setSelected(false);
+				p->setMasked(true);
 				break;
 			}
 		}
 	}
 }
 
-void IData::maskPeaks(const AABB<double,3>& mask) const
-{
-	// Loop over the peaks and check for each of them if it intercepts the mask
-	for (auto p : _peaks)
-	{
-		// If the peak is already unselected, no need to mask it.
-		if (!p->isSelected())
-			continue;
-		// If the background of the peak intercept the mask, unselected the peak
-		if (mask.intercept(*(p->getBackground())))
-		{
-			p->setSelected(false);
-			break;
-		}
-	}
-}
-
-bool IData::isMasked(const Eigen::Vector3d& point) const
+bool IData::inMasked(const Eigen::Vector3d& point) const
 {
 
 	// Loop over the defined masks and return true if one of them contains the point
