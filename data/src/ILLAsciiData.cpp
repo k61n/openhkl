@@ -185,6 +185,8 @@ void ILLAsciiData::open()
 
 void ILLAsciiData::close()
 {
+	if (!_isOpened)
+		return;
 	_map=boost::move(boost::interprocess::mapped_region());
 	_isOpened=false;
 }

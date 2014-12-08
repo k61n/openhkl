@@ -196,6 +196,9 @@ void HDF5Data::open()
 
 void HDF5Data::close()
 {
+	if (!_isOpened)
+		return;
+
 	_file->close();
 	_space->close();
 	_memspace->close();
