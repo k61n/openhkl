@@ -27,13 +27,17 @@ TiffData::TiffData(const std::string& filename, std::shared_ptr<Diffractometer> 
 
 	if (w!=_ncols || h!=_nrows)
 	{
-		TIFFClose(_file);
-		_isOpened=false;
+		close();
 		throw std::range_error("Tiff file "+filename+ " not consistent with diffractometer definition");
 	}
 	_isOpened=false;
 	TIFFGetField(_file, TIFFTAG_BITSPERSAMPLE, &_bits);
-	TIFFClose(_file);
+
+	if (_bits!=16 && _bits!=32)
+	{
+		close();
+		throw std::runtime_error("Can't read TIFF file "+_filename+" : only 16/32bits format supported");
+	}
 
 	_nFrames=1;
 
@@ -75,9 +79,11 @@ void TiffData::readInMemory()
 	if (!_isOpened)
 		open();
 
-	if (_bits!=16 || _bits!=32)
+	if (_bits!=16 && _bits!=32)
+	{
+		close();
 		throw std::runtime_error("Can't read TIFF file "+_filename+" : only 16/32bits format supported");
-
+	}
 	Eigen::Matrix<uint16,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> data16(_nrows,_ncols);
 
 	// Read line per line

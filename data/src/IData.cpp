@@ -62,7 +62,7 @@ const std::vector<Eigen::MatrixXi>& IData::getData() const
 	return _data;
 }
 
-Eigen::MatrixXi& IData::getData(std::size_t idx)
+const Eigen::MatrixXi& IData::getData(std::size_t idx) const
 {
 	return _data[idx];
 }
@@ -95,6 +95,16 @@ MetaData* const IData::getMetadata() const
 std::size_t IData::getNFrames() const
 {
 	return _nFrames;
+}
+
+std::size_t IData::getNCols() const
+{
+	return _ncols;
+}
+
+std::size_t IData::getNRows() const
+{
+	return _nrows;
 }
 
 std::set<Peak3D*>& IData::getPeaks()
@@ -275,8 +285,8 @@ void IData::saveHDF5(const std::string& filename) const
 
 	for (int j=0;j<names.size();++j)
 	{
-		H5::Attribute detectorScan(detectorGroup->createAttribute(names[j],H5::PredType::NATIVE_DOUBLE,scanSpace));
-		detectorScan.write(H5::PredType::NATIVE_DOUBLE,&vals(j,0));
+		H5::DataSet detectorScan(detectorGroup->createDataSet(names[j],H5::PredType::NATIVE_DOUBLE,scanSpace));
+		detectorScan.write(&vals(j,0),H5::PredType::NATIVE_DOUBLE,scanSpace,scanSpace);
 	}
 
 	H5::Group* sampleGroup=new H5::Group(scanGroup->createGroup("Sample"));
@@ -295,8 +305,8 @@ void IData::saveHDF5(const std::string& filename) const
 
 	for (int j=0;j<samplenames.size();++j)
 	{
-		H5::Attribute sampleScan(sampleGroup->createAttribute(samplenames[j],H5::PredType::NATIVE_DOUBLE,scanSpace));
-		sampleScan.write(H5::PredType::NATIVE_DOUBLE,&valsSamples(j,0));
+		H5::DataSet sampleScan(sampleGroup->createDataSet(samplenames[j],H5::PredType::NATIVE_DOUBLE,scanSpace));
+		sampleScan.write(&valsSamples(j,0),H5::PredType::NATIVE_DOUBLE,scanSpace,scanSpace);
 	}
 
 	const auto& map=_metadata->getMap();

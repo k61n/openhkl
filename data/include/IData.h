@@ -85,7 +85,7 @@ public:
 	//! Gets a pointer to the data
 	const std::vector<Eigen::MatrixXi>& getData() const;
 	//! Gets a pointer to the ith data
-	Eigen::MatrixXi& getData(std::size_t idx);
+	const Eigen::MatrixXi& getData(std::size_t idx) const;
     //! Gets the interpolated state between two consecutive detector states
     ComponentState getDetectorInterpolatedState(double frame);
 	//! Gets the the detector states.
@@ -97,6 +97,8 @@ public:
 	std::shared_ptr<Diffractometer> getDiffractometer() const;
 	//! Return the number of frames
 	std::size_t getNFrames() const;
+	std::size_t getNRows() const;
+	std::size_t getNCols() const;
 	//! Gets a pointer to the metadata of the data
 	MetaData* const getMetadata() const;
 	//! Return the peaks

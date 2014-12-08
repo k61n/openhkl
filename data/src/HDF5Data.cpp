@@ -60,20 +60,28 @@ HDF5Data::HDF5Data(const std::string& filename, std::shared_ptr<Diffractometer> 
 
 	// Getting Scan parameters for the detector
 	H5::Group detectorGroup(_file->openGroup("/Data/Scan/Detector"));
-	int nAxes=detectorGroup.getNumAttrs();
 
-	if (nAxes!=_diffractometer->getDetector()->getNPhysicalAxes())
-	{
-		_file->close();
-		throw std::runtime_error("Number of Detector Axes in HDF5 definition different from Diffractometer definition");
-	}
 	std::vector<std::string> axesS=_diffractometer->getDetector()->getGonio()->getPhysicalAxesNames();
 
-	Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> dm(nAxes,_nFrames);
-	for (int i=0;i<nAxes;++i)
+	Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> dm(axesS.size(),_nFrames);
+	for (int i=0;i<axesS.size();++i)
 	{
-		H5::Attribute attr=detectorGroup.openAttribute(axesS[i]);
-		attr.read(H5::PredType::NATIVE_DOUBLE,&dm(i,0));
+		try
+		{
+			H5::DataSet dset=detectorGroup.openDataSet(axesS[i]);
+			H5::DataSpace space(dset.getSpace());
+			hsize_t dim=space.getSimpleExtentNdims();
+			if (dim!=1)
+				throw std::runtime_error("Read HDF5, problem reading detector scan parameters, dimension of array should be 1");;
+			hsize_t dims[dim], maxdims[dim];
+			space.getSimpleExtentDims(dims,maxdims);
+			if (dims[0]!=_nFrames)
+				throw std::runtime_error("Read HDF5, problem reading detector scan parameters, different array length to npdone");
+			dset.read(&dm(i,0),H5::PredType::NATIVE_DOUBLE,space,space);
+		}catch(...)
+		{
+			throw;
+		}
 	}
 
 	// Use natural units internally (rad)
@@ -87,20 +95,28 @@ HDF5Data::HDF5Data(const std::string& filename, std::shared_ptr<Diffractometer> 
 
 	// Getting Scan parameters for the sample
 	H5::Group sampleGroup(_file->openGroup("/Data/Scan/Sample"));
-	nAxes=sampleGroup.getNumAttrs();
 
-	if (nAxes!=_diffractometer->getSample()->getNPhysicalAxes())
-	{
-		_file->close();
-		throw std::runtime_error("Number of Sample Axes in HDF5 definition different from Diffractometer definition");
-	}
 	axesS=_diffractometer->getSample()->getGonio()->getPhysicalAxesNames();
 
-	dm.resize(nAxes,_nFrames);
-	for (int i=0;i<nAxes;++i)
+	dm.resize(axesS.size(),_nFrames);
+	for (int i=0;i<axesS.size();++i)
 	{
-		H5::Attribute attr=sampleGroup.openAttribute(axesS[i]);
-		attr.read(H5::PredType::NATIVE_DOUBLE,&dm(i,0));
+		try
+		{
+			H5::DataSet dset=sampleGroup.openDataSet(axesS[i]);
+			H5::DataSpace space(dset.getSpace());
+			hsize_t dim=space.getSimpleExtentNdims();
+			if (dim!=1)
+				throw std::runtime_error("Read HDF5, problem reading sample scan parameters, dimension of array should be 1");;
+			hsize_t dims[dim], maxdims[dim];
+			space.getSimpleExtentDims(dims,maxdims);
+			if (dims[0]!=_nFrames)
+				throw std::runtime_error("Read HDF5, problem reading sample scan parameters, different array length to npdone");
+			dset.read(&dm(i,0),H5::PredType::NATIVE_DOUBLE,space,space);
+		}catch(...)
+		{
+			throw;
+		}
 	}
 
 	// Use natural units internally (rad)
