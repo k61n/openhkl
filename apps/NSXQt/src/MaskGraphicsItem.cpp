@@ -17,13 +17,13 @@
 #include "MaskGraphicsItem.h"
 
 MaskGraphicsItem::MaskGraphicsItem(SX::Data::IData* data)
-: SXGraphicsItem(nullptr,true,true,true),
+: SXGraphicsItem(nullptr,true,true),
   _data(data),
   _aabb(new AABB<double,3>),
   _from(0,0),
   _to(0,0)
 {
-    _pen.setWidth(2);
+    _pen.setWidth(1);
     _pen.setCosmetic(true);
     _pen.setStyle(Qt::SolidLine);
     _text=new QGraphicsTextItem(this);
@@ -43,15 +43,9 @@ void MaskGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 
     // Color depending on selection
     if (option->state & QStyle::State_Selected)
-    {
         _pen.setStyle(Qt::DashLine);
-        _pen.setWidth(4);
-    }
     else
-    {
         _pen.setStyle(Qt::SolidLine);
-        _pen.setWidth(2);
-    }
 
     painter->setRenderHint(QPainter::HighQualityAntialiasing);
     painter->setPen(_pen);

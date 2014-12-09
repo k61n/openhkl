@@ -20,7 +20,7 @@ public:
 	// Constructors and destructor
 
 	// Construct a SX graphics item
-    SXGraphicsItem(QGraphicsItem *parent=0, bool deletable=false, bool hoverable=false, bool movable=false);
+    SXGraphicsItem(QGraphicsItem *parent=0, bool deletable=false, bool movable=false);
     // Destructor
     virtual ~SXGraphicsItem();
 
@@ -38,8 +38,6 @@ public:
     DetectorScene* getScene() const;
     //! Set whether or not the item is deletable
     void setDeletable(bool deletable);
-    //! Set whether or not the item is hoverable
-    void setHoverable(bool hoverable);
     //! Set whether or not the item is movable
     void setMovable(bool movable);
 
@@ -47,8 +45,6 @@ public:
 
     //! Returns whether or not the item is deletable
     bool isDeletable() const;
-    //! Returns whether or not the item is hoverable
-    bool isHoverable() const;
     //! Return whether or not the item at the given position is fully inside the scene
     virtual bool isInScene(const QPointF& pos) const;
     //! Returns whether or not the item is movable
@@ -60,7 +56,7 @@ public:
 
 protected:
     bool _deletable;
-    bool _hoverable;
+    bool _hovered;
     bool _movable;
     QPen _pen;
 

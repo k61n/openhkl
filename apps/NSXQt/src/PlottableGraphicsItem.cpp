@@ -8,8 +8,8 @@
 #include "PlottableGraphicsItem.h"
 #include "SXPlot.h"
 
-PlottableGraphicsItem::PlottableGraphicsItem(QGraphicsItem *parent, bool deletable, bool hoverable, bool movable)
-: SXGraphicsItem(parent, deletable, hoverable, movable)
+PlottableGraphicsItem::PlottableGraphicsItem(QGraphicsItem *parent, bool deletable, bool movable)
+: SXGraphicsItem(parent, deletable, movable)
 {
 }
 

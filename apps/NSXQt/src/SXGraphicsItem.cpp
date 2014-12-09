@@ -6,10 +6,10 @@
 #include "SXGraphicsItem.h"
 #include "SXPlot.h"
 
-SXGraphicsItem::SXGraphicsItem(QGraphicsItem *parent, bool deletable, bool hoverable, bool movable)
+SXGraphicsItem::SXGraphicsItem(QGraphicsItem *parent, bool deletable, bool movable)
 : QGraphicsItem(parent),
   _deletable(deletable),
-  _hoverable(hoverable),
+  _hovered(false),
   _movable(movable),
   _label(nullptr)
 {
@@ -21,7 +21,7 @@ SXGraphicsItem::SXGraphicsItem(QGraphicsItem *parent, bool deletable, bool hover
     setFlags(QGraphicsItem::ItemIsSelectable);
     setFlag(QGraphicsItem::ItemIsMovable,_movable);
 
-    setAcceptHoverEvents(_hoverable);
+    setAcceptHoverEvents(true);
 
 }
 
@@ -32,7 +32,7 @@ SXGraphicsItem::~SXGraphicsItem()
 void SXGraphicsItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event);
-    _hoverable=true;
+    _hovered=true;
     setCursor(QCursor(Qt::PointingHandCursor));
     update();
 }
@@ -40,7 +40,7 @@ void SXGraphicsItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 void SXGraphicsItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event);
-    _hoverable=false;
+    _hovered=false;
     setCursor(QCursor(Qt::CrossCursor));
     update();
 }
@@ -57,12 +57,6 @@ void SXGraphicsItem::setDeletable(bool deletable)
     _deletable = deletable;
 }
 
-void SXGraphicsItem::setHoverable(bool hoverable)
-{
-	_hoverable=hoverable;
-	setAcceptHoverEvents(_hoverable);
-}
-
 void SXGraphicsItem::setMovable(bool movable)
 {
     _movable = movable;
@@ -72,11 +66,6 @@ void SXGraphicsItem::setMovable(bool movable)
 bool SXGraphicsItem::isDeletable() const
 {
     return _deletable;
-}
-
-bool SXGraphicsItem::isHoverable() const
-{
-    return _hoverable;
 }
 
 bool SXGraphicsItem::isMovable() const

@@ -77,18 +77,14 @@ void DetectorScene::setData(SX::Data::IData* data)
 {
 
     if (_currentData==data)
-    {
-        updatePeaks();
         return;
-    }
 
     if (_currentData)
         _currentData->close();
 
     _currentData = data;
 
-    if (!_currentData->isOpened())
-        _currentData->open();
+    _currentData->open();
 
     SX::Instrument::Detector* det=_currentData->getDiffractometer()->getDetector();
 
@@ -126,6 +122,10 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     // The left button was pressed
     if (event->buttons() & Qt::LeftButton)
     {
+
+        if (event->modifiers()==Qt::ControlModifier)
+            return;
+
         // Case of the Zoom mode, update the scene
         if (_mode==ZOOM)
         {
@@ -168,6 +168,13 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
         // Get the graphics item on which the user has clicked
         auto item=itemAt(event->lastScenePos(),QTransform());
+
+        if (event->modifiers()==Qt::ControlModifier)
+        {
+            item->setSelected(!item->isSelected());
+            return;
+        }
+
         // If the item is a NSXTools GI and is selectedit will become the current active GI
         if (auto p=dynamic_cast<SXGraphicsItem*>(item))
         {
@@ -223,25 +230,17 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
     // The right button was pressed
     else if (event->buttons() & Qt::RightButton)
     {
-
-        // Get the graphics item on which the user has clicked
-        auto item=itemAt(event->lastScenePos(),QTransform());
-        if (dynamic_cast<QGraphicsPixmapItem*>(item))
+        if (_zoomStack.size()>1)
         {
-            if (_zoomStack.size()>1)
+            // Remove the last zoom area stored in the stack
+            _zoomStack.pop();
+            // If not root, then update the scene
+            if (!_zoomStack.isEmpty())
             {
-                // Remove the last zoom area stored in the stack
-                _zoomStack.pop();
-                // If not root, then update the scene
-                if (!_zoomStack.isEmpty())
-                {
-                    setSceneRect(_zoomStack.top());
-                    emit dataChanged();
-                }
+                setSceneRect(_zoomStack.top());
+                emit dataChanged();
             }
         }
-        else
-            item->setSelected(!item->isSelected());
     }
 }
 
@@ -255,6 +254,9 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     // The user released the left mouse button
     if (event->button() & Qt::LeftButton)
     {
+        if (event->modifiers()==Qt::ControlModifier)
+            return;
+
         // Case of the Zoom mode, the zoom is updated and added on top of the zoom stack
         if(_mode==ZOOM)
         {
@@ -262,6 +264,8 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             qreal bot=_zoomrect->rect().bottom();
             qreal left=_zoomrect->rect().left();
             qreal right=_zoomrect->rect().right();
+            if (top==bot || left==right)
+                return;
             if (top > bot)
                 std::swap(top,bot);
             if (right < left)
@@ -291,7 +295,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
                 if (_lastClickedGI == _masks.last())
                     _currentData->addMask(p->getAABB());
                 _currentData->maskPeaks();
-                updatePeaks();
+                update();
             }
         }
     }
@@ -329,7 +333,7 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
         return;
 
     // The user pressed on Delete key
-    if (event->key() & Qt::Key_Delete)
+    if (event->key() == Qt::Key_Delete)
     {
         QList<QGraphicsItem*> items=selectedItems();
         int nPeaksErased=_peaks.size();
@@ -347,8 +351,9 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
             {
                 bool remove=_currentData->removePeak(p->getPeak());
                 if (remove)
+                {
                     _peaks.erase(p->getPeak());
-                updatePeaks();
+                }
             }
             // If the item is a mask graphics item, remove its corresponding mask from the data,
             // update the QList of mask graphics items and update the scene
@@ -356,7 +361,6 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
             {
             	_currentData->removeMask(p->getAABB());
                 _masks.removeOne(p);
-                updatePeaks();
             }
             if (p==_lastClickedGI)
                 _lastClickedGI=nullptr;
@@ -442,6 +446,8 @@ void DetectorScene::loadCurrentImage(bool newimage)
     std::size_t nrows=det->getNRows();
     std::size_t ncols=det->getNCols();
 
+    if (_currentFrameIndex>=_currentData->getNFrames())
+        _currentFrameIndex=_currentData->getNFrames()-1;
     if (newimage)
         _currentFrame =_currentData->getFrame(_currentFrameIndex);
 

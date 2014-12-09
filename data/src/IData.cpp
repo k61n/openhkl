@@ -115,6 +115,7 @@ std::set<Peak3D*>& IData::getPeaks()
 void IData::addPeak(Peak3D* peak)
 {
 	_peaks.insert(peak);
+	maskPeak(peak);
 }
 
 void IData::clearPeaks()
@@ -396,16 +397,19 @@ void IData::removeMask(AABB<double,3>* mask)
 void IData::maskPeaks() const
 {
 	for (auto p : _peaks)
+		maskPeak(p);
+}
+
+void IData::maskPeak(Peak3D* peak) const
+{
+	peak->setMasked(false);
+	for (auto m : _masks)
 	{
-		p->setMasked(false);
-		for (auto m : _masks)
+		// If the background of the peak intercept the mask, unselected the peak
+		if (m->intercept(*(peak->getBackground())))
 		{
-			// If the background of the peak intercept the mask, unselected the peak
-			if (m->intercept(*(p->getBackground())))
-			{
-				p->setMasked(true);
-				break;
-			}
+			peak->setMasked(true);
+			break;
 		}
 	}
 }

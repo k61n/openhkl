@@ -142,11 +142,11 @@ void Peak3D::integrate()
 	if (lower[2] < 0)
 		data_start=0;
 
-	if (upper[0] >= _data->getNCols())
+    if (end_x > _data->getNCols()-1)
 		end_x=_data->getNCols()-1;
-	if (upper[1] >= _data->getNRows())
+    if (end_y > _data->getNRows()-1)
 		end_y=_data->getNRows()-1;
-	if (upper[2] >= _data->getNFrames())
+    if (data_end > _data->getNFrames()-1)
 		data_end=_data->getNFrames()-1;
 
 	Eigen::Vector4d point1;

@@ -17,7 +17,7 @@
 bool PeakGraphicsItem::_labelVisible=false;
 
 PeakGraphicsItem::PeakGraphicsItem(SX::Crystal::Peak3D* p)
-: PlottableGraphicsItem(nullptr,true,true,false),
+: PlottableGraphicsItem(nullptr,true,false),
   _peak(p)
 {
     if (_peak)
@@ -47,8 +47,8 @@ PeakGraphicsItem::~PeakGraphicsItem()
 
 QRectF PeakGraphicsItem::boundingRect() const
 {
-    const Eigen::Vector3d& l=_peak->getBackground()->getLower();
-    const Eigen::Vector3d& u=_peak->getBackground()->getUpper();
+    const Eigen::Vector3d& l=_peak->getPeak()->getLower();
+    const Eigen::Vector3d& u=_peak->getPeak()->getUpper();
     qreal w=u[0]-l[0];
     qreal h=u[1]-l[1];
     return QRectF(-w/2.0,-h/2.0,w,h);
@@ -68,10 +68,10 @@ void PeakGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 
     painter->setRenderHint(QPainter::Antialiasing);
 
-    if (_hoverable)
+    if (_hovered)
         painter->setBrush(QBrush(QColor(255,255,0,120)));
 
-    _label->setVisible(_hoverable || _labelVisible);
+    _label->setVisible(_hovered || _labelVisible);
 
     if (_peak->isSelected())
         _pen.setColor("green");

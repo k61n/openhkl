@@ -8,16 +8,11 @@
 #include "CutterGraphicsItem.h"
 
 CutterGraphicsItem::CutterGraphicsItem(SX::Data::IData* data)
-: PlottableGraphicsItem(nullptr),
+: PlottableGraphicsItem(nullptr,true,true),
   _data(data),
   _from(0,0),
   _to(0,0)
 {
-
-	// The standard behaviour of a cutter: deletable, not hoverable and movable
-	setDeletable(true);
-	setHoverable(false);
-	setMovable(true);
 
     setZValue(1);
 

@@ -132,6 +132,8 @@ public:
 	bool inMasked(const Eigen::Vector3d& point) const;
 	//! Mask the peaks collected in the data with the masks defined up to now
 	void maskPeaks() const;
+	//! Mask a given peak
+	void maskPeak(Peak3D* peak) const;
 	//! Return the intensity at point x,y,z.
 	int dataAt(int x=0, int y=0, int z=0);
     //! Read a given Frame of the data
