@@ -144,14 +144,13 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         }
     }
     // No button was pressed, just a mouse move
-    else if (!event->buttons())
+    else if (event->button() == Qt::NoButton)
     {
-        QGraphicsScene::mouseMoveEvent(event);
-
         QGraphicsItem* gItem=itemAt(event->lastScenePos().toPoint(),QTransform());
         auto p=dynamic_cast<PlottableGraphicsItem*>(gItem);
         if (p)
             emit updatePlot(p);
+         QGraphicsScene::mouseMoveEvent(event);
     }
 }
 

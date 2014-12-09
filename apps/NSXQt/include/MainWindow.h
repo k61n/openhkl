@@ -71,7 +71,7 @@ private slots:
 
     void on_actionBehind_Detector_triggered();
 
-    void on_actionShow_labels_triggered();
+    void on_actionShow_labels_triggered(bool checked);
 
 public slots:
     void changeData(SX::Data::IData*);

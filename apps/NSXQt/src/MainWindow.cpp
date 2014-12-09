@@ -386,6 +386,7 @@ void MainWindow::updatePlot(PlottableGraphicsItem* item)
 
     // Plot the data
     item->plot(_ui->plot1D);
+    update();
 
 }
 
@@ -405,7 +406,8 @@ void MainWindow::on_actionBehind_Detector_triggered()
     _ui->_dview->fitScene();
 }
 
-void MainWindow::on_actionShow_labels_triggered()
+void MainWindow::on_actionShow_labels_triggered(bool checked)
 {
-    _ui->_dview->getScene()->showPeakLabels(true);
+    _ui->_dview->getScene()->showPeakLabels(checked);
+    _ui->_dview->getScene()->update();
 }

@@ -91,8 +91,8 @@ void PeakGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 
 void PeakGraphicsItem::setFrame(int frame)
 {
-    const Eigen::Vector3d& l=_peak->getBackground()->getLower();
-    const Eigen::Vector3d& u=_peak->getBackground()->getUpper();
+    const Eigen::Vector3d& l=_peak->getPeak()->getLower();
+    const Eigen::Vector3d& u=_peak->getPeak()->getUpper();
     if (frame>=l[2] && frame<=u[2])
     {
         setVisible(true);

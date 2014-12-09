@@ -29,7 +29,7 @@ PeakTableView::PeakTableView(QWidget *parent)
     setFocusPolicy(Qt::StrongFocus);
 
     // Set selection model
-    setSelectionMode(QAbstractItemView::MultiSelection);
+    setSelectionMode(QAbstractItemView::SingleSelection);
 
     // Signal sent when sorting by column
     QHeaderView* horizontal=this->horizontalHeader();
