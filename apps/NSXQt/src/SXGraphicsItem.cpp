@@ -107,7 +107,7 @@ void SXGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     QPointF dr = event->lastScenePos() - pos();
 
     QRectF itemRect=sceneBoundingRect();
-    itemRect.translate(dr);
+    itemRect.translate(QPointF(dr.x()>0,dr.y()>0));
 
     // At target position the item must be fully inside the scene
     if (scene()->sceneRect().contains(itemRect.topLeft()) && scene()->sceneRect().contains(itemRect.bottomRight()))

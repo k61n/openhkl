@@ -42,7 +42,8 @@ Peak3D::Peak3D(const Peak3D& other):
 		_countsSigma(other._countsSigma),
 		_wave(other._wave),
 		_scale(other._scale),
-		_selected(other._selected)
+		_selected(other._selected),
+		_masked(other._masked)
 {
 }
 
@@ -72,6 +73,7 @@ Peak3D& Peak3D::operator=(const Peak3D& other)
 		_wave = other._wave;
 		_scale = other._scale;
 		_selected = other._selected;
+		_masked = other._masked;
 
 	}
 
