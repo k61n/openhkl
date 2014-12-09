@@ -11,6 +11,8 @@ SXGraphicsItem::SXGraphicsItem(QGraphicsItem *parent, bool deletable, bool movab
   _deletable(deletable),
   _hovered(false),
   _movable(movable),
+  _firstMove(true),
+  _lastPos(),
   _label(nullptr)
 {
     _pen.setWidth(1);
@@ -103,15 +105,20 @@ void SXGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     if (!isSelected())
         return;
 
-    // The translation vector
-    QPointF dr = event->lastScenePos() - pos();
+    if (_firstMove)
+        _firstMove=false;
+    else
+    {
 
-    QRectF itemRect=sceneBoundingRect();
-    itemRect.translate(QPointF(dr.x()>0,dr.y()>0));
+        // The translation vector
+        QPointF dr = event->lastScenePos() - _lastPos;
+        QRectF itemRect=sceneBoundingRect();
+        itemRect.translate(dr);
 
-    // At target position the item must be fully inside the scene
-    if (scene()->sceneRect().contains(itemRect.topLeft()) && scene()->sceneRect().contains(itemRect.bottomRight()))
-        moveBy(dr.x(),dr.y());
-
+        // At target position the item must be fully inside the scene
+        if (scene()->sceneRect().contains(itemRect.topLeft()) && scene()->sceneRect().contains(itemRect.bottomRight()))
+            moveBy(dr.x(),dr.y());
+    }
+    _lastPos=event->lastScenePos();
 }
 

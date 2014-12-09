@@ -58,6 +58,8 @@ protected:
     bool _deletable;
     bool _hovered;
     bool _movable;
+    bool _firstMove;
+    QPointF _lastPos;
     QPen _pen;
 
     //! Text child object that contains hkl label
