@@ -335,7 +335,6 @@ void ILLAsciiData::readControlFBlock(std::stringstream& buffer)
 	}
 	_currentLine+=(fullLines+missing);
 
-    _diffractometer->getSource()->setWavelength(_metadata->getKey<double>("wavelength"));
 
 }
 
