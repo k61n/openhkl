@@ -43,6 +43,8 @@ Detector* FlatDetector::clone() const
 
 void FlatDetector::setAngularRange(double w, double h)
 {
+	_widthAngle=w;
+	_heightAngle=h;
 	// Full width
 	_width=2.0*_distance*tan(w);
 	// Full height
@@ -51,22 +53,13 @@ void FlatDetector::setAngularRange(double w, double h)
 
 void FlatDetector::setWidthAngle(double wangle)
 {
+	_widthAngle=wangle;
 	_width=2.0*_distance*tan(wangle);
 }
 
 void FlatDetector::setHeightAngle(double hangle)
 {
 	_height=2.0*_distance*tan(hangle);
-}
-
-double FlatDetector::getWidthAngle()const
-{
-	return 2.0*atan(0.5*_width/_distance);
-}
-
-double FlatDetector::getHeightAngle() const
-{
-	return 2.0*atan(0.5*_height/_distance);
 }
 
 Eigen::Vector3d FlatDetector::getPos(double px, double py) const

@@ -12,15 +12,15 @@ Detector* CylindricalDetector::create(const std::string& name)
 	return new CylindricalDetector(name);
 }
 
-CylindricalDetector::CylindricalDetector() : Detector(), _widthAngle(0.0)
+CylindricalDetector::CylindricalDetector() : Detector()
 {
 }
 
-CylindricalDetector::CylindricalDetector(const CylindricalDetector& other) : Detector(other), _widthAngle(other._widthAngle)
+CylindricalDetector::CylindricalDetector(const CylindricalDetector& other) : Detector(other)
 {
 }
 
-CylindricalDetector::CylindricalDetector(const std::string& name):Detector(name), _widthAngle(0.0)
+CylindricalDetector::CylindricalDetector(const std::string& name):Detector(name)
 {
 
 }
@@ -32,11 +32,7 @@ CylindricalDetector::~CylindricalDetector()
 CylindricalDetector& CylindricalDetector::operator=(const CylindricalDetector& other)
 {
 	if (this != &other)
-	{
 		Detector::operator=(other);
-		_widthAngle = other._widthAngle;
-
-	}
 	return *this;
 }
 
@@ -48,6 +44,7 @@ Detector* CylindricalDetector::clone() const
 void CylindricalDetector::setAngularRange(double w, double h)
 {
 	_widthAngle=w;
+	_heightAngle=h;
 	// R.dTheta
 	_width=w*_distance;
 	// Full height
@@ -63,17 +60,8 @@ void CylindricalDetector::setWidthAngle(double wangle)
 
 void CylindricalDetector::setHeightAngle(double hangle)
 {
+	_heightAngle=hangle;
 	_height=2.0*_distance*tan(hangle);
-}
-
-double CylindricalDetector::getWidthAngle()const
-{
-	return _widthAngle;
-}
-
-double CylindricalDetector::getHeightAngle() const
-{
-	return 2.0*atan(0.5*_height/_distance);
 }
 
 Eigen::Vector3d CylindricalDetector::getPos(double px, double py) const

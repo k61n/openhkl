@@ -51,7 +51,7 @@ public:
 
 	virtual void add(component*);
 	void clear();
-	uint nComponents() const;
+	uint getNComponents() const;
 	void remove(component*);
 
 	virtual ~Composite()=0;
@@ -78,7 +78,7 @@ void Composite<component>::clear()
 }
 
 template <typename component>
-uint Composite<component>::nComponents() const
+uint Composite<component>::getNComponents() const
 {
 	return _components.size();
 }

@@ -112,8 +112,6 @@ public:
 	void getGammaNu(const DetectorEvent& event, double& gamma, double& nu,const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
 	//! Returns the detector height.
 	double getHeigth() const;
-	//! Return the height in angular units (radians) covered by the detector
-	virtual double getHeightAngle() const=0;
 	/**
 	 *  @brief Get the scattered wavenumber for an event on a detector
 	 *  @param px horizontal position of the scattering event in pixels unit
@@ -149,7 +147,7 @@ public:
 	//! Returns the detector width
 	double getWidth() const;
 	//! Return the width in angular units (radians) covered by the detector
-	virtual double getWidthAngle() const=0;
+	virtual double getWidthAngle() const;
 	//! Set the size of the detector using angular units (radians) rather than lengths. Converted internally in width and height.
 	//! Use Units::deg for easy conversion
 	virtual void setAngularRange(double widthAngle, double heightAngle)=0;
@@ -159,6 +157,8 @@ public:
 	void setDistance(double d);
 	//! Set the height (meters)
 	void setHeight(double height);
+	//! Return the height in angular units (radians) covered by the detector
+	double getHeightAngle() const;
 	//! Set the full height using angular dimension
 	virtual void setHeightAngle(double hangle)=0;
 	//! Set the origin of the detector
@@ -175,6 +175,8 @@ public:
 	void setWidth(double width);
 	//! Set the full width of the detector in Angle, assume the distance is set before
 	virtual void setWidthAngle(double wangle)=0;
+	//! Returns the number of detector
+	virtual unsigned int getNDetectors() const;
 
 	// Other methods
 
@@ -191,6 +193,7 @@ protected:
 	double _width, _height;
 	// Sample to detector distance
 	double _distance;
+	double _widthAngle, _heightAngle;
 
 };
 

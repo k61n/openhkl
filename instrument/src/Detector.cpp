@@ -22,7 +22,9 @@ Detector::Detector()
   _nCols(0),
   _width(0.0),
   _height(0.0),
-  _distance(0)
+  _distance(0),
+  _widthAngle(0.0),
+  _heightAngle(0.0)
 {
 }
 
@@ -34,7 +36,9 @@ Detector::Detector(const Detector& other)
   _nCols(other._nCols),
   _width(other._width),
   _height(other._height),
-  _distance(other._distance)
+  _distance(other._distance),
+  _widthAngle(other._widthAngle),
+  _heightAngle(other._heightAngle)
 {
 }
 
@@ -46,7 +50,9 @@ Detector::Detector(const std::string& name)
   _nCols(0),
   _width(0.0),
   _height(0.0),
-  _distance(0.0)
+  _distance(0.0),
+  _widthAngle(0.0),
+  _heightAngle(0.0)
 {
 }
 
@@ -66,6 +72,8 @@ Detector& Detector::operator=(const Detector& other)
 		_width = other._width;
 		_height = other._height;
 		_distance = other._distance;
+		_widthAngle = other._widthAngle;
+		_heightAngle = other._heightAngle;
 	}
 	return *this;
 }
@@ -288,6 +296,20 @@ bool Detector::hasPixel(double px, double py) const
 	return (dx>=0 && dx<static_cast<double>(_nCols) && dy>=0 && dy<static_cast<double>(_nRows));
 }
 
+double Detector::getWidthAngle()const
+{
+	return _widthAngle;
+}
+
+double Detector::getHeightAngle() const
+{
+	return _heightAngle;
+}
+
+unsigned int Detector::getNDetectors() const
+{
+	return 1;
+}
 
 } // End namespace Instrument
 

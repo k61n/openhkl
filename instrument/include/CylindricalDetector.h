@@ -67,10 +67,6 @@ public:
 
 	// Getters and setters
 
-	//! Return the height in angular units (radians) covered by the detector
-	double getHeightAngle() const;
-	//! Return the width in angular units (radians) covered by the detector
-	double getWidthAngle() const;
 	//! Set the size of the detector using angular units (radians) rather than lengths. Converted internally in width and height.
 	//! Use Units::deg for easy conversion
 	void setAngularRange(double widthAngle, double heightAngle);
@@ -81,8 +77,6 @@ public:
 
 	Eigen::Vector3d getPos(double px,double py) const;
 
-private:
-	double _widthAngle;
 };
 
 } //End namespace Instrument

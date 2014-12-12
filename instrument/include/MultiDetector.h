@@ -48,10 +48,25 @@ public:
 	//! Static constructor
 	static Detector* create(const std::string& name);
 
-	//! Default Constructor
+	//! Construct an empty MultiDetector
 	MultiDetector();
-	//! Copy constructor
+	//! Construct a MultiDetector with a given name
+	MultiDetector(const std::string& name);
+	//! Construct a MultiDetector from another MultiDetector
 	MultiDetector(const MultiDetector& other);
+
+	//! Destructor
+	~MultiDetector();
+
+	//! Virtual copy constructor
+	Detector* clone() const;
+
+	//! Set the full width of the detector in Angle, assume the distance is set before
+	void setWidthAngle(double wangle);
+	void setHeightAngle(double hangle);
+	void setAngularRange(double w, double h);
+
+	unsigned int getNDetectors() const;
 
 	Eigen::Vector3d getPos(double px, double py) const;
 
