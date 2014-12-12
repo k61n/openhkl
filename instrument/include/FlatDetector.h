@@ -77,7 +77,6 @@ public:
 	void setWidthAngle(double wangle);
 	void setHeightAngle(double hangle);
 
-private:
 	Eigen::Vector3d getPos(double x,double y) const;
 };
 

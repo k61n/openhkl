@@ -79,9 +79,9 @@ public:
 	//! Set the full width of the detector in Angle, assume the distance is set before
 	void setWidthAngle(double wangle);
 
+	Eigen::Vector3d getPos(double px,double py) const;
 
 private:
-	Eigen::Vector3d getPos(double px,double py) const;
 	double _widthAngle;
 };
 

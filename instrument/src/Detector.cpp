@@ -16,8 +16,8 @@ using namespace SX::Units;
 
 Detector::Detector()
 : Component("detector"),
-  _minCol(0.0),
   _minRow(0.0),
+  _minCol(0.0),
   _nRows(0),
   _nCols(0),
   _width(0.0),

@@ -183,6 +183,8 @@ public:
 
 	bool hasPixel(double px, double py) const;
 
+	virtual Eigen::Vector3d getPos(double x, double y) const=0;
+
 protected:
 	double _minRow, _minCol;
 	uint _nRows, _nCols;
@@ -190,8 +192,6 @@ protected:
 	// Sample to detector distance
 	double _distance;
 
-private:
-	virtual Eigen::Vector3d getPos(double x, double y) const=0;
 };
 
 } // end namespace Instrument
