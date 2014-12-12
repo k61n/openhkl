@@ -80,11 +80,15 @@ Eigen::Vector3d FlatDetector::getPos(double px, double py) const
 	if (_distance==0)
 		throw std::runtime_error("Detector: distance must be >0");
 
+	// The coordinates are defined relatively to the detector origin
+	double x=px-_minCol;
+	double y=py-_minRow;
+
 	Eigen::Vector3d result;
 	// take the center of the bin
-	result[0]=(px/(_nCols-1.0)-0.5)*_width;
+	result[0]=(x/(_nCols-1.0)-0.5)*_width;
 	result[1]=_distance;
-	result[2]=(py/(_nRows-1.0)-0.5)*_height;
+	result[2]=(y/(_nRows-1.0)-0.5)*_height;
 	return result;
 }
 

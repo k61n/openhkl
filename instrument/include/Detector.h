@@ -34,7 +34,6 @@
 
 #include <Eigen/Dense>
 
-#include "AABB.h"
 #include "Component.h"
 #include "DetectorEvent.h"
 
@@ -162,6 +161,8 @@ public:
 	void setHeight(double height);
 	//! Set the full height using angular dimension
 	virtual void setHeightAngle(double hangle)=0;
+	//! Set the origin of the detector
+	void setOrigin(double px, double py);
 	//! Set the number of columns
 	void setNCols(unsigned int cols);
 	//! Set the number of pixels of the detector
@@ -183,12 +184,11 @@ public:
 	bool hasPixel(double px, double py) const;
 
 protected:
+	double _minRow, _minCol;
 	uint _nRows, _nCols;
 	double _width, _height;
 	// Sample to detector distance
 	double _distance;
-
-	SX::Geometry::AABB<double,2> _limits;
 
 private:
 	virtual Eigen::Vector3d getPos(double x, double y) const=0;

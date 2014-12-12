@@ -76,7 +76,7 @@ double CylindricalDetector::getHeightAngle() const
 	return 2.0*atan(0.5*_height/_distance);
 }
 
-Eigen::Vector3d CylindricalDetector::getPos(double x, double y) const
+Eigen::Vector3d CylindricalDetector::getPos(double px, double py) const
 {
 	if (_nCols==0 || _nRows==0)
 		throw std::runtime_error("Detector: number of rows or cols must >0");
@@ -86,6 +86,10 @@ Eigen::Vector3d CylindricalDetector::getPos(double x, double y) const
 
 	if (_distance==0)
 		throw std::runtime_error("Detector: distance must be >0");
+
+	// The coordinates are defined relatively to the detector origin
+	double x=px-_minCol;
+	double y=py-_minRow;
 
 	double gamma=(x/(_nCols-1.0)-0.5)*_widthAngle;
 	Eigen::Vector3d result;

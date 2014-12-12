@@ -16,34 +16,37 @@ using namespace SX::Units;
 
 Detector::Detector()
 : Component("detector"),
+  _minCol(0.0),
+  _minRow(0.0),
   _nRows(0),
   _nCols(0),
   _width(0.0),
   _height(0.0),
-  _distance(0),
-  _limits()
+  _distance(0)
 {
 }
 
 Detector::Detector(const Detector& other)
 : Component(other),
+  _minRow(0.0),
+  _minCol(0.0),
   _nRows(other._nRows),
   _nCols(other._nCols),
   _width(other._width),
   _height(other._height),
-  _distance(other._distance),
-  _limits(other._limits)
+  _distance(other._distance)
 {
 }
 
 Detector::Detector(const std::string& name)
 : Component(name),
+  _minRow(0),
+  _minCol(0),
   _nRows(0),
   _nCols(0),
   _width(0.0),
   _height(0.0),
-  _distance(0.0),
-  _limits()
+  _distance(0.0)
 {
 }
 
@@ -56,12 +59,13 @@ Detector& Detector::operator=(const Detector& other)
 	if (this != &other)
 	{
 		Component::operator=(other);
+		_minRow = other._minRow;
+		_minCol = other._minCol;
 		_nRows = other._nRows;
 		_nCols = other._nCols;
 		_width = other._width;
 		_height = other._height;
 		_distance = other._distance;
-		_limits = other._limits;
 	}
 	return *this;
 }
@@ -117,6 +121,13 @@ void Detector::setNPixels(unsigned int cols, unsigned int rows)
 	_nCols=cols;
 	_nRows=rows;
 }
+
+void Detector::setOrigin(double px, double py)
+{
+	_minCol=px;
+	_minRow=py;
+}
+
 void Detector::setNCols(unsigned int cols)
 {
 	if (cols==0)
@@ -270,7 +281,11 @@ DetectorEvent Detector::createDetectorEvent(double x, double y, const std::vecto
 
 bool Detector::hasPixel(double px, double py) const
 {
-	return _limits.isInsideAABB({px,py});
+
+	double dx=px-_minCol;
+	double dy=py-_minRow;
+
+	return (dx>=0 && dx<static_cast<double>(_nCols) && dy>=0 && dy<static_cast<double>(_nRows));
 }
 
 

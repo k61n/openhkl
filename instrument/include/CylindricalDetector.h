@@ -81,7 +81,7 @@ public:
 
 
 private:
-	Eigen::Vector3d getPos(double x,double y) const;
+	Eigen::Vector3d getPos(double px,double py) const;
 	double _widthAngle;
 };
 
