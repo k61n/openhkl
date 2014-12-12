@@ -30,9 +30,15 @@
 #define NSXTOOL_AABB_H_
 #include <initializer_list>
 #include <stdexcept>
-#include <Eigen/Dense>
 #include <iostream>
 #include <vector>
+
+#include <Eigen/Dense>
+
+#include "IShape.h"
+#include "Ellipsoid.h"
+#include "OBB.h"
+#include "Sphere.h"
 
 namespace SX
 {
@@ -52,124 +58,84 @@ typedef unsigned int uint;
  * from images or volumes.
  */
 template<typename T, uint D>
-class AABB
+class AABB : public IShape<T,D>
 {
 public:
+
+	typedef Eigen::Matrix<T,D,D> matrix;
 	typedef typename Eigen::Matrix<T,D,1> vector;
 	typedef Eigen::Matrix<T,D+1,1> HomVector;
 
-	//! Default constructor
+	// Get rid of IShape resolution for protected attributes of IShape
+	using IShape<T,D>::_lowerBound;
+	using IShape<T,D>::_upperBound;
+
+	//! Constructs an unitialized AABB object
 	AABB();
-	//! Copy constructor
+	//! Constructs a AABB object from another ABB object
 	AABB(const AABB<T,D>& other);
-	//! Constructor from two ublas vectors
+	//! Constructs a AABB object from two Eigen vectors representing respectively its lower and upper bound
 	AABB(const vector& lb, const vector& ub);
-	//! Constructor from two initializer_lists
+	//! Constructs a AABB object from two initializer lists representing respectively its lower and upper bound
 	AABB(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub);
 	//! Destructor
 	virtual ~AABB();
 	//! Assignment operator
 	AABB<T,D>& operator=(const AABB<T,D>& other);
-	//! Check for intersection with another AABB
-	//! Return true if touch or overlap
-	inline bool intercept(const AABB<T,D>& other) const
-	{
-		for (uint i=0; i<D; ++i)
-		{
-			if (_upperBound(i) < other._lowerBound(i) || _lowerBound(i) > other._upperBound(i))
-				return false;
-		}
-		return true;
-	}
-	inline bool contains(const AABB<T,D>& other) const
-	{
-		for (uint i=0; i<D; ++i)
-		{
-			if (_lowerBound(i) >= other._lowerBound(i) || _upperBound(i) <= other._upperBound(i))
-				return false;
-		}
-		return true;
-	}
-	//! Return the volume
-	T volumeND() const;
-	//! Check whether a given point is inside the AABB
-	bool isInsideAABB(const std::initializer_list<T>& point) const;
-	//! Check whether a given point is inside the AABB
-	bool isInsideAABB(const vector& point) const;
-	//! Check whether a given Homogeneous vector is inside the AABB
-	bool isInsideAABB(const HomVector& point) const;
-	//! Setter for the lower and upper bounds of the AABB
-	void setBounds(const vector& lb, const vector& ub);
-	//! Setter for the lower limit of the box
-	void setLower(const vector& lb);
-	//! Setter for the upper limit of the box
-	void setUpper(const vector& lb);
-	//! Const reference to lowerBound
-	const vector& getLower() const;
-	//! Reference to lower bound
-	vector& getLower();
-	//! Const reference to upperBound
-	const vector& getUpper() const;
-	//! Reference to upperBound
-	vector& getUpper();
-	//! Return the center of the bounding box
-	vector getCenter() const;
-	//! Return the extends of the bounding box
-	vector getBoxExtents() const;
-	//! Send the object to a stream
-	void printSelf(std::ostream&) const;
-	//! Translate the bounding box
-	void translateAABB(const vector&);
-	//! Scale the bounding box
-	void scaleAABB(const vector&);
-	//! Scale by a constant factor
-	void scaleAABB(T);
-protected:
-	// The lower bound point
-	vector _lowerBound;
-	// The upper bound point
-	vector _upperBound;
+
+	//! Constructs a pointer to a copy of the AABB
+	IShape<T,D>* clone() const;
+
+	//! Rotate the AABB.
+	void rotate(const matrix& eigenvectors);
+	//! Scale isotropically the AABB.
+	void scale(T value);
+	//! Scale anisotropically the AABB.
+	void scale(const vector& scale);
+	//! Translate the AABB.
+	void translate(const vector& t);
+
+	//! Check whether a point given as Homogeneous coordinate in the (D+1) dimension is inside the AABB.
+	bool isInside(const HomVector& vector) const;
+	//! Return true if the AABB intersects any kind of shape
+	bool collide(const IShape<T,D>& other) const;
+	//! Return true if the AABB intersects an ellipsoid.
+	bool collide(const AABB<T,D>& other) const;
+	//! Return true if the AABB intersects an ellipsoid.
+	bool collide(const Ellipsoid<T,D>& other) const;
+	//! Return true if the AABB intersects an OBB.
+	bool collide(const OBB<T,D>& other) const;
+	//! Return true if the AABB intersects a Sphere.
+	bool collide(const Sphere<T,D>& other) const;
+
+	// Macro to ensure that an OBB object can be dynamically allocated.
+	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
 };
 
+template<typename T,uint D> bool collideAABBAABB(const AABB<T,D>&, const AABB<T,D>&);
+template<typename T,uint D> bool collideAABBEllipsoid(const AABB<T,D>&, const Ellipsoid<T,D>&);
+template<typename T,uint D> bool collideAABBOBB(const AABB<T,D>&, const OBB<T,D>&);
+template<typename T,uint D> bool collideAABBSphere(const AABB<T,D>&, const Sphere<T,D>&);
+
 template<typename T, uint D>
-AABB<T,D>::AABB()
+AABB<T,D>::AABB() : IShape<T,D>()
 {
- // The bounded_vectors are left non-initialized.
 }
 
 template<typename T, uint D>
-AABB<T,D>::AABB(const AABB<T,D>& other)
+AABB<T,D>::AABB(const AABB<T,D>& other) : IShape<T,D>(other)
 {
-	_lowerBound = other._lowerBound;
-	_upperBound = other._upperBound;
 }
 
 template<typename T, uint D>
-AABB<T,D>::AABB(const vector& lb, const vector& ub) : _lowerBound(lb), _upperBound(ub)
+AABB<T,D>::AABB(const vector& lb, const vector& ub) : IShape<T,D>(lb,ub)
 {
-	for (uint i=0;i<D;++i)
-	{
-		if (_lowerBound(i)>_upperBound(i))
-			throw std::invalid_argument("AABB: upper limit must be > lower limit");
-	}
 }
 
 template<typename T, uint D>
-AABB<T,D>::AABB(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub)
+AABB<T,D>::AABB(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub) : IShape<T,D>(lb,ub)
 {
-	auto it1 = lb.begin();
-	auto it2 = ub.begin();
-	auto lbit = _lowerBound.data();
-	auto ubit = _upperBound.data();
-
-	for(;it1!=lb.end();it1++,it2++)
-	{
-		if ((*it1)>(*it2))
-			throw std::invalid_argument("AABB: upper limit must be > lower limit");
-		*(lbit++) = *it1;
-		*(ubit++) = *it2;
-	}
 }
 
 template<typename T, uint D>
@@ -181,181 +147,99 @@ template<typename T, uint D>
 AABB<T,D>& AABB<T,D>::operator=(const AABB<T,D>& other)
 {
   if (this != &other)
-  {
-	  _lowerBound = other._lowerBound;
-	  _upperBound = other._upperBound;
-  }
+	  IShape<T,D>::operator=(other);
   return *this;
 }
 
-template<typename T, uint D>
-T AABB<T,D>::volumeND() const
+template<typename T,uint D>
+IShape<T,D>* AABB<T,D>::clone() const
 {
-	return (_upperBound-_lowerBound).prod();
+	return new AABB<T,D>(*this);
 }
 
 template<typename T, uint D>
-std::ostream& operator<<(std::ostream& os, const AABB<T,D>& aabb)
+void AABB<T,D>::rotate(const matrix& eigenvectors)
 {
-	aabb.printSelf(os);
-	return os;
+}
+
+template<typename T, uint D>
+void AABB<T,D>::scale(T value)
+{
+	scaleAABB(value);
 }
 
 template<typename T,uint D>
-bool AABB<T,D>::isInsideAABB(const std::initializer_list<T>& point) const
+void AABB<T,D>::scale(const vector& v)
 {
-
-	if (point.size() != D)
-		throw("AABB: invalid point size");
-
-	auto it = point.begin();
-	auto lbit = _lowerBound.data();
-	auto ubit = _upperBound.data();
-
-	for(; it!=point.end(); it++,lbit++,ubit++)
-	{
-		if (*it < *lbit || *it > *ubit)
-			return false;
-	}
-
-	return true;
+	scaleAABB(v);
 }
 
 template<typename T,uint D>
-bool AABB<T,D>::isInsideAABB(const vector& point) const
+void AABB<T,D>::translate(const vector& t)
 {
-
-	auto it = point.data();
-	auto lbit = _lowerBound.data();
-	auto ubit = _upperBound.data();
-
-	for(unsigned int i=0; i<D; i++,lbit++,ubit++,it++)
-	{
-		if (*it < *lbit || *it > *ubit)
-			return false;
-	}
-
-	return true;
+	translateAABB(t);
 }
 
 template<typename T,uint D>
-bool AABB<T,D>::isInsideAABB(const HomVector& point) const
+bool AABB<T,D>::isInside(const HomVector& vector) const
 {
-
-	auto it = point.data();
-	auto lbit = _lowerBound.data();
-	auto ubit = _upperBound.data();
-
-	for(unsigned int i=0; i<D; i++,lbit++,ubit++,it++)
-	{
-		if (*it < *lbit || *it > *ubit)
-			return false;
-	}
-
-	return true;
+	return isInsideAABB(vector);
 }
 
-template<typename T, uint D>
-void AABB<T,D>::setBounds(const vector& lb, const vector& ub)
+template<typename T,uint D>
+bool AABB<T,D>::collide(const IShape<T,D>& other) const
 {
-	for (uint i=0;i<D;++i)
-	{
-		if (lb(i)>ub(i))
-			throw std::invalid_argument("AABB: upper limit must be > lower limit");
-	}
-	_lowerBound = lb;
-	_upperBound = ub;
+	if (this->intercept(other))
+		return other.collide(*this);
+	return false;
 }
 
-template<typename T, uint D>
-void AABB<T,D>::setLower(const vector& lb)
+template<typename T,uint D>
+bool AABB<T,D>::collide(const AABB<T,D>& other) const
 {
-	for (uint i=0;i<D;++i)
-	{
-		if (lb(i)>_upperBound(i))
-			throw std::invalid_argument("AABB: upper limit must be > lower limit");
-	}
-	_lowerBound = lb;
+	return collideAABBAABB<T,D>(*this,other);
 }
 
-template<typename T, uint D>
-void AABB<T,D>::setUpper(const vector& ub)
+template<typename T,uint D>
+bool AABB<T,D>::collide(const Ellipsoid<T,D>& other) const
 {
-	for (uint i=0;i<D;++i)
-	{
-		if (_lowerBound(i)>ub(i))
-			throw std::invalid_argument("AABB: upper limit must be > lower limit");
-	}
-	_upperBound = ub;
+	return collideAABBEllipsoid<T,D>(*this,other);
 }
 
-template<typename T, uint D>
-const typename AABB<T,D>::vector& AABB<T,D>::getLower() const
+template<typename T,uint D>
+bool AABB<T,D>::collide(const OBB<T,D>& other) const
 {
-	return _lowerBound;
+	return collideAABBOBB<T,D>(*this,other);
 }
 
-template<typename T, uint D>
-typename AABB<T,D>::vector& AABB<T,D>::getLower()
+template<typename T,uint D>
+bool AABB<T,D>::collide(const Sphere<T,D>& other) const
 {
-	return _lowerBound;
+	return collideAABBSphere<T,D>(*this,other);
 }
 
-template<typename T, uint D>
-const typename AABB<T,D>::vector& AABB<T,D>::getUpper() const
+template<typename T,uint D>
+bool collideAABBAABB(const AABB<T,D>& a, const AABB<T,D>& b)
 {
-	return _upperBound;
+	return a.collide(b);
 }
 
-template<typename T, uint D>
-typename AABB<T,D>::vector& AABB<T,D>::getUpper()
+template<typename T,uint D>
+bool collideAABBEllipsoid(const AABB<T,D>& aabb, const Ellipsoid<T,D>& ell)
 {
-	return _upperBound;
+	return collideEllipsoidAABB(ell,aabb);
 }
 
-template<typename T, uint D>
-void AABB<T,D>::translateAABB(const vector& t)
+template<typename T,uint D>
+bool collideAABBOBB(const AABB<T,D>& aabb, const OBB<T,D>& obb)
 {
-	_lowerBound+=t;
-	_upperBound+=t;
+	return collideOBBAABB(obb,aabb);
 }
 
-template<typename T, uint D>
-void AABB<T,D>::scaleAABB(const vector& s)
+template<typename T,uint D>
+bool collideAABBSphere(const AABB<T,D>& aabb, const Sphere<T,D>& sphere)
 {
-	vector center=getCenter();
-	_lowerBound=center+(_lowerBound-center).cwiseProduct(s);
-	_upperBound=center+(_upperBound-center).cwiseProduct(s);
-}
-
-template<typename T, uint D>
-void AABB<T,D>::scaleAABB(T s)
-{
-	vector center=getCenter();
-	_lowerBound=center+(_lowerBound-center)*s;
-	_upperBound=center+(_upperBound-center)*s;
-}
-
-
-template<typename T, uint D>
-typename AABB<T,D>::vector AABB<T,D>::getCenter() const
-{
-	vector center((_lowerBound + _upperBound)*0.5);
-	return center;
-}
-
-template<typename T, uint D>
-typename AABB<T,D>::vector AABB<T,D>::getBoxExtents() const
-{
-	vector dim(_upperBound - _lowerBound);
-	return dim;
-}
-
-template<typename T, uint D>
-void AABB<T,D>::printSelf(std::ostream& os) const
-{
-  os<<"AABB --> "<<"lower bound: "<<_lowerBound<<" , upper bound: "<<_upperBound;
-  return;
+	return collideSphereAABB(sphere,aabb);
 }
 
 } // namespace Geometry

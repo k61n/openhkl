@@ -38,6 +38,7 @@
 #include <unsupported/Eigen/MatrixFunctions>
 
 #include "IShape.h"
+#include "AABB.h"
 #include "Ellipsoid.h"
 #include "OBB.h"
 
@@ -57,9 +58,9 @@ class Sphere : public IShape<T,D>
 	typedef Eigen::Matrix<T,D+1,1> HomVector;
 	typedef Eigen::Matrix<T,D+1,D+1> HomMatrix;
 
-	// Get rid of AABB resolution for protected attributes of AABB
-	using AABB<T,D>::_lowerBound;
-	using AABB<T,D>::_upperBound;
+	// Get rid of IShape resolution for protected attributes of IShape
+	using IShape<T,D>::_lowerBound;
+	using IShape<T,D>::_upperBound;
 
 public:
 	//! The copy constructor
@@ -74,6 +75,8 @@ public:
 	Sphere<T,D>& operator=(const Sphere<T,D>& other);
 	//! Return true if the sphere intersects any kind of shape.
 	bool collide(const IShape<T,D>& other) const;
+	//! Check whether a sphere collides with a AABB.
+	bool collide(const AABB<T,D>&) const;
 	//! Check whether a sphere collides with an ellipsoid.
 	bool collide(const Ellipsoid<T,D>&) const;
 	//! Check whether a sphere collides with an OBB.
@@ -95,6 +98,8 @@ public:
 	//! Translate the sphere.
 	void translate(const vector& t);
 
+	// Macro to ensure that Sphere object can be dynamically allocated.
+	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
 private:
 	//! The center.
@@ -104,12 +109,9 @@ private:
 	//! Update the AABB bound to the sphere.
 	void updateAABB();
 
-public:
-	// Macro to ensure that Sphere object can be dynamically allocated.
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
 };
 
+template<typename T,uint D> bool collideSphereAABB(const Sphere<T,D>&, const AABB<T,D>&);
 template<typename T,uint D> bool collideSphereEllipsoid(const Sphere<T,D>&, const Ellipsoid<T,D>&);
 template<typename T,uint D> bool collideSphereOBB(const Sphere<T,D>&, const OBB<T,D>&);
 template<typename T,uint D> bool collideSphereSphere(const Sphere<T,D>&, const Sphere<T,D>&);
@@ -138,6 +140,7 @@ Sphere<T,D>& Sphere<T,D>::operator=(const Sphere<T,D>& other)
 {
 	if (this != &other)
 	{
+		IShape<T,D>::operator=(other);
 		_center = other._center;
 		_radius = other._radius;
 		updateAABB();
@@ -148,7 +151,7 @@ Sphere<T,D>& Sphere<T,D>::operator=(const Sphere<T,D>& other)
 template<typename T,uint D>
 IShape<T,D>* Sphere<T,D>::clone() const
 {
-	return new Sphere(*this);
+	return new Sphere<T,D>(*this);
 }
 
 template<typename T,uint D>
@@ -160,15 +163,21 @@ bool Sphere<T,D>::collide(const IShape<T,D>& other) const
 }
 
 template<typename T,uint D>
-bool Sphere<T,D>::collide(const Ellipsoid<T,D>& other) const
+bool Sphere<T,D>::collide(const AABB<T,D>& aabb) const
 {
-	return collideSphereEllipsoid<T,D>(*this,other);
+	return collideSphereAABB<T,D>(*this,aabb);
 }
 
 template<typename T,uint D>
-bool Sphere<T,D>::collide(const OBB<T,D>& other) const
+bool Sphere<T,D>::collide(const Ellipsoid<T,D>& ell) const
 {
-	return collideSphereOBB<T,D>(*this,other);
+	return collideSphereEllipsoid<T,D>(*this,ell);
+}
+
+template<typename T,uint D>
+bool Sphere<T,D>::collide(const OBB<T,D>& obb) const
+{
+	return collideSphereOBB<T,D>(*this,obb);
 }
 
 template<typename T,uint D>
@@ -236,6 +245,13 @@ void Sphere<T,D>::updateAABB()
 	_lowerBound=_center.array()-_radius;
 	_upperBound=_center.array()+_radius;
 
+}
+
+template<typename T,uint D>
+bool collideSphereAABB(const Sphere<T,D>& sphere, const AABB<T,D>& aabb)
+{
+	OBB<T,D> obb(aabb);
+	return collideSphereOBB(sphere,obb);
 }
 
 template<typename T,uint D>

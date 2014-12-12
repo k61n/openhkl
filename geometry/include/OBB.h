@@ -38,6 +38,7 @@
 #include <unsupported/Eigen/MatrixFunctions>
 
 #include "IShape.h"
+#include "AABB.h"
 #include "Ellipsoid.h"
 #include "Sphere.h"
 
@@ -51,21 +52,26 @@ template<typename T, uint D>
 class OBB : public IShape<T,D>
 {
 
+public:
+
 	//! Some useful typedefs;
 	typedef Eigen::Matrix<T,D,D> matrix;
 	typedef Eigen::Matrix<T,D,1> vector;
 	typedef Eigen::Matrix<T,D+1,1> HomVector;
 	typedef Eigen::Matrix<T,D+1,D+1> HomMatrix;
 
-	//! Get rid of AABB resolution for protected attributes of AABB
-	using AABB<T,D>::_lowerBound;
-	using AABB<T,D>::_upperBound;
+	// Get rid of IShape resolution for protected attributes of IShape
+	using IShape<T,D>::_lowerBound;
+	using IShape<T,D>::_upperBound;
 
-public:
+	//! Default constructor
+	OBB();
 	//! Copy constructor
 	OBB(const OBB<T,D>&);
 	//! Construct a N-dimensional box from its center, semi-axes, and eigenvectors ()
 	OBB(const vector& center, const vector& eigenvalues, const matrix& eigenvectors);
+	//! Construct a OBB from a AABB
+	OBB(const AABB<T,D>& aabb);
 	//! Assignment
 	OBB& operator=(const OBB<T,D>& other);
 	//! Return a copy of this OBB
@@ -74,9 +80,11 @@ public:
 	~OBB();
 	//! Return true if the OBB intersects any kind of shape.
 	bool collide(const IShape<T,D>& other) const;
-	//! Returns true if the sphere collides with an Ellipsoid.
+	//! Returns true if the OBB collides with a AABB.
+	bool collide(const AABB<T,D>&) const;
+	//! Returns true if the OBB collides with an Ellipsoid.
 	bool collide(const Ellipsoid<T,D>&) const;
-	//! Returns true if the sphere collides with an OBB.
+	//! Returns true if the OBB collides with an OBB.
 	bool collide(const OBB<T,D>& other) const;
 	//! Returns true if the OBB collides with a Sphere.
 	bool collide(const Sphere<T,D>&) const;
@@ -112,25 +120,40 @@ public:
 };
 
 // Collision detection in the 3D case.
-template<typename T,uint D> bool collideOBBOBB(const OBB<T,D>&, const OBB<T,D>&);
+template<typename T,uint D> bool collideOBBAABB(const OBB<T,D>&, const AABB<T,D>&);
 template<typename T,uint D> bool collideOBBEllipsoid(const OBB<T,D>&, const Ellipsoid<T,D>&);
+template<typename T,uint D> bool collideOBBOBB(const OBB<T,D>&, const OBB<T,D>&);
 template<typename T,uint D> bool collideOBBSphere(const OBB<T,D>&, const Sphere<T,D>&);
 
 template<typename T,uint D>
-OBB<T,D>::OBB(const OBB<T,D>& rhs)
- {
-	_eigenVal=rhs._eigenVal;
-	_TRSinv=rhs._TRSinv;
-	updateAABB();
- }
+OBB<T,D>::OBB() : IShape<T,D>()
+{
+}
 
 template<typename T,uint D>
-OBB<T,D>& OBB<T,D>::operator=(const OBB<T,D>& rhs)
+OBB<T,D>::OBB(const OBB<T,D>& other) : IShape<T,D>(other)
 {
-	if (this!=&rhs)
+	_eigenVal=other._eigenVal;
+	_TRSinv=other._TRSinv;
+	updateAABB();
+}
+
+template<typename T,uint D>
+OBB<T,D>::OBB(const AABB<T,D>& aabb)
+{
+	_TRSinv=Eigen::Matrix<T,D+1,D+1>::Identity();
+	_TRSinv.block(0,D,D,1)=-aabb.getAABBCenter();
+	updateAABB();
+}
+
+template<typename T,uint D>
+OBB<T,D>& OBB<T,D>::operator=(const OBB<T,D>& other)
+{
+	if (this!=&other)
 	{
-		_eigenVal=rhs._eigenVal;
-		_TRSinv=rhs._TRSinv;
+		IShape<T,D>::operator=(other);
+		_eigenVal=other._eigenVal;
+		_TRSinv=other._TRSinv;
 		updateAABB();
 	}
 	return *this;
@@ -138,7 +161,8 @@ OBB<T,D>& OBB<T,D>::operator=(const OBB<T,D>& rhs)
 
 template<typename T,uint D>
 OBB<T,D>::OBB(const vector& center, const vector& eigenvalues, const matrix& eigenvectors)
-: IShape<T,D>(), _eigenVal(eigenvalues)
+: IShape<T,D>(),
+  _eigenVal(eigenvalues)
 {
 	// Define the inverse scale matrix from the eigenvalues
 	Eigen::DiagonalMatrix<T,D+1> Sinv;
@@ -161,7 +185,7 @@ OBB<T,D>::OBB(const vector& center, const vector& eigenvalues, const matrix& eig
 template<typename T,uint D>
 IShape<T,D>* OBB<T,D>::clone() const
 {
-	return new OBB(*this);
+	return new OBB<T,D>(*this);
 }
 
 template<typename T, uint D>
@@ -175,6 +199,12 @@ bool OBB<T,D>::collide(const IShape<T,D>& other) const
 	if (this->intercept(other))
 		return other.collide(*this);
 	return false;
+}
+
+template<typename T,uint D>
+bool OBB<T,D>::collide(const AABB<T,D>& aabb) const
+{
+	return collideOBBAABB<T,D>(*this,aabb);
 }
 
 template<typename T,uint D>
@@ -316,6 +346,13 @@ void OBB<T,D>::updateAABB()
 	_lowerBound=Tmat-width;
 	_upperBound=Tmat+width;
 
+}
+
+template<typename T,uint D>
+bool collideOBBAABB(const OBB<T,D>& obb, const AABB<T,D>& aabb)
+{
+	OBB<T,D> obb1(aabb);
+	return collideOBBOBB(obb,obb1);
 }
 
 template<typename T,uint D=2>

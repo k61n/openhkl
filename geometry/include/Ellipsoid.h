@@ -35,6 +35,7 @@
 #include <Eigen/Eigenvalues>
 
 #include "IShape.h"
+#include "AABB.h"
 #include "OBB.h"
 #include "Sphere.h"
 
@@ -46,13 +47,15 @@ namespace Geometry
 template<typename T,uint D>
 class Ellipsoid : public IShape<T,D>
 {
+public:
 	typedef Eigen::Matrix<T,D,1> vector;
 	typedef Eigen::Matrix<T,D+1,1> HomVector;
 	typedef Eigen::Matrix<T,D,D> matrix;
 	typedef Eigen::Matrix<T,D+1,D+1> HomMatrix;
-	using AABB<T,D>::_lowerBound;
-	using AABB<T,D>::_upperBound;
-public:
+	// Get rid of IShape resolution for protected attributes of IShape
+	using IShape<T,D>::_lowerBound;
+	using IShape<T,D>::_upperBound;
+
 	Ellipsoid();
 	//! Copy constructor
 	Ellipsoid(const Ellipsoid&);
@@ -64,6 +67,8 @@ public:
 	IShape<T,D>* clone() const;
 	//! Return true if the ellipsoid intersects any kind of shape
 	bool collide(const IShape<T,D>& other) const;
+	//! Return true if the ellipsoid intersects an aabb.
+	bool collide(const AABB<T,D>& other) const;
 	//! Return true if the ellipsoid intersects an ellipsoid.
 	bool collide(const Ellipsoid<T,D>& other) const;
 	//! Return true if the ellipsoid intersects an OBB.
@@ -96,16 +101,15 @@ private:
 	vector _eigenVal;
 };
 
+template<typename T,uint D> bool collideEllipsoidAABB(const Ellipsoid<T,D>&, const AABB<T,D>&);
 template<typename T,uint D> bool collideEllipsoidEllipsoid(const Ellipsoid<T,D>&, const Ellipsoid<T,D>&);
 template<typename T,uint D> bool collideEllipsoidOBB(const Ellipsoid<T,D>&, const OBB<T,D>&);
 template<typename T,uint D> bool collideEllipsoidSphere(const Ellipsoid<T,D>&, const Sphere<T,D>&);
 
-
 template<typename T,uint D>
-Ellipsoid<T,D>::Ellipsoid()
-:IShape<T,D>()
- {
- }
+Ellipsoid<T,D>::Ellipsoid() : IShape<T,D>()
+{
+}
 
 template<typename T,uint D>
 Ellipsoid<T,D>::Ellipsoid(const Ellipsoid<T,D>& rhs)
@@ -116,12 +120,13 @@ Ellipsoid<T,D>::Ellipsoid(const Ellipsoid<T,D>& rhs)
  }
 
 template<typename T,uint D>
-Ellipsoid<T,D>& Ellipsoid<T,D>::operator=(const Ellipsoid<T,D>& rhs)
+Ellipsoid<T,D>& Ellipsoid<T,D>::operator=(const Ellipsoid<T,D>& other)
 {
-	if (this!=&rhs)
+	if (this!=&other)
 	{
-		_eigenVal=rhs._eigenVal;
-		_TRSinv=rhs._TRSinv;
+		IShape<T,D>::operator=(other);
+		_eigenVal=other._eigenVal;
+		_TRSinv=other._TRSinv;
 		updateAABB();
 	}
 	return *this;
@@ -130,13 +135,13 @@ Ellipsoid<T,D>& Ellipsoid<T,D>::operator=(const Ellipsoid<T,D>& rhs)
 template<typename T,uint D>
 IShape<T,D>* Ellipsoid<T,D>::clone() const
 {
-	return new Ellipsoid(*this);
+	return new Ellipsoid<T,D>(*this);
 }
 
 template<typename T,uint D>
 Ellipsoid<T,D>::Ellipsoid(const vector& center, const vector& eigenvalues, const matrix& eigenvectors)
-:IShape<T,D>(),
- _eigenVal(eigenvalues)
+: IShape<T,D>(),
+  _eigenVal(eigenvalues)
 {
 
 	// Define the inverse scale matrix from the eigenvalues
@@ -163,6 +168,12 @@ bool Ellipsoid<T,D>::collide(const IShape<T,D>& other) const
 	if (this->intercept(other))
 		return other.collide(*this);
 	return false;
+}
+
+template<typename T,uint D>
+bool Ellipsoid<T,D>::collide(const AABB<T,D>& aabb) const
+{
+	return collideEllipsoidAABB<T,D>(*this,aabb);
 }
 
 template<typename T,uint D>
@@ -305,6 +316,13 @@ void Ellipsoid<T,D>::updateAABB()
 	_lowerBound=TRS.block(0,D,D,1)-width;
 	_upperBound=TRS.block(0,D,D,1)+width;
 
+}
+
+template<typename T,uint D>
+bool collideEllipsoidAABB(const Ellipsoid<T,D>& ell, const AABB<T,D>& aabb)
+{
+	OBB<T,D> obb(aabb);
+	return collideEllipsoidOBB(ell,obb);
 }
 
 /** Based on the method describe in:

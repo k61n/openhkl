@@ -36,9 +36,11 @@
 #include "AABB.h"
 
 
-namespace SX {
+namespace SX
+{
 
-namespace Geometry {
+namespace Geometry
+{
 
 //! Typedef for unsigned integer
 typedef unsigned int uint;
@@ -89,7 +91,7 @@ public:
 	typedef Eigen::Matrix<T,D,1> vector;
 
 	//! Pair of AABB*
-	typedef typename std::pair< AABB<T,D>*,AABB<T,D>* > collision_pair;
+	typedef typename std::pair< IShape<T,D>*,IShape<T,D>* > collision_pair;
 
 	//! Copy constructor
 	NDTree(const NDTree<T,D>& other);
@@ -106,12 +108,14 @@ public:
 	//! destructor
 	~NDTree();
 
+	IShape<T,D>* clone() const;
+
 	/*! Add a new AABB object to the deepest leaf.
 	 * If the leaf has reached capacity of _MAX_STORAGE, then it will be split into
 	 * 2^D sub-NDTree, unless _MAX_DEPTH is reached, in which case data will simply
 	 * be added to this leaf.
 	 */
-	void addData(AABB<T,D>* aabb);
+	void addData(IShape<T,D>* aabb);
 
 	//! Check whether the node has some children
 	bool hasChildren() const;
@@ -135,7 +139,7 @@ public:
 	void getVoxels(std::vector<AABB<T,D>* >& voxels);
 
 	//! Remove a data from the NDTree
-	void removeData(const AABB<T,D>* data);
+	void removeData(const IShape<T,D>* data);
 
 	iterator begin();
 
@@ -176,7 +180,7 @@ private:
 	NDTree<T,D>* _children[getPow(D)];
 
 	//! Vector of data object in this leaf
-	std::vector<AABB<T,D>*> _data;
+	std::vector<IShape<T,D>*> _data;
 
 	//! Depth of this branch with respect to root node.
 	uint _depth;
@@ -242,7 +246,7 @@ _right(new NDTree<T,D>(*(other._right)))
 {
 	_data.reserve(_MAX_STORAGE);
 	for (auto d : other._data)
-		_data.push_back(new AABB<T,D>(*d));
+		_data.push_back(d->clone());
 }
 
 template<typename T, uint D>
@@ -256,7 +260,7 @@ NDTree<T,D>& NDTree<T,D>::operator=(const NDTree<T,D>& other)
 		_right=new NDTree<T,D>(*(other._right));
 		_data.reserve(_MAX_STORAGE);
 		for (auto d : other._data)
-			_data.push_back(new AABB<T,D>(*d));
+			_data.push_back(d->clone());
 	}
 	return *this;
 }
@@ -294,7 +298,7 @@ NDTree<T,D>::NDTree(const NDTree<T,D>* parent, uint sector)
 	}
 
 	// Calculate the center of the current branch
-	vector center = parent->getCenter();
+	vector center = parent->getAABBCenter();
 
 	// The numbering of sub-voxels is encoded into bits of an int a follows:
 	// ....... | dim[2] | dim[1] | dim[0]
@@ -321,22 +325,28 @@ NDTree<T,D>::~NDTree()
 	return;
 }
 
+template<typename T,uint D>
+IShape<T,D>* NDTree<T,D>::clone() const
+{
+	return new NDTree<T,D>(*this);
+}
+
 template<typename T, uint D>
-void NDTree<T,D>::addData(AABB<T,D>* aabb)
+void NDTree<T,D>::addData(IShape<T,D>* shape)
 {
 	// AABB does not overlap with this branch
-	if (!this->intercept(*aabb))
+	if (!this->intercept(*shape))
 		return;
 
 	// AABB overlap with this node
 	if (hasChildren())
 	{
 		for (unsigned int i=0;i<_MULTIPLICITY;++i)
-			_children[i]->addData(aabb);
+			_children[i]->addData(shape);
 	}
 	else
 	{
-		_data.push_back(aabb);
+		_data.push_back(shape);
 		if (_data.size() > _MAX_STORAGE)
 			split();
 	}
@@ -358,20 +368,20 @@ bool NDTree<T,D>::hasData() const
 template<typename T, uint D>
 void NDTree<T,D>::getPossibleCollisions(std::set<collision_pair >& collisions) const
 {
-	typedef std::set<std::pair<AABB<T,D>*,AABB<T,D>*> > setcol;
+	typedef std::set<std::pair<IShape<T,D>*,IShape<T,D>*> > setcol;
 
 	if (hasData())
 	{
 		for (auto it1=_data.begin(); it1!=_data.end(); ++it1)
 		{
-			// First AABB
-			AABB<T,D>* bb1=*it1;
+			// First IShape
+			IShape<T,D>* bb1=*it1;
 			for (auto it2=it1+1; it2!=_data.end(); ++it2)
 			{
-				// Second AABB
-				AABB<T,D>* bb2=*it2;
+				// Second IShape
+				IShape<T,D>* bb2=*it2;
 				// If two AABBs intersect, add to the set sorting the addresses
-				if (bb1->AABB<T,D>::intercept(*bb2))
+				if (bb1->IShape<T,D>::intercept(*bb2))
 				{
 					if (bb1 < bb2)
 						collisions.insert(typename setcol::value_type(bb1,bb2));
@@ -422,7 +432,7 @@ void NDTree<T,D>::printSelf(std::ostream& os) const
 }
 
 template<typename T, uint D>
-void NDTree<T,D>::removeData(const AABB<T,D>* data)
+void NDTree<T,D>::removeData(const IShape<T,D>* data)
 {
 
 	if (hasData())
