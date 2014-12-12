@@ -29,7 +29,7 @@
 #ifndef NSXTOOL_COMPOSITE_H_
 #define NSXTOOL_COMPOSITE_H_
 
-#include <vector>
+#include <set>
 
 namespace SX
 {
@@ -44,8 +44,8 @@ class Composite : public component
 {
 public:
 
-	typedef typename std::vector<component*>::const_iterator component_const_iterator;
-	typedef typename std::vector<component*>::iterator component_iterator;
+	typedef typename std::set<component*>::const_iterator component_const_iterator;
+	typedef typename std::set<component*>::iterator component_iterator;
 
 	Composite();
 
@@ -57,7 +57,7 @@ public:
 	virtual ~Composite()=0;
 
 protected:
-	std::vector<component*> _components;
+	std::set<component*> _components;
 };
 
 template <typename component>
@@ -68,10 +68,7 @@ Composite<component>::Composite()
 template <typename component>
 void Composite<component>::add(component* comp)
 {
-
-	auto it = std::find(_components.begin(),_components.end(),comp);
-	if (it == _components.end())
-		_components.push_back(comp);
+	_components.insert(comp);
 }
 
 template <typename component>
@@ -89,7 +86,7 @@ uint Composite<component>::nComponents() const
 template <typename component>
 void Composite<component>::remove(component* comp)
 {
-	auto it = std::find(_components.begin(),_components.end(),comp);
+	auto it = _components.find(comp);
 	if (it != _components.end())
 		_components.erase(it);
 }
