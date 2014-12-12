@@ -28,19 +28,23 @@
 
 #ifndef NSXTOOL_SIMPLEPEAK_H_
 #define NSXTOOL_SIMPLEPEAK_H_
-#include <Eigen/Dense>
+
 #include <map>
 #include <memory>
+
+#include <Eigen/Dense>
+
 #include "Basis.h"
 #include "IShape.h"
 
-
 namespace SX
 {
+
 namespace Data
 {
 	class IData;
 }
+
 namespace Instrument
 {
 	class Diffractometer;
@@ -50,10 +54,8 @@ namespace Instrument
 	class Detector;
 }
 
-
 namespace Crystal
 {
-
 
 class Peak3D
 {

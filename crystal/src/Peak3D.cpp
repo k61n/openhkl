@@ -1,14 +1,15 @@
 #include <cmath>
 #include <stdexcept>
-#include "IData.h"
-#include "Peak3D.h"
-#include "Diffractometer.h"
+
 #include "ComponentState.h"
 #include "DetectorEvent.h"
 #include "Detector.h"
-#include "Sample.h"
-#include "IShape.h"
+#include "Diffractometer.h"
 #include "Gonio.h"
+#include "IData.h"
+#include "IShape.h"
+#include "Peak3D.h"
+#include "Sample.h"
 
 namespace SX
 {
