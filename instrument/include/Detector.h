@@ -34,6 +34,7 @@
 
 #include <Eigen/Dense>
 
+#include "AABB.h"
 #include "Component.h"
 #include "DetectorEvent.h"
 
@@ -179,11 +180,15 @@ public:
 	//! Create a detector event, a small object with state of the event on the detector and gonio setup
 	DetectorEvent createDetectorEvent(double x, double y, const std::vector<double>& goniosetup=std::vector<double>());
 
+	bool hasPixel(double px, double py) const;
+
 protected:
 	uint _nRows, _nCols;
 	double _width, _height;
 	// Sample to detector distance
 	double _distance;
+
+	SX::Geometry::AABB<double,2> _limits;
 
 private:
 	virtual Eigen::Vector3d getPos(double x, double y) const=0;

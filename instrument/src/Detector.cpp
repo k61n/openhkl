@@ -20,7 +20,8 @@ Detector::Detector()
   _nCols(0),
   _width(0.0),
   _height(0.0),
-  _distance(0)
+  _distance(0),
+  _limits()
 {
 }
 
@@ -30,7 +31,8 @@ Detector::Detector(const Detector& other)
   _nCols(other._nCols),
   _width(other._width),
   _height(other._height),
-  _distance(other._distance)
+  _distance(other._distance),
+  _limits(other._limits)
 {
 }
 
@@ -40,7 +42,8 @@ Detector::Detector(const std::string& name)
   _nCols(0),
   _width(0.0),
   _height(0.0),
-  _distance(0)
+  _distance(0.0),
+  _limits()
 {
 }
 
@@ -58,6 +61,7 @@ Detector& Detector::operator=(const Detector& other)
 		_width = other._width;
 		_height = other._height;
 		_distance = other._distance;
+		_limits = other._limits;
 	}
 	return *this;
 }
@@ -262,6 +266,11 @@ DetectorEvent Detector::createDetectorEvent(double x, double y, const std::vecto
 	result._y=y;
 	result._values=values;
 	return result;
+}
+
+bool Detector::hasPixel(double px, double py) const
+{
+	return _limits.isInsideAABB({px,py});
 }
 
 
