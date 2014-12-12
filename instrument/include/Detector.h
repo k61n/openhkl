@@ -153,8 +153,6 @@ public:
 	//! Set the size of the detector using angular units (radians) rather than lengths. Converted internally in width and height.
 	//! Use Units::deg for easy conversion
 	virtual void setAngularRange(double widthAngle, double heightAngle)=0;
-	//! Pointer to function that maps data indexing with detector indexing
-	void setDataMapping(std::function<void(double,double,double&,double&)>);
 	//! Set the dimensions of the detector (meters).
 	void setDimensions(double width, double height);
 	//! Set sample to detector distance (overwrites Component::setRestPosition)
@@ -182,12 +180,10 @@ public:
 	DetectorEvent createDetectorEvent(double x, double y, const std::vector<double>& goniosetup=std::vector<double>());
 
 protected:
-	void convertCoordinates(double, double , double&, double&) const;
 	uint _nRows, _nCols;
 	double _width, _height;
 	// Sample to detector distance
 	double _distance;
-	std::function<void(double,double,double&,double&)> _mapping;
 
 private:
 	virtual Eigen::Vector3d getPos(double x, double y) const=0;

@@ -87,17 +87,13 @@ Eigen::Vector3d CylindricalDetector::getPos(double x, double y) const
 	if (_distance==0)
 		throw std::runtime_error("Detector: distance must be >0");
 
-	// Convert coordinates due to detector mapping,
-	// mx,my nows in the internal convention
-	double mx,my;
-	convertCoordinates(x,y,mx,my);
+	double gamma=(x/(_nCols-1.0)-0.5)*_widthAngle;
 	Eigen::Vector3d result;
-	// take the center of the bin
-	result[2]=(my/(_nRows-1.0)-0.5)*_height;
-	double gamma=(mx/(_nCols-1.0)-0.5)*_widthAngle;
+	result[0]=_distance*sin(gamma);
 	// Angle
 	result[1]=_distance*cos(gamma);
-	result[0]=_distance*sin(gamma);
+	// take the center of the bin
+	result[2]=(y/(_nRows-1.0)-0.5)*_height;
 	return result;
 }
 

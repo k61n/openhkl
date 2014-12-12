@@ -20,8 +20,7 @@ Detector::Detector()
   _nCols(0),
   _width(0.0),
   _height(0.0),
-  _distance(0),
-  _mapping(nullptr)
+  _distance(0)
 {
 }
 
@@ -31,8 +30,7 @@ Detector::Detector(const Detector& other)
   _nCols(other._nCols),
   _width(other._width),
   _height(other._height),
-  _distance(other._distance),
-  _mapping(other._mapping)
+  _distance(other._distance)
 {
 }
 
@@ -42,8 +40,7 @@ Detector::Detector(const std::string& name)
   _nCols(0),
   _width(0.0),
   _height(0.0),
-  _distance(0),
-  _mapping(nullptr)
+  _distance(0)
 {
 }
 
@@ -61,7 +58,6 @@ Detector& Detector::operator=(const Detector& other)
 		_width = other._width;
 		_height = other._height;
 		_distance = other._distance;
-		_mapping = other._mapping;
 	}
 	return *this;
 }
@@ -93,6 +89,7 @@ void Detector::setDistance(double d)
 	_distance=d;
 	_position=Eigen::Vector3d(0,d,0);
 }
+
 void Detector::setRestPosition(const Eigen::Vector3d& pos)
 {
 	_position=pos;
@@ -247,23 +244,6 @@ double Detector::get2Theta(const DetectorEvent& event, const Eigen::Vector3d& si
 double Detector::getDistance() const
 {
 	return _distance;
-}
-
-void Detector::setDataMapping(std::function<void(double,double,double&,double&)> rhs)
-{
-	_mapping=rhs;
-}
-
-void Detector::convertCoordinates(double px,double py,double& mx,double& my) const
-{
-	if (_mapping!=nullptr)
-		_mapping(px,py,mx,my);
-	else
-	{
-		mx=px;my=py;
-	}
-	return;
-
 }
 
 DetectorEvent Detector::createDetectorEvent(double x, double y, const std::vector<double>& values)
