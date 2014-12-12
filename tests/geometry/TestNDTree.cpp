@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(Test_NDTree)
 	//Test: the iterator on a NDTree begins with the root node
 	NDTree<double,3>::iterator it(tree.begin());
 
-	Eigen::Vector3d center(it->getCenter());
+	Eigen::Vector3d center(it->getAABBCenter());
 	BOOST_CHECK_CLOSE(center(0),50.0,tolerance);
 	BOOST_CHECK_CLOSE(center(1),50.0,tolerance);
 	BOOST_CHECK_CLOSE(center(2),50.0,tolerance);
@@ -72,7 +72,7 @@ BOOST_AUTO_TEST_CASE(Test_NDTree)
 	BOOST_CHECK_CLOSE(upper(1),100.0,tolerance);
 	BOOST_CHECK_CLOSE(upper(2),100.0,tolerance);
 
-	Eigen::Vector3d extents((*it).getBoxExtents());
+	Eigen::Vector3d extents((*it).getAABBExtents());
 	BOOST_CHECK_CLOSE(extents(0),100.0,tolerance);
 	BOOST_CHECK_CLOSE(extents(1),100.0,tolerance);
 	BOOST_CHECK_CLOSE(extents(2),100.0,tolerance);
