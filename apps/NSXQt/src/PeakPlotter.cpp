@@ -1,6 +1,5 @@
 #include "PeakPlotter.h"
 #include "ui_peakplotter.h"
-#include <IShape.h>
 #include "Units.h"
 #include "IData.h"
 

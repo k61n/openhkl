@@ -22,7 +22,7 @@ PeakGraphicsItem::PeakGraphicsItem(SX::Crystal::Peak3D* p)
 {
     if (_peak)
     {
-        Eigen::Vector3d c=_peak->getPeak()->getCenter();
+        Eigen::Vector3d c=_peak->getPeak()->getAABBCenter();
         setPos(c[0],c[1]);
     }
     _pen.setWidth(2);

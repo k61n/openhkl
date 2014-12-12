@@ -11,6 +11,7 @@
 #include <QWidget>
 
 #include "Data.h"
+#include "SingleShape.h"
 #include "ColorMap.h"
 #include "Plotter1D.h"
 #include "DetectorView.h"
@@ -543,7 +544,7 @@ void DetectorView::plotEllipsoids()
     {
         for (auto& el : _ptrData->getPeaks())
         {
-            const SX::Geometry::IShape<double,3>* peak=el.getPeak();
+            const SX::Geometry::SingleShape<double,3>* peak=el.getPeak();
             const Eigen::Vector3d& lower=peak->getLower();
             const Eigen::Vector3d& upper=peak->getUpper();
             // Plot bounding box

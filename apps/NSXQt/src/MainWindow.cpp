@@ -33,7 +33,6 @@
 #include "ExperimentTree.h"
 #include "GruberReduction.h"
 #include "ILLAsciiData.h"
-#include "IShape.h"
 #include "Logger.h"
 #include "NiggliReduction.h"
 #include "NoteBook.h"
@@ -144,7 +143,7 @@ void MainWindow::plotPeak(SX::Crystal::Peak3D* peak)
     auto scenePtr=_ui->_dview->getScene();
     // Ensure that frames
     changeData(peak->getData());
-    scenePtr->setData(peak->getData(),std::round(peak->getPeak()->getCenter()[2]));
+    scenePtr->setData(peak->getData(),std::round(peak->getPeak()->getAABBCenter()[2]));
     auto pgi=scenePtr->findPeakGraphicsItem(peak);
     if (pgi)
     {
