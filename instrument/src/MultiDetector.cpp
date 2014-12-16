@@ -50,7 +50,7 @@ void MultiDetector::setWidthAngle(double wangle)
 	for (auto& detector : _components)
 	{
 		detector->setWidthAngle(wangle);
-		_width += detector->getWidthAngle();
+		_width += detector->getWidth();
 	}
 }
 
@@ -61,7 +61,7 @@ void MultiDetector::setHeightAngle(double hangle)
 	for (auto& detector : _components)
 	{
 		detector->setHeightAngle(hangle);
-		_height += detector->getHeightAngle();
+		_height += detector->getHeigth();
 	}
 }
 
