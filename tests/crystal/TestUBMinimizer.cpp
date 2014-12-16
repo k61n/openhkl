@@ -35,7 +35,7 @@ const double tolerance=1e-6;
 BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
 {
 	// Build D9 instrument
-	SX::Instrument::Detector* D9=new FlatDetector("D9-detector");
+	SX::Instrument::FlatDetector* D9=new FlatDetector("D9-detector");
 	D9->setDistance(488*mm);
 	D9->setDimensions(64*mm,64*mm);
 	D9->setNPixels(32,32);

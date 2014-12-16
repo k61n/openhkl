@@ -19,7 +19,7 @@ BOOST_AUTO_TEST_CASE(Test_Cylindrical_Detector)
 {
 	CylindricalDetector d("D19-detector");
 	d.setDistance(764*mm);
-	d.setWidthAngle(120.0*deg);
+	d.setAngularWidth(120.0*deg);
 	d.setHeight(40.0*cm);
 	d.setNPixels(640,256);
 
