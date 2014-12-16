@@ -80,10 +80,8 @@ Detector& Detector::operator=(const Detector& other)
 
 void Detector::setDimensions(double width, double height)
 {
-	if (width<=0 || height<=0)
-		throw std::range_error("Detector "+Component::_name+" dimensions must be positive");
-	_width=width;
-	_height=height;
+	setWidth(width);
+	setHeight(height);
 }
 
 void Detector::setWidth(double width)
