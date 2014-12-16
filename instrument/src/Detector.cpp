@@ -122,10 +122,8 @@ double Detector::getWidth() const
 
 void Detector::setNPixels(unsigned int cols, unsigned int rows)
 {
-	if (cols==0 || rows==0)
-		throw std::range_error("Detector "+Component::_name+" number of pixels (row,col) must be >0");
-	_nCols=cols;
-	_nRows=rows;
+	setNCols(cols);
+	setNRows(rows);
 }
 
 void Detector::setOrigin(double px, double py)
