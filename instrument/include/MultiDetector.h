@@ -31,6 +31,7 @@
 #define NSXTOOL_MULTIDETECTOR_H_
 
 #include <string>
+#include <vector>
 
 #include "Composite.h"
 #include "Detector.h"
@@ -64,7 +65,6 @@ public:
 	//! Set the full width of the detector in Angle, assume the distance is set before
 	void setWidthAngle(double wangle);
 	void setHeightAngle(double hangle);
-	void setAngularRange(double w, double h);
 
 	unsigned int getNDetectors() const;
 

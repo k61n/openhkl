@@ -65,12 +65,6 @@ void MultiDetector::setHeightAngle(double hangle)
 	}
 }
 
-void MultiDetector::setAngularRange(double w, double h)
-{
-	setWidthAngle(w);
-	setHeightAngle(h);
-}
-
 unsigned int MultiDetector::getNDetectors() const
 {
 	return getNComponents();
