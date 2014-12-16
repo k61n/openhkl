@@ -35,19 +35,21 @@ Diffractometer* D19FourCircles::clone() const
 D19FourCircles::D19FourCircles(const std::string& name) : Diffractometer(name)
 {
 
-    _detector = new SX::Instrument::CylindricalDetector("640x256 cylindrical detector");
+    SX::Instrument::CylindricalDetector* detector = new SX::Instrument::CylindricalDetector("640x256 cylindrical detector");
 
-    _detector->setDistance(764*mm);
-    _detector->setWidthAngle(119.8*deg);
-    _detector->setHeight(40.0*cm);
-    _detector->setNPixels(640,256);
+    detector->setDistance(764*mm);
+    detector->setAngularWidth(119.8*deg);
+    detector->setHeight(40.0*cm);
+    detector->setNPixels(640,256);
 
     // Define the goniometer bound to the detector
     std::shared_ptr<Gonio> g(new Gonio("gamma-arm"));
     g->addRotation("2theta(gamma)",Vector3d(0,0,1),RotAxis::CW);
     g->addTranslation("y-offset",Vector3d(0,1,0));
     g->getAxis("y-offset")->setPhysical(false);
-    _detector->setGonio(g);
+    detector->setGonio(g);
+
+    _detector = detector;
 
     // Define the goniometer bound to the sample
     _sample= new Sample("sample");

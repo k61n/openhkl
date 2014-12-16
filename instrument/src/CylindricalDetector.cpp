@@ -12,15 +12,15 @@ Detector* CylindricalDetector::create(const std::string& name)
 	return new CylindricalDetector(name);
 }
 
-CylindricalDetector::CylindricalDetector() : Detector()
+CylindricalDetector::CylindricalDetector() : MonoDetector()
 {
 }
 
-CylindricalDetector::CylindricalDetector(const CylindricalDetector& other) : Detector(other)
+CylindricalDetector::CylindricalDetector(const CylindricalDetector& other) : MonoDetector(other)
 {
 }
 
-CylindricalDetector::CylindricalDetector(const std::string& name):Detector(name)
+CylindricalDetector::CylindricalDetector(const std::string& name) : MonoDetector(name)
 {
 
 }
@@ -32,7 +32,7 @@ CylindricalDetector::~CylindricalDetector()
 CylindricalDetector& CylindricalDetector::operator=(const CylindricalDetector& other)
 {
 	if (this != &other)
-		Detector::operator=(other);
+		MonoDetector::operator=(other);
 	return *this;
 }
 
@@ -41,17 +41,29 @@ Detector* CylindricalDetector::clone() const
 	return new CylindricalDetector(*this);
 }
 
-void CylindricalDetector::setWidthAngle(double wangle)
+void CylindricalDetector::setHeight(double height)
 {
-	_widthAngle=wangle;
-	// R.dTheta
-	_width=wangle*_distance;
+	_height=height;
+	_angularHeight=2.0*atan(0.5*_height/_distance);
 }
 
-void CylindricalDetector::setHeightAngle(double hangle)
+void CylindricalDetector::setWidth(double width)
 {
-	_heightAngle=hangle;
-	_height=2.0*_distance*tan(hangle);
+	_width=width;
+	_angularWidth=_width/_distance;
+}
+
+void CylindricalDetector::setAngularHeight(double angle)
+{
+	_angularHeight=angle;
+	_height=2.0*_distance*tan(angle);
+}
+
+void CylindricalDetector::setAngularWidth(double angle)
+{
+	_angularWidth=angle;
+	// R.dTheta
+	_width=_angularWidth*_distance;
 }
 
 Eigen::Vector3d CylindricalDetector::getPos(double px, double py) const
@@ -69,7 +81,7 @@ Eigen::Vector3d CylindricalDetector::getPos(double px, double py) const
 	double x=px-_minCol;
 	double y=py-_minRow;
 
-	double gamma=(x/(_nCols-1.0)-0.5)*_widthAngle;
+	double gamma=(x/(_nCols-1.0)-0.5)*_angularWidth;
 	Eigen::Vector3d result;
 	result[0]=_distance*sin(gamma);
 	// Angle
@@ -79,5 +91,6 @@ Eigen::Vector3d CylindricalDetector::getPos(double px, double py) const
 	return result;
 }
 
-}
-}
+} // Namespace Instrument
+
+} // Namespace SX

@@ -28,7 +28,8 @@
 
 #ifndef NSXTOOL_CYLINDRICALDETECTOR_H_
 #define NSXTOOL_CYLINDRICALDETECTOR_H_
-#include "Detector.h"
+
+#include "MonoDetector.h"
 
 namespace SX
 {
@@ -36,34 +37,40 @@ namespace SX
 namespace Instrument
 {
 
-class CylindricalDetector : public Detector
+class CylindricalDetector : public MonoDetector
 {
 public:
 
 	// Static constructor
 	static Detector* create(const std::string& name);
 
-	//! Default constructor
+	//! Construct a CylindricalDetector
 	CylindricalDetector();
-	//! Copy constructor
+	//! Construct a CylindricalDetector from another one
 	CylindricalDetector(const CylindricalDetector& other);
-	//! Constructs a cylindrical detector with a given name
+	//! Constructs a CylindricalDetector with a given name
 	CylindricalDetector(const std::string& name);
-	//! Constructs a detector from an XML node
+	//! Constructs a CylindricalDetector from an XML node
 	CylindricalDetector(const ptree& node);
+	//! Return a pointer to a copy of a CylindricalDetector
+	Detector* clone() const;
 	//! Destructor
 	virtual ~CylindricalDetector();
-	//! Virtual copy constructor
-	Detector* clone() const;
 
 	//! Assignment operator
 	CylindricalDetector& operator=(const CylindricalDetector& other);
 
-	//! Set the full height of the detector in Angle, assume the distance is set before
-	void setHeightAngle(double hangle);
-	//! Set the full width of the detector in Angle, assume the distance is set before
-	void setWidthAngle(double wangle);
+	//! Set the height of the detector (meters)
+	void setHeight(double height);
+	//! Set the width of the detector (meters)
+	void setWidth(double width);
 
+	//! Set the angular height of the detector (radians)
+	void setAngularHeight(double angle);
+	//! Set the angular width of the detector (radians)
+	void setAngularWidth(double angle);
+
+	//! Returns the position of a given pixel in detector space. This takes into account the detector motions in detector space.
 	Eigen::Vector3d getPos(double px,double py) const;
 
 };

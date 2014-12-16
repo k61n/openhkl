@@ -1,9 +1,7 @@
-#include <iostream>
 #include <stdexcept>
 #include <cmath>
 
 #include "Detector.h"
-#include "Units.h"
 #include "Gonio.h"
 
 namespace SX
@@ -12,47 +10,17 @@ namespace SX
 namespace Instrument
 {
 
-using namespace SX::Units;
-
-Detector::Detector()
-: Component("detector"),
-  _minRow(0.0),
-  _minCol(0.0),
-  _nRows(0),
-  _nCols(0),
-  _width(0.0),
-  _height(0.0),
-  _distance(0),
-  _widthAngle(0.0),
-  _heightAngle(0.0)
+Detector::Detector() : Component("detector")
 {
 }
 
 Detector::Detector(const Detector& other)
-: Component(other),
-  _minRow(0.0),
-  _minCol(0.0),
-  _nRows(other._nRows),
-  _nCols(other._nCols),
-  _width(other._width),
-  _height(other._height),
-  _distance(other._distance),
-  _widthAngle(other._widthAngle),
-  _heightAngle(other._heightAngle)
+: Component(other)
 {
 }
 
 Detector::Detector(const std::string& name)
-: Component(name),
-  _minRow(0),
-  _minCol(0),
-  _nRows(0),
-  _nCols(0),
-  _width(0.0),
-  _height(0.0),
-  _distance(0.0),
-  _widthAngle(0.0),
-  _heightAngle(0.0)
+: Component(name)
 {
 }
 
@@ -62,108 +30,9 @@ Detector::~Detector()
 
 Detector& Detector::operator=(const Detector& other)
 {
-	if (this != &other)
-	{
+	if (this!=&other)
 		Component::operator=(other);
-		_minRow = other._minRow;
-		_minCol = other._minCol;
-		_nRows = other._nRows;
-		_nCols = other._nCols;
-		_width = other._width;
-		_height = other._height;
-		_distance = other._distance;
-		_widthAngle = other._widthAngle;
-		_heightAngle = other._heightAngle;
-	}
 	return *this;
-}
-
-void Detector::setDimensions(double width, double height)
-{
-	setWidth(width);
-	setHeight(height);
-}
-
-void Detector::setWidth(double width)
-{
-	if (width<=0)
-		throw std::range_error("Detector "+Component::_name+" dimensions must be positive");
-	_width=width;
-}
-
-void Detector::setHeight(double height)
-{
-	if (height<=0)
-		throw std::range_error("Detector "+Component::_name+" dimensions must be positive");
-	_height=height;
-}
-
-void Detector::setDistance(double d)
-{
-	_distance=d;
-	_position=Eigen::Vector3d(0,d,0);
-}
-
-void Detector::setRestPosition(const Eigen::Vector3d& pos)
-{
-	_position=pos;
-	_distance=pos.norm();
-}
-
-double Detector::getHeigth() const
-{
-	return _height;
-}
-
-double Detector::getWidth() const
-{
-	return _width;
-}
-
-void Detector::setNPixels(unsigned int cols, unsigned int rows)
-{
-	setNCols(cols);
-	setNRows(rows);
-}
-
-void Detector::setOrigin(double px, double py)
-{
-	_minCol=px;
-	_minRow=py;
-}
-
-void Detector::setNCols(unsigned int cols)
-{
-	if (cols==0)
-		throw std::range_error("Detector "+Component::_name+" number of pixels (row,col) must be >0");
-	_nCols=cols;
-}
-
-void Detector::setNRows(unsigned int rows)
-{
-	if (rows==0)
-		throw std::range_error("Detector "+Component::_name+" number of pixels (row,col) must be >0");
-	_nRows=rows;
-}
-
-int Detector::getNCols() const
-{
-	return _nCols;
-}
-
-int Detector::getNRows() const
-{
-	return _nRows;
-}
-
-double Detector::getPixelHeigth() const
-{
-	return _height/_nRows;
-}
-
-double Detector::getPixelWidth() const
-{
-	return _width/_nCols;
 }
 
 Eigen::Vector3d Detector::getEventPosition(double px, double py, const std::vector<double>& values) const
@@ -260,11 +129,6 @@ double Detector::get2Theta(const DetectorEvent& event, const Eigen::Vector3d& si
 	return acos(proj/p.norm()/si.norm());
 }
 
-double Detector::getDistance() const
-{
-	return _distance;
-}
-
 DetectorEvent Detector::createDetectorEvent(double x, double y, const std::vector<double>& values)
 {
 	if (!_gonio)
@@ -282,37 +146,6 @@ DetectorEvent Detector::createDetectorEvent(double x, double y, const std::vecto
 	result._values=values;
 	return result;
 }
-
-bool Detector::hasPixel(double px, double py) const
-{
-
-	double dx=px-_minCol;
-	double dy=py-_minRow;
-
-	return (dx>=0 && dx<static_cast<double>(_nCols) && dy>=0 && dy<static_cast<double>(_nRows));
-}
-
-double Detector::getWidthAngle()const
-{
-	return _widthAngle;
-}
-
-double Detector::getHeightAngle() const
-{
-	return _heightAngle;
-}
-
-unsigned int Detector::getNDetectors() const
-{
-	return 1;
-}
-
-void Detector::setAngularRange(double w, double h)
-{
-	setWidthAngle(w);
-	setHeightAngle(h);
-}
-
 
 } // End namespace Instrument
 

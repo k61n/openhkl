@@ -28,7 +28,8 @@
 
 #ifndef NSXTOOL_FLATDETECTOR_H_
 #define NSXTOOL_FLATDETECTOR_H_
-#include "Detector.h"
+
+#include "MonoDetector.h"
 
 namespace SX
 {
@@ -36,41 +37,47 @@ namespace SX
 namespace Instrument
 {
 
-class FlatDetector : public Detector
+class FlatDetector : public MonoDetector
 {
 public:
-
-	// Static methods
 
 	// Static constructor
 	static Detector* create(const std::string& name);
 
-	// Constructors and destructor
-
-	//! Default Constructor
+	//! Construct a FlatDetector
 	FlatDetector();
-	//! Copy constructor
+	//! Construct a FlatDetector from another one
 	FlatDetector(const FlatDetector& other);
-	//! Constructs a default flat detector with a given name
+	//! Construct a FlatDetector with a given name
 	FlatDetector(const std::string& name);
-	//! Constructs a detector from an XML node
+	//! Construct a FlatDetector from an XML node
 	FlatDetector(const ptree& node);
+	//! Return a pointer to a copy of a FlatDetector
+	Detector* clone() const;
 	//! Destructor
 	virtual ~FlatDetector();
-	//! Virtual copy constructor
-	Detector* clone() const;
 
 	//! Assignment operator
 	FlatDetector& operator=(const FlatDetector& other);
 
-	void setWidthAngle(double wangle);
-	void setHeightAngle(double hangle);
+	//! Set the height of the detector (meters)
+	void setHeight(double height);
+	//! Set the width of the detector (meters)
+	void setWidth(double width);
 
-	Eigen::Vector3d getPos(double x,double y) const;
+	//! Set the angular height of the detector (radians)
+	void setAngularHeight(double angle);
+	//! Set the angular width of the detector (radians)
+	void setAngularWidth(double angle);
+
+	//! Returns the position of a given pixel in detector space. This takes into account the detector motions in detector space.
+	Eigen::Vector3d getPos(double px,double py) const;
+
 };
 
-} // end namespace Instrument
-} // End namespace SX
+} // Namespace Instrument
+
+} // Namespace SX
 
 
 #endif /* NSXTOOL_FLATDETECTOR_H_ */

@@ -23,17 +23,6 @@ MultiDetector::MultiDetector(const std::string& name) : SX::Kernel::Composite<De
 {
 }
 
-Eigen::Vector3d MultiDetector::getPos(double px, double py) const
-{
-
-	for (auto& detector : _components)
-	{
-		if (detector->hasPixel(px,py))
-			return detector->getPos(px,py);
-	}
-	throw std::runtime_error("Detector: invalid pixel");
-}
-
 MultiDetector::~MultiDetector()
 {
 }
@@ -43,26 +32,71 @@ Detector* MultiDetector::clone() const
 	return new MultiDetector(*this);
 }
 
-void MultiDetector::setWidthAngle(double wangle)
+unsigned int MultiDetector::getNCols() const
 {
-	_widthAngle = wangle;
-	_width=0.0;
+	unsigned int nCols=0;
 	for (auto& detector : _components)
-	{
-		detector->setWidthAngle(wangle);
-		_width += detector->getWidth();
-	}
+		nCols += detector->getNCols();
+	return nCols;
 }
 
-void MultiDetector::setHeightAngle(double hangle)
+unsigned int MultiDetector::getNRows() const
 {
-	_heightAngle = hangle;
-	_height=0.0;
+	unsigned int nRows=0;
+	for (auto& detector : _components)
+		nRows += detector->getNRows();
+	return nRows;
+}
+
+bool MultiDetector::hasPixel(double px, double py) const
+{
+	for (auto& detector : _components)
+		if (detector->hasPixel(px,py))
+			return true;
+	return false;
+}
+
+double MultiDetector::getHeight() const
+{
+	double height=0.0;
+	for (auto& detector : _components)
+		height += detector->getHeight();
+	return height;
+}
+
+double MultiDetector::getWidth() const
+{
+	double width=0.0;
+	for (auto& detector : _components)
+		width += detector->getWidth();
+	return width;
+}
+
+double MultiDetector::getAngularHeight() const
+{
+	double angularHeigth=0.0;
+	for (auto& detector : _components)
+		angularHeigth += detector->getAngularHeight();
+	return angularHeigth;
+}
+
+double MultiDetector::getAngularWidth() const
+{
+	double angularWidth=0.0;
+	for (auto& detector : _components)
+		angularWidth += detector->getAngularWidth();
+	return angularWidth;
+}
+
+Eigen::Vector3d MultiDetector::getPos(double px, double py) const
+{
+
 	for (auto& detector : _components)
 	{
-		detector->setHeightAngle(hangle);
-		_height += detector->getHeigth();
+		if (detector->hasPixel(px,py))
+			return detector->getPos(px,py);
 	}
+	throw std::runtime_error("Detector: invalid pixel");
 }
 
 unsigned int MultiDetector::getNDetectors() const

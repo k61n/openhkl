@@ -49,31 +49,44 @@ public:
 	//! Static constructor
 	static Detector* create(const std::string& name);
 
-	//! Construct an empty MultiDetector
+	//! Construct a MultiDetector
 	MultiDetector();
-	//! Construct a MultiDetector with a given name
-	MultiDetector(const std::string& name);
 	//! Construct a MultiDetector from another MultiDetector
 	MultiDetector(const MultiDetector& other);
-
+	//! Construct a MultiDetector with a given name
+	MultiDetector(const std::string& name);
+	//! Return a pointer to a copy of a MultiDetector
+	Detector* clone() const;
 	//! Destructor
 	~MultiDetector();
 
-	//! Virtual copy constructor
-	Detector* clone() const;
+	//! Return the number of columns of the detector.
+	unsigned int getNCols() const;
+	//! Return the number of rows of the detector.
+	unsigned int getNRows() const;
+	//! Return true whether a given pixel falls inside the detector
+	bool hasPixel(double px, double py) const;
 
-	//! Set the full width of the detector in Angle, assume the distance is set before
-	void setWidthAngle(double wangle);
-	void setHeightAngle(double hangle);
+	//! Return the height of the detector (meters)
+	double getHeight() const;
+	//! Return the width of the detector (meters)
+	double getWidth() const;
 
+	//! Return the angular height of the detector (radians)
+	double getAngularHeight() const;
+	//! Return the angular width of the detector (radians)
+	double getAngularWidth() const;
+
+	//! Returns the number of detector
 	unsigned int getNDetectors() const;
 
+	//! Returns the position of a given pixel in detector space. This takes into account the detector motions in detector space.
 	Eigen::Vector3d getPos(double px, double py) const;
 
 };
 
-} // end namespace Instrument
+} // Namespace Instrument
 
-} // end namespace SX
+} // Namespace SX
 
 #endif /* NSXTOOL_MULTIDETECTOR_H_ */

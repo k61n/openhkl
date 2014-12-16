@@ -53,32 +53,41 @@ class Detector : public Component
 {
 public:
 
-	// Static methods
-
-	// Static constructor (not implemented)
+	// Static constructor
 	static Detector* create(const std::string& name);
 
-	// Constructors and destructor
-
-	//! Default constructor
+	//! Construct a Detector
 	Detector();
-	//! Copy constructor
+	//! Construct a Detector from another Detector
 	Detector(const Detector& other);
-	//! Constructs a detector with a given name
+	//! Construct a Detector with a given name
 	Detector(const std::string& name);
-	//! Constructs a detector from an XML node
+	//! Construct a Detector from an XML node
 	Detector(const ptree& node);
+	//! Return a pointer to a copy of the Detector
+	virtual Detector* clone() const=0;
 	// Destructor
 	virtual ~Detector()=0;
-	//! Virtual copy constructor
-	virtual Detector* clone() const=0;
-
-	// Operators
 
 	//! Assignment operator
 	virtual Detector& operator=(const Detector& other);
 
-	// Getters and setters
+	//! Return the number of columns of the detector.
+	virtual unsigned int getNCols() const=0;
+	//! Return the number of rows of the detector.
+	virtual unsigned int getNRows() const=0;
+	//! Return true whether a given pixel falls inside the detector
+	virtual bool hasPixel(double px, double py) const=0;
+
+	//! Return the height of the detector (meters)
+	virtual double getHeight() const=0;
+	//! Return the width of the detector (meters)
+	virtual double getWidth() const=0;
+
+	//! Return the angular height of the detector (radians)
+	virtual double getAngularHeight() const=0;
+	//! Return the angular width of the detector (radians)
+	virtual double getAngularWidth() const=0;
 
 	/**
 	 *  @brief Get 2\f$ \theta \f$
@@ -89,8 +98,6 @@ public:
 	double get2Theta(double px, double py, const std::vector<double>& values=std::vector<double>(), const Eigen::Vector3d& si=Eigen::Vector3d(0,1,0)) const;
 	//! Get 2\f$ \theta \f$ from an event on the detector
 	double get2Theta(const DetectorEvent& event, const Eigen::Vector3d& si) const;
-	//! Returns the sample to detector distance
-	double getDistance() const;
 	/**
 	 *  @brief Get the position of a scattering event at px, py.
 	 *  @param px horizontal position of the scattering event in pixels unit
@@ -110,8 +117,6 @@ public:
 	void getGammaNu(double px, double py, double& gamma, double& nu,  const std::vector<double>& values=std::vector<double>(), const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
 	//! Get the scattering angles for an event on the detector
 	void getGammaNu(const DetectorEvent& event, double& gamma, double& nu,const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
-	//! Returns the detector height.
-	double getHeigth() const;
 	/**
 	 *  @brief Get the scattered wavenumber for an event on a detector
 	 *  @param px horizontal position of the scattering event in pixels unit
@@ -125,14 +130,7 @@ public:
 	 * Get the scattered wavenumber for an event on this detector
 	 */
 	Eigen::Vector3d getKf(const DetectorEvent& event,double wave, const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
-	//! Returns the number of columns of the detector.
-	int getNCols() const;
-	//! Returns the number of rows of the detector.
-	int getNRows() const;
-	//! Returns the height of a detector pixel.
-	double getPixelHeigth() const;
-	//! Returns the width of a detector pixel.
-	double getPixelWidth() const;
+
 	/**
 	 *  @brief Get the transferred wavenumber for an event on a detector
 	 *  @param px horizontal position of the scattering event in pixels unit
@@ -144,56 +142,15 @@ public:
 	Eigen::Vector3d getQ(double px, double py,double wave, const std::vector<double>& values=std::vector<double>(), const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
 	//! Get the transferred wavenumber for an event on this detector
 	Eigen::Vector3d getQ(const DetectorEvent& event, double wave,const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
-	//! Returns the detector width
-	double getWidth() const;
-	//! Return the width in angular units (radians) covered by the detector
-	virtual double getWidthAngle() const;
-	//! Set the size of the detector using angular units (radians) rather than lengths. Converted internally in width and height.
-	//! Use Units::deg for easy conversion
-	void setAngularRange(double widthAngle, double heightAngle);
-	//! Set the dimensions of the detector (meters).
-	void setDimensions(double width, double height);
-	//! Set sample to detector distance (overwrites Component::setRestPosition)
-	void setDistance(double d);
-	//! Set the height (meters)
-	void setHeight(double height);
-	//! Return the height in angular units (radians) covered by the detector
-	double getHeightAngle() const;
-	//! Set the full height using angular dimension
-	virtual void setHeightAngle(double hangle)=0;
-	//! Set the origin of the detector
-	void setOrigin(double px, double py);
-	//! Set the number of columns
-	void setNCols(unsigned int cols);
-	//! Set the number of pixels of the detector
-	void setNPixels(unsigned int cols,unsigned int rows);
-	//! Set the rest position of the detector (along y in Busing Levy convention)
-	void setRestPosition(const Eigen::Vector3d& p);
-	//! Set the number of rows
-	void setNRows(unsigned int rows);
-	//! Set the width (meters)
-	void setWidth(double width);
-	//! Set the full width of the detector in Angle, assume the distance is set before
-	virtual void setWidthAngle(double wangle)=0;
-	//! Returns the number of detector
-	virtual unsigned int getNDetectors() const;
 
-	// Other methods
+	//! Returns the number of detector
+	virtual unsigned int getNDetectors() const=0;
 
 	//! Create a detector event, a small object with state of the event on the detector and gonio setup
 	DetectorEvent createDetectorEvent(double x, double y, const std::vector<double>& goniosetup=std::vector<double>());
 
-	bool hasPixel(double px, double py) const;
-
+	//! Returns the position of a given pixel in detector space. This takes into account the detector motions in detector space.
 	virtual Eigen::Vector3d getPos(double x, double y) const=0;
-
-protected:
-	double _minRow, _minCol;
-	uint _nRows, _nCols;
-	double _width, _height;
-	// Sample to detector distance
-	double _distance;
-	double _widthAngle, _heightAngle;
 
 };
 

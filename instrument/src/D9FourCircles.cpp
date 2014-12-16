@@ -37,19 +37,21 @@ Diffractometer* D9FourCircles::clone() const
 D9FourCircles::D9FourCircles(const std::string& name) : Diffractometer(name)
 {
 
-    _detector = new SX::Instrument::FlatDetector("32x32 flat detector");
+	SX::Instrument::FlatDetector* detector = new SX::Instrument::FlatDetector("32x32 flat detector");
 
-    _detector->setDistance(488*mm);
-    _detector->setWidth(64*mm);
-    _detector->setHeight(64*mm);
-    _detector->setNPixels(32,32);
+    detector->setDistance(488*mm);
+    detector->setWidth(64*mm);
+    detector->setHeight(64*mm);
+    detector->setNPixels(32,32);
 
     // Attach a gonio to the detector
     std::shared_ptr<Gonio> g(new Gonio("gamma-arm"));
     g->addRotation("2theta(gamma)",Vector3d(0,0,1),RotAxis::CW);
     g->addTranslation("y-offset",Eigen::Vector3d(0,1,0));
     g->getAxis("y-offset")->setPhysical(false);
-    _detector->setGonio(g);
+    detector->setGonio(g);
+
+    _detector=detector;
 
     //Sample gonio
     _sample= new Sample("sample");
