@@ -63,9 +63,6 @@ public:
 	//! Assignment operator
 	FlatDetector& operator=(const FlatDetector& other);
 
-	//! Set the size of the detector using angular units (radians) rather than lengths. Converted internally in width and height.
-	//! Use Units::deg for easy conversion
-	void setAngularRange(double widthAngle, double heightAngle);
 	void setWidthAngle(double wangle);
 	void setHeightAngle(double hangle);
 

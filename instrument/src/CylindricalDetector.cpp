@@ -41,16 +41,6 @@ Detector* CylindricalDetector::clone() const
 	return new CylindricalDetector(*this);
 }
 
-void CylindricalDetector::setAngularRange(double w, double h)
-{
-	_widthAngle=w;
-	_heightAngle=h;
-	// R.dTheta
-	_width=w*_distance;
-	// Full height
-	_height=2.0*_distance*tan(h);
-}
-
 void CylindricalDetector::setWidthAngle(double wangle)
 {
 	_widthAngle=wangle;

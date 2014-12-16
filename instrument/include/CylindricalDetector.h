@@ -40,12 +40,8 @@ class CylindricalDetector : public Detector
 {
 public:
 
-	// Static methods
-
 	// Static constructor
 	static Detector* create(const std::string& name);
-
-	// Constructors and destructor
 
 	//! Default constructor
 	CylindricalDetector();
@@ -60,16 +56,9 @@ public:
 	//! Virtual copy constructor
 	Detector* clone() const;
 
-	// Operators
-
 	//! Assignment operator
 	CylindricalDetector& operator=(const CylindricalDetector& other);
 
-	// Getters and setters
-
-	//! Set the size of the detector using angular units (radians) rather than lengths. Converted internally in width and height.
-	//! Use Units::deg for easy conversion
-	void setAngularRange(double widthAngle, double heightAngle);
 	//! Set the full height of the detector in Angle, assume the distance is set before
 	void setHeightAngle(double hangle);
 	//! Set the full width of the detector in Angle, assume the distance is set before

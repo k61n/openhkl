@@ -41,16 +41,6 @@ Detector* FlatDetector::clone() const
 	return new FlatDetector(*this);
 }
 
-void FlatDetector::setAngularRange(double w, double h)
-{
-	_widthAngle=w;
-	_heightAngle=h;
-	// Full width
-	_width=2.0*_distance*tan(w);
-	// Full height
-	_height=2.0*_distance*tan(h);
-}
-
 void FlatDetector::setWidthAngle(double wangle)
 {
 	_widthAngle=wangle;
@@ -59,6 +49,7 @@ void FlatDetector::setWidthAngle(double wangle)
 
 void FlatDetector::setHeightAngle(double hangle)
 {
+	_heightAngle = hangle;
 	_height=2.0*_distance*tan(hangle);
 }
 

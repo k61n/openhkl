@@ -150,7 +150,7 @@ public:
 	virtual double getWidthAngle() const;
 	//! Set the size of the detector using angular units (radians) rather than lengths. Converted internally in width and height.
 	//! Use Units::deg for easy conversion
-	virtual void setAngularRange(double widthAngle, double heightAngle)=0;
+	void setAngularRange(double widthAngle, double heightAngle);
 	//! Set the dimensions of the detector (meters).
 	void setDimensions(double width, double height);
 	//! Set sample to detector distance (overwrites Component::setRestPosition)

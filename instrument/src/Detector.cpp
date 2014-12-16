@@ -311,6 +311,13 @@ unsigned int Detector::getNDetectors() const
 	return 1;
 }
 
+void Detector::setAngularRange(double w, double h)
+{
+	setWidthAngle(w);
+	setHeightAngle(h);
+}
+
+
 } // End namespace Instrument
 
 } // End namespace SX
