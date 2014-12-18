@@ -83,7 +83,7 @@ public:
 	//! Get a pointer to axis with label, throw range_error if not found
     Axis* const getAxis(const std::string& label);
 	//! Return the homogeneous matrix corresponding to this set of parameters. Throw if angles outside limits.
-	Eigen::Transform<double,3,Eigen::Affine> getHomMatrix(const std::vector<double>& values) const;
+	Eigen::Transform<double,3,Eigen::Affine> getHomMatrix(const std::vector<double>& values=std::vector<double>()) const;
 	//! Return the number of axes attached to this goniometer
 	std::size_t getNAxes() const;
 	//! Return the number of physical axis defined in the gonio
@@ -96,15 +96,15 @@ public:
 	//! Add a translation axis to this goniometer
 	Axis* addTranslation(const std::string& label,const Vector3d& axis);
 	//! Return the inverse of the homogeneous matrix corresponding to this set of parameters. Throw if angles outside limits.
-	Eigen::Transform<double,3,Eigen::Affine> getInverseHomMatrix(const std::vector<double>& values) const;
+	Eigen::Transform<double,3,Eigen::Affine> getInverseHomMatrix(const std::vector<double>& values=std::vector<double>()) const;
 	//! Transform a point in 3D space, given a vector of parameters
-	Vector3d transform(const Vector3d& v,const std::vector<double>& values);
+	Vector3d transform(const Vector3d& v,const std::vector<double>& values=std::vector<double>());
 	//! Reverse transform a point in 3D space, given a vector of parameters
-	Vector3d transformInverse(const Vector3d& v,const std::vector<double>& values);
+	Vector3d transformInverse(const Vector3d& v,const std::vector<double>& values=std::vector<double>());
 	//! Transform a vector inplace, for a values of Gonio parameters
-	void transformInPlace(Vector3d& v,const std::vector<double>& values);
+	void transformInPlace(Vector3d& v,const std::vector<double>& values=std::vector<double>());
 	//! Reverse transform a vector inplace, for a values of Gonio parameters
-	void transformInverseInPlace(Vector3d& v,const std::vector<double>& values);
+	void transformInverseInPlace(Vector3d& v,const std::vector<double>& values=std::vector<double>());
 	//! Reset all offsets
 	void resetOffsets();
 

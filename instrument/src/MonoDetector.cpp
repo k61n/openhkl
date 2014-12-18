@@ -105,6 +105,26 @@ void MonoDetector::setOrigin(double px, double py)
 	_minRow=py;
 }
 
+int MonoDetector::getMinRow() const
+{
+	return _minRow;
+}
+
+int MonoDetector::getMaxRow() const
+{
+	return _minRow+_nRows;
+}
+
+int MonoDetector::getMinCol() const
+{
+	return _minCol;
+}
+
+int MonoDetector::getMaxCol() const
+{
+	return _minCol+_nCols;
+}
+
 void MonoDetector::setNPixels(unsigned int cols, unsigned int rows)
 {
 	setNCols(cols);

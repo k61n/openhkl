@@ -76,6 +76,14 @@ public:
 	virtual unsigned int getNCols() const=0;
 	//! Return the number of rows of the detector.
 	virtual unsigned int getNRows() const=0;
+	//!  Get the minimum row index
+	virtual int getMinRow() const=0;
+	//!  Get the maximum row index
+	virtual int getMaxRow() const=0;
+	//!  Get the minimum col index
+	virtual int getMinCol() const=0;
+	//!  Get the maximum col index
+	virtual int getMaxCol() const=0;
 	//! Return true whether a given pixel falls inside the detector
 	virtual bool hasPixel(double px, double py) const=0;
 

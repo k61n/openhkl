@@ -55,5 +55,10 @@ add_executable(TestXMLInstrumentParser TestXMLInstrumentParser.cpp)
 TARGET_LINK_LIBRARIES(TestXMLInstrumentParser ${Boost_LIBRARIES} NSXTool)
 add_test(TestXMLInstrumentParser TestXMLInstrumentParser)
 
+# unit test for Cyclops
+add_executable(TestCyclop TestCyclop.cpp)
+TARGET_LINK_LIBRARIES(TestCyclop ${Boost_LIBRARIES} NSXTool)
+add_test(TestCyclop TestCyclop)
+
 configure_file(D10_ascii_example D10_ascii_example COPYONLY)
 configure_file(Instrument.xml Instrument.xml COPYONLY)

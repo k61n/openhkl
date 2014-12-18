@@ -64,6 +64,14 @@ public:
 	unsigned int getNCols() const;
 	//! Return the number of rows of the detector.
 	unsigned int getNRows() const;
+	//!  Get the minimum row index
+	int getMinRow() const;
+	//!  Get the maximum row index
+	int getMaxRow() const;
+	//!  Get the minimum col index
+	int getMinCol() const;
+	//!  Get the maximum col index
+	int getMaxCol() const;
 	//! Return true whether a given pixel falls inside the detector
 	bool hasPixel(double px, double py) const;
 

@@ -77,6 +77,14 @@ public:
 	void setNRows(unsigned int rows);
 	//! Set the pixel origin of the detector
 	void setOrigin(double px, double py);
+	//!  Get the minimum row index
+	int getMinRow() const;
+	//!  Get the maximum row index
+	int getMaxRow() const;
+	//!  Get the minimum col index
+	int getMinCol() const;
+	//!  Get the maximum col index
+	int getMaxCol() const;
 	//! Set the number of pixels of the detector
 	void setNPixels(unsigned int cols,unsigned int rows);
 	//! Return true whether a given pixel falls inside the detector

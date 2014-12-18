@@ -116,17 +116,17 @@ void Experiment::addData(IData* data)
 	if (!(diffName.compare(_diffractometer->getType())==0))
 		throw std::runtime_error("Mismatch between the diffractometers assigned to the experiment and the data");
 
-	double wav=data->getMetadata()->getKey<double>("wavelength");
+//	double wav=data->getMetadata()->getKey<double>("wavelength");
 
-	if (_data.empty())
-	{
-		_diffractometer->getSource()->setWavelength(wav);
-	}
-	else
-	{
-		if (wav!=_diffractometer->getSource()->getWavelength())
-			throw std::runtime_error("trying to mix data with different wavelengths");
-	}
+//	if (_data.empty())
+//	{
+//		_diffractometer->getSource()->setWavelength(wav);
+//	}
+//	else
+//	{
+//		if (wav!=_diffractometer->getSource()->getWavelength())
+//			throw std::runtime_error("trying to mix data with different wavelengths");
+//	}
 
 
 

@@ -3,6 +3,8 @@
 #include <Eigen/Dense>
 
 #include "Cyclops.h"
+#include "MultiDetector.h"
+#include "MonoDetector.h"
 #include "Diffractometer.h"
 #include "FlatDetector.h"
 #include "Gonio.h"
@@ -37,21 +39,35 @@ Diffractometer* Cyclops::clone() const
 Cyclops::Cyclops(const std::string& name) : Diffractometer(name)
 {
 
-//    _detector = new SX::Instrument::FlatDetector("Flat");
-//
-//    _detector->setDistance(488*mm);
-//    _detector->setWidth(64*mm);
-//    _detector->setHeight(64*mm);
-//    _detector->setNPixels(7680,2400);
-//
-//
-//    //Sample gonio
-//    _sample= new Sample("sample");
-//    std::shared_ptr<Gonio> bl(new Gonio("Busing-Levy"));
-//    bl->addRotation("omega",Vector3d(0,0,1),RotAxis::CCW);
-//    _sample->setGonio(bl);
-//
-//    _source = new Source("source");
+	SX::Instrument::MultiDetector* det=new SX::Instrument::MultiDetector("");
+	SX::Instrument::FlatDetector panel;
+	panel.setWidth(166*mm);
+	panel.setHeight(415*mm);
+	panel.setNPixels(960,2400);
+	panel.setDistance(200.38*mm);
+
+	for (int i=0;i<8;++i)
+	{
+		SX::Instrument::MonoDetector* current=new SX::Instrument::FlatDetector(panel);
+		current->setOrigin(960*i,0);
+		std::shared_ptr<Gonio> g(new Gonio(""));
+		SX::Instrument::Axis* a=g->addRotation("",Vector3d(0,0,1),RotAxis::CW);
+		a->setPhysical(false);
+		a->setOffset(-180*deg+i*45.0*deg);
+		current->setGonio(g);
+		det->add(current);
+		std::cout<<"LOCAL "<<current->getPos(480+960*i,1200)<<" "<<current->getDistance()<<std::endl;
+	}
+
+	_detector=det;
+
+    //Sample gonio
+    _sample= new Sample("sample");
+    std::shared_ptr<Gonio> bl(new Gonio("Busing-Levy"));
+    bl->addRotation("omega",Vector3d(0,0,1),RotAxis::CCW);
+    _sample->setGonio(bl);
+
+    _source = new Source("source");
 
 }
 

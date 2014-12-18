@@ -47,9 +47,15 @@ public:
 	typedef typename std::set<component*>::const_iterator component_const_iterator;
 	typedef typename std::set<component*>::iterator component_iterator;
 
+	//! Construct a Composite of component
 	Composite();
+	//! Construct a Composite of component from another one
+	Composite(const Composite& other);
 
-	virtual void add(component*);
+	//! Assignment operator
+	Composite& operator=(const Composite& other);
+
+	component* add(component*);
 	void clear();
 	uint getNComponents() const;
 	void remove(component*);
@@ -66,9 +72,28 @@ Composite<component>::Composite()
 }
 
 template <typename component>
-void Composite<component>::add(component* comp)
+Composite<component>::Composite(const Composite<component>& other)
 {
-	_components.insert(comp);
+	for (auto c : other._components)
+		_components.insert(c->clone());
+}
+
+template <typename component>
+Composite<component>& Composite<component>::operator=(const Composite<component>& other)
+{
+	if (this!=&other)
+	{
+		for (auto c : other._components)
+			_components.insert(c->clone());
+	}
+	return *this;
+}
+
+template <typename component>
+component* Composite<component>::add(component* comp)
+{
+	auto p=_components.insert(comp);
+	return *(p.first);
 }
 
 template <typename component>
