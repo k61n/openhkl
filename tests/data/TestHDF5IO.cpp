@@ -26,22 +26,17 @@ BOOST_AUTO_TEST_CASE(Test_HDF5_IO)
 {
 	DiffractometerFactory* factory = DiffractometerFactory::Instance();
 
-	std::shared_ptr<Diffractometer> diff = std::shared_ptr<Diffractometer>(factory->create("D19 4-circles","D10 diffractometer")->clone());
+	std::shared_ptr<Diffractometer> diff = std::shared_ptr<Diffractometer>(factory->create("D10 4-circles","D10 diffractometer")->clone());
 
-	for (int i=114054;i<114066;++i)
-	{
-	std::ostringstream os;
-	os << i;
-	ILLAsciiData dataf(std::string("/home/chapon/Data/D19/July2014/data/DKDP/"+os.str()),diff);
+	ILLAsciiData dataf("D10_ascii_example",diff);
 
 	dataf.open();
 	dataf.readInMemory();
-	const std::vector<Eigen::MatrixXi>& data=dataf.getData();
 
 
-	dataf.saveHDF5("/home/chapon/Data/D19/July2014/data/DKDP/"+os.str()+".h5");
+	dataf.saveHDF5("D10_hdf5_example.h5");
 	dataf.close();
-	}
+
 
 
 }
