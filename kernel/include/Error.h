@@ -30,12 +30,14 @@
 #ifndef NSXTOOL_ERROR_H_
 #define NSXTOOL_ERROR_H_
 
+#include <iostream>
 #include <exception>
 #include <string>
 
-namespace SX {
+namespace SX
+{
 
-namespace Error
+namespace Kernel
 {
 
 template<typename T>
@@ -44,7 +46,7 @@ class Error : public std::exception
 public:
 	Error(const std::string& message);
 
-	virtual ~Error() throw()=0;
+	virtual ~Error() throw();
 
 	const char* what() const noexcept;
 
@@ -68,19 +70,7 @@ const char* Error<T>::what() const noexcept
 	return _message.c_str();
 }
 
-template<typename T>
-class CrystalError : public Error<T>
-{
-public:
-	CrystalError(const std::string& message);
-};
-
-template<typename T>
-CrystalError<T>::CrystalError(const std::string& message) : Error<T>(message)
-{
-}
-
-} // end namespace Error
+} // end namespace Kernel
 
 } // end namespace SX
 

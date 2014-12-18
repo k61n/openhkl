@@ -73,7 +73,7 @@ UBFunctor::~UBFunctor() {
 int UBFunctor::operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const
 {
 	if (!_detector || !_sample)
-		throw SX::Error::CrystalError<UBFunctor>("A detector and a sample must be specified prior to calculate residuals.");
+		throw SX::Kernel::Error<UBFunctor>("A detector and a sample must be specified prior to calculate residuals.");
 
 	int naxes=9;
 	auto dgonio=_detector->getGonio();
@@ -154,7 +154,7 @@ void UBFunctor::resetParameters()
 void UBFunctor::setFixedParameters(unsigned int idx)
 {
 	if (!_detector || !_sample)
-		throw SX::Error::CrystalError<UBFunctor>("A detector and a sample must be specified prior to fixing parameters.");
+		throw SX::Kernel::Error<UBFunctor>("A detector and a sample must be specified prior to fixing parameters.");
 
 	if (idx>=static_cast<unsigned int>(inputs()))
 		return;
