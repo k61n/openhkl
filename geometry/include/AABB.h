@@ -165,25 +165,25 @@ void AABB<T,D>::rotate(const matrix& eigenvectors)
 template<typename T, uint D>
 void AABB<T,D>::scale(T value)
 {
-	scaleAABB(value);
+	IShape<T,D>::scaleAABB(value);
 }
 
 template<typename T,uint D>
 void AABB<T,D>::scale(const vector& v)
 {
-	scaleAABB(v);
+	IShape<T,D>::scaleAABB(v);
 }
 
 template<typename T,uint D>
 void AABB<T,D>::translate(const vector& t)
 {
-	translateAABB(t);
+	IShape<T,D>::translateAABB(t);
 }
 
 template<typename T,uint D>
 bool AABB<T,D>::isInside(const HomVector& vector) const
 {
-	return isInsideAABB(vector);
+	return IShape<T,D>::isInsideAABB(vector);
 }
 
 template<typename T,uint D>
