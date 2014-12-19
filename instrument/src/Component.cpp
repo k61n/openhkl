@@ -90,13 +90,25 @@ bool Component::hasGonio() const
 	return (_gonio.get()!=nullptr);
 }
 
+ComponentState Component::createState()
+{
+	ComponentState state;
+	state._ptrComp=this;
+	if (hasGonio())
+		state._values.resize(_gonio->getNPhysicalAxes(),0);
+	return state;
+}
+
 ComponentState Component::createState(const std::vector<double>& values)
 {
 	ComponentState state;
 	state._ptrComp=this;
-	if (values.size()!=_gonio->getNPhysicalAxes())
-		throw std::runtime_error("Trying to create a state from component "+_name+" with wrong number of Goniometer values");
-	state._values=values;
+	if (hasGonio())
+	{
+		if (values.size()!=_gonio->getNPhysicalAxes())
+			throw std::runtime_error("Trying to create a state from component "+_name+" with wrong number of Goniometer values");
+		state._values=values;
+	}
 	return state;
 }
 
@@ -104,10 +116,13 @@ ComponentState Component::createStateFromEigen(const Eigen::VectorXd& values)
 {
 	ComponentState state;
 	state._ptrComp=this;
-	if (values.size()!=_gonio->getNPhysicalAxes())
-		throw std::runtime_error("Trying to create a state from component "+_name+" with wrong number of Goniometer values");
-	state._values.resize(values.size());
-	memcpy(state._values.data(),values.data(),values.size()*sizeof(double));
+	if (hasGonio())
+	{
+		if (values.size()!=_gonio->getNPhysicalAxes())
+			throw std::runtime_error("Trying to create a state from component "+_name+" with wrong number of Goniometer values");
+		state._values.resize(values.size());
+		memcpy(state._values.data(),values.data(),values.size()*sizeof(double));
+	}
 	return state;
 }
 
@@ -115,10 +130,9 @@ ComponentState Component::createState(const std::map<std::string,double>& values
 {
 	ComponentState state;
 	state._ptrComp=this;
-
-	std::vector<double> v(_gonio->getNPhysicalAxes());
-	if (_gonio)
+	if (hasGonio())
 	{
+		std::vector<double> v(_gonio->getNPhysicalAxes());
 		std::size_t comp=0;
 		for (auto a : _gonio->getAxes())
 		{
@@ -127,8 +141,8 @@ ComponentState Component::createState(const std::map<std::string,double>& values
 			auto it=values.find(a->getLabel());
 			v[comp++] = (it != values.end()) ? it->second : 0.0;
 		}
+		state._values=v;
 	}
-	state._values=v;
 	return state;
 }
 
@@ -158,16 +172,18 @@ void Component::parse(const ptree& node)
 
 std::size_t Component::getNAxes() const
 {
-	if (!_gonio)
+	if (hasGonio())
+		return _gonio->getNAxes();
+	else
 		return 0;
-	return _gonio->getNAxes();
 }
 
 std::size_t Component::getNPhysicalAxes() const
 {
-	if (!_gonio)
+	if (hasGonio())
+		return _gonio->getNPhysicalAxes();
+	else
 		return 0;
-	return _gonio->getNPhysicalAxes();
 }
 
 } // end namespace Instrument

@@ -103,6 +103,7 @@ public:
 
 	//! Parse the XML component node.
 	virtual void parse(const ptree& pt);
+	ComponentState createState();
 	//! Create a state from a vector of values
 	ComponentState createState(const std::vector<double>& values);
 	//! Create a state from an Eigen Vector
