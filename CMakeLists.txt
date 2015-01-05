@@ -73,25 +73,27 @@ IF(WIN32 AND MSVC)
     ADD_DEFINITIONS(-DNSXTOOL_EXPORT)
 ENDIF()
 
-include_directories( analysis/include
-                     data/include
-                     geometry/include
-                     kernel/include
-                     integration/include
-                     materials/include
-                     utils/include
-                     crystal/include
-                     instrument/include)
+include_directories(analysis/include
+                    chemistry/include
+                    data/include
+                    geometry/include
+                    kernel/include
+                    integration/include
+                    materials/include
+                    utils/include
+                    crystal/include
+                    instrument/include)
 
 file(GLOB_RECURSE sources analysis/src/*.cpp
-                  data/src/*.cpp
-                  geometry/src/*.cpp
-                  kernel/src/*.cpp
-                  integration/src/*.cpp
-                  materials/*.cpp
-                  utils/src/*.cpp
-                  crystal/src/*.cpp
-                  instrument/src/*.cpp
+                          chemistry/src/*.cpp
+                          data/src/*.cpp
+                          geometry/src/*.cpp
+                          kernel/src/*.cpp
+                          integration/src/*.cpp
+                          materials/*.cpp
+                          utils/src/*.cpp
+                          crystal/src/*.cpp
+                          instrument/src/*.cpp
                   )                   
 
 # Creating the library
