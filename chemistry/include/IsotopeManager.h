@@ -42,7 +42,6 @@
 #include "Error.h"
 #include "Isotope.h"
 #include "Singleton.h"
-#include "Units.h"
 
 namespace SX
 {
@@ -51,7 +50,6 @@ namespace Chemistry
 {
 
 using boost::property_tree::ptree;
-using SX::Units::UnitsManager;
 
 typedef std::set<Isotope*> isotopeSet;
 typedef std::map<std::string,Isotope*> isotopeMap;
@@ -84,6 +82,8 @@ private:
 	friend class SX::Kernel::Destructor<IsotopeManager>;
 	IsotopeManager();
 
+	Isotope* readIsotope(const ptree& node) const;
+
 private:
 	static isotopeMap _isotopeRegistry;
 
@@ -97,9 +97,6 @@ isotopeSet IsotopeManager::getIsotopes(const std::string& key, T value) const
 	ptree root;
 	read_xml(database,root);
 
-	UnitsManager* um = UnitsManager::Instance();
-
-	double units;
 	BOOST_FOREACH(ptree::value_type const& v, root.get_child("sx_isotope_database"))
 	{
 		if (v.first.compare("isotope")!=0)
@@ -112,28 +109,7 @@ isotopeSet IsotopeManager::getIsotopes(const std::string& key, T value) const
 				ismap.insert(p->second);
 			else
 			{
-				Isotope* is=new Isotope();
-				is->_name=name;
-				is->_symbol=v.second.get<std::string>("symbol");
-				is->_element=v.second.get<std::string>("element");
-				is->_nProtons=v.second.get<int>("nProtons");
-				is->_nNucleons=v.second.get<int>("nNucleons");
-				is->_nElectrons=is->_nProtons;
-				units=um->get(v.second.get<std::string>("<xmlattr>.units"));
-				is->_molarMass=v.second.get<double>("molarMass")*units;
-				is->_nuclearSpin=v.second.get<double>("nuclearSpin");
-				is->_state=v.second.get<std::string>("state");
-				is->_abundance=v.second.get<double>("abundance",0.0)*units;
-				is->_halfLife=v.second.get<double>("halfLife",std::numeric_limits<double>::infinity())*units;
-				is->_stable=v.second.get<bool>("stable");
-				is->_bCoherent=v.second.get<std::complex<double>>("bCoherent")*units;
-				is->_bIncoherent=v.second.get<std::complex<double>>("bIncoherent")*units;
-				is->_bPlus=v.second.get<std::complex<double>>("bPlus");
-				is->_bMinus=v.second.get<std::complex<double>>("bMinus");
-				is->_xsCoherent=v.second.get<double>("xsCoherent");
-				is->_xsIncoherent=v.second.get<double>("xsIncoherent");
-				is->_xsScattering=v.second.get<double>("xsScattering");
-				is->_xsAbsorption=v.second.get<double>("xsAbsorption");
+				Isotope* is=readIsotope(v.second);
 				auto ret=_isotopeRegistry.insert(isotopePair(name,is));
 				ismap.insert(ret.first->second);
 			}

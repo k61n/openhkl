@@ -1,5 +1,7 @@
 #include "Isotope.h"
 #include "IsotopeManager.h"
+#include "Units.h"
+#include "Units.h"
 
 namespace SX
 {
@@ -38,33 +40,73 @@ Isotope* IsotopeManager::getIsotope(const std::string& name) const
 
 			if (v.second.get<std::string>("<xmlattr>.name").compare(name)==0)
 			{
-				Isotope* is=new Isotope();
-				is->_name=name;
-				is->_symbol=v.second.get<std::string>("symbol");
-				is->_element=v.second.get<std::string>("element");
-				is->_nProtons=v.second.get<int>("nProtons");
-				is->_nNucleons=v.second.get<int>("nNucleons");
-				is->_nElectrons=is->_nProtons;
-				is->_molarMass=v.second.get<double>("molarMass");
-				is->_nuclearSpin=v.second.get<double>("nuclearSpin");
-				is->_state=v.second.get<std::string>("state");
-				is->_abundance=v.second.get<double>("abundance",0.0);
-				is->_halfLife=v.second.get<double>("halfLife",std::numeric_limits<double>::infinity());
-				is->_stable=v.second.get<bool>("stable");
-				is->_bCoherent=v.second.get<std::complex<double>>("bCoherent");
-				is->_bIncoherent=v.second.get<std::complex<double>>("bIncoherent");
-				is->_bPlus=v.second.get<std::complex<double>>("bPlus");
-				is->_bMinus=v.second.get<std::complex<double>>("bMinus");
-				is->_xsCoherent=v.second.get<double>("xsCoherent");
-				is->_xsIncoherent=v.second.get<double>("xsIncoherent");
-				is->_xsScattering=v.second.get<double>("xsScattering");
-				is->_xsAbsorption=v.second.get<double>("xsAbsorption");
+				Isotope* is=readIsotope(v.second);
 				auto ret=_isotopeRegistry.insert(isotopePair(name,is));
 				return ret.first->second;
 			}
 		}
 		throw SX::Kernel::Error<IsotopeManager>("No match for entry "+name);
 	}
+}
+
+Isotope* IsotopeManager::readIsotope(const ptree& node) const
+{
+	SX::Units::UnitsManager* um = SX::Units::UnitsManager::Instance();
+	double units;
+
+	Isotope* is=new Isotope();
+	is->_name=node.get<std::string>("<xmlattr>.name");
+
+	is->_symbol=node.get<std::string>("symbol");
+
+	is->_element=node.get<std::string>("element");
+
+	is->_nProtons=node.get<int>("nProtons");
+
+	is->_nNucleons=node.get<int>("nNucleons");
+
+	is->_nElectrons=is->_nProtons;
+
+	units=um->get(node.get<std::string>("molarMass.<xmlattr>.units"));
+	is->_molarMass=node.get<double>("molarMass")*units;
+
+	is->_nuclearSpin=node.get<double>("nuclearSpin");
+
+	is->_state=node.get<std::string>("state");
+
+	units=um->get(node.get<std::string>("molarMass.<xmlattr>.units"));
+	is->_abundance=node.get<double>("abundance",0.0)*units;
+
+	units=um->get(node.get<std::string>("molarMass.<xmlattr>.units"));
+	is->_halfLife=node.get<double>("halfLife",std::numeric_limits<double>::infinity())*units;
+
+	is->_stable=node.get<bool>("stable");
+
+	units=um->get(node.get<std::string>("molarMass.<xmlattr>.units"));
+	is->_bCoherent=node.get<std::complex<double>>("bCoherent")*units;
+
+	units=um->get(node.get<std::string>("molarMass.<xmlattr>.units"));
+	is->_bIncoherent=node.get<std::complex<double>>("bIncoherent")*units;
+
+	units=um->get(node.get<std::string>("molarMass.<xmlattr>.units"));
+	is->_bPlus=node.get<std::complex<double>>("bPlus")*units;
+
+	units=um->get(node.get<std::string>("molarMass.<xmlattr>.units"));
+	is->_bMinus=node.get<std::complex<double>>("bMinus")*units;
+
+	units=um->get(node.get<std::string>("molarMass.<xmlattr>.units"));
+	is->_xsCoherent=node.get<double>("xsCoherent")*units;
+
+	units=um->get(node.get<std::string>("molarMass.<xmlattr>.units"));
+	is->_xsIncoherent=node.get<double>("xsIncoherent")*units;
+
+	units=um->get(node.get<std::string>("molarMass.<xmlattr>.units"));
+	is->_xsScattering=node.get<double>("xsScattering")*units;
+
+	units=um->get(node.get<std::string>("molarMass.<xmlattr>.units"));
+	is->_xsAbsorption=node.get<double>("xsAbsorption")*units;
+
+	return is;
 }
 
 } // end namespace Chemistry
