@@ -5,6 +5,7 @@
 
 #include <boost/test/unit_test.hpp>
 
+#include "Error.h"
 #include "IsotopeManager.h"
 #include "Units.h"
 
@@ -15,13 +16,13 @@ const double tolerance=1e-6;
 
 BOOST_AUTO_TEST_CASE(Test_Isotope_Manager)
 {
-
-	UnitsManager* um=UnitsManager::Instance();
-
 	IsotopeManager* im=IsotopeManager::Instance();
 
-	Isotope* is=im->getIsotope("H[1]");
+	// Check that get an unknown element throws
+	BOOST_CHECK_THROW(im->getIsotope("XXX"),SX::Kernel::Error<IsotopeManager>)
 
-	BOOST_CHECK_EQUAL(is->getFormalCharge(),0);
-	BOOST_CHECK_CLOSE(is->getMolarMass(),1.00782504*um->get("uma"),tolerance);
+	Isotope* is2=im->getIsotope("H[1]");
+	UnitsManager* um=UnitsManager::Instance();
+	BOOST_CHECK_EQUAL(is2->getFormalCharge(),0);
+	BOOST_CHECK_CLOSE(is2->getMolarMass(),1.00782504*um->get("uma"),tolerance);
 }

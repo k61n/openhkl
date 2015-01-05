@@ -67,43 +67,43 @@ Isotope* IsotopeManager::readIsotope(const ptree& node) const
 
 	is->_nElectrons=is->_nProtons;
 
-	units=um->get(node.get<std::string>("molarMass.<xmlattr>.units"));
+	units=um->get(node.get<std::string>("molarMass.<xmlattr>.units","uma"));
 	is->_molarMass=node.get<double>("molarMass")*units;
 
 	is->_nuclearSpin=node.get<double>("nuclearSpin");
 
 	is->_state=node.get<std::string>("state");
 
-	units=um->get(node.get<std::string>("molarMass.<xmlattr>.units"));
+	units=um->get(node.get<std::string>("abundance.<xmlattr>.units","%"));
 	is->_abundance=node.get<double>("abundance",0.0)*units;
 
-	units=um->get(node.get<std::string>("molarMass.<xmlattr>.units"));
+	units=um->get(node.get<std::string>("halfLife.<xmlattr>.units","year"));
 	is->_halfLife=node.get<double>("halfLife",std::numeric_limits<double>::infinity())*units;
 
 	is->_stable=node.get<bool>("stable");
 
-	units=um->get(node.get<std::string>("molarMass.<xmlattr>.units"));
+	units=um->get(node.get<std::string>("bCoherent.<xmlattr>.units","fm"));
 	is->_bCoherent=node.get<std::complex<double>>("bCoherent")*units;
 
-	units=um->get(node.get<std::string>("molarMass.<xmlattr>.units"));
+	units=um->get(node.get<std::string>("bIncoherent.<xmlattr>.units","fm"));
 	is->_bIncoherent=node.get<std::complex<double>>("bIncoherent")*units;
 
-	units=um->get(node.get<std::string>("molarMass.<xmlattr>.units"));
+	units=um->get(node.get<std::string>("bPlus.<xmlattr>.units","fm"));
 	is->_bPlus=node.get<std::complex<double>>("bPlus")*units;
 
-	units=um->get(node.get<std::string>("molarMass.<xmlattr>.units"));
+	units=um->get(node.get<std::string>("bMinus.<xmlattr>.units","fm"));
 	is->_bMinus=node.get<std::complex<double>>("bMinus")*units;
 
-	units=um->get(node.get<std::string>("molarMass.<xmlattr>.units"));
+	units=um->get(node.get<std::string>("xsCoherent.<xmlattr>.units","barn"));
 	is->_xsCoherent=node.get<double>("xsCoherent")*units;
 
-	units=um->get(node.get<std::string>("molarMass.<xmlattr>.units"));
+	units=um->get(node.get<std::string>("xsIncoherent.<xmlattr>.units","barn"));
 	is->_xsIncoherent=node.get<double>("xsIncoherent")*units;
 
-	units=um->get(node.get<std::string>("molarMass.<xmlattr>.units"));
+	units=um->get(node.get<std::string>("xsScattering.<xmlattr>.units","barn"));
 	is->_xsScattering=node.get<double>("xsScattering")*units;
 
-	units=um->get(node.get<std::string>("molarMass.<xmlattr>.units"));
+	units=um->get(node.get<std::string>("xsAbsorption.<xmlattr>.units","barn"));
 	is->_xsAbsorption=node.get<double>("xsAbsorption")*units;
 
 	return is;
