@@ -1,3 +1,4 @@
+add_subdirectory(chemistry)
 add_subdirectory(crystal)
 add_subdirectory(data)
 add_subdirectory(geometry)
