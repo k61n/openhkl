@@ -1,5 +1,10 @@
-add_executable(TestIsotopeManager TestIsotopeManager.cpp)
-TARGET_LINK_LIBRARIES(TestIsotopeManager ${Boost_LIBRARIES} NSXTool)
-add_test(TestIsotopeManager TestIsotopeManager)
+add_executable(TestIsotope TestIsotope.cpp)
+TARGET_LINK_LIBRARIES(TestIsotope ${Boost_LIBRARIES} NSXTool)
+add_test(TestIsotope TestIsotope)
 
-configure_file(../../resources/isotopes/SXIsotopeDatabase.xml SXIsotopeDatabase.xml COPYONLY)
+add_executable(TestElement TestElement.cpp)
+TARGET_LINK_LIBRARIES(TestElement ${Boost_LIBRARIES} NSXTool)
+add_test(TestElement TestElement)
+
+configure_file(../../resources/isotopes/isotopes.xml isotopes.xml COPYONLY)
+configure_file(../../resources/isotopes/elements.xml elements.xml COPYONLY)
