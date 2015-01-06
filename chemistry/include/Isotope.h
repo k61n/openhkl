@@ -30,9 +30,18 @@
 #ifndef NSXTOOL_ISOTOPE_H_
 #define NSXTOOL_ISOTOPE_H_
 
+#include <map>
 #include <complex>
 #include <ostream>
+#include <set>
 #include <string>
+#include <stdexcept>
+
+#include <boost/foreach.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
+
+#include "Error.h"
 
 namespace SX
 {
@@ -40,11 +49,58 @@ namespace SX
 namespace Chemistry
 {
 
-class IsotopeManager;
+using boost::property_tree::ptree;
+
+class Isotope;
+
+typedef std::set<Isotope*> isotopeSet;
+typedef std::map<std::string,Isotope*> isotopeMap;
+typedef std::pair<std::string,Isotope*> isotopePair;
 
 class Isotope
 {
+
 public:
+
+	static Isotope* buildFromDatabase(const std::string& name);
+
+	//! Returns the number of registered isotopes
+	static unsigned int getNRegisteredIsotopes();
+
+	static void registerIsotope(Isotope* is);
+
+	template<typename T>
+	static isotopeSet getIsotopes(const std::string& key, T value);
+
+	template<typename T>
+	static T getProperty(const std::string& name, const std::string& prop);
+
+private:
+
+	static Isotope* readIsotope(const ptree& node);
+
+private:
+
+	static std::string database;
+	static isotopeMap registeredIsotopes;
+
+public:
+
+	//! Copy constructor (deleted)
+	Isotope(const Isotope& other)=delete;
+
+	//! Destructor
+	~Isotope();
+
+	//! Return true if this Isotope is equal to another Isotope
+	bool operator==(const Isotope& other);
+
+	//! Returns the name of this Isotope
+	const std::string& getName() const;
+
+	//! Returns the abundance of this Isotope
+	double getNaturalAbundance() const;
+
 	//! Returns the formal charge of this Isotope
 	double getFormalCharge() const;
 
@@ -70,9 +126,8 @@ public:
 	//! Print some informations about this Isotope on a stream
 	void print(std::ostream& os) const;
 
-	friend class IsotopeManager;
-
 private:
+
 	//! Constructs an empty Isotope
 	Isotope();
 
@@ -87,7 +142,7 @@ private:
 	double _molarMass;
 	double _nuclearSpin;
 	std::string _state;
-	double _abundance;
+	double _naturalAbundance;
 	double _halfLife;
 	bool _stable;
 	std::complex<double> _bCoherent;
@@ -103,6 +158,63 @@ private:
 
 //! Overloads the operator<< with an Isotope object
 std::ostream& operator<<(std::ostream&,const Isotope&);
+
+template<typename T>
+T Isotope::getProperty(const std::string& name, const std::string& prop)
+{
+	ptree root;
+	read_xml(database,root);
+
+	BOOST_FOREACH(ptree::value_type const& v, root.get_child("isotopes"))
+	{
+		if (v.first.compare("isotope")!=0)
+			continue;
+
+		if (v.second.get<std::string>("<xmlattr>.name").compare(name)==0)
+		{
+			try
+			{
+				return v.second.get<T>(prop);
+			}
+			catch (const std::runtime_error& error)
+			{
+				throw SX::Kernel::Error<Isotope>(error.what());
+			}
+		}
+	}
+	throw SX::Kernel::Error<Isotope>("No match for entry "+name);
+}
+
+template<typename T>
+isotopeSet Isotope::getIsotopes(const std::string& key, T value)
+{
+	isotopeSet ismap;
+
+	ptree root;
+	read_xml(database,root);
+
+	BOOST_FOREACH(ptree::value_type const& v, root.get_child("isotopes"))
+	{
+		if (v.first.compare("isotope")!=0)
+			continue;
+
+		if (v.second.get<T>(key)==value)
+		{
+			std::string name=v.second.get<std::string>("<xmlattr>.name");
+			auto p=registeredIsotopes.find(name);
+			if (p!=registeredIsotopes.end())
+				ismap.insert(p->second);
+			else
+			{
+				Isotope* is=buildFromDatabase(name);
+				auto ret=registeredIsotopes.insert(isotopePair(name,is));
+				ismap.insert(ret.first->second);
+			}
+		}
+	}
+
+	return ismap;
+}
 
 
 } // end namespace Chemistry
