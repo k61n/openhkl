@@ -1,6 +1,6 @@
 #include <algorithm>
 
-#include "IsotopeManager.h"
+#include "Isotope.h"
 #include "Element.h"
 #include "Isotope.h"
 
