@@ -1,8 +1,11 @@
-#include "Units.h"
+#include <iostream>
 #include <stdexcept>
+
+#include "Units.h"
 
 namespace SX
 {
+
 namespace Units
 {
 
@@ -33,6 +36,7 @@ std::unordered_map<std::string,double> UnitsManager::_unitsMap =
 		{"pm3",pm3 },
 		{"fm3",fm3 },
 		{"am3",am3 },
+		{"g",g },
 		{"rad",rad },
 		{"deg",deg },
 		{"mrad",mrad},
@@ -46,7 +50,11 @@ std::unordered_map<std::string,double> UnitsManager::_unitsMap =
 		{"year",year},
 		{"perCent", perCent},
 		{"%", perCent},
-		{"uma",uma}
+		{"avogadro", avogadro},
+		{"uma",uma},
+		{"g_per_mole",g_per_mole},
+		{"g/cm3",g_per_cm3},
+		{"kg/m3",kg_per_m3}
 };
 
 double UnitsManager::get(const std::string& units)

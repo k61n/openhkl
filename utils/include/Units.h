@@ -28,10 +28,15 @@
 
 #ifndef NSXTOOL_UNITS_H_
 #define NSXTOOL_UNITS_H_
+
 #include <cmath>
-#include <Singleton.h>
 #include <unordered_map>
 #include <string>
+
+#include <boost/units/systems/si.hpp>
+#include <boost/units/systems/si/prefixes.hpp>
+
+#include <Singleton.h>
 
 namespace SX
 {
@@ -47,6 +52,9 @@ namespace SX
 //!
 namespace Units
 {
+
+using namespace boost::units;
+using namespace boost::units::si;
 
 using namespace SX::Kernel;
 
@@ -89,7 +97,7 @@ static const double yotta = 1.0e24;
 static const double twopi=2.0*M_PI;
 
 // Avogadro number
-static const double Nav = 6.0221367e23;
+static const double avogadro = 6.0221367e23;
 
 // Elementary charge
 static const double Q=1.60217649e-19;
@@ -121,10 +129,14 @@ static const double hour=3600*s;
 static const double day=24*hour;
 static const double year=364.25*day;
 
+// Matter units
+static const double mole=1.0;
+
 // Mass units
 static const double kg=1.0;
 static const double g=kg*milli;
-static const double uma=g/Nav;
+static const double uma=g/avogadro;
+static const double g_per_mole=g/mole;
 
 // Temperature units
 static const double Kelvin=1.0;
@@ -179,6 +191,10 @@ static const double pm3=pm*pm*pm;
 static const double fm3=fm*fm*fm;
 static const double am3=am*am*am;
 static const double ang3=ang*ang*ang;
+
+// Density
+static const double kg_per_m3=1.0;
+static const double g_per_cm3=kilo*kg_per_m3;
 
 // Temperature units
 static const double K=1.0;
