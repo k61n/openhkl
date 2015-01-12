@@ -22,9 +22,5 @@ add_executable(TestUBMinimizer TestUBMinimizer.cpp)
 TARGET_LINK_LIBRARIES(TestUBMinimizer ${Boost_LIBRARIES} NSXTool)
 add_test(TestUBMinimizer TestUBMinimizer)
 
-add_executable(TestMaterials TestMaterials.cpp)
-TARGET_LINK_LIBRARIES(TestMaterials ${Boost_LIBRARIES} NSXTool)
-add_test(TestMaterials TestMaterials)
-
 configure_file(CsOsO_15K.raf CsOsO_15K.raf COPYONLY)
 configure_file(CsOsO_15K.lpt CsOsO_15K.lpt COPYONLY)

@@ -6,5 +6,10 @@ add_executable(TestElement TestElement.cpp)
 TARGET_LINK_LIBRARIES(TestElement ${Boost_LIBRARIES} NSXTool)
 add_test(TestElement TestElement)
 
+add_executable(TestMaterial TestMaterial.cpp)
+TARGET_LINK_LIBRARIES(TestMaterial ${Boost_LIBRARIES} NSXTool)
+add_test(TestMaterial TestMaterial)
+
 configure_file(../../resources/isotopes/isotopes.xml isotopes.xml COPYONLY)
 configure_file(../../resources/isotopes/elements.xml elements.xml COPYONLY)
+configure_file(../../resources/isotopes/materials.xml materials.xml COPYONLY)
