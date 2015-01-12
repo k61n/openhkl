@@ -53,7 +53,8 @@ Material* Material::readMaterial(const ptree& node)
 {
 	double density = node.get<double>("density",1.0);
 	std::string fillingMode = node.get<std::string>("<xmlattr>.fillingMode","MassFraction");
-	Material* material=new Material(node.get<std::string>("<xmlattr>.name"),density,_toFillingMode.at(fillingMode));
+	FillingMode fMode=_toFillingMode.at(fillingMode);
+	Material* material=new Material(node.get<std::string>("<xmlattr>.name"),density,fMode);
 	BOOST_FOREACH(ptree::value_type const& v, node)
 	{
 		if (v.first.compare("material")==0)
@@ -61,38 +62,65 @@ Material* Material::readMaterial(const ptree& node)
 			Material* submaterial;
 			boost::optional<std::string> submat=v.second.get_optional<std::string>("<xmlattr>.material");
 			if (submat)
-			{
 				submaterial=buildFromDatabase(submat.get());
-			}
 			else
 				submaterial=readMaterial(v.second);
 
-			boost::optional<const ptree&> fraction = v.second.get_child_optional("fraction");
-			SX::Units::UnitsManager* um=SX::Units::UnitsManager::Instance();
-			if (fraction)
+			if (fMode==FillingMode::MassFraction || fMode==FillingMode::MoleFraction)
 			{
-				ptree node=fraction.get();
-				double units=um->get(node.get<std::string>("<xmlattr>.units","%"));
-				material->addMaterial(submaterial,node.get_value<double>()*units);
+				boost::optional<const ptree&> fraction = v.second.get_child_optional("fraction");
+				SX::Units::UnitsManager* um=SX::Units::UnitsManager::Instance();
+				if (fraction)
+				{
+					ptree node=fraction.get();
+					double units=um->get(node.get<std::string>("<xmlattr>.units","%"));
+					material->addMaterial(submaterial,node.get_value<double>()*units);
+				}
+				else
+					throw SX::Kernel::Error<Material>("Misformatted XML 'material' node: must have 'fraction' tag");
 			}
 			else
-				throw SX::Kernel::Error<Material>("Misformatted XML 'material' node: must have 'fraction' tag");
+			{
+				boost::optional<const ptree&> nAtoms = v.second.get_child_optional("natoms");
+				if (nAtoms)
+				{
+					ptree node=nAtoms.get();
+					material->addMaterial(submaterial,node.get_value<double>());
+				}
+				else
+					throw SX::Kernel::Error<Material>("Misformatted XML 'material' node: must have 'natoms' tag");
+
+			}
 
 
 		}
 		else if (v.first.compare("element")==0)
 		{
 			Element* element=Element::readElement(v.second);
-			boost::optional<const ptree&> fraction = v.second.get_child_optional("fraction");
-			SX::Units::UnitsManager* um=SX::Units::UnitsManager::Instance();
-			if (fraction)
+			if (fMode==FillingMode::MassFraction || fMode==FillingMode::MoleFraction)
 			{
-				ptree node=fraction.get();
-				double units=um->get(node.get<std::string>("<xmlattr>.units","%"));
-				material->addElement(element,node.get_value<double>()*units);
+				boost::optional<const ptree&> fraction = v.second.get_child_optional("fraction");
+				SX::Units::UnitsManager* um=SX::Units::UnitsManager::Instance();
+				if (fraction)
+				{
+					ptree node=fraction.get();
+					double units=um->get(node.get<std::string>("<xmlattr>.units","%"));
+					material->addElement(element,node.get_value<double>()*units);
+				}
+				else
+					throw SX::Kernel::Error<Material>("Misformatted XML 'element' node: must have 'fraction' tag");
 			}
 			else
-				throw SX::Kernel::Error<Material>("Misformatted XML 'element' node: must have 'fraction' tag");
+			{
+				boost::optional<const ptree&> nAtoms = v.second.get_child_optional("natoms");
+				if (nAtoms)
+				{
+					ptree node=nAtoms.get();
+					material->addElement(element,node.get_value<double>());
+				}
+				else
+					throw SX::Kernel::Error<Material>("Misformatted XML 'element' node: must have 'natoms' tag");
+			}
 		}
 	}
 
