@@ -34,11 +34,17 @@
 #include <string>
 #include <vector>
 
+#include <boost/foreach.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
+
 namespace SX
 {
 
 namespace Chemistry
 {
+
+using boost::property_tree::ptree;
 
 class Isotope;
 
@@ -61,24 +67,24 @@ public:
 	//! Register an Element in the registry
 	static void registerElement(Element* el);
 
+	static Element* readElement(const ptree& node);
+
 private:
 
+	static double tolerance;
 	static std::string database;
-	static elementMap registeredElements;
+	static elementMap registry;
 
 public:
-
-	//! Default constructor (deleted)
-	Element()=delete;
 
 	//! Copy constructor (deleted)
 	Element(const Element& other)=delete;
 
-	//! Constructs an Element from the Isotope Manager
+	//! Constructs an Element fetching the isotope of the isotopes database whose symbol is |symbol|
 	Element(const std::string& name, const std::string& symbol);
 
 	//! Constructs an empty Element
-	Element(const std::string& name);
+	Element(const std::string& name, unsigned int nIsotopes=1);
 
 	//! Destructor
 	~Element();
@@ -98,9 +104,15 @@ public:
 	//! Returns the number of isotopes this Element is made of
 	unsigned int getNIsotopes() const;
 
+	//! Returns the molar mass of the element (according to its isotopes composition)
+	double getMolarMass() const;
+
 private:
 
-	bool addIsotope(Isotope* isotope);
+	//! Constructs a default Element
+	Element();
+
+	void addIsotope(Isotope* isotope, double abundance);
 
 private:
 	std::string _name;

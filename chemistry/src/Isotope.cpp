@@ -9,14 +9,14 @@ namespace SX
 namespace Chemistry
 {
 
-isotopeMap Isotope::registeredIsotopes=isotopeMap();
+isotopeMap Isotope::registry=isotopeMap();
 
 std::string Isotope::database="isotopes.xml";
 
 Isotope* Isotope::buildFromDatabase(const std::string& name)
 {
-	auto it=registeredIsotopes.find(name);
-	if (it!=registeredIsotopes.end())
+	auto it=registry.find(name);
+	if (it!=registry.end())
 		return it->second;
 	else
 	{
@@ -29,11 +29,7 @@ Isotope* Isotope::buildFromDatabase(const std::string& name)
 				continue;
 
 			if (v.second.get<std::string>("<xmlattr>.name").compare(name)==0)
-			{
-				Isotope* is=readIsotope(v.second);
-				auto ret=registeredIsotopes.insert(isotopePair(name,is));
-				return ret.first->second;
-			}
+				return readIsotope(v.second);
 		}
 	}
 	throw SX::Kernel::Error<Isotope>("Isotope "+name+" is not registered in the isotopes database");
@@ -41,24 +37,22 @@ Isotope* Isotope::buildFromDatabase(const std::string& name)
 
 unsigned int Isotope::getNRegisteredIsotopes()
 {
-	return registeredIsotopes.size();
-}
-
-void Isotope::registerIsotope(Isotope* is)
-{
-	auto it=registeredIsotopes.find(is->getName());
-	if (it!=registeredIsotopes.end())
-		throw SX::Kernel::Error<Isotope>("The element "+is->getName()+" is already registered in the isotopes database");
-	registeredIsotopes.insert(isotopePair(is->getName(),is));
+	return registry.size();
 }
 
 Isotope* Isotope::readIsotope(const ptree& node)
 {
+
+	std::string name=node.get<std::string>("<xmlattr>.name");
+	auto it=registry.find(name);
+	if (it!=registry.end())
+		return it->second;
+
 	SX::Units::UnitsManager* um = SX::Units::UnitsManager::Instance();
 	double units;
 
 	Isotope* is=new Isotope();
-	is->_name=node.get<std::string>("<xmlattr>.name");
+	is->_name=name;
 
 	is->_symbol=node.get<std::string>("symbol");
 
@@ -77,8 +71,8 @@ Isotope* Isotope::readIsotope(const ptree& node)
 
 	is->_state=node.get<std::string>("state");
 
-	units=um->get(node.get<std::string>("naturalAbundance.<xmlattr>.units","%"));
-	is->_naturalAbundance=node.get<double>("naturalAbundance",0.0)*units;
+	units=um->get(node.get<std::string>("halfLife.<xmlattr>.units","%"));
+	is->_abundance=node.get<double>("abundance",0.0)*units;
 
 	units=um->get(node.get<std::string>("halfLife.<xmlattr>.units","year"));
 	is->_halfLife=node.get<double>("halfLife",std::numeric_limits<double>::infinity())*units;
@@ -109,6 +103,8 @@ Isotope* Isotope::readIsotope(const ptree& node)
 	units=um->get(node.get<std::string>("xsAbsorption.<xmlattr>.units","barn"));
 	is->_xsAbsorption=node.get<double>("xsAbsorption")*units;
 
+	registry.insert(isotopePair(is->_name,is));
+
 	return is;
 }
 
@@ -122,7 +118,7 @@ Isotope::Isotope()
   _molarMass(0.0),
   _nuclearSpin(0.0),
   _state(""),
-  _naturalAbundance(0.0),
+  _abundance(0.0),
   _halfLife(0.0),
   _stable(true),
   _bCoherent(0.0),
@@ -150,9 +146,9 @@ const std::string& Isotope::getName() const
 	return _name;
 }
 
-double Isotope::getNaturalAbundance() const
+double Isotope::getAbundance() const
 {
-	return _naturalAbundance;
+	return _abundance;
 }
 
 double Isotope::getFormalCharge() const
@@ -202,7 +198,7 @@ bool Isotope::isCation() const
 
 void Isotope::print(std::ostream& os) const
 {
-	os<<"Isotope "<<_name<<" (A="<<getNNucleons()<<",Q="<<getFormalCharge()<<")";
+	os<<"Isotope "<<_name<<" ["<<_nProtons<<","<<_nNucleons<<"]";
 }
 
 std::ostream& operator<<(std::ostream& os,const Isotope& isotope)

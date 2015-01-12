@@ -1,8 +1,9 @@
 #include <algorithm>
+#include <cmath>
 
 #include "Isotope.h"
 #include "Element.h"
-#include "Isotope.h"
+#include "Units.h"
 
 namespace SX
 {
@@ -10,14 +11,16 @@ namespace SX
 namespace Chemistry
 {
 
+double Element::tolerance=1.0e-6;
+
 std::string Element::database="elements.xml";
 
-elementMap Element::registeredElements=elementMap();
+elementMap Element::registry=elementMap();
 
 Element* Element::buildFromDatabase(const std::string& name)
 {
-	auto it=registeredElements.find(name);
-	if (it!=registeredElements.end())
+	auto it=registry.find(name);
+	if (it!=registry.end())
 		return it->second;
 	else
 	{
@@ -30,47 +33,69 @@ Element* Element::buildFromDatabase(const std::string& name)
 				continue;
 
 			if (v.second.get<std::string>("<xmlattr>.name").compare(name)==0)
-			{
-				Element* element;
-				// if the element node has an attribute symbol then the element is built from its natural components
-				boost::optional<std::string> symb = v.second.get_optional<std::string>("<xmlattr>.symbol");
-				if (symb)
-					element=new Element(name,symb.get());
-				else
-				{
-					element=new Element(name);
-					BOOST_FOREACH(ptree::value_type const& vv, v.second)
-					{
-						if (vv.first.compare("isotope")!=0)
-							continue;
-
-						std::string name=vv.second.get<std::string>("<xmlattr>.name");
-						boost::optional<double> val = v.second.get_optional<double>("<xmlattr>.abundance");
-						if (val)
-							element->addIsotope(name,val.get());
-						else
-							element->addIsotope(name);
-					}
-				}
-				auto ret=registeredElements.insert(elementPair(name,element));
-				return ret.first->second;
-			}
+				return readElement(v.second);;
 		}
 	}
 	throw SX::Kernel::Error<Element>("Element "+name+" is not registered in the elements database");
 }
 
+Element* Element::readElement(const ptree& node)
+{
+
+	std::string name=node.get<std::string>("<xmlattr>.name");
+	auto it=registry.find(name);
+	if (it!=registry.end())
+		return it->second;
+
+	Element* element;
+
+	// if the element node has an attribute symbol then the element is built from its natural isotopes
+	boost::optional<const ptree&> symbol = node.get_child_optional("symbol");
+	if (symbol)
+		element=new Element(name,symbol.get().get_value<std::string>());
+	else
+	{
+		SX::Units::UnitsManager* um=SX::Units::UnitsManager::Instance();
+
+		element=new Element(name);
+		BOOST_FOREACH(ptree::value_type const& v, node)
+		{
+			if (v.first.compare("isotope")!=0)
+				continue;
+
+			std::string iname=v.second.get<std::string>("<xmlattr>.name");
+			boost::optional<const ptree&> abundance = v.second.get_child_optional("abundance");
+			if (abundance)
+			{
+				ptree node=abundance.get();
+				double units=um->get(node.get<std::string>("<xmlattr>.units","%"));
+				element->addIsotope(iname,node.get_value<double>()*units);
+			}
+			else
+				element->addIsotope(iname);
+		}
+	}
+
+	registry.insert(elementPair(name,element));
+
+	return element;
+}
+
 unsigned int Element::getNRegisteredElements()
 {
-	return registeredElements.size();
+	return registry.size();
 }
 
 void Element::registerElement(Element* el)
 {
-	auto it=registeredElements.find(el->getName());
-	if (it!=registeredElements.end())
+	auto it=registry.find(el->getName());
+	if (it!=registry.end())
 		throw SX::Kernel::Error<Element>("The element "+el->getName()+" is already registered in the elements database");
-	registeredElements.insert(elementPair(el->getName(),el));
+	registry.insert(elementPair(el->getName(),el));
+}
+
+Element::Element() : _name(""), _isotopes(), _abundances()
+{
 }
 
 Element::Element(const std::string& name, const std::string& symbol) : _name(name), _isotopes(), _abundances()
@@ -83,11 +108,11 @@ Element::Element(const std::string& name, const std::string& symbol) : _name(nam
 	for (auto is : isotopes)
 	{
 		_isotopes.push_back(is);
-		_abundances.push_back(is->getNaturalAbundance());
+		_abundances.push_back(is->getAbundance());
 	}
 }
 
-Element::Element(const std::string& name) : _name(name), _isotopes(), _abundances()
+Element::Element(const std::string& name, unsigned int nIsotopes) : _name(name), _isotopes(), _abundances()
 {
 }
 
@@ -95,8 +120,16 @@ Element::~Element()
 {
 }
 
-bool Element::addIsotope(Isotope* isotope)
+void Element::addIsotope(Isotope* isotope, double abundance)
 {
+
+	if (abundance<0.0 || abundance>1.0)
+		throw SX::Kernel::Error<Element>("Invalid value for abundance");
+
+	double sum=std::accumulate(_abundances.begin(),_abundances.end(),0.0);
+	sum += abundance;
+	if (sum>(1.0+tolerance))
+		throw SX::Kernel::Error<Element>("The sum of abundances exceeds 1.0");
 
 	if (!_isotopes.empty())
 		// Check that the isotope is chemically compatible with the element (same number of protons)
@@ -106,38 +139,32 @@ bool Element::addIsotope(Isotope* isotope)
 		// If the element already contains the isotope, return false
 		auto it=std::find(_isotopes.begin(),_isotopes.end(),isotope);
 		if (it!=_isotopes.end())
-			return false;
+			return;
 
 	_isotopes.push_back(isotope);
 
-	// Everything OK, return true
-	return true;
+	_abundances.push_back(abundance);
+
+	return;
 
 }
 
 void Element::addIsotope(const std::string& name)
 {
-
 	Isotope* is=Isotope::buildFromDatabase(name);
 
-	if (addIsotope(is))
-		_abundances.push_back(is->getNaturalAbundance());
+	addIsotope(is,is->getAbundance());
 
 	return;
 }
 
 void Element::addIsotope(const std::string& name, double abundance)
 {
-	if (abundance<0.0)
-		throw SX::Kernel::Error<Element>("Negative value for isotope abundance.");
-
 	Isotope* is=Isotope::buildFromDatabase(name);
 
-	if (addIsotope(is))
-		_abundances.push_back(abundance);
+	addIsotope(is,abundance);
 
 	return;
-
 }
 
 const std::string& Element::getName() const
@@ -150,6 +177,19 @@ unsigned int Element::getNIsotopes() const
 	return _isotopes.size();
 }
 
+double Element::getMolarMass() const
+{
+
+	double sum=std::accumulate(_abundances.begin(),_abundances.end(),0.0);
+	if (std::abs(sum-1.0)>tolerance)
+		throw SX::Kernel::Error<Element>("The sum of abundances is not equal to 1.0");
+
+	double mm(0.0);
+	auto pit=_abundances.begin();
+	for (auto iit=_isotopes.begin();iit!=_isotopes.end();++iit,++pit)
+		mm += (*pit) * ((*iit)->getMolarMass());
+	return mm/sum;
+}
 
 } // end namespace Chemistry
 

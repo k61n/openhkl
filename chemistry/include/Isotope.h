@@ -36,6 +36,7 @@
 #include <set>
 #include <string>
 #include <stdexcept>
+#include <utility>
 
 #include <boost/foreach.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -62,27 +63,29 @@ class Isotope
 
 public:
 
+	//! Return a pointer to an Isotope built from the isotopes XML database
 	static Isotope* buildFromDatabase(const std::string& name);
 
 	//! Returns the number of registered isotopes
 	static unsigned int getNRegisteredIsotopes();
 
-	static void registerIsotope(Isotope* is);
-
+	//! Returns the set of Isotopes whose property |prop| matches the value |value|
 	template<typename T>
-	static isotopeSet getIsotopes(const std::string& key, T value);
+	static isotopeSet getIsotopes(const std::string& prop, T value);
 
+	//! Returns the value of property |prop| for isotope |name|
 	template<typename T>
 	static T getProperty(const std::string& name, const std::string& prop);
 
 private:
 
+	//! Read an isotope XML node and returns the corresponding Isotope object
 	static Isotope* readIsotope(const ptree& node);
 
 private:
 
 	static std::string database;
-	static isotopeMap registeredIsotopes;
+	static isotopeMap registry;
 
 public:
 
@@ -99,7 +102,7 @@ public:
 	const std::string& getName() const;
 
 	//! Returns the abundance of this Isotope
-	double getNaturalAbundance() const;
+	double getAbundance() const;
 
 	//! Returns the formal charge of this Isotope
 	double getFormalCharge() const;
@@ -142,7 +145,7 @@ private:
 	double _molarMass;
 	double _nuclearSpin;
 	std::string _state;
-	double _naturalAbundance;
+	double _abundance;
 	double _halfLife;
 	bool _stable;
 	std::complex<double> _bCoherent;
@@ -186,36 +189,40 @@ T Isotope::getProperty(const std::string& name, const std::string& prop)
 }
 
 template<typename T>
-isotopeSet Isotope::getIsotopes(const std::string& key, T value)
+isotopeSet Isotope::getIsotopes(const std::string& prop, T value)
 {
-	isotopeSet ismap;
+	isotopeSet isset;
 
+	// Open and read the isotopes XML database
 	ptree root;
 	read_xml(database,root);
 
+	// Loop over the nodes of the isotopes XML database
 	BOOST_FOREACH(ptree::value_type const& v, root.get_child("isotopes"))
 	{
+		// If the node is not an isotope node, ignore it
 		if (v.first.compare("isotope")!=0)
 			continue;
 
-		if (v.second.get<T>(key)==value)
+		// Search for the target property among the available ones for this isotope
+		boost::optional<T> opt=v.second.get_optional<T>(prop);
+		if (opt)
 		{
-			std::string name=v.second.get<std::string>("<xmlattr>.name");
-			auto p=registeredIsotopes.find(name);
-			if (p!=registeredIsotopes.end())
-				ismap.insert(p->second);
-			else
+			// Case where the property was found and matches the target value
+			if (opt.get()==value)
 			{
-				Isotope* is=buildFromDatabase(name);
-				auto ret=registeredIsotopes.insert(isotopePair(name,is));
-				ismap.insert(ret.first->second);
+				Isotope* is=readIsotope(v.second);
+				isset.insert(is);
 			}
 		}
 	}
 
-	return ismap;
-}
+	// If the search gave no match, throws
+	if (isset.empty())
+		throw SX::Kernel::Error<Isotope>("No isotopes matches property "+prop+" with value "+value);
 
+	return isset;
+}
 
 } // end namespace Chemistry
 
