@@ -1,0 +1,10 @@
+<elements>
+<element name="U">
+<isotope name="U[235]">
+<abundance>77.3</abundance>
+</isotope>
+<isotope name="U[238]">
+<abundance>22.7</abundance>
+</isotope>
+</element>
+</elements>

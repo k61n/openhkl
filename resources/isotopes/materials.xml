@@ -1,0 +1,54 @@
+<materials>
+<material name="CH4" fillingMode="MassFraction">
+	<density units="g/cm3">1.235</density>
+
+	<element name="C">
+	<symbol>C</symbol>	
+	<fraction units="%">75.0</fraction>
+	</element>
+
+	<element name="H">
+	<symbol>H</symbol>	
+	<fraction units="%">25.0</fraction>
+	</element>
+</material>
+
+<material name="H2O" fillingMode="MassFraction">
+	<density units="g/cm3">1.000</density>
+	
+	<element name="O">
+	<symbol>O</symbol>
+	<fraction units="%">88.88888</fraction>
+	</element>
+
+	<element name="H">
+	<symbol>H</symbol>
+	<fraction units="%">11.11111</fraction>
+	</element>
+</material>
+
+<material name="CH41" fillingMode="MoleFraction">
+	<density units="g/cm3">1.235</density>
+	
+	<element name="C">
+	<symbol>C</symbol>
+	<fraction units="%">20.0</fraction>
+	</element>
+
+	<element name="H">
+	<symbol>H</symbol>
+	<fraction units="%">80.0</fraction>
+	</element>
+</material>
+
+<material name="mixture" fillingMode="MassFraction">
+	<density units="g/cm3">1.235</density>
+	<material name="water" material="H2O">
+	<fraction units="%">50.0</fraction>
+	</material>
+	<material name="methane" material="CH4">
+	<fraction units="%">50.0</fraction>
+	</material>
+</material>
+
+</materials>
