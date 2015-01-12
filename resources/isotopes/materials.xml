@@ -1,5 +1,5 @@
 <materials>
-<material name="CH4" filling_mode="mass_fraction">
+<material name="CH4" state="gaz" filling_mode="mass_fraction">
 	<density units="g/cm3">1.235</density>
 
 	<element name="C">

@@ -142,7 +142,7 @@ static const double g_per_mole=g/mole;
 static const double Kelvin=1.0;
 
 // Energy units
-static const double J=mm*kg/s/s;
+static const double J=m*kg/s/s;
 static const double J_per_mole=1.66055927e-24*J;
 static const double cal=4.184*J;
 static const double cal_per_mole=6.94778e-24*J;
@@ -204,6 +204,7 @@ static const double c = 299792458.0*m/s;
 static const double h=6.626176e-34*J*s;
 static const double hbar=h/twopi;
 static const double kB = 1.3806513e-23*J/K;
+static const double R=8.3144621*J/mole/K;
 
 
 } //Namespace Units

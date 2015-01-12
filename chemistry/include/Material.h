@@ -61,6 +61,8 @@ public:
 
 	enum class FillingMode : unsigned int {MassFraction=0,MoleFraction=1,numberOfAtoms=2};
 
+	enum class State : unsigned int {Solid=0,Liquid=1,Gaz=2};
+
 public:
 
 	static Material* buildFromDatabase(const std::string& name);
@@ -71,6 +73,7 @@ private:
 
 private:
 
+	static std::map<std::string,State> _toState;
 	static std::map<std::string,FillingMode> _toFillingMode;
 	static double tolerance;
 	static std::string database;
@@ -82,7 +85,7 @@ public:
 
 	Material(const Material& other)=delete;
 
-	Material(const std::string& name, double density=1.0, FillingMode fillingMode=FillingMode::MassFraction);
+	Material(const std::string& name, State state=State::Solid, FillingMode fillingMode=FillingMode::MassFraction);
 
 	~Material();
 
@@ -103,6 +106,8 @@ public:
 
 	void setDensity(double density);
 
+	void setDensity(double pressure, double temperature);
+
 	const elementVector& getElements() const;
 
 	std::map<Element*,double> getMoleFractions() const;
@@ -115,6 +120,7 @@ private:
 
 	std::string _name;
 	double _density;
+	State _state;
 	FillingMode _fillingMode;
 	elementVector _elements;
 	std::vector<double> _fractions;

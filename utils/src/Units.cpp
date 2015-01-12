@@ -54,7 +54,8 @@ std::unordered_map<std::string,double> UnitsManager::_unitsMap =
 		{"uma",uma},
 		{"g_per_mole",g_per_mole},
 		{"g/cm3",g_per_cm3},
-		{"kg/m3",kg_per_m3}
+		{"kg/m3",kg_per_m3},
+		{"R",R}
 };
 
 double UnitsManager::get(const std::string& units)

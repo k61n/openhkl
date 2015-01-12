@@ -20,6 +20,12 @@ std::string Material::database="materials.xml";
 
 materialMap Material::registeredMaterials=materialMap();
 
+std::map<std::string,Material::State> Material::_toState={
+		{"solid",Material::State::Solid},
+		{"liquid",Material::State::Liquid},
+		{"gaz",Material::State::Gaz}
+};
+
 std::map<std::string,Material::FillingMode> Material::_toFillingMode={
 		{"mass_fraction",Material::FillingMode::MassFraction},
 		{"mole_fraction",Material::FillingMode::MoleFraction},
@@ -51,10 +57,13 @@ Material* Material::buildFromDatabase(const std::string& name)
 
 Material* Material::readMaterial(const ptree& node)
 {
-	double density = node.get<double>("density",1.0);
-	std::string fillingMode = node.get<std::string>("<xmlattr>.filling_mode","mass_fraction");
-	FillingMode fMode=_toFillingMode.at(fillingMode);
-	Material* material=new Material(node.get<std::string>("<xmlattr>.name"),density,fMode);
+
+	SX::Units::UnitsManager* um=SX::Units::UnitsManager::Instance();
+
+	// Get the physical states and the filling modes of the material to be constructed
+	State state=_toState.at(node.get<std::string>("<xmlattr>.state","solid"));
+	FillingMode fMode=_toFillingMode.at(node.get<std::string>("<xmlattr>.filling_mode","mass_fraction"));
+	Material* material=new Material(node.get<std::string>("<xmlattr>.name"),state,fMode);
 	BOOST_FOREACH(ptree::value_type const& v, node)
 	{
 		if (v.first.compare("material")==0)
@@ -100,7 +109,6 @@ Material* Material::readMaterial(const ptree& node)
 			if (fMode==FillingMode::MassFraction || fMode==FillingMode::MoleFraction)
 			{
 				boost::optional<const ptree&> fraction = v.second.get_child_optional("fraction");
-				SX::Units::UnitsManager* um=SX::Units::UnitsManager::Instance();
 				if (fraction)
 				{
 					ptree node=fraction.get();
@@ -124,14 +132,44 @@ Material* Material::readMaterial(const ptree& node)
 		}
 	}
 
+	if (material->_state==State::Gaz)
+	{
+		boost::optional<const ptree&> density = node.get_child_optional("density");
+		if (density)
+		{
+			ptree node=density.get();
+			double units=um->get(node.get<std::string>("<xmlattr>.units","kg/m3"));
+			material->setDensity(node.get_value<double>()*units);
+		}
+		else
+		{
+			const ptree& pNode=node.get_child("pressure");
+			double pUnits=um->get(pNode.get<std::string>("<xmlattr>.units","Pa"));
+			double pressure=pNode.get_value<double>()*pUnits;
+
+			const ptree& tNode=node.get_child("temperature");
+			double tUnits=um->get(tNode.get<std::string>("<xmlattr>.units","K"));
+			double temperature=tNode.get_value<double>()*tUnits;
+
+			material->setDensity(pressure,temperature);
+		}
+	}
+	else
+	{
+		const ptree& density = node.get_child("density");
+		double units=um->get(density.get<std::string>("<xmlattr>.units","kg/m3"));
+		material->setDensity(density.get_value<double>()*units);
+	};
+
 	registeredMaterials.insert(materialPair(material->_name,material));
 
 	return material;
 }
 
-Material::Material(const std::string& name, double density, FillingMode fillingMode)
+Material::Material(const std::string& name, State state, FillingMode fillingMode)
 : _name(name),
-  _density(density),
+  _density(1.0),
+  _state(state),
   _fillingMode(fillingMode),
   _elements(),
   _fractions()
@@ -289,9 +327,8 @@ std::map<Element*,double> Material::getNAtomsPerVolume() const
 
 	SX::Units::UnitsManager* um=SX::Units::UnitsManager::Instance();
 
-	double gpercm3=um->get("g")/um->get("cm3");
 	for (auto it : getMassFractions())
-		nAtoms.insert(std::pair<Element*,double>(it.first,um->get("avogadro")*it.second*_density*gpercm3/it.first->getMolarMass()));
+		nAtoms.insert(std::pair<Element*,double>(it.first,um->get("avogadro")*it.second*_density/it.first->getMolarMass()));
 
 	return nAtoms;
 }
@@ -327,8 +364,30 @@ double Material::getDensity() const
 void Material::setDensity(double density)
 {
 	if (density<=0)
-		throw SX::Kernel::Error<Material>("Negative value for material density");
+		throw SX::Kernel::Error<Material>("Negative density value");
 	_density=density;
+}
+
+void Material::setDensity(double pressure, double temperature)
+{
+
+	if (_state!=State::Gaz)
+		throw SX::Kernel::Error<Material>("Setting the density from pressure and temperature only applies for materials in gaz state");;
+
+	if (pressure<=0 || temperature<=0)
+		throw SX::Kernel::Error<Material>("Negative pressure and/or temperature values");
+
+	SX::Units::UnitsManager* um=SX::Units::UnitsManager::Instance();
+
+	std::map<Element*,double> m=getMoleFractions();
+
+	double moleDensity=pressure/um->get("R")/temperature;
+	double density=0.0;
+
+	for (auto it : m)
+		density+=moleDensity*it.second*it.first->getMolarMass();
+
+	setDensity(density);
 }
 
 const elementVector& Material::getElements() const

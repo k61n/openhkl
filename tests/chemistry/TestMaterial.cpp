@@ -37,7 +37,8 @@ BOOST_AUTO_TEST_CASE(Test_Material)
 //	for (auto it : water->getNAtomsPerVolume())
 //		std::cout<<it.first->getName()<<" "<<it.second<<std::endl;
 
-	Material* mixture=new Material("mixture",1.235,Material::FillingMode::MassFraction);
+	Material* mixture=new Material("mixture",Material::State::Gaz,Material::FillingMode::MassFraction);
+	mixture->setDensity(1.235);
 	mixture->addMaterial(methane,0.5);
 	mixture->addMaterial(water,0.5);
 	std::cout<<Element::getNRegisteredElements()<<std::endl;

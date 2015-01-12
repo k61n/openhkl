@@ -45,10 +45,10 @@ BOOST_AUTO_TEST_CASE(Test_Isotope)
 	BOOST_CHECK_EQUAL(Isotope::getNRegisteredIsotopes(),4);
 
 	// Check that accessing a given property of a given isotope of the isotopes database is OK
-	BOOST_CHECK_EQUAL(Isotope::getProperty<int>("N[14]","nNucleons"),14);
+	BOOST_CHECK_EQUAL(Isotope::getProperty<int>("N[14]","n_nucleons"),14);
 
 	// Check that accessing a given property of an unknown isotope throws
-	BOOST_CHECK_THROW(Isotope::getProperty<int>("XXXX","nNucleons"),SX::Kernel::Error<Isotope>);
+	BOOST_CHECK_THROW(Isotope::getProperty<int>("XXXX","n_nucleons"),SX::Kernel::Error<Isotope>);
 
 	// Check that accessing an unknown property of the isotopes database throws
 	BOOST_CHECK_THROW(Isotope::getProperty<int>("N[14]","XXXXX"),SX::Kernel::Error<Isotope>);
