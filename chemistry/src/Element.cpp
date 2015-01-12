@@ -81,17 +81,15 @@ Element* Element::readElement(const ptree& node)
 	return element;
 }
 
+bool Element::hasElement(const std::string& name)
+{
+	auto it=registry.find(name);
+	return (it!=registry.end());
+}
+
 unsigned int Element::getNRegisteredElements()
 {
 	return registry.size();
-}
-
-void Element::registerElement(Element* el)
-{
-	auto it=registry.find(el->getName());
-	if (it!=registry.end())
-		throw SX::Kernel::Error<Element>("The element "+el->getName()+" is already registered in the elements database");
-	registry.insert(elementPair(el->getName(),el));
 }
 
 Element::Element() : _name(""), _isotopes(), _abundances()
@@ -100,6 +98,10 @@ Element::Element() : _name(""), _isotopes(), _abundances()
 
 Element::Element(const std::string& name, const std::string& symbol) : _name(name), _isotopes(), _abundances()
 {
+
+	if (hasElement(name))
+		throw SX::Kernel::Error<Element>("The registry already contains an element with "+name+" name");
+
 	isotopeSet isotopes=Isotope::getIsotopes<std::string>("symbol",symbol);
 
 	_isotopes.reserve(isotopes.size());
@@ -110,10 +112,14 @@ Element::Element(const std::string& name, const std::string& symbol) : _name(nam
 		_isotopes.push_back(is);
 		_abundances.push_back(is->getAbundance());
 	}
+
+	registry.insert(elementPair(name,this));
 }
 
-Element::Element(const std::string& name, unsigned int nIsotopes) : _name(name), _isotopes(), _abundances()
+Element::Element(const std::string& name) : _name(name), _isotopes(), _abundances()
 {
+	if (hasElement(name))
+		throw SX::Kernel::Error<Element>("The registry already contains an element with "+name+" name");
 }
 
 Element::~Element()

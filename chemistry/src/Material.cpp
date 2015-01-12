@@ -21,9 +21,9 @@ std::string Material::database="materials.xml";
 materialMap Material::registeredMaterials=materialMap();
 
 std::map<std::string,Material::FillingMode> Material::_toFillingMode={
-		{"MassFraction",Material::FillingMode::MassFraction},
-		{"MoleFraction",Material::FillingMode::MoleFraction},
-		{"numberOfAtoms",Material::FillingMode::numberOfAtoms}
+		{"mass_fraction",Material::FillingMode::MassFraction},
+		{"mole_fraction",Material::FillingMode::MoleFraction},
+		{"number_of_atoms",Material::FillingMode::numberOfAtoms}
 };
 
 Material* Material::buildFromDatabase(const std::string& name)
@@ -52,7 +52,7 @@ Material* Material::buildFromDatabase(const std::string& name)
 Material* Material::readMaterial(const ptree& node)
 {
 	double density = node.get<double>("density",1.0);
-	std::string fillingMode = node.get<std::string>("<xmlattr>.fillingMode","MassFraction");
+	std::string fillingMode = node.get<std::string>("<xmlattr>.filling_mode","mass_fraction");
 	FillingMode fMode=_toFillingMode.at(fillingMode);
 	Material* material=new Material(node.get<std::string>("<xmlattr>.name"),density,fMode);
 	BOOST_FOREACH(ptree::value_type const& v, node)

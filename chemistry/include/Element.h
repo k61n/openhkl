@@ -64,10 +64,9 @@ public:
 	//! Returns the number of registered elements
 	static unsigned int getNRegisteredElements();
 
-	//! Register an Element in the registry
-	static void registerElement(Element* el);
-
 	static Element* readElement(const ptree& node);
+
+	static bool hasElement(const std::string& name);
 
 private:
 
@@ -84,7 +83,7 @@ public:
 	Element(const std::string& name, const std::string& symbol);
 
 	//! Constructs an empty Element
-	Element(const std::string& name, unsigned int nIsotopes=1);
+	Element(const std::string& name);
 
 	//! Destructor
 	~Element();

@@ -58,50 +58,50 @@ Isotope* Isotope::readIsotope(const ptree& node)
 
 	is->_element=node.get<std::string>("element");
 
-	is->_nProtons=node.get<int>("nProtons");
+	is->_nProtons=node.get<int>("n_protons");
 
-	is->_nNucleons=node.get<int>("nNucleons");
+	is->_nNucleons=node.get<int>("n_nucleons");
 
 	is->_nElectrons=is->_nProtons;
 
 	units=um->get(node.get<std::string>("molarMass.<xmlattr>.units","uma"));
-	is->_molarMass=node.get<double>("molarMass")*units;
+	is->_molarMass=node.get<double>("molar_mass")*units;
 
-	is->_nuclearSpin=node.get<double>("nuclearSpin");
+	is->_nuclearSpin=node.get<double>("nuclear_spin");
 
 	is->_state=node.get<std::string>("state");
 
-	units=um->get(node.get<std::string>("halfLife.<xmlattr>.units","%"));
+	units=um->get(node.get<std::string>("half_life.<xmlattr>.units","%"));
 	is->_abundance=node.get<double>("abundance",0.0)*units;
 
 	units=um->get(node.get<std::string>("halfLife.<xmlattr>.units","year"));
-	is->_halfLife=node.get<double>("halfLife",std::numeric_limits<double>::infinity())*units;
+	is->_halfLife=node.get<double>("half_life",std::numeric_limits<double>::infinity())*units;
 
 	is->_stable=node.get<bool>("stable");
 
-	units=um->get(node.get<std::string>("bCoherent.<xmlattr>.units","fm"));
-	is->_bCoherent=node.get<std::complex<double>>("bCoherent")*units;
+	units=um->get(node.get<std::string>("b_coherent.<xmlattr>.units","fm"));
+	is->_bCoherent=node.get<std::complex<double>>("b_coherent")*units;
 
-	units=um->get(node.get<std::string>("bIncoherent.<xmlattr>.units","fm"));
-	is->_bIncoherent=node.get<std::complex<double>>("bIncoherent")*units;
+	units=um->get(node.get<std::string>("b_incoherent.<xmlattr>.units","fm"));
+	is->_bIncoherent=node.get<std::complex<double>>("b_incoherent")*units;
 
-	units=um->get(node.get<std::string>("bPlus.<xmlattr>.units","fm"));
-	is->_bPlus=node.get<std::complex<double>>("bPlus",is->_bCoherent)*units;
+	units=um->get(node.get<std::string>("b_plus.<xmlattr>.units","fm"));
+	is->_bPlus=node.get<std::complex<double>>("b_plus",is->_bCoherent)*units;
 
-	units=um->get(node.get<std::string>("bMinus.<xmlattr>.units","fm"));
-	is->_bMinus=node.get<std::complex<double>>("bMinus",is->_bCoherent)*units;
+	units=um->get(node.get<std::string>("b_minus.<xmlattr>.units","fm"));
+	is->_bMinus=node.get<std::complex<double>>("b_minus",is->_bCoherent)*units;
 
-	units=um->get(node.get<std::string>("xsCoherent.<xmlattr>.units","barn"));
-	is->_xsCoherent=node.get<double>("xsCoherent")*units;
+	units=um->get(node.get<std::string>("xs_coherent.<xmlattr>.units","barn"));
+	is->_xsCoherent=node.get<double>("xs_coherent")*units;
 
-	units=um->get(node.get<std::string>("xsIncoherent.<xmlattr>.units","barn"));
-	is->_xsIncoherent=node.get<double>("xsIncoherent")*units;
+	units=um->get(node.get<std::string>("xs_incoherent.<xmlattr>.units","barn"));
+	is->_xsIncoherent=node.get<double>("xs_incoherent")*units;
 
-	units=um->get(node.get<std::string>("xsScattering.<xmlattr>.units","barn"));
-	is->_xsScattering=node.get<double>("xsScattering")*units;
+	units=um->get(node.get<std::string>("xs_scattering.<xmlattr>.units","barn"));
+	is->_xsScattering=node.get<double>("xs_scattering")*units;
 
-	units=um->get(node.get<std::string>("xsAbsorption.<xmlattr>.units","barn"));
-	is->_xsAbsorption=node.get<double>("xsAbsorption")*units;
+	units=um->get(node.get<std::string>("xs_absorption.<xmlattr>.units","barn"));
+	is->_xsAbsorption=node.get<double>("xs_absorption")*units;
 
 	registry.insert(isotopePair(is->_name,is));
 
