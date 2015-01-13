@@ -70,4 +70,13 @@ BOOST_AUTO_TEST_CASE(Test_Material)
 	// Check that the registry of materials has been correctly updated
 	BOOST_CHECK_EQUAL(Material::getNRegisteredMaterials(),4);
 
+	// Build a methane from the materials database
+	Material* methane2=Material::buildFromDatabase("CH4");
+	// Check that the registry of materials has been correctly updated
+	BOOST_CHECK_EQUAL(Material::getNRegisteredMaterials(),5);
+	// Check that the registry of elements has not been updated
+	BOOST_CHECK_EQUAL(Element::getNRegisteredElements(),3);
+	// Check that it corresponds (chemically) to the the methane previously defined
+	BOOST_CHECK_EQUAL(*methane2==methane,true);
+
 }

@@ -1,15 +1,15 @@
 <materials>
-<material name="CH4" state="gaz" filling_mode="mass_fraction">
-	<density units="g/cm3">1.235</density>
+<material name="CH4" state="gaz" filling_mode="mole_fraction">
+	<density units="kg/m3">1.235</density>
 
-	<element name="C">
+	<element name="carbon">
 	<symbol>C</symbol>	
-	<fraction units="%">75.0</fraction>
+	<fraction units="%">20.0</fraction>
 	</element>
 
-	<element name="H">
+	<element name="hydrogen">
 	<symbol>H</symbol>	
-	<fraction units="%">25.0</fraction>
+	<fraction units="%">80.0</fraction>
 	</element>
 </material>
 

@@ -99,6 +99,9 @@ public:
 	//! Assignment operator (deleted)
 	Element& operator=(const Element& other)=delete;
 
+	//! Add a pointer to an Isotope object with a given abudance to this Element
+	void addIsotope(Isotope* isotope, double abundance);
+
 	//! Add an isotope to this Element using its natural abundance
 	void addIsotope(const std::string& name);
 
@@ -122,8 +125,7 @@ public:
 
 private:
 
-	void addIsotope(Isotope* isotope, double abundance);
-
+	//! Register an Element object
 	void registerElement(Element* element);
 
 private:
