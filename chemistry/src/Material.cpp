@@ -200,8 +200,8 @@ bool Material::operator==(const Material& other) const
 			(mf1.size() == mf2.size()) &&
 			std::equal(mf1.begin(),
 					   mf1.end(),
-					   mf1.begin(),
-					   [] (elementContentsPair a, elementContentsPair b) { return a.first==b.first && a.second==b.second;});
+					   mf2.begin(),
+					   [] (elementContentsPair a, elementContentsPair b) { return a.first==b.first && std::abs(a.second-b.second)<tolerance;});
 }
 
 void Material::registerMaterial(Material* material)
