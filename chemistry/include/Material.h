@@ -50,7 +50,8 @@ class Element;
 
 class Material;
 
-typedef std::vector<Element*> elementVector;
+typedef std::pair<Element*,double> elementContentsPair;
+typedef std::map<Element*,double> elementContentsMap;
 typedef std::pair<std::string,Material*> materialPair;
 typedef std::map<std::string,Material*> materialMap;
 
@@ -59,16 +60,24 @@ class Material
 
 public:
 
-	enum class FillingMode : unsigned int {MassFraction=0,MoleFraction=1,numberOfAtoms=2};
+	enum class FillingMode : unsigned int {MassFraction=0,MoleFraction=1,NumberOfAtoms=2};
 
 	enum class State : unsigned int {Solid=0,Liquid=1,Gaz=2};
 
 public:
 
+	//! Returns a pointer to a Material object build from the materials database
 	static Material* buildFromDatabase(const std::string& name);
+
+	//! Returns the number of registered materials
+	static unsigned int getNRegisteredMaterials();
+
+	//! Returns true if a Material with a given name has been registered
+	bool hasMaterial(const std::string& name);
 
 private:
 
+	//! Returns a pointer to a Material object built from an XML node
 	static Material* readMaterial(const ptree& node);
 
 private:
@@ -77,44 +86,74 @@ private:
 	static std::map<std::string,FillingMode> _toFillingMode;
 	static double tolerance;
 	static std::string database;
-	static materialMap registeredMaterials;
+	static materialMap registry;
 
 public:
 
+	//! Default constructor (deleted)
 	Material()=delete;
 
+	//! Copy constructor (deleted)
 	Material(const Material& other)=delete;
 
+	//! Constructs a empty Material with a given name, state and filling mode.
 	Material(const std::string& name, State state=State::Solid, FillingMode fillingMode=FillingMode::MassFraction);
 
+	//! Destructor
 	~Material();
 
+	//! Returns true if two Materials are the same (same density, state and mass fractions)
+	bool operator==(const Material& other) const;
+
+	//! Add an Element to this Material
 	void addElement(Element* element, double fraction);
 
+	//! Add an Element to this Material. The Element will be built from the elements database
 	void addElement(const std::string& name, double fraction);
 
+	//! Add a Material to this Material (that will be a composite of materials)
 	void addMaterial(Material* material, double fraction);
 
+	//! Add a Material to this Material (that will be a composite of materials). The Material will be built from the materials database
 	void addMaterial(const std::string& name, double fraction);
 
+	//! Returns the name of this Material
 	const std::string& getName() const;
 
-	//! Returns the number of elements this Material is made of
+	//! Returns the number of elements of this Material
 	unsigned int getNElements() const;
 
+	//! Returns the density of this Material
 	double getDensity() const;
 
+	//! Set the density of this Material
 	void setDensity(double density);
 
+	//! Set the density of this Material from pressure and temperature values. Only applies for Material in Gaz state
 	void setDensity(double pressure, double temperature);
 
-	const elementVector& getElements() const;
+	//! Returns a map of the mole fractions per element
+	elementContentsMap getMoleFractions() const;
 
-	std::map<Element*,double> getMoleFractions() const;
+	//! Returns a map of the mass fractions per element
+	elementContentsMap getMassFractions() const;
 
-	std::map<Element*,double> getMassFractions() const;
+	//! Returns a map of the number of atoms per volume units per element (1/m3)
+	elementContentsMap getNAtomsPerVolume() const;
 
-	std::map<Element*,double> getNAtomsPerVolume() const;
+	//! Returns a map of the number of electrons per volume units per element (1/m3)
+	elementContentsMap getNElectronsPerVolume() const;
+
+	//! Returns the total number of atoms per volume units (1/m3)
+	double getNAtomsTotalPerVolume() const;
+
+	//! Returns the total number of electrons per volume units (1/m3)
+	double getNElectronsTotalPerVolume() const;
+
+private:
+
+	//! Register a Material object
+	void registerMaterial(Material* material);
 
 private:
 
@@ -122,8 +161,7 @@ private:
 	double _density;
 	State _state;
 	FillingMode _fillingMode;
-	elementVector _elements;
-	std::vector<double> _fractions;
+	elementContentsMap _elements;
 
 };
 

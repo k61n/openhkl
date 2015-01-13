@@ -50,6 +50,8 @@ class Isotope;
 
 class Element;
 
+typedef std::pair<Isotope*,double> isotopeContentsPair;
+typedef std::map<Isotope*,double> isotopeContentsMap;
 typedef std::pair<std::string,Element*> elementPair;
 typedef std::map<std::string,Element*> elementMap;
 
@@ -75,6 +77,9 @@ private:
 	static elementMap registry;
 
 public:
+
+	//! Default constructor (deleted)
+	Element()=delete;
 
 	//! Copy constructor (deleted)
 	Element(const Element& other)=delete;
@@ -106,18 +111,21 @@ public:
 	//! Returns the molar mass of the element (according to its isotopes composition)
 	double getMolarMass() const;
 
-private:
+	//! Returns the number of protons of the element
+	unsigned int getNProtons() const;
 
-	//! Constructs a default Element
-	Element();
+	//! Returns the number of electrons of the element
+	unsigned int getNElectrons() const;
+
+private:
 
 	void addIsotope(Isotope* isotope, double abundance);
 
+	void registerElement(Element* element);
+
 private:
 	std::string _name;
-	std::vector<Isotope*> _isotopes;
-	std::vector<double> _abundances;
-
+	isotopeContentsMap _isotopes;
 };
 
 } // end namespace Chemistry

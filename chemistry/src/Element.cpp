@@ -92,64 +92,56 @@ unsigned int Element::getNRegisteredElements()
 	return registry.size();
 }
 
-Element::Element() : _name(""), _isotopes(), _abundances()
+Element::Element(const std::string& name, const std::string& symbol) : _name(name), _isotopes()
 {
-}
-
-Element::Element(const std::string& name, const std::string& symbol) : _name(name), _isotopes(), _abundances()
-{
-
-	if (hasElement(name))
-		throw SX::Kernel::Error<Element>("The registry already contains an element with "+name+" name");
-
 	isotopeSet isotopes=Isotope::getIsotopes<std::string>("symbol",symbol);
 
-	_isotopes.reserve(isotopes.size());
-	_abundances.reserve(isotopes.size());
-
 	for (auto is : isotopes)
-	{
-		_isotopes.push_back(is);
-		_abundances.push_back(is->getAbundance());
-	}
+		_isotopes.insert(isotopeContentsPair(is,is->getAbundance()));
 
-	registry.insert(elementPair(name,this));
+	registerElement(this);
 }
 
-Element::Element(const std::string& name) : _name(name), _isotopes(), _abundances()
+Element::Element(const std::string& name) : _name(name), _isotopes()
 {
-	if (hasElement(name))
-		throw SX::Kernel::Error<Element>("The registry already contains an element with "+name+" name");
+	registerElement(this);
 }
 
 Element::~Element()
 {
 }
 
+void Element::registerElement(Element* element)
+{
+	if (hasElement(element->_name))
+		throw SX::Kernel::Error<Element>("The registry already contains an element with "+element->_name+" name");
+	registry.insert(elementPair(element->_name,element));
+}
+
 void Element::addIsotope(Isotope* isotope, double abundance)
 {
+	// If the element already contains the isotope, return
+	auto it=_isotopes.find(isotope);
+	if (it!=_isotopes.end())
+		return;
 
 	if (abundance<0.0 || abundance>1.0)
 		throw SX::Kernel::Error<Element>("Invalid value for abundance");
 
-	double sum=std::accumulate(_abundances.begin(),_abundances.end(),0.0);
+	double sum=std::accumulate(std::begin(_isotopes),
+			                    std::end(_isotopes),
+			                    0.0,
+			                    [](double previous, const isotopeContentsPair& p){return previous+p.second;});
 	sum += abundance;
 	if (sum>(1.0+tolerance))
 		throw SX::Kernel::Error<Element>("The sum of abundances exceeds 1.0");
 
 	if (!_isotopes.empty())
 		// Check that the isotope is chemically compatible with the element (same number of protons)
-		if (isotope->getNProtons() != _isotopes[0]->getNProtons())
-			throw SX::Kernel::Error<Element>("Invalid number of protons.");
+		if (isotope->getNProtons() != _isotopes.begin()->first->getNProtons())
+			throw SX::Kernel::Error<Element>("Invalid number of protons");
 
-		// If the element already contains the isotope, return false
-		auto it=std::find(_isotopes.begin(),_isotopes.end(),isotope);
-		if (it!=_isotopes.end())
-			return;
-
-	_isotopes.push_back(isotope);
-
-	_abundances.push_back(abundance);
+	_isotopes.insert(isotopeContentsPair(isotope,abundance));
 
 	return;
 
@@ -185,16 +177,33 @@ unsigned int Element::getNIsotopes() const
 
 double Element::getMolarMass() const
 {
-
-	double sum=std::accumulate(_abundances.begin(),_abundances.end(),0.0);
+	double sum=std::accumulate(std::begin(_isotopes),
+			                    std::end(_isotopes),
+			                    0.0,
+			                    [](double previous, const isotopeContentsPair& p){return previous+p.second;});
 	if (std::abs(sum-1.0)>tolerance)
 		throw SX::Kernel::Error<Element>("The sum of abundances is not equal to 1.0");
 
 	double mm(0.0);
-	auto pit=_abundances.begin();
-	for (auto iit=_isotopes.begin();iit!=_isotopes.end();++iit,++pit)
-		mm += (*pit) * ((*iit)->getMolarMass());
+	for (auto it=_isotopes.begin();it!=_isotopes.end();++it)
+		mm += it->second * (it->first->getMolarMass());
 	return mm/sum;
+}
+
+unsigned int Element::getNElectrons() const
+{
+	if (_isotopes.empty())
+		throw SX::Kernel::Error<Element>("The element is empy");
+
+	return _isotopes.begin()->first->getNElectrons();
+}
+
+unsigned int Element::getNProtons() const
+{
+	if (_isotopes.empty())
+		throw SX::Kernel::Error<Element>("The element is empy");
+
+	return _isotopes.begin()->first->getNProtons();
 }
 
 } // end namespace Chemistry

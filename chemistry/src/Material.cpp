@@ -1,7 +1,6 @@
 #include <algorithm>
 #include <functional>
 #include <numeric>
-#include <iostream>
 
 #include "Error.h"
 #include "Element.h"
@@ -18,7 +17,7 @@ double Material::tolerance=1.0e-6;
 
 std::string Material::database="materials.xml";
 
-materialMap Material::registeredMaterials=materialMap();
+materialMap Material::registry=materialMap();
 
 std::map<std::string,Material::State> Material::_toState={
 		{"solid",Material::State::Solid},
@@ -29,13 +28,13 @@ std::map<std::string,Material::State> Material::_toState={
 std::map<std::string,Material::FillingMode> Material::_toFillingMode={
 		{"mass_fraction",Material::FillingMode::MassFraction},
 		{"mole_fraction",Material::FillingMode::MoleFraction},
-		{"number_of_atoms",Material::FillingMode::numberOfAtoms}
+		{"number_of_atoms",Material::FillingMode::NumberOfAtoms}
 };
 
 Material* Material::buildFromDatabase(const std::string& name)
 {
-	auto it=registeredMaterials.find(name);
-	if (it!=registeredMaterials.end())
+	auto it=registry.find(name);
+	if (it!=registry.end())
 		return it->second;
 	else
 	{
@@ -53,6 +52,11 @@ Material* Material::buildFromDatabase(const std::string& name)
 	}
 	throw SX::Kernel::Error<Material>("Material "+name+" is not registered in the materials database");
 
+}
+
+unsigned int Material::getNRegisteredMaterials()
+{
+	return registry.size();
 }
 
 Material* Material::readMaterial(const ptree& node)
@@ -100,7 +104,6 @@ Material* Material::readMaterial(const ptree& node)
 					throw SX::Kernel::Error<Material>("Misformatted XML 'material' node: must have 'natoms' tag");
 
 			}
-
 
 		}
 		else if (v.first.compare("element")==0)
@@ -161,19 +164,51 @@ Material* Material::readMaterial(const ptree& node)
 		material->setDensity(density.get_value<double>()*units);
 	};
 
-	registeredMaterials.insert(materialPair(material->_name,material));
+	registry.insert(materialPair(material->_name,material));
 
 	return material;
 }
 
+bool Material::hasMaterial(const std::string& name)
+{
+	auto it=registry.find(name);
+	return (it!=registry.end());
+}
+
 Material::Material(const std::string& name, State state, FillingMode fillingMode)
 : _name(name),
-  _density(1.0),
+  _density(0.0),
   _state(state),
   _fillingMode(fillingMode),
-  _elements(),
-  _fractions()
+  _elements()
 {
+	registerMaterial(this);
+}
+
+Material::~Material()
+{
+}
+
+bool Material::operator==(const Material& other) const
+{
+
+	elementContentsMap mf1=getMassFractions();
+	elementContentsMap mf2=other.getMassFractions();
+
+	return (_density==other._density) &&
+			(_state==other._state) &&
+			(mf1.size() == mf2.size()) &&
+			std::equal(mf1.begin(),
+					   mf1.end(),
+					   mf1.begin(),
+					   [] (elementContentsPair a, elementContentsPair b) { return a.first==b.first && a.second==b.second;});
+}
+
+void Material::registerMaterial(Material* material)
+{
+	if (hasMaterial(material->_name))
+		throw SX::Kernel::Error<Element>("The registry already contains a material with "+material->_name+" name");
+	registry.insert(materialPair(material->_name,material));
 }
 
 void Material::addElement(Element* element, double fraction)
@@ -183,92 +218,71 @@ void Material::addElement(Element* element, double fraction)
 	{
 		if (fraction<=0 || fraction>1)
 			throw SX::Kernel::Error<Material>("Invalid value for mole fraction");
-		double sum=std::accumulate(_fractions.begin(),_fractions.end(),fraction);
+		double sum=std::accumulate(std::begin(_elements),
+				                    std::end(_elements),
+				                    fraction,
+				                    [](const double previous, const elementContentsPair& p) { return previous+p.second; });
 		if (sum>(1.0+tolerance))
 			throw SX::Kernel::Error<Material>("The sum of mole fractions exceeds 1.0");
 	}
 
 	// If the material already contains the element, return
-	auto it=std::find(_elements.begin(),_elements.end(),element);
+	auto it=_elements.find(element);
 	if (it!=_elements.end())
-	{
-		unsigned int idx=std::distance(_elements.begin(),it);
-		_fractions[idx]+=fraction;
-	}
+		it->second += fraction;
 	else
-	{
-		_elements.push_back(element);
-		_fractions.push_back(fraction);
-	}
+		_elements.insert(elementContentsPair(element,fraction));
 
 	return;
 }
 
-std::map<Element*,double> Material::getMoleFractions() const
+void Material::addElement(const std::string& name, double fraction)
 {
+	Element* el=Element::buildFromDatabase(name);
 
-	std::map<Element*,double> fractions;
+	addElement(el,fraction);
 
-	switch(_fillingMode)
-	{
-	case FillingMode::MoleFraction:
-	{
-		auto eit=_elements.begin();
-		for (auto fit=_fractions.begin();fit!=_fractions.end();++fit,++eit)
-			fractions.insert(std::pair<Element*,double>(*eit,*fit));
-		break;
-	}
-
-	case FillingMode::MassFraction:
-	{
-		for (unsigned int i=0;i<_elements.size();++i)
-		{
-			double xi=1.0;
-			double mi=_elements[i]->getMolarMass();
-			for (unsigned int j=0;j<_elements.size();++j)
-			{
-				if (i==j) continue;
-				double mj=_elements[j]->getMolarMass();
-				xi+=(_fractions[j]/_fractions[i])*(mi/mj);
-				fractions.insert(std::pair<Element*,double>(_elements[i],1.0/xi));
-			}
-		}
-		break;
-	}
-
-	case FillingMode::numberOfAtoms:
-	{
-		double nAtoms=std::accumulate(_fractions.begin(),_fractions.end(),0.0);
-		auto eit=_elements.begin();
-		for (auto fit=_fractions.begin();fit!=_fractions.end();++fit,++eit)
-			fractions.insert(std::pair<Element*,double>(*eit,*fit/nAtoms));
-		break;
-	}
-
-	}
-
-	return fractions;
+	return;
 }
 
-std::map<Element*,double> Material::getMassFractions() const
+void Material::addMaterial(Material* material, double fraction)
+{
+	if (_fillingMode == FillingMode::NumberOfAtoms)
+		throw SX::Kernel::Error<Material>("Invalid filling mode");
+
+	for (auto it : material->getMassFractions())
+		addElement(it.first,fraction*it.second);
+}
+
+void Material::addMaterial(const std::string& name, double fraction)
+{
+	Material* mat=Material::buildFromDatabase(name);
+
+	addMaterial(mat,fraction);
+
+	return;
+}
+
+elementContentsMap Material::getMassFractions() const
 {
 
-	std::map<Element*,double> fractions;
+	elementContentsMap fractions;
 
 	switch(_fillingMode)
 	{
 	case FillingMode::MoleFraction:
 	{
-		for (unsigned int i=0;i<_elements.size();++i)
+		for (auto it1=_elements.begin();it1!=_elements.end();++it1)
 		{
 			double xi=1.0;
-			double mi=_elements[i]->getMolarMass();
-			for (unsigned int j=0;j<_elements.size();++j)
+			double mi=it1->first->getMolarMass();
+			for (auto it2=_elements.begin();it2!=_elements.end();++it2)
 			{
-				if (i==j) continue;
-				double mj=_elements[j]->getMolarMass();
-				xi+=(_fractions[j]/_fractions[i])*(mj/mi);
-				fractions.insert(std::pair<Element*,double>(_elements[i],1.0/xi));
+				if (it1==it2)
+					continue;
+				double mj=it2->first->getMolarMass();
+				xi+=(it2->second/it1->second)*(mj/mi);
+				fractions.insert(elementContentsPair(it1->first,1.0/xi));
 			}
 		}
 		break;
@@ -276,20 +290,17 @@ std::map<Element*,double> Material::getMassFractions() const
 
 	case FillingMode::MassFraction:
 	{
-		auto eit=_elements.begin();
-		for (auto fit=_fractions.begin();fit!=_fractions.end();++fit,++eit)
-			fractions.insert(std::pair<Element*,double>(*eit,*fit));
+		fractions = _elements;
 		break;
 	}
 
-	case FillingMode::numberOfAtoms:
+	case FillingMode::NumberOfAtoms:
 	{
 		double totalMass=0.0;
-		auto eit=_elements.begin();
-		for (unsigned int i=0;i<_elements.size();++i)
+		for (auto it=_elements.begin();it!=_elements.end();++it)
 		{
-			double fimi=_elements[i]->getMolarMass()*_fractions[i];
-			fractions.insert(std::pair<Element*,double>(*eit,fimi));
+			double fimi=it->first->getMolarMass()*it->second;
+			fractions.insert(elementContentsPair(it->first,fimi));
 			totalMass+=fimi;
 		}
 		for (auto& it : fractions)
@@ -302,48 +313,98 @@ std::map<Element*,double> Material::getMassFractions() const
 	return fractions;
 }
 
-void Material::addElement(const std::string& name, double fraction)
+elementContentsMap Material::getMoleFractions() const
 {
-	Element* el=Element::buildFromDatabase(name);
 
-	addElement(el,fraction);
+	elementContentsMap fractions;
 
-	return;
+	switch(_fillingMode)
+	{
+	case FillingMode::MoleFraction:
+	{
+		fractions = _elements;
+		break;
+	}
+
+	case FillingMode::MassFraction:
+	{
+		for (auto it1=_elements.begin();it1!=_elements.end();++it1)
+		{
+			double xi=1.0;
+			double mi=it1->first->getMolarMass();
+			for (auto it2=_elements.begin();it2!=_elements.end();++it2)
+			{
+				if (it1==it2) continue;
+				double mj=it2->first->getMolarMass();
+				xi+=(it2->second/it1->second)*(mi/mj);
+				fractions.insert(std::pair<Element*,double>(it1->first,1.0/xi));
+			}
+		}
+		break;
+	}
+
+	case FillingMode::NumberOfAtoms:
+	{
+		double nAtoms=std::accumulate(std::begin(_elements),
+				                       std::end(_elements),
+				                       0.0,
+				                       [](double previous, const elementContentsPair& p) {return previous+p.second;});
+		for (auto it=_elements.begin();it!=_elements.end();++it)
+			fractions.insert(std::pair<Element*,double>(it->first,it->second/nAtoms));
+		break;
+	}
+
+	}
+
+	return fractions;
 }
 
-void Material::addMaterial(const std::string& name, double fraction)
+elementContentsMap Material::getNAtomsPerVolume() const
 {
-	Material* mat=Material::buildFromDatabase(name);
-
-	addMaterial(mat,fraction);
-
-	return;
-}
-
-std::map<Element*,double> Material::getNAtomsPerVolume() const
-{
-
-	std::map<Element*,double> nAtoms;
+	elementContentsMap nAtoms;
 
 	SX::Units::UnitsManager* um=SX::Units::UnitsManager::Instance();
 
+	double fact=um->get("avogadro")*_density;
+
 	for (auto it : getMassFractions())
-		nAtoms.insert(std::pair<Element*,double>(it.first,um->get("avogadro")*it.second*_density/it.first->getMolarMass()));
+		nAtoms.insert(elementContentsPair(it.first,fact*it.second/it.first->getMolarMass()));
 
 	return nAtoms;
 }
 
-void Material::addMaterial(Material* material, double fraction)
+double Material::getNAtomsTotalPerVolume() const
 {
-	if (_fillingMode == FillingMode::numberOfAtoms)
-		throw SX::Kernel::Error<Material>("Invalid filling mode");
+	elementContentsMap nAtoms=getNAtomsPerVolume();
 
-	for (auto it : material->getMassFractions())
-		addElement(it.first,fraction*it.second);
+	return std::accumulate(std::begin(nAtoms),
+			                std::end(nAtoms),
+			                0.0,
+			                [](double previous, const elementContentsPair& p){return previous+p.second;});
 }
 
-Material::~Material()
+elementContentsMap Material::getNElectronsPerVolume() const
 {
+	elementContentsMap nAtoms;
+
+	SX::Units::UnitsManager* um=SX::Units::UnitsManager::Instance();
+
+	double fact=um->get("avogadro")*_density;
+
+	for (auto it : getMassFractions())
+		nAtoms.insert(elementContentsPair(it.first,static_cast<double>(fact*it.first->getNElectrons())*it.second/it.first->getMolarMass()));
+
+	return nAtoms;
+}
+
+double Material::getNElectronsTotalPerVolume() const
+{
+	elementContentsMap nElectrons=getNElectronsPerVolume();
+
+	return std::accumulate(std::begin(nElectrons),
+			                std::end(nElectrons),
+			                0.0,
+			                [](double previous, const elementContentsPair& p){return previous+p.second;});
 }
 
 const std::string& Material::getName() const
@@ -379,7 +440,7 @@ void Material::setDensity(double pressure, double temperature)
 
 	SX::Units::UnitsManager* um=SX::Units::UnitsManager::Instance();
 
-	std::map<Element*,double> m=getMoleFractions();
+	elementContentsMap m=getMoleFractions();
 
 	double moleDensity=pressure/um->get("R")/temperature;
 	double density=0.0;
@@ -388,11 +449,6 @@ void Material::setDensity(double pressure, double temperature)
 		density+=moleDensity*it.second*it.first->getMolarMass();
 
 	setDensity(density);
-}
-
-const elementVector& Material::getElements() const
-{
-	return _elements;
 }
 
 } // end namespace Chemistry
