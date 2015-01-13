@@ -87,7 +87,7 @@ public:
 	//! Constructs an Element fetching the isotope of the isotopes database whose symbol is |symbol|
 	Element(const std::string& name, const std::string& symbol);
 
-	//! Constructs an empty Element
+	//! Constructs an empty Element to be filled further with addIsotope method
 	Element(const std::string& name);
 
 	//! Destructor

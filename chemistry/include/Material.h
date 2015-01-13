@@ -96,7 +96,7 @@ public:
 	//! Copy constructor (deleted)
 	Material(const Material& other)=delete;
 
-	//! Constructs a empty Material with a given name, state and filling mode.
+	//! Constructs a empty Material to be filled further with addElement and/or addMaterial methods
 	Material(const std::string& name, State state=State::Solid, FillingMode fillingMode=FillingMode::MassFraction);
 
 	//! Destructor
