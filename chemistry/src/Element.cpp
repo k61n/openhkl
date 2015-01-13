@@ -111,6 +111,16 @@ Element::~Element()
 {
 }
 
+bool Element::operator==(const Element& other) const
+{
+	return (_isotopes.size() == other._isotopes.size()) &&
+			std::equal(_isotopes.begin(),
+					   _isotopes.end(),
+					   other._isotopes.begin(),
+					   [] (isotopeContentsPair a, isotopeContentsPair b) { return a.first==b.first && std::abs(a.second-b.second)<tolerance;});
+
+}
+
 void Element::registerElement(Element* element)
 {
 	if (hasElement(element->_name))

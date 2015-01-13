@@ -93,6 +93,9 @@ public:
 	//! Destructor
 	~Element();
 
+	//! Return true if two Elements are the same (same isotopes with the same abundances)
+	bool operator==(const Element& other) const;
+
 	//! Assignment operator (deleted)
 	Element& operator=(const Element& other)=delete;
 
