@@ -4,6 +4,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include <iostream>
+#include <map>
 
 #include "Units.h"
 #include "Element.h"
@@ -12,58 +13,61 @@
 
 using namespace SX::Chemistry;
 
+const double tolerance=1;
+
 BOOST_AUTO_TEST_CASE(Test_Material)
 {
 
-	Material* methane=Material::buildFromDatabase("CH4");
-	std::cout<<Element::getNRegisteredElements()<<std::endl;
+	// Build a methane material dynamically
+	Material methane("methane",Material::State::Gaz,Material::FillingMode::NumberOfAtoms);
+	Element carbon("carbon","C");
+	Element hydrogen("hydrogen","H");
+	methane.addElement(&carbon,1);
+	methane.addElement(&hydrogen,4);
+	methane.setDensity(1.235);
 
-//
-//	for (auto it : methane->getMoleFractions())
-//		std::cout<<it.first->getName()<<" "<<it.second<<std::endl;
-//
-//	Material* mat1=Material::buildFromDatabase("CH41");
-//
-//	for (auto it : mat1->getMassFractions())
-//		std::cout<<it.first->getName()<<" "<<it.second<<std::endl;
-//
-	Material* water=Material::buildFromDatabase("H2O");
-	std::cout<<Element::getNRegisteredElements()<<std::endl;
-//
-////	for (auto it : water->getMoleFractions())
-////		std::cout<<it.first->getName()<<" "<<it.second<<std::endl;
-////
-//	std::cout<<"WATER"<<std::endl;
-//	for (auto it : water->getNAtomsPerVolume())
-//		std::cout<<it.first->getName()<<" "<<it.second<<std::endl;
+	// Check that the registry of elements has been correctly updated
+	BOOST_CHECK_EQUAL(Element::getNRegisteredElements(),2);
 
-	Material* mixture=new Material("mixture",Material::State::Gaz,Material::FillingMode::MassFraction);
-	mixture->setDensity(1.235);
-	mixture->addMaterial(methane,0.5);
-	mixture->addMaterial(water,0.5);
-	std::cout<<Element::getNRegisteredElements()<<std::endl;
-	std::cout<<"mixture"<<std::endl;
-	for (auto it : mixture->getMassFractions())
-		std::cout<<it.first->getName()<<" "<<it.second<<std::endl;
+	// Check that the registry of materials has been correctly updated
+	BOOST_CHECK_EQUAL(Material::getNRegisteredMaterials(),1);
 
-	Material* mixture1=Material::buildFromDatabase("mixture");
-	std::cout<<"mixture1"<<std::endl;
-	for (auto it : mixture1->getMassFractions())
-		std::cout<<it.first->getName()<<" "<<it.second<<std::endl;
+	std::map<Element*,double> massFractions=methane.getMassFractions();
+	BOOST_CHECK_CLOSE(massFractions.at(&carbon),0.75,tolerance);
+	BOOST_CHECK_CLOSE(massFractions.at(&hydrogen),0.25,tolerance);
 
-	std::cout<<Element::getNRegisteredElements()<<std::endl;
+	// Build another methane material dynamically with a different filling method
+	Material methane1("methane1",Material::State::Gaz,Material::FillingMode::MoleFraction);
+	methane1.addElement(&carbon,0.2);
+	methane1.addElement(&hydrogen,0.8);
+	methane1.setDensity(1.235);
+	// Check that this corresponds (chemically) to the same material
+	BOOST_CHECK_EQUAL(methane==methane1,true);
 
+	// Build a water material dynamically
+	Material water("water",Material::State::Gaz,Material::FillingMode::MoleFraction);
+	Element oxygen("oxygen","O");
+	water.addElement(&oxygen,0.333333);
+	water.addElement(&hydrogen,0.666666);
+	water.setDensity(1.000);
 
+	// Check that the registry of elements has been correctly updated
+	BOOST_CHECK_EQUAL(Element::getNRegisteredElements(),3);
 
-	//
-//	std::cout<<"density"<<std::endl;
-//	for (auto it : mixture.getNAtomsPerVolume())
-//		std::cout<<it.first->getName()<<" "<<it.second<<std::endl;
+	// Check that the registry of materials has been correctly updated
+	BOOST_CHECK_EQUAL(Material::getNRegisteredMaterials(),3);
 
-//	BOOST_CHECK_EQUAL(mat->getNElements(),2);
-//
-//	const elementVector& elements=mat->getElements();
-//	BOOST_CHECK_EQUAL(elements[0]->getNIsotopes(),2);
-//	BOOST_CHECK_EQUAL(elements[1]->getNIsotopes(),3);
+	massFractions=water.getMassFractions();
+	BOOST_CHECK_CLOSE(massFractions.at(&oxygen),8.0/9.0,tolerance);
+	BOOST_CHECK_CLOSE(massFractions.at(&hydrogen),1.0/9.0,tolerance);
+
+	// Build a mixture of materials dynamically
+	Material mixture("mixture",Material::State::Solid,Material::FillingMode::MassFraction);
+	mixture.addMaterial(&methane,0.5);
+	mixture.addMaterial(&water,0.5);
+	mixture.setDensity(3.0);
+
+	// Check that the registry of materials has been correctly updated
+	BOOST_CHECK_EQUAL(Material::getNRegisteredMaterials(),4);
 
 }
