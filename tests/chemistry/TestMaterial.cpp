@@ -7,6 +7,7 @@
 #include <map>
 
 #include "Units.h"
+#include "Isotope.h"
 #include "Element.h"
 #include "Material.h"
 #include "Units.h"
@@ -45,10 +46,10 @@ BOOST_AUTO_TEST_CASE(Test_Material)
 	BOOST_CHECK_EQUAL(methane==methane1,true);
 
 	// Build a water material dynamically
-	Material water("water",Material::State::Gaz,Material::FillingMode::MoleFraction);
+	Material water("water",Material::State::Liquid,Material::FillingMode::MoleFraction);
 	Element oxygen("oxygen","O");
-	water.addElement(&oxygen,0.333333);
-	water.addElement(&hydrogen,0.666666);
+	water.addElement(&oxygen,1.0/3.0);
+	water.addElement(&hydrogen,2.0/3.0);
 	water.setDensity(1.000);
 
 	// Check that the registry of elements has been correctly updated
@@ -76,7 +77,25 @@ BOOST_AUTO_TEST_CASE(Test_Material)
 	BOOST_CHECK_EQUAL(Material::getNRegisteredMaterials(),5);
 	// Check that the registry of elements has not been updated
 	BOOST_CHECK_EQUAL(Element::getNRegisteredElements(),3);
-	// Check that it corresponds (chemically) to the the methane previously defined
+	// Check that it corresponds (chemically) to the methane previously defined
 	BOOST_CHECK_EQUAL(*methane2==methane,true);
+
+	Material cf4("CF4",Material::State::Gaz,Material::FillingMode::NumberOfAtoms);
+	Element fluorine("fluor","F");
+	cf4.addElement(&carbon,1);
+	cf4.addElement(&fluorine,4);
+
+	Material he3("He3",Material::State::Gaz,Material::FillingMode::NumberOfAtoms);
+	Element helium3("helium3");
+	helium3.addIsotope(Isotope::buildFromDatabase("He[3]"),1.0);
+	he3.addElement(&helium3,1);
+
+	Material* gazmix= new Material("HeCF4",Material::State::Gaz,Material::FillingMode::PartialPressure);
+	gazmix->addMaterial(&cf4,2*SX::Units::Bar);
+	gazmix->addMaterial(&he3,10*SX::Units::Bar);
+	gazmix->setTemperature(290.0);
+
+	for (auto it : gazmix->getNAtomsPerVolume())
+		std::cout<<it.first->getName()<<"  "<<it.second<<std::endl;;
 
 }

@@ -13,36 +13,22 @@
 	</element>
 </material>
 
-<material name="H2O" filling_mode="mass_fraction">
-	<density units="g/cm3">1.000</density>
+<material name="H2O" state="liquid" filling_mode="mass_fraction">
+	<density units="kg/m3">1.000</density>
 	
-	<element name="O">
-	<symbol>O</symbol>
-	<fraction units="%">88.88888</fraction>
+	<element name="oxygen">
+	<symbol>O[16]</symbol>
+	<fraction units="%">88.88888888888888</fraction>
 	</element>
 
-	<element name="H">
-	<symbol>H</symbol>
-	<fraction units="%">11.11111</fraction>
+	<element name="hydrogen">
+	<symbol>H[1]</symbol>
+	<fraction units="%">11.111111111111111</fraction>
 	</element>
 </material>
 
-<material name="CH41" filling_mode="mole_fraction">
-	<density units="g/cm3">1.235</density>
-	
-	<element name="C">
-	<symbol>C</symbol>
-	<fraction units="%">20.0</fraction>
-	</element>
-
-	<element name="H">
-	<symbol>H</symbol>
-	<fraction units="%">80.0</fraction>
-	</element>
-</material>
-
-<material name="mixture" filling_mode="mass_fraction">
-	<density units="g/cm3">1.235</density>
+<material name="mixture1" state="solid" filling_mode="mass_fraction">
+	<density units="kg/m3">3.0</density>
 	<material name="water" material="H2O">
 	<fraction units="%">50.0</fraction>
 	</material>

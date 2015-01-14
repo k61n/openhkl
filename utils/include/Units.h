@@ -164,6 +164,7 @@ static const double N=m*kg/s/s;
 
 // Pressure units
 static const double Pa=N/m/m;
+static const double Bar=1.0e5*Pa;
 
 // Power units
 static const double W=m*m*kg/s/s/s;

@@ -28,7 +28,8 @@ std::map<std::string,Material::State> Material::_toState={
 std::map<std::string,Material::FillingMode> Material::_toFillingMode={
 		{"mass_fraction",Material::FillingMode::MassFraction},
 		{"mole_fraction",Material::FillingMode::MoleFraction},
-		{"number_of_atoms",Material::FillingMode::NumberOfAtoms}
+		{"number_of_atoms",Material::FillingMode::NumberOfAtoms},
+		{"partial_pressure",Material::FillingMode::PartialPressure}
 };
 
 Material* Material::buildFromDatabase(const std::string& name)
@@ -81,29 +82,23 @@ Material* Material::readMaterial(const ptree& node)
 
 			if (fMode==FillingMode::MassFraction || fMode==FillingMode::MoleFraction)
 			{
-				boost::optional<const ptree&> fraction = v.second.get_child_optional("fraction");
-				SX::Units::UnitsManager* um=SX::Units::UnitsManager::Instance();
-				if (fraction)
-				{
-					ptree node=fraction.get();
-					double units=um->get(node.get<std::string>("<xmlattr>.units","%"));
-					material->addMaterial(submaterial,node.get_value<double>()*units);
-				}
-				else
-					throw SX::Kernel::Error<Material>("Misformatted XML 'material' node: must have 'fraction' tag");
+				const ptree& fraction = v.second.get_child("fraction");
+				double units=um->get(fraction.get<std::string>("<xmlattr>.units","%"));
+				material->addMaterial(submaterial,fraction.get_value<double>()*units);
+			}
+			else if (fMode==FillingMode::PartialPressure)
+			{
+				const ptree& pressure = v.second.get_child("pressure");
+				double units=um->get(pressure.get<std::string>("<xmlattr>.units","Pa"));
+				material->addMaterial(submaterial,pressure.get_value<double>()*units);
+			}
+			else if (fMode==FillingMode::NumberOfAtoms)
+			{
+				const ptree& nAtoms = v.second.get_child("natoms");
+				material->addMaterial(submaterial,nAtoms.get_value<double>());
 			}
 			else
-			{
-				boost::optional<const ptree&> nAtoms = v.second.get_child_optional("natoms");
-				if (nAtoms)
-				{
-					ptree node=nAtoms.get();
-					material->addMaterial(submaterial,node.get_value<double>());
-				}
-				else
-					throw SX::Kernel::Error<Material>("Misformatted XML 'material' node: must have 'natoms' tag");
-
-			}
+				throw SX::Kernel::Error<Material>("Misformatted XML 'material' node: must have 'natoms' tag");
 
 		}
 		else if (v.first.compare("element")==0)
@@ -111,53 +106,27 @@ Material* Material::readMaterial(const ptree& node)
 			Element* element=Element::readElement(v.second);
 			if (fMode==FillingMode::MassFraction || fMode==FillingMode::MoleFraction)
 			{
-				boost::optional<const ptree&> fraction = v.second.get_child_optional("fraction");
-				if (fraction)
-				{
-					ptree node=fraction.get();
-					double units=um->get(node.get<std::string>("<xmlattr>.units","%"));
-					material->addElement(element,node.get_value<double>()*units);
-				}
-				else
-					throw SX::Kernel::Error<Material>("Misformatted XML 'element' node: must have 'fraction' tag");
+				const ptree& fraction = v.second.get_child("fraction");
+				double units=um->get(fraction.get<std::string>("<xmlattr>.units","%"));
+				material->addElement(element,fraction.get_value<double>()*units);
+			}
+			else if (fMode==FillingMode::PartialPressure)
+			{
+				const ptree& pressure = v.second.get_child("pressure");
+				double units=um->get(pressure.get<std::string>("<xmlattr>.units","Pa"));
+				material->addElement(element,pressure.get_value<double>()*units);
+			}
+			else if (fMode==FillingMode::NumberOfAtoms)
+			{
+				const ptree& nAtoms = v.second.get_child("natoms");
+				material->addElement(element,nAtoms.get_value<double>());
 			}
 			else
-			{
-				boost::optional<const ptree&> nAtoms = v.second.get_child_optional("natoms");
-				if (nAtoms)
-				{
-					ptree node=nAtoms.get();
-					material->addElement(element,node.get_value<double>());
-				}
-				else
-					throw SX::Kernel::Error<Material>("Misformatted XML 'element' node: must have 'natoms' tag");
-			}
+				throw SX::Kernel::Error<Material>("Misformatted XML 'element' node: invalid filling mode");
 		}
 	}
 
-	if (material->_state==State::Gaz)
-	{
-		boost::optional<const ptree&> density = node.get_child_optional("density");
-		if (density)
-		{
-			ptree node=density.get();
-			double units=um->get(node.get<std::string>("<xmlattr>.units","kg/m3"));
-			material->setDensity(node.get_value<double>()*units);
-		}
-		else
-		{
-			const ptree& pNode=node.get_child("pressure");
-			double pUnits=um->get(pNode.get<std::string>("<xmlattr>.units","Pa"));
-			double pressure=pNode.get_value<double>()*pUnits;
-
-			const ptree& tNode=node.get_child("temperature");
-			double tUnits=um->get(tNode.get<std::string>("<xmlattr>.units","K"));
-			double temperature=tNode.get_value<double>()*tUnits;
-
-			material->setDensity(pressure,temperature);
-		}
-	}
-	else
+	if (material->_fillingMode!=FillingMode::PartialPressure)
 	{
 		const ptree& density = node.get_child("density");
 		double units=um->get(density.get<std::string>("<xmlattr>.units","kg/m3"));
@@ -178,6 +147,7 @@ bool Material::hasMaterial(const std::string& name)
 Material::Material(const std::string& name, State state, FillingMode fillingMode)
 : _name(name),
   _density(0.0),
+  _temperature(0.0),
   _state(state),
   _fillingMode(fillingMode),
   _elements()
@@ -217,11 +187,11 @@ void Material::addElement(Element* element, double fraction)
 	if (_fillingMode==FillingMode::MassFraction || _fillingMode==FillingMode::MoleFraction)
 	{
 		if (fraction<=0 || fraction>1)
-			throw SX::Kernel::Error<Material>("Invalid value for mole fraction");
+			throw SX::Kernel::Error<Material>("Invalid value for mass/mole fraction");
 		double sum=std::accumulate(std::begin(_elements),
 				                    std::end(_elements),
 				                    fraction,
-				                    [](const double previous, const elementContentsPair& p) { return previous+p.second; });
+				                    [](double previous, const elementContentsPair& p) { return previous+p.second; });
 		if (sum>(1.0+tolerance))
 			throw SX::Kernel::Error<Material>("The sum of mole fractions exceeds 1.0");
 	}
@@ -245,20 +215,27 @@ void Material::addElement(const std::string& name, double fraction)
 	return;
 }
 
-void Material::addMaterial(Material* material, double fraction)
+void Material::addMaterial(Material* material, double contents)
 {
-	if (_fillingMode == FillingMode::NumberOfAtoms)
+	if (_fillingMode==FillingMode::MassFraction)
+	{
+		for (auto it : material->getMassFractions())
+			addElement(it.first,contents*it.second);
+	}
+	else if (_fillingMode==FillingMode::MoleFraction || _fillingMode==FillingMode::PartialPressure)
+	{
+		for (auto it : material->getMoleFractions())
+			addElement(it.first,contents*it.second);
+	}
+	else
 		throw SX::Kernel::Error<Material>("Invalid filling mode");
-
-	for (auto it : material->getMassFractions())
-		addElement(it.first,fraction*it.second);
 }
 
-void Material::addMaterial(const std::string& name, double fraction)
+void Material::addMaterial(const std::string& name, double contents)
 {
 	Material* mat=Material::buildFromDatabase(name);
 
-	addMaterial(mat,fraction);
+	addMaterial(mat,contents);
 
 	return;
 }
@@ -270,6 +247,12 @@ elementContentsMap Material::getMassFractions() const
 
 	switch(_fillingMode)
 	{
+	case FillingMode::MassFraction:
+	{
+		fractions = _elements;
+		break;
+	}
+
 	case FillingMode::MoleFraction:
 	{
 		for (auto it1=_elements.begin();it1!=_elements.end();++it1)
@@ -288,12 +271,6 @@ elementContentsMap Material::getMassFractions() const
 		break;
 	}
 
-	case FillingMode::MassFraction:
-	{
-		fractions = _elements;
-		break;
-	}
-
 	case FillingMode::NumberOfAtoms:
 	{
 		double totalMass=0.0;
@@ -305,6 +282,24 @@ elementContentsMap Material::getMassFractions() const
 		}
 		for (auto& it : fractions)
 			it.second/=totalMass;
+		break;
+	}
+
+	case FillingMode::PartialPressure:
+	{
+		for (auto it1=_elements.begin();it1!=_elements.end();++it1)
+		{
+			double xi=1.0;
+			double mi=it1->first->getMolarMass();
+			for (auto it2=_elements.begin();it2!=_elements.end();++it2)
+			{
+				if (it1==it2)
+					continue;
+				double mj=it2->first->getMolarMass();
+				xi+=(it2->second/it1->second)*(mj/mi);
+				fractions.insert(elementContentsPair(it1->first,1.0/xi));
+			}
+		}
 		break;
 	}
 
@@ -320,11 +315,6 @@ elementContentsMap Material::getMoleFractions() const
 
 	switch(_fillingMode)
 	{
-	case FillingMode::MoleFraction:
-	{
-		fractions = _elements;
-		break;
-	}
 
 	case FillingMode::MassFraction:
 	{
@@ -343,6 +333,12 @@ elementContentsMap Material::getMoleFractions() const
 		break;
 	}
 
+	case FillingMode::MoleFraction:
+	{
+		fractions = _elements;
+		break;
+	}
+
 	case FillingMode::NumberOfAtoms:
 	{
 		double nAtoms=std::accumulate(std::begin(_elements),
@@ -351,6 +347,17 @@ elementContentsMap Material::getMoleFractions() const
 				                       [](double previous, const elementContentsPair& p) {return previous+p.second;});
 		for (auto it=_elements.begin();it!=_elements.end();++it)
 			fractions.insert(std::pair<Element*,double>(it->first,it->second/nAtoms));
+		break;
+	}
+
+	case FillingMode::PartialPressure:
+	{
+		double totalPressure=std::accumulate(std::begin(_elements),
+				                              std::end(_elements),
+				                              0.0,
+				                              [](double previous, const elementContentsPair& p) {return previous+p.second;});
+		for (auto it=_elements.begin();it!=_elements.end();++it)
+			fractions.insert(std::pair<Element*,double>(it->first,it->second/totalPressure));
 		break;
 	}
 
@@ -363,9 +370,7 @@ elementContentsMap Material::getNAtomsPerVolume() const
 {
 	elementContentsMap nAtoms;
 
-	SX::Units::UnitsManager* um=SX::Units::UnitsManager::Instance();
-
-	double fact=um->get("avogadro")*_density;
+	double fact=SX::Units::avogadro*getDensity();
 
 	for (auto it : getMassFractions())
 		nAtoms.insert(elementContentsPair(it.first,fact*it.second/it.first->getMolarMass()));
@@ -387,9 +392,7 @@ elementContentsMap Material::getNElectronsPerVolume() const
 {
 	elementContentsMap nAtoms;
 
-	SX::Units::UnitsManager* um=SX::Units::UnitsManager::Instance();
-
-	double fact=um->get("avogadro")*_density;
+	double fact=SX::Units::avogadro*getDensity();
 
 	for (auto it : getMassFractions())
 		nAtoms.insert(elementContentsPair(it.first,static_cast<double>(fact*it.first->getNElectrons())*it.second/it.first->getMolarMass()));
@@ -419,36 +422,55 @@ unsigned int Material::getNElements() const
 
 double Material::getDensity() const
 {
-	return _density;
+	if (_fillingMode==FillingMode::PartialPressure)
+	{
+		if (_temperature<=0)
+			throw SX::Kernel::Error<Material>("Invalid temperature value");
+		double totalPressure=std::accumulate(std::begin(_elements),
+				                              std::end(_elements),
+				                              0.0,
+				                              [](double previous, const elementContentsPair& p) {return previous+p.second;});
+
+		double moleDensity=totalPressure/SX::Units::R/_temperature;
+
+		double density=0.0;
+
+		elementContentsMap mf=getMoleFractions();
+
+		for (auto it : mf)
+			density+=moleDensity*it.second*it.first->getMolarMass();
+
+		std::cout<<"DENSITY"<<density<<std::endl;
+
+		return density;
+
+	}
+	else
+		return _density;
 }
 
 void Material::setDensity(double density)
 {
+	if (_fillingMode==FillingMode::PartialPressure)
+		throw SX::Kernel::Error<Material>("Invalid filling mode: the material has been filled with partial pressures. Its density will be directly computed from them.");
+
 	if (density<=0)
-		throw SX::Kernel::Error<Material>("Negative density value");
+		throw SX::Kernel::Error<Material>("Invalid density value: must be a strictly positive number");
+
 	_density=density;
 }
 
-void Material::setDensity(double pressure, double temperature)
+double Material::getTemperature() const
 {
+	return _temperature;
+}
 
-	if (_state!=State::Gaz)
-		throw SX::Kernel::Error<Material>("Setting the density from pressure and temperature only applies for materials in gaz state");;
+void Material::setTemperature(double temperature)
+{
+	if (temperature<=0)
+		throw SX::Kernel::Error<Material>("Negative temperature value");
 
-	if (pressure<=0 || temperature<=0)
-		throw SX::Kernel::Error<Material>("Negative pressure and/or temperature values");
-
-	SX::Units::UnitsManager* um=SX::Units::UnitsManager::Instance();
-
-	elementContentsMap m=getMoleFractions();
-
-	double moleDensity=pressure/um->get("R")/temperature;
-	double density=0.0;
-
-	for (auto it : m)
-		density+=moleDensity*it.second*it.first->getMolarMass();
-
-	setDensity(density);
+	_temperature=temperature;
 }
 
 } // end namespace Chemistry

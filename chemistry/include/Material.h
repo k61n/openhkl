@@ -60,7 +60,7 @@ class Material
 
 public:
 
-	enum class FillingMode : unsigned int {MassFraction=0,MoleFraction=1,NumberOfAtoms=2};
+	enum class FillingMode : unsigned int {MassFraction=0,MoleFraction=1,NumberOfAtoms=2,PartialPressure=3};
 
 	enum class State : unsigned int {Solid=0,Liquid=1,Gaz=2};
 
@@ -129,8 +129,9 @@ public:
 	//! Set the density of this Material
 	void setDensity(double density);
 
-	//! Set the density of this Material from pressure and temperature values. Only applies for Material in Gaz state
-	void setDensity(double pressure, double temperature);
+	double getTemperature() const;
+
+	void setTemperature(double temperature);
 
 	//! Returns a map of the mole fractions per element
 	elementContentsMap getMoleFractions() const;
@@ -159,6 +160,7 @@ private:
 
 	std::string _name;
 	double _density;
+	double _temperature;
 	State _state;
 	FillingMode _fillingMode;
 	elementContentsMap _elements;
