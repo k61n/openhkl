@@ -242,7 +242,6 @@ std::ostream& operator<<(std::ostream& os, const Element& element)
 	return os;
 }
 
-
 } // end namespace Chemistry
 
 } // end namespace SX

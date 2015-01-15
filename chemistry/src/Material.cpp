@@ -25,11 +25,24 @@ std::map<std::string,Material::State> Material::_toState={
 		{"gaz",Material::State::Gaz}
 };
 
+std::map<Material::State,std::string> Material::_fromState={
+		{Material::State::Solid,"solid"},
+		{Material::State::Liquid,"liquid"},
+		{Material::State::Gaz,"gaz"}
+};
+
 std::map<std::string,Material::FillingMode> Material::_toFillingMode={
 		{"mass_fraction",Material::FillingMode::MassFraction},
 		{"mole_fraction",Material::FillingMode::MoleFraction},
 		{"number_of_atoms",Material::FillingMode::NumberOfAtoms},
 		{"partial_pressure",Material::FillingMode::PartialPressure}
+};
+
+std::map<Material::FillingMode,std::string> Material::_fromFillingMode={
+		{Material::FillingMode::MassFraction,"mass_fraction"},
+		{Material::FillingMode::MoleFraction,"mole_fraction"},
+		{Material::FillingMode::NumberOfAtoms,"number_of_atoms"},
+		{Material::FillingMode::PartialPressure,"partial_pressure"}
 };
 
 Material* Material::buildFromDatabase(const std::string& name)
@@ -471,6 +484,32 @@ void Material::setTemperature(double temperature)
 		throw SX::Kernel::Error<Material>("Negative temperature value");
 
 	_temperature=temperature;
+}
+
+void Material::print(std::ostream& os) const
+{
+	os<<"Material "<<_name<<" --> State="<<_fromState[_state]<<" ; Filling mode="<<_fromFillingMode[_fillingMode]<<std::endl;
+	if (_elements.empty())
+		os<<"Currently empty"<<std::endl;
+	else
+	{
+		int maxSize=0;
+		for (auto it : _elements)
+			if (it.first->getName().size() > maxSize)
+				maxSize=it.first->getName().size();
+		os<<"Composition:"<<std::endl;
+		for (auto it : _elements)
+		{
+			os<<"\t-"<<std::setw(maxSize)<<std::setiosflags(std::ios::left)<<it.first->getName()<<" --> "<<std::setiosflags(std::ios::fixed|std::ios::right)<<std::setprecision(3)<<std::setw(7)<<it.second<<std::endl;
+			std::cout<<std::resetiosflags(std::ios::right);
+		}
+	}
+}
+
+std::ostream& operator<<(std::ostream& os, const Material& material)
+{
+	material.print(os);
+	return os;
 }
 
 } // end namespace Chemistry

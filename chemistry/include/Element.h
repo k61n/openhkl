@@ -124,7 +124,7 @@ public:
 	//! Returns the number of electrons of the element
 	unsigned int getNElectrons() const;
 
-	//! Print informations about this Isotope to an output stream
+	//! Print informations about this Element to an output stream
 	void print(std::ostream& os) const;
 
 private:

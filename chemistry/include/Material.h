@@ -31,6 +31,7 @@
 #define NSXTOOL_MATERIAL_H_
 
 #include <map>
+#include <ostream>
 #include <string>
 #include <vector>
 
@@ -82,7 +83,9 @@ private:
 
 private:
 
+	static std::map<State,std::string> _fromState;
 	static std::map<std::string,State> _toState;
+	static std::map<FillingMode,std::string> _fromFillingMode;
 	static std::map<std::string,FillingMode> _toFillingMode;
 	static double tolerance;
 	static std::string database;
@@ -151,6 +154,9 @@ public:
 	//! Returns the total number of electrons per volume units (1/m3)
 	double getNElectronsTotalPerVolume() const;
 
+	//! Print informations about this Material to an output stream
+	void print(std::ostream& os) const;
+
 private:
 
 	//! Register a Material object
@@ -166,6 +172,8 @@ private:
 	elementContentsMap _elements;
 
 };
+
+std::ostream& operator<<(std::ostream& os, const Material& material);
 
 } // end namespace Chemistry
 

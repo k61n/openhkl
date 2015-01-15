@@ -95,7 +95,4 @@ BOOST_AUTO_TEST_CASE(Test_Material)
 	gazmix->addMaterial(&he3,10*SX::Units::Bar);
 	gazmix->setTemperature(290.0);
 
-	for (auto it : gazmix->getNAtomsPerVolume())
-		std::cout<<it.first->getName()<<"  "<<it.second<<std::endl;;
-
 }
