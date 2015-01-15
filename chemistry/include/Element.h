@@ -31,6 +31,7 @@
 #define NSXTOOL_ELEMENT_H_
 
 #include <map>
+#include <ostream>
 #include <string>
 #include <vector>
 
@@ -123,6 +124,9 @@ public:
 	//! Returns the number of electrons of the element
 	unsigned int getNElectrons() const;
 
+	//! Print informations about this Isotope to an output stream
+	void print(std::ostream& os) const;
+
 private:
 
 	//! Register an Element object
@@ -132,6 +136,8 @@ private:
 	std::string _name;
 	isotopeContentsMap _isotopes;
 };
+
+std::ostream& operator<<(std::ostream& os, const Element& element);
 
 } // end namespace Chemistry
 

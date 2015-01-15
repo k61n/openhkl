@@ -14,6 +14,7 @@ BOOST_AUTO_TEST_CASE(Test_Element)
 {
 	// Build a new element (from the isotope XML database) based on its natural isotopes
 	Element el1("H","H");
+
 	// Check that the number of natural isotopes of this element is OK (H[1],H[2],H[3])
 	BOOST_CHECK_EQUAL(el1.getNIsotopes(),3);
 	// Check that the registry of elements has been modified

@@ -216,6 +216,33 @@ unsigned int Element::getNProtons() const
 	return _isotopes.begin()->first->getNProtons();
 }
 
+void Element::print(std::ostream& os) const
+{
+	os<<"Element "<<_name<<std::endl;
+	if (_isotopes.empty())
+		os<<"Currently empty"<<std::endl;
+	else
+	{
+		int maxSize=0;
+		for (auto it : _isotopes)
+			if (it.first->getName().size() > maxSize)
+				maxSize=it.first->getName().size();
+		os<<"Composition:"<<std::endl;
+		for (auto it : _isotopes)
+		{
+			os<<"\t-"<<std::setw(maxSize)<<std::setiosflags(std::ios::left)<<it.first->getName()<<" --> "<<std::setiosflags(std::ios::fixed|std::ios::right)<<std::setprecision(3)<<std::setw(7)<<100.0*it.second<<" %"<<std::endl;
+			std::cout<<std::resetiosflags(std::ios::right);
+		}
+	}
+}
+
+std::ostream& operator<<(std::ostream& os, const Element& element)
+{
+	element.print(os);
+	return os;
+}
+
+
 } // end namespace Chemistry
 
 } // end namespace SX
