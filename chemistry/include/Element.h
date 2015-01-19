@@ -124,6 +124,12 @@ public:
 	//! Returns the number of electrons of the element
 	unsigned int getNElectrons() const;
 
+	//! Returns the incoherent Xs weighted over the isotopes of this Element
+	double getIncoherentXs() const;
+
+	//! Returns the scattering Xs weighted over the isotopes of this Element
+	double getScatteringXs(double lambda=1.798e-10) const;
+
 	//! Print informations about this Element to an output stream
 	void print(std::ostream& os) const;
 

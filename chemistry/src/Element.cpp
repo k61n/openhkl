@@ -216,6 +216,24 @@ unsigned int Element::getNProtons() const
 	return _isotopes.begin()->first->getNProtons();
 }
 
+double Element::getIncoherentXs() const
+{
+	double ixs=0.0;
+	for (auto is : _isotopes)
+		ixs+=is.second*is.first->_xsIncoherent;
+	return ixs;
+}
+
+double Element::getScatteringXs(double lambda) const
+{
+	double sxs=0.0;
+	double fact=lambda/1.798e-10;
+	for (auto is : _isotopes)
+		sxs+=is.second*is.first->_xsIncoherent;
+	sxs*=fact;
+	return sxs;
+}
+
 void Element::print(std::ostream& os) const
 {
 	os<<"Element "<<_name<<std::endl;

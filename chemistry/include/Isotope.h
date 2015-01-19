@@ -134,7 +134,7 @@ private:
 	//! Constructs an empty Isotope
 	Isotope();
 
-private:
+public:
 
 	std::string _name;
 	std::string _symbol;
