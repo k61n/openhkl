@@ -295,19 +295,14 @@ elementContentsMap Material::getMassFractions() const
 
 	case FillingMode::PartialPressure:
 	{
-		for (auto it1=_elements.begin();it1!=_elements.end();++it1)
+		double fact=0.0;
+		for (auto it=_elements.begin();it!=_elements.end();++it)
 		{
-			double xi=1.0;
-			double mi=it1->first->getMolarMass();
-			for (auto it2=_elements.begin();it2!=_elements.end();++it2)
-			{
-				if (it1==it2)
-					continue;
-				double mj=it2->first->getMolarMass();
-				xi+=(it2->second/it1->second)*(mj/mi);
-				fractions.insert(elementContentsPair(it1->first,1.0/xi));
-			}
+			fact+=it->second*it->first->getMolarMass();
+			fractions.insert(std::pair<Element*,double>(it->first,it->second*it->first->getMolarMass()));
 		}
+		for (auto& f : fractions)
+			f.second/=fact;
 		break;
 	}
 
@@ -376,7 +371,9 @@ elementContentsMap Material::getNAtomsPerVolume() const
 
 	double fact=SX::Units::avogadro*getDensity();
 
-	for (auto it : getMassFractions())
+	auto massFractions=getMassFractions();
+
+	for (auto it : massFractions)
 		nAtoms.insert(elementContentsPair(it.first,fact*it.second/it.first->getMolarMass()));
 
 	return nAtoms;
@@ -494,7 +491,7 @@ void Material::print(std::ostream& os) const
 		os<<"Currently empty"<<std::endl;
 	else
 	{
-		int maxSize=0;
+		unsigned int maxSize=0;
 		for (auto it : _elements)
 			if (it.first->getName().size() > maxSize)
 				maxSize=it.first->getName().size();
