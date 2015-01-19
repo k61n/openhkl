@@ -64,7 +64,8 @@ Isotope* Isotope::readIsotope(const ptree& node)
 
 	is->_nElectrons=is->_nProtons;
 
-	units=um->get(node.get<std::string>("molarMass.<xmlattr>.units","uma"));
+	units=um->get(node.get<std::string>("molar_mass.<xmlattr>.units","uma"));
+
 	is->_molarMass=node.get<double>("molar_mass")*units;
 
 	is->_nuclearSpin=node.get<double>("nuclear_spin");
@@ -74,7 +75,7 @@ Isotope* Isotope::readIsotope(const ptree& node)
 	units=um->get(node.get<std::string>("half_life.<xmlattr>.units","%"));
 	is->_abundance=node.get<double>("abundance",0.0)*units;
 
-	units=um->get(node.get<std::string>("halfLife.<xmlattr>.units","year"));
+	units=um->get(node.get<std::string>("half_life.<xmlattr>.units","year"));
 	is->_halfLife=node.get<double>("half_life",std::numeric_limits<double>::infinity())*units;
 
 	is->_stable=node.get<bool>("stable");
