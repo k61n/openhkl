@@ -268,19 +268,14 @@ elementContentsMap Material::getMassFractions() const
 
 	case FillingMode::MoleFraction:
 	{
-		for (auto it1=_elements.begin();it1!=_elements.end();++it1)
+		double fact=0.0;
+		for (auto it=_elements.begin();it!=_elements.end();++it)
 		{
-			double xi=1.0;
-			double mi=it1->first->getMolarMass();
-			for (auto it2=_elements.begin();it2!=_elements.end();++it2)
-			{
-				if (it1==it2)
-					continue;
-				double mj=it2->first->getMolarMass();
-				xi+=(it2->second/it1->second)*(mj/mi);
-				fractions.insert(elementContentsPair(it1->first,1.0/xi));
-			}
+			fact+=it->second*it->first->getMolarMass();
+			fractions.insert(std::pair<Element*,double>(it->first,it->second*it->first->getMolarMass()));
 		}
+		for (auto& f : fractions)
+			f.second/=fact;
 		break;
 	}
 
@@ -331,18 +326,14 @@ elementContentsMap Material::getMoleFractions() const
 
 	case FillingMode::MassFraction:
 	{
-		for (auto it1=_elements.begin();it1!=_elements.end();++it1)
+		double fact=0.0;
+		for (auto it=_elements.begin();it!=_elements.end();++it)
 		{
-			double xi=1.0;
-			double mi=it1->first->getMolarMass();
-			for (auto it2=_elements.begin();it2!=_elements.end();++it2)
-			{
-				if (it1==it2) continue;
-				double mj=it2->first->getMolarMass();
-				xi+=(it2->second/it1->second)*(mi/mj);
-				fractions.insert(std::pair<Element*,double>(it1->first,1.0/xi));
-			}
+			fact+=it->second/it->first->getMolarMass();
+			fractions.insert(std::pair<Element*,double>(it->first,it->second/it->first->getMolarMass()));
 		}
+		for (auto& f : fractions)
+			f.second/=fact;
 		break;
 	}
 
@@ -423,6 +414,18 @@ double Material::getNElectronsTotalPerVolume() const
 			                [](double previous, const elementContentsPair& p){return previous+p.second;});
 }
 
+double Material::getMu(double lambda) const
+{
+	double mu=0.0;
+	auto nAtomsPerVol=getNAtomsPerVolume();
+	for (auto it : nAtomsPerVol)
+	{
+		double xs=it.first->getIncoherentXs() + it.first->getScatteringXs(lambda);
+		mu+=it.second*xs;
+	}
+	return mu;
+}
+
 const std::string& Material::getName() const
 {
 	return _name;
@@ -452,8 +455,6 @@ double Material::getDensity() const
 
 		for (auto it : mf)
 			density+=moleDensity*it.second*it.first->getMolarMass();
-
-		std::cout<<"DENSITY"<<density<<std::endl;
 
 		return density;
 

@@ -154,6 +154,9 @@ public:
 	//! Returns the total number of electrons per volume units (1/m3)
 	double getNElectronsTotalPerVolume() const;
 
+	//! Returns the attenuation factor
+	double getMu(double lambda=1.798e-10) const;
+
 	//! Print informations about this Material to an output stream
 	void print(std::ostream& os) const;
 
