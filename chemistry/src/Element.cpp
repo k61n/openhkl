@@ -241,7 +241,7 @@ void Element::print(std::ostream& os) const
 		os<<"Currently empty"<<std::endl;
 	else
 	{
-		int maxSize=0;
+		unsigned int maxSize=0;
 		for (auto it : _isotopes)
 			if (it.first->getName().size() > maxSize)
 				maxSize=it.first->getName().size();
