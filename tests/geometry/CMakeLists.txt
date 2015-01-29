@@ -57,3 +57,8 @@ add_test(TestBasis TestBasis)
 add_executable(TestCluster TestCluster.cpp)
 TARGET_LINK_LIBRARIES(TestCluster ${Boost_LIBRARIES} NSXTool)
 add_test(TestCluster TestCluster)
+
+# unit test for Convex Hull
+add_executable(TestConvexHull TestConvexHull.cpp)
+TARGET_LINK_LIBRARIES(TestConvexHull ${Boost_LIBRARIES} NSXTool)
+add_test(TestConvexHull TestConvexHull)

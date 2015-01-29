@@ -85,14 +85,18 @@ BOOST_AUTO_TEST_CASE(Test_Material)
 	cf4.addElement(&carbon,1);
 	cf4.addElement(&fluorine,4);
 
-	Material he3("He3",Material::State::Gaz,Material::FillingMode::NumberOfAtoms);
+	Material he3("He3",Material::State::Gaz,Material::FillingMode::PartialPressure);
 	Element helium3("helium3");
 	helium3.addIsotope(Isotope::buildFromDatabase("He[3]"),1.0);
-	he3.addElement(&helium3,1);
+	he3.addElement(&helium3,10*SX::Units::Bar);
+	he3.setTemperature(290.0);
+	std::cout<<he3.getMu()<<std::endl;
 
 	Material* gazmix= new Material("HeCF4",Material::State::Gaz,Material::FillingMode::PartialPressure);
-	gazmix->addMaterial(&cf4,2*SX::Units::Bar);
+//	gazmix->addMaterial(&cf4,2*SX::Units::Bar);
 	gazmix->addMaterial(&he3,10*SX::Units::Bar);
 	gazmix->setTemperature(290.0);
+
+	std::cout<<gazmix->getMu()<<std::endl;
 
 }
