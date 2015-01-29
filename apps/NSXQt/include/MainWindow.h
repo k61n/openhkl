@@ -13,7 +13,6 @@
 #include <IData.h>
 #include <DialogPeakFind.h>
 #include "Experiment.h"
-#include "ILLAsciiDataReader.h"
 #include "Logger.h"
 
 class QListWidgetItem;
