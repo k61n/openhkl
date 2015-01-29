@@ -73,7 +73,6 @@ HEADERS  += include/MainWindow.h \
     include/DetectorScene.h \
     include/PeakGraphicsItem.h \
     include/CutSliceGraphicsItem.h \
-    include/PeakCustomPlot.h \
     include/PlottableGraphicsItem.h \
     include/CutLineGraphicsItem.h \
     include/CutterGraphicsItem.h \
