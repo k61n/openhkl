@@ -101,12 +101,18 @@ public:
 
 	//! Returns the vertices of the hull
 	const std::list<pVertex>& getVertices() const;
+	//! Returns the number of vertices of the hull
+	unsigned int getNVertices() const;
 
 	//! Returns the edges of the hull
 	const std::list<pEdge>& getEdges() const;
+	//! Returns the number of edges of the hull
+	unsigned int getNEdges() const;
 
 	//! Returns the faces of the hull
 	const std::list<pFace>& getFaces() const;
+	//! Returns the number of faces of the hull
+	unsigned int getNFaces() const;
 
 	//! Returns the center of gravity of the hull.
 	Eigen::Vector3d getCenter() const;
@@ -354,6 +360,9 @@ void ConvexHull<T>::updateHull()
 		initalizeHull();
 		_initialized=true;
 	}
+
+	if (_vertices.size()<4)
+		throw SX::Kernel::Error<ConvexHull>("Not enough vertices to build a convex hull.");
 
 	for (auto rit=_vertices.rbegin();rit!=_vertices.rend();rit++)
 	{
@@ -615,6 +624,24 @@ double ConvexHull<T>::getVolume() const
 
 	return volume;
 
+}
+
+template<typename T>
+unsigned int ConvexHull<T>::getNVertices() const
+{
+	return _vertices.size();
+}
+
+template<typename T>
+unsigned int ConvexHull<T>::getNEdges() const
+{
+	return _edges.size();
+}
+
+template<typename T>
+unsigned int ConvexHull<T>::getNFaces() const
+{
+	return _faces.size();
 }
 
 template<typename T>
