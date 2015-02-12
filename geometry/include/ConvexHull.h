@@ -80,7 +80,7 @@ public:
 
 public:
 
-	//! Check whether three vertices are coplanar
+	//! Checks whether three vertices are coplanar
 	static bool isCoplanar(pVertex v0, pVertex v1, pVertex v2);
 
 public:
@@ -91,63 +91,90 @@ public:
 	//! Destructor
 	~ConvexHull();
 
-	//! Add a new vertex to be "hulled" further
+	//! Adds a new vertex to the list of points to be processed later when calling updateHull method.
 	pVertex addVertex(const vector3& coords);
 
+	//! Updates the hull. The first time it is called two seed-triangles with opposite orientation will be
+	//! created on which the next hull faces will be built upon.
+	//! Original name: ConstructHull
+	void updateHull();
 
-	//! Create a new hull face
-	pFace makeFace(pVertex v0, pVertex v1, pVertex v2, pFace face=nullptr);
-
-	pFace makeNullFace();
-
-	pEdge makeNullEdge();
-
-	//! Construct hull
-	void constructHull();
-
-	//! Return the vertices of the hull
+	//! Returns the vertices of the hull
 	const std::list<pVertex>& getVertices() const;
 
-	//! Return the edges of the hull
+	//! Returns the edges of the hull
 	const std::list<pEdge>& getEdges() const;
 
-	//! Return the faces of the hull
+	//! Returns the faces of the hull
 	const std::list<pFace>& getFaces() const;
 
-	void print(std::ostream& os) const;
-
+	//! Returns the center of gravity of the hull.
 	Eigen::Vector3d getCenter() const;
 
+	//! Returns the volume of the hull. The volume is computed by summing the volumes of all the tethrahedrons
+	//! made by each face of the convex hull and any internal point of the hull.
+	//! A reasonable choice for the internal point is the center of gravity of the hull as, by definition of a
+	//! convex object, its center is within the hull.
 	double getVolume() const;
+
+	//! Sends some informations on an output stream.
+	void print(std::ostream& os) const;
 
 private:
 
-	//! Define the initial double triangles that will serve as a seed for the hull
-	void doubleTriangle();
+	//! Initializes the hull. The initialization consists in defines two triangles with opposite orientations that will
+	//! serve as seeds for the faces of the hull to be built later
+	void initalizeHull();
 
-	//! Find a set of three vertices that are not coplanar
+	//! Finds a set of three vertices that are not coplanar
 	bool findInitialVertices(pVertex& v0, pVertex& v1, pVertex& v2) const;
 
-	//! Update the hull with a new vertex
-	void addOne(pVertex v);
+	//! Processes a vertex to see whether it will be a vertex of the hull or ill be discarded.
+	//! Original name: addOne
+	void processVertex(pVertex v);
 
-	pFace makeConeFace(pEdge e, pVertex v);
+	//! Builds a null Face (that points to no edges and vertices)
+	//! Original name: makeNullFace
+	pFace buildNullFace();
 
-	void makeCcw(pFace f, pEdge e, pVertex v);
+	//! Builds a null Edge (that points to no vertices)
+	//! Original name: makeNullEdge
+	pEdge buildNullEdge();
 
+	//! Builds a new hull face from three vertices. If fold is not nullptr then its edges will be used
+	//! to defie the one of the new face to build.
+	//! Original name: MakeFace
+	pFace buildFace(pVertex v0, pVertex v1, pVertex v2, pFace fold=nullptr);
+
+	//! Builds a new hull face from the edges of an existing face and a new vertex.
+	//! Original name: MakeConeFace
+	pFace buildConeFace(pEdge e, pVertex v);
+
+	//! Orienttates a face of the hull given a reference edge and vertex
+	//! Original name: makeCcw
+	void orientate(pFace f, pEdge e, pVertex v);
+
+	//! Cleans the edges of the hull that are not visible anymore
 	void cleanEdges();
 
+	//! Cleans the faces of the hull that are not visible anymore
 	void cleanFaces();
 
+	//! Cleans the vertices of the hull that are not visible anymore
 	void cleanVertices();
 
+	//! Cleans the edges, faces and vertices of the hull that are not visible anymore
 	void cleanUp();
 
 private:
 
+	//! A boolean that indicates whether or not the two seed-triangles of the hull have been already created
 	bool _initialized;
+	//! The list of the vertices of the hull. This is the std implementation of the double-linked chain.
 	std::list<pVertex> _vertices;
+	//! The list of the edges of the hull. This is the std implementation of the double-linked chain.
 	std::list<pEdge> _edges;
+	//! The list of the faces of the hull. This is the std implementation of the double-linked chain.
 	std::list<pFace> _faces;
 
 };
@@ -190,19 +217,17 @@ typename ConvexHull<T>::pVertex ConvexHull<T>::addVertex(const vector3& coords)
 }
 
 template <typename T>
-typename ConvexHull<T>::pFace ConvexHull<T>::makeNullFace()
+typename ConvexHull<T>::pFace ConvexHull<T>::buildNullFace()
 {
 	pFace f=new Face<T>();
-	_faces.push_back(f);
-	return _faces.back();
+	return f;
 }
 
 template <typename T>
-typename ConvexHull<T>::pEdge ConvexHull<T>::makeNullEdge()
+typename ConvexHull<T>::pEdge ConvexHull<T>::buildNullEdge()
 {
 	pEdge e=new Edge<T>();
-	_edges.push_back(e);
-	return _edges.back();
+	return e;
 }
 
 template <typename T>
@@ -229,7 +254,7 @@ bool ConvexHull<T>::findInitialVertices(pVertex& v0, pVertex& v1, pVertex& v2) c
 }
 
 template <typename T>
-void ConvexHull<T>::doubleTriangle()
+void ConvexHull<T>::initalizeHull()
 {
 
 	// Find 3 non colinear vertices
@@ -243,8 +268,8 @@ void ConvexHull<T>::doubleTriangle()
 	v2->_mark=true;
 
 	// Create the two twin faces
-	pFace f0=makeFace(v0,v1,v2);
-	pFace f1=makeFace(v2,v1,v0,f0);
+	pFace f0=buildFace(v0,v1,v2);
+	pFace f1=buildFace(v2,v1,v0,f0);
 
 	// Link adjacent face
 	f0->_edges[0]->_adjFace[1]=f1;
@@ -262,7 +287,7 @@ void ConvexHull<T>::doubleTriangle()
 
 		if (f0->volumeSign(v)!=0)
 		{
-			addOne(v);
+			processVertex(v);
 			cleanUp();
 			return;
 		}
@@ -270,16 +295,19 @@ void ConvexHull<T>::doubleTriangle()
 }
 
 template <typename T>
-typename ConvexHull<T>::pFace ConvexHull<T>::makeFace(pVertex v0, pVertex v1, pVertex v2, pFace fold)
+typename ConvexHull<T>::pFace ConvexHull<T>::buildFace(pVertex v0, pVertex v1, pVertex v2, pFace fold)
 {
 
 	Edge<T> *e0(nullptr),*e1(nullptr),*e2(nullptr);
 
 	if (!fold)
 	{
-		e0=makeNullEdge();
-		e1=makeNullEdge();
-		e2=makeNullEdge();
+		e0=buildNullEdge();
+		e1=buildNullEdge();
+		e2=buildNullEdge();
+		_edges.push_back(e0);
+		_edges.push_back(e1);
+		_edges.push_back(e2);
 	}
 	else
 	{
@@ -298,13 +326,15 @@ typename ConvexHull<T>::pFace ConvexHull<T>::makeFace(pVertex v0, pVertex v1, pV
 	e2->_endPts[1]=v0;
 
 	// Create a new face
-	pFace f=makeNullFace();
+	pFace f=buildNullFace();
 	f->_edges[0]=e0;
 	f->_edges[1]=e1;
 	f->_edges[2]=e2;
 	f->_vertices[0]=v0;
 	f->_vertices[1]=v1;
 	f->_vertices[2]=v2;
+
+	_faces.push_back(f);
 
 	// Link the edges to the face
 	e0->_adjFace[0]=f;
@@ -316,12 +346,12 @@ typename ConvexHull<T>::pFace ConvexHull<T>::makeFace(pVertex v0, pVertex v1, pV
 }
 
 template <typename T>
-void ConvexHull<T>::constructHull()
+void ConvexHull<T>::updateHull()
 {
 
 	if (!_initialized)
 	{
-		doubleTriangle();
+		initalizeHull();
 		_initialized=true;
 	}
 
@@ -329,14 +359,14 @@ void ConvexHull<T>::constructHull()
 	{
 		if (!((*rit)->_mark))
 		{
-			addOne(*rit);
+			processVertex(*rit);
 			cleanUp();
 		}
 	}
 }
 
 template <typename T>
-void ConvexHull<T>::addOne(pVertex v)
+void ConvexHull<T>::processVertex(pVertex v)
 {
 
 	v->_mark=true;
@@ -378,7 +408,7 @@ void ConvexHull<T>::addOne(pVertex v)
 			e->_delete=true;
 		else if (visible1 || visible2)
 		{
-			e->_newFace=makeConeFace(e,v);
+			e->_newFace=buildConeFace(e,v);
 		}
 
 	}
@@ -386,7 +416,7 @@ void ConvexHull<T>::addOne(pVertex v)
 }
 
 template <typename T>
-typename ConvexHull<T>::pFace ConvexHull<T>::makeConeFace(pEdge e, pVertex v)
+typename ConvexHull<T>::pFace ConvexHull<T>::buildConeFace(pEdge e, pVertex v)
 {
 
 	std::array<pEdge,2> newEdges;
@@ -397,9 +427,10 @@ typename ConvexHull<T>::pFace ConvexHull<T>::makeConeFace(pEdge e, pVertex v)
 	{
 		if (!e->_endPts[i]->_duplicate)
 		{
-			newEdges[i] = makeNullEdge();
+			newEdges[i] = buildNullEdge();
 			newEdges[i]->_endPts[0] = e->_endPts[i];
 			newEdges[i]->_endPts[1] = v;
+			_edges.push_back(newEdges[i]);
 			e->_endPts[i]->_duplicate = newEdges[i];
 		}
 		else
@@ -407,11 +438,13 @@ typename ConvexHull<T>::pFace ConvexHull<T>::makeConeFace(pEdge e, pVertex v)
 	}
 
 	// Make the new face
-	pFace newFace = makeNullFace();
+	pFace newFace = buildNullFace();
 	newFace->_edges[0] = e;
 	newFace->_edges[1] = newEdges[0];
 	newFace->_edges[2] = newEdges[1];
-	makeCcw(newFace,e,v);
+	orientate(newFace,e,v);
+
+	_faces.push_back(newFace);
 
 	// Set the adjacent faces
 	for (unsigned int i=0;i<2;++i)
@@ -430,7 +463,7 @@ typename ConvexHull<T>::pFace ConvexHull<T>::makeConeFace(pEdge e, pVertex v)
 }
 
 template <typename T>
-void ConvexHull<T>::makeCcw(pFace f, pEdge e, pVertex v)
+void ConvexHull<T>::orientate(pFace f, pEdge e, pVertex v)
 {
 
 	pFace fv;
