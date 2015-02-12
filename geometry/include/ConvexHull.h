@@ -47,19 +47,35 @@ namespace SX
 namespace Geometry
 {
 
+/* !
+ * \brief Class ConvexHull.
+ * This class implements an templated object-oriented adaptation of the 3D incremental convex hull
+ * algorithm whose implementation in C has been described in:
+ *
+ * o'Rourke, Joseph. Computational geometry in C. Cambridge university press, 1998. 115-144.
+ *
+ * Basically, the algorithm works on the same way than for the 2D case. It works by building counter clockwise
+ * oriented faces (triangles) of the hull and at each step a new point is defined to be part of the hull if its
+ * signed volume is negative for at least one face. Otherwise the point is discarded. When a point is added to
+ * the hull, this one is extended by building new faces that link the point to the edges of the visible faces of
+ * the hull from that point. After that step, the hull is updated by removing the faces (and their corresponding
+ * edges) that has been completety "buried" by the hull growth.
+ *
+ * Some of the methods names have been renamed regarding to the C implementation because we felt more comfortable
+ * with during those names in the curse of the implementation. In such case the original name will be recalled
+ * when documenting those methods.
+ */
 template <typename T>
 class ConvexHull
 {
+
+public:
 
 	typedef Eigen::Matrix<T,3,1> vector3;
 	typedef Eigen::Matrix<T,3,3> matrix33;
 	typedef Vertex<T>* pVertex;
 	typedef Face<T>* pFace;
 	typedef Edge<T>* pEdge;
-
-private:
-
-	static double _tolerance;
 
 public:
 
@@ -130,9 +146,6 @@ private:
 	std::list<pFace> _faces;
 
 };
-
-template <typename T>
-double ConvexHull<T>::_tolerance=1.0e-9;
 
 template <typename T>
 ConvexHull<T>::ConvexHull() : _vertices(), _edges(), _faces()
@@ -207,7 +220,7 @@ bool ConvexHull<T>::isCoplanar(pVertex v0, pVertex v1, pVertex v2) const
 
 	T norm=va.cross(vb).norm();
 
-	return (norm<_tolerance);
+	return (norm<1.0e-9);
 }
 
 template <typename T>
