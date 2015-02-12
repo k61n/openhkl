@@ -71,11 +71,17 @@ class ConvexHull
 
 public:
 
+	// Typedefs
 	typedef Eigen::Matrix<T,3,1> vector3;
 	typedef Eigen::Matrix<T,3,3> matrix33;
 	typedef Vertex<T>* pVertex;
 	typedef Face<T>* pFace;
 	typedef Edge<T>* pEdge;
+
+public:
+
+	//! Check whether three vertices are coplanar
+	static bool isCoplanar(pVertex v0, pVertex v1, pVertex v2);
 
 public:
 
@@ -86,7 +92,8 @@ public:
 	~ConvexHull();
 
 	//! Add a new vertex to be "hulled" further
-	pVertex makeVertex(const vector3& coords);
+	pVertex addVertex(const vector3& coords);
+
 
 	//! Create a new hull face
 	pFace makeFace(pVertex v0, pVertex v1, pVertex v2, pFace face=nullptr);
@@ -94,12 +101,6 @@ public:
 	pFace makeNullFace();
 
 	pEdge makeNullEdge();
-
-	//! Check whether three vertices are coplanar
-	bool isCoplanar(pVertex v0, pVertex v1, pVertex v2) const;
-
-	//! Define the initial double triangles that will serve as a seed for the hull
-	void doubleTriangle();
 
 	//! Construct hull
 	void constructHull();
@@ -121,6 +122,9 @@ public:
 
 private:
 
+	//! Define the initial double triangles that will serve as a seed for the hull
+	void doubleTriangle();
+
 	//! Find a set of three vertices that are not coplanar
 	bool findInitialVertices(pVertex& v0, pVertex& v1, pVertex& v2) const;
 
@@ -141,6 +145,7 @@ private:
 
 private:
 
+	bool _initialized;
 	std::list<pVertex> _vertices;
 	std::list<pEdge> _edges;
 	std::list<pFace> _faces;
@@ -148,7 +153,18 @@ private:
 };
 
 template <typename T>
-ConvexHull<T>::ConvexHull() : _vertices(), _edges(), _faces()
+bool ConvexHull<T>::isCoplanar(pVertex v0, pVertex v1, pVertex v2)
+{
+	vector3 va=v1->_coords - v0->_coords;
+	vector3 vb=v2->_coords - v0->_coords;
+
+	T norm=va.cross(vb).norm();
+
+	return (norm<1.0e-9);
+}
+
+template <typename T>
+ConvexHull<T>::ConvexHull() : _initialized(false), _vertices(), _edges(), _faces()
 {
 }
 
@@ -166,7 +182,7 @@ ConvexHull<T>::~ConvexHull()
 }
 
 template <typename T>
-typename ConvexHull<T>::pVertex ConvexHull<T>::makeVertex(const vector3& coords)
+typename ConvexHull<T>::pVertex ConvexHull<T>::addVertex(const vector3& coords)
 {
 	pVertex v=new Vertex<T>(coords);
 	_vertices.push_back(v);
@@ -210,17 +226,6 @@ bool ConvexHull<T>::findInitialVertices(pVertex& v0, pVertex& v1, pVertex& v2) c
 		}
 	}
 	return false;
-}
-
-template <typename T>
-bool ConvexHull<T>::isCoplanar(pVertex v0, pVertex v1, pVertex v2) const
-{
-	vector3 va=v1->_coords - v0->_coords;
-	vector3 vb=v2->_coords - v0->_coords;
-
-	T norm=va.cross(vb).norm();
-
-	return (norm<1.0e-9);
 }
 
 template <typename T>
@@ -313,6 +318,12 @@ typename ConvexHull<T>::pFace ConvexHull<T>::makeFace(pVertex v0, pVertex v1, pV
 template <typename T>
 void ConvexHull<T>::constructHull()
 {
+
+	if (!_initialized)
+	{
+		doubleTriangle();
+		_initialized=true;
+	}
 
 	for (auto rit=_vertices.rbegin();rit!=_vertices.rend();rit++)
 	{
