@@ -40,25 +40,42 @@ namespace SX
 namespace Geometry
 {
 
+// Forward declaration
 template <typename T>
 class Face;
 
+/* !
+ * \brief Class Edge.
+ * This class implements the Edge object used in the incremental convex hull algorithm.
+ */
 template <typename T>
 class Edge
 {
 public:
+
+	//! Default constructor
 	Edge();
 
+	//! Copy constructor (deleted)
 	Edge(const Edge& other)=delete;
 
+	//! Destructor
 	~Edge();
 
+	//! Assignment operator (deleted)
+	Edge& operator=(const Edge& other)=delete;
+
+	//! Send some information about this Edge on an output stream
 	void print(std::ostream& os) const;
 
 public:
+	//! The two pointers to the faces adjacent to this Edge
 	std::array<Face<T>*,2> _adjFace;
+	//! The two pointers to the vertices that makes this Edge
 	std::array<Vertex<T>*,2> _endPts;
+	//! When not null indicates the new face formed by this Edge and a new vertex of the hull
 	Face<T>* _newFace;
+	//! If true this Edge is marked to be deleted at the next clean up step
 	bool _delete;
 };
 

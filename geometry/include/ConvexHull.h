@@ -416,9 +416,9 @@ void ConvexHull<T>::processVertex(pVertex v)
 		if (visible1 && visible2)
 			e->_delete=true;
 		else if (visible1 || visible2)
-		{
 			e->_newFace=buildConeFace(e,v);
-		}
+		else
+			continue;
 
 	}
 

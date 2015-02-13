@@ -39,33 +39,52 @@ namespace SX {
 namespace Geometry
 {
 
+// Forward declaration
 template <typename T>
 class Edge;
 
+/* !
+ * \brief Class Vertex.
+ * This class implements the Vertex object used in the incremental convex hull algorithm.
+ */
 template<typename T>
 class Vertex
 {
+
+public:
+
+	// Typedefs
 	typedef Eigen::Matrix<T,3,1> vector3;
 
 public:
 
+	//! Default constructor
 	Vertex();
 
-	Vertex(const Vertex& other);
+	//! Copy constructor (deleted)
+	Vertex(const Vertex& other)=delete;
 
+	//! Constructs a Vertex object from a vector of coordinates
 	Vertex(const vector3& coords);
 
+	//! Destructor
 	~Vertex();
 
-	Vertex& operator=(const Vertex& other);
+	//! Assignment operator (deleted)
+	Vertex& operator=(const Vertex& other)=delete;
 
+	//! Send some informations about this Vertex on an output stream
 	void print(std::ostream& os) const;
 
 public:
 
+	//! The coordinates of this Vertex
 	vector3 _coords;
+	//! A pointer to the incident cone edge (or nullptr)
 	Edge<T>* _duplicate;
+	//! True if this Vertex is on the hull
 	bool _onHull;
+	//! True if the vertex has been processed
 	bool _mark;
 };
 
@@ -77,25 +96,6 @@ Vertex<T>::Vertex() : _coords(), _duplicate(nullptr), _onHull(false), _mark(fals
 template <typename T>
 Vertex<T>::Vertex(const vector3& coords) : _coords(coords), _duplicate(nullptr), _onHull(false), _mark(false)
 {
-}
-
-template <typename T>
-Vertex<T>::Vertex(const Vertex<T>& other) : _coords(other._coords), _duplicate(other._duplicate), _onHull(other._onHull), _mark(other._mark)
-{
-}
-
-template <typename T>
-Vertex<T>& Vertex<T>::operator=(const Vertex<T>& other)
-{
-	if (this!=&other)
-	{
-		_coords=other._coords;
-		_duplicate=other._duplicate;
-		_onHull=other._onHull;
-		_mark=other._mark;
-
-	}
-	return *this;
 }
 
 template <typename T>
