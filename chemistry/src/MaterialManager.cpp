@@ -66,7 +66,18 @@ Material* MaterialManager::buildMaterial(const property_tree::ptree& node)
 			if (submat)
 				component=findMaterial(submat.get());
 			else
-				component=buildMaterial(v.second);
+			{
+				name=v.second.get<std::string>("<xmlattr>.name");
+				try
+				{
+					component=findMaterial(name);
+				}
+				catch(const SX::Kernel::Error<ElementManager>& e)
+				{
+					component=buildMaterial(v.second);
+					_registry.insert(materialPair(name,component));
+				}
+			}
 
 			if (fMode==Material::FillingMode::MassFraction || fMode==Material::FillingMode::MoleFraction)
 			{
