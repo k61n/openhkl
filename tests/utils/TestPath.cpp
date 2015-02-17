@@ -2,6 +2,7 @@
 #define BOOST_TEST_DYN_LINK
 
 #include <boost/test/unit_test.hpp>
+#include <boost/filesystem.hpp>
 
 #include <iostream>
 #include <string>
@@ -13,19 +14,25 @@ using namespace SX::Utils;
 BOOST_AUTO_TEST_CASE(Test_Path)
 {
 
-	std::string p=getInstallationPath();
-	std::cout<<p<<std::endl;
+	namespace filesystem=boost::filesystem;
 
-	p.clear();
-	p=getResourcesPath();
-	std::cout<<p<<std::endl;
+	Path* path=Path::Instance();
 
-	p.clear();
-	p=expandUser("~/toto");
-	std::cout<<p<<std::endl;
+	std::string s=(filesystem::path(path->getApplicationDataPath())/"sdddd").string();
 
-	p.clear();
-	p=getHomeDirectory();
-	std::cout<<p<<std::endl;
+	std::cout<<s<<std::endl;
+
+
+//	p.clear();
+//	p=path->getResourcesPath();
+//	std::cout<<p<<std::endl;
+//
+//	p.clear();
+//	p=path->expandUser("~/toto");
+//	std::cout<<p<<std::endl;
+//
+//	p.clear();
+//	p=path->getHomeDirectory();
+//	std::cout<<p<<std::endl;
 
 }
