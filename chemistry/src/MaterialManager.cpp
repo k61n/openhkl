@@ -1,6 +1,4 @@
-#include <boost/filesystem.hpp>
 #include <boost/foreach.hpp>
-#include <boost/property_tree/xml_parser.hpp>
 
 #include "ElementManager.h"
 #include "Error.h"
@@ -14,9 +12,6 @@ namespace SX
 
 namespace Chemistry
 {
-
-// Namespaces
-namespace xml_parser=boost::property_tree::xml_parser;
 
 MaterialManager::MaterialManager() : _registry()
 {

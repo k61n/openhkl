@@ -30,9 +30,12 @@
 #ifndef NSXTOOL_MATERIALMANAGER_H_
 #define NSXTOOL_MATERIALMANAGER_H_
 
+#include <map>
 #include <string>
 
+#include <boost/filesystem.hpp>
 #include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
 
 #include "Singleton.h"
 
@@ -51,6 +54,8 @@ typedef std::pair<std::string,Material*> materialPair;
 
 // Namespaces
 namespace filesystem=boost::filesystem;
+namespace property_tree=boost::property_tree;
+namespace xml_parser=boost::property_tree::xml_parser;
 
 class MaterialManager : public SX::Kernel::Singleton<MaterialManager,SX::Kernel::Constructor,SX::Kernel::Destructor>
 {
