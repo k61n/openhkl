@@ -175,14 +175,14 @@ if (ENABLE_CPACK)
       
     if ("${UNIX_DIST}" MATCHES "Ubuntu")
         string(REPLACE "," ", " CPACK_DEBIAN_PACKAGE_DEPENDS
-#        "libboost-filesystem-dev,"
+        "libboost-filesystem-dev,"
         "libboost-date-time-dev,"
         "libboost-python-dev,"
         "libboost-system-dev,"
         "libboost-test-dev,"
         "libeigen3-dev,"
         "libfftw3-dev,"
-        "libtiff4-dev,"
+        "libtiff-dev,"
         "libhdf5-serial-dev,"
         "python,"
         "python-numpy")
