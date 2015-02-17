@@ -62,4 +62,9 @@ BOOST_AUTO_TEST_CASE(Test_Material)
 
 	// Check that the registry of materials has been correctly updated
 	BOOST_CHECK_EQUAL(mmgr->getNRegisteredMaterials(),2);
+
+	// Build a mixture of material from the XML database
+	Material* dbMixture=mmgr->findMaterial("db_mixture");
+
+
 }

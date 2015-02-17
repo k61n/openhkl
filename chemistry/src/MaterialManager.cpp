@@ -70,7 +70,7 @@ Material* MaterialManager::buildMaterial(const property_tree::ptree& node)
 		{
 			Material* component;
 
-			boost::optional<std::string> submat=v.second.get_optional<std::string>("<xmlattr>.material");
+			boost::optional<std::string> submat=v.second.get_optional<std::string>("<xmlattr>.database");
 			if (submat)
 				component=findMaterial(submat.get());
 			else
@@ -80,7 +80,7 @@ Material* MaterialManager::buildMaterial(const property_tree::ptree& node)
 				{
 					component=findMaterial(name);
 				}
-				catch(const SX::Kernel::Error<ElementManager>& e)
+				catch(const SX::Kernel::Error<MaterialManager>& e)
 				{
 					component=buildMaterial(v.second);
 					_registry.insert(materialPair(name,component));
@@ -176,7 +176,7 @@ Material* MaterialManager::findMaterial(const std::string& name)
 			return mat;
 		}
 	}
-	throw SX::Kernel::Error<Material>("Material "+name+" is not registered in the materials database");
+	throw SX::Kernel::Error<MaterialManager>("Material "+name+" is not registered in the materials database");
 }
 
 void MaterialManager::setDatabasePath(const std::string& path)

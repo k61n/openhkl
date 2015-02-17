@@ -14,4 +14,27 @@
 	</element>
 </material>
 
+<material name="db_mixture" state="gaz" filling_mode="mole_fraction">
+	<density units="kg/m3">1.235</density>
+
+	<material database="db_methane">
+	<fraction>0.4</fraction>
+	</material>
+
+	<material name="db_water" state="gaz" filling_mode="number_of_atoms">
+		<element name="oxygen">
+		<symbol>O</symbol>	
+		<natoms units="%">1</natoms>
+		</element>
+		
+		<element name="hydrogen">
+		<symbol>H</symbol>	
+		<natoms units="%">2</natoms>
+		</element>
+		
+		<fraction>0.6</fraction>
+	</material>
+
+</material>
+
 </materials>
