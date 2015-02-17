@@ -68,6 +68,9 @@ public:
 	//! Destructor
 	~MaterialManager();
 
+	//! Builds and register an empty material. If the material with the same name is already registered, throws.
+	Material* buildMaterial(const std::string& name, Material::State state=Material::State::Solid, Material::FillingMode fillingMode=Material::FillingMode::MassFraction);
+
 	//! Find a Material
 	Material* findMaterial(const std::string& name);
 

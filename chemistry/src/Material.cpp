@@ -54,7 +54,8 @@ Material::Material(const std::string& name, State state, FillingMode fillingMode
   _temperature(0.0),
   _state(state),
   _fillingMode(fillingMode),
-  _elements()
+  _elements(),
+  _contents()
 {
 }
 
@@ -65,8 +66,8 @@ Material::~Material()
 bool Material::operator==(const Material& other) const
 {
 
-	elementContentsMap mf1=getMassFractions();
-	elementContentsMap mf2=other.getMassFractions();
+	contentsMap mf1=getMassFractions();
+	contentsMap mf2=other.getMassFractions();
 
 	return (_density==other._density) &&
 			(_state==other._state) &&
@@ -74,7 +75,17 @@ bool Material::operator==(const Material& other) const
 			std::equal(mf1.begin(),
 					   mf1.end(),
 					   mf2.begin(),
-					   [] (elementContentsPair a, elementContentsPair b) { return a.first==b.first && std::abs(a.second-b.second)<1.0e-6;});
+					   [] (strToDoublePair a, strToDoublePair b) { return a.first==b.first && std::abs(a.second-b.second)<1.0e-6;});
+}
+
+Element* Material::operator[](const std::string& name)
+{
+	auto it=_elements.find(name);
+
+	if (it==_elements.end())
+		throw SX::Kernel::Error<Material>("No element match "+name+" name in material "+_name);
+
+	return it->second;
 }
 
 void Material::addElement(Element* element, double fraction)
@@ -84,19 +95,24 @@ void Material::addElement(Element* element, double fraction)
 	{
 		if (fraction<=0 || fraction>1)
 			throw SX::Kernel::Error<Material>("Invalid value for mass/mole fraction");
-		double sum=std::accumulate(std::begin(_elements),
-				                    std::end(_elements),
+		double sum=std::accumulate(std::begin(_contents),
+				                    std::end(_contents),
 				                    fraction,
-				                    [](double previous, const elementContentsPair& p) { return previous+p.second;});
+				                    [](double previous, const strToDoublePair& p) { return previous+p.second;});
 		if (sum>(1.000001))
 			throw SX::Kernel::Error<Material>("The sum of mole fractions exceeds 1.0");
 	}
 
-	auto it=_elements.find(element);
-	if (it!=_elements.end())
+	std::string eName=element->getName();
+
+	auto it=_contents.find(eName);
+	if (it!=_contents.end())
 		it->second += fraction;
 	else
-		_elements.insert(elementContentsPair(element,fraction));
+	{
+		_elements.insert(strToElementPair(eName,element));
+		_contents.insert(strToDoublePair(eName,fraction));
+	}
 
 	return;
 }
@@ -127,36 +143,28 @@ void Material::addMaterial(Material* material, double contents)
 	else
 		throw SX::Kernel::Error<Material>("Invalid filling mode");
 }
-//
-//void Material::addMaterial(const std::string& name, double contents)
-//{
-//	Material* mat=Material::buildFromDatabase(name);
-//
-//	addMaterial(mat,contents);
-//
-//	return;
-//}
-//
-elementContentsMap Material::getMassFractions() const
+
+contentsMap Material::getMassFractions() const
 {
 
-	elementContentsMap fractions;
+	contentsMap fractions;
 
 	switch(_fillingMode)
 	{
 	case FillingMode::MassFraction:
 	{
-		fractions = _elements;
+		fractions = _contents;
 		break;
 	}
 
 	case FillingMode::MoleFraction:
 	{
 		double fact=0.0;
-		for (auto it=_elements.begin();it!=_elements.end();++it)
+		for (auto it=_contents.begin();it!=_contents.end();++it)
 		{
-			fact+=it->second*it->first->getMolarMass();
-			fractions.insert(std::pair<Element*,double>(it->first,it->second*it->first->getMolarMass()));
+			double prod=it->second*_elements.at(it->first)->getMolarMass();
+			fact+=prod;
+			fractions.insert(strToDoublePair(it->first,prod));
 		}
 		for (auto& f : fractions)
 			f.second/=fact;
@@ -166,11 +174,11 @@ elementContentsMap Material::getMassFractions() const
 	case FillingMode::NumberOfAtoms:
 	{
 		double totalMass=0.0;
-		for (auto it=_elements.begin();it!=_elements.end();++it)
+		for (auto it=_contents.begin();it!=_contents.end();++it)
 		{
-			double fimi=it->first->getMolarMass()*it->second;
-			fractions.insert(elementContentsPair(it->first,fimi));
-			totalMass+=fimi;
+			double prod=it->second*_elements.at(it->first)->getMolarMass();
+			totalMass+=prod;
+			fractions.insert(strToDoublePair(it->first,prod));
 		}
 		for (auto& it : fractions)
 			it.second/=totalMass;
@@ -180,10 +188,11 @@ elementContentsMap Material::getMassFractions() const
 	case FillingMode::PartialPressure:
 	{
 		double fact=0.0;
-		for (auto it=_elements.begin();it!=_elements.end();++it)
+		for (auto it=_contents.begin();it!=_contents.end();++it)
 		{
-			fact+=it->second*it->first->getMolarMass();
-			fractions.insert(std::pair<Element*,double>(it->first,it->second*it->first->getMolarMass()));
+			double prod=it->second*_elements.at(it->first)->getMolarMass();
+			fact+=prod;
+			fractions.insert(strToDoublePair(it->first,prod));
 		}
 		for (auto& f : fractions)
 			f.second/=fact;
@@ -195,10 +204,10 @@ elementContentsMap Material::getMassFractions() const
 	return fractions;
 }
 
-elementContentsMap Material::getMoleFractions() const
+contentsMap Material::getMoleFractions() const
 {
 
-	elementContentsMap fractions;
+	contentsMap fractions;
 
 	switch(_fillingMode)
 	{
@@ -206,10 +215,11 @@ elementContentsMap Material::getMoleFractions() const
 	case FillingMode::MassFraction:
 	{
 		double fact=0.0;
-		for (auto it=_elements.begin();it!=_elements.end();++it)
+		for (auto it=_contents.begin();it!=_contents.end();++it)
 		{
-			fact+=it->second/it->first->getMolarMass();
-			fractions.insert(std::pair<Element*,double>(it->first,it->second/it->first->getMolarMass()));
+			double frac=it->second/_elements.at(it->first)->getMolarMass();
+			fact+=frac;
+			fractions.insert(strToDoublePair(it->first,frac));
 		}
 		for (auto& f : fractions)
 			f.second/=fact;
@@ -218,29 +228,29 @@ elementContentsMap Material::getMoleFractions() const
 
 	case FillingMode::MoleFraction:
 	{
-		fractions = _elements;
+		fractions = _contents;
 		break;
 	}
 
 	case FillingMode::NumberOfAtoms:
 	{
-		double nAtoms=std::accumulate(std::begin(_elements),
-				                       std::end(_elements),
+		double nAtoms=std::accumulate(std::begin(_contents),
+				                       std::end(_contents),
 				                       0.0,
-				                       [](double previous, const elementContentsPair& p) {return previous+p.second;});
-		for (auto it=_elements.begin();it!=_elements.end();++it)
-			fractions.insert(std::pair<Element*,double>(it->first,it->second/nAtoms));
+				                       [](double previous, const strToDoublePair& p) {return previous+p.second;});
+		for (auto it=_contents.begin();it!=_contents.end();++it)
+			fractions.insert(strToDoublePair(it->first,it->second/nAtoms));
 		break;
 	}
 
 	case FillingMode::PartialPressure:
 	{
-		double totalPressure=std::accumulate(std::begin(_elements),
-				                              std::end(_elements),
+		double totalPressure=std::accumulate(std::begin(_contents),
+				                              std::end(_contents),
 				                              0.0,
-				                              [](double previous, const elementContentsPair& p) {return previous+p.second;});
-		for (auto it=_elements.begin();it!=_elements.end();++it)
-			fractions.insert(std::pair<Element*,double>(it->first,it->second/totalPressure));
+				                              [](double previous, const strToDoublePair& p) {return previous+p.second;});
+		for (auto it=_contents.begin();it!=_contents.end();++it)
+			fractions.insert(strToDoublePair(it->first,it->second/totalPressure));
 		break;
 	}
 
@@ -249,50 +259,57 @@ elementContentsMap Material::getMoleFractions() const
 	return fractions;
 }
 
-elementContentsMap Material::getNAtomsPerVolume() const
+contentsMap Material::getNAtomsPerVolume() const
 {
-	elementContentsMap nAtoms;
+	contentsMap nAtoms;
 
 	double fact=SX::Units::avogadro*getDensity();
 
 	auto massFractions=getMassFractions();
 
 	for (auto it : massFractions)
-		nAtoms.insert(elementContentsPair(it.first,fact*it.second/it.first->getMolarMass()));
+	{
+		double molarMass=_elements.at(it.first)->getMolarMass();
+		nAtoms.insert(strToDoublePair(it.first,fact*it.second/molarMass));
+	}
 
 	return nAtoms;
 }
 
 double Material::getNAtomsTotalPerVolume() const
 {
-	elementContentsMap nAtoms=getNAtomsPerVolume();
+	contentsMap nAtoms=getNAtomsPerVolume();
 
 	return std::accumulate(std::begin(nAtoms),
 			                std::end(nAtoms),
 			                0.0,
-			                [](double previous, const elementContentsPair& p){return previous+p.second;});
+			                [](double previous, const strToDoublePair& p){return previous+p.second;});
 }
 
-elementContentsMap Material::getNElectronsPerVolume() const
+contentsMap Material::getNElectronsPerVolume() const
 {
-	elementContentsMap nAtoms;
+	contentsMap nAtoms;
 
 	double fact=SX::Units::avogadro*getDensity();
 
 	for (auto it : getMassFractions())
-		nAtoms.insert(elementContentsPair(it.first,static_cast<double>(fact*it.first->getNElectrons())*it.second/it.first->getMolarMass()));
+	{
+		double nElectrons=static_cast<double>(_elements.at(it.first)->getNElectrons());
+		double molarMass=static_cast<double>(_elements.at(it.first)->getMolarMass());
+		nAtoms.insert(strToDoublePair(it.first,static_cast<double>(fact*nElectrons)*it.second/molarMass));
+	}
 
 	return nAtoms;
 }
 
 double Material::getNElectronsTotalPerVolume() const
 {
-	elementContentsMap nElectrons=getNElectronsPerVolume();
+	contentsMap nElectrons=getNElectronsPerVolume();
 
 	return std::accumulate(std::begin(nElectrons),
 			                std::end(nElectrons),
 			                0.0,
-			                [](double previous, const elementContentsPair& p){return previous+p.second;});
+			                [](double previous, const strToDoublePair& p){return previous+p.second;});
 }
 
 double Material::getMu(double lambda) const
@@ -301,8 +318,9 @@ double Material::getMu(double lambda) const
 	auto nAtomsPerVol=getNAtomsPerVolume();
 	for (auto it : nAtomsPerVol)
 	{
-		double xs=it.first->getIncoherentXs() + it.first->getAbsorptionXs(lambda);
-		mu+=it.second*xs;
+		double xsInc=_elements.at(it.first)->getIncoherentXs();
+		double xsAbs=_elements.at(it.first)->getAbsorptionXs(lambda);
+		mu+=it.second*(xsInc + xsAbs);
 	}
 	return mu;
 }
@@ -323,19 +341,22 @@ double Material::getDensity() const
 	{
 		if (_temperature<=0)
 			throw SX::Kernel::Error<Material>("Invalid temperature value");
-		double totalPressure=std::accumulate(std::begin(_elements),
-				                              std::end(_elements),
+		double totalPressure=std::accumulate(std::begin(_contents),
+				                              std::end(_contents),
 				                              0.0,
-				                              [](double previous, const elementContentsPair& p) {return previous+p.second;});
+				                              [](double previous, const strToDoublePair& p) {return previous+p.second;});
 
 		double moleDensity=totalPressure/SX::Units::R/_temperature;
 
 		double density=0.0;
 
-		elementContentsMap moleFractions=getMoleFractions();
+		contentsMap moleFractions=getMoleFractions();
 
 		for (auto it : moleFractions)
-			density+=moleDensity*it.second*it.first->getMolarMass();
+		{
+			double molarMass=static_cast<double>(_elements.at(it.first)->getMolarMass());
+			density+=moleDensity*it.second*molarMass;
+		}
 
 		return density;
 
@@ -377,12 +398,15 @@ void Material::print(std::ostream& os) const
 	{
 		unsigned int maxSize=0;
 		for (auto it : _elements)
-			if (it.first->getName().size() > maxSize)
-				maxSize=it.first->getName().size();
+		{
+			unsigned int nameSize=it.second->getName().size();
+			if (nameSize > maxSize)
+				maxSize=nameSize;
+		}
 		os<<"Composition:"<<std::endl;
 		for (auto it : _elements)
 		{
-			os<<"\t-"<<std::setw(maxSize)<<std::setiosflags(std::ios::left)<<it.first->getName()<<" --> "<<std::setiosflags(std::ios::fixed|std::ios::right)<<std::setprecision(3)<<std::setw(7)<<it.second<<std::endl;
+			os<<"\t-"<<std::setw(maxSize)<<std::setiosflags(std::ios::left)<<it.second->getName()<<" --> "<<std::setiosflags(std::ios::fixed|std::ios::right)<<std::setprecision(3)<<std::setw(7)<<it.second<<std::endl;
 			std::cout<<std::resetiosflags(std::ios::right);
 		}
 	}

@@ -45,8 +45,10 @@ namespace Chemistry
 class Element;
 
 // Typedefs
-typedef std::map<Element*,double> elementContentsMap;
-typedef std::pair<Element*,double> elementContentsPair;
+typedef std::map<std::string,Element*> elementsMap;
+typedef std::map<std::string,double> contentsMap;
+typedef std::pair<std::string,Element*> strToElementPair;
+typedef std::pair<std::string,double> strToDoublePair;
 
 class Material
 {
@@ -92,6 +94,9 @@ public:
 	//! Return true if two Material objects are the same (same density, same chemical state and same elements with the same mass fraction)
 	bool operator==(const Material& other) const;
 
+	//! Returns the Element* of this Material corresponding to this name. If no element of this Material matches this name, throws.
+	Element* operator[](const std::string& name);
+
 	//! Add a Material to this Material
 	void addMaterial(Material* material, double fraction);
 	//! Add an Element to this Material. The Element will be built from the elements database
@@ -112,9 +117,9 @@ public:
 	FillingMode getFillingMode() const;
 
 	//! Returns a map of the mole fractions per element
-	elementContentsMap getMoleFractions() const;
+	contentsMap getMoleFractions() const;
 	//! Returns a map of the mass fractions per element
-	elementContentsMap getMassFractions() const;
+	contentsMap getMassFractions() const;
 
 	//! Returns the density of this Material
 	double getDensity() const;
@@ -126,9 +131,9 @@ public:
 	void setTemperature(double temperature);
 
 	//! Returns a map of the number of atoms per volume units per element (1/m3)
-	elementContentsMap getNAtomsPerVolume() const;
+	contentsMap getNAtomsPerVolume() const;
 	//! Returns a map of the number of electrons per volume units per element (1/m3)
-	elementContentsMap getNElectronsPerVolume() const;
+	contentsMap getNElectronsPerVolume() const;
 	//! Returns the total number of atoms per volume units (1/m3)
 	double getNAtomsTotalPerVolume() const;
 	//! Returns the total number of electrons per volume units (1/m3)
@@ -146,12 +151,20 @@ private:
 
 private:
 
+	//! The name of this Material
 	std::string _name;
+	//! The density of this Material
 	double _density;
+	//! The temperature of this Material
 	double _temperature;
+	//! The physical state of this Material
 	State _state;
+	//! The way Element or Material objects will be added to this Material
 	FillingMode _fillingMode;
-	elementContentsMap _elements;
+	//! A lookup between the name of the Element this Material is made of and their corresponding pointer
+	elementsMap _elements;
+	//! A lookup between the name of the Element this Material is made of and their corresponding contents. The value depends on the filling mode.
+	contentsMap _contents;
 
 };
 

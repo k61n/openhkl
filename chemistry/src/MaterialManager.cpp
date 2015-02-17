@@ -35,6 +35,19 @@ void MaterialManager::cleanRegistry()
 	_registry.clear();
 }
 
+Material* MaterialManager::buildMaterial(const std::string& name, Material::State state, Material::FillingMode fillingMode)
+{
+	// Check first if an element with this name has already been registered
+	auto it=_registry.find(name);
+	if (it!=_registry.end())
+		throw SX::Kernel::Error<MaterialManager>("A material with name "+name+" is already registered in the registry.");
+
+	// Otherwise built it from scratch.
+	Material* mat=Material::create(name,state,fillingMode);
+	_registry.insert(materialPair(name,mat));
+	return mat;
+}
+
 Material* MaterialManager::buildMaterial(const property_tree::ptree& node)
 {
 	SX::Units::UnitsManager* um=SX::Units::UnitsManager::Instance();
