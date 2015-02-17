@@ -50,10 +50,13 @@ namespace SX
 namespace Chemistry
 {
 
-using boost::property_tree::ptree;
+// Namespaces
+namespace property_tree=boost::property_tree;
 
+// Forward declarations
 class Isotope;
 
+// Typedefs
 typedef std::set<Isotope*> isotopeSet;
 typedef std::map<std::string,Isotope*> isotopeMap;
 typedef std::pair<std::string,Isotope*> isotopePair;
@@ -63,29 +66,8 @@ class Isotope
 
 public:
 
-	//! Return a pointer to an Isotope built from the isotopes XML database
-	static Isotope* buildFromDatabase(const std::string& name);
-
-	//! Returns the number of registered isotopes
-	static unsigned int getNRegisteredIsotopes();
-
-	//! Returns the set of Isotopes whose property |prop| matches the value |value|
-	template<typename T>
-	static isotopeSet getIsotopes(const std::string& prop, T value);
-
-	//! Returns the value of property |prop| for isotope |name|
-	template<typename T>
-	static T getProperty(const std::string& name, const std::string& prop);
-
-private:
-
-	//! Read an isotope XML node and returns the corresponding Isotope object
-	static Isotope* readIsotope(const ptree& node);
-
-private:
-
-	static std::string database;
-	static isotopeMap registry;
+	//! Constructs an Isotope from an XML node
+	static Isotope* create(const property_tree::ptree& node);
 
 public:
 
@@ -95,17 +77,30 @@ public:
 	//! Destructor
 	~Isotope();
 
+	//! Assignment operator (deleted)
+	Isotope& operator=(const Isotope& other)=delete;
+
 	//! Return true if this Isotope is equal to another Isotope
 	bool operator==(const Isotope& other);
 
 	//! Returns the name of this Isotope
 	const std::string& getName() const;
 
+	//! Returns the symbol of this Isotope
+	const std::string& getSymbol() const;
+
+	//! Returns the chemical state of this Isotope
+	const std::string& getState() const;
+
+	//! Returns the nuclear spin of this Isotope
+	double getNuclearSpin() const;
+
 	//! Returns the abundance of this Isotope
 	double getAbundance() const;
-
-	//! Returns the formal charge of this Isotope
-	double getFormalCharge() const;
+	//! Returns the half-life of this Isotope
+	double getHalfLife() const;
+	//! Returns whether this Isotope is stable or not
+	bool getStable() const;
 
 	//! Returns the molar mass of this Isotope
 	double getMolarMass() const;
@@ -118,6 +113,26 @@ public:
 	double getNNucleons() const;
 	//! Returns the number of protons (aka Z) of this Isotope
 	double getNProtons() const;
+	//! Returns the formal charge of this Isotope
+	double getFormalCharge() const;
+
+	//! Returns the coherent scattering length of this Isotope
+	std::complex<double>  getBCoherent() const;
+	//! Returns the incoherent scattering length of this Isotope
+	std::complex<double>  getBIncoherent() const;
+	//! Returns the +1/2 spin-dependent scattering length of this Isotope
+	std::complex<double>  getBPlus() const;
+	//! Returns the -1/2 spin-dependent scattering length of this Isotope
+	std::complex<double>  getBMinus() const;
+
+	//! Returns the coherent cross section of this Isotope
+	double getXsCoherent() const;
+	//! Returns the incoherent cross section of this Isotope
+	double getXsIncoherent() const;
+	//! Returns the absorption cross section of this Isotope
+	double getXsAbsorption() const;
+	//! Returns the total cross section of this Isotope
+	double getXsScattering() const;
 
 	//! Returns true if this Isotope is an ion
 	bool isIon() const;
@@ -131,98 +146,56 @@ public:
 
 private:
 
-	//! Constructs an empty Isotope
+	//! Default constructor
 	Isotope();
 
-public:
+private:
 
+	//! The name of this Isotope
 	std::string _name;
+	//! The chemical symbol of this Isotope
 	std::string _symbol;
+	//! The chemical element corresponding to this Isotope
 	std::string _element;
+	//! The number of protons (aka Z) of this Isotope
 	int _nProtons;
+	//! The number of nucleons (aka N) of this Isotope
 	int _nNucleons;
+	//! The number of electrons of this Isotope
 	int _nElectrons;
+	//! The molar mass of this Isotope (in g/mol)
 	double _molarMass;
+	//! The nuclear spin of this Isotope
 	double _nuclearSpin;
+	//! The chemical state of this Isotope
 	std::string _state;
+	//! The natural abundance of this Isotope. Equal to 0 if unstable
 	double _abundance;
+	//! The half life of this Isotope. Equal to +Inf is stable
 	double _halfLife;
+	//! The stability of this Isotope
 	bool _stable;
+	//! The coherent scattering length of this Isotope
 	std::complex<double> _bCoherent;
+	//! The incoherent scattering length of this Isotope
 	std::complex<double> _bIncoherent;
+	//! The +1/2 spin-dependent scattering length of this Isotope
 	std::complex<double> _bPlus;
+	//! The -1/2 spin-dependent scattering length of this Isotope
 	std::complex<double> _bMinus;
+	//! The coherent cross section of this Isotope
 	double _xsCoherent;
+	//! The incoherent cross section of this Isotope
 	double _xsIncoherent;
+	//! The total cross section of this Isotope
 	double _xsScattering;
+	//! The absorption cross section of this Isotope
 	double _xsAbsorption;
 
 };
 
 //! Overloads the operator<< with an Isotope object
 std::ostream& operator<<(std::ostream&,const Isotope&);
-
-template<typename T>
-T Isotope::getProperty(const std::string& name, const std::string& prop)
-{
-	ptree root;
-	read_xml(database,root);
-
-	BOOST_FOREACH(ptree::value_type const& v, root.get_child("isotopes"))
-	{
-		if (v.first.compare("isotope")!=0)
-			continue;
-
-		if (v.second.get<std::string>("<xmlattr>.name").compare(name)==0)
-		{
-			try
-			{
-				return v.second.get<T>(prop);
-			}
-			catch (const std::runtime_error& error)
-			{
-				throw SX::Kernel::Error<Isotope>(error.what());
-			}
-		}
-	}
-	throw SX::Kernel::Error<Isotope>("No match for entry "+name);
-}
-
-template<typename T>
-isotopeSet Isotope::getIsotopes(const std::string& prop, T value)
-{
-	isotopeSet isset;
-
-	// Open and read the isotopes XML database
-	ptree root;
-	read_xml(database,root);
-
-	// Loop over the nodes of the isotopes XML database
-	BOOST_FOREACH(ptree::value_type const& v, root.get_child("isotopes"))
-	{
-		// If the node is not an isotope node, ignore it
-		if (v.first.compare("isotope")!=0)
-			continue;
-
-		// Search for the target property among the available ones for this isotope
-		boost::optional<T> opt=v.second.get_optional<T>(prop);
-		if (opt)
-		{
-			// Case where the property was found and matches the target value
-			if (opt.get()==value)
-			{
-				Isotope* is=readIsotope(v.second);
-				isset.insert(is);
-			}
-		}
-	}
-
-	// If the search gave no match, throws
-	if (isset.empty())
-		throw SX::Kernel::Error<Isotope>("No isotopes matches property "+prop+" with value "+value);
-
-	return isset;
-}
 
 } // end namespace Chemistry
 

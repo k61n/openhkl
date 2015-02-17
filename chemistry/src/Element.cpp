@@ -1,9 +1,11 @@
 #include <algorithm>
-#include <cmath>
+#include <iterator>
+#include <numeric>
 
-#include "Isotope.h"
 #include "Element.h"
-#include "Units.h"
+#include "Error.h"
+#include "Isotope.h"
+#include "IsotopeManager.h"
 
 namespace SX
 {
@@ -11,100 +13,29 @@ namespace SX
 namespace Chemistry
 {
 
-double Element::tolerance=1.0e-6;
-
-std::string Element::database="elements.xml";
-
-elementMap Element::registry=elementMap();
-
-Element* Element::buildFromDatabase(const std::string& name)
+Element* Element::create(const std::string& name, const std::string& symbol)
 {
-	auto it=registry.find(name);
-	if (it!=registry.end())
-		return it->second;
-	else
-	{
-		ptree root;
-		read_xml(database,root);
-
-		BOOST_FOREACH(ptree::value_type const& v, root.get_child("elements"))
-		{
-			if (v.first.compare("element")!=0)
-				continue;
-
-			if (v.second.get<std::string>("<xmlattr>.name").compare(name)==0)
-				return readElement(v.second);;
-		}
-	}
-	throw SX::Kernel::Error<Element>("Element "+name+" is not registered in the elements database");
-}
-
-Element* Element::readElement(const ptree& node)
-{
-
-	std::string name=node.get<std::string>("<xmlattr>.name");
-	auto it=registry.find(name);
-	if (it!=registry.end())
-		return it->second;
-
-	Element* element;
-
-	// if the element node has an attribute symbol then the element is built from its natural isotopes
-	boost::optional<const ptree&> symbol = node.get_child_optional("symbol");
-	if (symbol)
-		element=new Element(name,symbol.get().get_value<std::string>());
-	else
-	{
-		SX::Units::UnitsManager* um=SX::Units::UnitsManager::Instance();
-
-		element=new Element(name);
-		BOOST_FOREACH(ptree::value_type const& v, node)
-		{
-			if (v.first.compare("isotope")!=0)
-				continue;
-
-			std::string iname=v.second.get<std::string>("<xmlattr>.name");
-			boost::optional<const ptree&> abundance = v.second.get_child_optional("abundance");
-			if (abundance)
-			{
-				ptree node=abundance.get();
-				double units=um->get(node.get<std::string>("<xmlattr>.units","%"));
-				element->addIsotope(iname,node.get_value<double>()*units);
-			}
-			else
-				element->addIsotope(iname);
-		}
-	}
-
-	registry.insert(elementPair(name,element));
-
+	Element* element=new Element(name,symbol);
 	return element;
-}
-
-bool Element::hasElement(const std::string& name)
-{
-	auto it=registry.find(name);
-	return (it!=registry.end());
-}
-
-unsigned int Element::getNRegisteredElements()
-{
-	return registry.size();
 }
 
 Element::Element(const std::string& name, const std::string& symbol) : _name(name), _isotopes()
 {
-	isotopeSet isotopes=Isotope::getIsotopes<std::string>("symbol",symbol);
+	if (!symbol.empty())
+	{
+		// Retrieves the isotopes from the isotopes XML database whose symbol tag matches the given symbol
+		IsotopeManager* mgr=IsotopeManager::Instance();
+		isotopeSet isotopes=mgr->getIsotopes<std::string>("symbol",symbol);
 
-	for (auto is : isotopes)
-		_isotopes.insert(isotopeContentsPair(is,is->getAbundance()));
+		// If no isotopes matches the given symbol then throws
+		if (isotopes.empty())
+			throw SX::Kernel::Error<Element>("No isotopes match symbol "+symbol);
 
-	registerElement(this);
-}
+		// Insert the isotopes found in the isotopes internal map
+		for (auto is : isotopes)
+			_isotopes.insert(isotopeContentsPair(is,is->getAbundance()));
+	}
 
-Element::Element(const std::string& name) : _name(name), _isotopes()
-{
-	registerElement(this);
 }
 
 Element::~Element()
@@ -117,15 +48,8 @@ bool Element::operator==(const Element& other) const
 			std::equal(_isotopes.begin(),
 					   _isotopes.end(),
 					   other._isotopes.begin(),
-					   [] (isotopeContentsPair a, isotopeContentsPair b) { return a.first==b.first && std::abs(a.second-b.second)<tolerance;});
+					   [] (isotopeContentsPair a, isotopeContentsPair b) { return a.first==b.first && std::abs(a.second-b.second)<0.000001;});
 
-}
-
-void Element::registerElement(Element* element)
-{
-	if (hasElement(element->_name))
-		throw SX::Kernel::Error<Element>("The registry already contains an element with "+element->_name+" name");
-	registry.insert(elementPair(element->_name,element));
 }
 
 void Element::addIsotope(Isotope* isotope, double abundance)
@@ -135,21 +59,22 @@ void Element::addIsotope(Isotope* isotope, double abundance)
 	if (it!=_isotopes.end())
 		return;
 
+	// If some isotopes have been previously added to the Element, check that the one to be added is chemcially compatible with the other ones, otherwise throws
+	if (!_isotopes.empty())
+		if (isotope->getNProtons() != _isotopes.begin()->first->getNProtons())
+			throw SX::Kernel::Error<Element>("Invalid number of protons");
+
+	// If the abundance is not in the interval [0,1] then throws
 	if (abundance<0.0 || abundance>1.0)
 		throw SX::Kernel::Error<Element>("Invalid value for abundance");
 
+	// If the sum of af the abundances of all the isotopes building the element (+ the one of the isotope to be added) is more than 1, then throws
 	double sum=std::accumulate(std::begin(_isotopes),
 			                    std::end(_isotopes),
-			                    0.0,
+			                    abundance,
 			                    [](double previous, const isotopeContentsPair& p){return previous+p.second;});
-	sum += abundance;
-	if (sum>(1.0+tolerance))
+	if (sum>(1.000001))
 		throw SX::Kernel::Error<Element>("The sum of abundances exceeds 1.0");
-
-	if (!_isotopes.empty())
-		// Check that the isotope is chemically compatible with the element (same number of protons)
-		if (isotope->getNProtons() != _isotopes.begin()->first->getNProtons())
-			throw SX::Kernel::Error<Element>("Invalid number of protons");
 
 	_isotopes.insert(isotopeContentsPair(isotope,abundance));
 
@@ -159,8 +84,11 @@ void Element::addIsotope(Isotope* isotope, double abundance)
 
 void Element::addIsotope(const std::string& name)
 {
-	Isotope* is=Isotope::buildFromDatabase(name);
+	// Retrieve the isotope (from isotopes registry or XML database if not in the isotopes registry) whose name matches the given name
+	IsotopeManager* mgr=IsotopeManager::Instance();
+	Isotope* is=mgr->findIsotope(name);
 
+	// Add it to the isotopes internal map with its natural abundance
 	addIsotope(is,is->getAbundance());
 
 	return;
@@ -168,8 +96,11 @@ void Element::addIsotope(const std::string& name)
 
 void Element::addIsotope(const std::string& name, double abundance)
 {
-	Isotope* is=Isotope::buildFromDatabase(name);
+	// Retrieve the isotope (from isotopes registry or XML database if not in the isotopes registry) whose name matches the given name
+	IsotopeManager* mgr=IsotopeManager::Instance();
+	Isotope* is=mgr->findIsotope(name);
 
+	// Add it to the isotopes internal map with the given abundance
 	addIsotope(is,abundance);
 
 	return;
@@ -180,6 +111,14 @@ const std::string& Element::getName() const
 	return _name;
 }
 
+std::string Element::getSymbol() const
+{
+	if (_isotopes.empty())
+		throw SX::Kernel::Error<Element>("The element is empy");
+
+	return _isotopes.begin()->first->getSymbol();
+}
+
 unsigned int Element::getNIsotopes() const
 {
 	return _isotopes.size();
@@ -187,18 +126,21 @@ unsigned int Element::getNIsotopes() const
 
 double Element::getMolarMass() const
 {
+	// If the sum of af the abundances of all the isotopes building the element is more than 1, then throws
 	double sum=std::accumulate(std::begin(_isotopes),
 			                    std::end(_isotopes),
 			                    0.0,
 			                    [](double previous, const isotopeContentsPair& p){return previous+p.second;});
-	if (std::abs(sum-1.0)>tolerance)
+	if (std::abs(sum-1.0)>0.000001)
 		throw SX::Kernel::Error<Element>("The sum of abundances is not equal to 1.0");
 
+	// Compute the molar mass of the Element as the abundance-weighted sum of the molar mass of the isotopes it is made of.
 	double mm(0.0);
 	for (auto it=_isotopes.begin();it!=_isotopes.end();++it)
 		mm += it->second * (it->first->getMolarMass());
 	return mm/sum;
 }
+
 
 unsigned int Element::getNElectrons() const
 {
@@ -216,20 +158,34 @@ unsigned int Element::getNProtons() const
 	return _isotopes.begin()->first->getNProtons();
 }
 
+double Element::getNNeutrons() const
+{
+	if (_isotopes.empty())
+		throw SX::Kernel::Error<Element>("The element is empy");
+
+	// Compute the number of neutrons of the Element as the abundance-weighted sum of the number of neutrons of the isotopes it is made of.
+	double nNeutrons=0.0;
+	for (auto is : _isotopes)
+		nNeutrons += is.second * static_cast<double>(is.first->getNNeutrons());
+
+	return nNeutrons;
+}
+
 double Element::getIncoherentXs() const
 {
 	double ixs=0.0;
 	for (auto is : _isotopes)
-		ixs+=is.second*is.first->_xsIncoherent;
+		ixs+=is.second*is.first->getXsIncoherent();
 	return ixs;
 }
 
-double Element::getScatteringXs(double lambda) const
+double Element::getAbsorptionXs(double lambda) const
 {
 	double sxs=0.0;
+	// The scattering lengths are tabulated for thermal neutrons (wavelength=1.798 ang). So we must apply a scaling.
 	double fact=lambda/1.798e-10;
 	for (auto is : _isotopes)
-		sxs+=is.second*is.first->_xsIncoherent;
+		sxs+=is.second*is.first->getXsAbsorption();
 	sxs*=fact;
 	return sxs;
 }

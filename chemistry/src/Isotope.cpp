@@ -1,6 +1,10 @@
 #include <limits>
 
+#include <boost/filesystem.hpp>
+
+#include "Error.h"
 #include "Isotope.h"
+#include "Path.h"
 #include "Units.h"
 
 namespace SX
@@ -9,50 +13,16 @@ namespace SX
 namespace Chemistry
 {
 
-isotopeMap Isotope::registry=isotopeMap();
-
-std::string Isotope::database="isotopes.xml";
-
-Isotope* Isotope::buildFromDatabase(const std::string& name)
+Isotope* Isotope::create(const property_tree::ptree& node)
 {
-	auto it=registry.find(name);
-	if (it!=registry.end())
-		return it->second;
-	else
-	{
-		ptree root;
-		read_xml(database,root);
-
-		BOOST_FOREACH(ptree::value_type const& v, root.get_child("isotopes"))
-		{
-			if (v.first.compare("isotope")!=0)
-				continue;
-
-			if (v.second.get<std::string>("<xmlattr>.name").compare(name)==0)
-				return readIsotope(v.second);
-		}
-	}
-	throw SX::Kernel::Error<Isotope>("Isotope "+name+" is not registered in the isotopes database");
-}
-
-unsigned int Isotope::getNRegisteredIsotopes()
-{
-	return registry.size();
-}
-
-Isotope* Isotope::readIsotope(const ptree& node)
-{
-
-	std::string name=node.get<std::string>("<xmlattr>.name");
-	auto it=registry.find(name);
-	if (it!=registry.end())
-		return it->second;
 
 	SX::Units::UnitsManager* um = SX::Units::UnitsManager::Instance();
 	double units;
 
+	// Create an empty isotope and fill it with its corresponding XML tags
 	Isotope* is=new Isotope();
-	is->_name=name;
+
+	is->_name=node.get<std::string>("<xmlattr>.name");
 
 	is->_symbol=node.get<std::string>("symbol");
 
@@ -64,47 +34,55 @@ Isotope* Isotope::readIsotope(const ptree& node)
 
 	is->_nElectrons=is->_nProtons;
 
-	units=um->get(node.get<std::string>("molar_mass.<xmlattr>.units","uma"));
-
+	// If no units provided for molar_mass take g/mol as the default one
+	units=um->get(node.get<std::string>("molar_mass.<xmlattr>.units","g_per_mole"));
 	is->_molarMass=node.get<double>("molar_mass")*units;
 
 	is->_nuclearSpin=node.get<double>("nuclear_spin");
 
 	is->_state=node.get<std::string>("state");
 
+	// If no units provided for abundance take % as the default one
 	units=um->get(node.get<std::string>("half_life.<xmlattr>.units","%"));
 	is->_abundance=node.get<double>("abundance",0.0)*units;
 
+	// If no units provided for half_life take year as the default one
 	units=um->get(node.get<std::string>("half_life.<xmlattr>.units","year"));
 	is->_halfLife=node.get<double>("half_life",std::numeric_limits<double>::infinity())*units;
 
 	is->_stable=node.get<bool>("stable");
 
+	// If no units provided for b_coherent take fm as the default one
 	units=um->get(node.get<std::string>("b_coherent.<xmlattr>.units","fm"));
 	is->_bCoherent=node.get<std::complex<double>>("b_coherent")*units;
 
+	// If no units provided for b_incoherent take fm as the default one
 	units=um->get(node.get<std::string>("b_incoherent.<xmlattr>.units","fm"));
 	is->_bIncoherent=node.get<std::complex<double>>("b_incoherent")*units;
 
+	// If no units provided for b_plus take fm as the default one
 	units=um->get(node.get<std::string>("b_plus.<xmlattr>.units","fm"));
 	is->_bPlus=node.get<std::complex<double>>("b_plus",is->_bCoherent)*units;
 
+	// If no units provided for b_minus take fm as the default one
 	units=um->get(node.get<std::string>("b_minus.<xmlattr>.units","fm"));
 	is->_bMinus=node.get<std::complex<double>>("b_minus",is->_bCoherent)*units;
 
+	// If no units provided for xs_coherent take barn as the default one
 	units=um->get(node.get<std::string>("xs_coherent.<xmlattr>.units","barn"));
 	is->_xsCoherent=node.get<double>("xs_coherent")*units;
 
+	// If no units provided for xs_incoherent take barn as the default one
 	units=um->get(node.get<std::string>("xs_incoherent.<xmlattr>.units","barn"));
 	is->_xsIncoherent=node.get<double>("xs_incoherent")*units;
 
+	// If no units provided for xs_scattering take barn as the default one
 	units=um->get(node.get<std::string>("xs_scattering.<xmlattr>.units","barn"));
 	is->_xsScattering=node.get<double>("xs_scattering")*units;
 
+	// If no units provided for xs_absorption take barn as the default one
 	units=um->get(node.get<std::string>("xs_absorption.<xmlattr>.units","barn"));
 	is->_xsAbsorption=node.get<double>("xs_absorption")*units;
-
-	registry.insert(isotopePair(is->_name,is));
 
 	return is;
 }
@@ -139,6 +117,7 @@ Isotope::~Isotope()
 
 bool Isotope::operator==(const Isotope& other)
 {
+	// Two isotopes is1 and is2 are considered to be equal if Z(is1)=Z(is2) and A(is1)=A(is2)
 	return ((_nProtons==other._nProtons) && (_nNucleons==other._nNucleons));
 }
 
@@ -147,9 +126,34 @@ const std::string& Isotope::getName() const
 	return _name;
 }
 
+const std::string& Isotope::getSymbol() const
+{
+	return _symbol;
+}
+
+const std::string& Isotope::getState() const
+{
+	return _state;
+}
+
+double Isotope::getNuclearSpin() const
+{
+	return _nuclearSpin;
+}
+
 double Isotope::getAbundance() const
 {
 	return _abundance;
+}
+
+double Isotope::getHalfLife() const
+{
+	return _halfLife;
+}
+
+bool Isotope::getStable() const
+{
+	return _stable;
 }
 
 double Isotope::getFormalCharge() const
@@ -180,6 +184,46 @@ double Isotope::getNElectrons() const
 double Isotope::getNProtons() const
 {
 	return _nProtons;
+}
+
+std::complex<double>  Isotope::getBCoherent() const
+{
+	return _bCoherent;
+}
+
+std::complex<double>  Isotope::getBIncoherent() const
+{
+	return _bIncoherent;
+}
+
+std::complex<double>  Isotope::getBPlus() const
+{
+	return _bPlus;
+}
+
+std::complex<double>  Isotope::getBMinus() const
+{
+	return _bMinus;
+}
+
+double Isotope::getXsCoherent() const
+{
+	return _xsCoherent;
+}
+
+double Isotope::getXsIncoherent() const
+{
+	return _xsIncoherent;
+}
+
+double Isotope::getXsAbsorption() const
+{
+	return _xsAbsorption;
+}
+
+double Isotope::getXsScattering() const
+{
+	return _xsScattering;
 }
 
 bool Isotope::isIon() const

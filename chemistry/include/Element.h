@@ -33,11 +33,6 @@
 #include <map>
 #include <ostream>
 #include <string>
-#include <vector>
-
-#include <boost/foreach.hpp>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
 
 namespace SX
 {
@@ -45,37 +40,22 @@ namespace SX
 namespace Chemistry
 {
 
-using boost::property_tree::ptree;
-
+// Forward declarations
 class Isotope;
-
 class Element;
 
+// Typedefs
 typedef std::pair<Isotope*,double> isotopeContentsPair;
 typedef std::map<Isotope*,double> isotopeContentsMap;
-typedef std::pair<std::string,Element*> elementPair;
-typedef std::map<std::string,Element*> elementMap;
 
 class Element
 {
 
 public:
 
-	//! Returns an pointer to an Element object built from the elements database
-	static Element* buildFromDatabase(const std::string& name);
-
-	//! Returns the number of registered elements
-	static unsigned int getNRegisteredElements();
-
-	static Element* readElement(const ptree& node);
-
-	static bool hasElement(const std::string& name);
-
-private:
-
-	static double tolerance;
-	static std::string database;
-	static elementMap registry;
+	//! Constructs an Element.
+	//! If a chemical symbol is given the element will be built from its natural isotopes otherwise it is empty and will have to be filled later by addIsotope method.
+	static Element* create(const std::string& name, const std::string& symbol="");
 
 public:
 
@@ -85,34 +65,22 @@ public:
 	//! Copy constructor (deleted)
 	Element(const Element& other)=delete;
 
-	//! Constructs an Element fetching the isotope of the isotopes database whose symbol is |symbol|
-	Element(const std::string& name, const std::string& symbol);
-
-	//! Constructs an empty Element to be filled further with addIsotope method
-	Element(const std::string& name);
-
 	//! Destructor
 	~Element();
-
-	//! Return true if two Elements are the same (same isotopes with the same abundances)
-	bool operator==(const Element& other) const;
 
 	//! Assignment operator (deleted)
 	Element& operator=(const Element& other)=delete;
 
-	//! Add a pointer to an Isotope object with a given abudance to this Element
-	void addIsotope(Isotope* isotope, double abundance);
-
-	//! Add an isotope to this Element using its natural abundance
-	void addIsotope(const std::string& name);
-
-	//! Add an isotope to this Element using a given abundance
-	void addIsotope(const std::string& name, double abundance);
+	//! Return true if two Elements are the same (same isotopes with the same abundances)
+	bool operator==(const Element& other) const;
 
 	//! Returns the name of this Element
 	const std::string& getName() const;
 
-	//! Returns the number of isotopes this Element is made of
+	//! Returns the symbol of this Element
+	std::string getSymbol() const;
+
+	//! Returns the number of isotopes that build this Element
 	unsigned int getNIsotopes() const;
 
 	//! Returns the molar mass of the element (according to its isotopes composition)
@@ -124,22 +92,37 @@ public:
 	//! Returns the number of electrons of the element
 	unsigned int getNElectrons() const;
 
-	//! Returns the incoherent Xs weighted over the isotopes of this Element
+	//! Returns the number of neutrons of the element. It is computed as the abundance-weighted sum of the number of neutrons of the isotopes that build this Element.
+	double getNNeutrons() const;
+
+	//! Returns the incoherent cross section of this Element. It is computed as the abundance-weighted sum of the incoherent cross section of the isotopes that build this Element
 	double getIncoherentXs() const;
 
-	//! Returns the scattering Xs weighted over the isotopes of this Element
-	double getScatteringXs(double lambda=1.798e-10) const;
+	//! Returns the absorption cross section at a given wavelength weighted. It is computed as the abundance-weighted sum of the absorption cross section of the isotopes that build this Element
+	double getAbsorptionXs(double lambda=1.798e-10) const;
 
-	//! Print informations about this Element to an output stream
+	//! Prints informations about this Element to an output stream
 	void print(std::ostream& os) const;
 
+	//! Add an isotope to this Element using its natural abundance
+	void addIsotope(const std::string& name);
+
+	//! Add an isotope to this Element using a given abundance
+	void addIsotope(const std::string& name, double abundance);
+
 private:
 
-	//! Register an Element object
-	void registerElement(Element* element);
+	//! Constructs an Element by fetching the isotopes from the isotopes database whose symbol matches the given symbol
+	Element(const std::string& name, const std::string& symbol);
+
+	//! Add a pointer to an Isotope object with a given abudance to this Element
+	void addIsotope(Isotope* isotope, double abundance);
 
 private:
+	//! The name of the element
 	std::string _name;
+
+	//! A map that stores the abundance of each isotope that builds this Element
 	isotopeContentsMap _isotopes;
 };
 

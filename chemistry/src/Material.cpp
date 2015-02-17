@@ -1,9 +1,12 @@
 #include <algorithm>
 #include <functional>
+#include <iomanip>
+#include <iterator>
 #include <numeric>
 
 #include "Error.h"
 #include "Element.h"
+#include "ElementManager.h"
 #include "Material.h"
 #include "Units.h"
 
@@ -13,148 +16,36 @@ namespace SX
 namespace Chemistry
 {
 
-double Material::tolerance=1.0e-6;
-
-std::string Material::database="materials.xml";
-
-materialMap Material::registry=materialMap();
-
-std::map<std::string,Material::State> Material::_toState={
+std::map<std::string,Material::State> Material::s_toState={
 		{"solid",Material::State::Solid},
 		{"liquid",Material::State::Liquid},
 		{"gaz",Material::State::Gaz}
 };
 
-std::map<Material::State,std::string> Material::_fromState={
+std::map<Material::State,std::string> Material::s_fromState={
 		{Material::State::Solid,"solid"},
 		{Material::State::Liquid,"liquid"},
 		{Material::State::Gaz,"gaz"}
 };
 
-std::map<std::string,Material::FillingMode> Material::_toFillingMode={
+std::map<std::string,Material::FillingMode> Material::s_toFillingMode={
 		{"mass_fraction",Material::FillingMode::MassFraction},
 		{"mole_fraction",Material::FillingMode::MoleFraction},
 		{"number_of_atoms",Material::FillingMode::NumberOfAtoms},
 		{"partial_pressure",Material::FillingMode::PartialPressure}
 };
 
-std::map<Material::FillingMode,std::string> Material::_fromFillingMode={
+std::map<Material::FillingMode,std::string> Material::s_fromFillingMode={
 		{Material::FillingMode::MassFraction,"mass_fraction"},
 		{Material::FillingMode::MoleFraction,"mole_fraction"},
 		{Material::FillingMode::NumberOfAtoms,"number_of_atoms"},
 		{Material::FillingMode::PartialPressure,"partial_pressure"}
 };
 
-Material* Material::buildFromDatabase(const std::string& name)
+Material* Material::create(const std::string& name, State state, FillingMode fillingMode)
 {
-	auto it=registry.find(name);
-	if (it!=registry.end())
-		return it->second;
-	else
-	{
-		ptree root;
-		read_xml(database,root);
-
-		BOOST_FOREACH(ptree::value_type const& v, root.get_child("materials"))
-		{
-			if (v.first.compare("material")!=0)
-				continue;
-
-			if (v.second.get<std::string>("<xmlattr>.name").compare(name)==0)
-				return readMaterial(v.second);
-		}
-	}
-	throw SX::Kernel::Error<Material>("Material "+name+" is not registered in the materials database");
-
-}
-
-unsigned int Material::getNRegisteredMaterials()
-{
-	return registry.size();
-}
-
-Material* Material::readMaterial(const ptree& node)
-{
-
-	SX::Units::UnitsManager* um=SX::Units::UnitsManager::Instance();
-
-	// Get the physical states and the filling modes of the material to be constructed
-	State state=_toState.at(node.get<std::string>("<xmlattr>.state","solid"));
-	FillingMode fMode=_toFillingMode.at(node.get<std::string>("<xmlattr>.filling_mode","mass_fraction"));
-	Material* material=new Material(node.get<std::string>("<xmlattr>.name"),state,fMode);
-	BOOST_FOREACH(ptree::value_type const& v, node)
-	{
-		if (v.first.compare("material")==0)
-		{
-			Material* submaterial;
-			boost::optional<std::string> submat=v.second.get_optional<std::string>("<xmlattr>.material");
-			if (submat)
-				submaterial=buildFromDatabase(submat.get());
-			else
-				submaterial=readMaterial(v.second);
-
-			if (fMode==FillingMode::MassFraction || fMode==FillingMode::MoleFraction)
-			{
-				const ptree& fraction = v.second.get_child("fraction");
-				double units=um->get(fraction.get<std::string>("<xmlattr>.units","%"));
-				material->addMaterial(submaterial,fraction.get_value<double>()*units);
-			}
-			else if (fMode==FillingMode::PartialPressure)
-			{
-				const ptree& pressure = v.second.get_child("pressure");
-				double units=um->get(pressure.get<std::string>("<xmlattr>.units","Pa"));
-				material->addMaterial(submaterial,pressure.get_value<double>()*units);
-			}
-			else if (fMode==FillingMode::NumberOfAtoms)
-			{
-				const ptree& nAtoms = v.second.get_child("natoms");
-				material->addMaterial(submaterial,nAtoms.get_value<double>());
-			}
-			else
-				throw SX::Kernel::Error<Material>("Misformatted XML 'material' node: must have 'natoms' tag");
-
-		}
-		else if (v.first.compare("element")==0)
-		{
-			Element* element=Element::readElement(v.second);
-			if (fMode==FillingMode::MassFraction || fMode==FillingMode::MoleFraction)
-			{
-				const ptree& fraction = v.second.get_child("fraction");
-				double units=um->get(fraction.get<std::string>("<xmlattr>.units","%"));
-				material->addElement(element,fraction.get_value<double>()*units);
-			}
-			else if (fMode==FillingMode::PartialPressure)
-			{
-				const ptree& pressure = v.second.get_child("pressure");
-				double units=um->get(pressure.get<std::string>("<xmlattr>.units","Pa"));
-				material->addElement(element,pressure.get_value<double>()*units);
-			}
-			else if (fMode==FillingMode::NumberOfAtoms)
-			{
-				const ptree& nAtoms = v.second.get_child("natoms");
-				material->addElement(element,nAtoms.get_value<double>());
-			}
-			else
-				throw SX::Kernel::Error<Material>("Misformatted XML 'element' node: invalid filling mode");
-		}
-	}
-
-	if (material->_fillingMode!=FillingMode::PartialPressure)
-	{
-		const ptree& density = node.get_child("density");
-		double units=um->get(density.get<std::string>("<xmlattr>.units","kg/m3"));
-		material->setDensity(density.get_value<double>()*units);
-	};
-
-	registry.insert(materialPair(material->_name,material));
-
+	Material* material=new Material(name,state,fillingMode);
 	return material;
-}
-
-bool Material::hasMaterial(const std::string& name)
-{
-	auto it=registry.find(name);
-	return (it!=registry.end());
 }
 
 Material::Material(const std::string& name, State state, FillingMode fillingMode)
@@ -165,7 +56,6 @@ Material::Material(const std::string& name, State state, FillingMode fillingMode
   _fillingMode(fillingMode),
   _elements()
 {
-	registerMaterial(this);
 }
 
 Material::~Material()
@@ -184,14 +74,7 @@ bool Material::operator==(const Material& other) const
 			std::equal(mf1.begin(),
 					   mf1.end(),
 					   mf2.begin(),
-					   [] (elementContentsPair a, elementContentsPair b) { return a.first==b.first && std::abs(a.second-b.second)<tolerance;});
-}
-
-void Material::registerMaterial(Material* material)
-{
-	if (hasMaterial(material->_name))
-		throw SX::Kernel::Error<Element>("The registry already contains a material with "+material->_name+" name");
-	registry.insert(materialPair(material->_name,material));
+					   [] (elementContentsPair a, elementContentsPair b) { return a.first==b.first && std::abs(a.second-b.second)<1.0e-6;});
 }
 
 void Material::addElement(Element* element, double fraction)
@@ -204,12 +87,11 @@ void Material::addElement(Element* element, double fraction)
 		double sum=std::accumulate(std::begin(_elements),
 				                    std::end(_elements),
 				                    fraction,
-				                    [](double previous, const elementContentsPair& p) { return previous+p.second; });
-		if (sum>(1.0+tolerance))
+				                    [](double previous, const elementContentsPair& p) { return previous+p.second;});
+		if (sum>(1.000001))
 			throw SX::Kernel::Error<Material>("The sum of mole fractions exceeds 1.0");
 	}
 
-	// If the material already contains the element, return
 	auto it=_elements.find(element);
 	if (it!=_elements.end())
 		it->second += fraction;
@@ -221,7 +103,9 @@ void Material::addElement(Element* element, double fraction)
 
 void Material::addElement(const std::string& name, double fraction)
 {
-	Element* el=Element::buildFromDatabase(name);
+	ElementManager* mgr=ElementManager::Instance();
+
+	Element* el=mgr->findElement(name);
 
 	addElement(el,fraction);
 
@@ -243,16 +127,16 @@ void Material::addMaterial(Material* material, double contents)
 	else
 		throw SX::Kernel::Error<Material>("Invalid filling mode");
 }
-
-void Material::addMaterial(const std::string& name, double contents)
-{
-	Material* mat=Material::buildFromDatabase(name);
-
-	addMaterial(mat,contents);
-
-	return;
-}
-
+//
+//void Material::addMaterial(const std::string& name, double contents)
+//{
+//	Material* mat=Material::buildFromDatabase(name);
+//
+//	addMaterial(mat,contents);
+//
+//	return;
+//}
+//
 elementContentsMap Material::getMassFractions() const
 {
 
@@ -417,7 +301,7 @@ double Material::getMu(double lambda) const
 	auto nAtomsPerVol=getNAtomsPerVolume();
 	for (auto it : nAtomsPerVol)
 	{
-		double xs=it.first->getIncoherentXs() + it.first->getScatteringXs(lambda);
+		double xs=it.first->getIncoherentXs() + it.first->getAbsorptionXs(lambda);
 		mu+=it.second*xs;
 	}
 	return mu;
@@ -448,9 +332,9 @@ double Material::getDensity() const
 
 		double density=0.0;
 
-		elementContentsMap mf=getMoleFractions();
+		elementContentsMap moleFractions=getMoleFractions();
 
-		for (auto it : mf)
+		for (auto it : moleFractions)
 			density+=moleDensity*it.second*it.first->getMolarMass();
 
 		return density;
@@ -463,7 +347,7 @@ double Material::getDensity() const
 void Material::setDensity(double density)
 {
 	if (_fillingMode==FillingMode::PartialPressure)
-		throw SX::Kernel::Error<Material>("Invalid filling mode: the material has been filled with partial pressures. Its density will be directly computed from them.");
+		throw SX::Kernel::Error<Material>("The material has been filled with partial pressures. Its density will be directly computed from them.");
 
 	if (density<=0)
 		throw SX::Kernel::Error<Material>("Invalid density value: must be a strictly positive number");
@@ -486,7 +370,7 @@ void Material::setTemperature(double temperature)
 
 void Material::print(std::ostream& os) const
 {
-	os<<"Material "<<_name<<" --> State="<<_fromState[_state]<<" ; Filling mode="<<_fromFillingMode[_fillingMode]<<std::endl;
+	os<<"Material "<<_name<<" --> State="<<s_fromState[_state]<<" ; Filling mode="<<s_fromFillingMode[_fillingMode]<<std::endl;
 	if (_elements.empty())
 		os<<"Currently empty"<<std::endl;
 	else
@@ -502,6 +386,16 @@ void Material::print(std::ostream& os) const
 			std::cout<<std::resetiosflags(std::ios::right);
 		}
 	}
+}
+
+Material::FillingMode Material::getFillingMode() const
+{
+	return _fillingMode;
+}
+
+Material::State Material::getState() const
+{
+	return _state;
 }
 
 std::ostream& operator<<(std::ostream& os, const Material& material)

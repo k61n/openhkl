@@ -33,11 +33,7 @@
 #include <map>
 #include <ostream>
 #include <string>
-#include <vector>
-
-#include <boost/foreach.hpp>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
+#include <utility>
 
 namespace SX
 {
@@ -45,51 +41,39 @@ namespace SX
 namespace Chemistry
 {
 
-using boost::property_tree::ptree;
-
+// Forward declarations
 class Element;
 
-class Material;
-
-typedef std::pair<Element*,double> elementContentsPair;
+// Typedefs
 typedef std::map<Element*,double> elementContentsMap;
-typedef std::pair<std::string,Material*> materialPair;
-typedef std::map<std::string,Material*> materialMap;
+typedef std::pair<Element*,double> elementContentsPair;
 
 class Material
 {
 
 public:
 
+	//! Enumerates the different modes that can be used to fill a Material with its components
 	enum class FillingMode : unsigned int {MassFraction=0,MoleFraction=1,NumberOfAtoms=2,PartialPressure=3};
 
+	//! Enumerates the different chemical state that can be assigned to a Material
 	enum class State : unsigned int {Solid=0,Liquid=1,Gaz=2};
 
 public:
 
-	//! Returns a pointer to a Material object build from the materials database
-	static Material* buildFromDatabase(const std::string& name);
+	//! Constructs an empty Material in a given state to be filled later with a given filling mode
+	static Material* create(const std::string& name, State state=State::Solid, FillingMode fillingMode=FillingMode::MassFraction);
 
-	//! Returns the number of registered materials
-	static unsigned int getNRegisteredMaterials();
+public:
 
-	//! Returns true if a Material with a given name has been registered
-	bool hasMaterial(const std::string& name);
-
-private:
-
-	//! Returns a pointer to a Material object built from an XML node
-	static Material* readMaterial(const ptree& node);
-
-private:
-
-	static std::map<State,std::string> _fromState;
-	static std::map<std::string,State> _toState;
-	static std::map<FillingMode,std::string> _fromFillingMode;
-	static std::map<std::string,FillingMode> _toFillingMode;
-	static double tolerance;
-	static std::string database;
-	static materialMap registry;
+	//! A lookup between the enum State and its corresponding string representation
+	static std::map<State,std::string> s_fromState;
+	//! A lookup between the string representation of the enum State and its corresponding State
+	static std::map<std::string,State> s_toState;
+	//! A lookup between the enum FillingMode and its corresponding string representation
+	static std::map<FillingMode,std::string> s_fromFillingMode;
+	//! A lookup between the string representation of the enum FillingMode and its corresponding FillingMode
+	static std::map<std::string,FillingMode> s_toFillingMode;
 
 public:
 
@@ -99,62 +83,57 @@ public:
 	//! Copy constructor (deleted)
 	Material(const Material& other)=delete;
 
-	//! Constructs a empty Material to be filled further with addElement and/or addMaterial methods
-	Material(const std::string& name, State state=State::Solid, FillingMode fillingMode=FillingMode::MassFraction);
-
 	//! Destructor
 	~Material();
 
-	//! Returns true if two Materials are the same (same density, state and mass fractions)
+	//! Assignment operator (deleted)
+	Material& operator=(const Material& other)=delete;
+
+	//! Return true if two Material objects are the same (same density, same chemical state and same elements with the same mass fraction)
 	bool operator==(const Material& other) const;
 
-	//! Add an Element to this Material
-	void addElement(Element* element, double fraction);
-
+	//! Add a Material to this Material
+	void addMaterial(Material* material, double fraction);
 	//! Add an Element to this Material. The Element will be built from the elements database
 	void addElement(const std::string& name, double fraction);
-
-	//! Add a Material to this Material (that will be a composite of materials)
-	void addMaterial(Material* material, double fraction);
-
-	//! Add a Material to this Material (that will be a composite of materials). The Material will be built from the materials database
-	void addMaterial(const std::string& name, double fraction);
-
-	//! Returns the name of this Material
-	const std::string& getName() const;
+	//! Add an Element to this Material
+	void addElement(Element* element, double fraction);
 
 	//! Returns the number of elements of this Material
 	unsigned int getNElements() const;
 
-	//! Returns the density of this Material
-	double getDensity() const;
+	//! Returns the name of this Material
+	const std::string& getName() const;
 
-	//! Set the density of this Material
-	void setDensity(double density);
+	//! Returns the chemical state of this Material
+	State getState() const;
 
-	double getTemperature() const;
-
-	void setTemperature(double temperature);
+	//! Returns the filling mode used for adding component to this Material
+	FillingMode getFillingMode() const;
 
 	//! Returns a map of the mole fractions per element
 	elementContentsMap getMoleFractions() const;
-
 	//! Returns a map of the mass fractions per element
 	elementContentsMap getMassFractions() const;
 
+	//! Returns the density of this Material
+	double getDensity() const;
+	//! Sets the density of this Material
+	void setDensity(double density);
+	//! Returns the temperature of this Material
+	double getTemperature() const;
+	//! Sets the temperature of this Material
+	void setTemperature(double temperature);
+
 	//! Returns a map of the number of atoms per volume units per element (1/m3)
 	elementContentsMap getNAtomsPerVolume() const;
-
 	//! Returns a map of the number of electrons per volume units per element (1/m3)
 	elementContentsMap getNElectronsPerVolume() const;
-
 	//! Returns the total number of atoms per volume units (1/m3)
 	double getNAtomsTotalPerVolume() const;
-
 	//! Returns the total number of electrons per volume units (1/m3)
 	double getNElectronsTotalPerVolume() const;
-
-	//! Returns the attenuation factor
+	//! Returns the attenuation factor of this Material
 	double getMu(double lambda=1.798e-10) const;
 
 	//! Print informations about this Material to an output stream
@@ -162,8 +141,8 @@ public:
 
 private:
 
-	//! Register a Material object
-	void registerMaterial(Material* material);
+	//! Constructs an empty Material in a given state and filling mode (to be filled later by addElement and/or addMaterial methods)
+	Material(const std::string& name, State state=State::Solid, FillingMode fillingMode=FillingMode::MassFraction);
 
 private:
 
