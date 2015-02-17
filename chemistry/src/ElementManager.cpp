@@ -62,9 +62,9 @@ Element* ElementManager::buildElement(const std::string& name, const std::string
 		throw SX::Kernel::Error<ElementManager>("An element with name "+name+" is already registered in the database.");
 
 	// Otherwise built it from scratch.
-	Element* el=Element::create(name,symbol);
-	_registry.insert(elementPair(name,el));
-	return el;
+	Element* element=Element::create(name,symbol);
+	_registry.insert(elementPair(name,element));
+	return element;
 }
 
 Element* ElementManager::buildElement(const property_tree::ptree& node)
@@ -103,6 +103,7 @@ Element* ElementManager::buildElement(const property_tree::ptree& node)
 				element->addIsotope(isoName);
 		}
 	}
+	_registry.insert(elementPair(name,element));
 	return element;
 
 }
@@ -135,7 +136,6 @@ Element* ElementManager::findElement(const std::string& name)
 		if (node.second.get<std::string>("<xmlattr>.name").compare(name)==0)
 		{
 			Element* el=buildElement(node.second);
-			_registry.insert(elementPair(name,el));
 			return el;
 		}
 	}

@@ -31,6 +31,8 @@
 		<symbol>H</symbol>	
 		<natoms units="%">2</natoms>
 		</element>
+
+		<density units="kg/m3">0.234</density>
 		
 		<fraction>0.6</fraction>
 	</material>

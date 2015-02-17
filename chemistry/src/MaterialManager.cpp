@@ -110,7 +110,16 @@ Material* MaterialManager::buildMaterial(const property_tree::ptree& node)
 		else if (v.first.compare("element")==0)
 		{
 			ElementManager* mgr=ElementManager::Instance();
-			Element* element=mgr->buildElement(v.second);
+			Element* element;
+			name=v.second.get<std::string>("<xmlattr>.name");
+			try
+			{
+				element=mgr->findElement(name);
+			}
+			catch(const SX::Kernel::Error<ElementManager>& e)
+			{
+				element=mgr->buildElement(v.second);
+			}
 			if (fMode==Material::FillingMode::MassFraction || fMode==Material::FillingMode::MoleFraction)
 			{
 				const property_tree::ptree& fraction = v.second.get_child("fraction");
@@ -139,6 +148,8 @@ Material* MaterialManager::buildMaterial(const property_tree::ptree& node)
 		double units=um->get(density.get<std::string>("<xmlattr>.units","kg/m3"));
 		material->setDensity(density.get_value<double>()*units);
 	};
+
+	_registry.insert(materialPair(name,material));
 
 	return material;
 
@@ -172,7 +183,6 @@ Material* MaterialManager::findMaterial(const std::string& name)
 		{
 			// Once the XML node has been found, build a Material from it and register it
 			Material* mat = buildMaterial(v.second);
-			_registry.insert(materialPair(name,mat));
 			return mat;
 		}
 	}
