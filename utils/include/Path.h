@@ -30,9 +30,8 @@
 #define NSXTOOL_PATH_H_
 
 #include <string>
-#include <cstdlib>
 
-#include <boost/filesystem.hpp>
+#include "Singleton.h"
 
 namespace SX
 {
@@ -40,70 +39,28 @@ namespace SX
 namespace Utils
 {
 
-using namespace boost::filesystem;
-
-std::string expandUser(std::string path)
+class Path : public SX::Kernel::Singleton<Path,SX::Kernel::Constructor,SX::Kernel::Destructor>
 {
-	// the path must start with ~ to be user expanded.
-    if (!path.empty() && path[0] == '~')
-	{
-		char const* home = getenv("HOME");
-        if (home || ((home = getenv("USERPROFILE"))))
-			path.replace(0, 1, home);
-		// This should only happen on windows platform where USERPROFILE env var is not defined.
-		else
-		{
-			char const *hdrive = getenv("HOMEDRIVE");
-			char const *hpath = getenv("HOMEPATH");
-			assert(hdrive);
-			assert(hpath);
-			path.replace(0, 1, std::string(hdrive) + hpath);
-		}
-		// The expanded path must be valid
-		assert(portable_name(path));
-	}
-	return path;
-}
 
-std::string getHomeDirectory()
-{
-	char const* home = getenv("HOME");
-	if (home || ((home = getenv("USERPROFILE"))))
-		return std::string(home);
-	// This should only happen on windows platform where USERPROFILE env var is not defined.
-	else
-	{
-		char const *hdrive = getenv("HOMEDRIVE");
-		char const *hpath = getenv("HOMEPATH");
-		assert(hdrive);
-		assert(hpath);
-		return std::string(hdrive) + hpath;
-	}
-}
+public:
 
-std::string getInstallationPath()
-{
-	char* ppath;
-	ppath = getenv("NSXTOOL");
-	if (ppath!=NULL)
-		return std::string(ppath);
-	else
-		return "";
-}
+	//! Expands a given path with the HOME directory. The input path must start with ~ other wise it is returned unchanged
+	static std::string expandUser(std::string path);
 
-std::string getResourcesPath()
-{
-	path p(getInstallationPath());
-	p /= "resources";
-	return p.string();
-}
+	//! Returns the path to HOME
+	static std::string getHomeDirectory();
 
-std::string getInstrumentsPath()
-{
-	path p(getResourcesPath());
-	p /= "instruments";
-	return p.string();
-}
+	//! Returns the NSXTool installation path
+	static std::string getInstallationPath();
+
+	//! Returns the NSXTool resources path
+	static std::string getResourcesPath();
+
+	//! Returns the NSXTool application data path
+	static std::string getApplicationDataPath();
+
+};
+
 
 } // end namespace Utils
 

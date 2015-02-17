@@ -135,8 +135,9 @@ static const double mole=1.0;
 // Mass units
 static const double kg=1.0;
 static const double g=kg*milli;
-static const double uma=g/avogadro;
-static const double g_per_mole=g/mole;
+static const double Da=g/avogadro;
+static const double uma=Da;
+static const double g_per_mole=Da;
 
 // Temperature units
 static const double Kelvin=1.0;
