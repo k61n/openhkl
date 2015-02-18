@@ -32,8 +32,12 @@ Element::Element(const std::string& name, const std::string& symbol) : _name(nam
 			throw SX::Kernel::Error<Element>("No isotopes match symbol "+symbol);
 
 		// Insert the isotopes found in the isotopes internal map
-		for (auto is : isotopes)
-			_isotopes.insert(isotopeContentsPair(is,is->getAbundance()));
+		for (const auto& is : isotopes)
+		{
+			std::string name=is->getName();
+			_isotopes.insert(strToIsotopePair(name,is));
+			_abundances.insert(strToDoublePair(name,is->getAbundance()));
+		}
 	}
 
 }
@@ -44,24 +48,37 @@ Element::~Element()
 
 bool Element::operator==(const Element& other) const
 {
-	return (_isotopes.size() == other._isotopes.size()) &&
-			std::equal(_isotopes.begin(),
-					   _isotopes.end(),
-					   other._isotopes.begin(),
-					   [] (isotopeContentsPair a, isotopeContentsPair b) { return a.first==b.first && std::abs(a.second-b.second)<0.000001;});
+	return (_abundances.size() == other._abundances.size()) &&
+			std::equal(_abundances.begin(),
+					   _abundances.end(),
+					   other._abundances.begin(),
+					   [] (strToDoublePair a, strToDoublePair b) { return a.first==b.first && std::abs(a.second-b.second)<0.000001;});
 
+}
+
+Isotope* Element::operator[](const std::string& name)
+{
+	try
+	{
+		return _isotopes.at(name);
+	}
+	catch(const std::out_of_range& e)
+	{
+		throw SX::Kernel::Error<Element>("No isotope match "+name+" name in element "+_name);
+	}
 }
 
 void Element::addIsotope(Isotope* isotope, double abundance)
 {
+	std::string name=isotope->getName();
 	// If the element already contains the isotope, return
-	auto it=_isotopes.find(isotope);
+	auto it=_isotopes.find(name);
 	if (it!=_isotopes.end())
 		return;
 
 	// If some isotopes have been previously added to the Element, check that the one to be added is chemcially compatible with the other ones, otherwise throws
 	if (!_isotopes.empty())
-		if (isotope->getNProtons() != _isotopes.begin()->first->getNProtons())
+		if (isotope->getNProtons() != _isotopes.begin()->second->getNProtons())
 			throw SX::Kernel::Error<Element>("Invalid number of protons");
 
 	// If the abundance is not in the interval [0,1] then throws
@@ -69,14 +86,15 @@ void Element::addIsotope(Isotope* isotope, double abundance)
 		throw SX::Kernel::Error<Element>("Invalid value for abundance");
 
 	// If the sum of af the abundances of all the isotopes building the element (+ the one of the isotope to be added) is more than 1, then throws
-	double sum=std::accumulate(std::begin(_isotopes),
-			                    std::end(_isotopes),
+	double sum=std::accumulate(std::begin(_abundances),
+			                    std::end(_abundances),
 			                    abundance,
-			                    [](double previous, const isotopeContentsPair& p){return previous+p.second;});
+			                    [](double previous, const strToDoublePair& p){return previous+p.second;});
 	if (sum>(1.000001))
 		throw SX::Kernel::Error<Element>("The sum of abundances exceeds 1.0");
 
-	_isotopes.insert(isotopeContentsPair(isotope,abundance));
+	_isotopes.insert(strToIsotopePair(name,isotope));
+	_abundances.insert(strToDoublePair(name,abundance));
 
 	return;
 
@@ -116,7 +134,7 @@ std::string Element::getSymbol() const
 	if (_isotopes.empty())
 		throw SX::Kernel::Error<Element>("The element is empy");
 
-	return _isotopes.begin()->first->getSymbol();
+	return _isotopes.begin()->second->getSymbol();
 }
 
 unsigned int Element::getNIsotopes() const
@@ -127,17 +145,17 @@ unsigned int Element::getNIsotopes() const
 double Element::getMolarMass() const
 {
 	// If the sum of af the abundances of all the isotopes building the element is more than 1, then throws
-	double sum=std::accumulate(std::begin(_isotopes),
-			                    std::end(_isotopes),
+	double sum=std::accumulate(std::begin(_abundances),
+			                    std::end(_abundances),
 			                    0.0,
-			                    [](double previous, const isotopeContentsPair& p){return previous+p.second;});
+			                    [](double previous, const strToDoublePair& p){return previous+p.second;});
 	if (std::abs(sum-1.0)>0.000001)
 		throw SX::Kernel::Error<Element>("The sum of abundances is not equal to 1.0");
 
 	// Compute the molar mass of the Element as the abundance-weighted sum of the molar mass of the isotopes it is made of.
 	double mm(0.0);
-	for (auto it=_isotopes.begin();it!=_isotopes.end();++it)
-		mm += it->second * (it->first->getMolarMass());
+	for (auto& p : _abundances)
+		mm += p.second * _isotopes.at(p.first)->getMolarMass();
 	return mm/sum;
 }
 
@@ -147,7 +165,7 @@ unsigned int Element::getNElectrons() const
 	if (_isotopes.empty())
 		throw SX::Kernel::Error<Element>("The element is empy");
 
-	return _isotopes.begin()->first->getNElectrons();
+	return _isotopes.begin()->second->getNElectrons();
 }
 
 unsigned int Element::getNProtons() const
@@ -155,7 +173,7 @@ unsigned int Element::getNProtons() const
 	if (_isotopes.empty())
 		throw SX::Kernel::Error<Element>("The element is empy");
 
-	return _isotopes.begin()->first->getNProtons();
+	return _isotopes.begin()->second->getNProtons();
 }
 
 double Element::getNNeutrons() const
@@ -165,8 +183,8 @@ double Element::getNNeutrons() const
 
 	// Compute the number of neutrons of the Element as the abundance-weighted sum of the number of neutrons of the isotopes it is made of.
 	double nNeutrons=0.0;
-	for (auto is : _isotopes)
-		nNeutrons += is.second * static_cast<double>(is.first->getNNeutrons());
+	for (const auto& p : _abundances)
+		nNeutrons += p.second * static_cast<double>(_isotopes.at(p.first)->getNNeutrons());
 
 	return nNeutrons;
 }
@@ -174,8 +192,8 @@ double Element::getNNeutrons() const
 double Element::getIncoherentXs() const
 {
 	double ixs=0.0;
-	for (auto is : _isotopes)
-		ixs+=is.second*is.first->getXsIncoherent();
+	for (const auto& p : _abundances)
+		ixs+=p.second*_isotopes.at(p.first)->getXsIncoherent();
 	return ixs;
 }
 
@@ -184,8 +202,8 @@ double Element::getAbsorptionXs(double lambda) const
 	double sxs=0.0;
 	// The scattering lengths are tabulated for thermal neutrons (wavelength=1.798 ang). So we must apply a scaling.
 	double fact=lambda/1.798e-10;
-	for (auto is : _isotopes)
-		sxs+=is.second*is.first->getXsAbsorption();
+	for (const auto& p : _abundances)
+		sxs+=p.second*_isotopes.at(p.first)->getXsAbsorption();
 	sxs*=fact;
 	return sxs;
 }
@@ -198,13 +216,16 @@ void Element::print(std::ostream& os) const
 	else
 	{
 		unsigned int maxSize=0;
-		for (auto it : _isotopes)
-			if (it.first->getName().size() > maxSize)
-				maxSize=it.first->getName().size();
-		os<<"Composition:"<<std::endl;
-		for (auto it : _isotopes)
+		for (const auto& it : _isotopes)
 		{
-			os<<"\t-"<<std::setw(maxSize)<<std::setiosflags(std::ios::left)<<it.first->getName()<<" --> "<<std::setiosflags(std::ios::fixed|std::ios::right)<<std::setprecision(3)<<std::setw(7)<<100.0*it.second<<" %"<<std::endl;
+			unsigned int nameSize=it.second->getName().size();
+			if (nameSize > maxSize)
+				maxSize=nameSize;
+		}
+		os<<"Composition:"<<std::endl;
+		for (const auto& it : _abundances)
+		{
+			os<<"\t-"<<std::setw(maxSize)<<std::setiosflags(std::ios::left)<<_isotopes.at(it.first)->getName()<<" --> "<<std::setiosflags(std::ios::fixed|std::ios::right)<<std::setprecision(3)<<std::setw(7)<<100.0*it.second<<" %"<<std::endl;
 			std::cout<<std::resetiosflags(std::ios::right);
 		}
 	}

@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <iterator>
 #include <numeric>
+#include <stdexcept>
 
 #include "Error.h"
 #include "Element.h"
@@ -80,12 +81,14 @@ bool Material::operator==(const Material& other) const
 
 Element* Material::operator[](const std::string& name)
 {
-	auto it=_elements.find(name);
-
-	if (it==_elements.end())
+	try
+	{
+		return _elements.at(name);
+	}
+	catch(const std::out_of_range& e)
+	{
 		throw SX::Kernel::Error<Material>("No element match "+name+" name in material "+_name);
-
-	return it->second;
+	}
 }
 
 void Material::addElement(Element* element, double fraction)
@@ -132,13 +135,13 @@ void Material::addMaterial(Material* material, double contents)
 {
 	if (_fillingMode==FillingMode::MassFraction)
 	{
-		for (auto it : material->getMassFractions())
-			addElement(it.first,contents*it.second);
+		for (const auto& p : material->getMassFractions())
+			addElement(p.first,contents*p.second);
 	}
 	else if (_fillingMode==FillingMode::MoleFraction || _fillingMode==FillingMode::PartialPressure)
 	{
-		for (auto it : material->getMoleFractions())
-			addElement(it.first,contents*it.second);
+		for (const auto& p : material->getMoleFractions())
+			addElement(p.first,contents*p.second);
 	}
 	else
 		throw SX::Kernel::Error<Material>("Invalid filling mode");
@@ -267,10 +270,10 @@ contentsMap Material::getNAtomsPerVolume() const
 
 	auto massFractions=getMassFractions();
 
-	for (auto it : massFractions)
+	for (const auto& p : massFractions)
 	{
-		double molarMass=_elements.at(it.first)->getMolarMass();
-		nAtoms.insert(strToDoublePair(it.first,fact*it.second/molarMass));
+		double molarMass=_elements.at(p.first)->getMolarMass();
+		nAtoms.insert(strToDoublePair(p.first,fact*p.second/molarMass));
 	}
 
 	return nAtoms;
@@ -292,11 +295,11 @@ contentsMap Material::getNElectronsPerVolume() const
 
 	double fact=SX::Units::avogadro*getDensity();
 
-	for (auto it : getMassFractions())
+	for (const auto& p : getMassFractions())
 	{
-		double nElectrons=static_cast<double>(_elements.at(it.first)->getNElectrons());
-		double molarMass=static_cast<double>(_elements.at(it.first)->getMolarMass());
-		nAtoms.insert(strToDoublePair(it.first,static_cast<double>(fact*nElectrons)*it.second/molarMass));
+		double nElectrons=static_cast<double>(_elements.at(p.first)->getNElectrons());
+		double molarMass=static_cast<double>(_elements.at(p.first)->getMolarMass());
+		nAtoms.insert(strToDoublePair(p.first,static_cast<double>(fact*nElectrons)*p.second/molarMass));
 	}
 
 	return nAtoms;
@@ -316,11 +319,11 @@ double Material::getMu(double lambda) const
 {
 	double mu=0.0;
 	auto nAtomsPerVol=getNAtomsPerVolume();
-	for (auto it : nAtomsPerVol)
+	for (const auto& p : nAtomsPerVol)
 	{
-		double xsInc=_elements.at(it.first)->getIncoherentXs();
-		double xsAbs=_elements.at(it.first)->getAbsorptionXs(lambda);
-		mu+=it.second*(xsInc + xsAbs);
+		double xsInc=_elements.at(p.first)->getIncoherentXs();
+		double xsAbs=_elements.at(p.first)->getAbsorptionXs(lambda);
+		mu+=p.second*(xsInc + xsAbs);
 	}
 	return mu;
 }
@@ -352,11 +355,8 @@ double Material::getDensity() const
 
 		contentsMap moleFractions=getMoleFractions();
 
-		for (auto it : moleFractions)
-		{
-			double molarMass=static_cast<double>(_elements.at(it.first)->getMolarMass());
-			density+=moleDensity*it.second*molarMass;
-		}
+		for (const auto& p : moleFractions)
+			density+=moleDensity*p.second*static_cast<double>(_elements.at(p.first)->getMolarMass());
 
 		return density;
 
@@ -397,16 +397,16 @@ void Material::print(std::ostream& os) const
 	else
 	{
 		unsigned int maxSize=0;
-		for (auto it : _elements)
+		for (const auto& p : _elements)
 		{
-			unsigned int nameSize=it.second->getName().size();
+			unsigned int nameSize=p.second->getName().size();
 			if (nameSize > maxSize)
 				maxSize=nameSize;
 		}
 		os<<"Composition:"<<std::endl;
-		for (auto it : _elements)
+		for (const auto& p : _elements)
 		{
-			os<<"\t-"<<std::setw(maxSize)<<std::setiosflags(std::ios::left)<<it.second->getName()<<" --> "<<std::setiosflags(std::ios::fixed|std::ios::right)<<std::setprecision(3)<<std::setw(7)<<it.second<<std::endl;
+			os<<"\t-"<<std::setw(maxSize)<<std::setiosflags(std::ios::left)<<p.second->getName()<<" --> "<<std::setiosflags(std::ios::fixed|std::ios::right)<<std::setprecision(3)<<std::setw(7)<<p.second<<std::endl;
 			std::cout<<std::resetiosflags(std::ios::right);
 		}
 	}

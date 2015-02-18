@@ -45,8 +45,10 @@ class Isotope;
 class Element;
 
 // Typedefs
-typedef std::pair<Isotope*,double> isotopeContentsPair;
-typedef std::map<Isotope*,double> isotopeContentsMap;
+typedef std::map<std::string,Isotope*> isotopesMap;
+typedef std::map<std::string,double> contentsMap;
+typedef std::pair<std::string,Isotope*> strToIsotopePair;
+typedef std::pair<std::string,double> strToDoublePair;
 
 class Element
 {
@@ -73,6 +75,9 @@ public:
 
 	//! Return true if two Elements are the same (same isotopes with the same abundances)
 	bool operator==(const Element& other) const;
+
+	//! Returns the Isotope* of this Element corresponding to this name. If no element of this Element matches this name, throws.
+	Isotope* operator[](const std::string& name);
 
 	//! Returns the name of this Element
 	const std::string& getName() const;
@@ -122,8 +127,10 @@ private:
 	//! The name of the element
 	std::string _name;
 
-	//! A map that stores the abundance of each isotope that builds this Element
-	isotopeContentsMap _isotopes;
+	isotopesMap _isotopes;
+
+	contentsMap _abundances;
+
 };
 
 std::ostream& operator<<(std::ostream& os, const Element& element);
