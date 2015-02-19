@@ -37,6 +37,7 @@
 #include <Eigen/Dense>
 
 #include "Face.h"
+#include "Triangle.h"
 #include "Error.h"
 
 //
@@ -125,6 +126,10 @@ public:
 
 	//! Sends some informations on an output stream.
 	void print(std::ostream& os) const;
+
+	//!
+
+	std::vector<Triangle> createFaceCache() const;
 
 private:
 
@@ -303,7 +308,10 @@ void ConvexHull<T>::initalizeHull()
 template <typename T>
 typename ConvexHull<T>::pFace ConvexHull<T>::buildFace(pVertex v0, pVertex v1, pVertex v2, pFace fold)
 {
-
+    if (!v0 || !v1 || !v2)
+    {
+        std::cout << "Youpi";
+    }
 	Edge<T> *e0(nullptr),*e1(nullptr),*e2(nullptr);
 
 	if (!fold)
@@ -434,16 +442,14 @@ typename ConvexHull<T>::pFace ConvexHull<T>::buildConeFace(pEdge e, pVertex v)
 	// Make two new edges (if they don't already exist)
 	for (unsigned int i=0;i<2;++i)
 	{
-		if (!e->_endPts[i]->_duplicate)
+		if (!(newEdges[i]=e->_endPts[i]->_duplicate))
 		{
 			newEdges[i] = buildNullEdge();
 			newEdges[i]->_endPts[0] = e->_endPts[i];
 			newEdges[i]->_endPts[1] = v;
 			_edges.push_back(newEdges[i]);
 			e->_endPts[i]->_duplicate = newEdges[i];
-		}
-		else
-			newEdges[i]=e->_endPts[i]->_duplicate;
+		};
 	}
 
 	// Make the new face
@@ -488,7 +494,12 @@ void ConvexHull<T>::orientate(pFace f, pEdge e, pVertex v)
 		fv = e->_adjFace[1];
 
 	unsigned int idx;
-	for (idx=0;fv->_vertices[idx]!=e->_endPts[0];++idx);
+	for (idx=0;fv->_vertices[idx]!=e->_endPts[0];++idx)
+	{
+
+	}
+
+	std::cout << idx << std::endl;
 
 	// Orient f the same as fv
 	if (fv->_vertices[(idx+1)%3] != e->_endPts[1])
@@ -642,6 +653,21 @@ template<typename T>
 unsigned int ConvexHull<T>::getNFaces() const
 {
 	return _faces.size();
+}
+
+template<typename T>
+std::vector<Triangle > ConvexHull<T>::createFaceCache() const
+{
+	if (_vertices.size()<4)
+		throw SX::Kernel::Error<ConvexHull<T> >("Hull is flat or undefined, can not construct faces information");
+
+	std::vector<Triangle > triangles;
+	triangles.reserve(_faces.size());
+	for (const auto& f: _faces)
+	{
+		triangles.push_back(Triangle(f->_vertices[0]->_coords,f->_vertices[1]->_coords,f->_vertices[2]->_coords));
+	}
+	return triangles;
 }
 
 template<typename T>
