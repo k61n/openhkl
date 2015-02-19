@@ -250,10 +250,10 @@ bool ConvexHull<T>::findInitialVertices(pVertex& v0, pVertex& v1, pVertex& v2) c
 	for (auto it1=_vertices.begin();it1!=_vertices.end();++it1)
 	{
 		v0=*it1;
-		for (auto it2=++it1;it2!=_vertices.end();++it2)
+		for (auto it2=std::next(it1);it2!=_vertices.end();++it2)
 		{
 			v1=*it2;
-			for (auto it3=++it2;it3!=_vertices.end();++it3)
+			for (auto it3=std::next(it2);it3!=_vertices.end();++it3)
 			{
 				v2=*it3;
 				if (!isCoplanar(v0,v1,v2))
@@ -291,7 +291,7 @@ void ConvexHull<T>::initalizeHull()
 	f1->_edges[2]->_adjFace[1]=f0;
 
 	// Find a fourth noncoplanar point to form tetrahedron
-	for (auto v : _vertices)
+	for (auto& v : _vertices)
 	{
 		if (v->_mark)
 			continue;
@@ -308,10 +308,6 @@ void ConvexHull<T>::initalizeHull()
 template <typename T>
 typename ConvexHull<T>::pFace ConvexHull<T>::buildFace(pVertex v0, pVertex v1, pVertex v2, pFace fold)
 {
-    if (!v0 || !v1 || !v2)
-    {
-        std::cout << "Youpi";
-    }
 	Edge<T> *e0(nullptr),*e1(nullptr),*e2(nullptr);
 
 	if (!fold)
@@ -494,12 +490,9 @@ void ConvexHull<T>::orientate(pFace f, pEdge e, pVertex v)
 		fv = e->_adjFace[1];
 
 	unsigned int idx;
-	for (idx=0;fv->_vertices[idx]!=e->_endPts[0];++idx)
-	{
+	for (idx=0;fv->_vertices[idx]!=e->_endPts[0];++idx);
 
-	}
-
-	std::cout << idx << std::endl;
+//	std::cout <<"INDEX="<<idx << std::endl;
 
 	// Orient f the same as fv
 	if (fv->_vertices[(idx+1)%3] != e->_endPts[1])
