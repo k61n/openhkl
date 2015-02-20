@@ -155,9 +155,12 @@ BOOST_AUTO_TEST_CASE(Test_ConvexHull)
 	chull1.addVertex(vector3( 0, 0, 0));
 	chull1.addVertex(vector3( 0,10, 0));
 	chull1.addVertex(vector3(10,10, 0));
+	chull1.updateHull();
+	std::cout<<CheckEulerCondition(chull1)<<std::endl;
 	chull1.addVertex(vector3(10, 0, 0));
+	chull1.updateHull();
+	std::cout<<CheckEulerCondition(chull1)<<std::endl;
 	chull1.addVertex(vector3(15,15, 0));
-
 	chull1.updateHull();
 	std::cout<<CheckEulerCondition(chull1)<<std::endl;
 
