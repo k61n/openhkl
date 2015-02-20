@@ -250,10 +250,10 @@ bool ConvexHull<T>::findInitialVertices(pVertex& v0, pVertex& v1, pVertex& v2) c
 	for (auto it1=_vertices.begin();it1!=_vertices.end();++it1)
 	{
 		v0=*it1;
-		for (auto it2=std::next(it1);it2!=_vertices.end();++it2)
+		for (auto it2=++it1;it2!=_vertices.end();++it2)
 		{
 			v1=*it2;
-			for (auto it3=std::next(it2);it3!=_vertices.end();++it3)
+			for (auto it3=++it2;it3!=_vertices.end();++it3)
 			{
 				v2=*it3;
 				if (!isCoplanar(v0,v1,v2))
@@ -291,7 +291,7 @@ void ConvexHull<T>::initalizeHull()
 	f1->_edges[2]->_adjFace[1]=f0;
 
 	// Find a fourth noncoplanar point to form tetrahedron
-	for (auto& v : _vertices)
+	for (auto v : _vertices)
 	{
 		if (v->_mark)
 			continue;
@@ -490,9 +490,10 @@ void ConvexHull<T>::orientate(pFace f, pEdge e, pVertex v)
 		fv = e->_adjFace[1];
 
 	unsigned int idx;
-	for (idx=0;fv->_vertices[idx]!=e->_endPts[0];++idx);
+	for (idx=0;fv->_vertices[idx]!=e->_endPts[0];++idx)
+	{
 
-//	std::cout <<"INDEX="<<idx << std::endl;
+	}
 
 	// Orient f the same as fv
 	if (fv->_vertices[(idx+1)%3] != e->_endPts[1])
@@ -548,26 +549,30 @@ void ConvexHull<T>::cleanEdges()
 		}
 	}
 
-	for (auto rit=_edges.rbegin();rit!=_edges.rend();++rit)
+	for (auto it=_edges.begin();it!=_edges.end();)
 	{
-		if ((*rit)->_delete)
+		if ((*it)->_delete)
 		{
-			delete *rit;
-			_edges.erase(--(rit.base()));
+			delete *it;
+			it=_edges.erase(it);
 		}
+		else
+			++it;
 	}
 }
 
 template <typename T>
 void ConvexHull<T>::cleanFaces()
 {
-	for (auto rit=_faces.rbegin();rit!=_faces.rend();++rit)
+	for (auto it=_faces.begin();it!=_faces.end();)
 	{
-		if ((*rit)->_visible)
+		if ((*it)->_visible)
 		{
-			delete *rit;
-			_faces.erase(--(rit.base()));
+			delete *it;
+			it=_faces.erase(it);
 		}
+		else
+			++it;
 	}
 }
 
@@ -580,13 +585,15 @@ void ConvexHull<T>::cleanVertices()
 		e->_endPts[1]->_onHull=true;
 	}
 
-	for (auto rit=_vertices.rbegin();rit!=_vertices.rend();++rit)
+	for (auto it=_vertices.begin();it!=_vertices.end();)
 	{
-		if ((*rit)->_mark && !(*rit)->_onHull)
+		if ((*it)->_mark && !(*it)->_onHull)
 		{
-			delete *rit;
-			_vertices.erase(--(rit.base()));
+			delete *it;
+			it=_vertices.erase(it);
 		}
+		else
+			++it;
 	}
 
 	for (auto& v : _vertices)
