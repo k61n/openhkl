@@ -34,6 +34,7 @@
 #include "SampleItem.h"
 #include "Source.h"
 #include "SourceItem.h"
+#include "Absorption/AbsorptionDialog.h"
 
 ExperimentTree::ExperimentTree(QWidget *parent) : QTreeView(parent)
 {
@@ -188,7 +189,16 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             menu->popup(viewport()->mapToGlobal(point));
             connect(import,SIGNAL(triggered()),this,SLOT(importData()));
         }
+
+        else if (dynamic_cast<SampleItem*>(item))
+        {
+            QMenu* menu = new QMenu(this);
+            QAction* import=menu->addAction("Load absorption");
+            menu->popup(viewport()->mapToGlobal(point));
+            connect(import,SIGNAL(triggered()),this,SLOT(loadAbsorption()));
+        }
     }
+
 }
 
 void ExperimentTree::importData()
@@ -239,6 +249,19 @@ void ExperimentTree::importData()
     }
 
 }
+
+void ExperimentTree::loadAbsorption()
+{
+
+    // Get the current item and check that is actually a Data item. Otherwise, return.
+    QStandardItem* dataItem=_model->itemFromIndex(currentIndex());
+    SampleItem* source=dynamic_cast<SampleItem*>(dataItem);
+    if (!source)
+        return;
+    AbsorptionDialog* dialog=new AbsorptionDialog(source->getExperiment(),nullptr);
+    dialog->exec();
+}
+
 
 void ExperimentTree::onDoubleClick(const QModelIndex& index)
 {

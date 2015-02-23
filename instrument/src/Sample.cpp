@@ -36,5 +36,10 @@ Component* Sample::clone() const
 	return new Sample(*this);
 }
 
+SX::Geometry::ConvexHull<double>& Sample::getShape()
+{
+	return _sampleShape;
+}
+
 }
 } /* namespace SX */

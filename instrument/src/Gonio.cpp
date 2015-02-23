@@ -193,5 +193,25 @@ void Gonio::transformInverseInPlace(Vector3d& v,const std::vector<double>& value
 	v=getInverseHomMatrix(values)*v.homogeneous();
 }
 
+bool Gonio::hasAxis(const std::string& name) const
+{
+	for (const auto& axis : _axes)
+	{
+		if (name.compare(axis->getLabel())==0)
+			return true;
+	}
+	return false;
+}
+
+bool Gonio::hasPhysicalAxis(const std::string& name) const
+{
+	for (const auto& axis : _axes)
+	{
+		if (name.compare(axis->getLabel())==0 && axis->isPhysical())
+			return true;
+	}
+	return false;
+}
+
 }
 }

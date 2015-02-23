@@ -92,9 +92,15 @@ public:
 	//! Destructor
 	~ConvexHull();
 
+	//! Reset, eliminate all vertices, edges and faces
+	void reset();
+
 	//! Adds a new vertex to the list of points to be processed later when calling updateHull method.
 	pVertex addVertex(const vector3& coords);
-
+	pVertex addVertex(T x, T y, T z);
+	//! Remove vertex
+	bool removeVertex(const vector3& coords,double tolerance);
+	bool removeVertex(T x,T y,T z, double tolerance);
 	//! Updates the hull. The first time it is called two seed-triangles with opposite orientation will be
 	//! created on which the next hull faces will be built upon.
 	//! Original name: ConstructHull
@@ -191,6 +197,21 @@ private:
 };
 
 template <typename T>
+void ConvexHull<T>::reset()
+{
+	for (auto v : _vertices)
+		delete v;
+	for (auto e : _edges)
+			delete e;
+	for (auto f : _faces)
+			delete f;
+	_vertices.clear();
+	_edges.clear();
+	_faces.clear();
+
+}
+
+template <typename T>
 bool ConvexHull<T>::isCoplanar(pVertex v0, pVertex v1, pVertex v2)
 {
 	vector3 va=v1->_coords - v0->_coords;
@@ -225,6 +246,38 @@ typename ConvexHull<T>::pVertex ConvexHull<T>::addVertex(const vector3& coords)
 	pVertex v=new Vertex<T>(coords);
 	_vertices.push_back(v);
 	return _vertices.back();
+}
+
+template <typename T>
+typename ConvexHull<T>::pVertex ConvexHull<T>::addVertex(T x,T y,T z)
+{
+	pVertex v=new Vertex<T>(vector3(x,y,z));
+	_vertices.push_back(v);
+	return _vertices.back();
+}
+
+template <typename T>
+bool ConvexHull<T>::removeVertex(const vector3& coords, double tolerance)
+{
+	for (auto it=_vertices.begin();it!=_vertices.end();++it)
+	{
+		if (((*it)->_coords-coords).squaredNorm() < tolerance)
+			_vertices.erase(it);
+		return true;
+	}
+	return false;
+}
+
+template <typename T>
+bool ConvexHull<T>::removeVertex(T x,T y,T z, double tolerance)
+{
+	for (auto it=_vertices.begin();it!=_vertices.end();++it)
+	{
+		if (((*it)->_coords-vector3(x,y,z)).squaredNorm() < tolerance)
+			_vertices.erase(it);
+		return true;
+	}
+	return false;
 }
 
 template <typename T>

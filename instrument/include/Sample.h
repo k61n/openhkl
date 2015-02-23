@@ -33,6 +33,7 @@
 
 #include "Component.h"
 #include "UnitCell.h"
+#include "ConvexHull.h"
 
 namespace SX
 {
@@ -58,9 +59,11 @@ public:
 	// Operators
 	//! Assignment operator
 	Sample& operator=(const Sample& other);
-
+	//! Return the sample shape, described as a convex hull
+	SX::Geometry::ConvexHull<double>& getShape();
 	//!
 private:
+	SX::Geometry::ConvexHull<double> _sampleShape;
 };
 
 } // Namespace Instrument

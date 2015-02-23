@@ -22,21 +22,11 @@ Numor::Numor(const std::string& filename)
 	// Open file
 	std::ifstream file;
 	file.open(filename.c_str(),std::ios::in);
-    std::stringstream _buffer;
-
-    // Read only the header and parse the metadata. 200 lines should be enough.
-    char* temp=new char[81*200];
-    file.read(temp,81*200);
-    std::string s(temp);
-    std::size_t end_metadata=s.find("SSSSSSSS");
-
-    if (end_metadata==std::string::npos)
-    	throw std::runtime_error("Could not find end of metadata block in the first 200 lines of the ASCII file");
-
-	// copy the entire metadata block to memory
+	 std::stringstream _buffer;
+	// copy the entire file to memory
 	if (file.is_open())
 	{
-		_buffer << s.substr(0,end_metadata);
+		_buffer << file.rdbuf();
 		file.close();
 	}
 
@@ -65,6 +55,17 @@ Numor::Numor(const std::string& filename)
 	}catch(...)
 	{
 		throw std::runtime_error("Fail to read FBlock in file"+filename);
+	}
+	 //read the data block
+	if (isbpb())
+	{
+	try
+	{
+		readData(_buffer);
+	}catch(...)
+	{
+		throw std::runtime_error("Fail to read Data block in file"+filename);
+	}
 	}
 
 

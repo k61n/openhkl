@@ -46,7 +46,14 @@ SOURCES += src/Main.cpp \
     src/SimplePlot.cpp \
     src/MaskGraphicsItem.cpp \
     src/SXGraphicsItem.cpp \
-    src/PeakPlot.cpp
+    src/PeakPlot.cpp \
+    src/Absorption/AbsorptionDialog.cpp \
+    src/Absorption/CrystalScene.cpp \
+    src/Absorption/CrystalFaceItem.cpp \
+    src/Absorption/CrystalNodeItem.cpp \
+    src/Absorption/PinItem.cpp \
+    src/Absorption/RulerItem.cpp \
+    src/Absorption/CalibrateDistanceDialog.cpp
 
 HEADERS  += include/MainWindow.h \
     include/DialogPeakFind.h \
@@ -81,14 +88,23 @@ HEADERS  += include/MainWindow.h \
     include/MaskGraphicsItem.h \
     include/SXGraphicsItem.h \
     include/SimplePlot.h \
-    include/PeakPlot.h
+    include/PeakPlot.h \
+    include/Absorption/AbsorptionDialog.h \
+    include/Absorption/CrystalScene.h \
+    include/Absorption/CrystalFaceItem.h \
+    include/Absorption/CrystalNodeItem.h \
+    include/Absorption/PinItem.h \
+    include/Absorption/RulerItem.h \
+    include/Absorption/CalibrateDistanceDialog.h
 
 FORMS    += ui/mainwindow.ui \
     ui/dialog_PeakFind.ui \
     ui/dialog_UnitCell.ui \
     ui/dialogtransformationmatrix.ui \
     ui/dialogunitcellsolutions.ui \
-    ui/DialogExperiment.ui
+    ui/DialogExperiment.ui \
+    ui/Absorption/AbsorptionDialog.ui \
+    ui/Absorption/CalibrateDistanceDialog.ui
 
 win32:CONFIG(release, debug|release): LIBS += -lNSXTool
 else:unix: LIBS += -lNSXTool -lboost_date_time -lfftw3

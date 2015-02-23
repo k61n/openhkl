@@ -50,8 +50,6 @@ struct data
 // Fit with A*exp(-a*t)
 int ExpDecay(void* p, int m,int n,const double* x, double* fvec, int iflag)
 {
-	double a=x[0];
-	double b=x[1];
 	const double *y = ((data*)p)->y;
 	const double *t = ((data*)p)->x;
 	const double *s = ((data*)p)->sigma;
@@ -59,9 +57,9 @@ int ExpDecay(void* p, int m,int n,const double* x, double* fvec, int iflag)
 	const int nn=((data*)p)->n;
 	for (int i = 0; i < nn; ++i)
 	{
-	  fvec[i] = y[i] - ((a*exp(-b*t[i]))/s[i]);
+	  fvec[i] = (y[i]- (x[0]*exp(-x[1]*t[i])))/s[i];
 	}
-		  return 0;
+	return 0;
 
 }
 

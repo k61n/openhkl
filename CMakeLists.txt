@@ -82,8 +82,7 @@ endif()
 # Now add in all the components
 ###########################################################################
 
-include_directories(analysis/include
-                    chemistry/include
+include_directories(chemistry/include
                     data/include
                     geometry/include
                     kernel/include
@@ -93,8 +92,7 @@ include_directories(analysis/include
                     crystal/include
                     instrument/include)
 
-file(GLOB_RECURSE sources analysis/src/*.cpp
-                          chemistry/src/*.cpp
+file(GLOB_RECURSE sources chemistry/src/*.cpp
                           data/src/*.cpp
                           geometry/src/*.cpp
                           kernel/src/*.cpp

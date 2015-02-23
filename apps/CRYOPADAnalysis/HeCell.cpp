@@ -1,6 +1,8 @@
 #include "HeCell.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "Bpb.h"
+#include <cminpack-1/cminpack.h>
+#include <Eigen/Dense>
 
 namespace SX
 {
@@ -83,62 +85,56 @@ const boost::shared_ptr<SX::Data::Scan1D>& HeCell::getDecay() const
 }
 void HeCell::addPeak(double h, double k, double l)
 {
+	std::cout << "Registering peak " << h << "," << k << "," << l << " for cell decay\n";
 	_peaks.push_back(boost::tuple<double,double,double>(h,k,l));
 }
 int HeCell::fitExponential(double& A0,double& A0s, double& alpha,double& alphas)
 {
 
-//	const size_t n = _pvst->npoints();
-//	// This is OK since std::vector is garanteed contiguous
-//	struct data d = {(int)n, &_pvst->getX()[0],&_pvst->getY()[0],&_pvst->getE()[0]};
-//	// Number of parameters
-//	const int m=2;
-//	int maxfev, mode, nprint, info, nfev, ldfjac;
-//	int ipvt[m];
-//	double ftol, xtol, gtol, epsfcn, factor;
-//	//double x[m], fvec[m], diag[m], fjac[n*m], qtf[m],
-//	//wa1[m], wa2[m], wa3[m], wa4[n];
-//	double *x, *fvec, *diag, *fjac, *qtf, *wa1, *wa2, *wa3, *wa4;
-//	x= new double[m];
-//	fvec= new double [m];
-//	diag =new double [m];
-//	fjac =new double [n*m];
-//	qtf= new double [m];
-//	wa1= new double [m];
-//	wa2= new double [m];
-//	wa3 = new double [m];
-//	wa4= new double [n];
-//	// Initial guesses
-//	x[0] = 1.0;
-//	x[1] = 0.0;
-//
-//	ldfjac = n;
-//	ftol = sqrt(dpmpar(1));
-//	xtol = sqrt(dpmpar(1));
-//	gtol = 0.;
-//
-//	maxfev = 800;
-//	epsfcn = 0.;
-//	mode = 1;
-//	factor = 1.e2;
-//	nprint = 0;
-//	info = lmdif(ExpDecay,&d, n, m, x, fvec, ftol, xtol, gtol, maxfev, epsfcn,
-//	diag, mode, factor, nprint, &nfev, fjac, ldfjac,
-//	ipvt, qtf, wa1, wa2, wa3, wa4);
-//	A0=x[0];
-//	alpha=x[1];
-//	delete [] x;
-//	delete [] fvec;
-//	delete [] diag;
-//  	delete [] fjac;
-//  	delete [] qtf;
-//	delete [] wa1;
-//	delete [] wa2;
-//	delete [] wa3;
-//	delete [] wa4;
+	const size_t n = _pvst->npoints();
+	// This is OK since std::vector is garanteed contiguous
+	struct data d = {(int)n, &_pvst->getX()[0],&_pvst->getY()[0],&_pvst->getE()[0]};
+	std::cout << "----Cell decay---\n";
+	std::cout << "Time(s) Polar Sigma\n";
+	for (int i=0;i<d.n;++i)
+	{
+		std::cout << d.x[i] << " " << d.y[i] << " " << d.sigma[i] << std::endl;
+	}
+	// Number of parameters
+	const int m=2;
+	int maxfev, mode, nprint, info, nfev, ldfjac;
+	int ipvt[m];
+	double ftol, xtol, gtol, epsfcn, factor;
+	double x[m], fvec[n], diag[m], fjac[n*m], qtf[m],
+	wa1[m], wa2[m], wa3[m], wa4[n];
 
-//	return info;
-	return 0;
+	// Initial guesses
+	x[0] = 0.8;
+	x[1] = 1e-6;
+
+	ldfjac = n;
+	ftol = sqrt(dpmpar(1));
+	xtol = sqrt(dpmpar(1));
+	gtol = 0.;
+
+	maxfev = 800;
+	epsfcn = 0.;
+	mode = 1;
+	factor = 1.e2;
+	nprint = 1;
+	info = lmdif(ExpDecay,&d, n, m, x, fvec, ftol, xtol, gtol, maxfev, epsfcn,
+	diag, mode, factor, nprint, &nfev, fjac, ldfjac,
+	ipvt, qtf, wa1, wa2, wa3, wa4);
+	A0=x[0];
+	alpha=x[1];
+	std::cout << "Result of fit" << A0 << " " << alpha <<std::endl;
+	_P0=x[0];
+	_alpha0=x[1];
+	_P0s=0;
+	_alpha0s=0;
+
+	std::cout <<"---End cell decay---\n";
+	return info;
 }
 
 double HeCell::getPolar(const SX::Data::Numor& numor,double& Pcell, double& Pcells)

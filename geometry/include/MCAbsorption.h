@@ -49,7 +49,6 @@ public:
 	MCAbsorption(double width, double height, double pos);
 	~MCAbsorption();
 	void setSample(const ConvexHull<double>& sample, double muScat, double muAbs);
-
 	double run(unsigned int nIterations, const Eigen::Vector3d& outV, double wavelength) const;
 
 

@@ -28,5 +28,11 @@
         <file>resources/dataIcon.png</file>
         <file>resources/addExperimentIcon.png</file>
         <file>resources/selectionIcon.png</file>
+        <file>resources/IconcalibrateDistance.jpg</file>
+        <file>resources/IconmeasureDistance.jpg</file>
+        <file>resources/IconpickCenter.jpg</file>
+        <file>resources/IconpickingPoints.jpg</file>
+        <file>resources/Icontriangulate.jpg</file>
+        <file>resources/IconremovingPoints.jpg</file>
     </qresource>
 </RCC>

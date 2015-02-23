@@ -78,6 +78,10 @@ public:
 	std::vector<std::string> getAxesNames() const;
 	//! Gets the names of the physical axes of this goniometer
 	std::vector<std::string> getPhysicalAxesNames() const;
+	//! Has physical axis with this name
+	bool hasPhysicalAxis(const std::string&) const;
+	//! Has axis with this name
+	bool hasAxis(const std::string&) const;
 	//! Get a pointer to axis i, throw range_error if not found
 	Axis* const getAxis(unsigned int i);
 	//! Get a pointer to axis with label, throw range_error if not found

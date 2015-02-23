@@ -50,6 +50,7 @@
 #include "PeakGraphicsItem.h"
 #include "PlotFactory.h"
 #include <ctime>
+#include <Absorption/AbsorptionWidget.h>
 
 using namespace SX::Units;
 using namespace SX::Instrument;
