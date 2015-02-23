@@ -3,6 +3,8 @@
 
 #include <boost/test/unit_test.hpp>
 
+#include "initializer_list"
+#include <algorithm>
 #include "Error.h"
 #include "Face.h"
 #include "ConvexHull.h"
@@ -153,20 +155,41 @@ BOOST_AUTO_TEST_CASE(Test_ConvexHull)
 //	}
 
 
+//	for (int i=0;i<100;++i)
+//	{
+//		CHullDouble chull1;
+//
+//		for (int j=0;j<10000;++j)
+//		{
+//			double x=rand()%1000000;
+//			double y=rand()%1000000;
+//			double z=rand()%1000000;
+//			chull1.addVertex(x,y,z);
+//		}
+//
+//		chull1.updateHull();
+//		std::cout<<CheckEulerCondition(chull1)<<std::endl;
+//	}
+
+	std::cout<<"random shuffling"<<std::endl;
+	std::vector<std::vector<double>> coords;
+	for (int j=0;j<10000;++j)
+	{
+		double x=rand()%1000000;
+		double y=rand()%1000000;
+		double z=rand()%1000000;
+		coords.push_back({x,y,z});
+	}
 	for (int i=0;i<100;++i)
 	{
-		CHullDouble chull1;
-
-		for (int j=0;j<10000;++j)
-		{
-			double x=rand()%1000000;
-			double y=rand()%1000000;
-			double z=rand()%1000000;
-			chull1.addVertex(x,y,z);
-		}
-
-		chull1.updateHull();
-		std::cout<<CheckEulerCondition(chull1)<<std::endl;
+		CHullDouble chull2;
+		std::random_shuffle(coords.begin(),coords.end());
+		for (auto& v : coords)
+			chull2.addVertex(v[0],v[1],v[2]);
+		chull2.updateHull();
+		std::cout<<CheckEulerCondition(chull2)<<std::endl;
 	}
+
+
 }
 
