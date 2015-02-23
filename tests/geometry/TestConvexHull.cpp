@@ -6,6 +6,7 @@
 #include "Error.h"
 #include "Face.h"
 #include "ConvexHull.h"
+#include <cstdlib>
 
 //! Check that the Hull satisfies the Euler conditions
 template <typename T>
@@ -151,18 +152,21 @@ BOOST_AUTO_TEST_CASE(Test_ConvexHull)
 //		}
 //	}
 
-	chull1.addVertex(vector3( 0, 0,10));
-	chull1.addVertex(vector3( 0, 0, 0));
-	chull1.addVertex(vector3( 0,10, 0));
-	chull1.addVertex(vector3(10,10, 0));
-	chull1.updateHull();
-	std::cout<<CheckEulerCondition(chull1)<<std::endl;
-	chull1.addVertex(vector3(10, 0, 0));
-	chull1.updateHull();
-	std::cout<<CheckEulerCondition(chull1)<<std::endl;
-	chull1.addVertex(vector3(15,15, 0));
-	chull1.updateHull();
-	std::cout<<CheckEulerCondition(chull1)<<std::endl;
 
+	for (int i=0;i<100;++i)
+	{
+		CHullDouble chull1;
+
+		for (int j=0;j<10000;++j)
+		{
+			double x=rand()%1000000;
+			double y=rand()%1000000;
+			double z=rand()%1000000;
+			chull1.addVertex(x,y,z);
+		}
+
+		chull1.updateHull();
+		std::cout<<CheckEulerCondition(chull1)<<std::endl;
+	}
 }
 

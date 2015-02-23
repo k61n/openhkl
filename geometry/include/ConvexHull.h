@@ -421,14 +421,28 @@ void ConvexHull<T>::updateHull()
 	if (_vertices.size()<4)
 		throw SX::Kernel::Error<ConvexHull>("Not enough vertices to build a convex hull.");
 
-	for (auto rit=_vertices.rbegin();rit!=_vertices.rend();rit++)
+//	for (auto rit=_vertices.rbegin();rit!=_vertices.rend();rit++)
+//	{
+//		if (!((*rit)->_mark))
+//		{
+//			processVertex(*rit);
+//			cleanUp();
+//		}
+//	}
+
+	auto it=_vertices.begin();
+	while(it!=_vertices.end())
 	{
-		if (!((*rit)->_mark))
+		if (!((*it)->_mark))
 		{
-			processVertex(*rit);
+			processVertex(*it);
 			cleanUp();
+			it=_vertices.begin();
 		}
+		else
+			++it;
 	}
+
 }
 
 template <typename T>
@@ -456,10 +470,10 @@ void ConvexHull<T>::processVertex(pVertex v)
 
 	bool visible1, visible2;
 
-	for (auto rit=_edges.end();rit!=_edges.begin();)
+	auto it=_edges.begin();
+	while (it!=_edges.end())
 	{
-		--rit;
-		pEdge e=*rit;
+		pEdge e=*it;
 		if (e->_adjFace[0])
 			visible1=e->_adjFace[0]->_visible;
 		else
@@ -474,8 +488,8 @@ void ConvexHull<T>::processVertex(pVertex v)
 			e->_delete=true;
 		else if (visible1 || visible2)
 			e->_newFace=buildConeFace(e,v);
-		else
-			continue;
+
+		++it;
 
 	}
 
