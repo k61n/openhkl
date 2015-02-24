@@ -18,7 +18,7 @@ IData* HDF5Data::create(const std::string& filename, std::shared_ptr<Diffractome
 }
 
 HDF5Data::HDF5Data(const std::string& filename, std::shared_ptr<Diffractometer> instrument)
-:IData(filename,instrument)
+:IData(filename,instrument), _dataset(nullptr), _space(nullptr), _memspace(nullptr)
 {
 	_file=new H5::H5File(_filename.c_str(), H5F_ACC_RDONLY);
 
@@ -64,7 +64,7 @@ HDF5Data::HDF5Data(const std::string& filename, std::shared_ptr<Diffractometer> 
 	std::vector<std::string> axesS=_diffractometer->getDetector()->getGonio()->getPhysicalAxesNames();
 
 	Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> dm(axesS.size(),_nFrames);
-	for (int i=0;i<axesS.size();++i)
+	for (unsigned int i=0;i<axesS.size();++i)
 	{
 		try
 		{
@@ -88,7 +88,7 @@ HDF5Data::HDF5Data(const std::string& filename, std::shared_ptr<Diffractometer> 
 	dm*=SX::Units::deg;
 
 	_detectorStates.reserve(_nFrames);
-	for (int i=0;i<_nFrames;++i)
+	for (unsigned int i=0;i<_nFrames;++i)
 	{
 		_detectorStates.push_back(_diffractometer->getDetector()->createStateFromEigen(dm.col(i)));
 	}
@@ -99,7 +99,7 @@ HDF5Data::HDF5Data(const std::string& filename, std::shared_ptr<Diffractometer> 
 	axesS=_diffractometer->getSample()->getGonio()->getPhysicalAxesNames();
 
 	dm.resize(axesS.size(),_nFrames);
-	for (int i=0;i<axesS.size();++i)
+	for (unsigned int i=0;i<axesS.size();++i)
 	{
 		try
 		{
@@ -123,7 +123,7 @@ HDF5Data::HDF5Data(const std::string& filename, std::shared_ptr<Diffractometer> 
 	dm*=SX::Units::deg;
 
 	_sampleStates.reserve(_nFrames);
-	for (int i=0;i<_nFrames;++i)
+	for (unsigned int i=0;i<_nFrames;++i)
 	{
 		_sampleStates.push_back(_diffractometer->getSample()->createStateFromEigen(dm.col(i)));
 	}

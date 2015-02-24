@@ -23,7 +23,8 @@ namespace Data
 using namespace boost::filesystem;
 
 IData::IData(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer)
-: _filename(filename),
+:  _isOpened(false),
+   _filename(filename),
   _nFrames(0),
   _nrows(0),
   _ncols(0),
@@ -34,7 +35,6 @@ IData::IData(const std::string& filename, std::shared_ptr<Diffractometer> diffra
   _detectorStates(),
   _sampleStates(),
   _peaks(),
-  _isOpened(false),
   _fileSize(0),
   _masks()
 {
@@ -67,7 +67,7 @@ const Eigen::MatrixXi& IData::getData(std::size_t idx) const
 	return _data[idx];
 }
 
-int IData::dataAt(int x, int y, int z)
+int IData::dataAt(unsigned int x, unsigned int y, unsigned int z)
 {
 
 	// Check that the voxel is inside the limit of the data
@@ -277,16 +277,16 @@ void IData::saveHDF5(const std::string& filename) const
 	H5::DataSpace scanSpace(1,nf);
 	Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> vals(names.size(),_nFrames);
 
-	for (int i=0;i<_detectorStates.size();++i)
+	for (unsigned int i=0;i<_detectorStates.size();++i)
 	{
 		const std::vector<double>& v=_detectorStates[i].getValues();
-		for (int j=0;j<names.size();++j)
+		for (unsigned int j=0;j<names.size();++j)
 		{
 			vals(j,i)=v[j]/SX::Units::deg;
 		}
 	}
 
-	for (int j=0;j<names.size();++j)
+	for (unsigned int j=0;j<names.size();++j)
 	{
 		H5::DataSet detectorScan(detectorGroup->createDataSet(names[j],H5::PredType::NATIVE_DOUBLE,scanSpace));
 		detectorScan.write(&vals(j,0),H5::PredType::NATIVE_DOUBLE,scanSpace,scanSpace);
@@ -297,16 +297,16 @@ void IData::saveHDF5(const std::string& filename) const
 	std::vector<std::string> samplenames=_diffractometer->getSample()->getGonio()->getPhysicalAxesNames();
 	Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> valsSamples(samplenames.size(),_nFrames);
 
-	for (int i=0;i<_sampleStates.size();++i)
+	for (unsigned int i=0;i<_sampleStates.size();++i)
 	{
 		const std::vector<double>& v=_sampleStates[i].getValues();
-		for (int j=0;j<samplenames.size();++j)
+		for (unsigned int j=0;j<samplenames.size();++j)
 		{
 			valsSamples(j,i)=v[j]/SX::Units::deg;
 		}
 	}
 
-	for (int j=0;j<samplenames.size();++j)
+	for (unsigned int j=0;j<samplenames.size();++j)
 	{
 		H5::DataSet sampleScan(sampleGroup->createDataSet(samplenames[j],H5::PredType::NATIVE_DOUBLE,scanSpace));
 		sampleScan.write(&valsSamples(j,0),H5::PredType::NATIVE_DOUBLE,scanSpace,scanSpace);

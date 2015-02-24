@@ -33,6 +33,7 @@
 #include <array>
 #include <cmath>
 #include <list>
+#include <iostream>
 
 #include <Eigen/Dense>
 
@@ -243,6 +244,13 @@ ConvexHull<T>::~ConvexHull()
 template <typename T>
 typename ConvexHull<T>::pVertex ConvexHull<T>::addVertex(const vector3& coords)
 {
+
+	for (const auto& v : _vertices)
+	{
+		if (std::abs(coords[0]-v->_coords[0])<1.0e-6 && std::abs(coords[1]-v->_coords[1])<1.0e-6 && std::abs(coords[2]-v->_coords[2])<1.0e-6)
+			throw SX::Kernel::Error<ConvexHull>("Duplicate vertex (within 1.0e6 tolerance).");
+	}
+
 	pVertex v=new Vertex<T>(coords);
 	_vertices.push_back(v);
 	return _vertices.back();
@@ -251,9 +259,7 @@ typename ConvexHull<T>::pVertex ConvexHull<T>::addVertex(const vector3& coords)
 template <typename T>
 typename ConvexHull<T>::pVertex ConvexHull<T>::addVertex(T x,T y,T z)
 {
-	pVertex v=new Vertex<T>(vector3(x,y,z));
-	_vertices.push_back(v);
-	return _vertices.back();
+	return addVertex(vector3(x,y,z));
 }
 
 template <typename T>

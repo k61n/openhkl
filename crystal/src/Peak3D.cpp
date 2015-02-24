@@ -129,14 +129,14 @@ void Peak3D::integrate()
 	const Eigen::Vector3d& upper=_bkg->getUpper();
 
 	//
-	int data_start=static_cast<int>(std::floor(lower[2]));
-	int data_end=static_cast<int>(std::ceil(upper[2]));
+	unsigned int data_start=static_cast<int>(std::floor(lower[2]));
+	unsigned int data_end=static_cast<int>(std::ceil(upper[2]));
 
-	int start_x=static_cast<int>(std::floor(lower[0]));
-	int end_x=static_cast<int>(std::ceil(upper[0]));
+	unsigned int start_x=static_cast<int>(std::floor(lower[0]));
+	unsigned int end_x=static_cast<int>(std::ceil(upper[0]));
 
-	int start_y=static_cast<int>(std::floor(lower[1]));
-	int end_y=static_cast<int>(std::ceil(upper[1]));
+	unsigned int start_y=static_cast<int>(std::floor(lower[1]));
+	unsigned int end_y=static_cast<int>(std::ceil(upper[1]));
 
 	if (lower[0] < 0)
 		start_x=0;
@@ -162,7 +162,7 @@ void Peak3D::integrate()
 	int dx = end_x-start_x;
 	int dy = end_y-start_y;
 
-	for (int z=data_start;z<=data_end;++z)
+	for (unsigned int z=data_start;z<=data_end;++z)
 	{
 		const Eigen::MatrixXi& frame=_data->getData(z);
 		double pointsinpeak=0;
@@ -170,9 +170,9 @@ void Peak3D::integrate()
 		double intensityP=0;
 		double intensityBkg=0;
 		_projection[z-data_start]+=frame.block(start_y,start_x,dy,dx).sum();
-		for (int x=start_x;x<=end_x;++x)
+		for (unsigned int x=start_x;x<=end_x;++x)
 		{
-			for (int y=start_y;y<=end_y;++y)
+			for (unsigned int y=start_y;y<=end_y;++y)
 			{
 				int intensity=frame(y,x);
 				point1 << x+0.5,y+0.5,z,1;

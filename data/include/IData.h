@@ -135,7 +135,7 @@ public:
 	//! Mask a given peak
 	void maskPeak(Peak3D* peak) const;
 	//! Return the intensity at point x,y,z.
-	int dataAt(int x=0, int y=0, int z=0);
+	int dataAt(unsigned int x=0, unsigned int y=0, unsigned int z=0);
     //! Read a given Frame of the data
     virtual Eigen::MatrixXi getFrame(std::size_t i)=0;
     //! Read a single frame

@@ -173,14 +173,14 @@ BOOST_AUTO_TEST_CASE(Test_ConvexHull)
 
 	std::cout<<"random shuffling"<<std::endl;
 	std::vector<std::vector<double>> coords;
-	for (int j=0;j<10000;++j)
+	for (int j=0;j<1000;++j)
 	{
-		double x=rand()%1000000;
-		double y=rand()%1000000;
-		double z=rand()%1000000;
+		double x=rand()%100000;
+		double y=rand()%100000;
+		double z=rand()%100000;
 		coords.push_back({x,y,z});
 	}
-	for (int i=0;i<100;++i)
+	for (int i=0;i<1000;++i)
 	{
 		CHullDouble chull2;
 		std::random_shuffle(coords.begin(),coords.end());
@@ -189,7 +189,5 @@ BOOST_AUTO_TEST_CASE(Test_ConvexHull)
 		chull2.updateHull();
 		std::cout<<CheckEulerCondition(chull2)<<std::endl;
 	}
-
-
 }
 
