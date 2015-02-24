@@ -50,7 +50,7 @@ int MultiDetector::getMinRow() const
 	unsigned int minrow=std::numeric_limits<int>::infinity();
 	for (auto& detector : _components)
 	{
-		int row= detector->getMinRow();
+		unsigned int row= detector->getMinRow();
 		if (row<minrow)
 			minrow=row;
 	}
@@ -62,7 +62,7 @@ int MultiDetector::getMaxRow() const
 	unsigned int maxrow=0;
 	for (auto& detector : _components)
 	{
-		int row= detector->getMaxRow();
+		unsigned int row= detector->getMaxRow();
 		if (row>maxrow)
 			maxrow=row;
 	}
@@ -74,7 +74,7 @@ int MultiDetector::getMinCol() const
 	unsigned int mincol=std::numeric_limits<int>::infinity();
 	for (auto& detector : _components)
 	{
-		int row= detector->getMinCol();
+		unsigned int row= detector->getMinCol();
 		if (row<mincol)
 			mincol=row;
 	}
@@ -86,7 +86,7 @@ int MultiDetector::getMaxCol() const
 	unsigned int maxcol=0;
 	for (auto& detector : _components)
 	{
-		int row= detector->getMaxCol();
+		unsigned int row= detector->getMaxCol();
 		if (row>maxcol)
 			maxcol=row;
 	}

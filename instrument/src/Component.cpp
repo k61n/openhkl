@@ -116,11 +116,12 @@ ComponentState Component::createStateFromEigen(const Eigen::VectorXd& values)
 {
 	ComponentState state;
 	state._ptrComp=this;
+	unsigned int nValues=static_cast<unsigned int>(values.size());
 	if (hasGonio())
 	{
-		if (values.size()!=_gonio->getNPhysicalAxes())
+		if (nValues!=_gonio->getNPhysicalAxes())
 			throw std::runtime_error("Trying to create a state from component "+_name+" with wrong number of Goniometer values");
-		state._values.resize(values.size());
+		state._values.resize(nValues);
 		memcpy(state._values.data(),values.data(),values.size()*sizeof(double));
 	}
 	return state;

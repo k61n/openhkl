@@ -25,5 +25,7 @@ BOOST_AUTO_TEST_CASE(Test_Component_State)
 
 	ComponentState* pcs(new ComponentState(cs));
 
+	delete pcs;
+
 }
 

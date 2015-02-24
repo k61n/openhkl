@@ -64,7 +64,7 @@ public:
 	void addVectors(const std::vector<Eigen::Vector3d>& v);
 	//! Find a tVector in real space along the normalized direction N
 	tVector findtVector(const Eigen::Vector3d& N) const;
-	std::vector<tVector> findOnSphere(int nstacks,int nsolutions) const;
+	std::vector<tVector> findOnSphere(int nstacks, unsigned int nsolutions) const;
 	virtual ~FFTIndexing();
 
 private:

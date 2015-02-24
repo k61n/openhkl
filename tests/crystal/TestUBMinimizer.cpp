@@ -92,7 +92,7 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
     Eigen::Matrix3d M=Eigen::Matrix3d::Ones();
     minimizer.setStartingUBMatrix(M);
 
-    int ret = minimizer.run(100);
+    minimizer.run(100);
 
     UBSolution solution=minimizer.getSolution();
 

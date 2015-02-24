@@ -164,7 +164,7 @@ std::size_t Gonio::getNPhysicalAxes() const
 
 void Gonio::resetOffsets()
 {
-	for (int i=0;i<_axes.size();++i)
+	for (unsigned int i=0;i<_axes.size();++i)
 	{
 		_axes[i]->setOffset(0.0);
 	}

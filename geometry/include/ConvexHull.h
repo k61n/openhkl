@@ -277,13 +277,7 @@ bool ConvexHull<T>::removeVertex(const vector3& coords, double tolerance)
 template <typename T>
 bool ConvexHull<T>::removeVertex(T x,T y,T z, double tolerance)
 {
-	for (auto it=_vertices.begin();it!=_vertices.end();++it)
-	{
-		if (((*it)->_coords-vector3(x,y,z)).squaredNorm() < tolerance)
-			_vertices.erase(it);
-		return true;
-	}
-	return false;
+	return removeVertex(vector3(x,y,z),tolerance);
 }
 
 template <typename T>

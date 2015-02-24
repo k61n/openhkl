@@ -94,7 +94,7 @@ tVector FFTIndexing::findtVector(const Eigen::Vector3d& N) const
 
 }
 
-std::vector<tVector> FFTIndexing::findOnSphere(int nstacks,int nsolutions) const
+std::vector<tVector> FFTIndexing::findOnSphere(int nstacks, unsigned int nsolutions) const
 {
 
 		std::vector<double> projs(_qVectors.size());
@@ -152,7 +152,6 @@ std::vector<tVector> FFTIndexing::findOnSphere(int nstacks,int nsolutions) const
 
 			//
 			double FZero=std::abs(spectrum[0]);
-			int max_search=nPoints/(nSubdiv);
 			int pos_max=0;
 			double value=0;
 			for (int i=nSubdiv;i<nPointsHalf;++i)
