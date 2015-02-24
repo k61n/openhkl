@@ -27,7 +27,7 @@ BOOST_AUTO_TEST_CASE(Test_Material)
 	BOOST_CHECK_NO_THROW(mmgr->setDatabasePath("./materials.xml"));
 
 	// Builds the methane molecule from the materials XML database
-	Material* dbMethane=mmgr->findMaterial("db_methane");
+	SX::Chemistry::sptrMaterial dbMethane=mmgr->findMaterial("db_methane");
 
 	// Check that the registry of materials has been correctly updated
 	BOOST_CHECK_EQUAL(mmgr->getNRegisteredMaterials(),1);
@@ -52,7 +52,7 @@ BOOST_AUTO_TEST_CASE(Test_Material)
 	BOOST_CHECK_CLOSE(massFractions["hydrogen"],4.0*mHydrogen/mTotal,tolerance);
 
 	// Build a methane material dynamically and checks that its contents is the same than the one built from the database
-	Material* methane= mmgr->buildMaterial("methane",Material::State::Gaz,Material::FillingMode::NumberOfAtoms);
+	SX::Chemistry::sptrMaterial methane= mmgr->buildMaterial("methane",Material::State::Gaz,Material::FillingMode::NumberOfAtoms);
 	methane->addElement(emgr->findElement("carbon"),1);
 	methane->addElement(emgr->findElement("hydrogen"),4);
 	methane->setDensity(1.235);
@@ -64,7 +64,6 @@ BOOST_AUTO_TEST_CASE(Test_Material)
 	BOOST_CHECK_EQUAL(mmgr->getNRegisteredMaterials(),2);
 
 	// Build a mixture of material from the XML database
-	Material* dbMixture=mmgr->findMaterial("db_mixture");
-
+	SX::Chemistry::sptrMaterial dbMixture=mmgr->findMaterial("db_mixture");
 
 }

@@ -29,13 +29,13 @@ BOOST_AUTO_TEST_CASE(Test_Isotope)
 	BOOST_CHECK_THROW(mgr->findIsotope("XXX"),SX::Kernel::Error<IsotopeManager>)
 
 	// Builds an isotope known from the isotope database
-	Isotope* is=mgr->findIsotope("H[1]");
+	sptrIsotope is=mgr->findIsotope("H[1]");
 
 	// Checks that the isotopes registry has been updated.
 	BOOST_CHECK_EQUAL(mgr->getNRegisteredIsotopes(),1);
 
 	// Builds the same isotope and check that the isotopes registry has no been modified because no new isotope was created
-	Isotope* is1=mgr->findIsotope("H[1]");
+	sptrIsotope is1=mgr->findIsotope("H[1]");
 	BOOST_CHECK_EQUAL(mgr->getNRegisteredIsotopes(),1);
 
 	// Checks some of the property of the isotope

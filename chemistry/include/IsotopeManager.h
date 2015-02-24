@@ -31,6 +31,7 @@
 #define NSXTOOL_ISOTOPEMANAGER_H_
 
 #include <map>
+#include <memory>
 #include <set>
 #include <string>
 #include <utility>
@@ -53,9 +54,10 @@ namespace property_tree=boost::property_tree;
 namespace xml_parser=boost::property_tree::xml_parser;
 
 // Typedefs
-typedef std::set<Isotope*> isotopeSet;
-typedef std::map<std::string,Isotope*> isotopeMap;
-typedef std::pair<std::string,Isotope*> isotopePair;
+typedef std::shared_ptr<Isotope> sptrIsotope;
+typedef std::set<sptrIsotope> isotopeSet;
+typedef std::map<std::string,sptrIsotope> isotopeMap;
+typedef std::pair<std::string,sptrIsotope> isotopePair;
 
 class IsotopeManager : public SX::Kernel::Singleton<IsotopeManager,SX::Kernel::Constructor,SX::Kernel::Destructor>
 {
@@ -68,11 +70,11 @@ public:
 	//! Destructor
 	~IsotopeManager();
 
-	//! Returns the set of Isotopes whose property |prop| matches the value |value|
+	//! Returns a set of shared pointer to the Isotope objects whose property |prop| matches the value |value|
 	template<typename T>
 	isotopeSet getIsotopes(const std::string& prop, T value);
 
-	//! Returns the number of registered isotopes
+	//! Returns the number of registered Isotope objects
 	unsigned int getNRegisteredIsotopes() const;
 
 	//! Returns the value of a given property of a given isotope
@@ -82,15 +84,17 @@ public:
 	//! Sets the path for the isotopes XML database
 	void setDatabasePath(const std::string& path);
 
-	//! Finds an isotope with a given name. If the isotope name does not match any registered isotope build it from the isotopes XML database.
-	Isotope* findIsotope(const std::string& name);
+	//! Build and registers a new Isotope object with a given name
+	//! A shared pointer to the newly created Isotope is returned.
+	sptrIsotope buildIsotope(const std::string& name);
+
+	//! Returns a shared pointer to an Isotope with a given name. The Isotope is searched first in the registry and if not found in the XML datatabase. If is found nowhere, throws.
+	sptrIsotope findIsotope(const std::string& name);
 
 	//! Returns true if an isotope with a given name is registered
 	bool hasIsotope(const std::string& name) const;
 
-private:
-
-	//! Clean up the registry
+	//! Cleans up the registry
 	void cleanRegistry();
 
 private:
@@ -174,7 +178,7 @@ isotopeSet IsotopeManager::getIsotopes(const std::string& prop, T value)
 					isSet.insert(it->second);
 				else
 				{
-					Isotope* is=Isotope::create(v.second);
+					sptrIsotope is=Isotope::create(v.second);
 					_registry.insert(isotopePair(name,is));
 					isSet.insert(is);
 				}

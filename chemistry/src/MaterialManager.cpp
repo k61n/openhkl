@@ -29,13 +29,16 @@ MaterialManager::~MaterialManager()
 
 void MaterialManager::cleanRegistry()
 {
-	for (auto& p : _registry)
-		delete p.second;
-
-	_registry.clear();
+	for (auto it=_registry.begin();it!=_registry.end();)
+	{
+		if (it->second.unique())
+			it=_registry.erase(it);
+		else
+			++it;
+	}
 }
 
-Material* MaterialManager::buildMaterial(const std::string& name, Material::State state, Material::FillingMode fillingMode)
+sptrMaterial MaterialManager::buildMaterial(const std::string& name, Material::State state, Material::FillingMode fillingMode)
 {
 	// Check first if an element with this name has already been registered
 	auto it=_registry.find(name);
@@ -43,12 +46,12 @@ Material* MaterialManager::buildMaterial(const std::string& name, Material::Stat
 		throw SX::Kernel::Error<MaterialManager>("A material with name "+name+" is already registered in the registry.");
 
 	// Otherwise built it from scratch.
-	Material* mat=Material::create(name,state,fillingMode);
+	sptrMaterial mat=Material::create(name,state,fillingMode);
 	_registry.insert(materialPair(name,mat));
 	return mat;
 }
 
-Material* MaterialManager::buildMaterial(const property_tree::ptree& node)
+sptrMaterial MaterialManager::buildMaterial(const property_tree::ptree& node)
 {
 	SX::Units::UnitsManager* um=SX::Units::UnitsManager::Instance();
 
@@ -60,7 +63,7 @@ Material* MaterialManager::buildMaterial(const property_tree::ptree& node)
 	Material::FillingMode fMode=Material::s_toFillingMode.at(node.get<std::string>("<xmlattr>.filling_mode","mass_fraction"));
 
 	// Create an empty Material
-	Material* material=Material::create(name,state,fMode);
+	sptrMaterial material=Material::create(name,state,fMode);
 
 	// Loop over the subnodes of the node
 	BOOST_FOREACH(const property_tree::ptree::value_type& v, node)
@@ -68,7 +71,7 @@ Material* MaterialManager::buildMaterial(const property_tree::ptree& node)
 		// Case where the current subnode is a "material" node. A new Material will be built and added as a component of the empty Material
 		if (v.first.compare("material")==0)
 		{
-			Material* component;
+			sptrMaterial component;
 
 			boost::optional<std::string> submat=v.second.get_optional<std::string>("<xmlattr>.database");
 			if (submat)
@@ -110,7 +113,7 @@ Material* MaterialManager::buildMaterial(const property_tree::ptree& node)
 		else if (v.first.compare("element")==0)
 		{
 			ElementManager* mgr=ElementManager::Instance();
-			Element* element;
+			sptrElement element;
 			name=v.second.get<std::string>("<xmlattr>.name");
 			try
 			{
@@ -155,7 +158,7 @@ Material* MaterialManager::buildMaterial(const property_tree::ptree& node)
 
 }
 
-Material* MaterialManager::findMaterial(const std::string& name)
+sptrMaterial MaterialManager::findMaterial(const std::string& name)
 {
 	// Check first if a Material with this name has already been registered
 	auto it=_registry.find(name);
@@ -179,12 +182,9 @@ Material* MaterialManager::findMaterial(const std::string& name)
 		if (v.first.compare("material")!=0)
 			continue;
 
+		// Once the XML node has been found, build a Material from it and register it
 		if (v.second.get<std::string>("<xmlattr>.name").compare(name)==0)
-		{
-			// Once the XML node has been found, build a Material from it and register it
-			Material* mat = buildMaterial(v.second);
-			return mat;
-		}
+			return buildMaterial(v.second);
 	}
 	throw SX::Kernel::Error<MaterialManager>("Material "+name+" is not registered in the materials database");
 }

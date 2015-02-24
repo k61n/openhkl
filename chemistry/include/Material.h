@@ -31,6 +31,7 @@
 #define NSXTOOL_MATERIAL_H_
 
 #include <map>
+#include <memory>
 #include <ostream>
 #include <string>
 #include <utility>
@@ -43,11 +44,14 @@ namespace Chemistry
 
 // Forward declarations
 class Element;
+class Material;
 
 // Typedefs
-typedef std::map<std::string,Element*> elementsMap;
+typedef std::shared_ptr<Element> sptrElement;
+typedef std::shared_ptr<Material> sptrMaterial;
+typedef std::map<std::string,sptrElement> elementsMap;
 typedef std::map<std::string,double> contentsMap;
-typedef std::pair<std::string,Element*> strToElementPair;
+typedef std::pair<std::string,sptrElement> strToElementPair;
 typedef std::pair<std::string,double> strToDoublePair;
 
 class Material
@@ -64,7 +68,7 @@ public:
 public:
 
 	//! Constructs an empty Material in a given state to be filled later with a given filling mode
-	static Material* create(const std::string& name, State state=State::Solid, FillingMode fillingMode=FillingMode::MassFraction);
+	static sptrMaterial create(const std::string& name, State state=State::Solid, FillingMode fillingMode=FillingMode::MassFraction);
 
 public:
 
@@ -94,15 +98,15 @@ public:
 	//! Return true if two Material objects are the same (same density, same chemical state and same elements with the same mass fraction)
 	bool operator==(const Material& other) const;
 
-	//! Returns the Element* of this Material corresponding to this name. If no element of this Material matches this name, throws.
-	Element* operator[](const std::string& name);
+	//! Returns a shared pointer to the Element of this Material corresponding to this name. If no element of this Material matches this name, throws.
+	sptrElement operator[](const std::string& name);
 
-	//! Add a Material to this Material
-	void addMaterial(Material* material, double fraction);
-	//! Add an Element to this Material. The Element will be built from the elements database
+	//! Add a shared pointer to a Material object to this Material
+	void addMaterial(sptrMaterial material, double fraction);
+	//! Add an Element to this Material.
 	void addElement(const std::string& name, double fraction);
-	//! Add an Element to this Material
-	void addElement(Element* element, double fraction);
+	//! Add a shared pointer to an Element object to this Material
+	void addElement(sptrElement element, double fraction);
 
 	//! Returns the number of elements of this Material
 	unsigned int getNElements() const;

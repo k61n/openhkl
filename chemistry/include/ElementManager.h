@@ -31,6 +31,7 @@
 #define NSXTOOL_ELEMENTMANAGER_H_
 
 #include <map>
+#include <memory>
 #include <string>
 #include <utility>
 
@@ -49,8 +50,9 @@ class Element;
 class Isotope;
 
 // Typedefs
-typedef std::map<std::string,Element*> elementMap;
-typedef std::pair<std::string,Element*> elementPair;
+typedef std::shared_ptr<Element> sptrElement;
+typedef std::map<std::string,sptrElement> elementMap;
+typedef std::pair<std::string,sptrElement> elementPair;
 
 // Namespaces
 namespace property_tree=boost::property_tree;
@@ -69,24 +71,24 @@ public:
 	//! Sets the path for the elements XML database
 	void setDatabasePath(const std::string& path);
 
-	//! Find an Element in the registry and in the elements XML database if it is not found in the registry. If it is not found in both the registry and the database, throws.
-	Element* findElement(const std::string& name);
+	//! Returns a shared pointer to an Element with a given name. The Element is searched first in the registry and if not found in the XML datatabase. If is found nowhere, throws.
+	sptrElement findElement(const std::string& name);
 
-	//! Builds and register an element. If symbol is provided the Element will be built from its natural isotopes otherwise the Element is empty.
-	Element* buildElement(const std::string& name, const std::string& symbol="");
+	//! Builds and registers an element. If symbol is provided the Element will be built from its natural isotopes otherwise the Element is empty.
+	//! A shared pointer to the newly created Element is returned.
+	sptrElement buildElement(const std::string& name, const std::string& symbol="");
 
-	//! Builds an Element from an XML node
-	Element* buildElement(const property_tree::ptree& node);
+	//! Builds and registers an Element from an XML node
+	//! A shared pointer to the newly created Element is returned.
+	sptrElement buildElement(const property_tree::ptree& node);
 
-	//! Returns true if an element with a given name is registered
+	//! Returns true if an Element with a given name is registered
 	bool hasElement(const std::string& name) const;
 
-	//! Returns the number of registered elements
+	//! Returns the number of registered Element objects
 	unsigned int getNRegisteredElements() const;
 
-private:
-
-	//! Clean up the registry
+	//! Clean up the Element registry
 	void cleanRegistry();
 
 private:

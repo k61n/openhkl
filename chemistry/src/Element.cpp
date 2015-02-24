@@ -13,10 +13,9 @@ namespace SX
 namespace Chemistry
 {
 
-Element* Element::create(const std::string& name, const std::string& symbol)
+sptrElement Element::create(const std::string& name, const std::string& symbol)
 {
-	Element* element=new Element(name,symbol);
-	return element;
+	return sptrElement(new Element(name,symbol));
 }
 
 Element::Element(const std::string& name, const std::string& symbol) : _name(name), _isotopes()
@@ -56,7 +55,7 @@ bool Element::operator==(const Element& other) const
 
 }
 
-Isotope* Element::operator[](const std::string& name)
+sptrIsotope Element::operator[](const std::string& name)
 {
 	try
 	{
@@ -68,7 +67,7 @@ Isotope* Element::operator[](const std::string& name)
 	}
 }
 
-void Element::addIsotope(Isotope* isotope, double abundance)
+void Element::addIsotope(sptrIsotope isotope, double abundance)
 {
 	std::string name=isotope->getName();
 	// If the element already contains the isotope, return
@@ -104,7 +103,7 @@ void Element::addIsotope(const std::string& name)
 {
 	// Retrieve the isotope (from isotopes registry or XML database if not in the isotopes registry) whose name matches the given name
 	IsotopeManager* mgr=IsotopeManager::Instance();
-	Isotope* is=mgr->findIsotope(name);
+	sptrIsotope is=mgr->findIsotope(name);
 
 	// Add it to the isotopes internal map with its natural abundance
 	addIsotope(is,is->getAbundance());
@@ -116,7 +115,7 @@ void Element::addIsotope(const std::string& name, double abundance)
 {
 	// Retrieve the isotope (from isotopes registry or XML database if not in the isotopes registry) whose name matches the given name
 	IsotopeManager* mgr=IsotopeManager::Instance();
-	Isotope* is=mgr->findIsotope(name);
+	sptrIsotope is=mgr->findIsotope(name);
 
 	// Add it to the isotopes internal map with the given abundance
 	addIsotope(is,abundance);

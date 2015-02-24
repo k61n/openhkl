@@ -13,7 +13,12 @@ namespace SX
 namespace Chemistry
 {
 
-Isotope* Isotope::create(const property_tree::ptree& node)
+sptrIsotope Isotope::create(const std::string& name)
+{
+	return sptrIsotope(new Isotope(name));
+}
+
+sptrIsotope Isotope::create(const property_tree::ptree& node)
 {
 
 	SX::Units::UnitsManager* um = SX::Units::UnitsManager::Instance();
@@ -84,11 +89,35 @@ Isotope* Isotope::create(const property_tree::ptree& node)
 	units=um->get(node.get<std::string>("xs_absorption.<xmlattr>.units","barn"));
 	is->_xsAbsorption=node.get<double>("xs_absorption")*units;
 
-	return is;
+	return sptrIsotope(is);
 }
 
 Isotope::Isotope()
 : _name(""),
+  _symbol(""),
+  _element(""),
+  _nProtons(0),
+  _nNucleons(0),
+  _nElectrons(0),
+  _molarMass(0.0),
+  _nuclearSpin(0.0),
+  _state(""),
+  _abundance(0.0),
+  _halfLife(0.0),
+  _stable(true),
+  _bCoherent(0.0),
+  _bIncoherent(0.0),
+  _bPlus(0.0),
+  _bMinus(0.0),
+  _xsCoherent(0.0),
+  _xsIncoherent(0.0),
+  _xsScattering(0.0),
+  _xsAbsorption(0.0)
+{
+}
+
+Isotope::Isotope(const std::string& name)
+: _name(name),
   _symbol(""),
   _element(""),
   _nProtons(0),

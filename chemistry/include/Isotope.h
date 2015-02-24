@@ -33,6 +33,7 @@
 #include <map>
 #include <complex>
 #include <ostream>
+#include <memory>
 #include <set>
 #include <string>
 #include <stdexcept>
@@ -57,17 +58,21 @@ namespace property_tree=boost::property_tree;
 class Isotope;
 
 // Typedefs
-typedef std::set<Isotope*> isotopeSet;
-typedef std::map<std::string,Isotope*> isotopeMap;
-typedef std::pair<std::string,Isotope*> isotopePair;
+typedef std::shared_ptr<Isotope> sptrIsotope;
+typedef std::set<sptrIsotope> isotopeSet;
+typedef std::map<std::string,sptrIsotope> isotopeMap;
+typedef std::pair<std::string,sptrIsotope> isotopePair;
 
 class Isotope
 {
 
 public:
 
+	//! Constructs an empty Isotope with a given name
+	static sptrIsotope create(const std::string& name);
+
 	//! Constructs an Isotope from an XML node
-	static Isotope* create(const property_tree::ptree& node);
+	static sptrIsotope create(const property_tree::ptree& node);
 
 public:
 
@@ -148,6 +153,9 @@ private:
 
 	//! Default constructor
 	Isotope();
+
+	//! Construct an empty Isotope with a given name
+	Isotope(const std::string& name);
 
 private:
 

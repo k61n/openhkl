@@ -31,6 +31,7 @@
 #define NSXTOOL_MATERIALMANAGER_H_
 
 #include <map>
+#include <memory>
 #include <string>
 
 #include <boost/filesystem.hpp>
@@ -49,8 +50,9 @@ namespace Chemistry
 class Material;
 
 // Typedefs
-typedef std::map<std::string,Material*> materialMap;
-typedef std::pair<std::string,Material*> materialPair;
+typedef std::shared_ptr<Material> sptrMaterial;
+typedef std::map<std::string,sptrMaterial> materialMap;
+typedef std::pair<std::string,sptrMaterial> materialPair;
 
 // Namespaces
 namespace filesystem=boost::filesystem;
@@ -69,10 +71,10 @@ public:
 	~MaterialManager();
 
 	//! Builds and register an empty material. If the material with the same name is already registered, throws.
-	Material* buildMaterial(const std::string& name, Material::State state=Material::State::Solid, Material::FillingMode fillingMode=Material::FillingMode::MassFraction);
+	sptrMaterial buildMaterial(const std::string& name, Material::State state=Material::State::Solid, Material::FillingMode fillingMode=Material::FillingMode::MassFraction);
 
 	//! Find a Material
-	Material* findMaterial(const std::string& name);
+	sptrMaterial findMaterial(const std::string& name);
 
 	//! Sets the path for the materials XML database
 	void setDatabasePath(const std::string& path);
@@ -83,13 +85,13 @@ public:
 	//! Returns true if a Material with a given name is registered
 	bool hasMaterial(const std::string& name) const;
 
+	//! Clean up the registry
+	void cleanRegistry();
+
 private:
 
 	//! Builds a Material from an XML node
-	Material* buildMaterial(const property_tree::ptree& node);
-
-	//! Clean up the registry
-	void cleanRegistry();
+	sptrMaterial buildMaterial(const property_tree::ptree& node);
 
 private:
 

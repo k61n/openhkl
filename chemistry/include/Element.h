@@ -31,6 +31,7 @@
 #define NSXTOOL_ELEMENT_H_
 
 #include <map>
+#include <memory>
 #include <ostream>
 #include <string>
 
@@ -45,9 +46,11 @@ class Isotope;
 class Element;
 
 // Typedefs
-typedef std::map<std::string,Isotope*> isotopesMap;
+typedef std::shared_ptr<Isotope> sptrIsotope;
+typedef std::shared_ptr<Element> sptrElement;
+typedef std::map<std::string,sptrIsotope> isotopesMap;
 typedef std::map<std::string,double> contentsMap;
-typedef std::pair<std::string,Isotope*> strToIsotopePair;
+typedef std::pair<std::string,sptrIsotope> strToIsotopePair;
 typedef std::pair<std::string,double> strToDoublePair;
 
 class Element
@@ -55,9 +58,9 @@ class Element
 
 public:
 
-	//! Constructs an Element.
+	//! Returns a shared pointer to an Element.
 	//! If a chemical symbol is given the element will be built from its natural isotopes otherwise it is empty and will have to be filled later by addIsotope method.
-	static Element* create(const std::string& name, const std::string& symbol="");
+	static sptrElement create(const std::string& name, const std::string& symbol="");
 
 public:
 
@@ -76,8 +79,8 @@ public:
 	//! Return true if two Elements are the same (same isotopes with the same abundances)
 	bool operator==(const Element& other) const;
 
-	//! Returns the Isotope* of this Element corresponding to this name. If no element of this Element matches this name, throws.
-	Isotope* operator[](const std::string& name);
+	//! Returns a shared pointer to the Isotope of this Element that matches a given name. If no element of this Element matches this name, throws.
+	sptrIsotope operator[](const std::string& name);
 
 	//! Returns the name of this Element
 	const std::string& getName() const;
@@ -115,13 +118,13 @@ public:
 	//! Add an isotope to this Element using a given abundance
 	void addIsotope(const std::string& name, double abundance);
 
+	//! Add a shared pointer to an Isotope to this Element
+	void addIsotope(sptrIsotope isotope, double abundance);
+
 private:
 
 	//! Constructs an Element by fetching the isotopes from the isotopes database whose symbol matches the given symbol
 	Element(const std::string& name, const std::string& symbol);
-
-	//! Add a pointer to an Isotope object with a given abudance to this Element
-	void addIsotope(Isotope* isotope, double abundance);
 
 private:
 	//! The name of the element

@@ -29,7 +29,7 @@ BOOST_AUTO_TEST_CASE(Test_Element)
 	BOOST_CHECK_NO_THROW(emgr->setDatabasePath("./elements.xml"));
 
 	// Builds the natural hydrogen Element directly from the isotopes registry/database
-	Element* hydrogen=emgr->buildElement("natH","H");
+	sptrElement hydrogen=emgr->buildElement("natH","H");
 	// Checks that the number of protons is OK
 	BOOST_CHECK_EQUAL(hydrogen->getNProtons(),1);
 	// Checks that the number of neutrons is OK
@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_CASE(Test_Element)
 	BOOST_CHECK_THROW(emgr->buildElement("unknown","blablabla"),SX::Kernel::Error<IsotopeManager>);
 
 	// Builds an empty element and fills it will isotopes
-	Element* uranium=emgr->buildElement("natU");
+	sptrElement uranium=emgr->buildElement("natU");
 	uranium->addIsotope("U[235]");
 	uranium->addIsotope("U[238]");
 	// Checks that adding an incompatible isotope throws
@@ -67,17 +67,17 @@ BOOST_AUTO_TEST_CASE(Test_Element)
 	BOOST_CHECK_EQUAL(uranium,emgr->findElement("natU"));
 
 	// Gets a carbon Element from the elements XML database built from its natural isotopes
-	Element* dbCarbon=emgr->findElement("db_carbon");
+	sptrElement dbCarbon=emgr->findElement("db_carbon");
 	// Checks that it has the correct number of isotopes
 	BOOST_CHECK_EQUAL(dbCarbon->getNIsotopes(),2);
 
 	// Gets an  oxygen Element from the elements XML database built from user-defined abundances
-	Element* dbOxygen=emgr->findElement("db_oxygen");
+	sptrElement dbOxygen=emgr->findElement("db_oxygen");
 	// Checks that it has the correct number of isotopes
 	BOOST_CHECK_EQUAL(dbOxygen->getNIsotopes(),3);
 
 	// Gets an hydrogen Element from the elements XML database built from its natural isotopes
-	Element* dbHydrogen=emgr->findElement("db_hydrogen");
+	sptrElement dbHydrogen=emgr->findElement("db_hydrogen");
 	// Checks that it has the correct number of isotopes
 	BOOST_CHECK_EQUAL(dbHydrogen->getNIsotopes(),3);
 	// Checks that its mass is the same than the one built previously built from the isotopes registry/database

@@ -43,10 +43,9 @@ std::map<Material::FillingMode,std::string> Material::s_fromFillingMode={
 		{Material::FillingMode::PartialPressure,"partial_pressure"}
 };
 
-Material* Material::create(const std::string& name, State state, FillingMode fillingMode)
+sptrMaterial Material::create(const std::string& name, State state, FillingMode fillingMode)
 {
-	Material* material=new Material(name,state,fillingMode);
-	return material;
+	return sptrMaterial(new Material(name,state,fillingMode));
 }
 
 Material::Material(const std::string& name, State state, FillingMode fillingMode)
@@ -79,7 +78,7 @@ bool Material::operator==(const Material& other) const
 					   [] (strToDoublePair a, strToDoublePair b) { return a.first==b.first && std::abs(a.second-b.second)<1.0e-6;});
 }
 
-Element* Material::operator[](const std::string& name)
+sptrElement Material::operator[](const std::string& name)
 {
 	try
 	{
@@ -91,7 +90,7 @@ Element* Material::operator[](const std::string& name)
 	}
 }
 
-void Material::addElement(Element* element, double fraction)
+void Material::addElement(sptrElement element, double fraction)
 {
 
 	if (_fillingMode==FillingMode::MassFraction || _fillingMode==FillingMode::MoleFraction)
@@ -124,14 +123,14 @@ void Material::addElement(const std::string& name, double fraction)
 {
 	ElementManager* mgr=ElementManager::Instance();
 
-	Element* el=mgr->findElement(name);
+	sptrElement el=mgr->findElement(name);
 
 	addElement(el,fraction);
 
 	return;
 }
 
-void Material::addMaterial(Material* material, double contents)
+void Material::addMaterial(sptrMaterial material, double contents)
 {
 	if (_fillingMode==FillingMode::MassFraction)
 	{

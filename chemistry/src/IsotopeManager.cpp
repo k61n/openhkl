@@ -31,10 +31,13 @@ IsotopeManager::~IsotopeManager()
 
 void IsotopeManager::cleanRegistry()
 {
-	for (auto& p : _registry)
-		delete p.second;
-
-	_registry.clear();
+	for (auto it=_registry.begin();it!=_registry.end();)
+	{
+		if (it->second.unique())
+			it=_registry.erase(it);
+		else
+			++it;
+	}
 }
 
 void IsotopeManager::setDatabasePath(const std::string& path)
@@ -50,7 +53,20 @@ void IsotopeManager::setDatabasePath(const std::string& path)
 	_database=path;
 }
 
-Isotope* IsotopeManager::findIsotope(const std::string& name)
+sptrIsotope IsotopeManager::buildIsotope(const std::string& name)
+{
+	// Check first if an isotope with this name has already been registered
+	auto it=_registry.find(name);
+	if (it!=_registry.end())
+		throw SX::Kernel::Error<IsotopeManager>("An isotope with name "+name+" is already registered in the database.");
+
+	// Otherwise built it from scratch.
+	sptrIsotope is=Isotope::create(name);
+	_registry.insert(isotopePair(name,is));
+	return is;
+}
+
+sptrIsotope IsotopeManager::findIsotope(const std::string& name)
 {
 	// If the isotope has already been registered, just return its corresponding pointer
 	auto it=_registry.find(name);
@@ -78,7 +94,7 @@ Isotope* IsotopeManager::findIsotope(const std::string& name)
 		if (v.second.get<std::string>("<xmlattr>.name").compare(name)==0)
 		{
 			// Once the XML node has been found, build an Isotope from it and register it
-			Isotope* is = Isotope::create(v.second);
+			sptrIsotope is = Isotope::create(v.second);
 			_registry.insert(isotopePair(name,is));
 			return is;
 		}

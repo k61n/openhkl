@@ -34,10 +34,13 @@ ElementManager::~ElementManager()
 
 void ElementManager::cleanRegistry()
 {
-	for (auto& p : _registry)
-		delete p.second;
-
-	_registry.clear();
+	for (auto it=_registry.begin();it!=_registry.end();)
+	{
+		if (it->second.unique())
+			it=_registry.erase(it);
+		else
+			++it;
+	}
 }
 
 void ElementManager::setDatabasePath(const std::string& path)
@@ -54,7 +57,7 @@ void ElementManager::setDatabasePath(const std::string& path)
 	_database=path;
 }
 
-Element* ElementManager::buildElement(const std::string& name, const std::string& symbol)
+sptrElement ElementManager::buildElement(const std::string& name, const std::string& symbol)
 {
 	// Check first if an element with this name has already been registered
 	auto it=_registry.find(name);
@@ -62,14 +65,14 @@ Element* ElementManager::buildElement(const std::string& name, const std::string
 		throw SX::Kernel::Error<ElementManager>("An element with name "+name+" is already registered in the database.");
 
 	// Otherwise built it from scratch.
-	Element* element=Element::create(name,symbol);
+	sptrElement element=Element::create(name,symbol);
 	_registry.insert(elementPair(name,element));
 	return element;
 }
 
-Element* ElementManager::buildElement(const property_tree::ptree& node)
+sptrElement ElementManager::buildElement(const property_tree::ptree& node)
 {
-	Element* element;
+	sptrElement element;
 
 	std::string name=node.get<std::string>("<xmlattr>.name");
 
@@ -108,7 +111,7 @@ Element* ElementManager::buildElement(const property_tree::ptree& node)
 
 }
 
-Element* ElementManager::findElement(const std::string& name)
+sptrElement ElementManager::findElement(const std::string& name)
 {
 
 	// Looks first for the element in the registry
@@ -134,10 +137,7 @@ Element* ElementManager::findElement(const std::string& name)
 			continue;
 
 		if (node.second.get<std::string>("<xmlattr>.name").compare(name)==0)
-		{
-			Element* el=buildElement(node.second);
-			return el;
-		}
+			return buildElement(node.second);
 	}
 
 	throw SX::Kernel::Error<ElementManager>("Element "+name+" could not be found neither in the registry neither in the elements XML database.");
