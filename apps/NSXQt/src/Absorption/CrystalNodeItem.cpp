@@ -51,6 +51,8 @@ void CrystalNodeItem::getCoordinates(double &x, double &y, double &z)
 {
     double anglerad=-_angle*M_PI/180.0;
     x=_p1x;
-    y=cos(anglerad)*_p1y+sin(anglerad)*_p1z;
-    z=-sin(anglerad)*_p1y+cos(anglerad)*_p1z;
+    double ca=cos(anglerad);
+    double sa=sin(anglerad);
+    y=ca*_p1y+sa*_p1z;
+    z=-sa*_p1y+ca*_p1z;
 }
