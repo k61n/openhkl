@@ -212,6 +212,19 @@ const contentsMap& Element::getAbundances() const
 	return _abundances;
 }
 
+void Element::writeToXML(property_tree::ptree& parent) const
+{
+	property_tree::ptree& node=parent.add("element","");
+	node.put("<xmlattr>.name",_name);
+
+	for (const auto& is : _abundances)
+	{
+		property_tree::ptree& isnode=node.add("isotope","");
+		isnode.put("<xmlattr>.name",is.first);
+		isnode.put<double>("abundance",is.second);
+	}
+}
+
 void Element::print(std::ostream& os) const
 {
 	os<<"Element "<<_name<<std::endl;

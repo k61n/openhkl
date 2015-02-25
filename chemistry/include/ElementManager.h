@@ -96,7 +96,7 @@ public:
 	std::set<std::string> getDatabaseNames() const;
 
 	//! Synchronizes the new entries of the registry with the database
-	void synchronizeDatabase() const;
+	void synchronizeDatabase(std::string filename="") const;
 
 private:
 

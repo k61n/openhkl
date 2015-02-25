@@ -36,6 +36,8 @@
 #include <string>
 #include <utility>
 
+#include <boost/property_tree/ptree.hpp>
+
 namespace SX
 {
 
@@ -53,6 +55,9 @@ typedef std::map<std::string,sptrElement> elementsMap;
 typedef std::map<std::string,double> contentsMap;
 typedef std::pair<std::string,sptrElement> strToElementPair;
 typedef std::pair<std::string,double> strToDoublePair;
+
+// Namespaces
+namespace property_tree=boost::property_tree;
 
 class Material
 {
@@ -147,6 +152,9 @@ public:
 
 	//! Print informations about this Material to an output stream
 	void print(std::ostream& os) const;
+
+	//! Inserts the information about this Material to an XML parent node
+	void writeToXML(property_tree::ptree& parent) const;
 
 private:
 

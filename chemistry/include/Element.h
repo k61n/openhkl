@@ -35,6 +35,8 @@
 #include <ostream>
 #include <string>
 
+#include <boost/property_tree/ptree.hpp>
+
 namespace SX
 {
 
@@ -52,6 +54,9 @@ typedef std::map<std::string,sptrIsotope> isotopesMap;
 typedef std::map<std::string,double> contentsMap;
 typedef std::pair<std::string,sptrIsotope> strToIsotopePair;
 typedef std::pair<std::string,double> strToDoublePair;
+
+// Namespaces
+namespace property_tree=boost::property_tree;
 
 class Element
 {
@@ -123,6 +128,9 @@ public:
 
 	//! Returns the abundance of the isotopes that make this Element
 	const contentsMap& getAbundances() const;
+
+	//! Inserts the information about this Element to an XML parent node
+	void writeToXML(property_tree::ptree& parent) const;
 
 private:
 

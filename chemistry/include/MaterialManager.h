@@ -92,6 +92,9 @@ public:
 	//! Returns the name of the materials stored in the materials XML database
 	std::set<std::string> getDatabaseNames() const;
 
+	//! Synchronizes the new entries of the registry with the database
+	void synchronizeDatabase(std::string filename="") const;
+
 private:
 
 	//! Builds a Material from an XML node

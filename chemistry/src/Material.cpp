@@ -388,6 +388,21 @@ void Material::setTemperature(double temperature)
 	_temperature=temperature;
 }
 
+void Material::writeToXML(property_tree::ptree& parent) const
+{
+	property_tree::ptree& node=parent.add("material","");
+	node.put("<xmlattr>.name",_name);
+	node.put("<xmlattr>.state",s_fromState.at(_state));
+	node.put("<xmlattr>.filling_mode","mole_fraction");
+
+	for (const auto& el : getMoleFractions())
+	{
+		property_tree::ptree& elnode=node.add("element","");
+		elnode.put("<xmlattr>.name",el.first);
+		elnode.put<double>("contents",el.second);
+	}
+}
+
 void Material::print(std::ostream& os) const
 {
 	os<<"Material "<<_name<<" --> State="<<s_fromState[_state]<<" ; Filling mode="<<s_fromFillingMode[_fillingMode]<<std::endl;

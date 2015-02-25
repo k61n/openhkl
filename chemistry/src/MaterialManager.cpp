@@ -92,19 +92,19 @@ sptrMaterial MaterialManager::buildMaterial(const property_tree::ptree& node)
 
 			if (fMode==Material::FillingMode::MassFraction || fMode==Material::FillingMode::MoleFraction)
 			{
-				const property_tree::ptree& fraction = v.second.get_child("fraction");
+				const property_tree::ptree& fraction = v.second.get_child("contents");
 				double units=um->get(fraction.get<std::string>("<xmlattr>.units","%"));
 				material->addMaterial(component,fraction.get_value<double>()*units);
 			}
 			else if (fMode==Material::FillingMode::PartialPressure)
 			{
-				const property_tree::ptree& pressure = v.second.get_child("pressure");
+				const property_tree::ptree& pressure = v.second.get_child("contents");
 				double units=um->get(pressure.get<std::string>("<xmlattr>.units","Pa"));
 				material->addMaterial(component,pressure.get_value<double>()*units);
 			}
 			else if (fMode==Material::FillingMode::NumberOfAtoms)
 			{
-				const property_tree::ptree& nAtoms = v.second.get_child("natoms");
+				const property_tree::ptree& nAtoms = v.second.get_child("contents");
 				material->addMaterial(component,nAtoms.get_value<double>());
 			}
 			else
@@ -125,19 +125,19 @@ sptrMaterial MaterialManager::buildMaterial(const property_tree::ptree& node)
 			}
 			if (fMode==Material::FillingMode::MassFraction || fMode==Material::FillingMode::MoleFraction)
 			{
-				const property_tree::ptree& fraction = v.second.get_child("fraction");
+				const property_tree::ptree& fraction = v.second.get_child("contents");
 				double units=um->get(fraction.get<std::string>("<xmlattr>.units","%"));
 				material->addElement(element,fraction.get_value<double>()*units);
 			}
 			else if (fMode==Material::FillingMode::PartialPressure)
 			{
-				const property_tree::ptree& pressure = v.second.get_child("pressure");
+				const property_tree::ptree& pressure = v.second.get_child("contents");
 				double units=um->get(pressure.get<std::string>("<xmlattr>.units","Pa"));
 				material->addElement(element,pressure.get_value<double>()*units);
 			}
 			else if (fMode==Material::FillingMode::NumberOfAtoms)
 			{
-				const property_tree::ptree& nAtoms = v.second.get_child("natoms");
+				const property_tree::ptree& nAtoms = v.second.get_child("contents");
 				material->addElement(element,nAtoms.get_value<double>());
 			}
 			else
@@ -229,14 +229,52 @@ std::set<std::string> MaterialManager::getDatabaseNames() const
 
 	std::set<std::string> names;
 
-	BOOST_FOREACH(const property_tree::ptree::value_type& node, root.get_child("elements"))
+	BOOST_FOREACH(const property_tree::ptree::value_type& node, root.get_child("materials"))
 	{
-		if (node.first.compare("element")!=0)
+		if (node.first.compare("material")!=0)
 			continue;
 		names.insert(node.second.get<std::string>("<xmlattr>.name"));
 	}
 
 	return names;
+}
+
+void MaterialManager::synchronizeDatabase(std::string filename) const
+{
+
+	//! If there is no entries in the registry, nothing to save, returns
+	if (_registry.empty())
+		return;
+
+	property_tree::ptree root;
+	try
+	{
+		xml_parser::read_xml(_database,root, boost::property_tree::xml_parser::trim_whitespace);
+	}
+	catch (const std::runtime_error& error)
+	{
+		// If the database could not be opened for whatever reasons, starts with an empty property tree
+	}
+
+	std::set<std::string> dbNames=getDatabaseNames();
+
+	property_tree::ptree& materialsNode=root.get_child("materials");
+
+	for (const auto& m : _registry)
+	{
+		auto it=dbNames.find(m.second->getName());
+		if (it!=dbNames.end())
+			continue;
+
+		m.second->writeToXML(materialsNode);
+	}
+
+	if (filename.empty())
+		filename=_database;
+
+	boost::property_tree::xml_writer_settings<char> settings('\t', 1);
+	xml_parser::write_xml(filename,root);
+
 }
 
 } // end namespace Chemistry

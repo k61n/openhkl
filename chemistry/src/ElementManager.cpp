@@ -182,7 +182,7 @@ std::set<std::string> ElementManager::getDatabaseNames() const
 	return names;
 }
 
-void ElementManager::synchronizeDatabase() const
+void ElementManager::synchronizeDatabase(std::string filename) const
 {
 
 	//! If there is no entries in the registry, nothing to save, returns
@@ -201,26 +201,22 @@ void ElementManager::synchronizeDatabase() const
 
 	std::set<std::string> dbNames=getDatabaseNames();
 
+	property_tree::ptree& elementsNode=root.get_child("elements");
+
 	for (const auto& e : _registry)
 	{
 		auto it=dbNames.find(e.second->getName());
 		if (it!=dbNames.end())
 			continue;
 
-		property_tree::ptree& node=root.add("elements.element","");
-		node.put("<xmlattr>.name",e.second->getName());
-
-		for (const auto& is : e.second->getAbundances())
-		{
-			property_tree::ptree& isnode=node.add("isotope","");
-			isnode.put("<xmlattr>.name",is.first);
-			isnode.put<double>("abundance",is.second);
-		}
-
+		e.second->writeToXML(elementsNode);
 	}
 
+	if (filename.empty())
+		filename=_database;
+
 	boost::property_tree::xml_writer_settings<char> settings('\t', 1);
-	xml_parser::write_xml("toto.xml",root);
+	xml_parser::write_xml(filename,root);
 
 }
 
