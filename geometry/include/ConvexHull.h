@@ -209,6 +209,7 @@ void ConvexHull<T>::reset()
 	_vertices.clear();
 	_edges.clear();
 	_faces.clear();
+	_initialized=false;
 
 }
 
@@ -436,6 +437,7 @@ void ConvexHull<T>::updateHull()
 		if (!((*it)->_mark))
 		{
 			processVertex(*it);
+			++it;
 			cleanUp();
 			it=_vertices.begin();
 		}
