@@ -214,6 +214,31 @@ bool MaterialManager::hasMaterial(const std::string& name) const
 	return (it!=_registry.end());
 }
 
+std::set<std::string> MaterialManager::getDatabaseNames() const
+{
+
+	property_tree::ptree root;
+	try
+	{
+		xml_parser::read_xml(_database,root);
+	}
+	catch (const std::runtime_error& error)
+	{
+		throw SX::Kernel::Error<ElementManager>(error.what());
+	}
+
+	std::set<std::string> names;
+
+	BOOST_FOREACH(const property_tree::ptree::value_type& node, root.get_child("elements"))
+	{
+		if (node.first.compare("element")!=0)
+			continue;
+		names.insert(node.second.get<std::string>("<xmlattr>.name"));
+	}
+
+	return names;
+}
+
 } // end namespace Chemistry
 
 } // end namespace SX

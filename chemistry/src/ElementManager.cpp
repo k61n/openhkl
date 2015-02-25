@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include <boost/filesystem.hpp>
 #include <boost/foreach.hpp>
 #include <boost/property_tree/xml_parser.hpp>
@@ -153,6 +155,73 @@ bool ElementManager::hasElement(const std::string& name) const
 unsigned int ElementManager::getNRegisteredElements() const
 {
 	return _registry.size();
+}
+
+std::set<std::string> ElementManager::getDatabaseNames() const
+{
+
+	property_tree::ptree root;
+	try
+	{
+		xml_parser::read_xml(_database,root);
+	}
+	catch (const std::runtime_error& error)
+	{
+		throw SX::Kernel::Error<ElementManager>(error.what());
+	}
+
+	std::set<std::string> names;
+
+	BOOST_FOREACH(const property_tree::ptree::value_type& node, root.get_child("elements"))
+	{
+		if (node.first.compare("element")!=0)
+			continue;
+		names.insert(node.second.get<std::string>("<xmlattr>.name"));
+	}
+
+	return names;
+}
+
+void ElementManager::synchronizeDatabase() const
+{
+
+	//! If there is no entries in the registry, nothing to save, returns
+	if (_registry.empty())
+		return;
+
+	property_tree::ptree root;
+	try
+	{
+		xml_parser::read_xml(_database,root, boost::property_tree::xml_parser::trim_whitespace);
+	}
+	catch (const std::runtime_error& error)
+	{
+		// If the database could not be opened for whatever reasons, starts with an empty property tree
+	}
+
+	std::set<std::string> dbNames=getDatabaseNames();
+
+	for (const auto& e : _registry)
+	{
+		auto it=dbNames.find(e.second->getName());
+		if (it!=dbNames.end())
+			continue;
+
+		property_tree::ptree& node=root.add("elements.element","");
+		node.put("<xmlattr>.name",e.second->getName());
+
+		for (const auto& is : e.second->getAbundances())
+		{
+			property_tree::ptree& isnode=node.add("isotope","");
+			isnode.put("<xmlattr>.name",is.first);
+			isnode.put<double>("abundance",is.second);
+		}
+
+	}
+
+	boost::property_tree::xml_writer_settings<char> settings('\t', 1);
+	xml_parser::write_xml("toto.xml",root);
+
 }
 
 } // end namespace Chemistry

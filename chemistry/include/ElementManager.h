@@ -32,6 +32,7 @@
 
 #include <map>
 #include <memory>
+#include <set>
 #include <string>
 #include <utility>
 
@@ -90,6 +91,12 @@ public:
 
 	//! Clean up the Element registry
 	void cleanRegistry();
+
+	//! Returns the name of the elements stored in the elements XML database
+	std::set<std::string> getDatabaseNames() const;
+
+	//! Synchronizes the new entries of the registry with the database
+	void synchronizeDatabase() const;
 
 private:
 

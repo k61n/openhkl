@@ -207,6 +207,11 @@ double Element::getAbsorptionXs(double lambda) const
 	return sxs;
 }
 
+const contentsMap& Element::getAbundances() const
+{
+	return _abundances;
+}
+
 void Element::print(std::ostream& os) const
 {
 	os<<"Element "<<_name<<std::endl;

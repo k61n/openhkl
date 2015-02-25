@@ -121,6 +121,9 @@ public:
 	//! Add a shared pointer to an Isotope to this Element
 	void addIsotope(sptrIsotope isotope, double abundance);
 
+	//! Returns the abundance of the isotopes that make this Element
+	const contentsMap& getAbundances() const;
+
 private:
 
 	//! Constructs an Element by fetching the isotopes from the isotopes database whose symbol matches the given symbol

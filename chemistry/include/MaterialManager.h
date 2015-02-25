@@ -32,6 +32,7 @@
 
 #include <map>
 #include <memory>
+#include <set>
 #include <string>
 
 #include <boost/filesystem.hpp>
@@ -87,6 +88,9 @@ public:
 
 	//! Clean up the registry
 	void cleanRegistry();
+
+	//! Returns the name of the materials stored in the materials XML database
+	std::set<std::string> getDatabaseNames() const;
 
 private:
 

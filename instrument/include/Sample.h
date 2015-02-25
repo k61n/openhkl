@@ -29,11 +29,13 @@
 #ifndef NSXTOOL_SAMPLE_H_
 #define NSXTOOL_SAMPLE_H_
 
+#include <memory>
 #include <string>
 
 #include "Component.h"
-#include "UnitCell.h"
 #include "ConvexHull.h"
+#include "Material.h"
+#include "UnitCell.h"
 
 namespace SX
 {
@@ -59,11 +61,18 @@ public:
 	// Operators
 	//! Assignment operator
 	Sample& operator=(const Sample& other);
+
 	//! Return the sample shape, described as a convex hull
 	SX::Geometry::ConvexHull<double>& getShape();
-	//!
+
+	//! Returns a shared pointer to the material this Sample is made of
+	SX::Chemistry::sptrMaterial getMaterial() const;
+
+
 private:
 	SX::Geometry::ConvexHull<double> _sampleShape;
+	std::shared_ptr<SX::Chemistry::Material> _material;
+
 };
 
 } // Namespace Instrument
