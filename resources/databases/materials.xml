@@ -5,12 +5,12 @@
 
 	<element name="carbon">
 	<symbol>C</symbol>	
-	<fraction units="%">20.0</fraction>
+	<contents units="%">20.0</contents>
 	</element>
 
 	<element name="hydrogen">
 	<symbol>H</symbol>	
-	<fraction units="%">80.0</fraction>
+	<contents units="%">80.0</contents>
 	</element>
 </material>
 
@@ -18,23 +18,23 @@
 	<density units="kg/m3">1.235</density>
 
 	<material database="db_methane">
-	<fraction>0.4</fraction>
+	<contents>0.4</contents>
 	</material>
 
 	<material name="db_water" state="gaz" filling_mode="number_of_atoms">
+		<density units="kg/m3">0.234</density>
+		<contents>0.6</contents>
+
 		<element name="oxygen">
 		<symbol>O</symbol>	
-		<natoms units="%">1</natoms>
+		<contents units="%">1</contents>
 		</element>
 		
 		<element name="hydrogen">
 		<symbol>H</symbol>	
-		<natoms units="%">2</natoms>
+		<contents units="%">2</contents>
 		</element>
 
-		<density units="kg/m3">0.234</density>
-		
-		<fraction>0.6</fraction>
 	</material>
 
 </material>
