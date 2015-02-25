@@ -66,4 +66,6 @@ BOOST_AUTO_TEST_CASE(Test_Material)
 	// Build a mixture of material from the XML database
 	SX::Chemistry::sptrMaterial dbMixture=mmgr->findMaterial("db_mixture");
 
+	mmgr->synchronizeDatabase("materials_new.xml");
+
 }

@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE(Test_Element)
 	// Checks that its mass is the same than the one built previously built from the isotopes registry/database
 	BOOST_CHECK_CLOSE(dbHydrogen->getMolarMass(),hydrogen->getMolarMass(),tolerance);
 
-	emgr->synchronizeDatabase();
+	emgr->synchronizeDatabase("elements_new.xml");
 
 	ElementManager::DestroyInstance();
 	IsotopeManager::DestroyInstance();
