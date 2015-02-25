@@ -197,6 +197,7 @@ void ElementManager::synchronizeDatabase(std::string filename) const
 	catch (const std::runtime_error& error)
 	{
 		// If the database could not be opened for whatever reasons, starts with an empty property tree
+		root.add("elements","");
 	}
 
 	std::set<std::string> dbNames=getDatabaseNames();
