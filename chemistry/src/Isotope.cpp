@@ -1,11 +1,4 @@
-#include <limits>
-
-#include <boost/filesystem.hpp>
-
-#include "Error.h"
 #include "Isotope.h"
-#include "Path.h"
-#include "Units.h"
 
 namespace SX
 {
@@ -16,80 +9,6 @@ namespace Chemistry
 sptrIsotope Isotope::create(const std::string& name)
 {
 	return sptrIsotope(new Isotope(name));
-}
-
-sptrIsotope Isotope::create(const property_tree::ptree& node)
-{
-
-	SX::Units::UnitsManager* um = SX::Units::UnitsManager::Instance();
-	double units;
-
-	// Create an empty isotope and fill it with its corresponding XML tags
-	Isotope* is=new Isotope();
-
-	is->_name=node.get<std::string>("<xmlattr>.name");
-
-	is->_symbol=node.get<std::string>("symbol");
-
-	is->_element=node.get<std::string>("element");
-
-	is->_nProtons=node.get<int>("n_protons");
-
-	is->_nNucleons=node.get<int>("n_nucleons");
-
-	is->_nElectrons=is->_nProtons;
-
-	// If no units provided for molar_mass take g/mol as the default one
-	units=um->get(node.get<std::string>("molar_mass.<xmlattr>.units","g_per_mole"));
-	is->_molarMass=node.get<double>("molar_mass")*units;
-
-	is->_nuclearSpin=node.get<double>("nuclear_spin");
-
-	is->_state=node.get<std::string>("state");
-
-	// If no units provided for abundance take % as the default one
-	units=um->get(node.get<std::string>("half_life.<xmlattr>.units","%"));
-	is->_abundance=node.get<double>("abundance",0.0)*units;
-
-	// If no units provided for half_life take year as the default one
-	units=um->get(node.get<std::string>("half_life.<xmlattr>.units","year"));
-	is->_halfLife=node.get<double>("half_life",std::numeric_limits<double>::infinity())*units;
-
-	is->_stable=node.get<bool>("stable");
-
-	// If no units provided for b_coherent take fm as the default one
-	units=um->get(node.get<std::string>("b_coherent.<xmlattr>.units","fm"));
-	is->_bCoherent=node.get<std::complex<double>>("b_coherent")*units;
-
-	// If no units provided for b_incoherent take fm as the default one
-	units=um->get(node.get<std::string>("b_incoherent.<xmlattr>.units","fm"));
-	is->_bIncoherent=node.get<std::complex<double>>("b_incoherent")*units;
-
-	// If no units provided for b_plus take fm as the default one
-	units=um->get(node.get<std::string>("b_plus.<xmlattr>.units","fm"));
-	is->_bPlus=node.get<std::complex<double>>("b_plus",is->_bCoherent)*units;
-
-	// If no units provided for b_minus take fm as the default one
-	units=um->get(node.get<std::string>("b_minus.<xmlattr>.units","fm"));
-	is->_bMinus=node.get<std::complex<double>>("b_minus",is->_bCoherent)*units;
-
-	// If no units provided for xs_coherent take barn as the default one
-	units=um->get(node.get<std::string>("xs_coherent.<xmlattr>.units","barn"));
-	is->_xsCoherent=node.get<double>("xs_coherent")*units;
-
-	// If no units provided for xs_incoherent take barn as the default one
-	units=um->get(node.get<std::string>("xs_incoherent.<xmlattr>.units","barn"));
-	is->_xsIncoherent=node.get<double>("xs_incoherent")*units;
-
-	// If no units provided for xs_scattering take barn as the default one
-	units=um->get(node.get<std::string>("xs_scattering.<xmlattr>.units","barn"));
-	is->_xsScattering=node.get<double>("xs_scattering")*units;
-
-	// If no units provided for xs_absorption take barn as the default one
-	units=um->get(node.get<std::string>("xs_absorption.<xmlattr>.units","barn"));
-	is->_xsAbsorption=node.get<double>("xs_absorption")*units;
-
-	return sptrIsotope(is);
 }
 
 Isotope::Isotope()

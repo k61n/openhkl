@@ -108,7 +108,6 @@ sptrElement ElementManager::buildElement(const property_tree::ptree& node)
 				element->addIsotope(isoName);
 		}
 	}
-	_registry.insert(elementPair(name,element));
 	return element;
 
 }

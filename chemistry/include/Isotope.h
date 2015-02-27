@@ -36,12 +36,7 @@
 #include <memory>
 #include <set>
 #include <string>
-#include <stdexcept>
 #include <utility>
-
-#include <boost/foreach.hpp>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
 
 #include "Error.h"
 
@@ -50,9 +45,6 @@ namespace SX
 
 namespace Chemistry
 {
-
-// Namespaces
-namespace property_tree=boost::property_tree;
 
 // Forward declarations
 class Isotope;
@@ -70,9 +62,6 @@ public:
 
 	//! Constructs an empty Isotope with a given name
 	static sptrIsotope create(const std::string& name);
-
-	//! Constructs an Isotope from an XML node
-	static sptrIsotope create(const property_tree::ptree& node);
 
 public:
 
@@ -157,7 +146,7 @@ private:
 	//! Construct an empty Isotope with a given name
 	Isotope(const std::string& name);
 
-private:
+public:
 
 	//! The name of this Isotope
 	std::string _name;

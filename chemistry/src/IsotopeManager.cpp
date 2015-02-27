@@ -6,6 +6,7 @@
 #include "Isotope.h"
 #include "IsotopeManager.h"
 #include "Path.h"
+#include "Units.h"
 
 namespace SX
 {
@@ -15,13 +16,14 @@ namespace Chemistry
 
 namespace filesystem=boost::filesystem;
 
-IsotopeManager::IsotopeManager() : _registry()
+IsotopeManager::IsotopeManager() : _registry(), _units()
 {
 	// The default path for the isotopes database is $HOME/.nsxtool/databases/isotopes.xml
 	filesystem::path p(SX::Utils::Path::getApplicationDataPath());
 	p/="databases";
 	p/="isotopes.xml";
-	_database = p.string();
+
+	setDatabasePath(p.string());
 }
 
 IsotopeManager::~IsotopeManager()
@@ -40,6 +42,11 @@ void IsotopeManager::cleanRegistry()
 	}
 }
 
+const unitsMap& IsotopeManager::getUnits() const
+{
+	return _units;
+}
+
 void IsotopeManager::setDatabasePath(const std::string& path)
 {
 	// The new path is the same than the old path, do nothing
@@ -50,7 +57,56 @@ void IsotopeManager::setDatabasePath(const std::string& path)
 	if (!filesystem::exists(path))
 		throw SX::Kernel::Error<IsotopeManager>("Invalid path for isotopes database.");
 
+	// Loads the database into a property tree
+	property_tree::ptree root;
+	try
+	{
+		xml_parser::read_xml(path,root);
+	}
+	catch (const std::runtime_error& error)
+	{
+		throw SX::Kernel::Error<IsotopeManager>(error.what());
+	}
+
+	// Reads the units
+	_units.clear();
+	BOOST_FOREACH(const property_tree::ptree::value_type& v, root.get_child("units"))
+	{
+		_units.insert(unitsPair(v.first,v.second.get_value<std::string>()));
+	}
+
 	_database=path;
+}
+
+const std::string& IsotopeManager::getDatabasePath() const
+{
+	return _database;
+}
+
+std::vector<std::string> IsotopeManager::getDatabaseNames() const
+{
+
+	property_tree::ptree root;
+	try
+	{
+		xml_parser::read_xml(_database,root);
+	}
+	catch (const std::runtime_error& error)
+	{
+		throw SX::Kernel::Error<IsotopeManager>(error.what());
+	}
+
+	std::vector<std::string> names;
+	names.reserve(200);
+
+	BOOST_FOREACH(const property_tree::ptree::value_type& node, root.get_child("isotopes"))
+	{
+		if (node.first.compare("isotope")!=0)
+			continue;
+		names.push_back(node.second.get<std::string>("<xmlattr>.name"));
+	}
+
+	return names;
 }
 
 sptrIsotope IsotopeManager::buildIsotope(const std::string& name)
@@ -64,6 +120,42 @@ sptrIsotope IsotopeManager::buildIsotope(const std::string& name)
 	sptrIsotope is=Isotope::create(name);
 	_registry.insert(isotopePair(name,is));
 	return is;
+}
+
+sptrIsotope IsotopeManager::buildIsotope(const property_tree::ptree& node)
+{
+	sptrIsotope isotope;
+
+	std::string name=node.get<std::string>("<xmlattr>.name");
+
+	SX::Units::UnitsManager* um=SX::Units::UnitsManager::Instance();
+
+	// Build an empty Isotope
+	isotope=buildIsotope(name);
+
+	isotope->_name=name;
+	isotope->_symbol=node.get<std::string>("symbol");
+	isotope->_element=node.get<std::string>("element");
+	isotope->_nProtons=node.get<int>("n_protons");
+	isotope->_nNucleons=node.get<int>("n_nucleons");
+	isotope->_nElectrons=isotope->_nProtons;
+	isotope->_molarMass=node.get<double>("molar_mass")*um->get(_units.at("molar_mass"));
+	isotope->_nuclearSpin=node.get<double>("nuclear_spin");
+	isotope->_state=node.get<std::string>("state");
+	isotope->_abundance=node.get<double>("abundance",0.0)*um->get(_units.at("abundance"));
+	isotope->_halfLife=node.get<double>("half_life",std::numeric_limits<double>::infinity())*um->get(_units.at("half_life"));
+	isotope->_stable=node.get<bool>("stable");
+	isotope->_bCoherent=node.get<std::complex<double>>("b_coherent")*um->get(_units.at("b_coherent"));
+	isotope->_bIncoherent=node.get<std::complex<double>>("b_incoherent")*um->get(_units.at("b_incoherent"));
+	isotope->_bPlus=node.get<std::complex<double>>("b_plus",isotope->_bCoherent)*um->get(_units.at("b_plus"));
+	isotope->_bMinus=node.get<std::complex<double>>("b_minus",isotope->_bCoherent)*um->get(_units.at("b_minus"));
+	isotope->_xsCoherent=node.get<double>("xs_coherent")*um->get(_units.at("xs_coherent"));
+	isotope->_xsIncoherent=node.get<double>("xs_incoherent")*um->get(_units.at("xs_incoherent"));
+	isotope->_xsScattering=node.get<double>("xs_scattering")*um->get(_units.at("xs_scattering"));
+	isotope->_xsAbsorption=node.get<double>("xs_absorption")*um->get(_units.at("xs_absorption"));
+
+	return isotope;
+
 }
 
 sptrIsotope IsotopeManager::findIsotope(const std::string& name)
@@ -92,12 +184,7 @@ sptrIsotope IsotopeManager::findIsotope(const std::string& name)
 			continue;
 
 		if (v.second.get<std::string>("<xmlattr>.name").compare(name)==0)
-		{
-			// Once the XML node has been found, build an Isotope from it and register it
-			sptrIsotope is = Isotope::create(v.second);
-			_registry.insert(isotopePair(name,is));
-			return is;
-		}
+			return buildIsotope(v.second);
 	}
 
 	// No node match the request, throws

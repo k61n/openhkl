@@ -35,6 +35,7 @@
 #include <set>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include <boost/foreach.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -56,8 +57,12 @@ namespace xml_parser=boost::property_tree::xml_parser;
 // Typedefs
 typedef std::shared_ptr<Isotope> sptrIsotope;
 typedef std::set<sptrIsotope> isotopeSet;
+
 typedef std::map<std::string,sptrIsotope> isotopeMap;
 typedef std::pair<std::string,sptrIsotope> isotopePair;
+
+typedef std::map<std::string,std::string> unitsMap;
+typedef std::pair<std::string,std::string> unitsPair;
 
 class IsotopeManager : public SX::Kernel::Singleton<IsotopeManager,SX::Kernel::Constructor,SX::Kernel::Destructor>
 {
@@ -84,9 +89,16 @@ public:
 	//! Sets the path for the isotopes XML database
 	void setDatabasePath(const std::string& path);
 
+	//! Gets the path to the isotopes XML database
+	const std::string& getDatabasePath() const;
+
 	//! Build and registers a new Isotope object with a given name
 	//! A shared pointer to the newly created Isotope is returned.
 	sptrIsotope buildIsotope(const std::string& name);
+
+	//! Builds and registers an Isotope from an XML node
+	//! A shared pointer to the newly created Isotope is returned.
+	sptrIsotope buildIsotope(const property_tree::ptree& node);
 
 	//! Returns a shared pointer to an Isotope with a given name. The Isotope is searched first in the registry and if not found in the XML datatabase. If is found nowhere, throws.
 	sptrIsotope findIsotope(const std::string& name);
@@ -97,6 +109,13 @@ public:
 	//! Cleans up the registry
 	void cleanRegistry();
 
+	//! Gets the units stored in the XML database
+	const unitsMap& getUnits() const;
+
+	//! Returns the name of the isotopes stored in the isotopes XML database
+	std::vector<std::string> getDatabaseNames() const;
+
+
 private:
 
 	//! The path to the isotope database
@@ -104,6 +123,9 @@ private:
 
 	//! The registry that will store the created Isotope objects
 	isotopeMap _registry;
+
+	//! The map that stores the units for the properties of the database
+	unitsMap _units;
 };
 
 template<typename T>
@@ -178,8 +200,7 @@ isotopeSet IsotopeManager::getIsotopes(const std::string& prop, T value)
 					isSet.insert(it->second);
 				else
 				{
-					sptrIsotope is=Isotope::create(v.second);
-					_registry.insert(isotopePair(name,is));
+					sptrIsotope is=buildIsotope(v.second);
 					isSet.insert(is);
 				}
 			}
