@@ -2,6 +2,9 @@
 #include <QApplication>
 #include <QPainter>
 #include <QKeyEvent>
+#include <iostream>
+#include <fstream>
+#include <Eigen/Dense>
 
 SXPlot::SXPlot(QWidget *parent) : QCustomPlot(parent)
 {
@@ -10,6 +13,10 @@ SXPlot::SXPlot(QWidget *parent) : QCustomPlot(parent)
    connect(this, SIGNAL(mouseWheel(QWheelEvent*)), this, SLOT(mouseWheel()));
    connect(this, SIGNAL(titleDoubleClick(QMouseEvent*,QCPPlotTitle*)), this, SLOT(titleDoubleClick(QMouseEvent*,QCPPlotTitle*)));
    connect(this, SIGNAL(legendDoubleClick(QCPLegend*,QCPAbstractLegendItem*,QMouseEvent*)), this, SLOT(legendDoubleClick(QCPLegend*,QCPAbstractLegendItem*)));
+
+   // Enable right button click to export ASCII data
+   setContextMenuPolicy(Qt::CustomContextMenu);
+   connect(this,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(setmenuRequested(QPoint)));
 }
 
 void SXPlot::update(PlottableGraphicsItem *item)
@@ -93,4 +100,59 @@ void SXPlot::legendDoubleClick(QCPLegend *legend, QCPAbstractLegendItem *item)
       replot();
     }
   }
+}
+
+void SXPlot::exportToAscii()
+{
+    int ngraphs=this->graphCount();
+
+    if (!ngraphs)
+        return;
+
+    int npoints=graph(0)->data()->size();
+    if (!npoints)
+        return;
+
+    QString fileName = QFileDialog::getSaveFileName(this,
+        tr("Choose ASCII file to export"), "", tr("Data File (*.dat)"));
+
+    std::ofstream file;
+    file.open(fileName.toStdString().c_str(),std::ios::out);
+    if (!file.is_open())
+        QMessageBox::critical(this, tr("NSXTool"),
+                              tr("Problem opening file"));
+
+    // First column is the key, then 2n columns (value error)
+    Eigen::MatrixXd result(npoints,2*ngraphs+1);
+
+    QCPDataMap* data=graph(0)->data();
+    int current=0;
+    for (auto point: *data)
+    {
+        result(current++,0)=point.key;
+    }
+    for (int i=0;i<ngraphs;++i)
+    {
+        QCPDataMap* data=graph(i)->data();
+        int current=0;
+        for (auto point: *data)
+        {
+            result(current,2*i+1)=point.value;
+            result(current++,2*i+2)=point.valueErrorPlus+point.valueErrorMinus;
+        }
+    }
+    file << result;
+    file.close();
+}
+
+void SXPlot::setmenuRequested(QPoint pos)
+{
+    // Add menu to export the graphs to ASCII if graphs are present
+    if (this->graphCount())
+    {
+        QMenu* menu = new QMenu(this);
+        QAction* expportASCII=menu->addAction("Export to ASCII");
+        menu->popup(mapToGlobal(pos));
+        connect(expportASCII,SIGNAL(triggered()),this,SLOT(exportToAscii()));
+    }
 }

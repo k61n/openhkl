@@ -411,3 +411,4 @@ void MainWindow::on_actionShow_labels_triggered(bool checked)
     _ui->_dview->getScene()->showPeakLabels(checked);
     _ui->_dview->getScene()->update();
 }
+
