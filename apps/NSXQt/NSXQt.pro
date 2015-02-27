@@ -53,7 +53,8 @@ SOURCES += src/Main.cpp \
     src/Absorption/CrystalNodeItem.cpp \
     src/Absorption/PinItem.cpp \
     src/Absorption/RulerItem.cpp \
-    src/Absorption/CalibrateDistanceDialog.cpp
+    src/Absorption/CalibrateDistanceDialog.cpp \
+    src/Chemistry/IsotopeDatabaseDialog.cpp
 
 HEADERS  += include/MainWindow.h \
     include/DialogPeakFind.h \
@@ -95,7 +96,8 @@ HEADERS  += include/MainWindow.h \
     include/Absorption/CrystalNodeItem.h \
     include/Absorption/PinItem.h \
     include/Absorption/RulerItem.h \
-    include/Absorption/CalibrateDistanceDialog.h
+    include/Absorption/CalibrateDistanceDialog.h \
+    include/Chemistry/IsotopeDatabaseDialog.h
 
 FORMS    += ui/mainwindow.ui \
     ui/dialog_PeakFind.ui \
@@ -104,7 +106,8 @@ FORMS    += ui/mainwindow.ui \
     ui/dialogunitcellsolutions.ui \
     ui/DialogExperiment.ui \
     ui/Absorption/AbsorptionDialog.ui \
-    ui/Absorption/CalibrateDistanceDialog.ui
+    ui/Absorption/CalibrateDistanceDialog.ui \
+    ui/Chemistry/IsotopeDatabaseDialog.ui
 
 win32:CONFIG(release, debug|release): LIBS += -lNSXTool
 else:unix: LIBS += -lNSXTool -lboost_date_time -lfftw3
