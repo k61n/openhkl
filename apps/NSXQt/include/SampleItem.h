@@ -2,18 +2,17 @@
 #define SAMPLEITEM_H
 
 #include <string>
-
-#include "TreeItem.h"
+#include "InspectableTreeItem.h"
 
 using namespace SX::Instrument;
 
-class SampleItem : public TreeItem
+class SampleItem : public InspectableTreeItem
 {
 public:
     explicit SampleItem(Experiment* experiment);
 
     void setData(const QVariant & value, int role=Qt::UserRole + 1 );
-
+    QWidget* inspectItem();
 };
 
 #endif // SAMPLEITEM_H

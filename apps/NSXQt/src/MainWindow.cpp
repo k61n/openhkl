@@ -78,8 +78,13 @@ MainWindow::MainWindow(QWidget *parent)
     _ui->selectionMode->addItem(QIcon(":/resources/verticalSliceIcon.png"),"");
     _ui->selectionMode->addItem(QIcon(":/resources/selectionIcon.png"),"");
 
-    _ui->splitter->setStretchFactor(0,10);
-    _ui->splitter->setStretchFactor(1,90);
+    // Vertical splitter between Tree and Inspector Widget
+    _ui->splitterVertical->setStretchFactor(0,50);
+    _ui->splitterVertical->setStretchFactor(1,50);
+
+    // Horizontal splitter between Tree and DetectorScene
+    _ui->splitterHorizontal->setStretchFactor(0,10);
+    _ui->splitterHorizontal->setStretchFactor(1,90);
 
     // signals and slots
     connect(_ui->experimentTree,SIGNAL(plotData(SX::Data::IData*)),_ui->_dview->getScene(),SLOT(setData(SX::Data::IData*)));
@@ -93,6 +98,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     _ui->plotterDockWidget->show();
 
+    connect(_ui->experimentTree,SIGNAL(inspectWidget(QWidget*)),this,SLOT(setInspectorWidget(QWidget*)));
 }
 
 MainWindow::~MainWindow()
@@ -412,3 +418,10 @@ void MainWindow::on_actionShow_labels_triggered(bool checked)
     _ui->_dview->getScene()->update();
 }
 
+
+void MainWindow::setInspectorWidget(QWidget* w)
+{
+    _ui->scrollAreaInspection->setWidget(w);
+    _ui->scrollAreaInspection->setWidgetResizable(true);
+    _ui->scrollAreaInspection->update();
+}

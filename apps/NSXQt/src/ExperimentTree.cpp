@@ -47,6 +47,7 @@ ExperimentTree::ExperimentTree(QWidget *parent) : QTreeView(parent)
 
     connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(onCustomMenuRequested(const QPoint&)));
     connect(this, SIGNAL(doubleClicked(const QModelIndex&)),this,SLOT(onDoubleClick(const QModelIndex&)));
+    connect(this,SIGNAL(clicked(QModelIndex)),this,SLOT(onSingleClick(QModelIndex)));
 }
 
 void ExperimentTree::createNewExperiment()
@@ -230,10 +231,11 @@ void ExperimentTree::importData()
         if (exp->hasData(basename))
             continue;
 
+        IData* d;
         try
         {
             std::string extension=fileinfo.completeSuffix().toStdString();
-            IData* d = DataReaderFactory::Instance()->create(extension,fileNames[i].toStdString(),exp->getDiffractometer());
+             d = DataReaderFactory::Instance()->create(extension,fileNames[i].toStdString(),exp->getDiffractometer());
             exp->addData(d);
         }
         catch(std::exception& e)
@@ -242,7 +244,7 @@ void ExperimentTree::importData()
            continue;
         }
 
-        QStandardItem* item = new NumorItem(exp);
+        QStandardItem* item = new NumorItem(exp,d);
         item->setText(QString::fromStdString(basename));
         item->setCheckable(true);
         dataItem->appendRow(item);
@@ -329,4 +331,17 @@ ExperimentItem* ExperimentTree::getExperimentItem(Experiment* exp)
 
     return nullptr;
 
+}
+
+void ExperimentTree::onSingleClick(const QModelIndex &index)
+{
+        // Inspect this item if it is inspectable
+        InspectableTreeItem* item=dynamic_cast<InspectableTreeItem*>(_model->itemFromIndex(index));
+        if (item)
+            emit inspectWidget(item->inspectItem());
+        else
+        {
+            QWidget* widget=new QWidget();
+            emit inspectWidget(widget);
+        }
 }

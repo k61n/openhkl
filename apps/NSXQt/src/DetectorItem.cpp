@@ -1,12 +1,11 @@
 #include "DetectorItem.h"
-
 #include <QIcon>
 #include <QString>
-
 #include "Detector.h"
 #include "Diffractometer.h"
+#include "DetectorPropertyWidget.h"
 
-DetectorItem::DetectorItem(Experiment* experiment) : TreeItem(experiment)
+DetectorItem::DetectorItem(Experiment* experiment) : InspectableTreeItem(experiment)
 {
     setText(QString::fromStdString(_experiment->getDiffractometer()->getDetector()->getName()));
 
@@ -17,4 +16,9 @@ DetectorItem::DetectorItem(Experiment* experiment) : TreeItem(experiment)
 
     setDragEnabled(false);
     setDropEnabled(false);
+}
+
+QWidget* DetectorItem::inspectItem()
+{
+        return new DetectorPropertyWidget();
 }

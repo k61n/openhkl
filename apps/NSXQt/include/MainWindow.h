@@ -77,7 +77,7 @@ public slots:
     void showPeakList(std::vector<SX::Data::IData*>);
     void plotPeak(SX::Crystal::Peak3D*);
     void plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&);
-
+    void setInspectorWidget(QWidget*);
 private:
     Ui::MainWindow* _ui;
     std::unordered_map<std::string,SX::Instrument::Experiment> _experiments;

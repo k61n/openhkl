@@ -36,7 +36,7 @@
 #include "ConvexHull.h"
 #include "Material.h"
 #include "UnitCell.h"
-
+#include <vector>
 namespace SX
 {
 namespace Instrument
@@ -68,11 +68,17 @@ public:
 	//! Returns a shared pointer to the material this Sample is made of
 	SX::Chemistry::sptrMaterial getMaterial() const;
 
-
+	//! Create a new crystal with Empty UnitCell, and return it
+	std::shared_ptr<SX::Crystal::UnitCell> addUnitCell();
+	//! Get the UnitCell of Crystal number i in the list
+	std::shared_ptr<SX::Crystal::UnitCell> getUnitCell(int i);
+	//! Return number of crystals
+	std::size_t getNCrystals() const;
 private:
 	SX::Geometry::ConvexHull<double> _sampleShape;
 	std::shared_ptr<SX::Chemistry::Material> _material;
-
+	//! UnitCells of all crystals associated with this sample
+	std::vector<std::shared_ptr<SX::Crystal::UnitCell>> _cells;
 };
 
 } // Namespace Instrument

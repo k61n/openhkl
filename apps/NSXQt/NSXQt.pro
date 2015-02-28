@@ -54,7 +54,14 @@ SOURCES += src/Main.cpp \
     src/Absorption/PinItem.cpp \
     src/Absorption/RulerItem.cpp \
     src/Absorption/CalibrateDistanceDialog.cpp \
-    src/Chemistry/IsotopeDatabaseDialog.cpp
+    src/InspectableTreeItem.cpp \
+    src/UnitCellItem.cpp \
+    src/EmptyPropertyWidget.cpp \
+    src/SamplePropertyWidget.cpp \
+    src/ShapePropertyWidget.cpp \
+    src/UnitCellPropertyWidget.cpp \
+    src/NumorPropertyWidget.cpp \
+    src/DetectorPropertyWidget.cpp
 
 HEADERS  += include/MainWindow.h \
     include/DialogPeakFind.h \
@@ -97,7 +104,14 @@ HEADERS  += include/MainWindow.h \
     include/Absorption/PinItem.h \
     include/Absorption/RulerItem.h \
     include/Absorption/CalibrateDistanceDialog.h \
-    include/Chemistry/IsotopeDatabaseDialog.h
+    include/InspectableTreeItem.h \
+    include/UnitCellItem.h \
+    include/EmptyPropertyWidget.h \
+    include/SamplePropertyWidget.h \
+    include/ShapePropertyWidget.h \
+    include/UnitCellPropertyWidget.h \
+    include/NumorPropertyWidget.h \
+    include/DetectorPropertyWidget.h
 
 FORMS    += ui/mainwindow.ui \
     ui/dialog_PeakFind.ui \
@@ -107,7 +121,12 @@ FORMS    += ui/mainwindow.ui \
     ui/DialogExperiment.ui \
     ui/Absorption/AbsorptionDialog.ui \
     ui/Absorption/CalibrateDistanceDialog.ui \
-    ui/Chemistry/IsotopeDatabaseDialog.ui
+    ui/EmptyPropertyWidget.ui \
+    ui/SamplePropertyWidget.ui \
+    ui/ShapePropertyWidget.ui \
+    ui/UnitCellPropertyWidget.ui \
+    ui/NumorPropertyWidget.ui \
+    ui/DetectorPropertyWidget.ui
 
 win32:CONFIG(release, debug|release): LIBS += -lNSXTool
 else:unix: LIBS += -lNSXTool -lboost_date_time -lfftw3

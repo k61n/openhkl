@@ -37,7 +37,7 @@ public:
 signals:
     void plotData(SX::Data::IData*);
     void showPeakList(std::vector<SX::Data::IData*>);
-
+    void inspectWidget(QWidget*);
 public slots:
     void keyPressEvent(QKeyEvent* event);
     void onCustomMenuRequested(const QPoint& point);
@@ -45,7 +45,7 @@ public slots:
     void importData();
     void loadAbsorption();
     void createNewExperiment();
-
+    void onSingleClick(const QModelIndex& index);
 private:
 
     QStandardItemModel* _model;

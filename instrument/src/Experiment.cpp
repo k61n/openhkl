@@ -109,7 +109,7 @@ void Experiment::addData(IData* data)
 	std::string basename=data->getBasename();
 	auto it=_data.find(basename);
 	if (it != _data.end())
-		return;
+		return ;
 
 	std::string diffName = data->getMetadata()->getKey<std::string>("Instrument");
 
@@ -130,8 +130,7 @@ void Experiment::addData(IData* data)
 
 
 
-	_data.insert(std::pair<std::string,IData*>(basename,data));
-
+	auto pair=_data.insert(std::pair<std::string,IData*>(basename,data));
 }
 
 bool Experiment::hasData(const std::string& name) const

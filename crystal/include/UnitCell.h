@@ -72,6 +72,8 @@ public:
 	//! Assignment
 	UnitCell& operator=(const UnitCell&);
 	~UnitCell();
+	//! Set lattice parameters
+	void setParams(double a, double b, double c, double alpha, double beta, double gamma);
 	//! Build a UnitCell from a set of three direct vectors.
 	static UnitCell fromDirectVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c, LatticeCentring centring=LatticeCentring::P, BravaisType bravais=BravaisType::Triclinic,std::shared_ptr<SX::Geometry::Basis> reference=nullptr);
 	//! Build a UnitCell from a set of three reciprocal vectors.
@@ -82,8 +84,7 @@ public:
  	void setBravaisType(BravaisType bravais);
  	//!
  	std::string getBravaisTypeSymbol() const;
- 	//! Print to a stream
- 	void printSelf(std::ostream& os) const;
+
  	//! Get UB
  	void getUB(const Peak3D& p1, const Peak3D& p2);
  	//! Get the Busing-Levy B matrix as defined in Acta Cryst. (1967). 22, 457
@@ -91,10 +92,13 @@ public:
  	//! reciprocal bases are contravariant in NSXTool.
  	Eigen::Matrix3d getBusingLevyB() const;
  	Eigen::Matrix3d getBusingLevyU() const;
+ 	//! Print into a stream
+ 	void printSelf(std::ostream& os) const;
 private:
 	LatticeCentring _centring;
 	BravaisType _bravaisType;
 };
+
 //! Print to a stream
 std::ostream& operator<<(std::ostream&,const UnitCell&);
 

@@ -1,5 +1,5 @@
 #include "DataItem.h"
-
+#include "Experiment.h"
 #include <QIcon>
 
 DataItem::DataItem(Experiment* experiment) : TreeItem(experiment)

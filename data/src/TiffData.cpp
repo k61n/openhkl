@@ -29,7 +29,7 @@ TiffData::TiffData(const std::string& filename, std::shared_ptr<Diffractometer> 
 
 	if (w!=_ncols || h!=_nrows)
 	{
-		std::cout << w << " " << _ncols << " " << h << _nrows << std::endl;
+		std::cout << w << " " << _ncols << " " << h << " " <<_nrows << std::endl;
 		close();
 		throw std::range_error("Tiff file "+filename+ " not consistent with diffractometer definition");
 	}

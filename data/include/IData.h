@@ -71,12 +71,12 @@ public:
 	 */
 	IData(const std::string& filename, std::shared_ptr<Diffractometer> instrument);
 	//! Copy constructor
-	IData(const IData& other)=delete;
+	IData(const IData& other) = default;
 	//! Destructor
 	virtual ~IData()=0;
 	// Operators
 	//! Assignment operator
-	IData& operator=(const IData& other)=delete;
+	IData& operator=(const IData& other);
 
 	// Getters and setters
 

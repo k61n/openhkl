@@ -8,6 +8,8 @@
 
 #include "Experiment.h"
 
+class QWidget;
+
 using namespace SX::Instrument;
 
 class TreeItem : public QStandardItem
@@ -15,8 +17,8 @@ class TreeItem : public QStandardItem
 public:
     explicit TreeItem(Experiment* experiment);
     Experiment* getExperiment();
-
     virtual ~TreeItem();
+
 
 protected:
     Experiment* _experiment;

@@ -4,15 +4,16 @@
 #include <string>
 
 #include <QString>
-
-#include "TreeItem.h"
+#include "InspectableTreeItem.h"
 #include "Experiment.h"
 
-class DetectorItem : public TreeItem
+class QWidget;
+
+class DetectorItem : public InspectableTreeItem
 {
 public:
     explicit DetectorItem(Experiment* experiment);
-
+    QWidget* inspectItem();
 };
 
 #endif // DETECTORITEM_H

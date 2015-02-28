@@ -3,6 +3,7 @@
 
 #include "UnitCell.h"
 #include "Units.h"
+#include <iomanip>
 
 namespace SX
 {
@@ -59,6 +60,17 @@ UnitCell::UnitCell(const Eigen::Vector3d& v1,const Eigen::Vector3d& v2,const Eig
 {
 
 }
+void UnitCell::setParams(double a, double b, double c, double alpha, double beta, double gamma)
+{
+	double ca=cos(alpha), cb=cos(beta), cc=cos(gamma), sc=sin(gamma);
+	double a32=c/sin(gamma)*(ca-cb*cc);
+	double volume=a*b*c*sqrt(1.0-ca*ca-cb*cb-cc*cc+2.0*ca*cb*cc);
+	double a33=volume/(a*b*sc);
+	_A <<  a,b*cc,c*cb,
+		   0,b*sc,a32,
+		   0,0   ,a33;
+	_B=_A.inverse();
+}
 
 UnitCell UnitCell::fromDirectVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c, LatticeCentring centring, BravaisType bravais,std::shared_ptr<SX::Geometry::Basis> reference)
 {
@@ -99,26 +111,6 @@ std::string UnitCell::getBravaisTypeSymbol() const
 	std::ostringstream os;
 	os << static_cast<char>(_bravaisType) << static_cast<char>(_centring);
 	return os.str();
-}
-
-void UnitCell::printSelf(std::ostream& os) const
-{
-	os << "Cell parameters: \n" << getA() << ", " << getB() << ", " << getC() << ", " << getAlpha()/SX::Units::deg << ", " <<getBeta()/SX::Units::deg << ", "<< getGamma()/SX::Units::deg <<std::endl;
-	if (hasSigmas())
-	{
-		double as,bs,cs,alphas,betas,gammas;
-		getParametersSigmas( as,bs,cs,alphas,betas,gammas);
-		os << as << ", " << bs << ", " << cs << ", " << alphas/SX::Units::deg << ", " << betas/SX::Units::deg << ", " << gammas/SX::Units::deg << std::endl;
-	}
-	os << "Lattice centring: " << static_cast<char>(_centring) << std::endl;
-	os << "Bravais type: "     << static_cast<char>(_bravaisType) << std::endl;
-
-}
-
-std::ostream& operator<<(std::ostream& os,const UnitCell& rhs)
-{
-	rhs.printSelf(os);
-	return os;
 }
 
 void UnitCell::getUB(const Peak3D& p1, const Peak3D& p2)
@@ -163,6 +155,32 @@ Eigen::Matrix3d UnitCell::getBusingLevyB() const
 Eigen::Matrix3d UnitCell::getBusingLevyU() const
 {
 	return (getBusingLevyB().inverse()*_B);
+}
+
+void UnitCell::printSelf(std::ostream& os) const
+{
+	os << "Direct Lattice:\n";
+	os << std::fixed << std::setw(10) << std::setprecision(5) << getA();
+	os << std::fixed << std::setw(10) << std::setprecision(5) << getB();
+	os << std::fixed << std::setw(10) << std::setprecision(5) << getC();
+	os << std::fixed << std::setw(10) << std::setprecision(5) << getAlpha()/SX::Units::deg;
+	os << std::fixed << std::setw(10) << std::setprecision(5) << getBeta()/SX::Units::deg;
+	os << std::fixed << std::setw(10) << std::setprecision(5) << getGamma()/SX::Units::deg << std::endl;
+	os << "Reciprocal Lattice:\n";
+	os << std::fixed << std::setw(10) << std::setprecision(5) << getReciprocalA();
+	os << std::fixed << std::setw(10) << std::setprecision(5) << getReciprocalB();
+	os << std::fixed << std::setw(10) << std::setprecision(5) << getReciprocalC();
+	os << std::fixed << std::setw(10) << std::setprecision(5) << getReciprocalAlpha()/SX::Units::deg;
+	os << std::fixed << std::setw(10) << std::setprecision(5) << getReciprocalBeta()/SX::Units::deg;
+	os << std::fixed << std::setw(10) << std::setprecision(5) << getReciprocalGamma()/SX::Units::deg << std::endl;
+	os << "B matrix:" << std::endl;
+	os << _B;
+}
+
+std::ostream& operator<<(std::ostream& os,const UnitCell& uc)
+{
+	uc.printSelf(os);
+	return os;
 }
 
 
