@@ -214,12 +214,12 @@ void DialogUnitCell::acceptSolution(int i)
 
 void DialogUnitCell::setUpValues()
 {
-    ui->doubleSpinBoxa->setValue(_basis.gete1Norm());
-    ui->doubleSpinBoxb->setValue(_basis.gete2Norm());
-    ui->doubleSpinBoxc->setValue(_basis.gete3Norm());
-    ui->doubleSpinBoxalpha->setValue(_basis.gete2e3Angle()/SX::Units::deg);
-    ui->doubleSpinBoxbeta->setValue(_basis.gete1e3Angle()/SX::Units::deg);
-    ui->doubleSpinBoxgamma->setValue(_basis.gete1e2Angle()/SX::Units::deg);
+    ui->doubleSpinBoxa->setValue(_basis.getA());
+    ui->doubleSpinBoxb->setValue(_basis.getB());
+    ui->doubleSpinBoxc->setValue(_basis.getC());
+    ui->doubleSpinBoxalpha->setValue(_basis.getAlpha()/SX::Units::deg);
+    ui->doubleSpinBoxbeta->setValue(_basis.getBeta()/SX::Units::deg);
+    ui->doubleSpinBoxgamma->setValue(_basis.getGamma()/SX::Units::deg);
     Eigen::Matrix3d M=_basis.getStandardM().inverse();
     ui->doubleSpinBoxUB00->setValue(M(0,0));
     ui->doubleSpinBoxUB01->setValue(M(0,1));
