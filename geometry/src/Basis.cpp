@@ -115,39 +115,64 @@ std::ostream& operator<<(std::ostream& os,const Basis& b)
 	return os;
 }
 
-double Basis::gete1Norm() const
+double Basis::getA() const
 {
 	return _A.col(0).norm();
 }
-double Basis::gete2Norm() const
+double Basis::getB() const
 {
 	return _A.col(1).norm();
 }
-double Basis::gete3Norm() const
+double Basis::getC() const
 {
 	return _A.col(2).norm();
 }
-double Basis::gete1e2Angle() const
+double Basis::getAlpha() const
 {
-	return acos(_A.col(0).dot(_A.col(1))/gete1Norm()/gete2Norm());
+	return acos(_A.col(1).dot(_A.col(2))/getB()/getC());
 }
-double Basis::gete2e3Angle() const
+double Basis::getBeta() const
 {
-	return acos(_A.col(1).dot(_A.col(2))/gete2Norm()/gete3Norm());
+	return acos(_A.col(0).dot(_A.col(2))/getA()/getC());
 }
-double Basis::gete1e3Angle() const
+double Basis::getGamma() const
 {
-	return acos(_A.col(0).dot(_A.col(2))/gete1Norm()/gete3Norm());
+	return acos(_A.col(0).dot(_A.col(1))/getA()/getB());
+}
+
+double Basis::getReciprocalA() const
+{
+	return _B.row(0).norm();
+}
+double Basis::getReciprocalB() const
+{
+	return _B.row(1).norm();
+}
+double Basis::getReciprocalC() const
+{
+	return _B.col(2).norm();
+}
+double Basis::getReciprocalAlpha() const
+{
+	return acos(_B.row(1).dot(_B.row(2))/getReciprocalB()/getReciprocalC());
+}
+double Basis::getReciprocalBeta() const
+{
+	return acos(_B.row(0).dot(_B.row(2))/getReciprocalA()/getReciprocalC());
+}
+double Basis::getReciprocalGamma() const
+{
+	return acos(_B.row(0).dot(_A.row(1))/getReciprocalA()/getReciprocalB());
 }
 
 void Basis::getParameters(double& a,double& b,double& c,double& alpha,double& beta,double& gamma) const
 {
-	a=gete1Norm();
-	b=gete2Norm();
-	c=gete3Norm();
-	alpha=gete2e3Angle();
-	beta=gete1e3Angle();
-	gamma=gete1e2Angle();
+	a=getA();
+	b=getB();
+	c=getC();
+	alpha=getAlpha();
+	beta=getBeta();
+	gamma=getGamma();
 }
 
 void Basis::getParametersSigmas(double& sa,double& sb ,double& sc,double& salpha, double& sbeta, double& sgamma) const

@@ -75,17 +75,29 @@ public:
 	//! Build a basis from a set of three reciprocal vectors.
 	static Basis fromReciprocalVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c, ptrBasis reference=nullptr);
 	//! Returns the norm of e1 basis vector.
-	double gete1Norm() const;
+	double getA() const;
 	//! Returns the norm of e2 basis vector.
-	double gete2Norm() const;
+	double getB() const;
 	//! Returns the norm of e3 basis vector.
-	double gete3Norm() const;
+	double getC() const;
 	//! Returns the angle between e1 and e2 basis vectors (radian)
-	double gete1e2Angle() const;
+	double getAlpha() const;
 	//! Returns the angle between e1 and e3 basis vectors (radian)
-	double gete1e3Angle() const;
+	double getBeta() const;
 	//! Returns the angle between e2 and e3 basis vectors (radian)
-	double gete2e3Angle() const;
+	double getGamma() const;
+	//! Returns the norm of e1 basis vector.
+	double getReciprocalA() const;
+	//! Returns the norm of e2 basis vector.
+	double getReciprocalB() const;
+	//! Returns the norm of e3 basis vector.
+	double getReciprocalC() const;
+	//! Returns the angle between e1 and e2 basis vectors (radian)
+	double getReciprocalAlpha() const;
+	//! Returns the angle between e1 and e3 basis vectors (radian)
+	double getReciprocalBeta() const;
+	//! Returns the angle between e2 and e3 basis vectors (radian)
+	double getReciprocalGamma() const;
 	//! Get the direct basis parameters
 	void getParameters(double& a,double& b ,double& c,double& alpha, double& beta, double& gamma) const;
 	//! Get the errors on direct basis parameters

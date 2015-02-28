@@ -85,31 +85,6 @@ UnitCell::~UnitCell()
 {
 }
 
-double UnitCell::getA() const
-{
-	return gete1Norm();
-}
-double UnitCell::getB() const
-{
-	return gete2Norm();
-}
-double UnitCell::getC() const
-{
-	return gete3Norm();
-}
-double UnitCell::getAlpha() const
-{
-	return gete2e3Angle();
-}
-double UnitCell::getBeta() const
-{
-	return gete1e3Angle();
-}
-double UnitCell::getGamma() const
-{
-	return gete1e2Angle();
-}
-
 void UnitCell::setLatticeCentring(LatticeCentring centring)
 {
 	_centring=centring;
@@ -145,6 +120,52 @@ std::ostream& operator<<(std::ostream& os,const UnitCell& rhs)
 	rhs.printSelf(os);
 	return os;
 }
+
+void UnitCell::getUB(const Peak3D& p1, const Peak3D& p2)
+{
+	// Get Q1 and Q2 in the diffractometer basis
+	auto q1=p1.getQ();
+	auto q2=p2.getQ();
+	auto q3=q1.cross(q2);
+	q1.normalize();
+	q3.normalize();
+	q2=q3.cross(q1);
+
+	//
+	auto q1prime=this->toReciprocalStandard(p1.getMillerIndices());
+	auto q2prime=this->toReciprocalStandard(p2.getMillerIndices());
+	//
+	auto q3prime=q1prime.cross(q2prime);
+	q1prime.normalize();
+	q3prime.normalize();
+	q2prime=q3prime.cross(q1prime);
+	//
+	Eigen::Matrix3d ref1;
+
+}
+
+Eigen::Matrix3d UnitCell::getBusingLevyB() const
+{
+	Eigen::Matrix3d B;
+	double b1=getReciprocalA();
+	double b2=getReciprocalB();
+	double b3=getReciprocalC();
+	double c=getC();
+	double beta2=getReciprocalBeta();
+	double beta3=getReciprocalGamma();
+	double alpha1=getAlpha();
+	B <<  b1,            0,                          0,
+		  b2*cos(beta3), b2*sin(beta3),              0,
+		  b3*cos(beta2), -b3*sin(beta2)*cos(alpha1), 1/c;
+	return B;
+}
+
+Eigen::Matrix3d UnitCell::getBusingLevyU() const
+{
+	return (getBusingLevyB().inverse()*_B);
+}
+
+
 
 
 }

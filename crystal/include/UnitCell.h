@@ -32,6 +32,8 @@
 #include <Eigen/Dense>
 #include "Basis.h"
 #include <string>
+#include "Peak3D.h"
+
 namespace SX
 {
 
@@ -74,18 +76,6 @@ public:
 	static UnitCell fromDirectVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c, LatticeCentring centring=LatticeCentring::P, BravaisType bravais=BravaisType::Triclinic,std::shared_ptr<SX::Geometry::Basis> reference=nullptr);
 	//! Build a UnitCell from a set of three reciprocal vectors.
 	static UnitCell fromReciprocalVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c,LatticeCentring centring=LatticeCentring::P, BravaisType bravais=BravaisType::Triclinic,std::shared_ptr<SX::Geometry::Basis> reference=nullptr);
-	/// Get the a parameter (\f$ \AA \f$)
-	double getA() const;
-	/// Get the b parameter (\f$ \AA \f$)
- 	double getB() const;
- 	/// Get the c parameter (\f$ \AA \f$)
- 	double getC() const;
-	/// Get the alpha angle (radians)
- 	double getAlpha() const;
-	/// Get the beta angle (radians)
- 	double getBeta() const;
-	/// Get the gamma angle (radians)
- 	double getGamma() const;
 	//!
  	void setLatticeCentring(LatticeCentring centring);
  	//!
@@ -94,8 +84,13 @@ public:
  	std::string getBravaisTypeSymbol() const;
  	//! Print to a stream
  	void printSelf(std::ostream& os) const;
-
-
+ 	//! Get UB
+ 	void getUB(const Peak3D& p1, const Peak3D& p2);
+ 	//! Get the Busing-Levy B matrix as defined in Acta Cryst. (1967). 22, 457
+ 	//! The returned matrix is the transposed version of the matrix since
+ 	//! reciprocal bases are contravariant in NSXTool.
+ 	Eigen::Matrix3d getBusingLevyB() const;
+ 	Eigen::Matrix3d getBusingLevyU() const;
 private:
 	LatticeCentring _centring;
 	BravaisType _bravaisType;
