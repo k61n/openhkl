@@ -41,36 +41,35 @@ namespace SX
 namespace Utils
 {
 	using namespace boost::spirit;
-	//! Element symbol, isotope (0 if natural), and content
+
 	typedef boost::fusion::vector2<std::string,unsigned int> element;
-	//! Formula as a vector of elements
 	typedef std::vector<element> formula;
-	//! @Class: ChemFormulaParser. Use to parse a chemical formula including isotopes.
-	//! The chemical formula is given following the usual conventions with isotopes in brackets.
-	//! For example Gd[156](0.56)Mn4. This does not check the nature of the chemical element
-	//! or isotope validity. This is left to the periodic table.
-	//! The parser is used as usual in spirit given two iterators (begin and end)
-	//! : parse(begin,end,parser)
+
+	//! @Class: ChemicalFormulaParser.
+	//! Parses a chemical formula.
+	//! The chemical formula is defined as a string that represents a sequence of elements (e.g. CH4, H2O, C[12]3H[2]8).
+	//! Each element is in turn defined by a string that represents its chemical symbol as defined in the periodic table respectively followed
+	//! optionally by the element isotope given in square brackets and by the number of such element in the chemical formula (1 if not provided).
+	//! The parser is used as usual in spirit given two iterators (begin and end) : parse(begin,end,parser)
+	//! Example: C3H[2]8 will parse a molecule with three natural  carbons and eight deuterium atoms i.e. a deuterated propane.
 	template <typename Iterator>
-	struct FormParser : qi::grammar<Iterator,formula() >
+	struct ChemicalFormulaParser : qi::grammar<Iterator,formula() >
 	{
-		FormParser(): FormParser::base_type(start)
+		ChemicalFormulaParser(): ChemicalFormulaParser::base_type(start)
 		{
 			using boost::spirit::uint_;
 			using boost::spirit::ascii::char_;
-			//! Formula is made of multiple elements.
+			// A chemical formula is made of multiple elements parsing block.
 			start=*(startelement);
-			//! Symbol followed optionally by isotope, and by content.
-			startelement = symbol >> (uint_ | qi::attr(1));
-			//! Capital letter followed optionally by small character
-			symbol = char_("A-Z") >> -(char_("a-z")) >> -isot;
-			//! if isotope is given, should be inside bracket
-			isot= char_("[") >> uint_ >> char_("]");
+			// Each element parsing block is made of the element name followed optionally by the number of such isotopes in the chemical
+			// formula
+			startelement = (symbol) >> (uint_ | qi::attr(1));
+			//! An element name is made of a chemical symbol followed optionally by the a specific isotope definintion given in square bracket (e.g. H[2] for deuterium)
+			symbol = char_("A-Z") >> -char_("a-z") >> -(char_("[") >> +char_("0-9") >> char_("]"));
 		}
 	private:
 		qi::rule<Iterator,formula()> start;
 		qi::rule<Iterator,element()> startelement;
-		qi::rule<Iterator,unsigned int()> isot;
 		qi::rule<Iterator,std::string()> symbol;
 	};
 

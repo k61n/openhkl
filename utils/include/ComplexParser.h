@@ -33,38 +33,67 @@
 #include <boost/spirit/include/phoenix_core.hpp>
 #include <boost/spirit/include/phoenix_operator.hpp>
 #include <complex>
+#include <string>
 
 namespace SX
 {
+
+namespace Utils
+{
+
 //! Parse an expression for complex number of the type a+bi
 template <typename Iterator>
-    bool parse_complex(Iterator first, Iterator last, std::complex<double>& c)
-    {
-        using boost::spirit::qi::double_;
-        using boost::spirit::qi::_1;
-        using boost::spirit::qi::phrase_parse;
-        using boost::spirit::ascii::space;
-        using boost::phoenix::ref;
+bool strToComplex(Iterator first, Iterator last, std::complex<double>& c)
+{
+	using boost::spirit::qi::double_;
+	using boost::spirit::qi::_1;
+	using boost::spirit::qi::phrase_parse;
+	using boost::spirit::ascii::space;
+	using boost::phoenix::ref;
 
-        double rN = 0.0;
-        double iN = 0.0;
-        bool r = phrase_parse(first, last,
+	double rN = 0.0;
+	double iN = 0.0;
+	bool r = phrase_parse(first, last,
 
-            //  Begin grammar
-            (
-                    double_[ref(rN) = _1]
-                        >> -(double_[ref(iN) = _1]) >> 'i'
-                |   double_[ref(rN) = _1]
-            ),
-            //  End grammar
+		//  Begin grammar
+		(
+				double_[ref(rN) = _1]
+					>> -(double_[ref(iN) = _1]) >> 'i'
+			|   double_[ref(rN) = _1]
+		),
+		//  End grammar
 
-            space);
+		space);
 
-        if (!r || first != last)
-            return false;
-        c = std::complex<double>(rN, iN);
-        return r;
-    }
+	if (!r || first != last)
+		return false;
+	c = std::complex<double>(rN, iN);
+	return r;
+}
+
+template <typename T>
+std::string complexToString(const std::complex<T>& number, double tolerance=1.0e-6)
+{
+
+	if (std::norm(number) <= tolerance)
+		return "0";
+
+	std::string v("");
+	if (std::abs(number.real()) > tolerance)
+		v += std::to_string(number.real());
+	if (std::abs(number.imag()) > tolerance)
+	{
+	    if (number.imag() > 0)
+	        v += " + ";
+		v += std::to_string(number.imag()) + "i";
+	}
+
+	return v;
+}
+
+
+
+} // end namespace Utils
 
 } // Namespace SX
 

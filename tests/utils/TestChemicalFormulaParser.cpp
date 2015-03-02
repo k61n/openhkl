@@ -8,7 +8,7 @@
 #include <iostream>
 #include <string>
 
-#include "FormulaParser.h"
+#include "ChemicalFormulaParser.h"
 
 using namespace SX::Utils;
 
@@ -17,9 +17,9 @@ BOOST_AUTO_TEST_CASE(Test_Formula_Parser)
 
 	formula f;
 
-	std::string form="C[14]H[1]4";
+	std::string form="C[12]H4";
 
-	SX::Utils::FormParser<std::string::iterator> fp;
+	SX::Utils::ChemicalFormulaParser<std::string::iterator> fp;
 	qi::phrase_parse(form.begin(),form.end(),fp,qi::blank,f);
 
 	for (auto it : f)
