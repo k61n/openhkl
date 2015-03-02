@@ -4,7 +4,14 @@
 #include <iterator>
 #include <numeric>
 #include <stdexcept>
+#include <string>
 
+#include <boost/spirit/include/qi.hpp>
+#include <boost/spirit/include/qi_grammar.hpp>
+#include <boost/spirit/include/phoenix_stl.hpp>
+#include <boost/spirit/include/phoenix_fusion.hpp>
+
+#include "ChemicalFormulaParser.h"
 #include "Error.h"
 #include "Element.h"
 #include "ElementManager.h"
@@ -46,6 +53,30 @@ std::map<Material::FillingMode,std::string> Material::s_fromFillingMode={
 sptrMaterial Material::create(const std::string& name, State state, FillingMode fillingMode)
 {
 	return sptrMaterial(new Material(name,state,fillingMode));
+}
+
+sptrMaterial Material::fromChemicalFormula(std::string formula, State state)
+{
+
+	namespace qi=boost::spirit::qi;
+
+	SX::Utils::formula chemicalContents;
+
+	SX::Utils::ChemicalFormulaParser<std::string::iterator> parser;
+	qi::phrase_parse(formula.begin(),formula.end(),parser,qi::blank,chemicalContents);
+
+	ElementManager* emgr=ElementManager::Instance();
+
+	sptrMaterial mat=create(formula,state,FillingMode::NumberOfAtoms);
+
+	for (auto element : chemicalContents)
+	{
+		sptrElement el=emgr->buildElement(boost::fusion::at_c<0>(element),boost::fusion::at_c<0>(element));
+		mat->addElement(el,boost::fusion::at_c<1>(element));
+	}
+
+	return mat;
+
 }
 
 Material::Material(const std::string& name, State state, FillingMode fillingMode)

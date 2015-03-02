@@ -67,13 +67,16 @@ public:
 	//! Enumerates the different modes that can be used to fill a Material with its components
 	enum class FillingMode : unsigned int {MassFraction=0,MoleFraction=1,NumberOfAtoms=2,PartialPressure=3};
 
-	//! Enumerates the different chemical state that can be assigned to a Material
+	//! Enumerates the different chemical states that can be assigned to a Material
 	enum class State : unsigned int {Solid=0,Liquid=1,Gaz=2};
 
 public:
 
 	//! Constructs an empty Material in a given state to be filled later with a given filling mode
 	static sptrMaterial create(const std::string& name, State state=State::Solid, FillingMode fillingMode=FillingMode::MassFraction);
+
+	//! Constructs a material from a chemical formula and a given physical state
+	static sptrMaterial fromChemicalFormula(std::string formula, State state=State::Solid);
 
 public:
 
