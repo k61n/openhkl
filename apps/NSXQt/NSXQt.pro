@@ -54,6 +54,9 @@ SOURCES += src/Main.cpp \
     src/Absorption/PinItem.cpp \
     src/Absorption/RulerItem.cpp \
     src/Absorption/CalibrateDistanceDialog.cpp \
+    src/Chemistry/IsotopeDatabaseDialog.cpp \
+    src/Chemistry/AddElementDialog.cpp \
+    src/Chemistry/DragElementModel.cpp \
     src/InspectableTreeItem.cpp \
     src/UnitCellItem.cpp \
     src/EmptyPropertyWidget.cpp \
@@ -104,6 +107,9 @@ HEADERS  += include/MainWindow.h \
     include/Absorption/PinItem.h \
     include/Absorption/RulerItem.h \
     include/Absorption/CalibrateDistanceDialog.h \
+    include/Chemistry/IsotopeDatabaseDialog.h \
+    include/Chemistry/AddElementDialog.h \
+    include/Chemistry/DragElementModel.h \
     include/InspectableTreeItem.h \
     include/UnitCellItem.h \
     include/EmptyPropertyWidget.h \
@@ -126,6 +132,8 @@ FORMS    += ui/mainwindow.ui \
     ui/ShapePropertyWidget.ui \
     ui/UnitCellPropertyWidget.ui \
     ui/NumorPropertyWidget.ui \
+    ui/Chemistry/IsotopeDatabaseDialog.ui \
+    ui/Chemistry/AddElementDialog.ui \
     ui/DetectorPropertyWidget.ui
 
 win32:CONFIG(release, debug|release): LIBS += -lNSXTool

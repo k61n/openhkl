@@ -50,7 +50,9 @@
 #include "PeakGraphicsItem.h"
 #include "PlotFactory.h"
 #include <ctime>
-#include <Absorption/AbsorptionWidget.h>
+#include "Absorption/AbsorptionWidget.h"
+#include "Chemistry/IsotopeDatabaseDialog.h"
+#include "Chemistry/AddElementDialog.h"
 
 using namespace SX::Units;
 using namespace SX::Instrument;
@@ -410,6 +412,21 @@ void MainWindow::on_actionBehind_Detector_triggered()
     trans.scale(-1,-1);
     _ui->_dview->setTransform(trans);
     _ui->_dview->fitScene();
+}
+
+void MainWindow::on_action_display_isotopes_database_triggered()
+{
+
+    // Opens the dialog that will diplay the isotopes database
+    IsotopeDatabaseDialog* dlg=new IsotopeDatabaseDialog();
+    dlg->exec();
+}
+
+void MainWindow::on_action_add_element_triggered()
+{
+    // Opens the dialog that will diplay the isotopes database
+    AddElementDialog* dlg=new AddElementDialog();
+    dlg->exec();
 }
 
 void MainWindow::on_actionShow_labels_triggered(bool checked)

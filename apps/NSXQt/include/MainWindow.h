@@ -72,6 +72,10 @@ private slots:
 
     void on_actionShow_labels_triggered(bool checked);
 
+    void on_action_display_isotopes_database_triggered();
+
+    void on_action_add_element_triggered();
+
 public slots:
     void changeData(SX::Data::IData*);
     void showPeakList(std::vector<SX::Data::IData*>);

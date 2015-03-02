@@ -1346,7 +1346,15 @@ border-radius: 4px;
     <addaction name="menuSet_View"/>
     <addaction name="menuPeak"/>
    </widget>
+   <widget class="QMenu" name="menuChemistry">
+    <property name="title">
+     <string>Chemistry</string>
+    </property>
+    <addaction name="action_display_isotopes_database"/>
+    <addaction name="action_add_element"/>
+   </widget>
    <addaction name="menu_Options"/>
+   <addaction name="menuChemistry"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <property name="minimumSize">
@@ -1632,6 +1640,16 @@ QDockWidget::title {
     <string>Show labels</string>
    </property>
   </action>
+  <action name="action_display_isotopes_database">
+   <property name="text">
+    <string>Display isotopes database</string>
+   </property>
+  </action>
+  <action name="action_add_element">
+   <property name="text">
+    <string>Add element</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -1672,8 +1690,8 @@ QDockWidget::title {
      <y>539</y>
     </hint>
     <hint type="destinationlabel">
-     <x>885</x>
-     <y>546</y>
+     <x>882</x>
+     <y>545</y>
     </hint>
    </hints>
   </connection>
@@ -1684,8 +1702,8 @@ QDockWidget::title {
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>885</x>
-     <y>546</y>
+     <x>882</x>
+     <y>545</y>
     </hint>
     <hint type="destinationlabel">
      <x>820</x>
@@ -1700,12 +1718,12 @@ QDockWidget::title {
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>980</x>
-     <y>126</y>
+     <x>979</x>
+     <y>125</y>
     </hint>
     <hint type="destinationlabel">
-     <x>949</x>
-     <y>324</y>
+     <x>948</x>
+     <y>456</y>
     </hint>
    </hints>
   </connection>
@@ -1716,12 +1734,12 @@ QDockWidget::title {
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>949</x>
-     <y>394</y>
+     <x>948</x>
+     <y>512</y>
     </hint>
     <hint type="destinationlabel">
-     <x>980</x>
-     <y>126</y>
+     <x>979</x>
+     <y>125</y>
     </hint>
    </hints>
   </connection>

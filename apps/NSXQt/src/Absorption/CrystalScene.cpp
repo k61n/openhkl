@@ -7,6 +7,7 @@
 #include <QGraphicsTextItem>
 #include <QMessageBox>
 #include <QtDebug>
+#include <iostream>
 
 CrystalScene::CrystalScene(QWidget *parent) :
     QGraphicsScene(parent), pixmapitem(0),_ruler(0),_pin(0),_hull(),_text(nullptr)
@@ -20,34 +21,30 @@ CrystalScene::CrystalScene(QWidget *parent) :
     _pinCreated=false;
 
 }
+
 CrystalScene::~CrystalScene()
 {
 }
 
 void CrystalScene::loadImage(QString filename)
 {
+    _pix.load(filename);
    if (!pixmapitem)
    {
-    _pix.load(filename);
     pixmapitem=addPixmap(_pix);
     int w=pixmapitem->pixmap().width();
     pixmapitem->setScale(800.0/w);
    }
    else
-   {
-       _pix.load(filename);
        pixmapitem->setPixmap(_pix);
-    }
+
    QImage image=pixmapitem->pixmap().toImage();
    image.QImage::convertToFormat(QImage::Format_Indexed8);
    QVector<QRgb> table=image.colorTable();
-   QVector<QRgb>::iterator it;
 
    int i=0;
-   for (it=table.begin();it!=table.end();++it,i++)
-   {
+   for (auto it=table.begin();it!=table.end();++it,i++)
        image.setColor(i,*it+200);
-   }
 }
 
 void CrystalScene::changeBrigthness(int a)
@@ -79,21 +76,21 @@ void CrystalScene::changeBrigthness(int a)
     pixmapitem->setPixmap(QPixmap::fromImage(image));
 }
 
-
 void CrystalScene::activateCalibrateDistance()
 {
     mode=calibrateDistance;
 }
+
 void CrystalScene::activatePickCenter()
 {
     mode=pickCenter;
 }
 
-
 void CrystalScene::activatePickingPoints()
 {
     mode=pickingPoint;
 }
+
 void CrystalScene::activateRemovingPoints()
 {
     mode=removingPoint;
@@ -258,19 +255,20 @@ void CrystalScene::triangulate()
             double x,y,z;
             temp->getCoordinates(x,y,z);
             _hull.addVertex(x*aspectratio,y*aspectratio,z*aspectratio);
+            std::cout<<x*aspectratio<<" "<<y*aspectratio<<" "<<z*aspectratio<<std::endl;
         }
     }
+
     try
     {
     _hull.updateHull();
     }
     catch(std::exception& e)
     {
-        QMessageBox::critical(nullptr, tr("NSXTool"),
-                              tr(e.what()));
+        QMessageBox::critical(nullptr, tr("NSXTool"), tr(e.what()));
         return;
     }
-    qDebug() << "Hull Faces:" << _hull.getNFaces() << ", edges:" << _hull.getNEdges() << ", vertices: " << _hull.getNVertices();
+    std::cout << "Hull Faces:" << _hull.getNFaces() << ", edges:" << _hull.getNEdges() << ", vertices: " << _hull.getNVertices() << std::endl;
 
     const std::vector<SX::Geometry::Triangle>& tcache=_hull.createFaceCache();
     std::vector<SX::Geometry::Triangle>::const_iterator it;

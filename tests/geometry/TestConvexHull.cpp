@@ -171,23 +171,40 @@ BOOST_AUTO_TEST_CASE(Test_ConvexHull)
 //		std::cout<<CheckEulerCondition(chull1)<<std::endl;
 //	}
 
-	std::cout<<"random shuffling"<<std::endl;
-	std::vector<std::vector<double>> coords;
-	for (int j=0;j<1000;++j)
-	{
-		double x=rand()%100000;
-		double y=rand()%100000;
-		double z=rand()%100000;
-		coords.push_back({x,y,z});
-	}
-	for (int i=0;i<1000;++i)
-	{
-		CHullDouble chull2;
-		std::random_shuffle(coords.begin(),coords.end());
-		for (auto& v : coords)
-			chull2.addVertex(v[0],v[1],v[2]);
-		chull2.updateHull();
-		std::cout<<CheckEulerCondition(chull2)<<std::endl;
-	}
+//	std::cout<<"random shuffling"<<std::endl;
+//	std::vector<std::vector<double>> coords;
+//	for (int j=0;j<1000;++j)
+//	{
+//		double x=rand()%100000;
+//		double y=rand()%100000;
+//		double z=rand()%100000;
+//		coords.push_back({x,y,z});
+//	}
+//	for (int i=0;i<1000;++i)
+//	{
+//		CHullDouble chull2;
+//		std::random_shuffle(coords.begin(),coords.end());
+//		for (auto& v : coords)
+//			chull2.addVertex(v[0],v[1],v[2]);
+//		chull2.updateHull();
+//		std::cout<<CheckEulerCondition(chull2)<<std::endl;
+//	}
+
+	CHullDouble chull3;
+
+	chull3.addVertex(0.873653, 0.0446957, -0.122867);
+	chull3.addVertex(0.855163, -1.14266, -0.41567);
+	chull3.addVertex(0.582435, -0.503755, -0.183252);
+	chull3.addVertex(1.05393, 0.156435, -0.430035);
+	chull3.addVertex(1.3359, 0.350861, -0.964506);
+	chull3.addVertex(2.36672, 0.303931, -0.835496);
+	chull3.addVertex(1.87211, -0.239591, -0.0871566);
+	chull3.addVertex(2.25116, -1.06894, -0.388852);
+	chull3.addVertex(1.08629, -0.829353, -0.301696);
+
+	chull3.updateHull();
+
+	std::cout<<CheckEulerCondition(chull3)<<std::endl;
+
 }
 
