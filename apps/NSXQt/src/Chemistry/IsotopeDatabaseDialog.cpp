@@ -13,7 +13,7 @@
 #include <boost/property_tree/xml_parser.hpp>
 
 #include "Error.h"
-#include "Format.h"
+#include "ComplexParser.h"
 #include "include/Chemistry/IsotopeDatabaseDialog.h"
 #include "ui_IsotopeDatabaseDialog.h"
 #include "IsotopeManager.h"
