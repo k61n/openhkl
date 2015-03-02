@@ -96,6 +96,9 @@ public:
 	//! Returns the number of isotopes that build this Element
 	unsigned int getNIsotopes() const;
 
+	//! Return true whether some Isotope has been provided to this Element
+	bool isEmpty() const;
+
 	//! Returns the molar mass of the element (according to its isotopes composition)
 	double getMolarMass() const;
 

@@ -35,6 +35,8 @@
 #include <string>
 #include <vector>
 
+#include <iostream>
+
 namespace SX
 {
 
@@ -42,7 +44,7 @@ namespace Utils
 {
 	using namespace boost::spirit;
 
-	typedef boost::fusion::vector2<std::string,unsigned int> element;
+	typedef boost::fusion::vector3<std::string,std::string,unsigned int> element;
 	typedef std::vector<element> formula;
 
 	//! @Class: ChemicalFormulaParser.
@@ -63,14 +65,16 @@ namespace Utils
 			start=*(startelement);
 			// Each element parsing block is made of the element name followed optionally by the number of such isotopes in the chemical
 			// formula
-			startelement = (symbol) >> (uint_ | qi::attr(1));
+			startelement = symbol >> isotope >> (uint_ | qi::attr(1));
 			//! An element name is made of a chemical symbol followed optionally by the a specific isotope definintion given in square bracket (e.g. H[2] for deuterium)
-			symbol = char_("A-Z") >> -char_("a-z") >> -(char_("[") >> +char_("0-9") >> char_("]"));
+			symbol = char_("A-Z") >> -char_("a-z");
+			isotope = (char_("[") >> +char_("0-9") >> char_("]")) | boost::spirit::qi::attr("");
 		}
 	private:
 		qi::rule<Iterator,formula()> start;
 		qi::rule<Iterator,element()> startelement;
 		qi::rule<Iterator,std::string()> symbol;
+		qi::rule<Iterator,std::string()> isotope;
 	};
 
 } // Namespace Utils

@@ -141,6 +141,11 @@ unsigned int Element::getNIsotopes() const
 	return _isotopes.size();
 }
 
+bool Element::isEmpty() const
+{
+	return _isotopes.empty();
+}
+
 double Element::getMolarMass() const
 {
 	// If the sum of af the abundances of all the isotopes building the element is more than 1, then throws

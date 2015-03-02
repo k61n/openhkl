@@ -74,6 +74,9 @@ public:
 	//! Builds and register an empty material. If the material with the same name is already registered, throws.
 	sptrMaterial buildMaterial(const std::string& name, Material::State state=Material::State::Solid, Material::FillingMode fillingMode=Material::FillingMode::MassFraction);
 
+	//! Constructs a material from a chemical formula and a given physical state
+	sptrMaterial buildMaterialFromChemicalFormula(std::string formula, Material::State state=Material::State::Solid);
+
 	//! Find a Material
 	sptrMaterial findMaterial(const std::string& name);
 

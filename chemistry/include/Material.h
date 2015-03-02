@@ -75,9 +75,6 @@ public:
 	//! Constructs an empty Material in a given state to be filled later with a given filling mode
 	static sptrMaterial create(const std::string& name, State state=State::Solid, FillingMode fillingMode=FillingMode::MassFraction);
 
-	//! Constructs a material from a chemical formula and a given physical state
-	static sptrMaterial fromChemicalFormula(std::string formula, State state=State::Solid);
-
 public:
 
 	//! A lookup between the enum State and its corresponding string representation

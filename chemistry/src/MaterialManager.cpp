@@ -1,5 +1,12 @@
 #include <boost/foreach.hpp>
+#include <boost/spirit/include/qi.hpp>
+#include <boost/spirit/include/qi_grammar.hpp>
+#include <boost/spirit/include/phoenix_stl.hpp>
+#include <boost/spirit/include/phoenix_fusion.hpp>
 
+#include "ChemicalFormulaParser.h"
+#include "IsotopeManager.h"
+#include "Element.h"
 #include "ElementManager.h"
 #include "Error.h"
 #include "Material.h"
@@ -43,11 +50,61 @@ sptrMaterial MaterialManager::buildMaterial(const std::string& name, Material::S
 	// Check first if an element with this name has already been registered
 	auto it=_registry.find(name);
 	if (it!=_registry.end())
-		throw SX::Kernel::Error<MaterialManager>("A material with name "+name+" is already registered in the registry.");
+		return it->second;
 
 	// Otherwise built it from scratch.
 	sptrMaterial mat=Material::create(name,state,fillingMode);
 	_registry.insert(materialPair(name,mat));
+	return mat;
+}
+
+sptrMaterial MaterialManager::buildMaterialFromChemicalFormula(std::string formula, Material::State state)
+{
+
+	namespace qi=boost::spirit::qi;
+
+	SX::Utils::formula chemicalContents;
+
+	SX::Utils::ChemicalFormulaParser<std::string::iterator> parser;
+	qi::phrase_parse(formula.begin(),formula.end(),parser,qi::blank,chemicalContents);
+
+	ElementManager* emgr=ElementManager::Instance();
+
+	sptrMaterial mat=Material::create(formula,state,Material::FillingMode::NumberOfAtoms);
+
+	for (auto cc : chemicalContents)
+	{
+		std::string symbol=boost::fusion::at_c<0>(cc);
+		std::string isotope=boost::fusion::at_c<1>(cc);
+		unsigned int nAtoms=boost::fusion::at_c<2>(cc);
+
+		sptrElement element;
+
+		if (isotope.empty())
+		{
+			element = emgr->buildElement(symbol,symbol);
+			if (element->isEmpty())
+				throw SX::Kernel::Error<MaterialManager>("The element "+symbol+"is not a valid element name.");
+		}
+		else
+		{
+			element = emgr->buildElement(symbol,symbol+isotope);
+			if (element->isEmpty())
+			{
+				try
+				{
+					element->addIsotope(symbol+isotope);
+				}
+				catch(const SX::Kernel::Error<IsotopeManager>& error)
+				{
+					throw SX::Kernel::Error<MaterialManager>(error.what());
+				}
+			}
+		}
+
+		mat->addElement(element,nAtoms);
+	}
+
 	return mat;
 }
 

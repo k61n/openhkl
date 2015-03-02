@@ -64,7 +64,7 @@ sptrElement ElementManager::buildElement(const std::string& name, const std::str
 	// Check first if an element with this name has already been registered
 	auto it=_registry.find(name);
 	if (it!=_registry.end())
-		throw SX::Kernel::Error<ElementManager>("An element with name "+name+" is already registered in the database.");
+		return it->second;
 
 	// Otherwise built it from scratch.
 	sptrElement element=Element::create(name,symbol);
