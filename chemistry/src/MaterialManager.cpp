@@ -45,15 +45,19 @@ void MaterialManager::cleanRegistry()
 	}
 }
 
-sptrMaterial MaterialManager::buildMaterial(const std::string& name, Material::State state, Material::FillingMode fillingMode)
+sptrMaterial MaterialManager::buildEmptyMaterial(const std::string& name, Material::State state, Material::FillingMode fillingMode)
 {
 	// Check first if an element with this name has already been registered
 	auto it=_registry.find(name);
 	if (it!=_registry.end())
+	{
+		if (it->second->getFillingMode()!=fillingMode || it->second->getState()!= state)
+			throw SX::Kernel::Error<MaterialManager>("A material that matches "+name+" name is already registered but with a different physical state and/or filling mode.");
 		return it->second;
+	}
 
 	// Otherwise built it from scratch.
-	sptrMaterial mat=Material::create(name,state,fillingMode);
+	sptrMaterial mat(Material::create(name,state,fillingMode));
 	_registry.insert(materialPair(name,mat));
 	return mat;
 }
@@ -70,7 +74,7 @@ sptrMaterial MaterialManager::buildMaterialFromChemicalFormula(std::string formu
 
 	ElementManager* emgr=ElementManager::Instance();
 
-	sptrMaterial mat=Material::create(formula,state,Material::FillingMode::NumberOfAtoms);
+	sptrMaterial mat(Material::create(formula,state,Material::FillingMode::NumberOfAtoms));
 
 	for (auto cc : chemicalContents)
 	{
@@ -80,15 +84,12 @@ sptrMaterial MaterialManager::buildMaterialFromChemicalFormula(std::string formu
 
 		sptrElement element;
 
+		// Case of an element that has to be built from its natural isotopes
 		if (isotope.empty())
-		{
-			element = emgr->buildElement(symbol,symbol);
-			if (element->isEmpty())
-				throw SX::Kernel::Error<MaterialManager>("The element "+symbol+"is not a valid element name.");
-		}
+			element = emgr->buildNaturalElement(symbol,symbol);
 		else
 		{
-			element = emgr->buildElement(symbol,symbol+isotope);
+			element = emgr->getElement(symbol+isotope);
 			if (element->isEmpty())
 			{
 				try
@@ -101,6 +102,7 @@ sptrMaterial MaterialManager::buildMaterialFromChemicalFormula(std::string formu
 				}
 			}
 		}
+
 
 		mat->addElement(element,nAtoms);
 	}
@@ -120,7 +122,7 @@ sptrMaterial MaterialManager::buildMaterial(const property_tree::ptree& node)
 	Material::FillingMode fMode=Material::s_toFillingMode.at(node.get<std::string>("<xmlattr>.filling_mode","mass_fraction"));
 
 	// Create an empty Material
-	sptrMaterial material=Material::create(name,state,fMode);
+	sptrMaterial material(Material::create(name,state,fMode));
 
 	// Loop over the subnodes of the node
 	BOOST_FOREACH(const property_tree::ptree::value_type& v, node)
@@ -132,19 +134,11 @@ sptrMaterial MaterialManager::buildMaterial(const property_tree::ptree& node)
 
 			boost::optional<std::string> submat=v.second.get_optional<std::string>("<xmlattr>.database");
 			if (submat)
-				component=findMaterial(submat.get());
+				component=getMaterial(submat.get());
 			else
 			{
 				name=v.second.get<std::string>("<xmlattr>.name");
-				try
-				{
-					component=findMaterial(name);
-				}
-				catch(const SX::Kernel::Error<MaterialManager>& e)
-				{
-					component=buildMaterial(v.second);
-					_registry.insert(materialPair(name,component));
-				}
+				component=getMaterial(name);
 			}
 
 			if (fMode==Material::FillingMode::MassFraction || fMode==Material::FillingMode::MoleFraction)
@@ -172,14 +166,13 @@ sptrMaterial MaterialManager::buildMaterial(const property_tree::ptree& node)
 			ElementManager* mgr=ElementManager::Instance();
 			sptrElement element;
 			name=v.second.get<std::string>("<xmlattr>.name");
-			try
-			{
-				element=mgr->findElement(name);
-			}
-			catch(const SX::Kernel::Error<ElementManager>& e)
-			{
+			// If the element is stored in the elements registry just get it
+			if (mgr->isRegistered(name))
+				element=mgr->getElement(name);
+			// Otherwise parses the XMl node, build and register an new element out of it
+			else
 				element=mgr->buildElement(v.second);
-			}
+
 			if (fMode==Material::FillingMode::MassFraction || fMode==Material::FillingMode::MoleFraction)
 			{
 				const property_tree::ptree& fraction = v.second.get_child("contents");
@@ -209,13 +202,11 @@ sptrMaterial MaterialManager::buildMaterial(const property_tree::ptree& node)
 		material->setDensity(density.get_value<double>()*units);
 	};
 
-	_registry.insert(materialPair(name,material));
-
 	return material;
 
 }
 
-sptrMaterial MaterialManager::findMaterial(const std::string& name)
+sptrMaterial MaterialManager::getMaterial(const std::string& name)
 {
 	// Check first if a Material with this name has already been registered
 	auto it=_registry.find(name);
@@ -241,9 +232,16 @@ sptrMaterial MaterialManager::findMaterial(const std::string& name)
 
 		// Once the XML node has been found, build a Material from it and register it
 		if (v.second.get<std::string>("<xmlattr>.name").compare(name)==0)
-			return buildMaterial(v.second);
+		{
+			sptrMaterial material=buildMaterial(v.second);
+			_registry.insert(materialPair(name,material));
+			return material;
+		}
 	}
-	throw SX::Kernel::Error<MaterialManager>("Material "+name+" is not registered in the materials database");
+
+	sptrMaterial material(Material::create(name));
+	_registry.insert(materialPair(name,material));
+	return material;
 }
 
 void MaterialManager::setDatabasePath(const std::string& path)
@@ -260,12 +258,12 @@ void MaterialManager::setDatabasePath(const std::string& path)
 	_database=path;
 }
 
-unsigned int MaterialManager::getNRegisteredMaterials() const
+unsigned int MaterialManager::getNMaterialsInRegistry() const
 {
 	return _registry.size();
 }
 
-bool MaterialManager::hasMaterial(const std::string& name) const
+bool MaterialManager::isRegistered(const std::string& name) const
 {
 	auto it=_registry.find(name);
 	return (it!=_registry.end());
@@ -296,7 +294,7 @@ std::set<std::string> MaterialManager::getDatabaseNames() const
 	return names;
 }
 
-void MaterialManager::synchronizeDatabase(std::string filename) const
+void MaterialManager::updateDatabase(const std::string& filename) const
 {
 
 	//! If there is no entries in the registry, nothing to save, returns
@@ -327,12 +325,37 @@ void MaterialManager::synchronizeDatabase(std::string filename) const
 		m.second->writeToXML(materialsNode);
 	}
 
-	if (filename.empty())
-		filename=_database;
-
 	boost::property_tree::xml_writer_settings<char> settings('\t', 1);
-	xml_parser::write_xml(filename,root);
 
+	if (filename.empty())
+		xml_parser::write_xml(_database,root);
+	else
+		xml_parser::write_xml(filename,root);
+
+}
+
+unsigned int MaterialManager::getNMaterialsInDatabase() const
+{
+	unsigned int nMaterials(0);
+
+	property_tree::ptree root;
+	try
+	{
+		xml_parser::read_xml(_database,root);
+	}
+	catch (const std::runtime_error& error)
+	{
+		throw SX::Kernel::Error<MaterialManager>(error.what());
+	}
+
+	BOOST_FOREACH(const property_tree::ptree::value_type& node, root.get_child("materials"))
+	{
+		if (node.first.compare("material")!=0)
+			continue;
+		nMaterials++;
+	}
+
+	return nMaterials;
 }
 
 } // end namespace Chemistry

@@ -13,12 +13,12 @@ namespace SX
 namespace Chemistry
 {
 
-sptrElement Element::create(const std::string& name, const std::string& symbol)
+Element* Element::create(const std::string& name, const std::string& symbol)
 {
-	return sptrElement(new Element(name,symbol));
+	return (new Element(name,symbol));
 }
 
-Element::Element(const std::string& name, const std::string& symbol) : _name(name), _isotopes()
+Element::Element(const std::string& name, const std::string& symbol) : _name(name), _symbol(symbol), _isotopes(), _natural(!symbol.empty())
 {
 	if (!symbol.empty())
 	{
@@ -76,9 +76,13 @@ void Element::addIsotope(sptrIsotope isotope, double abundance)
 		return;
 
 	// If some isotopes have been previously added to the Element, check that the one to be added is chemcially compatible with the other ones, otherwise throws
-	if (!_isotopes.empty())
-		if (isotope->getNProtons() != _isotopes.begin()->second->getNProtons())
-			throw SX::Kernel::Error<Element>("Invalid number of protons");
+	if (!_symbol.empty())
+	{
+		if (_symbol.compare(isotope->getSymbol()) != 0)
+			throw SX::Kernel::Error<Element>("The isotope does not match with this element.");
+	}
+	else
+		_symbol=isotope->getSymbol();
 
 	// If the abundance is not in the interval [0,1] then throws
 	if (abundance<0.0 || abundance>1.0)
@@ -103,7 +107,7 @@ void Element::addIsotope(const std::string& name)
 {
 	// Retrieve the isotope (from isotopes registry or XML database if not in the isotopes registry) whose name matches the given name
 	IsotopeManager* mgr=IsotopeManager::Instance();
-	sptrIsotope is=mgr->findIsotope(name);
+	sptrIsotope is=mgr->getIsotope(name);
 
 	// Add it to the isotopes internal map with its natural abundance
 	addIsotope(is,is->getAbundance());
@@ -115,7 +119,7 @@ void Element::addIsotope(const std::string& name, double abundance)
 {
 	// Retrieve the isotope (from isotopes registry or XML database if not in the isotopes registry) whose name matches the given name
 	IsotopeManager* mgr=IsotopeManager::Instance();
-	sptrIsotope is=mgr->findIsotope(name);
+	sptrIsotope is=mgr->getIsotope(name);
 
 	// Add it to the isotopes internal map with the given abundance
 	addIsotope(is,abundance);
@@ -126,14 +130,6 @@ void Element::addIsotope(const std::string& name, double abundance)
 const std::string& Element::getName() const
 {
 	return _name;
-}
-
-std::string Element::getSymbol() const
-{
-	if (_isotopes.empty())
-		throw SX::Kernel::Error<Element>("The element is empy");
-
-	return _isotopes.begin()->second->getSymbol();
 }
 
 unsigned int Element::getNIsotopes() const
@@ -228,6 +224,21 @@ void Element::writeToXML(property_tree::ptree& parent) const
 		isnode.put("<xmlattr>.name",is.first);
 		isnode.put<double>("abundance",is.second);
 	}
+}
+
+void Element::setNatural(bool natural)
+{
+	_natural=natural;
+}
+
+const bool Element::isNatural() const
+{
+	return _natural;
+}
+
+const std::string& Element::getSymbol() const
+{
+	return _symbol;
 }
 
 void Element::print(std::ostream& os) const

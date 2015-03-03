@@ -6,9 +6,9 @@ namespace SX
 namespace Chemistry
 {
 
-sptrIsotope Isotope::create(const std::string& name)
+Isotope* Isotope::create(const std::string& name)
 {
-	return sptrIsotope(new Isotope(name));
+	return (new Isotope(name));
 }
 
 Isotope::Isotope()

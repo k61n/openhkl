@@ -72,31 +72,30 @@ public:
 	~MaterialManager();
 
 	//! Builds and register an empty material. If the material with the same name is already registered, throws.
-	sptrMaterial buildMaterial(const std::string& name, Material::State state=Material::State::Solid, Material::FillingMode fillingMode=Material::FillingMode::MassFraction);
+	sptrMaterial buildEmptyMaterial(const std::string& name, Material::State state=Material::State::Solid, Material::FillingMode fillingMode=Material::FillingMode::MassFraction);
 
 	//! Constructs a material from a chemical formula and a given physical state
 	sptrMaterial buildMaterialFromChemicalFormula(std::string formula, Material::State state=Material::State::Solid);
 
 	//! Find a Material
-	sptrMaterial findMaterial(const std::string& name);
-
-	//! Sets the path for the materials XML database
-	void setDatabasePath(const std::string& path);
-
-	//! Returns the number of registered materials
-	unsigned int getNRegisteredMaterials() const;
-
-	//! Returns true if a Material with a given name is registered
-	bool hasMaterial(const std::string& name) const;
+	sptrMaterial getMaterial(const std::string& name);
 
 	//! Clean up the registry
 	void cleanRegistry();
+	//! Returns the number of registered materials
+	unsigned int getNMaterialsInRegistry() const;
+	//! Returns true if a Material with a given name is registered
+	bool isRegistered(const std::string& name) const;
 
 	//! Returns the name of the materials stored in the materials XML database
 	std::set<std::string> getDatabaseNames() const;
+	//! Returns the number of materials stored in the XML database
+	unsigned int getNMaterialsInDatabase() const;
+	//! Sets the path for the materials XML database
+	void setDatabasePath(const std::string& path);
 
 	//! Synchronizes the new entries of the registry with the database
-	void synchronizeDatabase(std::string filename="") const;
+	void updateDatabase(const std::string& filename="") const;
 
 private:
 

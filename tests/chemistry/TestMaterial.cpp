@@ -27,10 +27,10 @@ BOOST_AUTO_TEST_CASE(Test_Material)
 	BOOST_CHECK_NO_THROW(mmgr->setDatabasePath("./materials.xml"));
 
 	// Builds the methane molecule from the materials XML database
-	SX::Chemistry::sptrMaterial dbMethane=mmgr->findMaterial("db_methane");
+	SX::Chemistry::sptrMaterial dbMethane=mmgr->getMaterial("db_methane");
 
 	// Check that the registry of materials has been correctly updated
-	BOOST_CHECK_EQUAL(mmgr->getNRegisteredMaterials(),1);
+	BOOST_CHECK_EQUAL(mmgr->getNMaterialsInRegistry(),1);
 
 	// Checks that the methane molecule is made of two elements each of them being a composite of isotopes
 	BOOST_CHECK_EQUAL(dbMethane->getNElements(),2);
@@ -52,20 +52,27 @@ BOOST_AUTO_TEST_CASE(Test_Material)
 	BOOST_CHECK_CLOSE(massFractions["hydrogen"],4.0*mHydrogen/mTotal,tolerance);
 
 	// Build a methane material dynamically and checks that its contents is the same than the one built from the database
-	SX::Chemistry::sptrMaterial methane= mmgr->buildMaterial("methane",Material::State::Gaz,Material::FillingMode::NumberOfAtoms);
-	methane->addElement(emgr->findElement("carbon"),1);
-	methane->addElement(emgr->findElement("hydrogen"),4);
+	SX::Chemistry::sptrMaterial methane= mmgr->buildEmptyMaterial("methane",Material::State::Gaz,Material::FillingMode::NumberOfAtoms);
+	methane->addElement(emgr->getElement("carbon"),1);
+	methane->addElement(emgr->getElement("hydrogen"),4);
 	methane->setDensity(1.235);
 	contentsMap massFractions1=methane->getMassFractions();
 	BOOST_CHECK_EQUAL(massFractions["carbon"],massFractions["carbon"]);
 	BOOST_CHECK_EQUAL(massFractions["hydrogen"],massFractions["hydrogen"]);
 
 	// Check that the registry of materials has been correctly updated
-	BOOST_CHECK_EQUAL(mmgr->getNRegisteredMaterials(),2);
+	BOOST_CHECK_EQUAL(mmgr->getNMaterialsInRegistry(),2);
 
 	// Build a mixture of material from the XML database
-	SX::Chemistry::sptrMaterial dbMixture=mmgr->findMaterial("db_mixture");
+	SX::Chemistry::sptrMaterial dbMixture=mmgr->getMaterial("db_mixture");
 
-	mmgr->synchronizeDatabase("materials_new.xml");
+	SX::Chemistry::sptrMaterial b4c=mmgr->buildMaterialFromChemicalFormula("B4C");
+	BOOST_CHECK_EQUAL((*b4c)["C"]->getNIsotopes(),2);
+	BOOST_CHECK_EQUAL((*b4c)["B"]->getNIsotopes(),2);
+	moleFractions=b4c->getMoleFractions();
+	BOOST_CHECK_EQUAL(moleFractions["C"],0.2);
+	BOOST_CHECK_EQUAL(moleFractions["B"],0.8);
+
+	mmgr->updateDatabase("materials_new.xml");
 
 }

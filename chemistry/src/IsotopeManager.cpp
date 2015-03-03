@@ -109,31 +109,14 @@ std::vector<std::string> IsotopeManager::getDatabaseNames() const
 	return names;
 }
 
-sptrIsotope IsotopeManager::buildIsotope(const std::string& name)
-{
-	// Check first if an isotope with this name has already been registered
-	auto it=_registry.find(name);
-	if (it!=_registry.end())
-		throw SX::Kernel::Error<IsotopeManager>("An isotope with name "+name+" is already registered in the database.");
-
-	// Otherwise built it from scratch.
-	sptrIsotope is=Isotope::create(name);
-	_registry.insert(isotopePair(name,is));
-	return is;
-}
-
 sptrIsotope IsotopeManager::buildIsotope(const property_tree::ptree& node)
 {
-	sptrIsotope isotope;
-
 	std::string name=node.get<std::string>("<xmlattr>.name");
 
 	SX::Units::UnitsManager* um=SX::Units::UnitsManager::Instance();
 
-	// Build an empty Isotope
-	isotope=buildIsotope(name);
+	sptrIsotope isotope(Isotope::create(name));
 
-	isotope->_name=name;
 	isotope->_symbol=node.get<std::string>("symbol");
 	isotope->_element=node.get<std::string>("element");
 	isotope->_nProtons=node.get<int>("n_protons");
@@ -158,7 +141,7 @@ sptrIsotope IsotopeManager::buildIsotope(const property_tree::ptree& node)
 
 }
 
-sptrIsotope IsotopeManager::findIsotope(const std::string& name)
+sptrIsotope IsotopeManager::getIsotope(const std::string& name)
 {
 	// If the isotope has already been registered, just return its corresponding pointer
 	auto it=_registry.find(name);
@@ -184,19 +167,50 @@ sptrIsotope IsotopeManager::findIsotope(const std::string& name)
 			continue;
 
 		if (v.second.get<std::string>("<xmlattr>.name").compare(name)==0)
-			return buildIsotope(v.second);
+		{
+			sptrIsotope isotope(buildIsotope(v.second));
+			_registry.insert(isotopePair(name,isotope));
+			return isotope;
+		}
 	}
 
-	// No node match the request, throws
-	throw SX::Kernel::Error<IsotopeManager>("Isotope "+name+" is not registered in the isotopes database");
+	sptrIsotope isotope(Isotope::create(name));
+	_registry.insert(isotopePair(name,isotope));
+
+	return isotope;
+
 }
 
-unsigned int IsotopeManager::getNRegisteredIsotopes() const
+unsigned int IsotopeManager::getNIsotopesInRegistry() const
 {
 	return _registry.size();
 }
 
-bool IsotopeManager::hasIsotope(const std::string& name) const
+unsigned int IsotopeManager::getNIsotopesInDatabase() const
+{
+	unsigned int nIsotopes(0);
+
+	property_tree::ptree root;
+	try
+	{
+		xml_parser::read_xml(_database,root);
+	}
+	catch (const std::runtime_error& error)
+	{
+		throw SX::Kernel::Error<IsotopeManager>(error.what());
+	}
+
+	BOOST_FOREACH(const property_tree::ptree::value_type& node, root.get_child("isotopes"))
+	{
+		if (node.first.compare("isotope")!=0)
+			continue;
+		nIsotopes++;
+	}
+
+	return nIsotopes;
+}
+
+bool IsotopeManager::isRegistered(const std::string& name) const
 {
 	auto it=_registry.find(name);
 	return (it!=_registry.end());

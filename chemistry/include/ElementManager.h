@@ -49,6 +49,7 @@ namespace Chemistry
 // Forward declarations
 class Element;
 class Isotope;
+class MaterialManager;
 
 // Typedefs
 typedef std::shared_ptr<Element> sptrElement;
@@ -61,6 +62,10 @@ namespace property_tree=boost::property_tree;
 class ElementManager : public SX::Kernel::Singleton<ElementManager,SX::Kernel::Constructor,SX::Kernel::Destructor>
 {
 
+private:
+
+	friend class MaterialManager;
+
 public:
 
 	//! Default constructor
@@ -72,31 +77,30 @@ public:
 	//! Sets the path for the elements XML database
 	void setDatabasePath(const std::string& path);
 
-	//! Returns a shared pointer to an Element with a given name. The Element is searched first in the registry and if not found in the XML datatabase. If is found nowhere, throws.
-	sptrElement findElement(const std::string& name);
-
 	//! Builds and registers an element. If symbol is provided the Element will be built from its natural isotopes otherwise the Element is empty.
 	//! A shared pointer to the newly created Element is returned.
-	sptrElement buildElement(const std::string& name, const std::string& symbol="");
-
-	//! Builds and registers an Element from an XML node
-	//! A shared pointer to the newly created Element is returned.
-	sptrElement buildElement(const property_tree::ptree& node);
-
-	//! Returns true if an Element with a given name is registered
-	bool hasElement(const std::string& name) const;
-
+	sptrElement buildNaturalElement(const std::string& name, const std::string& symbol);
+	//! Returns a shared pointer to an Element with a given name. The Element is searched first in the registry then in the XML database. If not found return an empty element.
+	sptrElement getElement(const std::string& name);
 	//! Returns the number of registered Element objects
-	unsigned int getNRegisteredElements() const;
-
+	unsigned int getNElementsInRegistry() const;
+	//! Returns true if an Element with a given name is registered
+	bool isRegistered(const std::string& name) const;
 	//! Clean up the Element registry
 	void cleanRegistry();
 
 	//! Returns the name of the elements stored in the elements XML database
 	std::set<std::string> getDatabaseNames() const;
+	//! Returns the number of elements stored in the XMl database
+	unsigned int getNElementsInDatabase() const;
+	//! Save the registry
+	void updateDatabase(std::string filename="") const;
 
-	//! Synchronizes the new entries of the registry with the database
-	void synchronizeDatabase(std::string filename="") const;
+private:
+
+	//! Builds and registers an Element from an XML node
+	//! A shared pointer to the newly created Element is returned.
+	sptrElement buildElement(const property_tree::ptree& node);
 
 private:
 

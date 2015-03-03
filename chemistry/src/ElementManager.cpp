@@ -59,15 +59,22 @@ void ElementManager::setDatabasePath(const std::string& path)
 	_database=path;
 }
 
-sptrElement ElementManager::buildElement(const std::string& name, const std::string& symbol)
+sptrElement ElementManager::buildNaturalElement(const std::string& name, const std::string& symbol)
 {
+	if (symbol.empty())
+		throw SX::Kernel::Error<ElementManager>("A chemical symbol is necessary for building a natural element.");
+
 	// Check first if an element with this name has already been registered
 	auto it=_registry.find(name);
 	if (it!=_registry.end())
+	{
+		if (symbol.compare(it->second->getSymbol())!=0)
+			throw SX::Kernel::Error<ElementManager>("An element that matches "+name+" name is already registered but with a different chemical symbol.");
 		return it->second;
+	}
 
 	// Otherwise built it from scratch.
-	sptrElement element=Element::create(name,symbol);
+	sptrElement element(Element::create(name,symbol));
 	_registry.insert(elementPair(name,element));
 	return element;
 }
@@ -81,13 +88,13 @@ sptrElement ElementManager::buildElement(const property_tree::ptree& node)
 	// If the element node has an attribute symbol then the element is built from its natural isotopes
 	boost::optional<const property_tree::ptree&> symbol = node.get_child_optional("symbol");
 	if (symbol)
-		element=buildElement(name,symbol.get().get_value<std::string>());
+		element=buildNaturalElement(name,symbol.get().get_value<std::string>());
 	else
 	{
 		SX::Units::UnitsManager* um=SX::Units::UnitsManager::Instance();
 
 		// Build an empty Element
-		element=buildElement(name);
+		element=sptrElement(Element::create(name));
 		// Loop over the 'isotope' nodes
 		BOOST_FOREACH(const property_tree::ptree::value_type& subnode, node)
 		{
@@ -112,7 +119,7 @@ sptrElement ElementManager::buildElement(const property_tree::ptree& node)
 
 }
 
-sptrElement ElementManager::findElement(const std::string& name)
+sptrElement ElementManager::getElement(const std::string& name)
 {
 
 	// Looks first for the element in the registry
@@ -138,20 +145,27 @@ sptrElement ElementManager::findElement(const std::string& name)
 			continue;
 
 		if (node.second.get<std::string>("<xmlattr>.name").compare(name)==0)
-			return buildElement(node.second);
+		{
+			sptrElement element=buildElement(node.second);
+			_registry.insert(elementPair(name,element));
+			return element;
+		}
 	}
 
-	throw SX::Kernel::Error<ElementManager>("Element "+name+" could not be found neither in the registry neither in the elements XML database.");
+	sptrElement element(Element::create(name));
+	_registry.insert(elementPair(name,element));
+
+	return element;
 
 }
 
-bool ElementManager::hasElement(const std::string& name) const
+bool ElementManager::isRegistered(const std::string& name) const
 {
 	auto it=_registry.find(name);
 	return (it!=_registry.end());
 }
 
-unsigned int ElementManager::getNRegisteredElements() const
+unsigned int ElementManager::getNElementsInRegistry() const
 {
 	return _registry.size();
 }
@@ -181,7 +195,7 @@ std::set<std::string> ElementManager::getDatabaseNames() const
 	return names;
 }
 
-void ElementManager::synchronizeDatabase(std::string filename) const
+void ElementManager::updateDatabase(std::string filename) const
 {
 
 	//! If there is no entries in the registry, nothing to save, returns
@@ -218,6 +232,30 @@ void ElementManager::synchronizeDatabase(std::string filename) const
 	boost::property_tree::xml_writer_settings<char> settings('\t', 1);
 	xml_parser::write_xml(filename,root);
 
+}
+
+unsigned int ElementManager::getNElementsInDatabase() const
+{
+	unsigned int nElements(0);
+
+	property_tree::ptree root;
+	try
+	{
+		xml_parser::read_xml(_database,root);
+	}
+	catch (const std::runtime_error& error)
+	{
+		throw SX::Kernel::Error<ElementManager>(error.what());
+	}
+
+	BOOST_FOREACH(const property_tree::ptree::value_type& node, root.get_child("elements"))
+	{
+		if (node.first.compare("element")!=0)
+			continue;
+		nElements++;
+	}
+
+	return nElements;
 }
 
 } // end namespace Chemistry

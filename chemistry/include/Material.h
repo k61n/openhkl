@@ -47,6 +47,7 @@ namespace Chemistry
 // Forward declarations
 class Element;
 class Material;
+class MaterialManager;
 
 // Typedefs
 typedef std::shared_ptr<Element> sptrElement;
@@ -62,6 +63,10 @@ namespace property_tree=boost::property_tree;
 class Material
 {
 
+private:
+
+	friend class MaterialManager;
+
 public:
 
 	//! Enumerates the different modes that can be used to fill a Material with its components
@@ -70,10 +75,10 @@ public:
 	//! Enumerates the different chemical states that can be assigned to a Material
 	enum class State : unsigned int {Solid=0,Liquid=1,Gaz=2};
 
-public:
+private:
 
 	//! Constructs an empty Material in a given state to be filled later with a given filling mode
-	static sptrMaterial create(const std::string& name, State state=State::Solid, FillingMode fillingMode=FillingMode::MassFraction);
+	static Material* create(const std::string& name, State state=State::Solid, FillingMode fillingMode=FillingMode::MassFraction);
 
 public:
 
@@ -88,30 +93,20 @@ public:
 
 public:
 
-	//! Default constructor (deleted)
-	Material()=delete;
-
-	//! Copy constructor (deleted)
-	Material(const Material& other)=delete;
-
 	//! Destructor
 	~Material();
 
-	//! Assignment operator (deleted)
-	Material& operator=(const Material& other)=delete;
-
 	//! Return true if two Material objects are the same (same density, same chemical state and same elements with the same mass fraction)
 	bool operator==(const Material& other) const;
-
 	//! Returns a shared pointer to the Element of this Material corresponding to this name. If no element of this Material matches this name, throws.
 	sptrElement operator[](const std::string& name);
 
-	//! Add a shared pointer to a Material object to this Material
-	void addMaterial(sptrMaterial material, double fraction);
 	//! Add an Element to this Material.
 	void addElement(const std::string& name, double fraction);
 	//! Add a shared pointer to an Element object to this Material
 	void addElement(sptrElement element, double fraction);
+	//! Add a shared pointer to a Material object to this Material
+	void addMaterial(sptrMaterial material, double fraction);
 
 	//! Returns the number of elements of this Material
 	unsigned int getNElements() const;
@@ -158,8 +153,17 @@ public:
 
 private:
 
+	//! Default constructor (deleted)
+	Material()=delete;
+
+	//! Copy constructor (deleted)
+	Material(const Material& other)=delete;
+
 	//! Constructs an empty Material in a given state and filling mode (to be filled later by addElement and/or addMaterial methods)
 	Material(const std::string& name, State state=State::Solid, FillingMode fillingMode=FillingMode::MassFraction);
+
+	//! Assignment operator (deleted)
+	Material& operator=(const Material& other)=delete;
 
 private:
 

@@ -44,9 +44,9 @@ std::map<Material::FillingMode,std::string> Material::s_fromFillingMode={
 		{Material::FillingMode::PartialPressure,"partial_pressure"}
 };
 
-sptrMaterial Material::create(const std::string& name, State state, FillingMode fillingMode)
+Material* Material::create(const std::string& name, State state, FillingMode fillingMode)
 {
-	return sptrMaterial(new Material(name,state,fillingMode));
+	return (new Material(name,state,fillingMode));
 }
 
 Material::Material(const std::string& name, State state, FillingMode fillingMode)
@@ -124,7 +124,7 @@ void Material::addElement(const std::string& name, double fraction)
 {
 	ElementManager* mgr=ElementManager::Instance();
 
-	sptrElement el=mgr->findElement(name);
+	sptrElement el=mgr->getElement(name);
 
 	addElement(el,fraction);
 

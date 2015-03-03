@@ -80,41 +80,35 @@ public:
 	isotopeSet getIsotopes(const std::string& prop, T value);
 
 	//! Returns the number of registered Isotope objects
-	unsigned int getNRegisteredIsotopes() const;
+	unsigned int getNIsotopesInRegistry() const;
+	//! Returns true if an isotope with a given name is registered
+	bool isRegistered(const std::string& name) const;
+	//! Cleans up the registry
+	void cleanRegistry();
 
-	//! Returns the value of a given property of a given isotope
+	//! Returns the value of a given property for a given isotope
 	template<typename T>
 	T getProperty(const std::string& name, const std::string& prop) const;
 
+	//! Returns the name of the isotopes stored in the isotopes XML database
+	std::vector<std::string> getDatabaseNames() const;
+	//! Gets the path to the isotopes XML database
+	const std::string& getDatabasePath() const;
+	//! Returns the number of isotopes stored in the XML database
+	unsigned int getNIsotopesInDatabase() const;
+	//! Gets the units stored in the XML database
+	const unitsMap& getUnits() const;
 	//! Sets the path for the isotopes XML database
 	void setDatabasePath(const std::string& path);
 
-	//! Gets the path to the isotopes XML database
-	const std::string& getDatabasePath() const;
+	//! Returns a shared pointer to an Isotope with a given name. The Isotope is searched first in the registry then in the XML database. If not found return an empty isotope.
+	sptrIsotope getIsotope(const std::string& name);
 
-	//! Build and registers a new Isotope object with a given name
-	//! A shared pointer to the newly created Isotope is returned.
-	sptrIsotope buildIsotope(const std::string& name);
+private:
 
 	//! Builds and registers an Isotope from an XML node
 	//! A shared pointer to the newly created Isotope is returned.
 	sptrIsotope buildIsotope(const property_tree::ptree& node);
-
-	//! Returns a shared pointer to an Isotope with a given name. The Isotope is searched first in the registry and if not found in the XML datatabase. If is found nowhere, throws.
-	sptrIsotope findIsotope(const std::string& name);
-
-	//! Returns true if an isotope with a given name is registered
-	bool hasIsotope(const std::string& name) const;
-
-	//! Cleans up the registry
-	void cleanRegistry();
-
-	//! Gets the units stored in the XML database
-	const unitsMap& getUnits() const;
-
-	//! Returns the name of the isotopes stored in the isotopes XML database
-	std::vector<std::string> getDatabaseNames() const;
-
 
 private:
 
@@ -200,8 +194,9 @@ isotopeSet IsotopeManager::getIsotopes(const std::string& prop, T value)
 					isSet.insert(it->second);
 				else
 				{
-					sptrIsotope is=buildIsotope(v.second);
-					isSet.insert(is);
+					sptrIsotope isotope=buildIsotope(v.second);
+					_registry.insert(isotopePair(name,isotope));
+					isSet.insert(isotope);
 				}
 			}
 		}

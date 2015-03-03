@@ -48,31 +48,24 @@ namespace Chemistry
 
 // Forward declarations
 class Isotope;
-
-// Typedefs
-typedef std::shared_ptr<Isotope> sptrIsotope;
-typedef std::set<sptrIsotope> isotopeSet;
-typedef std::map<std::string,sptrIsotope> isotopeMap;
-typedef std::pair<std::string,sptrIsotope> isotopePair;
+class IsotopeManager;
 
 class Isotope
 {
 
-public:
+private:
+
+	friend class IsotopeManager;
+
+private:
 
 	//! Constructs an empty Isotope with a given name
-	static sptrIsotope create(const std::string& name);
+	static Isotope* create(const std::string& name);
 
 public:
-
-	//! Copy constructor (deleted)
-	Isotope(const Isotope& other)=delete;
 
 	//! Destructor
 	~Isotope();
-
-	//! Assignment operator (deleted)
-	Isotope& operator=(const Isotope& other)=delete;
 
 	//! Return true if this Isotope is equal to another Isotope
 	bool operator==(const Isotope& other);
@@ -143,8 +136,14 @@ private:
 	//! Default constructor
 	Isotope();
 
+	//! Copy constructor (deleted)
+	Isotope(const Isotope& other)=delete;
+
 	//! Construct an empty Isotope with a given name
 	Isotope(const std::string& name);
+
+	//! Assignment operator (deleted)
+	Isotope& operator=(const Isotope& other)=delete;
 
 public:
 
