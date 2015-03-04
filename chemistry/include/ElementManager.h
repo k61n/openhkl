@@ -74,9 +74,6 @@ public:
 	//! Destructor
 	~ElementManager();
 
-	//! Sets the path for the elements XML database
-	void setDatabasePath(const std::string& path);
-
 	//! Builds and registers an element. If symbol is provided the Element will be built from its natural isotopes otherwise the Element is empty.
 	//! A shared pointer to the newly created Element is returned.
 	sptrElement buildNaturalElement(const std::string& name, const std::string& symbol);
@@ -85,7 +82,7 @@ public:
 	//! Returns the number of registered Element objects
 	unsigned int getNElementsInRegistry() const;
 	//! Returns true if an Element with a given name is registered
-	bool isRegistered(const std::string& name) const;
+	bool isInRegistry(const std::string& name) const;
 	//! Clean up the Element registry
 	void cleanRegistry();
 
@@ -93,6 +90,10 @@ public:
 	std::set<std::string> getDatabaseNames() const;
 	//! Returns the number of elements stored in the XMl database
 	unsigned int getNElementsInDatabase() const;
+	//! Returns true if an element with a given name is stored in the XML database
+	bool isInDatabase(const std::string& name) const;
+	//! Sets the path for the elements XML database
+	void setDatabasePath(const std::string& path);
 	//! Save the registry
 	void updateDatabase(std::string filename="") const;
 

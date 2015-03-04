@@ -159,7 +159,7 @@ sptrElement ElementManager::getElement(const std::string& name)
 
 }
 
-bool ElementManager::isRegistered(const std::string& name) const
+bool ElementManager::isInRegistry(const std::string& name) const
 {
 	auto it=_registry.find(name);
 	return (it!=_registry.end());
@@ -256,6 +256,30 @@ unsigned int ElementManager::getNElementsInDatabase() const
 	}
 
 	return nElements;
+}
+
+bool ElementManager::isInDatabase(const std::string& name) const
+{
+	property_tree::ptree root;
+	try
+	{
+		xml_parser::read_xml(_database,root);
+	}
+	catch (const std::runtime_error& error)
+	{
+		throw SX::Kernel::Error<ElementManager>(error.what());
+	}
+
+	BOOST_FOREACH(const property_tree::ptree::value_type& node, root.get_child("elements"))
+	{
+		if (node.first.compare("element")!=0)
+			continue;
+
+		if (node.second.get<std::string>("<xmlattr>.name").compare(name)==0)
+			return true;
+	}
+
+	return false;
 }
 
 } // end namespace Chemistry

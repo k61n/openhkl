@@ -82,7 +82,7 @@ public:
 	//! Returns the number of registered Isotope objects
 	unsigned int getNIsotopesInRegistry() const;
 	//! Returns true if an isotope with a given name is registered
-	bool isRegistered(const std::string& name) const;
+	bool isInRegistry(const std::string& name) const;
 	//! Cleans up the registry
 	void cleanRegistry();
 
@@ -98,6 +98,8 @@ public:
 	unsigned int getNIsotopesInDatabase() const;
 	//! Gets the units stored in the XML database
 	const unitsMap& getUnits() const;
+	//! Returns true if an isotope with a given name is stored in the XML database
+	bool isInDatabase(const std::string& name) const;
 	//! Sets the path for the isotopes XML database
 	void setDatabasePath(const std::string& path);
 

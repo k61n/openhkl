@@ -59,5 +59,10 @@ BOOST_AUTO_TEST_CASE(Test_Isotope)
 	// Checks that accessing an unknown property of the isotopes database throws
 	BOOST_CHECK_THROW(mgr->getProperty<int>("N[14]","XXXXX"),SX::Kernel::Error<IsotopeManager>);
 
+	// Cheks that a given known isotope is actually stored in the XML database
+	BOOST_CHECK(mgr->isInDatabase("He[4]"));
+	// Cheks that a given unknown isotope is actually not stored in the XML database
+	BOOST_CHECK(!mgr->isInDatabase("vdvxdvsdv"));
+
 	IsotopeManager::DestroyInstance();
 }

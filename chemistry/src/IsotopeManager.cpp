@@ -85,7 +85,6 @@ const std::string& IsotopeManager::getDatabasePath() const
 
 std::vector<std::string> IsotopeManager::getDatabaseNames() const
 {
-
 	property_tree::ptree root;
 	try
 	{
@@ -107,6 +106,30 @@ std::vector<std::string> IsotopeManager::getDatabaseNames() const
 	}
 
 	return names;
+}
+
+bool IsotopeManager::isInDatabase(const std::string& name) const
+{
+	property_tree::ptree root;
+	try
+	{
+		xml_parser::read_xml(_database,root);
+	}
+	catch (const std::runtime_error& error)
+	{
+		throw SX::Kernel::Error<IsotopeManager>(error.what());
+	}
+
+	BOOST_FOREACH(const property_tree::ptree::value_type& node, root.get_child("isotopes"))
+	{
+		if (node.first.compare("isotope")!=0)
+			continue;
+
+		if (node.second.get<std::string>("<xmlattr>.name").compare(name)==0)
+			return true;
+	}
+
+	return false;
 }
 
 sptrIsotope IsotopeManager::buildIsotope(const property_tree::ptree& node)
@@ -210,7 +233,7 @@ unsigned int IsotopeManager::getNIsotopesInDatabase() const
 	return nIsotopes;
 }
 
-bool IsotopeManager::isRegistered(const std::string& name) const
+bool IsotopeManager::isInRegistry(const std::string& name) const
 {
 	auto it=_registry.find(name);
 	return (it!=_registry.end());

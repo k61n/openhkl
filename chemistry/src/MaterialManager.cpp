@@ -167,7 +167,7 @@ sptrMaterial MaterialManager::buildMaterial(const property_tree::ptree& node)
 			sptrElement element;
 			name=v.second.get<std::string>("<xmlattr>.name");
 			// If the element is stored in the elements registry just get it
-			if (mgr->isRegistered(name))
+			if (mgr->isInRegistry(name))
 				element=mgr->getElement(name);
 			// Otherwise parses the XMl node, build and register an new element out of it
 			else
@@ -263,7 +263,7 @@ unsigned int MaterialManager::getNMaterialsInRegistry() const
 	return _registry.size();
 }
 
-bool MaterialManager::isRegistered(const std::string& name) const
+bool MaterialManager::isInRegistry(const std::string& name) const
 {
 	auto it=_registry.find(name);
 	return (it!=_registry.end());
@@ -292,6 +292,30 @@ std::set<std::string> MaterialManager::getDatabaseNames() const
 	}
 
 	return names;
+}
+
+bool MaterialManager::isInDatabase(const std::string& name) const
+{
+	property_tree::ptree root;
+	try
+	{
+		xml_parser::read_xml(_database,root);
+	}
+	catch (const std::runtime_error& error)
+	{
+		throw SX::Kernel::Error<MaterialManager>(error.what());
+	}
+
+	BOOST_FOREACH(const property_tree::ptree::value_type& node, root.get_child("materials"))
+	{
+		if (node.first.compare("material")!=0)
+			continue;
+
+		if (node.second.get<std::string>("<xmlattr>.name").compare(name)==0)
+			return true;
+	}
+
+	return false;
 }
 
 void MaterialManager::updateDatabase(const std::string& filename) const
