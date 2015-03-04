@@ -282,6 +282,18 @@ bool ElementManager::isInDatabase(const std::string& name) const
 	return false;
 }
 
+void ElementManager::removeElement(const std::string& name)
+{
+	auto it=_registry.find(name);
+
+	if (it!=_registry.end())
+		_registry.erase(it);
+
+	return;
+
+
+}
+
 } // end namespace Chemistry
 
 } // end namespace SX

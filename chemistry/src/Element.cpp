@@ -79,7 +79,7 @@ void Element::addIsotope(sptrIsotope isotope, double abundance)
 	if (!_symbol.empty())
 	{
 		if (_symbol.compare(isotope->getSymbol()) != 0)
-			throw SX::Kernel::Error<Element>("The isotope does not match with this element.");
+			throw SX::Kernel::Error<Element>("The element is made of isotopes of different chemical species.");
 	}
 	else
 		_symbol=isotope->getSymbol();

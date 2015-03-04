@@ -77,14 +77,16 @@ public:
 	//! Builds and registers an element. If symbol is provided the Element will be built from its natural isotopes otherwise the Element is empty.
 	//! A shared pointer to the newly created Element is returned.
 	sptrElement buildNaturalElement(const std::string& name, const std::string& symbol);
+	//! Clean up the Element registry
+	void cleanRegistry();
 	//! Returns a shared pointer to an Element with a given name. The Element is searched first in the registry then in the XML database. If not found return an empty element.
 	sptrElement getElement(const std::string& name);
 	//! Returns the number of registered Element objects
 	unsigned int getNElementsInRegistry() const;
 	//! Returns true if an Element with a given name is registered
 	bool isInRegistry(const std::string& name) const;
-	//! Clean up the Element registry
-	void cleanRegistry();
+	//! Removed an Element from the registry
+	void removeElement(const std::string& name);
 
 	//! Returns the name of the elements stored in the elements XML database
 	std::set<std::string> getDatabaseNames() const;

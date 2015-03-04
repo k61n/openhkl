@@ -1,12 +1,17 @@
-#include "include/Chemistry/AddElementDialog.h"
-#include "ui_AddElementDialog.h"
 #include "IsotopeManager.h"
+#include "Element.h"
+#include "ElementManager.h"
+#include "Error.h"
+
+#include "ui_AddElementDialog.h"
+#include "include/Chemistry/AddElementDialog.h"
 #include "include/Chemistry/DragElementModel.h"
 
 #include <iostream>
 #include <string>
 #include <vector>
 
+#include <QMessageBox>
 #include <QString>
 #include <QStringList>
 
@@ -31,8 +36,6 @@ AddElementDialog::AddElementDialog(QWidget *parent)
     ui->selectedIsotopesView->setModel(_model);
     ui->selectedIsotopesView->setAcceptDrops(true);
 
-//    connect(_model,SIGNAL(dataChanged(QModelIndex,QModelIndex)),this,SLOT(dropIsotope(QModelIndex,QModelIndex)));
-
 }
 
 AddElementDialog::~AddElementDialog()
@@ -40,7 +43,47 @@ AddElementDialog::~AddElementDialog()
     delete ui;
 }
 
-void AddElementDialog::dropIsotope(QModelIndex, QModelIndex)
+void AddElementDialog::on_cancelButton_clicked()
 {
-    std::cout<<"I have been called"<<std::endl;
+    this->destroy();
+}
+
+void AddElementDialog::on_saveButton_clicked()
+{
+
+    // Gets the element name
+    QString elementName=ui->elementNameEntry->text().simplified();
+
+    // Checks that it is not empty, otherwise return
+    if (elementName.isEmpty())
+    {
+        QMessageBox::warning(this,"Add element","Empty element name.");
+        return;
+    }
+
+    SX::Chemistry::ElementManager* emgr=SX::Chemistry::ElementManager::Instance();
+
+    // Checks that is not already used in the elements database, otherwise return
+    if (emgr->isInDatabase(elementName.toStdString()))
+    {
+        QMessageBox::warning(this,"Add element","An element with name '"+elementName+"'' is already registered in the database.");
+        return;
+    }
+
+    SX::Chemistry::sptrElement element=emgr->getElement(elementName.toStdString());
+
+    try
+    {
+        for (auto p : _model->getIsotopes())
+            element->addIsotope(p.first.toStdString(),p.second);
+    }
+    catch(const SX::Kernel::Error<SX::Chemistry::Element>& e)
+    {
+        QMessageBox::warning(this,"Add element",QString::fromStdString(e.what()));
+        emgr->removeElement(element->getName());
+        return;
+    }
+
+    emgr->updateDatabase();
+
 }

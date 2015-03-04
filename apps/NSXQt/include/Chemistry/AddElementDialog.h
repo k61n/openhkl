@@ -18,10 +18,10 @@ public:
     explicit AddElementDialog(QWidget *parent = 0);
     ~AddElementDialog();
 
-public slots:
+private slots:
 
-    void dropIsotope(QModelIndex,QModelIndex);
-
+    void on_cancelButton_clicked();
+    void on_saveButton_clicked();
 
 private:
     Ui::AddElementDialog *ui;

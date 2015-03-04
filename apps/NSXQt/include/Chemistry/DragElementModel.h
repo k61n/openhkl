@@ -11,11 +11,18 @@ class DragElementModel : public QAbstractTableModel
     Q_OBJECT
 
 public:
+
+    typedef QList<QPair<QString,double>> isotopesList;
+
     DragElementModel();
 
-    int rowCount(const QModelIndex &parent) const;
+    bool insertRows(int row, int count, const QModelIndex &parent);
+
+    int rowCount(const QModelIndex &parent=QModelIndex()) const;
 
     int columnCount(const QModelIndex &parent) const;
+
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
     QVariant data(const QModelIndex &index, int role) const;
 
@@ -23,12 +30,12 @@ public:
 
     Qt::ItemFlags flags(const QModelIndex &index) const;
 
+    const isotopesList& getIsotopes() const;
+
 
 private:
     SX::Chemistry::IsotopeManager* _isotopesMgr;
-    QList<QString> _isotopes;
-    QList<double> _abundances;
-
+    isotopesList _isotopes;
 };
 
 #endif // DRAGELEMENTMODEL_H
