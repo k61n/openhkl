@@ -29,7 +29,7 @@ BOOST_AUTO_TEST_CASE(Test_Element)
 	BOOST_CHECK_NO_THROW(emgr->setDatabasePath("./elements.xml"));
 
 	// Builds the natural hydrogen Element directly from the isotopes registry/database
-	sptrElement hydrogen=emgr->buildNaturalElement("natH","H");
+	sptrElement hydrogen=emgr->getElement("natH","H");
 	// Checks that the number of protons is OK
 	BOOST_CHECK_EQUAL(hydrogen->getNProtons(),1);
 	// Checks that the number of neutrons is OK
@@ -37,14 +37,8 @@ BOOST_AUTO_TEST_CASE(Test_Element)
 	// Checks that the molar mass is OK
 	BOOST_CHECK_CLOSE(hydrogen->getMolarMass(),(1.007825032*0.99985+2.014101778*0.00015)*um->get("uma"),tolerance);
 
-	// Checks that the isotope registry has now three entries corresponding to H[1], H[2], H[3]
-	BOOST_CHECK_EQUAL(imgr->getNIsotopesInRegistry(),3);
-
 	// Checks that the number of natural isotopes of this element is OK (H[1],H[2],H[3])
 	BOOST_CHECK_EQUAL(hydrogen->getNIsotopes(),3);
-
-	// Checks that the elements registry contains now 1 entry
-	BOOST_CHECK_EQUAL(emgr->getNElementsInRegistry(),1);
 
 	// Builds an empty element and fills it will isotopes
 	sptrElement uranium=emgr->getElement("natU");
@@ -77,7 +71,7 @@ BOOST_AUTO_TEST_CASE(Test_Element)
 	// Checks that its mass is the same than the one built previously built from the isotopes registry/database
 	BOOST_CHECK_CLOSE(dbHydrogen->getMolarMass(),hydrogen->getMolarMass(),tolerance);
 
-	emgr->updateDatabase("elements_new.xml");
+	emgr->saveRegistry("elements_new.xml");
 
 	ElementManager::DestroyInstance();
 	IsotopeManager::DestroyInstance();

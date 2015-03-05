@@ -55,7 +55,6 @@ SOURCES += src/Main.cpp \
     src/Absorption/RulerItem.cpp \
     src/Absorption/CalibrateDistanceDialog.cpp \
     src/Chemistry/IsotopeDatabaseDialog.cpp \
-    src/Chemistry/AddElementDialog.cpp \
     src/Chemistry/DragElementModel.cpp \
     src/InspectableTreeItem.cpp \
     src/UnitCellItem.cpp \
@@ -67,7 +66,8 @@ SOURCES += src/Main.cpp \
     src/DetectorPropertyWidget.cpp \
     src/Chemistry/NewElementTableView.cpp \
     src/Chemistry/IsotopesListWidget.cpp \
-    src/Chemistry/ElementsListWidget.cpp
+    src/Chemistry/ElementsListWidget.cpp \
+    src/Chemistry/ElementManagerDialog.cpp
 
 HEADERS  += include/MainWindow.h \
     include/DialogPeakFind.h \
@@ -111,7 +111,6 @@ HEADERS  += include/MainWindow.h \
     include/Absorption/RulerItem.h \
     include/Absorption/CalibrateDistanceDialog.h \
     include/Chemistry/IsotopeDatabaseDialog.h \
-    include/Chemistry/AddElementDialog.h \
     include/Chemistry/DragElementModel.h \
     include/InspectableTreeItem.h \
     include/UnitCellItem.h \
@@ -123,7 +122,8 @@ HEADERS  += include/MainWindow.h \
     include/DetectorPropertyWidget.h \
     include/Chemistry/NewElementTableView.h \
     include/Chemistry/IsotopesListWidget.h \
-    include/Chemistry/ElementsListWidget.h
+    include/Chemistry/ElementsListWidget.h \
+    include/Chemistry/ElementManagerDialog.h
 
 FORMS    += ui/mainwindow.ui \
     ui/dialog_PeakFind.ui \
@@ -139,8 +139,8 @@ FORMS    += ui/mainwindow.ui \
     ui/UnitCellPropertyWidget.ui \
     ui/NumorPropertyWidget.ui \
     ui/Chemistry/IsotopeDatabaseDialog.ui \
-    ui/Chemistry/AddElementDialog.ui \
-    ui/DetectorPropertyWidget.ui
+    ui/DetectorPropertyWidget.ui \
+    ui/Chemistry/ElementManagerDialog.ui
 
 win32:CONFIG(release, debug|release): LIBS += -lNSXTool
 else:unix: LIBS += -lNSXTool -lboost_date_time -lfftw3

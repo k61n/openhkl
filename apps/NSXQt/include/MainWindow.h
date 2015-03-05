@@ -10,8 +10,8 @@
 #include <QMenu>
 #include <QProgressBar>
 
-#include <IData.h>
-#include <DialogPeakFind.h>
+#include "IData.h"
+#include "DialogPeakFind.h"
 #include "Experiment.h"
 #include "Logger.h"
 

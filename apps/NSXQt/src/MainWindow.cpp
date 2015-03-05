@@ -52,7 +52,7 @@
 #include <ctime>
 #include "Absorption/AbsorptionWidget.h"
 #include "Chemistry/IsotopeDatabaseDialog.h"
-#include "Chemistry/AddElementDialog.h"
+#include "Chemistry/ElementManagerDialog.h"
 
 using namespace SX::Units;
 using namespace SX::Instrument;
@@ -425,7 +425,7 @@ void MainWindow::on_action_display_isotopes_database_triggered()
 void MainWindow::on_action_add_element_triggered()
 {
     // Opens the dialog that will diplay the isotopes database
-    AddElementDialog* dlg=new AddElementDialog();
+    ElementManagerDialog* dlg=new ElementManagerDialog();
     dlg->exec();
 }
 
