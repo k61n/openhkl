@@ -66,7 +66,7 @@ QSplitter::handle {
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
          <widget class="QSplitter" name="splitterVertical">
@@ -1647,7 +1647,7 @@ QDockWidget::title {
   </action>
   <action name="action_add_element">
    <property name="text">
-    <string>Add element</string>
+    <string>Element manager</string>
    </property>
   </action>
  </widget>
