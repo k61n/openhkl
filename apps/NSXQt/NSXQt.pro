@@ -64,7 +64,10 @@ SOURCES += src/Main.cpp \
     src/ShapePropertyWidget.cpp \
     src/UnitCellPropertyWidget.cpp \
     src/NumorPropertyWidget.cpp \
-    src/DetectorPropertyWidget.cpp
+    src/DetectorPropertyWidget.cpp \
+    src/Chemistry/NewElementTableView.cpp \
+    src/Chemistry/IsotopesListWidget.cpp \
+    src/Chemistry/ElementsListWidget.cpp
 
 HEADERS  += include/MainWindow.h \
     include/DialogPeakFind.h \
@@ -117,7 +120,10 @@ HEADERS  += include/MainWindow.h \
     include/ShapePropertyWidget.h \
     include/UnitCellPropertyWidget.h \
     include/NumorPropertyWidget.h \
-    include/DetectorPropertyWidget.h
+    include/DetectorPropertyWidget.h \
+    include/Chemistry/NewElementTableView.h \
+    include/Chemistry/IsotopesListWidget.h \
+    include/Chemistry/ElementsListWidget.h
 
 FORMS    += ui/mainwindow.ui \
     ui/dialog_PeakFind.ui \

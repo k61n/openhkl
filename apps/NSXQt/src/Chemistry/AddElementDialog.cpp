@@ -22,20 +22,23 @@ AddElementDialog::AddElementDialog(QWidget *parent)
     ui->setupUi(this);
 
     // Set the isotope manager
+    _elementMgr = SX::Chemistry::ElementManager::Instance();
+
+    // Set the isotope manager
     _isotopeMgr = SX::Chemistry::IsotopeManager::Instance();
 
-    std::vector<std::string> isotopesName=_isotopeMgr->getDatabaseNames();
-
-    for (const auto& isName : isotopesName)
-        ui->isotopesList->addItem(QString::fromStdString(isName));
+    ui->elementsList->setDragEnabled(true);
+    for (const auto& p : _elementMgr->getRegistry())
+        ui->elementsList->addItem(QString::fromStdString(p.first));
 
     ui->isotopesList->setDragEnabled(true);
+    for (const auto& isName : _isotopeMgr->getDatabaseNames())
+        ui->isotopesList->addItem(QString::fromStdString(isName));
 
     _model = new DragElementModel();
 
     ui->selectedIsotopesView->setModel(_model);
     ui->selectedIsotopesView->setAcceptDrops(true);
-
 }
 
 AddElementDialog::~AddElementDialog()
@@ -84,6 +87,6 @@ void AddElementDialog::on_saveButton_clicked()
         return;
     }
 
-    emgr->updateDatabase();
+    emgr->saveRegistry();
 
 }

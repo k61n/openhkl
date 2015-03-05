@@ -3,11 +3,20 @@
 
 #include <QDialog>
 
-#include "IsotopeManager.h"
 #include "DragElementModel.h"
 
-namespace Ui {
-class AddElementDialog;
+namespace Ui
+{
+    class AddElementDialog;
+}
+
+namespace SX
+{
+namespace Chemistry
+{
+    class ElementManager;
+    class IsotopeManager;
+}
 }
 
 class AddElementDialog : public QDialog
@@ -25,6 +34,7 @@ private slots:
 
 private:
     Ui::AddElementDialog *ui;
+    SX::Chemistry::ElementManager* _elementMgr;
     SX::Chemistry::IsotopeManager* _isotopeMgr;
     DragElementModel* _model;
 

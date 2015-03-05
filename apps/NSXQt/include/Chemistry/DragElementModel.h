@@ -2,7 +2,6 @@
 #define DRAGELEMENTMODEL_H
 
 #include <QAbstractTableModel>
-#include "IsotopeManager.h"
 
 #include <QList>
 
@@ -17,6 +16,7 @@ public:
     DragElementModel();
 
     bool insertRows(int row, int count, const QModelIndex &parent);
+    bool removeRows(int position, int rows, const QModelIndex &index=QModelIndex());
 
     int rowCount(const QModelIndex &parent=QModelIndex()) const;
 
@@ -32,10 +32,11 @@ public:
 
     const isotopesList& getIsotopes() const;
 
+    void setSender(QObject* sender);
 
 private:
-    SX::Chemistry::IsotopeManager* _isotopesMgr;
     isotopesList _isotopes;
+    QObject* _sender;
 };
 
 #endif // DRAGELEMENTMODEL_H
