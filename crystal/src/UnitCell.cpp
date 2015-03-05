@@ -182,8 +182,48 @@ std::ostream& operator<<(std::ostream& os,const UnitCell& uc)
 	uc.printSelf(os);
 	return os;
 }
+std::multimap<double,Eigen::Vector3d> UnitCell::generateReflectionsInSphere(double dstarmax) const
 
+{
+	std::multimap<double,Eigen::Vector3d> map;
+	// Get the bounding cube in h,k,l
+	int hmax=std::ceil(dstarmax/_B.row(0).norm());
+	int kmax=std::ceil(dstarmax/_B.row(1).norm());
+	int lmax=std::ceil(dstarmax/_B.row(2).norm());
 
+	// Iterate over the cuve and insert element in the map if dstar is not exceeded
+	for (int h=-hmax;h<=hmax;++h)
+	{
+		for (int k=-kmax;k<=kmax;++k)
+		{
+			for (int l=-lmax;l<=lmax;++l)
+			{
+				auto q=toReciprocalStandard(Eigen::Vector3d(h,k,l));
+				double norm=q.norm();
+				if (norm < dstarmax)
+					map.insert(std::map<double,Eigen::Vector3d>::value_type(norm,Eigen::Vector3d(h,k,l)));
+			}
+		}
+	}
+	return map;
+}
+
+double UnitCell::getAngle(double h1, double k1, double l1, double h2, double k2, double l2) const
+{
+	return getAngle(Eigen::Vector3d(h1,k1,l1),Eigen::Vector3d(h2,k2,l2));
+}
+double UnitCell::getAngle(const Eigen::Vector3d& hkl1, const Eigen::Vector3d& hkl2) const
+{
+	auto q1=toReciprocalStandard(hkl1);
+	auto q2=toReciprocalReference(hkl2);
+	double value=q1.dot(q2)/q1.norm()/q2.norm();
+	if (value<-1)
+		return M_PI;
+	else if (value>1)
+		return 0;
+	else
+		return acos(q1.dot(q2)/q1.norm()/q2.norm());
+}
 
 
 }

@@ -33,6 +33,7 @@
 #include "Basis.h"
 #include <string>
 #include "Peak3D.h"
+#include <map>
 
 namespace SX
 {
@@ -84,7 +85,12 @@ public:
  	void setBravaisType(BravaisType bravais);
  	//!
  	std::string getBravaisTypeSymbol() const;
-
+ 	//! Get a list of reflections sorted by their d* value in $\AA$ within a sphere defined by dstarmax
+ 	std::multimap<double,Eigen::Vector3d> generateReflectionsInSphere(double dstarmax) const;
+ 	//! Return the angle in radians between two reflections h1,k1,l1 and h2,k2,l2
+ 	double getAngle(double h1,double k1, double l1, double h2, double k2, double l2) const;
+ 	//! Return the angle in radians between two reflections hkl1 and hkl2
+ 	double getAngle(const Eigen::Vector3d& hkl1,const Eigen::Vector3d& hkl2) const;
  	//! Get UB
  	void getUB(const Peak3D& p1, const Peak3D& p2);
  	//! Get the Busing-Levy B matrix as defined in Acta Cryst. (1967). 22, 457
