@@ -83,6 +83,11 @@ const std::string& IsotopeManager::getDatabasePath() const
 	return _database;
 }
 
+const isotopeMap& IsotopeManager::getRegistry() const
+{
+	return _registry;
+}
+
 std::vector<std::string> IsotopeManager::getDatabaseNames() const
 {
 	property_tree::ptree root;

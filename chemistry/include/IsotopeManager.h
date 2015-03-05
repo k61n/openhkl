@@ -96,6 +96,8 @@ public:
 	const std::string& getDatabasePath() const;
 	//! Returns the number of isotopes stored in the XML database
 	unsigned int getNIsotopesInDatabase() const;
+	//! Returns the isotopes registry
+	const isotopeMap& getRegistry() const;
 	//! Gets the units stored in the XML database
 	const unitsMap& getUnits() const;
 	//! Returns true if an isotope with a given name is stored in the XML database

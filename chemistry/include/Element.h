@@ -50,7 +50,7 @@ class ElementManager;
 
 // Typedefs
 typedef std::shared_ptr<Isotope> sptrIsotope;
-typedef std::map<std::string,sptrIsotope> isotopesMap;
+typedef std::map<std::string,sptrIsotope> isotopeMap;
 typedef std::map<std::string,double> contentsMap;
 typedef std::pair<std::string,sptrIsotope> strToIsotopePair;
 typedef std::pair<std::string,double> strToDoublePair;
@@ -91,6 +91,8 @@ public:
 	//! Set whether or not this Element is natural
 	void setNatural(bool natural);
 
+	//! Returns the isotopes that builds this Element
+	const isotopeMap& getIsotopes() const;
 	//! Returns the number of isotopes that build this Element
 	unsigned int getNIsotopes() const;
 	//! Return true whether some Isotope has been provided to this Element
@@ -110,11 +112,11 @@ public:
 	double getAbsorptionXs(double lambda=1.798e-10) const;
 
 	//! Add a shared pointer to an Isotope to this Element
-	void addIsotope(sptrIsotope isotope, double abundance);
+	sptrIsotope addIsotope(sptrIsotope isotope, double abundance);
 	//! Add an isotope with a given name to this Element using its natural abundance
-	void addIsotope(const std::string& name);
+	sptrIsotope addIsotope(const std::string& name);
 	//! Add an Isotope with a given name to this Element using a given abundance
-	void addIsotope(const std::string& name, double abundance);
+	sptrIsotope addIsotope(const std::string& name, double abundance);
 
 	//! Returns the abundance of the isotopes that make this Element
 	const contentsMap& getAbundances() const;
@@ -148,7 +150,7 @@ private:
 	std::string _symbol;
 
 	//! A mapping between the names of the Isotope this Element is made of and their corresponding shared pointer
-	isotopesMap _isotopes;
+	isotopeMap _isotopes;
 
 	//! A mapping between the names of the Isotope this Element is made of and their corresponding abundances
 	contentsMap _abundances;

@@ -86,7 +86,7 @@ sptrMaterial MaterialManager::buildMaterialFromChemicalFormula(std::string formu
 
 		// Case of an element that has to be built from its natural isotopes
 		if (isotope.empty())
-			element = emgr->buildNaturalElement(symbol,symbol);
+			element = emgr->getElement(symbol,symbol);
 		else
 		{
 			element = emgr->getElement(symbol+isotope);
@@ -167,7 +167,7 @@ sptrMaterial MaterialManager::buildMaterial(const property_tree::ptree& node)
 			sptrElement element;
 			name=v.second.get<std::string>("<xmlattr>.name");
 			// If the element is stored in the elements registry just get it
-			if (mgr->isInRegistry(name))
+			if (mgr->hasElement(name))
 				element=mgr->getElement(name);
 			// Otherwise parses the XMl node, build and register an new element out of it
 			else

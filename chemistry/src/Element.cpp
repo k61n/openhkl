@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <iostream>
 #include <iterator>
 #include <numeric>
 
@@ -67,13 +68,13 @@ sptrIsotope Element::operator[](const std::string& name)
 	}
 }
 
-void Element::addIsotope(sptrIsotope isotope, double abundance)
+sptrIsotope Element::addIsotope(sptrIsotope isotope, double abundance)
 {
 	std::string name=isotope->getName();
 	// If the element already contains the isotope, return
 	auto it=_isotopes.find(name);
 	if (it!=_isotopes.end())
-		return;
+		return it->second;
 
 	// If some isotopes have been previously added to the Element, check that the one to be added is chemcially compatible with the other ones, otherwise throws
 	if (!_symbol.empty())
@@ -99,37 +100,42 @@ void Element::addIsotope(sptrIsotope isotope, double abundance)
 	_isotopes.insert(strToIsotopePair(name,isotope));
 	_abundances.insert(strToDoublePair(name,abundance));
 
-	return;
+	return isotope;
 
 }
 
-void Element::addIsotope(const std::string& name)
+sptrIsotope Element::addIsotope(const std::string& name)
 {
 	// Retrieve the isotope (from isotopes registry or XML database if not in the isotopes registry) whose name matches the given name
 	IsotopeManager* mgr=IsotopeManager::Instance();
-	sptrIsotope is=mgr->getIsotope(name);
+	sptrIsotope isotope=mgr->getIsotope(name);
 
 	// Add it to the isotopes internal map with its natural abundance
-	addIsotope(is,is->getAbundance());
+	addIsotope(isotope,isotope->getAbundance());
 
-	return;
+	return isotope;
 }
 
-void Element::addIsotope(const std::string& name, double abundance)
+sptrIsotope Element::addIsotope(const std::string& name, double abundance)
 {
 	// Retrieve the isotope (from isotopes registry or XML database if not in the isotopes registry) whose name matches the given name
 	IsotopeManager* mgr=IsotopeManager::Instance();
-	sptrIsotope is=mgr->getIsotope(name);
+	sptrIsotope isotope=mgr->getIsotope(name);
 
 	// Add it to the isotopes internal map with the given abundance
-	addIsotope(is,abundance);
+	addIsotope(isotope,abundance);
 
-	return;
+	return isotope;
 }
 
 const std::string& Element::getName() const
 {
 	return _name;
+}
+
+const isotopeMap& Element::getIsotopes() const
+{
+	return _isotopes;
 }
 
 unsigned int Element::getNIsotopes() const
