@@ -5,6 +5,8 @@
 
 #include <QList>
 
+#include "ElementManager.h"
+
 class DragElementModel : public QAbstractTableModel
 {
     Q_OBJECT
@@ -15,7 +17,7 @@ public:
 
     DragElementModel();
 
-    bool insertRows(int row, int count, const QModelIndex &parent);
+    bool insertRows(int row, int count, const QModelIndex &index=QModelIndex());
     bool removeRows(int position, int rows, const QModelIndex &index=QModelIndex());
 
     int rowCount(const QModelIndex &parent=QModelIndex()) const;
@@ -30,12 +32,15 @@ public:
 
     Qt::ItemFlags flags(const QModelIndex &index) const;
 
-    const isotopesList& getIsotopes() const;
-
     void setSender(QObject* sender);
+
+    //! Build the element whom isotopes contents is currently stored by the model
+    void buildElement(const QString& elementName);
+
 
 private:
     isotopesList _isotopes;
+    SX::Chemistry::ElementManager* _elementMgr;
     QObject* _sender;
 };
 

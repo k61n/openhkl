@@ -46,13 +46,14 @@ void ElementManager::cleanRegistry()
 	}
 }
 
-void ElementManager::setDatabasePath(const std::string& path)
+void ElementManager::setDatabasePath(std::string path)
 {
-
 	// The new path is the same than the old path, do nothing
 	if (path.compare(_database)==0)
 		return;
 
+	if (path.empty())
+		path=_database;
 
 	property_tree::ptree root;
 	try
@@ -75,7 +76,11 @@ void ElementManager::setDatabasePath(const std::string& path)
 
 		buildElement(node.second);
 	}
+}
 
+void ElementManager::reload()
+{
+	setDatabasePath();
 }
 
 sptrElement ElementManager::buildElement(const property_tree::ptree& node)

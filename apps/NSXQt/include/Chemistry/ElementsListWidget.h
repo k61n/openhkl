@@ -9,10 +9,6 @@ class ElementsListWidget : public QListWidget
 public:
     explicit ElementsListWidget(QWidget *parent = 0);
 
-signals:
-
-public slots:
-
 };
 
 #endif // ELEMENTSLISTWIDGET_H

@@ -84,13 +84,15 @@ public:
 	const elementMap& getRegistry() const;
 	//! Returns true if an Element with a given name is registered
 	bool hasElement(const std::string& name) const;
+	//! Reloads the current database
+	void reload();
 	//! Removes an Element from the registry
 	void removeElement(const std::string& name);
 	//! Save the registry
 	void saveRegistry(std::string filename="") const;
 
 	//! Sets the path for the elements XML database
-	void setDatabasePath(const std::string& path);
+	void setDatabasePath(std::string path="");
 
 private:
 

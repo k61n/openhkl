@@ -7,7 +7,11 @@
 #include "Isotope.h"
 #include "IsotopeManager.h"
 
-DragElementModel::DragElementModel() : QAbstractTableModel(), _isotopes(), _sender(nullptr)
+DragElementModel::DragElementModel()
+: QAbstractTableModel(),
+  _isotopes(),
+  _elementMgr(SX::Chemistry::ElementManager::Instance()),
+  _sender(nullptr)
 {
 }
 
@@ -31,11 +35,23 @@ int DragElementModel::columnCount(const QModelIndex &parent) const
 QVariant DragElementModel::data(const QModelIndex &index, int role) const
 {
 
-    if (!index.isValid() || _isotopes.empty())
+    if (!index.isValid())
         return QVariant();
 
-    if (role == Qt::DisplayRole)
+    if (role==Qt::DisplayRole)
     {
+
+        if (index.row()<0)
+            return QVariant();
+
+        if (_isotopes.empty())
+        {
+            if (index.column() == 0)
+                return "drag elements/isotopes here";
+            else
+                return 0.0;
+        }
+
         if (index.row()>=_isotopes.size())
             return QVariant();
 
@@ -54,19 +70,32 @@ bool DragElementModel::insertRows(int row, int count, const QModelIndex &parent)
 {
     Q_UNUSED(parent);
 
-    beginInsertRows(QModelIndex(),row,row+count-1);
+    if (count != 1)
+        return false;
+
+    beginInsertRows(QModelIndex(),row,row);
+    _isotopes.insert(row,QPair<QString,double>());
     endInsertRows();
     return true;
-
 }
 
-bool DragElementModel::removeRows(int position, int rows, const QModelIndex &index)
+bool DragElementModel::removeRows(int row, int count, const QModelIndex &index)
 {
     Q_UNUSED(index);
-    beginRemoveRows(QModelIndex(), position, position+rows-1);
+
+    if (_isotopes.empty())
+        return false;
+
+    if (row==_isotopes.size())
+        return false;
+
+    beginRemoveRows(QModelIndex(), row, row+count-1);
+    for (int idx=0;idx<count;++idx)
+        _isotopes.removeAt(row);
     endRemoveRows();
     return true;
 }
+
 bool DragElementModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
 
@@ -95,25 +124,21 @@ bool DragElementModel::setData(const QModelIndex &index, const QVariant &value, 
             double abundance=isotope->getAbundance();
             QPair<QString,double> pair(name,abundance);
 
-            if (index.row() >= _isotopes.size())
-            {
-                _isotopes.append(pair);
+            if (index.row() == _isotopes.size())
                 insertRow(rowCount());
-            }
-            else
-                _isotopes.replace(index.row(),pair);
+            _isotopes.replace(index.row(),pair);
         }
         else if (dynamic_cast<ElementsListWidget*>(_sender))
         {
-            removeRows(1,rowCount());
-            _isotopes.clear();
-            SX::Chemistry::ElementManager* emgr = SX::Chemistry::ElementManager::Instance();
-            SX::Chemistry::sptrElement element=emgr->getElement(value.toString().toStdString());
-            for (auto p : element->getIsotopes())
+            SX::Chemistry::sptrElement element=_elementMgr->getElement(value.toString().toStdString());
+
+            const SX::Chemistry::isotopeMap& isotopes=element->getIsotopes();
+
+            for (auto it=isotopes.rbegin();it!=isotopes.rend();++it)
             {
-                QPair<QString,double> pair(QString::fromStdString(p.first),p.second->getAbundance());
-                _isotopes.append(pair);
-                insertRow(rowCount());
+                QPair<QString,double> pair(QString::fromStdString(it->first),it->second->getAbundance());
+                insertRow(index.row());
+                _isotopes.replace(index.row(),pair);
             }
         }
         else
@@ -125,38 +150,11 @@ bool DragElementModel::setData(const QModelIndex &index, const QVariant &value, 
     }
     else if (role==Qt::EditRole)
     {
-        if (index.column()==0)
-        {
-            QString name=value.toString();
-            for (auto it : _isotopes)
-            {
-                // If the dropped isotope is already in the list, do nothing
-                if (it.first.compare(name)==0)
-                    return false;
-            }
-        }
-
-        if (index.row()>=_isotopes.size())
-        {
-            if (index.column()==1)
-                return false;
-            QPair<QString,double> pair(value.toString(),0.0);
-            _isotopes.append(pair);
-            insertRow(rowCount());
-        }
-        else
-        {
-            if (index.column()==0)
-                _isotopes[index.row()].first=value.toString();
-            else
-            {
-                double abundance=value.toDouble();
-                // If the abundance if not in [0,1], do nothing
-                if (abundance<0||abundance>1.0)
-                    return false;
-                _isotopes[index.row()].second = abundance;
-            }
-        }
+        double abundance=value.toDouble();
+        // If the abundance if not in [0,1], do nothing
+        if (abundance<0||abundance>1.0)
+            return false;
+        _isotopes[index.row()].second = abundance;
         emit dataChanged(index,index);
         return true;
     }
@@ -188,19 +186,27 @@ Qt::ItemFlags DragElementModel::flags(const QModelIndex &index) const
 {
     // The first column contains the isotope name: can not be edited
     if (index.column()==0)
-        return QAbstractItemModel::flags(index) | Qt::ItemIsEditable | Qt::ItemIsDropEnabled;
+        return QAbstractItemModel::flags(index) | Qt::ItemIsDropEnabled;
     // The second column contains the isotope abundance can not be dropped
     else
         return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
 
 }
 
-const DragElementModel::isotopesList& DragElementModel::getIsotopes() const
-{
-    return _isotopes;
-}
-
 void DragElementModel::setSender(QObject* sender)
 {
     _sender = sender;
 }
+
+void DragElementModel::buildElement(const QString& elementName)
+{
+    // Build the element from the registry
+    SX::Chemistry::sptrElement element=_elementMgr->getElement(elementName.toStdString());
+
+    for (const auto& p : _isotopes)
+    {
+        std::cout<<p.first.toStdString()<<" --- "<<p.second<<std::endl;
+        element->addIsotope(p.first.toStdString(),p.second);
+    }
+}
+

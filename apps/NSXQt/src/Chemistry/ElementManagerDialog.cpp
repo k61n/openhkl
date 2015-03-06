@@ -11,9 +11,12 @@
 #include <string>
 #include <vector>
 
+#include <QListIterator>
 #include <QMessageBox>
 #include <QString>
 #include <QStringList>
+#include <QShortcut>
+#include <QSortFilterProxyModel>
 
 ElementManagerDialog::ElementManagerDialog(QWidget *parent)
 : QDialog(parent),
@@ -21,24 +24,32 @@ ElementManagerDialog::ElementManagerDialog(QWidget *parent)
 {
     ui->setupUi(this);
 
-    // Set the isotope manager
+    // Get the element manager
     _elementMgr = SX::Chemistry::ElementManager::Instance();
 
-    // Set the isotope manager
-    _isotopeMgr = SX::Chemistry::IsotopeManager::Instance();
-
-    ui->elementsList->setDragEnabled(true);
+    // Fills the element list widget with the elements stored in the registry
     for (const auto& p : _elementMgr->getRegistry())
         ui->elementsList->addItem(QString::fromStdString(p.first));
 
-    ui->isotopesList->setDragEnabled(true);
+    // Get the isotope manager
+    _isotopeMgr = SX::Chemistry::IsotopeManager::Instance();
+    // Fills the element list widget with the isotopes stored in the registry
     for (const auto& isName : _isotopeMgr->getDatabaseNames())
         ui->isotopesList->addItem(QString::fromStdString(isName));
 
+    // Create and set the model underlying the new element table view
     _model = new DragElementModel();
-
     ui->selectedIsotopesView->setModel(_model);
-    ui->selectedIsotopesView->setAcceptDrops(true);
+
+    // Pressing Delete keyboard key on one element of the elements list widget will delete this element from the Elements registry
+    QShortcut* deleteShortcut1 = new QShortcut(QKeySequence(Qt::Key_Delete), ui->elementsList,nullptr,nullptr,Qt::WidgetShortcut);
+    connect(deleteShortcut1, SIGNAL(activated()), this, SLOT(deleteElement()));
+
+    // Pressing Delete keyboard key on one isotope new element table view widget will delete this isotope
+    // from the list of elements to be added
+    QShortcut* deleteShortcut2 = new QShortcut(QKeySequence(Qt::Key_Delete), ui->selectedIsotopesView,nullptr,nullptr,Qt::WidgetShortcut);
+    connect(deleteShortcut2, SIGNAL(activated()), this, SLOT(removeIsotope()));
+
 }
 
 ElementManagerDialog::~ElementManagerDialog()
@@ -48,10 +59,10 @@ ElementManagerDialog::~ElementManagerDialog()
 
 void ElementManagerDialog::on_cancelButton_clicked()
 {
-    this->destroy();
+    destroy();
 }
 
-void ElementManagerDialog::on_saveButton_clicked()
+void ElementManagerDialog::on_setButton_clicked()
 {
 
     // Gets the element name
@@ -64,29 +75,46 @@ void ElementManagerDialog::on_saveButton_clicked()
         return;
     }
 
-    SX::Chemistry::ElementManager* emgr=SX::Chemistry::ElementManager::Instance();
-
-    // Checks that is not already used in the elements database, otherwise return
-    if (emgr->hasElement(elementName.toStdString()))
-    {
-        QMessageBox::warning(this,"Add element","An element with name '"+elementName+"'' is already registered in the database.");
-        return;
-    }
-
-    SX::Chemistry::sptrElement element=emgr->getElement(elementName.toStdString());
-
     try
     {
-        for (auto p : _model->getIsotopes())
-            element->addIsotope(p.first.toStdString(),p.second);
+        _model->buildElement(elementName);
     }
-    catch(const SX::Kernel::Error<SX::Chemistry::Element>& e)
+    catch (SX::Kernel::Error<SX::Chemistry::Element>& e)
     {
         QMessageBox::warning(this,"Add element",QString::fromStdString(e.what()));
-        emgr->removeElement(element->getName());
+        _elementMgr->removeElement(elementName.toStdString());
         return;
     }
+    auto matches=ui->elementsList->findItems(elementName,Qt::MatchExactly);
+    if (matches.isEmpty())
+        ui->elementsList->addItem(elementName);
+}
 
-    emgr->saveRegistry();
+void ElementManagerDialog::on_saveButton_clicked()
+{
+    _elementMgr->saveRegistry();
+}
 
+void ElementManagerDialog::on_okButton_clicked()
+{
+    destroy();
+}
+
+void ElementManagerDialog::deleteElement()
+{
+    QString elementName=ui->elementsList->currentItem()->text();
+    _elementMgr->removeElement(elementName.toStdString());
+    delete ui->elementsList->currentItem();
+}
+
+void ElementManagerDialog::removeIsotope()
+{
+
+    QItemSelectionModel* selectionModel = ui->selectedIsotopesView->selectionModel();
+
+    QModelIndexList indexes = selectionModel->selection().indexes();
+    QListIterator<QModelIndex> it(indexes);
+    it.toBack();
+    while (it.hasPrevious())
+        _model->removeRows(it.previous().row(), 1, QModelIndex());
 }

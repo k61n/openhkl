@@ -70,11 +70,26 @@ sptrIsotope Element::operator[](const std::string& name)
 
 sptrIsotope Element::addIsotope(sptrIsotope isotope, double abundance)
 {
+
+	// If the abundance is not in the interval [0,1] then throws
+	if (abundance<0.0 || abundance>1.0)
+		throw SX::Kernel::Error<Element>("Invalid value for abundance");
+
+	double previousAbundance(0.0);
+
 	std::string name=isotope->getName();
-	// If the element already contains the isotope, return
+	// If the element already contains the isotope, change its abundance
 	auto it=_isotopes.find(name);
 	if (it!=_isotopes.end())
-		return it->second;
+		previousAbundance=_abundances[name];
+
+	// If the sum of af the abundances of all the isotopes building the element (+ the one of the isotope to be added) is more than 1, then throws
+	double sum=std::accumulate(std::begin(_abundances),
+			                    std::end(_abundances),
+			                    abundance-previousAbundance,
+			                    [](double previous, const strToDoublePair& p){return previous+p.second;});
+	if (sum>(1.000001))
+		throw SX::Kernel::Error<Element>("The sum of abundances exceeds 1.0");
 
 	// If some isotopes have been previously added to the Element, check that the one to be added is chemcially compatible with the other ones, otherwise throws
 	if (!_symbol.empty())
@@ -85,20 +100,10 @@ sptrIsotope Element::addIsotope(sptrIsotope isotope, double abundance)
 	else
 		_symbol=isotope->getSymbol();
 
-	// If the abundance is not in the interval [0,1] then throws
-	if (abundance<0.0 || abundance>1.0)
-		throw SX::Kernel::Error<Element>("Invalid value for abundance");
-
-	// If the sum of af the abundances of all the isotopes building the element (+ the one of the isotope to be added) is more than 1, then throws
-	double sum=std::accumulate(std::begin(_abundances),
-			                    std::end(_abundances),
-			                    abundance,
-			                    [](double previous, const strToDoublePair& p){return previous+p.second;});
-	if (sum>(1.000001))
-		throw SX::Kernel::Error<Element>("The sum of abundances exceeds 1.0");
+	isotope->_abundance = abundance;
 
 	_isotopes.insert(strToIsotopePair(name,isotope));
-	_abundances.insert(strToDoublePair(name,abundance));
+	_abundances.insert(strToDoublePair(name,isotope->_abundance));
 
 	return isotope;
 
