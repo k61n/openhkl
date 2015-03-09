@@ -75,38 +75,29 @@ sptrIsotope Element::addIsotope(sptrIsotope isotope, double abundance)
 	if (abundance<0.0 || abundance>1.0)
 		throw SX::Kernel::Error<Element>("Invalid value for abundance");
 
-	double previousAbundance(0.0);
-
 	std::string name=isotope->getName();
-	// If the element already contains the isotope, change its abundance
-	auto it=_isotopes.find(name);
-	if (it!=_isotopes.end())
-		previousAbundance=_abundances[name];
 
-	// If the sum of af the abundances of all the isotopes building the element (+ the one of the isotope to be added) is more than 1, then throws
-	double sum=std::accumulate(std::begin(_abundances),
-			                    std::end(_abundances),
-			                    abundance-previousAbundance,
-			                    [](double previous, const strToDoublePair& p){return previous+p.second;});
-	if (sum>(1.000001))
-		throw SX::Kernel::Error<Element>("The sum of abundances exceeds 1.0");
-
-	// If some isotopes have been previously added to the Element, check that the one to be added is chemcially compatible with the other ones, otherwise throws
-	if (!_symbol.empty())
+	if (_isotopes.empty())
 	{
-		if (_symbol.compare(isotope->getSymbol()) != 0)
-			throw SX::Kernel::Error<Element>("The element is made of isotopes of different chemical species.");
+		_isotopes.insert(strToIsotopePair(name,isotope));
+		_abundances.insert(strToDoublePair(name,abundance));
+		_symbol=isotope->getSymbol();
 	}
 	else
-		_symbol=isotope->getSymbol();
+	{
+		auto it=_isotopes.find(name);
+		if (it!=_isotopes.end())
+			_abundances[name] = abundance;
+		else
+		{
+			if (_symbol.compare(isotope->getSymbol()) != 0)
+				throw SX::Kernel::Error<Element>("The element is made of isotopes of different chemical species.");
 
-	isotope->_abundance = abundance;
-
-	_isotopes.insert(strToIsotopePair(name,isotope));
-	_abundances.insert(strToDoublePair(name,isotope->_abundance));
-
+			_isotopes.insert(strToIsotopePair(name,isotope));
+			_abundances.insert(strToDoublePair(name,abundance));
+		}
+	}
 	return isotope;
-
 }
 
 sptrIsotope Element::addIsotope(const std::string& name)

@@ -46,8 +46,6 @@ BOOST_AUTO_TEST_CASE(Test_Element)
 	uranium->addIsotope("U[238]");
 	// Checks that adding an incompatible isotope throws
 	BOOST_CHECK_THROW(uranium->addIsotope("C[12]"),SX::Kernel::Error<Element>);
-	// Checks that adding another (valid) isotope but with an abundance that will will make the sum of abundances > 1 throws
-	BOOST_CHECK_THROW(uranium->addIsotope("U[234]",0.98),SX::Kernel::Error<Element>);
 	// Checks that getting the molar mass of an incomplete (sum of abundances != 1 within 1.0-6 tolerance) elements throws
 	BOOST_CHECK_THROW(uranium->getMolarMass(),SX::Kernel::Error<Element>);
 
