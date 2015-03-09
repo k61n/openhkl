@@ -80,21 +80,14 @@ public:
 	//! Clean up the registry
 	void cleanRegistry();
 	//! Returns the number of registered materials
-	unsigned int getNMaterialsInRegistry() const;
+	unsigned int getNMaterials() const;
 	//! Returns true if a Material with a given name is registered
-	bool isInRegistry(const std::string& name) const;
+	bool hasMaterial(const std::string& name) const;
+	//! Save the registry to an XML file
+	void saveRegistry(std::string filename="") const;
 
-	//! Returns the name of the materials stored in the materials XML database
-	std::set<std::string> getDatabaseNames() const;
-	//! Returns the number of materials stored in the XML database
-	unsigned int getNMaterialsInDatabase() const;
-	//! Returns true if a material with a given name is stored in the XML database
-	bool isInDatabase(const std::string& name) const;
 	//! Sets the path for the materials XML database
 	void setDatabasePath(const std::string& path);
-
-	//! Synchronizes the new entries of the registry with the database
-	void updateDatabase(const std::string& filename="") const;
 
 private:
 

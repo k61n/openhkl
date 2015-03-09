@@ -21,13 +21,15 @@ namespace Chemistry
 std::map<std::string,Material::State> Material::s_toState={
 		{"solid",Material::State::Solid},
 		{"liquid",Material::State::Liquid},
-		{"gaz",Material::State::Gaz}
+		{"gaz",Material::State::Gaz},
+		{"mixture",Material::State::Mixture}
 };
 
 std::map<Material::State,std::string> Material::s_fromState={
 		{Material::State::Solid,"solid"},
 		{Material::State::Liquid,"liquid"},
-		{Material::State::Gaz,"gaz"}
+		{Material::State::Gaz,"gaz"},
+		{Material::State::Mixture,"mixture"}
 };
 
 std::map<std::string,Material::FillingMode> Material::s_toFillingMode={
@@ -133,6 +135,10 @@ void Material::addElement(const std::string& name, double fraction)
 
 void Material::addMaterial(sptrMaterial material, double contents)
 {
+
+	if (_fillingMode==FillingMode::NumberOfAtoms)
+		throw SX::Kernel::Error<Material>("Invalid filling mode");
+
 	if (_fillingMode==FillingMode::MassFraction)
 	{
 		for (const auto& p : material->getMassFractions())
@@ -143,8 +149,11 @@ void Material::addMaterial(sptrMaterial material, double contents)
 		for (const auto& p : material->getMoleFractions())
 			addElement(p.first,contents*p.second);
 	}
-	else
-		throw SX::Kernel::Error<Material>("Invalid filling mode");
+
+	//! If the material to add has a different chemical state then set the state as a mixture of chemical states
+	if (_state != material->_state)
+		_state=State::Mixture;
+
 }
 
 contentsMap Material::getMassFractions() const
@@ -207,6 +216,7 @@ contentsMap Material::getMassFractions() const
 	return fractions;
 }
 
+
 contentsMap Material::getMoleFractions() const
 {
 
@@ -254,6 +264,69 @@ contentsMap Material::getMoleFractions() const
 				                              [](double previous, const strToDoublePair& p) {return previous+p.second;});
 		for (auto it=_contents.begin();it!=_contents.end();++it)
 			fractions.insert(strToDoublePair(it->first,it->second/totalPressure));
+		break;
+	}
+
+	}
+
+	return fractions;
+}
+
+contentsMap Material::getNumberOfAtoms() const
+{
+
+	contentsMap fractions;
+
+	switch(_fillingMode)
+	{
+
+	case FillingMode::MassFraction:
+	{
+		double fact=0.0;
+		for (auto it=_contents.begin();it!=_contents.end();++it)
+		{
+			double frac=it->second/_elements.at(it->first)->getMolarMass();
+			fact+=frac;
+			fractions.insert(strToDoublePair(it->first,frac));
+		}
+		for (auto& f : fractions)
+			f.second/=fact;
+
+		auto min=std::min_element(fractions.begin(), fractions.end(), [] (const strToDoublePair & p1, const strToDoublePair & p2) -> bool {return (p1.second < p2.second);});
+		for (auto& f : fractions)
+			f.second/=min->second;
+
+		break;
+	}
+
+	case FillingMode::MoleFraction:
+	{
+
+		auto min=std::min_element(_contents.begin(), _contents.end(), [] (const strToDoublePair & p1, const strToDoublePair & p2) -> bool {return (p1.second < p2.second);});
+		for (auto it=_contents.begin();it!=_contents.end();++it)
+			fractions.insert(strToDoublePair(it->first,it->second/min->second));
+		break;
+	}
+
+	case FillingMode::NumberOfAtoms:
+	{
+		fractions=_contents;
+		break;
+	}
+
+	case FillingMode::PartialPressure:
+	{
+		double totalPressure=std::accumulate(std::begin(_contents),
+				                              std::end(_contents),
+				                              0.0,
+				                              [](double previous, const strToDoublePair& p) {return previous+p.second;});
+		for (auto it=_contents.begin();it!=_contents.end();++it)
+			fractions.insert(strToDoublePair(it->first,it->second/totalPressure));
+
+		auto min=std::min_element(fractions.begin(), fractions.end(), [] (const strToDoublePair & p1, const strToDoublePair & p2) -> bool {return (p1.second < p2.second);});
+		for (auto& f : fractions)
+			f.second/=min->second;
+
 		break;
 	}
 

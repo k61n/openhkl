@@ -30,7 +30,7 @@ BOOST_AUTO_TEST_CASE(Test_Material)
 	SX::Chemistry::sptrMaterial dbMethane=mmgr->getMaterial("db_methane");
 
 	// Check that the registry of materials has been correctly updated
-	BOOST_CHECK_EQUAL(mmgr->getNMaterialsInRegistry(),1);
+	BOOST_CHECK_EQUAL(mmgr->getNMaterials(),1);
 
 	// Checks that the methane molecule is made of two elements each of them being a composite of isotopes
 	BOOST_CHECK_EQUAL(dbMethane->getNElements(),2);
@@ -42,6 +42,11 @@ BOOST_AUTO_TEST_CASE(Test_Material)
 	contentsMap moleFractions=dbMethane->getMoleFractions();
 	BOOST_CHECK_EQUAL(moleFractions["carbon"],0.2);
 	BOOST_CHECK_EQUAL(moleFractions["hydrogen"],0.8);
+
+	// Checks the number of atoms of this methane molecule
+	contentsMap numberOfAtoms=dbMethane->getNumberOfAtoms();
+	BOOST_CHECK_EQUAL(numberOfAtoms["carbon"],1.00);
+	BOOST_CHECK_EQUAL(numberOfAtoms["hydrogen"],4.00);
 
 	// Checks the mass fractions of this methane molecule
 	double mCarbon = (*dbMethane)["carbon"]->getMolarMass();
@@ -61,7 +66,7 @@ BOOST_AUTO_TEST_CASE(Test_Material)
 	BOOST_CHECK_EQUAL(massFractions["hydrogen"],massFractions["hydrogen"]);
 
 	// Check that the registry of materials has been correctly updated
-	BOOST_CHECK_EQUAL(mmgr->getNMaterialsInRegistry(),2);
+	BOOST_CHECK_EQUAL(mmgr->getNMaterials(),2);
 
 	// Build a mixture of material from the XML database
 	SX::Chemistry::sptrMaterial dbMixture=mmgr->getMaterial("db_mixture");
@@ -73,6 +78,6 @@ BOOST_AUTO_TEST_CASE(Test_Material)
 	BOOST_CHECK_EQUAL(moleFractions["C"],0.2);
 	BOOST_CHECK_EQUAL(moleFractions["B"],0.8);
 
-	mmgr->updateDatabase("materials_new.xml");
+	mmgr->saveRegistry("materials_new.xml");
 
 }

@@ -88,7 +88,7 @@ public:
 	void reload();
 	//! Removes an Element from the registry
 	void removeElement(const std::string& name);
-	//! Save the registry
+	//! Save the registry to an XML file
 	void saveRegistry(std::string filename="") const;
 
 	//! Sets the path for the elements XML database

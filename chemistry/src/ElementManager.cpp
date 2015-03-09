@@ -225,7 +225,6 @@ const elementMap& ElementManager::getRegistry() const
 
 void ElementManager::saveRegistry(std::string filename) const
 {
-
 	//! If there is no entries in the registry, nothing to save, returns
 	if (_registry.empty())
 		return;
@@ -251,7 +250,6 @@ void ElementManager::saveRegistry(std::string filename) const
 
 	boost::property_tree::xml_writer_settings<char> settings('\t', 1);
 	xml_parser::write_xml(filename,root);
-
 }
 
 void ElementManager::removeElement(const std::string& name)

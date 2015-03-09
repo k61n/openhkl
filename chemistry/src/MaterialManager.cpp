@@ -258,69 +258,19 @@ void MaterialManager::setDatabasePath(const std::string& path)
 	_database=path;
 }
 
-unsigned int MaterialManager::getNMaterialsInRegistry() const
+unsigned int MaterialManager::getNMaterials() const
 {
 	return _registry.size();
 }
 
-bool MaterialManager::isInRegistry(const std::string& name) const
+bool MaterialManager::hasMaterial(const std::string& name) const
 {
 	auto it=_registry.find(name);
 	return (it!=_registry.end());
 }
 
-std::set<std::string> MaterialManager::getDatabaseNames() const
+void MaterialManager::saveRegistry(std::string filename) const
 {
-
-	property_tree::ptree root;
-	try
-	{
-		xml_parser::read_xml(_database,root);
-	}
-	catch (const std::runtime_error& error)
-	{
-		throw SX::Kernel::Error<ElementManager>(error.what());
-	}
-
-	std::set<std::string> names;
-
-	BOOST_FOREACH(const property_tree::ptree::value_type& node, root.get_child("materials"))
-	{
-		if (node.first.compare("material")!=0)
-			continue;
-		names.insert(node.second.get<std::string>("<xmlattr>.name"));
-	}
-
-	return names;
-}
-
-bool MaterialManager::isInDatabase(const std::string& name) const
-{
-	property_tree::ptree root;
-	try
-	{
-		xml_parser::read_xml(_database,root);
-	}
-	catch (const std::runtime_error& error)
-	{
-		throw SX::Kernel::Error<MaterialManager>(error.what());
-	}
-
-	BOOST_FOREACH(const property_tree::ptree::value_type& node, root.get_child("materials"))
-	{
-		if (node.first.compare("material")!=0)
-			continue;
-
-		if (node.second.get<std::string>("<xmlattr>.name").compare(name)==0)
-			return true;
-	}
-
-	return false;
-}
-
-void MaterialManager::updateDatabase(const std::string& filename) const
-{
-
 	//! If there is no entries in the registry, nothing to save, returns
 	if (_registry.empty())
 		return;
@@ -336,50 +286,16 @@ void MaterialManager::updateDatabase(const std::string& filename) const
 		root.add("materials","");
 	}
 
-	std::set<std::string> dbNames=getDatabaseNames();
+	property_tree::ptree& elementsNode=root.get_child("materials");
 
-	property_tree::ptree& materialsNode=root.get_child("materials");
-
-	for (const auto& m : _registry)
-	{
-		auto it=dbNames.find(m.second->getName());
-		if (it!=dbNames.end())
-			continue;
-
-		m.second->writeToXML(materialsNode);
-	}
-
-	boost::property_tree::xml_writer_settings<char> settings('\t', 1);
+	for (const auto& e : _registry)
+		e.second->writeToXML(elementsNode);
 
 	if (filename.empty())
-		xml_parser::write_xml(_database,root);
-	else
-		xml_parser::write_xml(filename,root);
+		filename=_database;
 
-}
-
-unsigned int MaterialManager::getNMaterialsInDatabase() const
-{
-	unsigned int nMaterials(0);
-
-	property_tree::ptree root;
-	try
-	{
-		xml_parser::read_xml(_database,root);
-	}
-	catch (const std::runtime_error& error)
-	{
-		throw SX::Kernel::Error<MaterialManager>(error.what());
-	}
-
-	BOOST_FOREACH(const property_tree::ptree::value_type& node, root.get_child("materials"))
-	{
-		if (node.first.compare("material")!=0)
-			continue;
-		nMaterials++;
-	}
-
-	return nMaterials;
+	boost::property_tree::xml_writer_settings<char> settings('\t', 1);
+	xml_parser::write_xml(filename,root);
 }
 
 } // end namespace Chemistry

@@ -73,7 +73,7 @@ public:
 	enum class FillingMode : unsigned int {MassFraction=0,MoleFraction=1,NumberOfAtoms=2,PartialPressure=3};
 
 	//! Enumerates the different chemical states that can be assigned to a Material
-	enum class State : unsigned int {Solid=0,Liquid=1,Gaz=2};
+	enum class State : unsigned int {Solid=0,Liquid=1,Gaz=2,Mixture=3};
 
 private:
 
@@ -124,6 +124,8 @@ public:
 	contentsMap getMoleFractions() const;
 	//! Returns a map of the mass fractions per element
 	contentsMap getMassFractions() const;
+	//! Returns a map of the mole fractions per element
+	contentsMap getNumberOfAtoms() const;
 
 	//! Returns the density of this Material
 	double getDensity() const;
