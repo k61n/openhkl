@@ -110,6 +110,12 @@ public:
 	double getIncoherentXs() const;
 	//! Returns the absorption cross section at a given wavelength weighted. It is computed as the abundance-weighted sum of the absorption cross section of the isotopes that build this Element
 	double getAbsorptionXs(double lambda=1.798e-10) const;
+	//! Returns the abundance of a given isotope. If not present in the Element, throw
+	double getAbundance(const std::string& name) const;
+	//! Set the abundance of a given isotope
+	void setAbundance(const std::string& name, double abundance);
+	//! Returns the abundance of the isotopes that make this Element
+	const contentsMap& getAbundances() const;
 
 	//! Add a shared pointer to an Isotope to this Element
 	sptrIsotope addIsotope(sptrIsotope isotope, double abundance);
@@ -118,8 +124,6 @@ public:
 	//! Add an Isotope with a given name to this Element using a given abundance
 	sptrIsotope addIsotope(const std::string& name, double abundance);
 
-	//! Returns the abundance of the isotopes that make this Element
-	const contentsMap& getAbundances() const;
 
 	//! Inserts the information about this Element to an XML parent node
 	void writeToXML(property_tree::ptree& parent) const;

@@ -130,15 +130,20 @@ bool DragElementModel::setData(const QModelIndex &index, const QVariant &value, 
         }
         else if (dynamic_cast<ElementsListWidget*>(_sender))
         {
+
+            removeRows(0,_isotopes.size());
+
             SX::Chemistry::sptrElement element=_elementMgr->getElement(value.toString().toStdString());
 
             const SX::Chemistry::isotopeMap& isotopes=element->getIsotopes();
-
-            for (auto it=isotopes.rbegin();it!=isotopes.rend();++it)
+            const SX::Chemistry::contentsMap& abundances=element->getAbundances();
+            auto ait=abundances.begin();
+            unsigned int comp(0);
+            for (auto it=isotopes.begin();it!=isotopes.end();++it,++ait)
             {
-                QPair<QString,double> pair(QString::fromStdString(it->first),it->second->getAbundance());
-                insertRow(index.row());
-                _isotopes.replace(index.row(),pair);
+                QPair<QString,double> pair(QString::fromStdString(it->first),ait->second);
+                insertRow(comp);
+                _isotopes.replace(comp++,pair);
             }
         }
         else
@@ -204,9 +209,6 @@ void DragElementModel::buildElement(const QString& elementName)
     SX::Chemistry::sptrElement element=_elementMgr->getElement(elementName.toStdString());
 
     for (const auto& p : _isotopes)
-    {
-        std::cout<<p.first.toStdString()<<" --- "<<p.second<<std::endl;
         element->addIsotope(p.first.toStdString(),p.second);
-    }
 }
 

@@ -144,6 +144,30 @@ bool Element::isEmpty() const
 	return _isotopes.empty();
 }
 
+double Element::getAbundance(const std::string& name) const
+{
+	try
+	{
+		return _abundances.at(name);
+	}
+	catch (const std::runtime_error& e)
+	{
+		throw SX::Kernel::Error<Element>("No isotope match "+name+" name in element "+_name);
+	}
+}
+
+void Element::setAbundance(const std::string& name, double abundance)
+{
+	// If the abundance is not in the interval [0,1] then throws
+	if (abundance<0.0 || abundance>1.0)
+		throw SX::Kernel::Error<Element>("Invalid value for abundance");
+
+	auto it=_abundances.find(name);
+
+	if (it!=_abundances.end())
+		_abundances[name]=abundance;
+}
+
 double Element::getMolarMass() const
 {
 	// If the sum of af the abundances of all the isotopes building the element is more than 1, then throws
