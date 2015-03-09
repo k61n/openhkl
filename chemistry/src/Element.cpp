@@ -21,6 +21,7 @@ Element* Element::create(const std::string& name, const std::string& symbol)
 
 Element::Element(const std::string& name, const std::string& symbol) : _name(name), _symbol(symbol), _isotopes(), _natural(!symbol.empty())
 {
+
 	if (!symbol.empty())
 	{
 		// Retrieves the isotopes from the isotopes XML database whose symbol tag matches the given symbol
@@ -36,7 +37,7 @@ Element::Element(const std::string& name, const std::string& symbol) : _name(nam
 		{
 			std::string name=is->getName();
 			_isotopes.insert(strToIsotopePair(name,is));
-			_abundances.insert(strToDoublePair(name,is->getAbundance()));
+			_abundances.insert(strToDoublePair(name,is->getNaturalAbundance()));
 		}
 	}
 
@@ -107,7 +108,7 @@ sptrIsotope Element::addIsotope(const std::string& name)
 	sptrIsotope isotope=mgr->getIsotope(name);
 
 	// Add it to the isotopes internal map with its natural abundance
-	addIsotope(isotope,isotope->getAbundance());
+	addIsotope(isotope,isotope->getNaturalAbundance());
 
 	return isotope;
 }
@@ -150,7 +151,7 @@ double Element::getAbundance(const std::string& name) const
 	{
 		return _abundances.at(name);
 	}
-	catch (const std::runtime_error& e)
+	catch (const std::out_of_range& e)
 	{
 		throw SX::Kernel::Error<Element>("No isotope match "+name+" name in element "+_name);
 	}

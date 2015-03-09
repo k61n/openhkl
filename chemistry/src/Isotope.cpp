@@ -21,7 +21,7 @@ Isotope::Isotope()
   _molarMass(0.0),
   _nuclearSpin(0.0),
   _state(""),
-  _abundance(0.0),
+  _naturalAbundance(0.0),
   _halfLife(0.0),
   _stable(true),
   _bCoherent(0.0),
@@ -45,7 +45,7 @@ Isotope::Isotope(const std::string& name)
   _molarMass(0.0),
   _nuclearSpin(0.0),
   _state(""),
-  _abundance(0.0),
+  _naturalAbundance(0.0),
   _halfLife(0.0),
   _stable(true),
   _bCoherent(0.0),
@@ -89,9 +89,9 @@ double Isotope::getNuclearSpin() const
 	return _nuclearSpin;
 }
 
-double Isotope::getAbundance() const
+double Isotope::getNaturalAbundance() const
 {
-	return _abundance;
+	return _naturalAbundance;
 }
 
 double Isotope::getHalfLife() const

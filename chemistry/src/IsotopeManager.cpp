@@ -153,7 +153,7 @@ sptrIsotope IsotopeManager::buildIsotope(const property_tree::ptree& node)
 	isotope->_molarMass=node.get<double>("molar_mass")*um->get(_units.at("molar_mass"));
 	isotope->_nuclearSpin=node.get<double>("nuclear_spin");
 	isotope->_state=node.get<std::string>("state");
-	isotope->_abundance=node.get<double>("abundance",0.0)*um->get(_units.at("abundance"));
+	isotope->_naturalAbundance=node.get<double>("natural_abundance",0.0)*um->get(_units.at("natural_abundance"));
 	isotope->_halfLife=node.get<double>("half_life",std::numeric_limits<double>::infinity())*um->get(_units.at("half_life"));
 	isotope->_stable=node.get<bool>("stable");
 	isotope->_bCoherent=node.get<std::complex<double>>("b_coherent")*um->get(_units.at("b_coherent"));

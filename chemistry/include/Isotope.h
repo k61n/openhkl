@@ -82,8 +82,8 @@ public:
 	//! Returns the nuclear spin of this Isotope
 	double getNuclearSpin() const;
 
-	//! Returns the abundance of this Isotope
-	double getAbundance() const;
+	//! Returns the natural abundance of this Isotope
+	double getNaturalAbundance() const;
 	//! Returns the half-life of this Isotope
 	double getHalfLife() const;
 	//! Returns whether this Isotope is stable or not
@@ -145,7 +145,7 @@ private:
 	//! Assignment operator (deleted)
 	Isotope& operator=(const Isotope& other)=delete;
 
-public:
+private:
 
 	//! The name of this Isotope
 	std::string _name;
@@ -166,7 +166,7 @@ public:
 	//! The chemical state of this Isotope
 	std::string _state;
 	//! The natural abundance of this Isotope. Equal to 0 if unstable
-	double _abundance;
+	double _naturalAbundance;
 	//! The half life of this Isotope. Equal to +Inf is stable
 	double _halfLife;
 	//! The stability of this Isotope
