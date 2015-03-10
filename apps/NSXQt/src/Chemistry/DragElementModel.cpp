@@ -121,7 +121,7 @@ bool DragElementModel::setData(const QModelIndex &index, const QVariant &value, 
                 if (it.first.compare(name)==0)
                     return false;
             }
-            double abundance=isotope->getAbundance();
+            double abundance=isotope->getNaturalAbundance();
             QPair<QString,double> pair(name,abundance);
 
             if (index.row() == _isotopes.size())

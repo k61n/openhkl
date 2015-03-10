@@ -429,7 +429,9 @@ double Material::getDensity() const
 		contentsMap moleFractions=getMoleFractions();
 
 		for (const auto& p : moleFractions)
-			density+=moleDensity*p.second*static_cast<double>(_elements.at(p.first)->getMolarMass());
+			density+=p.second*static_cast<double>(_elements.at(p.first)->getMolarMass());
+
+		density*=moleDensity;
 
 		return density;
 
