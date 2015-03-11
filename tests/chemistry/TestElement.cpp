@@ -1,8 +1,6 @@
 #define BOOST_TEST_MODULE "Test Element"
 #define BOOST_TEST_DYN_LINK
 
-#include <iostream>
-
 #include <boost/test/unit_test.hpp>
 
 #include "Element.h"
@@ -73,5 +71,4 @@ BOOST_AUTO_TEST_CASE(Test_Element)
 
 	ElementManager::DestroyInstance();
 	IsotopeManager::DestroyInstance();
-
 }

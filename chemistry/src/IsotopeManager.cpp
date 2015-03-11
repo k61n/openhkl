@@ -83,7 +83,7 @@ const std::string& IsotopeManager::getDatabasePath() const
 	return _database;
 }
 
-const isotopeMap& IsotopeManager::getRegistry() const
+const strToIsotopeMap& IsotopeManager::getRegistry() const
 {
 	return _registry;
 }
@@ -197,13 +197,13 @@ sptrIsotope IsotopeManager::getIsotope(const std::string& name)
 		if (v.second.get<std::string>("<xmlattr>.name").compare(name)==0)
 		{
 			sptrIsotope isotope(buildIsotope(v.second));
-			_registry.insert(isotopePair(name,isotope));
+			_registry.insert(strToIsotopePair(name,isotope));
 			return isotope;
 		}
 	}
 
 	sptrIsotope isotope(Isotope::create(name));
-	_registry.insert(isotopePair(name,isotope));
+	_registry.insert(strToIsotopePair(name,isotope));
 
 	return isotope;
 

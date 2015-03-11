@@ -5,10 +5,10 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include "Error.h"
 #include "Element.h"
 #include "ElementManager.h"
-#include "Material.h"
+#include "Error.h"
+#include "IMaterial.h"
 #include "MaterialManager.h"
 
 const double tolerance=1.0e-9;
@@ -36,15 +36,15 @@ BOOST_AUTO_TEST_CASE(Test_Material)
 	BOOST_CHECK_EQUAL(dbMethane->getNElements(),2);
 	BOOST_CHECK_EQUAL((*dbMethane)["carbon"]->getNIsotopes(),2);
 	BOOST_CHECK_EQUAL((*dbMethane)["hydrogen"]->getNIsotopes(),3);
-	BOOST_CHECK_THROW((*dbMethane)["blabla"]->getNIsotopes(),SX::Kernel::Error<Material>);
+	BOOST_CHECK_THROW((*dbMethane)["blabla"]->getNIsotopes(),SX::Kernel::Error<IMaterial>);
 
 	// Checks the mole fractions of this methane molecule
-	contentsMap moleFractions=dbMethane->getMoleFractions();
+	contentsMap moleFractions=dbMethane->getMolarFractions();
 	BOOST_CHECK_EQUAL(moleFractions["carbon"],0.2);
 	BOOST_CHECK_EQUAL(moleFractions["hydrogen"],0.8);
 
 	// Checks the number of atoms of this methane molecule
-	contentsMap numberOfAtoms=dbMethane->getNumberOfAtoms();
+	contentsMap numberOfAtoms=dbMethane->getStoichiometry();
 	BOOST_CHECK_EQUAL(numberOfAtoms["carbon"],1.00);
 	BOOST_CHECK_EQUAL(numberOfAtoms["hydrogen"],4.00);
 
@@ -57,10 +57,10 @@ BOOST_AUTO_TEST_CASE(Test_Material)
 	BOOST_CHECK_CLOSE(massFractions["hydrogen"],4.0*mHydrogen/mTotal,tolerance);
 
 	// Build a methane material dynamically and checks that its contents is the same than the one built from the database
-	SX::Chemistry::sptrMaterial methane= mmgr->buildEmptyMaterial("methane",Material::State::Gaz,Material::FillingMode::NumberOfAtoms);
+	SX::Chemistry::sptrMaterial methane= mmgr->buildEmptyMaterial("methane",IMaterial::State::Gaz,IMaterial::BuildingMode::Stoichiometry);
 	methane->addElement(emgr->getElement("carbon"),1);
 	methane->addElement(emgr->getElement("hydrogen"),4);
-	methane->setDensity(1.235);
+	methane->setMassDensity(1.235);
 	contentsMap massFractions1=methane->getMassFractions();
 	BOOST_CHECK_EQUAL(massFractions["carbon"],massFractions["carbon"]);
 	BOOST_CHECK_EQUAL(massFractions["hydrogen"],massFractions["hydrogen"]);
@@ -71,13 +71,12 @@ BOOST_AUTO_TEST_CASE(Test_Material)
 	// Build a mixture of material from the XML database
 	SX::Chemistry::sptrMaterial dbMixture=mmgr->getMaterial("db_mixture");
 
-	SX::Chemistry::sptrMaterial b4c=mmgr->buildMaterialFromChemicalFormula("B4C");
+	SX::Chemistry::sptrMaterial b4c=mmgr->buildMaterialFromChemicalFormula("B4C",IMaterial::State::Solid);
 	BOOST_CHECK_EQUAL((*b4c)["C"]->getNIsotopes(),2);
 	BOOST_CHECK_EQUAL((*b4c)["B"]->getNIsotopes(),2);
-	moleFractions=b4c->getMoleFractions();
+	moleFractions=b4c->getMolarFractions();
 	BOOST_CHECK_EQUAL(moleFractions["C"],0.2);
 	BOOST_CHECK_EQUAL(moleFractions["B"],0.8);
 
 	mmgr->saveRegistry("materials_new.xml");
-
 }

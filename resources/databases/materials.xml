@@ -1,7 +1,7 @@
 <materials>
 
-<material name="db_methane" state="gaz" filling_mode="mole_fraction">
-	<density units="kg/m3">1.235</density>
+<material name="db_methane" chemical_state="gaz" building_mode="molar_fractions">
+	<mass_density units="kg/m3">1.235</mass_density>
 
 	<element name="carbon">
 	<symbol>C</symbol>	
@@ -14,15 +14,15 @@
 	</element>
 </material>
 
-<material name="db_mixture" state="gaz" filling_mode="mole_fraction">
-	<density units="kg/m3">1.235</density>
+<material name="db_mixture" chemical_state="gaz" building_mode="molar_fractions">
+	<mass_density units="kg/m3">1.235</mass_density>
 
 	<material database="db_methane">
 	<contents>0.4</contents>
 	</material>
 
-	<material name="db_water" state="gaz" filling_mode="number_of_atoms">
-		<density units="kg/m3">0.234</density>
+	<material name="db_water" chemical_state="gaz" building_mode="stoichiometry">
+		<mass_density units="kg/m3">0.234</mass_density>
 		<contents>0.6</contents>
 
 		<element name="oxygen">

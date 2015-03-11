@@ -33,7 +33,7 @@
 #include <functional>
 #include <iostream>
 #include <stdexcept>
-#include <unordered_map>
+#include <map>
 #include <vector>
 
 namespace SX
@@ -50,7 +50,7 @@ template <typename returnType, typename keytype, typename ...args>
 class Factory
 {
 	typedef std::function<returnType*(args...)> callback;
-	typedef std::unordered_map<keytype,callback> callbackmap;
+	typedef std::map<keytype,callback> callbackmap;
 
 public:
 	Factory(){}
@@ -100,7 +100,7 @@ base* Factory<base,keytype,args...>::create(const keytype& key, args...arg)
 	if (it != _map.end())
 		return ((it->second)(arg...));
 	else
-		throw std::invalid_argument("Factory error: callback not registered for this type of class:"+key);
+		throw std::invalid_argument("Factory error: callback not registered for this class");
 }
 
 template <typename base, typename keytype, typename ...args>

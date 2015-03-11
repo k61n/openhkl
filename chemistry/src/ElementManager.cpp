@@ -180,7 +180,7 @@ sptrElement ElementManager::buildElement(const property_tree::ptree& node)
 	}
 
 	// Everything is OK, register the element
-	_registry.insert(elementPair(name,element));
+	_registry.insert(strToElementPair(name,element));
 
 	return element;
 
@@ -202,7 +202,7 @@ sptrElement ElementManager::getElement(const std::string& name, const std::strin
 
 	// Otherwise creates, registers and returns an empty Element with the given name
 	sptrElement element(Element::create(name,symbol));
-	_registry.insert(elementPair(name,element));
+	_registry.insert(strToElementPair(name,element));
 
 	return element;
 }
@@ -218,7 +218,7 @@ unsigned int ElementManager::getNElements() const
 	return _registry.size();
 }
 
-const elementMap& ElementManager::getRegistry() const
+const strToElementMap& ElementManager::getRegistry() const
 {
 	return _registry;
 }

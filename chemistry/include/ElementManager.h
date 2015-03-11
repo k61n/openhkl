@@ -53,8 +53,8 @@ class MaterialManager;
 
 // Typedefs
 typedef std::shared_ptr<Element> sptrElement;
-typedef std::map<std::string,sptrElement> elementMap;
-typedef std::pair<std::string,sptrElement> elementPair;
+typedef std::map<std::string,sptrElement> strToElementMap;
+typedef std::pair<std::string,sptrElement> strToElementPair;
 
 // Namespaces
 namespace property_tree=boost::property_tree;
@@ -81,7 +81,7 @@ public:
 	//! Returns the number of registered Element objects
 	unsigned int getNElements() const;
 	//! Returns the elements registry
-	const elementMap& getRegistry() const;
+	const strToElementMap& getRegistry() const;
 	//! Returns true if an Element with a given name is registered
 	bool hasElement(const std::string& name) const;
 	//! Reloads the current database
@@ -106,7 +106,7 @@ private:
 	std::string _database;
 
 	//! The registry that will store the created Element objects
-	elementMap _registry;
+	strToElementMap _registry;
 
 };
 

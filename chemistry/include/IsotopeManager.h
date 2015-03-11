@@ -58,8 +58,8 @@ namespace xml_parser=boost::property_tree::xml_parser;
 typedef std::shared_ptr<Isotope> sptrIsotope;
 typedef std::set<sptrIsotope> isotopeSet;
 
-typedef std::map<std::string,sptrIsotope> isotopeMap;
-typedef std::pair<std::string,sptrIsotope> isotopePair;
+typedef std::map<std::string,sptrIsotope> strToIsotopeMap;
+typedef std::pair<std::string,sptrIsotope> strToIsotopePair;
 
 typedef std::map<std::string,std::string> unitsMap;
 typedef std::pair<std::string,std::string> unitsPair;
@@ -97,7 +97,7 @@ public:
 	//! Returns the number of isotopes stored in the XML database
 	unsigned int getNIsotopesInDatabase() const;
 	//! Returns the isotopes registry
-	const isotopeMap& getRegistry() const;
+	const strToIsotopeMap& getRegistry() const;
 	//! Gets the units stored in the XML database
 	const unitsMap& getUnits() const;
 	//! Returns true if an isotope with a given name is stored in the XML database
@@ -120,7 +120,7 @@ private:
 	std::string _database;
 
 	//! The registry that will store the created Isotope objects
-	isotopeMap _registry;
+	strToIsotopeMap _registry;
 
 	//! The map that stores the units for the properties of the database
 	unitsMap _units;
@@ -199,7 +199,7 @@ isotopeSet IsotopeManager::getIsotopes(const std::string& prop, T value)
 				else
 				{
 					sptrIsotope isotope=buildIsotope(v.second);
-					_registry.insert(isotopePair(name,isotope));
+					_registry.insert(strToIsotopePair(name,isotope));
 					isSet.insert(isotope);
 				}
 			}
