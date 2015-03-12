@@ -8,6 +8,7 @@
 #include "Diffractometer.h"
 #include "UnitCellItem.h"
 
+
 SamplePropertyWidget::SamplePropertyWidget(SampleItem* caller,QWidget *parent) :
     _sampleItem(caller),
     QWidget(parent),
@@ -46,11 +47,7 @@ void SamplePropertyWidget::on_pushButton_addCrystal_clicked()
      auto _sample=_sampleItem->getExperiment()->getDiffractometer()->getSample();
      auto cell=_sample->addUnitCell();
      std::size_t nsamples=_sample->getNCrystals();
-     _sampleItem->setChild(nsamples-1,new UnitCellItem(_sampleItem->getExperiment(),cell));
+     _sampleItem->appendRow(new UnitCellItem(_sampleItem->getExperiment(),cell));
      ui->nsampleLabel->setText(QString::number(nsamples));
 }
 
-void SamplePropertyWidget::on_pushButton_addShape_clicked()
-{
-
-}

@@ -6,6 +6,8 @@
 #include "Units.h"
 #include <QtDebug>
 #include "Logger.h"
+#include <set>
+#include "IData.h"
 
 UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *parent) :
     _unitCellItem(caller),
@@ -57,4 +59,21 @@ void UnitCellPropertyWidget::setLatticeParams()
 void UnitCellPropertyWidget::on_pushButton_Info_clicked()
 {
    qDebug() << "" << *(_unitCellItem->getCell());
+}
+
+void UnitCellPropertyWidget::on_pushButton_Index_clicked()
+{
+    emit activateIndexingMode(_unitCellItem->getCell());
+}
+
+void UnitCellPropertyWidget::on_pushButton_Index_2_pressed()
+{
+    auto datamap=_unitCellItem->getExperiment()->getData();
+    std::vector<SX::Crystal::Peak3D*> allpeaks;
+    for (auto data: datamap)
+    {
+        auto peaks=data.second->getPeaks();
+        std::copy(peaks.begin(),peaks.end(),std::back_inserter(allpeaks));
+    }
+    auto cellptr=_unitCellItem->getCell();
 }

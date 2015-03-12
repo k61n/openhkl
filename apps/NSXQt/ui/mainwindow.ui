@@ -20,7 +20,7 @@
    <enum>Qt::ClickFocus</enum>
   </property>
   <property name="windowTitle">
-   <string>Integration Software Alpha version (Nov 2014)</string>
+   <string>Integration Software Beta version (March 2015)</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../NSXQt.qrc">

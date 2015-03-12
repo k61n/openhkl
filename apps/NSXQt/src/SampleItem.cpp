@@ -3,17 +3,20 @@
 #include "Diffractometer.h"
 #include "Sample.h"
 #include "SamplePropertyWidget.h"
+#include "SampleShapeItem.h"
 
 SampleItem::SampleItem(Experiment* experiment) : InspectableTreeItem(experiment)
 {
     setText(QString::fromStdString(_experiment->getDiffractometer()->getSample()->getName()));
-    QIcon icon(":/resources/sampleIcon.png");
+    QIcon icon(":/resources/gonioIcon.png");
     setIcon(icon);
 
-    setEditable(true);
-
+    setEditable(false);
+    setSelectable(false);
     setDragEnabled(false);
     setDropEnabled(false);
+    SampleShapeItem* shape=new SampleShapeItem(_experiment);
+    appendRow(shape);
 }
 
 void SampleItem::setData(const QVariant &value, int role)

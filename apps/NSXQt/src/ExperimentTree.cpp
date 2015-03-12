@@ -42,6 +42,7 @@ ExperimentTree::ExperimentTree(QWidget *parent) : QTreeView(parent)
 
     _model=new QStandardItemModel();
     setModel(_model);
+    expandAll();
     setSelectionMode(QAbstractItemView::ContiguousSelection);
     update();
 
@@ -304,14 +305,10 @@ void ExperimentTree::keyPressEvent(QKeyEvent *event)
         while (it.hasPrevious())
         {
             QStandardItem* item = _model->itemFromIndex(it.previous());
-
-            if (auto ptr=dynamic_cast<NumorItem*>(item))
-            {
-                ptr->getExperiment()->removeData(ptr->text().toStdString());
-                _model->removeRow(ptr->row(),ptr->parent()->index());
-            }
-            else if (auto ptr=dynamic_cast<ExperimentItem*>(item))
-                _model->removeRow(ptr->row());
+            if (!item->parent())
+                 _model->removeRow(item->row());
+            else
+                _model->removeRow(item->row(),item->parent()->index());
         }
     }
 }

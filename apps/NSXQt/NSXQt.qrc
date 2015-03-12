@@ -34,5 +34,6 @@
         <file>resources/IconpickingPoints.jpg</file>
         <file>resources/Icontriangulate.jpg</file>
         <file>resources/IconremovingPoints.jpg</file>
+        <file>resources/gonioIcon.png</file>
     </qresource>
 </RCC>

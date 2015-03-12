@@ -138,7 +138,7 @@ void SXPlot::exportToAscii()
         for (auto point: *data)
         {
             result(current,2*i+1)=point.value;
-            result(current++,2*i+2)=point.valueErrorPlus+point.valueErrorMinus;
+            result(current++,2*i+2)=0.5*(point.valueErrorPlus+point.valueErrorMinus);
         }
     }
     file << result;

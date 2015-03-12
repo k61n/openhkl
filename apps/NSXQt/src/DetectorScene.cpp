@@ -16,6 +16,7 @@
 #include <QtDebug>
 #include "MaskGraphicsItem.h"
 #include <ctime>
+#include <QMenu>
 
 DetectorScene::DetectorScene(QObject *parent)
 : QGraphicsScene(parent),
@@ -172,6 +173,21 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
         {
             item->setSelected(!item->isSelected());
             return;
+        }
+
+        PeakGraphicsItem* peak=dynamic_cast<PeakGraphicsItem*>(item);
+        if (peak && _mode==INDEXING)
+        {
+            QMenu* menu = new QMenu();
+            std::vector<Eigen::Vector3d> peaks=_indexer->index(*peak->getPeak());
+            for (auto p : peaks)
+            {
+                std::ostringstream os;
+                os << p;
+                QAction* action=menu->addAction(os.str().c_str());
+                connect(action,&QAction::triggered,[=](){setPeakIndex(peak->getPeak(),p);});
+            }
+            menu->popup(event->screenPos());
         }
 
         // If the item is a NSXTools GI and is selectedit will become the current active GI
@@ -434,6 +450,7 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
 void DetectorScene::changeInteractionMode(int mode)
 {
     _mode=static_cast<MODE>(mode);
+    std::cout << mode << std::endl;
 }
 
 void DetectorScene::loadCurrentImage(bool newimage)
@@ -539,5 +556,18 @@ void DetectorScene::showPeakLabels(bool peaklabel)
         it->second->setLabelVisible(peaklabel);
     }
     return;
+}
+
+void DetectorScene::activateIndexingMode(std::shared_ptr<SX::Crystal::UnitCell> cell)
+{
+    _mode=INDEXING;
+    _cell=cell;
+    _indexer=new SX::Crystal::Indexer(_cell);
+}
+
+void DetectorScene::setPeakIndex(SX::Crystal::Peak3D* peak, const Eigen::Vector3d &index)
+{
+    peak->setMillerIndices(index[0],index[1],index[2]);
+    _indexer->storePeak(peak);
 }
 

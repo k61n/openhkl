@@ -10,6 +10,9 @@
 #include <QStack>
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
+#include <memory>
+#include "UnitCell.h"
+#include "Indexer.h"
 
 // Forward declarations
 namespace SX
@@ -42,7 +45,7 @@ class DetectorScene : public QGraphicsScene
 {
     Q_OBJECT
 public:
-    enum MODE {ZOOM=0, LINE=1, HORIZONTALSLICE=2, VERTICALSLICE=3, MASK=4};
+    enum MODE {ZOOM=0, LINE=1, HORIZONTALSLICE=2, VERTICALSLICE=3, MASK=4,INDEXING=5};
     //! Which mode is the cursor diplaying
     enum CURSORMODE {THETA=0, GAMMA=1, DSPACING=2, PIXEL=3, HKL=4};
     explicit DetectorScene(QObject *parent = 0);
@@ -62,12 +65,15 @@ protected:
     void wheelEvent(QGraphicsSceneWheelEvent *event);
 
 public slots:
+
+    void activateIndexingMode(std::shared_ptr<SX::Crystal::UnitCell>);
     // To be called to update detector image
     void setData(SX::Data::IData*,int frame);
     void setData(SX::Data::IData*);
     void changeFrame(int frame=0);
     void setMaxIntensity(int);
     PeakGraphicsItem* findPeakGraphicsItem(SX::Crystal::Peak3D* peak);
+    void setPeakIndex(SX::Crystal::Peak3D* peak,const Eigen::Vector3d& index);
     void updatePeaks();
     //! Change interaction mode in the scene
     void changeInteractionMode(int);
@@ -104,6 +110,9 @@ private:
     std::map<SX::Crystal::Peak3D*,PeakGraphicsItem*> _peaks;
     QList<MaskGraphicsItem*> _masks;
     SXGraphicsItem* _lastClickedGI;
+    std::shared_ptr<SX::Crystal::UnitCell> _cell;
+    SX::Crystal::Indexer* _indexer;
+
 };
 
 #endif // DETECTORSCENE_H

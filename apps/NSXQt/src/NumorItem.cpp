@@ -13,6 +13,11 @@ NumorItem::NumorItem(SX::Instrument::Experiment* experiment,SX::Data::IData* dat
     setDropEnabled(true);
 }
 
+NumorItem::~NumorItem()
+{
+   _experiment->removeData(_data->getBasename());
+}
+
 SX::Data::IData* NumorItem::getData()
 {
     return _data;

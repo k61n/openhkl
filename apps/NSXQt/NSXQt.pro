@@ -67,7 +67,9 @@ SOURCES += src/Main.cpp \
     src/Chemistry/NewElementTableView.cpp \
     src/Chemistry/IsotopesListWidget.cpp \
     src/Chemistry/ElementsListWidget.cpp \
-    src/Chemistry/ElementManagerDialog.cpp
+    src/Chemistry/ElementManagerDialog.cpp \
+    src/SampleShapeItem.cpp \
+    src/SampleShapePropertyWidget.cpp
 
 HEADERS  += include/MainWindow.h \
     include/DialogPeakFind.h \
@@ -123,7 +125,9 @@ HEADERS  += include/MainWindow.h \
     include/Chemistry/NewElementTableView.h \
     include/Chemistry/IsotopesListWidget.h \
     include/Chemistry/ElementsListWidget.h \
-    include/Chemistry/ElementManagerDialog.h
+    include/Chemistry/ElementManagerDialog.h \
+    include/SampleShapeItem.h \
+    include/SampleShapePropertyWidget.h
 
 FORMS    += ui/mainwindow.ui \
     ui/dialog_PeakFind.ui \
@@ -140,10 +144,11 @@ FORMS    += ui/mainwindow.ui \
     ui/NumorPropertyWidget.ui \
     ui/Chemistry/IsotopeDatabaseDialog.ui \
     ui/DetectorPropertyWidget.ui \
-    ui/Chemistry/ElementManagerDialog.ui
+    ui/Chemistry/ElementManagerDialog.ui \
+    ui/SampleShapePropertyWidget.ui
 
 win32:CONFIG(release, debug|release): LIBS += -lNSXTool
-else:unix: LIBS += -lNSXTool -lboost_date_time -lfftw3
+else:unix: LIBS += -lNSXTool -lboost_date_time -lboost_system -lfftw3
 
 INCLUDEPATH += $$PWD include externals/include
 

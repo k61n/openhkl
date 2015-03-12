@@ -12,9 +12,8 @@ SourceItem::SourceItem(Experiment* experiment) : TreeItem(experiment)
 
     QIcon icon(":/resources/sourceIcon.png");
     setIcon(icon);
-
     setEditable(false);
-
+    setSelectable(false);
     setDragEnabled(false);
     setDropEnabled(false);
 }

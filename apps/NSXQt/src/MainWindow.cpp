@@ -53,6 +53,7 @@
 #include "Absorption/AbsorptionWidget.h"
 #include "Chemistry/IsotopeDatabaseDialog.h"
 #include "Chemistry/ElementManagerDialog.h"
+#include "UnitCellPropertyWidget.h"
 
 using namespace SX::Units;
 using namespace SX::Instrument;
@@ -441,4 +442,10 @@ void MainWindow::setInspectorWidget(QWidget* w)
     _ui->scrollAreaInspection->setWidget(w);
     _ui->scrollAreaInspection->setWidgetResizable(true);
     _ui->scrollAreaInspection->update();
+
+    // Handle specific actions from these widgets
+    if (UnitCellPropertyWidget* widget=dynamic_cast<UnitCellPropertyWidget*>(w))
+    {
+        connect(widget,SIGNAL(activateIndexingMode(std::shared_ptr<SX::Crystal::UnitCell>)),_ui->_dview->getScene(),SLOT(activateIndexingMode(std::shared_ptr<SX::Crystal::UnitCell>)));
+    }
 }

@@ -21,8 +21,6 @@ public:
 private slots:
     void on_pushButton_addCrystal_clicked();
 
-    void on_pushButton_addShape_clicked();
-
 private:
     //!Pointer to the sample
     SampleItem* _sampleItem;

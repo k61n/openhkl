@@ -20,6 +20,7 @@ class NumorItem : public InspectableTreeItem
 {
 public:
     explicit NumorItem(Experiment* experiment,SX::Data::IData* data);
+    ~NumorItem();
     QWidget* inspectItem();
     SX::Data::IData* getData();
 private:

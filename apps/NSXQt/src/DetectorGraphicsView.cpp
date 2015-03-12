@@ -22,6 +22,7 @@ DetectorGraphicsView::DetectorGraphicsView(QWidget* parent) : QGraphicsView(pare
     // Invert the y-axis so that (0,0) coordinate is at bottom left (and not top left)
     // This match detector coordinates in NSXTool
     scale(1,-1);
+    setContextMenuPolicy(Qt::CustomContextMenu);
 }
 
 void DetectorGraphicsView::resizeEvent(QResizeEvent *event)

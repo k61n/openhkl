@@ -13,7 +13,7 @@ DetectorItem::DetectorItem(Experiment* experiment) : InspectableTreeItem(experim
     setIcon(icon);
 
     setEditable(false);
-
+    setSelectable(false);
     setDragEnabled(false);
     setDropEnabled(false);
 }
