@@ -99,7 +99,7 @@ sptrMaterial MaterialManager::buildMaterialFromChemicalFormula(std::string formu
 			{
 				try
 				{
-					element->addIsotope(symbol+isotope);
+					element->addIsotope(symbol+isotope,100.0);
 				}
 				catch(const SX::Kernel::Error<IsotopeManager>& error)
 				{
