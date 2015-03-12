@@ -20,6 +20,10 @@ SamplePropertyWidget::SamplePropertyWidget(SampleItem* caller,QWidget *parent) :
     auto gonio=_sample->getGonio();
     auto naxes=gonio->getNAxes();
 
+    ui->axisLayout->addWidget(new QLabel("Name"),0,0);
+    ui->axisLayout->addWidget(new QLabel("Axis"),0,1);
+    ui->axisLayout->addWidget(new QLabel("Offset"),0,2);
+
     for (int i=0;i<naxes;++i)
     {
         auto axis=gonio->getAxis(i);

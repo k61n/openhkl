@@ -12,7 +12,6 @@
 CrystalScene::CrystalScene(SX::Geometry::ConvexHull<double>* hull, QWidget *parent) :
     QGraphicsScene(parent), pixmapitem(0),_ruler(0),_pin(0),_text(nullptr),_hull(hull)
 {
-    std::cout << "Working with" << _hull << std::endl;
     distance=1.0;
    _distancedialog=new CalibrateDistanceDialog();
     connect(_distancedialog,SIGNAL(on_calibrateDistanceSpinBox_valueChanged(double)),this,SLOT(getDistance(double)));
@@ -269,8 +268,6 @@ void CrystalScene::triangulate()
         QMessageBox::critical(nullptr, tr("NSXTool"), tr(e.what()));
         return;
     }
-    std::cout << "Hull Faces:" <<_hull->getNFaces() << ", edges:" <<_hull->getNEdges() << ", vertices: " <<_hull->getNVertices() << std::endl;
-
     const std::vector<SX::Geometry::Triangle>& tcache=_hull->createFaceCache();
     std::vector<SX::Geometry::Triangle>::const_iterator it;
     double yc, zc;
@@ -299,7 +296,7 @@ void CrystalScene::drawText(QString text)
     if (!_text)
     {
         _text=addText(text);
-        _text->setDefaultTextColor(QColor(Qt::white));
+        _text->setDefaultTextColor(QColor(Qt::red));
     }
     else
         _text->setPlainText(text);

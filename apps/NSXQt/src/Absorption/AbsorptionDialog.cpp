@@ -150,7 +150,6 @@ void AbsorptionDialog::setupInitialButtons()
 {
     ui->button_calibrateDistance->setDisabled(true);
     ui->button_pickCenter->setDisabled(true);
-    ui->button_measure->setDisabled(true);
     ui->button_pickingPoints->setDisabled(true);
     ui->button_removingPoints->setDisabled(true);
     ui->button_triangulate->setDisabled(true);

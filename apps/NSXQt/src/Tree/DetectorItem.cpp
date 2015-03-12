@@ -9,11 +9,9 @@
 
 DetectorItem::DetectorItem(Experiment* experiment) : InspectableTreeItem(experiment)
 {
-    setText(QString::fromStdString(_experiment->getDiffractometer()->getDetector()->getName()));
-
+    setText("Detector");
     QIcon icon(":/resources/detectorIcon.png");
     setIcon(icon);
-
     setEditable(false);
     setSelectable(false);
     setDragEnabled(false);

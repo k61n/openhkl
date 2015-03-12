@@ -9,7 +9,7 @@
 
 SampleItem::SampleItem(Experiment* experiment) : InspectableTreeItem(experiment)
 {
-    setText(QString::fromStdString(_experiment->getDiffractometer()->getSample()->getName()));
+    setText("Sample");
     QIcon icon(":/resources/gonioIcon.png");
     setIcon(icon);
 
