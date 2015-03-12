@@ -14,31 +14,36 @@ namespace SX
 namespace Chemistry
 {
 
-Element* Element::create(const std::string& name, const std::string& symbol)
+Element* Element::create(const std::string& name)
 {
-	return (new Element(name,symbol));
+	return (new Element(name));
 }
 
-Element::Element(const std::string& name, const std::string& symbol) : _name(name), _symbol(symbol), _isotopes(), _natural(!symbol.empty())
+Element::Element(const std::string& name) : _name(name),_symbol(), _isotopes(), _natural(false)
 {
 
-	if (!symbol.empty())
+	std::size_t bracket=name.find_first_of("[");
+	IsotopeManager* imgr=IsotopeManager::Instance();
+	if (bracket!=std::string::npos)
 	{
-		// Retrieves the isotopes from the isotopes XML database whose symbol tag matches the given symbol
-		IsotopeManager* mgr=IsotopeManager::Instance();
-		isotopeSet isotopes=mgr->getIsotopes<std::string>("symbol",symbol);
-
-		// If no isotopes matches the given symbol then throws
-		if (isotopes.empty())
-			throw SX::Kernel::Error<Element>("No isotopes match symbol "+symbol);
+		sptrIsotope isotope=imgr->getIsotope(name);
+		addIsotope(isotope,1.0);
+	}
+	else
+	{
+		isotopeSet isotopes;
+		try
+		{
+			isotopes=imgr->getIsotopes<std::string>("symbol",name);
+		}catch(...)
+		{
+			// return enpty element
+			return;
+		}
 
 		// Insert the isotopes found in the isotopes internal map
 		for (const auto& is : isotopes)
-		{
-			std::string name=is->getName();
-			_isotopes.insert(strToIsotopePair(name,is));
-			_abundances.insert(strToDoublePair(name,is->getNaturalAbundance()));
-		}
+			addIsotope(is,is->getNaturalAbundance());
 	}
 
 }

@@ -9,6 +9,7 @@
 #include "ElementManager.h"
 #include "Path.h"
 #include "Units.h"
+#include "IsotopeManager.h"
 
 namespace SX
 {
@@ -104,26 +105,41 @@ sptrElement ElementManager::buildElement(const property_tree::ptree& node)
 	if (it!=_registry.end())
 		return element;
 
-	// If the element node has an attribute symbol then the element is built from its natural isotopes
-	boost::optional<const property_tree::ptree&> symbol = node.get_child_optional("symbol");
-	if (symbol)
-		element=getElement(name,symbol.get().get_value<std::string>());
-	else
+
+	SX::Units::UnitsManager* um=SX::Units::UnitsManager::Instance();
+
+	// Build an empty Element
+	element=sptrElement(Element::create(name));
+	// Loop over the 'isotope' nodes
+	BOOST_FOREACH(const property_tree::ptree::value_type& subnode, node)
 	{
-		SX::Units::UnitsManager* um=SX::Units::UnitsManager::Instance();
+		if (subnode.first.compare("isotope")!=0)
+			continue;
 
-		// Build an empty Element
-		element=sptrElement(Element::create(name));
-		// Loop over the 'isotope' nodes
-		BOOST_FOREACH(const property_tree::ptree::value_type& subnode, node)
+		std::string isotopeName;
+		try
 		{
-			if (subnode.first.compare("isotope")!=0)
-				continue;
+			isotopeName=subnode.second.get<std::string>("<xmlattr>.name");
+		}
+		catch(const std::runtime_error& e)
+		{
+			element.reset();
+			return element;
+		}
 
-			std::string isotopeName;
+		// If the isotope node has an 'abundance' node then use its value to set the abundance of the corresponding isotope in the element being built
+		boost::optional<const property_tree::ptree&> abundanceNode = subnode.second.get_child_optional("abundance");
+		if (abundanceNode)
+		{
+			double units;
+			double abundance;
+
+			// Try to get the abundance and its units for this isotope, otherwise returns a null shared pointer
 			try
 			{
-				isotopeName=subnode.second.get<std::string>("<xmlattr>.name");
+				property_tree::ptree n=abundanceNode.get();
+				abundance=n.get_value<double>();
+				units=um->get(n.get<std::string>("<xmlattr>.units","%"));
 			}
 			catch(const std::runtime_error& e)
 			{
@@ -131,53 +147,33 @@ sptrElement ElementManager::buildElement(const property_tree::ptree& node)
 				return element;
 			}
 
-			// If the isotope node has an 'abundance' node then use its value to set the abundance of the corresponding isotope in the element being built
-			boost::optional<const property_tree::ptree&> abundanceNode = subnode.second.get_child_optional("abundance");
-			if (abundanceNode)
+			// Try to add the isotope, otherwise returns a null shared pointer
+			try
 			{
-				double units;
-				double abundance;
-
-				// Try to get the abundance and its units for this isotope, otherwise returns a null shared pointer
-				try
-				{
-					property_tree::ptree n=abundanceNode.get();
-					abundance=n.get_value<double>();
-					units=um->get(n.get<std::string>("<xmlattr>.units","%"));
-				}
-				catch(const std::runtime_error& e)
-				{
-					element.reset();
-					return element;
-				}
-
-				// Try to add the isotope, otherwise returns a null shared pointer
-				try
-				{
-					element->addIsotope(isotopeName,abundance*units);
-				}
-				catch(const SX::Kernel::Error<Element>& e)
-				{
-					element.reset();
-					return element;
-				}
+				element->addIsotope(isotopeName,abundance*units);
 			}
-			// Otherwise use the natural abundance found in the isotopes XML database
-			else
+			catch(const SX::Kernel::Error<Element>& e)
 			{
-				// Try to add the isotope, otherwise returns a null shared pointer
-				try
-				{
-					element->addIsotope(isotopeName);
-				}
-				catch(const SX::Kernel::Error<Element>& e)
-				{
-					element.reset();
-					return element;
-				}
+				element.reset();
+				return element;
+			}
+		}
+		// Otherwise use the natural abundance found in the isotopes XML database
+		else
+		{
+			// Try to add the isotope, otherwise returns a null shared pointer
+			try
+			{
+				element->addIsotope(isotopeName);
+			}
+			catch(const SX::Kernel::Error<Element>& e)
+			{
+				element.reset();
+				return element;
 			}
 		}
 	}
+
 
 	// Everything is OK, register the element
 	_registry.insert(strToElementPair(name,element));
@@ -186,22 +182,17 @@ sptrElement ElementManager::buildElement(const property_tree::ptree& node)
 
 }
 
-sptrElement ElementManager::getElement(const std::string& name, const std::string& symbol)
+sptrElement ElementManager::getElement(const std::string& name)
 {
+
+
 	// Case where an Element with this name is found in the registry
 	auto it=_registry.find(name);
 	if (it!=_registry.end())
-	{
-		if (!symbol.empty())
-		{
-			if (symbol.compare(it->second->getSymbol())!=0)
-				throw SX::Kernel::Error<ElementManager>("An element that matches "+name+" name is already registered but with a different chemical symbol.");
-		}
 		return it->second;
-	}
 
-	// Otherwise creates, registers and returns an empty Element with the given name
-	sptrElement element(Element::create(name,symbol));
+	sptrElement element(Element::create(name));
+
 	_registry.insert(strToElementPair(name,element));
 
 	return element;

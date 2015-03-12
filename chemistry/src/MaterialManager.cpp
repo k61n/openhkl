@@ -87,27 +87,7 @@ sptrMaterial MaterialManager::buildMaterialFromChemicalFormula(std::string formu
 		std::string isotope=boost::fusion::at_c<1>(cc);
 		unsigned int nAtoms=boost::fusion::at_c<2>(cc);
 
-		sptrElement element;
-
-		// Case of an element that has to be built from its natural isotopes
-		if (isotope.empty())
-			element = emgr->getElement(symbol,symbol);
-		else
-		{
-			element = emgr->getElement(symbol+isotope);
-			if (element->isEmpty())
-			{
-				try
-				{
-					element->addIsotope(symbol+isotope,100.0);
-				}
-				catch(const SX::Kernel::Error<IsotopeManager>& error)
-				{
-					throw SX::Kernel::Error<MaterialManager>(error.what());
-				}
-			}
-		}
-
+		sptrElement element(emgr->getElement(symbol+isotope));
 
 		mat->addElement(element,nAtoms);
 	}

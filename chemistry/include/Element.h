@@ -69,7 +69,7 @@ private:
 
 	//! Returns a shared pointer to an Element.
 	//! If a chemical symbol is given the element will be built from its natural isotopes otherwise it is empty and will have to be filled later by addIsotope method.
-	static Element* create(const std::string& name, const std::string& symbol="");
+	static Element* create(const std::string& name);
 
 public:
 
@@ -140,7 +140,7 @@ private:
 	Element(const Element& other)=delete;
 
 	//! Constructs an Element by fetching the isotopes from the isotopes database whose symbol matches the given symbol
-	Element(const std::string& name, const std::string& symbol);
+	Element(const std::string& name);
 
 	//! Assignment operator (deleted)
 	Element& operator=(const Element& other)=delete;

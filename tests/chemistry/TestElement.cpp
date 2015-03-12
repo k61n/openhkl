@@ -27,7 +27,7 @@ BOOST_AUTO_TEST_CASE(Test_Element)
 	BOOST_CHECK_NO_THROW(emgr->setDatabasePath("./elements.xml"));
 
 	// Builds the natural hydrogen Element directly from the isotopes registry/database
-	sptrElement hydrogen=emgr->getElement("natH","H");
+	sptrElement hydrogen=emgr->getElement("H");
 	// Checks that the number of protons is OK
 	BOOST_CHECK_EQUAL(hydrogen->getNProtons(),1);
 	// Checks that the number of neutrons is OK
@@ -50,10 +50,6 @@ BOOST_AUTO_TEST_CASE(Test_Element)
 	// Checks that a registered elemetns could be retrieved properly
 	BOOST_CHECK_EQUAL(uranium,emgr->getElement("natU"));
 
-	// Gets a carbon Element from the elements XML database built from its natural isotopes
-	sptrElement dbCarbon=emgr->getElement("db_carbon");
-	// Checks that it has the correct number of isotopes
-	BOOST_CHECK_EQUAL(dbCarbon->getNIsotopes(),2);
 
 	// Gets an  oxygen Element from the elements XML database built from user-defined abundances
 	sptrElement dbOxygen=emgr->getElement("db_oxygen");

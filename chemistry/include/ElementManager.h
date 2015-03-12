@@ -77,7 +77,7 @@ public:
 	//! Clean up the Element registry
 	void cleanRegistry();
 	//! Returns a shared pointer to an Element with a given name. The Element is searched first in the registry then in the XML database. If not found return an empty element.
-	sptrElement getElement(const std::string& name, const std::string& symbol="");
+	sptrElement getElement(const std::string& name);
 	//! Returns the number of registered Element objects
 	unsigned int getNElements() const;
 	//! Returns the elements registry
