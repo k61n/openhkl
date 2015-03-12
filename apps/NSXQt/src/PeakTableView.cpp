@@ -412,13 +412,6 @@ void PeakTableView::plotAs(const std::string& key)
     }
 
     emit plotData(x,y,e);
-
-//    Plotter1D* plot=new Plotter1D(this);
-//    plot->addCurve(x,y,e);
-//    plot->setXlabel(key);
-//    plot->setYlabel("Intensity");
-//    plot->show();
-
 }
 
 

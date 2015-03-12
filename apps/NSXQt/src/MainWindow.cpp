@@ -2,13 +2,13 @@
 #include "ui_mainwindow.h"
 
 #include <cmath>
+#include <ctime>
 #include <functional>
 #include <stdexcept>
 #include <utility>
 
 #include <Eigen/Dense>
 
-#include <CutterGraphicsItem.h>
 #include <QDateTime>
 #include <QFileDialog>
 #include <QGraphicsBlurEffect>
@@ -24,36 +24,37 @@
 #include "Basis.h"
 #include "BlobFinder.h"
 #include "Cluster.h"
-#include "Detector.h"
 #include "ComponentState.h"
+#include "Detector.h"
+#include "Ellipsoid.h"
+#include "GruberReduction.h"
+#include "ILLAsciiData.h"
+#include "NiggliReduction.h"
+#include "Peak3D.h"
+#include "Sample.h"
+#include "Source.h"
+
 #include "DetectorScene.h"
 #include "DialogExperiment.h"
 #include "DialogUnitCell.h"
-#include "Ellipsoid.h"
-#include "ExperimentTree.h"
-#include "GruberReduction.h"
-#include "ILLAsciiData.h"
+#include "Tree/ExperimentTree.h"
 #include "Logger.h"
-#include "NiggliReduction.h"
 #include "NoteBook.h"
-#include "Peak3D.h"
 #include "PeakTableView.h"
-#include "Sample.h"
-#include "Source.h"
 #include "UnitCell.h"
 #include "Units.h"
-#include "SXPlot.h"
+#include "Plot/SXPlot.h"
 #include "PeakTableView.h"
-#include "CutLineGraphicsItem.h"
-#include "CutSliceGraphicsItem.h"
-#include "PlottableGraphicsItem.h"
-#include "PeakGraphicsItem.h"
-#include "PlotFactory.h"
-#include <ctime>
 #include "Absorption/AbsorptionWidget.h"
 #include "Chemistry/IsotopeDatabaseDialog.h"
 #include "Chemistry/ElementManagerDialog.h"
-#include "UnitCellPropertyWidget.h"
+#include "GraphicsItems/CutLineGraphicsItem.h"
+#include "GraphicsItems/CutSliceGraphicsItem.h"
+#include <GraphicsItems/CutterGraphicsItem.h>
+#include "GraphicsItems/PeakGraphicsItem.h"
+#include "GraphicsItems/PlottableGraphicsItem.h"
+#include "Plot/PlotFactory.h"
+#include "Tree/UnitCellPropertyWidget.h"
 
 using namespace SX::Units;
 using namespace SX::Instrument;

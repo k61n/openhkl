@@ -16,37 +16,15 @@ RESOURCES = NSXQt.qrc \
 SOURCES += src/Main.cpp \
     src/MainWindow.cpp \
     src/ColorMap.cpp \
-    externals/src/qcustomplot.cpp \
     src/PeakTableView.cpp \
     src/DialogTransformationMatrix.cpp \
     src/DialogUnitCell.cpp \
-    src/NoteBook.cpp \
-    src/Logger.cpp \
-    src/DialogUnitCellSolutions.cpp \
-    src/ExperimentTree.cpp \
-    src/DialogExperiment.cpp \
-    src/TreeItem.cpp \
-    src/DataItem.cpp \
-    src/DetectorItem.cpp \
-    src/ExperimentItem.cpp \
-    src/InstrumentItem.cpp \
-    src/NumorItem.cpp \
-    src/PeakListItem.cpp \
-    src/SampleItem.cpp \
-    src/SourceItem.cpp \
     src/DetectorGraphicsView.cpp \
     src/DetectorScene.cpp \
-    src/PeakGraphicsItem.cpp \
-    src/CutSliceGraphicsItem.cpp \
-    src/SXPlot.cpp \
-    src/PlottableGraphicsItem.cpp \
-    src/CutLineGraphicsItem.cpp \
-    src/CutterGraphicsItem.cpp \
-    src/PlotFactory.cpp \
-    src/SimplePlot.cpp \
-    src/MaskGraphicsItem.cpp \
-    src/SXGraphicsItem.cpp \
-    src/PeakPlot.cpp \
+    src/DialogUnitCellSolutions.cpp \
+    src/DialogExperiment.cpp \
+    src/Logger.cpp \
+    src/NoteBook.cpp \
     src/Absorption/AbsorptionDialog.cpp \
     src/Absorption/CrystalScene.cpp \
     src/Absorption/CrystalFaceItem.cpp \
@@ -56,55 +34,58 @@ SOURCES += src/Main.cpp \
     src/Absorption/CalibrateDistanceDialog.cpp \
     src/Chemistry/IsotopeDatabaseDialog.cpp \
     src/Chemistry/DragElementModel.cpp \
-    src/InspectableTreeItem.cpp \
-    src/UnitCellItem.cpp \
-    src/EmptyPropertyWidget.cpp \
-    src/SamplePropertyWidget.cpp \
-    src/ShapePropertyWidget.cpp \
-    src/UnitCellPropertyWidget.cpp \
-    src/NumorPropertyWidget.cpp \
-    src/DetectorPropertyWidget.cpp \
     src/Chemistry/NewElementTableView.cpp \
     src/Chemistry/IsotopesListWidget.cpp \
     src/Chemistry/ElementsListWidget.cpp \
     src/Chemistry/ElementManagerDialog.cpp \
-    src/SampleShapeItem.cpp \
-    src/SampleShapePropertyWidget.cpp
+    src/Externals/qcustomplot.cpp \
+    src/Plot/PeakPlot.cpp \
+    src/Plot/PlotFactory.cpp \
+    src/Plot/SimplePlot.cpp \
+    src/Plot/SXPlot.cpp \
+    src/GraphicsItems/CutLineGraphicsItem.cpp \
+    src/GraphicsItems/CutSliceGraphicsItem.cpp \
+    src/GraphicsItems/CutterGraphicsItem.cpp \
+    src/GraphicsItems/MaskGraphicsItem.cpp \
+    src/GraphicsItems/PeakGraphicsItem.cpp \
+    src/GraphicsItems/PlottableGraphicsItem.cpp \
+    src/GraphicsItems/SXGraphicsItem.cpp \
+    src/Tree/DataItem.cpp \
+    src/Tree/DetectorItem.cpp \
+    src/Tree/DetectorPropertyWidget.cpp \
+    src/Tree/EmptyPropertyWidget.cpp \
+    src/Tree/ExperimentItem.cpp \
+    src/Tree/ExperimentTree.cpp \
+    src/Tree/InspectableTreeItem.cpp \
+    src/Tree/InstrumentItem.cpp \
+    src/Tree/NumorItem.cpp \
+    src/Tree/NumorPropertyWidget.cpp \
+    src/Tree/PeakItem.cpp \
+    src/Tree/PeakListItem.cpp \
+    src/Tree/SampleItem.cpp \
+    src/Tree/SamplePropertyWidget.cpp \
+    src/Tree/SampleShapeItem.cpp \
+    src/Tree/SampleShapePropertyWidget.cpp \
+    src/Tree/ShapePropertyWidget.cpp \
+    src/Tree/SourceItem.cpp \
+    src/Tree/TreeItem.cpp \
+    src/Tree/UnitCellItem.cpp \
+    src/Tree/UnitCellPropertyWidget.cpp \
+    src/GraphicsItems/SliceRectGraphicsItem.cpp
 
 HEADERS  += include/MainWindow.h \
     include/DialogPeakFind.h \
     include/ColorMap.h \
-    externals/include/qcustomplot.h \
+    include/Externals/qcustomplot.h \
     include/PeakTableView.h \
     include/DialogUnitCell.h \
     include/DialogTransformationMatrix.h \
     include/NoteBook.h \
     include/Logger.h \
     include/DialogUnitCellSolutions.h \
-    include/ExperimentTree.h \
     include/DialogExperiment.h \
-    include/TreeItem.h \
-    include/DataItem.h \
-    include/DetectorItem.h \
-    include/ExperimentItem.h \
-    include/InstrumentItem.h \
-    include/NumorItem.h \
-    include/PeakListItem.h \
-    include/SampleItem.h \
-    include/SourceItem.h \
     include/DetectorGraphicsView.h \
     include/DetectorScene.h \
-    include/PeakGraphicsItem.h \
-    include/CutSliceGraphicsItem.h \
-    include/PlottableGraphicsItem.h \
-    include/CutLineGraphicsItem.h \
-    include/CutterGraphicsItem.h \
-    include/PlotFactory.h \
-    include/SXPlot.h \
-    include/MaskGraphicsItem.h \
-    include/SXGraphicsItem.h \
-    include/SimplePlot.h \
-    include/PeakPlot.h \
     include/Absorption/AbsorptionDialog.h \
     include/Absorption/CrystalScene.h \
     include/Absorption/CrystalFaceItem.h \
@@ -114,20 +95,43 @@ HEADERS  += include/MainWindow.h \
     include/Absorption/CalibrateDistanceDialog.h \
     include/Chemistry/IsotopeDatabaseDialog.h \
     include/Chemistry/DragElementModel.h \
-    include/InspectableTreeItem.h \
-    include/UnitCellItem.h \
-    include/EmptyPropertyWidget.h \
-    include/SamplePropertyWidget.h \
-    include/ShapePropertyWidget.h \
-    include/UnitCellPropertyWidget.h \
-    include/NumorPropertyWidget.h \
-    include/DetectorPropertyWidget.h \
     include/Chemistry/NewElementTableView.h \
     include/Chemistry/IsotopesListWidget.h \
     include/Chemistry/ElementsListWidget.h \
     include/Chemistry/ElementManagerDialog.h \
-    include/SampleShapeItem.h \
-    include/SampleShapePropertyWidget.h
+    include/GraphicsItems/CutLineGraphicsItem.h \
+    include/GraphicsItems/CutSliceGraphicsItem.h \
+    include/GraphicsItems/CutterGraphicsItem.h \
+    include/GraphicsItems/MaskGraphicsItem.h \
+    include/GraphicsItems/PeakGraphicsItem.h \
+    include/GraphicsItems/PlottableGraphicsItem.h \
+    include/GraphicsItems/SXGraphicsItem.h \
+    include/Plot/PeakPlot.h \
+    include/Plot/PlotFactory.h \
+    include/Plot/SimplePlot.h \
+    include/Plot/SXPlot.h \
+    include/Tree/DataItem.h \
+    include/Tree/DetectorItem.h \
+    include/Tree/DetectorPropertyWidget.h \
+    include/Tree/EmptyPropertyWidget.h \
+    include/Tree/ExperimentItem.h \
+    include/Tree/ExperimentTree.h \
+    include/Tree/InspectableTreeItem.h \
+    include/Tree/InstrumentItem.h \
+    include/Tree/NumorItem.h \
+    include/Tree/NumorPropertyWidget.h \
+    include/Tree/PeakItem.h \
+    include/Tree/PeakListItem.h \
+    include/Tree/SampleItem.h \
+    include/Tree/SamplePropertyWidget.h \
+    include/Tree/SampleShapeItem.h \
+    include/Tree/SampleShapePropertyWidget.h \
+    include/Tree/ShapePropertyWidget.h \
+    include/Tree/SourceItem.h \
+    include/Tree/TreeItem.h \
+    include/Tree/UnitCellItem.h \
+    include/Tree/UnitCellPropertyWidget.h \
+    include/GraphicsItems/SliceRectGraphicsItem.h
 
 FORMS    += ui/mainwindow.ui \
     ui/dialog_PeakFind.ui \
@@ -137,15 +141,15 @@ FORMS    += ui/mainwindow.ui \
     ui/DialogExperiment.ui \
     ui/Absorption/AbsorptionDialog.ui \
     ui/Absorption/CalibrateDistanceDialog.ui \
-    ui/EmptyPropertyWidget.ui \
-    ui/SamplePropertyWidget.ui \
-    ui/ShapePropertyWidget.ui \
-    ui/UnitCellPropertyWidget.ui \
-    ui/NumorPropertyWidget.ui \
     ui/Chemistry/IsotopeDatabaseDialog.ui \
-    ui/DetectorPropertyWidget.ui \
     ui/Chemistry/ElementManagerDialog.ui \
-    ui/SampleShapePropertyWidget.ui
+    ui/Tree/DetectorPropertyWidget.ui \
+    ui/Tree/EmptyPropertyWidget.ui \
+    ui/Tree/NumorPropertyWidget.ui \
+    ui/Tree/SamplePropertyWidget.ui \
+    ui/Tree/SampleShapePropertyWidget.ui \
+    ui/Tree/ShapePropertyWidget.ui \
+    ui/Tree/UnitCellPropertyWidget.ui
 
 win32:CONFIG(release, debug|release): LIBS += -lNSXTool
 else:unix: LIBS += -lNSXTool -lboost_date_time -lboost_system -lfftw3

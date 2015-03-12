@@ -1,22 +1,25 @@
+#include <ctime>
 #include <vector>
+
 #include <QGraphicsSceneMouseEvent>
-#include <QPixmap>
-#include "ColorMap.h"
-#include "Detector.h"
-#include "DetectorScene.h"
-#include "IData.h"
-#include <QToolTip>
-#include "Units.h"
 #include <QKeyEvent>
+#include <QMenu>
+#include <QPixmap>
+#include <QtDebug>
+#include <QToolTip>
+
+#include "Detector.h"
+#include "IData.h"
 #include "Sample.h"
 #include "Source.h"
-#include "PeakGraphicsItem.h"
-#include "CutSliceGraphicsItem.h"
-#include "CutLineGraphicsItem.h"
-#include <QtDebug>
-#include "MaskGraphicsItem.h"
-#include <ctime>
-#include <QMenu>
+#include "Units.h"
+
+#include "ColorMap.h"
+#include "DetectorScene.h"
+#include "GraphicsItems/PeakGraphicsItem.h"
+#include "GraphicsItems/CutSliceGraphicsItem.h"
+#include "GraphicsItems/CutLineGraphicsItem.h"
+#include "GraphicsItems/MaskGraphicsItem.h"
 
 DetectorScene::DetectorScene(QObject *parent)
 : QGraphicsScene(parent),
