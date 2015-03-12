@@ -6,7 +6,7 @@
 
 QT       += core widgets printsupport opengl
 CONFIG   += debug_and_release
-QMAKE_CXXFLAGS += -std=c++0x -fopenmp -DNDEBUG -DEIGEN_FFTW_DEFAULT -g
+QMAKE_CXXFLAGS += -std=c++0x -fopenmp -DNDEBUG -DEIGEN_FFTW_DEFAULT
 QMAKE_LFLAGS += -fopenmp
 TARGET = nsxtool
 TEMPLATE = app

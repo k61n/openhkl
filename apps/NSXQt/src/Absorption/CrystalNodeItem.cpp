@@ -3,7 +3,7 @@
 CrystalNodeItem::CrystalNodeItem(QGraphicsItem *parent) :
     QGraphicsItem(parent)
 {
-
+    setZValue(10);
 }
 
 void CrystalNodeItem::initiate(double posx, double posy, double yc, double angle)

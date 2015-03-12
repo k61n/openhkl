@@ -22,13 +22,13 @@
   <property name="windowTitle">
    <string>NSXTool - Absorption Correction</string>
   </property>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>80</x>
      <y>9</y>
      <width>802</width>
-     <height>615</height>
+     <height>621</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -63,13 +63,13 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>9</x>
-     <y>10</y>
-     <width>61</width>
-     <height>458</height>
+     <x>10</x>
+     <y>30</y>
+     <width>64</width>
+     <height>444</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -81,6 +81,9 @@
       <property name="toolTip">
        <string>Open ILL *jpr file</string>
       </property>
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
       <property name="text">
        <string notr="true"/>
       </property>
@@ -90,8 +93,8 @@
       </property>
       <property name="iconSize">
        <size>
-        <width>50</width>
-        <height>50</height>
+        <width>40</width>
+        <height>40</height>
        </size>
       </property>
       <property name="flat">
@@ -112,12 +115,12 @@
       </property>
       <property name="icon">
        <iconset resource="../../NSXQt.qrc">
-        <normaloff>:/resources/IconcalibrateDistance.jpg</normaloff>:/resources/IconcalibrateDistance.jpg</iconset>
+        <normaloff>:/resources/IconcalibrateDistance.png</normaloff>:/resources/IconcalibrateDistance.png</iconset>
       </property>
       <property name="iconSize">
        <size>
-        <width>50</width>
-        <height>50</height>
+        <width>40</width>
+        <height>40</height>
        </size>
       </property>
      </widget>
@@ -132,12 +135,12 @@
       </property>
       <property name="icon">
        <iconset resource="../../NSXQt.qrc">
-        <normaloff>:/resources/IconpickCenter.jpg</normaloff>:/resources/IconpickCenter.jpg</iconset>
+        <normaloff>:/resources/IconpickCenter.png</normaloff>:/resources/IconpickCenter.png</iconset>
       </property>
       <property name="iconSize">
        <size>
-        <width>50</width>
-        <height>50</height>
+        <width>40</width>
+        <height>40</height>
        </size>
       </property>
      </widget>
@@ -158,12 +161,12 @@
       </property>
       <property name="icon">
        <iconset resource="../../NSXQt.qrc">
-        <normaloff>:/resources/IconmeasureDistance.jpg</normaloff>:/resources/IconmeasureDistance.jpg</iconset>
+        <normaloff>:/resources/IconmeasureDistance.png</normaloff>:/resources/IconmeasureDistance.png</iconset>
       </property>
       <property name="iconSize">
        <size>
-        <width>50</width>
-        <height>50</height>
+        <width>40</width>
+        <height>40</height>
        </size>
       </property>
      </widget>
@@ -178,12 +181,12 @@
       </property>
       <property name="icon">
        <iconset resource="../../NSXQt.qrc">
-        <normaloff>:/resources/IconpickingPoints.jpg</normaloff>:/resources/IconpickingPoints.jpg</iconset>
+        <normaloff>:/resources/IconpickingPoints.png</normaloff>:/resources/IconpickingPoints.png</iconset>
       </property>
       <property name="iconSize">
        <size>
-        <width>50</width>
-        <height>50</height>
+        <width>40</width>
+        <height>40</height>
        </size>
       </property>
      </widget>
@@ -198,12 +201,12 @@
       </property>
       <property name="icon">
        <iconset resource="../../NSXQt.qrc">
-        <normaloff>:/resources/IconremovingPoints.jpg</normaloff>:/resources/IconremovingPoints.jpg</iconset>
+        <normaloff>:/resources/IconremovingPoints.png</normaloff>:/resources/IconremovingPoints.png</iconset>
       </property>
       <property name="iconSize">
        <size>
-        <width>50</width>
-        <height>50</height>
+        <width>40</width>
+        <height>40</height>
        </size>
       </property>
      </widget>
@@ -218,12 +221,32 @@
       </property>
       <property name="icon">
        <iconset resource="../../NSXQt.qrc">
-        <normaloff>:/resources/Icontriangulate.jpg</normaloff>:/resources/Icontriangulate.jpg</iconset>
+        <normaloff>:/resources/Icontriangulate.png</normaloff>:/resources/Icontriangulate.png</iconset>
       </property>
       <property name="iconSize">
        <size>
-        <width>50</width>
-        <height>50</height>
+        <width>40</width>
+        <height>40</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="button_Save">
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Save: Assign Hull to sample Shape&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="../../NSXQt.qrc">
+        <normaloff>:/resources/saveIcon.png</normaloff>:/resources/saveIcon.png</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>40</width>
+        <height>40</height>
        </size>
       </property>
      </widget>

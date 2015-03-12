@@ -9,9 +9,10 @@
 #include <QtDebug>
 #include <iostream>
 
-CrystalScene::CrystalScene(QWidget *parent) :
-    QGraphicsScene(parent), pixmapitem(0),_ruler(0),_pin(0),_hull(),_text(nullptr)
+CrystalScene::CrystalScene(SX::Geometry::ConvexHull<double>* hull, QWidget *parent) :
+    QGraphicsScene(parent), pixmapitem(0),_ruler(0),_pin(0),_text(nullptr),_hull(hull)
 {
+    std::cout << "Working with" << _hull << std::endl;
     distance=1.0;
    _distancedialog=new CalibrateDistanceDialog();
     connect(_distancedialog,SIGNAL(on_calibrateDistanceSpinBox_valueChanged(double)),this,SLOT(getDistance(double)));
@@ -142,7 +143,7 @@ void CrystalScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
          {
              double x,y,z;
              temp2->getCoordinates(x,y,z);
-             _hull.removeVertex(x*aspectratio,y*aspectratio,z*aspectratio,1e-3);
+            _hull->removeVertex(x*aspectratio,y*aspectratio,z*aspectratio,1e-3);
              removeItem(temp);
          }
      }
@@ -244,7 +245,7 @@ void CrystalScene::setRotationAngle(double angle)
 
 void CrystalScene::triangulate()
 {
-    _hull.reset();
+   _hull->reset();
     QList<QGraphicsItem*> list=items();
 
     for (QList<QGraphicsItem*>::iterator it=list.begin();it!=list.end();it++)
@@ -254,23 +255,23 @@ void CrystalScene::triangulate()
         {
             double x,y,z;
             temp->getCoordinates(x,y,z);
-            _hull.addVertex(x*aspectratio,y*aspectratio,z*aspectratio);
+           _hull->addVertex(x*aspectratio,y*aspectratio,z*aspectratio);
             std::cout<<x*aspectratio<<" "<<y*aspectratio<<" "<<z*aspectratio<<std::endl;
         }
     }
 
     try
     {
-    _hull.updateHull();
+   _hull->updateHull();
     }
     catch(std::exception& e)
     {
         QMessageBox::critical(nullptr, tr("NSXTool"), tr(e.what()));
         return;
     }
-    std::cout << "Hull Faces:" << _hull.getNFaces() << ", edges:" << _hull.getNEdges() << ", vertices: " << _hull.getNVertices() << std::endl;
+    std::cout << "Hull Faces:" <<_hull->getNFaces() << ", edges:" <<_hull->getNEdges() << ", vertices: " <<_hull->getNVertices() << std::endl;
 
-    const std::vector<SX::Geometry::Triangle>& tcache=_hull.createFaceCache();
+    const std::vector<SX::Geometry::Triangle>& tcache=_hull->createFaceCache();
     std::vector<SX::Geometry::Triangle>::const_iterator it;
     double yc, zc;
     _pin->getCenter(yc,zc,_rotationAngle);
@@ -293,11 +294,6 @@ void CrystalScene::triangulate()
     update();
 }
 
-SX::Geometry::ConvexHull<double> CrystalScene::getHull()
-{
-    return _hull;
-}
-
 void CrystalScene::drawText(QString text)
 {
     if (!_text)
@@ -308,3 +304,4 @@ void CrystalScene::drawText(QString text)
     else
         _text->setPlainText(text);
 }
+

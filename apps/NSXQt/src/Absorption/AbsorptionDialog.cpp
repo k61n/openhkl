@@ -17,7 +17,7 @@
 #include <QDir>
 
 AbsorptionDialog::AbsorptionDialog(SX::Instrument::Experiment* experiment,QWidget *parent) :
-    QDialog(parent),_experiment(experiment),_cscene(new CrystalScene()),
+    QDialog(parent),_experiment(experiment),_cscene(new CrystalScene(&experiment->getDiffractometer()->getSample()->getShape())),
     ui(new Ui::AbsorptionDialog)
 {
     ui->setupUi(this);
@@ -156,24 +156,3 @@ void AbsorptionDialog::setupInitialButtons()
     ui->button_triangulate->setDisabled(true);
 }
 
-void AbsorptionDialog::on_AbsorptionDialog_destroyed()
-{
-    QMessageBox msgBox;
-    msgBox.setText("Sample information has been modified");
-    msgBox.setInformativeText("Do you want to save your changes?");
-    msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
-    msgBox.setDefaultButton(QMessageBox::Save);
-    int ret = msgBox.exec();
-    qDebug() << ret;
-}
-
-void AbsorptionDialog::on_AbsorptionDialog_finished(int result)
-{
-    QMessageBox msgBox;
-    msgBox.setText("Sample information has been modified");
-    msgBox.setInformativeText("Do you want to save your changes?");
-    msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
-    msgBox.setDefaultButton(QMessageBox::Save);
-    int ret = msgBox.exec();
-    qDebug() << ret;
-}

@@ -56,11 +56,11 @@ QSplitter::handle {
  }
 
  QSplitter::handle:horizontal {
-     width: 2px;
+     width: 5px;
  }
 
  QSplitter::handle:vertical {
-     height: 2px;
+     height: 5px;
  }</string>
       </property>
       <property name="orientation">
@@ -176,8 +176,8 @@ QTreeView {
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>389</width>
-                 <height>123</height>
+                 <width>388</width>
+                 <height>122</height>
                 </rect>
                </property>
               </widget>

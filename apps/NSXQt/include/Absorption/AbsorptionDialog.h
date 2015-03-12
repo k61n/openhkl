@@ -28,14 +28,12 @@ signals:
     //! Emitted when the image is changed in the movie
     void loadImage(QString image);
     void angleText(QString text);
+    void exportHull(const SX::Geometry::ConvexHull<double>& hull);
 public slots:
     void initializeSlider(int i);
 private slots:
     void on_button_openFile_pressed();
     void setupInitialButtons();
-    void on_AbsorptionDialog_destroyed();
-
-    void on_AbsorptionDialog_finished(int result);
 
 private:
     Ui::AbsorptionDialog *ui;

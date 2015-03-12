@@ -18,8 +18,10 @@ public:
     ~SampleShapePropertyWidget();
 
 private slots:
-    void on_pushButton_Info_clicked();
     void setChemicalFormula(const QString& formula);
+    void on_pushButton_LoadMovie_clicked();
+    void setHullProperties();
+
 private:
     SampleShapeItem* _caller;
     Ui::SampleShapePropertyWidget *ui;

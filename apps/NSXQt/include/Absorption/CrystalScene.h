@@ -26,13 +26,12 @@ public:
         none=0};
 
     //! Constructors
-    CrystalScene(QWidget *parent = 0);
+    CrystalScene(SX::Geometry::ConvexHull<double>* hull,QWidget *parent = 0);
     ~CrystalScene();
     //! Mouse interactions
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
     virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-    SX::Geometry::ConvexHull<double> getHull();
 public slots:
     //! Load an image from full filename including directory
     void loadImage(QString filename);
@@ -71,7 +70,7 @@ private:
     CrystalNodeItem* _current;
     PinItem* _pin;
     bool _pinCreated;
-    SX::Geometry::ConvexHull<double> _hull;
+    SX::Geometry::ConvexHull<double>* _hull;
     QPixmap _pix;
     QGraphicsTextItem* _text;
 };

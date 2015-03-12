@@ -22,7 +22,7 @@
     </widget>
    </item>
    <item row="2" column="0">
-    <widget class="QPushButton" name="pushButton_Info">
+    <widget class="QPushButton" name="pushButton_LoadMovie">
      <property name="toolTip">
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Load a info file containing Video&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
@@ -164,7 +164,7 @@ QPushButton:disabled {
   <tabstop>lineEdit_Faces</tabstop>
   <tabstop>lineEdit_Edges</tabstop>
   <tabstop>lineEdit_Vertices</tabstop>
-  <tabstop>pushButton_Info</tabstop>
+  <tabstop>pushButton_LoadMovie</tabstop>
  </tabstops>
  <resources/>
  <connections/>

@@ -8,10 +8,11 @@ PinItem::PinItem(QGraphicsItem *parent):QGraphicsItem(parent)
 }
 void PinItem::initiate(double posy, double angle)
 {
-    _p1y=posy;_p2y=0;
+    _p1y=posy;_p2y=posy;
     // Assume the z position is same as y;
     _angle=angle;
     _currentangle=angle;
+    _calibrated=false;
 }
 void PinItem::adjust(double y,double angle)
 {
