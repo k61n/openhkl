@@ -98,7 +98,6 @@ public:
 	bool hasData(const std::string& name) const;
 	//! Remove a data from the experiment
 	void removeData(const std::string& name);
-
 private:
 	//! The name of this experiment
 	std::string _name;
