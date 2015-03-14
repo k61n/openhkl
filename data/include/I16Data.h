@@ -27,57 +27,60 @@
  *
  */
 
-#ifndef NSXTOOL_SOURCE_H_
-#define NSXTOOL_SOURCE_H_
+#ifndef NSXTOOL_I16DATA_H_
+#define NSXTOOL_I16DATA_H_
 
+#include <map>
+#include <sstream>
 #include <string>
-
-#include "Component.h"
+#include <vector>
+#include <Eigen/Dense>
+#include <IData.h>
+#include "Diffractometer.h"
+#include "TiffData.h"
 
 namespace SX
 {
 
-namespace Instrument
+namespace Data
 {
-
-class Source : public Component
+/*! \brief Legacy ILL Data in ASCII format.
+ *
+ */
+class I16Data : public IData
 {
 public:
 
-	// Constructors and destructor
+	static IData* create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer);
 
-	// Default constructor
-	Source();
+	//! Default constructor
+	I16Data(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer);
 	//! Copy constructor
-	Source(const Source& other);
-	//! Constructs a default source with a given name
-	Source(const std::string& name);
+	I16Data(const I16Data& other)=delete;
 	//! Destructor
-	virtual ~Source();
-	//! Virtual copy constructor
-	Component* clone() const;
-
+	virtual ~I16Data();
 	// Operators
-
 	//! Assignment operator
-	Source& operator=(const Source& other);
+	I16Data& operator=(const I16Data& other)=delete;
 
-	// Getters and setters
-	double getWavelength() const;
-	Eigen::Vector3d getki() const;
-	void setWavelength(double wavelength);
-	//! Set an offset in wavelength. No effect if _offsetFiexed is set to True.
-	void setOffset(double offset);
-	void setOffsetFixed(bool fixed);
-	bool hasOffsetFixed() const;
+	// Other methods
+	void open();
+	void close();
+    //! Read a given Frame of the data
+    Eigen::MatrixXi getFrame(std::size_t idx);
+    //! Read a single frame
+    Eigen::MatrixXi readFrame(std::size_t idx);
+    //! Read all the frames in memory
+    void readInMemory();
+
 private:
-	double _wavelength;
-	double _offset;
-	bool _offsetFixed;
+	//! Vector of all TIFF files.
+	std::vector<std::string> _tifs;
+	std::string _basedirectory;
 };
 
-} // end namespace Instrument
+} // end namespace Data
 
 } // end namespace SX
 
-#endif /* NSXTOOL_SOURCE_H_ */
+#endif /* NSXTOOL_I16DATA_H_ */

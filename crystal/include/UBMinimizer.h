@@ -26,7 +26,8 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-
+#ifndef NSXTOOL_UBMINIMIZER_H_
+#define NSXTOOL_UBMINIMIZER_H_
 #include <map>
 #include <ostream>
 #include <set>
@@ -39,9 +40,7 @@
 #include <Detector.h>
 #include <Peak3D.h>
 #include <Sample.h>
-
-#ifndef NSXTOOL_UBMINIMIZER_H_
-#define NSXTOOL_UBMINIMIZER_H_
+#include "Source.h"
 
 namespace SX
 {
@@ -148,6 +147,8 @@ struct UBFunctor : public Functor<double>
 	 * @param sample the sample
 	 */
 	void setSample(SX::Instrument::Sample* sample);
+	//! Set the source
+	void setSource(SX::Instrument::Source* source);
 	//! Reset all the parameters (e.g. UB matrix + detector and sample offsets) to zero
 	void resetParameters();
 	/*
@@ -159,6 +160,7 @@ struct UBFunctor : public Functor<double>
 	std::vector<Peak3D> _peaks;
 	SX::Instrument::Detector* _detector;
 	SX::Instrument::Sample* _sample;
+	SX::Instrument::Source* _source;
 	std::set<int> _fixedParameters;
 };
 
@@ -169,14 +171,14 @@ struct UBSolution
 	UBSolution(const UBSolution& ubsol);
 	friend class UBMinimizer;
 	UBSolution();
-	UBSolution(SX::Instrument::Detector* detector,SX::Instrument::Sample* sample,const Eigen::VectorXd& values,const Eigen::MatrixXd& cov,const std::vector<bool>& fixedParameters);
+	UBSolution(SX::Instrument::Detector* detector,SX::Instrument::Sample* sample,SX::Instrument::Source* source,const Eigen::VectorXd& values,const Eigen::MatrixXd& cov,const std::vector<bool>& fixedParameters);
 	UBSolution& operator=(const UBSolution& ubsol);
 	SX::Instrument::Detector* _detector;
 	SX::Instrument::Sample* _sample;
+	SX::Instrument::Source* _source;
     Eigen::Matrix3d _ub;
-
     Eigen::Matrix<double,9,9> _covub;
-
+    double _sourceOffset,_sigmaSourceOffset;
 	Eigen::VectorXd _detectorOffsets;
 	Eigen::VectorXd _sigmaDetectorOffsets;
 	Eigen::VectorXd _sampleOffsets;
@@ -216,6 +218,7 @@ public:
 	 * @brief Set the starting values of the UB matrix
 	 * @param ub the UB matrix
 	 */
+	void setSource(SX::Instrument::Source* source);
 	void setStartingUBMatrix(const Eigen::Matrix3d& ub);
 	/*
 	 * @brief Set the starting value for a given parameter

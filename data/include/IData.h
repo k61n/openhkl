@@ -109,9 +109,7 @@ public:
     ComponentState getSampleInterpolatedState(double frame);
 	//! Gets the the detector states.
 	const std::vector<ComponentState>& getSampleStates() const;
-
 	// Other methods
-
 	//! Add a new mask to the data
 	void addMask(AABB<double,3>* mask);
 	//! Add a new peak to the data
@@ -149,7 +147,9 @@ public:
     //!
     std::size_t getFileSize() const;//
     void saveHDF5(const std::string& filename) const;
-
+    //! Is the peak h,k,l in Bragg condition in this dataset. Return Peak pointer if true,
+    //! otherwise nullptr.
+    Peak3D* hasPeak(double h, double k, double l,const Eigen::Matrix3d& BU);
 protected:
     bool _isOpened;
 	std::string _filename;

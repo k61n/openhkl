@@ -65,6 +65,7 @@ BOOST_AUTO_TEST_CASE(Test_Unit_Cell)
 
 	std::cout << cell;
 
-
+	UnitCell cell4(10,10,10,90*deg,90*deg,90*deg);
+	std::cout << cell4.getAngle(1,0,0,1,0,0) << std::endl;
 
 }

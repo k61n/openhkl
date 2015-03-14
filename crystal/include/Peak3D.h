@@ -52,6 +52,7 @@ namespace Instrument
 	class DetectorEvent;
 	class Sample;
 	class Detector;
+	class Source;
 }
 
 namespace Crystal
@@ -103,6 +104,8 @@ public:
    	double getRawSigma() const;
 	//! Returns the error on the scaled intensity.
    	double getScaledSigma() const;
+   	//!
+   	double getIOverSigmaI() const;
    	//! Return the lorentz factor of the peak.
    	double getLorentzFactor() const;
     SX::Instrument::ComponentState* getSampleState();
@@ -118,7 +121,7 @@ public:
    	//!
    	void setDetectorEvent(SX::Instrument::DetectorEvent* event);
    	//!
-   	void setWavelength(double wave);
+   	void setSource(SX::Instrument::Source* source);
    	bool setBasis(std::shared_ptr<SX::Geometry::Basis> basis);
 	bool hasIntegerHKL(std::shared_ptr<SX::Geometry::Basis> basis);
 	friend bool operator<(const Peak3D& p1, const Peak3D& p2);
@@ -126,8 +129,6 @@ public:
 	bool isSelected() const;
 	void setMasked(bool masked);
 	bool isMasked() const;
-	void setSample(SX::Instrument::Sample*);
-	void setDetector(SX::Instrument::Detector*);
 private:
 	//! Pointer to the data containing the peak
 	SX::Data::IData* _data;
@@ -147,8 +148,9 @@ private:
 	SX::Instrument::ComponentState* _sampleState;
 	//! Pointer to a Detector Event state
 	SX::Instrument::DetectorEvent* _event;
+	//!
+	SX::Instrument::Source* _source;
 	double _counts, _countsSigma;
-	double _wave;
 	double _scale;
 	bool _selected;
 	bool _masked;

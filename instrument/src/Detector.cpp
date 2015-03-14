@@ -82,6 +82,18 @@ Eigen::Vector3d Detector::getKf(const DetectorEvent& event, double wave,const Ei
 	return (p/wave);
 }
 
+bool Detector::receiveKf(double& px, double& py, const Eigen::Vector3d& kf,const std::vector<double>& goniovalues)
+{
+
+	if (_gonio)
+	{
+		auto kft=_gonio->transformInverse(kf,goniovalues);
+		return hasKf(kft,px,py);
+	}
+	else
+		return hasKf(kf,px,py);
+}
+
 Eigen::Vector3d Detector::getQ(double px, double py,double wave,const std::vector<double>& values,const Eigen::Vector3d& from) const
 {
 	if (wave<=0)

@@ -62,8 +62,14 @@ BOOST_AUTO_TEST_CASE(Test_Flat_Detector)
 	BOOST_CHECK_CLOSE(Q[1],-0.5,tolerance);
 	BOOST_CHECK_SMALL(Q[2],0.001);
 
+	// Check that detector receive an scattering vector at the right position
+	double px, py;
+	d.receiveKf(px,py,Vector3d(0,1,0),{0.0*deg});
+	BOOST_CHECK_CLOSE(px,15.5,tolerance);
+	BOOST_CHECK_CLOSE(py,15.5,tolerance);
 
-
-
+	d.receiveKf(px,py,Vector3d(1,0,0),{90.0*deg});
+	BOOST_CHECK_CLOSE(px,15.5,tolerance);
+	BOOST_CHECK_CLOSE(py,15.5,tolerance);
 }
 

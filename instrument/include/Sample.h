@@ -34,13 +34,15 @@
 
 #include "Component.h"
 #include "ConvexHull.h"
-#include "Material.h"
+#include "IMaterial.h"
 #include "UnitCell.h"
 #include <vector>
 namespace SX
 {
 namespace Instrument
 {
+
+typedef std::vector<std::shared_ptr<SX::Crystal::UnitCell>> CellList;
 
 class Sample : public Component
 {
@@ -74,11 +76,13 @@ public:
 	std::shared_ptr<SX::Crystal::UnitCell> getUnitCell(int i);
 	//! Return number of crystals
 	std::size_t getNCrystals() const;
+	//!
+	void removeUnitCell(std::shared_ptr<SX::Crystal::UnitCell> cell);
 private:
 	SX::Geometry::ConvexHull<double> _sampleShape;
-	std::shared_ptr<SX::Chemistry::Material> _material;
+	SX::Chemistry::sptrMaterial _material;
 	//! UnitCells of all crystals associated with this sample
-	std::vector<std::shared_ptr<SX::Crystal::UnitCell>> _cells;
+	CellList _cells;
 };
 
 } // Namespace Instrument

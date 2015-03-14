@@ -66,6 +66,19 @@ std::size_t Sample::getNCrystals() const
 	return _cells.size();
 }
 
+void Sample::removeUnitCell(std::shared_ptr<SX::Crystal::UnitCell> cell)
+{
+	for (auto it=_cells.begin();it!=_cells.end();++it)
+	{
+		if ((*it)==cell)
+		{
+			_cells.erase(it);
+			break;
+		}
+	}
+
+}
+
 } // end namespace Instrument
 
 } /* namespace SX */

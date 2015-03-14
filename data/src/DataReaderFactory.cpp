@@ -3,6 +3,7 @@
 #include "ILLAsciiData.h"
 #include "HDF5Data.h"
 #include "TiffData.h"
+#include "I16Data.h"
 
 namespace SX
 {
@@ -23,6 +24,9 @@ DataReaderFactory::DataReaderFactory()
 	// TIFF data
 	registerCallback("tiff",&TiffData::create);
 	registerCallback("tif",&TiffData::create);
+
+	// Register dat extension for I16 data
+	registerCallback("dat",&I16Data::create);
 }
 
 DataReaderFactory::~DataReaderFactory()

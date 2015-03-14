@@ -125,6 +125,12 @@ public:
 	//! Returns the center of gravity of the hull.
 	Eigen::Vector3d getCenter() const;
 
+	//! Translates the hull
+	void translate(T x, T y, T z) const;
+
+	//! Translates the hull to its center
+	void translateToCenter() const;
+
 	//! Returns the volume of the hull. The volume is computed by summing the volumes of all the tethrahedrons
 	//! made by each face of the convex hull and any internal point of the hull.
 	//! A reasonable choice for the internal point is the center of gravity of the hull as, by definition of a
@@ -134,8 +140,10 @@ public:
 	//! Sends some informations on an output stream.
 	void print(std::ostream& os) const;
 
-	//!
+	//! Checks that this Hull satisfies the Euler condition
+	bool checkEulerConditions() const;
 
+	//!
 	std::vector<Triangle> createFaceCache() const;
 
 private:
@@ -693,6 +701,25 @@ Eigen::Vector3d ConvexHull<T>::getCenter() const
 }
 
 template <typename T>
+void ConvexHull<T>::translate(T x, T y, T z) const
+{
+	for (auto& v : _vertices)
+	{
+		v->_coords[0] += x;
+		v->_coords[1] += y;
+		v->_coords[2] += z;
+	}
+}
+
+template <typename T>
+void ConvexHull<T>::translateToCenter() const
+{
+
+	Eigen::Vector3d center=-getCenter();
+	translate(center[0],center[1],center[2]);
+}
+
+template <typename T>
 double ConvexHull<T>::getVolume() const
 {
 
@@ -725,6 +752,28 @@ unsigned int ConvexHull<T>::getNFaces() const
 }
 
 template<typename T>
+bool ConvexHull<T>::checkEulerConditions() const
+{
+	unsigned int nVertices=_vertices.size();
+	unsigned int nEdges=_edges.size();
+	unsigned int nFaces=_faces.size();
+
+	if (nVertices<4)
+		return false;
+
+	if ( (nVertices - nEdges + nFaces) != 2 )
+		return false;
+
+	if ( nFaces != (2 * nVertices - 4) )
+		return false;
+
+	if ( (2 * nEdges) != (3 * nFaces) )
+		return false;
+
+	return true;
+}
+
+template<typename T>
 std::vector<Triangle > ConvexHull<T>::createFaceCache() const
 {
 	if (_vertices.size()<4)
@@ -743,8 +792,8 @@ template<typename T>
 void ConvexHull<T>::print(std::ostream& os) const
 {
 	os<<"Convex Hull:\n"<<std::endl;
-	for (auto& f : _faces)
-		os<<f;
+	for (auto v : _vertices)
+		os<< *v << std::endl;
 }
 
 template<typename T>

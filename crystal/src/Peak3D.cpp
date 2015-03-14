@@ -10,6 +10,7 @@
 #include "IShape.h"
 #include "Peak3D.h"
 #include "Sample.h"
+#include "Source.h"
 
 namespace SX
 {
@@ -23,9 +24,9 @@ Peak3D::Peak3D(SX::Data::IData* data):
 		_bkg(nullptr),
 		_sampleState(nullptr),
 		_event(nullptr),
+		_source(nullptr),
 		_counts(0.0),
 		_countsSigma(0.0),
-		_wave(0.0),
 		_scale(1.0),
 		_selected(true),
 		_masked(false)
@@ -39,9 +40,9 @@ Peak3D::Peak3D(const Peak3D& other):
 		_bkg(other._bkg == nullptr ? nullptr : other._bkg->clone()),
 		_sampleState(other._sampleState),
 		_event(other._event),
+		_source(other._source),
 		_counts(other._counts),
 		_countsSigma(other._countsSigma),
-		_wave(other._wave),
 		_scale(other._scale),
 		_selected(other._selected),
 		_masked(other._masked)
@@ -69,9 +70,9 @@ Peak3D& Peak3D::operator=(const Peak3D& other)
 
 		_sampleState = other._sampleState;
 		_event = other._event;
+		_source= other._source;
 		_counts = other._counts;
 		_countsSigma = other._countsSigma;
-		_wave = other._wave;
 		_scale = other._scale;
 		_selected = other._selected;
 		_masked = other._masked;
@@ -361,22 +362,18 @@ SX::Instrument::ComponentState* Peak3D::getSampleState()
 
 Eigen::RowVector3d Peak3D::getQ() const
 {
+	double wav=_source->getWavelength();
 	// If sample state is not set, assume sample is at the origin
 	if (!_sampleState)
 	{
-		return _event->getParent()->getQ(*_event,_wave);
+		return _event->getParent()->getQ(*_event,wav);
 	}
 	else // otherwise scattering point is deducted from the sample
 	{
-		Eigen::Vector3d q=_event->getParent()->getQ(*_event,_wave,_sampleState->getParent()->getPosition(*_sampleState));
+		Eigen::Vector3d q=_event->getParent()->getQ(*_event,wav,_sampleState->getParent()->getPosition(*_sampleState));
 		_sampleState->getParent()->getGonio()->transformInverseInPlace(q,_sampleState->getValues());
 		return q;
 	}
-}
-
-void Peak3D::setWavelength(double wave)
-{
-	_wave=wave;
 }
 
 void Peak3D::setSampleState(SX::Instrument::ComponentState* sstate)
@@ -387,6 +384,11 @@ void Peak3D::setSampleState(SX::Instrument::ComponentState* sstate)
 void Peak3D::setDetectorEvent(SX::Instrument::DetectorEvent* event)
 {
 	_event=event;
+}
+
+void Peak3D::setSource(SX::Instrument::Source* source)
+{
+	_source=source;
 }
 
 void Peak3D::getGammaNu(double& gamma,double& nu) const
@@ -421,15 +423,6 @@ void Peak3D::setSelected(bool s)
 	_selected=s;
 }
 
-void Peak3D::setSample(SX::Instrument::Sample* sample)
-{
-	_sampleState->setParent(sample);
-}
-void Peak3D::setDetector(SX::Instrument::Detector* detector)
-{
-	_event->setParent(detector);
-}
-
 void Peak3D::setMasked(bool masked)
 {
 	_masked=masked;
@@ -438,6 +431,11 @@ void Peak3D::setMasked(bool masked)
 bool Peak3D::isMasked() const
 {
 	return _masked;
+}
+
+double Peak3D::getIOverSigmaI() const
+{
+	return _counts/_countsSigma;
 }
 
 }

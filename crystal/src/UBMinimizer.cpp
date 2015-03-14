@@ -43,7 +43,7 @@ void removeColumn(Eigen::MatrixXd& matrix, unsigned int colToRemove)
 }
 
 
-UBFunctor::UBFunctor() : Functor<double>(), _peaks(0), _detector(nullptr), _sample(nullptr), _fixedParameters()
+UBFunctor::UBFunctor() : Functor<double>(), _peaks(0), _detector(nullptr), _sample(nullptr),_source(nullptr), _fixedParameters()
 {
 }
 
@@ -52,6 +52,7 @@ UBFunctor::UBFunctor(const UBFunctor& other)
 	_peaks = other._peaks;
 	_detector = other._detector;
 	_sample = other._sample;
+	_source = other._source;
 	_fixedParameters = other._fixedParameters;
 }
 
@@ -62,6 +63,7 @@ UBFunctor& UBFunctor::operator=(const UBFunctor& other)
 		_peaks = other._peaks;
 		_detector = other._detector;
 		_sample = other._sample;
+		_source = other._source;
 		_fixedParameters = other._fixedParameters;
 	}
 	return *this;
@@ -72,16 +74,24 @@ UBFunctor::~UBFunctor() {
 
 int UBFunctor::operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const
 {
-	if (!_detector || !_sample)
-		throw SX::Kernel::Error<UBFunctor>("A detector and a sample must be specified prior to calculate residuals.");
+	if (!_detector || !_sample || !_source)
+		throw SX::Kernel::Error<UBFunctor>("A detector, sample and source must be specified prior to calculate residuals.");
 
+	// First 9 parameters are UB matrix
 	int naxes=9;
+
+	// Parameter 9 is offset in wavelength
+	_source->setOffset(x[naxes++]);
+
+	// Then n parameters for the detector
 	auto dgonio=_detector->getGonio();
 	if (dgonio)
 	{
 		for (unsigned int i=0;i<dgonio->getNAxes();++i)
 			dgonio->getAxis(i)->setOffset(x[naxes++]);
 	}
+
+	// finally, n parameters for the sample
 	auto sgonio=_sample->getGonio();
 	if (sgonio)
 	{
@@ -108,8 +118,8 @@ void UBFunctor::addPeak(const Peak3D& peak)
 
 int UBFunctor::inputs() const
 {
-
-	int nInputs=9;
+	// 9 UB parameters + wavelength
+	int nInputs=10;
 
 	if (_detector)
 		nInputs += _detector->getNAxes();
@@ -134,9 +144,14 @@ void UBFunctor::setSample(SX::Instrument::Sample* sample)
 {
 	_sample=sample;
 }
+void UBFunctor::setSource(SX::Instrument::Source* source)
+{
+	_source=source;
+}
 
 void UBFunctor::resetParameters()
 {
+	_source->setOffset(0.0);
 	auto dgonio=_detector->getGonio();
 	if (dgonio)
 	{
@@ -153,8 +168,8 @@ void UBFunctor::resetParameters()
 
 void UBFunctor::setFixedParameters(unsigned int idx)
 {
-	if (!_detector || !_sample)
-		throw SX::Kernel::Error<UBFunctor>("A detector and a sample must be specified prior to fixing parameters.");
+	if (!_detector || !_sample || !_source)
+		throw SX::Kernel::Error<UBFunctor>("A detector, sample and source must be specified prior to fixing parameters.");
 
 	if (idx>=static_cast<unsigned int>(inputs()))
 		return;
@@ -162,6 +177,14 @@ void UBFunctor::setFixedParameters(unsigned int idx)
 	_fixedParameters.insert(idx);
 
 	unsigned int ii=idx-9;
+	if (ii==0)
+	{
+		_source->setOffsetFixed(true);
+		return;
+	}
+
+	ii--;
+
 	if (ii<_detector->getNAxes())
 	{
 		_detector->getGonio()->getAxis(ii)->setOffsetFixed(true);
@@ -194,6 +217,11 @@ void UBMinimizer::setDetector(SX::Instrument::Detector* detector)
 	_functor.setDetector(detector);
 }
 
+void UBMinimizer::setSource(SX::Instrument::Source* source)
+{
+	_functor.setSource(source);
+}
+
 void UBMinimizer::setFixedParameters(unsigned int idx)
 {
 	_functor.setFixedParameters(idx);
@@ -214,7 +242,6 @@ int UBMinimizer::run(unsigned int maxIter)
 	for (auto it=_start.begin();it!=_start.end();++it)
 		x[it->first] = it->second;
 
-
 	typedef Eigen::NumericalDiff<UBFunctor> NumDiffType;
 	NumDiffType numdiff(_functor);
 	Eigen::LevenbergMarquardt<NumDiffType> minimizer(numdiff);
@@ -225,7 +252,6 @@ int UBMinimizer::run(unsigned int maxIter)
 
 	if (status==1)
 	{
-
 		std::vector<bool> fParams(x.size(),false);
 		for (auto it : _functor._fixedParameters)
 			fParams[it] = true;
@@ -266,12 +292,14 @@ int UBMinimizer::run(unsigned int maxIter)
 		Eigen::MatrixXd JtJ = RPt.transpose()*RPt;
 
 		// Remove the fixed parameters before inverting J^t * J
+	    int removed=0;
 		for (unsigned int i=0;i<fParams.size();++i)
 		{
 			if (fParams[i])
 			{
-				removeColumn(JtJ,i);
-				removeRow(JtJ,i);
+				removeColumn(JtJ,i-removed);
+				removeRow(JtJ,i-removed);
+				removed++;
 			}
 		}
 
@@ -280,7 +308,7 @@ int UBMinimizer::run(unsigned int maxIter)
 
 	    covariance *= mse;
 
-	    _solution = UBSolution(_functor._detector, _functor._sample, x, covariance, fParams);
+	    _solution = UBSolution(_functor._detector, _functor._sample,_functor._source, x, covariance, fParams);
 	}
 
 	return status;
@@ -319,18 +347,20 @@ void UBMinimizer::unsetStartingValue(unsigned int idx)
 		_start.erase (it);
 }
 
-UBSolution::UBSolution() : _detector(nullptr), _sample(nullptr)
+UBSolution::UBSolution() : _detector(nullptr), _sample(nullptr),_source(nullptr),_sourceOffset(0),_sigmaSourceOffset(0)
 {
 }
 
-UBSolution::UBSolution(SX::Instrument::Detector* detector,SX::Instrument::Sample* sample,const Eigen::VectorXd& values,const Eigen::MatrixXd& cov,const std::vector<bool>& fixedParameters)
-: _detector(detector), _sample(sample), _fixedParameters(fixedParameters)
+UBSolution::UBSolution(SX::Instrument::Detector* detector,SX::Instrument::Sample* sample,SX::Instrument::Source* source,const Eigen::VectorXd& values,const Eigen::MatrixXd& cov,const std::vector<bool>& fixedParameters)
+: _detector(detector), _sample(sample),_source(source), _fixedParameters(fixedParameters)
 {
 	_ub  << values(0),values(1),values(2),values(3),values(4), values(5), values(6),values(7),values(8);
 
 	_covub = cov.block(0,0,9,9);
 
-	unsigned int idx = 9;
+	_sourceOffset=values(9);
+
+	unsigned int idx = 10;
 	std::size_t nDetectorAxes=_detector->getNAxes();
 	_detectorOffsets = values.segment(idx,nDetectorAxes);
 	_sigmaDetectorOffsets = Eigen::VectorXd(nDetectorAxes);
@@ -340,7 +370,12 @@ UBSolution::UBSolution(SX::Instrument::Detector* detector,SX::Instrument::Sample
 	_sampleOffsets = values.segment(idx,nSampleAxes);
 	_sigmaSampleOffsets = Eigen::VectorXd(nSampleAxes);
 
-	idx = 9;
+	if (_source->hasOffsetFixed())
+		_sigmaSourceOffset=0.0;
+	else
+		_sigmaSourceOffset=sqrt(cov(9,9));
+
+	idx = 10;
 	for (unsigned int i=0;i<nDetectorAxes;++i)
 	{
 		if (_detector->getGonio()->getAxis(i)->hasOffsetFixed())
@@ -369,8 +404,11 @@ UBSolution::UBSolution(const UBSolution& other)
 {
 	_detector = other._detector;
 	_sample = other._sample;
+	_source= other._source;
 	_ub = other._ub;
 	_covub = other._covub;
+	_sourceOffset=other._sourceOffset;
+	_sigmaSourceOffset=other._sigmaSourceOffset;
 	_detectorOffsets = other._detectorOffsets;
 	_sigmaDetectorOffsets = other._sigmaDetectorOffsets;
 	_sampleOffsets = other._sampleOffsets;
@@ -384,8 +422,11 @@ UBSolution& UBSolution::operator=(const UBSolution& other)
 	{
 		_detector = other._detector;
 		_sample = other._sample;
+		_source = other._source;
 		_ub = other._ub;
 		_covub = other._covub;
+		_sourceOffset= other._sourceOffset;
+		_sigmaSourceOffset =other. _sigmaSourceOffset;
 		_detectorOffsets = other._detectorOffsets;
 		_sigmaDetectorOffsets = other._sigmaDetectorOffsets;
 		_sampleOffsets = other._sampleOffsets;
@@ -399,9 +440,9 @@ std::ostream& operator<<(std::ostream& os, const UBSolution& solution)
 {
 	os<<"UB matrix:"<<std::endl;
 	os<<solution._ub<< std::endl;
-	os<<"UB error:" << std::endl;
+	os<<"UB Covariance:" << std::endl;
 	os<<solution._covub << std::endl;
-//	os<<solution._sigmaub << std::endl;
+	os << "Wavelength:" << solution._source->getWavelength() << "("<< solution._sigmaSourceOffset<< ")" << std::endl;
 	os<<"Detector offsets: " << std::endl;
 	auto detectorG=solution._detector->getGonio();
 	for (unsigned int i=0;i<detectorG->getNAxes();++i)

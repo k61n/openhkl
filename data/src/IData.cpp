@@ -9,6 +9,7 @@
 #include "Detector.h"
 #include "Gonio.h"
 #include "Sample.h"
+#include "Source.h"
 
 #include "H5Cpp.h"
 #include "blosc_filter.h"
@@ -441,6 +442,59 @@ void IData::releaseMemory()
 	_data.shrink_to_fit();
 
     _inMemory=false;
+}
+
+Peak3D* IData::hasPeak(double h, double k, double l, const Matrix3d& BU)
+{
+	// Get q at rest
+	Eigen::RowVector3d q=Eigen::RowVector3d(h,k,l)*BU;
+	double normQ=q.norm();
+	double sintheta=0.5*normQ*_diffractometer->getSource()->getWavelength();
+	q.normalize();
+	// Get q vectors for the two endpoints of the scans, this describes an arc or unit-length
+	auto q1=_diffractometer->getSample()->getGonio()->transform(q,_sampleStates.front().getValues());
+	auto q2=_diffractometer->getSample()->getGonio()->transform(q,_sampleStates.back().getValues());
+	// y coordinate of Q needs to be <0 for Bragg
+	if (q1[1]>0 && q2[1]>0)
+		return nullptr;
+
+	double t=0;
+	// Spherical linear interpolation between q1 and q2 gives:
+	// q=q1*sin(omega.(1-t))/sin(omega)+q2*sin(omega.t)/sin(omega) with cos(omega)=q1.q2
+	double comega=q1.dot(q2);
+	double omega=acos(comega);
+	double somega=sin(omega);
+	// Need to solve equation of the type a*cos(omega.t)+b*sin(omega.t)=c
+	double a=q1[1];
+	double b=q2[1]/somega-somega/comega*q1[1];
+	double a2b2=a*a+b*b;
+	double c=-sintheta/a2b2;
+	if (c<-1 || c>1)
+		return nullptr;
+	a/=a2b2;
+	b/=a2b2;
+	t=(asin(c)-atan2(a,b))/acos(comega);
+	if (t>=0 && t<=1) // Arc intercept the scattering cone
+	{
+		Eigen::RowVector3d q=q1*sin(omega*(1-t))/somega+q2*sin(omega*t)/somega;
+		q*=normQ;
+//		q+=_diffractometer->getSource()->getki();
+		ComponentState dis=getDetectorInterpolatedState(_nFrames*t);
+		double px,py;
+		if (_diffractometer->getDetector()->receiveKf(px,py,q,dis.getValues()))
+		{
+			Peak3D* newpeak=new Peak3D(this);
+			newpeak->setMillerIndices(h,k,l);
+			ComponentState cs=getSampleInterpolatedState(_nFrames*t);
+			newpeak->setSampleState(new ComponentState(cs));
+			DetectorEvent de=_diffractometer->getDetector()->createDetectorEvent(px,py,dis.getValues());
+			newpeak->setDetectorEvent(new DetectorEvent(de));
+		}
+
+	}
+	else
+		return nullptr;
+
 }
 
 } // end namespace Data

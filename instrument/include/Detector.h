@@ -151,6 +151,9 @@ public:
 	//! Get the transferred wavenumber for an event on this detector
 	Eigen::Vector3d getQ(const DetectorEvent& event, double wave,const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
 
+	//! Reuturn whether the detector with goniometer values can collect scattering at Kf. If true, px and py would be the pixel coordinates of the event
+	bool receiveKf(double& px, double& py,const Eigen::Vector3d& kf, const std::vector<double>& values=std::vector<double>());
+
 	//! Returns the number of detector
 	virtual unsigned int getNDetectors() const=0;
 
@@ -159,6 +162,11 @@ public:
 
 	//! Returns the position of a given pixel in detector space. This takes into account the detector motions in detector space.
 	virtual Eigen::Vector3d getPos(double x, double y) const=0;
+
+	//! Determine whether detector at rest can receive a scattering event with direction given by Kf. px and py are detector position if true.
+	virtual bool hasKf(const Eigen::Vector3d& kf,double& px, double& py) const =0;
+
+	//!
 
 };
 

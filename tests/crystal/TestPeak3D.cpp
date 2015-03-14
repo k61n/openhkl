@@ -11,6 +11,7 @@
 #include "Gonio.h"
 #include "Component.h"
 #include "ComponentState.h"
+#include "Source.h"
 
 using SX::Crystal::Peak3D;
 using SX::Instrument::DetectorEvent;
@@ -19,6 +20,7 @@ using SX::Instrument::Gonio;
 using SX::Instrument::RotAxis;
 using SX::Instrument::Sample;
 using SX::Instrument::ComponentState;
+using SX::Instrument::Source;
 
 using namespace SX::Units;
 const double tolerance=1e-6;
@@ -31,10 +33,11 @@ BOOST_AUTO_TEST_CASE(Test_Peak3D)
 	d.setNPixels(32,32);
 
 	DetectorEvent event=d.createDetectorEvent(15.5,15.5);
-
+	Source source;
+	source.setWavelength(1.0);
 	Peak3D peak;
 	peak.setDetectorEvent(&event);
-	peak.setWavelength(1.0);
+	peak.setSource(&source);
 	Eigen::Vector3d Q=peak.getQ();
 	BOOST_CHECK_SMALL(Q[0],tolerance);
 	BOOST_CHECK_SMALL(Q[1],tolerance);
@@ -69,11 +72,5 @@ BOOST_AUTO_TEST_CASE(Test_Peak3D)
 	sample.setRestPosition(Eigen::Vector3d(0,0,0.01*m));
 	Q=peak.getQ();
 	std::cout << Q <<std::endl;
-
-
-
-
-
-
 
 }

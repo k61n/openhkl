@@ -91,6 +91,24 @@ Eigen::Vector3d CylindricalDetector::getPos(double px, double py) const
 	return result;
 }
 
+bool CylindricalDetector::hasKf(const Eigen::Vector3d& kf, double& px, double& py) const
+{
+	double phi=atan2(kf[0],kf[1])+0.5*_angularWidth;
+	if (phi<0 || phi>=_angularWidth)
+		return false;
+
+	double inplane=sqrt(kf[0]*kf[0]+kf[1]*kf[1]);
+	if (inplane<1e-10)
+		return false;
+	double d=_distance*kf[2]/inplane+0.5*_height;
+	if (d<0 || d>_height)
+		return false;
+
+	px=phi/_angularWidth*(_nCols-1);
+	py=d/_height*(_nRows-1);
+	return true;
+}
+
 } // Namespace Instrument
 
 } // Namespace SX

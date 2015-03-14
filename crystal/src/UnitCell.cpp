@@ -132,7 +132,18 @@ void UnitCell::getUB(const Peak3D& p1, const Peak3D& p2)
 	q3prime.normalize();
 	q2prime=q3prime.cross(q1prime);
 	//
-	Eigen::Matrix3d ref1;
+	Eigen::Matrix3d m1,m2,U;
+	m1.col(0)=q1;
+	m1.col(1)=q2;
+	m1.col(2)=q3;
+
+	m2.col(0)=q1prime;
+	m2.col(1)=q2prime;
+	m2.col(2)=q3prime;
+
+	U=m2*m1.inverse();
+
+	_B=_B*U;
 
 }
 
