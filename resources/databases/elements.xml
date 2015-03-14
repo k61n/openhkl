@@ -1,7 +1,9 @@
 <elements>
 
-<element name="db_carbon">
-	<symbol>C</symbol>
+<element name="D">
+	<isotope name="H[2]">
+		<abundance>100</abundance>
+	</isotope>
 </element>
 
 <element name="db_oxygen">
