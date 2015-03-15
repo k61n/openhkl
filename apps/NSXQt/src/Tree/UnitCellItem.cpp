@@ -15,6 +15,7 @@ UnitCellItem::UnitCellItem(SX::Instrument::Experiment* experiment,std::shared_pt
     setEditable(true);
     setDragEnabled(false);
     setDropEnabled(false);
+    setForeground(QBrush(Qt::red));
 }
 
 UnitCellItem::~UnitCellItem()

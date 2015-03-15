@@ -50,8 +50,6 @@ private slots:
 
     void on_action_peak_find_triggered();
 
-    void on_actionUnit_Cell_triggered();
-
     void on_actionPixel_position_triggered();
 
     void on_actionGamma_Nu_triggered();
@@ -75,6 +73,8 @@ private slots:
     void on_action_display_isotopes_database_triggered();
 
     void on_action_add_element_triggered();
+
+    void on_actionConvert_to_HDF5_triggered();
 
 public slots:
     void changeData(SX::Data::IData*);

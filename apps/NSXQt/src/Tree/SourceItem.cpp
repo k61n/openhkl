@@ -3,10 +3,11 @@
 
 #include "Diffractometer.h"
 #include "Source.h"
-
+#include "Experiment.h"
 #include "Tree/SourceItem.h"
+#include "Tree/SourcePropertyWidget.h"
 
-SourceItem::SourceItem(Experiment* experiment) : TreeItem(experiment)
+SourceItem::SourceItem(SX::Instrument::Experiment* experiment) : InspectableTreeItem(experiment)
 {
     setText(QString::fromStdString(_experiment->getDiffractometer()->getSource()->getName()));
 
@@ -16,4 +17,9 @@ SourceItem::SourceItem(Experiment* experiment) : TreeItem(experiment)
     setSelectable(false);
     setDragEnabled(false);
     setDropEnabled(false);
+}
+
+QWidget* SourceItem::inspectItem()
+{
+    return new SourcePropertyWidget(this);
 }

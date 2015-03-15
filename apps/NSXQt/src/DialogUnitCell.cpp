@@ -43,144 +43,144 @@ DialogUnitCell::~DialogUnitCell()
 
 void DialogUnitCell::getUnitCell()
 {
-    qWarning() << "Find possible Unit-Cells";
-    _unitcells.clear();
+//    qWarning() << "Find possible Unit-Cells";
+//    _unitcells.clear();
 
-    if (!_peaks.size())
-        return;
-    std::vector<Eigen::Vector3d> qvects;
-    qvects.reserve(_peaks.size());
+//    if (!_peaks.size())
+//        return;
+//    std::vector<Eigen::Vector3d> qvects;
+//    qvects.reserve(_peaks.size());
 
-    SX::Instrument::Sample* sample=dynamic_cast<SX::Instrument::Sample*>(_peaks[0].get().getSampleState()->getParent());
-    SX::Instrument::Detector* detector=_peaks[0].get().getDetectorEvent()->getParent();
+//    SX::Instrument::Sample* sample=dynamic_cast<SX::Instrument::Sample*>(_peaks[0].get().getSampleState()->getParent());
+//    SX::Instrument::Detector* detector=_peaks[0].get().getDetectorEvent()->getParent();
 
-    sample->getGonio()->resetOffsets();
-    detector->getGonio()->resetOffsets();
+//    sample->getGonio()->resetOffsets();
+//    detector->getGonio()->resetOffsets();
 
-   for (SX::Crystal::Peak3D& peak : _peaks)
-    {
-        if (peak.isSelected())
-            qvects.push_back(peak.getQ());
-        peak.setSample(sample);
-        peak.setDetector(detector);
-    }
+//   for (SX::Crystal::Peak3D& peak : _peaks)
+//    {
+//        if (peak.isSelected())
+//            qvects.push_back(peak.getQ());
+//        peak.setSample(sample);
+//        peak.setDetector(detector);
+//    }
 
-    qDebug() << "Searching direct lattice vectors using" << _peaks.size() << "peaks defined on numors:";
-    std::set<int> numors;
-    for (SX::Crystal::Peak3D& p : _peaks)
-        numors.insert(p.getData()->getMetadata()->getKey<int>("Numor"));
-    QString numorstring("[");
-    for (auto n : numors)
-        numorstring += QString::number(n)+",";
-    numorstring +="]";
-        qDebug() << numorstring;
-    FFTIndexing indexing(130.0);
-    indexing.addVectors(qvects);
-    std::vector<tVector> tvects=indexing.findOnSphere(40,10);
-    qDebug() << "Refining solutions and diffractometers offsets";
-    int soluce=0;
+//    qDebug() << "Searching direct lattice vectors using" << _peaks.size() << "peaks defined on numors:";
+//    std::set<int> numors;
+//    for (SX::Crystal::Peak3D& p : _peaks)
+//        numors.insert(p.getData()->getMetadata()->getKey<int>("Numor"));
+//    QString numorstring("[");
+//    for (auto n : numors)
+//        numorstring += QString::number(n)+",";
+//    numorstring +="]";
+//        qDebug() << numorstring;
+//    FFTIndexing indexing(130.0);
+//    indexing.addVectors(qvects);
+//    std::vector<tVector> tvects=indexing.findOnSphere(40,10);
+//    qDebug() << "Refining solutions and diffractometers offsets";
+//    int soluce=0;
 
-    for (int i=0;i<10;++i)
-    {
-        for (int j=i+1;j<10;++j)
-        {
-            for (int k=j+1;k<10;++k)
-            {
-                Eigen::Vector3d& v1=tvects[i]._vect;
-                Eigen::Vector3d& v2=tvects[j]._vect;
-                Eigen::Vector3d& v3=tvects[k]._vect;
+//    for (int i=0;i<10;++i)
+//    {
+//        for (int j=i+1;j<10;++j)
+//        {
+//            for (int k=j+1;k<10;++k)
+//            {
+//                Eigen::Vector3d& v1=tvects[i]._vect;
+//                Eigen::Vector3d& v2=tvects[j]._vect;
+//                Eigen::Vector3d& v3=tvects[k]._vect;
 
-                if (v1.dot(v2.cross(v3))>20.0)
-                {
-                        UnitCell cell=UnitCell::fromDirectVectors(v1,v2,v3);
-                        std::shared_ptr<UnitCell> pcell(new UnitCell(cell));
-                        UBMinimizer minimizer;
-                        minimizer.setSample(sample);
-                        minimizer.setDetector(detector);
-                        for (int i=9;i<=16;++i)
-                            minimizer.setFixedParameters(i);
-                        int success=0;
-                        for (SX::Crystal::Peak3D& peak : _peaks)
-                        {
-                            if (peak.hasIntegerHKL(pcell))
-                            {
-                                minimizer.addPeak(peak);
-                                ++success;
-                            }
-                        }
+//                if (v1.dot(v2.cross(v3))>20.0)
+//                {
+//                        UnitCell cell=UnitCell::fromDirectVectors(v1,v2,v3);
+//                        std::shared_ptr<UnitCell> pcell(new UnitCell(cell));
+//                        UBMinimizer minimizer;
+//                        minimizer.setSample(sample);
+//                        minimizer.setDetector(detector);
+//                        for (int i=9;i<=17;++i)
+//                            minimizer.setFixedParameters(i);
+//                        int success=0;
+//                        for (SX::Crystal::Peak3D& peak : _peaks)
+//                        {
+//                            if (peak.hasIntegerHKL(pcell))
+//                            {
+//                                minimizer.addPeak(peak);
+//                                ++success;
+//                            }
+//                        }
 
-                        if (success < 10)
-                            continue;
+//                        if (success < 10)
+//                            continue;
 
-                        Eigen::Matrix3d M=cell.getReciprocalStandardM();
-                        minimizer.setStartingUBMatrix(M);
+//                        Eigen::Matrix3d M=cell.getReciprocalStandardM();
+//                        minimizer.setStartingUBMatrix(M);
 
-                        int ret = minimizer.run(100);
+//                        int ret = minimizer.run(100);
 
-                        if (ret==1)
-                        {
-                            qDebug() << "Refining solution... " << ++soluce << " ... convergence reached";
-                            UBSolution solution=minimizer.getSolution();
-                            SX::Crystal::UnitCell cc;
-                            try
-                            {
-                                cc=SX::Crystal::UnitCell::fromReciprocalVectors(solution._ub.row(0),solution._ub.row(1),solution._ub.row(2));
-                                cc.setReciprocalCovariance(solution._covub);
+//                        if (ret==1)
+//                        {
+//                            qDebug() << "Refining solution... " << ++soluce << " ... convergence reached";
+//                            UBSolution solution=minimizer.getSolution();
+//                            SX::Crystal::UnitCell cc;
+//                            try
+//                            {
+//                                cc=SX::Crystal::UnitCell::fromReciprocalVectors(solution._ub.row(0),solution._ub.row(1),solution._ub.row(2));
+//                                cc.setReciprocalCovariance(solution._covub);
 
-                            }catch(std::exception& e)
-                            {
-                                qDebug() << e.what();
-                                continue;
-                            }
-                            NiggliReduction niggli(cc.getMetricTensor(),1e-3);
-                            Eigen::Matrix3d newg,P;
-                            niggli.reduce(newg,P);
-                            cc.transform(P);
-                            GruberReduction gruber(cc.getMetricTensor(),0.07);
-                            LatticeCentring c;
-                            BravaisType b;
-                            gruber.reduce(P,c,b);
-                            cc.setLatticeCentring(c);
-                            cc.setBravaisType(b);
-                            cc.transform(P);
-                            double ap,bp,cp,alpha,beta,gamma;
-                            double as,bs,cs,alphas,betas,gammas;
-                            cc.getParameters(ap,bp,cp,alpha,beta,gamma);
-                            cc.getParametersSigmas(as,bs,cs,alphas,betas,gammas);
+//                            }catch(std::exception& e)
+//                            {
+//                                qDebug() << e.what();
+//                                continue;
+//                            }
+//                            NiggliReduction niggli(cc.getMetricTensor(),1e-3);
+//                            Eigen::Matrix3d newg,P;
+//                            niggli.reduce(newg,P);
+//                            cc.transform(P);
+//                            GruberReduction gruber(cc.getMetricTensor(),0.07);
+//                            LatticeCentring c;
+//                            BravaisType b;
+//                            gruber.reduce(P,c,b);
+//                            cc.setLatticeCentring(c);
+//                            cc.setBravaisType(b);
+//                            cc.transform(P);
+//                            double ap,bp,cp,alpha,beta,gamma;
+//                            double as,bs,cs,alphas,betas,gammas;
+//                            cc.getParameters(ap,bp,cp,alpha,beta,gamma);
+//                            cc.getParametersSigmas(as,bs,cs,alphas,betas,gammas);
 
-                            double score=0.0;
-                            double maxscore=0.0;
-                            std::shared_ptr<UnitCell> pcc(new UnitCell(cc));
-                            for (SX::Crystal::Peak3D& peak : _peaks)
-                            {
-                                if (peak.isSelected())
-                                {
-                                    maxscore++;
-                                if (peak.hasIntegerHKL(pcc))
-                                    score++;
-                                }
-                            }
-                            // Percentage of indexing
-                            score /= 0.01*maxscore;
-                            _unitcells.push_back(std::make_tuple(cc,solution,score));
-                        }
-                         minimizer.resetParameters();
-                }
-            }
-        }
-    }
-    //Sort the Quality of the solutions decreasing
-    std::sort(_unitcells.begin(),
-              _unitcells.end(),
-              [](const std::tuple<SX::Crystal::UnitCell,SX::Crystal::UBSolution,double>& cell1,const std::tuple<SX::Crystal::UnitCell,SX::Crystal::UBSolution,double>& cell2)->bool
-                {
-                    return (std::get<2>(cell1)>std::get<2>(cell2));
-                });
+//                            double score=0.0;
+//                            double maxscore=0.0;
+//                            std::shared_ptr<UnitCell> pcc(new UnitCell(cc));
+//                            for (SX::Crystal::Peak3D& peak : _peaks)
+//                            {
+//                                if (peak.isSelected())
+//                                {
+//                                    maxscore++;
+//                                if (peak.hasIntegerHKL(pcc))
+//                                    score++;
+//                                }
+//                            }
+//                            // Percentage of indexing
+//                            score /= 0.01*maxscore;
+//                            _unitcells.push_back(std::make_tuple(cc,solution,score));
+//                        }
+//                         minimizer.resetParameters();
+//                }
+//            }
+//        }
+//    }
+//    //Sort the Quality of the solutions decreasing
+//    std::sort(_unitcells.begin(),
+//              _unitcells.end(),
+//              [](const std::tuple<SX::Crystal::UnitCell,SX::Crystal::UBSolution,double>& cell1,const std::tuple<SX::Crystal::UnitCell,SX::Crystal::UBSolution,double>& cell2)->bool
+//                {
+//                    return (std::get<2>(cell1)>std::get<2>(cell2));
+//                });
 
-    DialogUnitCellSolutions* ucs=new DialogUnitCellSolutions(this);
-    ucs->setSolutions(_unitcells);
-    ucs->show();
-    connect(ucs,SIGNAL(selectSolution(int)),this,SLOT(acceptSolution(int)));
+//    DialogUnitCellSolutions* ucs=new DialogUnitCellSolutions(this);
+//    ucs->setSolutions(_unitcells);
+//    ucs->show();
+//    connect(ucs,SIGNAL(selectSolution(int)),this,SLOT(acceptSolution(int)));
 }
 
 void DialogUnitCell::acceptSolution(int i)

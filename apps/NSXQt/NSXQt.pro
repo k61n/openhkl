@@ -18,10 +18,8 @@ SOURCES += src/Main.cpp \
     src/ColorMap.cpp \
     src/PeakTableView.cpp \
     src/DialogTransformationMatrix.cpp \
-    src/DialogUnitCell.cpp \
     src/DetectorGraphicsView.cpp \
     src/DetectorScene.cpp \
-    src/DialogUnitCellSolutions.cpp \
     src/DialogExperiment.cpp \
     src/Logger.cpp \
     src/NoteBook.cpp \
@@ -71,18 +69,18 @@ SOURCES += src/Main.cpp \
     src/Tree/TreeItem.cpp \
     src/Tree/UnitCellItem.cpp \
     src/Tree/UnitCellPropertyWidget.cpp \
-    src/GraphicsItems/SliceRectGraphicsItem.cpp
+    src/GraphicsItems/SliceRectGraphicsItem.cpp \
+    src/DialogFindUnitCell.cpp \
+    src/Tree/SourcePropertyWidget.cpp
 
 HEADERS  += include/MainWindow.h \
     include/DialogPeakFind.h \
     include/ColorMap.h \
     include/Externals/qcustomplot.h \
     include/PeakTableView.h \
-    include/DialogUnitCell.h \
     include/DialogTransformationMatrix.h \
     include/NoteBook.h \
     include/Logger.h \
-    include/DialogUnitCellSolutions.h \
     include/DialogExperiment.h \
     include/DetectorGraphicsView.h \
     include/DetectorScene.h \
@@ -131,13 +129,13 @@ HEADERS  += include/MainWindow.h \
     include/Tree/TreeItem.h \
     include/Tree/UnitCellItem.h \
     include/Tree/UnitCellPropertyWidget.h \
-    include/GraphicsItems/SliceRectGraphicsItem.h
+    include/GraphicsItems/SliceRectGraphicsItem.h \
+    include/DialogFindUnitCell.h \
+    include/Tree/SourcePropertWidget.h
 
 FORMS    += ui/mainwindow.ui \
     ui/dialog_PeakFind.ui \
-    ui/dialog_UnitCell.ui \
     ui/dialogtransformationmatrix.ui \
-    ui/dialogunitcellsolutions.ui \
     ui/DialogExperiment.ui \
     ui/Absorption/AbsorptionDialog.ui \
     ui/Absorption/CalibrateDistanceDialog.ui \
@@ -149,7 +147,9 @@ FORMS    += ui/mainwindow.ui \
     ui/Tree/SamplePropertyWidget.ui \
     ui/Tree/SampleShapePropertyWidget.ui \
     ui/Tree/ShapePropertyWidget.ui \
-    ui/Tree/UnitCellPropertyWidget.ui
+    ui/Tree/UnitCellPropertyWidget.ui \
+    ui/DialogFindUnitCell.ui \
+    ui/Tree/SourcePropertWidget.ui
 
 win32:CONFIG(release, debug|release): LIBS += -lNSXTool
 else:unix: LIBS += -lNSXTool -lboost_date_time -lboost_system -lfftw3

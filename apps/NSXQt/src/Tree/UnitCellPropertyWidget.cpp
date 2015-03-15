@@ -10,6 +10,7 @@
 #include "Logger.h"
 #include "Tree/UnitCellPropertyWidget.h"
 #include "Tree/UnitCellItem.h"
+#include "DialogFindUnitCell.h"
 
 UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *parent) :
     _unitCellItem(caller),
@@ -24,14 +25,7 @@ UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *par
     connect(ui->doubleSpinBoxbeta,SIGNAL(editingFinished()),this,SLOT(setLatticeParams()));
     connect(ui->doubleSpinBoxgamma,SIGNAL(editingFinished()),this,SLOT(setLatticeParams()));
 
-    auto sample=caller->getCell();
-    ui->doubleSpinBoxa->setValue(sample->getA());
-    ui->doubleSpinBoxb->setValue(sample->getB());
-    ui->doubleSpinBoxc->setValue(sample->getC());
-    ui->doubleSpinBoxalpha->setValue(sample->getAlpha()/SX::Units::deg);
-    ui->doubleSpinBoxbeta->setValue(sample->getBeta()/SX::Units::deg);
-    ui->doubleSpinBoxgamma->setValue(sample->getGamma()/SX::Units::deg);
-
+    getLatticeParams();
 }
 
 UnitCellPropertyWidget::~UnitCellPropertyWidget()
@@ -68,14 +62,27 @@ void UnitCellPropertyWidget::on_pushButton_Index_clicked()
     emit activateIndexingMode(_unitCellItem->getCell());
 }
 
-void UnitCellPropertyWidget::on_pushButton_Index_2_pressed()
+void UnitCellPropertyWidget::on_pushButton_AutoIndexing_clicked()
 {
-    auto datamap=_unitCellItem->getExperiment()->getData();
-    std::vector<SX::Crystal::Peak3D*> allpeaks;
-    for (auto data: datamap)
-    {
-        auto peaks=data.second->getPeaks();
-        std::copy(peaks.begin(),peaks.end(),std::back_inserter(allpeaks));
-    }
-    auto cellptr=_unitCellItem->getCell();
+    DialogFindUnitCell* dialog=new DialogFindUnitCell(_unitCellItem->getExperiment(),this);
+    // Ensure that lattice parameters are updated if a solution is accepted
+    connect(dialog,SIGNAL(solutionAccepted(SX::Crystal::UnitCell)),this,SLOT(setCell(SX::Crystal::UnitCell)));
+    dialog->exec();
+}
+
+void UnitCellPropertyWidget::setCell(const SX::Crystal::UnitCell& cell)
+{
+    *(_unitCellItem->getCell().get())=cell;
+    getLatticeParams();
+}
+
+void UnitCellPropertyWidget::getLatticeParams()
+{
+    auto sample=_unitCellItem->getCell();
+    ui->doubleSpinBoxa->setValue(sample->getA());
+    ui->doubleSpinBoxb->setValue(sample->getB());
+    ui->doubleSpinBoxc->setValue(sample->getC());
+    ui->doubleSpinBoxalpha->setValue(sample->getAlpha()/SX::Units::deg);
+    ui->doubleSpinBoxbeta->setValue(sample->getBeta()/SX::Units::deg);
+    ui->doubleSpinBoxgamma->setValue(sample->getGamma()/SX::Units::deg);
 }

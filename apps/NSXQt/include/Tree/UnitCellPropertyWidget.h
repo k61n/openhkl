@@ -26,14 +26,13 @@ public:
 signals:
     void activateIndexingMode(std::shared_ptr<SX::Crystal::UnitCell>);
 private slots:
+    void getLatticeParams();
     void setLatticeParams();
-
     void on_pushButton_Info_clicked();
-
     void on_pushButton_Index_clicked();
-
-    void on_pushButton_Index_2_pressed();
-
+    void on_pushButton_AutoIndexing_clicked();
+public slots:
+    void setCell(const SX::Crystal::UnitCell&);
 private:
     UnitCellItem* _unitCellItem;
     Ui::UnitCellPropertyWidget *ui;

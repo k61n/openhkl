@@ -36,7 +36,6 @@
 
 #include "DetectorScene.h"
 #include "DialogExperiment.h"
-#include "DialogUnitCell.h"
 #include "Tree/ExperimentTree.h"
 #include "Logger.h"
 #include "NoteBook.h"
@@ -238,7 +237,7 @@ void MainWindow::on_action_peak_find_triggered()
             p->setSampleState(new SX::Instrument::ComponentState(numor->getSampleInterpolatedState(f)));
             ComponentState detState=numor->getDetectorInterpolatedState(f);
             p->setDetectorEvent(new SX::Instrument::DetectorEvent(numor->getDiffractometer()->getDetector()->createDetectorEvent(center[0],center[1],detState.getValues())));
-            p->setWavelength(numor->getDiffractometer()->getSource()->getWavelength());
+            p->setSource(numor->getDiffractometer()->getSource());
 
             if (!dAABB.contains(*(p->getPeak())))
                 p->setSelected(false);
@@ -266,29 +265,6 @@ void MainWindow::on_action_peak_find_triggered()
 
     _ui->_dview->getScene()->updatePeaks();
 
-}
-
-void MainWindow::on_actionUnit_Cell_triggered()
-{
-
-    std::vector<IData*> numors = _ui->experimentTree->getSelectedNumors();
-    if (numors.empty())
-    {
-        qWarning() << "No numors selected for finding peaks";
-        return;
-    }
-
-    DialogUnitCell* dialog=new DialogUnitCell(this);
-
-    std::vector<std::reference_wrapper<SX::Crystal::Peak3D>> peaks;
-    for (auto ptr : numors)
-    {
-      // Add peaks present in this numor
-      for (auto& peak : ptr->getPeaks())
-          peaks.push_back(std::ref(*peak));
-    }
-    dialog->setPeaks(peaks);
-    dialog->show();
 }
 
 void MainWindow::on_actionPixel_position_triggered()
@@ -449,4 +425,9 @@ void MainWindow::setInspectorWidget(QWidget* w)
     {
         connect(widget,SIGNAL(activateIndexingMode(std::shared_ptr<SX::Crystal::UnitCell>)),_ui->_dview->getScene(),SLOT(activateIndexingMode(std::shared_ptr<SX::Crystal::UnitCell>)));
     }
+}
+
+void MainWindow::on_actionConvert_to_HDF5_triggered()
+{
+
 }

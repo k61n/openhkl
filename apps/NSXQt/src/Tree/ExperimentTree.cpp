@@ -84,7 +84,7 @@ void ExperimentTree::addExperiment(const std::string& experimentName, const std:
 {
 
     // Create an experiment
-    Experiment* expPtr = new Experiment(experimentName,instrumentName);
+    SX::Instrument::Experiment* expPtr = new SX::Instrument::Experiment(experimentName,instrumentName);
 
     // Create an instrument item
     InstrumentItem* instr = new InstrumentItem(expPtr);
@@ -226,7 +226,7 @@ void ExperimentTree::importData()
         // Get the basename of the current numor
         QFileInfo fileinfo(fileNames[i]);
         std::string basename=fileinfo.fileName().toStdString();
-         Experiment* exp = expItem->getExperiment();
+         SX::Instrument::Experiment* exp = expItem->getExperiment();
 
         // If the experience already stores the current numor, skip it
         if (exp->hasData(basename))
@@ -283,7 +283,7 @@ void ExperimentTree::onDoubleClick(const QModelIndex& index)
     }
     else if (auto ptr=dynamic_cast<NumorItem*>(item))
     {
-        Experiment* exp = ptr->getExperiment();
+        SX::Instrument::Experiment* exp = ptr->getExperiment();
         IData* data=exp->getData(item->text().toStdString());
         emit plotData(data);
     }
@@ -313,7 +313,7 @@ void ExperimentTree::keyPressEvent(QKeyEvent *event)
     }
 }
 
-ExperimentItem* ExperimentTree::getExperimentItem(Experiment* exp)
+ExperimentItem* ExperimentTree::getExperimentItem(SX::Instrument::Experiment* exp)
 {
 
     QModelIndex rootIdx = rootIndex();

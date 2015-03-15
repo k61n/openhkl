@@ -144,7 +144,7 @@ QTreeView {
             </sizepolicy>
            </property>
            <property name="styleSheet">
-            <string notr="true">background-color: rgb(255, 255, 255)</string>
+            <string notr="true"/>
            </property>
            <layout class="QGridLayout" name="gridLayout_2">
             <item row="0" column="0">
@@ -168,8 +168,7 @@ QTreeView {
                </size>
               </property>
               <property name="styleSheet">
-               <string notr="true">
-</string>
+               <string notr="true"/>
               </property>
               <property name="frameShape">
                <enum>QFrame::NoFrame</enum>
@@ -189,7 +188,7 @@ QTreeView {
                  <x>0</x>
                  <y>0</y>
                  <width>390</width>
-                 <height>124</height>
+                 <height>122</height>
                 </rect>
                </property>
               </widget>
@@ -1365,8 +1364,15 @@ border-radius: 4px;
     <addaction name="action_display_isotopes_database"/>
     <addaction name="action_add_element"/>
    </widget>
+   <widget class="QMenu" name="menuUtils">
+    <property name="title">
+     <string>Utils</string>
+    </property>
+    <addaction name="actionConvert_to_HDF5"/>
+   </widget>
    <addaction name="menu_Options"/>
    <addaction name="menuChemistry"/>
+   <addaction name="menuUtils"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <property name="minimumSize">
@@ -1395,7 +1401,6 @@ border-radius: 4px;
    </attribute>
    <addaction name="action_open"/>
    <addaction name="action_peak_find"/>
-   <addaction name="actionUnit_Cell"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QDockWidget" name="loggerDockWidget">
@@ -1503,7 +1508,7 @@ QDockWidget::title {
      text-align: left; /* align the text to the left */
      background: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0,
                                          stop: 0 #FFFFFF,
-                                         stop: 1.0 #9999CC);
+                                         stop: 1.0 #77CCCC);
      padding-left: 4px;
  }
 </string>
@@ -1557,19 +1562,6 @@ QDockWidget::title {
    </property>
    <property name="toolTip">
     <string>Open Peak Find dialog</string>
-   </property>
-  </action>
-  <action name="actionUnit_Cell">
-   <property name="icon">
-    <iconset>
-     <normalon>:/resources/unitCellIcon.png</normalon>
-    </iconset>
-   </property>
-   <property name="text">
-    <string>Unit Cell</string>
-   </property>
-   <property name="toolTip">
-    <string>Unit Cell</string>
    </property>
   </action>
   <action name="actionPixel_position">
@@ -1660,6 +1652,11 @@ QDockWidget::title {
   <action name="action_add_element">
    <property name="text">
     <string>Element manager</string>
+   </property>
+  </action>
+  <action name="actionConvert_to_HDF5">
+   <property name="text">
+    <string>Convert to HDF5</string>
    </property>
   </action>
  </widget>
