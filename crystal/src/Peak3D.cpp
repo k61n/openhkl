@@ -293,9 +293,9 @@ bool Peak3D::setBasis(std::shared_ptr<SX::Geometry::Basis> basis)
 	return false;
 }
 
-bool Peak3D::hasIntegerHKL(std::shared_ptr<SX::Geometry::Basis> basis)
+bool Peak3D::hasIntegerHKL(const SX::Geometry::Basis& basis)
 {
-	_hkl=basis->fromReciprocalStandard(this->getQ());
+	_hkl=basis.fromReciprocalStandard(this->getQ());
 	if (std::fabs(_hkl[0]-std::round(_hkl[0]))<0.2 && std::fabs(_hkl[1]-std::round(_hkl[1]))<0.2 && std::fabs(_hkl[2]-std::round(_hkl[2]))<0.2)
 	{
 		_hkl[0]=std::round(_hkl[0]);
