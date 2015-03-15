@@ -136,66 +136,6 @@ QTreeView {
             <bool>false</bool>
            </attribute>
           </widget>
-          <widget class="QWidget" name="inspectionWidget" native="true">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="styleSheet">
-            <string notr="true"/>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_2">
-            <item row="0" column="0">
-             <widget class="QScrollArea" name="scrollAreaInspection">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>400</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true"/>
-              </property>
-              <property name="frameShape">
-               <enum>QFrame::NoFrame</enum>
-              </property>
-              <property name="frameShadow">
-               <enum>QFrame::Plain</enum>
-              </property>
-              <property name="sizeAdjustPolicy">
-               <enum>QAbstractScrollArea::AdjustToContents</enum>
-              </property>
-              <property name="widgetResizable">
-               <bool>true</bool>
-              </property>
-              <widget class="QWidget" name="scrollAreaWidgetContents_2">
-               <property name="geometry">
-                <rect>
-                 <x>0</x>
-                 <y>0</y>
-                 <width>390</width>
-                 <height>122</height>
-                </rect>
-               </property>
-              </widget>
-             </widget>
-            </item>
-           </layout>
-          </widget>
          </widget>
         </item>
         <item>
@@ -1508,10 +1448,23 @@ QDockWidget::title {
      text-align: left; /* align the text to the left */
      background: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0,
                                          stop: 0 #FFFFFF,
-                                         stop: 1.0 #77CCCC);
+                                         stop: 1.0 #9999CC);
      padding-left: 4px;
  }
-</string>
+
+ QDockWidget::close-button, QDockWidget::float-button {
+     border: 1px solid blues;
+     background: white;
+     padding: 0px;
+ }
+
+ QDockWidget::close-button:hover, QDockWidget::float-button:hover {
+     background: #BBBBFF;
+ }
+
+ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
+     padding: 1px -1px -1px 1px;
+ }</string>
    </property>
    <property name="windowTitle">
     <string>Plotter 1D</string>
@@ -1538,6 +1491,58 @@ QDockWidget::title {
       </widget>
      </item>
     </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dockWidget_Property">
+   <property name="minimumSize">
+    <size>
+     <width>300</width>
+     <height>121</height>
+    </size>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"> QDockWidget {
+     border: 3 px solid blue;
+	background-color : white
+ } 
+QDockWidget::title {
+     text-align: left; /* align the text to the left */
+     background: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0,
+                                         stop: 0 #FFFFFF,
+                                         stop: 1.0 #DD00FF);
+     padding-left: 4px;
+ }
+
+ QDockWidget::close-button, QDockWidget::float-button {
+     border: 1px solid blues;
+     background: white;
+     padding: 0px;
+ }
+
+ QDockWidget::close-button:hover, QDockWidget::float-button:hover {
+     background: #BBBBFF;
+ }
+
+ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
+     padding: 1px -1px -1px 1px;
+ }
+
+</string>
+   </property>
+   <property name="floating">
+    <bool>false</bool>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::BottomDockWidgetArea|Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
+   </property>
+   <property name="windowTitle">
+    <string>Property</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>8</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_2">
+    <layout class="QGridLayout" name="gridLayout_2"/>
    </widget>
   </widget>
   <action name="action_open">

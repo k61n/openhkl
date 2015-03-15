@@ -86,9 +86,11 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
     int npeaks=ui->horizontalSlider_NumberOfPeaks->value();
     // Need at leat 10 peaks
     if (npeaks<10)
+    {
         QMessageBox::warning(this, tr("NSXTool"),
                               tr("Need at least 10 peaks for autoindexing"));
-
+        return;
+    }
     //
     _solutions.clear();
     _solutions.reserve(50);

@@ -100,6 +100,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(_ui->action_open,SIGNAL(triggered()),_ui->experimentTree,SLOT(createNewExperiment()));
 
     _ui->plotterDockWidget->show();
+    _ui->dockWidget_Property->show();
 
     connect(_ui->experimentTree,SIGNAL(inspectWidget(QWidget*)),this,SLOT(setInspectorWidget(QWidget*)));
 }
@@ -416,9 +417,7 @@ void MainWindow::on_actionShow_labels_triggered(bool checked)
 
 void MainWindow::setInspectorWidget(QWidget* w)
 {
-    _ui->scrollAreaInspection->setWidget(w);
-    _ui->scrollAreaInspection->setWidgetResizable(true);
-    _ui->scrollAreaInspection->update();
+    _ui->dockWidget_Property->setWidget(w);
 
     // Handle specific actions from these widgets
     if (UnitCellPropertyWidget* widget=dynamic_cast<UnitCellPropertyWidget*>(w))
