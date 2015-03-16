@@ -70,9 +70,9 @@ sptrMaterial MaterialManager::buildMaterialFromChemicalFormula(std::string formu
 
 	namespace qi=boost::spirit::qi;
 
-	SX::Utils::formula chemicalContents;
+	SX::Chemistry::formula chemicalContents;
 
-	SX::Utils::ChemicalFormulaParser<std::string::iterator> parser;
+	ChemicalFormulaParser<std::string::iterator> parser;
 	qi::phrase_parse(formula.begin(),formula.end(),parser,qi::blank,chemicalContents);
 
 	ElementManager* emgr=ElementManager::Instance();

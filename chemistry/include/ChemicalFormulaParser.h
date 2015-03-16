@@ -35,12 +35,10 @@
 #include <string>
 #include <vector>
 
-#include <iostream>
-
 namespace SX
 {
 
-namespace Utils
+namespace Chemistry
 {
 	using namespace boost::spirit;
 
@@ -77,7 +75,7 @@ namespace Utils
 		qi::rule<Iterator,std::string()> isotope;
 	};
 
-} // Namespace Utils
+} // Namespace Chemistry
 
 } // Namespace SX
 

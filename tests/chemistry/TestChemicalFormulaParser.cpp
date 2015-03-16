@@ -10,7 +10,7 @@
 
 #include "ChemicalFormulaParser.h"
 
-using namespace SX::Utils;
+using namespace SX::Chemistry;
 
 BOOST_AUTO_TEST_CASE(Test_Formula_Parser)
 {
@@ -19,10 +19,10 @@ BOOST_AUTO_TEST_CASE(Test_Formula_Parser)
 
 	std::string form="C[12]H4";
 
-	SX::Utils::ChemicalFormulaParser<std::string::iterator> fp;
+	ChemicalFormulaParser<std::string::iterator> fp;
 	qi::phrase_parse(form.begin(),form.end(),fp,qi::blank,f);
 
-	for (auto it : f)
-		std::cout << boost::fusion::at_c<0>(it) << " "<< boost::fusion::at_c<1>(it) << std::endl;
+//	for (auto it : f)
+//		std::cout << boost::fusion::at_c<0>(it) << " "<< boost::fusion::at_c<1>(it) << std::endl;
 
 }
