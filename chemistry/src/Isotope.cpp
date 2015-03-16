@@ -20,7 +20,7 @@ Isotope::Isotope()
   _nElectrons(0),
   _molarMass(0.0),
   _nuclearSpin(0.0),
-  _state(""),
+  _chemicalState(""),
   _naturalAbundance(0.0),
   _halfLife(0.0),
   _stable(true),
@@ -44,7 +44,7 @@ Isotope::Isotope(const std::string& name)
   _nElectrons(0),
   _molarMass(0.0),
   _nuclearSpin(0.0),
-  _state(""),
+  _chemicalState(""),
   _naturalAbundance(0.0),
   _halfLife(0.0),
   _stable(true),
@@ -79,9 +79,9 @@ const std::string& Isotope::getSymbol() const
 	return _symbol;
 }
 
-const std::string& Isotope::getState() const
+const std::string& Isotope::getChemicalState() const
 {
-	return _state;
+	return _chemicalState;
 }
 
 double Isotope::getNuclearSpin() const

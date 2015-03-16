@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(Test_Material)
 	BOOST_CHECK_CLOSE(massFractions["H"],4.0*mHydrogen/mTotal,tolerance);
 
 	// Build a methane material dynamically and checks that its contents is the same than the one built from the database
-	SX::Chemistry::sptrMaterial methane= mmgr->buildEmptyMaterial("methane",IMaterial::State::Gaz,IMaterial::BuildingMode::Stoichiometry);
+	SX::Chemistry::sptrMaterial methane= mmgr->buildEmptyMaterial("methane",ChemicalState::Gaz,BuildingMode::Stoichiometry);
 	methane->addElement(emgr->getElement("C"),1);
 	methane->addElement(emgr->getElement("H"),4);
 	methane->setMassDensity(1.235);
@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_CASE(Test_Material)
 	// Build a mixture of material from the XML database
 	SX::Chemistry::sptrMaterial dbMixture=mmgr->getMaterial("db_mixture");
 
-	SX::Chemistry::sptrMaterial b4c=mmgr->buildMaterialFromChemicalFormula("B4C",IMaterial::State::Solid);
+	SX::Chemistry::sptrMaterial b4c=mmgr->buildMaterialFromChemicalFormula("B4C",ChemicalState::Solid);
 	BOOST_CHECK_EQUAL((*b4c)["C"]->getNIsotopes(),2);
 	BOOST_CHECK_EQUAL((*b4c)["B"]->getNIsotopes(),2);
 	moleFractions=b4c->getMolarFractions();

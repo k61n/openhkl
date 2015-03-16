@@ -46,7 +46,7 @@ void MaterialManager::cleanRegistry()
 	}
 }
 
-sptrMaterial MaterialManager::buildEmptyMaterial(const std::string& name, IMaterial::State state, IMaterial::BuildingMode buildingMode)
+sptrMaterial MaterialManager::buildEmptyMaterial(const std::string& name, ChemicalState state, BuildingMode buildingMode)
 {
 	// Check first if an element with this name has already been registered
 	auto it=_registry.find(name);
@@ -65,7 +65,7 @@ sptrMaterial MaterialManager::buildEmptyMaterial(const std::string& name, IMater
 	return mat;
 }
 
-sptrMaterial MaterialManager::buildMaterialFromChemicalFormula(std::string formula, IMaterial::State state)
+sptrMaterial MaterialManager::buildMaterialFromChemicalFormula(std::string formula, ChemicalState state)
 {
 
 	namespace qi=boost::spirit::qi;
@@ -79,7 +79,7 @@ sptrMaterial MaterialManager::buildMaterialFromChemicalFormula(std::string formu
 
 	MaterialsFactory* matFactory=MaterialsFactory::Instance();
 
-	sptrMaterial mat(matFactory->create(IMaterial::BuildingMode::Stoichiometry,formula,state));
+	sptrMaterial mat(matFactory->create(BuildingMode::Stoichiometry,formula,state));
 
 	for (auto cc : chemicalContents)
 	{
@@ -103,8 +103,8 @@ sptrMaterial MaterialManager::buildMaterial(const property_tree::ptree& node)
 	std::string name=node.get<std::string>("<xmlattr>.name");
 
 	// Get the chemical state and the building mode of the material to be constructed
-	IMaterial::State chemicalState=IMaterial::strToState.at(node.get<std::string>("<xmlattr>.chemical_state"));
-	IMaterial::BuildingMode buildingMode=IMaterial::strToBuildingMode.at(node.get<std::string>("<xmlattr>.building_mode"));
+	ChemicalState chemicalState=IMaterial::strToState.at(node.get<std::string>("<xmlattr>.chemical_state"));
+	BuildingMode buildingMode=IMaterial::strToBuildingMode.at(node.get<std::string>("<xmlattr>.building_mode"));
 
 	MaterialsFactory* matFactory=MaterialsFactory::Instance();
 
@@ -128,19 +128,19 @@ sptrMaterial MaterialManager::buildMaterial(const property_tree::ptree& node)
 				component=getMaterial(name);
 			}
 
-			if (buildingMode==IMaterial::BuildingMode::MassFractions || buildingMode==IMaterial::BuildingMode::MolarFractions)
+			if (buildingMode==BuildingMode::MassFractions || buildingMode==BuildingMode::MolarFractions)
 			{
 				const property_tree::ptree& fraction = v.second.get_child("contents");
 				double units=um->get(fraction.get<std::string>("<xmlattr>.units","%"));
 				material->addMaterial(component,fraction.get_value<double>()*units);
 			}
-			else if (buildingMode==IMaterial::BuildingMode::PartialPressures)
+			else if (buildingMode==BuildingMode::PartialPressures)
 			{
 				const property_tree::ptree& pressure = v.second.get_child("contents");
 				double units=um->get(pressure.get<std::string>("<xmlattr>.units","Pa"));
 				material->addMaterial(component,pressure.get_value<double>()*units);
 			}
-			else if (buildingMode==IMaterial::BuildingMode::Stoichiometry)
+			else if (buildingMode==BuildingMode::Stoichiometry)
 			{
 				const property_tree::ptree& nAtoms = v.second.get_child("contents");
 				material->addMaterial(component,nAtoms.get_value<double>());
@@ -160,19 +160,19 @@ sptrMaterial MaterialManager::buildMaterial(const property_tree::ptree& node)
 			else
 				element=mgr->buildElement(v.second);
 
-			if (buildingMode==IMaterial::BuildingMode::MassFractions || buildingMode==IMaterial::BuildingMode::MolarFractions)
+			if (buildingMode==BuildingMode::MassFractions || buildingMode==BuildingMode::MolarFractions)
 			{
 				const property_tree::ptree& fraction = v.second.get_child("contents");
 				double units=um->get(fraction.get<std::string>("<xmlattr>.units","%"));
 				material->addElement(element,fraction.get_value<double>()*units);
 			}
-			else if (buildingMode==IMaterial::BuildingMode::PartialPressures)
+			else if (buildingMode==BuildingMode::PartialPressures)
 			{
 				const property_tree::ptree& pressure = v.second.get_child("contents");
 				double units=um->get(pressure.get<std::string>("<xmlattr>.units","Pa"));
 				material->addElement(element,pressure.get_value<double>()*units);
 			}
-			else if (buildingMode==IMaterial::BuildingMode::Stoichiometry)
+			else if (buildingMode==BuildingMode::Stoichiometry)
 			{
 				const property_tree::ptree& nAtoms = v.second.get_child("contents");
 				material->addElement(element,nAtoms.get_value<double>());
@@ -182,7 +182,7 @@ sptrMaterial MaterialManager::buildMaterial(const property_tree::ptree& node)
 		}
 	}
 
-	if (material->getBuildingMode()!=IMaterial::BuildingMode::PartialPressures)
+	if (material->getBuildingMode()!=BuildingMode::PartialPressures)
 	{
 		const property_tree::ptree& density = node.get_child("mass_density");
 		double units=um->get(density.get<std::string>("<xmlattr>.units","kg/m3"));
@@ -228,7 +228,7 @@ sptrMaterial MaterialManager::getMaterial(const std::string& name)
 
 	MaterialsFactory* matFactory=MaterialsFactory::Instance();
 
-	sptrMaterial material(matFactory->create(IMaterial::BuildingMode::MassFractions,name,IMaterial::State::Solid));
+	sptrMaterial material(matFactory->create(BuildingMode::MassFractions,name,ChemicalState::Solid));
 	_registry.insert(strToMaterialPair(name,material));
 	return material;
 }

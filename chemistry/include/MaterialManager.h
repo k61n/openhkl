@@ -70,9 +70,9 @@ public:
 	~MaterialManager();
 
 	//! Builds and register an empty material. If the material with the same name is already registered, throws.
-	sptrMaterial buildEmptyMaterial(const std::string& name, IMaterial::State state, IMaterial::BuildingMode buildingMode);
+	sptrMaterial buildEmptyMaterial(const std::string& name, ChemicalState state, BuildingMode buildingMode);
 	//! Constructs a material from a chemical formula and a given physical state
-	sptrMaterial buildMaterialFromChemicalFormula(std::string formula, IMaterial::State state);
+	sptrMaterial buildMaterialFromChemicalFormula(std::string formula, ChemicalState state);
 	//! Find a Material
 	sptrMaterial getMaterial(const std::string& name);
 	//! Clean up the registry

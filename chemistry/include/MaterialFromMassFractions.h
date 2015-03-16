@@ -45,7 +45,7 @@ class MaterialFromMassFractions : public IMaterial
 public:
 
 	//! Constructs and returns a pointer to an empty Material with a given name and chemical state
-	static IMaterial* create(const std::string& name, State state);
+	static IMaterial* create(const std::string& name, ChemicalState state);
 
 public:
 
@@ -87,7 +87,7 @@ private:
 	MaterialFromMassFractions(const std::string& name);
 
 	//! Constructs an empty Material with a given name and chemical state
-	MaterialFromMassFractions(const std::string& name, State state);
+	MaterialFromMassFractions(const std::string& name, ChemicalState state);
 
 	//! Constructs an empty Material with a given name and chemical state in its string version
 	MaterialFromMassFractions(const std::string& name, const std::string& strState);

@@ -12,10 +12,10 @@ namespace Chemistry
 
 MaterialsFactory::MaterialsFactory()
 {
-	registerCallback(IMaterial::BuildingMode::MassFractions   ,&MaterialFromMassFractions::create);
-	registerCallback(IMaterial::BuildingMode::MolarFractions  ,&MaterialFromMolarFractions::create);
-	registerCallback(IMaterial::BuildingMode::PartialPressures,&MaterialFromPartialPressures::create);
-	registerCallback(IMaterial::BuildingMode::Stoichiometry   ,&MaterialFromStoichiometry::create);
+	registerCallback(BuildingMode::MassFractions   ,&MaterialFromMassFractions::create);
+	registerCallback(BuildingMode::MolarFractions  ,&MaterialFromMolarFractions::create);
+	registerCallback(BuildingMode::PartialPressures,&MaterialFromPartialPressures::create);
+	registerCallback(BuildingMode::Stoichiometry   ,&MaterialFromStoichiometry::create);
 }
 
 MaterialsFactory::~MaterialsFactory() {

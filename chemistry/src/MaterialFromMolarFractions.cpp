@@ -13,7 +13,7 @@ namespace SX
 namespace Chemistry
 {
 
-IMaterial* MaterialFromMolarFractions::create(const std::string& name, State state)
+IMaterial* MaterialFromMolarFractions::create(const std::string& name, ChemicalState state)
 {
 	return (new MaterialFromMolarFractions(name,state));
 }
@@ -22,7 +22,7 @@ MaterialFromMolarFractions::MaterialFromMolarFractions(const std::string& name) 
 {
 }
 
-MaterialFromMolarFractions::MaterialFromMolarFractions(const std::string& name, State state) : IMaterial(name,state)
+MaterialFromMolarFractions::MaterialFromMolarFractions(const std::string& name, ChemicalState state) : IMaterial(name,state)
 {
 }
 
@@ -34,7 +34,7 @@ MaterialFromMolarFractions::~MaterialFromMolarFractions()
 {
 }
 
-IMaterial::BuildingMode MaterialFromMolarFractions::getBuildingMode() const
+BuildingMode MaterialFromMolarFractions::getBuildingMode() const
 {
 	return BuildingMode::MolarFractions;
 }
@@ -96,7 +96,7 @@ void MaterialFromMolarFractions::addMaterial(sptrMaterial material, double molar
 
 	//! If the material to add has a different chemical state then set the state as a mixture of chemical states
 	if (_state != material->getState())
-		_state=State::Unknown;
+		_state=ChemicalState::Unknown;
 }
 
 strToDoubleMap MaterialFromMolarFractions::getMassFractions() const
@@ -123,7 +123,7 @@ strToDoubleMap MaterialFromMolarFractions::getMolarFractions() const
 
 strToDoubleMap MaterialFromMolarFractions::getPartialPressures() const
 {
-	if (_state!=State::Gaz)
+	if (_state!=ChemicalState::Gaz)
 		throw SX::Kernel::Error<MaterialFromMolarFractions>("Invalid material state.");
 
 	if (_temperature < 1.0-9)

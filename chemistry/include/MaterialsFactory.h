@@ -42,7 +42,7 @@ namespace SX
 namespace Chemistry
 {
 
-class MaterialsFactory : public Kernel::Factory<IMaterial,IMaterial::BuildingMode,std::string,IMaterial::State>, public Kernel::Singleton<MaterialsFactory,Kernel::Constructor,Kernel::Destructor>
+class MaterialsFactory : public Kernel::Factory<IMaterial,BuildingMode,std::string,ChemicalState>, public Kernel::Singleton<MaterialsFactory,Kernel::Constructor,Kernel::Destructor>
 {
 private:
 	friend class Kernel::Constructor<MaterialsFactory>;

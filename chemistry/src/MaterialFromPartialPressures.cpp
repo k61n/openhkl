@@ -12,26 +12,26 @@ namespace SX
 namespace Chemistry
 {
 
-IMaterial* MaterialFromPartialPressures::create(const std::string& name, State state)
+IMaterial* MaterialFromPartialPressures::create(const std::string& name, ChemicalState state)
 {
 	return (new MaterialFromPartialPressures(name,state));
 }
 
-MaterialFromPartialPressures::MaterialFromPartialPressures(const std::string& name) : IMaterial(name, State::Gaz)
+MaterialFromPartialPressures::MaterialFromPartialPressures(const std::string& name) : IMaterial(name, ChemicalState::Gaz)
 {
 }
 
-MaterialFromPartialPressures::MaterialFromPartialPressures(const std::string& name, State state) : IMaterial(name)
+MaterialFromPartialPressures::MaterialFromPartialPressures(const std::string& name, ChemicalState state) : IMaterial(name)
 {
-	if (state!=State::Gaz)
+	if (state!=ChemicalState::Gaz)
 		throw SX::Kernel::Error<MaterialFromPartialPressures>("Invalid chemical state.");
 	_state=state;
 }
 
 MaterialFromPartialPressures::MaterialFromPartialPressures(const std::string& name, const std::string& strState) : IMaterial(name)
 {
-	State state=strToState.at(strState);
-	if (state!=State::Gaz)
+	ChemicalState state=strToState.at(strState);
+	if (state!=ChemicalState::Gaz)
 		throw SX::Kernel::Error<MaterialFromPartialPressures>("Invalid chemical state.");
 	_state=state;
 }
@@ -40,7 +40,7 @@ MaterialFromPartialPressures::~MaterialFromPartialPressures()
 {
 }
 
-IMaterial::BuildingMode MaterialFromPartialPressures::getBuildingMode() const
+BuildingMode MaterialFromPartialPressures::getBuildingMode() const
 {
 	return BuildingMode::PartialPressures;
 }
@@ -107,8 +107,8 @@ void MaterialFromPartialPressures::addElement(const std::string& name, double pa
 void MaterialFromPartialPressures::addMaterial(sptrMaterial material, double partialPressure)
 {
 
-	State otherState=material->getState();
-	if (otherState!=State::Gaz)
+	ChemicalState otherState=material->getState();
+	if (otherState!=ChemicalState::Gaz)
 		throw SX::Kernel::Error<MaterialFromPartialPressures>("Invalid chemical state.");
 
 	for (const auto& p : material->getMolarFractions())
@@ -116,7 +116,7 @@ void MaterialFromPartialPressures::addMaterial(sptrMaterial material, double par
 
 	//! If the material to add has a different chemical state then set the state as a mixture of chemical states
 	if (_state != material->getState())
-		_state=State::Unknown;
+		_state=ChemicalState::Unknown;
 }
 
 strToDoubleMap MaterialFromPartialPressures::getMassFractions() const

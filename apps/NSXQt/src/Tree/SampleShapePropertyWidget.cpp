@@ -34,7 +34,7 @@ void SampleShapePropertyWidget::setChemicalFormula(const QString &formula)
     SX::Chemistry::sptrMaterial material;
     try
     {
-    material=mgr->buildMaterialFromChemicalFormula(formula.toStdString(),SX::Chemistry::IMaterial::State::Solid);
+    material=mgr->buildMaterialFromChemicalFormula(formula.toStdString(),SX::Chemistry::ChemicalState::Solid);
     }catch(std::exception& e)
     {
         QMessageBox::critical(this, tr("NSXTool"),tr(e.what()));

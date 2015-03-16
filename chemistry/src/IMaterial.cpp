@@ -9,37 +9,37 @@ namespace SX
 namespace Chemistry
 {
 
-std::map<std::string,IMaterial::BuildingMode> IMaterial::strToBuildingMode={
-		{"mass_fractions",IMaterial::BuildingMode::MassFractions},
-		{"molar_fractions",IMaterial::BuildingMode::MolarFractions},
-		{"stoichiometry",IMaterial::BuildingMode::Stoichiometry},
-		{"partial_pressures",IMaterial::BuildingMode::PartialPressures}
+std::map<std::string,BuildingMode> IMaterial::strToBuildingMode={
+		{"mass_fractions",BuildingMode::MassFractions},
+		{"molar_fractions",BuildingMode::MolarFractions},
+		{"stoichiometry",BuildingMode::Stoichiometry},
+		{"partial_pressures",BuildingMode::PartialPressures}
 };
 
-std::map<IMaterial::BuildingMode,std::string> IMaterial::buildingModeToStr={
-		{IMaterial::BuildingMode::MassFractions,"mass_fractions"},
-		{IMaterial::BuildingMode::MolarFractions,"molar_fractions"},
-		{IMaterial::BuildingMode::Stoichiometry,"stoichiometry"},
-		{IMaterial::BuildingMode::PartialPressures,"partial_pressures"}
+std::map<BuildingMode,std::string> IMaterial::buildingModeToStr={
+		{BuildingMode::MassFractions,"mass_fractions"},
+		{BuildingMode::MolarFractions,"molar_fractions"},
+		{BuildingMode::Stoichiometry,"stoichiometry"},
+		{BuildingMode::PartialPressures,"partial_pressures"}
 };
 
-std::map<std::string,IMaterial::State> IMaterial::strToState={
-		{"solid",IMaterial::State::Solid},
-		{"liquid",IMaterial::State::Liquid},
-		{"gaz",IMaterial::State::Gaz},
-		{"unknown",IMaterial::State::Unknown}};
+std::map<std::string,ChemicalState> IMaterial::strToState={
+		{"solid",ChemicalState::Solid},
+		{"liquid",ChemicalState::Liquid},
+		{"gaz",ChemicalState::Gaz},
+		{"unknown",ChemicalState::Unknown}};
 
-std::map<IMaterial::State,std::string> IMaterial::stateToStr={
-		{IMaterial::State::Solid,"solid"},
-		{IMaterial::State::Liquid,"liquid"},
-		{IMaterial::State::Gaz,"gaz"},
-		{IMaterial::State::Unknown,"unknown"}};
+std::map<ChemicalState,std::string> IMaterial::stateToStr={
+		{ChemicalState::Solid,"solid"},
+		{ChemicalState::Liquid,"liquid"},
+		{ChemicalState::Gaz,"gaz"},
+		{ChemicalState::Unknown,"unknown"}};
 
-IMaterial::IMaterial(const std::string& name) : _name(name), _state(State::Unknown), _massDensity(0.0), _temperature(0.0), _elements(), _contents()
+IMaterial::IMaterial(const std::string& name) : _name(name), _state(ChemicalState::Unknown), _massDensity(0.0), _temperature(0.0), _elements(), _contents()
 {
 }
 
-IMaterial::IMaterial(const std::string& name, State state) : _name(name), _state(state), _massDensity(0.0), _temperature(0.0), _elements(), _contents()
+IMaterial::IMaterial(const std::string& name, ChemicalState state) : _name(name), _state(state), _massDensity(0.0), _temperature(0.0), _elements(), _contents()
 {
 }
 
@@ -88,7 +88,7 @@ unsigned int IMaterial::getNElements() const
 	return _elements.size();
 }
 
-IMaterial::State IMaterial::getState() const
+ChemicalState IMaterial::getState() const
 {
 	return _state;
 }

@@ -60,6 +60,12 @@ typedef std::pair<std::string,double> strToDoublePair;
 // Namespaces
 namespace property_tree=boost::property_tree;
 
+// Enumerates
+//! The different modes that can be used to build a Material with its components
+enum class BuildingMode : unsigned int {MassFractions=0,MolarFractions=1,Stoichiometry=2,PartialPressures=3};
+//! The different chemical states that can be assigned to a Material
+enum class ChemicalState : unsigned int {Solid=0,Liquid=1,Gaz=2,Unknown=3};
+
 class IMaterial
 {
 
@@ -69,18 +75,10 @@ private:
 
 public:
 
-	//! Enumerates the different modes that can be used to build a Material with its components
-	enum class BuildingMode : unsigned int {MassFractions=0,MolarFractions=1,Stoichiometry=2,PartialPressures=3};
-
-	//! Enumerates the different chemical states that can be assigned to a Material
-	enum class State : unsigned int {Solid=0,Liquid=1,Gaz=2,Unknown=3};
-
-public:
-
 	//! A lookup between the enum State and its corresponding string representation
-	static std::map<State,std::string> stateToStr;
+	static std::map<ChemicalState,std::string> stateToStr;
 	//! A lookup between the string representation of the enum State and its corresponding State
-	static std::map<std::string,State> strToState;
+	static std::map<std::string,ChemicalState> strToState;
 	//! A lookup between the enum FillingMode and its corresponding string representation
 	static std::map<BuildingMode,std::string> buildingModeToStr;
 	//! A lookup between the string representation of the enum FillingMode and its corresponding FillingMode
@@ -102,7 +100,7 @@ public:
 	virtual BuildingMode getBuildingMode() const=0;
 
 	//! Returns the chemical state of this Material
-	State getState() const;
+	ChemicalState getState() const;
 	//! Returns a string version of the chemical state of this Material
 	std::string getStateString() const;
 
@@ -164,7 +162,7 @@ protected:
 	IMaterial(const std::string& name);
 
 	//! Constructs a Material with a given name and chemical state
-	IMaterial(const std::string& name, State state);
+	IMaterial(const std::string& name, ChemicalState state);
 
 	//! Constructs a Material with a given name and chemical state given in its string version
 	IMaterial(const std::string& name, const std::string& state);
@@ -177,7 +175,7 @@ protected:
 	//! The name of this Material
 	std::string _name;
 	//! The chemical state of this Material
-	State _state;
+	ChemicalState _state;
 	//! The mass density of this Material
 	double _massDensity;
 	//! The temperature of this Material

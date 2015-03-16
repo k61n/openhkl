@@ -77,7 +77,7 @@ public:
 	const std::string& getSymbol() const;
 
 	//! Returns the chemical state of this Isotope
-	const std::string& getState() const;
+	const std::string& getChemicalState() const;
 
 	//! Returns the nuclear spin of this Isotope
 	double getNuclearSpin() const;
@@ -164,7 +164,7 @@ private:
 	//! The nuclear spin of this Isotope
 	double _nuclearSpin;
 	//! The chemical state of this Isotope
-	std::string _state;
+	std::string _chemicalState;
 	//! The natural abundance of this Isotope. Equal to 0 if unstable
 	double _naturalAbundance;
 	//! The half life of this Isotope. Equal to +Inf is stable
