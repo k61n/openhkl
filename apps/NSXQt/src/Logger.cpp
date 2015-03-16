@@ -23,7 +23,6 @@ void customMessageHandler(QtMsgType type, const QMessageLogContext& context, con
     case QtDebugMsg:
         txt = QString("%1").arg(msg);
         log->setTextColor("darkBlue");
-        log->setFontItalic(true);
         break;
     case QtWarningMsg:
         txt = QString("%1").arg(msg);

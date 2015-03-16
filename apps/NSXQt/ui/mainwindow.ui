@@ -1503,7 +1503,7 @@ QDockWidget::title {
    <property name="styleSheet">
     <string notr="true"> QDockWidget {
      border: 3 px solid blue;
-	background-color : white
+	 background-color : white
  } 
 QDockWidget::title {
      text-align: left; /* align the text to the left */
@@ -1530,7 +1530,7 @@ QDockWidget::title {
 </string>
    </property>
    <property name="floating">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="allowedAreas">
     <set>Qt::BottomDockWidgetArea|Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>

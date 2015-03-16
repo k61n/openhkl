@@ -31,6 +31,8 @@ private slots:
     void on_pushButton_Info_clicked();
     void on_pushButton_Index_clicked();
     void on_pushButton_AutoIndexing_clicked();
+    void on_pushButton_Refine_clicked();
+
 public slots:
     void setCell(const SX::Crystal::UnitCell&);
 private:

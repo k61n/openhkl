@@ -71,7 +71,8 @@ SOURCES += src/Main.cpp \
     src/Tree/UnitCellPropertyWidget.cpp \
     src/GraphicsItems/SliceRectGraphicsItem.cpp \
     src/DialogFindUnitCell.cpp \
-    src/Tree/SourcePropertyWidget.cpp
+    src/Tree/SourcePropertyWidget.cpp \
+    src/DialogRefineUnitCell.cpp
 
 HEADERS  += include/MainWindow.h \
     include/DialogPeakFind.h \
@@ -131,7 +132,8 @@ HEADERS  += include/MainWindow.h \
     include/Tree/UnitCellPropertyWidget.h \
     include/GraphicsItems/SliceRectGraphicsItem.h \
     include/DialogFindUnitCell.h \
-    include/Tree/SourcePropertWidget.h
+    include/Tree/SourcePropertWidget.h \
+    include/DialogRefineUnitCell.h
 
 FORMS    += ui/mainwindow.ui \
     ui/dialog_PeakFind.ui \
@@ -149,7 +151,8 @@ FORMS    += ui/mainwindow.ui \
     ui/Tree/ShapePropertyWidget.ui \
     ui/Tree/UnitCellPropertyWidget.ui \
     ui/DialogFindUnitCell.ui \
-    ui/Tree/SourcePropertWidget.ui
+    ui/Tree/SourcePropertWidget.ui \
+    ui/DialogRefineUnitCell.ui
 
 win32:CONFIG(release, debug|release): LIBS += -lNSXTool
 else:unix: LIBS += -lNSXTool -lboost_date_time -lboost_system -lfftw3

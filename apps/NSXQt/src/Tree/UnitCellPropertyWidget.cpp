@@ -11,6 +11,7 @@
 #include "Tree/UnitCellPropertyWidget.h"
 #include "Tree/UnitCellItem.h"
 #include "DialogFindUnitCell.h"
+#include "DialogRefineUnitCell.h"
 
 UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *parent) :
     _unitCellItem(caller),
@@ -85,4 +86,10 @@ void UnitCellPropertyWidget::getLatticeParams()
     ui->doubleSpinBoxalpha->setValue(sample->getAlpha()/SX::Units::deg);
     ui->doubleSpinBoxbeta->setValue(sample->getBeta()/SX::Units::deg);
     ui->doubleSpinBoxgamma->setValue(sample->getGamma()/SX::Units::deg);
+}
+
+void UnitCellPropertyWidget::on_pushButton_Refine_clicked()
+{
+    DialogRefineUnitCell* dialog=new DialogRefineUnitCell(_unitCellItem->getExperiment(),_unitCellItem->getCell(),this);
+    dialog->exec();
 }

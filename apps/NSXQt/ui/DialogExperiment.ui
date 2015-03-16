@@ -153,6 +153,12 @@
     </layout>
    </widget>
   </widget>
+  <zorder>groupBox</zorder>
+  <zorder>layoutWidget</zorder>
+  <zorder>layoutWidget</zorder>
+  <zorder>label_2</zorder>
+  <zorder>buttonBox</zorder>
+  <zorder>label_2</zorder>
  </widget>
  <resources/>
  <connections>
