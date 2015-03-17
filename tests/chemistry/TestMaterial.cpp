@@ -78,5 +78,14 @@ BOOST_AUTO_TEST_CASE(Test_Material)
 	BOOST_CHECK_EQUAL(moleFractions["C"],0.2);
 	BOOST_CHECK_EQUAL(moleFractions["B"],0.8);
 
+	// Build a new material with floating stoichiometry
+	SX::Chemistry::sptrMaterial bacl2= mmgr->buildEmptyMaterial("bacl2",ChemicalState::Solid,BuildingMode::Stoichiometry);
+	bacl2->addElement(emgr->getElement("Ba"),0.95);
+	bacl2->addElement(emgr->getElement("Cl"),0.05);
+	// Build the same material but from a chemical formula
+	SX::Chemistry::sptrMaterial bacl2_1=mmgr->buildMaterialFromChemicalFormula("Ba0.95Cl0.05",ChemicalState::Solid);
+	// Check that both materials are the same
+	BOOST_CHECK(*bacl2==*bacl2_1);
+
 	mmgr->saveRegistry("materials_new.xml");
 }

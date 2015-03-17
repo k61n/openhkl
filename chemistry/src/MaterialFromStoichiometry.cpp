@@ -53,7 +53,7 @@ void MaterialFromStoichiometry::setMassDensity(double massDensity)
 
 void MaterialFromStoichiometry::addElement(sptrElement element, double stoichiometry)
 {
-	if (stoichiometry<1)
+	if (stoichiometry<0)
 		throw SX::Kernel::Error<MaterialFromStoichiometry>("Invalid value for stoichiometry");
 
 	std::string eName=element->getName();

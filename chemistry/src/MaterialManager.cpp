@@ -85,7 +85,7 @@ sptrMaterial MaterialManager::buildMaterialFromChemicalFormula(std::string formu
 	{
 		std::string symbol=boost::fusion::at_c<0>(cc);
 		std::string isotope=boost::fusion::at_c<1>(cc);
-		unsigned int nAtoms=boost::fusion::at_c<2>(cc);
+		double nAtoms=boost::fusion::at_c<2>(cc);
 
 		sptrElement element(emgr->getElement(symbol+isotope));
 
