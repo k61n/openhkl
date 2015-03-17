@@ -23,6 +23,7 @@ class AbsorptionDialog : public QDialog
 
 public:
     explicit AbsorptionDialog(SX::Instrument::Experiment* experiment,QWidget *parent = nullptr);
+    const std::string& getMovieFilename() const;
     ~AbsorptionDialog();
 signals:
     //! Emitted when the image is changed in the movie

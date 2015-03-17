@@ -55,6 +55,11 @@ AbsorptionDialog::~AbsorptionDialog()
     delete ui;
 }
 
+const std::string& AbsorptionDialog::getMovieFilename() const
+{
+    return _filepath;
+}
+
 void AbsorptionDialog::readInfoFile(const std::string &filename)
 {
     // Clear alll images.

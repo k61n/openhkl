@@ -34,8 +34,9 @@ void SampleShapePropertyWidget::setChemicalFormula(const QString &formula)
     SX::Chemistry::sptrMaterial material;
     try
     {
-    material=mgr->buildMaterialFromChemicalFormula(formula.toStdString(),SX::Chemistry::ChemicalState::Solid);
-    }catch(std::exception& e)
+        material=mgr->buildMaterialFromChemicalFormula(formula.toStdString(),SX::Chemistry::ChemicalState::Solid);
+    }
+    catch(std::exception& e)
     {
         QMessageBox::critical(this, tr("NSXTool"),tr(e.what()));
         return;
@@ -48,7 +49,10 @@ void SampleShapePropertyWidget::on_pushButton_LoadMovie_clicked()
 {
     AbsorptionDialog* dialog=new AbsorptionDialog(_caller->getExperiment(),nullptr);
     if (!dialog->exec())
-      setHullProperties();
+    {
+        setHullProperties();
+        ui->lineEdit_MovieFilename->setText(QString::fromStdString(dialog->getMovieFilename()));
+    }
 }
 
 void SampleShapePropertyWidget::setHullProperties()
