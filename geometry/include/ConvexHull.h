@@ -131,6 +131,9 @@ public:
 	//! Translates the hull to its center
 	void translateToCenter() const;
 
+	//! Rotate the this ConvexHull
+	void rotate(const matrix33& rotation) const;
+
 	//! Returns the volume of the hull. The volume is computed by summing the volumes of all the tethrahedrons
 	//! made by each face of the convex hull and any internal point of the hull.
 	//! A reasonable choice for the internal point is the center of gravity of the hull as, by definition of a
@@ -143,7 +146,9 @@ public:
 	//! Checks that this Hull satisfies the Euler condition
 	bool checkEulerConditions() const;
 
-	//!
+	//! Returns the Triangles that builds this ConvexHull.
+	//! Triangles objects are very light object that can be used
+	//! for further analysis such as Monte-Carlo based absorption correction.
 	std::vector<Triangle> createFaceCache() const;
 
 private:
@@ -430,15 +435,6 @@ void ConvexHull<T>::updateHull()
 	if (_vertices.size()<4)
 		throw SX::Kernel::Error<ConvexHull>("Not enough vertices to build a convex hull.");
 
-//	for (auto rit=_vertices.rbegin();rit!=_vertices.rend();rit++)
-//	{
-//		if (!((*rit)->_mark))
-//		{
-//			processVertex(*rit);
-//			cleanUp();
-//		}
-//	}
-
 	auto it=_vertices.begin();
 	while(it!=_vertices.end())
 	{
@@ -709,6 +705,13 @@ void ConvexHull<T>::translate(T x, T y, T z) const
 		v->_coords[1] += y;
 		v->_coords[2] += z;
 	}
+}
+
+template <typename T>
+void ConvexHull<T>::rotate(const matrix33& rotation) const
+{
+	for (auto& v : _vertices)
+		v->_coords = rotation*v->_coords;
 }
 
 template <typename T>

@@ -58,7 +58,17 @@ bool SampleShapePropertyWidget::setHullProperties()
     auto& hull=_caller->getExperiment()->getDiffractometer()->getSample()->getShape();
     if (!hull.checkEulerConditions())
         return false;
+
+    // The hull is translated to its center
     hull.translateToCenter();
+
+    // The hull is rotated of -90 along chi axis (Y axis)
+    Eigen::Matrix3d mat;
+    mat << 1, 0, 1,
+           0, 1, 0,
+          -1, 0, 1;
+    hull.rotate(mat);
+
     ui->lineEdit_Volume->setText(QString::number(hull.getVolume())+" mm^3");
     ui->lineEdit_Faces->setText(QString::number(hull.getNFaces()));
     ui->lineEdit_Edges->setText(QString::number(hull.getNEdges()));
