@@ -11,9 +11,5 @@ DataItem::DataItem(Experiment* experiment) : TreeItem(experiment)
     setIcon(icon);
 
     setEditable(false);
-
-    setDragEnabled(true);
-    setDropEnabled(true);
-
     setSelectable(false);
 }

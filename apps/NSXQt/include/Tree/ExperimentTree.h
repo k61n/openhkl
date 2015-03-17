@@ -43,9 +43,9 @@ public slots:
     void onCustomMenuRequested(const QPoint& point);
     void onDoubleClick(const QModelIndex& index);
     void importData();
-    void loadAbsorption();
     void createNewExperiment();
     void onSingleClick(const QModelIndex& index);
+
 private:
 
     QStandardItemModel* _model;

@@ -46,8 +46,10 @@ ExperimentTree::ExperimentTree(QWidget *parent) : QTreeView(parent)
     setSelectionMode(QAbstractItemView::ContiguousSelection);
     update();
 
-    connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(onCustomMenuRequested(const QPoint&)));
-    connect(this, SIGNAL(doubleClicked(const QModelIndex&)),this,SLOT(onDoubleClick(const QModelIndex&)));
+    setExpandsOnDoubleClick(false);
+
+    connect(this,SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(onCustomMenuRequested(const QPoint&)));
+    connect(this,SIGNAL(doubleClicked(const QModelIndex&)),this,SLOT(onDoubleClick(const QModelIndex&)));
     connect(this,SIGNAL(clicked(QModelIndex)),this,SLOT(onSingleClick(QModelIndex)));
 }
 
@@ -78,7 +80,6 @@ void ExperimentTree::createNewExperiment()
         return;
     }
 }
-
 
 void ExperimentTree::addExperiment(const std::string& experimentName, const std::string& instrumentName)
 {
@@ -191,14 +192,6 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             menu->popup(viewport()->mapToGlobal(point));
             connect(import,SIGNAL(triggered()),this,SLOT(importData()));
         }
-
-        else if (dynamic_cast<SampleItem*>(item))
-        {
-            QMenu* menu = new QMenu(this);
-            QAction* import=menu->addAction("Load absorption");
-            menu->popup(viewport()->mapToGlobal(point));
-            connect(import,SIGNAL(triggered()),this,SLOT(loadAbsorption()));
-        }
     }
 
 }
@@ -253,19 +246,6 @@ void ExperimentTree::importData()
 
 }
 
-void ExperimentTree::loadAbsorption()
-{
-
-    // Get the current item and check that is actually a Data item. Otherwise, return.
-    QStandardItem* dataItem=_model->itemFromIndex(currentIndex());
-    SampleItem* source=dynamic_cast<SampleItem*>(dataItem);
-    if (!source)
-        return;
-    AbsorptionDialog* dialog=new AbsorptionDialog(source->getExperiment(),nullptr);
-    dialog->exec();
-}
-
-
 void ExperimentTree::onDoubleClick(const QModelIndex& index)
 {
     // Get the current item and check that is actually a Numor item. Otherwise, return.
@@ -273,12 +253,18 @@ void ExperimentTree::onDoubleClick(const QModelIndex& index)
 
     if (auto ptr=dynamic_cast<DataItem*>(item))
     {
-        for (auto i=0;i<ptr->model()->rowCount(ptr->index());++i)
+        std::cout<<ptr->model()->rowCount()<<std::endl;
+        if (ptr->model()->rowCount(ptr->index())==0)
+            importData();
+        else
         {
-            if (ptr->child(i)->checkState() == Qt::Unchecked)
-                ptr->child(i)->setCheckState(Qt::Checked);
-            else
-                ptr->child(i)->setCheckState(Qt::Unchecked);
+            for (auto i=0;i<ptr->model()->rowCount(ptr->index());++i)
+            {
+                if (ptr->child(i)->checkState() == Qt::Unchecked)
+                    ptr->child(i)->setCheckState(Qt::Checked);
+                else
+                    ptr->child(i)->setCheckState(Qt::Unchecked);
+            }
         }
     }
     else if (auto ptr=dynamic_cast<NumorItem*>(item))

@@ -11,6 +11,7 @@ class PeakListItem : public TreeItem
 public:
     explicit PeakListItem(Experiment* experiment);
 
+
 };
 
 #endif // PEAKLISTITEM_H
