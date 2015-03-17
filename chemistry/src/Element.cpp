@@ -19,9 +19,8 @@ Element* Element::create(const std::string& name)
 	return (new Element(name));
 }
 
-Element::Element(const std::string& name) : _name(name),_symbol(), _isotopes(), _natural(false)
+Element::Element(const std::string& name) : _name(name), _symbol(), _isotopes(), _natural(false)
 {
-
 	std::size_t bracket=name.find_first_of("[");
 	IsotopeManager* imgr=IsotopeManager::Instance();
 	if (bracket!=std::string::npos)
@@ -32,20 +31,19 @@ Element::Element(const std::string& name) : _name(name),_symbol(), _isotopes(), 
 	else
 	{
 		isotopeSet isotopes;
+
 		try
 		{
 			isotopes=imgr->getIsotopes<std::string>("symbol",name);
-		}catch(...)
+		}
+		catch(const Kernel::Error<IsotopeManager>& e)
 		{
-			// return enpty element
-			return;
 		}
 
 		// Insert the isotopes found in the isotopes internal map
 		for (const auto& is : isotopes)
 			addIsotope(is,is->getNaturalAbundance());
 	}
-
 }
 
 Element::~Element()

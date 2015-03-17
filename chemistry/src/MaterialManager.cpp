@@ -87,7 +87,12 @@ sptrMaterial MaterialManager::buildMaterialFromChemicalFormula(std::string formu
 		std::string isotope=boost::fusion::at_c<1>(cc);
 		double nAtoms=boost::fusion::at_c<2>(cc);
 
-		sptrElement element(emgr->getElement(symbol+isotope));
+		std::string eName=symbol+isotope;
+
+		sptrElement element(emgr->getElement(eName));
+
+		if (element->isEmpty())
+			throw Kernel::Error<MaterialManager>("The element "+eName+" is neither a natural element, neither a known isotope.");
 
 		mat->addElement(element,nAtoms);
 	}

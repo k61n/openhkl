@@ -202,11 +202,8 @@ sptrIsotope IsotopeManager::getIsotope(const std::string& name)
 		}
 	}
 
-	sptrIsotope isotope(Isotope::create(name));
-	_registry.insert(strToIsotopePair(name,isotope));
-
-	return isotope;
-
+	// No isotope found neither in the registry neither in the database, throws
+	throw Kernel::Error<IsotopeManager>("No isotope with "+name+" found neither in the registry, neither in the database.");
 }
 
 unsigned int IsotopeManager::getNIsotopesInRegistry() const

@@ -174,7 +174,6 @@ sptrElement ElementManager::buildElement(const property_tree::ptree& node)
 		}
 	}
 
-
 	// Everything is OK, register the element
 	_registry.insert(strToElementPair(name,element));
 
@@ -184,8 +183,6 @@ sptrElement ElementManager::buildElement(const property_tree::ptree& node)
 
 sptrElement ElementManager::getElement(const std::string& name)
 {
-
-
 	// Case where an Element with this name is found in the registry
 	auto it=_registry.find(name);
 	if (it!=_registry.end())
