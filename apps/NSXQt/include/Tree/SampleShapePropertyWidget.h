@@ -20,7 +20,7 @@ public:
 private slots:
     void setChemicalFormula(const QString& formula);
     void on_pushButton_LoadMovie_clicked();
-    void setHullProperties();
+    bool setHullProperties();
 
 private:
     SampleShapeItem* _caller;

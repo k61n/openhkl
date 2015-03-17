@@ -49,18 +49,19 @@ void SampleShapePropertyWidget::on_pushButton_LoadMovie_clicked()
 {
     AbsorptionDialog* dialog=new AbsorptionDialog(_caller->getExperiment(),nullptr);
     if (!dialog->exec())
-        setHullProperties();
+        if (setHullProperties())
+            ui->lineEdit_MovieFilename->setText(QString::fromStdString(dialog->getMovieFilename()));
 }
 
-void SampleShapePropertyWidget::setHullProperties()
+bool SampleShapePropertyWidget::setHullProperties()
 {
     auto& hull=_caller->getExperiment()->getDiffractometer()->getSample()->getShape();
     if (!hull.checkEulerConditions())
-        return;
+        return false;
     hull.translateToCenter();
     ui->lineEdit_Volume->setText(QString::number(hull.getVolume())+" mm^3");
     ui->lineEdit_Faces->setText(QString::number(hull.getNFaces()));
     ui->lineEdit_Edges->setText(QString::number(hull.getNEdges()));
     ui->lineEdit_Vertices->setText(QString::number(hull.getNVertices()));
-    ui->lineEdit_MovieFilename->setText(QString::fromStdString(dialog->getMovieFilename()));
+    return true;
 }
