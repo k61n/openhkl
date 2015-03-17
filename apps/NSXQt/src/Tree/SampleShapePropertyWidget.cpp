@@ -49,10 +49,7 @@ void SampleShapePropertyWidget::on_pushButton_LoadMovie_clicked()
 {
     AbsorptionDialog* dialog=new AbsorptionDialog(_caller->getExperiment(),nullptr);
     if (!dialog->exec())
-    {
         setHullProperties();
-        ui->lineEdit_MovieFilename->setText(QString::fromStdString(dialog->getMovieFilename()));
-    }
 }
 
 void SampleShapePropertyWidget::setHullProperties()
@@ -65,4 +62,5 @@ void SampleShapePropertyWidget::setHullProperties()
     ui->lineEdit_Faces->setText(QString::number(hull.getNFaces()));
     ui->lineEdit_Edges->setText(QString::number(hull.getNEdges()));
     ui->lineEdit_Vertices->setText(QString::number(hull.getNVertices()));
+    ui->lineEdit_MovieFilename->setText(QString::fromStdString(dialog->getMovieFilename()));
 }
