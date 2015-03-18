@@ -6,15 +6,33 @@ namespace SX
 namespace Instrument
 {
 
-Source::Source() : Component("source"), _wavelength(1.0),_offset(0.0),_offsetFixed(true)
+Source::Source()
+: Component("source"),
+  _wavelength(1.0),
+  _offset(0.0),
+  _offsetFixed(true),
+  _width(1.0),
+  _height(1.0)
 {
 }
 
-Source::Source(const Source& other) : Component(other), _wavelength(other._wavelength),_offset(other._offset),_offsetFixed(other._offsetFixed)
+Source::Source(const Source& other)
+: Component(other),
+  _wavelength(other._wavelength),
+  _offset(other._offset),
+  _offsetFixed(other._offsetFixed),
+  _width(other._width),
+  _height(other._height)
 {
 }
 
-Source::Source(const std::string& name): Component(name), _wavelength(1.0),_offset(0.0),_offsetFixed(true)
+Source::Source(const std::string& name)
+: Component(name),
+  _wavelength(1.0),
+  _offset(0.0),
+  _offsetFixed(true),
+  _width(1.0),
+  _height(1.0)
 {
 }
 
@@ -28,6 +46,10 @@ Source& Source::operator=(const Source& other)
 	{
 		Component::operator=(other);
 		_wavelength = other._wavelength;
+		_offset = other._offset;
+		_offsetFixed = other._offsetFixed;
+		_width = other._width;
+		_height = other._height;
 	}
 	return *this;
 }
@@ -65,6 +87,26 @@ void Source::setOffsetFixed(bool fixed)
 bool Source::hasOffsetFixed() const
 {
 	return _offsetFixed;
+}
+
+double Source::getWidth() const
+{
+	return _width;
+}
+
+void Source::setWidth(double width)
+{
+	_width=width;
+}
+
+double Source::getHeight() const
+{
+	return _height;
+}
+
+void Source::setHeight(double height)
+{
+	_height=height;
 }
 
 } // end namespace Instrument

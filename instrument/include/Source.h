@@ -70,10 +70,19 @@ public:
 	void setOffset(double offset);
 	void setOffsetFixed(bool fixed);
 	bool hasOffsetFixed() const;
+
+	void setWidth(double width);
+	double getWidth() const;
+
+	void setHeight(double height);
+	double getHeight() const;
+
 private:
 	double _wavelength;
 	double _offset;
 	bool _offsetFixed;
+	double _width;
+	double _height;
 };
 
 } // end namespace Instrument
