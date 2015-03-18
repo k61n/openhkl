@@ -93,6 +93,9 @@ public:
 	//! Destructor
 	~ConvexHull();
 
+	//! Copy Convex Hull
+	ConvexHull(const ConvexHull&);
+	ConvexHull& operator=(const ConvexHull&);
 	//! Reset, eliminate all vertices, edges and faces
 	void reset();
 
@@ -209,6 +212,27 @@ private:
 	std::list<pFace> _faces;
 
 };
+
+template <typename T>
+ConvexHull<T>::ConvexHull(const ConvexHull<T>& other):_initialized(other._initialized)
+{
+	copy(other._vertices.begin(),other._vertices.end(),std::back_inserter(_vertices));
+	copy(other._edges.begin(),other._edges.end(),std::back_inserter(_edges));
+	copy(other._faces.begin(),other._faces.end(),std::back_inserter(_faces));
+}
+
+template <typename T>
+ConvexHull<T>& ConvexHull<T>::operator=(const ConvexHull<T>& other)
+{
+	if (this!=&other)
+	{
+		_initialized=other._initialized;
+		copy(other._vertices.begin(),other._vertices.end(),std::back_inserter(_vertices));
+		copy(other._edges.begin(),other._edges.end(),std::back_inserter(_edges));
+		copy(other._faces.begin(),other._faces.end(),std::back_inserter(_faces));
+	}
+	return *this;
+}
 
 template <typename T>
 void ConvexHull<T>::reset()

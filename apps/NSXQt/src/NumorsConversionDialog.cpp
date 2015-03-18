@@ -77,6 +77,7 @@ void NumorsConversionDialog::on_pushButton_convert_clicked()
             QString basename=fileInfo.baseName();
             QString outputFilename = QDir(ui->lineEdit_outputDirectory->text()).filePath(basename+".h5");
             data->saveHDF5(outputFilename.toStdString());
+            delete data;
         }
         ui->progressBar_conversion->setValue(++comp);
     }

@@ -110,6 +110,25 @@ UnitCell UnitCell::fromReciprocalVectors(const Vector3d& a, const Vector3d& b, c
 
 }
 
+void UnitCell::copyMatrices(const UnitCell& cell)
+{
+	_A=cell._A;
+	_B=cell._B;
+	return;
+}
+
+void UnitCell::setLatticeVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c)
+{
+	if (coplanar(a,b,c))
+		throw std::runtime_error("Class UnitCell: the direct vectors are coplanar.");
+	_A.col(0)=a;
+	_A.col(1)=b;
+	_A.col(2)=c;
+	_B=_A.inverse();
+	return;
+}
+
+
 UnitCell::~UnitCell()
 {
 }

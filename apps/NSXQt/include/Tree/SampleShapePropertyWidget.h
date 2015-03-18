@@ -18,11 +18,8 @@ public:
     ~SampleShapePropertyWidget();
 
 private slots:
-    void setChemicalFormula(const QString& formula);
-    void setZ();
     void on_pushButton_LoadMovie_clicked();
-    bool setHullProperties();
-    void changeUnitCell(int);
+    void setHullProperties();
 
 private:
     SampleShapeItem* _caller;

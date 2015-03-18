@@ -48,13 +48,13 @@ public:
 	//! Define absorption Engine with a rectangular source of WxH
 	MCAbsorption(double width, double height, double pos);
 	~MCAbsorption();
-	void setSample(const ConvexHull<double>& sample, double muScat, double muAbs);
+	void setSample(ConvexHull<double>* sample, double muScat, double muAbs);
 	double run(unsigned int nIterations, const Eigen::Vector3d& outV, const Eigen::Matrix3d& sampleOrientation) const;
 
 
 private:
 	//! Description of the sample in terms of individual oriented triangles
-	ConvexHull<double> _sample;
+	ConvexHull<double>* _sample;
 	double _width, _height, _pos;
 	double _muScat, _muAbs;
 	//! A rand9om uniform distribution of double [0,1[

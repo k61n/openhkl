@@ -14,7 +14,7 @@ namespace SX
 {
 namespace Geometry
 {
-MCAbsorption::MCAbsorption(double width, double height, double pos): _width(width),_height(height), _pos(pos), _muScat(0.0), _muAbs(0.0)
+MCAbsorption::MCAbsorption(double width, double height, double pos): _width(width),_height(height), _pos(pos), _muScat(0.0), _muAbs(0.0),_sample(nullptr)
 {
 	_random=std::bind(std::uniform_real_distribution<double>(-0.5,0.5),std::mt19937(time(0)));
 }
@@ -23,7 +23,7 @@ MCAbsorption::~MCAbsorption()
 {
 }
 
-void MCAbsorption::setSample(const ConvexHull<double>& sample, double muScat, double muAbs)
+void MCAbsorption::setSample(ConvexHull<double>* sample, double muScat, double muAbs)
 {
 	_sample = sample;
 	_muScat=muScat;
@@ -33,7 +33,7 @@ void MCAbsorption::setSample(const ConvexHull<double>& sample, double muScat, do
 double MCAbsorption::run(unsigned int nIterations, const Eigen::Vector3d& outV, const Eigen::Matrix3d& sampleOrientation) const
 {
 
-	TrianglesList faces=_sample.createFaceCache(sampleOrientation);
+	TrianglesList faces=_sample->createFaceCache(sampleOrientation);
 
 	if (faces.empty())
 		throw SX::Kernel::Error<MCAbsorption>("No sample defined.");
@@ -92,11 +92,9 @@ double MCAbsorption::run(unsigned int nIterations, const Eigen::Vector3d& outV, 
 	}
 
 	if (nHits==0)
-		throw SX::Kernel::Error<MCAbsorption>("No ray intercepts the sample'.");
-
-	attenuation /= nHits;
-
-	std::cout<<nHits<<std::endl;
+		attenuation=1.0;
+	else
+		attenuation /= nHits;
 
 	return attenuation;
 

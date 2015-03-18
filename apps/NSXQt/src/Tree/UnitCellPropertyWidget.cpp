@@ -12,6 +12,9 @@
 #include "Tree/UnitCellItem.h"
 #include "DialogFindUnitCell.h"
 #include "DialogRefineUnitCell.h"
+#include "MaterialManager.h"
+#include "IMaterial.h"
+#include <QMessageBox>
 
 UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *parent) :
     _unitCellItem(caller),
@@ -26,8 +29,15 @@ UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *par
     connect(ui->doubleSpinBoxbeta,SIGNAL(editingFinished()),this,SLOT(setLatticeParams()));
     connect(ui->doubleSpinBoxgamma,SIGNAL(editingFinished()),this,SLOT(setLatticeParams()));
 
+    ui->spinBox_Z->setValue(_unitCellItem->getCell()->getZ());
+    auto material=_unitCellItem->getCell()->getMaterial();
+    if (material)
+        ui->lineEdit_ChemicalFormula->setText(material->getName().c_str());
+
     getLatticeParams();
 }
+
+
 
 UnitCellPropertyWidget::~UnitCellPropertyWidget()
 {
@@ -73,7 +83,7 @@ void UnitCellPropertyWidget::on_pushButton_AutoIndexing_clicked()
 
 void UnitCellPropertyWidget::setCell(const SX::Crystal::UnitCell& cell)
 {
-    *(_unitCellItem->getCell().get())=cell;
+    _unitCellItem->getCell()->copyMatrices(cell);
     getLatticeParams();
 }
 
@@ -92,4 +102,30 @@ void UnitCellPropertyWidget::on_pushButton_Refine_clicked()
 {
     DialogRefineUnitCell* dialog=new DialogRefineUnitCell(_unitCellItem->getExperiment(),_unitCellItem->getCell(),this);
     dialog->exec();
+}
+
+void UnitCellPropertyWidget::setChemicalFormula(const QString &formula)
+{
+    auto mgr=SX::Chemistry::MaterialManager::Instance();
+    try
+    {
+        auto material=mgr->buildMaterialFromChemicalFormula(formula.toStdString(),SX::Chemistry::ChemicalState::Solid);
+        _unitCellItem->getCell()->setMaterial(material);
+        qDebug() << "" <<*material;
+    }
+    catch(std::exception& e)
+    {
+       QMessageBox::critical(this, tr("NSXTool"),tr(e.what()));
+        return;
+   }
+}
+
+void UnitCellPropertyWidget::on_spinBox_Z_valueChanged(int arg1)
+{
+        _unitCellItem->getCell()->setZ(arg1);
+}
+
+void UnitCellPropertyWidget::on_lineEdit_ChemicalFormula_returnPressed()
+{
+    setChemicalFormula(ui->lineEdit_ChemicalFormula->text());
 }

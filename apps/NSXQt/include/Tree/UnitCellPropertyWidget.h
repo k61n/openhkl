@@ -32,6 +32,9 @@ private slots:
     void on_pushButton_Index_clicked();
     void on_pushButton_AutoIndexing_clicked();
     void on_pushButton_Refine_clicked();
+    void setChemicalFormula(const QString &formula);
+    void on_spinBox_Z_valueChanged(int arg1);
+    void on_lineEdit_ChemicalFormula_returnPressed();
 
 public slots:
     void setCell(const SX::Crystal::UnitCell&);

@@ -45,6 +45,7 @@ public slots:
     void importData();
     void createNewExperiment();
     void onSingleClick(const QModelIndex& index);
+    void absorptionCorrection();
 
 private:
 

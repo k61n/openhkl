@@ -78,6 +78,8 @@ public:
 	~UnitCell();
 	//! Set lattice parameters
 	void setParams(double a, double b, double c, double alpha, double beta, double gamma);
+	void setLatticeVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c);
+	void copyMatrices(const UnitCell& other);
 	//! Build a UnitCell from a set of three direct vectors.
 	static UnitCell fromDirectVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c, LatticeCentring centring=LatticeCentring::P, BravaisType bravais=BravaisType::Triclinic,std::shared_ptr<SX::Geometry::Basis> reference=nullptr);
 	//! Build a UnitCell from a set of three reciprocal vectors.

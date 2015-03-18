@@ -11,8 +11,8 @@ Source::Source()
   _wavelength(1.0),
   _offset(0.0),
   _offsetFixed(true),
-  _width(1.0),
-  _height(1.0)
+  _width(0.01),
+  _height(0.01)
 {
 }
 
@@ -31,8 +31,8 @@ Source::Source(const std::string& name)
   _wavelength(1.0),
   _offset(0.0),
   _offsetFixed(true),
-  _width(1.0),
-  _height(1.0)
+  _width(0.01),
+  _height(0.01)
 {
 }
 

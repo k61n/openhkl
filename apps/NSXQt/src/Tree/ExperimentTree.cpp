@@ -35,6 +35,7 @@
 #include "Tree/PeakListItem.h"
 #include "Tree/SampleItem.h"
 #include "Tree/SourceItem.h"
+#include "Absorption/DialogMCAbsorption.h"
 
 ExperimentTree::ExperimentTree(QWidget *parent) : QTreeView(parent)
 {
@@ -174,6 +175,7 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
 
     QModelIndex index = indexAt(point);
 
+
     if (index == rootIndex())
     {
         QMenu* menu = new QMenu(this);
@@ -185,6 +187,8 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
     else
     {
         QStandardItem* item=_model->itemFromIndex(index);
+        auto p=dynamic_cast<TreeItem*>(item);
+        auto experiment=p->getExperiment();
         if (dynamic_cast<DataItem*>(item))
         {
             QMenu* menu = new QMenu(this);
@@ -192,8 +196,28 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             menu->popup(viewport()->mapToGlobal(point));
             connect(import,SIGNAL(triggered()),this,SLOT(importData()));
         }
+        else if (dynamic_cast<PeakListItem*>(item))
+        {
+            QMenu* menu = new QMenu(this);
+            QAction* abs=menu->addAction("Correct for Absorption");
+            menu->popup(viewport()->mapToGlobal(point));
+            // Call the slot
+            connect(abs,SIGNAL(triggered()),this,SLOT(absorptionCorrection()));
+        }
     }
 
+
+}
+
+void ExperimentTree::absorptionCorrection()
+{
+    // Get the current item and check that is actually a Data item. Otherwise, return.
+    QStandardItem* item=_model->itemFromIndex(currentIndex());
+    auto pitem=dynamic_cast<PeakListItem*>(item);
+    if (!pitem)
+        return;
+    DialogMCAbsorption* dialog=new DialogMCAbsorption(pitem->getExperiment(),this);
+    dialog->open();
 }
 
 void ExperimentTree::importData()
