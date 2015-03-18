@@ -6,15 +6,15 @@ namespace SX
 namespace Instrument
 {
 
-Sample::Sample() : Component("sample"), _sampleShape(), _material(),_cells()
+Sample::Sample() : Component("sample"), _sampleShape(), _cells()
 {
 }
 
-Sample::Sample(const Sample& other) : Component(other), _sampleShape(other._sampleShape), _material(other._material)
+Sample::Sample(const Sample& other) : Component(other), _sampleShape(other._sampleShape)
 {
 }
 
-Sample::Sample(const std::string& name) : Component(name), _sampleShape(), _material()
+Sample::Sample(const std::string& name) : Component(name), _sampleShape()
 {
 }
 
@@ -28,7 +28,6 @@ Sample& Sample::operator=(const Sample& other)
 	{
 		Component::operator=(other);
 		_sampleShape=other._sampleShape;
-		_material=other._material;
 	}
 	return *this;
 }
@@ -41,11 +40,6 @@ Component* Sample::clone() const
 SX::Geometry::ConvexHull<double>& Sample::getShape()
 {
 	return _sampleShape;
-}
-
-SX::Chemistry::sptrMaterial Sample::getMaterial() const
-{
-	return _material;
 }
 
 std::shared_ptr<SX::Crystal::UnitCell> Sample::addUnitCell()
@@ -76,7 +70,41 @@ void Sample::removeUnitCell(std::shared_ptr<SX::Crystal::UnitCell> cell)
 			break;
 		}
 	}
+}
 
+unsigned int Sample::getZ(unsigned int cellIndex) const
+{
+	if (cellIndex >= _cells.size())
+		throw Kernel::Error<Sample>("Invalid unit cell index.");
+
+	return _cells[cellIndex]->getZ();
+}
+
+void Sample::setZ(unsigned int Z, unsigned int cellIndex)
+{
+	if (cellIndex >= _cells.size())
+		throw Kernel::Error<Sample>("Invalid unit cell index.");
+
+	if (Z==0)
+		throw Kernel::Error<Sample>("Invalid Z value.");
+
+	_cells[cellIndex]->setZ(Z);
+}
+
+Chemistry::sptrMaterial Sample::getMaterial(unsigned int cellIndex) const
+{
+	if (cellIndex >= _cells.size())
+		throw Kernel::Error<Sample>("Invalid unit cell index.");
+
+	return _cells[cellIndex]->getMaterial();
+}
+
+void Sample::setMaterial(Chemistry::sptrMaterial material, unsigned int cellIndex)
+{
+	if (cellIndex >= _cells.size())
+		throw Kernel::Error<Sample>("Invalid unit cell index.");
+
+	_cells[cellIndex]->setMaterial(material);
 }
 
 } // end namespace Instrument

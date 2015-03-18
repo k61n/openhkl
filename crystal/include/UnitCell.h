@@ -28,12 +28,15 @@
 
 #ifndef NSXTOOL_UNITCELL_H_
 #define NSXTOOL_UNITCELL_H_
-#include <iostream>
-#include <Eigen/Dense>
-#include "Basis.h"
-#include <string>
-#include "Peak3D.h"
+
 #include <map>
+#include <string>
+
+#include <Eigen/Dense>
+
+#include "Basis.h"
+#include "IMaterial.h"
+#include "Peak3D.h"
 
 namespace SX
 {
@@ -100,9 +103,22 @@ public:
  	Eigen::Matrix3d getBusingLevyU() const;
  	//! Print into a stream
  	void printSelf(std::ostream& os) const;
+
+ 	//! Gets the Z value for the unit cell
+ 	unsigned int getZ() const;
+ 	//! Sets the Z value for the unit cell
+ 	void setZ(unsigned int Z);
+
+ 	//! Gets the Material for the unit cell
+ 	Chemistry::sptrMaterial getMaterial() const;
+ 	//! Sets the Material for the unit cell
+ 	void setMaterial(Chemistry::sptrMaterial material);
+
 private:
-	LatticeCentring _centring;
+	Chemistry::sptrMaterial _material;
+ 	LatticeCentring _centring;
 	BravaisType _bravaisType;
+	unsigned int _Z;
 };
 
 //! Print to a stream

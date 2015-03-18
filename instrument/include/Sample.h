@@ -67,9 +67,6 @@ public:
 	//! Return the sample shape, described as a convex hull
 	SX::Geometry::ConvexHull<double>& getShape();
 
-	//! Returns a shared pointer to the material this Sample is made of
-	SX::Chemistry::sptrMaterial getMaterial() const;
-
 	//! Create a new crystal with Empty UnitCell, and return it
 	std::shared_ptr<SX::Crystal::UnitCell> addUnitCell();
 	//! Get the UnitCell of Crystal number i in the list
@@ -78,9 +75,19 @@ public:
 	std::size_t getNCrystals() const;
 	//!
 	void removeUnitCell(std::shared_ptr<SX::Crystal::UnitCell> cell);
+
+	//! Gets the Z number of a given unit cell
+	unsigned int getZ(unsigned int cellIndex) const;
+	//! Sets the Z number of a given unit cell
+	void setZ(unsigned int Z, unsigned int cellIndex);
+
+	//! Gets the Material of one of the unit cells of this Sample
+	SX::Chemistry::sptrMaterial getMaterial(unsigned int cellIndex) const;
+	//! Sets the Material of one of the unit cells of this Sample
+	void setMaterial(Chemistry::sptrMaterial material, unsigned int cellIndex);
+
 private:
 	SX::Geometry::ConvexHull<double> _sampleShape;
-	SX::Chemistry::sptrMaterial _material;
 	//! UnitCells of all crystals associated with this sample
 	CellList _cells;
 };

@@ -1,9 +1,9 @@
 #include <cmath>
+#include <iomanip>
 #include <stdexcept>
 
 #include "UnitCell.h"
 #include "Units.h"
-#include <iomanip>
 
 namespace SX
 {
@@ -11,13 +11,21 @@ namespace SX
 namespace Crystal
 {
 
-UnitCell::UnitCell():SX::Geometry::Basis(),_centring(LatticeCentring::P),_bravaisType(BravaisType::Triclinic)
+UnitCell::UnitCell()
+: SX::Geometry::Basis(),
+  _material(),
+  _centring(LatticeCentring::P),
+  _bravaisType(BravaisType::Triclinic),
+  _Z(1)
 {
 }
 
 
 UnitCell::UnitCell(double a, double b, double c, double alpha, double beta, double gamma, LatticeCentring centring,BravaisType bravais,std::shared_ptr<SX::Geometry::Basis> reference)
-:_centring(centring),_bravaisType(bravais)
+: _material(),
+  _centring(centring),
+  _bravaisType(bravais),
+  _Z(1)
 {
 	double ca=cos(alpha), cb=cos(beta), cc=cos(gamma), sc=sin(gamma);
     double a32=c/sin(gamma)*(ca-cb*cc);
@@ -30,10 +38,13 @@ UnitCell::UnitCell(double a, double b, double c, double alpha, double beta, doub
 	SX::Geometry::Basis::_reference=reference;
 }
 
-UnitCell::UnitCell(const UnitCell& rhs) : SX::Geometry::Basis(rhs)
+UnitCell::UnitCell(const UnitCell& rhs)
+: SX::Geometry::Basis(rhs),
+  _material(rhs._material),
+  _centring(rhs._centring),
+  _bravaisType(rhs._bravaisType),
+  _Z(rhs._Z)
 {
-	_centring=rhs._centring;
-	_bravaisType=rhs._bravaisType;
 }
 
 UnitCell& UnitCell::operator=(const UnitCell& rhs)
@@ -49,14 +60,20 @@ UnitCell& UnitCell::operator=(const UnitCell& rhs)
 			_Acov = rhs._Acov;
 			_Bcov = rhs._Bcov;
 		}
+		_material=rhs._material;
 		_centring=rhs._centring;
 		_bravaisType=rhs._bravaisType;
+		_Z=rhs._Z;
 	}
 	return *this;
 }
 
 UnitCell::UnitCell(const Eigen::Vector3d& v1,const Eigen::Vector3d& v2,const Eigen::Vector3d& v3, LatticeCentring centring,BravaisType bravais,std::shared_ptr<SX::Geometry::Basis> reference)
-:SX::Geometry::Basis(v1,v2,v3,reference),_centring(centring),_bravaisType(bravais)
+: SX::Geometry::Basis(v1,v2,v3,reference),
+  _material(),
+  _centring(centring),
+  _bravaisType(bravais),
+  _Z(1)
 {
 
 }
@@ -236,6 +253,26 @@ double UnitCell::getAngle(const Eigen::Vector3d& hkl1, const Eigen::Vector3d& hk
 		return acos(q1.dot(q2)/q1.norm()/q2.norm());
 }
 
+unsigned int UnitCell::getZ() const
+{
+	return _Z;
+}
 
+void UnitCell::setZ(unsigned int Z)
+{
+	_Z=Z;
 }
+
+Chemistry::sptrMaterial UnitCell::getMaterial() const
+{
+	return _material;
 }
+
+void UnitCell::setMaterial(Chemistry::sptrMaterial material)
+{
+	_material=material;
+}
+
+} // end namespace Chemistry
+
+} // end maespace SX

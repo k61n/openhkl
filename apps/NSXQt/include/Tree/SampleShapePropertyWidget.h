@@ -19,8 +19,10 @@ public:
 
 private slots:
     void setChemicalFormula(const QString& formula);
+    void setZ();
     void on_pushButton_LoadMovie_clicked();
     bool setHullProperties();
+    void changeUnitCell(int);
 
 private:
     SampleShapeItem* _caller;

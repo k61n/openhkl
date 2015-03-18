@@ -18,7 +18,9 @@ SampleItem::SampleItem(Experiment* experiment) : InspectableTreeItem(experiment)
     setDragEnabled(false);
     setDropEnabled(false);
     SampleShapeItem* shape=new SampleShapeItem(_experiment);
+    shape->setEnabled(false);
     appendRow(shape);
+
 }
 
 void SampleItem::setData(const QVariant &value, int role)

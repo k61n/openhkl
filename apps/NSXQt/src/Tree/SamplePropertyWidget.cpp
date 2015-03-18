@@ -54,5 +54,6 @@ void SamplePropertyWidget::on_pushButton_addCrystal_clicked()
      std::size_t nsamples=_sample->getNCrystals();
      _sampleItem->appendRow(new UnitCellItem(_sampleItem->getExperiment(),cell));
      ui->nsampleLabel->setText(QString::number(nsamples));
+     _sampleItem->child(0)->setEnabled(true);
 }
 

@@ -20,17 +20,15 @@ SampleShapePropertyWidget::SampleShapePropertyWidget(SampleShapeItem* caller,QWi
     ui->setupUi(this);
     // When editing of text is finished, try to parse this as a chemical formula
     connect(ui->lineEdit_ChemicalFormula,&QLineEdit::returnPressed,[=](){setChemicalFormula(ui->lineEdit_ChemicalFormula->text());});
+    // When editing the Z value is finished, set it to the corresponding unit cell
+    connect(ui->spinBox_Z,SIGNAL(editingFinished()),this,SLOT(setZ()));
+    connect(ui->comboBox_CellChoices,SIGNAL(currentIndexChanged(int)),this,SLOT(changeUnitCell(int)));
     setHullProperties();
     int ncrystals=_caller->getExperiment()->getDiffractometer()->getSample()->getNCrystals();
     for (int i=0;i<ncrystals;++i)
         ui->comboBox_CellChoices->addItem("Crystal "+QString::number(i+1));
 
-    auto material=_caller->getExperiment()->getDiffractometer()->getSample()->getMaterial();
-    if (material)
-    {
-        ui->lineEdit_ChemicalFormula->setText(QString::fromStdString(material->getName()));
-    }
-
+    changeUnitCell(ui->comboBox_CellChoices->currentIndex());
 }
 
 SampleShapePropertyWidget::~SampleShapePropertyWidget()
@@ -44,7 +42,8 @@ void SampleShapePropertyWidget::setChemicalFormula(const QString &formula)
     try
     {
         auto material=mgr->buildMaterialFromChemicalFormula(formula.toStdString(),SX::Chemistry::ChemicalState::Solid);
-       _caller->getExperiment()->getDiffractometer()->getSample()->setMaterial(material);
+        unsigned int cellIndex=static_cast<unsigned int>(ui->comboBox_CellChoices->currentIndex());
+        _caller->getExperiment()->getDiffractometer()->getSample()->setMaterial(material,cellIndex);
         qDebug() << "" <<*material;
     }
     catch(std::exception& e)
@@ -86,4 +85,20 @@ bool SampleShapePropertyWidget::setHullProperties()
 
 
     return true;
+}
+
+void SampleShapePropertyWidget::setZ()
+{
+    unsigned int cellIndex=static_cast<unsigned int>(ui->comboBox_CellChoices->currentIndex());
+    unsigned int Z=static_cast<unsigned int>(ui->spinBox_Z->value());
+    _caller->getExperiment()->getDiffractometer()->getSample()->setZ(Z,cellIndex);
+}
+
+void SampleShapePropertyWidget::changeUnitCell(int idx)
+{
+    auto material=_caller->getExperiment()->getDiffractometer()->getSample()->getMaterial(idx);
+    if (material)
+        ui->lineEdit_ChemicalFormula->setText(QString::fromStdString(material->getName()));
+    unsigned int Z=_caller->getExperiment()->getDiffractometer()->getSample()->getZ(idx);
+    ui->spinBox_Z->setValue(Z);
 }
