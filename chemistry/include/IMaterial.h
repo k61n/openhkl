@@ -141,6 +141,10 @@ public:
 	double getNAtomsTotalPerVolume() const;
 	//! Returns the total number of electrons per volume units (1/m3)
 	double getNElectronsTotalPerVolume() const;
+	//! Returns the scattering attenuation factor of this Material
+	double getMuScattering() const;
+	//! Returns the absorption attenuation factor of this Material
+	double getMuAbsorption(double lambda=1.798e-10) const;
 	//! Returns the attenuation factor of this Material
 	double getMu(double lambda=1.798e-10) const;
 

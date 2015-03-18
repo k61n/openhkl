@@ -168,16 +168,33 @@ double IMaterial::getNElectronsTotalPerVolume() const
 	return nElectronsPerVolumeTotal;
 }
 
-double IMaterial::getMu(double lambda) const
+double IMaterial::getMuScattering() const
 {
-	double mu=0.0;
+	double muScat=0.0;
 	auto nAtomsPerVolume=getNAtomsPerVolume();
 	for (const auto& p : nAtomsPerVolume)
 	{
 		double xsInc=_elements.at(p.first)->getIncoherentXs();
-		double xsAbs=_elements.at(p.first)->getAbsorptionXs(lambda);
-		mu+=p.second*(xsInc + xsAbs);
+		muScat+=p.second*xsInc;
 	}
+	return muScat;
+}
+
+double IMaterial::getMuAbsorption(double lambda) const
+{
+	double muAbs=0.0;
+	auto nAtomsPerVolume=getNAtomsPerVolume();
+	for (const auto& p : nAtomsPerVolume)
+	{
+		double xsAbs=_elements.at(p.first)->getAbsorptionXs(lambda);
+		muAbs+=p.second*xsAbs;
+	}
+	return muAbs;
+}
+
+double IMaterial::getMu(double lambda) const
+{
+	double mu=getMuScattering() + getMuAbsorption(lambda);
 	return mu;
 }
 
