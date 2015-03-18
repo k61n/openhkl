@@ -48,7 +48,7 @@ struct Triangle
 	inline bool isOutsideBB(double px, double pz) const {
 		return (px<_xmin || px>_xmax || pz<_zmin || pz>_zmax);
 	}
-	bool rayintersect(const vector& point, const vector& dir,double& t1) const;
+	bool rayIntersect(const vector& point, const vector& dir,double& t1) const;
 	void calculate();
 	//! Rotation of the face
 	void rotate(const Eigen::Matrix<double,3,3>& rotation);

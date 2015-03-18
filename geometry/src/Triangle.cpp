@@ -42,7 +42,7 @@ void Triangle::calculate()
 	_dot012d=dot012d/overd2d;
 }
 
-bool Triangle::rayintersect(const vector& point,const vector& dir, double& t1) const
+bool Triangle::rayIntersect(const vector& point,const vector& dir, double& t1) const
 {
 	//Face is either flat or pointing in wrong direction.
 	double direction=_normal.dot(dir);

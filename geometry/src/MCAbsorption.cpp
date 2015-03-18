@@ -25,15 +25,17 @@ MCAbsorption::~MCAbsorption()
 
 void MCAbsorption::setSample(const ConvexHull<double>& sample, double muScat, double muAbs)
 {
-	_sample = sample.createFaceCache();
+	_sample = sample;
 	_muScat=muScat;
 	_muAbs=muAbs;
 }
 
-double MCAbsorption::run(unsigned int nIterations, const Eigen::Vector3d& outV, double wavelength) const
+double MCAbsorption::run(unsigned int nIterations, const Eigen::Vector3d& outV, const Eigen::Matrix3d& sampleOrientation) const
 {
 
-	if (_sample.empty())
+	TrianglesList faces=_sample.createFaceCache(sampleOrientation);
+
+	if (faces.empty())
 		throw SX::Kernel::Error<MCAbsorption>("No sample defined.");
 
 	Eigen::Vector3d dir(0,1,0);
@@ -52,12 +54,12 @@ double MCAbsorption::run(unsigned int nIterations, const Eigen::Vector3d& outV, 
 
 		double times[2];
 
-		for (const auto& triangle : _sample)
+		for (const auto& triangle : faces)
 		{
 			if (triangle.isOutsideBB(w,h))
 				continue;
 
-			if (triangle.rayintersect(point,dir,times[nIntersections]))
+			if (triangle.rayIntersect(point,dir,times[nIntersections]))
 			{
 				if (++nIntersections==2)
 					break;
@@ -74,9 +76,9 @@ double MCAbsorption::run(unsigned int nIterations, const Eigen::Vector3d& outV, 
 		point+=lpm*dir + times[0]*dir;
 
 		double t2;
-		for (const auto& triangle : _sample)
+		for (const auto& triangle : faces)
 		{
-			if (triangle.rayintersect(point,outV,t2))
+			if (triangle.rayIntersect(point,outV,t2))
 			{
 				lpm+=outV.norm()*t2;
 				nHits++;
@@ -86,7 +88,7 @@ double MCAbsorption::run(unsigned int nIterations, const Eigen::Vector3d& outV, 
 				continue;
 		}
 
-		attenuation+=exp(-(_muScat + _muAbs*wavelength/1.798e-10)*lpm);
+		attenuation+=exp(-(_muScat + _muAbs)*lpm);
 	}
 
 	if (nHits==0)
