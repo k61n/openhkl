@@ -17,12 +17,14 @@ BOOST_AUTO_TEST_CASE(Test_Formula_Parser)
 
 	formula f;
 
-	std::string form="C[12]H4";
+	std::string form="C[12]H1.2";
 
 	ChemicalFormulaParser<std::string::iterator> fp;
 	qi::phrase_parse(form.begin(),form.end(),fp,qi::blank,f);
 
-//	for (auto it : f)
-//		std::cout << boost::fusion::at_c<0>(it) << " "<< boost::fusion::at_c<1>(it) << std::endl;
+	for (auto it : f)
+		std::cout << boost::fusion::at_c<0>(it) << " "<< boost::fusion::at_c<1>(it) << " " << boost::fusion::at_c<2>(it) << std::endl;
+
+
 
 }

@@ -29,7 +29,7 @@ private slots:
     void cellSampleHasChanged(int i,int j);
     void cellDetectoreHasChanged(int i,int j);
     void on_pushButton_Refine_clicked();
-
+    void createTable();
 private:
     SX::Instrument::Experiment* _experiment;
     std::shared_ptr<SX::Crystal::UnitCell> _cell;

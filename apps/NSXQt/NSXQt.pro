@@ -58,7 +58,6 @@ SOURCES += src/Main.cpp \
     src/Tree/InstrumentItem.cpp \
     src/Tree/NumorItem.cpp \
     src/Tree/NumorPropertyWidget.cpp \
-    src/Tree/PeakItem.cpp \
     src/Tree/PeakListItem.cpp \
     src/Tree/SampleItem.cpp \
     src/Tree/SamplePropertyWidget.cpp \
@@ -119,7 +118,6 @@ HEADERS  += include/MainWindow.h \
     include/Tree/InstrumentItem.h \
     include/Tree/NumorItem.h \
     include/Tree/NumorPropertyWidget.h \
-    include/Tree/PeakItem.h \
     include/Tree/PeakListItem.h \
     include/Tree/SampleItem.h \
     include/Tree/SamplePropertyWidget.h \

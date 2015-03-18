@@ -14,6 +14,7 @@
 #include "H5Cpp.h"
 #include "blosc_filter.h"
 #include "blosc.h"
+#include "Ellipsoid.h"
 
 namespace SX
 {
@@ -489,6 +490,13 @@ Peak3D* IData::hasPeak(double h, double k, double l, const Matrix3d& BU)
 			newpeak->setSampleState(new ComponentState(cs));
 			DetectorEvent de=_diffractometer->getDetector()->createDetectorEvent(px,py,dis.getValues());
 			newpeak->setDetectorEvent(new DetectorEvent(de));
+			newpeak->setSource(_diffractometer->getSource());
+			Eigen::Vector3d center(px,py,_nFrames*t);
+			Eigen::Vector3d eigenvalues(2,2,2);
+			Eigen::Matrix3d eigenvectors;
+			eigenvectors << 1,0,0,0,1,0,0,0,1;
+			newpeak->setPeakShape(new SX::Geometry::Ellipsoid<double,3>(center,eigenvalues,eigenvectors));
+			newpeak->setBackgroundShape(new SX::Geometry::Ellipsoid<double,3>(center,eigenvalues*2,eigenvectors));
 		}
 
 	}

@@ -378,7 +378,25 @@ QPushButton:disabled {
     <string>Refine</string>
    </property>
   </widget>
+  <widget class="SimplePlot" name="widget" native="true">
+   <property name="geometry">
+    <rect>
+     <x>9</x>
+     <y>140</y>
+     <width>361</width>
+     <height>351</height>
+    </rect>
+   </property>
+  </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SimplePlot</class>
+   <extends>QWidget</extends>
+   <header>SimplePlot.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

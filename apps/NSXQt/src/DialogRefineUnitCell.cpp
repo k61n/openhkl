@@ -29,6 +29,89 @@ DialogRefineUnitCell::DialogRefineUnitCell(SX::Instrument::Experiment* experimen
     ui->tableWidget_Detector->setEditTriggers(QAbstractItemView::AllEditTriggers);
 
 
+    createTable();
+
+    // Connect checkbox for wavelength refinement
+    connect(ui->checkBox_Wavelength,&QCheckBox::toggled,
+            [=](bool checked)
+    {
+        fixParameter(checked,9);
+    }
+    );
+
+    getLatticeParams();
+    getWavelength();
+
+    // Set the UB minimizer with parameters
+    _minimizer.setDetector(_experiment->getDiffractometer()->getDetector());
+    _minimizer.setSource(_experiment->getDiffractometer()->getSource());
+    _minimizer.setSample(_experiment->getDiffractometer()->getSample());
+    _minimizer.setStartingUBMatrix(_cell->getReciprocalStandardM());
+}
+
+DialogRefineUnitCell::~DialogRefineUnitCell()
+{
+    delete ui;
+}
+void DialogRefineUnitCell::getLatticeParams()
+{
+    ui->doubleSpinBoxa->setValue(_cell->getA());
+    ui->doubleSpinBoxb->setValue(_cell->getB());
+    ui->doubleSpinBoxc->setValue(_cell->getC());
+    ui->doubleSpinBoxalpha->setValue(_cell->getAlpha()/SX::Units::deg);
+    ui->doubleSpinBoxbeta->setValue(_cell->getBeta()/SX::Units::deg);
+    ui->doubleSpinBoxgamma->setValue(_cell->getGamma()/SX::Units::deg);
+}
+
+void DialogRefineUnitCell::getWavelength()
+{
+    auto source=_experiment->getDiffractometer()->getSource();
+    ui->doubleSpinBox_Wavelength->setValue(source->getWavelength());
+}
+
+void DialogRefineUnitCell::fixParameter(bool checked, int i)
+{
+    if (!checked) // if refine flag is off
+        _minimizer.setFixedParameters(i);
+}
+void DialogRefineUnitCell::cellSampleHasChanged(int i, int j)
+{
+    if (j==1) // new offset has been entered
+    {
+        auto axis=_experiment->getDiffractometer()->getSample()->getGonio()->getAxis(i);
+        axis->setOffset(ui->tableWidget_Sample->item(i,j)->data(Qt::EditRole).toDouble());
+    }
+}
+
+void DialogRefineUnitCell::cellDetectoreHasChanged(int i, int j)
+{
+    if (j==1) // new offset has been entered
+    {
+        auto axis=_experiment->getDiffractometer()->getDetector()->getGonio()->getAxis(i);
+        axis->setOffset(ui->tableWidget_Sample->item(i,j)->data(Qt::EditRole).toDouble());
+    }
+}
+
+void DialogRefineUnitCell::on_pushButton_Refine_clicked()
+{
+    const auto& mapdata=_experiment->getData();
+    for (auto data: mapdata)
+    {
+        const auto& peaks=data.second->getPeaks();
+        for (auto peak: peaks)
+        {
+            _minimizer.addPeak(*peak);
+        }
+    }
+    //
+    _minimizer.run(100);
+    std::cout <<_minimizer.getSolution() << std::endl;
+    createTable();
+}
+
+void DialogRefineUnitCell::createTable()
+{
+
     //Get the sample, iterate over axis
     auto sample=_experiment->getDiffractometer()->getSample();
     int naxesSample=sample->getNAxes();
@@ -89,81 +172,5 @@ DialogRefineUnitCell::DialogRefineUnitCell(SX::Instrument::Experiment* experimen
         }
         );
         ui->tableWidget_Detector->setCellWidget(i,2,check);
-    }
-
-    connect(ui->tableWidget_Sample,SIGNAL(cellChanged(int,int)),this,SLOT(cellSampleHasChanged(int,int)));
-    connect(ui->tableWidget_Detector,SIGNAL(cellChanged(int,int)),this,SLOT(cellDetectoreHasChanged(int,int)));
-
-    // Connect checkbox for wavelength refinement
-    connect(ui->checkBox_Wavelength,&QCheckBox::toggled,
-            [=](bool checked)
-    {
-        fixParameter(checked,9);
-    }
-    );
-
-    getLatticeParams();
-    getWavelength();
-
-    // Set the UB minimizer with parameters
-    _minimizer.setDetector(_experiment->getDiffractometer()->getDetector());
-    _minimizer.setSource(_experiment->getDiffractometer()->getSource());
-    _minimizer.setSample(_experiment->getDiffractometer()->getSample());
-    _minimizer.setStartingUBMatrix(_cell->getReciprocalStandardM());
-}
-
-DialogRefineUnitCell::~DialogRefineUnitCell()
-{
-    delete ui;
-}
-void DialogRefineUnitCell::getLatticeParams()
-{
-    ui->doubleSpinBoxa->setValue(_cell->getA());
-    ui->doubleSpinBoxb->setValue(_cell->getB());
-    ui->doubleSpinBoxc->setValue(_cell->getC());
-    ui->doubleSpinBoxalpha->setValue(_cell->getAlpha()/SX::Units::deg);
-    ui->doubleSpinBoxbeta->setValue(_cell->getBeta()/SX::Units::deg);
-    ui->doubleSpinBoxgamma->setValue(_cell->getGamma()/SX::Units::deg);
-}
-
-void DialogRefineUnitCell::getWavelength()
-{
-    auto source=_experiment->getDiffractometer()->getSource();
-    ui->doubleSpinBox_Wavelength->setValue(source->getWavelength());
-}
-
-void DialogRefineUnitCell::fixParameter(bool checked, int i)
-{
-    if (!checked)
-        _minimizer.setFixedParameters(i);
-}
-void DialogRefineUnitCell::cellSampleHasChanged(int i, int j)
-{
-    if (j==1) // new offset has been entered
-    {
-        auto axis=_experiment->getDiffractometer()->getSample()->getGonio()->getAxis(i);
-        axis->setOffset(ui->tableWidget_Sample->item(i,j)->data(Qt::EditRole).toDouble());
-    }
-}
-
-void DialogRefineUnitCell::cellDetectoreHasChanged(int i, int j)
-{
-    if (j==1) // new offset has been entered
-    {
-        auto axis=_experiment->getDiffractometer()->getDetector()->getGonio()->getAxis(i);
-        axis->setOffset(ui->tableWidget_Sample->item(i,j)->data(Qt::EditRole).toDouble());
-    }
-}
-
-void DialogRefineUnitCell::on_pushButton_Refine_clicked()
-{
-    const auto& mapdata=_experiment->getData();
-    for (auto data: mapdata)
-    {
-        const auto& peaks=data.second->getPeaks();
-        for (auto peak: peaks)
-        {
-            _minimizer.addPeak(*peak);
-        }
     }
 }

@@ -33,6 +33,7 @@
 #include "Peak3D.h"
 #include <Eigen/Dense>
 #include <vector>
+#include <map>
 
 namespace SX{
 namespace Crystal{
@@ -42,7 +43,6 @@ typedef std::shared_ptr<UnitCell> ptrUnitCell;
 class Indexer
 {
 public:
-	Indexer();
 	Indexer(ptrUnitCell);
 	~Indexer();
 	//! Set the dspacing tolerance
@@ -50,9 +50,9 @@ public:
 	//! Set the tolerance for Angle comnparison between two reflections
 	void setAngularTolerance(double percent);
 	//! Return possible h,k,l for this peak based on dspacing and angle with stored peaks
-	std::vector<Eigen::Vector3i> index(const Peak3D&);
-	//! Store this peak as being indexed
-	void storePeak(const Peak3D&);
+	std::vector<Eigen::Vector3d> index(const Peak3D&);
+	//! Store this peak as being indexed, this is used for angle comparison for next peaks.
+	void storePeak(Peak3D*);
 private:
 	ptrUnitCell _cell;
 	//! Tolerance in d-spacing, default 0.01
@@ -60,7 +60,9 @@ private:
 	//! Tolerance in angle, default 0.01
 	double _angletol;
 	//! Stored peaks already indexed
-	std::vector<Peak3D> _peaks;
+	std::vector<Peak3D*> _peaks;
+	//!
+	std::multimap<double,Eigen::Vector3d> _possiblePeaks;
 };
 
 

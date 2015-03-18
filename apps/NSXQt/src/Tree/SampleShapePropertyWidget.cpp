@@ -21,6 +21,16 @@ SampleShapePropertyWidget::SampleShapePropertyWidget(SampleShapeItem* caller,QWi
     // When editing of text is finished, try to parse this as a chemical formula
     connect(ui->lineEdit_ChemicalFormula,&QLineEdit::returnPressed,[=](){setChemicalFormula(ui->lineEdit_ChemicalFormula->text());});
     setHullProperties();
+    int ncrystals=_caller->getExperiment()->getDiffractometer()->getSample()->getNCrystals();
+    for (int i=0;i<ncrystals;++i)
+        ui->comboBox_CellChoices->addItem("Crystal "+QString::number(i+1));
+
+    auto material=_caller->getExperiment()->getDiffractometer()->getSample()->getMaterial();
+    if (material)
+    {
+        ui->lineEdit_ChemicalFormula->setText(QString::fromStdString(material->getName()));
+    }
+
 }
 
 SampleShapePropertyWidget::~SampleShapePropertyWidget()
@@ -31,18 +41,17 @@ SampleShapePropertyWidget::~SampleShapePropertyWidget()
 void SampleShapePropertyWidget::setChemicalFormula(const QString &formula)
 {
     auto mgr=SX::Chemistry::MaterialManager::Instance();
-    SX::Chemistry::sptrMaterial material;
     try
     {
-        material=mgr->buildMaterialFromChemicalFormula(formula.toStdString(),SX::Chemistry::ChemicalState::Solid);
+        auto material=mgr->buildMaterialFromChemicalFormula(formula.toStdString(),SX::Chemistry::ChemicalState::Solid);
+       _caller->getExperiment()->getDiffractometer()->getSample()->setMaterial(material);
+        qDebug() << "" <<*material;
     }
     catch(std::exception& e)
     {
-        QMessageBox::critical(this, tr("NSXTool"),tr(e.what()));
+       QMessageBox::critical(this, tr("NSXTool"),tr(e.what()));
         return;
-    }
-
-    qDebug() << "" << *material;
+   }
 }
 
 void SampleShapePropertyWidget::on_pushButton_LoadMovie_clicked()
@@ -61,17 +70,20 @@ bool SampleShapePropertyWidget::setHullProperties()
 
     // The hull is translated to its center
     hull.translateToCenter();
-
     // The hull is rotated of -90 along chi axis (Y axis)
     Eigen::Matrix3d mat;
-    mat << 1, 0, 1,
+    mat << 0, 0, 1,
            0, 1, 0,
-          -1, 0, 1;
+          -1, 0, 0;
+
     hull.rotate(mat);
+    qDebug() << "Coordinates of the Hull at rest:" << hull;
 
     ui->lineEdit_Volume->setText(QString::number(hull.getVolume())+" mm^3");
     ui->lineEdit_Faces->setText(QString::number(hull.getNFaces()));
     ui->lineEdit_Edges->setText(QString::number(hull.getNEdges()));
     ui->lineEdit_Vertices->setText(QString::number(hull.getNVertices()));
+
+
     return true;
 }

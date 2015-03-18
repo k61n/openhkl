@@ -146,10 +146,10 @@ public:
 	//! Checks that this Hull satisfies the Euler condition
 	bool checkEulerConditions() const;
 
-	//! Returns the Triangles that builds this ConvexHull.
+	//! Returns the Triangles that builds this ConvexHull if the Hull was to be rotated by the rotation matrix: rotation
 	//! Triangles objects are very light object that can be used
 	//! for further analysis such as Monte-Carlo based absorption correction.
-	std::vector<Triangle> createFaceCache() const;
+	std::vector<Triangle> createFaceCache(const matrix33& rotation=Eigen::Matrix3d::Identity()) const;
 
 private:
 
@@ -777,7 +777,7 @@ bool ConvexHull<T>::checkEulerConditions() const
 }
 
 template<typename T>
-std::vector<Triangle > ConvexHull<T>::createFaceCache() const
+std::vector<Triangle > ConvexHull<T>::createFaceCache(const matrix33& rotation) const
 {
 	if (_vertices.size()<4)
 		throw SX::Kernel::Error<ConvexHull<T> >("Hull is flat or undefined, can not construct faces information");
@@ -786,7 +786,10 @@ std::vector<Triangle > ConvexHull<T>::createFaceCache() const
 	triangles.reserve(_faces.size());
 	for (const auto& f: _faces)
 	{
-		triangles.push_back(Triangle(f->_vertices[0]->_coords,f->_vertices[1]->_coords,f->_vertices[2]->_coords));
+		Eigen::Vector3d v0=rotation*Eigen::Vector3d(f->_vertices[0]->_coords);
+		Eigen::Vector3d v1=rotation*Eigen::Vector3d(f->_vertices[1]->_coords);
+		Eigen::Vector3d v2=rotation*Eigen::Vector3d(f->_vertices[2]->_coords);
+		triangles.push_back(Triangle(v0,v1,v2));
 	}
 	return triangles;
 }

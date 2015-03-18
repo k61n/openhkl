@@ -27,7 +27,7 @@ AbsorptionDialog::AbsorptionDialog(SX::Instrument::Experiment* experiment,QWidge
     connect(this,SIGNAL(loadImage(QString)),_cscene,SLOT(loadImage(QString)));
     // Horizontal slider changes image of the movie in the scene
     connect(ui->horizontalScrollBar,&QScrollBar::valueChanged,[=](int i){_cscene->loadImage(QString::fromStdString(_imageList[i].second));});
-    connect(ui->horizontalScrollBar,&QScrollBar::valueChanged,[=](int i){_cscene->drawText(QString::number(_imageList[i].first));
+    connect(ui->horizontalScrollBar,&QScrollBar::valueChanged,[=](int i){_cscene->drawText("Phi: "+QString::number(_imageList[i].first));
     connect(ui->horizontalScrollBar,&QScrollBar::valueChanged,[=](int i){_cscene->setRotationAngle(_imageList[i].first);});
     });
 
