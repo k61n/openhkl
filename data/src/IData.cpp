@@ -226,7 +226,7 @@ void IData::saveHDF5(const std::string& filename) const
 	blosc_set_nthreads(4);
 
 	if (!_inMemory)
-	throw std::runtime_error("Can't save "+_filename+" as HDF5, file not in memory");
+		throw std::runtime_error("Can't save "+_filename+" as HDF5, file not in memory");
 
 	hsize_t dims[3] = {_nFrames, _nrows,_ncols};
 	hsize_t chunk[3] = {1, _nrows,_ncols};

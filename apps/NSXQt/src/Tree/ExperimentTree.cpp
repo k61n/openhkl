@@ -229,7 +229,7 @@ void ExperimentTree::importData()
         try
         {
             std::string extension=fileinfo.completeSuffix().toStdString();
-             d = DataReaderFactory::Instance()->create(extension,fileNames[i].toStdString(),exp->getDiffractometer());
+            d = DataReaderFactory::Instance()->create(extension,fileNames[i].toStdString(),exp->getDiffractometer());
             exp->addData(d);
         }
         catch(std::exception& e)

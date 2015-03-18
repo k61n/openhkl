@@ -39,6 +39,7 @@
 #include "Tree/ExperimentTree.h"
 #include "Logger.h"
 #include "NoteBook.h"
+#include "NumorsConversionDialog.h"
 #include "PeakTableView.h"
 #include "UnitCell.h"
 #include "Units.h"
@@ -429,4 +430,6 @@ void MainWindow::setInspectorWidget(QWidget* w)
 void MainWindow::on_actionConvert_to_HDF5_triggered()
 {
 
+    NumorsConversionDialog* dlg=new NumorsConversionDialog();
+    dlg->exec();
 }

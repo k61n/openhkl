@@ -1,11 +1,20 @@
+#include <map>
+#include <set>
+
 #include <QtDebug>
 #include <QMessageBox>
 
+#include "Diffractometer.h"
+#include "Gonio.h"
+#include "IData.h"
 #include "IMaterial.h"
 #include "Logger.h"
+#include "IMaterial.h"
 #include "MaterialManager.h"
+#include "MCAbsorption.h"
+#include "Peak3D.h"
 #include "Sample.h"
-#include "Diffractometer.h"
+#include "Source.h"
 
 #include "ui_SampleShapePropertyWidget.h"
 #include "Absorption/AbsorptionDialog.h"
@@ -63,7 +72,8 @@ void SampleShapePropertyWidget::on_pushButton_LoadMovie_clicked()
 
 bool SampleShapePropertyWidget::setHullProperties()
 {
-    auto& hull=_caller->getExperiment()->getDiffractometer()->getSample()->getShape();
+    SX::Instrument::Sample* sample=_caller->getExperiment()->getDiffractometer()->getSample();
+    auto& hull=sample->getShape();
     if (!hull.checkEulerConditions())
         return false;
 
@@ -83,6 +93,31 @@ bool SampleShapePropertyWidget::setHullProperties()
     ui->lineEdit_Edges->setText(QString::number(hull.getNEdges()));
     ui->lineEdit_Vertices->setText(QString::number(hull.getNVertices()));
 
+    // HERE FOR TESTING PURPOSES
+
+    // Get the source
+    SX::Instrument::Source* source=_caller->getExperiment()->getDiffractometer()->getSource();
+    if (!source)
+        return true;
+
+    // Get the material
+    unsigned int cellIndex=static_cast<unsigned int>(ui->comboBox_CellChoices->currentIndex());
+    SX::Chemistry::sptrMaterial material=sample->getMaterial(cellIndex);
+
+    SX::Geometry::MCAbsorption mca(source->getWidth(),source->getHeight(),source->getRestPosition()[1]);
+    mca.setSample(hull,material->getMuScattering(),material->getMuAbsorption(source->getWavelength()));
+
+    std::map<std::string,IData*> data=_caller->getExperiment()->getData();
+
+    for (auto& d: data)
+    {
+        const auto& peaks=d.second->getPeaks();
+        for (auto& p: peaks)
+        {
+            auto hommat=sample->getGonio()->getHomMatrix(p->getSampleState()->getValues());
+            mca.run(1000,p->getKf(),hommat.rotation());
+        }
+    }
 
     return true;
 }

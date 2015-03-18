@@ -360,6 +360,13 @@ SX::Instrument::ComponentState* Peak3D::getSampleState()
 	return _sampleState;
 }
 
+Eigen::RowVector3d Peak3D::getKf() const
+{
+	double wav=_source->getWavelength();
+	Eigen::Vector3d kf=_event->getParent()->getKf(*_event,wav,_sampleState->getParent()->getPosition(*_sampleState));
+	return kf;
+}
+
 Eigen::RowVector3d Peak3D::getQ() const
 {
 	double wav=_source->getWavelength();

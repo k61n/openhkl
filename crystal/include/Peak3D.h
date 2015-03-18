@@ -78,7 +78,8 @@ public:
 	void setMillerIndices(double h, double k, double l);
 	//! Get the Miller indices of the peak (double to allow integration of incommensurate peaks)
 	const Eigen::RowVector3d& getMillerIndices() const;
-	//!
+	//! Get kf vector in the frame of reference of the diffractometer
+	Eigen::RowVector3d getKf() const;
 	//! Get q vector in the frame of reference of the diffractometer
 	Eigen::RowVector3d getQ() const;
 	void getGammaNu(double& gamma,double& nu) const;
