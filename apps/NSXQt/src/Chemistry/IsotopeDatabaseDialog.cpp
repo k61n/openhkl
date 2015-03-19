@@ -49,8 +49,8 @@ IsotopeDatabaseDialog::IsotopeDatabaseDialog(QWidget *parent) : QDialog(parent),
     model->setHorizontalHeaderItem(4,new QStandardItem("# nucleons"));
     model->setHorizontalHeaderItem(5,new QStandardItem("nuclear spin"));
     model->setHorizontalHeaderItem(6,new QStandardItem("molar mass ("+QString::fromStdString(umap.at("molar_mass"))+")"));
-    model->setHorizontalHeaderItem(7,new QStandardItem("state"));
-    model->setHorizontalHeaderItem(8,new QStandardItem("abundance ("+QString::fromStdString(umap.at("abundance"))+")"));
+    model->setHorizontalHeaderItem(7,new QStandardItem("chemical_state"));
+    model->setHorizontalHeaderItem(8,new QStandardItem("natural abundance ("+QString::fromStdString(umap.at("natural_abundance"))+")"));
     model->setHorizontalHeaderItem(9,new QStandardItem("stable"));
     model->setHorizontalHeaderItem(10,new QStandardItem("half-life ("+QString::fromStdString(umap.at("half_life"))+")"));
     model->setHorizontalHeaderItem(11,new QStandardItem("b coherent ("+QString::fromStdString(umap.at("b_coherent"))+")"));
@@ -76,8 +76,8 @@ IsotopeDatabaseDialog::IsotopeDatabaseDialog(QWidget *parent) : QDialog(parent),
         QStandardItem* col4 = new QStandardItem(QString::number(v.second.get<unsigned int>("n_nucleons")));
         QStandardItem* col5 = new QStandardItem(QString::number(v.second.get<double>("nuclear_spin")));
         QStandardItem* col6 = new QStandardItem(QString::number(v.second.get<double>("molar_mass")));
-        QStandardItem* col7 = new QStandardItem(QString::fromStdString(v.second.get<std::string>("state")));
-        QStandardItem* col8 = new QStandardItem(QString::number(v.second.get<double>("abundance",0.0)));
+        QStandardItem* col7 = new QStandardItem(QString::fromStdString(v.second.get<std::string>("chemical_state")));
+        QStandardItem* col8 = new QStandardItem(QString::number(v.second.get<double>("natural_abundance",0.0)));
         QStandardItem* col9 = new QStandardItem(QString::number(v.second.get<bool>("stable")));
         QStandardItem* col10= new QStandardItem(QString::number(v.second.get<double>("half_life",std::numeric_limits<double>::infinity())));
         QStandardItem* col11= new QStandardItem(QString::fromStdString(SX::Utils::complexToString(v.second.get<std::complex<double>>("b_coherent"))));
