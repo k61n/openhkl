@@ -11,6 +11,7 @@
 #include <Eigen/Dense>
 #include <QtDebug>
 #include "Gonio.h"
+#include "Units.h"
 
 DialogMCAbsorption::DialogMCAbsorption(SX::Instrument::Experiment *experiment, QWidget *parent):
     _experiment(experiment),
@@ -36,7 +37,7 @@ DialogMCAbsorption::~DialogMCAbsorption()
 
 void DialogMCAbsorption::on_pushButton_run_pressed()
 {
-    // HERE FOR TESTING PURPOSES
+
     if (!ui->comboBox->isEnabled())
         return;
 
@@ -56,7 +57,7 @@ void DialogMCAbsorption::on_pushButton_run_pressed()
             return;
     }
 
-    mca.setSample(&hull,material->getMuScattering(),material->getMuAbsorption(source->getWavelength()));
+    mca.setSample(&hull,material->getMuScattering(),material->getMuAbsorption(source->getWavelength()*SX::Units::ang));
 
     const auto& data=_experiment->getData();
 

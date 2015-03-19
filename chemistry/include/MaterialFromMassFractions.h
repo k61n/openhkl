@@ -75,6 +75,9 @@ public:
 	//! Gets the stochiometry of this Material
 	strToDoubleMap getStoichiometry() const;
 
+	//! Returns the molar mass of this Material
+	double getMolarMass() const {};
+
 	//! Print informations about this Material to an output stream
 	void print(std::ostream& os) const;
 

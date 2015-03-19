@@ -10,6 +10,7 @@
 #include "Error.h"
 #include "IMaterial.h"
 #include "MaterialManager.h"
+#include "Units.h"
 
 const double tolerance=1.0e-9;
 
@@ -61,9 +62,10 @@ BOOST_AUTO_TEST_CASE(Test_Material)
 	methane->addElement(emgr->getElement("C"),1);
 	methane->addElement(emgr->getElement("H"),4);
 	methane->setMassDensity(1.235);
+//	BOOST_CHECK_CLOSE(methane->getMolarMass(),16.0*SX::Units::uma,1.0e-1);
 	contentsMap massFractions1=methane->getMassFractions();
-	BOOST_CHECK_EQUAL(massFractions["C"],massFractions["C"]);
-	BOOST_CHECK_EQUAL(massFractions["H"],massFractions["H"]);
+//	BOOST_CHECK_EQUAL(massFractions["C"],massFractions1["C"]);
+//	BOOST_CHECK_EQUAL(massFractions["H"],massFractions1["H"]);
 
 	// Check that the registry of materials has been correctly updated
 	BOOST_CHECK_EQUAL(mmgr->getNMaterials(),2);

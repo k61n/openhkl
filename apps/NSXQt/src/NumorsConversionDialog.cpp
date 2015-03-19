@@ -1,9 +1,13 @@
+#include <iostream>
 #include <memory>
 
 #include <QDirModel>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QMessageBox>
+#include <QModelIndex>
+#include <QModelIndexList>
+#include <QtDebug>
 
 #include "DataReaderFactory.h"
 #include "Diffractometer.h"
@@ -68,15 +72,40 @@ void NumorsConversionDialog::on_pushButton_convert_clicked()
     for (auto& idx : indexes)
     {
         QFileInfo fileInfo = model->fileInfo(idx);
-        if (fileInfo.isFile())
+        int row = -1;
+        if (idx.row()!=row && idx.column()==0)
         {
+            row = idx.row();
             std::string filename=fileInfo.absoluteFilePath().toStdString();
             std::string extension=fileInfo.completeSuffix().toStdString();
-            SX::Data::IData* data = dataFactory->create(extension,filename,diffractometer);
+            SX::Data::IData* data;
+            try
+            {
+                data = dataFactory->create(extension,filename,diffractometer);
+            }
+            catch(...)
+            {
+                qDebug() << "Error when opening file " << filename.c_str() << ". Perhaps not suited for the selected diffractometer.";
+                ui->progressBar_conversion->setValue(++comp);
+                delete data;
+                continue;
+            }
             data->readInMemory();
             QString basename=fileInfo.baseName();
             QString outputFilename = QDir(ui->lineEdit_outputDirectory->text()).filePath(basename+".h5");
-            data->saveHDF5(outputFilename.toStdString());
+
+            try
+            {
+                data->saveHDF5(outputFilename.toStdString());
+            }
+            catch(...)
+            {
+                qDebug() << "The filename " << filename.c_str() << " could not be saved. Maybe a permission problem.";
+                ui->progressBar_conversion->setValue(++comp);
+                delete data;
+                continue;
+            }
+
             delete data;
         }
         ui->progressBar_conversion->setValue(++comp);

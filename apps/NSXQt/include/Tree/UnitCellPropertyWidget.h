@@ -35,9 +35,11 @@ private slots:
     void setChemicalFormula(const QString &formula);
     void on_spinBox_Z_valueChanged(int arg1);
     void on_lineEdit_ChemicalFormula_returnPressed();
+    void setMassDensity() const;
 
 public slots:
-    void setCell(const SX::Crystal::UnitCell&);
+    void setCell(const SX::Crystal::UnitCell&);    
+
 private:
     UnitCellItem* _unitCellItem;
     Ui::UnitCellPropertyWidget *ui;

@@ -56,7 +56,6 @@ Cyclops::Cyclops(const std::string& name) : Diffractometer(name)
 		a->setOffset(-180*deg+i*45.0*deg);
 		current->setGonio(g);
 		det->add(current);
-		std::cout<<"LOCAL "<<current->getPos(480+960*i,1200)<<" "<<current->getDistance()<<std::endl;
 	}
 
 	_detector=det;

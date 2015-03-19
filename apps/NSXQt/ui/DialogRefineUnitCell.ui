@@ -135,7 +135,7 @@ background-color: white
     <rect>
      <x>390</x>
      <y>10</y>
-     <width>206</width>
+     <width>207</width>
      <height>29</height>
     </rect>
    </property>
@@ -393,7 +393,7 @@ QPushButton:disabled {
   <customwidget>
    <class>SimplePlot</class>
    <extends>QWidget</extends>
-   <header>SimplePlot.h</header>
+   <header>Plot/SimplePlot.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

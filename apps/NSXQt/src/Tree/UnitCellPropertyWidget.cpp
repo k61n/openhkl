@@ -61,6 +61,20 @@ void UnitCellPropertyWidget::setLatticeParams()
 
     }
 
+    setMassDensity();
+
+}
+
+void UnitCellPropertyWidget::setMassDensity() const
+{
+    auto material=_unitCellItem->getCell()->getMaterial();
+    if (material)
+    {
+        double mm=material->getMolarMass();
+        mm*=ui->spinBox_Z->value();
+        double volume=_unitCellItem->getCell()->getVolume()*SX::Units::ang3;
+        material->setMassDensity(mm/volume);
+    }
 }
 
 void UnitCellPropertyWidget::on_pushButton_Info_clicked()
@@ -123,9 +137,11 @@ void UnitCellPropertyWidget::setChemicalFormula(const QString &formula)
 void UnitCellPropertyWidget::on_spinBox_Z_valueChanged(int arg1)
 {
         _unitCellItem->getCell()->setZ(arg1);
+        setMassDensity();
 }
 
 void UnitCellPropertyWidget::on_lineEdit_ChemicalFormula_returnPressed()
 {
     setChemicalFormula(ui->lineEdit_ChemicalFormula->text());
+    setMassDensity();
 }

@@ -1,3 +1,4 @@
+#include <iostream>
 #include <algorithm>
 #include <iomanip>
 
@@ -150,6 +151,20 @@ strToDoubleMap MaterialFromStoichiometry::getPartialPressures() const
 strToDoubleMap MaterialFromStoichiometry::getStoichiometry() const
 {
 	return _contents;
+}
+
+double MaterialFromStoichiometry::getMolarMass() const
+{
+	double mm(0.0);
+
+	for (const auto& e : _elements)
+	{
+		const auto& it=_contents.find(e.first);
+		std::cout<<it->first<<" "<<it->second<<" "<<e.second->getMolarMass()<<std::endl;
+		mm+=(it->second)*(e.second->getMolarMass());
+	}
+
+	return mm;
 }
 
 void MaterialFromStoichiometry::writeToXML(property_tree::ptree& parent) const
