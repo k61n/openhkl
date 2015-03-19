@@ -49,7 +49,7 @@ IsotopeDatabaseDialog::IsotopeDatabaseDialog(QWidget *parent) : QDialog(parent),
     model->setHorizontalHeaderItem(4,new QStandardItem("# nucleons"));
     model->setHorizontalHeaderItem(5,new QStandardItem("nuclear spin"));
     model->setHorizontalHeaderItem(6,new QStandardItem("molar mass ("+QString::fromStdString(umap.at("molar_mass"))+")"));
-    model->setHorizontalHeaderItem(7,new QStandardItem("chemical_state"));
+    model->setHorizontalHeaderItem(7,new QStandardItem("chemical state"));
     model->setHorizontalHeaderItem(8,new QStandardItem("natural abundance ("+QString::fromStdString(umap.at("natural_abundance"))+")"));
     model->setHorizontalHeaderItem(9,new QStandardItem("stable"));
     model->setHorizontalHeaderItem(10,new QStandardItem("half-life ("+QString::fromStdString(umap.at("half_life"))+")"));

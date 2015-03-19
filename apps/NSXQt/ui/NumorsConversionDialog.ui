@@ -103,13 +103,6 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_cancel">
-       <property name="text">
-        <string>Cancel</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QPushButton" name="pushButton_convert">
        <property name="text">
         <string>Convert</string>

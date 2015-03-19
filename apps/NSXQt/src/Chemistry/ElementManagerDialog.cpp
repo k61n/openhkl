@@ -57,11 +57,6 @@ ElementManagerDialog::~ElementManagerDialog()
     delete ui;
 }
 
-void ElementManagerDialog::on_cancelButton_clicked()
-{
-    destroy();
-}
-
 void ElementManagerDialog::on_setButton_clicked()
 {
 

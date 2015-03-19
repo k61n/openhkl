@@ -18,8 +18,6 @@ public:
 private slots:
     void on_pushButton_convert_clicked();
 
-    void on_pushButton_cancel_clicked();
-
     void on_pushButton_browse_clicked();
 
 private:

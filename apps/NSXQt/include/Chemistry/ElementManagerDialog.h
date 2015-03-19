@@ -34,8 +34,6 @@ public:
 
 private slots:
 
-    //! Closes the dialog without saving the elements registry
-    void on_cancelButton_clicked();
     //! Set the newly built element to the registry
     void on_setButton_clicked();
     //! Save the registry in its current state to the elements XML database

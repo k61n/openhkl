@@ -83,11 +83,6 @@ void NumorsConversionDialog::on_pushButton_convert_clicked()
     }
 }
 
-void NumorsConversionDialog::on_pushButton_cancel_clicked()
-{
-    destroy();
-}
-
 void NumorsConversionDialog::on_pushButton_browse_clicked()
 {
     QString outputDirectory=QFileDialog::getExistingDirectory (this, "Enter output directory", QDir::homePath());
