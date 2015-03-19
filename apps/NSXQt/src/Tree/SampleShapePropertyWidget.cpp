@@ -20,6 +20,8 @@
 #include "Absorption/AbsorptionDialog.h"
 #include "Tree/SampleShapeItem.h"
 #include "Tree/SampleShapePropertyWidget.h"
+#include "Units.h"
+
 
 SampleShapePropertyWidget::SampleShapePropertyWidget(SampleShapeItem* caller,QWidget *parent) :
     _caller(caller),
@@ -54,6 +56,8 @@ void SampleShapePropertyWidget::on_pushButton_LoadMovie_clicked()
                    0, 1, 0,
                   -1, 0, 0;
             hull.rotate(mat);
+            //Convert to m
+            hull.scale(SX::Units::mm);
             qDebug() << "Coordinates of the Hull at rest:" << hull;
             setHullProperties();
         }
@@ -65,7 +69,7 @@ void SampleShapePropertyWidget::setHullProperties()
     SX::Instrument::Sample* sample=_caller->getExperiment()->getDiffractometer()->getSample();
     auto& hull=sample->getShape();
 
-    ui->lineEdit_Volume->setText(QString::number(hull.getVolume())+" mm^3");
+    ui->lineEdit_Volume->setText(QString::number(hull.getVolume()/SX::Units::mm3)+" mm^3");
     ui->lineEdit_Faces->setText(QString::number(hull.getNFaces()));
     ui->lineEdit_Edges->setText(QString::number(hull.getNEdges()));
     ui->lineEdit_Vertices->setText(QString::number(hull.getNVertices()));

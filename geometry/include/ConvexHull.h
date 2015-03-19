@@ -134,6 +134,9 @@ public:
 	//! Translates the hull to its center
 	void translateToCenter() const;
 
+	//! Isotropic scaling of the Hull
+	void scale(T factor) const;
+
 	//! Rotate the this ConvexHull
 	void rotate(const matrix33& rotation) const;
 
@@ -728,6 +731,15 @@ void ConvexHull<T>::translate(T x, T y, T z) const
 		v->_coords[0] += x;
 		v->_coords[1] += y;
 		v->_coords[2] += z;
+	}
+}
+
+template <typename T>
+void ConvexHull<T>::scale(T factor) const
+{
+	for (auto& v : _vertices)
+	{
+		v->_coords*=factor;
 	}
 }
 
