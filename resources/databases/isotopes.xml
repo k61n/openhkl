@@ -5,7 +5,7 @@
   <n_protons>unitless</n_protons>
   <n_nucleons>unitless</n_nucleons>
   <nuclear_spin>unitless</nuclear_spin>
-  <molar_mass>uma</molar_mass>
+  <molar_mass>g_per_mole</molar_mass>
   <chemical_state>unitless</state>
   <natural_abundance>%</natural_abundance>
   <stable>unitless</stable>

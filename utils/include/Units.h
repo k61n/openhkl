@@ -137,7 +137,7 @@ static const double kg=1.0;
 static const double g=kg*milli;
 static const double Da=g/avogadro;
 static const double uma=Da;
-static const double g_per_mole=Da;
+static const double g_per_mole=g;
 
 // Temperature units
 static const double Kelvin=1.0;
@@ -179,7 +179,7 @@ static const double nm2=nm*nm;
 static const double pm2=pm*pm;
 static const double am2=am*am;
 static const double ang2=ang*ang;
-static const double barn=m2*yocto;
+static const double barn=cm2*yocto;
 
 // Volume units
 static const double m3=m*m*m;

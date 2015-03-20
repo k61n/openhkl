@@ -117,13 +117,14 @@ strToDoubleMap IMaterial::getNAtomsPerVolume() const
 {
 	strToDoubleMap nAtomsPerVolume;
 
-	double fact=SX::Units::avogadro*getMassDensity();
+	double fact=Units::avogadro*getMassDensity();
 
 	auto massFractions=getMassFractions();
 
 	for (const auto& p : massFractions)
 	{
 		double molarMass=_elements.at(p.first)->getMolarMass();
+		std::cout<<p.first<<" ----- "<<p.second<<" --- "<<_massDensity<<" --- "<<molarMass<<std::endl;
 		nAtomsPerVolume.insert(strToDoublePair(p.first,fact*p.second/molarMass));
 	}
 
@@ -134,7 +135,7 @@ strToDoubleMap IMaterial::getNElectronsPerVolume() const
 {
 	strToDoubleMap nElectronsPerVolume;
 
-	double fact=SX::Units::avogadro*getMassDensity();
+	double fact=Units::avogadro*getMassDensity();
 
 	for (const auto& p : getMassFractions())
 	{
@@ -175,6 +176,7 @@ double IMaterial::getMuScattering() const
 	for (const auto& p : nAtomsPerVolume)
 	{
 		double xsInc=_elements.at(p.first)->getIncoherentXs();
+		std::cout<<p.first<<" --> "<<p.second<<" --> "<<xsInc<<std::endl;
 		muScat+=p.second*xsInc;
 	}
 	return muScat;
@@ -187,6 +189,7 @@ double IMaterial::getMuAbsorption(double lambda) const
 	for (const auto& p : nAtomsPerVolume)
 	{
 		double xsAbs=_elements.at(p.first)->getAbsorptionXs(lambda);
+		std::cout<<p.first<<" --> "<<p.second<<" --> "<<xsAbs<<std::endl;
 		muAbs+=p.second*xsAbs;
 	}
 	return muAbs;
