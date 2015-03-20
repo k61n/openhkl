@@ -157,14 +157,22 @@ double MaterialFromStoichiometry::getMolarMass() const
 {
 	double mm(0.0);
 
+	auto cit=_contents.cbegin();
 	for (const auto& e : _elements)
-	{
-		const auto& it=_contents.find(e.first);
-		std::cout<<it->first<<" "<<it->second<<" "<<e.second->getMolarMass()<<std::endl;
-		mm+=(it->second)*(e.second->getMolarMass());
-	}
+		mm+=((cit++)->second)*(e.second->getMolarMass());
 
 	return mm;
+}
+
+std::string MaterialFromStoichiometry::getChemicalFormula() const
+{
+	std::ostringstream cf;
+
+	auto it=_contents.cbegin();
+	for (const auto& p : _elements)
+		cf<<p.first<<std::setiosflags(std::ios::fixed)<<std::setprecision(2)<<(it++)->second;
+
+	return cf.str();
 }
 
 void MaterialFromStoichiometry::writeToXML(property_tree::ptree& parent) const

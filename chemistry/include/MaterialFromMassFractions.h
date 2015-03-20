@@ -58,6 +58,11 @@ public:
 	double getMassDensity() const;
 	//! Sets the density of this Material
 	void setMassDensity(double density);
+	//! Returns the molar mass of this Material
+	double getMolarMass() const;;
+
+	//! Returns the chemical formula of this Material
+	std::string getChemicalFormula() const;
 
 	//! Add an Element to this Material.
 	void addElement(const std::string& name, double massFraction);
@@ -74,9 +79,6 @@ public:
 	strToDoubleMap getPartialPressures() const;
 	//! Gets the stochiometry of this Material
 	strToDoubleMap getStoichiometry() const;
-
-	//! Returns the molar mass of this Material
-	double getMolarMass() const {};
 
 	//! Print informations about this Material to an output stream
 	void print(std::ostream& os) const;

@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <iomanip>
+#include <sstream>
 
 #include "ElementManager.h"
 #include "Error.h"
@@ -46,9 +47,33 @@ double MaterialFromMassFractions::getMassDensity() const
 void MaterialFromMassFractions::setMassDensity(double massDensity)
 {
 	if (massDensity<=0)
-		throw SX::Kernel::Error<MaterialFromMassFractions>("Invalid density value.");
+		throw Kernel::Error<MaterialFromMassFractions>("Invalid density value.");
 
 	_massDensity=massDensity;
+}
+
+double MaterialFromMassFractions::getMolarMass() const
+{
+	double mm(0.0);
+
+	auto molarFractions=getMolarFractions();
+	auto cit=molarFractions.cbegin();
+	for (const auto& e : _elements)
+		mm+=((cit++)->second)*(e.second->getMolarMass());
+
+	return mm;
+}
+
+std::string MaterialFromMassFractions::getChemicalFormula() const
+{
+	std::ostringstream cf;
+
+	auto molarFractions=getMolarFractions();
+	auto cit=molarFractions.cbegin();
+	for (const auto& p : _elements)
+		cf<<p.first<<std::setiosflags(std::ios::fixed)<<std::setprecision(2)<<(cit++)->second;
+
+	return cf.str();
 }
 
 void MaterialFromMassFractions::addElement(sptrElement element, double massFraction)

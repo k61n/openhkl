@@ -71,7 +71,30 @@ double MaterialFromPartialPressures::getMassDensity() const
 
 void MaterialFromPartialPressures::setMassDensity(double massDensity)
 {
-	throw SX::Kernel::Error<MaterialFromPartialPressures>("The density can not be set for a Material built from partial pressures.");
+}
+
+double MaterialFromPartialPressures::getMolarMass() const
+{
+	double mm(0.0);
+
+	auto molarFractions=getMolarFractions();
+	auto cit=molarFractions.cbegin();
+	for (const auto& e : _elements)
+		mm+=((cit++)->second)*(e.second->getMolarMass());
+
+	return mm;
+}
+
+std::string MaterialFromPartialPressures::getChemicalFormula() const
+{
+	std::ostringstream cf;
+
+	auto molarFractions=getMolarFractions();
+	auto it=molarFractions.cbegin();
+	for (const auto& p : _elements)
+		cf<<p.first<<std::setiosflags(std::ios::fixed)<<std::setprecision(2)<<(it++)->second;
+
+	return cf.str();
 }
 
 void MaterialFromPartialPressures::addElement(sptrElement element, double partialPressure)

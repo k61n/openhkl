@@ -136,6 +136,9 @@ public:
 	//! Returns the molar mass of this Material
 	virtual double getMolarMass() const=0;
 
+	//! Returns the chemical formula of this Material
+	virtual std::string getChemicalFormula() const=0;
+
 	//! Returns the number of atoms per volume units per element (1/m3)
 	strToDoubleMap getNAtomsPerVolume() const;
 	//! Returns the number of electrons per volume units per element (1/m3)

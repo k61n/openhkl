@@ -52,6 +52,28 @@ void MaterialFromMolarFractions::setMassDensity(double massDensity)
 	_massDensity=massDensity;
 }
 
+double MaterialFromMolarFractions::getMolarMass() const
+{
+	double mm(0.0);
+
+	auto cit=_contents.cbegin();
+	for (const auto& e : _elements)
+		mm+=((cit++)->second)*(e.second->getMolarMass());
+
+	return mm;
+}
+
+std::string MaterialFromMolarFractions::getChemicalFormula() const
+{
+	std::ostringstream cf;
+
+	auto it=_contents.cbegin();
+	for (const auto& p : _elements)
+		cf<<p.first<<std::setiosflags(std::ios::fixed)<<std::setprecision(2)<<(it++)->second;
+
+	return cf.str();
+}
+
 void MaterialFromMolarFractions::addElement(sptrElement element, double molarFraction)
 {
 	if (molarFraction<=0 || molarFraction>1)
