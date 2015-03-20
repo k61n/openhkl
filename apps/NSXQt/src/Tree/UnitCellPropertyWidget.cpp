@@ -71,7 +71,8 @@ void UnitCellPropertyWidget::setMassDensity() const
     if (material)
     {
         double mm=material->getMolarMass();
-        mm*=ui->spinBox_Z->value();
+        std::cout<<"molar mass --> "<<mm<<std::endl;
+        mm*=ui->spinBox_Z->value()/SX::Units::avogadro;
         double volume=_unitCellItem->getCell()->getVolume()*SX::Units::ang3;
         material->setMassDensity(mm/volume);
     }
@@ -140,7 +141,7 @@ void UnitCellPropertyWidget::on_spinBox_Z_valueChanged(int arg1)
         setMassDensity();
 }
 
-void UnitCellPropertyWidget::on_lineEdit_ChemicalFormula_returnPressed()
+void UnitCellPropertyWidget::on_lineEdit_ChemicalFormula_editingFinished()
 {
     setChemicalFormula(ui->lineEdit_ChemicalFormula->text());
     setMassDensity();
