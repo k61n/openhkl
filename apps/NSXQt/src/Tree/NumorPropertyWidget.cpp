@@ -57,6 +57,7 @@ NumorPropertyWidget::NumorPropertyWidget(NumorItem* caller,QWidget *parent) :
         ui->tableWidget->setItem(numberLines,0,col0);
         ui->tableWidget->setItem(numberLines++,1,col1);
     }
+    ui->tableWidget->horizontalHeader()->setStretchLastSection(true);
 }
 
 NumorPropertyWidget::~NumorPropertyWidget()

@@ -20,5 +20,5 @@ DetectorItem::DetectorItem(Experiment* experiment) : InspectableTreeItem(experim
 
 QWidget* DetectorItem::inspectItem()
 {
-        return new DetectorPropertyWidget();
+        return new DetectorPropertyWidget(this);
 }

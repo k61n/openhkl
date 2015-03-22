@@ -7,15 +7,18 @@ namespace Ui {
 class DetectorPropertyWidget;
 }
 
+class DetectorItem;
+
 class DetectorPropertyWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit DetectorPropertyWidget(QWidget *parent = 0);
+    explicit DetectorPropertyWidget(DetectorItem* caller,QWidget *parent = 0);
     ~DetectorPropertyWidget();
 
 private:
+    DetectorItem* _detectorItem;
     Ui::DetectorPropertyWidget *ui;
 };
 
