@@ -114,6 +114,8 @@ void UnitCell::copyMatrices(const UnitCell& cell)
 {
 	_A=cell._A;
 	_B=cell._B;
+	_Acov=cell._Acov;
+	_Bcov=cell._Bcov;
 	return;
 }
 
@@ -220,8 +222,18 @@ void UnitCell::printSelf(std::ostream& os) const
 	os << std::fixed << std::setw(10) << std::setprecision(5) << getReciprocalAlpha()/SX::Units::deg;
 	os << std::fixed << std::setw(10) << std::setprecision(5) << getReciprocalBeta()/SX::Units::deg;
 	os << std::fixed << std::setw(10) << std::setprecision(5) << getReciprocalGamma()/SX::Units::deg << std::endl;
-	os << "B matrix:" << std::endl;
-	os << _B;
+	os << "UB matrix:" << std::endl;
+	os << _B << std::endl;
+	//
+	if (_material)
+	{
+		os << *(_material) << std::endl;
+		os << "Molar mass: "<< _material->getMolarMass()/SX::Units::g << "g.mol-1 \n";
+		os << "Density:" << _material->getMassDensity()/SX::Units::g_per_cm3 << "g.cm-3\n";
+		os << "Linear absorption coef: " << _material->getMuAbsorption()*SX::Units::cm << "cm-1 @ 1.798 AA \n";
+		os << "Linear incoherent coef: " << _material->getMuScattering()*SX::Units::cm << "cm-1";
+	}
+
 }
 
 std::ostream& operator<<(std::ostream& os,const UnitCell& uc)

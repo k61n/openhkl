@@ -156,6 +156,7 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
                         if (ret==1)
                         {
                             UBSolution solution=minimizer.getSolution();
+                            std::cout << solution;
                             try
                             {
                                 cell=SX::Crystal::UnitCell::fromReciprocalVectors(solution._ub.row(0),solution._ub.row(1),solution._ub.row(2));

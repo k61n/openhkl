@@ -21,7 +21,16 @@ UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *par
     QWidget(parent),
     ui(new Ui::UnitCellPropertyWidget)
 {
+
+
+
     ui->setupUi(this);
+    // Special character
+    ui->labelalpha->setText(QString((QChar) 0x03B1));
+    ui->labelbeta->setText(QString((QChar) 0x03B2));
+    ui->labelgamma->setText(QString((QChar) 0x03B3));
+
+
     connect(ui->doubleSpinBoxa,SIGNAL(editingFinished()),this,SLOT(setLatticeParams()));
     connect(ui->doubleSpinBoxb,SIGNAL(editingFinished()),this,SLOT(setLatticeParams()));
     connect(ui->doubleSpinBoxc,SIGNAL(editingFinished()),this,SLOT(setLatticeParams()));
@@ -71,7 +80,6 @@ void UnitCellPropertyWidget::setMassDensity() const
     if (material)
     {
         double mm=material->getMolarMass();
-        std::cout<<"molar mass --> "<<mm<<std::endl;
         mm*=ui->spinBox_Z->value()/SX::Units::avogadro;
         double volume=_unitCellItem->getCell()->getVolume()*SX::Units::ang3;
         material->setMassDensity(mm/volume);
@@ -126,7 +134,6 @@ void UnitCellPropertyWidget::setChemicalFormula(const QString &formula)
     {
         auto material=mgr->buildMaterialFromChemicalFormula(formula.toStdString(),SX::Chemistry::ChemicalState::Solid);
         _unitCellItem->getCell()->setMaterial(material);
-        qDebug() << "" <<*material;
     }
     catch(std::exception& e)
     {

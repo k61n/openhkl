@@ -150,6 +150,10 @@ public:
     //! Is the peak h,k,l in Bragg condition in this dataset. Return Peak pointer if true,
     //! otherwise nullptr.
     Peak3D* hasPeak(double h, double k, double l,const Eigen::Matrix3d& BU);
+
+    //! Get background
+    double getBackgroundLevel() const;
+
 protected:
     bool _isOpened;
 	std::string _filename;

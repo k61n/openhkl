@@ -2,7 +2,6 @@
 #include "ui_mainwindow.h"
 
 #include <cmath>
-#include <ctime>
 #include <functional>
 #include <stdexcept>
 #include <utility>
@@ -198,9 +197,8 @@ void MainWindow::on_action_peak_find_triggered()
     for (auto numor : numors)
     {
         numor->clearPeaks();
-        clock_t t1=clock();
         numor->readInMemory();
-        qDebug() << static_cast<double>(clock()-t1)/CLOCKS_PER_SEC;
+        int median=numor->getBackgroundLevel()+1;
         // Get pointers to start of each frame
         std::vector<int*> temp(numor->getNFrames());
         for (unsigned int i=0;i<numor->getNFrames();++i)
@@ -213,9 +211,7 @@ void MainWindow::on_action_peak_find_triggered()
         SX::Geometry::blob3DCollection blobs;
         try
         {
-            clock_t t1=clock();
-            blobs=SX::Geometry::findBlobs3D<int>(temp, numor->getDiffractometer()->getDetector()->getNRows(),numor->getDiffractometer()->getDetector()->getNCols(), threshold+2, 30, 10000, confidence, 0);
-            qDebug() << static_cast<double>(clock()-t1)/CLOCKS_PER_SEC;
+            blobs=SX::Geometry::findBlobs3D<int>(temp, numor->getDiffractometer()->getDetector()->getNRows(),numor->getDiffractometer()->getDetector()->getNCols(), median*threshold, 30, 10000, confidence, 0);
         }
         catch(std::exception& e) // Warning if RAM error
         {
@@ -247,13 +243,9 @@ void MainWindow::on_action_peak_find_triggered()
             numor->addPeak(p);
             npeaks++;
         }
-        t1=clock();
-        clock_t c=clock();
 
         for (auto& peak : numor->getPeaks())
             peak->integrate();
-        qDebug() << "Integration" << static_cast<double>(clock()-t1)/CLOCKS_PER_SEC;
-        qDebug()<<static_cast<double>((clock()-c))/CLOCKS_PER_SEC;
 
         numor->releaseMemory();
         numor->close();

@@ -42,6 +42,8 @@ DialogRefineUnitCell::DialogRefineUnitCell(SX::Instrument::Experiment* experimen
     getLatticeParams();
     getWavelength();
 
+    qDebug() << "Detector" << _experiment->getDiffractometer()->getDetector();
+
     // Set the UB minimizer with parameters
     _minimizer.setDetector(_experiment->getDiffractometer()->getDetector());
     _minimizer.setSource(_experiment->getDiffractometer()->getSource());
@@ -79,6 +81,7 @@ void DialogRefineUnitCell::cellSampleHasChanged(int i, int j)
     if (j==1) // new offset has been entered
     {
         auto axis=_experiment->getDiffractometer()->getSample()->getGonio()->getAxis(i);
+        qDebug() << "Axis sample" << axis;
         axis->setOffset(ui->tableWidget_Sample->item(i,j)->data(Qt::EditRole).toDouble());
     }
 }
@@ -88,23 +91,28 @@ void DialogRefineUnitCell::cellDetectoreHasChanged(int i, int j)
     if (j==1) // new offset has been entered
     {
         auto axis=_experiment->getDiffractometer()->getDetector()->getGonio()->getAxis(i);
+        qDebug() << "Axis detector" << axis;
         axis->setOffset(ui->tableWidget_Sample->item(i,j)->data(Qt::EditRole).toDouble());
     }
 }
 
 void DialogRefineUnitCell::on_pushButton_Refine_clicked()
 {
+    fixParameter(false,9);
+
     const auto& mapdata=_experiment->getData();
     for (auto data: mapdata)
     {
         const auto& peaks=data.second->getPeaks();
         for (auto peak: peaks)
         {
+            if (peak->hasIntegerHKL(*(_cell.get())) && !peak->isMasked() && peak->isSelected())
             _minimizer.addPeak(*peak);
         }
     }
     //
-    _minimizer.run(100);
+    int test=_minimizer.run(100);
+    std::cout << "output" << test << std::endl;
     std::cout <<_minimizer.getSolution() << std::endl;
     createTable();
 }
@@ -143,6 +151,7 @@ void DialogRefineUnitCell::createTable()
         ui->tableWidget_Sample->setCellWidget(i,2,check);
 
     }
+    connect(ui->tableWidget_Sample,SIGNAL(cellChanged(int,int)),this,SLOT(cellSampleHasChanged(int,int)));
     // Get the detector, iterate over axis
     auto detector=_experiment->getDiffractometer()->getDetector();
     int naxesDet=detector->getNAxes();
@@ -173,4 +182,6 @@ void DialogRefineUnitCell::createTable()
         );
         ui->tableWidget_Detector->setCellWidget(i,2,check);
     }
+
+    connect(ui->tableWidget_Detector,SIGNAL(cellChanged(int,int)),this,SLOT(cellDetectoreHasChanged(int,int)));
 }

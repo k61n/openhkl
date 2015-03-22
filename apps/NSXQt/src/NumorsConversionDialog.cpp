@@ -83,11 +83,12 @@ void NumorsConversionDialog::on_pushButton_convert_clicked()
             {
                 data = dataFactory->create(extension,filename,diffractometer);
             }
-            catch(...)
+            catch(std::exception& e)
             {
-                qDebug() << "Error when opening file " << filename.c_str() << ". Perhaps not suited for the selected diffractometer.";
+                qCritical() << "Error when opening file " << filename.c_str() << e.what();
                 ui->progressBar_conversion->setValue(++comp);
-                delete data;
+                if (data)
+                    delete data;
                 continue;
             }
             data->readInMemory();

@@ -505,6 +505,21 @@ Peak3D* IData::hasPeak(double h, double k, double l, const Matrix3d& BU)
 
 }
 
+double IData::getBackgroundLevel() const
+{
+	if (!_inMemory)
+		return 0;
+
+	double mean=0;
+	for (int i=0;i<_nFrames;++i)
+	{
+		mean+=_data[i].sum();
+	}
+	mean/=(_nFrames*_nrows*_ncols);
+	//
+	return mean;
+}
+
 } // end namespace Data
 
 } // end namespace SX

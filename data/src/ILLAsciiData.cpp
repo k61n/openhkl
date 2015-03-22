@@ -35,7 +35,14 @@ std::map<std::size_t,std::string> ILLAsciiData::MADAngles = {{1,"2theta(gamma)"}
 
 IData* ILLAsciiData::create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer)
 {
-	return new ILLAsciiData(filename,diffractometer);
+	ILLAsciiData* data;
+	try{
+		data=new ILLAsciiData(filename,diffractometer);
+	}catch(...)
+	{
+		return nullptr;
+	}
+	return data;
 }
 
 ILLAsciiData::ILLAsciiData(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer)
@@ -93,7 +100,11 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, std::shared_ptr<Diffract
 	{
 		std::string idesc = std::string("icdesc") + std::to_string(i+1);
 		int idx = _metadata->getKey<int>(idesc);
-		scans[i] = MADAngles[idx];
+		auto it=MADAngles.find(idx);
+		//
+		if (it==MADAngles.end())
+			throw std::runtime_error("Mad angle"+std::to_string(idx)+" not recognized");
+		scans[i] = it->second;
 	}
 
 	std::vector<double*> varAngles(_nAngles);
