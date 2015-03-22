@@ -15,6 +15,7 @@
 #include "MaterialManager.h"
 #include "IMaterial.h"
 #include <QMessageBox>
+#include "DialogTransformationMatrix.h"
 
 UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *parent) :
     _unitCellItem(caller),
@@ -152,4 +153,17 @@ void UnitCellPropertyWidget::on_lineEdit_ChemicalFormula_editingFinished()
 {
     setChemicalFormula(ui->lineEdit_ChemicalFormula->text());
     setMassDensity();
+}
+
+void UnitCellPropertyWidget::on_pushButton_Refine_2_clicked()
+{
+    DialogTransformationmatrix* dialog=new DialogTransformationmatrix(this);
+    connect(dialog,SIGNAL(getMatrix(Eigen::Matrix3d)),this,SLOT(transform(Eigen::Matrix3d)));
+    dialog->exec();
+}
+
+void UnitCellPropertyWidget::transform(const Eigen::Matrix3d &P)
+{
+   _unitCellItem->getCell()->transform(P);
+   getLatticeParams();
 }

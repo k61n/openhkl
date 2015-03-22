@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <memory>
+#include <Eigen/Dense>
 
 namespace Ui {
 class UnitCellPropertyWidget;
@@ -36,6 +37,8 @@ private slots:
     void on_spinBox_Z_valueChanged(int arg1);
     void setMassDensity() const;
     void on_lineEdit_ChemicalFormula_editingFinished();
+    void transform(const Eigen::Matrix3d& P);
+    void on_pushButton_Refine_2_clicked();
 
 public slots:
     void setCell(const SX::Crystal::UnitCell&);    

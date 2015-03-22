@@ -11,7 +11,8 @@ class DialogTransformationmatrix;
 class DialogTransformationmatrix : public QDialog
 {
     Q_OBJECT
-
+signals:
+    void getMatrix(const Eigen::Matrix3d& m);
 public:
     explicit DialogTransformationmatrix(QWidget *parent = 0);
     ~DialogTransformationmatrix();

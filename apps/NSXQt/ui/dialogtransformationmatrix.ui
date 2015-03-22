@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>500</width>
-    <height>272</height>
+    <width>348</width>
+    <height>263</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -22,8 +22,8 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>130</x>
-     <y>220</y>
+     <x>-20</x>
+     <y>200</y>
      <width>341</width>
      <height>32</height>
     </rect>
@@ -38,11 +38,14 @@
   <widget class="QGroupBox" name="groupBox_2">
    <property name="geometry">
     <rect>
-     <x>20</x>
+     <x>50</x>
      <y>20</y>
-     <width>481</width>
+     <width>271</width>
      <height>171</height>
     </rect>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Basis transformation should be given in covariant form,&lt;/p&gt;&lt;p&gt;i.e. the coordinates of the new cell with respect to the old &lt;/p&gt;&lt;p&gt;one are given in columns.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="styleSheet">
     <string notr="true"> QGroupBox {
@@ -64,26 +67,10 @@
    <property name="title">
     <string>Transformation matrix</string>
    </property>
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>20</y>
-      <width>441</width>
-      <height>151</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="pixmap">
-     <pixmap resource="../NSXQt.qrc">:/resources/transformationMatrixImage.png</pixmap>
-    </property>
-   </widget>
    <widget class="QWidget" name="gridLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>250</x>
+      <x>20</x>
       <y>40</y>
       <width>221</width>
       <height>101</height>
@@ -219,10 +206,11 @@
     </layout>
    </widget>
   </widget>
+  <zorder>buttonBox</zorder>
+  <zorder>groupBox_2</zorder>
+  <zorder>label</zorder>
  </widget>
- <resources>
-  <include location="../NSXQt.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>buttonBox</sender>
