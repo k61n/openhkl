@@ -410,6 +410,12 @@ void MainWindow::on_actionShow_labels_triggered(bool checked)
 
 void MainWindow::setInspectorWidget(QWidget* w)
 {
+    // Ensure that previous Property Widget is deleted.
+    auto widget=_ui->dockWidget_Property->widget();
+    if (widget)
+        delete widget;
+
+    // Assign current property Widget
     _ui->dockWidget_Property->setWidget(w);
 
     // Handle specific actions from these widgets
