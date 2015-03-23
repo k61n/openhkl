@@ -70,9 +70,9 @@
    <widget class="QWidget" name="gridLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>10</x>
       <y>40</y>
-      <width>221</width>
+      <width>248</width>
       <height>101</height>
      </rect>
     </property>
@@ -81,6 +81,9 @@
       <widget class="QDoubleSpinBox" name="P00">
        <property name="buttonSymbols">
         <enum>QAbstractSpinBox::NoButtons</enum>
+       </property>
+       <property name="decimals">
+        <number>3</number>
        </property>
        <property name="minimum">
         <double>-10.000000000000000</double>
@@ -98,6 +101,9 @@
        <property name="buttonSymbols">
         <enum>QAbstractSpinBox::NoButtons</enum>
        </property>
+       <property name="decimals">
+        <number>3</number>
+       </property>
        <property name="minimum">
         <double>-10.000000000000000</double>
        </property>
@@ -110,6 +116,9 @@
       <widget class="QDoubleSpinBox" name="P20">
        <property name="buttonSymbols">
         <enum>QAbstractSpinBox::NoButtons</enum>
+       </property>
+       <property name="decimals">
+        <number>3</number>
        </property>
        <property name="minimum">
         <double>-10.000000000000000</double>
@@ -124,6 +133,9 @@
        <property name="buttonSymbols">
         <enum>QAbstractSpinBox::NoButtons</enum>
        </property>
+       <property name="decimals">
+        <number>3</number>
+       </property>
        <property name="minimum">
         <double>-10.000000000000000</double>
        </property>
@@ -136,6 +148,9 @@
       <widget class="QDoubleSpinBox" name="P11">
        <property name="buttonSymbols">
         <enum>QAbstractSpinBox::NoButtons</enum>
+       </property>
+       <property name="decimals">
+        <number>3</number>
        </property>
        <property name="minimum">
         <double>-10.000000000000000</double>
@@ -153,6 +168,9 @@
        <property name="buttonSymbols">
         <enum>QAbstractSpinBox::NoButtons</enum>
        </property>
+       <property name="decimals">
+        <number>3</number>
+       </property>
        <property name="minimum">
         <double>-10.000000000000000</double>
        </property>
@@ -165,6 +183,9 @@
       <widget class="QDoubleSpinBox" name="P02">
        <property name="buttonSymbols">
         <enum>QAbstractSpinBox::NoButtons</enum>
+       </property>
+       <property name="decimals">
+        <number>3</number>
        </property>
        <property name="minimum">
         <double>-10.000000000000000</double>
@@ -179,6 +200,9 @@
        <property name="buttonSymbols">
         <enum>QAbstractSpinBox::NoButtons</enum>
        </property>
+       <property name="decimals">
+        <number>3</number>
+       </property>
        <property name="minimum">
         <double>-10.000000000000000</double>
        </property>
@@ -191,6 +215,9 @@
       <widget class="QDoubleSpinBox" name="P22">
        <property name="buttonSymbols">
         <enum>QAbstractSpinBox::NoButtons</enum>
+       </property>
+       <property name="decimals">
+        <number>3</number>
        </property>
        <property name="minimum">
         <double>-10.000000000000000</double>
@@ -206,9 +233,6 @@
     </layout>
    </widget>
   </widget>
-  <zorder>buttonBox</zorder>
-  <zorder>groupBox_2</zorder>
-  <zorder>label</zorder>
  </widget>
  <resources/>
  <connections>

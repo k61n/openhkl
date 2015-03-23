@@ -109,6 +109,16 @@ void UnitCellPropertyWidget::setCell(const SX::Crystal::UnitCell& cell)
 {
     _unitCellItem->getCell()->copyMatrices(cell);
     getLatticeParams();
+    auto datamap=_unitCellItem->getExperiment()->getData();
+    for (auto data: datamap)
+    {
+        auto peaks=data.second->getPeaks();
+        for (auto p: peaks)
+        {
+            p->setBasis(_unitCellItem->getCell());
+        }
+    }
+    emit activateIndexingMode(_unitCellItem->getCell());
 }
 
 void UnitCellPropertyWidget::getLatticeParams()

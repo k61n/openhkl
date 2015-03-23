@@ -259,6 +259,7 @@ void MainWindow::on_action_peak_find_triggered()
 
     _ui->_dview->getScene()->updatePeaks();
 
+
 }
 
 void MainWindow::on_actionPixel_position_triggered()
@@ -274,6 +275,11 @@ void MainWindow::on_actionGamma_Nu_triggered()
 void MainWindow::on_action2_Theta_triggered()
 {
      _ui->_dview->getScene()->changeCursorMode(DetectorScene::THETA);
+}
+
+void MainWindow::on_actionH_k_l_triggered()
+{
+     _ui->_dview->getScene()->changeCursorMode(DetectorScene::HKL);
 }
 
 
@@ -431,3 +437,4 @@ void MainWindow::on_actionConvert_to_HDF5_triggered()
     NumorsConversionDialog* dlg=new NumorsConversionDialog();
     dlg->exec();
 }
+

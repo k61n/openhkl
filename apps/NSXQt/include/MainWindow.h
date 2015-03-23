@@ -76,6 +76,8 @@ private slots:
 
     void on_actionConvert_to_HDF5_triggered();
 
+    void on_actionH_k_l_triggered();
+
 public slots:
     void changeData(SX::Data::IData*);
     void showPeakList(std::vector<SX::Data::IData*>);

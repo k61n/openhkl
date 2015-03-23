@@ -20,6 +20,9 @@
 #include "GraphicsItems/CutSliceGraphicsItem.h"
 #include "GraphicsItems/CutLineGraphicsItem.h"
 #include "GraphicsItems/MaskGraphicsItem.h"
+#include "Detector.h"
+#include "Sample.h"
+#include "Gonio.h"
 
 DetectorScene::DetectorScene(QObject *parent)
 : QGraphicsScene(parent),
@@ -62,7 +65,6 @@ void DetectorScene::changeFrame(int frame)
 
 void DetectorScene::setMaxIntensity(int intensity)
 {
-
     if (_currentIntensity==intensity)
         return;
 
@@ -443,6 +445,17 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
         }
         case(HKL):
         {
+            if (_cell)
+            {
+                auto detector=_currentData->getDiffractometer()->getDetector();
+                auto sample=_currentData->getDiffractometer()->getSample();
+                auto source=_currentData->getDiffractometer()->getSource();
+                auto Qvec=detector->getQ(col,row,source->getWavelength(),_currentData->getDetectorState(_currentFrameIndex).getValues(),sample->getPosition(_currentData->getSampleState(_currentFrameIndex).getValues()));
+                sample->getGonio()->transformInverseInPlace(Qvec,_currentData->getSampleState(_currentFrameIndex).getValues());
+                auto hkl=_cell->fromReciprocalStandard(Qvec);
+                ttip=QString("(%1,%2,%3) I: %4").arg(hkl[0]).arg(hkl[1]).arg(hkl[2]).arg(intensity);
+                 break;
+            }
 
         }
 
