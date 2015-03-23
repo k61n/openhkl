@@ -119,6 +119,7 @@ void UnitCellPropertyWidget::setCell(const SX::Crystal::UnitCell& cell)
         }
     }
     emit activateIndexingMode(_unitCellItem->getCell());
+    emit cellUpdated();
 }
 
 void UnitCellPropertyWidget::getLatticeParams()

@@ -183,16 +183,16 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
         PeakGraphicsItem* peak=dynamic_cast<PeakGraphicsItem*>(item);
         if (peak && _mode==INDEXING)
         {
-//            QMenu* menu = new QMenu();
-//            std::vector<Eigen::Vector3d> peaks=_indexer->index(*peak->getPeak());
-//            for (auto p : peaks)
-//            {
-//                std::ostringstream os;
-//                os << p;
-//                QAction* action=menu->addAction(os.str().c_str());
-//                connect(action,&QAction::triggered,[=](){setPeakIndex(peak->getPeak(),p);});
-//            }
-//            menu->popup(event->screenPos());
+            QMenu* menu = new QMenu();
+            std::vector<Eigen::Vector3d> peaks=_indexer->index(*peak->getPeak());
+            for (auto p : peaks)
+            {
+                std::ostringstream os;
+                os << p;
+                QAction* action=menu->addAction(os.str().c_str());
+                connect(action,&QAction::triggered,[=](){setPeakIndex(peak->getPeak(),p);});
+            }
+            menu->popup(event->screenPos());
         }
 
         // If the item is a NSXTools GI and is selectedit will become the current active GI

@@ -9,7 +9,7 @@ Indexer::Indexer(ptrUnitCell cell):
 		_dtol(0.01),
 		_angletol(0.01)
 {
-	_possiblePeaks=_cell->generateReflectionsInSphere(1.0);
+	_possiblePeaks=_cell->generateReflectionsInSphere(2.0);
 }
 
 Indexer::~Indexer()

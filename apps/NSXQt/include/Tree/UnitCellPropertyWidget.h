@@ -26,6 +26,7 @@ public:
 
 signals:
     void activateIndexingMode(std::shared_ptr<SX::Crystal::UnitCell>);
+    void cellUpdated();
 private slots:
     void getLatticeParams();
     void setLatticeParams();

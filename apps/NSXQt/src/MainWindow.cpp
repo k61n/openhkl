@@ -194,6 +194,7 @@ void MainWindow::on_action_peak_find_triggered()
     std::size_t npeaks=0;
     int comp = 0;
 
+
     for (auto numor : numors)
     {
         numor->clearPeaks();
@@ -218,6 +219,11 @@ void MainWindow::on_action_peak_find_triggered()
             qCritical() << "Peak finder caused a memory exception" << e.what();
         }
 
+        int ncells=numor->getDiffractometer()->getSample()->getNCrystals();
+        std::shared_ptr<SX::Crystal::UnitCell> cell;
+        if (ncells)
+            cell=numor->getDiffractometer()->getSample()->getUnitCell(0);
+
         SX::Geometry::AABB<double,3> dAABB(Eigen::Vector3d(0,0,0),Eigen::Vector3d(numor->getDiffractometer()->getDetector()->getNCols(),numor->getDiffractometer()->getDetector()->getNRows(),numor->getNFrames()-1));
         for (auto& blob : blobs)
         {
@@ -239,7 +245,8 @@ void MainWindow::on_action_peak_find_triggered()
 
             if (!dAABB.contains(*(p->getPeak())))
                 p->setSelected(false);
-
+            if (cell)
+                p->setBasis(cell);
             numor->addPeak(p);
             npeaks++;
         }
@@ -428,6 +435,7 @@ void MainWindow::setInspectorWidget(QWidget* w)
     if (UnitCellPropertyWidget* widget=dynamic_cast<UnitCellPropertyWidget*>(w))
     {
         connect(widget,SIGNAL(activateIndexingMode(std::shared_ptr<SX::Crystal::UnitCell>)),_ui->_dview->getScene(),SLOT(activateIndexingMode(std::shared_ptr<SX::Crystal::UnitCell>)));
+        connect(widget,SIGNAL(cellUpdated()),_ui->_dview->getScene(),SLOT(updatePeaks()));
     }
 }
 
