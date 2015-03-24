@@ -22,9 +22,6 @@ UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *par
     QWidget(parent),
     ui(new Ui::UnitCellPropertyWidget)
 {
-
-
-
     ui->setupUi(this);
     // Special character
     ui->labelalpha->setText(QString((QChar) 0x03B1));
@@ -112,7 +109,7 @@ void UnitCellPropertyWidget::setCell(const SX::Crystal::UnitCell& cell)
     auto datamap=_unitCellItem->getExperiment()->getData();
     for (auto data: datamap)
     {
-        auto peaks=data.second->getPeaks();
+        auto& peaks=data.second->getPeaks();
         for (auto p: peaks)
         {
             p->setBasis(_unitCellItem->getCell());

@@ -14,7 +14,8 @@ DialogRefineUnitCell::DialogRefineUnitCell(SX::Instrument::Experiment* experimen
     _experiment(experiment),
     _cell(cell),
     QDialog(parent),
-    ui(new Ui::DialogRefineUnitCell)
+    ui(new Ui::DialogRefineUnitCell),
+    _minimizer()
 {
     ui->setupUi(this);
 
@@ -42,13 +43,6 @@ DialogRefineUnitCell::DialogRefineUnitCell(SX::Instrument::Experiment* experimen
     getLatticeParams();
     getWavelength();
 
-    qDebug() << "Detector" << _experiment->getDiffractometer()->getDetector();
-
-    // Set the UB minimizer with parameters
-    _minimizer.setDetector(_experiment->getDiffractometer()->getDetector());
-    _minimizer.setSource(_experiment->getDiffractometer()->getSource());
-    _minimizer.setSample(_experiment->getDiffractometer()->getSample());
-    _minimizer.setStartingUBMatrix(_cell->getReciprocalStandardM());
 }
 
 DialogRefineUnitCell::~DialogRefineUnitCell()
@@ -81,7 +75,6 @@ void DialogRefineUnitCell::cellSampleHasChanged(int i, int j)
     if (j==1) // new offset has been entered
     {
         auto axis=_experiment->getDiffractometer()->getSample()->getGonio()->getAxis(i);
-        qDebug() << "Axis sample" << axis;
         axis->setOffset(ui->tableWidget_Sample->item(i,j)->data(Qt::EditRole).toDouble());
     }
 }
@@ -91,15 +84,13 @@ void DialogRefineUnitCell::cellDetectoreHasChanged(int i, int j)
     if (j==1) // new offset has been entered
     {
         auto axis=_experiment->getDiffractometer()->getDetector()->getGonio()->getAxis(i);
-        qDebug() << "Axis detector" << axis;
-        axis->setOffset(ui->tableWidget_Sample->item(i,j)->data(Qt::EditRole).toDouble());
+        axis->setOffset(ui->tableWidget_Detector->item(i,j)->data(Qt::EditRole).toDouble());
     }
 }
 
 void DialogRefineUnitCell::on_pushButton_Refine_clicked()
 {
-    fixParameter(false,9);
-
+    int nhits=0;
     const auto& mapdata=_experiment->getData();
     for (auto data: mapdata)
     {
@@ -107,9 +98,24 @@ void DialogRefineUnitCell::on_pushButton_Refine_clicked()
         for (auto peak: peaks)
         {
             if (peak->hasIntegerHKL(*(_cell.get())) && !peak->isMasked() && peak->isSelected())
-            _minimizer.addPeak(*peak);
+            {
+                _minimizer.addPeak(*peak);
+                nhits++;
+            }
         }
     }
+    qDebug() << nhits << " peaks considered for UB-refinement";
+
+    // Set the UB minimizer with parameters
+    _minimizer.setDetector(_experiment->getDiffractometer()->getDetector());
+    _minimizer.setSource(_experiment->getDiffractometer()->getSource());
+    _minimizer.setSample(_experiment->getDiffractometer()->getSample());
+
+    fixParameter(false,9);
+
+    auto M=_cell->getReciprocalStandardM();
+    _minimizer.setStartingUBMatrix(M);
+
     //
     int test=_minimizer.run(100);
     std::cout << "output" << test << std::endl;
