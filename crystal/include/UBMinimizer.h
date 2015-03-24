@@ -155,7 +155,7 @@ struct UBFunctor : public Functor<double>
 	 * @brief Set the offsets that will be fixed during the minization
 	 * @param idx the index of the offset (starting from 9)
 	 */
-	void setFixedParameters(unsigned int idx);
+	void refineParameter(unsigned int idx, bool refine);
 
 	std::vector<Peak3D> _peaks;
 	SX::Instrument::Detector* _detector;
@@ -208,7 +208,7 @@ public:
 	 * @brief Set the offsets that will be fixed during the minization
 	 * @param idx the index of the offset (starting from 9)
 	 */
-	void setFixedParameters(unsigned int idx);
+	void refineParameter(unsigned int idx, bool refine);
 	/*
 	 * @brief Set the sample related to the peaks collected for the minimization
 	 * @param sample the sample

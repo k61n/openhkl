@@ -166,7 +166,7 @@ void UBFunctor::resetParameters()
 	}
 }
 
-void UBFunctor::setFixedParameters(unsigned int idx)
+void UBFunctor::refineParameter(unsigned int idx, bool refine)
 {
 	if (!_detector || !_sample || !_source)
 		throw SX::Kernel::Error<UBFunctor>("A detector, sample and source must be specified prior to fixing parameters.");
@@ -174,27 +174,32 @@ void UBFunctor::setFixedParameters(unsigned int idx)
 	if (idx>=static_cast<unsigned int>(inputs()))
 		return;
 
-	_fixedParameters.insert(idx);
+	bool fixed=!refine;
+
+	if (fixed)
+		_fixedParameters.insert(idx);
+	else
+	{
+		auto it=_fixedParameters.find(idx);
+		if (it!=_fixedParameters.end())
+			_fixedParameters.erase(it);
+	}
 
 	unsigned int ii=idx-9;
 	if (ii==0)
 	{
-		_source->setOffsetFixed(true);
+		_source->setOffsetFixed(fixed);
 		return;
 	}
 
 	ii--;
 
-	if (ii<_detector->getNAxes())
-	{
-		_detector->getGonio()->getAxis(ii)->setOffsetFixed(true);
-		return;
-	}
-	ii-=_detector->getNAxes();
 	if (ii<_sample->getNAxes())
-	{
-		_sample->getGonio()->getAxis(ii)->setOffsetFixed(true);
-	}
+		_sample->getGonio()->getAxis(ii)->setOffsetFixed(fixed);
+
+	ii-=_sample->getNAxes();
+	if (ii<_detector->getNAxes())
+		_detector->getGonio()->getAxis(ii)->setOffsetFixed(fixed);
 }
 
 UBMinimizer::UBMinimizer() : _functor(UBFunctor()), _solution(), _start()
@@ -222,9 +227,9 @@ void UBMinimizer::setSource(SX::Instrument::Source* source)
 	_functor.setSource(source);
 }
 
-void UBMinimizer::setFixedParameters(unsigned int idx)
+void UBMinimizer::refineParameter(unsigned int idx, bool refine)
 {
-	_functor.setFixedParameters(idx);
+	_functor.refineParameter(idx, refine);
 }
 
 

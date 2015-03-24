@@ -29,16 +29,15 @@ DialogRefineUnitCell::DialogRefineUnitCell(SX::Instrument::Experiment* experimen
     ui->tableWidget_Sample->setEditTriggers(QAbstractItemView::AllEditTriggers);
     ui->tableWidget_Detector->setEditTriggers(QAbstractItemView::AllEditTriggers);
 
+    // Set the UB minimizer with parameters
+    _minimizer.setDetector(_experiment->getDiffractometer()->getDetector());
+    _minimizer.setSource(_experiment->getDiffractometer()->getSource());
+    _minimizer.setSample(_experiment->getDiffractometer()->getSample());
 
     createTable();
 
     // Connect checkbox for wavelength refinement
-    connect(ui->checkBox_Wavelength,&QCheckBox::toggled,
-            [=](bool checked)
-    {
-        fixParameter(checked,9);
-    }
-    );
+    connect(ui->checkBox_Wavelength,&QCheckBox::toggled,[=](bool checked){refineParameter(checked,9);});
 
     getLatticeParams();
     getWavelength();
@@ -65,17 +64,19 @@ void DialogRefineUnitCell::getWavelength()
     ui->doubleSpinBox_Wavelength->setValue(source->getWavelength());
 }
 
-void DialogRefineUnitCell::fixParameter(bool checked, int i)
+void DialogRefineUnitCell::refineParameter(bool checked, int i)
 {
-    if (!checked) // if refine flag is off
-        _minimizer.setFixedParameters(i);
+	_minimizer.refineParameter(i,checked);
 }
 void DialogRefineUnitCell::cellSampleHasChanged(int i, int j)
 {
     if (j==1) // new offset has been entered
     {
         auto axis=_experiment->getDiffractometer()->getSample()->getGonio()->getAxis(i);
+        bool offsetFixed=axis->hasOffsetFixed();
+        axis->setOffsetFixed(false);
         axis->setOffset(ui->tableWidget_Sample->item(i,j)->data(Qt::EditRole).toDouble());
+        axis->setOffsetFixed(offsetFixed);
     }
 }
 
@@ -84,7 +85,10 @@ void DialogRefineUnitCell::cellDetectoreHasChanged(int i, int j)
     if (j==1) // new offset has been entered
     {
         auto axis=_experiment->getDiffractometer()->getDetector()->getGonio()->getAxis(i);
+        bool offsetFixed=axis->hasOffsetFixed();
+        axis->setOffsetFixed(false);
         axis->setOffset(ui->tableWidget_Detector->item(i,j)->data(Qt::EditRole).toDouble());
+        axis->setOffsetFixed(offsetFixed);
     }
 }
 
@@ -106,17 +110,11 @@ void DialogRefineUnitCell::on_pushButton_Refine_clicked()
     }
     qDebug() << nhits << " peaks considered for UB-refinement";
 
-    // Set the UB minimizer with parameters
-    _minimizer.setDetector(_experiment->getDiffractometer()->getDetector());
-    _minimizer.setSource(_experiment->getDiffractometer()->getSource());
-    _minimizer.setSample(_experiment->getDiffractometer()->getSample());
-
-    fixParameter(false,9);
+    refineParameter(false,9);
 
     auto M=_cell->getReciprocalStandardM();
     _minimizer.setStartingUBMatrix(M);
 
-    //
     int test=_minimizer.run(100);
     std::cout << "output" << test << std::endl;
     std::cout <<_minimizer.getSolution() << std::endl;
@@ -147,13 +145,9 @@ void DialogRefineUnitCell::createTable()
         ui->tableWidget_Sample->setItem(i,0,item0);
         ui->tableWidget_Sample->setItem(i,1,item1);
         QCheckBox* check=new QCheckBox(this);
+        check->setChecked(!axis->hasOffsetFixed());
         // Connect checkbox to fixing this parameter
-        connect(check,&QCheckBox::toggled,
-                [=](bool checked)
-        {
-            fixParameter(checked,10+i);
-        }
-        );
+        connect(check,&QCheckBox::toggled,[=](bool checked){refineParameter(checked,10+i);});
         ui->tableWidget_Sample->setCellWidget(i,2,check);
 
     }
@@ -180,12 +174,7 @@ void DialogRefineUnitCell::createTable()
         ui->tableWidget_Detector->setItem(i,1,item1);
         QCheckBox* check=new QCheckBox(this);
         //Connect checkbox to fixing parameters
-        connect(check,&QCheckBox::toggled,
-                [=](bool checked)
-        {
-            fixParameter(checked,10+i+naxesSample);
-        }
-        );
+        connect(check,&QCheckBox::toggled,[=](bool checked){refineParameter(checked,10+i+naxesSample);});
         ui->tableWidget_Detector->setCellWidget(i,2,check);
     }
 

@@ -136,7 +136,7 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
                         minimizer.setDetector(detector);
                         minimizer.setSource(source);
                         for (int i=9;i<=17;++i)
-                            minimizer.setFixedParameters(i);
+                            minimizer.refineParameter(i,false);
                         int success=0;
                         for (auto peak : _peaks)
                         {

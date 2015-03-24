@@ -25,7 +25,7 @@ public:
     void getLatticeParams();
     void getWavelength();
 private slots:
-    void fixParameter(bool checked,int i);
+    void refineParameter(bool checked,int i);
     void cellSampleHasChanged(int i,int j);
     void cellDetectoreHasChanged(int i,int j);
     void on_pushButton_Refine_clicked();

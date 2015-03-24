@@ -1,21 +1,22 @@
 #include <set>
 
+#include <QMessageBox>
 #include <QtDebug>
 
+#include "Gonio.h"
 #include "IData.h"
+#include "IMaterial.h"
+#include "MaterialManager.h"
 #include "UnitCell.h"
 #include "Units.h"
 
 #include "ui_UnitCellPropertyWidget.h"
+#include "DialogFindUnitCell.h"
+#include "DialogRefineUnitCell.h"
+#include "DialogTransformationMatrix.h"
 #include "Logger.h"
 #include "Tree/UnitCellPropertyWidget.h"
 #include "Tree/UnitCellItem.h"
-#include "DialogFindUnitCell.h"
-#include "DialogRefineUnitCell.h"
-#include "MaterialManager.h"
-#include "IMaterial.h"
-#include <QMessageBox>
-#include "DialogTransformationMatrix.h"
 
 UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *parent) :
     _unitCellItem(caller),
@@ -27,7 +28,6 @@ UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *par
     ui->labelalpha->setText(QString((QChar) 0x03B1));
     ui->labelbeta->setText(QString((QChar) 0x03B2));
     ui->labelgamma->setText(QString((QChar) 0x03B3));
-
 
     connect(ui->doubleSpinBoxa,SIGNAL(editingFinished()),this,SLOT(setLatticeParams()));
     connect(ui->doubleSpinBoxb,SIGNAL(editingFinished()),this,SLOT(setLatticeParams()));

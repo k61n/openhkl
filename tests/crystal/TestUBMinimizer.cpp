@@ -90,9 +90,9 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
     minimizer.setDetector(D9);
     minimizer.setSample(sample);
     minimizer.setSource(source);
-    minimizer.setFixedParameters(9); // Source
-    minimizer.setFixedParameters(11); // Detector y
-    minimizer.setFixedParameters(14); // Detector phi
+    minimizer.refineParameter(9,false); // Source
+    minimizer.refineParameter(11,false); // Detector y
+    minimizer.refineParameter(14,false); // Detector phi
 
     for (auto& peak : _peaks)
 		minimizer.addPeak(peak);
