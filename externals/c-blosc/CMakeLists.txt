@@ -50,7 +50,7 @@
 
 
 cmake_minimum_required(VERSION 2.8)
-project(blosc)
+#project(blosc)
 
 # parse the full version numbers from blosc.h
 file(READ ${CMAKE_CURRENT_SOURCE_DIR}/blosc/blosc.h _blosc_h_contents)
@@ -66,24 +66,18 @@ string(REGEX REPLACE ".*#define[ \t]+BLOSC_VERSION_STRING[ \t]+\"([-0-9A-Za-z.]+
 message("Configuring for Blosc version: " ${BLOSC_VERSION_STRING})
 
 # options
-option(BUILD_STATIC
-    "Build a static version of the blosc library." ON)
-option(BUILD_HDF5_FILTER
-    "Build a blosc based compression filter for the HDF5 library" OFF)
-option(BUILD_TESTS
-    "Build test programs form the blosc compression library" ON)
-option(BUILD_BENCHMARKS
-    "Build benchmark programs form the blosc compression library" ON)
-option(DEACTIVATE_LZ4
-    "Do not include support for the LZ4 library." OFF)
-option(DEACTIVATE_SNAPPY
-    "Do not include support for the SNAPPY library." OFF)
-option(DEACTIVATE_ZLIB
-    "Do not include support for the ZLIB library." OFF)
-option(PREFER_EXTERNAL_COMPLIBS
-    "When found, use the installed compression libs instead of included sources." ON)
+option(BUILD_STATIC "Build a static version of the blosc library." ON)
+option(BUILD_HDF5_FILTER "Build a blosc based compression filter for the HDF5 library" OFF)
+# NSXTool: change the default value to OFF
+option(BUILD_TESTS "Build test programs form the blosc compression library" OFF)
+# NSXTool: change the default value to OFF
+option(BUILD_BENCHMARKS "Build benchmark programs form the blosc compression library" OFF)
+option(DEACTIVATE_LZ4 "Do not include support for the LZ4 library." OFF)
+option(DEACTIVATE_SNAPPY "Do not include support for the SNAPPY library." OFF)
+option(DEACTIVATE_ZLIB "Do not include support for the ZLIB library." OFF)
+option(PREFER_EXTERNAL_COMPLIBS "When found, use the installed compression libs instead of included sources." ON)
 
-# Commented to fit NSXTOOL
+# NSXTool: commented
 #set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 if(NOT PREFER_EXTERNAL_COMPLIBS)
@@ -126,7 +120,8 @@ endif(NOT DEACTIVATE_ZLIB)
 # create the config.h file
 configure_file ("blosc/config.h.in"  "blosc/config.h" )
 # now make sure that you set the build directory on your "Include" path when compiling
-include_directories("${PROJECT_BINARY_DIR}/blosc/")
+# NSXTOOL: modified the path from ${PROJECT_BINARY_DIR}/externals/c-blosc/blosc/ to ${PROJECT_BINARY_DIR}/blosc/
+include_directories("${PROJECT_BINARY_DIR}/externals/c-blosc/blosc/")
 
 # force the default build type to Release.
 if(NOT CMAKE_BUILD_TYPE)

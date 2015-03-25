@@ -8,6 +8,12 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/externals/c-blosc
 
 project(NSXTOOL_PROJECT)
 
+###########################################################################
+# Options
+###########################################################################
+
+option(BUILD_NSXQT "Build NSXQt application." OFF)
+
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release")
 endif()
@@ -48,6 +54,19 @@ find_package(TIFF)
 
 #### Internal dependencies
 add_subdirectory(externals)
+
+if (BUILD_NSXQT)
+    #### Find the QtWidgets library (based on cmake < 2.8.9 recipe http://doc.qt.io/qt-5/cmake-manual.html)
+    # Ubuntu: you may have to install libegl1-mesa-dev to make the Find work
+    find_package(Qt5Widgets)
+    # Add the include directories for the Qt 5 Widgets module to
+    # the compile lines.
+    include_directories(${Qt5Widgets_INCLUDE_DIRS})
+    # Use the compile definitions defined in the Qt 5 Widgets module
+    add_definitions(${Qt5Widgets_DEFINITIONS})
+    # Add compiler flags for building executables (-fPIE)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
+endif()
 
 ###########################################################################
 # Compiler/linker stuffs
@@ -121,6 +140,14 @@ find_library(FFTW3_LIBRARIES NAMES fftw3 libfftw3)
  
 # Link
 target_link_libraries(NSXTool ${Boost_LIBRARIES} ${PYTHON_LIBRARIES} ${FFTW3_LIBRARIES} ${HDF5_LIBRARIES} ${BLOSC_LIBRARY} ${TIFF_LIBRARY})
+
+if (BUILD_NSXQT)
+    qt5_generate_moc(${CMAKE_SOURCE_DIR}/apps/NSXQt/src/Main.cpp Main.moc)
+    # Tell CMake to create the nsxqt executable
+    add_executable(nsxqt ${CMAKE_SOURCE_DIR}/apps/NSXQt/src/Main.cpp Main.moc)
+    # Link the nsxqt executable to NSXTool and the Qt 5 widgets libraries.
+    target_link_libraries(nsxqt NSXTool Qt5::Widgets)
+endif()
 
 # Enable unit testing with ctest. This must be called before any calls to add_subdirectory 
 enable_testing()

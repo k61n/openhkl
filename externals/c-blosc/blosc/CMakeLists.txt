@@ -1,7 +1,8 @@
 # a simple way to detect that we are using CMAKE
 add_definitions(-DUSING_CMAKE)
 
-set(INTERNAL_LIBS ${CMAKE_SOURCE_DIR}/internal-complibs)
+# NSXTOOL: modified the path
+set(INTERNAL_LIBS ${CMAKE_SOURCE_DIR}/externals/c-blosc/internal-complibs)
 
 # includes
 if(NOT DEACTIVATE_LZ4)
