@@ -4,6 +4,7 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 
 # Add some paths to the cmake module search path.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/externals/c-blosc/cmake)
 
 project(NSXTOOL_PROJECT)
 
@@ -32,17 +33,21 @@ elseif(NOT Boost_FOUND)
 endif()
 
 ###### Find OPENMP 
-find_package (OpenMP)
+find_package(OpenMP)
 
 ###### Find the Eigen3 
 find_package(Eigen3)
+include_directories(${EIGEN3_INCLUDE_DIR})
+
 ###### Search the HDF5 library
 find_package(HDF5 COMPONENTS CXX)
 find_package(Blosc)
 
-######
+###### TIFF library
 find_package(TIFF)
-include_directories(${EIGEN3_INCLUDE_DIR})
+
+#### Internal dependencies
+add_subdirectory(externals)
 
 ###########################################################################
 # Compiler/linker stuffs
@@ -142,7 +147,7 @@ install(DIRECTORY resources/databases
         DIRECTORY_PERMISSIONS OWNER_READ OWNER_EXECUTE OWNER_WRITE GROUP_WRITE GROUP_READ GROUP_EXECUTE WORLD_WRITE WORLD_READ WORLD_EXECUTE
         PATTERN "CVS" EXCLUDE 
         PATTERN ".svn" EXCLUDE)
-   
+
 ###########################################################################
 # CPack settings
 ###########################################################################

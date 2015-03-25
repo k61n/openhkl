@@ -1,0 +1,1 @@
+/usr/bin/gcc  -msse2 -O3 -DNDEBUG    CMakeFiles/test_basics.dir/test_basics.c.o  -o test_basics -rdynamic -L/users/pellegrini/Downloads/c-blosc-master/buid/blosc ../blosc/libblosc.so.1.5.0 -lpthread -lz -Wl,-rpath,/users/pellegrini/Downloads/c-blosc-master/buid/blosc 

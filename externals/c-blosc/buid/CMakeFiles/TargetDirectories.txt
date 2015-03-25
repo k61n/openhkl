@@ -1,0 +1,6 @@
+/users/pellegrini/Downloads/c-blosc-master/buid/bench/CMakeFiles/bench.dir
+/users/pellegrini/Downloads/c-blosc-master/buid/blosc/CMakeFiles/blosc_shared.dir
+/users/pellegrini/Downloads/c-blosc-master/buid/blosc/CMakeFiles/blosc_static.dir
+/users/pellegrini/Downloads/c-blosc-master/buid/tests/CMakeFiles/test_api.dir
+/users/pellegrini/Downloads/c-blosc-master/buid/tests/CMakeFiles/test_basics.dir
+/users/pellegrini/Downloads/c-blosc-master/buid/CMakeFiles/uninstall.dir

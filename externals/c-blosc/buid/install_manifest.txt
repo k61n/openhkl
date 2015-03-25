@@ -1,0 +1,5 @@
+/usr/local/include/blosc.h
+/usr/local/lib/libblosc.so.1.5.0
+/usr/local/lib/libblosc.so.1
+/usr/local/lib/libblosc.so
+/usr/local/lib/libblosc.a
