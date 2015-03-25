@@ -1,7 +1,6 @@
 #include "UBMinimizer.h"
 
 #include <Eigen/Dense>
-
 #include "Component.h"
 #include "ComponentState.h"
 #include "Detector.h"
