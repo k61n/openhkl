@@ -30,7 +30,6 @@
 #ifndef NSXTOOL_ERROR_H_
 #define NSXTOOL_ERROR_H_
 
-#include <iostream>
 #include <exception>
 #include <string>
 

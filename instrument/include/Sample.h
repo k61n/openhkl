@@ -31,12 +31,13 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 #include "Component.h"
 #include "ConvexHull.h"
 #include "IMaterial.h"
 #include "UnitCell.h"
-#include <vector>
+
 namespace SX
 {
 namespace Instrument

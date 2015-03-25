@@ -28,10 +28,11 @@
 
 #ifndef NSXTOOL_ROTAXIS_H_
 #define NSXTOOL_ROTAXIS_H_
-#include "Axis.h"
-#include <iostream>
+
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
+
+#include "Axis.h"
 
 namespace SX
 {

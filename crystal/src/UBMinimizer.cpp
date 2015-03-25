@@ -7,7 +7,6 @@
 #include "Detector.h"
 #include "Gonio.h"
 #include "Error.h"
-#include "Gonio.h"
 #include "Peak3D.h"
 #include "Sample.h"
 #include "TransAxis.h"
@@ -301,7 +300,6 @@ int UBMinimizer::run(unsigned int maxIter)
 		{
 			if (fParams[i])
 			{
-				std::cout << "I remove column and row" << i-removed << std::endl;
 				removeColumn(JtJ,i-removed);
 				removeRow(JtJ,i-removed);
 				removed++;
@@ -312,10 +310,6 @@ int UBMinimizer::run(unsigned int maxIter)
 		Eigen::MatrixXd covariance=JtJ.inverse();
 
 	    covariance *= mse;
-
-	    std::cout << "Covariance" << std::endl;
-
-	    std::cout << covariance;
 
 	    _solution = UBSolution(_functor._detector, _functor._sample,_functor._source, x, covariance, fParams);
 	}
@@ -379,12 +373,16 @@ UBSolution::UBSolution(SX::Instrument::Detector* detector,SX::Instrument::Sample
 	_detectorOffsets = values.segment(idx,nDetectorAxes);
 	_sigmaDetectorOffsets = Eigen::VectorXd(nDetectorAxes);
 
+	idx = 9;
+
 	if (_source->hasOffsetFixed())
 		_sigmaSourceOffset=0.0;
 	else
+	{
 		_sigmaSourceOffset=sqrt(cov(9,9));
+		++idx;
+	}
 
-	idx = 10;
 
 	for (unsigned int i=0;i<nSampleAxes;++i)
 	{
@@ -407,8 +405,6 @@ UBSolution::UBSolution(SX::Instrument::Detector* detector,SX::Instrument::Sample
 			idx++;
 		}
 	}
-
-
 }
 
 UBSolution::UBSolution(const UBSolution& other)

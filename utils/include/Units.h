@@ -47,9 +47,6 @@ namespace SX
 //! a.Rotate(34*deg). This guarantees a self-consistent system of units in all calculations. This is inspired
 //! from the system of units in Geant4. Printing a property in a given unit requires to divide by the units.
 //! For example, if one wants an angle in degrees, angle/Units::deg needs to be used.
-//!
-//!
-//!
 namespace Units
 {
 

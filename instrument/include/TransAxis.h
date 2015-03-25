@@ -28,13 +28,16 @@
 
 #ifndef NSXTOOL_TRANSAXIS_H_
 #define NSXTOOL_TRANSAXIS_H_
-#include "Axis.h"
+
 #include <Eigen/Geometry>
 
-namespace SX {
-namespace Instrument {
+#include "Axis.h"
 
+namespace SX
+{
 
+namespace Instrument
+{
 
 class TransAxis : public Axis
 {
