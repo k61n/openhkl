@@ -103,6 +103,30 @@ Basis Basis::fromReciprocalVectors(const Vector3d& a, const Vector3d& b, const V
 	return Basis(av,bv,cv,reference);
 }
 
+void Basis::setDirectVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c)
+{
+
+	if (coplanar(a,b,c))
+		throw std::runtime_error("Class Basis: the reciprocal basis vectors are coplanar.");
+
+	_A.col(0) = a;
+	_A.col(1) = b;
+	_A.col(2) = c;
+	_B = _A.inverse();
+
+}
+
+void Basis::setReciprocalVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c)
+{
+	double rVolume = std::abs(a.dot(b.cross(c)));
+
+	Vector3d av=b.cross(c)/rVolume;
+	Vector3d bv=c.cross(a)/rVolume;
+	Vector3d cv=a.cross(b)/rVolume;
+
+	return setDirectVectors(av,bv,cv);
+}
+
 bool Basis::coplanar(const Vector3d& v1, const Vector3d& v2, const Vector3d& v3, double tolerance)
 {
 	return (std::abs(v1.dot(v2.cross(v3))) < tolerance);

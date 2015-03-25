@@ -84,19 +84,19 @@ int UBFunctor::operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const
 	_source->setOffset(x[naxes++]);
 
 	// Then n parameters for the detector
-	auto dgonio=_detector->getGonio();
-	if (dgonio)
-	{
-		for (unsigned int i=0;i<dgonio->getNAxes();++i)
-			dgonio->getAxis(i)->setOffset(x[naxes++]);
-	}
-
-	// finally, n parameters for the sample
 	auto sgonio=_sample->getGonio();
 	if (sgonio)
 	{
 		for (unsigned int i=0;i<sgonio->getNAxes();++i)
 			sgonio->getAxis(i)->setOffset(x[naxes++]);
+	}
+
+	// finally, n parameters for the sample
+	auto dgonio=_detector->getGonio();
+	if (dgonio)
+	{
+		for (unsigned int i=0;i<dgonio->getNAxes();++i)
+			dgonio->getAxis(i)->setOffset(x[naxes++]);
 	}
 
 	for (unsigned int i=0; i<_peaks.size();++i)
@@ -252,7 +252,6 @@ int UBMinimizer::run(unsigned int maxIter)
 	Eigen::LevenbergMarquardt<NumDiffType> minimizer(numdiff);
 	minimizer.parameters.xtol=1e-11;
 	minimizer.parameters.maxfev=maxIter;
-
 	int status = minimizer.minimize(x);
 
 	if (status==1)
@@ -302,6 +301,7 @@ int UBMinimizer::run(unsigned int maxIter)
 		{
 			if (fParams[i])
 			{
+				std::cout << "I remove column and row" << i-removed << std::endl;
 				removeColumn(JtJ,i-removed);
 				removeRow(JtJ,i-removed);
 				removed++;
@@ -312,6 +312,10 @@ int UBMinimizer::run(unsigned int maxIter)
 		Eigen::MatrixXd covariance=JtJ.inverse();
 
 	    covariance *= mse;
+
+	    std::cout << "Covariance" << std::endl;
+
+	    std::cout << covariance;
 
 	    _solution = UBSolution(_functor._detector, _functor._sample,_functor._source, x, covariance, fParams);
 	}
@@ -366,14 +370,14 @@ UBSolution::UBSolution(SX::Instrument::Detector* detector,SX::Instrument::Sample
 	_sourceOffset=values(9);
 
 	unsigned int idx = 10;
-	std::size_t nDetectorAxes=_detector->getNAxes();
-	_detectorOffsets = values.segment(idx,nDetectorAxes);
-	_sigmaDetectorOffsets = Eigen::VectorXd(nDetectorAxes);
-
-	idx+=nDetectorAxes;
 	std::size_t nSampleAxes=_sample->getNAxes();
 	_sampleOffsets = values.segment(idx,nSampleAxes);
 	_sigmaSampleOffsets = Eigen::VectorXd(nSampleAxes);
+
+	idx+=nSampleAxes;
+	std::size_t nDetectorAxes=_detector->getNAxes();
+	_detectorOffsets = values.segment(idx,nDetectorAxes);
+	_sigmaDetectorOffsets = Eigen::VectorXd(nDetectorAxes);
 
 	if (_source->hasOffsetFixed())
 		_sigmaSourceOffset=0.0;
@@ -381,16 +385,6 @@ UBSolution::UBSolution(SX::Instrument::Detector* detector,SX::Instrument::Sample
 		_sigmaSourceOffset=sqrt(cov(9,9));
 
 	idx = 10;
-	for (unsigned int i=0;i<nDetectorAxes;++i)
-	{
-		if (_detector->getGonio()->getAxis(i)->hasOffsetFixed())
-			_sigmaDetectorOffsets[i] = 0.0;
-		else
-		{
-			_sigmaDetectorOffsets[i] = std::sqrt(cov(idx,idx));
-			idx++;
-		}
-	}
 
 	for (unsigned int i=0;i<nSampleAxes;++i)
 	{
@@ -402,6 +396,18 @@ UBSolution::UBSolution(SX::Instrument::Detector* detector,SX::Instrument::Sample
 			idx++;
 		}
 	}
+
+	for (unsigned int i=0;i<nDetectorAxes;++i)
+	{
+		if (_detector->getGonio()->getAxis(i)->hasOffsetFixed())
+			_sigmaDetectorOffsets[i] = 0.0;
+		else
+		{
+			_sigmaDetectorOffsets[i] = std::sqrt(cov(idx,idx));
+			idx++;
+		}
+	}
+
 
 }
 

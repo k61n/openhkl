@@ -75,6 +75,8 @@ public:
 	//! Build a basis from a set of three reciprocal vectors.
 	static Basis fromReciprocalVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c, ptrBasis reference=nullptr);
 	//! Returns the norm of e1 basis vector.
+	void setDirectVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c);
+	void setReciprocalVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c);
 	double getA() const;
 	//! Returns the norm of e2 basis vector.
 	double getB() const;

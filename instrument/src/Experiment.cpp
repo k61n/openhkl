@@ -124,7 +124,7 @@ void Experiment::addData(IData* data)
 	}
 	else
 	{
-		if (wav!=_diffractometer->getSource()->getWavelength())
+		if (std::abs(wav-_diffractometer->getSource()->getWavelength())>1e-5)
 			throw std::runtime_error("trying to mix data with different wavelengths");
 	}
 

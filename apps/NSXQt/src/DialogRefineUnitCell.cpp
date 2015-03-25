@@ -42,6 +42,9 @@ DialogRefineUnitCell::DialogRefineUnitCell(SX::Instrument::Experiment* experimen
     getLatticeParams();
     getWavelength();
 
+    for (int i=9;i<=17;++i)
+        _minimizer.refineParameter(i,false);
+
 }
 
 DialogRefineUnitCell::~DialogRefineUnitCell()
@@ -110,19 +113,24 @@ void DialogRefineUnitCell::on_pushButton_Refine_clicked()
     }
     qDebug() << nhits << " peaks considered for UB-refinement";
 
-    refineParameter(false,9);
 
     auto M=_cell->getReciprocalStandardM();
     _minimizer.setStartingUBMatrix(M);
 
     int test=_minimizer.run(100);
-    std::cout << "output" << test << std::endl;
+    if (test!=1)
+        return;
+
     std::cout <<_minimizer.getSolution() << std::endl;
+    auto solution=_minimizer.getSolution();
+    _cell->setReciprocalVectors(solution._ub.row(0),solution._ub.row(1),solution._ub.row(2));
     createTable();
 }
 
 void DialogRefineUnitCell::createTable()
 {
+
+    getLatticeParams();
 
     //Get the sample, iterate over axis
     auto sample=_experiment->getDiffractometer()->getSample();
