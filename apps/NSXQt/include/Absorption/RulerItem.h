@@ -7,7 +7,6 @@
 
 class RulerItem : public QGraphicsItem
 {
-
 public:
     //! Constructor ...
     RulerItem(QGraphicsItem* parent = 0);
@@ -23,7 +22,7 @@ public:
                 QWidget *widget);
     //! Overloaded bounding box
     QRectF boundingRect() const;
-public slots:
+public:
     //! When first point is clicked, draw
     void startDrawingAt(const QPointF&);
     //! when ruler end is dragged
