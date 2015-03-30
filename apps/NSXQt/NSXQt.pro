@@ -133,7 +133,7 @@ HEADERS  += include/MainWindow.h \
     include/Tree/UnitCellPropertyWidget.h \
     include/GraphicsItems/SliceRectGraphicsItem.h \
     include/DialogFindUnitCell.h \
-    include/Tree/SourcePropertWidget.h \
+    include/Tree/SourcePropertyWidget.h \
     include/DialogRefineUnitCell.h \
     include/Tree/NormalizePeaksItem.h \
     include/NumorsConversionDialog.h \
@@ -155,7 +155,7 @@ FORMS    += ui/mainwindow.ui \
     ui/Tree/ShapePropertyWidget.ui \
     ui/Tree/UnitCellPropertyWidget.ui \
     ui/DialogFindUnitCell.ui \
-    ui/Tree/SourcePropertWidget.ui \
+    ui/Tree/SourcePropertyWidget.ui \
     ui/DialogRefineUnitCell.ui \
     ui/NumorsConversionDialog.ui \
     ui/Absorption/DialogMCAbsorption.ui
