@@ -1,5 +1,5 @@
-#include "include/Tree/SourcePropertWidget.h"
-#include "ui_SourcePropertWidget.h"
+#include "include/Tree/SourcePropertyWidget.h"
+#include "ui_SourcePropertyWidget.h"
 #include "include/Tree/SourceItem.h"
 #include "Diffractometer.h"
 #include "Source.h"
@@ -8,7 +8,7 @@
 SourcePropertyWidget::SourcePropertyWidget(SourceItem* caller,QWidget *parent) :
     _caller(caller),
     QWidget(parent),
-    ui(new Ui::SourcePropertWidget)
+    ui(new Ui::SourcePropertyWidget)
 {
     ui->setupUi(this);
     auto source=_caller->getExperiment()->getDiffractometer()->getSource();
