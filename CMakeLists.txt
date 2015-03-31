@@ -178,7 +178,10 @@ if (ENABLE_CPACK)
     set(BOOST_MIN_VERSION 1.54.0)      
 
     # rhel requirements
-    set(CPACK_RPM_PACKAGE_REQUIRES "boost >= ${BOOST_MIN_VERSION}")
+    set(CPACK_RPM_PACKAGE_REQUIRES "libQt5Core")
+    set(CPACK_RPM_PACKAGE_REQUIRES "libQt5PrintSupport")
+    set(CPACK_RPM_PACKAGE_REQUIRES "libQt5Widgets")
+    set(CPACK_RPM_PACKAGE_REQUIRES "libQt5Gui")
     set(CPACK_RPM_PACKAGE_REQUIRES "fftw3")
     set(CPACK_RPM_PACKAGE_REQUIRES "eigen3")
     set(CPACK_RPM_PACKAGE_REQUIRES "hdf5")
@@ -186,20 +189,20 @@ if (ENABLE_CPACK)
     set(CPACK_RPM_PACKAGE_REQUIRES "python")
     set(CPACK_RPM_PACKAGE_REQUIRES "numpy")
       
-    if ("${UNIX_DIST}" MATCHES "Ubuntu")
-        string(REPLACE "," ", " CPACK_DEBIAN_PACKAGE_DEPENDS
-        "libboost-filesystem-dev,"
-        "libboost-date-time-dev,"
-        "libboost-python-dev,"
-        "libboost-system-dev,"
-        "libboost-test-dev,"
-        "libeigen3-dev,"
-        "libfftw3-dev,"
-        "libtiff-dev,"
-        "libhdf5-serial-dev,"
-        "python,"
-        "python-numpy")
-    endif()
+#    if ("${UNIX_DIST}" MATCHES "Ubuntu")
+#        string(REPLACE "," ", " CPACK_DEBIAN_PACKAGE_DEPENDS
+#        "libboost-filesystem1.55-dev,"
+#        "libboost-date-time-dev,"
+#        "libboost-python-dev,"
+#        "libboost-system-dev,"
+#        "libboost-test-dev,"
+#        "libeigen3-dev,"
+#        "libfftw3-dev,"
+#        "libtiff-dev,"
+#        "libhdf5-serial-dev,"
+#        "python,"
+#        "python-numpy")
+#    endif()
     
     include(CPack)
     
