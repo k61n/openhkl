@@ -47,13 +47,16 @@ include_directories(${EIGEN3_INCLUDE_DIR})
 
 ###### Search the HDF5 library
 find_package(HDF5 COMPONENTS CXX)
-find_package(Blosc)
+find_package(Blosc REQUIRED)
+if (BLOSC_FOUND==True)
+        message("Blosc library found")
+else()
+        #### Internal dependencies
+        add_subdirectory(externals/c-blosc)
+endif()
 
 ###### TIFF library
 find_package(TIFF)
-
-#### Internal dependencies
-add_subdirectory(externals)
 
 ###########################################################################
 # Compiler/linker stuffs
@@ -101,7 +104,8 @@ include_directories(chemistry/include
                     materials/include
                     utils/include
                     crystal/include
-                    instrument/include)
+                    instrument/include
+                    externals/c-blosc/blosc)
 
 file(GLOB_RECURSE sources chemistry/src/*.cpp
                           data/src/*.cpp
@@ -126,7 +130,7 @@ endif()
 find_library(FFTW3_LIBRARIES NAMES fftw3 libfftw3)
  
 # Link
-target_link_libraries(NSXTool ${Boost_LIBRARIES} ${PYTHON_LIBRARIES} ${FFTW3_LIBRARIES} ${HDF5_LIBRARIES} ${BLOSC_LIBRARY} ${TIFF_LIBRARY})
+target_link_libraries(NSXTool blosc_shared ${Boost_LIBRARIES} ${PYTHON_LIBRARIES} ${FFTW3_LIBRARIES} ${HDF5_LIBRARIES} ${TIFF_LIBRARY})
 
 if (BUILD_NSXQT)
 	add_subdirectory(apps)

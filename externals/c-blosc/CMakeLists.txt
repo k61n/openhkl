@@ -78,7 +78,7 @@ option(DEACTIVATE_ZLIB "Do not include support for the ZLIB library." OFF)
 option(PREFER_EXTERNAL_COMPLIBS "When found, use the installed compression libs instead of included sources." ON)
 
 # NSXTool: commented
-#set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 if(NOT PREFER_EXTERNAL_COMPLIBS)
     message(STATUS "Finding external libraries disabled.  Using internal sources.")
@@ -118,10 +118,10 @@ if(NOT DEACTIVATE_ZLIB)
 endif(NOT DEACTIVATE_ZLIB)
 
 # create the config.h file
-configure_file ("blosc/config.h.in"  "blosc/config.h" )
+configure_file ("${CMAKE_CURRENT_SOURCE_DIR}/blosc/config.h.in"  "${CMAKE_CURRENT_SOURCE_DIR}/blosc/config.h" )
 # now make sure that you set the build directory on your "Include" path when compiling
 # NSXTOOL: modified the path from ${PROJECT_BINARY_DIR}/externals/c-blosc/blosc/ to ${PROJECT_BINARY_DIR}/blosc/
-include_directories("${PROJECT_BINARY_DIR}/externals/c-blosc/blosc/")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/blosc")
 
 # force the default build type to Release.
 if(NOT CMAKE_BUILD_TYPE)
