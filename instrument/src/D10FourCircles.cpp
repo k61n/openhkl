@@ -40,8 +40,8 @@ D10FourCircles::D10FourCircles(const std::string& name) : Diffractometer(name)
     SX::Instrument::FlatDetector* detector = new SX::Instrument::FlatDetector("32x32 flat detector");
 
     detector->setDistance(488*mm);
-    detector->setWidth(64*mm);
-    detector->setHeight(64*mm);
+    detector->setWidth(80*mm);
+    detector->setHeight(80*mm);
     detector->setNPixels(32,32);
 
     // Attach a gonio to the detector
