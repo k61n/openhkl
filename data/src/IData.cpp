@@ -152,7 +152,7 @@ ComponentState IData::getDetectorInterpolatedState(double frame)
 
 }
 
-const ComponentState& IData::getDetectorState(int frame) const
+const ComponentState& IData::getDetectorState(unsigned int frame) const
 {
 	if (frame>(_detectorStates.size()-1) || frame<0)
 		throw std::runtime_error("Error when returning detector state: invalid frame value");
@@ -180,7 +180,7 @@ ComponentState IData::getSampleInterpolatedState(double frame)
 
 }
 
-const ComponentState& IData::getSampleState(int frame) const
+const ComponentState& IData::getSampleState(unsigned int frame) const
 {
 
 	if (frame>(_sampleStates.size()-1) || frame<0)
@@ -451,57 +451,70 @@ Peak3D* IData::hasPeak(double h, double k, double l, const Matrix3d& BU)
 	Eigen::RowVector3d q=Eigen::RowVector3d(h,k,l)*BU;
 	double normQ=q.norm();
 	double sintheta=0.5*normQ*_diffractometer->getSource()->getWavelength();
-	q.normalize();
-	// Get q vectors for the two endpoints of the scans, this describes an arc or unit-length
+
+	// Get q vectors for the two endpoints of the scans, this describes an arc
 	auto q1=_diffractometer->getSample()->getGonio()->transform(q,_sampleStates.front().getValues());
 	auto q2=_diffractometer->getSample()->getGonio()->transform(q,_sampleStates.back().getValues());
-	// y coordinate of Q needs to be <0 for Bragg
+
+	// y coordinate of Q needs to be <0 somewhere in the scan for Bragg
 	if (q1[1]>0 && q2[1]>0)
 		return nullptr;
 
-	double t=0;
 	// Spherical linear interpolation between q1 and q2 gives:
 	// q=q1*sin(omega.(1-t))/sin(omega)+q2*sin(omega.t)/sin(omega) with cos(omega)=q1.q2
-	double comega=q1.dot(q2);
+	double comega=q1.dot(q2)/q1.norm()/q2.norm();
 	double omega=acos(comega);
 	double somega=sin(omega);
-	// Need to solve equation of the type a*cos(omega.t)+b*sin(omega.t)=c
+	// q must be equal to =sintheta*normQ to be  in Bragg condition,
+	// equivalent  to solving the equation of the type a*cos(omega.t)+b*sin(omega.t)=c
 	double a=q1[1];
-	double b=q2[1]/somega-somega/comega*q1[1];
-	double a2b2=a*a+b*b;
-	double c=-sintheta/a2b2;
+	double b=q2[1]/somega-comega/somega*q1[1];
+	double a2b2=sqrt(a*a+b*b);
+	double c=-sintheta*normQ/a2b2;
+
+	// No solution to the equation
 	if (c<-1 || c>1)
 		return nullptr;
-	a/=a2b2;
-	b/=a2b2;
-	t=(asin(c)-atan2(a,b))/acos(comega);
-	if (t>=0 && t<=1) // Arc intercept the scattering cone
-	{
-		Eigen::RowVector3d q=q1*sin(omega*(1-t))/somega+q2*sin(omega*t)/somega;
-		q*=normQ;
-//		q+=_diffractometer->getSource()->getki();
-		ComponentState dis=getDetectorInterpolatedState(_nFrames*t);
-		double px,py;
-		if (_diffractometer->getDetector()->receiveKf(px,py,q,dis.getValues()))
-		{
-			Peak3D* newpeak=new Peak3D(this);
-			newpeak->setMillerIndices(h,k,l);
-			ComponentState cs=getSampleInterpolatedState(_nFrames*t);
-			newpeak->setSampleState(new ComponentState(cs));
-			DetectorEvent de=_diffractometer->getDetector()->createDetectorEvent(px,py,dis.getValues());
-			newpeak->setDetectorEvent(new DetectorEvent(de));
-			newpeak->setSource(_diffractometer->getSource());
-			Eigen::Vector3d center(px,py,_nFrames*t);
-			Eigen::Vector3d eigenvalues(2,2,2);
-			Eigen::Matrix3d eigenvectors;
-			eigenvectors << 1,0,0,0,1,0,0,0,1;
-			newpeak->setPeakShape(new SX::Geometry::Ellipsoid<double,3>(center,eigenvalues,eigenvectors));
-			newpeak->setBackgroundShape(new SX::Geometry::Ellipsoid<double,3>(center,eigenvalues*2,eigenvectors));
-		}
 
-	}
-	else
+	double asinc=asin(c);
+	double alpha=atan2(a,b);
+
+	// First solution
+	double t=fmod(asinc-alpha,2*M_PI)/omega;
+	// Second  solution
+	if (t<0 || t >1)
+		t=fmod(M_PI-asinc-alpha,2*M_PI)/omega;
+	// No solutions
+	if (t<0 || t>1)
 		return nullptr;
+
+	// The q-vector in Bragg condition
+	q=q1*sin(omega*(1-t))/somega+q2*sin(omega*t)/somega;
+	// kf vector
+	q+=_diffractometer->getSource()->getki();
+	// Get detector state at this point
+	ComponentState dis=getDetectorInterpolatedState(_nFrames*t);
+	double px,py;
+	// If hit detector, new peak
+	if (_diffractometer->getDetector()->receiveKf(px,py,q,dis.getValues()))
+	{
+		Peak3D* newpeak=new Peak3D(this);
+		newpeak->setMillerIndices(h,k,l);
+		ComponentState cs=getSampleInterpolatedState(_nFrames*t);
+		newpeak->setSampleState(new ComponentState(cs));
+		DetectorEvent de=_diffractometer->getDetector()->createDetectorEvent(px,py,dis.getValues());
+		newpeak->setDetectorEvent(new DetectorEvent(de));
+		newpeak->setSource(_diffractometer->getSource());
+		Eigen::Vector3d center(px,py,_nFrames*t);
+		Eigen::Vector3d eigenvalues(2,2,2);
+		Eigen::Matrix3d eigenvectors;
+		eigenvectors << 1,0,0,0,1,0,0,0,1;
+		newpeak->setPeakShape(new SX::Geometry::Ellipsoid<double,3>(center,eigenvalues,eigenvectors));
+		newpeak->setBackgroundShape(new SX::Geometry::Ellipsoid<double,3>(center,eigenvalues*2,eigenvectors));
+		return newpeak;
+	}
+
+	return nullptr;
 
 }
 
@@ -511,7 +524,7 @@ double IData::getBackgroundLevel() const
 		return 0;
 
 	double mean=0;
-	for (int i=0;i<_nFrames;++i)
+	for (unsigned int i=0;i<_nFrames;++i)
 	{
 		mean+=_data[i].sum();
 	}

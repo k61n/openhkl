@@ -89,7 +89,7 @@ public:
     //! Gets the interpolated state between two consecutive detector states
     ComponentState getDetectorInterpolatedState(double frame);
 	//! Gets the the detector states.
-    const ComponentState& getDetectorState(int frame) const;
+    const ComponentState& getDetectorState(unsigned int frame) const;
 	const std::vector<ComponentState>& getDetectorStates() const;
     //! Gets the data filename
 	const std::string& getFilename() const;
@@ -104,7 +104,7 @@ public:
 	//! Return the peaks
 	std::set<Peak3D*>& getPeaks();
 	//! Get the sample state for frame
-	const ComponentState& getSampleState(int frame) const;
+	const ComponentState& getSampleState(unsigned int frame) const;
     //! Gets the interpolated state between two consecutive sample states
     ComponentState getSampleInterpolatedState(double frame);
 	//! Gets the the detector states.
