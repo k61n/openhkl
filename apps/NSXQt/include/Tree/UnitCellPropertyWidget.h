@@ -41,6 +41,8 @@ private slots:
     void transform(const Eigen::Matrix3d& P);
     void on_pushButton_Refine_2_clicked();
 
+    void on_pushButton_WeakPeaks_pressed();
+
 public slots:
     void setCell(const SX::Crystal::UnitCell&);    
 

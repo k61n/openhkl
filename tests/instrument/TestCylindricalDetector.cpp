@@ -66,9 +66,14 @@ BOOST_AUTO_TEST_CASE(Test_Cylindrical_Detector)
 
 	// Check that detector receive an scattering vector at the right position
 	double px, py;
-	d.receiveKf(px,py,Vector3d(0,1,0),{0.0*deg});
+	d.receiveKf(px,py,kf,{90.0*deg});
 	BOOST_CHECK_CLOSE(px,319.5,tolerance);
 	BOOST_CHECK_CLOSE(py,127.5,tolerance);
+
+	d.receiveKf(px,py,Vector3d(0.0,0.764,0.10),{0.0*deg});
+	BOOST_CHECK_CLOSE(px,319.5,tolerance);
+	BOOST_CHECK_CLOSE(py,191.25,tolerance);
+
 
 	d.receiveKf(px,py,Vector3d(1,0,0),{90.0*deg});
 	BOOST_CHECK_CLOSE(px,319.5,tolerance);

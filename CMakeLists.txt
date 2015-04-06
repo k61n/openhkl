@@ -20,13 +20,17 @@ endif()
 
 #Set package name here
 set(CPACK_PACKAGE_NAME "nsxtool")
+SET(CPACK_PACKAGE_VERSION "1.0.0")
+SET(CPACK_PACKAGE_VERSION_MAJOR "1")
+SET(CPACK_PACKAGE_VERSION_MINOR "0")
+SET(CPACK_PACKAGE_VERSION_PATCH "0")
 
 ###########################################################################
 # Check dependencies
 ###########################################################################
 
 ###### Find boost libraries  ##############
-find_package(Boost 1.54.0 COMPONENTS date_time system filesystem unit_test_framework python REQUIRED)
+find_package(Boost 1.54.0 COMPONENTS date_time system filesystem unit_test_framework REQUIRED)
 if(Boost_FOUND)
     include_directories("${Boost_INCLUDE_DIRS}")
     set(Boost_USE_STATIC_LIBS OFF)
@@ -49,10 +53,11 @@ include_directories(${EIGEN3_INCLUDE_DIR})
 find_package(HDF5 COMPONENTS CXX)
 find_package(Blosc REQUIRED)
 if (BLOSC_FOUND==True)
-        message("Blosc library found")
+        message("Blosc library found, already installed on the system")
 else()
         #### Internal dependencies
         add_subdirectory(externals/c-blosc)
+        message("Blosc library not found, will build from internal resources")
 endif()
 
 ###### TIFF library
@@ -146,7 +151,7 @@ add_subdirectory(tests)
 ###########################################################################
 
 # Install section, installing libraries 
-install(TARGETS NSXTool DESTINATION NSXTool)
+install(TARGETS NSXTool DESTINATION lib)
 
 if(UNIX)
 	set(INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include/NSXTool/")
@@ -182,31 +187,32 @@ if (ENABLE_CPACK)
     set(BOOST_MIN_VERSION 1.54.0)      
 
     # rhel requirements
-    set(CPACK_RPM_PACKAGE_REQUIRES "libQt5Core")
-    set(CPACK_RPM_PACKAGE_REQUIRES "libQt5PrintSupport")
-    set(CPACK_RPM_PACKAGE_REQUIRES "libQt5Widgets")
-    set(CPACK_RPM_PACKAGE_REQUIRES "libQt5Gui")
-    set(CPACK_RPM_PACKAGE_REQUIRES "fftw3")
-    set(CPACK_RPM_PACKAGE_REQUIRES "eigen3")
-    set(CPACK_RPM_PACKAGE_REQUIRES "hdf5")
-    set(CPACK_RPM_PACKAGE_REQUIRES "tiff")
-    set(CPACK_RPM_PACKAGE_REQUIRES "python")
-    set(CPACK_RPM_PACKAGE_REQUIRES "numpy")
+#    set(CPACK_RPM_PACKAGE_REQUIRES "libqt5core5a")
+#    set(CPACK_RPM_PACKAGE_REQUIRES "libqt5printsupport5")
+#    set(CPACK_RPM_PACKAGE_REQUIRES "libqt5widgets5")
+#    set(CPACK_RPM_PACKAGE_REQUIRES "libqt5gui5")
+#    set(CPACK_RPM_PACKAGE_REQUIRES "fftw3")
+#    set(CPACK_RPM_PACKAGE_REQUIRES "eigen3")
+#    set(CPACK_RPM_PACKAGE_REQUIRES "hdf5")
+#    set(CPACK_RPM_PACKAGE_REQUIRES "tiff")
       
-#    if ("${UNIX_DIST}" MATCHES "Ubuntu")
-#        string(REPLACE "," ", " CPACK_DEBIAN_PACKAGE_DEPENDS
-#        "libboost-filesystem1.55-dev,"
-#        "libboost-date-time-dev,"
-#        "libboost-python-dev,"
-#        "libboost-system-dev,"
-#        "libboost-test-dev,"
-#        "libeigen3-dev,"
-#        "libfftw3-dev,"
-#        "libtiff-dev,"
-#        "libhdf5-serial-dev,"
-#        "python,"
-#        "python-numpy")
-#    endif()
+    if ("${UNIX_DIST}" MATCHES "Ubuntu")
+        string(REPLACE "," ", " CPACK_DEBIAN_PACKAGE_DEPENDS
+        "libqt5core5,"
+        "libqt5printsupport5,"
+        "libqt5widgets5,"
+        "libqt5gui5,"
+        "libboost-filesystem1.55-dev,"
+        "libboost-date-time1.55-dev,"
+        "libboost-system1.55-dev,"
+        "libboost-test1.55-dev,"
+        "libeigen3-dev,"
+        "libfftw3-dev,"
+        "libtiff-dev,"
+        "libhdf5-serial-dev (>=1.8.11)")
+    endif()
+    
+    set (CMAKE_INSTALL_RPATH "/usr/local/lib")
     
     include(CPack)
     

@@ -175,3 +175,31 @@ void UnitCellPropertyWidget::transform(const Eigen::Matrix3d &P)
    _unitCellItem->getCell()->transform(P);
    getLatticeParams();
 }
+
+void UnitCellPropertyWidget::on_pushButton_WeakPeaks_pressed()
+{
+    auto peakmap=_unitCellItem->getCell()->generateReflectionsInSphere(2.0);
+    qDebug() << "reflections in sphere generated";
+    auto UB=_unitCellItem->getCell()->getReciprocalStandardM();
+    auto& map=_unitCellItem->getExperiment()->getData();
+
+    int npeaks=0;
+    for (auto& d: map)
+    {
+        auto& data=d.second;
+        for (auto p : peakmap)
+        {
+            auto& hkl=p.second;
+            Peak3D* pe=data->hasPeak(hkl[0],hkl[1],hkl[2],UB);
+            if (pe)
+            {
+               //qDebug()<< "Adding peak" << hkl[0] << " " << hkl[1] << " " << hkl[2];
+               data->addPeak(pe);
+               npeaks++;
+            }
+        }
+    }
+    qDebug() << "npeaks" << npeaks;
+    emit cellUpdated();
+
+}

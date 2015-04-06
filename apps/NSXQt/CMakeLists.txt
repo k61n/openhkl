@@ -1,8 +1,6 @@
 # Add NSXQt and NSXQt directories to the include path
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_BINARY_DIR})
 
-message(${CMAKE_CURRENT_SOURCE_DIR})
-
 # Disable console on Windows
 if(WIN32)
     set(GUI_TYPE WIN32)
@@ -73,9 +71,22 @@ file(GLOB_RECURSE nsxqt_rcs ${CMAKE_SOURCE_DIR}/apps/NSXQt/*.qrc)
 # "Compile" the resources files
 qt5_add_resources(resources ${nsxqt_rcs})
 
+# For info use 'objdump -x nsxqt | grep RPATH' to the installed executable (not the built one) 
+# to check that the RPATH is correctly set
+
+# Use, i.e. don't skip the full RPATH for the build tree
+set(CMAKE_SKIP_BUILD_RPATH  FALSE)
+# When building, don't use the install RPATH already (but later on when installing)
+set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE) 
+# Set the install RPATH
+set(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib)
+
 # Build the nsxqt executable
 add_executable(nsxqt ${GUI_TYPE} ${nsxqt_sources} ${nsxqt_headers} ${ui_headers} ${resources})        
 
 # Link the nsxqt executable with the Qt5 libraries in use.
 target_link_libraries(nsxqt Qt5::Core Qt5::PrintSupport Qt5::Gui Qt5::Widgets NSXTool)        
+
+# Install section, installing libraries 
+install(TARGETS nsxqt DESTINATION bin)
 
