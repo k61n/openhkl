@@ -174,7 +174,7 @@ double Basis::getReciprocalB() const
 }
 double Basis::getReciprocalC() const
 {
-	return _B.col(2).norm();
+	return _B.row(2).norm();
 }
 double Basis::getReciprocalAlpha() const
 {
