@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(Test_Element)
 	// Checks that the number of neutrons is OK
 	BOOST_CHECK_CLOSE(hydrogen->getNNeutrons(),(1*0.00015),tolerance);
 	// Checks that the molar mass is OK
-	BOOST_CHECK_CLOSE(hydrogen->getMolarMass(),(1.007825032*0.99985+2.014101778*0.00015)*um->get("uma"),tolerance);
+	BOOST_CHECK_CLOSE(hydrogen->getMolarMass(),(1.007825032*0.99985+2.014101778*0.00015)*um->get("g_per_mole"),tolerance);
 
 	// Checks that the number of natural isotopes of this element is OK (H[1],H[2],H[3])
 	BOOST_CHECK_EQUAL(hydrogen->getNIsotopes(),3);

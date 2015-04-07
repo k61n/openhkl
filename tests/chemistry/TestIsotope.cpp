@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_CASE(Test_Isotope)
 
 	// Checks some of the property of the isotope
 	BOOST_CHECK_EQUAL(is->getFormalCharge(),0);
-	BOOST_CHECK_CLOSE(is->getMolarMass(),1.00782504*um->get("uma"),tolerance);
+	BOOST_CHECK_CLOSE(is->getMolarMass(),1.00782504*um->get("g_per_mole"),tolerance);
 
 	// Takes all the isotopes whose symbol is equal to O
 	isotopeSet isset=mgr->getIsotopes<std::string>("symbol","O");
