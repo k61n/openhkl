@@ -186,7 +186,7 @@ double Basis::getReciprocalBeta() const
 }
 double Basis::getReciprocalGamma() const
 {
-	return acos(_B.row(0).dot(_A.row(1))/getReciprocalA()/getReciprocalB());
+	return acos(_B.row(0).dot(_B.row(1))/getReciprocalA()/getReciprocalB());
 }
 
 void Basis::getParameters(double& a,double& b,double& c,double& alpha,double& beta,double& gamma) const
