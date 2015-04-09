@@ -34,12 +34,12 @@
 #include <set>
 
 #include <Eigen/Dense>
-
 #include "AABB.h"
 #include "ComponentState.h"
 #include "MetaData.h"
 #include "Diffractometer.h"
 #include "Peak3D.h"
+#include "PeakCalc.h"
 
 namespace SX
 {
@@ -149,7 +149,7 @@ public:
     void saveHDF5(const std::string& filename) const;
     //! Is the peak h,k,l in Bragg condition in this dataset. Return Peak pointer if true,
     //! otherwise nullptr.
-    Peak3D* hasPeak(double h, double k, double l,const Eigen::Matrix3d& BU);
+    std::vector<PeakCalc> hasPeaks(const std::vector<Eigen::Vector3d>& hkls,const Eigen::Matrix3d& BU);
 
     //! Get background
     double getBackgroundLevel() const;
