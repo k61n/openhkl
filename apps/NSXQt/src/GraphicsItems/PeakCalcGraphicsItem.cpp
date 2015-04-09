@@ -13,13 +13,13 @@ PeakCalcGraphicsItem::PeakCalcGraphicsItem(SX::Crystal::PeakCalc p):SXGraphicsIt
     QString hkl;
     hkl=QString("%1,%2,%3").arg(p._h).arg(p._k).arg(p._l);
     _label->setPlainText(hkl);
-    _label->setDefaultTextColor(QColor(123,63,0,255));
+    _label->setDefaultTextColor(QColor("#FF3300"));
     setPos(_x,_y);
 
     _pen.setWidth(2);
     _pen.setCosmetic(true);
     _pen.setStyle(Qt::SolidLine);
-    _pen.setColor(QColor(123,63,0,255));
+    _pen.setColor(QColor("#FF3300"));
 }
 
 void PeakCalcGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
