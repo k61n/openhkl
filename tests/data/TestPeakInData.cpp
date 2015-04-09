@@ -50,7 +50,4 @@ BOOST_AUTO_TEST_CASE(Test_Peak_Data)
 			ub31,ub32,ub33;
 	ub.transposeInPlace();
 
-	BOOST_CHECK(dataf.hasPeak(0,2,0,ub));
-
-
 }
