@@ -150,11 +150,11 @@ Eigen::Vector3d MultiDetector::getPos(double px, double py) const
 	throw std::runtime_error("Detector: invalid pixel");
 }
 
-bool MultiDetector::hasKf(const Eigen::Vector3d& kf,double& px, double& py) const
+bool MultiDetector::hasKf(const Eigen::Vector3d& kf,const Eigen::Vector3d& from, double& px, double& py) const
 {
 	for (auto& detector : _components)
 	{
-		if (detector->hasKf(kf,px,py))
+		if (detector->hasKf(kf,from, px,py))
 		{
 			return true;
 		}

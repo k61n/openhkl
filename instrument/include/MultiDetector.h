@@ -92,7 +92,7 @@ public:
 	Eigen::Vector3d getPos(double px, double py) const;
 
 	//! Determine whether detector at rest can receive a scattering event with direction given by Kf. px and py are detector position if true.
-	virtual bool hasKf(const Eigen::Vector3d& kf,double& px, double& py) const;
+	virtual bool hasKf(const Eigen::Vector3d& kf,const Eigen::Vector3d& from, double& px, double& py) const;
 
 };
 

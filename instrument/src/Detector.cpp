@@ -3,6 +3,7 @@
 
 #include "Detector.h"
 #include "Gonio.h"
+#include <iostream>
 
 namespace SX
 {
@@ -82,16 +83,18 @@ Eigen::Vector3d Detector::getKf(const DetectorEvent& event, double wave,const Ei
 	return (p/wave);
 }
 
-bool Detector::receiveKf(double& px, double& py, const Eigen::Vector3d& kf,const std::vector<double>& goniovalues)
+bool Detector::receiveKf(double& px, double& py, const Eigen::Vector3d& kf, const Eigen::Vector3d& from,const std::vector<double>& goniovalues)
 {
 
 	if (_gonio)
 	{
-		auto kft=_gonio->transformInverse(kf,goniovalues);
-		return hasKf(kft,px,py);
+		auto fromt=_gonio->transformInverse(from,goniovalues);
+		auto tmatrix=_gonio->getInverseHomMatrix(goniovalues);
+		auto kft=tmatrix.rotation()*kf;
+		return hasKf(kft,fromt,px,py);
 	}
 	else
-		return hasKf(kf,px,py);
+		return hasKf(kf,from,px,py);
 }
 
 Eigen::Vector3d Detector::getQ(double px, double py,double wave,const std::vector<double>& values,const Eigen::Vector3d& from) const

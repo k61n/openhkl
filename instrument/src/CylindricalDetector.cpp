@@ -91,21 +91,37 @@ Eigen::Vector3d CylindricalDetector::getPos(double px, double py) const
 	return result;
 }
 
-bool CylindricalDetector::hasKf(const Eigen::Vector3d& kf, double& px, double& py) const
+bool CylindricalDetector::hasKf(const Eigen::Vector3d& kf,const Eigen::Vector3d& f, double& px, double& py) const
 {
-	double phi=atan2(kf[0],kf[1])+0.5*_angularWidth;
+
+	// Need to solve equation of the typr (from_xy + f_xy*t)^2=R^2
+	double b=2*(f[0]*kf[0]+f[1]*kf[1]);
+	double a=(kf[0]*kf[0]+kf[1]*kf[1]);
+	double c= f[0]*f[0]+f[1]*f[1]-_distance*_distance;
+
+	double Delta=b*b-4*a*c;
+	if (Delta<0)
+		return false;
+
+	Delta=sqrt(Delta);
+
+	double t=0.5*(-b+Delta)/a;
+	if (t<=0)
+		return false;
+
+	auto v=f+kf*t;
+
+	double phi=atan2(v[0],v[1])+0.5*_angularWidth;
 	if (phi<0 || phi>=_angularWidth)
 		return false;
 
-	double inplane=sqrt(kf[0]*kf[0]+kf[1]*kf[1]);
-	if (inplane<1e-10)
-		return false;
-	double d=_distance*kf[2]/inplane+0.5*_height;
-	if (d<0 || d>_height)
+	double d=v[2]/_height+0.5;
+
+	if (d<0 || d>1.0)
 		return false;
 
 	px=phi/_angularWidth*(_nCols-1);
-	py=d/_height*(_nRows-1);
+	py=d*(_nRows-1);
 	return true;
 }
 
