@@ -475,7 +475,7 @@ std::vector<PeakCalc> IData::hasPeaks(const std::vector<Eigen::Vector3d>& hkls, 
 		// y component of q when in Bragg condition y=-sin(theta)*||Q||
 		double qy=normQ2*wavelength_2;
 
-		Eigen::Vector3d qi0=gonio->transform(q,_sampleStates[0].getValues());
+		Eigen::Vector3d qi0=homMatrices[0]*q.homogeneous();
 		Eigen::Vector3d qi;
 
 		bool sign=(qi0[1] > qy);
@@ -483,7 +483,7 @@ std::vector<PeakCalc> IData::hasPeaks(const std::vector<Eigen::Vector3d>& hkls, 
 		unsigned int i;
 		for (i=1;i<scanSize;++i)
 		{
-			qi=gonio->transform(q,_sampleStates[i].getValues());
+			qi=homMatrices[i]*q.homogeneous();
 			bool sign2=(qi[1] > qy);
 			if (sign ^ sign2)
 			{
