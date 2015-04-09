@@ -88,9 +88,8 @@ bool Detector::receiveKf(double& px, double& py, const Eigen::Vector3d& kf, cons
 
 	if (_gonio)
 	{
-		auto fromt=_gonio->transformInverse(from,goniovalues);
-		auto tmatrix=_gonio->getInverseHomMatrix(goniovalues);
-		auto kft=tmatrix.rotation()*kf;
+		Eigen::Vector3d fromt=_gonio->transformInverse(from,goniovalues);
+		Eigen::Vector3d kft=_gonio->getInverseHomMatrix(goniovalues).rotation()*kf;
 		return hasKf(kft,fromt,px,py);
 	}
 	else

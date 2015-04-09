@@ -207,12 +207,5 @@ void UnitCellPropertyWidget::on_pushButton_WeakPeaks_pressed()
 
 void UnitCellPropertyWidget::on_pushButton_UB_clicked()
 {
-    Eigen::Matrix3d ub;
-    ub << 0.102551310,   -0.086017180,    0.003832481,
-          0.086087460,    0.102403000,   -0.005973244,
-          0.000846372,    0.006573884,    0.143193400;
-    ub.transposeInPlace();
-    auto cell=_unitCellItem->getCell();
-    cell->setReciprocalVectors(ub.row(0),ub.row(1),ub.row(2));
-    emit cellUpdated();
+
 }

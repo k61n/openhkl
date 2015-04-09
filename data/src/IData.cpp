@@ -142,8 +142,8 @@ ComponentState IData::getDetectorInterpolatedState(double frame)
 
 	std::size_t nPhysicalAxes=_diffractometer->getDetector()->getGonio()->getNPhysicalAxes();
 
-	const std::vector<double> prevState=_detectorStates[idx].getValues();
-	const std::vector<double> nextState=_detectorStates[idx+1].getValues();
+	const std::vector<double>& prevState=_detectorStates[idx].getValues();
+	const std::vector<double>& nextState=_detectorStates[idx+1].getValues();
 	std::vector<double> state(nPhysicalAxes);
 	for (std::size_t i=0;i<nPhysicalAxes;++i)
 		state[i] = prevState[i] + (frame-static_cast<double>(idx))*(nextState[i]-prevState[i]);
@@ -170,8 +170,8 @@ ComponentState IData::getSampleInterpolatedState(double frame)
 
 	std::size_t nPhysicalAxes=_diffractometer->getSample()->getGonio()->getNPhysicalAxes();
 
-	const std::vector<double> prevState=_sampleStates[idx].getValues();
-	const std::vector<double> nextState=_sampleStates[idx+1].getValues();
+	const std::vector<double>& prevState=_sampleStates[idx].getValues();
+	const std::vector<double>& nextState=_sampleStates[idx+1].getValues();
 	std::vector<double> state(nPhysicalAxes);
 	for (std::size_t i=0;i<nPhysicalAxes;++i)
 		state[i] = prevState[i] + (frame-static_cast<double>(idx))*(nextState[i]-prevState[i]);
@@ -462,27 +462,29 @@ std::vector<PeakCalc> IData::hasPeaks(const std::vector<Eigen::Vector3d>& hkls, 
 	for (unsigned int s=0; s<scanSize; ++s)
 		homMatrices.push_back(gonio->getHomMatrix(_sampleStates[s].getValues()));
 
-	auto UB = BU.transpose();
+	Eigen::Matrix3d UB = BU.transpose();
 
 	Eigen::Vector3d ki=_diffractometer->getSource()->getki();
-	double kin=ki.squaredNorm();
 
-	for (const auto& hkl : hkls)
+	for (const Eigen::Vector3d& hkl : hkls)
 	{
 		// Get q at rest
 		Eigen::Vector3d q=UB*hkl;
-		Eigen::Vector3d qi0=homMatrices[0]*q;
-		Eigen::Vector3d qi;
-		Eigen::Vector3d kf=qi0+ki;
 
-		bool sign=((kf.squaredNorm()-kin) > 0);
+		double normQ2=q.squaredNorm();
+		// y component of q when in Bragg condition y=-sin(theta)*||Q||
+		double qy=normQ2*wavelength_2;
+
+		Eigen::Vector3d qi0=gonio->transform(q,_sampleStates[0].getValues());
+		Eigen::Vector3d qi;
+
+		bool sign=(qi0[1] > qy);
 		bool found=false;
 		unsigned int i;
 		for (i=1;i<scanSize;++i)
 		{
-			qi=homMatrices[i]*q;
-			kf=qi+ki;
-			bool sign2=((kf.squaredNorm()-kin) > 0);
+			qi=gonio->transform(q,_sampleStates[i].getValues());
+			bool sign2=(qi[1] > qy);
 			if (sign ^ sign2)
 			{
 				found=true;
@@ -494,20 +496,19 @@ std::vector<PeakCalc> IData::hasPeaks(const std::vector<Eigen::Vector3d>& hkls, 
 		if (!found)
 			continue;
 
-		double normQ=q.norm();
-		// y component of q when in Bragg condition y=-sin(theta)*||Q||
-		double stnq=normQ*normQ*wavelength_2;
-		double t=(stnq-qi0[1])/(qi[1]-qi0[1]);
-		kf=ki+qi0+(qi-qi0)*t;
+		double t=(qy-qi0[1])/(qi[1]-qi0[1]);
+		Eigen::Vector3d kf=ki+qi0+(qi-qi0)*t;
 		t+=(i-1);
 
 		ComponentState dis=getDetectorInterpolatedState(t);
 		double px,py;
 		// If hit detector, new peak
 		ComponentState cs=getSampleInterpolatedState(t);
-		auto from=_diffractometer->getSample()->getPosition(cs.getValues());
+		Eigen::Vector3d from=_diffractometer->getSample()->getPosition(cs.getValues());
 
-		if (_diffractometer->getDetector()->receiveKf(px,py,kf,from,dis.getValues()))
+		bool accept=_diffractometer->getDetector()->receiveKf(px,py,kf,from,dis.getValues());
+
+		if (accept)
 			peaks.push_back(PeakCalc(hkl[0],hkl[1],hkl[2],px,py,t));
 	}
 
