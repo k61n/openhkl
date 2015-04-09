@@ -43,6 +43,8 @@ private slots:
 
     void on_pushButton_WeakPeaks_pressed();
 
+    void on_pushButton_UB_clicked();
+
 public slots:
     void setCell(const SX::Crystal::UnitCell&);    
 

@@ -78,6 +78,8 @@ private slots:
 
     void on_actionH_k_l_triggered();
 
+    void on_actionShow_calculated_peak_positions_triggered(bool checked);
+
 public slots:
     void changeData(SX::Data::IData*);
     void showPeakList(std::vector<SX::Data::IData*>);

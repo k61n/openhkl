@@ -17,6 +17,7 @@
 #include "Logger.h"
 #include "Tree/UnitCellPropertyWidget.h"
 #include "Tree/UnitCellItem.h"
+#include "Peak3D.h"
 
 UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *parent) :
     _unitCellItem(caller),
@@ -178,28 +179,40 @@ void UnitCellPropertyWidget::transform(const Eigen::Matrix3d &P)
 
 void UnitCellPropertyWidget::on_pushButton_WeakPeaks_pressed()
 {
-    auto peakmap=_unitCellItem->getCell()->generateReflectionsInSphere(2.0);
-    qDebug() << "reflections in sphere generated";
-    auto UB=_unitCellItem->getCell()->getReciprocalStandardM();
-    auto& map=_unitCellItem->getExperiment()->getData();
+//    auto peakmap=_unitCellItem->getCell()->generateReflectionsInSphere(2.0);
+//    qDebug() << "reflections in sphere generated";
+//    auto UB=_unitCellItem->getCell()->getReciprocalReferenceM();
+//    auto& map=_unitCellItem->getExperiment()->getData();
 
-    int npeaks=0;
-    for (auto& d: map)
-    {
-        auto& data=d.second;
-        for (auto p : peakmap)
-        {
-            auto& hkl=p.second;
-            Peak3D* pe=data->hasPeak(hkl[0],hkl[1],hkl[2],UB);
-            if (pe)
-            {
-               //qDebug()<< "Adding peak" << hkl[0] << " " << hkl[1] << " " << hkl[2];
-               data->addPeak(pe);
-               npeaks++;
-            }
-        }
-    }
-    qDebug() << "npeaks" << npeaks;
+//    int npeaks=0;
+//    for (auto& d: map)
+//    {
+//        auto& data=d.second;
+//        for (auto p : peakmap)
+//        {
+//            auto& hkl=p.second;
+//            SX::Crystal::PeakCalc* pe=data->hasPeak(hkl[0],hkl[1],hkl[2],UB);
+//            if (pe)
+//            {
+//               //qDebug()<< "Adding peak" << hkl[0] << " " << hkl[1] << " " << hkl[2];
+//               //data->addPeak(pe);
+//               npeaks++;
+//            }
+//        }
+
+//    }
+//    std::cout << "npeaks" << npeaks << std::endl;
+//    emit cellUpdated();
+}
+
+void UnitCellPropertyWidget::on_pushButton_UB_clicked()
+{
+    Eigen::Matrix3d ub;
+    ub << 0.102551310,   -0.086017180,    0.003832481,
+          0.086087460,    0.102403000,   -0.005973244,
+          0.000846372,    0.006573884,    0.143193400;
+    ub.transposeInPlace();
+    auto cell=_unitCellItem->getCell();
+    cell->setReciprocalVectors(ub.row(0),ub.row(1),ub.row(2));
     emit cellUpdated();
-
 }

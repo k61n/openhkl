@@ -74,7 +74,8 @@ SOURCES += src/Main.cpp \
     src/DialogRefineUnitCell.cpp \
     src/Tree/NormalizePeaksItem.cpp \
     src/NumorsConversionDialog.cpp \
-    src/Absorption/DialogMCAbsorption.cpp
+    src/Absorption/DialogMCAbsorption.cpp \
+    src/GraphicsItems/PeakCalcGraphicsItem.cpp
 
 HEADERS  += include/MainWindow.h \
     include/DialogPeakFind.h \
@@ -137,7 +138,8 @@ HEADERS  += include/MainWindow.h \
     include/DialogRefineUnitCell.h \
     include/Tree/NormalizePeaksItem.h \
     include/NumorsConversionDialog.h \
-    include/Absorption/DialogMCAbsorption.h
+    include/Absorption/DialogMCAbsorption.h \
+    include/GraphicsItems/PeakCalcGraphicsItem.h
 
 FORMS    += ui/mainwindow.ui \
     ui/dialog_PeakFind.ui \

@@ -21,8 +21,6 @@ NumorPropertyWidget::NumorPropertyWidget(NumorItem* caller,QWidget *parent) :
 
     ui->label_Data->setText(QString::fromStdString(caller->getData()->getBasename()));
 
-
-
     auto metadata=data->getMetadata();
     const auto& map=metadata->getMap();
 
@@ -42,7 +40,7 @@ NumorPropertyWidget::NumorPropertyWidget(NumorItem* caller,QWidget *parent) :
         }
         else if (typeid(double)==element.second.type())
         {
-            col1->setData(Qt::EditRole,int(boost::any_cast<double>(element.second)));
+            col1->setData(Qt::EditRole,double(boost::any_cast<double>(element.second)));
         }
         else if (typeid(std::string)==element.second.type())
         {

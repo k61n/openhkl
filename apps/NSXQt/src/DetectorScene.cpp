@@ -59,6 +59,8 @@ void DetectorScene::changeFrame(int frame)
 
     for (auto& peak : _peaks)
         (peak.second)->setFrame(_currentFrameIndex);
+    for (auto& peak: _peakCalcs)
+        peak->setFrame(_currentFrameIndex);
 
     loadCurrentImage();
 }
@@ -548,6 +550,46 @@ void DetectorScene::updatePeaks()
     }
 }
 
+void DetectorScene::updatePeakCalcs()
+{
+
+    clock_t start=clock();
+
+    if (!_currentData)
+        return;
+
+    for (auto& peak : _peakCalcs)
+    {
+        removeItem(peak);
+        delete peak;
+    }
+
+    _peakCalcs.clear();
+
+    auto sample=_currentData->getDiffractometer()->getSample();
+    int ncrystals=sample->getNCrystals();
+    if (ncrystals)
+    {
+        for (int i=0;i<ncrystals;++i)
+        {
+            auto ub=sample->getUnitCell(i)->getReciprocalStandardM();
+            auto hkls=sample->getUnitCell(i)->generateReflectionsInSphere(2.0);
+            std::vector<SX::Crystal::PeakCalc> peaks=_currentData->hasPeaks(hkls,ub);
+            for (const auto& p : peaks)
+            {
+                PeakCalcGraphicsItem* peak=new PeakCalcGraphicsItem(p);
+                peak->setFrame(_currentFrameIndex);
+                addItem(peak);
+                _peakCalcs.push_back(peak);
+            }
+        }
+    }
+
+    clock_t end=clock();
+    qDebug() << "ELAPSED TIME = "<<static_cast<double>((end-start))/CLOCKS_PER_SEC;
+
+}
+
 void DetectorScene::clearPeaks()
 {
 
@@ -566,11 +608,18 @@ void DetectorScene::clearPeaks()
 
 void DetectorScene::showPeakLabels(bool peaklabel)
 {
-    if (_peaks.size())
+    if (!_peaks.empty())
     {
         const auto& it=_peaks.begin();
         it->second->setLabelVisible(peaklabel);
     }
+
+    if (!_peakCalcs.empty())
+    {
+        const auto& it=_peakCalcs.begin();
+        (*it)->setLabelVisible(peaklabel);
+    }
+
     return;
 }
 
@@ -585,5 +634,17 @@ void DetectorScene::setPeakIndex(SX::Crystal::Peak3D* peak, const Eigen::Vector3
 {
     peak->setMillerIndices(index[0],index[1],index[2]);
 //    _indexer->storePeak(peak);
+}
+
+void DetectorScene::showPeakCalcs(bool flag)
+{
+    if (_peakCalcs.empty())
+        updatePeakCalcs();
+
+    for (auto p : _peakCalcs)
+    {
+        p->setVisible(flag);
+        p->setFrame(_currentFrameIndex);
+    }
 }
 

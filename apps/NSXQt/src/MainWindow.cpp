@@ -446,3 +446,9 @@ void MainWindow::on_actionConvert_to_HDF5_triggered()
     dlg->exec();
 }
 
+
+void MainWindow::on_actionShow_calculated_peak_positions_triggered(bool checked)
+{
+    _ui->_dview->getScene()->showPeakCalcs(checked);
+    _ui->_dview->getScene()->update();
+}

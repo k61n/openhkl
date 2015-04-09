@@ -1297,6 +1297,7 @@ border-radius: 4px;
       <string>Peak</string>
      </property>
      <addaction name="actionShow_labels"/>
+     <addaction name="actionShow_calculated_peak_positions"/>
     </widget>
     <addaction name="menuGraphics"/>
     <addaction name="menuShow_Window"/>
@@ -1671,6 +1672,14 @@ QDockWidget::title {
   <action name="actionConvert_to_HDF5">
    <property name="text">
     <string>Convert to HDF5</string>
+   </property>
+  </action>
+  <action name="actionShow_calculated_peak_positions">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show calculated peak positions</string>
    </property>
   </action>
  </widget>

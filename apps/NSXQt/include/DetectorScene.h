@@ -13,7 +13,8 @@
 #include <memory>
 #include "UnitCell.h"
 #include "Indexer.h"
-
+#include "PeakCalc.h"
+#include "GraphicsItems/PeakCalcGraphicsItem.h"
 // Forward declarations
 namespace SX
 {
@@ -75,12 +76,15 @@ public slots:
     PeakGraphicsItem* findPeakGraphicsItem(SX::Crystal::Peak3D* peak);
     void setPeakIndex(SX::Crystal::Peak3D* peak,const Eigen::Vector3d& index);
     void updatePeaks();
+    void updatePeakCalcs();
     //! Change interaction mode in the scene
     void changeInteractionMode(int);
     //!
     void changeCursorMode(int);
     //!
     void showPeakLabels(bool);
+    //!
+    void showPeakCalcs(bool);
     void clearPeaks();
 private:
 
@@ -108,6 +112,7 @@ private:
     QGraphicsPixmapItem* _image;
     //! Contains peaks item of current data, reinitialized with new data set.
     std::map<SX::Crystal::Peak3D*,PeakGraphicsItem*> _peaks;
+    std::vector<PeakCalcGraphicsItem*> _peakCalcs;
     QList<MaskGraphicsItem*> _masks;
     SXGraphicsItem* _lastClickedGI;
     std::shared_ptr<SX::Crystal::UnitCell> _cell;
