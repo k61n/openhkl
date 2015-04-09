@@ -9,7 +9,14 @@ Indexer::Indexer(ptrUnitCell cell):
 		_dtol(0.01),
 		_angletol(0.01)
 {
-	_possiblePeaks=_cell->generateReflectionsInSphere(2.0);
+	auto hkls = _cell->generateReflectionsInSphere(2.0);
+
+	auto UB = _cell->getReciprocalStandardM().transpose();
+	for (const auto& hkl : hkls)
+	{
+		double qnorm = (UB*hkl).norm();
+		_possiblePeaks.insert(std::multimap<double,Eigen::Vector3d>::value_type(qnorm,hkl));
+	}
 }
 
 Indexer::~Indexer()

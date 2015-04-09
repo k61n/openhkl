@@ -29,7 +29,7 @@
 #ifndef NSXTOOL_UNITCELL_H_
 #define NSXTOOL_UNITCELL_H_
 
-#include <map>
+#include <vector>
 #include <string>
 
 #include <Eigen/Dense>
@@ -91,7 +91,7 @@ public:
  	//!
  	std::string getBravaisTypeSymbol() const;
  	//! Get a list of reflections sorted by their d* value in $\AA$ within a sphere defined by dstarmax
- 	std::multimap<double,Eigen::Vector3d> generateReflectionsInSphere(double dstarmax) const;
+ 	std::vector<Eigen::Vector3d> generateReflectionsInSphere(double dstarmax) const;
  	//! Return the angle in radians between two reflections h1,k1,l1 and h2,k2,l2
  	double getAngle(double h1,double k1, double l1, double h2, double k2, double l2) const;
  	//! Return the angle in radians between two reflections hkl1 and hkl2

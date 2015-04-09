@@ -241,14 +241,23 @@ std::ostream& operator<<(std::ostream& os,const UnitCell& uc)
 	uc.printSelf(os);
 	return os;
 }
-std::multimap<double,Eigen::Vector3d> UnitCell::generateReflectionsInSphere(double dstarmax) const
+std::vector<Eigen::Vector3d> UnitCell::generateReflectionsInSphere(double dstarmax) const
 
 {
-	std::multimap<double,Eigen::Vector3d> map;
+	std::vector<Eigen::Vector3d> hkls;
+
 	// Get the bounding cube in h,k,l
 	int hmax=std::ceil(dstarmax/_B.row(0).norm());
 	int kmax=std::ceil(dstarmax/_B.row(1).norm());
 	int lmax=std::ceil(dstarmax/_B.row(2).norm());
+
+	std::cout<<"hmax --> "<<hmax<<" "<<kmax<<" "<<lmax<<std::endl;
+
+	int deltah=2*hmax+1;
+	int deltak=2*kmax+1;
+	int deltal=2*lmax+1;
+
+	hkls.reserve(deltah*deltak*deltal);
 
 	// Iterate over the cuve and insert element in the map if dstar is not exceeded
 	for (int h=-hmax;h<=hmax;++h)
@@ -257,14 +266,15 @@ std::multimap<double,Eigen::Vector3d> UnitCell::generateReflectionsInSphere(doub
 		{
 			for (int l=-lmax;l<=lmax;++l)
 			{
-				auto q=toReciprocalStandard(Eigen::Vector3d(h,k,l));
+				Eigen::Vector3d hkl(h,k,l);
+				auto q=toReciprocalStandard(hkl);
 				double norm=q.norm();
 				if (norm < dstarmax)
-					map.insert(std::map<double,Eigen::Vector3d>::value_type(norm,Eigen::Vector3d(h,k,l)));
+					hkls.push_back(hkl);
 			}
 		}
 	}
-	return map;
+	return hkls;
 }
 
 double UnitCell::getAngle(double h1, double k1, double l1, double h2, double k2, double l2) const
