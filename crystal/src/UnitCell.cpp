@@ -27,14 +27,32 @@ UnitCell::UnitCell(double a, double b, double c, double alpha, double beta, doub
   _bravaisType(bravais),
   _Z(1)
 {
-	double ca=cos(alpha), cb=cos(beta), cc=cos(gamma), sc=sin(gamma);
-    double a32=c/sin(gamma)*(ca-cb*cc);
+	// b-matrix as defined by Busing-Levy paper
+	// b1, b2*cos(beta3),  b3*cos(beta2)
+	// 0 , b2*sin(beta3), -b3*sin(beta2)*cos(alpha1)
+	// 0,  0            ,  1/a3
+	// We use the contravariant basis in reciprocal space, so transpose this.
+
+	double ca=cos(alpha), cb=cos(beta), cc=cos(gamma);
+	double sa=sin(alpha), sb=sin(beta), sc=sin(gamma);
 	double volume=a*b*c*sqrt(1.0-ca*ca-cb*cb-cc*cc+2.0*ca*cb*cc);
-	double a33=volume/(a*b*sc);
-	_A <<  a,b*cc,c*cb,
-	       0,b*sc,a32,
-	       0,0   ,a33;
-	_B=_A.inverse();
+
+	double as=b*c*sa/volume;
+	double bs=a*c*sb/volume;
+	double cs=a*b*sc/volume;
+	double alphas=(cb*cc-ca)/(sb*sc);
+	double betas=(ca*cc-cb)/(sa*sc);
+	double gammas=(ca*cb-cc)/(sa*sb);
+
+	alphas=acos(alphas);
+	betas=acos(betas);
+	gammas=acos(gammas);
+
+	_B << as,0,0,
+		  bs*cos(gammas),bs*sin(gammas),0,
+		  cs*cos(betas),-cs*sin(betas)*ca,1.0/c;
+
+	_A=_B.inverse();
 	SX::Geometry::Basis::_reference=reference;
 }
 
@@ -154,18 +172,21 @@ std::string UnitCell::getBravaisTypeSymbol() const
 void UnitCell::getUB(const Peak3D& p1, const Peak3D& p2)
 {
 	// Get Q1 and Q2 in the diffractometer basis
-	auto q1=p1.getQ();
-	auto q2=p2.getQ();
-	auto q3=q1.cross(q2);
+	std::cout << "I am here \n";
+	Eigen::Vector3d q1=p1.getQ();
+	Eigen::Vector3d q2=p2.getQ();
+	Eigen::Vector3d q3=q1.cross(q2);
 	q1.normalize();
 	q3.normalize();
 	q2=q3.cross(q1);
 
+	std::cout << q1 << q2 << q3 << std::endl;
+
 	//
-	auto q1prime=this->toReciprocalStandard(p1.getMillerIndices());
-	auto q2prime=this->toReciprocalStandard(p2.getMillerIndices());
+	Eigen::Vector3d q1prime=this->toReciprocalStandard(p1.getMillerIndices());
+	Eigen::Vector3d q2prime=this->toReciprocalStandard(p2.getMillerIndices());
 	//
-	auto q3prime=q1prime.cross(q2prime);
+	Eigen::Vector3d q3prime=q1prime.cross(q2prime);
 	q1prime.normalize();
 	q3prime.normalize();
 	q2prime=q3prime.cross(q1prime);
@@ -181,7 +202,9 @@ void UnitCell::getUB(const Peak3D& p1, const Peak3D& p2)
 
 	U=m2*m1.inverse();
 
+	std::cout << "B-matrix \n" << _B.transpose() << std::endl;
 	_B=_B*U;
+	std::cout << "UB_matrix \n" << _B.transpose() << std::endl;
 
 }
 
