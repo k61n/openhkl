@@ -103,13 +103,13 @@ struct AffineTransformParser : qi::grammar<It,Eigen::Transform<double,3,Eigen::A
 
         // Multiple terms, separated by commas
 
-        matrix = eps[_pass=matrixinit(_val)] >>
+        matrix = eps[_pass=matrixinit(_val),ref(row)=0,ref(col)=0] >>
               *term[_pass=matrix_insert(_val,ref(row),ref(col),_1)] >> lit(',')[ref(row)=1] >>
               *term[_pass=matrix_insert(_val,ref(row),ref(col),_1)] >> lit(',')[ref(row)=2] >>
               *term[_pass=matrix_insert(_val,ref(row),ref(col),_1)];
 
         // either prefactor followed by x, y, z or constant term
-        term = eps[_a=1.0,_b=1.0] >>
+        term = eps[_a=1.0,_b=1.0,ref(col)=0] >>
         		-(lit('+')|lit('-')[_b=-1.0]) >>
         		 ((-prefactor[_a=_1]) >> xyz)[_val=_a*_b] |
 		         (prefactor[_val=_1])[ref(col)=3];
