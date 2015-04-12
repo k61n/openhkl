@@ -22,5 +22,9 @@ add_executable(TestUBMinimizer TestUBMinimizer.cpp)
 TARGET_LINK_LIBRARIES(TestUBMinimizer ${Boost_LIBRARIES} NSXTool)
 add_test(TestUBMinimizer TestUBMinimizer)
 
+add_executable(TestSpaceGroup TestSpaceGroup.cpp)
+TARGET_LINK_LIBRARIES(TestSpaceGroup ${Boost_LIBRARIES} NSXTool)
+add_test(TestSpaceGroup TestSpaceGroup)
+
 configure_file(CsOsO_15K.raf CsOsO_15K.raf COPYONLY)
 configure_file(CsOsO_15K.lpt CsOsO_15K.lpt COPYONLY)
