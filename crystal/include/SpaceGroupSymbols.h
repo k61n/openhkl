@@ -28,8 +28,11 @@
  */
 #ifndef NSXTOOL_SPACEGROUPSYMBOLS_H_
 #define NSXTOOL_SPACEGROUPSYMBOLS_H_
-#include "Singleton.h"
+
+#include <string>
 #include "unordered_map"
+
+#include "Singleton.h"
 
 namespace SX
 {
