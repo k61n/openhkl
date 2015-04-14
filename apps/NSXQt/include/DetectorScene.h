@@ -15,6 +15,7 @@
 #include "Indexer.h"
 #include "PeakCalc.h"
 #include "GraphicsItems/PeakCalcGraphicsItem.h"
+
 // Forward declarations
 namespace SX
 {

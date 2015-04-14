@@ -2,17 +2,22 @@
 #define DIALOGREFINEUNITCELL_H
 
 #include <QDialog>
+
 #include <memory>
 #include "UnitCell.h"
 #include "UBMinimizer.h"
-namespace Ui {
+
+namespace Ui
+{
 class DialogRefineUnitCell;
 }
 
-namespace SX{
-    namespace Instrument{
-    class Experiment;
-    }
+namespace SX
+{
+namespace Instrument
+{
+class Experiment;
+}
 }
 
 class DialogRefineUnitCell : public QDialog
@@ -22,18 +27,24 @@ class DialogRefineUnitCell : public QDialog
 public:
     explicit DialogRefineUnitCell(SX::Instrument::Experiment* experiment,std::shared_ptr<SX::Crystal::UnitCell> cell,QWidget *parent = 0);
     ~DialogRefineUnitCell();
-    void getLatticeParams();
-    void getWavelength();
+    void setLatticeParams();
+    void setSampleOffsets();
+    void setDetectorOffsets();
+    void setWavelength();
+    void setMinimizer();
+    void setSolution(const SX::Crystal::UBSolution& solution);
 private slots:
     void refineParameter(bool checked,int i);
     void cellSampleHasChanged(int i,int j);
     void cellDetectoreHasChanged(int i,int j);
     void on_pushButton_Refine_clicked();
-    void createTable();
+    void createOffsetsTables();
+    void on_pushButton_Reset_clicked();
+
 private:
+    Ui::DialogRefineUnitCell *ui;
     SX::Instrument::Experiment* _experiment;
     std::shared_ptr<SX::Crystal::UnitCell> _cell;
-    Ui::DialogRefineUnitCell *ui;
     SX::Crystal::UBMinimizer _minimizer;
 };
 

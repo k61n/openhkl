@@ -124,9 +124,9 @@ void ExperimentTree::addExperiment(const std::string& experimentName, const std:
 
 }
 
-std::vector<IData*> ExperimentTree::getSelectedNumors(ExperimentItem* item) const
+std::vector<SX::Data::IData*> ExperimentTree::getSelectedNumors(ExperimentItem* item) const
 {
-    std::vector<IData*> numors;
+    std::vector<SX::Data::IData*> numors;
 
     QList<QStandardItem*> dataItems = _model->findItems(QString("Data"),Qt::MatchCaseSensitive|Qt::MatchRecursive);
 
@@ -148,10 +148,10 @@ std::vector<IData*> ExperimentTree::getSelectedNumors(ExperimentItem* item) cons
     return numors;
 }
 
-std::vector<IData*> ExperimentTree::getSelectedNumors() const
+std::vector<SX::Data::IData*> ExperimentTree::getSelectedNumors() const
 {
 
-    std::vector<IData*> numors;
+    std::vector<SX::Data::IData*> numors;
 
     QList<QStandardItem*> dataItems = _model->findItems(QString("Data"),Qt::MatchCaseSensitive|Qt::MatchRecursive);
 
@@ -249,7 +249,7 @@ void ExperimentTree::importData()
         if (exp->hasData(basename))
             continue;
 
-        IData* d;
+        SX::Data::IData* d;
         try
         {
             std::string extension=fileinfo.completeSuffix().toStdString();
@@ -294,7 +294,7 @@ void ExperimentTree::onDoubleClick(const QModelIndex& index)
     else if (auto ptr=dynamic_cast<NumorItem*>(item))
     {
         SX::Instrument::Experiment* exp = ptr->getExperiment();
-        IData* data=exp->getData(item->text().toStdString());
+        SX::Data::IData* data=exp->getData(item->text().toStdString());
         emit plotData(data);
     }
     else if (auto ptr=dynamic_cast<PeakListItem*>(item))

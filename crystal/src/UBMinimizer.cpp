@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include "UBMinimizer.h"
 
 #include <Eigen/Dense>
@@ -378,7 +380,7 @@ UBSolution::UBSolution(SX::Instrument::Detector* detector,SX::Instrument::Sample
 		_sigmaSourceOffset=0.0;
 	else
 	{
-		_sigmaSourceOffset=sqrt(cov(9,9));
+		_sigmaSourceOffset=std::sqrt(cov(9,9));
 		++idx;
 	}
 

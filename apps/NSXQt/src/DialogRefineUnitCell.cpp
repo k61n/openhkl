@@ -1,3 +1,11 @@
+#include <iostream>
+#include <sstream>
+
+#include <QtDebug>
+#include <QCheckBox>
+#include <QLayout>
+#include <QStatusBar>
+
 #include "include/DialogRefineUnitCell.h"
 #include "ui_DialogRefineUnitCell.h"
 #include "Experiment.h"
@@ -9,13 +17,15 @@
 #include "Axis.h"
 #include "Units.h"
 #include "IData.h"
+#include "DoubleTableItemDelegate.h"
 
-DialogRefineUnitCell::DialogRefineUnitCell(SX::Instrument::Experiment* experiment,std::shared_ptr<SX::Crystal::UnitCell> cell,QWidget *parent) :
-    _experiment(experiment),
-    _cell(cell),
-    QDialog(parent),
-    ui(new Ui::DialogRefineUnitCell),
-    _minimizer()
+DialogRefineUnitCell::DialogRefineUnitCell(SX::Instrument::Experiment* experiment,std::shared_ptr<SX::Crystal::UnitCell> cell,QWidget *parent)
+: QDialog(parent),
+  ui(new Ui::DialogRefineUnitCell),
+  _experiment(experiment),
+  _cell(cell),
+  _minimizer()
+
 {
     ui->setupUi(this);
 
@@ -29,29 +39,64 @@ DialogRefineUnitCell::DialogRefineUnitCell(SX::Instrument::Experiment* experimen
     ui->tableWidget_Sample->setEditTriggers(QAbstractItemView::AllEditTriggers);
     ui->tableWidget_Detector->setEditTriggers(QAbstractItemView::AllEditTriggers);
 
-    // Set the UB minimizer with parameters
-    _minimizer.setDetector(_experiment->getDiffractometer()->getDetector());
-    _minimizer.setSource(_experiment->getDiffractometer()->getSource());
-    _minimizer.setSample(_experiment->getDiffractometer()->getSample());
-
-    createTable();
-
     // Connect checkbox for wavelength refinement
     connect(ui->checkBox_Wavelength,&QCheckBox::toggled,[=](bool checked){refineParameter(checked,9);});
 
-    getLatticeParams();
-    getWavelength();
+    // Fill up the UB matrix parameters with the current value
+    setLatticeParams();
 
-    for (int i=9;i<=17;++i)
-        _minimizer.refineParameter(i,false);
+    // Fill up the wavelength with the current value
+    setWavelength();
 
+    // Set up the minimizer
+    setMinimizer();
+
+    // Fill up the sample and detector offsets tables
+    createOffsetsTables();
+
+    ui->labelalpha->setText(QString((QChar) 0x03B1));
+    ui->labelbeta->setText(QString((QChar) 0x03B2));
+    ui->labelgamma->setText(QString((QChar) 0x03B3));
 }
 
 DialogRefineUnitCell::~DialogRefineUnitCell()
 {
     delete ui;
 }
-void DialogRefineUnitCell::getLatticeParams()
+
+void DialogRefineUnitCell::setMinimizer()
+{
+    auto diffractometer = _experiment->getDiffractometer();
+    auto detector = diffractometer->getDetector();
+    auto sample = diffractometer->getSample();
+    auto source = diffractometer->getSource();
+
+    // Set the UB minimizer with parameters
+    _minimizer.setDetector(detector);
+    _minimizer.setSample(sample);
+    _minimizer.setSource(source);
+
+    int start=10;
+
+    int nSampleOffsets=sample->getNAxes();
+    for (int i=0;i<nSampleOffsets;++i)
+    {
+        auto axis=sample->getGonio()->getAxis(i);
+        _minimizer.refineParameter(start+i,!axis->hasOffsetFixed());
+        _minimizer.setStartingValue(start+i,axis->getOffset());
+    }
+
+    start += nSampleOffsets;
+    int nDetectorOffsets=detector->getNAxes();
+    for (int i=0;i<nDetectorOffsets;++i)
+    {
+        auto axis=detector->getGonio()->getAxis(i);
+        _minimizer.refineParameter(start+i,!axis->hasOffsetFixed());
+        _minimizer.setStartingValue(start+i,axis->getOffset());
+    }
+}
+
+void DialogRefineUnitCell::setLatticeParams()
 {
     ui->doubleSpinBoxa->setValue(_cell->getA());
     ui->doubleSpinBoxb->setValue(_cell->getB());
@@ -61,37 +106,177 @@ void DialogRefineUnitCell::getLatticeParams()
     ui->doubleSpinBoxgamma->setValue(_cell->getGamma()/SX::Units::deg);
 }
 
-void DialogRefineUnitCell::getWavelength()
+void DialogRefineUnitCell::setWavelength()
 {
     auto source=_experiment->getDiffractometer()->getSource();
     ui->doubleSpinBox_Wavelength->setValue(source->getWavelength());
+}
+
+void DialogRefineUnitCell::setSampleOffsets()
+{
+    //Get the sample, iterate over axis
+    auto sample=_experiment->getDiffractometer()->getSample();
+    int nAxesSample=sample->getNAxes();
+
+    // Set the number of row corresponding to the number of offsets/axis
+    ui->tableWidget_Sample->setRowCount(nAxesSample);
+
+    // Set the number of columns (axis name, axis offet, axis offset error, refinable state)
+    ui->tableWidget_Sample->setColumnCount(4);
+
+    // Allow double to be entered with a better precision
+    ui->tableWidget_Sample->setItemDelegateForColumn(1,new DoubleTableItemDelegate(ui->tableWidget_Sample));
+
+    // Fill the table
+    for (int i=0;i<nAxesSample;++i)
+    {
+        // Set the first column of the table: the axis name
+        auto axis=sample->getGonio()->getAxis(i);
+        QTableWidgetItem* item0=new QTableWidgetItem();
+        item0->setData(Qt::EditRole, QString(axis->getLabel().c_str()));
+        item0->setFlags(item0->flags() & ~Qt::ItemIsEditable);
+        if (axis->isPhysical())
+            item0->setBackgroundColor(QColor("#FFDDDD"));
+        else
+            item0->setBackgroundColor(QColor("#DDFFDD"));
+        ui->tableWidget_Sample->setItem(i,0,item0);
+
+        // Set the second column of the table: the axis offsets
+        QTableWidgetItem* item1=new QTableWidgetItem();
+        item1->setData(Qt::EditRole, double(axis->getOffset()));
+        item1->setFlags(item1->flags() | Qt::ItemIsEditable);
+        ui->tableWidget_Sample->setItem(i,1,item1);
+
+        // Set the third column of the table: the axis offsets errors
+        QTableWidgetItem* item2=new QTableWidgetItem();
+        item2->setData(Qt::EditRole, 0.000);
+        item2->setFlags(item2->flags() & ~Qt::ItemIsEditable);
+        ui->tableWidget_Sample->setItem(i,2,item2);
+
+        // Set the fourth column of the table: the axis refinable state
+        QCheckBox* item3=new QCheckBox(this);
+        item3->setChecked(!axis->hasOffsetFixed());
+        // Connect checkbox to fixing this parameter
+        connect(item3,&QCheckBox::toggled,[=](bool checked){refineParameter(checked,10+i);});
+        ui->tableWidget_Sample->setCellWidget(i,3,item3);
+
+    }
+}
+
+void DialogRefineUnitCell::setDetectorOffsets()
+{
+    // Get the number of axis for the sample
+    int nAxesSample=_experiment->getDiffractometer()->getSample()->getNAxes();
+
+    // Get the detector
+    auto detector=_experiment->getDiffractometer()->getDetector();
+    int nAxesDet=detector->getNAxes();
+
+    // Set the number of row corresponding to the number of offsets/axis
+    ui->tableWidget_Detector->setRowCount(nAxesDet);
+
+    // Set the number of columns (axis name, axis offet, axis offset error, refinable state)
+    ui->tableWidget_Detector->setColumnCount(4);
+
+    // Allow double to be entered with a better precision
+    ui->tableWidget_Detector->setItemDelegateForColumn(1,new DoubleTableItemDelegate(ui->tableWidget_Detector));
+
+    for (int i=0;i<nAxesDet;++i)
+    {
+
+        // Set the first column of the table: the axis name
+        auto axis=detector->getGonio()->getAxis(i);
+        QTableWidgetItem* item0=new QTableWidgetItem();
+        item0->setData(Qt::EditRole, QString(axis->getLabel().c_str()));
+        item0->setFlags(item0->flags() & ~Qt::ItemIsEditable);
+        // Set two different colors for the first column color according to to the axis type (physical or not)
+        if (axis->isPhysical())
+            item0->setBackgroundColor(QColor("#FFDDDD"));
+        else
+            item0->setBackgroundColor(QColor("#DDFFDD"));
+        ui->tableWidget_Detector->setItem(i,0,item0);
+
+        // Set the second column of the table: the axis offsets
+        QTableWidgetItem* item1=new QTableWidgetItem();
+        item1->setData(Qt::EditRole, axis->getOffset());
+        item1->setFlags(item1->flags() | Qt::ItemIsEditable);
+        ui->tableWidget_Detector->setItem(i,1,item1);
+
+        // Set the third column of the table: the axis offsets errors
+        QTableWidgetItem* item2=new QTableWidgetItem();
+        item2->setData(Qt::EditRole, 0.000);
+        item2->setFlags(item2->flags() & ~Qt::ItemIsEditable);
+        ui->tableWidget_Detector->setItem(i,2,item2);
+
+        // Set the fourth column of the table: the axis refinable state
+        QCheckBox* item3=new QCheckBox(this);
+        item3->setChecked(!axis->hasOffsetFixed());
+        ui->tableWidget_Detector->setCellWidget(i,3,item3);
+        //Connect checkbox to fixing parameters
+        connect(item3,&QCheckBox::toggled,[=](bool checked){refineParameter(checked,10+i+nAxesSample);});
+    }
+}
+
+void DialogRefineUnitCell::setSolution(const SX::Crystal::UBSolution& solution)
+{
+    // Get the sample
+    auto sample=_experiment->getDiffractometer()->getSample();
+    int nAxesSample=sample->getNAxes();
+
+    for (int i=0;i<nAxesSample;++i)
+    {
+        ui->tableWidget_Sample->item(i,1)->setData(Qt::EditRole,solution._sampleOffsets[i]);
+        ui->tableWidget_Sample->item(i,2)->setData(Qt::EditRole,solution._sigmaSampleOffsets[i]);
+    }
+
+    // Get the detector
+    auto detector=_experiment->getDiffractometer()->getDetector();
+    int nAxesDet=detector->getNAxes();
+
+    for (int i=0;i<nAxesDet;++i)
+    {
+        ui->tableWidget_Detector->item(i,1)->setData(Qt::EditRole,solution._detectorOffsets[i]);
+        ui->tableWidget_Detector->item(i,2)->setData(Qt::EditRole,solution._sigmaDetectorOffsets[i]);
+    }
 }
 
 void DialogRefineUnitCell::refineParameter(bool checked, int i)
 {
 	_minimizer.refineParameter(i,checked);
 }
+
 void DialogRefineUnitCell::cellSampleHasChanged(int i, int j)
 {
-    if (j==1) // new offset has been entered
+
+    // A new offset has been entered
+    if (j==1)
     {
         auto axis=_experiment->getDiffractometer()->getSample()->getGonio()->getAxis(i);
         bool offsetFixed=axis->hasOffsetFixed();
         axis->setOffsetFixed(false);
-        axis->setOffset(ui->tableWidget_Sample->item(i,j)->data(Qt::EditRole).toDouble());
+        double value=ui->tableWidget_Sample->item(i,j)->data(Qt::EditRole).toDouble();
+        axis->setOffset(value);
         axis->setOffsetFixed(offsetFixed);
+        _minimizer.setStartingValue(10+i,value);
     }
 }
 
 void DialogRefineUnitCell::cellDetectoreHasChanged(int i, int j)
 {
-    if (j==1) // new offset has been entered
+    // A new offset has been entered
+    if (j==1)
     {
         auto axis=_experiment->getDiffractometer()->getDetector()->getGonio()->getAxis(i);
         bool offsetFixed=axis->hasOffsetFixed();
         axis->setOffsetFixed(false);
-        axis->setOffset(ui->tableWidget_Detector->item(i,j)->data(Qt::EditRole).toDouble());
+        double value=ui->tableWidget_Detector->item(i,j)->data(Qt::EditRole).toDouble();
+        axis->setOffset(value);
         axis->setOffsetFixed(offsetFixed);
+
+        // Get the sample
+        auto sample=_experiment->getDiffractometer()->getSample();
+        int nAxesSample=sample->getNAxes();
+        _minimizer.setStartingValue(10+nAxesSample+i,value);
     }
 }
 
@@ -119,72 +304,45 @@ void DialogRefineUnitCell::on_pushButton_Refine_clicked()
 
     int test=_minimizer.run(100);
     if (test!=1)
+    {
+        ui->textEdit_Solution->setTextColor(QColor("red"));
+        ui->textEdit_Solution->setText("No solution found within convergence criteria.");
         return;
+    }
 
-    std::cout <<_minimizer.getSolution() << std::endl;
-    auto solution=_minimizer.getSolution();
+    const auto& solution=_minimizer.getSolution();
+    std::ostringstream os;
+    os<<solution;
+    ui->textEdit_Solution->setTextColor(QColor("black"));
+    ui->textEdit_Solution->setText(QString::fromStdString(os.str()));
     _cell->setReciprocalVectors(solution._ub.row(0),solution._ub.row(1),solution._ub.row(2));
-    createTable();
+
+    setSolution(solution);
 }
 
-void DialogRefineUnitCell::createTable()
+void DialogRefineUnitCell::createOffsetsTables()
 {
 
-    getLatticeParams();
+    setSampleOffsets();
 
-    //Get the sample, iterate over axis
-    auto sample=_experiment->getDiffractometer()->getSample();
-    int naxesSample=sample->getNAxes();
-    ui->tableWidget_Sample->setRowCount(naxesSample);
-    ui->tableWidget_Sample->setColumnCount(3);
-    for (int i=0;i<naxesSample;++i)
-    {
-        auto axis=sample->getGonio()->getAxis(i);
-        QTableWidgetItem* item0=new QTableWidgetItem();
-        item0->setData(Qt::EditRole, QString(axis->getLabel().c_str()));
-        item0->setFlags(item0->flags() & ~Qt::ItemIsEditable);
-        if (axis->isPhysical())
-            item0->setBackgroundColor(QColor("#FFDDDD"));
-        else
-            item0->setBackgroundColor(QColor("#DDFFDD"));
-        QTableWidgetItem* item1=new QTableWidgetItem();
-        item1->setData(Qt::EditRole, double(axis->getOffset()));
-        item1->setFlags(item1->flags() | Qt::ItemIsEditable);
-        ui->tableWidget_Sample->setItem(i,0,item0);
-        ui->tableWidget_Sample->setItem(i,1,item1);
-        QCheckBox* check=new QCheckBox(this);
-        check->setChecked(!axis->hasOffsetFixed());
-        // Connect checkbox to fixing this parameter
-        connect(check,&QCheckBox::toggled,[=](bool checked){refineParameter(checked,10+i);});
-        ui->tableWidget_Sample->setCellWidget(i,2,check);
+    setDetectorOffsets();
 
-    }
     connect(ui->tableWidget_Sample,SIGNAL(cellChanged(int,int)),this,SLOT(cellSampleHasChanged(int,int)));
-    // Get the detector, iterate over axis
-    auto detector=_experiment->getDiffractometer()->getDetector();
-    int naxesDet=detector->getNAxes();
-    ui->tableWidget_Detector->setRowCount(naxesDet);
-    ui->tableWidget_Detector->setColumnCount(3);
-    for (int i=0;i<naxesDet;++i)
-    {
-        auto axis=detector->getGonio()->getAxis(i);
-        QTableWidgetItem* item0=new QTableWidgetItem();
-        item0->setData(Qt::EditRole, QString(axis->getLabel().c_str()));
-        item0->setFlags(item0->flags() & ~Qt::ItemIsEditable);
-        if (axis->isPhysical())
-            item0->setBackgroundColor(QColor("#FFDDDD"));
-        else
-            item0->setBackgroundColor(QColor("#DDFFDD"));
-        QTableWidgetItem* item1=new QTableWidgetItem();
-        item1->setData(Qt::EditRole, double(axis->getOffset()));
-        item1->setFlags(item1->flags() | Qt::ItemIsEditable);
-        ui->tableWidget_Detector->setItem(i,0,item0);
-        ui->tableWidget_Detector->setItem(i,1,item1);
-        QCheckBox* check=new QCheckBox(this);
-        //Connect checkbox to fixing parameters
-        connect(check,&QCheckBox::toggled,[=](bool checked){refineParameter(checked,10+i+naxesSample);});
-        ui->tableWidget_Detector->setCellWidget(i,2,check);
-    }
 
     connect(ui->tableWidget_Detector,SIGNAL(cellChanged(int,int)),this,SLOT(cellDetectoreHasChanged(int,int)));
+}
+
+void DialogRefineUnitCell::on_pushButton_Reset_clicked()
+{
+    // Get the sample
+    auto sample=_experiment->getDiffractometer()->getSample();
+    for (auto a : sample->getGonio()->getAxes())
+        a->setOffset(0.00);
+    setSampleOffsets();
+
+    // Get the detector
+    auto detector=_experiment->getDiffractometer()->getDetector();
+    for (auto a : detector->getGonio()->getAxes())
+        a->setOffset(0.00);
+    setDetectorOffsets();
 }
