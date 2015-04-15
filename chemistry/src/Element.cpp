@@ -289,7 +289,7 @@ void Element::print(std::ostream& os) const
 		for (const auto& it : _abundances)
 		{
 			os<<"\t-"<<std::setw(maxSize)<<std::setiosflags(std::ios::left)<<_isotopes.at(it.first)->getName()<<" --> "<<std::setiosflags(std::ios::fixed|std::ios::right)<<std::setprecision(3)<<std::setw(7)<<100.0*it.second<<" %"<<std::endl;
-			std::cout<<std::resetiosflags(std::ios::right);
+			os<<std::resetiosflags(std::ios::right);
 		}
 	}
 }

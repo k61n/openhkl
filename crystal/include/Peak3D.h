@@ -130,6 +130,9 @@ public:
 	bool isSelected() const;
 	void setMasked(bool masked);
 	bool isMasked() const;
+	void setTransmission(double transmission);
+	double getTransmission() const;
+
 private:
 	//! Pointer to the data containing the peak
 	SX::Data::IData* _data;
@@ -155,6 +158,7 @@ private:
 	double _scale;
 	bool _selected;
 	bool _masked;
+	double _transmission;
 };
 
 

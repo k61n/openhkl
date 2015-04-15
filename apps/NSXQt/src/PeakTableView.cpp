@@ -108,14 +108,15 @@ void PeakTableView::sortByColumn(int i)
 
 void PeakTableView::constructTable()
 {
-    // Create table with 5 columns
-    QStandardItemModel* model=new QStandardItemModel(_peaks.size(),5,this);
+    // Create table with 7 columns
+    QStandardItemModel* model=new QStandardItemModel(_peaks.size(),7,this);
     model->setHorizontalHeaderItem(0,new QStandardItem("h k l"));
     model->setHorizontalHeaderItem(1,new QStandardItem("I"));
     model->setHorizontalHeaderItem(2,new QStandardItem(QString((QChar) 0x03C3)+"I"));
-    model->setHorizontalHeaderItem(3,new QStandardItem("Numor"));
-    model->setHorizontalHeaderItem(4,new QStandardItem("Selected"));
-
+    model->setHorizontalHeaderItem(3,new QStandardItem("Corrected I"));
+    model->setHorizontalHeaderItem(4,new QStandardItem(QString((QChar) 0x03C3)+"I"));
+    model->setHorizontalHeaderItem(5,new QStandardItem("Numor"));
+    model->setHorizontalHeaderItem(6,new QStandardItem("Selected"));
 
     // Setup content of the table
     int i=0;
@@ -123,25 +124,26 @@ void PeakTableView::constructTable()
     {
         const Eigen::RowVector3d& hkl=peak.getMillerIndices();
         double l=peak.getLorentzFactor();
-        QStandardItem* col1=new QStandardItem(QString::number(hkl[0],'f',2) + "  " + QString::number(hkl[1],'f',2) + "  " + QString::number(hkl[2],'f',2));
-        QStandardItem* col2=new QStandardItem(QString::number(peak.getScaledIntensity()/l,'f',2));
-        QStandardItem* col3=new QStandardItem(QString::number(peak.getScaledSigma()/l,'f',2));
-        QStandardItem* col4=new QStandardItem(QString::number(peak.getData()->getMetadata()->getKey<int>("Numor")));
-        QStandardItem* col5;
+        QStandardItem* col0=new QStandardItem(QString::number(hkl[0],'f',2) + "  " + QString::number(hkl[1],'f',2) + "  " + QString::number(hkl[2],'f',2));
+        QStandardItem* col1=new QStandardItem(QString::number(peak.getScaledIntensity()/l,'f',2));
+        QStandardItem* col2=new QStandardItem(QString::number(peak.getScaledSigma()/l,'f',2));
+        double t=peak.getTransmission();
+        QStandardItem* col3=new QStandardItem(QString::number(peak.getScaledIntensity()/l/t,'f',2));
+        QStandardItem* col4=new QStandardItem(QString::number(peak.getScaledSigma()/l/t,'f',2));
+        QStandardItem* col5=new QStandardItem(QString::number(peak.getData()->getMetadata()->getKey<int>("Numor")));
+        QStandardItem* col6;
         if (peak.isSelected())
-        {
-            col5= new QStandardItem(QIcon(":/resources/peakSelectedIcon.png"),"");
-        }
+            col6= new QStandardItem(QIcon(":/resources/peakSelectedIcon.png"),"");
         else
-        {
-            col5= new QStandardItem(QIcon(":/resources/peakDeselectedIcon.png"),"");
-        }
+            col6= new QStandardItem(QIcon(":/resources/peakDeselectedIcon.png"),"");
         model->setVerticalHeaderItem(i,new QStandardItem(QIcon(":/resources/singlePeakIcon.png"),QString::number(i)));
-        model->setItem(i,0,col1);
-        model->setItem(i,1,col2);
-        model->setItem(i,2,col3);
-        model->setItem(i,3,col4);
-        model->setItem(i++,4,col5);
+        model->setItem(i,0,col0);
+        model->setItem(i,1,col1);
+        model->setItem(i,2,col2);
+        model->setItem(i,3,col3);
+        model->setItem(i,4,col4);
+        model->setItem(i,5,col5);
+        model->setItem(i++,6,col6);
     }
     setModel(model);
 

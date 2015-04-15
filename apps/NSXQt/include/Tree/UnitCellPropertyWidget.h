@@ -39,11 +39,7 @@ private slots:
     void setMassDensity() const;
     void on_lineEdit_ChemicalFormula_editingFinished();
     void transform(const Eigen::Matrix3d& P);
-    void on_pushButton_Refine_2_clicked();
-
-    void on_pushButton_WeakPeaks_pressed();
-
-    void on_pushButton_UB_clicked();
+    void on_pushButton_TransformationMatrix_clicked();
 
 public slots:
     void setCell(const SX::Crystal::UnitCell&);    

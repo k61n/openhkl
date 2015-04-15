@@ -216,7 +216,7 @@ void MaterialFromMolarFractions::print(std::ostream& os) const
 		for (const auto& p : _elements)
 		{
 			os<<"\t-"<<std::setw(maxSize)<<std::setiosflags(std::ios::left)<<p.second->getName()<<" --> "<<std::setiosflags(std::ios::fixed|std::ios::right)<<std::setprecision(3)<<std::setw(7)<<p.second<<std::endl;
-			std::cout<<std::resetiosflags(std::ios::right);
+			os<<std::resetiosflags(std::ios::right);
 		}
 	}
 }

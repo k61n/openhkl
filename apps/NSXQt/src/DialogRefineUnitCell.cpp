@@ -240,6 +240,8 @@ void DialogRefineUnitCell::setSolution(const SX::Crystal::UBSolution& solution)
         ui->tableWidget_Detector->item(i,1)->setData(Qt::EditRole,solution._detectorOffsets[i]);
         ui->tableWidget_Detector->item(i,2)->setData(Qt::EditRole,solution._sigmaDetectorOffsets[i]);
     }
+
+    setLatticeParams();
 }
 
 void DialogRefineUnitCell::refineParameter(bool checked, int i)
@@ -284,9 +286,6 @@ void DialogRefineUnitCell::cellDetectoreHasChanged(int i, int j)
 
 void DialogRefineUnitCell::on_pushButton_Refine_clicked()
 {
-
-    _minimizer.clearPeaks();
-
     int nhits=0;
     const auto& mapdata=_experiment->getData();
     for (auto data: mapdata)
@@ -303,14 +302,11 @@ void DialogRefineUnitCell::on_pushButton_Refine_clicked()
     }
 
     std::ostringstream os;
-    os<<nhits<<" peaks considered for UB-refinement.\n";
+    os<<nhits<<" peaks considered for UB-refinement";
     ui->textEdit_Solution->setText(QString::fromStdString(os.str()));
     os.str("");
 
     auto M=_cell->getReciprocalStandardM();
-
-    std::cout<<"UB MATRIX"<<M<<std::endl;
-
     _minimizer.setStartingUBMatrix(M);
 
     int test=_minimizer.run(100);
@@ -344,7 +340,17 @@ void DialogRefineUnitCell::createOffsetsTables()
 
 void DialogRefineUnitCell::on_pushButton_Reset_clicked()
 {
-    _minimizer.resetParameters();
+    // Get the sample
+    auto sampleAxes=_experiment->getDiffractometer()->getSample()->getGonio()->getAxes();
+    for (auto a : sampleAxes)
+        a->setOffset(0.00);
     setSampleOffsets();
+    ui->tableWidget_Sample->update();
+
+    // Get the detector
+    auto detectorAxes=_experiment->getDiffractometer()->getDetector()->getGonio()->getAxes();
+    for (auto a : detectorAxes)
+        a->setOffset(0.00);
     setDetectorOffsets();
+    ui->tableWidget_Detector->update();
 }

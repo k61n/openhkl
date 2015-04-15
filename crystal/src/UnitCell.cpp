@@ -172,7 +172,6 @@ std::string UnitCell::getBravaisTypeSymbol() const
 void UnitCell::getUB(const Peak3D& p1, const Peak3D& p2)
 {
 	// Get Q1 and Q2 in the diffractometer basis
-	std::cout << "I am here \n";
 	Eigen::Vector3d q1=p1.getQ();
 	Eigen::Vector3d q2=p2.getQ();
 	Eigen::Vector3d q3=q1.cross(q2);

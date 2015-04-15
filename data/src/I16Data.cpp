@@ -70,7 +70,6 @@ I16Data::I16Data(const std::string& filename, std::shared_ptr<Diffractometer> di
 			std::istringstream is(line.substr(0,eq));
 			std::string key;
 			is >> key;
-			std::cout << key << std::endl;
 			if (key.compare("cmd")==0 || key.compare("date")==0)
 				continue;
 			if (key.compare("pilatus100k_path_template")==0)
@@ -79,7 +78,6 @@ I16Data::I16Data(const std::string& filename, std::shared_ptr<Diffractometer> di
 				std::istringstream is(line.substr(eq+2,std::string::npos-eq-1));
 				is >> secondary;
 				dir = boost::filesystem::path(filename).parent_path().string()+"/"+boost::filesystem::path(secondary).parent_path().string();
-				std::cout << "Directory" << dir << std::endl;
 				continue;
 			}
 			else

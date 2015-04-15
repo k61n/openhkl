@@ -6,7 +6,6 @@
 #include "Units.h"
 #include <Eigen/Dense>
 #include <vector>
-#include <iostream>
 
 using namespace SX::Crystal;
 using namespace SX::Units;
@@ -29,11 +28,4 @@ BOOST_AUTO_TEST_CASE(Test_FFT_Indexing)
 	// Max unit cell 50
 	FFTIndexing indexing(50.0);
 	indexing.addVectors(_qs);
-
-	std::vector<tVector> sols=indexing.findOnSphere(100,30);
-	for (auto& s : sols)
-	{
-		std::cout << s._vect.transpose() << " " << s._quality << std::endl;
-	}
-
 }

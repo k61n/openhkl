@@ -37,8 +37,8 @@ D19FourCircles::D19FourCircles(const std::string& name) : Diffractometer(name)
 
     SX::Instrument::CylindricalDetector* detector = new SX::Instrument::CylindricalDetector("640x256 cylindrical detector");
 
-    detector->setDistance(765*mm);
-    detector->setAngularWidth(119.8*deg);
+    detector->setDistance(764*mm);
+    detector->setAngularWidth(120.0*deg);
     detector->setHeight(398.4375*mm);
     detector->setNPixels(640,256);
 
@@ -51,8 +51,6 @@ D19FourCircles::D19FourCircles(const std::string& name) : Diffractometer(name)
     g->getAxis("y-offset")->setPhysical(false);
     g->addTranslation("z-offset",Vector3d(0,0,1));
     g->getAxis("z-offset")->setPhysical(false);
-    g->addRotation("Tilt",Vector3d(1,0,0),RotAxis::CCW);
-    g->getAxis("Tilt")->setPhysical(false);
     detector->setGonio(g);
 
     _detector = detector;

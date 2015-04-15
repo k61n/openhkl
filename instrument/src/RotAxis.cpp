@@ -105,20 +105,16 @@ void RotAxis::readXML(std::istream& is)
 			_axis[1]=v.second.get<double>("y");
 			_axis[2]=v.second.get<double>("z");
 			std::string direction=v.second.get<std::string>("Direction");
-			std::cout << direction << std::endl;
 			if (direction.compare("CCW")==0)
 			{
 				_dir=CCW;
-				std::cout << "CCW";
 			}
 			else if (direction.compare("CW")==0)
 			{
 				_dir=CW;
-				std::cout << "CW";
 			}
 		}
 	}
-	std::cout << _axis;
 }
 
 } // End namespace Instrument

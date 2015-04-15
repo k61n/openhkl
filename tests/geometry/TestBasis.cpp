@@ -47,8 +47,6 @@ BOOST_AUTO_TEST_CASE(Test_Basis)
 	// Check the rebasing to the standard basis.
 	bsecond.rebaseToStandard();
 
-	std::cout << bprime.use_count() <<std::endl;
-
 	xsecond=bsecond.fromStandard(x);
 
 	BOOST_CHECK_CLOSE(xsecond(0),0.25,tolerance);
@@ -102,15 +100,7 @@ BOOST_AUTO_TEST_CASE(Test_Basis)
 
 	std::shared_ptr<Basis> reference(new Basis(Basis::fromDirectVectors(Vector3d(1,0,0),Vector3d(0,1,0),Vector3d(0,0,1))));
 
-//	Basis b=Basis::fromDirectVectors(Vector3d(0,0,2),Vector3d(0,-1,0),Vector3d(1,0,0),reference);
-
-//	BOOST_CHECK_CLOSE(b.getVolume(),12.0,tolerance);
 	Eigen::Matrix3d P;
-//	P << 1,0,0,
-//		 0,2,0,
-//		 0,0,5;
-//	b.transform(P);
-//	BOOST_CHECK_CLOSE(b.getVolume(),120.0,tolerance);
 
 	// Check sigmas and error propagations
 	BOOST_CHECK(!reference->hasSigmas());
@@ -133,15 +123,8 @@ BOOST_AUTO_TEST_CASE(Test_Basis)
 	P << 0,2,0,4,0,0,0,0,-1;
 	reference->transform(P);
 
-	//	std::cout << reference->getDirectSigmas() <<std::endl;
-
 	reference->getParametersSigmas(err_a,err_b,err_c,err_alpha,err_beta,err_gamma);
-	std::cout<<err_a<<" "<<err_b<<" "<<err_c<<" "<<err_alpha<<" "<<err_beta<<" "<<err_gamma<<std::endl;
 
 	double err_as, err_bs, err_cs, err_alphas, err_betas, err_gammas;
 	reference->getReciprocalParametersSigmas(err_as,err_bs,err_cs,err_alphas,err_betas,err_gammas);
-
-	std::cout<<err_as<<" "<<err_bs<<" "<<err_cs<<" "<<err_alphas<<" "<<err_betas<<" "<<err_gammas<<std::endl;
-
-
 }

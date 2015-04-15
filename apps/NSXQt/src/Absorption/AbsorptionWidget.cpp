@@ -3,7 +3,6 @@
 #include <fstream>
 #include <QFileDialog>
 #include <QMessageBox>
-#include <iostream>
 #include "Diffractometer.h"
 #include "Sample.h"
 #include <boost/algorithm/string.hpp>
@@ -109,7 +108,6 @@ void AbsorptionWidget::loadImage(int i)
         return;
     QPixmap pix;
     QString file=QString::fromStdString(_imageList[i].second);
-    std::cout << file.toStdString() << std::endl;
     pix.load(QString::fromStdString(_imageList[i].second));
     QGraphicsPixmapItem* item=ui->graphicsView->scene()->addPixmap(pix);
     update();

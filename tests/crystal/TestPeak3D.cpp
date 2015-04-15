@@ -7,7 +7,6 @@
 #include "Units.h"
 #include <Eigen/Dense>
 #include <vector>
-#include <iostream>
 #include "Gonio.h"
 #include "Component.h"
 #include "ComponentState.h"
@@ -71,6 +70,4 @@ BOOST_AUTO_TEST_CASE(Test_Peak3D)
 
 	sample.setRestPosition(Eigen::Vector3d(0,0,0.01*m));
 	Q=peak.getQ();
-	std::cout << Q <<std::endl;
-
 }

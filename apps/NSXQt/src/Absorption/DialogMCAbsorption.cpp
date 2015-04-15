@@ -61,14 +61,22 @@ void DialogMCAbsorption::on_pushButton_run_pressed()
 
     const auto& data=_experiment->getData();
 
+    ui->progressBar_MCStatus->setValue(0);
+    ui->progressBar_MCStatus->setTextVisible(true);
+
+    int progress=0;
     for (auto& d: data)
     {
         const auto& peaks=d.second->getPeaks();
+        ui->progressBar_MCStatus->setMaximum(peaks.size());
+        ui->progressBar_MCStatus->setFormat(QString::fromStdString(d.second->getBasename()) + ": "+QString::number(progress)+"%");
         for (auto& p: peaks)
         {
             Eigen::Transform<double,3,2> hommat=sample->getGonio()->getHomMatrix(p->getSampleState()->getValues());
             Eigen::Matrix3d rot=hommat.rotation();
-            qDebug() << mca.run(ui->spinBox->value(),p->getKf(),rot);
+            double transmission=mca.run(ui->spinBox->value(),p->getKf(),rot);
+            p->setTransmission(transmission);
+            ui->progressBar_MCStatus->setValue(++progress);
         }
     }
 }

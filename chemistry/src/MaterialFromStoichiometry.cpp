@@ -211,7 +211,7 @@ void MaterialFromStoichiometry::print(std::ostream& os) const
 		{
 			os<<"\t-"<<std::setw(maxSize)<<std::setiosflags(std::ios::left)<<p.second->getName()<<" --> "<<std::setiosflags(std::ios::fixed|std::ios::right)<<std::setprecision(3)<<std::setw(7)<<ait->second<<std::endl;
 			os<< *(p.second) << std::endl;
-			std::cout<<std::resetiosflags(std::ios::right);
+			os<<std::resetiosflags(std::ios::right);
 			++ait;
 		}
 	}

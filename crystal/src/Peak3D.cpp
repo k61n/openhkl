@@ -29,7 +29,8 @@ Peak3D::Peak3D(SX::Data::IData* data):
 		_countsSigma(0.0),
 		_scale(1.0),
 		_selected(true),
-		_masked(false)
+		_masked(false),
+		_transmission(1.0)
 {
 }
 
@@ -45,7 +46,8 @@ Peak3D::Peak3D(const Peak3D& other):
 		_countsSigma(other._countsSigma),
 		_scale(other._scale),
 		_selected(other._selected),
-		_masked(other._masked)
+		_masked(other._masked),
+		_transmission(other._transmission)
 {
 }
 
@@ -76,6 +78,7 @@ Peak3D& Peak3D::operator=(const Peak3D& other)
 		_scale = other._scale;
 		_selected = other._selected;
 		_masked = other._masked;
+		_transmission = other._transmission;
 
 	}
 
@@ -317,6 +320,11 @@ double Peak3D::getScaledIntensity() const
 	return _scale*_counts;
 }
 
+double Peak3D::getTransmission() const
+{
+	return _transmission;
+}
+
 double Peak3D::getRawSigma() const
 {
 	return _countsSigma;
@@ -348,6 +356,11 @@ void Peak3D::setScale(double scale)
 {
 	_scale = scale;
 
+}
+
+void Peak3D::setTransmission(double transmission)
+{
+	_transmission=transmission;
 }
 
 SX::Instrument::DetectorEvent* Peak3D::getDetectorEvent()

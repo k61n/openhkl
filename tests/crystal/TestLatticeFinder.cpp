@@ -6,7 +6,6 @@
 #include "Units.h"
 #include <Eigen/Dense>
 #include <vector>
-#include <iostream>
 
 using namespace SX::Crystal;
 using namespace SX::Units;
@@ -27,8 +26,4 @@ BOOST_AUTO_TEST_CASE(Test_Lattice_Finder)
 	}
 	finder.run(3.0);
 	std::vector<SX::Crystal::LatticeSolution> solutions=finder.determineLattice(30,30);
-	for (auto& solution : solutions)
-	{
-		std::cout << SX::Crystal::UnitCell::fromReciprocalVectors(std::get<0>(solution),std::get<1>(solution),std::get<2>(solution)).getVolume() <<std::endl;
-	}
 }

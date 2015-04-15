@@ -24,6 +24,4 @@ BOOST_AUTO_TEST_CASE(Test_NDEllipsoid)
 			0,0,1;
 	Ellipsoid<double,3> e(center,semi_axes,eigV);
 	e.translate(Vector3d(1,0,0));
-	std::cout << e.getLower() << std::endl;
-	std::cout << e.getUpper() << std::endl;
 }

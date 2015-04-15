@@ -164,7 +164,7 @@ void UnitCellPropertyWidget::on_lineEdit_ChemicalFormula_editingFinished()
     setMassDensity();
 }
 
-void UnitCellPropertyWidget::on_pushButton_Refine_2_clicked()
+void UnitCellPropertyWidget::on_pushButton_TransformationMatrix_clicked()
 {
     DialogTransformationmatrix* dialog=new DialogTransformationmatrix(this);
     connect(dialog,SIGNAL(getMatrix(Eigen::Matrix3d)),this,SLOT(transform(Eigen::Matrix3d)));
@@ -175,37 +175,4 @@ void UnitCellPropertyWidget::transform(const Eigen::Matrix3d &P)
 {
    _unitCellItem->getCell()->transform(P);
    getLatticeParams();
-}
-
-void UnitCellPropertyWidget::on_pushButton_WeakPeaks_pressed()
-{
-//    auto peakmap=_unitCellItem->getCell()->generateReflectionsInSphere(2.0);
-//    qDebug() << "reflections in sphere generated";
-//    auto UB=_unitCellItem->getCell()->getReciprocalReferenceM();
-//    auto& map=_unitCellItem->getExperiment()->getData();
-
-//    int npeaks=0;
-//    for (auto& d: map)
-//    {
-//        auto& data=d.second;
-//        for (auto p : peakmap)
-//        {
-//            auto& hkl=p.second;
-//            SX::Crystal::PeakCalc* pe=data->hasPeak(hkl[0],hkl[1],hkl[2],UB);
-//            if (pe)
-//            {
-//               //qDebug()<< "Adding peak" << hkl[0] << " " << hkl[1] << " " << hkl[2];
-//               //data->addPeak(pe);
-//               npeaks++;
-//            }
-//        }
-
-//    }
-//    std::cout << "npeaks" << npeaks << std::endl;
-//    emit cellUpdated();
-}
-
-void UnitCellPropertyWidget::on_pushButton_UB_clicked()
-{
-
 }

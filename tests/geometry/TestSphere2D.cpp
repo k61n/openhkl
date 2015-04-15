@@ -47,9 +47,8 @@ BOOST_AUTO_TEST_CASE(Test_Sphere)
 	BOOST_CHECK_CLOSE(upper[1], 4.0,tolerance);
 
 	Vector3d point(0,0,1);
-	std::cout<<s1.isInside(point)<<std::endl;
 
-	// Test: a given point falls inside the Sphere
+//	// Test that a given point falls inside the Sphere
 //	int nSteps(500);
 //	Vector2d delta=(upper-lower)/nSteps;
 //	Vector3d point(0,0,1);

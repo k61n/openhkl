@@ -307,6 +307,7 @@ int UBMinimizer::run(unsigned int maxIter)
 
 		// Remove the fixed parameters before inverting J^t * J
 	    int removed=0;
+
 		for (unsigned int i=0;i<fParams.size();++i)
 		{
 			if (fParams[i])
@@ -458,9 +459,9 @@ std::ostream& operator<<(std::ostream& os, const UBSolution& solution)
 {
 	os<<"UB matrix:"<<std::endl;
 	os<<solution._ub<< std::endl;
-	os<<"UB Covariance:" << std::endl;
-	os<<solution._covub << std::endl;
+
 	os << "Wavelength:" << solution._source->getWavelength() << "("<< solution._sigmaSourceOffset<< ")" << std::endl;
+
 	os<<"Detector offsets: " << std::endl;
 	auto detectorG=solution._detector->getGonio();
 	for (unsigned int i=0;i<detectorG->getNAxes();++i)
@@ -473,6 +474,7 @@ std::ostream& operator<<(std::ostream& os, const UBSolution& solution)
 			os << solution._detectorOffsets[i]/SX::Units::deg << "(" << solution._sigmaDetectorOffsets[i]/SX::Units::deg << ") deg " << std::endl;
 	}
 	os <<std::endl;
+
 	os<<"Sample offsets:" << std::endl;
 	auto sampleG=solution._sample->getGonio();
 	for (unsigned int i=0;i<sampleG->getNAxes();++i)

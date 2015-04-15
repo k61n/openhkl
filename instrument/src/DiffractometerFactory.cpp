@@ -4,6 +4,7 @@
 #include "D19FourCircles.h"
 #include "Cyclops.h"
 #include "I16Kappa.h"
+#include "D3.h"
 
 namespace SX
 {
@@ -18,6 +19,7 @@ DiffractometerFactory::DiffractometerFactory()
 	registerCallback("D19 4-circles",&D19FourCircles::create);
 	registerCallback("Cyclops",&Cyclops::create);
 	registerCallback("I16 Kappa",&I16Kappa::create);
+	registerCallback("D3",&D3::create);
 }
 
 DiffractometerFactory::~DiffractometerFactory() {

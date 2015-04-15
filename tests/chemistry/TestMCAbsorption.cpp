@@ -50,16 +50,11 @@ BOOST_AUTO_TEST_CASE(Test_Material)
 	double muScattering=helium->getMuScattering();
 	double muAbsorption=helium->getMuAbsorption(1.46e-10);
 
-	std::cout<<"mu scattering --> "<<muScattering<<std::endl;
-	std::cout<<"mu absorption --> "<<muAbsorption<<std::endl;
-
 	// Set the material hull and its scattering and absorption attenuation factors
 	mca.setSample(&chull,muScattering,muAbsorption);
 
 	// Compute the transmission factor
 	double transmission=mca.run(10,vector3(0,1,0),Eigen::Matrix3d::Identity());
-	std::cout<<"transmission --> "<<transmission<<std::endl;
-
 
 	// Build an isotopically pure methane material
 	SX::Chemistry::sptrMaterial methane= mmgr->buildMaterialFromChemicalFormula("CH4",ChemicalState::Gaz);
@@ -73,15 +68,9 @@ BOOST_AUTO_TEST_CASE(Test_Material)
 	muScattering=methane->getMuScattering();
 	muAbsorption=methane->getMuAbsorption(1.46e-10);
 
-	std::cout<<"mu scattering --> "<<muScattering<<std::endl;
-	std::cout<<"mu absorption --> "<<muAbsorption<<std::endl;
-
 	// Set the material hull and its scattering and absorption attenuation factors
 	mca.setSample(&chull,muScattering,muAbsorption);
 
 	// Compute the transmission factor
-	transmission=mca.run(10000,vector3(0,1,0),Eigen::Matrix3d::Identity());
-	std::cout<<"transmission --> "<<transmission<<std::endl;
-
-
+	mca.run(10000,vector3(0,1,0),Eigen::Matrix3d::Identity());
 }

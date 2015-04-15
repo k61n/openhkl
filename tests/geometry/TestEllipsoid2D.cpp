@@ -23,5 +23,4 @@ BOOST_AUTO_TEST_CASE(Test_NDEllipsoid)
 			0,1;
 	Ellipsoid<double,2> e1(center1,semi_axes,eigV);
 	Ellipsoid<double,2> e2(center2,semi_axes,eigV);
-	std::cout << " I am here" << e1.collide(e2) << std::endl;
 }

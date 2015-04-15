@@ -7,7 +7,6 @@
 #include <QGraphicsTextItem>
 #include <QMessageBox>
 #include <QtDebug>
-#include <iostream>
 #include "Units.h"
 
 CrystalScene::CrystalScene(SX::Geometry::ConvexHull<double>* hull, QWidget *parent) :
@@ -256,7 +255,6 @@ void CrystalScene::triangulate()
             double x,y,z;
             temp->getCoordinates(x,y,z);
            _hull->addVertex(x*aspectratio,y*aspectratio,z*aspectratio);
-            std::cout<<x*aspectratio<<" "<<y*aspectratio<<" "<<z*aspectratio<<std::endl;
         }
     }
 

@@ -40,7 +40,7 @@ double MCAbsorption::run(unsigned int nIterations, const Eigen::Vector3d& outV, 
 
 	Eigen::Vector3d dir(0,1,0);
 
-	double attenuation(0.0);
+	double transmission(0.0);
 
 	unsigned int nHits(0);
 
@@ -88,16 +88,15 @@ double MCAbsorption::run(unsigned int nIterations, const Eigen::Vector3d& outV, 
 				continue;
 		}
 
-		attenuation+=exp(-(_muScat + _muAbs)*lpm);
+		transmission+=exp(-(_muScat + _muAbs)*lpm);
 	}
 
 	if (nHits==0)
-		attenuation=1.0;
+		transmission=1.0;
 	else
-		attenuation /= nHits;
+		transmission /= nHits;
 
-	return attenuation;
-
+	return transmission;
 }
 
 

@@ -468,7 +468,6 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
 void DetectorScene::changeInteractionMode(int mode)
 {
     _mode=static_cast<MODE>(mode);
-    std::cout << mode << std::endl;
 }
 
 void DetectorScene::loadCurrentImage(bool newimage)

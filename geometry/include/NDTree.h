@@ -417,15 +417,15 @@ template<typename T, uint D>
 void NDTree<T,D>::printSelf(std::ostream& os) const
 {
 
-	std::cout << "*** Node ***  " << this->_lowerBound  << "," << this->_upperBound << std::endl;
+	os << "*** Node ***  " << this->_lowerBound  << "," << this->_upperBound << std::endl;
 	if (!hasChildren())
 	{
-		std::cout << " has no children" <<std::endl;
-		std::cout << "... and has " << _data.size() << " data" <<  std::endl;
+		os << " has no children" <<std::endl;
+		os << "... and has " << _data.size() << " data" <<  std::endl;
 	}
 	else
 	{
-		std::cout << " has children :" << std::endl;
+		os << " has children :" << std::endl;
 		for (int i=0; i<_MULTIPLICITY; ++i)
 			_children[i]->printSelf(os);
 	}

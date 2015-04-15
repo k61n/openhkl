@@ -1,4 +1,3 @@
-#include <iostream>
 #include <memory>
 #include <stdexcept>
 #include <utility>
@@ -277,7 +276,6 @@ void ExperimentTree::onDoubleClick(const QModelIndex& index)
 
     if (auto ptr=dynamic_cast<DataItem*>(item))
     {
-        std::cout<<ptr->model()->rowCount()<<std::endl;
         if (ptr->model()->rowCount(ptr->index())==0)
             importData();
         else
