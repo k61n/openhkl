@@ -78,6 +78,8 @@ void DialogRefineUnitCell::setMinimizer()
 
     int start=10;
 
+    _minimizer.refineParameter(9,!source->hasOffsetFixed());
+
     int nSampleOffsets=sample->getNAxes();
     for (int i=0;i<nSampleOffsets;++i)
     {
