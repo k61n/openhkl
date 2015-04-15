@@ -135,7 +135,9 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
                         minimizer.setSample(sample);
                         minimizer.setDetector(detector);
                         minimizer.setSource(source);
-                        for (int i=9;i<=19;++i)
+                        // Only the UB matrix parameters are used for fit
+                        int nParameters= 10 + sample->getNAxes() + detector->getNAxes();
+                        for (int i=9;i<nParameters;++i)
                             minimizer.refineParameter(i,false);
                         int success=0;
                         for (auto peak : _peaks)

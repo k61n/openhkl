@@ -296,8 +296,11 @@ void DialogRefineUnitCell::on_pushButton_Refine_clicked()
             }
         }
     }
-    qDebug() << nhits << " peaks considered for UB-refinement";
 
+    std::ostringstream os;
+    os<<nhits<<" peaks considered for UB-refinement";
+    ui->textEdit_Solution->setText(QString::fromStdString(os.str()));
+    os.str("");
 
     auto M=_cell->getReciprocalStandardM();
     _minimizer.setStartingUBMatrix(M);
@@ -311,10 +314,9 @@ void DialogRefineUnitCell::on_pushButton_Refine_clicked()
     }
 
     const auto& solution=_minimizer.getSolution();
-    std::ostringstream os;
     os<<solution;
     ui->textEdit_Solution->setTextColor(QColor("black"));
-    ui->textEdit_Solution->setText(QString::fromStdString(os.str()));
+    ui->textEdit_Solution->append(QString::fromStdString(os.str()));
     _cell->setReciprocalVectors(solution._ub.row(0),solution._ub.row(1),solution._ub.row(2));
 
     setSolution(solution);
