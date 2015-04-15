@@ -127,6 +127,9 @@ struct UBFunctor : public Functor<double>
 	 * @param peak the peak to be added
 	 */
 	void addPeak(const Peak3D& peak);
+
+	void clearPeaks();
+
 	/*
 	 * @brief Returns the number of inputs of the functor (e.g. the number of parameters)
 	 * @return the number of inputs
@@ -197,6 +200,9 @@ public:
 	 * @param peak the peak to be added
 	 */
 	void addPeak(const Peak3D& peak);
+
+	void clearPeaks();
+
 	//! Reset all the parameters (e.g. UB matrix + detector and sample offsets) to zero
 	void resetParameters();
 	/*

@@ -116,6 +116,11 @@ void UBFunctor::addPeak(const Peak3D& peak)
 	_peaks.push_back(peak);
 }
 
+void UBFunctor::clearPeaks()
+{
+	_peaks.clear();
+}
+
 int UBFunctor::inputs() const
 {
 	// 9 UB parameters + wavelength
@@ -210,6 +215,11 @@ UBMinimizer::UBMinimizer() : _functor(UBFunctor()), _solution(), _start()
 void UBMinimizer::addPeak(const Peak3D& peak)
 {
 	_functor.addPeak(peak);
+}
+
+void UBMinimizer::clearPeaks()
+{
+	_functor.clearPeaks();
 }
 
 void UBMinimizer::resetParameters()
