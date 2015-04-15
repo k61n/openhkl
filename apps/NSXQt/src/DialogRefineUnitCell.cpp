@@ -284,6 +284,9 @@ void DialogRefineUnitCell::cellDetectoreHasChanged(int i, int j)
 
 void DialogRefineUnitCell::on_pushButton_Refine_clicked()
 {
+
+    _minimizer.clearPeaks();
+
     int nhits=0;
     const auto& mapdata=_experiment->getData();
     for (auto data: mapdata)
@@ -300,11 +303,14 @@ void DialogRefineUnitCell::on_pushButton_Refine_clicked()
     }
 
     std::ostringstream os;
-    os<<nhits<<" peaks considered for UB-refinement";
+    os<<nhits<<" peaks considered for UB-refinement.\n";
     ui->textEdit_Solution->setText(QString::fromStdString(os.str()));
     os.str("");
 
     auto M=_cell->getReciprocalStandardM();
+
+    std::cout<<"UB MATRIX"<<M<<std::endl;
+
     _minimizer.setStartingUBMatrix(M);
 
     int test=_minimizer.run(100);
@@ -338,15 +344,7 @@ void DialogRefineUnitCell::createOffsetsTables()
 
 void DialogRefineUnitCell::on_pushButton_Reset_clicked()
 {
-    // Get the sample
-    auto sampleAxes=_experiment->getDiffractometer()->getSample()->getGonio()->getAxes();
-    for (auto a : sampleAxes)
-        a->setOffset(0.00);
+    _minimizer.resetParameters();
     setSampleOffsets();
-
-    // Get the detector
-    auto detectorAxes=_experiment->getDiffractometer()->getDetector()->getGonio()->getAxes();
-    for (auto a : detectorAxes)
-        a->setOffset(0.00);
     setDetectorOffsets();
 }
