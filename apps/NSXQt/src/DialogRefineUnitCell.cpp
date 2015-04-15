@@ -339,14 +339,14 @@ void DialogRefineUnitCell::createOffsetsTables()
 void DialogRefineUnitCell::on_pushButton_Reset_clicked()
 {
     // Get the sample
-    auto sample=_experiment->getDiffractometer()->getSample();
-    for (auto a : sample->getGonio()->getAxes())
+    auto sampleAxes=_experiment->getDiffractometer()->getSample()->getGonio()->getAxes();
+    for (auto a : sampleAxes)
         a->setOffset(0.00);
     setSampleOffsets();
 
     // Get the detector
-    auto detector=_experiment->getDiffractometer()->getDetector();
-    for (auto a : detector->getGonio()->getAxes())
+    auto detectorAxes=_experiment->getDiffractometer()->getDetector()->getGonio()->getAxes();
+    for (auto a : detectorAxes)
         a->setOffset(0.00);
     setDetectorOffsets();
 }
