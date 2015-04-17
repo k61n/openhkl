@@ -2,7 +2,7 @@
  * nsxtool : Neutron Single Crystal analysis toolkit
  ------------------------------------------------------------------------------------------
  Copyright (C)
- 2012- Laurent C. Chapon Eric Pellegrini
+ 2012- Laurent C. Chapon, Eric Pellegrini
  Institut Laue-Langevin
  BP 156
  6, rue Jules Horowitz
@@ -26,32 +26,60 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-#ifndef NSXTOOL_SPACEGROUPSYMBOLS_H_
-#define NSXTOOL_SPACEGROUPSYMBOLS_H_
 
+#ifndef NSXTOOL_SYMMETRYGROUPGENERATOR_H_
+#define NSXTOOL_SYMMETRYGROUPGENERATOR_H_
+
+#include <vector>
 #include <string>
-#include <unordered_map>
 
-#include "Singleton.h"
+#include <Eigen/Dense>
+
+#include "SpaceGroupGenerator.h"
 
 namespace SX
 {
+
 namespace Crystal
 {
 
+typedef std::vector<SpaceGroupGenerator> groupElementsList;
 
-class SpaceGroupSymbols: public SX::Kernel::Singleton<SpaceGroupSymbols,SX::Kernel::Constructor,SX::Kernel::Destructor>
+class SpaceGroup
 {
+
 public:
-	void addSpaceGroup(const std::string& spaceGroup, const std::string& generators);
-	bool getGenerators(const std::string& spaceGroup,std::string& generators);
+
+	SpaceGroup(const std::string& symbol);
+
+	SpaceGroup(const std::string& symbol, const std::string& generators);
+
+	SpaceGroup(const SpaceGroup& other);
+
+	SpaceGroup& operator=(const SpaceGroup& other);
+
+	const std::string& getSymbol() const;
+
+	const std::string& getGenerators() const;
+
+	const groupElementsList& getGroupElements() const;
+
 private:
-	//! Store pairs of Space group symbols and generators.
-	static std::unordered_map<std::string,std::string> _spaceGroupTables;
+
+	void generateGroupElements();
+
+private:
+
+	std::string _symbol;
+
+	std::string _generators;
+
+	groupElementsList _groupElements;
+
 };
 
+} // end namespace Crystal
 
-} // Namespace Crystal
-} // Namespace SX
+} // end namespace SX
 
-#endif /* NSXTOOL_SPACEGROUPSYMBOLS_H_ */
+#endif /* NSXTOOL_SYMMETRYGROUPGENERATOR_H_ */

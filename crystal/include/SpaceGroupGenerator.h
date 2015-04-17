@@ -2,7 +2,7 @@
  * nsxtool : Neutron Single Crystal analysis toolkit
  ------------------------------------------------------------------------------------------
  Copyright (C)
- 2012- Laurent C. Chapon Eric Pellegrini
+ 2012- Laurent C. Chapon, Eric Pellegrini
  Institut Laue-Langevin
  BP 156
  6, rue Jules Horowitz
@@ -26,32 +26,56 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-#ifndef NSXTOOL_SPACEGROUPSYMBOLS_H_
-#define NSXTOOL_SPACEGROUPSYMBOLS_H_
 
-#include <string>
-#include <unordered_map>
+#ifndef NSXTOOL_SPACEGROUPGENERATOR_H_
+#define NSXTOOL_SPACEGROUPGENERATOR_H_
 
-#include "Singleton.h"
+#include <ostream>
+
+#include <Eigen/Dense>
 
 namespace SX
 {
+
 namespace Crystal
 {
 
+typedef Eigen::Transform<double,3,Eigen::Affine> affineTransformation;
 
-class SpaceGroupSymbols: public SX::Kernel::Singleton<SpaceGroupSymbols,SX::Kernel::Constructor,SX::Kernel::Destructor>
+class SpaceGroupGenerator
 {
+
 public:
-	void addSpaceGroup(const std::string& spaceGroup, const std::string& generators);
-	bool getGenerators(const std::string& spaceGroup,std::string& generators);
+
+	SpaceGroupGenerator()=delete;
+
+	SpaceGroupGenerator(std::string generator);
+
+	SpaceGroupGenerator(const affineTransformation& symmetryOperation);
+
+	SpaceGroupGenerator(const SpaceGroupGenerator& other);
+
+	SpaceGroupGenerator& operator=(const SpaceGroupGenerator& other);
+
+	bool operator==(const SpaceGroupGenerator& other) const;
+
+	SpaceGroupGenerator operator*(const SpaceGroupGenerator& other) const;
+
+	const affineTransformation& getSymmetryOperation() const;
+
+	~SpaceGroupGenerator();
+
+	void print(std::ostream& os) const;
+
 private:
-	//! Store pairs of Space group symbols and generators.
-	static std::unordered_map<std::string,std::string> _spaceGroupTables;
+
+	affineTransformation _symmetryOperation;
+
 };
 
+std::ostream& operator<<(std::ostream& os, const SpaceGroupGenerator& sgg);
 
-} // Namespace Crystal
-} // Namespace SX
+} // end namespace Crystal
+} // end namespace SX
 
-#endif /* NSXTOOL_SPACEGROUPSYMBOLS_H_ */
+#endif /* NSXTOOL_SPACEGROUPGENERATOR_H_ */

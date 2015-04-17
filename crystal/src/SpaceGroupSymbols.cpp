@@ -1,10 +1,4 @@
-/*
- * SpaceGroupSymbols.cpp
- *
- *  Created on"," Apr 11, 2015
- *      Author"," chapon
- */
-
+#include "Error.h"
 #include "SpaceGroupSymbols.h"
 
 namespace SX
@@ -283,6 +277,15 @@ std::unordered_map<std::string,std::string> SpaceGroupSymbols::_spaceGroupTables
 		       {"I m -3 m"," x+1/2,y+1/2,z+1/2; -x,-y,z; -x,y,-z; z,x,y; y,x,-z; -x,-y,-z"},
 		       {"I a -3 d"," x+1/2,y+1/2,z+1/2; -x+1/2,-y,z+1/2; -x,y+1/2,-z+1/2; z,x,y; y+3/4,x+1/4,-z+1/4; -x,-y,-z"}
 };
+
+void SpaceGroupSymbols::addSpaceGroup(const std::string& spaceGroup, const std::string& generators)
+{
+
+	auto it=_spaceGroupTables.find(spaceGroup);
+	if (it!=_spaceGroupTables.end())
+		throw SX::Kernel::Error<SpaceGroupSymbols>("The space group "+spaceGroup+" is already registered.");
+	_spaceGroupTables.insert(std::unordered_map<std::string,std::string>::value_type(spaceGroup,generators));
+}
 
 bool SpaceGroupSymbols::getGenerators(const std::string& spacegroup, std::string& generators)
 {
