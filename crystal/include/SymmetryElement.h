@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef NSXTOOL_SPACEGROUPGENERATOR_H_
-#define NSXTOOL_SPACEGROUPGENERATOR_H_
+#ifndef NSXTOOL_SYMMETRYELEMENT_H_
+#define NSXTOOL_SYMMETRYELEMENT_H_
 
 #include <ostream>
 
@@ -42,28 +42,28 @@ namespace Crystal
 
 typedef Eigen::Transform<double,3,Eigen::Affine> affineTransformation;
 
-class SpaceGroupGenerator
+class SymmetryElement
 {
 
 public:
 
-	SpaceGroupGenerator()=delete;
+	SymmetryElement()=delete;
 
-	SpaceGroupGenerator(std::string generator);
+	SymmetryElement(std::string generator);
 
-	SpaceGroupGenerator(const affineTransformation& symmetryOperation);
+	SymmetryElement(const affineTransformation& symmetryOperation);
 
-	SpaceGroupGenerator(const SpaceGroupGenerator& other);
+	SymmetryElement(const SymmetryElement& other);
 
-	SpaceGroupGenerator& operator=(const SpaceGroupGenerator& other);
+	~SymmetryElement();
 
-	bool operator==(const SpaceGroupGenerator& other) const;
+	SymmetryElement& operator=(const SymmetryElement& other);
 
-	SpaceGroupGenerator operator*(const SpaceGroupGenerator& other) const;
+	bool operator==(const SymmetryElement& other) const;
+
+	SymmetryElement operator*(const SymmetryElement& other) const;
 
 	const affineTransformation& getSymmetryOperation() const;
-
-	~SpaceGroupGenerator();
 
 	void print(std::ostream& os) const;
 
@@ -73,9 +73,10 @@ private:
 
 };
 
-std::ostream& operator<<(std::ostream& os, const SpaceGroupGenerator& sgg);
+std::ostream& operator<<(std::ostream& os, const SymmetryElement& sym);
 
 } // end namespace Crystal
+
 } // end namespace SX
 
-#endif /* NSXTOOL_SPACEGROUPGENERATOR_H_ */
+#endif /* NSXTOOL_SYMMETRYELEMENT_H_ */

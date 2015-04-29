@@ -1,9 +1,7 @@
 #include <algorithm>
-#include <iostream>
 
 #include "Error.h"
 #include "SpaceGroup.h"
-#include "SpaceGroupGenerator.h"
 #include "SpaceGroupSymbols.h"
 
 #include <boost/algorithm/string.hpp>
@@ -78,26 +76,26 @@ void SpaceGroup::generateGroupElements()
 
 	std::vector<std::string> gens;
 	boost::split(gens, _generators, boost::is_any_of(";"));
+
+	generators.reserve(gens.size()+1);
+	generators.push_back(SymmetryElement(affineTransformation::Identity()));
+
 	for (auto& g : gens)
 	{
-		auto gen=SpaceGroupGenerator(g);
+		auto gen=SymmetryElement(g);
 		generators.push_back(gen);
-		SpaceGroupGenerator geninv(gen.getSymmetryOperation().inverse());
-		auto it=std::find(generators.begin(),generators.end(),geninv);
-		if (it==generators.end())
-			generators.push_back(geninv);
 	}
 
-	_groupElements.push_back(SpaceGroupGenerator(affineTransformation::Identity()));
+	_groupElements.push_back(SymmetryElement(affineTransformation::Identity()));
 
 	while (true)
 	{
-		int oldSize=_groupElements.size();
-		for (const auto& g : generators)
+		unsigned int oldSize=_groupElements.size();
+		for (unsigned int i=0;i<_groupElements.size();++i)
 		{
-			for (const auto& element : _groupElements)
+			for (const auto& g : generators)
 			{
-				auto newElement=element*g;
+				auto newElement=_groupElements[i]*g;
 				auto it=std::find(_groupElements.begin(),_groupElements.end(),newElement);
 				if (it==_groupElements.end())
 					_groupElements.push_back(newElement);
@@ -107,6 +105,19 @@ void SpaceGroup::generateGroupElements()
 			break;
 		oldSize=_groupElements.size();
 	}
+}
+
+void SpaceGroup::print(std::ostream& os) const
+{
+	os << "Symmetry elements of space group "<<_symbol<<std::endl;
+	for (unsigned int i=0;i<_groupElements.size();++i)
+		os << "Elements "<<i+1<<":\n"<<_groupElements[i]<<std::endl;
+}
+
+std::ostream& operator<<(std::ostream& os, const SpaceGroup& sg)
+{
+	sg.print(os);
+	return os;
 }
 
 } // end namespace Crystal

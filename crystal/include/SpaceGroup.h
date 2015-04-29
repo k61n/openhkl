@@ -30,12 +30,13 @@
 #ifndef NSXTOOL_SYMMETRYGROUPGENERATOR_H_
 #define NSXTOOL_SYMMETRYGROUPGENERATOR_H_
 
+#include <ostream>
 #include <vector>
 #include <string>
 
 #include <Eigen/Dense>
 
-#include "SpaceGroupGenerator.h"
+#include "SymmetryElement.h"
 
 namespace SX
 {
@@ -43,7 +44,7 @@ namespace SX
 namespace Crystal
 {
 
-typedef std::vector<SpaceGroupGenerator> groupElementsList;
+typedef std::vector<SymmetryElement> groupElementsList;
 
 class SpaceGroup
 {
@@ -64,6 +65,8 @@ public:
 
 	const groupElementsList& getGroupElements() const;
 
+	void print(std::ostream& os) const;
+
 private:
 
 	void generateGroupElements();
@@ -77,6 +80,8 @@ private:
 	groupElementsList _groupElements;
 
 };
+
+std::ostream& operator<<(std::ostream& os, const SpaceGroup& sg);
 
 } // end namespace Crystal
 
