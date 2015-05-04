@@ -69,7 +69,7 @@ void PeakTableView::peakChanged(QModelIndex current, QModelIndex last)
 void PeakTableView::sortByColumn(int i)
 {
     // Only 5 columns || no sorting by sigma || check if peak
-    if (i>6 || i==2 || _peaks.size()==0)
+    if (i>6 || i==2 ||i==4 ||  _peaks.size()==0)
         return;
 
     int& column=std::get<0>(_columnUp);
@@ -84,17 +84,30 @@ void PeakTableView::sortByColumn(int i)
     switch (i)
     {
     case 0:
+    {
         sortByHKL(up);
         break;
+    }
     case 1:
-        sortByIntensity(up);
+    {
+        sortByRawIntensity(up);
         break;
+    }
     case 3:
+    {
+        sortByCorrectedIntensity(up);
+        break;
+    }
+    case 5:
+    {
         sortByNumor(up);
         break;
-    case 4:
+    }
+    case 6:
+    {
         sortBySelected(up);
         break;
+    }
     }
 
     constructTable();
@@ -111,7 +124,7 @@ void PeakTableView::constructTable()
     // Create table with 7 columns
     QStandardItemModel* model=new QStandardItemModel(_peaks.size(),7,this);
     model->setHorizontalHeaderItem(0,new QStandardItem("h k l"));
-    model->setHorizontalHeaderItem(1,new QStandardItem("I"));
+    model->setHorizontalHeaderItem(1,new QStandardItem("Raw I"));
     model->setHorizontalHeaderItem(2,new QStandardItem(QString((QChar) 0x03C3)+"I"));
     model->setHorizontalHeaderItem(3,new QStandardItem("Corrected I"));
     model->setHorizontalHeaderItem(4,new QStandardItem(QString((QChar) 0x03C3)+"I"));
@@ -123,10 +136,10 @@ void PeakTableView::constructTable()
     for (SX::Crystal::Peak3D& peak : _peaks)
     {
         const Eigen::RowVector3d& hkl=peak.getMillerIndices();
-        double l=peak.getLorentzFactor();
         QStandardItem* col0=new QStandardItem(QString::number(hkl[0],'f',2) + "  " + QString::number(hkl[1],'f',2) + "  " + QString::number(hkl[2],'f',2));
-        QStandardItem* col1=new QStandardItem(QString::number(peak.getScaledIntensity()/l,'f',2));
-        QStandardItem* col2=new QStandardItem(QString::number(peak.getScaledSigma()/l,'f',2));
+        QStandardItem* col1=new QStandardItem(QString::number(peak.getRawIntensity(),'f',2));
+        QStandardItem* col2=new QStandardItem(QString::number(peak.getRawSigma(),'f',2));
+        double l=peak.getLorentzFactor();
         double t=peak.getTransmission();
         QStandardItem* col3=new QStandardItem(QString::number(peak.getScaledIntensity()/l/t,'f',2));
         QStandardItem* col4=new QStandardItem(QString::number(peak.getScaledSigma()/l/t,'f',2));
@@ -350,19 +363,35 @@ void PeakTableView::sortBySelected(bool up)
               );
 }
 
-void PeakTableView::sortByIntensity(bool up)
+void PeakTableView::sortByRawIntensity(bool up)
 {
     if (up)
         std::sort(_peaks.begin(),_peaks.end(),
               [&](const SX::Crystal::Peak3D& p1, const SX::Crystal::Peak3D& p2)
                 {
-                    return ((p1.getScaledIntensity()/p1.getLorentzFactor())>(p2.getScaledIntensity()/p2.getLorentzFactor()));
+                    return (p1.getRawIntensity()>p2.getRawIntensity());
                 });
     else
         std::sort(_peaks.begin(),_peaks.end(),
                   [&](const SX::Crystal::Peak3D& p1, const SX::Crystal::Peak3D& p2)
                     {
-                        return ((p1.getScaledIntensity()/p1.getLorentzFactor())<(p2.getScaledIntensity()/p2.getLorentzFactor()));
+                        return (p1.getRawIntensity()<p2.getRawIntensity());
+                    });
+}
+
+void PeakTableView::sortByCorrectedIntensity(bool up)
+{
+    if (up)
+        std::sort(_peaks.begin(),_peaks.end(),
+              [&](const SX::Crystal::Peak3D& p1, const SX::Crystal::Peak3D& p2)
+                {
+                    return ((p1.getScaledIntensity()/p1.getLorentzFactor()/p1.getTransmission())>(p2.getScaledIntensity()/p2.getLorentzFactor()/p2.getTransmission()));
+                });
+    else
+        std::sort(_peaks.begin(),_peaks.end(),
+                  [&](const SX::Crystal::Peak3D& p1, const SX::Crystal::Peak3D& p2)
+                    {
+            return ((p1.getScaledIntensity()/p1.getLorentzFactor()/p1.getTransmission())<(p2.getScaledIntensity()/p2.getLorentzFactor()/p2.getTransmission()));
                     });
 }
 
