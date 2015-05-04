@@ -25,7 +25,7 @@ PeakTableView::PeakTableView(QWidget *parent)
     // Selection of a cell in the table select the whole line.
     this->setSelectionBehavior(QAbstractItemView::SelectRows);
     //
-    setBaseSize(500,500);
+    setMinimumSize(800,400);
     setFocusPolicy(Qt::StrongFocus);
 
     // Set selection model
