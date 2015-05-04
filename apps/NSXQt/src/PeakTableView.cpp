@@ -241,11 +241,12 @@ void PeakTableView::writeFullProf()
     if (!_peaks.size())
         qCritical()<<"No peaks in the table";
 
-    QFileDialog dialog(this);
-    dialog.setDefaultSuffix("int");
-
-    QString filename = dialog.getSaveFileName(this,tr("Save FullProf file"), "", tr("FullProf Files (*.int)"));
-
+    QString filename = QFileDialog::getSaveFileName(this,
+                                                    tr("Save FullProf file"),
+                                                    QString::fromStdString(getPeaksRange()+".int"),
+                                                    tr("FullProf Files (*.int)"),
+                                                    nullptr,
+                                                    QFileDialog::DontUseNativeDialog);
     if (filename.isEmpty())
         return;
 
@@ -289,9 +290,12 @@ void PeakTableView::writeShelX()
         return;
     }
 
-    QFileDialog dialog(this);
-    dialog.setDefaultSuffix("hkl");
-    QString filename = dialog.getSaveFileName(this,tr("Save ShelX file"), "", tr("ShelX Files (*.hkl)"));
+    QString filename = QFileDialog::getSaveFileName(this,
+                                                    tr("Save ShelX file"),
+                                                    QString::fromStdString(getPeaksRange()+".hkl"),
+                                                    tr("ShelX Files (*.hkl)"),
+                                                    nullptr,
+                                                    QFileDialog::DontUseNativeDialog);
     if (filename.isEmpty())
         return;
 
@@ -443,6 +447,23 @@ void PeakTableView::plotAs(const std::string& key)
     }
 
     emit plotData(x,y,e);
+}
+
+std::string PeakTableView::getPeaksRange() const
+{
+    std::set<std::string> temp;
+
+    for (auto p : _peaks)
+        temp.insert(std::to_string(p.get().getData()->getMetadata()->getKey<int>("Numor")));
+
+    std::string range(*(temp.begin()));
+
+    std::string last=*(temp.rbegin());
+
+    if (range.compare(last)!=0)
+        range += "_"+last;
+
+    return range;
 }
 
 

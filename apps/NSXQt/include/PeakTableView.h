@@ -58,6 +58,7 @@ private:
     void sortByNumor(bool up);
     void sortBySelected(bool up);
     void constructTable();
+    std::string getPeaksRange() const;
     std::vector<std::reference_wrapper<SX::Crystal::Peak3D>> _peaks;
     //! Which column is sorted and up or down
     std::tuple<int,bool> _columnUp;
