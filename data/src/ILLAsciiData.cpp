@@ -31,7 +31,14 @@ using namespace SX::Units;
 // 81 characters per line, at least 100 lines of header
 std::size_t ILLAsciiData::BlockSize=100*81;
 
-std::map<std::size_t,std::string> ILLAsciiData::MADAngles = {{1,"2theta(gamma)"},{2,"omega"},{3,"chi"},{4,"phi"},{5,"nu"}};
+std::map<std::size_t,std::string> ILLAsciiData::MADAngles = {{1,"2theta(gamma)"},
+		                                                     {2,"omega"},
+		                                                     {3,"chi"},
+		                                                     {4,"phi"},
+		                                                     {5,"nu"},
+		                                                     {8,"2theta(gamma)"},
+		                                                     {9,"chi"},
+		                                                     {10,"phi"}};
 
 IData* ILLAsciiData::create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer)
 {
