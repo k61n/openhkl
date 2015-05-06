@@ -3,7 +3,7 @@
 #include <utility>
 
 #include "Diffractometer.h"
-#include "DiffractometerFactory.h"
+#include "DiffractometerStore.h"
 #include "Experiment.h"
 #include "IData.h"
 #include "Source.h"
@@ -27,8 +27,8 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
   _diffractometerName(diffractometerName),
   _data()
 {
-	DiffractometerFactory* f=DiffractometerFactory::Instance();
-	_diffractometer = std::shared_ptr<Diffractometer>(f->create(diffractometerName,"instrument")->clone());
+	DiffractometerStore* ds=DiffractometerStore::Instance();
+	_diffractometer = std::shared_ptr<Diffractometer>(ds->buildDiffractomer(diffractometerName));
 }
 
 Experiment::Experiment(const std::string& diffractometerName)
@@ -36,8 +36,8 @@ Experiment::Experiment(const std::string& diffractometerName)
   _diffractometerName(diffractometerName),
   _data()
 {
-	DiffractometerFactory* f=DiffractometerFactory::Instance();
-	_diffractometer = std::shared_ptr<Diffractometer>(f->create(diffractometerName,"instrument")->clone());
+	DiffractometerStore* ds=DiffractometerStore::Instance();
+	_diffractometer = std::shared_ptr<Diffractometer>(ds->buildDiffractomer(diffractometerName));
 }
 
 Experiment::~Experiment()
@@ -112,7 +112,7 @@ void Experiment::addData(IData* data)
 
 	std::string diffName = data->getMetadata()->getKey<std::string>("Instrument");
 
-	if (!(diffName.compare(_diffractometer->getType())==0))
+	if (!(diffName.compare(_diffractometer->getName())==0))
 		throw std::runtime_error("Mismatch between the diffractometers assigned to the experiment and the data");
 
 	double wav=data->getMetadata()->getKey<double>("wavelength");
