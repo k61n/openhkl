@@ -8,7 +8,7 @@
 #include <Eigen/Dense>
 
 #include "ConvexHull.h"
-#include "IMaterial.h"
+#include "Material.h"
 #include "MaterialManager.h"
 #include "MCAbsorption.h"
 #include "Units.h"

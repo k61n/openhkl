@@ -70,12 +70,15 @@ BOOST_AUTO_TEST_CASE(Test_Material)
 	// Check that both materials are the same
 	BOOST_CHECK(*bacl2==*bacl2_1);
 
+	 mmgr->saveRegistry("materials_new.xml");
+
 	// Checks that setting the materials database to a correct path does not throw
 	BOOST_CHECK_NO_THROW(mmgr->setDatabasePath("./materials_new.xml"));
 
 	mmgr->cleanRegistry();
 
-	std::cout<<mmgr->getNMaterials()<<std::endl;
 	sptrMaterial methaneDB = mmgr->getMaterial("methane");
+
+	std::cout<<*mixture<<std::endl;
 
 }

@@ -60,5 +60,10 @@ add_executable(TestCyclop TestCyclop.cpp)
 TARGET_LINK_LIBRARIES(TestCyclop ${Boost_LIBRARIES} NSXTool)
 add_test(TestCyclop TestCyclop)
 
+# unit test for Cyclops
+add_executable(TestDiffractometerStore TestDiffractometerStore.cpp)
+TARGET_LINK_LIBRARIES(TestDiffractometerStore ${Boost_LIBRARIES} NSXTool)
+add_test(TestDiffractometerStore TestDiffractometerStore)
+
 configure_file(D10_ascii_example D10_ascii_example COPYONLY)
 configure_file(Instrument.xml Instrument.xml COPYONLY)
