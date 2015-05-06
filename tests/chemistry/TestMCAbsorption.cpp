@@ -26,7 +26,7 @@ BOOST_AUTO_TEST_CASE(Test_Material)
 	MaterialManager* mmgr=MaterialManager::Instance();
 
 	// Build an isotopically pure methane material
-	SX::Chemistry::sptrMaterial helium= mmgr->buildEmptyMaterial("helium3",ChemicalState::Gaz,BuildingMode::PartialPressures);
+	SX::Chemistry::sptrMaterial helium= mmgr->buildEmptyMaterial("helium3",BuildingMode::PartialPressure);
 	helium->addElement("He[3]",5.0*SX::Units::Bar);
 	helium->setTemperature(298);
 
@@ -54,10 +54,10 @@ BOOST_AUTO_TEST_CASE(Test_Material)
 	mca.setSample(&chull,muScattering,muAbsorption);
 
 	// Compute the transmission factor
-	double transmission=mca.run(10,vector3(0,1,0),Eigen::Matrix3d::Identity());
+	mca.run(10,vector3(0,1,0),Eigen::Matrix3d::Identity());
 
 	// Build an isotopically pure methane material
-	SX::Chemistry::sptrMaterial methane= mmgr->buildMaterialFromChemicalFormula("CH4",ChemicalState::Gaz);
+	SX::Chemistry::sptrMaterial methane= mmgr->buildMaterialFromChemicalFormula("CH4");
 	double mm=methane->getMolarMass();
 	double volume=chull.getVolume();
 	methane->setMassDensity(mm/volume);
