@@ -405,6 +405,24 @@ property_tree::ptree Material::writeToXML() const
 
 void Material::print(std::ostream& os) const
 {
+	os<<"Name          = "<<_name<<std::endl;
+	os<<"Building mode = "+buildingModeToString.at(_buildingMode)<<std::endl;
+	for (const auto & m : _materials)
+	{
+		os<<"##########################################"<<std::endl;
+		os<<"Submaterial"<<std::endl;
+		os<<"##########################################"<<std::endl;
+		os<<"amout         = "<<m.second<<std::endl;
+		os<<*(m.first)<<std::endl;
+	}
+	for (const auto & e : _elements)
+	{
+		os<<"##########################################"<<std::endl;
+		os<<"Element"<<std::endl;
+		os<<"##########################################"<<std::endl;
+		os<<"amout   = "<<e.second<<std::endl;
+		os<<*(e.first);
+	}
 }
 
 std::ostream& operator<<(std::ostream& os, const Material& material)

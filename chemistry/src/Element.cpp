@@ -273,24 +273,11 @@ const std::string& Element::getSymbol() const
 
 void Element::print(std::ostream& os) const
 {
-	os<<"Element "<<_name<<std::endl;
-	if (_isotopes.empty())
-		os<<"Currently empty"<<std::endl;
-	else
+	os<<"Name    = "<<_name<<std::endl;
+	for (const auto& it : _abundances)
 	{
-		unsigned int maxSize=0;
-		for (const auto& it : _isotopes)
-		{
-			unsigned int nameSize=it.second->getName().size();
-			if (nameSize > maxSize)
-				maxSize=nameSize;
-		}
-		os<<"Composition:"<<std::endl;
-		for (const auto& it : _abundances)
-		{
-			os<<"\t-"<<std::setw(maxSize)<<std::setiosflags(std::ios::left)<<_isotopes.at(it.first)->getName()<<" --> "<<std::setiosflags(std::ios::fixed|std::ios::right)<<std::setprecision(3)<<std::setw(7)<<100.0*it.second<<" %"<<std::endl;
-			os<<std::resetiosflags(std::ios::right);
-		}
+		os<<"\t-"<<std::setiosflags(std::ios::left)<<_isotopes.at(it.first)->getName()<<" --> "<<std::setiosflags(std::ios::fixed|std::ios::right)<<std::setprecision(3)<<std::setw(7)<<100.0*it.second<<" %"<<std::endl;
+		os<<std::resetiosflags(std::ios::right);
 	}
 }
 
