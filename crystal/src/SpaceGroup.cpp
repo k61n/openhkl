@@ -107,6 +107,11 @@ void SpaceGroup::generateGroupElements()
 	}
 }
 
+bool SpaceGroup::isExtincted(double h, double k, double l) const
+{
+	return true;
+}
+
 void SpaceGroup::print(std::ostream& os) const
 {
 	os << "Symmetry elements of space group "<<_symbol<<std::endl;

@@ -65,6 +65,8 @@ public:
 
 	const groupElementsList& getGroupElements() const;
 
+	bool isExtincted(double h, double k, double l) const;
+
 	void print(std::ostream& os) const;
 
 private:

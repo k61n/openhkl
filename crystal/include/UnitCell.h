@@ -35,7 +35,7 @@
 #include <Eigen/Dense>
 
 #include "Basis.h"
-#include "IMaterial.h"
+#include "Material.h"
 #include "Peak3D.h"
 
 namespace SX
