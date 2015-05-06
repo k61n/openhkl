@@ -11,7 +11,7 @@
 
 #include "DataReaderFactory.h"
 #include "Diffractometer.h"
-#include "DiffractometerFactory.h"
+#include "DiffractometerStore.h"
 #include "IData.h"
 
 #include "include/NumorsConversionDialog.h"
@@ -27,8 +27,8 @@ NumorsConversionDialog::NumorsConversionDialog(QWidget *parent)
     ui->comboBox_diffractometers->setInsertPolicy(QComboBox::InsertAlphabetically);
 
     // Add the available instruments to the combo box
-    SX::Instrument::DiffractometerFactory* diffractomersFactory = SX::Instrument::DiffractometerFactory::Instance();
-    for (const auto& diffractometer : diffractomersFactory->list())
+    SX::Instrument::DiffractometerStore* ds = SX::Instrument::DiffractometerStore::Instance();
+    for (const auto& diffractometer : ds->getDiffractometersList())
         ui->comboBox_diffractometers->addItem(QString::fromStdString(diffractometer));
 
     QDirModel* model=new QDirModel();
@@ -58,9 +58,9 @@ void NumorsConversionDialog::on_pushButton_convert_clicked()
     }
 
     SX::Data::DataReaderFactory* dataFactory=SX::Data::DataReaderFactory::Instance();
-    SX::Instrument::DiffractometerFactory* diffractometersFactory=SX::Instrument::DiffractometerFactory::Instance();
+    SX::Instrument::DiffractometerStore* ds=SX::Instrument::DiffractometerStore::Instance();
     std::string diffractometerName=ui->comboBox_diffractometers->currentText().toStdString();
-    std::shared_ptr<SX::Instrument::Diffractometer> diffractometer=std::shared_ptr<SX::Instrument::Diffractometer>(diffractometersFactory->create(diffractometerName,"instrument")->clone());
+    std::shared_ptr<SX::Instrument::Diffractometer> diffractometer=std::shared_ptr<SX::Instrument::Diffractometer>(ds->buildDiffractomer(diffractometerName));
 
     auto model = dynamic_cast<QDirModel*>(ui->treeView_inputFiles->model());
     QModelIndexList indexes = ui->treeView_inputFiles->selectionModel()->selectedIndexes();
