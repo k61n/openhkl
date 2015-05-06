@@ -5,7 +5,7 @@
 
 #include "Gonio.h"
 #include "IData.h"
-#include "IMaterial.h"
+#include "Material.h"
 #include "MaterialManager.h"
 #include "UnitCell.h"
 #include "Units.h"
@@ -142,7 +142,7 @@ void UnitCellPropertyWidget::setChemicalFormula(const QString &formula)
     auto mgr=SX::Chemistry::MaterialManager::Instance();
     try
     {
-        auto material=mgr->buildMaterialFromChemicalFormula(formula.toStdString(),SX::Chemistry::ChemicalState::Solid);
+        auto material=mgr->buildMaterialFromChemicalFormula(formula.toStdString());
         _unitCellItem->getCell()->setMaterial(material);
     }
     catch(std::exception& e)
