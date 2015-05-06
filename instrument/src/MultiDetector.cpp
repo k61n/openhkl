@@ -1,6 +1,15 @@
-#include "MultiDetector.h"
 #include <limits.h>
+#include <memory>
+
+#include <boost/foreach.hpp>
+
+#include <Eigen/Dense>
+
+#include "DetectorFactory.h"
+#include "Error.h"
 #include "Gonio.h"
+#include "MonoDetector.h"
+#include "MultiDetector.h"
 
 namespace SX
 {
@@ -33,6 +42,42 @@ MultiDetector::~MultiDetector()
 Detector* MultiDetector::clone() const
 {
 	return new MultiDetector(*this);
+}
+
+void MultiDetector::buildFromXML(const property_tree::ptree& node)
+{
+	// Create an instance of the detector factory
+	DetectorFactory* detectorFactory=DetectorFactory::Instance();
+
+	// Set the detector name from the XML node
+	std::string detectorName=node.get<std::string>("name");
+	this->setName(detectorName);
+
+    // Set each subdetector of the multi detector from the XML file
+	BOOST_FOREACH(const property_tree::ptree::value_type& v, node)
+	{
+	    if (v.first.compare("detector")==0)
+	    {
+	    	// Get the mono detector type
+	    	std::string detectorType=v.second.get<std::string>("<xmlattr>.type");
+
+	    	// Get the detector name
+	    	std::string detectorName=v.second.get<std::string>("name");
+
+	    	// Fetch the detector from the factory
+	    	MonoDetector* detector = dynamic_cast<MonoDetector*>(detectorFactory->create(detectorType,detectorName));
+
+	    	if (!detector)
+	    		throw Kernel::Error<MultiDetector>("NSXTool does not support nested multi detector.");
+
+	    	const property_tree::ptree& pixelOriginNode=v.second.get_child("origin");
+	    	double opx=pixelOriginNode.get<double>("pixel_x");
+	    	double opy=pixelOriginNode.get<double>("pixel_y");
+	    	detector->setOrigin(opx,opy);
+	    	detector->buildFromXML(v.second);
+	    	this->add(detector);
+	    }
+	}
 }
 
 unsigned int MultiDetector::getNCols() const

@@ -28,13 +28,18 @@
  */
 #ifndef NSXTOOL_DIFFRACTOMETER_H_
 #define NSXTOOL_DIFFRACTOMETER_H_
+
 #include <string>
+
+#include <boost/property_tree/ptree.hpp>
 
 namespace SX
 {
 
 namespace Instrument
 {
+
+namespace property_tree=boost::property_tree;
 
 // Forwards
 class Detector;
@@ -45,25 +50,17 @@ class Diffractometer
 {
 public:
 
-	// Statics
-
-	//static Diffractometer* create(const std::string&);
-
-	// Constructors and destructor
+	Diffractometer(const property_tree::ptree& node);
 
 	//! Constructs a diffractometer from another one
 	Diffractometer(const Diffractometer& other);
 	// Virtual copy constructor
-	virtual Diffractometer* clone() const=0;
+	virtual Diffractometer* clone() const {return nullptr;};
 	//! Destructor
-	virtual ~Diffractometer()=0;
-
-	// Operators
+	virtual ~Diffractometer();
 
 	//! Assignment operator
 	Diffractometer& operator=(const Diffractometer& other);
-
-	// Getters and setters
 
 	//! Get the name of this diffractometer
 	const std::string& getName() const;
@@ -74,7 +71,7 @@ public:
 	//! Get the source of this diffractometer
 	Source* getSource();
 	//! Get the type of the diffractometer
-	virtual std::string getType() const=0;
+	virtual std::string getType() const {return "";};
 	//! Set the detector of this diffractometer
 	void setDetector(Detector*);
 	//! Set the name of the diffractometer

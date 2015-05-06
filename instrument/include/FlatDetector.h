@@ -29,6 +29,8 @@
 #ifndef NSXTOOL_FLATDETECTOR_H_
 #define NSXTOOL_FLATDETECTOR_H_
 
+#include <boost/property_tree/ptree.hpp>
+
 #include "MonoDetector.h"
 
 namespace SX
@@ -36,6 +38,8 @@ namespace SX
 
 namespace Instrument
 {
+
+namespace property_tree=boost::property_tree;
 
 class FlatDetector : public MonoDetector
 {
@@ -50,8 +54,6 @@ public:
 	FlatDetector(const FlatDetector& other);
 	//! Construct a FlatDetector with a given name
 	FlatDetector(const std::string& name);
-	//! Construct a FlatDetector from an XML node
-	FlatDetector(const ptree& node);
 	//! Return a pointer to a copy of a FlatDetector
 	Detector* clone() const;
 	//! Destructor
@@ -59,6 +61,9 @@ public:
 
 	//! Assignment operator
 	FlatDetector& operator=(const FlatDetector& other);
+
+	//! Construct a FlatDetector from an XML node
+	void buildFromXML(const property_tree::ptree& node);
 
 	//! Set the height of the detector (meters)
 	void setHeight(double height);

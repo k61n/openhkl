@@ -33,6 +33,8 @@
 #include <string>
 #include <vector>
 
+#include <boost/property_tree/ptree.hpp>
+
 #include "Composite.h"
 #include "Detector.h"
 
@@ -41,6 +43,8 @@ namespace SX
 
 namespace Instrument
 {
+
+namespace property_tree=boost::property_tree;
 
 class MultiDetector : public SX::Kernel::Composite<Detector>
 {
@@ -59,6 +63,8 @@ public:
 	Detector* clone() const;
 	//! Destructor
 	~MultiDetector();
+
+	void buildFromXML(const property_tree::ptree& node);
 
 	//! Return the number of columns of the detector.
 	unsigned int getNCols() const;

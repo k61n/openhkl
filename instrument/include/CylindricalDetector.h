@@ -29,6 +29,8 @@
 #ifndef NSXTOOL_CYLINDRICALDETECTOR_H_
 #define NSXTOOL_CYLINDRICALDETECTOR_H_
 
+#include <boost/property_tree/ptree.hpp>
+
 #include "MonoDetector.h"
 
 namespace SX
@@ -36,6 +38,8 @@ namespace SX
 
 namespace Instrument
 {
+
+namespace property_tree=boost::property_tree;
 
 class CylindricalDetector : public MonoDetector
 {
@@ -50,8 +54,6 @@ public:
 	CylindricalDetector(const CylindricalDetector& other);
 	//! Constructs a CylindricalDetector with a given name
 	CylindricalDetector(const std::string& name);
-	//! Constructs a CylindricalDetector from an XML node
-	CylindricalDetector(const ptree& node);
 	//! Return a pointer to a copy of a CylindricalDetector
 	Detector* clone() const;
 	//! Destructor
@@ -59,6 +61,9 @@ public:
 
 	//! Assignment operator
 	CylindricalDetector& operator=(const CylindricalDetector& other);
+
+	//! Constructs a cylindrical detector from an XML node
+	void buildFromXML(const property_tree::ptree& node);
 
 	//! Set the height of the detector (meters)
 	void setHeight(double height);

@@ -32,6 +32,8 @@
 #include <string>
 #include <vector>
 
+#include <boost/property_tree/ptree.hpp>
+
 #include <Eigen/Dense>
 
 #include "Component.h"
@@ -42,6 +44,8 @@ namespace SX
 
 namespace Instrument
 {
+
+namespace property_tree=boost::property_tree;
 
 typedef unsigned int uint;
 
@@ -62,8 +66,6 @@ public:
 	Detector(const Detector& other);
 	//! Construct a Detector with a given name
 	Detector(const std::string& name);
-	//! Construct a Detector from an XML node
-	Detector(const ptree& node);
 	//! Return a pointer to a copy of the Detector
 	virtual Detector* clone() const=0;
 	// Destructor
@@ -71,6 +73,8 @@ public:
 
 	//! Assignment operator
 	virtual Detector& operator=(const Detector& other);
+
+	virtual void buildFromXML(const property_tree::ptree& node)=0;
 
 	//! Return the number of columns of the detector.
 	virtual unsigned int getNCols() const=0;

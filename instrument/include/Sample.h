@@ -33,15 +33,20 @@
 #include <string>
 #include <vector>
 
+#include <boost/property_tree/ptree.hpp>
+
 #include "Component.h"
 #include "ConvexHull.h"
-#include "IMaterial.h"
+#include "Material.h"
 #include "UnitCell.h"
 
 namespace SX
 {
+
 namespace Instrument
 {
+
+namespace property_tree=boost::property_tree;
 
 typedef std::vector<std::shared_ptr<SX::Crystal::UnitCell>> CellList;
 
@@ -64,6 +69,9 @@ public:
 	// Operators
 	//! Assignment operator
 	Sample& operator=(const Sample& other);
+
+	//! Construct a Sample from an XML node
+	void buildFromXML(const property_tree::ptree& node);
 
 	//! Return the sample shape, described as a convex hull
 	SX::Geometry::ConvexHull<double>& getShape();

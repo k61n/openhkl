@@ -1,5 +1,15 @@
+#include <memory>
+
+#include <boost/foreach.hpp>
+
+#include <Eigen/Dense>
+
+#include "Error.h"
 #include "FlatDetector.h"
 #include "Gonio.h"
+#include "RotAxis.h"
+#include "TransAxis.h"
+#include "Units.h"
 
 namespace SX
 {
@@ -22,6 +32,92 @@ FlatDetector::FlatDetector(const FlatDetector& other) : MonoDetector(other)
 
 FlatDetector::FlatDetector(const std::string& name) : MonoDetector(name)
 {
+}
+
+void FlatDetector::buildFromXML(const property_tree::ptree& node)
+{
+	Units::UnitsManager* um=SX::Units::UnitsManager::Instance();
+
+	// Set the detector name from the XML node
+	std::string detectorName=node.get<std::string>("name");
+	this->setName(detectorName);
+
+	// Set the detector to sample distance from the XML node
+	const property_tree::ptree& distanceNode = node.get_child("sample_distance");
+	double units=um->get(distanceNode.get<std::string>("<xmlattr>.units"));
+	double distance=distanceNode.get_value<double>();
+	distance *= units;
+    this->setDistance(distance);
+
+	// Set the detector width from the XML node
+	const property_tree::ptree& widthNode = node.get_child("width");
+	units=um->get(widthNode.get<std::string>("<xmlattr>.units"));
+	double width=widthNode.get_value<double>();
+	width *= units;
+    this->setWidth(width);
+
+	// Set the detector height from the XML node
+	const property_tree::ptree& heightNode = node.get_child("height");
+	units=um->get(heightNode.get<std::string>("<xmlattr>.units"));
+	double height=heightNode.get_value<double>();
+	height *= units;
+    this->setHeight(height);
+
+	// Set the detector number of pixels from the XML node
+	const property_tree::ptree& nColsNode = node.get_child("ncols");
+	unsigned int nCols=nColsNode.get_value<unsigned int>();
+	const property_tree::ptree& nRowsNode = node.get_child("nrows");
+	unsigned int nRows=nRowsNode.get_value<unsigned int>();
+    this->setNPixels(nCols,nRows);
+
+    // Set the detector goniometer from the XML node
+
+    const property_tree::ptree& goniometerNode=node.get_child("goniometer");
+    std::string goniometerName=goniometerNode.get<std::string>("name");
+    std::shared_ptr<Gonio> gonio(new Gonio(goniometerName));
+
+    // Set the axis of the detector goniometer from the XML node
+	BOOST_FOREACH(const property_tree::ptree::value_type& v, goniometerNode)
+	{
+	    if (v.first.compare("axis")==0)
+	    {
+	    	std::string axisType=v.second.get<std::string>("<xmlattr>.type");
+	    	std::string axisName=v.second.get<std::string>("name");
+
+	    	const property_tree::ptree& axisDirectionNode=v.second.get_child("direction");
+	    	double nx=axisDirectionNode.get<double>("x");
+	    	double ny=axisDirectionNode.get<double>("y");
+	    	double nz=axisDirectionNode.get<double>("z");
+
+	    	Eigen::Vector3d axisDir(nx,ny,nz);
+	    	axisDir.normalize();
+
+	    	bool physical=v.second.get<bool>("physical");
+
+	    	double offset=v.second.get<double>("offset");
+
+	    	// Case of a rotation axis
+	    	if (axisType.compare("rotation")==0)
+	    	{
+	    		bool clockwise=v.second.get<bool>("clockwise");
+	    		RotAxis::Direction sense=clockwise ? RotAxis::Direction::CW : RotAxis::Direction::CCW;
+		        gonio->addRotation(axisName,axisDir,sense);
+	    		gonio->getAxis(axisName)->setPhysical(physical);
+	    		gonio->getAxis(axisName)->setOffset(offset);
+	    	}
+	    	// Case of a translation axis
+	    	else if (axisType.compare("translation")==0)
+	    	{
+		        gonio->addTranslation(axisName,axisDir);
+	    		gonio->getAxis(axisName)->setPhysical(physical);
+	    		gonio->getAxis(axisName)->setOffset(offset);
+	    	}
+	    	else
+				throw Kernel::Error<FlatDetector>("Invalid axis type. Must be one of 'rotation' or 'translation'.");
+        }
+	}
+
+    this->setGonio(gonio);
 }
 
 FlatDetector::~FlatDetector()

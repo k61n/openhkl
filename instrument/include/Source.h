@@ -32,6 +32,8 @@
 
 #include <string>
 
+#include <boost/property_tree/ptree.hpp>
+
 #include "Component.h"
 
 namespace SX
@@ -40,11 +42,11 @@ namespace SX
 namespace Instrument
 {
 
+namespace property_tree=boost::property_tree;
+
 class Source : public Component
 {
 public:
-
-	// Constructors and destructor
 
 	// Default constructor
 	Source();
@@ -57,12 +59,12 @@ public:
 	//! Virtual copy constructor
 	Component* clone() const;
 
-	// Operators
-
 	//! Assignment operator
 	Source& operator=(const Source& other);
 
-	// Getters and setters
+	//! Construct a Source from an XML node
+	void buildFromXML(const property_tree::ptree& node);
+
 	double getWavelength() const;
 	Eigen::Vector3d getki() const;
 	void setWavelength(double wavelength);

@@ -36,6 +36,13 @@ Source::Source(const std::string& name)
 {
 }
 
+void Source::buildFromXML(const property_tree::ptree& node)
+{
+	// Set the source name from the XML node
+	std::string sourceName=node.get<std::string>("name");
+	this->setName(sourceName);
+}
+
 Source::~Source()
 {
 }
