@@ -243,17 +243,17 @@ const contentsMap& Element::getAbundances() const
 	return _abundances;
 }
 
-void Element::writeToXML(property_tree::ptree& parent) const
+property_tree::ptree Element::writeToXML() const
 {
-	property_tree::ptree& node=parent.add("element","");
+	property_tree::ptree node;
 	node.put("<xmlattr>.name",_name);
-
 	for (const auto& is : _abundances)
 	{
 		property_tree::ptree& isnode=node.add("isotope","");
 		isnode.put("<xmlattr>.name",is.first);
 		isnode.put<double>("abundance",is.second);
 	}
+	return node;
 }
 
 void Element::setNatural(bool natural)

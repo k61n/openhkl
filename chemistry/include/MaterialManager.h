@@ -39,7 +39,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
-#include "IMaterial.h"
+#include "Material.h"
 #include "Singleton.h"
 
 namespace SX
@@ -48,12 +48,8 @@ namespace SX
 namespace Chemistry
 {
 
-// Typedefs
-typedef std::shared_ptr<IMaterial> sptrMaterial;
-typedef std::map<std::string,sptrMaterial> strToMaterialMap;
-typedef std::pair<std::string,sptrMaterial> strToMaterialPair;
+typedef std::map<std::string,sptrMaterial> MaterialsRegistry;
 
-// Namespaces
 namespace filesystem=boost::filesystem;
 namespace property_tree=boost::property_tree;
 namespace xml_parser=boost::property_tree::xml_parser;
@@ -70,9 +66,9 @@ public:
 	~MaterialManager();
 
 	//! Builds and register an empty material. If the material with the same name is already registered, throws.
-	sptrMaterial buildEmptyMaterial(const std::string& name, ChemicalState state, BuildingMode buildingMode);
+	sptrMaterial buildEmptyMaterial(const std::string& name, BuildingMode mode);
 	//! Constructs a material from a chemical formula and a given physical state
-	sptrMaterial buildMaterialFromChemicalFormula(std::string formula, ChemicalState state);
+	sptrMaterial buildMaterialFromChemicalFormula(std::string formula);
 	//! Find a Material
 	sptrMaterial getMaterial(const std::string& name);
 	//! Clean up the registry
@@ -98,7 +94,7 @@ private:
 	std::string _database;
 
 	//! The registry that will store the created Material objects
-	strToMaterialMap _registry;
+	MaterialsRegistry _registry;
 
 };
 

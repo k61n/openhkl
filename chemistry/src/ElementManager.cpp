@@ -231,7 +231,10 @@ void ElementManager::saveRegistry(std::string filename) const
 	property_tree::ptree& elementsNode=root.get_child("elements");
 
 	for (const auto& e : _registry)
-		e.second->writeToXML(elementsNode);
+	{
+		auto enode = e.second->writeToXML();
+		root.add_child("element",enode);
+	}
 
 	if (filename.empty())
 		filename=_database;

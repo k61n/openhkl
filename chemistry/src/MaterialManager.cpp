@@ -9,7 +9,7 @@
 #include "Element.h"
 #include "ElementManager.h"
 #include "Error.h"
-#include "IMaterial.h"
+#include "Material.h"
 #include "MaterialManager.h"
 #include "MaterialsFactory.h"
 #include "Path.h"
@@ -46,26 +46,24 @@ void MaterialManager::cleanRegistry()
 	}
 }
 
-sptrMaterial MaterialManager::buildEmptyMaterial(const std::string& name, ChemicalState state, BuildingMode buildingMode)
+sptrMaterial MaterialManager::buildEmptyMaterial(const std::string& name, BuildingMode mode)
 {
 	// Check first if an element with this name has already been registered
 	auto it=_registry.find(name);
 	if (it!=_registry.end())
 	{
-		if (it->second->getBuildingMode()!=buildingMode || it->second->getState()!= state)
-			throw SX::Kernel::Error<MaterialManager>("A material that matches "+name+" name is already registered but with a different chemical state and/or building mode.");
+		if (it->second->getBuildingMode()!=mode)
+			throw SX::Kernel::Error<MaterialManager>("A material that matches "+name+" name is already registered but with a different building mode.");
 		return it->second;
 	}
 
-	MaterialsFactory* matFactory=MaterialsFactory::Instance();
-
 	// Otherwise built it from scratch.
-	sptrMaterial mat(matFactory->create(buildingMode,name,state));
-	_registry.insert(strToMaterialPair(name,mat));
+	sptrMaterial mat(Material::create(name,mode));
+	_registry.insert(MaterialsRegistry::value_type(name,mat));
 	return mat;
 }
 
-sptrMaterial MaterialManager::buildMaterialFromChemicalFormula(std::string formula, ChemicalState state)
+sptrMaterial MaterialManager::buildMaterialFromChemicalFormula(std::string formula)
 {
 
 	namespace qi=boost::spirit::qi;
@@ -77,9 +75,7 @@ sptrMaterial MaterialManager::buildMaterialFromChemicalFormula(std::string formu
 
 	ElementManager* emgr=ElementManager::Instance();
 
-	MaterialsFactory* matFactory=MaterialsFactory::Instance();
-
-	sptrMaterial mat(matFactory->create(BuildingMode::Stoichiometry,formula,state));
+	sptrMaterial mat(Material::create(formula,BuildingMode::Stoichiometry));
 
 	for (auto cc : chemicalContents)
 	{
@@ -107,14 +103,11 @@ sptrMaterial MaterialManager::buildMaterial(const property_tree::ptree& node)
 	// Gets the "name" of the Material to be built
 	std::string name=node.get<std::string>("<xmlattr>.name");
 
-	// Get the chemical state and the building mode of the material to be constructed
-	ChemicalState chemicalState=IMaterial::strToState.at(node.get<std::string>("<xmlattr>.chemical_state"));
-	BuildingMode buildingMode=IMaterial::strToBuildingMode.at(node.get<std::string>("<xmlattr>.building_mode"));
-
-	MaterialsFactory* matFactory=MaterialsFactory::Instance();
+	// Get the building mode of the material to be constructed
+	BuildingMode buildingMode=Material::stringToBuildingMode.at(node.get<std::string>("<xmlattr>.building_mode"));
 
 	// Create an empty Material
-	sptrMaterial material(matFactory->create(buildingMode,name,chemicalState));
+	sptrMaterial material(Material::create(name,buildingMode));
 
 	// Loop over the subnodes of the node
 	BOOST_FOREACH(const property_tree::ptree::value_type& v, node)
@@ -122,33 +115,25 @@ sptrMaterial MaterialManager::buildMaterial(const property_tree::ptree& node)
 		// Case where the current subnode is a "material" node. A new Material will be built and added as a component of the empty Material
 		if (v.first.compare("material")==0)
 		{
-			sptrMaterial component;
+			sptrMaterial subMaterial = buildMaterial(v.second);
+			name=v.second.get<std::string>("<xmlattr>.name");
 
-			boost::optional<std::string> submat=v.second.get_optional<std::string>("<xmlattr>.database");
-			if (submat)
-				component=getMaterial(submat.get());
-			else
+			if (buildingMode==BuildingMode::MassFraction || buildingMode==BuildingMode::MolarFraction)
 			{
-				name=v.second.get<std::string>("<xmlattr>.name");
-				component=getMaterial(name);
-			}
-
-			if (buildingMode==BuildingMode::MassFractions || buildingMode==BuildingMode::MolarFractions)
-			{
-				const property_tree::ptree& fraction = v.second.get_child("contents");
+				const property_tree::ptree& fraction = v.second.get_child("amount");
 				double units=um->get(fraction.get<std::string>("<xmlattr>.units","%"));
-				material->addMaterial(component,fraction.get_value<double>()*units);
+				material->addMaterial(subMaterial,fraction.get_value<double>()*units);
 			}
-			else if (buildingMode==BuildingMode::PartialPressures)
+			else if (buildingMode==BuildingMode::PartialPressure)
 			{
-				const property_tree::ptree& pressure = v.second.get_child("contents");
+				const property_tree::ptree& pressure = v.second.get_child("amount");
 				double units=um->get(pressure.get<std::string>("<xmlattr>.units","Pa"));
-				material->addMaterial(component,pressure.get_value<double>()*units);
+				material->addMaterial(subMaterial,pressure.get_value<double>()*units);
 			}
 			else if (buildingMode==BuildingMode::Stoichiometry)
 			{
-				const property_tree::ptree& nAtoms = v.second.get_child("contents");
-				material->addMaterial(component,nAtoms.get_value<double>());
+				const property_tree::ptree& nAtoms = v.second.get_child("amount");
+				material->addMaterial(subMaterial,nAtoms.get_value<double>());
 			}
 			else
 				throw SX::Kernel::Error<MaterialManager>("Unknown material building mode");
@@ -165,34 +150,27 @@ sptrMaterial MaterialManager::buildMaterial(const property_tree::ptree& node)
 			else
 				element=mgr->buildElement(v.second);
 
-			if (buildingMode==BuildingMode::MassFractions || buildingMode==BuildingMode::MolarFractions)
+			if (buildingMode==BuildingMode::MassFraction || buildingMode==BuildingMode::MolarFraction)
 			{
-				const property_tree::ptree& fraction = v.second.get_child("contents");
+				const property_tree::ptree& fraction = v.second.get_child("amount");
 				double units=um->get(fraction.get<std::string>("<xmlattr>.units","%"));
 				material->addElement(element,fraction.get_value<double>()*units);
 			}
-			else if (buildingMode==BuildingMode::PartialPressures)
+			else if (buildingMode==BuildingMode::PartialPressure)
 			{
-				const property_tree::ptree& pressure = v.second.get_child("contents");
+				const property_tree::ptree& pressure = v.second.get_child("amount");
 				double units=um->get(pressure.get<std::string>("<xmlattr>.units","Pa"));
 				material->addElement(element,pressure.get_value<double>()*units);
 			}
 			else if (buildingMode==BuildingMode::Stoichiometry)
 			{
-				const property_tree::ptree& nAtoms = v.second.get_child("contents");
+				const property_tree::ptree& nAtoms = v.second.get_child("amount");
 				material->addElement(element,nAtoms.get_value<double>());
 			}
 			else
 				throw SX::Kernel::Error<MaterialManager>("Unkown material building mode");
 		}
 	}
-
-	if (material->getBuildingMode()!=BuildingMode::PartialPressures)
-	{
-		const property_tree::ptree& density = node.get_child("mass_density");
-		double units=um->get(density.get<std::string>("<xmlattr>.units","kg/m3"));
-		material->setMassDensity(density.get_value<double>()*units);
-	};
 
 	return material;
 
@@ -226,16 +204,11 @@ sptrMaterial MaterialManager::getMaterial(const std::string& name)
 		if (v.second.get<std::string>("<xmlattr>.name").compare(name)==0)
 		{
 			sptrMaterial material=buildMaterial(v.second);
-			_registry.insert(strToMaterialPair(name,material));
+			_registry.insert(MaterialsRegistry::value_type(name,material));
 			return material;
 		}
 	}
-
-	MaterialsFactory* matFactory=MaterialsFactory::Instance();
-
-	sptrMaterial material(matFactory->create(BuildingMode::MassFractions,name,ChemicalState::Solid));
-	_registry.insert(strToMaterialPair(name,material));
-	return material;
+	throw SX::Kernel::Error<MaterialManager>("No material with "+name+" could be found in the database.");
 }
 
 void MaterialManager::setDatabasePath(const std::string& path)
@@ -280,10 +253,13 @@ void MaterialManager::saveRegistry(std::string filename) const
 		root.add("materials","");
 	}
 
-	property_tree::ptree& elementsNode=root.get_child("materials");
+	property_tree::ptree& materialsNode=root.get_child("materials");
 
-	for (const auto& e : _registry)
-		e.second->writeToXML(elementsNode);
+	for (const auto& m : _registry)
+	{
+		auto mnode = m.second->writeToXML();
+		materialsNode.add_child("material",mnode);
+	}
 
 	if (filename.empty())
 		filename=_database;

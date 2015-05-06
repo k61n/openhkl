@@ -126,7 +126,7 @@ public:
 
 
 	//! Inserts the information about this Element to an XML parent node
-	void writeToXML(property_tree::ptree& parent) const;
+	property_tree::ptree writeToXML() const;
 
 	//! Prints informations about this Element to an output stream
 	void print(std::ostream& os) const;
