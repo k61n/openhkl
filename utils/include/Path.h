@@ -59,6 +59,9 @@ public:
 	//! Returns the NSXTool application data path
 	static std::string getApplicationDataPath();
 
+	//! Returns the path where the diffractomers XML defininition files are stored
+	static std::string getDiffractometersPath();
+
 };
 
 

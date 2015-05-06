@@ -75,6 +75,15 @@ std::string Path::getApplicationDataPath()
 	return p.string();
 }
 
+std::string Path::getDiffractometersPath()
+{
+	boost::filesystem::path p(getHomeDirectory());
+	p /= ".nsxtool";
+	p /= "instruments";
+	return p.string();
+}
+
+
 } // end namespace Utils
 
 } // end namespace SX
