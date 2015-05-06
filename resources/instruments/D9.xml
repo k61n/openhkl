@@ -1,12 +1,12 @@
 <instrument>
-	<name>D19</name>
-    <detector type="cylindrical">
+	<name>D9</name>
+    <detector type="flat">
         <name>banana</name>
-        <sample_distance units="mm">764.0</sample_distance>
-        <angular_width units="deg">120.0</angular_width>
-        <height units="m">0.4</height>
-        <nrows>256</nrows>
-        <ncols>640</ncols>
+        <sample_distance units="mm">488.0</sample_distance>
+        <width units="mm">64.0</width>
+        <height units="mm">64.0</height>
+        <nrows>32</nrows>
+        <ncols>32</ncols>
         <goniometer>
         	<name>gamma-arm</name>
 	        <axis type="rotation">
@@ -21,31 +21,11 @@
 	            <physical>true</physical>
 	        </axis>
 	        <axis type="translation">
-	            <name>x-offset</name>
-	            <direction>
-			        <x>1.000</x>
-			        <y>0.000</y>
-			        <z>0.000</z>
-	            </direction>
-	            <offset>0.0</offset>
-	            <physical>false</physical>
-	        </axis>
-	        <axis type="translation">
 	            <name>y-offset</name>
 	            <direction>
 			        <x>0.000</x>
 			        <y>1.000</y>
 			        <z>0.000</z>
-	            </direction>
-	            <offset>0.0</offset>
-	            <physical>false</physical>
-	        </axis>
-	        <axis type="translation">
-	            <name>z-offset</name>
-	            <direction>
-			        <x>0.000</x>
-			        <y>0.000</y>
-			        <z>1.000</z>
 	            </direction>
 	            <offset>0.0</offset>
 	            <physical>false</physical>
