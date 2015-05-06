@@ -11,7 +11,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include "ComponentState.h"
-#include "DiffractometerFactory.h"
+#include "DiffractometerStore.h"
 #include "ILLAsciiData.h"
 #include "HDF5Data.h"
 #include "Units.h"
@@ -24,9 +24,9 @@ const double tolerance=1e-2;
 
 BOOST_AUTO_TEST_CASE(Test_HDF5_IO)
 {
-	DiffractometerFactory* factory = DiffractometerFactory::Instance();
+	DiffractometerStore* ds = DiffractometerStore::Instance();
 
-	std::shared_ptr<Diffractometer> diff = std::shared_ptr<Diffractometer>(factory->create("D10 4-circles","D10 diffractometer")->clone());
+	std::shared_ptr<Diffractometer> diff = std::shared_ptr<Diffractometer>(ds->buildDiffractomer("D10"));
 
 	ILLAsciiData dataf("D10_ascii_example",diff);
 
