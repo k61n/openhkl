@@ -48,6 +48,8 @@ class Source : public Component
 {
 public:
 
+	static Source* create(const property_tree::ptree& node);
+
 	// Default constructor
 	Source();
 	//! Copy constructor

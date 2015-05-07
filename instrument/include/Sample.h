@@ -54,7 +54,7 @@ class Sample : public Component
 {
 public:
 
-	// Constructors and destructor
+	static Sample* create(const property_tree::ptree& node);
 
 	// Default constructor
 	Sample();

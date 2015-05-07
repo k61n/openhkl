@@ -28,17 +28,27 @@
 
 #ifndef SX_GONIO_H_
 #define SX_GONIO_H_
+
+#include <memory>
 #include <string>
 #include <vector>
 #include <utility>
+
+#include <boost/property_tree/ptree.hpp>
+
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
+
 #include "Axis.h"
 #include "RotAxis.h"
 
-namespace SX {
+namespace SX
+{
 
-namespace Instrument {
+namespace Instrument
+{
+
+namespace property_tree=boost::property_tree;
 
 using Eigen::Vector3d;
 /* !
@@ -54,6 +64,8 @@ using Eigen::Vector3d;
 class Gonio
 {
 public:
+
+	static Gonio* create(const property_tree::ptree& node);
 
 	// Constructors and destructor
 

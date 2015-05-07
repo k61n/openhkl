@@ -92,6 +92,10 @@ public:
 	double getHighLimit() const;
 	//! Get maximum of the range
 	double getLowLimit() const;
+	//! Set the MAD id of the axis
+	void setMADId(unsigned int madid);
+	//! Get the MAD id of the axis
+	unsigned int getMADId() const;
 	//! Get the homogeneous (4x4) matrix corresponding to the value
 	virtual Transform<double,3,Eigen::Affine> getHomMatrix(double value) const=0;
 	//! Transform vector
@@ -115,6 +119,9 @@ protected:
 	bool _offsetFixed;
 	//! true for a physical axis, false for a virtual
 	bool _physical;
+
+	//! The MAD id (for instrument related to ILL ASCII Data)
+	unsigned int _madid;
 
 };
 

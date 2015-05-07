@@ -1,3 +1,4 @@
+#include "Gonio.h"
 #include "Source.h"
 
 namespace SX
@@ -5,6 +6,24 @@ namespace SX
 
 namespace Instrument
 {
+
+Source* Source::create(const property_tree::ptree& node)
+{
+	// Set the sample name from the XML node
+	std::string name=node.get<std::string>("name");
+
+	Source* source=new Source(name);
+
+    // Set the sample goniometer from the XML node
+
+    const property_tree::ptree& goniometerNode=node.get_child("goniometer");
+
+    std::shared_ptr<Gonio> gonio(Gonio::create(goniometerNode));
+
+    source->setGonio(gonio);
+
+    return source;
+}
 
 Source::Source()
 : Component("source"),

@@ -73,50 +73,7 @@ void FlatDetector::buildFromXML(const property_tree::ptree& node)
     // Set the detector goniometer from the XML node
 
     const property_tree::ptree& goniometerNode=node.get_child("goniometer");
-    std::string goniometerName=goniometerNode.get<std::string>("name");
-    std::shared_ptr<Gonio> gonio(new Gonio(goniometerName));
-
-    // Set the axis of the detector goniometer from the XML node
-	BOOST_FOREACH(const property_tree::ptree::value_type& v, goniometerNode)
-	{
-	    if (v.first.compare("axis")==0)
-	    {
-	    	std::string axisType=v.second.get<std::string>("<xmlattr>.type");
-	    	std::string axisName=v.second.get<std::string>("name");
-
-	    	const property_tree::ptree& axisDirectionNode=v.second.get_child("direction");
-	    	double nx=axisDirectionNode.get<double>("x");
-	    	double ny=axisDirectionNode.get<double>("y");
-	    	double nz=axisDirectionNode.get<double>("z");
-
-	    	Eigen::Vector3d axisDir(nx,ny,nz);
-	    	axisDir.normalize();
-
-	    	bool physical=v.second.get<bool>("physical");
-
-	    	double offset=v.second.get<double>("offset");
-
-	    	// Case of a rotation axis
-	    	if (axisType.compare("rotation")==0)
-	    	{
-	    		bool clockwise=v.second.get<bool>("clockwise");
-	    		RotAxis::Direction sense=clockwise ? RotAxis::Direction::CW : RotAxis::Direction::CCW;
-		        gonio->addRotation(axisName,axisDir,sense);
-	    		gonio->getAxis(axisName)->setPhysical(physical);
-	    		gonio->getAxis(axisName)->setOffset(offset);
-	    	}
-	    	// Case of a translation axis
-	    	else if (axisType.compare("translation")==0)
-	    	{
-		        gonio->addTranslation(axisName,axisDir);
-	    		gonio->getAxis(axisName)->setPhysical(physical);
-	    		gonio->getAxis(axisName)->setOffset(offset);
-	    	}
-	    	else
-				throw Kernel::Error<FlatDetector>("Invalid axis type. Must be one of 'rotation' or 'translation'.");
-        }
-	}
-
+    std::shared_ptr<Gonio> gonio(Gonio::create(goniometerNode));
     this->setGonio(gonio);
 }
 

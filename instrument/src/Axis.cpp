@@ -15,7 +15,8 @@ Axis::Axis()
   _min(-std::numeric_limits<double>::infinity()),
   _max(std::numeric_limits<double>::infinity()),
   _offsetFixed(false),
-  _physical(true)
+  _physical(true),
+  _madid(0)
 {
 }
 
@@ -26,7 +27,8 @@ Axis::Axis(const std::string& label)
   _min(-std::numeric_limits<double>::infinity()),
   _max(std::numeric_limits<double>::infinity()),
   _offsetFixed(false),
-  _physical(true)
+  _physical(true),
+  _madid(0)
 {
 }
 
@@ -36,7 +38,8 @@ Axis::Axis(const std::string& label, const Eigen::Vector3d& axis)
   _min(-std::numeric_limits<double>::infinity()),
   _max(std::numeric_limits<double>::infinity()),
   _offsetFixed(false),
-  _physical(true)
+  _physical(true),
+  _madid(0)
 {
 	setAxis(axis);
 }
@@ -48,7 +51,8 @@ Axis::Axis(const Axis& other)
   _min(other._min),
   _max(other._max),
   _offsetFixed(other._offsetFixed),
-  _physical(other._physical)
+  _physical(other._physical),
+  _madid(other._madid)
 {
 }
 
@@ -63,6 +67,7 @@ Axis& Axis::operator=(const Axis& other)
 		_max         = other._max;
 		_offsetFixed = other._offsetFixed;
 		_physical    = other._physical;
+		_madid       = other._madid;
 	}
 	return *this;
 }
@@ -93,6 +98,16 @@ void Axis::setAxis(const Vector3d& axis)
 const Eigen::Vector3d& Axis::getAxis() const
 {
 	return _axis;
+}
+
+void Axis::setMADId(unsigned int madid)
+{
+	_madid = madid;
+}
+
+unsigned int Axis::getMADId() const
+{
+	return _madid;
 }
 
 void Axis::setOffsetFixed(bool fixed)
