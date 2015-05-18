@@ -11,7 +11,6 @@
 #include "Error.h"
 #include "Material.h"
 #include "MaterialManager.h"
-#include "MaterialsFactory.h"
 #include "Path.h"
 #include "Units.h"
 
