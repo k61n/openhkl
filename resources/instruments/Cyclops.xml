@@ -241,7 +241,37 @@
 	        <z>0.000</z>
         </position>
     </sample>
-    <source>
+    <source type="monochromatic">
     	<name>monochromatic source</name>
-    </source>
-</instrument>
+        <goniometer>        
+        	<name></name>
+	        <axis type="translation">
+	            <name>x-offset</name>
+	            <direction>
+			        <x>1.000</x>
+			        <y>0.000</y>
+			        <z>0.000</z>
+	            </direction>
+	            <offset>0.0</offset>
+	            <physical>false</physical>
+	        </axis>
+	        <axis type="translation">
+	            <name>y-offset</name>
+	            <direction>
+			        <x>0.000</x>
+			        <y>1.000</y>
+			        <z>0.000</z>
+	            </direction>
+	            <offset>0.0</offset>
+	            <physical>false</physical>
+	        </axis>
+	    </goniometer>
+        <position>
+	        <x>0.000</x>
+	        <y>0.000</y>
+	        <z>0.000</z>
+        </position>
+        <width units="mm">1.0</width>
+        <height units="mm">1.0</height>
+        <wavelength>1.24</wavelength>
+    </source></instrument>
