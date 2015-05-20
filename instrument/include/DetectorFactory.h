@@ -44,7 +44,7 @@ namespace Instrument
 
 using namespace SX::Kernel;
 
-class DetectorFactory : public Factory<Detector,std::string,std::string>, public Singleton<DetectorFactory,Constructor,Destructor>
+class DetectorFactory : public Factory<Detector,std::string,const proptree::ptree&>, public Singleton<DetectorFactory,Constructor,Destructor>
 {
 private:
 	friend class Constructor<DetectorFactory>;
