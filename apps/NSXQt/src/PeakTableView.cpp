@@ -272,8 +272,9 @@ void PeakTableView::writeFullProf()
             file << std::setw(4);
             file << hkl[0] << std::setw(4) <<  hkl[1] << std::setw(4) << hkl[2];
             double l=peak.getLorentzFactor();
-            file << std::fixed << std::setw(14) << std::setprecision(4) << peak.getScaledIntensity()/l;
-            file << std::fixed << std::setw(14) << std::setprecision(4) << peak.getScaledSigma()/l;
+            double t=peak.getTransmission();
+            file << std::fixed << std::setw(14) << std::setprecision(4) << peak.getScaledIntensity()/l/t;
+            file << std::fixed << std::setw(14) << std::setprecision(4) << peak.getScaledSigma()/l/t;
             file << std::setprecision(0) << std::setw(5) << 1  << std::endl;
         }
     }
@@ -328,8 +329,9 @@ void PeakTableView::writeShelX()
             file << hkl[2];
 
             double l=peak.getLorentzFactor();
-            file << std::fixed << std::setw(8) << std::setprecision(2) << peak.getScaledIntensity()/l;
-            file << std::fixed << std::setw(8) << std::setprecision(2) << peak.getScaledSigma()/l <<std::endl;
+            double t=peak.getTransmission();
+            file << std::fixed << std::setw(8) << std::setprecision(2) << peak.getScaledIntensity()/l/t;
+            file << std::fixed << std::setw(8) << std::setprecision(2) << peak.getScaledSigma()/l/t <<std::endl;
             }
     }
     if (file.is_open())
