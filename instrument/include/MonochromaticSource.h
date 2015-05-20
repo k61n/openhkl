@@ -27,14 +27,14 @@
  *
  */
 
-#ifndef NSXTOOL_SOURCE_H_
-#define NSXTOOL_SOURCE_H_
+#ifndef NSXTOOL_MONOCHROMATICSOURCE_H_
+#define NSXTOOL_MONOCHROMATICSOURCE_H_
 
 #include <string>
 
 #include <boost/property_tree/ptree.hpp>
 
-#include "Component.h"
+#include "Source.h"
 
 namespace SX
 {
@@ -42,7 +42,7 @@ namespace SX
 namespace Instrument
 {
 
-class Source : public Component
+class MonochromaticSource : public Source
 {
 public:
 
@@ -50,53 +50,36 @@ public:
 	static Source* create(const proptree::ptree& node);
 
 	// Default constructor
-	Source();
+	MonochromaticSource();
 	//! Copy constructor
-	Source(const Source& other);
+	MonochromaticSource(const MonochromaticSource& other);
 	//! Constructs a default source with a given name
-	Source(const std::string& name);
-	//! Constructs a source from a property tree node
-	Source(const proptree::ptree& node);
-	//! Virtual copy constructor
-	virtual Source* clone() const=0;
+	MonochromaticSource(const std::string& name);
+	//! Constructs a monochromatic source from a property tree node
+	MonochromaticSource(const proptree::ptree& node);
 	//! Destructor
-	virtual ~Source()=0;
+	~MonochromaticSource();
+	//! Virtual copy constructor
+	Source* clone() const;
 
 	//! Assignment operator
-	Source& operator=(const Source& other);
+	MonochromaticSource& operator=(const MonochromaticSource& other);
 
-	//! Get the wavelength of the source
-	virtual double getWavelength() const=0;
-	//! Set the wavelength of the source
-	virtual void setWavelength(double wavelength)=0;
+	//! Get the wavelength of the monochromatic source
+	double getWavelength() const;
+	//! Set the wavelength of the monochromatic source
+	void setWavelength(double wavelength);
 
 	//! Get the incoming wave vector
-	virtual Eigen::Vector3d getKi() const=0;
+	Eigen::Vector3d getKi() const;
 
-	//! Set an offset in wavelength. No effect if _offsetFixed is set to True.
-	void setOffset(double offset);
-	void setOffsetFixed(bool fixed);
-	bool hasOffsetFixed() const;
+private:
+	double _wavelength;
 
-	//! Set the width of the source slit
-	void setWidth(double width);
-	//! Get the width of the source slit
-	double getWidth() const;
-
-	//! Set the height of the source slit
-	void setHeight(double height);
-	//! Get the height of the source slit
-	double getHeight() const;
-
-protected:
-	double _offset;
-	bool _offsetFixed;
-	double _width;
-	double _height;
 };
 
 } // end namespace Instrument
 
 } // end namespace SX
 
-#endif /* NSXTOOL_SOURCE_H_ */
+#endif /* NSXTOOL_MONOCHROMATICSOURCE_H_ */

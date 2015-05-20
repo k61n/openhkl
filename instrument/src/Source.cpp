@@ -1,5 +1,6 @@
-#include "Gonio.h"
 #include "Source.h"
+#include "SourceFactory.h"
+#include "Units.h"
 
 namespace SX
 {
@@ -7,27 +8,22 @@ namespace SX
 namespace Instrument
 {
 
-Source* Source::create(const property_tree::ptree& node)
+Source* Source::create(const proptree::ptree& node)
 {
-	// Set the sample name from the XML node
-	std::string name=node.get<std::string>("name");
+	// Create an instance of the source factory
+	SourceFactory* sourceFactory=SourceFactory::Instance();
 
-	Source* source=new Source(name);
+	// Get the source type
+	std::string sourceType=node.get<std::string>("<xmlattr>.type");
 
-    // Set the sample goniometer from the XML node
+	// Fetch the source from the factory
+	Source* source = sourceFactory->create(sourceType,node);
 
-    const property_tree::ptree& goniometerNode=node.get_child("goniometer");
-
-    std::shared_ptr<Gonio> gonio(Gonio::create(goniometerNode));
-
-    source->setGonio(gonio);
-
-    return source;
+	return source;
 }
 
 Source::Source()
 : Component("source"),
-  _wavelength(1.0),
   _offset(0.0),
   _offsetFixed(true),
   _width(0.01),
@@ -37,7 +33,6 @@ Source::Source()
 
 Source::Source(const Source& other)
 : Component(other),
-  _wavelength(other._wavelength),
   _offset(other._offset),
   _offsetFixed(other._offsetFixed),
   _width(other._width),
@@ -47,7 +42,6 @@ Source::Source(const Source& other)
 
 Source::Source(const std::string& name)
 : Component(name),
-  _wavelength(1.0),
   _offset(0.0),
   _offsetFixed(true),
   _width(0.01),
@@ -55,11 +49,25 @@ Source::Source(const std::string& name)
 {
 }
 
-void Source::buildFromXML(const property_tree::ptree& node)
+Source::Source(const proptree::ptree& node)
+: Component(node),
+  _offset(0.0),
+  _offsetFixed(true)
 {
-	// Set the source name from the XML node
-	std::string sourceName=node.get<std::string>("name");
-	this->setName(sourceName);
+
+	Units::UnitsManager* um=SX::Units::UnitsManager::Instance();
+
+	// Set the source slit width from the property tree node
+	const proptree::ptree& widthNode = node.get_child("width");
+	double units=um->get(widthNode.get<std::string>("<xmlattr>.units"));
+	_width=widthNode.get_value<double>();
+	_width *= units;
+
+	// Set the source slit height from the property tree node
+	const proptree::ptree& heightNode = node.get_child("height");
+	units=um->get(heightNode.get<std::string>("<xmlattr>.units"));
+	_height=heightNode.get_value<double>();
+	_height *= units;
 }
 
 Source::~Source()
@@ -71,33 +79,12 @@ Source& Source::operator=(const Source& other)
 	if (this != &other)
 	{
 		Component::operator=(other);
-		_wavelength = other._wavelength;
 		_offset = other._offset;
 		_offsetFixed = other._offsetFixed;
 		_width = other._width;
 		_height = other._height;
 	}
 	return *this;
-}
-
-Component* Source::clone() const
-{
-	return new Source(*this);
-}
-
-double Source::getWavelength() const
-{
-	return (_wavelength+_offset);
-}
-
-void Source::setWavelength(double wavelength)
-{
-	_wavelength=wavelength;
-}
-
-Eigen::Vector3d Source::getki() const
-{
-	return Eigen::Vector3d(0,1.0/(_wavelength+_offset),0.0);
 }
 
 void Source::setOffset(double off)
