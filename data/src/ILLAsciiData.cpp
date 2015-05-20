@@ -32,15 +32,6 @@ using namespace SX::Units;
 // 81 characters per line, at least 100 lines of header
 std::size_t ILLAsciiData::BlockSize=100*81;
 
-//std::map<std::size_t,std::string> ILLAsciiData::MADAngles = {{1,"2theta(gamma)"},
-//		                                                     {2,"omega"},
-//		                                                     {3,"chi"},
-//		                                                     {4,"phi"},
-//		                                                     {5,"nu"},
-//		                                                     {8,"2theta(gamma)"},
-//		                                                     {9,"chi"},
-//		                                                     {10,"phi"}};
-
 IData* ILLAsciiData::create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer)
 {
 	ILLAsciiData* data;
@@ -108,43 +99,75 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, std::shared_ptr<Diffract
 	for (std::size_t i=0;i<_nAngles;++i)
 	{
 		std::string idesc = std::string("icdesc") + std::to_string(i+1);
-		unsigned int id = _metadata->getKey<unsigned int>(idesc);
+		unsigned int id = _metadata->getKey<int>(idesc);
 		scannedAxisId.push_back(id);
 	}
 
-	std::vector<double*> varAngles;
-	varAngles.reserve(_nAngles);
+	std::vector<double*> varAngles(_nAngles);
 
-	std::map<unsigned int,std::string> detectorAxisIds(_diffractometer->getDetector()->getGonio()->getPhysicalAxisIdToNamesMap());
+	std::map<unsigned int,std::string> detectorAxisIds(_diffractometer->getDetector()->getGonio()->getPhysicalAxisIdToNames());
 	std::vector<double> detectorAxisValues(detectorAxisIds.size());
 	int comp=0;
 	for (const auto& p : detectorAxisIds)
 	{
-		auto it=std::find(scannedAxisId.begin(),scannedAxisId.end(),p.first);
-		if (it==scannedAxisId.end())
-			detectorAxisValues[comp]=_metadata->getKey<double>(p.second)*deg;
+		if (!_metadata->isKey(p.second))
+			detectorAxisValues[comp]=0.0;
 		else
-			varAngles[std::distance(scannedAxisId.begin(),it)] = &detectorAxisValues[comp];
+		{
+			auto it=std::find(scannedAxisId.begin(),scannedAxisId.end(),p.first);
+
+			if (it==scannedAxisId.end())
+				detectorAxisValues[comp]=_metadata->getKey<double>(p.second)*deg;
+			else
+				varAngles[std::distance(scannedAxisId.begin(),it)] = &detectorAxisValues[comp];
+		}
+
 		comp++;
 	}
 
-	std::map<unsigned int,std::string> sampleAxisIds(_diffractometer->getSample()->getGonio()->getPhysicalAxisIdToNamesMap());
+	std::map<unsigned int,std::string> sampleAxisIds(_diffractometer->getSample()->getGonio()->getPhysicalAxisIdToNames());
 	std::vector<double> sampleAxisValues(sampleAxisIds.size());
 	comp=0;
 	for (const auto& p : sampleAxisIds)
 	{
-		auto it=std::find(scannedAxisId.begin(),scannedAxisId.end(),p.first);
-		if (it == scannedAxisId.end())
-		{
-			sampleAxisValues[comp]=_metadata->getKey<double>(p.second)*deg;
-		}
+		if (!_metadata->isKey(p.second))
+			sampleAxisValues[comp]=0.0;
 		else
-			varAngles[std::distance(scannedAxisId.begin(),it)] = &sampleAxisValues[comp];
+		{
+			auto it=std::find(scannedAxisId.begin(),scannedAxisId.end(),p.first);
+
+			if (it == scannedAxisId.end())
+				sampleAxisValues[comp]=_metadata->getKey<double>(p.second)*deg;
+			else
+				varAngles[std::distance(scannedAxisId.begin(),it)] = &sampleAxisValues[comp];
+		}
+
+		comp++;
+	}
+
+	std::map<unsigned int,std::string> sourceAxisIds(_diffractometer->getSource()->getGonio()->getPhysicalAxisIdToNames());
+	std::vector<double> sourceAxisValues(sourceAxisIds.size());
+	comp=0;
+	for (const auto& p : sourceAxisIds)
+	{
+		if (!_metadata->isKey(p.second))
+			sourceAxisValues[comp]=0.0;
+		else
+		{
+			auto it=std::find(scannedAxisId.begin(),scannedAxisId.end(),p.first);
+
+			if (it == scannedAxisId.end())
+				sourceAxisValues[comp]=_metadata->getKey<double>(p.second)*deg;
+			else
+				varAngles[std::distance(scannedAxisId.begin(),it)] = &sourceAxisValues[comp];
+		}
+
 		comp++;
 	}
 
 	_detectorStates.reserve(_nFrames);
 	_sampleStates.reserve(_nFrames);
+	_sourceStates.reserve(_nFrames);
 
 	const char* start = _mapAddress+_headerSize;
 
@@ -158,13 +181,11 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, std::shared_ptr<Diffract
 	if (bb.size() != (_nAngles+3))
 		throw std::runtime_error("Problem parsing numor: mismatch between number of angles in header and datablock 2.");
 
-
 	beginValues = start  + frameE*(_dataLength+_skipChar) + fromStoFData;
-		readDoublesFromChar(beginValues,beginValues+FData,be);
+	readDoublesFromChar(beginValues,beginValues+FData,be);
 
-		if (be.size() != (_nAngles+3))
-			throw std::runtime_error("Problem parsing numor: mismatch between number of angles in header and datablock 2.");
-
+	if (be.size() != (_nAngles+3))
+		throw std::runtime_error("Problem parsing numor: mismatch between number of angles in header and datablock 2.");
 
 	for (std::size_t f=0;f<_nFrames;++f)
 	{
@@ -173,6 +194,7 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, std::shared_ptr<Diffract
 
 		_detectorStates.push_back(_diffractometer->getDetector()->createState(detectorAxisValues));
 		_sampleStates.push_back(_diffractometer->getSample()->createState(sampleAxisValues));
+		_sourceStates.push_back(_diffractometer->getSource()->createState(sourceAxisValues));
 	}
 	_fileSize=_map.get_size();
 

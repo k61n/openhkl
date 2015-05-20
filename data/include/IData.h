@@ -86,11 +86,6 @@ public:
 	const std::vector<Eigen::MatrixXi>& getData() const;
 	//! Gets a pointer to the ith data
 	const Eigen::MatrixXi& getData(std::size_t idx) const;
-    //! Gets the interpolated state between two consecutive detector states
-    ComponentState getDetectorInterpolatedState(double frame);
-	//! Gets the the detector states.
-    const ComponentState& getDetectorState(unsigned int frame) const;
-	const std::vector<ComponentState>& getDetectorStates() const;
     //! Gets the data filename
 	const std::string& getFilename() const;
 	//! Gets a shared pointer to the diffractometer used to collect the data
@@ -103,13 +98,28 @@ public:
 	MetaData* const getMetadata() const;
 	//! Return the peaks
 	std::set<Peak3D*>& getPeaks();
+
+    //! Gets the interpolated state between two consecutive detector states
+    ComponentState getDetectorInterpolatedState(double frame);
+	//! Gets the the detector states.
+    const ComponentState& getDetectorState(unsigned int frame) const;
+	//! Gets the the detector states.
+	const std::vector<ComponentState>& getDetectorStates() const;
+
 	//! Get the sample state for frame
 	const ComponentState& getSampleState(unsigned int frame) const;
     //! Gets the interpolated state between two consecutive sample states
     ComponentState getSampleInterpolatedState(double frame);
-	//! Gets the the detector states.
+	//! Gets the the sample states.
 	const std::vector<ComponentState>& getSampleStates() const;
-	// Other methods
+
+	//! Get the source state for frame
+	const ComponentState& getSourceState(unsigned int frame) const;
+    //! Gets the interpolated state between two consecutive source states
+    ComponentState getSourceInterpolatedState(double frame);
+	//! Gets the the source states.
+	const std::vector<ComponentState>& getSourceStates() const;
+
 	//! Add a new mask to the data
 	void addMask(AABB<double,3>* mask);
 	//! Add a new peak to the data
@@ -166,6 +176,7 @@ protected:
 	std::vector<Eigen::MatrixXi> _data;
 	std::vector<ComponentState> _detectorStates;
 	std::vector<ComponentState> _sampleStates;
+	std::vector<ComponentState> _sourceStates;
     std::set<Peak3D*> _peaks;
     std::size_t _fileSize;
     //! The set of masks bound to the data

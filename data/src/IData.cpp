@@ -36,6 +36,7 @@ IData::IData(const std::string& filename, std::shared_ptr<Diffractometer> diffra
   _data(),
   _detectorStates(),
   _sampleStates(),
+  _sourceStates(),
   _peaks(),
   _fileSize(0),
   _masks()
@@ -188,6 +189,35 @@ const ComponentState& IData::getSampleState(unsigned int frame) const
 	return _sampleStates[frame];
 }
 
+ComponentState IData::getSourceInterpolatedState(double frame)
+{
+
+	if (frame>(_sourceStates.size()-1) || frame<0)
+		throw std::runtime_error("Error when interpolating source states: invalid frame value");
+
+	std::size_t idx=static_cast<std::size_t>(std::floor(frame));
+
+	std::size_t nPhysicalAxes=_diffractometer->getSource()->getGonio()->getNPhysicalAxes();
+
+	const std::vector<double>& prevState=_sourceStates[idx].getValues();
+	const std::vector<double>& nextState=_sourceStates[idx+1].getValues();
+	std::vector<double> state(nPhysicalAxes);
+	for (std::size_t i=0;i<nPhysicalAxes;++i)
+		state[i] = prevState[i] + (frame-static_cast<double>(idx))*(nextState[i]-prevState[i]);
+
+	return _diffractometer->getSource()->createState(state);
+
+}
+
+const ComponentState& IData::getSourceState(unsigned int frame) const
+{
+	if (frame>(_sourceStates.size()-1) || frame<0)
+		throw std::runtime_error("Error when returning source state: invalid frame value");
+
+	return _sourceStates[frame];
+}
+
+
 const std::vector<ComponentState>& IData::getDetectorStates() const
 {
 	return _detectorStates;
@@ -196,6 +226,11 @@ const std::vector<ComponentState>& IData::getDetectorStates() const
 const std::vector<ComponentState>& IData::getSampleStates() const
 {
 	return _sampleStates;
+}
+
+const std::vector<ComponentState>& IData::getSourceStates() const
+{
+	return _sourceStates;
 }
 
 bool IData::removePeak(Peak3D* peak)
@@ -269,9 +304,12 @@ void IData::saveHDF5(const std::string& filename) const
 	  dset->write(_data.at(offset[0]).data(),H5::PredType::NATIVE_INT32,*memspace,*space);
 	}
 
-	// Saving the scans parameters (detector angles and sample angles)
+	// Saving the scans parameters (detector, sample and source)
 
 	H5::Group* scanGroup=new H5::Group(dataGroup->createGroup("Scan"));
+
+	// Write detector states
+
 	H5::Group* detectorGroup=new H5::Group(scanGroup->createGroup("Detector"));
 
 	std::vector<std::string> names=_diffractometer->getDetector()->getGonio()->getPhysicalAxesNames();
@@ -294,6 +332,8 @@ void IData::saveHDF5(const std::string& filename) const
 		detectorScan.write(&vals(j,0),H5::PredType::NATIVE_DOUBLE,scanSpace,scanSpace);
 	}
 
+	// Write sample states
+
 	H5::Group* sampleGroup=new H5::Group(scanGroup->createGroup("Sample"));
 
 	std::vector<std::string> samplenames=_diffractometer->getSample()->getGonio()->getPhysicalAxesNames();
@@ -312,6 +352,29 @@ void IData::saveHDF5(const std::string& filename) const
 	{
 		H5::DataSet sampleScan(sampleGroup->createDataSet(samplenames[j],H5::PredType::NATIVE_DOUBLE,scanSpace));
 		sampleScan.write(&valsSamples(j,0),H5::PredType::NATIVE_DOUBLE,scanSpace,scanSpace);
+	}
+
+	// Write source states
+
+	H5::Group* sourceGroup=new H5::Group(scanGroup->createGroup("Source"));
+
+	std::vector<std::string> sourcenames=_diffractometer->getSource()->getGonio()->getPhysicalAxesNames();
+
+	Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> valsSources(sourcenames.size(),_nFrames);
+
+	for (unsigned int i=0;i<_sourceStates.size();++i)
+	{
+		const std::vector<double>& v=_sourceStates[i].getValues();
+		for (unsigned int j=0;j<sourcenames.size();++j)
+		{
+			valsSources(j,i)=v[j]/SX::Units::deg;
+		}
+	}
+
+	for (unsigned int j=0;j<sourcenames.size();++j)
+	{
+		H5::DataSet sourceScan(sourceGroup->createDataSet(sourcenames[j],H5::PredType::NATIVE_DOUBLE,scanSpace));
+		sourceScan.write(&valsSources(j,0),H5::PredType::NATIVE_DOUBLE,scanSpace,scanSpace);
 	}
 
 	const auto& map=_metadata->getMap();

@@ -90,7 +90,7 @@ public:
 	//! Gets the names of the physical axes of this goniometer
 	std::vector<std::string> getPhysicalAxesNames() const;
 	//! Gets the names of the physical axes of this goniometer
-	std::map<unsigned int,std::string> getPhysicalAxisIdToNamesMap() const;
+	std::map<unsigned int,std::string> getPhysicalAxisIdToNames() const;
 	//! Has physical axis with this name
 	bool hasPhysicalAxis(const std::string&) const;
 	//! Has axis with this name

@@ -82,7 +82,7 @@ public:
 	//@ return : value corresponding to key
 	boost::any getKey(const std::string& key) const;
 	//! Is this key in the metadata
-	bool  isKey(const std::string& key) const;
+	bool isKey(const std::string& key) const;
 	//!Is this key in the metadata
 	bool isKey(const char* key) const;
 	//! Number of elements in the map

@@ -95,7 +95,7 @@ std::vector<std::string> Gonio::getPhysicalAxesNames() const
 	return names;
 }
 
-std::map<unsigned int,std::string> Gonio::getPhysicalAxisIdToNamesMap() const
+std::map<unsigned int,std::string> Gonio::getPhysicalAxisIdToNames() const
 {
 	std::map<unsigned int,std::string> idToNames;
 	for (auto a : _axes)
