@@ -82,8 +82,6 @@ private:
 
 	static std::size_t BlockSize;
 
-	static std::map<std::size_t,std::string> MADAngles;
-
 	//! Invoke seekg to beginning the line number, at position pos. First line is 1
 	void goToLine(std::stringstream& buffer, int number,int pos);
 	//! Read the control block containing all float parameters.

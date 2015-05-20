@@ -29,6 +29,7 @@
 #ifndef SX_GONIO_H_
 #define SX_GONIO_H_
 
+#include <map>
 #include <memory>
 #include <string>
 #include <vector>
@@ -84,14 +85,20 @@ public:
 	const std::vector<Axis*>& getAxes() const;
 	//! Gets the names of the axes of this goniometer
 	std::vector<std::string> getAxesNames() const;
+	//! Gets the ids of the physical axes of this goniometer
+	std::vector<unsigned int> getPhysicalAxesIds() const;
 	//! Gets the names of the physical axes of this goniometer
 	std::vector<std::string> getPhysicalAxesNames() const;
+	//! Gets the names of the physical axes of this goniometer
+	std::map<unsigned int,std::string> getPhysicalAxisIdToNamesMap() const;
 	//! Has physical axis with this name
 	bool hasPhysicalAxis(const std::string&) const;
 	//! Has axis with this name
 	bool hasAxis(const std::string&) const;
 	//! Get a pointer to axis i, throw range_error if not found
 	Axis* const getAxis(unsigned int i);
+	//! Get a pointer to axis with id id, throw range_error if not found
+	Axis* const getAxisFromId(unsigned int id);
 	//! Get a pointer to axis with label, throw range_error if not found
     Axis* const getAxis(const std::string& label);
 	//! Return the homogeneous matrix corresponding to this set of parameters. Throw if angles outside limits.
@@ -125,6 +132,8 @@ protected:
 	void isAxisValid(unsigned int i) const;
 	//! Check whether s names a valid axis
 	unsigned int isAxisValid(const std::string& s) const;
+	//! Check whether id matches one of the axis id
+	unsigned int isAxisIdValid(unsigned int id) const;
 
 	//! Given name of the gonio
 	std::string _label;

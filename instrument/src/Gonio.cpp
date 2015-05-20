@@ -71,6 +71,18 @@ const std::vector<Axis*>& Gonio::getAxes() const
 	return _axes;
 }
 
+std::vector<unsigned int> Gonio::getPhysicalAxesIds() const
+{
+	std::vector<unsigned int> ids;
+	ids.reserve(getNPhysicalAxes());
+	for (auto a : _axes)
+	{
+		if (a->isPhysical())
+			ids.push_back(a->getId());
+	}
+	return ids;
+}
+
 std::vector<std::string> Gonio::getPhysicalAxesNames() const
 {
 	std::vector<std::string> names;
@@ -81,6 +93,17 @@ std::vector<std::string> Gonio::getPhysicalAxesNames() const
 			names.push_back(a->getLabel());
 	}
 	return names;
+}
+
+std::map<unsigned int,std::string> Gonio::getPhysicalAxisIdToNamesMap() const
+{
+	std::map<unsigned int,std::string> idToNames;
+	for (auto a : _axes)
+	{
+		if (a->isPhysical())
+			idToNames.insert(std::map<unsigned int,std::string>::value_type(a->getId(),a->getLabel()));
+	}
+	return idToNames;
 }
 
 std::vector<std::string> Gonio::getAxesNames() const
@@ -95,6 +118,12 @@ std::vector<std::string> Gonio::getAxesNames() const
 Axis*const Gonio::getAxis(unsigned int i)
 {
 	isAxisValid(i);
+	return _axes[i];
+}
+
+Axis*const Gonio::getAxisFromId(unsigned int id)
+{
+	unsigned int i=isAxisIdValid(id);
 	return _axes[i];
 }
 
@@ -121,7 +150,6 @@ Axis* Gonio::addTranslation(const std::string& label, const Vector3d& axis)
 	return _axes.back();
 }
 
-
 void Gonio::isAxisValid(unsigned int i) const
 {
 	if (i>=_axes.size())
@@ -139,6 +167,16 @@ unsigned int Gonio::isAxisValid(const std::string& label) const
 	throw std::invalid_argument("Could not find the label "+label+" as a goniometer axis in "+_label);
 }
 
+unsigned int Gonio::isAxisIdValid(unsigned int id) const
+{
+	for (unsigned int i=0;i<_axes.size();++i)
+	{
+		if (_axes[i]->getId()==id)
+			return i;
+	}
+	//! If not found
+	throw std::invalid_argument("Could not find any axis with id "+std::to_string(id));
+}
 
 Eigen::Transform<double,3,Eigen::Affine> Gonio::getHomMatrix(const std::vector<double>& values) const
 {
