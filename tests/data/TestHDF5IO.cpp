@@ -33,10 +33,6 @@ BOOST_AUTO_TEST_CASE(Test_HDF5_IO)
 	dataf.open();
 	dataf.readInMemory();
 
-
 	dataf.saveHDF5("D10_hdf5_example.h5");
 	dataf.close();
-
-
-
 }

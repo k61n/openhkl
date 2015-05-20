@@ -18,7 +18,7 @@
 #include "UBMinimizer.h"
 #include "Units.h"
 #include "UnitCell.h"
-#include "Source.h"
+#include "MonochromaticSource.h"
 
 using SX::Crystal::UBSolution;
 using SX::Crystal::UBMinimizer;
@@ -29,7 +29,7 @@ using SX::Instrument::Gonio;
 using SX::Instrument::RotAxis;
 using SX::Instrument::Sample;
 using SX::Instrument::ComponentState;
-using SX::Instrument::Source;
+using SX::Instrument::MonochromaticSource;
 
 using namespace SX::Units;
 const double tolerance=1e-6;
@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
 	sampleGonio->addRotation("phi",Vector3d(0,0,1),RotAxis::CW);
 	sample->setGonio(sampleGonio);
 
-	Source* source=new Source;
+	MonochromaticSource* source=new MonochromaticSource();
 	source->setWavelength(0.8380);
 
 	// Open the RAFUB input file to get all informations about the collected peaks

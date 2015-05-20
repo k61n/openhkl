@@ -14,15 +14,11 @@ BOOST_AUTO_TEST_CASE(Test_DiffractometerStore)
 
 	SX::Instrument::DiffractometerStore* ds=SX::Instrument::DiffractometerStore::Instance();
 
-	auto d19 = ds->buildDiffractomer("D19");
-
-	std::cout<<d19->getDetector()->getName()<<std::endl;
-	std::cout<<d19->getSample()->getName()<<std::endl;
-
 	for (const auto& p : ds->getDiffractometersList())
+	{
 		std::cout<<p<<std::endl;
-
-	auto cyclops = ds->buildDiffractomer("Cyclops");
+		auto diffracto = ds->buildDiffractomer(p);
+	}
 
 }
 
