@@ -6,6 +6,11 @@ namespace SX
 namespace Instrument
 {
 
+Axis* TransAxis::create(const proptree::ptree& node)
+{
+	return new TransAxis(node);
+}
+
 TransAxis::TransAxis() : Axis("translation")
 {
 }
@@ -19,6 +24,10 @@ TransAxis::TransAxis(const std::string& label, const Vector3d& axis) : Axis(labe
 }
 
 TransAxis::TransAxis(const TransAxis& other) : Axis(other)
+{
+}
+
+TransAxis::TransAxis(const proptree::ptree& node) : Axis(node)
 {
 }
 

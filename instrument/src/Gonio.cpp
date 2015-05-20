@@ -43,40 +43,7 @@ Gonio::Gonio(const proptree::ptree& node)
 	BOOST_FOREACH(const proptree::ptree::value_type& v, node)
 	{
 	    if (v.first.compare("axis")==0)
-	    {
-	    	std::string axisType=v.second.get<std::string>("<xmlattr>.type");
-	    	std::string axisName=v.second.get<std::string>("name");
-
-	    	const proptree::ptree& axisDirectionNode=v.second.get_child("direction");
-	    	double nx=axisDirectionNode.get<double>("x");
-	    	double ny=axisDirectionNode.get<double>("y");
-	    	double nz=axisDirectionNode.get<double>("z");
-
-	    	Eigen::Vector3d axisDir(nx,ny,nz);
-	    	axisDir.normalize();
-
-	    	bool physical=v.second.get<bool>("physical");
-	    	double offset=v.second.get<double>("offset");
-
-	    	// Case of a rotation axis
-	    	if (axisType.compare("rotation")==0)
-	    	{
-	    		bool clockwise=v.second.get<bool>("clockwise");
-	    		RotAxis::Direction sense=clockwise ? RotAxis::Direction::CW : RotAxis::Direction::CCW;
-		        addRotation(axisName,axisDir,sense);
-	    		getAxis(axisName)->setPhysical(physical);
-	    		getAxis(axisName)->setOffset(offset);
-	    	}
-	    	// Case of a translation axis
-	    	else if (axisType.compare("translation")==0)
-	    	{
-		        addTranslation(axisName,axisDir);
-	    		getAxis(axisName)->setPhysical(physical);
-	    		getAxis(axisName)->setOffset(offset);
-	    	}
-	    	else
-				throw Kernel::Error<Gonio>("Invalid axis type. Must be one of 'rotation' or 'translation'.");
-        }
+	    	addAxis(Axis::create(v.second));
 	}
 }
 
@@ -137,6 +104,10 @@ Axis*const Gonio::getAxis(const std::string& label)
 	return _axes[i];
 }
 
+void Gonio::addAxis(Axis* axis)
+{
+	_axes.push_back(axis);
+}
 
 Axis* Gonio::addRotation(const std::string& label, const Vector3d& axis,RotAxis::Direction dir)
 {

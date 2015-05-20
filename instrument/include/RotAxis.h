@@ -53,6 +53,10 @@ class RotAxis : public Axis
 {
 public:
 	enum Direction {CCW,CW};
+
+	//! Static constructor for a RotAxis
+	static Axis* create(const proptree::ptree& node);
+
 	//! Default constructor
 	RotAxis();
 	//! Copy constructor
@@ -61,6 +65,8 @@ public:
 	explicit RotAxis(const std::string& label);
 	//! Explicit
 	explicit RotAxis(const std::string& label, const Vector3d& axis, Direction direction=CCW);
+	//! Construct a RotAxis from a property tree node.
+	RotAxis(const proptree::ptree& node);
 	//! Assignment operator
 	RotAxis& operator=(const RotAxis& other);
 	//! Destructor
@@ -83,18 +89,18 @@ public:
 	Quaterniond getQuat(double angle) const;
 	//! Print information into a stream
 	friend std::ostream& operator<<(std::ostream& os, const RotAxis&);
-	void readXML(std::istream&);
+
 protected:
 	//! Rotation direction
 	Direction _dir;
 };
 
-	static const RotAxis AxisXCW=RotAxis("XCW",Vector3d(1,0,0),RotAxis::CW);
-	static const RotAxis AxisXCCW=RotAxis("XCCW",Vector3d(1,0,0),RotAxis::CCW);
-	static const RotAxis AxisYCW=RotAxis("YCW",Vector3d(0,1,0),RotAxis::CW);
-	static const RotAxis AxisYCCW=RotAxis("YCCW",Vector3d(0,1,0),RotAxis::CCW);
-	static const RotAxis AxisZCW=RotAxis("ZCW",Vector3d(0,0,1),RotAxis::CW);
-	static const RotAxis AxisZCCW=RotAxis("ZCCW",Vector3d(0,0,1),RotAxis::CCW);
+static const RotAxis AxisXCW=RotAxis("XCW",Vector3d(1,0,0),RotAxis::CW);
+static const RotAxis AxisXCCW=RotAxis("XCCW",Vector3d(1,0,0),RotAxis::CCW);
+static const RotAxis AxisYCW=RotAxis("YCW",Vector3d(0,1,0),RotAxis::CW);
+static const RotAxis AxisYCCW=RotAxis("YCCW",Vector3d(0,1,0),RotAxis::CCW);
+static const RotAxis AxisZCW=RotAxis("ZCW",Vector3d(0,0,1),RotAxis::CW);
+static const RotAxis AxisZCCW=RotAxis("ZCCW",Vector3d(0,0,1),RotAxis::CCW);
 
 } //namespace Geometry
 

@@ -1,12 +1,27 @@
-#include "Axis.h"
-#include <stdexcept>
-#include <iostream>
 #include <limits>
+#include <stdexcept>
+
+#include "Axis.h"
+#include "AxisFactory.h"
 
 namespace SX
 {
 namespace Instrument
 {
+
+Axis* Axis::create(const proptree::ptree& node)
+{
+	// Create an instance of the source factory
+	AxisFactory* axisFactory=AxisFactory::Instance();
+
+	// Get the axis type
+	std::string axisType=node.get<std::string>("<xmlattr>.type");
+
+	// Fetch the axis from the factory
+	Axis* axis = axisFactory->create(axisType,node);
+
+	return axis;
+}
 
 Axis::Axis()
 : _label("axis"),
@@ -16,7 +31,7 @@ Axis::Axis()
   _max(std::numeric_limits<double>::infinity()),
   _offsetFixed(false),
   _physical(true),
-  _madid(0)
+  _id(0)
 {
 }
 
@@ -28,7 +43,7 @@ Axis::Axis(const std::string& label)
   _max(std::numeric_limits<double>::infinity()),
   _offsetFixed(false),
   _physical(true),
-  _madid(0)
+  _id(0)
 {
 }
 
@@ -39,7 +54,7 @@ Axis::Axis(const std::string& label, const Eigen::Vector3d& axis)
   _max(std::numeric_limits<double>::infinity()),
   _offsetFixed(false),
   _physical(true),
-  _madid(0)
+  _id(0)
 {
 	setAxis(axis);
 }
@@ -52,8 +67,32 @@ Axis::Axis(const Axis& other)
   _max(other._max),
   _offsetFixed(other._offsetFixed),
   _physical(other._physical),
-  _madid(other._madid)
+  _id(other._id)
 {
+}
+
+Axis::Axis(const proptree::ptree& node)
+{
+	_label=node.get<std::string>("name");
+
+	const proptree::ptree& axisDirectionNode=node.get_child("direction");
+	double nx=axisDirectionNode.get<double>("x");
+	double ny=axisDirectionNode.get<double>("y");
+	double nz=axisDirectionNode.get<double>("z");
+
+	Eigen::Vector3d axis(nx,ny,nz);
+	axis.normalize();
+
+	_axis=axis;
+
+	_offset=node.get<double>("offset");
+	_offsetFixed=false;
+
+	_min=node.get<double>("min",-std::numeric_limits<double>::infinity());
+	_max=node.get<double>("max", std::numeric_limits<double>::infinity());
+	_physical=node.get<bool>("physical");
+
+	_id=node.get<unsigned int>("id",0);
 }
 
 Axis& Axis::operator=(const Axis& other)
@@ -67,7 +106,7 @@ Axis& Axis::operator=(const Axis& other)
 		_max         = other._max;
 		_offsetFixed = other._offsetFixed;
 		_physical    = other._physical;
-		_madid       = other._madid;
+		_id       = other._id;
 	}
 	return *this;
 }
@@ -100,14 +139,14 @@ const Eigen::Vector3d& Axis::getAxis() const
 	return _axis;
 }
 
-void Axis::setMADId(unsigned int madid)
+void Axis::setId(unsigned int id)
 {
-	_madid = madid;
+	_id = id;
 }
 
-unsigned int Axis::getMADId() const
+unsigned int Axis::getId() const
 {
-	return _madid;
+	return _id;
 }
 
 void Axis::setOffsetFixed(bool fixed)

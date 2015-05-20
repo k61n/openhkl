@@ -101,6 +101,8 @@ public:
 	//! Return the number of physical axis defined in the gonio
 	std::size_t getNPhysicalAxes() const;
 
+	//! Add an Axis to this Goniometer.
+	void addAxis(Axis* axis);
 	//! Add a rotation axis to this goniometer
 	Axis* addRotation(const std::string& label,const Vector3d& axis, RotAxis::Direction dir=RotAxis::Direction::CCW);
 	//! Add a translation axis to this goniometer

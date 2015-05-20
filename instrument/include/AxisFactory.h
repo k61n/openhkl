@@ -2,7 +2,8 @@
  * nsxtool : Neutron Single Crystal analysis toolkit
  ------------------------------------------------------------------------------------------
  Copyright (C)
- 2012- Laurent C. Chapon Institut Laue-Langevin
+ 2012- Laurent C. Chapon, Eric Pellegrini
+ Institut Laue-Langevin
  BP 156
  6, rue Jules Horowitz
  38042 Grenoble Cedex 9
@@ -26,11 +27,13 @@
  *
  */
 
-#ifndef NSXTOOL_TRANSAXIS_H_
-#define NSXTOOL_TRANSAXIS_H_
+#ifndef NSXTOOL_AXISFACTORY_H_
+#define NSXTOOL_AXISFACTORY_H_
 
-#include <Eigen/Geometry>
+#include <string>
 
+#include "Factory.h"
+#include "Singleton.h"
 #include "Axis.h"
 
 namespace SX
@@ -39,34 +42,19 @@ namespace SX
 namespace Instrument
 {
 
-class TransAxis : public Axis
+using namespace SX::Kernel;
+
+class AxisFactory : public Factory<Axis,std::string,const proptree::ptree&>, public Singleton<AxisFactory,Constructor,Destructor>
 {
-public:
-
-	//! Static constructor for a TransAxis
-	static Axis* create(const proptree::ptree& node);
-
-	//! Default constructor
-	TransAxis();
-	//! Copy constructor
-	TransAxis(const TransAxis& other);
-	//! Constructs a translation axis with a given label
-	TransAxis(const std::string& label);
-	//! Constructs a translation axis with a given label and axis
-	TransAxis(const std::string& label,const Vector3d& axis);
-	//! Construct a TransAxis from a property tree node.
-	TransAxis(const proptree::ptree& node);
-	// Destructor
-	~TransAxis();
-	//! Virtual copy constructor
-	TransAxis* clone() const;
-
-	//! Assignment operator
-	TransAxis& operator=(const TransAxis& other);
-	Eigen::Transform<double,3,Eigen::Affine> getHomMatrix(double value) const;
-
+private:
+	friend class Constructor<AxisFactory>;
+	friend class Destructor<AxisFactory>;
+	AxisFactory();
+	~AxisFactory();
 };
 
-} // End namespace instrument
-} // End namesapce SX
-#endif /* NSXTOOL_TRANSAXIS_H_ */
+} // end namespace Instrument
+
+} // end namespace SX
+
+#endif /* NSXTOOL_AXISFACTORY_H_ */

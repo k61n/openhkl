@@ -68,11 +68,4 @@ BOOST_AUTO_TEST_CASE(Test_Rot_Axis)
 	BOOST_CHECK_CLOSE(transf[1],0.0,tolerance);
 	BOOST_CHECK_CLOSE(transf[2],-0.5*sqrt(2.0),tolerance);
 
-	std::ifstream ifs("RotAxis.xml");
-	if (ifs.is_open())
-	{
-		a.readXML(ifs);
-	}
-
-
 }

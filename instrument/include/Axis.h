@@ -28,7 +28,11 @@
 
 #ifndef NSXTOOL_AXIS_H_
 #define NSXTOOL_AXIS_H_
+
 #include <string>
+
+#include <boost/property_tree/ptree.hpp>
+
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
 
@@ -41,6 +45,8 @@ namespace SX
 namespace Instrument
 {
 
+namespace proptree=boost::property_tree;
+
 /** @brief Interface use for homogeneous transform, Rotation and translation, scale
 *
 * Each axis define a normalized direction (about which one rotates or along which one translates).
@@ -52,6 +58,10 @@ class Axis
 {
 
 public:
+
+	//! Static constructor for an Axis
+	static Axis* create(const proptree::ptree& node);
+
 	//! Default constructor
 	Axis();
 	//! Copy constructor
@@ -60,6 +70,8 @@ public:
 	Axis(const std::string& label);
 	//! Construct a labelized axis from a vector
 	Axis(const std::string& label, const Eigen::Vector3d& axis);
+	//! Construct an Axis from a property tree node.
+	Axis(const proptree::ptree& node);
 	//! Assignment operator
 	Axis& operator=(const Axis& other);
 	//! Destructor
@@ -87,18 +99,18 @@ public:
 	double getOffset() const;
 	//! Set the range of values accessible for this axis
 	void setLimits(double, double);
-	//! Set the  max value of the range
-	void setHighLimit(double);
-	//! Set the min value of the range
-	void setLowLimit(double);
 	//! Get minimum of the range
 	double getHighLimit() const;
+	//! Set the  max value of the range
+	void setHighLimit(double);
 	//! Get maximum of the range
 	double getLowLimit() const;
-	//! Set the MAD id of the axis
-	void setMADId(unsigned int madid);
-	//! Get the MAD id of the axis
-	unsigned int getMADId() const;
+	//! Set the min value of the range
+	void setLowLimit(double);
+	//! Get the instrument id of the axis
+	unsigned int getId() const;
+	//! Set the instrument id of the axis
+	void setId(unsigned int id);
 	//! Get the homogeneous (4x4) matrix corresponding to the value
 	virtual Transform<double,3,Eigen::Affine> getHomMatrix(double value) const=0;
 	//! Transform vector
@@ -111,22 +123,22 @@ public:
 protected:
 	//! Check whether a value is within the authorized limits of this axis, throw otherwise.
 	void checkRange(double value);
-	//! Label of the axis
+	//! Label of the axis.
 	std::string _label;
-	//! Axis direction, a normalized vector
+	//! Axis direction, a normalized vector.
 	Vector3d _axis;
-	//! Offset so that finalvalue=offset+given value
+	//! Offset so that finalvalue=offset+given value.
 	double _offset;
-	//! Limits
-	double _min, _max;
-	//!
+	//! The minimum value allowed for the value of the axis.
+	double _min;
+	//! The maximum value allowed for the value of the axis.
+	double _max;
+	//! Defines whether or not the offset will be fixed when refining the axis value.
 	bool _offsetFixed;
-	//! true for a physical axis, false for a virtual
+	//! Defines whether the axis is physical or not. A physical axis is related to metadata.
 	bool _physical;
-
-	//! The MAD id (for instrument related to ILL ASCII Data)
-	unsigned int _madid;
-
+	//! The instrument id (e.g. MAD number for instrument related to ILL ASCII Data).
+	unsigned int _id;
 };
 
 } // end namespace Instrument
