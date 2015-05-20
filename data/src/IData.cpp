@@ -464,7 +464,7 @@ std::vector<PeakCalc> IData::hasPeaks(const std::vector<Eigen::Vector3d>& hkls, 
 
 	Eigen::Matrix3d UB = BU.transpose();
 
-	Eigen::Vector3d ki=_diffractometer->getSource()->getki();
+	Eigen::Vector3d ki=_diffractometer->getSource()->getKi();
 
 	for (const Eigen::Vector3d& hkl : hkls)
 	{
