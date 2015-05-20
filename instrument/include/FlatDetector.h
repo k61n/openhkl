@@ -39,14 +39,12 @@ namespace SX
 namespace Instrument
 {
 
-namespace property_tree=boost::property_tree;
-
 class FlatDetector : public MonoDetector
 {
 public:
 
-	// Static constructor
-	static Detector* create(const std::string& name);
+	//! Static constructor of a FlatDetector from a property tree node
+	static Detector* create(const proptree::ptree& node);
 
 	//! Construct a FlatDetector
 	FlatDetector();
@@ -54,6 +52,8 @@ public:
 	FlatDetector(const FlatDetector& other);
 	//! Construct a FlatDetector with a given name
 	FlatDetector(const std::string& name);
+	//! Constructs a FlatDetector from a property tree node
+	FlatDetector(const proptree::ptree& node);
 	//! Return a pointer to a copy of a FlatDetector
 	Detector* clone() const;
 	//! Destructor
@@ -61,9 +61,6 @@ public:
 
 	//! Assignment operator
 	FlatDetector& operator=(const FlatDetector& other);
-
-	//! Construct a FlatDetector from an XML node
-	void buildFromXML(const property_tree::ptree& node);
 
 	//! Set the height of the detector (meters)
 	void setHeight(double height);

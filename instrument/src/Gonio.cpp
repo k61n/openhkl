@@ -19,21 +19,35 @@ namespace Instrument
 
 using Eigen::Quaterniond;
 
-Gonio* Gonio::create(const property_tree::ptree& node)
+Gonio::Gonio() : _label("goniometer")
+{
+}
+
+Gonio::Gonio(const std::string& label) : _label(label)
+{
+}
+
+Gonio::Gonio(const Gonio& other) : _label(other._label)
+{
+	_axes.reserve(other._axes.size());
+	for (auto ax : other._axes)
+		_axes.push_back(ax->clone());
+}
+
+Gonio::Gonio(const proptree::ptree& node)
 {
 
-    std::string goniometerName=node.get<std::string>("name");
-    Gonio* gonio(new Gonio(goniometerName));
+    _label=node.get<std::string>("name","");
 
     // Set the axis of the detector goniometer from the XML node
-	BOOST_FOREACH(const property_tree::ptree::value_type& v, node)
+	BOOST_FOREACH(const proptree::ptree::value_type& v, node)
 	{
 	    if (v.first.compare("axis")==0)
 	    {
 	    	std::string axisType=v.second.get<std::string>("<xmlattr>.type");
 	    	std::string axisName=v.second.get<std::string>("name");
 
-	    	const property_tree::ptree& axisDirectionNode=v.second.get_child("direction");
+	    	const proptree::ptree& axisDirectionNode=v.second.get_child("direction");
 	    	double nx=axisDirectionNode.get<double>("x");
 	    	double ny=axisDirectionNode.get<double>("y");
 	    	double nz=axisDirectionNode.get<double>("z");
@@ -49,39 +63,21 @@ Gonio* Gonio::create(const property_tree::ptree& node)
 	    	{
 	    		bool clockwise=v.second.get<bool>("clockwise");
 	    		RotAxis::Direction sense=clockwise ? RotAxis::Direction::CW : RotAxis::Direction::CCW;
-		        gonio->addRotation(axisName,axisDir,sense);
-	    		gonio->getAxis(axisName)->setPhysical(physical);
-	    		gonio->getAxis(axisName)->setOffset(offset);
+		        addRotation(axisName,axisDir,sense);
+	    		getAxis(axisName)->setPhysical(physical);
+	    		getAxis(axisName)->setOffset(offset);
 	    	}
 	    	// Case of a translation axis
 	    	else if (axisType.compare("translation")==0)
 	    	{
-		        gonio->addTranslation(axisName,axisDir);
-	    		gonio->getAxis(axisName)->setPhysical(physical);
-	    		gonio->getAxis(axisName)->setOffset(offset);
+		        addTranslation(axisName,axisDir);
+	    		getAxis(axisName)->setPhysical(physical);
+	    		getAxis(axisName)->setOffset(offset);
 	    	}
 	    	else
 				throw Kernel::Error<Gonio>("Invalid axis type. Must be one of 'rotation' or 'translation'.");
         }
 	}
-
-	return gonio;
-
-}
-
-Gonio::Gonio() : _label("goniometer")
-{
-}
-
-Gonio::Gonio(const std::string& label) : _label(label)
-{
-}
-
-Gonio::Gonio(const Gonio& other) : _label(other._label)
-{
-	_axes.reserve(other._axes.size());
-	for (auto ax : other._axes)
-		_axes.push_back(ax->clone());
 }
 
 Gonio& Gonio::operator=(const Gonio& other)

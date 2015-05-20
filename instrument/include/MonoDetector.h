@@ -49,8 +49,8 @@ class MonoDetector : public Detector
 {
 public:
 
-	// Static constructor (not implemented)
-	static Detector* create(const std::string& name);
+	//! Static constructor of a MonoDetector from a property tree node
+	static Detector* create(const proptree::ptree& node);
 
 	//! Construct a default MonoDetector
 	MonoDetector();
@@ -58,6 +58,8 @@ public:
 	MonoDetector(const MonoDetector& other);
 	//! Construct a MonoDetector with a given name
 	MonoDetector(const std::string& name);
+	//! Constructs a MonoDetector from a property tree node
+	MonoDetector(const proptree::ptree& node);
 	// Destructor
 	virtual ~MonoDetector()=0;
 

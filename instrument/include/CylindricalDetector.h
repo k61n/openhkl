@@ -39,14 +39,12 @@ namespace SX
 namespace Instrument
 {
 
-namespace property_tree=boost::property_tree;
-
 class CylindricalDetector : public MonoDetector
 {
 public:
 
-	// Static constructor
-	static Detector* create(const std::string& name);
+	//! Static constructor of a CylindricalDetector from a property tree node
+	static Detector* create(const proptree::ptree& node);
 
 	//! Construct a CylindricalDetector
 	CylindricalDetector();
@@ -54,6 +52,8 @@ public:
 	CylindricalDetector(const CylindricalDetector& other);
 	//! Constructs a CylindricalDetector with a given name
 	CylindricalDetector(const std::string& name);
+	//! Constructs a CylindricalDetector from a property tree node
+	CylindricalDetector(const proptree::ptree& node);
 	//! Return a pointer to a copy of a CylindricalDetector
 	Detector* clone() const;
 	//! Destructor
@@ -61,9 +61,6 @@ public:
 
 	//! Assignment operator
 	CylindricalDetector& operator=(const CylindricalDetector& other);
-
-	//! Constructs a cylindrical detector from an XML node
-	void buildFromXML(const property_tree::ptree& node);
 
 	//! Set the height of the detector (meters)
 	void setHeight(double height);

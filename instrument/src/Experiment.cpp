@@ -127,9 +127,7 @@ void Experiment::addData(IData* data)
 			throw std::runtime_error("trying to mix data with different wavelengths");
 	}
 
-
-
-	auto pair=_data.insert(std::pair<std::string,IData*>(basename,data));
+	_data.insert(std::pair<std::string,IData*>(basename,data));
 }
 
 bool Experiment::hasData(const std::string& name) const

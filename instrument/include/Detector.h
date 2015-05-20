@@ -57,8 +57,8 @@ class Detector : public Component
 {
 public:
 
-	// Static constructor
-	static Detector* create(const std::string& name);
+	//! Static constructor of a Detector from a property tree node
+	static Detector* create(const proptree::ptree& node);
 
 	//! Construct a Detector
 	Detector();
@@ -66,6 +66,8 @@ public:
 	Detector(const Detector& other);
 	//! Construct a Detector with a given name
 	Detector(const std::string& name);
+	//! Constructs a sample from a property tree node
+	Detector(const proptree::ptree& node);
 	//! Return a pointer to a copy of the Detector
 	virtual Detector* clone() const=0;
 	// Destructor
@@ -73,8 +75,6 @@ public:
 
 	//! Assignment operator
 	virtual Detector& operator=(const Detector& other);
-
-	virtual void buildFromXML(const property_tree::ptree& node)=0;
 
 	//! Return the number of columns of the detector.
 	virtual unsigned int getNCols() const=0;

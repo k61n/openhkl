@@ -30,8 +30,8 @@
 #define NSXTOOL_COMPONENT_H_
 
 #include <map>
-#include <string>
 #include <memory>
+#include <string>
 
 #include <boost/property_tree/ptree.hpp>
 
@@ -47,9 +47,7 @@ namespace Instrument
 
 class Gonio;
 
-using boost::property_tree::ptree;
-
-typedef unsigned int uint;
+namespace proptree=boost::property_tree;
 
 /*
  * Interface for the components of an instrument (e.g. detector, goniometer, source ...).
@@ -58,51 +56,48 @@ class Component
 {
 public:
 
-	// Constructors and destructor
-
 	//! Default constructor
 	Component();
 	// Copy constructor
 	Component(const Component& other);
 	//! Constructs a component with a given name
 	Component(const std::string& name);
+	//! Construct a component from a property tree node
+	Component(const proptree::ptree& node);
 	//! Virtual copy constructor
 	virtual Component* clone() const=0;
 	//! Destructor.
 	virtual ~Component()=0;
 
-	// Operators
-
 	//! Assignment operator
 	virtual Component& operator=(const Component& other);
 
-	// Getters and setters
-
-	//! Return the goniometer attached to this component
-	std::shared_ptr<Gonio> getGonio() const;
 	//! Returns the name of the component.
 	const std::string& getName() const;
+	//! Set the name of the component
+	void setName(const std::string& name);
+
 	//! Return the number of axes attached to this component
 	std::size_t getNAxes() const;
 	//! Return the number of physical axes attached to this component
 	std::size_t getNPhysicalAxes() const;
+
 	//! Get the absolute position of the component for a set of goniometer values
 	Eigen::Vector3d getPosition(const std::vector<double>& goniosetup) const;
 	//! Get the absolute position from a state of this component
 	Eigen::Vector3d getPosition(const ComponentState& state) const;
 	//! Get the absolute position at rest (unmodified by gonio)
 	const Eigen::Vector3d& getRestPosition() const;
-	//! Attach a modifier to the component.
-	void setGonio(std::shared_ptr<Gonio>);
-	//! Set the name of the component
-	void setName(const std::string& name);
 	//! Set the rest position
 	virtual void setRestPosition(const Eigen::Vector3d& pos);
 
-	// Other methods
+	//! Return the goniometer attached to this component
+	std::shared_ptr<Gonio> getGonio() const;
+	//! Return true if a geometric modifier is attached
+	bool hasGonio() const;
+	//! Attach a modifier to the component.
+	void setGonio(std::shared_ptr<Gonio>);
 
-	//! Parse the XML component node.
-	virtual void parse(const ptree& pt);
 	ComponentState createState();
 	//! Create a state from a vector of values
 	ComponentState createState(const std::vector<double>& values);
@@ -110,8 +105,7 @@ public:
 	ComponentState createStateFromEigen(const Eigen::VectorXd& values);
 	//! Create a state from a map of values
 	ComponentState createState(const std::map<std::string,double>& values);
-	//! Return true if a geometric modifier is attached
-	bool hasGonio() const;
+
 protected:
 	//! Name of the component
 	std::string _name;
@@ -119,7 +113,6 @@ protected:
 	std::shared_ptr<Gonio> _gonio;
 	//! The position of the component at rest, i.e. not modified by the Gonio.
 	Eigen::Vector3d _position;
-
 };
 
 } // end namespace Instrument

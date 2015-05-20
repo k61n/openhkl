@@ -1,9 +1,9 @@
-#include <stdexcept>
 #include <cmath>
+#include <stdexcept>
 
 #include "Detector.h"
+#include "DetectorFactory.h"
 #include "Gonio.h"
-#include <iostream>
 
 namespace SX
 {
@@ -11,7 +11,22 @@ namespace SX
 namespace Instrument
 {
 
-Detector::Detector() : Component("detector")
+Detector* Detector::create(const proptree::ptree& node)
+{
+	// Create an instance of the detector factory
+	DetectorFactory* detectorFactory=DetectorFactory::Instance();
+
+	// Get the detector type
+	std::string detectorType=node.get<std::string>("<xmlattr>.type");
+
+	// Fetch the detector from the factory
+	Detector* detector = detectorFactory->create(detectorType,node);
+
+	return detector;
+}
+
+Detector::Detector()
+: Component("detector")
 {
 }
 
@@ -22,6 +37,11 @@ Detector::Detector(const Detector& other)
 
 Detector::Detector(const std::string& name)
 : Component(name)
+{
+}
+
+Detector::Detector(const proptree::ptree& node)
+: Component(node)
 {
 }
 

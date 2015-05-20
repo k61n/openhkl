@@ -1,7 +1,5 @@
 #include <memory>
 
-#include <boost/foreach.hpp>
-
 #include <Eigen/Dense>
 
 #include "Error.h"
@@ -17,9 +15,9 @@ namespace SX
 namespace Instrument
 {
 
-Detector* FlatDetector::create(const std::string& name)
+Detector* FlatDetector::create(const proptree::ptree& node)
 {
-	return new FlatDetector(name);
+	return new FlatDetector(node);
 }
 
 FlatDetector::FlatDetector() : MonoDetector()
@@ -34,47 +32,24 @@ FlatDetector::FlatDetector(const std::string& name) : MonoDetector(name)
 {
 }
 
-void FlatDetector::buildFromXML(const property_tree::ptree& node)
+FlatDetector::FlatDetector(const proptree::ptree& node) : MonoDetector(node)
 {
 	Units::UnitsManager* um=SX::Units::UnitsManager::Instance();
 
-	// Set the detector name from the XML node
-	std::string detectorName=node.get<std::string>("name");
-	this->setName(detectorName);
-
-	// Set the detector to sample distance from the XML node
-	const property_tree::ptree& distanceNode = node.get_child("sample_distance");
-	double units=um->get(distanceNode.get<std::string>("<xmlattr>.units"));
-	double distance=distanceNode.get_value<double>();
-	distance *= units;
-    this->setDistance(distance);
-
-	// Set the detector width from the XML node
+	// Set the detector width from the property tree node
 	const property_tree::ptree& widthNode = node.get_child("width");
-	units=um->get(widthNode.get<std::string>("<xmlattr>.units"));
+	double units=um->get(widthNode.get<std::string>("<xmlattr>.units"));
 	double width=widthNode.get_value<double>();
 	width *= units;
-    this->setWidth(width);
+    setWidth(width);
 
-	// Set the detector height from the XML node
+	// Set the detector height from the property tree node
 	const property_tree::ptree& heightNode = node.get_child("height");
 	units=um->get(heightNode.get<std::string>("<xmlattr>.units"));
 	double height=heightNode.get_value<double>();
 	height *= units;
-    this->setHeight(height);
+    setHeight(height);
 
-	// Set the detector number of pixels from the XML node
-	const property_tree::ptree& nColsNode = node.get_child("ncols");
-	unsigned int nCols=nColsNode.get_value<unsigned int>();
-	const property_tree::ptree& nRowsNode = node.get_child("nrows");
-	unsigned int nRows=nRowsNode.get_value<unsigned int>();
-    this->setNPixels(nCols,nRows);
-
-    // Set the detector goniometer from the XML node
-
-    const property_tree::ptree& goniometerNode=node.get_child("goniometer");
-    std::shared_ptr<Gonio> gonio(Gonio::create(goniometerNode));
-    this->setGonio(gonio);
 }
 
 FlatDetector::~FlatDetector()
@@ -160,8 +135,6 @@ bool FlatDetector::hasKf(const Eigen::Vector3d& kf,const Eigen::Vector3d& f, dou
 		return false;
 
 	return true;
-
-
 }
 
 } // Namespace Instrument

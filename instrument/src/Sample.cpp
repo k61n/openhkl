@@ -16,22 +16,9 @@ namespace SX
 namespace Instrument
 {
 
-Sample* Sample::create(const property_tree::ptree& node)
+Sample* Sample::create(const proptree::ptree& node)
 {
-	// Set the sample name from the XML node
-	std::string name=node.get<std::string>("name");
-
-	Sample* sample=new Sample(name);
-
-    // Set the sample goniometer from the XML node
-
-    const property_tree::ptree& goniometerNode=node.get_child("goniometer");
-
-    std::shared_ptr<Gonio> gonio(Gonio::create(goniometerNode));
-
-    sample->setGonio(gonio);
-
-    return sample;
+	return new Sample(node);
 }
 
 Sample::Sample() : Component("sample"), _sampleShape(), _cells()
@@ -46,20 +33,13 @@ Sample::Sample(const std::string& name) : Component(name), _sampleShape()
 {
 }
 
-void Sample::buildFromXML(const property_tree::ptree& node)
+Sample::Sample(const proptree::ptree& node) : Component(node)
 {
-	// Set the sample name from the XML node
-	std::string sampleName=node.get<std::string>("name");
-	this->setName(sampleName);
+}
 
-    // Set the sample goniometer from the XML node
-
-    const property_tree::ptree& goniometerNode=node.get_child("goniometer");
-
-    std::shared_ptr<Gonio> gonio(Gonio::create(goniometerNode));
-
-    this->setGonio(gonio);
-
+Sample* Sample::clone() const
+{
+	return new Sample(*this);
 }
 
 Sample::~Sample()
@@ -74,11 +54,6 @@ Sample& Sample::operator=(const Sample& other)
 		_sampleShape=other._sampleShape;
 	}
 	return *this;
-}
-
-Component* Sample::clone() const
-{
-	return new Sample(*this);
 }
 
 SX::Geometry::ConvexHull<double>& Sample::getShape()

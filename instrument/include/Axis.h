@@ -35,8 +35,11 @@
 using Eigen::Vector3d;
 using Eigen::Transform;
 
-namespace SX {
-namespace Instrument{
+namespace SX
+{
+
+namespace Instrument
+{
 
 /** @brief Interface use for homogeneous transform, Rotation and translation, scale
 *
@@ -104,6 +107,7 @@ public:
 	void setPhysical(bool physical);
 	//! Return whether or not the axis is physical or not
 	bool isPhysical() const;
+
 protected:
 	//! Check whether a value is within the authorized limits of this axis, throw otherwise.
 	void checkRange(double value);
@@ -125,6 +129,8 @@ protected:
 
 };
 
-} // End namespace Instrument
-} // End namespace SX
+} // end namespace Instrument
+
+} // end namespace SX
+
 #endif /* NSXTOOL_AXIS_H_ */

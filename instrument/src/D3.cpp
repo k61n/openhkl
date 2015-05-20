@@ -9,7 +9,7 @@
 #include "Axis.h"
 #include "RotAxis.h"
 #include "Sample.h"
-#include "Source.h"
+#include "MonochromaticSource.h"
 #include "Units.h"
 
 namespace SX
@@ -59,7 +59,7 @@ D3::D3(const std::string& name) : Diffractometer(name)
 
     _sample->setGonio(bl);
 
-    _source = new Source("source");
+    _source = new MonochromaticSource("source");
 
 }
 

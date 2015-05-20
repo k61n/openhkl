@@ -44,14 +44,12 @@ namespace SX
 namespace Instrument
 {
 
-namespace property_tree=boost::property_tree;
-
-class MultiDetector : public SX::Kernel::Composite<Detector>
+class MultiDetector : public SX::Kernel::Composite<Detector,const proptree::ptree&>
 {
 public:
 
-	//! Static constructor
-	static Detector* create(const std::string& name);
+	//! Static constructor of a MultiDetector from a property tree node
+	static Detector* create(const proptree::ptree& node);
 
 	//! Construct a MultiDetector
 	MultiDetector();
@@ -59,12 +57,12 @@ public:
 	MultiDetector(const MultiDetector& other);
 	//! Construct a MultiDetector with a given name
 	MultiDetector(const std::string& name);
+	//! Constructs a MultiDetector from a property tree node
+	MultiDetector(const proptree::ptree& node);
 	//! Return a pointer to a copy of a MultiDetector
 	Detector* clone() const;
 	//! Destructor
 	~MultiDetector();
-
-	void buildFromXML(const property_tree::ptree& node);
 
 	//! Return the number of columns of the detector.
 	unsigned int getNCols() const;

@@ -8,7 +8,7 @@
 #include "Gonio.h"
 #include "RotAxis.h"
 #include "Sample.h"
-#include "Source.h"
+#include "MonochromaticSource.h"
 #include "Units.h"
 
 namespace SX
@@ -67,7 +67,7 @@ D9FourCircles::D9FourCircles(const std::string& name) : Diffractometer(name)
     bl->getAxis("z-sample")->setPhysical(false);
     _sample->setGonio(bl);
 
-    _source = new Source("source");
+    _source = new MonochromaticSource("source");
 
 }
 

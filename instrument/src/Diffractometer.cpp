@@ -18,8 +18,8 @@ Diffractometer::Diffractometer() : _name(""), _detector(nullptr), _sample(nullpt
 Diffractometer::Diffractometer(const Diffractometer& other)
 : _name(other._name),
   _detector(other._detector==nullptr ? nullptr : other._detector->clone()),
-  _sample(new Sample(*other._sample)),
-  _source(new Source(*other._source))
+  _sample(other._sample==nullptr ? nullptr : other._sample->clone()),
+  _source(other._source==nullptr ? nullptr : other._source->clone())
 {
 }
 
@@ -27,42 +27,23 @@ Diffractometer::Diffractometer(const std::string& name) : _name(name), _detector
 {
 }
 
-Diffractometer::Diffractometer(const ptree& node)
+Diffractometer::Diffractometer(const proptree::ptree& node)
 {
 
 	std::string diffractometerName=node.get<std::string>("name");
 	this->setName(diffractometerName);
 
-	// Build the detector
-
-	// Get the detector node
+	// Build the detector from its corresponding node
 	const property_tree::ptree& detectorNode = node.get_child("detector");
+	_detector = Detector::create(detectorNode);
 
-	// Get the detector type
-	std::string detectorType=detectorNode.get<std::string>("<xmlattr>.type");
-
-	// Get the detector name
-	std::string detectorName=detectorNode.get<std::string>("name");
-
-	// Create an instance of the detector factory
-	DetectorFactory* detectorFactory=DetectorFactory::Instance();
-	// Fetch the detector from the factory
-	_detector = detectorFactory->create(detectorType,detectorName);
-	_detector->buildFromXML(detectorNode);
-
-	// Build the sample
-
-	// Get the sample node
+	// Build the sample from its corresponding node
 	const property_tree::ptree& sampleNode = node.get_child("sample");
-    _sample= new Sample();
-	_sample->buildFromXML(sampleNode);
+    _sample= Sample::create(sampleNode);
 
-	// Build the source
-
-	// Get the source node
+	// Build the source from its corresponding node
 	const property_tree::ptree& sourceNode = node.get_child("source");
-    _source= new Source();
-	_source->buildFromXML(sourceNode);
+    _source= Source::create(sourceNode);
 }
 
 Diffractometer::~Diffractometer()
@@ -81,8 +62,8 @@ Diffractometer& Diffractometer::operator=(const Diffractometer& other)
 	{
 		_name = other._name;
 		_detector = other._detector==nullptr ? nullptr : other._detector->clone();
-		_sample = other._detector==nullptr ? nullptr : new Sample(*other._sample);
-		_source = other._source==nullptr ? nullptr : new Source(*other._source);
+		_sample = other._detector==nullptr ? nullptr : other._sample->clone();
+		_source = other._source==nullptr ? nullptr : other._source->clone();
 	}
 	return *this;
 }

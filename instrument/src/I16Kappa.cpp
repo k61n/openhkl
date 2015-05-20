@@ -9,7 +9,7 @@
 #include "Axis.h"
 #include "RotAxis.h"
 #include "Sample.h"
-#include "Source.h"
+#include "MonochromaticSource.h"
 #include "Units.h"
 
 namespace SX
@@ -59,7 +59,7 @@ I16Kappa::I16Kappa(const std::string& name) : Diffractometer(name)
 	  bl->addRotation("mu",Vector3d(0,0,1),RotAxis::CCW);
 	  _sample->setGonio(bl);
 
-    _source = new Source("source");
+    _source = new MonochromaticSource("source");
 
 }
 

@@ -48,7 +48,7 @@ namespace SX
 namespace Instrument
 {
 
-namespace property_tree=boost::property_tree;
+namespace proptree=boost::property_tree;
 
 using Eigen::Vector3d;
 /* !
@@ -65,20 +65,16 @@ class Gonio
 {
 public:
 
-	static Gonio* create(const property_tree::ptree& node);
-
-	// Constructors and destructor
-
 	// Default constructor
 	Gonio();
 	//! Copy constructor
 	Gonio(const Gonio& other);
-	//! Constructs a gonio with a gieven name
+	//! Constructs a gonio with a given name
 	Gonio(const std::string& name);
+	//! Constructs a Gonio from a property tree node
+	Gonio(const proptree::ptree& node);
 	//! Destructor
 	~Gonio();
-
-	// Operators
 
 	//! Assignment operator
 	Gonio& operator=(const Gonio& other);
@@ -104,8 +100,6 @@ public:
 	std::size_t getNAxes() const;
 	//! Return the number of physical axis defined in the gonio
 	std::size_t getNPhysicalAxes() const;
-
-	// Other methods
 
 	//! Add a rotation axis to this goniometer
 	Axis* addRotation(const std::string& label,const Vector3d& axis, RotAxis::Direction dir=RotAxis::Direction::CCW);
@@ -139,8 +133,8 @@ public:
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
-
 } // End namespace Geometry
+
 } // End namespace SX
 
 #endif /* SX_GONIO_H_ */

@@ -46,15 +46,14 @@ namespace SX
 namespace Instrument
 {
 
-namespace property_tree=boost::property_tree;
-
 typedef std::vector<std::shared_ptr<SX::Crystal::UnitCell>> CellList;
 
 class Sample : public Component
 {
 public:
 
-	static Sample* create(const property_tree::ptree& node);
+	//! Static constructor of a Sample from a property tree node
+	static Sample* create(const proptree::ptree& node);
 
 	// Default constructor
 	Sample();
@@ -62,16 +61,15 @@ public:
 	Sample(const Sample& other);
 	//! Constructs a default sample with a given name
 	Sample(const std::string& name);
+	//! Constructs a sample from a property tree node
+	Sample(const proptree::ptree& node);
+	//! Virtual copy constructor
+	Sample* clone() const;
 	//! Destructor
 	virtual ~Sample();
-	//! Virtual copy constructor
-	Component* clone() const;
 	// Operators
 	//! Assignment operator
 	Sample& operator=(const Sample& other);
-
-	//! Construct a Sample from an XML node
-	void buildFromXML(const property_tree::ptree& node);
 
 	//! Return the sample shape, described as a convex hull
 	SX::Geometry::ConvexHull<double>& getShape();

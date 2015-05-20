@@ -3,6 +3,7 @@
 #include <Eigen/Dense>
 
 #include "MonoDetector.h"
+#include "Units.h"
 
 namespace SX
 {
@@ -50,6 +51,26 @@ MonoDetector::MonoDetector(const std::string& name)
   _angularHeight(0.0),
   _distance(0)
 {
+}
+
+MonoDetector::MonoDetector(const proptree::ptree& node) : Detector(node)
+{
+	Units::UnitsManager* um=SX::Units::UnitsManager::Instance();
+
+	// Set the detector to sample distance from the property tree node
+	const property_tree::ptree& distanceNode = node.get_child("sample_distance");
+	double units=um->get(distanceNode.get<std::string>("<xmlattr>.units"));
+	double distance=distanceNode.get_value<double>();
+	distance *= units;
+    setDistance(distance);
+
+	// Set the detector number of pixels from the property tree node
+	const property_tree::ptree& nColsNode = node.get_child("ncols");
+	unsigned int nCols=nColsNode.get_value<unsigned int>();
+	const property_tree::ptree& nRowsNode = node.get_child("nrows");
+	unsigned int nRows=nRowsNode.get_value<unsigned int>();
+    setNPixels(nCols,nRows);
+
 }
 
 MonoDetector::~MonoDetector()

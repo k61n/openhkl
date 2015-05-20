@@ -11,7 +11,7 @@
 #include "Axis.h"
 #include "RotAxis.h"
 #include "Sample.h"
-#include "Source.h"
+#include "MonochromaticSource.h"
 #include "Units.h"
 
 namespace SX
@@ -66,7 +66,7 @@ Cyclops::Cyclops(const std::string& name) : Diffractometer(name)
     bl->addRotation("omega",Vector3d(0,0,1),RotAxis::CCW);
     _sample->setGonio(bl);
 
-    _source = new Source("source");
+    _source = new MonochromaticSource("source");
 
 }
 
