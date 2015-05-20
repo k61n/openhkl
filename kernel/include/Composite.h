@@ -39,7 +39,7 @@ namespace Kernel
 
 typedef unsigned int uint;
 
-template <typename component>
+template <typename component, typename ...args>
 class Composite : public component
 {
 public:
@@ -51,6 +51,8 @@ public:
 	Composite();
 	//! Construct a Composite of component from another one
 	Composite(const Composite& other);
+	//! Construct a Composite from the templated arguments
+	Composite(args... arg);
 
 	//! Assignment operator
 	Composite& operator=(const Composite& other);
@@ -66,20 +68,25 @@ protected:
 	std::set<component*> _components;
 };
 
-template <typename component>
-Composite<component>::Composite()
+template <typename component,typename ...args>
+Composite<component,args...>::Composite()
 {
 }
 
-template <typename component>
-Composite<component>::Composite(const Composite<component>& other)
+template <typename component,typename ...args>
+Composite<component,args...>::Composite(const Composite<component,args...>& other)
 {
 	for (auto c : other._components)
 		_components.insert(c->clone());
 }
 
-template <typename component>
-Composite<component>& Composite<component>::operator=(const Composite<component>& other)
+template <typename component,typename ...args>
+Composite<component,args...>::Composite(args... arg) : component(arg...)
+{
+}
+
+template <typename component,typename ...args>
+Composite<component,args...>& Composite<component,args...>::operator=(const Composite<component,args...>& other)
 {
 	if (this!=&other)
 	{
@@ -89,35 +96,35 @@ Composite<component>& Composite<component>::operator=(const Composite<component>
 	return *this;
 }
 
-template <typename component>
-component* Composite<component>::add(component* comp)
+template <typename component,typename ...args>
+component* Composite<component,args...>::add(component* comp)
 {
 	auto p=_components.insert(comp);
 	return *(p.first);
 }
 
-template <typename component>
-void Composite<component>::clear()
+template <typename component,typename ...args>
+void Composite<component,args...>::clear()
 {
 	_components.clear();
 }
 
-template <typename component>
-uint Composite<component>::getNComponents() const
+template <typename component,typename ...args>
+uint Composite<component,args...>::getNComponents() const
 {
 	return _components.size();
 }
 
-template <typename component>
-void Composite<component>::remove(component* comp)
+template <typename component,typename ...args>
+void Composite<component,args...>::remove(component* comp)
 {
 	auto it = _components.find(comp);
 	if (it != _components.end())
 		_components.erase(it);
 }
 
-template <typename component>
-Composite<component>::~Composite()
+template <typename component,typename ...args>
+Composite<component,args...>::~Composite()
 {
 }
 
