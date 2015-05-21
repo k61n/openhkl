@@ -57,6 +57,8 @@ private:
     void sortByCorrectedIntensity(bool up);
     void sortByNumor(bool up);
     void sortBySelected(bool up);
+    void sortByLorentzFactor(bool up);
+    void sortByTransmission(bool up);
     void constructTable();
     std::string getPeaksRange() const;
     std::vector<std::reference_wrapper<SX::Crystal::Peak3D>> _peaks;

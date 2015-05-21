@@ -68,8 +68,7 @@ void PeakTableView::peakChanged(QModelIndex current, QModelIndex last)
 
 void PeakTableView::sortByColumn(int i)
 {
-    // Only 5 columns || no sorting by sigma || check if peak
-    if (i>6 || i==2 ||i==4 ||  _peaks.size()==0)
+    if (i>8 || i==2 ||i==4 ||  _peaks.size()==0)
         return;
 
     int& column=std::get<0>(_columnUp);
@@ -100,10 +99,20 @@ void PeakTableView::sortByColumn(int i)
     }
     case 5:
     {
-        sortByNumor(up);
+        sortByLorentzFactor(up);
         break;
     }
     case 6:
+    {
+        sortByTransmission(up);
+        break;
+    }
+    case 7:
+    {
+        sortByNumor(up);
+        break;
+    }
+    case 8:
     {
         sortBySelected(up);
         break;
@@ -121,15 +130,17 @@ void PeakTableView::sortByColumn(int i)
 
 void PeakTableView::constructTable()
 {
-    // Create table with 7 columns
+    // Create table
     QStandardItemModel* model=new QStandardItemModel(_peaks.size(),7,this);
     model->setHorizontalHeaderItem(0,new QStandardItem("h k l"));
     model->setHorizontalHeaderItem(1,new QStandardItem("Raw I"));
     model->setHorizontalHeaderItem(2,new QStandardItem(QString((QChar) 0x03C3)+"I"));
     model->setHorizontalHeaderItem(3,new QStandardItem("Corrected I"));
     model->setHorizontalHeaderItem(4,new QStandardItem(QString((QChar) 0x03C3)+"I"));
-    model->setHorizontalHeaderItem(5,new QStandardItem("Numor"));
-    model->setHorizontalHeaderItem(6,new QStandardItem("Selected"));
+    model->setHorizontalHeaderItem(5,new QStandardItem("Lorentz factor"));
+    model->setHorizontalHeaderItem(6,new QStandardItem("Transmission"));
+    model->setHorizontalHeaderItem(7,new QStandardItem("Numor"));
+    model->setHorizontalHeaderItem(8,new QStandardItem("Selected"));
 
     // Setup content of the table
     int i=0;
@@ -143,12 +154,14 @@ void PeakTableView::constructTable()
         double t=peak.getTransmission();
         QStandardItem* col3=new QStandardItem(QString::number(peak.getScaledIntensity()/l/t,'f',2));
         QStandardItem* col4=new QStandardItem(QString::number(peak.getScaledSigma()/l/t,'f',2));
-        QStandardItem* col5=new QStandardItem(QString::number(peak.getData()->getMetadata()->getKey<int>("Numor")));
-        QStandardItem* col6;
+        QStandardItem* col5=new QStandardItem(QString::number(l,'f',2));
+        QStandardItem* col6=new QStandardItem(QString::number(t,'f',2));
+        QStandardItem* col7=new QStandardItem(QString::number(peak.getData()->getMetadata()->getKey<int>("Numor")));
+        QStandardItem* col8;
         if (peak.isSelected())
-            col6= new QStandardItem(QIcon(":/resources/peakSelectedIcon.png"),"");
+            col8= new QStandardItem(QIcon(":/resources/peakSelectedIcon.png"),"");
         else
-            col6= new QStandardItem(QIcon(":/resources/peakDeselectedIcon.png"),"");
+            col8= new QStandardItem(QIcon(":/resources/peakDeselectedIcon.png"),"");
         model->setVerticalHeaderItem(i,new QStandardItem(QIcon(":/resources/singlePeakIcon.png"),QString::number(i)));
         model->setItem(i,0,col0);
         model->setItem(i,1,col1);
@@ -156,7 +169,9 @@ void PeakTableView::constructTable()
         model->setItem(i,3,col3);
         model->setItem(i,4,col4);
         model->setItem(i,5,col5);
-        model->setItem(i++,6,col6);
+        model->setItem(i,6,col6);
+        model->setItem(i,7,col7);
+        model->setItem(i++,8,col8);
     }
     setModel(model);
 
@@ -382,6 +397,38 @@ void PeakTableView::sortByRawIntensity(bool up)
                   [&](const SX::Crystal::Peak3D& p1, const SX::Crystal::Peak3D& p2)
                     {
                         return (p1.getRawIntensity()<p2.getRawIntensity());
+                    });
+}
+
+void PeakTableView::sortByLorentzFactor(bool up)
+{
+    if (up)
+        std::sort(_peaks.begin(),_peaks.end(),
+              [&](const SX::Crystal::Peak3D& p1, const SX::Crystal::Peak3D& p2)
+                {
+                    return (p1.getLorentzFactor()>p2.getLorentzFactor());
+                });
+    else
+        std::sort(_peaks.begin(),_peaks.end(),
+                  [&](const SX::Crystal::Peak3D& p1, const SX::Crystal::Peak3D& p2)
+                    {
+                        return (p1.getLorentzFactor()<p2.getLorentzFactor());
+                    });
+}
+
+void PeakTableView::sortByTransmission(bool up)
+{
+    if (up)
+        std::sort(_peaks.begin(),_peaks.end(),
+              [&](const SX::Crystal::Peak3D& p1, const SX::Crystal::Peak3D& p2)
+                {
+                    return (p1.getTransmission()>p2.getTransmission());
+                });
+    else
+        std::sort(_peaks.begin(),_peaks.end(),
+                  [&](const SX::Crystal::Peak3D& p1, const SX::Crystal::Peak3D& p2)
+                    {
+                        return (p1.getTransmission()<p2.getTransmission());
                     });
 }
 
