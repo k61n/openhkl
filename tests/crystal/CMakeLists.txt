@@ -30,5 +30,9 @@ add_executable(TestSpaceGroupSymbols TestSpaceGroupSymbols.cpp)
 TARGET_LINK_LIBRARIES(TestSpaceGroupSymbols ${Boost_LIBRARIES} NSXTool)
 add_test(TestSpaceGroupSymbols TestSpaceGroupSymbols)
 
+add_executable(TestSymOp TestSymOp.cpp)
+TARGET_LINK_LIBRARIES(TestSymOp ${Boost_LIBRARIES} NSXTool)
+add_test(TestSymOp TestSymOp)
+
 configure_file(CsOsO_15K.raf CsOsO_15K.raf COPYONLY)
 configure_file(CsOsO_15K.lpt CsOsO_15K.lpt COPYONLY)

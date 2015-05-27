@@ -67,7 +67,11 @@ public:
 
 	void print(std::ostream& os) const;
 
+	//! Returns the axis order
+	int getAxisOrder() const;
+	//! Returns the Jones symbol
 	std::string getJonesSymbol() const;
+
 	//! True if has translational part non zero
 	bool hasTranslation() const;
 	//! Return the translation part of the symmetry operator

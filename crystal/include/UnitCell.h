@@ -31,9 +31,7 @@
 
 #include <vector>
 #include <string>
-
 #include <Eigen/Dense>
-
 #include "Basis.h"
 #include "Material.h"
 #include "Peak3D.h"
@@ -51,7 +49,7 @@ using Eigen::Vector3d;
 //! Centering type of the Bravais lattice
 enum  class LatticeCentring : char  {P='P',A='A',B='B',C='C',I='I',F='F',R='R'};
 //! Bravais type
-enum  class BravaisType : char  {Triclinic='a',Monolinic='m',Orthorhombic='o',Tetragonal='t',Hexagonal='h',Cubic='c'};
+enum  class BravaisType : char  {Triclinic='a',Monoclinic='m',Orthorhombic='o',Tetragonal='t',Hexagonal='h',Cubic='c'};
 
 /** @brief Class to define a crystallographic unit-cell.
  *

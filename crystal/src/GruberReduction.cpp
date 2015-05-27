@@ -118,7 +118,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 		if (typeI && equal(D,E)) // Condition 10
 		{
 			centring=LatticeCentring::C;
-			bravais=BravaisType::Monolinic;
+			bravais=BravaisType::Monoclinic;
 			P <<  1, 1, 0,
 				  1,-1, 0,
 				  0, 0,-1;
@@ -172,7 +172,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 		if (!typeI && equal(D,E)) // Condition 14
 		{
 			centring=LatticeCentring::C;
-			bravais=BravaisType::Monolinic;
+			bravais=BravaisType::Monoclinic;
 			P <<  1,-1, 0,
 				  1, 1, 0,
 				  0, 0, 1;
@@ -181,7 +181,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 		if (!typeI && equal(A+B,2.0*std::fabs(D+E+F))) // Condition 17
 		{
 			centring=LatticeCentring::C;
-			bravais=BravaisType::Monolinic;
+			bravais=BravaisType::Monoclinic;
 			P <<  1, 1,-1,
 				 -1, 1, 0,
 				  0, 0,-1;
@@ -211,7 +211,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 		if (typeI && equal(E,F)) // Condition 20
 		{
 			centring=LatticeCentring::C;
-			bravais=BravaisType::Monolinic;
+			bravais=BravaisType::Monoclinic;
 			P <<  0, 0,-1,
 				  1, 1, 0,
 				  1,-1, 0;
@@ -256,7 +256,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 		if (!typeI && equal(E,F)) // Condition 25
 		{
 			centring=LatticeCentring::C;
-			bravais=BravaisType::Monolinic;
+			bravais=BravaisType::Monoclinic;
 			P <<  0, 0, 1,
 				  1,-1, 0,
 				  1, 1, 0;
@@ -277,7 +277,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 		if (typeI && equal(E,A/2) && equal(F,A/2)) // Condition 27
 		{
 			centring=LatticeCentring::C;
-			bravais=BravaisType::Monolinic;
+			bravais=BravaisType::Monoclinic;
 			P << -1,-1, 0,
 				  2, 0,-1,
 				  0, 0, 1;
@@ -286,7 +286,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 		if (typeI && equal(E,A/2) && equal(F,2*D)) // Condition 28
 		{
 			centring=LatticeCentring::C;
-			bravais=BravaisType::Monolinic;
+			bravais=BravaisType::Monoclinic;
 			P << -1,-1, 0,
 				  0, 0, 1,
 				  0, 2, 0;
@@ -295,7 +295,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 		if (typeI && equal(E,2*D) && equal(F,A/2)) // Condition 29
 		{
 			centring=LatticeCentring::C;
-			bravais=BravaisType::Monolinic;
+			bravais=BravaisType::Monoclinic;
 			P <<  1, 1, 0,
 				  0,-2, 0,
 				  0, 0,-1;
@@ -304,7 +304,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 		if (typeI && equal(D,B/2) && equal(F,2*E)) // Condition 30
 		{
 			centring=LatticeCentring::C;
-			bravais=BravaisType::Monolinic;
+			bravais=BravaisType::Monoclinic;
 			P <<  0, 0,-1,
 				  1, 1, 0,
 				  0,-2, 0;
@@ -340,7 +340,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 		if (!typeI && equal(E,0.0) && equal(F,0.0)) // Condition 35
 		{
 			centring=LatticeCentring::P;
-			bravais=BravaisType::Monolinic;
+			bravais=BravaisType::Monoclinic;
 			P <<  0,-1, 0,
 				 -1, 0, 0,
 				  0, 0,-1;
@@ -358,7 +358,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 		if (!typeI && equal(D,0.0) && equal(F,0.0)) // Condition 33
 		{
 			centring=LatticeCentring::P;
-			bravais=BravaisType::Monolinic;
+			bravais=BravaisType::Monoclinic;
 			P <<  1, 0, 0,
 				  0, 1, 0,
 				  0, 0, 1;
@@ -376,7 +376,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 		if (!typeI && equal(D,0.0) && equal(E,0.0)) // Condition 34
 		{
 			centring=LatticeCentring::P;
-			bravais=BravaisType::Monolinic;
+			bravais=BravaisType::Monoclinic;
 			P << -1, 0, 0,
 				  0, 0,-1,
 				  0,-1, 0;
@@ -394,7 +394,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 		if (!typeI && equal(D,-B/2) && equal(F,0.0)) // Condition 41
 		{
 			centring=LatticeCentring::C;
-			bravais=BravaisType::Monolinic;
+			bravais=BravaisType::Monoclinic;
 			P <<  0, 0,-1,
 				 -1,-1, 0,
 				 -2, 0, 0;
@@ -403,7 +403,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 		if (!typeI && equal(E,-A/2) && equal(F,0.0)) // Condition 37
 		{
 			centring=LatticeCentring::C;
-			bravais=BravaisType::Monolinic;
+			bravais=BravaisType::Monoclinic;
 			P <<  1, 1, 0,
 				  0, 0, 1,
 				  2, 0, 0;
@@ -412,7 +412,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 		if (!typeI && equal(E,0.0) && equal(F,-A/2)) // Condition 39
 		{
 			centring=LatticeCentring::C;
-			bravais=BravaisType::Monolinic;
+			bravais=BravaisType::Monoclinic;
 			P << -1,-1, 0,
 				 -2, 0, 0,
 				  0, 0,-1;
@@ -421,7 +421,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 		if (!typeI && equal(A+B,2.0*std::fabs(D+E+F)) && equal(B,std::fabs(2*D+F))) // Condition 43
 		{
 			centring=LatticeCentring::I;
-			bravais=BravaisType::Monolinic;
+			bravais=BravaisType::Monoclinic;
 			P << -1,-1, 0,
 				  0,-1,-1,
 				  0,-2, 0;
