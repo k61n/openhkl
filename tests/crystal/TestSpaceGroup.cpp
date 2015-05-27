@@ -253,4 +253,30 @@ BOOST_AUTO_TEST_CASE(Test_SpaceGroup)
 		SpaceGroup sg(p.first);
 		BOOST_CHECK_EQUAL(sg.getGroupElements().size(),p.second);
 	}
+
+	// Test extinction conditions
+	SpaceGroup sg("F d -3 m");
+	BOOST_CHECK(sg.isExtinct(0,0,1));
+	BOOST_CHECK(sg.isExtinct(0,0,2));
+	BOOST_CHECK(sg.isExtinct(0,0,3));
+	BOOST_CHECK(!sg.isExtinct(0,0,4));
+	BOOST_CHECK(sg.isExtinct(1,1,2));
+	BOOST_CHECK(!sg.isExtinct(1,1,3));
+	BOOST_CHECK(sg.isExtinct(0,2,4));
+	BOOST_CHECK(!sg.isExtinct(0,2,6));
+
+	// Test extinction conditions
+	SpaceGroup sg2("I 41/a");
+	std::cout << sg2;
+	BOOST_CHECK(!sg2.isExtinct(1,2,1));
+	BOOST_CHECK(sg2.isExtinct(1,2,2));
+	BOOST_CHECK(sg2.isExtinct(1,2,0));
+	BOOST_CHECK(!sg2.isExtinct(2,2,0));
+	BOOST_CHECK(sg2.isExtinct(0,1,2));
+	BOOST_CHECK(!sg2.isExtinct(0,2,2));
+	BOOST_CHECK(!sg2.isExtinct(1,1,2));
+	BOOST_CHECK(sg2.isExtinct(1,1,3));
+	BOOST_CHECK(sg2.isExtinct(0,0,2));
+	BOOST_CHECK(sg2.isExtinct(1,-1,0));
+	BOOST_CHECK(!sg2.isExtinct(2,-2,0));
 }

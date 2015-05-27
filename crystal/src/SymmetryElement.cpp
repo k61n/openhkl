@@ -87,6 +87,23 @@ std::ostream& operator<<(std::ostream& os, const SymmetryElement& sym)
 	return os;
 }
 
+bool SymmetryElement::hasTranslation() const
+{
+	return (std::abs(_symmetryOperation(0,3))>1e-3 || std::abs(_symmetryOperation(1,3))>1e-3 || std::abs(_symmetryOperation(2,3))>1e-3);
+}
+
+Eigen::Vector3d SymmetryElement::getTranslationPart() const
+{
+	return _symmetryOperation.translation();
+}
+
+Eigen::Matrix3d SymmetryElement::getRotationPart() const
+{
+	return _symmetryOperation.linear();
+}
+
+
+
 } // end namespace Crystal
 
 } // end namespace SX

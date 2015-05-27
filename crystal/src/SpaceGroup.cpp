@@ -107,9 +107,27 @@ void SpaceGroup::generateGroupElements()
 	}
 }
 
-bool SpaceGroup::isExtincted(double h, double k, double l) const
+bool SpaceGroup::isExtinct(double h, double k, double l) const
 {
-	return true;
+	Eigen::Vector3d hkl(h,k,l);
+	for (const auto& element : _groupElements)
+	{
+		if (element.hasTranslation())
+		{
+			Eigen::Vector3d t=element.getTranslationPart();
+			double scalar=t.dot(hkl);
+			if (std::abs(std::remainder(scalar,1.0))>1e-3)
+			{
+				Eigen::Vector3d rhkl=element.getRotationPart()*hkl;
+				if (std::abs(rhkl(0)-hkl(0))<1e-3 && std::abs(rhkl(1)-hkl(1))<1e-3 && std::abs(rhkl(2)-hkl(2))<1e-3)
+				{
+				return true;
+				}
+			}
+		}
+	}
+
+	return false;
 }
 
 void SpaceGroup::print(std::ostream& os) const

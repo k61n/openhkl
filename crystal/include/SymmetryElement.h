@@ -66,6 +66,12 @@ public:
 	const affineTransformation& getSymmetryOperation() const;
 
 	void print(std::ostream& os) const;
+	//! True if has translational part non zero
+	bool hasTranslation() const;
+	//! Return the translation part of the symmetry operator
+	Eigen::Vector3d getTranslationPart() const;
+	//! Return the rotational part of the symmetry operator
+	Eigen::Matrix3d getRotationPart() const;
 
 private:
 
