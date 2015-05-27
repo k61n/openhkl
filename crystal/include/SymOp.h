@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef NSXTOOL_SYMMETRYELEMENT_H_
-#define NSXTOOL_SYMMETRYELEMENT_H_
+#ifndef NSXTOOL_SYMOP_H_
+#define NSXTOOL_SYMOP_H_
 
 #include <ostream>
 
@@ -42,30 +42,32 @@ namespace Crystal
 
 typedef Eigen::Transform<double,3,Eigen::Affine> affineTransformation;
 
-class SymmetryElement
+class SymOp
 {
 
 public:
 
-	SymmetryElement()=delete;
+	SymOp()=delete;
 
-	SymmetryElement(std::string generator);
+	SymOp(std::string generator);
 
-	SymmetryElement(const affineTransformation& symmetryOperation);
+	SymOp(const affineTransformation& symmetryOperation);
 
-	SymmetryElement(const SymmetryElement& other);
+	SymOp(const SymOp& other);
 
-	~SymmetryElement();
+	~SymOp();
 
-	SymmetryElement& operator=(const SymmetryElement& other);
+	SymOp& operator=(const SymOp& other);
 
-	bool operator==(const SymmetryElement& other) const;
+	bool operator==(const SymOp& other) const;
 
-	SymmetryElement operator*(const SymmetryElement& other) const;
+	SymOp operator*(const SymOp& other) const;
 
-	const affineTransformation& getSymmetryOperation() const;
+	const affineTransformation& getMatrix() const;
 
 	void print(std::ostream& os) const;
+
+	std::string getJonesSymbol() const;
 	//! True if has translational part non zero
 	bool hasTranslation() const;
 	//! Return the translation part of the symmetry operator
@@ -75,14 +77,14 @@ public:
 
 private:
 
-	affineTransformation _symmetryOperation;
+	affineTransformation _matrix;
 
 };
 
-std::ostream& operator<<(std::ostream& os, const SymmetryElement& sym);
+std::ostream& operator<<(std::ostream& os, const SymOp& sym);
 
 } // end namespace Crystal
 
 } // end namespace SX
 
-#endif /* NSXTOOL_SYMMETRYELEMENT_H_ */
+#endif /* NSXTOOL_SYMOP_H_ */

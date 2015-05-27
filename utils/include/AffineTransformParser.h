@@ -132,8 +132,7 @@ struct AffineTransformParser : qi::grammar<It,Eigen::Transform<double,3,Eigen::A
 };
 
 } // Namespace Utils
+
 } // Namespace SX
-
-
 
 #endif /* NSXTOOL_JONESSYMBOLPARSER_H_ */

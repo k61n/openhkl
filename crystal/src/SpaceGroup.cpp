@@ -78,15 +78,15 @@ void SpaceGroup::generateGroupElements()
 	boost::split(gens, _generators, boost::is_any_of(";"));
 
 	generators.reserve(gens.size()+1);
-	generators.push_back(SymmetryElement(affineTransformation::Identity()));
+	generators.push_back(SymOp(affineTransformation::Identity()));
 
 	for (auto& g : gens)
 	{
-		auto gen=SymmetryElement(g);
+		auto gen=SymOp(g);
 		generators.push_back(gen);
 	}
 
-	_groupElements.push_back(SymmetryElement(affineTransformation::Identity()));
+	_groupElements.push_back(SymOp(affineTransformation::Identity()));
 
 	while (true)
 	{

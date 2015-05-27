@@ -36,7 +36,7 @@
 
 #include <Eigen/Dense>
 
-#include "SymmetryElement.h"
+#include "SymOp.h"
 
 namespace SX
 {
@@ -44,7 +44,7 @@ namespace SX
 namespace Crystal
 {
 
-typedef std::vector<SymmetryElement> groupElementsList;
+typedef std::vector<SymOp> groupElementsList;
 
 class SpaceGroup
 {
