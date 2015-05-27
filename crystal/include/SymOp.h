@@ -74,6 +74,9 @@ public:
 
 	//! True if has translational part non zero
 	bool hasTranslation() const;
+
+	bool isPureTranslation() const;
+
 	//! Return the translation part of the symmetry operator
 	Eigen::Vector3d getTranslationPart() const;
 	//! Return the rotational part of the symmetry operator

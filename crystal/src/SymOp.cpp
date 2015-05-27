@@ -218,6 +218,11 @@ bool SymOp::hasTranslation() const
 	return (std::abs(_matrix(0,3))>1e-3 || std::abs(_matrix(1,3))>1e-3 || std::abs(_matrix(2,3))>1e-3);
 }
 
+bool SymOp::isPureTranslation() const
+{
+	return (_matrix.linear().isIdentity(1.0e-3) && !_matrix.translation().isZero(1.0e-3));
+}
+
 Eigen::Vector3d SymOp::getTranslationPart() const
 {
 	return _matrix.translation();

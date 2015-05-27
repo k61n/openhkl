@@ -36,6 +36,7 @@
 
 #include <Eigen/Dense>
 
+#include "UnitCell.h"
 #include "SymOp.h"
 
 namespace SX
@@ -67,7 +68,11 @@ public:
 
 	bool isExtinct(double h, double k, double l) const;
 
+	bool isCentrosymmetric() const;
+
 	void print(std::ostream& os) const;
+
+	BravaisType getBravaisType() const;
 
 private:
 

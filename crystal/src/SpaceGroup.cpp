@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <vector>
 
 #include "Error.h"
 #include "SpaceGroup.h"
@@ -51,6 +52,55 @@ SpaceGroup& SpaceGroup::operator=(const SpaceGroup& other)
 		_groupElements = other._groupElements;
 	}
 	return *this;
+}
+
+BravaisType SpaceGroup::getBravaisType() const
+{
+    std::vector<int> nrot(13,0);
+
+    int nPureTrans(0);
+    for (const auto& g : _groupElements)
+    {
+    	int order=g.getAxisOrder();
+    	nrot[order+6] += 1;
+    	if (g.isPureTranslation())
+    		nPureTrans++;
+    }
+
+    int isCentro=isCentrosymmetric() ? 2 : 1;
+    int fact = (1+nPureTrans)*isCentro;
+
+    // Cubic
+    if ((nrot[3] + nrot[9]) == 8*fact)
+       return BravaisType::Cubic;
+    // Hexagonal
+    else if ((nrot[0] + nrot[12]) == 2*fact)
+       return BravaisType::Hexagonal;
+    // Trigonal
+    else if ((nrot[3] + nrot[9]) == 2*fact)
+        return BravaisType::Trigonal;
+    // Tetragonal
+    else if ((nrot[2] + nrot[10]) == 2*fact)
+        return BravaisType::Tetragonal;
+    // Orthorhombic
+    else if ((nrot[4] + nrot[8]) == 3*fact)
+        return BravaisType::Orthorhombic;
+    // Monoclinic
+    else if ((nrot[4] + nrot[8]) == fact)
+        return BravaisType::Monoclinic;
+    // Triclinic
+    else
+        return BravaisType::Triclinic;
+}
+
+bool SpaceGroup::isCentrosymmetric() const
+{
+	for (const auto& g : _groupElements)
+	{
+		if (g.getAxisOrder()==-1)
+			return true;
+	}
+	return false;
 }
 
 const std::string& SpaceGroup::getSymbol() const

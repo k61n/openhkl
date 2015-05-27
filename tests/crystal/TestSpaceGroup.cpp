@@ -8,6 +8,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include "SpaceGroup.h"
+#include "UnitCell.h"
 
 using namespace SX::Crystal;
 
@@ -267,7 +268,6 @@ BOOST_AUTO_TEST_CASE(Test_SpaceGroup)
 
 	// Test extinction conditions
 	SpaceGroup sg2("I 41/a");
-	std::cout << sg2;
 	BOOST_CHECK(!sg2.isExtinct(1,2,1));
 	BOOST_CHECK(sg2.isExtinct(1,2,2));
 	BOOST_CHECK(sg2.isExtinct(1,2,0));
@@ -279,4 +279,37 @@ BOOST_AUTO_TEST_CASE(Test_SpaceGroup)
 	BOOST_CHECK(sg2.isExtinct(0,0,2));
 	BOOST_CHECK(sg2.isExtinct(1,-1,0));
 	BOOST_CHECK(!sg2.isExtinct(2,-2,0));
+
+	SpaceGroup sg3("I m -3 m");
+	BOOST_CHECK(sg3.getBravaisType()==BravaisType::Cubic);
+
+	SpaceGroup sg4("P n m a");
+	BOOST_CHECK(sg4.getBravaisType()==BravaisType::Orthorhombic);
+
+	SpaceGroup sg5("F d -3 m");
+	BOOST_CHECK(sg5.getBravaisType()==BravaisType::Cubic);
+
+	SpaceGroup sg6("C 2/m");
+	BOOST_CHECK(sg6.getBravaisType()==BravaisType::Monoclinic);
+
+	SpaceGroup sg7("P 21/c");
+	BOOST_CHECK(sg7.getBravaisType()==BravaisType::Monoclinic);
+
+	SpaceGroup sg8("P 4 m m");
+	BOOST_CHECK(sg8.getBravaisType()==BravaisType::Tetragonal);
+
+	SpaceGroup sg9("P 4/m m m");
+	BOOST_CHECK(sg9.getBravaisType()==BravaisType::Tetragonal);
+
+	SpaceGroup sg10("P 63/m m c");
+	BOOST_CHECK(sg10.getBravaisType()==BravaisType::Hexagonal);
+
+	SpaceGroup sg11("P 3 2 1");
+	BOOST_CHECK(sg11.getBravaisType()==BravaisType::Trigonal);
+
+	SpaceGroup sg12("P -1");
+	BOOST_CHECK(sg12.getBravaisType()==BravaisType::Triclinic);
+
+	SpaceGroup sg13("R -3 c");
+	BOOST_CHECK(sg13.getBravaisType()==BravaisType::Trigonal);
 }
