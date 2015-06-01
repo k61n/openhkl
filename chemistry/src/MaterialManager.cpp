@@ -1,3 +1,4 @@
+#include <boost/version.hpp>
 #include <boost/foreach.hpp>
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/qi_grammar.hpp>
@@ -13,6 +14,7 @@
 #include "MaterialManager.h"
 #include "Path.h"
 #include "Units.h"
+#define BOOST_MINOR BOOST_VERSION/100 % 1000
 
 namespace SX
 {
@@ -263,7 +265,11 @@ void MaterialManager::saveRegistry(std::string filename) const
 	if (filename.empty())
 		filename=_database;
 
+#if BOOST_MINOR < 55
 	boost::property_tree::xml_writer_settings<char> settings('\t', 1);
+#else
+	auto settings = boost::property_tree::xml_writer_make_settings<std::string> ('\t', 1);
+#endif
 	xml_parser::write_xml(filename,root);
 }
 
