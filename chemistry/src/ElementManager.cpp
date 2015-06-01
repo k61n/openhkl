@@ -1,5 +1,5 @@
 #include <stdexcept>
-
+#include <boost/version.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/foreach.hpp>
 #include <boost/property_tree/xml_parser.hpp>
@@ -10,6 +10,7 @@
 #include "Path.h"
 #include "Units.h"
 #include "IsotopeManager.h"
+#define BOOST_MINOR BOOST_VERSION/100 % 1000
 
 namespace SX
 {
@@ -239,7 +240,11 @@ void ElementManager::saveRegistry(std::string filename) const
 	if (filename.empty())
 		filename=_database;
 
+#if BOOST_MINOR < 55
 	boost::property_tree::xml_writer_settings<char> settings('\t', 1);
+#else
+	auto settings = boost::property_tree::xml_writer_make_settings<std::string> ('\t', 1);
+#endif
 	xml_parser::write_xml(filename,root);
 }
 
@@ -251,8 +256,6 @@ void ElementManager::removeElement(const std::string& name)
 		_registry.erase(it);
 
 	return;
-
-
 }
 
 } // end namespace Chemistry

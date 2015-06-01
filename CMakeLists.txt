@@ -97,6 +97,12 @@ if(WIN32 AND MSVC)
     add_definitions(-DNSXTOOL_EXPORT)
 endif()
 
+
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    add_definitions(-stdlib=libc++ 
+    				-std=c++11)
+endif()
+
 ###########################################################################
 # Now add in all the components
 ###########################################################################
