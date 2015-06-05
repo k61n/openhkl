@@ -37,9 +37,10 @@
 #include <unsupported/Eigen/NonLinearOptimization>
 #include <unsupported/Eigen/NumericalDiff>
 
-#include <Detector.h>
-#include <Peak3D.h>
-#include <Sample.h>
+#include "Detector.h"
+#include "LMFunctor.h"
+#include "Peak3D.h"
+#include "Sample.h"
 #include "Source.h"
 
 namespace SX
@@ -48,65 +49,9 @@ namespace SX
 namespace Crystal
 {
 
-/** @brief Functor that complies with the interface of Eigen Minimizer
- *
- * Nx : number of inputs (parameters) at compile time
- * Ny : number of values (points) at compile time
- */
-template<typename _Scalar, int NX = Eigen::Dynamic, int NY = Eigen::Dynamic>
-class Functor
-{
-public:
-    typedef _Scalar Scalar;
-    enum {InputsAtCompileTime = NX,ValuesAtCompileTime = NY};
-    typedef Eigen::Matrix<Scalar,InputsAtCompileTime,1> InputType;
-    typedef Eigen::Matrix<Scalar,ValuesAtCompileTime,1> ValueType;
-    typedef Eigen::Matrix<Scalar,ValuesAtCompileTime,InputsAtCompileTime> JacobianType;
-
-    Functor();
-    Functor(int inputs, int values);
-
-    virtual int operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const=0;
-
-    virtual int inputs() const;
-    virtual int values() const;
-    virtual ~Functor()=0;;
-
-protected:
-    int m_inputs, m_values;
-
-};
-
-template<typename _Scalar, int NX, int NY>
-Functor<_Scalar,NX,NY>::Functor() : m_inputs(InputsAtCompileTime), m_values(ValuesAtCompileTime)
-{
-}
-
-template<typename _Scalar, int NX, int NY>
-Functor<_Scalar,NX,NY>::Functor(int inputs, int values) : m_inputs(inputs), m_values(values)
-{
-}
-
-template<typename _Scalar, int NX, int NY>
-Functor<_Scalar,NX,NY>::~Functor()
-{
-}
-
-template<typename _Scalar, int NX, int NY>
-int Functor<_Scalar,NX,NY>::inputs() const
-{
-	return m_inputs;
-}
-
-template<typename _Scalar, int NX, int NY>
-int Functor<_Scalar,NX,NY>::values() const {
-    return m_values;
-}
-
-
 /** @brief UB functor is used to refine UB-matrix and instrument offsets
  */
-struct UBFunctor : public Functor<double>
+struct UBFunctor : public Utils::LMFunctor<double>
 {
 	//! Default constructor
 	UBFunctor();

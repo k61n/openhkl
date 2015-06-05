@@ -43,11 +43,11 @@ void removeColumn(Eigen::MatrixXd& matrix, unsigned int colToRemove)
 }
 
 
-UBFunctor::UBFunctor() : Functor<double>(), _peaks(0), _detector(nullptr), _sample(nullptr),_source(nullptr), _fixedParameters()
+UBFunctor::UBFunctor() : Utils::LMFunctor<double>(), _peaks(0), _detector(nullptr), _sample(nullptr),_source(nullptr), _fixedParameters()
 {
 }
 
-UBFunctor::UBFunctor(const UBFunctor& other)
+UBFunctor::UBFunctor(const UBFunctor& other) : Utils::LMFunctor<double>(other)
 {
 	_peaks = other._peaks;
 	_detector = other._detector;
@@ -60,6 +60,7 @@ UBFunctor& UBFunctor::operator=(const UBFunctor& other)
 {
 	if (this != &other)
 	{
+		Utils::LMFunctor<double>::operator=(other);
 		_peaks = other._peaks;
 		_detector = other._detector;
 		_sample = other._sample;

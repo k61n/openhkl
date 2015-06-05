@@ -265,7 +265,7 @@ void MaterialManager::saveRegistry(std::string filename) const
 	if (filename.empty())
 		filename=_database;
 
-#if BOOST_MINOR < 55
+#if BOOST_MINOR <= 55
 	boost::property_tree::xml_writer_settings<char> settings('\t', 1);
 #else
 	auto settings = boost::property_tree::xml_writer_make_settings<std::string> ('\t', 1);
