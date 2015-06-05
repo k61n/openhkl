@@ -41,7 +41,7 @@ namespace SX
 namespace Crystal
 {
 
-typedef std::tuple<Eigen::Vector3d,Eigen::Vector3d,Eigen::Vector3d,double> LatticeSolution;
+typedef std::tuple<Eigen::Vector3d,Eigen::Vector3d,Eigen::Vector3d,double> LatticeVectors;
 
 class LatticeFinder
 {
@@ -51,7 +51,7 @@ public:
 	void addPoint(const Eigen::Vector3d& v);
 	void addPoints(const std::vector<Eigen::Vector3d>&);
 	void run(double cellmin=2.0);
-	std::vector<LatticeSolution> determineLattice(std::size_t clustermax=20,int numberofsolutions=50) const;
+	std::vector<LatticeVectors> determineLattice(std::size_t clustermax=20,int numberofsolutions=50) const;
 	int getNumberOfClusters() { return _clusters.size();}
 	const std::multimap<double,Cluster>& getClusters() const { return _clusters;}
 	double costFunction(const Eigen::Vector3d& v1, const Eigen::Vector3d& v2, const Eigen::Vector3d& v3, double epsilon,  double delta) const;

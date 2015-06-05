@@ -25,5 +25,5 @@ BOOST_AUTO_TEST_CASE(Test_Lattice_Finder)
 			}
 	}
 	finder.run(3.0);
-	std::vector<SX::Crystal::LatticeSolution> solutions=finder.determineLattice(30,30);
+	std::vector<SX::Crystal::LatticeVectors> solutions=finder.determineLattice(30,30);
 }

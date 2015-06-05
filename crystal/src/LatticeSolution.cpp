@@ -1,0 +1,124 @@
+#include <algorithm>
+
+#include "Detector.h"
+#include "Gonio.h"
+#include "LatticeSolution.h"
+#include "Sample.h"
+#include "Source.h"
+
+namespace SX
+{
+
+namespace Crystal
+{
+
+LatticeSolution::LatticeSolution()
+: _detector(nullptr),
+  _sample(nullptr),
+  _source(nullptr),
+  _latticeParams(),
+  _covLatticeParams(),
+  _sourceOffset(0),
+  _sigmaSourceOffset(0),
+  _fixedParameters()
+{
+}
+
+LatticeSolution::LatticeSolution(const LatticeSolution& other)
+{
+	_detector = other._detector;
+	_sample = other._sample;
+	_source= other._source;
+	_latticeParams = other._latticeParams;
+	_covLatticeParams = other._covLatticeParams;
+	_sourceOffset=other._sourceOffset;
+	_sigmaSourceOffset=other._sigmaSourceOffset;
+	_detectorOffsets = other._detectorOffsets;
+	_sigmaDetectorOffsets = other._sigmaDetectorOffsets;
+	_sampleOffsets = other._sampleOffsets;
+	_sigmaSampleOffsets = other._sigmaSampleOffsets;
+	_fixedParameters = other._fixedParameters;
+}
+
+LatticeSolution& LatticeSolution::operator=(const LatticeSolution& other)
+{
+	if (this != &other)
+	{
+		_detector = other._detector;
+		_sample = other._sample;
+		_source = other._source;
+		_latticeParams = other._latticeParams;
+		_covLatticeParams = other._covLatticeParams;
+		_sourceOffset= other._sourceOffset;
+		_sigmaSourceOffset =other. _sigmaSourceOffset;
+		_detectorOffsets = other._detectorOffsets;
+		_sigmaDetectorOffsets = other._sigmaDetectorOffsets;
+		_sampleOffsets = other._sampleOffsets;
+		_sigmaSampleOffsets = other._sigmaSampleOffsets;
+		_fixedParameters = other._fixedParameters;
+	}
+	return *this;
+}
+
+LatticeSolution::LatticeSolution(Instrument::Detector* detector,Instrument::Sample* sample,Instrument::Source* source,const Eigen::VectorXd& values,const Eigen::MatrixXd& cov,const std::vector<bool>& fixedParameters)
+: _detector(detector),
+  _sample(sample),
+  _source(source),
+  _latticeParams(values),
+  _fixedParameters(fixedParameters)
+{
+
+	int nFixedLatticeParams(std::count(_fixedParameters.begin(),_fixedParameters.begin()+9,true));
+	int nFreeLatticeParams = 9-nFixedLatticeParams;
+
+	_covLatticeParams = cov.block(0,0,nFreeLatticeParams,nFreeLatticeParams);
+
+	_sourceOffset=values(nFreeLatticeParams);
+
+	unsigned int idx = nFreeLatticeParams+1;
+	std::size_t nSampleAxes=_sample->getNAxes();
+	_sampleOffsets = values.segment(idx,nSampleAxes);
+	_sigmaSampleOffsets = Eigen::VectorXd(nSampleAxes);
+
+	idx+=nSampleAxes;
+	std::size_t nDetectorAxes=_detector->getNAxes();
+	_detectorOffsets = values.segment(idx,nDetectorAxes);
+	_sigmaDetectorOffsets = Eigen::VectorXd(nDetectorAxes);
+
+	idx = nFreeLatticeParams;
+
+	if (_source->hasOffsetFixed())
+		_sigmaSourceOffset=0.0;
+	else
+	{
+		_sigmaSourceOffset=sqrt(cov(nFreeLatticeParams,nFreeLatticeParams));
+		++idx;
+	}
+
+
+	for (unsigned int i=0;i<nSampleAxes;++i)
+	{
+		if (_sample->getGonio()->getAxis(i)->hasOffsetFixed())
+			_sigmaSampleOffsets[i] = 0.0;
+		else
+		{
+			_sigmaSampleOffsets[i]=sqrt(cov(idx,idx));
+			idx++;
+		}
+	}
+
+	for (unsigned int i=0;i<nDetectorAxes;++i)
+	{
+		if (_detector->getGonio()->getAxis(i)->hasOffsetFixed())
+			_sigmaDetectorOffsets[i] = 0.0;
+		else
+		{
+			_sigmaDetectorOffsets[i]=sqrt(cov(idx,idx));
+			idx++;
+		}
+	}
+}
+
+} // end namespace Crystal
+
+} // end namespace SX

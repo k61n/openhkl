@@ -158,10 +158,10 @@ double LatticeFinder::costFunction(const Eigen::Vector3d& v1, const Eigen::Vecto
 }
 
 
-std::vector<LatticeSolution> LatticeFinder::determineLattice(std::size_t clustermax, int numberofsolutions) const
+std::vector<LatticeVectors> LatticeFinder::determineLattice(std::size_t clustermax, int numberofsolutions) const
 {
 
-	std::vector<LatticeSolution> solutions;
+	std::vector<LatticeVectors> solutions;
 
 	std::vector<Cluster> clust;
 	//Copy clusters in the multimap into a vector
@@ -198,7 +198,7 @@ std::vector<LatticeSolution> LatticeFinder::determineLattice(std::size_t cluster
 				if (vol <0 || std::abs(vol)<1e-6) // not a right handed solution or all coplanar
 					continue;
 				double score=costFunction(v1,v2,v3,0.05,5);
-				solutions.push_back(LatticeSolution(v1,v2,v3,score));
+				solutions.push_back(LatticeVectors(v1,v2,v3,score));
 				++k;
 			}
 			++j;
@@ -208,7 +208,7 @@ std::vector<LatticeSolution> LatticeFinder::determineLattice(std::size_t cluster
 	// Sort solutions from best to worse
 	std::sort(solutions.begin(),
 			  solutions.end(),
-              [](const LatticeSolution& s1, const LatticeSolution& s2) ->bool
+              [](const LatticeVectors& s1, const LatticeVectors& s2) ->bool
 			  {
 				return (std::get<3>(s1)>std::get<3>(s2));
 			  });
