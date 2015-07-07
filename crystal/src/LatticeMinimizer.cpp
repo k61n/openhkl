@@ -157,10 +157,12 @@ int LatticeMinimizer::run(unsigned int maxIter)
 	Eigen::LevenbergMarquardt<NumDiffType> minimizer(numdiff);
 	minimizer.parameters.xtol=1e-11;
 	minimizer.parameters.maxfev=maxIter;
+
 	int status = minimizer.minimize(x);
 
 	if (status==1)
 	{
+
 		std::vector<bool> fParams(x.size(),false);
 
 		for (const auto& p: _functor._fixedCellParams)

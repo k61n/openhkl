@@ -174,7 +174,7 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
                             cell.transform(P);
                             if (!ui->checkBox_NiggliOnly->isChecked())
                             {
-                                GruberReduction gruber(cell.getMetricTensor(),0.07);
+                                GruberReduction gruber(cell.getMetricTensor(),0.04);
                                 SX::Crystal::LatticeCentring c;
                                 SX::Crystal::BravaisType b;
                                 gruber.reduce(P,c,b);

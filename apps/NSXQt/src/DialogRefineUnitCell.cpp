@@ -314,7 +314,7 @@ void DialogRefineUnitCell::on_pushButton_Refine_clicked()
     {
         ui->textEdit_Solution->setTextColor(QColor("red"));
         ui->textEdit_Solution->setText("No solution found within convergence criteria.");
-        return;
+        return; // why not change ?
     }
 
     const auto& solution=_minimizer.getSolution();

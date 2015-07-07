@@ -15,6 +15,8 @@
 #include "Gonio.h"
 #include "Peak3D.h"
 #include "Sample.h"
+#include "LatticeMinimizer.h"
+#include "LatticeSolution.h"
 #include "UBMinimizer.h"
 #include "Units.h"
 #include "UnitCell.h"
@@ -22,6 +24,8 @@
 
 using SX::Crystal::UBSolution;
 using SX::Crystal::UBMinimizer;
+using SX::Crystal::LatticeMinimizer;
+using SX::Crystal::LatticeSolution;
 using SX::Crystal::Peak3D;
 using SX::Instrument::DetectorEvent;
 using SX::Instrument::FlatDetector;
@@ -97,8 +101,16 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
     for (auto& peak : _peaks)
 		minimizer.addPeak(peak);
 
-    Eigen::Matrix3d M=Eigen::Matrix3d::Ones();
+    Eigen::Matrix3d M=Eigen::Matrix3d::Identity();
     minimizer.setStartingUBMatrix(M);
+
+	Eigen::Quaterniond quat(M);
+
+	std::cout<<quat.w()<<std::endl;
+	std::cout<<quat.x()<<std::endl;
+	std::cout<<quat.y()<<std::endl;
+	std::cout<<quat.z()<<std::endl;
+
 
     minimizer.run(100);
 
@@ -106,6 +118,42 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
 
     SX::Crystal::UnitCell uc=SX::Crystal::UnitCell::fromReciprocalVectors(solution._ub.row(0),solution._ub.row(1),solution._ub.row(2));
 
+    std::cout<<uc.getA()<<std::endl;
+    std::cout<<uc.getB()<<std::endl;
+    std::cout<<uc.getC()<<std::endl;
+    std::cout<<uc.getAlpha()<<std::endl;
+    std::cout<<uc.getBeta()<<std::endl;
+    std::cout<<uc.getGamma()<<std::endl;
+
     uc.setReciprocalCovariance(solution._covub);
+
+    LatticeMinimizer lmin;
+    lmin.setDetector(D9);
+    lmin.setSample(sample);
+    lmin.setSource(source);
+    lmin.refineInstrParameter(9,false); // Source
+    lmin.refineInstrParameter(11,false); // Detector y
+    lmin.refineInstrParameter(14,false); // Detector phi
+
+    for (auto& peak : _peaks)
+		lmin.addPeak(peak);
+
+    lmin.setStartingLattice(uc.getA(),uc.getB(),uc.getC(),uc.getAlpha(),uc.getBeta(),uc.getGamma());
+    lmin.setStartingValue(6,0.0);
+    lmin.setStartingValue(7,0.0);
+    lmin.setStartingValue(8,1.0);
+
+    lmin.run(100);
+
+    LatticeSolution lsol=lmin.getSolution();
+
+    SX::Crystal::UnitCell luc(lsol._latticeParams[0],lsol._latticeParams[1],lsol._latticeParams[2],lsol._latticeParams[3],lsol._latticeParams[4],lsol._latticeParams[5]);
+
+    std::cout<<luc.getA()<<std::endl;
+    std::cout<<luc.getB()<<std::endl;
+    std::cout<<luc.getC()<<std::endl;
+    std::cout<<luc.getAlpha()<<std::endl;
+    std::cout<<luc.getBeta()<<std::endl;
+    std::cout<<luc.getGamma()<<std::endl;
 
 }

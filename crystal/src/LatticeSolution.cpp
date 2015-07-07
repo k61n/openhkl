@@ -1,10 +1,14 @@
 #include <algorithm>
+#include <ostream>
 
 #include "Detector.h"
 #include "Gonio.h"
 #include "LatticeSolution.h"
+#include "RotAxis.h"
 #include "Sample.h"
 #include "Source.h"
+#include "TransAxis.h"
+#include "Units.h"
 
 namespace SX
 {
@@ -117,6 +121,42 @@ LatticeSolution::LatticeSolution(Instrument::Detector* detector,Instrument::Samp
 			idx++;
 		}
 	}
+}
+
+std::ostream& operator<<(std::ostream& os, const LatticeSolution& solution)
+{
+	os<<"Lattice parameters:"<<std::endl;
+	os<<solution._latticeParams.transpose()<< std::endl;
+
+	os << "Wavelength:" << solution._source->getWavelength() << "("<< solution._sigmaSourceOffset<< ")" << std::endl;
+
+	os<<"Detector offsets: " << std::endl;
+	auto detectorG=solution._detector->getGonio();
+	for (unsigned int i=0;i<detectorG->getNAxes();++i)
+	{
+		os << detectorG->getAxis(i)->getLabel() << " ";
+		SX::Instrument::Axis* axis=detectorG->getAxis(i);
+		if (dynamic_cast<SX::Instrument::TransAxis*>(axis))
+			os << solution._detectorOffsets[i]/SX::Units::mm << "(" << solution._sigmaDetectorOffsets[i]/SX::Units::mm << ") mm " << std::endl;
+		else if (dynamic_cast<SX::Instrument::RotAxis*>(axis))
+			os << solution._detectorOffsets[i]/SX::Units::deg << "(" << solution._sigmaDetectorOffsets[i]/SX::Units::deg << ") deg " << std::endl;
+	}
+	os <<std::endl;
+
+	os<<"Sample offsets:" << std::endl;
+	auto sampleG=solution._sample->getGonio();
+	for (unsigned int i=0;i<sampleG->getNAxes();++i)
+	{
+		os << sampleG->getAxis(i)->getLabel() << " ";
+		SX::Instrument::Axis* axis=sampleG->getAxis(i);
+		if (dynamic_cast<SX::Instrument::TransAxis*>(axis))
+			os << solution._sampleOffsets[i]/SX::Units::mm << "(" << solution._sigmaSampleOffsets[i]/SX::Units::mm << ") mm " << std::endl;
+		else if (dynamic_cast<SX::Instrument::RotAxis*>(axis))
+			os << solution._sampleOffsets[i]/SX::Units::deg << "(" << solution._sigmaSampleOffsets[i]/SX::Units::deg << ") deg " << std::endl;
+	}
+	os<<std::endl;
+
+	return os;
 }
 
 } // end namespace Crystal

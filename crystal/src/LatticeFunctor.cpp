@@ -84,9 +84,12 @@ int LatticeFunctor::operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) 
 	double sthcph=sin(x[6])*cos(x[7]);
 	double sthsph=sin(x[6])*sin(x[7]);
 	double cph = cos(x[6]);
-	Eigen::Quaterniond quat(x[8],sthcph,sthsph,cph);
+	Eigen::Quaterniond quat(x[8],sin(x[8])*sthcph,sin(x[8])*sthsph,sin(x[8])*cph);
 	Eigen::Matrix3d U(quat.toRotationMatrix());
 	U.transposeInPlace();
+
+	std::cout<<x.transpose()<<std::endl;
+	std::cout<<U<<std::endl;
 
 	Eigen::Matrix3d BU = B*U;
 

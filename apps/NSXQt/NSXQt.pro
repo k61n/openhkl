@@ -5,13 +5,29 @@
 #-------------------------------------------------
 
 QT       += core widgets printsupport opengl
+
 CONFIG   += debug_and_release
-QMAKE_CXXFLAGS += -std=c++0x -fopenmp -DNDEBUG -DEIGEN_FFTW_DEFAULT
-QMAKE_LFLAGS += -fopenmp
+
+QMAKE_CXXFLAGS += -DNDEBUG -DEIGEN_FFTW_DEFAULT
+
+unix:!macx {
+    QMAKE_CXXFLAGS += -std=c++0x -fopenmp
+    QMAKE_LFLAGS += -fopenmp
+}
+
+macx: {
+    CONFIG += c++11
+    QMAKE_CXXFLAGS += -std=c++11
+}
+
+win32: {
+}
+
 TARGET = nsxtool
+
 TEMPLATE = app
 
-RESOURCES = NSXQt.qrc \
+RESOURCES = NSXQt.qrc
 
 SOURCES += src/Main.cpp \
     src/MainWindow.cpp \
@@ -164,7 +180,9 @@ FORMS    += ui/mainwindow.ui \
     ui/NumorsConversionDialog.ui \
     ui/Absorption/DialogMCAbsorption.ui
 
-win32:CONFIG(release, debug|release): LIBS += -lNSXTool
+win32: {
+    CONFIG(release, debug|release): LIBS += -lNSXTool
+}
 else:unix: LIBS += -lNSXTool -lboost_date_time -lboost_system -lfftw3
 
 INCLUDEPATH += $$PWD include externals/include
