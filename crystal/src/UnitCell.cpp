@@ -179,8 +179,6 @@ void UnitCell::getUB(const Peak3D& p1, const Peak3D& p2)
 	q3.normalize();
 	q2=q3.cross(q1);
 
-	std::cout << q1 << q2 << q3 << std::endl;
-
 	//
 	Eigen::Vector3d q1prime=this->toReciprocalStandard(p1.getMillerIndices());
 	Eigen::Vector3d q2prime=this->toReciprocalStandard(p2.getMillerIndices());
@@ -201,10 +199,7 @@ void UnitCell::getUB(const Peak3D& p1, const Peak3D& p2)
 
 	U=m2*m1.inverse();
 
-	std::cout << "B-matrix \n" << _B.transpose() << std::endl;
 	_B=_B*U;
-	std::cout << "UB_matrix \n" << _B.transpose() << std::endl;
-
 }
 
 Eigen::Matrix3d UnitCell::getBusingLevyB() const

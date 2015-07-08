@@ -21,6 +21,7 @@
 #include "Units.h"
 #include "UnitCell.h"
 #include "MonochromaticSource.h"
+#include <Eigen/Geometry>
 
 using SX::Crystal::UBSolution;
 using SX::Crystal::UBMinimizer;
@@ -101,31 +102,21 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
     for (auto& peak : _peaks)
 		minimizer.addPeak(peak);
 
-    Eigen::Matrix3d M=Eigen::Matrix3d::Identity();
+    Eigen::Matrix3d M;//=Eigen::Matrix3d::Identity();
+    M<<sqrt(2)/2.0,-sqrt(2)/2,0,
+       sqrt(2)/2.0, sqrt(2)/2,0,
+       0          ,          0,1;
     minimizer.setStartingUBMatrix(M);
-
-	Eigen::Quaterniond quat(M);
-
-	std::cout<<quat.w()<<std::endl;
-	std::cout<<quat.x()<<std::endl;
-	std::cout<<quat.y()<<std::endl;
-	std::cout<<quat.z()<<std::endl;
-
-
-    minimizer.run(100);
+    minimizer.run(1000);
 
     UBSolution solution=minimizer.getSolution();
 
     SX::Crystal::UnitCell uc=SX::Crystal::UnitCell::fromReciprocalVectors(solution._ub.row(0),solution._ub.row(1),solution._ub.row(2));
-
-    std::cout<<uc.getA()<<std::endl;
-    std::cout<<uc.getB()<<std::endl;
-    std::cout<<uc.getC()<<std::endl;
-    std::cout<<uc.getAlpha()<<std::endl;
-    std::cout<<uc.getBeta()<<std::endl;
-    std::cout<<uc.getGamma()<<std::endl;
-
     uc.setReciprocalCovariance(solution._covub);
+
+    std::cout<<"FROM UB"<<std::endl;
+    std::cout<<uc.getBusingLevyB()<<std::endl;
+    std::cout<<uc.getBusingLevyU()<<std::endl;
 
     LatticeMinimizer lmin;
     lmin.setDetector(D9);
@@ -138,22 +129,36 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
     for (auto& peak : _peaks)
 		lmin.addPeak(peak);
 
-    lmin.setStartingLattice(uc.getA(),uc.getB(),uc.getC(),uc.getAlpha(),uc.getBeta(),uc.getGamma());
+    SX::Crystal::UnitCell ucStart=SX::Crystal::UnitCell::fromReciprocalVectors(M.row(0),M.row(1),M.row(2));
+
+    lmin.setStartingLattice(ucStart.getA(),ucStart.getB(),ucStart.getC(),ucStart.getAlpha(),ucStart.getBeta(),ucStart.getGamma());
+
+    Eigen::Quaterniond q(ucStart.getBusingLevyU().transpose());
+
     lmin.setStartingValue(6,0.0);
     lmin.setStartingValue(7,0.0);
-    lmin.setStartingValue(8,1.0);
+    lmin.setStartingValue(8,2*std::acos(q.w()));
 
-    lmin.run(100);
+    lmin.run(1000);
 
     LatticeSolution lsol=lmin.getSolution();
 
     SX::Crystal::UnitCell luc(lsol._latticeParams[0],lsol._latticeParams[1],lsol._latticeParams[2],lsol._latticeParams[3],lsol._latticeParams[4],lsol._latticeParams[5]);
 
-    std::cout<<luc.getA()<<std::endl;
-    std::cout<<luc.getB()<<std::endl;
-    std::cout<<luc.getC()<<std::endl;
-    std::cout<<luc.getAlpha()<<std::endl;
-    std::cout<<luc.getBeta()<<std::endl;
-    std::cout<<luc.getGamma()<<std::endl;
+    q.w() = cos(lsol._latticeParams[8]/2.0);
+    q.x() = sin(lsol._latticeParams[8]/2.0)*sin(lsol._latticeParams[6])*cos(lsol._latticeParams[7]);
+    q.y() = sin(lsol._latticeParams[8]/2.0)*sin(lsol._latticeParams[6])*sin(lsol._latticeParams[7]);
+    q.z() = sin(lsol._latticeParams[8]/2.0)*cos(lsol._latticeParams[6]);
+
+    std::cout<<"FROM LATTICE"<<std::endl;
+    std::cout<<luc.getBusingLevyB()<<std::endl;
+    std::cout<<q.toRotationMatrix()<<std::endl;
+
+//    std::cout<<luc.getA()<<std::endl;
+//    std::cout<<luc.getB()<<std::endl;
+//    std::cout<<luc.getC()<<std::endl;
+//    std::cout<<luc.getAlpha()<<std::endl;
+//    std::cout<<luc.getBeta()<<std::endl;
+//    std::cout<<luc.getGamma()<<std::endl;
 
 }

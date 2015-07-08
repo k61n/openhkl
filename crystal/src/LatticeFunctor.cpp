@@ -80,16 +80,19 @@ int LatticeFunctor::operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) 
 
 	Eigen::Matrix3d B=uc.getBusingLevyB();
 
-	// The parameters 6,7,8 are the three quaternion parameters for defining U matrix
-	double sthcph=sin(x[6])*cos(x[7]);
-	double sthsph=sin(x[6])*sin(x[7]);
-	double cph = cos(x[6]);
-	Eigen::Quaterniond quat(x[8],sin(x[8])*sthcph,sin(x[8])*sthsph,sin(x[8])*cph);
+	// The parameters 6,7,8 are the three angles that will define U matrix through quaternion formalism
+	// 6 = phi angle of spherical coordinates
+	// 7 = theta angle of spherical coordinates
+	// 8 = omega angle of quaternion
+	double sThetacPhi=sin(x[6])*cos(x[7]);
+	double sThetasPhi=sin(x[6])*sin(x[7]);
+	double cPhi = cos(x[6]);
+	double omegaOver2 = x[8]/2.0;
+	double cOmegaOver2 = cos(omegaOver2);
+	double sOmegaOver2 = sin(omegaOver2);
+	Eigen::Quaterniond quat(cOmegaOver2,sOmegaOver2*sThetacPhi,sOmegaOver2*sThetasPhi,sOmegaOver2*cPhi);
 	Eigen::Matrix3d U(quat.toRotationMatrix());
 	U.transposeInPlace();
-
-	std::cout<<x.transpose()<<std::endl;
-	std::cout<<U<<std::endl;
 
 	Eigen::Matrix3d BU = B*U;
 
