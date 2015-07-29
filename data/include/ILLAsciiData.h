@@ -42,6 +42,15 @@
 #include <IData.h>
 #include "Diffractometer.h"
 
+
+namespace SX
+{
+	namespace Utils
+	{
+		template <class T> class IMatrixParser;
+	}
+}
+
 namespace SX
 {
 
@@ -103,6 +112,7 @@ private:
 	boost::interprocess::mapped_region _map;
 	const char* _mapAddress;
 	std::size_t _currentLine;
+	SX::Utils::IMatrixParser<const char*>* _parser;
 
 
 };

@@ -47,6 +47,7 @@ IData* ILLAsciiData::create(const std::string& filename, std::shared_ptr<Diffrac
 ILLAsciiData::ILLAsciiData(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer)
 : IData(filename,diffractometer)
 {
+
 	try
 	{
 		boost::interprocess::file_mapping filemap(_filename.c_str(), boost::interprocess::read_only);
@@ -199,9 +200,42 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, std::shared_ptr<Diffract
 	_fileSize=_map.get_size();
 
 	close();
+
+	Detector* d=_diffractometer->getDetector();
+	switch (d->getDataOrder())
+	{
+		case(Detector::DataOrder::TopLeftColMajor):
+			_parser=new EigenMatrixParser<const char*,TopLeftColMajorMapper>();
+			break;
+		case(Detector::DataOrder::TopLeftRowMajor):
+			_parser=new EigenMatrixParser<const char*,TopLeftRowMajorMapper>();
+			break;
+		case(Detector::DataOrder::TopRightColMajor):
+			_parser=new EigenMatrixParser<const char*,TopRightColMajorMapper>();
+			break;
+		case(Detector::DataOrder::TopRightRowMajor):
+			_parser=new EigenMatrixParser<const char*,TopRightRowMajorMapper>();
+			break;
+		case(Detector::DataOrder::BottomLeftColMajor):
+			_parser=new EigenMatrixParser<const char*,BottomLeftColMajorMapper>();
+			break;
+		case(Detector::DataOrder::BottomLeftRowMajor):
+			_parser=new EigenMatrixParser<const char*,BottomLeftRowMajorMapper>();
+			break;
+		case(Detector::DataOrder::BottomRightColMajor):
+			_parser=new EigenMatrixParser<const char*,BottomRightColMajorMapper>();
+			break;
+		case(Detector::DataOrder::BottomRightRowMajor):
+			_parser=new EigenMatrixParser<const char*,BottomRightRowMajorMapper>();
+			break;
+		default:
+			throw std::runtime_error("Detector data-ordering mode not defined");
+	}
 }
 
-ILLAsciiData::~ILLAsciiData() {
+ILLAsciiData::~ILLAsciiData()
+{
+	delete _parser;
 }
 
 void ILLAsciiData::open()
@@ -250,8 +284,8 @@ Eigen::MatrixXi ILLAsciiData::readFrame(std::size_t idx)
 	Eigen::MatrixXi v;
 	v.resize(_nrows,_ncols);
 
-	EigenMatrixParser<const char*,TopRightColMajorMapper> parser;
-	qi::phrase_parse(_mapAddress+begin,_mapAddress+begin+_dataLength,parser,qi::blank, v);
+	//EigenMatrixParser<const char*,TopRightColMajorMapper> parser;
+	qi::phrase_parse(_mapAddress+begin,_mapAddress+begin+_dataLength,*_parser,qi::blank, v);
 
 	return v;
 }

@@ -56,7 +56,16 @@ typedef unsigned int uint;
 class Detector : public Component
 {
 public:
-
+	enum  class DataOrder {
+		TopLeftColMajor,
+		TopLeftRowMajor,
+		TopRightColMajor,
+		TopRightRowMajor,
+		BottomLeftColMajor,
+		BottomLeftRowMajor,
+		BottomRightColMajor,
+		BottomRightRowMajor
+	};
 	//! Static constructor of a Detector from a property tree node
 	static Detector* create(const proptree::ptree& node);
 
@@ -171,7 +180,9 @@ public:
 	virtual bool hasKf(const Eigen::Vector3d& kf, const Eigen::Vector3d& from, double& px, double& py) const =0;
 
 	//!
-
+	DataOrder getDataOrder() const {return _dataorder;}
+	private:
+	DataOrder _dataorder;
 };
 
 } // end namespace Instrument
