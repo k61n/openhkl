@@ -168,13 +168,13 @@ endif()
 
 # Install the databases file
 install(DIRECTORY resources/databases 
-        DESTINATION $ENV{HOME}/.nsxtool 
+        DESTINATION /usr/local/share/nsxtool 
         FILE_PERMISSIONS OWNER_READ OWNER_EXECUTE OWNER_WRITE GROUP_WRITE GROUP_READ GROUP_EXECUTE WORLD_WRITE WORLD_READ WORLD_EXECUTE
         DIRECTORY_PERMISSIONS OWNER_READ OWNER_EXECUTE OWNER_WRITE GROUP_WRITE GROUP_READ GROUP_EXECUTE WORLD_WRITE WORLD_READ WORLD_EXECUTE
         PATTERN ".svn" EXCLUDE)
 
 install(DIRECTORY resources/instruments 
-        DESTINATION $ENV{HOME}/.nsxtool 
+        DESTINATION /usr/local/share/nsxtool 
         FILE_PERMISSIONS OWNER_READ OWNER_EXECUTE OWNER_WRITE GROUP_WRITE GROUP_READ GROUP_EXECUTE WORLD_WRITE WORLD_READ WORLD_EXECUTE
         DIRECTORY_PERMISSIONS OWNER_READ OWNER_EXECUTE OWNER_WRITE GROUP_WRITE GROUP_READ GROUP_EXECUTE WORLD_WRITE WORLD_READ WORLD_EXECUTE
         PATTERN ".svn" EXCLUDE)
@@ -188,14 +188,14 @@ set(ENABLE_CPACK CACHE BOOL "Switch to enable CPack package generation")
 if (ENABLE_CPACK)
 
     include(CPackCommon)
-
+        
     # Linux packaging
     if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
         include(CPackLinuxSetup)
         # let people know what is coming out the other end
         message(STATUS "CPACK_PACKAGE_FILE_NAME = ${CPACK_PACKAGE_FILE_NAME}")
     endif()
-
+    
     set(BOOST_MIN_VERSION 1.54.0)      
 
     # rhel requirements
@@ -210,18 +210,18 @@ if (ENABLE_CPACK)
       
     if ("${UNIX_DIST}" MATCHES "Ubuntu")
         string(REPLACE "," ", " CPACK_DEBIAN_PACKAGE_DEPENDS
-        "libqt5core5,"
+        "libqt5core5a,"
         "libqt5printsupport5,"
         "libqt5widgets5,"
         "libqt5gui5,"
-        "libboost-filesystem1.55-dev,"
-        "libboost-date-time1.55-dev,"
-        "libboost-system1.55-dev,"
-        "libboost-test1.55-dev,"
+        "libboost-filesystem1.54.0,"
+        "libboost-date-time1.54.0,"
+        "libboost-system1.54.0,"
+        "libboost-test1.54.0,"
         "libeigen3-dev,"
-        "libfftw3-dev,"
-        "libtiff-dev,"
-        "libhdf5-serial-dev (>=1.8.11)")
+        "libfftw3-bin,"
+        "libtiff5,"
+        "libhdf5-7 (>=1.8.11)")
     endif()
     
     set (CMAKE_INSTALL_RPATH "/usr/local/lib")

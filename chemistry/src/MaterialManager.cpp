@@ -25,8 +25,7 @@ namespace Chemistry
 MaterialManager::MaterialManager() : _registry()
 {
 	// The default path for the elements database is $HOME/.nsxtool/databases/elements.xml
-	filesystem::path p(SX::Utils::Path::getApplicationDataPath());
-	p/="databases";
+	filesystem::path p(SX::Utils::Path::getDataBasesPath());
 	p/="materials.xml";
 	_database = p.string();
 }

@@ -50,17 +50,13 @@ public:
 	//! Returns the path to HOME
 	static std::string getHomeDirectory();
 
-	//! Returns the NSXTool installation path
-	static std::string getInstallationPath();
-
-	//! Returns the NSXTool resources path
-	static std::string getResourcesPath();
-
 	//! Returns the NSXTool application data path
 	static std::string getApplicationDataPath();
 
 	//! Returns the path where the diffractomers XML defininition files are stored
 	static std::string getDiffractometersPath();
+
+	static std::string getDataBasesPath();
 
 };
 

@@ -43,8 +43,15 @@ Detector::Detector(const std::string& name)
 Detector::Detector(const proptree::ptree& node)
 : Component(node)
 {
-	const property_tree::ptree& dataOrderNode = node.get_child("data_ordering");
-	std::string dataOrder=dataOrderNode.get_value<std::string>();
+	boost::optional<const proptree::ptree&> dataOrdernode=node.get_child_optional("data ordering");
+	// If data order is not defined assumed default
+	if (!dataOrdernode)
+	{
+		_dataorder=DataOrder::BottomRightColMajor;
+		return;
+	}
+
+	std::string dataOrder=dataOrdernode.get().get_value<std::string>();
 
 	if (dataOrder.compare("TopLeftColMajor")==0)
 	{

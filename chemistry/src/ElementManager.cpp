@@ -24,11 +24,9 @@ namespace xml_parser=boost::property_tree::xml_parser;
 
 ElementManager::ElementManager() : _registry()
 {
-	// The default path for the elements database is $HOME/.nsxtool/databases/elements.xml
-	filesystem::path p(SX::Utils::Path::getApplicationDataPath());
-	p/="databases";
+	// The default path for the elements database is /usr/share/databases/elements.xml
+	filesystem::path p(SX::Utils::Path::getDataBasesPath());
 	p/="elements.xml";
-
 	setDatabasePath(p.string());
 }
 
@@ -229,7 +227,6 @@ void ElementManager::saveRegistry(std::string filename) const
 		root.add("elements","");
 	}
 
-	property_tree::ptree& elementsNode=root.get_child("elements");
 
 	for (const auto& e : _registry)
 	{

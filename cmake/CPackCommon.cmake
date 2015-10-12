@@ -7,9 +7,9 @@
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Single crystal data reduction")
 set(CPACK_PACKAGE_VENDOR "Institut Laue Langevin")
 set(CPACK_PACKAGE_URL http://www.ill.eu/fr/instruments-support/instruments-groups/groups/dif/ )
-set(CPACK_PACKAGE_CONTACT nsxtool-help@nsxtool.ill.eu)
-set(CPACK_PACKAGE_VERSION "0.0.0")
-set(CPACK_PACKAGE_VERSION_MAJOR "0")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER Eric Pellegrini <nsxtool-help@nsxtool.ill.eu>)
+set(CPACK_PACKAGE_VERSION "1.0.0")
+set(CPACK_PACKAGE_VERSION_MAJOR "1")
 set(CPACK_PACKAGE_VERSION_MINOR "0")
 set(CPACK_PACKAGE_VERSION_PATCH "0")
 

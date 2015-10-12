@@ -2,7 +2,7 @@
 	<name>D9</name>
     <detector type="flat">
         <name>banana</name>
-        <sample_distance units="mm">595.0</sample_distance>
+        <sample_distance units="mm">488.0</sample_distance>
         <width units="mm">256.0</width>
         <height units="mm">256.0</height>
         <nrows>128</nrows>
@@ -22,11 +22,31 @@
 	            <physical>true</physical>
 	        </axis>
 	        <axis type="translation">
+	            <name>x-offset</name>
+	            <direction>
+			        <x>1.000</x>
+			        <y>0.000</y>
+			        <z>0.000</z>
+	            </direction>
+	            <offset>0.0</offset>
+	            <physical>false</physical>
+	        </axis>
+	        <axis type="translation">
 	            <name>y-offset</name>
 	            <direction>
 			        <x>0.000</x>
 			        <y>1.000</y>
 			        <z>0.000</z>
+	            </direction>
+	            <offset>0.0</offset>
+	            <physical>false</physical>
+	        </axis>
+	        <axis type="translation">
+	            <name>z-offset</name>
+	            <direction>
+			        <x>0.000</x>
+			        <y>0.000</y>
+			        <z>1.000</z>
 	            </direction>
 	            <offset>0.0</offset>
 	            <physical>false</physical>

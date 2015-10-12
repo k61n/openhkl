@@ -19,8 +19,7 @@ namespace filesystem=boost::filesystem;
 IsotopeManager::IsotopeManager() : _registry(), _units()
 {
 	// The default path for the isotopes database is $HOME/.nsxtool/databases/isotopes.xml
-	filesystem::path p(SX::Utils::Path::getApplicationDataPath());
-	p/="databases";
+	filesystem::path p(SX::Utils::Path::getDataBasesPath());
 	p/="isotopes.xml";
 
 	setDatabasePath(p.string());

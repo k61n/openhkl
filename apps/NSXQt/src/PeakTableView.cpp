@@ -44,6 +44,7 @@ PeakTableView::PeakTableView(QWidget *parent)
                                                  });
 
     connect(this,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(deselectPeak(QModelIndex)));
+
 }
 
 void PeakTableView::setData(std::vector<SX::Data::IData*> data)

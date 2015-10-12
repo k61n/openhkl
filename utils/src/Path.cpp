@@ -52,34 +52,25 @@ std::string Path::expandUser(std::string path)
 	return path;
 }
 
-std::string Path::getInstallationPath()
-{
-	const char* ppath=getenv("NSXTOOL");
-	if (ppath)
-		return std::string(ppath);
-	else
-		throw SX::Kernel::Error<Path>("NSXTOOL environment variable has not been defined");
-}
-
-std::string Path::getResourcesPath()
-{
-	boost::filesystem::path p(getInstallationPath());
-	p /= "resources";
-	return p.string();
-}
-
 std::string Path::getApplicationDataPath()
 {
-	boost::filesystem::path p(getHomeDirectory());
-	p /= ".nsxtool";
+#ifdef __linux
+	boost::filesystem::path p("/usr/local/share");
+	p /= "nsxtool";
 	return p.string();
+#endif
 }
 
 std::string Path::getDiffractometersPath()
 {
-	boost::filesystem::path p(getHomeDirectory());
-	p /= ".nsxtool";
+	boost::filesystem::path p(getApplicationDataPath());
 	p /= "instruments";
+	return p.string();
+}
+std::string Path::getDataBasesPath()
+{
+	boost::filesystem::path p(getApplicationDataPath());
+	p /= "databases";
 	return p.string();
 }
 
