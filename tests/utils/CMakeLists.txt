@@ -10,3 +10,7 @@ add_test(TestEigenMatrixParser TestEigenMatrixParser)
 add_executable(TestAffineTransformParser TestAffineTransformParser.cpp)
 TARGET_LINK_LIBRARIES(TestAffineTransformParser ${Boost_LIBRARIES} NSXTool)
 add_test(TestAffineTransformParser TestAffineTransformParser)
+
+add_executable(TestLatticeConstraintParser TestLatticeConstraintParser.cpp)
+TARGET_LINK_LIBRARIES(TestLatticeConstraintParser ${Boost_LIBRARIES} NSXTool)
+add_test(TestLatticeConstraintParser TestLatticeConstraintParser)
