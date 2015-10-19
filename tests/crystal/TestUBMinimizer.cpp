@@ -150,9 +150,6 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
     q.y() = sin(lsol._latticeParams[8]/2.0)*sin(lsol._latticeParams[6])*sin(lsol._latticeParams[7]);
     q.z() = sin(lsol._latticeParams[8]/2.0)*cos(lsol._latticeParams[6]);
 
-    std::cout<<"FROM LATTICE"<<std::endl;
-    std::cout<<luc.getBusingLevyB()<<std::endl;
-    std::cout<<q.toRotationMatrix()<<std::endl;
 
 //    std::cout<<luc.getA()<<std::endl;
 //    std::cout<<luc.getB()<<std::endl;
