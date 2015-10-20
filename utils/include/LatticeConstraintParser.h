@@ -26,15 +26,15 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-#ifndef NSXTOOL_AFFINETRANSFORMPARSER_H_
-#define NSXTOOL_AFFINETRANSFORMPARSER_H_
+#ifndef NSXTOOL_LATTICECONSTRAINTPARSER_H_
+#define NSXTOOL_LATTICECONSTRAINTPARSER_H_
 #define BOOST_SPIRIT_USE_PHOENIX_V3
 #define BOOST_RESULT_OF_USE_DECLTYPE
 
 #include <map>
 #include <utility>
 
-#include <boost/fusion/adapted/std_tuple.hpp>
+#include <boost/fusion/include/boost_tuple.hpp>
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/qi_char.hpp>
 #include <boost/phoenix/function/adapt_callable.hpp>
@@ -42,8 +42,8 @@
 #include <boost/fusion/adapted/struct.hpp>
 #include <boost/variant.hpp>
 
-namespace qi   = boost::spirit::qi;
-namespace phx  = boost::phoenix;
+namespace qi  = boost::spirit::qi;
+namespace phx = boost::phoenix;
 
 namespace SX
 {
@@ -51,50 +51,45 @@ namespace SX
 namespace Utils
 {
 
-typedef std::tuple<int,int,double> constraints_tuple;
+typedef boost::tuple<int,int,double> constraint_tuple;
 
-struct ConstraintsSetter
+struct ConstraintSetter
 {
-	template <typename constraints_tuple>
-	bool operator()(constraints_tuple &constraints) const
+	template <typename constraint_tuple>
+	bool operator()(constraint_tuple &constraint, int lhs, int rhs, double coeff) const
 	{
-		return true;
-	}
-};
 
-struct ConstraintsInit
-{
-	template <typename constraints_tuple>
-	bool operator()(constraints_tuple &constraints) const
-	{
+		boost::get<0>(constraint) = lhs;
+		boost::get<1>(constraint) = rhs;
+		boost::get<2>(constraint) = coeff;
+
 		return true;
 	}
 };
 
 template<typename It>
-struct LatticeConstraintParser : qi::grammar<It,constraints_tuple()>
+struct LatticeConstraintParser : qi::grammar<It,constraint_tuple()>
 {
 	LatticeConstraintParser(): LatticeConstraintParser::base_type(constraint)
     {
         using namespace qi;
         using namespace phx;
 
-        static int par=0;
-
-        phx::function<ConstraintsSetter> const add_constraint = ConstraintsSetter();
+        phx::function<ConstraintSetter> const add_constraint = ConstraintSetter();
 
 //        constraints= (constraint >> *(lit(',') >> constraint));
-        constraint = eps[_a=1.0]>>-double_[_a*=_1] >> param >> lit('=') >> eps[_b=1.0] >> -double_[_b*=_1] >> param)[_pass=add_constraints(_val)];
-        param =(lit('a')[ref(par)=0]|lit('b')[ref(par)=1]|lit('c')[ref(par)=2]|string("alpha")[ref(par)=3]|string("beta")[ref(par)=4]|string("gamma")[ref(par)=5]);
+        constraint = (eps[_a=1.0,_b=1.0] >> -(prefactor[_a*=_1]) >> param[_c=_1] >> lit('=') >> -(prefactor[_b*=_1]) >> param[_d=_1])[_pass=add_constraint(_val,_c,_d,_b/_a)];
+        param =(lit('a')[_val=0]|lit('b')[_val=1]|lit('c')[_val=2]|string("alpha")[_val=3]|string("beta")[_val=4]|string("gamma")[_val=5]);
+        prefactor = eps[_val=1.0] >> double_[_val*=_1];
     }
-//		qi::rule<It,constraints_tuple()> constraints;
-        qi::rule<It,std::tuple<int,int,double>,qi::locals<double,double>> constraint;
-        qi::rule<It> param;
+	qi::rule<It,constraint_tuple(),qi::locals<double,double,int,int> > constraint;
+	qi::rule<It,int()> param;
+	qi::rule<It,double()> prefactor;
 };
 
 } // Namespace Utils
 
 } // Namespace SX
 
-#endif /* NSXTOOL_JONESSYMBOLPARSER_H_ */
+#endif /* NSXTOOL_LATTICECONSTRAINTPARSER_H_ */
 
