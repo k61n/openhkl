@@ -33,8 +33,9 @@
 
 #include <map>
 #include <utility>
+#include <tuple>
 
-#include <boost/fusion/include/boost_tuple.hpp>
+//#include <boost/fusion/include/boost_tuple.hpp>
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/qi_char.hpp>
 #include <boost/phoenix/function/adapt_callable.hpp>
@@ -51,7 +52,7 @@ namespace SX
 namespace Utils
 {
 
-typedef boost::tuple<int,int,double> constraint_tuple;
+typedef std::tuple<int,int,double> constraint_tuple;
 
 struct ConstraintSetter
 {
@@ -59,17 +60,18 @@ struct ConstraintSetter
 	bool operator()(constraint_tuple &constraint, int lhs, int rhs, double coeff) const
 	{
 
-		boost::get<0>(constraint) = lhs;
-		boost::get<1>(constraint) = rhs;
-		boost::get<2>(constraint) = coeff;
+		std::get<0>(constraint) = lhs;
+		std::get<1>(constraint) = rhs;
+		std::get<2>(constraint) = coeff;
 
 		return true;
 	}
 };
 
 template<typename It>
-struct LatticeConstraintParser : qi::grammar<It,constraint_tuple()>
+struct LatticeConstraintParser : qi::grammar<It,constraint_tuple(),qi::locals<double,double,int,int>>
 {
+
 	LatticeConstraintParser(): LatticeConstraintParser::base_type(constraint)
     {
         using namespace qi;
@@ -79,10 +81,11 @@ struct LatticeConstraintParser : qi::grammar<It,constraint_tuple()>
 
 //        constraints= (constraint >> *(lit(',') >> constraint));
         constraint = (eps[_a=1.0,_b=1.0] >> -(prefactor[_a*=_1]) >> param[_c=_1] >> lit('=') >> -(prefactor[_b*=_1]) >> param[_d=_1])[_pass=add_constraint(_val,_c,_d,_b/_a)];
-        param =(lit('a')[_val=0]|lit('b')[_val=1]|lit('c')[_val=2]|string("alpha")[_val=3]|string("beta")[_val=4]|string("gamma")[_val=5]);
+        param = (string("alpha")[_val=3]|string("beta")[_val=4]|string("gamma")[_val=5]|lit('a')[_val=0]|lit('b')[_val=1]|lit('c')[_val=2]);
         prefactor = eps[_val=1.0] >> double_[_val*=_1];
     }
-	qi::rule<It,constraint_tuple(),qi::locals<double,double,int,int> > constraint;
+
+	qi::rule<It,constraint_tuple(),qi::locals<double,double,int,int>> constraint;
 	qi::rule<It,int()> param;
 	qi::rule<It,double()> prefactor;
 };

@@ -96,14 +96,14 @@ struct AffineTransformParser : qi::grammar<It,Eigen::Transform<double,3,Eigen::A
         using namespace qi;
         using namespace phx;
         phx::function<MatrixFiller> const matrix_insert = MatrixFiller();
-        phx::function<MatrixInit> const matrixinit = MatrixInit();
+        phx::function<MatrixInit> const matrix_init = MatrixInit();
 
         static double row=0;
         static double col=0;
 
         // Multiple terms, separated by commas
 
-        matrix = eps[_pass=matrixinit(_val),ref(row)=0,ref(col)=0] >>
+        matrix = eps[_pass=matrix_init(_val),ref(row)=0,ref(col)=0] >>
               *term[_pass=matrix_insert(_val,ref(row),ref(col),_1)] >> lit(',')[ref(row)=1] >>
               *term[_pass=matrix_insert(_val,ref(row),ref(col),_1)] >> lit(',')[ref(row)=2] >>
               *term[_pass=matrix_insert(_val,ref(row),ref(col),_1)];

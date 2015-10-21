@@ -22,7 +22,7 @@ BOOST_AUTO_TEST_CASE(Test_LatticeConstraintParser)
 	do{
 	std::string s;
 	std::cin >> s;
-	if (!qi::phrase_parse(s.begin(),s.end(),parser,qi::blank,constraint))
-		std::cout << "test" <<std::endl;
+	if (qi::phrase_parse(s.begin(),s.end(),parser,qi::blank,constraint))
+		std::cout << std::get<0>(constraint) << " " << std::get<1>(constraint) << " " << std::get<2>(constraint) << std::endl;
 	}while(true);
 }
