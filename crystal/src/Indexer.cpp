@@ -44,7 +44,6 @@ std::vector<Eigen::Vector3d> Indexer::index(const Peak3D& peak)
 			}
 			else // Need to compare angles with previously stored peaks
 			{
-				auto q1calc=_cell->toReciprocalStandard((*it).second);
 				for (auto old: _peaks)
 				{
 					auto oldQ=old->getQ();

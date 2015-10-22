@@ -18,11 +18,17 @@ BOOST_AUTO_TEST_CASE(Test_LatticeConstraintParser)
 
 	LatticeConstraintParser<std::string::iterator> parser;
 
-	SX::Utils::constraint_tuple constraint;
-	do{
-	std::string s;
-	std::cin >> s;
-	if (qi::phrase_parse(s.begin(),s.end(),parser,qi::blank,constraint))
-		std::cout << std::get<0>(constraint) << " " << std::get<1>(constraint) << " " << std::get<2>(constraint) << std::endl;
-	}while(true);
+	SX::Utils::constraints_set constraints;
+	do
+	{
+		std::string s;
+		std::cin >> s;
+		if (qi::phrase_parse(s.begin(),s.end(),parser,qi::blank,constraints))
+		{
+			for (auto c : constraints)
+				std::cout << std::get<0>(c) << " " << std::get<1>(c) << " " << std::get<2>(c) << std::endl;
+			constraints.clear();
+		}
+	}
+	while(true);
 }

@@ -31,11 +31,9 @@
 #define BOOST_SPIRIT_USE_PHOENIX_V3
 #define BOOST_RESULT_OF_USE_DECLTYPE
 
-#include <map>
-#include <utility>
 #include <tuple>
+#include <set>
 
-//#include <boost/fusion/include/boost_tuple.hpp>
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/qi_char.hpp>
 #include <boost/phoenix/function/adapt_callable.hpp>
@@ -53,8 +51,9 @@ namespace Utils
 {
 
 typedef std::tuple<int,int,double> constraint_tuple;
+typedef std::set<constraint_tuple> constraints_set;
 
-struct ConstraintSetter
+struct SingleConstraint
 {
 	template <typename constraint_tuple>
 	bool operator()(constraint_tuple &constraint, int lhs, int rhs, double coeff) const
@@ -68,24 +67,38 @@ struct ConstraintSetter
 	}
 };
 
+struct MultiConstraint
+{
+	template <typename constraint_set>
+	bool operator()(constraint_set &constraints, const constraint_tuple& singleConstraint) const
+	{
+
+		constraints.insert(singleConstraint);
+
+		return true;
+	}
+};
+
 template<typename It>
-struct LatticeConstraintParser : qi::grammar<It,constraint_tuple(),qi::locals<double,double,int,int>>
+struct LatticeConstraintParser : qi::grammar<It,constraints_set()>
 {
 
-	LatticeConstraintParser(): LatticeConstraintParser::base_type(constraint)
+	LatticeConstraintParser(): LatticeConstraintParser::base_type(constraints)
     {
         using namespace qi;
         using namespace phx;
 
-        phx::function<ConstraintSetter> const add_constraint = ConstraintSetter();
+        phx::function<SingleConstraint> const set_single_constraint = SingleConstraint();
+        phx::function<MultiConstraint> const add_single_constraint = MultiConstraint();
 
-//        constraints= (constraint >> *(lit(',') >> constraint));
-        constraint = (eps[_a=1.0,_b=1.0] >> -(prefactor[_a*=_1]) >> param[_c=_1] >> lit('=') >> -(prefactor[_b*=_1]) >> param[_d=_1])[_pass=add_constraint(_val,_c,_d,_b/_a)];
+        constraints= (single_constraint[_pass=add_single_constraint(_val,_1)] >> *(lit(',') >> single_constraint[_pass=add_single_constraint(_val,_1)]));
+        single_constraint = (eps[_a=1.0,_b=1.0] >> -(prefactor[_a*=_1]) >> param[_c=_1] >> lit('=') >> -(prefactor[_b*=_1]) >> param[_d=_1])[_pass=set_single_constraint(_val,_c,_d,_b/_a)];
         param = (string("alpha")[_val=3]|string("beta")[_val=4]|string("gamma")[_val=5]|lit('a')[_val=0]|lit('b')[_val=1]|lit('c')[_val=2]);
         prefactor = eps[_val=1.0] >> double_[_val*=_1];
     }
 
-	qi::rule<It,constraint_tuple(),qi::locals<double,double,int,int>> constraint;
+	qi::rule<It,constraints_set()> constraints;
+	qi::rule<It,constraint_tuple(),qi::locals<double,double,int,int>> single_constraint;
 	qi::rule<It,int()> param;
 	qi::rule<It,double()> prefactor;
 };
