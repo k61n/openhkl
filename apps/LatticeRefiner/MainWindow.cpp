@@ -21,10 +21,12 @@
 #include <QStringList>
 #include <QHeaderView>
 #include <QTableWidgetItem>
+#include "Units.h"
+#include <QContextMenuEvent>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),_peaks()
 {
     ui->setupUi(this);
 
@@ -40,11 +42,33 @@ MainWindow::MainWindow(QWidget *parent) :
     SX::Instrument::DiffractometerStore* ds = SX::Instrument::DiffractometerStore::Instance();
     for (const auto& diffractometer : ds->getDiffractometersList())
         ui->comboBox_diffractometer->addItem(QString::fromStdString(diffractometer));
+
+    ui->tableWidget_peaks->verticalHeader()->setContextMenuPolicy(Qt::ActionsContextMenu);
+    QAction* unselect=new QAction("Unselect",ui->tableWidget_peaks->verticalHeader());
+    ui->tableWidget_peaks->verticalHeader()->addAction(unselect);
+    connect(unselect,SIGNAL(triggered()),this,SLOT(test()));
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::test()
+{
+    auto list=ui->tableWidget_peaks->selectionModel()->selectedRows();
+
+    QColor c1("white");
+    QColor c2("red");
+    for (const auto& l: list)
+    {
+        bool selected=_peaks[l.row()].second;
+        _peaks[l.row()].second=!selected;
+
+        ui->tableWidget_peaks->item(l.row(),0)->setBackgroundColor(selected ? c2 : c1);
+    }
+    ui->tableWidget_peaks->clearSelection();
+
 }
 
 void MainWindow::on_actionOpen_reflections_triggered()
@@ -65,24 +89,17 @@ void MainWindow::on_actionOpen_reflections_triggered()
     auto snames=sample->getGonio()->getPhysicalAxesNames();
 
     bool isBidim = detector->getNPixels()>1;
-//    int nPixelColumns = isBidim ? 2 : 0;
 
-//    int nBaseCols = 3+nPixelColumns;
     int nBaseCols = 5;
 
     int nAngles = dnames.size()+snames.size();
-    ui->tableWidget_peaks->setColumnCount(nBaseCols+nAngles+1);
+    ui->tableWidget_peaks->setColumnCount(nBaseCols+nAngles);
 
     QStringList header;
     header.push_back(QString("h"));
     header.push_back("k");
     header.push_back("l");
 
-//    if (isBidim)
-//    {
-//        header.push_back("px");
-//        header.push_back("py");
-//    }
     header.push_back("px");
     header.push_back("py");
 
@@ -124,19 +141,16 @@ void MainWindow::on_actionOpen_reflections_triggered()
             ui->tableWidget_peaks->setItem(row,1,new QTableWidgetItem(QString::number(k)));
             ui->tableWidget_peaks->setItem(row,2,new QTableWidgetItem(QString::number(l)));
 
+            double px,py;
             if (isBidim)
-            {
-                double px,py;
                 is >> px >> py;
-                ui->tableWidget_peaks->setItem(row,3,new QTableWidgetItem(QString::number(px)));
-                ui->tableWidget_peaks->setItem(row,4,new QTableWidgetItem(QString::number(py)));
-            }
             else
             {
-                ui->tableWidget_peaks->setItem(row,3,new QTableWidgetItem(QString("0.5")));
-                ui->tableWidget_peaks->setItem(row,4,new QTableWidgetItem(QString("0.5")));
+                px=0.5;
+                py=0.5;
             }
-
+            ui->tableWidget_peaks->setItem(row,3,new QTableWidgetItem(QString::number(px)));
+            ui->tableWidget_peaks->setItem(row,4,new QTableWidgetItem(QString::number(py)));
 
             int col=nBaseCols;
             std::vector<double> angles(nAngles);
@@ -146,8 +160,18 @@ void MainWindow::on_actionOpen_reflections_triggered()
                 ui->tableWidget_peaks->setItem(row,col++,new QTableWidgetItem(QString::number(angles[i])));
             }
 
-            ui->tableWidget_peaks->setItem(row,col,new QTableWidgetItem(""));
-            ui->tableWidget_peaks->item(row,col)->setCheckState(Qt::Checked);
+            std::vector<double> dangles(dnames.size()),sangles(snames.size());
+            std::transform(angles.begin(),angles.begin()+dnames.size(),dangles.begin(),[&](double value)->double {return value*SX::Units::deg;});
+            std::transform(angles.begin()+dnames.size(),angles.end(),sangles.begin(),[](double value)->double {return value*SX::Units::deg;});
+
+            // Create a peak
+            SX::Crystal::Peak3D peak;
+            peak.setMillerIndices(h,k,l);
+            peak.setDetectorEvent(new SX::Instrument::DetectorEvent(diffractometer->getDetector()->createDetectorEvent(px,py,dangles)));
+            peak.setSampleState(new SX::Instrument::ComponentState(diffractometer->getSample()->createState(sangles)));
+            peak.setSource(diffractometer->getSource());
+
+            _peaks.push_back(std::pair<SX::Crystal::Peak3D,bool>(peak,true));
 
             row++;
         }
@@ -222,38 +246,6 @@ void MainWindow::on_pushButton_refine_clicked()
     {
         for (auto c : constraints)
             minimizer.setLatticeConstraint(std::get<0>(c),std::get<1>(c));
-    }
-
-    // Set the peaks
-
-    int lastColumn = ui->tableWidget_peaks->columnCount()-1;
-    for (int row=0;row<ui->tableWidget_peaks->rowCount();++row)
-    {
-
-        if (ui->tableWidget_peaks->item(row,lastColumn)->checkState()==Qt::Unchecked)
-            continue;
-
-        // Create a peak
-        SX::Crystal::Peak3D peak;
-
-        double h,k,l;
-        h=ui->tableWidget_peaks->item(row,0)->text().toDouble();
-        k=ui->tableWidget_peaks->item(row,1)->text().toDouble();
-        l=ui->tableWidget_peaks->item(row,2)->text().toDouble();
-        peak.setMillerIndices(h,k,l);
-        double px,py;
-        px=ui->tableWidget_peaks->item(row,3)->text().toDouble();
-        py=ui->tableWidget_peaks->item(row,4)->text().toDouble();
-//        peak.setDetectorEvent(new DetectorEvent(D9->createDetectorEvent(px/2,py/2,{gamma*deg})));
-
-        // Set the wavelength
-        diffractometer->getSource()->setWavelength(ui->doubleSpinBox_wavelength->value());
-        peak.setSource(diffractometer->getSource());
-
-        // Create a sample state
-//        peak.setSampleState(new ComponentState(sample->createState({omega*deg,chi*deg,phi*deg})));
-
-        minimizer.addPeak(peak);
     }
 
 }
