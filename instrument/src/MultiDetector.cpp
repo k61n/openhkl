@@ -67,6 +67,11 @@ Detector* MultiDetector::clone() const
 	return new MultiDetector(*this);
 }
 
+unsigned int MultiDetector::getNPixels() const
+{
+	return getNCols()*getNRows();
+}
+
 unsigned int MultiDetector::getNCols() const
 {
 	return (getMaxCol()-getMinCol());

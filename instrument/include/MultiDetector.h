@@ -64,6 +64,8 @@ public:
 	//! Destructor
 	~MultiDetector();
 
+	//! Return the number of pixels of the detector.
+	unsigned int getNPixels() const;
 	//! Return the number of columns of the detector.
 	unsigned int getNCols() const;
 	//! Return the number of rows of the detector.

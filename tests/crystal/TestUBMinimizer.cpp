@@ -151,11 +151,11 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
     q.z() = sin(lsol._latticeParams[8]/2.0)*cos(lsol._latticeParams[6]);
 
 
-//    std::cout<<luc.getA()<<std::endl;
-//    std::cout<<luc.getB()<<std::endl;
-//    std::cout<<luc.getC()<<std::endl;
-//    std::cout<<luc.getAlpha()<<std::endl;
-//    std::cout<<luc.getBeta()<<std::endl;
-//    std::cout<<luc.getGamma()<<std::endl;
+    std::cout<<luc.getA()<<std::endl;
+    std::cout<<luc.getB()<<std::endl;
+    std::cout<<luc.getC()<<std::endl;
+    std::cout<<luc.getAlpha()<<std::endl;
+    std::cout<<luc.getBeta()<<std::endl;
+    std::cout<<luc.getGamma()<<std::endl;
 
 }

@@ -95,6 +95,11 @@ MonoDetector& MonoDetector::operator=(const MonoDetector& other)
 	return *this;
 }
 
+unsigned int MonoDetector::getNPixels() const
+{
+	return _nCols*_nRows;
+}
+
 unsigned int MonoDetector::getNCols() const
 {
 	return _nCols;

@@ -69,6 +69,8 @@ public:
 	//! Assignment operator
 	virtual MonoDetector& operator=(const MonoDetector& other);
 
+	//! Return the number of pixels of the detector
+	unsigned int getNPixels() const;
 	//! Return the number of columns of the detector
 	unsigned int getNCols() const;
 	//! Set the number of columns of the detector

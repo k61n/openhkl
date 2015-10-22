@@ -85,6 +85,8 @@ public:
 	//! Assignment operator
 	virtual Detector& operator=(const Detector& other);
 
+	//! Return the number of pixels of the detector.
+	virtual unsigned int getNPixels() const=0;
 	//! Return the number of columns of the detector.
 	virtual unsigned int getNCols() const=0;
 	//! Return the number of rows of the detector.
