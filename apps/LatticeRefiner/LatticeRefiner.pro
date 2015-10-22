@@ -25,6 +25,15 @@ win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../usr/loca
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../usr/local/lib/debug/ -lNSXTool
 else:unix: LIBS += -L$$PWD/../../../../../../usr/local/lib/ -lNSXTool
 
+INCLUDEPATH += $$PWD/../../../../../../usr/local/include/eigen3
+
 INCLUDEPATH += $$PWD/../../../../../../usr/local/include/NSXTool
 INCLUDEPATH += $$PWD/../../../../../../usr/include/eigen3
+DEPENDPATH += $$PWD/../../../../../../usr/local/include/NSXTool
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../usr/local/lib/release/ -lNSXTool
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../usr/local/lib/debug/ -lNSXTool
+else:unix: LIBS += -L$$PWD/../../../../../../usr/local/lib/ -lNSXTool
+
+INCLUDEPATH += $$PWD/../../../../../../usr/local/include/NSXTool
 DEPENDPATH += $$PWD/../../../../../../usr/local/include/NSXTool

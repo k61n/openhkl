@@ -1,10 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <vector>
-
 #include "Diffractometer.h"
-#include "Peak3D.h"
 
 #include <QMainWindow>
 
@@ -23,10 +20,10 @@ public:
 private slots:
     void on_actionOpen_reflections_triggered();
 
+    void on_pushButton_refine_clicked();
+
 private:
     Ui::MainWindow *ui;
-    std::vector<SX::Crystal::Peak3D> _peaks;
-
 };
 
 #endif // MAINWINDOW_H

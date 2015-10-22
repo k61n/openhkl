@@ -87,6 +87,7 @@ struct LatticeConstraintParser : qi::grammar<It,constraints_set()>
     {
         using namespace qi;
         using namespace phx;
+        using qi::_1;
 
         phx::function<SingleConstraint> const set_single_constraint = SingleConstraint();
         phx::function<MultiConstraint> const add_single_constraint = MultiConstraint();
