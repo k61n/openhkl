@@ -14,14 +14,17 @@ TARGET = LatticeRefiner
 TEMPLATE = app
 
 SOURCES += main.cpp\
-        MainWindow.cpp \
-    ConstraintsModel.cpp \
-    CheckableComboBox.cpp \
-    CheckableComboBoxDelegate.cpp
+        MainWindow.cpp
 
-HEADERS  += MainWindow.h \
-    ConstraintsModel.h \
-    CheckableComboBox.h \
-    CheckableComboBoxDelegate.h
+HEADERS  += MainWindow.h
 
 FORMS    += MainWindow.ui
+
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../usr/local/lib/release/ -lNSXTool
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../usr/local/lib/debug/ -lNSXTool
+else:unix: LIBS += -L$$PWD/../../../../../../usr/local/lib/ -lNSXTool
+
+INCLUDEPATH += $$PWD/../../../../../../usr/local/include/NSXTool
+INCLUDEPATH += $$PWD/../../../../../../usr/include/eigen3
+DEPENDPATH += $$PWD/../../../../../../usr/local/include/NSXTool

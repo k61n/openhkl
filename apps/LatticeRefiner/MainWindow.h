@@ -3,7 +3,9 @@
 
 #include <vector>
 
-#include <QStandardItemModel>
+#include "Diffractometer.h"
+#include "Peak3D.h"
+
 #include <QMainWindow>
 
 namespace Ui {
@@ -18,13 +20,13 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-public slots:
-    void slot_changed(const QModelIndex& topLeft, const QModelIndex& bottomRight);
+private slots:
+    void on_actionOpen_reflections_triggered();
 
 private:
     Ui::MainWindow *ui;
+    std::vector<SX::Crystal::Peak3D> _peaks;
 
-    std::vector<QStandardItemModel*> _models;
 };
 
 #endif // MAINWINDOW_H
