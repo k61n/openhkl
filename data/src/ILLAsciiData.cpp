@@ -70,7 +70,7 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, std::shared_ptr<Diffract
 	_dataPoints=_metadata->getKey<int>("nbdata");
 	_nAngles=_metadata->getKey<int>("nbang");
 	// Skip 8 or 9 lines to the beginning of data blocks
-	_skipChar=81*(8+(_nAngles<=2 ? 0 : 1));
+	_skipChar=81*(8+(_nAngles<=2 ? 0 : 2));
 	// ILL Ascii file for 2D detector store 10 values per line.
 	_dataLength=static_cast<int>(std::ceil(_dataPoints/10.0))*81;
 
