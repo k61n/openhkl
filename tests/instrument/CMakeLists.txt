@@ -40,11 +40,6 @@ add_executable(TestComponentState TestComponentState.cpp)
 TARGET_LINK_LIBRARIES(TestComponentState ${Boost_LIBRARIES} NSXTool)
 add_test(TestComponentState TestComponentState)
 
-# unit test for Diffractometer Factory
-add_executable(TestDiffractometerFactory TestDiffractometerFactory.cpp)
-TARGET_LINK_LIBRARIES(TestDiffractometerFactory ${Boost_LIBRARIES} NSXTool)
-add_test(TestDiffractometerFactory TestDiffractometerFactory)
-
 # unit test for Experiment
 add_executable(TestExperiment TestExperiment.cpp)
 TARGET_LINK_LIBRARIES(TestExperiment ${Boost_LIBRARIES} NSXTool)
