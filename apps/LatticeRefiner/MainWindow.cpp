@@ -4,6 +4,15 @@
 #include "ui_MainWindow.h"
 #include "MainWindow.h"
 
+#include <QDebug>
+#include <QtAlgorithms>
+#include <QFileDialog>
+#include <QString>
+#include <QStringList>
+#include <QHeaderView>
+#include <QTableWidgetItem>
+#include <QContextMenuEvent>
+
 #include "Detector.h"
 #include "Diffractometer.h"
 #include "DiffractometerStore.h"
@@ -13,16 +22,7 @@
 #include "Peak3D.h"
 #include "Sample.h"
 #include "Source.h"
-
-#include <QDebug>
-#include <QtAlgorithms>
-#include <QFileDialog>
-#include <QString>
-#include <QStringList>
-#include <QHeaderView>
-#include <QTableWidgetItem>
 #include "Units.h"
-#include <QContextMenuEvent>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -83,10 +83,17 @@ void MainWindow::on_actionOpen_reflections_triggered()
 
     std::shared_ptr<SX::Instrument::Diffractometer> diffractometer=std::shared_ptr<SX::Instrument::Diffractometer>(ds->buildDiffractomer(diffractometerName));
 
+    std::vector<std::string> dnames;
     auto detector=diffractometer->getDetector();
-    auto dnames=detector->getGonio()->getPhysicalAxesNames();
+    auto dgonio = detector->getGonio();
+    if (dgonio)
+        dnames=dgonio->getPhysicalAxesNames();
+
+    std::vector<std::string> snames;
     auto sample=diffractometer->getSample();
-    auto snames=sample->getGonio()->getPhysicalAxesNames();
+    auto sgonio = sample->getGonio();
+    if (sgonio)
+        snames=sgonio->getPhysicalAxesNames();
 
     bool isBidim = detector->getNPixels()>1;
 

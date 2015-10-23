@@ -1,12 +1,13 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "Diffractometer.h"
-#include "Peak3D.h"
-#include <vector>
 #include <utility>
+#include <vector>
 
 #include <QMainWindow>
+
+#include "Diffractometer.h"
+#include "Peak3D.h"
 
 namespace Ui {
 class MainWindow;
