@@ -34,13 +34,7 @@ std::size_t ILLAsciiData::BlockSize=100*81;
 
 IData* ILLAsciiData::create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer)
 {
-	ILLAsciiData* data;
-	try{
-		data=new ILLAsciiData(filename,diffractometer);
-	}catch(...)
-	{
-		return nullptr;
-	}
+	ILLAsciiData* data=new ILLAsciiData(filename,diffractometer);
 	return data;
 }
 

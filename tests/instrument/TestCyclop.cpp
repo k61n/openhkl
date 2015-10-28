@@ -1,6 +1,6 @@
 #define BOOST_TEST_MODULE "Test Cyclop"
 #define BOOST_TEST_DYN_LINK
-#include "Cyclops.h"
+
 #include <boost/test/unit_test.hpp>
 #include "DiffractometerStore.h"
 #include "Detector.h"
