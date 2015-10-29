@@ -175,4 +175,15 @@ void UnitCellPropertyWidget::transform(const Eigen::Matrix3d &P)
 {
    _unitCellItem->getCell()->transform(P);
    getLatticeParams();
+   // Update peaks
+   auto datamap=_unitCellItem->getExperiment()->getData();
+   for (auto data: datamap)
+   {
+       auto& peaks=data.second->getPeaks();
+       for (auto p: peaks)
+       {
+           p->setBasis(_unitCellItem->getCell());
+       }
+   }
+   emit cellUpdated();
 }

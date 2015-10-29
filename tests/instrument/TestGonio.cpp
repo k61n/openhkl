@@ -10,6 +10,7 @@
 using namespace SX::Units;
 using namespace SX::Instrument;
 using Eigen::Vector3d;
+using Eigen::RowVector3d;
 using Eigen::Matrix3d;
 const double tolerance=1e-6;
 
@@ -71,6 +72,12 @@ BOOST_AUTO_TEST_CASE(Test_Gonio)
 	BOOST_CHECK_CLOSE(result[0],result1[0],tolerance);
 	BOOST_CHECK_CLOSE(result[1],result1[1],tolerance);
 	BOOST_CHECK_CLOSE(result[2],result1[2],tolerance);
+
+	// Check that this works with row vector as well,
+	Vector3d result2=g.transform(RowVector3d(1,0,0),{om,chi,phi});
+	BOOST_CHECK_CLOSE(result[0],result2[0],tolerance);
+	BOOST_CHECK_CLOSE(result[1],result2[1],tolerance);
+	BOOST_CHECK_CLOSE(result[2],result2[2],tolerance);
 
 
 }

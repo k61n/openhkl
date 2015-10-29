@@ -239,8 +239,8 @@ void UnitCell::printSelf(std::ostream& os) const
 	os << std::fixed << std::setw(10) << std::setprecision(5) << getReciprocalAlpha()/SX::Units::deg;
 	os << std::fixed << std::setw(10) << std::setprecision(5) << getReciprocalBeta()/SX::Units::deg;
 	os << std::fixed << std::setw(10) << std::setprecision(5) << getReciprocalGamma()/SX::Units::deg << std::endl;
-	os << "UB matrix:" << std::endl;
-	os << _B << std::endl;
+	os << "UB matrix (in Busing Levy convention):" << std::endl;
+	os << _B.transpose() << std::endl;
 	//
 	if (_material)
 	{
