@@ -20,8 +20,6 @@ BOOST_AUTO_TEST_CASE(Test_Path)
 
 	std::string s=(filesystem::path(path->getApplicationDataPath())/"sdddd").string();
 
-	BOOST_CHECK(1==0);
-
 //	p.clear();
 //	p=path->getResourcesPath();
 //	std::cout<<p<<std::endl;
