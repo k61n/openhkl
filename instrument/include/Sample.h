@@ -77,7 +77,7 @@ public:
 	//! Create a new crystal with Empty UnitCell, and return it
 	std::shared_ptr<SX::Crystal::UnitCell> addUnitCell();
 	//! Get the UnitCell of Crystal number i in the list
-	std::shared_ptr<SX::Crystal::UnitCell> getUnitCell(int i);
+	std::shared_ptr<SX::Crystal::UnitCell> getUnitCell(unsigned int i);
 	//! Return number of crystals
 	std::size_t getNCrystals() const;
 	//!

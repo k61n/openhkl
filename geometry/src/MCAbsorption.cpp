@@ -14,7 +14,7 @@ namespace SX
 {
 namespace Geometry
 {
-MCAbsorption::MCAbsorption(double width, double height, double pos): _width(width),_height(height), _pos(pos), _muScat(0.0), _muAbs(0.0),_sample(nullptr)
+MCAbsorption::MCAbsorption(double width, double height, double pos):_sample(nullptr), _width(width),_height(height), _pos(pos), _muScat(0.0), _muAbs(0.0)
 {
 	_random=std::bind(std::uniform_real_distribution<double>(-0.5,0.5),std::mt19937(time(0)));
 }

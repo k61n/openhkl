@@ -121,7 +121,7 @@ I16Data::I16Data(const std::string& filename, std::shared_ptr<Diffractometer> di
 	sval[2]=_metadata->getKey<double>("phi");
 
 
-	for (int i=0;i<_nFrames;++i)
+	for (unsigned int i=0;i<_nFrames;++i)
 	{
 		_detectorStates.push_back(_diffractometer->getDetector()->createState(dval));
 		_sampleStates.push_back(_diffractometer->getSample()->createState(sval));

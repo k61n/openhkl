@@ -17,7 +17,6 @@ const double tolerance=1.0e-6;
 BOOST_AUTO_TEST_CASE(Test_Element)
 {
 	ElementManager* emgr=ElementManager::Instance();
-	IsotopeManager* imgr=IsotopeManager::Instance();
 	UnitsManager* um=UnitsManager::Instance();
 
 	// Checks that setting the elements database to a wrong path throws

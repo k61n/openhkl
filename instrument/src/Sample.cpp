@@ -67,7 +67,7 @@ std::shared_ptr<SX::Crystal::UnitCell> Sample::addUnitCell()
 	return (_cells.back());
 }
 
-std::shared_ptr<SX::Crystal::UnitCell> Sample::getUnitCell(int i)
+std::shared_ptr<SX::Crystal::UnitCell> Sample::getUnitCell(unsigned int i)
 {
 	if (i>=_cells.size())
 		throw std::runtime_error("Unit Cell not valid");
