@@ -27,6 +27,7 @@ DialogMCAbsorption::DialogMCAbsorption(SX::Instrument::Experiment *experiment, Q
             ui->comboBox->addItem("Crystal"+QString::number(i+1));
         }
     }
+    ui->progressBar_MCStatus->setValue(0);
 }
 
 DialogMCAbsorption::~DialogMCAbsorption()
@@ -47,6 +48,11 @@ void DialogMCAbsorption::on_pushButton_run_pressed()
     // Get the material
     unsigned int cellIndex=static_cast<unsigned int>(ui->comboBox->currentIndex());
     SX::Chemistry::sptrMaterial material=sample->getMaterial(cellIndex);
+    if (material==nullptr)
+    {
+            QMessageBox::critical(this,"NSXTOOL","No material defined for this crystal");
+            return;
+    }
 
     SX::Geometry::MCAbsorption mca(source->getWidth(),source->getHeight(),-1.0);
     auto& hull=sample->getShape();

@@ -1372,6 +1372,7 @@ border-radius: 4px;
    <property name="styleSheet">
     <string notr="true"> QDockWidget {
      border: 1px solid blue;
+border-radius: 10 px;
  } 
 QDockWidget::title {
      text-align: left; /* align the text to the left */
@@ -1393,7 +1394,9 @@ QDockWidget::title {
 
  QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
      padding: 1px -1px -1px 1px;
- }</string>
+ }
+
+</string>
    </property>
    <property name="features">
     <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
