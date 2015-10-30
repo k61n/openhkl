@@ -65,6 +65,9 @@ MainWindow::MainWindow(QWidget *parent)
   _currentData(nullptr)
 {
     _ui->setupUi(this);
+    // Set Date to the application window title
+    QDateTime datetime=QDateTime::currentDateTime();
+    this->setWindowTitle(QString("NSXTool version:")+ datetime.toString());
 
     // Starting the logger of the main application
     Logger::Instance()->setNoteBook(_ui->noteBook);
