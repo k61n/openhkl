@@ -21,9 +21,9 @@ using SX::Crystal::GruberReduction;
 using SX::Units::deg;
 
 DialogFindUnitCell::DialogFindUnitCell(SX::Instrument::Experiment *experiment, QWidget *parent):
-    _experiment(experiment),
     QDialog(parent),
-    ui(new Ui::DialogFindUnitCell)
+     ui(new Ui::DialogFindUnitCell),
+    _experiment(experiment)
 {
     ui->setupUi(this);
     setPeaks();

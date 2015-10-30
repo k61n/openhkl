@@ -112,7 +112,7 @@ Ellipsoid<T,D>::Ellipsoid() : IShape<T,D>()
 }
 
 template<typename T,uint D>
-Ellipsoid<T,D>::Ellipsoid(const Ellipsoid<T,D>& rhs)
+Ellipsoid<T,D>::Ellipsoid(const Ellipsoid<T,D>& rhs) : IShape<T,D>()
  {
 	_eigenVal=rhs._eigenVal;
 	_TRSinv=rhs._TRSinv;

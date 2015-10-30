@@ -186,8 +186,6 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
     else
     {
         QStandardItem* item=_model->itemFromIndex(index);
-        auto p=dynamic_cast<TreeItem*>(item);
-        auto experiment=p->getExperiment();
         if (dynamic_cast<DataItem*>(item))
         {
             QMenu* menu = new QMenu(this);

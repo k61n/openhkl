@@ -90,7 +90,7 @@ std::shared_ptr<Diffractometer> IData::getDiffractometer() const
 	return _diffractometer;
 }
 
-MetaData* const IData::getMetadata() const
+MetaData*  IData::getMetadata() const
 {
 	return _metadata;
 }

@@ -160,6 +160,8 @@ IShape<T,D>* AABB<T,D>::clone() const
 template<typename T, uint D>
 void AABB<T,D>::rotate(const matrix& eigenvectors)
 {
+	_lowerBound=eigenvectors*_lowerBound;
+	_upperBound=eigenvectors*_upperBound;
 }
 
 template<typename T, uint D>

@@ -6,9 +6,9 @@
 #include "Units.h"
 
 SourcePropertyWidget::SourcePropertyWidget(SourceItem* caller,QWidget *parent) :
-    _caller(caller),
     QWidget(parent),
-    ui(new Ui::SourcePropertyWidget)
+    ui(new Ui::SourcePropertyWidget),
+    _caller(caller)
 {
     ui->setupUi(this);
     auto source=_caller->getExperiment()->getDiffractometer()->getSource();

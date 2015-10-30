@@ -10,7 +10,7 @@
 #include "Units.h"
 
 CrystalScene::CrystalScene(SX::Geometry::ConvexHull<double>* hull, QWidget *parent) :
-    QGraphicsScene(parent), pixmapitem(0),_ruler(0),_pin(0),_text(nullptr),_hull(hull)
+    QGraphicsScene(parent), pixmapitem(0),_ruler(0),_pin(0),_hull(hull),_text(nullptr)
 {
     distance=1.0;
    _distancedialog=new CalibrateDistanceDialog();

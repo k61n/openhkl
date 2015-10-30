@@ -16,7 +16,7 @@ signals:
 public:
     explicit DialogTransformationmatrix(QWidget *parent = 0);
     ~DialogTransformationmatrix();
-    Eigen::Matrix3d getTransformation();
+    void getTransformation();
 private:
     Ui::DialogTransformationmatrix *ui;
 };

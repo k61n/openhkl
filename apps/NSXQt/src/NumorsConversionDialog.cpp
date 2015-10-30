@@ -78,7 +78,7 @@ void NumorsConversionDialog::on_pushButton_convert_clicked()
             row = idx.row();
             std::string filename=fileInfo.absoluteFilePath().toStdString();
             std::string extension=fileInfo.completeSuffix().toStdString();
-            SX::Data::IData* data;
+            SX::Data::IData* data=nullptr;
             try
             {
                 data = dataFactory->create(extension,filename,diffractometer);

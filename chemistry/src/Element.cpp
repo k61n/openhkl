@@ -261,7 +261,7 @@ void Element::setNatural(bool natural)
 	_natural=natural;
 }
 
-const bool Element::isNatural() const
+bool Element::isNatural() const
 {
 	return _natural;
 }

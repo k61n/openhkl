@@ -12,8 +12,8 @@
 #include "Tree/UnitCellItem.h"
 
 SamplePropertyWidget::SamplePropertyWidget(SampleItem* caller,QWidget *parent) :
-    _sampleItem(caller),
     QWidget(parent),
+    _sampleItem(caller),
     ui(new Ui::SamplePropertyWidget)
 {
     ui->setupUi(this);

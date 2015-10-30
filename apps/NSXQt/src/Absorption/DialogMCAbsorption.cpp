@@ -13,10 +13,9 @@
 #include "Gonio.h"
 #include "Units.h"
 
-DialogMCAbsorption::DialogMCAbsorption(SX::Instrument::Experiment *experiment, QWidget *parent):
-    _experiment(experiment),
-    QDialog(parent),
-    ui(new Ui::DialogMCAbsorption)
+DialogMCAbsorption::DialogMCAbsorption(SX::Instrument::Experiment *experiment, QWidget *parent): QDialog(parent),
+     ui(new Ui::DialogMCAbsorption),
+    _experiment(experiment)
 {
     ui->setupUi(this);
     auto ncrystals=_experiment->getDiffractometer()->getSample()->getNCrystals();

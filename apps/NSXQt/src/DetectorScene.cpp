@@ -44,7 +44,7 @@ DetectorScene::DetectorScene(QObject *parent)
 {
 }
 
-void DetectorScene::changeFrame(int frame)
+void DetectorScene::changeFrame(unsigned int frame)
 {
 
     if (!_currentData)

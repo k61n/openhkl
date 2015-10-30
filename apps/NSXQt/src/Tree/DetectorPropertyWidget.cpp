@@ -8,8 +8,8 @@
 #include "TransAxis.h"
 
 DetectorPropertyWidget::DetectorPropertyWidget(DetectorItem* caller,QWidget *parent) :
-    _detectorItem(caller),
     QWidget(parent),
+    _detectorItem(caller),
     ui(new Ui::DetectorPropertyWidget)
 {
     ui->setupUi(this);

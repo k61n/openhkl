@@ -17,8 +17,7 @@
 #include <QDir>
 
 AbsorptionDialog::AbsorptionDialog(SX::Instrument::Experiment* experiment,QWidget *parent) :
-    QDialog(parent),_experiment(experiment),_cscene(new CrystalScene(&experiment->getDiffractometer()->getSample()->getShape())),
-    ui(new Ui::AbsorptionDialog)
+    QDialog(parent),ui(new Ui::AbsorptionDialog),_experiment(experiment),_cscene(new CrystalScene(&experiment->getDiffractometer()->getSample()->getShape()))
 {
     ui->setupUi(this);
 

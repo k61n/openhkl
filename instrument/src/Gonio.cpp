@@ -115,19 +115,19 @@ std::vector<std::string> Gonio::getAxesNames() const
 	return names;
 }
 
-Axis*const Gonio::getAxis(unsigned int i)
+Axis* Gonio::getAxis(unsigned int i)
 {
 	isAxisValid(i);
 	return _axes[i];
 }
 
-Axis*const Gonio::getAxisFromId(unsigned int id)
+Axis* Gonio::getAxisFromId(unsigned int id)
 {
 	unsigned int i=isAxisIdValid(id);
 	return _axes[i];
 }
 
-Axis*const Gonio::getAxis(const std::string& label)
+Axis* Gonio::getAxis(const std::string& label)
 {
 	unsigned int i=isAxisValid(label);
 	return _axes[i];

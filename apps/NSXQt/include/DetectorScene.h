@@ -72,7 +72,7 @@ public slots:
     // To be called to update detector image
     void setData(SX::Data::IData*,int frame);
     void setData(SX::Data::IData*);
-    void changeFrame(int frame=0);
+    void changeFrame(unsigned int frame=0);
     void setMaxIntensity(int);
     PeakGraphicsItem* findPeakGraphicsItem(SX::Crystal::Peak3D* peak);
     void setPeakIndex(SX::Crystal::Peak3D* peak,const Eigen::Vector3d& index);
@@ -95,7 +95,7 @@ private:
     void createToolTipText(QGraphicsSceneMouseEvent*);
 
     SX::Data::IData* _currentData;
-    int _currentFrameIndex;
+    unsigned int _currentFrameIndex;
     int _currentIntensity;
     rowMatrix _currentFrame;
     CURSORMODE _cursorMode;

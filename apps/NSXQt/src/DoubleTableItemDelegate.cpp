@@ -16,6 +16,8 @@ QString DoubleTableItemDelegate::displayText(const QVariant& value, const QLocal
 
 QWidget* DoubleTableItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+    Q_UNUSED(index);
+    Q_UNUSED(option);
     QDoubleSpinBox *editor = new QDoubleSpinBox(parent);
     editor->setMinimum(0);
     editor->setMaximum(100);

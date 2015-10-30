@@ -25,8 +25,8 @@ private slots:
     void on_pushButton_run_pressed();
 
 private:
-    SX::Instrument::Experiment* _experiment;
     Ui::DialogMCAbsorption *ui;
+    SX::Instrument::Experiment* _experiment;
 };
 
 #endif // DIALOGMCABSORPTION_H

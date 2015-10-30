@@ -185,5 +185,8 @@ win32: {
 }
 else:unix: LIBS += -lNSXTool -lboost_date_time -lboost_system -lfftw3
 
+unix:
+{
 INCLUDEPATH += $$PWD include externals/include
-
+INCLUDEPATH += /usr/local/include/NSXTool /usr/include/eigen3
+}

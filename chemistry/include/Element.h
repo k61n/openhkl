@@ -87,7 +87,7 @@ public:
 	const std::string& getSymbol() const;
 
 	//! Return true whether this Element is natural
-	const bool isNatural() const;
+	bool isNatural() const;
 	//! Set whether or not this Element is natural
 	void setNatural(bool natural);
 

@@ -95,7 +95,7 @@ public:
 	std::size_t getNRows() const;
 	std::size_t getNCols() const;
 	//! Gets a pointer to the metadata of the data
-	MetaData* const getMetadata() const;
+	MetaData*  getMetadata() const;
 	//! Return the peaks
 	std::set<Peak3D*>& getPeaks();
 

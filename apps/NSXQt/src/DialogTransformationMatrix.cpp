@@ -14,7 +14,7 @@ DialogTransformationmatrix::~DialogTransformationmatrix()
     delete ui;
 }
 
-Eigen::Matrix3d DialogTransformationmatrix::getTransformation()
+void DialogTransformationmatrix::getTransformation()
 {
     Eigen::Matrix3d P;
     P << ui->P00->value(), ui->P01->value(), ui->P02->value(),

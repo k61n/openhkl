@@ -5,9 +5,9 @@
 #include "MetaData.h"
 
 NumorPropertyWidget::NumorPropertyWidget(NumorItem* caller,QWidget *parent) :
-    _numorItem(caller),
     QWidget(parent),
-    ui(new Ui::NumorPropertyWidget)
+    ui(new Ui::NumorPropertyWidget),
+    _numorItem(caller)
 {
     ui->setupUi(this);
     ui->tableWidget->horizontalHeader()->setVisible(false);

@@ -82,7 +82,7 @@ public:
 	//! Get a reference to the dat
 	const std::map<std::string,IData*>& getData() const;
 	//! Gets the pointer to a given data stored in the experiment
-	IData* const getData(std::string name);
+	IData* getData(std::string name);
 	//! Gets the names of the data stored in the experiment
 	std::vector<std::string> getDataNames() const;
 	//! Gets the name of the experiment

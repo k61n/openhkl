@@ -20,8 +20,8 @@
 #include "Peak3D.h"
 
 UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *parent) :
-    _unitCellItem(caller),
     QWidget(parent),
+    _unitCellItem(caller),
     ui(new Ui::UnitCellPropertyWidget)
 {
     ui->setupUi(this);

@@ -96,11 +96,11 @@ public:
 	//! Has axis with this name
 	bool hasAxis(const std::string&) const;
 	//! Get a pointer to axis i, throw range_error if not found
-	Axis* const getAxis(unsigned int i);
+	Axis*  getAxis(unsigned int i);
 	//! Get a pointer to axis with id id, throw range_error if not found
-	Axis* const getAxisFromId(unsigned int id);
+	Axis* getAxisFromId(unsigned int id);
 	//! Get a pointer to axis with label, throw range_error if not found
-    Axis* const getAxis(const std::string& label);
+    Axis* getAxis(const std::string& label);
 	//! Return the homogeneous matrix corresponding to this set of parameters. Throw if angles outside limits.
 	Eigen::Transform<double,3,Eigen::Affine> getHomMatrix(const std::vector<double>& values=std::vector<double>()) const;
 	//! Return the number of axes attached to this goniometer

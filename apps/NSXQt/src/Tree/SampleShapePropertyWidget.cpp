@@ -24,8 +24,8 @@
 
 
 SampleShapePropertyWidget::SampleShapePropertyWidget(SampleShapeItem* caller,QWidget *parent) :
+     QWidget(parent),
     _caller(caller),
-    QWidget(parent),
     ui(new Ui::SampleShapePropertyWidget)
 {
     ui->setupUi(this);
