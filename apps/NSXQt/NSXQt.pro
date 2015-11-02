@@ -79,7 +79,6 @@ SOURCES += src/Main.cpp \
     src/Tree/SamplePropertyWidget.cpp \
     src/Tree/SampleShapeItem.cpp \
     src/Tree/SampleShapePropertyWidget.cpp \
-    src/Tree/ShapePropertyWidget.cpp \
     src/Tree/SourceItem.cpp \
     src/Tree/TreeItem.cpp \
     src/Tree/UnitCellItem.cpp \
@@ -144,7 +143,6 @@ HEADERS  += include/MainWindow.h \
     include/Tree/SamplePropertyWidget.h \
     include/Tree/SampleShapeItem.h \
     include/Tree/SampleShapePropertyWidget.h \
-    include/Tree/ShapePropertyWidget.h \
     include/Tree/SourceItem.h \
     include/Tree/TreeItem.h \
     include/Tree/UnitCellItem.h \
@@ -172,7 +170,6 @@ FORMS    += ui/mainwindow.ui \
     ui/Tree/NumorPropertyWidget.ui \
     ui/Tree/SamplePropertyWidget.ui \
     ui/Tree/SampleShapePropertyWidget.ui \
-    ui/Tree/ShapePropertyWidget.ui \
     ui/Tree/UnitCellPropertyWidget.ui \
     ui/DialogFindUnitCell.ui \
     ui/Tree/SourcePropertyWidget.ui \
