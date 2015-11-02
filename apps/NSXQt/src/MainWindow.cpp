@@ -54,6 +54,7 @@
 #include "GraphicsItems/PlottableGraphicsItem.h"
 #include "Plot/PlotFactory.h"
 #include "Tree/UnitCellPropertyWidget.h"
+#include "Tree/PeakListPropertyWidget.h"
 
 using namespace SX::Units;
 using namespace SX::Instrument;
@@ -443,6 +444,16 @@ void MainWindow::setInspectorWidget(QWidget* w)
     {
         connect(widget,SIGNAL(activateIndexingMode(std::shared_ptr<SX::Crystal::UnitCell>)),_ui->_dview->getScene(),SLOT(activateIndexingMode(std::shared_ptr<SX::Crystal::UnitCell>)));
         connect(widget,SIGNAL(cellUpdated()),_ui->_dview->getScene(),SLOT(updatePeaks()));
+    }
+
+    if (PeakListPropertyWidget* widget=dynamic_cast<PeakListPropertyWidget*>(w))
+    {
+        // Ensure plot1D is updated
+        connect(widget->getPeakTableView(),SIGNAL(plotPeak(SX::Crystal::Peak3D*)),this,SLOT(plotPeak(SX::Crystal::Peak3D*)));
+        connect(widget->getPeakTableView(),
+                SIGNAL(plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&)),
+                this,
+                SLOT(plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&)));
     }
 }
 

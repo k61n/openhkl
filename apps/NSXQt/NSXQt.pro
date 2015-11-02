@@ -91,7 +91,8 @@ SOURCES += src/Main.cpp \
     src/NumorsConversionDialog.cpp \
     src/Absorption/DialogMCAbsorption.cpp \
     src/GraphicsItems/PeakCalcGraphicsItem.cpp \
-    src/DoubleTableItemDelegate.cpp
+    src/DoubleTableItemDelegate.cpp \
+    src/Tree/PeakListPropertyWidget.cpp
 
 HEADERS  += include/MainWindow.h \
     include/DialogPeakFind.h \
@@ -155,7 +156,8 @@ HEADERS  += include/MainWindow.h \
     include/NumorsConversionDialog.h \
     include/Absorption/DialogMCAbsorption.h \
     include/GraphicsItems/PeakCalcGraphicsItem.h \
-    include/DoubleTableItemDelegate.h
+    include/DoubleTableItemDelegate.h \
+    include/Tree/PeakListPropertyWidget.h
 
 FORMS    += ui/mainwindow.ui \
     ui/dialog_PeakFind.ui \
@@ -175,7 +177,8 @@ FORMS    += ui/mainwindow.ui \
     ui/Tree/SourcePropertyWidget.ui \
     ui/DialogRefineUnitCell.ui \
     ui/NumorsConversionDialog.ui \
-    ui/Absorption/DialogMCAbsorption.ui
+    ui/Absorption/DialogMCAbsorption.ui \
+    ui/Tree/PeakListPropertyWidget.ui
 
 win32: {
     CONFIG(release, debug|release): LIBS += -lNSXTool

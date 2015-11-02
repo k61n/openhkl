@@ -293,11 +293,7 @@ void ExperimentTree::onDoubleClick(const QModelIndex& index)
         SX::Data::IData* data=exp->getData(item->text().toStdString());
         emit plotData(data);
     }
-    else if (auto ptr=dynamic_cast<PeakListItem*>(item))
-    {
-        std::vector<SX::Data::IData*> data=getSelectedNumors(dynamic_cast<ExperimentItem*>(ptr->parent()));
-        emit showPeakList(data);
-    }
+
 }
 
 void ExperimentTree::keyPressEvent(QKeyEvent *event)

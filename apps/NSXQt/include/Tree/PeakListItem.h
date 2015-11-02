@@ -3,14 +3,14 @@
 
 #include <string>
 
-#include "TreeItem.h"
+#include "InspectableTreeItem.h"
 #include "Experiment.h"
 
-class PeakListItem : public TreeItem
+class PeakListItem : public InspectableTreeItem
 {
 public:
     explicit PeakListItem(Experiment* experiment);
-
+    QWidget* inspectItem();
 
 };
 

@@ -1,8 +1,9 @@
 #include <QIcon>
 
 #include "Tree/PeakListItem.h"
+#include "Tree/PeakListPropertyWidget.h"
 
-PeakListItem::PeakListItem(Experiment* experiment) : TreeItem(experiment)
+PeakListItem::PeakListItem(Experiment* experiment) : InspectableTreeItem(experiment)
 {
 
 	setText("Peaks");
@@ -17,3 +18,10 @@ PeakListItem::PeakListItem(Experiment* experiment) : TreeItem(experiment)
 
     setSelectable(false);
 }
+
+QWidget* PeakListItem::inspectItem()
+{
+    return new PeakListPropertyWidget(this);
+}
+
+

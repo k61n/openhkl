@@ -55,11 +55,9 @@ public slots:
     void plotAs(const std::string& key);
 private:
     void sortByHKL(bool up);
-    void sortByRawIntensity(bool up);
-    void sortByCorrectedIntensity(bool up);
+    void sortByIntensity(bool up);
     void sortByNumor(bool up);
     void sortBySelected(bool up);
-    void sortByLorentzFactor(bool up);
     void sortByTransmission(bool up);
     bool checkBeforeWritting();
     void constructTable();
