@@ -54,7 +54,7 @@ SpaceGroup& SpaceGroup::operator=(const SpaceGroup& other)
 	return *this;
 }
 
-BravaisType SpaceGroup::getBravaisType() const
+char SpaceGroup::getBravaisType() const
 {
     std::vector<int> nrot(13,0);
 
@@ -72,25 +72,25 @@ BravaisType SpaceGroup::getBravaisType() const
 
     // Cubic
     if ((nrot[3] + nrot[9]) == 8*fact)
-       return BravaisType::Cubic;
+       return 'c';
     // Hexagonal
     else if ((nrot[0] + nrot[12]) == 2*fact)
-       return BravaisType::Hexagonal;
+       return 'h';
     // Trigonal
     else if ((nrot[3] + nrot[9]) == 2*fact)
-        return BravaisType::Trigonal;
+        return 'h';
     // Tetragonal
     else if ((nrot[2] + nrot[10]) == 2*fact)
-        return BravaisType::Tetragonal;
+        return 't';
     // Orthorhombic
     else if ((nrot[4] + nrot[8]) == 3*fact)
-        return BravaisType::Orthorhombic;
+        return 'o';
     // Monoclinic
     else if ((nrot[4] + nrot[8]) == fact)
-        return BravaisType::Monoclinic;
+        return 'm';
     // Triclinic
     else
-        return BravaisType::Triclinic;
+        return 'a';
 }
 
 bool SpaceGroup::isCentrosymmetric() const
@@ -184,7 +184,8 @@ void SpaceGroup::print(std::ostream& os) const
 {
 	os << "Symmetry elements of space group "<<_symbol<<std::endl;
 	for (unsigned int i=0;i<_groupElements.size();++i)
-		os << "Elements "<<i+1<<":\n"<<_groupElements[i]<<std::endl;
+		os <<_groupElements[i]<< " ; ";
+	os << std::endl;
 }
 
 std::ostream& operator<<(std::ostream& os, const SpaceGroup& sg)

@@ -31,6 +31,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 #include "Singleton.h"
 
@@ -45,6 +46,7 @@ class SpaceGroupSymbols: public SX::Kernel::Singleton<SpaceGroupSymbols,SX::Kern
 public:
 	void addSpaceGroup(const std::string& spaceGroup, const std::string& generators);
 	bool getGenerators(const std::string& spaceGroup,std::string& generators);
+	std::vector<std::string> getAllSymbols() const;
 private:
 	//! Store pairs of Space group symbols and generators.
 	static std::unordered_map<std::string,std::string> _spaceGroupTables;

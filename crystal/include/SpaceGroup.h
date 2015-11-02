@@ -33,10 +33,7 @@
 #include <ostream>
 #include <vector>
 #include <string>
-
 #include <Eigen/Dense>
-
-#include "UnitCell.h"
 #include "SymOp.h"
 
 namespace SX
@@ -51,29 +48,30 @@ class SpaceGroup
 {
 
 public:
-
+	//! Construct a space group from its IT symbol. Lookup in the IUCR table
 	SpaceGroup(const std::string& symbol);
-
+	//! Construct a space group from a string containing the generators given in the Jones notation and separated
+	//! by ";" characters
 	SpaceGroup(const std::string& symbol, const std::string& generators);
-
+	//! Copy
 	SpaceGroup(const SpaceGroup& other);
-
+	//! Assignment
 	SpaceGroup& operator=(const SpaceGroup& other);
-
+	//! Get the IT symbol for this space group
 	const std::string& getSymbol() const;
-
+	//! Get the string containing the generators (in the Jones notation), separated bt ";' character
 	const std::string& getGenerators() const;
-
+	//! Get a vector containing the Symmetry operations for this space group
 	const groupElementsList& getGroupElements() const;
-
+	//! Determine whether a h,k,l reflection is forbidden
 	bool isExtinct(double h, double k, double l) const;
-
+	//! Return true if centrosymmetric
 	bool isCentrosymmetric() const;
-
+	//! Print to a stream
 	void print(std::ostream& os) const;
-
-	BravaisType getBravaisType() const;
-
+	//! Return the type of cell (triclinic, monoclinic ...)
+	char getBravaisType() const;
+	//!
 private:
 
 	void generateGroupElements();

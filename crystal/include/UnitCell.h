@@ -34,7 +34,7 @@
 #include <Eigen/Dense>
 #include "Basis.h"
 #include "Material.h"
-#include "Peak3D.h"
+#include "SpaceGroup.h"
 
 namespace SX
 {
@@ -95,7 +95,9 @@ public:
  	//! Return the angle in radians between two reflections hkl1 and hkl2
  	double getAngle(const Eigen::Vector3d& hkl1,const Eigen::Vector3d& hkl2) const;
  	//! Get UB
- 	void getUB(const Peak3D& p1, const Peak3D& p2);
+ 	//! Determine whether two reflections (h1,k1,l1) and (h2,k2,l2) are equivalents.
+ 	bool isEquivalent(double h1,double k1, double l1, double h2, double k2, double l2) const;
+ 	void getUBFrom2Peaks(const Vector3d& hkl1,const Vector3d& hkl2, const Vector3d& q1, const Vector3d& q2);
  	//! Get the Busing-Levy B matrix as defined in Acta Cryst. (1967). 22, 457
  	//! The returned matrix is the transposed version of the matrix since
  	//! reciprocal bases are contravariant in NSXTool.
@@ -113,12 +115,15 @@ public:
  	Chemistry::sptrMaterial getMaterial() const;
  	//! Sets the Material for the unit cell
  	void setMaterial(Chemistry::sptrMaterial material);
-
+ 	//! Set space group from its symbol
+ 	void setSpaceGroup(const std::string& symol);
+ 	std::string getSpaceGroup() const;
 private:
 	Chemistry::sptrMaterial _material;
  	LatticeCentring _centring;
 	BravaisType _bravaisType;
 	unsigned int _Z;
+	SpaceGroup _group;
 };
 
 //! Print to a stream

@@ -296,5 +296,17 @@ bool SpaceGroupSymbols::getGenerators(const std::string& spacegroup, std::string
 	return true;
 }
 
+std::vector<std::string> SpaceGroupSymbols::getAllSymbols() const
+{
+	std::vector<std::string> symbols;
+	symbols.reserve(_spaceGroupTables.size());
+	for (const auto& value : _spaceGroupTables)
+	{
+		symbols.push_back(value.first);
+	}
+	return symbols;
+}
+
+
 } // Namespace Crystal
 } // Namespace SX

@@ -48,6 +48,8 @@ class Source;
 namespace Crystal
 {
 
+class Peak3D;
+
 class LatticeMinimizer
 {
 public:

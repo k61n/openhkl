@@ -83,6 +83,7 @@ MainWindow::MainWindow(QWidget *parent)
     _ui->selectionMode->addItem(QIcon(":/resources/horizontalSliceIcon.png"),"");
     _ui->selectionMode->addItem(QIcon(":/resources/verticalSliceIcon.png"),"");
     _ui->selectionMode->addItem(QIcon(":/resources/selectionIcon.png"),"");
+    _ui->selectionMode->addItem(QIcon(":/resources/3dSlice.png"),"");
 
     // Vertical splitter between Tree and Inspector Widget
     _ui->splitterVertical->setStretchFactor(0,50);
@@ -152,6 +153,7 @@ void MainWindow::showPeakList(std::vector<SX::Data::IData*> data)
             SIGNAL(plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&)),
             this,
             SLOT(plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&)));
+
 }
 
 void MainWindow::plotPeak(SX::Crystal::Peak3D* peak)
@@ -251,7 +253,7 @@ void MainWindow::on_action_peak_find_triggered()
             if (!dAABB.contains(*(p->getPeak())))
                 p->setSelected(false);
             if (cell)
-                p->setBasis(cell);
+                p->setUnitCell(cell);
             numor->addPeak(p);
             npeaks++;
         }

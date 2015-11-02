@@ -80,10 +80,9 @@ void AbsorptionDialog::readInfoFile(const std::string &filename)
         }
 
         std::string line;
-        // Skip two line (comment)
+        // Skip one line (comment)
         getline(file,line);
         getline(file,line);
-
         // Read line with goniometer angles
         getline(file,line);
         // Cout number of axes, validate with goniometer definition

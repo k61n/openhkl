@@ -12,13 +12,15 @@
 #include <QMouseEvent>
 #include <QStandardItemModel>
 #include <QtDebug>
+#include <QMessageBox>
 
 #include "IData.h"
 #include "Peak3D.h"
 
 PeakTableView::PeakTableView(QWidget *parent)
 : QTableView(parent),
-  _columnUp(-1,false)
+  _columnUp(-1,false),
+  _normalized(false)
 {
     // Make sure that the user can not edit the content of the table
     this->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -194,6 +196,11 @@ void PeakTableView::contextMenuEvent(QContextMenuEvent* event)
 {
     // Show all peaks as selected when contet menu is requested
     QMenu* menu=new QMenu(this);
+    //
+    QAction* sortbyEquivalence=new QAction("Sort by equivalences",menu);
+    menu->addAction(sortbyEquivalence);
+    connect(sortbyEquivalence,SIGNAL(triggered()),this,SLOT(sortEquivalents()));
+
     QAction* normalize=new QAction("Normalize to monitor",menu);
     menu->addSeparator();
     menu->addAction(normalize);
@@ -230,6 +237,7 @@ void PeakTableView::contextMenuEvent(QContextMenuEvent* event)
     connect(writeFullProf,SIGNAL(triggered()),this,SLOT(writeFullProf()));
     connect(writeShelX,SIGNAL(triggered()),this,SLOT(writeShelX()));
     menu->popup(event->globalPos());
+
 }
 
 void PeakTableView::normalizeToMonitor()
@@ -243,6 +251,7 @@ void PeakTableView::normalizeToMonitor()
         // Keep track of the last selected index before rebuilding the table
         QModelIndex index=currentIndex();
         constructTable();
+        _normalized=true;
         selectRow(index.row());
         // If no row selected do nothing else.
         if (!index.isValid() < 0)
@@ -256,6 +265,9 @@ void PeakTableView::writeFullProf()
 {
     if (!_peaks.size())
         qCritical()<<"No peaks in the table";
+
+    if (!checkBeforeWritting())
+        return;
 
     QString filename = QFileDialog::getSaveFileName(this,
                                                     tr("Save FullProf file"),
@@ -306,6 +318,9 @@ void PeakTableView::writeShelX()
         qCritical()<<"No peaks in the table";
         return;
     }
+
+    if (!checkBeforeWritting())
+        return;
 
     QString filename = QFileDialog::getSaveFileName(this,
                                                     tr("Save ShelX file"),
@@ -515,5 +530,35 @@ std::string PeakTableView::getPeaksRange() const
 
     return range;
 }
+
+void PeakTableView::sortEquivalents()
+{
+    qDebug() << "Sorting";
+    auto ptrcell=_peaks[0].get().getUnitCell();
+    std::sort(_peaks.begin(),
+              _peaks.end(),
+              [&](const SX::Crystal::Peak3D& p1, const SX::Crystal::Peak3D& p2)
+                {
+                    Eigen::Vector3d hkl1=p1.getMillerIndices();
+                    Eigen::Vector3d hkl2=p2.getMillerIndices();
+                    if (ptrcell->isEquivalent(hkl1[0],hkl1[1],hkl1[2],hkl2[0],hkl2[1],hkl2[2]))
+                        return true;
+                    else
+                        return false;
+                }
+              );
+}
+
+bool PeakTableView::checkBeforeWritting()
+{
+    if (!_normalized)
+    {
+        int reply=QMessageBox::question(this,"Writing data","No normalisation (time/monitor) has been found. Are you sure you want to export",(QMessageBox::Yes | QMessageBox::Abort));
+        if (reply==QMessageBox::Abort)
+            return false;
+    }
+    return true;
+}
+
 
 

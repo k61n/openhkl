@@ -25,8 +25,8 @@ PeakPlot::PeakPlot(QWidget *parent) : SXPlot(parent)
     graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 6));
 
     addGraph();
-    graph(1)->setPen(QPen(QColor("red")));
-    graph(1)->setBrush(QBrush(QColor(255,0,0,80)));
+    graph(1)->setPen(QPen(QColor("magenta")));
+    graph(1)->setBrush(QBrush(QColor(255,0,255,60)));
 
     addGraph();
     graph(2)->setPen(QPen(QColor("blue")));

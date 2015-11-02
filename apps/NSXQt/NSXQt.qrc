@@ -36,5 +36,6 @@
         <file>resources/IconpickCenter.png</file>
         <file>resources/IconremovingPoints.png</file>
         <file>resources/Icontriangulate.png</file>
+        <file>resources/3dSlice.png</file>
     </qresource>
 </RCC>

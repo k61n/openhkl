@@ -204,7 +204,7 @@ int SymOp::getAxisOrder() const
 
 void SymOp::print(std::ostream& os) const
 {
-	os<<getJonesSymbol()<<std::endl;
+	os<<getJonesSymbol();
 }
 
 std::ostream& operator<<(std::ostream& os, const SymOp& sym)

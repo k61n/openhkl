@@ -16,7 +16,8 @@ UnitCell::UnitCell()
   _material(),
   _centring(LatticeCentring::P),
   _bravaisType(BravaisType::Triclinic),
-  _Z(1)
+  _Z(1),
+  _group("P 1")
 {
 }
 
@@ -25,7 +26,8 @@ UnitCell::UnitCell(double a, double b, double c, double alpha, double beta, doub
 : _material(),
   _centring(centring),
   _bravaisType(bravais),
-  _Z(1)
+  _Z(1),
+  _group("P 1")
 {
 	// b-matrix as defined by Busing-Levy paper
 	// b1, b2*cos(beta3),  b3*cos(beta2)
@@ -61,7 +63,8 @@ UnitCell::UnitCell(const UnitCell& rhs)
   _material(rhs._material),
   _centring(rhs._centring),
   _bravaisType(rhs._bravaisType),
-  _Z(rhs._Z)
+  _Z(rhs._Z),
+  _group(rhs._group)
 {
 }
 
@@ -82,6 +85,7 @@ UnitCell& UnitCell::operator=(const UnitCell& rhs)
 		_centring=rhs._centring;
 		_bravaisType=rhs._bravaisType;
 		_Z=rhs._Z;
+		_group=rhs._group;
 	}
 	return *this;
 }
@@ -91,7 +95,8 @@ UnitCell::UnitCell(const Eigen::Vector3d& v1,const Eigen::Vector3d& v2,const Eig
   _material(),
   _centring(centring),
   _bravaisType(bravais),
-  _Z(1)
+  _Z(1),
+  _group("P 1")
 {
 
 }
@@ -169,19 +174,17 @@ std::string UnitCell::getBravaisTypeSymbol() const
 	return os.str();
 }
 
-void UnitCell::getUB(const Peak3D& p1, const Peak3D& p2)
+void UnitCell::getUBFrom2Peaks(const Vector3d& hkl1, const Vector3d& hkl2, const Vector3d& q1, const Vector3d& q2)
 {
 	// Get Q1 and Q2 in the diffractometer basis
-	Eigen::Vector3d q1=p1.getQ();
-	Eigen::Vector3d q2=p2.getQ();
 	Eigen::Vector3d q3=q1.cross(q2);
-	q1.normalize();
-	q3.normalize();
-	q2=q3.cross(q1);
+	Vector3d q1u=q1/q1.norm();
+	Vector3d q3u=q3/q3.norm();
+	Vector3d q2u=q3.cross(q1);
 
 	//
-	Eigen::Vector3d q1prime=this->toReciprocalStandard(p1.getMillerIndices());
-	Eigen::Vector3d q2prime=this->toReciprocalStandard(p2.getMillerIndices());
+	Eigen::Vector3d q1prime=this->toReciprocalStandard(hkl1);
+	Eigen::Vector3d q2prime=this->toReciprocalStandard(hkl2);
 	//
 	Eigen::Vector3d q3prime=q1prime.cross(q2prime);
 	q1prime.normalize();
@@ -189,9 +192,9 @@ void UnitCell::getUB(const Peak3D& p1, const Peak3D& p2)
 	q2prime=q3prime.cross(q1prime);
 	//
 	Eigen::Matrix3d m1,m2,U;
-	m1.col(0)=q1;
-	m1.col(1)=q2;
-	m1.col(2)=q3;
+	m1.col(0)=q1u;
+	m1.col(1)=q2u;
+	m1.col(2)=q3u;
 
 	m2.col(0)=q1prime;
 	m2.col(1)=q2prime;
@@ -225,6 +228,8 @@ Eigen::Matrix3d UnitCell::getBusingLevyU() const
 
 void UnitCell::printSelf(std::ostream& os) const
 {
+	os << "Space group:" << std::endl;
+	os << _group << std::endl;
 	os << "Direct Lattice:\n";
 	os << std::fixed << std::setw(10) << std::setprecision(5) << getA();
 	os << std::fixed << std::setw(10) << std::setprecision(5) << getB();
@@ -250,6 +255,7 @@ void UnitCell::printSelf(std::ostream& os) const
 		os << "Linear absorption coef: " << _material->getMuAbsorption()*SX::Units::cm << "cm-1 @ 1.798 AA \n";
 		os << "Linear incoherent coef: " << _material->getMuScattering()*SX::Units::cm << "cm-1";
 	}
+
 
 }
 
@@ -311,6 +317,21 @@ double UnitCell::getAngle(const Eigen::Vector3d& hkl1, const Eigen::Vector3d& hk
 		return acos(q1.dot(q2)/q1.norm()/q2.norm());
 }
 
+bool UnitCell::isEquivalent(double h1, double k1, double l1, double h2, double k2, double l2) const
+{
+	const auto& elements=_group.getGroupElements();
+	Eigen::Vector3d rotated;
+	for (const auto& element : elements)
+	{
+		rotated=element.getMatrix()*Eigen::Vector3d(h1,k1,l1);
+		if (std::abs(rotated[0]-h2)<1e-6 && std::abs(rotated[1]-k2)<1e-6 && std::abs(rotated[2]-l2)<1e-6)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 unsigned int UnitCell::getZ() const
 {
 	return _Z;
@@ -329,6 +350,16 @@ Chemistry::sptrMaterial UnitCell::getMaterial() const
 void UnitCell::setMaterial(Chemistry::sptrMaterial material)
 {
 	_material=material;
+}
+
+void UnitCell::setSpaceGroup(const std::string& symbol)
+{
+	_group=SpaceGroup(symbol);
+}
+
+std::string UnitCell::getSpaceGroup() const
+{
+	return _group.getSymbol();
 }
 
 } // end namespace Chemistry

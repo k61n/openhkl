@@ -41,6 +41,8 @@ public slots:
 //    void customMenuRequested(QPoint pos);
     //! Sort the current table by column inde
     void sortByColumn(int column);
+    //! Sort equivalent reflections
+    void sortEquivalents();
     //! Write the current list to FullProf
     void writeFullProf();
     //! Write the currrent list to ShelX
@@ -59,13 +61,15 @@ private:
     void sortBySelected(bool up);
     void sortByLorentzFactor(bool up);
     void sortByTransmission(bool up);
+    bool checkBeforeWritting();
     void constructTable();
     std::string getPeaksRange() const;
     std::vector<std::reference_wrapper<SX::Crystal::Peak3D>> _peaks;
     //! Which column is sorted and up or down
     std::tuple<int,bool> _columnUp;
     PeakCustomPlot* _plotter;
-
+    //! Flag indicating that data have been normalized either to time or monitor.
+    bool _normalized;
 };
 
 #endif // PEAKTABLEVIEW_H

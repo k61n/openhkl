@@ -34,7 +34,7 @@
 
 #include <Eigen/Dense>
 
-#include "Basis.h"
+#include "UnitCell.h"
 #include "IShape.h"
 
 namespace SX
@@ -123,8 +123,9 @@ public:
    	void setDetectorEvent(SX::Instrument::DetectorEvent* event);
    	//!
    	void setSource(SX::Instrument::Source* source);
-   	bool setBasis(std::shared_ptr<SX::Geometry::Basis> basis);
-	bool hasIntegerHKL(const SX::Geometry::Basis& basis);
+   	bool setUnitCell(std::shared_ptr<SX::Crystal::UnitCell> basis);
+   	std::shared_ptr<SX::Crystal::UnitCell> getUnitCell() const;
+	bool hasIntegerHKL(const SX::Crystal::UnitCell& basis);
 	friend bool operator<(const Peak3D& p1, const Peak3D& p2);
 	void setSelected(bool);
 	bool isSelected() const;
@@ -147,7 +148,7 @@ private:
 	Eigen::VectorXd _projectionPeak;
 	Eigen::VectorXd _projectionBkg;
 	//!
-	std::shared_ptr<SX::Geometry::Basis> _basis;
+	std::shared_ptr<SX::Crystal::UnitCell> _basis;
 	//! Pointer to the state of the Sample Component
 	SX::Instrument::ComponentState* _sampleState;
 	//! Pointer to a Detector Event state

@@ -9,6 +9,7 @@
 #include "Sample.h"
 #include "Source.h"
 #include "UnitCell.h"
+#include "Peak3D.h"
 
 namespace SX
 {

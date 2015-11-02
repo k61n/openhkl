@@ -86,7 +86,9 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, std::shared_ptr<Diffract
 	if (vd.size() != (_nAngles+3))
 		throw std::runtime_error("Problem parsing numor: mismatch between number of angles in header and datablock 2.");
 
+	_metadata->add<double>("time",vd[0]);
 	_metadata->add<double>("monitor",vd[1]);
+
 
 	std::vector<unsigned int> scannedAxisId;
 	scannedAxisId.reserve(_nAngles);

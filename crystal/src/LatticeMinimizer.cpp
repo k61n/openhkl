@@ -11,6 +11,7 @@
 #include "LatticeMinimizer.h"
 #include "Sample.h"
 #include "Source.h"
+#include "Peak3D.h"
 
 namespace SX
 {

@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>9</x>
-     <y>29</y>
+     <y>59</y>
      <width>366</width>
      <height>62</height>
     </rect>
@@ -170,7 +170,7 @@
    <property name="geometry">
     <rect>
      <x>9</x>
-     <y>200</y>
+     <y>230</y>
      <width>362</width>
      <height>41</height>
     </rect>
@@ -452,7 +452,7 @@ QPushButton:disabled {
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>150</y>
+     <y>180</y>
      <width>78</width>
      <height>29</height>
     </rect>
@@ -487,7 +487,7 @@ QPushButton:disabled {
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>110</y>
+     <y>140</y>
      <width>321</width>
      <height>29</height>
     </rect>
@@ -504,6 +504,29 @@ QPushButton:disabled {
      <widget class="QLineEdit" name="lineEdit_ChemicalFormula"/>
     </item>
    </layout>
+  </widget>
+  <widget class="QLabel" name="label_3">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>20</y>
+     <width>91</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Spacegroup:</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit_SpaceGroup">
+   <property name="geometry">
+    <rect>
+     <x>100</x>
+     <y>10</y>
+     <width>113</width>
+     <height>27</height>
+    </rect>
+   </property>
   </widget>
  </widget>
  <tabstops>

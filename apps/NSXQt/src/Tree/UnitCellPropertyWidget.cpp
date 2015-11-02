@@ -43,6 +43,8 @@ UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *par
         ui->lineEdit_ChemicalFormula->setText(material->getName().c_str());
 
     getLatticeParams();
+
+    ui->lineEdit_SpaceGroup->setText(QString::fromStdString(_unitCellItem->getCell()->getSpaceGroup()));
 }
 
 
@@ -113,7 +115,7 @@ void UnitCellPropertyWidget::setCell(const SX::Crystal::UnitCell& cell)
         auto& peaks=data.second->getPeaks();
         for (auto p: peaks)
         {
-            p->setBasis(_unitCellItem->getCell());
+            p->setUnitCell(_unitCellItem->getCell());
         }
     }
     emit activateIndexingMode(_unitCellItem->getCell());
@@ -182,8 +184,24 @@ void UnitCellPropertyWidget::transform(const Eigen::Matrix3d &P)
        auto& peaks=data.second->getPeaks();
        for (auto p: peaks)
        {
-           p->setBasis(_unitCellItem->getCell());
+           p->setUnitCell(_unitCellItem->getCell());
        }
    }
    emit cellUpdated();
+}
+
+
+void UnitCellPropertyWidget::on_lineEdit_SpaceGroup_editingFinished()
+{
+    auto uc=_unitCellItem->getCell();
+    try
+    {
+        uc->setSpaceGroup(ui->lineEdit_SpaceGroup->text().toStdString());
+    }
+    catch(...)
+    {
+        qCritical() << " Space group non valid, reverting to P 1";
+        uc->setSpaceGroup("P 1");
+        ui->lineEdit_SpaceGroup->setText("P 1");
+    }
 }

@@ -11,6 +11,7 @@
 #include "Peak3D.h"
 #include "Sample.h"
 #include "Source.h"
+#include "Units.h"
 
 namespace SX
 {
@@ -282,7 +283,7 @@ Eigen::VectorXd Peak3D::getBkgProjectionSigma() const
 	return _scale*(_projectionBkg.array().sqrt());
 }
 
-bool Peak3D::setBasis(std::shared_ptr<SX::Geometry::Basis> basis)
+bool Peak3D::setUnitCell(std::shared_ptr<SX::Crystal::UnitCell> basis)
 {
 	_basis=basis;
 	_hkl=_basis->fromReciprocalStandard(this->getQ());
@@ -296,7 +297,12 @@ bool Peak3D::setBasis(std::shared_ptr<SX::Geometry::Basis> basis)
 	return false;
 }
 
-bool Peak3D::hasIntegerHKL(const SX::Geometry::Basis& basis)
+std::shared_ptr<SX::Crystal::UnitCell> Peak3D::getUnitCell() const
+{
+	return _basis;
+}
+
+bool Peak3D::hasIntegerHKL(const SX::Crystal::UnitCell& basis)
 {
 	_hkl=basis.fromReciprocalStandard(this->getQ());
 	if (std::fabs(_hkl[0]-std::round(_hkl[0]))<0.2 && std::fabs(_hkl[1]-std::round(_hkl[1]))<0.2 && std::fabs(_hkl[2]-std::round(_hkl[2]))<0.2)
@@ -312,12 +318,15 @@ bool Peak3D::hasIntegerHKL(const SX::Geometry::Basis& basis)
 
 double Peak3D::getRawIntensity() const
 {
-	return _counts;
+	const auto& ss=_data->getSampleStates();
+	int n=_data->getNFrames();
+	double step=(ss[n-1].getValues()[0]-ss[0].getValues()[0])/(double)(n-1)/(0.05*SX::Units::deg);
+	return _counts*step;
 }
 
 double Peak3D::getScaledIntensity() const
 {
-	return _scale*_counts;
+	return _scale*getRawIntensity();
 }
 
 double Peak3D::getTransmission() const
@@ -327,12 +336,15 @@ double Peak3D::getTransmission() const
 
 double Peak3D::getRawSigma() const
 {
-	return _countsSigma;
+	const auto& ss=_data->getSampleStates();
+	int n=_data->getNFrames();
+	double step=(ss[n-1].getValues()[0]-ss[0].getValues()[0])/(double)(n-1)/(0.05*SX::Units::deg);
+	return _countsSigma*step;
 }
 
 double Peak3D::getScaledSigma() const
 {
-	return _scale*_countsSigma;
+	return _scale*getRawSigma();
 }
 
 double Peak3D::getLorentzFactor() const

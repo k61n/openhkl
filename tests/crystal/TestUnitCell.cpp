@@ -62,10 +62,15 @@ BOOST_AUTO_TEST_CASE(Test_Unit_Cell)
 
 	cell.setLatticeCentring(LatticeCentring::I);
 	cell.setBravaisType(BravaisType::Tetragonal);
+	// Check angle calculations
+	UnitCell cell4(10,10,10,90*deg,98*deg,90*deg);
+	BOOST_CHECK_CLOSE(cell4.getAngle(1,0,0,0,0,1),82.0*deg,tolerance);
 
-	std::cout << cell;
+	// Check equivalence
+	cell4.setSpaceGroup("P 4/m m m");
 
-	UnitCell cell4(10,10,10,90*deg,90*deg,90*deg);
-	std::cout << cell4.getAngle(1,0,0,1,0,0) << std::endl;
+	BOOST_CHECK(cell4.isEquivalent(2,0,0,0,2,0));
+	BOOST_CHECK(cell4.isEquivalent(2,3,2,3,2,-2));
+	BOOST_CHECK(!cell4.isEquivalent(2,3,2,3,2,-3));
 
 }
