@@ -263,6 +263,7 @@ void ExperimentTree::importData()
         item->setText(QString::fromStdString(basename));
         item->setCheckable(true);
         dataItem->appendRow(item);
+
     }
 
 }

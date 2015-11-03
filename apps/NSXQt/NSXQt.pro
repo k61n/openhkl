@@ -92,7 +92,8 @@ SOURCES += src/Main.cpp \
     src/Absorption/DialogMCAbsorption.cpp \
     src/GraphicsItems/PeakCalcGraphicsItem.cpp \
     src/DoubleTableItemDelegate.cpp \
-    src/Tree/PeakListPropertyWidget.cpp
+    src/Tree/PeakListPropertyWidget.cpp \
+    src/OpenGL/GLTrackball.cpp
 
 HEADERS  += include/MainWindow.h \
     include/DialogPeakFind.h \
@@ -157,7 +158,8 @@ HEADERS  += include/MainWindow.h \
     include/Absorption/DialogMCAbsorption.h \
     include/GraphicsItems/PeakCalcGraphicsItem.h \
     include/DoubleTableItemDelegate.h \
-    include/Tree/PeakListPropertyWidget.h
+    include/Tree/PeakListPropertyWidget.h \
+    include/OpenGL/GLTrackball.h
 
 FORMS    += ui/mainwindow.ui \
     ui/dialog_PeakFind.ui \

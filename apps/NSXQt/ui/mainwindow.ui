@@ -703,6 +703,26 @@ QTreeView {
              <item>
               <widget class="QSpinBox" name="spinBox_Frame"/>
              </item>
+             <item>
+              <widget class="QCheckBox" name="checkBox_AspectRatio">
+               <property name="styleSheet">
+                <string notr="true">QCheckBox::indicator {
+    width: 35px;
+    height: 35px;
+}
+QCheckBox::indicator:checked {
+    image: url(:/resources/detectorAspectRatioOnIcon.png);
+}
+QCheckBox::indicator:unchecked {
+    image: url(:/resources/detectorAspectRatioOffIcon.png);
+}
+</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
             </layout>
            </widget>
           </item>
@@ -710,7 +730,7 @@ QTreeView {
         </item>
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_5" stretch="0,0">
-          <item>
+          <item alignment="Qt::AlignLeft">
            <widget class="QFrame" name="intensityFrame">
             <layout class="QVBoxLayout" name="verticalLayout">
              <property name="leftMargin">

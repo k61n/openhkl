@@ -470,3 +470,8 @@ void MainWindow::on_actionShow_calculated_peak_positions_triggered(bool checked)
     _ui->_dview->getScene()->showPeakCalcs(checked);
     _ui->_dview->getScene()->update();
 }
+
+void MainWindow::on_checkBox_AspectRatio_toggled(bool checked)
+{
+    _ui->_dview->fixDetectorAspectRatio(checked);
+}

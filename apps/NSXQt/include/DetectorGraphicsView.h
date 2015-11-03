@@ -15,6 +15,7 @@ public:
 signals:
 public slots:
     void fitScene();
+    void fixDetectorAspectRatio(bool);
 private:
     void copyViewToClipboard();
     DetectorScene* _scene;
