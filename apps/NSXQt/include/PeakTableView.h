@@ -31,11 +31,12 @@ public:
     void setData(std::vector<SX::Data::IData*>);
     void contextMenuEvent(QContextMenuEvent *);
     void mousePressEvent(QMouseEvent *event);
+    void keyPressEvent(QKeyEvent *event);
 signals:
     void plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&);
     void plotPeak(SX::Crystal::Peak3D*);
 public slots:
-    //! Slection of peak is changed
+    //! Selection of peak is changed
     void peakChanged(QModelIndex current,QModelIndex last);
     //! Display context menu
 //    void customMenuRequested(QPoint pos);
@@ -53,6 +54,8 @@ public slots:
     void deselectPeak(QModelIndex index);
     //! Plot as function of parameter. Needs to be a numeric type
     void plotAs(const std::string& key);
+    //! Search peaks with hkl matching part of the string. Text must represent h,k,l values separated by white spaces
+    void showPeaksMatchingText(QString text);
 private:
     void sortByHKL(bool up);
     void sortByIntensity(bool up);
@@ -68,6 +71,7 @@ private:
     PeakCustomPlot* _plotter;
     //! Flag indicating that data have been normalized either to time or monitor.
     bool _normalized;
+
 };
 
 #endif // PEAKTABLEVIEW_H

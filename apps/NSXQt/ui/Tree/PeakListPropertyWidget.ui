@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>754</width>
-    <height>453</height>
+    <width>995</width>
+    <height>728</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,7 +26,8 @@
        </property>
        <property name="styleSheet">
         <string notr="true">QTableView::item:selected {
-background-color: #EEEEFF;
+background-color: qlineargradient(x1 : 0, y1 : 0, x2 : 0, y2 :   1, stop :   0.0 #f5f9ff,
+                stop :   0.5 #ddddff, stop :   0.55 #eeeeff, stop :   1.0 #f5f9ff);
 color: #000000;
 }</string>
        </property>

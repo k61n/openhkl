@@ -3,6 +3,7 @@
 #include "include/PeakTableView.h"
 #include "include/Tree/PeakListItem.h"
 #include "IData.h"
+#include <QtDebug>
 PeakListPropertyWidget::PeakListPropertyWidget(PeakListItem* caller, QWidget *parent) :
      QWidget(parent),
      _caller(caller),
@@ -13,6 +14,9 @@ PeakListPropertyWidget::PeakListPropertyWidget(PeakListItem* caller, QWidget *pa
     std::vector<SX::Data::IData*> datav;
     std::for_each(datamap.begin(),datamap.end(),[&](std::pair<std::string,SX::Data::IData*> value){datav.push_back(value.second);});
     ui->tableView->setData(datav);
+
+    //Connect search box
+    connect(ui->lineEdit,SIGNAL(textChanged(QString)),ui->tableView,SLOT(showPeaksMatchingText(QString)));
 }
 
 PeakListPropertyWidget::~PeakListPropertyWidget()
@@ -24,3 +28,4 @@ PeakTableView* PeakListPropertyWidget::getPeakTableView() const
 {
     return ui->tableView;
 }
+

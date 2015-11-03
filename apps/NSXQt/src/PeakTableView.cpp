@@ -46,7 +46,8 @@ PeakTableView::PeakTableView(QWidget *parent)
                                                  });
 
     connect(this,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(deselectPeak(QModelIndex)));
-
+    // Hide the vertical Header
+    this->verticalHeader()->hide();
 }
 
 void PeakTableView::setData(std::vector<SX::Data::IData*> data)
@@ -149,7 +150,7 @@ void PeakTableView::constructTable()
             col5= new QStandardItem(QIcon(":/resources/peakSelectedIcon.png"),"");
         else
             col5= new QStandardItem(QIcon(":/resources/peakDeselectedIcon.png"),"");
-        model->setVerticalHeaderItem(i,new QStandardItem(QIcon(":/resources/singlePeakIcon.png"),QString::number(i)));
+
         model->setItem(i,0,col0);
         model->setItem(i,1,col1);
         model->setItem(i,2,col2);
@@ -171,6 +172,42 @@ void PeakTableView::mousePressEvent(QMouseEvent *event)
         return;
 
     QTableView::mousePressEvent(event);
+}
+
+void PeakTableView::keyPressEvent(QKeyEvent *event)
+{
+    QModelIndexList selected=selectedIndexes();
+    QModelIndex last=selected.last();
+    unsigned int index=last.row();
+    if (event->key() ==Qt::Key_Up)
+    {
+       --index;
+    }
+    else if (event->key() ==Qt::Key_Down)
+    {
+        ++index;
+    }
+    else if (event->key()==Qt::Key_Space)
+    {
+        auto& peak=_peaks[index].get();
+        bool newstatus=!peak.isSelected();
+        peak.setSelected(newstatus);
+        QStandardItemModel* model=dynamic_cast<QStandardItemModel*>(this->model());
+        if (newstatus)
+            model->setItem(index,5,new QStandardItem(QIcon(":/resources/peakSelectedIcon.png"),""));
+        else
+            model->setItem(index,5,new QStandardItem(QIcon(":/resources/peakDeselectedIcon.png"),""));
+    }
+
+    if (index<0 || index>_peaks.size()-1)
+        return;
+    if (!isRowHidden(index))
+    {
+        clearSelection();
+        selectRow(index);
+        SX::Crystal::Peak3D& peak=_peaks[index].get();
+        emit plotPeak(&peak);
+    }
 }
 
 void PeakTableView::contextMenuEvent(QContextMenuEvent* event)
@@ -507,6 +544,48 @@ bool PeakTableView::checkBeforeWritting()
             return false;
     }
     return true;
+}
+
+void PeakTableView::showPeaksMatchingText(QString text)
+{
+    QStringList list=text.split(" ");
+    int nterms=list.size();
+
+    if (nterms<3) // Don't search if h,k,l not complete
+    {
+        unsigned int row=0;
+        for (row=0;row<_peaks.size();row++)
+        {
+            setRowHidden(row,false);
+        }
+        return;
+    }
+
+    bool okh=false,okk=false,okl=false;
+    double h=list[0].toDouble(&okh);
+    double k=list[1].toDouble(&okk);
+    double l=list[2].toDouble(&okl);
+
+    if (!(okh && okk && okl)) // If problem parsing h k l into double
+    {
+        unsigned int row=0;
+        for (row=0;row<_peaks.size();row++)
+        {
+            setRowHidden(row,false);
+        }
+        return;
+    }
+
+    unsigned int row=0;
+    for (row=0;row<_peaks.size();row++)
+    {
+        auto& p=_peaks[row].get();
+        Eigen::Vector3d hkl=p.getMillerIndices();
+        if (std::fabs(hkl[0]-h)>1e-2 || std::fabs(hkl[1]-k)>1e-2 || std::fabs(hkl[2]-l)>1e-2)
+        {
+            setRowHidden(row,true);
+        }
+    }
 }
 
 

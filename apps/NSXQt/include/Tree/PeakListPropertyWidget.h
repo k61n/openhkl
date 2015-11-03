@@ -18,6 +18,9 @@ public:
     explicit PeakListPropertyWidget(PeakListItem* caller, QWidget *parent = 0);
     ~PeakListPropertyWidget();
     PeakTableView* getPeakTableView() const;
+private slots:
+
+
 private:
     PeakListItem* _caller;
     Ui::PeakListPropertyWidget *ui;
