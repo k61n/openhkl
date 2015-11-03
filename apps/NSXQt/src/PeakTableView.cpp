@@ -177,9 +177,13 @@ void PeakTableView::mousePressEvent(QMouseEvent *event)
 void PeakTableView::keyPressEvent(QKeyEvent *event)
 {
     QModelIndexList selected=selectedIndexes();
+    if (selected.isEmpty())
+        return;
+
+    // take last element
     QModelIndex last=selected.last();
     unsigned int index=last.row();
-    if (event->key() ==Qt::Key_Up)
+    if (event->key() ==Qt::Key_Up) // Deal with up and down arrow
     {
        --index;
     }
@@ -187,7 +191,7 @@ void PeakTableView::keyPressEvent(QKeyEvent *event)
     {
         ++index;
     }
-    else if (event->key()==Qt::Key_Space)
+    else if (event->key()==Qt::Key_Space) // Change status of peak from unselected to selected by using spacebar
     {
         auto& peak=_peaks[index].get();
         bool newstatus=!peak.isSelected();
@@ -197,9 +201,10 @@ void PeakTableView::keyPressEvent(QKeyEvent *event)
             model->setItem(index,5,new QStandardItem(QIcon(":/resources/peakSelectedIcon.png"),""));
         else
             model->setItem(index,5,new QStandardItem(QIcon(":/resources/peakDeselectedIcon.png"),""));
+        emit plotPeak(&peak);
     }
 
-    if (index<0 || index>_peaks.size()-1)
+    if (index>_peaks.size()-1)
         return;
     if (!isRowHidden(index))
     {
