@@ -35,6 +35,8 @@
 #include "Tree/SampleItem.h"
 #include "Tree/SourceItem.h"
 #include "Absorption/DialogMCAbsorption.h"
+#include "OpenGL/GLWidget.h"
+#include "OpenGL/GLSphere.h"
 
 ExperimentTree::ExperimentTree(QWidget *parent) : QTreeView(parent)
 {
@@ -196,10 +198,12 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
         else if (dynamic_cast<PeakListItem*>(item))
         {
             QMenu* menu = new QMenu(this);
-            QAction* abs=menu->addAction("Correct for Absorption");
+            QAction* abs=menu->addAction("Correct for Absorption"); // Absorption menu
+             QAction* scene3d=menu->addAction("Show 3D view"); // Peak in 3D OpenGL window
             menu->popup(viewport()->mapToGlobal(point));
             // Call the slot
             connect(abs,SIGNAL(triggered()),this,SLOT(absorptionCorrection()));
+            connect(scene3d,SIGNAL(triggered()),this,SLOT(showPeaksOpenGL()));
         }
     }
 
@@ -344,4 +348,24 @@ void ExperimentTree::onSingleClick(const QModelIndex &index)
             QWidget* widget=new QWidget();
             emit inspectWidget(widget);
         }
+}
+
+void ExperimentTree::showPeaksOpenGL()
+{
+    GLWidget* glw=new GLWidget();
+    auto& scene=glw->getScene();
+    auto datav=getSelectedNumors();
+    for (auto idata : datav)
+    {
+       auto peaks=idata->getPeaks();
+       for (auto peak: peaks)
+       {
+           GLSphere* sphere=new GLSphere("");
+           Eigen::Vector3d pos=peak->getQ();
+           sphere->setPos(pos[0]*100,pos[1]*100,pos[2]*100);
+           sphere->setColor(0,1,0);
+           scene.addActor(sphere);
+       }
+    }
+    glw->show();
 }

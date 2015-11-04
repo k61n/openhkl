@@ -46,6 +46,7 @@ public slots:
     void createNewExperiment();
     void onSingleClick(const QModelIndex& index);
     void absorptionCorrection();
+    void showPeaksOpenGL();
 
 private:
 

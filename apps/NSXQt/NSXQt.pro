@@ -93,7 +93,11 @@ SOURCES += src/Main.cpp \
     src/GraphicsItems/PeakCalcGraphicsItem.cpp \
     src/DoubleTableItemDelegate.cpp \
     src/Tree/PeakListPropertyWidget.cpp \
-    src/OpenGL/GLTrackball.cpp
+    src/OpenGL/GLTrackball.cpp \
+    src/OpenGL/GLWidget.cpp \
+    src/OpenGL/GLScene.cpp \
+    src/OpenGL/GLActor.cpp \
+    src/OpenGL/GLSphere.cpp
 
 HEADERS  += include/MainWindow.h \
     include/DialogPeakFind.h \
@@ -159,7 +163,11 @@ HEADERS  += include/MainWindow.h \
     include/GraphicsItems/PeakCalcGraphicsItem.h \
     include/DoubleTableItemDelegate.h \
     include/Tree/PeakListPropertyWidget.h \
-    include/OpenGL/GLTrackball.h
+    include/OpenGL/GLTrackball.h \
+    include/OpenGL/GLWidget.h \
+    include/OpenGL/GLScene.h \
+    include/OpenGL/GLActor.h \
+    include/OpenGL/GLSphere.h
 
 FORMS    += ui/mainwindow.ui \
     ui/dialog_PeakFind.ui \
