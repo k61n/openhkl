@@ -14,11 +14,11 @@
 #include <QContextMenuEvent>
 
 #include "Detector.h"
-#include "Diffractometer.h"
 #include "DiffractometerStore.h"
 #include "Gonio.h"
 #include "LatticeConstraintParser.h"
 #include "LatticeMinimizer.h"
+#include "LatticeSolution.h"
 #include "Peak3D.h"
 #include "Sample.h"
 #include "Source.h"
@@ -26,7 +26,9 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow),_peaks()
+    ui(new Ui::MainWindow),_peaks(),
+    _minimizer(),
+    _diffractometer(nullptr)
 {
     ui->setupUi(this);
 
@@ -44,9 +46,9 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->comboBox_diffractometer->addItem(QString::fromStdString(diffractometer));
 
     ui->tableWidget_peaks->verticalHeader()->setContextMenuPolicy(Qt::ActionsContextMenu);
-    QAction* unselect=new QAction("Unselect",ui->tableWidget_peaks->verticalHeader());
-    ui->tableWidget_peaks->verticalHeader()->addAction(unselect);
-    connect(unselect,SIGNAL(triggered()),this,SLOT(test()));
+    QAction* select=new QAction("Select/Unselect",ui->tableWidget_peaks->verticalHeader());
+    ui->tableWidget_peaks->verticalHeader()->addAction(select);
+    connect(select,SIGNAL(triggered()),this,SLOT(selectPeaks()));
 }
 
 MainWindow::~MainWindow()
@@ -54,21 +56,21 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::test()
+void MainWindow::selectPeaks()
 {
     auto list=ui->tableWidget_peaks->selectionModel()->selectedRows();
 
     QColor c1("white");
-    QColor c2("red");
+    QColor c2(255,100,100);
     for (const auto& l: list)
     {
         bool selected=_peaks[l.row()].second;
         _peaks[l.row()].second=!selected;
 
-        ui->tableWidget_peaks->item(l.row(),0)->setBackgroundColor(selected ? c2 : c1);
+        for (int i=0;i<ui->tableWidget_peaks->columnCount();++i)
+            ui->tableWidget_peaks->item(l.row(),i)->setBackgroundColor(selected ? c2 : c1);
     }
     ui->tableWidget_peaks->clearSelection();
-
 }
 
 void MainWindow::on_actionOpen_reflections_triggered()
@@ -78,19 +80,14 @@ void MainWindow::on_actionOpen_reflections_triggered()
 
     QString filename=QFileDialog::getOpenFileName(this);
 
-    SX::Instrument::DiffractometerStore* ds = SX::Instrument::DiffractometerStore::Instance();
-    std::string diffractometerName=ui->comboBox_diffractometer->currentText().toStdString();
-
-    std::shared_ptr<SX::Instrument::Diffractometer> diffractometer=std::shared_ptr<SX::Instrument::Diffractometer>(ds->buildDiffractomer(diffractometerName));
-
     std::vector<std::string> dnames;
-    auto detector=diffractometer->getDetector();
+    auto detector=_diffractometer->getDetector();
     auto dgonio = detector->getGonio();
     if (dgonio)
         dnames=dgonio->getPhysicalAxesNames();
 
     std::vector<std::string> snames;
-    auto sample=diffractometer->getSample();
+    auto sample=_diffractometer->getSample();
     auto sgonio = sample->getGonio();
     if (sgonio)
         snames=sgonio->getPhysicalAxesNames();
@@ -103,7 +100,7 @@ void MainWindow::on_actionOpen_reflections_triggered()
     ui->tableWidget_peaks->setColumnCount(nBaseCols+nAngles);
 
     QStringList header;
-    header.push_back(QString("h"));
+    header.push_back("h");
     header.push_back("k");
     header.push_back("l");
 
@@ -174,9 +171,9 @@ void MainWindow::on_actionOpen_reflections_triggered()
             // Create a peak
             SX::Crystal::Peak3D peak;
             peak.setMillerIndices(h,k,l);
-            peak.setDetectorEvent(new SX::Instrument::DetectorEvent(diffractometer->getDetector()->createDetectorEvent(px,py,dangles)));
-            peak.setSampleState(new SX::Instrument::ComponentState(diffractometer->getSample()->createState(sangles)));
-            peak.setSource(diffractometer->getSource());
+            peak.setDetectorEvent(new SX::Instrument::DetectorEvent(_diffractometer->getDetector()->createDetectorEvent(px,py,dangles)));
+            peak.setSampleState(new SX::Instrument::ComponentState(_diffractometer->getSample()->createState(sangles)));
+            peak.setSource(_diffractometer->getSource());
 
             _peaks.push_back(std::pair<SX::Crystal::Peak3D,bool>(peak,true));
 
@@ -187,61 +184,29 @@ void MainWindow::on_actionOpen_reflections_triggered()
 
 void MainWindow::on_pushButton_refine_clicked()
 {
-    SX::Instrument::DiffractometerStore* ds = SX::Instrument::DiffractometerStore::Instance();
-    std::string diffractometerName=ui->comboBox_diffractometer->currentText().toStdString();
-
-    std::shared_ptr<SX::Instrument::Diffractometer> diffractometer=std::shared_ptr<SX::Instrument::Diffractometer>(ds->buildDiffractomer(diffractometerName));
-
-    SX::Crystal::LatticeMinimizer minimizer;
-    minimizer.setDetector(diffractometer->getDetector());
-    minimizer.setSample(diffractometer->getSample());
-    minimizer.setSource(diffractometer->getSource());
-
-    // Fetch the starting or fixed value for a,b,c,alpha,beta,gamma and lambda
 
     double val;
 
     val=ui->doubleSpinBox_a->value();
-    if (ui->checkBox_a->isChecked())
-        minimizer.setStartingValue(0,val);
-    else
-        minimizer.setLatticeFixedValue(0,val);
+    _minimizer.setStartingValue(0,val,!ui->checkBox_a->isChecked());
 
     val=ui->doubleSpinBox_b->value();
-    if (ui->checkBox_b->isChecked())
-        minimizer.setStartingValue(1,val);
-    else
-        minimizer.setLatticeFixedValue(1,val);
+    _minimizer.setStartingValue(1,val,!ui->checkBox_b->isChecked());
 
     val=ui->doubleSpinBox_c->value();
-    if (ui->checkBox_c->isChecked())
-        minimizer.setStartingValue(2,val);
-    else
-        minimizer.setLatticeFixedValue(2,val);
+    _minimizer.setStartingValue(2,val,!ui->checkBox_c->isChecked());
 
     val=ui->doubleSpinBox_alpha->value();
-    if (ui->checkBox_alpha->isChecked())
-        minimizer.setStartingValue(3,val);
-    else
-        minimizer.setLatticeFixedValue(3,val);
+    _minimizer.setStartingValue(3,val*SX::Units::deg,!ui->checkBox_alpha->isChecked());
 
     val=ui->doubleSpinBox_beta->value();
-    if (ui->checkBox_beta->isChecked())
-        minimizer.setStartingValue(4,val);
-    else
-        minimizer.setLatticeFixedValue(4,val);
+    _minimizer.setStartingValue(4,val*SX::Units::deg,!ui->checkBox_beta->isChecked());
 
     val=ui->doubleSpinBox_gamma->value();
-    if (ui->checkBox_gamma->isChecked())
-        minimizer.setStartingValue(5,val);
-    else
-        minimizer.setLatticeFixedValue(5,val);
+    _minimizer.setStartingValue(5,val*SX::Units::deg,!ui->checkBox_gamma->isChecked());
 
     val=ui->doubleSpinBox_wavelength->value();
-    if (ui->checkBox_wavelength->isChecked())
-        minimizer.setStartingValue(9,val);
-    else
-        minimizer.setLatticeFixedValue(9,val);
+    _minimizer.setStartingValue(9,val,!ui->checkBox_wavelength->isChecked());
 
     // Parse the constraints string
 
@@ -252,7 +217,33 @@ void MainWindow::on_pushButton_refine_clicked()
     if (qi::phrase_parse(s.begin(),s.end(),constraintsParser,qi::blank,constraints))
     {
         for (auto c : constraints)
-            minimizer.setLatticeConstraint(std::get<0>(c),std::get<1>(c));
+        {
+            unsigned int lhs=std::get<0>(c);
+            unsigned int rhs=std::get<1>(c);
+            double factor=std::get<2>(c);
+            _minimizer.setConstraint(lhs,rhs,factor);
+        }
     }
 
+    for (const auto& p : _peaks)
+        if (p.second)
+            _minimizer.addPeak(p.first);
+
+    _minimizer.run(1000);
+
+    SX::Crystal::LatticeSolution sol=_minimizer.getSolution();
+    std::stringstream out;
+    out<<sol;
+    ui->textEdit_results->setText(QString::fromStdString(out.str()));
+}
+
+void MainWindow::on_comboBox_diffractometer_currentIndexChanged(const QString& diffractometerName)
+{
+    SX::Instrument::DiffractometerStore* ds = SX::Instrument::DiffractometerStore::Instance();
+
+    _diffractometer=std::shared_ptr<SX::Instrument::Diffractometer>(ds->buildDiffractomer(diffractometerName.toStdString()));
+
+    _minimizer.setDetector(_diffractometer->getDetector());
+    _minimizer.setSample(_diffractometer->getSample());
+    _minimizer.setSource(_diffractometer->getSource());
 }

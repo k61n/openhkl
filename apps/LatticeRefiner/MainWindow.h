@@ -7,6 +7,7 @@
 #include <QMainWindow>
 
 #include "Diffractometer.h"
+#include "LatticeMinimizer.h"
 #include "Peak3D.h"
 
 namespace Ui {
@@ -24,11 +25,15 @@ private slots:
     void on_actionOpen_reflections_triggered();
 
     void on_pushButton_refine_clicked();
-    void test();
+    void selectPeaks();
+    void on_comboBox_diffractometer_currentIndexChanged(const QString& diffractometerName);
+
 private:
     Ui::MainWindow *ui;
     //! List of peaks and whether they are use in the refinement or not (true/false)
     std::vector<std::pair<SX::Crystal::Peak3D,bool>> _peaks;
+    SX::Crystal::LatticeMinimizer _minimizer;
+    std::shared_ptr<SX::Instrument::Diffractometer> _diffractometer;
 };
 
 #endif // MAINWINDOW_H
