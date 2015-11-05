@@ -92,7 +92,7 @@ public:
 	//! Return true if the axis offset can't be modidied
 	bool hasOffsetFixed() const;
 	//! Set the current offset
-	void setOffset(double offset);
+	void setOffset(double offset,bool override=false);
 	//! Add an offset to the existing one
 	void addOffset(double offset);
 	//! Return the value of the offset

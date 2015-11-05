@@ -157,9 +157,9 @@ bool Axis::hasOffsetFixed() const
 {
 	return _offsetFixed;
 }
-void Axis::setOffset(double offset)
+void Axis::setOffset(double offset,bool override)
 {
-	if (!_offsetFixed)
+	if (!_offsetFixed || override)
 		_offset=offset;
 }
 void Axis::addOffset(double offset)
