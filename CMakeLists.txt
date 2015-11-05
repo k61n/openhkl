@@ -12,7 +12,7 @@ project(NSXTOOL_PROJECT)
 # Options
 ###########################################################################
 
-option(BUILD_QTAPP "Build Qt based application." OFF)
+option(BUILD_QTAPPS "Build Qt based application." OFF)
 
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release")
@@ -143,7 +143,7 @@ find_library(FFTW3_LIBRARIES NAMES fftw3 libfftw3)
 # Link
 target_link_libraries(NSXTool blosc_shared ${Boost_LIBRARIES} ${PYTHON_LIBRARIES} ${FFTW3_LIBRARIES} ${HDF5_LIBRARIES} ${TIFF_LIBRARY})
 
-if (BUILD_QTAPP)
+if (BUILD_QTAPPS)
 	add_subdirectory(apps)
 endif()
 
