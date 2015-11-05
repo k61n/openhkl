@@ -26,17 +26,20 @@ Detector* Detector::create(const proptree::ptree& node)
 }
 
 Detector::Detector()
-: Component("detector")
+: Component("detector"),
+  _dataorder(DataOrder::BottomLeftColMajor)
 {
 }
 
 Detector::Detector(const Detector& other)
-: Component(other)
+: Component(other),
+  _dataorder(DataOrder::BottomLeftColMajor)
 {
 }
 
 Detector::Detector(const std::string& name)
-: Component(name)
+: Component(name),
+  _dataorder(DataOrder::BottomLeftColMajor)
 {
 }
 
