@@ -18,7 +18,7 @@ BOOST_AUTO_TEST_CASE(Test_Path)
 
 	Path* path=Path::Instance();
 
-	std::string s=(filesystem::path(path->getApplicationDataPath())/"sdddd").string();
+    std::cout << "hello" << path->getApplicationDataPath() << std::endl;
 
 //	p.clear();
 //	p=path->getResourcesPath();

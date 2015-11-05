@@ -54,12 +54,18 @@ std::string Path::expandUser(std::string path)
 
 std::string Path::getApplicationDataPath()
 {
-#ifdef __linux || __macosx
+#ifdef __linux
 	boost::filesystem::path p("/usr/local/share");
 	p /= "nsxtool";
 	return p.string();
 #endif
+#ifdef __APPLE__
+    boost::filesystem::path p("/usr/local/share");
+    p /= "nsxtool";
+    return p.string();
+#endif
 }
+    
 
 std::string Path::getDiffractometersPath()
 {
