@@ -39,7 +39,7 @@
         </position>	    
         <row_min>0</row_min>
         <col_min>0</col_min>
-        <data_ordering>by_column</data_ordering>
+        <data_ordering>TopLeftColMajor</data_ordering>
     </detector>
     <sample>
         <name>sample</name>
