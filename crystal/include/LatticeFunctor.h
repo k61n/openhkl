@@ -35,6 +35,7 @@
 #include <vector>
 
 #include "LMFunctor.h"
+#include "LatticeConstraintParser.h"
 
 namespace SX
 {
@@ -85,9 +86,8 @@ struct LatticeFunctor : public Utils::LMFunctor<double>
 	Instrument::Detector* _detector;
 	Instrument::Sample* _sample;
 	Instrument::Source* _source;
-	std::map<unsigned int, unsigned int> _constrainedCellParams;
-	std::map<unsigned int,double> _fixedCellParams;
-	std::set<unsigned int> _fixedInstrParams;
+	SX::Utils::constraints_set _constraints;
+	std::map<unsigned int,double> _constants;
 };
 
 } // end namespace Crystal

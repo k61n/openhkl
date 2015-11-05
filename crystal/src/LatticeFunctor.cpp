@@ -23,9 +23,8 @@ LatticeFunctor::LatticeFunctor()
   _detector(nullptr),
   _sample(nullptr),
   _source(nullptr),
-  _constrainedCellParams(),
-  _fixedCellParams(),
-  _fixedInstrParams()
+  _constraints(),
+  _constants()
 {
 }
 
@@ -35,10 +34,8 @@ LatticeFunctor::LatticeFunctor(const LatticeFunctor& other) : Utils::LMFunctor<d
 	_detector = other._detector;
 	_sample = other._sample;
 	_source = other._source;
-	_constrainedCellParams = other._constrainedCellParams;
-	_fixedCellParams = other._fixedCellParams;
-	_fixedInstrParams = other._fixedInstrParams;
-
+	_constraints = other._constraints;
+	_constants = other._constants;
 }
 
 LatticeFunctor& LatticeFunctor::operator=(const LatticeFunctor& other)
@@ -50,9 +47,8 @@ LatticeFunctor& LatticeFunctor::operator=(const LatticeFunctor& other)
 		_detector = other._detector;
 		_sample = other._sample;
 		_source = other._source;
-		_constrainedCellParams = other._constrainedCellParams;
-		_fixedCellParams = other._fixedCellParams;
-		_fixedInstrParams = other._fixedInstrParams;
+		_constraints = other._constraints;
+		_constants = other._constants;
 	}
 	return *this;
 }
@@ -66,16 +62,20 @@ int LatticeFunctor::operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) 
 	if (!_detector || !_sample || !_source)
 		throw SX::Kernel::Error<LatticeFunctor>("A detector, sample and source must be specified prior to calculate residuals.");
 
-	// The parameters 0,1,2,3,4,5 are the six cell parameters
-	Eigen::VectorXd xlocal(x.segment(0,6));
+	Eigen::VectorXd xlocal(x);
 
 	// Set the fixed cell parameters
-	for (const auto& p : _fixedCellParams)
+	for (const auto& p : _constants)
 		xlocal[p.first] = p.second;
 
 	// Set the cell constraints
-	for (const auto& p : _constrainedCellParams)
-		xlocal[p.first] = x[p.second];
+	for (const auto& p : _constraints)
+	{
+		int lhs=std::get<0>(p);
+		int rhs=std::get<1>(p);
+		double factor=std::get<2>(p);
+		xlocal[lhs] = factor*xlocal[rhs];
+	}
 
 	UnitCell uc(xlocal[0],xlocal[1],xlocal[2],xlocal[3],xlocal[4],xlocal[5]);
 
@@ -85,10 +85,10 @@ int LatticeFunctor::operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) 
 	// 6 = phi angle of spherical coordinates
 	// 7 = theta angle of spherical coordinates
 	// 8 = omega angle of quaternion
-	double sThetacPhi=sin(x[6])*cos(x[7]);
-	double sThetasPhi=sin(x[6])*sin(x[7]);
-	double cPhi = cos(x[6]);
-	double omegaOver2 = x[8]/2.0;
+	double sThetacPhi=sin(xlocal[6])*cos(xlocal[7]);
+	double sThetasPhi=sin(xlocal[6])*sin(xlocal[7]);
+	double cPhi = cos(xlocal[6]);
+	double omegaOver2 = xlocal[8]/2.0;
 	double cOmegaOver2 = cos(omegaOver2);
 	double sOmegaOver2 = sin(omegaOver2);
 	Eigen::Quaterniond quat(cOmegaOver2,sOmegaOver2*sThetacPhi,sOmegaOver2*sThetasPhi,sOmegaOver2*cPhi);
@@ -101,14 +101,14 @@ int LatticeFunctor::operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) 
 	int naxes=9;
 
 	// Parameter 9 is offset in wavelength
-	_source->setOffset(x[naxes++]);
+	_source->setOffset(xlocal[naxes++]);
 
 	// Then n parameters for the detector
 	auto sgonio=_sample->getGonio();
 	if (sgonio)
 	{
 		for (unsigned int i=0;i<sgonio->getNAxes();++i)
-			sgonio->getAxis(i)->setOffset(x[naxes++]);
+			sgonio->getAxis(i)->setOffset(xlocal[naxes++],true);
 	}
 
 	// finally, n parameters for the sample
@@ -116,7 +116,7 @@ int LatticeFunctor::operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) 
 	if (dgonio)
 	{
 		for (unsigned int i=0;i<dgonio->getNAxes();++i)
-			dgonio->getAxis(i)->setOffset(x[naxes++]);
+			dgonio->getAxis(i)->setOffset(xlocal[naxes++],true);
 	}
 
 	for (unsigned int i=0; i<_peaks.size();++i)
