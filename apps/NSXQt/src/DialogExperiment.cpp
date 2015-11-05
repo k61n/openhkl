@@ -15,6 +15,7 @@ DialogExperiment::DialogExperiment(QWidget *parent) : QDialog(parent), ui(new Ui
 
     // Add the available instruments to the combo box
     DiffractometerStore* ds = DiffractometerStore::Instance();
+
     auto diffractometers=ds->getDiffractometersList();
     for (const auto& d : diffractometers)
         ui->instrument->addItem(QString::fromStdString(d));
