@@ -4,11 +4,10 @@ stages:
 test:
   stage: test
   script:
-    - cmake -DENABLE_CPACK=OFF  -DBUILD_NSXQT=OFF
+    - cmake -DENABLE_CPACK=OFF  -DBUILD_QTAPPS=OFF
     - make -j2 -l2
     - ctest -j2 -l2
   only:
     - master
   tags:
     - ubuntu14.04
-
