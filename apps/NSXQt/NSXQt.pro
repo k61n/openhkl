@@ -200,3 +200,11 @@ unix:
 INCLUDEPATH += $$PWD include externals/include
 INCLUDEPATH += /usr/local/include/NSXTool /usr/include/eigen3
 }
+
+macx:
+{
+INCLUDEPATH += $$PWD include externals/include
+INCLUDEPATH += /usr/local/include/NSXTool /usr/local/include/eigen3 /usr/local/Cellar/boost/1.59.0/include
+INCLUDEPATH += /opt/X11/include/
+LIBS += -L /usr/local/lib -lNSXTool -lboost_date_time -lboost_system -lfftw3
+}

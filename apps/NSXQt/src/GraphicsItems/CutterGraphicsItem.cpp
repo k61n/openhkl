@@ -4,6 +4,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneHoverEvent>
 #include <QtDebug>
+#include <cmath>
 
 #include "GraphicsItems/CutterGraphicsItem.h"
 
@@ -50,8 +51,8 @@ SX::Data::IData* CutterGraphicsItem::getData()
 
 QRectF CutterGraphicsItem::boundingRect() const
 {
-    qreal w=std::abs(_to.x()-_from.x());
-    qreal h=std::abs(_to.y()-_from.y());
+    qreal w=std::fabs(_to.x()-_from.x());
+    qreal h=std::fabs(_to.y()-_from.y());
     return QRectF(-w/2,-h/2,w,h);
 }
 

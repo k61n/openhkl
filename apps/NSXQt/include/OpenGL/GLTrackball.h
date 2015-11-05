@@ -1,7 +1,7 @@
 #ifndef GLTRACKBALL_H_
 #define GLTRACKBALL_H_
-#include <eigen3/Eigen/Geometry>
-#include <eigen3/Eigen/Dense>
+#include <Eigen/Geometry>
+#include <Eigen/Dense>
 
 class GLTrackball
 {

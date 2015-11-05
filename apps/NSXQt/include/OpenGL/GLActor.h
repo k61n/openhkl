@@ -1,7 +1,7 @@
 #ifndef GLACTOR_H
 #define GLACTOR_H
 #include <GL/gl.h>
-#include <eigen3/Eigen/Dense>
+#include <Eigen/Dense>
 #include <QGLWidget>
 
 class GLActor

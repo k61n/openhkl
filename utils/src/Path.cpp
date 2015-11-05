@@ -54,7 +54,7 @@ std::string Path::expandUser(std::string path)
 
 std::string Path::getApplicationDataPath()
 {
-#ifdef __linux
+#ifdef __linux || __macosx
 	boost::filesystem::path p("/usr/local/share");
 	p /= "nsxtool";
 	return p.string();
