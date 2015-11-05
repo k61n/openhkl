@@ -125,6 +125,13 @@ LatticeSolution::LatticeSolution(Instrument::Detector* detector,Instrument::Samp
 
 std::ostream& operator<<(std::ostream& os, const LatticeSolution& solution)
 {
+
+	if (!(solution._source && solution._sample && solution._detector))
+	{
+		os <<"No valid solution found."<<std::endl;
+		return os;
+	}
+
 	os<<"Lattice parameters:"<<std::endl;
 	os<<solution._latticeParams.transpose()<< std::endl;
 
