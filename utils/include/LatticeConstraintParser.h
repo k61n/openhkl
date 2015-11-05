@@ -50,7 +50,7 @@ namespace SX
 namespace Utils
 {
 
-typedef std::tuple<int,int,double> constraint_tuple;
+typedef std::tuple<unsigned int,unsigned int,double> constraint_tuple;
 typedef std::set<constraint_tuple> constraints_set;
 
 struct SingleConstraint
@@ -99,8 +99,8 @@ struct LatticeConstraintParser : qi::grammar<It,constraints_set()>
     }
 
 	qi::rule<It,constraints_set()> constraints;
-	qi::rule<It,constraint_tuple(),qi::locals<double,double,int,int>> single_constraint;
-	qi::rule<It,int()> param;
+	qi::rule<It,constraint_tuple(),qi::locals<double,double,unsigned int,unsigned int>> single_constraint;
+	qi::rule<It,unsigned int()> param;
 	qi::rule<It,double()> prefactor;
 };
 
