@@ -118,44 +118,44 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
     std::cout<<uc.getBusingLevyB()<<std::endl;
     std::cout<<uc.getBusingLevyU()<<std::endl;
 
-    LatticeMinimizer lmin;
-    lmin.setDetector(D9);
-    lmin.setSample(sample);
-    lmin.setSource(source);
-    lmin.refineInstrParameter(9,false); // Source
-    lmin.refineInstrParameter(11,false); // Detector y
-    lmin.refineInstrParameter(14,false); // Detector phi
-
-    for (auto& peak : _peaks)
-		lmin.addPeak(peak);
-
-    SX::Crystal::UnitCell ucStart=SX::Crystal::UnitCell::fromReciprocalVectors(M.row(0),M.row(1),M.row(2));
-
-    lmin.setStartingLattice(ucStart.getA(),ucStart.getB(),ucStart.getC(),ucStart.getAlpha(),ucStart.getBeta(),ucStart.getGamma());
-
-    Eigen::Quaterniond q(ucStart.getBusingLevyU().transpose());
-
-    lmin.setStartingValue(6,0.0);
-    lmin.setStartingValue(7,0.0);
-    lmin.setStartingValue(8,2*std::acos(q.w()));
-
-    lmin.run(1000);
-
-    LatticeSolution lsol=lmin.getSolution();
-
-    SX::Crystal::UnitCell luc(lsol._latticeParams[0],lsol._latticeParams[1],lsol._latticeParams[2],lsol._latticeParams[3],lsol._latticeParams[4],lsol._latticeParams[5]);
-
-    q.w() = cos(lsol._latticeParams[8]/2.0);
-    q.x() = sin(lsol._latticeParams[8]/2.0)*sin(lsol._latticeParams[6])*cos(lsol._latticeParams[7]);
-    q.y() = sin(lsol._latticeParams[8]/2.0)*sin(lsol._latticeParams[6])*sin(lsol._latticeParams[7]);
-    q.z() = sin(lsol._latticeParams[8]/2.0)*cos(lsol._latticeParams[6]);
-
-
-    std::cout<<luc.getA()<<std::endl;
-    std::cout<<luc.getB()<<std::endl;
-    std::cout<<luc.getC()<<std::endl;
-    std::cout<<luc.getAlpha()<<std::endl;
-    std::cout<<luc.getBeta()<<std::endl;
-    std::cout<<luc.getGamma()<<std::endl;
+//    LatticeMinimizer lmin;
+//    lmin.setDetector(D9);
+//    lmin.setSample(sample);
+//    lmin.setSource(source);
+//    lmin.refineInstrParameter(9,false); // Source
+//    lmin.refineInstrParameter(11,false); // Detector y
+//    lmin.refineInstrParameter(14,false); // Detector phi
+//
+//    for (auto& peak : _peaks)
+//		lmin.addPeak(peak);
+//
+//    SX::Crystal::UnitCell ucStart=SX::Crystal::UnitCell::fromReciprocalVectors(M.row(0),M.row(1),M.row(2));
+//
+//    lmin.setStartingLattice(ucStart.getA(),ucStart.getB(),ucStart.getC(),ucStart.getAlpha(),ucStart.getBeta(),ucStart.getGamma());
+//
+//    Eigen::Quaterniond q(ucStart.getBusingLevyU().transpose());
+//
+//    lmin.setStartingValue(6,0.0);
+//    lmin.setStartingValue(7,0.0);
+//    lmin.setStartingValue(8,2*std::acos(q.w()));
+//
+//    lmin.run(1000);
+//
+//    LatticeSolution lsol=lmin.getSolution();
+//
+//    SX::Crystal::UnitCell luc(lsol._latticeParams[0],lsol._latticeParams[1],lsol._latticeParams[2],lsol._latticeParams[3],lsol._latticeParams[4],lsol._latticeParams[5]);
+//
+//    q.w() = cos(lsol._latticeParams[8]/2.0);
+//    q.x() = sin(lsol._latticeParams[8]/2.0)*sin(lsol._latticeParams[6])*cos(lsol._latticeParams[7]);
+//    q.y() = sin(lsol._latticeParams[8]/2.0)*sin(lsol._latticeParams[6])*sin(lsol._latticeParams[7]);
+//    q.z() = sin(lsol._latticeParams[8]/2.0)*cos(lsol._latticeParams[6]);
+//
+//
+//    std::cout<<luc.getA()<<std::endl;
+//    std::cout<<luc.getB()<<std::endl;
+//    std::cout<<luc.getC()<<std::endl;
+//    std::cout<<luc.getAlpha()<<std::endl;
+//    std::cout<<luc.getBeta()<<std::endl;
+//    std::cout<<luc.getGamma()<<std::endl;
 
 }
