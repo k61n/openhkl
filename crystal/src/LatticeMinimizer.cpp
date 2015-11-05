@@ -4,6 +4,7 @@
 #include <unsupported/Eigen/NonLinearOptimization>
 #include <unsupported/Eigen/NumericalDiff>
 
+#include "Axis.h"
 #include "Detector.h"
 #include "EigenMatrixOp.h"
 #include "Error.h"
@@ -48,78 +49,81 @@ void LatticeMinimizer::setSource(Instrument::Source* source)
 	_functor._source=source;
 }
 
-void LatticeMinimizer::setLatticeConstraint(unsigned int idx, unsigned int target)
+void LatticeMinimizer::setConstraint(unsigned int idx, unsigned int target, double factor)
 {
-	if (idx>=6 || target>=6)
-		return;
-	_functor._constrainedCellParams[idx]=target;
+//	if (idx>=6 || target>=6)
+//		return;
+	_functor._constraints.insert(std::make_tuple(idx,target,factor));
 }
 
-void LatticeMinimizer::setLatticeFixedValue(unsigned int idx, double value)
+void LatticeMinimizer::setConstant(unsigned int idx, double value)
 {
-	if (idx>=6)
-		return;
-	_functor._fixedCellParams[idx] = value;
+//	if (idx>=6)
+//		return;
+	_functor._constants[idx] = value;
 }
 
-void LatticeMinimizer::resetInstrParameters()
+void LatticeMinimizer::resetOffsets()
 {
 	_functor._source->setOffset(0.0);
 	auto dgonio=_functor._detector->getGonio();
 	if (dgonio)
 	{
 		for (unsigned int i=0;i<dgonio->getNAxes();++i)
-			dgonio->getAxis(i)->setOffset(0.0);
+			dgonio->getAxis(i)->setOffset(0.0,true);
 	}
 	auto sgonio=_functor._sample->getGonio();
 	if (sgonio)
 	{
 		for (unsigned int i=0;i<sgonio->getNAxes();++i)
-			sgonio->getAxis(i)->setOffset(0.0);
+			sgonio->getAxis(i)->setOffset(0.0,true);
 	}
 }
 
-void LatticeMinimizer::refineInstrParameter(unsigned int idx, bool refine)
-{
-	if (!_functor._detector || !_functor._sample || !_functor._source)
-		throw Kernel::Error<LatticeMinimizer>("A detector, sample and source must be specified prior to fixing parameters.");
+//void LatticeMinimizer::refineInstrParameter(unsigned int idx, bool refine)
+//{
+//	if (!_functor._detector || !_functor._sample || !_functor._source)
+//		throw Kernel::Error<LatticeMinimizer>("A detector, sample and source must be specified prior to fixing parameters.");
+//
+//	if (idx>=static_cast<unsigned int>(_functor.inputs()))
+//		return;
+//
+//	bool fixed=!refine;
+//
+//	if (fixed)
+//		_functor._fixedInstrParams.insert(idx);
+//	else
+//	{
+//		auto it=_functor._fixedInstrParams.find(idx);
+//		if (it!=_functor._fixedInstrParams.end())
+//			_functor._fixedInstrParams.erase(it);
+//	}
+//
+//	unsigned int ii=idx-9;
+//	if (ii==0)
+//	{
+//		_functor._source->setOffsetFixed(fixed);
+//		return;
+//	}
+//
+//	ii--;
+//
+//	if (ii<_functor._sample->getNAxes())
+//		_functor._sample->getGonio()->getAxis(ii)->setOffsetFixed(fixed);
+//
+//	ii-=_functor._sample->getNAxes();
+//	if (ii<_functor._detector->getNAxes())
+//		_functor._detector->getGonio()->getAxis(ii)->setOffsetFixed(fixed);
+//}
 
-	if (idx>=static_cast<unsigned int>(_functor.inputs()))
-		return;
-
-	bool fixed=!refine;
-
-	if (fixed)
-		_functor._fixedInstrParams.insert(idx);
-	else
-	{
-		auto it=_functor._fixedInstrParams.find(idx);
-		if (it!=_functor._fixedInstrParams.end())
-			_functor._fixedInstrParams.erase(it);
-	}
-
-	unsigned int ii=idx-9;
-	if (ii==0)
-	{
-		_functor._source->setOffsetFixed(fixed);
-		return;
-	}
-
-	ii--;
-
-	if (ii<_functor._sample->getNAxes())
-		_functor._sample->getGonio()->getAxis(ii)->setOffsetFixed(fixed);
-
-	ii-=_functor._sample->getNAxes();
-	if (ii<_functor._detector->getNAxes())
-		_functor._detector->getGonio()->getAxis(ii)->setOffsetFixed(fixed);
-}
-
-void LatticeMinimizer::setStartingValue(unsigned int idx, double value)
+void LatticeMinimizer::setStartingValue(unsigned int idx, double value, bool constant)
 {
 	if (idx >=static_cast<unsigned int>(_functor.inputs()))
 		return;
 	_start[idx] = value;
+
+	if (constant)
+		setConstant(idx,value);
 }
 
 void LatticeMinimizer::unsetStartingValue(unsigned int idx)
@@ -129,14 +133,14 @@ void LatticeMinimizer::unsetStartingValue(unsigned int idx)
 		_start.erase (it);
 }
 
-void LatticeMinimizer::setStartingLattice(double a, double b, double c, double alpha, double beta, double gamma)
+void LatticeMinimizer::setStartingLattice(double a, double b, double c, double alpha, double beta, double gamma, bool constant)
 {
-	setStartingValue(0,a);
-	setStartingValue(1,b);
-	setStartingValue(2,c);
-	setStartingValue(3,alpha);
-	setStartingValue(4,beta);
-	setStartingValue(5,gamma);
+	setStartingValue(0,a, constant);
+	setStartingValue(1,b, constant);
+	setStartingValue(2,c, constant);
+	setStartingValue(3,alpha, constant);
+	setStartingValue(4,beta, constant);
+	setStartingValue(5,gamma, constant);
 }
 
 const LatticeSolution& LatticeMinimizer::getSolution() const
@@ -166,14 +170,11 @@ int LatticeMinimizer::run(unsigned int maxIter)
 
 		std::vector<bool> fParams(x.size(),false);
 
-		for (const auto& p: _functor._fixedCellParams)
+		for (const auto& p: _functor._constants)
 			fParams[p.first] = true;
 
-		for (const auto& p: _functor._constrainedCellParams)
-			fParams[p.first] = true;
-
-		for (auto it : _functor._fixedInstrParams)
-			fParams[it] = true;
+		for (const auto& p: _functor._constraints)
+			fParams[std::get<0>(p)] = true;
 
 		// Create a vector to calculate final residuals
 		Eigen::VectorXd fvec(_functor.values());

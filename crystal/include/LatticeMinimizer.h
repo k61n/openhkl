@@ -68,17 +68,17 @@ public:
 	 * @brief Define whether or not a given instrument offset will be fixed during the minization
 	 * @param idx the index of the offset (starting from 9)
 	 */
-	void refineInstrParameter(unsigned int idx, bool refine);
+//	void refineInstrParameter(unsigned int idx, bool refine);
 	/*
 	 * @brief Reset the parameters
 	 */
-	void resetInstrParameters();
+	void resetOffsets();
 
-	//! Set lattice constraint
-	void setLatticeConstraint(unsigned int idx, unsigned int target);
+	//! Set constraint
+	void setConstraint(unsigned int idx, unsigned int target, double factor=1.0);
 
 	//! Set fixed value for a given lattice parameter
-	void setLatticeFixedValue(unsigned int idx, double value);
+	void setConstant(unsigned int idx, double value);
 
 	/*
 	 * @brief Set the detector related to the peaks collected for the minimization
@@ -96,14 +96,14 @@ public:
 	 */
 	void setSource(Instrument::Source* source);
 
-	void setStartingLattice(double a, double b, double c, double alpha, double beta, double gamma);
+	void setStartingLattice(double a, double b, double c, double alpha, double beta, double gamma, bool constant=false);
 
 	/*
 	 * @brief Set the starting value for a given parameter
 	 * @param idx the index of the parameter
 	 * @param value the value of the parameter to be fixed
 	 */
-	void setStartingValue(unsigned int idx, double value);
+	void setStartingValue(unsigned int idx, double value, bool constant=false);
 	/*
 	 * @brief Unset the starting value for a given parameter
 	 * @param idx the index of the parameter
@@ -115,7 +115,7 @@ public:
 	 */
 	int run(unsigned int maxIter);
 	/*
-	 * @brief Returns the solution of the last minization
+	 * @brief Returns the solution of the last minimization
 	 * @return the solution
 	 */
 	const LatticeSolution& getSolution() const;
