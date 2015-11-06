@@ -3,6 +3,7 @@
 #include <iostream>
 #include <QtOpenGL>
 #include "OpenGL/GLSphere.h"
+#include <GL/gl.h>
 
 GLWidget::GLWidget(QWidget *parent) :
     QGLWidget(parent),ball(0,0),_picking(false),_zoom(1.0)

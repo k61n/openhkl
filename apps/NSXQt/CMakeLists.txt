@@ -13,6 +13,9 @@ find_package(Qt5OpenGL REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Gui REQUIRED)
 
+#Find OpenGL 
+find_package(OpenGL REQUIRED)
+
 # Find recursively all the header files of NSXQt
 file(GLOB_RECURSE nsxqt_headers ${CMAKE_SOURCE_DIR}/apps/NSXQt/include/*.h)                   
 # Find recursively all the cpp source files of NSXQt
@@ -91,7 +94,7 @@ set(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib)
 add_executable(nsxqt ${GUI_TYPE} ${nsxqt_sources} ${nsxqt_headers} ${ui_headers} ${resources})        
 
 # Link the nsxqt executable with the Qt5 libraries in use.
-target_link_libraries(nsxqt Qt5::Core Qt5::PrintSupport Qt5::Gui Qt5::Widgets Qt5::OpenGL NSXTool)        
+target_link_libraries(nsxqt Qt5::Core Qt5::PrintSupport Qt5::Gui Qt5::Widgets Qt5::OpenGL ${OPENGL_LIBRARIES} NSXTool)        
 
 # Install section, installing libraries 
 install(TARGETS nsxqt DESTINATION bin)
