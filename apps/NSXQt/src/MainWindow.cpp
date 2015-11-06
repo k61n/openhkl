@@ -84,7 +84,7 @@ MainWindow::MainWindow(QWidget *parent)
     _ui->selectionMode->addItem(QIcon(":/resources/horizontalSliceIcon.png"),"");
     _ui->selectionMode->addItem(QIcon(":/resources/verticalSliceIcon.png"),"");
     _ui->selectionMode->addItem(QIcon(":/resources/selectionIcon.png"),"");
-    _ui->selectionMode->addItem(QIcon(":/resources/3dSlice.png"),"");
+    _ui->selectionMode->addItem(QIcon(":/resources/slice3D.png"),"");
 
     // Vertical splitter between Tree and Inspector Widget
     _ui->splitterVertical->setStretchFactor(0,50);
