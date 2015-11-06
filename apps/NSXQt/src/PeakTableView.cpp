@@ -590,6 +590,8 @@ void PeakTableView::showPeaksMatchingText(QString text)
         {
             setRowHidden(row,true);
         }
+        else
+            setRowHidden(row,false);
     }
 }
 
