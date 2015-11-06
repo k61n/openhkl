@@ -9,6 +9,7 @@ endif(WIN32)
 # Find a few Qt submodules
 find_package(Qt5Core REQUIRED)
 find_package(Qt5PrintSupport REQUIRED)
+find_package(Qt5OpenGL REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Gui REQUIRED)
 
@@ -23,6 +24,7 @@ if (${CMAKE_VERSION} VERSION_LESS 2.8.11)
 	# There might be some redundancies.
 	include_directories(${Qt5Core_INCLUDE_DIRS})    
 	include_directories(${Qt5PrintSupport_INCLUDE_DIRS})    
+	include_directories(${Qt5OpenGL_INCLUDE_DIRS})    
 	include_directories(${Qt5Widgets_INCLUDE_DIRS})    
 	include_directories(${Qt5Gui_INCLUDE_DIRS})    
 	
@@ -30,6 +32,7 @@ if (${CMAKE_VERSION} VERSION_LESS 2.8.11)
 	# There might be some redundancies. 
 	add_definitions(${Qt5Core_DEFINITIONS})
 	add_definitions(${Qt5PrintSupport_DEFINITIONS})
+	add_definitions(${Qt5OpenGL_DEFINITIONS})
 	add_definitions(${Qt5Widgets_DEFINITIONS})
 	add_definitions(${Qt5Gui_DEFINITIONS})
 	
@@ -37,6 +40,7 @@ if (${CMAKE_VERSION} VERSION_LESS 2.8.11)
 	# There might be some redundancies. 
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Core_EXECUTABLE_COMPILE_FLAGS}")        
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5PrintSupport_EXECUTABLE_COMPILE_FLAGS}")        
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5OpenGL_EXECUTABLE_COMPILE_FLAGS}")        
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")        
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Gui_EXECUTABLE_COMPILE_FLAGS}")        
     
@@ -56,6 +60,8 @@ else ()
     set(CMAKE_AUTOMOC ON)
     # Handle automatically ui files
     set(CMAKE_AUTOUIC ON)
+    # Specify that the app will use OpenGL
+    set(QT_USE_QTOPENGL TRUE)
     # Handle automatically resources files
     set(CMAKE_AUTORCC ON)
         
@@ -85,7 +91,7 @@ set(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib)
 add_executable(nsxqt ${GUI_TYPE} ${nsxqt_sources} ${nsxqt_headers} ${ui_headers} ${resources})        
 
 # Link the nsxqt executable with the Qt5 libraries in use.
-target_link_libraries(nsxqt Qt5::Core Qt5::PrintSupport Qt5::Gui Qt5::Widgets NSXTool)        
+target_link_libraries(nsxqt Qt5::Core Qt5::PrintSupport Qt5::Gui Qt5::Widgets Qt5::OpenGL NSXTool)        
 
 # Install section, installing libraries 
 install(TARGETS nsxqt DESTINATION bin)
