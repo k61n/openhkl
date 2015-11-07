@@ -147,6 +147,10 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     //Copy the data
     double min=std::floor(_peak->getBackground()->getLower()[2]);
     double max=std::ceil(_peak->getBackground()->getUpper()[2]);
+    if (min<0)
+    	min=0;
+    if (max>_peak->getData()->getNFrames()-1)
+    	max=_peak->getData()->getNFrames()-1;
     for (int i=0;i<total.size();++i)
     {
         qx[i]= min + static_cast<double>(i)*(max-min)/(total.size()-1);
