@@ -65,7 +65,7 @@ void DialogFindUnitCell::setPeaks()
               _peaks.end(),
               [&](SX::Crystal::Peak3D* p1, SX::Crystal::Peak3D* p2)
                 {
-                    return (p1->getIOverSigmaI()>=p2->getIOverSigmaI());
+                    return (p1->getIOverSigmaI()>p2->getIOverSigmaI());
                 }
             );
     // Populate menus

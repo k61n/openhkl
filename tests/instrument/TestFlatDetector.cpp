@@ -62,7 +62,7 @@ BOOST_AUTO_TEST_CASE(Test_Flat_Detector)
 	BOOST_CHECK_CLOSE(Q[1],-0.5,tolerance);
 	BOOST_CHECK_SMALL(Q[2],0.001);
 
-	// Check that detector receive an scattering vector at the right position
+	// Check that detector receive a scattering vector at the right position
 	double px, py;
 	Eigen::Vector3d from(0,0,0);
 	d.receiveKf(px,py,Vector3d(0,1,0),from,{0.0*deg});
@@ -72,5 +72,12 @@ BOOST_AUTO_TEST_CASE(Test_Flat_Detector)
 	d.receiveKf(px,py,Vector3d(1,0,0),from,{90.0*deg});
 	BOOST_CHECK_CLOSE(px,15.5,tolerance);
 	BOOST_CHECK_CLOSE(py,15.5,tolerance);
+
+	// From is shifted up by length of 1 pixel along y and z
+	d.receiveKf(px,py,Vector3d(1,0,0),Vector3d(0,80/31.0*mm,80/31.0*mm),{90.0*deg});
+	BOOST_CHECK_CLOSE(px,14.5,tolerance);
+	BOOST_CHECK_CLOSE(py,16.5,tolerance);
+
+
 }
 

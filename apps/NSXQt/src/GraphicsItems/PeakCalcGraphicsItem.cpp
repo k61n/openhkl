@@ -34,7 +34,7 @@ void PeakCalcGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsIt
 
     painter->setRenderHint(QPainter::Antialiasing);
     painter->setPen(_pen);
-    painter->drawEllipse(-2,2,4,4);
+    painter->drawEllipse(-2,-2,4,4);
     _label->setPos(2,0);
 }
 

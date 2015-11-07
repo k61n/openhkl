@@ -170,7 +170,7 @@ Eigen::Vector3d Detector::getQ(double px, double py,double wave,const std::vecto
 	if (wave<=0)
 		throw std::runtime_error("Detector:getQ incident wavelength error, must be >0");
 	Eigen::Vector3d q=getKf(px,py,wave,values,from);
-	q-=Eigen::Vector3d(0.0,1/wave,0.0);
+	q[1]-=1.0/wave; // ki along y
 	return q;
 }
 
