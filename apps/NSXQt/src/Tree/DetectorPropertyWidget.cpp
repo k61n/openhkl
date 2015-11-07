@@ -6,6 +6,8 @@
 #include "Gonio.h"
 #include "RotAxis.h"
 #include "TransAxis.h"
+#include <QtDebug>
+#include "Units.h"
 
 DetectorPropertyWidget::DetectorPropertyWidget(DetectorItem* caller,QWidget *parent) :
     QWidget(parent),
@@ -22,7 +24,7 @@ DetectorPropertyWidget::DetectorPropertyWidget(DetectorItem* caller,QWidget *par
     ui->lineEdit_WPixels->setText(QString::number(detector->getNCols()));
     ui->lineEdit_HPixels->setText(QString::number(detector->getNRows()));
 
-    ui->tableWidget_Detector->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->tableWidget_Detector->setEditTriggers(QAbstractItemView::DoubleClicked);
     ui->tableWidget_Detector->setRowCount(gonio->getNAxes());
 
     ui->tableWidget_Detector->setColumnCount(3);
@@ -40,6 +42,8 @@ DetectorPropertyWidget::DetectorPropertyWidget(DetectorItem* caller,QWidget *par
         QTableWidgetItem* item1=new QTableWidgetItem();
 
         std::ostringstream os;
+
+        bool isRot=false;
         if (RotAxis* rot=dynamic_cast<RotAxis*>(axis))
         {
             os << "R(";
@@ -49,6 +53,7 @@ DetectorPropertyWidget::DetectorPropertyWidget(DetectorItem* caller,QWidget *par
                 os << "CW";
             else
                 os << "CCW";
+            isRot=true;
         }
         else if(dynamic_cast<TransAxis*>(axis))
         {
@@ -57,15 +62,37 @@ DetectorPropertyWidget::DetectorPropertyWidget(DetectorItem* caller,QWidget *par
             os << ")";
         }
         item1->setData(Qt::EditRole, QString(os.str().c_str()));
+
         QTableWidgetItem* item2=new QTableWidgetItem();
-        item2->setData(Qt::EditRole, double(axis->getOffset()));
+        if (isRot)
+            item2->setData(Qt::EditRole, double(axis->getOffset()/SX::Units::deg));
+        else
+            item2->setData(Qt::EditRole, double(axis->getOffset()/SX::Units::mm));
+
+
+        // First two columns non-editable
+        item0->setFlags(item0->flags() & ~Qt::ItemIsEditable);
+        item1->setFlags(item1->flags() & ~Qt::ItemIsEditable);
+
         ui->tableWidget_Detector->setItem(i,0,item0);
         ui->tableWidget_Detector->setItem(i,1,item1);
         ui->tableWidget_Detector->setItem(i,2,item2);
     }
+
+    connect(ui->tableWidget_Detector,SIGNAL(cellChanged(int,int)),this,SLOT(cellHasChanged(int,int)));
 }
 
 DetectorPropertyWidget::~DetectorPropertyWidget()
 {
     delete ui;
+}
+
+void DetectorPropertyWidget::cellHasChanged(int i,int j)
+{
+    auto detector=_detectorItem->getExperiment()->getDiffractometer()->getDetector();
+    auto axis=detector->getGonio()->getAxis(i);
+    if (dynamic_cast<TransAxis*>(axis))
+        axis->setOffset(ui->tableWidget_Detector->item(i,j)->data(Qt::EditRole).toDouble()*SX::Units::mm);
+    else
+        axis->setOffset(ui->tableWidget_Detector->item(i,j)->data(Qt::EditRole).toDouble()*SX::Units::deg);
 }

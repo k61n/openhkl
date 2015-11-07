@@ -16,7 +16,8 @@ class DetectorPropertyWidget : public QWidget
 public:
     explicit DetectorPropertyWidget(DetectorItem* caller,QWidget *parent = 0);
     ~DetectorPropertyWidget();
-
+private slots:
+    void cellHasChanged(int,int);
 private:
     DetectorItem* _detectorItem;
     Ui::DetectorPropertyWidget *ui;

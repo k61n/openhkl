@@ -10,6 +10,7 @@
 #include "Tree/SampleItem.h"
 #include "Tree/SamplePropertyWidget.h"
 #include "Tree/UnitCellItem.h"
+#include "Units.h"
 
 SamplePropertyWidget::SamplePropertyWidget(SampleItem* caller,QWidget *parent) :
     QWidget(parent),
@@ -22,7 +23,7 @@ SamplePropertyWidget::SamplePropertyWidget(SampleItem* caller,QWidget *parent) :
 
     ui->nsampleLabel->setText(QString::number(sample->getNCrystals()));
 
-    ui->tableWidget_Sample->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->tableWidget_Sample->setEditTriggers(QAbstractItemView::DoubleClicked);
     ui->tableWidget_Sample->setRowCount(gonio->getNAxes());
 
     ui->tableWidget_Sample->setColumnCount(3);
@@ -40,6 +41,9 @@ SamplePropertyWidget::SamplePropertyWidget(SampleItem* caller,QWidget *parent) :
         QTableWidgetItem* item1=new QTableWidgetItem();
 
         std::ostringstream os;
+
+        bool isrot=false;
+
         if (RotAxis* rot=dynamic_cast<RotAxis*>(axis))
         {
             os << "R(";
@@ -49,6 +53,7 @@ SamplePropertyWidget::SamplePropertyWidget(SampleItem* caller,QWidget *parent) :
                 os << "CW";
             else
                 os << "CCW";
+            isrot=true;
         }
         else if(dynamic_cast<TransAxis*>(axis))
         {
@@ -58,11 +63,20 @@ SamplePropertyWidget::SamplePropertyWidget(SampleItem* caller,QWidget *parent) :
         }
         item1->setData(Qt::EditRole, QString(os.str().c_str()));
         QTableWidgetItem* item2=new QTableWidgetItem();
-        item2->setData(Qt::EditRole, double(axis->getOffset()));
+
+        if (isrot)
+            item2->setData(Qt::EditRole, double(axis->getOffset()/SX::Units::deg));
+        else
+            item2->setData(Qt::EditRole, double(axis->getOffset()/SX::Units::mm));
+
+        item0->setFlags(item0->flags() &~Qt::ItemIsEditable);
+        item1->setFlags(item1->flags() &~Qt::ItemIsEditable);
         ui->tableWidget_Sample->setItem(i,0,item0);
         ui->tableWidget_Sample->setItem(i,1,item1);
         ui->tableWidget_Sample->setItem(i,2,item2);
     }
+
+    connect(ui->tableWidget_Sample,SIGNAL(cellChanged(int,int)),this,SLOT(cellHasChanged(int,int)));
 
 }
 
@@ -79,5 +93,15 @@ void SamplePropertyWidget::on_pushButton_addCrystal_clicked()
      _sampleItem->appendRow(new UnitCellItem(_sampleItem->getExperiment(),cell));
      ui->nsampleLabel->setText(QString::number(nsamples));
      _sampleItem->child(0)->setEnabled(true);
+}
+
+void SamplePropertyWidget::cellHasChanged(int i,int j)
+{
+    auto sample=_sampleItem->getExperiment()->getDiffractometer()->getSample();
+    auto axis=sample->getGonio()->getAxis(i);
+    if (dynamic_cast<TransAxis*>(axis))
+         axis->setOffset(ui->tableWidget_Sample->item(i,j)->data(Qt::EditRole).toDouble()*SX::Units::mm); // Given in mm
+    else
+         axis->setOffset(ui->tableWidget_Sample->item(i,j)->data(Qt::EditRole).toDouble()*SX::Units::deg); // Given in degs
 }
 

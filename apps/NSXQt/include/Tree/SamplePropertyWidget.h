@@ -20,7 +20,7 @@ public:
     ~SamplePropertyWidget();
 private slots:
     void on_pushButton_addCrystal_clicked();
-
+    void cellHasChanged(int,int);
 private:
     //!Pointer to the sample
     SampleItem* _sampleItem;

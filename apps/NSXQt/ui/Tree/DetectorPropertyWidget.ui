@@ -102,6 +102,12 @@
    </item>
    <item row="3" column="0">
     <widget class="QTableWidget" name="tableWidget_Detector">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>1</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
      <column>
       <property name="text">
        <string>Name:</string>
@@ -114,7 +120,10 @@
      </column>
      <column>
       <property name="text">
-       <string>Offset:</string>
+       <string>Offset(mm/deg):</string>
+      </property>
+      <property name="textAlignment">
+       <set>AlignJustify|AlignVCenter</set>
       </property>
      </column>
     </widget>

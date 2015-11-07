@@ -137,6 +137,8 @@ void UnitCellPropertyWidget::on_pushButton_Refine_clicked()
 {
     DialogRefineUnitCell* dialog=new DialogRefineUnitCell(_unitCellItem->getExperiment(),_unitCellItem->getCell(),this);
     dialog->exec();
+    getLatticeParams();
+    emit cellUpdated();
 }
 
 void UnitCellPropertyWidget::setChemicalFormula(const QString &formula)
