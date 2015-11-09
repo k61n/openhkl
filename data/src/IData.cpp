@@ -515,15 +515,15 @@ std::vector<PeakCalc> IData::hasPeaks(const std::vector<Eigen::Vector3d>& hkls, 
 
 	unsigned int scanSize = _sampleStates.size();
 
-	std::vector<Eigen::Transform<double,3,Eigen::Affine>> homMatrices;
-	homMatrices.reserve(scanSize);
+	std::vector<Eigen::Matrix3d> rotMatrices;
+	rotMatrices.reserve(scanSize);
 
 	auto gonio=_diffractometer->getSample()->getGonio();
 
 	double wavelength_2=-0.5*_diffractometer->getSource()->getWavelength();
 
 	for (unsigned int s=0; s<scanSize; ++s)
-		homMatrices.push_back(gonio->getHomMatrix(_sampleStates[s].getValues()));
+		rotMatrices.push_back(gonio->getHomMatrix(_sampleStates[s].getValues()).rotation());
 
 	Eigen::Matrix3d UB = BU.transpose();
 
@@ -538,7 +538,7 @@ std::vector<PeakCalc> IData::hasPeaks(const std::vector<Eigen::Vector3d>& hkls, 
 		// y component of q when in Bragg condition y=-sin(theta)*||Q||
 		double qy=normQ2*wavelength_2;
 
-		Eigen::Vector3d qi0=homMatrices[0]*q.homogeneous();
+		Eigen::Vector3d qi0=rotMatrices[0]*q;
 		Eigen::Vector3d qi;
 
 		bool sign=(qi0[1] > qy);
@@ -546,7 +546,7 @@ std::vector<PeakCalc> IData::hasPeaks(const std::vector<Eigen::Vector3d>& hkls, 
 		unsigned int i;
 		for (i=1;i<scanSize;++i)
 		{
-			qi=homMatrices[i]*q.homogeneous();
+			qi=rotMatrices[i]*q;
 			bool sign2=(qi[1] > qy);
 			if (sign ^ sign2)
 			{
@@ -560,6 +560,7 @@ std::vector<PeakCalc> IData::hasPeaks(const std::vector<Eigen::Vector3d>& hkls, 
 			continue;
 
 		double t=(qy-qi0[1])/(qi[1]-qi0[1]);
+
 		Eigen::Vector3d kf=ki+qi0+(qi-qi0)*t;
 		t+=(i-1);
 
