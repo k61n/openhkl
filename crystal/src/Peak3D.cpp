@@ -403,7 +403,7 @@ Eigen::RowVector3d Peak3D::getQ() const
 	else // otherwise scattering point is deducted from the sample
 	{
 		Eigen::Vector3d q=_event->getParent()->getQ(*_event,wav,_sampleState->getParent()->getPosition(*_sampleState));
-		_sampleState->getParent()->getGonio()->transformInverseInPlace(q,_sampleState->getValues());
+		q=_sampleState->getParent()->getGonio()->getInverseHomMatrix(_sampleState->getValues()).rotation()*q;
 		return q;
 	}
 }
