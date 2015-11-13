@@ -8,8 +8,8 @@ build:
     - cmake -DENABLE_CPACK=ON  -DBUILD_QTAPPS=OFF
     - make -j2 -l2
     - make DESTDIR=./build install
-    - ctest -j2 -l2
     - make DESTDIR=./build package
+    - scp nsxtool*.deb gitlabci-nsxtool@halltestvm:/mnt/data/software/nsxtool/uploads
 
   only:
     - master
