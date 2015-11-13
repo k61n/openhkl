@@ -2,7 +2,7 @@ stages:
   - build
   
 build:
-  stage: test
+  stage: build
   script:
     - mkdir ./build
     - cmake -DENABLE_CPACK=ON  -DBUILD_QTAPPS=OFF
