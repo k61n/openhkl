@@ -1,12 +1,16 @@
 stages:
-  - test
+  - build
   
-test:
+build:
   stage: test
   script:
-    - cmake -DENABLE_CPACK=OFF  -DBUILD_QTAPPS=OFF
+    - mkdir ./build
+    - cmake -DENABLE_CPACK=ON  -DBUILD_QTAPPS=OFF
     - make -j2 -l2
+    - make DESTDIR=./build install
     - ctest -j2 -l2
+    - make DESTDIR=./build package
+
   only:
     - master
   tags:
