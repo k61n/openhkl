@@ -36,6 +36,8 @@ DialogFindUnitCell::DialogFindUnitCell(SX::Instrument::Experiment *experiment, Q
     // Selection of a cellin the table select the whole line.
     ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
 
+    ui->label_amax->setText("Maximum cell dimension ("+QString((QChar) 0x0212b)+")");
+
     // Accept solution and set Unit-Cell
     connect(ui->tableView->verticalHeader(),SIGNAL(sectionDoubleClicked(int)),this,SLOT(selectSolution(int)));
 }
@@ -87,8 +89,7 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
     // Need at leat 10 peaks
     if (npeaks<10)
     {
-        QMessageBox::warning(this, tr("NSXTool"),
-                              tr("Need at least 10 peaks for autoindexing"));
+        QMessageBox::warning(this, tr("NSXTool"),tr("Need at least 10 peaks for autoindexing"));
         return;
     }
     //
@@ -98,31 +99,34 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
     std::vector<Eigen::Vector3d> qvects;
     qvects.reserve(npeaks);
 
-   for (int i=0;i<npeaks;++i)
-   {
-       auto peak=_peaks[i];
+    for (int i=0;i<npeaks;++i)
+    {
+        auto peak=_peaks[i];
         if (peak->isSelected() && !peak->isMasked())
             qvects.push_back(peak->getQ());
-   }
+    }
 
-   qDebug() << "Searching direct lattice vectors using" << npeaks << "peaks defined on numors:";
+    qDebug() << "Searching direct lattice vectors using" << npeaks << "peaks defined on numors:";
 
-   // Search for UnitCells with axis length up to 120 AA
-    SX::Crystal::FFTIndexing indexing(120.0);
+    // Set up a FFT indexer object
+    SX::Crystal::FFTIndexing indexing(ui->spinBox_nSubdiv->value(),ui->doubleSpinBox_amax->value());
     indexing.addVectors(qvects);
-    // Find 10 best 10 vectors
-    std::vector<SX::Crystal::tVector> tvects=indexing.findOnSphere(40,10);
+
+    int nSolutions = ui->spinBox_nSolutions->value();
+    // Find the best tvectors
+    std::vector<SX::Crystal::tVector> tvects=indexing.findOnSphere(ui->spinBox_nStacks->value(),nSolutions);
+    qDebug() << "" << tvects.size()<< " solutions found";
     qDebug() << "Refining solutions and diffractometers offsets";
 
     auto source=_experiment->getDiffractometer()->getSource();
     auto detector=_experiment->getDiffractometer()->getDetector();
     auto sample=_experiment->getDiffractometer()->getSample();
 
-    for (int i=0;i<10;++i)
+    for (int i=0;i<nSolutions;++i)
     {
-        for (int j=i+1;j<10;++j)
+        for (int j=i+1;j<nSolutions;++j)
         {
-            for (int k=j+1;k<10;++k)
+            for (int k=j+1;k<nSolutions;++k)
             {
                 Eigen::Vector3d& v1=tvects[i]._vect;
                 Eigen::Vector3d& v2=tvects[j]._vect;
@@ -130,74 +134,74 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
 
                 if (v1.dot(v2.cross(v3))>20.0)
                 {
-                        UnitCell cell=UnitCell::fromDirectVectors(v1,v2,v3);
-                        UBMinimizer minimizer;
-                        minimizer.setSample(sample);
-                        minimizer.setDetector(detector);
-                        minimizer.setSource(source);
-                        // Only the UB matrix parameters are used for fit
-                        int nParameters= 10 + sample->getNAxes() + detector->getNAxes();
-                        for (int i=9;i<nParameters;++i)
-                            minimizer.refineParameter(i,false);
-                        int success=0;
+                    UnitCell cell=UnitCell::fromDirectVectors(v1,v2,v3);
+                    UBMinimizer minimizer;
+                    minimizer.setSample(sample);
+                    minimizer.setDetector(detector);
+                    minimizer.setSource(source);
+                    // Only the UB matrix parameters are used for fit
+                    int nParameters= 10 + sample->getNAxes() + detector->getNAxes();
+                    for (int i=9;i<nParameters;++i)
+                        minimizer.refineParameter(i,false);
+                    int success=0;
+                    for (auto peak : _peaks)
+                    {
+                        if (peak->hasIntegerHKL(cell) && peak->isSelected() && !peak->isMasked())
+                        {
+                            minimizer.addPeak(*peak);
+                            ++success;
+                        }
+                    }
+
+                    if (success < 10)
+                        continue;
+
+                    Eigen::Matrix3d M=cell.getReciprocalStandardM();
+                    minimizer.setStartingUBMatrix(M);
+                    int ret = minimizer.run(100);
+                    if (ret==1)
+                    {
+                        UBSolution solution=minimizer.getSolution();
+                        try
+                        {
+                            cell=SX::Crystal::UnitCell::fromReciprocalVectors(solution._ub.row(0),solution._ub.row(1),solution._ub.row(2));
+                            cell.setReciprocalCovariance(solution._covub);
+
+                        }catch(std::exception& e)
+                        {
+                            qDebug() << e.what();
+                            continue;
+                        }
+                        NiggliReduction niggli(cell.getMetricTensor(),1e-3);
+                        Eigen::Matrix3d newg,P;
+                        niggli.reduce(newg,P);
+                        cell.transform(P);
+                        if (!ui->checkBox_NiggliOnly->isChecked())
+                        {
+                            GruberReduction gruber(cell.getMetricTensor(),0.04);
+                            SX::Crystal::LatticeCentring c;
+                            SX::Crystal::BravaisType b;
+                            gruber.reduce(P,c,b);
+                            cell.setLatticeCentring(c);
+                            cell.setBravaisType(b);
+                            cell.transform(P);
+                        }
+                        double score=0.0;
+                        double maxscore=0.0;
                         for (auto peak : _peaks)
                         {
-                            if (peak->hasIntegerHKL(cell) && peak->isSelected() && !peak->isMasked())
+                            if (peak->isSelected() && !peak->isMasked())
                             {
-                                minimizer.addPeak(*peak);
-                                ++success;
-                            }
-                        }
-
-                        if (success < 10)
-                            continue;
-
-                        Eigen::Matrix3d M=cell.getReciprocalStandardM();
-                        minimizer.setStartingUBMatrix(M);
-                        int ret = minimizer.run(100);
-                        if (ret==1)
-                        {
-                            UBSolution solution=minimizer.getSolution();
-                            try
-                            {
-                                cell=SX::Crystal::UnitCell::fromReciprocalVectors(solution._ub.row(0),solution._ub.row(1),solution._ub.row(2));
-                                cell.setReciprocalCovariance(solution._covub);
-
-                            }catch(std::exception& e)
-                            {
-                                qDebug() << e.what();
-                                continue;
-                            }
-                            NiggliReduction niggli(cell.getMetricTensor(),1e-3);
-                            Eigen::Matrix3d newg,P;
-                            niggli.reduce(newg,P);
-                            cell.transform(P);
-                            if (!ui->checkBox_NiggliOnly->isChecked())
-                            {
-                                GruberReduction gruber(cell.getMetricTensor(),0.04);
-                                SX::Crystal::LatticeCentring c;
-                                SX::Crystal::BravaisType b;
-                                gruber.reduce(P,c,b);
-                                cell.setLatticeCentring(c);
-                                cell.setBravaisType(b);
-                                cell.transform(P);
-                            }
-                            double score=0.0;
-                            double maxscore=0.0;
-                            for (auto peak : _peaks)
-                            {
-                                if (peak->isSelected() && !peak->isMasked())
-                                {
-                                    maxscore++;
+                                maxscore++;
                                 if (peak->hasIntegerHKL(cell))
                                     score++;
-                                }
                             }
-                            // Percentage of indexing
-                            score /= 0.01*maxscore;
-                            _solutions.push_back(std::pair<SX::Crystal::UnitCell,double>(cell,score));
                         }
-                         minimizer.resetParameters();
+                        // Percentage of indexing
+                        score /= 0.01*maxscore;
+                        _solutions.push_back(std::pair<SX::Crystal::UnitCell,double>(cell,score));
+                    }
+                    minimizer.resetParameters();
                 }
             }
         }
@@ -268,3 +272,58 @@ void DialogFindUnitCell::selectSolution(int i)
                           tr("Solution set"));
     emit solutionAccepted(_solutions[i].first);
 }
+
+
+//void DialogFindUnitCell::on_lineEdit_textChanged(const QString &arg1)
+//{
+//    QStringList list=arg1.split(" ");
+//    int nterms=list.size();
+
+//    double h,k,l;
+//    if (nterms==3) // Don't search if h,k,l not complete
+//    {
+//         h=list[0].toDouble();
+//         k=list[1].toDouble();
+//         l=list[2].toDouble();
+//    }
+
+//    int npeaks=ui->horizontalSlider_NumberOfPeaks->value();
+//    // Need at leat 10 peaks
+//    if (npeaks<10)
+//    {
+//        QMessageBox::warning(this, tr("NSXTool"),
+//                              tr("Need at least 10 peaks for autoindexing"));
+//        return;
+//    }
+//    //
+//    _solutions.clear();
+//    _solutions.reserve(50);
+//    // Store Q vectors at rest
+//    std::vector<Eigen::Vector3d> qvects;
+//    qvects.reserve(npeaks);
+
+//   for (int i=0;i<npeaks;++i)
+//   {
+//       auto peak=_peaks[i];
+//        if (peak->isSelected() && !peak->isMasked())
+//            qvects.push_back(peak->getQ());
+//   }
+
+//   SX::Crystal::FFTIndexing indexing(120.0);
+//   indexing.addVectors(qvects);
+//   std::vector<double> hist,xx;
+//   SX::Crystal::tVector v=indexing.findtVector(Eigen::Vector3d(h,k,l),hist,xx);
+
+//    qDebug() << v._vect[0] << " " << v._vect[1] << " " << v._vect[2];
+
+//    QVector<double> x=QVector<double>::fromStdVector(xx);
+
+//    QVector<double> y=QVector<double>::fromStdVector(hist);
+//    QVector<double> e(hist.size());
+
+////    ui->widget->graph(0)->setDataValueError(x,y,e);
+////    ui->widget->rescaleAxes();
+
+////    ui->widget->replot(QCustomPlot::rpHint);
+
+//}

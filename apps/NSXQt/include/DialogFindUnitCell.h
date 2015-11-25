@@ -34,6 +34,9 @@ private slots:
     void setIOverSigma(int peaknumber);
     void buildSolutionsTable();
     void selectSolution(int);
+
+//    void on_lineEdit_textChanged(const QString &arg1);
+
 private:
     void setPeaks();
     Ui::DialogFindUnitCell *ui;
