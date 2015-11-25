@@ -1,0 +1,13 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
+#include <string>
+
+#define RESOURCES_DIR @RESOURCES_DIR@
+
+std::string getResourcesDir()
+{
+    return "@RESOURCES_DIR@";
+}
+
+#endif // CONFIG_H

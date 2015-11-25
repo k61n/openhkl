@@ -107,7 +107,16 @@ endif()
 # Now add in all the components
 ###########################################################################
 
-include_directories(chemistry/include
+# Build the config.h on the fly
+if (UNIX)
+    set(RESOURCES_DIR ${CMAKE_INSTALL_PREFIX}/share/nsxtool)
+elseif (WIN32)
+    set(RESOURCES_DIR $ENV{APPDATA}/nsxtool)
+endif()
+configure_file(${CMAKE_SOURCE_DIR}/cmake/Config.h.in ${CMAKE_BINARY_DIR}/include/Config.h)
+
+include_directories(${CMAKE_BINARY_DIR}/include/
+                    chemistry/include
                     data/include
                     geometry/include
                     kernel/include
@@ -158,23 +167,20 @@ add_subdirectory(tests)
 
 # Install section, installing libraries 
 install(TARGETS NSXTool DESTINATION lib)
-
-if(UNIX)
-	set(INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include/NSXTool/")
-	file(GLOB_RECURSE all_headers */include/*.h)
-	install(CODE "MESSAGE(\"Installing headers...\")")
-	install(FILES ${all_headers} DESTINATION ${INCLUDE_DIR})
-endif()
+set(INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include/NSXTool/")
+file(GLOB_RECURSE all_headers */include/*.h)
+install(CODE "MESSAGE(\"Installing headers...\")")
+install(FILES ${all_headers} DESTINATION ${INCLUDE_DIR})
 
 # Install the databases file
 install(DIRECTORY resources/databases 
-        DESTINATION /usr/local/share/nsxtool 
+        DESTINATION ${RESOURCES_DIR}
         FILE_PERMISSIONS OWNER_READ OWNER_EXECUTE OWNER_WRITE GROUP_WRITE GROUP_READ GROUP_EXECUTE WORLD_WRITE WORLD_READ WORLD_EXECUTE
         DIRECTORY_PERMISSIONS OWNER_READ OWNER_EXECUTE OWNER_WRITE GROUP_WRITE GROUP_READ GROUP_EXECUTE WORLD_WRITE WORLD_READ WORLD_EXECUTE
         PATTERN ".svn" EXCLUDE)
 
 install(DIRECTORY resources/instruments 
-        DESTINATION /usr/local/share/nsxtool 
+        DESTINATION ${RESOURCES_DIR} 
         FILE_PERMISSIONS OWNER_READ OWNER_EXECUTE OWNER_WRITE GROUP_WRITE GROUP_READ GROUP_EXECUTE WORLD_WRITE WORLD_READ WORLD_EXECUTE
         DIRECTORY_PERMISSIONS OWNER_READ OWNER_EXECUTE OWNER_WRITE GROUP_WRITE GROUP_READ GROUP_EXECUTE WORLD_WRITE WORLD_READ WORLD_EXECUTE
         PATTERN ".svn" EXCLUDE)
@@ -196,7 +202,7 @@ if (ENABLE_CPACK)
         message(STATUS "CPACK_PACKAGE_FILE_NAME = ${CPACK_PACKAGE_FILE_NAME}")
     endif()
     
-    set(BOOST_MIN_VERSION 1.54.0)      
+#    set(BOOST_MIN_VERSION 1.54.0)      
 
     # rhel requirements
 #    set(CPACK_RPM_PACKAGE_REQUIRES "libqt5core5a")
