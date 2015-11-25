@@ -3,8 +3,6 @@
 
 #include <string>
 
-#define RESOURCES_DIR @RESOURCES_DIR@
-
 std::string getResourcesDir()
 {
     return "@RESOURCES_DIR@";
