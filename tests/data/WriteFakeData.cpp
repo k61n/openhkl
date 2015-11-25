@@ -84,74 +84,68 @@ double prefactor=scan.Intensity/(std::pow(2*M_PI,1.5)*scan.sx*scan.sy*scan.sz);
 for (int z=0;z<scan.npoints;++z)
 {
 	file << "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS" << std::endl;
-	file << std::fixed << std::setw(8) << z+1
-	<< std::fixed << std::setw(8) << scan.npoints-z-1
-	<< std::fixed << std::setw(8) << scan.npoints
-	<< std::fixed << std::setw(8) << scan.numor
-	<< "       0       1                                " << std::endl;
+	file << std::fixed << std::setw(8) << z+1 << std::fixed << std::setw(8) << scan.npoints-z-1 << std::fixed << std::setw(8) << scan.npoints << std::fixed << std::setw(8) << scan.numor << "       0       1                                " << std::endl;
 	file << "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF" <<std::endl;
 	file << "       4       1                                                                " <<std::endl;
 	file << "            time         monitor       Total Cou     angles*1000                " << std::endl;
 	file << "  0.46410000E+04  0.50000000E+05  0.73200000E+03" <<std::fixed << std::setw(16) << 1000*(scan.omega_center-scan.omega_width/2.0+z/static_cast<double>(scan.npoints-1)*scan.omega_width) << "                " << std::endl;
-	file <<
-	"IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII" << std::endl;
-        file <<
-    "    1024                                                                        " << std::endl;
+	file << "IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII" << std::endl;
+	file << "    1024                                                                        " << std::endl;
 	int ii=0;
 	for (int x=0;x<32;++x)
 	{
-
-			for (int y=0;y<32;++y)
+		for (int y=0;y<32;++y)
+		{
+			if (ii>9)
 			{
-					if (ii>9)
-					{
-					file <<std::endl;
-					ii=0;
-					}
-					double in=exp(-0.5*((x-scan.cx)*(x-scan.cx)/scan.sx/scan.sx+(y-scan.cy)*(y-scan.cy)/scan.sy/scan.sy+(z-scan.cz)*(z-scan.cz)/scan.sz/scan.sz));
-					file << std::fixed << std::setw(8) << int(prefactor*in);
-					ii++;
-			 }
-
+				file <<std::endl;
+				ii=0;
+			}
+			double in=exp(-0.5*((x-scan.cx)*(x-scan.cx)/scan.sx/scan.sx+(y-scan.cy)*(y-scan.cy)/scan.sy/scan.sy+(z-scan.cz)*(z-scan.cz)/scan.sz/scan.sz));
+			file << std::fixed << std::setw(8) << int(prefactor*in);
+			ii++;
+		 }
 	}
 	file << "                                                " << std::endl;
 }
 
-
-
-    file.close();
+file.close();
 }
 int main()
 {
-Scan scan;
-scan.npoints=31;
-scan.omega_width=3.0;
-scan.cz=16.0;
-scan.sx=3.0;
-scan.sy=3.0;
-scan.sz=3.0;
-scan.Intensity=10000;
-Eigen::Matrix3d ub;
-ub << 0.1,0.0,0.0,
-	  0.0,0.1,0.0,
-	  0.0,0.0,0.1;
+	double wavelength = 1.0;
+	Scan scan;
+	scan.npoints=31;
+	scan.omega_width=3.0;
+	scan.cz=15.5;
+	scan.sx=3.0;
+	scan.sy=3.0;
+	scan.sz=3.0;
+	scan.Intensity=10000;
+	Eigen::Matrix3d ub;
+	ub << 0.1,0.0,0.0,
+		  0.0,0.1,0.0,
+		  0.0,0.0,0.1;
 
-// Offset of sample (in mm) at rest
-Eigen::Vector3d sample(2,3,5); //
+	// Offset of sample (in mm) at rest
+	Eigen::Vector3d sample(0,0,0); //
 
-
-int p=0;
-for (int h=-5;h<6;++h)
-{
+	int p=0;
+	for (int h=-5;h<6;++h)
+	{
 		for (int k=-5;k<6;++k)
 		{
-				for (int l=-5;l<6;++l)
-				{
+			for (int l=-5;l<6;++l)
+			{
+
+				if (h==0 && k==0 && l==0)
+					continue;
+
 				scan.numor=++p;
 
 				Eigen::Vector3d z1=ub*Eigen::Vector3d(h,k,l);
 
-				double theta2=2.0*asin(0.5*z1.norm()*1.0);
+				double theta2=2.0*asin(0.5*z1.norm()*wavelength);
 				double omega=theta2/2.0;
 				double phi=atan2(z1[1],z1[0]);
 				double chi=atan2(z1[2],sqrt(z1[0]*z1[0]+z1[1]*z1[1]));
@@ -159,23 +153,27 @@ for (int h=-5;h<6;++h)
 				// Rotation of sample offset
 				Eigen::Matrix3d OM;
 				OM << cos(omega), sin(omega), 0,
-		-sin(omega), cos(omega), 0,
-		0      ,  0      , 1;
-			Eigen::Matrix3d CH;
-			CH << cos(chi), 0, sin(chi),
-				  0 ,       1,      0,
-				 -sin(chi), 0, cos(chi);
-			Eigen::Matrix3d PH;
-			PH << cos(phi), sin(phi), 0,
-				 -sin(phi), cos(phi), 0,
-				  0      ,  0      , 1;
+					 -sin(omega), cos(omega), 0,
+					           0,           0, 1;
+
+				Eigen::Matrix3d CH;
+				CH << cos(chi),  0, sin(chi),
+							 0,  1,         0,
+				     -sin(chi),  0, cos(chi);
+
+				Eigen::Matrix3d PH;
+				PH << cos(phi), sin(phi), 0,
+					 -sin(phi), cos(phi), 0,
+					         0,         0, 1;
+
 				Eigen::Vector3d newpos=OM*CH*PH*sample;
+
 				// Calculate offset on detector
 				double angle=atan2(newpos[0],newpos[1]);
 				// Offset along x
-				scan.cx=31-(15.5+sqrt(newpos[0]*newpos[0]+newpos[1]*newpos[1])*sin(angle-theta2)/64.0*31);
+				scan.cx=31-(15.5+sqrt(newpos[0]*newpos[0]+newpos[1]*newpos[1])*sin(angle-theta2)/64.0*32);
 				// Offset along z detector
-				scan.cy=15.5+newpos[2]/64.0*31;
+				scan.cy=15.5+newpos[2]/64.0*32;
 				std::cout << "Peak " << h << " " << k << " " << l << std::endl;
 				std::cout << scan.cx << " " << scan.cy << std::endl;
 				// Write angles in metadata
@@ -184,15 +182,11 @@ for (int h=-5;h<6;++h)
 				scan.chi=chi*180.0/M_PI;
 				scan.phi=phi*180.0/M_PI;
 
-
-
 				// Write it
 				std::ostringstream os;
 				os << "Cubic/scan" << p;
 				write_FakeD9(scan,os.str().c_str());
-				}
+			}
 		}
-}
-
-
+	}
 }
