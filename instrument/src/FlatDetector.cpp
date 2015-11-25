@@ -110,9 +110,9 @@ Eigen::Vector3d FlatDetector::getPos(double px, double py) const
 
 	Eigen::Vector3d result;
 	// take the center of the bin
-	result[0]=(x/(_nCols-1.0)-0.5)*_width;
+	result[0]=0.5*_width*((2*x+1.0)/_nCols-1);;
 	result[1]=_distance;
-	result[2]=(y/(_nRows-1.0)-0.5)*_height;
+	result[2]=0.5*_height*((2*y+1.0)/_nRows-1);
 	return result;
 }
 
@@ -128,8 +128,8 @@ bool FlatDetector::hasKf(const Eigen::Vector3d& kf,const Eigen::Vector3d& f, dou
 	double t=x/kf[1];
 	auto v=f+kf*t;
 
-	px=(v[0]/_width+0.5)*(_nCols-1);
-	py=(v[2]/_height+0.5)*(_nRows-1);
+	px=0.5*(_nCols*(2*v[0]/_width+1)-1);
+	py=0.5*(_nRows*(2*v[2]/_height+1)-1);
 
 	if (px<0 || px > _nCols|| py<0 || py> _nRows)
 		return false;
