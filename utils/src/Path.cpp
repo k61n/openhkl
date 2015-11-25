@@ -2,6 +2,7 @@
 
 #include <boost/filesystem.hpp>
 
+#include "Config.h"
 #include "Error.h"
 #include "Path.h"
 
@@ -69,13 +70,13 @@ std::string Path::getApplicationDataPath()
 
 std::string Path::getDiffractometersPath()
 {
-	boost::filesystem::path p(getApplicationDataPath());
+	boost::filesystem::path p(getResourcesDir());
 	p /= "instruments";
 	return p.string();
 }
 std::string Path::getDataBasesPath()
 {
-	boost::filesystem::path p(getApplicationDataPath());
+	boost::filesystem::path p(getResourcesDir());
 	p /= "databases";
 	return p.string();
 }
