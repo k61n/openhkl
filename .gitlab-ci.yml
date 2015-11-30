@@ -10,7 +10,7 @@ build:
     - make install
     - ctest -j2 -l2
     - rm CMakeCache.txt
-    - cmake -DENABLE_CPACK=ON  -DBUILD_QTAPPS=ON
+    - cmake -DENABLE_CPACK=ON
     - make package
     - scp nsxtool*.deb gitlabci-nsxtool@nsxtool.ill.fr:/mnt/data/software/nsxtool/uploads
 
