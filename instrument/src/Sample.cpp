@@ -56,6 +56,11 @@ Sample& Sample::operator=(const Sample& other)
 	return *this;
 }
 
+void Sample::setShape(const SX::Geometry::ConvexHull<double>& shape)
+{
+	_sampleShape = shape;
+}
+
 SX::Geometry::ConvexHull<double>& Sample::getShape()
 {
 	return _sampleShape;

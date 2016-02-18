@@ -71,6 +71,9 @@ public:
 	//! Assignment operator
 	Sample& operator=(const Sample& other);
 
+	//! Set the sample shape described as a convex hull
+	void setShape(const SX::Geometry::ConvexHull<double>& shape);
+
 	//! Return the sample shape, described as a convex hull
 	SX::Geometry::ConvexHull<double>& getShape();
 

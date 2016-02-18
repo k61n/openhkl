@@ -174,22 +174,24 @@ std::string UnitCell::getBravaisTypeSymbol() const
 	return os.str();
 }
 
-void UnitCell::getUBFrom2Peaks(const Vector3d& hkl1, const Vector3d& hkl2, const Vector3d& q1, const Vector3d& q2)
+void UnitCell::setBU(const Vector3d& hkl1, const Vector3d& hkl2, const Vector3d& q1, const Vector3d& q2)
 {
 	// Get Q1 and Q2 in the diffractometer basis
-	Eigen::Vector3d q3=q1.cross(q2);
-	Vector3d q1u=q1/q1.norm();
-	Vector3d q3u=q3/q3.norm();
-	Vector3d q2u=q3.cross(q1);
+	Eigen::Vector3d q3u=q1.cross(q2);
+	q3u.normalize();
+	Vector3d q1u=q1.normalized();
+	Vector3d q2u=q3u.cross(q1u);
 
 	//
 	Eigen::Vector3d q1prime=this->toReciprocalStandard(hkl1);
+	q1prime.normalize();
+
 	Eigen::Vector3d q2prime=this->toReciprocalStandard(hkl2);
 	//
 	Eigen::Vector3d q3prime=q1prime.cross(q2prime);
-	q1prime.normalize();
 	q3prime.normalize();
 	q2prime=q3prime.cross(q1prime);
+
 	//
 	Eigen::Matrix3d m1,m2,U;
 	m1.col(0)=q1u;
@@ -203,6 +205,11 @@ void UnitCell::getUBFrom2Peaks(const Vector3d& hkl1, const Vector3d& hkl2, const
 	U=m2*m1.inverse();
 
 	_B=_B*U;
+}
+
+void UnitCell::setBU(const Eigen::Matrix3d& BU)
+{
+	_B = BU;
 }
 
 Eigen::Matrix3d UnitCell::getBusingLevyB() const

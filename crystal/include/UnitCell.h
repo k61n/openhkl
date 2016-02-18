@@ -97,7 +97,10 @@ public:
  	//! Get UB
  	//! Determine whether two reflections (h1,k1,l1) and (h2,k2,l2) are equivalents.
  	bool isEquivalent(double h1,double k1, double l1, double h2, double k2, double l2) const;
- 	void getUBFrom2Peaks(const Vector3d& hkl1,const Vector3d& hkl2, const Vector3d& q1, const Vector3d& q2);
+ 	void setBU(const Vector3d& hkl1,const Vector3d& hkl2, const Vector3d& q1, const Vector3d& q2);
+
+ 	void setBU(const Eigen::Matrix3d& BU);
+
  	//! Get the Busing-Levy B matrix as defined in Acta Cryst. (1967). 22, 457
  	//! The returned matrix is the transposed version of the matrix since
  	//! reciprocal bases are contravariant in NSXTool.

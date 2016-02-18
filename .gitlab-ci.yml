@@ -5,12 +5,12 @@ build:
   stage: build
   script:
     - mkdir ./build
-    - cmake -DENABLE_CPACK=ON  -DBUILD_QTAPPS=ON -DCMAKE_INSTALL_PREFIX=./build
+    - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./build
     - make -j2 -l2
     - make install
     - ctest -j2 -l2
     - rm CMakeCache.txt
-    - cmake -DENABLE_CPACK=ON
+    - cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_CPACK=ON -DBUILD_QTAPPS=ON
     - make package
     - scp nsxtool*.deb gitlabci-nsxtool@nsxtool.ill.fr:/mnt/data/software/nsxtool/uploads
 
