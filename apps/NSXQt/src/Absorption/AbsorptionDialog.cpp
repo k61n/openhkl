@@ -73,7 +73,8 @@ void AbsorptionDialog::readInfoFile(const std::string &filename)
         // First read instrument name and validate with diffractometer name
         std::string _instrumentName, date;
         file >> _instrumentName >> date;
-        if (_instrumentName.compare(_experiment->getDiffractometer()->getType())!=0)
+        std::string diffType=_experiment->getDiffractometer()->getName();
+        if (_instrumentName.compare(diffType)!=0)
         {
             QMessageBox::critical(this, tr("NSXTool"),
                                   tr("Instrument name in video file does not match the diffractometer name"));
@@ -107,9 +108,12 @@ void AbsorptionDialog::readInfoFile(const std::string &filename)
         QFileInfo info(filename.c_str());
         QDir dir=info.absoluteDir();
         _filepath=dir.absolutePath().toStdString();
-
-        // Attempt to read
+        //
         getline(file,line);
+        if (line.find("camera:")!=std::string::npos)
+        {
+            getline(file,line);
+        }
         while(!file.eof())
         {
             line.erase(std::remove(line.begin(), line.end(), ':'), line.end());
