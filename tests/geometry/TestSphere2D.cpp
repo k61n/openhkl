@@ -10,6 +10,7 @@ using Eigen::Vector2d;
 using Eigen::Vector3d;
 using Eigen::Matrix2d;
 
+const double tolerance_small=1e-10;
 const double tolerance=1e-5;
 const double tolerance_large=1.0;
 
@@ -48,43 +49,57 @@ BOOST_AUTO_TEST_CASE(Test_Sphere)
 
 	Vector3d point(0,0,1);
 
-//	// Test that a given point falls inside the Sphere
-//	int nSteps(500);
-//	Vector2d delta=(upper-lower)/nSteps;
-//	Vector3d point(0,0,1);
-//	double sum(0.0);
-//	for(int i=0;i<=nSteps;++i)
-//	{
-//		point.x() = lower[0]+i*delta[0];
-//		for(int j=0;j<=nSteps;++j)
-//		{
-//			point.y() = lower[1]+j*delta[1];
-//			if (s1.isInside(point))
-//				sum+=1.0;
-//		}
-//	}
-//
-//	sum *= ((upper[0]-lower[0])*(upper[1]-lower[1]))/(nSteps*nSteps);
-//	BOOST_CHECK_CLOSE(sum,78.5,tolerance_large);
-//
-//	s1.translate(-s1.getCenter());
-//	Sphere<double,2> s2(Vector2d(10,0),1.0);
-//	BOOST_CHECK_EQUAL(s1.collide(s2),false);
-//	s2.translate(Vector2d(-2,0));
-//	BOOST_CHECK_EQUAL(s1.collide(s2),false);
-//	s2.translate(Vector2d(-2,0));
-//	BOOST_CHECK_EQUAL(s1.collide(s2),false);
-//	s2.translate(Vector2d(-2,0));
-//	BOOST_CHECK_EQUAL(s1.collide(s2),true);
-//	s2.translate(Vector2d(-2,0));
-//	BOOST_CHECK_EQUAL(s1.collide(s2),true);
-//	s2.translate(Vector2d(-2,0));
-//	BOOST_CHECK_EQUAL(s1.collide(s2),true);
-//	s2.translate(Vector2d(-2,0));
-//	BOOST_CHECK_EQUAL(s1.collide(s2),true);
-//	s2.translate(Vector2d(-2,0));
-//	BOOST_CHECK_EQUAL(s1.collide(s2),true);
-//	s2.translate(Vector2d(-2,0));
-//	BOOST_CHECK_EQUAL(s1.collide(s2),false);
+	// Test that a given point falls inside the Sphere
+	int nSteps(500);
+	Vector2d delta=(upper-lower)/nSteps;
+	double sum(0.0);
+	for(int i=0;i<=nSteps;++i)
+	{
+		point.x() = lower[0]+i*delta[0];
+		for(int j=0;j<=nSteps;++j)
+		{
+			point.y() = lower[1]+j*delta[1];
+			if (s1.isInside(point))
+				sum+=1.0;
+		}
+	}
+
+	sum *= ((upper[0]-lower[0])*(upper[1]-lower[1]))/(nSteps*nSteps);
+	BOOST_CHECK_CLOSE(sum,78.5,tolerance_large);
+
+	// Test: (non-)collision between two spheres
+
+	s1.translate(-s1.getCenter());
+	Sphere<double,2> s2(Vector2d(10,0),1.0);
+	BOOST_CHECK_EQUAL(s1.collide(s2),false);
+	s2.translate(Vector2d(-2,0));
+	BOOST_CHECK_EQUAL(s1.collide(s2),false);
+	s2.translate(Vector2d(-2,0));
+	BOOST_CHECK_EQUAL(s1.collide(s2),false);
+	s2.translate(Vector2d(-2,0));
+	BOOST_CHECK_EQUAL(s1.collide(s2),true);
+	s2.translate(Vector2d(-2,0));
+	BOOST_CHECK_EQUAL(s1.collide(s2),true);
+	s2.translate(Vector2d(-2,0));
+	BOOST_CHECK_EQUAL(s1.collide(s2),true);
+	s2.translate(Vector2d(-2,0));
+	BOOST_CHECK_EQUAL(s1.collide(s2),true);
+	s2.translate(Vector2d(-2,0));
+	BOOST_CHECK_EQUAL(s1.collide(s2),true);
+	s2.translate(Vector2d(-2,0));
+	BOOST_CHECK_EQUAL(s1.collide(s2),false);
+
+	// Test: (non-)intersection between a sphere and a ray
+
+	double t1,t2;
+	BOOST_CHECK(s1.rayIntersect(Vector2d(-10,0),Vector2d(2,0),t1,t2));
+	BOOST_CHECK_CLOSE(t1, 2.5, tolerance_small);
+	BOOST_CHECK_CLOSE(t2, 7.5, tolerance_small);
+
+	BOOST_CHECK(s1.rayIntersect(Vector2d(10.0*sqrt(3)/2,2.5),Vector2d(1,0),t1,t2));
+	BOOST_CHECK_CLOSE(t1,-15.0*sqrt(3)/2, tolerance_small);
+	BOOST_CHECK_CLOSE(t2, -5.0*sqrt(3)/2, tolerance_small);
+
+	BOOST_CHECK(!s1.rayIntersect(Vector2d(8,7),Vector2d(-1,1),t1,t2));
 
 }

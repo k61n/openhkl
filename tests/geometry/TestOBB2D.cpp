@@ -18,7 +18,7 @@ const double tolerance_large=1.0;
 BOOST_AUTO_TEST_CASE(Test_OBB)
 {
 
-	// Test: the construction onf an OBB
+	// Test: the construction of an OBB
 	Vector2d center(3,4);
 	Vector2d extent(sqrt(2),sqrt(2));
 	Matrix2d axis;
@@ -112,4 +112,35 @@ BOOST_AUTO_TEST_CASE(Test_OBB)
 
 	BOOST_CHECK_CLOSE(sum,24,tolerance_large);
 
+	// Test: the (non-)intersection of an OBB and different rays
+	axis << 1,0,
+			0,1;
+	OBB<double,2> obb4(Vector2d(1,1),Vector2d(2,2),axis);
+
+	double t1,t2;
+	BOOST_CHECK(obb4.rayIntersect(Vector2d(-5,0),Vector2d(2,0.5),t1,t2));
+	BOOST_CHECK_CLOSE(t1, 2.0, 1.0e-10);
+	BOOST_CHECK_CLOSE(t2, 4.0, 1.0e-10);
+	BOOST_CHECK(obb4.rayIntersect(Vector2d(-3,3),Vector2d(4,-2),t1,t2));
+	BOOST_CHECK_CLOSE(t1, 0.5, 1.0e-10);
+	BOOST_CHECK_CLOSE(t2, 1.5, 1.0e-10);
+	BOOST_CHECK(!obb4.rayIntersect(Vector2d(-6,8),Vector2d(2,3),t1,t2));
+
+	Vector2d s(sqrt(2),sqrt(2));
+	obb4.scale(s);
+
+	r << sqrt(2.0),-sqrt(2.0),
+		 sqrt(2.0), sqrt(2.0);
+	obb4.rotate(r);
+
+	BOOST_CHECK(obb4.rayIntersect(Vector2d(-4,-2),Vector2d(1.5,0.5),t1,t2));
+	BOOST_CHECK_CLOSE(t1, 2.0, 1.0e-10);
+	BOOST_CHECK_CLOSE(t2, 6.0, 1.0e-10);
+	BOOST_CHECK(obb4.rayIntersect(Vector2d(5,2.5),Vector2d(-0.5,0),t1,t2));
+	BOOST_CHECK_CLOSE(t1, 3.0, 1.0e-10);
+	BOOST_CHECK_CLOSE(t2, 13.0, 1.0e-10);
+	BOOST_CHECK(obb4.rayIntersect(Vector2d(5,2.5),Vector2d(0.5,0),t1,t2));
+	BOOST_CHECK_CLOSE(t1, -13.0, 1.0e-10);
+	BOOST_CHECK_CLOSE(t2,  -3.0, 1.0e-10);
+	BOOST_CHECK(!obb4.rayIntersect(Vector2d(-6,8),Vector2d(2,5),t1,t2));
 }
