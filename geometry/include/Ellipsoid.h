@@ -334,24 +334,9 @@ bool Ellipsoid<T,D>::rayIntersect(const vector& from, const vector& dir, double&
 	hDir[D] = 0.0;
 	hDir = _TRSinv*hDir;
 
-	// The intersection are found by solving the equation (x-a)^2 + (y-b)^2 + (z-c)^2 = R^2 with
-	// p=(x,y,z). Using p=p0+t*dir in this equation provides an equation of the form a*t^2 + b*t + c = 0.
+	Sphere<T,D> sphere(vector::Zero(),1.0);
 
-	double a = hDir.segment(0,3).squaredNorm();
-	double b = 2.0*(hFrom.segment(0,3)).dot(hDir.segment(0,3));
-	double c = hFrom.segment(0,3).squaredNorm() -1.0;
-
-	// Solve the 2nd degree equation
-    double delta = b*b - 4.0*a*c;
-    if (delta < 0)
-        return false;
-
-    double sdelta = sqrt(delta);
-
-    t1 = 0.5*(-b - sdelta)/a;
-    t2 = 0.5*(-b + sdelta)/a;
-
-    return true;
+	return sphere.rayIntersect(hFrom.segment(0,D),hDir.segment(0,D),t1,t2);
 }
 
 template<typename T,uint D>

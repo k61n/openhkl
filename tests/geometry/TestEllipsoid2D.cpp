@@ -10,8 +10,7 @@ using Eigen::Vector2d;
 using Eigen::Vector3d;
 using Eigen::Matrix2d;
 
-const double tolerance=1e-5;
-
+const double tolerance_small=1e-10;
 
 BOOST_AUTO_TEST_CASE(Test_NDEllipsoid)
 {
@@ -23,4 +22,13 @@ BOOST_AUTO_TEST_CASE(Test_NDEllipsoid)
 			0,1;
 	Ellipsoid<double,2> e1(center1,semi_axes,eigV);
 	Ellipsoid<double,2> e2(center2,semi_axes,eigV);
+
+	BOOST_CHECK(!e1.intercept(e2));
+
+	// Test: the (non-)intersection of an Sphere and different rays
+	double t1,t2;
+	BOOST_CHECK(e1.rayIntersect(Vector2d(300,260),Vector2d(0,1.0),t1,t2));
+	BOOST_CHECK_CLOSE(t1, 5.0, 1.0e-10);
+	BOOST_CHECK_CLOSE(t2,75.0, 1.0e-10);
+
 }
