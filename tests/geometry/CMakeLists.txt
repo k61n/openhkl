@@ -1,7 +1,12 @@
-# unit test for AABB class
-add_executable(TestAABB TestAABB.cpp)
-TARGET_LINK_LIBRARIES(TestAABB ${Boost_LIBRARIES} NSXTool)
-add_test(TestAABB TestAABB)
+# unit test for AABB2D class
+add_executable(TestAABB2D TestAABB2D.cpp)
+TARGET_LINK_LIBRARIES(TestAABB2D ${Boost_LIBRARIES} NSXTool)
+add_test(TestAABB2D TestAABB2D)
+
+# unit test for AABB3D class
+add_executable(TestAABB3D TestAABB3D.cpp)
+TARGET_LINK_LIBRARIES(TestAABB3D ${Boost_LIBRARIES} NSXTool)
+add_test(TestAABB3D TestAABB3D)
 
 # unit test for Blob2D class
 add_executable(TestBlob2D TestBlob2D.cpp)
