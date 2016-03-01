@@ -79,6 +79,8 @@ public:
 	const vector& getExtents() const;
 	//! Return the inverse of the Mapping matrix (\f$ S^{-1}.R^{-1}.T^{-1} \f$)
 	const HomMatrix& getInverseTransformation() const;
+	HomMatrix getTransformation() const;
+
 	//! Check whether a point given as Homogeneous coordinate in the (D+1) dimension is Inside the Ellipsoid.
 	bool isInside(const HomVector& vector) const;
 	//! Rotate the ellipsoid.
@@ -89,6 +91,13 @@ public:
 	void scale(const vector& scale);
 	//! Translate the ellipsoid
 	void translate(const vector& t);
+
+	//! Compute the intersection between the sphere and a given ray.
+	//! Return true if an intersection was found, false otherwise.
+	//! If the return value is true the intersection "times" will be stored
+	//! in t1 and t2 in such a way that from + t1*dir and from + t2*dir are
+	//! the two intersection points between the ray and this shape.
+	bool rayIntersect(const vector& from, const vector& dir, double& t1, double& t2) const;
 
 	// Macro to ensure that Ellipsoid can be dynamically allocated.
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -143,7 +152,6 @@ Ellipsoid<T,D>::Ellipsoid(const vector& center, const vector& eigenvalues, const
 : IShape<T,D>(),
   _eigenVal(eigenvalues)
 {
-
 	// Define the inverse scale matrix from the eigenvalues
 	Eigen::DiagonalMatrix<T,D+1> Sinv;
 	for (unsigned int i=0;i<D;++i)
@@ -155,6 +163,9 @@ Ellipsoid<T,D>::Ellipsoid(const vector& center, const vector& eigenvalues, const
 	_TRSinv(D,D)=1.0;
 	for (unsigned int i=0;i<D;++i)
 		_TRSinv.block(i,0,1,D)=eigenvectors.col(i).transpose().normalized();
+
+	// The translation part of the inverse transforation matrix is afected by rotation
+	// (see https://fr.wikipedia.org/wiki/Coordonn%C3%A9es_homog%C3%A8nes)
 	_TRSinv.block(0,D,D,1)=-_TRSinv.block(0,0,D,D)*center;
 
 	// Finally compute (TRS)^-1 by left-multiplying (TR)^-1 by S^-1
@@ -296,26 +307,51 @@ void Ellipsoid<T,D>::updateAABB()
 {
 	Eigen::Matrix<T,D+1,D+1> TRS=getInverseTransformation().inverse();
 
+	// See https://tavianator.com/exact-bounding-boxes-for-spheres-ellipsoids/ for details about how getting
+	// AABB efficiently from transformation matrix
+
 	// The width of the AABB in one direction is the norm of corresponding TRS matrix row
 	vector width=vector::Constant(0.0);
 	for (unsigned int i=0;i<D;++i)
 	{
 		for (unsigned int j=0;j<D;++j)
-		{
-			width[i]+=std::pow(TRS(i,j),2);
-		}
+			width[i]+=TRS(i,j)*TRS(i,j);
 		width[i]=sqrt(width[i]);
 	}
-	// Reconstruct TR, to get the center
-	Eigen::DiagonalMatrix<T,D+1> Sinv;
-	for (unsigned int i=0;i<D;++i)
-		Sinv.diagonal()[i]=1.0/_eigenVal[i];
-	Sinv.diagonal()[D]=1.0;
-	TRS=TRS*Sinv;
+
 	// Update the upper and lower bound of the AABB from center +-width
 	_lowerBound=TRS.block(0,D,D,1)-width;
 	_upperBound=TRS.block(0,D,D,1)+width;
 
+}
+
+template<typename T, uint D>
+bool Ellipsoid<T,D>::rayIntersect(const vector& from, const vector& dir, double& t1, double& t2) const
+{
+	HomVector hFrom = _TRSinv * from.homogeneous();
+	HomVector hDir;
+	hDir.segment(0,D) = dir;
+	hDir[D] = 0.0;
+	hDir = _TRSinv*hDir;
+
+	// The intersection are found by solving the equation (x-a)^2 + (y-b)^2 + (z-c)^2 = R^2 with
+	// p=(x,y,z). Using p=p0+t*dir in this equation provides an equation of the form a*t^2 + b*t + c = 0.
+
+	double a = hDir.segment(0,3).squaredNorm();
+	double b = 2.0*(hFrom.segment(0,3)).dot(hDir.segment(0,3));
+	double c = hFrom.segment(0,3).squaredNorm() -1.0;
+
+	// Solve the 2nd degree equation
+    double delta = b*b - 4.0*a*c;
+    if (delta < 0)
+        return false;
+
+    double sdelta = sqrt(delta);
+
+    t1 = 0.5*(-b - sdelta)/a;
+    t2 = 0.5*(-b + sdelta)/a;
+
+    return true;
 }
 
 template<typename T,uint D>
@@ -745,6 +781,12 @@ bool collideEllipsoidSphere(const Ellipsoid<T,D>& eA, const Sphere<T,D>& s)
 
 	return collideEllipsoidEllipsoid<T,D>(eA,eB);
 
+}
+
+template<typename T,uint D>
+typename Ellipsoid<T,D>::HomMatrix Ellipsoid<T,D>::getTransformation() const
+{
+	return _TRSinv.inverse();
 }
 
 } // Namespace Geometry

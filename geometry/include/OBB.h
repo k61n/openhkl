@@ -30,6 +30,7 @@
 #define NSXTOOL_OBB_H_
 
 #include <cmath>
+#include <iostream>
 #include <initializer_list>
 
 #include <Eigen/Dense>
@@ -103,6 +104,12 @@ public:
 	//! Translate the OBB.
 	void translate(const vector& t);
 
+	//! Compute the intersection between the OBB and a given ray.
+	//! Return true if an intersection was found, false otherwise.
+	//! If the return value is true the intersection "times" will be stored
+	//! in t1 and t2 in such a way that from + t1*dir and from + t2*dir are
+	//! the two intersection points between the ray and this shape.
+	bool rayIntersect(const vector& from, const vector& dir, double& t1, double& t2) const;
 
 private:
 	//! The inverse of the homogeneous transformation matrix.
@@ -345,6 +352,24 @@ void OBB<T,D>::updateAABB()
 	// Update the upper and lower bound of the AABB
 	_lowerBound=Tmat-width;
 	_upperBound=Tmat+width;
+
+}
+
+template<typename T, uint D>
+bool OBB<T,D>::rayIntersect(const vector& from, const vector& dir, double& t1, double& t2) const
+{
+
+	HomVector hFrom = _TRSinv * from.homogeneous();
+	HomVector hDir;
+	hDir.segment(0,D) = dir;
+	hDir[D] = 0.0;
+	hDir = _TRSinv*hDir;
+
+	AABB<T,D> aabb(-vector::Ones(),vector::Ones());
+
+	return aabb.rayIntersect(hFrom.segment(0,D),hDir.segment(0,D),t1,t2);
+
+	return true;
 
 }
 

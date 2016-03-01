@@ -98,6 +98,13 @@ public:
 	//! Translate the sphere.
 	void translate(const vector& t);
 
+	//! Compute the intersection between the sphere and a given ray.
+	//! Return true if an intersection was found, false otherwise.
+	//! If the return value is true the intersection "times" will be stored
+	//! in t1 and t2 in such a way that from + t1*dir and from + t2*dir are
+	//! the two intersection points between the ray and this shape.
+	bool rayIntersect(const vector& from, const vector& dir, double& t1, double& t2) const;
+
 	// Macro to ensure that Sphere object can be dynamically allocated.
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -203,9 +210,10 @@ typename Sphere<T,D>::HomMatrix Sphere<T,D>::getInverseTransformation() const
 {
 	Eigen::Matrix<T,D+1,D+1> mat=Eigen::Matrix<T,D+1,D+1>::Constant(0.0);
 	mat(D,D)=1.0;
+	double invRadius = 1.0/_radius;
 	for (unsigned int i=0;i<D+1;++i)
-		mat(i,i)=1.0/_radius;
-	mat.block(0,D,D,1)=-_center/_radius;
+		mat(i,i)=invRadius;
+	mat.block(0,D,D,1)=-_center*invRadius;
 
 	return mat;
 }
@@ -244,7 +252,29 @@ void Sphere<T,D>::updateAABB()
 	// Update the upper and lower bound of the AABB
 	_lowerBound=_center.array()-_radius;
 	_upperBound=_center.array()+_radius;
+}
 
+template<typename T, uint D>
+bool Sphere<T,D>::rayIntersect(const vector& from, const vector& dir, double& t1, double& t2) const
+{
+	// The intersection are found by solving the equation (x-a)^2 + (y-b)^2 + (z-c)^2 = R^2 with
+	// p=(x,y,z). Using p=p0+t*dir in this equation provides an equation of the form a*t^2 + b*t + c = 0.
+
+	double a = dir.squaredNorm();
+	double b = 2.0*(from-_center).dot(dir);
+	double c = _center.squaredNorm() + from.squaredNorm() - 2.0*_center.dot(from) - _radius*_radius;
+
+	// Solve the 2nd degree equation
+    double delta = b*b - 4.0*a*c;
+    if (delta < 0)
+        return false;
+
+    double sdelta = sqrt(delta);
+
+    t1 = 0.5*(-b - sdelta)/a;
+    t2 = 0.5*(-b + sdelta)/a;
+
+    return true;
 }
 
 template<typename T,uint D>

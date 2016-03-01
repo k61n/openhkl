@@ -28,9 +28,12 @@
 
 #ifndef NSXTOOL_AABB_H_
 #define NSXTOOL_AABB_H_
+
 #include <initializer_list>
 #include <stdexcept>
 #include <iostream>
+#include <limits>
+#include <utility>
 #include <vector>
 
 #include <Eigen/Dense>
@@ -107,6 +110,13 @@ public:
 	bool collide(const OBB<T,D>& other) const;
 	//! Return true if the AABB intersects a Sphere.
 	bool collide(const Sphere<T,D>& other) const;
+
+	//! Compute the intersection between the AABB and a given ray.
+	//! Return true if an intersection was found, false otherwise.
+	//! If the return value is true the intersection "times" will be stored
+	//! in t1 and t2 in such a way that from + t1*dir and from + t2*dir are
+	//! the two intersection points between the ray and this shape.
+	bool rayIntersect(const vector& from, const vector& dir, double& t1, double& t2) const;
 
 	// Macro to ensure that an OBB object can be dynamically allocated.
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -218,6 +228,48 @@ template<typename T,uint D>
 bool AABB<T,D>::collide(const Sphere<T,D>& other) const
 {
 	return collideAABBSphere<T,D>(*this,other);
+}
+
+template<typename T, uint D>
+bool AABB<T,D>::rayIntersect(const vector& from, const vector& dir, double& t1, double& t2) const
+{
+    // Adapted from
+	// See http://gamedev.stackexchange.com/questions/18436/most-efficient-aabb-vs-ray-collision-algorithms
+	// to get any values of t, negative or positive
+
+	// Check first the case of ray // to one the box axis
+	for (int i=0;i<D;++i)
+	{
+		if (std::abs(dir[i])<1.0e-10)
+		{
+			if (from[i] < _lowerBound[i] || from[i] > _upperBound[i])
+				return false;
+		}
+	}
+
+    // Keep track of t-values for every direction
+    std::vector<double> tvalues;
+    int nSlabs = 2*D;
+    tvalues.reserve(nSlabs);
+
+    // We test slabs in every direction
+    for (int i=0; i<D; i++)
+    {
+		double invdir=1.0/dir[i];
+		tvalues.push_back((_lowerBound[i] - from[i])*invdir);
+		tvalues.push_back((_upperBound[i] - from[i])*invdir);
+    }
+
+    std::sort(tvalues.begin(),tvalues.end());
+
+    t1 = tvalues[nSlabs/2 - 1];
+    t2 = tvalues[nSlabs/2];
+
+    double midt = (t1+t2)/2.0;
+
+    vector halfvect = from + midt*dir;
+
+    return IShape<T,D>::isInsideAABB(halfvect);
 }
 
 template<typename T,uint D>

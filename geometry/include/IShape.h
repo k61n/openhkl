@@ -141,6 +141,13 @@ public:
 	//! Scale the bounding box
 	void scaleAABB(const vector&);
 
+	//! Compute the intersection between the shape and a given ray.
+	//! Return true if an intersection was found, false otherwise.
+	//! If the return value is true the intersection "times" will be stored
+	//! in t1 and t2 in such a way that from + t1*dir and from + t2*dir are
+	//! the two intersection points between the ray and this shape.
+	virtual bool rayIntersect(const vector& from, const vector& dir, double& t1, double& t2) const=0;
+
 	std::ostream& printSelf(std::ostream& os);
 
 protected:
