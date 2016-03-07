@@ -205,11 +205,13 @@ void UnitCell::setBU(const Vector3d& hkl1, const Vector3d& hkl2, const Vector3d&
 	U=m2*m1.inverse();
 
 	_B=_B*U;
+	_A=_B.inverse();
 }
 
 void UnitCell::setBU(const Eigen::Matrix3d& BU)
 {
 	_B = BU;
+	_A = _B.inverse();
 }
 
 Eigen::Matrix3d UnitCell::getBusingLevyB() const
@@ -222,15 +224,16 @@ Eigen::Matrix3d UnitCell::getBusingLevyB() const
 	double beta2=getReciprocalBeta();
 	double beta3=getReciprocalGamma();
 	double alpha1=getAlpha();
-	B <<  b1,            0,                          0,
-		  b2*cos(beta3), b2*sin(beta3),              0,
-		  b3*cos(beta2), -b3*sin(beta2)*cos(alpha1), 1/c;
+	B <<  b1,b2*cos(beta3),b3*cos(beta2),
+	0	  , b2*sin(beta3), -b3*sin(beta2)*cos(alpha1),
+	0	  , 0 , 1/c;
+
 	return B;
 }
 
 Eigen::Matrix3d UnitCell::getBusingLevyU() const
 {
-	return (getBusingLevyB().inverse()*_B);
+	return (_B.transpose()*getBusingLevyB().inverse());
 }
 
 void UnitCell::printSelf(std::ostream& os) const
