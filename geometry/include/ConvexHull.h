@@ -32,11 +32,14 @@
 
 #include <array>
 #include <cmath>
-#include <list>
 #include <iostream>
+#include <iterator>
+#include <list>
 
 #include <Eigen/Dense>
 
+#include "Edge.h"
+#include "Vertex.h"
 #include "Face.h"
 #include "Triangle.h"
 #include "Error.h"
@@ -187,7 +190,7 @@ private:
 	//! Original name: MakeConeFace
 	pFace buildConeFace(pEdge e, pVertex v);
 
-	//! Orienttates a face of the hull given a reference edge and vertex
+	//! Orientates a face of the hull given a reference edge and vertex
 	//! Original name: makeCcw
 	void orientate(pFace f, pEdge e, pVertex v);
 
@@ -217,11 +220,72 @@ private:
 };
 
 template <typename T>
-ConvexHull<T>::ConvexHull(const ConvexHull<T>& other):_initialized(other._initialized)
+ConvexHull<T>::ConvexHull(const ConvexHull<T>& other) : _initialized(other._initialized)
 {
-	copy(other._vertices.begin(),other._vertices.end(),std::back_inserter(_vertices));
-	copy(other._edges.begin(),other._edges.end(),std::back_inserter(_edges));
-	copy(other._faces.begin(),other._faces.end(),std::back_inserter(_faces));
+	for (auto v : other._vertices)
+		_vertices.push_back(new Vertex<T>(v->_coords));
+
+	for (int i=0;i<_edges.size();++i)
+		_edges.push_back(new Edge<T>());
+
+	for (int i=0;i<_faces.size();++i)
+		_faces.push_back(new Face<T>());
+
+	typename std::list<pEdge>::iterator eit(_edges.begin());
+	typename std::list<pEdge>::const_iterator oeit(other._edges.begin());
+	for (int i=0;i<_edges.size();++i,++eit,++oeit)
+	{
+		for (int j=0;j<2;++j)
+		{
+			pVertex pv = (*oeit)->_endPts[j];
+			auto vit = std::find(other._vertices.begin(),other._vertices.end(),pv);
+			if (vit != other._vertices.end())
+			{
+				int dis = std::distance(other._vertices.begin(),vit);
+				auto it = _vertices.begin();
+				std::advance(it,dis);
+				(*eit)->_endPts[j] = *it;
+			}
+
+			pFace pf = (*oeit)->_adjFace[j];
+			auto fit = std::find(other._faces.begin(),other._faces.end(),pf);
+			if (fit != other._faces.end())
+			{
+				int dis = std::distance(other._faces.begin(),fit);
+				auto it = _faces.begin();
+				std::advance(it,dis);
+				(*eit)->_adjFace[j] = *it;
+			}
+		}
+	}
+
+	typename std::list<pFace>::iterator fit(_faces.begin());
+	typename std::list<pFace>::const_iterator ofit(other._faces.begin());
+	for (int i=0;i<_faces.size();++i,++fit,++ofit)
+	{
+		for (int j=0;j<3;++j)
+		{
+			pVertex pv = (*ofit)->_vertices[j];
+			auto vit = std::find(other._vertices.begin(),other._vertices.end(),pv);
+			if (vit != other._vertices.end())
+			{
+				int dis = std::distance(other._vertices.begin(),vit);
+				auto it = _vertices.begin();
+				std::advance(it,dis);
+				(*fit)->_vertices[j] = *it;
+			}
+
+			pEdge pe = (*ofit)->_edges[j];
+			auto eit = std::find(other._edges.begin(),other._edges.end(),pe);
+			if (eit != other._edges.end())
+			{
+				int dis = std::distance(other._edges.begin(),eit);
+				auto it = _edges.begin();
+				std::advance(it,dis);
+				(*fit)->_edges[j] = *it;
+			}
+		}
+	}
 }
 
 template <typename T>
@@ -229,10 +293,70 @@ ConvexHull<T>& ConvexHull<T>::operator=(const ConvexHull<T>& other)
 {
 	if (this!=&other)
 	{
-		_initialized=other._initialized;
-		copy(other._vertices.begin(),other._vertices.end(),std::back_inserter(_vertices));
-		copy(other._edges.begin(),other._edges.end(),std::back_inserter(_edges));
-		copy(other._faces.begin(),other._faces.end(),std::back_inserter(_faces));
+		for (auto v : other._vertices)
+			_vertices.push_back(new Vertex<T>(v->_coords));
+
+		for (int i=0;i<_edges.size();++i)
+			_edges.push_back(new Edge<T>());
+
+		for (int i=0;i<_faces.size();++i)
+			_faces.push_back(new Face<T>());
+
+		typename std::list<pEdge>::iterator eit(_edges.begin());
+		typename std::list<pEdge>::const_iterator oeit(other._edges.begin());
+		for (int i=0;i<_edges.size();++i,++eit,++oeit)
+		{
+			for (int j=0;j<2;++j)
+			{
+				pVertex pv = (*oeit)->_endPts[j];
+				auto vit = std::find(other._vertices.begin(),other._vertices.end(),pv);
+				if (vit != other._vertices.end())
+				{
+					int dis = std::distance(other._vertices.begin(),vit);
+					auto it = _vertices.begin();
+					std::advance(it,dis);
+					(*eit)->_endPts[j] = *it;
+				}
+
+				pFace pf = (*oeit)->_adjFace[j];
+				auto fit = std::find(other._faces.begin(),other._faces.end(),pf);
+				if (fit != other._faces.end())
+				{
+					int dis = std::distance(other._faces.begin(),fit);
+					auto it = _faces.begin();
+					std::advance(it,dis);
+					(*eit)->_adjFace[j] = *it;
+				}
+			}
+		}
+
+		typename std::list<pFace>::iterator fit(_faces.begin());
+		typename std::list<pFace>::const_iterator ofit(other._faces.begin());
+		for (int i=0;i<_faces.size();++i,++fit,++ofit)
+		{
+			for (int j=0;j<3;++j)
+			{
+				pVertex pv = (*ofit)->_vertices[j];
+				auto vit = std::find(other._vertices.begin(),other._vertices.end(),pv);
+				if (vit != other._vertices.end())
+				{
+					int dis = std::distance(other._vertices.begin(),vit);
+					auto it = _vertices.begin();
+					std::advance(it,dis);
+					(*fit)->_vertices[j] = *it;
+				}
+
+				pEdge pe = (*ofit)->_edges[j];
+				auto eit = std::find(other._edges.begin(),other._edges.end(),pe);
+				if (eit != other._edges.end())
+				{
+					int dis = std::distance(other._edges.begin(),eit);
+					auto it = _edges.begin();
+					std::advance(it,dis);
+					(*fit)->_edges[j] = *it;
+				}
+			}
+		}
 	}
 	return *this;
 }
@@ -245,7 +369,7 @@ void ConvexHull<T>::reset()
 	for (auto e : _edges)
 			delete e;
 	for (auto f : _faces)
-			delete f;
+		delete f;
 	_vertices.clear();
 	_edges.clear();
 	_faces.clear();
@@ -272,14 +396,18 @@ ConvexHull<T>::ConvexHull() : _initialized(false), _vertices(), _edges(), _faces
 template <typename T>
 ConvexHull<T>::~ConvexHull()
 {
-	for (auto& v : _vertices)
+	for (auto v : _vertices)
 		delete v;
 
-	for (auto& e : _edges)
+	for (auto e : _edges)
 		delete e;
 
-	for (auto& f : _faces)
+	for (auto f : _faces)
 		delete f;
+
+	_vertices.clear();
+	_edges.clear();
+	_faces.clear();
 }
 
 template <typename T>
@@ -475,13 +603,11 @@ void ConvexHull<T>::updateHull()
 		else
 			++it;
 	}
-
 }
 
 template <typename T>
 void ConvexHull<T>::processVertex(pVertex v)
 {
-
 	v->_mark=true;
 	// Mark the faces that are visible from vertex v
 	bool visible=false;
@@ -523,9 +649,7 @@ void ConvexHull<T>::processVertex(pVertex v)
 			e->_newFace=buildConeFace(e,v);
 
 		++it;
-
 	}
-
 }
 
 template <typename T>

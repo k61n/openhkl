@@ -34,7 +34,8 @@
 
 #include <ostream>
 
-namespace SX {
+namespace SX
+{
 
 namespace Geometry
 {
@@ -61,7 +62,7 @@ public:
 	//! Default constructor
 	Vertex();
 
-	//! Copy constructor (deleted)
+	//! Copy constructor
 	Vertex(const Vertex& other)=delete;
 
 	//! Constructs a Vertex object from a vector of coordinates
@@ -70,7 +71,7 @@ public:
 	//! Destructor
 	~Vertex();
 
-	//! Assignment operator (deleted)
+	//! Assignment operator
 	Vertex& operator=(const Vertex& other)=delete;
 
 	//! Send some informations about this Vertex on an output stream
@@ -86,6 +87,8 @@ public:
 	bool _onHull;
 	//! True if the vertex has been processed
 	bool _mark;
+
+private:
 };
 
 template <typename T>

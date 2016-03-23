@@ -46,6 +46,7 @@ namespace Geometry
 // Forward declarations
 template <typename T>
 class Vertex;
+
 template <typename T>
 class Edge;
 
@@ -62,13 +63,13 @@ public:
 	//! Default constructor
 	Face();
 
-	//! Copy constructor (deleted)
+	//! Copy constructor
 	Face(const Face& other)=delete;
 
 	//! Destructor
 	~Face();
 
-	//! Assignment operator (deleted)
+	//! Assignment operator
 	Face& operator=(const Face& other)=delete;
 
 	//! Returns the int signed volume of the tetrahedron formed by this Face and a vertex.

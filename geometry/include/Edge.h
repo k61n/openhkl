@@ -56,13 +56,13 @@ public:
 	//! Default constructor
 	Edge();
 
-	//! Copy constructor (deleted)
+	//! Copy constructor
 	Edge(const Edge& other)=delete;
 
 	//! Destructor
 	~Edge();
 
-	//! Assignment operator (deleted)
+	//! Assignment operator
 	Edge& operator=(const Edge& other)=delete;
 
 	//! Send some information about this Edge on an output stream
