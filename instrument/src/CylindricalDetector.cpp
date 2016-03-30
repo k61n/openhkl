@@ -119,7 +119,7 @@ Eigen::Vector3d CylindricalDetector::getPos(double px, double py) const
 	return result;
 }
 
-bool CylindricalDetector::hasKf(const Eigen::Vector3d& kf,const Eigen::Vector3d& f, double& px, double& py) const
+bool CylindricalDetector::hasKf(const Eigen::Vector3d& kf,const Eigen::Vector3d& f, double& px, double& py, double& t) const
 {
 
 	// Need to solve equation of the typr (from_xy + f_xy*t)^2=R^2
@@ -133,7 +133,7 @@ bool CylindricalDetector::hasKf(const Eigen::Vector3d& kf,const Eigen::Vector3d&
 
 	Delta=sqrt(Delta);
 
-	double t=0.5*(-b+Delta)/a;
+	t=0.5*(-b+Delta)/a;
 	if (t<=0)
 		return false;
 
@@ -150,6 +150,7 @@ bool CylindricalDetector::hasKf(const Eigen::Vector3d& kf,const Eigen::Vector3d&
 
 	px=phi/_angularWidth*(_nCols-1);
 	py=d*(_nRows-1);
+
 	return true;
 }
 

@@ -116,7 +116,7 @@ Eigen::Vector3d FlatDetector::getPos(double px, double py) const
 	return result;
 }
 
-bool FlatDetector::hasKf(const Eigen::Vector3d& kf,const Eigen::Vector3d& f, double& px, double& py) const
+bool FlatDetector::hasKf(const Eigen::Vector3d& kf,const Eigen::Vector3d& f, double& px, double& py, double& t) const
 {
 	double x=_distance-f[1];
 	if (std::fabs(kf[1])<1e-10 || std::fabs(x)<1e-10)
@@ -125,8 +125,9 @@ bool FlatDetector::hasKf(const Eigen::Vector3d& kf,const Eigen::Vector3d& f, dou
 		py=0;
 		return false;
 	}
-	double t=x/kf[1];
-	auto v=f+kf*t;
+
+	t = x/kf[1];
+	auto v = f+kf*t;
 
 	px=0.5*(_nCols*(2*v[0]/_width+1)-1);
 	py=0.5*(_nRows*(2*v[2]/_height+1)-1);

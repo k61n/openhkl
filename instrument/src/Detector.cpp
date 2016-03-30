@@ -152,17 +152,17 @@ Eigen::Vector3d Detector::getKf(const DetectorEvent& event, double wave,const Ei
 	return (p/wave);
 }
 
-bool Detector::receiveKf(double& px, double& py, const Eigen::Vector3d& kf, const Eigen::Vector3d& from,const std::vector<double>& goniovalues)
+bool Detector::receiveKf(double& px, double& py, const Eigen::Vector3d& kf, const Eigen::Vector3d& from, double& t, const std::vector<double>& goniovalues)
 {
 
 	if (_gonio)
 	{
 		Eigen::Vector3d fromt=_gonio->transformInverse(from,goniovalues);
 		Eigen::Vector3d kft=_gonio->getInverseHomMatrix(goniovalues).rotation()*kf;
-		return hasKf(kft,fromt,px,py);
+		return hasKf(kft,fromt,px,py,t);
 	}
 	else
-		return hasKf(kf,from,px,py);
+		return hasKf(kf,from,px,py,t);
 }
 
 Eigen::Vector3d Detector::getQ(double px, double py,double wave,const std::vector<double>& values,const Eigen::Vector3d& from) const

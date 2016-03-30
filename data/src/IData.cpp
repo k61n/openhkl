@@ -570,7 +570,8 @@ std::vector<PeakCalc> IData::hasPeaks(const std::vector<Eigen::Vector3d>& hkls, 
 		ComponentState cs=getSampleInterpolatedState(t);
 		Eigen::Vector3d from=_diffractometer->getSample()->getPosition(cs.getValues());
 
-		bool accept=_diffractometer->getDetector()->receiveKf(px,py,kf,from,dis.getValues());
+		double time;
+		bool accept=_diffractometer->getDetector()->receiveKf(px,py,kf,from,time,dis.getValues());
 
 		if (accept)
 			peaks.push_back(PeakCalc(hkl[0],hkl[1],hkl[2],px,py,t));
