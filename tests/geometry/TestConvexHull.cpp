@@ -3,12 +3,14 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include "initializer_list"
+#include <initializer_list>
+#include <iostream>
 #include <algorithm>
+#include <cstdlib>
+
 #include "Error.h"
 #include "Face.h"
 #include "ConvexHull.h"
-#include <cstdlib>
 
 //! Check that the Hull satisfies the convexity condition. This consists in
 //! checking that the signed volume between every face and every point is positive.
@@ -104,5 +106,13 @@ BOOST_AUTO_TEST_CASE(Test_ConvexHull)
 	chull.translateToCenter();
 	double newVolume=chull.getVolume();
 	BOOST_CHECK_CLOSE(oldVolume,newVolume,tolerance);
+
+	// Check that the copy construction is OK
+	CHullDouble newhull(chull);
+	BOOST_CHECK_EQUAL(chull.getNVertices(),newhull.getNVertices());
+	BOOST_CHECK_EQUAL(chull.getNEdges(),newhull.getNEdges());
+	BOOST_CHECK_EQUAL(chull.getNFaces(),newhull.getNFaces());
+	BOOST_CHECK_CLOSE(chull.getVolume(),newhull.getVolume(),tolerance);
+
 }
 
