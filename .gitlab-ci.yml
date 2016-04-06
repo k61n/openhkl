@@ -1,20 +1,31 @@
 stages:
-  - build
+  - mac
   
-build:
+#build:
+#  stage: build
+#  script:
+#    - mkdir ./build
+#    - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./build
+#    - make -j2 -l2
+#    - make install
+#    - ctest -j2 -l2
+#    - rm CMakeCache.txt
+#    - cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_CPACK=ON -DBUILD_QTAPPS=ON
+#    - make package
+#    - scp nsxtool*.deb gitlabci-nsxtool@nsxtool.ill.fr:/mnt/data/software/nsxtool/uploads
+
+#  only:
+#    - master
+#  tags:
+#    - ubuntu14.04
+
+
+mac:
   stage: build
   script:
-    - mkdir ./build
-    - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./build
-    - make -j2 -l2
-    - make install
-    - ctest -j2 -l2
-    - rm CMakeCache.txt
-    - cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_CPACK=ON -DBUILD_QTAPPS=ON
-    - make package
-    - scp nsxtool*.deb gitlabci-nsxtool@nsxtool.ill.fr:/mnt/data/software/nsxtool/uploads
-
+    - echo "test"
   only:
     - master
   tags:
-    - ubuntu14.04
+    - mac
+
