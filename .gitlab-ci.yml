@@ -23,7 +23,12 @@ stages:
 mac:
   stage: mac
   script:
-    - echo "test"
+    - mkdir ./build
+    - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./build
+    - make -j4 -l4
+    - make install
+    - ctest -j4 -l4
+    - rm CMakeCache.txt
   only:
     - master
   tags:
