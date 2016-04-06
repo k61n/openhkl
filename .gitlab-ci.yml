@@ -21,7 +21,7 @@ stages:
 
 
 mac:
-  stage: build
+  stage: mac
   script:
     - echo "test"
   only:
