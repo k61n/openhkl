@@ -8,6 +8,15 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/externals/c-blosc
 
 project(NSXTOOL_PROJECT)
 
+set(NSXTOOL_VERSION_MAJOR 1)
+set(NSXTOOL_VERSION_MINOR 0)
+
+# Propose two build configurations
+#set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Compilation configuration" FORCE)
+if(DEFINED CMAKE_BUILD_TYPE)
+    set_property( CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug;Release" )
+endif()
+
 ###########################################################################
 # Options
 ###########################################################################
@@ -20,10 +29,17 @@ endif()
 
 #Set package name here
 set(CPACK_PACKAGE_NAME "nsxtool")
-SET(CPACK_PACKAGE_VERSION "1.0.0")
-SET(CPACK_PACKAGE_VERSION_MAJOR "1")
-SET(CPACK_PACKAGE_VERSION_MINOR "0")
-SET(CPACK_PACKAGE_VERSION_PATCH "0")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Neutron Single Crystal Diffraction Data Reduction")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/License.txt")
+set(CPACK_PACKAGE_VERSION "1.0.0")
+set(CPACK_PACKAGE_VERSION_MAJOR "${NSXTOOL_VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR "${NSXTOOL_VERSION_MINOR}")
+set(CPACK_PACKAGE_VERSION_PATCH "0")
+set(CPACK_SOURCE_IGNORE_FILES "/\\\\.git/;" )
+
+if (APPLE)
+	include(DarwinSetup)
+endif()
 
 ###########################################################################
 # Check dependencies
@@ -189,49 +205,31 @@ install(DIRECTORY resources/instruments
 # CPack settings
 ###########################################################################
         
- # Keep this in a defaulted-to-off option
-set(ENABLE_CPACK CACHE BOOL "Switch to enable CPack package generation")
-if (ENABLE_CPACK)
-
-    include(CPackCommon)
-        
-    # Linux packaging
-    if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-        include(CPackLinuxSetup)
-        # let people know what is coming out the other end
-        message(STATUS "CPACK_PACKAGE_FILE_NAME = ${CPACK_PACKAGE_FILE_NAME}")
-    endif()
+include(CPackCommon)
     
-#    set(BOOST_MIN_VERSION 1.54.0)      
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 
-    # rhel requirements
-#    set(CPACK_RPM_PACKAGE_REQUIRES "libqt5core5a")
-#    set(CPACK_RPM_PACKAGE_REQUIRES "libqt5printsupport5")
-#    set(CPACK_RPM_PACKAGE_REQUIRES "libqt5widgets5")
-#    set(CPACK_RPM_PACKAGE_REQUIRES "libqt5gui5")
-#    set(CPACK_RPM_PACKAGE_REQUIRES "fftw3")
-#    set(CPACK_RPM_PACKAGE_REQUIRES "eigen3")
-#    set(CPACK_RPM_PACKAGE_REQUIRES "hdf5")
-#    set(CPACK_RPM_PACKAGE_REQUIRES "tiff")
+    include(CPackLinuxSetup)
+    message(STATUS "CPACK_PACKAGE_FILE_NAME = ${CPACK_PACKAGE_FILE_NAME}")
       
-    if ("${UNIX_DIST}" MATCHES "Ubuntu")
-        string(REPLACE "," ", " CPACK_DEBIAN_PACKAGE_DEPENDS
-        "libqt5core5a,"
-        "libqt5printsupport5,"
-        "libqt5widgets5,"
-        "libqt5gui5,"
-        "libboost-filesystem1.54.0,"
-        "libboost-date-time1.54.0,"
-        "libboost-system1.54.0,"
-        "libboost-test1.54.0,"
-        "libeigen3-dev,"
-        "libfftw3-bin,"
-        "libtiff5,"
-        "libhdf5-7 (>=1.8.11)")
-    endif()
-    
-    set (CMAKE_INSTALL_RPATH "/usr/local/lib")
-    
-    include(CPack)
-    
+	if ("${UNIX_DIST}" MATCHES "Ubuntu")
+	    string(REPLACE "," ", " CPACK_DEBIAN_PACKAGE_DEPENDS
+	    "libqt5core5a,"
+	    "libqt5printsupport5,"
+	    "libqt5widgets5,"
+	    "libqt5gui5,"
+	    "libboost-filesystem1.54.0,"
+	    "libboost-date-time1.54.0,"
+	    "libboost-system1.54.0,"
+	    "libboost-test1.54.0,"
+	    "libeigen3-dev,"
+	    "libfftw3-bin,"
+	    "libtiff5,"
+	    "libhdf5-7 (>=1.8.11)")
+	endif()
+
 endif()
+
+set(CMAKE_INSTALL_RPATH "/usr/local/lib")
+
+include(CPack)
