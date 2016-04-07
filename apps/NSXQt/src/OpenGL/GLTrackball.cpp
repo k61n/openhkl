@@ -1,6 +1,13 @@
 #include "OpenGL/GLTrackball.h"
+
 #include <cmath>
-#include <GL/gl.h>
+
+#ifdef __APPLE__
+	#include <OpenGL/gl.h>
+#else
+	#include <GL/gl.h>
+#endif
+
 #include <iostream>
 
 GLTrackball::GLTrackball(int viewport_w, int viewport_h):_w(viewport_w),_h(viewport_h)

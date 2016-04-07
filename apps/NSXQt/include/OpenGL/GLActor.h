@@ -1,6 +1,12 @@
 #ifndef GLACTOR_H
 #define GLACTOR_H
-#include <GL/gl.h>
+
+#ifdef __APPLE__
+	#include <OpenGL/gl.h>
+#else
+	#include <GL/gl.h>
+#endif
+
 #include <Eigen/Dense>
 #include <QGLWidget>
 

@@ -62,7 +62,7 @@ else ()
     # Handle automatically moc files
     set(CMAKE_AUTOMOC ON)
     # Handle automatically ui files
-    set(CMAKE_AUTOUIC ON)
+    set(CMAKE_AUTOUIC OFF)
     # Specify that the app will use OpenGL
     set(QT_USE_QTOPENGL TRUE)
     # Handle automatically resources files

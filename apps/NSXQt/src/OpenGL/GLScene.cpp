@@ -1,5 +1,5 @@
 #include "OpenGL/GLScene.h"
-#include <OpenGL/GLActor.h>
+#include "OpenGL/GLActor.h"
 #include <iostream>
 
 GLScene::GLScene():_current(0)

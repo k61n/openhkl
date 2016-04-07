@@ -2,7 +2,7 @@
 #define GLWIDGET_H
 
 #include <QGLWidget>
-#include "GLTrackball.h"
+#include "OpenGL/GLTrackball.h"
 #include "GLScene.h"
 
 class GLWidget : public QGLWidget
