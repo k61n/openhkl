@@ -1,5 +1,8 @@
+#include <boost/foreach.hpp>
+
+#include "Error.h"
+#include "Monochromator.h"
 #include "Source.h"
-#include "SourceFactory.h"
 #include "Units.h"
 
 namespace SX
@@ -10,64 +13,53 @@ namespace Instrument
 
 Source* Source::create(const proptree::ptree& node)
 {
-	// Create an instance of the source factory
-	SourceFactory* sourceFactory=SourceFactory::Instance();
-
-	// Get the source type
-	std::string sourceType=node.get<std::string>("<xmlattr>.type");
-
 	// Fetch the source from the factory
-	Source* source = sourceFactory->create(sourceType,node);
+	Source* source = new Source(node);
 
 	return source;
 }
 
 Source::Source()
 : Component("source"),
-  _offset(0.0),
-  _offsetFixed(true),
-  _width(0.01),
-  _height(0.01)
+  _monochromators(),
+  _selectedMonochromator(0)
 {
 }
 
 Source::Source(const Source& other)
 : Component(other),
-  _offset(other._offset),
-  _offsetFixed(other._offsetFixed),
-  _width(other._width),
-  _height(other._height)
+  _selectedMonochromator(other._selectedMonochromator)
 {
+	_monochromators.reserve(other._monochromators.size());
+	for (auto p : other._monochromators)
+		_monochromators.push_back(new Monochromator(*p));
 }
 
 Source::Source(const std::string& name)
 : Component(name),
-  _offset(0.0),
-  _offsetFixed(true),
-  _width(0.01),
-  _height(0.01)
+  _monochromators(),
+  _selectedMonochromator(0)
 {
 }
 
 Source::Source(const proptree::ptree& node)
 : Component(node),
-  _offset(0.0),
-  _offsetFixed(true)
+  _selectedMonochromator(0)
 {
+    // Loop over the "monochromator" nodes and add the corresponding pointer to Monochromator objects to the Source
+	BOOST_FOREACH(const boost::property_tree::ptree::value_type& v, node)
+	{
+	    if (v.first.compare("monochromator")==0)
+	    {
+	    	Monochromator* mono = new Monochromator(v.second);
+	    	addMonochromator(mono);
+	    }
+	}
+}
 
-	Units::UnitsManager* um=SX::Units::UnitsManager::Instance();
-
-	// Set the source slit width from the property tree node
-	const proptree::ptree& widthNode = node.get_child("width");
-	double units=um->get(widthNode.get<std::string>("<xmlattr>.units"));
-	_width=widthNode.get_value<double>();
-	_width *= units;
-
-	// Set the source slit height from the property tree node
-	const proptree::ptree& heightNode = node.get_child("height");
-	units=um->get(heightNode.get<std::string>("<xmlattr>.units"));
-	_height=heightNode.get_value<double>();
-	_height *= units;
+Source* Source::clone() const
+{
+	return new Source(*this);
 }
 
 Source::~Source()
@@ -79,47 +71,116 @@ Source& Source::operator=(const Source& other)
 	if (this != &other)
 	{
 		Component::operator=(other);
-		_offset = other._offset;
-		_offsetFixed = other._offsetFixed;
-		_width = other._width;
-		_height = other._height;
+		_selectedMonochromator = other._selectedMonochromator;
+		_monochromators.reserve(other._monochromators.size());
+		for (auto p : other._monochromators)
+			_monochromators.push_back(new Monochromator(*p));
 	}
 	return *this;
 }
 
-void Source::setOffset(double off)
+void Source::setOffset(double offset) const
 {
-	if (!_offsetFixed)
-		_offset=off;
-}
-void Source::setOffsetFixed(bool fixed)
-{
-	_offsetFixed=fixed;
+	Monochromator* mono=getSelectedMonochromator();
+	if (mono == nullptr)
+		return;
+
+	if (mono->isOffsetFixed())
+		return;
+
+	mono->setOffset(offset);
 }
 
-bool Source::hasOffsetFixed() const
+void Source::setWavelength(double wavelength) const
 {
-	return _offsetFixed;
+	Monochromator* mono=getSelectedMonochromator();
+	if (mono == nullptr)
+		return;
+
+	mono->setWavelength(wavelength);
 }
 
-double Source::getWidth() const
+double Source::getWavelength() const
 {
-	return _width;
+	Monochromator* mono=getSelectedMonochromator();
+	if (mono==nullptr)
+		throw SX::Kernel::Error<Source>("No monochromator selected.");
+
+	return mono->getWavelength();
 }
 
-void Source::setWidth(double width)
+double Source::getOffset() const
 {
-	_width=width;
+	Monochromator* mono=getSelectedMonochromator();
+	if (mono==nullptr)
+		throw SX::Kernel::Error<Source>("No monochromator selected.");
+
+	return mono->getOffset();
 }
 
-double Source::getHeight() const
+void Source::setOffsetFixed(bool offsetFixed) const
 {
-	return _height;
+	Monochromator* mono=getSelectedMonochromator();
+	if (mono == nullptr)
+		return;
+
+	mono->setOffsetFixed(offsetFixed);
 }
 
-void Source::setHeight(double height)
+bool Source::isOffsetFixed() const
 {
-	_height=height;
+	Monochromator* mono=getSelectedMonochromator();
+	if (mono==nullptr)
+		throw SX::Kernel::Error<Source>("No monochromator selected.");
+
+	return mono->isOffsetFixed();
+}
+
+const std::vector<Monochromator*>& Source::getMonochromators() const
+{
+	return _monochromators;
+}
+
+int Source::getNMonochromators() const
+{
+	return _monochromators.size();
+}
+
+Monochromator* Source::setSelectedMonochromator(size_t i)
+{
+	if (i >=0 && i<_monochromators.size())
+	{
+		_selectedMonochromator = i;
+		return _monochromators[i];
+	}
+	else
+		return nullptr;
+}
+
+Monochromator* Source::getSelectedMonochromator() const
+{
+	if (_selectedMonochromator>=0 && _selectedMonochromator<_monochromators.size())
+		return _monochromators[_selectedMonochromator];
+	else
+		return nullptr;
+
+}
+
+void Source::addMonochromator(Monochromator* mono)
+{
+
+	auto it=std::find(_monochromators.begin(),_monochromators.end(),mono);
+	if (it==_monochromators.end())
+		_monochromators.push_back(mono);
+}
+
+Eigen::Vector3d Source::getKi() const
+{
+	Monochromator* mono=getSelectedMonochromator();
+	if (mono==nullptr)
+		throw SX::Kernel::Error<Source>("No monochromator selected.");
+
+	return Eigen::Vector3d(0,1.0/mono->getWavelength(),0.0);
 }
 
 } // end namespace Instrument

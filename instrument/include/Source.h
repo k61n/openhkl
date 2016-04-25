@@ -31,6 +31,7 @@
 #define NSXTOOL_SOURCE_H_
 
 #include <string>
+#include <vector>
 
 #include <boost/property_tree/ptree.hpp>
 
@@ -41,6 +42,8 @@ namespace SX
 
 namespace Instrument
 {
+
+class Monochromator;
 
 class Source : public Component
 {
@@ -58,41 +61,50 @@ public:
 	//! Constructs a source from a property tree node
 	Source(const proptree::ptree& node);
 	//! Virtual copy constructor
-	virtual Source* clone() const=0;
+	Source* clone() const;
 	//! Destructor
-	virtual ~Source()=0;
+	~Source();
 
 	//! Assignment operator
 	Source& operator=(const Source& other);
 
 	//! Get the wavelength of the source
-	virtual double getWavelength() const=0;
+	double getWavelength() const;
 	//! Set the wavelength of the source
-	virtual void setWavelength(double wavelength)=0;
+	void setWavelength(double wavelength) const;
 
 	//! Get the incoming wave vector
-	virtual Eigen::Vector3d getKi() const=0;
+	Eigen::Vector3d getKi() const;
 
-	//! Set an offset in wavelength. No effect if _offsetFixed is set to True.
-	void setOffset(double offset);
-	void setOffsetFixed(bool fixed);
-	bool hasOffsetFixed() const;
+	//! Set the offset of the wavelength for the currently selected monochromator. No effect if _offsetFixed is set to True.
+	void setOffset(double offset) const;
+	//! Get the offset of the wavelength for the currently selected monochromator. Throw if no monochromator selected.
+	double getOffset() const;
 
-	//! Set the width of the source slit
-	void setWidth(double width);
-	//! Get the width of the source slit
-	double getWidth() const;
+	//! Fix the offset of the wavelength for the currently selected monochromator.
+	void setOffsetFixed(bool offsetFixed) const;
+	//! Return whether the offset of the wavelength of the selected monochromator is fixed or not
+	bool isOffsetFixed() const;
 
-	//! Set the height of the source slit
-	void setHeight(double height);
-	//! Get the height of the source slit
-	double getHeight() const;
+	//! Returns the monochromators registered for this Source
+	const std::vector<Monochromator*>& getMonochromators() const;
+
+	//! Returns the number of monochromators associated with this source
+	int getNMonochromators() const;
+
+	//! Select a monochromator for this source
+	Monochromator* setSelectedMonochromator(size_t i);
+
+	//! Return a pointer to the selected monochromator
+	Monochromator* getSelectedMonochromator() const;
+
+	//! Add a new monochromator to this source
+	void addMonochromator(Monochromator*);
 
 protected:
-	double _offset;
-	bool _offsetFixed;
-	double _width;
-	double _height;
+
+	std::vector<Monochromator*> _monochromators;
+	size_t _selectedMonochromator;
 };
 
 } // end namespace Instrument
