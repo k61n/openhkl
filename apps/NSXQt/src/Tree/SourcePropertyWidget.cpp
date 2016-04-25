@@ -1,7 +1,11 @@
 #include "include/Tree/SourcePropertyWidget.h"
 #include "ui_SourcePropertyWidget.h"
+#include <QDebug>
+
 #include "include/Tree/SourceItem.h"
+
 #include "Diffractometer.h"
+#include "Monochromator.h"
 #include "Source.h"
 #include "Units.h"
 
@@ -11,10 +15,14 @@ SourcePropertyWidget::SourcePropertyWidget(SourceItem* caller,QWidget *parent) :
     _caller(caller)
 {
     ui->setupUi(this);
-    auto source=_caller->getExperiment()->getDiffractometer()->getSource();
-    ui->doubleSpinBox_Wavelength->setValue(source->getWavelength());
-    ui->doubleSpinBox_Height->setValue(source->getHeight()/SX::Units::mm);
-    ui->doubleSpinBox_Width->setValue(source->getWidth()/SX::Units::mm);
+    Source* source=_caller->getExperiment()->getDiffractometer()->getSource();
+    auto monos = source->getMonochromators();
+    for (auto m : monos)
+        ui->comboBox_Monochromators->addItem(QString::fromStdString(m->getName()));
+    ui->doubleSpinBox_Wavelength->setValue(source->getSelectedMonochromator()->getWavelength());
+    ui->doubleSpinBox_FWHM->setValue(source->getSelectedMonochromator()->getFWHM());
+    ui->doubleSpinBox_Height->setValue(source->getSelectedMonochromator()->getHeight()/SX::Units::mm);
+    ui->doubleSpinBox_Width->setValue(source->getSelectedMonochromator()->getWidth()/SX::Units::mm);
 }
 
 SourcePropertyWidget::~SourcePropertyWidget()
@@ -31,11 +39,21 @@ void SourcePropertyWidget::on_doubleSpinBox_Wavelength_valueChanged(double arg1)
 void SourcePropertyWidget::on_doubleSpinBox_Width_valueChanged(double arg1)
 {
      auto source=_caller->getExperiment()->getDiffractometer()->getSource();
-     source->setWidth(arg1*SX::Units::mm);
+     source->getSelectedMonochromator()->setWidth(arg1*SX::Units::mm);
 }
 
 void SourcePropertyWidget::on_doubleSpinBox_Height_valueChanged(double arg1)
 {
      auto source=_caller->getExperiment()->getDiffractometer()->getSource();
-     source->setHeight(arg1*SX::Units::mm);
+     source->getSelectedMonochromator()->setHeight(arg1*SX::Units::mm);
+}
+
+void SourcePropertyWidget::on_comboBox_Monochromators_currentIndexChanged(int index)
+{
+    auto source=_caller->getExperiment()->getDiffractometer()->getSource();
+    source->setSelectedMonochromator(index);
+    ui->doubleSpinBox_Wavelength->setValue(source->getSelectedMonochromator()->getWavelength());
+    ui->doubleSpinBox_FWHM->setValue(source->getSelectedMonochromator()->getFWHM());
+    ui->doubleSpinBox_Height->setValue(source->getSelectedMonochromator()->getHeight()/SX::Units::mm);
+    ui->doubleSpinBox_Width->setValue(source->getSelectedMonochromator()->getWidth()/SX::Units::mm);
 }

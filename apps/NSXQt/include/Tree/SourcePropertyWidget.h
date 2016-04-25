@@ -24,6 +24,8 @@ private slots:
 
     void on_doubleSpinBox_Height_valueChanged(double arg1);
 
+    void on_comboBox_Monochromators_currentIndexChanged(int index);
+
 private:
     Ui::SourcePropertyWidget *ui;
     SourceItem* _caller;
