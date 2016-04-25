@@ -118,7 +118,7 @@
 	        <z>0.000</z>
         </position>
     </sample>
-    <source type="monochromatic">
+    <source>
     	<name>monochromatic source</name>
         <goniometer>        
         	<name></name>
@@ -186,8 +186,12 @@
 	        <y>0.000</y>
 	        <z>0.000</z>
         </position>
-        <width units="mm">60.0</width>
-        <height units="mm">80.0</height>
-        <wavelength>1.24</wavelength>
+        <monochromator>
+        	<name>Cu(220)</name>
+	        <width units="mm">60.0</width>
+	        <height units="mm">80.0</height>
+	        <wavelength>0.8409</wavelength>
+	        <fwhm>0.00901</fwhm>
+        </monochromator>
     </source>
 </instrument>
