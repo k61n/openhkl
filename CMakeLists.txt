@@ -67,6 +67,7 @@ include_directories(${EIGEN3_INCLUDE_DIR})
 
 ###### Search the HDF5 library
 find_package(HDF5 COMPONENTS CXX)
+include_directories("${HDF5_INCLUDE_DIRS}")
 find_package(Blosc REQUIRED)
 if (BLOSC_FOUND==True)
         message("Blosc library found, already installed on the system")
