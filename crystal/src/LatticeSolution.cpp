@@ -91,7 +91,7 @@ LatticeSolution::LatticeSolution(Instrument::Detector* detector,Instrument::Samp
 
 	idx = nFreeLatticeParams;
 
-	if (_source->hasOffsetFixed())
+	if (_source->isOffsetFixed())
 		_sigmaSourceOffset=0.0;
 	else
 	{

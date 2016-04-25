@@ -18,6 +18,7 @@
 #include "Units.h"
 #include "IData.h"
 #include "DoubleTableItemDelegate.h"
+#include "Monochromator.h"
 
 DialogRefineUnitCell::DialogRefineUnitCell(SX::Instrument::Experiment* experiment,std::shared_ptr<SX::Crystal::UnitCell> cell,QWidget *parent)
 : QDialog(parent),
@@ -78,7 +79,7 @@ void DialogRefineUnitCell::setMinimizer()
 
     int start=10;
 
-    _minimizer.refineParameter(9,!source->hasOffsetFixed());
+    _minimizer.refineParameter(9,!source->getSelectedMonochromator()->isOffsetFixed());
 
     int nSampleOffsets=sample->getNAxes();
     for (int i=0;i<nSampleOffsets;++i)

@@ -1,3 +1,8 @@
+#include <QtDebug>
+#include <QMessageBox>
+
+#include <Eigen/Dense>
+
 #include "include/Absorption/DialogMCAbsorption.h"
 #include "ui_DialogMCAbsorption.h"
 #include "Experiment.h"
@@ -5,13 +10,11 @@
 #include "Sample.h"
 #include "MCAbsorption.h"
 #include "Source.h"
-#include <QMessageBox>
 #include "IData.h"
 #include "Peak3D.h"
-#include <Eigen/Dense>
-#include <QtDebug>
 #include "Gonio.h"
 #include "Units.h"
+#include "Monochromator.h"
 
 DialogMCAbsorption::DialogMCAbsorption(SX::Instrument::Experiment *experiment, QWidget *parent): QDialog(parent),
      ui(new Ui::DialogMCAbsorption),
@@ -54,7 +57,7 @@ void DialogMCAbsorption::on_pushButton_run_pressed()
             return;
     }
 
-    SX::Geometry::MCAbsorption mca(source->getWidth(),source->getHeight(),-1.0);
+    SX::Geometry::MCAbsorption mca(source->getSelectedMonochromator()->getWidth(),source->getSelectedMonochromator()->getHeight(),-1.0);
     auto& hull=sample->getShape();
     if (!hull.checkEulerConditions())
     {

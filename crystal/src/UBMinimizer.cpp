@@ -366,7 +366,7 @@ UBSolution::UBSolution(SX::Instrument::Detector* detector,SX::Instrument::Sample
 
 	idx = 9;
 
-	if (_source->hasOffsetFixed())
+	if (_source->isOffsetFixed())
 		_sigmaSourceOffset=0.0;
 	else
 	{

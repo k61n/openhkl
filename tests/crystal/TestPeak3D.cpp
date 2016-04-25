@@ -10,7 +10,8 @@
 #include "Gonio.h"
 #include "Component.h"
 #include "ComponentState.h"
-#include "MonochromaticSource.h"
+#include "Source.h"
+#include "Monochromator.h"
 
 using SX::Crystal::Peak3D;
 using SX::Instrument::DetectorEvent;
@@ -19,7 +20,7 @@ using SX::Instrument::Gonio;
 using SX::Instrument::RotAxis;
 using SX::Instrument::Sample;
 using SX::Instrument::ComponentState;
-using SX::Instrument::MonochromaticSource;
+using SX::Instrument::Source;
 
 using namespace SX::Units;
 const double tolerance=1e-6;
@@ -32,8 +33,11 @@ BOOST_AUTO_TEST_CASE(Test_Peak3D)
 	d.setNPixels(32,32);
 
 	DetectorEvent event=d.createDetectorEvent(15.5,15.5);
-	MonochromaticSource source;
-	source.setWavelength(1.0);
+	Source source;
+	SX::Instrument::Monochromator mono("mono");
+	source.addMonochromator(&mono);
+	source.setSelectedMonochromator(0);
+
 	Peak3D peak;
 	peak.setDetectorEvent(&event);
 	peak.setSource(&source);
