@@ -17,12 +17,18 @@ SourcePropertyWidget::SourcePropertyWidget(SourceItem* caller,QWidget *parent) :
     ui->setupUi(this);
     Source* source=_caller->getExperiment()->getDiffractometer()->getSource();
     auto monos = source->getMonochromators();
-    for (auto m : monos)
-        ui->comboBox_Monochromators->addItem(QString::fromStdString(m->getName()));
-    ui->doubleSpinBox_Wavelength->setValue(source->getSelectedMonochromator()->getWavelength());
-    ui->doubleSpinBox_FWHM->setValue(source->getSelectedMonochromator()->getFWHM());
-    ui->doubleSpinBox_Height->setValue(source->getSelectedMonochromator()->getHeight()/SX::Units::mm);
-    ui->doubleSpinBox_Width->setValue(source->getSelectedMonochromator()->getWidth()/SX::Units::mm);
+    for (auto&& m : monos)
+        ui->comboBox_Monochromators->addItem(QString::fromStdString(m.getName()));
+
+    try {
+        ui->doubleSpinBox_Wavelength->setValue(source->getSelectedMonochromator()->getWavelength());
+        ui->doubleSpinBox_FWHM->setValue(source->getSelectedMonochromator()->getFWHM());
+        ui->doubleSpinBox_Height->setValue(source->getSelectedMonochromator()->getHeight()/SX::Units::mm);
+        ui->doubleSpinBox_Width->setValue(source->getSelectedMonochromator()->getWidth()/SX::Units::mm);
+    }
+    catch (std::exception& e) {
+        qCritical() << e.what(); 
+    }
 }
 
 SourcePropertyWidget::~SourcePropertyWidget()
