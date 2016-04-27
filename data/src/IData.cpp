@@ -298,10 +298,12 @@ void IData::saveHDF5(const std::string& filename) const
 	offset[1] = 0;
 	offset[2] = 0;
 
-	for(offset[0]=0; offset[0]<_data.size(); offset[0] += count[0])
-	{
-	  space->selectHyperslab(H5S_SELECT_SET,count,offset,NULL,NULL);
-	  dset->write(_data.at(offset[0]).data(),H5::PredType::NATIVE_INT32,*memspace,*space);
+	for(offset[0]=0; offset[0]<_data.size(); offset[0] += count[0]) {
+        space->selectHyperslab(H5S_SELECT_SET,count,offset,NULL,NULL);
+        
+        // HDF5 requires row-major storage, so copy frame into a row-major matrix
+        Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> frame(_data.at(offset[0]));
+        dset->write(frame.data(), H5::PredType::NATIVE_INT32, *memspace, *space);
 	}
 
 	// Saving the scans parameters (detector, sample and source)
