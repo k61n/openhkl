@@ -219,32 +219,13 @@ void HDF5Data::readInMemory()
 	if (!_isOpened)
 		open();
 
-	_data.resize(_nFrames);
+    _data.clear();
+    _data.reserve(_nFrames);
+    
 	for (std::size_t i=0;i<_nFrames;++i)
-	{
-		_data[i].resize(_nrows,_ncols);
-	}
-
-	hsize_t offset[3];
-	offset[0] = 0;
-	offset[1] = 0;
-	offset[2] = 0;
-
-    // Size of one hyperslab
-    hsize_t  count[3];
-    count[0] = 1;
-    count[1] = _nrows;
-    count[2] = _ncols;
-
-	// Read data Slab by slab
-	for(offset[0]=0; offset[0] < _nFrames; offset[0] += count[0])
-	{
-		_space->selectHyperslab(H5S_SELECT_SET,count,offset,NULL,NULL);
-		_dataset->read(_data.at(offset[0]).data(),H5::PredType::NATIVE_INT32,*_memspace,*_space);
-	}
+        _data.push_back(readFrame(i));
 
 	_inMemory=true;
-
 }
 
 Eigen::MatrixXi HDF5Data::getFrame(std::size_t frame)
@@ -261,16 +242,17 @@ Eigen::MatrixXi HDF5Data::readFrame(std::size_t frame)
 	if (!_isOpened)
 		open();
 
-	Eigen::MatrixXi m(_nrows,_ncols);
+    // HDF5 specification requires row-major storage
+	Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> m(_nrows,_ncols);
 
 	hsize_t count[3]={1,_nrows,_ncols};
-
 	hsize_t offset[3]={frame,0,0};
 
 	_space->selectHyperslab(H5S_SELECT_SET,count,offset,NULL,NULL);
 	_dataset->read(m.data(),H5::PredType::NATIVE_INT32,*_memspace,*_space);
 
-	return m;
+    // return copy as MatrixXi (which could be col-major)
+	return Eigen::MatrixXi(m);
 
 }
 
