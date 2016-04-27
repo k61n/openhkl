@@ -71,39 +71,40 @@ public:
 	//! Get the wavelength of the source
 	double getWavelength() const;
 	//! Set the wavelength of the source
-	void setWavelength(double wavelength) const;
+	void setWavelength(double wavelength);
 
 	//! Get the incoming wave vector
 	Eigen::Vector3d getKi() const;
 
 	//! Set the offset of the wavelength for the currently selected monochromator. No effect if _offsetFixed is set to True.
-	void setOffset(double offset) const;
+	void setOffset(double offset);
 	//! Get the offset of the wavelength for the currently selected monochromator. Throw if no monochromator selected.
 	double getOffset() const;
 
 	//! Fix the offset of the wavelength for the currently selected monochromator.
-	void setOffsetFixed(bool offsetFixed) const;
+	void setOffsetFixed(bool offsetFixed);
 	//! Return whether the offset of the wavelength of the selected monochromator is fixed or not
 	bool isOffsetFixed() const;
 
 	//! Returns the monochromators registered for this Source
-	const std::vector<Monochromator*>& getMonochromators() const;
+	const std::vector<Monochromator>& getMonochromators() const;
 
 	//! Returns the number of monochromators associated with this source
 	int getNMonochromators() const;
 
 	//! Select a monochromator for this source
-	Monochromator* setSelectedMonochromator(size_t i);
+    void setSelectedMonochromator(size_t i);
 
 	//! Return a pointer to the selected monochromator
-	Monochromator* getSelectedMonochromator() const;
+    Monochromator* getSelectedMonochromator();
+    const Monochromator* getSelectedMonochromator() const;
 
 	//! Add a new monochromator to this source
 	void addMonochromator(Monochromator*);
 
 protected:
 
-	std::vector<Monochromator*> _monochromators;
+	std::vector<Monochromator> _monochromators;
 	size_t _selectedMonochromator;
 };
 

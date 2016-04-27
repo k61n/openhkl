@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include <utility>
 
+#include "Monochromator.h"
 #include "Diffractometer.h"
 #include "DiffractometerStore.h"
 #include "Experiment.h"
@@ -116,6 +117,12 @@ void Experiment::addData(IData* data)
 		throw std::runtime_error("Mismatch between the diffractometers assigned to the experiment and the data");
 
 	double wav=data->getMetadata()->getKey<double>("wavelength");
+
+    // ensure that there is at least one monochromator!
+    if ( _diffractometer->getSource()->getNMonochromators() == 0 ) {
+        Monochromator mono("mono");
+        _diffractometer->getSource()->addMonochromator(&mono);
+    }
 
 	if (_data.empty())
 	{

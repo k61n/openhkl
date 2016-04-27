@@ -76,7 +76,7 @@ Monochromator& Monochromator::operator=(const Monochromator& other)
 	{
 		_name = other._name;
 		_wavelength = other._wavelength;
-		_offset - other._offset;
+		_offset = other._offset;
 		_offsetFixed = other._offsetFixed;
 		_fwhm = other._fwhm;
 		_width = other._width;
@@ -157,6 +157,32 @@ void Monochromator::setOffsetFixed(bool offsetFixed)
 bool Monochromator::isOffsetFixed() const
 {
 	return _offsetFixed;
+}
+
+bool Monochromator::operator==(const Monochromator& other)
+{
+    if (_name != other._name)
+        return false;
+
+    if (_wavelength != other._wavelength)
+        return false;
+
+    if (_offset != other._offset)
+        return false;
+
+    if (_offsetFixed != other._offsetFixed)
+        return false;
+
+    if (_fwhm != other._fwhm)
+        return false;
+
+    if ( _width != other._width)
+        return false;
+
+    if ( _height != other._height)
+        return false;
+
+    return true;
 }
 
 } /* namespace Instrument */

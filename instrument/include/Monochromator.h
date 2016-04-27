@@ -79,6 +79,8 @@ public:
 	//! Return whether the offset of the wavelength of this monochromator is fixed or not
 	bool isOffsetFixed() const;
 
+    bool operator==(const Monochromator& other);
+
 private:
 
 	std::string _name;
