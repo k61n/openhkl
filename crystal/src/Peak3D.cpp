@@ -169,7 +169,7 @@ void Peak3D::integrate()
 
 	for (unsigned int z=data_start;z<=data_end;++z)
 	{
-		const Eigen::MatrixXi& frame=_data->getData(z);
+        auto frame = _data->getFrame(z);
 		double pointsinpeak=0;
 		double pointsinbkg=0;
 		double intensityP=0;

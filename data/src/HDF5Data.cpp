@@ -20,6 +20,7 @@ IData* HDF5Data::create(const std::string& filename, std::shared_ptr<Diffractome
 HDF5Data::HDF5Data(const std::string& filename, std::shared_ptr<Diffractometer> instrument)
 :IData(filename,instrument), _dataset(nullptr), _space(nullptr), _memspace(nullptr)
 {
+    _isCached = false;
 	_file=new H5::H5File(_filename.c_str(), H5F_ACC_RDONLY);
 
 	// Read the info group and store in metadata
@@ -211,31 +212,6 @@ void HDF5Data::close()
 	_isOpened=false;
 }
 
-void HDF5Data::readInMemory()
-{
-	if (_inMemory)
-		return;
-
-	if (!_isOpened)
-		open();
-
-    _data.clear();
-    _data.reserve(_nFrames);
-    
-	for (std::size_t i=0;i<_nFrames;++i)
-        _data.push_back(readFrame(i));
-
-	_inMemory=true;
-}
-
-Eigen::MatrixXi HDF5Data::getFrame(std::size_t frame)
-{
-	if (_inMemory)
-		return _data[frame];
-	else
-		return readFrame(frame);
-
-}
 
 Eigen::MatrixXi HDF5Data::readFrame(std::size_t frame)
 {

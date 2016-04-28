@@ -79,25 +79,6 @@ void TiffData::close()
 	_isOpened=false;
 }
 
-void TiffData::readInMemory()
-{
-	if (_inMemory)
-		return;
-
-	_data[0].resize(_nrows,_ncols);
-	_data[0]=readFrame(0);
-
-	_inMemory=true;
-}
-
-Eigen::MatrixXi TiffData::getFrame(std::size_t idx)
-{
-
-	if (_inMemory)
-		return _data[idx];
-	else
-		return readFrame(idx);
-}
 
 Eigen::MatrixXi TiffData::readFrame(std::size_t idx)
 {

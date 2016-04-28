@@ -16,6 +16,7 @@
 #include "blosc.h"
 #include "Ellipsoid.h"
 
+
 namespace SX
 {
 
@@ -31,7 +32,7 @@ IData::IData(const std::string& filename, std::shared_ptr<Diffractometer> diffra
   _nrows(0),
   _ncols(0),
   _diffractometer(diffractometer),
-  _metadata(new MetaData()),
+   _metadata(std::unique_ptr<MetaData>(new MetaData())),
   _inMemory(false),
   _data(),
   _detectorStates(),
@@ -39,7 +40,9 @@ IData::IData(const std::string& filename, std::shared_ptr<Diffractometer> diffra
   _sourceStates(),
   _peaks(),
   _fileSize(0),
-  _masks()
+   _masks(),
+   _background(0.0),
+   _isCached(true)
 {
 	if ( !boost::filesystem::exists(_filename.c_str()))
 		throw std::runtime_error("IData, file: "+_filename+" does not exist");
@@ -51,7 +54,6 @@ IData::IData(const std::string& filename, std::shared_ptr<Diffractometer> diffra
 IData::~IData()
 {
 	clearPeaks();
-	delete _metadata;
 }
 
 std::string IData::getBasename() const
@@ -60,15 +62,6 @@ std::string IData::getBasename() const
 	return pathname.filename().string();
 }
 
-const std::vector<Eigen::MatrixXi>& IData::getData() const
-{
-	return _data;
-}
-
-const Eigen::MatrixXi& IData::getData(std::size_t idx) const
-{
-	return _data[idx];
-}
 
 int IData::dataAt(unsigned int x, unsigned int y, unsigned int z)
 {
@@ -77,7 +70,7 @@ int IData::dataAt(unsigned int x, unsigned int y, unsigned int z)
     if (z<0 || z>=_nFrames || y<0 || y>=_ncols || x<0 || x>=_nrows)
         return 0;
 
-    return (_data[z])(x,y);
+    return getFrame(z)(x,y);
 }
 
 const std::string& IData::getFilename() const
@@ -92,7 +85,7 @@ std::shared_ptr<Diffractometer> IData::getDiffractometer() const
 
 MetaData*  IData::getMetadata() const
 {
-	return _metadata;
+	return _metadata.get();
 }
 
 std::size_t IData::getNFrames() const
@@ -150,7 +143,6 @@ ComponentState IData::getDetectorInterpolatedState(double frame)
 		state[i] = prevState[i] + (frame-static_cast<double>(idx))*(nextState[i]-prevState[i]);
 
 	return _diffractometer->getDetector()->createState(state);
-
 }
 
 const ComponentState& IData::getDetectorState(unsigned int frame) const
@@ -582,19 +574,124 @@ std::vector<PeakCalc> IData::hasPeaks(const std::vector<Eigen::Vector3d>& hkls, 
 	return peaks;
 }
 
-double IData::getBackgroundLevel() const
+Eigen::MatrixXi IData::getFrame(std::size_t idx)
 {
-	if (!_inMemory)
-		return 0;
+    if ( _inMemory)
+        return _data.at(idx);
+    else
+        return readFrame(idx);            
+}
 
-	double mean=0;
-	for (unsigned int i=0;i<_nFrames;++i)
-	{
-		mean+=_data[i].sum();
-	}
-	mean/=(_nFrames*_nrows*_ncols);
-	//
-	return mean;
+void IData::readInMemory()
+{
+    // if caching is disabled, do nothing
+    if (!_isCached)
+        return;
+    
+    if (_inMemory)
+        return;
+
+    if ( !_isOpened)
+        open();
+
+    _data.clear();
+    _data.reserve(_nFrames);
+    
+    for (unsigned int i = 0; i < _nFrames; ++i)
+        _data.push_back(readFrame(i));
+
+    _inMemory = true;
+}
+
+double IData::getBackgroundLevel()
+{
+    if ( _background > 0.0 )
+        return _background;
+
+    _background = 0.0;
+
+    for (auto it = begin(); it != end(); ++it)
+        _background += it->sum();
+
+    _background /= (_nFrames * _nrows * _ncols);
+    return _background;
+}
+
+IData::FrameIterator::FrameIterator(IData* parent, int idx )
+    :_currentFrame(idx),
+     _parent(parent),
+     _currentData(),
+     _nextData()
+{
+    if (_currentFrame < _parent->_nFrames)
+        _currentData = _parent->getFrame(_currentFrame);
+
+    if ( _currentFrame+1 < _parent->_nFrames )
+        _nextData = getFrame(_currentFrame+1);
+}
+
+IData::FrameIterator::FrameIterator(const IData::FrameIterator& other)
+    :_currentFrame(other._currentFrame),
+     _parent(other._parent),
+     _currentData(other._currentData),
+    _nextData(other._nextData)
+{
+}
+
+IData::FrameIterator& IData::FrameIterator::operator++()
+{
+    assert(_currentFrame != _parent->_nFrames);
+
+    ++_currentFrame;
+    
+    if ( _currentFrame < _parent->_nFrames) {
+        _currentData = _nextData.get();
+        _nextData = getFrame(_currentFrame);
+    }
+
+    return *this;
+}
+
+std::shared_future<Eigen::MatrixXi> IData::FrameIterator::getFrame(int idx)
+{
+    return std::shared_future<Eigen::MatrixXi>(std::async(std::launch::async, [=]{return _parent->getFrame(idx);}));
+}
+
+Eigen::MatrixXi& IData::FrameIterator::operator*()
+{
+    return _currentData;
+}
+
+Eigen::MatrixXi* IData::FrameIterator::operator->()
+{
+    return &_currentData;
+}
+
+bool IData::FrameIterator::operator!=(const IData::FrameIterator& other) const
+{
+    if (_parent != other._parent)
+        return true;
+
+    if ( _currentFrame != other._currentFrame)
+        return true;
+
+    return false;
+}
+
+bool IData::FrameIterator::operator==(const IData::FrameIterator& other) const
+{
+    return !(*this != other);
+}
+
+
+IData::FrameIterator IData::begin()
+{
+    return FrameIterator(this, 0);
+}
+
+IData::FrameIterator IData::end()
+{
+    return FrameIterator(this, _nFrames);
 }
 
 } // end namespace Data

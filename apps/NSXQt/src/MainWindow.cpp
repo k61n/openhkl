@@ -208,29 +208,29 @@ void MainWindow::on_action_peak_find_triggered()
         numor->clearPeaks();
         numor->readInMemory();
         int median=numor->getBackgroundLevel()+1;
-        // Get pointers to start of each frame
-        std::vector<int*> temp(numor->getNFrames());
-        for (unsigned int i=0;i<numor->getNFrames();++i)
-        {
-            const Eigen::MatrixXi& v=numor->getData(i);
-            temp[i]=const_cast<int*>(v.data());
-        }
 
+        qDebug() << ">>>> the background level is " << median;
+        qDebug() << ">>>> finding blobs... ";
+                                       
         // Finding peaks
         SX::Geometry::blob3DCollection blobs;
         try
         {
-            blobs=SX::Geometry::findBlobs3D<int>(temp, numor->getDiffractometer()->getDetector()->getNRows(),numor->getDiffractometer()->getDetector()->getNCols(), median*threshold, 30, 10000, confidence, 0);
+            blobs=SX::Geometry::findBlobs3D(numor->begin(), numor->end(), median*threshold, 30, 10000, confidence);
         }
         catch(std::exception& e) // Warning if RAM error
         {
             qCritical() << "Peak finder caused a memory exception" << e.what();
         }
 
+        qDebug() << ">>>> found blobs";
+
         int ncells=numor->getDiffractometer()->getSample()->getNCrystals();
         std::shared_ptr<SX::Crystal::UnitCell> cell;
         if (ncells)
             cell=numor->getDiffractometer()->getSample()->getUnitCell(0);
+
+        qDebug() << ">>>> iterating over blobs";
 
         SX::Geometry::AABB<double,3> dAABB(Eigen::Vector3d(0,0,0),Eigen::Vector3d(numor->getDiffractometer()->getDetector()->getNCols(),numor->getDiffractometer()->getDetector()->getNRows(),numor->getNFrames()-1));
         for (auto& blob : blobs)
@@ -259,9 +259,19 @@ void MainWindow::on_action_peak_find_triggered()
             npeaks++;
         }
 
-        for (auto& peak : numor->getPeaks())
+        qDebug() << ">>>> integrating " << numor->getPeaks().size() << " peaks...";
+
+        int peak_counter;
+        
+        for (auto& peak : numor->getPeaks()) {
             peak->integrate();
 
+            ++peak_counter;
+
+            if ( (peak_counter % 20) == 0 )
+                qDebug() << ">>>>>>>> integrated " << peak_counter << " peaks "; 
+        }
+        
         numor->releaseMemory();
         numor->close();
         _ui->progressBar->setValue(++comp);

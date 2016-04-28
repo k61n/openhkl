@@ -64,14 +64,10 @@ public:
 	I16Data& operator=(const I16Data& other)=delete;
 
 	// Other methods
-	void open();
-	void close();
-    //! Read a given Frame of the data
-    Eigen::MatrixXi getFrame(std::size_t idx);
+	void open() override;
+	void close() override;
     //! Read a single frame
-    Eigen::MatrixXi readFrame(std::size_t idx);
-    //! Read all the frames in memory
-    void readInMemory();
+    Eigen::MatrixXi readFrame(std::size_t idx) override;
 
 private:
 	//! Vector of all TIFF files.
