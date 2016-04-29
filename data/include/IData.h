@@ -105,6 +105,7 @@ public:
 
     // iterators
     FrameIterator begin();
+    FrameIterator at(int idx);
     FrameIterator end();
 
 	// Getters and setters

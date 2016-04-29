@@ -686,12 +686,17 @@ bool IData::FrameIterator::operator==(const IData::FrameIterator& other) const
 
 IData::FrameIterator IData::begin()
 {
-    return FrameIterator(this, 0);
+    return at(0);
 }
 
 IData::FrameIterator IData::end()
 {
-    return FrameIterator(this, _nFrames);
+    return at(_nFrames);
+}
+
+IData::FrameIterator IData::at(int idx)
+{
+    return FrameIterator(this, idx);
 }
 
 } // end namespace Data

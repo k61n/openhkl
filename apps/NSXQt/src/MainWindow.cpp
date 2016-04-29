@@ -261,16 +261,30 @@ void MainWindow::on_action_peak_find_triggered()
 
         qDebug() << ">>>> integrating " << numor->getPeaks().size() << " peaks...";
 
-        int peak_counter;
+        int peak_counter = 0;
+
+        qDebug() << ">>>>>>>> initializing peak intensities...";
         
-        for (auto& peak : numor->getPeaks()) {
-            peak->integrate();
+        for ( auto& peak: numor->getPeaks() )
+            peak->framewiseIntegrateBegin();
 
-            ++peak_counter;
+        qDebug() << ">>>>>>>> iterating over data frames...";
 
-            if ( (peak_counter % 20) == 0 )
-                qDebug() << ">>>>>>>> integrated " << peak_counter << " peaks "; 
+        int idx = 0;
+
+        for ( auto it = numor->begin(); it != numor->end(); ++it, ++idx) {
+            Eigen::MatrixXi& frame = *it;
+            for ( auto& peak: numor->getPeaks() ) {
+                peak->framewiseIntegrateStep(frame, idx);
+            }
         }
+
+        qDebug() << ">>>>>>>> finalizing peak calculation....";
+
+        for ( auto& peak: numor->getPeaks() )
+            peak->framewiseIntegrateEnd();
+
+        
         
         numor->releaseMemory();
         numor->close();
