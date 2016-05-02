@@ -609,19 +609,23 @@ double IData::getBackgroundLevel()
         return _background;
 
     _background = 0.0;
+    double factor = 1.0 / (_nFrames * _nrows * _ncols);
 
-    for (auto it = begin(); it != end(); ++it)
-        _background += it->sum();
+    for (auto it = begin(); it != end(); ++it) {
+        // cast matrix to double (instead of int) -- necessary due to integer overflow!
+        _background += factor * it->cast<double>().sum();
+        
+    }
 
-    _background /= (_nFrames * _nrows * _ncols);
     return _background;
 }
 
-IData::FrameIterator::FrameIterator(IData* parent, int idx )
+IData::FrameIterator::FrameIterator(IData* parent, int idx, std::launch policy)
     :_currentFrame(idx),
      _parent(parent),
      _currentData(),
-     _nextData()
+     _nextData(),
+     _launchPolicy(policy)
 {
     if (_currentFrame < _parent->_nFrames)
         _currentData = _parent->getFrame(_currentFrame);
@@ -634,7 +638,8 @@ IData::FrameIterator::FrameIterator(const IData::FrameIterator& other)
     :_currentFrame(other._currentFrame),
      _parent(other._parent),
      _currentData(other._currentData),
-    _nextData(other._nextData)
+     _nextData(other._nextData),
+     _launchPolicy(other._launchPolicy)
 {
 }
 
@@ -654,7 +659,7 @@ IData::FrameIterator& IData::FrameIterator::operator++()
 
 std::shared_future<Eigen::MatrixXi> IData::FrameIterator::getFrame(int idx)
 {
-    return std::shared_future<Eigen::MatrixXi>(std::async(std::launch::async, [=]{return _parent->getFrame(idx);}));
+    return std::shared_future<Eigen::MatrixXi>(std::async(_launchPolicy, [=]{return _parent->getFrame(idx);}));
 }
 
 Eigen::MatrixXi& IData::FrameIterator::operator*()
@@ -696,7 +701,7 @@ IData::FrameIterator IData::end()
 
 IData::FrameIterator IData::at(int idx)
 {
-    return FrameIterator(this, idx);
+    return FrameIterator(this, idx, _inMemory ? std::launch::deferred : std::launch::async);
 }
 
 } // end namespace Data

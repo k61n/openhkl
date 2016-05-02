@@ -68,7 +68,7 @@ class IData
 public:
     class FrameIterator {
     public:
-        FrameIterator(IData* parent, int idx=0);
+        FrameIterator(IData* parent, int idx=0, std::launch policy=std::launch::async);
         FrameIterator(const FrameIterator& other);
 
         FrameIterator& operator++();
@@ -86,6 +86,7 @@ public:
         IData* _parent;
         Eigen::MatrixXi _currentData;
         std::shared_future<Eigen::MatrixXi> _nextData;
+        std::launch _launchPolicy;
     };
 
     
