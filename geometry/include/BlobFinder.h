@@ -34,6 +34,7 @@
 #include <stdexcept>
 #include <unordered_map>
 #include <vector>
+#include <iterator>
 
 #include "Blob2D.h"
 #include "Blob3D.h"
@@ -248,18 +249,22 @@ namespace Geometry
 		return blobs;
 	}
 
-	template <typename _datatype>
-	blob3DCollection findBlobs3D(const std::vector<_datatype*>& ptrs, uint nrows, uint ncols, _datatype threshold, int minComp, int maxComp, double confidence, bool rowMajor=1)
+    // the typename matrix_iterator_t should be a forward iterator of type Eigen::Matrix
+	template <typename matrix_iterator_t>
+	blob3DCollection findBlobs3D(matrix_iterator_t it_begin, matrix_iterator_t it_end, double threshold, int minComp, int maxComp, double confidence)
 	{
+        
 
 		// Number of frames
-		int nframes=ptrs.size();
-		if (nframes<=1)
-			throw std::runtime_error("Third dimension should be at least 2 to run this algorithm. if 1, use 2D version");
+        int nframes = 0;
 
 		// Map of Blobs (key : label, value : blob)
 		std::unordered_map<int,Blob3D> blobs;
 		blobs.reserve(1000000);
+
+        // determine the number of rows and columns
+        auto nrows = it_begin->rows();
+        auto ncols = it_begin->cols();	
 
 		// Store labels of current and previous frames.
 		vints labels(nrows*ncols,0);
@@ -279,24 +284,22 @@ namespace Geometry
 		// int representing the 8 possible nearest neighbor operations.
 		int code;
 
-		//
-		int row_inc=(rowMajor ? 1 : nrows);
+        int frame = 0;
 
 		// Iterate on all pixels in the image
-		for (int frame=0;frame<nframes;++frame)
+        for (auto frame_it = it_begin; frame_it != it_end; ++frame_it)
 		{
+            ++nframes;
+            auto& frame_data = *frame_it;
+            
 			// Go the the beginning of data
-			_datatype* datastart=ptrs[frame];
-			_datatype* dataptr=datastart;
 			index2D=0;
 			for (unsigned int row=0;row<nrows;++row)
 			{
-				if (!rowMajor)
-					dataptr=datastart+row;
 				for (unsigned int col=0;col<ncols;++col)
 				{
-					_datatype value=*(dataptr);
-					dataptr+=row_inc;
+                    auto value = frame_data(row, col);
+
 					// Discard pixel if value < threshold
 					if (value<threshold)
 					{
@@ -308,7 +311,7 @@ namespace Geometry
 					// Get labels of adjacent pixels
 					left= (col == 0 ? 0 : labels[index2D-1]);
 					top=  (row == 0 ? 0 : labels[index2D-ncols]) ;
-					previous= (frame == 0 ? 0 : labels2[index2D]);
+					previous= (frame_it == it_begin ? 0 : labels2[index2D]);
 					// Encode type of config.
 					code=0;
 					code |= ( (left!=0) << 0);
@@ -379,7 +382,15 @@ namespace Geometry
 				}
 			}
 
+            // increase frame count
+            // TODO: this could probably be done better!
+            ++frame;
+
 		}
+
+        // too few frames for algorithm to be reliable
+        if (nframes<=1)
+			throw std::runtime_error("Third dimension should be at least 2 to run this algorithm. if 1, use 2D version");
 
 		mergeBlobs<Blob3D>(blobs,equivalences);
 

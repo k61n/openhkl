@@ -46,11 +46,9 @@ public:
 	static IData* create(const std::string& filename, std::shared_ptr<Diffractometer> instrument);
 	HDF5Data(const std::string& filename, std::shared_ptr<Diffractometer> instrument);
 	virtual ~HDF5Data();
-	Eigen::MatrixXi getFrame(std::size_t frame);
-    Eigen::MatrixXi readFrame(std::size_t frame);
-    void readInMemory();
-    void open();
-    void close();
+    Eigen::MatrixXi readFrame(std::size_t frame) override;
+    void open() override;
+    void close() override;
 private:
     H5::H5File* _file;
     H5::DataSet* _dataset;

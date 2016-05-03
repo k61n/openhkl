@@ -260,15 +260,6 @@ void ILLAsciiData::close()
 	_isOpened=false;
 }
 
-Eigen::MatrixXi ILLAsciiData::getFrame(std::size_t idx)
-{
-
-	if (_inMemory)
-		return _data[idx];
-	else
-		return readFrame(idx);
-}
-
 Eigen::MatrixXi ILLAsciiData::readFrame(std::size_t idx)
 {
 	assert(idx<_nFrames);
@@ -284,26 +275,6 @@ Eigen::MatrixXi ILLAsciiData::readFrame(std::size_t idx)
 	qi::phrase_parse(_mapAddress+begin,_mapAddress+begin+_dataLength,*_parser,qi::blank, v);
 
 	return v;
-}
-
-void ILLAsciiData::readInMemory()
-{
-
-	if (_inMemory)
-        return;
-
-	if (!_isOpened)
-		open();
-
-	_data.resize(_nFrames);
-
-	#pragma omp parallel for
-	for (std::size_t i=0;i<_nFrames;++i)
-		_data[i]=readFrame(i);
-
-	_inMemory=true;
-
-	return;
 }
 
 void ILLAsciiData::goToLine(std::stringstream& buffer, int number,int pos)

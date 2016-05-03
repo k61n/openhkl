@@ -45,11 +45,9 @@ public:
 	static IData* create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer);
 	TiffData(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer);
 	virtual ~TiffData();
-	void open();
-	void close();
-	void readInMemory();
-	Eigen::MatrixXi getFrame(std::size_t frame);
-	Eigen::MatrixXi readFrame(std::size_t frame);
+	void open() override;
+	void close() override;
+	Eigen::MatrixXi readFrame(std::size_t frame) override;
 private:
 	//! Type of encoding for each pixel.
 	uint16 _bits;

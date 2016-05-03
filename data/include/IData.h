@@ -41,6 +41,9 @@
 #include "Peak3D.h"
 #include "PeakCalc.h"
 
+#include <mutex>
+#include <future>
+
 namespace SX
 {
 
@@ -63,7 +66,30 @@ using namespace SX::Instrument;
 class IData
 {
 public:
+    class FrameIterator {
+    public:
+        FrameIterator(IData* parent, int idx=0, std::launch policy=std::launch::async);
+        FrameIterator(const FrameIterator& other);
 
+        FrameIterator& operator++();
+
+        bool operator!=(const FrameIterator& other) const;
+        bool operator==(const FrameIterator& other) const;
+        
+        Eigen::MatrixXi& operator*();
+        Eigen::MatrixXi* operator->();
+        
+    private:
+        std::shared_future<Eigen::MatrixXi> getFrame(int idx);
+        
+        int _currentFrame;
+        IData* _parent;
+        Eigen::MatrixXi _currentData;
+        std::shared_future<Eigen::MatrixXi> _nextData;
+        std::launch _launchPolicy;
+    };
+
+    
 	// Constructors and destructor
 
 	/*! Construct a IData Object from a file on disk, and pointer to a diffractometer.
@@ -78,14 +104,15 @@ public:
 	//! Assignment operator
 	IData& operator=(const IData& other);
 
+    // iterators
+    FrameIterator begin();
+    FrameIterator at(int idx);
+    FrameIterator end();
+
 	// Getters and setters
 
     //! Gets the data basename
 	std::string getBasename() const;
-	//! Gets a pointer to the data
-	const std::vector<Eigen::MatrixXi>& getData() const;
-	//! Gets a pointer to the ith data
-	const Eigen::MatrixXi& getData(std::size_t idx) const;
     //! Gets the data filename
 	const std::string& getFilename() const;
 	//! Gets a shared pointer to the diffractometer used to collect the data
@@ -94,7 +121,7 @@ public:
 	std::size_t getNFrames() const;
 	std::size_t getNRows() const;
 	std::size_t getNCols() const;
-	//! Gets a pointer to the metadata of the data
+	//! Gets a reference to the metadata of the data
 	MetaData*  getMetadata() const;
 	//! Return the peaks
 	std::set<Peak3D*>& getPeaks();
@@ -133,7 +160,7 @@ public:
 	//! Return true if the file is stored in memory
 	bool isInMemory() const;
 	 //! Load all the frames in memory
-	virtual void readInMemory()=0;
+	void readInMemory();
   // Release the data from memory
 	void releaseMemory();
 	//! Return true if a given point (in detector space) belong to a mask
@@ -145,7 +172,7 @@ public:
 	//! Return the intensity at point x,y,z.
 	int dataAt(unsigned int x=0, unsigned int y=0, unsigned int z=0);
     //! Read a given Frame of the data
-    virtual Eigen::MatrixXi getFrame(std::size_t i)=0;
+    Eigen::MatrixXi getFrame(std::size_t i);
     //! Read a single frame
     virtual Eigen::MatrixXi readFrame(std::size_t idx)=0;
     //! Get the file handle. Necessary to call before readInMemory or any IO of data.
@@ -162,7 +189,7 @@ public:
     std::vector<PeakCalc> hasPeaks(const std::vector<Eigen::Vector3d>& hkls,const Eigen::Matrix3d& BU);
 
     //! Get background
-    double getBackgroundLevel() const;
+    double getBackgroundLevel();
 
 protected:
     bool _isOpened;
@@ -171,7 +198,7 @@ protected:
 	std::size_t _nrows;
 	std::size_t _ncols;
 	std::shared_ptr<Diffractometer> _diffractometer;
-	MetaData* _metadata;
+    std::unique_ptr<MetaData> _metadata;
 	bool _inMemory;
 	std::vector<Eigen::MatrixXi> _data;
 	std::vector<ComponentState> _detectorStates;
@@ -181,7 +208,8 @@ protected:
     std::size_t _fileSize;
     //! The set of masks bound to the data
     std::set<AABB<double,3>*> _masks;
-
+    double _background;
+    bool _isCached;
 };
 
 } // end namespace Data

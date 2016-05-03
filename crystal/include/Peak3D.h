@@ -134,6 +134,11 @@ public:
 	void setTransmission(double transmission);
 	double getTransmission() const;
 
+    // testing: new implementation of integration
+    void framewiseIntegrateBegin();
+    void framewiseIntegrateStep(Eigen::MatrixXi& frame, int idx);
+    void framewiseIntegrateEnd();
+
 private:
 	//! Pointer to the data containing the peak
 	SX::Data::IData* _data;
@@ -160,6 +165,30 @@ private:
 	bool _selected;
 	bool _masked;
 	double _transmission;
+
+    
+    struct IntegrationState {
+        Eigen::Vector3d lower;
+        Eigen::Vector3d upper;
+
+        unsigned int data_start;
+        unsigned int data_end;
+
+        unsigned int start_x;
+        unsigned int end_x;
+
+        unsigned int start_y;
+        unsigned int end_y;
+
+        Eigen::Vector4d point1;
+
+        int dx;
+        int dy;
+    };
+
+    IntegrationState _state;
+
+
 };
 
 

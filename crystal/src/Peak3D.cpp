@@ -167,9 +167,13 @@ void Peak3D::integrate()
 	int dx = end_x-start_x;
 	int dy = end_y-start_y;
 
-	for (unsigned int z=data_start;z<=data_end;++z)
+    unsigned int z = data_start;
+    SX::Data::IData::FrameIterator it_start = _data->at(data_start);
+    SX::Data::IData::FrameIterator it_end = _data->at(data_end+1);
+
+	for (auto it = it_start; it != it_end; ++it, ++z)
 	{
-		const Eigen::MatrixXi& frame=_data->getData(z);
+        auto frame = *it;
 		double pointsinpeak=0;
 		double pointsinbkg=0;
 		double intensityP=0;
@@ -470,6 +474,156 @@ double Peak3D::getIOverSigmaI() const
 	return _counts/_countsSigma;
 }
 
+
+
+void Peak3D::framewiseIntegrateBegin()
+{
+    if (!_data)
+		return;
+    
+	// Get the lower and upper limit of the bkg Bounding box
+    _state.lower = _bkg->getLower();
+	_state.upper= _bkg->getUpper();
+
+	//
+	_state.data_start=static_cast<int>(std::floor(_state.lower[2]));
+	_state.data_end=static_cast<int>(std::ceil(_state.upper[2]));
+
+    _state.start_x=static_cast<int>(std::floor(_state.lower[0]));
+    _state.end_x=static_cast<int>(std::ceil(_state.upper[0]));
+
+    _state.start_y=static_cast<int>(std::floor(_state.lower[1]));
+	_state.end_y=static_cast<int>(std::ceil(_state.upper[1]));
+
+	if (_state.lower[0] < 0)
+		_state.start_x=0;
+	if (_state.lower[1] < 0)
+		_state.start_y=0;
+	if (_state.lower[2] < 0)
+		_state.data_start=0;
+
+    if (_state.end_x > _data->getNCols()-1)
+		_state.end_x=_data->getNCols()-1;
+    if (_state.end_y > _data->getNRows()-1)
+		_state.end_y=_data->getNRows()-1;
+    if (_state.data_end > _data->getNFrames()-1)
+		_state.data_end=_data->getNFrames()-1;
+
+	// Allocate all vectors
+	_projection=Eigen::VectorXd::Zero(_state.data_end-_state.data_start+1);
+	_projectionPeak=Eigen::VectorXd::Zero(_state.data_end-_state.data_start+1);
+	_projectionBkg=Eigen::VectorXd::Zero(_state.data_end-_state.data_start+1);
+
+	_state.dx = _state.end_x - _state.start_x;
+	_state.dy = _state.end_y - _state.start_y;
+
+	return;
+}
+
+    
+void Peak3D::framewiseIntegrateStep(Eigen::MatrixXi& frame, int idx)
+{
+    if (!_data)
+		return;
+
+    if ( idx < _state.data_start )
+        return;
+
+    if ( idx > _state.data_end )
+        return;
+
+    double pointsinpeak=0;
+    double pointsinbkg=0;
+    double intensityP=0;
+    double intensityBkg=0;
+    
+    _projection[idx-_state.data_start]+=frame.block(_state.start_y,_state.start_x,_state.dy,_state.dx).sum();
+
+	for (unsigned int x=_state.start_x;x<=_state.end_x;++x) {
+        
+        for (unsigned int y=_state.start_y;y<=_state.end_y;++y) {
+            int intensity=frame(y,x);
+            _state.point1 << x+0.5,y+0.5,idx,1;
+            bool inbackground=(_bkg->isInside(_state.point1));
+            if (inbackground) {
+                intensityBkg+=intensity;
+                pointsinbkg++;
+
+                bool inpeak=(_peak->isInsideAABB(_state.point1) && _peak->isInside(_state.point1));
+                if (inpeak) {
+                    intensityP+=intensity;
+                    pointsinpeak++;
+                    continue;
+                }
+            }
+            else
+                continue;
+        }
+    }
+    if (pointsinpeak>0)
+        _projectionPeak[idx-_state.data_start]=intensityP-intensityBkg*pointsinpeak/pointsinbkg;
+    
+	return;
+}
+
+    
+void Peak3D::framewiseIntegrateEnd()
+{
+    if (!_data)
+		return;
+
+	// Quick fix determine the limits of the peak range
+	int datastart=0;
+	int dataend=0;
+	bool startfound=false;
+	for (int i=0;i<_projectionPeak.size();++i)
+	{
+		if (!startfound && std::fabs(_projectionPeak[i])>1e-6)
+		{
+			datastart=i;
+			startfound=true;
+		}
+		if (startfound)
+		{
+			if (std::fabs(_projectionPeak[i])<1e-6)
+			{
+				dataend=i;
+				break;
+			}
+		}
+
+	}
+	//
+
+	Eigen::VectorXd bkg=_projection-_projectionPeak;
+	if (datastart>1)
+		datastart--;
+
+	// Safety check
+	if (datastart==dataend)
+		return;
+
+	double bkg_left=bkg[datastart];
+	double bkg_right=bkg[dataend];
+	double diff;
+    for (int i=datastart;i<dataend;++i)
+    {
+		diff=bkg[i]-(bkg_left+static_cast<double>((i-datastart))/static_cast<double>((dataend-datastart))*(bkg_right-bkg_left));
+		if (diff>0)
+			_projectionPeak[i]+=diff;
+	}
+	_projectionBkg=_projection-_projectionPeak;
+
+	_counts = _projectionPeak.sum();
+	_countsSigma = std::sqrt(_counts);
+
+
+	return;
+}
+   
 }
 }
+
+
+
 

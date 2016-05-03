@@ -144,15 +144,6 @@ void I16Data::close()
 
 }
 
-Eigen::MatrixXi I16Data::getFrame(std::size_t idx)
-{
-
-	if (_inMemory)
-		return _data[idx];
-	else
-		return readFrame(idx);
-}
-
 Eigen::MatrixXi I16Data::readFrame(std::size_t idx)
 {
 	assert(idx<_nFrames);
@@ -168,25 +159,6 @@ Eigen::MatrixXi I16Data::readFrame(std::size_t idx)
 	// Not very nice, but need to copy the 32bits data to int
 	return data32.cast<int>();
 
-}
-
-void I16Data::readInMemory()
-{
-
-	if (_inMemory)
-        return;
-
-	if (!_isOpened)
-		open();
-
-	_data.resize(_nFrames);
-
-	for (std::size_t i=0;i<_nFrames;++i)
-		_data[i]=readFrame(i);
-
-	_inMemory=true;
-
-	return;
 }
 
 
