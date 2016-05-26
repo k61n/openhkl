@@ -2,7 +2,7 @@
 	<name>D9</name>
     <detector type="flat">
         <name>banana</name>
-        <sample_distance units="mm">488.0</sample_distance>
+        <sample_distance units="mm">368.0</sample_distance>
         <width units="mm">256.0</width>
         <height units="mm">256.0</height>
         <nrows>128</nrows>
