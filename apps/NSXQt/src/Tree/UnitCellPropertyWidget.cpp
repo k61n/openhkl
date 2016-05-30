@@ -20,6 +20,7 @@
 #include "Peak3D.h"
 #include "SpaceGroupSymbols.h"
 #include <QCompleter>
+#include <QSortFilterProxyModel>
 
 UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *parent) :
     QWidget(parent),
@@ -53,9 +54,21 @@ UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *par
     {
         ui->comboBox->addItem(QString::fromStdString(symbol));
     }
+
+    ui->comboBox->setCurrentText("");
+
+    QSortFilterProxyModel* proxyModel = new QSortFilterProxyModel();
+    proxyModel->setSourceModel(ui->comboBox->model());
+
+    QCompleter* completer = new QCompleter(proxyModel,ui->comboBox);
+    completer->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
+    completer->setCaseSensitivity(Qt::CaseSensitive);
+    ui->comboBox->setCompleter(completer);
+
+    QObject::connect(ui->comboBox->lineEdit(), SIGNAL(textChanged(QString)), proxyModel, SLOT(setFilterFixedString(QString)));
+    QObject::connect(completer, SIGNAL(activated(const QString &)), this, SLOT(onCompleterActivated(const QString &)));
+
 }
-
-
 
 UnitCellPropertyWidget::~UnitCellPropertyWidget()
 {
@@ -200,17 +213,26 @@ void UnitCellPropertyWidget::transform(const Eigen::Matrix3d &P)
    emit cellUpdated();
 }
 
-void UnitCellPropertyWidget::on_comboBox_activated(const QString &arg1)
+//void UnitCellPropertyWidget::on_comboBox_activated(const QString &arg1)
+//{
+//        auto uc=_unitCellItem->getCell();
+//        try
+//        {
+//            uc->setSpaceGroup(arg1.toStdString());
+//        }
+//        catch(...)
+//        {
+//            qWarning() << " Space group non valid, reverting to P 1";
+//            uc->setSpaceGroup("P 1");
+//            ui->comboBox->lineEdit()->setText("P 1");
+//        }
+//}
+
+void UnitCellPropertyWidget::onCompleterActivated(const QString& text)
 {
-        auto uc=_unitCellItem->getCell();
-        try
-        {
-            uc->setSpaceGroup(arg1.toStdString());
-        }
-        catch(...)
-        {
-            qWarning() << " Space group non valid, reverting to P 1";
-            uc->setSpaceGroup("P 1");
-            ui->comboBox->lineEdit()->setText("P 1");
-        }
+    if (text.isEmpty())
+        return;
+
+    ui->comboBox->setCurrentIndex(ui->comboBox->findText(text));
+    ui->comboBox->activated(ui->comboBox->currentIndex());
 }
