@@ -37,10 +37,6 @@ set(CPACK_PACKAGE_VERSION_MINOR "${NSXTOOL_VERSION_MINOR}")
 set(CPACK_PACKAGE_VERSION_PATCH "0")
 set(CPACK_SOURCE_IGNORE_FILES "/\\\\.git/;" )
 
-if (APPLE)
-	include(DarwinSetup)
-endif()
-
 ###########################################################################
 # Check dependencies
 ###########################################################################
