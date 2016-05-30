@@ -21,6 +21,19 @@
 	            <offset>0.0</offset>
 	            <physical>true</physical>
 	        </axis>
+		<name>nu-arm</name>
+	        <axis type="rotation">
+	            <name>chi</name>
+	            <id>3</id>
+	            <direction>
+			        <x>1.000</x>
+			        <y>0.000</y>
+			        <z>0.000</z>
+	            </direction>
+	            <clockwise>false</clockwise>
+	            <offset>0.0</offset>
+	            <physical>true</physical>
+	        </axis>
 	        <axis type="translation">
 	            <name>x-offset</name>
 	            <direction>
@@ -67,7 +80,7 @@
         	<name>Euler cradle (BL)</name>
 	        <axis type="rotation">
 	            <name>omega</name>
-	            <id>2</id>
+	            <id>16</id>
 	            <direction>
 			        <x>0.000</x>
 			        <y>0.000</y>
@@ -76,60 +89,6 @@
 	            <clockwise>true</clockwise>
 	            <offset>0.0</offset>
 	            <physical>true</physical>
-	        </axis>
-	        <axis type="rotation">
-	            <name>chi</name>
-	            <id>3</id>
-	            <direction>
-			        <x>0.000</x>
-			        <y>1.000</y>
-			        <z>0.000</z>
-	            </direction>
-	            <clockwise>false</clockwise>
-	            <offset>0.0</offset>
-	            <physical>true</physical>
-	        </axis>
-	        <axis type="rotation">
-	            <name>phi</name>
-	            <id>4</id>
-	            <direction>
-			        <x>0.000</x>
-			        <y>0.000</y>
-			        <z>1.000</z>
-	            </direction>
-	            <clockwise>true</clockwise>
-	            <offset>0.0</offset>
-	            <physical>true</physical>
-	        </axis>
-	        <axis type="translation">
-	            <name>x-offset</name>
-	            <direction>
-			        <x>1.000</x>
-			        <y>0.000</y>
-			        <z>0.000</z>
-	            </direction>
-	            <offset>0.0</offset>
-	            <physical>false</physical>
-	        </axis>
-	        <axis type="translation">
-	            <name>y-offset</name>
-	            <direction>
-			        <x>0.000</x>
-			        <y>1.000</y>
-			        <z>0.000</z>
-	            </direction>
-	            <offset>0.0</offset>
-	            <physical>false</physical>
-	        </axis>
-	        <axis type="translation">
-	            <name>z-offset</name>
-	            <direction>
-			        <x>0.000</x>
-			        <y>0.000</y>
-			        <z>1.000</z>
-	            </direction>
-	            <offset>0.0</offset>
-	            <physical>false</physical>
 	        </axis>
 	    </goniometer>
         <position>

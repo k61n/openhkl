@@ -2,51 +2,43 @@
 	<name>D9</name>
     <detector type="flat">
         <name>banana</name>
-        <sample_distance units="mm">368.0</sample_distance>
-        <width units="mm">256.0</width>
-        <height units="mm">256.0</height>
-        <nrows>128</nrows>
-        <ncols>128</ncols>
+        <sample_distance units="mm">488.0</sample_distance>
+        <width units="mm">64.0</width>
+        <height units="mm">64.0</height>
+        <nrows>32</nrows>
+        <ncols>32</ncols>
         <goniometer>
-        	<name>gamma-arm</name>
+        	<name>lifting-arm</name>
 	        <axis type="rotation">
 	            <name>2theta(gamma)</name>
 	            <id>1</id>
 	            <direction>
-			        <x>0.000</x>
-			        <y>0.000</y>
-			        <z>1.000</z>
+		        <x>0.000</x>
+		        <y>0.000</y>
+		        <z>1.000</z>
 	            </direction>
 	            <clockwise>true</clockwise>
 	            <offset>0.0</offset>
 	            <physical>true</physical>
 	        </axis>
-	        <axis type="translation">
-	            <name>x-offset</name>
+	        <axis type="rotation">
+	            <name>chi</name>
+	            <id>3</id>
 	            <direction>
-			        <x>1.000</x>
-			        <y>0.000</y>
-			        <z>0.000</z>
+		        <x>1.000</x>
+		        <y>0.000</y>
+		        <z>0.000</z>
 	            </direction>
+	            <clockwise>false</clockwise>
 	            <offset>0.0</offset>
-	            <physical>false</physical>
+	            <physical>true</physical>
 	        </axis>
 	        <axis type="translation">
 	            <name>y-offset</name>
 	            <direction>
-			        <x>0.000</x>
-			        <y>1.000</y>
-			        <z>0.000</z>
-	            </direction>
-	            <offset>0.0</offset>
-	            <physical>false</physical>
-	        </axis>
-	        <axis type="translation">
-	            <name>z-offset</name>
-	            <direction>
-			        <x>0.000</x>
-			        <y>0.000</y>
-			        <z>1.000</z>
+		        <x>0.000</x>
+		        <y>1.000</y>
+		        <z>0.000</z>
 	            </direction>
 	            <offset>0.0</offset>
 	            <physical>false</physical>
@@ -67,35 +59,11 @@
         	<name>Euler cradle (BL)</name>
 	        <axis type="rotation">
 	            <name>omega</name>
-	            <id>2</id>
+	            <id>16</id>
 	            <direction>
-			        <x>0.000</x>
-			        <y>0.000</y>
-			        <z>1.000</z>
-	            </direction>
-	            <clockwise>true</clockwise>
-	            <offset>0.0</offset>
-	            <physical>true</physical>
-	        </axis>
-	        <axis type="rotation">
-	            <name>chi</name>
-	            <id>3</id>
-	            <direction>
-			        <x>0.000</x>
-			        <y>1.000</y>
-			        <z>0.000</z>
-	            </direction>
-	            <clockwise>false</clockwise>
-	            <offset>0.0</offset>
-	            <physical>true</physical>
-	        </axis>
-	        <axis type="rotation">
-	            <name>phi</name>
-	            <id>4</id>
-	            <direction>
-			        <x>0.000</x>
-			        <y>0.000</y>
-			        <z>1.000</z>
+		        <x>0.000</x>
+		        <y>0.000</y>
+		        <z>1.000</z>
 	            </direction>
 	            <clockwise>true</clockwise>
 	            <offset>0.0</offset>
@@ -104,9 +72,9 @@
 	        <axis type="translation">
 	            <name>x-offset</name>
 	            <direction>
-			        <x>1.000</x>
-			        <y>0.000</y>
-			        <z>0.000</z>
+		        <x>1.000</x>
+		        <y>0.000</y>
+		        <z>0.000</z>
 	            </direction>
 	            <offset>0.0</offset>
 	            <physical>false</physical>
@@ -114,9 +82,9 @@
 	        <axis type="translation">
 	            <name>y-offset</name>
 	            <direction>
-			        <x>0.000</x>
-			        <y>1.000</y>
-			        <z>0.000</z>
+		        <x>0.000</x>
+		        <y>1.000</y>
+		        <z>0.000</z>
 	            </direction>
 	            <offset>0.0</offset>
 	            <physical>false</physical>
@@ -124,9 +92,9 @@
 	        <axis type="translation">
 	            <name>z-offset</name>
 	            <direction>
-			        <x>0.000</x>
-			        <y>0.000</y>
-			        <z>1.000</z>
+		        <x>0.000</x>
+		        <y>0.000</y>
+		        <z>1.000</z>
 	            </direction>
 	            <offset>0.0</offset>
 	            <physical>false</physical>
@@ -138,7 +106,7 @@
 	        <z>0.000</z>
         </position>
     </sample>
-    <source type="monochromatic">
+    <source>
     	<name>monochromatic source</name>
         <goniometer>        
         	<name></name>
@@ -146,9 +114,9 @@
 	            <name>om-mono</name>
 	            <id>8</id>
 	            <direction>
-			        <x>0.000</x>
-			        <y>0.000</y>
-			        <z>1.000</z>
+		        <x>0.000</x>
+		        <y>0.000</y>
+		        <z>1.000</z>
 	            </direction>
 	            <clockwise>true</clockwise>
 	            <offset>0.0</offset>
@@ -158,9 +126,9 @@
 	            <name>chi-mono</name>
 	            <id>9</id>
 	            <direction>
-			        <x>0.000</x>
-			        <y>1.000</y>
-			        <z>0.000</z>
+		        <x>0.000</x>
+		        <y>1.000</y>
+		        <z>0.000</z>
 	            </direction>
 	            <clockwise>false</clockwise>
 	            <offset>0.0</offset>
@@ -170,9 +138,9 @@
 	            <name>phi-mono</name>
 	            <id>10</id>
 	            <direction>
-			        <x>0.000</x>
-			        <y>0.000</y>
-			        <z>1.000</z>
+		        <x>0.000</x>
+		        <y>0.000</y>
+		        <z>1.000</z>
 	            </direction>
 	            <clockwise>true</clockwise>
 	            <offset>0.0</offset>
@@ -182,9 +150,9 @@
 	            <name>x-mono</name>
 	            <id>7</id>
 	            <direction>
-			        <x>1.000</x>
-			        <y>0.000</y>
-			        <z>0.000</z>
+		        <x>1.000</x>
+		        <y>0.000</y>
+		        <z>0.000</z>
 	            </direction>
 	            <offset>0.0</offset>
 	            <physical>true</physical>
@@ -193,9 +161,9 @@
 	            <name>y-mono</name>
 	            <id>6</id>
 	            <direction>
-			        <x>0.000</x>
-			        <y>1.000</y>
-			        <z>0.000</z>
+		        <x>0.000</x>
+		        <y>1.000</y>
+		        <z>0.000</z>
 	            </direction>
 	            <offset>0.0</offset>
 	            <physical>true</physical>
@@ -206,8 +174,12 @@
 	        <y>0.000</y>
 	        <z>0.000</z>
         </position>
-        <width units="mm">1.0</width>
-        <height units="mm">1.0</height>
-        <wavelength>1.24</wavelength>
+        <monochromator>
+        	<name>Cu(220)</name>
+	        <width units="mm">60.0</width>
+	        <height units="mm">80.0</height>
+	        <wavelength>0.8409</wavelength>
+	        <fwhm>0.00901</fwhm>
+        </monochromator>
     </source>
 </instrument>
