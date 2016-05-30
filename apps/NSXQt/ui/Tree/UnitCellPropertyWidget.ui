@@ -505,28 +505,34 @@ QPushButton:disabled {
     </item>
    </layout>
   </widget>
-  <widget class="QLabel" name="label_3">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>20</y>
-     <width>91</width>
-     <height>17</height>
+     <width>221</width>
+     <height>29</height>
     </rect>
    </property>
-   <property name="text">
-    <string>Spacegroup:</string>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="lineEdit_SpaceGroup">
-   <property name="geometry">
-    <rect>
-     <x>100</x>
-     <y>10</y>
-     <width>113</width>
-     <height>27</height>
-    </rect>
-   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_4">
+    <item>
+     <widget class="QLabel" name="label_3">
+      <property name="text">
+       <string>Spacegroup:</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QComboBox" name="comboBox">
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter or select space group and &lt;/p&gt;&lt;p&gt;press Enter to validate your choice&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="editable">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <tabstops>

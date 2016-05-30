@@ -18,6 +18,8 @@
 #include "Tree/UnitCellPropertyWidget.h"
 #include "Tree/UnitCellItem.h"
 #include "Peak3D.h"
+#include "SpaceGroupSymbols.h"
+#include <QCompleter>
 
 UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *parent) :
     QWidget(parent),
@@ -44,7 +46,13 @@ UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *par
 
     getLatticeParams();
 
-    ui->lineEdit_SpaceGroup->setText(QString::fromStdString(_unitCellItem->getCell()->getSpaceGroup()));
+    SX::Crystal::SpaceGroupSymbols* sgs=SX::Crystal::SpaceGroupSymbols::Instance();
+    std::vector<std::string> symbols=sgs->getAllSymbols();
+
+    for (const auto& symbol : symbols)
+    {
+        ui->comboBox->addItem(QString::fromStdString(symbol));
+    }
 }
 
 
@@ -192,18 +200,17 @@ void UnitCellPropertyWidget::transform(const Eigen::Matrix3d &P)
    emit cellUpdated();
 }
 
-
-void UnitCellPropertyWidget::on_lineEdit_SpaceGroup_editingFinished()
+void UnitCellPropertyWidget::on_comboBox_activated(const QString &arg1)
 {
-    auto uc=_unitCellItem->getCell();
-    try
-    {
-        uc->setSpaceGroup(ui->lineEdit_SpaceGroup->text().toStdString());
-    }
-    catch(...)
-    {
-        qCritical() << " Space group non valid, reverting to P 1";
-        uc->setSpaceGroup("P 1");
-        ui->lineEdit_SpaceGroup->setText("P 1");
-    }
+        auto uc=_unitCellItem->getCell();
+        try
+        {
+            uc->setSpaceGroup(arg1.toStdString());
+        }
+        catch(...)
+        {
+            qWarning() << " Space group non valid, reverting to P 1";
+            uc->setSpaceGroup("P 1");
+            ui->comboBox->lineEdit()->setText("P 1");
+        }
 }

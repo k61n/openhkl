@@ -40,7 +40,7 @@ private slots:
     void on_lineEdit_ChemicalFormula_editingFinished();
     void transform(const Eigen::Matrix3d& P);
     void on_pushButton_TransformationMatrix_clicked();
-    void on_lineEdit_SpaceGroup_editingFinished();
+    void on_comboBox_activated(const QString &arg1);
 
 public slots:
     void setCell(const SX::Crystal::UnitCell&);    
