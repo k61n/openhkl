@@ -18,6 +18,8 @@ public:
     ~DetectorPropertyWidget();
 private slots:
     void cellHasChanged(int,int);
+    void on_doubleSpinBox_Distance_valueChanged(double arg1);
+
 private:
     DetectorItem* _detectorItem;
     Ui::DetectorPropertyWidget *ui;
