@@ -11,6 +11,10 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
+    // Ensure . is used rather than , for float and double boxes
+    QLocale::setDefault(QLocale::c());
+
+    // Show splash
     QImage splashScrImage(":/resources/splashScreen.png");
     QPixmap Logo;
     Logo.convertFromImage(splashScrImage);
