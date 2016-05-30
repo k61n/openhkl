@@ -24,6 +24,11 @@ DetectorPropertyWidget::DetectorPropertyWidget(DetectorItem* caller,QWidget *par
     ui->lineEdit_WPixels->setText(QString::number(detector->getNCols()));
     ui->lineEdit_HPixels->setText(QString::number(detector->getNRows()));
 
+    Eigen::Vector3d restpos=detector->getRestPosition();
+    // rest position of the detector is along y
+    ui->doubleSpinBox_Distance->setValue(restpos[1]);
+
+    //
     ui->tableWidget_Detector->setEditTriggers(QAbstractItemView::DoubleClicked);
     ui->tableWidget_Detector->setRowCount(gonio->getNAxes());
 
@@ -95,4 +100,13 @@ void DetectorPropertyWidget::cellHasChanged(int i,int j)
         axis->setOffset(ui->tableWidget_Detector->item(i,j)->data(Qt::EditRole).toDouble()*SX::Units::mm);
     else
         axis->setOffset(ui->tableWidget_Detector->item(i,j)->data(Qt::EditRole).toDouble()*SX::Units::deg);
+}
+
+
+
+void DetectorPropertyWidget::on_doubleSpinBox_Distance_valueChanged(double arg1)
+{
+     auto detector=_detectorItem->getExperiment()->getDiffractometer()->getDetector();
+     if (arg1>0)
+        detector->setRestPosition(Eigen::Vector3d(0,arg1,0));
 }

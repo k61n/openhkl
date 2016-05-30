@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>373</width>
-    <height>387</height>
+    <height>448</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,6 +29,27 @@
    </item>
    <item row="1" column="0">
     <layout class="QGridLayout" name="gridLayout">
+     <item row="1" column="2">
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>HPixels:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="lineEdit_WPixels">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="3">
+      <widget class="QLineEdit" name="lineEdit_HPixels">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
      <item row="0" column="1">
       <widget class="QLineEdit" name="lineEdit_W">
        <property name="enabled">
@@ -64,30 +85,26 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
-      <widget class="QLineEdit" name="lineEdit_WPixels">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="2">
-      <widget class="QLabel" name="label_5">
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_7">
        <property name="text">
-        <string>HPixels:</string>
+        <string>Distance</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="3">
-      <widget class="QLineEdit" name="lineEdit_HPixels">
-       <property name="enabled">
-        <bool>false</bool>
+     <item row="2" column="1">
+      <widget class="QDoubleSpinBox" name="doubleSpinBox_Distance">
+       <property name="buttonSymbols">
+        <enum>QAbstractSpinBox::NoButtons</enum>
+       </property>
+       <property name="decimals">
+        <number>3</number>
        </property>
       </widget>
      </item>
     </layout>
    </item>
-   <item row="2" column="0">
+   <item row="3" column="0">
     <widget class="QLabel" name="label">
      <property name="font">
       <font>
@@ -100,7 +117,7 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="0">
+   <item row="4" column="0">
     <widget class="QTableWidget" name="tableWidget_Detector">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
