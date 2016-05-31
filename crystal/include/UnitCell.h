@@ -76,6 +76,20 @@ public:
 	~UnitCell();
 	//! Set lattice parameters
 	void setParams(double a, double b, double c, double alpha, double beta, double gamma);
+
+	//! Get A vector
+	Eigen::Vector3d getAVector() const;
+	//! Get B vector
+	Eigen::Vector3d getBVector() const;
+	//! Get C vector
+	Eigen::Vector3d getCVector() const;
+	//! Get A* vector
+	Eigen::Vector3d getReciprocalAVector() const;
+	//! Get B* vector
+	Eigen::Vector3d getReciprocalBVector() const;
+	//! Get C* vector
+	Eigen::Vector3d getReciprocalCVector() const;
+
 	void setLatticeVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c);
 	void copyMatrices(const UnitCell& other);
 	//! Build a UnitCell from a set of three direct vectors.

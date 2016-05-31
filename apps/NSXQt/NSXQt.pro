@@ -97,7 +97,9 @@ SOURCES += src/Main.cpp \
     src/OpenGL/GLWidget.cpp \
     src/OpenGL/GLScene.cpp \
     src/OpenGL/GLActor.cpp \
-    src/OpenGL/GLSphere.cpp
+    src/OpenGL/GLSphere.cpp \
+    src/OpenGL/GLReciprocalLattice.cpp \
+    src/LatticeIndexer.cpp
 
 HEADERS  += include/MainWindow.h \
     include/DialogPeakFind.h \
@@ -167,7 +169,9 @@ HEADERS  += include/MainWindow.h \
     include/OpenGL/GLWidget.h \
     include/OpenGL/GLScene.h \
     include/OpenGL/GLActor.h \
-    include/OpenGL/GLSphere.h
+    include/OpenGL/GLSphere.h \
+    include/OpenGL/GLReciprocalLattice.h \
+    include/LatticeIndexer.h
 
 FORMS    += ui/mainwindow.ui \
     ui/dialog_PeakFind.ui \
@@ -188,7 +192,8 @@ FORMS    += ui/mainwindow.ui \
     ui/DialogRefineUnitCell.ui \
     ui/NumorsConversionDialog.ui \
     ui/Absorption/DialogMCAbsorption.ui \
-    ui/Tree/PeakListPropertyWidget.ui
+    ui/Tree/PeakListPropertyWidget.ui \
+    ui/LatticeIndexer.ui
 
 win32: {
     CONFIG(release, debug|release): LIBS += -lNSXTool

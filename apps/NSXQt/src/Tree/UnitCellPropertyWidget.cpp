@@ -21,6 +21,7 @@
 #include "SpaceGroupSymbols.h"
 #include <QCompleter>
 #include <QSortFilterProxyModel>
+#include "LatticeIndexer.h"
 
 UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *parent) :
     QWidget(parent),
@@ -115,7 +116,8 @@ void UnitCellPropertyWidget::on_pushButton_Info_clicked()
 
 void UnitCellPropertyWidget::on_pushButton_Index_clicked()
 {
-    emit activateIndexingMode(_unitCellItem->getCell());
+    LatticeIndexer* indexer=new LatticeIndexer(_unitCellItem->getCell(),_unitCellItem->getExperiment());
+    indexer->show();
 }
 
 void UnitCellPropertyWidget::on_pushButton_AutoIndexing_clicked()

@@ -65,11 +65,8 @@ private:
 	std::multimap<double,Eigen::Vector3d> _possiblePeaks;
 };
 
-
-
-
-
 }
+
 }
 
 

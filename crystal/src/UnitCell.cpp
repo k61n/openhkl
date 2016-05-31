@@ -112,6 +112,31 @@ void UnitCell::setParams(double a, double b, double c, double alpha, double beta
 	_B=_A.inverse();
 }
 
+Eigen::Vector3d UnitCell::getAVector() const
+{
+	return _A.col(0);
+}
+Eigen::Vector3d UnitCell::getBVector() const
+{
+	return _A.col(1);
+}
+Eigen::Vector3d UnitCell::getCVector() const
+{
+	return _A.col(2);
+}
+Eigen::Vector3d UnitCell::getReciprocalAVector() const
+{
+	return _B.row(0);
+}
+Eigen::Vector3d UnitCell::getReciprocalBVector() const
+{
+	return _B.row(1);
+}
+Eigen::Vector3d UnitCell::getReciprocalCVector() const
+{
+	return _B.row(2);
+}
+
 UnitCell UnitCell::fromDirectVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c, LatticeCentring centring, BravaisType bravais,std::shared_ptr<SX::Geometry::Basis> reference)
 {
 	if (coplanar(a,b,c))
