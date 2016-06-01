@@ -24,6 +24,12 @@ void GLReciprocalLattice::setPeriodicCells(int xmin, int xmax, int ymin, int yma
 
 void GLReciprocalLattice::setSingleCell()
 {
+    _xmin=0;
+    _xmax=5;
+    _ymin=0;
+    _ymax=5;
+    _zmin=0;
+    _zmax=10;
     _periodicCell=false;
 }
 
@@ -41,71 +47,89 @@ void GLReciprocalLattice::GLCode()
 
     glBegin(GL_LINES);
 
-        auto aStarVector = _ptrCell->getReciprocalAVector();
-        auto bStarVector = _ptrCell->getReciprocalBVector();
-        auto cStarVector = _ptrCell->getReciprocalCVector();
+    auto aStarVector = _ptrCell->getReciprocalAVector();
+    auto bStarVector = _ptrCell->getReciprocalBVector();
+    auto cStarVector = _ptrCell->getReciprocalCVector();
 
-        double ax = aStarVector[0];
-        double ay = aStarVector[1];
-        double az = aStarVector[2];
+    double ax = aStarVector[0];
+    double ay = aStarVector[1];
+    double az = aStarVector[2];
 
-        double bx = bStarVector[0];
-        double by = bStarVector[1];
-        double bz = bStarVector[2];
+    double bx = bStarVector[0];
+    double by = bStarVector[1];
+    double bz = bStarVector[2];
 
-        double cx = cStarVector[0];
-        double cy = cStarVector[1];
-        double cz = cStarVector[2];
+    double cx = cStarVector[0];
+    double cy = cStarVector[1];
+    double cz = cStarVector[2];
 
-        glColor3f(1,0,0);
-        glVertex3d(0,0,0);
-        glVertex3d(ax,ay,az);
+    for (int h=_xmin;h<_xmax;++h)
+    {
+        double hd=static_cast<double>(h);
+        for (int k=_ymin;k<_ymax;++k)
+        {
+            double kd=static_cast<double>(k);
+            for (int l=_zmin;l<_zmax;++l)
+            {
+                double ld=static_cast<double>(l);
 
-        glColor3f(0,1,0);
-        glVertex3d(0,0,0);
-        glVertex3d(bx,by,bz);
+                double ox=hd*ax+kd*bx+ld*cx;
+                double oy=hd*ay+kd*by+ld*cy;
+                double oz=hd*az+kd*bz+ld*cz;
 
-        glColor3f(0,0,1);
-        glVertex3d(0,0,0);
-        glVertex3d(cx,cy,cz);
+                glColor3f(1,0,0);
+                glVertex3d(ox,oy,oz);
+                glVertex3d(ox+ax,oy+ay,oz+az);
 
-        glColor3f(0,0,0);
-        glVertex3d(ax,ay,az);
-        glVertex3d(ax+bx,ay+by,az+bz);
+                glColor3f(0,1,0);
+                glVertex3d(ox,oy,oz);
+                glVertex3d(ox+bx,oy+by,oz+bz);
 
-        glColor3f(0,0,0);
-        glVertex3d(bx,by,bz);
-        glVertex3d(ax+bx,ay+by,az+bz);
+                glColor3f(0,0,1);
+                glVertex3d(ox,oy,oz);
+                glVertex3d(ox+cx,oy+cy,oz+cz);
 
-        glColor3f(0,0,0);
-        glVertex3d(ax,ay,az);
-        glVertex3d(ax+cx,ay+cy,az+cz);
+                glColor3f(0,0,0);
+                glVertex3d(ox+ax,oy+ay,oz+az);
+                glVertex3d(ox+ax+bx,oy+ay+by,oz+az+bz);
 
-        glColor3f(0,0,0);
-        glVertex3d(cx,cy,cz);
-        glVertex3d(ax+cx,ay+cy,az+cz);
+                glColor3f(0,0,0);
+                glVertex3d(ox+bx,oy+by,oz+bz);
+                glVertex3d(ox+ax+bx,oy+ay+by,oz+az+bz);
 
-        glColor3f(0,0,0);
-        glVertex3d(bx,by,bz);
-        glVertex3d(bx+cx,by+cy,bz+cz);
+                glColor3f(0,0,0);
+                glVertex3d(ox+ax,oy+ay,oz+az);
+                glVertex3d(ox+ax+cx,oy+ay+cy,oz+az+cz);
 
-        glColor3f(0,0,0);
-        glVertex3d(cx,cy,cz);
-        glVertex3d(bx+cx,by+cy,bz+cz);
+                glColor3f(0,0,0);
+                glVertex3d(ox+cx,oy+cy,oz+cz);
+                glVertex3d(ox+ax+cx,oy+ay+cy,oz+az+cz);
 
-        glColor3f(0,0,0);
-        glVertex3d(ax+bx,ay+by,az+bz);
-        glVertex3d(ax+bx+cx,ay+by+cy,az+bz+cz);
+                glColor3f(0,0,0);
+                glVertex3d(ox+bx,oy+by,oz+bz);
+                glVertex3d(ox+bx+cx,oy+by+cy,oz+bz+cz);
 
-        glColor3f(0,0,0);
-        glVertex3d(ax+cx,ay+cy,az+cz);
-        glVertex3d(ax+bx+cx,ay+by+cy,az+bz+cz);
+                glColor3f(0,0,0);
+                glVertex3d(ox+cx,oy+cy,oz+cz);
+                glVertex3d(ox+bx+cx,oy+by+cy,oz+bz+cz);
 
-        glColor3f(0,0,0);
-        glVertex3d(bx+cx,by+cy,bz+cz);
-        glVertex3d(ax+bx+cx,ay+by+cy,az+bz+cz);
+                glColor3f(0,0,0);
+                glVertex3d(ox+ax+bx,oy+ay+by,oz+az+bz);
+                glVertex3d(ox+ax+bx+cx,oy+ay+by+cy,oz+az+bz+cz);
 
+                glColor3f(0,0,0);
+                glVertex3d(ox+ax+cx,oy+ay+cy,oz+az+cz);
+                glVertex3d(ox+ax+bx+cx,oy+ay+by+cy,oz+az+bz+cz);
 
+                glColor3f(0,0,0);
+                glVertex3d(ox+bx+cx,oy+by+cy,oz+bz+cz);
+                glVertex3d(ox+ax+bx+cx,oy+ay+by+cy,oz+az+bz+cz);
+
+            }
+
+        }
+
+    }
     glEnd();
     glDisable(GL_BLEND);
     glEnable(GL_LIGHTING);
