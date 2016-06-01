@@ -89,48 +89,46 @@ void GLReciprocalLattice::GLCode()
                 glVertex3d(ox,oy,oz);
                 glVertex3d(ox+cx,oy+cy,oz+cz);
 
-                glColor3f(0,0,0);
+                glColor3f(0,1,0);
                 glVertex3d(ox+ax,oy+ay,oz+az);
                 glVertex3d(ox+ax+bx,oy+ay+by,oz+az+bz);
 
-                glColor3f(0,0,0);
+                glColor3f(1,0,0);
                 glVertex3d(ox+bx,oy+by,oz+bz);
                 glVertex3d(ox+ax+bx,oy+ay+by,oz+az+bz);
 
-                glColor3f(0,0,0);
+                glColor3f(0,0,1);
                 glVertex3d(ox+ax,oy+ay,oz+az);
                 glVertex3d(ox+ax+cx,oy+ay+cy,oz+az+cz);
 
-                glColor3f(0,0,0);
+                glColor3f(1,0,0);
                 glVertex3d(ox+cx,oy+cy,oz+cz);
                 glVertex3d(ox+ax+cx,oy+ay+cy,oz+az+cz);
 
-                glColor3f(0,0,0);
+                glColor3f(0,0,1);
                 glVertex3d(ox+bx,oy+by,oz+bz);
                 glVertex3d(ox+bx+cx,oy+by+cy,oz+bz+cz);
 
-                glColor3f(0,0,0);
+                glColor3f(0,1,0);
                 glVertex3d(ox+cx,oy+cy,oz+cz);
                 glVertex3d(ox+bx+cx,oy+by+cy,oz+bz+cz);
 
-                glColor3f(0,0,0);
+                glColor3f(0,0,1);
                 glVertex3d(ox+ax+bx,oy+ay+by,oz+az+bz);
                 glVertex3d(ox+ax+bx+cx,oy+ay+by+cy,oz+az+bz+cz);
 
-                glColor3f(0,0,0);
+                glColor3f(0,1,0);
                 glVertex3d(ox+ax+cx,oy+ay+cy,oz+az+cz);
                 glVertex3d(ox+ax+bx+cx,oy+ay+by+cy,oz+az+bz+cz);
 
-                glColor3f(0,0,0);
+                glColor3f(1,0,0);
                 glVertex3d(ox+bx+cx,oy+by+cy,oz+bz+cz);
                 glVertex3d(ox+ax+bx+cx,oy+ay+by+cy,oz+az+bz+cz);
-
             }
-
         }
-
     }
     glEnd();
+
     glDisable(GL_BLEND);
     glEnable(GL_LIGHTING);
 
