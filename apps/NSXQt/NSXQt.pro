@@ -6,21 +6,31 @@
 
 QT       += core widgets printsupport opengl
 
-CONFIG   += debug_and_release
-
 QMAKE_CXXFLAGS += -DNDEBUG -DEIGEN_FFTW_DEFAULT
 
-unix:!macx {
+win32:
+{
+    LIBS += -lNSXTool
+}
+unix:!macx
+{
     QMAKE_CXXFLAGS += -std=c++0x -fopenmp
     QMAKE_LFLAGS += -fopenmp
-}
 
-macx: {
+    INCLUDEPATH += $$(PWD) include externals/include
+
+    LIBS += -lNSXTool -lboost_date_time -lboost_system -lfftw3
+}
+macx
+{
     CONFIG += c++11
     QMAKE_CXXFLAGS += -std=c++11
-}
 
-win32: {
+    INCLUDEPATH += $$PWD include externals/include
+
+    LIBS += -L../../build -lNSXTool
+    LIBS += -L/usr/local/opt/boost/lib -lboost_date_time-mt -lboost_system-mt -lboost_timer-mt -lboost_chrono-mt
+    LIBS += -L/usr/local/opt/fftw/lib -lfftw3
 }
 
 TARGET = nsxtool
@@ -194,22 +204,3 @@ FORMS    += ui/mainwindow.ui \
     ui/Absorption/DialogMCAbsorption.ui \
     ui/Tree/PeakListPropertyWidget.ui \
     ui/LatticeIndexer.ui
-
-win32: {
-    CONFIG(release, debug|release): LIBS += -lNSXTool
-}
-else:unix: LIBS += -lNSXTool -lboost_date_time -lboost_system -lfftw3
-
-unix:
-{
-INCLUDEPATH += $$PWD include externals/include
-INCLUDEPATH += /usr/local/include/NSXTool /usr/include/eigen3
-}
-
-macx:
-{
-INCLUDEPATH += $$PWD include externals/include
-INCLUDEPATH += /usr/local/include/NSXTool /usr/local/include/eigen3 /usr/local/Cellar/boost/1.59.0/include
-INCLUDEPATH += /opt/X11/include/
-LIBS += -L /usr/local/lib -lNSXTool -lboost_date_time -lboost_system -lfftw3
-}
