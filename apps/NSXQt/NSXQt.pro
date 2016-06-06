@@ -8,12 +8,10 @@ QT       += core widgets printsupport opengl
 
 QMAKE_CXXFLAGS += -DNDEBUG -DEIGEN_FFTW_DEFAULT
 
-win32:
-{
+win32: {
     LIBS += -lNSXTool
 }
-unix:!macx
-{
+unix:!macx {
     QMAKE_CXXFLAGS += -std=c++0x -fopenmp
     QMAKE_LFLAGS += -fopenmp
 
@@ -21,8 +19,7 @@ unix:!macx
 
     LIBS += -lNSXTool -lboost_date_time -lboost_system -lfftw3
 }
-macx
-{
+macx {
     CONFIG += c++11
     QMAKE_CXXFLAGS += -std=c++11
 
