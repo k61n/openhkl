@@ -15,16 +15,23 @@ linux:
   tags:
     - ubuntu14.04
 
-#mac:
-#  script:
-#    - mkdir ./build
-#    - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./build
-#    - make -j4 -l4
-#    - make install
-#    - ctest -j4 -l4
-#    - rm CMakeCache.txt
-#  only:
-#    - master
-#  tags:
-#    - mac
+mac:
+  script:
+    - mkdir ./build
+    - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=.
+    - make -j4 -l4
+    - make install
+    - ctest -j4 -l4
+    - rm CMakeCache.txt
+    - declare -x CPLUS_INCLUDE_PATH=/usr/local/opt/eigen/include/eigen3:/usr/local/opt/boost/include:${CI_PROJECT_DIR}/build/include/NSXTool
+    - declare -x LIBRARY_PATH=${CI_PROJECT_DIR}/build/:/usr/local/opt/boost/lib/:/usr/local/opt/fftw/lib/
+    - ${CI_PROJECT_DIR}/apps/NSXQt/
+    - /usr/local/opt/qt5/bin/qmake CONFIG+=release
+    - make -j4 -l4
+    - /usr/local/opt/qt5/bin/macdeployqt nsxtool.app/ -dmg
+    - scp nsxtool.dmg gitlabci-nsxtool@nsxtool.ill.fr:/mnt/data/software/nsxtool/uploads
+  only:
+    - master
+  tags:
+    - mac
 
