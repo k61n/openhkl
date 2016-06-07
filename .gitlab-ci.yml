@@ -36,7 +36,7 @@ mac:
     - /usr/local/opt/qt5/bin/macdeployqt nsxtool.app/ -dmg
   artifacts:
     paths:
-    - nsxtool*dmg
+    - ${CI_PROJECT_DIR}/apps/NSXQt/nsxtool*dmg
   only:
     - master
   tags:
