@@ -82,6 +82,8 @@ private slots:
 
     void on_checkBox_AspectRatio_toggled(bool checked);
 
+    void on_actionConvolution_Filter_triggered();
+
 public slots:
     void changeData(SX::Data::IData*);
     void showPeakList(std::vector<SX::Data::IData*>);

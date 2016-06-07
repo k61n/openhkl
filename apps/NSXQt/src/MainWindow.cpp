@@ -56,6 +56,8 @@
 #include "Tree/UnitCellPropertyWidget.h"
 #include "Tree/PeakListPropertyWidget.h"
 
+#include "dialogconvolve.h"
+
 using namespace SX::Units;
 using namespace SX::Instrument;
 
@@ -498,4 +500,10 @@ void MainWindow::on_actionShow_calculated_peak_positions_triggered(bool checked)
 void MainWindow::on_checkBox_AspectRatio_toggled(bool checked)
 {
     _ui->_dview->fixDetectorAspectRatio(checked);
+}
+
+void MainWindow::on_actionConvolution_Filter_triggered()
+{
+    auto dialog = new DialogConvolve(this);
+    dialog->show();
 }
