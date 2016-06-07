@@ -31,7 +31,7 @@ mac:
     - /usr/local/opt/qt5/bin/qmake CONFIG+=release
     - make -j4 -l4
     - /usr/local/opt/qt5/bin/macdeployqt nsxtool.app/ -dmg
-   artifacts:
+  artifacts:
     paths:
     - nsxtool*dmg
   only:
