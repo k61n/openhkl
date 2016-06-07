@@ -155,15 +155,27 @@ file(GLOB_RECURSE sources chemistry/src/*.cpp
                           utils/src/*.cpp
                           crystal/src/*.cpp
                           instrument/src/*.cpp
+                          )
+
+file(GLOB_RECURSE headers chemistry/include/*.h
+                          data/include/*.h
+                          geometry/include/*.h
+                          kernel/include/*.h
+                          imaging/include/*.h
+                          integration/include/*.h
+                          materials/*.cpp
+                          utils/include/*.h
+                          crystal/include/*.h
+                          instrument/include/*.h
                   )                   
 
 # Creating the library
 # Under Windows and Miscrosoft Visual Studio the library will be static to avoid
 # the DLL_EXPORT mess
 if(MSVC)
-    add_library(NSXTool STATIC ${sources})
+    add_library(NSXTool STATIC ${sources} ${headers})
 else()
-    add_library(NSXTool SHARED ${sources})
+    add_library(NSXTool SHARED ${sources} ${headers})
 endif()
 
 find_library(FFTW3_LIBRARIES NAMES fftw3 libfftw3)
