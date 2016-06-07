@@ -20,12 +20,12 @@ mac:
   script:
     - mkdir ./build
     - cd build
-    - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=.
+    - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=. ..
     - make -j4 -l4
     - make install
     - ctest -j4 -l4
     - rm CMakeCache.txt
-    - cmake -DCMAKE_BUILD_TYPE=Release
+    - cmake -DCMAKE_BUILD_TYPE=Release ..
     - make -j4 -l4
     - make install
     - declare -x CPLUS_INCLUDE_PATH=/usr/local/opt/eigen/include/eigen3:/usr/local/opt/boost/include:${CI_PROJECT_DIR}/build/include/NSXTool
