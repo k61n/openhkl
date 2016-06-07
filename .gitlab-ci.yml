@@ -8,7 +8,9 @@ linux:
     - rm CMakeCache.txt
     - cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_CPACK=ON -DBUILD_QTAPPS=ON
     - make package
-    - scp nsxtool*.deb gitlabci-nsxtool@nsxtool.ill.fr:/mnt/data/software/nsxtool/uploads
+  artifacts:
+    paths:
+    - nsxtool*deb
 
   only:
     - master
@@ -30,7 +32,9 @@ mac:
     - /usr/local/opt/qt5/bin/qmake CONFIG+=release
     - make -j4 -l4
     - /usr/local/opt/qt5/bin/macdeployqt nsxtool.app/ -dmg
-    - scp nsxtool.dmg gitlabci-nsxtool@nsxtool.ill.fr:/mnt/data/software/nsxtool/uploads
+   artifacts:
+    paths:
+    - nsxtool*dmg
   only:
     - master
   tags:
