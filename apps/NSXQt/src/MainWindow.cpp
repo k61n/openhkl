@@ -162,7 +162,11 @@ void MainWindow::plotPeak(SX::Crystal::Peak3D* peak)
     auto scenePtr=_ui->_dview->getScene();
     // Ensure that frames
     changeData(peak->getData());
-    scenePtr->setData(peak->getData(),std::round(peak->getPeak()->getAABBCenter()[2]));
+    // Get frame number to adjust the data
+    int data_frame=std::round(peak->getPeak()->getAABBCenter()[2]);
+    scenePtr->setData(peak->getData(),data_frame);
+    // Update the scrollbar
+    _ui->frame->setValue(data_frame);
     auto pgi=scenePtr->findPeakGraphicsItem(peak);
     if (pgi)
     {
