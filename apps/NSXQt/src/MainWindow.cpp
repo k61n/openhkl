@@ -56,7 +56,7 @@
 #include "Tree/UnitCellPropertyWidget.h"
 #include "Tree/PeakListPropertyWidget.h"
 
-#include "dialogconvolve.h"
+#include "DialogConvolve.h"
 
 using namespace SX::Units;
 using namespace SX::Instrument;
@@ -504,6 +504,7 @@ void MainWindow::on_checkBox_AspectRatio_toggled(bool checked)
 
 void MainWindow::on_actionConvolution_Filter_triggered()
 {
-    auto dialog = new DialogConvolve(this);
+    Eigen::MatrixXi frame = _ui->_dview->getScene()->getCurrentFrame();
+    auto dialog = new DialogConvolve(frame, this);
     dialog->show();
 }
