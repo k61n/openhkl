@@ -3,10 +3,12 @@ cmake_minimum_required(VERSION 2.8)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 # Add some paths to the cmake module search path.
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/modules)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/externals/c-blosc/cmake)
 
 project(NSXTOOL_PROJECT)
+
+include(CMakeFindBinUtils)
 
 set(NSXTOOL_VERSION_MAJOR 1)
 set(NSXTOOL_VERSION_MINOR 0)
@@ -24,8 +26,12 @@ endif()
 option(BUILD_QTAPPS "Build Qt based application." OFF)
 
 if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "Release")
+  set(CMAKE_BUILD_TYPE "Release")
 endif()
+
+# additional macros
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
+include(CheckCompiler)
 
 #Set package name here
 set(CPACK_PACKAGE_NAME "nsxtool")
