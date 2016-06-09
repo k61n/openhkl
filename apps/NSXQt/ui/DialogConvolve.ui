@@ -65,14 +65,17 @@
     </property>
    </column>
   </widget>
-  <widget class="QGraphicsView" name="graphicsView_2">
+  <widget class="QPushButton" name="pushButton">
    <property name="geometry">
     <rect>
      <x>730</x>
      <y>320</y>
-     <width>401</width>
-     <height>391</height>
+     <width>131</width>
+     <height>28</height>
     </rect>
+   </property>
+   <property name="text">
+    <string>Update Preview</string>
    </property>
   </widget>
  </widget>

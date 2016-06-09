@@ -41,26 +41,7 @@ namespace Imaging
 class GaussianKernel : public ConvolutionKernel
 {
 public:
-
-	//! Default constructor (deleted)
-	GaussianKernel()=delete;
-
-	//! Copy constructor
-	GaussianKernel(const GaussianKernel& other);
-
-	//! Construct a gaussian kernel given its size and its corresponding parameters
-	GaussianKernel(int kernelSize, const std::map<std::string,double>& parameters);
-
-	//! Destructor
-	~GaussianKernel();
-
-	//! Update the kernel given its size and its parameters
-	GaussianKernel& operator=(const GaussianKernel& other);
-
-protected:
-
-	void updateKernel();
-
+    const char* getName() override;
 };
 
 } /* namespace Imaging */

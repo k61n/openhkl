@@ -35,31 +35,17 @@ namespace SX
 namespace Imaging
 {
 
-BoxKernel::BoxKernel(const BoxKernel& other) : ConvolutionKernel(other)
+const char *BoxKernel::getName()
 {
+    return "Box";
 }
 
-BoxKernel::BoxKernel(int kernelSize, const std::map<std::string,double>& parameters) : ConvolutionKernel(kernelSize,parameters)
+void BoxKernel::update()
 {
-	updateKernel();
+    // TODO: implement this
 }
 
-BoxKernel::~BoxKernel()
-{
-}
 
-BoxKernel& BoxKernel::operator=(const BoxKernel& other)
-{
-	if (this != &other)
-		ConvolutionKernel::operator=(other);
-
-	return *this;
-}
-
-void BoxKernel::updateKernel()
-{
-	_kernel = Eigen::MatrixXd::Ones(_kernelSize,_kernelSize);
-}
 
 } /* namespace Imaging */
 

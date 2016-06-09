@@ -41,26 +41,7 @@ namespace Imaging
 class LorentzianKernel : public ConvolutionKernel
 {
 public:
-
-	//! Default constructor (deleted)
-	LorentzianKernel()=delete;
-
-	//! Copy constructor
-	LorentzianKernel(const LorentzianKernel& other);
-
-	//! Construct a lorentzian kernel given its size and its corresponding parameters
-	LorentzianKernel(int kernelSize, const std::map<std::string,double>& parameters);
-
-	//! Destructor
-	~LorentzianKernel();
-
-	//! Update the kernel given its size and its parameters
-	LorentzianKernel& operator=(const LorentzianKernel& other);
-
-protected:
-
-	void updateKernel();
-
+    const char* getName() override;
 };
 
 } /* namespace Imaging */

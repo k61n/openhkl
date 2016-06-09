@@ -41,25 +41,9 @@ namespace Imaging
 class BoxKernel : public ConvolutionKernel
 {
 public:
-
-	//! Default constructor (deleted)
-	BoxKernel()=delete;
-
-	//! Copy constructor
-	BoxKernel(const BoxKernel& other);
-
-	//! Construct a box kernel given its size and its corresponding parameters
-	BoxKernel(int kernelSize, const std::map<std::string,double>& parameters);
-
-	//! Destructor
-	~BoxKernel();
-
-	//! Update the kernel given its size and its parameters
-	BoxKernel& operator=(const BoxKernel& other);
-
-protected:
-
-	void updateKernel();
+    const char* getName() override;
+private:
+    void update() override;
 };
 
 } /* namespace Imaging */

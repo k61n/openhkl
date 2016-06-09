@@ -2,7 +2,7 @@
  * nsxtool : Neutron Single Crystal analysis toolkit
  ------------------------------------------------------------------------------------------
  Copyright (C)
- 2012- Laurent C. Chapon, Eric Pellegrini
+ 2012- Laurent C. Chapon, Eric Pellegrini, Jonathan Fisher
  Institut Laue-Langevin
  BP 156
  6, rue Jules Horowitz
@@ -10,6 +10,7 @@
  France
  chapon[at]ill.fr
  pellegrini[at]ill.fr
+ j.fisher[at]fz-juelich.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -38,102 +39,61 @@ namespace SX
 namespace Imaging
 {
 
-ConvolutionKernel::ConvolutionKernel(const ConvolutionKernel& other)
-: _kernelSize(other._kernelSize),
-  _parameters(other._parameters),
-  _kernel(other._kernel)
+
+
+ConvolutionKernel::ConvolutionKernel():
+    _kernel(), _hasChanged(false), _params()
 {
+    // all kernels have these default parameters
+    _params["rows"] = 0;
+    _params["cols"] = 0;
 }
 
-ConvolutionKernel::ConvolutionKernel(int kernelSize, const std::map<std::string,double>& parameters)
+ConvolutionKernel::ConvolutionKernel(const ConvolutionKernel &rhs)
 {
-	if (kernelSize <= 0 || (kernelSize%2==0))
-		throw std::runtime_error("Invalid kernel size");
-
-	_kernelSize = kernelSize;
-	_parameters = parameters;
+    _kernel = rhs._kernel;
+    _hasChanged = rhs._hasChanged;
+    _params = rhs._params;
 }
 
-ConvolutionKernel::~ConvolutionKernel()
+ConvolutionKernel::ConvolutionKernel(const ConvolutionKernel::ParameterMap &parameters)
 {
+    _params = parameters;
+    _hasChanged = true;
 }
 
-ConvolutionKernel& ConvolutionKernel::operator=(const ConvolutionKernel& other)
+ConvolutionKernel::ParameterMap &ConvolutionKernel::getParameters()
 {
-	if (this != &other)
-	{
-		_kernelSize = other._kernelSize;
-		_parameters = other._parameters;
-		_kernel = other._kernel;
-	}
-	return *this;
+    _hasChanged = true;
+    return _params;
 }
 
-const Eigen::MatrixXd& ConvolutionKernel::getKernel() const
+const ConvolutionKernel::ParameterMap &ConvolutionKernel::getParameters() const
 {
-	return _kernel;
+    return _params;
 }
 
-int ConvolutionKernel::getKernelSize() const
+const Convolver::RealMatrix& ConvolutionKernel::getKernel()
 {
-	return _kernelSize;
-}
+    if ( _hasChanged ) {
+        update();
+        _hasChanged = false;
+    }
 
-void ConvolutionKernel::setKernelSize(int kernelSize)
-{
-	if (kernelSize <= 0 ||  (kernelSize%2==0))
-		throw std::runtime_error("Invalid kernel size");
-
-	_kernelSize = kernelSize;
-	updateKernel();
-}
-
-const std::map<std::string,double>& ConvolutionKernel::getParameters() const
-{
-	return _parameters;
-}
-
-void ConvolutionKernel::setParameters(const std::map<std::string,double>& parameters)
-{
-	_parameters = parameters;
-	updateKernel();
-}
-
-Eigen::MatrixXd ConvolutionKernel::operator()(const Eigen::MatrixXd& image) const
-{
-	int imageNRows(image.rows());
-	int imageNCols(image.cols());
-
-	if (imageNRows<_kernelSize || imageNCols<_kernelSize)
-		throw std::runtime_error("The image to filter is smaller than the kernel");
-
-	int offset(_kernelSize/2);
-
-	int offset2 = 2*offset;
-
-	Eigen::MatrixXd resizedImage = Eigen::MatrixXd::Zero(imageNRows+offset2,imageNCols+offset2);
-	resizedImage.block(offset,offset,imageNRows,imageNCols) = image;
-
-	Eigen::MatrixXd convolutedImage = Eigen::MatrixXd::Zero(imageNRows,imageNCols);
-
-	for (int c=0;c<imageNCols;++c)
-	{
-		for (int r=0;r<imageNRows;++r)
-			convolutedImage(r,c) = (resizedImage.block(r,c,_kernelSize,_kernelSize)*_kernel.block(0,0,_kernelSize,_kernelSize)).sum();
-	}
-
-	return convolutedImage;
-}
-
-Eigen::MatrixXd ConvolutionKernel::apply(const Eigen::MatrixXd& image) const
-{
-	return ConvolutionKernel::operator()(image);
+    return _kernel;
 }
 
 void ConvolutionKernel::print(std::ostream& os) const
 {
 	os<<"Kernel Matrix ("<<_kernelSize<<","<<_kernelSize<<"):"<<std::endl;
-	os<<_kernel<<std::endl;
+    os<<_kernel<<std::endl;
+}
+
+ConvolutionKernel &ConvolutionKernel::operator=(const ConvolutionKernel &rhs)
+{
+    _kernel = rhs._kernel;
+    _hasChanged = rhs._hasChanged;
+    _params = rhs._params;
 }
 
 std::ostream& operator<<(std::ostream& os, const ConvolutionKernel& kernel)

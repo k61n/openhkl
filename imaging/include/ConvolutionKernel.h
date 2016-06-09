@@ -2,7 +2,7 @@
  * nsxtool : Neutron Single Crystal analysis toolkit
  ------------------------------------------------------------------------------------------
  Copyright (C)
- 2012- Laurent C. Chapon, Eric Pellegrini
+ 2012- Laurent C. Chapon, Eric Pellegrini, Jonathan Fisher
  Institut Laue-Langevin
  BP 156
  6, rue Jules Horowitz
@@ -10,6 +10,7 @@
  France
  chapon[at]ill.fr
  pellegrini[at]ill.fr
+ j.fisher[at]fz-juelich.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -35,7 +36,15 @@
 #include <string>
 #include <ostream>
 
+#include <string>
+#include <map>
+
 #include <Eigen/Dense>
+
+
+#include "Convolver.h"
+
+
 
 namespace SX
 {
@@ -45,58 +54,35 @@ namespace Imaging
 
 class ConvolutionKernel
 {
-
 public:
+    typedef std::map<std::string, double> ParameterMap;
 
-	//! Default constructor (deleted)
-	ConvolutionKernel()=delete;
+    ConvolutionKernel();
+    ConvolutionKernel(const ConvolutionKernel& rhs);
+    ConvolutionKernel(const ParameterMap& parameters);
 
-	//! Copy constructor
-	ConvolutionKernel(const ConvolutionKernel& other);
+    // used to get/set parameters
+    ParameterMap& getParameters();
+    const ParameterMap& getParameters() const;
 
-	//! Construct a convolution kernel given its size and its corresponding parameters
-	ConvolutionKernel(int kernelSize, const std::map<std::string,double>& parameters);
 
-	//! Assignment operator
-	ConvolutionKernel& operator=(const ConvolutionKernel& other);
+    const Convolver::RealMatrix& getKernel();
+    virtual const char* getName() = 0;
 
-	//! Return the size of the kernel
-	int getKernelSize() const;
-	//! Set the size of the kernel
-	void setKernelSize(int kernelSize);
 
-	//! Return a constant reference to the kernel matrix
-	const Eigen::MatrixXd& getKernel() const;
+    void print(std::ostream& os) const;
 
-	//! Return a constant reference to the parameters of the convolution kernel
-	const std::map<std::string,double>& getParameters() const;
-	//! Seto the parameters of the convolution kernel
-	void setParameters(const std::map<std::string,double>& parameters);
+    ConvolutionKernel& operator=(const ConvolutionKernel& rhs);
 
-	//! Call operator
-	Eigen::MatrixXd operator()(const Eigen::MatrixXd& image) const;
-	//! Apply the convolution kernel to an image
-	Eigen::MatrixXd apply(const Eigen::MatrixXd& image) const;
-
-	//! Destructor
-	virtual ~ConvolutionKernel()=0;
-
-	//! Flush information about the convolution kernel to an output stream
-	void print(std::ostream& os) const;
 
 protected:
+    // update the kernel using current parameters
+    virtual void update() {};
 
-	//! Update the kernel given its size and its parameters
-	virtual void updateKernel()=0;
-
-protected:
-
-	int _kernelSize;
-
-	std::map<std::string,double> _parameters;
-
-	Eigen::MatrixXd _kernel;
-
+    int _kernelSize;
+    Convolver::RealMatrix _kernel;
+    bool _hasChanged; // used to record if parameters have changed since last update
+    ParameterMap _params;
 };
 
 std::ostream& operator<<(std::ostream& os, const ConvolutionKernel& kernel);

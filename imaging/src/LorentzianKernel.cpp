@@ -35,53 +35,12 @@ namespace SX
 namespace Imaging
 {
 
-LorentzianKernel::LorentzianKernel(const LorentzianKernel& other) : ConvolutionKernel(other)
+const char *LorentzianKernel::getName()
 {
+    return "Lorentzian";
 }
 
-LorentzianKernel::LorentzianKernel(int kernelSize, const std::map<std::string,double>& parameters) : ConvolutionKernel(kernelSize,parameters)
-{
-	updateKernel();
-}
 
-LorentzianKernel::~LorentzianKernel()
-{
-}
-
-LorentzianKernel& LorentzianKernel::operator=(const LorentzianKernel& other)
-{
-	if (this != &other)
-		ConvolutionKernel::operator=(other);
-
-	return *this;
-}
-
-void LorentzianKernel::updateKernel()
-{
-
-	auto it=_parameters.find("fwhm");
-
-	if (it == _parameters.end())
-		throw std::runtime_error("Missing parameters for this kernel: fwhm");
-
-	_kernel = Eigen::MatrixXd(_kernelSize,_kernelSize);
-
-	int offset(_kernelSize/2);
-
-	double fwhm = _parameters["fwhm"];
-	fwhm /= 2.0;
-
-	for (int c=0;c<_kernelSize;++c)
-	{
-		double fc = static_cast<double>(c-offset);
-		for (int r=c;r<_kernelSize;++r)
-		{
-			double fr = static_cast<double>(r-offset);
-			_kernel(r,c) = _kernel(c,r) = fwhm/(fr*fr + fc*fc + fwhm*fwhm);
-		}
-	}
-
-}
 
 } /* namespace Imaging */
 

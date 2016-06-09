@@ -35,52 +35,11 @@ namespace SX
 namespace Imaging
 {
 
-GaussianKernel::GaussianKernel(const GaussianKernel& other) : ConvolutionKernel(other)
+const char *GaussianKernel::getName()
 {
+    return "Gaussian";
 }
 
-GaussianKernel::GaussianKernel(int kernelSize, const std::map<std::string,double>& parameters) : ConvolutionKernel(kernelSize,parameters)
-{
-	updateKernel();
-}
-
-GaussianKernel::~GaussianKernel()
-{
-}
-
-GaussianKernel& GaussianKernel::operator=(const GaussianKernel& other)
-{
-	if (this != &other)
-		ConvolutionKernel::operator=(other);
-
-	return *this;
-}
-
-void GaussianKernel::updateKernel()
-{
-
-	auto it=_parameters.find("sigma");
-
-	if (it == _parameters.end())
-		throw std::runtime_error("Missing parameters for this kernel: sigma");
-
-	_kernel = Eigen::MatrixXd(_kernelSize,_kernelSize);
-
-	int offset(_kernelSize/2);
-
-	double sigma = _parameters["sigma"];
-
-	for (int c=0;c<_kernelSize;++c)
-	{
-		double fc = static_cast<double>(c-offset);
-		for (int r=c;r<_kernelSize;++r)
-		{
-			double fr = static_cast<double>(r-offset);
-			_kernel(r,c) = _kernel(c,r) = std::exp(-0.5*(fr*fr + fc*fc)/sigma/sigma);
-		}
-	}
-
-}
 
 } /* namespace Imaging */
 
