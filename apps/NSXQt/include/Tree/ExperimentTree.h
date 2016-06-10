@@ -28,6 +28,7 @@ class ExperimentTree : public QTreeView
     Q_OBJECT
 public:
     explicit ExperimentTree(QWidget *parent = 0);
+    ~ExperimentTree();
 
     void addExperiment(const std::string& experimentName, const std::string& instrumentName);
     std::vector<SX::Data::IData*> getSelectedNumors() const;

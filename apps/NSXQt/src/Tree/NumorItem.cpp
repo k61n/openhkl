@@ -17,6 +17,7 @@ NumorItem::NumorItem(SX::Instrument::Experiment* experiment,SX::Data::IData* dat
 NumorItem::~NumorItem()
 {
    _experiment->removeData(_data->getBasename());
+   delete _data; // JMF fix memory leak detected by valgrind
 }
 
 SX::Data::IData* NumorItem::getData()

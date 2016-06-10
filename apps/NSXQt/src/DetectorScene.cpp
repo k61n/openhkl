@@ -34,7 +34,7 @@ DetectorScene::DetectorScene(QObject *parent)
   _mode(ZOOM),
   _zoomstart(0,0),
   _zoomend(0,0),
-  _zoomrect(),
+  _zoomrect(nullptr),
   _zoomStack(),
   _itemSelected(false),
   _image(nullptr),
@@ -214,6 +214,7 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             _zoomend=_zoomstart;
             QRect zoom(_zoomstart,_zoomend);
             _zoomrect=addRect(zoom);
+            _zoomrect->setParentItem(_image);
             QPen pen1(QBrush(QColor("gray")),1.0);
             pen1.setWidth(1);
             pen1.setCosmetic(true);

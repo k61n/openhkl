@@ -78,7 +78,7 @@ ConvolutionFilterTree::ConvolutionFilterTree(QWidget* parent): QTreeWidget(paren
 
 SX::Imaging::ConvolutionKernel* ConvolutionFilterTree::getKernel()
 {
-    return _selectedKernel;
+    return _selectedKernel.get();
 }
 
 void ConvolutionFilterTree::onComboBoxChange()
@@ -99,24 +99,20 @@ void ConvolutionFilterTree::onComboBoxChange()
     std::string kernel_name = _kernels[_comboBox->currentIndex()].toStdString();
     qDebug() << "the selected kernel is " << QString(kernel_name.c_str()) << " " << _comboBox->currentIndex();
 
-
-    if (_selectedKernel)
-        delete _selectedKernel;
-
     // TODO: replace with factory
     if (kernel_name == "No kernel") {
     } else if ( kernel_name == "Annular") {
         qDebug() << "annular kernel selected";
-        _selectedKernel = new SX::Imaging::AnnularKernel();
+        _selectedKernel = std::unique_ptr<SX::Imaging::ConvolutionKernel>(new SX::Imaging::AnnularKernel());
     }
     else if ( kernel_name == "Box") {
-        _selectedKernel = new SX::Imaging::BoxKernel();
+        _selectedKernel = std::unique_ptr<SX::Imaging::ConvolutionKernel>(new SX::Imaging::BoxKernel());
     }
     else if ( kernel_name == "Gaussian") {
-        _selectedKernel = new SX::Imaging::GaussianKernel();
+        _selectedKernel = std::unique_ptr<SX::Imaging::ConvolutionKernel>(new SX::Imaging::GaussianKernel());
     }
     else if ( kernel_name == "Lorentzian") {
-        _selectedKernel = new SX::Imaging::LorentzianKernel();
+        _selectedKernel = std::unique_ptr<SX::Imaging::ConvolutionKernel>(new SX::Imaging::LorentzianKernel());
     }
     else {
         qDebug("Error: unidentified kernel");

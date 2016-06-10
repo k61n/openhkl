@@ -55,6 +55,11 @@ ExperimentTree::ExperimentTree(QWidget *parent) : QTreeView(parent)
     connect(this,SIGNAL(clicked(QModelIndex)),this,SLOT(onSingleClick(QModelIndex)));
 }
 
+ExperimentTree::~ExperimentTree()
+{
+    delete _model;
+}
+
 void ExperimentTree::createNewExperiment()
 {
 

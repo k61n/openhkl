@@ -23,7 +23,7 @@ endif()
 # Options
 ###########################################################################
 
-option(BUILD_QTAPPS "Build Qt based application." OFF)
+option(BUILD_QTAPPS "Build Qt based application." ON)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")
@@ -89,7 +89,8 @@ find_package(TIFF)
 ###########################################################################
 # Compiler/linker stuffs
 ###########################################################################
-
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+  message("Configuring for build type 'Release'")
 if(CMAKE_COMPILER_IS_GNUCXX)
     add_definitions(
     -msse2
@@ -106,6 +107,12 @@ if(CMAKE_COMPILER_IS_GNUCXX)
     )
     set(CMAKE_CXX_FLAGS_RELEASE "-O2") 
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp ")
+  endif()
+elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  message("Configuring for build type 'Debug'")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Og -g")
+else()
+  message("Warning: build type ${CMAKE_BUILD_TYPE} is unrecognized")
 endif()
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
