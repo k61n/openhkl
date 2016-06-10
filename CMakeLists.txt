@@ -191,8 +191,8 @@ else()
     add_library(NSXTool SHARED ${sources} ${headers})
 endif()
 
-find_library(FFTW3_LIBRARIES NAMES fftw3 libfftw3)
- 
+find_library(FFTW3_LIBRARIES NAMES fftw3 libfftw3 fftw3-3 libfftw3-3)
+
 # Link
 target_link_libraries(NSXTool blosc_shared ${Boost_LIBRARIES} ${PYTHON_LIBRARIES} ${FFTW3_LIBRARIES} ${HDF5_LIBRARIES} ${TIFF_LIBRARY})
 
