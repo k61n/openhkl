@@ -73,7 +73,15 @@ include_directories(${EIGEN3_INCLUDE_DIR})
 
 ###### Search the HDF5 library
 find_package(HDF5 COMPONENTS CXX)
-include_directories("${HDF5_INCLUDE_DIRS}")
+include_directories("${HDF5_INCLUDE_DIR}")
+
+if ( HDF5_FOUND )
+   message("HDF5 found: include dir is ${HDF5_INCLUDE_DIR} and library is ${HDF5_LIBRARIES} located in ${HDF5_LIBRARY_DIR}")
+else()
+   messagE("ERROR: HDF5 not found")   
+endif()
+
+
 find_package(Blosc REQUIRED)
 if (BLOSC_FOUND==True)
         message("Blosc library found, already installed on the system")
@@ -85,6 +93,7 @@ endif()
 
 ###### TIFF library
 find_package(TIFF)
+include_directories(${TIFF_INCLUDE_DIR})
 
 ###########################################################################
 # Compiler/linker stuffs
@@ -192,7 +201,41 @@ else()
     add_library(NSXTool SHARED ${sources} ${headers})
 endif()
 
+find_path(FFTW_INCLUDE_DIR fftw3.h)
+include_directories(${FFTW_INCLUDE_DIR})
+
 find_library(FFTW3_LIBRARIES NAMES fftw3 libfftw3 fftw3-3 libfftw3-3)
+
+
+if (NOT HDF5_LIBRARIES )
+message("HDF5 Libraries no found")
+set(HDF5_LIBRARIES "")
+
+find_library(HDF5_LIBRARY_TEMP hdf5_cpp)
+set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
+
+find_library(HDF5_LIBRARY_TEMP libhdf5_cpp)
+set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
+
+find_library(HDF5_LIBRARY_TEMP hdf5)
+set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
+
+find_library(HDF5_LIBRARY_TEMP libhdf5)
+set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
+
+find_library(HDF5_LIBRARY_TEMP zlib)
+set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
+
+find_library(HDF5_LIBRARY_TEMP libzlib)
+set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
+
+find_library(HDF5_LIBRARY_TEMP szip)
+set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
+
+find_library(HDF5_LIBRARY_TEMP libszip)
+set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
+message("Alternative method found HDF5_LIBRARIES = ${HDF5_LIBRARIES}")
+endif()
 
 # Link
 target_link_libraries(NSXTool blosc_shared ${Boost_LIBRARIES} ${PYTHON_LIBRARIES} ${FFTW3_LIBRARIES} ${HDF5_LIBRARIES} ${TIFF_LIBRARY})

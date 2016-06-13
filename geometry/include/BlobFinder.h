@@ -41,13 +41,14 @@
 #include "Ellipsoid.h"
 #include "IShape.h"
 #include "NDTree.h"
+#include "Types.h"
 
 namespace SX
 {
 
 namespace Geometry
 {
-	typedef unsigned int uint;
+
 	typedef std::map<int,int> imap;
 	typedef std::pair<int,int> ipair;
 	typedef std::vector<int> vints;
@@ -107,7 +108,7 @@ namespace Geometry
 	}
 
 	template <typename _datatype>
-	blob2DCollection findBlobs2D(_datatype* dataptr, uint nrows, uint ncols, _datatype threshold, int minComp, int maxComp, double confidence, bool rowMajor=1)
+	blob2DCollection findBlobs2D(_datatype* dataptr, SX::Types::uint nrows, SX::Types::uint ncols, _datatype threshold, int minComp, int maxComp, double confidence, bool rowMajor=1)
 	{
 		// Map of Blobs (key : label, value : blob)
 		blob2DCollection blobs;

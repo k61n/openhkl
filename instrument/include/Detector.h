@@ -47,7 +47,6 @@ namespace Instrument
 
 namespace property_tree=boost::property_tree;
 
-typedef unsigned int uint;
 
 /** @brief Base class for Detectors.
  *

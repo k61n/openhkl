@@ -94,6 +94,7 @@ ConvolutionKernel &ConvolutionKernel::operator=(const ConvolutionKernel &rhs)
     _kernel = rhs._kernel;
     _hasChanged = rhs._hasChanged;
     _params = rhs._params;
+    return *this;
 }
 
 std::ostream& operator<<(std::ostream& os, const ConvolutionKernel& kernel)
