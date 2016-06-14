@@ -44,6 +44,7 @@ Transform<double,3,Eigen::Affine> TestAxis::getHomMatrix(double value) const
 BOOST_AUTO_TEST_CASE(Tests_Axis)
 {
 	TestAxis axis("Omega",true);
+	axis.setUnits("au");
 	const std::string& label=axis.getLabel();
 
 	BOOST_CHECK_EQUAL(label,"Omega");

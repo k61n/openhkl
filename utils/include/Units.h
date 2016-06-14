@@ -99,6 +99,9 @@ static const double avogadro = 6.0221367e23;
 // Elementary charge
 static const double Q=1.60217649e-19;
 
+// arbitrary unit
+static const double au=1.0;
+
 // Percentage
 static const double perCent=0.01;
 

@@ -120,6 +120,12 @@ public:
 	//! Return whether or not the axis is physical or not
 	bool isPhysical() const;
 
+	//! Return the value of the units related to axis.
+	std::string getUnits() const;
+	//! Set the value of the units related to the axis
+	void setUnits(std::string units);
+
+
 protected:
 	//! Check whether a value is within the authorized limits of this axis, throw otherwise.
 	void checkRange(double value);
@@ -139,6 +145,8 @@ protected:
 	bool _physical;
 	//! The instrument id (e.g. MAD number for instrument related to ILL ASCII Data).
 	unsigned int _id;
+	//! The units related to the axis
+	std::string _units;
 };
 
 } // end namespace Instrument

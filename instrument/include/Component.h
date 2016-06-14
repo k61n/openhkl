@@ -106,6 +106,10 @@ public:
 	//! Create a state from a map of values
 	ComponentState createState(const std::map<std::string,double>& values);
 
+	std::map<unsigned int,std::string> getPhysicalAxesNames() const;
+
+	std::vector<unsigned int> getPhysicalAxesIds() const;
+
 protected:
 	//! Name of the component
 	std::string _name;

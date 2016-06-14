@@ -3,6 +3,7 @@
 
 #include "Axis.h"
 #include "AxisFactory.h"
+#include "Units.h"
 
 namespace SX
 {
@@ -67,7 +68,8 @@ Axis::Axis(const Axis& other)
   _max(other._max),
   _offsetFixed(other._offsetFixed),
   _physical(other._physical),
-  _id(other._id)
+  _id(other._id),
+  _units(other._units)
 {
 }
 
@@ -85,7 +87,7 @@ Axis::Axis(const proptree::ptree& node)
 
 	_axis=axis;
 
-	_offset=node.get<double>("offset");
+	_offset=node.get<double>("offset",0.0);
 	_offsetFixed=false;
 
 	_min=node.get<double>("min",-std::numeric_limits<double>::infinity());
@@ -106,7 +108,8 @@ Axis& Axis::operator=(const Axis& other)
 		_max         = other._max;
 		_offsetFixed = other._offsetFixed;
 		_physical    = other._physical;
-		_id       = other._id;
+		_id          = other._id;
+		_units       = other._units;
 	}
 	return *this;
 }
@@ -169,7 +172,10 @@ void Axis::addOffset(double offset)
 }
 double Axis::getOffset() const
 {
-	return _offset;
+	Units::UnitsManager* um=SX::Units::UnitsManager::Instance();
+	double unitConversionFactor = um->get(_units);
+
+	return _offset*unitConversionFactor;
 }
 
 void Axis::setLimits(double min, double max)
@@ -217,5 +223,16 @@ bool Axis::isPhysical() const
 	return _physical;
 }
 
+std::string Axis::getUnits() const
+{
+	return _units;
 }
+
+void Axis::setUnits(std::string units)
+{
+	_units = units;
+}
+
+}
+
 }

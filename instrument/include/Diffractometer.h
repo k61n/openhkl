@@ -29,6 +29,7 @@
 #ifndef NSXTOOL_DIFFRACTOMETER_H_
 #define NSXTOOL_DIFFRACTOMETER_H_
 
+#include <map>
 #include <string>
 
 #include <boost/property_tree/ptree.hpp>
@@ -80,6 +81,8 @@ public:
 	void setSample(Sample*);
 	//! Set the source of this diffractometer
 	void setSource(Source*);
+
+	std::map<unsigned int,std::string> getPhysicalAxesNames() const;
 
 protected:
 

@@ -132,7 +132,7 @@
 	            </direction>
 	            <clockwise>true</clockwise>
 	            <offset>0.0</offset>
-	            <physical>true</physical>
+	            <physical>false</physical>
 	        </axis>
 	        <axis type="rotation">
 	            <name>chi-mono</name>
@@ -144,7 +144,7 @@
 	            </direction>
 	            <clockwise>false</clockwise>
 	            <offset>0.0</offset>
-	            <physical>true</physical>
+	            <physical>false</physical>
 	        </axis>
 	        <axis type="rotation">
 	            <name>phi-mono</name>
@@ -156,7 +156,7 @@
 	            </direction>
 	            <clockwise>true</clockwise>
 	            <offset>0.0</offset>
-	            <physical>true</physical>
+	            <physical>false</physical>
 	        </axis>
 	        <axis type="translation">
 	            <name>x-mono</name>
@@ -167,7 +167,7 @@
 			        <z>0.000</z>
 	            </direction>
 	            <offset>0.0</offset>
-	            <physical>true</physical>
+	            <physical>false</physical>
 	        </axis>
 	        <axis type="translation">
 	            <name>y-mono</name>
@@ -178,7 +178,7 @@
 			        <z>0.000</z>
 	            </direction>
 	            <offset>0.0</offset>
-	            <physical>true</physical>
+	            <physical>false</physical>
 	        </axis>
 	    </goniometer>
         <position>
