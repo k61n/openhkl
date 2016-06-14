@@ -3,7 +3,7 @@
 
 #include "Axis.h"
 #include "AxisFactory.h"
-#include "Units.h"
+
 
 namespace SX
 {
@@ -68,8 +68,7 @@ Axis::Axis(const Axis& other)
   _max(other._max),
   _offsetFixed(other._offsetFixed),
   _physical(other._physical),
-  _id(other._id),
-  _units(other._units)
+  _id(other._id)
 {
 }
 
@@ -109,7 +108,6 @@ Axis& Axis::operator=(const Axis& other)
 		_offsetFixed = other._offsetFixed;
 		_physical    = other._physical;
 		_id          = other._id;
-		_units       = other._units;
 	}
 	return *this;
 }
@@ -172,10 +170,7 @@ void Axis::addOffset(double offset)
 }
 double Axis::getOffset() const
 {
-	Units::UnitsManager* um=SX::Units::UnitsManager::Instance();
-	double unitConversionFactor = um->get(_units);
-
-	return _offset*unitConversionFactor;
+	return _offset;
 }
 
 void Axis::setLimits(double min, double max)
@@ -221,16 +216,6 @@ void Axis::setPhysical(bool physical)
 bool Axis::isPhysical() const
 {
 	return _physical;
-}
-
-std::string Axis::getUnits() const
-{
-	return _units;
-}
-
-void Axis::setUnits(std::string units)
-{
-	_units = units;
 }
 
 }

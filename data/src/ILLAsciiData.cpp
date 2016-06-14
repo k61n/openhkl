@@ -140,7 +140,8 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, std::shared_ptr<Diffract
 			// If the axis name is defined in the metadata, the contant will be the corresponding value
 			// other wise it will be 0
 			double val = _metadata->isKey(p.second) ? _metadata->getKey<double>(p.second) : 0.0;
-			std::vector<double> values(_nFrames,val);
+			// Data are given in deg for angles
+			std::vector<double> values(_nFrames,val*SX::Units::deg);
 			gonioValues.insert(std::pair<unsigned int,std::vector<double>>(p.first,values));
 		}
 	}
@@ -159,10 +160,12 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, std::shared_ptr<Diffract
 		// The first three being set for the 'time', the 'monitor' and the 'total count' values.
 		unsigned int comp(3);
 		for (const auto& id : scannedAxisId)
-			// The values has to be divided by 1000 because this factor is always applied
-			// for ILL data
-			gonioValues[id].push_back(scannedValues[comp++]/1000.0);
+		{
+			// The values are given in degrees in the metadata block and multiplied by 1000
+			gonioValues[id].push_back(scannedValues[comp++]/1000*SX::Units::deg);
+		}
 	}
+
 
 	_detectorStates.reserve(_nFrames);
 	auto detector = _diffractometer->getDetector();

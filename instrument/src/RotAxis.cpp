@@ -1,4 +1,3 @@
-#include "Units.h"
 #include "RotAxis.h"
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -19,17 +18,14 @@ Axis* RotAxis::create(const proptree::ptree& node)
 
 RotAxis::RotAxis() : Axis("rotation"), _dir(CCW)
 {
-	_units = "deg";
 }
 
 RotAxis::RotAxis(const std::string& label) : Axis(label),_dir(CCW)
 {
-	_units = "deg";
 }
 
 RotAxis::RotAxis(const std::string& label, const Vector3d& axis, Direction direction) : Axis(label,axis), _dir(direction)
 {
-	_units = "deg";
 }
 
 RotAxis::RotAxis(const RotAxis& other) : Axis(other), _dir(other._dir)
@@ -48,9 +44,6 @@ RotAxis& RotAxis::operator=(const RotAxis& other)
 
 RotAxis::RotAxis(const proptree::ptree& node) : Axis(node)
 {
-	Units::UnitsManager* um=SX::Units::UnitsManager::Instance();
-	_units=node.get<std::string>("<xmlattr>.units","deg");
-
 	bool clockwise=node.get<bool>("clockwise");
 	_dir=clockwise ? RotAxis::Direction::CW : RotAxis::Direction::CCW;
 }
