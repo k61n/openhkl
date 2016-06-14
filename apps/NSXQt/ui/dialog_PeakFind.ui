@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>414</width>
-    <height>225</height>
+    <width>422</width>
+    <height>237</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -46,18 +46,40 @@
        <rect>
         <x>30</x>
         <y>40</y>
-        <width>281</width>
-        <height>81</height>
+        <width>361</width>
+        <height>131</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="1" column="0">
-        <widget class="QLabel" name="confidenceLabel">
+       <item row="0" column="1">
+        <widget class="QDoubleSpinBox" name="thresholdSpinBox">
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+         <property name="frame">
+          <bool>true</bool>
+         </property>
+         <property name="buttonSymbols">
+          <enum>QAbstractSpinBox::UpDownArrows</enum>
+         </property>
+         <property name="minimum">
+          <double>1.500000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>100000.000000000000000</double>
+         </property>
+         <property name="value">
+          <double>3.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="thresholdLabel">
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Confidence interval for the 3D &lt;/p&gt;&lt;p&gt;distribution of points. &lt;/p&gt;&lt;p&gt;0.997 corresponds to 3 Sigma&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Threshold in signal/background ratio&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
-          <string>Gaussian Confidence : </string>
+          <string>Threshold (x bkg): </string>
          </property>
         </widget>
        </item>
@@ -83,36 +105,35 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="thresholdLabel">
+       <item row="1" column="0">
+        <widget class="QLabel" name="confidenceLabel">
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Threshold in signal/background ratio&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Confidence interval for the 3D &lt;/p&gt;&lt;p&gt;distribution of points. &lt;/p&gt;&lt;p&gt;0.997 corresponds to 3 Sigma&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
-          <string>Threshold (x bkg): </string>
+          <string>Gaussian Confidence : </string>
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
-        <widget class="QDoubleSpinBox" name="thresholdSpinBox">
-         <property name="styleSheet">
-          <string notr="true"/>
+       <item row="2" column="0">
+        <widget class="QLabel" name="filterLabel">
+         <property name="text">
+          <string>Preprocessing Filter:</string>
          </property>
-         <property name="frame">
-          <bool>true</bool>
-         </property>
-         <property name="buttonSymbols">
-          <enum>QAbstractSpinBox::UpDownArrows</enum>
-         </property>
-         <property name="minimum">
-          <double>1.500000000000000</double>
-         </property>
-         <property name="maximum">
-          <double>100000.000000000000000</double>
-         </property>
-         <property name="value">
-          <double>3.000000000000000</double>
-         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QComboBox" name="filterComboBox">
+         <item>
+          <property name="text">
+           <string>No filer</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Choose filer...</string>
+          </property>
+         </item>
         </widget>
        </item>
       </layout>
@@ -130,12 +151,12 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
+     <x>257</x>
+     <y>545</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
-     <y>274</y>
+     <y>227</y>
     </hint>
    </hints>
   </connection>
@@ -146,12 +167,12 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
+     <x>325</x>
+     <y>545</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
-     <y>274</y>
+     <y>227</y>
     </hint>
    </hints>
   </connection>

@@ -72,7 +72,20 @@ find_package(Eigen3)
 include_directories(${EIGEN3_INCLUDE_DIR})
 
 ###### Search the HDF5 library
-find_package(HDF5 COMPONENTS CXX)
+if(FALSE)
+    # FindHDF5.cmake does not find Windows installations. Try to
+    # use an environment variable instead until the official "find"
+    # file can be updated for Windows.
+    #
+    # Note that you have to set this environment variable by hand.
+    message("########################################## USING MSVC HDF5 HINT ####################")
+    file(TO_CMAKE_PATH "$ENV{HDF5_DIR}" HDF5_HINT)
+    set(HDF5_DIR ${HDF5_HINT} CACHE STRING "Path to HDF5 CMake config directory.")
+    find_package(HDF5 REQUIRED HINTS ${HDF5_DIR} COMPONENTS CXX)
+else()
+    find_package(HDF5 REQUIRED COMPONENTS CXX)
+endif()
+
 include_directories("${HDF5_INCLUDE_DIR}")
 
 if ( HDF5_FOUND )
@@ -124,7 +137,7 @@ else()
   message("Warning: build type ${CMAKE_BUILD_TYPE} is unrecognized")
 endif()
 
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
     add_definitions(-std=c++11)
 endif()
 
@@ -137,7 +150,7 @@ if(WIN32 AND MSVC)
 endif()
 
 
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   add_definitions(-std=c++11)
   #  -stdlib=libc++ 
 
@@ -208,32 +221,32 @@ find_library(FFTW3_LIBRARIES NAMES fftw3 libfftw3 fftw3-3 libfftw3-3)
 
 
 if (NOT HDF5_LIBRARIES )
-message("HDF5 Libraries no found")
+message("HDF5 Libraries not found")
 set(HDF5_LIBRARIES "")
 
 find_library(HDF5_LIBRARY_TEMP hdf5_cpp)
 set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
 
-find_library(HDF5_LIBRARY_TEMP libhdf5_cpp)
-set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
+#find_library(HDF5_LIBRARY_TEMP libhdf5_cpp)
+#set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
 
 find_library(HDF5_LIBRARY_TEMP hdf5)
 set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
 
-find_library(HDF5_LIBRARY_TEMP libhdf5)
-set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
+#find_library(HDF5_LIBRARY_TEMP libhdf5)
+#set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
 
 find_library(HDF5_LIBRARY_TEMP zlib)
 set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
 
-find_library(HDF5_LIBRARY_TEMP libzlib)
-set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
+#find_library(HDF5_LIBRARY_TEMP libzlib)
+#set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
 
 find_library(HDF5_LIBRARY_TEMP szip)
 set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
 
-find_library(HDF5_LIBRARY_TEMP libszip)
-set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
+#find_library(HDF5_LIBRARY_TEMP libszip)
+#set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
 message("Alternative method found HDF5_LIBRARIES = ${HDF5_LIBRARIES}")
 endif()
 

@@ -28,6 +28,8 @@ public:
     explicit DialogConvolve(const Eigen::MatrixXi& currentFrame, QWidget *parent = 0);
     ~DialogConvolve();
 
+    double getThreshold();
+
 private slots:
     void on_pushButton_clicked();
 

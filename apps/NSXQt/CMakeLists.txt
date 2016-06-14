@@ -1,3 +1,7 @@
+if(POLICY CMP0020)
+    cmake_policy(SET CMP0020 NEW)
+endif()
+
 # Add NSXQt and NSXQt directories to the include path
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_BINARY_DIR})
 
@@ -94,7 +98,7 @@ set(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib)
 add_executable(nsxqt ${GUI_TYPE} ${nsxqt_sources} ${nsxqt_headers} ${ui_headers} ${resources})        
 
 # Link the nsxqt executable with the Qt5 libraries in use.
-target_link_libraries(nsxqt Qt5::Core Qt5::PrintSupport Qt5::Gui Qt5::Widgets Qt5::OpenGL ${OPENGL_LIBRARIES} NSXTool)        
+target_link_libraries(nsxqt Qt5::Core Qt5::PrintSupport Qt5::Gui Qt5::Widgets Qt5::OpenGL ${OPENGL_LIBRARIES} NSXTool ${HDF5_LIBRARIES})        
 
 # Install section, installing libraries 
 install(TARGETS nsxqt DESTINATION bin)

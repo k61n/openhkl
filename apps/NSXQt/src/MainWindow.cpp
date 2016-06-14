@@ -184,9 +184,11 @@ void MainWindow::on_action_peak_find_triggered()
         return;
     }
 
-    DialogPeakFind* dialog= new DialogPeakFind();
+    DialogPeakFind* dialog= new DialogPeakFind(_ui->_dview->getScene()->getCurrentFrame());
 
-    dialog->setFixedSize(400,200);
+    // this line no longer relevant since changing the dialog
+    //dialog->setFixedSize(400,200);
+
     if (!dialog->exec())
         return;
 
@@ -200,6 +202,7 @@ void MainWindow::on_action_peak_find_triggered()
     QCoreApplication::processEvents();
     _ui->progressBar->setEnabled(true);
     _ui->progressBar->setMaximum(max);
+    _ui->progressBar->setValue(0);
 
     std::size_t npeaks=0;
     int comp = 0;

@@ -18,6 +18,9 @@ else(MSVC)
 endif(MSVC)
 include_directories(${HDF5_INCLUDE_DIRS})
 
+message("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+message("${HDF5_LIBRARIES}")
+
 
 # targets
 add_library(blosc_filter_shared SHARED ${SOURCES})

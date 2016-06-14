@@ -1293,7 +1293,7 @@ border-radius: 4px;
      <x>0</x>
      <y>0</y>
      <width>1000</width>
-     <height>30</height>
+     <height>28</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_Options">
@@ -1335,7 +1335,6 @@ border-radius: 4px;
     <addaction name="menuShow_Window"/>
     <addaction name="menuSet_View"/>
     <addaction name="menuPeak"/>
-    <addaction name="actionConvolution_Filter"/>
    </widget>
    <widget class="QMenu" name="menuChemistry">
     <property name="title">

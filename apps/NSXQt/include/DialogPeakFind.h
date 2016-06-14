@@ -3,36 +3,30 @@
 #include "ui_dialog_PeakFind.h"
 #include <QDialog>
 
+#include <Eigen/Core>
 
 class DialogPeakFind : public QDialog
 {
     Q_OBJECT
 public:
-    explicit DialogPeakFind(QWidget *parent = 0):QDialog(parent),ui(new Ui::DialogPeakFind)
-    {
-        ui->setupUi(this);
-        setModal(true);
-    }
-    double getConfidence()
-    {
-        return ui->confidenceSpinBox->value();
-    }
+    explicit DialogPeakFind(const Eigen::MatrixXi& currentFrame, QWidget *parent = 0);
 
-    double getThreshold()
-    {
-        return ui->thresholdSpinBox->value();
-    }
+    double getConfidence();
+    double getThreshold();
 
-    ~DialogPeakFind()
-    {}
+
+    ~DialogPeakFind();
+
 signals:
 
 public slots:
 private slots:
 
+    void on_filterComboBox_activated(int index);
 
 private:
     Ui::DialogPeakFind* ui;
+    Eigen::MatrixXi _currentFrame;
 
 };
 #endif // DIALOGPEAKFIND_H

@@ -69,13 +69,42 @@
    <property name="geometry">
     <rect>
      <x>730</x>
-     <y>320</y>
+     <y>410</y>
      <width>131</width>
      <height>28</height>
     </rect>
    </property>
    <property name="text">
     <string>Update Preview</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>740</x>
+     <y>340</y>
+     <width>66</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Threshold</string>
+   </property>
+  </widget>
+  <widget class="QDoubleSpinBox" name="thresholdSpinBox">
+   <property name="geometry">
+    <rect>
+     <x>810</x>
+     <y>340</y>
+     <width>111</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="maximum">
+    <double>1000000.000000000000000</double>
+   </property>
+   <property name="singleStep">
+    <double>0.100000000000000</double>
    </property>
   </widget>
  </widget>

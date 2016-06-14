@@ -41,12 +41,18 @@ DialogConvolve::DialogConvolve(const Eigen::MatrixXi& currentFrame, QWidget *par
 
     //scene->addPixmap();
 
-
+    // default value
+    ui->thresholdSpinBox->setValue(100.0);
 }
 
 DialogConvolve::~DialogConvolve()
 {
     delete ui;
+}
+
+double DialogConvolve::getThreshold()
+{
+    return ui->thresholdSpinBox->value();
 }
 
 
@@ -99,7 +105,7 @@ void DialogConvolve::on_pushButton_clicked()
     // apply a simple theshold
     // TODO: incorporate into GUI, or improve in some other way
     for ( int i = 0; i < nrows*ncols; ++i)
-        clamped_result.data()[i] = result.data()[i] > 100 ? 999 : 0;
+        clamped_result.data()[i] = result.data()[i] > getThreshold() ? max_intensity-1 : 0;
 
     pxmapPreview->setPixmap(QPixmap::fromImage(Mat2QImage(clamped_result.data(), frame.rows(), frame.cols(), 0, ncols, 0, nrows, max_intensity)));
 }
