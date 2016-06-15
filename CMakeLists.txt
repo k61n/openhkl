@@ -72,23 +72,27 @@ find_package(Eigen3)
 include_directories(${EIGEN3_INCLUDE_DIR})
 
 ###### Search the HDF5 library
-if(FALSE)
-    # FindHDF5.cmake does not find Windows installations. Try to
-    # use an environment variable instead until the official "find"
-    # file can be updated for Windows.
-    #
-    # Note that you have to set this environment variable by hand.
-    message("########################################## USING MSVC HDF5 HINT ####################")
-    file(TO_CMAKE_PATH "$ENV{HDF5_DIR}" HDF5_HINT)
-    set(HDF5_DIR ${HDF5_HINT} CACHE STRING "Path to HDF5 CMake config directory.")
-    find_package(HDF5 REQUIRED HINTS ${HDF5_DIR} COMPONENTS CXX)
-else()
-    find_package(HDF5 REQUIRED COMPONENTS CXX)
+find_package(HDF5 COMPONENTS CXX)
+
+# manually fix problem with windows build
+if(NOT HDF5_LIBRARIES)
+  set(HDF5_LIBRARIES "")
+  find_library(HDF5_LIBRARY_TEMP libszip)
+  set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
+
+  find_library(HDF5_LIBRARY_TEMP libzlib)
+  set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
+
+  find_library(HDF5_LIBRARY_TEMP libhdf5)
+  set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
+  
+  find_library(HDF5_LIBRARY_TEMP libhdf5_cpp)
+  set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
 endif()
 
 include_directories("${HDF5_INCLUDE_DIR}")
 
-if ( HDF5_FOUND )
+if ( HDF5_INCLUDE_DIR AND HDF5_LIBRARIES )
    message("HDF5 found: include dir is ${HDF5_INCLUDE_DIR} and library is ${HDF5_LIBRARIES} located in ${HDF5_LIBRARY_DIR}")
 else()
    messagE("ERROR: HDF5 not found")   
@@ -147,6 +151,7 @@ if(WIN32 AND MSVC)
     add_definitions(-DBOOST_ALL_NO_LIB)
     add_definitions(-D_USE_MATH_DEFINES)
     add_definitions(-DNSXTOOL_EXPORT)
+    add_definitions(-DH5_BUILT_AS_DYNAMIC_LIB)
 endif()
 
 
@@ -182,7 +187,8 @@ include_directories(${CMAKE_BINARY_DIR}/include/
                     externals/c-blosc/blosc)
 
 file(GLOB_RECURSE sources chemistry/src/*.cpp
-                          data/src/*.cpp
+  data/src/*.cpp
+  data/src/*.c
                           geometry/src/*.cpp
                           kernel/src/*.cpp
                           imaging/src/*.cpp
@@ -220,38 +226,11 @@ include_directories(${FFTW_INCLUDE_DIR})
 find_library(FFTW3_LIBRARIES NAMES fftw3 libfftw3 fftw3-3 libfftw3-3)
 
 
-if (NOT HDF5_LIBRARIES )
-message("HDF5 Libraries not found")
-set(HDF5_LIBRARIES "")
 
-find_library(HDF5_LIBRARY_TEMP hdf5_cpp)
-set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
-
-#find_library(HDF5_LIBRARY_TEMP libhdf5_cpp)
-#set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
-
-find_library(HDF5_LIBRARY_TEMP hdf5)
-set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
-
-#find_library(HDF5_LIBRARY_TEMP libhdf5)
-#set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
-
-find_library(HDF5_LIBRARY_TEMP zlib)
-set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
-
-#find_library(HDF5_LIBRARY_TEMP libzlib)
-#set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
-
-find_library(HDF5_LIBRARY_TEMP szip)
-set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
-
-#find_library(HDF5_LIBRARY_TEMP libszip)
-#set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
-message("Alternative method found HDF5_LIBRARIES = ${HDF5_LIBRARIES}")
-endif()
 
 # Link
-target_link_libraries(NSXTool blosc_shared ${Boost_LIBRARIES} ${PYTHON_LIBRARIES} ${FFTW3_LIBRARIES} ${HDF5_LIBRARIES} ${TIFF_LIBRARY})
+#target_link_libraries(NSXTool blosc_shared ${Boost_LIBRARIES} ${PYTHON_LIBRARIES} ${FFTW3_LIBRARIES} ${HDF5_LIBRARIES} ${TIFF_LIBRARY})
+target_link_libraries(NSXTool ${HDF5_LIBRARIES} blosc_shared ${Boost_LIBRARIES} ${PYTHON_LIBRARIES} ${FFTW3_LIBRARIES} ${TIFF_LIBRARY})
 
 if (BUILD_QTAPPS)
 	add_subdirectory(apps)

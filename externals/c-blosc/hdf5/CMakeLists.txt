@@ -4,22 +4,23 @@ set(SOURCES blosc_filter.c)
 include_directories("${PROJECT_SOURCE_DIR}/blosc")
 
 # dependencies
-if(MSVC)
-    # FindHDF5.cmake does not find Windows installations. Try to
-    # use an environment variable instead until the official "find"
-    # file can be updated for Windows.
-    #
-    # Note that you have to set this environment variable by hand.
-    file(TO_CMAKE_PATH "$ENV{HDF5_DIR}" HDF5_HINT)
-    set(HDF5_DIR ${HDF5_HINT} CACHE STRING "Path to HDF5 CMake config directory.")
-    find_package(HDF5 REQUIRED HINTS ${HDF5_DIR})
-else(MSVC)
-    find_package(HDF5 REQUIRED)
-endif(MSVC)
-include_directories(${HDF5_INCLUDE_DIRS})
+# if(MSVC)
+#     # FindHDF5.cmake does not find Windows installations. Try to
+#     # use an environment variable instead until the official "find"
+#     # file can be updated for Windows.
+#     #
+#     # Note that you have to set this environment variable by hand.
+#     file(TO_CMAKE_PATH "$ENV{HDF5_DIR}" HDF5_HINT)
+#     set(HDF5_DIR ${HDF5_HINT} CACHE STRING "Path to HDF5 CMake config directory.")
+#     find_package(HDF5 REQUIRED HINTS ${HDF5_DIR})
+#     add_definitions(-DH5_BUILT_AS_DYNAMIC_LIB)
+# else(MSVC)
+#     find_package(HDF5 REQUIRED)
+# endif(MSVC)
+# include_directories(${HDF5_INCLUDE_DIRS})
 
-message("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
-message("${HDF5_LIBRARIES}")
+# message("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+# message("${HDF5_LIBRARIES}")
 
 
 # targets
