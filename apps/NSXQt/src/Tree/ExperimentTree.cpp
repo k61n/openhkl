@@ -62,27 +62,32 @@ ExperimentTree::~ExperimentTree()
 
 void ExperimentTree::createNewExperiment()
 {
+    DialogExperiment* dlg;
 
-    DialogExperiment* dlg = new DialogExperiment();
+    // DialogExperiment could throw an exception if it fails to read the resource files
+    try {
+        dlg = new DialogExperiment();
 
-    // The user pressed cancel, return
-    if (!dlg->exec())
-        return;
+        // The user pressed cancel, return
+        if (!dlg->exec())
+            return;
 
-    // If no experiment name is provided, pop up a warning
-    if (dlg->getExperimentName().isEmpty())
-    {
-        qWarning() << "Empty experiment name";
+        // If no experiment name is provided, pop up a warning
+        if (dlg->getExperimentName().isEmpty()) {
+            qWarning() << "Empty experiment name";
+            return;
+        }
+    }
+    catch(std::exception& e) {
+        qDebug() << "Runtime error: " << e.what();
         return;
     }
 
     // Add the experiment
-    try
-    {
+    try {
         addExperiment(dlg->getExperimentName().toStdString(),dlg->getInstrumentName().toStdString());
     }
-    catch(const std::runtime_error& e)
-    {
+    catch(const std::runtime_error& e) {
         qWarning() << e.what();
         return;
     }

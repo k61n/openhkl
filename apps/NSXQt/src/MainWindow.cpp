@@ -58,6 +58,8 @@
 
 #include "DialogConvolve.h"
 
+#include "Path.h"
+
 using namespace SX::Units;
 using namespace SX::Instrument;
 
@@ -112,6 +114,8 @@ MainWindow::MainWindow(QWidget *parent)
     _ui->dockWidget_Property->show();
 
     connect(_ui->experimentTree,SIGNAL(inspectWidget(QWidget*)),this,SLOT(setInspectorWidget(QWidget*)));
+
+    qDebug() << "The resources directory is " << SX::Utils::Path().getResourcesDir().c_str();
 }
 
 MainWindow::~MainWindow()

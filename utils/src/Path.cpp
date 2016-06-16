@@ -87,6 +87,11 @@ std::string Path::getDataBasesPath()
 	return p.string();
 }
 
+std::string Path::getResourcesDir()
+{
+    return boost::filesystem::path(g_resourcesDir).string();
+}
+
 
 } // end namespace Utils
 

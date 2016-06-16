@@ -169,7 +169,9 @@ endif()
 if (UNIX)
     set(RESOURCES_DIR ${CMAKE_INSTALL_PREFIX}/share/nsxtool)
 elseif (WIN32)
-    set(RESOURCES_DIR $ENV{APPDATA}/nsxtool)
+    set(RESOURCES_DIR "$ENV{APPDATA}\\nsxtool")
+    # take care of pesky backslashes in windows path names
+    STRING(REGEX REPLACE "\\\\" "\\\\\\\\" RESOURCES_DIR ${RESOURCES_DIR})
 endif()
 configure_file(${CMAKE_SOURCE_DIR}/cmake/Config.h.in ${CMAKE_BINARY_DIR}/include/Config.h)
 
