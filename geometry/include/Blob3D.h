@@ -30,6 +30,8 @@
 #include <iostream>
 #include <Eigen/Dense>
 
+//#include "IBlob.h"
+
 namespace SX
 {
 
@@ -49,7 +51,7 @@ using Eigen::Matrix3d;
  * Blob3D can be transformed into an Ellipsoid, by diagonalizing the variance tensor.
  *
  */
-class Blob3D
+class Blob3D//: public IBlob
 {
 public:
   //!Initialize an empty blob
