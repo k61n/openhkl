@@ -13,6 +13,8 @@
 #include "Source.h"
 #include "Units.h"
 
+#include "IFrameIterator.h"
+
 namespace SX
 {
 namespace Crystal
@@ -168,12 +170,10 @@ void Peak3D::integrate()
 	int dy = end_y-start_y;
 
     unsigned int z = data_start;
-    SX::Data::IData::FrameIterator it_start = _data->at(data_start);
-    SX::Data::IData::FrameIterator it_end = _data->at(data_end+1);
 
-	for (auto it = it_start; it != it_end; ++it, ++z)
+    for (auto it = _data->getIterator(data_start); it->index() != data_end; it->advance(), ++z)
 	{
-        auto frame = *it;
+        auto frame = it->getFrame();
 		double pointsinpeak=0;
 		double pointsinbkg=0;
 		double intensityP=0;

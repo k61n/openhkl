@@ -31,6 +31,8 @@
 #define NSXTOOL_TYPES_H_
 
 #include <tuple>
+#include <complex>
+#include <Eigen/Core>
 
 namespace SX
 {
@@ -40,6 +42,8 @@ namespace SX
 namespace Types
 {
     using uint = unsigned int;
+    using RealMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+    using ComplexMatrix = Eigen::Matrix<std::complex<double>, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 } // end namespace Types
 
 

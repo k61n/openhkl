@@ -1,9 +1,14 @@
 #ifndef DIALOGPEAKFIND_H
 #define DIALOGPEAKFIND_H
+
+#include <memory>
+
 #include "ui_dialog_PeakFind.h"
 #include <QDialog>
 
 #include <Eigen/Core>
+
+#include "Convolver.h"
 
 class DialogPeakFind : public QDialog
 {
@@ -14,6 +19,7 @@ public:
     double getConfidence();
     double getThreshold();
 
+    std::shared_ptr<SX::Imaging::Convolver> getConvolver();
 
     ~DialogPeakFind();
 
@@ -27,6 +33,7 @@ private slots:
 private:
     Ui::DialogPeakFind* ui;
     Eigen::MatrixXi _currentFrame;
+    std::shared_ptr<SX::Imaging::Convolver> _convolver;
 
 };
 #endif // DIALOGPEAKFIND_H

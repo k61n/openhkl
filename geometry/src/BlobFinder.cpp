@@ -1,4 +1,10 @@
 #include "BlobFinder.h"
+#include "IFrameIterator.h"
+
+#include <iostream>
+
+using std::cout;
+using std::endl;
 
 namespace SX
 {
@@ -56,13 +62,11 @@ namespace Geometry
      * register collisions
      * merge collisions
      *
-     *
+     */
     // the typename matrix_iterator_t should be a forward iterator of type Eigen::Matrix
-    template <typename matrix_iterator_t>
-    blob3DCollection findBlobs3D(matrix_iterator_t it_begin, matrix_iterator_t it_end, double threshold, int minComp, int maxComp, double confidence)
-    {
 
-
+    blob3DCollection BlobFinder::find(int begin, int end, double threshold, int minComp, int maxComp, double confidence)
+    { 
         // Number of frames
         int nframes = 0;
 
@@ -71,8 +75,9 @@ namespace Geometry
         blobs.reserve(1000000);
 
         // determine the number of rows and columns
-        auto nrows = it_begin->rows();
-        auto ncols = it_begin->cols();
+        auto frame_it = _data->getIterator(begin);
+        auto nrows = frame_it->getFrame().rows();
+        auto ncols = frame_it->getFrame().cols();
 
         // Store labels of current and previous frames.
         vints labels(nrows*ncols,0);
@@ -94,11 +99,21 @@ namespace Geometry
 
         int frame = 0;
 
+        if (_filterCallback) {
+            cout << "blob finder using a filter" << endl;
+        }
+        else {
+            cout << "blob finder is not using a filter" << endl;
+        }
+
         // Iterate on all pixels in the image
-        for (auto frame_it = it_begin; frame_it != it_end; ++frame_it)
+        for (; frame_it->index() != end; frame_it->advance())
         {
             ++nframes;
-            auto& frame_data = *frame_it;
+            auto frame_data = frame_it->getFrame();
+            auto filtered_frame = _filterCallback ? _filterCallback(frame_data) : frame_data;
+            // testing ONLY
+            frame_data = filtered_frame;
 
             // Go the the beginning of data
             index2D=0;
@@ -109,17 +124,18 @@ namespace Geometry
                     auto value = frame_data(row, col);
 
                     // Discard pixel if value < threshold
-                    if (value<threshold)
+                    if (filtered_frame(row, col)<threshold)
                     {
                         labels[index2D]=labels2[index2D]=0;
                         index2D++;
                         continue;
                     }
+
                     newlabel=false;
                     // Get labels of adjacent pixels
                     left= (col == 0 ? 0 : labels[index2D-1]);
                     top=  (row == 0 ? 0 : labels[index2D-ncols]) ;
-                    previous= (frame_it == it_begin ? 0 : labels2[index2D]);
+                    previous= (frame_it->index() == begin ? 0 : labels2[index2D]);
                     // Encode type of config.
                     code=0;
                     code |= ( (left!=0) << 0);
@@ -261,7 +277,18 @@ namespace Geometry
 
         return blobs;
     }
-*/
+
+    void BlobFinder::setFilter(BlobFinder::FilterCallback callback)
+    {
+        _filterCallback = callback;
+    }
+
+/**/
+
+BlobFinder::BlobFinder(SX::Data::IData* data)
+{
+    _data = data;
+}
 
 } // namespace Geometry
 

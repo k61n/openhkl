@@ -1,5 +1,7 @@
 #include <utility>
 #include <stdexcept>
+#include <memory>
+
 #include "Units.h"
 
 #include <boost/filesystem.hpp>
@@ -16,6 +18,8 @@
 #include "blosc.h"
 #include "Ellipsoid.h"
 
+#include "IFrameIterator.h"
+#include "BasicFrameIterator.h"
 
 namespace SX
 {
@@ -48,7 +52,24 @@ IData::IData(const std::string& filename, std::shared_ptr<Diffractometer> diffra
 		throw std::runtime_error("IData, file: "+_filename+" does not exist");
 
 	_nrows=_diffractometer->getDetector()->getNRows();
-	_ncols=_diffractometer->getDetector()->getNCols();
+    _ncols=_diffractometer->getDetector()->getNCols();
+}
+
+std::unique_ptr<IFrameIterator> IData::getIterator(int idx)
+{
+    // use default frame iterator if one hasn't been set
+    if ( !_iteratorCallback) {
+        _iteratorCallback = [] (IData* data, int index) {
+            return new BasicFrameIterator(data, index);
+        };
+    }
+
+    return std::unique_ptr<IFrameIterator>(_iteratorCallback(this, idx));
+}
+
+void IData::setIteratorCallback(FrameIteratorCallback callback)
+{
+    _iteratorCallback = callback;
 }
 
 IData::~IData()
@@ -116,7 +137,7 @@ void IData::addPeak(Peak3D* peak)
 
 void IData::clearPeaks()
 {
-	for (auto ptr : _peaks)
+    for (auto ptr : _peaks)
 		delete ptr;
 	_peaks.clear();
 }
@@ -611,98 +632,16 @@ double IData::getBackgroundLevel()
     _background = 0.0;
     double factor = 1.0 / (_nFrames * _nrows * _ncols);
 
-    for (auto it = begin(); it != end(); ++it) {
+    for (auto it = getIterator(0); it->index() != _nFrames; it->advance()) {
         // cast matrix to double (instead of int) -- necessary due to integer overflow!
-        _background += factor * it->cast<double>().sum();
+        // _background += factor * it->cast<double>().sum();
+        _background += factor * it->getFrame().sum();
         
     }
 
     return _background;
 }
 
-IData::FrameIterator::FrameIterator(IData* parent, int idx, std::launch policy)
-    :_currentFrame(idx),
-     _parent(parent),
-     _currentData(),
-     _nextData(),
-     _launchPolicy(policy)
-{
-    if (_currentFrame < _parent->_nFrames)
-        _currentData = _parent->getFrame(_currentFrame);
-
-    if ( _currentFrame+1 < _parent->_nFrames )
-        _nextData = getFrame(_currentFrame+1);
-}
-
-IData::FrameIterator::FrameIterator(const IData::FrameIterator& other)
-    :_currentFrame(other._currentFrame),
-     _parent(other._parent),
-     _currentData(other._currentData),
-     _nextData(other._nextData),
-     _launchPolicy(other._launchPolicy)
-{
-}
-
-IData::FrameIterator& IData::FrameIterator::operator++()
-{
-    assert(_currentFrame != _parent->_nFrames);
-
-    ++_currentFrame;
-    
-    if ( _currentFrame < _parent->_nFrames) {
-        _currentData = _nextData.get();
-        _nextData = getFrame(_currentFrame);
-    }
-
-    return *this;
-}
-
-std::shared_future<Eigen::MatrixXi> IData::FrameIterator::getFrame(int idx)
-{
-    return std::shared_future<Eigen::MatrixXi>(std::async(_launchPolicy, [=]{return _parent->getFrame(idx);}));
-}
-
-Eigen::MatrixXi& IData::FrameIterator::operator*()
-{
-    return _currentData;
-}
-
-Eigen::MatrixXi* IData::FrameIterator::operator->()
-{
-    return &_currentData;
-}
-
-bool IData::FrameIterator::operator!=(const IData::FrameIterator& other) const
-{
-    if (_parent != other._parent)
-        return true;
-
-    if ( _currentFrame != other._currentFrame)
-        return true;
-
-    return false;
-}
-
-bool IData::FrameIterator::operator==(const IData::FrameIterator& other) const
-{
-    return !(*this != other);
-}
-
-
-IData::FrameIterator IData::begin()
-{
-    return at(0);
-}
-
-IData::FrameIterator IData::end()
-{
-    return at(_nFrames);
-}
-
-IData::FrameIterator IData::at(int idx)
-{
-    return FrameIterator(this, idx, _inMemory ? std::launch::deferred : std::launch::async);
-}
 
 } // end namespace Data
 

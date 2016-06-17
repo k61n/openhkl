@@ -14,6 +14,10 @@
 
 #include <iostream>
 
+#include "Types.h"
+
+using RealMatrix = SX::Types::RealMatrix;
+
 using std::cout;
 using std::endl;
 
@@ -43,6 +47,8 @@ DialogConvolve::DialogConvolve(const Eigen::MatrixXi& currentFrame, QWidget *par
 
     // default value
     ui->thresholdSpinBox->setValue(100.0);
+
+    _convolver = std::shared_ptr<SX::Imaging::Convolver>(new SX::Imaging::Convolver);
 }
 
 DialogConvolve::~DialogConvolve()
@@ -55,12 +61,22 @@ double DialogConvolve::getThreshold()
     return ui->thresholdSpinBox->value();
 }
 
+std::shared_ptr<SX::Imaging::Convolver> DialogConvolve::getConvolver()
+{
+    return _convolver;
+}
+
+std::shared_ptr<SX::Imaging::ConvolutionKernel> DialogConvolve::getKernel()
+{
+    return _kernel;
+}
+
 
 void DialogConvolve::on_pushButton_clicked()
 {
     // TODO: implement this
     std::cout << "push button clicked" << std::endl;
-    SX::Imaging::Convolver::RealMatrix data, result;
+    RealMatrix data, result;
     Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> clamped_result;
 
     int nrows, ncols;
@@ -86,7 +102,7 @@ void DialogConvolve::on_pushButton_clicked()
     std::cout << "set kernel rows and cols: " << frame.rows() << " " << frame.cols() << std::endl;
 
     // set up convolver
-    _convolver.setKernel(_kernel->getKernel());
+    _convolver->setKernel(_kernel->getKernel());
 
     std::cout << "initialized convolver" << std::endl;
 
@@ -95,7 +111,7 @@ void DialogConvolve::on_pushButton_clicked()
 
     cout << "cast data to double" << endl;
 
-    result = _convolver.apply(data);
+    result = _convolver->apply(data);
     clamped_result.resize(frame.rows(),frame.cols());
 
     cout << "convolved data successfully" << endl;

@@ -76,9 +76,9 @@ ConvolutionFilterTree::ConvolutionFilterTree(QWidget* parent): QTreeWidget(paren
     rebuild();
 }
 
-SX::Imaging::ConvolutionKernel* ConvolutionFilterTree::getKernel()
+std::shared_ptr<SX::Imaging::ConvolutionKernel> ConvolutionFilterTree::getKernel()
 {
-    return _selectedKernel.get();
+    return _selectedKernel;
 }
 
 void ConvolutionFilterTree::onComboBoxChange()

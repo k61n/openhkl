@@ -9,6 +9,7 @@
 	France
 	chapon[at]ill.fr
     pellegrini[at]ill.fr
+    j.fisher[at]fz-juelich.de
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU Lesser General Public
@@ -43,8 +44,10 @@
 #include "NDTree.h"
 #include "Types.h"
 
-namespace SX
-{
+#include "IData.h"
+
+
+namespace SX {
 
 namespace Geometry
 {
@@ -454,6 +457,53 @@ namespace Geometry
 
 		return blobs;
 	}
+
+    /* Class used for blob-finding, which is the first step of peak-finding.
+     * The use of IFrameIterator allows for custom iterators, e.g. which work multi-threaded.
+     * Since blob-finding may take some time on large data sets, ProgressHandler is used to give feedback to the GUI.
+     *
+     */
+    class BlobFinder {
+    public:
+        using RealMatrix = SX::Types::RealMatrix;
+        using FilterCallback = std::function<RealMatrix(const RealMatrix&)>;
+
+        BlobFinder(SX::Data::IData* data);
+
+        blob3DCollection find(int begin, int end, double threshold, int minComp, int maxComp, double confidence);
+
+        blob3DCollection findBlobs3D(int it_begin, int it_end, double threshold, int minComp, int maxComp, double confidence);
+
+        void findBlobs();
+
+        //void mergeBlobs();
+
+        void setProgressHandler();
+
+        void setThreshold(double threshold);
+
+        void setCondfidence(double confidence);
+
+        void setMinComp(int minComp);
+
+        void setMaxComp(int maxComp);
+
+        //! Sets the filter, which allows for more sophisticated blob-finding
+        void setFilter(FilterCallback callback);
+
+
+    private:
+        double _threshold;
+        double _confidence;
+        int _minComp;
+        int _maxComp;
+        SX::Data::IData* _data;
+        FilterCallback _filterCallback;
+
+        // filter
+        // progress handler
+        // ...
+    };
 
 } // namespace Geometry
 

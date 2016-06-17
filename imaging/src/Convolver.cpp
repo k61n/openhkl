@@ -20,6 +20,8 @@ namespace SX
 namespace Imaging
 {
 
+using RealMatrix = SX::Types::RealMatrix;
+
 
 Convolver::Convolver():
     _rows(0), _cols(0), _halfCols(0),
@@ -29,7 +31,7 @@ Convolver::Convolver():
 
 }
 
-Convolver::Convolver(const Convolver::RealMatrix &kernel): Convolver()
+Convolver::Convolver(const RealMatrix &kernel): Convolver()
 {
     setKernel(kernel);
 }
@@ -55,7 +57,7 @@ void Convolver::reset()
     _transformedKernel.resize(0);
 }
 
-void Convolver::setKernel(const Convolver::RealMatrix &kernel)
+void Convolver::setKernel(const RealMatrix &kernel)
 {
     // check whether we need a new plan
     if ( kernel.rows() != _rows || kernel.cols() != _cols) {
@@ -92,7 +94,7 @@ void Convolver::setKernel(const Convolver::RealMatrix &kernel)
     cout << "convolver initialized kernel successfully" << endl;
 }
 
-Convolver::RealMatrix Convolver::apply(const Convolver::RealMatrix &image)
+RealMatrix Convolver::apply(const RealMatrix &image)
 {
     // image MUST have same dimensions as kernel
     if ( _rows != image.rows() || _cols != image.cols() )
@@ -122,7 +124,7 @@ Convolver::RealMatrix Convolver::apply(const Convolver::RealMatrix &image)
 
     cout <<"backward plan executed successfully";
 
-    Convolver::RealMatrix result(_rows, _cols);
+    RealMatrix result(_rows, _cols);
     memcpy(result.data(), _realData, _rows*_cols*sizeof(double));
     return result;
 }

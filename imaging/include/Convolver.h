@@ -13,6 +13,8 @@
 #include <vector>
 #include <complex>
 
+#include "Types.h"
+
 
 namespace SX
 {
@@ -23,20 +25,18 @@ namespace Imaging
 class Convolver
 {
 public:
-    typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> RealMatrix;
-
     Convolver();
 
     // kernel must be padded so that dimensions match dimensions of image
-    Convolver(const RealMatrix& kernel);
+    Convolver(const SX::Types::RealMatrix& kernel);
 
     ~Convolver();
 
     void reset();
-    void setKernel(const RealMatrix& kernel);
+    void setKernel(const SX::Types::RealMatrix& kernel);
 
     // throws exception if image dimensions do not match kernel
-    RealMatrix apply(const RealMatrix& image);
+    SX::Types::RealMatrix apply(const SX::Types::RealMatrix& image);
 
 private:
     int _rows, _cols, _halfCols;

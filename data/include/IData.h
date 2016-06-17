@@ -44,6 +44,8 @@
 #include <mutex>
 #include <future>
 
+//#include "IFrameIterator.h"
+
 namespace SX
 {
 
@@ -55,9 +57,18 @@ namespace Instrument
 namespace Data
 {
 
+using RowMatrixi = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+using RowMatrixd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+
 using namespace SX::Crystal;
 using namespace SX::Geometry;
 using namespace SX::Instrument;
+
+class IFrameIterator;
+class ThreadedFrameIterator;
+class BasicFrameIterator;
+
+using FrameIteratorCallback = std::function<IFrameIterator*(IData*, int)>;
 
 /*! \brief Interface for diffraction data
  *
@@ -66,30 +77,6 @@ using namespace SX::Instrument;
 class IData
 {
 public:
-    class FrameIterator {
-    public:
-        FrameIterator(IData* parent, int idx=0, std::launch policy=std::launch::async);
-        FrameIterator(const FrameIterator& other);
-
-        FrameIterator& operator++();
-
-        bool operator!=(const FrameIterator& other) const;
-        bool operator==(const FrameIterator& other) const;
-        
-        Eigen::MatrixXi& operator*();
-        Eigen::MatrixXi* operator->();
-        
-    private:
-        std::shared_future<Eigen::MatrixXi> getFrame(int idx);
-        
-        int _currentFrame;
-        IData* _parent;
-        Eigen::MatrixXi _currentData;
-        std::shared_future<Eigen::MatrixXi> _nextData;
-        std::launch _launchPolicy;
-    };
-
-    
 	// Constructors and destructor
 
 	/*! Construct a IData Object from a file on disk, and pointer to a diffractometer.
@@ -105,9 +92,8 @@ public:
 	IData& operator=(const IData& other);
 
     // iterators
-    FrameIterator begin();
-    FrameIterator at(int idx);
-    FrameIterator end();
+    std::unique_ptr<IFrameIterator> getIterator(int idx);
+    void setIteratorCallback(FrameIteratorCallback callback);
 
 	// Getters and setters
 
@@ -210,6 +196,7 @@ protected:
     std::set<AABB<double,3>*> _masks;
     double _background;
     bool _isCached;
+    FrameIteratorCallback _iteratorCallback;
 };
 
 } // end namespace Data

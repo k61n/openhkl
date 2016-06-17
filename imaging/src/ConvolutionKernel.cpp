@@ -39,7 +39,7 @@ namespace SX
 namespace Imaging
 {
 
-
+using RealMatrix = SX::Types::RealMatrix;
 
 ConvolutionKernel::ConvolutionKernel():
     _kernel(), _hasChanged(false), _params()
@@ -73,7 +73,7 @@ const ConvolutionKernel::ParameterMap &ConvolutionKernel::getParameters() const
     return _params;
 }
 
-const Convolver::RealMatrix& ConvolutionKernel::getKernel()
+const RealMatrix& ConvolutionKernel::getKernel()
 {
     if ( _hasChanged ) {
         update();

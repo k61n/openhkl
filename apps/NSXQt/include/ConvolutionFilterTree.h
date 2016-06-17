@@ -20,7 +20,7 @@ class ConvolutionFilterTree: public QTreeWidget {
 private:
     QComboBox* _comboBox;
     QStringList _kernels;
-    std::unique_ptr<SX::Imaging::ConvolutionKernel> _selectedKernel;
+    std::shared_ptr<SX::Imaging::ConvolutionKernel> _selectedKernel;
     bool _rebuild;
     std::map<std::string, QSpinBox*> _parameters;
 
@@ -30,7 +30,7 @@ private:
 public:
     ConvolutionFilterTree(QWidget* parent);
 
-    SX::Imaging::ConvolutionKernel* getKernel();
+    std::shared_ptr<SX::Imaging::ConvolutionKernel> getKernel();
     void retrieveParameters();
 
 public slots:

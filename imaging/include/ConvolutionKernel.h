@@ -43,6 +43,7 @@
 
 
 #include "Convolver.h"
+#include "Types.h"
 
 
 
@@ -66,7 +67,7 @@ public:
     const ParameterMap& getParameters() const;
 
 
-    const Convolver::RealMatrix& getKernel();
+    const SX::Types::RealMatrix& getKernel();
     virtual const char* getName() = 0;
 
 
@@ -80,7 +81,7 @@ protected:
     virtual void update() {};
 
     int _kernelSize;
-    Convolver::RealMatrix _kernel;
+    SX::Types::RealMatrix _kernel;
     bool _hasChanged; // used to record if parameters have changed since last update
     ParameterMap _params;
 };

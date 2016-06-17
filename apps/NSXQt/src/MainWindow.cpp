@@ -59,9 +59,13 @@
 #include "DialogConvolve.h"
 
 #include "Path.h"
+#include "IFrameIterator.h"
+#include "Types.h"
 
 using namespace SX::Units;
 using namespace SX::Instrument;
+
+using SX::Types::RealMatrix;
 
 MainWindow::MainWindow(QWidget *parent)
 : QMainWindow(parent),
@@ -200,6 +204,11 @@ void MainWindow::on_action_peak_find_triggered()
     double confidence=dialog->getConfidence();
     double threshold=dialog->getThreshold();   
 
+    // get convolver
+    auto convolver = dialog->getConvolver();
+
+
+
     qWarning() << "Peak find algorithm: Searching peaks in " << numors.size() << " files";
     int max=numors.size();
 
@@ -225,7 +234,21 @@ void MainWindow::on_action_peak_find_triggered()
         SX::Geometry::blob3DCollection blobs;
         try
         {
-            blobs=SX::Geometry::findBlobs3D(numor->begin(), numor->end(), median*threshold, 30, 10000, confidence);
+            SX::Geometry::BlobFinder blob_finder(numor);
+
+            // set image filter, if selected
+            if (convolver ) {
+                auto callback = [&] (const RealMatrix& input) -> RealMatrix
+                {
+                    return convolver->apply(input);
+                };
+
+                blob_finder.setFilter(callback);
+            }
+
+
+            blobs = blob_finder.find(0, numor->getNFrames(), median*threshold, 30, 10000, confidence);
+            //blobs=SX::Geometry::findBlobs3D(numor->begin(), numor->end(), median*threshold, 30, 10000, confidence);
         }
         catch(std::exception& e) // Warning if RAM error
         {
@@ -281,8 +304,8 @@ void MainWindow::on_action_peak_find_triggered()
 
         int idx = 0;
 
-        for ( auto it = numor->begin(); it != numor->end(); ++it, ++idx) {
-            Eigen::MatrixXi& frame = *it;
+        for ( auto it = numor->getIterator(0); it->index() != numor->getNFrames(); it->advance(), ++idx) {
+            Eigen::MatrixXi frame = it->getFrame().cast<int>();
             for ( auto& peak: numor->getPeaks() ) {
                 peak->framewiseIntegrateStep(frame, idx);
             }

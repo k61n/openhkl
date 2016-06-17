@@ -21,6 +21,12 @@ double DialogPeakFind::getThreshold()
     return ui->thresholdSpinBox->value();
 }
 
+std::shared_ptr<SX::Imaging::Convolver> DialogPeakFind::getConvolver()
+{
+    return _convolver;
+}
+
+
 DialogPeakFind::~DialogPeakFind()
 {
 
@@ -55,4 +61,6 @@ void DialogPeakFind::on_filterComboBox_activated(int index)
     // filter was chosen successfully, so update internals to forward to main window
     double threshold = convolveDialog->getThreshold();
     ui->thresholdSpinBox->setValue(threshold);
+
+    _convolver = convolveDialog->getConvolver();
 }
