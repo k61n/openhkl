@@ -247,7 +247,7 @@ void MainWindow::on_action_peak_find_triggered()
             }
 
 
-            blobs = blob_finder.find(0, numor->getNFrames(), median*threshold, 30, 10000, confidence);
+            blobs = blob_finder.find(0, numor->getNFrames(), median, threshold, 30, 10000, confidence);
             //blobs=SX::Geometry::findBlobs3D(numor->begin(), numor->end(), median*threshold, 30, 10000, confidence);
         }
         catch(std::exception& e) // Warning if RAM error

@@ -470,9 +470,8 @@ namespace Geometry
 
         BlobFinder(SX::Data::IData* data);
 
-        blob3DCollection find(int begin, int end, double threshold, int minComp, int maxComp, double confidence);
+        blob3DCollection find(int begin, int end, double background, double threshold, int minComp, int maxComp, double confidence);
 
-        blob3DCollection findBlobs3D(int it_begin, int it_end, double threshold, int minComp, int maxComp, double confidence);
 
         void findBlobs();
 

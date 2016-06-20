@@ -65,7 +65,7 @@ namespace Geometry
      */
     // the typename matrix_iterator_t should be a forward iterator of type Eigen::Matrix
 
-    blob3DCollection BlobFinder::find(int begin, int end, double threshold, int minComp, int maxComp, double confidence)
+    blob3DCollection BlobFinder::find(int begin, int end, double background, double threshold, int minComp, int maxComp, double confidence)
     { 
         // Number of frames
         int nframes = 0;
@@ -106,6 +106,9 @@ namespace Geometry
             cout << "blob finder is not using a filter" << endl;
         }
 
+        // todo...
+        // threshold *= background
+
         // Iterate on all pixels in the image
         for (; frame_it->index() != end; frame_it->advance())
         {
@@ -113,7 +116,7 @@ namespace Geometry
             auto frame_data = frame_it->getFrame();
             auto filtered_frame = _filterCallback ? _filterCallback(frame_data) : frame_data;
             // testing ONLY
-            frame_data = filtered_frame;
+            //frame_data = filtered_frame;
 
             // Go the the beginning of data
             index2D=0;
