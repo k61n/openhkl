@@ -109,12 +109,12 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
     qDebug() << "Searching direct lattice vectors using" << npeaks << "peaks defined on numors:";
 
     // Set up a FFT indexer object
-    SX::Crystal::FFTIndexing indexing(ui->spinBox_nSubdiv->value(),ui->doubleSpinBox_amax->value());
+    SX::Crystal::FFTIndexing indexing(5,ui->doubleSpinBox_amax->value());
     indexing.addVectors(qvects);
 
     int nSolutions = ui->spinBox_nSolutions->value();
     // Find the best tvectors
-    std::vector<SX::Crystal::tVector> tvects=indexing.findOnSphere(ui->spinBox_nStacks->value(),nSolutions);
+    std::vector<SX::Crystal::tVector> tvects=indexing.findOnSphere(30,nSolutions);
     qDebug() << "" << tvects.size()<< " solutions found";
     qDebug() << "Refining solutions and diffractometers offsets";
 

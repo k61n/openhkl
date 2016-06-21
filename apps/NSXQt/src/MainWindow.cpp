@@ -135,7 +135,7 @@ void MainWindow::changeData(IData* data)
 
     _ui->spinBox_Frame->setMaximum(frameMax);
 
-    _ui->intensity->setValue(10);
+    //_ui->intensity->setValue(10);
 
 }
 

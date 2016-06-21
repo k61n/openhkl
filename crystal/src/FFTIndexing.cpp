@@ -192,7 +192,7 @@ std::vector<tVector> FFTIndexing::findOnSphere(int nstacks, unsigned int nsoluti
 			result.end(),
 			[](const tVector& t1, const tVector& t2)->bool
 			{
-				return (t1._vect.norm() < t2._vect.norm());
+				return (t1._quality > t2._quality);
 			});
 
 	if (nsolutions>result.size())
