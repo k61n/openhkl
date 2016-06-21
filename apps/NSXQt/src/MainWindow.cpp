@@ -197,20 +197,28 @@ void MainWindow::on_action_peak_find_triggered()
         return;
     }
 
-    DialogPeakFind* dialog= new DialogPeakFind(_ui->_dview->getScene()->getCurrentFrame());
+    //DialogPeakFind* dialog= new DialogPeakFind(_ui->_dview->getScene()->getCurrentFrame());
 
     // this line no longer relevant since changing the dialog
     //dialog->setFixedSize(400,200);
 
+    DialogConvolve* dialog = new DialogConvolve(_ui->_dview->getScene()->getCurrentFrame(), this);
+
     if (!dialog->exec())
         return;
 
-    // Get Confidence and threshold
-    double confidence=dialog->getConfidence();
-    double threshold=dialog->getThreshold();   
+    // Get parameters for blob finding
+    double confidence = dialog->getConfidence();
+    double threshold = dialog->getThreshold();
+
+    int minComp = dialog->getMinComponents();
+    int maxComp = dialog->getMaxComponents();
+
+
 
     // get convolver
     auto convolver = dialog->getConvolver();
+
 
 
 
@@ -270,15 +278,21 @@ void MainWindow::on_action_peak_find_triggered()
             SX::Geometry::BlobFinder blob_finder(numor);
 
             blob_finder.setProgressHandler(
-                        [&] (double progress) -> void
-                        {
-                            _ui->progressBar->setValue(progress*max);
-                            if ( processEvents ) processEvents();
-                        }
+                [&] (double progress) -> void
+                {
+                    _ui->progressBar->setValue(progress*max);
+                    if ( processEvents ) processEvents();
+                }
             );
 
+            blob_finder.setMedian(median);
+            blob_finder.setThreshold(threshold);
+            blob_finder.setMinComp(minComp);
+            blob_finder.setMaxComp(maxComp);
+            blob_finder.setConfidence(confidence);
+
             // set image filter, if selected
-            if (convolver ) {
+            if (convolver) {
                 auto callback = [&] (const RealMatrix& input) -> RealMatrix
                 {
                     return convolver->apply(input);
@@ -288,7 +302,7 @@ void MainWindow::on_action_peak_find_triggered()
             }
 
 
-            blobs = blob_finder.find(0, numor->getNFrames(), median, threshold, 30, 10000, confidence);
+            blobs = blob_finder.find(0, numor->getNFrames()+1);
             //blobs=SX::Geometry::findBlobs3D(numor->begin(), numor->end(), median*threshold, 30, 10000, confidence);
         }
         catch(std::exception& e) // Warning if RAM error

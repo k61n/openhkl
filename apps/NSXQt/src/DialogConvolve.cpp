@@ -61,6 +61,34 @@ double DialogConvolve::getThreshold()
     return ui->thresholdSpinBox->value();
 }
 
+double DialogConvolve::getConfidence()
+{
+    return ui->confidenceSpinBox->value();
+}
+
+int DialogConvolve::getMinComponents()
+{
+    return ui->minCompBox->value();
+}
+
+int DialogConvolve::getMaxComponents()
+{
+    return ui->maxCompBox->value();
+}
+
+bool DialogConvolve::thesholdIsRelative()
+{
+    switch (ui->thresholdComboBox->currentIndex()) {
+    case 0:
+        return true;
+    case 1:
+        return false;
+    default:
+        qDebug() << "warning: DialogConvolve: thesholdComboBox has invalid index!";
+        return false;
+    }
+}
+
 std::shared_ptr<SX::Imaging::Convolver> DialogConvolve::getConvolver()
 {
     return _convolver;
@@ -71,8 +99,7 @@ std::shared_ptr<SX::Imaging::ConvolutionKernel> DialogConvolve::getKernel()
     return _kernel;
 }
 
-
-void DialogConvolve::on_pushButton_clicked()
+void DialogConvolve::on_previewButton_clicked()
 {
     // TODO: implement this
     std::cout << "push button clicked" << std::endl;

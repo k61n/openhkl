@@ -82,7 +82,7 @@ public:
 
     BlobFinder(SX::Data::IData* data);
 
-    blob3DCollection find(int begin, int end, double background, double threshold, int minComp, int maxComp, double confidence);
+    blob3DCollection find(int begin, int end);
 
     void registerEquivalence(int a, int b, vipairs& equivalences);
 
@@ -101,11 +101,15 @@ public:
 
     void setThreshold(double threshold);
 
-    void setCondfidence(double confidence);
+    void setConfidence(double confidence);
+
+    void setMedian(double median);
 
     void setMinComp(int minComp);
 
     void setMaxComp(int maxComp);
+
+    void setRelative(bool isRelative);
 
 
     void findCollisions();
@@ -119,8 +123,13 @@ public:
 private:
     double _threshold;
     double _confidence;
+    double _median;
+
     int _minComp;
     int _maxComp;
+
+    bool _isRelative;
+
     SX::Data::IData* _data;
     FilterCallback _filterCallback;
     SX::Utils::ProgressHandler _progressCallback;

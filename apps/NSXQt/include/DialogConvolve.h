@@ -30,12 +30,19 @@ public:
     ~DialogConvolve();
 
     double getThreshold();
+    double getConfidence();
+
+    int getMinComponents();
+    int getMaxComponents();
+
+    bool thesholdIsRelative();
 
     std::shared_ptr<SX::Imaging::Convolver> getConvolver();
     std::shared_ptr<SX::Imaging::ConvolutionKernel> getKernel();
 
+
 private slots:
-    void on_pushButton_clicked();
+    void on_previewButton_clicked();
 
 private:
     Ui::DialogConvolve *ui;
