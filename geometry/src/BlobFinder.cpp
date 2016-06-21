@@ -12,7 +12,7 @@ namespace SX
 namespace Geometry
 {
 
-	void registerEquivalence(int a, int b, vipairs& equivalences)
+    void BlobFinder::registerEquivalence(int a, int b, vipairs& equivalences)
 	{
 		if (a < b)
 			equivalences.push_back(vipairs::value_type(b,a));
@@ -20,7 +20,7 @@ namespace Geometry
 			equivalences.push_back(vipairs::value_type(a,b));
 	}
 
-	bool sortEquivalences(const ipair& pa, const ipair& pb)
+    bool BlobFinder::sortEquivalences(const ipair& pa, const ipair& pb)
 	{
 		if (pa.first<pb.first)
 			return true;
@@ -29,7 +29,7 @@ namespace Geometry
 		return (pa.second<pb.second);
 	}
 
-	imap removeDuplicates(vipairs& equivalences)
+    imap BlobFinder::removeDuplicates(vipairs& equivalences)
 	{
 		auto beg=equivalences.begin();
 		auto last=std::unique(equivalences.begin(),equivalences.end());
@@ -41,7 +41,7 @@ namespace Geometry
 		return mequiv;
 	}
 
-	void reassignEquivalences(imap& equivalences)
+    void BlobFinder::reassignEquivalences(imap& equivalences)
 	{
 		for (auto it=equivalences.begin();it!=equivalences.end();++it)
 		{
@@ -67,25 +67,30 @@ namespace Geometry
 
     blob3DCollection BlobFinder::find(int begin, int end, double background, double threshold, int minComp, int maxComp, double confidence)
     { 
+        // used to pass to progress handler
+        double progress = 0.0;
+
+        _confidence = confidence;
+
         // Number of frames
-        int nframes = 0;
+        _nframes = 0;
 
         // Map of Blobs (key : label, value : blob)
-        std::unordered_map<int,Blob3D> blobs;
-        blobs.reserve(1000000);
+        _blobs.clear();
+        _blobs.reserve(1000000);
 
         // determine the number of rows and columns
         auto frame_it = _data->getIterator(begin);
-        auto nrows = frame_it->getFrame().rows();
-        auto ncols = frame_it->getFrame().cols();
+        _nrows = frame_it->getFrame().rows();
+        _ncols = frame_it->getFrame().cols();
 
         // Store labels of current and previous frames.
-        vints labels(nrows*ncols,0);
-        vints labels2(nrows*ncols,0);
+        vints labels(_nrows*_ncols,0);
+        vints labels2(_nrows*_ncols,0);
 
         // Create empty equivalence table
-        vipairs equivalences;
-        equivalences.reserve(100000);
+        _equivalences.clear();
+        _equivalences.reserve(100000);
 
         int left, top, previous; // Labels of the left and top pixels with respect to current one and the one above in previous frame
 
@@ -112,7 +117,8 @@ namespace Geometry
         // Iterate on all pixels in the image
         for (; frame_it->index() != end; frame_it->advance())
         {
-            ++nframes;
+            ++_nframes;
+
             auto frame_data = frame_it->getFrame();
             auto filtered_frame = _filterCallback ? _filterCallback(frame_data) : frame_data;
             // testing ONLY
@@ -120,9 +126,9 @@ namespace Geometry
 
             // Go the the beginning of data
             index2D=0;
-            for (unsigned int row=0;row<nrows;++row)
+            for (unsigned int row=0;row<_nrows;++row)
             {
-                for (unsigned int col=0;col<ncols;++col)
+                for (unsigned int col=0;col<_ncols;++col)
                 {
                     auto value = frame_data(row, col);
 
@@ -137,7 +143,7 @@ namespace Geometry
                     newlabel=false;
                     // Get labels of adjacent pixels
                     left= (col == 0 ? 0 : labels[index2D-1]);
-                    top=  (row == 0 ? 0 : labels[index2D-ncols]) ;
+                    top=  (row == 0 ? 0 : labels[index2D-_ncols]) ;
                     previous= (frame_it->index() == begin ? 0 : labels2[index2D]);
                     // Encode type of config.
                     code=0;
@@ -159,7 +165,7 @@ namespace Geometry
                         case 3: // Top and left
                             label=top;
                             if (top!=left)
-                                registerEquivalence(top,left,equivalences);
+                                registerEquivalence(top, left, _equivalences);
                             break;
                         case 4: // Only previous
                             label=previous;
@@ -167,26 +173,26 @@ namespace Geometry
                         case 5: // Left and previous
                             label=left;
                             if (left!=previous)
-                                registerEquivalence(left,previous,equivalences);
+                                registerEquivalence(left, previous, _equivalences);
                             break;
                         case 6: // Top and previous
                             label=top;
                             if (top!=previous)
-                                registerEquivalence(top,previous,equivalences);
+                                registerEquivalence(top, previous, _equivalences);
                             break;
                         case 7: // All three
                             label=left;
                             if ((top==left) && (top!=previous))
-                                registerEquivalence(top,previous,equivalences);
+                                registerEquivalence(top, previous, _equivalences);
                             else if ((top==previous) && (top!=left))
-                                registerEquivalence(top,left,equivalences);
+                                registerEquivalence(top, left, _equivalences);
                             else if ((left==previous) && (left!=top))
-                                registerEquivalence(left,top,equivalences);
+                                registerEquivalence(left, top, _equivalences);
                             else if ((left!=previous) && (left!=top) && (top!=previous))
                             {
-                                registerEquivalence(top,previous,equivalences);
-                                registerEquivalence(top,left,equivalences);
-                                registerEquivalence(left,previous,equivalences);
+                                registerEquivalence(top, previous, _equivalences);
+                                registerEquivalence(top, left, _equivalences);
+                                registerEquivalence(left, previous, _equivalences);
                             }
                             break;
                         default:
@@ -199,11 +205,11 @@ namespace Geometry
                     //
                     if (newlabel) // Create a new blob if necessary
                     {
-                        blobs.insert(blob3DCollection::value_type(label,Blob3D(col,row,frame,value)));
+                        _blobs.insert(blob3DCollection::value_type(label,Blob3D(col,row,frame,value)));
                     }
                     else
                     {
-                        auto it=blobs.find(label);
+                        auto it = _blobs.find(label);
                         it->second.addPoint(col,row,frame,value);
                     }
                 }
@@ -213,37 +219,54 @@ namespace Geometry
             // TODO: this could probably be done better!
             ++frame;
 
+            progress = static_cast<double>(frame) / static_cast<double>(end-begin) * 100.0;
+
+            if ( _progressCallback)
+                _progressCallback(progress);
         }
 
         // too few frames for algorithm to be reliable
-        if (nframes<=1)
+        if (_nframes<=1)
             throw std::runtime_error("Third dimension should be at least 2 to run this algorithm. if 1, use 2D version");
 
-        mergeBlobs<Blob3D>(blobs,equivalences);
+        mergeBlobs();
 
-        for (auto it=blobs.begin();it!=blobs.end();)
+        for (auto it = _blobs.begin(); it != _blobs.end();)
         {
             Blob3D& p=it->second;
-            if (p.getComponents()<minComp || p.getComponents()>maxComp)
-                it=blobs.erase(it);
+            if (p.getComponents() < minComp || p.getComponents() > maxComp)
+                it = _blobs.erase(it);
             else
-                it++;
+                it++;            
         }
 
+        findCollisions();
 
+        mergeBlobs();
+
+        return _blobs;
+    }
+
+    void BlobFinder::setProgressHandler(Utils::ProgressHandler callback)
+    {
+        _progressCallback = callback;
+    }
+
+    void BlobFinder::findCollisions()
+    {
         // Determine the AABB of the blobs
         shape3Dmap boxes;
-        boxes.reserve(blobs.size());
+        boxes.reserve(_blobs.size());
 
         Eigen::Vector3d center,extents;
         Eigen::Matrix3d axis;
 
-        for (auto it=blobs.begin();it!=blobs.end();)
+        for (auto it = _blobs.begin(); it != _blobs.end();)
         {
             Blob3D& p=it->second;
-            p.toEllipsoid(confidence,center,extents,axis);
+            p.toEllipsoid(_confidence,center,extents,axis);
             if (extents.minCoeff()<1.0e-9)
-                it=blobs.erase(it);
+                it = _blobs.erase(it);
             else
             {
                 boxes.insert(shape3Dmap::value_type(new Ellipsoid3D(center,extents,axis),it->first));
@@ -251,8 +274,7 @@ namespace Geometry
             }
         }
 
-
-        Octree oct({0.0,0.0,0.0},{double(ncols),double(nrows),double(nframes)});
+        Octree oct({0.0,0.0,0.0},{double(_ncols),double(_nrows),double(_nframes)});
         oct.setMaxDepth(6);
         oct.setMaxStorage(6);
 
@@ -264,21 +286,17 @@ namespace Geometry
 
 
         // Clear the equivalence vectors for reuse purpose
-        equivalences.clear();
+        _equivalences.clear();
 
-        for (auto it=collisions.begin();it!=collisions.end();++it)
+        for (auto it = collisions.begin(); it != collisions.end(); ++it)
         {
             if (it->first->collide(*(it->second)))
             {
-                auto bit1=boxes.find(it->first);
-                auto bit2=boxes.find(it->second);
-                registerEquivalence(bit1->second,bit2->second,equivalences);
+                auto bit1 = boxes.find(it->first);
+                auto bit2 = boxes.find(it->second);
+                registerEquivalence(bit1->second, bit2->second, _equivalences);
             }
         }
-
-        mergeBlobs<Blob3D>(blobs,equivalences);
-
-        return blobs;
     }
 
     void BlobFinder::setFilter(BlobFinder::FilterCallback callback)
@@ -291,6 +309,41 @@ namespace Geometry
 BlobFinder::BlobFinder(SX::Data::IData* data)
 {
     _data = data;
+}
+
+
+
+void BlobFinder::mergeBlobs()
+{
+
+    // Sort the equivalences pair by ascending order of the first element and if equal by ascending order of their second element.
+    std::sort(_equivalences.begin(), _equivalences.end(), sortEquivalences);
+
+    // Remove the duplicate pairs
+    imap mequiv = removeDuplicates(_equivalences);
+
+    reassignEquivalences(mequiv);
+
+    // Iterate on blobs and merge equivalences
+    for (auto it = _blobs.begin(); it != _blobs.end();)
+    {
+        auto match = mequiv.find(it->first);
+        if (match == mequiv.end())
+        {
+            // Nothing is found get to the next blob
+            it++;
+        }
+        else
+        {
+            auto tomerge = _blobs.find(match->second);
+            // Should never be the case
+            if (tomerge != _blobs.end())
+            {
+                tomerge->second.merge(it->second);
+                it = _blobs.erase(it);
+            }
+        }
+    }
 }
 
 } // namespace Geometry

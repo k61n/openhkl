@@ -46,6 +46,7 @@
 
 #include "IData.h"
 
+#include "ProgressHandler.h"
 
 namespace SX {
 
@@ -68,48 +69,75 @@ namespace Geometry
 	typedef std::unordered_map<IShape2D*,int> shape2Dmap;
 	typedef std::unordered_map<IShape3D*,int> shape3Dmap;
 
-	void registerEquivalence(int a, int b, vipairs& equivalences);
 
-	bool sortEquivalences(const ipair& pa, const ipair& pb);
+/* Class used for blob-finding, which is the first step of peak-finding.
+ * The use of IFrameIterator allows for custom iterators, e.g. which work multi-threaded.
+ * Since blob-finding may take some time on large data sets, ProgressHandler is used to give feedback to the GUI.
+ *
+ */
+class BlobFinder {
+public:
+    using RealMatrix = SX::Types::RealMatrix;
+    using FilterCallback = std::function<RealMatrix(const RealMatrix&)>;
 
-	imap removeDuplicates(vipairs& equivalences);
+    BlobFinder(SX::Data::IData* data);
 
-	void reassignEquivalences(imap& equivalences);
+    blob3DCollection find(int begin, int end, double background, double threshold, int minComp, int maxComp, double confidence);
 
-	template <typename blobtype>
-	void mergeBlobs(std::unordered_map<int,blobtype>& blobs, vipairs& equivalences)
-	{
+    void registerEquivalence(int a, int b, vipairs& equivalences);
 
-		// Sort the equivalences pair by ascending order of the first element and if equal by ascending order of their second element.
-		std::sort(equivalences.begin(), equivalences.end(),sortEquivalences);
+    static bool sortEquivalences(const ipair& pa, const ipair& pb);
 
-		// Remove the duplicate pairs
-		imap mequiv=removeDuplicates(equivalences);
+    imap removeDuplicates(vipairs& equivalences);
 
-		reassignEquivalences(mequiv);
+    void reassignEquivalences(imap& equivalences);
 
-		// Iterate on blobs and merge equivalences
-		for (auto it=blobs.begin();it!=blobs.end();)
-		{
-			auto match=mequiv.find(it->first);
-			if (match==mequiv.end())
-			{
-				// Nothing is found get to the next blob
-				it++;
-			}
-			else
-			{
-				auto tomerge=blobs.find(match->second);
-				// Should never be the case
-				if (tomerge!=blobs.end())
-				{
-					tomerge->second.merge(it->second);
-					it=blobs.erase(it);
-				}
-			}
-		}
-	}
+    void findBlobs();
 
+    //void mergeBlobs();
+
+    //! sets progress handler callback function
+    void setProgressHandler(SX::Utils::ProgressHandler callback);
+
+    void setThreshold(double threshold);
+
+    void setCondfidence(double confidence);
+
+    void setMinComp(int minComp);
+
+    void setMaxComp(int maxComp);
+
+
+    void findCollisions();
+
+    //! Sets the filter, which allows for more sophisticated blob-finding
+    void setFilter(FilterCallback callback);
+
+    void mergeBlobs();
+
+
+private:
+    double _threshold;
+    double _confidence;
+    int _minComp;
+    int _maxComp;
+    SX::Data::IData* _data;
+    FilterCallback _filterCallback;
+    SX::Utils::ProgressHandler _progressCallback;
+
+    int _nrows, _ncols, _nframes;
+
+    // filter
+    // progress handler
+    // ...
+
+    std::unordered_map<int,Blob3D> _blobs;
+    vipairs _equivalences;
+};
+
+
+
+    /*
 	template <typename _datatype>
 	blob2DCollection findBlobs2D(_datatype* dataptr, SX::Types::uint nrows, SX::Types::uint ncols, _datatype threshold, int minComp, int maxComp, double confidence, bool rowMajor=1)
 	{
@@ -251,8 +279,9 @@ namespace Geometry
 		mergeBlobs<Blob2D>(blobs,equivalences);
 
 		return blobs;
-	}
+    } /**/
 
+    /*
     // the typename matrix_iterator_t should be a forward iterator of type Eigen::Matrix
 	template <typename matrix_iterator_t>
 	blob3DCollection findBlobs3D(matrix_iterator_t it_begin, matrix_iterator_t it_end, double threshold, int minComp, int maxComp, double confidence)
@@ -456,53 +485,9 @@ namespace Geometry
 		mergeBlobs<Blob3D>(blobs,equivalences);
 
 		return blobs;
-	}
-
-    /* Class used for blob-finding, which is the first step of peak-finding.
-     * The use of IFrameIterator allows for custom iterators, e.g. which work multi-threaded.
-     * Since blob-finding may take some time on large data sets, ProgressHandler is used to give feedback to the GUI.
-     *
-     */
-    class BlobFinder {
-    public:
-        using RealMatrix = SX::Types::RealMatrix;
-        using FilterCallback = std::function<RealMatrix(const RealMatrix&)>;
-
-        BlobFinder(SX::Data::IData* data);
-
-        blob3DCollection find(int begin, int end, double background, double threshold, int minComp, int maxComp, double confidence);
+    } /**/
 
 
-        void findBlobs();
-
-        //void mergeBlobs();
-
-        void setProgressHandler();
-
-        void setThreshold(double threshold);
-
-        void setCondfidence(double confidence);
-
-        void setMinComp(int minComp);
-
-        void setMaxComp(int maxComp);
-
-        //! Sets the filter, which allows for more sophisticated blob-finding
-        void setFilter(FilterCallback callback);
-
-
-    private:
-        double _threshold;
-        double _confidence;
-        int _minComp;
-        int _maxComp;
-        SX::Data::IData* _data;
-        FilterCallback _filterCallback;
-
-        // filter
-        // progress handler
-        // ...
-    };
 
 } // namespace Geometry
 

@@ -12,9 +12,7 @@
 #include <QSpinBox>
 
 #include "AnnularKernel.h"
-#include "BoxKernel.h"
-#include "GaussianKernel.h"
-#include "LorentzianKernel.h"
+#include "ConstantKernel.h"
 
 void ConvolutionFilterTree::rebuild()
 {
@@ -32,7 +30,7 @@ void ConvolutionFilterTree::rebuild()
 
     // TODO: this should be replaced by a factory
     _kernels.clear();
-    _kernels << "No kernel" << "Annular" << "Gaussian" << "Lorentzian";
+    _kernels << "No kernel" << "Annular" << "Constant";
 
 
     QLabel* labelWidget = new QLabel(this);
@@ -105,14 +103,8 @@ void ConvolutionFilterTree::onComboBoxChange()
         qDebug() << "annular kernel selected";
         _selectedKernel = std::unique_ptr<SX::Imaging::ConvolutionKernel>(new SX::Imaging::AnnularKernel());
     }
-    else if ( kernel_name == "Box") {
-        _selectedKernel = std::unique_ptr<SX::Imaging::ConvolutionKernel>(new SX::Imaging::BoxKernel());
-    }
-    else if ( kernel_name == "Gaussian") {
-        _selectedKernel = std::unique_ptr<SX::Imaging::ConvolutionKernel>(new SX::Imaging::GaussianKernel());
-    }
-    else if ( kernel_name == "Lorentzian") {
-        _selectedKernel = std::unique_ptr<SX::Imaging::ConvolutionKernel>(new SX::Imaging::LorentzianKernel());
+    else if ( kernel_name == "Constant") {
+        _selectedKernel = std::unique_ptr<SX::Imaging::ConvolutionKernel>(new SX::Imaging::ConstantKernel());
     }
     else {
         qDebug("Error: unidentified kernel");

@@ -3,22 +3,18 @@
 
 #include <functional>
 
-class ProgressHandler
-{
-public:
-    typedef std::function<bool(int)> ProgressCallback;
+namespace SX {
 
-    ProgressHandler();
-    ProgressHandler(ProgressCallback callback);
+    namespace Utils {
 
-    void setMaximum(int max);
-    void update(int n);
+        // progress handler callback:
+        // progressHandler(double progress) -> int
+        // argument progress is the progress (as a percentage)
+        using ProgressHandler = std::function<void(double)>;
 
-private:
-    ProgressCallback _callback;
-    int _maximum;
-    bool _continue;
-};
+    } // namespace Utils
+
+} // namespace SX
 
 
 #endif // PROGRESSHANDLER_H

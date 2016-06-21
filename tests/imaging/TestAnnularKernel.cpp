@@ -1,4 +1,4 @@
-#define BOOST_TEST_MODULE "Test Box Kernel"
+#define BOOST_TEST_MODULE "Test Constant Kernel"
 #define BOOST_TEST_DYN_LINK
 
 #include <boost/test/unit_test.hpp>
@@ -9,9 +9,9 @@
 
 #include <Eigen/Dense>
 
-#include "BoxKernel.h"
+#include "ConstantKernel.h"
 
-BOOST_AUTO_TEST_CASE(Test_Box_kernel)
+BOOST_AUTO_TEST_CASE(Test_Constant_kernel)
 {
     // TODO: implement this test
 

@@ -56,41 +56,60 @@ class Blob3D//: public IBlob
 public:
   //!Initialize an empty blob
   Blob3D();
+
   //!Initialize a blob with a point of mass m at x,y,z
   Blob3D(double x, double y,double z, double m);
+
   //! Copy constructor
   Blob3D(const Blob3D&);
   Blob3D(Blob3D&&) = default;
+
   //! Assignment
   Blob3D& operator=(const Blob3D&);
+
   //! Add point to the Blob
   void addPoint(double x, double y, double z, double m);
+
   //! Merge a second blob
   void merge(const Blob3D&);
+
   //! Return the total mass
   double getMass() const;
+
   //! Return the number of points
   int getComponents() const;
+
   //! Return the minimumMass
   double getMinimumMass() const;
+
   //! Return the minimumMass
   double getMaximumMass() const;
+
   //! Return the center of Mass
   Vector3d getCenterOfMass() const;
+
   //! Get the ellipsoid parameters
-  void toEllipsoid(double confidence, Vector3d& center,Vector3d& eigenvalues,Matrix3d& eigenvectors) const;
+  void toEllipsoid(double confidence, Vector3d& center,
+                   Vector3d& eigenvalues,Matrix3d& eigenvectors) const;
+
   //! Print
   void printSelf(std::ostream& os) const;
+
   //! Compute the intersection with a plane of equation \f$ax+by+cz+d=0\f$
-  bool intersectionWithPlane(double a, double b, double c, double d, Vector3d& center, Vector3d& semi_axes, Vector3d& axis1, Vector3d& axis2, double confidence) const;
+  bool intersectionWithPlane(double a, double b, double c, double d,
+                             Vector3d& center, Vector3d& semi_axes,
+                             Vector3d& axis1, Vector3d& axis2, double confidence) const;
 
 private:
   //! Total mass=zeroth order momentum
   double _m000;
+
   //! First moment= Sum of all weighted positions m_i.x_i, m_i.y_i, m_i.z_i
   double _m100, _m010, _m001;
+
   //! Second moments
   double _m200, _m020, _m002, _m110, _m101, _m011;
+
   //! Number of points contributing
   unsigned int _npoints;
   double _minValue, _maxValue;

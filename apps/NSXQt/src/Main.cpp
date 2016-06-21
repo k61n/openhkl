@@ -7,9 +7,16 @@
 
 #include "MainWindow.h"
 
+// jmf debug testing
+#include <functional>
+std::function<void(void)> processEvents;
+
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+
+    processEvents = [&] () { a.processEvents(); };
 
     QImage splashScrImage(":/resources/splashScreen.png");
     QPixmap Logo;

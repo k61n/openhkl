@@ -18,6 +18,7 @@
 #include <QProgressDialog>
 #include <QtDebug>
 #include <QTransform>
+#include <QProgressDialog>
 
 #include "AABB.h"
 #include "Basis.h"
@@ -61,6 +62,10 @@
 #include "Path.h"
 #include "IFrameIterator.h"
 #include "Types.h"
+
+// jmf debug testing
+#include <functional>
+extern std::function<void(void)> processEvents;
 
 using namespace SX::Units;
 using namespace SX::Instrument;
@@ -210,7 +215,8 @@ void MainWindow::on_action_peak_find_triggered()
 
 
     qWarning() << "Peak find algorithm: Searching peaks in " << numors.size() << " files";
-    int max=numors.size();
+    //int max=numors.size();
+    int max = 100;
 
     QCoreApplication::processEvents();
     _ui->progressBar->setEnabled(true);
@@ -225,7 +231,34 @@ void MainWindow::on_action_peak_find_triggered()
     {
         numor->clearPeaks();
         numor->readInMemory();
-        int median=numor->getBackgroundLevel()+1;
+
+        int median = 0;
+
+        try {
+            QProgressDialog progressDialog(this);
+
+            progressDialog.setMaximum(100);
+            progressDialog.setLabelText("Computing background level...");
+            progressDialog.show();
+
+            auto callback = [&] (double progress) -> void
+            {
+                progressDialog.setValue(static_cast<int>(progress));
+                processEvents();
+            };
+
+
+
+            median = numor->getBackgroundLevel(callback)+1;
+
+
+            progressDialog.close();
+        }
+        catch (...) {
+            qCritical() << "Error computing background level of dataset";
+            return;
+        }
+
 
         qDebug() << ">>>> the background level is " << median;
         qDebug() << ">>>> finding blobs... ";
@@ -235,6 +268,14 @@ void MainWindow::on_action_peak_find_triggered()
         try
         {
             SX::Geometry::BlobFinder blob_finder(numor);
+
+            blob_finder.setProgressHandler(
+                        [&] (double progress) -> void
+                        {
+                            _ui->progressBar->setValue(progress*max);
+                            if ( processEvents ) processEvents();
+                        }
+            );
 
             // set image filter, if selected
             if (convolver ) {

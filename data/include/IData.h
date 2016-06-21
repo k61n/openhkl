@@ -46,6 +46,8 @@
 
 //#include "IFrameIterator.h"
 
+#include "ProgressHandler.h"
+
 namespace SX
 {
 
@@ -175,7 +177,7 @@ public:
     std::vector<PeakCalc> hasPeaks(const std::vector<Eigen::Vector3d>& hkls,const Eigen::Matrix3d& BU);
 
     //! Get background
-    double getBackgroundLevel();
+    double getBackgroundLevel(SX::Utils::ProgressHandler progressCallbak = nullptr);
 
 protected:
     bool _isOpened;

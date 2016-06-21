@@ -624,7 +624,7 @@ void IData::readInMemory()
     _inMemory = true;
 }
 
-double IData::getBackgroundLevel()
+double IData::getBackgroundLevel(SX::Utils::ProgressHandler progressCallback)
 {
     if ( _background > 0.0 )
         return _background;
@@ -632,10 +632,16 @@ double IData::getBackgroundLevel()
     _background = 0.0;
     double factor = 1.0 / (_nFrames * _nrows * _ncols);
 
+
     for (auto it = getIterator(0); it->index() != _nFrames; it->advance()) {
         // cast matrix to double (instead of int) -- necessary due to integer overflow!
         // _background += factor * it->cast<double>().sum();
         _background += factor * it->getFrame().sum();
+
+        if ( progressCallback ) {
+            double progress = 100.0 * it->index() / static_cast<double>(_nFrames);
+            progressCallback(progress);
+        }
         
     }
 
