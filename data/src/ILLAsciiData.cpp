@@ -1,6 +1,7 @@
 #include <cmath>
 #include <cstring>
 #include <map>
+#include <set>
 #include <stdexcept>
 
 #include "EigenMatrixParser.h"
@@ -8,7 +9,6 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/interprocess/file_mapping.hpp>
-
 
 #include "ILLAsciiData.h"
 #include "Component.h"
@@ -75,7 +75,7 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, std::shared_ptr<Diffract
 	if ((int)(vi.size() != 2) || (vi[0] != (int)(_nAngles+3)))
 		throw std::runtime_error("Problem parsing numor: mismatch between number of angles in header and datablock 1.");
 
-
+	// This corresponds to the lines going from SSSSSSSSS to "            time         monitor       Total Cou     angles*1000"
 	std::size_t fromStoFData=skip3Lines + (vi[1]+1)*81;
 
 	const char* beginValues=_mapAddress+_headerSize+fromStoFData;
@@ -89,7 +89,8 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, std::shared_ptr<Diffract
 	_metadata->add<double>("time",vd[0]);
 	_metadata->add<double>("monitor",vd[1]);
 
-
+	// This vector will store the id of the axis scanned by MAD. The id of the ith scanned axis is defined with "icdesci"
+	// in the IIIIIIIII metadata block
 	std::vector<unsigned int> scannedAxisId;
 	scannedAxisId.reserve(_nAngles);
 
@@ -100,99 +101,126 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, std::shared_ptr<Diffract
 		scannedAxisId.push_back(id);
 	}
 
-	std::vector<double*> varAngles(_nAngles);
+	// This map relates the ids of the physical axis registered in the instrument definition file with their name
+	std::map<unsigned int,std::string> instrPhysAxisIds(_diffractometer->getPhysicalAxesNames());
 
-	std::map<unsigned int,std::string> detectorAxisIds(_diffractometer->getDetector()->getGonio()->getPhysicalAxisIdToNames());
-	std::vector<double> detectorAxisValues(detectorAxisIds.size());
-	int comp=0;
-	for (const auto& p : detectorAxisIds)
+	// Check that every scanned axis has been defined in the instrumnet file. Otherwise, throws.
+	for (const auto& id : scannedAxisId)
 	{
-		if (!_metadata->isKey(p.second))
-			detectorAxisValues[comp]=0.0;
-		else
-		{
-			auto it=std::find(scannedAxisId.begin(),scannedAxisId.end(),p.first);
-
-			if (it==scannedAxisId.end())
-				detectorAxisValues[comp]=_metadata->getKey<double>(p.second)*deg;
-			else
-				varAngles[std::distance(scannedAxisId.begin(),it)] = &detectorAxisValues[comp];
-		}
-
-		comp++;
+		auto it=instrPhysAxisIds.find(id);
+		if (it==instrPhysAxisIds.end())
+			throw std::runtime_error("The axis with MAD id "+std::to_string(id)+" could not be found in the instrument definition file.");
 	}
 
-	std::map<unsigned int,std::string> sampleAxisIds(_diffractometer->getSample()->getGonio()->getPhysicalAxisIdToNames());
-	std::vector<double> sampleAxisValues(sampleAxisIds.size());
-	comp=0;
-	for (const auto& p : sampleAxisIds)
+	// This map will store the values over the framess of each physical axis of the goniometers bound to the instrument (detector + sample + source)
+	// 3 cases:
+	//	1) a physical axis is not a scanned axis and its name is not defined in the metadata, then the corresponding values will
+	//	   be a constant equal to 0
+	//	2) a physical axis is not a scanned axis and its name is defined in the metadata, then the corresponding values will
+	//	   be a constant equal to the metadata value
+	// 	3) a physical axis is one of the scanned axis, then the corresponding values will be fetched from the FFFFFF dta blocks
+	std::map<unsigned int,std::vector<double>> gonioValues;
+
+	// Loop over the physical axis of the instrument
+	for (const auto& p : instrPhysAxisIds)
 	{
-		if (!_metadata->isKey(p.second))
-			sampleAxisValues[comp]=0.0;
+		// Case of a physical axis that is also a scanned axis
+		// Prepare a vector that will be further set with the corresponding values
+		auto it=std::find(scannedAxisId.begin(),scannedAxisId.end(),p.first);
+		if (it!=scannedAxisId.end())
+		{
+			std::vector<double> values;
+			values.reserve(_nFrames);
+			gonioValues.insert(std::pair<unsigned int,std::vector<double>>(p.first,values));
+		}
+		// Case of a physical axis that is not a scanned axis.
+		// The values for this axis will be a constant
 		else
 		{
-			auto it=std::find(scannedAxisId.begin(),scannedAxisId.end(),p.first);
-
-			if (it == scannedAxisId.end())
-				sampleAxisValues[comp]=_metadata->getKey<double>(p.second)*deg;
-			else
-				varAngles[std::distance(scannedAxisId.begin(),it)] = &sampleAxisValues[comp];
+			// If the axis name is defined in the metadata, the contant will be the corresponding value
+			// other wise it will be 0
+			double val = _metadata->isKey(p.second) ? _metadata->getKey<double>(p.second) : 0.0;
+			// Data are given in deg for angles
+			std::vector<double> values(_nFrames,val*SX::Units::deg);
+			gonioValues.insert(std::pair<unsigned int,std::vector<double>>(p.first,values));
 		}
-
-		comp++;
 	}
 
-	std::map<unsigned int,std::string> sourceAxisIds(_diffractometer->getSource()->getGonio()->getPhysicalAxisIdToNames());
-	std::vector<double> sourceAxisValues(sourceAxisIds.size());
-	comp=0;
-	for (const auto& p : sourceAxisIds)
+	// This is the address of the beginning of the first SSSSSS datablock
+	const char* start = _mapAddress+_headerSize;
+	// Read the FFFFFF data block frame by frame
+	for (unsigned int i=0;i<_nFrames;++i)
 	{
-		if (!_metadata->isKey(p.second))
-			sourceAxisValues[comp]=0.0;
-		else
+		std::vector<double> scannedValues;
+
+		beginValues = start  + i*(_dataLength+_skipChar) + fromStoFData;
+		readDoublesFromChar(beginValues,beginValues+FData,scannedValues);
+
+		// The values of the scanned axis starts from the 4th number of the FFFFFF data block.
+		// The first three being set for the 'time', the 'monitor' and the 'total count' values.
+		unsigned int comp(3);
+		for (const auto& id : scannedAxisId)
 		{
-			auto it=std::find(scannedAxisId.begin(),scannedAxisId.end(),p.first);
-
-			if (it == scannedAxisId.end())
-				sourceAxisValues[comp]=_metadata->getKey<double>(p.second)*deg;
-			else
-				varAngles[std::distance(scannedAxisId.begin(),it)] = &sourceAxisValues[comp];
+			// The values are given in degrees in the metadata block and multiplied by 1000
+			gonioValues[id].push_back(scannedValues[comp++]/1000*SX::Units::deg);
 		}
-
-		comp++;
 	}
+
 
 	_detectorStates.reserve(_nFrames);
-	_sampleStates.reserve(_nFrames);
-	_sourceStates.reserve(_nFrames);
-
-	const char* start = _mapAddress+_headerSize;
-
-	std::size_t frameB=0,frameE=_nFrames-1;
-
-	std::vector<double> bb,be;
-
-	beginValues = start  + frameB*(_dataLength+_skipChar) + fromStoFData;
-	readDoublesFromChar(beginValues,beginValues+FData,bb);
-
-	if (bb.size() != (_nAngles+3))
-		throw std::runtime_error("Problem parsing numor: mismatch between number of angles in header and datablock 2.");
-
-	beginValues = start  + frameE*(_dataLength+_skipChar) + fromStoFData;
-	readDoublesFromChar(beginValues,beginValues+FData,be);
-
-	if (be.size() != (_nAngles+3))
-		throw std::runtime_error("Problem parsing numor: mismatch between number of angles in header and datablock 2.");
-
-	for (std::size_t f=0;f<_nFrames;++f)
+	auto detector = _diffractometer->getDetector();
+	// If a detector is set for this instrument, loop over the frames and gather for each physical axis
+	// of the detector the corresponding values defined previously. The gathered values being further pushed as
+	// a new detector state
+	if (detector)
 	{
-		for (std::size_t i=0;i<_nAngles;++i)
-			*(varAngles[i]) = (bb[3+i]+(be[3+i]-bb[3+i])*static_cast<double>(f)/static_cast<double>(_nFrames-1))*deg/1000.0;
-
-		_detectorStates.push_back(_diffractometer->getDetector()->createState(detectorAxisValues));
-		_sampleStates.push_back(_diffractometer->getSample()->createState(sampleAxisValues));
-		_sourceStates.push_back(_diffractometer->getSource()->createState(sourceAxisValues));
+		auto detAxisIdsToNames = detector->getPhysicalAxesIds();
+		for (std::size_t f=0;f<_nFrames;++f)
+		{
+			std::vector<double> detValues;
+			detValues.reserve(detAxisIdsToNames.size());
+			for (const auto& v : detAxisIdsToNames)
+				detValues.push_back(gonioValues[v][f]);
+			_detectorStates.push_back(_diffractometer->getDetector()->createState(detValues));
+		}
 	}
+
+	_sampleStates.reserve(_nFrames);
+	auto sample = _diffractometer->getSample();
+	// If a sample is set for this instrument, loop over the frames and gather for each physical axis
+	// of the sample the corresponding values defined previously. The gathered values being further pushed as
+	// a new sample state
+	if (sample)
+	{
+		auto sampleAxisIdsToNames = sample->getPhysicalAxesIds();
+		for (std::size_t f=0;f<_nFrames;++f)
+		{
+			std::vector<double> sampleValues;
+			sampleValues.reserve(sampleAxisIdsToNames.size());
+			for (const auto& v : sampleAxisIdsToNames)
+				sampleValues.push_back(gonioValues[v][f]);
+			_sampleStates.push_back(_diffractometer->getSample()->createState(sampleValues));
+		}
+	}
+
+	_sourceStates.reserve(_nFrames);
+	auto source = _diffractometer->getSource();
+	// If a source is set for this instrument, loop over the frames and gather for each physical axis
+	// of the source the corresponding values defined previously. The gathered values being further pushed as
+	// a new source state
+	if (source)
+	{
+		auto sourceAxisIdsToNames = source->getPhysicalAxesIds();
+		for (std::size_t f=0;f<_nFrames;++f)
+		{
+			std::vector<double> sourceValues;
+			sourceValues.reserve(sourceAxisIdsToNames.size());
+			for (const auto& v : sourceAxisIdsToNames)
+				sourceValues.push_back(gonioValues[v][f]);
+			_sourceStates.push_back(_diffractometer->getSource()->createState(sourceValues));
+		}
+	}
+
 	_fileSize=_map.get_size();
 
 	close();

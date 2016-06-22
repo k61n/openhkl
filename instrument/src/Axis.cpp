@@ -4,6 +4,7 @@
 #include "Axis.h"
 #include "AxisFactory.h"
 
+
 namespace SX
 {
 namespace Instrument
@@ -85,7 +86,7 @@ Axis::Axis(const proptree::ptree& node)
 
 	_axis=axis;
 
-	_offset=node.get<double>("offset");
+	_offset=node.get<double>("offset",0.0);
 	_offsetFixed=false;
 
 	_min=node.get<double>("min",-std::numeric_limits<double>::infinity());
@@ -106,7 +107,7 @@ Axis& Axis::operator=(const Axis& other)
 		_max         = other._max;
 		_offsetFixed = other._offsetFixed;
 		_physical    = other._physical;
-		_id       = other._id;
+		_id          = other._id;
 	}
 	return *this;
 }
@@ -218,4 +219,5 @@ bool Axis::isPhysical() const
 }
 
 }
+
 }

@@ -107,5 +107,31 @@ Source* Diffractometer::getSource()
 	return _source;
 }
 
+std::map<unsigned int,std::string> Diffractometer::getPhysicalAxesNames() const
+{
+
+	std::map<unsigned int,std::string> names;
+
+	if (_detector)
+	{
+		auto axisIdsToNames = _detector->getPhysicalAxesNames();
+		names.insert(axisIdsToNames.begin(),axisIdsToNames.end());
+	}
+
+	if (_sample)
+	{
+		auto axisIdsToNames = _sample->getPhysicalAxesNames();
+		names.insert(axisIdsToNames.begin(),axisIdsToNames.end());
+	}
+
+	if (_source)
+	{
+		auto axisIdsToNames = _source->getPhysicalAxesNames();
+		names.insert(axisIdsToNames.begin(),axisIdsToNames.end());
+	}
+
+	return names;
+}
+
 }
 } /* namespace SX */

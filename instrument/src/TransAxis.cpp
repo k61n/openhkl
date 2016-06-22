@@ -1,5 +1,6 @@
 #include "TransAxis.h"
 
+
 namespace SX
 {
 
@@ -55,7 +56,6 @@ Eigen::Transform<double,3,Eigen::Affine> TransAxis::getHomMatrix(double value) c
 	return mat;
 }
 
-
-
 }
+
 }

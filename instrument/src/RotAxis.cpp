@@ -1,4 +1,3 @@
-#include "Units.h"
 #include "RotAxis.h"
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -25,14 +24,12 @@ RotAxis::RotAxis(const std::string& label) : Axis(label),_dir(CCW)
 {
 }
 
-RotAxis::RotAxis(const std::string& label, const Vector3d& axis, Direction direction) : Axis(label,axis)
+RotAxis::RotAxis(const std::string& label, const Vector3d& axis, Direction direction) : Axis(label,axis), _dir(direction)
 {
-	_dir = direction;
 }
 
-RotAxis::RotAxis(const RotAxis& other) : Axis(other)
+RotAxis::RotAxis(const RotAxis& other) : Axis(other), _dir(other._dir)
 {
-	_dir = other._dir;
 }
 
 RotAxis& RotAxis::operator=(const RotAxis& other)

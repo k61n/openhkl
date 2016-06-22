@@ -193,6 +193,39 @@ std::size_t Component::getNPhysicalAxes() const
 		return 0;
 }
 
+std::map<unsigned int,std::string> Component::getPhysicalAxesNames() const
+{
+	std::map<unsigned int,std::string> names;
+
+	if (_gonio)
+	{
+		for (auto a : _gonio->getAxes())
+		{
+			if (a->isPhysical())
+				names.insert(std::pair<unsigned int,std::string>(a->getId(),a->getLabel()));
+		}
+	}
+
+	return names;
+}
+
+std::vector<unsigned int> Component::getPhysicalAxesIds() const
+{
+	std::vector<unsigned int> ids;
+
+	if (_gonio)
+	{
+		ids.reserve(_gonio->getNPhysicalAxes());
+		for (auto a : _gonio->getAxes())
+		{
+			if (a->isPhysical())
+				ids.push_back(a->getId());
+		}
+	}
+
+	return ids;
+}
+
 } // end namespace Instrument
 
 } // end namespace SX
