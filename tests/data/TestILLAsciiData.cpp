@@ -47,10 +47,10 @@ BOOST_AUTO_TEST_CASE(Test_ILL_Data)
 	const std::vector<ComponentState> detectorStates=dataf.getDetectorStates();
 	const std::vector<ComponentState> sampleStates=dataf.getSampleStates();
 
-	BOOST_CHECK_CLOSE(detectorStates[3].getValues()[0],0.54347000E+05/1000.0,tolerance);
-	BOOST_CHECK_CLOSE(sampleStates[2].getValues()[0],0.26572000E+05/1000.0,tolerance);
-	BOOST_CHECK_CLOSE(sampleStates[2].getValues()[1],0.48923233E+02,tolerance);
-	BOOST_CHECK_CLOSE(sampleStates[2].getValues()[2],-0.48583171E+02,tolerance);
+	BOOST_CHECK_CLOSE(detectorStates[3].getValues()[0],0.54347000E+05/1000*SX::Units::deg,tolerance);
+	BOOST_CHECK_CLOSE(sampleStates[2].getValues()[0],0.26572000E+05/1000*SX::Units::deg,tolerance);
+	BOOST_CHECK_CLOSE(sampleStates[2].getValues()[1],0.48923233E+02*SX::Units::deg,tolerance);
+	BOOST_CHECK_CLOSE(sampleStates[2].getValues()[2],-0.48583171E+02*SX::Units::deg,tolerance);
 
 	ComponentState cs=dataf.getDetectorInterpolatedState(0.0);
 	BOOST_CHECK_CLOSE(cs.getValues()[0],detectorStates[0].getValues()[0],tolerance);
