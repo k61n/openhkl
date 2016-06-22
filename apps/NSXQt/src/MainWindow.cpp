@@ -265,8 +265,6 @@ void MainWindow::on_action_peak_find_triggered()
 
         qDebug() << ">>>> integrating " << numor->getPeaks().size() << " peaks...";
 
-        int peak_counter = 0;
-
         qDebug() << ">>>>>>>> initializing peak intensities...";
         
         for ( auto& peak: numor->getPeaks() )
