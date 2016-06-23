@@ -20,6 +20,7 @@ DataReaderFactory::DataReaderFactory()
 	registerCallback("h5",&HDF5Data::create);
 	registerCallback("hdf5",&HDF5Data::create);
 	registerCallback("hdf",&HDF5Data::create);
+	registerCallback("nxs",&HDF5Data::create);
 
 	// TIFF data
 	registerCallback("tiff",&TiffData::create);

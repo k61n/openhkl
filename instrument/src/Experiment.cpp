@@ -83,7 +83,7 @@ const std::map<std::string,IData*>& Experiment::getData() const
 	return _data;
 }
 
-IData* Experiment::getData(std::string name)
+IData* Experiment::getData(const std::string& name)
 {
 	auto it=_data.find(name);
 	if (it == _data.end())
@@ -92,7 +92,7 @@ IData* Experiment::getData(std::string name)
 	return _data[name];
 }
 
-std::string Experiment::getName() const
+const std::string& Experiment::getName() const
 {
 	return _name;
 }

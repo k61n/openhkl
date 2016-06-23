@@ -1,3 +1,5 @@
+#include "ui_mainwindow.h"
+
 #include <memory>
 #include <stdexcept>
 #include <utility>
@@ -15,6 +17,7 @@
 #include <QString>
 #include <QtDebug>
 
+#include "BlobFinder.h"
 #include "DataReaderFactory.h"
 #include "Detector.h"
 #include "DialogExperiment.h"
@@ -37,6 +40,9 @@
 #include "Absorption/DialogMCAbsorption.h"
 #include "OpenGL/GLWidget.h"
 #include "OpenGL/GLSphere.h"
+#include "Logger.h"
+#include "ReciprocalSpaceViewer.h"
+#include "DetectorScene.h"
 
 ExperimentTree::ExperimentTree(QWidget *parent) : QTreeView(parent)
 {
@@ -192,14 +198,18 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
         {
             QMenu* menu = new QMenu(this);
             QAction* import=menu->addAction("Import");
+            QAction* findpeaks=menu->addAction("Peak finder");
+            QAction* rviewer=menu->addAction("Reciprocal space viewer");
             menu->popup(viewport()->mapToGlobal(point));
             connect(import,SIGNAL(triggered()),this,SLOT(importData()));
+            connect(findpeaks,&QAction::triggered,[=](){findPeaks(index);});
+            connect(rviewer,&QAction::triggered,[=](){viewReciprocalSpace(index);});
         }
         else if (dynamic_cast<PeakListItem*>(item))
         {
             QMenu* menu = new QMenu(this);
             QAction* abs=menu->addAction("Correct for Absorption"); // Absorption menu
-             QAction* scene3d=menu->addAction("Show 3D view"); // Peak in 3D OpenGL window
+            QAction* scene3d=menu->addAction("Show 3D view"); // Peak in 3D OpenGL window
             menu->popup(viewport()->mapToGlobal(point));
             // Call the slot
             connect(abs,SIGNAL(triggered()),this,SLOT(absorptionCorrection()));
@@ -223,7 +233,6 @@ void ExperimentTree::absorptionCorrection()
 
 void ExperimentTree::importData()
 {
-
     // Get the current item and check that is actually a Data item. Otherwise, return.
     QStandardItem* dataItem=_model->itemFromIndex(currentIndex());
     if (!dynamic_cast<DataItem*>(dataItem))
@@ -269,6 +278,211 @@ void ExperimentTree::importData()
         dataItem->appendRow(item);
 
     }
+
+}
+
+void ExperimentTree::findPeaks(const QModelIndex& index)
+{
+
+    MainWindow* main=dynamic_cast<MainWindow*>(QApplication::activeWindow());
+
+    auto ui=main->getUI();
+
+    ui->_dview->getScene()->clearPeaks();
+
+    QStandardItem* item=_model->itemFromIndex(index);
+
+    TreeItem* titem=dynamic_cast<TreeItem*>(item);
+    if (!titem)
+        return;
+
+    SX::Instrument::Experiment* expt(titem->getExperiment());
+
+    if (!expt)
+        return;
+
+    QStandardItem* ditem=_model->itemFromIndex(index);
+
+    std::vector<SX::Data::IData*> selectedNumors;
+    int nTotalNumors(_model->rowCount(ditem->index()));
+    selectedNumors.reserve(nTotalNumors);
+
+    for (auto i=0;i<nTotalNumors;++i)
+    {
+        if (ditem->child(i)->checkState() == Qt::Checked)
+        {
+            if (auto ptr = dynamic_cast<NumorItem*>(ditem->child(i)))
+                selectedNumors.push_back(ptr->getExperiment()->getData(ptr->text().toStdString()));
+        }
+    }
+
+    if (selectedNumors.empty())
+    {
+        qWarning()<<"No numors selected for finding peaks";
+        return;
+    }
+
+    DialogPeakFind* dialog= new DialogPeakFind();
+
+    dialog->setFixedSize(400,200);
+    if (!dialog->exec())
+        return;
+
+    // Get Confidence and threshold
+    double confidence=dialog->getConfidence();
+    double threshold=dialog->getThreshold();
+
+    int max=selectedNumors.size();
+    qWarning() << "Peak find algorithm: Searching peaks in " << max << " files";
+
+    QCoreApplication::processEvents();
+    ui->progressBar->setEnabled(true);
+    ui->progressBar->setMaximum(max);
+
+    std::size_t npeaks=0;
+    int comp = 0;
+
+    for (auto numor : selectedNumors)
+    {
+        numor->clearPeaks();
+        numor->readInMemory();
+        int median=numor->getBackgroundLevel()+1;
+
+        qDebug() << ">>>> the background level is " << median;
+        qDebug() << ">>>> finding blobs... ";
+
+        // Finding peaks
+        SX::Geometry::blob3DCollection blobs;
+        try
+        {
+            blobs=SX::Geometry::findBlobs3D(numor->begin(), numor->end(), median*threshold, 30, 10000, confidence);
+        }
+        catch(std::exception& e) // Warning if RAM error
+        {
+            qCritical() << "Peak finder caused a memory exception" << e.what();
+        }
+
+        qDebug() << ">>>> found blobs";
+
+        int ncells=numor->getDiffractometer()->getSample()->getNCrystals();
+        std::shared_ptr<SX::Crystal::UnitCell> cell;
+        if (ncells)
+            cell=numor->getDiffractometer()->getSample()->getUnitCell(0);
+
+        qDebug() << ">>>> iterating over blobs";
+
+        SX::Geometry::AABB<double,3> dAABB(Eigen::Vector3d(0,0,0),Eigen::Vector3d(numor->getDiffractometer()->getDetector()->getNCols(),numor->getDiffractometer()->getDetector()->getNRows(),numor->getNFrames()-1));
+        for (auto& blob : blobs)
+        {
+            Eigen::Vector3d center, eigenvalues;
+            Eigen::Matrix3d eigenvectors;
+            blob.second.toEllipsoid(confidence, center,eigenvalues,eigenvectors);
+            SX::Crystal::Peak3D* p = new Peak3D(numor);
+            p->setPeakShape(new SX::Geometry::Ellipsoid3D(center,eigenvalues,eigenvectors));
+            eigenvalues[0]*=2.0;
+            eigenvalues[1]*=2.0;
+            eigenvalues[2]*=3.0;
+            p->setBackgroundShape(new SX::Geometry::Ellipsoid3D(center,eigenvalues,eigenvectors));
+            //
+            int f=std::floor(center[2]);
+            p->setSampleState(new SX::Instrument::ComponentState(numor->getSampleInterpolatedState(f)));
+            ComponentState detState=numor->getDetectorInterpolatedState(f);
+            p->setDetectorEvent(new SX::Instrument::DetectorEvent(numor->getDiffractometer()->getDetector()->createDetectorEvent(center[0],center[1],detState.getValues())));
+            p->setSource(numor->getDiffractometer()->getSource());
+
+            if (!dAABB.contains(*(p->getPeak())))
+                p->setSelected(false);
+            if (cell)
+                p->setUnitCell(cell);
+            numor->addPeak(p);
+            npeaks++;
+        }
+
+        qDebug() << ">>>> integrating " << numor->getPeaks().size() << " peaks...";
+
+        qDebug() << ">>>>>>>> initializing peak intensities...";
+
+        for ( auto& peak: numor->getPeaks() )
+            peak->framewiseIntegrateBegin();
+
+        qDebug() << ">>>>>>>> iterating over data frames...";
+
+        int idx = 0;
+
+        for ( auto it = numor->begin(); it != numor->end(); ++it, ++idx) {
+            Eigen::MatrixXi& frame = *it;
+            for ( auto& peak: numor->getPeaks() ) {
+                peak->framewiseIntegrateStep(frame, idx);
+            }
+        }
+
+        qDebug() << ">>>>>>>> finalizing peak calculation....";
+
+        for ( auto& peak: numor->getPeaks() )
+            peak->framewiseIntegrateEnd();
+
+
+
+        numor->releaseMemory();
+        numor->close();
+        ui->progressBar->setValue(++comp);
+    }
+
+    qDebug() << "Found " << npeaks << " peaks";
+    // Reinitialise progress bar
+    ui->progressBar->setValue(0);
+    ui->progressBar->setEnabled(false);
+
+    ui->_dview->getScene()->updatePeaks();
+}
+
+void ExperimentTree::viewReciprocalSpace(const QModelIndex& index)
+{
+    QStandardItem* item=_model->itemFromIndex(index);
+
+    TreeItem* titem=dynamic_cast<TreeItem*>(item);
+    if (!titem)
+        return;
+
+    SX::Instrument::Experiment* expt(titem->getExperiment());
+
+    if (!expt)
+        return;
+
+    QStandardItem* ditem=_model->itemFromIndex(index);
+
+    std::vector<SX::Data::IData*> selectedNumors;
+    int nTotalNumors(_model->rowCount(ditem->index()));
+    selectedNumors.reserve(nTotalNumors);
+
+    for (auto i=0;i<nTotalNumors;++i)
+    {
+        if (ditem->child(i)->checkState() == Qt::Checked)
+        {
+            if (auto ptr = dynamic_cast<NumorItem*>(ditem->child(i)))
+                selectedNumors.push_back(ptr->getExperiment()->getData(ptr->text().toStdString()));
+        }
+    }
+
+    if (selectedNumors.empty())
+    {
+        qWarning()<<"No numor selected for reciprocal viewer";
+        return;
+    }
+
+    try
+    {
+        ReciprocalSpaceViewer* dialog = new ReciprocalSpaceViewer(expt);
+        dialog->setData(selectedNumors);
+        if (!dialog->exec())
+            return;
+    }
+    catch(std::exception& e)
+    {
+        qWarning()<<e.what();
+        return;
+    }
+
 
 }
 

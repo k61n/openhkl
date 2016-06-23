@@ -1,6 +1,7 @@
 #ifndef EXPERIMENTTREE_H
 #define EXPERIMENTTREE_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -43,6 +44,8 @@ public slots:
     void onCustomMenuRequested(const QPoint& point);
     void onDoubleClick(const QModelIndex& index);
     void importData();
+    void findPeaks(const QModelIndex& index);
+    void viewReciprocalSpace(const QModelIndex& index);
     void createNewExperiment();
     void onSingleClick(const QModelIndex& index);
     void absorptionCorrection();

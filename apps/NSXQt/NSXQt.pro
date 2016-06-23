@@ -106,7 +106,8 @@ SOURCES += src/Main.cpp \
     src/OpenGL/GLActor.cpp \
     src/OpenGL/GLSphere.cpp \
     src/OpenGL/GLReciprocalLattice.cpp \
-    src/LatticeIndexer.cpp
+    src/LatticeIndexer.cpp \
+    src/ReciprocalSpaceViewer.cpp
 
 HEADERS  += include/MainWindow.h \
     include/DialogPeakFind.h \
@@ -178,7 +179,8 @@ HEADERS  += include/MainWindow.h \
     include/OpenGL/GLActor.h \
     include/OpenGL/GLSphere.h \
     include/OpenGL/GLReciprocalLattice.h \
-    include/LatticeIndexer.h
+    include/LatticeIndexer.h \
+    include/ReciprocalSpaceViewer.h
 
 FORMS    += ui/mainwindow.ui \
     ui/dialog_PeakFind.ui \
@@ -200,4 +202,5 @@ FORMS    += ui/mainwindow.ui \
     ui/NumorsConversionDialog.ui \
     ui/Absorption/DialogMCAbsorption.ui \
     ui/Tree/PeakListPropertyWidget.ui \
-    ui/LatticeIndexer.ui
+    ui/LatticeIndexer.ui \
+    ui/ReciprocalSpaceViewer.ui

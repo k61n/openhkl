@@ -1379,7 +1379,6 @@ border-radius: 4px;
     <bool>false</bool>
    </attribute>
    <addaction name="action_open"/>
-   <addaction name="action_peak_find"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QDockWidget" name="loggerDockWidget">
@@ -1590,18 +1589,6 @@ QDockWidget::title {
    </property>
    <property name="toolTip">
     <string>Add experiment</string>
-   </property>
-  </action>
-  <action name="action_peak_find">
-   <property name="icon">
-    <iconset resource="../NSXQt.qrc">
-     <normaloff>:/resources/findPeakIcon.png</normaloff>:/resources/findPeakIcon.png</iconset>
-   </property>
-   <property name="text">
-    <string>Peak Find</string>
-   </property>
-   <property name="toolTip">
-    <string>Open Peak Find dialog</string>
    </property>
   </action>
   <action name="actionPixel_position">

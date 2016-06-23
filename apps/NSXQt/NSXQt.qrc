@@ -39,5 +39,6 @@
         <file>resources/detectorAspectRatioOnIcon.png</file>
         <file>resources/detectorAspectRatioOffIcon.png</file>
         <file>resources/slice3D.png</file>
+        <file>resources/reciprocal_space.png</file>
     </qresource>
 </RCC>
