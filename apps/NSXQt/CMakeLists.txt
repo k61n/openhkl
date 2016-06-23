@@ -21,9 +21,20 @@ find_package(Qt5Gui REQUIRED)
 find_package(OpenGL REQUIRED)
 
 # Find recursively all the header files of NSXQt
-file(GLOB_RECURSE nsxqt_headers ${CMAKE_SOURCE_DIR}/apps/NSXQt/include/*.h)                   
+file(GLOB_RECURSE nsxqt_headers
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/include/*.h
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/views/*.h
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/models/*.h
+  )
+
+include_directories(nsxqt_headers)
+
 # Find recursively all the cpp source files of NSXQt
-file(GLOB_RECURSE nsxqt_sources ${CMAKE_SOURCE_DIR}/apps/NSXQt/src/*.cpp)                   
+file(GLOB_RECURSE nsxqt_sources
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/src/*.cpp
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/views/*.cpp
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/models/*.cpp
+  )                   
 
 if (${CMAKE_VERSION} VERSION_LESS 2.8.11)
 

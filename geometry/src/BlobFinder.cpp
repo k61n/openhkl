@@ -219,8 +219,9 @@ blob3DCollection BlobFinder::find(int begin, int end)
 
         progress = static_cast<double>(frame) / static_cast<double>(end-begin) * 100.0;
 
-        if ( _progressCallback)
-            _progressCallback(progress);
+
+        if ( _progressHandler )
+            _progressHandler->setProgress(progress);
     }
 
     // too few frames for algorithm to be reliable
@@ -245,9 +246,9 @@ blob3DCollection BlobFinder::find(int begin, int end)
     return _blobs;
 }
 
-void BlobFinder::setProgressHandler(Utils::ProgressHandler callback)
+void BlobFinder::setProgressHandler(Utils::ProgressHandler* callback)
 {
-    _progressCallback = callback;
+    _progressHandler = callback;
 }
 
 void BlobFinder::setThreshold(double threshold)

@@ -130,6 +130,9 @@ if(CMAKE_COMPILER_IS_GNUCXX)
     -DEIGEN_FFTW_DEFAULT
     -fopenmp
     -pthread
+    -Wno-ignored-attributes # ignore annoying warnings caused by Eigen library
+    -Wno-misleading-indentation # ignore annoying warnings caused by Eigen library
+    -Wno-deprecated-declarations # ignore annoying warnings caused by Eigen library
     )
     set(CMAKE_CXX_FLAGS_RELEASE "-O2") 
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp ")
@@ -137,7 +140,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
   message("Configuring for build type 'Release'")
 elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
   message("Configuring for build type 'Debug'")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Og -g")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g")
 else()
   message("Warning: build type ${CMAKE_BUILD_TYPE} is unrecognized")
 endif()

@@ -1,0 +1,207 @@
+
+#include <vector>
+#include <memory>
+
+#include "IData.h"
+#include "Experiment.h"
+#include "Detector.h"
+#include "BlobFinder.h"
+#include "PeakFinder.h"
+#include "Types.h"
+#include "Convolver.h"
+#include "Sample.h"
+#include "IFrameIterator.h"
+
+
+
+using SX::Types::RealMatrix;
+using SX::Imaging::Convolver;
+using SX::Utils::ProgressHandler;
+
+namespace SX {
+
+namespace Data {
+
+PeakFinder::PeakFinder()
+{
+
+}
+
+
+void PeakFinder::find(std::vector<IData*> numors, double threshold, double confidence, int minComp, int maxComp, std::shared_ptr<Convolver> convolver)
+{
+    // needed to compile:
+    //double threshold, confidence;
+    //int minComp, maxComp;
+    //std::unique_ptr<Convolver> convolver(new Convolver);
+
+
+    //qWarning() << "Peak find algorithm: Searching peaks in " << numors.size() << " files";
+    //int max=numors.size();
+    int max = 100;
+
+    //QCoreApplication::processEvents();
+    //_ui->progressBar->setEnabled(true);
+    //_ui->progressBar->setMaximum(max);
+    //_ui->progressBar->setValue(0);
+
+    std::size_t npeaks=0;
+    int comp = 0;
+
+    //QProgressDialog progressDialog(this);
+
+
+    for (auto numor : numors)
+    {
+        numor->clearPeaks();
+        numor->readInMemory();
+
+        int median = 0;
+
+        try {
+            //progressDialog->setMaximum(100);
+            //progressDialog->setLabelText("Computing background level...");
+            //progressDialog->show();
+
+            ProgressHandler progress;
+            median = numor->getBackgroundLevel(&progress)+1;
+
+            //progressDialog->close();
+        }
+        catch (...) {
+            //qCritical() << "Error computing background level of dataset";
+            return;
+        }
+
+
+        //qDebug() << ">>>> the background level is " << median;
+        //qDebug() << ">>>> finding blobs... ";
+
+        // Finding peaks
+        SX::Geometry::blob3DCollection blobs;
+        try
+        {
+            //progressDialog->setLabelText("Finding blobs...");
+            //progressDialog->setValue(0);
+
+            SX::Geometry::BlobFinder blob_finder(numor);
+
+            ProgressHandler handler;
+
+            blob_finder.setProgressHandler(&handler);
+
+            blob_finder.setMedian(median);
+            blob_finder.setThreshold(threshold);
+            blob_finder.setMinComp(minComp);
+            blob_finder.setMaxComp(maxComp);
+            blob_finder.setConfidence(confidence);
+
+            // set image filter, if selected
+            if (convolver) {
+                auto callback = [&] (const RealMatrix& input) -> RealMatrix
+                {
+                    return convolver->apply(input);
+                };
+
+                blob_finder.setFilter(callback);
+            }
+
+
+            blobs = blob_finder.find(0, numor->getNFrames());
+            //blobs=SX::Geometry::findBlobs3D(numor->begin(), numor->end(), median*threshold, 30, 10000, confidence);
+        }
+        catch(std::exception& e) // Warning if error
+        {
+            //qCritical() << "Peak finder caused n exception" << e.what();
+        }
+
+        //qDebug() << ">>>> found blobs";
+
+        int ncells=numor->getDiffractometer()->getSample()->getNCrystals();
+        std::shared_ptr<SX::Crystal::UnitCell> cell;
+        if (ncells)
+            cell=numor->getDiffractometer()->getSample()->getUnitCell(0);
+
+        //qDebug() << ">>>> iterating over blobs";
+
+        SX::Geometry::AABB<double,3> dAABB(Eigen::Vector3d(0,0,0),Eigen::Vector3d(numor->getDiffractometer()->getDetector()->getNCols(),numor->getDiffractometer()->getDetector()->getNRows(),numor->getNFrames()-1));
+        for (auto& blob : blobs)
+        {
+            Eigen::Vector3d center, eigenvalues;
+            Eigen::Matrix3d eigenvectors;
+            blob.second.toEllipsoid(confidence, center,eigenvalues,eigenvectors);
+            SX::Crystal::Peak3D* p = new Peak3D(numor);
+            p->setPeakShape(new SX::Geometry::Ellipsoid3D(center,eigenvalues,eigenvectors));
+            eigenvalues[0]*=2.0;
+            eigenvalues[1]*=2.0;
+            eigenvalues[2]*=3.0;
+            p->setBackgroundShape(new SX::Geometry::Ellipsoid3D(center,eigenvalues,eigenvectors));
+            //
+            int f=std::floor(center[2]);
+            p->setSampleState(new SX::Instrument::ComponentState(numor->getSampleInterpolatedState(f)));
+            ComponentState detState=numor->getDetectorInterpolatedState(f);
+            p->setDetectorEvent(new SX::Instrument::DetectorEvent(numor->getDiffractometer()->getDetector()->createDetectorEvent(center[0],center[1],detState.getValues())));
+            p->setSource(numor->getDiffractometer()->getSource());
+
+            if (!dAABB.contains(*(p->getPeak())))
+                p->setSelected(false);
+            if (cell)
+                p->setUnitCell(cell);
+            numor->addPeak(p);
+            npeaks++;
+        }
+
+        //qDebug() << ">>>> integrating " << numor->getPeaks().size() << " peaks...";
+
+        int peak_counter = 0;
+
+        //qDebug() << ">>>>>>>> initializing peak intensities...";
+
+        for ( auto& peak: numor->getPeaks() )
+            peak->framewiseIntegrateBegin();
+
+        //qDebug() << ">>>>>>>> iterating over data frames...";
+
+        //progressDialog->setValue(0);
+        //progressDialog->setLabelText("Integrating peak intensities...");
+
+        int idx = 0;
+
+        for ( auto it = numor->getIterator(0); it->index() != numor->getNFrames(); it->advance(), ++idx) {
+            Eigen::MatrixXi frame = it->getFrame().cast<int>();
+            for ( auto& peak: numor->getPeaks() ) {
+                peak->framewiseIntegrateStep(frame, idx);
+            }
+            //double progress = it->index() / static_cast<double>(numor->getNFrames()) * 100.0;
+            //progressDialog->setValue(static_cast<int>(progress));
+            //processEvents();
+        }
+
+        //qDebug() << ">>>>>>>> finalizing peak calculation....";
+
+        for ( auto& peak: numor->getPeaks() )
+            peak->framewiseIntegrateEnd();
+
+
+        //progressDialog->close();
+
+        numor->releaseMemory();
+        numor->close();
+        //_ui->progressBar->setValue(++comp);
+    }
+
+    //qDebug() << "Found " << npeaks << " peaks";
+    // Reinitialise progress bar
+    //_ui->progressBar->setValue(0);
+    //_ui->progressBar->setEnabled(false);
+
+    //_ui->_dview->getScene()->updatePeaks();
+
+
+}
+
+} // namespace Data
+
+} // namespace SX
+
+

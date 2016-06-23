@@ -6,34 +6,30 @@
 
 #include "IData.h"
 #include "IFrameIterator.h"
+#include "Types.h"
+
+#include <future>
 
 namespace SX {
 
 namespace Data {
-/*
-class ThreadedFrameIterator {
-public:
-    ThreadedFrameIterator(IData* parent, int idx=0, std::launch policy=std::launch::async);
-    ThreadedFrameIterator(const ThreadedFrameIterator& other);
 
-    ThreadedFrameIterator& operator++();
+class ThreadedFrameIterator: public IFrameIterator {
+public: 
+    ThreadedFrameIterator(IData* data, int idx);
+    ~ThreadedFrameIterator();
 
-    bool operator!=(const ThreadedFrameIterator& other) const;
-    bool operator==(const ThreadedFrameIterator& other) const;
-
-    Eigen::MatrixXi& operator*();
-    Eigen::MatrixXi* operator->();
+    SX::Types::RealMatrix& getFrame() override;
+    void advance() override;
 
 private:
-    std::shared_future<Eigen::MatrixXi> getFrame(int idx);
+    SX::Types::RealMatrix _currentFrame;
+    std::shared_future<SX::Types::RealMatrix> _nextFrame;
 
-    int _currentFrame;
-    IData* _parent;
-    Eigen::MatrixXi _currentData;
-    std::shared_future<Eigen::MatrixXi> _nextData;
-    std::launch _launchPolicy;
+
+    std::shared_future<SX::Types::RealMatrix> getFrameAsync(int idx);
 };
-*/
+
 } // Data
 
 } // SX

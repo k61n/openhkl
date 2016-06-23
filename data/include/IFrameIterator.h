@@ -16,12 +16,18 @@ class IData;
 
 class IFrameIterator {
 public:
-    IFrameIterator(IData* data, int idx) {};
+    IFrameIterator(IData* data, int idx): _index(idx), _data(data) {};
     virtual ~IFrameIterator() {};
+
+    int index() {return _index;}
 
     virtual SX::Types::RealMatrix& getFrame() = 0;
     virtual void advance() = 0;
-    virtual int index() = 0;
+
+
+protected:
+    int _index;
+    IData* _data;
 };
 
 } // namespace Data

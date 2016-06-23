@@ -20,6 +20,7 @@
 
 #include "IFrameIterator.h"
 #include "BasicFrameIterator.h"
+#include "ThreadedFrameIterator.h"
 
 namespace SX
 {
@@ -60,7 +61,8 @@ std::unique_ptr<IFrameIterator> IData::getIterator(int idx)
     // use default frame iterator if one hasn't been set
     if ( !_iteratorCallback) {
         _iteratorCallback = [] (IData* data, int index) {
-            return new BasicFrameIterator(data, index);
+            //return new BasicFrameIterator(data, index);
+            return new ThreadedFrameIterator(data, index);
         };
     }
 
@@ -624,7 +626,7 @@ void IData::readInMemory()
     _inMemory = true;
 }
 
-double IData::getBackgroundLevel(SX::Utils::ProgressHandler progressCallback)
+double IData::getBackgroundLevel(SX::Utils::ProgressHandler* progressCallback)
 {
     if ( _background > 0.0 )
         return _background;
@@ -640,10 +642,13 @@ double IData::getBackgroundLevel(SX::Utils::ProgressHandler progressCallback)
 
         if ( progressCallback ) {
             double progress = 100.0 * it->index() / static_cast<double>(_nFrames);
-            progressCallback(progress);
+            progressCallback->setProgress(progress);
         }
         
     }
+
+    if ( progressCallback )
+        progressCallback->setProgress(100);
 
     return _background;
 }

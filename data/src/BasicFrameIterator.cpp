@@ -14,8 +14,6 @@ namespace Data {
 
 BasicFrameIterator::BasicFrameIterator(IData *data, int idx): IFrameIterator(data, idx)
 {
-    _data = data;
-    _index = idx;
     _currentFrame = _data->getFrame(_index).cast<double>();
 }
 
@@ -35,11 +33,6 @@ void BasicFrameIterator::advance()
 
     if (_index != _data->getNFrames())
         _currentFrame = _data->getFrame(_index).cast<double>();
-}
-
-int BasicFrameIterator::index()
-{
-    return _index;
 }
 
 

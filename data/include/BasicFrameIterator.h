@@ -19,11 +19,9 @@ public:
 
     SX::Types::RealMatrix& getFrame() override;
     void advance() override;
-    int index() override;
+
 
 private:
-    int _index;
-    IData* _data;
     SX::Types::RealMatrix _currentFrame;
 
 };

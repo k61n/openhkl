@@ -63,6 +63,8 @@
 #include "IFrameIterator.h"
 #include "Types.h"
 
+#include "PeakFinder.h"
+
 // jmf debug testing
 #include <functional>
 extern std::function<void(void)> processEvents;
@@ -125,11 +127,14 @@ MainWindow::MainWindow(QWidget *parent)
     connect(_ui->experimentTree,SIGNAL(inspectWidget(QWidget*)),this,SLOT(setInspectorWidget(QWidget*)));
 
     qDebug() << "The resources directory is " << SX::Utils::Path().getResourcesDir().c_str();
+
+    _progressView = new ProgressView();
 }
 
 MainWindow::~MainWindow()
 {
     delete _ui;
+    delete _progressView;
 }
 
 void MainWindow::changeData(IData* data)
@@ -187,7 +192,6 @@ void MainWindow::plotPeak(SX::Crystal::Peak3D* peak)
 
 void MainWindow::on_action_peak_find_triggered()
 {
-
     _ui->_dview->getScene()->clearPeaks();
 
     std::vector<IData*> numors = _ui->experimentTree->getSelectedNumors();
@@ -214,11 +218,16 @@ void MainWindow::on_action_peak_find_triggered()
     int minComp = dialog->getMinComponents();
     int maxComp = dialog->getMaxComponents();
 
-
-
     // get convolver
     auto convolver = dialog->getConvolver();
 
+    SX::Data::PeakFinder peakFinder;
+
+    peakFinder.find(numors, threshold, confidence, minComp, maxComp, convolver);
+}
+/*
+void MainWindow::findPeaks()
+{
 
 
 
@@ -226,13 +235,15 @@ void MainWindow::on_action_peak_find_triggered()
     //int max=numors.size();
     int max = 100;
 
-    QCoreApplication::processEvents();
+    //QCoreApplication::processEvents();
     _ui->progressBar->setEnabled(true);
     _ui->progressBar->setMaximum(max);
     _ui->progressBar->setValue(0);
 
     std::size_t npeaks=0;
     int comp = 0;
+
+    //QProgressDialog progressDialog(this);
 
 
     for (auto numor : numors)
@@ -243,24 +254,19 @@ void MainWindow::on_action_peak_find_triggered()
         int median = 0;
 
         try {
-            QProgressDialog progressDialog(this);
-
-            progressDialog.setMaximum(100);
-            progressDialog.setLabelText("Computing background level...");
-            progressDialog.show();
+            progressDialog->setMaximum(100);
+            progressDialog->setLabelText("Computing background level...");
+            progressDialog->show();
 
             auto callback = [&] (double progress) -> void
             {
-                progressDialog.setValue(static_cast<int>(progress));
-                processEvents();
+                progressDialog->setValue(static_cast<int>(progress));
+                //processEvents();
             };
-
-
 
             median = numor->getBackgroundLevel(callback)+1;
 
-
-            progressDialog.close();
+            //progressDialog->close();
         }
         catch (...) {
             qCritical() << "Error computing background level of dataset";
@@ -275,13 +281,16 @@ void MainWindow::on_action_peak_find_triggered()
         SX::Geometry::blob3DCollection blobs;
         try
         {
+            progressDialog->setLabelText("Finding blobs...");
+            progressDialog->setValue(0);
+
             SX::Geometry::BlobFinder blob_finder(numor);
 
             blob_finder.setProgressHandler(
                 [&] (double progress) -> void
                 {
-                    _ui->progressBar->setValue(progress*max);
-                    if ( processEvents ) processEvents();
+                    progressDialog->setValue(static_cast<int>(progress));
+                    //if ( processEvents ) processEvents();
                 }
             );
 
@@ -302,12 +311,12 @@ void MainWindow::on_action_peak_find_triggered()
             }
 
 
-            blobs = blob_finder.find(0, numor->getNFrames()+1);
+            blobs = blob_finder.find(0, numor->getNFrames());
             //blobs=SX::Geometry::findBlobs3D(numor->begin(), numor->end(), median*threshold, 30, 10000, confidence);
         }
-        catch(std::exception& e) // Warning if RAM error
+        catch(std::exception& e) // Warning if error
         {
-            qCritical() << "Peak finder caused a memory exception" << e.what();
+            qCritical() << "Peak finder caused n exception" << e.what();
         }
 
         qDebug() << ">>>> found blobs";
@@ -357,6 +366,9 @@ void MainWindow::on_action_peak_find_triggered()
 
         qDebug() << ">>>>>>>> iterating over data frames...";
 
+        progressDialog->setValue(0);
+        progressDialog->setLabelText("Integrating peak intensities...");
+
         int idx = 0;
 
         for ( auto it = numor->getIterator(0); it->index() != numor->getNFrames(); it->advance(), ++idx) {
@@ -364,6 +376,9 @@ void MainWindow::on_action_peak_find_triggered()
             for ( auto& peak: numor->getPeaks() ) {
                 peak->framewiseIntegrateStep(frame, idx);
             }
+            double progress = it->index() / static_cast<double>(numor->getNFrames()) * 100.0;
+            progressDialog->setValue(static_cast<int>(progress));
+            //processEvents();
         }
 
         qDebug() << ">>>>>>>> finalizing peak calculation....";
@@ -372,6 +387,7 @@ void MainWindow::on_action_peak_find_triggered()
             peak->framewiseIntegrateEnd();
 
         
+        progressDialog->close();
         
         numor->releaseMemory();
         numor->close();
@@ -387,6 +403,7 @@ void MainWindow::on_action_peak_find_triggered()
 
 
 }
+/**/
 
 void MainWindow::on_actionPixel_position_triggered()
 {

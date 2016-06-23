@@ -85,10 +85,13 @@ public:
 	 *  @param inMemory: whether the file should be loaded in memory straight away or kept on disk
 	 */
 	IData(const std::string& filename, std::shared_ptr<Diffractometer> instrument);
+
 	//! Copy constructor
 	IData(const IData& other) = default;
+
 	//! Destructor
 	virtual ~IData()=0;
+
 	// Operators
 	//! Assignment operator
 	IData& operator=(const IData& other);
@@ -101,83 +104,112 @@ public:
 
     //! Gets the data basename
 	std::string getBasename() const;
+
     //! Gets the data filename
 	const std::string& getFilename() const;
-	//! Gets a shared pointer to the diffractometer used to collect the data
+
+    //! Gets a shared pointer to the diffractometer used to collect the data
 	std::shared_ptr<Diffractometer> getDiffractometer() const;
-	//! Return the number of frames
+
+    //! Return the number of frames
 	std::size_t getNFrames() const;
 	std::size_t getNRows() const;
 	std::size_t getNCols() const;
-	//! Gets a reference to the metadata of the data
+
+    //! Gets a reference to the metadata of the data
 	MetaData*  getMetadata() const;
-	//! Return the peaks
+
+    //! Return the peaks
 	std::set<Peak3D*>& getPeaks();
 
     //! Gets the interpolated state between two consecutive detector states
     ComponentState getDetectorInterpolatedState(double frame);
-	//! Gets the the detector states.
+
+    //! Gets the the detector states.
     const ComponentState& getDetectorState(unsigned int frame) const;
-	//! Gets the the detector states.
+
+    //! Gets the the detector states.
 	const std::vector<ComponentState>& getDetectorStates() const;
 
 	//! Get the sample state for frame
 	const ComponentState& getSampleState(unsigned int frame) const;
+
     //! Gets the interpolated state between two consecutive sample states
     ComponentState getSampleInterpolatedState(double frame);
-	//! Gets the the sample states.
+
+    //! Gets the the sample states.
 	const std::vector<ComponentState>& getSampleStates() const;
 
 	//! Get the source state for frame
 	const ComponentState& getSourceState(unsigned int frame) const;
+
     //! Gets the interpolated state between two consecutive source states
     ComponentState getSourceInterpolatedState(double frame);
-	//! Gets the the source states.
+
+    //! Gets the the source states.
 	const std::vector<ComponentState>& getSourceStates() const;
 
 	//! Add a new mask to the data
 	void addMask(AABB<double,3>* mask);
-	//! Add a new peak to the data
+
+    //! Add a new peak to the data
 	void addPeak(Peak3D* peak);
-	//! Remove a mask from the data
+
+    //! Remove a mask from the data
 	void removeMask(AABB<double,3>* mask);
-	//! Remove a peak from the data
+
+    //! Remove a peak from the data
 	bool removePeak(Peak3D* peak);
-	//! Clear the peaks collected for this data
+
+    //! Clear the peaks collected for this data
 	void clearPeaks();
-	//! Return true if the file is stored in memory
+
+    //! Return true if the file is stored in memory
 	bool isInMemory() const;
-	 //! Load all the frames in memory
+
+    //! Load all the frames in memory
 	void readInMemory();
-  // Release the data from memory
+
+    //! Release the data from memory
 	void releaseMemory();
-	//! Return true if a given point (in detector space) belong to a mask
+
+    //! Return true if a given point (in detector space) belong to a mask
 	bool inMasked(const Eigen::Vector3d& point) const;
-	//! Mask the peaks collected in the data with the masks defined up to now
+
+    //! Mask the peaks collected in the data with the masks defined up to now
 	void maskPeaks() const;
-	//! Mask a given peak
+
+    //! Mask a given peak
 	void maskPeak(Peak3D* peak) const;
-	//! Return the intensity at point x,y,z.
+
+    //! Return the intensity at point x,y,z.
 	int dataAt(unsigned int x=0, unsigned int y=0, unsigned int z=0);
+
     //! Read a given Frame of the data
     Eigen::MatrixXi getFrame(std::size_t i);
+
     //! Read a single frame
     virtual Eigen::MatrixXi readFrame(std::size_t idx)=0;
+
     //! Get the file handle. Necessary to call before readInMemory or any IO of data.
     virtual void open()=0;
+
     //! Close file and release handle
     virtual void close()=0;
+
     //! True if file is open
     bool isOpened() const;
+
     //!
     std::size_t getFileSize() const;//
     void saveHDF5(const std::string& filename) const;
+
     //! Is the peak h,k,l in Bragg condition in this dataset. Return Peak pointer if true,
     //! otherwise nullptr.
     std::vector<PeakCalc> hasPeaks(const std::vector<Eigen::Vector3d>& hkls,const Eigen::Matrix3d& BU);
 
     //! Get background
-    double getBackgroundLevel(SX::Utils::ProgressHandler progressCallbak = nullptr);
+    double getBackgroundLevel(SX::Utils::ProgressHandler* progress);
 
 protected:
     bool _isOpened;

@@ -15,6 +15,10 @@
 #include "Experiment.h"
 #include "Logger.h"
 
+#include "JobHandler.h"
+
+#include "ProgressView.h"
+
 class QListWidgetItem;
 class PlottableGraphicsItem;
 
@@ -35,6 +39,8 @@ namespace SX
     }
 }
 
+class QProgressDialog;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -43,45 +49,30 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    void findPeaks();
+
 signals:
     void plotDetectorData(SX::Data::IData*,int frame);
 private slots:
 //    void on_action_open_triggered();
 
     void on_action_peak_find_triggered();
-
     void on_actionPixel_position_triggered();
-
     void on_actionGamma_Nu_triggered();
-
     void on_action2_Theta_triggered();
-
     void on_actionD_spacing_triggered();
-
     void on_actionLogger_triggered();
-
     void on_action1D_Peak_Ploter_triggered();
-
     void updatePlot(PlottableGraphicsItem* cutter);
-
     void on_actionFrom_Sample_triggered();
-
     void on_actionBehind_Detector_triggered();
-
     void on_actionShow_labels_triggered(bool checked);
-
     void on_action_display_isotopes_database_triggered();
-
     void on_action_add_element_triggered();
-
     void on_actionConvert_to_HDF5_triggered();
-
     void on_actionH_k_l_triggered();
-
     void on_actionShow_calculated_peak_positions_triggered(bool checked);
-
     void on_checkBox_AspectRatio_toggled(bool checked);
-
     void on_actionConvolution_Filter_triggered();
 
 public slots:
@@ -94,6 +85,7 @@ private:
     Ui::MainWindow* _ui;
     std::unordered_map<std::string,SX::Instrument::Experiment> _experiments;
     SX::Data::IData* _currentData;
+    ProgressView* _progressView;
 
 };
 

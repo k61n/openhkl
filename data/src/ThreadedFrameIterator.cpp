@@ -1,97 +1,69 @@
 #include "IFrameIterator.h"
 #include "ThreadedFrameIterator.h"
+#include "IData.h"
+
+#include <future>
+
 
 
 namespace SX {
 
 namespace Data {
- /*
 
-ThreadedFrameIterator::ThreadedFrameIterator(IData* parent, int idx, std::launch policy)
-    :_currentFrame(idx),
-     _parent(parent),
-     _currentData(),
-     _nextData(),
-     _launchPolicy(policy)
+
+
+ThreadedFrameIterator::ThreadedFrameIterator(IData* data, int idx)
+    :IFrameIterator(data, idx),
+     _currentFrame(),
+     _nextFrame()
 {
-    if (_currentFrame < _parent->_nFrames)
-        _currentData = _parent->getFrame(_currentFrame);
+    std::launch policy = std::launch::async;
+    int nframes = _data->getNFrames();
 
-    if ( _currentFrame+1 < _parent->_nFrames )
-        _nextData = getFrame(_currentFrame+1);
+    if (_index < nframes)
+        _currentFrame = _data->getFrame(_index).cast<double>();
+
+    if ( _index+1 < nframes )
+        _nextFrame = getFrameAsync(_index+1);
 }
 
-ThreadedFrameIterator::ThreadedFrameIterator(const IData::ThreadedFrameIterator& other)
-    :_currentFrame(other._currentFrame),
-     _parent(other._parent),
-     _currentData(other._currentData),
-     _nextData(other._nextData),
-     _launchPolicy(other._launchPolicy)
+ThreadedFrameIterator::~ThreadedFrameIterator()
 {
+
 }
 
-IData::ThreadedFrameIterator& IData::ThreadedFrameIterator::operator++()
+Types::RealMatrix &ThreadedFrameIterator::getFrame()
 {
-    assert(_currentFrame != _parent->_nFrames);
-
-    ++_currentFrame;
-
-    if ( _currentFrame < _parent->_nFrames) {
-        _currentData = _nextData.get();
-        _nextData = getFrame(_currentFrame);
-    }
-
-    return *this;
-}
-
-std::shared_future<Eigen::MatrixXi> IData::ThreadedFrameIterator::getFrame(int idx)
-{
-    return std::shared_future<Eigen::MatrixXi>(std::async(_launchPolicy, [=]{return _parent->getFrame(idx);}));
-}
-
-Eigen::MatrixXi& IData::ThreadedFrameIterator::operator*()
-{
-    return _currentData;
-}
-
-Eigen::MatrixXi* IData::ThreadedFrameIterator::operator->()
-{
-    return &_currentData;
-}
-
-bool IData::ThreadedFrameIterator::operator!=(const IData::ThreadedFrameIterator& other) const
-{
-    if (_parent != other._parent)
-        return true;
-
-    if ( _currentFrame != other._currentFrame)
-        return true;
-
-    return false;
-}
-
-bool IData::ThreadedFrameIterator::operator==(const IData::ThreadedFrameIterator& other) const
-{
-    return !(*this != other);
+    assert(_index < _data->getNFrames() );
+    return _currentFrame;
 }
 
 
-ThreadedFrameIterator IData::begin()
+void ThreadedFrameIterator::advance()
 {
-    return at(0);
+    int nframes = _data->getNFrames();
+    ++_index;
+
+    if (_index < nframes)
+        _currentFrame = _nextFrame.get();
+
+    if (_index+1 < nframes)
+        _nextFrame = getFrameAsync(_index+1);
 }
 
-ThreadedFrameIterator IData::end()
+std::shared_future<SX::Types::RealMatrix> ThreadedFrameIterator::getFrameAsync(int idx)
 {
-    return at(_nFrames);
+    std::launch policy = std::launch::async;
+
+    auto get_fn = [=] () -> SX::Types::RealMatrix
+    {
+        return _data->getFrame(idx).cast<double>();
+    };
+
+    return std::shared_future<SX::Types::RealMatrix>(std::async(policy, get_fn));
 }
 
-ThreadedFrameIterator IData::at(int idx)
-{
-    return ThreadedFrameIterator(this, idx, _inMemory ? std::launch::deferred : std::launch::async);
-}
-
-*/
+/**/
 
 } // namespace Data
 

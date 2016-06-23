@@ -97,7 +97,7 @@ public:
     //void mergeBlobs();
 
     //! sets progress handler callback function
-    void setProgressHandler(SX::Utils::ProgressHandler callback);
+    void setProgressHandler(SX::Utils::ProgressHandler* handler);
 
     void setThreshold(double threshold);
 
@@ -132,7 +132,7 @@ private:
 
     SX::Data::IData* _data;
     FilterCallback _filterCallback;
-    SX::Utils::ProgressHandler _progressCallback;
+    SX::Utils::ProgressHandler* _progressHandler;
 
     int _nrows, _ncols, _nframes;
 
