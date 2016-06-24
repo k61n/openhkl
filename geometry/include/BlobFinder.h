@@ -84,6 +84,8 @@ public:
 
     blob3DCollection find(int begin, int end);
 
+    void findBlobs(int begin, int end);
+
     void registerEquivalence(int a, int b, vipairs& equivalences);
 
     static bool sortEquivalences(const ipair& pa, const ipair& pb);
@@ -97,7 +99,7 @@ public:
     //void mergeBlobs();
 
     //! sets progress handler callback function
-    void setProgressHandler(SX::Utils::ProgressHandler* handler);
+    void setProgressHandler(std::shared_ptr<SX::Utils::ProgressHandler> handler);
 
     void setThreshold(double threshold);
 
@@ -120,6 +122,7 @@ public:
     void mergeBlobs();
 
 
+    void eliminateBlobs();
 private:
     double _threshold;
     double _confidence;
@@ -132,7 +135,7 @@ private:
 
     SX::Data::IData* _data;
     FilterCallback _filterCallback;
-    SX::Utils::ProgressHandler* _progressHandler;
+    std::shared_ptr<SX::Utils::ProgressHandler> _progressHandler;
 
     int _nrows, _ncols, _nframes;
 

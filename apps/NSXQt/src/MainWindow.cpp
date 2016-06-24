@@ -64,6 +64,7 @@
 #include "Types.h"
 
 #include "PeakFinder.h"
+#include "ProgressHandler.h"
 
 // jmf debug testing
 #include <functional>
@@ -71,8 +72,9 @@ extern std::function<void(void)> processEvents;
 
 using namespace SX::Units;
 using namespace SX::Instrument;
-
 using SX::Types::RealMatrix;
+using SX::Utils::ProgressHandler;
+using SX::Data::PeakFinder;
 
 MainWindow::MainWindow(QWidget *parent)
 : QMainWindow(parent),
@@ -128,13 +130,15 @@ MainWindow::MainWindow(QWidget *parent)
 
     qDebug() << "The resources directory is " << SX::Utils::Path().getResourcesDir().c_str();
 
-    _progressView = new ProgressView();
+    _progressView = std::shared_ptr<ProgressView>(new ProgressView());
+    _progressHandler = std::shared_ptr<ProgressHandler>(new ProgressHandler());
+
+    _peakFinder = std::unique_ptr<PeakFinder>(new PeakFinder());
 }
 
 MainWindow::~MainWindow()
 {
     delete _ui;
-    delete _progressView;
 }
 
 void MainWindow::changeData(IData* data)
@@ -221,9 +225,16 @@ void MainWindow::on_action_peak_find_triggered()
     // get convolver
     auto convolver = dialog->getConvolver();
 
-    SX::Data::PeakFinder peakFinder;
+    _peakFinder->setHandler(_progressHandler);
+    _progressView->watch(_progressHandler);
 
-    peakFinder.find(numors, threshold, confidence, minComp, maxComp, convolver);
+    auto find_fn = [=] () -> void
+    {
+        _peakFinder->find(numors, threshold, confidence, minComp, maxComp, convolver);
+    };
+
+    std::thread thr(find_fn);
+    thr.detach();
 }
 /*
 void MainWindow::findPeaks()

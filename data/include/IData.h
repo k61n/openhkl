@@ -209,7 +209,7 @@ public:
     std::vector<PeakCalc> hasPeaks(const std::vector<Eigen::Vector3d>& hkls,const Eigen::Matrix3d& BU);
 
     //! Get background
-    double getBackgroundLevel(SX::Utils::ProgressHandler* progress);
+    double getBackgroundLevel(std::shared_ptr<SX::Utils::ProgressHandler> progress);
 
 protected:
     bool _isOpened;

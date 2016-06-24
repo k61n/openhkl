@@ -51,6 +51,39 @@ void BlobFinder::reassignEquivalences(imap& equivalences)
     }
 }
 
+
+void BlobFinder::eliminateBlobs()
+{
+    // update progress handler
+    if ( _progressHandler ) {
+        _progressHandler->setStatus("Eliminating blobs which are too small or too large...");
+        _progressHandler->setProgress(0);
+    }
+
+    double total_dist = std::distance(_blobs.begin(), _blobs.end());
+
+    for (auto it = _blobs.begin(); it != _blobs.end();)
+    {
+        Blob3D& p=it->second;
+        if (p.getComponents() < _minComp || p.getComponents() > _maxComp)
+            it = _blobs.erase(it);
+        else
+            it++;
+
+        // update progress handler
+        double current_dist = std::distance(it, _blobs.end());
+
+        int progress = static_cast<int>( 100.0 - 100.0*(total_dist-current_dist) / total_dist);
+
+        // only update infrequently, since there could be thousands of blobs
+        if ( progress%5 == 0 && _progressHandler)
+            _progressHandler->setProgress(progress);
+    }
+
+    if ( _progressHandler )
+        _progressHandler->setProgress(100);
+}
+
     /*
      * blob finding stages:
      *
@@ -64,9 +97,39 @@ void BlobFinder::reassignEquivalences(imap& equivalences)
      *
      */
     // the typename matrix_iterator_t should be a forward iterator of type Eigen::Matrix
-
 blob3DCollection BlobFinder::find(int begin, int end)
 {
+    // find all blobs, possibly with multiple labels
+    findBlobs(begin, end);
+
+    // merge adjacent blobs
+    mergeBlobs();
+
+    // remove blobs which are too small or too large
+    eliminateBlobs();
+
+    // determine which additional blobs should be merged due to collisions / intersection
+    findCollisions();
+
+    // merge the remaining blobs
+    mergeBlobs();
+
+    if (_progressHandler) {
+        _progressHandler->setStatus("Blob finding complete.");
+        _progressHandler->setProgress(100);
+    }
+
+    return _blobs;
+}
+
+void BlobFinder::findBlobs(int begin, int end)
+{
+    // update via handler if necessary
+    if ( _progressHandler ) {
+        _progressHandler->setStatus("Finding blobs...");
+        _progressHandler->setProgress(0);
+    }
+
     // used to pass to progress handler
     double progress = 0.0;
 
@@ -219,34 +282,20 @@ blob3DCollection BlobFinder::find(int begin, int end)
 
         progress = static_cast<double>(frame) / static_cast<double>(end-begin) * 100.0;
 
-
         if ( _progressHandler )
             _progressHandler->setProgress(progress);
     }
+
+    if (_progressHandler)
+        _progressHandler->setProgress(100);
 
     // too few frames for algorithm to be reliable
     if (_nframes<=1)
         throw std::runtime_error("Third dimension should be at least 2 to run this algorithm. if 1, use 2D version");
 
-    mergeBlobs();
-
-    for (auto it = _blobs.begin(); it != _blobs.end();)
-    {
-        Blob3D& p=it->second;
-        if (p.getComponents() < _minComp || p.getComponents() > _maxComp)
-            it = _blobs.erase(it);
-        else
-            it++;
-    }
-
-    findCollisions();
-
-    mergeBlobs();
-
-    return _blobs;
 }
 
-void BlobFinder::setProgressHandler(Utils::ProgressHandler* callback)
+void BlobFinder::setProgressHandler(std::shared_ptr<Utils::ProgressHandler> callback)
 {
     _progressHandler = callback;
 }
@@ -283,12 +332,21 @@ void BlobFinder::setRelative(bool isRelative)
 
 void BlobFinder::findCollisions()
 {
+    // update progress handler
+    if (_progressHandler) {
+        _progressHandler->setStatus("Finding blob collisions...");
+        _progressHandler->setProgress(0);
+    }
+
     // Determine the AABB of the blobs
     shape3Dmap boxes;
     boxes.reserve(_blobs.size());
 
     Eigen::Vector3d center,extents;
     Eigen::Matrix3d axis;
+
+    double total_dist = std::distance(_blobs.begin(), _blobs.end());
+
 
     for (auto it = _blobs.begin(); it != _blobs.end();)
     {
@@ -302,6 +360,15 @@ void BlobFinder::findCollisions()
             boxes.insert(shape3Dmap::value_type(new Ellipsoid3D(center,extents,axis),it->first));
             it++;
         }
+
+        // update progress handler
+        double current_dist = std::distance(it, _blobs.end());
+
+        int progress = static_cast<int>( 50.0 - 50.0*(total_dist-current_dist) / total_dist);
+
+        // only update infrequently, since there could be thousands of blobs
+        if ( progress%5 == 0 && _progressHandler)
+            _progressHandler->setProgress(progress);
     }
 
     Octree oct({0.0,0.0,0.0},{double(_ncols),double(_nrows),double(_nframes)});
@@ -318,6 +385,9 @@ void BlobFinder::findCollisions()
     // Clear the equivalence vectors for reuse purpose
     _equivalences.clear();
 
+    // get total distance for progress tracking
+    total_dist = std::distance(collisions.begin(), collisions.end());
+
     for (auto it = collisions.begin(); it != collisions.end(); ++it)
     {
         if (it->first->collide(*(it->second)))
@@ -326,7 +396,20 @@ void BlobFinder::findCollisions()
             auto bit2 = boxes.find(it->second);
             registerEquivalence(bit1->second, bit2->second, _equivalences);
         }
+
+        // update progress handler
+        double current_dist = std::distance(it, collisions.end());
+
+        int progress = static_cast<int>( 100.0 - 50.0*(total_dist-current_dist) / total_dist);
+
+        // only update infrequently, since there could be thousands of blobs
+        if ( progress%5 == 0 && _progressHandler)
+            _progressHandler->setProgress(progress);
     }
+
+    // calculation complete
+    if ( _progressHandler )
+        _progressHandler->setProgress(100);
 }
 
 void BlobFinder::setFilter(BlobFinder::FilterCallback callback)
@@ -342,17 +425,24 @@ BlobFinder::BlobFinder(SX::Data::IData* data)
 }
 
 
-
 void BlobFinder::mergeBlobs()
 {
+    // initialize progress handler if necessary
+    if (_progressHandler) {
+        _progressHandler->setStatus("Merging blobs...");
+        _progressHandler->setProgress(0);
+    }
 
-    // Sort the equivalences pair by ascending order of the first element and if equal by ascending order of their second element.
+    // Sort the equivalences pair by ascending order of the first element
+    // and if equal by ascending order of their second element.
     std::sort(_equivalences.begin(), _equivalences.end(), sortEquivalences);
 
     // Remove the duplicate pairs
     imap mequiv = removeDuplicates(_equivalences);
 
     reassignEquivalences(mequiv);
+
+    double total_dist = std::distance(_blobs.begin(), _blobs.end());
 
     // Iterate on blobs and merge equivalences
     for (auto it = _blobs.begin(); it != _blobs.end();)
@@ -373,7 +463,20 @@ void BlobFinder::mergeBlobs()
                 it = _blobs.erase(it);
             }
         }
+
+        // update progress handler
+        double current_dist = std::distance(it, _blobs.end());
+
+        int progress = static_cast<int>( 100.0 - 100.0*(total_dist-current_dist) / total_dist);
+
+        // only update infrequently, since there could be thousands of blobs
+        if ( progress%5 == 0 && _progressHandler)
+            _progressHandler->setProgress(progress);
     }
+
+    // finalize update handler
+    if ( _progressHandler )
+        _progressHandler->setProgress(100);
 }
 
 } // namespace Geometry

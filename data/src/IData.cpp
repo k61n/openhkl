@@ -626,13 +626,18 @@ void IData::readInMemory()
     _inMemory = true;
 }
 
-double IData::getBackgroundLevel(SX::Utils::ProgressHandler* progressCallback)
+double IData::getBackgroundLevel(std::shared_ptr<SX::Utils::ProgressHandler> progressCallback)
 {
     if ( _background > 0.0 )
         return _background;
 
     _background = 0.0;
     double factor = 1.0 / (_nFrames * _nrows * _ncols);
+
+    if ( progressCallback) {
+        progressCallback->setStatus("Computing background level...");
+        progressCallback->setProgress(0);
+    }
 
 
     for (auto it = getIterator(0); it->index() != _nFrames; it->advance()) {

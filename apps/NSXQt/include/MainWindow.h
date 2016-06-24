@@ -4,6 +4,7 @@
 #include <map>
 #include <unordered_map>
 #include <vector>
+#include <memory>
 
 #include <QGraphicsScene>
 #include <QMainWindow>
@@ -16,7 +17,6 @@
 #include "Logger.h"
 
 #include "JobHandler.h"
-
 #include "ProgressView.h"
 
 class QListWidgetItem;
@@ -32,10 +32,15 @@ namespace SX
     namespace Data
     {
         class IData;
+        class PeakFinder;
     }
     namespace Instrument
     {
         class Experiment;
+    }
+
+    namespace Utils {
+        class ProgressHandler;
     }
 }
 
@@ -85,8 +90,10 @@ private:
     Ui::MainWindow* _ui;
     std::unordered_map<std::string,SX::Instrument::Experiment> _experiments;
     SX::Data::IData* _currentData;
-    ProgressView* _progressView;
 
+    std::shared_ptr<SX::Utils::ProgressHandler> _progressHandler;
+    std::shared_ptr<ProgressView> _progressView;
+    std::unique_ptr<SX::Data::PeakFinder> _peakFinder;
 };
 
 #endif // MAINWINDOW_H

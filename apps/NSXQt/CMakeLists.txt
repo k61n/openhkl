@@ -3,7 +3,13 @@ if(POLICY CMP0020)
 endif()
 
 # Add NSXQt and NSXQt directories to the include path
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_BINARY_DIR})
+include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/models
+  ${CMAKE_CURRENT_SOURCE_DIR}/views
+  ${CMAKE_CURRENT_BINARY_DIR}
+  )
 
 # Disable console on Windows
 if(WIN32)
@@ -27,7 +33,7 @@ file(GLOB_RECURSE nsxqt_headers
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/models/*.h
   )
 
-include_directories(nsxqt_headers)
+
 
 # Find recursively all the cpp source files of NSXQt
 file(GLOB_RECURSE nsxqt_sources

@@ -8,6 +8,8 @@
 #include <QProgressDialog>
 #include <QTimer>
 
+#include <memory>
+
 #include "ProgressHandler.h"
 
 class ProgressView: public QObject {
@@ -17,13 +19,13 @@ public:
     ProgressView();
     ~ProgressView();
 
-    void watch(SX::Utils::ProgressHandler* handler);
+    void watch(std::shared_ptr<SX::Utils::ProgressHandler> handler);
 
 public slots:
     void update();
 
 private:
-    SX::Utils::ProgressHandler* _handler;
+    std::shared_ptr<SX::Utils::ProgressHandler> _handler;
     QTimer* _timer;
     QProgressDialog* _dialog;
 };

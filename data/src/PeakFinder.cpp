@@ -63,8 +63,7 @@ void PeakFinder::find(std::vector<IData*> numors, double threshold, double confi
             //progressDialog->setLabelText("Computing background level...");
             //progressDialog->show();
 
-            ProgressHandler progress;
-            median = numor->getBackgroundLevel(&progress)+1;
+            median = numor->getBackgroundLevel(_handler)+1;
 
             //progressDialog->close();
         }
@@ -86,9 +85,7 @@ void PeakFinder::find(std::vector<IData*> numors, double threshold, double confi
 
             SX::Geometry::BlobFinder blob_finder(numor);
 
-            ProgressHandler handler;
-
-            blob_finder.setProgressHandler(&handler);
+            blob_finder.setProgressHandler(_handler);
 
             blob_finder.setMedian(median);
             blob_finder.setThreshold(threshold);
@@ -124,6 +121,12 @@ void PeakFinder::find(std::vector<IData*> numors, double threshold, double confi
 
         //qDebug() << ">>>> iterating over blobs";
 
+        if (_handler ) {
+            _handler->setStatus("Computing bounding boxes...");
+            _handler->setProgress(0);
+        }
+
+        int count = 0;
         SX::Geometry::AABB<double,3> dAABB(Eigen::Vector3d(0,0,0),Eigen::Vector3d(numor->getDiffractometer()->getDetector()->getNCols(),numor->getDiffractometer()->getDetector()->getNRows(),numor->getNFrames()-1));
         for (auto& blob : blobs)
         {
@@ -149,13 +152,26 @@ void PeakFinder::find(std::vector<IData*> numors, double threshold, double confi
                 p->setUnitCell(cell);
             numor->addPeak(p);
             npeaks++;
+            ++count;
+
+            if ( _handler ) {
+                double progress = count * 100.0 / blobs.size();
+                _handler->setProgress(progress);
+            }
         }
+
+
 
         //qDebug() << ">>>> integrating " << numor->getPeaks().size() << " peaks...";
 
         int peak_counter = 0;
 
         //qDebug() << ">>>>>>>> initializing peak intensities...";
+
+        if (_handler) {
+            _handler->setStatus("Integrating peaks...");
+            _handler->setProgress(0);
+        }
 
         for ( auto& peak: numor->getPeaks() )
             peak->framewiseIntegrateBegin();
@@ -175,6 +191,11 @@ void PeakFinder::find(std::vector<IData*> numors, double threshold, double confi
             //double progress = it->index() / static_cast<double>(numor->getNFrames()) * 100.0;
             //progressDialog->setValue(static_cast<int>(progress));
             //processEvents();
+
+            if (_handler) {
+                double progress = it->index() * 100.0 / numor->getNFrames();
+                _handler->setProgress(progress);
+            }
         }
 
         //qDebug() << ">>>>>>>> finalizing peak calculation....";
@@ -197,7 +218,15 @@ void PeakFinder::find(std::vector<IData*> numors, double threshold, double confi
 
     //_ui->_dview->getScene()->updatePeaks();
 
+    if (_handler) {
+        _handler->setStatus("Peak finding completed.");
+        _handler->setProgress(100);
+    }
+}
 
+void PeakFinder::setHandler(std::shared_ptr<ProgressHandler> handler)
+{
+    _handler = handler;
 }
 
 } // namespace Data
