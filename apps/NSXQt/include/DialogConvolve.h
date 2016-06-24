@@ -1,12 +1,13 @@
 // author: Jonathan Fisher
 // j.fisher@fz-juelich.de
 
-#ifndef DIALOGCONVOLVE_H
-#define DIALOGCONVOLVE_H
+#ifndef NSXTOOL_DIALOGCONVOLVE_H_
+#define NSXTOOL_DIALOGCONVOLVE_H_
 
 #include <QDialog>
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
+#include <QStandardItemModel>
 
 #include <Eigen/Core>
 
@@ -55,4 +56,4 @@ private:
     std::shared_ptr<SX::Imaging::ConvolutionKernel> _kernel;
 
 };
-#endif // DIALOGCONVOLVE_H
+#endif // NSXTOOL_DIALOGCONVOLVE_H_

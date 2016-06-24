@@ -60,10 +60,14 @@ void BlobFinder::eliminateBlobs()
         _progressHandler->setProgress(0);
     }
 
-    double total_dist = std::distance(_blobs.begin(), _blobs.end());
+    // dummies use to help progress handler
+    int dummy = 0;
+    int magic = 0.2 * std::distance(_blobs.begin(), _blobs.end());
 
     for (auto it = _blobs.begin(); it != _blobs.end();)
     {
+        ++dummy;
+
         Blob3D& p=it->second;
         if (p.getComponents() < _minComp || p.getComponents() > _maxComp)
             it = _blobs.erase(it);
@@ -71,13 +75,13 @@ void BlobFinder::eliminateBlobs()
             it++;
 
         // update progress handler
-        double current_dist = std::distance(it, _blobs.end());
+        if ( dummy&magic == 0 && _progressHandler) {
 
-        int progress = static_cast<int>( 100.0 - 100.0*(total_dist-current_dist) / total_dist);
-
-        // only update infrequently, since there could be thousands of blobs
-        if ( progress%5 == 0 && _progressHandler)
-            _progressHandler->setProgress(progress);
+            double total_dist = std::distance(_blobs.begin(), _blobs.end());
+            double current_dist = std::distance(_blobs.begin(), it);
+            double progress = 100.0 * current_dist / total_dist;
+            _progressHandler->setProgress(50 + 0.5*progress);
+        }
     }
 
     if ( _progressHandler )
@@ -345,11 +349,14 @@ void BlobFinder::findCollisions()
     Eigen::Vector3d center,extents;
     Eigen::Matrix3d axis;
 
-    double total_dist = std::distance(_blobs.begin(), _blobs.end());
-
+    // dummies used to help progress handler
+    int dummy = 0;
+    int magic = 0.2 * std::distance(_blobs.begin(), _blobs.end());
 
     for (auto it = _blobs.begin(); it != _blobs.end();)
     {
+        ++dummy;
+
         Blob3D& p=it->second;
         p.toEllipsoid(_confidence,center,extents,axis);
 
@@ -362,13 +369,12 @@ void BlobFinder::findCollisions()
         }
 
         // update progress handler
-        double current_dist = std::distance(it, _blobs.end());
-
-        int progress = static_cast<int>( 50.0 - 50.0*(total_dist-current_dist) / total_dist);
-
-        // only update infrequently, since there could be thousands of blobs
-        if ( progress%5 == 0 && _progressHandler)
-            _progressHandler->setProgress(progress);
+        if ( dummy&magic == 0 && _progressHandler) {
+            double total_dist = std::distance(_blobs.begin(), _blobs.end());
+            double current_dist = std::distance(_blobs.begin(), it);
+            double progress = 100.0 * current_dist / total_dist;
+            _progressHandler->setProgress(0.5*progress);
+        }
     }
 
     Octree oct({0.0,0.0,0.0},{double(_ncols),double(_nrows),double(_nframes)});
@@ -385,8 +391,10 @@ void BlobFinder::findCollisions()
     // Clear the equivalence vectors for reuse purpose
     _equivalences.clear();
 
-    // get total distance for progress tracking
-    total_dist = std::distance(collisions.begin(), collisions.end());
+
+    // dummies used to help progress handler
+    dummy = 0;
+    magic = 0.02 * std::distance(collisions.begin(), collisions.end());
 
     for (auto it = collisions.begin(); it != collisions.end(); ++it)
     {
@@ -398,13 +406,13 @@ void BlobFinder::findCollisions()
         }
 
         // update progress handler
-        double current_dist = std::distance(it, collisions.end());
+        if ( dummy&magic == 0 && _progressHandler) {
 
-        int progress = static_cast<int>( 100.0 - 50.0*(total_dist-current_dist) / total_dist);
-
-        // only update infrequently, since there could be thousands of blobs
-        if ( progress%5 == 0 && _progressHandler)
-            _progressHandler->setProgress(progress);
+            double total_dist = std::distance(collisions.begin(), collisions.end());
+            double current_dist = std::distance(collisions.begin(), it);
+            double progress = 100.0 * current_dist / total_dist;
+            _progressHandler->setProgress(50 + 0.5*progress);
+        }
     }
 
     // calculation complete
@@ -442,11 +450,15 @@ void BlobFinder::mergeBlobs()
 
     reassignEquivalences(mequiv);
 
-    double total_dist = std::distance(_blobs.begin(), _blobs.end());
+    // dummy for calling progress updater
+    int dummy = 0;
+    int magic = 0.02 * std::distance(_blobs.begin(), _blobs.end());
 
     // Iterate on blobs and merge equivalences
     for (auto it = _blobs.begin(); it != _blobs.end();)
     {
+        ++dummy;
+
         auto match = mequiv.find(it->first);
         if (match == mequiv.end())
         {
@@ -465,13 +477,12 @@ void BlobFinder::mergeBlobs()
         }
 
         // update progress handler
-        double current_dist = std::distance(it, _blobs.end());
-
-        int progress = static_cast<int>( 100.0 - 100.0*(total_dist-current_dist) / total_dist);
-
-        // only update infrequently, since there could be thousands of blobs
-        if ( progress%5 == 0 && _progressHandler)
+        if ( dummy%magic == 0 && _progressHandler) {
+            double total_dist = std::distance(_blobs.begin(), _blobs.end());
+            double current_dist = std::distance(_blobs.begin(), it);
+            int progress = static_cast<int>( 100.0 * current_dist / total_dist);
             _progressHandler->setProgress(progress);
+        }
     }
 
     // finalize update handler

@@ -6,18 +6,41 @@
 #define NSXTOOL_JOBHANDLER_H_
 
 
-//! Class designed to handle a job schedule in a multi-threaded way
-class JobHandler {
-public:
-    JobHandler();
-    ~JobHandler();
+#include <QObject>
+#include <QThread>
 
-    //! add a job to the queue, return id
-    // int addJob(Job job);
+#include <functional>
+#include <memory>
+
+
+class WorkerThread : public QThread
+{
+    Q_OBJECT
+public:
+    WorkerThread(QObject* parent, std::function<void(void)> task);
+    void run();
+
+signals:
+    void resultReady();
 
 private:
-    //QThread* _thread;
+    std::function<void(void)> _task;
+};
 
+
+class Job : public QObject
+{
+    Q_OBJECT
+
+public:
+    Job(QObject* parent, std::function<void(void)> task, std::function<void(void)> onFinished);
+
+public slots:
+    void resultReady();
+
+private:
+    std::unique_ptr<WorkerThread> _worker;
+    std::function<void(void)> _onFinished;
 };
 
 #endif // NSXTOOL_JOBHANDLER_H_

@@ -8,7 +8,14 @@
 ProgressView::ProgressView()
 {
     _dialog = new QProgressDialog();
+
+
+    _dialog->setLabelText("Nothing to show");
+    _dialog->setMaximum(100);
+    _dialog->setValue(0);
     _dialog->hide();
+
+
     _timer = new QTimer();
 }
 

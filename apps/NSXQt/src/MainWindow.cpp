@@ -66,6 +66,8 @@
 #include "PeakFinder.h"
 #include "ProgressHandler.h"
 
+#include "JobHandler.h"
+
 // jmf debug testing
 #include <functional>
 extern std::function<void(void)> processEvents;
@@ -228,13 +230,18 @@ void MainWindow::on_action_peak_find_triggered()
     _peakFinder->setHandler(_progressHandler);
     _progressView->watch(_progressHandler);
 
-    auto find_fn = [=] () -> void
+    auto task = [=] () -> void
     {
         _peakFinder->find(numors, threshold, confidence, minComp, maxComp, convolver);
     };
 
-    std::thread thr(find_fn);
-    thr.detach();
+    auto onFinished = [=] () -> void
+    {
+        _ui->_dview->getScene()->updatePeaks();
+        qDebug() << "Peak search complete.";
+    };
+
+    auto job = new Job(this, task, onFinished);
 }
 /*
 void MainWindow::findPeaks()
