@@ -50,7 +50,7 @@ PeakTableView::PeakTableView(QWidget *parent)
     this->verticalHeader()->hide();
 }
 
-void PeakTableView::setData(std::vector<SX::Data::IData*> data)
+void PeakTableView::setData(std::vector<std::shared_ptr<SX::Data::IData>> data)
 {
     for (auto ptr : data)
     {

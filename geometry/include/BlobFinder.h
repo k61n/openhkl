@@ -80,7 +80,7 @@ public:
     using RealMatrix = SX::Types::RealMatrix;
     using FilterCallback = std::function<RealMatrix(const RealMatrix&)>;
 
-    BlobFinder(SX::Data::IData* data);
+    BlobFinder(std::shared_ptr<SX::Data::IData> data);
 
     blob3DCollection find(int begin, int end);
 
@@ -133,7 +133,7 @@ private:
 
     bool _isRelative;
 
-    SX::Data::IData* _data;
+    std::shared_ptr<SX::Data::IData> _data;
     FilterCallback _filterCallback;
     std::shared_ptr<SX::Utils::ProgressHandler> _progressHandler;
 

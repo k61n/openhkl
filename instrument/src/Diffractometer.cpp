@@ -35,25 +35,28 @@ Diffractometer::Diffractometer(const proptree::ptree& node)
 
 	// Build the detector from its corresponding node
 	const property_tree::ptree& detectorNode = node.get_child("detector");
-	_detector = Detector::create(detectorNode);
+    _detector = std::shared_ptr<Detector>(Detector::create(detectorNode));
 
 	// Build the sample from its corresponding node
 	const property_tree::ptree& sampleNode = node.get_child("sample");
-    _sample= Sample::create(sampleNode);
+    _sample= std::shared_ptr<Sample>(Sample::create(sampleNode));
 
 	// Build the source from its corresponding node
 	const property_tree::ptree& sourceNode = node.get_child("source");
-    _source= Source::create(sourceNode);
+    _source= std::shared_ptr<Source>(Source::create(sourceNode));
 }
 
 Diffractometer::~Diffractometer()
 {
+    // no longer necessary to explicitly delete since we switched to smart pointers
+    /*
 	if (_detector)
 		delete _detector;
 	if (_sample)
 		delete _sample;
 	if (_source)
 		delete _source;
+    /**/
 }
 
 Diffractometer& Diffractometer::operator=(const Diffractometer& other)
@@ -61,14 +64,15 @@ Diffractometer& Diffractometer::operator=(const Diffractometer& other)
 	if (this != &other)
 	{
 		_name = other._name;
-		_detector = other._detector==nullptr ? nullptr : other._detector->clone();
-		_sample = other._detector==nullptr ? nullptr : other._sample->clone();
-		_source = other._source==nullptr ? nullptr : other._source->clone();
+
+        _detector = std::shared_ptr<Detector>(other._detector==nullptr ? nullptr : other._detector->clone());
+        _sample = std::shared_ptr<Sample>(other._detector==nullptr ? nullptr : other._sample->clone());
+        _source = std::shared_ptr<Source>(other._source==nullptr ? nullptr : other._source->clone());
 	}
 	return *this;
 }
 
-void Diffractometer::setDetector(Detector* d)
+void Diffractometer::setDetector(std::shared_ptr<Detector> d)
 {
 	_detector=d;
 }
@@ -78,11 +82,11 @@ void Diffractometer::setName(const std::string& name)
 	_name = name;
 }
 
-void Diffractometer::setSample(Sample* s)
+void Diffractometer::setSample(std::shared_ptr<Sample> s)
 {
 	_sample=s;
 }
-void Diffractometer::setSource(Source* s)
+void Diffractometer::setSource(std::shared_ptr<Source> s)
 {
 	_source=s;
 }
@@ -92,17 +96,17 @@ const std::string& Diffractometer::getName() const
 	return _name;
 }
 
-Detector* Diffractometer::getDetector()
+std::shared_ptr<Detector> Diffractometer::getDetector()
 {
 	return _detector;
 }
 
-Sample* Diffractometer::getSample()
+std::shared_ptr<Sample> Diffractometer::getSample()
 {
 	return _sample;
 }
 
-Source* Diffractometer::getSource()
+std::shared_ptr<Source> Diffractometer::getSource()
 {
 	return _source;
 }

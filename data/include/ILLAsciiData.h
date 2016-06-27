@@ -63,7 +63,7 @@ class ILLAsciiData : public IData
 {
 public:
 
-	static IData* create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer);
+    static IData* create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer);
 
 	//! Default constructor
 	ILLAsciiData(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer);

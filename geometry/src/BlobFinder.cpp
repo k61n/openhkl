@@ -427,7 +427,7 @@ void BlobFinder::setFilter(BlobFinder::FilterCallback callback)
 
 /**/
 
-BlobFinder::BlobFinder(SX::Data::IData* data)
+BlobFinder::BlobFinder(std::shared_ptr<SX::Data::IData> data)
 {
     _data = data;
 }

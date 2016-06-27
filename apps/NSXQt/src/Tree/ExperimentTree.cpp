@@ -38,6 +38,10 @@
 #include "OpenGL/GLWidget.h"
 #include "OpenGL/GLSphere.h"
 
+using std::vector;
+using SX::Data::IData;
+using std::shared_ptr;
+
 ExperimentTree::ExperimentTree(QWidget *parent) : QTreeView(parent)
 {
     setContextMenuPolicy(Qt::CustomContextMenu);
@@ -135,9 +139,9 @@ void ExperimentTree::addExperiment(const std::string& experimentName, const std:
 
 }
 
-std::vector<SX::Data::IData*> ExperimentTree::getSelectedNumors(ExperimentItem* item) const
+vector<shared_ptr<IData>> ExperimentTree::getSelectedNumors(ExperimentItem* item) const
 {
-    std::vector<SX::Data::IData*> numors;
+    vector<shared_ptr<IData>> numors;
 
     QList<QStandardItem*> dataItems = _model->findItems(QString("Data"),Qt::MatchCaseSensitive|Qt::MatchRecursive);
 
@@ -159,10 +163,9 @@ std::vector<SX::Data::IData*> ExperimentTree::getSelectedNumors(ExperimentItem* 
     return numors;
 }
 
-std::vector<SX::Data::IData*> ExperimentTree::getSelectedNumors() const
+vector<shared_ptr<IData>> ExperimentTree::getSelectedNumors() const
 {
-
-    std::vector<SX::Data::IData*> numors;
+    vector<shared_ptr<IData>> numors;
 
     QList<QStandardItem*> dataItems = _model->findItems(QString("Data"),Qt::MatchCaseSensitive|Qt::MatchRecursive);
 
@@ -260,12 +263,19 @@ void ExperimentTree::importData()
         if (exp->hasData(basename))
             continue;
 
-        SX::Data::IData* d;
+        std::shared_ptr<IData> data_ptr;
+
         try
         {
             std::string extension=fileinfo.completeSuffix().toStdString();
-            d = DataReaderFactory::Instance()->create(extension,fileNames[i].toStdString(),exp->getDiffractometer());
-            exp->addData(d);
+
+            IData* raw_ptr = DataReaderFactory::Instance()->create(
+                        extension,fileNames[i].toStdString(),exp->getDiffractometer()
+                        );
+
+            data_ptr = std::shared_ptr<IData>(raw_ptr);
+
+            exp->addData(data_ptr);
         }
         catch(std::exception& e)
         {
@@ -273,7 +283,7 @@ void ExperimentTree::importData()
            continue;
         }
 
-        QStandardItem* item = new NumorItem(exp,d);
+        QStandardItem* item = new NumorItem(exp, data_ptr.get());
         item->setText(QString::fromStdString(basename));
         item->setCheckable(true);
         dataItem->appendRow(item);
@@ -305,8 +315,7 @@ void ExperimentTree::onDoubleClick(const QModelIndex& index)
     else if (auto ptr=dynamic_cast<NumorItem*>(item))
     {
         SX::Instrument::Experiment* exp = ptr->getExperiment();
-        SX::Data::IData* data=exp->getData(item->text().toStdString());
-        emit plotData(data);
+        emit plotData(exp->getData(item->text().toStdString()));
     }
 
 }

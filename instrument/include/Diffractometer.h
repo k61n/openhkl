@@ -30,6 +30,7 @@
 #define NSXTOOL_DIFFRACTOMETER_H_
 
 #include <string>
+#include <memory>
 
 #include <boost/property_tree/ptree.hpp>
 
@@ -54,8 +55,10 @@ public:
 
 	//! Constructs a diffractometer from another one
 	Diffractometer(const Diffractometer& other);
-	// Virtual copy constructor
+
+    //! Virtual copy constructor
 	virtual Diffractometer* clone() const {return nullptr;};
+
 	//! Destructor
 	virtual ~Diffractometer();
 
@@ -64,34 +67,43 @@ public:
 
 	//! Get the name of this diffractometer
 	const std::string& getName() const;
+
 	//! Get the detector of this diffractometer
-	Detector* getDetector();
+    std::shared_ptr<Detector> getDetector();
+
 	//! Get the sample of this diffractometer
-	Sample* getSample();
+    std::shared_ptr<Sample> getSample();
+
 	//! Get the source of this diffractometer
-	Source* getSource();
+    std::shared_ptr<Source> getSource();
+
 	//! Get the type of the diffractometer
 	virtual std::string getType() const {return "";};
+
 	//! Set the detector of this diffractometer
-	void setDetector(Detector*);
+    void setDetector(std::shared_ptr<Detector>);
+
 	//! Set the name of the diffractometer
 	void setName(const std::string& name);
+
 	//! Set the sample of this diffractometer
-	void setSample(Sample*);
+    void setSample(std::shared_ptr<Sample>);
+
 	//! Set the source of this diffractometer
-	void setSource(Source*);
+    void setSource(std::shared_ptr<Source>);
 
 protected:
 
 	//! Default constructor
 	Diffractometer();
+
 	//! Constructs a diffractometer with a given name
 	Diffractometer(const std::string& name);
 
 	std::string _name;
-	Detector* _detector;
-	Sample* _sample;
-	Source* _source;
+    std::shared_ptr<Detector> _detector;
+    std::shared_ptr<Sample> _sample;
+    std::shared_ptr<Source> _source;
 };
 
 } // Namespace Instrument

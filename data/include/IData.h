@@ -211,6 +211,7 @@ public:
     //! Get background
     double getBackgroundLevel(std::shared_ptr<SX::Utils::ProgressHandler> progress);
 
+
 protected:
     bool _isOpened;
 	std::string _filename;

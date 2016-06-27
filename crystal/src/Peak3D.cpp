@@ -97,14 +97,14 @@ Peak3D::~Peak3D()
         delete _bkg;
 }
 
-void Peak3D::linkData(SX::Data::IData* data)
+void Peak3D::linkData(std::shared_ptr<SX::Data::IData> data)
 {
-	_data=data;
+    _data = data;
 }
 
 void Peak3D::unlinkData()
 {
-	_data=nullptr;
+    _data = nullptr;
 }
 
 void Peak3D::setPeakShape(SX::Geometry::IShape<double,3>* p)
@@ -422,7 +422,7 @@ void Peak3D::setDetectorEvent(SX::Instrument::DetectorEvent* event)
 	_event=event;
 }
 
-void Peak3D::setSource(SX::Instrument::Source* source)
+void Peak3D::setSource(std::shared_ptr<SX::Instrument::Source> source)
 {
 	_source=source;
 }

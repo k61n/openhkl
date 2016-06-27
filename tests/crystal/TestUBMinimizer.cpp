@@ -24,6 +24,8 @@
 #include "Monochromator.h"
 #include "Source.h"
 
+#include <memory>
+
 using SX::Crystal::UBSolution;
 using SX::Crystal::UBMinimizer;
 using SX::Crystal::LatticeMinimizer;
@@ -55,6 +57,7 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
 	detectorGonio->getAxis("y-offset")->setPhysical(false);
 	D9->setGonio(detectorGonio);
 
+
 	Sample* sample=new Sample("sample");
 	std::shared_ptr<Gonio> sampleGonio(new Gonio("Busing Levy convention"));
 	sampleGonio->addRotation("omega",Vector3d(0,0,1),RotAxis::CW);
@@ -62,11 +65,11 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
 	sampleGonio->addRotation("phi",Vector3d(0,0,1),RotAxis::CW);
 	sample->setGonio(sampleGonio);
 
-	Source source;
+    std::shared_ptr<Source> source(new Source);
 	SX::Instrument::Monochromator mono("mono");
 	mono.setWavelength(0.8380);
-	source.addMonochromator(&mono);
-	source.setSelectedMonochromator(0);
+    source->addMonochromator(&mono);
+    source->setSelectedMonochromator(0);
 
 	// Open the RAFUB input file to get all informations about the collected peaks
 	std::ifstream ifs("CsOsO_15K.raf", std::ifstream::in);
@@ -88,7 +91,7 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
 		// set the miller indices corresponding to the peak
 		peak.setMillerIndices(h,k,l);
 		// Set the wavelength
-		peak.setSource(&source);
+        peak.setSource(source);
 
 		// Create a sample state
 		peak.setSampleState(new ComponentState(sample->createState({omega*deg,chi*deg,phi*deg})));
@@ -98,7 +101,7 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
     UBMinimizer minimizer;
     minimizer.setDetector(D9);
     minimizer.setSample(sample);
-    minimizer.setSource(&source);
+    minimizer.setSource(source.get());
     minimizer.refineParameter(9,false); // Source
     minimizer.refineParameter(11,false); // Detector y
     minimizer.refineParameter(14,false); // Detector phi

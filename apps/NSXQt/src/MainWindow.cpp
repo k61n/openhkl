@@ -114,9 +114,15 @@ MainWindow::MainWindow(QWidget *parent)
     _ui->splitterHorizontal->setStretchFactor(1,90);
 
     // signals and slots
-    connect(_ui->experimentTree,SIGNAL(plotData(SX::Data::IData*)),_ui->_dview->getScene(),SLOT(setData(SX::Data::IData*)));
-    connect(_ui->experimentTree,SIGNAL(plotData(SX::Data::IData*)),this,SLOT(changeData(SX::Data::IData*)));
-    connect(_ui->experimentTree,SIGNAL(showPeakList(std::vector<SX::Data::IData*>)),this,SLOT(showPeakList(std::vector<SX::Data::IData*>)));
+    connect(_ui->experimentTree, SIGNAL(plotData(std::shared_ptr<SX::Data::IData>)),
+            _ui->_dview->getScene(), SLOT(setData(std::shared_ptr<SX::Data::IData>))
+    );
+
+    connect(_ui->experimentTree, SIGNAL(plotData(std::shared_ptr<SX::Data::IData>)),
+            this, SLOT(changeData(std::shared_ptr<SX::Data::IData>)));
+
+    connect(_ui->experimentTree, SIGNAL(showPeakList(std::vector<std::shared_ptr<SX::Data::IData>>)),
+            this, SLOT(showPeakList(std::vector<std::shared_ptr<SX::Data::IData>>)));
 
     connect(_ui->frame,&QScrollBar::valueChanged,[=](const int& value){_ui->_dview->getScene()->changeFrame(value);});
 
@@ -143,7 +149,7 @@ MainWindow::~MainWindow()
     delete _ui;
 }
 
-void MainWindow::changeData(IData* data)
+void MainWindow::changeData(std::shared_ptr<IData> data)
 {
     _ui->frameFrame->setEnabled(true);
     _ui->intensityFrame->setEnabled(true);
@@ -165,7 +171,7 @@ void MainWindow::changeData(IData* data)
 
 }
 
-void MainWindow::showPeakList(std::vector<SX::Data::IData*> data)
+void MainWindow::showPeakList(std::vector<std::shared_ptr<SX::Data::IData>> data)
 {
 
     if (data.empty())
@@ -200,7 +206,7 @@ void MainWindow::on_action_peak_find_triggered()
 {
     _ui->_dview->getScene()->clearPeaks();
 
-    std::vector<IData*> numors = _ui->experimentTree->getSelectedNumors();
+    std::vector<std::shared_ptr<IData>> numors = _ui->experimentTree->getSelectedNumors();
     if (numors.empty())
     {
         qWarning() << "No numors selected for finding peaks";

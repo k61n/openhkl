@@ -23,7 +23,7 @@ class PeakFinder
 {
 public:
     PeakFinder();
-    void find(std::vector<IData*> numors, double threshold, double confidence, int minComp, int maxComp, std::shared_ptr<SX::Imaging::Convolver> convolver);
+    void find(std::vector<std::shared_ptr<IData>> numors, double threshold, double confidence, int minComp, int maxComp, std::shared_ptr<SX::Imaging::Convolver> convolver);
 
     void setHandler(std::shared_ptr<SX::Utils::ProgressHandler> handler);
 

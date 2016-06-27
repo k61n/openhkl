@@ -17,6 +17,7 @@
 
 #include "Convolver.h"
 #include "ConvolutionKernel.h"
+#include "PeakFindModel.h"
 
 namespace Ui {
 class DialogConvolve;
@@ -54,6 +55,8 @@ private:
 
     std::shared_ptr<SX::Imaging::Convolver> _convolver;
     std::shared_ptr<SX::Imaging::ConvolutionKernel> _kernel;
+
+    PeakFindModel* _peakFindModel;
 
 };
 #endif // NSXTOOL_DIALOGCONVOLVE_H_

@@ -3,6 +3,7 @@
 
 #include <map>
 #include <list>
+#include <memory>
 
 #include <Eigen/Dense>
 
@@ -51,7 +52,7 @@ public:
     //! Which mode is the cursor diplaying
     enum CURSORMODE {THETA=0, GAMMA=1, DSPACING=2, PIXEL=3, HKL=4};
     explicit DetectorScene(QObject *parent = 0);
-    SX::Data::IData* getData();
+    std::shared_ptr<SX::Data::IData> getData();
     const rowMatrix& getCurrentFrame() const;
     const std::map<SX::Crystal::Peak3D*,PeakGraphicsItem*>& getPeaksGraphicsItems() const;
 
@@ -70,8 +71,8 @@ public slots:
 
     void activateIndexingMode(std::shared_ptr<SX::Crystal::UnitCell>);
     // To be called to update detector image
-    void setData(SX::Data::IData*,int frame);
-    void setData(SX::Data::IData*);
+    void setData(std::shared_ptr<SX::Data::IData>,int frame);
+    void setData(std::shared_ptr<SX::Data::IData>);
     void changeFrame(unsigned int frame=0);
     void setMaxIntensity(int);
     PeakGraphicsItem* findPeakGraphicsItem(SX::Crystal::Peak3D* peak);
@@ -94,7 +95,7 @@ private:
     //! Create the text of the tooltip depending on Scene Mode.
     void createToolTipText(QGraphicsSceneMouseEvent*);
 
-    SX::Data::IData* _currentData;
+    std::shared_ptr<SX::Data::IData> _currentData;
     unsigned int _currentFrameIndex;
     int _currentIntensity;
     rowMatrix _currentFrame;

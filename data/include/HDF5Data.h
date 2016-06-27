@@ -43,7 +43,7 @@ namespace Data
 class HDF5Data : public IData
 {
 public:
-	static IData* create(const std::string& filename, std::shared_ptr<Diffractometer> instrument);
+    static IData* create(const std::string& filename, std::shared_ptr<Diffractometer> instrument);
 	HDF5Data(const std::string& filename, std::shared_ptr<Diffractometer> instrument);
 	virtual ~HDF5Data();
     Eigen::MatrixXi readFrame(std::size_t frame) override;

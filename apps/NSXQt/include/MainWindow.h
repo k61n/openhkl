@@ -81,15 +81,15 @@ private slots:
     void on_actionConvolution_Filter_triggered();
 
 public slots:
-    void changeData(SX::Data::IData*);
-    void showPeakList(std::vector<SX::Data::IData*>);
+    void changeData(std::shared_ptr<SX::Data::IData>);
+    void showPeakList(std::vector<std::shared_ptr<SX::Data::IData>>);
     void plotPeak(SX::Crystal::Peak3D*);
     void plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&);
     void setInspectorWidget(QWidget*);
 private:
     Ui::MainWindow* _ui;
     std::unordered_map<std::string,SX::Instrument::Experiment> _experiments;
-    SX::Data::IData* _currentData;
+    std::shared_ptr<SX::Data::IData> _currentData;
 
     std::shared_ptr<SX::Utils::ProgressHandler> _progressHandler;
     std::shared_ptr<ProgressView> _progressView;

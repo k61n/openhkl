@@ -49,11 +49,16 @@ DialogConvolve::DialogConvolve(const Eigen::MatrixXi& currentFrame, QWidget *par
     ui->thresholdSpinBox->setValue(100.0);
 
     _convolver = std::shared_ptr<SX::Imaging::Convolver>(new SX::Imaging::Convolver);
+
+    _peakFindModel = new PeakFindModel(this);
+
+    ui->treeView->setModel(_peakFindModel);
 }
 
 DialogConvolve::~DialogConvolve()
 {
     delete ui;
+    delete _peakFindModel;
 }
 
 double DialogConvolve::getThreshold()
@@ -112,8 +117,8 @@ void DialogConvolve::on_previewButton_clicked()
     ncols = frame.cols();
 
     // note that treeWidget retains ownership!
-    ui->treeWidget->retrieveParameters();
-    _kernel = ui->treeWidget->getKernel();
+    ui->treeWidgetOld->retrieveParameters();
+    _kernel = ui->treeWidgetOld->getKernel();
 
     if (!_kernel) {
         qDebug() << "null kernel returned!";

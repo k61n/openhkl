@@ -4,6 +4,8 @@
 #include <QPen>
 #include <QPointF>
 
+#include <memory>
+
 #include "PlottableGraphicsItem.h"
 
 namespace SX
@@ -25,7 +27,7 @@ public:
     // Constructors and destructor
 
     //! Constructs a data cutter
-    CutterGraphicsItem(SX::Data::IData* data);
+    CutterGraphicsItem(std::shared_ptr<SX::Data::IData> data);
     //! Destructor
     virtual ~CutterGraphicsItem();
 
@@ -41,7 +43,7 @@ public:
     //! Returns the bounding rectangle of the item
     QRectF boundingRect() const;
     //! Returns the data bound to the item
-    SX::Data::IData* getData();
+    std::shared_ptr<SX::Data::IData> getData();
     //! Sets the top left corner of the item
     void setFrom(const QPointF& pos);
     //! Sets the bottom right corner of the item
@@ -55,7 +57,7 @@ public:
 
 protected:
     //! The data on which the cutter will act upon
-    SX::Data::IData* _data;
+    std::shared_ptr<SX::Data::IData> _data;
     //! The top left coordinates of the slice
     QPointF _from;
     //! The bottom right coordinates of the slice

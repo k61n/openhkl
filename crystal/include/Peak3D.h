@@ -67,27 +67,39 @@ public:
 	Peak3D& operator=(const Peak3D& other);
 	~Peak3D();
 	//! Attach the data
-	void linkData(SX::Data::IData* data);
+    void linkData(std::shared_ptr<SX::Data::IData> data);
+
 	//! Detach the data
 	void unlinkData();
+
 	//! Set the Peak region. Peak shaped is owned after setting
 	void setPeakShape(SX::Geometry::IShape<double,3>* peak);
+
 	//! set the background region. Bkg region is owned after setting
 	void setBackgroundShape(SX::Geometry::IShape<double,3>* background);
+
 	//! Set the Miller indices of the peak (double to allow integration of incommensurate peaks)
 	void setMillerIndices(double h, double k, double l);
+
 	//! Get the Miller indices of the peak (double to allow integration of incommensurate peaks)
 	const Eigen::RowVector3d& getMillerIndices() const;
+
 	//! Get kf vector in the frame of reference of the diffractometer
 	Eigen::RowVector3d getKf() const;
+
 	//! Get q vector in the frame of reference of the diffractometer
 	Eigen::RowVector3d getQ() const;
+
 	void getGammaNu(double& gamma,double& nu) const;
+
 	//! Run the integration of the peak; iterate over the data
 	void integrate();
+
 	//!
-	const SX::Data::IData* getData() const { return _data;}
-	SX::Data::IData* getData() { return _data;}
+    const std::shared_ptr<SX::Data::IData> getData() const { return _data;}
+
+    std::shared_ptr<SX::Data::IData> getData() { return _data;}
+
 	//! Get the projection of total data in the bounding box.
 	Eigen::VectorXd getProjection() const;
 	Eigen::VectorXd getPeakProjection() const;
@@ -122,7 +134,7 @@ public:
    	//!
    	void setDetectorEvent(SX::Instrument::DetectorEvent* event);
    	//!
-   	void setSource(SX::Instrument::Source* source);
+    void setSource(std::shared_ptr<SX::Instrument::Source> source);
    	bool setUnitCell(std::shared_ptr<SX::Crystal::UnitCell> basis);
    	std::shared_ptr<SX::Crystal::UnitCell> getUnitCell() const;
 	bool hasIntegerHKL(const SX::Crystal::UnitCell& basis);
@@ -141,7 +153,7 @@ public:
 
 private:
 	//! Pointer to the data containing the peak
-	SX::Data::IData* _data;
+    std::shared_ptr<SX::Data::IData> _data;
 	//! Miller indices of the peak
 	Eigen::RowVector3d _hkl;
 	//! Shape describing the Peak zone
@@ -159,7 +171,7 @@ private:
 	//! Pointer to a Detector Event state
 	SX::Instrument::DetectorEvent* _event;
 	//!
-	SX::Instrument::Source* _source;
+    std::shared_ptr<SX::Instrument::Source> _source;
 	double _counts, _countsSigma;
 	double _scale;
 	bool _selected;

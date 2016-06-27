@@ -28,7 +28,7 @@ PeakFinder::PeakFinder()
 }
 
 
-void PeakFinder::find(std::vector<IData*> numors, double threshold, double confidence, int minComp, int maxComp, std::shared_ptr<Convolver> convolver)
+void PeakFinder::find(std::vector<std::shared_ptr<IData>> numors, double threshold, double confidence, int minComp, int maxComp, std::shared_ptr<Convolver> convolver)
 {
     // needed to compile:
     //double threshold, confidence;
@@ -133,7 +133,7 @@ void PeakFinder::find(std::vector<IData*> numors, double threshold, double confi
             Eigen::Vector3d center, eigenvalues;
             Eigen::Matrix3d eigenvectors;
             blob.second.toEllipsoid(confidence, center,eigenvalues,eigenvectors);
-            SX::Crystal::Peak3D* p = new Peak3D(numor);
+            SX::Crystal::Peak3D* p = new Peak3D(numor.get());
             p->setPeakShape(new SX::Geometry::Ellipsoid3D(center,eigenvalues,eigenvectors));
             eigenvalues[0]*=2.0;
             eigenvalues[1]*=2.0;

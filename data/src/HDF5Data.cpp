@@ -14,7 +14,7 @@ namespace Data
 
 IData* HDF5Data::create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer)
 {
-	return new HDF5Data(filename,diffractometer);
+    return new HDF5Data(filename, diffractometer);
 }
 
 HDF5Data::HDF5Data(const std::string& filename, std::shared_ptr<Diffractometer> instrument)

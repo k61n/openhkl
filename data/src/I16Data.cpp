@@ -32,7 +32,7 @@ using namespace SX::Units;
 
 IData* I16Data::create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer)
 {
-	return new I16Data(filename,diffractometer);
+    return new I16Data(filename, diffractometer);
 }
 
 I16Data::I16Data(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer)

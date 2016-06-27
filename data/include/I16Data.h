@@ -34,6 +34,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <memory>
 #include <Eigen/Dense>
 #include <IData.h>
 #include "Diffractometer.h"
@@ -51,7 +52,7 @@ class I16Data : public IData
 {
 public:
 
-	static IData* create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer);
+    static IData* create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer);
 
 	//! Default constructor
 	I16Data(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer);

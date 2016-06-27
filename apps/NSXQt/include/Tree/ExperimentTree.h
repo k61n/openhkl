@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 
 #include <QPoint>
 #include <QStandardItem>
@@ -31,13 +32,13 @@ public:
     ~ExperimentTree();
 
     void addExperiment(const std::string& experimentName, const std::string& instrumentName);
-    std::vector<SX::Data::IData*> getSelectedNumors() const;
-    std::vector<SX::Data::IData*> getSelectedNumors(ExperimentItem* item) const;
+    std::vector<std::shared_ptr<SX::Data::IData>> getSelectedNumors() const;
+    std::vector<std::shared_ptr<SX::Data::IData>> getSelectedNumors(ExperimentItem* item) const;
     ExperimentItem* getExperimentItem(Experiment* exp);
 
 signals:
-    void plotData(SX::Data::IData*);
-    void showPeakList(std::vector<SX::Data::IData*>);
+    void plotData(std::shared_ptr<SX::Data::IData>);
+    void showPeakList(std::vector<std::shared_ptr<SX::Data::IData>>);
     void inspectWidget(QWidget*);
 public slots:
     void keyPressEvent(QKeyEvent* event);

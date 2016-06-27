@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 #include <tuple>
+#include <memory>
 
 #include <QFileDialog>
 #include <QMenu>
@@ -28,7 +29,7 @@ class PeakTableView : public QTableView
     Q_OBJECT
 public:
     explicit PeakTableView(QWidget* parent = 0);
-    void setData(std::vector<SX::Data::IData*>);
+    void setData(std::vector<std::shared_ptr<SX::Data::IData>>);
     void contextMenuEvent(QContextMenuEvent *);
     void mousePressEvent(QMouseEvent *event);
     void keyPressEvent(QKeyEvent *event);
