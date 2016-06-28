@@ -46,6 +46,14 @@ public:
 private slots:
     void on_previewButton_clicked();
 
+    void on_filterComboBox_currentIndexChanged(int index);
+
+    void on_parameter1_valueChanged(int arg1);
+
+    void on_parameter2_valueChanged(int arg1);
+
+    void on_parameter3_valueChanged(int arg1);
+
 private:
     Ui::DialogConvolve *ui;
     QGraphicsScene* scene;

@@ -453,6 +453,7 @@ void BlobFinder::mergeBlobs()
     // dummy for calling progress updater
     int dummy = 0;
     int magic = 0.02 * std::distance(_blobs.begin(), _blobs.end());
+    if ( magic == 0 ) magic = 1;
 
     // Iterate on blobs and merge equivalences
     for (auto it = _blobs.begin(); it != _blobs.end();)

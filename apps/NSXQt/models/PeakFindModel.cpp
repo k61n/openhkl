@@ -2,6 +2,7 @@
 #include <QStandardItem>
 #include <QList>
 #include <QDoubleSpinBox>
+#include <QDebug>
 
 PeakFindModel::PeakFindModel(QObject *parent): QStandardItemModel(parent)
 {
@@ -33,11 +34,24 @@ PeakFindModel::PeakFindModel(QObject *parent): QStandardItemModel(parent)
     item->child(0, 1)->setData(QVariant(3.0), Qt::DisplayRole);
     item->child(1, 1)->setData(QVariant(1.0), Qt::DisplayRole);
 
-
+    connect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onItemChanged(QStandardItem*)));
 
 }
 
 PeakFindModel::~PeakFindModel()
 {
 
+}
+
+void PeakFindModel::onItemChanged(QStandardItem *item)
+{
+    qDebug() << "item " << item->text() << "changed at "
+             << item->row() << ", " << item->column()
+             << " with valued " << item->data();
+    if ( item->parent() ) {
+        qDebug() << "    with parent " << item->parent()->text();
+    }
+    else {
+        qDebug() << "    with no parent";
+    }
 }

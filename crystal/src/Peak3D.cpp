@@ -20,7 +20,7 @@ namespace SX
 namespace Crystal
 {
 
-Peak3D::Peak3D(SX::Data::IData* data):
+Peak3D::Peak3D(std::shared_ptr<SX::Data::IData> data):
 		_data(data),
 		_hkl(Eigen::Vector3d::Zero()),
 		_peak(nullptr),

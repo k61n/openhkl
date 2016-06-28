@@ -52,13 +52,14 @@ DialogConvolve::DialogConvolve(const Eigen::MatrixXi& currentFrame, QWidget *par
 
     _peakFindModel = new PeakFindModel(this);
 
-    ui->treeView->setModel(_peakFindModel);
+    //ui->treeView->setModel(_peakFindModel);
 }
 
 DialogConvolve::~DialogConvolve()
 {
     delete ui;
-    delete _peakFindModel;
+    // this should be handled by Qt. check with valgrind?
+    // delete _peakFindModel;
 }
 
 double DialogConvolve::getThreshold()
@@ -101,6 +102,7 @@ std::shared_ptr<SX::Imaging::Convolver> DialogConvolve::getConvolver()
 
 std::shared_ptr<SX::Imaging::ConvolutionKernel> DialogConvolve::getKernel()
 {
+
     return _kernel;
 }
 
@@ -117,8 +119,8 @@ void DialogConvolve::on_previewButton_clicked()
     ncols = frame.cols();
 
     // note that treeWidget retains ownership!
-    ui->treeWidgetOld->retrieveParameters();
-    _kernel = ui->treeWidgetOld->getKernel();
+    //ui->treeWidgetOld->retrieveParameters();
+    //_kernel = ui->treeWidgetOld->getKernel();
 
     if (!_kernel) {
         qDebug() << "null kernel returned!";
@@ -156,4 +158,46 @@ void DialogConvolve::on_previewButton_clicked()
         clamped_result.data()[i] = result.data()[i] > getThreshold() ? max_intensity-1 : 0;
 
     pxmapPreview->setPixmap(QPixmap::fromImage(Mat2QImage(clamped_result.data(), frame.rows(), frame.cols(), 0, ncols, 0, nrows, max_intensity)));
+}
+
+void DialogConvolve::on_filterComboBox_currentIndexChanged(int index)
+{
+    _kernel.reset();
+
+    switch(index)
+    {
+    // annular kernel
+    case 1:
+        _kernel = std::shared_ptr<SX::Imaging::ConvolutionKernel>(new SX::Imaging::AnnularKernel());
+        _kernel->getParameters()["r1"] = ui->parameter1->value();
+        _kernel->getParameters()["r2"] = ui->parameter2->value();
+        _kernel->getParameters()["r3"] = ui->parameter3->value();
+        break;
+    default:
+        break;
+    }
+
+    if (_kernel ) {
+        _kernel->getParameters()["rows"] = frame.rows();
+        _kernel->getParameters()["cols"] = frame.cols();
+
+    }
+}
+
+void DialogConvolve::on_parameter1_valueChanged(int arg1)
+{
+    if ( _kernel )
+        _kernel->getParameters()["r1"] = arg1;
+}
+
+void DialogConvolve::on_parameter2_valueChanged(int arg1)
+{
+    if ( _kernel )
+        _kernel->getParameters()["r2"] = arg1;
+}
+
+void DialogConvolve::on_parameter3_valueChanged(int arg1)
+{
+    if ( _kernel )
+        _kernel->getParameters()["r3"] = arg1;
 }

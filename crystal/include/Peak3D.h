@@ -62,7 +62,7 @@ class Peak3D
 {
 public:
 
-	Peak3D(SX::Data::IData* data=0);
+    Peak3D(std::shared_ptr<SX::Data::IData> data=std::shared_ptr<SX::Data::IData>());
 	Peak3D(const Peak3D& other);
 	Peak3D& operator=(const Peak3D& other);
 	~Peak3D();

@@ -133,7 +133,7 @@ void PeakFinder::find(std::vector<std::shared_ptr<IData>> numors, double thresho
             Eigen::Vector3d center, eigenvalues;
             Eigen::Matrix3d eigenvectors;
             blob.second.toEllipsoid(confidence, center,eigenvalues,eigenvectors);
-            SX::Crystal::Peak3D* p = new Peak3D(numor.get());
+            SX::Crystal::Peak3D* p = new Peak3D(numor);
             p->setPeakShape(new SX::Geometry::Ellipsoid3D(center,eigenvalues,eigenvectors));
             eigenvalues[0]*=2.0;
             eigenvalues[1]*=2.0;

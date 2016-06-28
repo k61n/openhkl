@@ -16,6 +16,10 @@ public:
     ~PeakFindModel();
 
 
+private slots:
+    void onItemChanged(QStandardItem* item);
+
+
 private:
 
 };
