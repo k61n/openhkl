@@ -21,6 +21,7 @@
 
 #include "AABB.h"
 #include "Basis.h"
+#include "BlobFinder.h"
 #include "Cluster.h"
 #include "ComponentState.h"
 #include "Detector.h"
