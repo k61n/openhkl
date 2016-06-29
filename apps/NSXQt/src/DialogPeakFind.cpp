@@ -59,8 +59,8 @@ void DialogPeakFind::on_filterComboBox_activated(int index)
         return;
 
     // filter was chosen successfully, so update internals to forward to main window
-    double threshold = convolveDialog->getThreshold();
-    ui->thresholdSpinBox->setValue(threshold);
+    //double threshold = convolveDialog->getThreshold();
+    //ui->thresholdSpinBox->setValue(threshold);
 
-    _convolver = convolveDialog->getConvolver();
+    //_convolver = convolveDialog->getConvolver();
 }

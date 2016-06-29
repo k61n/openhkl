@@ -76,6 +76,9 @@ public:
     ConvolutionKernel& operator=(const ConvolutionKernel& rhs);
 
 
+    int getType();
+
+
 protected:
     // update the kernel using current parameters
     virtual void update() {};

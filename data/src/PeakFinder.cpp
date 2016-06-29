@@ -28,7 +28,7 @@ PeakFinder::PeakFinder()
 }
 
 
-void PeakFinder::find(std::vector<std::shared_ptr<IData>> numors, double threshold, double confidence, int minComp, int maxComp, std::shared_ptr<Convolver> convolver)
+void PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
 {
     // needed to compile:
     //double threshold, confidence;
@@ -56,14 +56,12 @@ void PeakFinder::find(std::vector<std::shared_ptr<IData>> numors, double thresho
         numor->clearPeaks();
         numor->readInMemory();
 
-        int median = 0;
-
         try {
             //progressDialog->setMaximum(100);
             //progressDialog->setLabelText("Computing background level...");
             //progressDialog->show();
 
-            median = numor->getBackgroundLevel(_handler)+1;
+            _median = numor->getBackgroundLevel(_handler)+1;
 
             //progressDialog->close();
         }
@@ -87,22 +85,49 @@ void PeakFinder::find(std::vector<std::shared_ptr<IData>> numors, double thresho
 
             blob_finder.setProgressHandler(_handler);
 
-            blob_finder.setMedian(median);
-            blob_finder.setThreshold(threshold);
-            blob_finder.setMinComp(minComp);
-            blob_finder.setMaxComp(maxComp);
-            blob_finder.setConfidence(confidence);
+            blob_finder.setMedian(_median);
+            blob_finder.setThreshold(_thresholdValue);
+            blob_finder.setMinComp(_minComp);
+            blob_finder.setMaxComp(_maxComp);
+            blob_finder.setConfidence(_confidence);
+            blob_finder.setRelative(_thresholdType == 0);
+
+            if ( _handler ) {
+                _handler->log("Median value is: " + std::to_string(_median));
+                _handler->log("threshold value is " + std::to_string(_thresholdValue));
+                _handler->log("min comp is" + std::to_string(_minComp));
+                _handler->log("max comp is " + std::to_string(_maxComp));
+                _handler->log("confidence is " + std::to_string(_confidence));
+                _handler->log("relative threshold is" + std::to_string(_thresholdType == 0));
+            }
 
             // set image filter, if selected
-            if (convolver) {
+            if ( _kernel ) {
+
+                if ( !_convolver)
+                    _convolver = std::shared_ptr<SX::Imaging::Convolver>(new SX::Imaging::Convolver);
+
+                // update the convolver with the kernel
+                _convolver->setKernel(_kernel->getKernel());
+
+                // this is the filter function to be applied to each frame
                 auto callback = [&] (const RealMatrix& input) -> RealMatrix
                 {
-                    return convolver->apply(input);
+                    return _convolver->apply(input);
                 };
+
+                if (_handler) {
+                    _handler->log("kernel " + std::string(_kernel->getName()) + " selected");
+                    for (auto& it: _kernel->getParameters())
+                        _handler->log(it.first + " " + std::to_string(it.second));
+                }
 
                 blob_finder.setFilter(callback);
             }
-
+            else {
+                if ( _handler )
+                    _handler->log("no convolution filter selected");
+            }
 
             blobs = blob_finder.find(0, numor->getNFrames());
             //blobs=SX::Geometry::findBlobs3D(numor->begin(), numor->end(), median*threshold, 30, 10000, confidence);
@@ -132,7 +157,7 @@ void PeakFinder::find(std::vector<std::shared_ptr<IData>> numors, double thresho
         {
             Eigen::Vector3d center, eigenvalues;
             Eigen::Matrix3d eigenvectors;
-            blob.second.toEllipsoid(confidence, center,eigenvalues,eigenvectors);
+            blob.second.toEllipsoid(_confidence, center, eigenvalues, eigenvectors);
             SX::Crystal::Peak3D* p = new Peak3D(numor);
             p->setPeakShape(new SX::Geometry::Ellipsoid3D(center,eigenvalues,eigenvectors));
             eigenvalues[0]*=2.0;
@@ -169,7 +194,7 @@ void PeakFinder::find(std::vector<std::shared_ptr<IData>> numors, double thresho
         //qDebug() << ">>>>>>>> initializing peak intensities...";
 
         if (_handler) {
-            _handler->setStatus("Integrating peaks...");
+            _handler->setStatus(("Integrating " + std::to_string(numor->getPeaks().size()) + " peaks...").c_str());
             _handler->setProgress(0);
         }
 
@@ -227,6 +252,79 @@ void PeakFinder::find(std::vector<std::shared_ptr<IData>> numors, double thresho
 void PeakFinder::setHandler(std::shared_ptr<ProgressHandler> handler)
 {
     _handler = handler;
+}
+
+void PeakFinder::setThresholdValue(double threshold)
+{
+    _thresholdValue = threshold;
+}
+
+double PeakFinder::getThresholdValue()
+{
+    return _thresholdValue;
+}
+
+void PeakFinder::setThresholdType(int type)
+{
+    _thresholdType = type;
+}
+
+int PeakFinder::getThresholdType()
+{
+    return _thresholdType;
+}
+
+void PeakFinder::setConfidence(double confidence)
+{
+    _confidence = confidence;
+}
+
+double PeakFinder::getConfidence()
+{
+    return _confidence;
+}
+
+void PeakFinder::setMinComponents(int minComp)
+{
+    _minComp = minComp;
+}
+
+int PeakFinder::getMinComponents()
+{
+    return _minComp;
+}
+
+void PeakFinder::setMaxComponents(int maxComp)
+{
+    _maxComp = maxComp;
+}
+
+int PeakFinder::getMaxComponents()
+{
+    return _maxComp;
+}
+
+void PeakFinder::setConvolver(std::shared_ptr<SX::Imaging::Convolver> convolver)
+{
+    _convolver = convolver;
+}
+
+int PeakFinder::getKernelType()
+{
+    if ( _kernel )
+        return _kernel->getType();
+    else
+        return 0;
+}
+
+void PeakFinder::setKernel(std::shared_ptr<Imaging::ConvolutionKernel> kernel)
+{
+    _kernel = kernel;
+}
+
+std::shared_ptr<Imaging::ConvolutionKernel> PeakFinder::getKernel()
+{
+    return _kernel;
 }
 
 } // namespace Data

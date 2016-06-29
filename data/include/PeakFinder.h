@@ -4,6 +4,9 @@
 
 #include <memory>
 
+#include "Convolver.h"
+#include "ConvolutionKernel.h"
+
 
 namespace SX {
 
@@ -23,9 +26,7 @@ class PeakFinder
 {
 public:
     PeakFinder();
-    void find(std::vector<std::shared_ptr<IData>> numors,
-              double threshold, double confidence, int minComp, int maxComp,
-              std::shared_ptr<SX::Imaging::Convolver> convolver);
+    void find(std::vector<std::shared_ptr<IData>> numors);
 
     void setHandler(std::shared_ptr<SX::Utils::ProgressHandler> handler);
 
@@ -44,11 +45,28 @@ public:
     void setMaxComponents(int maxComp);
     int getMaxComponents();
 
-    void setFilter();
-    void getFilter();
+    void setConvolver(std::shared_ptr<SX::Imaging::Convolver> convolver);
+    void setConvolutionKernel(std::shared_ptr<SX::Imaging::ConvolutionKernel> kernel);
+
+    int getKernelType();
+
+    void setKernel(std::shared_ptr<SX::Imaging::ConvolutionKernel> kernel);
+    std::shared_ptr<SX::Imaging::ConvolutionKernel> getKernel();
 
 private:
     std::shared_ptr<SX::Utils::ProgressHandler> _handler;
+    std::shared_ptr<SX::Imaging::Convolver> _convolver;
+    std::shared_ptr<SX::Imaging::ConvolutionKernel> _kernel;
+    int _kernelType;
+
+    double _thresholdValue;
+    int _thresholdType;
+
+    double _confidence;
+    double _median;
+
+    int _minComp;
+    int _maxComp;
 };
 
 } // namespace Data

@@ -18,6 +18,8 @@
 #include "Convolver.h"
 #include "ConvolutionKernel.h"
 #include "PeakFindModel.h"
+#include "PeakFinder.h"
+
 
 namespace Ui {
 class DialogConvolve;
@@ -30,7 +32,7 @@ class DialogConvolve : public QDialog
 public:
     explicit DialogConvolve(const Eigen::MatrixXi& currentFrame, QWidget *parent = 0);
     ~DialogConvolve();
-
+/*
     double getThreshold();
     double getConfidence();
 
@@ -41,6 +43,9 @@ public:
 
     std::shared_ptr<SX::Imaging::Convolver> getConvolver();
     std::shared_ptr<SX::Imaging::ConvolutionKernel> getKernel();
+*/
+    void setPreviewFrame(const Eigen::MatrixXi& frame);
+    void setPeakFinder(std::shared_ptr<SX::Data::PeakFinder> peakFinder);
 
 
 private slots:
@@ -49,10 +54,18 @@ private slots:
     void on_filterComboBox_currentIndexChanged(int index);
 
     void on_parameter1_valueChanged(int arg1);
-
     void on_parameter2_valueChanged(int arg1);
-
     void on_parameter3_valueChanged(int arg1);
+
+    void on_thresholdSpinBox_valueChanged(double arg1);
+
+    void on_confidenceSpinBox_valueChanged(double arg1);
+
+    void on_minCompBox_valueChanged(int arg1);
+
+    void on_maxCompBox_valueChanged(int arg1);
+
+    void on_thresholdComboBox_currentIndexChanged(int index);
 
 private:
     Ui::DialogConvolve *ui;
@@ -61,10 +74,8 @@ private:
 
     Eigen::MatrixXi frame;
 
+    std::shared_ptr<SX::Data::PeakFinder> _peakFinder;
     std::shared_ptr<SX::Imaging::Convolver> _convolver;
-    std::shared_ptr<SX::Imaging::ConvolutionKernel> _kernel;
-
-    PeakFindModel* _peakFindModel;
 
 };
 #endif // NSXTOOL_DIALOGCONVOLVE_H_

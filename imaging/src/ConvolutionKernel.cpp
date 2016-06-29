@@ -32,12 +32,16 @@
 #include <utility>
 
 #include "ConvolutionKernel.h"
+#include "AnnularKernel.h"
 
 namespace SX
 {
 
 namespace Imaging
 {
+
+
+
 
 using RealMatrix = SX::Types::RealMatrix;
 
@@ -95,6 +99,16 @@ ConvolutionKernel &ConvolutionKernel::operator=(const ConvolutionKernel &rhs)
     _hasChanged = rhs._hasChanged;
     _params = rhs._params;
     return *this;
+}
+
+int ConvolutionKernel::getType()
+{
+    if ( dynamic_cast<AnnularKernel*>(this)) {
+        return 1;
+    }
+    else {
+       return 0;
+    }
 }
 
 std::ostream& operator<<(std::ostream& os, const ConvolutionKernel& kernel)

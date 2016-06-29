@@ -31,6 +31,7 @@ public:
     const std::string getStatus();
 
     void log(const char* message);
+    void log(const std::string& message);
     std::vector<std::string> getLog();
 
 private:

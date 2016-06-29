@@ -290,8 +290,10 @@ void BlobFinder::findBlobs(int begin, int end)
             _progressHandler->setProgress(progress);
     }
 
-    if (_progressHandler)
+    if (_progressHandler) {
+        _progressHandler->log("Found " + std::to_string(_blobs.size()) + " blobs");
         _progressHandler->setProgress(100);
+    }
 
     // too few frames for algorithm to be reliable
     if (_nframes<=1)

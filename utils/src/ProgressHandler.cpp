@@ -45,6 +45,12 @@ const std::string ProgressHandler::getStatus()
     return status;
 }
 
+void ProgressHandler::log(const std::string& message)
+{
+    std::lock_guard<std::mutex> lock(_mutex);
+    _log.push_back(message);
+}
+
 void ProgressHandler::log(const char *message)
 {
     std::lock_guard<std::mutex> lock(_mutex);

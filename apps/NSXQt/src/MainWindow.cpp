@@ -140,8 +140,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     _progressView = std::shared_ptr<ProgressView>(new ProgressView());
     _progressHandler = std::shared_ptr<ProgressHandler>(new ProgressHandler());
-
-    _peakFinder = std::unique_ptr<PeakFinder>(new PeakFinder());
+    _peakFinder = std::shared_ptr<PeakFinder>(new PeakFinder());
 }
 
 MainWindow::~MainWindow()
@@ -220,31 +219,40 @@ void MainWindow::on_action_peak_find_triggered()
 
     DialogConvolve* dialog = new DialogConvolve(_ui->_dview->getScene()->getCurrentFrame(), this);
 
+    _peakFinder->setHandler(_progressHandler);
+    _progressView->watch(_progressHandler);
+
+    // dialog will be initialized with values from current peak finder,
+    // and any changes made will persist
+    dialog->setPeakFinder(_peakFinder);
+
     if (!dialog->exec())
         return;
 
     // Get parameters for blob finding
-    double confidence = dialog->getConfidence();
+    /*double confidence = dialog->getConfidence();
     double threshold = dialog->getThreshold();
 
     int minComp = dialog->getMinComponents();
     int maxComp = dialog->getMaxComponents();
 
     // get convolver
-    _convolver = dialog->getConvolver();
+    _convolver = dialog->getConvolver();*/
 
-    _peakFinder->setHandler(_progressHandler);
-    _progressView->watch(_progressHandler);
+    qDebug() << "Beginning peak search.";
+
 
     auto task = [=] () -> void
     {
-        _peakFinder->find(numors, threshold, confidence, minComp, maxComp, _convolver);
+        _peakFinder->find(numors);
     };
 
     auto onFinished = [=] () -> void
     {
         _ui->_dview->getScene()->updatePeaks();
-        qDebug() << "Peak search complete.";
+        qDebug() << "Peak search complete., found "
+                 << _ui->_dview->getScene()->getData()->getPeaks().size()
+                 << " peaks.";
     };
 
     auto job = new Job(this, task, onFinished);

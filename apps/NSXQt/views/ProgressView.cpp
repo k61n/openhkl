@@ -59,4 +59,9 @@ void ProgressView::update()
 
     if ( progress < 0)
         qDebug() << "Status:" << _handler->getStatus().c_str() << " " << _handler->getProgress();
+
+    auto log = _handler->getLog();
+
+    for (auto& msg: log)
+        qDebug() << msg.c_str();
 }

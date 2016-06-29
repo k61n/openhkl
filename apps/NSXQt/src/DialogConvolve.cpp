@@ -30,6 +30,10 @@ DialogConvolve::DialogConvolve(const Eigen::MatrixXi& currentFrame, QWidget *par
 
     this->setWindowTitle("Convolution Filter");
 
+    _peakFinder = std::shared_ptr<SX::Data::PeakFinder>(new SX::Data::PeakFinder);
+    _convolver = std::shared_ptr<SX::Imaging::Convolver>(new SX::Imaging::Convolver);
+    _peakFinder->setConvolver(_convolver);
+
     //ui->graphicsView->setAcceptDrops();
 
     scene = new QGraphicsScene(this);
@@ -45,12 +49,9 @@ DialogConvolve::DialogConvolve(const Eigen::MatrixXi& currentFrame, QWidget *par
 
     //scene->addPixmap();
 
+
     // default value
-    ui->thresholdSpinBox->setValue(100.0);
-
-    _convolver = std::shared_ptr<SX::Imaging::Convolver>(new SX::Imaging::Convolver);
-
-    _peakFindModel = new PeakFindModel(this);
+    //ui->thresholdSpinBox->setValue(100.0);
 
     //ui->treeView->setModel(_peakFindModel);
 }
@@ -62,6 +63,29 @@ DialogConvolve::~DialogConvolve()
     // delete _peakFindModel;
 }
 
+void DialogConvolve::setPeakFinder(std::shared_ptr<SX::Data::PeakFinder> peakFinder)
+{
+    _peakFinder = peakFinder;
+    std::shared_ptr<SX::Imaging::ConvolutionKernel> kernel = peakFinder->getKernel();
+
+    if ( !_peakFinder)
+        return;
+
+    // need to update widgets with appropriate values
+    ui->thresholdSpinBox->setValue(_peakFinder->getThresholdValue());
+    ui->thresholdComboBox->setCurrentIndex(_peakFinder->getThresholdType());
+    ui->confidenceSpinBox->setValue(_peakFinder->getConfidence());
+    ui->minCompBox->setValue(_peakFinder->getMinComponents());
+    ui->maxCompBox->setValue(_peakFinder->getMaxComponents());
+    ui->filterComboBox->setCurrentIndex(_peakFinder->getKernelType());
+
+    if ( kernel ) {
+        ui->parameter1->setValue(kernel->getParameters()["r1"]);
+        ui->parameter2->setValue(kernel->getParameters()["r2"]);
+        ui->parameter3->setValue(kernel->getParameters()["r3"]);
+    }
+}
+/*
 double DialogConvolve::getThreshold()
 {
     return ui->thresholdSpinBox->value();
@@ -105,7 +129,7 @@ std::shared_ptr<SX::Imaging::ConvolutionKernel> DialogConvolve::getKernel()
 
     return _kernel;
 }
-
+*/
 void DialogConvolve::on_previewButton_clicked()
 {
     // TODO: implement this
@@ -121,8 +145,9 @@ void DialogConvolve::on_previewButton_clicked()
     // note that treeWidget retains ownership!
     //ui->treeWidgetOld->retrieveParameters();
     //_kernel = ui->treeWidgetOld->getKernel();
+    auto kernel = _peakFinder->getKernel();
 
-    if (!_kernel) {
+    if (!kernel) {
         qDebug() << "null kernel returned!";
         return;
     }
@@ -130,13 +155,13 @@ void DialogConvolve::on_previewButton_clicked()
     std::cout << "got kernel" << std::endl;
 
     // dimensions must match image dimensions
-    _kernel->getParameters()["rows"] = frame.rows();
-    _kernel->getParameters()["cols"] = frame.cols();
+    kernel->getParameters()["rows"] = frame.rows();
+    kernel->getParameters()["cols"] = frame.cols();
 
     std::cout << "set kernel rows and cols: " << frame.rows() << " " << frame.cols() << std::endl;
 
     // set up convolver
-    _convolver->setKernel(_kernel->getKernel());
+    _convolver->setKernel(kernel->getKernel());
 
     std::cout << "initialized convolver" << std::endl;
 
@@ -155,49 +180,77 @@ void DialogConvolve::on_previewButton_clicked()
     // apply a simple theshold
     // TODO: incorporate into GUI, or improve in some other way
     for ( int i = 0; i < nrows*ncols; ++i)
-        clamped_result.data()[i] = result.data()[i] > getThreshold() ? max_intensity-1 : 0;
+        clamped_result.data()[i] = result.data()[i] > _peakFinder->getThresholdValue() ? max_intensity-1 : 0;
 
     pxmapPreview->setPixmap(QPixmap::fromImage(Mat2QImage(clamped_result.data(), frame.rows(), frame.cols(), 0, ncols, 0, nrows, max_intensity)));
 }
 
 void DialogConvolve::on_filterComboBox_currentIndexChanged(int index)
 {
-    _kernel.reset();
+    std::shared_ptr<SX::Imaging::ConvolutionKernel> kernel;
 
     switch(index)
     {
     // annular kernel
     case 1:
-        _kernel = std::shared_ptr<SX::Imaging::ConvolutionKernel>(new SX::Imaging::AnnularKernel());
-        _kernel->getParameters()["r1"] = ui->parameter1->value();
-        _kernel->getParameters()["r2"] = ui->parameter2->value();
-        _kernel->getParameters()["r3"] = ui->parameter3->value();
+        kernel = std::shared_ptr<SX::Imaging::ConvolutionKernel>(new SX::Imaging::AnnularKernel());
+        kernel->getParameters()["r1"] = ui->parameter1->value();
+        kernel->getParameters()["r2"] = ui->parameter2->value();
+        kernel->getParameters()["r3"] = ui->parameter3->value();
         break;
     default:
         break;
     }
 
-    if (_kernel ) {
-        _kernel->getParameters()["rows"] = frame.rows();
-        _kernel->getParameters()["cols"] = frame.cols();
-
+    if (kernel ) {
+        kernel->getParameters()["rows"] = frame.rows();
+        kernel->getParameters()["cols"] = frame.cols();
     }
+
+    // propagate changes to peak finder
+    _peakFinder->setKernel(kernel);
 }
 
 void DialogConvolve::on_parameter1_valueChanged(int arg1)
 {
-    if ( _kernel )
-        _kernel->getParameters()["r1"] = arg1;
+    if ( _peakFinder->getKernel() )
+        _peakFinder->getKernel()->getParameters()["r1"] = arg1;
 }
 
 void DialogConvolve::on_parameter2_valueChanged(int arg1)
 {
-    if ( _kernel )
-        _kernel->getParameters()["r2"] = arg1;
+    if ( _peakFinder->getKernel() )
+        _peakFinder->getKernel()->getParameters()["r2"] = arg1;
 }
 
 void DialogConvolve::on_parameter3_valueChanged(int arg1)
 {
-    if ( _kernel )
-        _kernel->getParameters()["r3"] = arg1;
+    if ( _peakFinder->getKernel() )
+        _peakFinder->getKernel()->getParameters()["r3"] = arg1;
+}
+
+void DialogConvolve::on_thresholdSpinBox_valueChanged(double arg1)
+{
+    _peakFinder->setThresholdValue(arg1);
+}
+
+void DialogConvolve::on_confidenceSpinBox_valueChanged(double arg1)
+{
+    _peakFinder->setConfidence(arg1);
+}
+
+void DialogConvolve::on_minCompBox_valueChanged(int arg1)
+{
+    _peakFinder->setMinComponents(arg1);
+}
+
+void DialogConvolve::on_maxCompBox_valueChanged(int arg1)
+{
+    _peakFinder->setMaxComponents(arg1);
+}
+
+void DialogConvolve::on_thresholdComboBox_currentIndexChanged(int index)
+{
+    _peakFinder->setThresholdType(index);
+    qDebug() << "threshold type index is " << index;
 }
