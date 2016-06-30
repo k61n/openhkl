@@ -1,4 +1,3 @@
-#include <QApplication>
 #include <QSplashScreen>
 #include <QDesktopWidget>
 #include <QPainter>
@@ -6,10 +5,11 @@
 #include <QSplashScreen>
 
 #include "MainWindow.h"
+#include "NSXQtApp.h"
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+    NSXQtApp a(argc, argv);
 
     // Ensure . is used rather than , for float and double boxes
     QLocale::setDefault(QLocale::c());
