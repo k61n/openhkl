@@ -71,6 +71,8 @@ MonoDetector::MonoDetector(const proptree::ptree& node) : Detector(node)
 	unsigned int nRows=nRowsNode.get_value<unsigned int>();
     setNPixels(nCols,nRows);
 
+    _minCol = node.get<double>("origin_x",0.0);
+    _minRow = node.get<double>("origin_y",0.0);
 }
 
 MonoDetector::~MonoDetector()
