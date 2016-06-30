@@ -17,14 +17,17 @@ class WorkerThread : public QThread
 {
     Q_OBJECT
 public:
-    WorkerThread(QObject* parent, std::function<void(void)> task);
+    using TaskCallback = std::function<bool(void)>;
+    using FinishedCallback = std::function<void(bool)>;
+
+    WorkerThread(QObject* parent, TaskCallback task);
     void run();
 
 signals:
-    void resultReady();
+    void resultReady(bool success);
 
 private:
-    std::function<void(void)> _task;
+    TaskCallback _task;
 };
 
 
@@ -33,14 +36,21 @@ class Job : public QObject
     Q_OBJECT
 
 public:
-    Job(QObject* parent, std::function<void(void)> task, std::function<void(void)> onFinished);
+    Job(QObject* parent, WorkerThread::TaskCallback task, WorkerThread::FinishedCallback onFinished);
+    void exec();
 
 public slots:
-    void resultReady();
+    void resultReady(bool success);
+    void terminated();
+    void terminate();
+
+signals:
+    void terminateThread();
 
 private:
     std::unique_ptr<WorkerThread> _worker;
-    std::function<void(void)> _onFinished;
+    WorkerThread::FinishedCallback _onFinished;
+    WorkerThread* _workerThread;
 };
 
 #endif // NSXTOOL_JOBHANDLER_H_

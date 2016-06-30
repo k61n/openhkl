@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1260</width>
-    <height>554</height>
+    <width>1057</width>
+    <height>398</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,265 +16,179 @@
   <property name="modal">
    <bool>false</bool>
   </property>
-  <widget class="QDialogButtonBox" name="buttonBox">
-   <property name="geometry">
-    <rect>
-     <x>1080</x>
-     <y>490</y>
-     <width>171</width>
-     <height>32</height>
-    </rect>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Horizontal</enum>
-   </property>
-   <property name="standardButtons">
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-   </property>
-  </widget>
   <widget class="QGraphicsView" name="graphicsView">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>10</y>
-     <width>701</width>
-     <height>531</height>
+     <x>0</x>
+     <y>0</y>
+     <width>671</width>
+     <height>391</height>
     </rect>
    </property>
   </widget>
-  <widget class="QPushButton" name="previewButton">
+  <widget class="QWidget" name="">
    <property name="geometry">
     <rect>
-     <x>770</x>
-     <y>490</y>
-     <width>131</width>
-     <height>28</height>
+     <x>680</x>
+     <y>0</y>
+     <width>371</width>
+     <height>391</height>
     </rect>
    </property>
-   <property name="text">
-    <string>Generate Preview</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="thresholdLabel">
-   <property name="geometry">
-    <rect>
-     <x>730</x>
-     <y>30</y>
-     <width>66</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Threshold</string>
-   </property>
-  </widget>
-  <widget class="QDoubleSpinBox" name="thresholdSpinBox">
-   <property name="geometry">
-    <rect>
-     <x>880</x>
-     <y>30</y>
-     <width>111</width>
-     <height>30</height>
-    </rect>
-   </property>
-   <property name="maximum">
-    <double>1000000.000000000000000</double>
-   </property>
-   <property name="singleStep">
-    <double>0.100000000000000</double>
-   </property>
-   <property name="value">
-    <double>3.000000000000000</double>
-   </property>
-  </widget>
-  <widget class="QLabel" name="confidenceLabel">
-   <property name="geometry">
-    <rect>
-     <x>730</x>
-     <y>70</y>
-     <width>101</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Confidence</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="minCompLabel">
-   <property name="geometry">
-    <rect>
-     <x>730</x>
-     <y>110</y>
-     <width>131</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Min. components</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="maxCompLabel">
-   <property name="geometry">
-    <rect>
-     <x>730</x>
-     <y>150</y>
-     <width>141</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Max. componenents</string>
-   </property>
-  </widget>
-  <widget class="QComboBox" name="thresholdComboBox">
-   <property name="geometry">
-    <rect>
-     <x>1000</x>
-     <y>30</y>
-     <width>181</width>
-     <height>30</height>
-    </rect>
-   </property>
-   <item>
-    <property name="text">
-     <string>Relative to background</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>Absolute</string>
-    </property>
-   </item>
-  </widget>
-  <widget class="QDoubleSpinBox" name="confidenceSpinBox">
-   <property name="geometry">
-    <rect>
-     <x>880</x>
-     <y>70</y>
-     <width>111</width>
-     <height>30</height>
-    </rect>
-   </property>
-   <property name="decimals">
-    <number>4</number>
-   </property>
-   <property name="maximum">
-    <double>1.000000000000000</double>
-   </property>
-   <property name="singleStep">
-    <double>0.001000000000000</double>
-   </property>
-   <property name="value">
-    <double>0.997000000000000</double>
-   </property>
-  </widget>
-  <widget class="QLabel" name="filterLabel">
-   <property name="geometry">
-    <rect>
-     <x>1010</x>
-     <y>110</y>
-     <width>81</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Filter type</string>
-   </property>
-  </widget>
-  <widget class="QComboBox" name="filterComboBox">
-   <property name="geometry">
-    <rect>
-     <x>1100</x>
-     <y>110</y>
-     <width>85</width>
-     <height>30</height>
-    </rect>
-   </property>
-   <item>
-    <property name="text">
-     <string>None</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>Annular</string>
-    </property>
-   </item>
-  </widget>
-  <widget class="QSpinBox" name="minCompBox">
-   <property name="geometry">
-    <rect>
-     <x>880</x>
-     <y>110</y>
-     <width>111</width>
-     <height>30</height>
-    </rect>
-   </property>
-   <property name="maximum">
-    <number>2000000000</number>
-   </property>
-   <property name="value">
-    <number>30</number>
-   </property>
-  </widget>
-  <widget class="QSpinBox" name="maxCompBox">
-   <property name="geometry">
-    <rect>
-     <x>880</x>
-     <y>150</y>
-     <width>111</width>
-     <height>30</height>
-    </rect>
-   </property>
-   <property name="maximum">
-    <number>2000000000</number>
-   </property>
-   <property name="value">
-    <number>10000</number>
-   </property>
-  </widget>
-  <widget class="QSpinBox" name="parameter3">
-   <property name="geometry">
-    <rect>
-     <x>1160</x>
-     <y>220</y>
-     <width>49</width>
-     <height>30</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QSpinBox" name="parameter2">
-   <property name="geometry">
-    <rect>
-     <x>1110</x>
-     <y>220</y>
-     <width>49</width>
-     <height>30</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QSpinBox" name="parameter1">
-   <property name="geometry">
-    <rect>
-     <x>1060</x>
-     <y>220</y>
-     <width>49</width>
-     <height>30</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label">
-   <property name="geometry">
-    <rect>
-     <x>1060</x>
-     <y>190</y>
-     <width>131</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Filter parameters</string>
-   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="1" column="2">
+     <widget class="QComboBox" name="thresholdComboBox">
+      <item>
+       <property name="text">
+        <string>Relative to background</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Absolute</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="2" column="2">
+     <widget class="QDoubleSpinBox" name="confidenceSpinBox">
+      <property name="decimals">
+       <number>4</number>
+      </property>
+      <property name="maximum">
+       <double>1.000000000000000</double>
+      </property>
+      <property name="singleStep">
+       <double>0.001000000000000</double>
+      </property>
+      <property name="value">
+       <double>0.997000000000000</double>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="2">
+     <widget class="QSpinBox" name="minCompBox">
+      <property name="maximum">
+       <number>2000000000</number>
+      </property>
+      <property name="value">
+       <number>30</number>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0" colspan="2">
+     <widget class="QLabel" name="maxCompLabel">
+      <property name="text">
+       <string>Max. componenents</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="2">
+     <widget class="QSpinBox" name="maxCompBox">
+      <property name="maximum">
+       <number>2000000000</number>
+      </property>
+      <property name="value">
+       <number>10000</number>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="2">
+     <widget class="QComboBox" name="filterComboBox">
+      <item>
+       <property name="text">
+        <string>None</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Annular</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="6" column="2">
+     <widget class="QSpinBox" name="parameter1"/>
+    </item>
+    <item row="7" column="2">
+     <widget class="QSpinBox" name="parameter2"/>
+    </item>
+    <item row="8" column="2">
+     <widget class="QSpinBox" name="parameter3"/>
+    </item>
+    <item row="9" column="0" colspan="2">
+     <widget class="QPushButton" name="previewButton">
+      <property name="text">
+       <string>Generate Preview</string>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="2">
+     <widget class="QDialogButtonBox" name="buttonBox">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="standardButtons">
+       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0" colspan="2">
+     <widget class="QLabel" name="minCompLabel">
+      <property name="text">
+       <string>Min. components</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0" colspan="2">
+     <widget class="QLabel" name="confidenceLabel">
+      <property name="text">
+       <string>Confidence</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <widget class="QDoubleSpinBox" name="thresholdSpinBox">
+      <property name="maximum">
+       <double>1000000.000000000000000</double>
+      </property>
+      <property name="singleStep">
+       <double>0.100000000000000</double>
+      </property>
+      <property name="value">
+       <double>3.000000000000000</double>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0" colspan="2">
+     <widget class="QLabel" name="thresholdLabel">
+      <property name="text">
+       <string>Threshold value</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="2">
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>Threshold type</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0" colspan="2">
+     <widget class="QLabel" name="filterLabel">
+      <property name="text">
+       <string>Filter type</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="0" colspan="2">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Filter parameters</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources/>

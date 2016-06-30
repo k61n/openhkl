@@ -92,7 +92,6 @@ private:
     std::shared_ptr<SX::Data::IData> _currentData;
 
     std::shared_ptr<SX::Utils::ProgressHandler> _progressHandler;
-    std::shared_ptr<ProgressView> _progressView;
     std::shared_ptr<SX::Data::PeakFinder> _peakFinder;
     std::shared_ptr<SX::Imaging::Convolver> _convolver;
     //threshold, confidence, minComp, maxComp

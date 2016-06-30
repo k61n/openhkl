@@ -631,7 +631,11 @@ double IData::getBackgroundLevel(std::shared_ptr<SX::Utils::ProgressHandler> pro
     if ( _background > 0.0 )
         return _background;
 
-    _background = 0.0;
+    // we calculate background in local variable bg for thread safety reasons--
+    // this method is called from a thread which could be aborted, so we do not want
+    // to write to _background until the calculation has been completed
+    double bg = 0.0;
+
     double factor = 1.0 / (_nFrames * _nrows * _ncols);
 
     if ( progressCallback) {
@@ -643,7 +647,7 @@ double IData::getBackgroundLevel(std::shared_ptr<SX::Utils::ProgressHandler> pro
     for (auto it = getIterator(0); it->index() != _nFrames; it->advance()) {
         // cast matrix to double (instead of int) -- necessary due to integer overflow!
         // _background += factor * it->cast<double>().sum();
-        _background += factor * it->getFrame().sum();
+        bg += factor * it->getFrame().sum();
 
         if ( progressCallback ) {
             double progress = 100.0 * it->index() / static_cast<double>(_nFrames);
@@ -655,6 +659,7 @@ double IData::getBackgroundLevel(std::shared_ptr<SX::Utils::ProgressHandler> pro
     if ( progressCallback )
         progressCallback->setProgress(100);
 
+    _background = bg;
     return _background;
 }
 

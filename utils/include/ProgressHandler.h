@@ -8,6 +8,7 @@
 #include <functional>
 #include <string>
 #include <vector>
+#include <atomic>
 
 namespace SX {
 
@@ -34,11 +35,16 @@ public:
     void log(const std::string& message);
     std::vector<std::string> getLog();
 
+    void abort();
+    bool aborted();
+
 private:
     std::mutex _mutex;
     std::string _status;
     std::vector<std::string> _log;
     int _progress;
+
+    std::atomic_bool _aborted;
 };
 
 } // namespace Utils

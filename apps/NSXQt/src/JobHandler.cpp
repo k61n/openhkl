@@ -3,31 +3,58 @@
 
 #include "JobHandler.h"
 
+using TaskCallback = WorkerThread::TaskCallback;
+using FinishedCallback = WorkerThread::FinishedCallback;
 
-WorkerThread::WorkerThread(QObject *parent, std::function<void(void)> task): QThread(parent), _task(task)
+
+WorkerThread::WorkerThread(QObject *parent, TaskCallback task): QThread(parent), _task(task)
 {
 
 }
 
 void WorkerThread::run()
 {
-    if ( _task )
-        _task();
+    bool success = false;
 
-    emit resultReady();
+    try {
+        if ( _task )
+            success = _task();
+    }
+    catch(...) {
+        emit resultReady(false);
+    }
+
+    emit resultReady(success);
 }
 
-Job::Job(QObject *parent, std::function<void(void)> task, std::function<void(void)> onFinished):
+Job::Job(QObject *parent, TaskCallback task, FinishedCallback onFinished):
     QObject(parent), _onFinished(onFinished)
 {
-    WorkerThread *workerThread = new WorkerThread(this, task);
-    connect(workerThread, SIGNAL(resultReady()), this, SLOT(resultReady()));
-    connect(workerThread, SIGNAL(finished()), workerThread, SLOT(deleteLater()));
-    workerThread->start();
+    _workerThread = new WorkerThread(this, task);
+    connect(_workerThread, SIGNAL(resultReady(bool)), this, SLOT(resultReady(bool)));
+    connect(_workerThread, SIGNAL(finished()), _workerThread, SLOT(deleteLater()));
+    connect(this, SIGNAL(terminateThread()), _workerThread, SLOT(terminate()));
 }
 
-void Job::resultReady()
+void Job::exec()
+{
+    _workerThread->start();
+}
+
+void Job::resultReady(bool success)
 {
     if (_onFinished)
-        _onFinished();
+        _onFinished(success);
 }
+
+void Job::terminated()
+{
+    if (_onFinished)
+        _onFinished(false);
+}
+
+void Job::terminate()
+{
+    emit terminateThread();
+}
+

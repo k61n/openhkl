@@ -26,7 +26,7 @@ class PeakFinder
 {
 public:
     PeakFinder();
-    void find(std::vector<std::shared_ptr<IData>> numors);
+    bool find(std::vector<std::shared_ptr<IData>> numors);
 
     void setHandler(std::shared_ptr<SX::Utils::ProgressHandler> handler);
 
@@ -57,7 +57,7 @@ private:
     std::shared_ptr<SX::Utils::ProgressHandler> _handler;
     std::shared_ptr<SX::Imaging::Convolver> _convolver;
     std::shared_ptr<SX::Imaging::ConvolutionKernel> _kernel;
-    int _kernelType;
+    //int _kernelType;
 
     double _thresholdValue;
     int _thresholdType;

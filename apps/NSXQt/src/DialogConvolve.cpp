@@ -28,7 +28,11 @@ DialogConvolve::DialogConvolve(const Eigen::MatrixXi& currentFrame, QWidget *par
 {
     ui->setupUi(this);
 
-    this->setWindowTitle("Convolution Filter");
+    //this->setWindowTitle(nsx");
+
+    // disable resizing
+    this->setFixedSize(this->size());
+
 
     _peakFinder = std::shared_ptr<SX::Data::PeakFinder>(new SX::Data::PeakFinder);
     _convolver = std::shared_ptr<SX::Imaging::Convolver>(new SX::Imaging::Convolver);

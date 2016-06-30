@@ -138,7 +138,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     qDebug() << "The resources directory is " << SX::Utils::Path().getResourcesDir().c_str();
 
-    _progressView = std::shared_ptr<ProgressView>(new ProgressView());
     _progressHandler = std::shared_ptr<ProgressHandler>(new ProgressHandler());
     _peakFinder = std::shared_ptr<PeakFinder>(new PeakFinder());
 }
@@ -219,8 +218,9 @@ void MainWindow::on_action_peak_find_triggered()
 
     DialogConvolve* dialog = new DialogConvolve(_ui->_dview->getScene()->getCurrentFrame(), this);
 
+    // reset progress handler
+    _progressHandler = std::shared_ptr<ProgressHandler>(new ProgressHandler);
     _peakFinder->setHandler(_progressHandler);
-    _progressView->watch(_progressHandler);
 
     // dialog will be initialized with values from current peak finder,
     // and any changes made will persist
@@ -241,21 +241,44 @@ void MainWindow::on_action_peak_find_triggered()
 
     qDebug() << "Beginning peak search.";
 
+    // create a pop-up window that will show the progress
+    ProgressView* progressView = new ProgressView(this);
+    progressView->watch(_progressHandler);
 
-    auto task = [=] () -> void
+    auto task = [=] () -> bool
     {
-        _peakFinder->find(numors);
+        bool result = false;
+
+        try {
+            result = _peakFinder->find(numors);
+        }
+        catch(std::exception& e) {
+            qDebug() << "Caught exception during peak find.";
+            return false;
+        }
+        return result;
     };
 
-    auto onFinished = [=] () -> void
+    auto onFinished = [=] (bool succeeded) -> void
     {
+        // delete the progressView
+        delete progressView;
+
+        if ( succeeded ) {
         _ui->_dview->getScene()->updatePeaks();
         qDebug() << "Peak search complete., found "
                  << _ui->_dview->getScene()->getData()->getPeaks().size()
                  << " peaks.";
+        }
+        else {
+            qDebug() << "Peak search failed!";
+        }
     };
 
     auto job = new Job(this, task, onFinished);
+    //connect(progressView, SIGNAL(canceled()), job, SLOT(terminate()));
+
+    job->exec();
 }
 
 

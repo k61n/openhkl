@@ -1,6 +1,7 @@
 // author: Jonathan Fisher
 // j.fisher@fz-juelich.de
 
+#include <stdexcept>
 
 #include "ProgressHandler.h"
 
@@ -10,7 +11,7 @@ namespace Utils {
 
 ProgressHandler::ProgressHandler()
 {
-
+    _aborted = false;
 }
 
 SX::Utils::ProgressHandler::~ProgressHandler()
@@ -21,8 +22,12 @@ SX::Utils::ProgressHandler::~ProgressHandler()
 void SX::Utils::ProgressHandler::setProgress(int progress)
 {
     std::lock_guard<std::mutex> lock(_mutex);
+
     _progress = progress > 100 ? 100 : progress;
     _progress = _progress < 0 ? 0 : _progress;
+
+    if ( aborted() )
+        throw std::runtime_error("Exception: job was aborted!");
 }
 
 int SX::Utils::ProgressHandler::getProgress()
@@ -65,6 +70,16 @@ std::vector<std::string> ProgressHandler::getLog()
     _log.clear();
 
     return old_log;
+}
+
+void ProgressHandler::abort()
+{
+    _aborted = true;
+}
+
+bool ProgressHandler::aborted()
+{
+    return _aborted;
 }
 
 

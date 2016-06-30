@@ -12,22 +12,22 @@
 
 #include "ProgressHandler.h"
 
-class ProgressView: public QObject {
+class ProgressView: public QProgressDialog {
     Q_OBJECT
 
 public:
-    ProgressView();
+    ProgressView(QWidget* parent);
     ~ProgressView();
 
     void watch(std::shared_ptr<SX::Utils::ProgressHandler> handler);
 
 public slots:
-    void update();
+    void updateProgress();
+    void abort();
 
 private:
     std::shared_ptr<SX::Utils::ProgressHandler> _handler;
     QTimer* _timer;
-    QProgressDialog* _dialog;
 };
 
 

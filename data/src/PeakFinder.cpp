@@ -24,11 +24,18 @@ namespace Data {
 
 PeakFinder::PeakFinder()
 {
+    // default values
+    _thresholdValue = 3.0;
+    _thresholdType = 0;
+    _confidence = 0.997;
+    _median = 0;
 
+    _minComp = 30;
+    _maxComp = 10000;
 }
 
 
-void PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
+bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
 {
     // needed to compile:
     //double threshold, confidence;
@@ -67,7 +74,7 @@ void PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
         }
         catch (...) {
             //qCritical() << "Error computing background level of dataset";
-            return;
+            return false;
         }
 
 
@@ -247,6 +254,8 @@ void PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
         _handler->setStatus("Peak finding completed.");
         _handler->setProgress(100);
     }
+
+    return true;
 }
 
 void PeakFinder::setHandler(std::shared_ptr<ProgressHandler> handler)
