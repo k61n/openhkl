@@ -6,7 +6,10 @@
 class NSXQtApp : public QApplication
 {
 public:
-    NSXQtApp();
+    NSXQtApp(int &argc, char *argv[]);
+
+private:
+    bool notify(QObject* receiver, QEvent* event);
 };
 
 #endif // NSXQTAPP_H

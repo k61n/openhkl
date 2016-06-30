@@ -107,7 +107,8 @@ SOURCES += src/Main.cpp \
     src/OpenGL/GLSphere.cpp \
     src/OpenGL/GLReciprocalLattice.cpp \
     src/LatticeIndexer.cpp \
-    src/ReciprocalSpaceViewer.cpp
+    src/ReciprocalSpaceViewer.cpp \
+    src/NSXQtApp.cpp
 
 HEADERS  += include/MainWindow.h \
     include/DialogPeakFind.h \
@@ -180,7 +181,8 @@ HEADERS  += include/MainWindow.h \
     include/OpenGL/GLSphere.h \
     include/OpenGL/GLReciprocalLattice.h \
     include/LatticeIndexer.h \
-    include/ReciprocalSpaceViewer.h
+    include/ReciprocalSpaceViewer.h \
+    include/NSXQtApp.h
 
 FORMS    += ui/mainwindow.ui \
     ui/dialog_PeakFind.ui \
