@@ -2,6 +2,7 @@
 #define RECIPROCALSPACEVIEWER_H
 
 #include <vector>
+#include <memory>
 
 #include <QDialog>
 
@@ -29,7 +30,7 @@ class ReciprocalSpaceViewer : public QDialog
 public:
     explicit ReciprocalSpaceViewer(SX::Instrument::Experiment* experiment, QWidget *parent = 0);
 
-    void setData(const std::vector<SX::Data::IData*>& data);
+    void setData(const std::vector<std::shared_ptr<SX::Data::IData>>& data);
 
     ~ReciprocalSpaceViewer();
 
@@ -40,8 +41,7 @@ private:
     Ui::ReciprocalSpaceViewer *ui;
 
     SX::Instrument::Experiment* _experiment;
-
-    std::vector<SX::Data::IData*> _data;
+    std::vector<std::shared_ptr<SX::Data::IData>> _data;
 };
 
 #endif // RECIPROCALSPACEVIEWER_H

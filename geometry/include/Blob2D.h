@@ -30,6 +30,8 @@
 #include <iostream>
 #include <Eigen/Dense>
 
+#include "IBlob.h"
+
 namespace SX
 {
 
@@ -47,7 +49,7 @@ namespace Geometry
  * Blobs can be merged and maintain zero, first and second momentum.
  *
  */
-class Blob2D
+class Blob2D//: public IBlob
 {
 public:
   //!Initialize an empty blob

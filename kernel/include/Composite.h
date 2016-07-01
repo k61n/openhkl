@@ -31,13 +31,14 @@
 
 #include <set>
 
+#include "Types.h"
+
 namespace SX
 {
 
 namespace Kernel
 {
 
-typedef unsigned int uint;
 
 template <typename component, typename ...args>
 class Composite : public component
@@ -59,7 +60,7 @@ public:
 
 	component* add(component*);
 	void clear();
-	uint getNComponents() const;
+	SX::Types::uint getNComponents() const;
 	void remove(component*);
 
 	virtual ~Composite()=0;
@@ -110,7 +111,7 @@ void Composite<component,args...>::clear()
 }
 
 template <typename component,typename ...args>
-uint Composite<component,args...>::getNComponents() const
+SX::Types::uint Composite<component,args...>::getNComponents() const
 {
 	return _components.size();
 }

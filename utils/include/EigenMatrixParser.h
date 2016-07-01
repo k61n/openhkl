@@ -244,7 +244,8 @@ struct EigenMatrixParser : IMatrixParser<It>
 
         phx::function<mapper> const matrix_insert = mapper();
 
-        IMatrixParser<It>::matrix = eps [_a=-1, _b=-1] >> (+(int_ [ _pass = matrix_insert(_val, _a, _b, _1) ])) % eol;
+	// JMF modified to fix MSVC error C2872
+        IMatrixParser<It>::matrix = eps [_a=-1, _b=-1] >> (+(int_ [ _pass = matrix_insert(_val, _a, _b, boost::spirit::_1) ])) % eol;
 
     }
 };

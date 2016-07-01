@@ -1,6 +1,8 @@
 #define BOOST_TEST_MODULE "Test Experiment"
 #define BOOST_TEST_DYN_LINK
 
+#include <memory>
+
 #include <boost/test/unit_test.hpp>
 
 #include "Experiment.h"
@@ -24,8 +26,11 @@ BOOST_AUTO_TEST_CASE(Test_Experiment)
 	BOOST_CHECK_EQUAL(exp.getDataNames().size(),0);
 
 	// Add some data
-	ILLAsciiData* data = new ILLAsciiData(std::string("D10_ascii_example"),exp.getDiffractometer());
-	exp.addData(data);
+    std::shared_ptr<IData> data;
+    data = std::shared_ptr<IData>(new ILLAsciiData(std::string("D10_ascii_example"),exp.getDiffractometer()));
+
+
+    exp.addData(data);
 	BOOST_CHECK_EQUAL(exp.getDataNames().size(),1);
 	BOOST_CHECK_EQUAL(exp.getDataNames()[0],"D10_ascii_example");
 

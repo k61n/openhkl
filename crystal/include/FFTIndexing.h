@@ -34,6 +34,7 @@
 #include <Eigen/Dense>
 
 #include "Units.h"
+#include "Types.h"
 
 namespace SX
 {
@@ -41,7 +42,6 @@ namespace SX
 namespace Crystal
 {
 
-typedef unsigned int uint;
 
 using namespace SX::Units;
 

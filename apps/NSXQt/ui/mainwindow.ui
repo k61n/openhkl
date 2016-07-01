@@ -1293,16 +1293,16 @@ border-radius: 4px;
      <x>0</x>
      <y>0</y>
      <width>1000</width>
-     <height>25</height>
+     <height>28</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_Options">
     <property name="title">
-     <string>&amp;Options</string>
+     <string>Optio&amp;ns</string>
     </property>
     <widget class="QMenu" name="menuGraphics">
      <property name="title">
-      <string>Cursor Mode</string>
+      <string>&amp;Cursor Mode</string>
      </property>
      <addaction name="actionPixel_position"/>
      <addaction name="actionGamma_Nu"/>
@@ -1312,21 +1312,21 @@ border-radius: 4px;
     </widget>
     <widget class="QMenu" name="menuShow_Window">
      <property name="title">
-      <string>Show Window</string>
+      <string>&amp;Show Window</string>
      </property>
      <addaction name="actionLogger"/>
      <addaction name="action1D_Peak_Ploter"/>
     </widget>
     <widget class="QMenu" name="menuSet_View">
      <property name="title">
-      <string>Set View</string>
+      <string>Set &amp;View</string>
      </property>
      <addaction name="actionFrom_Sample"/>
      <addaction name="actionBehind_Detector"/>
     </widget>
     <widget class="QMenu" name="menuPeak">
      <property name="title">
-      <string>Peak</string>
+      <string>&amp;Peak</string>
      </property>
      <addaction name="actionShow_labels"/>
      <addaction name="actionShow_calculated_peak_positions"/>
@@ -1338,16 +1338,17 @@ border-radius: 4px;
    </widget>
    <widget class="QMenu" name="menuChemistry">
     <property name="title">
-     <string>Chemistry</string>
+     <string>Che&amp;mistry</string>
     </property>
     <addaction name="action_display_isotopes_database"/>
     <addaction name="action_add_element"/>
    </widget>
    <widget class="QMenu" name="menuUtils">
     <property name="title">
-     <string>Utils</string>
+     <string>&amp;Utils</string>
     </property>
     <addaction name="actionConvert_to_HDF5"/>
+    <addaction name="separator"/>
    </widget>
    <addaction name="menu_Options"/>
    <addaction name="menuChemistry"/>
@@ -1434,7 +1435,7 @@ QDockWidget::title {
     <set>Qt::BottomDockWidgetArea|Qt::RightDockWidgetArea|Qt::TopDockWidgetArea</set>
    </property>
    <property name="windowTitle">
-    <string>Logger</string>
+    <string>&amp;Logger</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>8</number>
@@ -1505,7 +1506,7 @@ QDockWidget::title {
  }</string>
    </property>
    <property name="windowTitle">
-    <string>Plotter 1D</string>
+    <string>Plotter &amp;1D</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>8</number>
@@ -1570,7 +1571,7 @@ QDockWidget::title {
     <set>Qt::BottomDockWidgetArea|Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
    </property>
    <property name="windowTitle">
-    <string>Property</string>
+    <string>Propert&amp;y</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>8</number>
@@ -1596,7 +1597,7 @@ QDockWidget::title {
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Pixel position</string>
+    <string>&amp;Pixel position</string>
    </property>
   </action>
   <action name="actionGamma_Nu">
@@ -1607,7 +1608,7 @@ QDockWidget::title {
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Gamma Nu</string>
+    <string>&amp;Gamma Nu</string>
    </property>
   </action>
   <action name="action2_Theta">
@@ -1615,7 +1616,7 @@ QDockWidget::title {
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>2 Theta</string>
+    <string>&amp;2 Theta</string>
    </property>
   </action>
   <action name="actionD_spacing">
@@ -1623,7 +1624,7 @@ QDockWidget::title {
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>d-spacing</string>
+    <string>&amp;d-spacing</string>
    </property>
   </action>
   <action name="actionH_k_l">
@@ -1631,7 +1632,7 @@ QDockWidget::title {
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>h k l</string>
+    <string>&amp;h k l</string>
    </property>
   </action>
   <action name="actionLogger">
@@ -1639,7 +1640,7 @@ QDockWidget::title {
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Logger</string>
+    <string>&amp;Logger</string>
    </property>
   </action>
   <action name="action1D_Peak_Ploter">
@@ -1647,7 +1648,7 @@ QDockWidget::title {
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>1D Peak Ploter</string>
+    <string>&amp;1D Peak Ploter</string>
    </property>
   </action>
   <action name="actionFrom_Sample">
@@ -1655,7 +1656,7 @@ QDockWidget::title {
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>From Sample</string>
+    <string>&amp;From Sample</string>
    </property>
   </action>
   <action name="actionBehind_Detector">
@@ -1663,7 +1664,7 @@ QDockWidget::title {
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Behind Detector</string>
+    <string>&amp;Behind Detector</string>
    </property>
   </action>
   <action name="actionShow_labels">
@@ -1671,22 +1672,22 @@ QDockWidget::title {
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Show labels</string>
+    <string>&amp;Show labels</string>
    </property>
   </action>
   <action name="action_display_isotopes_database">
    <property name="text">
-    <string>Display isotopes database</string>
+    <string>&amp;Display isotopes database</string>
    </property>
   </action>
   <action name="action_add_element">
    <property name="text">
-    <string>Element manager</string>
+    <string>&amp;Element manager</string>
    </property>
   </action>
   <action name="actionConvert_to_HDF5">
    <property name="text">
-    <string>Convert to HDF5</string>
+    <string>&amp;Convert to HDF5</string>
    </property>
   </action>
   <action name="actionShow_calculated_peak_positions">
@@ -1694,7 +1695,12 @@ QDockWidget::title {
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Show calculated peak positions</string>
+    <string>Show &amp;calculated peak positions</string>
+   </property>
+  </action>
+  <action name="actionConvolution_Filter">
+   <property name="text">
+    <string>Convolution Filter</string>
    </property>
   </action>
  </widget>

@@ -13,6 +13,8 @@
 #include "Source.h"
 #include "Monochromator.h"
 
+#include <memory>
+
 using SX::Crystal::Peak3D;
 using SX::Instrument::DetectorEvent;
 using SX::Instrument::FlatDetector;
@@ -33,14 +35,16 @@ BOOST_AUTO_TEST_CASE(Test_Peak3D)
 	d.setNPixels(32,32);
 
 	DetectorEvent event=d.createDetectorEvent(15.5,15.5);
-	Source source;
+    std::shared_ptr<Source> source(new Source);
+
 	SX::Instrument::Monochromator mono("mono");
-	source.addMonochromator(&mono);
-	source.setSelectedMonochromator(0);
+
+    source->addMonochromator(&mono);
+    source->setSelectedMonochromator(0);
 
 	Peak3D peak;
 	peak.setDetectorEvent(&event);
-	peak.setSource(&source);
+    peak.setSource(source);
 	Eigen::Vector3d Q=peak.getQ();
 	BOOST_CHECK_SMALL(Q[0],tolerance);
 	BOOST_CHECK_SMALL(Q[1],tolerance);

@@ -3,10 +3,12 @@ cmake_minimum_required(VERSION 2.8)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 # Add some paths to the cmake module search path.
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/modules)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/externals/c-blosc/cmake)
 
 project(NSXTOOL_PROJECT)
+
+include(CMakeFindBinUtils)
 
 set(NSXTOOL_VERSION_MAJOR 1)
 set(NSXTOOL_VERSION_MINOR 0)
@@ -21,11 +23,15 @@ endif()
 # Options
 ###########################################################################
 
-option(BUILD_QTAPPS "Build Qt based application." OFF)
+option(BUILD_QTAPPS "Build Qt based application." ON)
 
 if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "Release")
+  set(CMAKE_BUILD_TYPE "Release")
 endif()
+
+# additional macros
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
+include(CheckCompiler)
 
 #Set package name here
 set(CPACK_PACKAGE_NAME "nsxtool")
@@ -63,7 +69,32 @@ include_directories(${EIGEN3_INCLUDE_DIR})
 
 ###### Search the HDF5 library
 find_package(HDF5 COMPONENTS CXX)
-include_directories("${HDF5_INCLUDE_DIRS}")
+
+# manually fix problem with windows build
+if(NOT HDF5_LIBRARIES)
+  set(HDF5_LIBRARIES "")
+  find_library(HDF5_LIBRARY_TEMP libszip)
+  set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
+
+  find_library(HDF5_LIBRARY_TEMP libzlib)
+  set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
+
+  find_library(HDF5_LIBRARY_TEMP libhdf5)
+  set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
+  
+  find_library(HDF5_LIBRARY_TEMP libhdf5_cpp)
+  set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
+endif()
+
+include_directories("${HDF5_INCLUDE_DIR}")
+
+if ( HDF5_INCLUDE_DIR AND HDF5_LIBRARIES )
+   message("HDF5 found: include dir is ${HDF5_INCLUDE_DIR} and library is ${HDF5_LIBRARIES} located in ${HDF5_LIBRARY_DIR}")
+else()
+   messagE("ERROR: HDF5 not found")   
+endif()
+
+
 find_package(Blosc REQUIRED)
 if (BLOSC_FOUND==True)
         message("Blosc library found, already installed on the system")
@@ -75,11 +106,13 @@ endif()
 
 ###### TIFF library
 find_package(TIFF)
+include_directories(${TIFF_INCLUDE_DIR})
 
 ###########################################################################
 # Compiler/linker stuffs
 ###########################################################################
-
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+  message("Configuring for build type 'Release'")
 if(CMAKE_COMPILER_IS_GNUCXX)
     add_definitions(
     -msse2
@@ -93,12 +126,22 @@ if(CMAKE_COMPILER_IS_GNUCXX)
     -DEIGEN_FFTW_DEFAULT
     -fopenmp
     -pthread
+    -Wno-ignored-attributes # ignore annoying warnings caused by Eigen library
+    -Wno-misleading-indentation # ignore annoying warnings caused by Eigen library
+    -Wno-deprecated-declarations # ignore annoying warnings caused by Eigen library
     )
     set(CMAKE_CXX_FLAGS_RELEASE "-O2") 
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp ")
+  endif()
+  message("Configuring for build type 'Release'")
+elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  message("Configuring for build type 'Debug'")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g")
+else()
+  message("Warning: build type ${CMAKE_BUILD_TYPE} is unrecognized")
 endif()
 
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
     add_definitions(-std=c++11)
 endif()
 
@@ -108,12 +151,14 @@ if(WIN32 AND MSVC)
     add_definitions(-DBOOST_ALL_NO_LIB)
     add_definitions(-D_USE_MATH_DEFINES)
     add_definitions(-DNSXTOOL_EXPORT)
+    add_definitions(-DH5_BUILT_AS_DYNAMIC_LIB)
 endif()
 
 
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    add_definitions(-stdlib=libc++ 
-    				-std=c++11)
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  add_definitions(-std=c++11)
+  #  -stdlib=libc++ 
+
 endif()
 
 ###########################################################################
@@ -124,7 +169,9 @@ endif()
 if (UNIX)
     set(RESOURCES_DIR ${CMAKE_INSTALL_PREFIX}/share/nsxtool)
 elseif (WIN32)
-    set(RESOURCES_DIR $ENV{APPDATA}/nsxtool)
+    set(RESOURCES_DIR "$ENV{APPDATA}\\nsxtool")
+    # take care of pesky backslashes in windows path names
+    STRING(REGEX REPLACE "\\\\" "\\\\\\\\" RESOURCES_DIR ${RESOURCES_DIR})
 endif()
 configure_file(${CMAKE_SOURCE_DIR}/cmake/Config.h.in ${CMAKE_BINARY_DIR}/include/Config.h)
 
@@ -133,6 +180,7 @@ include_directories(${CMAKE_BINARY_DIR}/include/
                     data/include
                     geometry/include
                     kernel/include
+                    imaging/include
                     integration/include
                     materials/include
                     utils/include
@@ -141,29 +189,50 @@ include_directories(${CMAKE_BINARY_DIR}/include/
                     externals/c-blosc/blosc)
 
 file(GLOB_RECURSE sources chemistry/src/*.cpp
-                          data/src/*.cpp
+  data/src/*.cpp
+  data/src/*.c
                           geometry/src/*.cpp
                           kernel/src/*.cpp
+                          imaging/src/*.cpp
                           integration/src/*.cpp
                           materials/*.cpp
                           utils/src/*.cpp
                           crystal/src/*.cpp
                           instrument/src/*.cpp
+                          )
+
+file(GLOB_RECURSE headers chemistry/include/*.h
+                          data/include/*.h
+                          geometry/include/*.h
+                          kernel/include/*.h
+                          imaging/include/*.h
+                          integration/include/*.h
+                          materials/*.cpp
+                          utils/include/*.h
+                          crystal/include/*.h
+                          instrument/include/*.h
                   )                   
 
 # Creating the library
 # Under Windows and Miscrosoft Visual Studio the library will be static to avoid
 # the DLL_EXPORT mess
 if(MSVC)
-    add_library(NSXTool STATIC ${sources})
+    add_library(NSXTool STATIC ${sources} ${headers})
 else()
-    add_library(NSXTool SHARED ${sources})
+    add_library(NSXTool SHARED ${sources} ${headers})
 endif()
 
-find_library(FFTW3_LIBRARIES NAMES fftw3 libfftw3)
- 
+find_path(FFTW_INCLUDE_DIR fftw3.h)
+include_directories(${FFTW_INCLUDE_DIR})
+
+find_library(FFTW3_LIBRARIES NAMES fftw3 libfftw3 fftw3-3 libfftw3-3)
+
+
+
+
 # Link
-target_link_libraries(NSXTool blosc_shared ${Boost_LIBRARIES} ${PYTHON_LIBRARIES} ${FFTW3_LIBRARIES} ${HDF5_LIBRARIES} ${TIFF_LIBRARY})
+#target_link_libraries(NSXTool blosc_shared ${Boost_LIBRARIES} ${PYTHON_LIBRARIES} ${FFTW3_LIBRARIES} ${HDF5_LIBRARIES} ${TIFF_LIBRARY})
+target_link_libraries(NSXTool ${HDF5_LIBRARIES} blosc_shared ${Boost_LIBRARIES} ${PYTHON_LIBRARIES} ${FFTW3_LIBRARIES} ${TIFF_LIBRARY})
 
 if (BUILD_QTAPPS)
 	add_subdirectory(apps)
