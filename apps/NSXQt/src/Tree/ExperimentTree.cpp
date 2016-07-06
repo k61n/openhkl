@@ -348,7 +348,25 @@ void ExperimentTree::findPeaks(const QModelIndex& index)
     }
 
     // run peak find dialog
-    DialogConvolve* dialog = new DialogConvolve(ui->_dview->getScene()->getCurrentFrame(), this);
+    auto frame = ui->_dview->getScene()->getCurrentFrame();
+
+    // check if now frame was loaded, or is otherwise invalid
+    if ( frame.rows() == 0 || frame.cols() == 0) {
+        // attempt to read first frame of first numor by default
+        try {
+            frame = selectedNumors[0]->getFrame(0);
+        }
+        catch(std::exception& e) {
+            qDebug() << "Peak search failed: cannot load frame: " << e.what();
+            return;
+        }
+    }
+
+    qDebug() << "Preview frame has dimensions" << frame.rows() << " " << frame.cols();
+
+    DialogConvolve* dialog = new DialogConvolve(frame, this);
+
+
 
     // reset progress handler
     _progressHandler = std::shared_ptr<ProgressHandler>(new ProgressHandler);
@@ -393,18 +411,22 @@ void ExperimentTree::findPeaks(const QModelIndex& index)
         // delete the progressView
         delete progressView;
 
+        int num_peaks = 0;
+
+        for (auto numor: selectedNumors) {
+            num_peaks += numor->getPeaks().size();
+            numor->releaseMemory();
+        }
+
         if ( succeeded ) {
-        ui->_dview->getScene()->updatePeaks();
-        qDebug() << "Peak search complete., found "
-                 << ui->_dview->getScene()->getData()->getPeaks().size()
-                 << " peaks.";
+            ui->_dview->getScene()->updatePeaks();
+
+            qDebug() << "Peak search complete., found "
+                     << num_peaks
+                     << " peaks.";
         }
         else {
             qDebug() << "Peak search failed!";
-        }
-
-        for (auto numor: selectedNumors) {
-            numor->releaseMemory();
         }
     };
 
