@@ -393,8 +393,13 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
 
 void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
 {
+    if (!_currentData)
+        return;
+
     auto instr=_currentData->getDiffractometer();
     std::shared_ptr<SX::Instrument::Detector> det=instr->getDetector();
+
+
     int nrows=det->getNRows();
     int ncols=det->getNCols();
 

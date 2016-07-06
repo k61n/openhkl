@@ -2,6 +2,7 @@
 #define NUMORITEM_H
 
 #include <string>
+#include <memory>
 #include "InspectableTreeItem.h"
 
 class QWidget;
@@ -19,12 +20,12 @@ namespace SX
 class NumorItem : public InspectableTreeItem
 {
 public:
-    explicit NumorItem(Experiment* experiment,SX::Data::IData* data);
+    explicit NumorItem(Experiment* experiment, std::shared_ptr<SX::Data::IData> data);
     ~NumorItem();
     QWidget* inspectItem();
-    SX::Data::IData* getData();
+    std::shared_ptr<SX::Data::IData> getData();
 private:
-    SX::Data::IData* _data;
+    std::shared_ptr<SX::Data::IData> _data;
 };
 
 #endif // NUMORITEM_H

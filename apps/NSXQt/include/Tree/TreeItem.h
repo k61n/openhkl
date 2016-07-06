@@ -2,6 +2,7 @@
 #define EDITABLETREEITEM_H
 
 #include <string>
+#include <memory>
 
 #include <QStandardItem>
 #include <QVariant>
@@ -14,6 +15,7 @@ using namespace SX::Instrument;
 
 class TreeItem : public QStandardItem
 {
+
 public:
     explicit TreeItem(Experiment* experiment);
     Experiment* getExperiment();

@@ -81,7 +81,7 @@ using SX::Data::PeakFinder;
 MainWindow::MainWindow(QWidget *parent)
 : QMainWindow(parent),
   _ui(new Ui::MainWindow),
-  _experiments(),
+  //_experiments(),
   _currentData(nullptr)
 {
     _ui->setupUi(this);

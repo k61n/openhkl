@@ -91,7 +91,7 @@ public slots:
     void setInspectorWidget(QWidget*);
 private:
     Ui::MainWindow* _ui;
-    std::unordered_map<std::string,SX::Instrument::Experiment> _experiments;
+    //std::unordered_map<std::string,SX::Instrument::Experiment> _experiments;
     std::shared_ptr<SX::Data::IData> _currentData;
 
     std::shared_ptr<SX::Utils::ProgressHandler> _progressHandler;

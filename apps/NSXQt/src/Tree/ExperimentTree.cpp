@@ -55,7 +55,7 @@ ExperimentTree::ExperimentTree(QWidget *parent) : QTreeView(parent)
 {
     setContextMenuPolicy(Qt::CustomContextMenu);
 
-    _model=new QStandardItemModel();
+    _model=new QStandardItemModel(this);
     setModel(_model);
     expandAll();
     setSelectionMode(QAbstractItemView::ContiguousSelection);
@@ -70,7 +70,8 @@ ExperimentTree::ExperimentTree(QWidget *parent) : QTreeView(parent)
 
 ExperimentTree::~ExperimentTree()
 {
-    delete _model;
+    // _model should be deleted automatically during destructor by QT
+    //delete _model;
 }
 
 void ExperimentTree::createNewExperiment()
@@ -295,7 +296,7 @@ void ExperimentTree::importData()
            continue;
         }
 
-        QStandardItem* item = new NumorItem(exp, data_ptr.get());
+        QStandardItem* item = new NumorItem(exp, data_ptr);
         item->setText(QString::fromStdString(basename));
         item->setCheckable(true);
         dataItem->appendRow(item);
@@ -365,6 +366,9 @@ void ExperimentTree::findPeaks(const QModelIndex& index)
     qDebug() << "Preview frame has dimensions" << frame.rows() << " " << frame.cols();
 
     DialogConvolve* dialog = new DialogConvolve(frame, this);
+
+    // dialog will automatically be deleted before we return from this method
+    std::unique_ptr<DialogConvolve> dialog_ptr(dialog);
 
 
 
