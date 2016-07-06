@@ -9,7 +9,7 @@
 class PeakListItem : public InspectableTreeItem
 {
 public:
-    explicit PeakListItem(Experiment* experiment);
+    explicit PeakListItem(std::shared_ptr<Experiment> experiment);
     QWidget* inspectItem();
 
 };

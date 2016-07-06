@@ -17,7 +17,7 @@ namespace SX
 class InspectableTreeItem : public TreeItem
 {
 public:
-    InspectableTreeItem(Experiment* experiment);
+    InspectableTreeItem(std::shared_ptr<Experiment> experiment);
     ~InspectableTreeItem();
     //! Tree items can expose a QWidget that show their internal properties.
     virtual QWidget* inspectItem() =0;

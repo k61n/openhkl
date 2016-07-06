@@ -111,7 +111,7 @@ void ExperimentTree::addExperiment(const std::string& experimentName, const std:
 {
 
     // Create an experiment
-    SX::Instrument::Experiment* expPtr = new SX::Instrument::Experiment(experimentName,instrumentName);
+    std::shared_ptr<SX::Instrument::Experiment> expPtr(new SX::Instrument::Experiment(experimentName,instrumentName));
 
     // Create an instrument item
     InstrumentItem* instr = new InstrumentItem(expPtr);
@@ -244,7 +244,7 @@ void ExperimentTree::absorptionCorrection()
     auto pitem=dynamic_cast<PeakListItem*>(item);
     if (!pitem)
         return;
-    DialogMCAbsorption* dialog=new DialogMCAbsorption(pitem->getExperiment(),this);
+    DialogMCAbsorption* dialog=new DialogMCAbsorption(pitem->getExperiment().get(),this);
     dialog->open();
 }
 
@@ -270,7 +270,7 @@ void ExperimentTree::importData()
         // Get the basename of the current numor
         QFileInfo fileinfo(fileNames[i]);
         std::string basename=fileinfo.fileName().toStdString();
-         SX::Instrument::Experiment* exp = expItem->getExperiment();
+         std::shared_ptr<SX::Instrument::Experiment> exp = expItem->getExperiment();
 
         // If the experience already stores the current numor, skip it
         if (exp->hasData(basename))
@@ -322,7 +322,7 @@ void ExperimentTree::findPeaks(const QModelIndex& index)
     if (!titem)
         return;
 
-    SX::Instrument::Experiment* expt(titem->getExperiment());
+    std::shared_ptr<SX::Instrument::Experiment> expt(titem->getExperiment());
 
     if (!expt)
         return;
@@ -348,7 +348,7 @@ void ExperimentTree::findPeaks(const QModelIndex& index)
         return;
     }
 
-    // run peak find dialog
+    // run peak find
     auto frame = ui->_dview->getScene()->getCurrentFrame();
 
     // check if now frame was loaded, or is otherwise invalid
@@ -448,7 +448,7 @@ void ExperimentTree::viewReciprocalSpace(const QModelIndex& index)
     if (!titem)
         return;
 
-    SX::Instrument::Experiment* expt(titem->getExperiment());
+    std::shared_ptr<SX::Instrument::Experiment> expt(titem->getExperiment());
 
     if (!expt)
         return;
@@ -476,7 +476,7 @@ void ExperimentTree::viewReciprocalSpace(const QModelIndex& index)
 
     try
     {
-        ReciprocalSpaceViewer* dialog = new ReciprocalSpaceViewer(expt);
+        ReciprocalSpaceViewer* dialog = new ReciprocalSpaceViewer(expt.get());
         dialog->setData(selectedNumors);
         if (!dialog->exec())
             return;
@@ -512,7 +512,7 @@ void ExperimentTree::onDoubleClick(const QModelIndex& index)
     }
     else if (auto ptr=dynamic_cast<NumorItem*>(item))
     {
-        SX::Instrument::Experiment* exp = ptr->getExperiment();
+        std::shared_ptr<SX::Instrument::Experiment> exp = ptr->getExperiment();
         emit plotData(exp->getData(item->text().toStdString()));
     }
 
@@ -546,7 +546,7 @@ ExperimentItem* ExperimentTree::getExperimentItem(SX::Instrument::Experiment* ex
     {
         auto idx = _model->index(i,0,rootIdx);
         auto ptr=dynamic_cast<ExperimentItem*>(_model->itemFromIndex(idx));
-        if (ptr && ptr->getExperiment()==exp)
+        if (ptr && ptr->getExperiment().get()==exp)
             return ptr;
     }
 

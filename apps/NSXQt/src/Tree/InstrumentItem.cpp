@@ -3,7 +3,7 @@
 
 #include "Tree/InstrumentItem.h"
 
-InstrumentItem::InstrumentItem(Experiment* experiment) : TreeItem(experiment)
+InstrumentItem::InstrumentItem(std::shared_ptr<Experiment> experiment) : TreeItem(experiment)
 {
     setText(QString::fromStdString(_experiment->getDiffractometerType()));
 

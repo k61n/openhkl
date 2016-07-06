@@ -197,6 +197,10 @@ void HDF5Data::open()
     _memspace=new H5::DataSpace(3,count,NULL);
 
 	_isOpened=true;
+
+    // reported by valgrind
+    free(version);
+    free(date);
 }
 
 void HDF5Data::close()

@@ -40,9 +40,8 @@ DialogConvolve::DialogConvolve(const Eigen::MatrixXi& currentFrame, QWidget *par
 
     //ui->graphicsView->setAcceptDrops();
 
-    // jmf debug testing
-    //scene = new QGraphicsScene(this);
-    //ui->graphicsView->setScene(scene);
+    scene = new QGraphicsScene(this);
+    ui->graphicsView->setScene(scene);
 
     // get pixmap from current frame
     int nrows = frame.rows();
@@ -51,7 +50,7 @@ DialogConvolve::DialogConvolve(const Eigen::MatrixXi& currentFrame, QWidget *par
 
     Eigen::Matrix<int,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> rowFrame(frame);
     // jmf debug testing
-    //pxmapPreview = scene->addPixmap(QPixmap::fromImage(Mat2QImage(rowFrame.data(), nrows, ncols, 0, ncols, 0, nrows, max_intensity)));
+    pxmapPreview = scene->addPixmap(QPixmap::fromImage(Mat2QImage(rowFrame.data(), nrows, ncols, 0, ncols, 0, nrows, max_intensity)));
 
     //scene->addPixmap();
 
@@ -188,8 +187,7 @@ void DialogConvolve::on_previewButton_clicked()
     for ( int i = 0; i < nrows*ncols; ++i)
         clamped_result.data()[i] = result.data()[i] > _peakFinder->getThresholdValue() ? max_intensity-1 : 0;
 
-    // jmf debug testing
-    //pxmapPreview->setPixmap(QPixmap::fromImage(Mat2QImage(clamped_result.data(), frame.rows(), frame.cols(), 0, ncols, 0, nrows, max_intensity)));
+    pxmapPreview->setPixmap(QPixmap::fromImage(Mat2QImage(clamped_result.data(), frame.rows(), frame.cols(), 0, ncols, 0, nrows, max_intensity)));
 }
 
 void DialogConvolve::on_filterComboBox_currentIndexChanged(int index)

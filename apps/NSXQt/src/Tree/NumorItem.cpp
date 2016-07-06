@@ -9,7 +9,7 @@
 using std::cout;
 using std::endl;
 
-NumorItem::NumorItem(SX::Instrument::Experiment* experiment,std::shared_ptr<SX::Data::IData> data) :
+NumorItem::NumorItem(std::shared_ptr<SX::Instrument::Experiment> experiment,std::shared_ptr<SX::Data::IData> data) :
     InspectableTreeItem(experiment),
     _data(data)
 {

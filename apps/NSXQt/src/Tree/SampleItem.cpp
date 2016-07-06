@@ -7,7 +7,7 @@
 #include "Tree/SampleShapeItem.h"
 #include "Tree/SampleItem.h"
 
-SampleItem::SampleItem(Experiment* experiment) : InspectableTreeItem(experiment)
+SampleItem::SampleItem(std::shared_ptr<Experiment> experiment) : InspectableTreeItem(experiment)
 {
     setText("Sample");
     QIcon icon(":/resources/gonioIcon.png");

@@ -20,7 +20,7 @@ namespace SX
 class NumorItem : public InspectableTreeItem
 {
 public:
-    explicit NumorItem(Experiment* experiment, std::shared_ptr<SX::Data::IData> data);
+    explicit NumorItem(std::shared_ptr<Experiment> experiment, std::shared_ptr<SX::Data::IData> data);
     ~NumorItem();
     QWidget* inspectItem();
     std::shared_ptr<SX::Data::IData> getData();

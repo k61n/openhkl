@@ -9,7 +9,7 @@
 class InstrumentItem : public TreeItem
 {
 public:
-    explicit InstrumentItem(Experiment* experiment);
+    explicit InstrumentItem(std::shared_ptr<Experiment> experiment);
 
 };
 

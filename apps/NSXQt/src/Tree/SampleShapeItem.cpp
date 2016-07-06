@@ -3,7 +3,7 @@
 #include "Tree/SampleShapeItem.h"
 #include "Tree/SampleShapePropertyWidget.h"
 
-SampleShapeItem::SampleShapeItem(SX::Instrument::Experiment* experiment):
+SampleShapeItem::SampleShapeItem(std::shared_ptr<SX::Instrument::Experiment> experiment):
     InspectableTreeItem(experiment)
 {
     QIcon icon(":/resources/sampleIcon.png");

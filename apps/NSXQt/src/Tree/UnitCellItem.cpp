@@ -6,7 +6,7 @@
 #include "Tree/UnitCellItem.h"
 #include "Tree/UnitCellPropertyWidget.h"
 
-UnitCellItem::UnitCellItem(SX::Instrument::Experiment* experiment,std::shared_ptr<SX::Crystal::UnitCell> cell):
+UnitCellItem::UnitCellItem(std::shared_ptr<SX::Instrument::Experiment> experiment,std::shared_ptr<SX::Crystal::UnitCell> cell):
     InspectableTreeItem(experiment),
     _cell(cell)
 {

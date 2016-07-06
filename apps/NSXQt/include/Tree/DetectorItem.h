@@ -2,6 +2,7 @@
 #define DETECTORITEM_H
 
 #include <string>
+#include <memory>
 
 #include <QString>
 #include "InspectableTreeItem.h"
@@ -12,7 +13,7 @@ class QWidget;
 class DetectorItem : public InspectableTreeItem
 {
 public:
-    explicit DetectorItem(Experiment* experiment);
+    explicit DetectorItem(std::shared_ptr<Experiment> experiment);
     QWidget* inspectItem();
 };
 

@@ -5,7 +5,7 @@
 class SampleShapeItem : public InspectableTreeItem
 {
 public:
-    SampleShapeItem(Experiment* experiment);
+    SampleShapeItem(std::shared_ptr<Experiment> experiment);
     ~SampleShapeItem();
     QWidget* inspectItem();
 };

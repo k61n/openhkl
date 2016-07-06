@@ -116,13 +116,13 @@ void UnitCellPropertyWidget::on_pushButton_Info_clicked()
 
 void UnitCellPropertyWidget::on_pushButton_Index_clicked()
 {
-    LatticeIndexer* indexer=new LatticeIndexer(_unitCellItem->getCell(),_unitCellItem->getExperiment());
+    LatticeIndexer* indexer=new LatticeIndexer(_unitCellItem->getCell(),_unitCellItem->getExperiment().get());
     indexer->show();
 }
 
 void UnitCellPropertyWidget::on_pushButton_AutoIndexing_clicked()
 {
-    DialogFindUnitCell* dialog=new DialogFindUnitCell(_unitCellItem->getExperiment(),this);
+    DialogFindUnitCell* dialog=new DialogFindUnitCell(_unitCellItem->getExperiment().get(),this);
     // Ensure that lattice parameters are updated if a solution is accepted
     connect(dialog,SIGNAL(solutionAccepted(SX::Crystal::UnitCell)),this,SLOT(setCell(SX::Crystal::UnitCell)));
     dialog->exec();
@@ -158,7 +158,7 @@ void UnitCellPropertyWidget::getLatticeParams()
 
 void UnitCellPropertyWidget::on_pushButton_Refine_clicked()
 {
-    DialogRefineUnitCell* dialog=new DialogRefineUnitCell(_unitCellItem->getExperiment(),_unitCellItem->getCell(),this);
+    DialogRefineUnitCell* dialog=new DialogRefineUnitCell(_unitCellItem->getExperiment().get(),_unitCellItem->getCell(),this);
     dialog->exec();
     getLatticeParams();
     emit cellUpdated();
