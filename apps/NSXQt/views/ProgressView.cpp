@@ -79,6 +79,10 @@ void ProgressView::abort()
         return;
 
     _handler->abort();
+
+    // call update to flush ouput log etc.
+    updateProgress();
+
     qDebug() << "Job was aborted.";
     _timer->stop();
 }

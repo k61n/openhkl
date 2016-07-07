@@ -4,7 +4,9 @@
 // j.fisher@fz-juelich.de
 
 #include "AnnularKernel.h"
+#ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
+#endif
 #include <math.h> // for M_PI
 
 // M_PI is often define but not standard
@@ -80,13 +82,13 @@ void SX::Imaging::AnnularKernel::update()
             double val = 0.0;
 
             // shift so that (0,0) = (rows, cols) = (rows, 0) = (0, cols) is the center of the kernel
-            double x = j > cols/2 ? j-cols : j;
-            double y = i > rows/2 ? i-rows : i;
+            double x = j > cols/2 ? cols-j : j;
+            double y = i > rows/2 ? rows-i : i;
 
             double dist2 = x*x + y*y;
 
             if (dist2 > r3*r3)
-                continue;
+                val = 0.0;
             else if (dist2 <= r1*r1)
                 val = positive_value;
             else if (dist2 > r2*r2)

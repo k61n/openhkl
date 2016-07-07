@@ -5,6 +5,7 @@
 #include "ui_DialogConvolve.h"
 
 #include "AnnularKernel.h"
+#include "DeltaKernel.h"
 
 #include "ColorMap.h"
 #include <QImage>
@@ -50,7 +51,7 @@ DialogConvolve::DialogConvolve(const Eigen::MatrixXi& currentFrame, QWidget *par
 
     Eigen::Matrix<int,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> rowFrame(frame);
     // jmf debug testing
-    pxmapPreview = scene->addPixmap(QPixmap::fromImage(Mat2QImage(rowFrame.data(), nrows, ncols, 0, ncols, 0, nrows, max_intensity)));
+    pxmapPreview = scene->addPixmap(QPixmap::fromImage(Mat2QImage(rowFrame.data(), nrows, ncols, 0, ncols-1, 0, nrows-1, max_intensity)));
 
     //scene->addPixmap();
 
@@ -184,8 +185,19 @@ void DialogConvolve::on_previewButton_clicked()
 
     // apply a simple theshold
     // TODO: incorporate into GUI, or improve in some other way
+
+    double background;
+
+    // threshold relative to background
+    if (_peakFinder->getThresholdType() == 0)
+        background = data.sum() / ((double)frame.rows()*frame.cols());
+    else
+        background = 1.0;
+
+    qDebug() << "Generating preview image with background of " << background;
+
     for ( int i = 0; i < nrows*ncols; ++i)
-        clamped_result.data()[i] = result.data()[i] > _peakFinder->getThresholdValue() ? max_intensity-1 : 0;
+        clamped_result.data()[i] = result.data()[i] > _peakFinder->getThresholdValue()*background ? max_intensity-1 : 0;
 
     pxmapPreview->setPixmap(QPixmap::fromImage(Mat2QImage(clamped_result.data(), frame.rows(), frame.cols(), 0, ncols, 0, nrows, max_intensity)));
 }
@@ -196,6 +208,9 @@ void DialogConvolve::on_filterComboBox_currentIndexChanged(int index)
 
     switch(index)
     {
+    // no kernel
+    case 0:
+        kernel.reset();
     // annular kernel
     case 1:
         kernel = std::shared_ptr<SX::Imaging::ConvolutionKernel>(new SX::Imaging::AnnularKernel());
@@ -203,7 +218,13 @@ void DialogConvolve::on_filterComboBox_currentIndexChanged(int index)
         kernel->getParameters()["r2"] = ui->parameter2->value();
         kernel->getParameters()["r3"] = ui->parameter3->value();
         break;
+    // kronecker delta (debugging)
+    case 2:
+        kernel = std::shared_ptr<SX::Imaging::ConvolutionKernel>(new SX::Imaging::DeltaKernel());
+        break;
     default:
+        qDebug() << "Warning: unrecognized kernel selected -- defaulting to NO kernel";
+        kernel.reset();
         break;
     }
 

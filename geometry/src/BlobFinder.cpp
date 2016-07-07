@@ -75,7 +75,7 @@ void BlobFinder::eliminateBlobs()
             it++;
 
         // update progress handler
-        if ( dummy&magic == 0 && _progressHandler) {
+        if ( (dummy&magic) == 0 && _progressHandler) {
 
             double total_dist = std::distance(_blobs.begin(), _blobs.end());
             double current_dist = std::distance(_blobs.begin(), it);
@@ -84,8 +84,10 @@ void BlobFinder::eliminateBlobs()
         }
     }
 
-    if ( _progressHandler )
+    if ( _progressHandler ) {
+        _progressHandler->log("After elimination, " + std::to_string(_blobs.size()) + " blobs remain");
         _progressHandler->setProgress(100);
+    }
 }
 
     /*
@@ -371,7 +373,7 @@ void BlobFinder::findCollisions()
         }
 
         // update progress handler
-        if ( dummy&magic == 0 && _progressHandler) {
+        if ( (dummy&magic) == 0 && _progressHandler) {
             double total_dist = std::distance(_blobs.begin(), _blobs.end());
             double current_dist = std::distance(_blobs.begin(), it);
             double progress = 100.0 * current_dist / total_dist;
@@ -408,7 +410,7 @@ void BlobFinder::findCollisions()
         }
 
         // update progress handler
-        if ( dummy&magic == 0 && _progressHandler) {
+        if ( (dummy&magic) == 0 && _progressHandler) {
 
             double total_dist = std::distance(collisions.begin(), collisions.end());
             double current_dist = std::distance(collisions.begin(), it);
@@ -418,8 +420,10 @@ void BlobFinder::findCollisions()
     }
 
     // calculation complete
-    if ( _progressHandler )
+    if ( _progressHandler ) {
+        _progressHandler->log("Found " + std::to_string(_equivalences.size()) + " equivalences");
         _progressHandler->setProgress(100);
+    }
 }
 
 void BlobFinder::setFilter(BlobFinder::FilterCallback callback)
@@ -480,7 +484,7 @@ void BlobFinder::mergeBlobs()
         }
 
         // update progress handler
-        if ( dummy%magic == 0 && _progressHandler) {
+        if ( (dummy%magic) == 0 && _progressHandler) {
             double total_dist = std::distance(_blobs.begin(), _blobs.end());
             double current_dist = std::distance(_blobs.begin(), it);
             int progress = static_cast<int>( 100.0 * current_dist / total_dist);
@@ -489,8 +493,10 @@ void BlobFinder::mergeBlobs()
     }
 
     // finalize update handler
-    if ( _progressHandler )
+    if ( _progressHandler ) {
+        _progressHandler->log("After merging, " + std::to_string(_blobs.size()) + " blobs remain.");
         _progressHandler->setProgress(100);
+    }
 }
 
 } // namespace Geometry
