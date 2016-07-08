@@ -17,7 +17,7 @@
 #include "Logger.h"
 
 #include "JobHandler.h"
-#include "ProgressView.h"
+#include "views/ProgressView.h"
 
 class QListWidgetItem;
 class PlottableGraphicsItem;
