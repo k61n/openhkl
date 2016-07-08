@@ -34,7 +34,6 @@ DialogConvolve::DialogConvolve(const Eigen::MatrixXi& currentFrame, QWidget *par
     // disable resizing
     this->setFixedSize(this->size());
 
-
     _peakFinder = std::shared_ptr<SX::Data::PeakFinder>(new SX::Data::PeakFinder);
     _convolver = std::shared_ptr<SX::Imaging::Convolver>(new SX::Imaging::Convolver);
     _peakFinder->setConvolver(_convolver);
@@ -43,6 +42,8 @@ DialogConvolve::DialogConvolve(const Eigen::MatrixXi& currentFrame, QWidget *par
 
     scene = new QGraphicsScene(this);
     ui->graphicsView->setScene(scene);
+    // flip image vertically to conform with DetectorScene
+    ui->graphicsView->scale(1, -1);
 
     // get pixmap from current frame
     int nrows = frame.rows();
