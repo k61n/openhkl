@@ -50,7 +50,7 @@
 #include "Chemistry/ElementManagerDialog.h"
 #include "GraphicsItems/CutLineGraphicsItem.h"
 #include "GraphicsItems/CutSliceGraphicsItem.h"
-#include <GraphicsItems/CutterGraphicsItem.h>
+#include "GraphicsItems/CutterGraphicsItem.h"
 #include "GraphicsItems/PeakGraphicsItem.h"
 #include "GraphicsItems/PlottableGraphicsItem.h"
 #include "Plot/PlotFactory.h"

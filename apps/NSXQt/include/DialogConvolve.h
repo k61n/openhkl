@@ -17,7 +17,7 @@
 
 #include "Convolver.h"
 #include "ConvolutionKernel.h"
-#include "PeakFindModel.h"
+#include "models/PeakFindModel.h"
 #include "PeakFinder.h"
 
 
