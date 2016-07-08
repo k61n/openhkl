@@ -9,6 +9,10 @@
 
 #include "ColorMap.h"
 #include <QImage>
+#include <QTreeView>
+#include <QStandardItem>
+#include <QStandardItemModel>
+#include <QList>
 
 #include <Eigen/Core>
 #include <QDebug>
@@ -86,57 +90,60 @@ void DialogConvolve::setPeakFinder(std::shared_ptr<SX::Data::PeakFinder> peakFin
     ui->maxCompBox->setValue(_peakFinder->getMaxComponents());
     ui->filterComboBox->setCurrentIndex(_peakFinder->getKernelType());
 
-    if ( kernel ) {
-        ui->parameter1->setValue(kernel->getParameters()["r1"]);
-        ui->parameter2->setValue(kernel->getParameters()["r2"]);
-        ui->parameter3->setValue(kernel->getParameters()["r3"]);
+    buildTree();
+}
+
+void DialogConvolve::buildTree()
+{
+    // reset tree
+    QTreeView* treeView = ui->treeView;
+    treeView->reset();
+    treeView->header()->hide();
+
+    // no peakfinder set?!
+    if (!_peakFinder)
+        return;
+
+    // get the selected kernel (if any)
+    std::shared_ptr<SX::Imaging::ConvolutionKernel> kernel = _peakFinder->getKernel();
+
+    // no kernel selected: do nothing
+    if (!kernel)
+        return;
+
+    // get parameters
+    std::map<std::string, double> parameters = kernel->getParameters();
+
+    QStandardItemModel* model = new QStandardItemModel(this);
+    treeView->setModel(model);
+
+    // iterate through parameters to build the tree
+    for (auto it: parameters) {
+        // rows parameter fixed by data frame
+        if ( it.first == "rows")
+            continue;
+        // cols parameter fixed by data frame
+        if ( it.first == "cols" )
+            continue;
+
+        // otherwise, editable parameter so add it to the list
+
+        QStandardItem* name = new QStandardItem();
+        name->setText(it.first.c_str());
+        name->setEditable(false);
+
+        QStandardItem* value = new QStandardItem();
+
+        name->setText(it.first.c_str());
+        value->setData(QVariant(it.second), Qt::EditRole|Qt::DisplayRole);
+        value->setData(QVariant(it.first.c_str()), Qt::UserRole);
+
+        model->appendRow(QList<QStandardItem*>() << name << value);
     }
-}
-/*
-double DialogConvolve::getThreshold()
-{
-    return ui->thresholdSpinBox->value();
+
+    connect(model, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(parameterChanged(QStandardItem*)));
 }
 
-double DialogConvolve::getConfidence()
-{
-    return ui->confidenceSpinBox->value();
-}
-
-int DialogConvolve::getMinComponents()
-{
-    return ui->minCompBox->value();
-}
-
-int DialogConvolve::getMaxComponents()
-{
-    return ui->maxCompBox->value();
-}
-
-bool DialogConvolve::thesholdIsRelative()
-{
-    switch (ui->thresholdComboBox->currentIndex()) {
-    case 0:
-        return true;
-    case 1:
-        return false;
-    default:
-        qDebug() << "warning: DialogConvolve: thesholdComboBox has invalid index!";
-        return false;
-    }
-}
-
-std::shared_ptr<SX::Imaging::Convolver> DialogConvolve::getConvolver()
-{
-    return _convolver;
-}
-
-std::shared_ptr<SX::Imaging::ConvolutionKernel> DialogConvolve::getKernel()
-{
-
-    return _kernel;
-}
-*/
 void DialogConvolve::on_previewButton_clicked()
 {
     // TODO: implement this
@@ -215,14 +222,11 @@ void DialogConvolve::on_filterComboBox_currentIndexChanged(int index)
     // annular kernel
     case 1:
         kernel = std::shared_ptr<SX::Imaging::ConvolutionKernel>(new SX::Imaging::AnnularKernel());
-        kernel->getParameters()["r1"] = ui->parameter1->value();
-        kernel->getParameters()["r2"] = ui->parameter2->value();
-        kernel->getParameters()["r3"] = ui->parameter3->value();
-        break;
+
     // kronecker delta (debugging)
-    case 2:
-        kernel = std::shared_ptr<SX::Imaging::ConvolutionKernel>(new SX::Imaging::DeltaKernel());
-        break;
+    //case 2:
+    //    kernel = std::shared_ptr<SX::Imaging::ConvolutionKernel>(new SX::Imaging::DeltaKernel());
+    //    break;
     default:
         qDebug() << "Warning: unrecognized kernel selected -- defaulting to NO kernel";
         kernel.reset();
@@ -236,25 +240,11 @@ void DialogConvolve::on_filterComboBox_currentIndexChanged(int index)
 
     // propagate changes to peak finder
     _peakFinder->setKernel(kernel);
+
+    // update dialog with list of parameters
+    buildTree();
 }
 
-void DialogConvolve::on_parameter1_valueChanged(int arg1)
-{
-    if ( _peakFinder->getKernel() )
-        _peakFinder->getKernel()->getParameters()["r1"] = arg1;
-}
-
-void DialogConvolve::on_parameter2_valueChanged(int arg1)
-{
-    if ( _peakFinder->getKernel() )
-        _peakFinder->getKernel()->getParameters()["r2"] = arg1;
-}
-
-void DialogConvolve::on_parameter3_valueChanged(int arg1)
-{
-    if ( _peakFinder->getKernel() )
-        _peakFinder->getKernel()->getParameters()["r3"] = arg1;
-}
 
 void DialogConvolve::on_thresholdSpinBox_valueChanged(double arg1)
 {
@@ -280,4 +270,26 @@ void DialogConvolve::on_thresholdComboBox_currentIndexChanged(int index)
 {
     _peakFinder->setThresholdType(index);
     qDebug() << "threshold type index is " << index;
+}
+
+void DialogConvolve::parameterChanged(QStandardItem *item)
+{
+    // nothing to do
+    if (!item || !_peakFinder)
+        return;
+
+    auto kernel = _peakFinder->getKernel();
+
+    // still nothing to do
+    if (!kernel)
+        return;
+
+    auto& parameters = kernel->getParameters();
+
+    // extract name and value
+    auto name = item->data(Qt::UserRole).toString().toStdString();
+    auto value = item->data(Qt::EditRole).toDouble();
+
+    // update
+    parameters[name] = value;
 }
