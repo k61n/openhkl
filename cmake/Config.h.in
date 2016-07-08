@@ -3,9 +3,11 @@
 
 #include <string>
 
-std::string getResourcesDir()
-{
-    return "@RESOURCES_DIR@";
+namespace SX {
+    namespace Utils {
+            constexpr char* g_resourcesDir = "@RESOURCES_DIR@";
+    }
 }
+
 
 #endif // CONFIG_H

@@ -4,7 +4,12 @@
 #include "Tree/NumorPropertyWidget.h"
 #include "Tree/NumorItem.h"
 
-NumorItem::NumorItem(SX::Instrument::Experiment* experiment,SX::Data::IData* data) :
+#include <iostream>
+
+using std::cout;
+using std::endl;
+
+NumorItem::NumorItem(std::shared_ptr<SX::Instrument::Experiment> experiment,std::shared_ptr<SX::Data::IData> data) :
     InspectableTreeItem(experiment),
     _data(data)
 {
@@ -16,10 +21,13 @@ NumorItem::NumorItem(SX::Instrument::Experiment* experiment,SX::Data::IData* dat
 
 NumorItem::~NumorItem()
 {
+    cout << "NumorItem destructor: removing data " << _data->getBasename() << endl;
+
    _experiment->removeData(_data->getBasename());
+   //delete _data; // JMF fix memory leak detected by valgrind
 }
 
-SX::Data::IData* NumorItem::getData()
+std::shared_ptr<SX::Data::IData> NumorItem::getData()
 {
     return _data;
 }

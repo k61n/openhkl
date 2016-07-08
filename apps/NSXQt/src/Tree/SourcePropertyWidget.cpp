@@ -15,7 +15,7 @@ SourcePropertyWidget::SourcePropertyWidget(SourceItem* caller,QWidget *parent) :
     _caller(caller)
 {
     ui->setupUi(this);
-    Source* source=_caller->getExperiment()->getDiffractometer()->getSource();
+    std::shared_ptr<Source> source=_caller->getExperiment()->getDiffractometer()->getSource();
     auto monos = source->getMonochromators();
     for (auto&& m : monos)
         ui->comboBox_Monochromators->addItem(QString::fromStdString(m.getName()));

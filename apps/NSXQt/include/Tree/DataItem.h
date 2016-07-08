@@ -14,7 +14,7 @@ namespace SX
 class DataItem : public TreeItem
 {
 public:
-    explicit DataItem(Experiment* experiment);
+    explicit DataItem(std::shared_ptr<Experiment> experiment);
 };
 
 #endif // DATAITEM_H

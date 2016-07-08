@@ -3,7 +3,7 @@
 #include "Experiment.h"
 #include "Tree/DataItem.h"
 
-DataItem::DataItem(Experiment* experiment) : TreeItem(experiment)
+DataItem::DataItem(std::shared_ptr<Experiment> experiment) : TreeItem(experiment)
 {
     setText("Data");
 

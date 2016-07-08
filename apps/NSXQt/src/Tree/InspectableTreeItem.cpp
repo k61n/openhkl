@@ -1,6 +1,6 @@
 #include "Tree/InspectableTreeItem.h"
 
-InspectableTreeItem::InspectableTreeItem(Experiment* experiment):TreeItem(experiment)
+InspectableTreeItem::InspectableTreeItem(std::shared_ptr<Experiment> experiment):TreeItem(experiment)
 {
 }
 

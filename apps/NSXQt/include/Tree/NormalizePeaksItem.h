@@ -14,7 +14,7 @@ namespace SX
 class NormalizePeaksItem : public TreeItem
 {
 public:
-    NormalizePeaksItem(Experiment* experiment);
+    NormalizePeaksItem(std::shared_ptr<Experiment> experiment);
 };
 
 #endif // NORMALIZEPEAKSITEM_H

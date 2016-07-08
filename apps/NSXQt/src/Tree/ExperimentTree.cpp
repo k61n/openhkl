@@ -1,4 +1,6 @@
 #include "ui_mainwindow.h"
+#include "DialogConvolve.h"
+#include "ProgressHandler.h"
 
 #include <memory>
 #include <stdexcept>
@@ -44,11 +46,16 @@
 #include "ReciprocalSpaceViewer.h"
 #include "DetectorScene.h"
 
+using std::vector;
+using SX::Data::IData;
+using std::shared_ptr;
+using SX::Utils::ProgressHandler;
+
 ExperimentTree::ExperimentTree(QWidget *parent) : QTreeView(parent)
 {
     setContextMenuPolicy(Qt::CustomContextMenu);
 
-    _model=new QStandardItemModel();
+    _model=new QStandardItemModel(this);
     setModel(_model);
     expandAll();
     setSelectionMode(QAbstractItemView::ContiguousSelection);
@@ -61,29 +68,40 @@ ExperimentTree::ExperimentTree(QWidget *parent) : QTreeView(parent)
     connect(this,SIGNAL(clicked(QModelIndex)),this,SLOT(onSingleClick(QModelIndex)));
 }
 
+ExperimentTree::~ExperimentTree()
+{
+    // _model should be deleted automatically during destructor by QT
+    //delete _model;
+}
+
 void ExperimentTree::createNewExperiment()
 {
+    DialogExperiment* dlg;
 
-    DialogExperiment* dlg = new DialogExperiment();
+    // DialogExperiment could throw an exception if it fails to read the resource files
+    try {
+        dlg = new DialogExperiment();
 
-    // The user pressed cancel, return
-    if (!dlg->exec())
-        return;
+        // The user pressed cancel, return
+        if (!dlg->exec())
+            return;
 
-    // If no experiment name is provided, pop up a warning
-    if (dlg->getExperimentName().isEmpty())
-    {
-        qWarning() << "Empty experiment name";
+        // If no experiment name is provided, pop up a warning
+        if (dlg->getExperimentName().isEmpty()) {
+            qWarning() << "Empty experiment name";
+            return;
+        }
+    }
+    catch(std::exception& e) {
+        qDebug() << "Runtime error: " << e.what();
         return;
     }
 
     // Add the experiment
-    try
-    {
+    try {
         addExperiment(dlg->getExperimentName().toStdString(),dlg->getInstrumentName().toStdString());
     }
-    catch(const std::runtime_error& e)
-    {
+    catch(const std::runtime_error& e) {
         qWarning() << e.what();
         return;
     }
@@ -93,7 +111,7 @@ void ExperimentTree::addExperiment(const std::string& experimentName, const std:
 {
 
     // Create an experiment
-    SX::Instrument::Experiment* expPtr = new SX::Instrument::Experiment(experimentName,instrumentName);
+    std::shared_ptr<SX::Instrument::Experiment> expPtr(new SX::Instrument::Experiment(experimentName,instrumentName));
 
     // Create an instrument item
     InstrumentItem* instr = new InstrumentItem(expPtr);
@@ -131,9 +149,9 @@ void ExperimentTree::addExperiment(const std::string& experimentName, const std:
 
 }
 
-std::vector<SX::Data::IData*> ExperimentTree::getSelectedNumors(ExperimentItem* item) const
+vector<shared_ptr<IData>> ExperimentTree::getSelectedNumors(ExperimentItem* item) const
 {
-    std::vector<SX::Data::IData*> numors;
+    vector<shared_ptr<IData>> numors;
 
     QList<QStandardItem*> dataItems = _model->findItems(QString("Data"),Qt::MatchCaseSensitive|Qt::MatchRecursive);
 
@@ -155,10 +173,9 @@ std::vector<SX::Data::IData*> ExperimentTree::getSelectedNumors(ExperimentItem* 
     return numors;
 }
 
-std::vector<SX::Data::IData*> ExperimentTree::getSelectedNumors() const
+vector<shared_ptr<IData>> ExperimentTree::getSelectedNumors() const
 {
-
-    std::vector<SX::Data::IData*> numors;
+    vector<shared_ptr<IData>> numors;
 
     QList<QStandardItem*> dataItems = _model->findItems(QString("Data"),Qt::MatchCaseSensitive|Qt::MatchRecursive);
 
@@ -227,7 +244,7 @@ void ExperimentTree::absorptionCorrection()
     auto pitem=dynamic_cast<PeakListItem*>(item);
     if (!pitem)
         return;
-    DialogMCAbsorption* dialog=new DialogMCAbsorption(pitem->getExperiment(),this);
+    DialogMCAbsorption* dialog=new DialogMCAbsorption(pitem->getExperiment().get(),this);
     dialog->open();
 }
 
@@ -253,18 +270,25 @@ void ExperimentTree::importData()
         // Get the basename of the current numor
         QFileInfo fileinfo(fileNames[i]);
         std::string basename=fileinfo.fileName().toStdString();
-         SX::Instrument::Experiment* exp = expItem->getExperiment();
+         std::shared_ptr<SX::Instrument::Experiment> exp = expItem->getExperiment();
 
         // If the experience already stores the current numor, skip it
         if (exp->hasData(basename))
             continue;
 
-        SX::Data::IData* d;
+        std::shared_ptr<IData> data_ptr;
+
         try
         {
             std::string extension=fileinfo.completeSuffix().toStdString();
-            d = DataReaderFactory::Instance()->create(extension,fileNames[i].toStdString(),exp->getDiffractometer());
-            exp->addData(d);
+
+            IData* raw_ptr = DataReaderFactory::Instance()->create(
+                        extension,fileNames[i].toStdString(),exp->getDiffractometer()
+                        );
+
+            data_ptr = std::shared_ptr<IData>(raw_ptr);
+
+            exp->addData(data_ptr);
         }
         catch(std::exception& e)
         {
@@ -272,7 +296,7 @@ void ExperimentTree::importData()
            continue;
         }
 
-        QStandardItem* item = new NumorItem(exp,d);
+        QStandardItem* item = new NumorItem(exp, data_ptr);
         item->setText(QString::fromStdString(basename));
         item->setCheckable(true);
         dataItem->appendRow(item);
@@ -280,6 +304,8 @@ void ExperimentTree::importData()
     }
 
 }
+
+
 
 void ExperimentTree::findPeaks(const QModelIndex& index)
 {
@@ -296,14 +322,14 @@ void ExperimentTree::findPeaks(const QModelIndex& index)
     if (!titem)
         return;
 
-    SX::Instrument::Experiment* expt(titem->getExperiment());
+    std::shared_ptr<SX::Instrument::Experiment> expt(titem->getExperiment());
 
     if (!expt)
         return;
 
     QStandardItem* ditem=_model->itemFromIndex(index);
 
-    std::vector<SX::Data::IData*> selectedNumors;
+    std::vector<std::shared_ptr<SX::Data::IData>> selectedNumors;
     int nTotalNumors(_model->rowCount(ditem->index()));
     selectedNumors.reserve(nTotalNumors);
 
@@ -322,118 +348,96 @@ void ExperimentTree::findPeaks(const QModelIndex& index)
         return;
     }
 
-    DialogPeakFind* dialog= new DialogPeakFind();
+    // run peak find
+    auto frame = ui->_dview->getScene()->getCurrentFrame();
 
-    dialog->setFixedSize(400,200);
+    // check if now frame was loaded, or is otherwise invalid
+    if ( frame.rows() == 0 || frame.cols() == 0) {
+        // attempt to read first frame of first numor by default
+        try {
+            frame = selectedNumors[0]->getFrame(0);
+        }
+        catch(std::exception& e) {
+            qDebug() << "Peak search failed: cannot load frame: " << e.what();
+            return;
+        }
+    }
+
+    qDebug() << "Preview frame has dimensions" << frame.rows() << " " << frame.cols();
+
+    DialogConvolve* dialog = new DialogConvolve(frame, this);
+
+    // dialog will automatically be deleted before we return from this method
+    std::unique_ptr<DialogConvolve> dialog_ptr(dialog);
+
+
+
+    // reset progress handler
+    _progressHandler = std::shared_ptr<ProgressHandler>(new ProgressHandler);
+
+    // set up peak finder
+    if ( !_peakFinder)
+        _peakFinder = std::shared_ptr<PeakFinder>(new PeakFinder);
+    _peakFinder->setHandler(_progressHandler);
+
+    // dialog will be initialized with values from current peak finder,
+    // and any changes made will persist
+    dialog->setPeakFinder(_peakFinder);
+
     if (!dialog->exec())
         return;
 
-    // Get Confidence and threshold
-    double confidence=dialog->getConfidence();
-    double threshold=dialog->getThreshold();
-
     int max=selectedNumors.size();
     qWarning() << "Peak find algorithm: Searching peaks in " << max << " files";
+    
+    // create a pop-up window that will show the progress
+    ProgressView* progressView = new ProgressView(this);
+    progressView->watch(_progressHandler);
 
-    QCoreApplication::processEvents();
-    ui->progressBar->setEnabled(true);
-    ui->progressBar->setMaximum(max);
-
-    std::size_t npeaks=0;
-    int comp = 0;
-
-    for (auto numor : selectedNumors)
+    // lambda function to execute peak search in a separate thread
+    auto task = [=] () -> bool
     {
-        numor->clearPeaks();
-        numor->readInMemory();
-        int median=numor->getBackgroundLevel()+1;
+        bool result = false;
 
-        qDebug() << ">>>> the background level is " << median;
-        qDebug() << ">>>> finding blobs... ";
-
-        // Finding peaks
-        SX::Geometry::blob3DCollection blobs;
-        try
-        {
-            blobs=SX::Geometry::findBlobs3D(numor->begin(), numor->end(), median*threshold, 30, 10000, confidence);
+        // execute in a try-block because the progress handler may throw if it is aborted by GUI
+        try {
+            result = _peakFinder->find(selectedNumors);
         }
-        catch(std::exception& e) // Warning if RAM error
-        {
-            qCritical() << "Peak finder caused a memory exception" << e.what();
+        catch(std::exception& e) {
+            qDebug() << "Caught exception during peak find; peak search aborted.";
+            return false;
         }
+        return result;
+    };
 
-        qDebug() << ">>>> found blobs";
+    auto onFinished = [=] (bool succeeded) -> void
+    {
+        // delete the progressView
+        delete progressView;
 
-        int ncells=numor->getDiffractometer()->getSample()->getNCrystals();
-        std::shared_ptr<SX::Crystal::UnitCell> cell;
-        if (ncells)
-            cell=numor->getDiffractometer()->getSample()->getUnitCell(0);
+        int num_peaks = 0;
 
-        qDebug() << ">>>> iterating over blobs";
-
-        SX::Geometry::AABB<double,3> dAABB(Eigen::Vector3d(0,0,0),Eigen::Vector3d(numor->getDiffractometer()->getDetector()->getNCols(),numor->getDiffractometer()->getDetector()->getNRows(),numor->getNFrames()-1));
-        for (auto& blob : blobs)
-        {
-            Eigen::Vector3d center, eigenvalues;
-            Eigen::Matrix3d eigenvectors;
-            blob.second.toEllipsoid(confidence, center,eigenvalues,eigenvectors);
-            SX::Crystal::Peak3D* p = new Peak3D(numor);
-            p->setPeakShape(new SX::Geometry::Ellipsoid3D(center,eigenvalues,eigenvectors));
-            eigenvalues[0]*=2.0;
-            eigenvalues[1]*=2.0;
-            eigenvalues[2]*=3.0;
-            p->setBackgroundShape(new SX::Geometry::Ellipsoid3D(center,eigenvalues,eigenvectors));
-            //
-            int f=std::floor(center[2]);
-            p->setSampleState(new SX::Instrument::ComponentState(numor->getSampleInterpolatedState(f)));
-            ComponentState detState=numor->getDetectorInterpolatedState(f);
-            p->setDetectorEvent(new SX::Instrument::DetectorEvent(numor->getDiffractometer()->getDetector()->createDetectorEvent(center[0],center[1],detState.getValues())));
-            p->setSource(numor->getDiffractometer()->getSource());
-
-            if (!dAABB.contains(*(p->getPeak())))
-                p->setSelected(false);
-            if (cell)
-                p->setUnitCell(cell);
-            numor->addPeak(p);
-            npeaks++;
+        for (auto numor: selectedNumors) {
+            num_peaks += numor->getPeaks().size();
+            numor->releaseMemory();
         }
 
-        qDebug() << ">>>> integrating " << numor->getPeaks().size() << " peaks...";
+        if ( succeeded ) {
+            ui->_dview->getScene()->updatePeaks();
 
-        qDebug() << ">>>>>>>> initializing peak intensities...";
-
-        for ( auto& peak: numor->getPeaks() )
-            peak->framewiseIntegrateBegin();
-
-        qDebug() << ">>>>>>>> iterating over data frames...";
-
-        int idx = 0;
-
-        for ( auto it = numor->begin(); it != numor->end(); ++it, ++idx) {
-            Eigen::MatrixXi& frame = *it;
-            for ( auto& peak: numor->getPeaks() ) {
-                peak->framewiseIntegrateStep(frame, idx);
-            }
+            qDebug() << "Peak search complete., found "
+                     << num_peaks
+                     << " peaks.";
         }
+        else {
+            qDebug() << "Peak search failed!";
+        }
+    };
 
-        qDebug() << ">>>>>>>> finalizing peak calculation....";
+    auto job = new Job(this, task, onFinished);
+    //connect(progressView, SIGNAL(canceled()), job, SLOT(terminate()));
 
-        for ( auto& peak: numor->getPeaks() )
-            peak->framewiseIntegrateEnd();
-
-
-
-        numor->releaseMemory();
-        numor->close();
-        ui->progressBar->setValue(++comp);
-    }
-
-    qDebug() << "Found " << npeaks << " peaks";
-    // Reinitialise progress bar
-    ui->progressBar->setValue(0);
-    ui->progressBar->setEnabled(false);
-
-    ui->_dview->getScene()->updatePeaks();
+    job->exec();
 }
 
 void ExperimentTree::viewReciprocalSpace(const QModelIndex& index)
@@ -444,14 +448,14 @@ void ExperimentTree::viewReciprocalSpace(const QModelIndex& index)
     if (!titem)
         return;
 
-    SX::Instrument::Experiment* expt(titem->getExperiment());
+    std::shared_ptr<SX::Instrument::Experiment> expt(titem->getExperiment());
 
     if (!expt)
         return;
 
     QStandardItem* ditem=_model->itemFromIndex(index);
 
-    std::vector<SX::Data::IData*> selectedNumors;
+    std::vector<std::shared_ptr<SX::Data::IData>> selectedNumors;
     int nTotalNumors(_model->rowCount(ditem->index()));
     selectedNumors.reserve(nTotalNumors);
 
@@ -472,7 +476,7 @@ void ExperimentTree::viewReciprocalSpace(const QModelIndex& index)
 
     try
     {
-        ReciprocalSpaceViewer* dialog = new ReciprocalSpaceViewer(expt);
+        ReciprocalSpaceViewer* dialog = new ReciprocalSpaceViewer(expt.get());
         dialog->setData(selectedNumors);
         if (!dialog->exec())
             return;
@@ -508,9 +512,8 @@ void ExperimentTree::onDoubleClick(const QModelIndex& index)
     }
     else if (auto ptr=dynamic_cast<NumorItem*>(item))
     {
-        SX::Instrument::Experiment* exp = ptr->getExperiment();
-        SX::Data::IData* data=exp->getData(item->text().toStdString());
-        emit plotData(data);
+        std::shared_ptr<SX::Instrument::Experiment> exp = ptr->getExperiment();
+        emit plotData(exp->getData(item->text().toStdString()));
     }
 
 }
@@ -543,7 +546,7 @@ ExperimentItem* ExperimentTree::getExperimentItem(SX::Instrument::Experiment* ex
     {
         auto idx = _model->index(i,0,rootIdx);
         auto ptr=dynamic_cast<ExperimentItem*>(_model->itemFromIndex(idx));
-        if (ptr && ptr->getExperiment()==exp)
+        if (ptr && ptr->getExperiment().get()==exp)
             return ptr;
     }
 

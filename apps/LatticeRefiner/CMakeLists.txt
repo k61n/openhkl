@@ -1,3 +1,7 @@
+if(POLICY CMP0020)
+    cmake_policy(SET CMP0020 NEW)
+endif()
+
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_BINARY_DIR})
 
 # Disable console on Windows

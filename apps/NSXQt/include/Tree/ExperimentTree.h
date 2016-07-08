@@ -4,6 +4,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <memory>
 
 #include <QPoint>
 #include <QStandardItem>
@@ -11,6 +12,8 @@
 #include <QTreeView>
 
 #include "Experiment.h"
+#include "ProgressHandler.h"
+#include "PeakFinder.h"
 
 using namespace SX::Instrument;
 
@@ -29,15 +32,16 @@ class ExperimentTree : public QTreeView
     Q_OBJECT
 public:
     explicit ExperimentTree(QWidget *parent = 0);
+    ~ExperimentTree();
 
     void addExperiment(const std::string& experimentName, const std::string& instrumentName);
-    std::vector<SX::Data::IData*> getSelectedNumors() const;
-    std::vector<SX::Data::IData*> getSelectedNumors(ExperimentItem* item) const;
+    std::vector<std::shared_ptr<SX::Data::IData>> getSelectedNumors() const;
+    std::vector<std::shared_ptr<SX::Data::IData>> getSelectedNumors(ExperimentItem* item) const;
     ExperimentItem* getExperimentItem(Experiment* exp);
 
 signals:
-    void plotData(SX::Data::IData*);
-    void showPeakList(std::vector<SX::Data::IData*>);
+    void plotData(std::shared_ptr<SX::Data::IData>);
+    void showPeakList(std::vector<std::shared_ptr<SX::Data::IData>>);
     void inspectWidget(QWidget*);
 public slots:
     void keyPressEvent(QKeyEvent* event);
@@ -55,6 +59,8 @@ private:
 
     QStandardItemModel* _model;
 
+    std::shared_ptr<SX::Utils::ProgressHandler> _progressHandler;
+    std::shared_ptr<SX::Data::PeakFinder> _peakFinder;
 };
 
 #endif // EXPERIMENTTREE_H

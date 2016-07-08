@@ -136,9 +136,9 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
                 {
                     UnitCell cell=UnitCell::fromDirectVectors(v1,v2,v3);
                     UBMinimizer minimizer;
-                    minimizer.setSample(sample);
-                    minimizer.setDetector(detector);
-                    minimizer.setSource(source);
+                    minimizer.setSample(sample.get());
+                    minimizer.setDetector(detector.get());
+                    minimizer.setSource(source.get());
                     // Only the UB matrix parameters are used for fit
                     int nParameters= 10 + sample->getNAxes() + detector->getNAxes();
                     for (int i=9;i<nParameters;++i)

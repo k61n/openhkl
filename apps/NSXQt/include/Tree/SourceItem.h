@@ -15,7 +15,7 @@ class Experiment;
 class SourceItem : public InspectableTreeItem
 {
 public:
-    explicit SourceItem(SX::Instrument::Experiment* experiment);
+    explicit SourceItem(std::shared_ptr<SX::Instrument::Experiment> experiment);
     QWidget* inspectItem();
 };
 

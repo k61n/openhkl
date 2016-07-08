@@ -14,7 +14,7 @@ namespace Data
 
 IData* HDF5Data::create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer)
 {
-	return new HDF5Data(filename,diffractometer);
+    return new HDF5Data(filename, diffractometer);
 }
 
 HDF5Data::HDF5Data(const std::string& filename, std::shared_ptr<Diffractometer> instrument)
@@ -74,8 +74,10 @@ HDF5Data::HDF5Data(const std::string& filename, std::shared_ptr<Diffractometer> 
 			hsize_t dim=space.getSimpleExtentNdims();
 			if (dim!=1)
 				throw std::runtime_error("Read HDF5, problem reading detector scan parameters, dimension of array should be 1");;
-			hsize_t dims[dim], maxdims[dim];
-			space.getSimpleExtentDims(dims,maxdims);
+			std::vector<hsize_t> dims(dim), maxdims(dim);
+			space.getSimpleExtentDims(&dims[0], &maxdims[0]);
+			//hsize_t dims[dim], maxdims[dim];
+			//space.getSimpleExtentDims(dims,maxdims);
 			if (dims[0]!=_nFrames)
 				throw std::runtime_error("Read HDF5, problem reading detector scan parameters, different array length to npdone");
 			dset.read(&dm(i,0),H5::PredType::NATIVE_DOUBLE,space,space);
@@ -109,8 +111,10 @@ HDF5Data::HDF5Data(const std::string& filename, std::shared_ptr<Diffractometer> 
 			hsize_t dim=space.getSimpleExtentNdims();
 			if (dim!=1)
 				throw std::runtime_error("Read HDF5, problem reading sample scan parameters, dimension of array should be 1");;
-			hsize_t dims[dim], maxdims[dim];
-			space.getSimpleExtentDims(dims,maxdims);
+			std::vector<hsize_t> dims(dim), maxdims(dim);
+			space.getSimpleExtentDims(&dims[0], &maxdims[0]);
+			// hsize_t dims[dim], maxdims[dim];
+			// space.getSimpleExtentDims(dims,maxdims);
 			if (dims[0]!=_nFrames)
 				throw std::runtime_error("Read HDF5, problem reading sample scan parameters, different array length to npdone");
 			dset.read(&dm(i,0),H5::PredType::NATIVE_DOUBLE,space,space);
@@ -175,10 +179,10 @@ void HDF5Data::open()
 	}
 	// Get rank of data
 	const hsize_t ndims=_space->getSimpleExtentNdims();
-	hsize_t dims[ndims];
-	hsize_t maxdims[ndims];
+	std::vector<hsize_t> dims(ndims), maxdims(ndims);
+		
 	// Get dimensions of data
-	_space->getSimpleExtentDims(dims,maxdims);
+	_space->getSimpleExtentDims(&dims[0], &maxdims[0]);
 
 	_nFrames=dims[0];
 	_nrows=dims[1];
@@ -193,6 +197,10 @@ void HDF5Data::open()
     _memspace=new H5::DataSpace(3,count,NULL);
 
 	_isOpened=true;
+
+    // reported by valgrind
+    free(version);
+    free(date);
 }
 
 void HDF5Data::close()

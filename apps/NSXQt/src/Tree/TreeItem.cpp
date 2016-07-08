@@ -3,7 +3,7 @@
 
 #include "Tree/TreeItem.h"
 
-TreeItem::TreeItem(Experiment* experiment) : QStandardItem(), _experiment(experiment)
+TreeItem::TreeItem(std::shared_ptr<Experiment> experiment) : QStandardItem(), _experiment(experiment)
 {
 }
 
@@ -11,7 +11,7 @@ TreeItem::~TreeItem()
 {
 }
 
-Experiment* TreeItem::getExperiment()
+std::shared_ptr<Experiment> TreeItem::getExperiment()
 {
     return _experiment;
 }

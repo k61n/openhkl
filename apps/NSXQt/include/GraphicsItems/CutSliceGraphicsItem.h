@@ -28,7 +28,7 @@ public:
     // Constructors and destructor
 
     //! Construct a data slicer
-    CutSliceGraphicsItem(SX::Data::IData*, bool horizontal=true);
+    CutSliceGraphicsItem(std::shared_ptr<SX::Data::IData>, bool horizontal=true);
     //! The destructor
     ~CutSliceGraphicsItem();
 

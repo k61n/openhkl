@@ -40,10 +40,10 @@ SampleShapePropertyWidget::~SampleShapePropertyWidget()
 
 void SampleShapePropertyWidget::on_pushButton_LoadMovie_clicked()
 {
-    AbsorptionDialog* dialog=new AbsorptionDialog(_caller->getExperiment(),nullptr);
+    AbsorptionDialog* dialog=new AbsorptionDialog(_caller->getExperiment().get(),nullptr);
     if (!dialog->exec())
     {
-        SX::Instrument::Sample* sample=_caller->getExperiment()->getDiffractometer()->getSample();
+        std::shared_ptr<SX::Instrument::Sample> sample=_caller->getExperiment()->getDiffractometer()->getSample();
         auto& hull=sample->getShape();
         if (hull.checkEulerConditions())
         {
@@ -66,7 +66,7 @@ void SampleShapePropertyWidget::on_pushButton_LoadMovie_clicked()
 
 void SampleShapePropertyWidget::setHullProperties()
 {
-    SX::Instrument::Sample* sample=_caller->getExperiment()->getDiffractometer()->getSample();
+    std::shared_ptr<SX::Instrument::Sample> sample=_caller->getExperiment()->getDiffractometer()->getSample();
     auto& hull=sample->getShape();
 
     ui->lineEdit_Volume->setText(QString::number(hull.getVolume()/SX::Units::mm3)+" mm^3");

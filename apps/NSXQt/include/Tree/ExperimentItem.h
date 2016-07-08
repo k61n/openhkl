@@ -11,7 +11,7 @@ using namespace SX::Instrument;
 class ExperimentItem : public TreeItem
 {
 public:
-    explicit ExperimentItem(Experiment* experiment);
+    explicit ExperimentItem(std::shared_ptr<Experiment> experiment);
 
     void setData(const QVariant & value, int role=Qt::UserRole + 1 );
 

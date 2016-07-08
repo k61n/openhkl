@@ -1,5 +1,15 @@
+if(POLICY CMP0020)
+    cmake_policy(SET CMP0020 NEW)
+endif()
+
 # Add NSXQt and NSXQt directories to the include path
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_BINARY_DIR})
+include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/models
+  ${CMAKE_CURRENT_SOURCE_DIR}/views
+  ${CMAKE_CURRENT_BINARY_DIR}
+  )
 
 # Disable console on Windows
 if(WIN32)
@@ -17,9 +27,20 @@ find_package(Qt5Gui REQUIRED)
 find_package(OpenGL REQUIRED)
 
 # Find recursively all the header files of NSXQt
-file(GLOB_RECURSE nsxqt_headers ${CMAKE_SOURCE_DIR}/apps/NSXQt/include/*.h)                   
+file(GLOB_RECURSE nsxqt_headers
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/include/*.h
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/views/*.h
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/models/*.h
+  )
+
+
+
 # Find recursively all the cpp source files of NSXQt
-file(GLOB_RECURSE nsxqt_sources ${CMAKE_SOURCE_DIR}/apps/NSXQt/src/*.cpp)                   
+file(GLOB_RECURSE nsxqt_sources
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/src/*.cpp
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/views/*.cpp
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/models/*.cpp
+  )                   
 
 if (${CMAKE_VERSION} VERSION_LESS 2.8.11)
 
@@ -94,7 +115,7 @@ set(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib)
 add_executable(nsxqt ${GUI_TYPE} ${nsxqt_sources} ${nsxqt_headers} ${ui_headers} ${resources})        
 
 # Link the nsxqt executable with the Qt5 libraries in use.
-target_link_libraries(nsxqt Qt5::Core Qt5::PrintSupport Qt5::Gui Qt5::Widgets Qt5::OpenGL ${OPENGL_LIBRARIES} NSXTool)        
+target_link_libraries(nsxqt Qt5::Core Qt5::PrintSupport Qt5::Gui Qt5::Widgets Qt5::OpenGL ${OPENGL_LIBRARIES} NSXTool ${HDF5_LIBRARIES})        
 
 # Install section, installing libraries 
 install(TARGETS nsxqt DESTINATION bin)

@@ -56,12 +56,18 @@ std::string Path::expandUser(std::string path)
 std::string Path::getApplicationDataPath()
 {
 #ifdef __linux
+  // TODO: application data path should NOT be hard coded
 	boost::filesystem::path p("/usr/local/share");
 	p /= "nsxtool";
 	return p.string();
-#endif
-#ifdef __APPLE__
+#elif defined (__APPLE__)
+	// TODO: application data path should NOT be hard coded
     boost::filesystem::path p("/usr/local/share");
+    p /= "nsxtool";
+    return p.string();
+#elif defined (_WIN32)
+    // TODO: implement this correctly for windows
+    boost::filesystem::path p("");
     p /= "nsxtool";
     return p.string();
 #endif
@@ -79,6 +85,11 @@ std::string Path::getDataBasesPath()
 	boost::filesystem::path p(getResourcesDir());
 	p /= "databases";
 	return p.string();
+}
+
+std::string Path::getResourcesDir()
+{
+    return boost::filesystem::path(g_resourcesDir).string();
 }
 
 

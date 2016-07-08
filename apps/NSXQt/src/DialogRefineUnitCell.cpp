@@ -73,9 +73,9 @@ void DialogRefineUnitCell::setMinimizer()
     auto source = diffractometer->getSource();
 
     // Set the UB minimizer with parameters
-    _minimizer.setDetector(detector);
-    _minimizer.setSample(sample);
-    _minimizer.setSource(source);
+    _minimizer.setDetector(detector.get());
+    _minimizer.setSample(sample.get());
+    _minimizer.setSource(source.get());
 
     int start=10;
 

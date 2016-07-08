@@ -72,18 +72,19 @@ std::vector<std::string> Experiment::getDataNames() const
 	std::vector<std::string> v;
 	v.reserve(_data.size());
 	std::for_each(_data.begin(),_data.end(),[&v]
-	                                         (const std::map<std::string,IData*>::value_type& p)
+                                             (const std::map<std::string,std::shared_ptr<IData>>::value_type& p)
 	                                         {v.push_back(p.first);});
 
 	return v;
 }
 
-const std::map<std::string,IData*>& Experiment::getData() const
+const std::map<std::string,std::shared_ptr<IData>>& Experiment::getData() const
 {
 	return _data;
 }
 
-IData* Experiment::getData(const std::string& name)
+
+std::shared_ptr<IData> Experiment::getData(std::string name)
 {
 	auto it=_data.find(name);
 	if (it == _data.end())
@@ -102,7 +103,7 @@ void Experiment::setName(const std::string& name)
 	_name = name;
 }
 
-void Experiment::addData(IData* data)
+void Experiment::addData(std::shared_ptr<IData> data)
 {
 
 	// Add the data only if it does not exist in the current data map
@@ -134,7 +135,7 @@ void Experiment::addData(IData* data)
 			throw std::runtime_error("trying to mix data with different wavelengths");
 	}
 
-	_data.insert(std::pair<std::string,IData*>(basename,data));
+    _data.insert(std::pair<std::string,std::shared_ptr<IData>>(basename,data));
 }
 
 bool Experiment::hasData(const std::string& name) const

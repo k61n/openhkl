@@ -13,12 +13,14 @@
 #include "Source.h"
 #include "Units.h"
 
+#include "IFrameIterator.h"
+
 namespace SX
 {
 namespace Crystal
 {
 
-Peak3D::Peak3D(SX::Data::IData* data):
+Peak3D::Peak3D(std::shared_ptr<SX::Data::IData> data):
 		_data(data),
 		_hkl(Eigen::Vector3d::Zero()),
 		_peak(nullptr),
@@ -95,14 +97,14 @@ Peak3D::~Peak3D()
         delete _bkg;
 }
 
-void Peak3D::linkData(SX::Data::IData* data)
+void Peak3D::linkData(std::shared_ptr<SX::Data::IData> data)
 {
-	_data=data;
+    _data = data;
 }
 
 void Peak3D::unlinkData()
 {
-	_data=nullptr;
+    _data = nullptr;
 }
 
 void Peak3D::setPeakShape(SX::Geometry::IShape<double,3>* p)
@@ -168,12 +170,10 @@ void Peak3D::integrate()
 	int dy = end_y-start_y;
 
     unsigned int z = data_start;
-    SX::Data::IData::FrameIterator it_start = _data->at(data_start);
-    SX::Data::IData::FrameIterator it_end = _data->at(data_end+1);
 
-	for (auto it = it_start; it != it_end; ++it, ++z)
+    for (auto it = _data->getIterator(data_start); it->index() != data_end; it->advance(), ++z)
 	{
-        auto frame = *it;
+        auto frame = it->getFrame();
 		double pointsinpeak=0;
 		double pointsinbkg=0;
 		double intensityP=0;
@@ -422,7 +422,7 @@ void Peak3D::setDetectorEvent(SX::Instrument::DetectorEvent* event)
 	_event=event;
 }
 
-void Peak3D::setSource(SX::Instrument::Source* source)
+void Peak3D::setSource(std::shared_ptr<SX::Instrument::Source> source)
 {
 	_source=source;
 }

@@ -3,7 +3,7 @@
 #include "Tree/PeakListItem.h"
 #include "Tree/PeakListPropertyWidget.h"
 
-PeakListItem::PeakListItem(Experiment* experiment) : InspectableTreeItem(experiment)
+PeakListItem::PeakListItem(std::shared_ptr<Experiment> experiment) : InspectableTreeItem(experiment)
 {
 
 	setText("Peaks");

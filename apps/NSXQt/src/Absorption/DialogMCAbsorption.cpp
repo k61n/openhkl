@@ -1,6 +1,8 @@
 #include <QtDebug>
 #include <QMessageBox>
 
+#include <memory>
+
 #include <Eigen/Dense>
 
 #include "include/Absorption/DialogMCAbsorption.h"
@@ -45,8 +47,8 @@ void DialogMCAbsorption::on_pushButton_run_pressed()
         return;
 
     // Get the source
-    SX::Instrument::Source* source=_experiment->getDiffractometer()->getSource();
-    SX::Instrument::Sample* sample=_experiment->getDiffractometer()->getSample();
+    std::shared_ptr<SX::Instrument::Source> source=_experiment->getDiffractometer()->getSource();
+    std::shared_ptr<SX::Instrument::Sample> sample=_experiment->getDiffractometer()->getSample();
 
     // Get the material
     unsigned int cellIndex=static_cast<unsigned int>(ui->comboBox->currentIndex());

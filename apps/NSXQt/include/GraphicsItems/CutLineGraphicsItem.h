@@ -2,6 +2,7 @@
 #define CUTLINEGRAPHICSITEM_H
 
 #include <string>
+#include <memory>
 
 #include <QGraphicsItem>
 #include <GraphicsItems/CutterGraphicsItem.h>
@@ -22,7 +23,7 @@ class CutLineGraphicsItem : public CutterGraphicsItem
 {
 public:
 
-    explicit CutLineGraphicsItem(SX::Data::IData*);
+    explicit CutLineGraphicsItem(std::shared_ptr<SX::Data::IData>);
 
     ~CutLineGraphicsItem();
 

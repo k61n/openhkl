@@ -7,6 +7,7 @@
 #include "MainWindow.h"
 #include "NSXQtApp.h"
 
+
 int main(int argc, char *argv[])
 {
     NSXQtApp a(argc, argv);

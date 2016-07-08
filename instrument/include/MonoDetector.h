@@ -32,6 +32,7 @@
 #include <string>
 
 #include "Detector.h"
+#include "Types.h"
 
 namespace SX
 {
@@ -39,7 +40,6 @@ namespace SX
 namespace Instrument
 {
 
-typedef unsigned int uint;
 
 /** @brief Base class for Mono Detectors.
  *
@@ -132,7 +132,7 @@ public:
 	unsigned int getNDetectors() const;
 
 protected:
-	uint _nRows, _nCols;
+	SX::Types::uint _nRows, _nCols;
 	double _minRow, _minCol;
 	double _width, _height;
 	double _angularWidth, _angularHeight;

@@ -38,7 +38,7 @@ ReciprocalSpaceViewer::~ReciprocalSpaceViewer()
     delete ui;
 }
 
-void ReciprocalSpaceViewer::setData(const std::vector<SX::Data::IData*>& data)
+void ReciprocalSpaceViewer::setData(const std::vector<std::shared_ptr<SX::Data::IData>>& data)
 {
     _data.clear();
     _data.reserve(data.size());
@@ -97,11 +97,11 @@ void ReciprocalSpaceViewer::on_view_clicked()
     // The distance from the point origin to the plane (P,v1,v2)
     double distOrigToPlane=v3.dot(from);
 
-    SX::Instrument::Detector* detector(_experiment->getDiffractometer()->getDetector());
+    std::shared_ptr<SX::Instrument::Detector> detector(_experiment->getDiffractometer()->getDetector());
     int nDetRows = detector->getNRows();
     int nDetCols = detector->getNCols();
 
-    SX::Instrument::Sample* sample(_experiment->getDiffractometer()->getSample());
+    std::shared_ptr<SX::Instrument::Sample> sample(_experiment->getDiffractometer()->getSample());
 
     double lambda(_experiment->getDiffractometer()->getSource()->getWavelength());
     double invlambda(1.0/lambda);
@@ -114,7 +114,7 @@ void ReciprocalSpaceViewer::on_view_clicked()
     std::vector<Eigen::Vector3d> qrest;
     qrest.reserve(nDetRows*nDetCols);
 
-    SX::Instrument::MonoDetector* mdetector=dynamic_cast<SX::Instrument::MonoDetector*>(detector);
+    SX::Instrument::MonoDetector* mdetector=dynamic_cast<SX::Instrument::MonoDetector*>(detector.get());
     double pixelS=mdetector->getPixelWidth()*mdetector->getPixelHeigth();
 
     for (int j=0;j<nDetCols;++j)

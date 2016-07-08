@@ -59,12 +59,16 @@ public:
 
 	//! Default constructor (deleted)
 	Experiment()=delete;
+
 	//! Copy constructor
 	Experiment(const Experiment& other);
+
 	//! Construct an empty experiment from a given name and diffractometer
 	Experiment(const std::string& name, const std::string& diffractometerName);
+
 	//! Construct an empty experiment from a diffractometer name
 	Experiment(const std::string& diffractometerName);
+
 	//! Destructor
 	virtual ~Experiment();
 
@@ -77,36 +81,49 @@ public:
 
 	//! Gets the type of the diffractomer used in the experiment
 	const std::string& getDiffractometerType() const;
+
 	//! Gets a shared pointer to the diffractometer related to the experiment
 	std::shared_ptr<Diffractometer> getDiffractometer() const;
-	//! Get a reference to the data
-	const std::map<std::string,IData*>& getData() const;
+
+    //! Get a reference to the data
+    const std::map<std::string,std::shared_ptr<IData>>& getData() const;
+
 	//! Gets the pointer to a given data stored in the experiment
-	IData* getData(const std::string& name);
+    std::shared_ptr<IData> getData(std::string name);
+
 	//! Gets the names of the data stored in the experiment
 	std::vector<std::string> getDataNames() const;
+
 	//! Gets the name of the experiment
-	const std::string& getName() const;
+
+    const std::string& getName() const;
+    //std::string getName() const;
+
 	//! Sets the name of the experiment
 	void setName(const std::string& name);
 
 	// Other methods
 
 	//! Add some data to the experiment
-	void addData(IData* data);
+    void addData(std::shared_ptr<IData> data);
+
 	//! Check whether the experiment has a data
 	bool hasData(const std::string& name) const;
+
 	//! Remove a data from the experiment
 	void removeData(const std::string& name);
 private:
 	//! The name of this experiment
 	std::string _name;
+
 	//! The name of the diffractometer assigned to the experiment
 	std::string _diffractometerName;
+
 	//! A pointer to the detector assigned to this experiment
 	std::shared_ptr<Diffractometer> _diffractometer;
+
 	//! A map of the data related to the experiment. The keys are the basename of their corresponding file.
-	std::map<std::string,IData*> _data;
+    std::map<std::string,std::shared_ptr<IData>> _data;
 };
 
 } // end namespace Instrument

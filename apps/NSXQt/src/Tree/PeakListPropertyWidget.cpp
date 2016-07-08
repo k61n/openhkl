@@ -4,15 +4,25 @@
 #include "include/Tree/PeakListItem.h"
 #include "IData.h"
 #include <QtDebug>
+
+#include <memory>
+
 PeakListPropertyWidget::PeakListPropertyWidget(PeakListItem* caller, QWidget *parent) :
      QWidget(parent),
      _caller(caller),
      ui(new Ui::PeakListPropertyWidget)
 {
     ui->setupUi(this);
-    const auto&  datamap=_caller->getExperiment()->getData();
-    std::vector<SX::Data::IData*> datav;
-    std::for_each(datamap.begin(),datamap.end(),[&](std::pair<std::string,SX::Data::IData*> value){datav.push_back(value.second);});
+    std::map<std::string,std::shared_ptr<IData>>  datamap=_caller->getExperiment()->getData();
+    std::vector<std::shared_ptr<SX::Data::IData>> datav;
+
+    auto func = [&](std::pair<std::string,std::shared_ptr<SX::Data::IData>> value)
+    {
+        datav.push_back(value.second);
+    };
+
+    std::for_each(datamap.begin(), datamap.end(), func);
+
     ui->tableView->setData(datav);
 
     //Connect search box

@@ -18,6 +18,7 @@
 #include <QProgressDialog>
 #include <QtDebug>
 #include <QTransform>
+#include <QProgressDialog>
 
 #include "AABB.h"
 #include "Basis.h"
@@ -56,13 +57,31 @@
 #include "Tree/UnitCellPropertyWidget.h"
 #include "Tree/PeakListPropertyWidget.h"
 
+#include "DialogConvolve.h"
+
+#include "Path.h"
+#include "IFrameIterator.h"
+#include "Types.h"
+
+#include "PeakFinder.h"
+#include "ProgressHandler.h"
+
+#include "JobHandler.h"
+
+// jmf debug testing
+#include <functional>
+extern std::function<void(void)> processEvents;
+
 using namespace SX::Units;
 using namespace SX::Instrument;
+using SX::Types::RealMatrix;
+using SX::Utils::ProgressHandler;
+using SX::Data::PeakFinder;
 
 MainWindow::MainWindow(QWidget *parent)
 : QMainWindow(parent),
   _ui(new Ui::MainWindow),
-  _experiments(),
+  //_experiments(),
   _currentData(nullptr)
 {
     _ui->setupUi(this);
@@ -95,9 +114,15 @@ MainWindow::MainWindow(QWidget *parent)
     _ui->splitterHorizontal->setStretchFactor(1,90);
 
     // signals and slots
-    connect(_ui->experimentTree,SIGNAL(plotData(SX::Data::IData*)),_ui->_dview->getScene(),SLOT(setData(SX::Data::IData*)));
-    connect(_ui->experimentTree,SIGNAL(plotData(SX::Data::IData*)),this,SLOT(changeData(SX::Data::IData*)));
-    connect(_ui->experimentTree,SIGNAL(showPeakList(std::vector<SX::Data::IData*>)),this,SLOT(showPeakList(std::vector<SX::Data::IData*>)));
+    connect(_ui->experimentTree, SIGNAL(plotData(std::shared_ptr<SX::Data::IData>)),
+            _ui->_dview->getScene(), SLOT(setData(std::shared_ptr<SX::Data::IData>))
+    );
+
+    connect(_ui->experimentTree, SIGNAL(plotData(std::shared_ptr<SX::Data::IData>)),
+            this, SLOT(changeData(std::shared_ptr<SX::Data::IData>)));
+
+    connect(_ui->experimentTree, SIGNAL(showPeakList(std::vector<std::shared_ptr<SX::Data::IData>>)),
+            this, SLOT(showPeakList(std::vector<std::shared_ptr<SX::Data::IData>>)));
 
     connect(_ui->frame,&QScrollBar::valueChanged,[=](const int& value){_ui->_dview->getScene()->changeFrame(value);});
 
@@ -110,6 +135,11 @@ MainWindow::MainWindow(QWidget *parent)
     _ui->dockWidget_Property->show();
 
     connect(_ui->experimentTree,SIGNAL(inspectWidget(QWidget*)),this,SLOT(setInspectorWidget(QWidget*)));
+
+    qDebug() << "The resources directory is " << SX::Utils::Path().getResourcesDir().c_str();
+
+    _progressHandler = std::shared_ptr<ProgressHandler>(new ProgressHandler());
+    _peakFinder = std::shared_ptr<PeakFinder>(new PeakFinder());
 }
 
 MainWindow::~MainWindow()
@@ -122,7 +152,8 @@ Ui::MainWindow* MainWindow::getUI() const
     return _ui;
 }
 
-void MainWindow::changeData(IData* data)
+
+void MainWindow::changeData(std::shared_ptr<IData> data)
 {
     _ui->frameFrame->setEnabled(true);
     _ui->intensityFrame->setEnabled(true);
@@ -144,7 +175,7 @@ void MainWindow::changeData(IData* data)
 
 }
 
-void MainWindow::showPeakList(std::vector<SX::Data::IData*> data)
+void MainWindow::showPeakList(std::vector<std::shared_ptr<SX::Data::IData>> data)
 {
 
     if (data.empty())
@@ -178,6 +209,9 @@ void MainWindow::plotPeak(SX::Crystal::Peak3D* peak)
         updatePlot(pgi);
     }
 }
+
+
+
 
 void MainWindow::on_actionPixel_position_triggered()
 {
@@ -376,4 +410,11 @@ void MainWindow::on_actionShow_calculated_peak_positions_triggered(bool checked)
 void MainWindow::on_checkBox_AspectRatio_toggled(bool checked)
 {
     _ui->_dview->fixDetectorAspectRatio(checked);
+}
+
+void MainWindow::on_actionConvolution_Filter_triggered()
+{
+    Eigen::MatrixXi frame = _ui->_dview->getScene()->getCurrentFrame();
+    auto dialog = new DialogConvolve(frame, this);
+    dialog->show();
 }

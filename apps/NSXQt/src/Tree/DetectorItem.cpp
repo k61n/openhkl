@@ -7,7 +7,7 @@
 #include "Tree/DetectorPropertyWidget.h"
 #include "Tree/DetectorItem.h"
 
-DetectorItem::DetectorItem(Experiment* experiment) : InspectableTreeItem(experiment)
+DetectorItem::DetectorItem(std::shared_ptr<Experiment> experiment) : InspectableTreeItem(experiment)
 {
     setText("Detector");
     QIcon icon(":/resources/detectorIcon.png");

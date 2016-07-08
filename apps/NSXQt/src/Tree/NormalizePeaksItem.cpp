@@ -1,6 +1,6 @@
 #include "Tree/NormalizePeaksItem.h"
 
-NormalizePeaksItem::NormalizePeaksItem(Experiment* experiment) : TreeItem(experiment)
+NormalizePeaksItem::NormalizePeaksItem(std::shared_ptr<Experiment> experiment) : TreeItem(experiment)
 {
     setText("Normalize peaks");
     setEditable(false);

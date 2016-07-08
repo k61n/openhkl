@@ -34,7 +34,7 @@ DetectorScene::DetectorScene(QObject *parent)
   _mode(ZOOM),
   _zoomstart(0,0),
   _zoomend(0,0),
-  _zoomrect(),
+  _zoomrect(nullptr),
   _zoomStack(),
   _itemSelected(false),
   _image(nullptr),
@@ -81,20 +81,12 @@ void DetectorScene::setMaxIntensity(int intensity)
     loadCurrentImage(false);
 }
 
-void DetectorScene::setData(SX::Data::IData* data)
+void DetectorScene::setData(std::shared_ptr<SX::Data::IData> data)
 {
-
-    if (_currentData==data)
-        return;
-
-    if (_currentData)
-        _currentData->close();
-
     _currentData = data;
-
     _currentData->open();
 
-    SX::Instrument::Detector* det=_currentData->getDiffractometer()->getDetector();
+    std::shared_ptr<SX::Instrument::Detector> det=_currentData->getDiffractometer()->getDetector();
 
      _zoomStack.clear();
      _zoomStack.push_back(QRect(0,0,det->getNCols(),det->getNRows()));
@@ -112,7 +104,7 @@ void DetectorScene::setData(SX::Data::IData* data)
 
 }
 
-void DetectorScene::setData(SX::Data::IData* data, int frame)
+void DetectorScene::setData(std::shared_ptr<SX::Data::IData> data, int frame)
 {
     setData(data);
     changeFrame(frame);
@@ -214,6 +206,7 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             _zoomend=_zoomstart;
             QRect zoom(_zoomstart,_zoomend);
             _zoomrect=addRect(zoom);
+            _zoomrect->setParentItem(_image);
             QPen pen1(QBrush(QColor("gray")),1.0);
             pen1.setWidth(1);
             pen1.setCosmetic(true);
@@ -240,7 +233,7 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             // Case of Mask mode
             else if (_mode==MASK)
             {
-                MaskGraphicsItem* mask = new MaskGraphicsItem(_currentData);
+                MaskGraphicsItem* mask = new MaskGraphicsItem(_currentData.get());
                 mask->setFrom(event->lastScenePos());
                 mask->setTo(event->lastScenePos());
                 _masks.append(mask);
@@ -400,8 +393,13 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
 
 void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
 {
+    if (!_currentData)
+        return;
+
     auto instr=_currentData->getDiffractometer();
-    SX::Instrument::Detector* det=instr->getDetector();
+    std::shared_ptr<SX::Instrument::Detector> det=instr->getDetector();
+
+
     int nrows=det->getNRows();
     int ncols=det->getNCols();
 
@@ -415,7 +413,7 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
 
     const auto& samplev=_currentData->getSampleState(_currentFrameIndex).getValues();
     const auto& detectorv=_currentData->getDetectorState(_currentFrameIndex).getValues();
-    SX::Instrument::Sample* sample=instr->getSample();
+    std::shared_ptr<SX::Instrument::Sample> sample=instr->getSample();
     double wave=instr->getSource()->getWavelength();
 
     QString ttip;
@@ -475,7 +473,7 @@ void DetectorScene::loadCurrentImage(bool newimage)
     // Full image size, front of the stack
     QRect& full=_zoomStack.front();
 
-    SX::Instrument::Detector* det=_currentData->getDiffractometer()->getDetector();
+    std::shared_ptr<SX::Instrument::Detector> det=_currentData->getDiffractometer()->getDetector();
     std::size_t nrows=det->getNRows();
     std::size_t ncols=det->getNCols();
 
@@ -500,7 +498,7 @@ void DetectorScene::loadCurrentImage(bool newimage)
 
 }
 
-SX::Data::IData* DetectorScene::getData()
+std::shared_ptr<SX::Data::IData> DetectorScene::getData()
 {
     return _currentData;
 }

@@ -2,7 +2,7 @@
 
 #include "Tree/ExperimentItem.h"
 
-ExperimentItem::ExperimentItem(Experiment* experiment) : TreeItem(experiment)
+ExperimentItem::ExperimentItem(std::shared_ptr<Experiment> experiment) : TreeItem(experiment)
 {
     setText(QString::fromStdString(_experiment->getName()));
     setForeground(QBrush(QColor("blue")));
@@ -21,6 +21,7 @@ void ExperimentItem::setData(const QVariant &value, int role)
 
 ExperimentItem::~ExperimentItem()
 {
-    if (_experiment)
-        delete _experiment;
+    // no longer needed since _experiment is a smart pointer
+    //if (_experiment)
+    //    delete _experiment;
 }

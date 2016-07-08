@@ -34,8 +34,7 @@ std::size_t ILLAsciiData::BlockSize=100*81;
 
 IData* ILLAsciiData::create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer)
 {
-	ILLAsciiData* data=new ILLAsciiData(filename,diffractometer);
-	return data;
+    return new ILLAsciiData(filename, diffractometer);
 }
 
 ILLAsciiData::ILLAsciiData(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer)
@@ -225,7 +224,7 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, std::shared_ptr<Diffract
 
 	close();
 
-	Detector* d=_diffractometer->getDetector();
+    std::shared_ptr<Detector> d=_diffractometer->getDetector();
 	switch (d->getDataOrder())
 	{
 		case(Detector::DataOrder::TopLeftColMajor):

@@ -17,7 +17,7 @@ class QWidget;
 class UnitCellItem : public InspectableTreeItem
 {
 public:
-    UnitCellItem(SX::Instrument::Experiment* experiment,std::shared_ptr<SX::Crystal::UnitCell>);
+    UnitCellItem(std::shared_ptr<SX::Instrument::Experiment> experiment,std::shared_ptr<SX::Crystal::UnitCell>);
     ~UnitCellItem();
     QWidget* inspectItem();
     std::shared_ptr<SX::Crystal::UnitCell> getCell();
