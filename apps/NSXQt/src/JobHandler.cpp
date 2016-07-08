@@ -28,7 +28,7 @@ void WorkerThread::run()
 }
 
 Job::Job(QObject *parent, TaskCallback task, FinishedCallback onFinished):
-    QObject(parent), _onFinished(onFinished)
+    QObject(parent), _task(task), _onFinished(onFinished)
 {
     _workerThread = new WorkerThread(this, task);
     connect(_workerThread, SIGNAL(resultReady(bool)), this, SLOT(resultReady(bool)));
@@ -38,6 +38,7 @@ Job::Job(QObject *parent, TaskCallback task, FinishedCallback onFinished):
 
 void Job::exec()
 {
+    // execute asynchronously in another thread
     _workerThread->start();
 }
 

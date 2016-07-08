@@ -605,7 +605,7 @@ Eigen::MatrixXi IData::getFrame(std::size_t idx)
         return readFrame(idx);            
 }
 
-void IData::readInMemory()
+void IData::readInMemory(std::shared_ptr<SX::Utils::ProgressHandler> progress)
 {
     // if caching is disabled, do nothing
     if (!_isCached)
@@ -614,16 +614,32 @@ void IData::readInMemory()
     if (_inMemory)
         return;
 
+    if (progress) {
+        progress->setProgress(0);
+        progress->setStatus("Reading data into memory...");
+    }
+
     if ( !_isOpened)
         open();
 
     _data.clear();
     _data.reserve(_nFrames);
+
+    int dummy = static_cast<int>(0.01 * _nFrames)+1;
     
-    for (unsigned int i = 0; i < _nFrames; ++i)
+    for (unsigned int i = 0; i < _nFrames; ++i) {
         _data.push_back(readFrame(i));
 
+        if ( (i%dummy) == 0 && progress) {
+            progress->setProgress(100.0 * i / _nFrames);
+        }
+    }
+
     _inMemory = true;
+
+    if (progress) {
+        progress->setProgress(100);
+    }
 }
 
 double IData::getBackgroundLevel(std::shared_ptr<SX::Utils::ProgressHandler> progressCallback)

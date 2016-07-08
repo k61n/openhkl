@@ -355,6 +355,7 @@ void ExperimentTree::findPeaks(const QModelIndex& index)
     if ( frame.rows() == 0 || frame.cols() == 0) {
         // attempt to read first frame of first numor by default
         try {
+            selectedNumors[0]->open();
             frame = selectedNumors[0]->getFrame(0);
         }
         catch(std::exception& e) {

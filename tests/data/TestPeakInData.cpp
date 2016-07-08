@@ -31,7 +31,7 @@ BOOST_AUTO_TEST_CASE(Test_Peak_Data)
 	ILLAsciiData dataf("D9_ascii_example",diff);
 
 	dataf.open();
-	dataf.readInMemory();
+    dataf.readInMemory(nullptr);
 
 	auto metadata=dataf.getMetadata();
 	double ub11=metadata->getKey<double>("ub(1,1)");

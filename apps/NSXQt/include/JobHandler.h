@@ -49,6 +49,7 @@ signals:
 
 private:
     std::unique_ptr<WorkerThread> _worker;
+    WorkerThread::TaskCallback _task;
     WorkerThread::FinishedCallback _onFinished;
     WorkerThread* _workerThread;
 };

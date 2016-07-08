@@ -31,7 +31,7 @@ BOOST_AUTO_TEST_CASE(Test_HDF5_IO)
 	ILLAsciiData dataf("D10_ascii_example",diff);
 
 	dataf.open();
-	dataf.readInMemory();
+    dataf.readInMemory(nullptr);
 
 	dataf.saveHDF5("D10_hdf5_example.h5");
 	dataf.close();

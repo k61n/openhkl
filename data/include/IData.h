@@ -168,7 +168,7 @@ public:
 	bool isInMemory() const;
 
     //! Load all the frames in memory
-	void readInMemory();
+    void readInMemory(std::shared_ptr<SX::Utils::ProgressHandler> progress);
 
     //! Release the data from memory
 	void releaseMemory();
