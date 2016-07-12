@@ -17,7 +17,7 @@
 #include "DetectorScene.h"
 #include "GraphicsItems/MaskGraphicsItem.h"
 
-MaskGraphicsItem::MaskGraphicsItem(SX::Data::IData* data)
+MaskGraphicsItem::MaskGraphicsItem(std::shared_ptr<SX::Data::IData> data)
 : SXGraphicsItem(nullptr,true,true),
   _data(data),
   _aabb(new AABB<double,3>),

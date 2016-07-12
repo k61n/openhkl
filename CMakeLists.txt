@@ -111,6 +111,14 @@ include_directories(${TIFF_INCLUDE_DIR})
 ###########################################################################
 # Compiler/linker stuffs
 ###########################################################################
+if(CMAKE_COMPILER_IS_GNUCXX)
+    add_definitions(
+        -Wno-ignored-attributes # ignore annoying warnings caused by Eigen library
+        -Wno-misleading-indentation # ignore annoying warnings caused by Eigen library
+        -Wno-deprecated-declarations # ignore annoying warnings caused by Eigen library
+        .)
+endif()
+
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
   message("Configuring for build type 'Release'")
 if(CMAKE_COMPILER_IS_GNUCXX)
@@ -126,9 +134,6 @@ if(CMAKE_COMPILER_IS_GNUCXX)
     -DEIGEN_FFTW_DEFAULT
     -fopenmp
     -pthread
-    -Wno-ignored-attributes # ignore annoying warnings caused by Eigen library
-    -Wno-misleading-indentation # ignore annoying warnings caused by Eigen library
-    -Wno-deprecated-declarations # ignore annoying warnings caused by Eigen library
     )
     set(CMAKE_CXX_FLAGS_RELEASE "-O2") 
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp ")

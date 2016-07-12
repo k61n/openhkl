@@ -18,7 +18,8 @@
 #include "Units.h"
 #include "Monochromator.h"
 
-DialogMCAbsorption::DialogMCAbsorption(SX::Instrument::Experiment *experiment, QWidget *parent): QDialog(parent),
+DialogMCAbsorption::DialogMCAbsorption(std::shared_ptr<SX::Instrument::Experiment> experiment, QWidget *parent):
+    QDialog(parent),
      ui(new Ui::DialogMCAbsorption),
     _experiment(experiment)
 {

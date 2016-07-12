@@ -15,13 +15,15 @@ class LatticeIndexer : public QWidget
     Q_OBJECT
 
 public:
-    explicit LatticeIndexer(std::shared_ptr<SX::Crystal::UnitCell> ptrCell,SX::Instrument::Experiment* exp,QWidget *parent = 0);
+    explicit LatticeIndexer(std::shared_ptr<SX::Crystal::UnitCell> ptrCell,
+                            std::shared_ptr<SX::Instrument::Experiment> exp,
+                            QWidget *parent = 0);
     void updatePeaks();
     void updateCell();
     ~LatticeIndexer();
 private:
     std::shared_ptr<SX::Crystal::UnitCell> _ptrCell;
-    SX::Instrument::Experiment* _experiment;
+    std::shared_ptr<SX::Instrument::Experiment> _experiment;
     Ui::LatticeIndexer *ui;
 
 };

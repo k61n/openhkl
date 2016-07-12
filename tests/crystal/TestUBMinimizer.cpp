@@ -40,12 +40,15 @@ using SX::Instrument::ComponentState;
 using SX::Instrument::Source;
 
 using namespace SX::Units;
+using SX::Instrument::FlatDetector;
+using std::shared_ptr;
+
 const double tolerance=1e-6;
 
 BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
 {
 	// Build D9 instrument
-	SX::Instrument::FlatDetector* D9=new FlatDetector("D9-detector");
+    shared_ptr<FlatDetector> D9(new FlatDetector("D9-detector"));
 	D9->setDistance(488*mm);
 	D9->setDimensions(64*mm,64*mm);
 	D9->setNPixels(32,32);
@@ -58,7 +61,7 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
 	D9->setGonio(detectorGonio);
 
 
-	Sample* sample=new Sample("sample");
+    shared_ptr<Sample> sample(new Sample("sample"));
 	std::shared_ptr<Gonio> sampleGonio(new Gonio("Busing Levy convention"));
 	sampleGonio->addRotation("omega",Vector3d(0,0,1),RotAxis::CW);
 	sampleGonio->addRotation("chi",Vector3d(0,1,0),RotAxis::CCW);
@@ -101,7 +104,7 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
     UBMinimizer minimizer;
     minimizer.setDetector(D9);
     minimizer.setSample(sample);
-    minimizer.setSource(source.get());
+    minimizer.setSource(source);
     minimizer.refineParameter(9,false); // Source
     minimizer.refineParameter(11,false); // Detector y
     minimizer.refineParameter(14,false); // Detector phi

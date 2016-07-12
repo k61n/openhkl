@@ -20,7 +20,7 @@ using SX::Crystal::NiggliReduction;
 using SX::Crystal::GruberReduction;
 using SX::Units::deg;
 
-DialogFindUnitCell::DialogFindUnitCell(SX::Instrument::Experiment *experiment, QWidget *parent):
+DialogFindUnitCell::DialogFindUnitCell(std::shared_ptr<SX::Instrument::Experiment> experiment, QWidget *parent):
     QDialog(parent),
      ui(new Ui::DialogFindUnitCell),
     _experiment(experiment)
@@ -136,9 +136,9 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
                 {
                     UnitCell cell=UnitCell::fromDirectVectors(v1,v2,v3);
                     UBMinimizer minimizer;
-                    minimizer.setSample(sample.get());
-                    minimizer.setDetector(detector.get());
-                    minimizer.setSource(source.get());
+                    minimizer.setSample(sample);
+                    minimizer.setDetector(detector);
+                    minimizer.setSource(source);
                     // Only the UB matrix parameters are used for fit
                     int nParameters= 10 + sample->getNAxes() + detector->getNAxes();
                     for (int i=9;i<nParameters;++i)

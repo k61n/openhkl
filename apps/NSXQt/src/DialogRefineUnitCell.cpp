@@ -20,7 +20,9 @@
 #include "DoubleTableItemDelegate.h"
 #include "Monochromator.h"
 
-DialogRefineUnitCell::DialogRefineUnitCell(SX::Instrument::Experiment* experiment,std::shared_ptr<SX::Crystal::UnitCell> cell,QWidget *parent)
+DialogRefineUnitCell::DialogRefineUnitCell(std::shared_ptr<SX::Instrument::Experiment> experiment,
+                                           std::shared_ptr<SX::Crystal::UnitCell> cell,
+                                           QWidget *parent)
 : QDialog(parent),
   ui(new Ui::DialogRefineUnitCell),
   _experiment(experiment),
@@ -73,9 +75,9 @@ void DialogRefineUnitCell::setMinimizer()
     auto source = diffractometer->getSource();
 
     // Set the UB minimizer with parameters
-    _minimizer.setDetector(detector.get());
-    _minimizer.setSample(sample.get());
-    _minimizer.setSource(source.get());
+    _minimizer.setDetector(detector);
+    _minimizer.setSample(sample);
+    _minimizer.setSource(source);
 
     int start=10;
 
@@ -294,7 +296,7 @@ void DialogRefineUnitCell::on_pushButton_Refine_clicked()
         const auto& peaks=data.second->getPeaks();
         for (auto peak: peaks)
         {
-            if (peak->hasIntegerHKL(*(_cell.get())) && !peak->isMasked() && peak->isSelected())
+            if (peak->hasIntegerHKL(*_cell) && !peak->isMasked() && peak->isSelected())
             {
                 _minimizer.addPeak(*peak);
                 nhits++;

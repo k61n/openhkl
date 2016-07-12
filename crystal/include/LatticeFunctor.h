@@ -33,6 +33,7 @@
 #include <map>
 #include <set>
 #include <vector>
+#include <memory>
 
 #include "LMFunctor.h"
 #include "LatticeConstraintParser.h"
@@ -83,9 +84,9 @@ struct LatticeFunctor : public Utils::LMFunctor<double>
 	int values() const;
 
 	std::vector<Peak3D> _peaks;
-	Instrument::Detector* _detector;
-	Instrument::Sample* _sample;
-	Instrument::Source* _source;
+    std::shared_ptr<Instrument::Detector> _detector;
+    std::shared_ptr<Instrument::Sample> _sample;
+    std::shared_ptr<Instrument::Source> _source;
 	SX::Utils::constraints_set _constraints;
 	std::map<unsigned int,double> _constants;
 };

@@ -233,7 +233,7 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             // Case of Mask mode
             else if (_mode==MASK)
             {
-                MaskGraphicsItem* mask = new MaskGraphicsItem(_currentData.get());
+                MaskGraphicsItem* mask = new MaskGraphicsItem(_currentData);
                 mask->setFrom(event->lastScenePos());
                 mask->setTo(event->lastScenePos());
                 _masks.append(mask);

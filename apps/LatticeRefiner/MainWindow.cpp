@@ -243,7 +243,7 @@ void MainWindow::on_comboBox_diffractometer_currentIndexChanged(const QString& d
 
     _diffractometer=std::shared_ptr<SX::Instrument::Diffractometer>(ds->buildDiffractomer(diffractometerName.toStdString()));
 
-    _minimizer.setDetector(_diffractometer->getDetector().get());
-    _minimizer.setSample(_diffractometer->getSample().get());
-    _minimizer.setSource(_diffractometer->getSource().get());
+    _minimizer.setDetector(_diffractometer->getDetector());
+    _minimizer.setSample(_diffractometer->getSample());
+    _minimizer.setSource(_diffractometer->getSource());
 }

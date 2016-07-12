@@ -40,7 +40,7 @@ SampleShapePropertyWidget::~SampleShapePropertyWidget()
 
 void SampleShapePropertyWidget::on_pushButton_LoadMovie_clicked()
 {
-    AbsorptionDialog* dialog=new AbsorptionDialog(_caller->getExperiment().get(),nullptr);
+    AbsorptionDialog* dialog=new AbsorptionDialog(_caller->getExperiment(),nullptr);
     if (!dialog->exec())
     {
         std::shared_ptr<SX::Instrument::Sample> sample=_caller->getExperiment()->getDiffractometer()->getSample();
