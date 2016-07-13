@@ -205,9 +205,14 @@ void DialogConvolve::on_previewButton_clicked()
     qDebug() << "Generating preview image with background of " << background;
 
     for ( int i = 0; i < nrows*ncols; ++i)
-        clamped_result.data()[i] = result.data()[i] > _peakFinder->getThresholdValue()*background ? max_intensity-1 : 0;
+        clamped_result.data()[i] =
+                result.data()[i] > _peakFinder->getThresholdValue()*background ? max_intensity-1 : 0;
 
-    pxmapPreview->setPixmap(QPixmap::fromImage(Mat2QImage(clamped_result.data(), frame.rows(), frame.cols(), 0, ncols, 0, nrows, max_intensity)));
+    pxmapPreview->setPixmap(QPixmap::fromImage(Mat2QImage(clamped_result.data(),
+                                                          frame.rows(), frame.cols(),
+                                                          0, ncols,
+                                                          0, nrows,
+                                                          max_intensity)));
 }
 
 void DialogConvolve::on_filterComboBox_currentIndexChanged(int index)
@@ -219,9 +224,11 @@ void DialogConvolve::on_filterComboBox_currentIndexChanged(int index)
     // no kernel
     case 0:
         kernel.reset();
+        break;
     // annular kernel
     case 1:
         kernel = std::shared_ptr<SX::Imaging::ConvolutionKernel>(new SX::Imaging::AnnularKernel());
+        break;
 
     // kronecker delta (debugging)
     //case 2:
