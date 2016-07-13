@@ -69,8 +69,12 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
             //progressDialog->setLabelText("Computing background level...");
             //progressDialog->show();
 
-            // jmf: why do we round median to an integer??
-            _median = static_cast<int>(numor->getBackgroundLevel(_handler))+1;
+
+            // compute median only if necessary
+            if (_thresholdType == 0) {
+                // jmf: why do we round median to an integer??
+                _median = static_cast<int>(numor->getBackgroundLevel(_handler))+1;
+            }
 
             //progressDialog->close();
         }
