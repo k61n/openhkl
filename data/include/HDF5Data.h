@@ -50,10 +50,10 @@ public:
     void open() override;
     void close() override;
 private:
-    H5::H5File* _file;
-    H5::DataSet* _dataset;
-    H5::DataSpace* _space;
-    H5::DataSpace* _memspace;
+    std::unique_ptr<H5::H5File> _file;
+    std::unique_ptr<H5::DataSet> _dataset;
+    std::unique_ptr<H5::DataSpace> _space;
+    std::unique_ptr<H5::DataSpace> _memspace;
 
 };
 

@@ -35,8 +35,7 @@ Component::Component(const proptree::ptree& node)
 		_gonio=nullptr;
 	else
 	{
-		std::shared_ptr<Gonio> gonio(new Gonio(goniometerNode.get()));
-		_gonio =gonio;
+        _gonio = std::shared_ptr<Gonio>(new Gonio(goniometerNode.get()));
 	}
 
 	// Set the component position

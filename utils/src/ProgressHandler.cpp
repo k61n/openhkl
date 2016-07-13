@@ -11,6 +11,7 @@ namespace Utils {
 
 ProgressHandler::ProgressHandler()
 {
+    _progress = 0;
     _aborted = false;
 }
 

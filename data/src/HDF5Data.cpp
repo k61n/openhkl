@@ -6,6 +6,9 @@
 #include "Sample.h"
 #include "Units.h"
 
+using std::unique_ptr;
+using std::shared_ptr;
+
 namespace SX
 {
 
@@ -21,7 +24,7 @@ HDF5Data::HDF5Data(const std::string& filename, std::shared_ptr<Diffractometer> 
 :IData(filename,instrument), _dataset(nullptr), _space(nullptr), _memspace(nullptr)
 {
     _isCached = false;
-	_file=new H5::H5File(_filename.c_str(), H5F_ACC_RDONLY);
+    _file=unique_ptr<H5::H5File>(new H5::H5File(_filename.c_str(), H5F_ACC_RDONLY));
 
 	// Read the info group and store in metadata
 	H5::Group infoGroup(_file->openGroup("/Info"));
@@ -134,7 +137,6 @@ HDF5Data::HDF5Data(const std::string& filename, std::shared_ptr<Diffractometer> 
 	}
 
 	_file->close();
-	delete _file;
 }
 
 HDF5Data::~HDF5Data()
@@ -150,11 +152,11 @@ void HDF5Data::open()
 
 	try
 	{
-		_file=new H5::H5File(_filename.c_str(), H5F_ACC_RDONLY);
+        _file=unique_ptr<H5::H5File>(new H5::H5File(_filename.c_str(), H5F_ACC_RDONLY));
 	}catch(...)
 	{
 		if (_file)
-			delete _file;
+            _file.reset();
 		throw;
 	}
 
@@ -170,9 +172,9 @@ void HDF5Data::open()
 	// Create new data set
 	try
 	{
-	_dataset=new H5::DataSet(_file->openDataSet("/Data/Counts"));
+    _dataset = unique_ptr<H5::DataSet>(new H5::DataSet(_file->openDataSet("/Data/Counts")));
 	// Dataspace of the dataset /counts
-	_space=new H5::DataSpace(_dataset->getSpace());
+    _space = unique_ptr<H5::DataSpace>(new H5::DataSpace(_dataset->getSpace()));
 	}catch(...)
 	{
 		throw;
@@ -194,9 +196,9 @@ void HDF5Data::open()
     count[1] = _nrows;
     count[2] = _ncols;
 
-    _memspace=new H5::DataSpace(3,count,NULL);
+    _memspace = unique_ptr<H5::DataSpace>(new H5::DataSpace(3,count,NULL));
 
-	_isOpened=true;
+    _isOpened = true;
 
     // reported by valgrind
     free(version);
@@ -212,12 +214,13 @@ void HDF5Data::close()
 	_space->close();
 	_memspace->close();
 	_dataset->close();
-	delete _memspace;
-	delete _space;
-	delete _dataset;
-	delete _file;
 
-	_isOpened=false;
+    _space.reset();
+    _memspace.reset();
+    _dataset.reset();
+    _file.reset();
+
+    _isOpened = false;
 }
 
 
