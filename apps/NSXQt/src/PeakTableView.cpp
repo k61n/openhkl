@@ -277,7 +277,7 @@ void PeakTableView::normalizeToMonitor()
         _normalized=true;
         selectRow(index.row());
         // If no row selected do nothing else.
-        if (!index.isValid() < 0)
+        if (!index.isValid())
             return;
         SX::Crystal::Peak3D& peak=_peaks[index.row()].get();
         emit plotPeak(&peak);

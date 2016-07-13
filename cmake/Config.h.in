@@ -5,7 +5,7 @@
 
 namespace SX {
     namespace Utils {
-            constexpr char* g_resourcesDir = "@RESOURCES_DIR@";
+            constexpr const char* g_resourcesDir = "@RESOURCES_DIR@";
     }
 }
 

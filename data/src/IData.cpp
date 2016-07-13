@@ -89,8 +89,8 @@ std::string IData::getBasename() const
 int IData::dataAt(unsigned int x, unsigned int y, unsigned int z)
 {
 
-	// Check that the voxel is inside the limit of the data
-    if (z<0 || z>=_nFrames || y<0 || y>=_ncols || x<0 || x>=_nrows)
+	// Check that the voxel is inside the limit of the data  
+    if (z>=_nFrames || y>=_ncols || x>=_nrows)
         return 0;
 
     return getFrame(z)(x,y);
@@ -170,7 +170,7 @@ ComponentState IData::getDetectorInterpolatedState(double frame)
 
 const ComponentState& IData::getDetectorState(unsigned int frame) const
 {
-	if (frame>(_detectorStates.size()-1) || frame<0)
+    if (frame>(_detectorStates.size()-1))
 		throw std::runtime_error("Error when returning detector state: invalid frame value");
 
 	return _detectorStates[frame];
@@ -199,7 +199,7 @@ ComponentState IData::getSampleInterpolatedState(double frame)
 const ComponentState& IData::getSampleState(unsigned int frame) const
 {
 
-	if (frame>(_sampleStates.size()-1) || frame<0)
+    if (frame>(_sampleStates.size()-1))
 			throw std::runtime_error("Error when returning sample state: invalid frame value");
 	return _sampleStates[frame];
 }
@@ -226,7 +226,7 @@ ComponentState IData::getSourceInterpolatedState(double frame)
 
 const ComponentState& IData::getSourceState(unsigned int frame) const
 {
-	if (frame>(_sourceStates.size()-1) || frame<0)
+    if (frame>(_sourceStates.size()-1) )
 		throw std::runtime_error("Error when returning source state: invalid frame value");
 
 	return _sourceStates[frame];

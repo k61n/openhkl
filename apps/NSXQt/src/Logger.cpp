@@ -35,6 +35,10 @@ void customMessageHandler(QtMsgType type, const QMessageLogContext& context, con
         break;
     case QtFatalMsg:
         abort();
+        break;
+    case QtInfoMsg:
+        // added to fix clang warning. should we do something in this case?
+        break;
     }
     log->append(txt);
     // Return to black color for user input in the notebook
