@@ -435,7 +435,7 @@ void ExperimentTree::findPeaks(const QModelIndex& index)
         }
     };
 
-    auto job = new Job(this, task, onFinished);
+    auto job = new Job(this, task, onFinished, true);
     //connect(progressView, SIGNAL(canceled()), job, SLOT(terminate()));
 
     job->exec();
