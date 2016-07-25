@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <iostream>
 #include <set>
+#include <memory>
 
 #include <QContextMenuEvent>
 #include <QHeaderView>
@@ -16,6 +17,8 @@
 
 #include "IData.h"
 #include "Peak3D.h"
+#include "ProgressHandler.h"
+#include "ProgressView.h"
 
 PeakTableView::PeakTableView(QWidget *parent)
 : QTableView(parent),
@@ -124,6 +127,14 @@ void PeakTableView::sortByColumn(int i)
 
 void PeakTableView::constructTable()
 {
+    // set up progress handler and view
+    std::shared_ptr<SX::Utils::ProgressHandler> progressHandler(new SX::Utils::ProgressHandler);
+    ProgressView progressView(this);
+
+    progressView.watch(progressHandler);
+    progressHandler->setStatus("Creating peak tables..");
+    progressHandler->setProgress(0);
+
     // Create table
     QStandardItemModel* model=new QStandardItemModel(_peaks.size(),6,this);
     model->setHorizontalHeaderItem(0,new QStandardItem("h k l"));
@@ -133,19 +144,27 @@ void PeakTableView::constructTable()
     model->setHorizontalHeaderItem(4,new QStandardItem("Numor"));
     model->setHorizontalHeaderItem(5,new QStandardItem("Selected"));
 
+
+    int i = 0;
+
     // Setup content of the table
-    int i=0;
     for (SX::Crystal::Peak3D& peak : _peaks)
     {
-        const Eigen::RowVector3d& hkl=peak.getMillerIndices();
-        QStandardItem* col0=new QStandardItem(QString::number(hkl[0],'f',2) + "  " + QString::number(hkl[1],'f',2) + "  " + QString::number(hkl[2],'f',2));
-        double l=peak.getLorentzFactor();
-        double t=peak.getTransmission();
-        QStandardItem* col1=new QStandardItem(QString::number(peak.getScaledIntensity()/l/t,'f',2));
-        QStandardItem* col2=new QStandardItem(QString::number(peak.getScaledSigma()/l/t,'f',2));
-        QStandardItem* col3=new QStandardItem(QString::number(t,'f',2));
-        QStandardItem* col4=new QStandardItem(QString::number(peak.getData()->getMetadata()->getKey<int>("Numor")));
+        const Eigen::RowVector3d& hkl = peak.getMillerIndices();
+
+        QStandardItem* col0 = new QStandardItem(QString::number(hkl[0],'f',2)
+                + "  " + QString::number(hkl[1],'f',2)
+                + "  " + QString::number(hkl[2],'f',2));
+
+        double l = peak.getLorentzFactor();
+        double t = peak.getTransmission();
+
+        QStandardItem* col1 = new QStandardItem(QString::number(peak.getScaledIntensity()/l/t,'f',2));
+        QStandardItem* col2 = new QStandardItem(QString::number(peak.getScaledSigma()/l/t,'f',2));
+        QStandardItem* col3 = new QStandardItem(QString::number(t,'f',2));
+        QStandardItem* col4 = new QStandardItem(QString::number(peak.getData()->getMetadata()->getKey<int>("Numor")));
         QStandardItem* col5;
+
         if (peak.isSelected())
             col5= new QStandardItem(QIcon(":/resources/peakSelectedIcon.png"),"");
         else
@@ -157,6 +176,8 @@ void PeakTableView::constructTable()
         model->setItem(i,3,col3);
         model->setItem(i,4,col4);
         model->setItem(i++,5,col5);
+
+        progressHandler->setProgress(i * 100.0 / _peaks.size() );
     }
     setModel(model);
 
@@ -277,7 +298,7 @@ void PeakTableView::normalizeToMonitor()
         _normalized=true;
         selectRow(index.row());
         // If no row selected do nothing else.
-        if (!index.isValid() < 0)
+        if (!index.isValid())
             return;
         SX::Crystal::Peak3D& peak=_peaks[index.row()].get();
         emit plotPeak(&peak);

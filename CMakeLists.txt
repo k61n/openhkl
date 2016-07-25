@@ -24,6 +24,16 @@ endif()
 ###########################################################################
 
 option(BUILD_QTAPPS "Build Qt based application." ON)
+option(USE_LLVM "Build with LLVM / Clang." OFF)
+option(BUILD_WITH_DEBUG_INFO "Build with debugging information (developers only)" OFF)
+
+# find clang
+if ( USE_LLVM )
+    find_program(CMAKE_C_COMPILER "clang")
+    find_program(CMAKE_CXX_COMPILER "clang++")
+endif( USE_LLVM )
+
+
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")
@@ -32,6 +42,12 @@ endif()
 # additional macros
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
 include(CheckCompiler)
+
+if ( BUILD_WITH_DEBUG_INFO )
+    if (CMAKE_COMPILER_IS_GNUCXX)
+        add_definitions(-g)
+    endif(CMAKE_COMPILER_IS_GNUCXX)
+endif( BUILD_WITH_DEBUG_INFO )
 
 #Set package name here
 set(CPACK_PACKAGE_NAME "nsxtool")
@@ -62,6 +78,11 @@ endif()
 
 ###### Find OPENMP 
 find_package(OpenMP)
+
+#if (OPENMP_FOUND)
+#    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+#    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+#endif()
 
 ###### Find the Eigen3 
 find_package(Eigen3)
@@ -111,32 +132,40 @@ include_directories(${TIFF_INCLUDE_DIR})
 ###########################################################################
 # Compiler/linker stuffs
 ###########################################################################
+if(CMAKE_COMPILER_IS_GNUCXX)
+    add_definitions(
+        -Wall
+        -Wno-ignored-attributes # ignore annoying warnings caused by Eigen library
+        -Wno-misleading-indentation # ignore annoying warnings caused by Eigen library
+        -Wno-deprecated-declarations # ignore annoying warnings caused by Eigen library
+        -std=c++11
+        #-fopenmp
+        -pthread
+        -DEIGEN_FFTW_DEFAULT
+    )
+endif()
+
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
   message("Configuring for build type 'Release'")
 if(CMAKE_COMPILER_IS_GNUCXX)
     add_definitions(
     -msse2
-    -std=c++0x
-    -Wall
     -DNDEBUG
-    -D__GXX_EXPERIMENTAL_CXX0X__ 
+    #-D__GXX_EXPERIMENTAL_CXX0X__
     -funroll-loops
     -mfpmath=sse
     -ftree-vectorize
-    -DEIGEN_FFTW_DEFAULT
-    -fopenmp
-    -pthread
-    -Wno-ignored-attributes # ignore annoying warnings caused by Eigen library
-    -Wno-misleading-indentation # ignore annoying warnings caused by Eigen library
-    -Wno-deprecated-declarations # ignore annoying warnings caused by Eigen library
+    -O2
     )
-    set(CMAKE_CXX_FLAGS_RELEASE "-O2") 
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp ")
   endif()
   message("Configuring for build type 'Release'")
 elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
   message("Configuring for build type 'Debug'")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g")
+  if (CMAKE_COMPILER_IS_GNUCXX)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Og -g")
+  else()
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O1 -g")
+  endif()
 else()
   message("Warning: build type ${CMAKE_BUILD_TYPE} is unrecognized")
 endif()
@@ -156,9 +185,9 @@ endif()
 
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-  add_definitions(-std=c++11)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+  # add_definitions(-std=c++11)
   #  -stdlib=libc++ 
-
 endif()
 
 ###########################################################################

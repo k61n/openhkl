@@ -17,7 +17,7 @@
 #include "UnitCell.h"
 #include "Logger.h"
 
-ReciprocalSpaceViewer::ReciprocalSpaceViewer(SX::Instrument::Experiment* experiment,QWidget *parent) :
+ReciprocalSpaceViewer::ReciprocalSpaceViewer(std::shared_ptr<SX::Instrument::Experiment> experiment,QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ReciprocalSpaceViewer),
     _experiment(experiment),
@@ -114,7 +114,12 @@ void ReciprocalSpaceViewer::on_view_clicked()
     std::vector<Eigen::Vector3d> qrest;
     qrest.reserve(nDetRows*nDetCols);
 
-    SX::Instrument::MonoDetector* mdetector=dynamic_cast<SX::Instrument::MonoDetector*>(detector.get());
+
+
+
+    std::shared_ptr<SX::Instrument::MonoDetector> mdetector
+            = std::dynamic_pointer_cast<SX::Instrument::MonoDetector>(detector);
+
     double pixelS=mdetector->getPixelWidth()*mdetector->getPixelHeigth();
 
     for (int j=0;j<nDetCols;++j)

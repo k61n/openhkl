@@ -119,16 +119,16 @@ int UBFunctor::values() const
 	return 3*_peaks.size();
 }
 
-void UBFunctor::setDetector(SX::Instrument::Detector* detector)
+void UBFunctor::setDetector(std::shared_ptr<SX::Instrument::Detector> detector)
 {
 	_detector=detector;
 }
 
-void UBFunctor::setSample(SX::Instrument::Sample* sample)
+void UBFunctor::setSample(std::shared_ptr<SX::Instrument::Sample> sample)
 {
 	_sample=sample;
 }
-void UBFunctor::setSource(SX::Instrument::Source* source)
+void UBFunctor::setSource(std::shared_ptr<SX::Instrument::Source> source)
 {
 	_source=source;
 }
@@ -206,12 +206,12 @@ void UBMinimizer::resetParameters()
 	_functor.resetParameters();
 }
 
-void UBMinimizer::setDetector(SX::Instrument::Detector* detector)
+void UBMinimizer::setDetector(std::shared_ptr<SX::Instrument::Detector> detector)
 {
 	_functor.setDetector(detector);
 }
 
-void UBMinimizer::setSource(SX::Instrument::Source* source)
+void UBMinimizer::setSource(std::shared_ptr<SX::Instrument::Source> source)
 {
 	_functor.setSource(source);
 }
@@ -222,7 +222,7 @@ void UBMinimizer::refineParameter(unsigned int idx, bool refine)
 }
 
 
-void UBMinimizer::setSample(SX::Instrument::Sample* sample)
+void UBMinimizer::setSample(std::shared_ptr<SX::Instrument::Sample> sample)
 {
 	_functor.setSample(sample);
 }
@@ -345,7 +345,12 @@ UBSolution::UBSolution() : _detector(nullptr), _sample(nullptr),_source(nullptr)
 {
 }
 
-UBSolution::UBSolution(SX::Instrument::Detector* detector,SX::Instrument::Sample* sample,SX::Instrument::Source* source,const Eigen::VectorXd& values,const Eigen::MatrixXd& cov,const std::vector<bool>& fixedParameters)
+UBSolution::UBSolution(std::shared_ptr<SX::Instrument::Detector> detector,
+                       std::shared_ptr<SX::Instrument::Sample> sample,
+                       std::shared_ptr<SX::Instrument::Source> source,
+                       const Eigen::VectorXd& values,
+                       const Eigen::MatrixXd& cov,
+                       const std::vector<bool>& fixedParameters)
 : _detector(detector), _sample(sample),_source(source), _fixedParameters(fixedParameters)
 {
 	_ub  << values(0),values(1),values(2),values(3),values(4), values(5), values(6),values(7),values(8);

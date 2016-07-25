@@ -37,7 +37,8 @@ public:
     void addExperiment(const std::string& experimentName, const std::string& instrumentName);
     std::vector<std::shared_ptr<SX::Data::IData>> getSelectedNumors() const;
     std::vector<std::shared_ptr<SX::Data::IData>> getSelectedNumors(ExperimentItem* item) const;
-    ExperimentItem* getExperimentItem(Experiment* exp);
+
+    // ExperimentItem* getExperimentItem(Experiment* exp); // no longer used?
 
 signals:
     void plotData(std::shared_ptr<SX::Data::IData>);

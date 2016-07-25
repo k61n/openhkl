@@ -126,7 +126,7 @@ int Source::getNMonochromators() const
 
 void Source::setSelectedMonochromator(size_t i)
 {
-	if (i >=0 && i<_monochromators.size())
+    if (i<_monochromators.size())
 		_selectedMonochromator = i;
 	else
 		throw std::runtime_error("setSelectedMonochromator(): index i is out of range");
@@ -134,7 +134,7 @@ void Source::setSelectedMonochromator(size_t i)
 
 Monochromator* Source::getSelectedMonochromator()
 {
-	if (_selectedMonochromator>=0 && _selectedMonochromator<_monochromators.size())
+    if (_selectedMonochromator<_monochromators.size())
 		return &_monochromators[_selectedMonochromator];
 	else
         throw std::runtime_error("getSelectedMonochromator(): selected monochromator does not exist");
@@ -142,7 +142,7 @@ Monochromator* Source::getSelectedMonochromator()
 
 const Monochromator* Source::getSelectedMonochromator() const
 {
-	if (_selectedMonochromator>=0 && _selectedMonochromator<_monochromators.size())
+    if (_selectedMonochromator<_monochromators.size())
 		return &_monochromators[_selectedMonochromator];
 	else
         throw std::runtime_error("getSelectedMonochromator(): selected monochromator does not exist");

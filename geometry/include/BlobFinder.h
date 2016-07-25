@@ -291,7 +291,7 @@ private:
 		mergeBlobs<Blob2D>(blobs,equivalences);
 
 		return blobs;
-    } /**/
+    } */
 
     /*
     // the typename matrix_iterator_t should be a forward iterator of type Eigen::Matrix
@@ -497,7 +497,7 @@ private:
 		mergeBlobs<Blob3D>(blobs,equivalences);
 
 		return blobs;
-    } /**/
+    } */
 
 
 

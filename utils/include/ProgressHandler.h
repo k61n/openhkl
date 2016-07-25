@@ -25,6 +25,8 @@ public:
     ProgressHandler();
     ~ProgressHandler();
 
+    void setProcessCallback(std::function<void()> callback);
+
     void setProgress(int progress);
     int getProgress();
 
@@ -45,6 +47,8 @@ private:
     int _progress;
 
     std::atomic_bool _aborted;
+
+    std::function<void(void)> _callback;
 };
 
 } // namespace Utils

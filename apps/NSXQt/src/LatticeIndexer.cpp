@@ -5,7 +5,9 @@
 #include "IData.h"
 #include "OpenGL/GLReciprocalLattice.h"
 
-LatticeIndexer::LatticeIndexer(std::shared_ptr<SX::Crystal::UnitCell> ptrCell, SX::Instrument::Experiment* experiment, QWidget *parent)
+LatticeIndexer::LatticeIndexer(std::shared_ptr<SX::Crystal::UnitCell> ptrCell,
+                               std::shared_ptr<SX::Instrument::Experiment> experiment,
+                               QWidget *parent)
     : QWidget(parent),
       _ptrCell(ptrCell),
       _experiment(experiment),

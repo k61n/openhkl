@@ -47,6 +47,7 @@ typedef Eigen::Matrix<int,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> rowMatr
 class DetectorScene : public QGraphicsScene
 {
     Q_OBJECT
+
 public:
     enum MODE {ZOOM=0, LINE=1, HORIZONTALSLICE=2, VERTICALSLICE=3, MASK=4,INDEXING=5};
     //! Which mode is the cursor diplaying
@@ -60,6 +61,7 @@ signals:
      //! Signal emitted for all changes of the image
     void dataChanged();
     void updatePlot(PlottableGraphicsItem* cutter);
+
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
@@ -68,7 +70,6 @@ protected:
     void wheelEvent(QGraphicsSceneWheelEvent *event);
 
 public slots:
-
     void activateIndexingMode(std::shared_ptr<SX::Crystal::UnitCell>);
     // To be called to update detector image
     void setData(std::shared_ptr<SX::Data::IData>,int frame);
@@ -88,8 +89,8 @@ public slots:
     //!
     void showPeakCalcs(bool);
     void clearPeaks();
-private:
 
+private:
     //! Load image from current Data and frame
     void loadCurrentImage(bool newimage=true);
     //! Create the text of the tooltip depending on Scene Mode.

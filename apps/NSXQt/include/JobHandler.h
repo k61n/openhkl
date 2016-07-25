@@ -36,7 +36,10 @@ class Job : public QObject
     Q_OBJECT
 
 public:
-    Job(QObject* parent, WorkerThread::TaskCallback task, WorkerThread::FinishedCallback onFinished);
+    Job(QObject* parent,
+        WorkerThread::TaskCallback task,
+        WorkerThread::FinishedCallback onFinished,
+        bool executeSynchronous);
     void exec();
 
 public slots:
@@ -49,8 +52,10 @@ signals:
 
 private:
     std::unique_ptr<WorkerThread> _worker;
+    WorkerThread::TaskCallback _task;
     WorkerThread::FinishedCallback _onFinished;
     WorkerThread* _workerThread;
+    bool _synchronous;
 };
 
 #endif // NSXTOOL_JOBHANDLER_H_

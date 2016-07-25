@@ -61,15 +61,20 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
     for (auto numor : numors)
     {
         numor->clearPeaks();
-        numor->readInMemory();
+
+        numor->readInMemory(_handler);
 
         try {
             //progressDialog->setMaximum(100);
             //progressDialog->setLabelText("Computing background level...");
             //progressDialog->show();
 
-            // jmf: why do we round median to an integer??
-            _median = static_cast<int>(numor->getBackgroundLevel(_handler))+1;
+
+            // compute median only if necessary
+            if (_thresholdType == 0) {
+                // jmf: why do we round median to an integer??
+                _median = static_cast<int>(numor->getBackgroundLevel(_handler))+1;
+            }
 
             //progressDialog->close();
         }
@@ -138,11 +143,20 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
             }
 
             blobs = blob_finder.find(0, numor->getNFrames());
+
+            if ( _handler ) {
+                _handler->log("Found " + std::to_string(blobs.size()) + " blobs");
+            }
+
             //blobs=SX::Geometry::findBlobs3D(numor->begin(), numor->end(), median*threshold, 30, 10000, confidence);
         }
         catch(std::exception& e) // Warning if error
         {
-            //qCritical() << "Peak finder caused n exception" << e.what();
+            if ( _handler )
+                _handler->log(std::string("Peak finder caused an exception: ") + e.what());
+
+            // pass exception back to callee
+            throw e;
         }
 
         //qDebug() << ">>>> found blobs";

@@ -27,9 +27,14 @@ void WorkerThread::run()
     emit resultReady(success);
 }
 
-Job::Job(QObject *parent, TaskCallback task, FinishedCallback onFinished):
-    QObject(parent), _onFinished(onFinished)
+Job::Job(QObject *parent, TaskCallback task, FinishedCallback onFinished, bool executeSynchronous):
+    QObject(parent), _task(task), _onFinished(onFinished), _synchronous(executeSynchronous)
 {
+    if ( _synchronous) {
+        _workerThread = nullptr;
+        return;
+    }
+
     _workerThread = new WorkerThread(this, task);
     connect(_workerThread, SIGNAL(resultReady(bool)), this, SLOT(resultReady(bool)));
     connect(_workerThread, SIGNAL(finished()), _workerThread, SLOT(deleteLater()));
@@ -38,7 +43,20 @@ Job::Job(QObject *parent, TaskCallback task, FinishedCallback onFinished):
 
 void Job::exec()
 {
-    _workerThread->start();
+    // execute synchronously
+    if ( _synchronous ) {
+        bool success = false;
+
+        if (_task)
+            success = _task();
+
+        if (_onFinished)
+            _onFinished(success);
+    }
+    else {
+        // execute asynchronously in another thread
+        _workerThread->start();
+    }
 }
 
 void Job::resultReady(bool success)

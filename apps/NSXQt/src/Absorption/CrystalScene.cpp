@@ -39,7 +39,7 @@ void CrystalScene::loadImage(QString filename)
        pixmapitem->setPixmap(_pix);
 
    QImage image=pixmapitem->pixmap().toImage();
-   image.QImage::convertToFormat(QImage::Format_Indexed8);
+   image = image.convertToFormat(QImage::Format_Indexed8);
    QVector<QRgb> table=image.colorTable();
 
    int i=0;

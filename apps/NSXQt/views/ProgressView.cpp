@@ -2,13 +2,13 @@
 // j.fisher@fz-juelich.de
 
 #include <QDebug>
+#include <QApplication>
 
 #include "ProgressView.h"
 
 ProgressView::ProgressView(QWidget* parent): QProgressDialog(parent)
 {
     setModal(true);
-
 
     setLabelText("Nothing to show");
     setMaximum(100);
@@ -40,6 +40,8 @@ void ProgressView::watch(std::shared_ptr<SX::Utils::ProgressHandler> handler)
     connect(this, SIGNAL(canceled()), this, SLOT(abort()));
 
     _timer->start();
+
+    _handler->setProcessCallback([] () {QApplication::processEvents();});
 }
 
 void ProgressView::updateProgress()

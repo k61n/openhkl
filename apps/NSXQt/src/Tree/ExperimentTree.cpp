@@ -244,7 +244,7 @@ void ExperimentTree::absorptionCorrection()
     auto pitem=dynamic_cast<PeakListItem*>(item);
     if (!pitem)
         return;
-    DialogMCAbsorption* dialog=new DialogMCAbsorption(pitem->getExperiment().get(),this);
+    DialogMCAbsorption* dialog=new DialogMCAbsorption(pitem->getExperiment(),this);
     dialog->open();
 }
 
@@ -355,6 +355,7 @@ void ExperimentTree::findPeaks(const QModelIndex& index)
     if ( frame.rows() == 0 || frame.cols() == 0) {
         // attempt to read first frame of first numor by default
         try {
+            selectedNumors[0]->open();
             frame = selectedNumors[0]->getFrame(0);
         }
         catch(std::exception& e) {
@@ -434,7 +435,7 @@ void ExperimentTree::findPeaks(const QModelIndex& index)
         }
     };
 
-    auto job = new Job(this, task, onFinished);
+    auto job = new Job(this, task, onFinished, true);
     //connect(progressView, SIGNAL(canceled()), job, SLOT(terminate()));
 
     job->exec();
@@ -476,7 +477,7 @@ void ExperimentTree::viewReciprocalSpace(const QModelIndex& index)
 
     try
     {
-        ReciprocalSpaceViewer* dialog = new ReciprocalSpaceViewer(expt.get());
+        ReciprocalSpaceViewer* dialog = new ReciprocalSpaceViewer(expt);
         dialog->setData(selectedNumors);
         if (!dialog->exec())
             return;
@@ -537,22 +538,24 @@ void ExperimentTree::keyPressEvent(QKeyEvent *event)
     }
 }
 
-ExperimentItem* ExperimentTree::getExperimentItem(SX::Instrument::Experiment* exp)
-{
 
-    QModelIndex rootIdx = rootIndex();
+// jmf: this method no longer used?
+//ExperimentItem* ExperimentTree::getExperimentItem(SX::Instrument::Experiment* exp)
+//{
 
-    for (auto i=0;i<_model->rowCount(rootIdx);++i)
-    {
-        auto idx = _model->index(i,0,rootIdx);
-        auto ptr=dynamic_cast<ExperimentItem*>(_model->itemFromIndex(idx));
-        if (ptr && ptr->getExperiment().get()==exp)
-            return ptr;
-    }
+//    QModelIndex rootIdx = rootIndex();
 
-    return nullptr;
+//    for (auto i=0;i<_model->rowCount(rootIdx);++i)
+//    {
+//        auto idx = _model->index(i,0,rootIdx);
+//        auto ptr=dynamic_cast<ExperimentItem*>(_model->itemFromIndex(idx));
+//        if (ptr && ptr->getExperiment().get()==exp)
+//            return ptr;
+//    }
 
-}
+//    return nullptr;
+
+// }
 
 void ExperimentTree::onSingleClick(const QModelIndex &index)
 {

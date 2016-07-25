@@ -8,6 +8,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
 #include <QStandardItemModel>
+#include <QStandardItem>
 
 #include <Eigen/Core>
 
@@ -46,26 +47,17 @@ public:
 */
     void setPreviewFrame(const Eigen::MatrixXi& frame);
     void setPeakFinder(std::shared_ptr<SX::Data::PeakFinder> peakFinder);
-
+    void buildTree();
 
 private slots:
     void on_previewButton_clicked();
-
     void on_filterComboBox_currentIndexChanged(int index);
-
-    void on_parameter1_valueChanged(int arg1);
-    void on_parameter2_valueChanged(int arg1);
-    void on_parameter3_valueChanged(int arg1);
-
     void on_thresholdSpinBox_valueChanged(double arg1);
-
     void on_confidenceSpinBox_valueChanged(double arg1);
-
     void on_minCompBox_valueChanged(int arg1);
-
     void on_maxCompBox_valueChanged(int arg1);
-
     void on_thresholdComboBox_currentIndexChanged(int index);
+    void parameterChanged(QStandardItem* item);
 
 private:
     Ui::DialogConvolve *ui;

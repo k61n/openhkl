@@ -35,16 +35,16 @@ void LatticeMinimizer::clearPeaks()
 	_functor._peaks.clear();
 }
 
-void LatticeMinimizer::setDetector(Instrument::Detector* detector)
+void LatticeMinimizer::setDetector(std::shared_ptr<Instrument::Detector> detector)
 {
 	_functor._detector=detector;
 }
 
-void LatticeMinimizer::setSample(Instrument::Sample* sample)
+void LatticeMinimizer::setSample(std::shared_ptr<Instrument::Sample> sample)
 {
 	_functor._sample=sample;
 }
-void LatticeMinimizer::setSource(Instrument::Source* source)
+void LatticeMinimizer::setSource(std::shared_ptr<Instrument::Source> source)
 {
 	_functor._source=source;
 }

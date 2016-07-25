@@ -2,6 +2,7 @@
 #define SLICEGRAPHICSITEM_H
 
 #include <string>
+#include <memory>
 
 #include "AABB.h"
 
@@ -34,7 +35,7 @@ public:
     // Constructors and destructor
 
 	// Constructs a mask
-    MaskGraphicsItem(SX::Data::IData* data);
+    MaskGraphicsItem(std::shared_ptr<SX::Data::IData> data);
     //! The destructor
     ~MaskGraphicsItem();
 
@@ -64,7 +65,7 @@ public:
 
 protected:
     //! The data on which the cutter will act upon
-    SX::Data::IData* _data;
+    std::shared_ptr<SX::Data::IData> _data;
     //! The AABB of the peak
     AABB<double,3>* _aabb;
     QPointF _from;

@@ -122,6 +122,7 @@ blob3DCollection BlobFinder::find(int begin, int end)
 
     if (_progressHandler) {
         _progressHandler->setStatus("Blob finding complete.");
+        _progressHandler->log("Blob finding complete.");
         _progressHandler->setProgress(100);
     }
 

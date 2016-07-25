@@ -25,7 +25,9 @@ class DialogRefineUnitCell : public QDialog
     Q_OBJECT
 
 public:
-    explicit DialogRefineUnitCell(SX::Instrument::Experiment* experiment,std::shared_ptr<SX::Crystal::UnitCell> cell,QWidget *parent = 0);
+    explicit DialogRefineUnitCell(std::shared_ptr<SX::Instrument::Experiment> experiment,
+                                  std::shared_ptr<SX::Crystal::UnitCell> cell,
+                                  QWidget *parent = 0);
     ~DialogRefineUnitCell();
     void setLatticeParams();
     void setSampleOffsets();
@@ -43,7 +45,7 @@ private slots:
 
 private:
     Ui::DialogRefineUnitCell *ui;
-    SX::Instrument::Experiment* _experiment;
+    std::shared_ptr<SX::Instrument::Experiment> _experiment;
     std::shared_ptr<SX::Crystal::UnitCell> _cell;
     SX::Crystal::UBMinimizer _minimizer;
 };

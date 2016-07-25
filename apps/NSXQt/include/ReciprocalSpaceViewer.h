@@ -28,7 +28,7 @@ class ReciprocalSpaceViewer : public QDialog
     Q_OBJECT
 
 public:
-    explicit ReciprocalSpaceViewer(SX::Instrument::Experiment* experiment, QWidget *parent = 0);
+    explicit ReciprocalSpaceViewer(std::shared_ptr<SX::Instrument::Experiment> experiment, QWidget *parent = 0);
 
     void setData(const std::vector<std::shared_ptr<SX::Data::IData>>& data);
 
@@ -40,7 +40,7 @@ private slots:
 private:
     Ui::ReciprocalSpaceViewer *ui;
 
-    SX::Instrument::Experiment* _experiment;
+    std::shared_ptr<SX::Instrument::Experiment> _experiment;
     std::vector<std::shared_ptr<SX::Data::IData>> _data;
 };
 

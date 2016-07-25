@@ -64,7 +64,12 @@ LatticeSolution& LatticeSolution::operator=(const LatticeSolution& other)
 	return *this;
 }
 
-LatticeSolution::LatticeSolution(Instrument::Detector* detector,Instrument::Sample* sample,Instrument::Source* source,const Eigen::VectorXd& values,const Eigen::MatrixXd& cov,const std::vector<bool>& fixedParameters)
+LatticeSolution::LatticeSolution(std::shared_ptr<Instrument::Detector> detector,
+                                 std::shared_ptr<Instrument::Sample> sample,
+                                 std::shared_ptr<Instrument::Source> source,
+                                 const Eigen::VectorXd& values,
+                                 const Eigen::MatrixXd& cov,
+                                 const std::vector<bool>& fixedParameters)
 : _detector(detector),
   _sample(sample),
   _source(source),

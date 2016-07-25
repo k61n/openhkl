@@ -25,7 +25,7 @@ class DialogFindUnitCell : public QDialog
     Q_OBJECT
 
 public:
-    explicit DialogFindUnitCell(SX::Instrument::Experiment* experiment, QWidget *parent = 0);
+    explicit DialogFindUnitCell(std::shared_ptr<SX::Instrument::Experiment> experiment, QWidget *parent = 0);
     ~DialogFindUnitCell();
 signals:
     void solutionAccepted(const SX::Crystal::UnitCell&);
@@ -40,7 +40,7 @@ private slots:
 private:
     void setPeaks();
     Ui::DialogFindUnitCell *ui;
-    SX::Instrument::Experiment* _experiment;
+    std::shared_ptr<SX::Instrument::Experiment> _experiment;
     std::vector<SX::Crystal::Peak3D*> _peaks;
     std::vector<std::pair<SX::Crystal::UnitCell,double>> _solutions;
 };

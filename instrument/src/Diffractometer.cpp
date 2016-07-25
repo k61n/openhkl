@@ -56,7 +56,7 @@ Diffractometer::~Diffractometer()
 		delete _sample;
 	if (_source)
 		delete _source;
-    /**/
+    */
 }
 
 Diffractometer& Diffractometer::operator=(const Diffractometer& other)

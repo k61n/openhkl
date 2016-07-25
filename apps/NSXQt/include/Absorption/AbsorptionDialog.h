@@ -1,6 +1,8 @@
 #ifndef ABSORPTIONDIALOG_H
 #define ABSORPTIONDIALOG_H
 
+#include <memory>
+
 #include <QDialog>
 #include "CrystalScene.h"
 
@@ -22,7 +24,7 @@ class AbsorptionDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit AbsorptionDialog(SX::Instrument::Experiment* experiment,QWidget *parent = nullptr);
+    explicit AbsorptionDialog(std::shared_ptr<SX::Instrument::Experiment> experiment, QWidget *parent = nullptr);
     const std::string& getMovieFilename() const;
     ~AbsorptionDialog();
 signals:
@@ -39,7 +41,7 @@ private slots:
 private:
     Ui::AbsorptionDialog *ui;
     //! Link to the experiment
-    SX::Instrument::Experiment* _experiment;
+    std::shared_ptr<SX::Instrument::Experiment> _experiment;
     //! Rotation axis to collect movie
     SX::Instrument::RotAxis* _spindleAxis;
     //! Set of Roatation angle and absolute fileName for jpg image

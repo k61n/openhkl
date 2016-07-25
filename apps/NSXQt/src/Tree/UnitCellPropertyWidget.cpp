@@ -1,4 +1,5 @@
 #include <set>
+#include <memory>
 
 #include <QMessageBox>
 #include <QtDebug>
@@ -22,6 +23,9 @@
 #include <QCompleter>
 #include <QSortFilterProxyModel>
 #include "LatticeIndexer.h"
+
+#include "ProgressHandler.h"
+#include "ProgressView.h"
 
 UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *parent) :
     QWidget(parent),
@@ -116,13 +120,13 @@ void UnitCellPropertyWidget::on_pushButton_Info_clicked()
 
 void UnitCellPropertyWidget::on_pushButton_Index_clicked()
 {
-    LatticeIndexer* indexer=new LatticeIndexer(_unitCellItem->getCell(),_unitCellItem->getExperiment().get());
+    LatticeIndexer* indexer=new LatticeIndexer(_unitCellItem->getCell(),_unitCellItem->getExperiment());
     indexer->show();
 }
 
 void UnitCellPropertyWidget::on_pushButton_AutoIndexing_clicked()
 {
-    DialogFindUnitCell* dialog=new DialogFindUnitCell(_unitCellItem->getExperiment().get(),this);
+    DialogFindUnitCell* dialog=new DialogFindUnitCell(_unitCellItem->getExperiment(),this);
     // Ensure that lattice parameters are updated if a solution is accepted
     connect(dialog,SIGNAL(solutionAccepted(SX::Crystal::UnitCell)),this,SLOT(setCell(SX::Crystal::UnitCell)));
     dialog->exec();
@@ -130,15 +134,28 @@ void UnitCellPropertyWidget::on_pushButton_AutoIndexing_clicked()
 
 void UnitCellPropertyWidget::setCell(const SX::Crystal::UnitCell& cell)
 {
+    // set up progress handler and view
+    std::shared_ptr<SX::Utils::ProgressHandler> progressHandler(new SX::Utils::ProgressHandler);
+    ProgressView progressView(this);
+
+    progressView.watch(progressHandler);
+    progressHandler->setStatus("Setting unit cell...");
+    progressHandler->setProgress(0);
+
+    int i;
+
     _unitCellItem->getCell()->copyMatrices(cell);
     getLatticeParams();
     auto datamap=_unitCellItem->getExperiment()->getData();
     for (auto data: datamap)
     {
+        i = 0;
         auto& peaks=data.second->getPeaks();
         for (auto p: peaks)
         {
             p->setUnitCell(_unitCellItem->getCell());
+            progressHandler->setProgress(i * 100.0 / peaks.size());
+            ++i;
         }
     }
     emit activateIndexingMode(_unitCellItem->getCell());
@@ -158,7 +175,7 @@ void UnitCellPropertyWidget::getLatticeParams()
 
 void UnitCellPropertyWidget::on_pushButton_Refine_clicked()
 {
-    DialogRefineUnitCell* dialog=new DialogRefineUnitCell(_unitCellItem->getExperiment().get(),_unitCellItem->getCell(),this);
+    DialogRefineUnitCell* dialog=new DialogRefineUnitCell(_unitCellItem->getExperiment(),_unitCellItem->getCell(),this);
     dialog->exec();
     getLatticeParams();
     emit cellUpdated();

@@ -57,7 +57,7 @@ private:
 	ConvexHull<double>* _sample;
 	double _width, _height, _pos;
 	double _muScat, _muAbs;
-	//! A rand9om uniform distribution of double [0,1[
+    //! A random uniform distribution of double [0,1[
 	std::function<double (void)> _random;
 
 };
