@@ -174,8 +174,8 @@ void Peak3D::integrate()
     for (auto it = _data->getIterator(data_start); it->index() != data_end; it->advance(), ++z)
 	{
         auto frame = it->getFrame();
-		double pointsinpeak=0;
-		double pointsinbkg=0;
+		int pointsinpeak=0;
+		int pointsinbkg=0;
 		double intensityP=0;
 		double intensityBkg=0;
 		_projection[z-data_start]+=frame.block(start_y,start_x,dy,dx).sum();
@@ -185,26 +185,29 @@ void Peak3D::integrate()
 			{
 				int intensity=frame(y,x);
 				point1 << x+0.5,y+0.5,z,1;
-				bool inbackground=(_bkg->isInside(point1));
-				if (inbackground)
+				bool inbackground = (_bkg->isInsideAABB(point1) && _bkg->isInside(point1));
+				bool inpeak = (_peak->isInsideAABB(point1) && _peak->isInside(point1));
+
+				if (inpeak)
+				{
+					intensityP+=intensity;
+					pointsinpeak++;
+				}
+				else if (inbackground)
 				{
 					intensityBkg+=intensity;
 					pointsinbkg++;
-
-					bool inpeak=(_peak->isInsideAABB(point1) && _peak->isInside(point1));
-					if (inpeak)
-					{
-						intensityP+=intensity;
-						pointsinpeak++;
-						continue;
-					}
 				}
 				else
 					continue;
 			}
 		}
+
+		if (pointsinbkg == 0)
+			throw std::runtime_error("No background defined around the peak");
+
 		if (pointsinpeak>0)
-			_projectionPeak[z-data_start]=intensityP-intensityBkg*pointsinpeak/pointsinbkg;
+			_projectionPeak[z-data_start]=intensityP-intensityBkg*static_cast<double>(pointsinpeak)/static_cast<double>(pointsinbkg);
 
 	}
 
