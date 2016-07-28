@@ -1,12 +1,12 @@
 linux:
   script:
     - mkdir ./build
-    - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./build
+    - cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_CPACK=OFF -DBUILD_QTAPPS=OFF -DCMAKE_INSTALL_PREFIX=./build
     - make -j2 -l2
     - make install
     - ctest -j2 -l2
     - rm CMakeCache.txt
-    - cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_CPACK=ON -DBUILD_QTAPPS=ON
+    - cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_CPACK=ON -DBUILD_QTAPPS=ON -DCMAKE_PREFIX_PATH=/opt/qt57
     - make package
   artifacts:
     paths:
