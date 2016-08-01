@@ -107,10 +107,10 @@ if(NOT HDF5_LIBRARIES)
   set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
 endif()
 
-include_directories("${HDF5_INCLUDE_DIR}")
+include_directories("${HDF5_INCLUDE_DIRS}")
 
-if ( HDF5_INCLUDE_DIR AND HDF5_LIBRARIES )
-   message("HDF5 found: include dir is ${HDF5_INCLUDE_DIR} and library is ${HDF5_LIBRARIES} located in ${HDF5_LIBRARY_DIR}")
+if ( HDF5_INCLUDE_DIRS AND HDF5_LIBRARIES )
+   message("HDF5 found: include dir is ${HDF5_INCLUDE_DIRS} and library is ${HDF5_LIBRARIES} located in ${HDF5_LIBRARY_DIRS}")
 else()
    messagE("ERROR: HDF5 not found")   
 endif()
