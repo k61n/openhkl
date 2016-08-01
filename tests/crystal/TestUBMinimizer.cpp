@@ -90,14 +90,14 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
 		// Create a peak
 		Peak3D peak;
 		// Create the detector event matching that peak (the px and py are given in mm in the RAFUB input file)
-		peak.setDetectorEvent(new DetectorEvent(D9->createDetectorEvent(px/2,py/2,{gamma*deg})));
+        peak.setDetectorEvent(std::shared_ptr<DetectorEvent>(new DetectorEvent(D9->createDetectorEvent(px/2,py/2,{gamma*deg}))));
 		// set the miller indices corresponding to the peak
 		peak.setMillerIndices(h,k,l);
 		// Set the wavelength
         peak.setSource(source);
 
 		// Create a sample state
-		peak.setSampleState(new ComponentState(sample->createState({omega*deg,chi*deg,phi*deg})));
+        peak.setSampleState(std::shared_ptr<ComponentState>(new ComponentState(sample->createState({omega*deg,chi*deg,phi*deg}))));
 		_peaks.push_back(peak);
 	}
 

@@ -121,8 +121,8 @@ public:
    	double getIOverSigmaI() const;
    	//! Return the lorentz factor of the peak.
    	double getLorentzFactor() const;
-    SX::Instrument::ComponentState* getSampleState();
-    SX::Instrument::DetectorEvent* getDetectorEvent();
+    std::shared_ptr<SX::Instrument::ComponentState> getSampleState();
+    std::shared_ptr<SX::Instrument::DetectorEvent> getDetectorEvent();
    	//! Return the scaling factor.
    	double getScale() const;
    	//! Rescale the current scaling factor by scale.
@@ -130,9 +130,9 @@ public:
    	//! Set the scaling factor.
    	void setScale(double factor);
    	//!
-   	void setSampleState(SX::Instrument::ComponentState* gstate);
+    void setSampleState(std::shared_ptr<SX::Instrument::ComponentState> gstate);
    	//!
-   	void setDetectorEvent(SX::Instrument::DetectorEvent* event);
+    void setDetectorEvent(std::shared_ptr<SX::Instrument::DetectorEvent> event);
    	//!
     void setSource(std::shared_ptr<SX::Instrument::Source> source);
    	bool setUnitCell(std::shared_ptr<SX::Crystal::UnitCell> basis);
@@ -167,9 +167,9 @@ private:
 	//!
 	std::shared_ptr<SX::Crystal::UnitCell> _basis;
 	//! Pointer to the state of the Sample Component
-	SX::Instrument::ComponentState* _sampleState;
+    std::shared_ptr<SX::Instrument::ComponentState> _sampleState;
 	//! Pointer to a Detector Event state
-	SX::Instrument::DetectorEvent* _event;
+    std::shared_ptr<SX::Instrument::DetectorEvent> _event;
 	//!
     std::shared_ptr<SX::Instrument::Source> _source;
 	double _counts, _countsSigma;

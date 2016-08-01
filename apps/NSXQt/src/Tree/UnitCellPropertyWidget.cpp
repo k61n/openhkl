@@ -62,7 +62,7 @@ UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *par
 
     ui->comboBox->setCurrentText("");
 
-    QSortFilterProxyModel* proxyModel = new QSortFilterProxyModel();
+    QSortFilterProxyModel* proxyModel = new QSortFilterProxyModel(this);
     proxyModel->setSourceModel(ui->comboBox->model());
 
     QCompleter* completer = new QCompleter(proxyModel,ui->comboBox);

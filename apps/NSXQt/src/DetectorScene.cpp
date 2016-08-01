@@ -622,9 +622,9 @@ void DetectorScene::showPeakLabels(bool peaklabel)
 
 void DetectorScene::activateIndexingMode(std::shared_ptr<SX::Crystal::UnitCell> cell)
 {
-    _mode=INDEXING;
-    _cell=cell;
-    _indexer=new SX::Crystal::Indexer(_cell);
+    _mode = INDEXING;
+    _cell = cell;
+    _indexer = std::unique_ptr<SX::Crystal::Indexer>(new SX::Crystal::Indexer(_cell));
 }
 
 void DetectorScene::setPeakIndex(SX::Crystal::Peak3D* peak, const Eigen::Vector3d &index)

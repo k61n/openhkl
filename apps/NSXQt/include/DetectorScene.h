@@ -119,7 +119,7 @@ private:
     QList<MaskGraphicsItem*> _masks;
     SXGraphicsItem* _lastClickedGI;
     std::shared_ptr<SX::Crystal::UnitCell> _cell;
-    SX::Crystal::Indexer* _indexer;
+    std::unique_ptr<SX::Crystal::Indexer> _indexer;
 
 };
 

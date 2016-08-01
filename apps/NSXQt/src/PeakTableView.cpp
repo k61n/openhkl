@@ -127,6 +127,10 @@ void PeakTableView::sortByColumn(int i)
 
 void PeakTableView::constructTable()
 {
+    // icons for selected and deselected peaks
+    QIcon selectedIcon(":/resources/peakSelectedIcon.png");
+    QIcon deselectedIcon(":/resources/peakDeselectedIcon.png");
+
     // set up progress handler and view
     std::shared_ptr<SX::Utils::ProgressHandler> progressHandler(new SX::Utils::ProgressHandler);
     ProgressView progressView(this);
@@ -166,9 +170,9 @@ void PeakTableView::constructTable()
         QStandardItem* col5;
 
         if (peak.isSelected())
-            col5= new QStandardItem(QIcon(":/resources/peakSelectedIcon.png"),"");
+            col5= new QStandardItem(selectedIcon,"");
         else
-            col5= new QStandardItem(QIcon(":/resources/peakDeselectedIcon.png"),"");
+            col5= new QStandardItem(deselectedIcon, "");
 
         model->setItem(i,0,col0);
         model->setItem(i,1,col1);
