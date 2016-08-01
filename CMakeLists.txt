@@ -230,7 +230,7 @@ file(GLOB_RECURSE sources chemistry/*.cpp
                           instrument/src/*.cpp
                           )
 
-file(GLOB_RECURSE headers chemistry/include/*.h
+file(GLOB_RECURSE headers chemistry/*.h
                           data/include/*.h
                           geometry/include/*.h
                           kernel/include/*.h
