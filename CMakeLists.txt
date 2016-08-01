@@ -207,7 +207,7 @@ configure_file(${CMAKE_SOURCE_DIR}/cmake/Config.h.in ${CMAKE_BINARY_DIR}/include
 include_directories(${CMAKE_BINARY_DIR}/include/
                     chemistry
                     data/include
-                    geometry/include
+                    geometry
                     kernel/include
                     imaging/include
                     integration/include
@@ -220,7 +220,7 @@ include_directories(${CMAKE_BINARY_DIR}/include/
 file(GLOB_RECURSE sources chemistry/*.cpp
                           data/src/*.cpp
                           data/src/*.c
-                          geometry/src/*.cpp
+                          geometry/*.cpp
                           kernel/src/*.cpp
                           imaging/src/*.cpp
                           integration/src/*.cpp
@@ -232,7 +232,7 @@ file(GLOB_RECURSE sources chemistry/*.cpp
 
 file(GLOB_RECURSE headers chemistry/*.h
                           data/include/*.h
-                          geometry/include/*.h
+                          geometry/*.h
                           kernel/include/*.h
                           imaging/include/*.h
                           integration/include/*.h
