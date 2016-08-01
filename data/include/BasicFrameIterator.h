@@ -14,7 +14,7 @@ namespace Data {
 
 class BasicFrameIterator: public IFrameIterator {
 public:
-    BasicFrameIterator(IData* data, int idx);
+    BasicFrameIterator(IData* data, unsigned int idx);
     ~BasicFrameIterator();
 
     SX::Types::RealMatrix& getFrame() override;

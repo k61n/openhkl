@@ -148,7 +148,7 @@ public:
 
     // testing: new implementation of integration
     void framewiseIntegrateBegin();
-    void framewiseIntegrateStep(Eigen::MatrixXi& frame, int idx);
+    void framewiseIntegrateStep(Eigen::MatrixXi& frame, unsigned int idx);
     void framewiseIntegrateEnd();
 
 private:

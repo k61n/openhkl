@@ -237,7 +237,7 @@ bool AABB<T,D>::rayIntersect(const vector& from, const vector& dir, double& t1, 
 	// to get any values of t, negative or positive
 
 	// Check first the case of ray // to one the box axis
-	for (int i=0;i<D;++i)
+    for (unsigned int i=0;i<D;++i)
 	{
 		if (std::abs(dir[i])<1.0e-10)
 		{
@@ -252,7 +252,7 @@ bool AABB<T,D>::rayIntersect(const vector& from, const vector& dir, double& t1, 
     tvalues.reserve(nSlabs);
 
     // We test slabs in every direction
-    for (int i=0; i<D; i++)
+    for (unsigned int i=0; i<D; i++)
     {
 		double invdir=1.0/dir[i];
 		tvalues.push_back((_lowerBound[i] - from[i])*invdir);

@@ -524,7 +524,7 @@ void Peak3D::framewiseIntegrateBegin()
 }
 
     
-void Peak3D::framewiseIntegrateStep(Eigen::MatrixXi& frame, int idx)
+void Peak3D::framewiseIntegrateStep(Eigen::MatrixXi& frame, unsigned int idx)
 {
     if (!_data)
 		return;

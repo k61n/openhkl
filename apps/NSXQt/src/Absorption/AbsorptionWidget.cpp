@@ -13,8 +13,9 @@
 #include <QFileInfo>
 #include <QDir>
 AbsorptionWidget::AbsorptionWidget(SX::Instrument::Experiment* experiment,QWidget *parent) :
-    QWidget(parent),_experiment(experiment),
-    ui(new Ui::AbsorptionWidget)
+    QWidget(parent),
+    ui(new Ui::AbsorptionWidget),
+    _experiment(experiment)
 {
     ui->setupUi(this);
     connect(ui->horizontalScrollBar,SIGNAL(valueChanged(int)),this,SLOT(loadImage(int)));
@@ -102,14 +103,17 @@ void AbsorptionWidget::readInfoFile(const std::string &filename)
     }
 }
 
-void AbsorptionWidget::loadImage(int i)
+void AbsorptionWidget::loadImage(unsigned int i)
 {
     if (i>=_imageList.size())
         return;
     QPixmap pix;
     QString file=QString::fromStdString(_imageList[i].second);
     pix.load(QString::fromStdString(_imageList[i].second));
-    QGraphicsPixmapItem* item=ui->graphicsView->scene()->addPixmap(pix);
+
+    // unused variable
+    //QGraphicsPixmapItem* item=
+    ui->graphicsView->scene()->addPixmap(pix);
     update();
 }
 
