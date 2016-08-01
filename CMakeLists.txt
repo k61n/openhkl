@@ -225,10 +225,9 @@ file(GLOB_RECURSE sources chemistry/*.cpp
                           imaging/*.cpp
                           integration/src/*.cpp
                           materials/*.cpp
-                          utils/src/*.cpp
+                          utils/*.cpp
                           crystal/*.cpp
-                          instrument/*.cpp
-                          )
+                          instrument/*.cpp)
 
 file(GLOB_RECURSE headers chemistry/*.h
                           data/*.h
@@ -239,8 +238,7 @@ file(GLOB_RECURSE headers chemistry/*.h
                           materials/*.cpp
                           utils/*.h
                           crystal/*.h
-                          instrument/*.h
-                  )                   
+                          instrument/*.h)                   
 
 # Creating the library
 # Under Windows and Miscrosoft Visual Studio the library will be static to avoid
