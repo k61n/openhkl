@@ -212,8 +212,8 @@ include_directories(${CMAKE_BINARY_DIR}/include/
                     imaging
                     integration/include
                     materials/include
-                    utils/include
-                    crystal/include
+                    utils
+                    crystal
                     instrument
                     externals/c-blosc/blosc)
 
@@ -226,7 +226,7 @@ file(GLOB_RECURSE sources chemistry/*.cpp
                           integration/src/*.cpp
                           materials/*.cpp
                           utils/src/*.cpp
-                          crystal/src/*.cpp
+                          crystal/*.cpp
                           instrument/*.cpp
                           )
 
@@ -238,7 +238,7 @@ file(GLOB_RECURSE headers chemistry/*.h
                           integration/include/*.h
                           materials/*.cpp
                           utils/include/*.h
-                          crystal/include/*.h
+                          crystal/*.h
                           instrument/*.h
                   )                   
 
