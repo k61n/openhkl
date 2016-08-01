@@ -237,7 +237,7 @@ file(GLOB_RECURSE headers chemistry/*.h
                           imaging/*.h
                           integration/include/*.h
                           materials/*.cpp
-                          utils/include/*.h
+                          utils/*.h
                           crystal/*.h
                           instrument/*.h
                   )                   
