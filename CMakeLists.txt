@@ -214,7 +214,7 @@ include_directories(${CMAKE_BINARY_DIR}/include/
                     materials/include
                     utils/include
                     crystal/include
-                    instrument/include
+                    instrument
                     externals/c-blosc/blosc)
 
 file(GLOB_RECURSE sources chemistry/*.cpp
@@ -227,7 +227,7 @@ file(GLOB_RECURSE sources chemistry/*.cpp
                           materials/*.cpp
                           utils/src/*.cpp
                           crystal/src/*.cpp
-                          instrument/src/*.cpp
+                          instrument/*.cpp
                           )
 
 file(GLOB_RECURSE headers chemistry/*.h
@@ -239,7 +239,7 @@ file(GLOB_RECURSE headers chemistry/*.h
                           materials/*.cpp
                           utils/include/*.h
                           crystal/include/*.h
-                          instrument/include/*.h
+                          instrument/*.h
                   )                   
 
 # Creating the library
