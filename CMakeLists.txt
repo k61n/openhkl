@@ -206,7 +206,7 @@ configure_file(${CMAKE_SOURCE_DIR}/cmake/Config.h.in ${CMAKE_BINARY_DIR}/include
 
 include_directories(${CMAKE_BINARY_DIR}/include/
                     chemistry
-                    data/include
+                    data
                     geometry
                     kernel
                     imaging/include
@@ -218,8 +218,8 @@ include_directories(${CMAKE_BINARY_DIR}/include/
                     externals/c-blosc/blosc)
 
 file(GLOB_RECURSE sources chemistry/*.cpp
-                          data/src/*.cpp
-                          data/src/*.c
+                          data/*.cpp
+                          data/*.c
                           geometry/*.cpp
                           kernel/*.cpp
                           imaging/src/*.cpp
@@ -231,7 +231,7 @@ file(GLOB_RECURSE sources chemistry/*.cpp
                           )
 
 file(GLOB_RECURSE headers chemistry/*.h
-                          data/include/*.h
+                          data/*.h
                           geometry/*.h
                           kernel/*.h
                           imaging/include/*.h
