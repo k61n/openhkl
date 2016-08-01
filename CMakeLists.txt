@@ -209,7 +209,7 @@ include_directories(${CMAKE_BINARY_DIR}/include/
                     data
                     geometry
                     kernel
-                    imaging/include
+                    imaging
                     integration/include
                     materials/include
                     utils/include
@@ -222,7 +222,7 @@ file(GLOB_RECURSE sources chemistry/*.cpp
                           data/*.c
                           geometry/*.cpp
                           kernel/*.cpp
-                          imaging/src/*.cpp
+                          imaging/*.cpp
                           integration/src/*.cpp
                           materials/*.cpp
                           utils/src/*.cpp
@@ -234,7 +234,7 @@ file(GLOB_RECURSE headers chemistry/*.h
                           data/*.h
                           geometry/*.h
                           kernel/*.h
-                          imaging/include/*.h
+                          imaging/*.h
                           integration/include/*.h
                           materials/*.cpp
                           utils/include/*.h
