@@ -13,7 +13,7 @@
 */
 
 GLWidget::GLWidget(QWidget *parent) :
-    QGLWidget(parent),ball(0,0),_picking(false),_zoom(1.0)
+    QGLWidget(parent),_zoom(1.0),ball(0,0),_picking(false)
 {
 
 

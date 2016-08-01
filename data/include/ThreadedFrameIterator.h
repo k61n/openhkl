@@ -16,7 +16,7 @@ namespace Data {
 
 class ThreadedFrameIterator: public IFrameIterator {
 public: 
-    ThreadedFrameIterator(IData* data, int idx);
+    ThreadedFrameIterator(IData* data, unsigned int idx);
     ~ThreadedFrameIterator();
 
     SX::Types::RealMatrix& getFrame() override;

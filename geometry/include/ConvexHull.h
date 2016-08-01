@@ -225,15 +225,15 @@ ConvexHull<T>::ConvexHull(const ConvexHull<T>& other) : _initialized(other._init
 	for (auto v : other._vertices)
 		_vertices.push_back(new Vertex<T>(v->_coords));
 
-	for (int i=0;i<other._edges.size();++i)
+    for (unsigned int i=0;i<other._edges.size();++i)
 		_edges.push_back(new Edge<T>());
 
-	for (int i=0;i<other._faces.size();++i)
+    for (unsigned int i=0;i<other._faces.size();++i)
 		_faces.push_back(new Face<T>());
 
 	typename std::list<pEdge>::iterator eit(_edges.begin());
 	typename std::list<pEdge>::const_iterator oeit(other._edges.begin());
-	for (int i=0;i<_edges.size();++i,++eit,++oeit)
+    for (unsigned int i=0;i<_edges.size();++i,++eit,++oeit)
 	{
 		for (int j=0;j<2;++j)
 		{
@@ -261,7 +261,8 @@ ConvexHull<T>::ConvexHull(const ConvexHull<T>& other) : _initialized(other._init
 
 	typename std::list<pFace>::iterator fit(_faces.begin());
 	typename std::list<pFace>::const_iterator ofit(other._faces.begin());
-	for (int i=0;i<_faces.size();++i,++fit,++ofit)
+
+    for (unsigned int i=0;i<_faces.size();++i,++fit,++ofit)
 	{
 		for (int j=0;j<3;++j)
 		{
@@ -296,15 +297,16 @@ ConvexHull<T>& ConvexHull<T>::operator=(const ConvexHull<T>& other)
 		for (auto v : other._vertices)
 			_vertices.push_back(new Vertex<T>(v->_coords));
 
-		for (int i=0;i<other._edges.size();++i)
+        for (unsigned int i=0;i<other._edges.size();++i)
 			_edges.push_back(new Edge<T>());
 
-		for (int i=0;i<other._faces.size();++i)
+        for (unsigned int i=0;i<other._faces.size();++i)
 			_faces.push_back(new Face<T>());
 
 		typename std::list<pEdge>::iterator eit(_edges.begin());
 		typename std::list<pEdge>::const_iterator oeit(other._edges.begin());
-		for (int i=0;i<_edges.size();++i,++eit,++oeit)
+
+        for (unsigned int i=0;i<_edges.size();++i,++eit,++oeit)
 		{
 			for (int j=0;j<2;++j)
 			{
@@ -332,7 +334,8 @@ ConvexHull<T>& ConvexHull<T>::operator=(const ConvexHull<T>& other)
 
 		typename std::list<pFace>::iterator fit(_faces.begin());
 		typename std::list<pFace>::const_iterator ofit(other._faces.begin());
-		for (int i=0;i<_faces.size();++i,++fit,++ofit)
+
+        for (unsigned int i=0;i<_faces.size();++i,++fit,++ofit)
 		{
 			for (int j=0;j<3;++j)
 			{

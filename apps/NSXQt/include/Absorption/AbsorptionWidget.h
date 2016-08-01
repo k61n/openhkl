@@ -31,7 +31,7 @@ private:
     //! read info file containing video information
     void readInfoFile(const std::string& filename);
 public slots:
-    void loadImage(int i);
+    void loadImage(unsigned int i);
     void initializeSlider(int i);
 private slots:
     void on_pushButton_clicked();

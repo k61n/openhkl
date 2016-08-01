@@ -44,8 +44,10 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
 
 
     //qWarning() << "Peak find algorithm: Searching peaks in " << numors.size() << " files";
+
+    // unused variable
     //int max=numors.size();
-    int max = 100;
+    //int max = 100;
 
     //QCoreApplication::processEvents();
     //_ui->progressBar->setEnabled(true);
@@ -53,7 +55,9 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
     //_ui->progressBar->setValue(0);
 
     std::size_t npeaks=0;
-    int comp = 0;
+
+    // unused variable
+    // int comp = 0;
 
     //QProgressDialog progressDialog(this);
 
@@ -211,7 +215,8 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
 
         //qDebug() << ">>>> integrating " << numor->getPeaks().size() << " peaks...";
 
-        int peak_counter = 0;
+        // unused variable
+        // int peak_counter = 0;
 
         //qDebug() << ">>>>>>>> initializing peak intensities...";
 

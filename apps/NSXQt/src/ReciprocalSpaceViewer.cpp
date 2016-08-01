@@ -137,7 +137,7 @@ void ReciprocalSpaceViewer::on_view_clicked()
     for (auto d : _data)
     {
 
-        for (int f=0;f<d->getNFrames();++f)
+        for (unsigned int f=0;f<d->getNFrames();++f)
         {
             auto detectorStates(d->getDetectorState(f).getValues());
             Eigen::Matrix3d invM(sample->getGonio()->getInverseHomMatrix(d->getSampleState(f).getValues()).rotation());

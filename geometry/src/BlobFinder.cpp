@@ -103,7 +103,7 @@ void BlobFinder::eliminateBlobs()
      *
      */
     // the typename matrix_iterator_t should be a forward iterator of type Eigen::Matrix
-blob3DCollection BlobFinder::find(int begin, int end)
+blob3DCollection BlobFinder::find(unsigned int begin, unsigned int end)
 {
     // find all blobs, possibly with multiple labels
     findBlobs(begin, end);
@@ -129,7 +129,7 @@ blob3DCollection BlobFinder::find(int begin, int end)
     return _blobs;
 }
 
-void BlobFinder::findBlobs(int begin, int end)
+void BlobFinder::findBlobs(unsigned int begin, unsigned int end)
 {
     // update via handler if necessary
     if ( _progressHandler ) {

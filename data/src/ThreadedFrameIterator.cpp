@@ -12,13 +12,14 @@ namespace Data {
 
 
 
-ThreadedFrameIterator::ThreadedFrameIterator(IData* data, int idx)
+ThreadedFrameIterator::ThreadedFrameIterator(IData* data, unsigned int idx)
     :IFrameIterator(data, idx),
      _currentFrame(),
      _nextFrame()
 {
-    std::launch policy = std::launch::async;
-    int nframes = _data->getNFrames();
+    // unused variable
+    //std::launch policy = std::launch::async;
+    unsigned int nframes = _data->getNFrames();
 
     if (_index < nframes)
         _currentFrame = _data->getFrame(_index).cast<double>();
@@ -41,7 +42,7 @@ Types::RealMatrix &ThreadedFrameIterator::getFrame()
 
 void ThreadedFrameIterator::advance()
 {
-    int nframes = _data->getNFrames();
+    unsigned int nframes = _data->getNFrames();
     ++_index;
 
     if (_index < nframes)

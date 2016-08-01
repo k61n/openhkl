@@ -82,9 +82,9 @@ public:
 
     BlobFinder(std::shared_ptr<SX::Data::IData> data);
 
-    blob3DCollection find(int begin, int end);
+    blob3DCollection find(unsigned int begin, unsigned int end);
 
-    void findBlobs(int begin, int end);
+    void findBlobs(unsigned int begin, unsigned int end);
 
     void registerEquivalence(int a, int b, vipairs& equivalences);
 
@@ -137,7 +137,7 @@ private:
     FilterCallback _filterCallback;
     std::shared_ptr<SX::Utils::ProgressHandler> _progressHandler;
 
-    int _nrows, _ncols, _nframes;
+    unsigned int _nrows, _ncols, _nframes;
 
     // filter
     // progress handler
