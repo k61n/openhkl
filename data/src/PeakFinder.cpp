@@ -188,9 +188,20 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
             p->setBackgroundShape(new SX::Geometry::Ellipsoid3D(center,eigenvalues,eigenvectors));
             //
             int f=std::floor(center[2]);
-            p->setSampleState(new SX::Instrument::ComponentState(numor->getSampleInterpolatedState(f)));
+
+            using ComponentState = SX::Instrument::ComponentState;
+
+            p->setSampleState(std::shared_ptr<ComponentState>(new ComponentState(numor->getSampleInterpolatedState(f))));
             ComponentState detState=numor->getDetectorInterpolatedState(f);
-            p->setDetectorEvent(new SX::Instrument::DetectorEvent(numor->getDiffractometer()->getDetector()->createDetectorEvent(center[0],center[1],detState.getValues())));
+
+            using DetectorEvent = SX::Instrument::DetectorEvent;
+
+            p->setDetectorEvent(std::shared_ptr<DetectorEvent>(
+                                    new DetectorEvent(numor->getDiffractometer()->getDetector()->createDetectorEvent(
+                                                          center[0],center[1],detState.getValues()))
+                                    )
+                    );
+
             p->setSource(numor->getDiffractometer()->getSource());
 
             if (!dAABB.contains(*(p->getPeak())))

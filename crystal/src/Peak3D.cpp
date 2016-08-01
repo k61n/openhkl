@@ -382,12 +382,12 @@ void Peak3D::setTransmission(double transmission)
 	_transmission=transmission;
 }
 
-SX::Instrument::DetectorEvent* Peak3D::getDetectorEvent()
+std::shared_ptr<SX::Instrument::DetectorEvent> Peak3D::getDetectorEvent()
 {
 	return _event;
 }
 
-SX::Instrument::ComponentState* Peak3D::getSampleState()
+std::shared_ptr<SX::Instrument::ComponentState> Peak3D::getSampleState()
 {
 	return _sampleState;
 }
@@ -415,12 +415,12 @@ Eigen::RowVector3d Peak3D::getQ() const
 	}
 }
 
-void Peak3D::setSampleState(SX::Instrument::ComponentState* sstate)
+void Peak3D::setSampleState(std::shared_ptr<SX::Instrument::ComponentState> sstate)
 {
 	_sampleState=sstate;
 }
 
-void Peak3D::setDetectorEvent(SX::Instrument::DetectorEvent* event)
+void Peak3D::setDetectorEvent(std::shared_ptr<SX::Instrument::DetectorEvent> event)
 {
 	_event=event;
 }
