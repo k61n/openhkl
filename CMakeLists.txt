@@ -205,7 +205,7 @@ endif()
 configure_file(${CMAKE_SOURCE_DIR}/cmake/Config.h.in ${CMAKE_BINARY_DIR}/include/Config.h)
 
 include_directories(${CMAKE_BINARY_DIR}/include/
-                    chemistry/include
+                    chemistry
                     data/include
                     geometry/include
                     kernel/include
@@ -217,9 +217,9 @@ include_directories(${CMAKE_BINARY_DIR}/include/
                     instrument/include
                     externals/c-blosc/blosc)
 
-file(GLOB_RECURSE sources chemistry/src/*.cpp
-  data/src/*.cpp
-  data/src/*.c
+file(GLOB_RECURSE sources chemistry/*.cpp
+                          data/src/*.cpp
+                          data/src/*.c
                           geometry/src/*.cpp
                           kernel/src/*.cpp
                           imaging/src/*.cpp
