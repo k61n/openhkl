@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DialogMCAbsorption</class>
- <widget class="QDialog" name="DialogMCAbsorption">
+ <class>MCAbsorptionDialog</class>
+ <widget class="QDialog" name="MCAbsorptionDialog">
   <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>
@@ -16,7 +16,7 @@
   <property name="windowTitle">
    <string>Monte-Carlo absorption Correction</string>
   </property>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>

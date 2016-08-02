@@ -5,8 +5,8 @@
 
 #include <Eigen/Dense>
 
-#include "DialogMCAbsorption.h"
-#include "ui_DialogMCAbsorption.h"
+#include "MCAbsorptionDialog.h"
+#include "ui_MCAbsorptionDialog.h"
 #include "Experiment.h"
 #include "Diffractometer.h"
 #include "Sample.h"
@@ -18,9 +18,9 @@
 #include "Units.h"
 #include "Monochromator.h"
 
-DialogMCAbsorption::DialogMCAbsorption(std::shared_ptr<SX::Instrument::Experiment> experiment, QWidget *parent):
+MCAbsorptionDialog::MCAbsorptionDialog(std::shared_ptr<SX::Instrument::Experiment> experiment, QWidget *parent):
     QDialog(parent),
-     ui(new Ui::DialogMCAbsorption),
+     ui(new Ui::MCAbsorptionDialog),
     _experiment(experiment)
 {
     ui->setupUi(this);
@@ -36,12 +36,12 @@ DialogMCAbsorption::DialogMCAbsorption(std::shared_ptr<SX::Instrument::Experimen
     ui->progressBar_MCStatus->setValue(0);
 }
 
-DialogMCAbsorption::~DialogMCAbsorption()
+MCAbsorptionDialog::~MCAbsorptionDialog()
 {
     delete ui;
 }
 
-void DialogMCAbsorption::on_pushButton_run_pressed()
+void MCAbsorptionDialog::on_pushButton_run_pressed()
 {
 
     if (!ui->comboBox->isEnabled())

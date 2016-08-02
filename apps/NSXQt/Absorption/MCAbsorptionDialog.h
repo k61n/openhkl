@@ -1,12 +1,12 @@
-#ifndef DIALOGMCABSORPTION_H
-#define DIALOGMCABSORPTION_H
+#ifndef MCABSORPTIONDIALOG_H
+#define MCABSORPTIONDIALOG_H
 
 #include <memory>
 
 #include <QDialog>
 
 namespace Ui {
-class DialogMCAbsorption;
+class MCAbsorptionDialog;
 }
 
 namespace SX{
@@ -15,20 +15,20 @@ namespace SX{
     }
 }
 
-class DialogMCAbsorption : public QDialog
+class MCAbsorptionDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit DialogMCAbsorption(std::shared_ptr<SX::Instrument::Experiment> experiment, QWidget *parent = 0);
-    ~DialogMCAbsorption();
+    explicit MCAbsorptionDialog(std::shared_ptr<SX::Instrument::Experiment> experiment, QWidget *parent = 0);
+    ~MCAbsorptionDialog();
 
 private slots:
     void on_pushButton_run_pressed();
 
 private:
-    Ui::DialogMCAbsorption *ui;
+    Ui::MCAbsorptionDialog *ui;
     std::shared_ptr<SX::Instrument::Experiment> _experiment;
 };
 
-#endif // DIALOGMCABSORPTION_H
+#endif // MCABSORPTIONDIALOG_H

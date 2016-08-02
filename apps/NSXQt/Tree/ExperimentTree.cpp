@@ -39,7 +39,7 @@
 #include "Tree/PeakListItem.h"
 #include "Tree/SampleItem.h"
 #include "Tree/SourceItem.h"
-#include "Absorption/DialogMCAbsorption.h"
+#include "MCAbsorptionDialog.h"
 #include "OpenGL/GLWidget.h"
 #include "OpenGL/GLSphere.h"
 #include "Logger.h"
