@@ -1,6 +1,6 @@
-#include "include/Chemistry/NewElementTableView.h"
+#include "NewElementTableView.h"
 
-#include "include/Chemistry/DragElementModel.h"
+#include "DragElementModel.h"
 
 #include <QDropEvent>
 

@@ -31,6 +31,7 @@ file(GLOB_RECURSE nsxqt_headers
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/include/*.h
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/views/*.h
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/models/*.h
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/chemistry/*.h
   )
 
 
@@ -40,6 +41,7 @@ file(GLOB_RECURSE nsxqt_sources
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/src/*.cpp
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/views/*.cpp
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/models/*.cpp
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/chemistry/*.cpp
   )                   
 
 if (${CMAKE_VERSION} VERSION_LESS 2.8.11)

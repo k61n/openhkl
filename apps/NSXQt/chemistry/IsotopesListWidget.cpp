@@ -1,4 +1,4 @@
-#include "include/Chemistry/IsotopesListWidget.h"
+#include "IsotopesListWidget.h"
 
 IsotopesListWidget::IsotopesListWidget(QWidget *parent) :
     QListWidget(parent)

@@ -1,6 +1,6 @@
-#include "include/Chemistry/DragElementModel.h"
-#include "include/Chemistry/IsotopesListWidget.h"
-#include "include/Chemistry/ElementsListWidget.h"
+#include "DragElementModel.h"
+#include "IsotopesListWidget.h"
+#include "ElementsListWidget.h"
 
 #include "Element.h"
 #include "ElementManager.h"

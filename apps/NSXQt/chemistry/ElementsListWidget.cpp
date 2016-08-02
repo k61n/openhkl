@@ -1,4 +1,4 @@
-#include "include/Chemistry/ElementsListWidget.h"
+#include "ElementsListWidget.h"
 
 #include <iostream>
 

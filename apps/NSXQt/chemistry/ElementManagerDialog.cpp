@@ -4,8 +4,8 @@
 #include "Error.h"
 
 #include "ui_ElementManagerDialog.h"
-#include "include/Chemistry/ElementManagerDialog.h"
-#include "include/Chemistry/DragElementModel.h"
+#include "ElementManagerDialog.h"
+#include "DragElementModel.h"
 
 #include <iostream>
 #include <string>

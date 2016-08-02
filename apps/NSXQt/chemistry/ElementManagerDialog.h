@@ -3,7 +3,7 @@
 
 #include <QDialog>
 
-#include "include/Chemistry/DragElementModel.h"
+#include "DragElementModel.h"
 #include "ElementManager.h"
 
 namespace Ui

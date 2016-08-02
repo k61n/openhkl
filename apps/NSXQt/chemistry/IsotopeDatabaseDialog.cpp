@@ -14,7 +14,7 @@
 
 #include "Error.h"
 #include "ComplexParser.h"
-#include "include/Chemistry/IsotopeDatabaseDialog.h"
+#include "IsotopeDatabaseDialog.h"
 #include "ui_IsotopeDatabaseDialog.h"
 #include "IsotopeManager.h"
 
