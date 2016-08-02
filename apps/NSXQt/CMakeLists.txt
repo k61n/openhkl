@@ -10,6 +10,7 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/Plot/
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/Tree/
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/views/
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/dialogs/
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/models/
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/chemistry/
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/
@@ -37,6 +38,7 @@ file(GLOB_RECURSE nsxqt_headers
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/OpenGL/*.h
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/Plot/*.h
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/Tree/*.h
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/dialogs/*.h
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/views/*.h
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/models/*.h
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/chemistry/*.h
@@ -52,6 +54,7 @@ file(GLOB_RECURSE nsxqt_sources
     ${CMAKE_SOURCE_DIR}/apps/NSXQt/OpenGL/*.cpp
     ${CMAKE_SOURCE_DIR}/apps/NSXQt/Plot/*.cpp
     ${CMAKE_SOURCE_DIR}/apps/NSXQt/Tree/*.cpp
+    ${CMAKE_SOURCE_DIR}/apps/NSXQt/dialogs/*.cpp
     ${CMAKE_SOURCE_DIR}/apps/NSXQt/views/*.cpp
     ${CMAKE_SOURCE_DIR}/apps/NSXQt/models/*.cpp
     ${CMAKE_SOURCE_DIR}/apps/NSXQt/chemistry/*.cpp
