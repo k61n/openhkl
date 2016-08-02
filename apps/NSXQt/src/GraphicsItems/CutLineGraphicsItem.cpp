@@ -79,7 +79,9 @@ void CutLineGraphicsItem::plot(SXPlot* plot)
                 QPoint currentCorner = lowestCorner + QPoint(pi,pj);
                 QPointF dp = point - currentCorner;
                 double dist2 = dp.x()*dp.x() + dp.y()*dp.y();
-                int count=currentFrame(currentCorner.x(),currentCorner.y());
+                // bugfix? x and y should be swapped here
+                //int count=currentFrame(currentCorner.x(),currentCorner.y());
+                int count=currentFrame(currentCorner.y(),currentCorner.x());
                 y[i] += dist2*count;
                 sdist2 += dist2;
             }
