@@ -1,8 +1,8 @@
-#include "include/Tree/SourcePropertyWidget.h"
+#include "SourcePropertyWidget.h"
 #include "ui_SourcePropertyWidget.h"
 #include <QDebug>
 
-#include "include/Tree/SourceItem.h"
+#include "SourceItem.h"
 
 #include "Diffractometer.h"
 #include "Monochromator.h"

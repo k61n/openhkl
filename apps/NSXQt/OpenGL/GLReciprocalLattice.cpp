@@ -1,4 +1,4 @@
-#include "include/OpenGL/GLReciprocalLattice.h"
+#include "GLReciprocalLattice.h"
 
 GLReciprocalLattice::GLReciprocalLattice(const char* name):GLActor(name)
 {

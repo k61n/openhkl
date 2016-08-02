@@ -14,7 +14,7 @@
 #include "DiffractometerStore.h"
 #include "IData.h"
 
-#include "include/NumorsConversionDialog.h"
+#include "NumorsConversionDialog.h"
 #include "ui_NumorsConversionDialog.h"
 
 NumorsConversionDialog::NumorsConversionDialog(QWidget *parent)

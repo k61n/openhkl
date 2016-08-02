@@ -1,4 +1,4 @@
-#include "include/DialogFindUnitCell.h"
+#include "DialogFindUnitCell.h"
 #include "ui_DialogFindUnitCell.h"
 #include "Experiment.h"
 #include "Peak3D.h"

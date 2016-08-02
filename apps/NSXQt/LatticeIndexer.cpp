@@ -1,6 +1,6 @@
 #include "OpenGL/GLWidget.h"
 #include "OpenGL/GLSphere.h"
-#include "include/LatticeIndexer.h"
+#include "LatticeIndexer.h"
 #include "ui_LatticeIndexer.h"
 #include "IData.h"
 #include "OpenGL/GLReciprocalLattice.h"

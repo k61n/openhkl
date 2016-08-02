@@ -1,7 +1,7 @@
-#include "include/Tree/PeakListPropertyWidget.h"
+#include "PeakListPropertyWidget.h"
 #include "ui_PeakListPropertyWidget.h"
-#include "include/PeakTableView.h"
-#include "include/Tree/PeakListItem.h"
+#include "PeakTableView.h"
+#include "PeakListItem.h"
 #include "IData.h"
 #include <QtDebug>
 

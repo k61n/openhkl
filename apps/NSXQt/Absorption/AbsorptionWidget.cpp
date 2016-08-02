@@ -1,4 +1,4 @@
-#include "include/Absorption/AbsorptionWidget.h"
+#include "AbsorptionWidget.h"
 #include "ui_AbsorptionWidget.h"
 #include <fstream>
 #include <QFileDialog>

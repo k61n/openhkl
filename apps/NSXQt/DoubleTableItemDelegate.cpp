@@ -1,6 +1,6 @@
 #include <QDoubleSpinBox>
 
-#include "include/DoubleTableItemDelegate.h"
+#include "DoubleTableItemDelegate.h"
 
 DoubleTableItemDelegate::DoubleTableItemDelegate(QObject *parent) :
     QStyledItemDelegate(parent)

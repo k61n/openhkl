@@ -6,7 +6,7 @@
 #include <QLayout>
 #include <QStatusBar>
 
-#include "include/DialogRefineUnitCell.h"
+#include "DialogRefineUnitCell.h"
 #include "ui_DialogRefineUnitCell.h"
 #include "Experiment.h"
 #include "Diffractometer.h"

@@ -5,7 +5,7 @@
 
 #include <Eigen/Dense>
 
-#include "include/Absorption/DialogMCAbsorption.h"
+#include "DialogMCAbsorption.h"
 #include "ui_DialogMCAbsorption.h"
 #include "Experiment.h"
 #include "Diffractometer.h"

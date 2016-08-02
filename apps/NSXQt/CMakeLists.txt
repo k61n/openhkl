@@ -4,11 +4,15 @@ endif()
 
 # Add NSXQt and NSXQt directories to the include path
 include_directories(
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/include
-  ${CMAKE_CURRENT_SOURCE_DIR}/models
-  ${CMAKE_CURRENT_SOURCE_DIR}/views
-  ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/Absorption/
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/GraphicsItems/
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/OpenGL/
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/Plot/
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/Tree/
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/views/
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/models/
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/chemistry/
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/
   )
 
 # Disable console on Windows
@@ -28,20 +32,30 @@ find_package(OpenGL REQUIRED)
 
 # Find recursively all the header files of NSXQt
 file(GLOB_RECURSE nsxqt_headers
-  ${CMAKE_SOURCE_DIR}/apps/NSXQt/include/*.h
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/Absorption/*.h
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/GraphicsItems/*.h
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/OpenGL/*.h
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/Plot/*.h
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/Tree/*.h
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/views/*.h
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/models/*.h
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/chemistry/*.h
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/*.h
   )
 
 
 
 # Find recursively all the cpp source files of NSXQt
 file(GLOB_RECURSE nsxqt_sources
-  ${CMAKE_SOURCE_DIR}/apps/NSXQt/src/*.cpp
-  ${CMAKE_SOURCE_DIR}/apps/NSXQt/views/*.cpp
-  ${CMAKE_SOURCE_DIR}/apps/NSXQt/models/*.cpp
-  ${CMAKE_SOURCE_DIR}/apps/NSXQt/chemistry/*.cpp
+    ${CMAKE_SOURCE_DIR}/apps/NSXQt/Absorption/*.cpp
+    ${CMAKE_SOURCE_DIR}/apps/NSXQt/GraphicsItems/*.cpp
+    ${CMAKE_SOURCE_DIR}/apps/NSXQt/OpenGL/*.cpp
+    ${CMAKE_SOURCE_DIR}/apps/NSXQt/Plot/*.cpp
+    ${CMAKE_SOURCE_DIR}/apps/NSXQt/Tree/*.cpp
+    ${CMAKE_SOURCE_DIR}/apps/NSXQt/views/*.cpp
+    ${CMAKE_SOURCE_DIR}/apps/NSXQt/models/*.cpp
+    ${CMAKE_SOURCE_DIR}/apps/NSXQt/chemistry/*.cpp
+    ${CMAKE_SOURCE_DIR}/apps/NSXQt/*.cpp
   )                   
 
 if (${CMAKE_VERSION} VERSION_LESS 2.8.11)

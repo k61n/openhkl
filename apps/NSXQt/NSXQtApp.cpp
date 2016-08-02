@@ -1,4 +1,4 @@
-#include "include/NSXQtApp.h"
+#include "NSXQtApp.h"
 
 #include <QtDebug>
 

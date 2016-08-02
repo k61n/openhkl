@@ -1,4 +1,4 @@
-#include "include/ReciprocalSpaceViewer.h"
+#include "ReciprocalSpaceViewer.h"
 #include "ui_ReciprocalSpaceViewer.h"
 
 #include <limits>

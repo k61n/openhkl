@@ -2,7 +2,7 @@
 #define PEAKLISTPROPERTYWIDGET_H
 
 #include <QWidget>
-#include "include/PeakTableView.h"
+#include "PeakTableView.h"
 
 namespace Ui {
 class PeakListPropertyWidget;
