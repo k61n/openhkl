@@ -28,7 +28,7 @@
 #include "Source.h"
 
 #include "PeakTableView.h"
-#include "Absorption/AbsorptionDialog.h"
+#include "AbsorptionDialog.h"
 #include "Tree/DataItem.h"
 #include "Tree/DetectorItem.h"
 #include "Tree/ExperimentItem.h"

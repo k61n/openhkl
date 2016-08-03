@@ -4,7 +4,7 @@ endif()
 
 # Add NSXQt and NSXQt directories to the include path
 include_directories(
-  ${CMAKE_SOURCE_DIR}/apps/NSXQt/Absorption/
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/absorption/
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/GraphicsItems/
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/OpenGL/
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/Plot/

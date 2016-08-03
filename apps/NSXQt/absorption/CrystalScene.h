@@ -4,7 +4,7 @@
 #include <QGraphicsView>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsLineItem>
-#include "Absorption/CalibrateDistanceDialog.h"
+#include "CalibrateDistanceDialog.h"
 #include "RulerItem.h"
 #include "CrystalNodeItem.h"
 #include "PinItem.h"

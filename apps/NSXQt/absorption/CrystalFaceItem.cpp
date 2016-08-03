@@ -1,4 +1,4 @@
-#include "Absorption/CrystalFaceItem.h"
+#include "CrystalFaceItem.h"
 #include <QPainter>
 #include <cmath>
 

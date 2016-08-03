@@ -1,7 +1,8 @@
-#include "Absorption/PinItem.h"
+#include "PinItem.h"
 #include <QPainter>
 #include <cmath>
 #include <QStyleOptionGraphicsItem>
+
 PinItem::PinItem(QGraphicsItem *parent):QGraphicsItem(parent)
 {
     _calibrated=false;

@@ -1,4 +1,4 @@
-#include "Absorption/RulerItem.h"
+#include "RulerItem.h"
 #include <cmath>
 #include <QPen>
 #include <QPainter>

@@ -1,4 +1,4 @@
-#include "Absorption/CalibrateDistanceDialog.h"
+#include "CalibrateDistanceDialog.h"
 #include "ui_CalibrateDistanceDialog.h"
 
 CalibrateDistanceDialog::CalibrateDistanceDialog(QWidget *parent) :

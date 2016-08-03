@@ -1,4 +1,4 @@
-#include "Absorption/CrystalNodeItem.h"
+#include "CrystalNodeItem.h"
 
 CrystalNodeItem::CrystalNodeItem(QGraphicsItem *parent) :
     QGraphicsItem(parent)

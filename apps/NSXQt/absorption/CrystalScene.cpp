@@ -1,6 +1,6 @@
-#include "Absorption/CrystalScene.h"
-#include <Absorption/CrystalNodeItem.h>
-#include <Absorption/CrystalFaceItem.h>
+#include "CrystalScene.h"
+#include "CrystalNodeItem.h"
+#include "CrystalFaceItem.h"
 #include <QMouseEvent>
 #include <sstream>
 #include <cmath>

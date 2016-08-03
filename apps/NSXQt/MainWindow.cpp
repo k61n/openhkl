@@ -45,7 +45,7 @@
 #include "Units.h"
 #include "Plot/SXPlot.h"
 #include "PeakTableView.h"
-#include "Absorption/AbsorptionWidget.h"
+#include "AbsorptionWidget.h"
 #include "chemistry/IsotopeDatabaseDialog.h"
 #include "chemistry/ElementManagerDialog.h"
 #include "GraphicsItems/CutLineGraphicsItem.h"
