@@ -277,9 +277,8 @@ add_subdirectory(tests)
 # Install section, installing libraries 
 install(TARGETS NSXTool DESTINATION lib)
 set(INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include/NSXTool/")
-file(GLOB_RECURSE all_headers */include/*.h)
 install(CODE "MESSAGE(\"Installing headers...\")")
-install(FILES ${all_headers} DESTINATION ${INCLUDE_DIR})
+install(FILES ${headers} DESTINATION ${INCLUDE_DIR})
 
 # Install the databases file
 install(DIRECTORY resources/databases 
