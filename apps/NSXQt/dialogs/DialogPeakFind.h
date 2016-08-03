@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "ui_dialog_PeakFind.h"
+#include "ui_PeakFindDialog.h"
 #include <QDialog>
 
 #include <Eigen/Core>

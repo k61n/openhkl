@@ -2,7 +2,7 @@
 // j.fisher@fz-juelich.de
 
 #include "DialogConvolve.h"
-#include "ui_DialogConvolve.h"
+#include "ui_ConvolveDialog.h"
 
 #include "AnnularKernel.h"
 #include "DeltaKernel.h"

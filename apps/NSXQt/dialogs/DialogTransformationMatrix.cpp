@@ -1,5 +1,5 @@
 #include "DialogTransformationMatrix.h"
-#include "ui_dialogtransformationmatrix.h"
+#include "ui_TransformationMatrixDialog.h"
 
 DialogTransformationmatrix::DialogTransformationmatrix(QWidget *parent) :
     QDialog(parent),

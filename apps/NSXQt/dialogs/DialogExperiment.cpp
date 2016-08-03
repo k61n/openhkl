@@ -1,5 +1,5 @@
 #include "DialogExperiment.h"
-#include "ui_DialogExperiment.h"
+#include "ui_ExperimentDialog.h"
 #include <QString>
 #include "DiffractometerStore.h"
 #include <QComboBox>

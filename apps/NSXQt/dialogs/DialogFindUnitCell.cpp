@@ -1,5 +1,5 @@
 #include "DialogFindUnitCell.h"
-#include "ui_DialogFindUnitCell.h"
+#include "ui_FindUnitCellDialog.h"
 #include "Experiment.h"
 #include "Peak3D.h"
 #include "IData.h"

@@ -1,4 +1,4 @@
-#include "ui_mainwindow.h"
+#include "ui_MainWindow.h"
 #include "DialogConvolve.h"
 #include "ProgressHandler.h"
 
@@ -196,9 +196,7 @@ vector<shared_ptr<IData>> ExperimentTree::getSelectedNumors() const
 
 void ExperimentTree::onCustomMenuRequested(const QPoint& point)
 {
-
     QModelIndex index = indexAt(point);
-
 
     if (index == rootIndex())
     {
@@ -233,8 +231,6 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             connect(scene3d,SIGNAL(triggered()),this,SLOT(showPeaksOpenGL()));
         }
     }
-
-
 }
 
 void ExperimentTree::absorptionCorrection()
@@ -244,7 +240,7 @@ void ExperimentTree::absorptionCorrection()
     auto pitem=dynamic_cast<PeakListItem*>(item);
     if (!pitem)
         return;
-    DialogMCAbsorption* dialog=new DialogMCAbsorption(pitem->getExperiment(),this);
+    MCAbsorptionDialog* dialog = new MCAbsorptionDialog(pitem->getExperiment(), this);
     dialog->open();
 }
 
@@ -302,7 +298,6 @@ void ExperimentTree::importData()
         dataItem->appendRow(item);
 
     }
-
 }
 
 
@@ -487,8 +482,6 @@ void ExperimentTree::viewReciprocalSpace(const QModelIndex& index)
         qWarning()<<e.what();
         return;
     }
-
-
 }
 
 void ExperimentTree::onDoubleClick(const QModelIndex& index)
@@ -516,7 +509,6 @@ void ExperimentTree::onDoubleClick(const QModelIndex& index)
         std::shared_ptr<SX::Instrument::Experiment> exp = ptr->getExperiment();
         emit plotData(exp->getData(item->text().toStdString()));
     }
-
 }
 
 void ExperimentTree::keyPressEvent(QKeyEvent *event)
