@@ -60,10 +60,10 @@ SOURCES += src/Main.cpp \
     src/Chemistry/ElementsListWidget.cpp \
     src/Chemistry/ElementManagerDialog.cpp \
     src/Externals/qcustomplot.cpp \
-    src/Plot/PeakPlot.cpp \
-    src/Plot/PlotFactory.cpp \
-    src/Plot/SimplePlot.cpp \
-    src/Plot/SXPlot.cpp \
+    src/plot/PeakPlot.cpp \
+    src/plot/PlotFactory.cpp \
+    src/plot/SimplePlot.cpp \
+    src/plot/SXPlot.cpp \
     src/GraphicsItems/CutLineGraphicsItem.cpp \
     src/GraphicsItems/CutSliceGraphicsItem.cpp \
     src/GraphicsItems/CutterGraphicsItem.cpp \
@@ -143,10 +143,10 @@ HEADERS  += include/MainWindow.h \
     include/GraphicsItems/PeakGraphicsItem.h \
     include/GraphicsItems/PlottableGraphicsItem.h \
     include/GraphicsItems/SXGraphicsItem.h \
-    include/Plot/PeakPlot.h \
-    include/Plot/PlotFactory.h \
-    include/Plot/SimplePlot.h \
-    include/Plot/SXPlot.h \
+    include/plot/PeakPlot.h \
+    include/plot/PlotFactory.h \
+    include/plot/SimplePlot.h \
+    include/plot/SXPlot.h \
     include/Tree/DataItem.h \
     include/Tree/DetectorItem.h \
     include/Tree/DetectorPropertyWidget.h \

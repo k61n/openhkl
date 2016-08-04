@@ -7,7 +7,7 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/absorption/
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/GraphicsItems/
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/OpenGL/
-  ${CMAKE_SOURCE_DIR}/apps/NSXQt/Plot/
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/plot/
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/Tree/
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/views/
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/dialogs/
@@ -36,7 +36,7 @@ file(GLOB_RECURSE nsxqt_headers
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/Absorption/*.h
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/GraphicsItems/*.h
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/OpenGL/*.h
-  ${CMAKE_SOURCE_DIR}/apps/NSXQt/Plot/*.h
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/plot/*.h
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/Tree/*.h
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/dialogs/*.h
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/views/*.h
@@ -52,7 +52,7 @@ file(GLOB_RECURSE nsxqt_sources
     ${CMAKE_SOURCE_DIR}/apps/NSXQt/Absorption/*.cpp
     ${CMAKE_SOURCE_DIR}/apps/NSXQt/GraphicsItems/*.cpp
     ${CMAKE_SOURCE_DIR}/apps/NSXQt/OpenGL/*.cpp
-    ${CMAKE_SOURCE_DIR}/apps/NSXQt/Plot/*.cpp
+    ${CMAKE_SOURCE_DIR}/apps/NSXQt/plot/*.cpp
     ${CMAKE_SOURCE_DIR}/apps/NSXQt/Tree/*.cpp
     ${CMAKE_SOURCE_DIR}/apps/NSXQt/dialogs/*.cpp
     ${CMAKE_SOURCE_DIR}/apps/NSXQt/views/*.cpp
