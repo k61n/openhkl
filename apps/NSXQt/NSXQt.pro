@@ -23,7 +23,7 @@ macx {
     CONFIG += c++11
     QMAKE_CXXFLAGS += -std=c++11
 
-    INCLUDEPATH += $$PWD include externals/include
+    INCLUDEPATH += $$PWD include models views externals/include
 
     LIBS += -L../../build -lNSXTool
     LIBS += -L/usr/local/opt/boost/lib -lboost_date_time-mt -lboost_system-mt -lboost_timer-mt -lboost_chrono-mt
@@ -46,6 +46,9 @@ SOURCES += src/Main.cpp \
     src/DialogExperiment.cpp \
     src/Logger.cpp \
     src/NoteBook.cpp \
+    src/DialogConvolve.cpp \
+    src/DialogPeakFind.cpp \
+    src/JobHandler.cpp \
     src/Absorption/AbsorptionDialog.cpp \
     src/Absorption/CrystalScene.cpp \
     src/Absorption/CrystalFaceItem.cpp \
@@ -119,6 +122,9 @@ HEADERS  += include/MainWindow.h \
     include/PeakTableView.h \
     include/DialogTransformationMatrix.h \
     include/NoteBook.h \
+    include/DialogConvolve.h \
+    include/DialogPeakFind.h \
+    include/JobHandler.h \    
     include/Logger.h \
     include/DialogExperiment.h \
     include/DetectorGraphicsView.h \
@@ -192,6 +198,8 @@ FORMS    += ui/mainwindow.ui \
     ui/dialog_PeakFind.ui \
     ui/dialogtransformationmatrix.ui \
     ui/DialogExperiment.ui \
+    ui/DialogConvolve.ui \
+    ui/dialog_PeakFind.ui \    
     ui/Absorption/AbsorptionDialog.ui \
     ui/Absorption/CalibrateDistanceDialog.ui \
     ui/Chemistry/IsotopeDatabaseDialog.ui \
