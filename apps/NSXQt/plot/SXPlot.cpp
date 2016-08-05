@@ -6,7 +6,7 @@
 
 #include <Eigen/Dense>
 
-#include "Plot/SXPlot.h"
+#include "SXPlot.h"
 
 SXPlot::SXPlot(QWidget *parent) : QCustomPlot(parent)
 {

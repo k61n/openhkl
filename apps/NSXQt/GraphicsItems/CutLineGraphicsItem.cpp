@@ -18,9 +18,9 @@
 #include "DetectorScene.h"
 #include "IData.h"
 
-#include "GraphicsItems/CutLineGraphicsItem.h"
-#include "Plot/SimplePlot.h"
-#include "Plot/SXPlot.h"
+#include "CutLineGraphicsItem.h"
+#include "SimplePlot.h"
+#include "SXPlot.h"
 
 CutLineGraphicsItem::CutLineGraphicsItem(std::shared_ptr<SX::Data::IData> data)
 : CutterGraphicsItem(data),

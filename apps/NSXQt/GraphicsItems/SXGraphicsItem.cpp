@@ -4,8 +4,8 @@
 #include <QGraphicsSceneMouseEvent>
 
 #include "DetectorScene.h"
-#include "GraphicsItems/SXGraphicsItem.h"
-#include "Plot/SXPlot.h"
+#include "SXGraphicsItem.h"
+#include "SXPlot.h"
 
 SXGraphicsItem::SXGraphicsItem(QGraphicsItem *parent, bool deletable, bool movable)
 : QGraphicsItem(parent),

@@ -1,4 +1,4 @@
-#include "Plot/PeakPlot.h"
+#include "PeakPlot.h"
 
 SXPlot* PeakPlot::create(QWidget *parent)
 {

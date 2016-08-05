@@ -1,6 +1,6 @@
-#include "Plot/PeakPlot.h"
-#include "Plot/PlotFactory.h"
-#include "Plot/SimplePlot.h"
+#include "PeakPlot.h"
+#include "PlotFactory.h"
+#include "SimplePlot.h"
 
 PlotFactory::PlotFactory()
 {

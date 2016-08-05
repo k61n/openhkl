@@ -4,6 +4,17 @@ endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_BINARY_DIR})
 
+include_directories(
+${CMAKE_SOURCE_DIR}/nsxlib/chemistry/
+${CMAKE_SOURCE_DIR}/nsxlib/crystal/
+${CMAKE_SOURCE_DIR}/nsxlib/data/
+${CMAKE_SOURCE_DIR}/nsxlib/geometry/
+${CMAKE_SOURCE_DIR}/nsxlib/imaging/
+${CMAKE_SOURCE_DIR}/nsxlib/instrument/
+${CMAKE_SOURCE_DIR}/nsxlib/kernel/
+${CMAKE_SOURCE_DIR}/nsxlib/utils/
+)
+
 # Disable console on Windows
 if(WIN32)
     set(GUI_TYPE WIN32)

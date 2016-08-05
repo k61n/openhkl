@@ -9,9 +9,9 @@
 #include "Peak3D.h"
 #include "Units.h"
 
-#include "GraphicsItems/PeakGraphicsItem.h"
-#include "Plot/SXPlot.h"
-#include "Plot/PeakPlot.h"
+#include "PeakGraphicsItem.h"
+#include "SXPlot.h"
+#include "PeakPlot.h"
 
 
 bool PeakGraphicsItem::_labelVisible=false;

@@ -6,9 +6,9 @@
 
 #include <QMainWindow>
 
-#include "Diffractometer.h"
 #include "LatticeMinimizer.h"
 #include "Peak3D.h"
+#include "Diffractometer.h"
 
 namespace Ui {
 class MainWindow;

@@ -4,6 +4,14 @@ endif()
 
 # Add NSXQt and NSXQt directories to the include path
 include_directories(
+    ${CMAKE_SOURCE_DIR}/nsxlib/chemistry/
+    ${CMAKE_SOURCE_DIR}/nsxlib/crystal/
+    ${CMAKE_SOURCE_DIR}/nsxlib/data/
+    ${CMAKE_SOURCE_DIR}/nsxlib/geometry/
+    ${CMAKE_SOURCE_DIR}/nsxlib/imaging/
+    ${CMAKE_SOURCE_DIR}/nsxlib/instrument/
+    ${CMAKE_SOURCE_DIR}/nsxlib/kernel/
+    ${CMAKE_SOURCE_DIR}/nsxlib/utils/
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/absorption/
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/GraphicsItems/
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/OpenGL/

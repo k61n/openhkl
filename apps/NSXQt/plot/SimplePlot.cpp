@@ -1,7 +1,7 @@
 #include <QWidget>
 
-#include "Plot/SimplePlot.h"
-#include "Plot/SXPlot.h"
+#include "SimplePlot.h"
+#include "SXPlot.h"
 
 SXPlot* SimplePlot::create(QWidget *parent)
 {
