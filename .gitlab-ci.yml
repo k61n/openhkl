@@ -11,9 +11,9 @@ linux:
   artifacts:
     paths:
     - nsxtool*deb
-  only:
-    - master
-    - develop
+#  only:
+#    - master
+#    - develop
   tags:
     - ubuntu14.04
 
@@ -38,9 +38,9 @@ mac:
   artifacts:
     paths:
     - ${CI_PROJECT_DIR}/apps/NSXQt/nsxtool*dmg
-  only:
-    - master
-    - develop
+#  only:
+#    - master
+#    - develop
   tags:
     - mac
 
