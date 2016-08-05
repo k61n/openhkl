@@ -13,6 +13,7 @@ linux:
     - nsxtool*deb
   only:
     - master
+    - develop
   tags:
     - ubuntu14.04
 
@@ -39,6 +40,7 @@ mac:
     - ${CI_PROJECT_DIR}/apps/NSXQt/nsxtool*dmg
   only:
     - master
+    - develop
   tags:
     - mac
 
