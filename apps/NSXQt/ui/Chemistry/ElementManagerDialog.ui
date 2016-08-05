@@ -179,17 +179,17 @@
   <customwidget>
    <class>NewElementTableView</class>
    <extends>QTableView</extends>
-   <header>include/Chemistry/NewElementTableView.h</header>
+   <header>chemistry/NewElementTableView.h</header>
   </customwidget>
   <customwidget>
    <class>ElementsListWidget</class>
    <extends>QListWidget</extends>
-   <header>include/Chemistry/ElementsListWidget.h</header>
+   <header>chemistry/ElementsListWidget.h</header>
   </customwidget>
   <customwidget>
    <class>IsotopesListWidget</class>
    <extends>QListWidget</extends>
-   <header>include/Chemistry/IsotopesListWidget.h</header>
+   <header>chemistry/IsotopesListWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

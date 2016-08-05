@@ -28,7 +28,7 @@
   <customwidget>
    <class>GLWidget</class>
    <extends>QWidget</extends>
-   <header>include/OpenGL/GLWidget.h</header>
+   <header>OpenGL/GLWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

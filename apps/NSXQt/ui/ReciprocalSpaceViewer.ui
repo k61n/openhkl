@@ -245,7 +245,7 @@
   <customwidget>
    <class>QCustomPlot</class>
    <extends>QWidget</extends>
-   <header>include/Externals/qcustomplot.h</header>
+   <header>Externals/qcustomplot.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
