@@ -119,7 +119,12 @@ else ()
 endif()
 
 # Find recursively all the Qt ui files of NSXQt
-file(GLOB_RECURSE nsxqt_uis ${CMAKE_SOURCE_DIR}/apps/NSXQt/ui/*.ui)                   
+file(GLOB_RECURSE nsxqt_uis
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/ui/*.ui
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/ui/Absorption/*.ui
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/ui/Chemistry/*.ui
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/ui/Tree/*.ui
+  )                                      
 # Build the headers files for all Qt ui files
 qt5_wrap_ui(ui_headers ${nsxqt_uis})
 
@@ -146,4 +151,36 @@ target_link_libraries(nsxqt Qt5::Core Qt5::PrintSupport Qt5::Gui Qt5::Widgets Qt
 
 # Install section, installing libraries 
 install(TARGETS nsxqt DESTINATION bin)
+
+
+
+
+foreach(source_file ${nsxqt_sources})
+  set(qmake_sources "${qmake_sources} ${source_file}")
+endforeach(source_file)
+
+foreach(source_file ${nsxqt_headers})
+  set(qmake_headers "${qmake_headers} ${source_file}")
+endforeach(source_file)
+
+foreach(source_file ${nsxqt_uis})
+  set(qmake_uis "${qmake_uis} ${source_file}")
+endforeach(source_file)
+
+get_property(dirs DIRECTORY PROPERTY INCLUDE_DIRECTORIES)
+foreach(dir ${dirs})
+  if (NOT ${dir} STREQUAL "/usr/include")
+    set(qmake_include_dirs "${qmake_include_dirs} ${dir}")
+  endif()
+endforeach(dir)
+
+message("------------------------")
+message("${qmake_include_dirs}")
+message("------------------------")
+
+
+# generate the qmake project file automatically
+configure_file(NSXQt.pro.in ${CMAKE_CURRENT_BINARY_DIR}/NSXQt.pro)
+
+
 
