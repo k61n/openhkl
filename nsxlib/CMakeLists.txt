@@ -11,7 +11,7 @@ include_directories(${CMAKE_BINARY_DIR}/include/
                     utils
                     crystal
                     instrument
-                    externals/c-blosc/blosc)
+                    ../externals/c-blosc/blosc)
 
 file(GLOB_RECURSE sources chemistry/*.cpp
                           data/*.cpp
@@ -63,4 +63,4 @@ install(TARGETS NSXTool DESTINATION lib)
 set(INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include/NSXTool/")
 file(GLOB_RECURSE all_headers */include/*.h)
 install(CODE "MESSAGE(\"Installing headers...\")")
-install(FILES ${all_headers} DESTINATION ${INCLUDE_DIR})
+install(FILES ${headers} DESTINATION ${INCLUDE_DIR})
