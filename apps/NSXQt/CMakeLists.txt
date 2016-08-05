@@ -41,7 +41,7 @@ find_package(OpenGL REQUIRED)
 
 # Find recursively all the header files of NSXQt
 file(GLOB_RECURSE nsxqt_headers
-  ${CMAKE_SOURCE_DIR}/apps/NSXQt/Absorption/*.h
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/absorption/*.h
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/GraphicsItems/*.h
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/OpenGL/*.h
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/plot/*.h
@@ -57,7 +57,7 @@ file(GLOB_RECURSE nsxqt_headers
 
 # Find recursively all the cpp source files of NSXQt
 file(GLOB_RECURSE nsxqt_sources
-    ${CMAKE_SOURCE_DIR}/apps/NSXQt/Absorption/*.cpp
+    ${CMAKE_SOURCE_DIR}/apps/NSXQt/absorption/*.cpp
     ${CMAKE_SOURCE_DIR}/apps/NSXQt/GraphicsItems/*.cpp
     ${CMAKE_SOURCE_DIR}/apps/NSXQt/OpenGL/*.cpp
     ${CMAKE_SOURCE_DIR}/apps/NSXQt/plot/*.cpp
