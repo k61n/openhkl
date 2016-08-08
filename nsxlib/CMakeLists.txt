@@ -61,6 +61,6 @@ target_link_libraries(NSXTool ${HDF5_LIBRARIES} blosc_shared ${Boost_LIBRARIES} 
 # Install section, installing libraries 
 install(TARGETS NSXTool DESTINATION lib)
 set(INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include/NSXTool/")
-file(GLOB_RECURSE all_headers */include/*.h)
+file(GLOB_RECURSE all_headers *.h)
 install(CODE "MESSAGE(\"Installing headers...\")")
 install(FILES ${headers} DESTINATION ${INCLUDE_DIR})
