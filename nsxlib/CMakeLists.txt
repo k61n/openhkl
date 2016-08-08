@@ -1,5 +1,4 @@
 
-
 include_directories(${CMAKE_BINARY_DIR}/include/
                     chemistry
                     data
@@ -13,8 +12,8 @@ include_directories(${CMAKE_BINARY_DIR}/include/
                     instrument
                     ../externals/c-blosc/blosc)
 
+# note: *.c needed for blosc files in data directory
 file(GLOB_RECURSE sources *.cpp *.c)
-
 file(GLOB_RECURSE headers *.h)
 
 # Creating the library
@@ -28,11 +27,15 @@ endif()
 
 
 
-
 # Link
-#target_link_libraries(NSXTool blosc_shared ${Boost_LIBRARIES} ${PYTHON_LIBRARIES} ${FFTW3_LIBRARIES} ${HDF5_LIBRARIES} ${TIFF_LIBRARY})
-target_link_libraries(NSXTool ${HDF5_LIBRARIES} blosc_shared ${Boost_LIBRARIES} ${PYTHON_LIBRARIES} ${FFTW3_LIBRARIES} ${TIFF_LIBRARY})
-
+target_link_libraries(NSXTool
+    ${HDF5_LIBRARIES}
+    blosc_shared
+    ${Boost_LIBRARIES}
+    ${PYTHON_LIBRARIES}
+    ${FFTW3_LIBRARIES}
+    ${TIFF_LIBRARY}
+)
 
 # Install section, installing libraries 
 install(TARGETS NSXTool DESTINATION lib)

@@ -23,7 +23,8 @@ BOOST_AUTO_TEST_CASE(Test_Element)
 	BOOST_CHECK_THROW(emgr->setDatabasePath("/fsdfs/fsdfsd/blablabla.xml"),SX::Kernel::Error<ElementManager>);
 
 	// Checks that setting the elements database to a correct path does not throw
-	BOOST_CHECK_NO_THROW(emgr->setDatabasePath("./elements.xml"));
+    BOOST_CHECK_NO_THROW(emgr->setDatabasePath("./elements.xml"));
+    //BOOST_CHECK_NO_THROW(emgr->setDatabasePath("elements.xml"));
 
 	// Builds the natural hydrogen Element directly from the isotopes registry/database
 	sptrElement hydrogen=emgr->getElement("H");
