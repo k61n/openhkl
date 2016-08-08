@@ -93,6 +93,17 @@ endif()
 #  message("Warning: build type ${CMAKE_BUILD_TYPE} is unrecognized")
 #endif()
 
+# ensure that NDEBUG is defined for release builds
+#if(CMAKE_BUILD_TYPE STREQUAL "Release")
+#    if ( COMPILER_IS_GNU_OR_CLANG)
+#        add_definitions(-DNDEBUG)
+#    elseif(MSVC)
+#        add_definitions(/DNDEBUG)
+#    else()
+#        message(WARNING "NDEBUG should be defined but may not be on compiler ${CMAKE_COMPILER_ID}")
+#    endif()
+#endif()
+
 
 # Disable auto-linking to allow dynamic linking with MSVC
 if(WIN32 AND MSVC)
