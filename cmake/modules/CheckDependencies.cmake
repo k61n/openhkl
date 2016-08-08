@@ -4,6 +4,7 @@
 #    include(FindClang)
 #endif( BUILD_WITH_CLANG )
 
+
 ###### Find boost libraries  ##############
 find_package(Boost 1.54.0 COMPONENTS date_time system filesystem unit_test_framework REQUIRED)
 if(Boost_FOUND)
@@ -69,3 +70,11 @@ endif()
 ###### TIFF library
 find_package(TIFF)
 include_directories(${TIFF_INCLUDE_DIR})
+
+
+
+find_path(FFTW_INCLUDE_DIR fftw3.h)
+include_directories(${FFTW_INCLUDE_DIR})
+find_library(FFTW3_LIBRARIES NAMES fftw3 libfftw3 fftw3-3 libfftw3-3)
+
+
