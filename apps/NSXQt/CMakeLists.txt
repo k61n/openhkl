@@ -41,15 +41,15 @@ find_package(OpenGL REQUIRED)
 
 # Find recursively all the header files of NSXQt
 file(GLOB_RECURSE nsxqt_headers
-  ${CMAKE_SOURCE_DIR}/apps/NSXQt/absorption/*.h
-  ${CMAKE_SOURCE_DIR}/apps/NSXQt/GraphicsItems/*.h
-  ${CMAKE_SOURCE_DIR}/apps/NSXQt/OpenGL/*.h
-  ${CMAKE_SOURCE_DIR}/apps/NSXQt/plot/*.h
-  ${CMAKE_SOURCE_DIR}/apps/NSXQt/Tree/*.h
-  ${CMAKE_SOURCE_DIR}/apps/NSXQt/dialogs/*.h
-  ${CMAKE_SOURCE_DIR}/apps/NSXQt/views/*.h
-  ${CMAKE_SOURCE_DIR}/apps/NSXQt/models/*.h
-  ${CMAKE_SOURCE_DIR}/apps/NSXQt/chemistry/*.h
+#  ${CMAKE_SOURCE_DIR}/apps/NSXQt/absorption/*.h
+#  ${CMAKE_SOURCE_DIR}/apps/NSXQt/GraphicsItems/*.h
+#  ${CMAKE_SOURCE_DIR}/apps/NSXQt/OpenGL/*.h
+#  ${CMAKE_SOURCE_DIR}/apps/NSXQt/plot/*.h
+#  ${CMAKE_SOURCE_DIR}/apps/NSXQt/Tree/*.h
+#  ${CMAKE_SOURCE_DIR}/apps/NSXQt/dialogs/*.h
+#  ${CMAKE_SOURCE_DIR}/apps/NSXQt/views/*.h
+#  ${CMAKE_SOURCE_DIR}/apps/NSXQt/models/*.h
+#  ${CMAKE_SOURCE_DIR}/apps/NSXQt/chemistry/*.h
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/*.h
   )
 
@@ -57,15 +57,15 @@ file(GLOB_RECURSE nsxqt_headers
 
 # Find recursively all the cpp source files of NSXQt
 file(GLOB_RECURSE nsxqt_sources
-    ${CMAKE_SOURCE_DIR}/apps/NSXQt/absorption/*.cpp
-    ${CMAKE_SOURCE_DIR}/apps/NSXQt/GraphicsItems/*.cpp
-    ${CMAKE_SOURCE_DIR}/apps/NSXQt/OpenGL/*.cpp
-    ${CMAKE_SOURCE_DIR}/apps/NSXQt/plot/*.cpp
-    ${CMAKE_SOURCE_DIR}/apps/NSXQt/Tree/*.cpp
-    ${CMAKE_SOURCE_DIR}/apps/NSXQt/dialogs/*.cpp
-    ${CMAKE_SOURCE_DIR}/apps/NSXQt/views/*.cpp
-    ${CMAKE_SOURCE_DIR}/apps/NSXQt/models/*.cpp
-    ${CMAKE_SOURCE_DIR}/apps/NSXQt/chemistry/*.cpp
+#    ${CMAKE_SOURCE_DIR}/apps/NSXQt/absorption/*.cpp
+#    ${CMAKE_SOURCE_DIR}/apps/NSXQt/GraphicsItems/*.cpp
+#    ${CMAKE_SOURCE_DIR}/apps/NSXQt/OpenGL/*.cpp
+#    ${CMAKE_SOURCE_DIR}/apps/NSXQt/plot/*.cpp
+#    ${CMAKE_SOURCE_DIR}/apps/NSXQt/Tree/*.cpp
+#    ${CMAKE_SOURCE_DIR}/apps/NSXQt/dialogs/*.cpp
+#    ${CMAKE_SOURCE_DIR}/apps/NSXQt/views/*.cpp
+#    ${CMAKE_SOURCE_DIR}/apps/NSXQt/models/*.cpp
+#    ${CMAKE_SOURCE_DIR}/apps/NSXQt/chemistry/*.cpp
     ${CMAKE_SOURCE_DIR}/apps/NSXQt/*.cpp
   )                   
 
@@ -99,7 +99,6 @@ if (${CMAKE_VERSION} VERSION_LESS 2.8.11)
     # All the sources files that are not Qt Q_OBJECT will trigger a warning and won't be compiled as moc objects. 
     qt5_wrap_cpp(mocs ${nsxqt_headers})
     
-    # Append the moc cpp files to the NSXQt sources
     list(APPEND nsxqt_sources ${mocs})
                                 
 else ()
@@ -153,7 +152,10 @@ target_link_libraries(nsxqt Qt5::Core Qt5::PrintSupport Qt5::Gui Qt5::Widgets Qt
 install(TARGETS nsxqt DESTINATION bin)
 
 
-
+set(qmake_sources "")
+set(qmake_headers "")
+set(qmake_uis "")
+set(qmake_include_dirs "")
 
 foreach(source_file ${nsxqt_sources})
   set(qmake_sources "${qmake_sources} ${source_file}")
@@ -175,7 +177,11 @@ foreach(dir ${dirs})
 endforeach(dir)
 
 message("------------------------")
-message("${qmake_include_dirs}")
+message("${qmake_sources}")
+message("------------------------")
+
+message("------------------------")
+message("${nsxqt_sources}")
 message("------------------------")
 
 
