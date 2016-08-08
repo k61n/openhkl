@@ -2,23 +2,48 @@
 #  CheckCompiler.cmake
 #---------------------------------------------------------------------------------------------------
 
- 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  add_definitions( -std=c++11)
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-  set(MSVC TRUE)
+
+# determine if compiler is GNU/clang variety
+if ( CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    set(COMPILER_IS_GNU_OR_CLANG TRUE)
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    set(COMPILER_IS_GNU_OR_CLANG TRUE)
+else()
+    set(COMPILER_IS_GNU_OR_CLANG FALSE)
+endif()
+
+# check whether compiler is MSVC
+if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    set(MSVC TRUE)
+else()
+    set(MSVC FALSE)
+endif()
+
+# enable c++11 support
+if (CMAKE_VERSION VERSION_LESS "3.1")
+    if(COMPILER_IS_GNU_OR_CLANG)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+    elseif(MSVC)
+        # todo...?
+    endif()
+else()
+  set(CMAKE_CXX_STANDARD 11)
+endif()
+
+# check whether the compiler is recognized
+if(COMPILER_IS_GNU_OR_CLANG)
+elseif(MSVC)
 else()
   message(WARNING "C++ compiler not recognized")
 endif()
 
-message(STATUS "Using compiler `${CMAKE_CXX_COMPILER_ID}` with flags ${CMAKE_CXX_FLAGS}")
-
-
-
+# build with debugging information
 if ( BUILD_WITH_DEBUG_INFO )
-    if (CMAKE_COMPILER_IS_GNUCXX)
+    if ( COMPILER_IS_GNU_OR_CLANG)
         add_definitions(-g)
-    endif(CMAKE_COMPILER_IS_GNUCXX)
+    elseif (MSVC)
+        add_definitions(/DEBUG)
+    endif()
 endif( BUILD_WITH_DEBUG_INFO )
 
 
@@ -73,9 +98,4 @@ if(WIN32 AND MSVC)
     add_definitions(-DH5_BUILT_AS_DYNAMIC_LIB)
 endif()
 
-
-if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-  # add_definitions(-std=c++11)
-  #  -stdlib=libc++
-endif()
+message(STATUS "Using compiler `${CMAKE_CXX_COMPILER_ID}` with flags ${CMAKE_CXX_FLAGS}")

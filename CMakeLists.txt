@@ -6,43 +6,27 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/modules)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/externals/c-blosc/cmake)
 
-project(NSXTOOL_PROJECT)
 
-include(CMakeFindBinUtils)
+project(NSXTOOL_PROJECT)
 
 set(NSXTOOL_VERSION_MAJOR 1)
 set(NSXTOOL_VERSION_MINOR 0)
-
-# set build configurations and default build type
-include(BuildType)
-
-# Propose two build configurations
-#set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Compilation configuration" FORCE)
-if(DEFINED CMAKE_BUILD_TYPE)
-    set_property( CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug;Release" )
-endif()
 
 ###########################################################################
 # Options
 ###########################################################################
 
 option(BUILD_QTAPPS "Build Qt based application." ON)
-option(USE_CLANG "Build with Clang." OFF)
 option(BUILD_WITH_DEBUG_INFO "Build with debugging information (developers only)" OFF)
 
-# find clang
-if ( USE_CLANG )
-    include(FindClang)
-endif( USE_CLANG )
+###########################################################################
+# Scripts controlling build setup and dependencies
+###########################################################################
+include(CMakeFindBinUtils)
+include(BuildType)              # build types: debug and release
+include(CheckDependencies)     # checkexternal dependencies
+include(CheckCompiler)         # configure compiler
 
-
-
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE "Release")
-endif()
-
-
-include(CheckCompiler)
 
 
 #Set package name here
@@ -55,16 +39,7 @@ set(CPACK_PACKAGE_VERSION_MINOR "${NSXTOOL_VERSION_MINOR}")
 set(CPACK_PACKAGE_VERSION_PATCH "0")
 set(CPACK_SOURCE_IGNORE_FILES "/\\\\.git/;" )
 
-###########################################################################
-# Check dependencies
-###########################################################################
 
-include(CheckDependencies)
-
-
-###########################################################################
-# Compiler/linker stuffs
-###########################################################################
 
 
 ###########################################################################

@@ -176,13 +176,13 @@ foreach(dir ${dirs})
   endif()
 endforeach(dir)
 
-message("------------------------")
-message("${qmake_sources}")
-message("------------------------")
+#message("------------------------")
+#message("${qmake_sources}")
+#message("------------------------")
 
-message("------------------------")
-message("${nsxqt_sources}")
-message("------------------------")
+#message("------------------------")
+#message("${nsxqt_sources}")
+#message("------------------------")
 
 
 # generate the qmake project file automatically

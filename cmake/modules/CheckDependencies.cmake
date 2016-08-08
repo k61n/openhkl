@@ -1,4 +1,9 @@
 
+# find clang
+#if ( BUILD_WITH_CLANG )
+#    include(FindClang)
+#endif( BUILD_WITH_CLANG )
+
 ###### Find boost libraries  ##############
 find_package(Boost 1.54.0 COMPONENTS date_time system filesystem unit_test_framework REQUIRED)
 if(Boost_FOUND)
