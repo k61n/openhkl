@@ -27,11 +27,11 @@ find_package(OpenMP)
 #endif()
 
 ###### Find the Eigen3
-find_package(Eigen3)
+find_package(Eigen3 REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
 
 ###### Search the HDF5 library
-find_package(HDF5 COMPONENTS CXX)
+find_package(HDF5 COMPONENTS CXX REQUIRED)
 
 # manually fix problem with windows build
 if(NOT HDF5_LIBRARIES)
@@ -68,7 +68,7 @@ else()
 endif()
 
 ###### TIFF library
-find_package(TIFF)
+find_package(TIFF REQUIRED)
 include_directories(${TIFF_INCLUDE_DIR})
 
 
