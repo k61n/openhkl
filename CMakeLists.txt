@@ -17,7 +17,7 @@ set(NSXTOOL_VERSION_MINOR 0)
 ###########################################################################
 
 option(BUILD_QTAPPS "Build Qt based application." ON)
-option(BUILD_WITH_DEBUG_INFO "Build with debugging information (developers only)" OFF)
+option(BUILD_OPTIMIZED_DEBUG "Set optimization level -O1 or -Og for debug build" OFF)
 
 ###########################################################################
 # Scripts controlling build setup and dependencies
