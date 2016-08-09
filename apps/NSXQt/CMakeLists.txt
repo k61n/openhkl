@@ -89,11 +89,11 @@ if (${CMAKE_VERSION} VERSION_LESS 2.8.11)
 	
 	# Add compiler flags for building executables (i.e. -fPIE)
 	# There might be some redundancies. 
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Core_EXECUTABLE_COMPILE_FLAGS}")        
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5PrintSupport_EXECUTABLE_COMPILE_FLAGS}")        
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5OpenGL_EXECUTABLE_COMPILE_FLAGS}")        
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")        
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Gui_EXECUTABLE_COMPILE_FLAGS}")        
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Core_EXECUTABLE_COMPILE_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5PrintSupport_EXECUTABLE_COMPILE_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5OpenGL_EXECUTABLE_COMPILE_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Gui_EXECUTABLE_COMPILE_FLAGS}")
     
     # Generate the Qt moc files
     # All the sources files that are not Qt Q_OBJECT will trigger a warning and won't be compiled as moc objects. 
@@ -176,13 +176,13 @@ foreach(dir ${dirs})
   endif()
 endforeach(dir)
 
-message("------------------------")
-message("${qmake_sources}")
-message("------------------------")
+#message("------------------------")
+#message("${qmake_sources}")
+#message("------------------------")
 
-message("------------------------")
-message("${nsxqt_sources}")
-message("------------------------")
+#message("------------------------")
+#message("${nsxqt_sources}")
+#message("------------------------")
 
 
 # generate the qmake project file automatically

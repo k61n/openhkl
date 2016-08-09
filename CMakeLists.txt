@@ -6,48 +6,28 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/modules)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/externals/c-blosc/cmake)
 
-project(NSXTOOL_PROJECT)
 
-include(CMakeFindBinUtils)
+project(NSXTOOL_PROJECT)
 
 set(NSXTOOL_VERSION_MAJOR 1)
 set(NSXTOOL_VERSION_MINOR 0)
-
-# Propose two build configurations
-#set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Compilation configuration" FORCE)
-if(DEFINED CMAKE_BUILD_TYPE)
-    set_property( CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug;Release" )
-endif()
 
 ###########################################################################
 # Options
 ###########################################################################
 
 option(BUILD_QTAPPS "Build Qt based application." ON)
-option(USE_LLVM "Build with LLVM / Clang." OFF)
-option(BUILD_WITH_DEBUG_INFO "Build with debugging information (developers only)" OFF)
+option(BUILD_OPTIMIZED_DEBUG "Set optimization level -O1 or -Og for debug build" OFF)
 
-# find clang
-if ( USE_LLVM )
-    find_program(CMAKE_C_COMPILER "clang")
-    find_program(CMAKE_CXX_COMPILER "clang++")
-endif( USE_LLVM )
+###########################################################################
+# Scripts controlling build setup and dependencies
+###########################################################################
+include(CMakeFindBinUtils)
+include(BuildType)             # build types: debug and release
+include(CheckDependencies)     # checkexternal dependencies
+include(CheckCompiler)         # configure compiler
 
 
-
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE "Release")
-endif()
-
-# additional macros
-set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
-include(CheckCompiler)
-
-if ( BUILD_WITH_DEBUG_INFO )
-    if (CMAKE_COMPILER_IS_GNUCXX)
-        add_definitions(-g)
-    endif(CMAKE_COMPILER_IS_GNUCXX)
-endif( BUILD_WITH_DEBUG_INFO )
 
 #Set package name here
 set(CPACK_PACKAGE_NAME "nsxtool")
@@ -59,136 +39,8 @@ set(CPACK_PACKAGE_VERSION_MINOR "${NSXTOOL_VERSION_MINOR}")
 set(CPACK_PACKAGE_VERSION_PATCH "0")
 set(CPACK_SOURCE_IGNORE_FILES "/\\\\.git/;" )
 
-###########################################################################
-# Check dependencies
-###########################################################################
-
-###### Find boost libraries  ##############
-find_package(Boost 1.54.0 COMPONENTS date_time system filesystem unit_test_framework REQUIRED)
-if(Boost_FOUND)
-    include_directories("${Boost_INCLUDE_DIRS}")
-    set(Boost_USE_STATIC_LIBS OFF)
-    set(Boost_USE_MULTITHREADED ON)
-    set(Boost_USE_STATIC_RUNTIME OFF)
-    message(STATUS "Found boost: " ${Boost_INCLUDE_DIRS})
-    message(STATUS "Boost" ${Boost_LIBRARIES})
-elseif(NOT Boost_FOUND)
-    message(FATAL_ERROR "Unable to find correct Boost version. Did you set BOOST_ROOT?")
-endif()
-
-###### Find OPENMP 
-find_package(OpenMP)
-
-#if (OPENMP_FOUND)
-#    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-#    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-#endif()
-
-###### Find the Eigen3 
-find_package(Eigen3)
-include_directories(${EIGEN3_INCLUDE_DIR})
-
-###### Search the HDF5 library
-find_package(HDF5 COMPONENTS CXX)
-
-# manually fix problem with windows build
-if(NOT HDF5_LIBRARIES)
-  set(HDF5_LIBRARIES "")
-  find_library(HDF5_LIBRARY_TEMP libszip)
-  set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
-
-  find_library(HDF5_LIBRARY_TEMP libzlib)
-  set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
-
-  find_library(HDF5_LIBRARY_TEMP libhdf5)
-  set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
-  
-  find_library(HDF5_LIBRARY_TEMP libhdf5_cpp)
-  set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
-endif()
-
-include_directories("${HDF5_INCLUDE_DIRS}")
-
-if ( HDF5_INCLUDE_DIRS AND HDF5_LIBRARIES )
-   message("HDF5 found: include dir is ${HDF5_INCLUDE_DIRS} and library is ${HDF5_LIBRARIES} located in ${HDF5_LIBRARY_DIRS}")
-else()
-   messagE("ERROR: HDF5 not found")   
-endif()
 
 
-find_package(Blosc REQUIRED)
-if (BLOSC_FOUND==True)
-        message("Blosc library found, already installed on the system")
-else()
-        #### Internal dependencies
-        add_subdirectory(externals/c-blosc)
-        message("Blosc library not found, will build from internal resources")
-endif()
-
-###### TIFF library
-find_package(TIFF)
-include_directories(${TIFF_INCLUDE_DIR})
-
-###########################################################################
-# Compiler/linker stuffs
-###########################################################################
-if(CMAKE_COMPILER_IS_GNUCXX)
-    add_definitions(
-        -Wall
-        -Wno-ignored-attributes # ignore annoying warnings caused by Eigen library
-        -Wno-misleading-indentation # ignore annoying warnings caused by Eigen library
-        -Wno-deprecated-declarations # ignore annoying warnings caused by Eigen library
-        -std=c++11
-        #-fopenmp
-        -pthread
-        -DEIGEN_FFTW_DEFAULT
-    )
-endif()
-
-if(CMAKE_BUILD_TYPE STREQUAL "Release")
-  message("Configuring for build type 'Release'")
-if(CMAKE_COMPILER_IS_GNUCXX)
-    add_definitions(
-    -msse2
-    -DNDEBUG
-    #-D__GXX_EXPERIMENTAL_CXX0X__
-    -funroll-loops
-    -mfpmath=sse
-    -ftree-vectorize
-    -O2
-    )
-  endif()
-  message("Configuring for build type 'Release'")
-elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
-  message("Configuring for build type 'Debug'")
-  if (CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Og -g")
-  else()
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O1 -g")
-  endif()
-else()
-  message("Warning: build type ${CMAKE_BUILD_TYPE} is unrecognized")
-endif()
-
-if(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
-    add_definitions(-std=c++11)
-endif()
-
-
-# Disable auto-linking to allow dynamic linking with MSVC
-if(WIN32 AND MSVC)
-    add_definitions(-DBOOST_ALL_NO_LIB)
-    add_definitions(-D_USE_MATH_DEFINES)
-    add_definitions(-DNSXTOOL_EXPORT)
-    add_definitions(-DH5_BUILT_AS_DYNAMIC_LIB)
-endif()
-
-
-if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-  # add_definitions(-std=c++11)
-  #  -stdlib=libc++ 
-endif()
 
 ###########################################################################
 # Now add in all the components
