@@ -23,7 +23,7 @@ option(BUILD_OPTIMIZED_DEBUG "Set optimization level -O1 or -Og for debug build"
 # Scripts controlling build setup and dependencies
 ###########################################################################
 include(CMakeFindBinUtils)
-include(BuildType)              # build types: debug and release
+include(BuildType)             # build types: debug and release
 include(CheckDependencies)     # checkexternal dependencies
 include(CheckCompiler)         # configure compiler
 
