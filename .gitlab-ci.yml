@@ -5,15 +5,9 @@ windows-msvc:
     - cmake --version
     - set BOOST_ROOT=c:\local\boost_1_61_0
     - set BOOST_LIBRARYDIR=c:\local\boost_1_61_0\lib64-msvc-14.0
-    #- set EIGEN3_INCLUDE_DIR=C:\Users\ci\Libraries\eigen
+    - set TIFF_HIMEC:\Users\ci\Libraries\libtiff
     - set PATH=C:\Users\ci\Libraries\eigen;%PATH%
-    - dir C:\Users\ci\Libraries
-    - del C:\Users\ci\Libraries\libtiff\*.h 
-    - mkdir C:\Users\ci\Libraries\libtiff\lib
-    - move C:\Users\ci\Libraries\libtiff\*.lib C:\Users\ci\Libraries\libtiff\lib\
-    - move C:\Users\ci\Libraries\libtiff\*.dll C:\Users\ci\Libraries\libtiff\lib\
-    - dir C:\Users\ci\Libraries\libtiff\
-    - set PATH=C:\Users\ci\Libraries\libtiff;%PATH%
+    - set PATH=C:\Users\ci\Libraries\libtiff\lib;%PATH%
     - cmake .. -G"Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Release
   tags:
     - windows
