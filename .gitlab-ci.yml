@@ -13,6 +13,7 @@ windows-msvc:
     - set PATH=%SOURCE_DIR%\externals\libtiff;%PATH%
     - cmake .. -G"Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Release
     - cmake --build . --config Release
+    - cmake --build . --config Release --target install
     - set PATH=%BOOST_LIBRARYDIR%;%PATH%
     - set PATH=%FFTW_DIR%;%PATH%
     - set PATH=%SOURCE_DIR%\externals\libtiff\lib;%PATH%
