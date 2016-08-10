@@ -5,9 +5,8 @@ windows-msvc:
     - cmake --version
     - set BOOST_ROOT=c:\local\boost_1_61_0
     - set BOOST_LIBRARYDIR=c:\local\boost_1_61_0\lib64-msvc-14.0
-    - set TIFF_HIMEC:\Users\ci\Libraries\libtiff
     - set PATH=C:\Users\ci\Libraries\eigen;%PATH%
-    - set PATH=C:\Users\ci\Libraries\libtiff\lib;%PATH%
+    - set PATH=C:\Users\ci\Libraries\libtiff;%PATH%
     - cmake .. -G"Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Release
   tags:
     - windows
