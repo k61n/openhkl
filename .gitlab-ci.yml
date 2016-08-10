@@ -6,7 +6,7 @@ windows-msvc:
     - set BOOST_LIBRARYDIR=c:\local\boost_1_61_0\lib64-msvc-14.0
     - set FFTW_DIR=C:\Users\ci\Libraries\fftw
     - dir C:\Users\ci\Libraries\fftw
-    - call "C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\bin\\x86_amd64\\cl.exe" /def:C:\Users\ci\Libraries\fftw\libfftw3-3.def
+    - call "C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\bin\\x86_amd64\\lib.exe" /def:C:\Users\ci\Libraries\fftw\libfftw3-3.def
     - move libfftw3-3.lib C:\Users\ci\Libraries\fftw\
     - set PATH=C:\Users\ci\Libraries\eigen;%PATH%
     - set PATH=C:\Users\ci\Libraries\libtiff;%PATH%
