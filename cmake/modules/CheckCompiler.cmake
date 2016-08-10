@@ -18,6 +18,12 @@ else()
     set(COMPILER_IS_GNU_OR_CLANG FALSE)
 endif()
 
+# try to fix problem with msvc+llvm
+if(WIN32 AND MSVC AND CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  message(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Building with MSVC+Clang on Windows")
+  add_definitions(/D__clang__)
+endif()
+
 # check whether compiler is MSVC
 if(DEFINED MSVC)
   set(COMPILER_IS_MSVC MSVC)
