@@ -26,7 +26,7 @@ if(TRUE)
         DOC "Specify the directory containing fftw3.h"
     )
 
-    find_library(FFTW_LIBRARY NAMES fftw3 fftw3-3 PATHS
+    find_library(FFTW_LIBRARY NAMES fftw3 fftw3-3 libfftw3 libfftw3-3 PATHS
       $ENV{FFTW_DIR}
       $ENV{FFTW_DIR}/lib
         $ENV{FFTW3} $ENV{FFTW3}/lib $ENV{FFTW3}/.libs
