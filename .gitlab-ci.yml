@@ -7,13 +7,14 @@ windows-msvc:
     - set BOOST_ROOT=c:\local\boost_1_61_0
     - set BOOST_LIBRARYDIR=c:\local\boost_1_61_0\lib64-msvc-14.0
     - set FFTW_DIR=C:\Users\ci\Libraries\fftw
-    - call "C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\vcvarsall.bat" x86_amd64
-    - lib /def:C:\Users\ci\Libraries\fftw\libfftw3-3.def /machine:x64
-    - move libfftw3-3.lib C:\Users\ci\Libraries\fftw\
-    - dir C:\Users\ci\Libraries\fftw
+    #- call "C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\vcvarsall.bat" x86_amd64
+    #- lib /def:C:\Users\ci\Libraries\fftw\libfftw3-3.def /machine:x64
+    #- move libfftw3-3.lib C:\Users\ci\Libraries\fftw\
+    #- dir C:\Users\ci\Libraries\fftw
     - set PATH=C:\Users\ci\Libraries\eigen;%PATH%
     - set PATH=C:\Users\ci\Libraries\libtiff;%PATH%
     - cmake .. -G"Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Release
+    - cmake --build . --config Release
   tags:
     - windows
 
