@@ -4,7 +4,7 @@ windows-msvc:
     - cd build
     - cmake --version
     - set BOOST_ROOT=c:\local\boost_1_61_0
-    - set BOOST_LIBRARYDIR=c:\local\boost_1_61_0\lib64.msvc.14.0
+    - set BOOST_LIBRARYDIR=c:\local\boost_1_61_0\lib64-msvc-14.0
     - echo %PATH%
     - echo %BOOST_ROOT%
     - dir c:\local\boost_1_61_0
