@@ -13,7 +13,7 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   message(">>>>>>>>>>>>>>>>>>>>>> the compiler is clang")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D__clang__")
   add_definitions(-D__clang__) # fix msbuild problems??
-  message(">>>>>>>>>>>>>>>>>>>>>> cxx flags: ${CMAKE_CXX_FLAGS}")
+  message(">>>>>>>>>>>>>>>>>>>>>> cxx flags: ${CMAKE_CXX_FLAGS}; win32: ${WIN32}; msvc: ${MSVC}; compiler exe ${CMAKE_CXX_COMPILER}")
 else()
     set(COMPILER_IS_GNU_OR_CLANG FALSE)
 endif()
