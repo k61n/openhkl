@@ -63,7 +63,7 @@ endif()
 
 if( NOT FFTW_FOUND )
     if( FFTW_FIND_REQUIRED )
-        message( FATAL_ERROR "FindFFTW: can't find fftw3 header or library" )
+        message( FATAL_ERROR "FindFFTW: can't find fftw3 header or library: include dir is ${FFTW_INCLUDE_DIR} and library is ${FFTW_LIBRARY}" )
     endif()
 endif()
 
