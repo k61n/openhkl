@@ -13,9 +13,18 @@ windows-llvm:
     - set PATH=%SOURCE_DIR%\externals\libtiff;%PATH%
     - set PATH=C:\Program Files\LLVM;%PATH%
     - cmake .. -G"Visual Studio 14 2015 Win64" -TLLVM-vs2014 -DCMAKE_BUILD_TYPE=Release
+    - cmake --build . --config Release
+    - cmake --build . --config Release --target install
+    - set PATH=%BOOST_LIBRARYDIR%;%PATH%
+    - set PATH=%FFTW_DIR%;%PATH%
+    - set PATH=%SOURCE_DIR%\externals\libtiff\lib;%PATH%
+    - set PATH=C:\Program Files\HDF_Group\HDF5\1.8.17\lib\;%PATH%
+    - set PATH=%BUILD_DIR%\nsxlib\Release;%PATH%
+    - set PATH=%BUILD_DIR%\externals\c-blosc\blosc\Release\blosc;%PATH%
+    - ctest
   tags:
     - windows
-    
+
 
 windows-msvc:
   script:
