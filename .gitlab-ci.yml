@@ -10,7 +10,7 @@ windows-msvc:
     - dir C:\Users\ci\Libraries
     #- copy C:\Users\ci\Libraries\libtiff\include\*.h C:\Users\ci\Libraries\libtiff\*.h 
     - dir C:\Users\ci\Libraries\libtiff\
-    - set PATH=C:\Users\ci\Libraries;%PATH%
+    - set PATH=C:\Users\ci\Libraries\libtiff;%PATH%
     - cmake .. -G"Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Release
   tags:
     - windows
