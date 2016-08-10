@@ -11,6 +11,8 @@ if(FFTW_LIBRARY AND FFTW_INCLUDE_DIR)
   set(FFTW_FIND_QUIETLY TRUE)
 endif()
 
+message("FFTW_DIR is $ENV{FFTW_DIR}")
+
 #if(NOT WIN32)
 if(TRUE)
     find_path(FFTW_INCLUDE_DIR fftw3.h
