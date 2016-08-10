@@ -5,9 +5,10 @@ windows-msvc:
     - cmake --version
     - dir C:\Qt
     - dir C:\Qt\Qt5.6.1
-    - dir C:\Qt\Qt5.6.1.\msvc2015_64
-    - dir C:\Qt\Qt5.6.1.\msvc2015_64\bin
-    - set QTDIR=C:\Qt\Qt5.6.1\msvc2015_64
+    - dir C:\Qt\Qt5.6.1\5.6\
+    - dir C:\Qt\Qt5.6.1\5.6\msvc2015_64
+    - dir C:\Qt\Qt5.6.1\5.6\msvc2015_64\bin
+    - set QTDIR=C:\Qt\Qt5.6.1\5.6\msvc2015_64
     - set PATH=%QTDIR%\bin;%PATH%
     - qmake --version
     - set BOOST_ROOT=c:\local\boost_1_61_0
