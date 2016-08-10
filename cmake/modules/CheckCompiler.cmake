@@ -14,10 +14,14 @@ else()
 endif()
 
 # check whether compiler is MSVC
-if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    set(COMPILER_IS_MSVC TRUE)
+if(DEFINED MSVC)
+  set(COMPILER_IS_MSVC MSVC)
 else()
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    set(COMPILER_IS_MSVC TRUE)
+  else()
     set(COMPILER_IS_MSVC FALSE)
+  endif()
 endif()
 
 # enable c++11 support
