@@ -6,6 +6,7 @@ windows-msvc:
     - set BOOST_ROOT=c:\local\boost_1_61_0
     - set BOOST_LIBRARYDIR=c:\local\boost_1_61_0\lib64-msvc-14.0
     - set EIGEN3_INCLUDE_DIR=C:\Users\ci\Libraries\eigen
+    - set PATH=C:\Users\ci\Libraries\eigen;%PATH%
     - dir C:\Users\ci\Libraries\eigen
     - cmake .. -G"Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Release
   tags:
