@@ -33,7 +33,7 @@ target_link_libraries(NSXTool
     blosc_shared
     ${Boost_LIBRARIES}
     ${PYTHON_LIBRARIES}
-    ${FFTW3_LIBRARIES}
+    ${FFTW_LIBRARIES}
     ${TIFF_LIBRARY}
 )
 
