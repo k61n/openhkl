@@ -8,7 +8,10 @@ windows-msvc:
     #- set EIGEN3_INCLUDE_DIR=C:\Users\ci\Libraries\eigen
     - set PATH=C:\Users\ci\Libraries\eigen;%PATH%
     - dir C:\Users\ci\Libraries
-    #- copy C:\Users\ci\Libraries\libtiff\include\*.h C:\Users\ci\Libraries\libtiff\*.h 
+    - del C:\Users\ci\Libraries\libtiff\*.h 
+    - mkdir C:\Users\ci\Libraries\libtiff\lib
+    - move C:\Users\ci\Libraries\libtiff\*.lib C:\Users\ci\Libraries\libtiff\lib\
+    - move C:\Users\ci\Libraries\libtiff\*.dll C:\Users\ci\Libraries\libtiff\lib\
     - dir C:\Users\ci\Libraries\libtiff\
     - set PATH=C:\Users\ci\Libraries\libtiff;%PATH%
     - cmake .. -G"Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Release
