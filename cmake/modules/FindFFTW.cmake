@@ -14,7 +14,8 @@ endif()
 #if(NOT WIN32)
 if(TRUE)
     find_path(FFTW_INCLUDE_DIR fftw3.h
-        $ENV{FFTW_DIR}/include
+      $ENV{FFTW_DIR}
+      $ENV{FFTW_DIR}/include
         $ENV{FFTW3} $ENV{FFTW3}/include $ENV{FFTW3}/api
         /usr/local/include
         /usr/include
@@ -24,7 +25,8 @@ if(TRUE)
     )
 
     find_library(FFTW_LIBRARY NAMES fftw3 fftw3-3 PATHS
-        $ENV{FFTW_DIR}/lib
+      $ENV{FFTW_DIR}
+      $ENV{FFTW_DIR}/lib
         $ENV{FFTW3} $ENV{FFTW3}/lib $ENV{FFTW3}/.libs
         /usr/local/lib
         /usr/lib 
