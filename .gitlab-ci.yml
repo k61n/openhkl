@@ -1,5 +1,6 @@
 windows-msvc:
   script:
+    - set
     - set SOURCE_DIR=%cd%
     - mkdir build
     - cd build
