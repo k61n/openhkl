@@ -77,8 +77,8 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
 	// Open the RAFUB input file to get all informations about the collected peaks
 	std::ifstream ifs("CsOsO_15K.raf", std::ifstream::in);
 
-	if (ifs.fail())
-		return;
+    // fail test if we can't open the file
+    BOOST_CHECK( ifs.fails() == false );
 
 	double h,k,l,px,py,gamma,omega,chi,phi;
 	std::vector<Peak3D> _peaks;
