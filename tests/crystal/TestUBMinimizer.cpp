@@ -78,7 +78,7 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
 	std::ifstream ifs("CsOsO_15K.raf", std::ifstream::in);
 
     // fail test if we can't open the file
-    BOOST_CHECK( ifs.fails() == false );
+    BOOST_CHECK( ifs.fail() == false );
 
 	double h,k,l,px,py,gamma,omega,chi,phi;
 	std::vector<Peak3D> _peaks;
