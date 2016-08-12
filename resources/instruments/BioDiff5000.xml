@@ -1,5 +1,5 @@
 <instrument>
-	<name>BioDiff</name>
+	<name>BioDiff5000</name>
     <detector type="cylindrical">
         <name>banana</name>
         <sample_distance units="mm">199.5</sample_distance>

@@ -63,10 +63,15 @@ if (BUILD_QTAPPS)
 	add_subdirectory(apps)
 endif()
 
+# additional tools
+add_subdirectory(tools)
+
 # Enable unit testing with ctest. This must be called before any calls to add_subdirectory 
 enable_testing()
 # Directory with all the unit-tests. 
 add_subdirectory(tests)
+
+
 
 ###########################################################################
 # Installation settings
