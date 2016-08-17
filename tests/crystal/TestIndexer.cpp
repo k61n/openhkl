@@ -1,4 +1,4 @@
-#define BOOST_TEST_MODULE "Test FFTIndexing"
+#define BOOST_TEST_MODULE "Test Indexer"
 #define BOOST_TEST_DYN_LINK
 #include "FlatDetector.h"
 #include "Peak3D.h"
@@ -27,7 +27,7 @@ using SX::Instrument::Source;
 using namespace SX::Units;
 const double tolerance=1e-6;
 
-BOOST_AUTO_TEST_CASE(Test_FFTIndexing)
+BOOST_AUTO_TEST_CASE(Test_Indexer)
 {
     // todo: implement me!!
 }

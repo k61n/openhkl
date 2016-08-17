@@ -17,6 +17,8 @@ ThreadedFrameIterator::ThreadedFrameIterator(IData* data, unsigned int idx)
      _currentFrame(),
      _nextFrame()
 {
+    assert(data != nullptr);
+
     // unused variable
     //std::launch policy = std::launch::async;
     unsigned int nframes = _data->getNFrames();

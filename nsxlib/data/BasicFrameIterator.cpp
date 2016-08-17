@@ -14,6 +14,7 @@ namespace Data {
 
 BasicFrameIterator::BasicFrameIterator(IData *data, unsigned int idx): IFrameIterator(data, idx)
 {
+    assert(data != nullptr);
     _currentFrame = _data->getFrame(_index).cast<double>();
 }
 

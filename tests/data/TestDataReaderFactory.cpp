@@ -1,4 +1,4 @@
-#define BOOST_TEST_MODULE "Test MetaData class"
+#define BOOST_TEST_MODULE "Test data reader factory"
 #define BOOST_TEST_DYN_LINK
 
 #include <fstream>
@@ -22,7 +22,7 @@ using namespace SX::Units;
 
 const double tolerance=1e-2;
 
-BOOST_AUTO_TEST_CASE(Test_MetaData)
+BOOST_AUTO_TEST_CASE(Test_DataReaderFactory)
 {
     // todo: implement me!
 }

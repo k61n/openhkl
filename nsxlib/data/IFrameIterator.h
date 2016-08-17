@@ -16,8 +16,8 @@ class IData;
 
 class IFrameIterator {
 public:
-    IFrameIterator(IData* data, unsigned int idx): _index(idx), _data(data) {};
-    virtual ~IFrameIterator() {};
+    IFrameIterator(IData* data, unsigned int idx): _index(idx), _data(data) {}
+    virtual ~IFrameIterator() {}
 
     unsigned int index() {return _index;}
 
