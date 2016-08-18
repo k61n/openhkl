@@ -24,30 +24,43 @@ const double tolerance=1e-2;
 
 BOOST_AUTO_TEST_CASE(Test_Peak_Data)
 {
-	DiffractometerStore* ds = DiffractometerStore::Instance();
+    DiffractometerStore* ds;
+    std::shared_ptr<Diffractometer> diff;
+    std::unique_ptr<ILLAsciiData> dataf;
+    MetaData* metadata;
 
-	std::shared_ptr<Diffractometer> diff = std::shared_ptr<Diffractometer>(ds->buildDiffractomer("D9"));
+    try {
+        ds = DiffractometerStore::Instance();
+        diff = std::shared_ptr<Diffractometer>(ds->buildDiffractomer("D9"));
+        dataf = std::unique_ptr<ILLAsciiData>(new ILLAsciiData("D9_ascii_example", diff));
 
-	ILLAsciiData dataf("D9_ascii_example",diff);
+        dataf->open();
+        dataf->readInMemory(nullptr);
 
-	dataf.open();
-    dataf.readInMemory(nullptr);
+        metadata = dataf->getMetadata();
+        BOOST_CHECK(metadata != nullptr);
+    }
+    catch(std::exception& e) {
+        BOOST_FAIL(std::string("caught exception: ") + e.what());
+    }
+    catch (...) {
+        BOOST_FAIL("unknown exception");
+    }
 
-	auto metadata=dataf.getMetadata();
-	double ub11=metadata->getKey<double>("ub(1,1)");
-	double ub12=metadata->getKey<double>("ub(1,2)");
-	double ub13=metadata->getKey<double>("ub(1,3)");
-	double ub21=metadata->getKey<double>("ub(2,1)");
-	double ub22=metadata->getKey<double>("ub(2,2)");
-	double ub23=metadata->getKey<double>("ub(2,3)");
-	double ub31=metadata->getKey<double>("ub(3,1)");
-	double ub32=metadata->getKey<double>("ub(3,2)");
-	double ub33=metadata->getKey<double>("ub(3,3)");
+    double ub11=metadata->getKey<double>("ub(1,1)");
+    double ub12=metadata->getKey<double>("ub(1,2)");
+    double ub13=metadata->getKey<double>("ub(1,3)");
+    double ub21=metadata->getKey<double>("ub(2,1)");
+    double ub22=metadata->getKey<double>("ub(2,2)");
+    double ub23=metadata->getKey<double>("ub(2,3)");
+    double ub31=metadata->getKey<double>("ub(3,1)");
+    double ub32=metadata->getKey<double>("ub(3,2)");
+    double ub33=metadata->getKey<double>("ub(3,3)");
 
-	Eigen::Matrix3d ub;
-	ub <<   ub11,ub12,ub13,
-			ub21,ub22,ub23,
-			ub31,ub32,ub33;
-	ub.transposeInPlace();
+    Eigen::Matrix3d ub;
+    ub <<   ub11,ub12,ub13,
+            ub21,ub22,ub23,
+            ub31,ub32,ub33;
+    ub.transposeInPlace();
 
 }
