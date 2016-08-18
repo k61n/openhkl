@@ -1,2 +1,5 @@
 # this is important for ILL ascii data files
-* text eol=lf
+tests/data/D10_ascii_example eol=lf
+tests/data/D9_ascii_example eol=lf
+tests/data/D9_QSCAN eol=lf
+
