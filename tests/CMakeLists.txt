@@ -33,7 +33,7 @@ foreach(source_file ${test_sources})
   #message("base name is ${base_name}")
   add_executable(${base_name} ${source_file} ${test_headers})
   target_link_libraries(${base_name} ${Boost_LIBRARIES} NSXTool)
-  add_test(${base_name} ${base_name})
+  add_test(${base_name} ${base_name} WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
   message("Added test ${base_name}")
 endforeach(source_file)
 
