@@ -1,5 +1,5 @@
 # this is important for ILL ascii data files
-tests/data/D10_ascii_example eol=lf
-tests/data/D9_ascii_example eol=lf
-tests/data/D9_QSCAN eol=lf
-
+tests/data/D10_ascii_example binary
+tests/data/D9_ascii_example binary
+tests/data/D9_QSCAN binary
+tests/instrument/D10_ascii_example binary
