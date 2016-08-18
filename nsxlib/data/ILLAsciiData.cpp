@@ -478,29 +478,28 @@ void ILLAsciiData::readMetaData(const char* buf)
 	std::stringstream buffer;
 	buffer << s.substr(0,endMetadata);
 	// Try to read the header file
-	try
-	{
+	try	{
 		readHeader(buffer);
-	}catch(...)
-	{
-		throw std::runtime_error("ILLAsciiData: Fail to read Header in stream");
+    }
+    catch(std::exception& e) {
+        throw std::runtime_error(std::string("ILLAsciiData: failed to read header in stream: ") + e.what());
+    }
+    catch(...) {
+        throw std::runtime_error("ILLAsciiData: Fail to read Header in stream (unknown exception)");
 	}
 
 	// Read the block containing control parameters (integer)
-	try
-	{
+	try	{
 		readControlIBlock(buffer);
-	}catch(...)
-	{
+    }
+    catch(...) {
 		throw std::runtime_error("ILLAsciiMetaReader: Fail to read IBlock in stream");
 	}
 
 	// Read the block containing float metadata
-	try
-	{
+    try {
 		readControlFBlock(buffer);
-	}catch(...)
-	{
+    }catch(...) {
 		throw std::runtime_error("ILLAsciiMetaReader: Fail to read FBlock in stream");
 	}
 }
