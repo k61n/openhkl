@@ -69,9 +69,9 @@ mac:
     - /usr/local/opt/qt5/bin/qmake ${CI_PROJECT_DIR}/build/apps/NSXQt/NSXQt.pro CONFIG+=release
     - make -j4 -l4
     - /usr/local/opt/qt5/bin/macdeployqt nsxtool.app/ -dmg
-  artifacts:
-    paths:
-    - ${CI_PROJECT_DIR}/build/qmake-build/nsxtool*dmg
+#  artifacts:
+#    paths:
+#    - ${CI_PROJECT_DIR}/build/qmake-build/nsxtool*dmg
 #  only:
 #    - master
 #    - develop
