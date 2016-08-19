@@ -1,4 +1,7 @@
 # this is important for ILL ascii data files
-D10_ascii_example binary
-D9_ascii_example binary
-D9_QSCAN binary
+* binary
+*.cpp text
+*.hpp text
+*.c text
+*.h text
+*.txt text
