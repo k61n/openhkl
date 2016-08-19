@@ -184,7 +184,7 @@ int main()
 
 				// Write it
 				std::ostringstream os;
-				os << "Cubic/scan" << p;
+                os << "Cubic_scan" << p;
 				write_FakeD9(scan,os.str().c_str());
 			}
 		}

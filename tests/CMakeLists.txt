@@ -34,7 +34,7 @@ foreach(source_file ${test_sources})
   add_executable(${base_name} ${source_file} ${test_headers})
   target_link_libraries(${base_name} ${Boost_LIBRARIES} NSXTool)
   add_test(${base_name} ${base_name})
-  message("Added test ${base_name}")
+  #message("Added test ${base_name}")
 endforeach(source_file)
 
 #add_custom_target(check ALL COMMAND ${CMAKE_CTEST_COMMAND})
@@ -57,6 +57,8 @@ configure_file(crystal/CsOsO_15K.lpt CsOsO_15K.lpt COPYONLY)
 configure_file(data/D10_ascii_example D10_ascii_example COPYONLY)
 configure_file(data/D9_ascii_example D9_ascii_example COPYONLY)
 configure_file(data/D9_QSCAN D9_QSCAN COPYONLY)
+
+configure_file(data/H5_example.hdf H5_example.hdf COPYONLY)
 
 
 

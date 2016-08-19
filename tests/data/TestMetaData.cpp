@@ -1,18 +1,28 @@
-#define BOOST_TEST_MODULE "Test Ascii format"
+#define BOOST_TEST_MODULE "Test MetaData class"
 #define BOOST_TEST_DYN_LINK
+
+#include <fstream>
+#include <memory>
+#include <string>
+#include <vector>
+#include <Eigen/Dense>
+#include <iostream>
 
 #include <boost/test/unit_test.hpp>
 
-#include "MetaData.h"
+#include "ComponentState.h"
+#include "DiffractometerStore.h"
+#include "ILLAsciiData.h"
+#include "HDF5Data.h"
+#include "Units.h"
 
 using namespace SX::Data;
+using namespace SX::Instrument;
+using namespace SX::Units;
 
-BOOST_AUTO_TEST_CASE(Test_Ascii_Reader)
+const double tolerance=1e-2;
+
+BOOST_AUTO_TEST_CASE(Test_MetaData)
 {
-
-	// Make sure that total counts for the first frame is 65.
-	MetaData* meta= new MetaData();
-
-	delete meta;
-
+    // todo: implement me!
 }

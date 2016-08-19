@@ -18,6 +18,7 @@ set(NSXTOOL_VERSION_MINOR 0)
 
 option(BUILD_QTAPPS "Build Qt based application." ON)
 option(BUILD_OPTIMIZED_DEBUG "Set optimization level -O1 or -Og for debug build" OFF)
+option(BUILD_COVERAGE_REPORT "Build code coverage report" OFF)
 
 ###########################################################################
 # Scripts controlling build setup and dependencies
@@ -27,6 +28,9 @@ include(BuildType)             # build types: debug and release
 include(CheckDependencies)     # checkexternal dependencies
 include(CheckCompiler)         # configure compiler
 
+if(BUILD_COVERAGE_REPORT)
+  include(CheckCoverage)        # code coverage
+endif()
 
 
 #Set package name here
@@ -71,7 +75,12 @@ enable_testing()
 # Directory with all the unit-tests. 
 add_subdirectory(tests)
 
-
+# code coverage report
+if(BUILD_COVERAGE_REPORT)
+  set(ignore_dirs "'/usr/*'")
+  #list(APPEND ignore_dirs "'*/tests/*'")
+  add_coverage_target(coverage "${ignore_dirs}")
+endif()
 
 ###########################################################################
 # Installation settings
