@@ -1,13 +1,8 @@
 windows-msvc:
   script:
-    - del tests\data\D10_ascii_example
-    - del tests\data\D9_ascii_example
-    - del tests\data\D9_QSCAN
-    - del tests\instrument\D10_ascii_example
-    - git checkout -- tests\data\D10_ascii_example
-    - git checkout -- tests\data\D9_ascii_example
-    - git checkout -- tests\data\D9_QSCAN
-    - git checkout -- tests\instrument\D10_ascii_example
+    - dir PATH=C:\Program Files\HDF_Group\HDF5\1.8.17\bin\
+    - dir PATH=C:\Program Files\HDF_Group\HDF5\1.8.17\
+    - dir PATH=C:\Program Files\HDF_Group\HDF5\1.8.17\lib
     - set SOURCE_DIR=%cd%
     - mkdir build
     - cd build
