@@ -1,5 +1,7 @@
 windows-msvc:
   script:
+    - dir C:\Users\ci\Libraries\libtiff
+    - dir C:\Users\ci\Libraries\libtiff\lib
     - dir "C:\Program Files\HDF_Group\HDF5\1.8.17\bin\"
     - dir "C:\Program Files\HDF_Group\HDF5\1.8.17\"
     - dir "C:\Program Files\HDF_Group\HDF5\1.8.17\lib"
