@@ -41,9 +41,9 @@ linux:
     - rm CMakeCache.txt
     - cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_CPACK=ON -DBUILD_QTAPPS=ON -DCMAKE_PREFIX_PATH=/opt/qt57
     - make package
-  artifacts:
-    paths:
-    - nsxtool*deb
+#  artifacts:
+#    paths:
+#    - nsxtool*deb
 #  only:
 #    - master
 #    - develop
