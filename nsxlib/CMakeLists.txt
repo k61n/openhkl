@@ -28,14 +28,25 @@ endif()
 
 
 # Link
+if(MSVC)
 target_link_libraries(NSXTool
     ${HDF5_LIBRARIES}
-    blosc_shared
+    blosc_static
     ${Boost_LIBRARIES}
     ${PYTHON_LIBRARIES}
     ${FFTW_LIBRARIES}
     ${TIFF_LIBRARY}
 )
+else()
+  target_link_libraries(NSXTool
+        ${HDF5_LIBRARIES}
+        blosc_shared
+        ${Boost_LIBRARIES}
+        ${PYTHON_LIBRARIES}
+        ${FFTW_LIBRARIES}
+        ${TIFF_LIBRARY}
+    )
+endif()
 
 # Install section, installing libraries 
 install(TARGETS NSXTool DESTINATION lib)

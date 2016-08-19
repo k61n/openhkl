@@ -29,12 +29,17 @@ BOOST_AUTO_TEST_CASE(Test_HDF5_IO)
     std::shared_ptr<Diffractometer> diff;
     std::unique_ptr<ILLAsciiData> dataf;
 
+    std::cout << "beginning Test_HDF5_IO" << std::endl;
+
     try {
         ds = DiffractometerStore::Instance();
         diff = std::shared_ptr<Diffractometer>(ds->buildDiffractomer("D10"));
         dataf = std::unique_ptr<ILLAsciiData>(new ILLAsciiData("D10_ascii_example",diff));
         dataf->open();
         dataf->readInMemory(nullptr);
+
+        std::cout << "ascii data successfully read. writing hdf5..." << std::endl;
+
         dataf->saveHDF5("D10_hdf5_example.h5");
     }
     catch (std::exception& e) {
