@@ -3,7 +3,7 @@ windows-msvc:
     - del tests\data\D10_ascii_example
     - del tests\data\D9_ascii_example
     - del tests\data\D9_QSCAN
-    - del test\instrument\D10_ascii_example
+    - del tests\instrument\D10_ascii_example
     - git checkout -- tests\data\D10_ascii_example
     - git checkout -- tests\data\D9_ascii_example
     - git checkout -- tests\data\D9_QSCAN
