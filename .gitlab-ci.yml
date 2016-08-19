@@ -1,8 +1,9 @@
 windows-msvc:
   script:
-    - dir PATH=C:\Program Files\HDF_Group\HDF5\1.8.17\bin\
-    - dir PATH=C:\Program Files\HDF_Group\HDF5\1.8.17\
-    - dir PATH=C:\Program Files\HDF_Group\HDF5\1.8.17\lib
+
+    - dir C:\Program Files\HDF_Group\HDF5\1.8.17\bin\
+    - dir C:\Program Files\HDF_Group\HDF5\1.8.17\
+    - dir C:\Program Files\HDF_Group\HDF5\1.8.17\lib
     - set SOURCE_DIR=%cd%
     - mkdir build
     - cd build
@@ -23,7 +24,6 @@ windows-msvc:
     - set PATH=%BOOST_LIBRARYDIR%;%PATH%
     - set PATH=%FFTW_DIR%;%PATH%
     - set PATH=C:\Users\ci\Libraries\libtiff\lib;%PATH%
-    - dir PATH=C:\Program Files\HDF_Group\HDF5\1.8.17\bin\
     - set PATH=C:\Program Files\HDF_Group\HDF5\1.8.17\bin\;%PATH%
     - set PATH=%BUILD_DIR%\nsxlib\Release;%PATH%
     - set PATH=%BUILD_DIR%\externals\c-blosc\blosc\Release\blosc;%PATH%
