@@ -24,7 +24,7 @@ windows-msvc:
     - set PATH=%BOOST_LIBRARYDIR%;%PATH%
     - set PATH=%FFTW_DIR%;%PATH%
     - set PATH=C:\Users\ci\Libraries\libtiff\lib;%PATH%
-    - set PATH=C:\Program Files\HDF_Group\HDF5\1.8.17\bin\;%PATH%
+    - set PATH=C:\Program Files\HDF_Group\HDF5\1.8.17\bin;%PATH%
     - set PATH=%BUILD_DIR%\nsxlib\Release;%PATH%
     - ctest -V
   tags:
