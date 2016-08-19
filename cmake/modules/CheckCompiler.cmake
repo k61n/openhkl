@@ -35,6 +35,13 @@ else()
   endif()
 endif()
 
+# disable annoying warnings during msvc build
+if (COMPILER_IS_MSVC)
+    # annoying warning triggered by boost::spirit
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4348")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4348")
+endif()
+
 # enable c++11 support
 if (CMAKE_VERSION VERSION_LESS "3.1")
     if(COMPILER_IS_GNU_OR_CLANG)
@@ -86,6 +93,10 @@ if(CMAKE_COMPILER_IS_GNUCXX)
         #-pthread
         #-DEIGEN_FFTW_DEFAULT
     )
+endif()
+
+if(COMPILER_IS_MSVC)
+    add_definitions(/DH5_BUILT_AS_DYNAMIC_LIB)
 endif()
 
 # jmf: much of this is redundant due to cmake and gcc defaults

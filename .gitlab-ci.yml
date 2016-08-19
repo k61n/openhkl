@@ -1,6 +1,13 @@
 windows-msvc:
   script:
-    - set
+    - del tests\data\D10_ascii_example
+    - del tests\data\D9_ascii_example
+    - del tests\data\D9_QSCAN
+    - del test\instrument\D10_ascii_example
+    - git checkout -- tests\data\D10_ascii_example
+    - git checkout -- tests\data\D9_ascii_example
+    - git checkout -- tests\data\D9_QSCAN
+    - git checkout -- tests\instrument\D10_ascii_example
     - set SOURCE_DIR=%cd%
     - mkdir build
     - cd build
