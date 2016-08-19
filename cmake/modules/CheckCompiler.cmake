@@ -1,22 +1,45 @@
 #---------------------------------------------------------------------------------------------------
 #  CheckCompiler.cmake
 #---------------------------------------------------------------------------------------------------
-
+enable_language(CXX)
+enable_language(C)
 
 # determine if compiler is GNU/clang variety
 if ( CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     set(COMPILER_IS_GNU_OR_CLANG TRUE)
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    set(COMPILER_IS_GNU_OR_CLANG TRUE)
+
+  set(COMPILER_IS_GNU_OR_CLANG TRUE)
+  message(">>>>>>>>>>>>>>>>>>>>>> the compiler is clang")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D__clang__")
+  add_definitions(-D__clang__) # fix msbuild problems??
+  message(">>>>>>>>>>>>>>>>>>>>>> cxx flags: ${CMAKE_CXX_FLAGS}; win32: ${WIN32}; msvc: ${MSVC}; compiler exe ${CMAKE_CXX_COMPILER}")
 else()
     set(COMPILER_IS_GNU_OR_CLANG FALSE)
 endif()
 
+# try to fix problem with msvc+llvm
+if(WIN32 AND MSVC AND CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  message(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Building with MSVC+Clang on Windows")
+  add_definitions(/D__clang__)
+endif()
+
 # check whether compiler is MSVC
-if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    set(MSVC TRUE)
+if(DEFINED MSVC)
+  set(COMPILER_IS_MSVC MSVC)
 else()
-    set(MSVC FALSE)
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    set(COMPILER_IS_MSVC TRUE)
+  else()
+    set(COMPILER_IS_MSVC FALSE)
+  endif()
+endif()
+
+# disable annoying warnings during msvc build
+if (COMPILER_IS_MSVC)
+    # annoying warning triggered by boost::spirit
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4348")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4348")
 endif()
 
 # enable c++11 support
@@ -25,7 +48,7 @@ if (CMAKE_VERSION VERSION_LESS "3.1")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
     elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-    elseif(MSVC)
+    elseif(COMPILER_IS_MSVC)
         # todo...?
     endif()
 else()
@@ -34,7 +57,7 @@ endif()
 
 # check whether the compiler is recognized
 if(COMPILER_IS_GNU_OR_CLANG)
-elseif(MSVC)
+elseif(COMPILER_IS_MSVC)
 else()
   message(WARNING "C++ compiler not recognized")
 endif()
@@ -43,7 +66,7 @@ endif()
 if ( BUILD_WITH_DEBUG_INFO )
     if ( COMPILER_IS_GNU_OR_CLANG)
         add_definitions(-g)
-    elseif (MSVC)
+    elseif (COMPILER_IS_MSVC)
         add_definitions(/DEBUG)
     endif()
 endif( BUILD_WITH_DEBUG_INFO )
@@ -53,7 +76,12 @@ if(CMAKE_COMPILER_IS_GNU_OR_CLANG)
     add_definitions(-Wall)
     add_definitions(-pthread)
     add_definitions(-DEIGEN_FFTW_DEFAULT)
+    add_definitions(-D_USE_MATH_DEFINES)
+  elseif(COMPILER_IS_MSVC)
+    add_definitions(/D_USE_MATH_DEFINES)
 endif()
+
+ 
 
 if(CMAKE_COMPILER_IS_GNUCXX)
     add_definitions(
@@ -65,6 +93,10 @@ if(CMAKE_COMPILER_IS_GNUCXX)
         #-pthread
         #-DEIGEN_FFTW_DEFAULT
     )
+endif()
+
+if(COMPILER_IS_MSVC)
+    add_definitions(/DH5_BUILT_AS_DYNAMIC_LIB)
 endif()
 
 # jmf: much of this is redundant due to cmake and gcc defaults
@@ -106,11 +138,11 @@ endif()
 
 
 # Disable auto-linking to allow dynamic linking with MSVC
-if(WIN32 AND MSVC)
-    add_definitions(-DBOOST_ALL_NO_LIB)
-    add_definitions(-D_USE_MATH_DEFINES)
-    add_definitions(-DNSXTOOL_EXPORT)
-    add_definitions(-DH5_BUILT_AS_DYNAMIC_LIB)
+if(WIN32 AND COMPILER_IS_MSVC)
+    add_definitions(/DBOOST_ALL_NO_LIB)
+    add_definitions(/D_USE_MATH_DEFINES)
+    add_definitions(/DNSXTOOL_EXPORT)
+    add_definitions(/DH5_BUILT_AS_DYNAMIC_LIB)
 endif()
 
 

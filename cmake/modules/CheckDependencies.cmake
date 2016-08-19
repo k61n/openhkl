@@ -73,8 +73,10 @@ include_directories(${TIFF_INCLUDE_DIR})
 
 
 
-find_path(FFTW_INCLUDE_DIR fftw3.h)
-include_directories(${FFTW_INCLUDE_DIR})
-find_library(FFTW3_LIBRARIES NAMES fftw3 libfftw3 fftw3-3 libfftw3-3)
+# find_path(FFTW_INCLUDE_DIR fftw3.h)
+# include_directories(${FFTW_INCLUDE_DIR})
+# find_library(FFTW_LIBRARIES NAMES fftw3 libfftw3 fftw3-3 libfftw3-3)
 
+find_package(FFTW REQUIRED)
+include_directories(${FFTW_INCLUDE_DIR})
 

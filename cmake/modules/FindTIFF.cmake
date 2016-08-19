@@ -21,13 +21,15 @@
 # This is a heavily patched version of the CMake module FindTIFF.cmake
 # Copyright 2002-2009 Kitware, Inc.
 # Copyright 2013- BornAgain team
+# Copyright 2016- NSXTool team
+
 # Distributed under the OSI-approved BSD License
 
-if(WIN32)
-    find_path(TIFF_INCLUDE_DIR tiff.h PATHS ${CMAKE_INCLUDE_PATH}/libtiff NO_SYSTEM_ENVIRONMENT_PATH)
-else()
+#if(WIN32)
+#    find_path(TIFF_INCLUDE_DIR tiff.h PATHS ${CMAKE_INCLUDE_PATH}/libtiff NO_SYSTEM_ENVIRONMENT_PATH)
+#else()
     find_path(TIFF_INCLUDE_DIR tiff.h)
-endif()
+#endif()
 
 set(TIFF_NAMES ${TIFF_NAMES} libtiff tiff libtiff3 tiff3)
 find_library(TIFF_LIBRARY NAMES ${TIFF_NAMES})

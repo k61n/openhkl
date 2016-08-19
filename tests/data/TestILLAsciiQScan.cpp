@@ -23,20 +23,29 @@ const double tolerance=1e-2;
 
 BOOST_AUTO_TEST_CASE(Test_ILL_Ascii_QScan)
 {
+    DiffractometerStore* ds;
+    std::shared_ptr<Diffractometer> diff;
+    std::unique_ptr<ILLAsciiData> dataf;
+    MetaData* meta;
+    Eigen::MatrixXi v;
 
-	DiffractometerStore* ds = DiffractometerStore::Instance();
+    try {
+        ds = DiffractometerStore::Instance();
+        diff = std::shared_ptr<Diffractometer>(ds->buildDiffractomer("D9"));
+        dataf = std::unique_ptr<ILLAsciiData>(new ILLAsciiData(std::string("D9_QSCAN"),diff));
+        meta=dataf->getMetadata();
 
-	std::shared_ptr<Diffractometer> diff = std::shared_ptr<Diffractometer>(ds->buildDiffractomer("D9"));
+        BOOST_CHECK(meta->getKey<int>("nbang")==4);
 
-	ILLAsciiData dataf(std::string("D9_QSCAN"),diff);
-
-	MetaData* meta=dataf.getMetadata();
-
-	BOOST_CHECK(meta->getKey<int>("nbang")==4);
-
-	dataf.open();
-
-	Eigen::MatrixXi v=dataf.getFrame(0);
+        dataf->open();
+        v = dataf->getFrame(0);
+    }
+    catch (std::exception& e) {
+        BOOST_FAIL(std::string("caught exception: ") + e.what());
+    }
+    catch(...) {
+        BOOST_FAIL("unknown exception");
+    }
 
 	// Check the total number of count in the frame 0
 	BOOST_CHECK_EQUAL(v.sum(),5.90800000e+03);
@@ -46,6 +55,6 @@ BOOST_AUTO_TEST_CASE(Test_ILL_Ascii_QScan)
 
 
 
-	dataf.close();
+    dataf->close();
 
 }
