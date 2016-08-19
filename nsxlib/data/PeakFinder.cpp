@@ -178,7 +178,13 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
         }
 
         int count = 0;
-        SX::Geometry::AABB<double,3> dAABB(Eigen::Vector3d(0,0,0),Eigen::Vector3d(numor->getDiffractometer()->getDetector()->getNCols(),numor->getDiffractometer()->getDetector()->getNRows(),numor->getNFrames()-1));
+        SX::Geometry::AABB<double,3> dAABB(
+                    Eigen::Vector3d(0,0,0),
+                    Eigen::Vector3d(
+                        numor->getDiffractometer()->getDetector()->getNCols(),
+                        numor->getDiffractometer()->getDetector()->getNRows(),
+                        numor->getNFrames()-1)
+                    );
         for (auto& blob : blobs)
         {
             Eigen::Vector3d center, eigenvalues;
