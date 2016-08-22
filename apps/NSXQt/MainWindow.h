@@ -61,6 +61,7 @@ public:
 
 signals:
     void plotDetectorData(SX::Data::IData*,int frame);
+    void findSpaceGroup();
 private slots:
 //    void on_action_open_triggered();
 
@@ -82,6 +83,7 @@ private slots:
     void on_actionShow_calculated_peak_positions_triggered(bool checked);
     void on_checkBox_AspectRatio_toggled(bool checked);
     void on_actionConvolution_Filter_triggered();
+    void on_actionFind_space_group_triggered();
 
 public slots:
     void changeData(std::shared_ptr<SX::Data::IData>);
@@ -89,6 +91,7 @@ public slots:
     void plotPeak(SX::Crystal::Peak3D*);
     void plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&);
     void setInspectorWidget(QWidget*);
+
 private:
     Ui::MainWindow* _ui;
     //std::unordered_map<std::string,SX::Instrument::Experiment> _experiments;

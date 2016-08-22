@@ -33,6 +33,7 @@
 #include <ostream>
 #include <vector>
 #include <string>
+#include <array>
 #include <Eigen/Dense>
 #include "SymOp.h"
 
@@ -71,7 +72,8 @@ public:
 	void print(std::ostream& os) const;
 	//! Return the type of cell (triclinic, monoclinic ...)
 	char getBravaisType() const;
-	//!
+    //! Return the percentage of extinct reflections
+    double fractionExtinct(std::vector<std::array<double, 3>> hkl);
 private:
 
 	void generateGroupElements();

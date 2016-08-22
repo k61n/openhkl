@@ -5,6 +5,10 @@
 #include <memory>
 #include <stdexcept>
 #include <utility>
+#include <map>
+#include <array>
+#include <tuple>
+#include <vector>
 
 #include <QAbstractItemView>
 #include <QDebug>
@@ -45,6 +49,9 @@
 #include "Logger.h"
 #include "ReciprocalSpaceViewer.h"
 #include "DetectorScene.h"
+
+#include "SpaceGroupSymbols.h"
+#include "SpaceGroup.h"
 
 using std::vector;
 using SX::Data::IData;
@@ -580,4 +587,108 @@ void ExperimentTree::showPeaksOpenGL()
        }
     }
     glw->show();
+}
+
+void ExperimentTree::findSpaceGroup()
+{
+    // testing for now
+    using SX::Crystal::SpaceGroup;
+    using SX::Crystal::SpaceGroupSymbols;
+    using std::vector;
+    using std::string;
+    using std::map;
+    using std::array;
+    using SX::Crystal::Peak3D;
+    using std::tuple;
+
+    SpaceGroupSymbols* spaceGroupSymbols = SpaceGroupSymbols::Instance();
+
+    vector<SpaceGroup> groups;
+    vector<string> symbols = spaceGroupSymbols->getAllSymbols();
+    vector<unsigned int> groupSize;
+    vector<double> quality;
+    vector<unsigned int> indices; // used to sort lists
+
+    vector<array<double, 3>> hkls;
+
+    auto numors = getSelectedNumors();
+
+    qDebug() << "Retrieving reflection list for space group calculation...";
+
+    for (auto& numor: numors) {
+        auto peaks = numor->getPeaks();
+
+        for ( Peak3D* peak : peaks) {
+            Eigen::RowVector3d hkl = peak->getMillerIndices();
+            hkls.push_back(array<double, 3>{hkl[0], hkl[1], hkl[2]});
+        }
+    }
+
+    for (auto& symbol: symbols) {
+        SpaceGroup group = SpaceGroup(symbol);
+
+        indices.push_back(groupSize.size());
+        groups.push_back(group);
+        groupSize.push_back(group.getGenerators().size());
+        quality.push_back(1.0-group.fractionExtinct(hkls));
+
+        qDebug() << "Checking agreement with space group type "
+                 << symbol << ": "
+                 << 100.0*quality.back() << " "
+                 << groupSize.back() << " "
+                 << groups[indices.back()].getBravaisType() << " "
+                 << groups[indices.back()].isCentrosymmetric();
+    }
+
+    assert(indices.size() == symbols.size());
+    assert(indices.size() == groupSize.size());
+    assert(indices.size() == quality.size());
+
+    unsigned call_count = 0;
+
+    // sort
+    auto sortFunc = [&quality, &groupSize, &call_count](unsigned int a, unsigned int b) -> bool
+    {
+        ++call_count;
+
+        if ( quality[a] < quality[b])
+            return true;
+        else if (quality[a] > quality[b])
+            return false;
+
+        return groupSize[a] < groupSize[b];
+    };
+
+    qDebug() << "call count:" << call_count;
+
+    std::sort(indices.begin(), indices.end(), sortFunc);
+
+    // more testing
+    vector<unsigned int> matches;
+
+    for (auto i: indices) {
+        if ( quality[i] < 0.99)
+            continue;
+
+        bool match = false;
+
+        for (shared_ptr<IData> numor: numors) {
+            shared_ptr<Sample> sample = numor->getDiffractometer()->getSample();
+            unsigned int ncrystals = sample->getNCrystals();
+
+            for (unsigned int c = 0; c < ncrystals; ++c) {
+                if ( sample->getUnitCell(c)->getBravaisTypeSymbol()[0] == groups[i].getBravaisType())
+                    match = true;
+            }
+
+            if ( match )
+                matches.push_back(i);
+        }
+    }
+
+    qDebug() << "FOUND MATCHES:";
+
+    for (auto m: matches) {
+        qDebug() << "m:" << symbols[m] << " " << groupSize[m] << " " << groups[m].getBravaisType();
+    }
 }

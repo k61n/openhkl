@@ -1335,6 +1335,7 @@ border-radius: 4px;
     <addaction name="menuShow_Window"/>
     <addaction name="menuSet_View"/>
     <addaction name="menuPeak"/>
+    <addaction name="actionFind_space_group"/>
    </widget>
    <widget class="QMenu" name="menuChemistry">
     <property name="title">
@@ -1701,6 +1702,11 @@ QDockWidget::title {
   <action name="actionConvolution_Filter">
    <property name="text">
     <string>Convolution Filter</string>
+   </property>
+  </action>
+  <action name="actionFind_space_group">
+   <property name="text">
+    <string>Find space group</string>
    </property>
   </action>
  </widget>

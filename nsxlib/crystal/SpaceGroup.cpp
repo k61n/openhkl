@@ -93,6 +93,19 @@ char SpaceGroup::getBravaisType() const
         return 'a';
 }
 
+double SpaceGroup::fractionExtinct(std::vector<std::array<double, 3> > hkl)
+{
+    unsigned int extinct = 0;
+    unsigned int total = hkl.size();
+
+    for (auto& i: hkl) {
+        if (isExtinct(i[0],i[1], i[2]))
+            ++extinct;
+    }
+
+    return (double)extinct / (double)total;
+}
+
 bool SpaceGroup::isCentrosymmetric() const
 {
 	for (const auto& g : _groupElements)

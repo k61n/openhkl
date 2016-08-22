@@ -55,6 +55,7 @@ public slots:
     void onSingleClick(const QModelIndex& index);
     void absorptionCorrection();
     void showPeaksOpenGL();
+    void findSpaceGroup();
 
 private:
 
