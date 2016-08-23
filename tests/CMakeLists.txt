@@ -68,4 +68,6 @@ configure_file(instrument/RotAxis.xml RotAxis.xml COPYONLY)
 configure_file(instrument/D10_ascii_example D10_ascii_example COPYONLY)
 configure_file(instrument/Instrument.xml Instrument.xml COPYONLY)
 
+configure_file(crystal/crystal_database.csv crystal_database.csv COPYONLY)
+
 
