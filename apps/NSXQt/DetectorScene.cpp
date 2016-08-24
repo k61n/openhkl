@@ -574,6 +574,10 @@ void DetectorScene::updatePeakCalcs()
             std::vector<SX::Crystal::PeakCalc> peaks=_currentData->hasPeaks(hkls,ub);
             for (const auto& p : peaks)
             {
+                // jmf testing
+                // todo: check whether peak is allowed by space group!!
+
+
                 PeakCalcGraphicsItem* peak=new PeakCalcGraphicsItem(p);
                 peak->setFrame(_currentFrameIndex);
                 addItem(peak);

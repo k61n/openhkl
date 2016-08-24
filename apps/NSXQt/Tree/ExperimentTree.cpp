@@ -605,13 +605,15 @@ void ExperimentTree::findSpaceGroup()
 
     vector<SpaceGroup> groups;
     vector<string> symbols = spaceGroupSymbols->getAllSymbols();
-    vector<unsigned int> groupSize;
-    vector<double> quality;
-    vector<unsigned int> indices; // used to sort lists
 
     vector<array<double, 3>> hkls;
 
     auto numors = getSelectedNumors();
+
+    if ( numors.size()  == 0) {
+        qDebug() << "Need at least one numor to find space group!";
+        return;
+    }
 
     qDebug() << "Retrieving reflection list for space group calculation...";
 
@@ -624,71 +626,40 @@ void ExperimentTree::findSpaceGroup()
         }
     }
 
+    // todo: how to we handle multiple samples??
+    shared_ptr<Sample> sample = numors[0]->getDiffractometer()->getSample();
+
     for (auto& symbol: symbols) {
         SpaceGroup group = SpaceGroup(symbol);
 
-        indices.push_back(groupSize.size());
-        groups.push_back(group);
-        groupSize.push_back(group.getGenerators().size());
-        quality.push_back(1.0-group.fractionExtinct(hkls));
-
-        qDebug() << "Checking agreement with space group type "
-                 << symbol << ": "
-                 << 100.0*quality.back() << " "
-                 << groupSize.back() << " "
-                 << groups[indices.back()].getBravaisType() << " "
-                 << groups[indices.back()].isCentrosymmetric();
-    }
-
-    assert(indices.size() == symbols.size());
-    assert(indices.size() == groupSize.size());
-    assert(indices.size() == quality.size());
-
-    unsigned call_count = 0;
-
-    // sort
-    auto sortFunc = [&quality, &groupSize, &call_count](unsigned int a, unsigned int b) -> bool
-    {
-        ++call_count;
-
-        if ( quality[a] < quality[b])
-            return true;
-        else if (quality[a] > quality[b])
-            return false;
-
-        return groupSize[a] < groupSize[b];
-    };
-
-    qDebug() << "call count:" << call_count;
-
-    std::sort(indices.begin(), indices.end(), sortFunc);
-
-    // more testing
-    vector<unsigned int> matches;
-
-    for (auto i: indices) {
-        if ( quality[i] < 0.99)
+        // space group not compatible with bravais type
+        // todo: what about multiple crystals??
+        if (group.getBravaisType() != sample->getUnitCell(0)->getBravaisTypeSymbol()[0])
             continue;
 
-        bool match = false;
+        if ( group.fractionExtinct(hkls) > 0.0)
+            continue;
 
-        for (shared_ptr<IData> numor: numors) {
-            shared_ptr<Sample> sample = numor->getDiffractometer()->getSample();
-            unsigned int ncrystals = sample->getNCrystals();
+        // group is compatible with observed reflections, so add it to list
+        groups.push_back(group);
 
-            for (unsigned int c = 0; c < ncrystals; ++c) {
-                if ( sample->getUnitCell(c)->getBravaisTypeSymbol()[0] == groups[i].getBravaisType())
-                    match = true;
-            }
-
-            if ( match )
-                matches.push_back(i);
-        }
     }
+
+    auto compare_fn = [](const SpaceGroup& a, const SpaceGroup& b) -> bool
+    {
+        return a.getGenerators().size() > b.getGenerators().size();
+    };
+
+    std::sort(groups.begin(), groups.end(), compare_fn);
 
     qDebug() << "FOUND MATCHES:";
 
-    for (auto m: matches) {
-        qDebug() << "m:" << symbols[m] << " " << groupSize[m] << " " << groups[m].getBravaisType();
+    for (auto&& grp: groups) {
+        qDebug() << grp.getSymbol().c_str() << " " << grp.getGroupElements().size() << " " << grp.getBravaisType();
     }
+
+    // set compatible group with highest symmetry
+    sample->getUnitCell(0)->setSpaceGroup(groups.front().getSymbol());
+
+    qDebug() << "Space group has been set to " << groups.front().getSymbol();
 }
