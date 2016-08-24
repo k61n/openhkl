@@ -115,7 +115,7 @@ int run_test()
         }
         catch(...) {
             //BOOST_FAIL("unknown space group");
-            std::cout << "unknown space group: " << symbol << std::endl;
+            //std::cout << "unknown space group: " << symbol << std::endl;
             continue; // unknown space group
         }
 
@@ -157,6 +157,8 @@ int run_test()
 //        BOOST_CHECK_CLOSE(niggliCell.getBeta(), gruberCell.getBeta(), tolerance);
 //        BOOST_CHECK_CLOSE(niggliCell.getGamma(), gruberCell.getGamma(), tolerance);
 
+        std::cout << a << " " << b << " " << c << " " << alpha << " " << beta << " " << gamma << std::endl;
+
         BOOST_CHECK_CLOSE(gruberCell.getA(), a, tolerance);
         BOOST_CHECK_CLOSE(gruberCell.getB(), b, tolerance);
         BOOST_CHECK_CLOSE(gruberCell.getC(), c, tolerance);
@@ -164,11 +166,11 @@ int run_test()
         BOOST_CHECK_CLOSE(gruberCell.getBeta(), beta, tolerance);
         BOOST_CHECK_CLOSE(gruberCell.getGamma(), gamma, tolerance);
 
-
-        std::cout << "Bravais type:" << gruberCell.getBravaisTypeSymbol()[0] << " expected " << bravais << std::endl;
-
         if ( gruberCell.getBravaisTypeSymbol()[0] == bravais)
             ++correct;
+        else
+            std::cout << "incorrect bravais type" << endl;
+
     }
 
     std::cout<< correct * 100.0 / total << "% correct out of " << total << " total" << std::endl;
