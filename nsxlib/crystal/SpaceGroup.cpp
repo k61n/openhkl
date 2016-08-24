@@ -1,6 +1,5 @@
 #include <algorithm>
 #include <vector>
-
 #include "Error.h"
 #include "SpaceGroup.h"
 #include "SpaceGroupSymbols.h"
@@ -14,10 +13,14 @@ namespace Crystal
 {
 
 
-SpaceGroup::SpaceGroup(const std::string& symbol) : _symbol(symbol)
+SpaceGroup::SpaceGroup(const std::string& symbol)
 {
 	// Get the generators of the input space group.
 	SpaceGroupSymbols* sg=SpaceGroupSymbols::Instance();
+
+	// Get a reduced version of the spacegroup symbol
+	_symbol = sg->getReducedSymbol(symbol);
+
 	if (!sg->getGenerators(_symbol,_generators))
 		throw SX::Kernel::Error<SpaceGroup>("Unknown space group.");
 	generateGroupElements();

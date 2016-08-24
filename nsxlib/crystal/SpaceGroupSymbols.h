@@ -46,6 +46,7 @@ class SpaceGroupSymbols: public SX::Kernel::Singleton<SpaceGroupSymbols,SX::Kern
 public:
 	void addSpaceGroup(const std::string& spaceGroup, const std::string& generators);
 	bool getGenerators(const std::string& spaceGroup,std::string& generators);
+	std::string getReducedSymbol(const std::string& symbol);
 	std::vector<std::string> getAllSymbols() const;
 private:
 	//! Store pairs of Space group symbols and generators.

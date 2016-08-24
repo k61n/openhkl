@@ -1,3 +1,7 @@
+#include <sstream>
+
+#include <boost/algorithm/string/join.hpp>
+
 #include "Error.h"
 #include "SpaceGroupSymbols.h"
 
@@ -280,7 +284,6 @@ std::unordered_map<std::string,std::string> SpaceGroupSymbols::_spaceGroupTables
 
 void SpaceGroupSymbols::addSpaceGroup(const std::string& spaceGroup, const std::string& generators)
 {
-
 	auto it=_spaceGroupTables.find(spaceGroup);
 	if (it!=_spaceGroupTables.end())
 		throw SX::Kernel::Error<SpaceGroupSymbols>("The space group "+spaceGroup+" is already registered.");
@@ -294,6 +297,27 @@ bool SpaceGroupSymbols::getGenerators(const std::string& spacegroup, std::string
 		return false;
 	generators=(*it).second;
 	return true;
+}
+
+std::string SpaceGroupSymbols::getReducedSymbol(const std::string& symbol)
+{
+	// This is the only get when the separate 1 has to be kept
+	if (symbol.compare("P 1")==0)
+		return symbol;
+
+	// Otherwise throw away every separate 1 to produce the short name for Bravais
+	// see https://en.wikipedia.org/wiki/List_of_space_groups
+	std::istringstream iss(symbol);
+    std::string token;
+    std::vector<std::string> tokens;
+    while (std::getline(iss, token, ' '))
+    {
+        if (token.compare("1")==0)
+            continue;
+    	tokens.push_back(token);
+    }
+    std::string reducedSymbol = boost::algorithm::join(tokens, " ");
+    return reducedSymbol;
 }
 
 std::vector<std::string> SpaceGroupSymbols::getAllSymbols() const
