@@ -14,8 +14,8 @@ GruberReduction::GruberReduction(const Eigen::Matrix3d& g, double epsilon)
 	if (epsilon<=0 || epsilon>1)
 		throw std::runtime_error("Gruber reduction: epsilon must be in the range ]0,1]");
 
-    // Multiply tolerance by approximate squared Unit-cell length
-    _epsilon *= std::pow(g.determinant(), 1.0/3.0);
+    // Multiply tolerance by approximate Unit-cell length
+    _epsilon *= std::pow(g.determinant(), 1.0/6.0);
 }
 
 void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,BravaisType& bravais)
