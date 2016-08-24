@@ -50,6 +50,11 @@ int run_test()
 
         char* ptr = strtok(&buffer[0], ",");
 
+        // maybe we reached the end of the CSV file
+        if ( ptr == nullptr && database.eof())
+            continue;
+
+        BOOST_CHECK(ptr != nullptr);
         symbol = string(ptr);
 
         ptr = strtok(nullptr, ",");
