@@ -11,9 +11,10 @@ namespace Crystal
 
 int NiggliReduction::_itermax=10000;
 
-NiggliReduction::NiggliReduction(const Eigen::Matrix3d& g, double epsilon)
+NiggliReduction::NiggliReduction(const Eigen::Matrix3d& g, double epsilon):
+    _g(g),
+    _epsilon(epsilon)
 {
-	_g=g;
 	if (epsilon<=0 || epsilon>1)
 		throw std::runtime_error("Niggli reduction: epsilon must be in the range ]0,1]");
 	// Multiply tolerance by approximate Unit-cell length

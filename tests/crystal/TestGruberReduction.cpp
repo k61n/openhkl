@@ -28,9 +28,9 @@ using namespace std;
 using namespace SX::Crystal;
 using namespace SX::Units;
 
-const double niggli_tolerance = 1e-12;
-const double gruber_tolerance = 1e-12;
-const double tolerance = 1e-12;
+const double niggli_tolerance = 1e-10;
+const double gruber_tolerance = 1e-4;
+const double tolerance = 1e-6;
 
 Eigen::Matrix3d random_orthogonal_matrix()
 {
@@ -115,7 +115,7 @@ int run_test()
         }
         catch(...) {
             //BOOST_FAIL("unknown space group");
-            std::cout << "unknown space grou: " << symbol << std::endl;
+            std::cout << "unknown space group: " << symbol << std::endl;
             continue; // unknown space group
         }
 
@@ -132,8 +132,11 @@ int run_test()
         // perform reduction using NiggliReduction class
         Eigen::Matrix3d niggli_g, niggli_P;
         NiggliReduction niggli(niggliCell.getMetricTensor(), niggli_tolerance);
-//        niggli.reduce(niggli_g, niggli_P);
-//        niggliCell.transform(niggli_P);
+        niggli.reduce(niggli_g, niggli_P);
+        niggliCell.transform(niggli_P);
+
+        // testing
+        // gruberCell.transform(niggli_P);
 
         // perform reduction using GruberReduction class
         Eigen::Matrix3d gruber_g, gruber_P;
@@ -154,13 +157,12 @@ int run_test()
 //        BOOST_CHECK_CLOSE(niggliCell.getBeta(), gruberCell.getBeta(), tolerance);
 //        BOOST_CHECK_CLOSE(niggliCell.getGamma(), gruberCell.getGamma(), tolerance);
 
-        BOOST_CHECK_CLOSE(niggliCell.getA(), a, tolerance);
-        BOOST_CHECK_CLOSE(niggliCell.getB(), b, tolerance);
-        BOOST_CHECK_CLOSE(niggliCell.getC(), c, tolerance);
-        BOOST_CHECK_CLOSE(niggliCell.getAlpha(), alpha, tolerance);
-        BOOST_CHECK_CLOSE(niggliCell.getBeta(), beta, tolerance);
-        BOOST_CHECK_CLOSE(niggliCell.getGamma(), gamma, tolerance);
-
+        BOOST_CHECK_CLOSE(gruberCell.getA(), a, tolerance);
+        BOOST_CHECK_CLOSE(gruberCell.getB(), b, tolerance);
+        BOOST_CHECK_CLOSE(gruberCell.getC(), c, tolerance);
+        BOOST_CHECK_CLOSE(gruberCell.getAlpha(), alpha, tolerance);
+        BOOST_CHECK_CLOSE(gruberCell.getBeta(), beta, tolerance);
+        BOOST_CHECK_CLOSE(gruberCell.getGamma(), gamma, tolerance);
 
 
         std::cout << "Bravais type:" << gruberCell.getBravaisTypeSymbol()[0] << " expected " << bravais << std::endl;

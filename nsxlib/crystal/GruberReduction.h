@@ -42,7 +42,8 @@ public:
 	//!! Construct algorithm with the metric tensor of the Cell, and a tolerance
 	GruberReduction(const Eigen::Matrix3d& g, double epsilon);
 	//! Find the conventional cell and output transformation matrix, centring type and Bravais lattice of the new cell.
-	void reduce(Eigen::Matrix3d& P, LatticeCentring& CentringType, BravaisType& bravais);
+    //! Return value is the condition which matched (1-44)
+    int reduce(Eigen::Matrix3d& P, LatticeCentring& CentringType, BravaisType& bravais);
 private:
 	bool equal(double A,double B) const;
 	Eigen::Matrix3d _g;
