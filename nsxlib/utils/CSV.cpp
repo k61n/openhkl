@@ -47,7 +47,7 @@ CSV::~CSV()
 
 std::vector<std::string> CSV::getRow(std::istream &stream)
 {
-    char delim('a');
+    char delim(0);
     const char eof = std::char_traits<char>::eof();
     std::vector<std::string> row;
 
@@ -119,7 +119,11 @@ std::string CSV::getToken(std::istream &stream, char &delim)
     if (stream.eof())
         curr = eof;
 
+
     delim = curr; // write this so caller knows if token ended by delim, newline, or eof
+
+        std::cout << "####" << tok << "####" << (int)delim << std::endl;
+
     return tok;
 }
 

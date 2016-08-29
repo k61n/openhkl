@@ -28,9 +28,8 @@ private slots:
     void selectPeaks();
     void on_comboBox_diffractometer_currentIndexChanged(const QString& diffractometerName);
 
-    void on_actionShow_calculated_peak_positions_triggered();
-
-    void on_actionShow_calculated_peak_positions_triggered(bool checked);
+    // void on_actionShow_calculated_peak_positions_triggered();
+    // void on_actionShow_calculated_peak_positions_triggered(bool checked);
 
 private:
     Ui::MainWindow *ui;

@@ -50,6 +50,16 @@ int run_test()
 
         BOOST_CHECK(row.size() == 8);
 
+        if (row.size() != 8) {
+            std::cout << "CSV READ ERROR ROW " << num_rows << std::endl;
+            std::cout << "    ";
+
+            for (auto&& item: row)
+                std::cout << item << "#### ";
+
+            std::cout << std::endl;
+        }
+
         string sg, sgHall;
 
         sg = table->getReducedSymbol(row[0]);
