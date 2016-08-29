@@ -22,7 +22,7 @@ SpaceGroup::SpaceGroup(const std::string& symbol)
 	_symbol = sg->getReducedSymbol(symbol);
 
 	if (!sg->getGenerators(_symbol,_generators))
-		throw SX::Kernel::Error<SpaceGroup>("Unknown space group.");
+        throw SX::Kernel::Error<SpaceGroup>("Unknown space group: " + _symbol + "(" + symbol + ")");
 	generateGroupElements();
 }
 
@@ -107,6 +107,14 @@ double SpaceGroup::fractionExtinct(std::vector<std::array<double, 3> > hkl)
     }
 
     return (double)extinct / (double)total;
+}
+
+std::string SpaceGroup::getBravaisTypeSymbol() const
+{
+    std::string bravais = "";
+    bravais += getBravaisType();
+    bravais += getSymbol()[0];
+    return bravais;
 }
 
 bool SpaceGroup::isCentrosymmetric() const

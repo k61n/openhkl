@@ -299,11 +299,39 @@ bool SpaceGroupSymbols::getGenerators(const std::string& spacegroup, std::string
 	return true;
 }
 
-std::string SpaceGroupSymbols::getReducedSymbol(const std::string& symbol)
+std::string SpaceGroupSymbols::getReducedSymbol(const std::string& symbol) const
 {
 	// This is the only get when the separate 1 has to be kept
-	if (symbol.compare("P 1")==0)
+    if (symbol == "P 1")
 		return symbol;
+    else if (symbol == "P 3 1 m")
+        return symbol;
+    else if (symbol == "P 3 m 1")
+        return symbol;
+    else if (symbol == "P -3 1 m")
+        return symbol;
+    else if (symbol == "P -3 m 1")
+        return symbol;
+    else if (symbol == "P 3 1 c")
+        return symbol;
+    else if (symbol == "P 3 c 1")
+        return symbol;
+    else if (symbol == "P -3 1 c")
+        return symbol;
+    else if (symbol == "P -3 c 1")
+        return symbol;
+    else if (symbol == "P 32 2 1")
+        return symbol;
+    else if (symbol == "P 32 1 2")
+        return symbol;
+    else if (symbol == "P 31 1 2")
+        return symbol;
+    else if (symbol == "P 31 2 1")
+        return symbol;
+    else if (symbol == "P 3 1 2")
+        return symbol;
+    else if (symbol == "P 3 2 1")
+        return symbol;
 
 	// Otherwise throw away every separate 1 to produce the short name for Bravais
 	// see https://en.wikipedia.org/wiki/List_of_space_groups
@@ -329,6 +357,15 @@ std::vector<std::string> SpaceGroupSymbols::getAllSymbols() const
 		symbols.push_back(value.first);
 	}
 	return symbols;
+}
+
+std::string SpaceGroupSymbols::getFullSymbol(const std::string& symbol) const
+{
+   auto symbols = getAllSymbols();
+
+   for(auto&& full_symbol: symbols)
+       if (getReducedSymbol(symbol) == getReducedSymbol(full_symbol))
+           return full_symbol;
 }
 
 

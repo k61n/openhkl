@@ -52,9 +52,7 @@ private:
     char _delim;
     char _quotchar;
 
-    std::string removePadding(const std::string& str); //!<< Remove leading and trailing whitespace
-    std::string getToken(std::istream& stream); //!<< Get next token
-    std::string skipWhitespace(std::istream& stream); //!<< Skip to first non-whitespace character
+    std::string getToken(std::istream& stream, char& delim); //!<< Get next token, write delimeter type
 };
 
 } // namespace Utils

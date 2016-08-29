@@ -53,6 +53,8 @@
 #include "SpaceGroupSymbols.h"
 #include "SpaceGroup.h"
 
+#include "SpaceGroupDialog.h"
+
 using std::vector;
 using SX::Data::IData;
 using std::shared_ptr;
@@ -591,75 +593,6 @@ void ExperimentTree::showPeaksOpenGL()
 
 void ExperimentTree::findSpaceGroup()
 {
-    // testing for now
-    using SX::Crystal::SpaceGroup;
-    using SX::Crystal::SpaceGroupSymbols;
-    using std::vector;
-    using std::string;
-    using std::map;
-    using std::array;
-    using SX::Crystal::Peak3D;
-    using std::tuple;
-
-    SpaceGroupSymbols* spaceGroupSymbols = SpaceGroupSymbols::Instance();
-
-    vector<SpaceGroup> groups;
-    vector<string> symbols = spaceGroupSymbols->getAllSymbols();
-
-    vector<array<double, 3>> hkls;
-
-    auto numors = getSelectedNumors();
-
-    if ( numors.size()  == 0) {
-        qDebug() << "Need at least one numor to find space group!";
-        return;
-    }
-
-    qDebug() << "Retrieving reflection list for space group calculation...";
-
-    for (auto& numor: numors) {
-        auto peaks = numor->getPeaks();
-
-        for ( Peak3D* peak : peaks) {
-            Eigen::RowVector3d hkl = peak->getMillerIndices();
-            hkls.push_back(array<double, 3>{hkl[0], hkl[1], hkl[2]});
-        }
-    }
-
-    // todo: how to we handle multiple samples??
-    shared_ptr<Sample> sample = numors[0]->getDiffractometer()->getSample();
-
-    for (auto& symbol: symbols) {
-        SpaceGroup group = SpaceGroup(symbol);
-
-        // space group not compatible with bravais type
-        // todo: what about multiple crystals??
-        if (group.getBravaisType() != sample->getUnitCell(0)->getBravaisTypeSymbol()[0])
-            continue;
-
-        if ( group.fractionExtinct(hkls) > 0.0)
-            continue;
-
-        // group is compatible with observed reflections, so add it to list
-        groups.push_back(group);
-
-    }
-
-    auto compare_fn = [](const SpaceGroup& a, const SpaceGroup& b) -> bool
-    {
-        return a.getGenerators().size() > b.getGenerators().size();
-    };
-
-    std::sort(groups.begin(), groups.end(), compare_fn);
-
-    qDebug() << "FOUND MATCHES:";
-
-    for (auto&& grp: groups) {
-        qDebug() << grp.getSymbol().c_str() << " " << grp.getGroupElements().size() << " " << grp.getBravaisType();
-    }
-
-    // set compatible group with highest symmetry
-    sample->getUnitCell(0)->setSpaceGroup(groups.front().getSymbol());
-
-    qDebug() << "Space group has been set to " << groups.front().getSymbol();
+    SpaceGroupDialog* dialog = new SpaceGroupDialog(getSelectedNumors(), this);
+    dialog->exec();
 }

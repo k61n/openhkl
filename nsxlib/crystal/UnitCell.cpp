@@ -317,6 +317,8 @@ std::vector<Eigen::Vector3d> UnitCell::generateReflectionsInSphere(double dstarm
 
 	hkls.reserve(deltah*deltak*deltal);
 
+    SX::Crystal::SpaceGroup group(getSpaceGroup());
+
 	// Iterate over the cuve and insert element in the map if dstar is not exceeded
 	for (int h=-hmax;h<=hmax;++h)
 	{
@@ -324,6 +326,11 @@ std::vector<Eigen::Vector3d> UnitCell::generateReflectionsInSphere(double dstarm
 		{
 			for (int l=-lmax;l<=lmax;++l)
 			{
+                // jmf added 29.08.2016
+                // skip those HKL which are forbidden by the space group??
+                if (group.isExtinct(h, k, l))
+                    continue;
+
 				Eigen::Vector3d hkl(h,k,l);
 				auto q=toReciprocalStandard(hkl);
 				double norm=q.norm();

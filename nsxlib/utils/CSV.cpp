@@ -29,3 +29,101 @@
  */
 
 #include "CSV.h"
+
+namespace SX {
+
+namespace Utils {
+
+
+CSV::CSV(char delim, char quotchar): _delim(delim), _quotchar(quotchar)
+{
+
+}
+
+CSV::~CSV()
+{
+
+}
+
+std::vector<std::string> CSV::getRow(std::istream &stream)
+{
+    char delim('a');
+    const char eof = std::char_traits<char>::eof();
+    std::vector<std::string> row;
+
+    while(delim != '\n' && delim != eof)
+        row.push_back(getToken(stream, delim));
+
+    return row;
+}
+
+std::string CSV::getToken(std::istream &stream, char &delim)
+{
+    std::string tok("");
+    char curr, prev, eof, n1, n2;
+    bool in_string(false);
+    bool in_tok(false);
+    bool done(false);
+
+    eof = std::char_traits<char>::eof();
+
+    while(!done && !stream.eof()) {
+        stream.get(curr);
+
+        // skip leading whitespace
+        if(!in_tok && std::iswspace(curr))
+            continue;
+
+        // by this point, we are reading a token
+        in_tok = true;
+
+        if (curr == eof) {
+            done = true;
+            continue;
+        }
+
+        if (!in_string) {
+            if ( (curr == _delim) || (curr == '\n')) {
+                done = true;
+                continue;
+            }
+            if (curr == _quotchar)
+                in_string = true;
+        }
+        else {
+            // check whether we are at end of string, or a quoted '"'
+            if ( curr == _quotchar) {
+                // check for triple quote
+                int pos = stream.tellg();
+                stream.get(n1);
+                stream.get(n2);
+
+                if ( (n1 == _quotchar) && (n2 == _quotchar)) {
+                    tok += _quotchar;
+                    tok += _quotchar;
+                    tok += _quotchar;
+                    prev = curr;
+                    continue;
+                }
+                else {
+                    in_string = false;
+                    stream.seekg(pos, std::ios_base::beg);
+                }
+            }
+        }
+
+        tok += curr;
+        prev = curr;
+    }
+
+    if (stream.eof())
+        curr = eof;
+
+    delim = curr; // write this so caller knows if token ended by delim, newline, or eof
+    return tok;
+}
+
+
+} // namespace Utils
+
+} // namespace SX

@@ -74,6 +74,8 @@ public:
 	char getBravaisType() const;
     //! Return the percentage of extinct reflections
     double fractionExtinct(std::vector<std::array<double, 3>> hkl);
+    //! Return the Bravais type symbol
+    std::string getBravaisTypeSymbol() const;
 private:
 
 	void generateGroupElements();
