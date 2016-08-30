@@ -56,6 +56,7 @@ public slots:
     void absorptionCorrection();
     void showPeaksOpenGL();
     void findSpaceGroup();
+    void findEquivalences();
 
 private:
 

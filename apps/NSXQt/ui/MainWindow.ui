@@ -1336,6 +1336,7 @@ border-radius: 4px;
     <addaction name="menuSet_View"/>
     <addaction name="menuPeak"/>
     <addaction name="actionFind_space_group"/>
+    <addaction name="actionFind_equivalences"/>
    </widget>
    <widget class="QMenu" name="menuChemistry">
     <property name="title">
@@ -1707,6 +1708,11 @@ QDockWidget::title {
   <action name="actionFind_space_group">
    <property name="text">
     <string>Find space group</string>
+   </property>
+  </action>
+  <action name="actionFind_equivalences">
+   <property name="text">
+    <string>Find equivalences</string>
    </property>
   </action>
  </widget>

@@ -62,6 +62,7 @@ public:
 signals:
     void plotDetectorData(SX::Data::IData*,int frame);
     void findSpaceGroup();
+    void findEquivalences();
 private slots:
 //    void on_action_open_triggered();
 
@@ -84,6 +85,8 @@ private slots:
     void on_checkBox_AspectRatio_toggled(bool checked);
     void on_actionConvolution_Filter_triggered();
     void on_actionFind_space_group_triggered();
+
+    void on_actionFind_equivalences_triggered();
 
 public slots:
     void changeData(std::shared_ptr<SX::Data::IData>);

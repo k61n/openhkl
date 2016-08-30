@@ -597,3 +597,55 @@ void ExperimentTree::findSpaceGroup()
     dialog->exec();
     // update the space group elsewhere
 }
+
+void ExperimentTree::findEquivalences()
+{
+    qDebug() << "Finding peak equivalences...";
+
+    std::vector<std::shared_ptr<IData>> numors = getSelectedNumors();
+    std::vector<std::vector<Peak3D*>> peak_equivs;
+
+    std::shared_ptr<UnitCell> unit_cell;
+    std::unique_ptr<SpaceGroup> grp;
+
+    for (std::shared_ptr<IData> numor: numors) {
+        std::set<Peak3D*> peaks = numor->getPeaks();
+        for (Peak3D* peak: peaks ) {
+            bool found_equivalence = false;
+
+            if ( !unit_cell) {
+                unit_cell = peak->getUnitCell();
+                qDebug() << "Space group has "
+                         << SpaceGroup(unit_cell->getSpaceGroup()).getGenerators().size()
+                         << " generators";
+            }
+
+            unsigned int h1, h2, k1, k2, l1, l2;
+
+            Eigen::RowVector3d hkl = peak->getMillerIndices();
+            h1 = std::lrint(hkl(0));
+            k1 = std::lrint(hkl(1));
+            l1 = std::lrint(hkl(2));
+
+            for (int i = 0; i < peak_equivs.size() && !found_equivalence; ++i) {
+                hkl = peak_equivs[i][0]->getMillerIndices();
+                h2 = std::lrint(hkl(0));
+                k2 = std::lrint(hkl(1));
+                l2 = std::lrint(hkl(2));
+
+                if ( unit_cell->isEquivalent(h1, k1, l1, h2, k2, l2)) {
+                    found_equivalence = true;
+                    peak_equivs[i].push_back(peak);
+                    continue;
+                }
+            }
+
+            // didn't find an equivalence?
+            if ( !found_equivalence) {
+                peak_equivs.push_back(std::vector<Peak3D*>{peak});
+            }
+        }
+    }
+
+    qDebug() << "Found " << peak_equivs.size() << " equivalence classes of peaks";
+}

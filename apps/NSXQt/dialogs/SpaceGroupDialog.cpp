@@ -128,7 +128,7 @@ void SpaceGroupDialog::evaluateSpaceGroups()
         SX::Crystal::SpaceGroup grp_a(a.first), grp_b(b.first);
 
         // sort by size
-        return grp_a.getGenerators().size() > grp_b.getGenerators().size();
+        return grp_a.getGroupElements().size() > grp_b.getGroupElements().size();
     };
 
     std::sort(_groups.begin(), _groups.end(), compare_fn);
@@ -162,7 +162,7 @@ void SpaceGroupDialog::buildTable()
 
         QStandardItem* col0 = new QStandardItem(symbol.c_str());
         QStandardItem* col1 = new QStandardItem(grp.getBravaisTypeSymbol().c_str());
-        QStandardItem* col2 = new QStandardItem(to_string(grp.getGenerators().size()).c_str());
+        QStandardItem* col2 = new QStandardItem(to_string(grp.getGroupElements().size()).c_str());
         QStandardItem* col3 = new QStandardItem(to_string((int)agreement).c_str());
 
         model->setItem(row,0,col0);

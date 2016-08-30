@@ -135,6 +135,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(_ui->action_open,SIGNAL(triggered()),_ui->experimentTree,SLOT(createNewExperiment()));
 
     connect(this, SIGNAL(findSpaceGroup(void)), _ui->experimentTree, SLOT(findSpaceGroup()));
+    connect(this, SIGNAL(findEquivalences(void)), _ui->experimentTree, SLOT(findEquivalences()));
 
     _ui->plotterDockWidget->show();
     _ui->dockWidget_Property->show();
@@ -428,4 +429,9 @@ void MainWindow::on_actionConvolution_Filter_triggered()
 void MainWindow::on_actionFind_space_group_triggered()
 {
     emit findSpaceGroup();
+}
+
+void MainWindow::on_actionFind_equivalences_triggered()
+{
+    emit findEquivalences();
 }
