@@ -95,6 +95,7 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
     //
     _solutions.clear();
     _solutions.reserve(50);
+    buildSolutionsTable(); // clear the table
     // Store Q vectors at rest
     std::vector<Eigen::Vector3d> qvects;
     qvects.reserve(npeaks);
@@ -177,18 +178,21 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
                         Eigen::Matrix3d newg,P;
                         niggli.reduce(newg,P);
                         cell.transform(P);
-                        if (!ui->checkBox_NiggliOnly->isChecked())
-                        {
-                            double tolerance = ui->gruberSpinBox->value();
 
-                            GruberReduction gruber(cell.getMetricTensor(), tolerance);
-                            SX::Crystal::LatticeCentring c;
-                            SX::Crystal::BravaisType b;
-                            gruber.reduce(P,c,b);
-                            cell.setLatticeCentring(c);
-                            cell.setBravaisType(b);
+                        // use GruberReduction::reduce to get Bravais type
+                        tolerance = ui->gruberSpinBox->value();
+                        GruberReduction gruber(cell.getMetricTensor(), tolerance);
+                        SX::Crystal::LatticeCentring c;
+                        SX::Crystal::BravaisType b;
+                        gruber.reduce(P,c,b);
+                        cell.setLatticeCentring(c);
+                        cell.setBravaisType(b);
+
+                        if (!ui->checkBox_NiggliOnly->isChecked())
+                        {                            
                             cell.transform(P);
                         }
+
                         double score=0.0;
                         double maxscore=0.0;
                         for (auto peak : _peaks)

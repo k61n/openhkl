@@ -29,7 +29,8 @@ using namespace std;
 using namespace SX::Crystal;
 using namespace SX::Units;
 
-const double gruber_tolerance = 1e-2;
+const double gruber_tolerance = 1e-4;
+const double niggli_tolerance = 1e-4;
 const double tolerance = 1e-6;
 
 Eigen::Matrix3d random_orthogonal_matrix()
@@ -77,10 +78,10 @@ int run_test()
     double A, B, C, D, E, F;
 
     A = 32.3232323232;
-    B = 23.23232323;
+    B = 43.23232323;
     C = 35.35353535;
     D = 10.10101010;
-    E = 15.15151515;
+    E = 5.15151515;
     F = 8.8888888;
 
     // scaling factor for a couple of special cases
@@ -123,7 +124,7 @@ int run_test()
         {"hP", {A, B, B, -B/2, 0, 0}},   // condition 22
         {"oC", {A, B, B, D, 0, 0}},   // condition 23
         {"hR", {A, B, B, -D*s[24], -A/3, -A/3}},   // condition 24
-        {"mC", {A, B, B, -D, -E, -E}},   // condition 25
+        {"mC", {A, B, B, -D, E, E}},   // condition 25
         {"oF", {A, B, C, A/4, A/2, A/2}},   // condition 26
         {"mC", {A, B, C, D, A/2, A/2}},   // condition 27
         {"mC", {A, B, C, D, A/2, 2*D}},   // condition 28
@@ -149,30 +150,38 @@ int run_test()
 
     for (auto&& test_case: test_cases) {
         std::default_random_engine generator;
-        std::uniform_real_distribution<double> distribution(-0.001*gruber_tolerance, 0.001*gruber_tolerance);
+        std::uniform_real_distribution<double> distribution(-0.1*gruber_tolerance, 0.1*gruber_tolerance);
 
         string expected_bravais(test_case.first);
-        vector<double> a(test_case.second);
+        vector<double> p(test_case.second);
 
         for ( int i = 0; i < 10; ++i) {
+            double a, b, c, alpha, beta, gamma;
+            double A, B, C, D, E, F;
 
-            UnitCell cell;
+            A = p[0]+distribution(generator);
+            B = p[1]+distribution(generator);
+            C = p[2]+distribution(generator);
+            D = p[3]+distribution(generator);
+            E = p[4]+distribution(generator);
+            F = p[5]+distribution(generator);
 
-            Eigen::Matrix3d G;
+            a = std::sqrt(A);
+            b = std::sqrt(B);
+            c = std::sqrt(C);
+            alpha = std::acos(D / b / c);
+            beta = std::acos(E / a / c);
+            gamma = std::acos(F / a / b);
 
-            G(1,0) = G(2,0) = G(2,1) = 0;
-
-            G(0,0) = a[0]+distribution(generator); // A
-            G(1,1) = a[1]+distribution(generator); // B
-            G(2,2) = a[2]+distribution(generator); // C
-            G(1,2) = a[3]+distribution(generator); // D
-            G(0,2) = a[4]+distribution(generator); // E
-            G(0,1) = a[5]+distribution(generator); // F
+            UnitCell cell(a, b, c, alpha, beta, gamma);
+            Eigen::Matrix3d G = cell.getMetricTensor();
 
             // G = 0.5 * (G + G.transpose());
             double det = G.determinant();
 
-            Eigen::Matrix3d P;
+            Eigen::Matrix3d P, NG, NP;
+
+            NG = G;
 
             GruberReduction gruber(G, gruber_tolerance);
             BravaisType bravais_type;
@@ -182,10 +191,19 @@ int run_test()
             cell.setBravaisType(bravais_type);
             cell.setLatticeCentring(centering);
 
+            cell.transform(P);
+
             cout << "test case " << condition << " match: " << match << endl;
+
+            if ( condition != match) {
+                cout << "error" << endl;
+            }
 
             BOOST_CHECK(match == condition);
             BOOST_CHECK(cell.getBravaisTypeSymbol() == expected_bravais);
+
+            NiggliReduction niggli(G, niggli_tolerance);
+            niggli.reduce(NG, NP);
         }
         ++condition;
     }

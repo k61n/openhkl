@@ -105,11 +105,11 @@ void SpaceGroupDialog::evaluateSpaceGroups()
 
         // space group not compatible with bravais type
         // todo: what about multiple crystals??
-//        if (group.getBravaisTypeSymbol() != bravais)
-//            continue;
+        if (group.getBravaisTypeSymbol() != bravais)
+            continue;
 
-//        if ( group.fractionExtinct(hkls) > 0.0)
-//            continue;
+        if ( group.fractionExtinct(hkls) > 0.0)
+            continue;
 
         // group is compatible with observed reflections, so add it to list
         _groups.push_back(make_pair(symbol, 100.0*(1-group.fractionExtinct(hkls))));
@@ -163,7 +163,7 @@ void SpaceGroupDialog::buildTable()
         QStandardItem* col0 = new QStandardItem(symbol.c_str());
         QStandardItem* col1 = new QStandardItem(grp.getBravaisTypeSymbol().c_str());
         QStandardItem* col2 = new QStandardItem(to_string(grp.getGenerators().size()).c_str());
-        QStandardItem* col3 = new QStandardItem(to_string(agreement).c_str());
+        QStandardItem* col3 = new QStandardItem(to_string((int)agreement).c_str());
 
         model->setItem(row,0,col0);
         model->setItem(row,1,col1);
