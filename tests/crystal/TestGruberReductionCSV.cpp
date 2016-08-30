@@ -39,6 +39,9 @@ const double tolerance = 1e-4;
 int run_test()
 {
     using vectord = vector<double>;
+    ofstream outfile;
+
+    outfile.open("output.tsv", fstream::out);
 
     vector<int> failures(45, 0);
     vector<int> counts(45, 0);
@@ -103,6 +106,7 @@ int run_test()
         NiggliReduction niggli(niggliCell.getMetricTensor(), niggli_tolerance);
         niggli.reduce(niggli_g, niggli_P);
         niggliCell.transform(niggli_P);
+        gruberCell.transform(niggli_P);
 
         // testing
         // gruberCell.transform(niggli_P);
@@ -128,8 +132,8 @@ int run_test()
 
         gruberCell.setBravaisType(bravaisType);
         gruberCell.setLatticeCentring(centering);
-        gruberCell.transform(gruber_P);
-        gruber_g = gruberCell.getMetricTensor();
+        //gruberCell.transform(gruber_P);
+        //gruber_g = gruberCell.getMetricTensor();
 
         // check agreement between niggli and gruber
 //        BOOST_CHECK_CLOSE(niggliCell.getA(), gruberCell.getA(), tolerance);
@@ -146,18 +150,27 @@ int run_test()
                   << condition << " "
                   << correct*100.0/total << std::endl;
 
-        if ( gruberCell.getBravaisTypeSymbol() == bravais)
+        if ( gruberCell.getBravaisTypeSymbol() == bravais) {
             ++correct;
+            outfile << row[0] << '\t'
+                    << row[1] << '\t'
+                    << row[2] << '\t'
+                    << row[3] << '\t'
+                    << row[4] << '\t'
+                    << row[5] << '\t'
+                    << row[6] << '\t'
+                    << row[7] << '\n';
+        }
         else {
             ++failures[condition];
         }
 
-        BOOST_CHECK_CLOSE(gruberCell.getA(), a, tolerance);
-        BOOST_CHECK_CLOSE(gruberCell.getB(), b, tolerance);
-        BOOST_CHECK_CLOSE(gruberCell.getC(), c, tolerance);
-        BOOST_CHECK_CLOSE(gruberCell.getAlpha(), alpha, tolerance);
-        BOOST_CHECK_CLOSE(gruberCell.getBeta(), beta, tolerance);
-        BOOST_CHECK_CLOSE(gruberCell.getGamma(), gamma, tolerance);
+//        BOOST_CHECK_CLOSE(gruberCell.getA(), a, tolerance);
+//        BOOST_CHECK_CLOSE(gruberCell.getB(), b, tolerance);
+//        BOOST_CHECK_CLOSE(gruberCell.getC(), c, tolerance);
+//        BOOST_CHECK_CLOSE(gruberCell.getAlpha(), alpha, tolerance);
+//        BOOST_CHECK_CLOSE(gruberCell.getBeta(), beta, tolerance);
+//        BOOST_CHECK_CLOSE(gruberCell.getGamma(), gamma, tolerance);
         BOOST_CHECK(gruberCell.getBravaisTypeSymbol()[0] == bravais[0]);
         BOOST_CHECK(gruberCell.getBravaisTypeSymbol()[1] == bravais[1]);
     }
