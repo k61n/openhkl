@@ -60,7 +60,7 @@ UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *par
         ui->comboBox->addItem(QString::fromStdString(symbol));
     }
 
-    ui->comboBox->setCurrentText("");
+    ui->comboBox->setCurrentText(_unitCellItem->getCell()->getSpaceGroup().c_str());
 
     QSortFilterProxyModel* proxyModel = new QSortFilterProxyModel(this);
     proxyModel->setSourceModel(ui->comboBox->model());

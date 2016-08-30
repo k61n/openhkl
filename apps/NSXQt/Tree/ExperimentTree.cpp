@@ -595,4 +595,5 @@ void ExperimentTree::findSpaceGroup()
 {
     SpaceGroupDialog* dialog = new SpaceGroupDialog(getSelectedNumors(), this);
     dialog->exec();
+    // update the space group elsewhere
 }
