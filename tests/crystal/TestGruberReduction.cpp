@@ -24,37 +24,24 @@
 #include <fstream>
 #include <random>
 
+#include "CSV.h"
+
 using namespace std;
 using namespace SX::Crystal;
 using namespace SX::Units;
+using namespace SX::Utils;
 
-const double niggli_tolerance = 1e-10;
-const double gruber_tolerance = 1e-4;
-const double tolerance = 1e-6;
-
-Eigen::Matrix3d random_orthogonal_matrix()
-{
-    std::default_random_engine generator;
-    std::uniform_real_distribution<double> distribution(-1.0,1.0);
-
-
-    Eigen::Matrix3d A;
-
-    for (unsigned int i = 0; i < 3; ++i)
-        for ( unsigned int j = 0; j < 3; ++j)
-            A(i, j) = distribution(generator);
-
-    Eigen::HouseholderQR<Eigen::Matrix3d> QR(A);
-
-    return QR.householderQ();
-}
+const double niggli_tolerance = 1e-9;
+const double gruber_tolerance = 1e-6;
+const double tolerance = 1e-4;
 
 int run_test()
 {
     using vectord = vector<double>;
 
     ifstream database;
-    database.open("crystal_database.csv", fstream::in);
+    database.open("crystallography.tsv", fstream::in);
+    CSV csv_reader('\t', '#');
 
     BOOST_CHECK(database.is_open());
 
@@ -63,55 +50,27 @@ int run_test()
     total = 0;
     correct = 0;
 
-
-    vector<char> buffer(1024, 0);
-    vector<pair<string, vector<double>>> lattices;
-
     string symbol;
     double a, b, c, alpha, beta, gamma;
 
     while ( !database.eof()) {
+        vector<string> row =  csv_reader.getRow(database);
 
-        database.getline(&buffer[0], 1024);
-
-        char* ptr = strtok(&buffer[0], ",");
-
-        // maybe we reached the end of the CSV file
-        if ( ptr == nullptr && database.eof())
+        if ( row.size() < 8)
             continue;
 
-        BOOST_CHECK(ptr != nullptr);
-        symbol = string(ptr);
+        symbol = row[0];
+        a = atof(row[2].c_str());
+        b = atof(row[3].c_str());
+        c = atof(row[4].c_str());
+        alpha = atof(row[5].c_str()) * deg;
+        beta = atof(row[6].c_str()) * deg;
+        gamma = atof(row[7].c_str()) * deg;
 
-        ptr = strtok(nullptr, ",");
-        BOOST_CHECK(ptr != nullptr);
-        a = atof(ptr);
-
-        ptr = strtok(nullptr, ",");
-        BOOST_CHECK(ptr != nullptr);
-
-        b = atof(ptr);
-        ptr = strtok(nullptr, ",");
-        BOOST_CHECK(ptr != nullptr);
-        c = atof(ptr);
-
-        ptr = strtok(nullptr, ",");
-        BOOST_CHECK(ptr != nullptr);
-        alpha = atof(ptr) * deg;
-
-        ptr = strtok(nullptr, ",");
-        BOOST_CHECK(ptr != nullptr);
-        beta = atof(ptr) * deg;
-
-        ptr = strtok(nullptr, ",");
-        BOOST_CHECK(ptr != nullptr);
-        gamma = atof(ptr) * deg;
-
-        char bravais;
+        std::string bravais;
 
         try {
-
-            bravais = SpaceGroup(symbol).getBravaisType();
+            bravais = SpaceGroup(symbol).getBravaisTypeSymbol();
         }
         catch(...) {
             //BOOST_FAIL("unknown space group");
@@ -125,7 +84,7 @@ int run_test()
         UnitCell gruberCell(a, b, c, alpha, beta, gamma);
 
         // randomly transform the cell so that it is not in a normal form
-        Eigen::Matrix3d P = random_orthogonal_matrix();
+        //Eigen::Matrix3d P = random_orthogonal_matrix();
         //niggliCell.transform(P);
         //gruberCell.transform(P);
 
@@ -143,7 +102,15 @@ int run_test()
         LatticeCentring centering;
         BravaisType bravaisType;
         GruberReduction gruber(gruberCell.getMetricTensor(), gruber_tolerance);
-        gruber.reduce(gruber_P, centering, bravaisType);
+
+        try {
+           gruber.reduce(gruber_P, centering, bravaisType);
+        }
+        catch (std::exception& e) {
+            BOOST_CHECK(false);
+            std::cout << e.what() << std::endl;
+        }
+
         gruberCell.setBravaisType(bravaisType);
         gruberCell.setLatticeCentring(centering);
         gruberCell.transform(gruber_P);
@@ -157,7 +124,17 @@ int run_test()
 //        BOOST_CHECK_CLOSE(niggliCell.getBeta(), gruberCell.getBeta(), tolerance);
 //        BOOST_CHECK_CLOSE(niggliCell.getGamma(), gruberCell.getGamma(), tolerance);
 
-        std::cout << a << " " << b << " " << c << " " << alpha << " " << beta << " " << gamma << std::endl;
+        std::cout << symbol << " "
+                  << a << " " << b << " " << c << " "
+                  << alpha/deg << " " << beta/deg << " " << gamma/deg << " "
+                  << bravais << " " << gruberCell.getBravaisTypeSymbol() << " "
+                  << correct*100.0/total << std::endl;
+
+        if ( gruberCell.getBravaisTypeSymbol() == bravais)
+            ++correct;
+        else {
+
+        }
 
         BOOST_CHECK_CLOSE(gruberCell.getA(), a, tolerance);
         BOOST_CHECK_CLOSE(gruberCell.getB(), b, tolerance);
@@ -165,12 +142,7 @@ int run_test()
         BOOST_CHECK_CLOSE(gruberCell.getAlpha(), alpha, tolerance);
         BOOST_CHECK_CLOSE(gruberCell.getBeta(), beta, tolerance);
         BOOST_CHECK_CLOSE(gruberCell.getGamma(), gamma, tolerance);
-
-        if ( gruberCell.getBravaisTypeSymbol()[0] == bravais)
-            ++correct;
-        else
-            std::cout << "incorrect bravais type" << endl;
-
+        BOOST_CHECK(gruberCell.getBravaisTypeSymbol() == bravais);
     }
 
     std::cout<< correct * 100.0 / total << "% correct out of " << total << " total" << std::endl;

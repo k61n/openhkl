@@ -14,11 +14,11 @@ using namespace SX::Utils;
 
 int run_test() {
     std::string csv_file =
-            ",,,r\n"
-            "a, b, c, d\n"
-            "e, f, g, h\n"
-            "1, 2, 3, 4\n"
-            "\"as,df\", \"\"\",d,e";
+        //    ",,,\n"
+        //    "a, b, c, d\n"
+        //    "e, f, g, h\n"
+        //    "1, 2, 3, 4\n"
+            "\"\", \"\"\"\"\", \"as,df\", \" \"\"\" \"";
 
     std::istringstream stream(csv_file);
 

@@ -30,6 +30,8 @@
 
 #include "CSV.h"
 
+#include <cassert>
+
 namespace SX {
 
 namespace Utils {
@@ -62,20 +64,18 @@ std::string CSV::getToken(std::istream &stream, char &delim)
     std::string tok("");
     char curr, prev, eof, n1, n2;
     bool in_string(false);
-    bool in_tok(false);
     bool done(false);
-
     eof = std::char_traits<char>::eof();
 
+    int pos = stream.tellg();
+    stream.seekg(0, std::ios_base::end);
+    int size = stream.tellg();
+    stream.seekg(pos-size, std::ios_base::end);
+    assert(pos == stream.tellg());
+
     while(!done && !stream.eof()) {
+        curr = eof;
         stream.get(curr);
-
-        // skip leading whitespace
-        if(!in_tok && std::iswspace(curr))
-            continue;
-
-        // by this point, we are reading a token
-        in_tok = true;
 
         if (curr == eof) {
             done = true;
@@ -93,21 +93,28 @@ std::string CSV::getToken(std::istream &stream, char &delim)
         else {
             // check whether we are at end of string, or a quoted '"'
             if ( curr == _quotchar) {
-                // check for triple quote
-                int pos = stream.tellg();
-                stream.get(n1);
-                stream.get(n2);
+                pos = stream.tellg();
 
-                if ( (n1 == _quotchar) && (n2 == _quotchar)) {
-                    tok += _quotchar;
-                    tok += _quotchar;
-                    tok += _quotchar;
-                    prev = curr;
-                    continue;
-                }
-                else {
+                // reached end of file
+                if (size-pos < 2) {
                     in_string = false;
-                    stream.seekg(pos, std::ios_base::beg);
+                }
+                // else check for triple quote
+                else {
+                    stream.get(n1);
+                    stream.get(n2);
+
+                    if ( (n1 == _quotchar) && (n2 == _quotchar)) {
+                        tok += _quotchar;
+                        tok += _quotchar;
+                        tok += _quotchar;
+                        prev = curr;
+                        continue;
+                    } else {
+                        in_string = false;
+                        stream.seekg(pos);
+                        assert(pos == stream.tellg());
+                    }
                 }
             }
         }
@@ -122,7 +129,7 @@ std::string CSV::getToken(std::istream &stream, char &delim)
 
     delim = curr; // write this so caller knows if token ended by delim, newline, or eof
 
-        std::cout << "####" << tok << "####" << (int)delim << std::endl;
+    // std::cout << "####" << tok << "####" << (int)delim << std::endl;
 
     return tok;
 }
