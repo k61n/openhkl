@@ -195,9 +195,11 @@ bool SpaceGroup::isExtinct(double h, double k, double l) const
 	{
 		if (element.hasTranslation())
 		{
-			Eigen::Vector3d t=element.getTranslationPart();
+            Eigen::Vector3d t = element.getTranslationPart();
 			double scalar=t.dot(hkl);
-			if (std::abs(std::remainder(scalar,1.0))>1e-3)
+            std::complex<double> prefactor = 1.0-std::exp(std::complex<double>(0,2*M_PI)*scalar);
+            if (std::abs(scalar)>1e-3)
+            //if (std::abs(std::remainder(scalar,1.0))>1e-3)
 			{
 				Eigen::Vector3d rhkl=element.getRotationPart()*hkl;
 				if (std::abs(rhkl(0)-hkl(0))<1e-3 && std::abs(rhkl(1)-hkl(1))<1e-3 && std::abs(rhkl(2)-hkl(2))<1e-3)
