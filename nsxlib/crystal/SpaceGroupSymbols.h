@@ -44,11 +44,13 @@ namespace Crystal
 class SpaceGroupSymbols: public SX::Kernel::Singleton<SpaceGroupSymbols,SX::Kernel::Constructor,SX::Kernel::Destructor>
 {
 public:
+    SpaceGroupSymbols();
 	void addSpaceGroup(const std::string& spaceGroup, const std::string& generators);
 	bool getGenerators(const std::string& spaceGroup,std::string& generators);
     std::string getReducedSymbol(const std::string& symbol) const;
 	std::vector<std::string> getAllSymbols() const;
     std::string getFullSymbol(const std::string& symbol) const;
+    int getID(const std::string& symbol) const;
 private:
 	//! Store pairs of Space group symbols and generators.
 	static std::unordered_map<std::string,std::string> _spaceGroupTables;

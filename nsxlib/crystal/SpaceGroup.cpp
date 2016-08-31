@@ -117,6 +117,13 @@ std::string SpaceGroup::getBravaisTypeSymbol() const
     return bravais;
 }
 
+int SpaceGroup::getID() const
+{
+    SpaceGroupSymbols* sg = SpaceGroupSymbols::Instance();
+    std::string full_symbol = sg->getFullSymbol(_symbol);
+    return sg->getID(full_symbol);
+}
+
 bool SpaceGroup::isCentrosymmetric() const
 {
 	for (const auto& g : _groupElements)

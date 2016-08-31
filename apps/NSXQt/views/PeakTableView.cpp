@@ -386,10 +386,8 @@ void PeakTableView::writeShelX()
         return;
     }
 
-    for (const SX::Crystal::Peak3D& peak : _peaks)
-    {
-        if (peak.isSelected())
-        {
+    for (const SX::Crystal::Peak3D& peak : _peaks) {
+        if (peak.isSelected())  {
             const Eigen::RowVector3d& hkl=peak.getMillerIndices();
 
             file << std::fixed;
@@ -409,9 +407,9 @@ void PeakTableView::writeShelX()
 
             double l=peak.getLorentzFactor();
             double t=peak.getTransmission();
-            file << std::fixed << std::setw(8) << std::setprecision(2) << peak.getScaledIntensity()/l/t;
-            file << std::fixed << std::setw(8) << std::setprecision(2) << peak.getScaledSigma()/l/t <<std::endl;
-            }
+            file << std::fixed << std::setw(12) << std::setprecision(2) << peak.getScaledIntensity()/l/t;
+            file << std::fixed << std::setw(12) << std::setprecision(2) << peak.getScaledSigma()/l/t <<std::endl;
+        }
     }
     if (file.is_open())
         file.close();

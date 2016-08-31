@@ -127,6 +127,13 @@ const Eigen::RowVector3d& Peak3D::getMillerIndices() const
 	return _hkl;
 }
 
+Eigen::RowVector3i Peak3D::getIntegerMillerIndices() const
+{
+    Eigen::RowVector3i hkl;
+    hkl << std::lround(_hkl[0]), std::lround(_hkl[1]), std::lround(_hkl[2]);
+    return hkl;
+}
+
 void Peak3D::integrate()
 {
 	if (!_data)

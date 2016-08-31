@@ -255,16 +255,16 @@ BOOST_AUTO_TEST_CASE(Test_SpaceGroup)
 		BOOST_CHECK_EQUAL(sg.getGroupElements().size(),p.second);
 	}
 
-	// Test extinction conditions
-	SpaceGroup sg("F d -3 m");
-	BOOST_CHECK(sg.isExtinct(0,0,1));
-	BOOST_CHECK(sg.isExtinct(0,0,2));
-	BOOST_CHECK(sg.isExtinct(0,0,3));
-	BOOST_CHECK(!sg.isExtinct(0,0,4));
-	BOOST_CHECK(sg.isExtinct(1,1,2));
-	BOOST_CHECK(!sg.isExtinct(1,1,3));
-	BOOST_CHECK(sg.isExtinct(0,2,4));
-	BOOST_CHECK(!sg.isExtinct(0,2,6));
+    // Test extinction conditions
+    SpaceGroup sg("F d -3 m");
+    BOOST_CHECK(sg.isExtinct(0,0,1));
+    BOOST_CHECK(sg.isExtinct(0,0,2));
+    BOOST_CHECK(sg.isExtinct(0,0,3));
+    BOOST_CHECK(!sg.isExtinct(0,0,4));
+    BOOST_CHECK(sg.isExtinct(1,1,2));
+    BOOST_CHECK(!sg.isExtinct(1,1,3));
+    BOOST_CHECK(sg.isExtinct(0,2,4));
+    BOOST_CHECK(!sg.isExtinct(0,2,6));
 
 	// Test extinction conditions
 	SpaceGroup sg2("I 41/a");
@@ -312,4 +312,17 @@ BOOST_AUTO_TEST_CASE(Test_SpaceGroup)
 
 	SpaceGroup sg13("R -3 c");
 	BOOST_CHECK(sg13.getBravaisType()=='h');
+
+
+    // Test extinction conditions
+    SpaceGroup sg14("P 21 21 21");
+    BOOST_CHECK(sg14.isExtinct(2,0,0));
+    BOOST_CHECK(sg14.isExtinct(0,2,0));
+    BOOST_CHECK(sg14.isExtinct(0,0,2));
+
+    // Test extinction conditions
+    SpaceGroup sg15("P 2 2 21");
+    BOOST_CHECK(!sg15.isExtinct(2,0,0));
+    BOOST_CHECK(!sg15.isExtinct(0,2,0));
+    BOOST_CHECK(sg15.isExtinct(0,0,2));
 }

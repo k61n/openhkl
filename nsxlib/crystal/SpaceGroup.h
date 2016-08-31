@@ -76,6 +76,8 @@ public:
     double fractionExtinct(std::vector<std::array<double, 3>> hkl);
     //! Return the Bravais type symbol
     std::string getBravaisTypeSymbol() const;
+    //! Return the ID of the space group
+    int getID() const;
 private:
 
 	void generateGroupElements();

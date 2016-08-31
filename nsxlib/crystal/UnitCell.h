@@ -77,6 +77,9 @@ public:
 	//! Set lattice parameters
 	void setParams(double a, double b, double c, double alpha, double beta, double gamma);
 
+    //! Set lattice parmeters from ABCDEF
+    void setABCDEF(double A, double B, double C, double D, double E, double F);
+
 	//! Get A vector
 	Eigen::Vector3d getAVector() const;
 	//! Get B vector

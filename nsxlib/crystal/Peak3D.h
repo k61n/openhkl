@@ -84,6 +84,9 @@ public:
 	//! Get the Miller indices of the peak (double to allow integration of incommensurate peaks)
 	const Eigen::RowVector3d& getMillerIndices() const;
 
+    //! Get the integral Miller indices
+    Eigen::RowVector3i getIntegerMillerIndices() const;
+
 	//! Get kf vector in the frame of reference of the diffractometer
 	Eigen::RowVector3d getKf() const;
 

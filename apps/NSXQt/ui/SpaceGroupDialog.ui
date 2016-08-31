@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Space Group Finder</string>
+   <string>Compatible Space Groups</string>
   </property>
   <property name="modal">
    <bool>false</bool>

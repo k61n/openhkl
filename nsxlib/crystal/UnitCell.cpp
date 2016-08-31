@@ -109,7 +109,20 @@ void UnitCell::setParams(double a, double b, double c, double alpha, double beta
 	_A <<  a,b*cc,c*cb,
 		   0,b*sc,a32,
 		   0,0   ,a33;
-	_B=_A.inverse();
+    _B = _A.inverse();
+}
+
+void UnitCell::setABCDEF(double A, double B, double C, double D, double E, double F)
+{
+    double a, b, c, alpha, beta, gamma;
+    a = std::sqrt(A);
+    b = std::sqrt(B);
+    c = std::sqrt(C);
+    alpha = std::acos(D / b / c);
+    beta = std::acos(E / a / c);
+    gamma = std::acos(F / a / b);
+
+    setParams(a, b, c, alpha, beta, gamma);
 }
 
 Eigen::Vector3d UnitCell::getAVector() const
@@ -185,12 +198,12 @@ UnitCell::~UnitCell()
 
 void UnitCell::setLatticeCentring(LatticeCentring centring)
 {
-	_centring=centring;
+    _centring = centring;
 }
 
 void UnitCell::setBravaisType(BravaisType bravais)
 {
-	_bravaisType=bravais;
+    _bravaisType = bravais;
 }
 std::string UnitCell::getBravaisTypeSymbol() const
 {

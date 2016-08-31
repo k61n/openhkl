@@ -90,14 +90,29 @@ void SpaceGroupDialog::evaluateSpaceGroups()
         auto peaks = numor->getPeaks();
 
         for ( Peak3D* peak : peaks) {
-            Eigen::RowVector3d hkl = peak->getMillerIndices();
-            hkls.push_back(array<double, 3>{hkl[0], hkl[1], hkl[2]});
+            Eigen::RowVector3i hkl = peak->getIntegerMillerIndices();
+
+            if (peak->isSelected() && !peak->isMasked())
+                hkls.push_back(array<double, 3>{(double)hkl[0], (double)hkl[1], (double)hkl[2]});
         }
+    }
+
+    if (hkls.size() == 0) {
+        qDebug() << "Need to have indexed peaks in order to find space group!";
+        return;
     }
 
     // todo: how to we handle multiple samples??
     std::shared_ptr<SX::Instrument::Sample> sample = _numors[0]->getDiffractometer()->getSample();
+
+    if (!sample) {
+        qDebug() << "Need to have a sample in order to find space group!";
+        return;
+    }
+
     _groups.clear();
+
+    qDebug() << "Attempting to determine space group based on " << hkls.size() << " peaks";
 
     for (auto& symbol: symbols) {
         SpaceGroup group = SpaceGroup(symbol);
@@ -116,22 +131,22 @@ void SpaceGroupDialog::evaluateSpaceGroups()
 
     }
 
-    auto compare_fn = [](const pair<string, double>& a, const pair<string, double>& b) -> bool
-    {
-        // first sort by quality
-        if (a.second > b.second)
-            return true;
-        else if (a.second < b.second)
-            return false;
+//    auto compare_fn = [](const pair<string, double>& a, const pair<string, double>& b) -> bool
+//    {
+//        // first sort by quality
+//        if (a.second > b.second)
+//            return true;
+//        else if (a.second < b.second)
+//            return false;
 
-        // otherwise we sort by properties of the groups
-        SX::Crystal::SpaceGroup grp_a(a.first), grp_b(b.first);
+//        // otherwise we sort by properties of the groups
+//        SX::Crystal::SpaceGroup grp_a(a.first), grp_b(b.first);
 
-        // sort by size
-        return grp_a.getGroupElements().size() > grp_b.getGroupElements().size();
-    };
+//        // sort by size
+//        return grp_a.getGroupElements().size() > grp_b.getGroupElements().size();
+//    };
 
-    std::sort(_groups.begin(), _groups.end(), compare_fn);
+    //std::sort(_groups.begin(), _groups.end(), compare_fn);
 
 //    qDebug() << "FOUND MATCHES:";
 
@@ -144,12 +159,12 @@ void SpaceGroupDialog::evaluateSpaceGroups()
 
 void SpaceGroupDialog::buildTable()
 {
-    QStandardItemModel* model = new QStandardItemModel(_groups.size(), 4, this);
+    QStandardItemModel* model = new QStandardItemModel(_groups.size(), 2, this);
 
     model->setHorizontalHeaderItem(0,new QStandardItem("Symbol"));
-    model->setHorizontalHeaderItem(1,new QStandardItem("Bravais Type"));
-    model->setHorizontalHeaderItem(2,new QStandardItem("Size"));
-    model->setHorizontalHeaderItem(3,new QStandardItem("Agreement"));
+    //model->setHorizontalHeaderItem(1,new QStandardItem("Bravais Type"));
+    model->setHorizontalHeaderItem(1,new QStandardItem("Size"));
+    //model->setHorizontalHeaderItem(3,new QStandardItem("Agreement"));
 
     unsigned int row = 0;
 
@@ -161,14 +176,15 @@ void SpaceGroupDialog::buildTable()
         SX::Crystal::SpaceGroup grp(symbol);
 
         QStandardItem* col0 = new QStandardItem(symbol.c_str());
-        QStandardItem* col1 = new QStandardItem(grp.getBravaisTypeSymbol().c_str());
-        QStandardItem* col2 = new QStandardItem(to_string(grp.getGroupElements().size()).c_str());
-        QStandardItem* col3 = new QStandardItem(to_string((int)agreement).c_str());
+        QStandardItem* col1 = new QStandardItem(to_string(grp.getID()).c_str());
+//        QStandardItem* col1 = new QStandardItem(grp.getBravaisTypeSymbol().c_str());
+//        QStandardItem* col2 = new QStandardItem(to_string(grp.getGroupElements().size()).c_str());
+//        QStandardItem* col3 = new QStandardItem(to_string((int)agreement).c_str());
 
         model->setItem(row,0,col0);
         model->setItem(row,1,col1);
-        model->setItem(row,2,col2);
-        model->setItem(row,3,col3);
+//        model->setItem(row,2,col2);
+//        model->setItem(row,3,col3);
 
         ++row;
     }
