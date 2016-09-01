@@ -89,7 +89,6 @@ private:
 	std::string _generators;
 
 	groupElementsList _groupElements;
-
 };
 
 std::ostream& operator<<(std::ostream& os, const SpaceGroup& sg);

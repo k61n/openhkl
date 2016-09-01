@@ -1,3 +1,32 @@
+/*
+ * nsxtool : Neutron Single Crystal analysis toolkit
+ ------------------------------------------------------------------------------------------
+ Copyright (C)
+ 2016- Laurent C. Chapon, Eric Pellegrini, Jonathan Fisher
+ Institut Laue-Langevin
+ BP 156
+ 6, rue Jules Horowitz
+ 38042 Grenoble Cedex 9
+ France
+ chapon[at]ill.fr
+ pellegrini[at]ill.fr
+
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+
+ You should have received a copy of the GNU Lesser General Public
+ License along with this library; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ */
+
 #include <algorithm>
 #include <vector>
 #include "Error.h"
@@ -185,8 +214,10 @@ void SpaceGroup::generateGroupElements()
 		if (_groupElements.size()==oldSize)
 			break;
 		oldSize=_groupElements.size();
-	}
+    }
 }
+
+
 
 bool SpaceGroup::isExtinct(double h, double k, double l) const
 {
@@ -197,8 +228,8 @@ bool SpaceGroup::isExtinct(double h, double k, double l) const
 		{
             Eigen::Vector3d t = element.getTranslationPart();
 			double scalar=t.dot(hkl);
-            std::complex<double> prefactor = 1.0-std::exp(std::complex<double>(0,2*M_PI)*scalar);
-            if (std::abs(scalar)>1e-3)
+            std::complex<double> prefactor = 1.0+std::exp(std::complex<double>(0,2*M_PI)*scalar);
+            if (std::abs(prefactor)<1e-3)
             //if (std::abs(std::remainder(scalar,1.0))>1e-3)
 			{
 				Eigen::Vector3d rhkl=element.getRotationPart()*hkl;

@@ -621,11 +621,11 @@ void ExperimentTree::findEquivalences()
             if ( !unit_cell) {
                 unit_cell = peak->getUnitCell();
                 qDebug() << "Space group has "
-                         << SpaceGroup(unit_cell->getSpaceGroup()).getGenerators().size()
-                         << " generators";
+                         << SpaceGroup(unit_cell->getSpaceGroup()).getGroupElements().size()
+                         << " elements";
             }
 
-            unsigned int h1, h2, k1, k2, l1, l2;
+            int h1, h2, k1, k2, l1, l2;
 
             Eigen::RowVector3i hkl = peak->getIntegerMillerIndices();
             h1 = hkl[0];
@@ -634,12 +634,24 @@ void ExperimentTree::findEquivalences()
 
 
             for (int i = 0; i < peak_equivs.size() && !found_equivalence; ++i) {
+
                 hkl = peak_equivs[i][0]->getIntegerMillerIndices();
                 h2 = hkl[0];
                 k2 = hkl[1];
                 l2 = hkl[2];
 
-                if ( unit_cell->isEquivalent(h1, k1, l1, h2, k2, l2)) {
+                // debugging
+//                if ( std::abs(h1) == std::abs(h2)
+//                     && std::abs(k1) == std::abs(k2)
+//                     && std::abs(l1) == std::abs(l2))
+//                {
+//                    if (h1*h2*k1*k2*l1*l2 > 0) {
+//                        qDebug() << h1 << " " << k1 << " " << l1 << " "
+//                                 << h2 << " " << k2 << " " << l2;
+//                    }
+//                }
+
+                if ( unit_cell->isFriedelEquivalent(h1, k1, l1, h2, k2, l2) ) {
                     found_equivalence = true;
                     peak_equivs[i].push_back(peak);
                     continue;
@@ -647,7 +659,7 @@ void ExperimentTree::findEquivalences()
             }
 
             // didn't find an equivalence?
-            if ( !found_equivalence) {
+                if ( !found_equivalence) {
                 peak_equivs.push_back(std::vector<Peak3D*>{peak});
             }
         }
@@ -655,13 +667,45 @@ void ExperimentTree::findEquivalences()
 
     qDebug() << "Found " << peak_equivs.size() << " equivalence classes of peaks:";
 
+    std::map<int, int> size_counts;
+
     for (auto& peaks: peak_equivs) {
-        if (peaks.size() > 1) {
-            qDebug() << "   " << peaks.size() << " peaks in this class";
-            for (auto& p: peaks) {
-                Eigen::Vector3i hkl= p->getIntegerMillerIndices();
-                qDebug() << "        " << hkl[0] << " " << hkl[1] << " " << hkl[2];
-            }
+        ++size_counts[peaks.size()];
+
+        // debugging info, only print for larger groups
+        if ( peaks.size() < 3)
+            continue;
+
+        double average, var, sigma;
+
+        average = 0;
+        var = 0;
+        R
+
+        for (Peak3D* p: peaks) {
+            average += p->getScaledIntensity() / peaks.size();
+            qDebug() << p->getScaledIntensity() << " "
+                      << p->getPeak()->getAABBCenter()[2];
         }
+
+        for (Peak3D* p: peaks)
+            var += (p->getScaledIntensity()/average-1)*(p->getScaledIntensity()/average-1) /(peaks.size()-1);
+
+        qDebug() << "N = " << peaks.size()
+                 << "; I = " << average
+                 << "; relative sigma = " << std::sqrt(var);
+
+
+//        if (peaks.size() > 2) {
+//            qDebug() << "   " << peaks.size() << " peaks in this class";
+//            for (auto& p: peaks) {
+//                Eigen::Vector3i hkl= p->getIntegerMillerIndices();
+//                qDebug() << "        " << hkl[0] << " " << hkl[1] << " " << hkl[2];
+//            }
+//        }
+    }
+
+    for (auto& it: size_counts) {
+        qDebug() << "Found " << it.second << " classes of size " << it.first;
     }
 }

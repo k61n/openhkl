@@ -184,12 +184,18 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
                         GruberReduction gruber(cell.getMetricTensor(), tolerance);
                         SX::Crystal::LatticeCentring c;
                         SX::Crystal::BravaisType b;
-                        gruber.reduce(P,c,b);
-                        cell.setLatticeCentring(c);
-                        cell.setBravaisType(b);
 
-                        if (!ui->checkBox_NiggliOnly->isChecked())
-                        {                            
+                        try {
+                            gruber.reduce(P,c,b);
+                            cell.setLatticeCentring(c);
+                            cell.setBravaisType(b);
+                        }
+                        catch(std::exception& e) {
+                            qDebug() << "Gruber reduction error:" << e.what();
+                            //continue;
+                        }
+
+                        if (!ui->checkBox_NiggliOnly->isChecked()) {
                             cell.transform(P);
                         }
 

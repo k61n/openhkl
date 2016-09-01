@@ -378,13 +378,39 @@ bool UnitCell::isEquivalent(double h1, double k1, double l1, double h2, double k
 	Eigen::Vector3d rotated;
 	for (const auto& element : elements)
 	{
-		rotated=element.getMatrix()*Eigen::Vector3d(h1,k1,l1);
-		if (std::abs(rotated[0]-h2)<1e-6 && std::abs(rotated[1]-k2)<1e-6 && std::abs(rotated[2]-l2)<1e-6)
+        // jmf: check that this edit is correct!
+        //rotated = element.getMatrix()*Eigen::Vector3d(h1,k1,l1);
+        rotated = element.getRotationPart()*Eigen::Vector3d(h1,k1,l1);
+
+        if (std::abs(rotated[0]-h2)<1e-6 && std::abs(rotated[1]-k2)<1e-6 && std::abs(rotated[2]-l2)<1e-6)
 		{
 			return true;
 		}
 	}
-	return false;
+    return false;
+}
+
+bool UnitCell::isFriedelEquivalent(double h1, double k1, double l1, double h2, double k2, double l2) const
+{
+    const auto& elements=_group.getGroupElements();
+    Eigen::Vector3d rotated;
+    for (const auto& element : elements)
+    {
+        // jmf: check that this edit is correct!
+        //rotated = element.getMatrix()*Eigen::Vector3d(h1,k1,l1);
+        rotated = element.getRotationPart()*Eigen::Vector3d(h1,k1,l1);
+
+        if (std::abs(rotated[0]-h2)<1e-6 && std::abs(rotated[1]-k2)<1e-6 && std::abs(rotated[2]-l2)<1e-6)
+        {
+            return true;
+        }
+        // compare against Friedel reflection
+        else if (std::abs(rotated[0]+h2)<1e-6 && std::abs(rotated[1]+k2)<1e-6 && std::abs(rotated[2]+l2)<1e-6)
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 unsigned int UnitCell::getZ() const

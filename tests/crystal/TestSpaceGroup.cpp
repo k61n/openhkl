@@ -316,13 +316,19 @@ BOOST_AUTO_TEST_CASE(Test_SpaceGroup)
 
     // Test extinction conditions
     SpaceGroup sg14("P 21 21 21");
-    BOOST_CHECK(sg14.isExtinct(2,0,0));
-    BOOST_CHECK(sg14.isExtinct(0,2,0));
-    BOOST_CHECK(sg14.isExtinct(0,0,2));
+    BOOST_CHECK(sg14.isExtinct(3,0,0));
+    BOOST_CHECK(sg14.isExtinct(0,3,0));
+    BOOST_CHECK(sg14.isExtinct(0,0,3));
+    BOOST_CHECK(!sg14.isExtinct(2,0,0));
+    BOOST_CHECK(!sg14.isExtinct(0,2,0));
+    BOOST_CHECK(!sg14.isExtinct(0,0,2));
 
     // Test extinction conditions
     SpaceGroup sg15("P 2 2 21");
     BOOST_CHECK(!sg15.isExtinct(2,0,0));
     BOOST_CHECK(!sg15.isExtinct(0,2,0));
-    BOOST_CHECK(sg15.isExtinct(0,0,2));
+    BOOST_CHECK(!sg15.isExtinct(0,0,2));
+    BOOST_CHECK(!sg15.isExtinct(3,0,0));
+    BOOST_CHECK(!sg15.isExtinct(0,3,0));
+    BOOST_CHECK(sg15.isExtinct(0,0,3));
 }

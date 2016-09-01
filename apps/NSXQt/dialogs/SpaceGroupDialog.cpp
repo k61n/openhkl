@@ -123,38 +123,30 @@ void SpaceGroupDialog::evaluateSpaceGroups()
         if (group.getBravaisTypeSymbol() != bravais)
             continue;
 
-        if ( group.fractionExtinct(hkls) > 0.0)
-            continue;
+//        if ( group.fractionExtinct(hkls) > 0.0)
+//            continue;
 
         // group is compatible with observed reflections, so add it to list
         _groups.push_back(make_pair(symbol, 100.0*(1-group.fractionExtinct(hkls))));
 
     }
 
-//    auto compare_fn = [](const pair<string, double>& a, const pair<string, double>& b) -> bool
-//    {
-//        // first sort by quality
-//        if (a.second > b.second)
-//            return true;
-//        else if (a.second < b.second)
-//            return false;
+    auto compare_fn = [](const pair<string, double>& a, const pair<string, double>& b) -> bool
+    {
+        // sort first by quality
+        if (a.second != b.second)
+            return a.second > b.second;
 
-//        // otherwise we sort by properties of the groups
-//        SX::Crystal::SpaceGroup grp_a(a.first), grp_b(b.first);
+        // otherwise we sort by properties of the groups
+        SX::Crystal::SpaceGroup grp_a(a.first), grp_b(b.first);
 
-//        // sort by size
-//        return grp_a.getGroupElements().size() > grp_b.getGroupElements().size();
-//    };
+        // sort by group ID
+        return grp_a.getID() < grp_b.getID();
+    };
 
-    //std::sort(_groups.begin(), _groups.end(), compare_fn);
+    std::sort(_groups.begin(), _groups.end(), compare_fn);
 
-//    qDebug() << "FOUND MATCHES:";
-
-//    for (auto&& grp: _groups) {
-//        qDebug() << grp.getSymbol().c_str()
-//                 << " " << grp.getGroupElements().size()
-//                 << " " << grp.getBravaisTypeSymbol().c_str();
-//    }
+    qDebug() << "Done evaluating space groups.";
 }
 
 void SpaceGroupDialog::buildTable()
@@ -162,9 +154,9 @@ void SpaceGroupDialog::buildTable()
     QStandardItemModel* model = new QStandardItemModel(_groups.size(), 2, this);
 
     model->setHorizontalHeaderItem(0,new QStandardItem("Symbol"));
-    //model->setHorizontalHeaderItem(1,new QStandardItem("Bravais Type"));
-    model->setHorizontalHeaderItem(1,new QStandardItem("Size"));
-    //model->setHorizontalHeaderItem(3,new QStandardItem("Agreement"));
+    model->setHorizontalHeaderItem(1,new QStandardItem("Group ID"));
+    model->setHorizontalHeaderItem(2,new QStandardItem("Bravais Type"));
+    model->setHorizontalHeaderItem(3,new QStandardItem("Agreement"));
 
     unsigned int row = 0;
 
@@ -177,14 +169,13 @@ void SpaceGroupDialog::buildTable()
 
         QStandardItem* col0 = new QStandardItem(symbol.c_str());
         QStandardItem* col1 = new QStandardItem(to_string(grp.getID()).c_str());
-//        QStandardItem* col1 = new QStandardItem(grp.getBravaisTypeSymbol().c_str());
-//        QStandardItem* col2 = new QStandardItem(to_string(grp.getGroupElements().size()).c_str());
-//        QStandardItem* col3 = new QStandardItem(to_string((int)agreement).c_str());
+        QStandardItem* col2 = new QStandardItem(grp.getBravaisTypeSymbol().c_str());
+        QStandardItem* col3 = new QStandardItem(to_string((int)agreement).c_str());
 
         model->setItem(row,0,col0);
         model->setItem(row,1,col1);
-//        model->setItem(row,2,col2);
-//        model->setItem(row,3,col3);
+        model->setItem(row,2,col2);
+        model->setItem(row,3,col3);
 
         ++row;
     }
