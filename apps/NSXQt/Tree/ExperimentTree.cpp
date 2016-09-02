@@ -680,7 +680,6 @@ void ExperimentTree::findEquivalences()
 
         average = 0;
         var = 0;
-        R
 
         for (Peak3D* p: peaks) {
             average += p->getScaledIntensity() / peaks.size();
