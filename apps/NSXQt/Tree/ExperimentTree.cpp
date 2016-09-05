@@ -55,6 +55,10 @@
 
 #include "SpaceGroupDialog.h"
 
+#include <QVector>
+#include "Externals/qcustomplot.h"
+#include "ui_ScaleDialog.h"
+
 using std::vector;
 using SX::Data::IData;
 using std::shared_ptr;
