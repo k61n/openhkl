@@ -59,6 +59,8 @@
 #include "Externals/qcustomplot.h"
 #include "ui_ScaleDialog.h"
 
+#include "ScaleDialog.h"
+
 using std::vector;
 using SX::Data::IData;
 using std::shared_ptr;
@@ -675,40 +677,12 @@ void ExperimentTree::findEquivalences()
 
     for (auto& peaks: peak_equivs) {
         ++size_counts[peaks.size()];
-
-        // debugging info, only print for larger groups
-        if ( peaks.size() < 3)
-            continue;
-
-        double average, var, sigma;
-
-        average = 0;
-        var = 0;
-
-        for (Peak3D* p: peaks) {
-            average += p->getScaledIntensity() / peaks.size();
-            qDebug() << p->getScaledIntensity() << " "
-                      << p->getPeak()->getAABBCenter()[2];
-        }
-
-        for (Peak3D* p: peaks)
-            var += (p->getScaledIntensity()/average-1)*(p->getScaledIntensity()/average-1) /(peaks.size()-1);
-
-        qDebug() << "N = " << peaks.size()
-                 << "; I = " << average
-                 << "; relative sigma = " << std::sqrt(var);
-
-
-//        if (peaks.size() > 2) {
-//            qDebug() << "   " << peaks.size() << " peaks in this class";
-//            for (auto& p: peaks) {
-//                Eigen::Vector3i hkl= p->getIntegerMillerIndices();
-//                qDebug() << "        " << hkl[0] << " " << hkl[1] << " " << hkl[2];
-//            }
-//        }
     }
 
     for (auto& it: size_counts) {
         qDebug() << "Found " << it.second << " classes of size " << it.first;
     }
+
+    ScaleDialog* scaleDialog = new ScaleDialog(peak_equivs, this);
+    scaleDialog->exec();
 }

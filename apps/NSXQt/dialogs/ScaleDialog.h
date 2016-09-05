@@ -20,6 +20,7 @@
 #include <memory>
 
 #include "IData.h"
+#include "Peak3D.h"
 
 
 
@@ -32,14 +33,18 @@ class ScaleDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit ScaleDialog(QWidget *parent = 0);
+    explicit ScaleDialog(const std::vector<std::vector<SX::Crystal::Peak3D*>>& peaks, QWidget *parent = 0);
     ~ScaleDialog();
 
+    void buildPlot();
 
 private slots:
 
 
+    void on_redrawButton_clicked();
+
 private:
     Ui::ScaleDialog *ui;
+    std::vector<std::vector<SX::Crystal::Peak3D*>> _peaks;
 };
 #endif // NSXTOOL_SCALEDIALOG_H_
