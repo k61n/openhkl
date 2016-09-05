@@ -554,20 +554,19 @@ void Peak3D::framewiseIntegrateStep(Eigen::MatrixXi& frame, unsigned int idx)
         for (unsigned int y=_state.start_y;y<=_state.end_y;++y) {
             int intensity=frame(y,x);
             _state.point1 << x+0.5,y+0.5,idx,1;
-            bool inbackground=(_bkg->isInside(_state.point1));
-            if (inbackground) {
+
+            bool inbackground=(_bkg->isInsideAABB(_state.point1) && _bkg->isInside(_state.point1));
+            bool inpeak=(_peak->isInsideAABB(_state.point1) && _peak->isInside(_state.point1));
+
+            if (inpeak) {
+                intensityP+=intensity;
+                pointsinpeak++;
+                continue;
+            }
+            else if (inbackground) {
                 intensityBkg+=intensity;
                 pointsinbkg++;
-
-                bool inpeak=(_peak->isInsideAABB(_state.point1) && _peak->isInside(_state.point1));
-                if (inpeak) {
-                    intensityP+=intensity;
-                    pointsinpeak++;
-                    continue;
-                }
             }
-            else
-                continue;
         }
     }
     if (pointsinpeak>0)
