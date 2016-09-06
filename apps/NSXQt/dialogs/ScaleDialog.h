@@ -39,6 +39,8 @@ public:
     void buildPlot();
     void buildScalePlot();
 
+    void calculateRFactors();
+
 private slots:
 
 
@@ -47,5 +49,6 @@ private slots:
 private:
     Ui::ScaleDialog *ui;
     std::vector<std::vector<SX::Crystal::Peak3D*>> _peaks;
+    double _Rmerge, _Rmeas, _Rpim;
 };
 #endif // NSXTOOL_SCALEDIALOG_H_

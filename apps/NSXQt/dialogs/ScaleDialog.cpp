@@ -39,6 +39,7 @@ ScaleDialog::ScaleDialog(const vector<vector<Peak3D*>>& peaks, QWidget *parent) 
     ui(new Ui::ScaleDialog)
 {
     ui->setupUi(this);
+    calculateRFactors();
     buildPlot();
 }
 
@@ -199,6 +200,55 @@ void ScaleDialog::buildScalePlot()
     plot->xAxis->setRange(xmin, xmax);
     plot->yAxis->setRange(ymin, ymax);
     plot->replot();
+}
+
+void ScaleDialog::calculateRFactors()
+{
+    _Rmerge = 0;
+    _Rmeas = 0;
+    _Rpim = 0;
+
+    double I_total = 0.0;
+
+    // go through each equivalence class of peaks
+    for (auto&& peak_list: _peaks) {
+        // skip if there are fewer than two peaks
+        if ( peak_list.size() < 2)
+            continue;
+
+        double average = 0.0;
+        double sigma, var = 0.0;
+
+        for (auto&& p: peak_list) {
+            double in = p->getScaledIntensity();
+            average += in;
+        }
+
+        const double n = peak_list.size();
+        average /= n;
+
+        I_total += n*average;
+
+        const double Fmeas = std::sqrt(n / (n-1));
+        const double Fpim = std::sqrt(1 / (n-1));
+
+        double I_total = 0.0;
+
+        for (auto&& p: peak_list) {
+            double diff = std::fabs(p->getScaledIntensity() - average);
+            _Rmerge += diff;
+            _Rmeas += Fmeas*diff;
+            _Rpim += Fpim*diff;
+        }
+    }
+
+    _Rmerge /= I_total;
+    _Rmeas /= I_total;
+    _Rpim /= I_total;
+
+    qDebug() << "R merge = " << _Rmerge;
+    qDebug() << "R meas  = " << _Rmeas;
+    qDebug() << "R pim   = " << _Rpim;
 }
 
 void ScaleDialog::on_redrawButton_clicked()
