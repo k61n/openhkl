@@ -125,6 +125,82 @@ void ScaleDialog::buildPlot()
     plot->replot();
 }
 
+void ScaleDialog::buildScalePlot()
+{
+    double sigma_max = ui->sigmaSpinBox->value();
+
+    double a = ui->spinBoxA->value();
+    double b = ui->spinBoxB->value();
+
+    QCustomPlot* plot = ui->plotWidget;
+
+    double xmin, xmax, ymin, ymax;
+
+    xmin = xmax = ymin = ymax = 0.0;
+
+    QVector<double> xs, ys;
+
+    // clear all previous graphs
+    while(plot->graphCount()) {
+        QCPGraph* graph = plot->graph(0);
+        plot->removeGraph(graph);
+    }
+
+    // go through each equivalence class of peaks
+    for (auto&& peak_list: _peaks) {
+        // skip if there are fewer than two peaks
+        if ( peak_list.size() < 2)
+            continue;
+
+        double average = 0.0;
+        double sigma, var = 0.0;
+
+        for (auto&& p: peak_list) {
+            double frame = p->getPeak()->getAABBCenter()[2];
+            double in = p->getScaledIntensity() * (a+b*frame);
+            average += in;
+            var += in*in;
+        }
+
+        average /= peak_list.size();
+        var -= peak_list.size()*average*average;
+        var /= (peak_list.size()-1);
+        sigma = std::sqrt(var);
+
+        if (sigma > sigma_max*average) {
+            qDebug() << "skipping set of peaks because sigma_max is too large!";
+            continue;
+        }
+
+        for (auto&& p: peak_list) {
+
+
+            double x = p->getPeak()->getAABBCenter()[2]; // frame
+            double y = (p->getScaledIntensity() * (a+b*x) - average);
+
+            xmin = x < xmin? x : xmin;
+            xmax = x > xmax? x : xmax;
+            ymin = y < ymin? y : ymin;
+            ymax = y > ymax? y : ymax;
+
+            xs.push_back(x);
+            ys.push_back(y);
+        }
+    }
+
+    // useful aliases
+    plot->addGraph();
+    QCPGraph* graph = plot->graph(0);
+
+    // do the plotting
+    graph->setData(xs, ys);
+    plot->xAxis->setLabel("Frame");
+    plot->yAxis->setLabel("Difference");
+    plot->xAxis->setRange(xmin, xmax);
+    plot->yAxis->setRange(ymin, ymax);
+    plot->replot();
+}
+
 void ScaleDialog::on_redrawButton_clicked()
 {
     buildPlot();

@@ -57,6 +57,7 @@ public slots:
     void showPeaksOpenGL();
     void findSpaceGroup();
     void findEquivalences();
+    void findFriedelPairs();
 
 private:
 

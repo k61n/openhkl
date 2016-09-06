@@ -136,6 +136,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(this, SIGNAL(findSpaceGroup(void)), _ui->experimentTree, SLOT(findSpaceGroup()));
     connect(this, SIGNAL(findEquivalences(void)), _ui->experimentTree, SLOT(findEquivalences()));
+    connect(this,SIGNAL(findFriedelPairs(void)), _ui->experimentTree, SLOT(findFriedelPairs()));
 
     _ui->plotterDockWidget->show();
     _ui->dockWidget_Property->show();
@@ -434,4 +435,10 @@ void MainWindow::on_actionFind_space_group_triggered()
 void MainWindow::on_actionFind_equivalences_triggered()
 {
     emit findEquivalences();
+}
+
+
+void MainWindow::on_actionFind_Friedel_pairs_triggered()
+{
+    emit findFriedelPairs();
 }

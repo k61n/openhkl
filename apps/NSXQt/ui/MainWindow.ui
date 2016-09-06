@@ -1337,6 +1337,7 @@ border-radius: 4px;
     <addaction name="menuPeak"/>
     <addaction name="actionFind_space_group"/>
     <addaction name="actionFind_equivalences"/>
+    <addaction name="actionFind_Friedel_pairs"/>
    </widget>
    <widget class="QMenu" name="menuChemistry">
     <property name="title">
@@ -1713,6 +1714,11 @@ QDockWidget::title {
   <action name="actionFind_equivalences">
    <property name="text">
     <string>Find equivalences</string>
+   </property>
+  </action>
+  <action name="actionFind_Friedel_pairs">
+   <property name="text">
+    <string>Find Friedel pairs</string>
    </property>
   </action>
  </widget>

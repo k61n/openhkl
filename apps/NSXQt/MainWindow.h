@@ -63,6 +63,7 @@ signals:
     void plotDetectorData(SX::Data::IData*,int frame);
     void findSpaceGroup();
     void findEquivalences();
+    void findFriedelPairs();
 private slots:
 //    void on_action_open_triggered();
 
@@ -84,9 +85,11 @@ private slots:
     void on_actionShow_calculated_peak_positions_triggered(bool checked);
     void on_checkBox_AspectRatio_toggled(bool checked);
     void on_actionConvolution_Filter_triggered();
-    void on_actionFind_space_group_triggered();
 
+    void on_actionFind_space_group_triggered();
     void on_actionFind_equivalences_triggered();
+    void on_actionFind_Friedel_pairs_triggered();
+
 
 public slots:
     void changeData(std::shared_ptr<SX::Data::IData>);

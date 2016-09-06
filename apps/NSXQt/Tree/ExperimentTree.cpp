@@ -60,6 +60,7 @@
 #include "ui_ScaleDialog.h"
 
 #include "ScaleDialog.h"
+#include "FriedelDialog.h"
 
 using std::vector;
 using SX::Data::IData;
@@ -685,4 +686,23 @@ void ExperimentTree::findEquivalences()
 
     ScaleDialog* scaleDialog = new ScaleDialog(peak_equivs, this);
     scaleDialog->exec();
+}
+
+void ExperimentTree::findFriedelPairs()
+{
+    qDebug() << "Find Friedel pairs triggered!";
+
+    std::vector<Peak3D*> peaks;
+    std::vector<std::shared_ptr<IData>> numors = getSelectedNumors();
+
+    for (std::shared_ptr<IData> numor: numors) {
+        std::set<Peak3D*> peak_list = numor->getPeaks();
+
+        for (Peak3D* peak: peak_list)
+            peaks.push_back(peak);
+    }
+
+    FriedelDialog* friedelDialog = new FriedelDialog(peaks, this);
+    friedelDialog->exec();
+    delete friedelDialog;
 }

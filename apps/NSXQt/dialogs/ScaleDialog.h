@@ -37,6 +37,7 @@ public:
     ~ScaleDialog();
 
     void buildPlot();
+    void buildScalePlot();
 
 private slots:
 
