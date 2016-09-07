@@ -36,7 +36,7 @@ void customMessageHandler(QtMsgType type, const QMessageLogContext& context, con
     case QtFatalMsg:
         abort();
         break;
-    case QtInfoMsg:
+    default:
         // added to fix clang warning. should we do something in this case?
         break;
     }
