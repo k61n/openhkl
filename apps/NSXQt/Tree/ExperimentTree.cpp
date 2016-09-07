@@ -62,6 +62,8 @@
 #include "ScaleDialog.h"
 #include "FriedelDialog.h"
 
+#include "RFactor.h"
+
 using std::vector;
 using SX::Data::IData;
 using std::shared_ptr;
@@ -605,72 +607,36 @@ void ExperimentTree::findSpaceGroup()
     // update the space group elsewhere
 }
 
-void ExperimentTree::findEquivalences()
+void ExperimentTree::computeRFactors()
 {
     qDebug() << "Finding peak equivalences...";
 
     std::vector<std::shared_ptr<IData>> numors = getSelectedNumors();
     std::vector<std::vector<Peak3D*>> peak_equivs;
+    std::vector<Peak3D*> peak_list;
 
     std::shared_ptr<UnitCell> unit_cell;
-    std::unique_ptr<SpaceGroup> grp;
 
     for (std::shared_ptr<IData> numor: numors) {
         std::set<Peak3D*> peaks = numor->getPeaks();
-        for (Peak3D* peak: peaks ) {
-
-            // ignore masked peaks
-            if ( peak->isMasked() || !peak->isSelected())
-                continue;
-
-            bool found_equivalence = false;
-
-            if ( !unit_cell) {
-                unit_cell = peak->getUnitCell();
-                qDebug() << "Space group has "
-                         << SpaceGroup(unit_cell->getSpaceGroup()).getGroupElements().size()
-                         << " elements";
-            }
-
-            int h1, h2, k1, k2, l1, l2;
-
-            Eigen::RowVector3i hkl = peak->getIntegerMillerIndices();
-            h1 = hkl[0];
-            k1 = hkl[1];
-            l1 = hkl[2];
-
-
-            for (int i = 0; i < peak_equivs.size() && !found_equivalence; ++i) {
-
-                hkl = peak_equivs[i][0]->getIntegerMillerIndices();
-                h2 = hkl[0];
-                k2 = hkl[1];
-                l2 = hkl[2];
-
-                // debugging
-//                if ( std::abs(h1) == std::abs(h2)
-//                     && std::abs(k1) == std::abs(k2)
-//                     && std::abs(l1) == std::abs(l2))
-//                {
-//                    if (h1*h2*k1*k2*l1*l2 > 0) {
-//                        qDebug() << h1 << " " << k1 << " " << l1 << " "
-//                                 << h2 << " " << k2 << " " << l2;
-//                    }
-//                }
-
-                if ( unit_cell->isFriedelEquivalent(h1, k1, l1, h2, k2, l2) ) {
-                    found_equivalence = true;
-                    peak_equivs[i].push_back(peak);
-                    continue;
-                }
-            }
-
-            // didn't find an equivalence?
-                if ( !found_equivalence) {
-                peak_equivs.push_back(std::vector<Peak3D*>{peak});
-            }
-        }
+        for (Peak3D* peak: peaks)
+            if ( peak->isSelected() && !peak->isMasked())
+                peak_list.push_back(peak);
     }
+
+    if ( peak_list.size() == 0) {
+        qDebug() << "No peaks -- cannot search for equivalences!";
+        return;
+    }
+
+    if ( !unit_cell) {
+        // what do we do if there is more than one sample/unit cell??
+        unit_cell = peak_list[0]->getUnitCell();
+    }
+
+    SpaceGroup grp(unit_cell->getSpaceGroup());
+
+    peak_equivs = grp.findEquivalences(peak_list, true);
 
     qDebug() << "Found " << peak_equivs.size() << " equivalence classes of peaks:";
 
@@ -684,25 +650,38 @@ void ExperimentTree::findEquivalences()
         qDebug() << "Found " << it.second << " classes of size " << it.first;
     }
 
-    ScaleDialog* scaleDialog = new ScaleDialog(peak_equivs, this);
-    scaleDialog->exec();
+
+    qDebug() << "Computing R factors:";
+
+    RFactor rfactor(peak_equivs);
+
+    qDebug() << "    Rmerge = " << rfactor.Rmerge();
+    qDebug() << "    Rmeas  = " << rfactor.Rmeas();
+    qDebug() << "    Rpim   = " << rfactor.Rpim();
+
+    //ScaleDialog* scaleDialog = new ScaleDialog(peak_equivs, this);
+    //scaleDialog->exec();
 }
 
 void ExperimentTree::findFriedelPairs()
 {
-    qDebug() << "Find Friedel pairs triggered!";
+    qDebug() << "findFriedelParis() is not yet implemented!";
+    return;
 
-    std::vector<Peak3D*> peaks;
-    std::vector<std::shared_ptr<IData>> numors = getSelectedNumors();
+//    std::vector<Peak3D*> peaks;
+//    std::vector<std::shared_ptr<IData>> numors = getSelectedNumors();
 
-    for (std::shared_ptr<IData> numor: numors) {
-        std::set<Peak3D*> peak_list = numor->getPeaks();
+//    for (std::shared_ptr<IData> numor: numors) {
+//        std::set<Peak3D*> peak_list = numor->getPeaks();
 
-        for (Peak3D* peak: peak_list)
-            peaks.push_back(peak);
-    }
+//        for (Peak3D* peak: peak_list)
+//            peaks.push_back(peak);
+//    }
 
-    FriedelDialog* friedelDialog = new FriedelDialog(peaks, this);
-    friedelDialog->exec();
-    delete friedelDialog;
+
+
+    // todo: something with FriedelDialog!
+    //FriedelDialog* friedelDialog = new FriedelDialog(peaks, this);
+    //friedelDialog->exec();
+    //delete friedelDialog;
 }

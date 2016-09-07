@@ -253,5 +253,6 @@ void ScaleDialog::calculateRFactors()
 
 void ScaleDialog::on_redrawButton_clicked()
 {
+    calculateRFactors();
     buildPlot();
 }

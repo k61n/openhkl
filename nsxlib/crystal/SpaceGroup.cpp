@@ -32,8 +32,11 @@
 #include "Error.h"
 #include "SpaceGroup.h"
 #include "SpaceGroupSymbols.h"
+#include "Peak3D.h"
 
 #include <boost/algorithm/string.hpp>
+
+using namespace std;
 
 namespace SX
 {
@@ -153,6 +156,46 @@ int SpaceGroup::getID() const
     return sg->getID(full_symbol);
 }
 
+vector<vector<Peak3D *>> SpaceGroup::findEquivalences(const vector<Peak3D*> &peak_list, bool friedel) const
+{
+    vector<vector<Peak3D*>> peak_equivs;
+
+    for (Peak3D* peak: peak_list ) {
+
+        bool found_equivalence = false;
+
+        int h1, h2, k1, k2, l1, l2;
+
+        Eigen::RowVector3i hkl = peak->getIntegerMillerIndices();
+        h1 = hkl[0];
+        k1 = hkl[1];
+        l1 = hkl[2];
+
+        for (int i = 0; i < peak_equivs.size() && !found_equivalence; ++i) {
+
+            hkl = peak_equivs[i][0]->getIntegerMillerIndices();
+            h2 = hkl[0];
+            k2 = hkl[1];
+            l2 = hkl[2];
+
+
+            if ( (friedel && isFriedelEquivalent(h1, k1, l1, h2, k2, l2))
+                 || (!friedel && isEquivalent(h1, k1, l1, h2, k2, l2))) {
+                found_equivalence = true;
+                peak_equivs[i].push_back(peak);
+                continue;
+            }
+        }
+
+        // didn't find an equivalence?
+        if ( !found_equivalence) {
+            peak_equivs.push_back(std::vector<Peak3D*>{peak});
+        }
+    }
+
+    return peak_equivs;
+}
+
 bool SpaceGroup::isCentrosymmetric() const
 {
 	for (const auto& g : _groupElements)
@@ -256,6 +299,47 @@ std::ostream& operator<<(std::ostream& os, const SpaceGroup& sg)
 {
 	sg.print(os);
 	return os;
+}
+
+bool SpaceGroup::isEquivalent(double h1, double k1, double l1, double h2, double k2, double l2) const
+{
+    const auto& elements = getGroupElements();
+    Eigen::Vector3d rotated;
+    for (const auto& element : elements)
+    {
+        // jmf: check that this edit is correct!
+        //rotated = element.getMatrix()*Eigen::Vector3d(h1,k1,l1);
+        rotated = element.getRotationPart()*Eigen::Vector3d(h1,k1,l1);
+
+        if (std::abs(rotated[0]-h2)<1e-6 && std::abs(rotated[1]-k2)<1e-6 && std::abs(rotated[2]-l2)<1e-6)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool SpaceGroup::isFriedelEquivalent(double h1, double k1, double l1, double h2, double k2, double l2) const
+{
+    const auto& elements = getGroupElements();
+    Eigen::Vector3d rotated;
+    for (const auto& element : elements)
+    {
+        // jmf: check that this edit is correct!
+        //rotated = element.getMatrix()*Eigen::Vector3d(h1,k1,l1);
+        rotated = element.getRotationPart()*Eigen::Vector3d(h1,k1,l1);
+
+        if (std::abs(rotated[0]-h2)<1e-6 && std::abs(rotated[1]-k2)<1e-6 && std::abs(rotated[2]-l2)<1e-6)
+        {
+            return true;
+        }
+        // compare against Friedel reflection
+        else if (std::abs(rotated[0]+h2)<1e-6 && std::abs(rotated[1]+k2)<1e-6 && std::abs(rotated[2]+l2)<1e-6)
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 } // end namespace Crystal

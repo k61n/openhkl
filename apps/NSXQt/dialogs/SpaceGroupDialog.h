@@ -47,7 +47,8 @@ private:
 
     Ui::SpaceGroupDialog *ui;
     std::vector<std::shared_ptr<SX::Data::IData>> _numors;
-    std::vector<std::pair<std::string, double>> _groups;
+    //std::vector<std::tuple<std::string, double, double, double, double>> _groups;
+    std::vector<std::tuple<std::string, double>> _groups;
     std::string _selectedGroup;
 };
 #endif // NSXTOOL_SPACEGROUPDIALOG_H_

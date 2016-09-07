@@ -1336,8 +1336,8 @@ border-radius: 4px;
     <addaction name="menuSet_View"/>
     <addaction name="menuPeak"/>
     <addaction name="actionFind_space_group"/>
-    <addaction name="actionFind_equivalences"/>
     <addaction name="actionFind_Friedel_pairs"/>
+    <addaction name="actionCompute_R_factors"/>
    </widget>
    <widget class="QMenu" name="menuChemistry">
     <property name="title">
@@ -1719,6 +1719,11 @@ QDockWidget::title {
   <action name="actionFind_Friedel_pairs">
    <property name="text">
     <string>Find Friedel pairs</string>
+   </property>
+  </action>
+  <action name="actionCompute_R_factors">
+   <property name="text">
+    <string>Compute R factors</string>
    </property>
   </action>
  </widget>

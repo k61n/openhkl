@@ -56,7 +56,7 @@ public slots:
     void absorptionCorrection();
     void showPeaksOpenGL();
     void findSpaceGroup();
-    void findEquivalences();
+    void computeRFactors();
     void findFriedelPairs();
 
 private:

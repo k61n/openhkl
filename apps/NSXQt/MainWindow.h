@@ -62,7 +62,7 @@ public:
 signals:
     void plotDetectorData(SX::Data::IData*,int frame);
     void findSpaceGroup();
-    void findEquivalences();
+    void computeRFactors();
     void findFriedelPairs();
 private slots:
 //    void on_action_open_triggered();
@@ -87,8 +87,8 @@ private slots:
     void on_actionConvolution_Filter_triggered();
 
     void on_actionFind_space_group_triggered();
-    void on_actionFind_equivalences_triggered();
     void on_actionFind_Friedel_pairs_triggered();
+    void on_actionCompute_R_factors_triggered();
 
 
 public slots:
