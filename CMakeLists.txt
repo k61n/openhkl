@@ -119,21 +119,28 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     include(CPackLinuxSetup)
     message(STATUS "CPACK_PACKAGE_FILE_NAME = ${CPACK_PACKAGE_FILE_NAME}")
       
-	if ("${UNIX_DIST}" MATCHES "Ubuntu")
-	    string(REPLACE "," ", " CPACK_DEBIAN_PACKAGE_DEPENDS
-	    "libqt5core5a,"
-	    "libqt5printsupport5,"
-	    "libqt5widgets5,"
-	    "libqt5gui5,"
-	    "libboost-filesystem1.54.0,"
-	    "libboost-date-time1.54.0,"
-	    "libboost-system1.54.0,"
-	    "libboost-test1.54.0,"
-	    "libeigen3-dev,"
-	    "libfftw3-bin,"
-	    "libtiff5,"
-	    "libhdf5-7 (>=1.8.11)")
-	endif()
+    if ("${UNIX_DIST}" MATCHES "Ubuntu")
+
+      # set(boost_version_string "${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}")
+      # 	    string(REPLACE "," ", " CPACK_DEBIAN_PACKAGE_DEPENDS
+      # 	    "libqt5core5a,"
+      # 	    "libqt5printsupport5,"
+      # 	    "libqt5widgets5,"
+      # 	    "libqt5gui5,"
+      # 	    "libboost-filesystem${boost_version_string},"
+      # 	    "libboost-date-time${boost_version_string},"
+      # 	    "libboost-system${boost_version_string},"
+      # 	    "libboost-test${boost_version_string},"
+      # 	    "libeigen3-dev,"
+      # 	    "libfftw3-bin,"
+      # 	    "libtiff5,"
+      # 	    "libhdf5-7 (>=1.8.11)")
+      # 	endif()
+
+      # automatically generate dependencies
+      set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+
+      endif()
 
 endif()
 
