@@ -7,7 +7,6 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <random>
 
 #include "Minimizer.h"
 
@@ -16,46 +15,43 @@
 using namespace SX::Utils;
 using namespace std;
 
-class exp_functor
+
+int run_test()
 {
-public:
-    exp_functor()
+    Minimizer m;
+    Eigen::VectorXd x, y, wt;
+
+    int nparams = 3, nvalues = 40;
+
+    const int num_points = 40;
+    y.resize(num_points, 1);
+    wt.resize(num_points, 1);
+
+    x.resize(3,1);
+    x << 4.0, 0.2, 0.5;
+
+    for (int i = 0; i < nvalues; i++)
     {
-        const int num_points = 40;
-        _y.resize(num_points, 1);
-        _wt.resize(num_points, 1);
-        gen = std::mt19937(rd());
+        double t = i;
+        double yi = 1.0 + 5 * exp (-0.1 * t);
 
-        _x.resize(3,1);
-        _x << 4.0, 0.2, 0.5;
-
-        for (int i = 0; i < num_points; i++)
-        {
-            double t = i;
-            double yi = 1.0 + 5 * exp (-0.1 * t);
-            double si = 0.1 * yi;
-
-            r = std::normal_distribution<>(0, si);
-            double dy = r(gen);
-
-            _wt[i] = 1.0 / (si * si);
-            _y[i] = yi + dy;
-            cout << "data: " << i << " " << _y[i] << " " << si << endl;
-        }
+        wt[i] = 1.0;
+        y[i] = yi;
+        cout << "data: " << i << " " << y[i] << " " << endl;
     }
 
-    exp_functor(const exp_functor& other):
-        _x(other._x), _y(other._y), _wt(other._wt),
-        rd(), gen(other.gen), r(other.r)
-    {}
+    m.init(nparams, nvalues);
 
-    int operator()(const Eigen::VectorXd& x, Eigen::VectorXd& f)
+    m.setInitialValues(x);
+    m.setInitialWeights(wt);
+
+    auto residual_fn = [y] (const Eigen::VectorXd& p, Eigen::VectorXd& r) -> int
     {
-        int n = f.rows();
+        int n = r.rows();
 
-        double A =x(0);
-        double lambda = x(1);
-        double b =x(2);
+        double A =p(0);
+        double lambda = p(1);
+        double b =p(2);
 
         size_t i;
 
@@ -64,30 +60,22 @@ public:
             /* Model Yi = A * exp(-lambda * i) + b */
             double t = i;
             double Yi = A * exp (-lambda * t) + b;
-            f(i) = Yi - _y[i];
+            r(i) = Yi - y[i];
         }
         return GSL_SUCCESS;
-    }
+    };
 
-
-    Eigen::VectorXd _x, _y, _wt;
-    std::random_device rd;
-    std::mt19937 gen;
-    std::normal_distribution<> r;
-};
-
-int run_test()
-{
-    exp_functor f;
-    Minimizer m;
-
-    m.init(f._x.size(), f._y.size());
-
-    m.setInitialValues(f._x);
-    m.setInitialWeights(f._wt);
-    m.set_f(f);
+    m.set_f(residual_fn);
 
     m.fit(200);
+
+
+    x = m.params();
+
+    BOOST_CHECK_CLOSE(x(0), 5.0, 1e-6);
+    BOOST_CHECK_CLOSE(x(1), 0.1, 1e-6);
+    BOOST_CHECK_CLOSE(x(2), 1.0, 1e-6);
+
     m.free();
 
     return 0;
