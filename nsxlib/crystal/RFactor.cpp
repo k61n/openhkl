@@ -67,8 +67,6 @@ void RFactor::recalculate(const vector<vector<Peak3D *> > &peak_equivs)
         const double Fmeas = std::sqrt(n / (n-1));
         const double Fpim = std::sqrt(1 / (n-1));
 
-        double I_total = 0.0;
-
         for (auto&& p: peak_list) {
             double diff = std::fabs(p->getScaledIntensity() - average);
             _Rmerge += diff;
@@ -77,9 +75,17 @@ void RFactor::recalculate(const vector<vector<Peak3D *> > &peak_equivs)
         }
     }
 
-    _Rmerge /= I_total;
-    _Rmeas /= I_total;
-    _Rpim /= I_total;
+    if (I_total < 1e-3) {
+        // something wrong! too few peaks?
+        _Rmerge = 0.0;
+        _Rmeas = 0.0;
+        _Rpim = 0.0;
+    }
+    else {
+        _Rmerge /= I_total;
+        _Rmeas /= I_total;
+        _Rpim /= I_total;
+    }
 }
 
 RFactor::RFactor(const vector<vector<Peak3D *> > &peak_equivs): RFactor()

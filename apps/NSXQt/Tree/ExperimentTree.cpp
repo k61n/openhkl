@@ -620,7 +620,7 @@ void ExperimentTree::computeRFactors()
     for (std::shared_ptr<IData> numor: numors) {
         std::set<Peak3D*> peaks = numor->getPeaks();
         for (Peak3D* peak: peaks)
-            if ( peak->isSelected() && !peak->isMasked())
+            if ( peak && peak->isSelected() && !peak->isMasked() )
                 peak_list.push_back(peak);
     }
 
@@ -629,12 +629,29 @@ void ExperimentTree::computeRFactors()
         return;
     }
 
-    if ( !unit_cell) {
+    for (Peak3D* peak: peak_list) {
         // what do we do if there is more than one sample/unit cell??
-        unit_cell = peak_list[0]->getUnitCell();
+        unit_cell = peak->getUnitCell();
+
+        if (unit_cell)
+            break;
     }
 
-    SpaceGroup grp(unit_cell->getSpaceGroup());
+    if (!unit_cell) {
+        qDebug() << "No unit cell selected! Cannot compute R factors.";
+        return;
+    }
+
+    SpaceGroup grp("P 1");
+
+    // spacegroup construct can throw
+    try {
+        grp = SpaceGroup(unit_cell->getSpaceGroup());
+    }
+    catch(std::exception& e) {
+        qDebug() << "Caught exception: " << e.what() << endl;
+        return;
+    }
 
     peak_equivs = grp.findEquivalences(peak_list, true);
 
@@ -649,7 +666,6 @@ void ExperimentTree::computeRFactors()
     for (auto& it: size_counts) {
         qDebug() << "Found " << it.second << " classes of size " << it.first;
     }
-
 
     qDebug() << "Computing R factors:";
 
