@@ -32,6 +32,9 @@ windows-msvc:
     - set PATH=C:\Program Files\HDF_Group\HDF5\1.8.17\bin;%PATH%
     - set PATH=%BUILD_DIR%\nsxlib\Release;%PATH%
     - ctest -V
+  only:
+    - master
+    - develop
   tags:
     - windows
 
@@ -49,9 +52,9 @@ linux:
 #  artifacts:
 #    paths:
 #    - nsxtool*deb
-#  only:
-#    - master
-#    - develop
+  only:
+    - master
+    - develop
   tags:
     - ubuntu14.04
 
@@ -77,9 +80,9 @@ mac:
 #  artifacts:
 #    paths:
 #    - ${CI_PROJECT_DIR}/build/qmake-build/nsxtool*dmg
-#  only:
-#    - master
-#    - develop
+  only:
+    - master
+    - develop
   tags:
     - mac
 
