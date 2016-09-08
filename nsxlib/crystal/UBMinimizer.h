@@ -35,8 +35,7 @@
 #include <memory>
 
 #include <Eigen/Dense>
-#include <unsupported/Eigen/NonLinearOptimization>
-#include <unsupported/Eigen/NumericalDiff>
+
 
 #include "Detector.h"
 #include "LMFunctor.h"
@@ -191,11 +190,16 @@ public:
 	 * @param idx the index of the parameter
 	 */
 	void unsetStartingValue(unsigned int idx);
-	/*
-	 * @brief Run the minimization
-	 * @return the status of the minimization (1 if everything OK)
-	 */
-	int run(unsigned int maxIter);
+    /*
+     * @brief Run the minimization using Eigen implementation
+     * @return the status of the minimization (1 if everything OK)
+     */
+    int runEigen(unsigned int maxIter);
+    /*
+     * @brief Run the minimization using GSL implementation
+     * @return the status of the minimization (1 if everything OK)
+     */
+    int runGSL(unsigned int maxIter);
 	/*
 	 * @brief Returns the solution of the last minization
 	 * @return the solution

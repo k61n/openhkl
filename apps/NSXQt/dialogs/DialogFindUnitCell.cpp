@@ -159,7 +159,7 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
 
                     Eigen::Matrix3d M=cell.getReciprocalStandardM();
                     minimizer.setStartingUBMatrix(M);
-                    int ret = minimizer.run(100);
+                    int ret = minimizer.runGSL(100);
                     if (ret==1)
                     {
                         UBSolution solution=minimizer.getSolution();

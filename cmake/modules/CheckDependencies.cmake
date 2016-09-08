@@ -80,3 +80,5 @@ include_directories(${TIFF_INCLUDE_DIR})
 find_package(FFTW REQUIRED)
 include_directories(${FFTW_INCLUDE_DIR})
 
+# GNU scientific library
+find_package(GSL REQUIRED)
