@@ -35,8 +35,7 @@
 #include <memory>
 
 #include <Eigen/Dense>
-#include <unsupported/Eigen/NonLinearOptimization>
-#include <unsupported/Eigen/NumericalDiff>
+
 
 #include "Detector.h"
 #include "LMFunctor.h"

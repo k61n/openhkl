@@ -1,6 +1,10 @@
 #include <cmath>
 
 #include "UBMinimizer.h"
+#include "Minimizer.h"
+
+#include <unsupported/Eigen/NonLinearOptimization>
+#include <unsupported/Eigen/NumericalDiff>
 
 #include <Eigen/Dense>
 #include "Component.h"

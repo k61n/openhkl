@@ -36,6 +36,7 @@ target_link_libraries(NSXTool
     ${PYTHON_LIBRARIES}
     ${FFTW_LIBRARIES}
     ${TIFF_LIBRARY}
+    ${GSL_LIBRARIES}
 )
 else()
   target_link_libraries(NSXTool
@@ -45,6 +46,7 @@ else()
         ${PYTHON_LIBRARIES}
         ${FFTW_LIBRARIES}
         ${TIFF_LIBRARY}
+        ${GSL_LIBRARIES}
     )
 endif()
 
