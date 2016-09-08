@@ -231,7 +231,7 @@ void UBMinimizer::setSample(std::shared_ptr<SX::Instrument::Sample> sample)
 	_functor.setSample(sample);
 }
 
-int UBMinimizer::run(unsigned int maxIter)
+int UBMinimizer::runEigen(unsigned int maxIter)
 {
 
 	int nParams=_functor.inputs();
@@ -310,6 +310,100 @@ int UBMinimizer::run(unsigned int maxIter)
 	}
 
 	return status;
+
+}
+
+int UBMinimizer::runGSL(unsigned int maxIter)
+{
+    SX::Utils::Minimizer minimizer;
+
+    int nParams=_functor.inputs();
+    Eigen::VectorXd x=Eigen::VectorXd::Zero(nParams);
+
+    for (auto it=_start.begin();it!=_start.end();++it)
+        x[it->first] = it->second;
+
+    minimizer.init(nParams, _functor.values());
+    minimizer.setInitialValues(x);
+    minimizer.set_f(_functor);
+
+//    typedef Eigen::NumericalDiff<UBFunctor> NumDiffType;
+//    NumDiffType numdiff(_functor);
+//    Eigen::LevenbergMarquardt<NumDiffType> minimizer(numdiff);
+//    minimizer.parameters.xtol=1e-11;
+//    minimizer.parameters.maxfev=maxIter;
+
+    //int status = minimizer.minimize(x);
+
+    int status = minimizer.fit(maxIter);
+
+    if (status)
+    {
+        x = minimizer.params();
+
+        std::vector<bool> fParams(x.size(),false);
+        for (auto it : _functor._fixedParameters)
+            fParams[it] = true;
+
+        // Create a vector to calculate final residuals
+        Eigen::VectorXd fvec(_functor.values());
+        // Calculate final residuals
+        _functor(x,fvec);
+
+        // The MSE is computed as SSE/dof where dof is the number of degrees of freedom
+        int nFreeParameters=_functor.inputs()-_functor._fixedParameters.size();
+        double mse = fvec.squaredNorm()/(_functor.values()-nFreeParameters);
+
+        // Computation of the covariance matrix
+        // The covariance matrix is obtained from the estimated jacobian computed through a QR decomposition
+        // (see for example:
+        // 		- http://en.wikipedia.org/wiki/Non-linear_least_squares
+        // 		- https://github.com/scipy/scipy/blob/v0.14.0/scipy/optimize/minpack.py#L256
+        // 		- http://osdir.com/ml/python.scientific.user/2005-03/msg00067.html)
+
+        // CMinPack does not provide directly the jacobian but the so called FJAC that is NOT the jacobian
+        // FJAC is an output M by N array where M is the number of observations (_functor.values()) and N the number of parameters (_functor.inputs()).
+        // The upper N by N submatrix of FJAC contains the upper triangular matrix R with diagonal elements of nonincreasing magnitude such that
+        //
+        //		P^t * (J^t * J) * P = R^t * R,
+        //
+        // where P is a permutation matrix and J is the final calculated jacobian
+        // From (J^t * J) we can get directly get the covariance matrix C using the formula
+        //
+        // 		C = (J^t * J)^-1
+
+        // The upper N*N block of the FJAC matrix
+//        Eigen::MatrixXd fjac=minimizer.fjac.block(0,0,_functor.inputs(),_functor.inputs());
+
+//        // The R * P^t matrix
+//        Eigen::MatrixXd RPt = fjac.triangularView<Eigen::Upper>()*(minimizer.permutation.toDenseMatrix().cast<double>().transpose());
+
+//        Eigen::MatrixXd JtJ = RPt.transpose()*RPt;
+
+        // Remove the fixed parameters before inverting J^t * J
+        int removed=0;
+
+        Eigen::MatrixXd jac = minimizer.jacobian();
+        Eigen::MatrixXd JtJ = jac.transpose()*jac;
+
+        for (unsigned int i=0;i<fParams.size();++i)
+        {
+            if (fParams[i])
+            {
+                Utils::removeColumn(JtJ,i-removed);
+                Utils::removeRow(JtJ,i-removed);
+                removed++;
+            }
+        }
+
+        // The covariance matrix
+        Eigen::MatrixXd covariance = JtJ.inverse();
+        covariance *= mse;
+
+        _solution = UBSolution(_functor._detector, _functor._sample,_functor._source, x, covariance, fParams);
+    }
+
+    return status;
 
 }
 

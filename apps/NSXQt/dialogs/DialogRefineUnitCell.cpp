@@ -312,7 +312,7 @@ void DialogRefineUnitCell::on_pushButton_Refine_clicked()
     auto M=_cell->getReciprocalStandardM();
     _minimizer.setStartingUBMatrix(M);
 
-    int test=_minimizer.run(100);
+    int test=_minimizer.runGSL(100);
     if (test!=1)
     {
         ui->textEdit_Solution->setTextColor(QColor("red"));

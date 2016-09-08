@@ -69,22 +69,22 @@ int expb_df (const gsl_vector * x, void *data, gsl_matrix * J)
     return GSL_SUCCESS;
 }
 
-void callback(const size_t iter, void *params, const gsl_multifit_nlinear_workspace *w)
-{
-    gsl_vector *f = gsl_multifit_nlinear_residual(w);
-    gsl_vector *x = gsl_multifit_nlinear_position(w);
-    double rcond;
+//void callback(const size_t iter, void *params, const gsl_multifit_nlinear_workspace *w)
+//{
+//    gsl_vector *f = gsl_multifit_nlinear_residual(w);
+//    gsl_vector *x = gsl_multifit_nlinear_position(w);
+//    double rcond;
 
-    /* compute reciprocal condition number of J(x) */
-    gsl_multifit_nlinear_rcond(&rcond, w);
-    fprintf(stderr, "iter %2zu: A = %.4f, lambda = %.4f, b = %.4f, cond(J) = %8.4f, | %f\n",
-            iter,
-            gsl_vector_get(x, 0),
-            gsl_vector_get(x, 1),
-            gsl_vector_get(x, 2),
-            1.0 / rcond,
-            gsl_blas_dnrm2(f));
-}
+//    /* compute reciprocal condition number of J(x) */
+//    gsl_multifit_nlinear_rcond(&rcond, w);
+//    fprintf(stderr, "iter %2zu: A = %.4f, lambda = %.4f, b = %.4f, cond(J) = %8.4f, | %f\n",
+//            iter,
+//            gsl_vector_get(x, 0),
+//            gsl_vector_get(x, 1),
+//            gsl_vector_get(x, 2),
+//            1.0 / rcond,
+//            gsl_blas_dnrm2(f));
+//}
 
 
 Minimizer::Minimizer()
@@ -133,7 +133,7 @@ void Minimizer::init(int param, int values)
     w = gsl_multifit_nlinear_alloc (T, &fdf_params, _n, _p);
 }
 
-void Minimizer::fit(int max_iter)
+bool Minimizer::fit(int max_iter)
 {
     /* initialize solver with starting point and weights */
     gsl_multifit_nlinear_winit (_x, _wt, &fdf, w);
@@ -141,7 +141,8 @@ void Minimizer::fit(int max_iter)
     f = gsl_multifit_nlinear_residual(w);
     gsl_blas_ddot(f, f, &chisq0);
     /* solve the system with a maximum of 20 iterations */
-    status = gsl_multifit_nlinear_driver(max_iter, xtol, gtol, ftol, callback, NULL, &info, w);
+
+    status = gsl_multifit_nlinear_driver(max_iter, xtol, gtol, ftol, NULL /*callback*/, NULL, &info, w);
     /* compute covariance of best fit parameters */
     J = gsl_multifit_nlinear_jac(w);
     gsl_multifit_nlinear_covar (J, 0.0, covar);
@@ -167,7 +168,7 @@ void Minimizer::fit(int max_iter)
     }
     fprintf (stderr, "status = %s\n", gsl_strerror (status));
 
-    return;
+    return status == GSL_SUCCESS;
 }
 
 void Minimizer::free()
@@ -203,6 +204,38 @@ void Minimizer::setInitialWeights(const Eigen::VectorXd &wt)
 
     for ( int i = 0; i < wt.size(); ++i)
         gsl_vector_set(_wt, i, wt(i));
+}
+
+Eigen::MatrixXd Minimizer::covariance()
+{
+    Eigen::MatrixXd c(_p, _p);
+
+    for (int i = 0; i < _p; ++i)
+        for(int j = 0; j < _p; ++j)
+            c(i, j) = gsl_matrix_get(covar, i, j);
+
+    return c;
+}
+
+Eigen::MatrixXd Minimizer::jacobian()
+{
+    Eigen::MatrixXd jac(J->size1, J->size2);
+
+    for (int i = 0; i < jac.rows(); ++i)
+        for(int j = 0; j < jac.cols(); ++j)
+            jac(i, j) = gsl_matrix_get(J, i, j);
+
+    return jac;
+}
+
+Eigen::VectorXd Minimizer::params()
+{
+    Eigen::VectorXd x(_p);
+
+    for ( int i = 0; i < _p; ++i)
+        x(i) = gsl_vector_get(w->x, i);
+
+    return x;
 }
 
 int Minimizer::gsl_f_wrapper(const gsl_vector *input, void *data, gsl_vector *output)

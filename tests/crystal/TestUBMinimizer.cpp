@@ -117,7 +117,7 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
        sqrt(2)/2.0, sqrt(2)/2,0,
        0          ,          0,1;
     minimizer.setStartingUBMatrix(M);
-    minimizer.run(1000);
+    minimizer.runEigen(1000);
 
     UBSolution solution=minimizer.getSolution();
 

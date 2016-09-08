@@ -68,7 +68,7 @@ public:
     Minimizer();
 
     void init(int params, int values);
-    void fit(int max_iter);
+    bool fit(int max_iter);
     void free();
 
     template <typename Fun_>
@@ -80,6 +80,11 @@ public:
     void setInitialValues(const Eigen::VectorXd& x);
 
     void setInitialWeights(const Eigen::VectorXd& wt);
+
+    Eigen::MatrixXd covariance();
+    Eigen::MatrixXd jacobian();
+
+    Eigen::VectorXd params();
 
 private:
     static int gsl_f_wrapper(const gsl_vector*, void*, gsl_vector*);
@@ -95,8 +100,8 @@ private:
 
     gsl_vector *f;
     gsl_matrix *J;
-    const double xtol = 1e-10;
-    const double gtol = 1e-10;
+    const double xtol = 1e-7;
+    const double gtol = 1e-7;
     const double ftol = 0.0;
     double chisq, chisq0;
     int status, info;
