@@ -72,7 +72,6 @@ find_package(TIFF REQUIRED)
 include_directories(${TIFF_INCLUDE_DIR})
 
 
-
 # find_path(FFTW_INCLUDE_DIR fftw3.h)
 # include_directories(${FFTW_INCLUDE_DIR})
 # find_library(FFTW_LIBRARIES NAMES fftw3 libfftw3 fftw3-3 libfftw3-3)
@@ -81,4 +80,19 @@ find_package(FFTW REQUIRED)
 include_directories(${FFTW_INCLUDE_DIR})
 
 # GNU scientific library
-find_package(GSL REQUIRED)
+find_package(GSL 2.2)
+
+if(NOT GSL_FOUND OR GSL_VERSION VERSION_LESS 2.2)
+  set(BUILD_GSL TRUE)
+  message("Could not find gsl (>=2.2) on host system, building from source")
+  add_subdirectory(externals/gsl-2.2.1)
+  set(GSL_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/externals/gsl-2.2.1)
+  set(GSL_LIBRARIES "${CMAKE_CURRENT_BINARY_DIR}/externals/gsl-2.2.1/.libs/libgsl.so;${CMAKE_CURRENT_BINARY_DIR}/externals/gsl-2.2.1/cblas/.libs/libgslcblas.so")
+endif()
+
+include_directories(${GSL_INCLUDE_DIR})
+
+message("GSL_INCLUDE_DIR is ${GSL_INCLUDE_DIR}")
+message("GSL_LIBRARIES is ${GSL_LIBRARIES}")
+  
+

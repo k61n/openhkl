@@ -25,6 +25,9 @@ else()
     add_library(NSXTool SHARED ${sources} ${headers})
 endif()
 
+if(BUILD_GSL)
+  add_dependencies(NSXTool gsl_library)
+endif()
 
 
 # Link
@@ -56,3 +59,6 @@ set(INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include/NSXTool/")
 file(GLOB_RECURSE all_headers *.h)
 install(CODE "MESSAGE(\"Installing headers...\")")
 install(FILES ${headers} DESTINATION ${INCLUDE_DIR})
+
+
+message("FROM NSXLIB: GSL_LIBRARIES is ${GSL_LIBRARIES}")
