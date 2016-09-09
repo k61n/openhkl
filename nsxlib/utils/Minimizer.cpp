@@ -47,23 +47,19 @@ namespace SX {
 namespace Utils {
 
 
-Minimizer::Minimizer()
+Minimizer::Minimizer():
+    _workspace(nullptr),
+    _covariance(nullptr),
+    _numValues(0),
+    _numParams(0),
+    _jacobian( nullptr),
+    _x (nullptr),
+    _wt (nullptr),
+    _f(nullptr),
+    _xtol(1e-7),
+    _gtol(1e-7),
+    _ftol(0.0)
 {
-
-
-    _workspace = nullptr;
-
-    _covariance = nullptr;
-    _numValues = 0;
-    _numParams = 0;
-
-    f = nullptr;
-    _jacobian = nullptr;
-
-    _x = nullptr;
-    _wt = nullptr;
-
-    f_type _f = nullptr;
 }
 
 Minimizer::~Minimizer()
@@ -85,6 +81,10 @@ void Minimizer::initialize(int params, int values)
     // allocate initial paramter values and weights
     _x = gsl_vector_alloc(_numParams);
     _wt = gsl_vector_alloc(_numValues);
+
+    // initialize the weights to 1
+    for (int i = 0; i < _numValues; ++i)
+        gsl_vector_set(_wt, i, 1.0);
 
     // these are used in the helper routine gsl_f_wrapper
     _inputEigen.resize(_numParams);
@@ -113,12 +113,11 @@ bool Minimizer::fit(int max_iter)
     gsl_multifit_nlinear_winit (_x, _wt, &_fdf, _workspace);
 
     // run fitting routine
-    status = gsl_multifit_nlinear_driver(max_iter, xtol, gtol, ftol, NULL /*callback*/, NULL, &info, _workspace);
+    _status = gsl_multifit_nlinear_driver(max_iter, _xtol, _gtol, _ftol, NULL /*callback*/, NULL, &info, _workspace);
 
+    fprintf (stderr, "status = %s\n", gsl_strerror (_status));
 
-    fprintf (stderr, "status = %s\n", gsl_strerror (status));
-
-    return status == GSL_SUCCESS;
+    return (_status == GSL_SUCCESS);
 }
 
 void Minimizer::deinitialize()
@@ -199,6 +198,31 @@ Eigen::VectorXd Minimizer::params()
         eigenFromGSL(_workspace->x, x);
 
     return x;
+}
+
+const char *Minimizer::getStatusStr()
+{
+    return gsl_strerror(_status);
+}
+
+void Minimizer::setxTol(double xtol)
+{
+    _xtol = xtol;
+}
+
+void Minimizer::setgTol(double gtol)
+{
+    _gtol = gtol;
+}
+
+void Minimizer::setfTol(double ftol)
+{
+    _ftol = ftol;
+}
+
+int Minimizer::numIterations()
+{
+    return _workspace->niter;
 }
 
 int Minimizer::gsl_f_wrapper(const gsl_vector *input, void *data, gsl_vector *output)

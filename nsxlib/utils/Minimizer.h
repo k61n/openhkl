@@ -82,6 +82,14 @@ public:
     Eigen::MatrixXd jacobian();
     Eigen::VectorXd params();
 
+    const char* getStatusStr();
+
+    void setxTol(double xtol);
+    void setgTol(double gtol);
+    void setfTol(double ftol);
+
+    int numIterations();
+
 private:
     static int gsl_f_wrapper(const gsl_vector*, void*, gsl_vector*);
 
@@ -101,11 +109,11 @@ private:
 
     gsl_vector *f;
     gsl_matrix *_jacobian;
-    const double xtol = 1e-7;
-    const double gtol = 1e-7;
-    const double ftol = 0.0;
+    double _xtol = 1e-7;
+    double _gtol = 1e-7;
+    double _ftol = 0.0;
     //double chisq, chisq0;
-    int status, info;
+    int _status, info;
     struct data d;
 
     gsl_vector* _x;
@@ -115,6 +123,8 @@ private:
     Eigen::VectorXd _outputEigen;
 
     f_type _f;
+
+
 };
 
 } // namespace Utils
