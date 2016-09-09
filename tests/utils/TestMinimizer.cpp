@@ -40,7 +40,7 @@ int run_test()
         cout << "data: " << i << " " << y[i] << " " << endl;
     }
 
-    m.init(nparams, nvalues);
+    m.initialize(nparams, nvalues);
 
     m.setInitialValues(x);
     m.setInitialWeights(wt);
@@ -75,8 +75,6 @@ int run_test()
     BOOST_CHECK_CLOSE(x(0), 5.0, 1e-6);
     BOOST_CHECK_CLOSE(x(1), 0.1, 1e-6);
     BOOST_CHECK_CLOSE(x(2), 1.0, 1e-6);
-
-    m.free();
 
     return 0;
 }

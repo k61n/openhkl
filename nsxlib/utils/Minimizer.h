@@ -37,6 +37,7 @@
 #define NSXTOOL_MINIMIZER_H_
 
 #include <functional>
+#include <Eigen/Dense>
 
 #include <gsl/gsl_rng.h>
 #include <gsl/gsl_randist.h>
@@ -45,11 +46,6 @@
 #include <gsl/gsl_blas.h>
 #include <gsl/gsl_multifit_nlinear.h>
 #include <gsl/gsl_multilarge_nlinear.h>
-
-#include <Eigen/Dense>
-
-/* number of data points to fit */
-#define NUM_POINTS 40
 
 namespace SX {
 
@@ -66,10 +62,11 @@ public:
     using f_type = std::function<int(const Eigen::VectorXd&, Eigen::VectorXd&)>;
 
     Minimizer();
+    ~Minimizer();
 
-    void init(int params, int values);
+    void initialize(int params, int values);
     bool fit(int max_iter);
-    void free();
+    void deinitialize();
 
     template <typename Fun_>
     void set_f(Fun_ functor)
@@ -83,32 +80,39 @@ public:
 
     Eigen::MatrixXd covariance();
     Eigen::MatrixXd jacobian();
-
     Eigen::VectorXd params();
 
 private:
     static int gsl_f_wrapper(const gsl_vector*, void*, gsl_vector*);
 
-    const gsl_multifit_nlinear_type *T;
-    gsl_multifit_nlinear_workspace *w;
+    static void eigenFromGSL(const gsl_vector* in, Eigen::VectorXd& out);
+    static void eigenFromGSL(const gsl_matrix* in, Eigen::MatrixXd& out);
 
-    gsl_matrix *covar;
-    gsl_multifit_nlinear_fdf fdf;
-    gsl_multifit_nlinear_parameters fdf_params;
+    static void gslFromEigen(const Eigen::VectorXd& in, gsl_vector* out);
+    static void gslFromEigen(const Eigen::MatrixXd& in, gsl_matrix* out);
 
-    int _n, _p;
+    gsl_multifit_nlinear_workspace* _workspace;
+
+    gsl_matrix* _covariance;
+    gsl_multifit_nlinear_fdf _fdf;
+    gsl_multifit_nlinear_parameters _fdfParams;
+
+    int _numValues, _numParams;
 
     gsl_vector *f;
-    gsl_matrix *J;
+    gsl_matrix *_jacobian;
     const double xtol = 1e-7;
     const double gtol = 1e-7;
     const double ftol = 0.0;
-    double chisq, chisq0;
+    //double chisq, chisq0;
     int status, info;
     struct data d;
 
     gsl_vector* _x;
     gsl_vector* _wt;
+
+    Eigen::VectorXd _inputEigen;
+    Eigen::VectorXd _outputEigen;
 
     f_type _f;
 };

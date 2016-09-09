@@ -323,7 +323,7 @@ int UBMinimizer::runGSL(unsigned int maxIter)
     for (auto it=_start.begin();it!=_start.end();++it)
         x[it->first] = it->second;
 
-    minimizer.init(nParams, _functor.values());
+    minimizer.initialize(nParams, _functor.values());
     minimizer.setInitialValues(x);
     minimizer.set_f(_functor);
 
