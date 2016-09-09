@@ -41,14 +41,29 @@ public:
 
     void calculateRFactors();
 
+    void resetScale();
+    void setScale();
+
+    void refineScale();
+
 private slots:
 
 
     void on_redrawButton_clicked();
 
+    void on_pushButton_clicked();
+
 private:
+    double getScale(double z);
+
     Ui::ScaleDialog *ui;
     std::vector<std::vector<SX::Crystal::Peak3D*>> _peaks;
+    std::vector<double> _averages;
+
+    Eigen::VectorXd _scale;
+
+    int _values;
+
     double _Rmerge, _Rmeas, _Rpim;
 };
 #endif // NSXTOOL_SCALEDIALOG_H_

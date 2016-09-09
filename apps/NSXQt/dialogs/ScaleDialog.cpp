@@ -26,6 +26,8 @@
 #include "SpaceGroupSymbols.h"
 #include "IData.h"
 #include "Peak3D.h"
+#include "Minimizer.h"
+#include "RFactor.h"
 
 #include "Externals/qcustomplot.h"
 
@@ -39,8 +41,25 @@ ScaleDialog::ScaleDialog(const vector<vector<Peak3D*>>& peaks, QWidget *parent) 
     ui(new Ui::ScaleDialog)
 {
     ui->setupUi(this);
+
+    // set all scaling factors to 1
+    resetScale();
+
+    // calculate and build
     calculateRFactors();
-    buildPlot();
+
+
+    // reserve enough space in _scale!!
+    for (auto& peak_list: _peaks) {
+        for (auto& peak: peak_list) {
+            int frame = std::ceil(peak->getPeak()->getAABBCenter()[2]);
+            if ( frame > _scale.size() )
+                _scale.resize(frame+1);
+        }
+    }
+
+    // initialize the plot
+    buildScalePlot();
 }
 
 ScaleDialog::~ScaleDialog()
@@ -148,46 +167,18 @@ void ScaleDialog::buildScalePlot()
     }
 
     // go through each equivalence class of peaks
-    for (auto&& peak_list: _peaks) {
-        // skip if there are fewer than two peaks
-        if ( peak_list.size() < 2)
-            continue;
+    for (int i = 0; i < _scale.size(); ++i) {
 
-        double average = 0.0;
-        double sigma, var = 0.0;
+        xs.push_back(i);
+        ys.push_back(_scale[i]);
 
-        for (auto&& p: peak_list) {
-            double frame = p->getPeak()->getAABBCenter()[2];
-            double in = p->getScaledIntensity() * (a+b*frame);
-            average += in;
-            var += in*in;
-        }
-
-        average /= peak_list.size();
-        var -= peak_list.size()*average*average;
-        var /= (peak_list.size()-1);
-        sigma = std::sqrt(var);
-
-        if (sigma > sigma_max*average) {
-            qDebug() << "skipping set of peaks because sigma_max is too large!";
-            continue;
-        }
-
-        for (auto&& p: peak_list) {
-
-
-            double x = p->getPeak()->getAABBCenter()[2]; // frame
-            double y = (p->getScaledIntensity() * (a+b*x) - average);
-
-            xmin = x < xmin? x : xmin;
-            xmax = x > xmax? x : xmax;
-            ymin = y < ymin? y : ymin;
-            ymax = y > ymax? y : ymax;
-
-            xs.push_back(x);
-            ys.push_back(y);
-        }
+        if ( _scale[i] > ymax)
+            ymax = _scale[i];
     }
+
+    xmin = 0;
+    xmax = xs.size();
+    ymin = 0;
 
     // useful aliases
     plot->addGraph();
@@ -207,11 +198,16 @@ void ScaleDialog::calculateRFactors()
     _Rmerge = 0;
     _Rmeas = 0;
     _Rpim = 0;
+    _values = 0;
 
     double I_total = 0.0;
 
+    _averages.resize(_peaks.size());
+
     // go through each equivalence class of peaks
-    for (auto&& peak_list: _peaks) {
+    for (int i = 0; i < _peaks.size(); ++i) {
+        vector<Peak3D*> &peak_list = _peaks[i];
+
         // skip if there are fewer than two peaks
         if ( peak_list.size() < 2)
             continue;
@@ -220,12 +216,16 @@ void ScaleDialog::calculateRFactors()
         double sigma, var = 0.0;
 
         for (auto&& p: peak_list) {
-            double in = p->getScaledIntensity();
+            double z = p->getPeak()->getAABBCenter()[2];
+            double in = p->getScaledIntensity()*getScale(z);
             average += in;
+            ++_values;
         }
 
         const double n = peak_list.size();
         average /= n;
+
+        _averages[i] = average;
 
         I_total += n*average;
 
@@ -235,7 +235,8 @@ void ScaleDialog::calculateRFactors()
         double I_total = 0.0;
 
         for (auto&& p: peak_list) {
-            double diff = std::fabs(p->getScaledIntensity() - average);
+            double z = p->getPeak()->getAABBCenter()[2];
+            double diff = std::fabs(p->getScaledIntensity()*getScale(z) - average);
             _Rmerge += diff;
             _Rmeas += Fmeas*diff;
             _Rpim += Fpim*diff;
@@ -256,3 +257,100 @@ void ScaleDialog::on_redrawButton_clicked()
     calculateRFactors();
     buildPlot();
 }
+
+void ScaleDialog::resetScale()
+{
+    for (auto& peak_list: _peaks) {
+        for (auto& peak: peak_list) {
+            peak->setScale(1.0);
+            int frame = std::ceil(peak->getPeak()->getAABBCenter()[2]);
+            if ( frame >= _scale.size())
+                _scale.resize(frame+1);
+        }
+    }
+
+    for (int i = 0; i < _scale.size(); ++i)
+        _scale[i] = 1.0;
+}
+
+void ScaleDialog::setScale()
+{
+    for (auto& peak_list: _peaks) {
+        for (auto& peak: peak_list) {
+            double z = peak->getPeak()->getAABBCenter()[2];
+            peak->setScale(getScale(z));
+        }
+    }
+}
+
+void ScaleDialog::refineScale()
+{
+    auto residual_fn = [&](const Eigen::VectorXd& scale, Eigen::VectorXd& residuals)
+    {
+        int i = 0;
+        int idx = 0;
+
+        Eigen::VectorXd old_scale = _scale;
+        _scale = scale;
+
+        for (i = 0, idx = 0; i < _peaks.size(); ++i) {
+            if ( _peaks[i].size() < 2)
+                continue;
+
+            double average = 0;
+
+            for (Peak3D* peak: _peaks[i]) {
+                double z = peak->getPeak()->getAABBCenter()[2] ;
+                average += getScale(z) * peak->getScaledIntensity();
+            }
+
+            average /= _peaks[i].size();
+
+            for (Peak3D* peak: _peaks[i]) {
+                double z = peak->getPeak()->getAABBCenter()[2];
+                residuals(idx++) = (getScale(z) * peak->getScaledIntensity() / average - 1.0);
+            }
+        }
+
+        _scale = old_scale;
+
+        return GSL_SUCCESS;
+    };
+
+    qDebug() << "Refining scale using GSL minimizer...";
+
+    SX::Utils::Minimizer minimizer;
+
+    resetScale();
+
+    minimizer.init(_scale.size(), _values);
+    minimizer.setInitialValues(_scale);
+
+    minimizer.set_f(residual_fn);
+    minimizer.fit(100);
+
+    _scale = minimizer.params();
+
+    minimizer.free();
+
+    qDebug() << "...done!";
+}
+
+void ScaleDialog::on_pushButton_clicked()
+{
+    refineScale();
+    buildScalePlot();
+    calculateRFactors();
+}
+
+double ScaleDialog::getScale(double z)
+{
+    int lower = std::floor(z);
+    int upper = std::ceil(z);
+
+    double t = z-lower;
+    double s = upper-z;
+
+    return s*_scale[lower] + t*_scale[upper];
+}
+
