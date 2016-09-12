@@ -63,7 +63,7 @@ mac:
     - mkdir ./build
     - cd build
     - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_QTAPPS=OFF -DCMAKE_INSTALL_PREFIX=. ..
-    - cat include/Config.h
+    #- cat include/Config.h
     - make -j4 -l4
     - make install
     - ctest -j4 -l4
