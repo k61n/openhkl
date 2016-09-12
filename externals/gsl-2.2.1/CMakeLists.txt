@@ -20,7 +20,7 @@ set(PACKAGE_BUGREPORT "")
 set(PACKAGE_URL "")
 set(LT_OBJDIR ".libs/")
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
 # The following part of config.h is hard to derive from configure.ac.
 string(REGEX MATCHALL "[^\n]*\n" CONFIG
@@ -511,13 +511,13 @@ foreach (i RANGE ${length})
   string(REPLACE "<semi>" ";" line "${line}")
   set(CONFIG_OUT "${CONFIG_OUT}${line}")
 endforeach ()
-file(WRITE ${GSL_BINARY_DIR}/config.h
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/config.h
 "/* config.h.  Generated from config.h.in by configure.  */
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
 ${CONFIG_OUT}")
 
-include_directories(${GSL_BINARY_DIR} ${GSL_SOURCE_DIR})
+include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
 add_definitions(-DHAVE_CONFIG_H)
 
 if (GSL_DISABLE_WARNINGS)
@@ -564,8 +564,8 @@ function(add_gsl_test exename)
   add_test(${exename} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${exename})
 endfunction()
 
-file(GLOB GSL_HEADER_PATHS "${GSL_SOURCE_DIR}/gsl*.h")
-file(GLOB dirs "${GSL_SOURCE_DIR}/*")
+file(GLOB GSL_HEADER_PATHS "${CMAKE_CURRENT_SOURCE_DIR}/gsl*.h")
+file(GLOB dirs "${CMAKE_CURRENT_SOURCE_DIR}/*")
 foreach (dir ${dirs})
   if (NOT (dir MATCHES "gsl$"))
     file(GLOB headers "${dir}/gsl*.h")
@@ -582,7 +582,7 @@ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/copy-headers.cmake "
   file(MAKE_DIRECTORY gsl)
   foreach (path ${GSL_HEADER_PATHS})
     get_filename_component(filename \${path} NAME)
-    configure_file(\${path} ${GSL_BINARY_DIR}/gsl/\${filename} COPYONLY)
+    configure_file(\${path} ${CMAKE_CURRENT_BINARY_DIR}/gsl/\${filename} COPYONLY)
   endforeach ()")
 
 add_custom_command(OUTPUT ${GSL_HEADERS}
