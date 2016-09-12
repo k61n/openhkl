@@ -28,7 +28,7 @@ find_package(OpenMP)
 
 ###### Find the Eigen3
 find_package(Eigen3 REQUIRED)
-include_directories(${EIGEN3_INCLUDE_DIR})
+include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
 
 ###### Search the HDF5 library
 find_package(HDF5 COMPONENTS CXX REQUIRED)

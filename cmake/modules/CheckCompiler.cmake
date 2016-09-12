@@ -86,9 +86,9 @@ endif()
 if(CMAKE_COMPILER_IS_GNUCXX)
     add_definitions(
         #-Wall
-        -Wno-ignored-attributes # ignore annoying warnings caused by Eigen library
-        -Wno-misleading-indentation # ignore annoying warnings caused by Eigen library
-        -Wno-deprecated-declarations # ignore annoying warnings caused by Eigen library
+        #-Wno-ignored-attributes # ignore annoying warnings caused by Eigen library
+        #-Wno-misleading-indentation # ignore annoying warnings caused by Eigen library
+        #-Wno-deprecated-declarations # ignore annoying warnings caused by Eigen library
         #-fopenmp
         #-pthread
         #-DEIGEN_FFTW_DEFAULT
