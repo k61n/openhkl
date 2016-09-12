@@ -26,32 +26,57 @@ else()
 endif()
 
 if(BUILD_GSL)
-  add_dependencies(NSXTool gsl_library)
-endif()
-
-
-# Link
-if(MSVC)
-target_link_libraries(NSXTool
-    ${HDF5_LIBRARIES}
-    blosc_static
-    ${Boost_LIBRARIES}
-    ${PYTHON_LIBRARIES}
-    ${FFTW_LIBRARIES}
-    ${TIFF_LIBRARY}
-    ${GSL_LIBRARIES}
-)
+  add_dependencies(NSXTool gsl gslcblas)
+  if(MSVC)
+    target_link_libraries(NSXTool
+      ${HDF5_LIBRARIES}
+      blosc_static
+      ${Boost_LIBRARIES}
+      ${PYTHON_LIBRARIES}
+      ${FFTW_LIBRARIES}
+      ${TIFF_LIBRARY}
+      gsl
+      gslcblas
+      )
+  else()
+    target_link_libraries(NSXTool
+      ${HDF5_LIBRARIES}
+      blosc_shared
+      ${Boost_LIBRARIES}
+      ${PYTHON_LIBRARIES}
+      ${FFTW_LIBRARIES}
+      ${TIFF_LIBRARY}
+      gsl
+      gslcblas
+      )
+  endif()
 else()
-  target_link_libraries(NSXTool
-        ${HDF5_LIBRARIES}
-        blosc_shared
-        ${Boost_LIBRARIES}
-        ${PYTHON_LIBRARIES}
-        ${FFTW_LIBRARIES}
-        ${TIFF_LIBRARY}
-        ${GSL_LIBRARIES}
-    )
+  # Link
+  if(MSVC)
+    target_link_libraries(NSXTool
+      ${HDF5_LIBRARIES}
+      blosc_static
+      ${Boost_LIBRARIES}
+      ${PYTHON_LIBRARIES}
+      ${FFTW_LIBRARIES}
+      ${TIFF_LIBRARY}
+      ${GSL_LIBRARIES}
+      )
+  else()
+    target_link_libraries(NSXTool
+      ${HDF5_LIBRARIES}
+      blosc_shared
+      ${Boost_LIBRARIES}
+      ${PYTHON_LIBRARIES}
+      ${FFTW_LIBRARIES}
+      ${TIFF_LIBRARY}
+      ${GSL_LIBRARIES}
+      )
+  endif()
 endif()
+
+
+
 
 # Install section, installing libraries 
 install(TARGETS NSXTool DESTINATION lib)

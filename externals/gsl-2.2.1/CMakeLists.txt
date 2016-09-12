@@ -615,6 +615,8 @@ foreach (dir "." ${dirs})
         # Build gslcblas as a static library on MSVC because it doesn't have a .def file.
         if (MSVC)
           set(GSLCBLAS_TYPE STATIC)
+	else()
+	  set(GSLCBLAS_TYPE SHARED)
         endif ()
         add_library(gslcblas ${GSLCBLAS_TYPE} ${SOURCES})
         target_link_libraries(gslcblas ${CMAKE_REQUIRED_LIBRARIES})
@@ -656,7 +658,8 @@ if (BUILD_SHARED_LIBS)
   endif ()
 endif ()
 
-add_library(gsl ${shared} ${GSL_SOURCES})
+# jmf testing
+add_library(gsl SHARED ${GSL_SOURCES})
 set_target_properties(gsl PROPERTIES COMPILE_DEFINITIONS DLL_EXPORT)
 target_link_libraries(gsl gslcblas)
 add_dependencies(gsl copy-headers)
