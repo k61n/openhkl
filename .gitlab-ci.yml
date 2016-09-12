@@ -80,9 +80,9 @@ mac:
 #  artifacts:
 #    paths:
 #    - ${CI_PROJECT_DIR}/build/qmake-build/nsxtool*dmg
-  only:
-    - master
-    - develop
+#  only:
+#    - master
+#    - develop
   tags:
     - mac
 
