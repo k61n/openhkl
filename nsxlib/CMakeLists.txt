@@ -25,7 +25,7 @@ else()
     add_library(NSXTool SHARED ${sources} ${headers})
 endif()
 
-if(BUILD_GSL)
+if(GSL_FOUND)
   add_dependencies(NSXTool gsl gslcblas)
   if(MSVC)
     target_link_libraries(NSXTool
@@ -35,8 +35,7 @@ if(BUILD_GSL)
       ${PYTHON_LIBRARIES}
       ${FFTW_LIBRARIES}
       ${TIFF_LIBRARY}
-      gsl
-      gslcblas
+      ${GSL_LIBRARIES}
       )
   else()
     target_link_libraries(NSXTool
@@ -46,8 +45,7 @@ if(BUILD_GSL)
       ${PYTHON_LIBRARIES}
       ${FFTW_LIBRARIES}
       ${TIFF_LIBRARY}
-      gsl
-      gslcblas
+      ${GSL_LIBRARIES}
       )
   endif()
 else()
@@ -60,7 +58,6 @@ else()
       ${PYTHON_LIBRARIES}
       ${FFTW_LIBRARIES}
       ${TIFF_LIBRARY}
-      ${GSL_LIBRARIES}
       )
   else()
     target_link_libraries(NSXTool
@@ -70,7 +67,6 @@ else()
       ${PYTHON_LIBRARIES}
       ${FFTW_LIBRARIES}
       ${TIFF_LIBRARY}
-      ${GSL_LIBRARIES}
       )
   endif()
 endif()
