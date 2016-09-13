@@ -85,6 +85,8 @@ bool MinimizerEigen::fit(int max_iter)
     // evaluate the jacobian
     _fdf->df(_x, _jacobian);
 
+    _numIter = _lm->iter;
+
     return (status == 1);
 }
 

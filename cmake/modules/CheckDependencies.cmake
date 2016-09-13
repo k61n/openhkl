@@ -85,6 +85,8 @@ find_package(GSL)
 if(GSL_FOUND)
   include_directories(${GSL_INCLUDE_DIR})
 
+  message("GSL_INCLUDE_DIR is ${GSL_INCLUDE_DIR}")
+
   set(temp_string ${GSL_VERSION})
   string(REGEX REPLACE "([0-9]+)\\.([0-9]+)(\\.([0-9]+))?" "\\1" gsl_version_major ${temp_string})
   string(REGEX REPLACE "([0-9]+)\\.([0-9]+)(\\.([0-9]+))?" "\\2" gsl_version_minor ${temp_string})

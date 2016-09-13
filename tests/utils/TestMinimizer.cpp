@@ -108,6 +108,10 @@ int run_test()
 
     BOOST_CHECK(norm < 1e-6);
 
+    cout << "Number of iterations:" << endl;
+    cout << "    Eigen: " << m_eigen->numIterations() << endl;
+    cout << "    GSL:   " << m_gsl->numIterations() << endl;
+
 #endif
 
     return 0;
