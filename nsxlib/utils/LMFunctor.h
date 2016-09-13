@@ -30,6 +30,8 @@
 #ifndef NSXTOOL_LMFUNCTOR_H_
 #define NSXTOOL_LMFUNCTOR_H_
 
+#include <Eigen/Dense>
+
 namespace SX
 {
 
@@ -58,7 +60,7 @@ public:
 
 	virtual int inputs() const;
 	virtual int values() const;
-	virtual ~LMFunctor()=0;;
+    virtual ~LMFunctor()=0;
 
 protected:
 	int m_inputs, m_values;

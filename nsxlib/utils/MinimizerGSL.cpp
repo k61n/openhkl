@@ -33,7 +33,7 @@
  *
  */
 
-#include "Minimizer.h"
+#include "MinimizerGSL.h"
 
 
 #include <stdlib.h>
@@ -49,50 +49,44 @@ namespace SX {
 namespace Utils {
 
 
-Minimizer::Minimizer():
+MinimizerGSL::MinimizerGSL():
+    IMinimizer(),
     _workspace(nullptr),
-    _covariance(nullptr),
-    _numValues(0),
-    _numParams(0),
-    _jacobian( nullptr),
-    _x (nullptr),
-    _wt (nullptr),
-    _f(nullptr),
-    _xtol(1e-7),
-    _gtol(1e-7),
-    _ftol(0.0)
+    _covariance_gsl(nullptr),
+    _jacobian_gsl( nullptr),
+    _x_gsl (nullptr),
+    _wt_gsl (nullptr)
 {
 }
 
-Minimizer::~Minimizer()
+MinimizerGSL::~MinimizerGSL()
 {
     deinitialize();
 }
 
-void Minimizer::initialize(int params, int values)
+void MinimizerGSL::initialize(int params, int values)
 {
     deinitialize();
+    IMinimizer::initialize(params, values);
 
     // use default parameters + Levenberg-Marquardt trust region selection
     _fdfParams = gsl_multifit_nlinear_default_parameters();
     _fdfParams.trs = gsl_multifit_nlinear_trs_lm;
 
-    _numParams = params;
-    _numValues = values;
-
     // allocate initial paramter values and weights
-    _x = gsl_vector_alloc(_numParams);
-    _wt = gsl_vector_alloc(_numValues);
+    _x_gsl = gsl_vector_alloc(_numParams);
+    _wt_gsl = gsl_vector_alloc(_numValues);
+    _covariance_gsl = gsl_matrix_alloc(_numParams, _numParams);
 
     // initialize the weights to 1
     for (int i = 0; i < _numValues; ++i)
-        gsl_vector_set(_wt, i, 1.0);
+        gsl_vector_set(_wt_gsl, i, 1.0);
 
     // these are used in the helper routine gsl_f_wrapper
     _inputEigen.resize(_numParams);
     _outputEigen.resize(_numValues);
 
-    _fdf.f = &Minimizer::gsl_f_wrapper; // function to be minimized: wrapper which calls _f
+    _fdf.f = &MinimizerGSL::gsl_f_wrapper; // function to be minimized: wrapper which calls _f
     _fdf.df = nullptr;  // set to nullptr since we compute the jacobian numerically
     _fdf.fvv = nullptr;  // not using geodesic acceleration
 
@@ -105,132 +99,81 @@ void Minimizer::initialize(int params, int values)
     _workspace = gsl_multifit_nlinear_alloc(gsl_multifit_nlinear_trust, &_fdfParams, _numValues, _numParams);
 }
 
-bool Minimizer::fit(int max_iter)
+bool MinimizerGSL::fit(int max_iter)
 {
     if (!_workspace || !_f)
         return false;
 
     // initialize solver with starting point and weights
-    // note that this is NOT called in Minimizer::initialize because _f needs to be set first!
-    gsl_multifit_nlinear_winit (_x, _wt, &_fdf, _workspace);
+    // note that this is NOT called in MinimizerGSL::initialize because _f needs to be set first!
+    gslFromEigen(_x, _x_gsl);
+    gslFromEigen(_wt, _wt_gsl);
+
+    gsl_multifit_nlinear_winit (_x_gsl, _wt_gsl, &_fdf, _workspace);
 
     // run fitting routine
     _status = gsl_multifit_nlinear_driver(max_iter, _xtol, _gtol, _ftol, NULL /*callback*/, NULL, &info, _workspace);
 
-    fprintf (stderr, "status = %s\n", gsl_strerror (_status));
+    fprintf (stderr, "status = %s\n", gsl_strerror(_status));
+
+    eigenFromGSL(_workspace->x, _x);
+    eigenFromGSL(_workspace->J, _jacobian);
+    gslFromEigen(_x, _x_gsl);
+
+    _numIter = _workspace->niter;
+
+
+    gsl_multifit_nlinear_covar(_workspace->J, 1e-6, _covariance_gsl);
+
+    eigenFromGSL(_covariance_gsl, _covariance);
 
     return (_status == GSL_SUCCESS);
 }
 
-void Minimizer::deinitialize()
+void MinimizerGSL::deinitialize()
 {
+    IMinimizer::deinitialize();
+
     if (_workspace) {
         gsl_multifit_nlinear_free (_workspace);
         _workspace = nullptr;
     }
 
-    if (_covariance) {
-        gsl_matrix_free (_covariance);
-        _covariance = nullptr;
+    if (_covariance_gsl) {
+        gsl_matrix_free (_covariance_gsl);
+        _covariance_gsl = nullptr;
     }
 
-    if (_jacobian) {
+    if (_jacobian_gsl) {
         // jacobian is part of the workspace, doesnt need to be freed
         //gsl_matrix_free(_jacobian);
-        _jacobian = nullptr;
+        _jacobian_gsl = nullptr;
     }
 
-    if (_x) {
-        gsl_vector_free(_x);
-        _x = nullptr;
+    if (_x_gsl) {
+        gsl_vector_free(_x_gsl);
+        _x_gsl = nullptr;
     }
 
-    if (_wt) {
-        gsl_vector_free(_wt);
-        _wt = nullptr;
+    if (_wt_gsl) {
+        gsl_vector_free(_wt_gsl);
+        _wt_gsl = nullptr;
     }
 
     _f = nullptr;
 }
 
-void Minimizer::setInitialValues(const Eigen::VectorXd &x)
-{
-    assert(_numParams == x.size());
 
-    for ( int i = 0; i < x.size(); ++i)
-        gsl_vector_set(_x, i, x(i));
-
-    _covariance = gsl_matrix_alloc(_numParams, _numParams);
-}
-
-void Minimizer::setInitialWeights(const Eigen::VectorXd &wt)
-{
-    assert(_numValues == wt.size());
-
-    _wt = gsl_vector_alloc(wt.size());
-
-    for ( int i = 0; i < wt.size(); ++i)
-        gsl_vector_set(_wt, i, wt(i));
-}
-
-Eigen::MatrixXd Minimizer::covariance()
-{
-    if (!_jacobian)
-        _jacobian = gsl_multifit_nlinear_jac(_workspace);
-
-    gsl_multifit_nlinear_covar(_jacobian, 0.0, _covariance);
-    Eigen::MatrixXd c(_numParams, _numParams);
-    eigenFromGSL(_covariance, c);
-    return c;
-}
-
-Eigen::MatrixXd Minimizer::jacobian()
-{
-    _jacobian = gsl_multifit_nlinear_jac(_workspace);
-    Eigen::MatrixXd jac(_jacobian->size1, _jacobian->size2);
-    eigenFromGSL(_jacobian, jac);
-    return jac;
-}
-
-Eigen::VectorXd Minimizer::params()
-{
-    Eigen::VectorXd x(_numParams);
-
-    if (_workspace)
-        eigenFromGSL(_workspace->x, x);
-
-    return x;
-}
-
-const char *Minimizer::getStatusStr()
+const char *MinimizerGSL::getStatusStr()
 {
     return gsl_strerror(_status);
 }
 
-void Minimizer::setxTol(double xtol)
-{
-    _xtol = xtol;
-}
 
-void Minimizer::setgTol(double gtol)
-{
-    _gtol = gtol;
-}
-
-void Minimizer::setfTol(double ftol)
-{
-    _ftol = ftol;
-}
-
-int Minimizer::numIterations()
-{
-    return _workspace->niter;
-}
-
-int Minimizer::gsl_f_wrapper(const gsl_vector *input, void *data, gsl_vector *output)
+int MinimizerGSL::gsl_f_wrapper(const gsl_vector *input, void *data, gsl_vector *output)
 {
     // call the function
-    Minimizer* self = reinterpret_cast<Minimizer*>(data);
+    MinimizerGSL* self = reinterpret_cast<MinimizerGSL*>(data);
 
     Eigen::VectorXd& in = self->_inputEigen;
     Eigen::VectorXd& out = self->_outputEigen;
@@ -246,7 +189,7 @@ int Minimizer::gsl_f_wrapper(const gsl_vector *input, void *data, gsl_vector *ou
     return result;
 }
 
-void Minimizer::eigenFromGSL(const gsl_vector *in, Eigen::VectorXd &out)
+void MinimizerGSL::eigenFromGSL(const gsl_vector *in, Eigen::VectorXd &out)
 {
     assert(in->size == out.size());
 
@@ -254,7 +197,7 @@ void Minimizer::eigenFromGSL(const gsl_vector *in, Eigen::VectorXd &out)
         out(i) = gsl_vector_get(in, i);
 }
 
-void Minimizer::eigenFromGSL(const gsl_matrix *in, Eigen::MatrixXd &out)
+void MinimizerGSL::eigenFromGSL(const gsl_matrix *in, Eigen::MatrixXd &out)
 {
     assert(in->size1 == out.rows());
     assert(in->size2 == out.cols());
@@ -264,7 +207,7 @@ void Minimizer::eigenFromGSL(const gsl_matrix *in, Eigen::MatrixXd &out)
             out(i, j) = gsl_matrix_get(in, i, j);
 }
 
-void Minimizer::gslFromEigen(const Eigen::VectorXd &in, gsl_vector *out)
+void MinimizerGSL::gslFromEigen(const Eigen::VectorXd &in, gsl_vector *out)
 {
     assert(in.size() == out->size);
 
@@ -272,7 +215,7 @@ void Minimizer::gslFromEigen(const Eigen::VectorXd &in, gsl_vector *out)
         gsl_vector_set(out, i, in(i));
 }
 
-void Minimizer::gslFromEigen(const Eigen::MatrixXd &in, gsl_matrix *out)
+void MinimizerGSL::gslFromEigen(const Eigen::MatrixXd &in, gsl_matrix *out)
 {
     assert(out->size1 == in.rows());
     assert(out->size2 == in.cols());

@@ -1,7 +1,8 @@
 #include <cmath>
 
 #include "UBMinimizer.h"
-#include "Minimizer.h"
+#include "MinimizerGSL.h"
+#include "MinimizerEigen.h"
 
 #include <unsupported/Eigen/NonLinearOptimization>
 #include <unsupported/Eigen/NumericalDiff>
@@ -315,7 +316,11 @@ int UBMinimizer::runEigen(unsigned int maxIter)
 
 int UBMinimizer::runGSL(unsigned int maxIter)
 {
-    SX::Utils::Minimizer minimizer;
+#ifdef NSXTOOL_GSL_FOUND
+    SX::Utils::MinimizerGSL minimizer;
+#else
+    SX::Utils::MinimizerEigen minimizer;
+#endif
 
     int nParams=_functor.inputs();
     Eigen::VectorXd x=Eigen::VectorXd::Zero(nParams);
@@ -324,7 +329,7 @@ int UBMinimizer::runGSL(unsigned int maxIter)
         x[it->first] = it->second;
 
     minimizer.initialize(nParams, _functor.values());
-    minimizer.setInitialValues(x);
+    minimizer.setParams(x);
     minimizer.set_f(_functor);
 
     int status = minimizer.fit(maxIter);

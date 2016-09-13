@@ -8,7 +8,8 @@
 #include <vector>
 #include <string>
 
-#include "Minimizer.h"
+#include "MinimizerEigen.h"
+#include "MinimizerGSL.h"
 
 #include <Eigen/Dense>
 
@@ -18,8 +19,11 @@ using namespace std;
 
 int run_test()
 {
-    Minimizer m;
-    Eigen::VectorXd x, y, wt;
+    std::unique_ptr<IMinimizer> m_gsl, m_eigen;
+
+    m_eigen = std::unique_ptr<MinimizerEigen>(new MinimizerEigen);
+
+    Eigen::VectorXd x_initial, x_eigen, x_gsl, y, wt;
 
     int nparams = 3, nvalues = 40;
 
@@ -27,8 +31,11 @@ int run_test()
     y.resize(num_points, 1);
     wt.resize(num_points, 1);
 
-    x.resize(3,1);
-    x << 4.0, 0.2, 0.5;
+    x_eigen.resize(3);
+    x_gsl.resize(3);
+    x_initial.resize(3);
+
+    x_initial << 4.0, 0.2, 0.5;
 
     for (int i = 0; i < nvalues; i++)
     {
@@ -40,10 +47,6 @@ int run_test()
         cout << "data: " << i << " " << y[i] << " " << endl;
     }
 
-    m.initialize(nparams, nvalues);
-
-    m.setInitialValues(x);
-    m.setInitialWeights(wt);
 
     auto residual_fn = [y] (const Eigen::VectorXd& p, Eigen::VectorXd& r) -> int
     {
@@ -65,16 +68,47 @@ int run_test()
         return GSL_SUCCESS;
     };
 
-    m.set_f(residual_fn);
+    m_eigen->initialize(nparams, nvalues);
+    m_eigen->setParams(x_initial);
+    m_eigen->setWeights(wt);
+    m_eigen->set_f(residual_fn);
+    m_eigen->fit(200);
+    x_eigen = m_eigen->params();
 
-    m.fit(200);
+    BOOST_CHECK_CLOSE(x_eigen(0), 5.0, 1e-6);
+    BOOST_CHECK_CLOSE(x_eigen(1), 0.1, 1e-6);
+    BOOST_CHECK_CLOSE(x_eigen(2), 1.0, 1e-6);
 
+#ifdef NSXTOOL_GSL_FOUND
 
-    x = m.params();
+    m_gsl = std::unique_ptr<IMinimizer>(new MinimizerGSL);
 
-    BOOST_CHECK_CLOSE(x(0), 5.0, 1e-6);
-    BOOST_CHECK_CLOSE(x(1), 0.1, 1e-6);
-    BOOST_CHECK_CLOSE(x(2), 1.0, 1e-6);
+    m_gsl->initialize(nparams, nvalues);
+    m_gsl->setParams(x_initial);
+    m_gsl->setWeights(wt);
+    m_gsl->set_f(residual_fn);
+    m_gsl->fit(200);
+    x_gsl = m_gsl->params();
+
+    BOOST_CHECK_CLOSE(x_gsl(0), 5.0, 1e-6);
+    BOOST_CHECK_CLOSE(x_gsl(1), 0.1, 1e-6);
+    BOOST_CHECK_CLOSE(x_gsl(2), 1.0, 1e-6);
+
+    Eigen::MatrixXd j_gsl, j_eigen;
+
+    j_eigen = m_eigen->jacobian();
+    j_gsl = m_gsl->jacobian();
+
+    BOOST_CHECK(j_eigen.rows() == j_gsl.rows());
+    BOOST_CHECK(j_eigen.cols() == j_gsl.cols());
+
+    Eigen::MatrixXd diff = j_eigen - j_gsl;
+
+    double norm = (diff * diff.transpose()).trace();
+
+    BOOST_CHECK(norm < 1e-6);
+
+#endif
 
     return 0;
 }

@@ -33,63 +33,58 @@
  *
  */
 
-#ifndef NSXTOOL_IMINIMIZER_H_
-#define NSXTOOL_IMINIMIZER_H_
+#ifndef NSXTOOL_MINIMIZEREIGEN_H_
+#define NSXTOOL_MINIMIZEREIGEN_H_
 
 #include <functional>
+#include <memory>
 
 #include <Eigen/Dense>
+#include <unsupported/Eigen/NonLinearOptimization>
+#include <unsupported/Eigen/NumericalDiff>
+
+
+#include "IMinimizer.h"
+#include "LMFunctor.h"
 
 namespace SX {
 
 namespace Utils {
 
-class IMinimizer {
+class MinimizerEigen: public IMinimizer {
+
+
 public:
     using f_type = std::function<int(const Eigen::VectorXd&, Eigen::VectorXd&)>;
 
-    IMinimizer();
-    virtual ~IMinimizer();
+    class functor_type: public LMFunctor<double> {
+    public:
+        functor_type(f_type f, int params, int values): LMFunctor(params, values), _f(f) {}
 
-    template <typename Fun_>
-    void set_f(Fun_ functor)
-    {
-        _f = static_cast<f_type>(functor);
-    }
+        int operator()(const Eigen::VectorXd& x, Eigen::VectorXd& r) const override { return _f(x, r); }
+    private:
+        f_type _f;
+    };
 
-    void setParams(const Eigen::VectorXd& x);
-    void setWeights(const Eigen::VectorXd& wt);
+    using fdf_type = Eigen::NumericalDiff<functor_type>;
+    using lm_type = Eigen::LevenbergMarquardt<fdf_type>;
 
-    Eigen::MatrixXd covariance();
-    Eigen::MatrixXd jacobian();
-    Eigen::VectorXd params();
+    MinimizerEigen();
+    ~MinimizerEigen();
 
-    void setxTol(double xtol);
-    void setgTol(double gtol);
-    void setfTol(double ftol);
+    void initialize(int params, int values) override;
+    void deinitialize() override;
 
-    int numIterations();
+    const char* getStatusStr() override;
+    bool fit(int max_iter) override;
 
-    virtual void initialize(int params, int values);
-    virtual void deinitialize();
-    virtual bool fit(int max_iter) = 0;
-    virtual const char* getStatusStr() = 0;
-
-protected:
-    int _numValues, _numParams, _numIter;
-
-    double _xtol = 1e-7;
-    double _gtol = 1e-7;
-    double _ftol = 0.0;
-
-    Eigen::VectorXd _x,  _wt;
-    Eigen::MatrixXd _jacobian, _covariance;
-
-    f_type _f;
+private:
+    std::unique_ptr<fdf_type> _fdf;
+    std::unique_ptr<lm_type> _lm;
 };
 
 } // namespace Utils
 
 } // namespace SX
 
-#endif // NSXTOOL_IMINIMIZER_H_
+#endif // NSXTOOL_MINIMIZEREIGEN_H_
