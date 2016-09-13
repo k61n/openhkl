@@ -80,22 +80,30 @@ find_package(FFTW REQUIRED)
 include_directories(${FFTW_INCLUDE_DIR})
 
 # GNU scientific library
-find_package(GSL 2.2)
+find_package(GSL)
 
-if(NOT GSL_FOUND OR GSL_VERSION VERSION_LESS 2.2)
-  set(BUILD_GSL TRUE)
-  message("Could not find gsl (>=2.2) on host system, building from source")
-  add_subdirectory(externals/gsl-2.2.1)
-  set(GSL_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/externals/gsl-2.2.1)
-  #set(GSL_LIBRARIES "${CMAKE_CURRENT_BINARY_DIR}/externals/gsl-2.2.1/.libs/libgsl.so;${CMAKE_CURRENT_BINARY_DIR}/externals/gsl-2.2.1/cblas/.libs/libgslcblas.so")
-  get_property(gsl_lib_location TARGET gsl PROPERTY LOCATION)
-  get_property(gslcblas_lib_location TARGET gslcblas PROPERTY LOCATION)
-  set(GSL_LIBRARIES "${gsl_lib_location};${gslcblas_lib_location}")
+if(GSL_FOUND)
+  include_directories(${GSL_INCLUDE_DIR})
+
+  set(temp_string ${GSL_VERSION})
+  string(REGEX REPLACE "([0-9]+)\\.([0-9]+)(\\.([0-9]+))?" "\\1" gsl_version_major ${temp_string})
+  string(REGEX REPLACE "([0-9]+)\\.([0-9]+)(\\.([0-9]+))?" "\\2" gsl_version_minor ${temp_string})
+  #string(REGEX REPLACE "([0-9]+)\\.([0-9]+)(\\.([0-9]+))?" "\\4" gsl_version_subminor ${temp_string})
+  
+
+  message("GSL_VERSION_MAJOR is ${gsl_version_major}")
+  message("GSL_VERSION_MINOR is ${gsl_version_minor}")
+  #message("GSL_VERSION_SUBMINOR is ${gsl_version_subminor}")
+
+  add_definitions(-DNSXTOOL_GSL_FOUND=1)
+  add_definitions(-DNSXTOOL_GSL_VERSION_MAJOR=${gsl_version_major})
+  add_definitions(-DNSXTOOL_GSL_VERSION_MINOR=${gsl_version_minor})
+    
+  else()
+  message(WARNING "GSL library not found -- will use Eigen/unsupported for Levenberg-Marquardt algorithm")
 endif()
 
-include_directories(${GSL_INCLUDE_DIR})
 
-message("GSL_INCLUDE_DIR is ${GSL_INCLUDE_DIR}")
-message("GSL_LIBRARIES is ${GSL_LIBRARIES}")
-  
+
+
 
