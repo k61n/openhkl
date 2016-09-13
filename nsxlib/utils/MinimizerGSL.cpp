@@ -120,9 +120,13 @@ bool MinimizerGSL::fit(int max_iter)
 #else
     gsl_multifit_fdfsolver_set(_workspace, &_fdf, _x_gsl);
 #if(NSXTOOL_GSL_VERSION_MAJOR==2)
+    _jacobian_gsl = gsl_matrix_alloc(_numValues, _numParams);
     _status = gsl_multifit_fdfsolver_driver(_workspace, max_iter, _xtol, _gtol, _ftol, &info);
     gsl_multifit_fdfsolver_dif_df(_workspace->x, _wt_gsl, &_fdf, _workspace->f, _jacobian_gsl);
     eigenFromGSL(_jacobian_gsl, _jacobian);
+    gsl_matrix_free(_jacobian_gsl);
+    _jacobian_gsl = nullptr;
+    _numIter = _workspace->niter;
 #else // GSL VERSION 1.xx
     _numIter = 0;
     double epsabs = 0.0;

@@ -26,7 +26,6 @@ else()
 endif()
 
 if(GSL_FOUND)
-  add_dependencies(NSXTool gsl gslcblas)
   if(MSVC)
     target_link_libraries(NSXTool
       ${HDF5_LIBRARIES}
