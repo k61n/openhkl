@@ -78,9 +78,9 @@ public:
 protected:
     int _numValues, _numParams, _numIter;
 
-    double _xtol = 1e-7;
-    double _gtol = 1e-7;
-    double _ftol = 0.0;
+    double _xtol;
+    double _gtol;
+    double _ftol;
 
     Eigen::VectorXd _x,  _wt;
     Eigen::MatrixXd _jacobian, _covariance;

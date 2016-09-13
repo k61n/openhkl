@@ -65,7 +65,7 @@ int run_test()
             double Yi = A * exp (-lambda * t) + b;
             r(i) = Yi - y[i];
         }
-        return GSL_SUCCESS;
+        return 0;
     };
 
     m_eigen->initialize(nparams, nvalues);
