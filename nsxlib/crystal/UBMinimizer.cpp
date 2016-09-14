@@ -4,9 +4,6 @@
 #include "MinimizerGSL.h"
 #include "MinimizerEigen.h"
 
-#include <unsupported/Eigen/NonLinearOptimization>
-#include <unsupported/Eigen/NumericalDiff>
-
 #include <Eigen/Dense>
 #include "Component.h"
 #include "ComponentState.h"
