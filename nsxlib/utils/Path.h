@@ -59,7 +59,6 @@ public:
 	static std::string getDataBasesPath();
 
     static std::string getResourcesDir();
-
 };
 
 
