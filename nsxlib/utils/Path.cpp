@@ -14,6 +14,9 @@ namespace SX
 namespace Utils
 {
 
+int Path::_argc = 0;
+const char** Path::_argv = nullptr;
+
 std::string Path::getHomeDirectory()
 {
 	const char* home = getenv("HOME");
@@ -75,6 +78,13 @@ std::string Path::getApplicationDataPath()
     if ( nsx_root_dir)
         possible_locations.insert(possible_locations.begin(), nsx_root_dir);
 
+    // add location of executable if possible
+    if ( _argc > 0 && _argv && _argv[0]) {
+        boost::filesystem::path p(_argv[0]);
+        p.remove_filename();
+        possible_locations.insert(possible_locations.begin(), p.string());
+    }
+
     std::string match = "";
 
     for (auto&& path: possible_locations) {
@@ -117,6 +127,12 @@ std::string Path::getResourcesDir()
         resourcesDir = getApplicationDataPath();
 
     return boost::filesystem::path(resourcesDir).string();
+}
+
+void Path::setArgv(int argc, const char **argv)
+{
+    _argc = argc;
+    _argv = argv;
 }
 
 

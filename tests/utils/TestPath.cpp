@@ -13,12 +13,13 @@ using namespace SX::Utils;
 
 BOOST_AUTO_TEST_CASE(Test_Path)
 {
-
 	namespace filesystem=boost::filesystem;
+    const char* argv[1] = {"test/test.exe"};
+    Path::setArgv(1, argv);
 
     Path* path = Path::Instance();
 
-    std::cout << "hello" << path->getApplicationDataPath() << std::endl;
+    std::cout << "hello " << path->getApplicationDataPath() << std::endl;
 
     std::string p = path->getResourcesDir();
     std::cout << p <<std::endl;
