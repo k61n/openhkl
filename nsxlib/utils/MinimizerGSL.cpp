@@ -117,6 +117,7 @@ bool MinimizerGSL::fit(int max_iter)
     _status = gsl_multifit_nlinear_driver(max_iter, _xtol, _gtol, _ftol, NULL /*callback*/, NULL, &info, _workspace);
     gsl_multifit_nlinear_covar(_workspace->J, 1e-6, _covariance_gsl);
     _numIter = _workspace->niter;
+    eigenFromGSL(_workspace->J, _jacobian);
 #else
     gsl_multifit_fdfsolver_set(_workspace, &_fdf, _x_gsl);
 #if(NSXTOOL_GSL_VERSION_MAJOR==2)
