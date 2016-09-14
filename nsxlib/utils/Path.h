@@ -61,10 +61,11 @@ public:
     static std::string getResourcesDir();
 
     //! Pass (argc, argv) or running process to nsxlib
-    static void setArgv(int argc, const char** argv);
+    static void setArgv(int argc, char** argv);
 
+private:
     static int _argc;
-    static const char** _argv;
+    static char** _argv;
 };
 
 

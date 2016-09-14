@@ -15,7 +15,7 @@ namespace Utils
 {
 
 int Path::_argc = 0;
-const char** Path::_argv = nullptr;
+char** Path::_argv = nullptr;
 
 std::string Path::getHomeDirectory()
 {
@@ -129,7 +129,7 @@ std::string Path::getResourcesDir()
     return boost::filesystem::path(resourcesDir).string();
 }
 
-void Path::setArgv(int argc, const char **argv)
+void Path::setArgv(int argc, char **argv)
 {
     _argc = argc;
     _argv = argv;
