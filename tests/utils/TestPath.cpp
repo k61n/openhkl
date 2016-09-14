@@ -14,7 +14,8 @@ using namespace SX::Utils;
 BOOST_AUTO_TEST_CASE(Test_Path)
 {
 	namespace filesystem=boost::filesystem;
-    const char* argv[1] = {"test/test.exe"};
+    std::string arg = "test/test.exe";
+    char* argv[1] = {&arg[0]};
     Path::setArgv(1, argv);
 
     Path* path = Path::Instance();
