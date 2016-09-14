@@ -1,3 +1,10 @@
+#include <sstream>
+
+#include <boost/algorithm/string/join.hpp>
+
+#include <vector>
+#include <utility>
+
 #include "Error.h"
 #include "SpaceGroupSymbols.h"
 
@@ -44,7 +51,9 @@ namespace Crystal
 !!----   INFO: Tabulated information on Crystallographic Symmetry
 */
 
-std::unordered_map<std::string,std::string> SpaceGroupSymbols::_spaceGroupTables =
+std::unordered_map<std::string,std::string> SpaceGroupSymbols::_spaceGroupTables;
+
+std::vector<std::pair<std::string, std::string>> _spaceGroupTableVector =
 {
 	           {"P 1"," x,y,z"},
 		       {"P -1"," -x,-y,-z"},
@@ -278,13 +287,22 @@ std::unordered_map<std::string,std::string> SpaceGroupSymbols::_spaceGroupTables
 		       {"I a -3 d"," x+1/2,y+1/2,z+1/2; -x+1/2,-y,z+1/2; -x,y+1/2,-z+1/2; z,x,y; y+3/4,x+1/4,-z+1/4; -x,-y,-z"}
 };
 
+SpaceGroupSymbols::SpaceGroupSymbols()
+{
+    // initialize the unordered map from the ordered vector
+    if ( _spaceGroupTables.size() == 0) {
+        for (auto&& it: _spaceGroupTableVector)
+            _spaceGroupTables[it.first] = it.second;
+    }
+}
+
 void SpaceGroupSymbols::addSpaceGroup(const std::string& spaceGroup, const std::string& generators)
 {
-
 	auto it=_spaceGroupTables.find(spaceGroup);
 	if (it!=_spaceGroupTables.end())
 		throw SX::Kernel::Error<SpaceGroupSymbols>("The space group "+spaceGroup+" is already registered.");
 	_spaceGroupTables.insert(std::unordered_map<std::string,std::string>::value_type(spaceGroup,generators));
+    _spaceGroupTableVector.push_back(std::make_pair(spaceGroup, generators));
 }
 
 bool SpaceGroupSymbols::getGenerators(const std::string& spacegroup, std::string& generators)
@@ -296,6 +314,55 @@ bool SpaceGroupSymbols::getGenerators(const std::string& spacegroup, std::string
 	return true;
 }
 
+std::string SpaceGroupSymbols::getReducedSymbol(const std::string& symbol) const
+{
+	// This is the only get when the separate 1 has to be kept
+    if (symbol == "P 1")
+		return symbol;
+    else if (symbol == "P 3 1 m")
+        return symbol;
+    else if (symbol == "P 3 m 1")
+        return symbol;
+    else if (symbol == "P -3 1 m")
+        return symbol;
+    else if (symbol == "P -3 m 1")
+        return symbol;
+    else if (symbol == "P 3 1 c")
+        return symbol;
+    else if (symbol == "P 3 c 1")
+        return symbol;
+    else if (symbol == "P -3 1 c")
+        return symbol;
+    else if (symbol == "P -3 c 1")
+        return symbol;
+    else if (symbol == "P 32 2 1")
+        return symbol;
+    else if (symbol == "P 32 1 2")
+        return symbol;
+    else if (symbol == "P 31 1 2")
+        return symbol;
+    else if (symbol == "P 31 2 1")
+        return symbol;
+    else if (symbol == "P 3 1 2")
+        return symbol;
+    else if (symbol == "P 3 2 1")
+        return symbol;
+
+	// Otherwise throw away every separate 1 to produce the short name for Bravais
+	// see https://en.wikipedia.org/wiki/List_of_space_groups
+	std::istringstream iss(symbol);
+    std::string token;
+    std::vector<std::string> tokens;
+    while (std::getline(iss, token, ' '))
+    {
+        if (token.compare("1")==0)
+            continue;
+    	tokens.push_back(token);
+    }
+    std::string reducedSymbol = boost::algorithm::join(tokens, " ");
+    return reducedSymbol;
+}
+
 std::vector<std::string> SpaceGroupSymbols::getAllSymbols() const
 {
 	std::vector<std::string> symbols;
@@ -305,6 +372,24 @@ std::vector<std::string> SpaceGroupSymbols::getAllSymbols() const
 		symbols.push_back(value.first);
 	}
 	return symbols;
+}
+
+std::string SpaceGroupSymbols::getFullSymbol(const std::string& symbol) const
+{
+   auto symbols = getAllSymbols();
+
+   for(auto&& full_symbol: symbols)
+       if (getReducedSymbol(symbol) == getReducedSymbol(full_symbol))
+           return full_symbol;
+}
+
+int SpaceGroupSymbols::getID(const std::string& symbol) const
+{
+    for (int id = 0; id < _spaceGroupTableVector.size(); ++id)
+        if ( _spaceGroupTableVector[id].first == symbol)
+            return id;
+
+    return -1;
 }
 
 

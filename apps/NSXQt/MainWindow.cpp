@@ -68,6 +68,9 @@
 
 #include "JobHandler.h"
 
+#include "SpaceGroup.h"
+#include "SpaceGroupSymbols.h"
+
 // jmf debug testing
 #include <functional>
 extern std::function<void(void)> processEvents;
@@ -130,6 +133,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(_ui->selectionMode,SIGNAL(currentIndexChanged(int)),_ui->_dview->getScene(),SLOT(changeInteractionMode(int)));
     connect(_ui->_dview->getScene(),SIGNAL(updatePlot(PlottableGraphicsItem*)),this,SLOT(updatePlot(PlottableGraphicsItem*)));
     connect(_ui->action_open,SIGNAL(triggered()),_ui->experimentTree,SLOT(createNewExperiment()));
+
+    connect(this, SIGNAL(findSpaceGroup(void)), _ui->experimentTree, SLOT(findSpaceGroup()));
+    connect(this, SIGNAL(computeRFactors(void)), _ui->experimentTree, SLOT(computeRFactors()));
+    connect(this,SIGNAL(findFriedelPairs(void)), _ui->experimentTree, SLOT(findFriedelPairs()));
 
     _ui->plotterDockWidget->show();
     _ui->dockWidget_Property->show();
@@ -417,4 +424,22 @@ void MainWindow::on_actionConvolution_Filter_triggered()
     Eigen::MatrixXi frame = _ui->_dview->getScene()->getCurrentFrame();
     auto dialog = new DialogConvolve(frame, this);
     dialog->show();
+}
+
+
+void MainWindow::on_actionFind_space_group_triggered()
+{
+    emit findSpaceGroup();
+}
+
+void MainWindow::on_actionFind_Friedel_pairs_triggered()
+{
+    emit findFriedelPairs();
+}
+
+
+void MainWindow::on_actionCompute_R_factors_triggered()
+{
+    emit computeRFactors();
+    // emit findFriedelPairs();
 }

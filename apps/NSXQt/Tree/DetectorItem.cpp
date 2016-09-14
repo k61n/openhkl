@@ -20,5 +20,5 @@ DetectorItem::DetectorItem(std::shared_ptr<Experiment> experiment) : Inspectable
 
 QWidget* DetectorItem::inspectItem()
 {
-        return new DetectorPropertyWidget(this);
+    return new DetectorPropertyWidget(this);
 }

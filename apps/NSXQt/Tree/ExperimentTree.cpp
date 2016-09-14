@@ -5,6 +5,10 @@
 #include <memory>
 #include <stdexcept>
 #include <utility>
+#include <map>
+#include <array>
+#include <tuple>
+#include <vector>
 
 #include <QAbstractItemView>
 #include <QDebug>
@@ -19,7 +23,7 @@
 #include <QString>
 #include <QtDebug>
 
-#include "BlobFinder.h"
+//#include "BlobFinder.h"
 #include "DataReaderFactory.h"
 #include "Detector.h"
 #include "DialogExperiment.h"
@@ -45,6 +49,20 @@
 #include "Logger.h"
 #include "ReciprocalSpaceViewer.h"
 #include "DetectorScene.h"
+
+#include "SpaceGroupSymbols.h"
+#include "SpaceGroup.h"
+
+#include "SpaceGroupDialog.h"
+
+#include <QVector>
+#include "Externals/qcustomplot.h"
+#include "ui_ScaleDialog.h"
+
+#include "ScaleDialog.h"
+#include "FriedelDialog.h"
+
+#include "RFactor.h"
 
 using std::vector;
 using SX::Data::IData;
@@ -580,4 +598,106 @@ void ExperimentTree::showPeaksOpenGL()
        }
     }
     glw->show();
+}
+
+void ExperimentTree::findSpaceGroup()
+{
+    SpaceGroupDialog* dialog = new SpaceGroupDialog(getSelectedNumors(), this);
+    dialog->exec();
+    // update the space group elsewhere
+}
+
+void ExperimentTree::computeRFactors()
+{
+    qDebug() << "Finding peak equivalences...";
+
+    std::vector<std::shared_ptr<IData>> numors = getSelectedNumors();
+    std::vector<std::vector<Peak3D*>> peak_equivs;
+    std::vector<Peak3D*> peak_list;
+
+    std::shared_ptr<UnitCell> unit_cell;
+
+    for (std::shared_ptr<IData> numor: numors) {
+        std::set<Peak3D*> peaks = numor->getPeaks();
+        for (Peak3D* peak: peaks)
+            if ( peak && peak->isSelected() && !peak->isMasked() )
+                peak_list.push_back(peak);
+    }
+
+    if ( peak_list.size() == 0) {
+        qDebug() << "No peaks -- cannot search for equivalences!";
+        return;
+    }
+
+    for (Peak3D* peak: peak_list) {
+        // what do we do if there is more than one sample/unit cell??
+        unit_cell = peak->getUnitCell();
+
+        if (unit_cell)
+            break;
+    }
+
+    if (!unit_cell) {
+        qDebug() << "No unit cell selected! Cannot compute R factors.";
+        return;
+    }
+
+    SpaceGroup grp("P 1");
+
+    // spacegroup construct can throw
+    try {
+        grp = SpaceGroup(unit_cell->getSpaceGroup());
+    }
+    catch(std::exception& e) {
+        qDebug() << "Caught exception: " << e.what() << endl;
+        return;
+    }
+
+    peak_equivs = grp.findEquivalences(peak_list, true);
+
+    qDebug() << "Found " << peak_equivs.size() << " equivalence classes of peaks:";
+
+    std::map<int, int> size_counts;
+
+    for (auto& peaks: peak_equivs) {
+        ++size_counts[peaks.size()];
+    }
+
+    for (auto& it: size_counts) {
+        qDebug() << "Found " << it.second << " classes of size " << it.first;
+    }
+
+    qDebug() << "Computing R factors:";
+
+    RFactor rfactor(peak_equivs);
+
+    qDebug() << "    Rmerge = " << rfactor.Rmerge();
+    qDebug() << "    Rmeas  = " << rfactor.Rmeas();
+    qDebug() << "    Rpim   = " << rfactor.Rpim();
+
+    //ScaleDialog* scaleDialog = new ScaleDialog(peak_equivs, this);
+    //scaleDialog->exec();
+}
+
+void ExperimentTree::findFriedelPairs()
+{
+    qDebug() << "findFriedelParis() is not yet implemented!";
+    return;
+
+//    std::vector<Peak3D*> peaks;
+//    std::vector<std::shared_ptr<IData>> numors = getSelectedNumors();
+
+//    for (std::shared_ptr<IData> numor: numors) {
+//        std::set<Peak3D*> peak_list = numor->getPeaks();
+
+//        for (Peak3D* peak: peak_list)
+//            peaks.push_back(peak);
+//    }
+
+
+
+    // todo: something with FriedelDialog!
+    //FriedelDialog* friedelDialog = new FriedelDialog(peaks, this);
+    //friedelDialog->exec();
+    //delete friedelDialog;
 }

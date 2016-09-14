@@ -2,13 +2,15 @@
  * nsxtool : Neutron Single Crystal analysis toolkit
     ------------------------------------------------------------------------------------------
     Copyright (C)
-    2012- Laurent C. Chapon, Eric C. Pellegrini Institut Laue-Langevin
+    2016- Laurent C. Chapon, Eric C. Pellegrini Institut Laue-Langevin
+          Jonathan Fisher, Forschungszentrum Juelich GmbH
 	BP 156
 	6, rue Jules Horowitz
 	38042 Grenoble Cedex 9
 	France
 	chapon[at]ill.fr
     pellegrini[at]ill.fr
+    j.fisher[at]fz-juelich.de
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU Lesser General Public
@@ -26,30 +28,23 @@
  *
  */
 
-#ifndef NSXTOOL_GRUBBERREDUCTION_H_
-#define NSXTOOL_GRUBBERREDUCTION_H_
+#ifndef NSXTOOL_RANDOMMATRIX_H_
+#define NSXTOOL_RANDOMMATRIX_H_
 
-#include "UnitCell.h"
 #include <Eigen/Dense>
 
-namespace SX {
-namespace Crystal {
-
-
-class GruberReduction
+namespace SX
 {
-public:
-	//!! Construct algorithm with the metric tensor of the Cell, and a tolerance
-	GruberReduction(const Eigen::Matrix3d& g, double epsilon);
-	//! Find the conventional cell and output transformation matrix, centring type and Bravais lattice of the new cell.
-    //! Return value is the condition which matched (1-44)
-    int reduce(Eigen::Matrix3d& P, LatticeCentring& CentringType, BravaisType& bravais);
-private:
-	bool equal(double A,double B) const;
-	Eigen::Matrix3d _g;
-	double _epsilon;
-};
 
-}
-}
-#endif
+namespace Utils
+{
+
+//! Create random orthogonal matrix (used for testing geometry)
+Eigen::MatrixXd randomMatrix(unsigned int n);
+
+} //Namespace Utils
+
+} //Namespace SX
+
+
+#endif /* NSXTOOL_RANDOMMATIRX_H_ */

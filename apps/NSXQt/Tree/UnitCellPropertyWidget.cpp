@@ -60,7 +60,7 @@ UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *par
         ui->comboBox->addItem(QString::fromStdString(symbol));
     }
 
-    ui->comboBox->setCurrentText("");
+    ui->comboBox->setCurrentText(_unitCellItem->getCell()->getSpaceGroup().c_str());
 
     QSortFilterProxyModel* proxyModel = new QSortFilterProxyModel(this);
     proxyModel->setSourceModel(ui->comboBox->model());
@@ -144,7 +144,9 @@ void UnitCellPropertyWidget::setCell(const SX::Crystal::UnitCell& cell)
 
     int i;
 
-    _unitCellItem->getCell()->copyMatrices(cell);
+    //_unitCellItem->getCell()->copyMatrices(cell);
+    *_unitCellItem->getCell() = cell;
+
     getLatticeParams();
     auto datamap=_unitCellItem->getExperiment()->getData();
     for (auto data: datamap)
@@ -158,6 +160,9 @@ void UnitCellPropertyWidget::setCell(const SX::Crystal::UnitCell& cell)
             ++i;
         }
     }
+
+    qDebug() << "Set unit cell: bravais type " << cell.getBravaisTypeSymbol();
+
     emit activateIndexingMode(_unitCellItem->getCell());
     emit cellUpdated();
 }

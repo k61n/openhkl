@@ -2,7 +2,7 @@
  * nsxtool : Neutron Single Crystal analysis toolkit
  ------------------------------------------------------------------------------------------
  Copyright (C)
- 2012- Laurent C. Chapon Eric Pellegrini
+ 2012- Laurent C. Chapon Eric Pellegrini, Jonathan Fisher
  Institut Laue-Langevin
  BP 156
  6, rue Jules Horowitz
@@ -10,6 +10,7 @@
  France
  chapon[at]ill.fr
  pellegrini[at]ill.fr
+ j.fisher[at]fz-juelich.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -26,38 +27,39 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-#ifndef NSXTOOL_SPACEGROUPSYMBOLS_H_
-#define NSXTOOL_SPACEGROUPSYMBOLS_H_
 
-#include <string>
-#include <unordered_map>
+#ifndef FRIEDELDIALOG_H
+#define FRIEDELDIALOG_H
+
 #include <vector>
 
-#include "Singleton.h"
+#include <QDialog>
 
-namespace SX
-{
-namespace Crystal
-{
+#include "Peak3D.h"
+
+namespace Ui {
+class FriedelDialog;
+}
 
 
-class SpaceGroupSymbols: public SX::Kernel::Singleton<SpaceGroupSymbols,SX::Kernel::Constructor,SX::Kernel::Destructor>
+
+class FriedelDialog : public QDialog
 {
+    Q_OBJECT
+
 public:
-    SpaceGroupSymbols();
-	void addSpaceGroup(const std::string& spaceGroup, const std::string& generators);
-	bool getGenerators(const std::string& spaceGroup,std::string& generators);
-    std::string getReducedSymbol(const std::string& symbol) const;
-	std::vector<std::string> getAllSymbols() const;
-    std::string getFullSymbol(const std::string& symbol) const;
-    int getID(const std::string& symbol) const;
+    explicit FriedelDialog(const std::vector<SX::Crystal::Peak3D*>& peaks, QWidget *parent = 0);
+    ~FriedelDialog();
+
+    void findFriedelPairs();
+
+private slots:
+    void on_goodPairsButton_clicked();
+
 private:
-	//! Store pairs of Space group symbols and generators.
-	static std::unordered_map<std::string,std::string> _spaceGroupTables;
+    Ui::FriedelDialog *_ui;
+    std::vector<SX::Crystal::Peak3D*> _peaks;
+    std::vector<std::pair<SX::Crystal::Peak3D*, SX::Crystal::Peak3D*>> _friedelPairs;
 };
 
-
-} // Namespace Crystal
-} // Namespace SX
-
-#endif /* NSXTOOL_SPACEGROUPSYMBOLS_H_ */
+#endif // FRIEDELDIALOG_H

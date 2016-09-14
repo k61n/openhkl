@@ -109,7 +109,20 @@ void UnitCell::setParams(double a, double b, double c, double alpha, double beta
 	_A <<  a,b*cc,c*cb,
 		   0,b*sc,a32,
 		   0,0   ,a33;
-	_B=_A.inverse();
+    _B = _A.inverse();
+}
+
+void UnitCell::setABCDEF(double A, double B, double C, double D, double E, double F)
+{
+    double a, b, c, alpha, beta, gamma;
+    a = std::sqrt(A);
+    b = std::sqrt(B);
+    c = std::sqrt(C);
+    alpha = std::acos(D / b / c);
+    beta = std::acos(E / a / c);
+    gamma = std::acos(F / a / b);
+
+    setParams(a, b, c, alpha, beta, gamma);
 }
 
 Eigen::Vector3d UnitCell::getAVector() const
@@ -185,12 +198,12 @@ UnitCell::~UnitCell()
 
 void UnitCell::setLatticeCentring(LatticeCentring centring)
 {
-	_centring=centring;
+    _centring = centring;
 }
 
 void UnitCell::setBravaisType(BravaisType bravais)
 {
-	_bravaisType=bravais;
+    _bravaisType = bravais;
 }
 std::string UnitCell::getBravaisTypeSymbol() const
 {
@@ -317,6 +330,8 @@ std::vector<Eigen::Vector3d> UnitCell::generateReflectionsInSphere(double dstarm
 
 	hkls.reserve(deltah*deltak*deltal);
 
+    SX::Crystal::SpaceGroup group(getSpaceGroup());
+
 	// Iterate over the cuve and insert element in the map if dstar is not exceeded
 	for (int h=-hmax;h<=hmax;++h)
 	{
@@ -324,6 +339,11 @@ std::vector<Eigen::Vector3d> UnitCell::generateReflectionsInSphere(double dstarm
 		{
 			for (int l=-lmax;l<=lmax;++l)
 			{
+                // jmf added 29.08.2016
+                // skip those HKL which are forbidden by the space group??
+                if (group.isExtinct(h, k, l))
+                    continue;
+
 				Eigen::Vector3d hkl(h,k,l);
 				auto q=toReciprocalStandard(hkl);
 				double norm=q.norm();
@@ -354,17 +374,12 @@ double UnitCell::getAngle(const Eigen::Vector3d& hkl1, const Eigen::Vector3d& hk
 
 bool UnitCell::isEquivalent(double h1, double k1, double l1, double h2, double k2, double l2) const
 {
-	const auto& elements=_group.getGroupElements();
-	Eigen::Vector3d rotated;
-	for (const auto& element : elements)
-	{
-		rotated=element.getMatrix()*Eigen::Vector3d(h1,k1,l1);
-		if (std::abs(rotated[0]-h2)<1e-6 && std::abs(rotated[1]-k2)<1e-6 && std::abs(rotated[2]-l2)<1e-6)
-		{
-			return true;
-		}
-	}
-	return false;
+    return _group.isEquivalent(h1, k1, l1, h2, k2, l2);
+}
+
+bool UnitCell::isFriedelEquivalent(double h1, double k1, double l1, double h2, double k2, double l2) const
+{
+    return _group.isFriedelEquivalent(h1, k1, l1, h2, k2, l2);
 }
 
 unsigned int UnitCell::getZ() const

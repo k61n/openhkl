@@ -82,6 +82,12 @@ public:
 	//! Return the rotational part of the symmetry operator
 	Eigen::Matrix3d getRotationPart() const;
 
+    //! Return whether the translation part of 'other' is an integral multiple
+    //! of the translation part of 'this'. Note: returns false if either is pure rotation.
+    //! The return value, if non-zero, is the number n such that
+    //! n * this->getTranslationPart() == other.getTranslationPart()
+    int translationIsIntegralMultiple(const SymOp& other) const;
+
 private:
 
 	affineTransformation _matrix;

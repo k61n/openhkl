@@ -230,7 +230,36 @@ Eigen::Vector3d SymOp::getTranslationPart() const
 
 Eigen::Matrix3d SymOp::getRotationPart() const
 {
-	return _matrix.linear();
+    return _matrix.linear();
+}
+
+int SymOp::translationIsIntegralMultiple(const SymOp &other) const
+{
+    const double epsilon = 1e-3;
+
+    // return true only for non-zero multiple
+    if (!other.hasTranslation() || !this->hasTranslation())
+        return false;
+
+    Eigen::Vector3d myTranslation = this->getTranslationPart();
+    Eigen::Vector3d otherTranslation = other.getTranslationPart();
+
+    int n;
+
+    for (unsigned int i = 0; i < 3; ++i) {
+        if ( std::abs(myTranslation[i]) > epsilon) {
+            n = std::round(otherTranslation[i] / myTranslation[i]);
+            break;
+        }
+    }
+
+    Eigen::Vector3d difference = n*myTranslation - otherTranslation;
+    double norm = (double)(difference.adjoint()*difference);
+
+    if ( norm < epsilon)
+        return n;
+    else
+        return 0;
 }
 
 

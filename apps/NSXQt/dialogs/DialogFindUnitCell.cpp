@@ -95,6 +95,7 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
     //
     _solutions.clear();
     _solutions.reserve(50);
+    buildSolutionsTable(); // clear the table
     // Store Q vectors at rest
     std::vector<Eigen::Vector3d> qvects;
     qvects.reserve(npeaks);
@@ -172,20 +173,32 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
                             qDebug() << e.what();
                             continue;
                         }
-                        NiggliReduction niggli(cell.getMetricTensor(),1e-3);
+                        double tolerance = ui->niggliSpinBox->value();
+                        NiggliReduction niggli(cell.getMetricTensor(), tolerance);
                         Eigen::Matrix3d newg,P;
                         niggli.reduce(newg,P);
                         cell.transform(P);
-                        if (!ui->checkBox_NiggliOnly->isChecked())
-                        {
-                            GruberReduction gruber(cell.getMetricTensor(),0.04);
-                            SX::Crystal::LatticeCentring c;
-                            SX::Crystal::BravaisType b;
+
+                        // use GruberReduction::reduce to get Bravais type
+                        tolerance = ui->gruberSpinBox->value();
+                        GruberReduction gruber(cell.getMetricTensor(), tolerance);
+                        SX::Crystal::LatticeCentring c;
+                        SX::Crystal::BravaisType b;
+
+                        try {
                             gruber.reduce(P,c,b);
                             cell.setLatticeCentring(c);
                             cell.setBravaisType(b);
+                        }
+                        catch(std::exception& e) {
+                            qDebug() << "Gruber reduction error:" << e.what();
+                            //continue;
+                        }
+
+                        if (!ui->checkBox_NiggliOnly->isChecked()) {
                             cell.transform(P);
                         }
+
                         double score=0.0;
                         double maxscore=0.0;
                         for (auto peak : _peaks)

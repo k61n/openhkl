@@ -2,7 +2,7 @@
  * nsxtool : Neutron Single Crystal analysis toolkit
  ------------------------------------------------------------------------------------------
  Copyright (C)
- 2012- Laurent C. Chapon Eric Pellegrini
+ 2016- Laurent C. Chapon, Eric Pellegrini, Jonathan Fisher
  Institut Laue-Langevin
  BP 156
  6, rue Jules Horowitz
@@ -10,6 +10,7 @@
  France
  chapon[at]ill.fr
  pellegrini[at]ill.fr
+ j.fisher[at]fz-juelich.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -26,38 +27,36 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-#ifndef NSXTOOL_SPACEGROUPSYMBOLS_H_
-#define NSXTOOL_SPACEGROUPSYMBOLS_H_
 
-#include <string>
-#include <unordered_map>
+#ifndef NSXTOOL_CSV_H_
+#define NSXTOOL_CSV_H_
+
 #include <vector>
+#include <iostream>
+#include <string>
 
-#include "Singleton.h"
+namespace SX {
 
-namespace SX
-{
-namespace Crystal
-{
+namespace Utils {
 
-
-class SpaceGroupSymbols: public SX::Kernel::Singleton<SpaceGroupSymbols,SX::Kernel::Constructor,SX::Kernel::Destructor>
-{
+//! @class CSV
+//! @brief Simple CSV parser
+class CSV {
 public:
-    SpaceGroupSymbols();
-	void addSpaceGroup(const std::string& spaceGroup, const std::string& generators);
-	bool getGenerators(const std::string& spaceGroup,std::string& generators);
-    std::string getReducedSymbol(const std::string& symbol) const;
-	std::vector<std::string> getAllSymbols() const;
-    std::string getFullSymbol(const std::string& symbol) const;
-    int getID(const std::string& symbol) const;
+    CSV(char delim=',', char quotchar='"');
+    ~CSV();
+
+    std::vector<std::string> getRow(std::istream& stream);
+
 private:
-	//! Store pairs of Space group symbols and generators.
-	static std::unordered_map<std::string,std::string> _spaceGroupTables;
+    char _delim;
+    char _quotchar;
+
+    std::string getToken(std::istream& stream, char& delim); //!<< Get next token, write delimeter type
 };
 
+} // namespace Utils
 
-} // Namespace Crystal
-} // Namespace SX
+} // namespace SX
 
-#endif /* NSXTOOL_SPACEGROUPSYMBOLS_H_ */
+#endif // NSXTOOL_CSV_H_

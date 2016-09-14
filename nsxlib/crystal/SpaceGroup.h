@@ -33,6 +33,7 @@
 #include <ostream>
 #include <vector>
 #include <string>
+#include <array>
 #include <Eigen/Dense>
 #include "SymOp.h"
 
@@ -42,6 +43,7 @@ namespace SX
 namespace Crystal
 {
 
+class Peak3D;
 typedef std::vector<SymOp> groupElementsList;
 
 class SpaceGroup
@@ -71,7 +73,19 @@ public:
 	void print(std::ostream& os) const;
 	//! Return the type of cell (triclinic, monoclinic ...)
 	char getBravaisType() const;
-	//!
+    //! Return the percentage of extinct reflections
+    double fractionExtinct(std::vector<std::array<double, 3>> hkl);
+    //! Return the Bravais type symbol
+    std::string getBravaisTypeSymbol() const;
+    //! Return the ID of the space group
+    int getID() const;
+    //! Find equivalences in a list of peaks
+    std::vector<std::vector<SX::Crystal::Peak3D*>>
+        findEquivalences(const std::vector<SX::Crystal::Peak3D*>&peak_list, bool friedel=true) const;
+    //! Return whether two sets of indices are related by a symmetry
+    bool isEquivalent(double h1, double k1, double l1, double h2, double k2, double l2) const;
+    //! Return whether two sets of indices are related by a symmetry up to Friedel reflection
+    bool isFriedelEquivalent(double h1, double k1, double l1, double h2, double k2, double l2) const;
 private:
 
 	void generateGroupElements();
@@ -83,7 +97,6 @@ private:
 	std::string _generators;
 
 	groupElementsList _groupElements;
-
 };
 
 std::ostream& operator<<(std::ostream& os, const SpaceGroup& sg);

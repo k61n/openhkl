@@ -8,17 +8,18 @@ namespace SX
 namespace Crystal
 {
 
-GruberReduction::GruberReduction(const Eigen::Matrix3d& g, double epsilon)
+GruberReduction::GruberReduction(const Eigen::Matrix3d& g, double epsilon):
+    _g(g),
+    _epsilon(epsilon)
 {
-	_g=g;
 	if (epsilon<=0 || epsilon>1)
 		throw std::runtime_error("Gruber reduction: epsilon must be in the range ]0,1]");
 
-	// Multiply tolerance by approximate Unit-cell length
-	_epsilon=epsilon*std::pow(sqrt(g.determinant()),1.0/3.0);
+    // Multiply tolerance by approximate squared Unit-cell length
+    _epsilon *= std::pow(g.determinant(), 1.0/3.0);
 }
 
-void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,BravaisType& bravais)
+int GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,BravaisType& bravais)
 {
 	double A=_g(0,0);
 	double B=_g(1,1);
@@ -27,7 +28,18 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 	double E=_g(0,2);
 	double F=_g(0,1);
 
-	bool typeI=(D*E*F>0);
+    double eps = std::sqrt(_epsilon);
+
+    bool typeI;
+
+    if ( fabs(D) < eps)
+        typeI = false;
+    else if ( fabs(E) < eps)
+        typeI = false;
+    else if ( fabs(F) < eps)
+        typeI = false;
+    else
+        typeI = D*E*F > 0;
 
 	if (equal(A,B) && equal(B,C)) //A=B=C
 	{
@@ -38,7 +50,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P << 1, 1,-1,
 				-1, 1, 1,
 				 1,-1, 1;
-			return;
+            return 1;
 		}
 		if (typeI && equal(E,D) && equal(F,D)) // Condition 2
 		{
@@ -47,7 +59,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P << 1,-1,-1,
 				-1, 0,-1,
 				 0, 1,-1;
-			return;
+            return 2;
 		}
 		if (!typeI && equal(D,0) && equal(E,0) && equal(F,0)) // Condition 3
 		{
@@ -56,7 +68,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P << 1, 0, 0,
 				 0, 1, 0,
 				 0, 0, 1;
-			return;
+            return 3;
 		}
 		if (!typeI && equal(D,-A/3) && equal(E,-A/3) && equal(F,-A/3)) // Condition 5
 		{
@@ -65,7 +77,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P << 1, 1, 0,
 				 0, 1, 1,
 				 1, 0, 1;
-			return;
+            return 5;
 		}
 		if (!typeI && equal(D,E) && equal(D,F)) // Condition 4
 		{
@@ -74,7 +86,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P << 1,-1,-1,
 				-1, 0,-1,
 				 0, 1,-1;
-			return;
+            return 4;
 		}
 		if (!typeI && equal(D,E) && equal(A+B,2.0*std::fabs(D+E+F))) // Condition 6
 		{
@@ -83,7 +95,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P << 0, 1, 1,
 				 1, 0, 1,
 				 1, 1, 0;
-			return;
+            return 6;
 		}
 		if (!typeI && equal(E,F) && equal(A+B,2.0*std::fabs(D+E+F))) // Condition 7
 		{
@@ -92,7 +104,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P << 1, 1, 0,
 				 0, 1, 1,
 				 1, 0, 1;
-			return;
+            return 7;
 		}
 		if (!typeI && equal(A+B,2.0*std::fabs(D+E+F))) // Condition 8
 		{
@@ -101,8 +113,10 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P << -1,-1, 0,
 				 -1, 0,-1,
 				  0,-1,-1;
-			return;
+            return 8;
 		}
+
+        throw std::runtime_error("A=B=C but could not classify cell type");
 	}
 	else if (equal(A,B))
 	{
@@ -113,7 +127,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P <<  1,-1,-1,
 				  0, 1,-1,
 				  0, 0, 3;
-			return;
+            return 9;
 		}
 		if (typeI && equal(D,E)) // Condition 10
 		{
@@ -122,7 +136,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P <<  1, 1, 0,
 				  1,-1, 0,
 				  0, 0,-1;
-			return;
+            return 10;
 		}
 		if (!typeI && equal(D,0.0) && equal(E,0.0) && equal(F,0.0)) // Condition 11
 		{
@@ -131,7 +145,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P <<  1, 0, 0,
 				  0, 1, 0,
 				  0, 0, 1;
-			return;
+            return 11;
 		}
 		if (!typeI && equal(D,0.0) && equal(E,0.0) && equal(F,-A/2)) // Condition 12
 		{
@@ -140,7 +154,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P <<  1, 0, 0,
 				  0, 1, 0,
 				  0, 0, 1;
-			return;
+            return 12;
 		}
 		if (!typeI && equal(D,0.0) && equal(E,0.0)) // Condition 13
 		{
@@ -149,7 +163,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P <<  1,-1, 0,
 				  1, 1, 0,
 				  0, 0, 1;
-			return;
+            return 13;
 		}
 		if (!typeI && equal(D,-A/2) && equal(E,-A/2) && equal(F,0.0)) // Condition 15
 		{
@@ -158,7 +172,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P <<  1, 0, 1,
 				  0, 1, 1,
 				  0, 0, 2;
-			return;
+            return 15;
 		}
 		if (!typeI && equal(D,E) && equal(A+B,2.0*std::fabs(D+E+F))) // Condition 16
 		{
@@ -167,7 +181,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P << -1, 1, 1,
 				 -1,-1, 1,
 				  0, 0, 2;
-			return;
+            return 16;
 		}
 		if (!typeI && equal(D,E)) // Condition 14
 		{
@@ -176,7 +190,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P <<  1,-1, 0,
 				  1, 1, 0,
 				  0, 0, 1;
-			return;
+            return 14;
 		}
 		if (!typeI && equal(A+B,2.0*std::fabs(D+E+F))) // Condition 17
 		{
@@ -185,8 +199,10 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P <<  1, 1,-1,
 				 -1, 1, 0,
 				  0, 0,-1;
-			return;
+            return 17;
 		}
+
+        throw std::runtime_error("A=B but could not classify cell type");
 	}
 	else if (equal(B,C))
 	{
@@ -197,7 +213,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P <<  0, 1, 1,
 				 -1,-1, 0,
 				  1,-1, 0;
-			return;
+            return 18;
 		}
 		if (typeI && equal(E,A/2) && equal(F,A/2)) // Condition 19
 		{
@@ -206,7 +222,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P << -1, 0,-1,
 				  0,-1, 1,
 				  0, 1, 1;
-			return;
+            return 19;
 		}
 		if (typeI && equal(E,F)) // Condition 20
 		{
@@ -215,7 +231,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P <<  0, 0,-1,
 				  1, 1, 0,
 				  1,-1, 0;
-			return;
+            return 20;
 		}
 		if (!typeI && equal(D,0.0) && equal(E,0.0) && equal(F,0.0)) // Condition 21
 		{
@@ -224,7 +240,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P <<  0, 0, 1,
 				  1, 0, 0,
 				  0, 1, 0;
-			return;
+            return 21;
 		}
 		if (!typeI && equal(D,-B/2) && equal(E,0.0) && equal(F,0.0)) // Condition 22
 		{
@@ -233,7 +249,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P <<  0, 0, 1,
 				  1, 0, 0,
 				  0, 1, 0;
-			return;
+            return 22;
 		}
 		if (!typeI && equal(E,0.0) && equal(F,0.0)) // Condition 23
 		{
@@ -242,7 +258,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P <<  0, 0, 1,
 				  1,-1, 0,
 				  1, 1, 0;
-			return;
+            return 23;
 		}
 		if (!typeI && equal(A+B,2.0*std::fabs(D+E+F)) && equal(E,-A/3) && equal(F,-A/3)) // Condition 24
 		{
@@ -251,7 +267,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P <<  1, 0, 1,
 				  2,-1, 0,
 				  1, 1, 0;
-			return;
+            return 24;
 		}
 		if (!typeI && equal(E,F)) // Condition 25
 		{
@@ -260,8 +276,10 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P <<  0, 0, 1,
 				  1,-1, 0,
 				  1, 1, 0;
-			return;
+            return 25;
 		}
+
+        throw std::runtime_error("B=C but could not classify cell type");
 	}
 	else
 	{
@@ -272,7 +290,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P <<  1,-1,-1,
 				  0, 2, 0,
 				  0, 0, 2;
-			return;
+            return 26;
 		}
 		if (typeI && equal(E,A/2) && equal(F,A/2)) // Condition 27
 		{
@@ -281,7 +299,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P << -1,-1, 0,
 				  2, 0,-1,
 				  0, 0, 1;
-			return;
+            return 27;
 		}
 		if (typeI && equal(E,A/2) && equal(F,2*D)) // Condition 28
 		{
@@ -290,7 +308,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P << -1,-1, 0,
 				  0, 0, 1,
 				  0, 2, 0;
-			return;
+            return 28;
 		}
 		if (typeI && equal(E,2*D) && equal(F,A/2)) // Condition 29
 		{
@@ -299,7 +317,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P <<  1, 1, 0,
 				  0,-2, 0,
 				  0, 0,-1;
-			return;
+            return 29;
 		}
 		if (typeI && equal(D,B/2) && equal(F,2*E)) // Condition 30
 		{
@@ -308,7 +326,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P <<  0, 0,-1,
 				  1, 1, 0,
 				  0,-2, 0;
-			return;
+            return 30;
 		}
 		if (typeI) // Condition 31
 		{
@@ -317,7 +335,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P <<  1, 0, 0,
 				  0, 1, 0,
 				  0, 0, 1;
-			return;
+            return 31;
 		}
 		if (!typeI && equal(D,0.0) && equal(E,0.0) && equal(F,0.0)) // Condition 32
 		{
@@ -326,7 +344,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P <<  1, 0, 0,
 				  0, 1, 0,
 				  0, 0, 1;
-			return;
+            return 32;
 		}
 		if (!typeI && equal(D,-B/2) && equal(E,0.0) && equal(F,0.0)) // Condition 40
 		{
@@ -335,7 +353,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P <<  0, 0,-1,
 				 -1, 1, 0,
 				  0, 2, 0;
-			return;
+            return 40;
 		}
 		if (!typeI && equal(E,0.0) && equal(F,0.0)) // Condition 35
 		{
@@ -344,7 +362,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P <<  0,-1, 0,
 				 -1, 0, 0,
 				  0, 0,-1;
-			return;
+            return 35;
 		}
 		if (!typeI && equal(D,0.0) && equal(E,-A/2) && equal(F,0.0)) // Condition 36
 		{
@@ -353,7 +371,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P <<  1,-1, 0,
 				  0, 0, 1,
 				  0,-2, 0;
-			return;
+            return 36;
 		}
 		if (!typeI && equal(D,0.0) && equal(F,0.0)) // Condition 33
 		{
@@ -362,7 +380,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P <<  1, 0, 0,
 				  0, 1, 0,
 				  0, 0, 1;
-			return;
+            return 33;
 		}
 		if (!typeI && equal(D,0.0) && equal(E,0.0) && equal(F,-A/2)) // Condition 38
 		{
@@ -371,7 +389,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P << -1, 1, 0,
 				  0, 2, 0,
 				  0, 0,-1;
-			return;
+            return 38;
 		}
 		if (!typeI && equal(D,0.0) && equal(E,0.0)) // Condition 34
 		{
@@ -380,7 +398,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P << -1, 0, 0,
 				  0, 0,-1,
 				  0,-1, 0;
-			return;
+            return 34;
 		}
 		if (!typeI && equal(D,-B/2) && equal(E,-A/2) && equal(F,0.0)) // Condition 42
 		{
@@ -389,7 +407,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P << -1, 0, 1,
 				  0,-1, 1,
 				  0, 0, 2;
-			return;
+            return 42;
 		}
 		if (!typeI && equal(D,-B/2) && equal(F,0.0)) // Condition 41
 		{
@@ -398,7 +416,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P <<  0, 0,-1,
 				 -1,-1, 0,
 				 -2, 0, 0;
-			return;
+            return 41;
 		}
 		if (!typeI && equal(E,-A/2) && equal(F,0.0)) // Condition 37
 		{
@@ -407,7 +425,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P <<  1, 1, 0,
 				  0, 0, 1,
 				  2, 0, 0;
-			return;
+            return 37;
 		}
 		if (!typeI && equal(E,0.0) && equal(F,-A/2)) // Condition 39
 		{
@@ -416,7 +434,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P << -1,-1, 0,
 				 -2, 0, 0,
 				  0, 0,-1;
-			return;
+            return 39;
 		}
 		if (!typeI && equal(A+B,2.0*std::fabs(D+E+F)) && equal(B,std::fabs(2*D+F))) // Condition 43
 		{
@@ -425,7 +443,7 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P << -1,-1, 0,
 				  0,-1,-1,
 				  0,-2, 0;
-			return;
+            return 43;
 		}
 		if (!typeI) // Condition 44
 		{
@@ -434,9 +452,13 @@ void GruberReduction::reduce(Eigen::Matrix3d& P,LatticeCentring& centring,Bravai
 			P <<  1, 0, 0,
 				  0, 1, 0,
 				  0, 0, 1;
-			return;
+            return 44;
 		}
+
+        throw std::runtime_error("A != B != C but could not classify cell type");
 	}
+
+    throw std::runtime_error(std::string("failed to classify cell into one of the 44 conditions!"));
 }
 
 bool GruberReduction::equal(double A, double B) const

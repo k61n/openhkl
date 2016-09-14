@@ -569,6 +569,8 @@ void DetectorScene::updatePeakCalcs()
     {
         for (int i=0;i<ncrystals;++i)
         {
+            SX::Crystal::SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
+
             auto ub=sample->getUnitCell(i)->getReciprocalStandardM();
             auto hkls=sample->getUnitCell(i)->generateReflectionsInSphere(1.5);
             std::vector<SX::Crystal::PeakCalc> peaks=_currentData->hasPeaks(hkls,ub);

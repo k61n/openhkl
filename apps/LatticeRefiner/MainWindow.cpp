@@ -247,3 +247,4 @@ void MainWindow::on_comboBox_diffractometer_currentIndexChanged(const QString& d
     _minimizer.setSample(_diffractometer->getSample());
     _minimizer.setSource(_diffractometer->getSource());
 }
+
