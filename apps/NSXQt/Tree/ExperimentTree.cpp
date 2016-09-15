@@ -675,8 +675,8 @@ void ExperimentTree::computeRFactors()
     qDebug() << "    Rmeas  = " << rfactor.Rmeas();
     qDebug() << "    Rpim   = " << rfactor.Rpim();
 
-    //ScaleDialog* scaleDialog = new ScaleDialog(peak_equivs, this);
-    //scaleDialog->exec();
+    ScaleDialog* scaleDialog = new ScaleDialog(peak_equivs, this);
+    scaleDialog->exec();
 }
 
 void ExperimentTree::findFriedelPairs()
