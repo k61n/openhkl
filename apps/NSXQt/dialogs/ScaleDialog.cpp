@@ -26,7 +26,7 @@
 #include "SpaceGroupSymbols.h"
 #include "IData.h"
 #include "Peak3D.h"
-#include "Minimizer.h"
+#include "MinimizerGSL.h"
 #include "RFactor.h"
 
 #include "Externals/qcustomplot.h"
@@ -314,26 +314,24 @@ void ScaleDialog::refineScale()
 
         _scale = old_scale;
 
-        return GSL_SUCCESS;
+        return 0;
     };
 
     qDebug() << "Refining scale using GSL minimizer...";
 
-    SX::Utils::Minimizer minimizer;
+    SX::Utils::MinimizerGSL minimizer;
 
     resetScale();
 
-    minimizer.init(_scale.size(), _values);
-    minimizer.setInitialValues(_scale);
+    minimizer.initialize(_scale.size(), _values);
+    minimizer.setParams(_scale);
 
     minimizer.set_f(residual_fn);
     minimizer.fit(100);
 
     _scale = minimizer.params();
 
-    minimizer.free();
-
-    qDebug() << "...done!";
+    qDebug() << "...done after " << minimizer.numIterations() << "iterations";
 }
 
 void ScaleDialog::on_pushButton_clicked()

@@ -125,6 +125,7 @@ public:
    	//! Return the lorentz factor of the peak.
    	double getLorentzFactor() const;
     std::shared_ptr<SX::Instrument::ComponentState> getSampleState();
+    double getSampleStepSize() const;
     std::shared_ptr<SX::Instrument::DetectorEvent> getDetectorEvent();
    	//! Return the scaling factor.
    	double getScale() const;
