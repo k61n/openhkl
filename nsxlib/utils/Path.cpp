@@ -1,6 +1,8 @@
 #include <cstdlib>
 
 #include <boost/filesystem.hpp>
+#include <fstream>
+
 
 #include "Config.h"
 #include "Error.h"
@@ -11,6 +13,9 @@ namespace SX
 
 namespace Utils
 {
+
+int Path::_argc = 0;
+char** Path::_argv = nullptr;
 
 std::string Path::getHomeDirectory()
 {
@@ -55,22 +60,48 @@ std::string Path::expandUser(std::string path)
 
 std::string Path::getApplicationDataPath()
 {
-#ifdef __linux
-  // TODO: application data path should NOT be hard coded
-	boost::filesystem::path p("/usr/local/share");
-	p /= "nsxtool";
-	return p.string();
-#elif defined (__APPLE__)
-	// TODO: application data path should NOT be hard coded
-    boost::filesystem::path p("/usr/local/share");
-    p /= "nsxtool";
-    return p.string();
-#elif defined (_WIN32)
-    // TODO: implement this correctly for windows
-    boost::filesystem::path p("");
-    p /= "nsxtool";
-    return p.string();
-#endif
+    std::vector<std::string> possible_locations = {
+        "",
+        ".",
+        "nsxtool",
+        getHomeDirectory(),
+        getHomeDirectory() + "/nsxtool",
+        g_resourcesDir,
+        "/usr/share/nsxtool",
+        "/usr/local/share/nsxtool"
+    };
+
+    // check for environment variable NSX_ROOT_DIR
+    const char* nsx_root_dir = getenv("NSX_ROOT_DIR");
+
+    // if defined, it takes highest precedence
+    if ( nsx_root_dir)
+        possible_locations.insert(possible_locations.begin(), nsx_root_dir);
+
+    // add location of executable if possible
+    if ( _argc > 0 && _argv && _argv[0]) {
+        boost::filesystem::path p(_argv[0]);
+        p.remove_filename();
+        possible_locations.insert(possible_locations.begin(), p.string());
+    }
+
+    std::string match = "";
+
+    for (auto&& path: possible_locations) {
+        std::string path_str = boost::filesystem::path(path + "/instruments/D19.xml").string();
+
+        std::ifstream file(path_str, std::ios_base::in);
+        if ( file.good() ) {
+            match = path;
+            break;
+        }
+    }
+
+    // did not find a match
+    if ( match == "" )
+        throw SX::Kernel::Error<Path>("The application data directory could not be defined");
+
+    return boost::filesystem::path(match).string();
 }
     
 
@@ -80,6 +111,7 @@ std::string Path::getDiffractometersPath()
 	p /= "instruments";
 	return p.string();
 }
+
 std::string Path::getDataBasesPath()
 {
 	boost::filesystem::path p(getResourcesDir());
@@ -89,8 +121,21 @@ std::string Path::getDataBasesPath()
 
 std::string Path::getResourcesDir()
 {
-    return boost::filesystem::path(g_resourcesDir).string();
+    static std::string resourcesDir;
+
+    if ( resourcesDir == "")
+        resourcesDir = getApplicationDataPath();
+
+    return boost::filesystem::path(resourcesDir).string();
 }
+
+void Path::setArgv(int argc, char **argv)
+{
+    _argc = argc;
+    _argv = argv;
+}
+
+
 
 
 } // end namespace Utils

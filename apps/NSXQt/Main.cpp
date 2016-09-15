@@ -6,10 +6,12 @@
 
 #include "MainWindow.h"
 #include "NSXQtApp.h"
+#include "Path.h"
 
 
 int main(int argc, char *argv[])
 {
+    SX::Utils::Path::setArgv(argc, argv);
     NSXQtApp a(argc, argv);
 
     // Ensure . is used rather than , for float and double boxes
