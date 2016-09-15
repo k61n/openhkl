@@ -60,9 +60,10 @@ private:
     std::vector<std::vector<SX::Crystal::Peak3D*>> _peaks;
     std::vector<double> _averages;
 
-    Eigen::VectorXd _scale;
+    Eigen::VectorXd _scaleParams;
 
     int _values;
+    int _numFrames;
 
     double _Rmerge, _Rmeas, _Rpim;
 };

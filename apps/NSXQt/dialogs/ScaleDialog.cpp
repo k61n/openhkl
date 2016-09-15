@@ -38,6 +38,7 @@ using SX::Crystal::Peak3D;
 ScaleDialog::ScaleDialog(const vector<vector<Peak3D*>>& peaks, QWidget *parent) :
     QDialog(parent),
     _peaks(peaks),
+    _numFrames(0),
     ui(new Ui::ScaleDialog)
 {
     ui->setupUi(this);
@@ -50,13 +51,13 @@ ScaleDialog::ScaleDialog(const vector<vector<Peak3D*>>& peaks, QWidget *parent) 
 
 
     // reserve enough space in _scale!!
-    for (auto& peak_list: _peaks) {
-        for (auto& peak: peak_list) {
-            int frame = std::ceil(peak->getPeak()->getAABBCenter()[2]);
-            if ( frame > _scale.size() )
-                _scale.resize(frame+1);
-        }
-    }
+//    for (auto& peak_list: _peaks) {
+//        for (auto& peak: peak_list) {
+//            int frame = std::ceil(peak->getPeak()->getAABBCenter()[2]);
+//            if ( frame > _scale.size() )
+//                _scale.resize(frame+1);
+//        }
+//    }
 
     // initialize the plot
     buildScalePlot();
@@ -167,13 +168,13 @@ void ScaleDialog::buildScalePlot()
     }
 
     // go through each equivalence class of peaks
-    for (int i = 0; i < _scale.size(); ++i) {
+    for (int i = 0; i < _numFrames; ++i) {
 
         xs.push_back(i);
-        ys.push_back(_scale[i]);
+        ys.push_back(getScale(i));
 
-        if ( _scale[i] > ymax)
-            ymax = _scale[i];
+        if (ys[i] > ymax)
+            ymax = ys[i];
     }
 
     xmin = 0;
@@ -218,6 +219,10 @@ void ScaleDialog::calculateRFactors()
         for (auto&& p: peak_list) {
             double z = p->getPeak()->getAABBCenter()[2];
             double in = p->getScaledIntensity()*getScale(z);
+
+            if ( z > _numFrames)
+                _numFrames = std::ceil(z);
+
             average += in;
             ++_values;
         }
@@ -260,17 +265,19 @@ void ScaleDialog::on_redrawButton_clicked()
 
 void ScaleDialog::resetScale()
 {
-    for (auto& peak_list: _peaks) {
-        for (auto& peak: peak_list) {
-            peak->setScale(1.0);
-            int frame = std::ceil(peak->getPeak()->getAABBCenter()[2]);
-            if ( frame >= _scale.size())
-                _scale.resize(frame+1);
-        }
-    }
+//    for (auto& peak_list: _peaks) {
+//        for (auto& peak: peak_list) {
+//            peak->setScale(1.0);
+//            int frame = std::ceil(peak->getPeak()->getAABBCenter()[2]);
+//            if ( frame >= _scale.size())
+//                _scale.resize(frame+1);
+//        }
+//    }
 
-    for (int i = 0; i < _scale.size(); ++i)
-        _scale[i] = 1.0;
+//    for (int i = 0; i < _scale.size(); ++i)
+//        _scale[i] = 1.0;
+    _scaleParams.resize(4);
+    _scaleParams << 0.0, 0.0, 0.0, 0.0;
 }
 
 void ScaleDialog::setScale()
@@ -285,13 +292,13 @@ void ScaleDialog::setScale()
 
 void ScaleDialog::refineScale()
 {
-    auto residual_fn = [&](const Eigen::VectorXd& scale, Eigen::VectorXd& residuals)
+    auto residual_fn = [&](const Eigen::VectorXd& params, Eigen::VectorXd& residuals)
     {
         int i = 0;
         int idx = 0;
 
-        Eigen::VectorXd old_scale = _scale;
-        _scale = scale;
+        Eigen::VectorXd old_params = _scaleParams;
+        _scaleParams = params;
 
         for (i = 0, idx = 0; i < _peaks.size(); ++i) {
             if ( _peaks[i].size() < 2)
@@ -308,11 +315,11 @@ void ScaleDialog::refineScale()
 
             for (Peak3D* peak: _peaks[i]) {
                 double z = peak->getPeak()->getAABBCenter()[2];
-                residuals(idx++) = (getScale(z) * peak->getScaledIntensity() / average - 1.0);
+                residuals(idx++) = sqrt(fabs(getScale(z) * peak->getScaledIntensity() / average - 1.0));
             }
         }
 
-        _scale = old_scale;
+        _scaleParams = old_params;
 
         return 0;
     };
@@ -323,13 +330,13 @@ void ScaleDialog::refineScale()
 
     resetScale();
 
-    minimizer.initialize(_scale.size(), _values);
-    minimizer.setParams(_scale);
+    minimizer.initialize(_scaleParams.size(), _values);
+    minimizer.setParams(_scaleParams);
 
     minimizer.set_f(residual_fn);
     minimizer.fit(100);
 
-    _scale = minimizer.params();
+    _scaleParams = minimizer.params();
 
     qDebug() << "...done after " << minimizer.numIterations() << "iterations";
 }
@@ -343,12 +350,8 @@ void ScaleDialog::on_pushButton_clicked()
 
 double ScaleDialog::getScale(double z)
 {
-    int lower = std::floor(z);
-    int upper = std::ceil(z);
-
-    double t = z-lower;
-    double s = upper-z;
-
-    return s*_scale[lower] + t*_scale[upper];
+    // simple polynomial in the frame number
+    auto& p = _scaleParams;
+    return 1.0 + z*(p[0] + z*(p[1] + z*(p[2] + z*p[3])));
 }
 
