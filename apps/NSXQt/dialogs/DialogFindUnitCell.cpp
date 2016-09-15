@@ -13,6 +13,8 @@
 #include "FFTIndexing.h"
 #include "Units.h"
 
+#include <stdexcept>
+
 using SX::Crystal::UnitCell;
 using SX::Crystal::UBMinimizer;
 using SX::Crystal::UBSolution;
@@ -123,18 +125,18 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
     auto detector=_experiment->getDiffractometer()->getDetector();
     auto sample=_experiment->getDiffractometer()->getSample();
 
-    for (int i=0;i<nSolutions;++i)
-    {
-        for (int j=i+1;j<nSolutions;++j)
-        {
-            for (int k=j+1;k<nSolutions;++k)
-            {
+    int num_attempts = 0;
+
+    for (int i = 0; i < nSolutions; ++i) {
+        for (int j = i+1; j < nSolutions; ++j) {
+            for (int k = j+1; k < nSolutions; ++k) {
                 Eigen::Vector3d& v1=tvects[i]._vect;
                 Eigen::Vector3d& v2=tvects[j]._vect;
                 Eigen::Vector3d& v3=tvects[k]._vect;
 
-                if (v1.dot(v2.cross(v3))>20.0)
-                {
+
+                if (v1.dot(v2.cross(v3)) > 20.0) {
+
                     UnitCell cell=UnitCell::fromDirectVectors(v1,v2,v3);
                     UBMinimizer minimizer;
                     minimizer.setSample(sample);
@@ -142,13 +144,11 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
                     minimizer.setSource(source);
                     // Only the UB matrix parameters are used for fit
                     int nParameters= 10 + sample->getNAxes() + detector->getNAxes();
-                    for (int i=9;i<nParameters;++i)
+                    for (int i = 9; i < nParameters; ++i)
                         minimizer.refineParameter(i,false);
-                    int success=0;
-                    for (auto peak : _peaks)
-                    {
-                        if (peak->hasIntegerHKL(cell) && peak->isSelected() && !peak->isMasked())
-                        {
+                    int success = 0;
+                    for (auto peak : _peaks) {
+                        if (peak->hasIntegerHKL(cell) && peak->isSelected() && !peak->isMasked()) {
                             minimizer.addPeak(*peak);
                             ++success;
                         }
@@ -157,19 +157,19 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
                     if (success < 10)
                         continue;
 
+                    qDebug() << "Refining solution " << ++num_attempts;
+
                     Eigen::Matrix3d M=cell.getReciprocalStandardM();
                     minimizer.setStartingUBMatrix(M);
-                    int ret = minimizer.run(100);
-                    if (ret==1)
-                    {
+                    int ret = minimizer.runGSL(100);
+
+                    if (ret == 1) {
                         UBSolution solution=minimizer.getSolution();
-                        try
-                        {
+                        try {
                             cell=SX::Crystal::UnitCell::fromReciprocalVectors(solution._ub.row(0),solution._ub.row(1),solution._ub.row(2));
                             cell.setReciprocalCovariance(solution._covub);
 
-                        }catch(std::exception& e)
-                        {
+                        } catch(std::exception& e) {
                             qDebug() << e.what();
                             continue;
                         }
@@ -185,7 +185,7 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
                         SX::Crystal::LatticeCentring c;
                         SX::Crystal::BravaisType b;
 
-                        try {
+                        try {                            
                             gruber.reduce(P,c,b);
                             cell.setLatticeCentring(c);
                             cell.setBravaisType(b);
@@ -201,10 +201,8 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
 
                         double score=0.0;
                         double maxscore=0.0;
-                        for (auto peak : _peaks)
-                        {
-                            if (peak->isSelected() && !peak->isMasked())
-                            {
+                        for (auto peak : _peaks) {
+                            if (peak->isSelected() && !peak->isMasked()) {
                                 maxscore++;
                                 if (peak->hasIntegerHKL(cell))
                                     score++;
@@ -219,6 +217,8 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
             }
         }
     }
+
+    qDebug() << "Done refining solutions, building table...";
 
     buildSolutionsTable();
 }

@@ -312,9 +312,8 @@ void DialogRefineUnitCell::on_pushButton_Refine_clicked()
     auto M=_cell->getReciprocalStandardM();
     _minimizer.setStartingUBMatrix(M);
 
-    int test=_minimizer.run(100);
-    if (test!=1)
-    {
+    int test = _minimizer.runGSL(100);
+    if (test != 1) {
         ui->textEdit_Solution->setTextColor(QColor("red"));
         ui->textEdit_Solution->setText("No solution found within convergence criteria.");
         return; // why not change ?

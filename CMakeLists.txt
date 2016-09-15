@@ -58,7 +58,7 @@ elseif (WIN32)
     # take care of pesky backslashes in windows path names
     STRING(REGEX REPLACE "\\\\" "\\\\\\\\" RESOURCES_DIR ${RESOURCES_DIR})
 endif()
-configure_file(${CMAKE_SOURCE_DIR}/cmake/Config.h.in ${CMAKE_BINARY_DIR}/include/Config.h)
+configure_file(${CMAKE_SOURCE_DIR}/cmake/NSXConfig.h.in ${CMAKE_BINARY_DIR}/include/NSXConfig.h)
 
 add_subdirectory(nsxlib)
 

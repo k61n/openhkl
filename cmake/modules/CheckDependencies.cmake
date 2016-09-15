@@ -28,7 +28,7 @@ find_package(OpenMP)
 
 ###### Find the Eigen3
 find_package(Eigen3 REQUIRED)
-include_directories(${EIGEN3_INCLUDE_DIR})
+include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
 
 ###### Search the HDF5 library
 find_package(HDF5 COMPONENTS CXX REQUIRED)
@@ -72,11 +72,40 @@ find_package(TIFF REQUIRED)
 include_directories(${TIFF_INCLUDE_DIR})
 
 
-
 # find_path(FFTW_INCLUDE_DIR fftw3.h)
 # include_directories(${FFTW_INCLUDE_DIR})
 # find_library(FFTW_LIBRARIES NAMES fftw3 libfftw3 fftw3-3 libfftw3-3)
 
 find_package(FFTW REQUIRED)
 include_directories(${FFTW_INCLUDE_DIR})
+
+# GNU scientific library
+find_package(GSL)
+
+if(GSL_FOUND)
+  include_directories(${GSL_INCLUDE_DIR})
+
+  message("GSL_INCLUDE_DIR is ${GSL_INCLUDE_DIR}")
+
+  set(temp_string ${GSL_VERSION})
+  string(REGEX REPLACE "([0-9]+)\\.([0-9]+)(\\.([0-9]+))?" "\\1" gsl_version_major ${temp_string})
+  string(REGEX REPLACE "([0-9]+)\\.([0-9]+)(\\.([0-9]+))?" "\\2" gsl_version_minor ${temp_string})
+  #string(REGEX REPLACE "([0-9]+)\\.([0-9]+)(\\.([0-9]+))?" "\\4" gsl_version_subminor ${temp_string})
+  
+
+  message("GSL_VERSION_MAJOR is ${gsl_version_major}")
+  message("GSL_VERSION_MINOR is ${gsl_version_minor}")
+  #message("GSL_VERSION_SUBMINOR is ${gsl_version_subminor}")
+
+  add_definitions(-DNSXTOOL_GSL_FOUND=1)
+  add_definitions(-DNSXTOOL_GSL_VERSION_MAJOR=${gsl_version_major})
+  add_definitions(-DNSXTOOL_GSL_VERSION_MINOR=${gsl_version_minor})
+    
+  else()
+  message(WARNING "GSL library not found -- will use Eigen/unsupported for Levenberg-Marquardt algorithm")
+endif()
+
+
+
+
 

@@ -4,7 +4,7 @@
 #include <fstream>
 
 
-#include "Config.h"
+#include "NSXConfig.h"
 #include "Error.h"
 #include "Path.h"
 

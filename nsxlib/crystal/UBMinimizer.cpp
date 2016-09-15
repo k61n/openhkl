@@ -1,6 +1,8 @@
 #include <cmath>
 
 #include "UBMinimizer.h"
+#include "MinimizerGSL.h"
+#include "MinimizerEigen.h"
 
 #include <Eigen/Dense>
 #include "Component.h"
@@ -227,7 +229,7 @@ void UBMinimizer::setSample(std::shared_ptr<SX::Instrument::Sample> sample)
 	_functor.setSample(sample);
 }
 
-int UBMinimizer::run(unsigned int maxIter)
+int UBMinimizer::runEigen(unsigned int maxIter)
 {
 
 	int nParams=_functor.inputs();
@@ -307,6 +309,69 @@ int UBMinimizer::run(unsigned int maxIter)
 
 	return status;
 
+}
+
+int UBMinimizer::runGSL(unsigned int maxIter)
+{
+#ifdef NSXTOOL_GSL_FOUND
+    SX::Utils::MinimizerGSL minimizer;
+#else
+    SX::Utils::MinimizerEigen minimizer;
+#endif
+
+    int nParams=_functor.inputs();
+    Eigen::VectorXd x=Eigen::VectorXd::Zero(nParams);
+
+    for (auto it=_start.begin();it!=_start.end();++it)
+        x[it->first] = it->second;
+
+    minimizer.initialize(nParams, _functor.values());
+    minimizer.setParams(x);
+    minimizer.set_f(_functor);
+
+    int status = minimizer.fit(maxIter);
+
+    if (status) {
+        x = minimizer.params();
+
+        std::vector<bool> fParams(x.size(),false);
+        for (auto it : _functor._fixedParameters)
+            fParams[it] = true;
+
+        // Create a vector to calculate final residuals
+        Eigen::VectorXd fvec(_functor.values());
+        // Calculate final residuals
+        _functor(x,fvec);
+
+        // The MSE is computed as SSE/dof where dof is the number of degrees of freedom
+        int nFreeParameters=_functor.inputs()-_functor._fixedParameters.size();
+        double mse = fvec.squaredNorm()/(_functor.values()-nFreeParameters);
+
+        int removed = 0;
+
+        Eigen::MatrixXd jac = minimizer.jacobian();
+        Eigen::MatrixXd JtJ = jac.transpose()*jac;
+
+        for (unsigned int i=0;i<fParams.size();++i) {
+            if (fParams[i]) {
+                Utils::removeColumn(JtJ,i-removed);
+                Utils::removeRow(JtJ,i-removed);
+                removed++;
+            }
+        }
+
+        // The covariance matrix
+        Eigen::MatrixXd covariance = JtJ.inverse();
+        covariance *= mse;
+
+        _solution = UBSolution(_functor._detector, _functor._sample,_functor._source, x, covariance, fParams);
+    }
+
+    // debugging only
+    std::cout << "status is " << minimizer.getStatusStr()
+              << " after " << minimizer.numIterations() << " iterations" << std::endl;
+
+    return status;
 }
 
 const UBSolution& UBMinimizer::getSolution() const
