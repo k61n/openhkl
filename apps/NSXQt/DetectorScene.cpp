@@ -38,10 +38,13 @@ DetectorScene::DetectorScene(QObject *parent)
   _zoomStack(),
   _itemSelected(false),
   _image(nullptr),
-  _peaks(),
+  _peakGraphicsItems(),
   _masks(),
-  _lastClickedGI(nullptr)
+  _lastClickedGI(nullptr),
+  _showPeakCalcs(false)
 {
+    //setBspTreeDepth(4);
+    qDebug() << "BSP tree depth = " << bspTreeDepth();
 }
 
 void DetectorScene::changeFrame(unsigned int frame)
@@ -57,10 +60,11 @@ void DetectorScene::changeFrame(unsigned int frame)
         return;
     _currentFrameIndex = frame;
 
-    for (auto& peak : _peaks)
-        (peak.second)->setFrame(_currentFrameIndex);
-    for (auto& peak: _peakCalcs)
-        peak->setFrame(_currentFrameIndex);
+//    for (auto& peak : _peaks)
+//        (peak.second)->setFrame(_currentFrameIndex);
+
+    updatePeaks();
+    showPeakCalcs(_showPeakCalcs);
 
     loadCurrentImage();
 }
@@ -144,14 +148,18 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         }
     }
     // No button was pressed, just a mouse move
+
+
     else if (event->button() == Qt::NoButton)
     {
+        //      jmf: testing follows
         QGraphicsItem* gItem=itemAt(event->lastScenePos().toPoint(),QTransform());
         auto p=dynamic_cast<PlottableGraphicsItem*>(gItem);
         if (p)
             emit updatePlot(p);
          QGraphicsScene::mouseMoveEvent(event);
     }
+
 }
 
 void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -261,20 +269,17 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-
     // If no data is loaded, do nothing
     if (!_currentData)
         return;
 
     // The user released the left mouse button
-    if (event->button() & Qt::LeftButton)
-    {
+    if (event->button() & Qt::LeftButton) {
         if (event->modifiers()==Qt::ControlModifier)
             return;
 
         // Case of the Zoom mode, the zoom is updated and added on top of the zoom stack
-        if(_mode==ZOOM)
-        {
+        if(_mode==ZOOM) {
             qreal top=_zoomrect->rect().top();
             qreal bot=_zoomrect->rect().bottom();
             qreal left=_zoomrect->rect().left();
@@ -300,13 +305,10 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             removeItem(_zoomrect);
             _zoomStack.push_back(_zoomrect->rect().toRect());
             emit dataChanged();
-        }
-        else
-        {
+        } else {
             if (auto p=dynamic_cast<PlottableGraphicsItem*>(_lastClickedGI))
                 emit updatePlot(p);
-            else if (auto p=dynamic_cast<MaskGraphicsItem*>(_lastClickedGI))
-            {
+            else if (auto p=dynamic_cast<MaskGraphicsItem*>(_lastClickedGI)) {
                 if (_lastClickedGI == _masks.last())
                     _currentData->addMask(p->getAABB());
                 _currentData->maskPeaks();
@@ -333,8 +335,7 @@ void DetectorScene::wheelEvent(QGraphicsSceneWheelEvent* event)
     if (!(p->isSelected()))
         return;
 
-    if (auto p=dynamic_cast<CutterGraphicsItem*>(item))
-    {
+    if (auto p=dynamic_cast<CutterGraphicsItem*>(item)) {
         p->wheelEvent(event);
         emit updatePlot(p);
     }
@@ -342,19 +343,15 @@ void DetectorScene::wheelEvent(QGraphicsSceneWheelEvent* event)
 
 void DetectorScene::keyPressEvent(QKeyEvent* event)
 {
-
 	// If no data, returns
     if (!_currentData)
         return;
 
     // The user pressed on Delete key
-    if (event->key() == Qt::Key_Delete)
-    {
+    if (event->key() == Qt::Key_Delete) {
         QList<QGraphicsItem*> items=selectedItems();
-        int nPeaksErased=_peaks.size();
-        for (auto item : items)
-        {
-
+        int nPeaksErased = _peakGraphicsItems.size();
+        for (auto item: items) {
             auto p=dynamic_cast<SXGraphicsItem*>(item);
         	// The item must be deletable ... to be deleted
             if (!p->isDeletable())
@@ -362,18 +359,15 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
 
         	// If the item is a peak graphics item, remove its corresponding peak from the data,
         	// update the set of peak graphics items and update the scene
-            if (auto p=dynamic_cast<PeakGraphicsItem*>(item))
-            {
+            if (auto p=dynamic_cast<PeakGraphicsItem*>(item)) {
                 bool remove=_currentData->removePeak(p->getPeak());
-                if (remove)
-                {
-                    _peaks.erase(p->getPeak());
+                if (remove) {
+                    _peakGraphicsItems.erase(p->getPeak());
                 }
             }
             // If the item is a mask graphics item, remove its corresponding mask from the data,
             // update the QList of mask graphics items and update the scene
-            else if (auto p=dynamic_cast<MaskGraphicsItem*>(item))
-            {
+            else if (auto p=dynamic_cast<MaskGraphicsItem*>(item)) {
             	_currentData->removeMask(p->getAABB());
                 _masks.removeOne(p);
             }
@@ -385,7 +379,7 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
             delete item;
         }
         // Computes the new number of peaks, and if it changes log it
-        nPeaksErased -= _peaks.size();
+        nPeaksErased -= _peakGraphicsItems.size();
         if (nPeaksErased > 0)
             qDebug() << "Removed "<< nPeaksErased << " peaks";
     }
@@ -417,8 +411,7 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
     double wave=instr->getSource()->getWavelength();
 
     QString ttip;
-    switch (_cursorMode)
-    {
+    switch (_cursorMode) {
         case(PIXEL):
         {
             ttip=QString("(%1,%2) I:%3").arg(col).arg(row).arg(intensity);
@@ -445,8 +438,7 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
         }
         case(HKL):
         {
-            if (_cell)
-            {
+            if (_cell) {
                 auto detector=_currentData->getDiffractometer()->getDetector();
                 auto sample=_currentData->getDiffractometer()->getSample();
                 auto source=_currentData->getDiffractometer()->getSource();
@@ -482,12 +474,10 @@ void DetectorScene::loadCurrentImage(bool newimage)
     if (newimage)
         _currentFrame =_currentData->getFrame(_currentFrameIndex);
 
-    if (!_image)
-    {
+    if (!_image) {
         _image=addPixmap(QPixmap::fromImage(Mat2QImage(_currentFrame.data(), nrows, ncols, full.left(), full.right(), full.top(), full.bottom(), _currentIntensity)));
         _image->setZValue(-1);
-    }
-    else
+    } else
         _image->setPixmap(QPixmap::fromImage(Mat2QImage(_currentFrame.data(), nrows, ncols, full.left(), full.right(), full.top(), full.bottom(), _currentIntensity)));
 
     setSceneRect(_zoomStack.back());
@@ -503,10 +493,10 @@ std::shared_ptr<SX::Data::IData> DetectorScene::getData()
     return _currentData;
 }
 
-const std::map<SX::Crystal::Peak3D*,PeakGraphicsItem*>& DetectorScene::getPeaksGraphicsItems() const
-{
-    return _peaks;
-}
+//const std::map<SX::Crystal::Peak3D*,PeakGraphicsItem*>& DetectorScene::getPeaksGraphicsItems() const
+//{
+//    return _peaks;
+//}
 
 const rowMatrix& DetectorScene::getCurrentFrame() const
 {
@@ -520,8 +510,8 @@ void DetectorScene::changeCursorMode(int mode)
 
 PeakGraphicsItem* DetectorScene::findPeakGraphicsItem(SX::Crystal::Peak3D *peak)
 {
-    auto it=_peaks.find(peak);
-    if (it!=_peaks.end())
+    auto it=_peakGraphicsItems.find(peak);
+    if (it!=_peakGraphicsItems.end())
         return it->second;
     else
         return nullptr;
@@ -530,7 +520,6 @@ PeakGraphicsItem* DetectorScene::findPeakGraphicsItem(SX::Crystal::Peak3D *peak)
 
 void DetectorScene::updatePeaks()
 {
-
     if (!_currentData)
         return;
 
@@ -538,88 +527,82 @@ void DetectorScene::updatePeaks()
 
     auto& peaks=_currentData->getPeaks();
 
-    for (auto peak : peaks)
-    {
-        PeakGraphicsItem* pgi=new PeakGraphicsItem(peak);
+    for (auto peak : peaks) {
+        const Eigen::Vector3d& l = peak->getPeak()->getLower();
+        const Eigen::Vector3d& u = peak->getPeak()->getUpper();
+
+        if (_currentFrameIndex < l[2] || _currentFrameIndex > u[2])
+            continue;
+
+        PeakGraphicsItem* pgi = new PeakGraphicsItem(peak);
         pgi->setFrame(_currentFrameIndex);
         addItem(pgi);
-        _peaks.insert(std::pair<SX::Crystal::Peak3D*,PeakGraphicsItem*>(peak,pgi));
+        _peakGraphicsItems.insert(std::pair<SX::Crystal::Peak3D*, PeakGraphicsItem*>(peak,pgi));
     }
 }
 
 void DetectorScene::updatePeakCalcs()
 {
-
-    clock_t start=clock();
+    clock_t start = clock();
 
     if (!_currentData)
         return;
 
-    for (auto& peak : _peakCalcs)
-    {
-        removeItem(peak);
-        delete peak;
-    }
+    _precalculatedPeaks.clear();
 
-    _peakCalcs.clear();
+    //qDebug() << "BSP tree depth = " << bspTreeDepth();
+
+    //setBspTreeDepth(8);
 
     auto sample=_currentData->getDiffractometer()->getSample();
     int ncrystals=sample->getNCrystals();
-    if (ncrystals)
-    {
-        for (int i=0;i<ncrystals;++i)
-        {
+    if (ncrystals) {
+        for (int i = 0; i < ncrystals; ++i) {
             SX::Crystal::SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
 
             auto ub=sample->getUnitCell(i)->getReciprocalStandardM();
             auto hkls=sample->getUnitCell(i)->generateReflectionsInSphere(1.5);
             std::vector<SX::Crystal::PeakCalc> peaks=_currentData->hasPeaks(hkls,ub);
-            for (const auto& p : peaks)
-            {
-                PeakCalcGraphicsItem* peak=new PeakCalcGraphicsItem(p);
-                peak->setFrame(_currentFrameIndex);
-                addItem(peak);
-                _peakCalcs.push_back(peak);
-            }
+            _precalculatedPeaks.reserve(_precalculatedPeaks.size() + peaks.size());
+
+            for(auto&& p: peaks)
+                _precalculatedPeaks.push_back(p);
         }
     }
 
-    clock_t end=clock();
+    showPeakCalcs(_showPeakCalcs);
+
+    qDebug() << "number of calculated peaks " << _peakCalcs.size();
+    clock_t end = clock();
     qDebug() << "ELAPSED TIME = "<<static_cast<double>((end-start))/CLOCKS_PER_SEC;
+    qDebug() << "BSP tree depth = " << bspTreeDepth();
 
 }
 
 void DetectorScene::clearPeaks()
 {
-
     if (!_currentData)
         return;
 
-    for (auto& peak : _peaks)
-    {
+    for (auto& peak : _peakGraphicsItems) {
         removeItem(peak.second);
         delete peak.second;
     }
 
-    _peaks.clear();
-
+    _peakGraphicsItems.clear();
 }
 
 void DetectorScene::showPeakLabels(bool peaklabel)
 {
-    if (!_peaks.empty())
-    {
-        const auto& it=_peaks.begin();
+    if (!_peakGraphicsItems.empty()) {
+        const auto& it=_peakGraphicsItems.begin();
         it->second->setLabelVisible(peaklabel);
     }
 
-    if (!_peakCalcs.empty())
-    {
-        const auto& it=_peakCalcs.begin();
+    if (!_peakCalcs.empty()) {
+        const auto& it = _peakCalcs.begin();
         (*it)->setLabelVisible(peaklabel);
     }
-
-    return;
 }
 
 void DetectorScene::activateIndexingMode(std::shared_ptr<SX::Crystal::UnitCell> cell)
@@ -637,13 +620,31 @@ void DetectorScene::setPeakIndex(SX::Crystal::Peak3D* peak, const Eigen::Vector3
 
 void DetectorScene::showPeakCalcs(bool flag)
 {
-    if (_peakCalcs.empty())
+    _showPeakCalcs = flag;
+
+    if (!flag)
+        return;
+
+    if (_precalculatedPeaks.empty())
         updatePeakCalcs();
 
-    for (auto p : _peakCalcs)
-    {
-        p->setVisible(flag);
-        p->setFrame(_currentFrameIndex);
+    for (auto& peak : _peakCalcs) {
+        removeItem(peak);
+        delete peak;
+    }
+
+    _peakCalcs.resize(0);
+
+    for (auto&& p : _precalculatedPeaks) {
+        if ( std::abs(_currentFrameIndex-p._frame) > 1.0)
+            continue;
+
+            PeakCalcGraphicsItem* peak = new PeakCalcGraphicsItem(p);
+            peak->setVisible(flag);
+            peak->setFrame(_currentFrameIndex);
+            peak->setEnabled(false); // testing
+            addItem(peak);
+            _peakCalcs.push_back(peak);
     }
 }
 
