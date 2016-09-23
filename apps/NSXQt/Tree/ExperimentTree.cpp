@@ -63,6 +63,8 @@
 #include "FriedelDialog.h"
 
 #include "RFactor.h"
+#include <hdf5.h>
+#include <H5Exception.h>
 
 using std::vector;
 using SX::Data::IData;
@@ -309,7 +311,11 @@ void ExperimentTree::importData()
            qWarning() << "Error reading numor: " + fileNames[i] + " " + QString(e.what());
            continue;
         }
+        catch(...)
 
+        {
+        	qWarning() << "Error reading numor: " + fileNames[i] + " reason not known:";
+        }
         QStandardItem* item = new NumorItem(exp, data_ptr);
         item->setText(QString::fromStdString(basename));
         item->setCheckable(true);
