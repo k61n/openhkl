@@ -358,24 +358,17 @@ void BlobFinder::findCollisions()
     int dummy = 0;
     int magic = 0.2 * std::distance(_blobs.begin(), _blobs.end());
 
-    for (auto it = _blobs.begin(); it != _blobs.end();)
-    {
-        try {
+    for (auto it = _blobs.begin(); it != _blobs.end();) {
         ++dummy;
-
-        try {
         Blob3D& p=it->second;
 
+        // ignore blobs that are too small -- otherwise an exception will be raised!!
         if ( p.getMass() < 1e-7) {
             it = _blobs.erase(it);
             continue;
         }
 
         p.toEllipsoid(_confidence,center,extents,axis);
-            }
-            catch(std::exception& e) {
-                throw e;
-            }
 
         if (extents.minCoeff()<1.0e-9)
             it = _blobs.erase(it);
@@ -390,10 +383,6 @@ void BlobFinder::findCollisions()
             double current_dist = std::distance(_blobs.begin(), it);
             double progress = 100.0 * current_dist / total_dist;
             _progressHandler->setProgress(0.5*progress);
-        }
-        }
-        catch(std::exception& e) {
-            throw e;
         }
     }
 
