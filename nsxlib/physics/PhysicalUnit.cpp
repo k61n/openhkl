@@ -1,8 +1,13 @@
 #include <algorithm>
+#include <cmath>
 #include <functional>
 #include <numeric>
 
 #include "PhysicalUnit.h"
+
+namespace Physics
+{
+
 
 namespace Units
 {
@@ -53,7 +58,7 @@ std::map<std::string,double> PhysicalUnit::_definedPrefixes = {{"y" ,1.0e-24},
                                               {"Z" ,1.0e+21},
                                               {"Y" ,1.0e+24}};
 
-std::map<dimension,double> PhysicalUnit::_unitEquivalences = {{{2,-2,0,0,0,0,0},4.0}};
+std::map<dimension,double> PhysicalUnit::_unitEquivalences = {{{2,-2,0,0,0,0,0},1.782661907e-36}};
 
 PhysicalUnit::PhysicalUnit(double value, const std::string& unit) : _value(value)
 {
@@ -101,9 +106,16 @@ double PhysicalUnit::convert(const std::string& ounit) const
 			{
 				dimension dimDifference;
 				std::transform(_dimension.begin(),_dimension.end(),u.second.begin(),dimDifference.begin(), std::minus<int>());
-				int prod=std::inner_product(dimDifference.begin(),dimDifference.end(),p.second.begin());
-				double norm2=std::accumulate(p.second.begin,p.second.end(),0.0,[&](double sum,int v){sum += static_cast<double>(v*v);});
-				std::cout<<norm2<<std::endl;
+				int prod=std::inner_product(dimDifference.begin(),dimDifference.end(),p.first.begin(),0);
+				auto sumsquare = [](double sum2,int v){sum2 += static_cast<double>(v*v);return sum2;};
+				int norm2=std::inner_product(p.first.begin(),p.first.end(),p.first.begin(),0);
+				double ratio=static_cast<double>(prod)/static_cast<double>(norm2);
+				double intpart;
+				if (std::modf(ratio,&intpart)==0.0)
+				{
+					double conversionFactor(_value*std::pow(p.second,ratio));
+					break;
+				}
 			}
 		}
     }
@@ -155,5 +167,7 @@ void PhysicalUnit::PhysicalUnitParser::updateUnitParser(const std::string& name,
 	_unit.add(name,physicalUnit);
 }
 
-}
+} // end namespace Units
+
+} //end namespace Physics
 
