@@ -704,36 +704,36 @@ void ExperimentTree::findFriedelPairs()
 
 void ExperimentTree::integrateCalculatedPeaks()
 {
-//    qDebug() << "Integrating calculated peaks...";
+    qDebug() << "Integrating calculated peaks...";
 
-//    int count = 0;
-//    Eigen::Vector3d peak_extent, bg_extent;
-//    peak_extent << 0.0, 0.0, 0.0;
-//    bg_extent << 0.0, 0.0, 0.0;
+    int count = 0;
+    Eigen::Vector3d peak_extent, bg_extent;
+    peak_extent << 0.0, 0.0, 0.0;
+    bg_extent << 0.0, 0.0, 0.0;
 
-//    std::shared_ptr<UnitCell> unit_cell;
+    std::shared_ptr<UnitCell> unit_cell;
 
-//    for (std::shared_ptr<IData> numor: getSelectedNumors()) {
-//        for (Peak3D* peak: numor->getPeaks())
-//            if ( peak && peak->isSelected() && !peak->isMasked() ) {
-//                peak_extent += peak->getPeak()->getAABBExtents();
-//                bg_extent += peak->getBackground()->getAABBExtents();
-//                ++count;
-//            }
-//    }
+    for (std::shared_ptr<IData> numor: getSelectedNumors()) {
+        for (Peak3D* peak: numor->getPeaks())
+            if ( peak && peak->isSelected() && !peak->isMasked() ) {
+                peak_extent += peak->getPeak()->getAABBExtents();
+                bg_extent += peak->getBackground()->getAABBExtents();
+                ++count;
+            }
+    }
 
-//    if ( count == 0) {
-//        qDebug() << "No peaks -- cannot search for equivalences!";
-//        return;
-//    }
+    if ( count == 0) {
+        qDebug() << "No peaks -- cannot search for equivalences!";
+        return;
+    }
 
-//    peak_extent /= count;
-//    bg_extent /= count;
+    peak_extent /= count;
+    bg_extent /= count;
 
-//    qDebug() << "Done calculating average bounding box";
+    qDebug() << "Done calculating average bounding box";
 
-//    qDebug() << peak_extent(0) << " " << peak_extent(1) << " " << peak_extent(2);
-//    qDebug() << bg_extent(0) << " " << bg_extent(1) << " " << bg_extent(2);
+    qDebug() << peak_extent(0) << " " << peak_extent(1) << " " << peak_extent(2);
+    qDebug() << bg_extent(0) << " " << bg_extent(1) << " " << bg_extent(2);
 
 //    // reset bounding boxes based on averages
 //    for (std::shared_ptr<IData> numor: getSelectedNumors()) {

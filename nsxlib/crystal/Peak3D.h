@@ -40,6 +40,10 @@
 namespace SX
 {
 
+namespace Geometry {
+class Blob3D;
+}
+
 namespace Data
 {
 	class IData;
@@ -63,6 +67,7 @@ class Peak3D
 public:
 
     Peak3D(std::shared_ptr<SX::Data::IData> data=std::shared_ptr<SX::Data::IData>());
+    Peak3D(std::shared_ptr<SX::Data::IData> data, const SX::Geometry::Blob3D& blob, double confidence);
 	Peak3D(const Peak3D& other);
 	Peak3D& operator=(const Peak3D& other);
 	~Peak3D();

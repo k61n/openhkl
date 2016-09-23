@@ -12,8 +12,12 @@
 #include "Sample.h"
 #include "Source.h"
 #include "Units.h"
+#include "Blob3D.h"
+#include "BlobFinder.h" // needed for Ellipsoid3D typedef
 
 #include "IFrameIterator.h"
+
+using SX::Geometry::Blob3D;
 
 namespace SX
 {
@@ -35,6 +39,40 @@ Peak3D::Peak3D(std::shared_ptr<SX::Data::IData> data):
 		_masked(false),
 		_transmission(1.0)
 {
+}
+
+Peak3D::Peak3D(std::shared_ptr<Data::IData> data, const Blob3D &blob, double confidence):
+    Peak3D(data)
+{
+    Eigen::Vector3d center, eigenvalues;
+    Eigen::Matrix3d eigenvectors;
+
+    blob.toEllipsoid(confidence, center, eigenvalues, eigenvectors);
+    setPeakShape(new SX::Geometry::Ellipsoid3D(center,eigenvalues,eigenvectors));
+
+    eigenvalues[0]*=2.0;
+    eigenvalues[1]*=2.0;
+    eigenvalues[2]*=3.0;
+
+    setBackgroundShape(new SX::Geometry::Ellipsoid3D(center,eigenvalues,eigenvectors));
+    //
+    int f=std::floor(center[2]);
+
+    using ComponentState = SX::Instrument::ComponentState;
+
+    setSampleState(std::shared_ptr<ComponentState>(new ComponentState(data->getSampleInterpolatedState(f))));
+    ComponentState detState = data->getDetectorInterpolatedState(f);
+
+    using DetectorEvent = SX::Instrument::DetectorEvent;
+
+    setDetectorEvent(std::shared_ptr<DetectorEvent>(
+                            new DetectorEvent(data->getDiffractometer()->getDetector()->createDetectorEvent(
+                                                  center[0],center[1],detState.getValues()))
+                            )
+            );
+
+    setSource(data->getDiffractometer()->getSource());
+
 }
 
 Peak3D::Peak3D(const Peak3D& other):
