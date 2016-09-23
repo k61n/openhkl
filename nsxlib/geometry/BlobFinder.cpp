@@ -358,17 +358,21 @@ void BlobFinder::findCollisions()
     int dummy = 0;
     int magic = 0.2 * std::distance(_blobs.begin(), _blobs.end());
 
-    for (auto it = _blobs.begin(); it != _blobs.end();)
-    {
+    for (auto it = _blobs.begin(); it != _blobs.end();) {
         ++dummy;
-
         Blob3D& p=it->second;
+
+        // ignore blobs that are too small -- otherwise an exception will be raised!!
+        if ( p.getMass() < 1e-7) {
+            it = _blobs.erase(it);
+            continue;
+        }
+
         p.toEllipsoid(_confidence,center,extents,axis);
 
         if (extents.minCoeff()<1.0e-9)
             it = _blobs.erase(it);
-        else
-        {
+        else {
             boxes.insert(shape3Dmap::value_type(new Ellipsoid3D(center,extents,axis),it->first));
             it++;
         }

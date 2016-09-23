@@ -418,7 +418,8 @@ void ExperimentTree::findPeaks(const QModelIndex& index)
             result = _peakFinder->find(selectedNumors);
         }
         catch(std::exception& e) {
-            qDebug() << "Caught exception during peak find; peak search aborted.";
+            qDebug() << "Caught exception during peak find: " << e.what();
+            qDebug() <<" Peak search aborted.";
             return false;
         }
         return result;
