@@ -312,9 +312,9 @@ void ExperimentTree::importData()
            continue;
         }
         catch(...)
-
         {
         	qWarning() << "Error reading numor: " + fileNames[i] + " reason not known:";
+        	continue;
         }
         QStandardItem* item = new NumorItem(exp, data_ptr);
         item->setText(QString::fromStdString(basename));
