@@ -735,17 +735,34 @@ void ExperimentTree::integrateCalculatedPeaks()
     qDebug() << peak_extent(0) << " " << peak_extent(1) << " " << peak_extent(2);
     qDebug() << bg_extent(0) << " " << bg_extent(1) << " " << bg_extent(2);
 
-//    // reset bounding boxes based on averages
-//    for (std::shared_ptr<IData> numor: getSelectedNumors()) {
-//        for (Peak3D* peak: numor->getPeaks())
-//            if ( peak && peak->isSelected() && !peak->isMasked() ) {
-//                Eigen::Vector3d center = peak->getPeak()->getAABBCenter();
+    for (std::shared_ptr<IData> numor: getSelectedNumors()) {
 
 
 
-//                peak->setPeak()->setLower;
+        std::vector<Peak3D*> calculated_peaks;
 
-//                ++count;
-//            }
-//    }
+        shared_ptr<Sample> sample = numor->getDiffractometer()->getSample();
+        int ncrystals = sample->getNCrystals();
+
+        if (ncrystals) {
+            for (int i = 0; i < ncrystals; ++i) {
+                SX::Crystal::SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
+                auto ub = sample->getUnitCell(i)->getReciprocalStandardM();
+
+                qDebug() << "Calculating peak locations...";
+
+                auto hkls = sample->getUnitCell(i)->generateReflectionsInSphere(1.5);
+                std::vector<SX::Crystal::PeakCalc> peaks = numor->hasPeaks(hkls, ub);
+                calculated_peaks.reserve(calculated_peaks.size() + peaks.size());
+
+                qDebug() << "Adding calculated peaks...";
+
+                for(auto&& p: peaks) {
+                    //calculated_peaks.push_back(p);
+                }
+            }
+        }
+
+        qDebug() << "Done.";
+    }
 }
