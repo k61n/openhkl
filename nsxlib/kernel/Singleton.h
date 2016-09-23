@@ -69,8 +69,10 @@ T* Singleton<T,Constructor,Destructor>::Instance()
 template <typename T,template <class> class Constructor,template <class> class Destructor>
 void Singleton<T,Constructor,Destructor>::DestroyInstance()
 {
-	if (_instance)
+    if (_instance) {
 		Destructor<T>::destroy(_instance);
+        _instance = nullptr;
+    }
 }
 
 /**
