@@ -360,15 +360,26 @@ void BlobFinder::findCollisions()
 
     for (auto it = _blobs.begin(); it != _blobs.end();)
     {
+        try {
         ++dummy;
 
+        try {
         Blob3D& p=it->second;
+
+        if ( p.getMass() < 1e-7) {
+            it = _blobs.erase(it);
+            continue;
+        }
+
         p.toEllipsoid(_confidence,center,extents,axis);
+            }
+            catch(std::exception& e) {
+                throw e;
+            }
 
         if (extents.minCoeff()<1.0e-9)
             it = _blobs.erase(it);
-        else
-        {
+        else {
             boxes.insert(shape3Dmap::value_type(new Ellipsoid3D(center,extents,axis),it->first));
             it++;
         }
@@ -379,6 +390,10 @@ void BlobFinder::findCollisions()
             double current_dist = std::distance(_blobs.begin(), it);
             double progress = 100.0 * current_dist / total_dist;
             _progressHandler->setProgress(0.5*progress);
+        }
+        }
+        catch(std::exception& e) {
+            throw e;
         }
     }
 
