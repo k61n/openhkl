@@ -84,8 +84,7 @@ void DialogRefineUnitCell::setMinimizer()
     _minimizer.refineParameter(9,!source->getSelectedMonochromator()->isOffsetFixed());
 
     int nSampleOffsets=sample->getNAxes();
-    for (int i=0;i<nSampleOffsets;++i)
-    {
+    for (int i=0;i<nSampleOffsets;++i) {
         auto axis=sample->getGonio()->getAxis(i);
         _minimizer.refineParameter(start+i,!axis->hasOffsetFixed());
         _minimizer.setStartingValue(start+i,axis->getOffset());
@@ -93,8 +92,7 @@ void DialogRefineUnitCell::setMinimizer()
 
     start += nSampleOffsets;
     int nDetectorOffsets=detector->getNAxes();
-    for (int i=0;i<nDetectorOffsets;++i)
-    {
+    for (int i = 0; i < nDetectorOffsets; ++i) {
         auto axis=detector->getGonio()->getAxis(i);
         _minimizer.refineParameter(start+i,!axis->hasOffsetFixed());
         _minimizer.setStartingValue(start+i,axis->getOffset());
@@ -133,8 +131,7 @@ void DialogRefineUnitCell::setSampleOffsets()
     ui->tableWidget_Sample->setItemDelegateForColumn(1,new DoubleTableItemDelegate(ui->tableWidget_Sample));
 
     // Fill the table
-    for (int i=0;i<nAxesSample;++i)
-    {
+    for (int i=0;i<nAxesSample;++i) {
         // Set the first column of the table: the axis name
         auto axis=sample->getGonio()->getAxis(i);
         QTableWidgetItem* item0=new QTableWidgetItem();
@@ -186,9 +183,7 @@ void DialogRefineUnitCell::setDetectorOffsets()
     // Allow double to be entered with a better precision
     ui->tableWidget_Detector->setItemDelegateForColumn(1,new DoubleTableItemDelegate(ui->tableWidget_Detector));
 
-    for (int i=0;i<nAxesDet;++i)
-    {
-
+    for (int i=0;i<nAxesDet;++i) {
         // Set the first column of the table: the axis name
         auto axis=detector->getGonio()->getAxis(i);
         QTableWidgetItem* item0=new QTableWidgetItem();
@@ -228,8 +223,7 @@ void DialogRefineUnitCell::setSolution(const SX::Crystal::UBSolution& solution)
     auto sample=_experiment->getDiffractometer()->getSample();
     int nAxesSample=sample->getNAxes();
 
-    for (int i=0;i<nAxesSample;++i)
-    {
+    for (int i=0;i<nAxesSample;++i) {
         ui->tableWidget_Sample->item(i,1)->setData(Qt::EditRole,solution._sampleOffsets[i]);
         ui->tableWidget_Sample->item(i,2)->setData(Qt::EditRole,solution._sigmaSampleOffsets[i]);
     }
@@ -238,8 +232,7 @@ void DialogRefineUnitCell::setSolution(const SX::Crystal::UBSolution& solution)
     auto detector=_experiment->getDiffractometer()->getDetector();
     int nAxesDet=detector->getNAxes();
 
-    for (int i=0;i<nAxesDet;++i)
-    {
+    for (int i=0;i<nAxesDet;++i) {
         ui->tableWidget_Detector->item(i,1)->setData(Qt::EditRole,solution._detectorOffsets[i]);
         ui->tableWidget_Detector->item(i,2)->setData(Qt::EditRole,solution._sigmaDetectorOffsets[i]);
     }
@@ -256,8 +249,7 @@ void DialogRefineUnitCell::cellSampleHasChanged(int i, int j)
 {
 
     // A new offset has been entered
-    if (j==1)
-    {
+    if (j==1) {
         auto axis=_experiment->getDiffractometer()->getSample()->getGonio()->getAxis(i);
         bool offsetFixed=axis->hasOffsetFixed();
         axis->setOffsetFixed(false);
@@ -271,8 +263,7 @@ void DialogRefineUnitCell::cellSampleHasChanged(int i, int j)
 void DialogRefineUnitCell::cellDetectoreHasChanged(int i, int j)
 {
     // A new offset has been entered
-    if (j==1)
-    {
+    if (j==1) {
         auto axis=_experiment->getDiffractometer()->getDetector()->getGonio()->getAxis(i);
         bool offsetFixed=axis->hasOffsetFixed();
         axis->setOffsetFixed(false);
@@ -291,13 +282,10 @@ void DialogRefineUnitCell::on_pushButton_Refine_clicked()
 {
     int nhits=0;
     const auto& mapdata=_experiment->getData();
-    for (auto data: mapdata)
-    {
+    for (auto data: mapdata) {
         const auto& peaks=data.second->getPeaks();
-        for (auto peak: peaks)
-        {
-            if (peak->hasIntegerHKL(*_cell) && !peak->isMasked() && peak->isSelected())
-            {
+        for (auto peak: peaks) {
+            if (peak->hasIntegerHKL(*_cell) && !peak->isMasked() && peak->isSelected()) {
                 _minimizer.addPeak(*peak);
                 nhits++;
             }
@@ -320,10 +308,29 @@ void DialogRefineUnitCell::on_pushButton_Refine_clicked()
     }
 
     const auto& solution=_minimizer.getSolution();
-    os<<solution;
-    ui->textEdit_Solution->setTextColor(QColor("black"));
-    ui->textEdit_Solution->append(QString::fromStdString(os.str()));
+    os << solution;
+
+
     _cell->setReciprocalVectors(solution._ub.row(0),solution._ub.row(1),solution._ub.row(2));
+
+    // calculate the new quality of the fit
+    unsigned int total = 0, count = 0;
+    for (auto data: _experiment->getData()) {
+        for (auto peak: data.second->getPeaks()) {
+            if(!peak->isMasked() && peak->isSelected()) {
+                ++total;
+
+                if ( peak->hasIntegerHKL(*_cell))
+                    ++count;
+            }
+        }
+    }
+
+    os << "Quality: " << (double)count * 100.0 / (double)total;
+
+    // update textbox with output
+    ui->textEdit_Solution->append(QString::fromStdString(os.str()));
+    ui->textEdit_Solution->append(QString::fromStdString(os.str()));
 
     setSolution(solution);
 }
