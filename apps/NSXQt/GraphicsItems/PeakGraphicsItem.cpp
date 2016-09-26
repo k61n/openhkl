@@ -13,6 +13,7 @@
 #include "SXPlot.h"
 #include "PeakPlot.h"
 
+#include "Ellipsoid.h"
 
 bool PeakGraphicsItem::_labelVisible=false;
 
@@ -47,8 +48,10 @@ PeakGraphicsItem::~PeakGraphicsItem()
 
 QRectF PeakGraphicsItem::boundingRect() const
 {
-    const Eigen::Vector3d& l=_peak->getPeak()->getLower();
-    const Eigen::Vector3d& u=_peak->getPeak()->getUpper();
+//    const Eigen::Vector3d& l=_peak->getPeak()->getLower();
+//    const Eigen::Vector3d& u=_peak->getPeak()->getUpper();
+    const Eigen::Vector3d& l=_peak->getBackground()->getLower();
+    const Eigen::Vector3d& u=_peak->getBackground()->getUpper();
     qreal w=u[0]-l[0];
     qreal h=u[1]-l[1];
     return QRectF(-w/2.0,-h/2.0,w,h);
@@ -73,19 +76,44 @@ void PeakGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 
     _label->setVisible(_hovered || _labelVisible);
 
-    if (_peak->isSelected())
+
+
+    const Eigen::Vector3d& peak_l = _peak->getPeak()->getLower();
+    const Eigen::Vector3d& peak_u = _peak->getPeak()->getUpper();
+    qreal peak_w = peak_u[0]-peak_l[0];
+    qreal peak_h = peak_u[1]-peak_l[1];
+
+    const Eigen::Vector3d& bkg_l = _peak->getBackground()->getLower();
+    const Eigen::Vector3d& bkg_u = _peak->getBackground()->getUpper();
+    qreal bkg_w = bkg_u[0] - bkg_l[0];
+    qreal bkg_h = bkg_u[1] - bkg_l[1];
+
+    if (_peak->isSelected()) {
         _pen.setColor("green");
-    else
+        painter->setPen(_pen);
+        //painter->drawEllipse(0, 0, peak_w/2, peak_h/2);
+        if (_peakPoints.size())
+            painter->drawPolygon(&_peakPoints[0], _peakPoints.size());
+        else
+            painter->drawEllipse(-peak_w/2, -peak_h/2, peak_w, peak_h);
+
+        _pen.setColor("grey");
+        painter->setPen(_pen);
+        //painter->drawEllipse(0, 0, bkg_w/2, bkg_h/2);
+        if (_bkgPoints.size())
+            painter->drawPolygon(&_bkgPoints[0], _bkgPoints.size());
+        else
+            painter->drawEllipse(-bkg_w/2, -bkg_h/2, bkg_w, bkg_h);
+    }
+    else {
         _pen.setColor("red");
+        painter->setPen(_pen);
+        //painter->drawEllipse(0, 0, peak_w/2, peak_h/2);
+        painter->drawEllipse(-peak_w/2, -peak_h/2, peak_w, peak_h);
+    }
 
-    painter->setPen(_pen);
-
-    const Eigen::Vector3d& l2=_peak->getPeak()->getLower();
-    const Eigen::Vector3d& u2=_peak->getPeak()->getUpper();
-    qreal w2=u2[0]-l2[0];
-    qreal h2=u2[1]-l2[1];
-    painter->drawRect(-w2/2,-h2/2,w2,h2);
-    _label->setPos(w2/2,h2/2);
+    //painter->drawRect(-w2/2,-h2/2,w2,h2);
+    _label->setPos(peak_w/2,peak_h/2);
 
 }
 
@@ -93,17 +121,16 @@ void PeakGraphicsItem::setFrame(int frame)
 {
     const Eigen::Vector3d& l=_peak->getPeak()->getLower();
     const Eigen::Vector3d& u=_peak->getPeak()->getUpper();
-    if (frame>=l[2] && frame<=u[2])
-    {
+    if (frame>=l[2] && frame<=u[2]) {
         setVisible(true);
         _label->setVisible(_labelVisible);
         auto& v=_peak->getMillerIndices();
         QString hkl;
         hkl=QString("%1,%2,%3").arg(v[0]).arg(v[1]).arg(v[2]);
         _label->setPlainText(hkl);
+        calculatePoints(frame);
     }
-    else
-    {
+    else {
         setVisible(false);
         _label->setVisible(false);
     }
@@ -122,6 +149,60 @@ SX::Crystal::Peak3D* PeakGraphicsItem::getPeak()
 void PeakGraphicsItem::setLabelVisible(bool flag)
 {
     _labelVisible=flag;
+}
+
+void PeakGraphicsItem::calculatePoints(int frame)
+{
+    _peakPoints.clear();
+    _bkgPoints.clear();
+
+    const SX::Geometry::Ellipsoid<double, 3>* peak;
+    const SX::Geometry::Ellipsoid<double, 3>* bkg;
+
+    peak = dynamic_cast<const SX::Geometry::Ellipsoid<double, 3>*>(_peak->getPeak());
+    bkg = dynamic_cast<const SX::Geometry::Ellipsoid<double, 3>*>(_peak->getBackground());
+
+    // return if cannot cast to ellipsoid
+    if (!peak || !bkg)
+        return;
+
+    int count = 50;
+
+    _peakPoints.reserve(count);
+    _bkgPoints.reserve(count);
+
+    for (int i = 0; i < count; ++i) {
+        double dx = std::cos((double)i / count * 2.0 * 3.141592);
+        double dy = std::sin((double)i / count * 2.0 * 3.141592);
+
+        const Eigen::Vector3d& peak_l = _peak->getPeak()->getLower();
+        const Eigen::Vector3d& peak_u = _peak->getPeak()->getUpper();
+        qreal peak_x = (peak_u[0] + peak_l[0])/2.0;
+        qreal peak_y = (peak_u[1] + peak_l[1])/2.0;
+        qreal peak_z = (peak_u[2] + peak_l[2])/2.0;
+
+        SX::Geometry::Ellipsoid<double, 3>::vector from, dir, collide;
+        double t1, t2, t;
+
+        from << peak_x, peak_y, peak_z;
+        dir << dx, dy, frame-peak_z;
+
+        if (peak->rayIntersect(from, dir, t1, t2)) {
+            t = t1 > t2? t1 : t2;
+            if (t <= 0)
+                break;
+            collide = t*dir;
+            _peakPoints.push_back(QPointF(collide(0), collide(1)));
+        }
+
+        if(bkg->rayIntersect(from, dir, t1, t2)) {
+            t = t1 > t2? t1 : t2;
+            if (t <= 0)
+                break;
+            collide = t*dir;
+            _bkgPoints.push_back(QPointF(collide(0), collide(1)));
+        }
+    }
 }
 
 void PeakGraphicsItem::plot(SXPlot* plot)

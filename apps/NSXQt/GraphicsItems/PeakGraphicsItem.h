@@ -1,6 +1,8 @@
 #ifndef PEAKGRAPHICSITEM_H
 #define PEAKGRAPHICSITEM_H
 
+#include <QPointF>
+
 #include <string>
 
 #include "PlottableGraphicsItem.h"
@@ -40,12 +42,17 @@ public:
 
     static void setLabelVisible(bool flag=true);
 
+    void calculatePoints(int frame);
+
 private:
 
     //! Pointer to the Peak3D object
     SX::Crystal::Peak3D* _peak;
     //! (h,k,l) index visible in GraphicsScene
     static bool _labelVisible;
+
+    std::vector<QPointF> _peakPoints;
+    std::vector<QPointF> _bkgPoints;
 
 };
 
