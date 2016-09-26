@@ -17,6 +17,24 @@
 
 bool PeakGraphicsItem::_labelVisible=false;
 
+static void sortPoints(std::vector<QPointF>& points)
+{
+    double avg_x, avg_y;
+
+    for (auto&& p: points) {
+       avg_x += p.x();
+       avg_y += p.y();
+    }
+
+    auto compare = [=](const QPointF& a, const QPointF& b) {
+        const double theta_a = std::atan2(a.y()-avg_y, a.x()-avg_x);
+        const double theta_b = std::atan2(b.y()-avg_y, b.x()-avg_x);
+        return theta_a < theta_b;
+    };
+
+    std::sort(points.begin(), points.end(), compare);
+}
+
 PeakGraphicsItem::PeakGraphicsItem(SX::Crystal::Peak3D* p)
 : PlottableGraphicsItem(nullptr,true,false),
   _peak(p)
@@ -93,7 +111,7 @@ void PeakGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
         painter->setPen(_pen);
         //painter->drawEllipse(0, 0, peak_w/2, peak_h/2);
         if (_peakPoints.size())
-            painter->drawPolygon(&_peakPoints[0], _peakPoints.size());
+            painter->drawConvexPolygon(&_peakPoints[0], _peakPoints.size());
         else
             painter->drawEllipse(-peak_w/2, -peak_h/2, peak_w, peak_h);
 
@@ -101,7 +119,7 @@ void PeakGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
         painter->setPen(_pen);
         //painter->drawEllipse(0, 0, bkg_w/2, bkg_h/2);
         if (_bkgPoints.size())
-            painter->drawPolygon(&_bkgPoints[0], _bkgPoints.size());
+            painter->drawConvexPolygon(&_bkgPoints[0], _bkgPoints.size());
         else
             painter->drawEllipse(-bkg_w/2, -bkg_h/2, bkg_w, bkg_h);
     }
@@ -184,25 +202,26 @@ void PeakGraphicsItem::calculatePoints(int frame)
         SX::Geometry::Ellipsoid<double, 3>::vector from, dir, collide;
         double t1, t2, t;
 
-        from << peak_x, peak_y, peak_z;
-        dir << dx, dy, frame-peak_z;
+        from << peak_x, peak_y, frame;
+        dir << dx, dy, 0;
 
         if (peak->rayIntersect(from, dir, t1, t2)) {
-            t = t1 > t2? t1 : t2;
-            if (t <= 0)
-                break;
-            collide = t*dir;
+            collide = t1*dir;
+            _peakPoints.push_back(QPointF(collide(0), collide(1)));
+            collide = t2*dir;
             _peakPoints.push_back(QPointF(collide(0), collide(1)));
         }
 
         if(bkg->rayIntersect(from, dir, t1, t2)) {
-            t = t1 > t2? t1 : t2;
-            if (t <= 0)
-                break;
-            collide = t*dir;
+            collide = t1*dir;
+            _bkgPoints.push_back(QPointF(collide(0), collide(1)));
+            collide = t2*dir;
             _bkgPoints.push_back(QPointF(collide(0), collide(1)));
         }
     }
+
+    sortPoints(_peakPoints);
+    sortPoints(_bkgPoints);
 }
 
 void PeakGraphicsItem::plot(SXPlot* plot)
