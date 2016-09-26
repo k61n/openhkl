@@ -154,6 +154,9 @@ public:
 	void setTransmission(double transmission);
 	double getTransmission() const;
 
+    void scalePeakShape(double scale);
+    void scaleBackgroundShape(double scale);
+
     // testing: new implementation of integration
     void framewiseIntegrateBegin();
     void framewiseIntegrateStep(Eigen::MatrixXi& frame, unsigned int idx);

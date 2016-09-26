@@ -383,7 +383,17 @@ double Peak3D::getScaledIntensity() const
 
 double Peak3D::getTransmission() const
 {
-	return _transmission;
+    return _transmission;
+}
+
+void Peak3D::scalePeakShape(double scale)
+{
+    _peak->scale(scale);
+}
+
+void Peak3D::scaleBackgroundShape(double scale)
+{
+    _bkg->scale(scale);
 }
 
 double Peak3D::getRawSigma() const

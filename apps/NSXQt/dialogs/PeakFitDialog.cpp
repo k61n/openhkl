@@ -15,6 +15,12 @@
 
 #include "AABB.h"
 #include "ColorMap.h"
+#include "IMinimizer.h"
+#include "MinimizerEigen.h"
+#include "MinimizerGSL.h"
+
+#include <cmath>
+
 
 
 using SX::Crystal::Peak3D;
@@ -22,7 +28,8 @@ using SX::Crystal::Peak3D;
 PeakFitDialog::PeakFitDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::PeakFitDialog),
-    _image(nullptr)
+    _image(nullptr),
+    _peak(nullptr)
 {
     ui->setupUi(this);
 
@@ -37,12 +44,15 @@ PeakFitDialog::PeakFitDialog(QWidget *parent) :
     connect(ui->spinBoxH, SIGNAL(valueChanged(int)), this, SLOT(changeH(int)));
     connect(ui->spinBoxK, SIGNAL(valueChanged(int)), this, SLOT(changeK(int)));
     connect(ui->spinBoxL, SIGNAL(valueChanged(int)), this, SLOT(changeL(int)));
+    connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(fitPeakShape()));
+    connect(ui->collisionButton, SIGNAL(clicked()), this, SLOT(checkCollisions()));
 
     _hkl << 1, 0, 0;
 
     ui->spinBoxH->setValue(_hkl[0]);
     ui->spinBoxK->setValue(_hkl[1]);
     ui->spinBoxL->setValue(_hkl[2]);
+
 }
 
 PeakFitDialog::~PeakFitDialog()
@@ -74,6 +84,55 @@ void PeakFitDialog::changeL(int value)
     _hkl[2] = value;
     updatePeak();
     updateView();
+}
+
+void PeakFitDialog::fitPeakShape()
+{
+#ifdef NSXTOOL_GSL_FOUND
+    SX::Utils::MinimizerGSL minimizer;
+#else
+    SX::Utils::MinimizerEigen minimizer;
+#endif
+
+}
+
+void PeakFitDialog::checkCollisions()
+{
+    if (!_peak) {
+        qDebug() << "error: no peak selected!";
+        return;
+    }
+
+    qDebug() << "checking collisions with peak at hkl = (" << _hkl[0] << ", " << _hkl[1] << ", " << _hkl[2] << ")";
+
+    std::shared_ptr<IData> numor = _peak->getData();
+    std::set<Peak3D*>& peaks = numor->getPeaks();
+
+    for (Peak3D* other_peak: peaks) {
+        if ( other_peak == _peak)
+            continue;
+
+        if (_peak->getBackground()->collide(*other_peak->getPeak())) {
+            Eigen::RowVector3i hkl = other_peak->getIntegerMillerIndices();
+            qDebug() << "COLLISION FOUND: ("
+                     << hkl[0] << ", "
+                     << hkl[1] << ", "
+                     << hkl[2] << ")";
+
+
+
+
+            int i;
+            for (i = 0; i < 1000; ++i) {
+                _peak->scaleBackgroundShape(0.90);
+                if ( !_peak->getBackground()->collide(*other_peak->getPeak()))
+                    break;
+            }
+
+            qDebug() << "collision removed after " << i+1 << " iterations.";
+            _peak->integrate();
+        }
+    }
 }
 
 void PeakFitDialog::updateView()
@@ -109,6 +168,7 @@ void PeakFitDialog::updatePeak()
     }
 
     std::shared_ptr<IData> numor = _tree->getSelectedNumors()[0];
+    SX::Data::RowMatrixi frame = numor->getFrame(ui->frameScrollBar->value());
     std::set<Peak3D*>& peaks = numor->getPeaks();
 
     Peak3D* the_peak = nullptr;
@@ -128,6 +188,9 @@ void PeakFitDialog::updatePeak()
         return;
     }
 
+    // update current peak
+    _peak = the_peak;
+
     // get AABB
     const SX::Geometry::IShape<double,3>* aabb = the_peak->getBackground();
 
@@ -141,6 +204,15 @@ void PeakFitDialog::updatePeak()
     _xmax = std::ceil(upper(0));
     _ymax = std::ceil(upper(1));
     _zmax = std::ceil(upper(2));
+
+    _xmin = _xmin < 0? 0 : _xmin;
+    _ymin = _ymin < 0? 0 : _ymin;
+    _zmin = _zmin < 0? 0 : _zmin;
+
+    _xmax = _xmax >= frame.cols()? frame.cols()-1 : _xmax;
+    _ymax = _ymax >= frame.rows()? frame.rows()-1 : _ymax;
+    _zmax = _zmax >= numor->getNFrames()? numor->getNFrames()-1 : _zmax;
+
 
     qDebug() << _xmin << "    " << _ymin << "    " << _zmin;
     qDebug() << _xmax << "    " << _ymax << "    " << _zmax;
