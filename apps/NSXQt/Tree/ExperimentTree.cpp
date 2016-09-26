@@ -64,6 +64,8 @@
 
 #include "RFactor.h"
 
+#include "PeakFitDialog.h"
+
 using std::vector;
 using SX::Data::IData;
 using std::shared_ptr;
@@ -765,4 +767,11 @@ void ExperimentTree::integrateCalculatedPeaks()
 
         qDebug() << "Done.";
     }
+}
+
+void ExperimentTree::peakFitDialog()
+{
+    qDebug() << "peakFitDialog() triggered";
+    PeakFitDialog* dialog = new PeakFitDialog(this);
+    dialog->exec();
 }

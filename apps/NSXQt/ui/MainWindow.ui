@@ -1339,6 +1339,7 @@ border-radius: 4px;
     <addaction name="actionFind_Friedel_pairs"/>
     <addaction name="actionCompute_R_factors"/>
     <addaction name="actionIntegrate_calculated_peaks"/>
+    <addaction name="actionPeak_fit_dialog"/>
    </widget>
    <widget class="QMenu" name="menuChemistry">
     <property name="title">
@@ -1735,6 +1736,11 @@ QDockWidget::title {
   <action name="actionIntegrate_calculated_peaks">
    <property name="text">
     <string>Integrate calculated peaks</string>
+   </property>
+  </action>
+  <action name="actionPeak_fit_dialog">
+   <property name="text">
+    <string>Peak fit dialog</string>
    </property>
   </action>
  </widget>
