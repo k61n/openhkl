@@ -1331,6 +1331,7 @@ border-radius: 4px;
      <addaction name="actionShow_labels"/>
      <addaction name="actionShow_calculated_peak_positions"/>
      <addaction name="actionDraw_peak_background"/>
+     <addaction name="actionRemove_bad_peaks"/>
     </widget>
     <addaction name="menuGraphics"/>
     <addaction name="menuShow_Window"/>
@@ -1753,6 +1754,14 @@ QDockWidget::title {
    </property>
    <property name="text">
     <string>Draw peak background</string>
+   </property>
+  </action>
+  <action name="actionRemove_bad_peaks">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Remove bad peaks</string>
    </property>
   </action>
  </widget>

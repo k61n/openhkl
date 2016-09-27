@@ -71,6 +71,8 @@
 #include "SpaceGroup.h"
 #include "SpaceGroupSymbols.h"
 
+#include "Peak3D.h"
+
 // jmf debug testing
 #include <functional>
 extern std::function<void(void)> processEvents;
@@ -459,4 +461,40 @@ void MainWindow::on_actionPeak_fit_dialog_triggered()
 void MainWindow::on_actionDraw_peak_background_triggered(bool checked)
 {
     _ui->_dview->getScene()->drawPeakBackground(checked);
+}
+
+void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
+{
+
+    std::vector<std::shared_ptr<IData>> numors = _ui->experimentTree->getSelectedNumors();
+
+    for (std::shared_ptr<IData> numor: numors) {
+        std::set<Peak3D*>& peaks = numor->getPeaks();
+
+        for (std::set<Peak3D*>::iterator it = peaks.begin(); it != peaks.end();) {
+            if ( (*it)->isMasked() || !(*it)->isSelected() ) {
+                delete *it;
+                it = peaks.erase(it);
+            }
+            else {
+                bool correctly_indexed = false;
+
+                for (int i = 0; i < numor->getDiffractometer()->getSample()->getNCrystals(); ++i) {
+                    SX::Crystal::UnitCell cell = *numor->getDiffractometer()->getSample()->getUnitCell(i);
+                    if ( (*it)->hasIntegerHKL(cell) ) {
+                        correctly_indexed = true;
+                        break;
+                    }
+                }
+                if (!correctly_indexed) {
+                    delete *it;
+                    it = peaks.erase(it);
+                }
+                else
+                    ++it;
+            }
+        }
+    }
+
+    _ui->_dview->getScene()->updatePeaks();
 }
