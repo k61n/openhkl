@@ -180,7 +180,6 @@ void Peak3D::integrate()
 	if (!_data)
 		return;
 
-
     framewiseIntegrateBegin();
 
     unsigned int idx = _state.data_start;
