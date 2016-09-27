@@ -19,12 +19,15 @@ bool PeakGraphicsItem::_labelVisible=false;
 
 static void sortPoints(std::vector<QPointF>& points)
 {
-    double avg_x, avg_y;
+    double avg_x = 0.0, avg_y = 0.0;
 
     for (auto&& p: points) {
        avg_x += p.x();
        avg_y += p.y();
     }
+
+    avg_x /= points.size();
+    avg_y /= points.size();
 
     auto compare = [=](const QPointF& a, const QPointF& b) {
         const double theta_a = std::atan2(a.y()-avg_y, a.x()-avg_x);
@@ -127,7 +130,11 @@ void PeakGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
         _pen.setColor("red");
         painter->setPen(_pen);
         //painter->drawEllipse(0, 0, peak_w/2, peak_h/2);
-        painter->drawEllipse(-peak_w/2, -peak_h/2, peak_w, peak_h);
+        //painter->drawEllipse(-peak_w/2, -peak_h/2, peak_w, peak_h);
+        if (_peakPoints.size())
+            painter->drawConvexPolygon(&_peakPoints[0], _peakPoints.size());
+        else
+            painter->drawEllipse(-peak_w/2, -peak_h/2, peak_w, peak_h);
     }
 
     //painter->drawRect(-w2/2,-h2/2,w2,h2);

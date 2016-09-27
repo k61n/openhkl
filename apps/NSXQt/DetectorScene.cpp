@@ -92,20 +92,18 @@ void DetectorScene::setData(std::shared_ptr<SX::Data::IData> data)
 
     std::shared_ptr<SX::Instrument::Detector> det=_currentData->getDiffractometer()->getDetector();
 
-     _zoomStack.clear();
-     _zoomStack.push_back(QRect(0,0,det->getNCols(),det->getNRows()));
+    _zoomStack.clear();
+    _zoomStack.push_back(QRect(0,0,det->getNCols(),det->getNRows()));
 
 
-    if (_lastClickedGI)
-     {
-         removeItem(_lastClickedGI);
-         delete _lastClickedGI;
-         _lastClickedGI=nullptr;
-     }
+    if (_lastClickedGI) {
+        removeItem(_lastClickedGI);
+        delete _lastClickedGI;
+        _lastClickedGI=nullptr;
+    }
 
-     loadCurrentImage();
-     updatePeaks();
-
+    loadCurrentImage();
+    updatePeaks();
 }
 
 void DetectorScene::setData(std::shared_ptr<SX::Data::IData> data, int frame)
@@ -152,12 +150,12 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
     else if (event->button() == Qt::NoButton)
     {
-        //      jmf: testing follows
+          //      jmf: testing follows
         QGraphicsItem* gItem=itemAt(event->lastScenePos().toPoint(),QTransform());
         auto p=dynamic_cast<PlottableGraphicsItem*>(gItem);
         if (p)
             emit updatePlot(p);
-         QGraphicsScene::mouseMoveEvent(event);
+            QGraphicsScene::mouseMoveEvent(event);
     }
 
 }
