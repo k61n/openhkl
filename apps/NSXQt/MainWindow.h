@@ -64,6 +64,7 @@ signals:
     void findSpaceGroup();
     void computeRFactors();
     void findFriedelPairs();
+    void integrateCalculatedPeaks();
 private slots:
 //    void on_action_open_triggered();
 
@@ -89,6 +90,7 @@ private slots:
     void on_actionFind_space_group_triggered();
     void on_actionFind_Friedel_pairs_triggered();
     void on_actionCompute_R_factors_triggered();
+    void on_actionIntegrate_calculated_peaks_triggered();
 
 
 public slots:
