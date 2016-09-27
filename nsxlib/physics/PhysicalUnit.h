@@ -45,10 +45,10 @@
 
 namespace qi = boost::spirit::qi;
 
-namespace Physics
+namespace SX
 {
 
-namespace Units 
+namespace Physics
 {
 
 using dimension = std::array<int,7>;
@@ -63,6 +63,16 @@ struct ConversionFactorOperator
 struct PowerOperator
 {
 	bool operator()(physical_unit& unit, int power) const;
+};
+
+struct MultiplyOperator
+{
+	bool operator()(physical_unit& unit1, physical_unit& unit2) const;
+};
+
+struct DivideOperator
+{
+	bool operator()(physical_unit& unit1, physical_unit& unit2) const;
 };
 
 class PhysicalUnit
@@ -101,25 +111,22 @@ private:
 		qi::symbols<char,physical_unit> _unit;
 		qi::rule<std::string::const_iterator,physical_unit(),qi::locals<double>> _prefixedUnit;
 		qi::rule<std::string::const_iterator,physical_unit(),qi::locals<int>> _poweredUnit;
+		qi::rule<std::string::const_iterator,physical_unit(),qi::locals<physical_unit>> _compositeUnit;
 		qi::rule<std::string::const_iterator,physical_unit()> _start;
 	};
 
 private:
+
 	PhysicalUnitParser _parser;
-
 	double _value;
-
 	double _conversionFactor;
-
 	dimension _dimension;
-
 
 };
 
-
-} // end namespace Units
-
 } // end namespace Physics
+
+} // end namespace SX
 
 #endif /* NSXTOOL_PHYSICALUNIT_H_ */
 

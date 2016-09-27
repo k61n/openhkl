@@ -5,11 +5,11 @@
 
 #include "PhysicalUnit.h"
 
-namespace Physics
+namespace SX
 {
 
 
-namespace Units
+namespace Physics
 {
 
 bool ConversionFactorOperator::operator()(double factor, physical_unit& unit) const
@@ -22,6 +22,20 @@ bool PowerOperator::operator()(physical_unit& unit, int power) const
 {
 	unit.first = std::pow(unit.first,power);
 	std::for_each(unit.second.begin(), unit.second.end(), [power](int &element){ element*=power;});
+	return true;
+}
+
+bool MultiplyOperator::operator()(physical_unit& unit1, physical_unit& unit2) const
+{
+	unit1.first *= unit2.first;
+	std::transform(unit1.second.begin(), unit1.second.end(),unit2.second.begin(),unit1.second.begin(),std::plus<int>());
+	return true;
+}
+
+bool DivideOperator::operator()(physical_unit& unit1, physical_unit& unit2) const
+{
+	unit1.first /= unit2.first;
+	std::transform(unit1.second.begin(), unit1.second.end(),unit2.second.begin(),unit1.second.begin(),std::minus<int>());
 	return true;
 }
 
@@ -62,7 +76,7 @@ std::map<dimension,double> PhysicalUnit::_unitEquivalences = {{{2,-2,0,0,0,0,0},
 
 PhysicalUnit::PhysicalUnit(double value, const std::string& unit) : _value(value)
 {
-    Units::physical_unit u;
+    physical_unit u;
     auto f = unit.begin();
 	auto l = unit.end();
     bool ok = qi::phrase_parse(f,l,_parser,qi::space,u);
@@ -88,7 +102,7 @@ void PhysicalUnit::addUnit(const std::string& name, const physical_unit& physica
 
 double PhysicalUnit::convert(const std::string& ounit) const
 {
-    Units::physical_unit u;
+    physical_unit u;
     auto f = ounit.begin();
 	auto l = ounit.end();
     bool ok = qi::phrase_parse(f,l,_parser,qi::space,u);
@@ -142,6 +156,7 @@ PhysicalUnit::PhysicalUnitParser::PhysicalUnitParser() : PhysicalUnitParser::bas
 	namespace phx = boost::phoenix;
 	phx::function<ConversionFactorOperator> const update_conversion_factor = ConversionFactorOperator();
 	phx::function<PowerOperator> const powerize_unit = PowerOperator();
+	phx::function<MultiplyOperator> const multiply_unit = MultiplyOperator();
 
 	for (const auto& prefix : _definedPrefixes)
 		_prefix.add(prefix.first,prefix.second);
@@ -153,7 +168,9 @@ PhysicalUnit::PhysicalUnitParser::PhysicalUnitParser() : PhysicalUnitParser::bas
 
     _poweredUnit = (_prefixedUnit[qi::_val=qi::_1,qi::_a=1] >> -(qi::lit("**") >> qi::int_[qi::_a=qi::_1]))[qi::_pass=powerize_unit(qi::_val,qi::_a)];
 
-	_start = _poweredUnit[qi::_val=qi::_1];
+    _compositeUnit = _poweredUnit[qi::_val=qi::_1] >> -(qi::lit("*") >> _poweredUnit[qi::_a=qi::_1])[qi::_pass=multiply_unit(qi::_val,qi::_a)];
+
+	_start = _compositeUnit[qi::_val=qi::_1];
 
 }
 
@@ -167,7 +184,7 @@ void PhysicalUnit::PhysicalUnitParser::updateUnitParser(const std::string& name,
 	_unit.add(name,physicalUnit);
 }
 
-} // end namespace Units
+} // end namespace Physics
 
-} //end namespace Physics
+} //end namespace SX
 
