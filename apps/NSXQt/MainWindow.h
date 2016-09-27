@@ -94,6 +94,8 @@ private slots:
     void on_actionIntegrate_calculated_peaks_triggered();
     void on_actionPeak_fit_dialog_triggered();
 
+    void on_actionDraw_peak_background_triggered(bool checked);
+
 
 public slots:
     void changeData(std::shared_ptr<SX::Data::IData>);

@@ -217,6 +217,14 @@ void PeakFitDialog::updatePeak()
     qDebug() << _xmin << "    " << _ymin << "    " << _zmin;
     qDebug() << _xmax << "    " << _ymax << "    " << _zmax;
 
+    // testing
+    const Ellipsoid<double, 3>* ellipse = dynamic_cast<const Ellipsoid<double, 3>*>(the_peak->getPeak());
+
+    if (ellipse) {
+        Eigen::Matrix<double, 3, 1> center = ellipse->getCenter();
+        qDebug() << "center: " << center(0) << ", " << center(1) << ", " << center(2);
+    }
+
     ui->frameScrollBar->setMinimum(_zmin);
     ui->frameScrollBar->setMaximum(_zmax);
     ui->frameScrollBar->setValue(std::round(aabb->getAABBCenter()[2]));

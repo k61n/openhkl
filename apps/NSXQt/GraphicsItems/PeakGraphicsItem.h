@@ -41,6 +41,7 @@ public:
     SX::Crystal::Peak3D* getPeak();
 
     static void setLabelVisible(bool flag=true);
+    static void drawBackground(bool flag);
 
     void calculatePoints(int frame);
 
@@ -50,6 +51,7 @@ private:
     SX::Crystal::Peak3D* _peak;
     //! (h,k,l) index visible in GraphicsScene
     static bool _labelVisible;
+    static bool _drawBackground;
 
     std::vector<QPointF> _peakPoints;
     std::vector<QPointF> _bkgPoints;

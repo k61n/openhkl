@@ -86,6 +86,7 @@ public slots:
     void changeCursorMode(int);
     //!
     void showPeakLabels(bool);
+    void drawPeakBackground(bool);
     //!
     void showPeakCalcs(bool);
     void clearPeaks();

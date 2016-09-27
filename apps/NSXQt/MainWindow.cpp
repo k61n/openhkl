@@ -455,3 +455,8 @@ void MainWindow::on_actionPeak_fit_dialog_triggered()
 {
     emit peakFitDialog();
 }
+
+void MainWindow::on_actionDraw_peak_background_triggered(bool checked)
+{
+    _ui->_dview->getScene()->drawPeakBackground(checked);
+}

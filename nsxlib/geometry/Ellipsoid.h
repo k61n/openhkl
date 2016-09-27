@@ -60,6 +60,8 @@ public:
 	Ellipsoid();
 	//! Copy constructor
 	Ellipsoid(const Ellipsoid&);
+    //! Construct from center and RS inverse matrix
+    Ellipsoid(const vector& center, const matrix& RSinv);
 	//! Construct a N-dimensional ellipsoid from its center, semi-axes, and eigenvectors ()
 	Ellipsoid(const vector& center, const vector& eigenvalues, const matrix& eigenvectors);
 	//! Assignment
@@ -99,6 +101,11 @@ public:
 	//! in t1 and t2 in such a way that from + t1*dir and from + t2*dir are
 	//! the two intersection points between the ray and this shape.
 	bool rayIntersect(const vector& from, const vector& dir, double& t1, double& t2) const;
+
+    //! Return the center of the ellipse
+    Eigen::Matrix<T, D, 1> getCenter() const;
+    //! Return just the rotation and scaling matrix
+    Eigen::Matrix<T, D, D> getRSinv() const;
 
 	// Macro to ensure that Ellipsoid can be dynamically allocated.
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -172,6 +179,18 @@ Ellipsoid<T,D>::Ellipsoid(const vector& center, const vector& eigenvalues, const
 	// Finally compute (TRS)^-1 by left-multiplying (TR)^-1 by S^-1
 	_TRSinv=Sinv*_TRSinv;
 	updateAABB();
+}
+
+
+template<typename T,SX::Types::uint D>
+Ellipsoid<T,D>::Ellipsoid(const vector& center, const matrix& RSinv): IShape<T,D>()
+{
+    vector t = -RSinv*center;
+    _TRSinv=Eigen::Matrix<T,D+1,D+1>::Constant(0.0);
+    _TRSinv(D,D)=1.0;
+    for (unsigned int i=0;i<D;++i)
+        _TRSinv(i, D) = t(i, 0);
+    updateAABB();
 }
 
 template<typename T,SX::Types::uint D>
@@ -337,7 +356,37 @@ bool Ellipsoid<T,D>::rayIntersect(const vector& from, const vector& dir, double&
 
 	Sphere<T,D> sphere(vector::Zero(),1.0);
 
-	return sphere.rayIntersect(hFrom.segment(0,D),hDir.segment(0,D),t1,t2);
+    return sphere.rayIntersect(hFrom.segment(0,D),hDir.segment(0,D),t1,t2);
+}
+
+template<typename T, SX::Types::uint D>
+Eigen::Matrix<T, D, 1> Ellipsoid<T, D>::getCenter() const
+{
+    Eigen::Matrix<T, D, 1> t;
+    Eigen::Matrix<T, D, D> A;
+
+    for (int i = 0; i < D; ++i) {
+        t(i,0) = _TRSinv(i, D);
+
+        for (int j = 0; j < D; ++j)
+            A(i, j) = _TRSinv(i, j);
+    }
+
+    t = -A.inverse()*t;
+    return t;
+}
+
+template<typename T, SX::Types::uint D>
+Eigen::Matrix<T, D, D> Ellipsoid<T, D>::getRSinv() const
+{
+    Eigen::Matrix<T, D, D> A;
+
+    for (int i = 0; i < D; ++i) {
+        for (int j = 0; j < D; ++j)
+            A(i, j) = _TRSinv(i, j);
+    }
+
+    return A;
 }
 
 template<typename T,SX::Types::uint D>

@@ -15,7 +15,8 @@
 
 #include "Ellipsoid.h"
 
-bool PeakGraphicsItem::_labelVisible=false;
+bool PeakGraphicsItem::_labelVisible = false;
+bool PeakGraphicsItem::_drawBackground = false;
 
 static void sortPoints(std::vector<QPointF>& points)
 {
@@ -118,13 +119,17 @@ void PeakGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
         else
             painter->drawEllipse(-peak_w/2, -peak_h/2, peak_w, peak_h);
 
-        _pen.setColor("grey");
-        painter->setPen(_pen);
-        //painter->drawEllipse(0, 0, bkg_w/2, bkg_h/2);
-        if (_bkgPoints.size())
-            painter->drawConvexPolygon(&_bkgPoints[0], _bkgPoints.size());
-        else
-            painter->drawEllipse(-bkg_w/2, -bkg_h/2, bkg_w, bkg_h);
+        if (_drawBackground) {
+
+
+            _pen.setColor("grey");
+            painter->setPen(_pen);
+            //painter->drawEllipse(0, 0, bkg_w/2, bkg_h/2);
+            if (_bkgPoints.size())
+                painter->drawConvexPolygon(&_bkgPoints[0], _bkgPoints.size());
+            else
+                painter->drawEllipse(-bkg_w/2, -bkg_h/2, bkg_w, bkg_h);
+        }
     }
     else {
         _pen.setColor("red");
@@ -173,7 +178,12 @@ SX::Crystal::Peak3D* PeakGraphicsItem::getPeak()
 
 void PeakGraphicsItem::setLabelVisible(bool flag)
 {
-    _labelVisible=flag;
+    _labelVisible = flag;
+}
+
+void PeakGraphicsItem::drawBackground(bool flag)
+{
+    _drawBackground = flag;
 }
 
 void PeakGraphicsItem::calculatePoints(int frame)

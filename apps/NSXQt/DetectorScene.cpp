@@ -603,6 +603,14 @@ void DetectorScene::showPeakLabels(bool peaklabel)
     }
 }
 
+void DetectorScene::drawPeakBackground(bool flag)
+{
+    if (!_peakGraphicsItems.empty()) {
+        const auto& it=_peakGraphicsItems.begin();
+        it->second->drawBackground(flag);
+    }
+}
+
 void DetectorScene::activateIndexingMode(std::shared_ptr<SX::Crystal::UnitCell> cell)
 {
     _mode = INDEXING;
