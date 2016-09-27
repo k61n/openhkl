@@ -13,11 +13,14 @@
 #include "Source.h"
 #include "Units.h"
 #include "Blob3D.h"
+#include "IData.h"
 #include "BlobFinder.h" // needed for Ellipsoid3D typedef
 
 #include "IFrameIterator.h"
 
 using SX::Geometry::Blob3D;
+
+using SX::Data::IFrameIterator;
 
 namespace SX
 {
@@ -176,133 +179,20 @@ void Peak3D::integrate()
 {
 	if (!_data)
 		return;
-	// Get the lower and upper limit of the bkg Bounding box
-	const Eigen::Vector3d& lower=_bkg->getLower();
-	const Eigen::Vector3d& upper=_bkg->getUpper();
-
-	//
-	unsigned int data_start=static_cast<int>(std::floor(lower[2]));
-	unsigned int data_end=static_cast<int>(std::ceil(upper[2]));
-
-	unsigned int start_x=static_cast<int>(std::floor(lower[0]));
-	unsigned int end_x=static_cast<int>(std::ceil(upper[0]));
-
-	unsigned int start_y=static_cast<int>(std::floor(lower[1]));
-	unsigned int end_y=static_cast<int>(std::ceil(upper[1]));
-
-	if (lower[0] < 0)
-		start_x=0;
-	if (lower[1] < 0)
-		start_y=0;
-	if (lower[2] < 0)
-		data_start=0;
-
-    if (end_x > _data->getNCols()-1)
-		end_x=_data->getNCols()-1;
-    if (end_y > _data->getNRows()-1)
-		end_y=_data->getNRows()-1;
-    if (data_end > _data->getNFrames()-1)
-		data_end=_data->getNFrames()-1;
-
-	Eigen::Vector4d point1;
-
-	// Allocate all vectors
-	_projection=Eigen::VectorXd::Zero(data_end-data_start+1);
-	_projectionPeak=Eigen::VectorXd::Zero(data_end-data_start+1);
-	_projectionBkg=Eigen::VectorXd::Zero(data_end-data_start+1);
-
-	int dx = end_x-start_x;
-	int dy = end_y-start_y;
-
-    unsigned int z = data_start;
-
-    for (auto it = _data->getIterator(data_start); it->index() != data_end; it->advance(), ++z)
-	{
-        auto frame = it->getFrame();
-		int pointsinpeak=0;
-		int pointsinbkg=0;
-		double intensityP=0;
-		double intensityBkg=0;
-		_projection[z-data_start]+=frame.block(start_y,start_x,dy,dx).sum();
-		for (unsigned int x=start_x;x<=end_x;++x)
-		{
-			for (unsigned int y=start_y;y<=end_y;++y)
-			{
-				int intensity=frame(y,x);
-				point1 << x+0.5,y+0.5,z,1;
-				bool inbackground = (_bkg->isInsideAABB(point1) && _bkg->isInside(point1));
-				bool inpeak = (_peak->isInsideAABB(point1) && _peak->isInside(point1));
-
-				if (inpeak)
-				{
-					intensityP+=intensity;
-					pointsinpeak++;
-				}
-				else if (inbackground)
-				{
-					intensityBkg+=intensity;
-					pointsinbkg++;
-				}
-				else
-					continue;
-			}
-		}
-
-		if (pointsinbkg == 0)
-			throw std::runtime_error("No background defined around the peak");
-
-		if (pointsinpeak>0)
-			_projectionPeak[z-data_start]=intensityP-intensityBkg*static_cast<double>(pointsinpeak)/static_cast<double>(pointsinbkg);
-
-	}
-
-	// Quick fix determine the limits of the peak range
-	int datastart=0;
-	int dataend=0;
-	bool startfound=false;
-	for (int i=0;i<_projectionPeak.size();++i)
-	{
-		if (!startfound && std::fabs(_projectionPeak[i])>1e-6)
-		{
-			datastart=i;
-			startfound=true;
-		}
-		if (startfound)
-		{
-			if (std::fabs(_projectionPeak[i])<1e-6)
-			{
-				dataend=i;
-				break;
-			}
-		}
-
-	}
-	//
-
-	Eigen::VectorXd bkg=_projection-_projectionPeak;
-	if (datastart>1)
-		datastart--;
-
-	// Safety check
-	if (datastart==dataend)
-		return;
-
-	double bkg_left=bkg[datastart];
-	double bkg_right=bkg[dataend];
-	double diff;
-    for (int i=datastart;i<dataend;++i)
-    {
-		diff=bkg[i]-(bkg_left+static_cast<double>((i-datastart))/static_cast<double>((dataend-datastart))*(bkg_right-bkg_left));
-		if (diff>0)
-			_projectionPeak[i]+=diff;
-	}
-	_projectionBkg=_projection-_projectionPeak;
-
-	_counts = _projectionPeak.sum();
-	_countsSigma = std::sqrt(_counts);
 
 
-	return;
+    framewiseIntegrateBegin();
+
+    unsigned int idx = _state.data_start;
+    std::unique_ptr<IFrameIterator> it = _data->getIterator(idx);
+
+    for(; idx <= _state.data_end; it->advance(), ++idx) {
+        Eigen::MatrixXi frame = it->getFrame().cast<int>();
+        framewiseIntegrateStep(frame, idx);
+    }
+
+    framewiseIntegrateEnd()
+;
 }
 
 Eigen::VectorXd Peak3D::getProjection() const
