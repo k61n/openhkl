@@ -2,6 +2,7 @@
 #include <cmath>
 #include <functional>
 #include <numeric>
+#include <exception>
 
 #include "PhysicalUnit.h"
 
@@ -85,6 +86,8 @@ PhysicalUnit::PhysicalUnit(double value, const std::string& unit) : _value(value
 		_conversionFactor = u.first;
 		_dimension = u.second;
     }
+    else
+    	throw std::runtime_error("Invalid input unit");
 
 }
 
