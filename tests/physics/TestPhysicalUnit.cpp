@@ -3,22 +3,31 @@
 
 #include <boost/test/unit_test.hpp>
 
+#include <exception>
 #include <iostream>
 #include <string>
 
 #include "PhysicalUnit.h"
 
+const double tolerance=1.0e-9;
+
 BOOST_AUTO_TEST_CASE(Test_Physical_Unit)
 {
-	SX::Physics::PhysicalUnit p(1.0,"m*s");
+	// Check that a bad input unit actually throws
+	BOOST_CHECK_THROW(SX::Physics::PhysicalUnit p(1.0,"xxxxxx"),std::runtime_error);
 
-	std::cout<<p.getConversionFactor()<<std::endl;
+	SX::Physics::PhysicalUnit p(1.0,"m/s");
 
-	auto dimension = p.getDimension();
+	// Check that an invalid conversion throws
+	BOOST_CHECK_THROW(p.convert("km*K"),std::runtime_error);
 
-	std::copy(dimension.begin(), dimension.end(), std::ostream_iterator<int>(std::cout));
-	std::cout<<std::endl;
+	// Check a valid conversion
+    BOOST_CHECK_CLOSE(p.convert("km/s"), 1.0e-3, tolerance);
 
-	auto factor=p.convert("km*s");
-	std::cout<<factor<<std::endl;
+    // Change the value
+    p.setValue(5.0);
+
+    // Check again a valid conversion
+    BOOST_CHECK_CLOSE(p.convert("km/s"), 5.0e-3, tolerance);
+
 }

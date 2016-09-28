@@ -40,40 +40,45 @@ bool DivideOperator::operator()(physical_unit& unit1, physical_unit& unit2) cons
 	return true;
 }
 
-std::map<std::string,physical_unit> PhysicalUnit::_definedUnits = {{"m"  , physical_unit(1.0,    { 1, 0, 0, 0, 0, 0, 0})},
-															       {"s"  , physical_unit(1.0,    { 0, 1, 0, 0, 0, 0, 0})},
-                                                                   {"K"  , physical_unit(1.0,    { 0, 0, 1, 0, 0, 0, 0})},
-                                                                   {"kg" , physical_unit(1.0,    { 0, 0, 0, 1, 0, 0, 0})},
-                                                                   {"A"  , physical_unit(1.0,    { 0, 0, 0, 0, 1, 0, 0})},
-                                                                   {"mol", physical_unit(1.0,    { 0, 0, 0, 0, 0, 1, 0})},
-                                                                   {"cd" , physical_unit(1.0,    { 0, 0, 0, 0, 0, 0, 1})},
-                                                                   {"ang", physical_unit(1.0e-10,{ 1, 0, 0, 0, 0, 0, 0})},
-                                                                   {"J"  , physical_unit(1.0,    { 2,-2, 0, 1, 0, 0, 0})},
-                                                                   {"eV" , physical_unit(1.602176565e-19,{{ 2,-2, 0, 1, 0, 0, 0}})},
+std::map<std::string,physical_unit> PhysicalUnit::_definedUnits = {{"m"  , physical_unit(1.0,    { 1, 0, 0, 0, 0, 0, 0})}, // length [meter]
+															       {"s"  , physical_unit(1.0,    { 0, 1, 0, 0, 0, 0, 0})}, // time [second]
+                                                                   {"K"  , physical_unit(1.0,    { 0, 0, 1, 0, 0, 0, 0})}, // temperatrure [kelvin]
+                                                                   {"kg" , physical_unit(1.0,    { 0, 0, 0, 1, 0, 0, 0})}, // mass [kilogram]
+                                                                   {"A"  , physical_unit(1.0,    { 0, 0, 0, 0, 1, 0, 0})}, // current [ampere]
+                                                                   {"mol", physical_unit(1.0,    { 0, 0, 0, 0, 0, 1, 0})}, // substance [mole]
+                                                                   {"cd" , physical_unit(1.0,    { 0, 0, 0, 0, 0, 0, 1})}, // luminosity [candela]
+                                                                   {"ang", physical_unit(1.0e-10,{ 1, 0, 0, 0, 0, 0, 0})}, // angstrom
+                                                                   {"J"  , physical_unit(1.0,    { 2,-2, 0, 1, 0, 0, 0})}, // joule
+                                                                   {"eV" , physical_unit(1.602176565e-19,{{ 2,-2, 0, 1, 0, 0, 0}})} // electron-volt
+                                                                  };
+
+std::map<std::string,double> PhysicalUnit::_definedPrefixes = {{"y" ,1.0e-24}, //yocto
+		                                                       {"z" ,1.0e-21}, // zepto
+															   {"a" ,1.0e-18}, // atto
+															   {"f" ,1.0e-15}, // femto
+															   {"p" ,1.0e-12}, // pico
+															   {"n" ,1.0e-09}, // nano
+															   {"u" ,1.0e-06}, // micro
+															   {"m" ,1.0e-03}, // milli
+															   {"c" ,1.0e-02}, // centi
+															   {"d" ,1.0e-01}, // deci
+															   {"da",1.0e+01}, // deca
+															   {"h" ,1.0e+02}, // hecto
+															   {"k" ,1.0e+03}, // kilo
+															   {"M" ,1.0e+06}, // mega
+															   {"G" ,1.0e+09}, // giga
+															   {"T" ,1.0e+12}, // tera
+															   {"P" ,1.0e+15}, // peta
+															   {"E" ,1.0e+18}, // exa
+															   {"Z" ,1.0e+21}, // zeta
+															   {"Y" ,1.0e+24}  // yotta
+                                                              };
+
+std::map<dimension,double> PhysicalUnit::_unitEquivalences = {{{ 2,-2, 0, 0, 0, 0, 0},1.782661907e-36}, // equivalence energy to mass
+		                                                      {{ 2,-2,-1, 1, 0, 0, 0},1.1604505e+04}, // equivalence energy to temperature
+		                                                      {{ 2,-3, 0, 1, 0, 0, 0},6.582119e-16}, // equivalence energy to time
+		                                                      {{ 1,-2, 0, 1, 0, 0, 0},1.97327e-07}, // equivalence energy to distance
 };
-
-std::map<std::string,double> PhysicalUnit::_definedPrefixes = {{"y" ,1.0e-24},
-                                              {"z" ,1.0e-21},
-                                              {"a" ,1.0e-18},
-                                              {"f" ,1.0e-15},
-                                              {"p" ,1.0e-12},
-                                              {"n" ,1.0e-09},
-                                              {"u" ,1.0e-06},
-                                              {"m" ,1.0e-03},
-                                              {"c" ,1.0e-02},
-                                              {"d" ,1.0e-01},
-                                              {"da",1.0e+01},
-                                              {"h" ,1.0e+02},
-                                              {"k" ,1.0e+03},
-                                              {"M" ,1.0e+06},
-                                              {"G" ,1.0e+09},
-                                              {"T" ,1.0e+12},
-                                              {"P" ,1.0e+15},
-                                              {"E" ,1.0e+18},
-                                              {"Z" ,1.0e+21},
-                                              {"Y" ,1.0e+24}};
-
-std::map<dimension,double> PhysicalUnit::_unitEquivalences = {{{2,-2,0,0,0,0,0},1.782661907e-36}};
 
 PhysicalUnit::PhysicalUnit(double value, const std::string& unit) : _value(value)
 {
@@ -119,23 +124,28 @@ double PhysicalUnit::convert(const std::string& ounit) const
 		}
 		else
 		{
+			bool equivalenceFound(false);
 			for (const auto& p : _unitEquivalences)
 			{
 				dimension dimDifference;
 				std::transform(_dimension.begin(),_dimension.end(),u.second.begin(),dimDifference.begin(), std::minus<int>());
 				int prod=std::inner_product(dimDifference.begin(),dimDifference.end(),p.first.begin(),0);
-				auto sumsquare = [](double sum2,int v){sum2 += static_cast<double>(v*v);return sum2;};
 				int norm2=std::inner_product(p.first.begin(),p.first.end(),p.first.begin(),0);
 				double ratio=static_cast<double>(prod)/static_cast<double>(norm2);
 				double intpart;
 				if (std::modf(ratio,&intpart)==0.0)
 				{
 					double conversionFactor(_value*std::pow(p.second,ratio));
+					equivalenceFound = true;
 					break;
 				}
 			}
+			if (!equivalenceFound)
+		    	throw std::runtime_error("Invalid output unit");
 		}
     }
+    else
+    	throw std::runtime_error("Invalid output unit");
 }
 
 double PhysicalUnit::getConversionFactor() const
@@ -146,6 +156,11 @@ double PhysicalUnit::getConversionFactor() const
 const dimension& PhysicalUnit::getDimension() const
 {
 	return _dimension;
+}
+
+void PhysicalUnit::setValue(double value)
+{
+	_value = value;
 }
 
 double PhysicalUnit::getValue() const
@@ -160,6 +175,7 @@ PhysicalUnit::PhysicalUnitParser::PhysicalUnitParser() : PhysicalUnitParser::bas
 	phx::function<ConversionFactorOperator> const update_conversion_factor = ConversionFactorOperator();
 	phx::function<PowerOperator> const powerize_unit = PowerOperator();
 	phx::function<MultiplyOperator> const multiply_unit = MultiplyOperator();
+	phx::function<DivideOperator> const divide_unit = DivideOperator();
 
 	for (const auto& prefix : _definedPrefixes)
 		_prefix.add(prefix.first,prefix.second);
@@ -171,7 +187,8 @@ PhysicalUnit::PhysicalUnitParser::PhysicalUnitParser() : PhysicalUnitParser::bas
 
     _poweredUnit = (_prefixedUnit[qi::_val=qi::_1,qi::_a=1] >> -(qi::lit("**") >> qi::int_[qi::_a=qi::_1]))[qi::_pass=powerize_unit(qi::_val,qi::_a)];
 
-    _compositeUnit = _poweredUnit[qi::_val=qi::_1] >> -(qi::lit("*") >> _poweredUnit[qi::_a=qi::_1])[qi::_pass=multiply_unit(qi::_val,qi::_a)];
+    _compositeUnit = (_poweredUnit[qi::_val=qi::_1] >> -((qi::lit("/") >> _poweredUnit[qi::_a=qi::_1])[qi::_pass=divide_unit(qi::_val,qi::_a)] |
+    		                                             (qi::lit("*") >> _poweredUnit[qi::_a=qi::_1])[qi::_pass=multiply_unit(qi::_val,qi::_a)]));
 
 	_start = _compositeUnit[qi::_val=qi::_1];
 

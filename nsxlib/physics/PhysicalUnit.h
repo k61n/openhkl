@@ -89,6 +89,8 @@ public:
 
 	const dimension& getDimension() const; 
 
+	void setValue(double value);
+
 	double getValue() const;
 
 	void addPrefix(const std::string& name, double factor);
