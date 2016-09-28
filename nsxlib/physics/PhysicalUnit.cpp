@@ -9,47 +9,73 @@
 namespace SX
 {
 
-
 namespace Physics
 {
 
-bool ConversionFactorOperator::operator()(double factor, physical_unit& unit) const
+bool PrefixOperator::operator()(double prefix, physical_unit& unit) const
 {
-	unit.first *= factor;
+	auto& currentPrefix=std::get<0>(unit);
+	currentPrefix *= prefix;
 	return true;
 }
 
 bool PowerOperator::operator()(physical_unit& unit, int power) const
 {
-	unit.first = std::pow(unit.first,power);
-	std::for_each(unit.second.begin(), unit.second.end(), [power](int &element){ element*=power;});
+	auto& currentPrefix=std::get<0>(unit);
+	currentPrefix = std::pow(currentPrefix,power);
+
+	auto& currentScale=std::get<1>(unit);
+	currentScale = std::pow(currentScale,power);
+
+	auto& dimension=std::get<2>(unit);
+	std::for_each(dimension.begin(),dimension.end(), [power](int &element){ element*=power;});
+
 	return true;
 }
 
-bool MultiplyOperator::operator()(physical_unit& unit1, physical_unit& unit2) const
+bool MultiplyOperator::operator()(physical_unit& unit1, const physical_unit& unit2) const
 {
-	unit1.first *= unit2.first;
-	std::transform(unit1.second.begin(), unit1.second.end(),unit2.second.begin(),unit1.second.begin(),std::plus<int>());
+	auto& currentPrefix=std::get<0>(unit1);
+	currentPrefix *= std::get<0>(unit2);
+
+	auto& currentScale=std::get<1>(unit1);
+	currentScale *= std::get<1>(unit2);
+
+	auto& dimension1=std::get<2>(unit1);
+	auto& dimension2=std::get<2>(unit2);
+	std::transform(dimension1.begin(),dimension1.end(),dimension2.begin(),dimension1.begin(),std::plus<int>());
+
 	return true;
 }
 
-bool DivideOperator::operator()(physical_unit& unit1, physical_unit& unit2) const
+bool DivideOperator::operator()(physical_unit& unit1, const physical_unit& unit2) const
 {
-	unit1.first /= unit2.first;
-	std::transform(unit1.second.begin(), unit1.second.end(),unit2.second.begin(),unit1.second.begin(),std::minus<int>());
+	auto& currentPrefix=std::get<0>(unit1);
+	currentPrefix *= std::get<0>(unit2);
+
+	auto& currentScale=std::get<1>(unit1);
+	currentScale *= std::get<1>(unit2);
+
+	auto& dimension1=std::get<2>(unit1);
+	auto& dimension2=std::get<2>(unit2);
+	std::transform(dimension1.begin(),dimension1.end(),dimension2.begin(),dimension1.begin(),std::minus<int>());
+
 	return true;
 }
 
-std::map<std::string,physical_unit> PhysicalUnit::_definedUnits = {{"m"  , physical_unit(1.0,    { 1, 0, 0, 0, 0, 0, 0})}, // length [meter]
-															       {"s"  , physical_unit(1.0,    { 0, 1, 0, 0, 0, 0, 0})}, // time [second]
-                                                                   {"K"  , physical_unit(1.0,    { 0, 0, 1, 0, 0, 0, 0})}, // temperatrure [kelvin]
-                                                                   {"kg" , physical_unit(1.0,    { 0, 0, 0, 1, 0, 0, 0})}, // mass [kilogram]
-                                                                   {"A"  , physical_unit(1.0,    { 0, 0, 0, 0, 1, 0, 0})}, // current [ampere]
-                                                                   {"mol", physical_unit(1.0,    { 0, 0, 0, 0, 0, 1, 0})}, // substance [mole]
-                                                                   {"cd" , physical_unit(1.0,    { 0, 0, 0, 0, 0, 0, 1})}, // luminosity [candela]
-                                                                   {"ang", physical_unit(1.0e-10,{ 1, 0, 0, 0, 0, 0, 0})}, // angstrom
-                                                                   {"J"  , physical_unit(1.0,    { 2,-2, 0, 1, 0, 0, 0})}, // joule
-                                                                   {"eV" , physical_unit(1.602176565e-19,{{ 2,-2, 0, 1, 0, 0, 0}})} // electron-volt
+std::map<std::string,physical_unit> PhysicalUnit::_definedUnits = {{"m"  , physical_unit(1.0    ,1.0,            { 1, 0, 0, 0, 0, 0, 0})}, // length [meter]
+															       {"s"  , physical_unit(1.0    ,1.0,            { 0, 1, 0, 0, 0, 0, 0})}, // time [second]
+                                                                   {"K"  , physical_unit(1.0    ,1.0,            { 0, 0, 1, 0, 0, 0, 0})}, // temperature [kelvin]
+                                                                   {"kg" , physical_unit(1.0    ,1.0,            { 0, 0, 0, 1, 0, 0, 0})}, // mass [kilogram]
+                                                                   {"A"  , physical_unit(1.0    ,1.0,            { 0, 0, 0, 0, 1, 0, 0})}, // current [ampere]
+                                                                   {"mol", physical_unit(1.0    ,1.0,            { 0, 0, 0, 0, 0, 1, 0})}, // substance [mole]
+                                                                   {"cd" , physical_unit(1.0    ,1.0,            { 0, 0, 0, 0, 0, 0, 1})}, // luminosity [candela]
+                                                                   {"ang", physical_unit(1.0e-10,1.0,            { 1, 0, 0, 0, 0, 0, 0})}, // distance [angstrom]
+                                                                   {"J"  , physical_unit(1.0    ,1.0,            { 2,-2, 0, 1, 0, 0, 0})}, // energy [joule]
+                                                                   {"eV" , physical_unit(1.0    ,1.602176565e-19,{ 2,-2, 0, 1, 0, 0, 0})}, // energy [electron-volt]
+                                                                   {"min", physical_unit(1.0    ,60.0           ,{ 0, 1, 0, 0, 0, 0, 0})}, // time [minute]
+                                                                   {"h"  , physical_unit(1.0    ,3660.0         ,{ 0, 1, 0, 0, 0, 0, 0})}, // time [hour]
+                                                                   {"g"  , physical_unit(1.0e-3 ,1.0            ,{ 0, 0, 0, 1, 0, 0, 0})}, // time [gram]
                                                                   };
 
 std::map<std::string,double> PhysicalUnit::_definedPrefixes = {{"y" ,1.0e-24}, //yocto
@@ -74,11 +100,19 @@ std::map<std::string,double> PhysicalUnit::_definedPrefixes = {{"y" ,1.0e-24}, /
 															   {"Y" ,1.0e+24}  // yotta
                                                               };
 
-std::map<dimension,double> PhysicalUnit::_unitEquivalences = {{{ 2,-2, 0, 0, 0, 0, 0},1.782661907e-36}, // equivalence energy to mass
-		                                                      {{ 2,-2,-1, 1, 0, 0, 0},1.1604505e+04}, // equivalence energy to temperature
-		                                                      {{ 2,-3, 0, 1, 0, 0, 0},6.582119e-16}, // equivalence energy to time
-		                                                      {{ 1,-2, 0, 1, 0, 0, 0},1.97327e-07}, // equivalence energy to distance
+std::map<dimension,double> PhysicalUnit::_unitEquivalences = {{{ 2,-2, 0, 0, 0, 0, 0},1.1126500948414508e-17}, // energy to mass (J <--> kg)
+		                                                      {{ 2,-2,-1, 1, 0, 0, 0},7.242971666667e+22}, // energy to temperature (J <--> K)
+		                                                      {{ 2,-3, 0, 1, 0, 0, 0},4108.235723695035}, // energy to time (J <--> s)
+		                                                      {{ 1,-2, 0, 1, 0, 0, 0},1.2316183141775015e12}, // energy to distance (J <--> m)
 };
+
+PhysicalUnit::PhysicalUnit(const PhysicalUnit& other)
+: _value(other._value),
+  _prefix(other._prefix),
+  _scale(other._scale),
+  _dimension(other._dimension)
+{
+}
 
 PhysicalUnit::PhysicalUnit(double value, const std::string& unit) : _value(value)
 {
@@ -88,12 +122,58 @@ PhysicalUnit::PhysicalUnit(double value, const std::string& unit) : _value(value
     bool ok = qi::phrase_parse(f,l,_parser,qi::space,u);
     if (ok) 
 	{
-		_conversionFactor = u.first;
-		_dimension = u.second;
+		_prefix = std::get<0>(u);
+		_scale = std::get<1>(u);
+		_dimension = std::get<2>(u);
     }
     else
     	throw std::runtime_error("Invalid input unit");
 
+}
+
+PhysicalUnit::PhysicalUnit(const std::string& unit) : _value(1.0)
+{
+    physical_unit u;
+    auto f = unit.begin();
+	auto l = unit.end();
+    bool ok = qi::phrase_parse(f,l,_parser,qi::space,u);
+    if (ok)
+	{
+		_prefix = std::get<0>(u);
+		_scale = std::get<1>(u);
+		_dimension = std::get<2>(u);
+    }
+    else
+    	throw std::runtime_error("Invalid input unit");
+
+}
+
+PhysicalUnit::PhysicalUnit(double value, double prefix, double scale, const dimension& dimension)
+: _value(value),
+  _prefix(prefix),
+  _scale(scale),
+  _dimension(dimension)
+{
+}
+
+PhysicalUnit::PhysicalUnit(double prefix, double scale, const dimension& dimension)
+: _value(1.0),
+  _prefix(prefix),
+  _scale(scale),
+  _dimension(dimension)
+{
+}
+
+PhysicalUnit& PhysicalUnit::operator=(const PhysicalUnit& other)
+{
+	if (this!=&other)
+	{
+		_value = other._value;
+		_prefix = other._prefix;
+		_scale = other._scale;
+		_dimension = other._dimension;
+	}
+	return *this;
 }
 
 void PhysicalUnit::addPrefix(const std::string& name, double factor)
@@ -115,42 +195,64 @@ double PhysicalUnit::convert(const std::string& ounit) const
 	auto l = ounit.end();
     bool ok = qi::phrase_parse(f,l,_parser,qi::space,u);
     if (ok) 
-	{
-		bool dimEqualityTest = std::equal(_dimension.begin(),_dimension.end(),u.second.begin());
-		if (dimEqualityTest)
-		{
-			double conversionFactor(_value*_conversionFactor/u.first);
-			return conversionFactor;
-		}
-		else
-		{
-			bool equivalenceFound(false);
-			for (const auto& p : _unitEquivalences)
-			{
-				dimension dimDifference;
-				std::transform(_dimension.begin(),_dimension.end(),u.second.begin(),dimDifference.begin(), std::minus<int>());
-				int prod=std::inner_product(dimDifference.begin(),dimDifference.end(),p.first.begin(),0);
-				int norm2=std::inner_product(p.first.begin(),p.first.end(),p.first.begin(),0);
-				double ratio=static_cast<double>(prod)/static_cast<double>(norm2);
-				double intpart;
-				if (std::modf(ratio,&intpart)==0.0)
-				{
-					double conversionFactor(_value*std::pow(p.second,ratio));
-					equivalenceFound = true;
-					break;
-				}
-			}
-			if (!equivalenceFound)
-		    	throw std::runtime_error("Invalid output unit");
-		}
-    }
+    	return convert(std::get<0>(u),std::get<1>(u),std::get<2>(u));
     else
     	throw std::runtime_error("Invalid output unit");
 }
 
-double PhysicalUnit::getConversionFactor() const
+double PhysicalUnit::convert(double oprefix, double oscale, const dimension& odimension) const
 {
-	return _conversionFactor;
+	bool dimEqualityTest = std::equal(_dimension.begin(),_dimension.end(),odimension.begin());
+	if (dimEqualityTest)
+	{
+		double conversionFactor(_value*_prefix*_scale/(oprefix*oscale));
+		return conversionFactor;
+	}
+	else
+	{
+		dimension dimDifference;
+
+		std::transform(_dimension.begin(),_dimension.end(),odimension.begin(),dimDifference.begin(), std::minus<int>());
+
+		for (const auto& p : _unitEquivalences)
+		{
+			auto it1=dimDifference.begin();
+			bool proportional=true;
+			for (auto it2=p.first.begin();it2!=p.first.end();++it1,++it2)
+			{
+				if ((*it1)!=0 ^ (*it2)!=0)
+				{
+					proportional=false;
+					break;
+				}
+			}
+
+			if (!proportional)
+				continue;
+
+			int prod=std::inner_product(dimDifference.begin(),dimDifference.end(),p.first.begin(),0);
+			int norm2=std::inner_product(p.first.begin(),p.first.end(),p.first.begin(),0);
+			double ratio=static_cast<double>(prod)/static_cast<double>(norm2);
+			double intpart;
+			if (std::abs(std::modf(ratio,&intpart))<1.0e-9)
+			{
+				double conversionFactor(_value*std::pow(p.second,ratio)*_prefix*_scale/(oprefix*oscale));
+				return conversionFactor;
+			}
+		}
+
+		throw std::runtime_error("Invalid output unit");
+	}
+}
+
+double PhysicalUnit::getPrefix() const
+{
+	return _prefix;
+}
+
+double PhysicalUnit::getScale() const
+{
+	return _scale;
 }
 
 const dimension& PhysicalUnit::getDimension() const
@@ -168,11 +270,16 @@ double PhysicalUnit::getValue() const
 	return _value;
 }
 
+double PhysicalUnit::convertToSI() const
+{
+	return _prefix*_scale*_value;
+}
+
 PhysicalUnit::PhysicalUnitParser::PhysicalUnitParser() : PhysicalUnitParser::base_type(_start) 
 {
 
 	namespace phx = boost::phoenix;
-	phx::function<ConversionFactorOperator> const update_conversion_factor = ConversionFactorOperator();
+	phx::function<PrefixOperator> const update_prefix = PrefixOperator();
 	phx::function<PowerOperator> const powerize_unit = PowerOperator();
 	phx::function<MultiplyOperator> const multiply_unit = MultiplyOperator();
 	phx::function<DivideOperator> const divide_unit = DivideOperator();
@@ -183,7 +290,7 @@ PhysicalUnit::PhysicalUnitParser::PhysicalUnitParser() : PhysicalUnitParser::bas
 	for (const auto& dim : _definedUnits)
 		_unit.add(dim.first,dim.second);
 
-    _prefixedUnit = ((_prefix[qi::_a=qi::_1] >> _unit[qi::_val=qi::_1]) | (qi::attr(1.0)[qi::_a=qi::_1] >> _unit[qi::_val=qi::_1]))[qi::_pass=update_conversion_factor(qi::_a,qi::_val)];
+    _prefixedUnit = ((_prefix[qi::_a=qi::_1] >> _unit[qi::_val=qi::_1]) | (qi::attr(1.0)[qi::_a=qi::_1] >> _unit[qi::_val=qi::_1]))[qi::_pass=update_prefix(qi::_a,qi::_val)];
 
     _poweredUnit = (_prefixedUnit[qi::_val=qi::_1,qi::_a=1] >> -(qi::lit("**") >> qi::int_[qi::_a=qi::_1]))[qi::_pass=powerize_unit(qi::_val,qi::_a)];
 
