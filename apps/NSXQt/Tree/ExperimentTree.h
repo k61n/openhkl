@@ -58,6 +58,7 @@ public slots:
     void findSpaceGroup();
     void computeRFactors();
     void findFriedelPairs();
+    void integrateCalculatedPeaks();
 
 private:
 

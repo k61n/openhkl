@@ -63,6 +63,8 @@
 #include "FriedelDialog.h"
 
 #include "RFactor.h"
+#include <hdf5.h>
+#include <H5Exception.h>
 
 using std::vector;
 using SX::Data::IData;
@@ -309,7 +311,11 @@ void ExperimentTree::importData()
            qWarning() << "Error reading numor: " + fileNames[i] + " " + QString(e.what());
            continue;
         }
-
+        catch(...)
+        {
+        	qWarning() << "Error reading numor: " + fileNames[i] + " reason not known:";
+        	continue;
+        }
         QStandardItem* item = new NumorItem(exp, data_ptr);
         item->setText(QString::fromStdString(basename));
         item->setCheckable(true);
@@ -418,7 +424,8 @@ void ExperimentTree::findPeaks(const QModelIndex& index)
             result = _peakFinder->find(selectedNumors);
         }
         catch(std::exception& e) {
-            qDebug() << "Caught exception during peak find; peak search aborted.";
+            qDebug() << "Caught exception during peak find: " << e.what();
+            qDebug() <<" Peak search aborted.";
             return false;
         }
         return result;
@@ -700,4 +707,52 @@ void ExperimentTree::findFriedelPairs()
     //FriedelDialog* friedelDialog = new FriedelDialog(peaks, this);
     //friedelDialog->exec();
     //delete friedelDialog;
+}
+
+void ExperimentTree::integrateCalculatedPeaks()
+{
+//    qDebug() << "Integrating calculated peaks...";
+
+//    int count = 0;
+//    Eigen::Vector3d peak_extent, bg_extent;
+//    peak_extent << 0.0, 0.0, 0.0;
+//    bg_extent << 0.0, 0.0, 0.0;
+
+//    std::shared_ptr<UnitCell> unit_cell;
+
+//    for (std::shared_ptr<IData> numor: getSelectedNumors()) {
+//        for (Peak3D* peak: numor->getPeaks())
+//            if ( peak && peak->isSelected() && !peak->isMasked() ) {
+//                peak_extent += peak->getPeak()->getAABBExtents();
+//                bg_extent += peak->getBackground()->getAABBExtents();
+//                ++count;
+//            }
+//    }
+
+//    if ( count == 0) {
+//        qDebug() << "No peaks -- cannot search for equivalences!";
+//        return;
+//    }
+
+//    peak_extent /= count;
+//    bg_extent /= count;
+
+//    qDebug() << "Done calculating average bounding box";
+
+//    qDebug() << peak_extent(0) << " " << peak_extent(1) << " " << peak_extent(2);
+//    qDebug() << bg_extent(0) << " " << bg_extent(1) << " " << bg_extent(2);
+
+//    // reset bounding boxes based on averages
+//    for (std::shared_ptr<IData> numor: getSelectedNumors()) {
+//        for (Peak3D* peak: numor->getPeaks())
+//            if ( peak && peak->isSelected() && !peak->isMasked() ) {
+//                Eigen::Vector3d center = peak->getPeak()->getAABBCenter();
+
+
+
+//                peak->setPeak()->setLower;
+
+//                ++count;
+//            }
+//    }
 }

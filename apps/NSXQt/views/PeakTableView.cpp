@@ -407,8 +407,8 @@ void PeakTableView::writeShelX()
 
             double l=peak.getLorentzFactor();
             double t=peak.getTransmission();
-            file << std::fixed << std::setw(12) << std::setprecision(2) << peak.getScaledIntensity()/l/t;
-            file << std::fixed << std::setw(12) << std::setprecision(2) << peak.getScaledSigma()/l/t <<std::endl;
+            file << std::fixed << std::setw(8) << std::setprecision(2) << peak.getScaledIntensity()/l/t;
+            file << std::fixed << std::setw(8) << std::setprecision(2) << peak.getScaledSigma()/l/t <<std::endl;
         }
     }
     if (file.is_open())

@@ -137,6 +137,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this, SIGNAL(findSpaceGroup(void)), _ui->experimentTree, SLOT(findSpaceGroup()));
     connect(this, SIGNAL(computeRFactors(void)), _ui->experimentTree, SLOT(computeRFactors()));
     connect(this,SIGNAL(findFriedelPairs(void)), _ui->experimentTree, SLOT(findFriedelPairs()));
+    connect(this, SIGNAL(integrateCalculatedPeaks()), _ui->experimentTree, SLOT(integrateCalculatedPeaks()));
 
     _ui->plotterDockWidget->show();
     _ui->dockWidget_Property->show();
@@ -151,6 +152,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+    qInstallMessageHandler(0);
     delete _ui;
 }
 
@@ -442,4 +444,9 @@ void MainWindow::on_actionCompute_R_factors_triggered()
 {
     emit computeRFactors();
     // emit findFriedelPairs();
+}
+
+void MainWindow::on_actionIntegrate_calculated_peaks_triggered()
+{
+    emit integrateCalculatedPeaks();
 }

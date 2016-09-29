@@ -329,6 +329,10 @@ int UBMinimizer::runGSL(unsigned int maxIter)
     minimizer.setParams(x);
     minimizer.set_f(_functor);
 
+    minimizer.setxTol(1e-10);
+    minimizer.setfTol(1e-10);
+    minimizer.setgTol(1e-10);
+
     int status = minimizer.fit(maxIter);
 
     if (status) {

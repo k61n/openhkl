@@ -1338,6 +1338,7 @@ border-radius: 4px;
     <addaction name="actionFind_space_group"/>
     <addaction name="actionFind_Friedel_pairs"/>
     <addaction name="actionCompute_R_factors"/>
+    <addaction name="actionIntegrate_calculated_peaks"/>
    </widget>
    <widget class="QMenu" name="menuChemistry">
     <property name="title">
@@ -1724,6 +1725,16 @@ QDockWidget::title {
   <action name="actionCompute_R_factors">
    <property name="text">
     <string>Compute R factors</string>
+   </property>
+  </action>
+  <action name="actionFind_calculated_peaks">
+   <property name="text">
+    <string>Integrate calculated peaks</string>
+   </property>
+  </action>
+  <action name="actionIntegrate_calculated_peaks">
+   <property name="text">
+    <string>Integrate calculated peaks</string>
    </property>
   </action>
  </widget>
