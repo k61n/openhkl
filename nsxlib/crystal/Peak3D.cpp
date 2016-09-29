@@ -34,7 +34,8 @@ Peak3D::Peak3D(std::shared_ptr<SX::Data::IData> data):
 		_scale(1.0),
 		_selected(true),
 		_masked(false),
-		_transmission(1.0)
+		_transmission(1.0),
+		_state()
 {
 }
 
@@ -55,7 +56,8 @@ Peak3D::Peak3D(const Peak3D& other):
 		_scale(other._scale),
 		_selected(other._selected),
 		_masked(other._masked),
-		_transmission(other._transmission)
+		_transmission(other._transmission),
+		_state(other._state)
 {
 }
 
@@ -71,7 +73,7 @@ Peak3D& Peak3D::operator=(const Peak3D& other)
 		_peak == nullptr ? nullptr : other._peak->clone();
 		_bkg == nullptr ? nullptr : other._bkg->clone();
 
-		_projection = other._projection);
+		_projection = other._projection;
 		_projectionPeak = other._projectionPeak;
 		_projectionBkg = other._projectionBkg;
 
@@ -85,6 +87,8 @@ Peak3D& Peak3D::operator=(const Peak3D& other)
 		_selected = other._selected;
 		_masked = other._masked;
 		_transmission = other._transmission;
+
+		_state = other._state;
 
 	}
 

@@ -386,14 +386,14 @@ void PeakTableView::writeShelX()
         return;
     }
 
-    auto sptrBasis = peak[0].getUnitCell();
+    auto sptrBasis = _peaks[0].get().getUnitCell();
     if (sptrBasis==nullptr)
     {
         qCritical()<<"No unit cell defined the peaks. No index can be defined.";
         return;
     }
 
-    for (const SX::Crystal::Peak3D& peak : _peaks)
+    for (SX::Crystal::Peak3D& peak : _peaks)
     {
         if (peak.isSelected())
         {
@@ -407,7 +407,7 @@ void PeakTableView::writeShelX()
 				return;
 			}
 
-            if (!peak.hasIntegerHKL(sptrCurrentBasis,0.2))
+            if (!(peak.hasIntegerHKL(*sptrCurrentBasis,0.2)))
             	continue;
 
             file << std::fixed;
