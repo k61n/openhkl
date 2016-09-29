@@ -19,8 +19,32 @@ Indexer::Indexer(ptrUnitCell cell):
 	}
 }
 
+Indexer::Indexer(const Indexer& other)
+: _cell(other._cell),
+  _dtol(other._dtol),
+  _angletol(other._angletol),
+  _peaks(other._peaks),
+  _possiblePeaks(other._possiblePeaks)
+{
+}
+
 Indexer::~Indexer()
 {
+
+}
+
+Indexer& Indexer::operator=(const Indexer& other)
+{
+	if (this!=&other)
+	{
+		_cell = other._cell;
+		_dtol = other._dtol;
+		_angletol = other._angletol;
+		_peaks = other._peaks;
+		_possiblePeaks = other._possiblePeaks;
+	}
+
+	return *this;
 
 }
 
