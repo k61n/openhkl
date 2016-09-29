@@ -44,6 +44,11 @@ class Indexer
 {
 public:
 	Indexer(ptrUnitCell);
+
+	Indexer(const Indexer& other);
+
+	Indexer& operator=(const Indexer& other);
+
 	~Indexer();
 	//! Set the dspacing tolerance
 	void setdSpacingTolerance(double percent);
