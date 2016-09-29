@@ -140,7 +140,7 @@ public:
     void setSource(std::shared_ptr<SX::Instrument::Source> source);
    	bool setUnitCell(std::shared_ptr<SX::Crystal::UnitCell> basis);
    	std::shared_ptr<SX::Crystal::UnitCell> getUnitCell() const;
-	bool hasIntegerHKL(const SX::Crystal::UnitCell& basis);
+	bool hasIntegerHKL(const SX::Crystal::UnitCell& basis, double tolerance=0.2);
 	friend bool operator<(const Peak3D& p1, const Peak3D& p2);
 	void setSelected(bool);
 	bool isSelected() const;
@@ -175,7 +175,8 @@ private:
     std::shared_ptr<SX::Instrument::DetectorEvent> _event;
 	//!
     std::shared_ptr<SX::Instrument::Source> _source;
-	double _counts, _countsSigma;
+	double _counts;
+	double _countsSigma;
 	double _scale;
 	bool _selected;
 	bool _masked;
