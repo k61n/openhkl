@@ -42,7 +42,9 @@
 #include <array>
 #include <iostream>
 #include <ratio>
+#include <map>
 #include <string>
+#include <tuple>
 
 namespace qi = boost::spirit::qi;
 
