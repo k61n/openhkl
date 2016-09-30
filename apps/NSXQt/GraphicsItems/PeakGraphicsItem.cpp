@@ -18,27 +18,6 @@
 bool PeakGraphicsItem::_labelVisible = false;
 bool PeakGraphicsItem::_drawBackground = false;
 
-static void sortPoints(std::vector<QPointF>& points)
-{
-    double avg_x = 0.0, avg_y = 0.0;
-
-    for (auto&& p: points) {
-       avg_x += p.x();
-       avg_y += p.y();
-    }
-
-    avg_x /= points.size();
-    avg_y /= points.size();
-
-    auto compare = [=](const QPointF& a, const QPointF& b) {
-        const double theta_a = std::atan2(a.y()-avg_y, a.x()-avg_x);
-        const double theta_b = std::atan2(b.y()-avg_y, b.x()-avg_x);
-        return theta_a < theta_b;
-    };
-
-    std::sort(points.begin(), points.end(), compare);
-}
-
 PeakGraphicsItem::PeakGraphicsItem(SX::Crystal::Peak3D* p)
 : PlottableGraphicsItem(nullptr,true,false),
   _peak(p)
@@ -70,8 +49,6 @@ PeakGraphicsItem::~PeakGraphicsItem()
 
 QRectF PeakGraphicsItem::boundingRect() const
 {
-//    const Eigen::Vector3d& l=_peak->getPeak()->getLower();
-//    const Eigen::Vector3d& u=_peak->getPeak()->getUpper();
     const Eigen::Vector3d& l=_peak->getBackground()->getLower();
     const Eigen::Vector3d& u=_peak->getBackground()->getUpper();
     qreal w=u[0]-l[0];
@@ -98,8 +75,6 @@ void PeakGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 
     _label->setVisible(_hovered || _labelVisible);
 
-
-
     const Eigen::Vector3d& peak_l = _peak->getPeak()->getLower();
     const Eigen::Vector3d& peak_u = _peak->getPeak()->getUpper();
     qreal peak_w = peak_u[0]-peak_l[0];
@@ -113,33 +88,17 @@ void PeakGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
     if (_peak->isSelected()) {
         _pen.setColor("green");
         painter->setPen(_pen);
-        //painter->drawEllipse(0, 0, peak_w/2, peak_h/2);
-        if (_peakPoints.size())
-            painter->drawConvexPolygon(&_peakPoints[0], _peakPoints.size());
-        else
-            painter->drawEllipse(-peak_w/2, -peak_h/2, peak_w, peak_h);
+        drawEllipse(*painter, _peakEllipse);
 
         if (_drawBackground) {
-
-
             _pen.setColor("grey");
             painter->setPen(_pen);
-            //painter->drawEllipse(0, 0, bkg_w/2, bkg_h/2);
-            if (_bkgPoints.size())
-                painter->drawConvexPolygon(&_bkgPoints[0], _bkgPoints.size());
-            else
-                painter->drawEllipse(-bkg_w/2, -bkg_h/2, bkg_w, bkg_h);
+            drawEllipse(*painter, _bkgEllipse);
         }
-    }
-    else {
+    } else {
         _pen.setColor("red");
         painter->setPen(_pen);
-        //painter->drawEllipse(0, 0, peak_w/2, peak_h/2);
-        //painter->drawEllipse(-peak_w/2, -peak_h/2, peak_w, peak_h);
-        if (_peakPoints.size())
-            painter->drawConvexPolygon(&_peakPoints[0], _peakPoints.size());
-        else
-            painter->drawEllipse(-peak_w/2, -peak_h/2, peak_w, peak_h);
+        drawEllipse(*painter, _peakEllipse);
     }
 
     //painter->drawRect(-w2/2,-h2/2,w2,h2);
@@ -158,7 +117,8 @@ void PeakGraphicsItem::setFrame(int frame)
         QString hkl;
         hkl=QString("%1,%2,%3").arg(v[0]).arg(v[1]).arg(v[2]);
         _label->setPlainText(hkl);
-        calculatePoints(frame);
+        _peakEllipse = calculateEllipse(*_peak->getPeak(), frame);
+        _bkgEllipse = calculateEllipse(*_peak->getBackground(), frame);
     }
     else {
         setVisible(false);
@@ -186,59 +146,79 @@ void PeakGraphicsItem::drawBackground(bool flag)
     _drawBackground = flag;
 }
 
-void PeakGraphicsItem::calculatePoints(int frame)
+PeakGraphicsItem::Ellipse PeakGraphicsItem::calculateEllipse(const SX::Geometry::IShape<double, 3> &shape, int frame)
 {
-    _peakPoints.clear();
-    _bkgPoints.clear();
+    Eigen::MatrixXd M;
+    Eigen::VectorXd p;
+    Ellipse ellipse;
 
-    const SX::Geometry::Ellipsoid<double, 3>* peak;
-    const SX::Geometry::Ellipsoid<double, 3>* bkg;
+    try {
+        const SX::Geometry::Ellipsoid<double, 3>& ellipse_shape =
+                dynamic_cast<const SX::Geometry::Ellipsoid<double, 3>&>(shape);
+        M = ellipse_shape.getRSinv();
+        p = ellipse_shape.getCenter();
+    }
+    catch(std::bad_cast& e){
+        // bad cast, so just use information from bounding box and return early
+        Eigen::Vector3d lower = shape.getLower();
+        Eigen::Vector3d upper = shape.getUpper();
 
-    peak = dynamic_cast<const SX::Geometry::Ellipsoid<double, 3>*>(_peak->getPeak());
-    bkg = dynamic_cast<const SX::Geometry::Ellipsoid<double, 3>*>(_peak->getBackground());
+        ellipse.a = 0.5 * (upper[0] - lower[0]);
+        ellipse.b = 0.5 * (upper[1] - lower[1]);
+        ellipse.alpha = 0.0;
+        ellipse.u = 0;
+        ellipse.v = 0;
 
-    // return if cannot cast to ellipsoid
-    if (!peak || !bkg)
-        return;
-
-    int count = 50;
-
-    _peakPoints.reserve(count);
-    _bkgPoints.reserve(count);
-
-    for (int i = 0; i < count; ++i) {
-        double dx = std::cos((double)i / count * 2.0 * 3.141592);
-        double dy = std::sin((double)i / count * 2.0 * 3.141592);
-
-        const Eigen::Vector3d& peak_l = _peak->getPeak()->getLower();
-        const Eigen::Vector3d& peak_u = _peak->getPeak()->getUpper();
-        qreal peak_x = (peak_u[0] + peak_l[0])/2.0;
-        qreal peak_y = (peak_u[1] + peak_l[1])/2.0;
-        qreal peak_z = (peak_u[2] + peak_l[2])/2.0;
-
-        SX::Geometry::Ellipsoid<double, 3>::vector from, dir, collide;
-        double t1, t2, t;
-
-        from << peak_x, peak_y, frame;
-        dir << dx, dy, 0;
-
-        if (peak->rayIntersect(from, dir, t1, t2)) {
-            collide = t1*dir;
-            _peakPoints.push_back(QPointF(collide(0), collide(1)));
-            collide = t2*dir;
-            _peakPoints.push_back(QPointF(collide(0), collide(1)));
-        }
-
-        if(bkg->rayIntersect(from, dir, t1, t2)) {
-            collide = t1*dir;
-            _bkgPoints.push_back(QPointF(collide(0), collide(1)));
-            collide = t2*dir;
-            _bkgPoints.push_back(QPointF(collide(0), collide(1)));
-        }
+        return ellipse;
     }
 
-    sortPoints(_peakPoints);
-    sortPoints(_bkgPoints);
+    M = M.transpose()*M;
+
+    const double x0 = 0.0; //p(0);
+    const double y0 = 0.0; //p(1);
+    const double z0 = p(2);
+
+    const double A = M(0,0);
+    const double B = M(1,1);
+    const double C = M(0,1) + M(1,0);
+    const double D =  (M(0,2)+M(2,0))*(frame-z0);
+    const double E =  (M(1,2)+M(2,1))*(frame-z0);
+    const double F = -1.0 + M(2,2)*(frame-z0)*(frame-z0);
+
+    const double alpha = std::atan2(0.5*C, B-A) / 2.0;
+
+    const double c2a = std::cos(2*alpha);
+    const double s2a = std::sin(2*alpha);
+
+    const double ca = std::cos(alpha);
+    const double sa = std::sin(alpha);
+
+    const double a = std::abs(ca) > 1e-6? 0.5 * (A+B + (A-B)/c2a) : 0.5 * (A+B - C/s2a);
+    const double b = A+B-a;
+
+    const double c = (D*ca - E*sa);
+    const double d = (D*sa + E*ca);
+
+    const double u0 = -c / (2.0*a);
+    const double v0 = -d / (2.0*b);
+
+    const double e = F -a*u0*u0 - b*v0*v0;
+
+    ellipse.a = a / -e > 0.0? 1.0 / std::sqrt(a / -e) : 0.0;
+    ellipse.b = b / -e > 0.0? 1.0 / std::sqrt(b / -e) : 0.0;
+    ellipse.alpha = alpha *180.0 / M_PI;
+    ellipse.u = u0;
+    ellipse.v = v0;
+
+    return ellipse;
+}
+
+void PeakGraphicsItem::drawEllipse(QPainter &painter, PeakGraphicsItem::Ellipse ellipse)
+{
+    QPointF center(ellipse.u, ellipse.v);
+    painter.rotate(-ellipse.alpha);
+    painter.drawEllipse(center, ellipse.a, ellipse.b);
+    painter.rotate(ellipse.alpha);
 }
 
 void PeakGraphicsItem::plot(SXPlot* plot)

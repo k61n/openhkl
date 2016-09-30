@@ -43,9 +43,13 @@ public:
     static void setLabelVisible(bool flag=true);
     static void drawBackground(bool flag);
 
-    void calculatePoints(int frame);
-
 private:
+    struct Ellipse {
+        double a, b, u, v, alpha;
+    };
+
+    static Ellipse calculateEllipse(const SX::Geometry::IShape<double, 3>& shape, int frame);
+    static void drawEllipse(QPainter& painter, Ellipse ellipse);
 
     //! Pointer to the Peak3D object
     SX::Crystal::Peak3D* _peak;
@@ -53,9 +57,8 @@ private:
     static bool _labelVisible;
     static bool _drawBackground;
 
-    std::vector<QPointF> _peakPoints;
-    std::vector<QPointF> _bkgPoints;
-
+    Ellipse _peakEllipse;
+    Ellipse _bkgEllipse;
 };
 
 #endif // PEAKGRAPHICSITEM_H
