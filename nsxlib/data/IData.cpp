@@ -171,7 +171,7 @@ ComponentState IData::getDetectorInterpolatedState(double frame)
 const ComponentState& IData::getDetectorState(unsigned int frame) const
 {
     if (frame>(_detectorStates.size()-1))
-		throw std::runtime_error("Error when returning detector state: invalid frame value");
+    throw std::runtime_error("Error when returning detector state: invalid frame value");
 
 	return _detectorStates[frame];
 }
@@ -677,6 +677,37 @@ double IData::getBackgroundLevel(std::shared_ptr<SX::Utils::ProgressHandler> pro
 
     _background = bg;
     return _background;
+}
+
+void IData::integratePeaks(std::shared_ptr<Utils::ProgressHandler> handler)
+{
+    if (handler) {
+        handler->setStatus(("Integrating " + std::to_string(getPeaks().size()) + " peaks...").c_str());
+        handler->setProgress(0);
+    }
+
+    for ( auto& peak: getPeaks() )
+        peak->framewiseIntegrateBegin();
+
+    //progressDialog->setValue(0);
+    //progressDialog->setLabelText("Integrating peak intensities...");
+
+    int idx = 0;
+
+    for ( auto it = getIterator(0); it->index() != getNFrames(); it->advance(), ++idx) {
+        Eigen::MatrixXi frame = it->getFrame().cast<int>();
+        for ( auto& peak: getPeaks() ) {
+            peak->framewiseIntegrateStep(frame, idx);
+        }
+
+        if (handler) {
+            double progress = it->index() * 100.0 / getNFrames();
+            handler->setProgress(progress);
+        }
+    }
+
+    for ( auto& peak: getPeaks() )
+        peak->framewiseIntegrateEnd();
 }
 
 

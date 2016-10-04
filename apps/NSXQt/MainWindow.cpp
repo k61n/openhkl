@@ -141,6 +141,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this,SIGNAL(findFriedelPairs(void)), _ui->experimentTree, SLOT(findFriedelPairs()));
     connect(this, SIGNAL(integrateCalculatedPeaks()), _ui->experimentTree, SLOT(integrateCalculatedPeaks()));
     connect(this, SIGNAL(peakFitDialog()), _ui->experimentTree, SLOT(peakFitDialog()));
+    connect(this, SIGNAL(incorporateCalculatedPeaks()), _ui->experimentTree, SLOT(incorporateCalculatedPeaks()));
 
     _ui->plotterDockWidget->show();
     _ui->dockWidget_Property->show();
@@ -497,4 +498,9 @@ void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
     }
 
     _ui->_dview->getScene()->updatePeaks();
+}
+
+void MainWindow::on_actionIncorporate_calculated_peaks_triggered(bool checked)
+{
+    emit incorporateCalculatedPeaks();
 }

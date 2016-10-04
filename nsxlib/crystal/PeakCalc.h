@@ -2,7 +2,7 @@
  * nsxtool : Neutron Single Crystal analysis toolkit
  ------------------------------------------------------------------------------------------
  Copyright (C)
- 2012- Laurent C. Chapon Eric Pellegrini
+ 2012- Laurent C. Chapon Eric Pellegrini, Jonathan Fisher
  Institut Laue-Langevin
  BP 156
  6, rue Jules Horowitz
@@ -10,6 +10,7 @@
  France
  chapon[at]ill.fr
  pellegrini[at]ill.fr
+ j.fisher[at]fz-juelich.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -29,11 +30,20 @@
 #ifndef NSXTOOL_PEAKCALC_H_
 #define NSXTOOL_PEAKCALC_H_
 
+#include <memory>
+#include <vector>
+#include <set>
+
 namespace SX {
+
+namespace Data {
+class IData;
+}
 
 namespace Crystal
 {
 
+class Peak3D;
 
 struct PeakCalc
 {
@@ -41,6 +51,9 @@ struct PeakCalc
 	~PeakCalc();
 	double _h,_k,_l;
 	double _x,_y,_frame;
+
+    Peak3D* averagePeaks(std::shared_ptr<SX::Data::IData> data, double distance);
+    std::vector<Peak3D*> findNeighbors(const std::set<Peak3D*>& peak_list, double distance);
 };
 
 } // namespace Crystal

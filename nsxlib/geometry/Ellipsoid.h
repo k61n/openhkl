@@ -188,8 +188,14 @@ Ellipsoid<T,D>::Ellipsoid(const vector& center, const matrix& RSinv): IShape<T,D
     vector t = -RSinv*center;
     _TRSinv=Eigen::Matrix<T,D+1,D+1>::Constant(0.0);
     _TRSinv(D,D)=1.0;
-    for (unsigned int i=0;i<D;++i)
+
+    for (unsigned int i = 0; i < D; ++i) {
         _TRSinv(i, D) = t(i, 0);
+
+        for (unsigned int j = 0; j < D; ++j)
+            _TRSinv(i, j) = RSinv(i, j);
+    }
+
     updateAABB();
 }
 

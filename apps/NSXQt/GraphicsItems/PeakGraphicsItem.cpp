@@ -174,6 +174,12 @@ PeakGraphicsItem::Ellipse PeakGraphicsItem::calculateEllipse(const SX::Geometry:
 
     M = M.transpose()*M;
 
+    // ellipsoid defined by (x-p).M.(x-p) = 1
+    // rewritten as A*x^2 + B*y^2 + C*x*y + D*x*(z-z0) + E*y*(z-z0) + F = 0
+    // set u = cos(alpha)*x - sin(alpha)*y
+    // set v = sin(alpha)*y + cos(alpha)*x
+    // and transform into standard form a*(u-u0)^2 + b*(v-v0)^2 = 1
+
     const double x0 = 0.0; //p(0);
     const double y0 = 0.0; //p(1);
     const double z0 = p(2);

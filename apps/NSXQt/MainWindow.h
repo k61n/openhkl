@@ -66,6 +66,7 @@ signals:
     void findFriedelPairs();
     void integrateCalculatedPeaks();
     void peakFitDialog();
+    void incorporateCalculatedPeaks();
 private slots:
 //    void on_action_open_triggered();
 
@@ -96,6 +97,7 @@ private slots:
 
     void on_actionDraw_peak_background_triggered(bool checked);
     void on_actionRemove_bad_peaks_triggered(bool checked);
+    void on_actionIncorporate_calculated_peaks_triggered(bool checked);
 
 public slots:
     void changeData(std::shared_ptr<SX::Data::IData>);

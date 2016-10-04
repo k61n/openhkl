@@ -1,3 +1,38 @@
+/*
+ * nsxtool : Neutron Single Crystal analysis toolkit
+ ------------------------------------------------------------------------------------------
+ Copyright (C)
+ 2016- Laurent C. Chapon, Eric Pellegrini, Jonathan Fisher
+
+ Institut Laue-Langevin
+ BP 156
+ 6, rue Jules Horowitz
+ 38042 Grenoble Cedex 9
+ France
+ chapon[at]ill.fr
+ pellegrini[at]ill.fr
+
+ Forshungszentrum Juelich GmbH
+ 52425 Juelich
+ Germany
+ j.fisher[at]fz-juelich.de
+
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+
+ You should have received a copy of the GNU Lesser General Public
+ License along with this library; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ */
+
 #include <cmath>
 #include <stdexcept>
 
@@ -28,7 +63,7 @@ namespace Crystal
 {
 
 Peak3D::Peak3D(std::shared_ptr<SX::Data::IData> data):
-		_data(data),
+        _data(nullptr),
 		_hkl(Eigen::Vector3d::Zero()),
 		_peak(nullptr),
 		_bkg(nullptr),
@@ -42,6 +77,7 @@ Peak3D::Peak3D(std::shared_ptr<SX::Data::IData> data):
 		_masked(false),
 		_transmission(1.0)
 {
+    linkData(data);
 }
 
 Peak3D::Peak3D(std::shared_ptr<Data::IData> data, const Blob3D &blob, double confidence):
@@ -58,24 +94,6 @@ Peak3D::Peak3D(std::shared_ptr<Data::IData> data, const Blob3D &blob, double con
     eigenvalues[2]*=3.0;
 
     setBackgroundShape(new SX::Geometry::Ellipsoid3D(center,eigenvalues,eigenvectors));
-    //
-    int f=std::floor(center[2]);
-
-    using ComponentState = SX::Instrument::ComponentState;
-
-    setSampleState(std::shared_ptr<ComponentState>(new ComponentState(data->getSampleInterpolatedState(f))));
-    ComponentState detState = data->getDetectorInterpolatedState(f);
-
-    using DetectorEvent = SX::Instrument::DetectorEvent;
-
-    setDetectorEvent(std::shared_ptr<DetectorEvent>(
-                            new DetectorEvent(data->getDiffractometer()->getDetector()->createDetectorEvent(
-                                                  center[0],center[1],detState.getValues()))
-                            )
-            );
-
-    setSource(data->getDiffractometer()->getSource());
-
 }
 
 Peak3D::Peak3D(const Peak3D& other):
@@ -141,6 +159,7 @@ Peak3D::~Peak3D()
 void Peak3D::linkData(std::shared_ptr<SX::Data::IData> data)
 {
     _data = data;
+    setSource(_data->getDiffractometer()->getSource());
 }
 
 void Peak3D::unlinkData()
@@ -151,6 +170,24 @@ void Peak3D::unlinkData()
 void Peak3D::setPeakShape(SX::Geometry::IShape<double,3>* p)
 {
 	_peak=p;
+
+    Eigen::Vector3d center = _peak->getAABBCenter();
+
+    //
+    int f=std::floor(center[2]);
+
+    using ComponentState = SX::Instrument::ComponentState;
+
+    setSampleState(std::shared_ptr<ComponentState>(new ComponentState(_data->getSampleInterpolatedState(f))));
+    ComponentState detState = _data->getDetectorInterpolatedState(f);
+
+    using DetectorEvent = SX::Instrument::DetectorEvent;
+
+    setDetectorEvent(std::shared_ptr<DetectorEvent>(
+                            new DetectorEvent(_data->getDiffractometer()->getDetector()->createDetectorEvent(
+                                                  center[0],center[1],detState.getValues()))
+                            )
+            );
 }
 
 void Peak3D::setBackgroundShape(SX::Geometry::IShape<double,3>* b)
@@ -561,8 +598,7 @@ void Peak3D::framewiseIntegrateEnd()
 	_projectionBkg=_projection-_projectionPeak;
 
 	_counts = _projectionPeak.sum();
-	_countsSigma = std::sqrt(_counts);
-
+    _countsSigma = std::sqrt(std::abs(_counts));
 
 	return;
 }

@@ -211,6 +211,8 @@ public:
     //! Get background
     double getBackgroundLevel(std::shared_ptr<SX::Utils::ProgressHandler> progress);
 
+    //! Integrate intensities of all peaks
+    void integratePeaks(std::shared_ptr<SX::Utils::ProgressHandler> handler = nullptr);
 
 protected:
     bool _isOpened;

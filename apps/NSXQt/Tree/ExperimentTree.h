@@ -60,6 +60,7 @@ public slots:
     void findFriedelPairs();
     void integrateCalculatedPeaks();
     void peakFitDialog();
+    void incorporateCalculatedPeaks();
 
 private:
 
