@@ -1,7 +1,7 @@
 stages:
   - build
   - test
-#  - deploy
+  - deploy
 
 # trusty pipeline
 build:trusty:
@@ -11,10 +11,6 @@ build:trusty:
     - cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_CPACK=OFF -DBUILD_QTAPPS=OFF -DCMAKE_INSTALL_PREFIX=./build
     - make -j2 -l2
     - make install
-    - ctest -j2 -l2
-    - rm CMakeCache.txt
-    - cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_CPACK=ON -DBUILD_QTAPPS=ON
-    - make package
   allow_failure: false
   only:
     - triggers
