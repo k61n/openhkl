@@ -7,10 +7,7 @@ stages:
 build:trusty:
   stage: build
   script:
-    - mkdir ./build
-    - cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_CPACK=OFF -DBUILD_QTAPPS=OFF -DCMAKE_INSTALL_PREFIX=./build
-    - make -j2 -l2
-    - make install
+    - ./build_server/debian/run_build.sh
   allow_failure: false
   only:
     - triggers
@@ -29,7 +26,7 @@ build:trusty:
 test:trusty:
   stage: test
   script:
-    - ctest -j2 -l2
+    - ./build_server/debian/run_tests.sh
   allow_failure: false
   only:
     - triggers
@@ -46,8 +43,7 @@ test:trusty:
 deploy:trusty:
   stage: deploy
   script:
-    - cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_CPACK=ON -DBUILD_QTAPPS=ON
-    - make package
+    - ./build_server/debian/run_deploy.sh
   only:
     - triggers
     - tags
