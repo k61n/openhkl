@@ -159,7 +159,8 @@ Peak3D::~Peak3D()
 void Peak3D::linkData(std::shared_ptr<SX::Data::IData> data)
 {
     _data = data;
-    setSource(_data->getDiffractometer()->getSource());
+    if (_data)
+        setSource(_data->getDiffractometer()->getSource());
 }
 
 void Peak3D::unlinkData()
