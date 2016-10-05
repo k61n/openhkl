@@ -13,9 +13,9 @@ build:trusty:
   only:
     - triggers
     - tags
-    - /^feature-.*$/
-    - /^release-.*$/
-    - /^hotfix-.*$/
+    - /^feature/.*$/
+    - /^release/.*$/
+    - /^hotfix/.*$/
     - develop
   artifacts:
     paths:
@@ -32,9 +32,9 @@ test:trusty:
   only:
     - triggers
     - tags
-    - /^feature-.*$/
-    - /^release-.*$/
-    - /^hotfix-.*$/
+    - /^feature/.*$/
+    - /^release/.*$/
+    - /^hotfix/.*$/
     - develop
   dependencies:
     - build:trusty
