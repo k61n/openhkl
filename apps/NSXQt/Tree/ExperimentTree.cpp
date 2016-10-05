@@ -853,7 +853,7 @@ void ExperimentTree::incorporateCalculatedPeaks()
                 if (!new_peak)
                     continue;
 
-                new_peak->setSelected(false);
+                new_peak->setSelected(true);
                 calculated_peaks.push_back(new_peak);
 
                 int done = std::round(current_peak * 100.0 / peaks.size());

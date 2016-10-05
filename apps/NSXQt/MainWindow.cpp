@@ -466,15 +466,26 @@ void MainWindow::on_actionDraw_peak_background_triggered(bool checked)
 
 void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
 {
+    const double pmax = 0.1;
+
+    int total_peaks = 0;
+    int remaining_peaks = 0;
 
     std::vector<std::shared_ptr<IData>> numors = _ui->experimentTree->getSelectedNumors();
+    std::vector<Peak3D*> bad_peaks;
 
     for (std::shared_ptr<IData> numor: numors) {
         std::set<Peak3D*>& peaks = numor->getPeaks();
 
+        total_peaks += peaks.size();
+
         for (std::set<Peak3D*>::iterator it = peaks.begin(); it != peaks.end();) {
             if ( (*it)->isMasked() || !(*it)->isSelected() ) {
-                delete *it;
+                bad_peaks.push_back(*it);
+                it = peaks.erase(it);
+            }
+            else if ((*it)->pValue() >= pmax) {
+                bad_peaks.push_back(*it);
                 it = peaks.erase(it);
             }
             else {
@@ -488,7 +499,7 @@ void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
                     }
                 }
                 if (!correctly_indexed) {
-                    delete *it;
+                    bad_peaks.push_back(*it);
                     it = peaks.erase(it);
                 }
                 else
@@ -497,7 +508,11 @@ void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
         }
     }
 
+    qDebug() << "Eliminated " << bad_peaks.size() << " out of " << total_peaks << " total peaks.";
     _ui->_dview->getScene()->updatePeaks();
+
+    for (Peak3D* peak: bad_peaks)
+        delete peak;
 }
 
 void MainWindow::on_actionIncorporate_calculated_peaks_triggered(bool checked)

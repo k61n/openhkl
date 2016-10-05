@@ -495,9 +495,13 @@ void Peak3D::framewiseIntegrateBegin()
 		_state.data_end=_data->getNFrames()-1;
 
 	// Allocate all vectors
-	_projection=Eigen::VectorXd::Zero(_state.data_end-_state.data_start+1);
-	_projectionPeak=Eigen::VectorXd::Zero(_state.data_end-_state.data_start+1);
-	_projectionBkg=Eigen::VectorXd::Zero(_state.data_end-_state.data_start+1);
+    _projection = Eigen::VectorXd::Zero(_state.data_end - _state.data_start + 1);
+    _projectionPeak = Eigen::VectorXd::Zero(_state.data_end - _state.data_start + 1);
+    _projectionBkg = Eigen::VectorXd::Zero(_state.data_end - _state.data_start + 1);
+    _pointsPeak = Eigen::VectorXd::Zero(_state.data_end - _state.data_start + 1);
+    _pointsBkg = Eigen::VectorXd::Zero(_state.data_end - _state.data_start + 1);
+    _countsPeak = Eigen::VectorXd::Zero(_state.data_end - _state.data_start + 1);
+    _countsBkg = Eigen::VectorXd::Zero(_state.data_end - _state.data_start + 1);
 
 	_state.dx = _state.end_x - _state.start_x;
 	_state.dy = _state.end_y - _state.start_y;
@@ -544,6 +548,13 @@ void Peak3D::framewiseIntegrateStep(Eigen::MatrixXi& frame, unsigned int idx)
             }
         }
     }
+
+    _pointsPeak[idx-_state.data_start] = pointsinpeak;
+    _pointsBkg[idx-_state.data_start] = pointsinbkg;
+
+    _countsPeak[idx-_state.data_start] = intensityP;
+    _countsBkg[idx-_state.data_start] = intensityBkg;
+
     if (pointsinpeak>0)
         _projectionPeak[idx-_state.data_start]=intensityP-intensityBkg*pointsinpeak/pointsinbkg;
     
@@ -596,12 +607,35 @@ void Peak3D::framewiseIntegrateEnd()
 		if (diff>0)
 			_projectionPeak[i]+=diff;
 	}
+
+    // note: this "background" simply refers to anything in the AABB but NOT in the peak
 	_projectionBkg=_projection-_projectionPeak;
 
 	_counts = _projectionPeak.sum();
     _countsSigma = std::sqrt(std::abs(_counts));
 
-	return;
+    return;
+}
+
+double Peak3D::pValue()
+{
+    // assumption: all background pixel counts are Poisson processes with rate R
+    // therefore, we can estimate the rate R as below:
+    const double R = _countsBkg.sum() / _pointsBkg.sum();
+
+    // null hypothesis: the pixels inside the peak are Poisson processes with rate R
+    // therefore, by central limit theorem the average value
+    const double avg = _countsPeak.sum() / _pointsPeak.sum();
+    // is normal with mean R and variance:
+    const double var = R / _pointsPeak.sum();
+
+    // thus we obtain the following standard normal variable
+    const double z = (avg-R) / std::sqrt(var);
+
+    // compute the p value
+    const double p = 1.0 - 0.5 * (1.0 + std::erf(z / std::sqrt(2)));
+
+    return p;
 }
    
 }

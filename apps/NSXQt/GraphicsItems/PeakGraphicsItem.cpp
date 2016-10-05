@@ -53,6 +53,10 @@ QRectF PeakGraphicsItem::boundingRect() const
     const Eigen::Vector3d& u=_peak->getBackground()->getUpper();
     qreal w=u[0]-l[0];
     qreal h=u[1]-l[1];
+
+    assert(w >= 0.0);
+    assert(h >= 0.0);
+
     return QRectF(-w/2.0,-h/2.0,w,h);
 }
 
@@ -282,6 +286,8 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     info+="Intensity ("+QString((QChar) 0x03C3)+"I): "+QString::number(intensity)+" ("+QString::number(sI,'f',2)+")\n";
     double l=_peak->getLorentzFactor();
     info+="Cor. int. ("+QString((QChar) 0x03C3)+"I): "+QString::number(intensity/l,'f',2)+" ("+QString::number(sI/l,'f',2)+")\n";
+
+    info += "p value (" + QString::number(_peak->pValue(), 'f', 3) + ")\n";
 
     double scale=_peak->getScale();
     double monitor=_peak->getData()->getMetadata()->getKey<double>("monitor");
