@@ -94,6 +94,22 @@ test:osx:
   tags:
     - mac
 
+deploy:osx:
+  stage: deploy
+  script:
+    - ./build_server/osx/run_deploy.sh
+  only:
+    - /^feature/.*$/
+    - triggers
+    - tags
+    - develop
+  when: on_success
+  artifacts:
+    paths:
+    - ${CI_PROJECT_DIR}/build/qmake-build/nsxtool*dmg
+  tags:
+    - mac
+
 #windows-msvc:
 #  script:
 #    - dir C:\Users\ci\Libraries\libtiff
