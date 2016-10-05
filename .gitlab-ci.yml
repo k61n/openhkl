@@ -46,6 +46,7 @@ deploy:trusty:
   script:
     - ./build_server/debian/run_deploy.sh
   only:
+    - /^feature/.*$/
     - triggers
     - tags
     - develop
