@@ -46,7 +46,6 @@ deploy:trusty:
   script:
     - ./build_server/debian/run_deploy.sh
   only:
-    - /^feature/.*$/
     - triggers
     - tags
     - develop
@@ -56,6 +55,25 @@ deploy:trusty:
     - nsxtool*deb
   tags:
     - ubuntu14.04
+
+build:osx:
+  stage: build
+  script:
+    - ./build_server/osx/run_build.sh
+  allow_failure: false
+  only:
+    - triggers
+    - tags
+    - /^feature/.*$/
+    - /^release/.*$/
+    - /^hotfix/.*$/
+    - develop
+  artifacts:
+    paths:
+    - build
+    expire_in: 1 day
+  tags:
+    - mac
 
 #windows-msvc:
 #  script:
