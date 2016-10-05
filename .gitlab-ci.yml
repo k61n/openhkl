@@ -111,6 +111,44 @@ deploy:osx:
   tags:
     - mac
 
+# windows pipeline
+
+build:windows:
+  stage: build
+  script:
+    - .\build_server\windows\run_build.bat
+  allow_failure: false
+  only:
+    - triggers
+    - tags
+    - /^feature/.*$/
+    - /^release/.*$/
+    - /^hotfix/.*$/
+    - develop
+  artifacts:
+    paths:
+    - build
+    expire_in: 1 day
+  tags:
+    - windows
+
+test:windows:
+  stage: test
+  script:
+    - .\build_server\osx\run_tests.bat
+  allow_failure: false
+  only:
+    - triggers
+    - tags
+    - /^feature/.*$/
+    - /^release/.*$/
+    - /^hotfix/.*$/
+    - develop
+  dependencies:
+    - build:windows
+  tags:
+    - windows
+
 #windows-msvc:
 #  script:
 #    - dir C:\Users\ci\Libraries\libtiff
