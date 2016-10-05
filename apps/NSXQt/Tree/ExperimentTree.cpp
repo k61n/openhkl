@@ -848,7 +848,7 @@ void ExperimentTree::incorporateCalculatedPeaks()
                     continue;
 
                 // now we must add it, calculating shape from nearest peaks
-                Peak3D* new_peak = p.averagePeaks(numor, 500);
+                Peak3D* new_peak = p.averagePeaks(numor, 200);
 
                 if (!new_peak)
                     continue;

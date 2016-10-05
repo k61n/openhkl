@@ -466,7 +466,7 @@ void MainWindow::on_actionDraw_peak_background_triggered(bool checked)
 
 void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
 {
-    const double pmax = 0.1;
+    const double pmax = 0.01;
 
     int total_peaks = 0;
     int remaining_peaks = 0;
