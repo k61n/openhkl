@@ -135,7 +135,7 @@ build:windows:
 test:windows:
   stage: test
   script:
-    - .\build_server\osx\run_tests.bat
+    - .\build_server\windows\run_tests.bat
   allow_failure: false
   only:
     - triggers
