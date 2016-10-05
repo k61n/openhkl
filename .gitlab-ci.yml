@@ -56,6 +56,8 @@ deploy:trusty:
   tags:
     - ubuntu14.04
 
+# osx pipeline
+
 build:osx:
   stage: build
   script:
@@ -72,6 +74,23 @@ build:osx:
     paths:
     - build
     expire_in: 1 day
+  tags:
+    - mac
+
+test:osx:
+  stage: test
+  script:
+    - ./build_server/osx/run_tests.sh
+  allow_failure: false
+  only:
+    - triggers
+    - tags
+    - /^feature/.*$/
+    - /^release/.*$/
+    - /^hotfix/.*$/
+    - develop
+  dependencies:
+    - build:osx
   tags:
     - mac
 
