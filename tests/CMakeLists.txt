@@ -6,19 +6,9 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/nsxlib/imaging/
     ${CMAKE_SOURCE_DIR}/nsxlib/instrument/
     ${CMAKE_SOURCE_DIR}/nsxlib/kernel/
+    ${CMAKE_SOURCE_DIR}/nsxlib/physics/
     ${CMAKE_SOURCE_DIR}/nsxlib/utils/
 )
-
-
-# add_subdirectory(chemistry)
-# add_subdirectory(crystal)
-# add_subdirectory(data)
-# add_subdirectory(geometry)
-# add_subdirectory(imaging)
-# add_subdirectory(instrument)
-# add_subdirectory(kernel)
-# add_subdirectory(utils)
-
 
 file(GLOB_RECURSE test_sources "*.cpp")
 file(GLOB_RECURSE test_headers "*.h")

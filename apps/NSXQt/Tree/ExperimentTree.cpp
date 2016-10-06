@@ -64,6 +64,8 @@
 #include "FriedelDialog.h"
 
 #include "RFactor.h"
+#include <hdf5.h>
+#include <H5Exception.h>
 
 #include "PeakFitDialog.h"
 
@@ -313,7 +315,11 @@ void ExperimentTree::importData()
            qWarning() << "Error reading numor: " + fileNames[i] + " " + QString(e.what());
            continue;
         }
-
+        catch(...)
+        {
+        	qWarning() << "Error reading numor: " + fileNames[i] + " reason not known:";
+        	continue;
+        }
         QStandardItem* item = new NumorItem(exp, data_ptr);
         item->setText(QString::fromStdString(basename));
         item->setCheckable(true);
@@ -422,7 +428,8 @@ void ExperimentTree::findPeaks(const QModelIndex& index)
             result = _peakFinder->find(selectedNumors);
         }
         catch(std::exception& e) {
-            qDebug() << "Caught exception during peak find; peak search aborted.";
+            qDebug() << "Caught exception during peak find: " << e.what();
+            qDebug() <<" Peak search aborted.";
             return false;
         }
         return result;

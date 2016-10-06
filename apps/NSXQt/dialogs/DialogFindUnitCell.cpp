@@ -148,7 +148,7 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
                         minimizer.refineParameter(i,false);
                     int success = 0;
                     for (auto peak : _peaks) {
-                        if (peak->hasIntegerHKL(cell) && peak->isSelected() && !peak->isMasked()) {
+                        if (peak->hasIntegerHKL(cell,0.2) && peak->isSelected() && !peak->isMasked()) {
                             minimizer.addPeak(*peak);
                             ++success;
                         }
@@ -204,7 +204,7 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
                         for (auto peak : _peaks) {
                             if (peak->isSelected() && !peak->isMasked()) {
                                 maxscore++;
-                                if (peak->hasIntegerHKL(cell))
+                                if (peak->hasIntegerHKL(cell,0.2))
                                     score++;
                             }
                         }

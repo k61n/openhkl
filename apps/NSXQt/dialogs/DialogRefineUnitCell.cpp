@@ -284,8 +284,10 @@ void DialogRefineUnitCell::on_pushButton_Refine_clicked()
     const auto& mapdata=_experiment->getData();
     for (auto data: mapdata) {
         const auto& peaks=data.second->getPeaks();
-        for (auto peak: peaks) {
-            if (peak->hasIntegerHKL(*_cell) && !peak->isMasked() && peak->isSelected()) {
+        for (auto peak: peaks)
+        {
+            if (peak->hasIntegerHKL(*_cell,0.2) && !peak->isMasked() && peak->isSelected())
+            {
                 _minimizer.addPeak(*peak);
                 nhits++;
             }

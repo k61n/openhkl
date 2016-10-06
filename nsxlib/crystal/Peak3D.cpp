@@ -67,6 +67,7 @@ Peak3D::Peak3D(std::shared_ptr<SX::Data::IData> data):
 		_hkl(Eigen::Vector3d::Zero()),
 		_peak(nullptr),
 		_bkg(nullptr),
+		_basis(nullptr),
 		_sampleState(nullptr),
 		_event(nullptr),
 		_source(nullptr),
@@ -75,7 +76,8 @@ Peak3D::Peak3D(std::shared_ptr<SX::Data::IData> data):
 		_scale(1.0),
 		_selected(true),
 		_masked(false),
-		_transmission(1.0)
+		_transmission(1.0),
+		_state()
 {
     linkData(data);
 }
@@ -101,6 +103,10 @@ Peak3D::Peak3D(const Peak3D& other):
 		_hkl(other._hkl),
 		_peak(other._peak == nullptr ? nullptr : other._peak->clone()),
 		_bkg(other._bkg == nullptr ? nullptr : other._bkg->clone()),
+		_projection(other._projection),
+		_projectionPeak(other._projectionPeak),
+		_projectionBkg(other._projectionBkg),
+		_basis(other._basis),
 		_sampleState(other._sampleState),
 		_event(other._event),
 		_source(other._source),
@@ -109,7 +115,8 @@ Peak3D::Peak3D(const Peak3D& other):
 		_scale(other._scale),
 		_selected(other._selected),
 		_masked(other._masked),
-		_transmission(other._transmission)
+		_transmission(other._transmission),
+		_state(other._state)
 {
 }
 
@@ -122,16 +129,14 @@ Peak3D& Peak3D::operator=(const Peak3D& other)
 		_data = other._data;
 		_hkl = other._hkl;
 
-		if (other._peak == nullptr)
-			_peak = nullptr;
-		else
-			_peak = other._peak->clone();
+		_peak == nullptr ? nullptr : other._peak->clone();
+		_bkg == nullptr ? nullptr : other._bkg->clone();
 
-		if (other._bkg == nullptr)
-			_bkg = nullptr;
-		else
-			_bkg = other._bkg->clone();
+		_projection = other._projection;
+		_projectionPeak = other._projectionPeak;
+		_projectionBkg = other._projectionBkg;
 
+		_basis = other._basis;
 		_sampleState = other._sampleState;
 		_event = other._event;
 		_source= other._source;
@@ -141,6 +146,8 @@ Peak3D& Peak3D::operator=(const Peak3D& other)
 		_selected = other._selected;
 		_masked = other._masked;
 		_transmission = other._transmission;
+
+		_state = other._state;
 
 	}
 
@@ -281,16 +288,20 @@ std::shared_ptr<SX::Crystal::UnitCell> Peak3D::getUnitCell() const
 	return _basis;
 }
 
-bool Peak3D::hasIntegerHKL(const SX::Crystal::UnitCell& basis)
+bool Peak3D::hasIntegerHKL(const SX::Crystal::UnitCell& basis, double tolerance)
 {
 	_hkl=basis.fromReciprocalStandard(this->getQ());
-	if (std::fabs(_hkl[0]-std::round(_hkl[0]))<0.2 && std::fabs(_hkl[1]-std::round(_hkl[1]))<0.2 && std::fabs(_hkl[2]-std::round(_hkl[2]))<0.2)
+	if (std::fabs(_hkl[0]-std::round(_hkl[0])) < tolerance &&
+		std::fabs(_hkl[1]-std::round(_hkl[1])) < tolerance &&
+		std::fabs(_hkl[2]-std::round(_hkl[2])) < tolerance)
 	{
 		_hkl[0]=std::round(_hkl[0]);
 		_hkl[1]=std::round(_hkl[1]);
 		_hkl[2]=std::round(_hkl[2]);
+
 		return true;
 	}
+
 	return false;
 }
 

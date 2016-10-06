@@ -156,6 +156,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+    qInstallMessageHandler(0);
     delete _ui;
 }
 
