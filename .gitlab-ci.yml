@@ -46,7 +46,6 @@ deploy:trusty:
   script:
     - ./build_server/debian/run_deploy.sh
   only:
-    - /^feature/.*$/
     - triggers
     - tags
     - develop
@@ -100,7 +99,6 @@ deploy:osx:
   script:
     - ./build_server/osx/run_deploy.sh
   only:
-    - /^feature/.*$/
     - triggers
     - tags
     - develop
@@ -116,7 +114,7 @@ deploy:osx:
 build:windows:
   stage: build
   script:
-    - .\build_server\windows\run_build.bat
+    - .\\build_server\\windows\\run_build.bat
   allow_failure: false
   only:
     - triggers
@@ -135,7 +133,7 @@ build:windows:
 test:windows:
   stage: test
   script:
-    - .\build_server\windows\run_tests.bat
+    - .\\build_server\\windows\\run_tests.bat
   allow_failure: false
   only:
     - triggers
@@ -149,69 +147,18 @@ test:windows:
   tags:
     - windows
 
-#windows-msvc:
-#  script:
-#    - dir C:\Users\ci\Libraries\libtiff
-#    - dir C:\Users\ci\Libraries\libtiff\lib
-#    - dir "C:\Program Files\HDF_Group\HDF5\1.8.17\bin\"
-#    - dir "C:\Program Files\HDF_Group\HDF5\1.8.17\"
-#    - dir "C:\Program Files\HDF_Group\HDF5\1.8.17\lib"
-#    - dir C:\Users\ci\Libraries
-#    - set SOURCE_DIR=%cd%
-#    - mkdir build
-#    - cd build
-#    - set BUILD_DIR=%cd%
-#    - set HDF5_ROOT=C:\Program Files\HDF_Group\HDF5\1.8.17
-#    - set QTDIR=C:\Qt\Qt5.6.1\5.6\msvc2015_64
-#    - set PATH=%QTDIR%\bin;%PATH%
-#    - set BOOST_ROOT=c:\local\boost_1_61_0
-#    - set BOOST_LIBRARYDIR=c:\local\boost_1_61_0\lib64-msvc-14.0
-#    - set FFTW_DIR=C:\Users\ci\Libraries\fftw
-#    - set PATH=C:\Users\ci\Libraries\eigen;%PATH%
-#    - set PATH=C:\Users\ci\Libraries\libtiff;%PATH%
-#    - set PATH=C:\Program Files\LLVM;%PATH%
-#    - call "C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\vcvarsall.bat"
-#    - cmake .. -G"Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Release
-#    - cmake --build . --config Release
-#    - cmake --build . --config Release --target install
-#    - set PATH=%BOOST_LIBRARYDIR%;%PATH%
-#    - set PATH=%FFTW_DIR%;%PATH%
-#    - set PATH=C:\Users\ci\Libraries\libtiff\lib;%PATH%
-#    - set PATH=C:\Program Files\HDF_Group\HDF5\1.8.17\bin;%PATH%
-#    - set PATH=%BUILD_DIR%\nsxlib\Release;%PATH%
-#    - ctest -V
-#  only:
-#    - master
-#    - develop
-#  tags:
-#    - windows
-
-
-#mac:
-#  script:
-#    - mkdir ./build
-#    - cd build
-#    - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_QTAPPS=OFF -DCMAKE_INSTALL_PREFIX=. ..
-#    - make -j4 -l4
-#    - make install
-#    - ctest -j4 -l4
-#    - rm CMakeCache.txt
-#    - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_QTAPPS=ON -DCMAKE_INSTALL_PREFIX=. -DCMAKE_PREFIX_PATH=/usr/local/Cellar/qt5/5.6.0/ ..
-#    - make -j4 -l4
-#    - make install
-#    - declare -x CPLUS_INCLUDE_PATH=/usr/local/include:/usr/local/opt/eigen/include/eigen3:/usr/local/opt/boost/include:${CI_PROJECT_DIR}/build/include/NSXTool
-#    - declare -x LIBRARY_PATH=${CI_PROJECT_DIR}/build/nsxlib:/usr/local/opt/boost/lib/:/usr/local/opt/fftw/lib/
-#    - mkdir qmake-build
-#    - cd qmake-build
-#    - /usr/local/opt/qt5/bin/qmake ${CI_PROJECT_DIR}/build/apps/NSXQt/NSXQt.pro CONFIG+=release
-#    - make -j4 -l4
-#    - /usr/local/opt/qt5/bin/macdeployqt nsxtool.app/ -dmg
+deploy:windows:
+  stage: deploy
+  script:
+    - .\\build_server\\windows\\run_deploy.bat
+  only:
+    - triggers
+    - tags
+    - develop
+  when: on_success
 #  artifacts:
 #    paths:
-#    - ${CI_PROJECT_DIR}/build/qmake-build/nsxtool*dmg
-#  only:
-#    - master
-#    - develop
-#  tags:
-#    - mac
+#    - ${CI_PROJECT_DIR}\\build\\windows\\nsxtool*exe
+  tags:
+    - windows
 
