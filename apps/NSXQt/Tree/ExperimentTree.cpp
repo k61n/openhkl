@@ -1,6 +1,7 @@
 #include "ui_MainWindow.h"
 #include "DialogConvolve.h"
 #include "ProgressHandler.h"
+#include "ProgressView.h"
 
 #include <memory>
 #include <stdexcept>
@@ -63,6 +64,11 @@
 #include "FriedelDialog.h"
 
 #include "RFactor.h"
+#include <hdf5.h>
+#include <H5Exception.h>
+
+#include "PeakFitDialog.h"
+
 
 using std::vector;
 using SX::Data::IData;
@@ -309,7 +315,11 @@ void ExperimentTree::importData()
            qWarning() << "Error reading numor: " + fileNames[i] + " " + QString(e.what());
            continue;
         }
-
+        catch(...)
+        {
+        	qWarning() << "Error reading numor: " + fileNames[i] + " reason not known:";
+        	continue;
+        }
         QStandardItem* item = new NumorItem(exp, data_ptr);
         item->setText(QString::fromStdString(basename));
         item->setCheckable(true);
@@ -702,4 +712,172 @@ void ExperimentTree::findFriedelPairs()
     //FriedelDialog* friedelDialog = new FriedelDialog(peaks, this);
     //friedelDialog->exec();
     //delete friedelDialog;
+}
+
+void ExperimentTree::integrateCalculatedPeaks()
+{
+    qDebug() << "Integrating calculated peaks...";
+
+    int count = 0;
+    Eigen::Vector3d peak_extent, bg_extent;
+    peak_extent << 0.0, 0.0, 0.0;
+    bg_extent << 0.0, 0.0, 0.0;
+
+    std::shared_ptr<UnitCell> unit_cell;
+
+    for (std::shared_ptr<IData> numor: getSelectedNumors()) {
+        for (Peak3D* peak: numor->getPeaks())
+            if ( peak && peak->isSelected() && !peak->isMasked() ) {
+                peak_extent += peak->getPeak()->getAABBExtents();
+                bg_extent += peak->getBackground()->getAABBExtents();
+                ++count;
+            }
+    }
+
+    if ( count == 0) {
+        qDebug() << "No peaks -- cannot search for equivalences!";
+        return;
+    }
+
+    peak_extent /= count;
+    bg_extent /= count;
+
+    qDebug() << "Done calculating average bounding box";
+
+    qDebug() << peak_extent(0) << " " << peak_extent(1) << " " << peak_extent(2);
+    qDebug() << bg_extent(0) << " " << bg_extent(1) << " " << bg_extent(2);
+
+    for (std::shared_ptr<IData> numor: getSelectedNumors()) {
+
+
+
+        std::vector<Peak3D*> calculated_peaks;
+
+        shared_ptr<Sample> sample = numor->getDiffractometer()->getSample();
+        int ncrystals = sample->getNCrystals();
+
+        if (ncrystals) {
+            for (int i = 0; i < ncrystals; ++i) {
+                SX::Crystal::SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
+                auto ub = sample->getUnitCell(i)->getReciprocalStandardM();
+
+                qDebug() << "Calculating peak locations...";
+
+                auto hkls = sample->getUnitCell(i)->generateReflectionsInSphere(1.5);
+                std::vector<SX::Crystal::PeakCalc> peaks = numor->hasPeaks(hkls, ub);
+                calculated_peaks.reserve(calculated_peaks.size() + peaks.size());
+
+                qDebug() << "Adding calculated peaks...";
+
+                for(auto&& p: peaks) {
+                    //calculated_peaks.push_back(p);
+                }
+            }
+        }
+
+        qDebug() << "Done.";
+    }
+}
+
+void ExperimentTree::peakFitDialog()
+{
+    qDebug() << "peakFitDialog() triggered";
+    PeakFitDialog* dialog = new PeakFitDialog(this);
+    dialog->exec();
+}
+
+void ExperimentTree::incorporateCalculatedPeaks()
+{
+    qDebug() << "Incorporating missing peaks into current data set...";
+
+    std::vector<std::shared_ptr<IData>> numors = getSelectedNumors();
+
+    std::shared_ptr<SX::Utils::ProgressHandler> handler(new SX::Utils::ProgressHandler);
+    ProgressView progressView(this);
+    progressView.watch(handler);
+
+    int current_numor = 0;
+
+    class compare_fn {
+    public:
+        auto operator()(const Eigen::RowVector3i a, const Eigen::RowVector3i b) -> bool
+        {
+            if (a(0) != b(0))
+                return a(0) < b(0);
+
+            if (a(1) != b(1))
+                return a(1) < b(1);
+
+            return a(2) < b(2);
+        }
+    };
+
+    int last_done = 0;
+
+    for(std::shared_ptr<IData> numor: numors) {
+        qDebug() << "Finding missing peaks for numor " << ++current_numor << " of " << numors.size();
+
+        std::vector<Peak3D*> calculated_peaks;
+
+        shared_ptr<Sample> sample = numor->getDiffractometer()->getSample();
+        int ncrystals = sample->getNCrystals();
+
+        for (int i = 0; i < ncrystals; ++i) {
+            SX::Crystal::SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
+            auto ub = sample->getUnitCell(i)->getReciprocalStandardM();
+
+            handler->setStatus("Calculating peak locations...");
+
+            //auto predicted_hkls = sample->getUnitCell(i)->generateReflectionsInSphere(1.5);
+            auto predicted_hkls = sample->getUnitCell(i)->generateReflectionsInSphere(1.0   );
+            std::vector<SX::Crystal::PeakCalc> peaks = numor->hasPeaks(predicted_hkls, ub);
+            calculated_peaks.reserve(peaks.size());
+
+            int current_peak = 0;
+
+            handler->setStatus("Building set of previously found peaks...");
+
+            std::set<Peak3D*> found_peaks = numor->getPeaks();
+            std::set<Eigen::RowVector3i, compare_fn> found_hkls;
+
+            for (Peak3D* p: found_peaks)
+                found_hkls.insert(p->getIntegerMillerIndices());
+
+
+            handler->setStatus("Adding calculated peaks...");
+
+            for(PeakCalc& p: peaks) {
+                ++current_peak;
+
+                Eigen::RowVector3i hkl(std::round(p._h), std::round(p._k), std::round(p._l));
+
+                // try to find this reflection in the list of peaks, skip if found
+                if (std::find(found_hkls.begin(), found_hkls.end(), hkl) != found_hkls.end() )
+                    continue;
+
+                // now we must add it, calculating shape from nearest peaks
+                Peak3D* new_peak = p.averagePeaks(numor, 200);
+
+                if (!new_peak)
+                    continue;
+
+                new_peak->setSelected(true);
+                calculated_peaks.push_back(new_peak);
+
+                int done = std::round(current_peak * 100.0 / peaks.size());
+
+                if ( done != last_done) {
+                    handler->setProgress(done);
+                    last_done = done;
+                }
+            }
+        }
+
+        for (Peak3D* peak: calculated_peaks)
+            numor->addPeak(peak);
+
+        numor->integratePeaks(handler);
+    }
+
+    qDebug() << "Done incorporating missing peaks.";
 }

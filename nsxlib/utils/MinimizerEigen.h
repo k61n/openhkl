@@ -43,9 +43,8 @@
 #include <unsupported/Eigen/NonLinearOptimization>
 #include <unsupported/Eigen/NumericalDiff>
 
-
-#include "IMinimizer.h"
 #include "LMFunctor.h"
+#include "IMinimizer.h"
 
 namespace SX {
 

@@ -55,7 +55,7 @@ public:
     explicit DetectorScene(QObject *parent = 0);
     std::shared_ptr<SX::Data::IData> getData();
     const rowMatrix& getCurrentFrame() const;
-    const std::map<SX::Crystal::Peak3D*,PeakGraphicsItem*>& getPeaksGraphicsItems() const;
+    //const std::map<SX::Crystal::Peak3D*,PeakGraphicsItem*>& getPeaksGraphicsItems() const;
 
 signals:
      //! Signal emitted for all changes of the image
@@ -86,6 +86,7 @@ public slots:
     void changeCursorMode(int);
     //!
     void showPeakLabels(bool);
+    void drawPeakBackground(bool);
     //!
     void showPeakCalcs(bool);
     void clearPeaks();
@@ -114,12 +115,16 @@ private:
     bool _itemSelected;
     QGraphicsPixmapItem* _image;
     //! Contains peaks item of current data, reinitialized with new data set.
-    std::map<SX::Crystal::Peak3D*,PeakGraphicsItem*> _peaks;
+    std::map<SX::Crystal::Peak3D*,PeakGraphicsItem*> _peakGraphicsItems;
     std::vector<PeakCalcGraphicsItem*> _peakCalcs;
     QList<MaskGraphicsItem*> _masks;
     SXGraphicsItem* _lastClickedGI;
     std::shared_ptr<SX::Crystal::UnitCell> _cell;
     std::unique_ptr<SX::Crystal::Indexer> _indexer;
+    std::vector<SX::Crystal::PeakCalc> _precalculatedPeaks;
+
+    bool _showPeakCalcs;
+
 
 };
 

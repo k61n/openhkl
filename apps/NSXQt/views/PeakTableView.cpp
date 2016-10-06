@@ -386,9 +386,29 @@ void PeakTableView::writeShelX()
         return;
     }
 
-    for (const SX::Crystal::Peak3D& peak : _peaks) {
-        if (peak.isSelected())  {
+    auto sptrBasis = _peaks[0].get().getUnitCell();
+    if (sptrBasis==nullptr)
+    {
+        qCritical()<<"No unit cell defined the peaks. No index can be defined.";
+        return;
+    }
+
+    for (SX::Crystal::Peak3D& peak : _peaks)
+    {
+        if (peak.isSelected())
+        {
             const Eigen::RowVector3d& hkl=peak.getMillerIndices();
+
+            auto sptrCurrentBasis = peak.getUnitCell();
+
+            if (sptrCurrentBasis!=sptrBasis)
+			{
+				qCritical()<<"Not all the peaks have the same unit cell. Multi crystal not implement yet";
+				return;
+			}
+
+            if (!(peak.hasIntegerHKL(*sptrCurrentBasis,0.2)))
+            	continue;
 
             file << std::fixed;
             file << std::setprecision(0);
@@ -407,8 +427,8 @@ void PeakTableView::writeShelX()
 
             double l=peak.getLorentzFactor();
             double t=peak.getTransmission();
-            file << std::fixed << std::setw(12) << std::setprecision(2) << peak.getScaledIntensity()/l/t;
-            file << std::fixed << std::setw(12) << std::setprecision(2) << peak.getScaledSigma()/l/t <<std::endl;
+            file << std::fixed << std::setw(8) << std::setprecision(2) << peak.getScaledIntensity()/l/t;
+            file << std::fixed << std::setw(8) << std::setprecision(2) << peak.getScaledSigma()/l/t <<std::endl;
         }
     }
     if (file.is_open())

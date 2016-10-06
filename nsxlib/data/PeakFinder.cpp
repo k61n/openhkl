@@ -178,41 +178,16 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
         }
 
         int count = 0;
+        std::shared_ptr<Detector> dect = numor->getDiffractometer()->getDetector();
+
         SX::Geometry::AABB<double,3> dAABB(
                     Eigen::Vector3d(0,0,0),
-                    Eigen::Vector3d(
-                        numor->getDiffractometer()->getDetector()->getNCols(),
-                        numor->getDiffractometer()->getDetector()->getNRows(),
-                        numor->getNFrames()-1)
-                    );
-        for (auto& blob : blobs)
-        {
-            Eigen::Vector3d center, eigenvalues;
-            Eigen::Matrix3d eigenvectors;
-            blob.second.toEllipsoid(_confidence, center, eigenvalues, eigenvectors);
-            SX::Crystal::Peak3D* p = new Peak3D(numor);
-            p->setPeakShape(new SX::Geometry::Ellipsoid3D(center,eigenvalues,eigenvectors));
-            eigenvalues[0]*=2.0;
-            eigenvalues[1]*=2.0;
-            eigenvalues[2]*=3.0;
-            p->setBackgroundShape(new SX::Geometry::Ellipsoid3D(center,eigenvalues,eigenvectors));
-            //
-            int f=std::floor(center[2]);
-
-            using ComponentState = SX::Instrument::ComponentState;
-
-            p->setSampleState(std::shared_ptr<ComponentState>(new ComponentState(numor->getSampleInterpolatedState(f))));
-            ComponentState detState=numor->getDetectorInterpolatedState(f);
-
-            using DetectorEvent = SX::Instrument::DetectorEvent;
-
-            p->setDetectorEvent(std::shared_ptr<DetectorEvent>(
-                                    new DetectorEvent(numor->getDiffractometer()->getDetector()->createDetectorEvent(
-                                                          center[0],center[1],detState.getValues()))
-                                    )
+                    Eigen::Vector3d(dect->getNCols(), dect->getNRows(), numor->getNFrames()-1)
                     );
 
-            p->setSource(numor->getDiffractometer()->getSource());
+        for (auto& blob : blobs) {
+
+            SX::Crystal::Peak3D* p = new Peak3D(numor, blob.second, _confidence);
 
             if (!dAABB.contains(*(p->getPeak())))
                 p->setSelected(false);
@@ -228,15 +203,6 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
             }
         }
 
-
-
-        //qDebug() << ">>>> integrating " << numor->getPeaks().size() << " peaks...";
-
-        // unused variable
-        // int peak_counter = 0;
-
-        //qDebug() << ">>>>>>>> initializing peak intensities...";
-
         if (_handler) {
             _handler->setStatus(("Integrating " + std::to_string(numor->getPeaks().size()) + " peaks...").c_str());
             _handler->setProgress(0);
@@ -244,8 +210,6 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
 
         for ( auto& peak: numor->getPeaks() )
             peak->framewiseIntegrateBegin();
-
-        //qDebug() << ">>>>>>>> iterating over data frames...";
 
         //progressDialog->setValue(0);
         //progressDialog->setLabelText("Integrating peak intensities...");
@@ -257,17 +221,12 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
             for ( auto& peak: numor->getPeaks() ) {
                 peak->framewiseIntegrateStep(frame, idx);
             }
-            //double progress = it->index() / static_cast<double>(numor->getNFrames()) * 100.0;
-            //progressDialog->setValue(static_cast<int>(progress));
-            //processEvents();
 
             if (_handler) {
                 double progress = it->index() * 100.0 / numor->getNFrames();
                 _handler->setProgress(progress);
             }
         }
-
-        //qDebug() << ">>>>>>>> finalizing peak calculation....";
 
         for ( auto& peak: numor->getPeaks() )
             peak->framewiseIntegrateEnd();
@@ -279,13 +238,6 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
         numor->close();
         //_ui->progressBar->setValue(++comp);
     }
-
-    //qDebug() << "Found " << npeaks << " peaks";
-    // Reinitialise progress bar
-    //_ui->progressBar->setValue(0);
-    //_ui->progressBar->setEnabled(false);
-
-    //_ui->_dview->getScene()->updatePeaks();
 
     if (_handler) {
         _handler->setStatus("Peak finding completed.");

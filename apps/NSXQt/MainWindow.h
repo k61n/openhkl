@@ -64,6 +64,9 @@ signals:
     void findSpaceGroup();
     void computeRFactors();
     void findFriedelPairs();
+    void integrateCalculatedPeaks();
+    void peakFitDialog();
+    void incorporateCalculatedPeaks();
 private slots:
 //    void on_action_open_triggered();
 
@@ -89,7 +92,12 @@ private slots:
     void on_actionFind_space_group_triggered();
     void on_actionFind_Friedel_pairs_triggered();
     void on_actionCompute_R_factors_triggered();
+    void on_actionIntegrate_calculated_peaks_triggered();
+    void on_actionPeak_fit_dialog_triggered();
 
+    void on_actionDraw_peak_background_triggered(bool checked);
+    void on_actionRemove_bad_peaks_triggered(bool checked);
+    void on_actionIncorporate_calculated_peaks_triggered(bool checked);
 
 public slots:
     void changeData(std::shared_ptr<SX::Data::IData>);

@@ -9,6 +9,7 @@
 	France
 	chapon[at]ill.fr
     pellegrini[at]ill.fr
+    j.fisher[at]fz-juelide.de
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU Lesser General Public
@@ -40,6 +41,10 @@
 namespace SX
 {
 
+namespace Geometry {
+class Blob3D;
+}
+
 namespace Data
 {
 	class IData;
@@ -63,6 +68,7 @@ class Peak3D
 public:
 
     Peak3D(std::shared_ptr<SX::Data::IData> data=std::shared_ptr<SX::Data::IData>());
+    Peak3D(std::shared_ptr<SX::Data::IData> data, const SX::Geometry::Blob3D& blob, double confidence);
 	Peak3D(const Peak3D& other);
 	Peak3D& operator=(const Peak3D& other);
 	~Peak3D();
@@ -141,7 +147,7 @@ public:
     void setSource(std::shared_ptr<SX::Instrument::Source> source);
    	bool setUnitCell(std::shared_ptr<SX::Crystal::UnitCell> basis);
    	std::shared_ptr<SX::Crystal::UnitCell> getUnitCell() const;
-	bool hasIntegerHKL(const SX::Crystal::UnitCell& basis);
+	bool hasIntegerHKL(const SX::Crystal::UnitCell& basis, double tolerance=0.2);
 	friend bool operator<(const Peak3D& p1, const Peak3D& p2);
 	void setSelected(bool);
 	bool isSelected() const;
@@ -150,10 +156,16 @@ public:
 	void setTransmission(double transmission);
 	double getTransmission() const;
 
+    void scalePeakShape(double scale);
+    void scaleBackgroundShape(double scale);
+
     // testing: new implementation of integration
     void framewiseIntegrateBegin();
     void framewiseIntegrateStep(Eigen::MatrixXi& frame, unsigned int idx);
     void framewiseIntegrateEnd();
+
+    //! compute P value that there is actually an observed peak, assuming Poisson statistics
+    double pValue();
 
 private:
 	//! Pointer to the data containing the peak
@@ -168,6 +180,10 @@ private:
 	Eigen::VectorXd _projection;
 	Eigen::VectorXd _projectionPeak;
 	Eigen::VectorXd _projectionBkg;
+    Eigen::VectorXd _pointsPeak;
+    Eigen::VectorXd _pointsBkg;
+    Eigen::VectorXd _countsPeak;
+    Eigen::VectorXd _countsBkg;
 	//!
 	std::shared_ptr<SX::Crystal::UnitCell> _basis;
 	//! Pointer to the state of the Sample Component
@@ -176,7 +192,8 @@ private:
     std::shared_ptr<SX::Instrument::DetectorEvent> _event;
 	//!
     std::shared_ptr<SX::Instrument::Source> _source;
-	double _counts, _countsSigma;
+	double _counts;
+	double _countsSigma;
 	double _scale;
 	bool _selected;
 	bool _masked;

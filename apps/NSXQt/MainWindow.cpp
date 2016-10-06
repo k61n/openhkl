@@ -71,6 +71,8 @@
 #include "SpaceGroup.h"
 #include "SpaceGroupSymbols.h"
 
+#include "Peak3D.h"
+
 // jmf debug testing
 #include <functional>
 extern std::function<void(void)> processEvents;
@@ -137,6 +139,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this, SIGNAL(findSpaceGroup(void)), _ui->experimentTree, SLOT(findSpaceGroup()));
     connect(this, SIGNAL(computeRFactors(void)), _ui->experimentTree, SLOT(computeRFactors()));
     connect(this,SIGNAL(findFriedelPairs(void)), _ui->experimentTree, SLOT(findFriedelPairs()));
+    connect(this, SIGNAL(integrateCalculatedPeaks()), _ui->experimentTree, SLOT(integrateCalculatedPeaks()));
+    connect(this, SIGNAL(peakFitDialog()), _ui->experimentTree, SLOT(peakFitDialog()));
+    connect(this, SIGNAL(incorporateCalculatedPeaks()), _ui->experimentTree, SLOT(incorporateCalculatedPeaks()));
 
     _ui->plotterDockWidget->show();
     _ui->dockWidget_Property->show();
@@ -151,6 +156,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+    qInstallMessageHandler(0);
     delete _ui;
 }
 
@@ -442,4 +448,75 @@ void MainWindow::on_actionCompute_R_factors_triggered()
 {
     emit computeRFactors();
     // emit findFriedelPairs();
+}
+
+void MainWindow::on_actionIntegrate_calculated_peaks_triggered()
+{
+    emit integrateCalculatedPeaks();
+}
+
+void MainWindow::on_actionPeak_fit_dialog_triggered()
+{
+    emit peakFitDialog();
+}
+
+void MainWindow::on_actionDraw_peak_background_triggered(bool checked)
+{
+    _ui->_dview->getScene()->drawPeakBackground(checked);
+}
+
+void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
+{
+    const double pmax = 0.01;
+
+    int total_peaks = 0;
+    int remaining_peaks = 0;
+
+    std::vector<std::shared_ptr<IData>> numors = _ui->experimentTree->getSelectedNumors();
+    std::vector<Peak3D*> bad_peaks;
+
+    for (std::shared_ptr<IData> numor: numors) {
+        std::set<Peak3D*>& peaks = numor->getPeaks();
+
+        total_peaks += peaks.size();
+
+        for (std::set<Peak3D*>::iterator it = peaks.begin(); it != peaks.end();) {
+            if ( (*it)->isMasked() || !(*it)->isSelected() ) {
+                bad_peaks.push_back(*it);
+                it = peaks.erase(it);
+            }
+            else if ((*it)->pValue() >= pmax) {
+                bad_peaks.push_back(*it);
+                it = peaks.erase(it);
+            }
+            else {
+                bool correctly_indexed = false;
+
+                for (int i = 0; i < numor->getDiffractometer()->getSample()->getNCrystals(); ++i) {
+                    SX::Crystal::UnitCell cell = *numor->getDiffractometer()->getSample()->getUnitCell(i);
+                    if ( (*it)->hasIntegerHKL(cell) ) {
+                        correctly_indexed = true;
+                        break;
+                    }
+                }
+                if (!correctly_indexed) {
+                    bad_peaks.push_back(*it);
+                    it = peaks.erase(it);
+                }
+                else
+                    ++it;
+            }
+        }
+    }
+
+    qDebug() << "Eliminated " << bad_peaks.size() << " out of " << total_peaks << " total peaks.";
+    _ui->_dview->getScene()->updatePeaks();
+
+    for (Peak3D* peak: bad_peaks)
+        delete peak;
+}
+
+void MainWindow::on_actionIncorporate_calculated_peaks_triggered(bool checked)
+{
+    emit incorporateCalculatedPeaks();
 }

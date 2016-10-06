@@ -80,7 +80,7 @@ find_package(FFTW REQUIRED)
 include_directories(${FFTW_INCLUDE_DIR})
 
 # GNU scientific library
-find_package(GSL)
+find_package(GSL 2.0)
 
 if(GSL_FOUND)
   include_directories(${GSL_INCLUDE_DIR})
