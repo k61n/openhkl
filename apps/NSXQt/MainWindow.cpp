@@ -467,7 +467,9 @@ void MainWindow::on_actionDraw_peak_background_triggered(bool checked)
 
 void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
 {
-    const double pmax = 0.01;
+    //const double pmax = 2.873e-7; // corresponds to 5 sigma
+    // const double pmax = 3e-5; // corresponds to 4 sigma
+    const double pmax = 1e-3;
 
     int total_peaks = 0;
     int remaining_peaks = 0;

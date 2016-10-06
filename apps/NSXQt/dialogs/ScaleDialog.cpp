@@ -232,6 +232,8 @@ void ScaleDialog::calculateRFactors()
 
         _averages[i] = average;
 
+        assert(average > 0.0);
+
         I_total += n*average;
 
         const double Fmeas = std::sqrt(n / (n-1));
@@ -315,7 +317,7 @@ void ScaleDialog::refineScale()
 
             for (Peak3D* peak: _peaks[i]) {
                 double z = peak->getPeak()->getAABBCenter()[2];
-                residuals(idx++) = sqrt(fabs(getScale(z) * peak->getScaledIntensity() / average - 1.0));
+                residuals(idx++) = getScale(z) * peak->getScaledIntensity() - average;
             }
         }
 
@@ -331,6 +333,11 @@ void ScaleDialog::refineScale()
     resetScale();
 
     minimizer.initialize(_scaleParams.size(), _values);
+
+    minimizer.setxTol(1e-15);
+    minimizer.setfTol(1e-15);
+    minimizer.setgTol(1e-15);
+
     minimizer.setParams(_scaleParams);
 
     minimizer.set_f(residual_fn);
@@ -352,6 +359,6 @@ double ScaleDialog::getScale(double z)
 {
     // simple polynomial in the frame number
     auto& p = _scaleParams;
-    return 1.0 + z*(p[0] + z*(p[1] + z*(p[2] + z*p[3])));
+    return (1.0 /*+ z*p[0] + z*z*p[1]*/) * std::exp(z*p[2] + z*z*p[3]);
 }
 
