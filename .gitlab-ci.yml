@@ -50,6 +50,8 @@ deploy:trusty:
     - tags
     - develop
   when: on_success
+  dependencies:
+    - build:trusty
   artifacts:
     paths:
     - nsxtool*deb
@@ -103,6 +105,8 @@ deploy:osx:
     - tags
     - develop
   when: on_success
+  dependencies:
+    - build:osx
   artifacts:
     paths:
     - ${CI_PROJECT_DIR}/build/qmake-build/nsxtool*dmg
@@ -156,6 +160,8 @@ deploy:windows:
     - tags
     - develop
   when: on_success
+  dependencies:
+    - build:windows
 #  artifacts:
 #    paths:
 #    - ${CI_PROJECT_DIR}\\build\\windows\\nsxtool*exe
