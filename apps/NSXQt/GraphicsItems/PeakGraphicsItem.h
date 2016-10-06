@@ -1,6 +1,8 @@
 #ifndef PEAKGRAPHICSITEM_H
 #define PEAKGRAPHICSITEM_H
 
+#include <QPointF>
+
 #include <string>
 
 #include "PlottableGraphicsItem.h"
@@ -39,14 +41,24 @@ public:
     SX::Crystal::Peak3D* getPeak();
 
     static void setLabelVisible(bool flag=true);
+    static void drawBackground(bool flag);
 
 private:
+    struct Ellipse {
+        double a, b, u, v, alpha;
+    };
+
+    static Ellipse calculateEllipse(const SX::Geometry::IShape<double, 3>& shape, int frame);
+    static void drawEllipse(QPainter& painter, Ellipse ellipse);
 
     //! Pointer to the Peak3D object
     SX::Crystal::Peak3D* _peak;
     //! (h,k,l) index visible in GraphicsScene
     static bool _labelVisible;
+    static bool _drawBackground;
 
+    Ellipse _peakEllipse;
+    Ellipse _bkgEllipse;
 };
 
 #endif // PEAKGRAPHICSITEM_H

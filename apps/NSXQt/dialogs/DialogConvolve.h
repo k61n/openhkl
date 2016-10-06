@@ -18,7 +18,6 @@
 
 #include "Convolver.h"
 #include "ConvolutionKernel.h"
-#include "models/PeakFindModel.h"
 #include "PeakFinder.h"
 
 

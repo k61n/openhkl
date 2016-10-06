@@ -123,6 +123,9 @@ public:
 
 
     void eliminateBlobs();
+
+
+
 private:
     double _threshold;
     double _confidence;

@@ -1,3 +1,38 @@
+/*
+ * nsxtool : Neutron Single Crystal analysis toolkit
+ ------------------------------------------------------------------------------------------
+ Copyright (C)
+ 2016- Laurent C. Chapon, Eric Pellegrini, Jonathan Fisher
+
+ Institut Laue-Langevin
+ BP 156
+ 6, rue Jules Horowitz
+ 38042 Grenoble Cedex 9
+ France
+ chapon[at]ill.fr
+ pellegrini[at]ill.fr
+
+ Forshungszentrum Juelich GmbH
+ 52425 Juelich
+ Germany
+ j.fisher[at]fz-juelich.de
+
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+
+ You should have received a copy of the GNU Lesser General Public
+ License along with this library; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ */
+
 #include <cmath>
 #include <stdexcept>
 
@@ -12,8 +47,15 @@
 #include "Sample.h"
 #include "Source.h"
 #include "Units.h"
+#include "Blob3D.h"
+#include "IData.h"
+#include "BlobFinder.h" // needed for Ellipsoid3D typedef
 
 #include "IFrameIterator.h"
+
+using SX::Geometry::Blob3D;
+
+using SX::Data::IFrameIterator;
 
 namespace SX
 {
@@ -21,7 +63,7 @@ namespace Crystal
 {
 
 Peak3D::Peak3D(std::shared_ptr<SX::Data::IData> data):
-		_data(data),
+        _data(nullptr),
 		_hkl(Eigen::Vector3d::Zero()),
 		_peak(nullptr),
 		_bkg(nullptr),
@@ -37,6 +79,23 @@ Peak3D::Peak3D(std::shared_ptr<SX::Data::IData> data):
 		_transmission(1.0),
 		_state()
 {
+    linkData(data);
+}
+
+Peak3D::Peak3D(std::shared_ptr<Data::IData> data, const Blob3D &blob, double confidence):
+    Peak3D(data)
+{
+    Eigen::Vector3d center, eigenvalues;
+    Eigen::Matrix3d eigenvectors;
+
+    blob.toEllipsoid(confidence, center, eigenvalues, eigenvectors);
+    setPeakShape(new SX::Geometry::Ellipsoid3D(center,eigenvalues,eigenvectors));
+
+    eigenvalues[0]*=2.0;
+    eigenvalues[1]*=2.0;
+    eigenvalues[2]*=3.0;
+
+    setBackgroundShape(new SX::Geometry::Ellipsoid3D(center,eigenvalues,eigenvectors));
 }
 
 Peak3D::Peak3D(const Peak3D& other):
@@ -107,6 +166,8 @@ Peak3D::~Peak3D()
 void Peak3D::linkData(std::shared_ptr<SX::Data::IData> data)
 {
     _data = data;
+    if (_data)
+        setSource(_data->getDiffractometer()->getSource());
 }
 
 void Peak3D::unlinkData()
@@ -117,6 +178,24 @@ void Peak3D::unlinkData()
 void Peak3D::setPeakShape(SX::Geometry::IShape<double,3>* p)
 {
 	_peak=p;
+
+    Eigen::Vector3d center = _peak->getAABBCenter();
+
+    //
+    int f=std::floor(center[2]);
+
+    using ComponentState = SX::Instrument::ComponentState;
+
+    setSampleState(std::shared_ptr<ComponentState>(new ComponentState(_data->getSampleInterpolatedState(f))));
+    ComponentState detState = _data->getDetectorInterpolatedState(f);
+
+    using DetectorEvent = SX::Instrument::DetectorEvent;
+
+    setDetectorEvent(std::shared_ptr<DetectorEvent>(
+                            new DetectorEvent(_data->getDiffractometer()->getDetector()->createDetectorEvent(
+                                                  center[0],center[1],detState.getValues()))
+                            )
+            );
 }
 
 void Peak3D::setBackgroundShape(SX::Geometry::IShape<double,3>* b)
@@ -145,133 +224,19 @@ void Peak3D::integrate()
 {
 	if (!_data)
 		return;
-	// Get the lower and upper limit of the bkg Bounding box
-	const Eigen::Vector3d& lower=_bkg->getLower();
-	const Eigen::Vector3d& upper=_bkg->getUpper();
 
-	//
-	unsigned int data_start=static_cast<int>(std::floor(lower[2]));
-	unsigned int data_end=static_cast<int>(std::ceil(upper[2]));
+    framewiseIntegrateBegin();
 
-	unsigned int start_x=static_cast<int>(std::floor(lower[0]));
-	unsigned int end_x=static_cast<int>(std::ceil(upper[0]));
+    unsigned int idx = _state.data_start;
+    std::unique_ptr<IFrameIterator> it = _data->getIterator(idx);
 
-	unsigned int start_y=static_cast<int>(std::floor(lower[1]));
-	unsigned int end_y=static_cast<int>(std::ceil(upper[1]));
+    for(; idx <= _state.data_end; it->advance(), ++idx) {
+        Eigen::MatrixXi frame = it->getFrame().cast<int>();
+        framewiseIntegrateStep(frame, idx);
+    }
 
-	if (lower[0] < 0)
-		start_x=0;
-	if (lower[1] < 0)
-		start_y=0;
-	if (lower[2] < 0)
-		data_start=0;
-
-    if (end_x > _data->getNCols()-1)
-		end_x=_data->getNCols()-1;
-    if (end_y > _data->getNRows()-1)
-		end_y=_data->getNRows()-1;
-    if (data_end > _data->getNFrames()-1)
-		data_end=_data->getNFrames()-1;
-
-	Eigen::Vector4d point1;
-
-	// Allocate all vectors
-	_projection=Eigen::VectorXd::Zero(data_end-data_start+1);
-	_projectionPeak=Eigen::VectorXd::Zero(data_end-data_start+1);
-	_projectionBkg=Eigen::VectorXd::Zero(data_end-data_start+1);
-
-	int dx = end_x-start_x;
-	int dy = end_y-start_y;
-
-    unsigned int z = data_start;
-
-    for (auto it = _data->getIterator(data_start); it->index() != data_end; it->advance(), ++z)
-	{
-        auto frame = it->getFrame();
-		int pointsinpeak=0;
-		int pointsinbkg=0;
-		double intensityP=0;
-		double intensityBkg=0;
-		_projection[z-data_start]+=frame.block(start_y,start_x,dy,dx).sum();
-		for (unsigned int x=start_x;x<=end_x;++x)
-		{
-			for (unsigned int y=start_y;y<=end_y;++y)
-			{
-				int intensity=frame(y,x);
-				point1 << x+0.5,y+0.5,z,1;
-				bool inbackground = (_bkg->isInsideAABB(point1) && _bkg->isInside(point1));
-				bool inpeak = (_peak->isInsideAABB(point1) && _peak->isInside(point1));
-
-				if (inpeak)
-				{
-					intensityP+=intensity;
-					pointsinpeak++;
-				}
-				else if (inbackground)
-				{
-					intensityBkg+=intensity;
-					pointsinbkg++;
-				}
-				else
-					continue;
-			}
-		}
-
-		if (pointsinbkg == 0)
-			throw std::runtime_error("No background defined around the peak");
-
-		if (pointsinpeak>0)
-			_projectionPeak[z-data_start]=intensityP-intensityBkg*static_cast<double>(pointsinpeak)/static_cast<double>(pointsinbkg);
-
-	}
-
-	// Quick fix determine the limits of the peak range
-	int datastart=0;
-	int dataend=0;
-	bool startfound=false;
-	for (int i=0;i<_projectionPeak.size();++i)
-	{
-		if (!startfound && std::fabs(_projectionPeak[i])>1e-6)
-		{
-			datastart=i;
-			startfound=true;
-		}
-		if (startfound)
-		{
-			if (std::fabs(_projectionPeak[i])<1e-6)
-			{
-				dataend=i;
-				break;
-			}
-		}
-
-	}
-	//
-
-	Eigen::VectorXd bkg=_projection-_projectionPeak;
-	if (datastart>1)
-		datastart--;
-
-	// Safety check
-	if (datastart==dataend)
-		return;
-
-	double bkg_left=bkg[datastart];
-	double bkg_right=bkg[dataend];
-	double diff;
-    for (int i=datastart;i<dataend;++i)
-    {
-		diff=bkg[i]-(bkg_left+static_cast<double>((i-datastart))/static_cast<double>((dataend-datastart))*(bkg_right-bkg_left));
-		if (diff>0)
-			_projectionPeak[i]+=diff;
-	}
-	_projectionBkg=_projection-_projectionPeak;
-
-	_counts = _projectionPeak.sum();
-	_countsSigma = std::sqrt(_counts);
-
-
-	return;
+    framewiseIntegrateEnd()
+;
 }
 
 Eigen::VectorXd Peak3D::getProjection() const
@@ -356,7 +321,17 @@ double Peak3D::getScaledIntensity() const
 
 double Peak3D::getTransmission() const
 {
-	return _transmission;
+    return _transmission;
+}
+
+void Peak3D::scalePeakShape(double scale)
+{
+    _peak->scale(scale);
+}
+
+void Peak3D::scaleBackgroundShape(double scale)
+{
+    _bkg->scale(scale);
 }
 
 double Peak3D::getRawSigma() const
@@ -531,9 +506,13 @@ void Peak3D::framewiseIntegrateBegin()
 		_state.data_end=_data->getNFrames()-1;
 
 	// Allocate all vectors
-	_projection=Eigen::VectorXd::Zero(_state.data_end-_state.data_start+1);
-	_projectionPeak=Eigen::VectorXd::Zero(_state.data_end-_state.data_start+1);
-	_projectionBkg=Eigen::VectorXd::Zero(_state.data_end-_state.data_start+1);
+    _projection = Eigen::VectorXd::Zero(_state.data_end - _state.data_start + 1);
+    _projectionPeak = Eigen::VectorXd::Zero(_state.data_end - _state.data_start + 1);
+    _projectionBkg = Eigen::VectorXd::Zero(_state.data_end - _state.data_start + 1);
+    _pointsPeak = Eigen::VectorXd::Zero(_state.data_end - _state.data_start + 1);
+    _pointsBkg = Eigen::VectorXd::Zero(_state.data_end - _state.data_start + 1);
+    _countsPeak = Eigen::VectorXd::Zero(_state.data_end - _state.data_start + 1);
+    _countsBkg = Eigen::VectorXd::Zero(_state.data_end - _state.data_start + 1);
 
 	_state.dx = _state.end_x - _state.start_x;
 	_state.dy = _state.end_y - _state.start_y;
@@ -580,6 +559,13 @@ void Peak3D::framewiseIntegrateStep(Eigen::MatrixXi& frame, unsigned int idx)
             }
         }
     }
+
+    _pointsPeak[idx-_state.data_start] = pointsinpeak;
+    _pointsBkg[idx-_state.data_start] = pointsinbkg;
+
+    _countsPeak[idx-_state.data_start] = intensityP;
+    _countsBkg[idx-_state.data_start] = intensityBkg;
+
     if (pointsinpeak>0)
         _projectionPeak[idx-_state.data_start]=intensityP-intensityBkg*pointsinpeak/pointsinbkg;
     
@@ -632,13 +618,35 @@ void Peak3D::framewiseIntegrateEnd()
 		if (diff>0)
 			_projectionPeak[i]+=diff;
 	}
+
+    // note: this "background" simply refers to anything in the AABB but NOT in the peak
 	_projectionBkg=_projection-_projectionPeak;
 
 	_counts = _projectionPeak.sum();
-	_countsSigma = std::sqrt(_counts);
+    _countsSigma = std::sqrt(std::abs(_counts));
 
+    return;
+}
 
-	return;
+double Peak3D::pValue()
+{
+    // assumption: all background pixel counts are Poisson processes with rate R
+    // therefore, we can estimate the rate R as below:
+    const double R = _countsBkg.sum() / _pointsBkg.sum();
+
+    // null hypothesis: the pixels inside the peak are Poisson processes with rate R
+    // therefore, by central limit theorem the average value
+    const double avg = _countsPeak.sum() / _pointsPeak.sum();
+    // is normal with mean R and variance:
+    const double var = R / _pointsPeak.sum();
+
+    // thus we obtain the following standard normal variable
+    const double z = (avg-R) / std::sqrt(var);
+
+    // compute the p value
+    const double p = 1.0 - 0.5 * (1.0 + std::erf(z / std::sqrt(2)));
+
+    return p;
 }
    
 }

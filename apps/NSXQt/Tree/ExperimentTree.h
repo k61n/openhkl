@@ -59,6 +59,8 @@ public slots:
     void computeRFactors();
     void findFriedelPairs();
     void integrateCalculatedPeaks();
+    void peakFitDialog();
+    void incorporateCalculatedPeaks();
 
 private:
 
