@@ -66,6 +66,7 @@
 #include "PeakFinder.h"
 #include "ProgressHandler.h"
 
+#include "Session.h"
 #include "JobHandler.h"
 
 #include "SpaceGroup.h"
@@ -83,11 +84,13 @@ using SX::Types::RealMatrix;
 using SX::Utils::ProgressHandler;
 using SX::Data::PeakFinder;
 
+
 MainWindow::MainWindow(QWidget *parent)
 : QMainWindow(parent),
   _ui(new Ui::MainWindow),
   //_experiments(),
-  _currentData(nullptr)
+  _currentData(nullptr),
+  _session(new Session)
 {
     _ui->setupUi(this);
     // Set Date to the application window title
@@ -157,7 +160,42 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     qInstallMessageHandler(0);
+    delete _session;
     delete _ui;
+}
+
+void MainWindow::on_actionNew_session_triggered()
+{
+    qDebug() << "new session: not implemented yet";
+}
+
+void MainWindow::on_actionSave_session_triggered()
+{
+    qDebug() << "save session: not implemented yet";
+}
+
+void MainWindow::on_actionSave_session_as_triggered()
+{
+    qDebug() << "save session as: not implemented yet";
+}
+
+void MainWindow::on_actionLoad_session_triggered()
+{
+    qDebug() << "load session: not implemented yet";
+}
+
+void MainWindow::on_actionAbout_triggered()
+{
+    qDebug() << "about triggered";
+    // Show splash
+    QImage splashScrImage(":/resources/splashScreen.png");
+    QPixmap Logo;
+    Logo.convertFromImage(splashScrImage);
+    QSplashScreen* splashScrWindow = new QSplashScreen(this, Logo, Qt::WindowStaysOnTopHint);
+    QSize screenSize = QApplication::desktop()->geometry().size();
+    splashScrWindow->move(screenSize.width()/2-300,screenSize.height()/2-150);
+    splashScrWindow->show();
+
 }
 
 Ui::MainWindow* MainWindow::getUI() const

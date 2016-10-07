@@ -1358,9 +1358,26 @@ border-radius: 4px;
     <addaction name="actionConvert_to_HDF5"/>
     <addaction name="separator"/>
    </widget>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionNew_session"/>
+    <addaction name="actionSave_session"/>
+    <addaction name="actionSave_session_as"/>
+    <addaction name="actionLoad_session"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAbout"/>
+   </widget>
+   <addaction name="menuFile"/>
    <addaction name="menu_Options"/>
    <addaction name="menuChemistry"/>
    <addaction name="menuUtils"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <property name="minimumSize">
@@ -1768,6 +1785,31 @@ QDockWidget::title {
   <action name="actionIncorporate_calculated_peaks">
    <property name="text">
     <string>Incorporate calculated peaks</string>
+   </property>
+  </action>
+  <action name="actionNew_session">
+   <property name="text">
+    <string>New session</string>
+   </property>
+  </action>
+  <action name="actionSave_session">
+   <property name="text">
+    <string>Save session</string>
+   </property>
+  </action>
+  <action name="actionSave_session_as">
+   <property name="text">
+    <string>Save session as...</string>
+   </property>
+  </action>
+  <action name="actionLoad_session">
+   <property name="text">
+    <string>Load session</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About...</string>
    </property>
   </action>
  </widget>

@@ -16,11 +16,13 @@
 #include "Experiment.h"
 #include "Logger.h"
 
+
 #include "JobHandler.h"
 #include "views/ProgressView.h"
 
 class QListWidgetItem;
 class PlottableGraphicsItem;
+class Session;
 
 namespace Ui
 {
@@ -70,6 +72,12 @@ signals:
 private slots:
 //    void on_action_open_triggered();
 
+    void on_actionNew_session_triggered();
+    void on_actionSave_session_triggered();
+    void on_actionSave_session_as_triggered();
+    void on_actionLoad_session_triggered();
+
+    void on_actionAbout_triggered();
 
     void on_actionPixel_position_triggered();
     void on_actionGamma_Nu_triggered();
@@ -115,6 +123,8 @@ private:
     std::shared_ptr<SX::Data::PeakFinder> _peakFinder;
     std::shared_ptr<SX::Imaging::Convolver> _convolver;
     //threshold, confidence, minComp, maxComp
+
+    Session* _session;
 };
 
 #endif // MAINWINDOW_H
