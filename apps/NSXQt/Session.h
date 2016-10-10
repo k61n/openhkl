@@ -36,50 +36,72 @@
 #ifndef NSXTOOL_SESSION_H_
 #define NSXTOOL_SESSION_H_
 
-#include <QObject>
-
-#include <functional>
 #include <memory>
 #include <string>
-#include <map>
+#include <vector>
+#include <memory>
+
+#include <QPoint>
+#include <QStandardItem>
+#include <QStandardItemModel>
+#include <QTreeView>
 
 #include "Experiment.h"
+#include "ProgressHandler.h"
+#include "PeakFinder.h"
 
-//! SessionListener class. Any object derived from this class will be notified
-//! of any state changes to the corresponding instance of Session
-class SessionListener : public QObject {
-    Q_OBJECT
-public:
-    virtual ~SessionListener() {}
+using namespace SX::Instrument;
 
-signals:
+class ExperimentItem;
 
-public slots:
-    virtual void addExperiment(const std::string& name, const SX::Instrument::Experiment& experiment);
+namespace SX
+{
+namespace Data
+{
+    class IData;
+}
+}
 
-private:
-};
-
-//! Session contains the global state of the work session (experiments, data sets, etc.)
-//! Any time the state is modified, it broadcasts corresponding signal to all listeners.
 class Session : public QObject
 {
     Q_OBJECT
 public:
+    explicit Session(QWidget *parent = 0);
     ~Session();
 
-    //! Automatically connect signals and slots
-    void addListener(SessionListener* hook);
+    void addExperiment(const std::string& experimentName, const std::string& instrumentName);
+    std::vector<std::shared_ptr<SX::Data::IData>> getSelectedNumors() const;
+    std::vector<std::shared_ptr<SX::Data::IData>> getSelectedNumors(ExperimentItem* item) const;
 
-    void addExperiment(const std::string& name, const std::string& instrumentName);
+    // ExperimentItem* getExperimentItem(Experiment* exp); // no longer used?
 
 signals:
-    void addExperiment(const std::string& name, const SX::Instrument::Experiment& experiment);
+    void plotData(std::shared_ptr<SX::Data::IData>);
+    void showPeakList(std::vector<std::shared_ptr<SX::Data::IData>>);
+    void inspectWidget(QWidget*);
+public slots:
+
+
+    void importData();
+    void findPeaks(const QModelIndex& index);
+
+    void createNewExperiment();
+
+    void absorptionCorrection();
+    void showPeaksOpenGL();
+    void findSpaceGroup();
+    void computeRFactors();
+    void findFriedelPairs();
+    void integrateCalculatedPeaks();
+    void peakFitDialog();
+    void incorporateCalculatedPeaks();
 
 private:
-    std::map<std::string, SX::Instrument::Experiment*> _experiments;
+
+    QStandardItemModel* _model;
+
+    std::shared_ptr<SX::Utils::ProgressHandler> _progressHandler;
+    std::shared_ptr<SX::Data::PeakFinder> _peakFinder;
 };
-
-
 
 #endif // NSXTOOL_SESSION_H_
