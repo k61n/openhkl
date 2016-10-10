@@ -72,7 +72,7 @@
 #include "Tree/DataItem.h"
 #include "Tree/DetectorItem.h"
 #include "Tree/ExperimentItem.h"
-#include "Session.h"
+#include "models/SessionModel.h"
 #include "Tree/TreeItem.h"
 #include "Tree/InstrumentItem.h"
 #include "Tree/NumorItem.h"
@@ -115,11 +115,9 @@ using SX::Data::IData;
 using std::shared_ptr;
 using SX::Utils::ProgressHandler;
 
-Session::Session(QWidget *parent) : QObject(parent)
+SessionModel::SessionModel()
 {
 
-
-    _model=new QStandardItemModel(this);
 
 
 
@@ -129,13 +127,13 @@ Session::Session(QWidget *parent) : QObject(parent)
     connect(this,SIGNAL(clicked(QModelIndex)),this,SLOT(onSingleClick(QModelIndex)));
 }
 
-Session::~Session()
+SessionModel::~SessionModel()
 {
     // _model should be deleted automatically during destructor by QT
     //delete _model;
 }
 
-void Session::createNewExperiment()
+void SessionModel::createNewExperiment()
 {
     DialogExperiment* dlg;
 
@@ -168,56 +166,55 @@ void Session::createNewExperiment()
     }
 }
 
-void Session::addExperiment(const std::string& experimentName, const std::string& instrumentName)
+std::shared_ptr<SX::Instrument::Experiment> SessionModel::addExperiment(const std::string& experimentName, const std::string& instrumentName)
 {
-
     // Create an experiment
     std::shared_ptr<SX::Instrument::Experiment> expPtr(new SX::Instrument::Experiment(experimentName,instrumentName));
 
-    // Create an instrument item
-    InstrumentItem* instr = new InstrumentItem(expPtr);
+//    // Create an instrument item
+//    InstrumentItem* instr = new InstrumentItem(expPtr);
 
-    // Create a detector item and add it to the instrument item
-    DetectorItem* detector = new DetectorItem(expPtr);
-    instr->appendRow(detector);
+//    // Create a detector item and add it to the instrument item
+//    DetectorItem* detector = new DetectorItem(expPtr);
+//    instr->appendRow(detector);
 
-    // Create a sample item and add it to the instrument item
-    SampleItem* sample = new SampleItem(expPtr);
-    instr->appendRow(sample);
+//    // Create a sample item and add it to the instrument item
+//    SampleItem* sample = new SampleItem(expPtr);
+//    instr->appendRow(sample);
 
-    // Create a source item and add it to the instrument leaf
-    SourceItem* source = new SourceItem(expPtr);
-    instr->appendRow(source);
+//    // Create a source item and add it to the instrument leaf
+//    SourceItem* source = new SourceItem(expPtr);
+//    instr->appendRow(source);
 
     // Create an experiment item
     ExperimentItem* expt = new ExperimentItem(expPtr);
 
-    // Add the instrument item to the experiment item
-    expt->appendRow(instr);
+//    // Add the instrument item to the experiment item
+//    expt->appendRow(instr);
 
-    // Create a data item and add it to the experiment item
-    DataItem* data = new DataItem(expPtr);
-    expt->appendRow(data);
+//    // Create a data item and add it to the experiment item
+//    DataItem* data = new DataItem(expPtr);
+//    expt->appendRow(data);
 
-    // Create a peaks item and add it to the experiment item
-    PeakListItem* peaks = new PeakListItem(expPtr);
-    expt->appendRow(peaks);
+//    // Create a peaks item and add it to the experiment item
+//    PeakListItem* peaks = new PeakListItem(expPtr);
+//    expt->appendRow(peaks);
 
     // Add the experiment item to the root of the experiment tree
-    _model->appendRow(expt);
+    appendRow(expt);
 
-
+    return expPtr;
 }
 
-vector<shared_ptr<IData>> Session::getSelectedNumors(ExperimentItem* item) const
+vector<shared_ptr<IData>> SessionModel::getSelectedNumors(ExperimentItem* item) const
 {
     vector<shared_ptr<IData>> numors;
 
-    QList<QStandardItem*> dataItems = _model->findItems(QString("Data"),Qt::MatchCaseSensitive|Qt::MatchRecursive);
+    QList<QStandardItem*> dataItems = findItems(QString("Data"),Qt::MatchCaseSensitive|Qt::MatchRecursive);
 
     for (const auto& it : dataItems)
     {
-        for (auto i=0;i<_model->rowCount(it->index());++i)
+        for (auto i=0;i < rowCount(it->index());++i)
         {
             if (it->child(i)->checkState() == Qt::Checked)
             {
@@ -233,15 +230,36 @@ vector<shared_ptr<IData>> Session::getSelectedNumors(ExperimentItem* item) const
     return numors;
 }
 
-vector<shared_ptr<IData>> Session::getSelectedNumors() const
+QJsonObject SessionModel::toJsonObject() noexcept
+{
+    QJsonObject obj;
+    QJsonArray experiments;
+
+    for(int i = 0; i < rowCount(); ++i) {
+        ExperimentItem* expItem = dynamic_cast<ExperimentItem*>(item(i,0));
+        assert(expItem != nullptr);
+        experiments.push_back(expItem->toJson());
+    }
+
+    obj["experiments"] = experiments;
+
+    return obj;
+}
+
+void SessionModel::fromJsonObject()
+{
+
+}
+
+vector<shared_ptr<IData>> SessionModel::getSelectedNumors() const
 {
     vector<shared_ptr<IData>> numors;
 
-    QList<QStandardItem*> dataItems = _model->findItems(QString("Data"),Qt::MatchCaseSensitive|Qt::MatchRecursive);
+    QList<QStandardItem*> dataItems = findItems(QString("Data"),Qt::MatchCaseSensitive|Qt::MatchRecursive);
 
     for (const auto& it : dataItems)
     {
-        for (auto i=0;i<_model->rowCount(it->index());++i)
+        for (auto i=0;i < rowCount(it->index());++i)
         {
             if (it->child(i)->checkState() == Qt::Checked)
             {
@@ -255,26 +273,26 @@ vector<shared_ptr<IData>> Session::getSelectedNumors() const
 }
 
 
-void Session::absorptionCorrection()
+void SessionModel::absorptionCorrection()
 {
     // NOT IMPLEMENTED
 }
 
-void Session::importData()
-{
-    // NOT IMPLEMENTED
-}
-
-
-
-void Session::findPeaks(const QModelIndex& index)
+void SessionModel::importData()
 {
     // NOT IMPLEMENTED
 }
 
 
 
-void Session::showPeaksOpenGL()
+void SessionModel::findPeaks(const QModelIndex& index)
+{
+    // NOT IMPLEMENTED
+}
+
+
+
+void SessionModel::showPeaksOpenGL()
 {
     GLWidget* glw=new GLWidget();
     auto& scene=glw->getScene();
@@ -294,12 +312,12 @@ void Session::showPeaksOpenGL()
     glw->show();
 }
 
-void Session::findSpaceGroup()
+void SessionModel::findSpaceGroup()
 {
     // NOT IMPLEMENTED
 }
 
-void Session::computeRFactors()
+void SessionModel::computeRFactors()
 {
     qDebug() << "Finding peak equivalences...";
 
@@ -371,7 +389,7 @@ void Session::computeRFactors()
     //scaleDialog->exec();
 }
 
-void Session::findFriedelPairs()
+void SessionModel::findFriedelPairs()
 {
     qDebug() << "findFriedelParis() is not yet implemented!";
     return;
@@ -394,7 +412,7 @@ void Session::findFriedelPairs()
     //delete friedelDialog;
 }
 
-void Session::integrateCalculatedPeaks()
+void SessionModel::integrateCalculatedPeaks()
 {
     qDebug() << "Integrating calculated peaks...";
 
@@ -459,12 +477,12 @@ void Session::integrateCalculatedPeaks()
     }
 }
 
-void Session::peakFitDialog()
+void SessionModel::peakFitDialog()
 {
     // NOT IMPLEMENTED
 }
 
-void Session::incorporateCalculatedPeaks()
+void SessionModel::incorporateCalculatedPeaks()
 {
     // NOT IMPLEMENTED
 }

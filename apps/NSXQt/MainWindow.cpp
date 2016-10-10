@@ -66,7 +66,7 @@
 #include "PeakFinder.h"
 #include "ProgressHandler.h"
 
-#include "Session.h"
+#include "SessionModel.h"
 #include "JobHandler.h"
 
 #include "SpaceGroup.h"
@@ -90,9 +90,13 @@ MainWindow::MainWindow(QWidget *parent)
   _ui(new Ui::MainWindow),
   //_experiments(),
   _currentData(nullptr),
-  _session(new Session)
+  _session(new SessionModel)
 {
     _ui->setupUi(this);
+
+    // make experiment tree aware of the session
+    _ui->experimentTree->setSession(_session);
+
     // Set Date to the application window title
     QDateTime datetime=QDateTime::currentDateTime();
     this->setWindowTitle(QString("NSXTool version:")+ datetime.toString());
@@ -146,6 +150,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this, SIGNAL(peakFitDialog()), _ui->experimentTree, SLOT(peakFitDialog()));
     connect(this, SIGNAL(incorporateCalculatedPeaks()), _ui->experimentTree, SLOT(incorporateCalculatedPeaks()));
 
+    connect(_session.get(), SIGNAL(updatePeaks()), _ui->_dview->getScene(), SLOT(updatePeaks()));
+
     _ui->plotterDockWidget->show();
     _ui->dockWidget_Property->show();
 
@@ -160,7 +166,6 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     qInstallMessageHandler(0);
-    delete _session;
     delete _ui;
 }
 
@@ -177,6 +182,21 @@ void MainWindow::on_actionSave_session_triggered()
 void MainWindow::on_actionSave_session_as_triggered()
 {
     qDebug() << "save session as: not implemented yet";
+
+    QString filename = QFileDialog::getSaveFileName(this, "Save session as..", ".", "Json document (*.json)");
+
+    qDebug() << "saving session to " << filename;
+
+    QJsonDocument doc(_session->toJsonObject());
+
+    QFile savefile(filename);
+
+    if ( !savefile.open(QIODevice::WriteOnly)) {
+        qDebug() << "couldn't open file for saving!";
+        return;
+    }
+
+    savefile.write(doc.toJson());
 }
 
 void MainWindow::on_actionLoad_session_triggered()
@@ -548,7 +568,8 @@ void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
     }
 
     qDebug() << "Eliminated " << bad_peaks.size() << " out of " << total_peaks << " total peaks.";
-    _ui->_dview->getScene()->updatePeaks();
+    //_ui->_dview->getScene()->updatePeaks();
+    _session->updatePeaks();
 
     for (Peak3D* peak: bad_peaks)
         delete peak;

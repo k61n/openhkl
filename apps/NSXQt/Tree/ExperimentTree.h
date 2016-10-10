@@ -18,6 +18,7 @@
 using namespace SX::Instrument;
 
 class ExperimentItem;
+class SessionModel;
 
 namespace SX
 {
@@ -33,6 +34,8 @@ class ExperimentTree : public QTreeView
 public:
     explicit ExperimentTree(QWidget *parent = 0);
     ~ExperimentTree();
+
+    void setSession(std::shared_ptr<SessionModel> session);
 
     void addExperiment(const std::string& experimentName, const std::string& instrumentName);
     std::vector<std::shared_ptr<SX::Data::IData>> getSelectedNumors() const;
@@ -64,10 +67,9 @@ public slots:
 
 private:
 
-    QStandardItemModel* _model;
-
     std::shared_ptr<SX::Utils::ProgressHandler> _progressHandler;
     std::shared_ptr<SX::Data::PeakFinder> _peakFinder;
+    std::shared_ptr<SessionModel> _session;
 };
 
 #endif // EXPERIMENTTREE_H

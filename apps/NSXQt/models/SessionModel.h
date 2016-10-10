@@ -33,13 +33,14 @@
  *
  */
 
-#ifndef NSXTOOL_SESSION_H_
-#define NSXTOOL_SESSION_H_
+#ifndef NSXTOOL_SESSIONMODEL_H_
+#define NSXTOOL_SESSIONMODEL_H_
 
 #include <memory>
 #include <string>
 #include <vector>
 #include <memory>
+#include <map>
 
 #include <QPoint>
 #include <QStandardItem>
@@ -49,6 +50,7 @@
 #include "Experiment.h"
 #include "ProgressHandler.h"
 #include "PeakFinder.h"
+
 
 using namespace SX::Instrument;
 
@@ -62,23 +64,32 @@ namespace Data
 }
 }
 
-class Session : public QObject
+class SessionModel : public QStandardItemModel
 {
     Q_OBJECT
 public:
-    explicit Session(QWidget *parent = 0);
-    ~Session();
+    explicit SessionModel();
+    ~SessionModel();
 
-    void addExperiment(const std::string& experimentName, const std::string& instrumentName);
+    std::shared_ptr<SX::Instrument::Experiment> addExperiment(const std::string& experimentName, const std::string& instrumentName);
     std::vector<std::shared_ptr<SX::Data::IData>> getSelectedNumors() const;
     std::vector<std::shared_ptr<SX::Data::IData>> getSelectedNumors(ExperimentItem* item) const;
 
     // ExperimentItem* getExperimentItem(Experiment* exp); // no longer used?
 
+    //! Convert session into JSON object
+    QJsonObject toJsonObject() noexcept;
+    void fromJsonObject();
+
+
+
 signals:
     void plotData(std::shared_ptr<SX::Data::IData>);
     void showPeakList(std::vector<std::shared_ptr<SX::Data::IData>>);
     void inspectWidget(QWidget*);
+
+    void updatePeaks();
+
 public slots:
 
 
@@ -96,12 +107,12 @@ public slots:
     void peakFitDialog();
     void incorporateCalculatedPeaks();
 
+
 private:
 
-    QStandardItemModel* _model;
-
     std::shared_ptr<SX::Utils::ProgressHandler> _progressHandler;
-    std::shared_ptr<SX::Data::PeakFinder> _peakFinder;
+    std::shared_ptr<SX::Data::PeakFinder> _peakFinder;    
+    //std::map<std::string, std::shared_ptr<SX::Instrument::Experiment>> _experiments;
 };
 
-#endif // NSXTOOL_SESSION_H_
+#endif // NSXTOOL_SESSIONMODEL_H_

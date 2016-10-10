@@ -22,7 +22,7 @@
 
 class QListWidgetItem;
 class PlottableGraphicsItem;
-class Session;
+class SessionModel;
 
 namespace Ui
 {
@@ -124,7 +124,7 @@ private:
     std::shared_ptr<SX::Imaging::Convolver> _convolver;
     //threshold, confidence, minComp, maxComp
 
-    Session* _session;
+    std::shared_ptr<SessionModel> _session;
 };
 
 #endif // MAINWINDOW_H

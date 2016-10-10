@@ -69,18 +69,24 @@
 
 #include "PeakFitDialog.h"
 
+#include "SessionModel.h"
+
+#include "DataItem.h"
+
 
 using std::vector;
 using SX::Data::IData;
 using std::shared_ptr;
 using SX::Utils::ProgressHandler;
 
-ExperimentTree::ExperimentTree(QWidget *parent) : QTreeView(parent)
+ExperimentTree::ExperimentTree(QWidget *parent):
+    QTreeView(parent)//,
+    //_session(nullptr)
 {
     setContextMenuPolicy(Qt::CustomContextMenu);
 
-    _model=new QStandardItemModel(this);
-    setModel(_model);
+    //_session=new QStandardItemModel(this);
+    //setModel(_session);
     expandAll();
     setSelectionMode(QAbstractItemView::ContiguousSelection);
     update();
@@ -94,8 +100,14 @@ ExperimentTree::ExperimentTree(QWidget *parent) : QTreeView(parent)
 
 ExperimentTree::~ExperimentTree()
 {
-    // _model should be deleted automatically during destructor by QT
-    //delete _model;
+    // _session should be deleted automatically during destructor by QT
+    //delete _session;
+}
+
+void ExperimentTree::setSession(std::shared_ptr<SessionModel> session)
+{
+    _session = session;
+    setModel(_session.get());
 }
 
 void ExperimentTree::createNewExperiment()
@@ -133,41 +145,42 @@ void ExperimentTree::createNewExperiment()
 
 void ExperimentTree::addExperiment(const std::string& experimentName, const std::string& instrumentName)
 {
+    assert(_session != nullptr);
 
     // Create an experiment
-    std::shared_ptr<SX::Instrument::Experiment> expPtr(new SX::Instrument::Experiment(experimentName,instrumentName));
+    std::shared_ptr<SX::Instrument::Experiment> expPtr = _session->addExperiment(experimentName,instrumentName);
 
-    // Create an instrument item
-    InstrumentItem* instr = new InstrumentItem(expPtr);
+//    // Create an instrument item
+//    InstrumentItem* instr = new InstrumentItem(expPtr);
 
-    // Create a detector item and add it to the instrument item
-    DetectorItem* detector = new DetectorItem(expPtr);
-    instr->appendRow(detector);
+//    // Create a detector item and add it to the instrument item
+//    DetectorItem* detector = new DetectorItem(expPtr);
+//    instr->appendRow(detector);
 
-    // Create a sample item and add it to the instrument item
-    SampleItem* sample = new SampleItem(expPtr);
-    instr->appendRow(sample);
+//    // Create a sample item and add it to the instrument item
+//    SampleItem* sample = new SampleItem(expPtr);
+//    instr->appendRow(sample);
 
-    // Create a source item and add it to the instrument leaf
-    SourceItem* source = new SourceItem(expPtr);
-    instr->appendRow(source);
+//    // Create a source item and add it to the instrument leaf
+//    SourceItem* source = new SourceItem(expPtr);
+//    instr->appendRow(source);
 
-    // Create an experiment item
-    ExperimentItem* expt = new ExperimentItem(expPtr);
+//    // Create an experiment item
+//    ExperimentItem* expt = new ExperimentItem(expPtr);
 
-    // Add the instrument item to the experiment item
-    expt->appendRow(instr);
+//    // Add the instrument item to the experiment item
+//    expt->appendRow(instr);
 
-    // Create a data item and add it to the experiment item
-    DataItem* data = new DataItem(expPtr);
-    expt->appendRow(data);
+//    // Create a data item and add it to the experiment item
+//    DataItem* data = new DataItem(expPtr);
+//    expt->appendRow(data);
 
-    // Create a peaks item and add it to the experiment item
-    PeakListItem* peaks = new PeakListItem(expPtr);
-    expt->appendRow(peaks);
+//    // Create a peaks item and add it to the experiment item
+//    PeakListItem* peaks = new PeakListItem(expPtr);
+//    expt->appendRow(peaks);
 
-    // Add the experiment item to the root of the experiment tree
-    _model->appendRow(expt);
+//    // Add the experiment item to the root of the experiment tree
+//    _session->appendRow(expt);
 
     update();
 
@@ -175,47 +188,49 @@ void ExperimentTree::addExperiment(const std::string& experimentName, const std:
 
 vector<shared_ptr<IData>> ExperimentTree::getSelectedNumors(ExperimentItem* item) const
 {
-    vector<shared_ptr<IData>> numors;
+//    vector<shared_ptr<IData>> numors;
 
-    QList<QStandardItem*> dataItems = _model->findItems(QString("Data"),Qt::MatchCaseSensitive|Qt::MatchRecursive);
+//    QList<QStandardItem*> dataItems = _session->findItems(QString("Data"),Qt::MatchCaseSensitive|Qt::MatchRecursive);
 
-    for (const auto& it : dataItems)
-    {
-        for (auto i=0;i<_model->rowCount(it->index());++i)
-        {
-            if (it->child(i)->checkState() == Qt::Checked)
-            {
-                if (auto ptr = dynamic_cast<NumorItem*>(it->child(i)))
-                {
-                    if (it->parent() == item)
-                        numors.push_back(ptr->getExperiment()->getData(ptr->text().toStdString()));
-                }
-            }
-        }
-    }
+//    for (const auto& it : dataItems)
+//    {
+//        for (auto i=0;i<_session->rowCount(it->index());++i)
+//        {
+//            if (it->child(i)->checkState() == Qt::Checked)
+//            {
+//                if (auto ptr = dynamic_cast<NumorItem*>(it->child(i)))
+//                {
+//                    if (it->parent() == item)
+//                        numors.push_back(ptr->getExperiment()->getData(ptr->text().toStdString()));
+//                }
+//            }
+//        }
+//    }
 
-    return numors;
+//    return numors;
+    return _session->getSelectedNumors(item);
 }
 
 vector<shared_ptr<IData>> ExperimentTree::getSelectedNumors() const
 {
-    vector<shared_ptr<IData>> numors;
+//    vector<shared_ptr<IData>> numors;
 
-    QList<QStandardItem*> dataItems = _model->findItems(QString("Data"),Qt::MatchCaseSensitive|Qt::MatchRecursive);
+//    QList<QStandardItem*> dataItems = _session->findItems(QString("Data"),Qt::MatchCaseSensitive|Qt::MatchRecursive);
 
-    for (const auto& it : dataItems)
-    {
-        for (auto i=0;i<_model->rowCount(it->index());++i)
-        {
-            if (it->child(i)->checkState() == Qt::Checked)
-            {
-                if (auto ptr = dynamic_cast<NumorItem*>(it->child(i)))
-                    numors.push_back(ptr->getExperiment()->getData(ptr->text().toStdString()));
-            }
-        }
-    }
+//    for (const auto& it : dataItems)
+//    {
+//        for (auto i=0;i<_session->rowCount(it->index());++i)
+//        {
+//            if (it->child(i)->checkState() == Qt::Checked)
+//            {
+//                if (auto ptr = dynamic_cast<NumorItem*>(it->child(i)))
+//                    numors.push_back(ptr->getExperiment()->getData(ptr->text().toStdString()));
+//            }
+//        }
+//    }
 
-    return numors;
+//    return numors;
+    return _session->getSelectedNumors();
 }
 
 void ExperimentTree::onCustomMenuRequested(const QPoint& point)
@@ -232,7 +247,7 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
     }
     else
     {
-        QStandardItem* item=_model->itemFromIndex(index);
+        QStandardItem* item=_session->itemFromIndex(index);
         if (dynamic_cast<DataItem*>(item))
         {
             QMenu* menu = new QMenu(this);
@@ -260,7 +275,7 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
 void ExperimentTree::absorptionCorrection()
 {
     // Get the current item and check that is actually a Data item. Otherwise, return.
-    QStandardItem* item=_model->itemFromIndex(currentIndex());
+    QStandardItem* item=_session->itemFromIndex(currentIndex());
     auto pitem=dynamic_cast<PeakListItem*>(item);
     if (!pitem)
         return;
@@ -271,8 +286,8 @@ void ExperimentTree::absorptionCorrection()
 void ExperimentTree::importData()
 {
     // Get the current item and check that is actually a Data item. Otherwise, return.
-    QStandardItem* dataItem=_model->itemFromIndex(currentIndex());
-    if (!dynamic_cast<DataItem*>(dataItem))
+    DataItem* dataItem = dynamic_cast<DataItem*>(_session->itemFromIndex(currentIndex()));
+    if (!dataItem)
         return;
 
     QStringList fileNames;
@@ -282,48 +297,52 @@ void ExperimentTree::importData()
     if (fileNames.isEmpty())
         return;
 
-    QModelIndex parentIndex = _model->parent(currentIndex());
-    auto expItem=dynamic_cast<ExperimentItem*>(_model->itemFromIndex(parentIndex));
+
+
+    QModelIndex parentIndex = _session->parent(currentIndex());
+    auto expItem=dynamic_cast<ExperimentItem*>(_session->itemFromIndex(parentIndex));
 
     for (int i=0;i<fileNames.size();++i)
     {
-        // Get the basename of the current numor
-        QFileInfo fileinfo(fileNames[i]);
-        std::string basename=fileinfo.fileName().toStdString();
-         std::shared_ptr<SX::Instrument::Experiment> exp = expItem->getExperiment();
+        dataItem->importData(fileNames[i].toStdString());
 
-        // If the experience already stores the current numor, skip it
-        if (exp->hasData(basename))
-            continue;
+//        // Get the basename of the current numor
+//        QFileInfo fileinfo(fileNames[i]);
+//        std::string basename=fileinfo.fileName().toStdString();
+//         std::shared_ptr<SX::Instrument::Experiment> exp = expItem->getExperiment();
 
-        std::shared_ptr<IData> data_ptr;
+//        // If the experience already stores the current numor, skip it
+//        if (exp->hasData(basename))
+//            continue;
 
-        try
-        {
-            std::string extension=fileinfo.completeSuffix().toStdString();
+//        std::shared_ptr<IData> data_ptr;
 
-            IData* raw_ptr = DataReaderFactory::Instance()->create(
-                        extension,fileNames[i].toStdString(),exp->getDiffractometer()
-                        );
+//        try
+//        {
+//            std::string extension=fileinfo.completeSuffix().toStdString();
 
-            data_ptr = std::shared_ptr<IData>(raw_ptr);
+//            IData* raw_ptr = DataReaderFactory::Instance()->create(
+//                        extension,fileNames[i].toStdString(),exp->getDiffractometer()
+//                        );
 
-            exp->addData(data_ptr);
-        }
-        catch(std::exception& e)
-        {
-           qWarning() << "Error reading numor: " + fileNames[i] + " " + QString(e.what());
-           continue;
-        }
-        catch(...)
-        {
-        	qWarning() << "Error reading numor: " + fileNames[i] + " reason not known:";
-        	continue;
-        }
-        QStandardItem* item = new NumorItem(exp, data_ptr);
-        item->setText(QString::fromStdString(basename));
-        item->setCheckable(true);
-        dataItem->appendRow(item);
+//            data_ptr = std::shared_ptr<IData>(raw_ptr);
+
+//            exp->addData(data_ptr);
+//        }
+//        catch(std::exception& e)
+//        {
+//           qWarning() << "Error reading numor: " + fileNames[i] + " " + QString(e.what());
+//           continue;
+//        }
+//        catch(...)
+//        {
+//        	qWarning() << "Error reading numor: " + fileNames[i] + " reason not known:";
+//        	continue;
+//        }
+//        QStandardItem* item = new NumorItem(exp, data_ptr);
+//        item->setText(QString::fromStdString(basename));
+//        item->setCheckable(true);
+//        dataItem->appendRow(item);
 
     }
 }
@@ -339,7 +358,7 @@ void ExperimentTree::findPeaks(const QModelIndex& index)
 
     ui->_dview->getScene()->clearPeaks();
 
-    QStandardItem* item=_model->itemFromIndex(index);
+    QStandardItem* item=_session->itemFromIndex(index);
 
     TreeItem* titem=dynamic_cast<TreeItem*>(item);
     if (!titem)
@@ -350,10 +369,10 @@ void ExperimentTree::findPeaks(const QModelIndex& index)
     if (!expt)
         return;
 
-    QStandardItem* ditem=_model->itemFromIndex(index);
+    QStandardItem* ditem=_session->itemFromIndex(index);
 
     std::vector<std::shared_ptr<SX::Data::IData>> selectedNumors;
-    int nTotalNumors(_model->rowCount(ditem->index()));
+    int nTotalNumors(_session->rowCount(ditem->index()));
     selectedNumors.reserve(nTotalNumors);
 
     for (auto i=0;i<nTotalNumors;++i)
@@ -448,7 +467,8 @@ void ExperimentTree::findPeaks(const QModelIndex& index)
         }
 
         if ( succeeded ) {
-            ui->_dview->getScene()->updatePeaks();
+            //ui->_dview->getScene()->updatePeaks();
+            _session->updatePeaks();
 
             qDebug() << "Peak search complete., found "
                      << num_peaks
@@ -467,7 +487,7 @@ void ExperimentTree::findPeaks(const QModelIndex& index)
 
 void ExperimentTree::viewReciprocalSpace(const QModelIndex& index)
 {
-    QStandardItem* item=_model->itemFromIndex(index);
+    QStandardItem* item=_session->itemFromIndex(index);
 
     TreeItem* titem=dynamic_cast<TreeItem*>(item);
     if (!titem)
@@ -478,10 +498,10 @@ void ExperimentTree::viewReciprocalSpace(const QModelIndex& index)
     if (!expt)
         return;
 
-    QStandardItem* ditem=_model->itemFromIndex(index);
+    QStandardItem* ditem=_session->itemFromIndex(index);
 
     std::vector<std::shared_ptr<SX::Data::IData>> selectedNumors;
-    int nTotalNumors(_model->rowCount(ditem->index()));
+    int nTotalNumors(_session->rowCount(ditem->index()));
     selectedNumors.reserve(nTotalNumors);
 
     for (auto i=0;i<nTotalNumors;++i)
@@ -516,7 +536,7 @@ void ExperimentTree::viewReciprocalSpace(const QModelIndex& index)
 void ExperimentTree::onDoubleClick(const QModelIndex& index)
 {
     // Get the current item and check that is actually a Numor item. Otherwise, return.
-    QStandardItem* item=_model->itemFromIndex(index);
+    QStandardItem* item=_session->itemFromIndex(index);
 
     if (auto ptr=dynamic_cast<DataItem*>(item))
     {
@@ -550,11 +570,11 @@ void ExperimentTree::keyPressEvent(QKeyEvent *event)
         it.toBack();
         while (it.hasPrevious())
         {
-            QStandardItem* item = _model->itemFromIndex(it.previous());
+            QStandardItem* item = _session->itemFromIndex(it.previous());
             if (!item->parent())
-                 _model->removeRow(item->row());
+                 _session->removeRow(item->row());
             else
-                _model->removeRow(item->row(),item->parent()->index());
+                _session->removeRow(item->row(),item->parent()->index());
         }
     }
 }
@@ -566,10 +586,10 @@ void ExperimentTree::keyPressEvent(QKeyEvent *event)
 
 //    QModelIndex rootIdx = rootIndex();
 
-//    for (auto i=0;i<_model->rowCount(rootIdx);++i)
+//    for (auto i=0;i<_session->rowCount(rootIdx);++i)
 //    {
-//        auto idx = _model->index(i,0,rootIdx);
-//        auto ptr=dynamic_cast<ExperimentItem*>(_model->itemFromIndex(idx));
+//        auto idx = _session->index(i,0,rootIdx);
+//        auto ptr=dynamic_cast<ExperimentItem*>(_session->itemFromIndex(idx));
 //        if (ptr && ptr->getExperiment().get()==exp)
 //            return ptr;
 //    }
@@ -581,7 +601,7 @@ void ExperimentTree::keyPressEvent(QKeyEvent *event)
 void ExperimentTree::onSingleClick(const QModelIndex &index)
 {
         // Inspect this item if it is inspectable
-        InspectableTreeItem* item=dynamic_cast<InspectableTreeItem*>(_model->itemFromIndex(index));
+        InspectableTreeItem* item=dynamic_cast<InspectableTreeItem*>(_session->itemFromIndex(index));
         if (item)
             emit inspectWidget(item->inspectItem());
         else

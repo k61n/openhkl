@@ -15,6 +15,8 @@ class DataItem : public TreeItem
 {
 public:
     explicit DataItem(std::shared_ptr<Experiment> experiment);
+
+    void importData(const std::string& filename);
 };
 
 #endif // DATAITEM_H
