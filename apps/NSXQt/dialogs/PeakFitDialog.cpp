@@ -19,22 +19,25 @@
 #include "MinimizerEigen.h"
 #include "MinimizerGSL.h"
 
+#include "SessionModel.h"
+
 #include <cmath>
+
 
 
 
 using SX::Crystal::Peak3D;
 
-PeakFitDialog::PeakFitDialog(QWidget *parent) :
+PeakFitDialog::PeakFitDialog(std::shared_ptr<SessionModel> session, QWidget *parent):
     QDialog(parent),
+    _session(session),
     ui(new Ui::PeakFitDialog),
     _image(nullptr),
     _peak(nullptr)
 {
     ui->setupUi(this);
 
-    _tree = dynamic_cast<ExperimentTree*>(parent);
-    assert(_tree != nullptr);
+    assert(_session != nullptr);
 
     _scene = new QGraphicsScene(this);
     ui->graphicsView->setScene(_scene);
@@ -137,12 +140,12 @@ void PeakFitDialog::checkCollisions()
 
 void PeakFitDialog::updateView()
 {
-    if (_tree->getSelectedNumors().size() != 1) {
+    if (_session->getSelectedNumors().size() != 1) {
         qDebug() << "must have exactly 1 numor selected!";
         return;
     }
 
-    std::shared_ptr<IData> numor = _tree->getSelectedNumors()[0];
+    std::shared_ptr<IData> numor = _session->getSelectedNumors()[0];
     SX::Data::RowMatrixi frame = numor->getFrame(ui->frameScrollBar->value());
 
     int intensity = std::ceil(frame.sum() / (double)(frame.rows()*frame.cols())) * 5.0;
@@ -162,12 +165,12 @@ void PeakFitDialog::updateView()
 void PeakFitDialog::updatePeak()
 {
     // todo: handle the case of more than one selected numor!!
-    if (_tree->getSelectedNumors().size() != 1) {
+    if (_session->getSelectedNumors().size() != 1) {
         qDebug() << "ERROR: as currently implemented this method supports only one selected numor!!";
         return;
     }
 
-    std::shared_ptr<IData> numor = _tree->getSelectedNumors()[0];
+    std::shared_ptr<IData> numor = _session->getSelectedNumors()[0];
     SX::Data::RowMatrixi frame = numor->getFrame(ui->frameScrollBar->value());
     std::set<Peak3D*>& peaks = numor->getPeaks();
 

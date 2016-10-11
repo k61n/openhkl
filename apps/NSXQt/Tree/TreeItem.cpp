@@ -32,7 +32,7 @@ QJsonObject TreeItem::toJson()
     return obj;
 }
 
-void TreeItem::fromJson(QJsonObject &obj)
+void TreeItem::fromJson(const QJsonObject &obj)
 {
     QString name = obj["name"].toString();
     QJsonArray data = obj["data"].toArray();

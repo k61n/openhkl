@@ -15,6 +15,8 @@ class DetectorItem : public InspectableTreeItem
 public:
     explicit DetectorItem(std::shared_ptr<Experiment> experiment);
     QWidget* inspectItem();
+
+    QJsonObject toJson() override;
 };
 
 #endif // DETECTORITEM_H

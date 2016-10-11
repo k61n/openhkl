@@ -37,12 +37,6 @@ public:
 
     void setSession(std::shared_ptr<SessionModel> session);
 
-    void addExperiment(const std::string& experimentName, const std::string& instrumentName);
-    std::vector<std::shared_ptr<SX::Data::IData>> getSelectedNumors() const;
-    std::vector<std::shared_ptr<SX::Data::IData>> getSelectedNumors(ExperimentItem* item) const;
-
-    // ExperimentItem* getExperimentItem(Experiment* exp); // no longer used?
-
 signals:
     void plotData(std::shared_ptr<SX::Data::IData>);
     void showPeakList(std::vector<std::shared_ptr<SX::Data::IData>>);

@@ -23,7 +23,7 @@ public:
     virtual ~TreeItem();
 
     virtual QJsonObject toJson();
-    virtual void fromJson(QJsonObject& obj);
+    virtual void fromJson(const QJsonObject& obj);
 
 protected:
     std::shared_ptr<Experiment> _experiment;

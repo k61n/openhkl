@@ -15,6 +15,8 @@ public:
 
     void setData(const QVariant & value, int role=Qt::UserRole + 1 );
     QWidget* inspectItem();
+
+    QJsonObject toJson() override;
 };
 
 #endif // SAMPLEITEM_H

@@ -2,6 +2,7 @@
 #include <QFileInfo>
 #include <QDebug>
 #include <QStandardItem>
+#include <QJsonArray>
 
 #include "Experiment.h"
 #include "Tree/DataItem.h"
@@ -58,4 +59,33 @@ void DataItem::importData(const std::string &filename_str)
     item->setText(QString::fromStdString(basename));
     item->setCheckable(true);
     appendRow(item);
+}
+
+QJsonObject DataItem::toJson()
+{
+    QJsonObject obj;
+    QJsonArray numors;
+
+    for(int i = 0; i < rowCount(); ++i) {
+        std::string name = this->child(i)->text().toStdString();
+        std::map<std::string, std::shared_ptr<IData>>::const_iterator it = getExperiment()->getData().find(name);
+
+        assert(it != getExperiment()->getData().cend());
+
+        const std::shared_ptr<IData>& data = it->second;
+        assert(data != nullptr);
+        numors.push_back(data->getFilename().c_str());
+    }
+
+    obj["numors"] = numors;
+
+    return obj;
+}
+
+void DataItem::fromJson(const QJsonObject &obj)
+{
+    QJsonArray numors = obj["numors"].toArray();
+
+    for (auto&& numor: numors)
+        importData(numor.toString().toStdString());
 }

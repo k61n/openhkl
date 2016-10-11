@@ -78,8 +78,8 @@ public:
     // ExperimentItem* getExperimentItem(Experiment* exp); // no longer used?
 
     //! Convert session into JSON object
-    QJsonObject toJsonObject() noexcept;
-    void fromJsonObject();
+    QJsonObject toJsonObject();
+    void fromJsonObject(const QJsonObject& obj);
 
 
 

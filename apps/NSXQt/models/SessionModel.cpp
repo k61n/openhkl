@@ -232,7 +232,7 @@ vector<shared_ptr<IData>> SessionModel::getSelectedNumors(ExperimentItem* item) 
     return numors;
 }
 
-QJsonObject SessionModel::toJsonObject() noexcept
+QJsonObject SessionModel::toJsonObject()
 {
     QJsonObject obj;
     QJsonArray experiments;
@@ -248,9 +248,21 @@ QJsonObject SessionModel::toJsonObject() noexcept
     return obj;
 }
 
-void SessionModel::fromJsonObject()
+void SessionModel::fromJsonObject(const QJsonObject &obj)
 {
 
+    QJsonArray experiments = obj["experiments"].toArray();
+
+    for (auto&& expr: experiments) {
+        QJsonObject exp_obj = expr.toObject();
+        std::string name = exp_obj["name"].toString().toStdString();
+        std::string instrument = exp_obj["instrument"].toString().toStdString();
+        std::shared_ptr<Experiment> ptr = addExperiment(name, instrument);
+
+        ExperimentItem* expItem = dynamic_cast<ExperimentItem*>(item(rowCount()-1,0));
+        assert(expItem != nullptr);
+        expItem->fromJson(exp_obj);
+    }
 }
 
 vector<shared_ptr<IData>> SessionModel::getSelectedNumors() const

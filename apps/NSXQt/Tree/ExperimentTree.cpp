@@ -135,102 +135,12 @@ void ExperimentTree::createNewExperiment()
 
     // Add the experiment
     try {
-        addExperiment(dlg->getExperimentName().toStdString(),dlg->getInstrumentName().toStdString());
+        _session->addExperiment(dlg->getExperimentName().toStdString(),dlg->getInstrumentName().toStdString());
     }
     catch(const std::runtime_error& e) {
         qWarning() << e.what();
         return;
     }
-}
-
-void ExperimentTree::addExperiment(const std::string& experimentName, const std::string& instrumentName)
-{
-    assert(_session != nullptr);
-
-    // Create an experiment
-    std::shared_ptr<SX::Instrument::Experiment> expPtr = _session->addExperiment(experimentName,instrumentName);
-
-//    // Create an instrument item
-//    InstrumentItem* instr = new InstrumentItem(expPtr);
-
-//    // Create a detector item and add it to the instrument item
-//    DetectorItem* detector = new DetectorItem(expPtr);
-//    instr->appendRow(detector);
-
-//    // Create a sample item and add it to the instrument item
-//    SampleItem* sample = new SampleItem(expPtr);
-//    instr->appendRow(sample);
-
-//    // Create a source item and add it to the instrument leaf
-//    SourceItem* source = new SourceItem(expPtr);
-//    instr->appendRow(source);
-
-//    // Create an experiment item
-//    ExperimentItem* expt = new ExperimentItem(expPtr);
-
-//    // Add the instrument item to the experiment item
-//    expt->appendRow(instr);
-
-//    // Create a data item and add it to the experiment item
-//    DataItem* data = new DataItem(expPtr);
-//    expt->appendRow(data);
-
-//    // Create a peaks item and add it to the experiment item
-//    PeakListItem* peaks = new PeakListItem(expPtr);
-//    expt->appendRow(peaks);
-
-//    // Add the experiment item to the root of the experiment tree
-//    _session->appendRow(expt);
-
-    update();
-
-}
-
-vector<shared_ptr<IData>> ExperimentTree::getSelectedNumors(ExperimentItem* item) const
-{
-//    vector<shared_ptr<IData>> numors;
-
-//    QList<QStandardItem*> dataItems = _session->findItems(QString("Data"),Qt::MatchCaseSensitive|Qt::MatchRecursive);
-
-//    for (const auto& it : dataItems)
-//    {
-//        for (auto i=0;i<_session->rowCount(it->index());++i)
-//        {
-//            if (it->child(i)->checkState() == Qt::Checked)
-//            {
-//                if (auto ptr = dynamic_cast<NumorItem*>(it->child(i)))
-//                {
-//                    if (it->parent() == item)
-//                        numors.push_back(ptr->getExperiment()->getData(ptr->text().toStdString()));
-//                }
-//            }
-//        }
-//    }
-
-//    return numors;
-    return _session->getSelectedNumors(item);
-}
-
-vector<shared_ptr<IData>> ExperimentTree::getSelectedNumors() const
-{
-//    vector<shared_ptr<IData>> numors;
-
-//    QList<QStandardItem*> dataItems = _session->findItems(QString("Data"),Qt::MatchCaseSensitive|Qt::MatchRecursive);
-
-//    for (const auto& it : dataItems)
-//    {
-//        for (auto i=0;i<_session->rowCount(it->index());++i)
-//        {
-//            if (it->child(i)->checkState() == Qt::Checked)
-//            {
-//                if (auto ptr = dynamic_cast<NumorItem*>(it->child(i)))
-//                    numors.push_back(ptr->getExperiment()->getData(ptr->text().toStdString()));
-//            }
-//        }
-//    }
-
-//    return numors;
-    return _session->getSelectedNumors();
 }
 
 void ExperimentTree::onCustomMenuRequested(const QPoint& point)
@@ -482,14 +392,13 @@ void ExperimentTree::onSingleClick(const QModelIndex &index)
 
 void ExperimentTree::showPeaksOpenGL()
 {
-    GLWidget* glw=new GLWidget();
-    auto& scene=glw->getScene();
-    auto datav=getSelectedNumors();
-    for (auto idata : datav)
-    {
+    GLWidget* glw = new GLWidget();
+    auto& scene = glw->getScene();
+    auto datav = _session->getSelectedNumors();
+
+    for (auto idata : datav) {
        auto peaks=idata->getPeaks();
-       for (auto peak: peaks)
-       {
+       for (auto peak: peaks) {
            GLSphere* sphere=new GLSphere("");
            Eigen::Vector3d pos=peak->getQ();
            sphere->setPos(pos[0]*100,pos[1]*100,pos[2]*100);
@@ -502,7 +411,7 @@ void ExperimentTree::showPeaksOpenGL()
 
 void ExperimentTree::findSpaceGroup()
 {
-    SpaceGroupDialog* dialog = new SpaceGroupDialog(getSelectedNumors(), this);
+    SpaceGroupDialog* dialog = new SpaceGroupDialog(_session->getSelectedNumors(), this);
     dialog->exec();
     // update the space group elsewhere
 }
@@ -511,7 +420,7 @@ void ExperimentTree::computeRFactors()
 {
     qDebug() << "Finding peak equivalences...";
 
-    std::vector<std::shared_ptr<IData>> numors = getSelectedNumors();
+    std::vector<std::shared_ptr<IData>> numors = _session->getSelectedNumors();
     std::vector<std::vector<Peak3D*>> peak_equivs;
     std::vector<Peak3D*> peak_list;
 
@@ -613,7 +522,7 @@ void ExperimentTree::integrateCalculatedPeaks()
 
     std::shared_ptr<UnitCell> unit_cell;
 
-    for (std::shared_ptr<IData> numor: getSelectedNumors()) {
+    for (std::shared_ptr<IData> numor: _session->getSelectedNumors()) {
         for (Peak3D* peak: numor->getPeaks())
             if ( peak && peak->isSelected() && !peak->isMasked() ) {
                 peak_extent += peak->getPeak()->getAABBExtents();
@@ -635,7 +544,7 @@ void ExperimentTree::integrateCalculatedPeaks()
     qDebug() << peak_extent(0) << " " << peak_extent(1) << " " << peak_extent(2);
     qDebug() << bg_extent(0) << " " << bg_extent(1) << " " << bg_extent(2);
 
-    for (std::shared_ptr<IData> numor: getSelectedNumors()) {
+    for (std::shared_ptr<IData> numor: _session->getSelectedNumors()) {
 
 
 
@@ -670,7 +579,7 @@ void ExperimentTree::integrateCalculatedPeaks()
 void ExperimentTree::peakFitDialog()
 {
     qDebug() << "peakFitDialog() triggered";
-    PeakFitDialog* dialog = new PeakFitDialog(this);
+    PeakFitDialog* dialog = new PeakFitDialog(_session, this);
     dialog->exec();
 }
 
@@ -678,7 +587,7 @@ void ExperimentTree::incorporateCalculatedPeaks()
 {
     qDebug() << "Incorporating missing peaks into current data set...";
 
-    std::vector<std::shared_ptr<IData>> numors = getSelectedNumors();
+    std::vector<std::shared_ptr<IData>> numors = _session->getSelectedNumors();
 
     std::shared_ptr<SX::Utils::ProgressHandler> handler(new SX::Utils::ProgressHandler);
     ProgressView progressView(this);

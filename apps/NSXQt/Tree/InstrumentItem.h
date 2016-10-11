@@ -6,11 +6,22 @@
 #include "Experiment.h"
 #include <Tree/TreeItem.h>
 
+class DetectorItem;
+class SampleItem;
+class SourceItem;
+
 class InstrumentItem : public TreeItem
 {
 public:
     explicit InstrumentItem(std::shared_ptr<Experiment> experiment);
 
+    QJsonObject toJson() override;
+    void fromJson(const QJsonObject& obj) override;
+
+private:
+    DetectorItem* _detector;
+    SampleItem* _sample;
+    SourceItem* _source;
 };
 
 #endif // INSTRUMENTITEM_H

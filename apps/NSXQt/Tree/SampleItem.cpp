@@ -1,4 +1,5 @@
 #include <QIcon>
+#include <QJsonArray>
 
 #include "Diffractometer.h"
 #include "Sample.h"
@@ -32,4 +33,13 @@ void SampleItem::setData(const QVariant &value, int role)
 QWidget* SampleItem::inspectItem()
 {
     return new SamplePropertyWidget(this);
+}
+
+QJsonObject SampleItem::toJson()
+{
+    QJsonObject obj;
+
+    obj["shapes"] = QJsonArray();
+
+    return obj;
 }

@@ -15,7 +15,7 @@
 #include "DataItem.h"
 #include "PeakListItem.h"
 
-//using SX::Instrument::Experiment;
+using SX::Instrument::Experiment;
 
 ExperimentItem::ExperimentItem(std::shared_ptr<Experiment> experiment) : TreeItem(experiment)
 {
@@ -27,30 +27,18 @@ ExperimentItem::ExperimentItem(std::shared_ptr<Experiment> experiment) : TreeIte
     setDropEnabled(true);
     setEditable(true);
 
-    InstrumentItem* instr = new InstrumentItem(experiment);
-
-    // Create a detector item and add it to the instrument item
-    DetectorItem* detector = new DetectorItem(experiment);
-    instr->appendRow(detector);
-
-    // Create a sample item and add it to the instrument item
-    SampleItem* sample = new SampleItem(experiment);
-    instr->appendRow(sample);
-
-    // Create a source item and add it to the instrument leaf
-    SourceItem* source = new SourceItem(experiment);
-    instr->appendRow(source);
+    _instr = new InstrumentItem(experiment);
 
     // Add the instrument item to the experiment item
-    appendRow(instr);
+    appendRow(_instr);
 
     // Create a data item and add it to the experiment item
-    DataItem* data = new DataItem(experiment);
-    appendRow(data);
+    _data = new DataItem(experiment);
+    appendRow(_data);
 
     // Create a peaks item and add it to the experiment item
-    PeakListItem* peaks = new PeakListItem(experiment);
-    appendRow(peaks);
+     _peaks = new PeakListItem(experiment);
+    appendRow(_peaks);
 }
 
 void ExperimentItem::setData(const QVariant &value, int role)
@@ -69,59 +57,23 @@ ExperimentItem::~ExperimentItem()
 QJsonObject ExperimentItem::toJson()
 {
     std::shared_ptr<SX::Instrument::Experiment> exp_ptr = getExperiment();
-
     QJsonObject experiment;
-    QJsonArray datasets;
-
-    for(auto&& name : exp_ptr->getDataNames())
-        datasets.append(name.c_str());
 
     experiment["name"] = exp_ptr->getName().c_str();
+    //experiment["instrument"] = _instr->toJson();
     experiment["instrument"] = exp_ptr->getDiffractometer()->getName().c_str();
-    experiment["data"] = datasets;
+    experiment["data"] = _data->toJson();
+    experiment["peaks"] = _peaks->toJson();
+
+    return experiment;
 }
 
-void ExperimentItem::fromJson(QJsonObject &obj)
+void ExperimentItem::fromJson(const QJsonObject &obj)
 {
     SessionModel* session = dynamic_cast<SessionModel*>(model());
     assert(session != nullptr);
 
-    std::string name = obj["name"].toString().toStdString();
-    std::string instrument = obj["instrument"].toString().toStdString();
-    QJsonArray datasets = obj["data"].toArray();
-
-    std::shared_ptr<SX::Instrument::Experiment> exp_ptr = session->addExperiment(name, instrument);
-
-    for(QJsonValue&& val: datasets) {
-        //exp_ptr->addData()
-        std::string filename = val.toString().toStdString();
-
-
-
-        if (exp_ptr->hasData(filename))
-            continue;
-
-        //std::shared_ptr<SX::Data::IData> data(new SX::Data::IData());
-    }
+    //_instr->fromJson(obj["instrument"].toObject());
+    _data->fromJson(obj["data"].toObject());
+    _peaks->fromJson(obj["peaks"].toObject());
 }
-
-
-//QJsonValue ExperimentItem::toJson()
-//{
-//    QJsonObject experiment;
-
-//    experiment["name"] = getExperiment()->getName().c_str();
-
-//    experiment["instrument"] = 0;
-
-//    QJsonArray numors;
-
-//    for(auto&& name: getExperiment()->getDataNames())
-//        numors.push_back(name.c_str());
-
-//    experiment["data"] = numors;
-
-//    // experiment["peaks"] = 0;
-
-//    return experiment;
-//}

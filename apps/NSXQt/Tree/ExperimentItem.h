@@ -9,6 +9,10 @@
 
 //using namespace SX::Instrument;
 
+class InstrumentItem;
+class DataItem;
+class PeakListItem;
+
 class ExperimentItem : public TreeItem
 {
 public:
@@ -21,10 +25,14 @@ public:
     //QJsonValue toJson();
 
     QJsonObject toJson() override;
-    void fromJson(QJsonObject& obj) override;
+    void fromJson(const QJsonObject& obj) override;
 
 signals:
 
+private:
+    InstrumentItem* _instr;
+    DataItem* _data;
+    PeakListItem* _peaks;
 };
 
 #endif // EXPERIMENTITEM_H

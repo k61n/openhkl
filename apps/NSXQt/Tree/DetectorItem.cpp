@@ -22,3 +22,12 @@ QWidget* DetectorItem::inspectItem()
 {
     return new DetectorPropertyWidget(this);
 }
+
+QJsonObject DetectorItem::toJson()
+{
+    QJsonObject obj;
+
+    // NOT IMPLEMENTED
+
+    return obj;
+}

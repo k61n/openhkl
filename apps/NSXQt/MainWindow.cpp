@@ -201,7 +201,20 @@ void MainWindow::on_actionSave_session_as_triggered()
 
 void MainWindow::on_actionLoad_session_triggered()
 {
-    qDebug() << "load session: not implemented yet";
+    QString filename = QFileDialog::getOpenFileName(this, "Load session", ".", "Json document (*.json)");
+    qDebug() << "Loading session from file '" << filename << "'";
+
+    QFile loadfile(filename);
+
+    if ( !loadfile.open(QIODevice::ReadOnly)) {
+        qDebug() << "couldn't open file for loading!";
+        return;
+    }
+
+    QJsonDocument doc = QJsonDocument::fromJson(loadfile.readAll());
+    QJsonObject obj = doc.object();
+
+    _session->fromJsonObject(obj);
 }
 
 void MainWindow::on_actionAbout_triggered()
@@ -530,7 +543,7 @@ void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
     int total_peaks = 0;
     int remaining_peaks = 0;
 
-    std::vector<std::shared_ptr<IData>> numors = _ui->experimentTree->getSelectedNumors();
+    std::vector<std::shared_ptr<IData>> numors = _session->getSelectedNumors();
     std::vector<Peak3D*> bad_peaks;
 
     for (std::shared_ptr<IData> numor: numors) {

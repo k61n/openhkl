@@ -17,6 +17,9 @@ public:
     explicit DataItem(std::shared_ptr<Experiment> experiment);
 
     void importData(const std::string& filename);
+
+    QJsonObject toJson() override;
+    void fromJson(const QJsonObject& obj) override;
 };
 
 #endif // DATAITEM_H
