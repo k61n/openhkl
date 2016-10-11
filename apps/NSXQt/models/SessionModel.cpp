@@ -104,6 +104,8 @@
 
 #include "PeakFitDialog.h"
 
+#include "DialogConvolve.h"
+
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonValue>
@@ -282,14 +284,6 @@ void SessionModel::importData()
 {
     // NOT IMPLEMENTED
 }
-
-
-
-void SessionModel::findPeaks(const QModelIndex& index)
-{
-    // NOT IMPLEMENTED
-}
-
 
 
 void SessionModel::showPeaksOpenGL()
@@ -485,4 +479,140 @@ void SessionModel::peakFitDialog()
 void SessionModel::incorporateCalculatedPeaks()
 {
     // NOT IMPLEMENTED
+}
+
+
+void SessionModel::findPeaks(const QModelIndex& index)
+{
+    MainWindow* main = dynamic_cast<MainWindow*>(QApplication::activeWindow());
+
+    auto ui=main->getUI();
+
+    ui->_dview->getScene()->clearPeaks();
+
+    QStandardItem* item = itemFromIndex(index);
+
+    TreeItem* titem=dynamic_cast<TreeItem*>(item);
+    if (!titem)
+        return;
+
+    std::shared_ptr<SX::Instrument::Experiment> expt(titem->getExperiment());
+
+    if (!expt)
+        return;
+
+    QStandardItem* ditem = itemFromIndex(index);
+
+    std::vector<std::shared_ptr<SX::Data::IData>> selectedNumors;
+    int nTotalNumors(rowCount(ditem->index()));
+    selectedNumors.reserve(nTotalNumors);
+
+    for (auto i=0;i<nTotalNumors;++i)
+    {
+        if (ditem->child(i)->checkState() == Qt::Checked)
+        {
+            if (auto ptr = dynamic_cast<NumorItem*>(ditem->child(i)))
+                selectedNumors.push_back(ptr->getExperiment()->getData(ptr->text().toStdString()));
+        }
+    }
+
+    if (selectedNumors.empty())
+    {
+        qWarning()<<"No numors selected for finding peaks";
+        return;
+    }
+
+    // run peak find
+    auto frame = ui->_dview->getScene()->getCurrentFrame();
+
+    // check if now frame was loaded, or is otherwise invalid
+    if ( frame.rows() == 0 || frame.cols() == 0) {
+        // attempt to read first frame of first numor by default
+        try {
+            selectedNumors[0]->open();
+            frame = selectedNumors[0]->getFrame(0);
+        }
+        catch(std::exception& e) {
+            qDebug() << "Peak search failed: cannot load frame: " << e.what();
+            return;
+        }
+    }
+
+    qDebug() << "Preview frame has dimensions" << frame.rows() << " " << frame.cols();
+
+    DialogConvolve* dialog = new DialogConvolve(frame, nullptr);
+
+    // dialog will automatically be deleted before we return from this method
+    std::unique_ptr<DialogConvolve> dialog_ptr(dialog);
+
+
+
+    // reset progress handler
+    _progressHandler = std::shared_ptr<ProgressHandler>(new ProgressHandler);
+
+    // set up peak finder
+    if ( !_peakFinder)
+        _peakFinder = std::shared_ptr<PeakFinder>(new PeakFinder);
+    _peakFinder->setHandler(_progressHandler);
+
+    // dialog will be initialized with values from current peak finder,
+    // and any changes made will persist
+    dialog->setPeakFinder(_peakFinder);
+
+    if (!dialog->exec())
+        return;
+
+    int max=selectedNumors.size();
+    qWarning() << "Peak find algorithm: Searching peaks in " << max << " files";
+
+    // create a pop-up window that will show the progress
+    ProgressView* progressView = new ProgressView(nullptr);
+    progressView->watch(_progressHandler);
+
+    // lambda function to execute peak search in a separate thread
+    auto task = [=] () -> bool
+    {
+        bool result = false;
+
+        // execute in a try-block because the progress handler may throw if it is aborted by GUI
+        try {
+            result = _peakFinder->find(selectedNumors);
+        }
+        catch(std::exception& e) {
+            qDebug() << "Caught exception during peak find: " << e.what();
+            qDebug() <<" Peak search aborted.";
+            return false;
+        }
+        return result;
+    };
+
+    auto onFinished = [=] (bool succeeded) -> void
+    {
+        // delete the progressView
+        delete progressView;
+
+        int num_peaks = 0;
+
+        for (auto numor: selectedNumors) {
+            num_peaks += numor->getPeaks().size();
+            numor->releaseMemory();
+        }
+
+        if ( succeeded ) {
+            //ui->_dview->getScene()->updatePeaks();
+            updatePeaks();
+
+            qDebug() << "Peak search complete., found "
+                     << num_peaks
+                     << " peaks.";
+        }
+        else {
+            qDebug() << "Peak search failed!";
+        }
+    };
+
+    auto job = new Job(this, task, onFinished, true);
+    //connect(progressView, SIGNAL(canceled()), job, SLOT(terminate()));
+
+    job->exec();
 }
