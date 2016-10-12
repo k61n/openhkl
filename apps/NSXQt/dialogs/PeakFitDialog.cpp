@@ -28,7 +28,7 @@
 
 using SX::Crystal::Peak3D;
 
-PeakFitDialog::PeakFitDialog(std::shared_ptr<SessionModel> session, QWidget *parent):
+PeakFitDialog::PeakFitDialog(SessionModel* session, QWidget *parent):
     QDialog(parent),
     _session(session),
     ui(new Ui::PeakFitDialog),

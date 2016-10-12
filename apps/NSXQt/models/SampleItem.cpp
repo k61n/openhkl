@@ -38,8 +38,28 @@ QWidget* SampleItem::inspectItem()
 QJsonObject SampleItem::toJson()
 {
     QJsonObject obj;
+    QJsonArray cells;
 
-    obj["shapes"] = QJsonArray();
+    std::shared_ptr<SX::Instrument::Sample> sample = _experiment->getDiffractometer()->getSample();
+
+    for (int i = 0; i < sample->getNCrystals(); ++i) {
+        std::shared_ptr<SX::Crystal::UnitCell> cell = sample->getUnitCell(i);
+
+        Eigen::Vector3d v[3];
+        v[0] = cell->getAVector();
+        v[1] = cell->getBVector();
+        v[2] = cell->getCVector();
+
+        QJsonArray params;
+
+        for (int j = 0; j < 3; ++j)
+            for (int k = 0; k < 3; ++k)
+                params.push_back(v[j][k]);
+
+        cells.push_back(params);
+    }
+
+    obj["shapes"] = cells;
 
     return obj;
 }

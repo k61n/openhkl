@@ -25,7 +25,7 @@ class PeakFitDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit PeakFitDialog(std::shared_ptr<SessionModel> session, QWidget *parent = 0);
+    explicit PeakFitDialog(SessionModel* session, QWidget *parent = 0);
     ~PeakFitDialog();
     void updateView();
     void updatePeak();
@@ -41,7 +41,7 @@ public slots:
 
 private:
     Ui::PeakFitDialog *ui;
-    std::shared_ptr<SessionModel> _session;
+    SessionModel* _session;
     QGraphicsScene* _scene;
     QGraphicsPixmapItem* _image;
     Eigen::RowVector3i _hkl;
