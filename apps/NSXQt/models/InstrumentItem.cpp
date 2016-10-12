@@ -37,7 +37,7 @@ QJsonObject InstrumentItem::toJson()
 {
     QJsonObject obj;
 
-    obj["type"] = text();
+    obj["name"] = text();
     //obj["detector"] = _detector->toJson();
     obj["sample"] = _sample->toJson();
     //obj["source"] = _source->toJson();
@@ -47,6 +47,6 @@ QJsonObject InstrumentItem::toJson()
 
 void InstrumentItem::fromJson(const QJsonObject &obj)
 {
-    setText(obj["type"].toString());
-    _sample->fromJson(obj);
+    setText(obj["name"].toString());
+    _sample->fromJson(obj["sample"].toObject());
 }

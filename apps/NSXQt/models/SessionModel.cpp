@@ -168,36 +168,9 @@ std::shared_ptr<SX::Instrument::Experiment> SessionModel::addExperiment(const st
     // Create an experiment
     std::shared_ptr<SX::Instrument::Experiment> expPtr(new SX::Instrument::Experiment(experimentName,instrumentName));
 
-//    // Create an instrument item
-//    InstrumentItem* instr = new InstrumentItem(expPtr);
-
-//    // Create a detector item and add it to the instrument item
-//    DetectorItem* detector = new DetectorItem(expPtr);
-//    instr->appendRow(detector);
-
-//    // Create a sample item and add it to the instrument item
-//    SampleItem* sample = new SampleItem(expPtr);
-//    instr->appendRow(sample);
-
-//    // Create a source item and add it to the instrument leaf
-//    SourceItem* source = new SourceItem(expPtr);
-//    instr->appendRow(source);
-
     // Create an experiment item
     ExperimentItem* expt = new ExperimentItem(expPtr);
 
-//    // Add the instrument item to the experiment item
-//    expt->appendRow(instr);
-
-//    // Create a data item and add it to the experiment item
-//    DataItem* data = new DataItem(expPtr);
-//    expt->appendRow(data);
-
-//    // Create a peaks item and add it to the experiment item
-//    PeakListItem* peaks = new PeakListItem(expPtr);
-//    expt->appendRow(peaks);
-
-    // Add the experiment item to the root of the experiment tree
     appendRow(expt);
 
     return expPtr;
@@ -251,7 +224,7 @@ void SessionModel::fromJsonObject(const QJsonObject &obj)
     for (auto&& expr: experiments) {
         QJsonObject exp_obj = expr.toObject();
         std::string name = exp_obj["name"].toString().toStdString();
-        std::string instrument = exp_obj["instrument"].toString().toStdString();
+        std::string instrument = exp_obj["instrument"].toObject()["name"].toString().toStdString();
         std::shared_ptr<Experiment> ptr = addExperiment(name, instrument);
 
         ExperimentItem* expItem = dynamic_cast<ExperimentItem*>(item(rowCount()-1,0));

@@ -60,8 +60,8 @@ QJsonObject ExperimentItem::toJson()
     QJsonObject experiment;
 
     experiment["name"] = exp_ptr->getName().c_str();
-    //experiment["instrument"] = _instr->toJson();
-    experiment["instrument"] = exp_ptr->getDiffractometer()->getName().c_str();
+    experiment["instrument"] = _instr->toJson();
+    //experiment["instrument"] = exp_ptr->getDiffractometer()->getName().c_str();
     experiment["data"] = _data->toJson();
     experiment["peaks"] = _peaks->toJson();
 
@@ -73,7 +73,7 @@ void ExperimentItem::fromJson(const QJsonObject &obj)
     SessionModel* session = dynamic_cast<SessionModel*>(model());
     assert(session != nullptr);
 
-    //_instr->fromJson(obj["instrument"].toObject());
+    _instr->fromJson(obj["instrument"].toObject());
     _data->fromJson(obj["data"].toObject());
     _peaks->fromJson(obj["peaks"].toObject());
 }

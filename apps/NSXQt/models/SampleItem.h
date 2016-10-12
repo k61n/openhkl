@@ -17,6 +17,7 @@ public:
     QWidget* inspectItem();
 
     QJsonObject toJson() override;
+    void fromJson(const QJsonObject& obj) override;
 };
 
 #endif // SAMPLEITEM_H
