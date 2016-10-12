@@ -6,7 +6,7 @@
 #include "IData.h"
 
 #include "models/SessionModel.h"
-#include "Tree/ExperimentItem.h"
+#include "models/ExperimentItem.h"
 
 #include "InstrumentItem.h"
 #include "DetectorItem.h"

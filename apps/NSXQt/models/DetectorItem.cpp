@@ -5,7 +5,7 @@
 #include "Diffractometer.h"
 
 #include "Tree/DetectorPropertyWidget.h"
-#include "Tree/DetectorItem.h"
+#include "models/DetectorItem.h"
 
 DetectorItem::DetectorItem(std::shared_ptr<Experiment> experiment) : InspectableTreeItem(experiment)
 {

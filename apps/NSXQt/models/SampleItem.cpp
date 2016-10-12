@@ -5,8 +5,8 @@
 #include "Sample.h"
 
 #include "Tree/SamplePropertyWidget.h"
-#include "Tree/SampleShapeItem.h"
-#include "Tree/SampleItem.h"
+#include "models/SampleShapeItem.h"
+#include "models/SampleItem.h"
 
 SampleItem::SampleItem(std::shared_ptr<Experiment> experiment) : InspectableTreeItem(experiment)
 {

@@ -4,7 +4,7 @@
 #include <QJsonArray>
 #include <cassert>
 
-#include "Tree/TreeItem.h"
+#include "models/TreeItem.h"
 
 TreeItem::TreeItem(std::shared_ptr<Experiment> experiment) : QStandardItem(), _experiment(experiment)
 {

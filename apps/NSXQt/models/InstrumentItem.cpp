@@ -1,10 +1,10 @@
 #include <QIcon>
 #include <QString>
 
-#include "Tree/InstrumentItem.h"
-#include "Tree/DetectorItem.h"
-#include "Tree/SampleItem.h"
-#include "Tree/SourceItem.h"
+#include "models/InstrumentItem.h"
+#include "models/DetectorItem.h"
+#include "models/SampleItem.h"
+#include "models/SourceItem.h"
 
 InstrumentItem::InstrumentItem(std::shared_ptr<Experiment> experiment) : TreeItem(experiment)
 {

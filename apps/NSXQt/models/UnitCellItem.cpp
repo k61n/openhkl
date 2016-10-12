@@ -3,7 +3,7 @@
 #include "Sample.h"
 #include "UnitCell.h"
 
-#include "Tree/UnitCellItem.h"
+#include "models/UnitCellItem.h"
 #include "Tree/UnitCellPropertyWidget.h"
 
 UnitCellItem::UnitCellItem(std::shared_ptr<SX::Instrument::Experiment> experiment,std::shared_ptr<SX::Crystal::UnitCell> cell):

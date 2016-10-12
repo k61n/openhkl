@@ -2,7 +2,7 @@
 #include "IData.h"
 
 #include "Tree/NumorPropertyWidget.h"
-#include "Tree/NumorItem.h"
+#include "models/NumorItem.h"
 
 #include <iostream>
 

@@ -475,7 +475,12 @@ void IData::removeMask(AABB<double,3>* mask)
 	if (p!=_masks.end())
 		_masks.erase(mask);
 	// Update the peaks selection status.
-	maskPeaks();
+    maskPeaks();
+}
+
+const std::set<AABB<double, 3> *>& IData::getMasks()
+{
+    return _masks;
 }
 
 void IData::maskPeaks() const

@@ -5,7 +5,7 @@
 #include <QJsonArray>
 
 #include "Experiment.h"
-#include "Tree/DataItem.h"
+#include "models/DataItem.h"
 #include "DataReaderFactory.h"
 #include "NumorItem.h"
 

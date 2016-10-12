@@ -1,5 +1,5 @@
 #include "ui_NumorPropertyWidget.h"
-#include "Tree/NumorItem.h"
+#include "models/NumorItem.h"
 #include "Tree/NumorPropertyWidget.h"
 #include "IData.h"
 #include "MetaData.h"

@@ -4,7 +4,7 @@
 #include <string>
 
 #include "Experiment.h"
-#include <Tree/TreeItem.h>
+#include "models/TreeItem.h"
 
 class DetectorItem;
 class SampleItem;
