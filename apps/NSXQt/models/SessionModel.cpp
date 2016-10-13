@@ -233,6 +233,16 @@ void SessionModel::fromJsonObject(const QJsonObject &obj)
     }
 }
 
+void SessionModel::setFilename(QString name)
+{
+    _filename = name;
+}
+
+QString SessionModel::getFilename()
+{
+    return _filename;
+}
+
 vector<shared_ptr<IData>> SessionModel::getSelectedNumors() const
 {
     vector<shared_ptr<IData>> numors;

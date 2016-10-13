@@ -81,6 +81,8 @@ public:
     QJsonObject toJsonObject();
     void fromJsonObject(const QJsonObject& obj);
 
+    void setFilename(QString name);
+    QString getFilename();
 
 
 signals:
@@ -109,6 +111,8 @@ public slots:
 
 
 private:
+    //! Filename for the save/load feature
+    QString _filename;
 
     std::shared_ptr<SX::Utils::ProgressHandler> _progressHandler;
     std::shared_ptr<SX::Data::PeakFinder> _peakFinder;    

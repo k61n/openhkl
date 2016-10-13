@@ -113,6 +113,7 @@ public slots:
     void plotPeak(SX::Crystal::Peak3D*);
     void plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&);
     void setInspectorWidget(QWidget*);
+    void saveSession(QString filename);
 
 private:
     Ui::MainWindow* _ui;

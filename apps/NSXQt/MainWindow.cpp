@@ -170,20 +170,16 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::on_actionNew_session_triggered()
-{
-    qDebug() << "new session: not implemented yet";
+{    
+  qDebug() << "save session: not implemented yet";
 }
 
-void MainWindow::on_actionSave_session_triggered()
+void MainWindow::saveSession(QString filename)
 {
-    qDebug() << "save session: not implemented yet";
-}
-
-void MainWindow::on_actionSave_session_as_triggered()
-{
-    qDebug() << "save session as: not implemented yet";
-
-    QString filename = QFileDialog::getSaveFileName(this, "Save session as..", ".", "Json document (*.json)");
+    if (filename == "") {
+        qDebug() << "Must first save to file before selecting save";
+        return;
+    }
 
     qDebug() << "saving session to " << filename;
 
@@ -197,11 +193,25 @@ void MainWindow::on_actionSave_session_as_triggered()
     }
 
     savefile.write(doc.toJson());
+    _session->setFilename(filename);
+}
+
+void MainWindow::on_actionSave_session_triggered()
+{
+    saveSession(_session->getFilename());
+}
+
+void MainWindow::on_actionSave_session_as_triggered()
+{
+    QString homeDir = SX::Utils::Path::getHomeDirectory().c_str();
+    QString filename = QFileDialog::getSaveFileName(this, "Save session as..", homeDir, "Json document (*.json)");
+    saveSession(filename);
 }
 
 void MainWindow::on_actionLoad_session_triggered()
 {
-    QString filename = QFileDialog::getOpenFileName(this, "Load session", ".", "Json document (*.json)");
+    QString homeDir = SX::Utils::Path::getHomeDirectory().c_str();
+    QString filename = QFileDialog::getOpenFileName(this, "Load session", homeDir, "Json document (*.json)");
     qDebug() << "Loading session from file '" << filename << "'";
 
     QFile loadfile(filename);
@@ -215,6 +225,7 @@ void MainWindow::on_actionLoad_session_triggered()
     QJsonObject obj = doc.object();
 
     _session->fromJsonObject(obj);
+    _session->setFilename(filename);
 }
 
 void MainWindow::on_actionAbout_triggered()
@@ -228,7 +239,6 @@ void MainWindow::on_actionAbout_triggered()
     QSize screenSize = QApplication::desktop()->geometry().size();
     splashScrWindow->move(screenSize.width()/2-300,screenSize.height()/2-150);
     splashScrWindow->show();
-
 }
 
 Ui::MainWindow* MainWindow::getUI() const
@@ -250,18 +260,14 @@ void MainWindow::changeData(std::shared_ptr<IData> data)
         frame = frameMax;
 
     _ui->frame->setValue(frame);
-
     _ui->frame->setMaximum(frameMax);
-
     _ui->spinBox_Frame->setMaximum(frameMax);
 
     //_ui->intensity->setValue(10);
-
 }
 
 void MainWindow::showPeakList(std::vector<std::shared_ptr<SX::Data::IData>> data)
 {
-
     if (data.empty())
         return;
 
@@ -274,24 +280,22 @@ void MainWindow::showPeakList(std::vector<std::shared_ptr<SX::Data::IData>> data
             SIGNAL(plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&)),
             this,
             SLOT(plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&)));
-
 }
 
 void MainWindow::plotPeak(SX::Crystal::Peak3D* peak)
 {
-    auto scenePtr=_ui->_dview->getScene();
+    auto scenePtr = _ui->_dview->getScene();
     // Ensure that frames
     changeData(peak->getData());
     // Get frame number to adjust the data
-    int data_frame=std::round(peak->getPeak()->getAABBCenter()[2]);
-    scenePtr->setData(peak->getData(),data_frame);
+    int data_frame = std::round(peak->getPeak()->getAABBCenter()[2]);
+    scenePtr->setData(peak->getData(), data_frame);
     // Update the scrollbar
     _ui->frame->setValue(data_frame);
-    auto pgi=scenePtr->findPeakGraphicsItem(peak);
+    auto pgi = scenePtr->findPeakGraphicsItem(peak);
+
     if (pgi)
-    {
         updatePlot(pgi);
-    }
 }
 
 
@@ -341,9 +345,7 @@ void MainWindow::on_action1D_Peak_Ploter_triggered()
 
 void MainWindow::plotData(const QVector<double>& x,const QVector<double>& y,const QVector<double>& e)
 {
-
-    if (_ui->plot1D->getType().compare("simple")!=0)
-    {
+    if (_ui->plot1D->getType().compare("simple") != 0) {
         // Store the old size policy
         QSizePolicy oldSizePolicy = _ui->plot1D->sizePolicy();
         // Remove the current plotter from the ui
@@ -369,9 +371,7 @@ void MainWindow::plotData(const QVector<double>& x,const QVector<double>& y,cons
 
     _ui->plot1D->graph(0)->setDataValueError(x,y,e);
     _ui->plot1D->rescaleAxes();
-
     _ui->plot1D->replot();
-
 }
 
 void MainWindow::updatePlot(PlottableGraphicsItem* item)
@@ -379,8 +379,7 @@ void MainWindow::updatePlot(PlottableGraphicsItem* item)
     if (!item)
         return;
 
-    if (!item->isPlottable(_ui->plot1D))
-    {
+    if (!item->isPlottable(_ui->plot1D)) {
         // Store the old size policy
         QSizePolicy oldSizePolicy = _ui->plot1D->sizePolicy();
         // Remove the current plotter from the ui
@@ -402,7 +401,6 @@ void MainWindow::updatePlot(PlottableGraphicsItem* item)
 
         // Add the plot to the ui
         _ui->horizontalLayout_4->addWidget(_ui->plot1D);
-
     }
 
     // Plot the data
@@ -429,7 +427,6 @@ void MainWindow::on_actionBehind_Detector_triggered()
 
 void MainWindow::on_action_display_isotopes_database_triggered()
 {
-
     // Opens the dialog that will diplay the isotopes database
     IsotopeDatabaseDialog* dlg=new IsotopeDatabaseDialog();
     dlg->exec();
@@ -460,14 +457,12 @@ void MainWindow::setInspectorWidget(QWidget* w)
     _ui->dockWidget_Property->setWidget(w);
 
     // Handle specific actions from these widgets
-    if (UnitCellPropertyWidget* widget=dynamic_cast<UnitCellPropertyWidget*>(w))
-    {
+    if (UnitCellPropertyWidget* widget=dynamic_cast<UnitCellPropertyWidget*>(w)) {
         connect(widget,SIGNAL(activateIndexingMode(std::shared_ptr<SX::Crystal::UnitCell>)),_ui->_dview->getScene(),SLOT(activateIndexingMode(std::shared_ptr<SX::Crystal::UnitCell>)));
         connect(widget,SIGNAL(cellUpdated()),_ui->_dview->getScene(),SLOT(updatePeaks()));
     }
 
-    if (PeakListPropertyWidget* widget=dynamic_cast<PeakListPropertyWidget*>(w))
-    {
+    if (PeakListPropertyWidget* widget=dynamic_cast<PeakListPropertyWidget*>(w)) {
         // Ensure plot1D is updated
         connect(widget->getPeakTableView(),SIGNAL(plotPeak(SX::Crystal::Peak3D*)),this,SLOT(plotPeak(SX::Crystal::Peak3D*)));
         connect(widget->getPeakTableView(),
@@ -479,7 +474,6 @@ void MainWindow::setInspectorWidget(QWidget* w)
 
 void MainWindow::on_actionConvert_to_HDF5_triggered()
 {
-
     NumorsConversionDialog* dlg=new NumorsConversionDialog();
     dlg->exec();
 }
