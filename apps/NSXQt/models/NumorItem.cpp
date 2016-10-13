@@ -39,7 +39,7 @@ QJsonObject NumorItem::toJson()
     QJsonObject obj;
     QJsonArray masks;
 
-    obj["filename"] = getData()->getFilename().c_str();
+    obj["filename"] = QString(getData()->getFilename().c_str());
 
     for (auto&& mask: getData()->getMasks()) {
         const Eigen::Vector3d lower(mask->getLower());
@@ -62,8 +62,8 @@ QJsonObject NumorItem::toJson()
 
 void NumorItem::fromJson(const QJsonObject &obj)
 {
-    assert(obj["filename"].toString() == getData()->getFilename().c_str());
-    QJsonArray masks = obj["masks"].toArray();
+  assert(obj["filename"].toString() == getData()->getFilename().c_str());
+  QJsonArray masks = obj["masks"].toArray();
 
     for (auto&& mask: masks) {
         QJsonArray mask_arr = mask.toArray();
