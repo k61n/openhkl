@@ -3,6 +3,8 @@
 
 #include "TreeItem.h"
 
+class NumorItem;
+
 namespace SX
 {
     namespace Instrument
@@ -16,7 +18,7 @@ class DataItem : public TreeItem
 public:
     explicit DataItem(std::shared_ptr<Experiment> experiment);
 
-    void importData(const std::string& filename);
+    NumorItem* importData(const std::string& filename);
 
     QJsonObject toJson() override;
     void fromJson(const QJsonObject& obj) override;

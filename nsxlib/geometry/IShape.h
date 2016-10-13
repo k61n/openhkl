@@ -69,9 +69,9 @@ public:
 	IShape();
 	//! Construct a IShape from another IShape
 	IShape(const IShape& other);
-	//! Construct a IShape from two Eigen vectors representing the lower and upper bound of its bounding box
-	IShape(const vector& lower, const vector& upper);
-	//! Construct a IShape from two initializer lists representing respectively its lower and upper bound
+    //! Construct a IShape from two Eigen vectors representing the lower and upper bound of its bounding box
+    IShape(const vector& lower, const vector& upper);
+    //! Construct a IShape from two initializer lists representing respectively its lower and upper bound
 	IShape(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub);
 	// Destructor
 	virtual ~IShape();
@@ -97,15 +97,15 @@ public:
 	//! Check whether the bounding box of the shape intersects (e.g. touches or overlaps) the bounding box of another shape
 	bool intercept(const IShape& other) const;
 
-	//! Set the lower and upper bounds of the shape bounding box
+    //! Set the lower and upper bounds of the shape bounding box
 	void setBounds(const vector& lb, const vector& ub);
-	//! Set the lower bound of the shape bounding box
-	void setLower(const vector& lb);
+    //! Set the lower bound of the shape bounding box
+    void setLower(const vector& lb);
 	//! Set the upper bound of the shape bounding box
 	void setUpper(const vector& lb);
-	//! Get a constant reference to the lower bound of the bounding box of the shape
-	const vector& getLower() const;
-	//! Get a reference to the lower bound of the bounding box of the shape
+    //! Get a constant reference to the lower bound of the bounding box of the shape
+    const vector& getLower() const;
+    //! Get a reference to the lower bound of the bounding box of the shape
 	vector& getLower();
 	//! Get a constant reference to the upper bound of the bounding box of the shape
 	const vector& getUpper() const;

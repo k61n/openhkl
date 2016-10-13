@@ -155,8 +155,8 @@ public:
     //! Add a new peak to the data
 	void addPeak(Peak3D* peak);
 
-    //! Remove a mask from the data
-	void removeMask(AABB<double,3>* mask);
+    //! Remove a mask from the data, by reference
+    void removeMask(AABB<double, 3>* mask);
 
     //! Return the list of masks
     const std::set<AABB<double,3>*>& getMasks();

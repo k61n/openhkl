@@ -49,7 +49,6 @@ DetectorScene::DetectorScene(QObject *parent)
 
 void DetectorScene::changeFrame(unsigned int frame)
 {
-
     if (!_currentData)
         return;
 
@@ -67,6 +66,8 @@ void DetectorScene::changeFrame(unsigned int frame)
     showPeakCalcs(_showPeakCalcs);
 
     loadCurrentImage();
+
+    updateMasks(frame);
 }
 
 void DetectorScene::setMaxIntensity(int intensity)
@@ -239,10 +240,9 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             // Case of Mask mode
             else if (_mode==MASK)
             {
-                MaskGraphicsItem* mask = new MaskGraphicsItem(_currentData);
+                MaskGraphicsItem* mask = new MaskGraphicsItem(_currentData, new AABB<double, 3>);
                 mask->setFrom(event->lastScenePos());
                 mask->setTo(event->lastScenePos());
-                _masks.append(mask);
                 addItem(mask);
                 _lastClickedGI=mask;
             }
@@ -307,10 +307,16 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             if (auto p=dynamic_cast<PlottableGraphicsItem*>(_lastClickedGI))
                 emit updatePlot(p);
             else if (auto p=dynamic_cast<MaskGraphicsItem*>(_lastClickedGI)) {
-                if (_lastClickedGI == _masks.last())
+                // add a new mask
+                if (std::find(_masks.begin(), _masks.end(), p) == _masks.end()) {
                     _currentData->addMask(p->getAABB());
+                    removeItem(p);
+                    delete p;
+                    _lastClickedGI = nullptr;
+                }
                 _currentData->maskPeaks();
                 update();
+                updateMasks(_currentFrameIndex);
             }
         }
     }
@@ -588,6 +594,33 @@ void DetectorScene::clearPeaks()
     }
 
     _peakGraphicsItems.clear();
+}
+
+void DetectorScene::updateMasks(unsigned int frame)
+{
+    _lastClickedGI = nullptr;
+
+    for (auto&& mask: _masks) {
+        removeItem(mask);
+        delete mask;
+    }
+
+    _masks.clear();
+
+    for (auto&& mask: _currentData->getMasks()) {
+        const Eigen::Vector3d lower(mask->getLower());
+        const Eigen::Vector3d upper(mask->getUpper());
+
+        // mask is out of the frame
+        if (frame > upper[2] || frame < lower[2])
+            continue;
+
+        MaskGraphicsItem* maskItem = new MaskGraphicsItem(_currentData, mask);
+        maskItem->setFrom(QPoint(lower(0), lower(1)));
+        maskItem->setTo(QPoint(upper(0), upper(1)));
+        addItem(maskItem);
+        _masks.push_back(maskItem);
+    }
 }
 
 void DetectorScene::showPeakLabels(bool peaklabel)

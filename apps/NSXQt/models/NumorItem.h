@@ -24,6 +24,10 @@ public:
     ~NumorItem();
     QWidget* inspectItem();
     std::shared_ptr<SX::Data::IData> getData();
+
+    QJsonObject toJson() override;
+    void fromJson(const QJsonObject& obj) override;
+
 private:
     std::shared_ptr<SX::Data::IData> _data;
 };

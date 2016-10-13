@@ -21,7 +21,7 @@ DataItem::DataItem(std::shared_ptr<Experiment> experiment) : TreeItem(experiment
 }
 
 
-void DataItem::importData(const std::string &filename_str)
+NumorItem* DataItem::importData(const std::string &filename_str)
 {
     // Get the basename of the current numor
     QString filename(filename_str.c_str());
@@ -31,7 +31,7 @@ void DataItem::importData(const std::string &filename_str)
 
     // If the experience already stores the current numor, skip it
     if (exp->hasData(basename))
-        return;
+        return nullptr;
 
     std::shared_ptr<IData> data_ptr;
 
@@ -48,17 +48,19 @@ void DataItem::importData(const std::string &filename_str)
     }
     catch(std::exception& e) {
         qWarning() << "Error reading numor: " + filename + " " + QString(e.what());
-        return;
+        return nullptr;
     }
     catch(...)  {
         qWarning() << "Error reading numor: " + filename + " reason not known:";
-        return;
+        return nullptr;
     }
 
-    QStandardItem* item = new NumorItem(exp, data_ptr);
+    NumorItem* item = new NumorItem(exp, data_ptr);
     item->setText(QString::fromStdString(basename));
     item->setCheckable(true);
     appendRow(item);
+
+    return item;
 }
 
 QJsonObject DataItem::toJson()
@@ -67,14 +69,9 @@ QJsonObject DataItem::toJson()
     QJsonArray numors;
 
     for(int i = 0; i < rowCount(); ++i) {
-        std::string name = this->child(i)->text().toStdString();
-        std::map<std::string, std::shared_ptr<IData>>::const_iterator it = getExperiment()->getData().find(name);
-
-        assert(it != getExperiment()->getData().cend());
-
-        const std::shared_ptr<IData>& data = it->second;
-        assert(data != nullptr);
-        numors.push_back(data->getFilename().c_str());
+        NumorItem* item = dynamic_cast<NumorItem*>(this->child(i));
+        assert(item != nullptr);
+        numors.push_back(item->toJson());
     }
 
     obj["numors"] = numors;
@@ -86,6 +83,9 @@ void DataItem::fromJson(const QJsonObject &obj)
 {
     QJsonArray numors = obj["numors"].toArray();
 
-    for (auto&& numor: numors)
-        importData(numor.toString().toStdString());
+    for (auto&& numor: numors) {
+        QString filename = numor.toObject()["filename"].toString();
+        NumorItem* item = importData(filename.toStdString());
+        item->fromJson(numor.toObject());
+    }
 }
