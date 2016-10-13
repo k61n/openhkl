@@ -6,6 +6,7 @@
 
 #include <QStandardItem>
 #include <QVariant>
+#include <QJsonObject>
 
 #include "Experiment.h"
 
@@ -21,6 +22,8 @@ public:
     std::shared_ptr<Experiment> getExperiment();
     virtual ~TreeItem();
 
+    virtual QJsonObject toJson();
+    virtual void fromJson(const QJsonObject& obj);
 
 protected:
     std::shared_ptr<Experiment> _experiment;

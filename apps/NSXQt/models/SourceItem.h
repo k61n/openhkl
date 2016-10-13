@@ -10,7 +10,7 @@ namespace SX{
         class Experiment;
     }
 }
-class Experiment;
+
 
 class SourceItem : public InspectableTreeItem
 {

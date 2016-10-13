@@ -5,7 +5,7 @@
 #include "Diffractometer.h"
 
 #include "Tree/DetectorPropertyWidget.h"
-#include "Tree/DetectorItem.h"
+#include "models/DetectorItem.h"
 
 DetectorItem::DetectorItem(std::shared_ptr<Experiment> experiment) : InspectableTreeItem(experiment)
 {
@@ -21,4 +21,13 @@ DetectorItem::DetectorItem(std::shared_ptr<Experiment> experiment) : Inspectable
 QWidget* DetectorItem::inspectItem()
 {
     return new DetectorPropertyWidget(this);
+}
+
+QJsonObject DetectorItem::toJson()
+{
+    QJsonObject obj;
+
+    // NOT IMPLEMENTED
+
+    return obj;
 }

@@ -1,6 +1,6 @@
 #include <QWidget>
 
-#include "Tree/SampleShapeItem.h"
+#include "models/SampleShapeItem.h"
 #include "Tree/SampleShapePropertyWidget.h"
 
 SampleShapeItem::SampleShapeItem(std::shared_ptr<SX::Instrument::Experiment> experiment):

@@ -91,6 +91,8 @@ public slots:
     void showPeakCalcs(bool);
     void clearPeaks();
 
+    void updateMasks(unsigned int frame);
+
 private:
     //! Load image from current Data and frame
     void loadCurrentImage(bool newimage=true);

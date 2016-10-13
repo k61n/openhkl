@@ -4,7 +4,7 @@
 #include "Diffractometer.h"
 #include "Source.h"
 #include "Experiment.h"
-#include "Tree/SourceItem.h"
+#include "models/SourceItem.h"
 #include "Tree/SourcePropertyWidget.h"
 
 SourceItem::SourceItem(std::shared_ptr<SX::Instrument::Experiment> experiment) : InspectableTreeItem(experiment)

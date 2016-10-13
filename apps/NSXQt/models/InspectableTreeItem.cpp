@@ -1,4 +1,4 @@
-#include "Tree/InspectableTreeItem.h"
+#include "models/InspectableTreeItem.h"
 
 InspectableTreeItem::InspectableTreeItem(std::shared_ptr<Experiment> experiment):TreeItem(experiment)
 {
