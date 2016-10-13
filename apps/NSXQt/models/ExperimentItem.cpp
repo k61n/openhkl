@@ -59,7 +59,7 @@ QJsonObject ExperimentItem::toJson()
     std::shared_ptr<SX::Instrument::Experiment> exp_ptr = getExperiment();
     QJsonObject experiment;
 
-    experiment["name"] = exp_ptr->getName().c_str();
+    experiment["name"] = QString(exp_ptr->getName().c_str());
     experiment["instrument"] = _instr->toJson();
     //experiment["instrument"] = exp_ptr->getDiffractometer()->getName().c_str();
     experiment["data"] = _data->toJson();
