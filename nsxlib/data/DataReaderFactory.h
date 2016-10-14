@@ -51,7 +51,9 @@ typedef typename std::shared_ptr<SX::Instrument::Diffractometer> ptrInstrument;
  * choose the correct DataReader at runtime. Reader selection is based on the extension of the datafile.
  *
  */
-class DataReaderFactory : public Factory<IData,std::string,std::string,std::shared_ptr<SX::Instrument::Diffractometer> >, public Singleton<DataReaderFactory,Constructor,Destructor>
+class DataReaderFactory :
+        public Factory<IData,std::string,std::string,std::shared_ptr<SX::Instrument::Diffractometer> >,
+        public Singleton<DataReaderFactory,Constructor,Destructor>
 {
 private:
 	friend class Constructor<DataReaderFactory>;
