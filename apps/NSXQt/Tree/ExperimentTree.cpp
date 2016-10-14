@@ -147,37 +147,44 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
 {
     QModelIndex index = indexAt(point);
 
-    if (index == rootIndex())
-    {
+    if (index == rootIndex()) {
         QMenu* menu = new QMenu(this);
-        QAction* newexp=menu->addAction("Add new experiment");
+        QAction* newexp = menu->addAction("Add new experiment");
         menu->popup(viewport()->mapToGlobal(point));
-        connect(newexp,SIGNAL(triggered()),this,SLOT(createNewExperiment()));
-
+        connect(newexp, SIGNAL(triggered()), this, SLOT(createNewExperiment()));
     }
-    else
-    {
-        QStandardItem* item=_session->itemFromIndex(index);
-        if (dynamic_cast<DataItem*>(item))
-        {
+    else {
+        QStandardItem* item = _session->itemFromIndex(index);
+        if (dynamic_cast<DataItem*>(item)) {
             QMenu* menu = new QMenu(this);
-            QAction* import=menu->addAction("Import");
-            QAction* findpeaks=menu->addAction("Peak finder");
-            QAction* rviewer=menu->addAction("Reciprocal space viewer");
+            QAction* import = menu->addAction("Import");
+            QAction* findpeaks = menu->addAction("Peak finder");
+            QAction* rviewer = menu->addAction("Reciprocal space viewer");
             menu->popup(viewport()->mapToGlobal(point));
-            connect(import,SIGNAL(triggered()),this,SLOT(importData()));
-            connect(findpeaks,&QAction::triggered,[=](){findPeaks(index);});
-            connect(rviewer,&QAction::triggered,[=](){viewReciprocalSpace(index);});
+            connect(import, SIGNAL(triggered()), this, SLOT(importData()));
+            connect(findpeaks, &QAction::triggered, [=](){findPeaks(index);});
+            connect(rviewer, &QAction::triggered, [=](){viewReciprocalSpace(index);});
         }
-        else if (dynamic_cast<PeakListItem*>(item))
-        {
+        else if (dynamic_cast<PeakListItem*>(item)) {
             QMenu* menu = new QMenu(this);
-            QAction* abs=menu->addAction("Correct for Absorption"); // Absorption menu
-            QAction* scene3d=menu->addAction("Show 3D view"); // Peak in 3D OpenGL window
+            QAction* abs = menu->addAction("Correct for Absorption");
+            QAction* scene3d = menu->addAction("Show 3D view");
             menu->popup(viewport()->mapToGlobal(point));
             // Call the slot
-            connect(abs,SIGNAL(triggered()),this,SLOT(absorptionCorrection()));
-            connect(scene3d,SIGNAL(triggered()),this,SLOT(showPeaksOpenGL()));
+            connect(abs, SIGNAL(triggered()), this, SLOT(absorptionCorrection()));
+            connect(scene3d, SIGNAL(triggered()), this, SLOT(showPeaksOpenGL()));
+        }
+        else if (NumorItem* nitem = dynamic_cast<NumorItem*>(item)) {
+            QMenu* menu = new QMenu(this);
+            QAction* export_hdf = menu->addAction("Export to HDF5...");
+            menu->popup(viewport()->mapToGlobal(point));
+
+            auto export_fn = [=] {
+                QString filename = QFileDialog::getSaveFileName(this, "Save File", "", "HDF5 (*.hdf *.hdf5)");
+                nitem->exportHDF5(filename.toStdString());
+            };
+
+            connect(export_hdf, &QAction::triggered, this, export_fn);
         }
     }
 }

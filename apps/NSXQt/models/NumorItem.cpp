@@ -84,6 +84,11 @@ void NumorItem::fromJson(const QJsonObject &obj)
     }
 }
 
+void NumorItem::exportHDF5(std::string filename)
+{
+    _data->saveHDF5(filename);
+}
+
 QWidget* NumorItem::inspectItem()
 {
     return new NumorPropertyWidget(this);
