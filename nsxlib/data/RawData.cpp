@@ -63,7 +63,7 @@ namespace Data
 using namespace SX::Utils;
 using namespace SX::Units;
 
-IData *RawData::create(const std::__cxx11::string &filename, std::shared_ptr<Diffractometer> diffractometer)
+IData *RawData::create(const std::string &filename, std::shared_ptr<Diffractometer> diffractometer)
 {
     std::vector<std::string> filenames;
     filenames.push_back(filename);
