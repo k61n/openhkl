@@ -132,7 +132,7 @@ Eigen::MatrixXi RawData::readFrame(std::size_t idx)
 
     file.seekg(0, std::ios_base::end);
 
-    if ( file.tellg() != _length) {
+    if (_length != file.tellg()) {
         std::string err_msg = "data file " + filename + " is not of the expected size: ";
         err_msg += "expected " + std::to_string(_length) + " bytes but found " + std::to_string(file.tellg());
         throw std::runtime_error(err_msg);
