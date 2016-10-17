@@ -64,7 +64,8 @@ public:
 
 	//! Default constructor
     RawData(const std::vector<std::string>& filenames, std::shared_ptr<Diffractometer> diffractometer,
-            double wavelength, double delta_chi, double delta_omega, double delta_phi);
+            double wavelength, double delta_chi, double delta_omega, double delta_phi,
+            bool rowMajor, bool swapEndian, int bpp);
 
 	//! Copy constructor
     RawData(const RawData& other)=delete;

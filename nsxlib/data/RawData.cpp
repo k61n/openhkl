@@ -63,25 +63,26 @@ namespace Data
 using namespace SX::Utils;
 using namespace SX::Units;
 
-IData *RawData::create(const std::string &filename, std::shared_ptr<Diffractometer> diffractometer)
-{
+IData *RawData::create(const std::string &filename, std::shared_ptr<Diffractometer> diffractometer) {
     std::vector<std::string> filenames;
     filenames.push_back(filename);
-    return new RawData(filenames, diffractometer, 0, 0, 0, 0);
+    return new RawData(filenames, diffractometer, 0, 0, 0, 0, true, true, 2);
 }
 
 RawData::RawData(const std::vector<std::string>& filenames, std::shared_ptr<Diffractometer> diffractometer,
-                 double wavelength, double delta_chi, double delta_omega, double delta_phi):
+                 double wavelength, double delta_chi, double delta_omega, double delta_phi,
+                 bool rowMajor, bool swapEndian, int bpp):
     IData(filenames[0], diffractometer),
     _filenames(filenames),
     _wavelength(wavelength),
     _delta_chi(delta_chi),
     _delta_omega(delta_omega),
     _delta_phi(delta_phi),
-    _rowMajor(true),
-    _swapEndian(true),
-    _bpp(2)
+    _rowMajor(rowMajor),
+    _swapEndian(swapEndian),
+    _bpp(bpp)
 {
+
     // ensure that there is at least one monochromator!
     if ( _diffractometer->getSource()->getNMonochromators() == 0 ) {
         Monochromator mono("mono");
@@ -144,23 +145,16 @@ RawData::RawData(const std::vector<std::string>& filenames, std::shared_ptr<Diff
     }
 }
 
-RawData::~RawData()
-{
-
+RawData::~RawData() {
 }
 
-void RawData::open()
-{
-
+void RawData::open() {
 }
 
-void RawData::close()
-{
-
+void RawData::close() {
 }
 
-Eigen::MatrixXi RawData::readFrame(std::size_t idx)
-{
+Eigen::MatrixXi RawData::readFrame(std::size_t idx) {
     std::string filename = _filenames.at(idx);
 
     _data.resize(_length);
@@ -202,8 +196,7 @@ Eigen::MatrixXi RawData::readFrame(std::size_t idx)
     }
 }
 
-void RawData::swapEndian()
-{
+void RawData::swapEndian() {
     if (!_swapEndian)
         return;
 
@@ -214,8 +207,7 @@ void RawData::swapEndian()
     }
 }
 
-void RawData::setBpp(int bpp)
-{
+void RawData::setBpp(int bpp) {
     _bpp = bpp;
     _length = _bpp*_nrows*_ncols;
 }

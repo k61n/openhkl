@@ -262,13 +262,14 @@ void ExperimentTree::importRawData()
     const double delta_chi = dialog.deltaChi();
     const bool swap_endian = dialog.swapEndian();
     const int bpp = dialog.bpp();
+    const bool row_major = dialog.rowMajor();
 
     std::vector<std::string> filenames;
 
     for (auto&& file: files)
         filenames.push_back(file.toStdString());
 
-    dataItem->importRawData(filenames, wavelength, delta_chi, delta_omega, delta_phi);
+    dataItem->importRawData(filenames, wavelength, delta_chi, delta_omega, delta_phi, row_major, swap_endian, bpp);
 }
 
 

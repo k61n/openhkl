@@ -90,7 +90,8 @@ NumorItem* DataItem::importData(const std::string &filename_str)
 }
 
 NumorItem *DataItem::importRawData(const std::vector<std::string> &filenames,
-                                   double wavelength, double delta_chi, double delta_omega, double delta_phi)
+                                   double wavelength, double delta_chi, double delta_omega, double delta_phi,
+                                   bool rowMajor, bool swapEndian, int bpp)
 {
     // Get the basename of the current numor
     QString filename(filenames[0].c_str());
@@ -106,7 +107,9 @@ NumorItem *DataItem::importRawData(const std::vector<std::string> &filenames,
 
     try {
         auto diff = exp->getDiffractometer();
-        auto data_ptr = new SX::Data::RawData(filenames, diff, wavelength, delta_chi, delta_omega, delta_phi);
+        auto data_ptr = new SX::Data::RawData(filenames, diff,
+                                              wavelength, delta_chi, delta_omega, delta_phi,
+                                              rowMajor, swapEndian, bpp);
         data = std::shared_ptr<SX::Data::IData>(data_ptr);
     }
     catch(std::exception& e) {
