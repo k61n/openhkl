@@ -35,7 +35,7 @@ public:
     // Constructors and destructor
 
 	// Constructs a mask
-    MaskGraphicsItem(std::shared_ptr<SX::Data::IData> data);
+    MaskGraphicsItem(std::shared_ptr<SX::Data::IData> data, AABB<double, 3>* aabb);
     //! The destructor
     ~MaskGraphicsItem();
 

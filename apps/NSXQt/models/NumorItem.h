@@ -24,6 +24,11 @@ public:
     ~NumorItem();
     QWidget* inspectItem();
     std::shared_ptr<SX::Data::IData> getData();
+
+    QJsonObject toJson() override;
+    void fromJson(const QJsonObject& obj) override;
+    void exportHDF5(std::string filename);
+
 private:
     std::shared_ptr<SX::Data::IData> _data;
 };

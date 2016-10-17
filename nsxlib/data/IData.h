@@ -155,8 +155,11 @@ public:
     //! Add a new peak to the data
 	void addPeak(Peak3D* peak);
 
-    //! Remove a mask from the data
-	void removeMask(AABB<double,3>* mask);
+    //! Remove a mask from the data, by reference
+    void removeMask(AABB<double, 3>* mask);
+
+    //! Return the list of masks
+    const std::set<AABB<double,3>*>& getMasks();
 
     //! Remove a peak from the data
 	bool removePeak(Peak3D* peak);
@@ -202,7 +205,7 @@ public:
 
     //!
     std::size_t getFileSize() const;//
-    void saveHDF5(const std::string& filename) const;
+    void saveHDF5(const std::string& filename); // const;
 
     //! Is the peak h,k,l in Bragg condition in this dataset. Return Peak pointer if true,
     //! otherwise nullptr.

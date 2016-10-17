@@ -1,7 +1,7 @@
 #ifndef NORMALIZEPEAKSITEM_H
 #define NORMALIZEPEAKSITEM_H
 
-#include "Tree/TreeItem.h"
+#include "models/TreeItem.h"
 
 namespace SX
 {

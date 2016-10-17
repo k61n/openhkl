@@ -18,7 +18,7 @@
 
 #include "ui_SampleShapePropertyWidget.h"
 #include "AbsorptionDialog.h"
-#include "Tree/SampleShapeItem.h"
+#include "models/SampleShapeItem.h"
 #include "Tree/SampleShapePropertyWidget.h"
 #include "Units.h"
 

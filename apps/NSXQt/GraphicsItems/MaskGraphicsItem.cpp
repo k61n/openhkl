@@ -17,10 +17,10 @@
 #include "DetectorScene.h"
 #include "GraphicsItems/MaskGraphicsItem.h"
 
-MaskGraphicsItem::MaskGraphicsItem(std::shared_ptr<SX::Data::IData> data)
+MaskGraphicsItem::MaskGraphicsItem(std::shared_ptr<SX::Data::IData> data, AABB<double, 3>* aabb)
 : SXGraphicsItem(nullptr,true,true),
   _data(data),
-  _aabb(new AABB<double,3>),
+  _aabb(aabb),
   _from(0,0),
   _to(0,0)
 {
@@ -30,6 +30,8 @@ MaskGraphicsItem::MaskGraphicsItem(std::shared_ptr<SX::Data::IData> data)
     _text=new QGraphicsTextItem(this);
     _text->setFlag(QGraphicsItem::ItemIgnoresTransformations);
     _text->setParentItem(this);
+
+
 }
 
 MaskGraphicsItem::~MaskGraphicsItem()
@@ -84,7 +86,7 @@ void MaskGraphicsItem::setTo(const QPointF& pos)
 
 AABB<double,3>* MaskGraphicsItem::getAABB()
 {
-	return _aabb;
+    return _aabb;
 }
 
 void MaskGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)

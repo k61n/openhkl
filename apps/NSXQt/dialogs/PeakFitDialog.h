@@ -8,6 +8,8 @@
 class QGraphicsScene;
 class QGraphicsPixmapItem;
 
+class SessionModel;
+
 namespace SX {
 namespace Crystal {
 class Peak3D;
@@ -23,7 +25,7 @@ class PeakFitDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit PeakFitDialog(QWidget *parent = 0);
+    explicit PeakFitDialog(SessionModel* session, QWidget *parent = 0);
     ~PeakFitDialog();
     void updateView();
     void updatePeak();
@@ -39,7 +41,7 @@ public slots:
 
 private:
     Ui::PeakFitDialog *ui;
-    ExperimentTree* _tree;
+    SessionModel* _session;
     QGraphicsScene* _scene;
     QGraphicsPixmapItem* _image;
     Eigen::RowVector3i _hkl;

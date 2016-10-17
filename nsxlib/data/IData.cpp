@@ -269,14 +269,13 @@ std::size_t IData::getFileSize() const
 	return _fileSize;
 }
 
-void IData::saveHDF5(const std::string& filename) const
+void IData::saveHDF5(const std::string& filename) //const
 {
-
 	blosc_init();
 	blosc_set_nthreads(4);
 
-	if (!_inMemory)
-		throw std::runtime_error("Can't save "+_filename+" as HDF5, file not in memory");
+    //if (!_inMemory)
+    //	throw std::runtime_error("Can't save "+_filename+" as HDF5, file not in memory");
 
 	hsize_t dims[3] = {_nFrames, _nrows,_ncols};
 	hsize_t chunk[3] = {1, _nrows,_ncols};
@@ -284,11 +283,10 @@ void IData::saveHDF5(const std::string& filename) const
 
 	H5::H5File file(filename.c_str(), H5F_ACC_TRUNC);
 
-	H5::DataSpace* space=new H5::DataSpace(3,dims,NULL);
+    H5::DataSpace space(3, dims, nullptr);
+    H5::DSetCreatPropList plist;
 
-	H5::DSetCreatPropList* plist = new  H5::DSetCreatPropList();
-
-	plist->setChunk(3,chunk);
+    plist.setChunk(3, chunk);
 
 	char *version, *date;
 	int r;
@@ -301,161 +299,127 @@ void IData::saveHDF5(const std::string& filename) const
 	if (r<=0)
 		throw std::runtime_error("Problem registering BLOSC filter in HDF5 library");
 
-	plist->setFilter(FILTER_BLOSC, H5Z_FLAG_OPTIONAL, 7, cd_values);
+    plist.setFilter(FILTER_BLOSC, H5Z_FLAG_OPTIONAL, 7, cd_values);
 
-	H5::DataSpace* memspace=new H5::DataSpace(3,count,NULL);
-
-	H5::Group* dataGroup=new H5::Group(file.createGroup("/Data"));
-	H5::DataSet* dset=new H5::DataSet(dataGroup->createDataSet("Counts", H5::PredType::NATIVE_INT32, *space, *plist));
+    H5::DataSpace memspace(3, count, nullptr);
+    H5::Group dataGroup(file.createGroup("/Data"));
+    H5::DataSet dset(dataGroup.createDataSet("Counts", H5::PredType::NATIVE_INT32, space, plist));
 
 	hsize_t offset[3];
 	offset[0] = 0;
 	offset[1] = 0;
 	offset[2] = 0;
 
-	for(offset[0]=0; offset[0]<_data.size(); offset[0] += count[0]) {
-        space->selectHyperslab(H5S_SELECT_SET,count,offset,NULL,NULL);
-        
+    for(offset[0]=0; offset[0] < _nFrames; offset[0] += count[0]) {
+        space.selectHyperslab(H5S_SELECT_SET, count, offset, nullptr, nullptr);
         // HDF5 requires row-major storage, so copy frame into a row-major matrix
-        Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> frame(_data.at(offset[0]));
-        dset->write(frame.data(), H5::PredType::NATIVE_INT32, *memspace, *space);
+        RowMatrixi frame(getFrame(offset[0]));
+        dset.write(frame.data(), H5::PredType::NATIVE_INT32, memspace, space);
 	}
 
 	// Saving the scans parameters (detector, sample and source)
-
-	H5::Group* scanGroup=new H5::Group(dataGroup->createGroup("Scan"));
+    H5::Group scanGroup(dataGroup.createGroup("Scan"));
 
 	// Write detector states
-
-	H5::Group* detectorGroup=new H5::Group(scanGroup->createGroup("Detector"));
+    H5::Group detectorGroup(scanGroup.createGroup("Detector"));
 
 	std::vector<std::string> names=_diffractometer->getDetector()->getGonio()->getPhysicalAxesNames();
 	hsize_t nf[1]={_nFrames};
 	H5::DataSpace scanSpace(1,nf);
-	Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> vals(names.size(),_nFrames);
+    RowMatrixd vals(names.size(),_nFrames);
 
-	for (unsigned int i=0;i<_detectorStates.size();++i)
-	{
-		const std::vector<double>& v=_detectorStates[i].getValues();
-		for (unsigned int j=0;j<names.size();++j)
-		{
-			vals(j,i)=v[j]/SX::Units::deg;
+    for (unsigned int i = 0; i < _detectorStates.size(); ++i) {
+        const std::vector<double>& v = _detectorStates[i].getValues();
+
+        for (unsigned int j = 0; j < names.size(); ++j) {
+            vals(j,i) = v[j] / SX::Units::deg;
 		}
 	}
 
-	for (unsigned int j=0;j<names.size();++j)
-	{
-		H5::DataSet detectorScan(detectorGroup->createDataSet(names[j],H5::PredType::NATIVE_DOUBLE,scanSpace));
-		detectorScan.write(&vals(j,0),H5::PredType::NATIVE_DOUBLE,scanSpace,scanSpace);
+    for (unsigned int j = 0; j < names.size(); ++j) {
+        H5::DataSet detectorScan(detectorGroup.createDataSet(names[j], H5::PredType::NATIVE_DOUBLE, scanSpace));
+        detectorScan.write(&vals(j,0), H5::PredType::NATIVE_DOUBLE, scanSpace, scanSpace);
 	}
 
 	// Write sample states
-
-	H5::Group* sampleGroup=new H5::Group(scanGroup->createGroup("Sample"));
-
+    H5::Group sampleGroup(scanGroup.createGroup("Sample"));
 	std::vector<std::string> samplenames=_diffractometer->getSample()->getGonio()->getPhysicalAxesNames();
-	Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> valsSamples(samplenames.size(),_nFrames);
+    RowMatrixd valsSamples(samplenames.size(), _nFrames);
 
-	for (unsigned int i=0;i<_sampleStates.size();++i)
-	{
-		const std::vector<double>& v=_sampleStates[i].getValues();
-		for (unsigned int j=0;j<samplenames.size();++j)
-		{
-			valsSamples(j,i)=v[j]/SX::Units::deg;
+    for (unsigned int i = 0; i < _sampleStates.size(); ++i) {
+        const std::vector<double>& v = _sampleStates[i].getValues();
+
+        for (unsigned int j = 0; j < samplenames.size(); ++j) {
+            valsSamples(j,i) = v[j]/SX::Units::deg;
 		}
 	}
 
-	for (unsigned int j=0;j<samplenames.size();++j)
-	{
-		H5::DataSet sampleScan(sampleGroup->createDataSet(samplenames[j],H5::PredType::NATIVE_DOUBLE,scanSpace));
-		sampleScan.write(&valsSamples(j,0),H5::PredType::NATIVE_DOUBLE,scanSpace,scanSpace);
+    for (unsigned int j = 0; j < samplenames.size(); ++j) {
+        H5::DataSet sampleScan(sampleGroup.createDataSet(samplenames[j], H5::PredType::NATIVE_DOUBLE, scanSpace));
+        sampleScan.write(&valsSamples(j,0), H5::PredType::NATIVE_DOUBLE, scanSpace, scanSpace);
 	}
 
 	// Write source states
+    H5::Group sourceGroup(scanGroup.createGroup("Source"));
+    std::vector<std::string> sourcenames = _diffractometer->getSource()->getGonio()->getPhysicalAxesNames();
+    RowMatrixd valsSources(sourcenames.size(),_nFrames);
 
-	H5::Group* sourceGroup=new H5::Group(scanGroup->createGroup("Source"));
-
-	std::vector<std::string> sourcenames=_diffractometer->getSource()->getGonio()->getPhysicalAxesNames();
-
-	Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> valsSources(sourcenames.size(),_nFrames);
-
-	for (unsigned int i=0;i<_sourceStates.size();++i)
-	{
+    for (unsigned int i = 0; i < _sourceStates.size(); ++i) {
 		const std::vector<double>& v=_sourceStates[i].getValues();
-		for (unsigned int j=0;j<sourcenames.size();++j)
-		{
-			valsSources(j,i)=v[j]/SX::Units::deg;
+
+        for (unsigned int j = 0; j < sourcenames.size(); ++j) {
+            valsSources(j,i) = v[j] / SX::Units::deg;
 		}
 	}
 
-	for (unsigned int j=0;j<sourcenames.size();++j)
-	{
-		H5::DataSet sourceScan(sourceGroup->createDataSet(sourcenames[j],H5::PredType::NATIVE_DOUBLE,scanSpace));
-		sourceScan.write(&valsSources(j,0),H5::PredType::NATIVE_DOUBLE,scanSpace,scanSpace);
+    for (unsigned int j = 0; j < sourcenames.size(); ++j) {
+        H5::DataSet sourceScan(sourceGroup.createDataSet(sourcenames[j], H5::PredType::NATIVE_DOUBLE, scanSpace));
+        sourceScan.write(&valsSources(j,0), H5::PredType::NATIVE_DOUBLE, scanSpace, scanSpace);
 	}
 
 	const auto& map=_metadata->getMap();
 
-
 	// Write all string metadata into the "Info" group
-	H5::Group* infogroup=new H5::Group(file.createGroup("/Info"));
+    H5::Group infogroup(file.createGroup("/Info"));
 	H5::DataSpace metaSpace(H5S_SCALAR);
 	H5::StrType str80(H5::PredType::C_S1, 80);
 	std::string info;
-	for (const auto& item : map)
-	{
+
+    for (const auto& item: map) {
 		std::string info;
-		try
-		{
-			info=boost::any_cast<std::string>(item.second);
-			H5::Attribute intAtt(infogroup->createAttribute(item.first,str80,metaSpace));
-			intAtt.write(str80,info);
-		}
-		catch(...)
-		{
+
+        try {
+            info = boost::any_cast<std::string>(item.second);
+            H5::Attribute intAtt(infogroup.createAttribute(item.first, str80, metaSpace));
+            intAtt.write(str80, info);
+        } catch(...) {
+            // shouldn't there be some error handling here?
 		}
 	}
 
 	// Write all other metadata (int and double) into the "Experiment" Group
-	H5::Group* metadatagroup=new H5::Group(file.createGroup("/Experiment"));
-	//
-	for (const auto& item : map)
-	{
-		int value;
-		try
-		{
-			value=boost::any_cast<int>(item.second);
-			H5::Attribute intAtt(metadatagroup->createAttribute(item.first,H5::PredType::NATIVE_INT32,metaSpace));
-			intAtt.write(H5::PredType::NATIVE_INT,&value);
-		}
-		catch(...)
-		{
-			try
-			{
-				double dvalue;
-				dvalue=boost::any_cast<double>(item.second);
-				H5::Attribute intAtt(metadatagroup->createAttribute(item.first,H5::PredType::NATIVE_DOUBLE,metaSpace));
-				intAtt.write(H5::PredType::NATIVE_DOUBLE,&dvalue);
-			}catch(...)
-			{
+    H5::Group metadatagroup(file.createGroup("/Experiment"));
 
+    for (const auto& item: map)	{
+		int value;
+
+        try {
+            value = boost::any_cast<int>(item.second);
+            H5::Attribute intAtt(metadatagroup.createAttribute(item.first, H5::PredType::NATIVE_INT32, metaSpace));
+            intAtt.write(H5::PredType::NATIVE_INT, &value);
+        } catch(...) {
+            try {
+				double dvalue;
+                dvalue = boost::any_cast<double>(item.second);
+                H5::Attribute intAtt(metadatagroup.createAttribute(item.first, H5::PredType::NATIVE_DOUBLE, metaSpace));
+                intAtt.write(H5::PredType::NATIVE_DOUBLE, &dvalue);
+            }catch(...) {
+                // shouldn't there be some error handling here?
 			}
 		}
-
 	}
-	delete dataGroup;
-	delete scanGroup;
-	delete detectorGroup;
-	delete sampleGroup;
-	delete infogroup;
-	delete metadatagroup;
-	delete dset;
-	delete memspace;
-	delete space;
-	delete plist;
-	file.close();
 
-	//
+	file.close();
 	blosc_destroy();
 }
 
@@ -475,7 +439,12 @@ void IData::removeMask(AABB<double,3>* mask)
 	if (p!=_masks.end())
 		_masks.erase(mask);
 	// Update the peaks selection status.
-	maskPeaks();
+    maskPeaks();
+}
+
+const std::set<AABB<double, 3> *>& IData::getMasks()
+{
+    return _masks;
 }
 
 void IData::maskPeaks() const

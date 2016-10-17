@@ -7,9 +7,9 @@
 #include "TransAxis.h"
 
 #include "ui_SamplePropertyWidget.h"
-#include "Tree/SampleItem.h"
+#include "models/SampleItem.h"
 #include "Tree/SamplePropertyWidget.h"
-#include "Tree/UnitCellItem.h"
+#include "models/UnitCellItem.h"
 #include "Units.h"
 
 SamplePropertyWidget::SamplePropertyWidget(SampleItem* caller,QWidget *parent) :

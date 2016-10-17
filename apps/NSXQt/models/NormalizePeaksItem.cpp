@@ -1,4 +1,4 @@
-#include "Tree/NormalizePeaksItem.h"
+#include "models/NormalizePeaksItem.h"
 
 NormalizePeaksItem::NormalizePeaksItem(std::shared_ptr<Experiment> experiment) : TreeItem(experiment)
 {
