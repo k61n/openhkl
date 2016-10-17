@@ -4,6 +4,7 @@
 #include <QStandardItem>
 #include <QJsonArray>
 
+#include "RawData.h"
 #include "Experiment.h"
 #include "models/DataItem.h"
 #include "DataReaderFactory.h"
@@ -20,13 +21,45 @@ DataItem::DataItem(std::shared_ptr<Experiment> experiment) : TreeItem(experiment
     setSelectable(false);
 }
 
+NumorItem *DataItem::importData(std::shared_ptr<IData> data)
+{
+    // Get the basename of the current numor
+    QString filename(data->getFilename().c_str());
+    QFileInfo fileinfo(filename);
+    std::string basename = fileinfo.fileName().toStdString();
+    std::shared_ptr<SX::Instrument::Experiment> exp = getExperiment();
+
+    // If the experience already stores the current numor, skip it
+    if (exp->hasData(basename))
+        return nullptr;
+
+    try {
+        exp->addData(data);
+    }
+    catch(std::exception& e) {
+        qWarning() << "Error reading numor: " + filename + " " + QString(e.what());
+        return nullptr;
+    }
+    catch(...)  {
+        qWarning() << "Error reading numor: " + filename + " reason not known:";
+        return nullptr;
+    }
+
+    NumorItem* item = new NumorItem(exp, data);
+    item->setText(QString::fromStdString(basename));
+    item->setCheckable(true);
+    appendRow(item);
+
+    return item;
+}
+
 
 NumorItem* DataItem::importData(const std::string &filename_str)
 {
     // Get the basename of the current numor
     QString filename(filename_str.c_str());
     QFileInfo fileinfo(filename);
-    std::string basename=fileinfo.fileName().toStdString();
+    std::string basename = fileinfo.fileName().toStdString();
     std::shared_ptr<SX::Instrument::Experiment> exp = getExperiment();
 
     // If the experience already stores the current numor, skip it
@@ -43,8 +76,6 @@ NumorItem* DataItem::importData(const std::string &filename_str)
                     );
 
         data_ptr = std::shared_ptr<IData>(raw_ptr);
-
-        exp->addData(data_ptr);
     }
     catch(std::exception& e) {
         qWarning() << "Error reading numor: " + filename + " " + QString(e.what());
@@ -55,12 +86,39 @@ NumorItem* DataItem::importData(const std::string &filename_str)
         return nullptr;
     }
 
-    NumorItem* item = new NumorItem(exp, data_ptr);
-    item->setText(QString::fromStdString(basename));
-    item->setCheckable(true);
-    appendRow(item);
+    return importData(data_ptr);
+}
 
-    return item;
+NumorItem *DataItem::importRawData(const std::vector<std::string> &filenames,
+                                   double wavelength, double delta_chi, double delta_omega, double delta_phi)
+{
+    // Get the basename of the current numor
+    QString filename(filenames[0].c_str());
+    QFileInfo fileinfo(filename);
+    std::string basename = fileinfo.fileName().toStdString();
+    std::shared_ptr<SX::Instrument::Experiment> exp = getExperiment();
+
+    // If the experience already stores the current numor, skip it
+    if (exp->hasData(basename))
+        return nullptr;
+
+    std::shared_ptr<IData> data;
+
+    try {
+        auto diff = exp->getDiffractometer();
+        auto data_ptr = new SX::Data::RawData(filenames, diff, wavelength, delta_chi, delta_omega, delta_phi);
+        data = std::shared_ptr<SX::Data::IData>(data_ptr);
+    }
+    catch(std::exception& e) {
+        qWarning() << "Error reading numor: " + filename + " " + QString(e.what());
+        return nullptr;
+    }
+    catch(...)  {
+        qWarning() << "Error reading numor: " + filename + " reason not known:";
+        return nullptr;
+    }
+
+    return importData(data);
 }
 
 QJsonObject DataItem::toJson()

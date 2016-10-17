@@ -95,12 +95,53 @@ RawData::RawData(const std::vector<std::string>& filenames, std::shared_ptr<Diff
     _metadata->add<std::string>("Instrument", _diffractometer->getName());
     _metadata->add<double>("wavelength", _wavelength);
     _metadata->add<int>("npdone", _filenames.size());
+    _metadata->add<double>("monitor", 0.0);
+    _metadata->add<int>("Numor", 0.0);
 
     _data.resize(_bpp*_nrows*_ncols);
 
     _nFrames = _filenames.size();
 
+    std::vector<std::string> axesS = _diffractometer->getDetector()->getGonio()->getPhysicalAxesNames();
+    Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> dm
+            = Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor>::Zero(axesS.size(), _nFrames);
 
+    _detectorStates.reserve(_nFrames);
+
+    for (unsigned int i = 0; i < _nFrames; ++i) {
+        _detectorStates.push_back(_diffractometer->getDetector()->createStateFromEigen(dm.col(i)));
+    }
+
+    // Getting Scan parameters for the sample
+    axesS = _diffractometer->getSample()->getGonio()->getPhysicalAxesNames();
+    dm.resize(axesS.size(), _nFrames);
+
+    int omega, phi, chi;
+    int i;
+
+    for (i = 0, omega = -1, phi = -1, chi = -1; i < axesS.size(); ++i) {
+        omega = axesS[i] == "omega"? i : omega;
+        chi = axesS[i] == "chi"? i : chi;
+        phi = axesS[i] == "phi"? i : phi;
+    }
+
+    assert(omega != -1);
+    assert(phi   != -1);
+    assert(chi != -1);
+
+    for (i = 0; i < _nFrames; ++i) {
+        dm(omega, i) = i*delta_omega;
+        dm(phi, i) = i*delta_phi;
+        dm(chi,i) = i*delta_chi;
+    }
+
+    // Use natural units internally (rad)
+    dm*=SX::Units::deg;
+    _sampleStates.reserve(_nFrames);
+
+    for (unsigned int i=0;i<_nFrames;++i) {
+        _sampleStates.push_back(_diffractometer->getSample()->createStateFromEigen(dm.col(i)));
+    }
 }
 
 RawData::~RawData()
