@@ -46,6 +46,7 @@ public slots:
     void onCustomMenuRequested(const QPoint& point);
     void onDoubleClick(const QModelIndex& index);
     void importData();
+    void importRawData();
     void findPeaks(const QModelIndex& index);
     void viewReciprocalSpace(const QModelIndex& index);
     void createNewExperiment();

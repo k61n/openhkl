@@ -205,7 +205,7 @@ public:
 
     //!
     std::size_t getFileSize() const;//
-    void saveHDF5(const std::string& filename) const;
+    void saveHDF5(const std::string& filename); // const;
 
     //! Is the peak h,k,l in Bragg condition in this dataset. Return Peak pointer if true,
     //! otherwise nullptr.

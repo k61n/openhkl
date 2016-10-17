@@ -51,6 +51,8 @@
 #include "ReciprocalSpaceViewer.h"
 #include "DetectorScene.h"
 
+#include "dialogs/DialogRawData.h"
+
 #include "SpaceGroupSymbols.h"
 #include "SpaceGroup.h"
 
@@ -147,37 +149,46 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
 {
     QModelIndex index = indexAt(point);
 
-    if (index == rootIndex())
-    {
+    if (index == rootIndex()) {
         QMenu* menu = new QMenu(this);
-        QAction* newexp=menu->addAction("Add new experiment");
+        QAction* newexp = menu->addAction("Add new experiment");
         menu->popup(viewport()->mapToGlobal(point));
-        connect(newexp,SIGNAL(triggered()),this,SLOT(createNewExperiment()));
-
+        connect(newexp, SIGNAL(triggered()), this, SLOT(createNewExperiment()));
     }
-    else
-    {
-        QStandardItem* item=_session->itemFromIndex(index);
-        if (dynamic_cast<DataItem*>(item))
-        {
+    else {
+        QStandardItem* item = _session->itemFromIndex(index);
+        if (dynamic_cast<DataItem*>(item)) {
             QMenu* menu = new QMenu(this);
-            QAction* import=menu->addAction("Import");
-            QAction* findpeaks=menu->addAction("Peak finder");
-            QAction* rviewer=menu->addAction("Reciprocal space viewer");
+            QAction* import = menu->addAction("Import data");
+            QAction* rawImport = menu->addAction("Import raw data...");
+            QAction* findpeaks = menu->addAction("Peak finder");
+            QAction* rviewer = menu->addAction("Reciprocal space viewer");
             menu->popup(viewport()->mapToGlobal(point));
-            connect(import,SIGNAL(triggered()),this,SLOT(importData()));
-            connect(findpeaks,&QAction::triggered,[=](){findPeaks(index);});
-            connect(rviewer,&QAction::triggered,[=](){viewReciprocalSpace(index);});
+            connect(import, SIGNAL(triggered()), this, SLOT(importData()));
+            connect(rawImport, SIGNAL(triggered()), this, SLOT(importRawData()));
+            connect(findpeaks, &QAction::triggered, [=](){findPeaks(index);});
+            connect(rviewer, &QAction::triggered, [=](){viewReciprocalSpace(index);});
         }
-        else if (dynamic_cast<PeakListItem*>(item))
-        {
+        else if (dynamic_cast<PeakListItem*>(item)) {
             QMenu* menu = new QMenu(this);
-            QAction* abs=menu->addAction("Correct for Absorption"); // Absorption menu
-            QAction* scene3d=menu->addAction("Show 3D view"); // Peak in 3D OpenGL window
+            QAction* abs = menu->addAction("Correct for Absorption");
+            QAction* scene3d = menu->addAction("Show 3D view");
             menu->popup(viewport()->mapToGlobal(point));
             // Call the slot
-            connect(abs,SIGNAL(triggered()),this,SLOT(absorptionCorrection()));
-            connect(scene3d,SIGNAL(triggered()),this,SLOT(showPeaksOpenGL()));
+            connect(abs, SIGNAL(triggered()), this, SLOT(absorptionCorrection()));
+            connect(scene3d, SIGNAL(triggered()), this, SLOT(showPeaksOpenGL()));
+        }
+        else if (NumorItem* nitem = dynamic_cast<NumorItem*>(item)) {
+            QMenu* menu = new QMenu(this);
+            QAction* export_hdf = menu->addAction("Export to HDF5...");
+            menu->popup(viewport()->mapToGlobal(point));
+
+            auto export_fn = [=] {
+                QString filename = QFileDialog::getSaveFileName(this, "Save File", "", "HDF5 (*.hdf *.hdf5)");
+                nitem->exportHDF5(filename.toStdString());
+            };
+
+            connect(export_hdf, &QAction::triggered, this, export_fn);
         }
     }
 }
@@ -213,6 +224,52 @@ void ExperimentTree::importData()
     for (int i=0;i<fileNames.size();++i) {
         dataItem->importData(fileNames[i].toStdString());
     }
+}
+
+void ExperimentTree::importRawData()
+{
+    // Get the current item and check that is actually a Data item. Otherwise, return.
+    DataItem* dataItem = dynamic_cast<DataItem*>(_session->itemFromIndex(currentIndex()));
+
+    if (!dataItem)
+        return;
+
+    std::shared_ptr<SX::Instrument::Experiment> exmt = dataItem->getExperiment();
+
+    if (!exmt)
+        return;
+
+    QStringList files = QFileDialog::getOpenFileNames(
+                            this,
+                            "Select one or more files to open",
+                            "",
+                            "Raw data (*)");
+
+    files.sort();
+
+    if (files.isEmpty())
+        return;
+
+    DialogRawData dialog(this);
+    //dialog.setWavelength(exmt->getDiffractometer()->getSource()->getWavelength());
+
+    if (!dialog.exec())
+        return;
+
+    const double wavelength = dialog.wavelength();
+    const double delta_phi = dialog.deltaPhi();
+    const double delta_omega = dialog.deltaOmega();
+    const double delta_chi = dialog.deltaChi();
+    const bool swap_endian = dialog.swapEndian();
+    const int bpp = dialog.bpp();
+    const bool row_major = dialog.rowMajor();
+
+    std::vector<std::string> filenames;
+
+    for (auto&& file: files)
+        filenames.push_back(file.toStdString());
+
+    dataItem->importRawData(filenames, wavelength, delta_chi, delta_omega, delta_phi, row_major, swap_endian, bpp);
 }
 
 
