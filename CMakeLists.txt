@@ -19,6 +19,7 @@ set(NSXTOOL_VERSION_MINOR 0)
 option(BUILD_QTAPPS "Build Qt based application." ON)
 option(BUILD_OPTIMIZED_DEBUG "Set optimization level -O1 or -Og for debug build" OFF)
 option(BUILD_COVERAGE_REPORT "Build code coverage report" OFF)
+option(BUILD_WITH_OPENMP "Build with OpenMP support" OFF)
 
 ###########################################################################
 # Scripts controlling build setup and dependencies

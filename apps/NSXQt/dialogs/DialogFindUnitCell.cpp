@@ -16,8 +16,6 @@
 #include <stdexcept>
 #include <mutex>
 
-#include <omp.h>
-
 using SX::Crystal::UnitCell;
 using SX::Crystal::UBMinimizer;
 using SX::Crystal::UBSolution;
@@ -143,7 +141,6 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
 
     #pragma omp parallel for
     for (int idx = 0; idx < indices.size(); ++idx) {
-        std::cout << "number of omp threads = " << omp_get_num_threads() << std::endl;
 
         int i = std::get<0>(indices[idx]);
         int j = std::get<1>(indices[idx]);
