@@ -14,6 +14,9 @@
 #include "Units.h"
 
 #include <stdexcept>
+#include <mutex>
+
+#include <omp.h>
 
 using SX::Crystal::UnitCell;
 using SX::Crystal::UBMinimizer;
@@ -86,11 +89,9 @@ void DialogFindUnitCell::setPeaks()
 
 void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
 {
-
-    int npeaks=ui->horizontalSlider_NumberOfPeaks->value();
+    int npeaks = ui->horizontalSlider_NumberOfPeaks->value();
     // Need at leat 10 peaks
-    if (npeaks<10)
-    {
+    if (npeaks < 10) {
         QMessageBox::warning(this, tr("NSXTool"),tr("Need at least 10 peaks for autoindexing"));
         return;
     }
@@ -127,99 +128,119 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
 
     int num_attempts = 0;
 
+    std::mutex the_mutex;
+
+    std::vector<std::tuple<int, int, int>> indices;
+    indices.reserve(nSolutions*nSolutions*nSolutions);
+
     for (int i = 0; i < nSolutions; ++i) {
         for (int j = i+1; j < nSolutions; ++j) {
             for (int k = j+1; k < nSolutions; ++k) {
-                Eigen::Vector3d& v1=tvects[i]._vect;
-                Eigen::Vector3d& v2=tvects[j]._vect;
-                Eigen::Vector3d& v3=tvects[k]._vect;
-
-
-                if (v1.dot(v2.cross(v3)) > 20.0) {
-
-                    UnitCell cell=UnitCell::fromDirectVectors(v1,v2,v3);
-                    UBMinimizer minimizer;
-                    minimizer.setSample(sample);
-                    minimizer.setDetector(detector);
-                    minimizer.setSource(source);
-                    // Only the UB matrix parameters are used for fit
-                    int nParameters= 10 + sample->getNAxes() + detector->getNAxes();
-                    for (int i = 9; i < nParameters; ++i)
-                        minimizer.refineParameter(i,false);
-                    int success = 0;
-                    for (auto peak : _peaks) {
-                        if (peak->hasIntegerHKL(cell,0.2) && peak->isSelected() && !peak->isMasked()) {
-                            minimizer.addPeak(*peak);
-                            ++success;
-                        }
-                    }
-
-                    if (success < 10)
-                        continue;
-
-                    qDebug() << "Refining solution " << ++num_attempts;
-
-                    Eigen::Matrix3d M=cell.getReciprocalStandardM();
-                    minimizer.setStartingUBMatrix(M);
-                    int ret = minimizer.runGSL(100);
-
-                    if (ret == 1) {
-                        UBSolution solution=minimizer.getSolution();
-                        try {
-                            cell=SX::Crystal::UnitCell::fromReciprocalVectors(solution._ub.row(0),solution._ub.row(1),solution._ub.row(2));
-                            cell.setReciprocalCovariance(solution._covub);
-
-                        } catch(std::exception& e) {
-                            qDebug() << e.what();
-                            continue;
-                        }
-                        double tolerance = ui->niggliSpinBox->value();
-                        NiggliReduction niggli(cell.getMetricTensor(), tolerance);
-                        Eigen::Matrix3d newg,P;
-                        niggli.reduce(newg,P);
-                        cell.transform(P);
-
-                        // use GruberReduction::reduce to get Bravais type
-                        tolerance = ui->gruberSpinBox->value();
-                        GruberReduction gruber(cell.getMetricTensor(), tolerance);
-                        SX::Crystal::LatticeCentring c;
-                        SX::Crystal::BravaisType b;
-
-                        try {                            
-                            gruber.reduce(P,c,b);
-                            cell.setLatticeCentring(c);
-                            cell.setBravaisType(b);
-                        }
-                        catch(std::exception& e) {
-                            qDebug() << "Gruber reduction error:" << e.what();
-                            //continue;
-                        }
-
-                        if (!ui->checkBox_NiggliOnly->isChecked()) {
-                            cell.transform(P);
-                        }
-
-                        double score=0.0;
-                        double maxscore=0.0;
-                        for (auto peak : _peaks) {
-                            if (peak->isSelected() && !peak->isMasked()) {
-                                maxscore++;
-                                if (peak->hasIntegerHKL(cell,0.2))
-                                    score++;
-                            }
-                        }
-                        // Percentage of indexing
-                        score /= 0.01*maxscore;
-                        _solutions.push_back(std::pair<SX::Crystal::UnitCell,double>(cell,score));
-                    }
-                    minimizer.resetParameters();
-                }
+                indices.push_back(std::tuple<int,int,int>(i,j,k));
             }
         }
     }
 
-    qDebug() << "Done refining solutions, building table...";
+    #pragma omp parallel for
+    for (int idx = 0; idx < indices.size(); ++idx) {
+        std::cout << "number of omp threads = " << omp_get_num_threads() << std::endl;
 
+        int i = std::get<0>(indices[idx]);
+        int j = std::get<1>(indices[idx]);
+        int k = std::get<2>(indices[idx]);
+
+        Eigen::Vector3d& v1=tvects[i]._vect;
+        Eigen::Vector3d& v2=tvects[j]._vect;
+        Eigen::Vector3d& v3=tvects[k]._vect;
+
+        if (v1.dot(v2.cross(v3)) > 20.0) {
+            UnitCell cell=UnitCell::fromDirectVectors(v1,v2,v3);
+            UBMinimizer minimizer;
+            minimizer.setSample(sample);
+            minimizer.setDetector(detector);
+            minimizer.setSource(source);
+            // Only the UB matrix parameters are used for fit
+            int nParameters= 10 + sample->getNAxes() + detector->getNAxes();
+            for (int i = 9; i < nParameters; ++i)
+                minimizer.refineParameter(i,false);
+            int success = 0;
+            for (auto peak : _peaks) {
+                // make a copy to avoid thread race condition
+                SX::Crystal::Peak3D new_peak(*peak);
+
+                if (new_peak.hasIntegerHKL(cell,0.2) && new_peak.isSelected() && !new_peak.isMasked()) {
+                    minimizer.addPeak(*peak);
+                    ++success;
+                }
+            }
+
+            if (success < 10)
+                continue;
+
+            //qDebug() << "Refining solution " << ++num_attempts;
+
+            Eigen::Matrix3d M=cell.getReciprocalStandardM();
+            minimizer.setStartingUBMatrix(M);
+            int ret = minimizer.runGSL(100);
+
+            if (ret == 1) {
+                UBSolution solution=minimizer.getSolution();
+                try {
+                    cell=SX::Crystal::UnitCell::fromReciprocalVectors(solution._ub.row(0),solution._ub.row(1),solution._ub.row(2));
+                    cell.setReciprocalCovariance(solution._covub);
+
+                } catch(std::exception& e) {
+                    //qDebug() << e.what();
+                    continue;
+                }
+                double tolerance = ui->niggliSpinBox->value();
+                NiggliReduction niggli(cell.getMetricTensor(), tolerance);
+                Eigen::Matrix3d newg,P;
+                niggli.reduce(newg,P);
+                cell.transform(P);
+
+                // use GruberReduction::reduce to get Bravais type
+                tolerance = ui->gruberSpinBox->value();
+                GruberReduction gruber(cell.getMetricTensor(), tolerance);
+                SX::Crystal::LatticeCentring c;
+                SX::Crystal::BravaisType b;
+
+                try {
+                    gruber.reduce(P,c,b);
+                    cell.setLatticeCentring(c);
+                    cell.setBravaisType(b);
+                }
+                catch(std::exception& e) {
+                    //qDebug() << "Gruber reduction error:" << e.what();
+                    //continue;
+                }
+
+                if (!ui->checkBox_NiggliOnly->isChecked()) {
+                    cell.transform(P);
+                }
+
+                double score=0.0;
+                double maxscore=0.0;
+                for (auto peak : _peaks) {
+                    if (peak->isSelected() && !peak->isMasked()) {
+                        maxscore++;
+                        if (peak->hasIntegerHKL(cell,0.2))
+                            score++;
+                    }
+                }
+                // Percentage of indexing
+                score /= 0.01*maxscore;
+                {
+                    std::lock_guard<std::mutex> the_lock(the_mutex);
+                    _solutions.push_back(std::pair<SX::Crystal::UnitCell,double>(cell,score));
+                }
+            }
+            minimizer.resetParameters();
+
+        }
+    }
+
+    qDebug() << "Done refining solutions, building table...";
     buildSolutionsTable();
 }
 
