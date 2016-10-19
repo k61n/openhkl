@@ -22,10 +22,9 @@ PeakGraphicsItem::PeakGraphicsItem(SX::Crystal::Peak3D* p)
 : PlottableGraphicsItem(nullptr,true,false),
   _peak(p)
 {
-    if (_peak)
-    {
+    if (_peak) {
         Eigen::Vector3d c=_peak->getPeak()->getAABBCenter();
-        setPos(c[0],c[1]);
+        setPos(c[0], c[1]);
     }
     _pen.setWidth(2);
     _pen.setCosmetic(true);
