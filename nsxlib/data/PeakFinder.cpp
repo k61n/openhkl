@@ -93,8 +93,8 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
 
         // Finding peaks
         SX::Geometry::blob3DCollection blobs;
-        try
-        {
+
+        try {
             //progressDialog->setLabelText("Finding blobs...");
             //progressDialog->setValue(0);
 
@@ -211,19 +211,24 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
         for ( auto& peak: numor->getPeaks() )
             peak->framewiseIntegrateBegin();
 
-        //progressDialog->setValue(0);
-        //progressDialog->setLabelText("Integrating peak intensities...");
+        // testing OMP implementation
+        int frames_done = 0;
+        #pragma omp parallel for
+        for (int idx = 0; idx < numor->getNFrames(); ++idx) {
 
-        int idx = 0;
+            Eigen::MatrixXi frame(numor->getNRows(), numor->getNCols());
 
-        for ( auto it = numor->getIterator(0); it->index() != numor->getNFrames(); it->advance(), ++idx) {
-            Eigen::MatrixXi frame = it->getFrame().cast<int>();
+            #pragma omp critical
+            frame = numor->getFrame(idx);
+
             for ( auto& peak: numor->getPeaks() ) {
                 peak->framewiseIntegrateStep(frame, idx);
             }
 
             if (_handler) {
-                double progress = it->index() * 100.0 / numor->getNFrames();
+                #pragma omp atomic
+                ++frames_done;
+                double progress = frames_done * 100.0 / numor->getNFrames();
                 _handler->setProgress(progress);
             }
         }

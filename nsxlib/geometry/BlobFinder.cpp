@@ -189,8 +189,6 @@ void BlobFinder::findBlobs(unsigned int begin, unsigned int end)
 
         auto frame_data = frame_it->getFrame();
         auto filtered_frame = _filterCallback ? _filterCallback(frame_data) : frame_data;
-        // testing ONLY
-        //frame_data = filtered_frame;
 
         // Go the the beginning of data
         index2D=0;

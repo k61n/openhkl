@@ -85,6 +85,7 @@ public:
     blob3DCollection find(unsigned int begin, unsigned int end);
 
     void findBlobs(unsigned int begin, unsigned int end);
+    void findBlobsSerial(unsigned int begin, unsigned int end);
 
     void registerEquivalence(int a, int b, vipairs& equivalences);
 
