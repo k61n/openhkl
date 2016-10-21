@@ -654,28 +654,41 @@ void IData::integratePeaks(std::shared_ptr<Utils::ProgressHandler> handler)
         handler->setStatus(("Integrating " + std::to_string(getPeaks().size()) + " peaks...").c_str());
         handler->setProgress(0);
     }
+    
+    std::set<Peak3D*>& peaks = getPeaks();
+    const int num_peaks = peaks.size();
 
-    for ( auto& peak: getPeaks() )
+    for ( auto& peak: peaks )
         peak->framewiseIntegrateBegin();
 
     //progressDialog->setValue(0);
     //progressDialog->setLabelText("Integrating peak intensities...");
 
     int idx = 0;
+    int num_frames_done = 0;
 
-    for ( auto it = getIterator(0); it->index() != getNFrames(); it->advance(), ++idx) {
-        Eigen::MatrixXi frame = it->getFrame().cast<int>();
-        for ( auto& peak: getPeaks() ) {
+    //for ( auto it = getIterator(0); it->index() != getNFrames(); it->advance(), ++idx) {
+    
+    
+    #pragma omp parallel for
+    for ( idx = 0; idx < getNFrames(); ++idx ) {
+        Eigen::MatrixXi frame;
+        #pragma omp critical
+        frame = getFrame(idx);
+        
+        for ( auto& peak: peaks ) {
             peak->framewiseIntegrateStep(frame, idx);
         }
 
         if (handler) {
-            double progress = it->index() * 100.0 / getNFrames();
+            #pragma omp atomic
+            ++num_frames_done;
+            double progress = num_frames_done * 100.0 / getNFrames();
             handler->setProgress(progress);
         }
     }
 
-    for ( auto& peak: getPeaks() )
+    for ( auto& peak: peaks )
         peak->framewiseIntegrateEnd();
 }
 

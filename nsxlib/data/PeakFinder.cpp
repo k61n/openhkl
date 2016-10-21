@@ -37,35 +37,11 @@ PeakFinder::PeakFinder()
 
 bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
 {
-    // needed to compile:
-    //double threshold, confidence;
-    //int minComp, maxComp;
-    //std::unique_ptr<Convolver> convolver(new Convolver);
-
-
-    //qWarning() << "Peak find algorithm: Searching peaks in " << numors.size() << " files";
-
-    // unused variable
-    //int max=numors.size();
-    //int max = 100;
-
-    //QCoreApplication::processEvents();
-    //_ui->progressBar->setEnabled(true);
-    //_ui->progressBar->setMaximum(max);
-    //_ui->progressBar->setValue(0);
 
     std::size_t npeaks=0;
 
-    // unused variable
-    // int comp = 0;
-
-    //QProgressDialog progressDialog(this);
-
-
-    for (auto numor : numors)
-    {
+    for (auto numor : numors) {
         numor->clearPeaks();
-
         numor->readInMemory(_handler);
 
         try {
@@ -87,16 +63,10 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
             return false;
         }
 
-
-        //qDebug() << ">>>> the background level is " << median;
-        //qDebug() << ">>>> finding blobs... ";
-
         // Finding peaks
         SX::Geometry::blob3DCollection blobs;
 
         try {
-            //progressDialog->setLabelText("Finding blobs...");
-            //progressDialog->setValue(0);
 
             SX::Geometry::BlobFinder blob_finder(numor);
 
@@ -130,7 +100,10 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
                 // this is the filter function to be applied to each frame
                 auto callback = [&] (const RealMatrix& input) -> RealMatrix
                 {
-                    return _convolver->apply(input);
+                    RealMatrix output;
+                    #pragma omp critical
+                    output = _convolver->apply(input);
+                    return output;
                 };
 
                 if (_handler) {
@@ -208,36 +181,7 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
             _handler->setProgress(0);
         }
 
-        for ( auto& peak: numor->getPeaks() )
-            peak->framewiseIntegrateBegin();
-
-        // testing OMP implementation
-        int frames_done = 0;
-        #pragma omp parallel for
-        for (int idx = 0; idx < numor->getNFrames(); ++idx) {
-
-            Eigen::MatrixXi frame(numor->getNRows(), numor->getNCols());
-
-            #pragma omp critical
-            frame = numor->getFrame(idx);
-
-            for ( auto& peak: numor->getPeaks() ) {
-                peak->framewiseIntegrateStep(frame, idx);
-            }
-
-            if (_handler) {
-                #pragma omp atomic
-                ++frames_done;
-                double progress = frames_done * 100.0 / numor->getNFrames();
-                _handler->setProgress(progress);
-            }
-        }
-
-        for ( auto& peak: numor->getPeaks() )
-            peak->framewiseIntegrateEnd();
-
-
-        //progressDialog->close();
+        numor->integratePeaks();
 
         numor->releaseMemory();
         numor->close();
