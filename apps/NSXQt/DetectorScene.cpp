@@ -661,8 +661,14 @@ void DetectorScene::showPeakCalcs(bool flag)
 {
     _showPeakCalcs = flag;
 
-    if (!flag)
+    if (!flag) {
+        for (auto&& p: _peakCalcs)
+            delete p;
+
+        _peakCalcs.clear();
+        _precalculatedPeaks.clear();
         return;
+    }
 
     if (_precalculatedPeaks.empty())
         updatePeakCalcs();
