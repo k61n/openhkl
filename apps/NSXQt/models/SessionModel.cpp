@@ -119,9 +119,6 @@ using SX::Utils::ProgressHandler;
 
 SessionModel::SessionModel()
 {
-    connect(this,SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(onCustomMenuRequested(const QPoint&)));
-    connect(this,SIGNAL(doubleClicked(const QModelIndex&)),this,SLOT(onDoubleClick(const QModelIndex&)));
-    connect(this,SIGNAL(clicked(QModelIndex)),this,SLOT(onSingleClick(QModelIndex)));
 }
 
 SessionModel::~SessionModel()
@@ -182,14 +179,10 @@ vector<shared_ptr<IData>> SessionModel::getSelectedNumors(ExperimentItem* item) 
 
     QList<QStandardItem*> dataItems = findItems(QString("Data"),Qt::MatchCaseSensitive|Qt::MatchRecursive);
 
-    for (const auto& it : dataItems)
-    {
-        for (auto i=0;i < rowCount(it->index());++i)
-        {
-            if (it->child(i)->checkState() == Qt::Checked)
-            {
-                if (auto ptr = dynamic_cast<NumorItem*>(it->child(i)))
-                {
+    for (const auto& it : dataItems) {
+        for (auto i=0;i < rowCount(it->index());++i) {
+            if (it->child(i)->checkState() == Qt::Checked) {
+                if (auto ptr = dynamic_cast<NumorItem*>(it->child(i))) {
                     if (it->parent() == item)
                         numors.push_back(ptr->getExperiment()->getData(ptr->text().toStdString()));
                 }
@@ -249,12 +242,9 @@ vector<shared_ptr<IData>> SessionModel::getSelectedNumors() const
 
     QList<QStandardItem*> dataItems = findItems(QString("Data"),Qt::MatchCaseSensitive|Qt::MatchRecursive);
 
-    for (const auto& it : dataItems)
-    {
-        for (auto i=0;i < rowCount(it->index());++i)
-        {
-            if (it->child(i)->checkState() == Qt::Checked)
-            {
+    for (const auto& it : dataItems) {
+        for (auto i=0;i < rowCount(it->index());++i) {
+            if (it->child(i)->checkState() == Qt::Checked) {
                 if (auto ptr = dynamic_cast<NumorItem*>(it->child(i)))
                     numors.push_back(ptr->getExperiment()->getData(ptr->text().toStdString()));
             }
@@ -377,23 +367,6 @@ void SessionModel::findFriedelPairs()
 {
     qDebug() << "findFriedelParis() is not yet implemented!";
     return;
-
-//    std::vector<Peak3D*> peaks;
-//    std::vector<std::shared_ptr<IData>> numors = getSelectedNumors();
-
-//    for (std::shared_ptr<IData> numor: numors) {
-//        std::set<Peak3D*> peak_list = numor->getPeaks();
-
-//        for (Peak3D* peak: peak_list)
-//            peaks.push_back(peak);
-//    }
-
-
-
-    // todo: something with FriedelDialog!
-    //FriedelDialog* friedelDialog = new FriedelDialog(peaks, this);
-    //friedelDialog->exec();
-    //delete friedelDialog;
 }
 
 void SessionModel::integrateCalculatedPeaks()
