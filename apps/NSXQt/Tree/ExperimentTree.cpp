@@ -239,11 +239,16 @@ void ExperimentTree::importRawData()
     if (!exmt)
         return;
 
-    QStringList files = QFileDialog::getOpenFileNames(
-                            this,
-                            "Select one or more files to open",
-                            "",
-                            "Raw data (*)");
+//    QStringList files = QFileDialog::getOpenFileNames(
+//                            //this,
+//                            nullptr,
+//                            "Select one or more files to open",
+//                            ".",
+//                            "Raw data (*)");
+
+    QStringList files;
+    files = QFileDialog::getOpenFileNames(this,"import raw data","","",nullptr,QFileDialog::Option::DontUseNativeDialog);
+
 
     files.sort();
 

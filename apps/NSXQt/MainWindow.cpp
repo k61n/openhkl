@@ -204,14 +204,14 @@ void MainWindow::on_actionSave_session_triggered()
 void MainWindow::on_actionSave_session_as_triggered()
 {
     QString homeDir = SX::Utils::Path::getHomeDirectory().c_str();
-    QString filename = QFileDialog::getSaveFileName(this, "Save session as..", homeDir, "Json document (*.json)");
+    QString filename = QFileDialog::getSaveFileName(this, "Save session as..", homeDir, "Json document (*.json)", nullptr, QFileDialog::Option::DontUseNativeDialog);
     saveSession(filename);
 }
 
 void MainWindow::on_actionLoad_session_triggered()
 {
     QString homeDir = SX::Utils::Path::getHomeDirectory().c_str();
-    QString filename = QFileDialog::getOpenFileName(this, "Load session", homeDir, "Json document (*.json)");
+    QString filename = QFileDialog::getOpenFileName(this, "Load session", homeDir, "Json document (*.json)", nullptr, QFileDialog::Option::DontUseNativeDialog);
     qDebug() << "Loading session from file '" << filename << "'";
 
     QFile loadfile(filename);
