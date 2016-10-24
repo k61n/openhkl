@@ -110,6 +110,7 @@ blob3DCollection BlobFinder::find(unsigned int begin, unsigned int end) {
     vipairs equivalences;
 
     _nframes = 0;
+    _currentlabel = 0;
 
     #pragma omp parallel
     {
@@ -158,10 +159,10 @@ blob3DCollection BlobFinder::find(unsigned int begin, unsigned int end) {
     findCollisions(blobs, equivalences);
 
     // merge the remaining blobs
-    //mergeBlobs(blobs, equivalences);
+    mergeBlobs(blobs, equivalences);
 
     // remove blobs which are too small or too large
-    //eliminateBlobs(blobs);
+    eliminateBlobs(blobs);
 
     if (_progressHandler) {
         _progressHandler->setStatus("Blob finding complete.");
@@ -213,7 +214,10 @@ void BlobFinder::findBlobs(std::unordered_map<int,Blob3D>& blobs,
     // Labels of the left and top pixels with respect to current one and the one above in previous frame
     int left, top, previous;
 
-    int currentlabel=0;
+    //int currentlabel=0;
+   //  initialize currentlabel to begin so that parallel version of algorithm works
+//    int currentlabel = begin;
+
     int label;
     bool newlabel;
     int index2D=0;
@@ -244,15 +248,12 @@ void BlobFinder::findBlobs(std::unordered_map<int,Blob3D>& blobs,
 
         // Go the the beginning of data
         index2D=0;
-        for (unsigned int row=0;row<_nrows;++row)
-        {
-            for (unsigned int col=0;col<_ncols;++col)
-            {
+        for (unsigned int row = 0; row < _nrows; ++row) {
+            for (unsigned int col = 0; col < _ncols; ++col) {
                 auto value = frame_data(row, col);
 
                 // Discard pixel if value < threshold
-                if (filtered_frame(row, col)<threshold)
-                {
+                if (filtered_frame(row, col) < threshold) {
                     labels[index2D]=labels2[index2D]=0;
                     index2D++;
                     continue;
@@ -271,7 +272,8 @@ void BlobFinder::findBlobs(std::unordered_map<int,Blob3D>& blobs,
 
                 switch (code) {
                 case 0:
-                    label=++currentlabel;
+                    #pragma omp critical
+                    label = ++_currentlabel;
                     newlabel=true;
                     break;
                 case 1: // Only left pixel
@@ -320,13 +322,10 @@ void BlobFinder::findBlobs(std::unordered_map<int,Blob3D>& blobs,
 
                 labels[index2D]=labels2[index2D]=label;
                 index2D++;
-                //
-                if (newlabel) // Create a new blob if necessary
-                {
+                // Create a new blob if necessary
+                if (newlabel) {
                     blobs.insert(blob3DCollection::value_type(label,Blob3D(col,row,idx,value)));
-                }
-                else
-                {
+                } else {
                     auto it = blobs.find(label);
                     it->second.addPoint(col,row,idx,value);
                 }

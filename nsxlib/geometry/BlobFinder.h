@@ -142,6 +142,8 @@ private:
 
     unsigned int _nrows, _ncols, _nframes;
 
+    unsigned int _currentlabel;
+
     // filter
     // progress handler
     // ...
