@@ -620,7 +620,7 @@ void SessionModel::incorporateCalculatedPeaks()
             handler->setStatus("Calculating peak locations...");
 
             //auto predicted_hkls = sample->getUnitCell(i)->generateReflectionsInSphere(1.5);
-            auto predicted_hkls = sample->getUnitCell(i)->generateReflectionsInSphere(1.0   );
+            auto predicted_hkls = sample->getUnitCell(i)->generateReflectionsInSphere(1.0);
             std::vector<SX::Crystal::PeakCalc> peaks = numor->hasPeaks(predicted_hkls, ub);
             calculated_peaks.reserve(peaks.size());
 
@@ -637,7 +637,11 @@ void SessionModel::incorporateCalculatedPeaks()
 
             handler->setStatus("Adding calculated peaks...");
 
-            for(PeakCalc& p: peaks) {
+            int done_peaks = 0;
+
+            #pragma omp parallel for
+            for (int peak_id = 0; peak_id < peaks.size(); ++peak_id) {
+                PeakCalc& p = peaks[peak_id];
                 ++current_peak;
 
                 Eigen::RowVector3i hkl(std::round(p._h), std::round(p._k), std::round(p._l));
@@ -653,9 +657,12 @@ void SessionModel::incorporateCalculatedPeaks()
                     continue;
 
                 new_peak->setSelected(true);
+                #pragma omp critical
                 calculated_peaks.push_back(new_peak);
 
-                int done = std::round(current_peak * 100.0 / peaks.size());
+                #pragma omp atomic
+                ++done_peaks;
+                int done = std::round(done_peaks * 100.0 / peaks.size());
 
                 if ( done != last_done) {
                     handler->setProgress(done);
