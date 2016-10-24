@@ -143,7 +143,7 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
     qDebug() << "" << new_solutions.size()<< " possible solutions found";
     qDebug() << "Refining solutions and diffractometers offsets";
 
-    #pragma omp parallel for
+    //#pragma omp parallel for
     for (int idx = 0; idx < new_solutions.size(); ++idx) {
 
         UBMinimizer minimizer;

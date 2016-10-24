@@ -66,22 +66,20 @@ int UBFunctor::operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const
 
 	// Then n parameters for the detector
 	auto sgonio=_sample->getGonio();
-	if (sgonio)
-	{
+    if (sgonio) {
 		for (unsigned int i=0;i<sgonio->getNAxes();++i)
 			sgonio->getAxis(i)->setOffset(x[naxes++]);
 	}
 
 	// finally, n parameters for the sample
 	auto dgonio=_detector->getGonio();
-	if (dgonio)
-	{
+	if (dgonio)	{
 		for (unsigned int i=0;i<dgonio->getNAxes();++i)
 			dgonio->getAxis(i)->setOffset(x[naxes++]);
 	}
 
-	for (unsigned int i=0; i<_peaks.size();++i)
-	{
+    #pragma omp parallel for
+	for (unsigned int i=0; i<_peaks.size();++i)	{
 		Eigen::RowVector3d qVector=_peaks[i].getQ();
 		const Eigen::RowVector3d& hkl=_peaks[i].getMillerIndices();
 		fvec(3*i)   = (x[0]*hkl[0] + x[3]*hkl[1] + x[6]*hkl[2] - qVector[0]);
