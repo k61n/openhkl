@@ -12,7 +12,7 @@ set(CPACK_SOURCE_GENERATOR TGZ)
 include(DetermineLinuxDistro)
 
 # define which binary generators to use
-if ("${UNIX_DIST}" MATCHES "Ubuntu")
+if ("${UNIX_DIST}" MATCHES "Ubuntu" OR ${BUILD_DEBIAN})
     find_program(DPKG_CMD dpkg)
     if (DPKG_CMD)
         set(CPACK_GENERATOR "DEB")
