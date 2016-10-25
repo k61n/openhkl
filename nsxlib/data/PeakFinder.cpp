@@ -45,18 +45,11 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
         numor->readInMemory(_handler);
 
         try {
-            //progressDialog->setMaximum(100);
-            //progressDialog->setLabelText("Computing background level...");
-            //progressDialog->show();
-
-
             // compute median only if necessary
             if (_thresholdType == 0) {
                 // jmf: why do we round median to an integer??
                 _median = static_cast<int>(numor->getBackgroundLevel(_handler))+1;
             }
-
-            //progressDialog->close();
         }
         catch (...) {
             //qCritical() << "Error computing background level of dataset";
@@ -123,9 +116,7 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
 
             if ( _handler ) {
                 _handler->log("Found " + std::to_string(blobs.size()) + " blobs");
-            }
-
-            //blobs=SX::Geometry::findBlobs3D(numor->begin(), numor->end(), median*threshold, 30, 10000, confidence);
+            }            
         }
         catch(std::exception& e) // Warning if error
         {
@@ -136,14 +127,11 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
             throw e;
         }
 
-        //qDebug() << ">>>> found blobs";
-
-        int ncells=numor->getDiffractometer()->getSample()->getNCrystals();
+        int ncells = numor->getDiffractometer()->getSample()->getNCrystals();
         std::shared_ptr<SX::Crystal::UnitCell> cell;
+
         if (ncells)
             cell=numor->getDiffractometer()->getSample()->getUnitCell(0);
-
-        //qDebug() << ">>>> iterating over blobs";
 
         if (_handler ) {
             _handler->setStatus("Computing bounding boxes...");
