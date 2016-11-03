@@ -19,7 +19,7 @@ file(GLOB_RECURSE headers *.h)
 # Creating the library
 # Under Windows and Miscrosoft Visual Studio the library will be static to avoid
 # the DLL_EXPORT mess
-if(MSVC)
+if(MSVC OR BUILD_STATIC)
     add_library(NSXTool STATIC ${sources} ${headers})
 else()
     add_library(NSXTool SHARED ${sources} ${headers})
