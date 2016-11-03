@@ -20,7 +20,7 @@ option(BUILD_QTAPPS "Build Qt based application." ON)
 option(BUILD_OPTIMIZED_DEBUG "Set optimization level -O1 or -Og for debug build" OFF)
 option(BUILD_COVERAGE_REPORT "Build code coverage report" OFF)
 option(BUILD_DEBIAN "Build debian .deb packages" OFF)
-option(BUILD_STATIC "Link nsxlib statically" OFF)
+option(NSX_BUILD_STATIC "Link nsxlib statically" OFF)
 
 ###########################################################################
 # Scripts controlling build setup and dependencies
