@@ -13,6 +13,7 @@
 #include <QDoubleSpinBox>
 
 #include <QModelIndex>
+#include <QDebug>
 
 #include <Eigen/Core>
 #include <QDebug>
@@ -232,7 +233,11 @@ void ScaleDialog::calculateRFactors()
 
         _averages[i] = average;
 
-        assert(average > 0.0);
+        // commented out: because of very weak reflections, it is possible
+        // that the average is less than zero
+        //assert(average > 0.0);
+        if (average < 0.0)
+            qDebug() << "warning: averge intensity of reflections is negative";
 
         I_total += n*average;
 
