@@ -12,7 +12,7 @@ set(CPACK_SOURCE_GENERATOR TGZ)
 include(DetermineLinuxDistro)
 
 # define which binary generators to use
-if ("${UNIX_DIST}" MATCHES "Ubuntu")
+if ("${UNIX_DIST}" MATCHES "Ubuntu" OR ${BUILD_DEBIAN})
     find_program(DPKG_CMD dpkg)
     if (DPKG_CMD)
         set(CPACK_GENERATOR "DEB")
@@ -27,7 +27,10 @@ if ("${UNIX_DIST}" MATCHES "Ubuntu")
 endif()
 
 #RedHatEnterpriseClient RedHatEnterpriseWorkstation
-if ("${UNIX_DIST}" MATCHES "RedHatEnterprise" OR "${UNIX_DIST}" MATCHES "Fedora" OR "${UNIX_DIST}" MATCHES "SUSE LINUX")
+if ("${UNIX_DIST}" MATCHES "RedHatEnterprise"
+    OR "${UNIX_DIST}" MATCHES "Fedora"
+    OR "${UNIX_DIST}" MATCHES "SUSE LINUX"
+    OR "${UNIX_DIST}" MATCHES "CentOS")
 
     find_program(RPMBUILD_CMD rpmbuild)
 
