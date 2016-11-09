@@ -283,8 +283,8 @@ void ScaleDialog::resetScale()
 
 //    for (int i = 0; i < _scale.size(); ++i)
 //        _scale[i] = 1.0;
-    _scaleParams.resize(4);
-    _scaleParams << 0.0, 0.0, 0.0, 0.0;
+    _scaleParams.resize(2);
+    _scaleParams << 0.0, 0.0;
 }
 
 void ScaleDialog::setScale()
@@ -346,7 +346,7 @@ void ScaleDialog::refineScale()
     minimizer.setParams(_scaleParams);
 
     minimizer.set_f(residual_fn);
-    minimizer.fit(100);
+    minimizer.fit(1000);
 
     _scaleParams = minimizer.params();
 
@@ -364,6 +364,6 @@ double ScaleDialog::getScale(double z)
 {
     // simple polynomial in the frame number
     auto& p = _scaleParams;
-    return (1.0 /*+ z*p[0] + z*z*p[1]*/) * std::exp(z*p[2] + z*z*p[3]);
+    return (1.0 /*+ z*p[0] + z*z*p[1]*/) * std::exp(z*p[0] + z*z*p[1]);
 }
 

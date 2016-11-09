@@ -1331,18 +1331,11 @@ border-radius: 4px;
      <addaction name="actionShow_labels"/>
      <addaction name="actionShow_calculated_peak_positions"/>
      <addaction name="actionDraw_peak_background"/>
-     <addaction name="actionRemove_bad_peaks"/>
-     <addaction name="actionIncorporate_calculated_peaks"/>
     </widget>
     <addaction name="menuGraphics"/>
     <addaction name="menuShow_Window"/>
     <addaction name="menuSet_View"/>
     <addaction name="menuPeak"/>
-    <addaction name="actionFind_space_group"/>
-    <addaction name="actionFind_Friedel_pairs"/>
-    <addaction name="actionCompute_R_factors"/>
-    <addaction name="actionIntegrate_calculated_peaks"/>
-    <addaction name="actionPeak_fit_dialog"/>
    </widget>
    <widget class="QMenu" name="menuChemistry">
     <property name="title">
@@ -1373,8 +1366,24 @@ border-radius: 4px;
     </property>
     <addaction name="actionAbout"/>
    </widget>
+   <widget class="QMenu" name="menuAnalysis">
+    <property name="title">
+     <string>Analysis</string>
+    </property>
+    <widget class="QMenu" name="menuPeaks">
+     <property name="title">
+      <string>Peaks</string>
+     </property>
+     <addaction name="actionRemove_bad_peaks"/>
+     <addaction name="actionIncorporate_calculated_peaks"/>
+    </widget>
+    <addaction name="actionCompute_R_factors"/>
+    <addaction name="actionFind_space_group"/>
+    <addaction name="menuPeaks"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menu_Options"/>
+   <addaction name="menuAnalysis"/>
    <addaction name="menuChemistry"/>
    <addaction name="menuUtils"/>
    <addaction name="menuHelp"/>
@@ -1728,11 +1737,6 @@ QDockWidget::title {
     <string>Convolution Filter</string>
    </property>
   </action>
-  <action name="actionFind_space_group">
-   <property name="text">
-    <string>Find space group</string>
-   </property>
-  </action>
   <action name="actionFind_equivalences">
    <property name="text">
     <string>Find equivalences</string>
@@ -1774,19 +1778,6 @@ QDockWidget::title {
     <string>Draw peak background</string>
    </property>
   </action>
-  <action name="actionRemove_bad_peaks">
-   <property name="checkable">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>Remove bad peaks</string>
-   </property>
-  </action>
-  <action name="actionIncorporate_calculated_peaks">
-   <property name="text">
-    <string>Incorporate calculated peaks</string>
-   </property>
-  </action>
   <action name="actionNew_session">
    <property name="text">
     <string>New session</string>
@@ -1810,6 +1801,21 @@ QDockWidget::title {
   <action name="actionAbout">
    <property name="text">
     <string>About...</string>
+   </property>
+  </action>
+  <action name="actionFind_space_group">
+   <property name="text">
+    <string>Find space group</string>
+   </property>
+  </action>
+  <action name="actionRemove_bad_peaks">
+   <property name="text">
+    <string>Remove bad peaks</string>
+   </property>
+  </action>
+  <action name="actionIncorporate_calculated_peaks">
+   <property name="text">
+    <string>Incorporate calculated peaks</string>
    </property>
   </action>
  </widget>
