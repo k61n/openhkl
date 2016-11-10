@@ -27,7 +27,10 @@ if ("${UNIX_DIST}" MATCHES "Ubuntu" OR ${BUILD_DEBIAN})
 endif()
 
 #RedHatEnterpriseClient RedHatEnterpriseWorkstation
-if ("${UNIX_DIST}" MATCHES "RedHatEnterprise" OR "${UNIX_DIST}" MATCHES "Fedora" OR "${UNIX_DIST}" MATCHES "SUSE LINUX")
+if ("${UNIX_DIST}" MATCHES "RedHatEnterprise"
+    OR "${UNIX_DIST}" MATCHES "Fedora"
+    OR "${UNIX_DIST}" MATCHES "SUSE LINUX"
+    OR "${UNIX_DIST}" MATCHES "CentOS")
 
     find_program(RPMBUILD_CMD rpmbuild)
 

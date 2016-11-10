@@ -21,6 +21,7 @@ option(BUILD_OPTIMIZED_DEBUG "Set optimization level -O1 or -Og for debug build"
 option(BUILD_COVERAGE_REPORT "Build code coverage report" OFF)
 option(BUILD_WITH_OPENMP "Build with OpenMP support" OFF)
 option(BUILD_DEBIAN "Build debian .deb packages" OFF)
+option(NSX_BUILD_STATIC "Link nsxlib statically" OFF)
 
 ###########################################################################
 # Scripts controlling build setup and dependencies

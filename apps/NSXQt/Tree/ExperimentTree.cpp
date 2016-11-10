@@ -261,6 +261,32 @@ void ExperimentTree::importRawData()
     if (!dialog.exec())
         return;
 
+//<<<<<<< HEAD
+//    int max=selectedNumors.size();
+//    qWarning() << "Peak find algorithm: Searching peaks in " << max << " files";
+    
+//    // create a pop-up window that will show the progress
+//    ProgressView* progressView = new ProgressView(this);
+//    progressView->watch(_progressHandler);
+
+//    // lambda function to execute peak search in a separate thread
+//    auto task = [=] () -> bool
+//    {
+//        bool result = false;
+
+//        // execute in a try-block because the progress handler may throw if it is aborted by GUI
+//        try {
+//            result = _peakFinder->find(selectedNumors);
+//        }
+//        catch(std::exception& e) {
+//            qDebug() << "Caught exception during peak find: "
+//                     << e.what()
+//                     << " ; peak search aborted.";
+//            return false;
+//        }
+//        return result;
+//    };
+//=======
     const double wavelength = dialog.wavelength();
     const double delta_phi = dialog.deltaPhi();
     const double delta_omega = dialog.deltaOmega();
@@ -268,6 +294,7 @@ void ExperimentTree::importRawData()
     const bool swap_endian = dialog.swapEndian();
     const int bpp = dialog.bpp();
     const bool row_major = dialog.rowMajor();
+//>>>>>>> develop
 
     std::vector<std::string> filenames;
 
@@ -472,8 +499,8 @@ void ExperimentTree::computeRFactors()
     qDebug() << "    Rmeas  = " << rfactor.Rmeas();
     qDebug() << "    Rpim   = " << rfactor.Rpim();
 
-    //ScaleDialog* scaleDialog = new ScaleDialog(peak_equivs, this);
-    //scaleDialog->exec();
+    ScaleDialog* scaleDialog = new ScaleDialog(peak_equivs, this);
+    scaleDialog->exec();
 }
 
 void ExperimentTree::findFriedelPairs()

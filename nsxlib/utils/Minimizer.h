@@ -33,64 +33,26 @@
  *
  */
 
-#ifndef NSXTOOL_IMINIMIZER_H_
-#define NSXTOOL_IMINIMIZER_H_
+#ifndef NSXTOOL_MINIMIZER_H_
+#define NSXTOOL_MINIMIZER_H_
 
-#include <functional>
-
-#include <Eigen/Dense>
+#include "IMinimizer.h"
+#include "MinimizerGSL.h"
+#include "MinimizerEigen.h"
 
 namespace SX {
 
 namespace Utils {
 
-class IMinimizer {
-public:
-    using f_type = std::function<int(const Eigen::VectorXd&, Eigen::VectorXd&)>;
-
-    IMinimizer();
-    virtual ~IMinimizer();
-
-    template <typename Fun_>
-    void set_f(Fun_ functor)
-    {
-        _f = static_cast<f_type>(functor);
-    }
-
-    void setParams(const Eigen::VectorXd& x);
-    void setWeights(const Eigen::VectorXd& wt);
-
-    Eigen::MatrixXd covariance();
-    Eigen::MatrixXd jacobian();
-    Eigen::VectorXd params();
-
-    void setxTol(double xtol);
-    void setgTol(double gtol);
-    void setfTol(double ftol);
-
-    int numIterations();
-
-    virtual void initialize(int params, int values);
-    virtual void deinitialize();
-    virtual bool fit(int max_iter) = 0;
-    virtual const char* getStatusStr() = 0;
-
-protected:
-    int _numValues, _numParams, _numIter;
-
-    double _xtol;
-    double _gtol;
-    double _ftol;
-
-    Eigen::VectorXd _x,  _wt;
-    Eigen::MatrixXd _jacobian, _covariance;
-
-    f_type _f;
-};
+#ifdef NSXTOOL_GSL_FOUND
+using Minimizer = MinimizerGSL;
+#else
+using Minimizer = MinimizerEigen;
+#endif
 
 
 } // namespace Utils
 
 } // namespace SX
 
-#endif // NSXTOOL_IMINIMIZER_H_
+#endif // NSXTOOL_MINIMIZER_H_

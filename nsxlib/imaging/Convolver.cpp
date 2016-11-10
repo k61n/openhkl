@@ -68,8 +68,10 @@ void Convolver::setKernel(const RealMatrix &kernel)
 
         _halfCols = (_cols>>1) + 1; // used by FFTW; check documentation for details
 
-        _realData = fftw_alloc_real(_rows * _cols);
-        _transformedData = fftw_alloc_complex(_rows * _halfCols);
+        // use fftw_malloc instead of fftw_alloc_* to support older version of fftw3
+        _realData = (double*)fftw_malloc(_rows * _cols * sizeof(double));
+        _transformedData = (fftw_complex*)fftw_malloc(_rows * _halfCols * sizeof(fftw_complex));
+        
         _transformedKernel.resize(_rows*_halfCols);
 
         cout << "allocated fftw arrays successfully" << endl;

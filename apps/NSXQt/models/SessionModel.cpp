@@ -444,14 +444,10 @@ void SessionModel::peakFitDialog()
 void SessionModel::findPeaks(const QModelIndex& index)
 {
     MainWindow* main = dynamic_cast<MainWindow*>(QApplication::activeWindow());
-
-    auto ui=main->getUI();
-
-    ui->_dview->getScene()->clearPeaks();
-
+    auto ui = main->getUI();
     QStandardItem* item = itemFromIndex(index);
+    TreeItem* titem = dynamic_cast<TreeItem*>(item);
 
-    TreeItem* titem=dynamic_cast<TreeItem*>(item);
     if (!titem)
         return;
 
@@ -461,22 +457,19 @@ void SessionModel::findPeaks(const QModelIndex& index)
         return;
 
     QStandardItem* ditem = itemFromIndex(index);
-
     std::vector<std::shared_ptr<SX::Data::IData>> selectedNumors;
     int nTotalNumors(rowCount(ditem->index()));
+
     selectedNumors.reserve(nTotalNumors);
 
-    for (auto i=0;i<nTotalNumors;++i)
-    {
-        if (ditem->child(i)->checkState() == Qt::Checked)
-        {
+    for (auto i = 0; i < nTotalNumors; ++i) {
+        if (ditem->child(i)->checkState() == Qt::Checked) {
             if (auto ptr = dynamic_cast<NumorItem*>(ditem->child(i)))
                 selectedNumors.push_back(ptr->getExperiment()->getData(ptr->text().toStdString()));
         }
     }
 
-    if (selectedNumors.empty())
-    {
+    if (selectedNumors.empty()) {
         qWarning()<<"No numors selected for finding peaks";
         return;
     }
@@ -497,14 +490,12 @@ void SessionModel::findPeaks(const QModelIndex& index)
         }
     }
 
-    qDebug() << "Preview frame has dimensions" << frame.rows() << " " << frame.cols();
+    // qDebug() << "Preview frame has dimensions" << frame.rows() << " " << frame.cols();
 
     DialogConvolve* dialog = new DialogConvolve(frame, nullptr);
 
     // dialog will automatically be deleted before we return from this method
     std::unique_ptr<DialogConvolve> dialog_ptr(dialog);
-
-
 
     // reset progress handler
     _progressHandler = std::shared_ptr<ProgressHandler>(new ProgressHandler);
@@ -520,6 +511,8 @@ void SessionModel::findPeaks(const QModelIndex& index)
 
     if (!dialog->exec())
         return;
+
+    ui->_dview->getScene()->clearPeaks();
 
     int max=selectedNumors.size();
     qWarning() << "Peak find algorithm: Searching peaks in " << max << " files";
