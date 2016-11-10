@@ -433,74 +433,77 @@ void ExperimentTree::findSpaceGroup()
 
 void ExperimentTree::computeRFactors()
 {
-    qDebug() << "Finding peak equivalences...";
+    _session->computeRFactors();
 
-    std::vector<std::shared_ptr<IData>> numors = _session->getSelectedNumors();
-    std::vector<std::vector<Peak3D*>> peak_equivs;
-    std::vector<Peak3D*> peak_list;
+//    qDebug() << "Finding peak equivalences...";
 
-    std::shared_ptr<UnitCell> unit_cell;
+//    std::vector<std::shared_ptr<IData>> numors = _session->getSelectedNumors();
+//    std::vector<std::vector<Peak3D*>> peak_equivs;
+//    std::vector<Peak3D*> peak_list;
 
-    for (std::shared_ptr<IData> numor: numors) {
-        std::set<Peak3D*> peaks = numor->getPeaks();
-        for (Peak3D* peak: peaks)
-            if ( peak && peak->isSelected() && !peak->isMasked() )
-                peak_list.push_back(peak);
-    }
+//    std::shared_ptr<UnitCell> unit_cell;
 
-    if ( peak_list.size() == 0) {
-        qDebug() << "No peaks -- cannot search for equivalences!";
-        return;
-    }
+//    for (std::shared_ptr<IData> numor: numors) {
+//        std::set<Peak3D*> peaks = numor->getPeaks();
+//        for (Peak3D* peak: peaks)
+//            if ( peak && peak->isSelected() && !peak->isMasked() )
+//                peak_list.push_back(peak);
+//    }
 
-    for (Peak3D* peak: peak_list) {
-        // what do we do if there is more than one sample/unit cell??
-        unit_cell = peak->getUnitCell();
+//    if ( peak_list.size() == 0) {
+//        qDebug() << "No peaks -- cannot search for equivalences!";
+//        return;
+//    }
 
-        if (unit_cell)
-            break;
-    }
+//    for (Peak3D* peak: peak_list) {
+//        // what do we do if there is more than one sample/unit cell??
+//        unit_cell = peak->getUnitCell();
 
-    if (!unit_cell) {
-        qDebug() << "No unit cell selected! Cannot compute R factors.";
-        return;
-    }
+//        if (unit_cell)
+//            break;
+//    }
 
-    SpaceGroup grp("P 1");
+//    if (!unit_cell) {
+//        qDebug() << "No unit cell selected! Cannot compute R factors.";
+//        return;
+//    }
 
-    // spacegroup construct can throw
-    try {
-        grp = SpaceGroup(unit_cell->getSpaceGroup());
-    }
-    catch(std::exception& e) {
-        qDebug() << "Caught exception: " << e.what() << endl;
-        return;
-    }
+//    SpaceGroup grp("P 1");
 
-    peak_equivs = grp.findEquivalences(peak_list, true);
+//    // spacegroup construct can throw
+//    try {
+//        grp = SpaceGroup(unit_cell->getSpaceGroup());
+//    }
+//    catch(std::exception& e) {
+//        qDebug() << "Caught exception: " << e.what() << endl;
+//        return;
+//    }
 
-    qDebug() << "Found " << peak_equivs.size() << " equivalence classes of peaks:";
+//    peak_equivs = grp.findEquivalences(peak_list, true);
 
-    std::map<int, int> size_counts;
+//    qDebug() << "Found " << peak_equivs.size() << " equivalence classes of peaks:";
 
-    for (auto& peaks: peak_equivs) {
-        ++size_counts[peaks.size()];
-    }
+//    std::map<int, int> size_counts;
 
-    for (auto& it: size_counts) {
-        qDebug() << "Found " << it.second << " classes of size " << it.first;
-    }
+//    for (auto& peaks: peak_equivs) {
+//        ++size_counts[peaks.size()];
+//    }
 
-    qDebug() << "Computing R factors:";
+//    for (auto& it: size_counts) {
+//        qDebug() << "Found " << it.second << " classes of size " << it.first;
+//    }
 
-    RFactor rfactor(peak_equivs);
+//    qDebug() << "Computing R factors:";
 
-    qDebug() << "    Rmerge = " << rfactor.Rmerge();
-    qDebug() << "    Rmeas  = " << rfactor.Rmeas();
-    qDebug() << "    Rpim   = " << rfactor.Rpim();
+//    RFactor rfactor(peak_equivs);
 
-    ScaleDialog* scaleDialog = new ScaleDialog(peak_equivs, this);
-    scaleDialog->exec();
+//    qDebug() << "    Rmerge = " << rfactor.Rmerge();
+//    qDebug() << "    Rmeas  = " << rfactor.Rmeas();
+//    qDebug() << "    Rpim   = " << rfactor.Rpim();
+
+    // WIP: disabled for now
+    // ScaleDialog* scaleDialog = new ScaleDialog(peak_equivs, this);
+    // scaleDialog->exec();
 }
 
 void ExperimentTree::findFriedelPairs()
