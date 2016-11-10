@@ -208,11 +208,9 @@ void DialogConvolve::on_previewButton_clicked()
         clamped_result.data()[i] =
                 result.data()[i] > _peakFinder->getThresholdValue()*background ? max_intensity-1 : 0;
 
-    pxmapPreview->setPixmap(QPixmap::fromImage(Mat2QImage(clamped_result.data(),
-                                                          frame.rows(), frame.cols(),
-                                                          0, ncols,
-                                                          0, nrows,
-                                                          max_intensity)));
+    QImage image = Mat2QImage(clamped_result.data(), frame.rows(), frame.cols(), 0, ncols-1, 0, nrows-1, max_intensity);
+    QPixmap pixmap = QPixmap::fromImage(image);
+    pxmapPreview->setPixmap(pixmap);
 }
 
 void DialogConvolve::on_filterComboBox_currentIndexChanged(int index)

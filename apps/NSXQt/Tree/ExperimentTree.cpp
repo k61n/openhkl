@@ -184,7 +184,7 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             menu->popup(viewport()->mapToGlobal(point));
 
             auto export_fn = [=] {
-                QString filename = QFileDialog::getSaveFileName(this, "Save File", "", "HDF5 (*.hdf *.hdf5)");
+                QString filename = QFileDialog::getSaveFileName(this, "Save File", "", "HDF5 (*.hdf *.hdf5)", nullptr, QFileDialog::Option::DontUseNativeDialog);
                 nitem->exportHDF5(filename.toStdString());
             };
 
