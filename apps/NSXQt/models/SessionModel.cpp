@@ -119,9 +119,6 @@ using SX::Utils::ProgressHandler;
 
 SessionModel::SessionModel()
 {
-    connect(this,SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(onCustomMenuRequested(const QPoint&)));
-    connect(this,SIGNAL(doubleClicked(const QModelIndex&)),this,SLOT(onDoubleClick(const QModelIndex&)));
-    connect(this,SIGNAL(clicked(QModelIndex)),this,SLOT(onSingleClick(QModelIndex)));
 }
 
 SessionModel::~SessionModel()
@@ -182,14 +179,10 @@ vector<shared_ptr<IData>> SessionModel::getSelectedNumors(ExperimentItem* item) 
 
     QList<QStandardItem*> dataItems = findItems(QString("Data"),Qt::MatchCaseSensitive|Qt::MatchRecursive);
 
-    for (const auto& it : dataItems)
-    {
-        for (auto i=0;i < rowCount(it->index());++i)
-        {
-            if (it->child(i)->checkState() == Qt::Checked)
-            {
-                if (auto ptr = dynamic_cast<NumorItem*>(it->child(i)))
-                {
+    for (const auto& it : dataItems) {
+        for (auto i=0;i < rowCount(it->index());++i) {
+            if (it->child(i)->checkState() == Qt::Checked) {
+                if (auto ptr = dynamic_cast<NumorItem*>(it->child(i))) {
                     if (it->parent() == item)
                         numors.push_back(ptr->getExperiment()->getData(ptr->text().toStdString()));
                 }
@@ -249,12 +242,9 @@ vector<shared_ptr<IData>> SessionModel::getSelectedNumors() const
 
     QList<QStandardItem*> dataItems = findItems(QString("Data"),Qt::MatchCaseSensitive|Qt::MatchRecursive);
 
-    for (const auto& it : dataItems)
-    {
-        for (auto i=0;i < rowCount(it->index());++i)
-        {
-            if (it->child(i)->checkState() == Qt::Checked)
-            {
+    for (const auto& it : dataItems) {
+        for (auto i=0;i < rowCount(it->index());++i) {
+            if (it->child(i)->checkState() == Qt::Checked) {
                 if (auto ptr = dynamic_cast<NumorItem*>(it->child(i)))
                     numors.push_back(ptr->getExperiment()->getData(ptr->text().toStdString()));
             }
@@ -377,23 +367,6 @@ void SessionModel::findFriedelPairs()
 {
     qDebug() << "findFriedelParis() is not yet implemented!";
     return;
-
-//    std::vector<Peak3D*> peaks;
-//    std::vector<std::shared_ptr<IData>> numors = getSelectedNumors();
-
-//    for (std::shared_ptr<IData> numor: numors) {
-//        std::set<Peak3D*> peak_list = numor->getPeaks();
-
-//        for (Peak3D* peak: peak_list)
-//            peaks.push_back(peak);
-//    }
-
-
-
-    // todo: something with FriedelDialog!
-    //FriedelDialog* friedelDialog = new FriedelDialog(peaks, this);
-    //friedelDialog->exec();
-    //delete friedelDialog;
 }
 
 void SessionModel::integrateCalculatedPeaks()
@@ -471,14 +444,10 @@ void SessionModel::peakFitDialog()
 void SessionModel::findPeaks(const QModelIndex& index)
 {
     MainWindow* main = dynamic_cast<MainWindow*>(QApplication::activeWindow());
-
-    auto ui=main->getUI();
-
-    ui->_dview->getScene()->clearPeaks();
-
+    auto ui = main->getUI();
     QStandardItem* item = itemFromIndex(index);
+    TreeItem* titem = dynamic_cast<TreeItem*>(item);
 
-    TreeItem* titem=dynamic_cast<TreeItem*>(item);
     if (!titem)
         return;
 
@@ -488,22 +457,19 @@ void SessionModel::findPeaks(const QModelIndex& index)
         return;
 
     QStandardItem* ditem = itemFromIndex(index);
-
     std::vector<std::shared_ptr<SX::Data::IData>> selectedNumors;
     int nTotalNumors(rowCount(ditem->index()));
+
     selectedNumors.reserve(nTotalNumors);
 
-    for (auto i=0;i<nTotalNumors;++i)
-    {
-        if (ditem->child(i)->checkState() == Qt::Checked)
-        {
+    for (auto i = 0; i < nTotalNumors; ++i) {
+        if (ditem->child(i)->checkState() == Qt::Checked) {
             if (auto ptr = dynamic_cast<NumorItem*>(ditem->child(i)))
                 selectedNumors.push_back(ptr->getExperiment()->getData(ptr->text().toStdString()));
         }
     }
 
-    if (selectedNumors.empty())
-    {
+    if (selectedNumors.empty()) {
         qWarning()<<"No numors selected for finding peaks";
         return;
     }
@@ -524,14 +490,12 @@ void SessionModel::findPeaks(const QModelIndex& index)
         }
     }
 
-    qDebug() << "Preview frame has dimensions" << frame.rows() << " " << frame.cols();
+    // qDebug() << "Preview frame has dimensions" << frame.rows() << " " << frame.cols();
 
     DialogConvolve* dialog = new DialogConvolve(frame, nullptr);
 
     // dialog will automatically be deleted before we return from this method
     std::unique_ptr<DialogConvolve> dialog_ptr(dialog);
-
-
 
     // reset progress handler
     _progressHandler = std::shared_ptr<ProgressHandler>(new ProgressHandler);
@@ -547,6 +511,8 @@ void SessionModel::findPeaks(const QModelIndex& index)
 
     if (!dialog->exec())
         return;
+
+    ui->_dview->getScene()->clearPeaks();
 
     int max=selectedNumors.size();
     qWarning() << "Peak find algorithm: Searching peaks in " << max << " files";
@@ -647,7 +613,7 @@ void SessionModel::incorporateCalculatedPeaks()
             handler->setStatus("Calculating peak locations...");
 
             //auto predicted_hkls = sample->getUnitCell(i)->generateReflectionsInSphere(1.5);
-            auto predicted_hkls = sample->getUnitCell(i)->generateReflectionsInSphere(1.0   );
+            auto predicted_hkls = sample->getUnitCell(i)->generateReflectionsInSphere(1.0);
             std::vector<SX::Crystal::PeakCalc> peaks = numor->hasPeaks(predicted_hkls, ub);
             calculated_peaks.reserve(peaks.size());
 
@@ -664,7 +630,11 @@ void SessionModel::incorporateCalculatedPeaks()
 
             handler->setStatus("Adding calculated peaks...");
 
-            for(PeakCalc& p: peaks) {
+            int done_peaks = 0;
+
+            #pragma omp parallel for
+            for (int peak_id = 0; peak_id < peaks.size(); ++peak_id) {
+                PeakCalc& p = peaks[peak_id];
                 ++current_peak;
 
                 Eigen::RowVector3i hkl(std::round(p._h), std::round(p._k), std::round(p._l));
@@ -680,9 +650,12 @@ void SessionModel::incorporateCalculatedPeaks()
                     continue;
 
                 new_peak->setSelected(true);
+                #pragma omp critical
                 calculated_peaks.push_back(new_peak);
 
-                int done = std::round(current_peak * 100.0 / peaks.size());
+                #pragma omp atomic
+                ++done_peaks;
+                int done = std::round(done_peaks * 100.0 / peaks.size());
 
                 if ( done != last_done) {
                     handler->setProgress(done);

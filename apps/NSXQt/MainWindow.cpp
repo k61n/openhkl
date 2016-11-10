@@ -204,14 +204,14 @@ void MainWindow::on_actionSave_session_triggered()
 void MainWindow::on_actionSave_session_as_triggered()
 {
     QString homeDir = SX::Utils::Path::getHomeDirectory().c_str();
-    QString filename = QFileDialog::getSaveFileName(this, "Save session as..", homeDir, "Json document (*.json)");
+    QString filename = QFileDialog::getSaveFileName(this, "Save session as..", homeDir, "Json document (*.json)", nullptr, QFileDialog::Option::DontUseNativeDialog);
     saveSession(filename);
 }
 
 void MainWindow::on_actionLoad_session_triggered()
 {
     QString homeDir = SX::Utils::Path::getHomeDirectory().c_str();
-    QString filename = QFileDialog::getOpenFileName(this, "Load session", homeDir, "Json document (*.json)");
+    QString filename = QFileDialog::getOpenFileName(this, "Load session", homeDir, "Json document (*.json)", nullptr, QFileDialog::Option::DontUseNativeDialog);
     qDebug() << "Loading session from file '" << filename << "'";
 
     QFile loadfile(filename);
@@ -532,7 +532,9 @@ void MainWindow::on_actionDraw_peak_background_triggered(bool checked)
 
 void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
 {
-    const double pmax = 0.01;
+    //const double pmax = 2.873e-7; // corresponds to 5 sigma
+    // const double pmax = 3e-5; // corresponds to 4 sigma
+    const double pmax = 1e-3;
 
     int total_peaks = 0;
     int remaining_peaks = 0;

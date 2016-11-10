@@ -14,6 +14,7 @@
 #include "Units.h"
 
 #include <stdexcept>
+#include <mutex>
 
 using SX::Crystal::UnitCell;
 using SX::Crystal::UBMinimizer;
@@ -86,24 +87,22 @@ void DialogFindUnitCell::setPeaks()
 
 void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
 {
-
-    int npeaks=ui->horizontalSlider_NumberOfPeaks->value();
+    int npeaks = ui->horizontalSlider_NumberOfPeaks->value();
     // Need at leat 10 peaks
-    if (npeaks<10)
-    {
+    if (npeaks < 10) {
         QMessageBox::warning(this, tr("NSXTool"),tr("Need at least 10 peaks for autoindexing"));
         return;
     }
-    //
+
+    // clear the table
     _solutions.clear();
-    _solutions.reserve(50);
-    buildSolutionsTable(); // clear the table
+    buildSolutionsTable();
+
     // Store Q vectors at rest
     std::vector<Eigen::Vector3d> qvects;
     qvects.reserve(npeaks);
 
-    for (int i=0;i<npeaks;++i)
-    {
+    for (int i = 0; i < npeaks; ++i) {
         auto peak=_peaks[i];
         if (peak->isSelected() && !peak->isMasked())
             qvects.push_back(peak->getQ());
@@ -117,15 +116,14 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
 
     int nSolutions = ui->spinBox_nSolutions->value();
     // Find the best tvectors
-    std::vector<SX::Crystal::tVector> tvects=indexing.findOnSphere(30,nSolutions);
-    qDebug() << "" << tvects.size()<< " solutions found";
-    qDebug() << "Refining solutions and diffractometers offsets";
+    std::vector<SX::Crystal::tVector> tvects=indexing.findOnSphere(30, nSolutions);
 
-    auto source=_experiment->getDiffractometer()->getSource();
-    auto detector=_experiment->getDiffractometer()->getDetector();
-    auto sample=_experiment->getDiffractometer()->getSample();
+    auto source = _experiment->getDiffractometer()->getSource();
+    auto detector = _experiment->getDiffractometer()->getDetector();
+    auto sample = _experiment->getDiffractometer()->getSample();
 
-    int num_attempts = 0;
+    std::vector<std::pair<SX::Crystal::UnitCell,double>> new_solutions;
+    new_solutions.reserve(nSolutions*nSolutions*nSolutions);
 
     for (int i = 0; i < nSolutions; ++i) {
         for (int j = i+1; j < nSolutions; ++j) {
@@ -134,92 +132,114 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
                 Eigen::Vector3d& v2=tvects[j]._vect;
                 Eigen::Vector3d& v3=tvects[k]._vect;
 
-
                 if (v1.dot(v2.cross(v3)) > 20.0) {
-
-                    UnitCell cell=UnitCell::fromDirectVectors(v1,v2,v3);
-                    UBMinimizer minimizer;
-                    minimizer.setSample(sample);
-                    minimizer.setDetector(detector);
-                    minimizer.setSource(source);
-                    // Only the UB matrix parameters are used for fit
-                    int nParameters= 10 + sample->getNAxes() + detector->getNAxes();
-                    for (int i = 9; i < nParameters; ++i)
-                        minimizer.refineParameter(i,false);
-                    int success = 0;
-                    for (auto peak : _peaks) {
-                        if (peak->hasIntegerHKL(cell,0.2) && peak->isSelected() && !peak->isMasked()) {
-                            minimizer.addPeak(*peak);
-                            ++success;
-                        }
-                    }
-
-                    if (success < 10)
-                        continue;
-
-                    qDebug() << "Refining solution " << ++num_attempts;
-
-                    Eigen::Matrix3d M=cell.getReciprocalStandardM();
-                    minimizer.setStartingUBMatrix(M);
-                    int ret = minimizer.runGSL(100);
-
-                    if (ret == 1) {
-                        UBSolution solution=minimizer.getSolution();
-                        try {
-                            cell=SX::Crystal::UnitCell::fromReciprocalVectors(solution._ub.row(0),solution._ub.row(1),solution._ub.row(2));
-                            cell.setReciprocalCovariance(solution._covub);
-
-                        } catch(std::exception& e) {
-                            qDebug() << e.what();
-                            continue;
-                        }
-                        double tolerance = ui->niggliSpinBox->value();
-                        NiggliReduction niggli(cell.getMetricTensor(), tolerance);
-                        Eigen::Matrix3d newg,P;
-                        niggli.reduce(newg,P);
-                        cell.transform(P);
-
-                        // use GruberReduction::reduce to get Bravais type
-                        tolerance = ui->gruberSpinBox->value();
-                        GruberReduction gruber(cell.getMetricTensor(), tolerance);
-                        SX::Crystal::LatticeCentring c;
-                        SX::Crystal::BravaisType b;
-
-                        try {                            
-                            gruber.reduce(P,c,b);
-                            cell.setLatticeCentring(c);
-                            cell.setBravaisType(b);
-                        }
-                        catch(std::exception& e) {
-                            qDebug() << "Gruber reduction error:" << e.what();
-                            //continue;
-                        }
-
-                        if (!ui->checkBox_NiggliOnly->isChecked()) {
-                            cell.transform(P);
-                        }
-
-                        double score=0.0;
-                        double maxscore=0.0;
-                        for (auto peak : _peaks) {
-                            if (peak->isSelected() && !peak->isMasked()) {
-                                maxscore++;
-                                if (peak->hasIntegerHKL(cell,0.2))
-                                    score++;
-                            }
-                        }
-                        // Percentage of indexing
-                        score /= 0.01*maxscore;
-                        _solutions.push_back(std::pair<SX::Crystal::UnitCell,double>(cell,score));
-                    }
-                    minimizer.resetParameters();
+                    UnitCell cell = UnitCell::fromDirectVectors(v1, v2, v3);
+                    new_solutions.push_back(std::make_pair(cell, 0.0));
                 }
             }
         }
     }
 
-    qDebug() << "Done refining solutions, building table...";
+    qDebug() << "" << new_solutions.size()<< " possible solutions found";
+    qDebug() << "Refining solutions and diffractometers offsets";
 
+    //#pragma omp parallel for
+    for (int idx = 0; idx < new_solutions.size(); ++idx) {
+
+        UBMinimizer minimizer;
+        minimizer.setSample(sample);
+        minimizer.setDetector(detector);
+        minimizer.setSource(source);
+
+        SX::Crystal::UnitCell cell = new_solutions[idx].first;
+
+        // Only the UB matrix parameters are used for fit
+        int nParameters= 10 + sample->getNAxes() + detector->getNAxes();
+        for (int i = 9; i < nParameters; ++i)
+            minimizer.refineParameter(i,false);
+
+        int success = 0;
+        for (auto peak : _peaks) {
+            // make a copy to avoid thread race condition
+            //SX::Crystal::Peak3D new_peak(*peak);
+
+            //if (new_peak.hasIntegerHKL(cell,0.2) && new_peak.isSelected() && !new_peak.isMasked()) {
+            if (peak->hasIntegerHKL(cell,0.2) && peak->isSelected() && !peak->isMasked()) {
+                minimizer.addPeak(*peak);
+                ++success;
+            }
+        }
+
+        if (success < 10)
+            continue;
+
+        Eigen::Matrix3d M = cell.getReciprocalStandardM();
+        minimizer.setStartingUBMatrix(M);
+        int ret = minimizer.runGSL(100);
+
+        if (ret == 1) {
+            UBSolution sln = minimizer.getSolution();
+            try {
+                cell = SX::Crystal::UnitCell::fromReciprocalVectors(sln._ub.row(0),sln._ub.row(1),sln._ub.row(2));
+                cell.setReciprocalCovariance(sln._covub);
+
+            } catch(std::exception& e) {
+                //qDebug() << e.what();
+                continue;
+            }
+            double tolerance = ui->niggliSpinBox->value();
+            NiggliReduction niggli(cell.getMetricTensor(), tolerance);
+            Eigen::Matrix3d newg, P;
+            niggli.reduce(newg, P);
+            cell.transform(P);
+
+            // use GruberReduction::reduce to get Bravais type
+            tolerance = ui->gruberSpinBox->value();
+            GruberReduction gruber(cell.getMetricTensor(), tolerance);
+            SX::Crystal::LatticeCentring c;
+            SX::Crystal::BravaisType b;
+
+            try {
+                gruber.reduce(P,c,b);
+                cell.setLatticeCentring(c);
+                cell.setBravaisType(b);
+            }
+            catch(std::exception& e) {
+                //qDebug() << "Gruber reduction error:" << e.what();
+                //continue;
+            }
+
+            if (!ui->checkBox_NiggliOnly->isChecked()) {
+                cell.transform(P);
+            }
+
+            double score=0.0;
+            double maxscore=0.0;
+            for (auto peak : _peaks) {
+                if (peak->isSelected() && !peak->isMasked()) {
+                    maxscore++;
+                    if (peak->hasIntegerHKL(cell,0.2))
+                        score++;
+                }
+            }
+            // Percentage of indexing
+            score /= 0.01*maxscore;
+            new_solutions[idx].first = cell;
+            new_solutions[idx].second = score;
+        }
+        minimizer.resetParameters();
+    }
+
+    _solutions.reserve(new_solutions.size());
+
+    // remove the false solutions
+    for (auto&& it = new_solutions.begin(); it != new_solutions.end(); ++it)
+        if (it->second > 0.1)
+            _solutions.push_back(*it);
+
+    _solutions.shrink_to_fit();
+
+    qDebug() << "Done refining solutions, building table...";
     buildSolutionsTable();
 }
 

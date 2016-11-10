@@ -37,66 +37,29 @@ PeakFinder::PeakFinder()
 
 bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
 {
-    // needed to compile:
-    //double threshold, confidence;
-    //int minComp, maxComp;
-    //std::unique_ptr<Convolver> convolver(new Convolver);
-
-
-    //qWarning() << "Peak find algorithm: Searching peaks in " << numors.size() << " files";
-
-    // unused variable
-    //int max=numors.size();
-    //int max = 100;
-
-    //QCoreApplication::processEvents();
-    //_ui->progressBar->setEnabled(true);
-    //_ui->progressBar->setMaximum(max);
-    //_ui->progressBar->setValue(0);
 
     std::size_t npeaks=0;
 
-    // unused variable
-    // int comp = 0;
-
-    //QProgressDialog progressDialog(this);
-
-
-    for (auto numor : numors)
-    {
+    for (auto numor : numors) {
         numor->clearPeaks();
-
         numor->readInMemory(_handler);
 
         try {
-            //progressDialog->setMaximum(100);
-            //progressDialog->setLabelText("Computing background level...");
-            //progressDialog->show();
-
-
             // compute median only if necessary
             if (_thresholdType == 0) {
                 // jmf: why do we round median to an integer??
                 _median = static_cast<int>(numor->getBackgroundLevel(_handler))+1;
             }
-
-            //progressDialog->close();
         }
         catch (...) {
             //qCritical() << "Error computing background level of dataset";
             return false;
         }
 
-
-        //qDebug() << ">>>> the background level is " << median;
-        //qDebug() << ">>>> finding blobs... ";
-
         // Finding peaks
         SX::Geometry::blob3DCollection blobs;
-        try
-        {
-            //progressDialog->setLabelText("Finding blobs...");
-            //progressDialog->setValue(0);
+
+        try {
 
             SX::Geometry::BlobFinder blob_finder(numor);
 
@@ -130,7 +93,10 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
                 // this is the filter function to be applied to each frame
                 auto callback = [&] (const RealMatrix& input) -> RealMatrix
                 {
-                    return _convolver->apply(input);
+                    RealMatrix output;
+                    #pragma omp critical
+                    output = _convolver->apply(input);
+                    return output;
                 };
 
                 if (_handler) {
@@ -150,9 +116,7 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
 
             if ( _handler ) {
                 _handler->log("Found " + std::to_string(blobs.size()) + " blobs");
-            }
-
-            //blobs=SX::Geometry::findBlobs3D(numor->begin(), numor->end(), median*threshold, 30, 10000, confidence);
+            }            
         }
         catch(std::exception& e) // Warning if error
         {
@@ -163,14 +127,11 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
             throw e;
         }
 
-        //qDebug() << ">>>> found blobs";
-
-        int ncells=numor->getDiffractometer()->getSample()->getNCrystals();
+        int ncells = numor->getDiffractometer()->getSample()->getNCrystals();
         std::shared_ptr<SX::Crystal::UnitCell> cell;
+
         if (ncells)
             cell=numor->getDiffractometer()->getSample()->getUnitCell(0);
-
-        //qDebug() << ">>>> iterating over blobs";
 
         if (_handler ) {
             _handler->setStatus("Computing bounding boxes...");
@@ -208,31 +169,7 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
             _handler->setProgress(0);
         }
 
-        for ( auto& peak: numor->getPeaks() )
-            peak->framewiseIntegrateBegin();
-
-        //progressDialog->setValue(0);
-        //progressDialog->setLabelText("Integrating peak intensities...");
-
-        int idx = 0;
-
-        for ( auto it = numor->getIterator(0); it->index() != numor->getNFrames(); it->advance(), ++idx) {
-            Eigen::MatrixXi frame = it->getFrame().cast<int>();
-            for ( auto& peak: numor->getPeaks() ) {
-                peak->framewiseIntegrateStep(frame, idx);
-            }
-
-            if (_handler) {
-                double progress = it->index() * 100.0 / numor->getNFrames();
-                _handler->setProgress(progress);
-            }
-        }
-
-        for ( auto& peak: numor->getPeaks() )
-            peak->framewiseIntegrateEnd();
-
-
-        //progressDialog->close();
+        numor->integratePeaks();
 
         numor->releaseMemory();
         numor->close();

@@ -307,11 +307,8 @@ bool Peak3D::hasIntegerHKL(const SX::Crystal::UnitCell& basis, double tolerance)
 
 
 double Peak3D::getRawIntensity() const
-{
-	const auto& ss=_data->getSampleStates();
-	int n=_data->getNFrames();
-	double step=(ss[n-1].getValues()[0]-ss[0].getValues()[0])/(double)(n-1)/(0.05*SX::Units::deg);
-	return _counts*step;
+{  
+    return _counts * getSampleStepSize();
 }
 
 double Peak3D::getScaledIntensity() const
@@ -336,10 +333,7 @@ void Peak3D::scaleBackgroundShape(double scale)
 
 double Peak3D::getRawSigma() const
 {
-	const auto& ss=_data->getSampleStates();
-	int n=_data->getNFrames();
-	double step=(ss[n-1].getValues()[0]-ss[0].getValues()[0])/(double)(n-1)/(0.05*SX::Units::deg);
-	return _countsSigma*step;
+    return _countsSigma * getSampleStepSize();
 }
 
 double Peak3D::getScaledSigma() const
@@ -382,7 +376,28 @@ std::shared_ptr<SX::Instrument::DetectorEvent> Peak3D::getDetectorEvent()
 
 std::shared_ptr<SX::Instrument::ComponentState> Peak3D::getSampleState()
 {
-	return _sampleState;
+    return _sampleState;
+}
+
+double Peak3D::getSampleStepSize() const
+{
+    // TODO: we should NOT assume that gonio axis 0 is the one being rotated
+    // when we compute 'step' below
+    double step = 0.0;
+
+    int numFrames = _data->getNFrames();
+    const auto& ss = _data->getSampleStates();
+    int numValues = ss[0].getValues().size();
+
+    for (int i = 0; i < numValues; ++i) {
+        double dx = ss[numFrames-1].getValues()[i] - ss[0].getValues()[i];
+        step += dx*dx;
+    }
+
+    step = std::sqrt(step);
+    step /= (numFrames-1) * 0.05 * SX::Units::deg;
+
+    return step;
 }
 
 Eigen::RowVector3d Peak3D::getKf() const

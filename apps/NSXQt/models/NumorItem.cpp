@@ -84,8 +84,11 @@ void NumorItem::fromJson(const QJsonObject &obj)
     }
 }
 
-void NumorItem::exportHDF5(std::string filename)
+void NumorItem::exportHDF5(const std::string& filename) const
 {
+	if (filename.empty())
+		return;
+
     _data->saveHDF5(filename);
 }
 

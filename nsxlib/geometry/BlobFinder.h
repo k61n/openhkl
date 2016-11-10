@@ -84,17 +84,17 @@ public:
 
     blob3DCollection find(unsigned int begin, unsigned int end);
 
-    void findBlobs(unsigned int begin, unsigned int end);
+    void findBlobs(std::unordered_map<int,Blob3D>& blobs, vipairs& equivalences, unsigned int begin, unsigned int end);
 
-    void registerEquivalence(int a, int b, vipairs& equivalences);
+    static void registerEquivalence(int a, int b, vipairs& equivalences);
 
     static bool sortEquivalences(const ipair& pa, const ipair& pb);
 
-    imap removeDuplicates(vipairs& equivalences);
+    static imap removeDuplicates(vipairs& equivalences);
 
-    void reassignEquivalences(imap& equivalences);
+    static void reassignEquivalences(imap& equivalences);
 
-    void findBlobs();
+    //void findBlobs() const;
 
     //void mergeBlobs();
 
@@ -114,15 +114,15 @@ public:
     void setRelative(bool isRelative);
 
 
-    void findCollisions();
+    void findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& equivalences) const;
 
     //! Sets the filter, which allows for more sophisticated blob-finding
     void setFilter(FilterCallback callback);
 
-    void mergeBlobs();
+    void mergeBlobs(std::unordered_map<int,Blob3D>& blobs, vipairs& equivalences) const;
 
 
-    void eliminateBlobs();
+    void eliminateBlobs(std::unordered_map<int,Blob3D>& blobs) const;
 
 
 
@@ -136,18 +136,20 @@ private:
 
     bool _isRelative;
 
-    std::shared_ptr<SX::Data::IData> _data;
+    mutable std::shared_ptr<SX::Data::IData> _data;
     FilterCallback _filterCallback;
-    std::shared_ptr<SX::Utils::ProgressHandler> _progressHandler;
+    mutable std::shared_ptr<SX::Utils::ProgressHandler> _progressHandler;
 
     unsigned int _nrows, _ncols, _nframes;
+
+    unsigned int _currentlabel;
 
     // filter
     // progress handler
     // ...
 
-    std::unordered_map<int,Blob3D> _blobs;
-    vipairs _equivalences;
+    //std::unordered_map<int,Blob3D> _blobs;
+    //vipairs _equivalences;
 };
 
 
