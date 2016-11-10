@@ -292,11 +292,11 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             if (top<max.top())
                 top=max.top();
             if (bot>max.bottom())
-                bot=max.bottom();
+                bot=max.bottom()+1;
             if (left<max.left())
                 left=max.left();
             if (right>max.right())
-                right=max.right();
+                right=max.right()+1;
 
             _zoomrect->setRect(left,top,right-left,bot-top);
             setSceneRect(_zoomrect->rect());
