@@ -118,8 +118,8 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
                 _handler->log("Found " + std::to_string(blobs.size()) + " blobs");
             }            
         }
-        catch(std::exception& e) // Warning if error
-        {
+        // Warning if error
+        catch(std::exception& e) {
             if ( _handler )
                 _handler->log(std::string("Peak finder caused an exception: ") + e.what());
 

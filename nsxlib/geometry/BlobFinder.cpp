@@ -134,7 +134,7 @@ blob3DCollection BlobFinder::find(unsigned int begin, unsigned int end) {
             std::cout //<< "thread " << omp_get_thread_num() << ";"
                       << "begin = " << begin << "; end = " << end
                       << std::endl;
-        }
+        }     
 
         // find blobs within the current frame range
         findBlobs(local_blobs, local_equivalences, begin, end);
@@ -153,13 +153,17 @@ blob3DCollection BlobFinder::find(unsigned int begin, unsigned int end) {
         }
     }
 
-    ///////////////////////// serial section below
+    // serial section below
 
-    // determine which additional blobs should be merged due to collisions / intersection
-    findCollisions(blobs, equivalences);
+    int num_blobs;
 
-    // merge the remaining blobs
-    mergeBlobs(blobs, equivalences);
+    do {
+        num_blobs = blobs.size();
+        // determine which additional blobs should be merged due to collisions / intersection
+        findCollisions(blobs, equivalences);
+        // merge the remaining blobs
+        mergeBlobs(blobs, equivalences);
+    } while (num_blobs != blobs.size());
 
     // remove blobs which are too small or too large
     eliminateBlobs(blobs);
