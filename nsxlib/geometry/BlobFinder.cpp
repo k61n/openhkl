@@ -114,13 +114,6 @@ blob3DCollection BlobFinder::find(unsigned int begin, unsigned int end) {
 
     #pragma omp parallel
     {
-        #pragma omp master
-        {
-              std::cout << "number of threads is " << omp_get_num_threads() << std::endl;
-              //<< "begin = " << begin << "; end = " << end
-              //<< std::endl;
-        }
-
         int begin = -1;
         int end;
 
@@ -136,13 +129,6 @@ blob3DCollection BlobFinder::find(unsigned int begin, unsigned int end) {
             end = i+1;
         }
 
-        #pragma omp critical
-        {
-            std::cout //<< "thread " << omp_get_thread_num() << ";"
-                      << "begin = " << begin << "; end = " << end
-                      << std::endl;
-        }     
-
         // find blobs within the current frame range
         findBlobs(local_blobs, local_equivalences, begin, end);
 
@@ -154,18 +140,13 @@ blob3DCollection BlobFinder::find(unsigned int begin, unsigned int end) {
 
         #pragma omp critical
         {
-            std::cout << "found " << local_blobs.size() << " local blobs " << std::endl;
-
             // merge the blobs into the global set
             for (auto&& blob: local_blobs)
                 blobs.insert(blob);
         }
     }
 
-    std::cout << "after parallel section, we have " << blobs.size() << " unmerged blobs" << std::endl;
-
     // serial section below
-
     int num_blobs;
 
     do {
@@ -239,13 +220,6 @@ void BlobFinder::findBlobs(std::unordered_map<int,Blob3D>& blobs,
 
     // int representing the 8 possible nearest neighbor operations.
     int code;
-
-    if (_filterCallback) {
-        cout << "blob finder using a filter" << endl;
-    }
-    else {
-        cout << "blob finder is not using a filter" << endl;
-    }
 
     // Iterate on all pixels in the image
     // #pragma omp for schedule(dynamic, DYNAMIC_CHUNK)
