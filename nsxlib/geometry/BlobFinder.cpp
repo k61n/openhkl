@@ -114,6 +114,13 @@ blob3DCollection BlobFinder::find(unsigned int begin, unsigned int end) {
 
     #pragma omp parallel
     {
+        #pragma omp master
+        {
+              std::cout << "number of threads is " << omp_get_num_threads() << std::endl;
+              //<< "begin = " << begin << "; end = " << end
+              //<< std::endl;
+        }
+
         int begin = -1;
         int end;
 
@@ -147,13 +154,15 @@ blob3DCollection BlobFinder::find(unsigned int begin, unsigned int end) {
 
         #pragma omp critical
         {
-            std::cout << "found " << local_blobs.size() << "local blobs" << std::endl;
+            std::cout << "found " << local_blobs.size() << " local blobs " << std::endl;
 
             // merge the blobs into the global set
             for (auto&& blob: local_blobs)
                 blobs.insert(blob);
         }
     }
+
+    std::cout << "after parallel section, we have " << blobs.size() << " unmerged blobs" << std::endl;
 
     // serial section below
 
@@ -424,7 +433,9 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
             continue;
         }
 
-        if (extents.minCoeff()<1.0e-9)
+        // if the threshold is too small it will break the OpenMP peak search
+        // when the number of threads is very large
+        if (extents.minCoeff()<1.0e-13)
             it = blobs.erase(it);
         else {
             boxes.insert(shape3Dmap::value_type(new Ellipsoid3D(center,extents,axis),it->first));
