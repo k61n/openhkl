@@ -147,6 +147,8 @@ blob3DCollection BlobFinder::find(unsigned int begin, unsigned int end) {
 
         #pragma omp critical
         {
+            std::cout << "found " << local_blobs.size() << "local blobs" << std::endl;
+
             // merge the blobs into the global set
             for (auto&& blob: local_blobs)
                 blobs.insert(blob);
@@ -348,8 +350,8 @@ void BlobFinder::findBlobs(std::unordered_map<int,Blob3D>& blobs,
     }
 
     // too few frames for algorithm to be reliable
-    if (_nframes<=1)
-        throw std::runtime_error("Third dimension should be at least 2 to run this algorithm. if 1, use 2D version");
+    //if (_nframes<=1)
+    //    throw std::runtime_error("Third dimension should be at least 2 to run this algorithm. if 1, use 2D version");
 
 }
 
