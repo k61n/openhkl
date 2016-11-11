@@ -146,8 +146,6 @@ void DialogConvolve::buildTree()
 
 void DialogConvolve::on_previewButton_clicked()
 {
-    // TODO: implement this
-    std::cout << "push button clicked" << std::endl;
     RealMatrix data, result;
     Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> clamped_result;
 
@@ -166,28 +164,18 @@ void DialogConvolve::on_previewButton_clicked()
         return;
     }
 
-    std::cout << "got kernel" << std::endl;
-
     // dimensions must match image dimensions
     kernel->getParameters()["rows"] = frame.rows();
     kernel->getParameters()["cols"] = frame.cols();
 
-    std::cout << "set kernel rows and cols: " << frame.rows() << " " << frame.cols() << std::endl;
-
     // set up convolver
     _convolver->setKernel(kernel->getKernel());
-
-    std::cout << "initialized convolver" << std::endl;
 
     // compute the convolution!
     data = frame.cast<double>();
 
-    cout << "cast data to double" << endl;
-
     result = _convolver->apply(data);
     clamped_result.resize(frame.rows(),frame.cols());
-
-    cout << "convolved data successfully" << endl;
 
     int max_intensity = 1000;
 

@@ -129,13 +129,6 @@ blob3DCollection BlobFinder::find(unsigned int begin, unsigned int end) {
             end = i+1;
         }
 
-        #pragma omp critical
-        {
-            std::cout //<< "thread " << omp_get_thread_num() << ";"
-                      << "begin = " << begin << "; end = " << end
-                      << std::endl;
-        }     
-
         // find blobs within the current frame range
         findBlobs(local_blobs, local_equivalences, begin, end);
 
@@ -147,8 +140,6 @@ blob3DCollection BlobFinder::find(unsigned int begin, unsigned int end) {
 
         #pragma omp critical
         {
-            std::cout << "found " << local_blobs.size() << "local blobs" << std::endl;
-
             // merge the blobs into the global set
             for (auto&& blob: local_blobs)
                 blobs.insert(blob);
@@ -156,7 +147,6 @@ blob3DCollection BlobFinder::find(unsigned int begin, unsigned int end) {
     }
 
     // serial section below
-
     int num_blobs;
 
     do {
@@ -230,13 +220,6 @@ void BlobFinder::findBlobs(std::unordered_map<int,Blob3D>& blobs,
 
     // int representing the 8 possible nearest neighbor operations.
     int code;
-
-    if (_filterCallback) {
-        cout << "blob finder using a filter" << endl;
-    }
-    else {
-        cout << "blob finder is not using a filter" << endl;
-    }
 
     // Iterate on all pixels in the image
     // #pragma omp for schedule(dynamic, DYNAMIC_CHUNK)
@@ -424,7 +407,9 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
             continue;
         }
 
-        if (extents.minCoeff()<1.0e-9)
+        // if the threshold is too small it will break the OpenMP peak search
+        // when the number of threads is very large
+        if (extents.minCoeff()<1.0e-13)
             it = blobs.erase(it);
         else {
             boxes.insert(shape3Dmap::value_type(new Ellipsoid3D(center,extents,axis),it->first));
