@@ -16,6 +16,7 @@ build:trusty:
     - /^feature/.*$/
     - /^release/.*$/
     - /^hotfix/.*$/
+    - /^bugfix/.*$/
     - develop
   artifacts:
     paths:
@@ -35,6 +36,7 @@ test:trusty:
     - /^feature/.*$/
     - /^release/.*$/
     - /^hotfix/.*$/
+    - /^bugfix/.*$/
     - develop
   dependencies:
     - build:trusty
@@ -71,6 +73,7 @@ build:osx:
     - /^feature/.*$/
     - /^release/.*$/
     - /^hotfix/.*$/
+    - /^bugfix/.*$/
     - develop
   artifacts:
     paths:
@@ -90,6 +93,7 @@ test:osx:
     - /^feature/.*$/
     - /^release/.*$/
     - /^hotfix/.*$/
+    - /^bugfix/.*$/
     - develop
   dependencies:
     - build:osx
@@ -126,6 +130,7 @@ build:windows:
     - /^feature/.*$/
     - /^release/.*$/
     - /^hotfix/.*$/
+    - /^bugfix/.*$/
     - develop
   artifacts:
     paths:
@@ -145,6 +150,7 @@ test:windows:
     - /^feature/.*$/
     - /^release/.*$/
     - /^hotfix/.*$/
+    - /^bugfix/.*$/ 
     - develop
   dependencies:
     - build:windows
