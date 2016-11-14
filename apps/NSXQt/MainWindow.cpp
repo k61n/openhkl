@@ -493,7 +493,7 @@ void MainWindow::on_checkBox_AspectRatio_toggled(bool checked)
 void MainWindow::on_actionConvolution_Filter_triggered()
 {
     Eigen::MatrixXi frame = _ui->_dview->getScene()->getCurrentFrame();
-    auto dialog = new DialogConvolve(frame, this);
+    auto dialog = new DialogConvolve(frame, nullptr, this);
     dialog->show();
 }
 

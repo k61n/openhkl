@@ -13,6 +13,7 @@
 
 #include "IData.h"
 #include "Experiment.h"
+#include "Convolver.h"
 #include "Logger.h"
 
 

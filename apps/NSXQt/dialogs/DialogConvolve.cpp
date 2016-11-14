@@ -94,7 +94,7 @@ void DialogConvolve::setPeakFinder(std::shared_ptr<SX::Data::PeakFinder> peakFin
     ui->confidenceSpinBox->setValue(_peakFinder->getConfidence());
     ui->minCompBox->setValue(_peakFinder->getMinComponents());
     ui->maxCompBox->setValue(_peakFinder->getMaxComponents());
-    ui->filterComboBox->setCurrentIndex(QString::fromStdString(kernelName));
+    ui->filterComboBox->setCurrentText(QString::fromStdString(kernelName));
 
     buildTree();
 }
