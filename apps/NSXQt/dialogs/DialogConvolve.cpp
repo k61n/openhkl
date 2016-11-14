@@ -162,50 +162,32 @@ void DialogConvolve::on_previewButton_clicked()
     //_kernel = ui->treeWidgetOld->getKernel();
     auto kernel = _peakFinder->getKernel();
 
-    if (!kernel) {
-        qDebug() << "null kernel returned!";
-        return;
+    int maxData = frame.maxCoeff();
+
+    if (kernel)
+    {
+        // dimensions must match image dimensions
+        kernel->getParameters()["rows"] = frame.rows();
+        kernel->getParameters()["cols"] = frame.cols();
+
+        // set up convolver
+        auto convolver = _peakFinder->getConvolver();
+        convolver->setKernel(kernel->getKernel());
+
+        // compute the convolution
+        data = frame.cast<double>();
+        result = convolver->apply(data);
+        clamped_result.resize(frame.rows(),frame.cols());
+        double minVal = result.minCoeff();
+        double maxVal = result.maxCoeff();
+        result.array() -= minVal;
+        result.array() *= static_cast<double>(maxData)/(maxVal-minVal);
+		clamped_result = result.cast<int>();
     }
-
-    std::cout<<_peakFinder<<std::endl;
-    std::cout<<kernel->getName()<<std::endl;
-
-    // dimensions must match image dimensions
-    kernel->getParameters()["rows"] = frame.rows();
-    kernel->getParameters()["cols"] = frame.cols();
-    std::cout<<kernel->getName()<<std::endl;
-
-    // set up convolver
-    auto convolver = _peakFinder->getConvolver();
-    convolver->setKernel(kernel->getKernel());
-    std::cout<<kernel->getKernel()<<std::endl;
-
-    // compute the convolution!
-    data = frame.cast<double>();
-
-    result = convolver->apply(data);
-    clamped_result.resize(frame.rows(),frame.cols());
-
-    int max_intensity = 1000;
-
-    // apply a simple theshold
-    // TODO: incorporate into GUI, or improve in some other way
-
-    double background;
-
-    // threshold relative to background
-    if (_peakFinder->getThresholdType() == 0)
-        background = data.sum() / ((double)frame.rows()*frame.cols());
     else
-        background = 1.0;
+        clamped_result = frame;
 
-    qDebug() << "Generating preview image with background of " << background;
-
-    for ( int i = 0; i < nrows*ncols; ++i)
-        clamped_result.data()[i] =
-                result.data()[i] > _peakFinder->getThresholdValue()*background ? max_intensity-1 : 0;
-
-    QImage image = Mat2QImage(clamped_result.data(), frame.rows(), frame.cols(), 0, ncols-1, 0, nrows-1, max_intensity);
+    QImage image = Mat2QImage(clamped_result.data(), frame.rows(), frame.cols(), 0, ncols-1, 0, nrows-1, maxData);
     QPixmap pixmap = QPixmap::fromImage(image);
     pxmapPreview->setPixmap(pixmap);
 }
