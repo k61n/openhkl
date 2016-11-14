@@ -244,14 +244,6 @@ void PeakFinder::setConvolver(std::shared_ptr<SX::Imaging::Convolver> convolver)
     _convolver = convolver;
 }
 
-int PeakFinder::getKernelType()
-{
-    if ( _kernel )
-        return _kernel->getType();
-    else
-        return 0;
-}
-
 void PeakFinder::setKernel(std::shared_ptr<Imaging::ConvolutionKernel> kernel)
 {
     _kernel = kernel;

@@ -48,8 +48,6 @@ public:
     void setConvolver(std::shared_ptr<SX::Imaging::Convolver> convolver);
     void setConvolutionKernel(std::shared_ptr<SX::Imaging::ConvolutionKernel> kernel);
 
-    int getKernelType();
-
     void setKernel(std::shared_ptr<SX::Imaging::ConvolutionKernel> kernel);
     std::shared_ptr<SX::Imaging::ConvolutionKernel> getKernel();
 
