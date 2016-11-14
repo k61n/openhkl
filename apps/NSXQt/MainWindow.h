@@ -12,7 +12,6 @@
 #include <QProgressBar>
 
 #include "IData.h"
-#include "DialogPeakFind.h"
 #include "Experiment.h"
 #include "Logger.h"
 
