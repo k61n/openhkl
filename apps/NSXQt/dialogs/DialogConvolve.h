@@ -55,7 +55,5 @@ private:
     Eigen::MatrixXi frame;
 
     std::shared_ptr<SX::Data::PeakFinder> _peakFinder;
-    std::shared_ptr<SX::Imaging::Convolver> _convolver;
-
 };
 #endif // NSXTOOL_DIALOGCONVOLVE_H_

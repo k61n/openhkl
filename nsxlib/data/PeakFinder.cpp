@@ -32,6 +32,9 @@ PeakFinder::PeakFinder()
 
     _minComp = 30;
     _maxComp = 10000;
+
+    _convolver = std::shared_ptr<SX::Imaging::Convolver>(new SX::Imaging::Convolver);
+
 }
 
 
@@ -247,6 +250,11 @@ void PeakFinder::setConvolver(std::shared_ptr<SX::Imaging::Convolver> convolver)
 void PeakFinder::setKernel(std::shared_ptr<Imaging::ConvolutionKernel> kernel)
 {
     _kernel = kernel;
+}
+
+std::shared_ptr<Imaging::Convolver> PeakFinder::getConvolver()
+{
+    return _convolver;
 }
 
 std::shared_ptr<Imaging::ConvolutionKernel> PeakFinder::getKernel()

@@ -38,11 +38,7 @@ DialogConvolve::DialogConvolve(const Eigen::MatrixXi& currentFrame, std::shared_
     this->setFixedSize(this->size());
 
     if (!peakFinder)
-    {
         _peakFinder = std::shared_ptr<SX::Data::PeakFinder>(new SX::Data::PeakFinder);
-        _convolver = std::shared_ptr<SX::Imaging::Convolver>(new SX::Imaging::Convolver);
-        _peakFinder->setConvolver(_convolver);
-    }
     else
         setPeakFinder(peakFinder);
 
@@ -171,17 +167,23 @@ void DialogConvolve::on_previewButton_clicked()
         return;
     }
 
+    std::cout<<_peakFinder<<std::endl;
+    std::cout<<kernel->getName()<<std::endl;
+
     // dimensions must match image dimensions
     kernel->getParameters()["rows"] = frame.rows();
     kernel->getParameters()["cols"] = frame.cols();
+    std::cout<<kernel->getName()<<std::endl;
 
     // set up convolver
-    _convolver->setKernel(kernel->getKernel());
+    auto convolver = _peakFinder->getConvolver();
+    convolver->setKernel(kernel->getKernel());
+    std::cout<<kernel->getKernel()<<std::endl;
 
     // compute the convolution!
     data = frame.cast<double>();
 
-    result = _convolver->apply(data);
+    result = convolver->apply(data);
     clamped_result.resize(frame.rows(),frame.cols());
 
     int max_intensity = 1000;
