@@ -5,31 +5,38 @@
 
 #include "DeltaKernel.h"
 
-namespace SX {
+namespace SX
+{
 
-namespace Imaging {
+namespace Imaging
+{
 
+ConvolutionKernel* DeltaKernel::create()
+{
+	return new DeltaKernel();
+}
 
 DeltaKernel::DeltaKernel()
 {
     // default values
     _params["rows"] = 15;
     _params["cols"] = 15;
-    _params["r1"] = 5;
-    _params["r2"] = 10;
-    _params["r3"] = 15;
 }
 
-SX::Imaging::DeltaKernel::DeltaKernel(const SX::Imaging::ConvolutionKernel::ParameterMap &params)
+DeltaKernel::DeltaKernel(const SX::Imaging::ConvolutionKernel::ParameterMap &params)
 {
     _params = params;
 
     // load default values if necessary
-    if ( _params["rows"] >= 0)
+    if ( _params["rows"] <= 0)
         _params["rows"] = 15;
 
-    if ( _params["cols"] >= 0)
+    if ( _params["cols"] <= 0)
         _params["cols"] = 15;
+}
+
+DeltaKernel::~DeltaKernel()
+{
 }
 
 const char *DeltaKernel::getName()
@@ -37,7 +44,7 @@ const char *DeltaKernel::getName()
     return "Delta";
 }
 
-void SX::Imaging::DeltaKernel::update()
+void DeltaKernel::update()
 {
     int rows, cols;
 
@@ -52,7 +59,6 @@ void SX::Imaging::DeltaKernel::update()
     // set kernel equal to kronecker delta
     _kernel = SX::Types::RealMatrix::Zero(rows, cols);
     _kernel(0,0) = 1.0;
-
 }
 
 

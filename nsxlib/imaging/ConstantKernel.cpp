@@ -6,10 +6,16 @@
 #include "ConstantKernel.h"
 
 
-namespace SX {
+namespace SX
+{
 
-namespace Imaging {
+namespace Imaging
+{
 
+ConvolutionKernel* ConstantKernel::create()
+{
+	return new ConstantKernel();
+}
 
 ConstantKernel::ConstantKernel()
 {
@@ -18,16 +24,20 @@ ConstantKernel::ConstantKernel()
     _params["cols"] = 15;
 }
 
-SX::Imaging::ConstantKernel::ConstantKernel(const SX::Imaging::ConvolutionKernel::ParameterMap &params)
+ConstantKernel::ConstantKernel(const SX::Imaging::ConvolutionKernel::ParameterMap &params)
 {
     _params = params;
 
     // load default values if necessary
-    if ( _params["rows"] >= 0)
+    if ( _params["rows"] <= 0)
         _params["rows"] = 15;
 
-    if ( _params["cols"] >= 0)
+    if ( _params["cols"] <= 0)
         _params["cols"] = 15;
+}
+
+ConstantKernel::~ConstantKernel()
+{
 }
 
 const char *ConstantKernel::getName()

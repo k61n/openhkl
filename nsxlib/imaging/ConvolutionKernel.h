@@ -75,15 +75,13 @@ public:
 
     ConvolutionKernel& operator=(const ConvolutionKernel& rhs);
 
-
-    int getType();
+    virtual ~ConvolutionKernel()=0;
 
 
 protected:
     // update the kernel using current parameters
     virtual void update() {};
 
-    int _kernelSize;
     SX::Types::RealMatrix _kernel;
     bool _hasChanged; // used to record if parameters have changed since last update
     ParameterMap _params;

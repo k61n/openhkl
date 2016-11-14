@@ -20,8 +20,13 @@ namespace Imaging {
 class DeltaKernel : public ConvolutionKernel
 {
 public:
+	static ConvolutionKernel* create();
+
+public:
     DeltaKernel();
     DeltaKernel(const ConvolutionKernel::ParameterMap& params);
+
+    virtual ~DeltaKernel();
 
     const char* getName() override;
 

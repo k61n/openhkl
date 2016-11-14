@@ -28,6 +28,7 @@
  *
  */
 
+#include <iostream>
 #include <stdexcept>
 #include <utility>
 
@@ -39,9 +40,6 @@ namespace SX
 
 namespace Imaging
 {
-
-
-
 
 using RealMatrix = SX::Types::RealMatrix;
 
@@ -66,6 +64,10 @@ ConvolutionKernel::ConvolutionKernel(const ConvolutionKernel::ParameterMap &para
     _hasChanged = true;
 }
 
+ConvolutionKernel::~ConvolutionKernel()
+{
+}
+
 ConvolutionKernel::ParameterMap &ConvolutionKernel::getParameters()
 {
     _hasChanged = true;
@@ -79,7 +81,9 @@ const ConvolutionKernel::ParameterMap &ConvolutionKernel::getParameters() const
 
 const RealMatrix& ConvolutionKernel::getKernel()
 {
-    if ( _hasChanged ) {
+	std::cout<<"has changed "<<_hasChanged<<std::endl;
+    if ( _hasChanged )
+    {
         update();
         _hasChanged = false;
     }
@@ -89,7 +93,7 @@ const RealMatrix& ConvolutionKernel::getKernel()
 
 void ConvolutionKernel::print(std::ostream& os) const
 {
-	os<<"Kernel Matrix ("<<_kernelSize<<","<<_kernelSize<<"):"<<std::endl;
+	os<<"Kernel Matrix ("<<_kernel.rows()<<","<<_kernel.cols()<<"):"<<std::endl;
     os<<_kernel<<std::endl;
 }
 
@@ -99,16 +103,6 @@ ConvolutionKernel &ConvolutionKernel::operator=(const ConvolutionKernel &rhs)
     _hasChanged = rhs._hasChanged;
     _params = rhs._params;
     return *this;
-}
-
-int ConvolutionKernel::getType()
-{
-    if ( dynamic_cast<AnnularKernel*>(this)) {
-        return 1;
-    }
-    else {
-       return 0;
-    }
 }
 
 std::ostream& operator<<(std::ostream& os, const ConvolutionKernel& kernel)

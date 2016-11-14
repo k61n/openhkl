@@ -18,6 +18,10 @@ namespace SX {
 
 namespace Imaging {
 
+ConvolutionKernel* AnnularKernel::create()
+{
+	return new AnnularKernel();
+}
 
 AnnularKernel::AnnularKernel()
 {
@@ -34,20 +38,24 @@ SX::Imaging::AnnularKernel::AnnularKernel(const SX::Imaging::ConvolutionKernel::
     _params = params;
 
     // load default values if necessary
-    if ( _params["rows"] >= 0)
+    if ( _params["rows"] <= 0)
         _params["rows"] = 15;
 
-    if ( _params["cols"] >= 0)
+    if ( _params["cols"] <= 0)
         _params["cols"] = 15;
 
-    if ( _params["r1"] >= 0)
+    if ( _params["r1"] <= 0)
         _params["r1"] = 3;
 
-    if ( _params["r2"] >= 0)
+    if ( _params["r2"] <= 0)
         _params["r2"] = 6;
 
-    if ( _params["r3"] >= 0)
+    if ( _params["r3"] <= 0)
         _params["r3"] = 10;
+}
+
+AnnularKernel::~AnnularKernel()
+{
 }
 
 const char *AnnularKernel::getName()
