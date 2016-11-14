@@ -4,8 +4,7 @@
 #include "DialogConvolve.h"
 #include "ui_ConvolveDialog.h"
 
-#include "AnnularKernel.h"
-#include "DeltaKernel.h"
+#include "KernelFactory.h"
 
 #include "ColorMap.h"
 #include <QImage>
@@ -26,7 +25,7 @@ using RealMatrix = SX::Types::RealMatrix;
 using std::cout;
 using std::endl;
 
-DialogConvolve::DialogConvolve(const Eigen::MatrixXi& currentFrame, QWidget *parent) :
+DialogConvolve::DialogConvolve(const Eigen::MatrixXi& currentFrame, std::shared_ptr<SX::Data::PeakFinder> peakFinder, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DialogConvolve),
     frame(currentFrame)
@@ -38,9 +37,14 @@ DialogConvolve::DialogConvolve(const Eigen::MatrixXi& currentFrame, QWidget *par
     // disable resizing
     this->setFixedSize(this->size());
 
-    _peakFinder = std::shared_ptr<SX::Data::PeakFinder>(new SX::Data::PeakFinder);
-    _convolver = std::shared_ptr<SX::Imaging::Convolver>(new SX::Imaging::Convolver);
-    _peakFinder->setConvolver(_convolver);
+    if (!peakFinder)
+    {
+        _peakFinder = std::shared_ptr<SX::Data::PeakFinder>(new SX::Data::PeakFinder);
+        _convolver = std::shared_ptr<SX::Imaging::Convolver>(new SX::Imaging::Convolver);
+        _peakFinder->setConvolver(_convolver);
+    }
+    else
+        setPeakFinder(peakFinder);
 
     //ui->graphicsView->setAcceptDrops();
 
@@ -58,13 +62,12 @@ DialogConvolve::DialogConvolve(const Eigen::MatrixXi& currentFrame, QWidget *par
     // jmf debug testing
     pxmapPreview = scene->addPixmap(QPixmap::fromImage(Mat2QImage(rowFrame.data(), nrows, ncols, 0, ncols-1, 0, nrows-1, max_intensity)));
 
-    //scene->addPixmap();
+    SX::Imaging::KernelFactory* kernelFactory=SX::Imaging::KernelFactory::Instance();
 
-
-    // default value
-    //ui->thresholdSpinBox->setValue(100.0);
-
-    //ui->treeView->setModel(_peakFindModel);
+    ui->filterComboBox->clear();
+    ui->filterComboBox->addItem("none");
+    for (const auto& k : kernelFactory->list())
+        ui->filterComboBox->addItem(QString::fromStdString(k));
 }
 
 DialogConvolve::~DialogConvolve()
@@ -76,11 +79,14 @@ DialogConvolve::~DialogConvolve()
 
 void DialogConvolve::setPeakFinder(std::shared_ptr<SX::Data::PeakFinder> peakFinder)
 {
-    _peakFinder = peakFinder;
-    std::shared_ptr<SX::Imaging::ConvolutionKernel> kernel = peakFinder->getKernel();
 
-    if ( !_peakFinder)
+    if (_peakFinder)
         return;
+
+    _peakFinder = peakFinder;
+
+    std::shared_ptr<SX::Imaging::ConvolutionKernel> kernel = peakFinder->getKernel();
+    std::string kernelName = kernel ? kernel->getName() : "none";
 
     // need to update widgets with appropriate values
     ui->thresholdSpinBox->setValue(_peakFinder->getThresholdValue());
@@ -88,7 +94,7 @@ void DialogConvolve::setPeakFinder(std::shared_ptr<SX::Data::PeakFinder> peakFin
     ui->confidenceSpinBox->setValue(_peakFinder->getConfidence());
     ui->minCompBox->setValue(_peakFinder->getMinComponents());
     ui->maxCompBox->setValue(_peakFinder->getMaxComponents());
-    ui->filterComboBox->setCurrentIndex(_peakFinder->getKernelType());
+    ui->filterComboBox->setCurrentIndex(QString::fromStdString(kernelName));
 
     buildTree();
 }
@@ -107,39 +113,40 @@ void DialogConvolve::buildTree()
     // get the selected kernel (if any)
     std::shared_ptr<SX::Imaging::ConvolutionKernel> kernel = _peakFinder->getKernel();
 
-    // no kernel selected: do nothing
-    if (!kernel)
-        return;
-
-    // get parameters
-    std::map<std::string, double> parameters = kernel->getParameters();
-
     QStandardItemModel* model = new QStandardItemModel(this);
-    treeView->setModel(model);
 
-    // iterate through parameters to build the tree
-    for (auto it: parameters) {
-        // rows parameter fixed by data frame
-        if ( it.first == "rows")
-            continue;
-        // cols parameter fixed by data frame
-        if ( it.first == "cols" )
-            continue;
+    // no kernel selected: do nothing
+    if (kernel)
+    {
+		// get parameters
+		std::map<std::string, double> parameters = kernel->getParameters();
 
-        // otherwise, editable parameter so add it to the list
+		// iterate through parameters to build the tree
+		for (auto it: parameters) {
+			// rows parameter fixed by data frame
+			if ( it.first == "rows")
+				continue;
+			// cols parameter fixed by data frame
+			if ( it.first == "cols" )
+				continue;
 
-        QStandardItem* name = new QStandardItem();
-        name->setText(it.first.c_str());
-        name->setEditable(false);
+			// otherwise, editable parameter so add it to the list
 
-        QStandardItem* value = new QStandardItem();
+			QStandardItem* name = new QStandardItem();
+			name->setText(it.first.c_str());
+			name->setEditable(false);
 
-        name->setText(it.first.c_str());
-        value->setData(QVariant(it.second), Qt::EditRole|Qt::DisplayRole);
-        value->setData(QVariant(it.first.c_str()), Qt::UserRole);
+			QStandardItem* value = new QStandardItem();
 
-        model->appendRow(QList<QStandardItem*>() << name << value);
+			name->setText(it.first.c_str());
+			value->setData(QVariant(it.second), Qt::EditRole|Qt::DisplayRole);
+			value->setData(QVariant(it.first.c_str()), Qt::UserRole);
+
+			model->appendRow(QList<QStandardItem*>() << name << value);
+		}
     }
+
+	treeView->setModel(model);
 
     connect(model, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(parameterChanged(QStandardItem*)));
 }
@@ -211,22 +218,20 @@ void DialogConvolve::on_filterComboBox_currentIndexChanged(int index)
     case 0:
         kernel.reset();
         break;
-    // annular kernel
-    case 1:
-        kernel = std::shared_ptr<SX::Imaging::ConvolutionKernel>(new SX::Imaging::AnnularKernel());
-        break;
-
-    // kronecker delta (debugging)
-    //case 2:
-    //    kernel = std::shared_ptr<SX::Imaging::ConvolutionKernel>(new SX::Imaging::DeltaKernel());
-    //    break;
     default:
-        qDebug() << "Warning: unrecognized kernel selected -- defaulting to NO kernel";
-        kernel.reset();
+        std::string kernelName = ui->filterComboBox->currentText().toStdString();
+        SX::Imaging::KernelFactory* kernelFactory = SX::Imaging::KernelFactory::Instance();
+        if (!kernelFactory->hasCallback(kernelName))
+        {
+            qDebug() << "Warning: unrecognized kernel selected -- defaulting to NO kernel";
+            kernel.reset();
+        }
+        kernel.reset(kernelFactory->create(kernelName));
         break;
     }
 
-    if (kernel ) {
+    if (kernel )
+    {
         kernel->getParameters()["rows"] = frame.rows();
         kernel->getParameters()["cols"] = frame.cols();
     }

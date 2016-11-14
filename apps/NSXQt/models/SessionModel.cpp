@@ -492,11 +492,6 @@ void SessionModel::findPeaks(const QModelIndex& index)
 
     // qDebug() << "Preview frame has dimensions" << frame.rows() << " " << frame.cols();
 
-    DialogConvolve* dialog = new DialogConvolve(frame, nullptr);
-
-    // dialog will automatically be deleted before we return from this method
-    std::unique_ptr<DialogConvolve> dialog_ptr(dialog);
-
     // reset progress handler
     _progressHandler = std::shared_ptr<ProgressHandler>(new ProgressHandler);
 
@@ -505,9 +500,10 @@ void SessionModel::findPeaks(const QModelIndex& index)
         _peakFinder = std::shared_ptr<PeakFinder>(new PeakFinder);
     _peakFinder->setHandler(_progressHandler);
 
-    // dialog will be initialized with values from current peak finder,
-    // and any changes made will persist
-    dialog->setPeakFinder(_peakFinder);
+    DialogConvolve* dialog = new DialogConvolve(frame, _peakFinder, nullptr);
+
+    // dialog will automatically be deleted before we return from this method
+    std::unique_ptr<DialogConvolve> dialog_ptr(dialog);
 
     if (!dialog->exec())
         return;
