@@ -8,6 +8,7 @@
 
 #include "ColorMap.h"
 #include <QImage>
+#include <QSortFilterProxyModel>
 #include <QTreeView>
 #include <QStandardItem>
 #include <QStandardItemModel>
@@ -28,7 +29,8 @@ using std::endl;
 DialogConvolve::DialogConvolve(const Eigen::MatrixXi& currentFrame, std::shared_ptr<SX::Data::PeakFinder> peakFinder, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DialogConvolve),
-    frame(currentFrame)
+    _frame(currentFrame),
+    _pxmapPreview(nullptr)
 {
     ui->setupUi(this);
 
@@ -37,33 +39,24 @@ DialogConvolve::DialogConvolve(const Eigen::MatrixXi& currentFrame, std::shared_
     // disable resizing
     this->setFixedSize(this->size());
 
-    if (!peakFinder)
-        _peakFinder = std::shared_ptr<SX::Data::PeakFinder>(new SX::Data::PeakFinder);
-    else
-        setPeakFinder(peakFinder);
+    _peakFinder = peakFinder;
 
-    //ui->graphicsView->setAcceptDrops();
-
-    scene = new QGraphicsScene(this);
-    ui->graphicsView->setScene(scene);
+    _scene = new QGraphicsScene(this);
+    ui->graphicsView->setScene(_scene);
     // flip image vertically to conform with DetectorScene
     ui->graphicsView->scale(1, -1);
 
-    // get pixmap from current frame
-    int nrows = frame.rows();
-    int ncols = frame.cols();
-    int max_intensity = 1000;
-
-    Eigen::Matrix<int,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> rowFrame(frame);
-    // jmf debug testing
-    pxmapPreview = scene->addPixmap(QPixmap::fromImage(Mat2QImage(rowFrame.data(), nrows, ncols, 0, ncols-1, 0, nrows-1, max_intensity)));
-
-    SX::Imaging::KernelFactory* kernelFactory=SX::Imaging::KernelFactory::Instance();
-
     ui->filterComboBox->clear();
-    ui->filterComboBox->addItem("none");
+    SX::Imaging::KernelFactory* kernelFactory=SX::Imaging::KernelFactory::Instance();
     for (const auto& k : kernelFactory->list())
         ui->filterComboBox->addItem(QString::fromStdString(k));
+    ui->filterComboBox->addItem("none");
+
+    QSortFilterProxyModel* proxy = new QSortFilterProxyModel();
+    proxy->setSourceModel(ui->filterComboBox->model());
+    ui->filterComboBox->model()->setParent(proxy);
+    ui->filterComboBox->setModel(proxy);
+    ui->filterComboBox->model()->sort(0);
 }
 
 DialogConvolve::~DialogConvolve()
@@ -71,28 +64,6 @@ DialogConvolve::~DialogConvolve()
     delete ui;
     // this should be handled by Qt. check with valgrind?
     // delete _peakFindModel;
-}
-
-void DialogConvolve::setPeakFinder(std::shared_ptr<SX::Data::PeakFinder> peakFinder)
-{
-
-    if (_peakFinder)
-        return;
-
-    _peakFinder = peakFinder;
-
-    std::shared_ptr<SX::Imaging::ConvolutionKernel> kernel = peakFinder->getKernel();
-    std::string kernelName = kernel ? kernel->getName() : "none";
-
-    // need to update widgets with appropriate values
-    ui->thresholdSpinBox->setValue(_peakFinder->getThresholdValue());
-    ui->thresholdComboBox->setCurrentIndex(_peakFinder->getThresholdType());
-    ui->confidenceSpinBox->setValue(_peakFinder->getConfidence());
-    ui->minCompBox->setValue(_peakFinder->getMinComponents());
-    ui->maxCompBox->setValue(_peakFinder->getMaxComponents());
-    ui->filterComboBox->setCurrentText(QString::fromStdString(kernelName));
-
-    buildTree();
 }
 
 void DialogConvolve::buildTree()
@@ -114,32 +85,23 @@ void DialogConvolve::buildTree()
     // no kernel selected: do nothing
     if (kernel)
     {
-		// get parameters
-		std::map<std::string, double> parameters = kernel->getParameters();
+        // get parameters
+        std::map<std::string, double> parameters = kernel->getParameters();
 
-		// iterate through parameters to build the tree
-		for (auto it: parameters) {
-			// rows parameter fixed by data frame
-			if ( it.first == "rows")
-				continue;
-			// cols parameter fixed by data frame
-			if ( it.first == "cols" )
-				continue;
+        // iterate through parameters to build the tree
+        for (auto it: parameters) {
+            QStandardItem* name = new QStandardItem();
+            name->setText(it.first.c_str());
+            name->setEditable(false);
 
-			// otherwise, editable parameter so add it to the list
+            QStandardItem* value = new QStandardItem();
 
-			QStandardItem* name = new QStandardItem();
-			name->setText(it.first.c_str());
-			name->setEditable(false);
+            name->setText(it.first.c_str());
+            value->setData(QVariant(it.second), Qt::EditRole|Qt::DisplayRole);
+            value->setData(QVariant(it.first.c_str()), Qt::UserRole);
 
-			QStandardItem* value = new QStandardItem();
-
-			name->setText(it.first.c_str());
-			value->setData(QVariant(it.second), Qt::EditRole|Qt::DisplayRole);
-			value->setData(QVariant(it.first.c_str()), Qt::UserRole);
-
-			model->appendRow(QList<QStandardItem*>() << name << value);
-		}
+            model->appendRow(QList<QStandardItem*>() << name << value);
+        }
     }
 
 	treeView->setModel(model);
@@ -154,74 +116,62 @@ void DialogConvolve::on_previewButton_clicked()
 
     int nrows, ncols;
 
-    nrows = frame.rows();
-    ncols = frame.cols();
+    nrows = _frame.rows();
+    ncols = _frame.cols();
 
-    // note that treeWidget retains ownership!
-    //ui->treeWidgetOld->retrieveParameters();
-    //_kernel = ui->treeWidgetOld->getKernel();
     auto kernel = _peakFinder->getKernel();
 
-    int maxData = frame.maxCoeff();
+    int maxData = _frame.maxCoeff();
 
     if (kernel)
     {
-        // dimensions must match image dimensions
-        kernel->getParameters()["rows"] = frame.rows();
-        kernel->getParameters()["cols"] = frame.cols();
-
         // set up convolver
         auto convolver = _peakFinder->getConvolver();
         convolver->setKernel(kernel->getKernel());
 
         // compute the convolution
-        data = frame.cast<double>();
+        data = _frame.cast<double>();
         result = convolver->apply(data);
-        clamped_result.resize(frame.rows(),frame.cols());
+        clamped_result.resize(_frame.rows(),_frame.cols());
         double minVal = result.minCoeff();
         double maxVal = result.maxCoeff();
         result.array() -= minVal;
         result.array() *= static_cast<double>(maxData)/(maxVal-minVal);
-		clamped_result = result.cast<int>();
+        clamped_result = result.cast<int>();
     }
     else
-        clamped_result = frame;
+        clamped_result = _frame;
 
-    QImage image = Mat2QImage(clamped_result.data(), frame.rows(), frame.cols(), 0, ncols-1, 0, nrows-1, maxData);
-    QPixmap pixmap = QPixmap::fromImage(image);
-    pxmapPreview->setPixmap(pixmap);
+    QImage image = Mat2QImage(clamped_result.data(), nrows, ncols, 0, ncols-1, 0, nrows-1, maxData);
+
+    if (!_pxmapPreview)
+        _pxmapPreview = _scene->addPixmap(QPixmap::fromImage(image));
+    else
+        _pxmapPreview->setPixmap(QPixmap::fromImage(image));
 }
 
 void DialogConvolve::on_filterComboBox_currentIndexChanged(int index)
 {
     std::shared_ptr<SX::Imaging::ConvolutionKernel> kernel;
 
-    switch(index)
-    {
-    // no kernel
-    case 0:
+    if (QString::compare(ui->filterComboBox->currentText(),"none") == 0)
         kernel.reset();
-        break;
-    default:
+    else
+    {
         std::string kernelName = ui->filterComboBox->currentText().toStdString();
         SX::Imaging::KernelFactory* kernelFactory = SX::Imaging::KernelFactory::Instance();
-        if (!kernelFactory->hasCallback(kernelName))
-        {
-            qDebug() << "Warning: unrecognized kernel selected -- defaulting to NO kernel";
-            kernel.reset();
-        }
-        kernel.reset(kernelFactory->create(kernelName));
-        break;
-    }
-
-    if (kernel )
-    {
-        kernel->getParameters()["rows"] = frame.rows();
-        kernel->getParameters()["cols"] = frame.cols();
+        kernel.reset(kernelFactory->create(kernelName,_frame.rows(),_frame.cols()));
     }
 
     // propagate changes to peak finder
     _peakFinder->setKernel(kernel);
+
+    // need to update widgets with appropriate values
+    ui->thresholdSpinBox->setValue(_peakFinder->getThresholdValue());
+    ui->thresholdComboBox->setCurrentIndex(_peakFinder->getThresholdType());
+    ui->confidenceSpinBox->setValue(_peakFinder->getConfidence());
+    ui->minCompBox->setValue(_peakFinder->getMinComponents());
+    ui->maxCompBox->setValue(_peakFinder->getMaxComponents());
 
     // update dialog with list of parameters
     buildTree();

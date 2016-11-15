@@ -34,7 +34,6 @@ public:
     ~DialogConvolve();
 
     void setPreviewFrame(const Eigen::MatrixXi& frame);
-    void setPeakFinder(std::shared_ptr<SX::Data::PeakFinder> peakFinder);
     void buildTree();
 
 private slots:
@@ -49,10 +48,10 @@ private slots:
 
 private:
     Ui::DialogConvolve *ui;
-    QGraphicsScene* scene;
-    QGraphicsPixmapItem* pxmapPreview;
+    QGraphicsScene* _scene;
+    QGraphicsPixmapItem* _pxmapPreview;
 
-    Eigen::MatrixXi frame;
+    Eigen::MatrixXi _frame;
 
     std::shared_ptr<SX::Data::PeakFinder> _peakFinder;
 };
