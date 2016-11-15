@@ -13,17 +13,24 @@
 
 #include "ConvolutionKernel.h"
 
-namespace SX {
+namespace SX
+{
 
-namespace Imaging {
+namespace Imaging
+{
 
 class ConstantKernel : public ConvolutionKernel
 {
 public:
-    ConstantKernel();
-    ConstantKernel(const ConvolutionKernel::ParameterMap& params);
+	static ConvolutionKernel* create(int nrows, int ncols);
+
+public:
+    ConstantKernel(int nrows, int ncols);
+    ConstantKernel(int nrows, int ncols, const ConvolutionKernel::ParameterMap& params);
 
     const char* getName() override;
+
+    virtual ~ConstantKernel();
 
 private:
     void update() override;

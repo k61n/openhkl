@@ -5,31 +5,30 @@
 
 #include "DeltaKernel.h"
 
-namespace SX {
-
-namespace Imaging {
-
-
-DeltaKernel::DeltaKernel()
+namespace SX
 {
-    // default values
-    _params["rows"] = 15;
-    _params["cols"] = 15;
-    _params["r1"] = 5;
-    _params["r2"] = 10;
-    _params["r3"] = 15;
+
+namespace Imaging
+{
+
+ConvolutionKernel* DeltaKernel::create(int nrows, int ncols)
+{
+	return new DeltaKernel(nrows,ncols);
 }
 
-SX::Imaging::DeltaKernel::DeltaKernel(const SX::Imaging::ConvolutionKernel::ParameterMap &params)
+DeltaKernel::DeltaKernel(int nrows, int ncols) : ConvolutionKernel(nrows,ncols)
 {
-    _params = params;
+    update();
+}
 
-    // load default values if necessary
-    if ( _params["rows"] >= 0)
-        _params["rows"] = 15;
+DeltaKernel::DeltaKernel(int nrows, int ncols, const SX::Imaging::ConvolutionKernel::ParameterMap &params)
+: ConvolutionKernel(nrows,ncols,params)
+{
+    update();
+}
 
-    if ( _params["cols"] >= 0)
-        _params["cols"] = 15;
+DeltaKernel::~DeltaKernel()
+{
 }
 
 const char *DeltaKernel::getName()
@@ -37,13 +36,13 @@ const char *DeltaKernel::getName()
     return "Delta";
 }
 
-void SX::Imaging::DeltaKernel::update()
+void DeltaKernel::update()
 {
     int rows, cols;
 
     // get necessary parameters
-    rows = static_cast<int>(_params["rows"]);
-    cols = static_cast<int>(_params["cols"]);
+    rows = _kernel.rows();
+    cols = _kernel.cols();
 
     // sanity checks
     if ( rows < 0 || cols < 0 )
@@ -52,7 +51,6 @@ void SX::Imaging::DeltaKernel::update()
     // set kernel equal to kronecker delta
     _kernel = SX::Types::RealMatrix::Zero(rows, cols);
     _kernel(0,0) = 1.0;
-
 }
 
 

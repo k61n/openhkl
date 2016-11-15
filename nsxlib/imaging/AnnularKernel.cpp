@@ -18,36 +18,35 @@ namespace SX {
 
 namespace Imaging {
 
+ConvolutionKernel* AnnularKernel::create(int nrows, int ncols)
+{
+	return new AnnularKernel(nrows,ncols);
+}
 
-AnnularKernel::AnnularKernel()
+AnnularKernel::AnnularKernel(int nrows, int ncols) : ConvolutionKernel(nrows,ncols)
 {
     // default values
-    _params["rows"] = 15;
-    _params["cols"] = 15;
     _params["r1"] = 5;
     _params["r2"] = 10;
     _params["r3"] = 15;
 }
 
-SX::Imaging::AnnularKernel::AnnularKernel(const SX::Imaging::ConvolutionKernel::ParameterMap &params)
+SX::Imaging::AnnularKernel::AnnularKernel(int nrows, int ncols, const SX::Imaging::ConvolutionKernel::ParameterMap &params)
+: ConvolutionKernel(nrows,ncols,params)
 {
-    _params = params;
-
     // load default values if necessary
-    if ( _params["rows"] >= 0)
-        _params["rows"] = 15;
-
-    if ( _params["cols"] >= 0)
-        _params["cols"] = 15;
-
-    if ( _params["r1"] >= 0)
+    if ( _params["r1"] <= 0)
         _params["r1"] = 3;
 
-    if ( _params["r2"] >= 0)
+    if ( _params["r2"] <= 0)
         _params["r2"] = 6;
 
-    if ( _params["r3"] >= 0)
+    if ( _params["r3"] <= 0)
         _params["r3"] = 10;
+}
+
+AnnularKernel::~AnnularKernel()
+{
 }
 
 const char *AnnularKernel::getName()
@@ -60,22 +59,18 @@ void SX::Imaging::AnnularKernel::update()
     int rows, cols, r1, r2, r3;
 
     // get necessary parameters
-    rows = static_cast<int>(_params["rows"]);
-    cols = static_cast<int>(_params["cols"]);
+    rows = _kernel.rows();
+    cols = _kernel.cols();
     r1 = static_cast<int>(_params["r1"]);
     r2 = static_cast<int>(_params["r2"]);
     r3 = static_cast<int>(_params["r3"]);
 
     // sanity checks
-    if ( rows < 0 || cols < 0 || r1 < 0 || r2 < r1 || r3 < r2)
+    if (rows < 0 || cols < 0 || r1 < 0 || r2 < r1 || r3 < r2)
         throw std::runtime_error("AnnularKernel::update() called with invalid parameters");
-
-    // sanity checks passed, now we proceed
-    _kernel.resize(rows, cols);
 
     double positive_value = 1.0 / (M_PI*r1*r1);
     double negative_value = 1.0 / (M_PI*r2*r2 - M_PI*r3*r3);
-
 
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {

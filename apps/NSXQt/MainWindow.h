@@ -12,8 +12,8 @@
 #include <QProgressBar>
 
 #include "IData.h"
-#include "DialogPeakFind.h"
 #include "Experiment.h"
+#include "Convolver.h"
 #include "Logger.h"
 
 
@@ -95,7 +95,6 @@ private slots:
     void on_actionH_k_l_triggered();
     void on_actionShow_calculated_peak_positions_triggered(bool checked);
     void on_checkBox_AspectRatio_toggled(bool checked);
-    void on_actionConvolution_Filter_triggered();
 
     void on_actionFind_space_group_triggered();
     void on_actionFind_Friedel_pairs_triggered();

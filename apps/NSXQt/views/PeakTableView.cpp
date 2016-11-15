@@ -50,7 +50,7 @@ PeakTableView::PeakTableView(QWidget *parent)
 
     connect(this,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(deselectPeak(QModelIndex)));
     // Hide the vertical Header
-    this->verticalHeader()->hide();
+    //this->verticalHeader()->hide();
 }
 
 void PeakTableView::setData(std::vector<std::shared_ptr<SX::Data::IData>> data)

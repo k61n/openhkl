@@ -88,7 +88,6 @@ std::string IData::getBasename() const
 
 int IData::dataAt(unsigned int x, unsigned int y, unsigned int z)
 {
-
 	// Check that the voxel is inside the limit of the data  
     if (z>=_nFrames || y>=_ncols || x>=_nrows)
         return 0;
@@ -151,16 +150,16 @@ bool IData::isInMemory() const
 
 ComponentState IData::getDetectorInterpolatedState(double frame)
 {
-
 	if (frame>(_detectorStates.size()-1) || frame<0)
 		throw std::runtime_error("Error when interpolating detector states: invalid frame value");
 
-	std::size_t idx=static_cast<std::size_t>(std::floor(frame));
+    std::size_t idx = static_cast<std::size_t>(std::floor(frame));
+    std::size_t next = std::min(idx+1, _detectorStates.size()-1);
 
 	std::size_t nPhysicalAxes=_diffractometer->getDetector()->getGonio()->getNPhysicalAxes();
 
 	const std::vector<double>& prevState=_detectorStates[idx].getValues();
-	const std::vector<double>& nextState=_detectorStates[idx+1].getValues();
+    const std::vector<double>& nextState=_detectorStates[next].getValues();
 	std::vector<double> state(nPhysicalAxes);
 	for (std::size_t i=0;i<nPhysicalAxes;++i)
 		state[i] = prevState[i] + (frame-static_cast<double>(idx))*(nextState[i]-prevState[i]);
@@ -178,27 +177,25 @@ const ComponentState& IData::getDetectorState(unsigned int frame) const
 
 ComponentState IData::getSampleInterpolatedState(double frame)
 {
-
 	if (frame>(_sampleStates.size()-1) || frame<0)
 		throw std::runtime_error("Error when interpolating sample states: invalid frame value");
 
-	std::size_t idx=static_cast<std::size_t>(std::floor(frame));
+    std::size_t idx = static_cast<std::size_t>(std::floor(frame));
+    std::size_t next = std::min(idx+1, _sampleStates.size()-1);
 
 	std::size_t nPhysicalAxes=_diffractometer->getSample()->getGonio()->getNPhysicalAxes();
 
 	const std::vector<double>& prevState=_sampleStates[idx].getValues();
-	const std::vector<double>& nextState=_sampleStates[idx+1].getValues();
+    const std::vector<double>& nextState=_sampleStates[next].getValues();
 	std::vector<double> state(nPhysicalAxes);
 	for (std::size_t i=0;i<nPhysicalAxes;++i)
 		state[i] = prevState[i] + (frame-static_cast<double>(idx))*(nextState[i]-prevState[i]);
 
 	return _diffractometer->getSample()->createState(state);
-
 }
 
 const ComponentState& IData::getSampleState(unsigned int frame) const
 {
-
     if (frame>(_sampleStates.size()-1))
 			throw std::runtime_error("Error when returning sample state: invalid frame value");
 	return _sampleStates[frame];
@@ -206,22 +203,21 @@ const ComponentState& IData::getSampleState(unsigned int frame) const
 
 ComponentState IData::getSourceInterpolatedState(double frame)
 {
-
 	if (frame>(_sourceStates.size()-1) || frame<0)
 		throw std::runtime_error("Error when interpolating source states: invalid frame value");
 
-	std::size_t idx=static_cast<std::size_t>(std::floor(frame));
+    std::size_t idx = static_cast<std::size_t>(std::floor(frame));
+    std::size_t next = std::min(idx+1, _sourceStates.size()-1);
 
-	std::size_t nPhysicalAxes=_diffractometer->getSource()->getGonio()->getNPhysicalAxes();
+    std::size_t nPhysicalAxes=_diffractometer->getSource()->getGonio()->getNPhysicalAxes();
 
 	const std::vector<double>& prevState=_sourceStates[idx].getValues();
-	const std::vector<double>& nextState=_sourceStates[idx+1].getValues();
+    const std::vector<double>& nextState=_sourceStates[next].getValues();
 	std::vector<double> state(nPhysicalAxes);
 	for (std::size_t i=0;i<nPhysicalAxes;++i)
 		state[i] = prevState[i] + (frame-static_cast<double>(idx))*(nextState[i]-prevState[i]);
 
 	return _diffractometer->getSource()->createState(state);
-
 }
 
 const ComponentState& IData::getSourceState(unsigned int frame) const

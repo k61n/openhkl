@@ -27,13 +27,10 @@ SX::Types::RealMatrix generateImage(int rows, int cols)
 
 double computeError(int rows, int cols)
 {
-    SX::Imaging::Convolver convolver;
-    SX::Imaging::DeltaKernel kernel;
-
     SX::Types::RealMatrix original = generateImage(rows,cols);
 
-    kernel.getParameters()["rows"] = rows;
-    kernel.getParameters()["cols"] = cols;
+    SX::Imaging::Convolver convolver;
+    SX::Imaging::DeltaKernel kernel(rows,cols);
 
     convolver.setKernel(kernel.getKernel());
 

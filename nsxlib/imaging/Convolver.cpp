@@ -74,18 +74,26 @@ void Convolver::setKernel(const RealMatrix &kernel)
         
         _transformedKernel.resize(_rows*_halfCols);
 
+        cout << "allocated fftw arrays successfully" << endl;
+
         // create plans
         _forwardPlan = fftw_plan_dft_r2c_2d(_rows, _cols, _realData, _transformedData, FFTW_MEASURE);
         _backwardPlan = fftw_plan_dft_c2r_2d(_rows, _cols, _transformedData, _realData, FFTW_MEASURE);
+
+        cout << "created fftw plans successfully" << endl;
     }
 
     // precompute the transformation of the kernel
     std::memcpy(_realData, kernel.data(), _rows*_cols*sizeof(double));
     fftw_execute(_forwardPlan);
 
+    cout << "forward transform of kernel computed successfully" << endl;
+
     // store transformed kernel as vector of comlexes (convenient for convolution)
     for (int i = 0; i < _rows*_halfCols; ++i)
         _transformedKernel[i] = std::complex<double>(_transformedData[i][0], _transformedData[i][1]);
+
+    cout << "convolver initialized kernel successfully" << endl;
 }
 
 RealMatrix Convolver::apply(const RealMatrix &image)
@@ -111,6 +119,7 @@ RealMatrix Convolver::apply(const RealMatrix &image)
 
     // perform inverse transform: _realData now stores the convolution
     fftw_execute(_backwardPlan);
+
     RealMatrix result(_rows, _cols);
     memcpy(result.data(), _realData, _rows*_cols*sizeof(double));
     return result;

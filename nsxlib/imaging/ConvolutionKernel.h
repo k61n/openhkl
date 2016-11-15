@@ -58,9 +58,9 @@ class ConvolutionKernel
 public:
     typedef std::map<std::string, double> ParameterMap;
 
-    ConvolutionKernel();
+    ConvolutionKernel(int nrows, int ncols);
     ConvolutionKernel(const ConvolutionKernel& rhs);
-    ConvolutionKernel(const ParameterMap& parameters);
+    ConvolutionKernel(int nrows, int ncols, const ParameterMap& parameters);
 
     // used to get/set parameters
     ParameterMap& getParameters();
@@ -70,20 +70,19 @@ public:
     const SX::Types::RealMatrix& getKernel();
     virtual const char* getName() = 0;
 
-
     void print(std::ostream& os) const;
 
     ConvolutionKernel& operator=(const ConvolutionKernel& rhs);
 
-
-    int getType();
+    virtual ~ConvolutionKernel()=0;
 
 
 protected:
     // update the kernel using current parameters
     virtual void update() {};
 
-    int _kernelSize;
+    int _nrows, _ncols;
+
     SX::Types::RealMatrix _kernel;
     bool _hasChanged; // used to record if parameters have changed since last update
     ParameterMap _params;
