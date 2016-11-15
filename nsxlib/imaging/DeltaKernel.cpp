@@ -11,28 +11,18 @@ namespace SX
 namespace Imaging
 {
 
-ConvolutionKernel* DeltaKernel::create()
+ConvolutionKernel* DeltaKernel::create(int nrows, int ncols)
 {
-	return new DeltaKernel();
+	return new DeltaKernel(nrows,ncols);
 }
 
-DeltaKernel::DeltaKernel()
+DeltaKernel::DeltaKernel(int nrows, int ncols) : ConvolutionKernel(nrows,ncols)
 {
-    // default values
-    _params["rows"] = 15;
-    _params["cols"] = 15;
 }
 
-DeltaKernel::DeltaKernel(const SX::Imaging::ConvolutionKernel::ParameterMap &params)
+DeltaKernel::DeltaKernel(int nrows, int ncols, const SX::Imaging::ConvolutionKernel::ParameterMap &params)
+: ConvolutionKernel(nrows,ncols,params)
 {
-    _params = params;
-
-    // load default values if necessary
-    if ( _params["rows"] <= 0)
-        _params["rows"] = 15;
-
-    if ( _params["cols"] <= 0)
-        _params["cols"] = 15;
 }
 
 DeltaKernel::~DeltaKernel()
@@ -49,8 +39,8 @@ void DeltaKernel::update()
     int rows, cols;
 
     // get necessary parameters
-    rows = static_cast<int>(_params["rows"]);
-    cols = static_cast<int>(_params["cols"]);
+    rows = _kernel.rows();
+    cols = _kernel.cols();
 
     // sanity checks
     if ( rows < 0 || cols < 0 )

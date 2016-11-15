@@ -20,7 +20,7 @@ namespace Imaging
 
 using namespace SX::Kernel;
 
-class KernelFactory : public Factory<ConvolutionKernel,std::string>, public Singleton<KernelFactory,Constructor,Destructor>
+class KernelFactory : public Factory<ConvolutionKernel,std::string,int,int>, public Singleton<KernelFactory,Constructor,Destructor>
 {
 public:
 	KernelFactory();

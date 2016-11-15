@@ -43,12 +43,9 @@ namespace Imaging
 
 using RealMatrix = SX::Types::RealMatrix;
 
-ConvolutionKernel::ConvolutionKernel():
-    _kernel(), _hasChanged(false), _params()
+ConvolutionKernel::ConvolutionKernel(int nrows, int ncols) : _kernel(), _hasChanged(false), _params()
 {
-    // all kernels have these default parameters
-    _params["rows"] = 0;
-    _params["cols"] = 0;
+	_kernel.resize(nrows,ncols);
 }
 
 ConvolutionKernel::ConvolutionKernel(const ConvolutionKernel &rhs)
@@ -58,8 +55,9 @@ ConvolutionKernel::ConvolutionKernel(const ConvolutionKernel &rhs)
     _params = rhs._params;
 }
 
-ConvolutionKernel::ConvolutionKernel(const ConvolutionKernel::ParameterMap &parameters)
+ConvolutionKernel::ConvolutionKernel(int nrows, int ncols, const ConvolutionKernel::ParameterMap &parameters)
 {
+	_kernel.resize(nrows,ncols);
     _params = parameters;
     _hasChanged = true;
 }
@@ -81,7 +79,6 @@ const ConvolutionKernel::ParameterMap &ConvolutionKernel::getParameters() const
 
 const RealMatrix& ConvolutionKernel::getKernel()
 {
-	std::cout<<"has changed "<<_hasChanged<<std::endl;
     if ( _hasChanged )
     {
         update();

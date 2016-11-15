@@ -12,28 +12,18 @@ namespace SX
 namespace Imaging
 {
 
-ConvolutionKernel* ConstantKernel::create()
+ConvolutionKernel* ConstantKernel::create(int nrows, int ncols)
 {
-	return new ConstantKernel();
+	return new ConstantKernel(nrows, ncols);
 }
 
-ConstantKernel::ConstantKernel()
+ConstantKernel::ConstantKernel(int nrows, int ncols) : ConvolutionKernel(nrows,ncols)
 {
-    // default values
-    _params["rows"] = 15;
-    _params["cols"] = 15;
 }
 
-ConstantKernel::ConstantKernel(const SX::Imaging::ConvolutionKernel::ParameterMap &params)
+ConstantKernel::ConstantKernel(int nrows, int ncols, const SX::Imaging::ConvolutionKernel::ParameterMap &params)
+: ConvolutionKernel(nrows,ncols,params)
 {
-    _params = params;
-
-    // load default values if necessary
-    if ( _params["rows"] <= 0)
-        _params["rows"] = 15;
-
-    if ( _params["cols"] <= 0)
-        _params["cols"] = 15;
 }
 
 ConstantKernel::~ConstantKernel()
@@ -50,17 +40,12 @@ void SX::Imaging::ConstantKernel::update()
     int rows, cols;
 
     // get necessary parameters
-    rows = static_cast<int>(_params["rows"]);
-    cols = static_cast<int>(_params["cols"]);
-
-    
+    rows = _kernel.rows();
+    cols = _kernel.cols();
 
     // sanity checks
     if ( rows < 0 || cols < 0 )
-        throw std::runtime_error("ConstantKernel::update() called with invalid parameters");
-
-    // sanity checks passed, now we proceed
-    _kernel.resize(rows, cols);
+        throw std::runtime_error("DeltaKernel::update() called with invalid parameters");
 
     double value = 1.0 / (rows * cols);
 

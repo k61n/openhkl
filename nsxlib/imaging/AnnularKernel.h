@@ -51,11 +51,11 @@ namespace Imaging {
 class AnnularKernel : public ConvolutionKernel
 {
 public:
-	static ConvolutionKernel* create();
+	static ConvolutionKernel* create(int nrows, int ncols);
 
 public:
-    AnnularKernel();
-    AnnularKernel(const ConvolutionKernel::ParameterMap& params);
+    AnnularKernel(int nrows, int ncols);
+    AnnularKernel(int nrows, int ncols,const ConvolutionKernel::ParameterMap& params);
 
     virtual ~AnnularKernel();
 

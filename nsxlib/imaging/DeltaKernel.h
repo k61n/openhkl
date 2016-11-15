@@ -13,18 +13,20 @@
 
 #include "ConvolutionKernel.h"
 
-namespace SX {
+namespace SX
+{
 
-namespace Imaging {
+namespace Imaging
+{
 
 class DeltaKernel : public ConvolutionKernel
 {
 public:
-	static ConvolutionKernel* create();
+	static ConvolutionKernel* create(int nrows, int ncols);
 
 public:
-    DeltaKernel();
-    DeltaKernel(const ConvolutionKernel::ParameterMap& params);
+    DeltaKernel(int nrows, int ncols);
+    DeltaKernel(int nrows, int ncols, const ConvolutionKernel::ParameterMap& params);
 
     virtual ~DeltaKernel();
 
