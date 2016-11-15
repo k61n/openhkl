@@ -490,14 +490,6 @@ void MainWindow::on_checkBox_AspectRatio_toggled(bool checked)
     _ui->_dview->fixDetectorAspectRatio(checked);
 }
 
-void MainWindow::on_actionConvolution_Filter_triggered()
-{
-    Eigen::MatrixXi frame = _ui->_dview->getScene()->getCurrentFrame();
-    auto dialog = new DialogConvolve(frame, nullptr, this);
-    dialog->show();
-}
-
-
 void MainWindow::on_actionFind_space_group_triggered()
 {
     emit findSpaceGroup();
