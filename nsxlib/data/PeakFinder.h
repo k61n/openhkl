@@ -46,9 +46,9 @@ public:
     int getMaxComponents();
 
     void setConvolver(std::shared_ptr<SX::Imaging::Convolver> convolver);
-    void setConvolutionKernel(std::shared_ptr<SX::Imaging::ConvolutionKernel> kernel);
+    std::shared_ptr<SX::Imaging::Convolver> getConvolver();
 
-    int getKernelType();
+    void setConvolutionKernel(std::shared_ptr<SX::Imaging::ConvolutionKernel> kernel);
 
     void setKernel(std::shared_ptr<SX::Imaging::ConvolutionKernel> kernel);
     std::shared_ptr<SX::Imaging::ConvolutionKernel> getKernel();
@@ -57,7 +57,6 @@ private:
     std::shared_ptr<SX::Utils::ProgressHandler> _handler;
     std::shared_ptr<SX::Imaging::Convolver> _convolver;
     std::shared_ptr<SX::Imaging::ConvolutionKernel> _kernel;
-    //int _kernelType;
 
     double _thresholdValue;
     int _thresholdType;

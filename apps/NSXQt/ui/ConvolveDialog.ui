@@ -31,7 +31,7 @@
     <rect>
      <x>680</x>
      <y>0</y>
-     <width>371</width>
+     <width>375</width>
      <height>391</height>
     </rect>
    </property>
@@ -55,21 +55,9 @@
     </item>
     <item row="5" column="2">
      <widget class="QComboBox" name="filterComboBox">
-      <item>
-       <property name="text">
-        <string>None</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Annular</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Kronecker Delta (debug only)</string>
-       </property>
-      </item>
+      <property name="insertPolicy">
+       <enum>QComboBox::InsertAlphabetically</enum>
+      </property>
      </widget>
     </item>
     <item row="8" column="0" colspan="2">

@@ -71,6 +71,8 @@ public:
 	//! remove a key from the factory
 	//@param key : key representing how the callback is stored
 	std::size_t unregisterCallback(const keytype& key);
+	//! Return true if a given callback has been registered so far
+	bool hasCallback(const keytype& key);
 
 protected:
 	callbackmap _map;
@@ -100,7 +102,7 @@ base* Factory<base,keytype,args...>::create(const keytype& key, args...arg)
 	if (it != _map.end())
 		return ((it->second)(arg...));
 	else
-		throw std::invalid_argument("Factory error: callback not registered for this class");
+		throw std::invalid_argument("Factory error: callback not registered for "+key+"class");
 }
 
 template <typename base, typename keytype, typename ...args>
@@ -116,6 +118,13 @@ template <typename base, typename keytype, typename ...args>
 std::size_t Factory<base,keytype,args...>::unregisterCallback(const keytype& key)
 {
 	return _map.erase(key);
+}
+
+template <typename base, typename keytype, typename ...args>
+bool Factory<base,keytype,args...>::hasCallback(const keytype& key)
+{
+	auto it=_map.find(key);
+	return (it!=_map.end());
 }
 
 } // end namespace Kernel

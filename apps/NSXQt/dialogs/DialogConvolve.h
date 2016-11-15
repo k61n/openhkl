@@ -30,22 +30,10 @@ class DialogConvolve : public QDialog
     Q_OBJECT
 
 public:
-    explicit DialogConvolve(const Eigen::MatrixXi& currentFrame, QWidget *parent = 0);
+    explicit DialogConvolve(const Eigen::MatrixXi& currentFrame, std::shared_ptr<SX::Data::PeakFinder> peakFinder=nullptr, QWidget *parent = 0);
     ~DialogConvolve();
-/*
-    double getThreshold();
-    double getConfidence();
 
-    int getMinComponents();
-    int getMaxComponents();
-
-    bool thesholdIsRelative();
-
-    std::shared_ptr<SX::Imaging::Convolver> getConvolver();
-    std::shared_ptr<SX::Imaging::ConvolutionKernel> getKernel();
-*/
     void setPreviewFrame(const Eigen::MatrixXi& frame);
-    void setPeakFinder(std::shared_ptr<SX::Data::PeakFinder> peakFinder);
     void buildTree();
 
 private slots:
@@ -60,13 +48,11 @@ private slots:
 
 private:
     Ui::DialogConvolve *ui;
-    QGraphicsScene* scene;
-    QGraphicsPixmapItem* pxmapPreview;
+    QGraphicsScene* _scene;
+    QGraphicsPixmapItem* _pxmapPreview;
 
-    Eigen::MatrixXi frame;
+    Eigen::MatrixXi _frame;
 
     std::shared_ptr<SX::Data::PeakFinder> _peakFinder;
-    std::shared_ptr<SX::Imaging::Convolver> _convolver;
-
 };
 #endif // NSXTOOL_DIALOGCONVOLVE_H_

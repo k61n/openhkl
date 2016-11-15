@@ -28,6 +28,7 @@
  *
  */
 
+#include <iostream>
 #include <stdexcept>
 #include <utility>
 
@@ -40,17 +41,11 @@ namespace SX
 namespace Imaging
 {
 
-
-
-
 using RealMatrix = SX::Types::RealMatrix;
 
-ConvolutionKernel::ConvolutionKernel():
-    _kernel(), _hasChanged(false), _params()
+ConvolutionKernel::ConvolutionKernel(int nrows, int ncols) : _kernel(), _hasChanged(false), _params()
 {
-    // all kernels have these default parameters
-    _params["rows"] = 0;
-    _params["cols"] = 0;
+	_kernel.resize(nrows,ncols);
 }
 
 ConvolutionKernel::ConvolutionKernel(const ConvolutionKernel &rhs)
@@ -60,10 +55,15 @@ ConvolutionKernel::ConvolutionKernel(const ConvolutionKernel &rhs)
     _params = rhs._params;
 }
 
-ConvolutionKernel::ConvolutionKernel(const ConvolutionKernel::ParameterMap &parameters)
+ConvolutionKernel::ConvolutionKernel(int nrows, int ncols, const ConvolutionKernel::ParameterMap &parameters)
 {
+	_kernel.resize(nrows,ncols);
     _params = parameters;
     _hasChanged = true;
+}
+
+ConvolutionKernel::~ConvolutionKernel()
+{
 }
 
 ConvolutionKernel::ParameterMap &ConvolutionKernel::getParameters()
@@ -79,7 +79,8 @@ const ConvolutionKernel::ParameterMap &ConvolutionKernel::getParameters() const
 
 const RealMatrix& ConvolutionKernel::getKernel()
 {
-    if ( _hasChanged ) {
+    if ( _hasChanged )
+    {
         update();
         _hasChanged = false;
     }
@@ -89,7 +90,7 @@ const RealMatrix& ConvolutionKernel::getKernel()
 
 void ConvolutionKernel::print(std::ostream& os) const
 {
-	os<<"Kernel Matrix ("<<_kernelSize<<","<<_kernelSize<<"):"<<std::endl;
+	os<<"Kernel Matrix ("<<_kernel.rows()<<","<<_kernel.cols()<<"):"<<std::endl;
     os<<_kernel<<std::endl;
 }
 
@@ -99,16 +100,6 @@ ConvolutionKernel &ConvolutionKernel::operator=(const ConvolutionKernel &rhs)
     _hasChanged = rhs._hasChanged;
     _params = rhs._params;
     return *this;
-}
-
-int ConvolutionKernel::getType()
-{
-    if ( dynamic_cast<AnnularKernel*>(this)) {
-        return 1;
-    }
-    else {
-       return 0;
-    }
 }
 
 std::ostream& operator<<(std::ostream& os, const ConvolutionKernel& kernel)
