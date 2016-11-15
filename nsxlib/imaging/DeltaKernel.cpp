@@ -18,11 +18,13 @@ ConvolutionKernel* DeltaKernel::create(int nrows, int ncols)
 
 DeltaKernel::DeltaKernel(int nrows, int ncols) : ConvolutionKernel(nrows,ncols)
 {
+    update();
 }
 
 DeltaKernel::DeltaKernel(int nrows, int ncols, const SX::Imaging::ConvolutionKernel::ParameterMap &params)
 : ConvolutionKernel(nrows,ncols,params)
 {
+    update();
 }
 
 DeltaKernel::~DeltaKernel()
