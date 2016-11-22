@@ -21,6 +21,7 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/dialogs/
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/models/
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/chemistry/
+  ${CMAKE_SOURCE_DIR}/apps/NSXQt/widgets/
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/
   )
 
