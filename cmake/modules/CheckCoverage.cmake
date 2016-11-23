@@ -82,7 +82,7 @@ function(add_coverage_target targetname ignore_directories)
   endforeach()
   
   add_custom_command(TARGET ${targetname} POST_BUILD
-    COMMAND ${GENHTML_COMMAND} ${lcov_output}
+    COMMAND ${GENHTML_COMMAND} ${lcov_output} -o coverage
     COMMENT "open index.html in your webbrowser to see the code coverage report.")
   
 endfunction()
