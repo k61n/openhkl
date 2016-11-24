@@ -65,17 +65,15 @@ void SX::Imaging::AnnularKernel::update()
     r2 = static_cast<int>(_params["r2"]);
     r3 = static_cast<int>(_params["r3"]);
 
+    SX::Types::RealMatrix inner = SX::Types::RealMatrix::Zero(rows, cols);
+    SX::Types::RealMatrix outer = SX::Types::RealMatrix::Zero(rows, cols);
+
     // sanity checks
     if (rows < 0 || cols < 0 || r1 < 0 || r2 < r1 || r3 < r2)
         throw std::runtime_error("AnnularKernel::update() called with invalid parameters");
 
-    double positive_value = 1.0 / (M_PI*r1*r1);
-    double negative_value = 1.0 / (M_PI*r2*r2 - M_PI*r3*r3);
-
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
-            double val = 0.0;
-
             // shift so that (0,0) = (rows, cols) = (rows, 0) = (0, cols) is the center of the kernel
             double x = j > cols/2 ? cols-j : j;
             double y = i > rows/2 ? rows-i : i;
@@ -83,15 +81,17 @@ void SX::Imaging::AnnularKernel::update()
             double dist2 = x*x + y*y;
 
             if (dist2 > r3*r3)
-                val = 0.0;
+                continue;
             else if (dist2 <= r1*r1)
-                val = positive_value;
+                inner(i, j) = 1.0;
             else if (dist2 > r2*r2)
-                val = negative_value;
-
-            _kernel(i,j) = val;
+                outer(i, j) = 1.0;
         }
     }
+
+    inner /= inner.sum();
+    outer /= outer.sum();
+    _kernel = inner - outer;
 }
 
 
