@@ -125,12 +125,12 @@ std::size_t IData::getNRows() const
 	return _nrows;
 }
 
-std::set<Peak3D*>& IData::getPeaks()
+std::set<sptrPeak3D>& IData::getPeaks()
 {
 	return _peaks;
 }
 
-void IData::addPeak(Peak3D* peak)
+void IData::addPeak(sptrPeak3D peak)
 {
 	_peaks.insert(peak);
 	maskPeak(peak);
@@ -138,8 +138,8 @@ void IData::addPeak(Peak3D* peak)
 
 void IData::clearPeaks()
 {
-    for (auto ptr : _peaks)
-		delete ptr;
+//    for (auto ptr : _peaks)
+//		delete ptr;
 	_peaks.clear();
 }
 
@@ -244,13 +244,13 @@ const std::vector<ComponentState>& IData::getSourceStates() const
 	return _sourceStates;
 }
 
-bool IData::removePeak(Peak3D* peak)
+bool IData::removePeak(sptrPeak3D peak)
 {
 	auto it=_peaks.find(peak);
 	if (it==_peaks.end())
 		return false;
 
-	delete *it;
+//	delete *it;
     _peaks.erase(it);
 	return true;
 }
@@ -449,7 +449,7 @@ void IData::maskPeaks() const
 		maskPeak(p);
 }
 
-void IData::maskPeak(Peak3D* peak) const
+void IData::maskPeak(sptrPeak3D peak) const
 {
 	peak->setMasked(false);
 	for (auto m : _masks)
@@ -651,7 +651,7 @@ void IData::integratePeaks(std::shared_ptr<Utils::ProgressHandler> handler)
         handler->setProgress(0);
     }
     
-    std::set<Peak3D*>& peaks = getPeaks();
+    std::set<sptrPeak3D>& peaks = getPeaks();
     const int num_peaks = peaks.size();
 
     for ( auto& peak: peaks )

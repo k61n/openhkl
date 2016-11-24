@@ -23,7 +23,8 @@
 #include "SpaceGroup.h"
 
 
-namespace Ui {
+namespace Ui
+{
 class SpaceGroupDialog;
 }
 

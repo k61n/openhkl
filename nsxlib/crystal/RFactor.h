@@ -31,21 +31,26 @@
 #ifndef NSXTOOL_RFACTOR_H_
 #define NSXTOOL_RFACTOR_H_
 
+#include <memory>
 #include <vector>
 
-namespace SX {
+namespace SX
+{
 
-namespace Crystal {
+namespace Crystal
+{
 
 class Peak3D;
+using sptrPeak3D=std::shared_ptr<Peak3D>;
 
-class RFactor {
+class RFactor
+{
 public:
     RFactor(): _Rmerge(0.0), _Rmeas(0.0), _Rpim(0.0) {}
-    RFactor(const std::vector<std::vector<Peak3D*>>&peak_equivs);
+    RFactor(const std::vector<std::vector<sptrPeak3D>>&peak_equivs);
     ~RFactor() {}
 
-    void recalculate(const std::vector<std::vector<Peak3D*>>&peak_equivs);
+    void recalculate(const std::vector<std::vector<sptrPeak3D>>&peak_equivs);
 
     double Rmerge() {return _Rmerge;}
     double Rmeas() {return _Rmeas;}

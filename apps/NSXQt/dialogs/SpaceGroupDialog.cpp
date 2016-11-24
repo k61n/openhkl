@@ -71,7 +71,7 @@ void SpaceGroupDialog::evaluateSpaceGroups()
     using std::string;
     using std::map;
     using std::array;
-    using SX::Crystal::Peak3D;
+    using SX::Crystal::sptrPeak3D;
     using std::tuple;
 
     SpaceGroupSymbols* spaceGroupSymbols = SpaceGroupSymbols::Instance();
@@ -80,8 +80,8 @@ void SpaceGroupDialog::evaluateSpaceGroups()
 
 
     vector<array<double, 3>> hkls;
-    vector<Peak3D*> peak_list;
-    vector<vector<Peak3D*>> peak_equivs;
+    vector<sptrPeak3D> peak_list;
+    vector<vector<sptrPeak3D>> peak_equivs;
 
     //auto numors = getSelectedNumors();
 
@@ -95,10 +95,12 @@ void SpaceGroupDialog::evaluateSpaceGroups()
     for (auto& numor: _numors) {
         auto peaks = numor->getPeaks();
 
-        for ( Peak3D* peak : peaks) {
+        for (sptrPeak3D peak : peaks)
+        {
             Eigen::RowVector3i hkl = peak->getIntegerMillerIndices();
 
-            if (peak->isSelected() && !peak->isMasked()) {
+            if (peak->isSelected() && !peak->isMasked())
+            {
                 hkls.push_back(array<double, 3>{(double)hkl[0], (double)hkl[1], (double)hkl[2]});
                 peak_list.push_back(peak);
             }

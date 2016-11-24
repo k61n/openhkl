@@ -540,9 +540,11 @@ void ExperimentTree::integrateCalculatedPeaks()
 
     std::shared_ptr<UnitCell> unit_cell;
 
-    for (std::shared_ptr<IData> numor: _session->getSelectedNumors()) {
-        for (Peak3D* peak: numor->getPeaks())
-            if ( peak && peak->isSelected() && !peak->isMasked() ) {
+    for (std::shared_ptr<IData> numor: _session->getSelectedNumors())
+    {
+        for (sptrPeak3D peak: numor->getPeaks())
+            if ( peak && peak->isSelected() && !peak->isMasked() )
+            {
                 peak_extent += peak->getPeak()->getAABBExtents();
                 bg_extent += peak->getBackground()->getAABBExtents();
                 ++count;
@@ -564,9 +566,7 @@ void ExperimentTree::integrateCalculatedPeaks()
 
     for (std::shared_ptr<IData> numor: _session->getSelectedNumors()) {
 
-
-
-        std::vector<Peak3D*> calculated_peaks;
+        std::vector<sptrPeak3D> calculated_peaks;
 
         shared_ptr<Sample> sample = numor->getDiffractometer()->getSample();
         int ncrystals = sample->getNCrystals();

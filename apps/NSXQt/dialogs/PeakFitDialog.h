@@ -10,15 +10,21 @@ class QGraphicsPixmapItem;
 
 class SessionModel;
 
-namespace SX {
-namespace Crystal {
+namespace SX
+{
+namespace Crystal
+{
 class Peak3D;
+using sptrPeak3D=std::shared_ptr<Peak3D>;
 }
 }
 
-namespace Ui {
+namespace Ui
+{
 class PeakFitDialog;
 }
+
+using SX::Crystal::sptrPeak3D;
 
 class PeakFitDialog : public QDialog
 {
@@ -49,7 +55,7 @@ private:
     int _xmin, _xmax, _ymin, _ymax, _zmin, _zmax;
 
     Eigen::RowVectorXd _fitParams;
-    SX::Crystal::Peak3D* _peak;
+    sptrPeak3D _peak;
 };
 
 #endif // PEAKFITDIALOG_H

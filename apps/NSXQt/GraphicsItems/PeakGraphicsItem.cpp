@@ -18,7 +18,7 @@
 bool PeakGraphicsItem::_labelVisible = false;
 bool PeakGraphicsItem::_drawBackground = false;
 
-PeakGraphicsItem::PeakGraphicsItem(SX::Crystal::Peak3D* p)
+PeakGraphicsItem::PeakGraphicsItem(sptrPeak3D p)
 : PlottableGraphicsItem(nullptr,true,false),
   _peak(p)
 {
@@ -134,7 +134,7 @@ std::string PeakGraphicsItem::getPlotType() const
     return "peak";
 }
 
-SX::Crystal::Peak3D* PeakGraphicsItem::getPeak()
+sptrPeak3D PeakGraphicsItem::getPeak()
 {
     return _peak;
 }

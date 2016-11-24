@@ -497,11 +497,6 @@ std::shared_ptr<SX::Data::IData> DetectorScene::getData()
     return _currentData;
 }
 
-//const std::map<SX::Crystal::Peak3D*,PeakGraphicsItem*>& DetectorScene::getPeaksGraphicsItems() const
-//{
-//    return _peaks;
-//}
-
 const rowMatrix& DetectorScene::getCurrentFrame() const
 {
     return _currentFrame;
@@ -512,7 +507,7 @@ void DetectorScene::changeCursorMode(int mode)
     _cursorMode=static_cast<CURSORMODE>(mode);
 }
 
-PeakGraphicsItem* DetectorScene::findPeakGraphicsItem(SX::Crystal::Peak3D *peak)
+PeakGraphicsItem* DetectorScene::findPeakGraphicsItem(sptrPeak3D peak)
 {
     auto it=_peakGraphicsItems.find(peak);
     if (it!=_peakGraphicsItems.end())
@@ -541,7 +536,7 @@ void DetectorScene::updatePeaks()
         PeakGraphicsItem* pgi = new PeakGraphicsItem(peak);
         pgi->setFrame(_currentFrameIndex);
         addItem(pgi);
-        _peakGraphicsItems.insert(std::pair<SX::Crystal::Peak3D*, PeakGraphicsItem*>(peak,pgi));
+        _peakGraphicsItems.insert(std::pair<sptrPeak3D, PeakGraphicsItem*>(peak,pgi));
     }
 }
 
@@ -651,10 +646,9 @@ void DetectorScene::activateIndexingMode(std::shared_ptr<SX::Crystal::UnitCell> 
     _indexer = std::unique_ptr<SX::Crystal::Indexer>(new SX::Crystal::Indexer(_cell));
 }
 
-void DetectorScene::setPeakIndex(SX::Crystal::Peak3D* peak, const Eigen::Vector3d &index)
+void DetectorScene::setPeakIndex(sptrPeak3D peak, const Eigen::Vector3d &index)
 {
     peak->setMillerIndices(index[0],index[1],index[2]);
-//    _indexer->storePeak(peak);
 }
 
 void DetectorScene::showPeakCalcs(bool flag)

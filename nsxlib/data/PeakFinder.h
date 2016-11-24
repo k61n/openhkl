@@ -8,17 +8,21 @@
 #include "ConvolutionKernel.h"
 
 
-namespace SX {
+namespace SX
+{
 
-namespace Imaging {
+namespace Imaging
+{
 class Convolver;
 }
 
-namespace Utils {
+namespace Utils
+{
 class ProgressHandler;
 }
 
-namespace Data {
+namespace Data
+{
 
 class IData;
 

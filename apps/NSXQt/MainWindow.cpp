@@ -275,14 +275,14 @@ void MainWindow::showPeakList(std::vector<std::shared_ptr<SX::Data::IData>> data
     table->setData(data);
     table->show();
     // Ensure plot1D is updated
-    connect(table,SIGNAL(plotPeak(SX::Crystal::Peak3D*)),this,SLOT(plotPeak(SX::Crystal::Peak3D*)));
+    connect(table,SIGNAL(plotPeak(sptrPeak3D)),this,SLOT(plotPeak(sptrPeak3D)));
     connect(table,
             SIGNAL(plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&)),
             this,
             SLOT(plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&)));
 }
 
-void MainWindow::plotPeak(SX::Crystal::Peak3D* peak)
+void MainWindow::plotPeak(sptrPeak3D peak)
 {
     auto scenePtr = _ui->_dview->getScene();
     // Ensure that frames
@@ -464,7 +464,7 @@ void MainWindow::setInspectorWidget(QWidget* w)
 
     if (PeakListPropertyWidget* widget=dynamic_cast<PeakListPropertyWidget*>(w)) {
         // Ensure plot1D is updated
-        connect(widget->getPeakTableView(),SIGNAL(plotPeak(SX::Crystal::Peak3D*)),this,SLOT(plotPeak(SX::Crystal::Peak3D*)));
+        connect(widget->getPeakTableView(),SIGNAL(plotPeak(sptrPeak3D)),this,SLOT(plotPeak(sptrPeak3D)));
         connect(widget->getPeakTableView(),
                 SIGNAL(plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&)),
                 this,
@@ -532,14 +532,16 @@ void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
     int remaining_peaks = 0;
 
     std::vector<std::shared_ptr<IData>> numors = _session->getSelectedNumors();
-    std::vector<Peak3D*> bad_peaks;
+    std::vector<sptrPeak3D> bad_peaks;
 
-    for (std::shared_ptr<IData> numor: numors) {
-        std::set<Peak3D*>& peaks = numor->getPeaks();
+    for (std::shared_ptr<IData> numor: numors)
+    {
+        std::set<sptrPeak3D>& peaks = numor->getPeaks();
 
         total_peaks += peaks.size();
 
-        for (std::set<Peak3D*>::iterator it = peaks.begin(); it != peaks.end();) {
+        for (std::set<sptrPeak3D>::iterator it = peaks.begin(); it != peaks.end();)
+        {
             if ( (*it)->isMasked() || !(*it)->isSelected() ) {
                 bad_peaks.push_back(*it);
                 it = peaks.erase(it);
@@ -571,9 +573,6 @@ void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
     qDebug() << "Eliminated " << bad_peaks.size() << " out of " << total_peaks << " total peaks.";
     //_ui->_dview->getScene()->updatePeaks();
     _session->updatePeaks();
-
-    for (Peak3D* peak: bad_peaks)
-        delete peak;
 }
 
 void MainWindow::on_actionIncorporate_calculated_peaks_triggered(bool checked)

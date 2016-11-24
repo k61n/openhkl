@@ -120,7 +120,7 @@ public:
 	MetaData*  getMetadata() const;
 
     //! Return the peaks
-	std::set<Peak3D*>& getPeaks();
+	std::set<sptrPeak3D>& getPeaks();
 
     //! Gets the interpolated state between two consecutive detector states
     ComponentState getDetectorInterpolatedState(double frame);
@@ -153,7 +153,7 @@ public:
 	void addMask(AABB<double,3>* mask);
 
     //! Add a new peak to the data
-	void addPeak(Peak3D* peak);
+	void addPeak(sptrPeak3D peak);
 
     //! Remove a mask from the data, by reference
     void removeMask(AABB<double, 3>* mask);
@@ -162,7 +162,7 @@ public:
     const std::set<AABB<double,3>*>& getMasks();
 
     //! Remove a peak from the data
-	bool removePeak(Peak3D* peak);
+	bool removePeak(sptrPeak3D peak);
 
     //! Clear the peaks collected for this data
 	void clearPeaks();
@@ -183,7 +183,7 @@ public:
 	void maskPeaks() const;
 
     //! Mask a given peak
-	void maskPeak(Peak3D* peak) const;
+	void maskPeak(sptrPeak3D peak) const;
 
     //! Return the intensity at point x,y,z.
 	int dataAt(unsigned int x=0, unsigned int y=0, unsigned int z=0);
@@ -230,7 +230,7 @@ protected:
 	std::vector<ComponentState> _detectorStates;
 	std::vector<ComponentState> _sampleStates;
 	std::vector<ComponentState> _sourceStates;
-    std::set<Peak3D*> _peaks;
+    std::set<sptrPeak3D> _peaks;
     std::size_t _fileSize;
     //! The set of masks bound to the data
     std::set<AABB<double,3>*> _masks;
