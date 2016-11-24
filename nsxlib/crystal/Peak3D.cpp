@@ -177,12 +177,9 @@ void Peak3D::unlinkData()
 
 void Peak3D::setPeakShape(SX::Geometry::IShape<double,3>* p)
 {
-	_peak=p;
-
+    _peak = p;
     Eigen::Vector3d center = _peak->getAABBCenter();
-
-    //
-    int f=std::floor(center[2]);
+    int f = std::floor(center[2]);
 
     using ComponentState = SX::Instrument::ComponentState;
 

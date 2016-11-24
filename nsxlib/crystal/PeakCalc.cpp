@@ -62,7 +62,7 @@ Peak3D* PeakCalc::averagePeaks(std::shared_ptr<Data::IData> data, double distanc
 {
     Peak3D* peak = new Peak3D(data);
 
-    std::vector<Peak3D*> neighbors = findNeighbors(data->getPeaks(), distance);
+    std::vector<Peak3D*> neighbors(findNeighbors(data->getPeaks(), distance));
 
     if (neighbors.size() <= 0) {
         delete peak;
@@ -84,6 +84,12 @@ Peak3D* PeakCalc::averagePeaks(std::shared_ptr<Data::IData> data, double distanc
         // in current implementation these casts should always work
         assert(ell_peak != nullptr);
         assert(ell_bkg != nullptr);
+
+        // debugging
+        if (ell_peak->getAABBExtents().maxCoeff() > 1e3)
+            std::cout << "something strange" << std::endl;
+        if (ell_peak->getAABBExtents().minCoeff() < 1e-2)
+            std::cout << "something strange" << std::endl;
 
         const Matrix3d& peak_rs = ell_peak->getRSinv();
         const Matrix3d& bkg_rs = ell_bkg->getRSinv();
@@ -125,6 +131,9 @@ std::vector<Peak3D *> PeakCalc::findNeighbors(const std::set<Peak3D *> &peak_lis
     Eigen::Vector3d center(_x, _y, _frame);
 
     for (Peak3D* peak: peak_list) {
+        if (peak->isMasked() || !peak->isSelected())
+            continue;
+
         double squared_dist = (center-peak->getPeak()->getAABBCenter()).squaredNorm();
 
         if ( squared_dist < max_squared_dist)
@@ -132,7 +141,6 @@ std::vector<Peak3D *> PeakCalc::findNeighbors(const std::set<Peak3D *> &peak_lis
     }
 
     neighbors.shrink_to_fit();
-
     return neighbors;
 }
 
