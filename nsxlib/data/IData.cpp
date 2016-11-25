@@ -76,7 +76,9 @@ void IData::setIteratorCallback(FrameIteratorCallback callback)
 
 IData::~IData()
 {
-	clearPeaks();
+    // peaks should be cleared explicitly to avoid memory leak
+    // due to cyclic shared pointers
+    clearPeaks();
 }
 
 std::string IData::getBasename() const
