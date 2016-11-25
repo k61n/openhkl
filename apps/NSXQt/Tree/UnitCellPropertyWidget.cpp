@@ -126,9 +126,10 @@ void UnitCellPropertyWidget::on_pushButton_Index_clicked()
 
 void UnitCellPropertyWidget::on_pushButton_AutoIndexing_clicked()
 {
-    DialogFindUnitCell* dialog=new DialogFindUnitCell(_unitCellItem->getExperiment(),this);
+    DialogFindUnitCell* dialog = new DialogFindUnitCell(_unitCellItem->getExperiment(), this);
     // Ensure that lattice parameters are updated if a solution is accepted
-    connect(dialog,SIGNAL(solutionAccepted(SX::Crystal::UnitCell)),this,SLOT(setCell(SX::Crystal::UnitCell)));
+    connect(dialog, SIGNAL(solutionAccepted(const SX::Crystal::UnitCell&)),
+            this, SLOT(setCell(const SX::Crystal::UnitCell&)));
     dialog->exec();
 }
 
