@@ -30,11 +30,14 @@
 #ifndef NSXTOOL_SYMMETRYGROUPGENERATOR_H_
 #define NSXTOOL_SYMMETRYGROUPGENERATOR_H_
 
-#include <ostream>
-#include <vector>
-#include <string>
 #include <array>
+#include <memory>
+#include <ostream>
+#include <string>
+#include <vector>
+
 #include <Eigen/Dense>
+
 #include "SymOp.h"
 
 namespace SX
@@ -44,6 +47,7 @@ namespace Crystal
 {
 
 class Peak3D;
+using sptrPeak3D = std::shared_ptr<Peak3D>;
 typedef std::vector<SymOp> groupElementsList;
 
 class SpaceGroup
@@ -80,8 +84,8 @@ public:
     //! Return the ID of the space group
     int getID() const;
     //! Find equivalences in a list of peaks
-    std::vector<std::vector<SX::Crystal::Peak3D*>>
-        findEquivalences(const std::vector<SX::Crystal::Peak3D*>&peak_list, bool friedel=true) const;
+    std::vector<std::vector<sptrPeak3D>>
+	findEquivalences(const std::vector<sptrPeak3D>&peak_list, bool friedel=true) const;
     //! Return whether two sets of indices are related by a symmetry
     bool isEquivalent(double h1, double k1, double l1, double h2, double k2, double l2) const;
     //! Return whether two sets of indices are related by a symmetry up to Friedel reflection

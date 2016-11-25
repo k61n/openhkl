@@ -31,22 +31,33 @@ namespace Ui
 
 namespace SX
 {
-    namespace Data
-    {
-        class IData;
-        class PeakFinder;
-    }
-    namespace Instrument
-    {
-        class Experiment;
-    }
 
-    namespace Utils {
-        class ProgressHandler;
-    }
+namespace Crystal
+{
+class Peak3D;
+using sptrPeak3D=std::shared_ptr<Peak3D>;
+}
+
+namespace Data
+{
+class IData;
+class PeakFinder;
+}
+
+namespace Instrument
+{
+class Experiment;
+}
+
+namespace Utils
+{
+class ProgressHandler;
+}
 }
 
 class QProgressDialog;
+
+using SX::Crystal::sptrPeak3D;
 
 class MainWindow : public QMainWindow
 {
@@ -109,7 +120,7 @@ private slots:
 public slots:
     void changeData(std::shared_ptr<SX::Data::IData>);
     void showPeakList(std::vector<std::shared_ptr<SX::Data::IData>>);
-    void plotPeak(SX::Crystal::Peak3D*);
+    void plotPeak(sptrPeak3D);
     void plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&);
     void setInspectorWidget(QWidget*);
     void saveSession(QString filename);

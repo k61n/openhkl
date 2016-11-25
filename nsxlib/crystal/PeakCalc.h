@@ -34,9 +34,11 @@
 #include <vector>
 #include <set>
 
-namespace SX {
+namespace SX
+{
 
-namespace Data {
+namespace Data
+{
 class IData;
 }
 
@@ -45,6 +47,8 @@ namespace Crystal
 
 class Peak3D;
 
+using sptrPeak3D = std::shared_ptr<Peak3D>;
+
 struct PeakCalc
 {
 	PeakCalc(double h,double k,double l, double x,double y, double frame);
@@ -52,11 +56,12 @@ struct PeakCalc
 	double _h,_k,_l;
 	double _x,_y,_frame;
 
-    Peak3D* averagePeaks(std::shared_ptr<SX::Data::IData> data, double distance);
-    std::vector<Peak3D*> findNeighbors(const std::set<Peak3D*>& peak_list, double distance);
+    sptrPeak3D averagePeaks(std::shared_ptr<SX::Data::IData> data, double distance);
+    std::vector<sptrPeak3D> findNeighbors(const std::set<sptrPeak3D>& peak_list, double distance);
 };
 
 } // namespace Crystal
-} /* namespace SX */
+
+} // namespace SX
 
 #endif /* NSXTOOL_PEAKCALC_H_ */

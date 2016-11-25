@@ -68,7 +68,7 @@ void DialogFindUnitCell::setPeaks()
     // Sort peaks by decreasing I/SigmaI
     std::sort(_peaks.begin(),
               _peaks.end(),
-              [&](SX::Crystal::Peak3D* p1, SX::Crystal::Peak3D* p2)
+              [&](sptrPeak3D p1, sptrPeak3D p2)
                 {
                     return (p1->getIOverSigmaI()>p2->getIOverSigmaI());
                 }
@@ -159,12 +159,11 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
             minimizer.refineParameter(i,false);
 
         int success = 0;
-        for (auto peak : _peaks) {
-            // make a copy to avoid thread race condition
-            //SX::Crystal::Peak3D new_peak(*peak);
-
+        for (auto peak : _peaks)
+        {
             //if (new_peak.hasIntegerHKL(cell,0.2) && new_peak.isSelected() && !new_peak.isMasked()) {
-            if (peak->hasIntegerHKL(cell,0.2) && peak->isSelected() && !peak->isMasked()) {
+            if (peak->hasIntegerHKL(cell,0.2) && peak->isSelected() && !peak->isMasked())
+            {
                 minimizer.addPeak(*peak);
                 ++success;
             }

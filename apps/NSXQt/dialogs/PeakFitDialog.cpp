@@ -23,9 +23,6 @@
 
 #include <cmath>
 
-
-
-
 using SX::Crystal::Peak3D;
 
 PeakFitDialog::PeakFitDialog(SessionModel* session, QWidget *parent):
@@ -109,21 +106,20 @@ void PeakFitDialog::checkCollisions()
     qDebug() << "checking collisions with peak at hkl = (" << _hkl[0] << ", " << _hkl[1] << ", " << _hkl[2] << ")";
 
     std::shared_ptr<IData> numor = _peak->getData();
-    std::set<Peak3D*>& peaks = numor->getPeaks();
+    std::set<sptrPeak3D>& peaks = numor->getPeaks();
 
-    for (Peak3D* other_peak: peaks) {
+    for (sptrPeak3D other_peak: peaks)
+    {
         if ( other_peak == _peak)
             continue;
 
-        if (_peak->getBackground()->collide(*other_peak->getPeak())) {
+        if (_peak->getBackground()->collide(*other_peak->getPeak()))
+        {
             Eigen::RowVector3i hkl = other_peak->getIntegerMillerIndices();
             qDebug() << "COLLISION FOUND: ("
                      << hkl[0] << ", "
                      << hkl[1] << ", "
                      << hkl[2] << ")";
-
-
-
 
             int i;
             for (i = 0; i < 1000; ++i) {
@@ -172,13 +168,15 @@ void PeakFitDialog::updatePeak()
 
     std::shared_ptr<IData> numor = _session->getSelectedNumors()[0];
     SX::Data::RowMatrixi frame = numor->getFrame(ui->frameScrollBar->value());
-    std::set<Peak3D*>& peaks = numor->getPeaks();
+    std::set<sptrPeak3D>& peaks = numor->getPeaks();
 
-    Peak3D* the_peak = nullptr;
+    sptrPeak3D the_peak = nullptr;
     bool found_peak = false;
 
-    for(Peak3D* peak: peaks) {
-        if ( peak->getIntegerMillerIndices() == _hkl) {
+    for(sptrPeak3D peak: peaks)
+    {
+        if ( peak->getIntegerMillerIndices() == _hkl)
+        {
             found_peak = true;
             the_peak = peak;
             break;

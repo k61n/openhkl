@@ -9,18 +9,20 @@
 #include "PeakFinder.h"
 #include "Types.h"
 #include "Convolver.h"
+#include "Peak3D.h"
 #include "Sample.h"
 #include "IFrameIterator.h"
 
-
-
 using SX::Types::RealMatrix;
+using SX::Crystal::sptrPeak3D;
 using SX::Imaging::Convolver;
 using SX::Utils::ProgressHandler;
 
-namespace SX {
+namespace SX
+{
 
-namespace Data {
+namespace Data
+{
 
 PeakFinder::PeakFinder()
 {
@@ -151,7 +153,7 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
 
         for (auto& blob : blobs) {
 
-            SX::Crystal::Peak3D* p = new Peak3D(numor, blob.second, _confidence);
+            sptrPeak3D p = sptrPeak3D(new Peak3D(numor, blob.second, _confidence));
 
             if (!dAABB.contains(*(p->getPeak())))
                 p->setSelected(false);

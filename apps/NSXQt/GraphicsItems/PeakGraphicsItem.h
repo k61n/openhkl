@@ -12,17 +12,20 @@ namespace SX
 namespace Crystal
 {
 class Peak3D;
+using sptrPeak3D = std::shared_ptr<Peak3D>;
 }
 }
 
 class QWidget;
 class SXPlot;
 
+using SX::Crystal::sptrPeak3D;
+
 class PeakGraphicsItem : public PlottableGraphicsItem
 {
 public:
 
-    PeakGraphicsItem(SX::Crystal::Peak3D* p);
+    PeakGraphicsItem(sptrPeak3D p);
 
     ~PeakGraphicsItem();
 
@@ -38,7 +41,7 @@ public:
     std::string getPlotType() const;
 
     //! Return the peak object
-    SX::Crystal::Peak3D* getPeak();
+    sptrPeak3D getPeak();
 
     static void setLabelVisible(bool flag=true);
     static void drawBackground(bool flag);
@@ -52,7 +55,7 @@ private:
     static void drawEllipse(QPainter& painter, Ellipse ellipse);
 
     //! Pointer to the Peak3D object
-    SX::Crystal::Peak3D* _peak;
+    sptrPeak3D _peak;
     //! (h,k,l) index visible in GraphicsScene
     static bool _labelVisible;
     static bool _drawBackground;

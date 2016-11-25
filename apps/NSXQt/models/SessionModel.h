@@ -94,7 +94,6 @@ signals:
 
 public slots:
 
-
     void importData();
     void findPeaks(const QModelIndex& index);
 

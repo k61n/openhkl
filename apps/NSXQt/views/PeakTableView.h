@@ -20,9 +20,12 @@ namespace SX
 {
 namespace Crystal
 {
-    class Peak3D;
+class Peak3D;
+using sptrPeak3D=std::shared_ptr<Peak3D>;
 }
 }
+
+using SX::Crystal::sptrPeak3D;
 
 class PeakTableView : public QTableView
 {
@@ -35,7 +38,7 @@ public:
     void keyPressEvent(QKeyEvent *event);
 signals:
     void plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&);
-    void plotPeak(SX::Crystal::Peak3D*);
+    void plotPeak(sptrPeak3D);
 public slots:
     //! Selection of peak is changed
     void peakChanged(QModelIndex current,QModelIndex last);
@@ -66,7 +69,7 @@ private:
     bool checkBeforeWritting();
     void constructTable();
     std::string getPeaksRange() const;
-    std::vector<std::reference_wrapper<SX::Crystal::Peak3D>> _peaks;
+    std::vector<sptrPeak3D> _peaks;
     //! Which column is sorted and up or down
     std::tuple<int,bool> _columnUp;
     PeakCustomPlot* _plotter;

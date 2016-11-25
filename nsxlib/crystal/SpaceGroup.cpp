@@ -156,11 +156,11 @@ int SpaceGroup::getID() const
     return sg->getID(full_symbol);
 }
 
-vector<vector<Peak3D *>> SpaceGroup::findEquivalences(const vector<Peak3D*> &peak_list, bool friedel) const
+vector<vector<sptrPeak3D>> SpaceGroup::findEquivalences(const vector<sptrPeak3D> &peak_list, bool friedel) const
 {
-    vector<vector<Peak3D*>> peak_equivs;
+    vector<vector<sptrPeak3D>> peak_equivs;
 
-    for (Peak3D* peak: peak_list ) {
+    for (sptrPeak3D peak: peak_list ) {
 
         bool found_equivalence = false;
 
@@ -189,7 +189,7 @@ vector<vector<Peak3D *>> SpaceGroup::findEquivalences(const vector<Peak3D*> &pea
 
         // didn't find an equivalence?
         if ( !found_equivalence) {
-            peak_equivs.push_back(std::vector<Peak3D*>{peak});
+            peak_equivs.push_back(std::vector<sptrPeak3D>{peak});
         }
     }
 

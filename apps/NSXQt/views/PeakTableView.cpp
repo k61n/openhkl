@@ -44,8 +44,8 @@ PeakTableView::PeakTableView(QWidget *parent)
     QHeaderView* vertical=this->verticalHeader();
     connect(vertical, &QHeaderView::sectionClicked, [&](int index)
                                                  {
-                                                  SX::Crystal::Peak3D& peak=_peaks[index].get();
-                                                  emit plotPeak(&peak);
+                                                  sptrPeak3D peak=_peaks[index];
+                                                  emit plotPeak(peak);
                                                  });
 
     connect(this,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(deselectPeak(QModelIndex)));
@@ -58,8 +58,8 @@ void PeakTableView::setData(std::vector<std::shared_ptr<SX::Data::IData>> data)
     for (auto ptr : data)
     {
         // Add peaks present in this numor to the LatticeFinder
-        for (auto& peak : ptr->getPeaks())
-            _peaks.push_back(std::ref(*peak));
+        for (sptrPeak3D peak : ptr->getPeaks())
+            _peaks.push_back(peak);
     }
     constructTable();
 }
@@ -68,8 +68,8 @@ void PeakTableView::peakChanged(QModelIndex current, QModelIndex last)
 {
     if (current.row()!=last.row())
     {
-        SX::Crystal::Peak3D& peak=_peaks[current.row()].get();
-        emit plotPeak(&peak);
+        sptrPeak3D peak=_peaks[current.row()];
+        emit plotPeak(peak);
     }
 }
 
@@ -152,24 +152,24 @@ void PeakTableView::constructTable()
     int i = 0;
 
     // Setup content of the table
-    for (SX::Crystal::Peak3D& peak : _peaks)
+    for (sptrPeak3D peak : _peaks)
     {
-        const Eigen::RowVector3d& hkl = peak.getMillerIndices();
+        const Eigen::RowVector3d& hkl = peak->getMillerIndices();
 
         QStandardItem* col0 = new QStandardItem(QString::number(hkl[0],'f',2)
                 + "  " + QString::number(hkl[1],'f',2)
                 + "  " + QString::number(hkl[2],'f',2));
 
-        double l = peak.getLorentzFactor();
-        double t = peak.getTransmission();
+        double l = peak->getLorentzFactor();
+        double t = peak->getTransmission();
 
-        QStandardItem* col1 = new QStandardItem(QString::number(peak.getScaledIntensity()/l/t,'f',2));
-        QStandardItem* col2 = new QStandardItem(QString::number(peak.getScaledSigma()/l/t,'f',2));
+        QStandardItem* col1 = new QStandardItem(QString::number(peak->getScaledIntensity()/l/t,'f',2));
+        QStandardItem* col2 = new QStandardItem(QString::number(peak->getScaledSigma()/l/t,'f',2));
         QStandardItem* col3 = new QStandardItem(QString::number(t,'f',2));
-        QStandardItem* col4 = new QStandardItem(QString::number(peak.getData()->getMetadata()->getKey<int>("Numor")));
+        QStandardItem* col4 = new QStandardItem(QString::number(peak->getData()->getMetadata()->getKey<int>("Numor")));
         QStandardItem* col5;
 
-        if (peak.isSelected())
+        if (peak->isSelected())
             col5= new QStandardItem(selectedIcon,"");
         else
             col5= new QStandardItem(deselectedIcon, "");
@@ -218,15 +218,15 @@ void PeakTableView::keyPressEvent(QKeyEvent *event)
     }
     else if (event->key()==Qt::Key_Space) // Change status of peak from unselected to selected by using spacebar
     {
-        auto& peak=_peaks[index].get();
-        bool newstatus=!peak.isSelected();
-        peak.setSelected(newstatus);
+        sptrPeak3D peak=_peaks[index];
+        bool newstatus=!(peak->isSelected());
+        peak->setSelected(newstatus);
         QStandardItemModel* model=dynamic_cast<QStandardItemModel*>(this->model());
         if (newstatus)
             model->setItem(index,5,new QStandardItem(QIcon(":/resources/peakSelectedIcon.png"),""));
         else
             model->setItem(index,5,new QStandardItem(QIcon(":/resources/peakDeselectedIcon.png"),""));
-        emit plotPeak(&peak);
+        emit plotPeak(peak);
     }
 
     if (index>_peaks.size()-1)
@@ -235,8 +235,8 @@ void PeakTableView::keyPressEvent(QKeyEvent *event)
     {
         clearSelection();
         selectRow(index);
-        SX::Crystal::Peak3D& peak=_peaks[index].get();
-        emit plotPeak(&peak);
+        sptrPeak3D peak=_peaks[index];
+        emit plotPeak(peak);
     }
 }
 
@@ -263,7 +263,7 @@ void PeakTableView::contextMenuEvent(QContextMenuEvent* event)
     if (indexList.size()) //at least on peak
     {
         QMenu* plotasmenu=menu->addMenu("Plot as");
-        SX::Data::MetaData* met=_peaks[indexList[0].row()].get().getData()->getMetadata();
+        SX::Data::MetaData* met=_peaks[indexList[0].row()]->getData()->getMetadata();
         const std::set<std::string>& keys=met->getAllKeys();
         for (const auto& key : keys)
         {
@@ -294,8 +294,8 @@ void PeakTableView::normalizeToMonitor()
     double factor = QInputDialog::getDouble(this,"Enter normalization factor","",1,1,100000000,1,&ok);
     if (ok)
     {
-        for (SX::Crystal::Peak3D& peak : _peaks)
-            peak.setScale(factor/peak.getData()->getMetadata()->getKey<double>("monitor"));
+        for (sptrPeak3D peak : _peaks)
+            peak->setScale(factor/peak->getData()->getMetadata()->getKey<double>("monitor"));
         // Keep track of the last selected index before rebuilding the table
         QModelIndex index=currentIndex();
         constructTable();
@@ -304,8 +304,8 @@ void PeakTableView::normalizeToMonitor()
         // If no row selected do nothing else.
         if (!index.isValid())
             return;
-        SX::Crystal::Peak3D& peak=_peaks[index.row()].get();
-        emit plotPeak(&peak);
+        sptrPeak3D peak=_peaks[index.row()];
+        emit plotPeak(peak);
     }
 }
 
@@ -336,21 +336,21 @@ void PeakTableView::writeFullProf()
 
     file << "TITLE File written by ...\n";
     file << "(3i4,2F14.4,i5,4f8.2)\n";
-    double wave=_peaks[0].get().getData()->getMetadata()->getKey<double>("wavelength");
+    double wave=_peaks[0]->getData()->getMetadata()->getKey<double>("wavelength");
     file << std::fixed << std::setw(8) << std::setprecision(3) << wave << " 0 0" << std::endl;
-    for (const SX::Crystal::Peak3D& peak : _peaks)
+    for (sptrPeak3D peak : _peaks)
     {
-        if (peak.isSelected())
+        if (peak->isSelected())
         {
-            const Eigen::RowVector3d& hkl=peak.getMillerIndices();
+            const Eigen::RowVector3d& hkl=peak->getMillerIndices();
 
             file << std::setprecision(0);
             file << std::setw(4);
             file << hkl[0] << std::setw(4) <<  hkl[1] << std::setw(4) << hkl[2];
-            double l=peak.getLorentzFactor();
-            double t=peak.getTransmission();
-            file << std::fixed << std::setw(14) << std::setprecision(4) << peak.getScaledIntensity()/l/t;
-            file << std::fixed << std::setw(14) << std::setprecision(4) << peak.getScaledSigma()/l/t;
+            double l=peak->getLorentzFactor();
+            double t=peak->getTransmission();
+            file << std::fixed << std::setw(14) << std::setprecision(4) << peak->getScaledIntensity()/l/t;
+            file << std::fixed << std::setw(14) << std::setprecision(4) << peak->getScaledSigma()/l/t;
             file << std::setprecision(0) << std::setw(5) << 1  << std::endl;
         }
     }
@@ -386,20 +386,20 @@ void PeakTableView::writeShelX()
         return;
     }
 
-    auto sptrBasis = _peaks[0].get().getUnitCell();
+    auto sptrBasis = _peaks[0]->getUnitCell();
     if (sptrBasis==nullptr)
     {
         qCritical()<<"No unit cell defined the peaks. No index can be defined.";
         return;
     }
 
-    for (SX::Crystal::Peak3D& peak : _peaks)
+    for (sptrPeak3D peak : _peaks)
     {
-        if (peak.isSelected())
+        if (peak->isSelected())
         {
-            const Eigen::RowVector3d& hkl=peak.getMillerIndices();
+            const Eigen::RowVector3d& hkl=peak->getMillerIndices();
 
-            auto sptrCurrentBasis = peak.getUnitCell();
+            auto sptrCurrentBasis = peak->getUnitCell();
 
             if (sptrCurrentBasis!=sptrBasis)
 			{
@@ -407,7 +407,7 @@ void PeakTableView::writeShelX()
 				return;
 			}
 
-            if (!(peak.hasIntegerHKL(*sptrCurrentBasis,0.2)))
+            if (!(peak->hasIntegerHKL(*sptrCurrentBasis,0.2)))
             	continue;
 
             file << std::fixed;
@@ -425,10 +425,10 @@ void PeakTableView::writeShelX()
             file << std::setw(4);
             file << hkl[2];
 
-            double l=peak.getLorentzFactor();
-            double t=peak.getTransmission();
-            file << std::fixed << std::setw(8) << std::setprecision(2) << peak.getScaledIntensity()/l/t;
-            file << std::fixed << std::setw(8) << std::setprecision(2) << peak.getScaledSigma()/l/t <<std::endl;
+            double l=peak->getLorentzFactor();
+            double t=peak->getTransmission();
+            file << std::fixed << std::setw(8) << std::setprecision(2) << peak->getScaledIntensity()/l/t;
+            file << std::fixed << std::setw(8) << std::setprecision(2) << peak->getScaledSigma()/l/t <<std::endl;
         }
     }
     if (file.is_open())
@@ -439,7 +439,7 @@ void PeakTableView::sortByHKL(bool up)
 {
     if (up)
         std::sort(_peaks.begin(),_peaks.end(),
-              [&](const SX::Crystal::Peak3D& p1, const SX::Crystal::Peak3D& p2)
+              [&](sptrPeak3D p1, sptrPeak3D p2)
               {
                 return (p2<p1);
               }
@@ -452,16 +452,16 @@ void PeakTableView::sortBySelected(bool up)
 {
     if (up)
         std::sort(_peaks.begin(),_peaks.end(),
-              [&](const SX::Crystal::Peak3D& p1, const SX::Crystal::Peak3D& p2)
+              [&](sptrPeak3D p1, const sptrPeak3D p2)
               {
-                return (p2.isSelected()<p1.isSelected());
+                return (p2->isSelected()<p1->isSelected());
               }
               );
     else
         std::sort(_peaks.begin(),_peaks.end(),
-              [&](const SX::Crystal::Peak3D& p1, const SX::Crystal::Peak3D& p2)
+              [&](const sptrPeak3D p1, sptrPeak3D p2)
               {
-                return (p2.isSelected()>p1.isSelected());
+                return (p2->isSelected()>p1->isSelected());
               }
               );
 }
@@ -470,15 +470,15 @@ void PeakTableView::sortByTransmission(bool up)
 {
     if (up)
         std::sort(_peaks.begin(),_peaks.end(),
-              [&](const SX::Crystal::Peak3D& p1, const SX::Crystal::Peak3D& p2)
+              [&](sptrPeak3D p1,sptrPeak3D p2)
                 {
-                    return (p1.getTransmission()>p2.getTransmission());
+                    return (p1->getTransmission()>p2->getTransmission());
                 });
     else
         std::sort(_peaks.begin(),_peaks.end(),
-                  [&](const SX::Crystal::Peak3D& p1, const SX::Crystal::Peak3D& p2)
+                  [&](sptrPeak3D p1,sptrPeak3D p2)
                     {
-                        return (p1.getTransmission()<p2.getTransmission());
+                        return (p1->getTransmission()<p2->getTransmission());
                     });
 }
 
@@ -486,15 +486,15 @@ void PeakTableView::sortByIntensity(bool up)
 {
     if (up)
         std::sort(_peaks.begin(),_peaks.end(),
-              [&](const SX::Crystal::Peak3D& p1, const SX::Crystal::Peak3D& p2)
+              [&](sptrPeak3D p1, sptrPeak3D p2)
                 {
-                    return ((p1.getScaledIntensity()/p1.getLorentzFactor()/p1.getTransmission())>(p2.getScaledIntensity()/p2.getLorentzFactor()/p2.getTransmission()));
+                    return ((p1->getScaledIntensity()/p1->getLorentzFactor()/p1->getTransmission())>(p2->getScaledIntensity()/p2->getLorentzFactor()/p2->getTransmission()));
                 });
     else
         std::sort(_peaks.begin(),_peaks.end(),
-                  [&](const SX::Crystal::Peak3D& p1, const SX::Crystal::Peak3D& p2)
+                  [&](sptrPeak3D p1, sptrPeak3D p2)
                     {
-            return ((p1.getScaledIntensity()/p1.getLorentzFactor()/p1.getTransmission())<(p2.getScaledIntensity()/p2.getLorentzFactor()/p2.getTransmission()));
+            return ((p1->getScaledIntensity()/p1->getLorentzFactor()/p1->getTransmission())<(p2->getScaledIntensity()/p2->getLorentzFactor()/p2->getTransmission()));
                     });
 }
 
@@ -502,26 +502,26 @@ void PeakTableView::sortByNumor(bool up)
 {
     if (up)
         std::sort(_peaks.begin(),_peaks.end(),
-              [&](const SX::Crystal::Peak3D& p1, const SX::Crystal::Peak3D& p2)
+              [&](sptrPeak3D p1, sptrPeak3D p2)
                 {
-                    int numor1=p1.getData()->getMetadata()->getKey<int>("Numor");
-                    int numor2=p2.getData()->getMetadata()->getKey<int>("Numor");
+                    int numor1=p1->getData()->getMetadata()->getKey<int>("Numor");
+                    int numor2=p2->getData()->getMetadata()->getKey<int>("Numor");
                     return (numor1>numor2);
                 });
     else
         std::sort(_peaks.begin(),_peaks.end(),
-              [&](const SX::Crystal::Peak3D& p1, const SX::Crystal::Peak3D& p2)
+              [&](sptrPeak3D p1, sptrPeak3D p2)
                 {
-                    int numor1=p1.getData()->getMetadata()->getKey<int>("Numor");
-                    int numor2=p2.getData()->getMetadata()->getKey<int>("Numor");
+                    int numor1=p1->getData()->getMetadata()->getKey<int>("Numor");
+                    int numor2=p2->getData()->getMetadata()->getKey<int>("Numor");
                     return (numor1<numor2);
                 });
 }
 
 void PeakTableView::deselectPeak(QModelIndex index)
 {
-    auto& peak=_peaks[index.row()];
-    peak.get().setSelected(!peak.get().isSelected());
+    sptrPeak3D peak=_peaks[index.row()];
+    peak->setSelected(!peak->isSelected());
     constructTable();
 }
 
@@ -539,10 +539,10 @@ void PeakTableView::plotAs(const std::string& key)
 
     for (int i=0;i<nPoints;++i)
     {
-        SX::Crystal::Peak3D p=_peaks[indexList[i].row()].get();
-        x[i]=p.getData()->getMetadata()->getKey<double>(key);
-        y[i]=p.getScaledIntensity();
-        e[i]=p.getScaledSigma();
+        sptrPeak3D p=_peaks[indexList[i].row()];
+        x[i]=p->getData()->getMetadata()->getKey<double>(key);
+        y[i]=p->getScaledIntensity();
+        e[i]=p->getScaledSigma();
     }
 
     emit plotData(x,y,e);
@@ -552,8 +552,8 @@ std::string PeakTableView::getPeaksRange() const
 {
     std::set<std::string> temp;
 
-    for (auto p : _peaks)
-        temp.insert(std::to_string(p.get().getData()->getMetadata()->getKey<int>("Numor")));
+    for (sptrPeak3D p : _peaks)
+        temp.insert(std::to_string(p->getData()->getMetadata()->getKey<int>("Numor")));
 
     std::string range(*(temp.begin()));
 
@@ -568,13 +568,13 @@ std::string PeakTableView::getPeaksRange() const
 void PeakTableView::sortEquivalents()
 {
     qDebug() << "Sorting";
-    auto ptrcell=_peaks[0].get().getUnitCell();
+    auto ptrcell=_peaks[0]->getUnitCell();
     std::sort(_peaks.begin(),
               _peaks.end(),
-              [&](const SX::Crystal::Peak3D& p1, const SX::Crystal::Peak3D& p2)
+              [&](sptrPeak3D p1, sptrPeak3D p2)
                 {
-                    Eigen::Vector3d hkl1=p1.getMillerIndices();
-                    Eigen::Vector3d hkl2=p2.getMillerIndices();
+                    Eigen::Vector3d hkl1=p1->getMillerIndices();
+                    Eigen::Vector3d hkl2=p2->getMillerIndices();
                     if (ptrcell->isEquivalent(hkl1[0],hkl1[1],hkl1[2],hkl2[0],hkl2[1],hkl2[2]))
                         return true;
                     else
@@ -627,8 +627,8 @@ void PeakTableView::showPeaksMatchingText(QString text)
     unsigned int row=0;
     for (row=0;row<_peaks.size();row++)
     {
-        auto& p=_peaks[row].get();
-        Eigen::Vector3d hkl=p.getMillerIndices();
+        sptrPeak3D p=_peaks[row];
+        Eigen::Vector3d hkl=p->getMillerIndices();
         if (std::fabs(hkl[0]-h)>1e-2 || std::fabs(hkl[1]-k)>1e-2 || std::fabs(hkl[2]-l)>1e-2)
         {
             setRowHidden(row,true);

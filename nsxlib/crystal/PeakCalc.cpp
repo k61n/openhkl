@@ -44,9 +44,11 @@
 
 using namespace SX::Geometry;
 
-namespace SX {
-namespace Crystal {
+namespace SX
+{
 
+namespace Crystal
+{
 
 PeakCalc::PeakCalc(double h,double k,double l, double x,double y, double frame):
     _h(h),_k(k),_l(l),_x(x),_y(y),_frame(frame)
@@ -58,16 +60,14 @@ PeakCalc::~PeakCalc()
 {
 }
 
-Peak3D* PeakCalc::averagePeaks(std::shared_ptr<Data::IData> data, double distance)
+sptrPeak3D PeakCalc::averagePeaks(std::shared_ptr<Data::IData> data, double distance)
 {
-    Peak3D* peak = new Peak3D(data);
+    sptrPeak3D peak = sptrPeak3D(new Peak3D(data));
 
-    std::vector<Peak3D*> neighbors = findNeighbors(data->getPeaks(), distance);
+    std::vector<sptrPeak3D> neighbors = findNeighbors(data->getPeaks(), distance);
 
-    if (neighbors.size() <= 0) {
-        delete peak;
+    if (neighbors.size() <= 0)
         return nullptr;
-    }
 
     peak->setMillerIndices(_h, _k, _l);
 
@@ -77,7 +77,8 @@ Peak3D* PeakCalc::averagePeaks(std::shared_ptr<Data::IData> data, double distanc
     peak_shape.setZero();
     bkg_shape.setZero();
 
-    for(Peak3D* p: neighbors) {
+    for(sptrPeak3D p: neighbors)
+    {
         const Ellipsoid<double, 3>* ell_peak = dynamic_cast<const Ellipsoid<double, 3>*>(p->getPeak());
         const Ellipsoid<double, 3>* ell_bkg = dynamic_cast<const Ellipsoid<double, 3>*>(p->getBackground());
 
@@ -115,16 +116,17 @@ Peak3D* PeakCalc::averagePeaks(std::shared_ptr<Data::IData> data, double distanc
     return peak;
 }
 
-std::vector<Peak3D *> PeakCalc::findNeighbors(const std::set<Peak3D *> &peak_list, double distance)
+std::vector<sptrPeak3D> PeakCalc::findNeighbors(const std::set<sptrPeak3D>& peak_list, double distance)
 {
     const double max_squared_dist = distance*distance;
 
-    std::vector<Peak3D*> neighbors;
+    std::vector<sptrPeak3D> neighbors;
     neighbors.reserve(100);
 
     Eigen::Vector3d center(_x, _y, _frame);
 
-    for (Peak3D* peak: peak_list) {
+    for (sptrPeak3D peak: peak_list)
+    {
         double squared_dist = (center-peak->getPeak()->getAABBCenter()).squaredNorm();
 
         if ( squared_dist < max_squared_dist)
