@@ -38,7 +38,7 @@ public:
     explicit DialogFindUnitCell(std::shared_ptr<Experiment> experiment, QWidget *parent = 0);
     ~DialogFindUnitCell();
 signals:
-    void solutionAccepted(const UnitCell&);
+    void solutionAccepted(const SX::Crystal::UnitCell&);
 private slots:
     void on_pushButton_SearchUnitCells_clicked();
     void setIOverSigma(int peaknumber);
