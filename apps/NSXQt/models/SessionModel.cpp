@@ -67,6 +67,8 @@
 #include "Sample.h"
 #include "Source.h"
 
+#include "dialogs/DialogCalculatedPeaks.h"
+
 #include "PeakTableView.h"
 #include "AbsorptionDialog.h"
 #include "models/DataItem.h"
@@ -574,6 +576,11 @@ void SessionModel::findPeaks(const QModelIndex& index)
 void SessionModel::incorporateCalculatedPeaks()
 {
     qDebug() << "Incorporating missing peaks into current data set...";
+
+    DialogCalculatedPeaks dialog;
+
+    if (!dialog.exec())
+        return;
 
     std::vector<std::shared_ptr<IData>> numors = getSelectedNumors();
 
