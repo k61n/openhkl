@@ -37,7 +37,7 @@ namespace SX {
 
 namespace Crystal {
 
-void RFactor::recalculate(const vector<vector<Peak3D *> > &peak_equivs)
+void RFactor::recalculate(const vector<vector<sptrPeak3D> > &peak_equivs)
 {
     _Rmerge = 0;
     _Rmeas = 0;
@@ -88,7 +88,7 @@ void RFactor::recalculate(const vector<vector<Peak3D *> > &peak_equivs)
     }
 }
 
-RFactor::RFactor(const vector<vector<Peak3D *> > &peak_equivs): RFactor()
+RFactor::RFactor(const vector<vector<sptrPeak3D> > &peak_equivs): RFactor()
 {
     recalculate(peak_equivs);
 }

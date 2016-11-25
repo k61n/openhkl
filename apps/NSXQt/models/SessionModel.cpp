@@ -296,16 +296,19 @@ void SessionModel::computeRFactors()
     qDebug() << "Finding peak equivalences...";
 
     std::vector<std::shared_ptr<IData>> numors = getSelectedNumors();
-    std::vector<std::vector<Peak3D*>> peak_equivs;
-    std::vector<Peak3D*> peak_list;
+    std::vector<std::vector<sptrPeak3D>> peak_equivs;
+    std::vector<sptrPeak3D> peak_list;
 
     std::shared_ptr<UnitCell> unit_cell;
 
-    for (std::shared_ptr<IData> numor: numors) {
-        std::set<Peak3D*> peaks = numor->getPeaks();
-        for (Peak3D* peak: peaks)
+    for (std::shared_ptr<IData> numor: numors)
+    {
+        std::set<sptrPeak3D> peaks = numor->getPeaks();
+        for (sptrPeak3D peak: peaks)
+        {
             if ( peak && peak->isSelected() && !peak->isMasked() )
                 peak_list.push_back(peak);
+        }
     }
 
     if ( peak_list.size() == 0) {
@@ -313,7 +316,7 @@ void SessionModel::computeRFactors()
         return;
     }
 
-    for (Peak3D* peak: peak_list) {
+    for (sptrPeak3D peak: peak_list) {
         // what do we do if there is more than one sample/unit cell??
         unit_cell = peak->getUnitCell();
 
@@ -380,13 +383,17 @@ void SessionModel::integrateCalculatedPeaks()
 
     std::shared_ptr<UnitCell> unit_cell;
 
-    for (std::shared_ptr<IData> numor: getSelectedNumors()) {
-        for (Peak3D* peak: numor->getPeaks())
-            if ( peak && peak->isSelected() && !peak->isMasked() ) {
+    for (std::shared_ptr<IData> numor: getSelectedNumors())
+    {
+        for (sptrPeak3D peak: numor->getPeaks())
+        {
+            if ( peak && peak->isSelected() && !peak->isMasked() )
+            {
                 peak_extent += peak->getPeak()->getAABBExtents();
                 bg_extent += peak->getBackground()->getAABBExtents();
                 ++count;
             }
+        }
     }
 
     if ( count == 0) {
@@ -402,11 +409,9 @@ void SessionModel::integrateCalculatedPeaks()
     qDebug() << peak_extent(0) << " " << peak_extent(1) << " " << peak_extent(2);
     qDebug() << bg_extent(0) << " " << bg_extent(1) << " " << bg_extent(2);
 
-    for (std::shared_ptr<IData> numor: getSelectedNumors()) {
-
-
-
-        std::vector<Peak3D*> calculated_peaks;
+    for (std::shared_ptr<IData> numor: getSelectedNumors())
+    {
+        std::vector<sptrPeak3D> calculated_peaks;
 
         shared_ptr<Sample> sample = numor->getDiffractometer()->getSample();
         int ncrystals = sample->getNCrystals();
@@ -594,15 +599,17 @@ void SessionModel::incorporateCalculatedPeaks()
 
     int last_done = 0;
 
-    for(std::shared_ptr<IData> numor: numors) {
+    for(std::shared_ptr<IData> numor: numors)
+    {
         qDebug() << "Finding missing peaks for numor " << ++current_numor << " of " << numors.size();
 
-        std::vector<Peak3D*> calculated_peaks;
+        std::vector<sptrPeak3D> calculated_peaks;
 
         shared_ptr<Sample> sample = numor->getDiffractometer()->getSample();
         int ncrystals = sample->getNCrystals();
 
-        for (int i = 0; i < ncrystals; ++i) {
+        for (int i = 0; i < ncrystals; ++i)
+        {
             SX::Crystal::SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
             auto ub = sample->getUnitCell(i)->getReciprocalStandardM();
 
@@ -617,12 +624,11 @@ void SessionModel::incorporateCalculatedPeaks()
 
             handler->setStatus("Building set of previously found peaks...");
 
-            std::set<Peak3D*> found_peaks = numor->getPeaks();
+            std::set<sptrPeak3D> found_peaks = numor->getPeaks();
             std::set<Eigen::RowVector3i, compare_fn> found_hkls;
 
-            for (Peak3D* p: found_peaks)
+            for (sptrPeak3D p: found_peaks)
                 found_hkls.insert(p->getIntegerMillerIndices());
-
 
             handler->setStatus("Adding calculated peaks...");
 
@@ -640,7 +646,7 @@ void SessionModel::incorporateCalculatedPeaks()
                     continue;
 
                 // now we must add it, calculating shape from nearest peaks
-                Peak3D* new_peak = p.averagePeaks(numor, 200);
+                sptrPeak3D new_peak = p.averagePeaks(numor, 200);
 
                 if (!new_peak)
                     continue;
@@ -660,7 +666,7 @@ void SessionModel::incorporateCalculatedPeaks()
             }
         }
 
-        for (Peak3D* peak: calculated_peaks)
+        for (sptrPeak3D peak: calculated_peaks)
             numor->addPeak(peak);
 
         numor->integratePeaks(handler);

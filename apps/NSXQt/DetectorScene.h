@@ -27,6 +27,7 @@ class IData;
 namespace Crystal
 {
 class Peak3D;
+using sptrPeak3D = std::shared_ptr<Peak3D>;
 }
 }
 class QImage;
@@ -37,10 +38,11 @@ class MaskGraphicsItem;
 class PlottableGraphicsItem;
 class SXGraphicsItem;
 
-
 // For the plotting part, better to have RowMajor matrix to use QImage scanline function and
 // optimize cache hit.
 typedef Eigen::Matrix<int,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> rowMatrix;
+
+using SX::Crystal::sptrPeak3D;
 
 //! Master Scene containing the pixmap of the detector counts
 //! and overlayed graphics items (peaks, data cutters, masks ...)
@@ -55,7 +57,6 @@ public:
     explicit DetectorScene(QObject *parent = 0);
     std::shared_ptr<SX::Data::IData> getData();
     const rowMatrix& getCurrentFrame() const;
-    //const std::map<SX::Crystal::Peak3D*,PeakGraphicsItem*>& getPeaksGraphicsItems() const;
 
 signals:
      //! Signal emitted for all changes of the image
@@ -76,8 +77,8 @@ public slots:
     void setData(std::shared_ptr<SX::Data::IData>);
     void changeFrame(unsigned int frame=0);
     void setMaxIntensity(int);
-    PeakGraphicsItem* findPeakGraphicsItem(SX::Crystal::Peak3D* peak);
-    void setPeakIndex(SX::Crystal::Peak3D* peak,const Eigen::Vector3d& index);
+    PeakGraphicsItem* findPeakGraphicsItem(sptrPeak3D peak);
+    void setPeakIndex(sptrPeak3D peak,const Eigen::Vector3d& index);
     void updatePeaks();
     void updatePeakCalcs();
     //! Change interaction mode in the scene
@@ -117,7 +118,7 @@ private:
     bool _itemSelected;
     QGraphicsPixmapItem* _image;
     //! Contains peaks item of current data, reinitialized with new data set.
-    std::map<SX::Crystal::Peak3D*,PeakGraphicsItem*> _peakGraphicsItems;
+    std::map<sptrPeak3D,PeakGraphicsItem*> _peakGraphicsItems;
     std::vector<PeakCalcGraphicsItem*> _peakCalcs;
     QList<MaskGraphicsItem*> _masks;
     SXGraphicsItem* _lastClickedGI;
