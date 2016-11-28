@@ -40,6 +40,8 @@
 #include <vector>
 #include <set>
 
+#include <Eigen/Core>
+
 #include "UnitCell.h"
 
 namespace SX
@@ -54,7 +56,16 @@ namespace Crystal
 {
 
 class ResolutionShell {
+public:
+    ResolutionShell(double dmin, double dmax, double wavelength, SX::Crystal::UnitCell cell);
+    const std::vector<Eigen::Vector3i>& getIndices();
+private:
+    void computeIndices();
 
+    std::vector<Eigen::Vector3i> _hkls;
+    double _dmax, _dmin;
+    double _wavelength;
+    SX::Crystal::UnitCell _cell;
 
 };
 

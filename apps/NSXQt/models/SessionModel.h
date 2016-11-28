@@ -98,7 +98,6 @@ public slots:
     void findPeaks(const QModelIndex& index);
 
     void createNewExperiment();
-
     void absorptionCorrection();
     void showPeaksOpenGL();
     void findSpaceGroup();
@@ -107,6 +106,7 @@ public slots:
     void integrateCalculatedPeaks();
     void peakFitDialog();
     void incorporateCalculatedPeaks();
+    void applyResolutionCutoff(double dmin, double dmax);
 
 
 private:

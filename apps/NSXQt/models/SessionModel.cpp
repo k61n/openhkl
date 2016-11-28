@@ -66,8 +66,10 @@
 #include "Diffractometer.h"
 #include "Sample.h"
 #include "Source.h"
+#include "gcd.h"
 
 #include "dialogs/DialogCalculatedPeaks.h"
+#include "dialogs/ResolutionCutoffDialog.h"
 
 #include "PeakTableView.h"
 #include "AbsorptionDialog.h"
@@ -105,8 +107,8 @@
 #include <H5Exception.h>
 
 #include "PeakFitDialog.h"
-
 #include "DialogConvolve.h"
+#include "ResolutionShell.h"
 
 #include <QJsonObject>
 #include <QJsonArray>
@@ -582,6 +584,9 @@ void SessionModel::incorporateCalculatedPeaks()
     if (!dialog.exec())
         return;
 
+    const double dmax = dialog.dMax();
+    const double dmin = dialog.dMin();
+
     std::vector<std::shared_ptr<IData>> numors = getSelectedNumors();
 
     std::shared_ptr<SX::Utils::ProgressHandler> handler(new SX::Utils::ProgressHandler);
@@ -606,24 +611,23 @@ void SessionModel::incorporateCalculatedPeaks()
 
     int last_done = 0;
 
-    for(std::shared_ptr<IData> numor: numors)
-    {
+    for(std::shared_ptr<IData> numor: numors) {
         qDebug() << "Finding missing peaks for numor " << ++current_numor << " of " << numors.size();
 
+        const double wavelength = numor->getDiffractometer()->getSource()->getWavelength();
         std::vector<sptrPeak3D> calculated_peaks;
 
         shared_ptr<Sample> sample = numor->getDiffractometer()->getSample();
         int ncrystals = sample->getNCrystals();
 
-        for (int i = 0; i < ncrystals; ++i)
-        {
+        for (int i = 0; i < ncrystals; ++i) {
             SX::Crystal::SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
             auto ub = sample->getUnitCell(i)->getReciprocalStandardM();
 
             handler->setStatus("Calculating peak locations...");
 
             //auto predicted_hkls = sample->getUnitCell(i)->generateReflectionsInSphere(1.5);
-            auto predicted_hkls = sample->getUnitCell(i)->generateReflectionsInSphere(1.0);
+            auto predicted_hkls = sample->getUnitCell(i)->generateReflectionsInShell(dmin, dmax, wavelength);
             std::vector<SX::Crystal::PeakCalc> peaks = numor->hasPeaks(predicted_hkls, ub);
             calculated_peaks.reserve(peaks.size());
 
@@ -680,4 +684,64 @@ void SessionModel::incorporateCalculatedPeaks()
     }
 
     qDebug() << "Done incorporating missing peaks.";
+}
+
+void SessionModel::applyResolutionCutoff(double dmin, double dmax)
+{
+    int num_removed = 0;
+
+
+    double avg_d = 0;
+    int num_peaks = 0;
+
+    qDebug() << "Applying resolution cutoff...";
+
+    std::vector<std::shared_ptr<IData>> numors = getSelectedNumors();
+
+    for(std::shared_ptr<IData> numor: numors) {
+
+        std::vector<std::shared_ptr<Peak3D>> bad_peaks;
+
+        const double wavelength = numor->getDiffractometer()->getSource()->getWavelength();
+        shared_ptr<Sample> sample = numor->getDiffractometer()->getSample();
+
+        int ncrystals = sample->getNCrystals();
+
+        for (std::shared_ptr<Peak3D> peak: numor->getPeaks()) {
+            bool peak_good = false;
+
+            for (int i = 0; i < ncrystals && !peak_good; ++i) {
+                if (!peak->isSelected() || peak->isMasked())
+                    continue;
+
+                double d = 1.0 / peak->getQ().norm();
+
+//                if (peak->hasIntegerHKL(*sample->getUnitCell(i))) {
+//                    auto hkl = peak->getIntegerMillerIndices();
+//                    d *= SX::Utils::gcd(hkl(0), hkl(1), hkl(2));
+//                }
+
+                avg_d += d;
+                ++num_peaks;
+
+                if ( dmin <= d && d <= dmax)
+                    peak_good = true;
+            }
+
+            // did not satisfy resolution constraint for any crystal
+            if (!peak_good)
+                bad_peaks.push_back(peak);
+        }
+
+        // erase the bad peaks from the list
+        for (auto peak: bad_peaks) {
+            numor->removePeak(peak);
+            ++num_removed;
+        }
+    }
+
+    avg_d /= num_peaks;
+
+    qDebug() << "Done applying resolution cutoff. Removed " << num_removed << " peaks.";
+    qDebug() << "Average value of d for peaks is " << avg_d;
 }

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DialogCalculatedPeaks</class>
- <widget class="QDialog" name="DialogCalculatedPeaks">
+ <class>ResolutionCutoffDialog</class>
+ <widget class="QDialog" name="ResolutionCutoffDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>386</width>
-    <height>346</height>
+    <width>234</width>
+    <height>149</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,11 +17,11 @@
    <item row="0" column="0">
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>d min (angstrom)</string>
+      <string>d min</string>
      </property>
     </widget>
    </item>
-   <item row="0" column="2">
+   <item row="0" column="1">
     <widget class="QDoubleSpinBox" name="dMinSpinBox">
      <property name="maximum">
       <double>1000.000000000000000</double>
@@ -37,11 +37,11 @@
    <item row="1" column="0">
     <widget class="QLabel" name="label_2">
      <property name="text">
-      <string>d max (angstrom)</string>
+      <string>d max</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="2">
+   <item row="1" column="1">
     <widget class="QDoubleSpinBox" name="dMaxSpinBox">
      <property name="maximum">
       <double>1000.000000000000000</double>
@@ -55,26 +55,6 @@
     </widget>
    </item>
    <item row="2" column="0" colspan="2">
-    <widget class="QLabel" name="label_3">
-     <property name="text">
-      <string>search radius (in pixels)</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="2">
-    <widget class="QDoubleSpinBox" name="radiusSpinBox">
-     <property name="maximum">
-      <double>1000000.000000000000000</double>
-     </property>
-     <property name="singleStep">
-      <double>0.100000000000000</double>
-     </property>
-     <property name="value">
-      <double>100.000000000000000</double>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1" colspan="2">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -91,7 +71,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>DialogCalculatedPeaks</receiver>
+   <receiver>ResolutionCutoffDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -107,7 +87,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>DialogCalculatedPeaks</receiver>
+   <receiver>ResolutionCutoffDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
