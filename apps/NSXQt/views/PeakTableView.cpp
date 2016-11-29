@@ -53,6 +53,8 @@
 #include "ProgressView.h"
 #include "LogFileDialog.h"
 
+#include "ResolutionShell.h"
+
 PeakTableView::PeakTableView(QWidget *parent)
 : QTableView(parent),
   _columnUp(-1,false),
@@ -430,7 +432,7 @@ void PeakTableView::writeShelX()
             file << std::fixed;
             file << std::setprecision(0);
             file << std::setw(4);
-            file <<  hkl[1];
+            file << hkl[1];
 
             file << std::fixed;
             file << std::setprecision(0);
@@ -470,7 +472,10 @@ void PeakTableView::writeLog()
     }
 
     if (dialog.writeStatistics()) {
-        qDebug() << "writing of detailed statistics not yet implemented";
+        if (!writeStatistics(dialog.statisticsFilename(),
+                             _peaks,
+                             dialog.dmin(), dialog.dmax(), dialog.numShells()))
+            qCritical() << "Could not write statistics log to " << dialog.statisticsFilename().c_str();
     }
 }
 
@@ -619,14 +624,14 @@ std::string PeakTableView::getPeaksRange() const
 void PeakTableView::sortEquivalents()
 {
     qDebug() << "Sorting";
-    auto ptrcell=_peaks[0]->getUnitCell();
+    auto grp = SX::Crystal::SpaceGroup(_peaks[0]->getUnitCell()->getSpaceGroup());
     std::sort(_peaks.begin(),
               _peaks.end(),
               [&](sptrPeak3D p1, sptrPeak3D p2)
                 {
-                    Eigen::Vector3d hkl1=p1->getMillerIndices();
-                    Eigen::Vector3d hkl2=p2->getMillerIndices();
-                    if (ptrcell->isEquivalent(hkl1[0],hkl1[1],hkl1[2],hkl2[0],hkl2[1],hkl2[2]))
+                    Eigen::Vector3d hkl1 = p1->getMillerIndices();
+                    Eigen::Vector3d hkl2 = p2->getMillerIndices();
+                    if (grp.isEquivalent(hkl1, hkl2))
                         return true;
                     else
                         return false;
@@ -735,6 +740,37 @@ bool PeakTableView::writeNewShelX(std::string filename, const std::vector<sptrPe
     if (file.is_open())
         file.close();
 
+    return true;
+}
+
+bool PeakTableView::writeStatistics(std::string filename,
+                                    const std::vector<SX::Crystal::sptrPeak3D> &peaks,
+                                    double dmin, double dmax, int num_shells)
+{
+    std::fstream file(filename, std::ios::out);
+    SX::Crystal::ResolutionShell res = {dmin, dmax, num_shells};
+    std::vector<char> buf(1024, 0); // buffer for snprintf
+
+    if (!file.is_open()) {
+        qCritical() << "Error writing to this file, please check write permisions";
+        return false;
+    }
+
+    for (auto&& peak: peaks)
+        res.addPeak(peak);
+
+    auto&& ds = res.getD();
+    auto&& shells = res.getShells();
+
+    for (int i = 0; i < num_shells; ++i) {
+        const double d_lower = ds[i];
+        const double d_upper = ds[i+1];
+
+        std::snprintf(&buf[0], buf.size(), " %6.2f  %6.2f  %6d", d_lower, d_upper, shells[i].size());
+        file << &buf[0] << std::endl;
+    }
+
+    file.close();
     return true;
 }
 

@@ -95,6 +95,7 @@ public slots:
     void showPeaksMatchingText(QString text);
 private:
     static bool writeNewShelX(std::string filename, const std::vector<sptrPeak3D>& peaks);
+    static bool writeStatistics(std::string filename, const std::vector<sptrPeak3D>& peaks, double dmin, double dmax, int shells);
 
     void sortByHKL(bool up);
     void sortByIntensity(bool up);
