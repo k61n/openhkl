@@ -476,15 +476,28 @@ void PeakTableView::writeLog()
 
 void PeakTableView::sortByHKL(bool up)
 {
+    auto compare_fn = [](sptrPeak3D p1, sptrPeak3D p2) -> bool
+    {
+        auto hkl1 = p1->getMillerIndices();
+        auto hkl2 = p2->getMillerIndices();
+
+        if (hkl1[0] != hkl2[0])
+            return hkl1[0] < hkl2[0];
+        else if (hkl1[1] != hkl2[1])
+            return hkl1[1] < hkl2[1];
+        else
+            return hkl1[2] < hkl2[2];
+    };
+
+    auto compare_fn_up = [compare_fn](sptrPeak3D p1, sptrPeak3D p2) -> bool
+    {
+        return compare_fn(p2, p1);
+    };
+
     if (up)
-        std::sort(_peaks.begin(),_peaks.end(),
-              [&](sptrPeak3D p1, sptrPeak3D p2)
-              {
-                return (p2<p1);
-              }
-              );
+        std::sort(_peaks.begin(), _peaks.end(), compare_fn_up);
     else
-        std::sort(_peaks.begin(),_peaks.end());
+        std::sort(_peaks.begin(),_peaks.end(), compare_fn);
 }
 
 void PeakTableView::sortBySelected(bool up)
