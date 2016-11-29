@@ -611,6 +611,9 @@ void SessionModel::incorporateCalculatedPeaks()
 
     int last_done = 0;
 
+    int predicted_peaks = 0;
+    int observed_peaks = 0;
+
     for(std::shared_ptr<IData> numor: numors) {
         qDebug() << "Finding missing peaks for numor " << ++current_numor << " of " << numors.size();
 
@@ -628,6 +631,9 @@ void SessionModel::incorporateCalculatedPeaks()
 
             //auto predicted_hkls = sample->getUnitCell(i)->generateReflectionsInSphere(1.5);
             auto predicted_hkls = sample->getUnitCell(i)->generateReflectionsInShell(dmin, dmax, wavelength);
+
+            predicted_peaks += predicted_hkls.size();
+
             std::vector<SX::Crystal::PeakCalc> peaks = numor->hasPeaks(predicted_hkls, ub);
             calculated_peaks.reserve(peaks.size());
 
@@ -681,9 +687,11 @@ void SessionModel::incorporateCalculatedPeaks()
             numor->addPeak(peak);
 
         numor->integratePeaks(handler);
+        observed_peaks += numor->getPeaks().size();
     }
 
     qDebug() << "Done incorporating missing peaks.";
+    qDebug() << "Q coverage = " << (double)observed_peaks / (double)predicted_peaks * 100.0 << "%";
 }
 
 void SessionModel::applyResolutionCutoff(double dmin, double dmax)
