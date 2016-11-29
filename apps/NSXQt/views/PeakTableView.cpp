@@ -36,6 +36,7 @@
 #include <iostream>
 #include <set>
 #include <memory>
+#include <cstdio>
 
 #include <QContextMenuEvent>
 #include <QHeaderView>
@@ -105,45 +106,35 @@ void PeakTableView::peakChanged(QModelIndex current, QModelIndex last)
 
 void PeakTableView::sortByColumn(int i)
 {
-    if (i>5 || i==2 ||  _peaks.size()==0)
+    if (i>5 || i==2 || _peaks.size()==0)
         return;
 
     int& column=std::get<0>(_columnUp);
     bool& up=std::get<1>(_columnUp);
+
     // If column already sorted, swith direction
-    if (i==column)
-    {
-        up=!up;
+    if (i==column) {
+        up = !up;
     }
-    column=i;
+    column = i;
 
     switch (i)
     {
     case 0:
-    {
         sortByHKL(up);
         break;
-    }
     case 1:
-    {
         sortByIntensity(up);
         break;
-    }
     case 3:
-    {
         sortByTransmission(up);
         break;
-    }
     case 4:
-    {
         sortByNumor(up);
         break;
-    }
     case 5:
-    {
         sortBySelected(up);
         break;
-    }
     }
 
     constructTable();
@@ -177,7 +168,6 @@ void PeakTableView::constructTable()
     model->setHorizontalHeaderItem(3,new QStandardItem("Transmission"));
     model->setHorizontalHeaderItem(4,new QStandardItem("Numor"));
     model->setHorizontalHeaderItem(5,new QStandardItem("Selected"));
-
 
     int i = 0;
 
@@ -343,7 +333,7 @@ void PeakTableView::normalizeToMonitor()
 void PeakTableView::writeFullProf()
 {
     if (!_peaks.size())
-        qCritical()<<"No peaks in the table";
+        qCritical() << "No peaks in the table";
 
     if (!checkBeforeWriting())
         return;
@@ -357,7 +347,7 @@ void PeakTableView::writeFullProf()
     if (filename.isEmpty())
         return;
 
-    std::fstream file(filename.toStdString(),std::ios::out);
+    std::fstream file(filename.toStdString(), std::ios::out);
 
     if (!file.is_open()) {
         qCritical()<<"Error writing to this file, please check write permisions";
@@ -366,8 +356,9 @@ void PeakTableView::writeFullProf()
 
     file << "TITLE File written by ...\n";
     file << "(3i4,2F14.4,i5,4f8.2)\n";
-    double wave=_peaks[0]->getData()->getMetadata()->getKey<double>("wavelength");
+    double wave = _peaks[0]->getData()->getMetadata()->getKey<double>("wavelength");
     file << std::fixed << std::setw(8) << std::setprecision(3) << wave << " 0 0" << std::endl;
+
     for (sptrPeak3D peak: _peaks) {
         if (peak->isSelected()) {
             const Eigen::RowVector3d& hkl=peak->getMillerIndices();
@@ -375,8 +366,8 @@ void PeakTableView::writeFullProf()
             file << std::setprecision(0);
             file << std::setw(4);
             file << hkl[0] << std::setw(4) <<  hkl[1] << std::setw(4) << hkl[2];
-            double l=peak->getLorentzFactor();
-            double t=peak->getTransmission();
+            double l = peak->getLorentzFactor();
+            double t = peak->getTransmission();
             file << std::fixed << std::setw(14) << std::setprecision(4) << peak->getScaledIntensity()/l/t;
             file << std::fixed << std::setw(14) << std::setprecision(4) << peak->getScaledSigma()/l/t;
             file << std::setprecision(0) << std::setw(5) << 1  << std::endl;
@@ -460,10 +451,27 @@ void PeakTableView::writeLog()
 {
     LogFileDialog dialog;
 
+    if (!_peaks.size()) {
+        qCritical() << "No peaks in the table";
+        return;
+    }
+
+    // return if user cancels dialog
     if (!dialog.exec())
         return;
 
+    if (dialog.writeUnmerged()) {
+        if (!writeNewShelX(dialog.unmergedFilename(), _peaks))
+            qCritical() << "Could not write unmerged data to " << dialog.unmergedFilename().c_str();
+    }
 
+    if (dialog.writeMerged()) {
+        qDebug() << "writing of merged data not yet implemented";
+    }
+
+    if (dialog.writeStatistics()) {
+        qDebug() << "writing of detailed statistics not yet implemented";
+    }
 }
 
 void PeakTableView::sortByHKL(bool up)
@@ -663,6 +671,58 @@ void PeakTableView::showPeaksMatchingText(QString text)
         else
             setRowHidden(row, false);
     }
+}
+
+bool PeakTableView::writeNewShelX(std::string filename, const std::vector<sptrPeak3D> &peaks)
+{
+    std::fstream file(filename, std::ios::out);
+    std::vector<char> buf(1024, 0); // buffer for snprintf
+
+    if (!file.is_open()) {
+        qCritical() << "Error writing to this file, please check write permisions";
+        return false;
+    }
+
+    auto sptrBasis = peaks[0]->getUnitCell();
+
+    if (!sptrBasis) {
+        qCritical() << "No unit cell defined the peaks. No index can be defined.";
+        return false;
+    }
+
+    for (sptrPeak3D peak: peaks) {
+        if (peak->isMasked() || !peak->isSelected())
+            continue;
+
+        const Eigen::RowVector3d& hkl = peak->getMillerIndices();
+        auto sptrCurrentBasis = peak->getUnitCell();
+
+        if (sptrCurrentBasis != sptrBasis) {
+            qCritical() << "Not all the peaks have the same unit cell. Multi crystal not implement yet";
+            return false;
+        }
+
+        if (!(peak->hasIntegerHKL(*sptrCurrentBasis,0.2)))
+            continue;
+
+        const int h = std::round(hkl[0]);
+        const int k = std::round(hkl[1]);
+        const int l = std::round(hkl[2]);
+
+        double lorentz = peak->getLorentzFactor();
+        double trans = peak->getTransmission();
+
+        double intensity = peak->getScaledIntensity() / lorentz / trans;
+        double sigma = peak->getScaledSigma() / lorentz / trans;
+
+        std::snprintf(&buf[0], buf.size(), "  %4d %4d %4d %15.2f %10.2f", h, k, l, intensity, sigma);
+        file << &buf[0] << std::endl;
+    }
+
+    if (file.is_open())
+        file.close();
+
+    return true;
 }
 
 

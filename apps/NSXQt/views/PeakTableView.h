@@ -94,6 +94,8 @@ public slots:
     //! Search peaks with hkl matching part of the string. Text must represent h,k,l values separated by white spaces
     void showPeaksMatchingText(QString text);
 private:
+    static bool writeNewShelX(std::string filename, const std::vector<sptrPeak3D>& peaks);
+
     void sortByHKL(bool up);
     void sortByIntensity(bool up);
     void sortByNumor(bool up);
