@@ -42,7 +42,7 @@
 
 #include <Eigen/Core>
 
-#include "UnitCell.h"
+#include "Peak3D.h"
 
 namespace SX
 {
@@ -57,15 +57,14 @@ namespace Crystal
 
 class ResolutionShell {
 public:
-    ResolutionShell(double dmin, double dmax, double wavelength, SX::Crystal::UnitCell cell);
-    const std::vector<Eigen::Vector3i>& getIndices();
+    ResolutionShell(double dmin, double dmax, int num_shells);
+    void addPeak(sptrPeak3D peak);
+    const std::vector<std::vector<sptrPeak3D>>& getShells() const;
+    const std::vector<double>& getD() const;
 private:
-    void computeIndices();
-
-    std::vector<Eigen::Vector3i> _hkls;
     double _dmax, _dmin;
-    double _wavelength;
-    SX::Crystal::UnitCell _cell;
+    std::vector<std::vector<sptrPeak3D>> _shells;
+    std::vector<double> _d;
 
 };
 

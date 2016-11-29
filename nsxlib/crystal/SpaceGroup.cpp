@@ -306,7 +306,7 @@ bool SpaceGroup::isEquivalent(double h1, double k1, double l1, double h2, double
     return isEquivalent(Eigen::Vector3d(h1, k1, l1), Eigen::Vector3d(h2, k2, l2));
 }
 
-bool SpaceGroup::isEquivalent(const Eigen::Vector3d &a, const Eigen::Vector3d &b) const
+bool SpaceGroup::isEquivalent(const Eigen::Vector3d& a, const Eigen::Vector3d& b) const
 {
     const auto& elements = getGroupElements();
 
