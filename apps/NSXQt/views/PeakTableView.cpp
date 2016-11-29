@@ -1,3 +1,34 @@
+/*
+ * nsxtool : Neutron Single Crystal analysis toolkit
+    ------------------------------------------------------------------------------------------
+    Copyright (C)
+    2016- Laurent C. Chapon, Eric C. Pellegrini Institut Laue-Langevin
+          Jonathan Fisher, Forschungszentrum Juelich GmbH
+    BP 156
+    6, rue Jules Horowitz
+    38042 Grenoble Cedex 9
+    France
+    chapon[at]ill.fr
+    pellegrini[at]ill.fr
+    j.fisher[at]fz-juelich.de
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Lesser General Public
+    License as published by the Free Software Foundation; either
+    version 2.1 of the License, or (at your option) any later version.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public
+    License along with this library; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ */
+
+
 #include "PeakTableView.h"
 
 #include <fstream>
@@ -19,6 +50,7 @@
 #include "Peak3D.h"
 #include "ProgressHandler.h"
 #include "ProgressView.h"
+#include "LogFileDialog.h"
 
 PeakTableView::PeakTableView(QWidget *parent)
 : QTableView(parent),
@@ -41,22 +73,21 @@ PeakTableView::PeakTableView(QWidget *parent)
     connect(horizontal,SIGNAL(sectionClicked(int)),this,SLOT(sortByColumn(int)));
 
     // Signal sent when clicking on a row to plot peak
-    QHeaderView* vertical=this->verticalHeader();
+    QHeaderView* vertical = this->verticalHeader();
     connect(vertical, &QHeaderView::sectionClicked, [&](int index)
                                                  {
                                                   sptrPeak3D peak=_peaks[index];
                                                   emit plotPeak(peak);
                                                  });
 
-    connect(this,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(deselectPeak(QModelIndex)));
+    connect(this, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(deselectPeak(QModelIndex)));
     // Hide the vertical Header
     //this->verticalHeader()->hide();
 }
 
 void PeakTableView::setData(std::vector<std::shared_ptr<SX::Data::IData>> data)
 {
-    for (auto ptr : data)
-    {
+    for (auto ptr: data) {
         // Add peaks present in this numor to the LatticeFinder
         for (sptrPeak3D peak : ptr->getPeaks())
             _peaks.push_back(peak);
@@ -66,8 +97,7 @@ void PeakTableView::setData(std::vector<std::shared_ptr<SX::Data::IData>> data)
 
 void PeakTableView::peakChanged(QModelIndex current, QModelIndex last)
 {
-    if (current.row()!=last.row())
-    {
+    if (current.row() != last.row()) {
         sptrPeak3D peak=_peaks[current.row()];
         emit plotPeak(peak);
     }
@@ -152,8 +182,7 @@ void PeakTableView::constructTable()
     int i = 0;
 
     // Setup content of the table
-    for (sptrPeak3D peak : _peaks)
-    {
+    for (sptrPeak3D peak: _peaks) {
         const Eigen::RowVector3d& hkl = peak->getMillerIndices();
 
         QStandardItem* col0 = new QStandardItem(QString::number(hkl[0],'f',2)
@@ -188,7 +217,8 @@ void PeakTableView::constructTable()
     this->setColumnWidth(0,150);
 
     // Signal sent when the user navigates the table (e.g. up down arrow )
-    connect(this->selectionModel(),SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),this,SLOT(peakChanged(QModelIndex,QModelIndex)));
+    connect(this->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
+            this, SLOT(peakChanged(QModelIndex,QModelIndex)));
 }
 
 void PeakTableView::mousePressEvent(QMouseEvent *event)
@@ -201,41 +231,41 @@ void PeakTableView::mousePressEvent(QMouseEvent *event)
 
 void PeakTableView::keyPressEvent(QKeyEvent *event)
 {
-    QModelIndexList selected=selectedIndexes();
+    QModelIndexList selected = selectedIndexes();
     if (selected.isEmpty())
         return;
 
     // take last element
-    QModelIndex last=selected.last();
-    unsigned int index=last.row();
-    if (event->key() ==Qt::Key_Up) // Deal with up and down arrow
-    {
+    QModelIndex last = selected.last();
+    unsigned int index = last.row();
+
+    if (event->key() == Qt::Key_Up)  {
        --index;
     }
-    else if (event->key() ==Qt::Key_Down)
-    {
+    else if (event->key() == Qt::Key_Down) {
         ++index;
     }
-    else if (event->key()==Qt::Key_Space) // Change status of peak from unselected to selected by using spacebar
-    {
-        sptrPeak3D peak=_peaks[index];
-        bool newstatus=!(peak->isSelected());
+    // Change status of peak from unselected to selected by using spacebar
+    else if (event->key() == Qt::Key_Space) {
+        sptrPeak3D peak = _peaks[index];
+        bool newstatus = !(peak->isSelected());
         peak->setSelected(newstatus);
-        QStandardItemModel* model=dynamic_cast<QStandardItemModel*>(this->model());
+        QStandardItemModel* model = dynamic_cast<QStandardItemModel*>(this->model());
+
         if (newstatus)
-            model->setItem(index,5,new QStandardItem(QIcon(":/resources/peakSelectedIcon.png"),""));
+            model->setItem(index, 5, new QStandardItem(QIcon(":/resources/peakSelectedIcon.png"),""));
         else
-            model->setItem(index,5,new QStandardItem(QIcon(":/resources/peakDeselectedIcon.png"),""));
+            model->setItem(index, 5, new QStandardItem(QIcon(":/resources/peakDeselectedIcon.png"),""));
         emit plotPeak(peak);
     }
 
     if (index>_peaks.size()-1)
         return;
-    if (!isRowHidden(index))
-    {
+
+    if (!isRowHidden(index)) {
         clearSelection();
         selectRow(index);
-        sptrPeak3D peak=_peaks[index];
+        sptrPeak3D peak = _peaks[index];
         emit plotPeak(peak);
     }
 }
@@ -243,68 +273,69 @@ void PeakTableView::keyPressEvent(QKeyEvent *event)
 void PeakTableView::contextMenuEvent(QContextMenuEvent* event)
 {
     // Show all peaks as selected when contet menu is requested
-    QMenu* menu=new QMenu(this);
-    //
-    QAction* sortbyEquivalence=new QAction("Sort by equivalences",menu);
-    menu->addAction(sortbyEquivalence);
-    connect(sortbyEquivalence,SIGNAL(triggered()),this,SLOT(sortEquivalents()));
+    QMenu* menu = new QMenu(this);
 
-    QAction* normalize=new QAction("Normalize to monitor",menu);
+    QAction* sortbyEquivalence = new QAction("Sort by equivalences", menu);
+    menu->addAction(sortbyEquivalence);
+    connect(sortbyEquivalence, SIGNAL(triggered()), this, SLOT(sortEquivalents()));
+
+    QAction* normalize = new QAction("Normalize to monitor", menu);
     menu->addSeparator();
     menu->addAction(normalize);
-    QMenu* writeMenu=menu->addMenu("Write");
-    QAction* writeFullProf=new QAction("FullProf file",writeMenu);
-    QAction* writeShelX=new QAction("SHELX file",writeMenu);
+    QMenu* writeMenu = menu->addMenu("Write");
+    QAction* writeFullProf = new QAction("FullProf file", writeMenu);
+    QAction* writeShelX = new QAction("SHELX file", writeMenu);
+    QAction* writeLog = new QAction("Detailed log file", writeMenu);
     writeMenu->addAction(writeFullProf);
     writeMenu->addAction(writeShelX);
+    writeMenu->addAction(writeLog);
 
     // Menu to plot against metadata
     QModelIndexList indexList = selectionModel()->selectedIndexes();
-    if (indexList.size()) //at least on peak
-    {
-        QMenu* plotasmenu=menu->addMenu("Plot as");
-        SX::Data::MetaData* met=_peaks[indexList[0].row()]->getData()->getMetadata();
-        const std::set<std::string>& keys=met->getAllKeys();
-        for (const auto& key : keys)
-        {
-             try
-             {
+    //at least one peak
+    if (indexList.size()) {
+        QMenu* plotasmenu = menu->addMenu("Plot as");
+        SX::Data::MetaData* met = _peaks[indexList[0].row()]->getData()->getMetadata();
+        const std::set<std::string>& keys = met->getAllKeys();
+
+        for (const auto& key: keys) {
+            try {
                 met->getKey<double>(key); //Ensure metadata is a Numeric tyoe
-             }catch(std::exception& e)
-            {
+            }
+            catch(std::exception& e) {
                 continue;
             }
-             QAction* newparam=new QAction(QString::fromStdString(key),plotasmenu);
-             connect(newparam,&QAction::triggered,this,[&](){plotAs(key);}); // New way to connect slot using C++ 2011 lambda sicne Qt 5
-             plotasmenu->addAction(newparam);
+            QAction* newparam = new QAction(QString::fromStdString(key),plotasmenu);
+            connect(newparam,&QAction::triggered, this, [&](){plotAs(key);});
+            plotasmenu->addAction(newparam);
         }
     }
 
     // Connections
-    connect(normalize,SIGNAL(triggered()),this,SLOT(normalizeToMonitor()));
-    connect(writeFullProf,SIGNAL(triggered()),this,SLOT(writeFullProf()));
-    connect(writeShelX,SIGNAL(triggered()),this,SLOT(writeShelX()));
-    menu->popup(event->globalPos());
+    connect(normalize, SIGNAL(triggered()), this, SLOT(normalizeToMonitor()));
+    connect(writeFullProf, SIGNAL(triggered()), this, SLOT(writeFullProf()));
+    connect(writeShelX, SIGNAL(triggered()), this, SLOT(writeShelX()));
+    connect(writeLog, SIGNAL(triggered()), this, SLOT(writeLog()));
 
+    menu->popup(event->globalPos());
 }
 
 void PeakTableView::normalizeToMonitor()
 {
     bool ok;
     double factor = QInputDialog::getDouble(this,"Enter normalization factor","",1,1,100000000,1,&ok);
-    if (ok)
-    {
+    if (ok) {
         for (sptrPeak3D peak : _peaks)
             peak->setScale(factor/peak->getData()->getMetadata()->getKey<double>("monitor"));
         // Keep track of the last selected index before rebuilding the table
         QModelIndex index=currentIndex();
         constructTable();
-        _normalized=true;
+        _normalized = true;
         selectRow(index.row());
         // If no row selected do nothing else.
         if (!index.isValid())
             return;
-        sptrPeak3D peak=_peaks[index.row()];
+        sptrPeak3D peak = _peaks[index.row()];
         emit plotPeak(peak);
     }
 }
@@ -314,7 +345,7 @@ void PeakTableView::writeFullProf()
     if (!_peaks.size())
         qCritical()<<"No peaks in the table";
 
-    if (!checkBeforeWritting())
+    if (!checkBeforeWriting())
         return;
 
     QString filename = QFileDialog::getSaveFileName(this,
@@ -328,8 +359,7 @@ void PeakTableView::writeFullProf()
 
     std::fstream file(filename.toStdString(),std::ios::out);
 
-    if (!file.is_open())
-    {
+    if (!file.is_open()) {
         qCritical()<<"Error writing to this file, please check write permisions";
         return;
     }
@@ -338,10 +368,8 @@ void PeakTableView::writeFullProf()
     file << "(3i4,2F14.4,i5,4f8.2)\n";
     double wave=_peaks[0]->getData()->getMetadata()->getKey<double>("wavelength");
     file << std::fixed << std::setw(8) << std::setprecision(3) << wave << " 0 0" << std::endl;
-    for (sptrPeak3D peak : _peaks)
-    {
-        if (peak->isSelected())
-        {
+    for (sptrPeak3D peak: _peaks) {
+        if (peak->isSelected()) {
             const Eigen::RowVector3d& hkl=peak->getMillerIndices();
 
             file << std::setprecision(0);
@@ -361,13 +389,12 @@ void PeakTableView::writeFullProf()
 
 void PeakTableView::writeShelX()
 {
-    if (!_peaks.size())
-    {
-        qCritical()<<"No peaks in the table";
+    if (!_peaks.size()) {
+        qCritical() << "No peaks in the table";
         return;
     }
 
-    if (!checkBeforeWritting())
+    if (!checkBeforeWriting())
         return;
 
     QString filename = QFileDialog::getSaveFileName(this,
@@ -379,36 +406,30 @@ void PeakTableView::writeShelX()
     if (filename.isEmpty())
         return;
 
-    std::fstream file(filename.toStdString().c_str(),std::ios::out);
-    if (!file.is_open())
-    {
-        qCritical()<<"Error writing to this file, please check write permisions";
+    std::fstream file(filename.toStdString().c_str(), std::ios::out);
+    if (!file.is_open()) {
+        qCritical() << "Error writing to this file, please check write permisions";
         return;
     }
 
     auto sptrBasis = _peaks[0]->getUnitCell();
-    if (sptrBasis==nullptr)
-    {
-        qCritical()<<"No unit cell defined the peaks. No index can be defined.";
+    if (sptrBasis == nullptr) {
+        qCritical() << "No unit cell defined the peaks. No index can be defined.";
         return;
     }
 
-    for (sptrPeak3D peak : _peaks)
-    {
-        if (peak->isSelected())
-        {
-            const Eigen::RowVector3d& hkl=peak->getMillerIndices();
-
+    for (sptrPeak3D peak: _peaks) {
+        if (peak->isSelected()) {
+            const Eigen::RowVector3d& hkl = peak->getMillerIndices();
             auto sptrCurrentBasis = peak->getUnitCell();
 
-            if (sptrCurrentBasis!=sptrBasis)
-			{
-				qCritical()<<"Not all the peaks have the same unit cell. Multi crystal not implement yet";
-				return;
-			}
+            if (sptrCurrentBasis != sptrBasis) {
+                qCritical()<<"Not all the peaks have the same unit cell. Multi crystal not implement yet";
+                return;
+            }
 
             if (!(peak->hasIntegerHKL(*sptrCurrentBasis,0.2)))
-            	continue;
+                continue;
 
             file << std::fixed;
             file << std::setprecision(0);
@@ -425,14 +446,24 @@ void PeakTableView::writeShelX()
             file << std::setw(4);
             file << hkl[2];
 
-            double l=peak->getLorentzFactor();
-            double t=peak->getTransmission();
+            double l = peak->getLorentzFactor();
+            double t = peak->getTransmission();
             file << std::fixed << std::setw(8) << std::setprecision(2) << peak->getScaledIntensity()/l/t;
             file << std::fixed << std::setw(8) << std::setprecision(2) << peak->getScaledSigma()/l/t <<std::endl;
         }
     }
     if (file.is_open())
         file.close();
+}
+
+void PeakTableView::writeLog()
+{
+    LogFileDialog dialog;
+
+    if (!dialog.exec())
+        return;
+
+
 }
 
 void PeakTableView::sortByHKL(bool up)
@@ -504,23 +535,23 @@ void PeakTableView::sortByNumor(bool up)
         std::sort(_peaks.begin(),_peaks.end(),
               [&](sptrPeak3D p1, sptrPeak3D p2)
                 {
-                    int numor1=p1->getData()->getMetadata()->getKey<int>("Numor");
-                    int numor2=p2->getData()->getMetadata()->getKey<int>("Numor");
+                    int numor1 = p1->getData()->getMetadata()->getKey<int>("Numor");
+                    int numor2 = p2->getData()->getMetadata()->getKey<int>("Numor");
                     return (numor1>numor2);
                 });
     else
         std::sort(_peaks.begin(),_peaks.end(),
               [&](sptrPeak3D p1, sptrPeak3D p2)
                 {
-                    int numor1=p1->getData()->getMetadata()->getKey<int>("Numor");
-                    int numor2=p2->getData()->getMetadata()->getKey<int>("Numor");
+                    int numor1 = p1->getData()->getMetadata()->getKey<int>("Numor");
+                    int numor2 = p2->getData()->getMetadata()->getKey<int>("Numor");
                     return (numor1<numor2);
                 });
 }
 
 void PeakTableView::deselectPeak(QModelIndex index)
 {
-    sptrPeak3D peak=_peaks[index.row()];
+    sptrPeak3D peak = _peaks[index.row()];
     peak->setSelected(!peak->isSelected());
     constructTable();
 }
@@ -537,8 +568,7 @@ void PeakTableView::plotAs(const std::string& key)
     QVector<double> y(nPoints);
     QVector<double> e(nPoints);
 
-    for (int i=0;i<nPoints;++i)
-    {
+    for (int i = 0; i < nPoints; ++i) {
         sptrPeak3D p=_peaks[indexList[i].row()];
         x[i]=p->getData()->getMetadata()->getKey<double>(key);
         y[i]=p->getScaledIntensity();
@@ -583,10 +613,9 @@ void PeakTableView::sortEquivalents()
               );
 }
 
-bool PeakTableView::checkBeforeWritting()
+bool PeakTableView::checkBeforeWriting()
 {
-    if (!_normalized)
-    {
+    if (!_normalized) {
         int reply=QMessageBox::question(this,"Writing data","No normalisation (time/monitor) has been found. Are you sure you want to export",(QMessageBox::Yes | QMessageBox::Abort));
         if (reply==QMessageBox::Abort)
             return false;
@@ -614,27 +643,25 @@ void PeakTableView::showPeaksMatchingText(QString text)
     double k=list[1].toDouble(&okk);
     double l=list[2].toDouble(&okl);
 
-    if (!(okh && okk && okl)) // If problem parsing h k l into double
-    {
+    // If problem parsing h k l into double
+    if (!(okh && okk && okl)) {
         unsigned int row=0;
-        for (row=0;row<_peaks.size();row++)
-        {
-            setRowHidden(row,false);
+        for (row = 0; row < _peaks.size(); row++) {
+            setRowHidden(row, false);
         }
         return;
     }
 
-    unsigned int row=0;
-    for (row=0;row<_peaks.size();row++)
-    {
-        sptrPeak3D p=_peaks[row];
-        Eigen::Vector3d hkl=p->getMillerIndices();
-        if (std::fabs(hkl[0]-h)>1e-2 || std::fabs(hkl[1]-k)>1e-2 || std::fabs(hkl[2]-l)>1e-2)
-        {
-            setRowHidden(row,true);
+    unsigned int row = 0;
+    for (row = 0; row < _peaks.size(); row++) {
+        sptrPeak3D p = _peaks[row];
+        Eigen::Vector3d hkl = p->getMillerIndices();
+
+        if (std::fabs(hkl[0]-h)>1e-2 || std::fabs(hkl[1]-k)>1e-2 || std::fabs(hkl[2]-l)>1e-2) {
+            setRowHidden(row, true);
         }
         else
-            setRowHidden(row,false);
+            setRowHidden(row, false);
     }
 }
 
