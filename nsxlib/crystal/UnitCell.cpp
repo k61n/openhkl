@@ -381,6 +381,8 @@ std::vector<Eigen::Vector3d> UnitCell::generateReflectionsInShell(double dmin, d
     const int num_hkl = 2*hkl_max+1;
     hkls.reserve(num_hkl*num_hkl*num_hkl);
 
+    SX::Crystal::SpaceGroup group(getSpaceGroup());
+
     for (int h = -hkl_max; h <= hkl_max; ++h) {
         for (int k = -hkl_max; k <= hkl_max; ++k) {
             for (int l = -hkl_max; l <= hkl_max; ++l) {
@@ -403,6 +405,10 @@ std::vector<Eigen::Vector3d> UnitCell::generateReflectionsInShell(double dmin, d
 
                 // scattering angle too small
                 if ( d > dmax)
+                    continue;
+
+                // skip those HKL which are forbidden by the space group
+                if (group.isExtinct(h, k, l))
                     continue;
 
                 hkls.push_back(Eigen::Vector3i(h, k, l).cast<double>());
