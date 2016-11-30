@@ -45,7 +45,7 @@ namespace Crystal
 {
 
 MergedPeak::MergedPeak(SpaceGroup &grp):
-    _grp{grp}, _peaks{}, _intensity{0}, _sigma{0}
+  _grp(grp), _peaks(), _intensity(0), _sigma(0)
 {
 
 }
