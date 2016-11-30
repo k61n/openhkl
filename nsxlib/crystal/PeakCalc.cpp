@@ -64,6 +64,11 @@ sptrPeak3D PeakCalc::averagePeaks(std::shared_ptr<Data::IData> data, double dist
 {
     Eigen::Matrix3d peak_shape, bkg_shape;
     sptrPeak3D peak = sptrPeak3D(new Peak3D(data));
+
+    std::vector<sptrPeak3D> neighbors;
+
+    const double original_distance = distance;
+
     // An averaged peak is by definition not an observed peak but a calculated peak
     peak->setObserved(false);
 
