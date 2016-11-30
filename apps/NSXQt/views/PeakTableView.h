@@ -95,7 +95,8 @@ public slots:
     void showPeaksMatchingText(QString text);
 private:
     static bool writeNewShelX(std::string filename, const std::vector<sptrPeak3D>& peaks);
-    static bool writeStatistics(std::string filename, const std::vector<sptrPeak3D>& peaks, double dmin, double dmax, int shells);
+    static bool writeStatistics(std::string filename, const std::vector<sptrPeak3D>& peaks,
+                                double dmin, double dmax, int shells, bool friedel);
 
     void sortByHKL(bool up);
     void sortByIntensity(bool up);
@@ -111,6 +112,7 @@ private:
     PeakCustomPlot* _plotter;
     //! Flag indicating that data have been normalized either to time or monitor.
     bool _normalized;
+    bool _friedel;
 
 };
 

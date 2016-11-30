@@ -301,29 +301,27 @@ std::ostream& operator<<(std::ostream& os, const SpaceGroup& sg)
     return os;
 }
 
-bool SpaceGroup::isEquivalent(double h1, double k1, double l1, double h2, double k2, double l2) const
+bool SpaceGroup::isEquivalent(double h1, double k1, double l1, double h2, double k2, double l2, bool friedel) const
 {
-    return isEquivalent(Eigen::Vector3d(h1, k1, l1), Eigen::Vector3d(h2, k2, l2));
+    return isEquivalent(Eigen::Vector3d(h1, k1, l1), Eigen::Vector3d(h2, k2, l2), friedel);
 }
 
-bool SpaceGroup::isEquivalent(const Eigen::Vector3d& a, const Eigen::Vector3d& b) const
+bool SpaceGroup::isEquivalent(const Eigen::Vector3d& a, const Eigen::Vector3d& b, bool friedel) const
 {
     const auto& elements = getGroupElements();
+    const double eps = 1e-6;
 
     for (const auto& element : elements) {
         // jmf: check that this edit is correct!
         const auto rotation = element.getRotationPart();
         const auto rotated = rotation * a;
-        const auto diff1 = rotated-b;
-        const auto diff2 = b-rotated;
 
-        volatile double max1 = diff1.maxCoeff();
-        volatile double max2 = diff2.maxCoeff();
-
-        const double max = std::max((rotated-b).maxCoeff(), (b-rotated).maxCoeff());
-
-        if (max < 1e-6)
+        if (std::max((rotated-b).maxCoeff(), (b-rotated).maxCoeff()) < eps)
             return true;
+
+        if (friedel)
+            if (std::max((rotated+b).maxCoeff(), (-b-rotated).maxCoeff()) < eps)
+                return true;
     }
     return false;
 }

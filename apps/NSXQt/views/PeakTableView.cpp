@@ -463,6 +463,8 @@ void PeakTableView::writeLog()
     if (!dialog.exec())
         return;
 
+    _friedel = dialog.friedel();
+
     if (dialog.writeUnmerged()) {
         if (!writeNewShelX(dialog.unmergedFilename(), _peaks))
             qCritical() << "Could not write unmerged data to " << dialog.unmergedFilename().c_str();
@@ -475,7 +477,7 @@ void PeakTableView::writeLog()
     if (dialog.writeStatistics()) {
         if (!writeStatistics(dialog.statisticsFilename(),
                              _peaks,
-                             dialog.dmin(), dialog.dmax(), dialog.numShells()))
+                             dialog.dmin(), dialog.dmax(), dialog.numShells(), _friedel))
             qCritical() << "Could not write statistics log to " << dialog.statisticsFilename().c_str();
     }
 }
@@ -746,7 +748,7 @@ bool PeakTableView::writeNewShelX(std::string filename, const std::vector<sptrPe
 
 bool PeakTableView::writeStatistics(std::string filename,
                                     const std::vector<SX::Crystal::sptrPeak3D> &peaks,
-                                    double dmin, double dmax, int num_shells)
+                                    double dmin, double dmax, int num_shells, bool friedel)
 {
     std::fstream file(filename, std::ios::out);
     SX::Crystal::ResolutionShell res = {dmin, dmax, num_shells};
@@ -848,7 +850,7 @@ bool PeakTableView::writeStatistics(std::string filename,
                 continue;
 
             // peak was not equivalent to any of the merged peaks
-            SX::Crystal::MergedPeak new_peak(grp);
+            SX::Crystal::MergedPeak new_peak(grp, friedel);
             new_peak.addPeak(peak);
             merged_peaks.push_back(new_peak);
         }

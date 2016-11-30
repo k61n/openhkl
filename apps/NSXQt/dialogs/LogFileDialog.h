@@ -61,6 +61,8 @@ public:
 
     double numShells() const;
 
+    bool friedel() const;
+
 private slots:
     void on_statisticsBox_toggled(bool checked);
     void on_mergedBox_toggled(bool checked);

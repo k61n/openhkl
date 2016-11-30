@@ -54,7 +54,7 @@ namespace Crystal
 class MergedPeak
 {
 public:
-    MergedPeak(SpaceGroup grp);
+    MergedPeak(SpaceGroup grp, bool friedel=false);
     MergedPeak(const MergedPeak& other);
     ~MergedPeak();
 
@@ -73,6 +73,7 @@ private:
     double _intensity, _sigma, _chiSquared;
     std::vector<sptrPeak3D> _peaks;
     SX::Crystal::SpaceGroup _grp;
+    bool _friedel;
 };
 
 

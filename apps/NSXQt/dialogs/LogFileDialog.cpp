@@ -91,6 +91,11 @@ double LogFileDialog::numShells() const
     return ui->shellBox->value();
 }
 
+bool LogFileDialog::friedel() const
+{
+    return ui->friedelBox->isChecked();
+}
+
 void LogFileDialog::on_statisticsBox_toggled(bool checked)
 {
     if (!checked) {

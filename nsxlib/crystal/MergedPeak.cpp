@@ -44,14 +44,14 @@ namespace SX
 namespace Crystal
 {
 
-MergedPeak::MergedPeak(SpaceGroup grp):
-  _grp(grp), _peaks(), _intensity(0), _sigma(0), _hkl(), _chiSquared(0.0)
+MergedPeak::MergedPeak(SpaceGroup grp, bool friedel):
+  _grp(grp), _peaks(), _intensity(0), _sigma(0), _hkl(), _chiSquared(0.0), _friedel(friedel)
 {
 
 }
 
 MergedPeak::MergedPeak(const MergedPeak &other):
-    _grp(other._grp), _peaks(other._peaks),
+    _grp(other._grp), _peaks(other._peaks), _friedel(other._friedel),
     _intensity(other._intensity), _sigma(other._sigma),
     _hkl(other._hkl), _chiSquared(other._chiSquared)
 {
@@ -66,7 +66,7 @@ MergedPeak::~MergedPeak()
 bool MergedPeak::addPeak(sptrPeak3D peak)
 {
     // peak is not equivalent to one already on the list
-    if (_peaks.size() && !_grp.isEquivalent(_hkl.cast<double>(), peak->getMillerIndices()))
+    if (_peaks.size() && !_grp.isEquivalent(_hkl.cast<double>(), peak->getMillerIndices(), _friedel))
         return false;
 
     // add peak to list
@@ -75,10 +75,10 @@ bool MergedPeak::addPeak(sptrPeak3D peak)
     volatile int test = 0;
 
     // jmf debugging
-    if (_peaks.size() > _grp.getGroupElements().size()) {
-        std::cout << "something funny is happening!" << std::endl;
-        test = 1;
-    }
+//    if (_peaks.size() > _grp.getGroupElements().size()) {
+//        std::cout << "something funny is happening!" << std::endl;
+//        test = 1;
+//    }
 
     // this was the first peak, so we have to update _hkl
     _hkl = peak->getIntegerMillerIndices();
@@ -109,7 +109,7 @@ double MergedPeak::chiSquared() const
 
 int MergedPeak::redundancy() const
 {
-    assert(_peaks.size() <= _grp.getGroupElements().size());
+    assert(_peaks.size() <= (_friedel ? 2:1) * _grp.getGroupElements().size());
     return _peaks.size();
 }
 

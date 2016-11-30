@@ -87,9 +87,9 @@ public:
     std::vector<std::vector<sptrPeak3D>>
     findEquivalences(const std::vector<sptrPeak3D>&peak_list, bool friedel=true) const;
     //! Return whether two sets of indices are related by a symmetry
-    bool isEquivalent(double h1, double k1, double l1, double h2, double k2, double l2) const;
+    bool isEquivalent(double h1, double k1, double l1, double h2, double k2, double l2, bool friedel=false) const;
     //! Return whether two sets of indices are related by a symmetry
-    bool isEquivalent(const Eigen::Vector3d& a, const Eigen::Vector3d& b) const;
+    bool isEquivalent(const Eigen::Vector3d& a, const Eigen::Vector3d& b, bool friedel=false) const;
     //! Return whether two sets of indices are related by a symmetry up to Friedel reflection
     bool isFriedelEquivalent(double h1, double k1, double l1, double h2, double k2, double l2) const;
 private:
