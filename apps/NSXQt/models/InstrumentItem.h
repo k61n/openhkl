@@ -18,6 +18,12 @@ public:
     QJsonObject toJson() override;
     void fromJson(const QJsonObject& obj) override;
 
+public:
+
+    DetectorItem* getDetectorItem();
+    SampleItem* getSampleItem();
+    SourceItem* getSourceItem();
+
 private:
     DetectorItem* _detector;
     SampleItem* _sample;
