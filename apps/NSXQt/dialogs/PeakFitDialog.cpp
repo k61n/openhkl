@@ -193,7 +193,7 @@ void PeakFitDialog::updatePeak()
     _peak = the_peak;
 
     // get AABB
-    const SX::Geometry::IShape<double,3>* aabb = the_peak->getBackground();
+    sptrShape3D aabb = the_peak->getBackground();
 
     Eigen::Vector3d lower = aabb->getLower();
     Eigen::Vector3d upper = aabb->getUpper();
@@ -219,9 +219,10 @@ void PeakFitDialog::updatePeak()
     qDebug() << _xmax << "    " << _ymax << "    " << _zmax;
 
     // testing
-    const Ellipsoid<double, 3>* ellipse = dynamic_cast<const Ellipsoid<double, 3>*>(the_peak->getPeak());
+    sptrEllipsoid3D ellipse = std::dynamic_pointer_cast<Ellipsoid3D>(the_peak->getPeak());
 
-    if (ellipse) {
+    if (ellipse)
+    {
         Eigen::Matrix<double, 3, 1> center = ellipse->getCenter();
         qDebug() << "center: " << center(0) << ", " << center(1) << ", " << center(2);
     }
