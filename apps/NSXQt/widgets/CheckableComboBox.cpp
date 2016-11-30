@@ -1,4 +1,3 @@
-#include <QtDebug>
 #include <QKeyEvent>
 #include <QLineEdit>
 #include <QListView>
@@ -141,4 +140,10 @@ bool CheckableComboBox::eventFilter(QObject* receiver, QEvent* event)
         break;
     }
     return false;
+}
+
+void CheckableComboBox::addItems(const std::vector<std::string> &items)
+{
+    for (const auto& item : items)
+        addItem(QString::fromStdString(item));
 }

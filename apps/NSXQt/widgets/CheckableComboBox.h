@@ -1,5 +1,8 @@
-#ifndef MYCOMBOBOX_H
-#define MYCOMBOBOX_H
+#ifndef CHECKABLECOMBOBOX_H
+#define CHECKABLECOMBOBOX_H
+
+#include <string>
+#include <vector>
 
 #include <QComboBox>
 #include <QEvent>
@@ -17,6 +20,8 @@ public:
     virtual ~CheckableComboBox();
 
     const QString& defaultText() const;
+
+    void addItems(const std::vector<std::string>& items);
 
     void setDefaultText(const QString& text);
 
@@ -44,4 +49,4 @@ private:
 
 };
 
-#endif // MYCOMBOBOX_H
+#endif // CHECKABLECOMBOBOX_H
