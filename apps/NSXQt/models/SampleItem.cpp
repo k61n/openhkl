@@ -84,3 +84,21 @@ void SampleItem::fromJson(const QJsonObject &obj)
         appendRow(new UnitCellItem(getExperiment(), cell));
     }
 }
+
+QList<UnitCellItem*> SampleItem::getUnitCellItems()
+{
+    QList<UnitCellItem*> unitCellItems;
+
+    QModelIndex sampleItemIdx = model()->indexFromItem(this);
+
+    for (int i=0;i<model()->rowCount(sampleItemIdx);++i)
+    {
+        QModelIndex idx = model()->index(i,0,sampleItemIdx);
+        QStandardItem* item = model()->itemFromIndex(idx);
+        UnitCellItem* ucItem = dynamic_cast<UnitCellItem*>(item);
+        if (ucItem)
+            unitCellItems << ucItem;
+    }
+
+    return unitCellItems;
+}

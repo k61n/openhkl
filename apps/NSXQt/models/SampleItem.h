@@ -4,7 +4,11 @@
 #include <string>
 #include <memory>
 
+#include <QList>
+
 #include "InspectableTreeItem.h"
+
+class UnitCellItem;
 
 using namespace SX::Instrument;
 
@@ -18,6 +22,8 @@ public:
 
     QJsonObject toJson() override;
     void fromJson(const QJsonObject& obj) override;
+
+    QList<UnitCellItem*> getUnitCellItems();
 };
 
 #endif // SAMPLEITEM_H
