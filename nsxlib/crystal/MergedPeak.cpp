@@ -44,27 +44,96 @@ namespace SX
 namespace Crystal
 {
 
-MergedPeak::MergedPeak(SpaceGroup &grp):
-    _grp{grp}, _peaks{}, _intensity{0}, _sigma{0}
+MergedPeak::MergedPeak(SpaceGroup grp):
+    _grp{grp}, _peaks{}, _intensity{0}, _sigma{0}, _hkl(), _chiSquared(0.0)
 {
 
 }
 
 bool MergedPeak::addPeak(sptrPeak3D peak)
 {
-    bool equiv = false;
+    // peak is not equivalent to one already on the list
+    if (_peaks.size() && !_grp.isEquivalent(_hkl.cast<double>(), peak->getMillerIndices()))
+        return false;
 
-    // no peaks added to list yet: so add the new peak
-    if (_peaks.size() == 0)
-        equiv = true;
-    // otherwise check if it is equivalent to the existing peaks
-    else
-        equiv = _grp.isEquivalent(_hkl.cast<double>(), peak->getMillerIndices());
+    // add peak to list
+    _peaks.push_back(peak);
+
+    // if this was NOT the first list, nothing remains to be done
+    if ( _peaks.size() >= 2)
+        return true;
+
+    // this was the first peak, so we have to update _hkl
+    _hkl = peak->getIntegerMillerIndices();
+    update();
 }
 
 Eigen::Vector3i MergedPeak::getIndex() const
 {
     return _hkl;
+}
+
+double MergedPeak::intensity() const
+{
+    return _intensity;
+}
+
+double MergedPeak::sigma() const
+{
+    return _sigma;
+}
+
+double MergedPeak::chiSquared() const
+{
+    return _chiSquared;
+}
+
+void MergedPeak::determineRepresentativeHKL()
+{
+    Eigen::Vector3d best_hkl = _hkl.cast<double>();
+
+    std::vector<Eigen::Vector3d> equivs;
+
+    for (auto&& g: _grp.getGroupElements())
+        equivs.push_back(g.getRotationPart()*best_hkl);
+
+    auto compare_fn = [](const Eigen::Vector3d& a, const Eigen::Vector3d& b) -> bool
+    {
+        if (a(0) != b(0))
+            return a(0) > b(0);
+        else if (a(1) != b(1))
+            return a(1) > b(1);
+        else
+            return a(2) > b(2);
+    };
+
+    best_hkl = *std::min_element(equivs.begin(), equivs.end(), compare_fn);
+}
+
+void MergedPeak::update()
+{
+    determineRepresentativeHKL();
+
+    // update average intensity and error
+    _intensity = 0.0;
+    _sigma = 0.0;
+    double variance = 0.0;
+
+    for (auto&& peak: _peaks) {
+        _intensity += peak->getScaledIntensity();
+        variance += std::pow(peak->getScaledSigma(), 2);
+    }
+
+    _intensity /= _peaks.size();
+    variance /= _peaks.size();
+    _sigma = std::sqrt(variance);
+
+    // update chi2
+    // TODO: check that this is correct!
+    _chiSquared = 0.0;
+
+    for (auto&& peak: _peaks)
+        _chiSquared += std::pow((peak->getScaledIntensity() - _intensity), 2) / variance;
 }
 
 

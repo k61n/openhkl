@@ -54,17 +54,23 @@ namespace Crystal
 class MergedPeak
 {
 public:
-    MergedPeak(SpaceGroup& grp);
+    MergedPeak(SpaceGroup grp);
     ~MergedPeak();
 
     bool addPeak(sptrPeak3D peak);
     Eigen::Vector3i getIndex() const;
+    double intensity() const;
+    double sigma() const;
+    double chiSquared() const;
 
 private:
+    void determineRepresentativeHKL();
+    void update();
+
     Eigen::Vector3i _hkl;
-    double _intensity, _sigma;
+    double _intensity, _sigma, _chiSquared;
     std::vector<sptrPeak3D> _peaks;
-    SX::Crystal::SpaceGroup& _grp;
+    SX::Crystal::SpaceGroup _grp;
 };
 
 
