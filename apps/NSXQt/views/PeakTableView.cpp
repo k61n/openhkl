@@ -54,6 +54,7 @@
 #include "LogFileDialog.h"
 
 #include "ResolutionShell.h"
+#include "MergedPeak.h"
 
 PeakTableView::PeakTableView(QWidget *parent)
 : QTableView(parent),
@@ -750,14 +751,66 @@ bool PeakTableView::writeStatistics(std::string filename,
     std::fstream file(filename, std::ios::out);
     SX::Crystal::ResolutionShell res = {dmin, dmax, num_shells};
     std::vector<char> buf(1024, 0); // buffer for snprintf
+    std::vector<SX::Crystal::MergedPeak> merged_peaks;
 
     if (!file.is_open()) {
         qCritical() << "Error writing to this file, please check write permisions";
         return false;
     }
 
-    for (auto&& peak: peaks)
+    if (peaks.size() == 0) {
+        qCritical() << "No peaks to write to log!";
+        return false;
+    }
+
+    // jmf testing
+//    for (int i = 0; i < peaks.size(); ++i) {
+//        const auto peak = peaks[i];
+
+//        if (peak->isMasked() || !peak->isSelected())
+//            continue;
+
+//        if (!peak->hasIntegerHKL(*peak->getUnitCell(), 1e-2))
+//            continue;
+
+//        for (int j =i+1; j < peaks.size(); ++j) {
+//            const auto other_peak = peaks[j];
+
+//            if (other_peak->isMasked() || !other_peak->isSelected())
+//                continue;
+
+//            if (peak->getUnitCell() != other_peak->getUnitCell())
+//                continue;
+
+//            if (!other_peak->hasIntegerHKL(*peak->getUnitCell(), 1e-2))
+//                continue;
+
+//            const auto hkl1 = peak->getIntegerMillerIndices();
+//            const auto hkl2 = other_peak->getIntegerMillerIndices();
+
+//            if (hkl1 == hkl2) {
+//                std::cout << "duplicate peak found!" << std::endl;
+//                std::cout << hkl1(0) << " " << hkl1(1) << " " << hkl1(2) << std::endl;
+
+//                const auto c1 = peak->getPeak()->getAABBCenter();
+//                const auto c2 = other_peak->getPeak()->getAABBCenter();
+
+//                std::cout << c1(0) << " " << c1(1) << " " << c1(2) << std::endl;
+//                std::cout << c2(0) << " " << c2(1) << " " << c2(2) << std::endl;
+//            }
+//        }
+//    }
+
+    auto cell = peaks[0]->getUnitCell();
+    auto grp = SX::Crystal::SpaceGroup(cell->getSpaceGroup());
+
+    for (auto&& peak: peaks) {
+        if (cell != peak->getUnitCell()) {
+            qCritical() << "Only one unit cell is supported at this time!!";
+            return false;
+        }
         res.addPeak(peak);
+    }
 
     auto&& ds = res.getD();
     auto&& shells = res.getShells();
@@ -770,9 +823,75 @@ bool PeakTableView::writeStatistics(std::string filename,
         file << &buf[0] << std::endl;
     }
 
+    int shell_count = 0;
+
+    for (auto&& shell: res.getShells()) {
+        for (auto&& peak: shell) {
+            bool peak_added = false;
+
+            // skip bad/masked peaks
+            if (peak->isMasked() || !peak->isSelected())
+                continue;
+
+            // skip misindexed peaks
+            if (!peak->hasIntegerHKL(*cell))
+                continue;
+
+            for (auto&& merged_peak: merged_peaks) {
+                if (merged_peak.addPeak(peak)) {
+                    peak_added = true;
+                    break;
+                }
+            }
+
+            if (peak_added)
+                continue;
+
+            // peak was not equivalent to any of the merged peaks
+            SX::Crystal::MergedPeak new_peak(grp);
+            new_peak.addPeak(peak);
+            merged_peaks.push_back(new_peak);
+        }
+
+        qDebug() << "Finished logging shell " << ++shell_count;
+    }
+
+    auto compare_fn = [](const SX::Crystal::MergedPeak& p, const SX::Crystal::MergedPeak& q) -> bool
+    {
+        const auto a = p.getIndex();
+        const auto b = q.getIndex();
+
+        if (a(0) != b(0))
+            return a(0) < b(0);
+        else if (a(1) != b(1))
+            return a(1) < b(1);
+        else
+            return a(2) < b(2);
+    };
+
+    std::sort(merged_peaks.begin(), merged_peaks.end(), compare_fn);
+
+    for (auto&& peak: merged_peaks) {
+
+        const auto hkl = peak.getIndex();
+
+        const int h = hkl[0];
+        const int k = hkl[1];
+        const int l = hkl[2];
+
+        const double intensity = peak.intensity();
+        const double sigma = peak.sigma();
+        const double chi2 = peak.chiSquared();
+        const int nobs = peak.redundancy();
+
+        std::snprintf(&buf[0], buf.size(), "  %4d %4d %4d %15.2f %10.2f %3d %10.5f",
+                h, k, l, intensity, sigma, nobs, chi2);
+
+        file << &buf[0] << std::endl;
+    }
+
+    qDebug() << "Done writing log file.";
+
     file.close();
     return true;
 }
-
-
-

@@ -312,7 +312,14 @@ bool SpaceGroup::isEquivalent(const Eigen::Vector3d& a, const Eigen::Vector3d& b
 
     for (const auto& element : elements) {
         // jmf: check that this edit is correct!
-        const auto rotated = element.getRotationPart() * a;
+        const auto rotation = element.getRotationPart();
+        const auto rotated = rotation * a;
+        const auto diff1 = rotated-b;
+        const auto diff2 = b-rotated;
+
+        volatile double max1 = diff1.maxCoeff();
+        volatile double max2 = diff2.maxCoeff();
+
         const double max = std::max((rotated-b).maxCoeff(), (b-rotated).maxCoeff());
 
         if (max < 1e-6)

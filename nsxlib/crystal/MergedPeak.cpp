@@ -50,6 +50,14 @@ MergedPeak::MergedPeak(SpaceGroup grp):
 
 }
 
+MergedPeak::MergedPeak(const MergedPeak &other):
+    _grp(other._grp), _peaks(other._peaks),
+    _intensity(other._intensity), _sigma(other._sigma),
+    _hkl(other._hkl), _chiSquared(other._chiSquared)
+{
+
+}
+
 MergedPeak::~MergedPeak()
 {
 
@@ -72,13 +80,11 @@ bool MergedPeak::addPeak(sptrPeak3D peak)
         test = 1;
     }
 
-    // if this was NOT the first list, nothing remains to be done
-    if ( _peaks.size() >= 2)
-        return true;
-
     // this was the first peak, so we have to update _hkl
     _hkl = peak->getIntegerMillerIndices();
     update();
+
+    return true;
 }
 
 Eigen::Vector3i MergedPeak::getIndex() const

@@ -387,12 +387,9 @@ void SessionModel::integrateCalculatedPeaks()
 
     std::shared_ptr<UnitCell> unit_cell;
 
-    for (std::shared_ptr<IData> numor: getSelectedNumors())
-    {
-        for (sptrPeak3D peak: numor->getPeaks())
-        {
-            if ( peak && peak->isSelected() && !peak->isMasked() )
-            {
+    for (std::shared_ptr<IData> numor: getSelectedNumors()) {
+        for (sptrPeak3D peak: numor->getPeaks()) {
+            if ( peak && peak->isSelected() && !peak->isMasked() ) {
                 peak_extent += peak->getPeak()->getAABBExtents();
                 bg_extent += peak->getBackground()->getAABBExtents();
                 ++count;
@@ -625,7 +622,8 @@ void SessionModel::incorporateCalculatedPeaks()
 
         for (int i = 0; i < ncrystals; ++i) {
             SX::Crystal::SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
-            auto ub = sample->getUnitCell(i)->getReciprocalStandardM();
+            auto cell = sample->getUnitCell(i);
+            auto ub = cell->getReciprocalStandardM();
 
             handler->setStatus("Calculating peak locations...");
 
@@ -669,6 +667,8 @@ void SessionModel::incorporateCalculatedPeaks()
                     continue;
 
                 new_peak->setSelected(true);
+                new_peak->setUnitCell(cell);
+
                 #pragma omp critical
                 calculated_peaks.push_back(new_peak);
 

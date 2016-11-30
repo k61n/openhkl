@@ -55,6 +55,7 @@ class MergedPeak
 {
 public:
     MergedPeak(SpaceGroup grp);
+    MergedPeak(const MergedPeak& other);
     ~MergedPeak();
 
     bool addPeak(sptrPeak3D peak);
