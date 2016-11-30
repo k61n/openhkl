@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1059</width>
-    <height>398</height>
+    <width>1098</width>
+    <height>396</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -31,7 +31,7 @@
     <rect>
      <x>680</x>
      <y>0</y>
-     <width>375</width>
+     <width>413</width>
      <height>391</height>
     </rect>
    </property>
@@ -43,7 +43,7 @@
       </property>
      </widget>
     </item>
-    <item row="4" column="2">
+    <item row="4" column="3">
      <widget class="QSpinBox" name="maxCompBox">
       <property name="maximum">
        <number>2000000000</number>
@@ -53,27 +53,10 @@
       </property>
      </widget>
     </item>
-    <item row="5" column="2">
+    <item row="5" column="3">
      <widget class="QComboBox" name="filterComboBox">
       <property name="insertPolicy">
        <enum>QComboBox::InsertAlphabetically</enum>
-      </property>
-     </widget>
-    </item>
-    <item row="8" column="0" colspan="2">
-     <widget class="QPushButton" name="previewButton">
-      <property name="text">
-       <string>Generate Preview</string>
-      </property>
-     </widget>
-    </item>
-    <item row="8" column="2">
-     <widget class="QDialogButtonBox" name="buttonBox">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="standardButtons">
-       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
       </property>
      </widget>
     </item>
@@ -91,7 +74,7 @@
       </property>
      </widget>
     </item>
-    <item row="0" column="2">
+    <item row="0" column="3">
      <widget class="QDoubleSpinBox" name="thresholdSpinBox">
       <property name="maximum">
        <double>1000000.000000000000000</double>
@@ -125,7 +108,7 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="2">
+    <item row="1" column="3">
      <widget class="QComboBox" name="thresholdComboBox">
       <item>
        <property name="text">
@@ -139,7 +122,7 @@
       </item>
      </widget>
     </item>
-    <item row="2" column="2">
+    <item row="2" column="3">
      <widget class="QDoubleSpinBox" name="confidenceSpinBox">
       <property name="decimals">
        <number>4</number>
@@ -155,7 +138,7 @@
       </property>
      </widget>
     </item>
-    <item row="3" column="2">
+    <item row="3" column="3">
      <widget class="QSpinBox" name="minCompBox">
       <property name="maximum">
        <number>2000000000</number>
@@ -165,13 +148,37 @@
       </property>
      </widget>
     </item>
-    <item row="6" column="2">
+    <item row="6" column="3">
      <widget class="QTreeView" name="treeView"/>
     </item>
     <item row="6" column="0" colspan="2">
      <widget class="QLabel" name="label">
       <property name="text">
        <string>Filter parameters</string>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="1">
+     <widget class="QPushButton" name="previewButton">
+      <property name="text">
+       <string>Generate Preview</string>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="3">
+     <widget class="QCheckBox" name="thresholdCheckBox">
+      <property name="text">
+       <string>apply threshold to preview</string>
+      </property>
+     </widget>
+    </item>
+    <item row="10" column="3">
+     <widget class="QDialogButtonBox" name="buttonBox">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="standardButtons">
+       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
       </property>
      </widget>
     </item>

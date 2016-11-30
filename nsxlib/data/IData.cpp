@@ -163,7 +163,8 @@ ComponentState IData::getDetectorInterpolatedState(double frame)
 	const std::vector<double>& prevState=_detectorStates[idx].getValues();
     const std::vector<double>& nextState=_detectorStates[next].getValues();
 	std::vector<double> state(nPhysicalAxes);
-	for (std::size_t i=0;i<nPhysicalAxes;++i)
+
+    for (std::size_t i=0; i < nPhysicalAxes; ++i)
 		state[i] = prevState[i] + (frame-static_cast<double>(idx))*(nextState[i]-prevState[i]);
 
 	return _diffractometer->getDetector()->createState(state);
@@ -626,7 +627,6 @@ double IData::getBackgroundLevel(std::shared_ptr<SX::Utils::ProgressHandler> pro
         progressCallback->setProgress(0);
     }
 
-
     for (auto it = getIterator(0); it->index() != _nFrames; it->advance()) {
         // cast matrix to double (instead of int) -- necessary due to integer overflow!
         // _background += factor * it->cast<double>().sum();
@@ -636,7 +636,6 @@ double IData::getBackgroundLevel(std::shared_ptr<SX::Utils::ProgressHandler> pro
             double progress = 100.0 * it->index() / static_cast<double>(_nFrames);
             progressCallback->setProgress(progress);
         }
-        
     }
 
     if ( progressCallback )

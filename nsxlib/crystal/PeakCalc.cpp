@@ -33,14 +33,14 @@
  *
  */
 
+#include <set>
+
+#include <Eigen/Eigenvalues>
+
 #include "PeakCalc.h"
 #include "Peak3D.h"
 #include "IData.h"
 #include "Ellipsoid.h"
-
-#include <Eigen/Eigenvalues>
-
-#include <set>
 
 using namespace SX::Geometry;
 
@@ -62,23 +62,26 @@ PeakCalc::~PeakCalc()
 
 sptrPeak3D PeakCalc::averagePeaks(std::shared_ptr<Data::IData> data, double distance)
 {
+    Eigen::Matrix3d peak_shape, bkg_shape;
     sptrPeak3D peak = sptrPeak3D(new Peak3D(data));
+    std::vector<sptrPeak3D> neighbors;
 
-    std::vector<sptrPeak3D> neighbors = findNeighbors(data->getPeaks(), distance);
+    const double original_distance = distance;
+
+    do {
+        neighbors = findNeighbors(data->getPeaks(), distance);
+        distance += original_distance;
+    } while(neighbors.size() <= 0);
 
     if (neighbors.size() <= 0)
         return nullptr;
 
     peak->setMillerIndices(_h, _k, _l);
-
     double weight = 1.0 / (double)neighbors.size();
-
-    Eigen::Matrix3d peak_shape, bkg_shape;
     peak_shape.setZero();
     bkg_shape.setZero();
 
-    for(sptrPeak3D p: neighbors)
-    {
+    for(sptrPeak3D p: neighbors) {
         const Ellipsoid<double, 3>* ell_peak = dynamic_cast<const Ellipsoid<double, 3>*>(p->getPeak());
         const Ellipsoid<double, 3>* ell_bkg = dynamic_cast<const Ellipsoid<double, 3>*>(p->getBackground());
 
@@ -104,7 +107,6 @@ sptrPeak3D PeakCalc::averagePeaks(std::shared_ptr<Data::IData> data, double dist
         eigenvalues(i) = 1.0 / std::sqrt(eigenvalues(i));
 
     peak->setPeakShape(new Ellipsoid<double, 3>(center, eigenvalues, solver.eigenvectors()));
-
     solver.compute(bkg_shape);
     eigenvalues = solver.eigenvalues();
 
@@ -112,29 +114,31 @@ sptrPeak3D PeakCalc::averagePeaks(std::shared_ptr<Data::IData> data, double dist
         eigenvalues(i) = 1.0 / std::sqrt(eigenvalues(i));
 
     peak->setBackgroundShape(new Ellipsoid<double, 3>(center, eigenvalues, solver.eigenvectors()));
-
     return peak;
 }
 
 std::vector<sptrPeak3D> PeakCalc::findNeighbors(const std::set<sptrPeak3D>& peak_list, double distance)
 {
     const double max_squared_dist = distance*distance;
-
     std::vector<sptrPeak3D> neighbors;
     neighbors.reserve(100);
-
     Eigen::Vector3d center(_x, _y, _frame);
 
-    for (sptrPeak3D peak: peak_list)
-    {
-        double squared_dist = (center-peak->getPeak()->getAABBCenter()).squaredNorm();
+    for (sptrPeak3D peak: peak_list) {
+        // ignore peak
+        if (peak->isMasked() || !peak->isSelected())
+            continue;
 
-        if ( squared_dist < max_squared_dist)
-            neighbors.push_back(peak);
+        const double squared_dist = (center-peak->getPeak()->getAABBCenter()).squaredNorm();
+
+        // not close enough
+        if ( squared_dist > max_squared_dist)
+            continue;
+
+        neighbors.push_back(peak);
     }
 
     neighbors.shrink_to_fit();
-
     return neighbors;
 }
 

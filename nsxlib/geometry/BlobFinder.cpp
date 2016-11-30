@@ -43,11 +43,10 @@ imap BlobFinder::removeDuplicates(vipairs& equivalences)
 
 void BlobFinder::reassignEquivalences(imap& equivalences)
 {
-    for (auto it=equivalences.begin();it!=equivalences.end();++it)
-    {
+    for (auto it = equivalences.begin(); it != equivalences.end(); ++it) {
         auto found=equivalences.find(it->second);
-        if (found!=equivalences.end())
-            it->second=found->second;
+        if (found != equivalences.end())
+            it->second = found->second;
     }
 }
 
@@ -64,8 +63,7 @@ void BlobFinder::eliminateBlobs(std::unordered_map<int,Blob3D>& blobs) const
     int dummy = 0;
     int magic = 0.2 * std::distance(blobs.begin(), blobs.end());
 
-    for (auto it = blobs.begin(); it != blobs.end();)
-    {
+    for (auto it = blobs.begin(); it != blobs.end();) {
         ++dummy;
 
         Blob3D& p=it->second;
@@ -211,12 +209,12 @@ void BlobFinder::findBlobs(std::unordered_map<int,Blob3D>& blobs,
     int left, top, previous;
 
     //int currentlabel=0;
-   //  initialize currentlabel to begin so that parallel version of algorithm works
-//    int currentlabel = begin;
+    // initialize currentlabel to begin so that parallel version of algorithm works
+    // int currentlabel = begin;
 
     int label;
     bool newlabel;
-    int index2D=0;
+    int index2D = 0;
 
     // int representing the 8 possible nearest neighbor operations.
     int code;
