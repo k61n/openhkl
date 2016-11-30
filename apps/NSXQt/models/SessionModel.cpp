@@ -428,10 +428,6 @@ void SessionModel::integrateCalculatedPeaks()
                 calculated_peaks.reserve(calculated_peaks.size() + peaks.size());
 
                 qDebug() << "Adding calculated peaks...";
-
-                for(auto&& p: peaks) {
-                    //calculated_peaks.push_back(p);
-                }
             }
         }
 
