@@ -45,7 +45,12 @@ namespace Crystal
 {
 
 MergedPeak::MergedPeak(SpaceGroup grp):
-    _grp{grp}, _peaks{}, _intensity{0}, _sigma{0}, _hkl(), _chiSquared(0.0)
+  _grp(grp), _peaks(), _intensity(0), _sigma(0), _hkl(), _chiSquared(0.0)
+{
+
+}
+
+MergedPeak::~MergedPeak()
 {
 
 }
@@ -58,6 +63,14 @@ bool MergedPeak::addPeak(sptrPeak3D peak)
 
     // add peak to list
     _peaks.push_back(peak);
+
+    volatile int test = 0;
+
+    // jmf debugging
+    if (_peaks.size() > _grp.getGroupElements().size()) {
+        std::cout << "something funny is happening!" << std::endl;
+        test = 1;
+    }
 
     // if this was NOT the first list, nothing remains to be done
     if ( _peaks.size() >= 2)
@@ -88,6 +101,12 @@ double MergedPeak::chiSquared() const
     return _chiSquared;
 }
 
+int MergedPeak::redundancy() const
+{
+    assert(_peaks.size() <= _grp.getGroupElements().size());
+    return _peaks.size();
+}
+
 void MergedPeak::determineRepresentativeHKL()
 {
     Eigen::Vector3d best_hkl = _hkl.cast<double>();
@@ -108,6 +127,9 @@ void MergedPeak::determineRepresentativeHKL()
     };
 
     best_hkl = *std::min_element(equivs.begin(), equivs.end(), compare_fn);
+
+    for (int i = 0; i < 3; ++i)
+        _hkl(i) = std::round(best_hkl(i));
 }
 
 void MergedPeak::update()
@@ -125,7 +147,7 @@ void MergedPeak::update()
     }
 
     _intensity /= _peaks.size();
-    variance /= _peaks.size();
+    variance /= _peaks.size()*_peaks.size();
     _sigma = std::sqrt(variance);
 
     // update chi2

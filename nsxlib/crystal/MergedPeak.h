@@ -62,6 +62,7 @@ public:
     double intensity() const;
     double sigma() const;
     double chiSquared() const;
+    int redundancy() const;
 
 private:
     void determineRepresentativeHKL();
