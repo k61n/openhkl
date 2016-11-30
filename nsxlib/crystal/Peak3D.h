@@ -37,6 +37,7 @@
 
 #include "UnitCell.h"
 #include "IShape.h"
+#include "Ellipsoid.h"
 
 namespace SX
 {
@@ -44,11 +45,14 @@ namespace SX
 namespace Geometry
 {
 class Blob3D;
+using sptrShape3D=std::shared_ptr<SX::Geometry::IShape<double,3>>;
+using Ellipsoid3D=Ellipsoid<double,3>;
+using sptrEllipsoid3D=std::shared_ptr<Ellipsoid3D>;
 }
 
 namespace Data
 {
-	class IData;
+class IData;
 }
 
 namespace Instrument
@@ -61,6 +65,8 @@ namespace Instrument
 	class Source;
 }
 
+using namespace SX::Geometry;
+
 namespace Crystal
 {
 
@@ -70,20 +76,27 @@ public:
 
     Peak3D(std::shared_ptr<SX::Data::IData> data=std::shared_ptr<SX::Data::IData>());
     Peak3D(std::shared_ptr<SX::Data::IData> data, const SX::Geometry::Blob3D& blob, double confidence);
-	Peak3D(const Peak3D& other);
+
+    //! Copy constructor
+    Peak3D(const Peak3D& other);
+
+	//! Assignment operator
 	Peak3D& operator=(const Peak3D& other);
+
+	//! Destructor
 	~Peak3D();
+
 	//! Attach the data
     void linkData(std::shared_ptr<SX::Data::IData> data);
 
 	//! Detach the data
 	void unlinkData();
 
-	//! Set the Peak region. Peak shaped is owned after setting
-	void setPeakShape(SX::Geometry::IShape<double,3>* peak);
+	//! Set the Peak region.
+	void setPeakShape(sptrShape3D peak);
 
-	//! set the background region. Bkg region is owned after setting
-	void setBackgroundShape(SX::Geometry::IShape<double,3>* background);
+	//! set the background region.
+	void setBackgroundShape(sptrShape3D background);
 
 	//! Set the Miller indices of the peak (double to allow integration of incommensurate peaks)
 	void setMillerIndices(double h, double k, double l);
@@ -117,8 +130,10 @@ public:
 	Eigen::VectorXd getProjectionSigma() const;
 	Eigen::VectorXd getPeakProjectionSigma() const;
 	Eigen::VectorXd getBkgProjectionSigma() const;
-	const SX::Geometry::IShape<double,3>* getPeak() const { return _peak;}
-	const SX::Geometry::IShape<double,3>* getBackground() const {return _bkg;}
+
+	std::shared_ptr<SX::Geometry::IShape<double,3>> getPeak();
+	std::shared_ptr<SX::Geometry::IShape<double,3>> getBackground();
+
 	//! Return the scaled intensity of the peak.
    	double getScaledIntensity() const;
 	//! Return the raw intensity of the peak.
@@ -154,6 +169,8 @@ public:
 	bool isSelected() const;
 	void setMasked(bool masked);
 	bool isMasked() const;
+	void setObserved(bool observed);
+	bool isObserved() const;
 	void setTransmission(double transmission);
 	double getTransmission() const;
 
@@ -174,9 +191,9 @@ private:
 	//! Miller indices of the peak
 	Eigen::RowVector3d _hkl;
 	//! Shape describing the Peak zone
-	SX::Geometry::IShape<double,3>* _peak;
+	std::shared_ptr<SX::Geometry::IShape<double,3>> _peak;
 	//! Shape describing the background zone (must fully contain peak)
-	SX::Geometry::IShape<double,3>* _bkg;
+	std::shared_ptr<SX::Geometry::IShape<double,3>> _bkg;
 	//!
 	Eigen::VectorXd _projection;
 	Eigen::VectorXd _projectionPeak;
@@ -198,10 +215,12 @@ private:
 	double _scale;
 	bool _selected;
 	bool _masked;
+	bool _observed;
 	double _transmission;
 
     
-    struct IntegrationState {
+    struct IntegrationState
+    {
         Eigen::Vector3d lower;
         Eigen::Vector3d upper;
 

@@ -49,7 +49,6 @@
 #include "Units.h"
 #include "Blob3D.h"
 #include "IData.h"
-#include "BlobFinder.h" // needed for Ellipsoid3D typedef
 
 #include "IFrameIterator.h"
 
@@ -59,6 +58,7 @@ using SX::Data::IFrameIterator;
 
 namespace SX
 {
+
 namespace Crystal
 {
 
@@ -75,6 +75,7 @@ Peak3D::Peak3D(std::shared_ptr<SX::Data::IData> data):
 		_countsSigma(0.0),
 		_scale(1.0),
 		_selected(true),
+		_observed(true),
 		_masked(false),
 		_transmission(1.0),
 		_state()
@@ -82,27 +83,27 @@ Peak3D::Peak3D(std::shared_ptr<SX::Data::IData> data):
     linkData(data);
 }
 
-Peak3D::Peak3D(std::shared_ptr<Data::IData> data, const Blob3D &blob, double confidence):
-    Peak3D(data)
+Peak3D::Peak3D(std::shared_ptr<Data::IData> data, const Blob3D &blob, double confidence)
+: Peak3D(data)
 {
     Eigen::Vector3d center, eigenvalues;
     Eigen::Matrix3d eigenvectors;
 
     blob.toEllipsoid(confidence, center, eigenvalues, eigenvectors);
-    setPeakShape(new SX::Geometry::Ellipsoid3D(center,eigenvalues,eigenvectors));
+    setPeakShape(sptrEllipsoid3D(new Ellipsoid3D(center,eigenvalues,eigenvectors)));
 
     eigenvalues[0]*=2.0;
     eigenvalues[1]*=2.0;
     eigenvalues[2]*=3.0;
 
-    setBackgroundShape(new SX::Geometry::Ellipsoid3D(center,eigenvalues,eigenvectors));
+    setBackgroundShape(sptrEllipsoid3D(new Ellipsoid3D(center,eigenvalues,eigenvectors)));
 }
 
 Peak3D::Peak3D(const Peak3D& other):
 		_data(other._data),
 		_hkl(other._hkl),
-		_peak(other._peak == nullptr ? nullptr : other._peak->clone()),
-		_bkg(other._bkg == nullptr ? nullptr : other._bkg->clone()),
+		_peak(other._peak == nullptr ? nullptr : other._peak),
+		_bkg(other._bkg == nullptr ? nullptr : other._bkg),
 		_projection(other._projection),
 		_projectionPeak(other._projectionPeak),
 		_projectionBkg(other._projectionBkg),
@@ -114,6 +115,7 @@ Peak3D::Peak3D(const Peak3D& other):
 		_countsSigma(other._countsSigma),
 		_scale(other._scale),
 		_selected(other._selected),
+		_observed(other._observed),
 		_masked(other._masked),
 		_transmission(other._transmission),
 		_state(other._state)
@@ -122,10 +124,8 @@ Peak3D::Peak3D(const Peak3D& other):
 
 Peak3D& Peak3D::operator=(const Peak3D& other)
 {
-
 	if (this != &other)
 	{
-
 		_data = other._data;
 		_hkl = other._hkl;
 
@@ -144,6 +144,7 @@ Peak3D& Peak3D::operator=(const Peak3D& other)
 		_countsSigma = other._countsSigma;
 		_scale = other._scale;
 		_selected = other._selected;
+		_observed = other._observed;
 		_masked = other._masked;
 		_transmission = other._transmission;
 
@@ -157,10 +158,6 @@ Peak3D& Peak3D::operator=(const Peak3D& other)
 
 Peak3D::~Peak3D()
 {
-    if (_peak)
-        delete _peak;
-    if (_bkg)
-        delete _bkg;
 }
 
 void Peak3D::linkData(std::shared_ptr<SX::Data::IData> data)
@@ -175,7 +172,7 @@ void Peak3D::unlinkData()
     _data = nullptr;
 }
 
-void Peak3D::setPeakShape(SX::Geometry::IShape<double,3>* p)
+void Peak3D::setPeakShape(sptrShape3D p)
 {
 	_peak=p;
 
@@ -198,7 +195,17 @@ void Peak3D::setPeakShape(SX::Geometry::IShape<double,3>* p)
             );
 }
 
-void Peak3D::setBackgroundShape(SX::Geometry::IShape<double,3>* b)
+std::shared_ptr<SX::Geometry::IShape<double,3>> Peak3D::getPeak()
+{
+	return _peak;
+}
+
+std::shared_ptr<SX::Geometry::IShape<double,3>> Peak3D::getBackground()
+{
+	return _bkg;
+}
+
+void Peak3D::setBackgroundShape(sptrShape3D b)
 {
 	_bkg=b;
 }
@@ -480,12 +487,20 @@ bool Peak3D::isMasked() const
 	return _masked;
 }
 
+void Peak3D::setObserved(bool observed)
+{
+	_observed = observed;
+}
+
+bool Peak3D::isObserved() const
+{
+	return _observed;
+}
+
 double Peak3D::getIOverSigmaI() const
 {
 	return _counts/_countsSigma;
 }
-
-
 
 void Peak3D::framewiseIntegrateBegin()
 {
