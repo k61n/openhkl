@@ -77,3 +77,8 @@ void ExperimentItem::fromJson(const QJsonObject &obj)
     _data->fromJson(obj["data"].toObject());
     _peaks->fromJson(obj["peaks"].toObject());
 }
+
+InstrumentItem* ExperimentItem::getInstrumentItem()
+{
+	return _instr;
+}

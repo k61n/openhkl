@@ -27,7 +27,9 @@ public:
     QJsonObject toJson() override;
     void fromJson(const QJsonObject& obj) override;
 
-signals:
+public:
+
+	InstrumentItem* getInstrumentItem();
 
 private:
     InstrumentItem* _instr;
