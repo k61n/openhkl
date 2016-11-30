@@ -59,9 +59,6 @@ void DetectorScene::changeFrame(unsigned int frame)
         return;
     _currentFrameIndex = frame;
 
-//    for (auto& peak : _peaks)
-//        (peak.second)->setFrame(_currentFrameIndex);
-
     updatePeaks();
     showPeakCalcs(_showPeakCalcs);
 
@@ -569,8 +566,6 @@ void DetectorScene::updatePeakCalcs()
         }
     }
 
-    showPeakCalcs(_showPeakCalcs);
-
     qDebug() << "number of calculated peaks " << _peakCalcs.size();
     clock_t end = clock();
     qDebug() << "ELAPSED TIME = "<<static_cast<double>((end-start))/CLOCKS_PER_SEC;
@@ -655,19 +650,22 @@ void DetectorScene::showPeakCalcs(bool flag)
 {
     _showPeakCalcs = flag;
 
-    if (!flag) {
+    if (!flag)
+    {
         for (auto&& p: _peakCalcs)
             delete p;
 
         _peakCalcs.clear();
         _precalculatedPeaks.clear();
+
         return;
     }
 
     if (_precalculatedPeaks.empty())
         updatePeakCalcs();
 
-    for (auto& peak : _peakCalcs) {
+    for (auto& peak : _peakCalcs)
+    {
         removeItem(peak);
         delete peak;
     }
