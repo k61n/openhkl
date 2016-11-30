@@ -37,20 +37,18 @@ PeakTableView::PeakTableView(QWidget *parent)
     setSelectionMode(QAbstractItemView::MultiSelection);
 
     // Signal sent when sorting by column
-    QHeaderView* horizontal=this->horizontalHeader();
-    connect(horizontal,SIGNAL(sectionClicked(int)),this,SLOT(sortByColumn(int)));
+//    QHeaderView* horizontal=this->horizontalHeader();
+//    connect(horizontal,SIGNAL(sectionClicked(int)),this,SLOT(sortByColumn(int)));
 
     // Signal sent when clicking on a row to plot peak
-    QHeaderView* vertical=this->verticalHeader();
-    connect(vertical, &QHeaderView::sectionClicked, [&](int index)
-                                                 {
-                                                  sptrPeak3D peak=_peaks[index];
-                                                  emit plotPeak(peak);
-                                                 });
+//    QHeaderView* vertical=this->verticalHeader();
+//    connect(vertical, &QHeaderView::sectionClicked, [&](int index)
+//                                                 {
+//                                                  sptrPeak3D peak=_peaks[index];
+//                                                  emit plotPeak(peak);
+//                                                 });
 
-    connect(this,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(deselectPeak(QModelIndex)));
-    // Hide the vertical Header
-    //this->verticalHeader()->hide();
+//    connect(this,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(deselectPeak(QModelIndex)));
 }
 
 void PeakTableView::setData(std::vector<std::shared_ptr<SX::Data::IData>> data)
