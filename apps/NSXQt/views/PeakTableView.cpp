@@ -278,10 +278,8 @@ void PeakTableView::contextMenuEvent(QContextMenuEvent* event)
     QMenu* writeMenu = menu->addMenu("Write");
     QAction* writeFullProf = new QAction("FullProf file", writeMenu);
     QAction* writeShelX = new QAction("SHELX file", writeMenu);
-    QAction* writeLog = new QAction("Detailed log file", writeMenu);
     writeMenu->addAction(writeFullProf);
     writeMenu->addAction(writeShelX);
-    writeMenu->addAction(writeLog);
 
     // Menu to plot against metadata
     QModelIndexList indexList = selectionModel()->selectedIndexes();
@@ -308,7 +306,6 @@ void PeakTableView::contextMenuEvent(QContextMenuEvent* event)
     connect(normalize, SIGNAL(triggered()), this, SLOT(normalizeToMonitor()));
     connect(writeFullProf, SIGNAL(triggered()), this, SLOT(writeFullProf()));
     connect(writeShelX, SIGNAL(triggered()), this, SLOT(writeShelX()));
-    connect(writeLog, SIGNAL(triggered()), this, SLOT(writeLog()));
 
     menu->popup(event->globalPos());
 }

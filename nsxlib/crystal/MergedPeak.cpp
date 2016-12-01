@@ -45,7 +45,7 @@ namespace Crystal
 {
 
 MergedPeak::MergedPeak(SpaceGroup grp, bool friedel):
-  _grp(grp), _peaks(), _intensity(0), _sigma(0), _hkl(), _chiSquared(0.0), _friedel(friedel)
+  _grp(grp), _peaks(), _intensity(0), _sigma(0), _hkl(), _chiSquared(0.0), _friedel(friedel), _std(0.0)
 {
 
 }
@@ -53,7 +53,7 @@ MergedPeak::MergedPeak(SpaceGroup grp, bool friedel):
 MergedPeak::MergedPeak(const MergedPeak &other):
     _grp(other._grp), _peaks(other._peaks), _friedel(other._friedel),
     _intensity(other._intensity), _sigma(other._sigma),
-    _hkl(other._hkl), _chiSquared(other._chiSquared)
+    _hkl(other._hkl), _chiSquared(other._chiSquared), _std(other._std)
 {
 
 }
@@ -113,6 +113,11 @@ int MergedPeak::redundancy() const
     return _peaks.size();
 }
 
+double MergedPeak::std() const
+{
+    return _std;
+}
+
 void MergedPeak::determineRepresentativeHKL()
 {
     Eigen::Vector3d best_hkl = _hkl.cast<double>();
@@ -122,8 +127,23 @@ void MergedPeak::determineRepresentativeHKL()
     for (auto&& g: _grp.getGroupElements())
         equivs.push_back(g.getRotationPart()*best_hkl);
 
-    auto compare_fn = [](const Eigen::Vector3d& a, const Eigen::Vector3d& b) -> bool
+    auto num_nneg = [](const Eigen::Vector3d& v) -> int
     {
+        int neg = 0;
+
+        for (int i = 0; i < 3; ++i)
+            if (v(i) >= 0)
+                ++neg;
+    };
+
+    auto compare_fn = [=](const Eigen::Vector3d& a, const Eigen::Vector3d& b) -> bool
+    {
+        auto neg_a = num_nneg(a);
+        auto neg_b = num_nneg(b);
+
+        if (neg_a != neg_b)
+            return neg_a > neg_b;
+
         if (a(0) != b(0))
             return a(0) > b(0);
         else if (a(1) != b(1))
@@ -159,9 +179,18 @@ void MergedPeak::update()
     // update chi2
     // TODO: check that this is correct!
     _chiSquared = 0.0;
+    _std = 0.0;
 
-    for (auto&& peak: _peaks)
-        _chiSquared += std::pow((peak->getScaledIntensity() - _intensity), 2) / variance;
+    for (auto&& peak: _peaks) {
+        const double res2 = std::pow((peak->getScaledIntensity() - _intensity), 2);
+        _chiSquared += res2 / _intensity;
+        _std += res2;
+    }
+
+    if (_peaks.size()>1)
+        _std /= (_peaks.size()-1);
+
+    _std = std::sqrt(_std);
 }
 
 

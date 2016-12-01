@@ -64,13 +64,14 @@ public:
     double sigma() const;
     double chiSquared() const;
     int redundancy() const;
+    double std() const;
 
 private:
     void determineRepresentativeHKL();
     void update();
 
     Eigen::Vector3i _hkl;
-    double _intensity, _sigma, _chiSquared;
+    double _intensity, _sigma, _chiSquared, _std;
     std::vector<sptrPeak3D> _peaks;
     SX::Crystal::SpaceGroup _grp;
     bool _friedel;

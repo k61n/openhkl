@@ -763,6 +763,13 @@ void SessionModel::writeLog()
     LogFileDialog dialog;
     std::vector<sptrPeak3D> peaks;
 
+    auto numors = this->getSelectedNumors();
+
+    for (auto numor: numors) {
+        for (auto peak: numor->getPeaks())
+            peaks.push_back(peak);
+    }
+
     if (!peaks.size()) {
         qCritical() << "No peaks in the table";
         return;
@@ -862,44 +869,6 @@ bool SessionModel::writeStatistics(std::string filename,
         return false;
     }
 
-    // jmf testing
-//    for (int i = 0; i < peaks.size(); ++i) {
-//        const auto peak = peaks[i];
-
-//        if (peak->isMasked() || !peak->isSelected())
-//            continue;
-
-//        if (!peak->hasIntegerHKL(*peak->getUnitCell(), 1e-2))
-//            continue;
-
-//        for (int j =i+1; j < peaks.size(); ++j) {
-//            const auto other_peak = peaks[j];
-
-//            if (other_peak->isMasked() || !other_peak->isSelected())
-//                continue;
-
-//            if (peak->getUnitCell() != other_peak->getUnitCell())
-//                continue;
-
-//            if (!other_peak->hasIntegerHKL(*peak->getUnitCell(), 1e-2))
-//                continue;
-
-//            const auto hkl1 = peak->getIntegerMillerIndices();
-//            const auto hkl2 = other_peak->getIntegerMillerIndices();
-
-//            if (hkl1 == hkl2) {
-//                std::cout << "duplicate peak found!" << std::endl;
-//                std::cout << hkl1(0) << " " << hkl1(1) << " " << hkl1(2) << std::endl;
-
-//                const auto c1 = peak->getPeak()->getAABBCenter();
-//                const auto c2 = other_peak->getPeak()->getAABBCenter();
-
-//                std::cout << c1(0) << " " << c1(1) << " " << c1(2) << std::endl;
-//                std::cout << c2(0) << " " << c2(1) << " " << c2(2) << std::endl;
-//            }
-//        }
-//    }
-
     auto cell = peaks[0]->getUnitCell();
     auto grp = SX::Crystal::SpaceGroup(cell->getSpaceGroup());
 
@@ -914,46 +883,70 @@ bool SessionModel::writeStatistics(std::string filename,
     auto&& ds = res.getD();
     auto&& shells = res.getShells();
 
+    std::vector<std::vector<sptrPeak3D>> all_equivs;
+
+    file << "          dmin       dmax       nobs redundancy     r_meas    r_merge      r_pim" << std::endl;
+
     for (int i = 0; i < num_shells; ++i) {
         const double d_lower = ds[i];
         const double d_upper = ds[i+1];
 
-        std::snprintf(&buf[0], buf.size(), " %6.2f  %6.2f  %6d", d_lower, d_upper, shells[i].size());
+        auto peak_equivs = grp.findEquivalences(shells[i], friedel);
+        RFactor rfactor(peak_equivs);
+
+        for (auto&& equiv: peak_equivs)
+            all_equivs.push_back(equiv);
+
+        double redundancy = (double)shells[i].size() / (double)peak_equivs.size();
+
+        std::snprintf(&buf[0], buf.size(),
+                "    %10.2f %10.2f %10d %10.3f %10.3f %10.3f %10.3f",
+                d_lower, d_upper, shells[i].size(), redundancy,
+                rfactor.Rmeas(), rfactor.Rmerge(), rfactor.Rpim());
+
         file << &buf[0] << std::endl;
-    }
 
-    int shell_count = 0;
+        for (auto equiv: peak_equivs) {
+            SX::Crystal::MergedPeak new_peak(grp, friedel);
 
-    for (auto&& shell: res.getShells()) {
-        for (auto&& peak: shell) {
-            bool peak_added = false;
+            for (auto peak: equiv) {
+                // skip bad/masked peaks
+                if (peak->isMasked() || !peak->isSelected())
+                    continue;
 
-            // skip bad/masked peaks
-            if (peak->isMasked() || !peak->isSelected())
-                continue;
+                // skip misindexed peaks
+                if (!peak->hasIntegerHKL(*cell))
+                    continue;
 
-            // skip misindexed peaks
-            if (!peak->hasIntegerHKL(*cell))
-                continue;
+                // peak was not equivalent to any of the merged peaks
+                new_peak.addPeak(peak);
 
-            for (auto&& merged_peak: merged_peaks) {
-                if (merged_peak.addPeak(peak)) {
-                    peak_added = true;
-                    break;
-                }
             }
 
-            if (peak_added)
-                continue;
-
-            // peak was not equivalent to any of the merged peaks
-            SX::Crystal::MergedPeak new_peak(grp, friedel);
-            new_peak.addPeak(peak);
-            merged_peaks.push_back(new_peak);
+            if (new_peak.redundancy() > 0)
+                merged_peaks.push_back(new_peak);
         }
 
-        qDebug() << "Finished logging shell " << ++shell_count;
+         qDebug() << "Finished logging shell " << i+1;
     }
+
+    file << "--------------------------------------------------------------------------------" << std::endl;
+
+    RFactor rfactor(all_equivs);
+
+    int num_peaks = 0;
+
+    for (auto& equiv: all_equivs)
+        num_peaks += equiv.size();
+
+    double redundancy = (double)num_peaks / (double)all_equivs.size();
+
+    std::snprintf(&buf[0], buf.size(),
+            "    %10.2f %10.2f %10d %10.3f %10.3f %10.3f %10.3f",
+            dmin, dmax, num_peaks, redundancy,
+            rfactor.Rmeas(), rfactor.Rmerge(), rfactor.Rpim());
+
+    file << &buf[0] << std::endl << std::endl;
 
     auto compare_fn = [](const SX::Crystal::MergedPeak& p, const SX::Crystal::MergedPeak& q) -> bool
     {
@@ -982,9 +975,10 @@ bool SessionModel::writeStatistics(std::string filename,
         const double sigma = peak.sigma();
         const double chi2 = peak.chiSquared();
         const int nobs = peak.redundancy();
+        const double std = peak.std();
 
-        std::snprintf(&buf[0], buf.size(), "  %4d %4d %4d %15.2f %10.2f %3d %10.5f",
-                h, k, l, intensity, sigma, nobs, chi2);
+        std::snprintf(&buf[0], buf.size(), "  %4d %4d %4d %15.2f %10.2f %3d %15.5f %15.5f %15.5f",
+                h, k, l, intensity, sigma, nobs, chi2, std, std/std::abs(intensity));
 
         file << &buf[0] << std::endl;
     }
