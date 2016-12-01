@@ -1381,6 +1381,7 @@ border-radius: 4px;
     <addaction name="actionCompute_R_factors"/>
     <addaction name="actionFind_space_group"/>
     <addaction name="menuPeaks"/>
+    <addaction name="actionWrite_log_file"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menu_Options"/>
@@ -1822,6 +1823,11 @@ QDockWidget::title {
   <action name="actionApply_resolution_cutoff">
    <property name="text">
     <string>Apply resolution cutoff</string>
+   </property>
+  </action>
+  <action name="actionWrite_log_file">
+   <property name="text">
+    <string>Write log file</string>
    </property>
   </action>
  </widget>

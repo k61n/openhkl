@@ -83,8 +83,6 @@ public slots:
     void writeFullProf();
     //! Write the currrent list to ShelX
     void writeShelX();
-    //! Write a detailed log to file
-    void writeLog();
     //! Normalize to monitor.
     void normalizeToMonitor();
     //! Change selected status of peak when double-clicked

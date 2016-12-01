@@ -171,7 +171,7 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::on_actionNew_session_triggered()
-{    
+{
   qDebug() << "save session: not implemented yet";
 }
 
@@ -589,4 +589,10 @@ void MainWindow::on_actionApply_resolution_cutoff_triggered()
         return;
 
     _session->applyResolutionCutoff(dialog.dMin(), dialog.dMax());
+}
+
+void MainWindow::on_actionWrite_log_file_triggered()
+{
+    qDebug() << "write log file triggered";
+    _session->writeLog();
 }
