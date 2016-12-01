@@ -134,6 +134,8 @@ void MergedPeak::determineRepresentativeHKL()
         for (int i = 0; i < 3; ++i)
             if (v(i) >= 0)
                 ++neg;
+
+        return neg;
     };
 
     auto compare_fn = [=](const Eigen::Vector3d& a, const Eigen::Vector3d& b) -> bool
