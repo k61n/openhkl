@@ -1,15 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <author/>
- <comment/>
- <exportmacro/>
  <class>PeakFitDialog</class>
  <widget class="QDialog" name="PeakFitDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>1212</width>
+    <height>838</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,8 +16,8 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>240</y>
+     <x>590</x>
+     <y>740</y>
      <width>341</width>
      <height>32</height>
     </rect>
@@ -31,8 +29,73 @@
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
    </property>
   </widget>
+  <widget class="QGraphicsView" name="peakView">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>10</y>
+     <width>411</width>
+     <height>321</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QGraphicsView" name="fitView">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>360</y>
+     <width>411</width>
+     <height>361</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QGraphicsView" name="differenceView">
+   <property name="geometry">
+    <rect>
+     <x>450</x>
+     <y>10</y>
+     <width>351</width>
+     <height>321</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QGraphicsView" name="chiSquaredView">
+   <property name="geometry">
+    <rect>
+     <x>470</x>
+     <y>360</y>
+     <width>351</width>
+     <height>361</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QScrollBar" name="frameScrollBar">
+   <property name="geometry">
+    <rect>
+     <x>90</x>
+     <y>740</y>
+     <width>160</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton">
+   <property name="geometry">
+    <rect>
+     <x>950</x>
+     <y>80</y>
+     <width>201</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Run Fit</string>
+   </property>
+  </widget>
  </widget>
- <pixmapfunction/>
  <resources/>
  <connections>
   <connection>
