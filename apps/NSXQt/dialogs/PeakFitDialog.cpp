@@ -39,6 +39,10 @@
 #include "ui_PeakFitDialog.h"
 #include "models/SessionModel.h"
 
+#include "IData.h"
+
+using namespace SX::Crystal;
+
 PeakFitDialog::PeakFitDialog(SessionModel* session, QWidget *parent) :
     QDialog(parent),
     _session(session),
@@ -52,7 +56,68 @@ PeakFitDialog::~PeakFitDialog()
     delete ui;
 }
 
-void PeakFitDialog::on_pushButton_clicked()
+bool PeakFitDialog::changePeak()
 {
-    qDebug() << "peak fit button clicked!";
+    int h, k, l;
+
+    h = ui->hSpinBox->value();
+    k = ui->kSpinBox->value();
+    l = ui->lSpinBox->value();
+
+    auto hkl = Eigen::Vector3i(h, k, l);
+
+    bool peak_found = false;
+
+    auto numors = _session->getSelectedNumors();
+
+    for (int i = 0; i < numors.size() && !peak_found; ++i) {
+        auto& peaks = numors[i]->getPeaks();
+
+        for (auto peak: peaks) {
+            Eigen::Vector3i peak_hkl = peak->getIntegerMillerIndices();
+
+            if (hkl == peak_hkl) {
+                _peak = peak;
+                peak_found = true;
+                break;
+            }
+        }
+    }
+
+    // could not find it in the list!
+    if (!peak_found) {
+        qCritical() << "Peak with specified HKL not found!";
+        ui->hSpinBox->setValue(0);
+        ui->kSpinBox->setValue(0);
+        ui->lSpinBox->setValue(0);
+        _peakFit = nullptr;
+        return false;
+    }
+
+    _peakFit = std::unique_ptr<PeakFit>(new PeakFit(_peak));
+
+    return true;
+}
+
+void PeakFitDialog::updatePlots()
+{
+    // not implemented yet
+}
+
+void PeakFitDialog::on_hSpinBox_valueChanged(int arg1)
+{
+    if ( changePeak() )
+        updatePlots();
+}
+
+void PeakFitDialog::on_kSpinBox_valueChanged(int arg1)
+{
+    if ( changePeak() )
+        updatePlots();
+}
+
+void PeakFitDialog::on_lSpinBox_valueChanged(int arg1)
+{
+    if ( changePeak() )
+        updatePlots();
 }

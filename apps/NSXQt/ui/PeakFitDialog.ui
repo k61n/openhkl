@@ -62,7 +62,7 @@
   <widget class="QGraphicsView" name="chiSquaredView">
    <property name="geometry">
     <rect>
-     <x>470</x>
+     <x>450</x>
      <y>360</y>
      <width>351</width>
      <height>361</height>
@@ -82,7 +82,7 @@
     <enum>Qt::Horizontal</enum>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton">
+  <widget class="QPushButton" name="runFitButton">
    <property name="geometry">
     <rect>
      <x>950</x>
@@ -93,6 +93,36 @@
    </property>
    <property name="text">
     <string>Run Fit</string>
+   </property>
+  </widget>
+  <widget class="QSpinBox" name="hSpinBox">
+   <property name="geometry">
+    <rect>
+     <x>920</x>
+     <y>200</y>
+     <width>49</width>
+     <height>29</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QSpinBox" name="kSpinBox">
+   <property name="geometry">
+    <rect>
+     <x>990</x>
+     <y>200</y>
+     <width>49</width>
+     <height>29</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QSpinBox" name="lSpinBox">
+   <property name="geometry">
+    <rect>
+     <x>1060</x>
+     <y>200</y>
+     <width>49</width>
+     <height>29</height>
+    </rect>
    </property>
   </widget>
  </widget>

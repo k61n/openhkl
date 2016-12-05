@@ -38,6 +38,10 @@
 
 #include <QDialog>
 #include <memory>
+#include "Peak3D.h"
+#include "PeakFit.h"
+
+class QGraphicsScene;
 
 class SessionModel;
 
@@ -53,12 +57,23 @@ public:
     explicit PeakFitDialog(SessionModel* session, QWidget *parent = 0);
     ~PeakFitDialog();
 
+    bool changePeak();
+    void updatePlots();
+
 private slots:
-    void on_pushButton_clicked();
+    void on_hSpinBox_valueChanged(int arg1);
+    void on_kSpinBox_valueChanged(int arg1);
+    void on_lSpinBox_valueChanged(int arg1);
 
 private:
     Ui::PeakFitDialog *ui;
     SessionModel* _session;
+    SX::Crystal::sptrPeak3D _peak;
+    std::unique_ptr<SX::Crystal::PeakFit> _peakFit;
+
+    QGraphicsScene* _peakScene;
+    QGraphicsScene* _fitScene;
+    //QGraphicsScene* _
 };
 
 #endif // PEAKFITDIALOG_H

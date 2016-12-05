@@ -583,4 +583,5 @@ void MainWindow::on_actionIncorporate_calculated_peaks_triggered(bool checked)
 void MainWindow::on_actionFit_peak_triggered()
 {
     qDebug() << "peak fit triggered";
+    this->_session->peakFitDialog();
 }

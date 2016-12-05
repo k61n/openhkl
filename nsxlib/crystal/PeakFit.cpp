@@ -43,6 +43,16 @@ namespace SX
 namespace Crystal
 {
 
+PeakFit::PeakFit(sptrPeak3D peak): _peak(peak)
+{
+
+}
+
+PeakFit::~PeakFit()
+{
+
+}
+
 int PeakFit::residuals(const Eigen::VectorXd &params, Eigen::VectorXd &res) const
 {
     assert(params.size() == numParams());
