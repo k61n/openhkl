@@ -104,6 +104,9 @@
      <height>29</height>
     </rect>
    </property>
+   <property name="minimum">
+    <number>-99</number>
+   </property>
   </widget>
   <widget class="QSpinBox" name="kSpinBox">
    <property name="geometry">
@@ -114,6 +117,9 @@
      <height>29</height>
     </rect>
    </property>
+   <property name="minimum">
+    <number>-99</number>
+   </property>
   </widget>
   <widget class="QSpinBox" name="lSpinBox">
    <property name="geometry">
@@ -123,6 +129,9 @@
      <width>49</width>
      <height>29</height>
     </rect>
+   </property>
+   <property name="minimum">
+    <number>-99</number>
    </property>
   </widget>
  </widget>

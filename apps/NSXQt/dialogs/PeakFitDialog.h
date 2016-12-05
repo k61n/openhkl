@@ -40,6 +40,7 @@
 #include <memory>
 #include "Peak3D.h"
 #include "PeakFit.h"
+#include <Eigen/Dense>
 
 class QGraphicsScene;
 
@@ -65,6 +66,10 @@ private slots:
     void on_kSpinBox_valueChanged(int arg1);
     void on_lSpinBox_valueChanged(int arg1);
 
+    void on_frameScrollBar_valueChanged(int value);
+
+    void on_runFitButton_clicked();
+
 private:
     Ui::PeakFitDialog *ui;
     SessionModel* _session;
@@ -73,7 +78,20 @@ private:
 
     QGraphicsScene* _peakScene;
     QGraphicsScene* _fitScene;
-    //QGraphicsScene* _
+    QGraphicsScene* _differenceScene;
+    QGraphicsScene* _chiSquaredScene;
+
+    QGraphicsPixmapItem* _peakImage;
+    QGraphicsPixmapItem* _fitImage;
+    QGraphicsPixmapItem* _differenceImage;
+    QGraphicsPixmapItem* _chiSquaredImage;
+
+    Eigen::MatrixXd _peakData;
+    Eigen::MatrixXd _fitData;
+    Eigen::MatrixXd _differenceData;
+    Eigen::MatrixXd _chiSquaredData;
+
+    Eigen::VectorXd _bestParams;
 };
 
 #endif // PEAKFITDIALOG_H

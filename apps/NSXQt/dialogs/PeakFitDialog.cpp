@@ -34,21 +34,39 @@
  */
 
 #include <QDebug>
+#include <QGraphicsScene>
+#include <QGraphicsPixmapItem>
 
 #include "dialogs/PeakFitDialog.h"
 #include "ui_PeakFitDialog.h"
 #include "models/SessionModel.h"
-
+#include "ColorMap.h"
 #include "IData.h"
+#include "Minimizer.h"
 
 using namespace SX::Crystal;
+using namespace SX::Utils;
 
 PeakFitDialog::PeakFitDialog(SessionModel* session, QWidget *parent) :
     QDialog(parent),
     _session(session),
+    _peakImage(nullptr),
+    _fitImage(nullptr),
+    _differenceImage(nullptr),
+    _chiSquaredImage(nullptr),
     ui(new Ui::PeakFitDialog)
 {
     ui->setupUi(this);
+
+    _peakScene = new QGraphicsScene(this);
+    _fitScene = new QGraphicsScene(this);
+    _differenceScene = new QGraphicsScene(this);
+    _chiSquaredScene = new QGraphicsScene(this);
+
+    ui->peakView->setScene(_peakScene);
+    ui->fitView->setScene(_fitScene);
+    ui->differenceView->setScene(_differenceScene);
+    ui->chiSquaredView->setScene(_chiSquaredScene);
 }
 
 PeakFitDialog::~PeakFitDialog()
@@ -87,37 +105,110 @@ bool PeakFitDialog::changePeak()
     // could not find it in the list!
     if (!peak_found) {
         qCritical() << "Peak with specified HKL not found!";
-        ui->hSpinBox->setValue(0);
-        ui->kSpinBox->setValue(0);
-        ui->lSpinBox->setValue(0);
         _peakFit = nullptr;
+        _peak = nullptr;
         return false;
     }
 
     _peakFit = std::unique_ptr<PeakFit>(new PeakFit(_peak));
+    _bestParams = _peakFit->defaultParams();
 
+    Eigen::Vector3d lower = _peak->getBackground()->getLower();
+    Eigen::Vector3d upper = _peak->getBackground()->getUpper();
+
+    ui->frameScrollBar->setMinimum(std::ceil(lower(2)));
+    ui->frameScrollBar->setMaximum(std::floor(upper(2)));
+    ui->frameScrollBar->setValue(std::round((upper(2)-lower(2))/2.0));
+
+    updatePlots();
     return true;
 }
 
 void PeakFitDialog::updatePlots()
 {
-    // not implemented yet
+    if (!_peak)
+        return;
+
+    int frame = ui->frameScrollBar->value();
+
+    Eigen::ArrayXXd peakData = _peakFit->peakData(frame);
+    Eigen::ArrayXXd predData = _peakFit->predict(_bestParams, frame);
+
+    Eigen::ArrayXXd diffData = (peakData-predData).abs();
+    Eigen::ArrayXXd chi2Data = _peakFit->chi2(frame);
+
+    const int max_intensity = std::round(_peakFit->maxIntensity());
+
+    QRect sceneRect(0, 0, peakData.cols()-1, peakData.rows()-1);
+    _peakScene->setSceneRect(sceneRect);
+    _fitScene->setSceneRect(sceneRect);
+    _differenceScene->setSceneRect(sceneRect);
+    _chiSquaredScene->setSceneRect(sceneRect);
+
+    QImage peak = Mat2QImage(peakData, sceneRect, max_intensity);
+    QImage pred = Mat2QImage(predData, sceneRect, max_intensity);
+    QImage chi2 = Mat2QImage(chi2Data, sceneRect, max_intensity);
+    QImage diff = Mat2QImage(diffData, sceneRect, max_intensity);
+
+    if (!_peakImage) {
+        _peakImage = _peakScene->addPixmap(QPixmap::fromImage(peak));
+        _fitImage = _fitScene->addPixmap(QPixmap::fromImage(pred));
+        _chiSquaredImage = _chiSquaredScene->addPixmap((QPixmap::fromImage(chi2)));
+        _differenceImage = _differenceScene->addPixmap((QPixmap::fromImage(diff)));
+    }
+    else {
+        _peakImage->setPixmap(QPixmap::fromImage(peak));
+        _fitImage->setPixmap(QPixmap::fromImage(pred));
+        _chiSquaredImage->setPixmap(QPixmap::fromImage(chi2));
+        _differenceImage->setPixmap(QPixmap::fromImage(diff));
+    }
+
+    ui->peakView->fitInView(_peakScene->sceneRect(), Qt::KeepAspectRatio);
+    ui->fitView->fitInView(_fitScene->sceneRect(), Qt::KeepAspectRatio);
+    ui->chiSquaredView->fitInView(_chiSquaredScene->sceneRect(), Qt::KeepAspectRatio);
+    ui->differenceView->fitInView(_differenceScene->sceneRect(), Qt::KeepAspectRatio);
 }
 
 void PeakFitDialog::on_hSpinBox_valueChanged(int arg1)
 {
-    if ( changePeak() )
-        updatePlots();
+    changePeak();
 }
 
 void PeakFitDialog::on_kSpinBox_valueChanged(int arg1)
 {
-    if ( changePeak() )
-        updatePlots();
+    changePeak();
 }
 
 void PeakFitDialog::on_lSpinBox_valueChanged(int arg1)
 {
-    if ( changePeak() )
-        updatePlots();
+    changePeak();
+}
+
+void PeakFitDialog::on_frameScrollBar_valueChanged(int value)
+{
+    updatePlots();
+}
+
+void PeakFitDialog::on_runFitButton_clicked()
+{
+    Minimizer min;
+
+    auto min_func = [&](const Eigen::VectorXd& par, Eigen::VectorXd& res) -> int
+    {
+        _peakFit->residuals(par, res);
+        return 0;
+    };
+
+    min.set_f(min_func);
+
+    Eigen::VectorXd params = _peakFit->defaultParams();
+
+    min.initialize(_peakFit->numParams(), _peakFit->numValues());
+    min.setParams(params);
+
+    if (min.fit(100) ) {
+        _bestParams = min.params();
+    }
+    else
+        qDebug() << "Fit did not converge!";
 }
