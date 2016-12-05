@@ -1376,6 +1376,7 @@ border-radius: 4px;
      </property>
      <addaction name="actionRemove_bad_peaks"/>
      <addaction name="actionIncorporate_calculated_peaks"/>
+     <addaction name="actionFit_peak"/>
     </widget>
     <addaction name="actionCompute_R_factors"/>
     <addaction name="actionFind_space_group"/>
@@ -1816,6 +1817,11 @@ QDockWidget::title {
   <action name="actionIncorporate_calculated_peaks">
    <property name="text">
     <string>Incorporate calculated peaks</string>
+   </property>
+  </action>
+  <action name="actionFit_peak">
+   <property name="text">
+    <string>Fit peak</string>
    </property>
   </action>
  </widget>

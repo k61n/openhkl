@@ -170,7 +170,7 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::on_actionNew_session_triggered()
-{    
+{
   qDebug() << "save session: not implemented yet";
 }
 
@@ -578,4 +578,9 @@ void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
 void MainWindow::on_actionIncorporate_calculated_peaks_triggered(bool checked)
 {
     emit incorporateCalculatedPeaks();
+}
+
+void MainWindow::on_actionFit_peak_triggered()
+{
+    qDebug() << "peak fit triggered";
 }
