@@ -33,9 +33,14 @@
 #include "UnitCell.h"
 #include "IShape.h"
 #include "Peak3D.h"
+#include <Eigen/Dense>
 
 namespace SX
 {
+
+namespace Utils {
+class IMinimizer;
+}
 
 namespace Crystal
 {
@@ -50,8 +55,25 @@ public:
     int numParams() const;
     int numValues() const;
 
+    Eigen::MatrixXd peakData(int frame) const;
+    Eigen::MatrixXd predict(int frame) const;
+    Eigen::MatrixXd predict(const Eigen::VectorXd& params, int frame) const;
+    Eigen::MatrixXd chi2(int frame) const;
+
+    double maxIntensity() const;
+
+    Eigen::VectorXd defaultParams() const;
+
+    bool fit(SX::Utils::IMinimizer& minimizer);
+
 private:
     sptrPeak3D _peak;
+    std::vector<Eigen::ArrayXXd> _peakData;
+    std::vector<Eigen::ArrayXXd> _maskData;
+    int _frameBegin, _frameEnd, _frames;
+    int _rowMin, _rowMax;
+    int _colMin, _colMax;
+    Eigen::VectorXd _params;
 };
 
 } // namespace Crystal
