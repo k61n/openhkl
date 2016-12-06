@@ -43,6 +43,7 @@
 #include <Eigen/Dense>
 
 class QGraphicsScene;
+class QCustomPlot;
 
 class SessionModel;
 

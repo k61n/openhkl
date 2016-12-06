@@ -36,6 +36,7 @@
 #include <QDebug>
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
+#include <Externals/qcustomplot.h>
 
 #include "dialogs/PeakFitDialog.h"
 #include "ui_PeakFitDialog.h"
@@ -171,7 +172,53 @@ void PeakFitDialog::updatePlots()
     ui->fitView->fitInView(_fitScene->sceneRect(), Qt::KeepAspectRatio);
     ui->chiSquaredView->fitInView(_chiSquaredScene->sceneRect(), Qt::KeepAspectRatio);
     ui->differenceView->fitInView(_differenceScene->sceneRect(), Qt::KeepAspectRatio);
+
+
+    // clear all previous graphs in custom plot
+    while(ui->chartWidget->graphCount()) {
+        QCPGraph* graph = ui->chartWidget->graph(0);
+        ui->chartWidget->removeGraph(graph);
+    }
+
+    // update qcustomplot plot
+    int xmin, xmax, ymin, ymax;
+
+    xmin = ui->frameScrollBar->minimum();
+    xmax = ui->frameScrollBar->maximum();
+
+    QVector<double> xs, ys;
+
+    // go through each frame
+    for(int x = xmin; x <= xmax; ++x) {
+
+        Eigen::ArrayXXd peakData = _peakFit->peakData(x);
+        Eigen::ArrayXXd predData = _peakFit->predict(_bestParams, x);
+
+        double y  = (peakData-predData).sum();
+        double ymin = (peakData-predData).minCoeff();
+        double ymax = (peakData-predData).maxCoeff();
+
+        xs.push_back(x);
+        ys.push_back(y);
+
+        double average = 0.0;
+        double sigma, var = 0.0;
+    }
+
+    // useful aliases
+    ui->chartWidget->addGraph();
+    QCPGraph* graph = ui->chartWidget->graph(0);
+
+    // do the plotting
+    graph->setData(xs, ys);
+    ui->chartWidget->xAxis->setLabel("Frame");
+    ui->chartWidget->yAxis->setLabel("Difference");
+    ui->chartWidget->xAxis->setRange(xmin, xmax);
+    ui->chartWidget->yAxis->setRange(ymin, ymax);
+    ui->chartWidget->replot();
 }
+
+
 
 void PeakFitDialog::on_hSpinBox_valueChanged(int arg1)
 {

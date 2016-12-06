@@ -53,17 +53,17 @@ using namespace std;
 
 int run_test()
 {
-    double x= 3.14;
-    Eigen::Vector3d v(1.0, 2.0, 3.0);
-    Eigen::Matrix3d m;
-    m << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9;
+//    double x= 3.14;
+//    Eigen::Vector3d v(1.0, 2.0, 3.0);
+//    Eigen::Matrix3d m;
+//    m << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9;
 
-    Eigen::MatrixXd blah;
+//    Eigen::MatrixXd blah;
 
-    blah << m, v;
+//    blah << m, v;
 
-    Eigen::Vector3d w;
-    Eigen::Matrix3d n;
+//    Eigen::Vector3d w;
+//    Eigen::Matrix3d n;
 
     // NOT IMPLEMENTED YET
 
