@@ -116,9 +116,12 @@ bool PeakFitDialog::changePeak()
     Eigen::Vector3d lower = _peak->getBackground()->getLower();
     Eigen::Vector3d upper = _peak->getBackground()->getUpper();
 
-    ui->frameScrollBar->setMinimum(std::ceil(lower(2)));
-    ui->frameScrollBar->setMaximum(std::floor(upper(2)));
-    ui->frameScrollBar->setValue(std::round((upper(2)-lower(2))/2.0));
+    int min = std::max(0.0, std::ceil(lower(2)));
+    int max = std::min(_peak->getData()->getNFrames()-1.0, std::floor(upper(2)));
+
+    ui->frameScrollBar->setMinimum(min);
+    ui->frameScrollBar->setMaximum(max);
+    ui->frameScrollBar->setValue(std::round((min+max)/2.0));
 
     updatePlots();
     return true;
@@ -134,10 +137,11 @@ void PeakFitDialog::updatePlots()
     Eigen::ArrayXXd peakData = _peakFit->peakData(frame);
     Eigen::ArrayXXd predData = _peakFit->predict(_bestParams, frame);
 
-    Eigen::ArrayXXd diffData = (peakData-predData).abs();
+    Eigen::ArrayXXd diffData = _peakFit->relDifference(frame);
     Eigen::ArrayXXd chi2Data = _peakFit->chi2(frame);
 
     const int max_intensity = std::round(_peakFit->maxIntensity());
+    diffData *= max_intensity;
 
     QRect sceneRect(0, 0, peakData.cols()-1, peakData.rows()-1);
     _peakScene->setSceneRect(sceneRect);
@@ -199,16 +203,21 @@ void PeakFitDialog::on_runFitButton_clicked()
         return 0;
     };
 
-    min.set_f(min_func);
 
-    Eigen::VectorXd params = _peakFit->defaultParams();
+
+    Eigen::VectorXd params = _bestParams;
 
     min.initialize(_peakFit->numParams(), _peakFit->numValues());
+    min.set_f(min_func);
     min.setParams(params);
 
     if (min.fit(100) ) {
-        _bestParams = min.params();
+        qDebug() << "Fit converged!";
     }
-    else
-        qDebug() << "Fit did not converge!";
+    else {
+        qDebug() << "Fit did not converge! " << min.getStatusStr();
+    }
+
+    _bestParams = min.params();
+    updatePlots();
 }

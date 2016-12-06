@@ -59,6 +59,7 @@ public:
     Eigen::MatrixXd predict(int frame) const;
     Eigen::MatrixXd predict(const Eigen::VectorXd& params, int frame) const;
     Eigen::MatrixXd chi2(int frame) const;
+    Eigen::MatrixXd relDifference(int frame) const;
 
     double maxIntensity() const;
 

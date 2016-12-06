@@ -100,18 +100,16 @@ int PeakFit::residuals(const Eigen::VectorXd &params, Eigen::VectorXd &res) cons
 
     res.resize(numValues());
 
-    const double a = params(0);
-    const Eigen::Vector3d b(params(1), params(2), params(3));
-    const double c = params(4);
-
     int i = 0;
 
     for (int frame = _frameBegin; frame < _frameEnd; ++frame) {
         auto&& pred = predict(params, frame);
+        auto&& diff = pred-_peakData[frame-_frameBegin].matrix();
 
         for (int r = 0; r < _rowMax-_rowMin; ++r) {
             for (int c = 0; c < _colMax-_colMin; ++c) {
-                res(i++) = pred(r, c);
+                res(i++) = diff(r, c);
+                //res(i++) = std::pow(std::abs(diff(r, c)), 0.5);
             }
         }
     }
@@ -164,6 +162,15 @@ Eigen::MatrixXd PeakFit::predict(const Eigen::VectorXd &params, int frame) const
     double x0x = p(i++);
     double x0y = p(i++);
     double x0z = p(i++);
+    double e0 = p(i++);
+    double e1 = p(i++);
+    double e2 = p(i++);
+    double e00 = p(i++);
+    double e01 = p(i++);
+    double e02 = p(i++);
+    double e11 = p(i++);
+    double e12 = p(i++);
+    double e22 = p(i++);
 
     Eigen::Vector3d v0(x0x, x0y, x0z);
     Eigen::Matrix3d A;
@@ -180,9 +187,21 @@ Eigen::MatrixXd PeakFit::predict(const Eigen::VectorXd &params, int frame) const
 
             Eigen::Vector3d v(x, y, frame);
             v -= v0;
-            double val = bkg + b0*x + b1*y;
+            double val = bkg + b0*v(0) + b1*v(1);
             double arg = -0.5*v.dot(A*v);
-            val += c * std::exp(arg);
+            double gauss = std::exp(arg);
+            val += c * gauss;
+            val += e0*v(0)*gauss;
+            val += e1*v(1)*gauss;
+            val += e2*v(2)*gauss;
+
+            val += e00*v(0)*v(0)*gauss;
+            val += e01*v(0)*v(1)*gauss;
+            val += e02*v(0)*v(2)*gauss;
+            val += e11*v(1)*v(1)*gauss;
+            val += e12*v(1)*v(2)*gauss;
+            val += e22*v(2)*v(2)*gauss;
+
             pred(i, j) = val;
         }
     }
@@ -200,6 +219,16 @@ Eigen::MatrixXd PeakFit::chi2(int frame) const
     return (diff*diff) / (pred+(1.0-mask));
 }
 
+Eigen::MatrixXd PeakFit::relDifference(int frame) const
+{
+    Eigen::ArrayXXd obs = _peakData[frame-_frameBegin];
+    Eigen::ArrayXXd pred = predict(frame);
+    Eigen::ArrayXXd mask = _maskData[frame-_frameBegin];
+
+    Eigen::ArrayXXd diff = pred-obs;
+    return diff.abs() / (obs+(1.0-mask));
+}
+
 double PeakFit::maxIntensity() const
 {
     double max = -1000;
@@ -215,7 +244,7 @@ double PeakFit::maxIntensity() const
 Eigen::VectorXd PeakFit::defaultParams() const
 {
     Eigen::VectorXd p;
-    p.resize(13);
+    p.resize(22);
 
     double bkg = 0.0;
     double nbkg = 0;
@@ -241,17 +270,21 @@ Eigen::VectorXd PeakFit::defaultParams() const
     auto dx = upper-lower;
     double scale = 1.0 / 3.0;
 
-    d00 = dx(0);
-    d11 = dx(1);
-    d22 = dx(2);
+    d00 = 2.0 / dx(0);
+    d11 = 2.0 / dx(1);
+    d22 = 2.0 / dx(2);
 
     d01 = d02 = d12 = 0.0;
 
-    p << bkg, b0, b1, c, d00, d01, d02, d11, d12, d22, x0(0), x0(1), x0(2);
+    double e0, e1, e2, e00, e01, e02, e11, e12, e22;
+    e0 = e1 = e2 = e00 = e01 = e02 = e11 = e12 = e22 = 0.0;
+
+    p << 0.95*bkg, b0, b1, c, d00, d01, d02, d11, d12, d22, x0(0), x0(1), x0(2),
+            e0, e1, e2, e00, e01, e02, e11, e12, e22;
     return p;
 }
 
-bool PeakFit::fit(IMinimizer &minimizer)
+bool PeakFit::fit(IMinimizer& minimizer)
 {
     return false;
 }
