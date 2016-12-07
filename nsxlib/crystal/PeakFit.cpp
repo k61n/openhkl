@@ -103,6 +103,7 @@ int PeakFit::residuals(const Eigen::VectorXd &params, Eigen::VectorXd &res) cons
     int i = 0;
 
     for (int frame = _frameBegin; frame <= _frameEnd; ++frame) {
+
         auto&& pred = predict(params, frame);
         auto&& diff = pred-_peakData[frame-_frameBegin].matrix();
 
@@ -198,6 +199,9 @@ Eigen::MatrixXd PeakFit::background(const Eigen::VectorXd& params, double frame)
 Eigen::MatrixXd PeakFit::predict(const Eigen::VectorXd &params, double frame) const
 {
     const Eigen::VectorXd& p = params;
+    // used for numerical integration
+    const int num_points = 20;
+    const double dz = 1.0 / (double)num_points;
 
     int i = 0;
 
@@ -240,21 +244,32 @@ Eigen::MatrixXd PeakFit::predict(const Eigen::VectorXd &params, double frame) co
             Eigen::Vector3d v(x, y, frame);
             v -= v0;
             double val = bkg + b0*v(0) + b1*v(1);
-            double arg = -0.5*v.dot(A*v);
-            double gauss = std::exp(arg);
-            val += c * gauss;
-            val += e0*v(0)*gauss;
-            val += e1*v(1)*gauss;
-            val += e2*v(2)*gauss;
 
-            val += e00*v(0)*v(0)*gauss;
-            val += e01*v(0)*v(1)*gauss;
-            val += e02*v(0)*v(2)*gauss;
-            val += e11*v(1)*v(1)*gauss;
-            val += e12*v(1)*v(2)*gauss;
-            val += e22*v(2)*v(2)*gauss;
+            const double zmin = frame-0.5-x0z;
+            const double zmax = frame+0.5-x0z;
 
-            pred(i, j) = val;
+            double sum = 0.0;
+
+            for (int i = 0; i < num_points; ++i) {
+                v(2) = zmin + i*dz;
+
+                double arg = -0.5*v.dot(A*v);
+                double gauss = std::exp(arg);
+
+                sum += c * gauss;
+                sum += e0*v(0)*gauss;
+                sum += e1*v(1)*gauss;
+                sum += e2*v(2)*gauss;
+
+                sum += e00*v(0)*v(0)*gauss;
+                sum += e01*v(0)*v(1)*gauss;
+                sum += e02*v(0)*v(2)*gauss;
+                sum += e11*v(1)*v(1)*gauss;
+                sum += e12*v(1)*v(2)*gauss;
+                sum += e22*v(2)*v(2)*gauss;
+            }
+
+            pred(i, j) = val + dz*sum;
         }
     }
 
