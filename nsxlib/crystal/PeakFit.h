@@ -56,8 +56,9 @@ public:
     int numValues() const;
 
     Eigen::MatrixXd peakData(int frame) const;
-    Eigen::MatrixXd predict(int frame) const;
-    Eigen::MatrixXd predict(const Eigen::VectorXd& params, int frame) const;
+    Eigen::MatrixXd predict(double frame) const;
+    Eigen::MatrixXd background(const Eigen::VectorXd& params, double frame) const;
+    Eigen::MatrixXd predict(const Eigen::VectorXd& params, double frame) const;
     Eigen::MatrixXd chi2(int frame) const;
     Eigen::MatrixXd relDifference(int frame) const;
 
@@ -66,6 +67,9 @@ public:
     Eigen::VectorXd defaultParams() const;
 
     bool fit(SX::Utils::IMinimizer& minimizer);
+
+    int frameBegin() const;
+    int frameEnd() const;
 
 private:
     sptrPeak3D _peak;

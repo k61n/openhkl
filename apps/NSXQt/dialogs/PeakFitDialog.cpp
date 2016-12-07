@@ -114,11 +114,8 @@ bool PeakFitDialog::changePeak()
     _peakFit = std::unique_ptr<PeakFit>(new PeakFit(_peak));
     _bestParams = _peakFit->defaultParams();
 
-    Eigen::Vector3d lower = _peak->getBackground()->getLower();
-    Eigen::Vector3d upper = _peak->getBackground()->getUpper();
-
-    int min = std::max(0.0, std::ceil(lower(2)));
-    int max = std::min(_peak->getData()->getNFrames()-1.0, std::floor(upper(2)));
+    int min = _peakFit->frameBegin();
+    int max = _peakFit->frameEnd()-1;
 
     ui->frameScrollBar->setMinimum(min);
     ui->frameScrollBar->setMaximum(max);
@@ -138,11 +135,10 @@ void PeakFitDialog::updatePlots()
     Eigen::ArrayXXd peakData = _peakFit->peakData(frame);
     Eigen::ArrayXXd predData = _peakFit->predict(_bestParams, frame);
 
-    Eigen::ArrayXXd diffData = _peakFit->relDifference(frame);
+    Eigen::ArrayXXd diffData = (predData-peakData).abs();
     Eigen::ArrayXXd chi2Data = _peakFit->chi2(frame);
 
     const int max_intensity = std::round(_peakFit->maxIntensity());
-    diffData *= max_intensity;
 
     QRect sceneRect(0, 0, peakData.cols()-1, peakData.rows()-1);
     _peakScene->setSceneRect(sceneRect);
@@ -181,38 +177,59 @@ void PeakFitDialog::updatePlots()
     }
 
     // update qcustomplot plot
-    int xmin, xmax, ymin, ymax;
+    int xmin(0), xmax(0), ymin(0), ymax(0);
 
-    xmin = ui->frameScrollBar->minimum();
-    xmax = ui->frameScrollBar->maximum();
 
-    QVector<double> xs, ys;
+    xmin = _peakFit->frameBegin();
+    xmax = _peakFit->frameEnd();
+
+    int num_points = 100;
+
+    QVector<double> xs, Ipred, Iobs;
+
+    auto&& peakProjection = _peak->getPeakProjection();
 
     // go through each frame
-    for(int x = xmin; x <= xmax; ++x) {
+    for(int i = 0; i < num_points; ++i) {
 
-        Eigen::ArrayXXd peakData = _peakFit->peakData(x);
+        double x = xmin + i*(double)(xmax-xmin) / (double)num_points;
+        double t = x-std::floor(x);
+
+        int i0 = std::rint(std::floor(x));
+        int i1 = std::rint(std::floor(x+1));
+
+        Eigen::ArrayXXd peakData = _peakFit->peakData(std::rint(x));
+        Eigen::ArrayXXd backData = _peakFit->background(_bestParams, x);
         Eigen::ArrayXXd predData = _peakFit->predict(_bestParams, x);
 
-        double y  = (peakData-predData).sum();
-        double ymin = (peakData-predData).minCoeff();
-        double ymax = (peakData-predData).maxCoeff();
+        double obs = t*peakProjection(i1-xmin) + (1-t)*peakProjection(i0-xmin);
+        double pred = (predData-backData).sum();
 
+        double new_ymin = obs < pred ? obs : pred;
+        double new_ymax = obs > pred ? obs : pred;
+
+        ymin = new_ymin < ymin ? new_ymin : ymin;
+        ymax = new_ymax > ymax ? new_ymax : ymax;
+
+        Iobs.push_back(obs);
+        Ipred.push_back(pred);
         xs.push_back(x);
-        ys.push_back(y);
 
         double average = 0.0;
         double sigma, var = 0.0;
     }
 
-    // useful aliases
+    // do the QCP plotting
     ui->chartWidget->addGraph();
-    QCPGraph* graph = ui->chartWidget->graph(0);
+    ui->chartWidget->addGraph();
 
-    // do the plotting
-    graph->setData(xs, ys);
+    ui->chartWidget->graph(0)->setPen(QPen(Qt::black));
+    ui->chartWidget->graph(0)->setData(xs, Iobs);
+    ui->chartWidget->graph(1)->setPen(QPen(Qt::blue));
+    ui->chartWidget->graph(1)->setData(xs, Ipred);
+
     ui->chartWidget->xAxis->setLabel("Frame");
-    ui->chartWidget->yAxis->setLabel("Difference");
+    ui->chartWidget->yAxis->setLabel("Difference: Obs (black) and Pred (blue)");
     ui->chartWidget->xAxis->setRange(xmin, xmax);
     ui->chartWidget->yAxis->setRange(ymin, ymax);
     ui->chartWidget->replot();
@@ -242,6 +259,11 @@ void PeakFitDialog::on_frameScrollBar_valueChanged(int value)
 
 void PeakFitDialog::on_runFitButton_clicked()
 {
+    if (!_peak || !_peakFit) {
+        qCritical() << "No peak selected for fitting!";
+        return;
+    }
+
     Minimizer min;
 
     auto min_func = [&](const Eigen::VectorXd& par, Eigen::VectorXd& res) -> int

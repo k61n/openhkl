@@ -52,7 +52,7 @@ PeakFit::PeakFit(sptrPeak3D peak): _peak(peak)
     auto lower = _peak->getBackground()->getLower();
     auto upper = _peak->getBackground()->getUpper();
 
-    _frameBegin = std::ceil(lower(2));
+    _frameBegin = std::floor(lower(2));
     _frameEnd = std::ceil(upper(2));
 
     _frameBegin = std::max(_frameBegin, 0);
@@ -67,11 +67,11 @@ PeakFit::PeakFit(sptrPeak3D peak): _peak(peak)
     const int nrows = _rowMax-_rowMin;
     const int ncols = _colMax-_colMin;
 
-    _frames = _frameEnd - _frameBegin;
+    _frames = _frameEnd - _frameBegin+1;
     _peakData.resize(_frames);
     _maskData.resize(_frames);
 
-    for (int i = _frameBegin; i < _frameEnd; ++i) {
+    for (int i = _frameBegin; i <= _frameEnd; ++i) {
         auto frameData = _peak->getData()->getFrame(i);
         _peakData[i-_frameBegin] = frameData.block(_rowMin, _colMin, nrows, ncols).cast<double>();
         _maskData[i-_frameBegin].resize(nrows, ncols);
@@ -102,7 +102,7 @@ int PeakFit::residuals(const Eigen::VectorXd &params, Eigen::VectorXd &res) cons
 
     int i = 0;
 
-    for (int frame = _frameBegin; frame < _frameEnd; ++frame) {
+    for (int frame = _frameBegin; frame <= _frameEnd; ++frame) {
         auto&& pred = predict(params, frame);
         auto&& diff = pred-_peakData[frame-_frameBegin].matrix();
 
@@ -124,7 +124,7 @@ int PeakFit::numParams() const
 
 int PeakFit::numValues() const
 {
-    return (_rowMax-_rowMin)*(_colMax-_colMin)*(_frameEnd-_frameBegin);
+    return (_rowMax-_rowMin)*(_colMax-_colMin)*(_frames);
 }
 
 Eigen::MatrixXd PeakFit::peakData(int frame) const
@@ -132,18 +132,70 @@ Eigen::MatrixXd PeakFit::peakData(int frame) const
     if (frame < _frameBegin)
         frame = _frameBegin;
 
-    if (frame >= _frameEnd)
-        frame = _frameEnd-1;
+    if (frame > _frameEnd)
+        frame = _frameEnd;
 
     return _peakData[frame-_frameBegin];
 }
 
-Eigen::MatrixXd PeakFit::predict(int frame) const
+Eigen::MatrixXd PeakFit::predict(double frame) const
 {
     return predict(_params, frame);
 }
 
-Eigen::MatrixXd PeakFit::predict(const Eigen::VectorXd &params, int frame) const
+Eigen::MatrixXd PeakFit::background(const Eigen::VectorXd& params, double frame) const
+{
+    const Eigen::VectorXd& p = params;
+
+    int i = 0;
+
+    double bkg = p(i++);
+    double b0 = p(i++);
+    double b1 = p(i++);
+    double c = p(i++);
+    double d00 = p(i++);
+    double d01 = p(i++);
+    double d02 = p(i++);
+    double d11 = p(i++);
+    double d12 = p(i++);
+    double d22 = p(i++);
+    double x0x = p(i++);
+    double x0y = p(i++);
+    double x0z = p(i++);
+    double e0 = p(i++);
+    double e1 = p(i++);
+    double e2 = p(i++);
+    double e00 = p(i++);
+    double e01 = p(i++);
+    double e02 = p(i++);
+    double e11 = p(i++);
+    double e12 = p(i++);
+    double e22 = p(i++);
+
+    Eigen::Vector3d v0(x0x, x0y, x0z);
+    Eigen::Matrix3d A;
+
+    A << d00, d01, d02, d01, d11, d12, d02, d12, d22;
+
+    Eigen::ArrayXXd pred;
+    pred.resize(_rowMax-_rowMin, _colMax-_colMin);
+
+    for (int x = _colMin; x < _colMax; ++x) {
+        for (int y = _rowMin; y < _rowMax; ++y) {
+            int i = y-_rowMin;
+            int j = x-_colMin;
+
+            Eigen::Vector3d v(x, y, frame);
+            v -= v0;
+            double val = bkg + b0*v(0) + b1*v(1);
+            pred(i, j) = val;
+        }
+    }
+
+    return (pred*_maskData[std::round(frame-_frameBegin)]).matrix();
+}
+
+Eigen::MatrixXd PeakFit::predict(const Eigen::VectorXd &params, double frame) const
 {
     const Eigen::VectorXd& p = params;
 
@@ -206,7 +258,7 @@ Eigen::MatrixXd PeakFit::predict(const Eigen::VectorXd &params, int frame) const
         }
     }
 
-    return (pred*_maskData[frame-_frameBegin]).matrix();
+    return (pred*_maskData[std::round(frame-_frameBegin)]).matrix();
 }
 
 Eigen::MatrixXd PeakFit::chi2(int frame) const
@@ -287,6 +339,16 @@ Eigen::VectorXd PeakFit::defaultParams() const
 bool PeakFit::fit(IMinimizer& minimizer)
 {
     return false;
+}
+
+int PeakFit::frameBegin() const
+{
+    return _frameBegin;
+}
+
+int PeakFit::frameEnd() const
+{
+    return _frameEnd;
 }
 
 
