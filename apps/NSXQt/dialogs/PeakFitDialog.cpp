@@ -198,6 +198,9 @@ void PeakFitDialog::updatePlots()
         int i0 = std::rint(std::floor(x));
         int i1 = std::rint(std::floor(x+1));
 
+        if (i1 >= num_points)
+            break;
+
         Eigen::ArrayXXd peakData = _peakFit->peakData(std::rint(x));
         Eigen::ArrayXXd backData = _peakFit->background(_bestParams, x);
         Eigen::ArrayXXd predData = _peakFit->predict(_bestParams, x);

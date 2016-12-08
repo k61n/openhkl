@@ -111,6 +111,9 @@ int PeakFit::residuals(const Eigen::VectorXd &params, Eigen::VectorXd &res) cons
                 //res(i++) = std::pow(std::abs(diff(r, c)), 0.5);
             }
         }
+
+        // also add difference in integrated intensity
+        res(i++) = diff.sum();
     }
 
     return 0;
@@ -123,7 +126,8 @@ int PeakFit::numParams() const
 
 int PeakFit::numValues() const
 {
-    return (_rowMax-_rowMin)*(_colMax-_colMin)*(_frames);
+    // return (_rowMax-_rowMin)*(_colMax-_colMin)*(_frames);
+    return (_rowMax-_rowMin)*(_colMax-_colMin)*(_frames) + _frames;
 }
 
 Eigen::MatrixXd PeakFit::peakData(std::size_t frame) const
@@ -250,26 +254,45 @@ Eigen::MatrixXd PeakFit::predict(const Eigen::VectorXd &params, double frame) co
 
             double sum = 0.0;
 
-            for (int i = 0; i < num_points; ++i) {
-                v(2) = zmin + i*dz;
+//            for (int i = 0; i < num_points; ++i) {
+//                v(2) = zmin + i*dz;
 
-                double arg = -0.5*v.dot(A*v);
-                double gauss = std::exp(arg);
+//                double arg = -0.5*v.dot(A*v);
+//                double gauss = std::exp(arg);
 
-                sum += c * gauss;
-                sum += e0*v(0)*gauss;
-                sum += e1*v(1)*gauss;
-                sum += e2*v(2)*gauss;
+//                sum += c * gauss;
+//                sum += e0*v(0)*gauss;
+//                sum += e1*v(1)*gauss;
+//                sum += e2*v(2)*gauss;
 
-                sum += e00*v(0)*v(0)*gauss;
-                sum += e01*v(0)*v(1)*gauss;
-                sum += e02*v(0)*v(2)*gauss;
-                sum += e11*v(1)*v(1)*gauss;
-                sum += e12*v(1)*v(2)*gauss;
-                sum += e22*v(2)*v(2)*gauss;
-            }
+//                sum += e00*v(0)*v(0)*gauss;
+//                sum += e01*v(0)*v(1)*gauss;
+//                sum += e02*v(0)*v(2)*gauss;
+//                sum += e11*v(1)*v(1)*gauss;
+//                sum += e12*v(1)*v(2)*gauss;
+//                sum += e22*v(2)*v(2)*gauss;
+//            }
 
-            pred(i, j) = val + dz*sum;
+//            pred(i, j) = val + dz*sum;
+
+
+            double arg = -0.5*v.dot(A*v);
+            double gauss = std::exp(arg);
+
+            sum += c * gauss;
+            sum += e0*v(0)*gauss;
+            sum += e1*v(1)*gauss;
+            sum += e2*v(2)*gauss;
+
+            sum += e00*v(0)*v(0)*gauss;
+            sum += e01*v(0)*v(1)*gauss;
+            sum += e02*v(0)*v(2)*gauss;
+            sum += e11*v(1)*v(1)*gauss;
+            sum += e12*v(1)*v(2)*gauss;
+            sum += e22*v(2)*v(2)*gauss;
+
+
+            pred(i, j) = val + sum;
         }
     }
 
