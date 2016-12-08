@@ -200,7 +200,7 @@ Eigen::MatrixXd PeakFit::predict(const Eigen::VectorXd &params, double frame) co
 {
     const Eigen::VectorXd& p = params;
     // used for numerical integration
-    const int num_points = 20;
+    const int num_points = 2;
     const double dz = 1.0 / (double)num_points;
 
     int i = 0;
