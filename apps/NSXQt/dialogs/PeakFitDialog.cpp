@@ -138,7 +138,7 @@ void PeakFitDialog::updatePlots()
     Eigen::ArrayXXd diffData = (predData-peakData).abs();
     Eigen::ArrayXXd chi2Data = _peakFit->chi2(frame);
 
-    const int max_intensity = std::round(_peakFit->maxIntensity());
+    const int max_intensity = std::round    (_peakFit->maxIntensity());
 
     QRect sceneRect(0, 0, peakData.cols()-1, peakData.rows()-1);
     _peakScene->setSceneRect(sceneRect);

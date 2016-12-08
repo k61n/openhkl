@@ -13,8 +13,8 @@ class SampleItem : public InspectableTreeItem
 public:
     explicit SampleItem(std::shared_ptr<Experiment> experiment);
 
-    void setData(const QVariant & value, int role=Qt::UserRole + 1 );
-    QWidget* inspectItem();
+    void setData(const QVariant & value, int role=Qt::UserRole + 1 ) override;
+    QWidget* inspectItem() override;
 
     QJsonObject toJson() override;
     void fromJson(const QJsonObject& obj) override;

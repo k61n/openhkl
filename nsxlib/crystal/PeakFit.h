@@ -55,12 +55,12 @@ public:
     int numParams() const;
     int numValues() const;
 
-    Eigen::MatrixXd peakData(int frame) const;
+    Eigen::MatrixXd peakData(std::size_t frame) const;
     Eigen::MatrixXd predict(double frame) const;
     Eigen::MatrixXd background(const Eigen::VectorXd& params, double frame) const;
     Eigen::MatrixXd predict(const Eigen::VectorXd& params, double frame) const;
-    Eigen::MatrixXd chi2(int frame) const;
-    Eigen::MatrixXd relDifference(int frame) const;
+    Eigen::MatrixXd chi2(std::size_t frame) const;
+    Eigen::MatrixXd relDifference(std::size_t frame) const;
 
     double maxIntensity() const;
 
@@ -71,13 +71,15 @@ public:
     int frameBegin() const;
     int frameEnd() const;
 
+    int integerFrame(double f) const;
+
 private:
     sptrPeak3D _peak;
     std::vector<Eigen::ArrayXXd> _peakData;
     std::vector<Eigen::ArrayXXd> _maskData;
-    int _frameBegin, _frameEnd, _frames;
-    int _rowMin, _rowMax;
-    int _colMin, _colMax;
+    std::size_t _frameBegin, _frameEnd, _frames;
+    std::size_t _rowMin, _rowMax;
+    std::size_t _colMin, _colMax;
     Eigen::VectorXd _params;
 };
 

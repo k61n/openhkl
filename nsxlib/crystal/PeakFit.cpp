@@ -39,6 +39,7 @@
 #include "PeakFit.h"
 #include "IData.h"
 #include "IMinimizer.h"
+#include "Round.h"
 
 namespace SX
 {
@@ -52,26 +53,23 @@ PeakFit::PeakFit(sptrPeak3D peak): _peak(peak)
     auto lower = _peak->getBackground()->getLower();
     auto upper = _peak->getBackground()->getUpper();
 
-    _frameBegin = std::floor(lower(2));
-    _frameEnd = std::ceil(upper(2));
+    _frameBegin = std::max(Utils::ifloor(lower(2)), 0);
+    _frameEnd = std::min(static_cast<std::size_t>(Utils::iceil(upper(2))), _peak->getData()->getNFrames());
 
-    _frameBegin = std::max(_frameBegin, 0);
-    _frameEnd = std::min(_frameEnd, (int)_peak->getData()->getNFrames());
+    _rowMin = Utils::ifloor(lower(1));
+    _rowMax = Utils::iceil(upper(1));
 
-    _rowMin = std::ceil(lower(1));
-    _rowMax = std::ceil(upper(1));
-
-    _colMin = std::ceil(lower(0));
-    _colMax = std::ceil(upper(0));
+    _colMin = Utils::ifloor(lower(0));
+    _colMax = Utils::iceil(upper(0));
 
     const int nrows = _rowMax-_rowMin;
     const int ncols = _colMax-_colMin;
 
-    _frames = _frameEnd - _frameBegin+1;
-    _peakData.resize(_frames);
-    _maskData.resize(_frames);
+    _frames = _frameEnd - _frameBegin;
+    _peakData.resize(static_cast<size_t>(_frames));
+    _maskData.resize(static_cast<size_t>(_frames));
 
-    for (int i = _frameBegin; i <= _frameEnd; ++i) {
+    for (unsigned int i = _frameBegin; i < _frameEnd; ++i) {
         auto frameData = _peak->getData()->getFrame(i);
         _peakData[i-_frameBegin] = frameData.block(_rowMin, _colMin, nrows, ncols).cast<double>();
         _maskData[i-_frameBegin].resize(nrows, ncols);
@@ -102,7 +100,7 @@ int PeakFit::residuals(const Eigen::VectorXd &params, Eigen::VectorXd &res) cons
 
     int i = 0;
 
-    for (int frame = _frameBegin; frame <= _frameEnd; ++frame) {
+    for (int frame = _frameBegin; frame < _frameEnd; ++frame) {
 
         auto&& pred = predict(params, frame);
         auto&& diff = pred-_peakData[frame-_frameBegin].matrix();
@@ -128,13 +126,13 @@ int PeakFit::numValues() const
     return (_rowMax-_rowMin)*(_colMax-_colMin)*(_frames);
 }
 
-Eigen::MatrixXd PeakFit::peakData(int frame) const
+Eigen::MatrixXd PeakFit::peakData(std::size_t frame) const
 {
     if (frame < _frameBegin)
         frame = _frameBegin;
 
-    if (frame > _frameEnd)
-        frame = _frameEnd;
+    if (frame >= _frameEnd)
+        frame = _frameEnd-1;
 
     return _peakData[frame-_frameBegin];
 }
@@ -150,6 +148,10 @@ Eigen::MatrixXd PeakFit::background(const Eigen::VectorXd& params, double frame)
 
     int i = 0;
 
+    double x0x = p(i++);
+    double x0y = p(i++);
+    double x0z = p(i++);
+
     double bkg = p(i++);
     double b0 = p(i++);
     double b1 = p(i++);
@@ -160,9 +162,7 @@ Eigen::MatrixXd PeakFit::background(const Eigen::VectorXd& params, double frame)
     double d11 = p(i++);
     double d12 = p(i++);
     double d22 = p(i++);
-    double x0x = p(i++);
-    double x0y = p(i++);
-    double x0z = p(i++);
+
     double e0 = p(i++);
     double e1 = p(i++);
     double e2 = p(i++);
@@ -174,11 +174,8 @@ Eigen::MatrixXd PeakFit::background(const Eigen::VectorXd& params, double frame)
     double e22 = p(i++);
 
     Eigen::Vector3d v0(x0x, x0y, x0z);
-    Eigen::Matrix3d A;
-
-    A << d00, d01, d02, d01, d11, d12, d02, d12, d22;
-
     Eigen::ArrayXXd pred;
+
     pred.resize(_rowMax-_rowMin, _colMax-_colMin);
 
     for (int x = _colMin; x < _colMax; ++x) {
@@ -193,17 +190,22 @@ Eigen::MatrixXd PeakFit::background(const Eigen::VectorXd& params, double frame)
         }
     }
 
-    return (pred*_maskData[std::round(frame-_frameBegin)]).matrix();
+    const unsigned int idx = integerFrame(frame)-_frameBegin;
+    return (pred*_maskData[idx]).matrix();
 }
 
 Eigen::MatrixXd PeakFit::predict(const Eigen::VectorXd &params, double frame) const
 {
     const Eigen::VectorXd& p = params;
     // used for numerical integration
-    const int num_points = 2;
+    const int num_points = 20;
     const double dz = 1.0 / (double)num_points;
 
     int i = 0;
+
+    double x0x = p(i++);
+    double x0y = p(i++);
+    double x0z = p(i++);
 
     double bkg = p(i++);
     double b0 = p(i++);
@@ -215,9 +217,7 @@ Eigen::MatrixXd PeakFit::predict(const Eigen::VectorXd &params, double frame) co
     double d11 = p(i++);
     double d12 = p(i++);
     double d22 = p(i++);
-    double x0x = p(i++);
-    double x0y = p(i++);
-    double x0z = p(i++);
+
     double e0 = p(i++);
     double e1 = p(i++);
     double e2 = p(i++);
@@ -273,10 +273,10 @@ Eigen::MatrixXd PeakFit::predict(const Eigen::VectorXd &params, double frame) co
         }
     }
 
-    return (pred*_maskData[std::round(frame-_frameBegin)]).matrix();
+    return (pred*_maskData[integerFrame(frame)-_frameBegin]).matrix();
 }
 
-Eigen::MatrixXd PeakFit::chi2(int frame) const
+Eigen::MatrixXd PeakFit::chi2(std::size_t frame) const
 {
     Eigen::ArrayXXd obs = _peakData[frame-_frameBegin];
     Eigen::ArrayXXd pred = predict(frame);
@@ -286,7 +286,7 @@ Eigen::MatrixXd PeakFit::chi2(int frame) const
     return (diff*diff) / (pred+(1.0-mask));
 }
 
-Eigen::MatrixXd PeakFit::relDifference(int frame) const
+Eigen::MatrixXd PeakFit::relDifference(std::size_t frame) const
 {
     Eigen::ArrayXXd obs = _peakData[frame-_frameBegin];
     Eigen::ArrayXXd pred = predict(frame);
@@ -346,7 +346,7 @@ Eigen::VectorXd PeakFit::defaultParams() const
     double e0, e1, e2, e00, e01, e02, e11, e12, e22;
     e0 = e1 = e2 = e00 = e01 = e02 = e11 = e12 = e22 = 0.0;
 
-    p << 0.95*bkg, b0, b1, c, d00, d01, d02, d11, d12, d22, x0(0), x0(1), x0(2),
+    p <<  x0(0), x0(1), x0(2), 0.95*bkg, b0, b1, c, d00, d01, d02, d11, d12, d22,
             e0, e1, e2, e00, e01, e02, e11, e12, e22;
     return p;
 }
@@ -364,6 +364,14 @@ int PeakFit::frameBegin() const
 int PeakFit::frameEnd() const
 {
     return _frameEnd;
+}
+
+int PeakFit::integerFrame(double f) const
+{
+    int fint = Utils::iround(f);
+    if (fint < _frameBegin) fint = _frameBegin;
+    if (fint >= _frameEnd) fint = _frameEnd-1;
+    return fint;
 }
 
 
