@@ -55,12 +55,13 @@ public:
     int numParams() const;
     int numValues() const;
 
-    Eigen::MatrixXd peakData(std::size_t frame) const;
-    Eigen::MatrixXd predict(double frame) const;
-    Eigen::MatrixXd background(const Eigen::VectorXd& params, double frame) const;
-    Eigen::MatrixXd predict(const Eigen::VectorXd& params, double frame) const;
-    Eigen::MatrixXd chi2(std::size_t frame) const;
-    Eigen::MatrixXd relDifference(std::size_t frame) const;
+    Eigen::ArrayXXd peakData(double frame) const;
+    Eigen::ArrayXXd predict(double frame) const;
+    Eigen::ArrayXXd background(const Eigen::VectorXd& params, double frame) const;
+    Eigen::ArrayXXd predict(const Eigen::VectorXd& params, double frame) const;
+    Eigen::ArrayXXd mask(double frame) const;
+    Eigen::ArrayXXd chi2(std::size_t frame) const;
+    Eigen::ArrayXXd relDifference(std::size_t frame) const;
 
     double maxIntensity() const;
 
