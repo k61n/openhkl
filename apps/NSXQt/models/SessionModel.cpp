@@ -671,6 +671,7 @@ void SessionModel::incorporateCalculatedPeaks()
 
                 new_peak->setSelected(true);
                 new_peak->setUnitCell(cell);
+                new_peak->setCalculated(true);
 
                 #pragma omp critical
                 calculated_peaks.push_back(new_peak);
