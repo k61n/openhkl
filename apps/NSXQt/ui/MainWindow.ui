@@ -1323,6 +1323,7 @@ border-radius: 4px;
      </property>
      <addaction name="actionFrom_Sample"/>
      <addaction name="actionBehind_Detector"/>
+     <addaction name="actionLogarithmic_Scale"/>
     </widget>
     <widget class="QMenu" name="menuPeak">
      <property name="title">
@@ -1816,6 +1817,14 @@ QDockWidget::title {
   <action name="actionIncorporate_calculated_peaks">
    <property name="text">
     <string>Incorporate calculated peaks</string>
+   </property>
+  </action>
+  <action name="actionLogarithmic_Scale">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Logarithmic Scale</string>
    </property>
   </action>
  </widget>

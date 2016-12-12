@@ -170,7 +170,7 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::on_actionNew_session_triggered()
-{    
+{
   qDebug() << "save session: not implemented yet";
 }
 
@@ -515,6 +515,11 @@ void MainWindow::on_actionIntegrate_calculated_peaks_triggered()
 void MainWindow::on_actionPeak_fit_dialog_triggered()
 {
     emit peakFitDialog();
+}
+
+void MainWindow::on_actionLogarithmic_Scale_triggered(bool checked)
+{
+    _ui->_dview->getScene()->setLogarithmic(checked);
 }
 
 void MainWindow::on_actionDraw_peak_background_triggered(bool checked)

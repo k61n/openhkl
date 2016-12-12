@@ -57,6 +57,7 @@ public:
     explicit DetectorScene(QObject *parent = 0);
     std::shared_ptr<SX::Data::IData> getData();
     const rowMatrix& getCurrentFrame() const;
+    void setLogarithmic(bool checked);
 
 signals:
      //! Signal emitted for all changes of the image
@@ -127,6 +128,7 @@ private:
     std::vector<SX::Crystal::PeakCalc> _precalculatedPeaks;
 
     bool _showPeakCalcs;
+    bool _logarithmic;
 
 
 };
