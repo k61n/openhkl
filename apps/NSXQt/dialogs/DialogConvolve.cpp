@@ -108,7 +108,7 @@ void DialogConvolve::buildTree()
         }
     }
 
-	treeView->setModel(model);
+    treeView->setModel(model);
 
     connect(model, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(parameterChanged(QStandardItem*)));
 }
@@ -154,7 +154,10 @@ void DialogConvolve::on_previewButton_clicked()
     result.array() *= static_cast<double>(maxData)/(maxVal-minVal);
     clamped_result = result.cast<int>();
 
-    QImage image = Mat2QImage(clamped_result.data(), nrows, ncols, 0, ncols-1, 0, nrows-1, maxData);
+    BlueWhiteCMap cmap;
+    QRect rect(0, 0, ncols, nrows);
+
+    QImage image = cmap.matToImage(clamped_result, rect, maxData);
 
     if (!_pxmapPreview)
         _pxmapPreview = _scene->addPixmap(QPixmap::fromImage(image));

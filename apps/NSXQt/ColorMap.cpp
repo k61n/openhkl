@@ -32,29 +32,106 @@
 #include "ColorMap.h"
 #include <ctime>
 #include <cmath>
+#include <array>
 
-QImage Mat2QImage(int* src, int rows, int cols,int xmin, int xmax, int ymin, int ymax, int colorMax, bool log)
+// helper function used for matplotlib-derived color maps
+template<typename Arr>
+static QRgb cmap_poly(const Arr& rs, const Arr& gs, const Arr& bs, double t)
 {
-    if (xmin<0 || xmax> cols || ymin<0 || ymax>rows)
+    if (t < 0)
+        t = 0.0;
+
+    if ( t > 1.0)
+        t = 1.0;
+
+    assert(rs.size() == gs.size() && rs.size() == bs.size());
+    assert(rs.size() >= 2);
+
+    double r = 0.0, g = 0.0, b = 0.0;
+    double tn = 1.0;
+
+    for (int i = 0; i < rs.size(); ++i) {
+        r += rs[i]*tn;
+        g += gs[i]*tn;
+        b += bs[i]*tn;
+        tn *= t;
+    }
+
+    r *= 255.0;
+    g *= 255.0;
+    b *= 255.0;
+
+    int ir = std::min(std::lround(r), 255l);
+    int ig = std::min(std::lround(g), 255l);
+    int ib = std::min(std::lround(b), 255l);
+
+    return QColor(ir, ig, ib).rgb();
+}
+
+// precomputed global constants used for color maps
+const std::array<double, 10> ViridisCMap::_r = {
+    0.26199569,   0.76259414,  -7.95549936,  28.42312215, -50.08511333,
+      19.34939787,  43.08721907, -11.35989349, -50.97404283,  29.49258413
+};
+
+const std::array<double, 10> ViridisCMap::_g = {
+    0.00418753,  1.4837755,  -0.8924195,  -0.1797478,  1.00381965,  0.59462808,
+     -0.48846077, -1.07553209, -0.59690997,  1.05359406
+};
+
+const std::array<double, 10> ViridisCMap::_b = {
+    0.32239281,   1.94232169,  -6.74189755 , 13.57191937, -14.96017142,
+      1.05841996 , 13.84594501,  -2.33633239 ,-19.99350254,  13.43282862
+};
+
+
+QImage ColorMap::matToImage(const Eigen::MatrixXi& source, const QRect& rect, int colorMax, bool log)
+{
+    // invalid rectangle: early return
+    if (rect.left() < 0 || rect.top() < 0)
+        return QImage();
+
+    const int rows = source.rows();
+    const int cols = source.cols();
+
+    const int xmin = rect.left();
+    const int xmax = rect.right();
+    const int ymin = rect.top();
+    const int ymax = rect.bottom();
+
+    // invalid rectangle: early return
+    if (xmax > cols || ymax > rows)
         return QImage();
 
     QImage dest(cols, rows, QImage::Format_RGB32);
 
-    src += ymin*cols;
-
     for (int y = ymin; y <= ymax; ++y) {
-        QRgb* destrow = (QRgb*)(dest.scanLine(y-ymin));
-        int x;
-        for (x = xmin; x <= xmax; ++x) {
-            int val = *(src+x);
+        QRgb* destrow = (QRgb*)(dest.scanLine(y-rect.top()));
 
-            if (log) {
-                destrow[x-xmin] = ColorMap(std::log(val), colorMax);
-            }
-            else
-                destrow[x-xmin] = BlueWhite(val, colorMax);
+        for (int x = xmin; x <= xmax; ++x) {
+            double val = log ? std::log(source(y, x)) : source(y, x);
+            destrow[x-xmin] = color(val, colorMax);
         }
-        src+=cols;
     }
+
     return dest;
+}
+
+QRgb BlueWhiteCMap::color(double v, double vmax)
+{
+    if (v > vmax)
+        return QColor(0, 0, 255).rgb();
+
+    if (v < 0)
+        v = 0.0;
+
+    double mm = 1.0/vmax;
+    long r =std::lround(255.0 - v*(255*mm));
+
+    return QColor(r, r, 255).rgb();
+}
+
+QRgb ViridisCMap::color(double v, double vmax)
+{
+    return cmap_poly(_r, _g, _b, v/vmax);
 }

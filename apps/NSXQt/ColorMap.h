@@ -36,33 +36,31 @@
 #include <QColor>
 #include <cmath>
 
-inline QRgb BlueWhite(int v,int vmax)
-{
-    double mm=1.0/(double)vmax;
-    int r=255-v*(255*mm);
-    return (v>vmax ? 0xff0000ff : ((0xffu << 24) | r << 16 | r << 8 | 0xff ) );
-}
+#include <Eigen/Core>
+#include <array>
 
-inline QRgb ColorMap(double v, double vmax)
-{
-    v = std::max(v, 0.0);
-    v = std::min(v, vmax);
-    v /= vmax;
 
-    const double b = 1.0 + 6 * (v*v*v/3.0 - v*v/2.0);
-    const double r = 1.0 - b;
-    const double g = 16.0 * v*v * (1-v)*(1-v);
+class ColorMap {
+public:
+    virtual ~ColorMap() {};
 
-    long lr = std::lround(255.0*r);
-    long lg = std::lround(255.0*g);
-    long lb = std::lround(255.0*b);
+    virtual QRgb color(double v, double vmax) = 0;
 
-    return QColor(lr, lg, lb).rgb();
-}
+    QImage matToImage(const Eigen::MatrixXi& source, const QRect& rect, int colorMax, bool log=false);
+    QImage matToImage(const Eigen::MatrixXd& source, const QRect& rect, double colorMax, bool log=false);
+};
 
-// Get an image from an 2D arrays of (rows,cols) with range (xmin:xmax,ymin:ymax) and
-// intensity coded with colorMax as brightest.
-QImage Mat2QImage(int* src, int rows, int cols, int xmin, int xmax, int ymin, int ymax, int colorMax, bool log=false);
+class BlueWhiteCMap: public ColorMap {
+public:
+    virtual QRgb color(double v, double vmax) override;
+};
+
+class ViridisCMap: public ColorMap {
+public:
+    virtual QRgb color(double v, double vmax) override;
+private:
+    static const std::array<double, 10> _r, _g, _b;
+};
 
 
 #endif // COLORMAP_H

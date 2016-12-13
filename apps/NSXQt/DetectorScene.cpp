@@ -456,20 +456,19 @@ void DetectorScene::loadCurrentImage(bool newimage)
     std::size_t nrows=det->getNRows();
     std::size_t ncols=det->getNCols();
 
+    //BlueWhiteCMap cmap;
+    ViridisCMap cmap;
+
     if (_currentFrameIndex>=_currentData->getNFrames())
         _currentFrameIndex=_currentData->getNFrames()-1;
     if (newimage)
         _currentFrame =_currentData->getFrame(_currentFrameIndex);
 
     if (!_image) {
-        _image=addPixmap(QPixmap::fromImage(Mat2QImage(_currentFrame.data(), nrows, ncols,
-                                                       full.left(), full.right(), full.top(), full.bottom(),
-                                                       _currentIntensity, _logarithmic)));
+        _image=addPixmap(QPixmap::fromImage(cmap.matToImage(_currentFrame, full, _currentIntensity, _logarithmic)));
         _image->setZValue(-1);
     } else
-        _image->setPixmap(QPixmap::fromImage(Mat2QImage(_currentFrame.data(), nrows, ncols,
-                                                        full.left(), full.right(), full.top(), full.bottom(),
-                                                        _currentIntensity, _logarithmic)));
+        _image->setPixmap(QPixmap::fromImage(cmap.matToImage(_currentFrame, full, _currentIntensity, _logarithmic)));
 
     setSceneRect(_zoomStack.back());
     emit dataChanged();
