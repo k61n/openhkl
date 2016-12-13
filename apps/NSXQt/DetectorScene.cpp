@@ -457,7 +457,7 @@ void DetectorScene::loadCurrentImage(bool newimage)
     std::size_t ncols=det->getNCols();
 
     //BlueWhiteCMap cmap;
-    ViridisCMap cmap;
+    InfernoCMap cmap;
 
     if (_currentFrameIndex>=_currentData->getNFrames())
         _currentFrameIndex=_currentData->getNFrames()-1;

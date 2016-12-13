@@ -34,6 +34,16 @@
 #include <cmath>
 #include <array>
 
+static inline int clamp(int a, int b, int c)
+{
+    if (c < a)
+        return a;
+    else if (c > b)
+        return b;
+    else
+        return c;
+}
+
 // helper function used for matplotlib-derived color maps
 template<typename Arr>
 static QRgb cmap_poly(const Arr& rs, const Arr& gs, const Arr& bs, double t)
@@ -61,9 +71,10 @@ static QRgb cmap_poly(const Arr& rs, const Arr& gs, const Arr& bs, double t)
     g *= 255.0;
     b *= 255.0;
 
-    int ir = int(r+0.5);
-    int ig = int(g+0.5);
-    int ib = int(b+0.5);
+    int ir = clamp(0, 255, int(r+0.5));
+    int ig = clamp(0, 255, int(g+0.5));
+    int ib = clamp(0, 255, int(b+0.5));
+
 
     return qRgb(ir, ig, ib);
 }
@@ -119,6 +130,11 @@ QRgb ViridisCMap::color(double v, double vmax)
     return cmap_poly(_r, _g, _b, v/vmax);
 }
 
+QRgb InfernoCMap::color(double v, double vmax)
+{
+    return cmap_poly(_r, _g, _b, v/vmax);
+}
+
 
 // what follows below are precomuted coefficients of polynomials giving greyscale -> RGB color maps
 // taken by fitting cmap profiles from matplotlib. The color maps are named after the corresponding
@@ -139,4 +155,25 @@ const std::array<double, 10> ViridisCMap::_b = {
     0.32239281,   1.94232169,  -6.74189755 , 13.57191937, -14.96017142,
       1.05841996 , 13.84594501,  -2.33633239 ,-19.99350254,  13.43282862
 };
+
+
+// inferno color map coefficients
+const std::array<double, 10> InfernoCMap::_r = {
+    -3.36847510e-03 ,  3.15381240e-01 ,  8.72624578e+00 , -2.52627883e+01,
+      3.08011344e+01,  -3.99980222e+00 , -1.86958357e+01 , -1.85683678e-01,
+      1.42108798e+01 , -4.92829420e+00
+};
+
+const std::array<double, 10> InfernoCMap::_g = {
+    -4.22403115e-03,   8.70403886e-01 , -7.34841278e+00 ,  3.07510158e+01,
+      -4.90063700e+01 ,  1.47393900e+01,   3.48803792e+01,  -7.60981586e+00,
+      -3.60021724e+01,   1.97381697e+01
+};
+
+const std::array<double, 10> InfernoCMap::_b = {
+  -3.18786326e-04 ,  2.13800128e+00 ,  7.52620707e+00,  -6.38020636e+01,
+      1.26534276e+02 , -5.07331686e+01,  -9.84574633e+01,   3.26053189e+01,
+      1.17571189e+02 , -7.27627032e+01
+};
+
 

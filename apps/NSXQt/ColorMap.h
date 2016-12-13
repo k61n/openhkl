@@ -63,4 +63,12 @@ private:
 };
 
 
+class InfernoCMap: public ColorMap {
+public:
+    virtual QRgb color(double v, double vmax) override;
+private:
+    static const std::array<double, 10> _r, _g, _b;
+};
+
+
 #endif // COLORMAP_H
