@@ -1237,6 +1237,9 @@ border: 1px solid #aaa;
 border-radius: 4px;
 }</string>
                </property>
+               <property name="minimum">
+                <number>1</number>
+               </property>
                <property name="maximum">
                 <number>10000</number>
                </property>
@@ -1333,10 +1336,17 @@ border-radius: 4px;
      <addaction name="actionShow_calculated_peak_positions"/>
      <addaction name="actionDraw_peak_background"/>
     </widget>
+    <widget class="QMenu" name="menuColor_map">
+     <property name="title">
+      <string>Color map</string>
+     </property>
+     <addaction name="actionPlaceholder"/>
+    </widget>
     <addaction name="menuGraphics"/>
     <addaction name="menuShow_Window"/>
     <addaction name="menuSet_View"/>
     <addaction name="menuPeak"/>
+    <addaction name="menuColor_map"/>
    </widget>
    <widget class="QMenu" name="menuChemistry">
     <property name="title">
@@ -1825,6 +1835,11 @@ QDockWidget::title {
    </property>
    <property name="text">
     <string>Logarithmic Scale</string>
+   </property>
+  </action>
+  <action name="actionPlaceholder">
+   <property name="text">
+    <string>placeholder</string>
    </property>
   </action>
  </widget>

@@ -44,39 +44,52 @@ static inline int clamp(int a, int b, int c)
         return c;
 }
 
-// helper function used for matplotlib-derived color maps
-template<typename Arr>
-static QRgb cmap_poly(const Arr& rs, const Arr& gs, const Arr& bs, double t)
+ColorMap::ColorMap(const double *rgb):
+    _rgb(new double[256*3]),
+    _log_rgb(new double[256*3])
+
 {
-    if (t < 0)
-        t = 0.0;
+    std::memcpy(_rgb, rgb, 256*3*sizeof(double));
 
-    if ( t > 1.0)
-        t = 1.0;
+    const double ilog2 = 1.0 / std::log(2.0);
+    const double N = 1e5;
 
-    assert(rs.size() == gs.size() && rs.size() == bs.size());
-    assert(rs.size() >= 2);
+    for (unsigned int i = 0; i < 256; ++i) {
 
-    double r = 0.0, g = 0.0, b = 0.0;
-    double tn = 1.0;
 
-    for (int i = 0; i < rs.size(); ++i) {
-        r += rs[i]*tn;
-        g += gs[i]*tn;
-        b += bs[i]*tn;
-        tn *= t;
+        const double t = (1.0 + i / 256.0);
+        const double x = std::log(t) * ilog2 * 255.0;
+
+        const int a = int(x);
+        const int b = std::min(a+1, 255);
+
+        const double eps = t-a;
+
+        for (unsigned int j = 0; j < 3; ++j) {
+            _log_rgb[3*i+j] = (1-eps)*_rgb[3*a+j] + eps*_rgb[3*b+j];
+        }
     }
+}
 
-    r *= 255.0;
-    g *= 255.0;
-    b *= 255.0;
+ColorMap::ColorMap(const std::string &name):
+    ColorMap(getColorMap(name))
+{
 
-    int ir = clamp(0, 255, int(r+0.5));
-    int ig = clamp(0, 255, int(g+0.5));
-    int ib = clamp(0, 255, int(b+0.5));
+}
 
+ColorMap::ColorMap():
+    ColorMap(getColorMapNames().front())
+{
 
-    return qRgb(ir, ig, ib);
+}
+
+ColorMap::~ColorMap()
+{
+    if (_log_rgb)
+        delete[] _log_rgb;
+
+    if (_rgb)
+        delete[] _rgb;
 }
 
 QImage ColorMap::matToImage(const Eigen::MatrixXi& source, const QRect& rect, int colorMax, bool log)
@@ -103,77 +116,14 @@ QImage ColorMap::matToImage(const Eigen::MatrixXi& source, const QRect& rect, in
         QRgb* destrow = (QRgb*)(dest.scanLine(y-rect.top()));
 
         for (int x = xmin; x <= xmax; ++x) {
-            double val = log ? std::log(source(y, x)) : source(y, x);
-            destrow[x-xmin] = color(val, colorMax);
+            if (log)
+                destrow[x-xmin] = log_color(source(y, x), colorMax);
+            else
+                destrow[x-xmin] = color(source(y, x), colorMax);
         }
     }
 
     return dest;
 }
-
-QRgb BlueWhiteCMap::color(double v, double vmax)
-{
-    if (v > vmax)
-        return QColor(0, 0, 255).rgb();
-
-    if (v < 0)
-        v = 0.0;
-
-    double mm = 1.0/vmax;
-    long r =std::lround(255.0 - v*(255*mm));
-
-    return qRgb(r, r, 255);
-}
-
-QRgb ViridisCMap::color(double v, double vmax)
-{
-    return cmap_poly(_r, _g, _b, v/vmax);
-}
-
-QRgb InfernoCMap::color(double v, double vmax)
-{
-    return cmap_poly(_r, _g, _b, v/vmax);
-}
-
-
-// what follows below are precomuted coefficients of polynomials giving greyscale -> RGB color maps
-// taken by fitting cmap profiles from matplotlib. The color maps are named after the corresponding
-// color maps in matplotlib
-
-// viridis color map coefficients
-const std::array<double, 10> ViridisCMap::_r = {
-    0.26199569,   0.76259414,  -7.95549936,  28.42312215, -50.08511333,
-      19.34939787,  43.08721907, -11.35989349, -50.97404283,  29.49258413
-};
-
-const std::array<double, 10> ViridisCMap::_g = {
-    0.00418753,  1.4837755,  -0.8924195,  -0.1797478,  1.00381965,  0.59462808,
-     -0.48846077, -1.07553209, -0.59690997,  1.05359406
-};
-
-const std::array<double, 10> ViridisCMap::_b = {
-    0.32239281,   1.94232169,  -6.74189755 , 13.57191937, -14.96017142,
-      1.05841996 , 13.84594501,  -2.33633239 ,-19.99350254,  13.43282862
-};
-
-
-// inferno color map coefficients
-const std::array<double, 10> InfernoCMap::_r = {
-    -3.36847510e-03 ,  3.15381240e-01 ,  8.72624578e+00 , -2.52627883e+01,
-      3.08011344e+01,  -3.99980222e+00 , -1.86958357e+01 , -1.85683678e-01,
-      1.42108798e+01 , -4.92829420e+00
-};
-
-const std::array<double, 10> InfernoCMap::_g = {
-    -4.22403115e-03,   8.70403886e-01 , -7.34841278e+00 ,  3.07510158e+01,
-      -4.90063700e+01 ,  1.47393900e+01,   3.48803792e+01,  -7.60981586e+00,
-      -3.60021724e+01,   1.97381697e+01
-};
-
-const std::array<double, 10> InfernoCMap::_b = {
-  -3.18786326e-04 ,  2.13800128e+00 ,  7.52620707e+00,  -6.38020636e+01,
-      1.26534276e+02 , -5.07331686e+01,  -9.84574633e+01,   3.26053189e+01,
-      1.17571189e+02 , -7.27627032e+01
-};
 
 

@@ -84,13 +84,16 @@ public:
     void setFilename(QString name);
     QString getFilename();
 
+    void setColorMap(const std::string& name);
+    std::string getColorMap() const;
+
 
 signals:
     void plotData(std::shared_ptr<SX::Data::IData>);
     void showPeakList(std::vector<std::shared_ptr<SX::Data::IData>>);
     void inspectWidget(QWidget*);
-
     void updatePeaks();
+
 
 public slots:
 
@@ -98,7 +101,6 @@ public slots:
     void findPeaks(const QModelIndex& index);
 
     void createNewExperiment();
-
     void absorptionCorrection();
     void showPeaksOpenGL();
     void findSpaceGroup();
@@ -114,7 +116,8 @@ private:
     QString _filename;
 
     std::shared_ptr<SX::Utils::ProgressHandler> _progressHandler;
-    std::shared_ptr<SX::Data::PeakFinder> _peakFinder;    
+    std::shared_ptr<SX::Data::PeakFinder> _peakFinder;
+    std::string _colormap;
     //std::map<std::string, std::shared_ptr<SX::Instrument::Experiment>> _experiments;
 };
 

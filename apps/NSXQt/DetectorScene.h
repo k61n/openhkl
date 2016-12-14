@@ -17,7 +17,10 @@
 #include "PeakCalc.h"
 #include "GraphicsItems/PeakCalcGraphicsItem.h"
 
+#include "ColorMap.h"
+
 // Forward declarations
+
 namespace SX
 {
 namespace Data
@@ -58,6 +61,7 @@ public:
     std::shared_ptr<SX::Data::IData> getData();
     const rowMatrix& getCurrentFrame() const;
     void setLogarithmic(bool checked);
+    void setColorMap(const std::string& name);
 
 signals:
      //! Signal emitted for all changes of the image
@@ -82,6 +86,7 @@ public slots:
     void setPeakIndex(sptrPeak3D peak,const Eigen::Vector3d& index);
     void updatePeaks();
     void updatePeakCalcs();
+    void redrawImage();
     //! Change interaction mode in the scene
     void changeInteractionMode(int);
     //!
@@ -129,8 +134,7 @@ private:
 
     bool _showPeakCalcs;
     bool _logarithmic;
-
-
+    std::unique_ptr<ColorMap> _colormap;
 };
 
 #endif // DETECTORSCENE_H

@@ -236,6 +236,16 @@ QString SessionModel::getFilename()
     return _filename;
 }
 
+void SessionModel::setColorMap(const std::string &name)
+{
+    _colormap = name;
+}
+
+std::string SessionModel::getColorMap() const
+{
+    return _colormap;
+}
+
 vector<shared_ptr<IData>> SessionModel::getSelectedNumors() const
 {
     vector<shared_ptr<IData>> numors;

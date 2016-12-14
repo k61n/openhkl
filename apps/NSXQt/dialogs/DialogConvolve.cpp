@@ -154,7 +154,7 @@ void DialogConvolve::on_previewButton_clicked()
     result.array() *= static_cast<double>(maxData)/(maxVal-minVal);
     clamped_result = result.cast<int>();
 
-    BlueWhiteCMap cmap;
+    auto cmap = ColorMap::getColorMap("inferno");
     QRect rect(0, 0, ncols, nrows);
 
     QImage image = cmap.matToImage(clamped_result, rect, maxData);

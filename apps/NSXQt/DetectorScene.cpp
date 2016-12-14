@@ -24,6 +24,8 @@
 #include "Sample.h"
 #include "Gonio.h"
 
+#include "ColorMap.h"
+
 DetectorScene::DetectorScene(QObject *parent)
 : QGraphicsScene(parent),
   _currentData(nullptr),
@@ -42,7 +44,8 @@ DetectorScene::DetectorScene(QObject *parent)
   _masks(),
   _lastClickedGI(nullptr),
   _showPeakCalcs(false),
-  _logarithmic(false)
+  _logarithmic(false),
+  _colormap(new ColorMap())
 {
     //setBspTreeDepth(4);
     qDebug() << "BSP tree depth = " << bspTreeDepth();
@@ -456,19 +459,16 @@ void DetectorScene::loadCurrentImage(bool newimage)
     std::size_t nrows=det->getNRows();
     std::size_t ncols=det->getNCols();
 
-    //BlueWhiteCMap cmap;
-    InfernoCMap cmap;
-
     if (_currentFrameIndex>=_currentData->getNFrames())
         _currentFrameIndex=_currentData->getNFrames()-1;
     if (newimage)
         _currentFrame =_currentData->getFrame(_currentFrameIndex);
 
     if (!_image) {
-        _image=addPixmap(QPixmap::fromImage(cmap.matToImage(_currentFrame, full, _currentIntensity, _logarithmic)));
+        _image=addPixmap(QPixmap::fromImage(_colormap->matToImage(_currentFrame, full, _currentIntensity, _logarithmic)));
         _image->setZValue(-1);
     } else
-        _image->setPixmap(QPixmap::fromImage(cmap.matToImage(_currentFrame, full, _currentIntensity, _logarithmic)));
+        _image->setPixmap(QPixmap::fromImage(_colormap->matToImage(_currentFrame, full, _currentIntensity, _logarithmic)));
 
     setSceneRect(_zoomStack.back());
     emit dataChanged();
@@ -561,6 +561,11 @@ void DetectorScene::updatePeakCalcs()
     qDebug() << "ELAPSED TIME = "<<static_cast<double>((end-start))/CLOCKS_PER_SEC;
     qDebug() << "BSP tree depth = " << bspTreeDepth();
 
+}
+
+void DetectorScene::redrawImage()
+{
+    loadCurrentImage(false);
 }
 
 void DetectorScene::clearPeaks()
@@ -676,4 +681,9 @@ void DetectorScene::showPeakCalcs(bool flag)
 void DetectorScene::setLogarithmic(bool checked)
 {
     _logarithmic = checked;
+}
+
+void DetectorScene::setColorMap(const std::string &name)
+{
+    _colormap = std::unique_ptr<ColorMap>(new ColorMap(name));
 }
