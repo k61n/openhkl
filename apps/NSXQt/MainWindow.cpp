@@ -57,8 +57,6 @@
 #include "Tree/UnitCellPropertyWidget.h"
 #include "Tree/PeakListPropertyWidget.h"
 
-#include "DialogConvolve.h"
-
 #include "Path.h"
 #include "IFrameIterator.h"
 #include "Types.h"

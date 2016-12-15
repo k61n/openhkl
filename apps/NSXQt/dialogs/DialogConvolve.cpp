@@ -32,7 +32,8 @@ DialogConvolve::DialogConvolve(const Eigen::MatrixXi& currentFrame,
     QDialog(parent),
     ui(new Ui::DialogConvolve),
     _frame(currentFrame),
-    _pxmapPreview(nullptr)
+    _pxmapPreview(nullptr),
+    _colormap(new ColorMap)
 {
     ui->setupUi(this);
 
@@ -61,7 +62,7 @@ DialogConvolve::DialogConvolve(const Eigen::MatrixXi& currentFrame,
     ui->filterComboBox->model()->sort(0);
 
     // automatically generate preview
-    on_previewButton_clicked();
+    // on_previewButton_clicked();
 }
 
 DialogConvolve::~DialogConvolve()
@@ -113,6 +114,17 @@ void DialogConvolve::buildTree()
     connect(model, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(parameterChanged(QStandardItem*)));
 }
 
+void DialogConvolve::setColorMap(const std::string &name)
+{
+    _colormap = std::unique_ptr<ColorMap>(new ColorMap(name));
+}
+
+int DialogConvolve::exec()
+{
+    on_previewButton_clicked();
+    return QDialog::exec();
+}
+
 void DialogConvolve::on_previewButton_clicked()
 {
     RealMatrix data, result;
@@ -154,10 +166,9 @@ void DialogConvolve::on_previewButton_clicked()
     result.array() *= static_cast<double>(maxData)/(maxVal-minVal);
     clamped_result = result.cast<int>();
 
-    auto cmap = ColorMap::getColorMap("inferno");
     QRect rect(0, 0, ncols, nrows);
 
-    QImage image = cmap.matToImage(clamped_result, rect, maxData);
+    QImage image = _colormap->matToImage(clamped_result, rect, maxData);
 
     if (!_pxmapPreview)
         _pxmapPreview = _scene->addPixmap(QPixmap::fromImage(image));

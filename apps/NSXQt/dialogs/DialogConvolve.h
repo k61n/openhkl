@@ -19,7 +19,7 @@
 #include "Convolver.h"
 #include "ConvolutionKernel.h"
 #include "PeakFinder.h"
-
+#include "ColorMap.h"
 
 namespace Ui {
 class DialogConvolve;
@@ -30,11 +30,17 @@ class DialogConvolve : public QDialog
     Q_OBJECT
 
 public:
-    explicit DialogConvolve(const Eigen::MatrixXi& currentFrame, std::shared_ptr<SX::Data::PeakFinder> peakFinder=nullptr, QWidget *parent = 0);
+    explicit DialogConvolve(const Eigen::MatrixXi& currentFrame,
+                            std::shared_ptr<SX::Data::PeakFinder> peakFinder=nullptr,
+                            QWidget *parent = 0);
     ~DialogConvolve();
 
     void setPreviewFrame(const Eigen::MatrixXi& frame);
     void buildTree();
+    void setColorMap(const std::string& name);
+
+    int exec() override;
+
 
 private slots:
     void on_previewButton_clicked();
@@ -50,9 +56,9 @@ private:
     Ui::DialogConvolve *ui;
     QGraphicsScene* _scene;
     QGraphicsPixmapItem* _pxmapPreview;
-
     Eigen::MatrixXi _frame;
 
     std::shared_ptr<SX::Data::PeakFinder> _peakFinder;
+    std::unique_ptr<ColorMap> _colormap;
 };
 #endif // NSXTOOL_DIALOGCONVOLVE_H_

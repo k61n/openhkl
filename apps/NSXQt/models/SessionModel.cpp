@@ -516,6 +516,7 @@ void SessionModel::findPeaks(const QModelIndex& index)
     _peakFinder->setHandler(_progressHandler);
 
     DialogConvolve* dialog = new DialogConvolve(frame, _peakFinder, nullptr);
+    dialog->setColorMap(_colormap);
 
     // dialog will automatically be deleted before we return from this method
     std::unique_ptr<DialogConvolve> dialog_ptr(dialog);
