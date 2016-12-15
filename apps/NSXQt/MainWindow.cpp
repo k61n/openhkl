@@ -172,7 +172,7 @@ MainWindow::MainWindow(QWidget *parent)
     auto names = ColorMap::getColorMapNames();
 
     for (const auto name: names) {
-        QAction* action = new QAction(name.c_str());
+        QAction* action = new QAction(name.c_str(), _ui->menuColor_map);
 
         auto slot_fn = [=] () -> void
         {
