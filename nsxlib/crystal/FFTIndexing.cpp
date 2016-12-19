@@ -30,7 +30,7 @@ void FFTIndexing::addVectors(const std::vector<Eigen::Vector3d>& vec)
         _qVectors.push_back(std::cref(v));
 }
 
-std::vector<tVector> FFTIndexing::findOnSphere(int nstacks, unsigned int nsolutions) const
+std::vector<tVector> FFTIndexing::findOnSphere(unsigned int nstacks, unsigned int nsolutions) const
 {
     std::vector<double> projs(_qVectors.size());
     double qMax = 0;
@@ -42,12 +42,12 @@ std::vector<tVector> FFTIndexing::findOnSphere(int nstacks, unsigned int nsoluti
     }
 
     qMax = sqrt(qMax); // max norm of all vectors
-    int nPoints = std::ceil(2*qMax*_nSubdiv*_amax); // number of points in histogram
+    size_t nPoints = size_t(std::lround(std::ceil(2*qMax*_nSubdiv*_amax))); // number of points in histogram
 
     if (nPoints%2)
         ++nPoints;
 
-    int nPointsHalf = nPoints / 2;
+    size_t nPointsHalf = nPoints / 2;
     double dq = 2*qMax / nPoints;
     double dqInv = 1.0 / dq;
     double twopi = 2.0*M_PI;
@@ -59,11 +59,11 @@ std::vector<tVector> FFTIndexing::findOnSphere(int nstacks, unsigned int nsoluti
     std::vector<tVector> result;
     result.reserve(nstacks*nstacks);
 
-    for (int th = 0; th <= nstacks; ++th) {
+    for (unsigned int th = 0; th <= nstacks; ++th) {
         double theta = th*fact1;
         double ctheta = cos(theta);
         double stheta = sin(theta);
-        int nslices = fact2*stheta + 1;
+        int nslices = int(std::lround(fact2*stheta + 1));
 
         for (int ph = 0; ph < nslices; ++ph) {
             double phi = ph * twopi/ double(nslices);
@@ -74,7 +74,7 @@ std::vector<tVector> FFTIndexing::findOnSphere(int nstacks, unsigned int nsoluti
 
             for (const auto& vect: _qVectors) {
                 double proj = vect.get().dot(N);
-                int index = static_cast<int>(std::floor((proj+qMax)*dqInv));
+                size_t index = size_t((std::floor((proj+qMax)*dqInv)));
                 if (index == nPoints)
                     --index;
 
@@ -85,10 +85,10 @@ std::vector<tVector> FFTIndexing::findOnSphere(int nstacks, unsigned int nsoluti
 
             fft.fwd(spectrum, hist); // Fourier transform the histogram
             double FZero = std::abs(spectrum[0]); // zero mode
-            int pos_max = 0; // position of maximum mode, other than zero mode
+            size_t pos_max = 0; // position of maximum mode, other than zero mode
             double value = 0; // value of maxmimum mode
 
-            for (int i = _nSubdiv/2; i < nPointsHalf; ++i) {
+            for (size_t i = size_t(_nSubdiv/2); i < nPointsHalf; ++i) {
                 double current = std::abs(spectrum[i]);
 
                 if (current < 0.7*FZero)
