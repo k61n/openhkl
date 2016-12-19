@@ -113,12 +113,15 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
     indexing.addVectors(qvects);
 
     int nSolutions = ui->spinBox_nSolutions->value();
-    // Find the best tvectors
-    std::vector<SX::Crystal::tVector> tvects = indexing.findOnSphere(30, nSolutions);
+    int numStacks = ui->stacksSpinBox->value();
+    std::vector<SX::Crystal::tVector> tvects = indexing.findOnSphere(numStacks, nSolutions);
 
     auto source = _experiment->getDiffractometer()->getSource();
     auto detector = _experiment->getDiffractometer()->getDetector();
     auto sample = _experiment->getDiffractometer()->getSample();
+
+    // jmf debugging
+    qDebug() << "size of tvects " << tvects.size();
 
     std::vector<std::pair<SX::Crystal::UnitCell,double>> new_solutions;
     new_solutions.reserve(nSolutions*nSolutions*nSolutions);

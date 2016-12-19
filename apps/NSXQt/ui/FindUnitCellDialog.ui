@@ -279,6 +279,23 @@ border-radius: 4px;
        </property>
       </spacer>
      </item>
+     <item>
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>Number of stacks</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="stacksSpinBox">
+       <property name="maximum">
+        <number>500</number>
+       </property>
+       <property name="value">
+        <number>30</number>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item row="5" column="0">
