@@ -221,7 +221,7 @@ void SessionModel::fromJsonObject(const QJsonObject &obj)
 
     QJsonArray experiments = obj["experiments"].toArray();
 
-    for (auto&& expr: experiments) {
+    for (auto expr: experiments) {
         QJsonObject exp_obj = expr.toObject();
         std::string name = exp_obj["name"].toString().toStdString();
         std::string instrument = exp_obj["instrument"].toObject()["name"].toString().toStdString();
@@ -351,7 +351,7 @@ void SessionModel::computeRFactors()
 
     qDebug() << "Found " << peak_equivs.size() << " equivalence classes of peaks:";
 
-    std::map<int, int> size_counts;
+    std::map<size_t, int> size_counts;
 
     for (auto& peaks: peak_equivs) {
         ++size_counts[peaks.size()];
@@ -379,6 +379,7 @@ void SessionModel::findFriedelPairs()
     return;
 }
 
+// jmf: dead code??
 void SessionModel::integrateCalculatedPeaks()
 {
     qDebug() << "Integrating calculated peaks...";
@@ -418,10 +419,10 @@ void SessionModel::integrateCalculatedPeaks()
         std::vector<sptrPeak3D> calculated_peaks;
 
         shared_ptr<Sample> sample = numor->getDiffractometer()->getSample();
-        int ncrystals = sample->getNCrystals();
+        unsigned int ncrystals = static_cast<unsigned int>(sample->getNCrystals());
 
         if (ncrystals) {
-            for (int i = 0; i < ncrystals; ++i) {
+            for (unsigned int i = 0; i < ncrystals; ++i) {
                 SX::Crystal::SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
                 auto ub = sample->getUnitCell(i)->getReciprocalStandardM();
 
@@ -433,9 +434,9 @@ void SessionModel::integrateCalculatedPeaks()
 
                 qDebug() << "Adding calculated peaks...";
 
-                for(auto&& p: peaks) {
+                //for(auto&& p: peaks) {
                     //calculated_peaks.push_back(p);
-                }
+                //}
             }
         }
 
@@ -467,11 +468,10 @@ void SessionModel::findPeaks(const QModelIndex& index)
 
     QStandardItem* ditem = itemFromIndex(index);
     std::vector<std::shared_ptr<SX::Data::IData>> selectedNumors;
-    int nTotalNumors(rowCount(ditem->index()));
+    int nTotalNumors = rowCount(ditem->index());
+    selectedNumors.reserve(size_t(nTotalNumors));
 
-    selectedNumors.reserve(nTotalNumors);
-
-    for (auto i = 0; i < nTotalNumors; ++i) {
+    for (int i = 0; i < nTotalNumors; ++i) {
         if (ditem->child(i)->checkState() == Qt::Checked) {
             if (auto ptr = dynamic_cast<NumorItem*>(ditem->child(i)))
                 selectedNumors.push_back(ptr->getExperiment()->getData(ptr->text().toStdString()));
@@ -519,7 +519,7 @@ void SessionModel::findPeaks(const QModelIndex& index)
 
     ui->_dview->getScene()->clearPeaks();
 
-    int max=selectedNumors.size();
+    size_t max = selectedNumors.size();
     qWarning() << "Peak find algorithm: Searching peaks in " << max << " files";
 
     // create a pop-up window that will show the progress
@@ -695,14 +695,12 @@ void SessionModel::incorporateCalculatedPeaks()
     }
 
     qDebug() << "Done incorporating missing peaks.";
-    qDebug() << "Q coverage = " << (double)observed_peaks / (double)predicted_peaks * 100.0 << "%";
+    qDebug() << "Q coverage = " << double(observed_peaks) / double(predicted_peaks) * 100.0 << "%";
 }
 
 void SessionModel::applyResolutionCutoff(double dmin, double dmax)
 {
     int num_removed = 0;
-
-
     double avg_d = 0;
     int num_peaks = 0;
 
@@ -711,37 +709,18 @@ void SessionModel::applyResolutionCutoff(double dmin, double dmax)
     std::vector<std::shared_ptr<IData>> numors = getSelectedNumors();
 
     for(std::shared_ptr<IData> numor: numors) {
-
         std::vector<std::shared_ptr<Peak3D>> bad_peaks;
-
-        const double wavelength = numor->getDiffractometer()->getSource()->getWavelength();
         shared_ptr<Sample> sample = numor->getDiffractometer()->getSample();
 
-        int ncrystals = sample->getNCrystals();
-
         for (std::shared_ptr<Peak3D> peak: numor->getPeaks()) {
-            bool peak_good = false;
+            if (!peak->isSelected() || peak->isMasked())
+                continue;
 
-            for (int i = 0; i < ncrystals && !peak_good; ++i) {
-                if (!peak->isSelected() || peak->isMasked())
-                    continue;
+            double d = 1.0 / peak->getQ().norm();
+            avg_d += d;
+            ++num_peaks;
 
-                double d = 1.0 / peak->getQ().norm();
-
-//                if (peak->hasIntegerHKL(*sample->getUnitCell(i))) {
-//                    auto hkl = peak->getIntegerMillerIndices();
-//                    d *= SX::Utils::gcd(hkl(0), hkl(1), hkl(2));
-//                }
-
-                avg_d += d;
-                ++num_peaks;
-
-                if ( dmin <= d && d <= dmax)
-                    peak_good = true;
-            }
-
-            // did not satisfy resolution constraint for any crystal
-            if (!peak_good)
+            if ( dmin > d && d > dmax)
                 bad_peaks.push_back(peak);
         }
 
@@ -831,9 +810,9 @@ bool SessionModel::writeNewShelX(std::string filename, const std::vector<sptrPea
         if (!(peak->hasIntegerHKL(*sptrCurrentBasis,0.2)))
             continue;
 
-        const int h = std::round(hkl[0]);
-        const int k = std::round(hkl[1]);
-        const int l = std::round(hkl[2]);
+        const long h = std::lround(hkl[0]);
+        const long k = std::lround(hkl[1]);
+        const long l = std::lround(hkl[2]);
 
         double lorentz = peak->getLorentzFactor();
         double trans = peak->getTransmission();
@@ -841,7 +820,7 @@ bool SessionModel::writeNewShelX(std::string filename, const std::vector<sptrPea
         double intensity = peak->getScaledIntensity() / lorentz / trans;
         double sigma = peak->getScaledSigma() / lorentz / trans;
 
-        std::snprintf(&buf[0], buf.size(), "  %4d %4d %4d %15.2f %10.2f", h, k, l, intensity, sigma);
+        std::snprintf(&buf[0], buf.size(), "  %4ld %4ld %4ld %15.2f %10.2f", h, k, l, intensity, sigma);
         file << &buf[0] << std::endl;
     }
 
@@ -888,7 +867,7 @@ bool SessionModel::writeStatistics(std::string filename,
 
     file << "          dmin       dmax       nobs redundancy     r_meas    r_merge      r_pim" << std::endl;
 
-    for (int i = 0; i < num_shells; ++i) {
+    for (size_t i = 0; i < size_t(num_shells); ++i) {
         const double d_lower = ds[i];
         const double d_upper = ds[i+1];
 
@@ -898,11 +877,11 @@ bool SessionModel::writeStatistics(std::string filename,
         for (auto&& equiv: peak_equivs)
             all_equivs.push_back(equiv);
 
-        double redundancy = (double)shells[i].size() / (double)peak_equivs.size();
+        double redundancy = double(shells[i].size()) / double(peak_equivs.size());
 
         std::snprintf(&buf[0], buf.size(),
                 "    %10.2f %10.2f %10d %10.3f %10.3f %10.3f %10.3f",
-                d_lower, d_upper, shells[i].size(), redundancy,
+                d_lower, d_upper, int(shells[i].size()), redundancy,
                 rfactor.Rmeas(), rfactor.Rmerge(), rfactor.Rpim());
 
         file << &buf[0] << std::endl;
@@ -940,7 +919,7 @@ bool SessionModel::writeStatistics(std::string filename,
     for (auto& equiv: all_equivs)
         num_peaks += equiv.size();
 
-    double redundancy = (double)num_peaks / (double)all_equivs.size();
+    double redundancy = double(num_peaks) / double(all_equivs.size());
 
     std::snprintf(&buf[0], buf.size(),
             "    %10.2f %10.2f %10d %10.3f %10.3f %10.3f %10.3f",

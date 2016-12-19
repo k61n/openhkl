@@ -22,7 +22,7 @@ class NumorItem : public InspectableTreeItem
 public:
     explicit NumorItem(std::shared_ptr<Experiment> experiment, std::shared_ptr<SX::Data::IData> data);
     ~NumorItem();
-    QWidget* inspectItem();
+    QWidget* inspectItem() override;
     std::shared_ptr<SX::Data::IData> getData();
 
     QJsonObject toJson() override;

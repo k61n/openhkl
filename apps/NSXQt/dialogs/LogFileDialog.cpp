@@ -86,7 +86,7 @@ double LogFileDialog::dmax() const
     return ui->dMaxBox->value();
 }
 
-double LogFileDialog::numShells() const
+int LogFileDialog::numShells() const
 {
     return ui->shellBox->value();
 }
