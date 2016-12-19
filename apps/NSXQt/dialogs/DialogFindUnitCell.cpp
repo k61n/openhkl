@@ -102,11 +102,9 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
     std::vector<Eigen::Vector3d> qvects;
     qvects.reserve(npeaks);
 
-    for (int i = 0; i < npeaks; ++i) {
-        auto peak=_peaks[i];
+    for (auto& peak: _peaks)
         if (peak->isSelected() && !peak->isMasked())
             qvects.push_back(peak->getQ());
-    }
 
     qDebug() << "Searching direct lattice vectors using" << npeaks << "peaks defined on numors:";
 
@@ -116,7 +114,7 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
 
     int nSolutions = ui->spinBox_nSolutions->value();
     // Find the best tvectors
-    std::vector<SX::Crystal::tVector> tvects=indexing.findOnSphere(30, nSolutions);
+    std::vector<SX::Crystal::tVector> tvects = indexing.findOnSphere(30, nSolutions);
 
     auto source = _experiment->getDiffractometer()->getSource();
     auto detector = _experiment->getDiffractometer()->getDetector();
@@ -125,14 +123,21 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
     std::vector<std::pair<SX::Crystal::UnitCell,double>> new_solutions;
     new_solutions.reserve(nSolutions*nSolutions*nSolutions);
 
-    for (int i = 0; i < nSolutions; ++i) {
-        for (int j = i+1; j < nSolutions; ++j) {
-            for (int k = j+1; k < nSolutions; ++k) {
-                Eigen::Vector3d& v1=tvects[i]._vect;
-                Eigen::Vector3d& v2=tvects[j]._vect;
-                Eigen::Vector3d& v3=tvects[k]._vect;
+    for (int i = 0; i < tvects.size(); ++i) {
+        for (int j = i+1; j < tvects.size(); ++j) {
+            for (int k = j+1; k < tvects.size(); ++k) {
+                Eigen::Vector3d& v1 = tvects[i]._vect;
+                Eigen::Vector3d& v2 = tvects[j]._vect;
+                Eigen::Vector3d& v3 = tvects[k]._vect;
 
-                if (v1.dot(v2.cross(v3)) > 20.0) {
+                volatile double det = v1.dot(v2.cross(v3));
+
+                // change orientation to right-handed
+                if (det < 0) {
+                    v1 *= -1, v2 *= -1, v3 *= -1;
+                }
+
+                if (std::abs(det) > 20.0) {
                     UnitCell cell = UnitCell::fromDirectVectors(v1, v2, v3);
                     new_solutions.push_back(std::make_pair(cell, 0.0));
                 }
@@ -144,7 +149,7 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
     qDebug() << "Refining solutions and diffractometers offsets";
 
     //#pragma omp parallel for
-    for (int idx = 0; idx < new_solutions.size(); ++idx) {
+    for (unsigned int idx = 0; idx < new_solutions.size(); ++idx) {
 
         UBMinimizer minimizer;
         minimizer.setSample(sample);
@@ -156,14 +161,11 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
         // Only the UB matrix parameters are used for fit
         int nParameters= 10 + sample->getNAxes() + detector->getNAxes();
         for (int i = 9; i < nParameters; ++i)
-            minimizer.refineParameter(i,false);
+            minimizer.refineParameter(i, false);
 
         int success = 0;
-        for (auto peak : _peaks)
-        {
-            //if (new_peak.hasIntegerHKL(cell,0.2) && new_peak.isSelected() && !new_peak.isMasked()) {
-            if (peak->hasIntegerHKL(cell,0.2) && peak->isSelected() && !peak->isMasked())
-            {
+        for (auto peak: _peaks) {
+            if (peak->hasIntegerHKL(cell, 0.2) && peak->isSelected() && !peak->isMasked()) {
                 minimizer.addPeak(*peak);
                 ++success;
             }
@@ -204,20 +206,22 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
                 cell.setBravaisType(b);
             }
             catch(std::exception& e) {
-                //qDebug() << "Gruber reduction error:" << e.what();
-                //continue;
+                qDebug() << "Gruber reduction error:" << e.what()
+                         << ". Consider changing the Gruber tolerance parameter";
+                continue;
             }
 
             if (!ui->checkBox_NiggliOnly->isChecked()) {
                 cell.transform(P);
             }
 
-            double score=0.0;
-            double maxscore=0.0;
+            double score = 0.0;
+            double maxscore = 0.0;
+
             for (auto peak : _peaks) {
                 if (peak->isSelected() && !peak->isMasked()) {
                     maxscore++;
-                    if (peak->hasIntegerHKL(cell,0.2))
+                    if (peak->hasIntegerHKL(cell, 0.2))
                         score++;
                 }
             }
@@ -250,14 +254,14 @@ void DialogFindUnitCell::buildSolutionsTable()
     std::sort(_solutions.begin(),_solutions.end(),
               [](const Soluce& s1, const Soluce& s2) -> bool
     {
-        if (s1.second==s2.second)
+        if ( std::abs(s1.second-s2.second) < 1e-8)
             return (s1.first.getVolume()<s2.first.getVolume());
         else
             return (s1.second>s2.second);
     }
     );
     // Create table with 9 columns
-    QStandardItemModel* model=new QStandardItemModel(_solutions.size(),9,this);
+    QStandardItemModel* model = new QStandardItemModel(_solutions.size(), 9, this);
     model->setHorizontalHeaderItem(0,new QStandardItem("a"));
     model->setHorizontalHeaderItem(1,new QStandardItem("b"));
     model->setHorizontalHeaderItem(2,new QStandardItem("c"));
@@ -304,58 +308,3 @@ void DialogFindUnitCell::selectSolution(int i)
                           tr("Solution set"));
     emit solutionAccepted(_solutions[i].first);
 }
-
-
-//void DialogFindUnitCell::on_lineEdit_textChanged(const QString &arg1)
-//{
-//    QStringList list=arg1.split(" ");
-//    int nterms=list.size();
-
-//    double h,k,l;
-//    if (nterms==3) // Don't search if h,k,l not complete
-//    {
-//         h=list[0].toDouble();
-//         k=list[1].toDouble();
-//         l=list[2].toDouble();
-//    }
-
-//    int npeaks=ui->horizontalSlider_NumberOfPeaks->value();
-//    // Need at leat 10 peaks
-//    if (npeaks<10)
-//    {
-//        QMessageBox::warning(this, tr("NSXTool"),
-//                              tr("Need at least 10 peaks for autoindexing"));
-//        return;
-//    }
-//    //
-//    _solutions.clear();
-//    _solutions.reserve(50);
-//    // Store Q vectors at rest
-//    std::vector<Eigen::Vector3d> qvects;
-//    qvects.reserve(npeaks);
-
-//   for (int i=0;i<npeaks;++i)
-//   {
-//       auto peak=_peaks[i];
-//        if (peak->isSelected() && !peak->isMasked())
-//            qvects.push_back(peak->getQ());
-//   }
-
-//   SX::Crystal::FFTIndexing indexing(120.0);
-//   indexing.addVectors(qvects);
-//   std::vector<double> hist,xx;
-//   SX::Crystal::tVector v=indexing.findtVector(Eigen::Vector3d(h,k,l),hist,xx);
-
-//    qDebug() << v._vect[0] << " " << v._vect[1] << " " << v._vect[2];
-
-//    QVector<double> x=QVector<double>::fromStdVector(xx);
-
-//    QVector<double> y=QVector<double>::fromStdVector(hist);
-//    QVector<double> e(hist.size());
-
-////    ui->widget->graph(0)->setDataValueError(x,y,e);
-////    ui->widget->rescaleAxes();
-
-////    ui->widget->replot(QCustomPlot::rpHint);
-
-//}

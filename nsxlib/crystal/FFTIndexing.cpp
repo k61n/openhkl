@@ -36,9 +36,9 @@ std::vector<tVector> FFTIndexing::findOnSphere(int nstacks, unsigned int nsoluti
     double qMax = 0;
 
     for (const auto& v : _qVectors) {
-        double norm=v.get().squaredNorm();
-        if (norm>qMax)
-            qMax=norm;
+        double norm = v.get().squaredNorm();
+        if (norm > qMax)
+            qMax = norm;
     }
 
     qMax = sqrt(qMax); // max norm of all vectors
@@ -54,7 +54,7 @@ std::vector<tVector> FFTIndexing::findOnSphere(int nstacks, unsigned int nsoluti
     double fact1 = 0.5*M_PI / nstacks;
     double fact2 = twopi * nstacks;
 
-    std::vector<double> hist(nPoints,0); // reciprocal space historgram
+    std::vector<double> hist(nPoints, 0); // reciprocal space histogram
     Eigen::FFT<double> fft;              // FFT engine
     std::vector<tVector> result;
     result.reserve(nstacks*nstacks);
@@ -84,7 +84,7 @@ std::vector<tVector> FFTIndexing::findOnSphere(int nstacks, unsigned int nsoluti
             std::vector<std::complex<double>> spectrum;
 
             fft.fwd(spectrum, hist); // Fourier transform the histogram
-            double FZero=std::abs(spectrum[0]); // zero mode
+            double FZero = std::abs(spectrum[0]); // zero mode
             int pos_max = 0; // position of maximum mode, other than zero mode
             double value = 0; // value of maxmimum mode
 
