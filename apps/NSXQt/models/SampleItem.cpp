@@ -43,7 +43,7 @@ QJsonObject SampleItem::toJson()
 
     std::shared_ptr<SX::Instrument::Sample> sample = _experiment->getDiffractometer()->getSample();
 
-    for (int i = 0; i < sample->getNCrystals(); ++i) {
+    for (unsigned int i = 0; i < sample->getNCrystals(); ++i) {
         std::shared_ptr<SX::Crystal::UnitCell> cell = sample->getUnitCell(i);
 
         Eigen::Vector3d v[3];
@@ -70,7 +70,7 @@ void SampleItem::fromJson(const QJsonObject &obj)
     std::shared_ptr<SX::Instrument::Sample> sample = _experiment->getDiffractometer()->getSample();
     QJsonArray shapes = obj["shapes"].toArray();
 
-    for(auto&& shape: shapes) {
+    for(QJsonValueRef shape: shapes) {
         Eigen::Vector3d v[3];
         QJsonArray params = shape.toArray();
 
