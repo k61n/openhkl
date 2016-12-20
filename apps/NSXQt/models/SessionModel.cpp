@@ -621,9 +621,9 @@ void SessionModel::incorporateCalculatedPeaks()
         std::vector<sptrPeak3D> calculated_peaks;
 
         shared_ptr<Sample> sample = numor->getDiffractometer()->getSample();
-        int ncrystals = sample->getNCrystals();
+        unsigned int ncrystals = static_cast<unsigned int>(sample->getNCrystals());
 
-        for (int i = 0; i < ncrystals; ++i) {
+        for (unsigned int i = 0; i < ncrystals; ++i) {
             SX::Crystal::SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
             auto cell = sample->getUnitCell(i);
             auto ub = cell->getReciprocalStandardM();
@@ -653,11 +653,11 @@ void SessionModel::incorporateCalculatedPeaks()
             int done_peaks = 0;
 
             #pragma omp parallel for
-            for (int peak_id = 0; peak_id < peaks.size(); ++peak_id) {
+            for (size_t peak_id = 0; peak_id < peaks.size(); ++peak_id) {
                 PeakCalc& p = peaks[peak_id];
                 ++current_peak;
 
-                Eigen::RowVector3i hkl(std::round(p._h), std::round(p._k), std::round(p._l));
+                Eigen::RowVector3i hkl(int(std::lround(p._h)), int(std::lround(p._k)), int(std::lround(p._l)));
 
                 // try to find this reflection in the list of peaks, skip if found
                 if (std::find(found_hkls.begin(), found_hkls.end(), hkl) != found_hkls.end() )
@@ -678,7 +678,7 @@ void SessionModel::incorporateCalculatedPeaks()
 
                 #pragma omp atomic
                 ++done_peaks;
-                int done = std::round(done_peaks * 100.0 / peaks.size());
+                int done = int(std::lround(done_peaks * 100.0 / peaks.size()));
 
                 if ( done != last_done) {
                     handler->setProgress(done);
