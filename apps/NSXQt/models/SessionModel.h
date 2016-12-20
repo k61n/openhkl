@@ -88,14 +88,13 @@ public:
     bool writeNewShelX(std::string filename, const std::vector<sptrPeak3D> &peaks);
     bool writeStatistics(std::string filename,
                          const std::vector<SX::Crystal::sptrPeak3D> &peaks,
-                         double dmin, double dmax, int num_shells, bool friedel);
+                         double dmin, double dmax, unsigned int num_shells, bool friedel);
 
 
 signals:
     void plotData(std::shared_ptr<SX::Data::IData>);
     void showPeakList(std::vector<std::shared_ptr<SX::Data::IData>>);
     void inspectWidget(QWidget*);
-
     void updatePeaks();
 
 public slots:

@@ -4,7 +4,7 @@
 
 namespace SX{
     namespace Crystal{
-        class PeakCalc;
+        struct PeakCalc;
     }
 }
 

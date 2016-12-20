@@ -47,13 +47,15 @@ namespace SX
 namespace Crystal
 {
 
-ResolutionShell::ResolutionShell(double dmin, double dmax, int num_shells):
-    _dmin{dmin}, _dmax{dmax}, _shells(num_shells), _d(num_shells+1, 0.0)
+ResolutionShell::ResolutionShell(double dmin, double dmax, unsigned long num_shells):
+    _numShells(std::max(num_shells, 1ul)),
+    _shells(std::max(_numShells, 1ul)),
+    _d(_numShells+1, 0.0)
 {
-    const double dv = (std::pow(dmin, -3) - std::pow(dmax, -3)) / (double)num_shells;
+    const double dv = (std::pow(dmin, -3) - std::pow(dmax, -3)) / double(_numShells);
     _d[0] = dmin;
 
-    for (int i = 0; i < num_shells; ++i)
+    for (size_t i = 0; i < _numShells; ++i)
         _d[i+1] = std::pow(std::pow(_d[i], -3) - dv, -1.0/3.0);
 }
 
@@ -61,7 +63,7 @@ void ResolutionShell::addPeak(sptrPeak3D peak)
 {
     const double d = 1.0 / peak->getQ().norm();
 
-    for (int i = 0; i < _d.size()-1; ++i)
+    for (size_t i = 0; i < _d.size()-1; ++i)
         if (_d[i] <= d && d < _d[i+1])
             _shells[i].push_back(peak);
 }

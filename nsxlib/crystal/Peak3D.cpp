@@ -76,9 +76,9 @@ Peak3D::Peak3D(std::shared_ptr<SX::Data::IData> data):
         _scale(1.0),
         _selected(true),
         _masked(false),
+        _calculated(false),
         _transmission(1.0),
-        _state(),
-        _calculated(false)
+        _state()
 {
     linkData(data);
 }
@@ -116,15 +116,14 @@ Peak3D::Peak3D(const Peak3D& other):
         _scale(other._scale),
         _selected(other._selected),
         _masked(other._masked),
+        _calculated(other._calculated),
         _transmission(other._transmission),
-        _state(other._state),
-        _calculated(other._calculated)
+        _state(other._state)
 {
 }
 
 Peak3D& Peak3D::operator=(const Peak3D& other)
 {
-
     if (this != &other) {
 
         _data = other._data;
@@ -136,25 +135,21 @@ Peak3D& Peak3D::operator=(const Peak3D& other)
         _projection = other._projection;
         _projectionPeak = other._projectionPeak;
         _projectionBkg = other._projectionBkg;
-
         _basis = other._basis;
         _sampleState = other._sampleState;
         _event = other._event;
-        _source= other._source;
+        _source = other._source;
         _counts = other._counts;
         _countsSigma = other._countsSigma;
         _scale = other._scale;
         _selected = other._selected;
         _masked = other._masked;
         _transmission = other._transmission;
-
         _state = other._state;
-
         _calculated = other._calculated;
     }
 
     return *this;
-
 }
 
 Peak3D::~Peak3D()
@@ -181,7 +176,7 @@ void Peak3D::setPeakShape(SX::Geometry::IShape<double,3>* p)
 {
     _peak = p;
     Eigen::Vector3d center = _peak->getAABBCenter();
-    int f = std::floor(center[2]);
+    int f = int(std::lfloor(center[2]));
 
     using ComponentState = SX::Instrument::ComponentState;
 
@@ -199,7 +194,7 @@ void Peak3D::setPeakShape(SX::Geometry::IShape<double,3>* p)
 
 void Peak3D::setBackgroundShape(SX::Geometry::IShape<double,3>* b)
 {
-    _bkg=b;
+    _bkg = b;
 }
 
 

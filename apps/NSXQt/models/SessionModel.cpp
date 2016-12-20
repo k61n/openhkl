@@ -832,7 +832,7 @@ bool SessionModel::writeNewShelX(std::string filename, const std::vector<sptrPea
 
 bool SessionModel::writeStatistics(std::string filename,
                                     const std::vector<SX::Crystal::sptrPeak3D> &peaks,
-                                    double dmin, double dmax, int num_shells, bool friedel)
+                                    double dmin, double dmax, unsigned int num_shells, bool friedel)
 {
     std::fstream file(filename, std::ios::out);
     SX::Crystal::ResolutionShell res = {dmin, dmax, num_shells};
