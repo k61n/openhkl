@@ -176,7 +176,7 @@ void Peak3D::setPeakShape(SX::Geometry::IShape<double,3>* p)
 {
     _peak = p;
     Eigen::Vector3d center = _peak->getAABBCenter();
-    int f = int(std::lfloor(center[2]));
+    int f = int(std::lround(std::floor(center[2])));
 
     using ComponentState = SX::Instrument::ComponentState;
 
