@@ -45,22 +45,19 @@ namespace Crystal
 {
 
 MergedPeak::MergedPeak(SpaceGroup grp, bool friedel):
-  _grp(grp), _peaks(), _intensity(0), _sigma(0), _hkl(), _chiSquared(0.0), _friedel(friedel), _std(0.0)
+ _hkl(), _intensity(0), _sigma(0), _chiSquared(0.0), _std(0.0), _peaks(), _grp(grp), _friedel(friedel)
 {
-
 }
 
 MergedPeak::MergedPeak(const MergedPeak &other):
-    _grp(other._grp), _peaks(other._peaks), _friedel(other._friedel),
-    _intensity(other._intensity), _sigma(other._sigma),
-    _hkl(other._hkl), _chiSquared(other._chiSquared), _std(other._std)
+    _hkl(other._hkl),
+    _intensity(other._intensity), _sigma(other._sigma), _chiSquared(other._chiSquared), _std(other._std),
+    _peaks(other._peaks),  _grp(other._grp), _friedel(other._friedel)
 {
-
 }
 
 MergedPeak::~MergedPeak()
 {
-
 }
 
 bool MergedPeak::addPeak(sptrPeak3D peak)
@@ -71,14 +68,6 @@ bool MergedPeak::addPeak(sptrPeak3D peak)
 
     // add peak to list
     _peaks.push_back(peak);
-
-    volatile int test = 0;
-
-    // jmf debugging
-//    if (_peaks.size() > _grp.getGroupElements().size()) {
-//        std::cout << "something funny is happening!" << std::endl;
-//        test = 1;
-//    }
 
     // this was the first peak, so we have to update _hkl
     _hkl = peak->getIntegerMillerIndices();
@@ -107,7 +96,7 @@ double MergedPeak::chiSquared() const
     return _chiSquared;
 }
 
-int MergedPeak::redundancy() const
+size_t MergedPeak::redundancy() const
 {
     assert(_peaks.size() <= (_friedel ? 2:1) * _grp.getGroupElements().size());
     return _peaks.size();
@@ -140,15 +129,16 @@ void MergedPeak::determineRepresentativeHKL()
 
     auto compare_fn = [=](const Eigen::Vector3d& a, const Eigen::Vector3d& b) -> bool
     {
+        const double eps = 1e-5;
         auto neg_a = num_nneg(a);
         auto neg_b = num_nneg(b);
 
         if (neg_a != neg_b)
             return neg_a > neg_b;
 
-        if (a(0) != b(0))
+        if (std::abs(a(0)-b(0)) > eps)
             return a(0) > b(0);
-        else if (a(1) != b(1))
+        else if (std::abs(a(1)-b(1)) > eps)
             return a(1) > b(1);
         else
             return a(2) > b(2);
@@ -157,7 +147,7 @@ void MergedPeak::determineRepresentativeHKL()
     best_hkl = *std::min_element(equivs.begin(), equivs.end(), compare_fn);
 
     for (int i = 0; i < 3; ++i)
-        _hkl(i) = std::round(best_hkl(i));
+        _hkl(i) = int(std::lround(best_hkl(i)));
 }
 
 void MergedPeak::update()
@@ -195,10 +185,8 @@ void MergedPeak::update()
     _std = std::sqrt(_std);
 }
 
-
-
-}
-}
+} // namespace Crystal
+} // namespace SX
 
 
 

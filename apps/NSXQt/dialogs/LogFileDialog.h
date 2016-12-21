@@ -59,7 +59,7 @@ public:
     double dmin() const;
     double dmax() const;
 
-    int numShells() const;
+    unsigned int numShells() const;
 
     bool friedel() const;
 

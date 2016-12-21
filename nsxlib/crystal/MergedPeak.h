@@ -63,7 +63,7 @@ public:
     double intensity() const;
     double sigma() const;
     double chiSquared() const;
-    int redundancy() const;
+    size_t redundancy() const;
     double std() const;
 
 private:

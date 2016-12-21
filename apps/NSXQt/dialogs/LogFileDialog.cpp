@@ -29,6 +29,7 @@
  */
 
 #include <QFileDialog>
+#include <cassert>
 
 #include "dialogs/LogFileDialog.h"
 #include "ui_LogFileDialog.h"
@@ -78,17 +79,23 @@ bool LogFileDialog::writeStatistics() const
 
 double LogFileDialog::dmin() const
 {
-    return ui->dMinBox->value();
+    double value = ui->dMinBox->value();
+    assert(value > 0);
+    return value;
 }
 
 double LogFileDialog::dmax() const
 {
-    return ui->dMaxBox->value();
+    double value = ui->dMaxBox->value();
+    assert(value > 0);
+    return value;
 }
 
-int LogFileDialog::numShells() const
+unsigned int LogFileDialog::numShells() const
 {
-    return ui->shellBox->value();
+    int value = ui->shellBox->value();
+    assert(value > 0);
+    return static_cast<unsigned int>(value);
 }
 
 bool LogFileDialog::friedel() const
