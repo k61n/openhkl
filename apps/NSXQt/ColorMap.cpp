@@ -34,35 +34,19 @@
 #include <cmath>
 #include <array>
 
-static inline int clamp(int a, int b, int c)
-{
-    if (c < a)
-        return a;
-    else if (c > b)
-        return b;
-    else
-        return c;
-}
-
 ColorMap::ColorMap(const double *rgb):
     _rgb(new double[256*3]),
     _log_rgb(new double[256*3])
 
 {
     std::memcpy(_rgb, rgb, 256*3*sizeof(double));
-
     const double ilog2 = 1.0 / std::log(2.0);
-    const double N = 1e5;
 
     for (unsigned int i = 0; i < 256; ++i) {
-
-
         const double t = (1.0 + i / 256.0);
         const double x = std::log(t) * ilog2 * 255.0;
-
-        const int a = int(x);
-        const int b = std::min(a+1, 255);
-
+        const unsigned int a = static_cast<unsigned int>(x);
+        const unsigned int b = std::min(a+1, 255u);
         const double eps = t-a;
 
         for (unsigned int j = 0; j < 3; ++j) {
@@ -98,8 +82,8 @@ QImage ColorMap::matToImage(const Eigen::MatrixXi& source, const QRect& rect, in
     if (rect.left() < 0 || rect.top() < 0)
         return QImage();
 
-    const int rows = source.rows();
-    const int cols = source.cols();
+    const int rows = int(source.rows());
+    const int cols = int(source.cols());
 
     const int xmin = rect.left();
     const int xmax = rect.right();
@@ -113,7 +97,7 @@ QImage ColorMap::matToImage(const Eigen::MatrixXi& source, const QRect& rect, in
     QImage dest(cols, rows, QImage::Format_RGB32);
 
     for (int y = ymin; y <= ymax; ++y) {
-        QRgb* destrow = (QRgb*)(dest.scanLine(y-rect.top()));
+        QRgb* destrow = reinterpret_cast<QRgb*>(dest.scanLine(y-rect.top()));
 
         for (int x = xmin; x <= xmax; ++x) {
             if (log)

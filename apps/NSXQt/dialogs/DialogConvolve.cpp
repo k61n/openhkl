@@ -31,8 +31,8 @@ DialogConvolve::DialogConvolve(const Eigen::MatrixXi& currentFrame,
                                QWidget *parent):
     QDialog(parent),
     ui(new Ui::DialogConvolve),
-    _frame(currentFrame),
     _pxmapPreview(nullptr),
+    _frame(currentFrame),
     _colormap(new ColorMap)
 {
     ui->setupUi(this);
@@ -130,8 +130,8 @@ void DialogConvolve::on_previewButton_clicked()
     RealMatrix data, result;
     Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> clamped_result;
 
-    int nrows = _frame.rows();
-    int ncols = _frame.cols();
+    int nrows = int(_frame.rows());
+    int ncols = int(_frame.cols());
     auto kernel = _peakFinder->getKernel();
     int maxData = _frame.maxCoeff();
 
@@ -149,7 +149,7 @@ void DialogConvolve::on_previewButton_clicked()
 
     // apply threshold in preview
     if (ui->thresholdCheckBox->isChecked()) {
-        double avgData = std::ceil(_frame.sum() / (double)(nrows*ncols));
+        double avgData = std::ceil(_frame.sum() / double(nrows*ncols));
         double threshold = _peakFinder->getThresholdValue();
         bool relativeThreshold = _peakFinder->getThresholdType() == 0;
         threshold = relativeThreshold ? threshold*avgData : threshold;
@@ -185,7 +185,7 @@ void DialogConvolve::on_filterComboBox_currentIndexChanged(int index)
     else {
         std::string kernelName = ui->filterComboBox->currentText().toStdString();
         SX::Imaging::KernelFactory* kernelFactory = SX::Imaging::KernelFactory::Instance();
-        kernel.reset(kernelFactory->create(kernelName,_frame.rows(),_frame.cols()));
+        kernel.reset(kernelFactory->create(kernelName, int(_frame.rows()), int(_frame.cols())));
     }
 
     // propagate changes to peak finder
