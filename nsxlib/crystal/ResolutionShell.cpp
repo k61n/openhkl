@@ -47,9 +47,9 @@ namespace SX
 namespace Crystal
 {
 
-ResolutionShell::ResolutionShell(double dmin, double dmax, unsigned long num_shells):
-    _numShells(std::max(num_shells, 1ul)),
-    _shells(std::max(_numShells, 1ul)),
+ResolutionShell::ResolutionShell(double dmin, double dmax, size_t num_shells):
+    _numShells(std::max(num_shells, size_t(1))),
+    _shells(std::max(_numShells, size_t(1))),
     _d(_numShells+1, 0.0)
 {
     const double dv = (std::pow(dmin, -3) - std::pow(dmax, -3)) / double(_numShells);

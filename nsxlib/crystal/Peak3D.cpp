@@ -186,9 +186,9 @@ void Peak3D::setPeakShape(SX::Geometry::IShape<double,3>* p)
     using DetectorEvent = SX::Instrument::DetectorEvent;
 
     setDetectorEvent(std::shared_ptr<DetectorEvent>(
-                            new DetectorEvent(_data->getDiffractometer()->getDetector()->createDetectorEvent(
-                                                  center[0],center[1],detState.getValues()))
-                            )
+                         new DetectorEvent(_data->getDiffractometer()->getDetector()->createDetectorEvent(
+                                               center[0],center[1],detState.getValues()))
+                    )
             );
 }
 
