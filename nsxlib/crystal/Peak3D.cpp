@@ -210,7 +210,7 @@ const Eigen::RowVector3d& Peak3D::getMillerIndices() const
 Eigen::RowVector3i Peak3D::getIntegerMillerIndices() const
 {
     Eigen::RowVector3i hkl;
-    hkl << std::lround(_hkl[0]), std::lround(_hkl[1]), std::lround(_hkl[2]);
+    hkl << int(std::lround(_hkl[0])), int(std::lround(_hkl[1])), int(std::lround(_hkl[2]));
     return hkl;
 }
 
@@ -222,7 +222,7 @@ void Peak3D::integrate()
     framewiseIntegrateBegin();
 
     unsigned int idx = _state.data_start;
-    std::unique_ptr<IFrameIterator> it = _data->getIterator(idx);
+    std::unique_ptr<IFrameIterator> it = _data->getIterator(int(idx));
 
     for(; idx <= _state.data_end; it->advance(), ++idx) {
         Eigen::MatrixXi frame = it->getFrame().cast<int>();
@@ -379,11 +379,11 @@ double Peak3D::getSampleStepSize() const
     // when we compute 'step' below
     double step = 0.0;
 
-    int numFrames = _data->getNFrames();
+    size_t numFrames = _data->getNFrames();
     const auto& ss = _data->getSampleStates();
-    int numValues = ss[0].getValues().size();
+    size_t numValues = ss[0].getValues().size();
 
-    for (int i = 0; i < numValues; ++i) {
+    for (size_t i = 0; i < numValues; ++i) {
         double dx = ss[numFrames-1].getValues()[i] - ss[0].getValues()[i];
         step += dx*dx;
     }
@@ -491,14 +491,14 @@ void Peak3D::framewiseIntegrateBegin()
     _state.upper= _bkg->getUpper();
 
     //
-    _state.data_start=static_cast<int>(std::floor(_state.lower[2]));
-    _state.data_end=static_cast<int>(std::ceil(_state.upper[2]));
+    _state.data_start = static_cast<unsigned int>(std::floor(_state.lower[2]));
+    _state.data_end = static_cast<unsigned int>(std::ceil(_state.upper[2]));
 
-    _state.start_x=static_cast<int>(std::floor(_state.lower[0]));
-    _state.end_x=static_cast<int>(std::ceil(_state.upper[0]));
+    _state.start_x = static_cast<unsigned int>(std::floor(_state.lower[0]));
+    _state.end_x = static_cast<unsigned int>(std::ceil(_state.upper[0]));
 
-    _state.start_y=static_cast<int>(std::floor(_state.lower[1]));
-    _state.end_y=static_cast<int>(std::ceil(_state.upper[1]));
+    _state.start_y = static_cast<unsigned int>(std::floor(_state.lower[1]));
+    _state.end_y = static_cast<unsigned int>(std::ceil(_state.upper[1]));
 
     if (_state.lower[0] < 0)
         _state.start_x=0;
@@ -508,11 +508,11 @@ void Peak3D::framewiseIntegrateBegin()
         _state.data_start=0;
 
     if (_state.end_x > _data->getNCols()-1)
-        _state.end_x=_data->getNCols()-1;
+        _state.end_x = static_cast<unsigned int>(_data->getNCols()-1);
     if (_state.end_y > _data->getNRows()-1)
-        _state.end_y=_data->getNRows()-1;
+        _state.end_y =  static_cast<unsigned int>(_data->getNRows()-1);
     if (_state.data_end > _data->getNFrames()-1)
-        _state.data_end=_data->getNFrames()-1;
+        _state.data_end = static_cast<unsigned int>(_data->getNFrames()-1);
 
     // Allocate all vectors
     _projection = Eigen::VectorXd::Zero(_state.data_end - _state.data_start + 1);
@@ -523,8 +523,8 @@ void Peak3D::framewiseIntegrateBegin()
     _countsPeak = Eigen::VectorXd::Zero(_state.data_end - _state.data_start + 1);
     _countsBkg = Eigen::VectorXd::Zero(_state.data_end - _state.data_start + 1);
 
-    _state.dx = _state.end_x - _state.start_x;
-    _state.dy = _state.end_y - _state.start_y;
+    _state.dx = int(_state.end_x - _state.start_x);
+    _state.dy = int(_state.end_y - _state.start_y);
 
     return;
 }
@@ -532,38 +532,31 @@ void Peak3D::framewiseIntegrateBegin()
 
 void Peak3D::framewiseIntegrateStep(Eigen::MatrixXi& frame, unsigned int idx)
 {
-    if (!_data)
+    if (!_data || idx < _state.data_start || idx > _state.data_end)
         return;
 
-    if ( idx < _state.data_start )
-        return;
+    double pointsinpeak = 0;
+    double pointsinbkg = 0;
+    double intensityP = 0;
+    double intensityBkg = 0;
 
-    if ( idx > _state.data_end )
-        return;
+    _projection[idx-_state.data_start] += frame.block(_state.start_y, _state.start_x, _state.dy,_state.dx).sum();
 
-    double pointsinpeak=0;
-    double pointsinbkg=0;
-    double intensityP=0;
-    double intensityBkg=0;
+    for (unsigned int x = _state.start_x; x <= _state.end_x; ++x) {
+        for (unsigned int y = _state.start_y; y <= _state.end_y; ++y) {
+            int intensity = frame(y, x);
+            _state.point1 << x+0.5, y+0.5, idx, 1;
 
-    _projection[idx-_state.data_start]+=frame.block(_state.start_y,_state.start_x,_state.dy,_state.dx).sum();
-
-    for (unsigned int x=_state.start_x;x<=_state.end_x;++x) {
-
-        for (unsigned int y=_state.start_y;y<=_state.end_y;++y) {
-            int intensity=frame(y,x);
-            _state.point1 << x+0.5,y+0.5,idx,1;
-
-            bool inbackground=(_bkg->isInsideAABB(_state.point1) && _bkg->isInside(_state.point1));
-            bool inpeak=(_peak->isInsideAABB(_state.point1) && _peak->isInside(_state.point1));
+            bool inbackground = (_bkg->isInsideAABB(_state.point1) && _bkg->isInside(_state.point1));
+            bool inpeak = (_peak->isInsideAABB(_state.point1) && _peak->isInside(_state.point1));
 
             if (inpeak) {
-                intensityP+=intensity;
+                intensityP += intensity;
                 pointsinpeak++;
                 continue;
             }
             else if (inbackground) {
-                intensityBkg+=intensity;
+                intensityBkg += intensity;
                 pointsinbkg++;
             }
         }
@@ -575,8 +568,8 @@ void Peak3D::framewiseIntegrateStep(Eigen::MatrixXi& frame, unsigned int idx)
     _countsPeak[idx-_state.data_start] = intensityP;
     _countsBkg[idx-_state.data_start] = intensityBkg;
 
-    if (pointsinpeak>0)
-        _projectionPeak[idx-_state.data_start]=intensityP-intensityBkg*pointsinpeak/pointsinbkg;
+    if (pointsinpeak > 0)
+        _projectionPeak[idx-_state.data_start] = intensityP-intensityBkg*pointsinpeak/pointsinbkg;
 
     return;
 }
