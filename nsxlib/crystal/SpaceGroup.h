@@ -54,29 +54,29 @@ class SpaceGroup
 {
 
 public:
-	//! Construct a space group from its IT symbol. Lookup in the IUCR table
-	SpaceGroup(const std::string& symbol);
-	//! Construct a space group from a string containing the generators given in the Jones notation and separated
-	//! by ";" characters
-	SpaceGroup(const std::string& symbol, const std::string& generators);
-	//! Copy
-	SpaceGroup(const SpaceGroup& other);
-	//! Assignment
-	SpaceGroup& operator=(const SpaceGroup& other);
-	//! Get the IT symbol for this space group
-	const std::string& getSymbol() const;
-	//! Get the string containing the generators (in the Jones notation), separated bt ";' character
-	const std::string& getGenerators() const;
-	//! Get a vector containing the Symmetry operations for this space group
-	const groupElementsList& getGroupElements() const;
-	//! Determine whether a h,k,l reflection is forbidden
-	bool isExtinct(double h, double k, double l) const;
-	//! Return true if centrosymmetric
-	bool isCentrosymmetric() const;
-	//! Print to a stream
-	void print(std::ostream& os) const;
-	//! Return the type of cell (triclinic, monoclinic ...)
-	char getBravaisType() const;
+    //! Construct a space group from its IT symbol. Lookup in the IUCR table
+    SpaceGroup(const std::string& symbol);
+    //! Construct a space group from a string containing the generators given in the Jones notation and separated
+    //! by ";" characters
+    SpaceGroup(const std::string& symbol, const std::string& generators);
+    //! Copy
+    SpaceGroup(const SpaceGroup& other);
+    //! Assignment
+    SpaceGroup& operator=(const SpaceGroup& other);
+    //! Get the IT symbol for this space group
+    const std::string& getSymbol() const;
+    //! Get the string containing the generators (in the Jones notation), separated bt ";' character
+    const std::string& getGenerators() const;
+    //! Get a vector containing the Symmetry operations for this space group
+    const groupElementsList& getGroupElements() const;
+    //! Determine whether a h,k,l reflection is forbidden
+    bool isExtinct(double h, double k, double l) const;
+    //! Return true if centrosymmetric
+    bool isCentrosymmetric() const;
+    //! Print to a stream
+    void print(std::ostream& os) const;
+    //! Return the type of cell (triclinic, monoclinic ...)
+    char getBravaisType() const;
     //! Return the percentage of extinct reflections
     double fractionExtinct(std::vector<std::array<double, 3>> hkl);
     //! Return the Bravais type symbol
@@ -85,22 +85,24 @@ public:
     int getID() const;
     //! Find equivalences in a list of peaks
     std::vector<std::vector<sptrPeak3D>>
-	findEquivalences(const std::vector<sptrPeak3D>&peak_list, bool friedel=true) const;
+    findEquivalences(const std::vector<sptrPeak3D>&peak_list, bool friedel=true) const;
     //! Return whether two sets of indices are related by a symmetry
-    bool isEquivalent(double h1, double k1, double l1, double h2, double k2, double l2) const;
+    bool isEquivalent(double h1, double k1, double l1, double h2, double k2, double l2, bool friedel=false) const;
+    //! Return whether two sets of indices are related by a symmetry
+    bool isEquivalent(const Eigen::Vector3d& a, const Eigen::Vector3d& b, bool friedel=false) const;
     //! Return whether two sets of indices are related by a symmetry up to Friedel reflection
     bool isFriedelEquivalent(double h1, double k1, double l1, double h2, double k2, double l2) const;
 private:
 
-	void generateGroupElements();
+    void generateGroupElements();
 
 private:
 
-	std::string _symbol;
+    std::string _symbol;
 
-	std::string _generators;
+    std::string _generators;
 
-	groupElementsList _groupElements;
+    groupElementsList _groupElements;
 };
 
 std::ostream& operator<<(std::ostream& os, const SpaceGroup& sg);

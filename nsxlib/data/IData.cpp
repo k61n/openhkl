@@ -495,74 +495,65 @@ void IData::releaseMemory()
 
 std::vector<PeakCalc> IData::hasPeaks(const std::vector<Eigen::Vector3d>& hkls, const Matrix3d& BU)
 {
-
 	std::vector<PeakCalc> peaks;
-
 	unsigned int scanSize = _sampleStates.size();
-
+    Eigen::Matrix3d UB = BU.transpose();
+    Eigen::Vector3d ki=_diffractometer->getSource()->getKi();
 	std::vector<Eigen::Matrix3d> rotMatrices;
 	rotMatrices.reserve(scanSize);
-
-	auto gonio=_diffractometer->getSample()->getGonio();
-
-	double wavelength_2=-0.5*_diffractometer->getSource()->getWavelength();
+    auto gonio = _diffractometer->getSample()->getGonio();
+    double wavelength_2 = -0.5 * _diffractometer->getSource()->getWavelength();
 
 	for (unsigned int s=0; s<scanSize; ++s)
 		rotMatrices.push_back(gonio->getHomMatrix(_sampleStates[s].getValues()).rotation());
 
-	Eigen::Matrix3d UB = BU.transpose();
+    for (const Eigen::Vector3d& hkl: hkls) {
+        // Get q at rest
+        Eigen::Vector3d q=UB*hkl;
 
-	Eigen::Vector3d ki=_diffractometer->getSource()->getKi();
+        double normQ2=q.squaredNorm();
+        // y component of q when in Bragg condition y=-sin(theta)*||Q||
+        double qy=normQ2*wavelength_2;
 
-	for (const Eigen::Vector3d& hkl : hkls)
-	{
-		// Get q at rest
-		Eigen::Vector3d q=UB*hkl;
+        Eigen::Vector3d qi0=rotMatrices[0]*q;
+        Eigen::Vector3d qi;
 
-		double normQ2=q.squaredNorm();
-		// y component of q when in Bragg condition y=-sin(theta)*||Q||
-		double qy=normQ2*wavelength_2;
+        bool sign = (qi0[1] > qy);
+        bool found = false;
+        unsigned int i;
 
-		Eigen::Vector3d qi0=rotMatrices[0]*q;
-		Eigen::Vector3d qi;
+        for (i = 1; i < scanSize; ++i) {
+            qi=rotMatrices[i]*q;
+            bool sign2=(qi[1] > qy);
+            if (sign ^ sign2) {
+                found=true;
+                break;
+            }
+            qi0=qi;
+        }
 
-		bool sign=(qi0[1] > qy);
-		bool found=false;
-		unsigned int i;
-		for (i=1;i<scanSize;++i)
-		{
-			qi=rotMatrices[i]*q;
-			bool sign2=(qi[1] > qy);
-			if (sign ^ sign2)
-			{
-				found=true;
-				break;
-			}
-			qi0=qi;
-		}
+        if (!found)
+            continue;
 
-		if (!found)
-			continue;
+        double t = (qy-qi0[1]) / (qi[1]-qi0[1]);
 
-		double t=(qy-qi0[1])/(qi[1]-qi0[1]);
+        Eigen::Vector3d kf=ki+qi0+(qi-qi0)*t;
+        t+=(i-1);
 
-		Eigen::Vector3d kf=ki+qi0+(qi-qi0)*t;
-		t+=(i-1);
+        ComponentState dis=getDetectorInterpolatedState(t);
+        double px,py;
+        // If hit detector, new peak
+        ComponentState cs=getSampleInterpolatedState(t);
+        Eigen::Vector3d from=_diffractometer->getSample()->getPosition(cs.getValues());
 
-		ComponentState dis=getDetectorInterpolatedState(t);
-		double px,py;
-		// If hit detector, new peak
-		ComponentState cs=getSampleInterpolatedState(t);
-		Eigen::Vector3d from=_diffractometer->getSample()->getPosition(cs.getValues());
+        double time;
+        bool accept=_diffractometer->getDetector()->receiveKf(px,py,kf,from,time,dis.getValues());
 
-		double time;
-		bool accept=_diffractometer->getDetector()->receiveKf(px,py,kf,from,time,dis.getValues());
+        if (accept)
+            peaks.push_back(PeakCalc(hkl[0],hkl[1],hkl[2],px,py,t));
+    }
 
-		if (accept)
-			peaks.push_back(PeakCalc(hkl[0],hkl[1],hkl[2],px,py,t));
-	}
-
-	return peaks;
+    return peaks;
 }
 
 Eigen::MatrixXi IData::getFrame(std::size_t idx)
@@ -570,7 +561,7 @@ Eigen::MatrixXi IData::getFrame(std::size_t idx)
     if ( _inMemory)
         return _data.at(idx);
     else
-        return readFrame(idx);            
+        return readFrame(idx);
 }
 
 void IData::readInMemory(std::shared_ptr<SX::Utils::ProgressHandler> progress)

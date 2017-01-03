@@ -4,6 +4,7 @@
 
 #include "UnitCell.h"
 #include "Units.h"
+#include "gcd.h"
 
 namespace SX
 {
@@ -249,7 +250,17 @@ void UnitCell::setBU(const Vector3d& hkl1, const Vector3d& hkl2, const Vector3d&
 void UnitCell::setBU(const Eigen::Matrix3d& BU)
 {
 	_B = BU;
-	_A = _B.inverse();
+    _A = _B.inverse();
+}
+
+double UnitCell::getD(int h, int k, int l)
+{
+    const Eigen::Vector3d b1(getReciprocalAVector());
+    const Eigen::Vector3d b2(getReciprocalBVector());
+    const Eigen::Vector3d b3(getReciprocalCVector());
+
+    const Eigen::Vector3d q = h*b1 + k*b2 + l*b3;
+    return SX::Utils::gcd(h, k, l) / q.norm();
 }
 
 Eigen::Matrix3d UnitCell::getBusingLevyB() const
@@ -352,13 +363,67 @@ std::vector<Eigen::Vector3d> UnitCell::generateReflectionsInSphere(double dstarm
 			}
 		}
 	}
-	return hkls;
+    return hkls;
+}
+
+std::vector<Eigen::Vector3d> UnitCell::generateReflectionsInShell(double dmin, double dmax, double wavelength) const
+{
+    const Eigen::Vector3d b1(getReciprocalAVector());
+    const Eigen::Vector3d b2(getReciprocalBVector());
+    const Eigen::Vector3d b3(getReciprocalCVector());
+    Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> eigen_solver;
+    const Eigen::Matrix3d BTB(getReciprocalMetricTensor());
+    std::vector<Eigen::Vector3d> hkls;
+
+    eigen_solver.compute(BTB);
+    double b_min = std::sqrt(eigen_solver.eigenvalues().minCoeff());
+    const int hkl_max = std::ceil(2.0 / (wavelength * b_min));
+    const int num_hkl = 2*hkl_max+1;
+    hkls.reserve(num_hkl*num_hkl*num_hkl);
+
+    SX::Crystal::SpaceGroup group(getSpaceGroup());
+
+    for (int h = -hkl_max; h <= hkl_max; ++h) {
+        for (int k = -hkl_max; k <= hkl_max; ++k) {
+            for (int l = -hkl_max; l <= hkl_max; ++l) {
+
+                Eigen::Vector3d q = h*b1 + k*b2 + l*b3;
+
+//                double gcd = (double)SX::Utils::gcd(h, k, l);
+//                const double d = gcd / q.norm();
+                const double d = 1.0 / q.norm();
+
+                const double sin_theta = wavelength / (2.0 * d);
+
+                // unphysical, so skip
+                if (sin_theta > 1.0 && sin_theta < 0.0)
+                    continue;
+
+                // scattering angle too large
+                if ( d < dmin)
+                    continue;
+
+                // scattering angle too small
+                if ( d > dmax)
+                    continue;
+
+                // skip those HKL which are forbidden by the space group
+                if (group.isExtinct(h, k, l))
+                    continue;
+
+                hkls.push_back(Eigen::Vector3i(h, k, l).cast<double>());
+            }
+        }
+    }
+
+    return hkls;
 }
 
 double UnitCell::getAngle(double h1, double k1, double l1, double h2, double k2, double l2) const
 {
 	return getAngle(Eigen::Vector3d(h1,k1,l1),Eigen::Vector3d(h2,k2,l2));
 }
+
 double UnitCell::getAngle(const Eigen::Vector3d& hkl1, const Eigen::Vector3d& hkl2) const
 {
 	auto q1=toReciprocalStandard(hkl1);

@@ -107,6 +107,8 @@ public:
  	std::string getBravaisTypeSymbol() const;
  	//! Get a list of reflections sorted by their d* value in $\AA$ within a sphere defined by dstarmax
  	std::vector<Eigen::Vector3d> generateReflectionsInSphere(double dstarmax) const;
+    //! Get a list of reflections with d value in the range [dmin, dmax]
+    std::vector<Eigen::Vector3d> generateReflectionsInShell(double dmin, double dmax, double wavelength) const;
  	//! Return the angle in radians between two reflections h1,k1,l1 and h2,k2,l2
  	double getAngle(double h1,double k1, double l1, double h2, double k2, double l2) const;
  	//! Return the angle in radians between two reflections hkl1 and hkl2
@@ -119,6 +121,9 @@ public:
  	void setBU(const Vector3d& hkl1,const Vector3d& hkl2, const Vector3d& q1, const Vector3d& q2);
 
  	void setBU(const Eigen::Matrix3d& BU);
+
+    //! Return d of the Bragg condition for the given reflection
+    double getD(int h, int k, int l);
 
  	//! Get the Busing-Levy B matrix as defined in Acta Cryst. (1967). 22, 457
  	//! The returned matrix is the transposed version of the matrix since

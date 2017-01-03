@@ -89,7 +89,7 @@ void PeakGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
     qreal bkg_h = bkg_u[1] - bkg_l[1];
 
     if (_peak->isSelected()) {
-        _pen.setColor("green");
+        _pen.setColor(_peak->getCalculated() ? "yellow" : "green");
         painter->setPen(_pen);
         drawEllipse(*painter, _peakEllipse);
 
@@ -253,12 +253,14 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     //Copy the data
     double min=std::floor(_peak->getBackground()->getLower()[2]);
     double max=std::ceil(_peak->getBackground()->getUpper()[2]);
+
     if (min<0)
-    	min=0;
+        min=0;
+
     if (max>_peak->getData()->getNFrames()-1)
-    	max=_peak->getData()->getNFrames()-1;
-    for (int i=0;i<total.size();++i)
-    {
+        max=_peak->getData()->getNFrames()-1;
+
+    for (int i = 0; i < total.size(); ++i) {
         qx[i]= min + static_cast<double>(i)*(max-min)/(total.size()-1);
         qtotal[i]=total[i];
         qtotalE[i]=totalSigma[i];

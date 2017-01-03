@@ -17,8 +17,7 @@ class ExperimentItem : public TreeItem
 {
 public:
     explicit ExperimentItem(std::shared_ptr<SX::Instrument::Experiment> experiment);
-
-    void setData(const QVariant & value, int role=Qt::UserRole + 1 );
+    void setData(const QVariant & value, int role=Qt::UserRole + 1 ) override;
 
     ~ExperimentItem();
 

@@ -1376,10 +1376,12 @@ border-radius: 4px;
      </property>
      <addaction name="actionRemove_bad_peaks"/>
      <addaction name="actionIncorporate_calculated_peaks"/>
+     <addaction name="actionApply_resolution_cutoff"/>
     </widget>
     <addaction name="actionCompute_R_factors"/>
     <addaction name="actionFind_space_group"/>
     <addaction name="menuPeaks"/>
+    <addaction name="actionWrite_log_file"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menu_Options"/>
@@ -1816,6 +1818,16 @@ QDockWidget::title {
   <action name="actionIncorporate_calculated_peaks">
    <property name="text">
     <string>Incorporate calculated peaks</string>
+   </property>
+  </action>
+  <action name="actionApply_resolution_cutoff">
+   <property name="text">
+    <string>Apply resolution cutoff</string>
+   </property>
+  </action>
+  <action name="actionWrite_log_file">
+   <property name="text">
+    <string>Write log file</string>
    </property>
   </action>
  </widget>
