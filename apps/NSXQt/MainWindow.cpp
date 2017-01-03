@@ -56,6 +56,7 @@
 #include "PlotFactory.h"
 #include "Tree/UnitCellPropertyWidget.h"
 #include "Tree/PeakListPropertyWidget.h"
+#include "ResolutionCutoffDialog.h"
 
 #include "Path.h"
 #include "IFrameIterator.h"
@@ -605,4 +606,20 @@ void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
 void MainWindow::on_actionIncorporate_calculated_peaks_triggered(bool checked)
 {
     emit incorporateCalculatedPeaks();
+}
+
+void MainWindow::on_actionApply_resolution_cutoff_triggered()
+{
+    ResolutionCutoffDialog dialog;
+
+    if (!dialog.exec())
+        return;
+
+    _session->applyResolutionCutoff(dialog.dMin(), dialog.dMax());
+}
+
+void MainWindow::on_actionWrite_log_file_triggered()
+{
+    qDebug() << "write log file triggered";
+    _session->writeLog();
 }

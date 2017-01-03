@@ -52,7 +52,6 @@ void RFactor::recalculate(const vector<vector<sptrPeak3D> > &peak_equivs)
             continue;
 
         double average = 0.0;
-        double sigma, var = 0.0;
 
         for (auto&& p: peak_list) {
             double in = p->getScaledIntensity();

@@ -69,11 +69,12 @@ if ( BUILD_WITH_DEBUG_INFO )
 endif( BUILD_WITH_DEBUG_INFO )
 
 # special configuration for GNU/clang
-if(CMAKE_COMPILER_IS_GNU_OR_CLANG)
+if(COMPILER_IS_GNU_OR_CLANG)
     add_definitions(-Wall)
     add_definitions(-pthread)
     add_definitions(-DEIGEN_FFTW_DEFAULT)
     add_definitions(-D_USE_MATH_DEFINES)
+    message("TESTING: COMPILER IS CLANG OR GNU")
   elseif(COMPILER_IS_MSVC)
     add_definitions(/D_USE_MATH_DEFINES)
 endif()

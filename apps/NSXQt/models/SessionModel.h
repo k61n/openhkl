@@ -87,6 +87,13 @@ public:
     void setColorMap(const std::string& name);
     std::string getColorMap() const;
 
+    void writeLog();
+    bool writeNewShelX(std::string filename, const std::vector<sptrPeak3D> &peaks);
+    bool writeStatistics(std::string filename,
+                         const std::vector<SX::Crystal::sptrPeak3D> &peaks,
+                         double dmin, double dmax, unsigned int num_shells, bool friedel);
+
+
 
 signals:
     void plotData(std::shared_ptr<SX::Data::IData>);
@@ -109,15 +116,17 @@ public slots:
     void integrateCalculatedPeaks();
     void peakFitDialog();
     void incorporateCalculatedPeaks();
+    void applyResolutionCutoff(double dmin, double dmax);
 
 
 private:
     //! Filename for the save/load feature
     QString _filename;
-
     std::shared_ptr<SX::Utils::ProgressHandler> _progressHandler;
     std::shared_ptr<SX::Data::PeakFinder> _peakFinder;
     std::string _colormap;
+
+
     //std::map<std::string, std::shared_ptr<SX::Instrument::Experiment>> _experiments;
 };
 
