@@ -58,8 +58,6 @@
 #include "Tree/PeakListPropertyWidget.h"
 #include "ResolutionCutoffDialog.h"
 
-#include "DialogConvolve.h"
-
 #include "Path.h"
 #include "IFrameIterator.h"
 #include "Types.h"
@@ -74,6 +72,8 @@
 #include "SpaceGroupSymbols.h"
 
 #include "Peak3D.h"
+
+#include "ColorMap.h"
 
 // jmf debug testing
 #include <functional>
@@ -162,6 +162,28 @@ MainWindow::MainWindow(QWidget *parent)
 
     _progressHandler = std::shared_ptr<ProgressHandler>(new ProgressHandler());
     _peakFinder = std::shared_ptr<PeakFinder>(new PeakFinder());
+
+
+    for (auto&& action: _ui->menuColor_map->actions()) {
+        _ui->menuColor_map->removeAction(action);
+    }
+
+    auto names = ColorMap::getColorMapNames();
+
+    for (const auto name: names) {
+        QAction* action = new QAction(name.c_str(), _ui->menuColor_map);
+
+        auto slot_fn = [=] () -> void
+        {
+            const std::string name = action->text().toStdString();
+            _session->setColorMap(name);
+            _ui->_dview->getScene()->setColorMap(name);
+            _ui->_dview->getScene()->redrawImage();
+        };
+
+        connect(action, &QAction::triggered, this, slot_fn);
+        _ui->menuColor_map->addAction(action);
+    }
 }
 
 MainWindow::~MainWindow()
@@ -516,6 +538,11 @@ void MainWindow::on_actionIntegrate_calculated_peaks_triggered()
 void MainWindow::on_actionPeak_fit_dialog_triggered()
 {
     emit peakFitDialog();
+}
+
+void MainWindow::on_actionLogarithmic_Scale_triggered(bool checked)
+{
+    _ui->_dview->getScene()->setLogarithmic(checked);
 }
 
 void MainWindow::on_actionDraw_peak_background_triggered(bool checked)

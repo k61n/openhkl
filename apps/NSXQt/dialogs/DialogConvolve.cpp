@@ -31,8 +31,9 @@ DialogConvolve::DialogConvolve(const Eigen::MatrixXi& currentFrame,
                                QWidget *parent):
     QDialog(parent),
     ui(new Ui::DialogConvolve),
+    _pxmapPreview(nullptr),
     _frame(currentFrame),
-    _pxmapPreview(nullptr)
+    _colormap(new ColorMap)
 {
     ui->setupUi(this);
 
@@ -61,7 +62,7 @@ DialogConvolve::DialogConvolve(const Eigen::MatrixXi& currentFrame,
     ui->filterComboBox->model()->sort(0);
 
     // automatically generate preview
-    on_previewButton_clicked();
+    // on_previewButton_clicked();
 }
 
 DialogConvolve::~DialogConvolve()
@@ -108,9 +109,20 @@ void DialogConvolve::buildTree()
         }
     }
 
-	treeView->setModel(model);
+    treeView->setModel(model);
 
     connect(model, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(parameterChanged(QStandardItem*)));
+}
+
+void DialogConvolve::setColorMap(const std::string &name)
+{
+    _colormap = std::unique_ptr<ColorMap>(new ColorMap(name));
+}
+
+int DialogConvolve::exec()
+{
+    on_previewButton_clicked();
+    return QDialog::exec();
 }
 
 void DialogConvolve::on_previewButton_clicked()
@@ -118,8 +130,8 @@ void DialogConvolve::on_previewButton_clicked()
     RealMatrix data, result;
     Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> clamped_result;
 
-    int nrows = _frame.rows();
-    int ncols = _frame.cols();
+    int nrows = int(_frame.rows());
+    int ncols = int(_frame.cols());
     auto kernel = _peakFinder->getKernel();
     int maxData = _frame.maxCoeff();
 
@@ -137,7 +149,7 @@ void DialogConvolve::on_previewButton_clicked()
 
     // apply threshold in preview
     if (ui->thresholdCheckBox->isChecked()) {
-        double avgData = std::ceil(_frame.sum() / (double)(nrows*ncols));
+        double avgData = std::ceil(_frame.sum() / double(nrows*ncols));
         double threshold = _peakFinder->getThresholdValue();
         bool relativeThreshold = _peakFinder->getThresholdType() == 0;
         threshold = relativeThreshold ? threshold*avgData : threshold;
@@ -154,7 +166,9 @@ void DialogConvolve::on_previewButton_clicked()
     result.array() *= static_cast<double>(maxData)/(maxVal-minVal);
     clamped_result = result.cast<int>();
 
-    QImage image = Mat2QImage(clamped_result.data(), nrows, ncols, 0, ncols-1, 0, nrows-1, maxData);
+    QRect rect(0, 0, ncols, nrows);
+
+    QImage image = _colormap->matToImage(clamped_result, rect, maxData);
 
     if (!_pxmapPreview)
         _pxmapPreview = _scene->addPixmap(QPixmap::fromImage(image));
@@ -171,7 +185,7 @@ void DialogConvolve::on_filterComboBox_currentIndexChanged(int index)
     else {
         std::string kernelName = ui->filterComboBox->currentText().toStdString();
         SX::Imaging::KernelFactory* kernelFactory = SX::Imaging::KernelFactory::Instance();
-        kernel.reset(kernelFactory->create(kernelName,_frame.rows(),_frame.cols()));
+        kernel.reset(kernelFactory->create(kernelName, int(_frame.rows()), int(_frame.cols())));
     }
 
     // propagate changes to peak finder

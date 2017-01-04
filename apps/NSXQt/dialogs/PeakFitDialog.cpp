@@ -148,8 +148,10 @@ void PeakFitDialog::updateView()
 
 //    int ymin = frame.cols()-_ymax;
 //    int ymax = frame.cols()-_ymin;
+    auto cmap = ColorMap::getColorMap("inferno");
+    QRect rect(_xmin, _ymin, _xmax-_xmin, _ymax-_ymin);
 
-    QImage new_image = Mat2QImage(frame.data(), frame.rows(), frame.cols(), _xmin, _xmax, _ymin, _ymax, intensity);
+    QImage new_image = cmap.matToImage(frame, rect, intensity);
     new_image = new_image.scaled(ui->graphicsView->width(), ui->graphicsView->height());
 
     if (_image)

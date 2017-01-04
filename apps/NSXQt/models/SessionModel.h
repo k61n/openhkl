@@ -84,6 +84,9 @@ public:
     void setFilename(QString name);
     QString getFilename();
 
+    void setColorMap(const std::string& name);
+    std::string getColorMap() const;
+
     void writeLog();
     bool writeNewShelX(std::string filename, const std::vector<sptrPeak3D> &peaks);
     bool writeStatistics(std::string filename,
@@ -91,11 +94,13 @@ public:
                          double dmin, double dmax, unsigned int num_shells, bool friedel);
 
 
+
 signals:
     void plotData(std::shared_ptr<SX::Data::IData>);
     void showPeakList(std::vector<std::shared_ptr<SX::Data::IData>>);
     void inspectWidget(QWidget*);
     void updatePeaks();
+
 
 public slots:
 
@@ -117,9 +122,11 @@ public slots:
 private:
     //! Filename for the save/load feature
     QString _filename;
-
     std::shared_ptr<SX::Utils::ProgressHandler> _progressHandler;
     std::shared_ptr<SX::Data::PeakFinder> _peakFinder;
+    std::string _colormap;
+
+
     //std::map<std::string, std::shared_ptr<SX::Instrument::Experiment>> _experiments;
 };
 

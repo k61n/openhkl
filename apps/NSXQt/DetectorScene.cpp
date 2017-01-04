@@ -24,6 +24,8 @@
 #include "Sample.h"
 #include "Gonio.h"
 
+#include "ColorMap.h"
+
 DetectorScene::DetectorScene(QObject *parent)
 : QGraphicsScene(parent),
   _currentData(nullptr),
@@ -41,7 +43,9 @@ DetectorScene::DetectorScene(QObject *parent)
   _peakGraphicsItems(),
   _masks(),
   _lastClickedGI(nullptr),
-  _showPeakCalcs(false)
+  _showPeakCalcs(false),
+  _logarithmic(false),
+  _colormap(new ColorMap())
 {
     //setBspTreeDepth(4);
     qDebug() << "BSP tree depth = " << bspTreeDepth();
@@ -57,6 +61,7 @@ void DetectorScene::changeFrame(unsigned int frame)
 
     if (frame == _currentFrameIndex)
         return;
+
     _currentFrameIndex = frame;
 
 //    for (auto& peak : _peaks)
@@ -123,21 +128,17 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     createToolTipText(event);
 
     // The left button was pressed
-    if (event->buttons() & Qt::LeftButton)
-    {
+    if (event->buttons() & Qt::LeftButton) {
 
         if (event->modifiers()==Qt::ControlModifier)
             return;
 
         // Case of the Zoom mode, update the scene
-        if (_mode==ZOOM)
-        {
+        if (_mode==ZOOM) {
             QRectF zoom=_zoomrect->rect();
             zoom.setBottomRight(event->lastScenePos());
             _zoomrect->setRect(zoom);
-        }
-        else
-        {
+        } else {
             if (!_lastClickedGI)
                 return;
             _lastClickedGI->mouseMoveEvent(event);
@@ -147,13 +148,10 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         }
     }
     // No button was pressed, just a mouse move
-
-
-    else if (event->button() == Qt::NoButton)
-    {
+    else if (event->button() == Qt::NoButton) {
           //      jmf: testing follows
-        QGraphicsItem* gItem=itemAt(event->lastScenePos().toPoint(),QTransform());
-        auto p=dynamic_cast<PlottableGraphicsItem*>(gItem);
+        QGraphicsItem* gItem=itemAt(event->lastScenePos().toPoint(), QTransform());
+        auto p = dynamic_cast<PlottableGraphicsItem*>(gItem);
         if (p)
             emit updatePlot(p);
             QGraphicsScene::mouseMoveEvent(event);
@@ -163,52 +161,45 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-
     // If no data is loaded, do nothing
     if (!_currentData)
         return;
 
     // The left button was pressed
-    if (event->buttons() & Qt::LeftButton)
-    {
+    if (event->buttons() & Qt::LeftButton) {
 
         // Get the graphics item on which the user has clicked
         auto item=itemAt(event->lastScenePos(),QTransform());
 
-        if (event->modifiers()==Qt::ControlModifier)
-        {
+        if (event->modifiers() == Qt::ControlModifier) {
             item->setSelected(!item->isSelected());
             return;
         }
 
-        PeakGraphicsItem* peak=dynamic_cast<PeakGraphicsItem*>(item);
-        if (peak && _mode==INDEXING)
-        {
+        PeakGraphicsItem* peak = dynamic_cast<PeakGraphicsItem*>(item);
+
+        if (peak && _mode == INDEXING) {
             QMenu* menu = new QMenu();
-            std::vector<Eigen::Vector3d> peaks=_indexer->index(*peak->getPeak());
-            for (auto p : peaks)
-            {
+            std::vector<Eigen::Vector3d> peaks = _indexer->index(*peak->getPeak());
+            for (auto p : peaks) {
                 std::ostringstream os;
                 os << p;
-                QAction* action=menu->addAction(os.str().c_str());
-                connect(action,&QAction::triggered,[=](){setPeakIndex(peak->getPeak(),p);});
+                QAction* action = menu->addAction(os.str().c_str());
+                connect(action, &QAction::triggered, [=] () {setPeakIndex(peak->getPeak(),p);});
             }
             menu->popup(event->screenPos());
         }
 
         // If the item is a NSXTools GI and is selectedit will become the current active GI
-        if (auto p=dynamic_cast<SXGraphicsItem*>(item))
-        {
-            if (p->isSelected())
-            {
+        if (auto p = dynamic_cast<SXGraphicsItem*>(item)) {
+            if (p->isSelected()) {
                 _lastClickedGI = p;
                 return;
             }
         }
 
         // Case of the Zoom mode
-        if (_mode==ZOOM)
-        {
+        if (_mode==ZOOM) {
             _zoomstart=event->lastScenePos().toPoint();
             _zoomend=_zoomstart;
             QRect zoom(_zoomstart,_zoomend);
@@ -220,11 +211,9 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             _zoomrect->setPen(pen1);
             _zoomrect->setBrush(QBrush(QColor(255,0,0,30)));
         }
-        else
-        {
+        else {
             // Case of Cuttings mode (horizontal/vertical slices, line cut)
-            if (_mode==HORIZONTALSLICE || _mode==VERTICALSLICE || _mode==LINE)
-            {
+            if (_mode==HORIZONTALSLICE || _mode==VERTICALSLICE || _mode==LINE) {
                 // Create the cutter item corresponding to the seleced cutting mode
                 CutterGraphicsItem* cutter;
                 if (_mode==HORIZONTALSLICE)
@@ -249,15 +238,12 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
         }
     }
     // The right button was pressed
-    else if (event->buttons() & Qt::RightButton)
-    {
-        if (_zoomStack.size()>1)
-        {
+    else if (event->buttons() & Qt::RightButton) {
+        if (_zoomStack.size()>1) {
             // Remove the last zoom area stored in the stack
             _zoomStack.pop();
             // If not root, then update the scene
-            if (!_zoomStack.isEmpty())
-            {
+            if (!_zoomStack.isEmpty()) {
                 setSceneRect(_zoomStack.top());
                 emit dataChanged();
             }
@@ -347,7 +333,7 @@ void DetectorScene::wheelEvent(QGraphicsSceneWheelEvent* event)
 
 void DetectorScene::keyPressEvent(QKeyEvent* event)
 {
-	// If no data, returns
+    // If no data, returns
     if (!_currentData)
         return;
 
@@ -357,12 +343,12 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
         int nPeaksErased = _peakGraphicsItems.size();
         for (auto item: items) {
             auto p=dynamic_cast<SXGraphicsItem*>(item);
-        	// The item must be deletable ... to be deleted
+            // The item must be deletable ... to be deleted
             if (!p->isDeletable())
-        		continue;
+                continue;
 
-        	// If the item is a peak graphics item, remove its corresponding peak from the data,
-        	// update the set of peak graphics items and update the scene
+            // If the item is a peak graphics item, remove its corresponding peak from the data,
+            // update the set of peak graphics items and update the scene
             if (auto p=dynamic_cast<PeakGraphicsItem*>(item)) {
                 bool remove=_currentData->removePeak(p->getPeak());
                 if (remove) {
@@ -372,7 +358,7 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
             // If the item is a mask graphics item, remove its corresponding mask from the data,
             // update the QList of mask graphics items and update the scene
             else if (auto p=dynamic_cast<MaskGraphicsItem*>(item)) {
-            	_currentData->removeMask(p->getAABB());
+                _currentData->removeMask(p->getAABB());
                 _masks.removeOne(p);
             }
             if (p==_lastClickedGI)
@@ -479,17 +465,16 @@ void DetectorScene::loadCurrentImage(bool newimage)
         _currentFrame =_currentData->getFrame(_currentFrameIndex);
 
     if (!_image) {
-        _image=addPixmap(QPixmap::fromImage(Mat2QImage(_currentFrame.data(), nrows, ncols, full.left(), full.right(), full.top(), full.bottom(), _currentIntensity)));
+        _image=addPixmap(QPixmap::fromImage(_colormap->matToImage(_currentFrame, full, _currentIntensity, _logarithmic)));
         _image->setZValue(-1);
     } else
-        _image->setPixmap(QPixmap::fromImage(Mat2QImage(_currentFrame.data(), nrows, ncols, full.left(), full.right(), full.top(), full.bottom(), _currentIntensity)));
+        _image->setPixmap(QPixmap::fromImage(_colormap->matToImage(_currentFrame, full, _currentIntensity, _logarithmic)));
 
     setSceneRect(_zoomStack.back());
     emit dataChanged();
 
     if (auto p=dynamic_cast<PlottableGraphicsItem*>(_lastClickedGI))
         emit updatePlot(p);
-
 }
 
 std::shared_ptr<SX::Data::IData> DetectorScene::getData()
@@ -576,6 +561,11 @@ void DetectorScene::updatePeakCalcs()
     qDebug() << "ELAPSED TIME = "<<static_cast<double>((end-start))/CLOCKS_PER_SEC;
     qDebug() << "BSP tree depth = " << bspTreeDepth();
 
+}
+
+void DetectorScene::redrawImage()
+{
+    loadCurrentImage(false);
 }
 
 void DetectorScene::clearPeaks()
@@ -687,3 +677,13 @@ void DetectorScene::showPeakCalcs(bool flag)
     }
 }
 
+
+void DetectorScene::setLogarithmic(bool checked)
+{
+    _logarithmic = checked;
+}
+
+void DetectorScene::setColorMap(const std::string &name)
+{
+    _colormap = std::unique_ptr<ColorMap>(new ColorMap(name));
+}
