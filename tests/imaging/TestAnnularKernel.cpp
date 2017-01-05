@@ -13,16 +13,15 @@
 
 BOOST_AUTO_TEST_CASE(Test_Constant_kernel)
 {
-    // TODO: implement this test
-
     /*
-	SX::Imaging::BoxKernel boxk(5,{});
+    SX::Imaging::BoxKernel boxk(5,{});
 
-	Eigen::MatrixXd data=Eigen::MatrixXd::Ones(10,10);
+    Eigen::MatrixXd data=Eigen::MatrixXd::Ones(10,10);
 
-	std::cout<<boxk<<std::endl;
+    std::cout<<boxk<<std::endl;
 
-	std::cout<<boxk(data)<<std::endl;
+    std::cout<<boxk(data)<<std::endl;
     */
+#pragma warning "test not implemented"
 }
 

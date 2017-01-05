@@ -34,11 +34,11 @@ using namespace SX::Utils;
 
 const double niggli_tolerance = 1e-9;
 const double gruber_tolerance = 1e-5;
-const double tolerance = 1e-4;
+// const double tolerance = 1e-4;
 
 int run_test()
 {
-    using vectord = vector<double>;
+    // using vectord = vector<double>;
     ofstream outfile;
 
     outfile.open("output.tsv", fstream::out);
@@ -185,6 +185,5 @@ int run_test()
 
 BOOST_AUTO_TEST_CASE(Test_GruberReductionCSV)
 {
-    // todo: implement me!!
     BOOST_CHECK(run_test() == 0);
 }

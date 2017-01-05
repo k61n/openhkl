@@ -9,7 +9,7 @@ namespace SX
 namespace Crystal
 {
 
-int NiggliReduction::_itermax=10000;
+unsigned int NiggliReduction::_itermax = 10000;
 
 NiggliReduction::NiggliReduction(const Eigen::Matrix3d& g, double epsilon):
     _epsilon(epsilon),
@@ -37,7 +37,7 @@ void NiggliReduction::reduce(Eigen::Matrix3d& newg, Eigen::Matrix3d& P)
     _P = Eigen::Matrix3d::Identity();
     updateParameters();
 
-    for(int i = 0; i < _itermax; ++i) {
+    for(unsigned int i = 0; i < _itermax; ++i) {
         // Starts the 8 conditional tests
         // Step 1
         if ((_A>_B+_epsilon) || (!(std::abs(_A-_B)>_epsilon) && (std::abs(_xi)>std::abs(_eta)+_epsilon))) {

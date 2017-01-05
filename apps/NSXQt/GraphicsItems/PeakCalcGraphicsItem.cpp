@@ -31,22 +31,18 @@ void PeakCalcGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsIt
         return;
 
     _label->setVisible(_labelVisible);
-
     painter->setRenderHint(QPainter::Antialiasing);
     painter->setPen(_pen);
     painter->drawEllipse(-2,-2,4,4);
     _label->setPos(2,0);
 }
 
-void PeakCalcGraphicsItem::setFrame(int frame)
+void PeakCalcGraphicsItem::setFrame(unsigned long frame)
 {
-    if (frame>=_frame-1 && frame<=_frame+1)
-    {
+    if (frame>=_frame-1 && frame<=_frame+1) {
         setVisible(true);
         _label->setVisible(_labelVisible);
-    }
-    else
-    {
+    } else {
         setVisible(false);
         _label->setVisible(false);
     }
@@ -54,11 +50,11 @@ void PeakCalcGraphicsItem::setFrame(int frame)
 
 void PeakCalcGraphicsItem::setLabelVisible(bool flag)
 {
-    _labelVisible=flag;
+    _labelVisible = flag;
 }
 
 QRectF PeakCalcGraphicsItem::boundingRect() const
 {
-    return QRectF(-1,-1,2,2);
+    return QRectF(-1, -1, 2, 2);
 }
 

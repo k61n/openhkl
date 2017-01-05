@@ -9,22 +9,22 @@
 using namespace SX::Units;
 using namespace SX::Instrument;
 using Eigen::Vector3d;
-const double tolerance=1e-6;
+// const double tolerance=1e-6;
 
 
 // Necessary since Axis is pure abstract
 class TestAxis: public Axis
 {
 public:
-	TestAxis(const std::string& label, bool physical);
-	~TestAxis();
-	TestAxis* clone() const;
-	Transform<double,3,Eigen::Affine> getHomMatrix(double value) const;
+    TestAxis(const std::string& label, bool physical);
+    ~TestAxis();
+    TestAxis* clone() const;
+    Transform<double,3,Eigen::Affine> getHomMatrix(double value) const;
 };
 
 TestAxis::TestAxis(const std::string& label, bool physical) : Axis(label)
 {
-	setPhysical(physical);
+    setPhysical(physical);
 }
 
 TestAxis::~TestAxis()
@@ -33,30 +33,30 @@ TestAxis::~TestAxis()
 
 TestAxis* TestAxis::clone() const
 {
-	return new TestAxis(*this);
+    return new TestAxis(*this);
 }
 
 Transform<double,3,Eigen::Affine> TestAxis::getHomMatrix(double value) const
 {
-	return Eigen::Transform<double,3,Eigen::Affine>();
+    return Eigen::Transform<double,3,Eigen::Affine>();
 }
 
 BOOST_AUTO_TEST_CASE(Tests_Axis)
 {
-	TestAxis axis("Omega",true);
-	const std::string& label=axis.getLabel();
+    TestAxis axis("Omega",true);
+    const std::string& label=axis.getLabel();
 
-	BOOST_CHECK_EQUAL(label,"Omega");
-	Vector3d v;
-	v << 0,0,1;
-	axis.setAxis(v);
-	BOOST_CHECK_EQUAL(v,axis.getAxis());
+    BOOST_CHECK_EQUAL(label,"Omega");
+    Vector3d v;
+    v << 0,0,1;
+    axis.setAxis(v);
+    BOOST_CHECK_EQUAL(v,axis.getAxis());
 
-	BOOST_CHECK_EQUAL(axis.getOffset(),0.0);
+    BOOST_CHECK_EQUAL(axis.getOffset(),0.0);
 
-	axis.setOffset(2.0);
-	BOOST_CHECK_EQUAL(axis.getOffset(),2.0);
-	axis.addOffset(1.0);
-	BOOST_CHECK_EQUAL(axis.getOffset(),3.0);
+    axis.setOffset(2.0);
+    BOOST_CHECK_EQUAL(axis.getOffset(),2.0);
+    axis.addOffset(1.0);
+    BOOST_CHECK_EQUAL(axis.getOffset(),3.0);
 
 }

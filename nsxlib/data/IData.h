@@ -3,26 +3,26 @@
     ------------------------------------------------------------------------------------------
     Copyright (C)
     2012- Laurent C. Chapon, Eric C. Pellegrini Institut Laue-Langevin
-	BP 156
-	6, rue Jules Horowitz
-	38042 Grenoble Cedex 9
-	France
-	chapon[at]ill.fr
+    BP 156
+    6, rue Jules Horowitz
+    38042 Grenoble Cedex 9
+    France
+    chapon[at]ill.fr
     pellegrini[at]ill.fr
 
-	This library is free software; you can redistribute it and/or
-	modify it under the terms of the GNU Lesser General Public
-	License as published by the Free Software Foundation; either
-	version 2.1 of the License, or (at your option) any later version.
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Lesser General Public
+    License as published by the Free Software Foundation; either
+    version 2.1 of the License, or (at your option) any later version.
 
-	This library is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-	Lesser General Public License for more details.
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Lesser General Public License for more details.
 
-	You should have received a copy of the GNU Lesser General Public
-	License along with this library; if not, write to the Free Software
-	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+    You should have received a copy of the GNU Lesser General Public
+    License along with this library; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
 
@@ -53,7 +53,7 @@ namespace SX
 
 namespace Instrument
 {
-	class Component;
+    class Component;
 }
 
 namespace Data
@@ -79,81 +79,81 @@ using FrameIteratorCallback = std::function<IFrameIterator*(IData*, int)>;
 class IData
 {
 public:
-	// Constructors and destructor
+    // Constructors and destructor
 
-	/*! Construct a IData Object from a file on disk, and pointer to a diffractometer.
-	 *  @param inMemory: whether the file should be loaded in memory straight away or kept on disk
-	 */
-	IData(const std::string& filename, std::shared_ptr<Diffractometer> instrument);
+    /*! Construct a IData Object from a file on disk, and pointer to a diffractometer.
+     *  @param inMemory: whether the file should be loaded in memory straight away or kept on disk
+     */
+    IData(const std::string& filename, std::shared_ptr<Diffractometer> instrument);
 
-	//! Copy constructor
-	IData(const IData& other) = default;
+    //! Copy constructor
+    IData(const IData& other) = default;
 
-	//! Destructor
-	virtual ~IData()=0;
+    //! Destructor
+    virtual ~IData()=0;
 
-	// Operators
-	//! Assignment operator
-	IData& operator=(const IData& other);
+    // Operators
+    //! Assignment operator
+    IData& operator=(const IData& other);
 
     // iterators
     std::unique_ptr<IFrameIterator> getIterator(int idx);
     void setIteratorCallback(FrameIteratorCallback callback);
 
-	// Getters and setters
+    // Getters and setters
 
     //! Gets the data basename
-	std::string getBasename() const;
+    std::string getBasename() const;
 
     //! Gets the data filename
-	const std::string& getFilename() const;
+    const std::string& getFilename() const;
 
     //! Gets a shared pointer to the diffractometer used to collect the data
-	std::shared_ptr<Diffractometer> getDiffractometer() const;
+    std::shared_ptr<Diffractometer> getDiffractometer() const;
 
     //! Return the number of frames
-	std::size_t getNFrames() const;
-	std::size_t getNRows() const;
-	std::size_t getNCols() const;
+    std::size_t getNFrames() const;
+    std::size_t getNRows() const;
+    std::size_t getNCols() const;
 
     //! Gets a reference to the metadata of the data
-	MetaData*  getMetadata() const;
+    MetaData* getMetadata() const;
 
     //! Return the peaks
-	std::set<sptrPeak3D>& getPeaks();
+    std::set<sptrPeak3D>& getPeaks();
 
     //! Gets the interpolated state between two consecutive detector states
     ComponentState getDetectorInterpolatedState(double frame);
 
     //! Gets the the detector states.
-    const ComponentState& getDetectorState(unsigned int frame) const;
+    const ComponentState& getDetectorState(unsigned long frame) const;
 
     //! Gets the the detector states.
-	const std::vector<ComponentState>& getDetectorStates() const;
+    const std::vector<ComponentState>& getDetectorStates() const;
 
-	//! Get the sample state for frame
-	const ComponentState& getSampleState(unsigned int frame) const;
+    //! Get the sample state for frame
+    const ComponentState& getSampleState(unsigned long frame) const;
 
     //! Gets the interpolated state between two consecutive sample states
     ComponentState getSampleInterpolatedState(double frame);
 
     //! Gets the the sample states.
-	const std::vector<ComponentState>& getSampleStates() const;
+    const std::vector<ComponentState>& getSampleStates() const;
 
-	//! Get the source state for frame
-	const ComponentState& getSourceState(unsigned int frame) const;
+    //! Get the source state for frame
+    const ComponentState& getSourceState(unsigned int frame) const;
 
     //! Gets the interpolated state between two consecutive source states
     ComponentState getSourceInterpolatedState(double frame);
 
     //! Gets the the source states.
-	const std::vector<ComponentState>& getSourceStates() const;
+    const std::vector<ComponentState>& getSourceStates() const;
 
-	//! Add a new mask to the data
-	void addMask(AABB<double,3>* mask);
+    //! Add a new mask to the data
+    void addMask(AABB<double,3>* mask);
 
     //! Add a new peak to the data
-	void addPeak(sptrPeak3D peak);
+    void addPeak(sptrPeak3D peak);
 
     //! Remove a mask from the data, by reference
     void removeMask(AABB<double, 3>* mask);
@@ -162,31 +162,31 @@ public:
     const std::set<AABB<double,3>*>& getMasks();
 
     //! Remove a peak from the data
-	bool removePeak(sptrPeak3D peak);
+    bool removePeak(sptrPeak3D peak);
 
     //! Clear the peaks collected for this data
-	void clearPeaks();
+    void clearPeaks();
 
     //! Return true if the file is stored in memory
-	bool isInMemory() const;
+    bool isInMemory() const;
 
     //! Load all the frames in memory
     void readInMemory(std::shared_ptr<SX::Utils::ProgressHandler> progress);
 
     //! Release the data from memory
-	void releaseMemory();
+    void releaseMemory();
 
     //! Return true if a given point (in detector space) belong to a mask
-	bool inMasked(const Eigen::Vector3d& point) const;
+    bool inMasked(const Eigen::Vector3d& point) const;
 
     //! Mask the peaks collected in the data with the masks defined up to now
-	void maskPeaks() const;
+    void maskPeaks() const;
 
     //! Mask a given peak
-	void maskPeak(sptrPeak3D peak) const;
+    void maskPeak(sptrPeak3D peak) const;
 
     //! Return the intensity at point x,y,z.
-	int dataAt(unsigned int x=0, unsigned int y=0, unsigned int z=0);
+    int dataAt(unsigned int x=0, unsigned int y=0, unsigned int z=0);
 
     //! Read a given Frame of the data
     Eigen::MatrixXi getFrame(std::size_t i);
@@ -219,17 +219,17 @@ public:
 
 protected:
     bool _isOpened;
-	std::string _filename;
-	std::size_t _nFrames;
-	std::size_t _nrows;
-	std::size_t _ncols;
-	std::shared_ptr<Diffractometer> _diffractometer;
+    std::string _filename;
+    std::size_t _nFrames;
+    std::size_t _nrows;
+    std::size_t _ncols;
+    std::shared_ptr<Diffractometer> _diffractometer;
     std::unique_ptr<MetaData> _metadata;
-	bool _inMemory;
-	std::vector<Eigen::MatrixXi> _data;
-	std::vector<ComponentState> _detectorStates;
-	std::vector<ComponentState> _sampleStates;
-	std::vector<ComponentState> _sourceStates;
+    bool _inMemory;
+    std::vector<Eigen::MatrixXi> _data;
+    std::vector<ComponentState> _detectorStates;
+    std::vector<ComponentState> _sampleStates;
+    std::vector<ComponentState> _sourceStates;
     std::set<sptrPeak3D> _peaks;
     std::size_t _fileSize;
     //! The set of masks bound to the data

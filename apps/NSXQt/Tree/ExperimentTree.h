@@ -56,7 +56,7 @@ public slots:
     void findSpaceGroup();
     void computeRFactors();
     void findFriedelPairs();
-    void integrateCalculatedPeaks();
+    //void integrateCalculatedPeaks();
     void peakFitDialog();
     void incorporateCalculatedPeaks();
 

@@ -53,8 +53,8 @@ namespace Utils {
 MinimizerGSL::MinimizerGSL():
     IMinimizer(),
     _workspace(nullptr),
-    _covariance_gsl(nullptr),
     _jacobian_gsl( nullptr),
+    _covariance_gsl(nullptr),
     _x_gsl (nullptr),
     _wt_gsl (nullptr)
 {

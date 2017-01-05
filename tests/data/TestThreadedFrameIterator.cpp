@@ -18,7 +18,7 @@
 using namespace SX::Data;
 using namespace SX::Instrument;
 
-const double tolerance=1e-2;
+// const double tolerance=1e-2;
 
 BOOST_AUTO_TEST_CASE(Test_ThreadedFrameIterator)
 {

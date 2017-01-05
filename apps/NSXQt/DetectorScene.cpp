@@ -51,7 +51,7 @@ DetectorScene::DetectorScene(QObject *parent)
     qDebug() << "BSP tree depth = " << bspTreeDepth();
 }
 
-void DetectorScene::changeFrame(unsigned int frame)
+void DetectorScene::changeFrame(size_t frame)
 {
     if (!_currentData)
         return;
@@ -99,7 +99,7 @@ void DetectorScene::setData(std::shared_ptr<SX::Data::IData> data)
     std::shared_ptr<SX::Instrument::Detector> det=_currentData->getDiffractometer()->getDetector();
 
     _zoomStack.clear();
-    _zoomStack.push_back(QRect(0,0,det->getNCols(),det->getNRows()));
+    _zoomStack.push_back(QRect(0,0,int(det->getNCols()),int(det->getNRows())));
 
 
     if (_lastClickedGI) {
@@ -112,7 +112,7 @@ void DetectorScene::setData(std::shared_ptr<SX::Data::IData> data)
     updatePeaks();
 }
 
-void DetectorScene::setData(std::shared_ptr<SX::Data::IData> data, int frame)
+void DetectorScene::setData(std::shared_ptr<SX::Data::IData> data, size_t frame)
 {
     setData(data);
     changeFrame(frame);
@@ -264,11 +264,12 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
         // Case of the Zoom mode, the zoom is updated and added on top of the zoom stack
         if(_mode==ZOOM) {
-            qreal top=_zoomrect->rect().top();
-            qreal bot=_zoomrect->rect().bottom();
-            qreal left=_zoomrect->rect().left();
-            qreal right=_zoomrect->rect().right();
-            if (top==bot || left==right)
+            qreal top = _zoomrect->rect().top();
+            qreal bot = _zoomrect->rect().bottom();
+            qreal left = _zoomrect->rect().left();
+            qreal right = _zoomrect->rect().right();
+
+            if (qAbs(top-bot)<1e-10 || qAbs(left-right)<1e-10)
                 return;
             if (top > bot)
                 std::swap(top,bot);
@@ -340,16 +341,16 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
     // The user pressed on Delete key
     if (event->key() == Qt::Key_Delete) {
         QList<QGraphicsItem*> items=selectedItems();
-        int nPeaksErased = _peakGraphicsItems.size();
+        int nPeaksErased = int(_peakGraphicsItems.size());
         for (auto item: items) {
-            auto p=dynamic_cast<SXGraphicsItem*>(item);
+            auto p = dynamic_cast<SXGraphicsItem*>(item);
             // The item must be deletable ... to be deleted
             if (!p->isDeletable())
                 continue;
 
             // If the item is a peak graphics item, remove its corresponding peak from the data,
             // update the set of peak graphics items and update the scene
-            if (auto p=dynamic_cast<PeakGraphicsItem*>(item)) {
+            if (auto p = dynamic_cast<PeakGraphicsItem*>(item)) {
                 bool remove=_currentData->removePeak(p->getPeak());
                 if (remove) {
                     _peakGraphicsItems.erase(p->getPeak());
@@ -357,11 +358,11 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
             }
             // If the item is a mask graphics item, remove its corresponding mask from the data,
             // update the QList of mask graphics items and update the scene
-            else if (auto p=dynamic_cast<MaskGraphicsItem*>(item)) {
+            else if (auto p = dynamic_cast<MaskGraphicsItem*>(item)) {
                 _currentData->removeMask(p->getAABB());
                 _masks.removeOne(p);
             }
-            if (p==_lastClickedGI)
+            if (p == _lastClickedGI)
                 _lastClickedGI=nullptr;
             // Remove the item from the scene
             removeItem(item);
@@ -383,12 +384,11 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
     auto instr=_currentData->getDiffractometer();
     std::shared_ptr<SX::Instrument::Detector> det=instr->getDetector();
 
+    int nrows = int(det->getNRows());
+    int ncols = int(det->getNCols());
 
-    int nrows=det->getNRows();
-    int ncols=det->getNCols();
-
-    int col=static_cast<int>(event->lastScenePos().x());
-    int row=static_cast<int>(event->lastScenePos().y());
+    int col = static_cast<int>(event->lastScenePos().x());
+    int row = static_cast<int>(event->lastScenePos().y());
 
     if (col<0 || col>ncols-1 || row<0 || row>nrows-1)
         return;
@@ -404,26 +404,26 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
     switch (_cursorMode) {
         case(PIXEL):
         {
-            ttip=QString("(%1,%2) I:%3").arg(col).arg(row).arg(intensity);
+            ttip = QString("(%1,%2) I:%3").arg(col).arg(row).arg(intensity);
             break;
         }
         case(GAMMA):
         {
-            double gamma,nu;
-            det->getGammaNu(col,row,gamma,nu,detectorv,sample->getPosition(samplev));
-            ttip=QString("(%1,%2) I: %3").arg(gamma/SX::Units::deg).arg(nu/SX::Units::deg).arg(intensity);
+            double gamma, nu;
+            det->getGammaNu(col, row, gamma, nu, detectorv, sample->getPosition(samplev));
+            ttip = QString("(%1,%2) I: %3").arg(gamma/SX::Units::deg).arg(nu/SX::Units::deg).arg(intensity);
             break;
         }
         case(THETA):
         {
-            double th2=det->get2Theta(col,row,detectorv,Eigen::Vector3d(0,1.0/wave,0));
-            ttip=QString("(%1) I: %2").arg(th2/SX::Units::deg).arg(intensity);
+            double th2 = det->get2Theta(col, row, detectorv, Eigen::Vector3d(0, 1.0/wave, 0));
+            ttip = QString("(%1) I: %2").arg(th2/SX::Units::deg).arg(intensity);
             break;
         }
         case(DSPACING):
         {
-            double th2=det->get2Theta(col,row,detectorv,Eigen::Vector3d(0,1.0/wave,0));
-            ttip=QString("(%1) I: %2").arg(wave/(2*sin(0.5*th2))).arg(intensity);
+            double th2 = det->get2Theta(col, row, detectorv, Eigen::Vector3d(0, 1.0/wave, 0));
+            ttip = QString("(%1) I: %2").arg(wave/(2*sin(0.5*th2))).arg(intensity);
             break;
         }
         case(HKL):
@@ -432,11 +432,13 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
                 auto detector=_currentData->getDiffractometer()->getDetector();
                 auto sample=_currentData->getDiffractometer()->getSample();
                 auto source=_currentData->getDiffractometer()->getSource();
-                auto Qvec=detector->getQ(col,row,source->getWavelength(),_currentData->getDetectorState(_currentFrameIndex).getValues(),sample->getPosition(_currentData->getSampleState(_currentFrameIndex).getValues()));
+                auto Qvec=detector->getQ(
+                            col, row, source->getWavelength(), _currentData->getDetectorState(_currentFrameIndex).getValues(),
+                            sample->getPosition(_currentData->getSampleState(_currentFrameIndex).getValues()));
                 sample->getGonio()->transformInverseInPlace(Qvec,_currentData->getSampleState(_currentFrameIndex).getValues());
-                auto hkl=_cell->fromReciprocalStandard(Qvec);
-                ttip=QString("(%1,%2,%3) I: %4").arg(hkl[0]).arg(hkl[1]).arg(hkl[2]).arg(intensity);
-                 break;
+                auto hkl = _cell->fromReciprocalStandard(Qvec);
+                ttip = QString("(%1,%2,%3) I: %4").arg(hkl[0]).arg(hkl[1]).arg(hkl[2]).arg(intensity);
+                break;
             }
 
         }
@@ -447,25 +449,25 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
 
 void DetectorScene::changeInteractionMode(int mode)
 {
-    _mode=static_cast<MODE>(mode);
+    _mode = static_cast<MODE>(mode);
 }
 
 void DetectorScene::loadCurrentImage(bool newimage)
 {
     // Full image size, front of the stack
-    QRect& full=_zoomStack.front();
+    QRect& full = _zoomStack.front();
 
-    std::shared_ptr<SX::Instrument::Detector> det=_currentData->getDiffractometer()->getDetector();
-    std::size_t nrows=det->getNRows();
-    std::size_t ncols=det->getNCols();
+    std::shared_ptr<SX::Instrument::Detector> det = _currentData->getDiffractometer()->getDetector();
+    //std::size_t nrows=det->getNRows();
+    //std::size_t ncols=det->getNCols();
 
-    if (_currentFrameIndex>=_currentData->getNFrames())
-        _currentFrameIndex=_currentData->getNFrames()-1;
+    if (_currentFrameIndex >= _currentData->getNFrames())
+        _currentFrameIndex = _currentData->getNFrames()-1;
     if (newimage)
         _currentFrame =_currentData->getFrame(_currentFrameIndex);
 
     if (!_image) {
-        _image=addPixmap(QPixmap::fromImage(_colormap->matToImage(_currentFrame, full, _currentIntensity, _logarithmic)));
+        _image = addPixmap(QPixmap::fromImage(_colormap->matToImage(_currentFrame, full, _currentIntensity, _logarithmic)));
         _image->setZValue(-1);
     } else
         _image->setPixmap(QPixmap::fromImage(_colormap->matToImage(_currentFrame, full, _currentIntensity, _logarithmic)));
@@ -473,7 +475,7 @@ void DetectorScene::loadCurrentImage(bool newimage)
     setSceneRect(_zoomStack.back());
     emit dataChanged();
 
-    if (auto p=dynamic_cast<PlottableGraphicsItem*>(_lastClickedGI))
+    if (auto p = dynamic_cast<PlottableGraphicsItem*>(_lastClickedGI))
         emit updatePlot(p);
 }
 
@@ -494,12 +496,12 @@ void DetectorScene::changeCursorMode(int mode)
 
 PeakGraphicsItem* DetectorScene::findPeakGraphicsItem(sptrPeak3D peak)
 {
-    auto it=_peakGraphicsItems.find(peak);
-    if (it!=_peakGraphicsItems.end())
+    auto it = _peakGraphicsItems.find(peak);
+
+    if (it != _peakGraphicsItems.end())
         return it->second;
     else
         return nullptr;
-
 }
 
 void DetectorScene::updatePeaks()
@@ -539,9 +541,9 @@ void DetectorScene::updatePeakCalcs()
     //setBspTreeDepth(8);
 
     auto sample=_currentData->getDiffractometer()->getSample();
-    int ncrystals=sample->getNCrystals();
+    size_t ncrystals = sample->getNCrystals();
     if (ncrystals) {
-        for (int i = 0; i < ncrystals; ++i) {
+        for (unsigned int i = 0; i < ncrystals; ++i) {
             SX::Crystal::SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
 
             auto ub=sample->getUnitCell(i)->getReciprocalStandardM();
@@ -558,7 +560,7 @@ void DetectorScene::updatePeakCalcs()
 
     qDebug() << "number of calculated peaks " << _peakCalcs.size();
     clock_t end = clock();
-    qDebug() << "ELAPSED TIME = "<<static_cast<double>((end-start))/CLOCKS_PER_SEC;
+    qDebug() << "ELAPSED TIME = " << static_cast<double>((end-start))/CLOCKS_PER_SEC;
     qDebug() << "BSP tree depth = " << bspTreeDepth();
 
 }
@@ -581,7 +583,7 @@ void DetectorScene::clearPeaks()
     _peakGraphicsItems.clear();
 }
 
-void DetectorScene::updateMasks(unsigned int frame)
+void DetectorScene::updateMasks(unsigned long frame)
 {
     _lastClickedGI = nullptr;
 
@@ -601,8 +603,8 @@ void DetectorScene::updateMasks(unsigned int frame)
             continue;
 
         MaskGraphicsItem* maskItem = new MaskGraphicsItem(_currentData, mask);
-        maskItem->setFrom(QPoint(lower(0), lower(1)));
-        maskItem->setTo(QPoint(upper(0), upper(1)));
+        maskItem->setFrom(QPointF(lower(0), lower(1)));
+        maskItem->setTo(QPointF(upper(0), upper(1)));
         addItem(maskItem);
         _masks.push_back(maskItem);
     }

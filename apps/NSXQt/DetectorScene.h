@@ -78,9 +78,9 @@ protected:
 public slots:
     void activateIndexingMode(std::shared_ptr<SX::Crystal::UnitCell>);
     // To be called to update detector image
-    void setData(std::shared_ptr<SX::Data::IData>,int frame);
+    void setData(std::shared_ptr<SX::Data::IData>, size_t frame);
     void setData(std::shared_ptr<SX::Data::IData>);
-    void changeFrame(unsigned int frame=0);
+    void changeFrame(size_t frame = 0);
     void setMaxIntensity(int);
     PeakGraphicsItem* findPeakGraphicsItem(sptrPeak3D peak);
     void setPeakIndex(sptrPeak3D peak,const Eigen::Vector3d& index);
@@ -98,7 +98,7 @@ public slots:
     void showPeakCalcs(bool);
     void clearPeaks();
 
-    void updateMasks(unsigned int frame);
+    void updateMasks(unsigned long frame);
 
 private:
     //! Load image from current Data and frame
@@ -107,7 +107,7 @@ private:
     void createToolTipText(QGraphicsSceneMouseEvent*);
 
     std::shared_ptr<SX::Data::IData> _currentData;
-    unsigned int _currentFrameIndex;
+    unsigned long _currentFrameIndex;
     int _currentIntensity;
     rowMatrix _currentFrame;
     CURSORMODE _cursorMode;
