@@ -133,9 +133,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(_ui->experimentTree, SIGNAL(plotData(std::shared_ptr<SX::Data::IData>)),
             this, SLOT(changeData(std::shared_ptr<SX::Data::IData>)));
 
-    connect(_ui->experimentTree, SIGNAL(showPeakList(std::vector<std::shared_ptr<SX::Data::IData>>)),
-            this, SLOT(showPeakList(std::vector<std::shared_ptr<SX::Data::IData>>)));
-
     connect(_ui->frame,&QScrollBar::valueChanged,[=](const int& value){_ui->_dview->getScene()->changeFrame(value);});
 
     connect(_ui->intensity,SIGNAL(valueChanged(int)),_ui->_dview->getScene(),SLOT(setMaxIntensity(int)));
@@ -266,22 +263,6 @@ void MainWindow::changeData(std::shared_ptr<IData> data)
     //_ui->intensity->setValue(10);
 }
 
-void MainWindow::showPeakList(std::vector<std::shared_ptr<SX::Data::IData>> data)
-{
-    if (data.empty())
-        return;
-
-    PeakTableView* table=new PeakTableView();
-    table->setData(data);
-    table->show();
-    // Ensure plot1D is updated
-    connect(table,SIGNAL(plotPeak(sptrPeak3D)),this,SLOT(plotPeak(sptrPeak3D)));
-    connect(table,
-            SIGNAL(plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&)),
-            this,
-            SLOT(plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&)));
-}
-
 void MainWindow::plotPeak(sptrPeak3D peak)
 {
     auto scenePtr = _ui->_dview->getScene();
@@ -297,9 +278,6 @@ void MainWindow::plotPeak(sptrPeak3D peak)
     if (pgi)
         updatePlot(pgi);
 }
-
-
-
 
 void MainWindow::on_actionPixel_position_triggered()
 {
