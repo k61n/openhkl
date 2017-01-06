@@ -7,8 +7,6 @@
 #include "TreeItem.h"
 #include "Experiment.h"
 
-//using namespace SX::Instrument;
-
 class InstrumentItem;
 class DataItem;
 class PeakListItem;
