@@ -39,7 +39,6 @@ public:
 
 signals:
     void plotData(std::shared_ptr<SX::Data::IData>);
-    void showPeakList(std::vector<std::shared_ptr<SX::Data::IData>>);
     void inspectWidget(QWidget*);
 public slots:
     void keyPressEvent(QKeyEvent* event);
