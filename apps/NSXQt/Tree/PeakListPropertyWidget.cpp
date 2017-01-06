@@ -1,3 +1,5 @@
+#include <QSortFilterProxyModel>
+
 #include "PeakListPropertyWidget.h"
 #include "ui_PeakListPropertyWidget.h"
 #include "PeakTableView.h"
@@ -8,7 +10,6 @@
 #include "IData.h"
 #include "UnitCellItem.h"
 #include "CollectedPeaksModel.h"
-#include "CollectedPeaksProxyModel.h"
 
 #include <QtDebug>
 
@@ -30,22 +31,9 @@ PeakListPropertyWidget::PeakListPropertyWidget(PeakListItem* caller, QWidget *pa
 
     std::for_each(datamap.begin(), datamap.end(), func);
 
-
-    CollectedPeaksModel* model = new CollectedPeaksModel();
-    for (auto ptr : datav)
-    {
-        // Add peaks present in this numor to the LatticeFinder
-        for (sptrPeak3D peak : ptr->getPeaks())
-            model->addPeak(peak);
-    }
-    CollectedPeaksProxyModel* proxy = new CollectedPeaksProxyModel();
-    proxy->setSourceModel(model);
-    ui->tableView->setModel(proxy);
-    ui->tableView->setSortingEnabled(true);
-    ui->tableView->sortByColumn(0);
-
-
-//    ui->tableView->setData(datav);
+    CollectedPeaksModel *model = new CollectedPeaksModel();
+    model->setData(datav);
+    ui->tableView->setModel(model);
 
     ui->selectedCells->setDefaultText("Selected cells");
 
