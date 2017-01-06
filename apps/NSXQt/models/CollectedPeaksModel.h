@@ -2,6 +2,7 @@
 #define COLLECTEDPEAKSMODEL_H
 
 #include <memory>
+#include <string>
 #include <vector>
 
 #include <QAbstractTableModel>
@@ -22,12 +23,14 @@ public:
 
     ~CollectedPeaksModel();
 
-    int rowCount(const QModelIndex &parent) const override;
+    int rowCount(const QModelIndex &parent=QModelIndex()) const override;
 
-    int columnCount(const QModelIndex &parent) const override;
+    int columnCount(const QModelIndex &parent=QModelIndex()) const override;
 
     QVariant data(const QModelIndex &index, int role) const override;
     bool setData(const QModelIndex &index, const QVariant &value, int role) override;
+
+    void setData(const std::vector<std::shared_ptr<SX::Data::IData>>& data);
 
     QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
 
@@ -35,15 +38,22 @@ public:
 
     void setPeaks(const std::vector<sptrPeak3D>& peaks);
 
+    const std::vector<sptrPeak3D>& getPeaks() const;
+
     bool indexIsValid(const QModelIndex& index) const;
 
-    double getMinIntensity() const;
+    void sort(int column, Qt::SortOrder order);
 
-    double getMinSigmaIntensity() const;
+    void normalizeToMonitor(double factor);
 
-signals:
+    void writeShelX(const std::string& filename, double tolerance=0.2, QModelIndexList indexes=QModelIndexList());
+
+    void writeFullProf(const std::string& filename, double tolerance=0.2, QModelIndexList indexes=QModelIndexList());
 
 public slots:
+
+    void sortEquivalents();
+
 
 private:
 
