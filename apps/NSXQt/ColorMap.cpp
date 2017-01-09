@@ -35,11 +35,11 @@
 #include <array>
 
 ColorMap::ColorMap(const double *rgb):
-    _rgb(new double[256*3]),
-    _log_rgb(new double[256*3])
+    _rgb(256*3, 0),
+    _log_rgb(256*3, 0)
 
 {
-    std::memcpy(_rgb, rgb, 256*3*sizeof(double));
+    std::memcpy(&_rgb[0], rgb, 256*3*sizeof(double)); // warning: this might be dangerous
     const double ilog2 = 1.0 / std::log(2.0);
 
     for (unsigned int i = 0; i < 256; ++i) {
@@ -69,11 +69,6 @@ ColorMap::ColorMap():
 
 ColorMap::~ColorMap()
 {
-    if (_log_rgb)
-        delete[] _log_rgb;
-
-    if (_rgb)
-        delete[] _rgb;
 }
 
 QImage ColorMap::matToImage(const Eigen::MatrixXi& source, const QRect& rect, int colorMax, bool log)

@@ -147,7 +147,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this, SIGNAL(findSpaceGroup(void)), _ui->experimentTree, SLOT(findSpaceGroup()));
     connect(this, SIGNAL(computeRFactors(void)), _ui->experimentTree, SLOT(computeRFactors()));
     connect(this,SIGNAL(findFriedelPairs(void)), _ui->experimentTree, SLOT(findFriedelPairs()));
-    connect(this, SIGNAL(integrateCalculatedPeaks()), _ui->experimentTree, SLOT(integrateCalculatedPeaks()));
+    // connect(this, SIGNAL(integrateCalculatedPeaks()), _ui->experimentTree, SLOT(integrateCalculatedPeaks()));
     connect(this, SIGNAL(peakFitDialog()), _ui->experimentTree, SLOT(peakFitDialog()));
     connect(this, SIGNAL(incorporateCalculatedPeaks()), _ui->experimentTree, SLOT(incorporateCalculatedPeaks()));
 
@@ -531,7 +531,8 @@ void MainWindow::on_actionCompute_R_factors_triggered()
 
 void MainWindow::on_actionIntegrate_calculated_peaks_triggered()
 {
-    emit integrateCalculatedPeaks();
+//    emit integrateCalculatedPeaks();
+    qDebug() << "what triggered this?";
 }
 
 void MainWindow::on_actionPeak_fit_dialog_triggered()
