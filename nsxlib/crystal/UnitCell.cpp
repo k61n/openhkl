@@ -17,7 +17,8 @@ UnitCell::UnitCell()
   _centring(LatticeCentring::P),
   _bravaisType(BravaisType::Triclinic),
   _Z(1),
-  _group("P 1")
+  _group("P 1"),
+  _name("")
 {
 }
 
@@ -27,7 +28,8 @@ UnitCell::UnitCell(double a, double b, double c, double alpha, double beta, doub
   _centring(centring),
   _bravaisType(bravais),
   _Z(1),
-  _group("P 1")
+  _group("P 1"),
+  _name("")
 {
 	// b-matrix as defined by Busing-Levy paper
 	// b1, b2*cos(beta3),  b3*cos(beta2)
@@ -64,7 +66,8 @@ UnitCell::UnitCell(const UnitCell& rhs)
   _centring(rhs._centring),
   _bravaisType(rhs._bravaisType),
   _Z(rhs._Z),
-  _group(rhs._group)
+  _group(rhs._group),
+  _name(rhs._name)
 {
 }
 
@@ -86,6 +89,7 @@ UnitCell& UnitCell::operator=(const UnitCell& rhs)
 		_bravaisType=rhs._bravaisType;
 		_Z=rhs._Z;
 		_group=rhs._group;
+		_name = rhs._name;
 	}
 	return *this;
 }
@@ -96,7 +100,8 @@ UnitCell::UnitCell(const Eigen::Vector3d& v1,const Eigen::Vector3d& v2,const Eig
   _centring(centring),
   _bravaisType(bravais),
   _Z(1),
-  _group("P 1")
+  _group("P 1"),
+  _name("")
 {
 
 }
@@ -410,6 +415,16 @@ void UnitCell::setSpaceGroup(const std::string& symbol)
 std::string UnitCell::getSpaceGroup() const
 {
 	return _group.getSymbol();
+}
+
+void UnitCell::setName(const std::string& name)
+{
+	_name = name;
+}
+
+const std::string& UnitCell::getName() const
+{
+	return _name;
 }
 
 } // end namespace Chemistry
