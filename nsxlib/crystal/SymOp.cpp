@@ -222,14 +222,14 @@ int SymOp::translationIsIntegralMultiple(const SymOp &other) const
     Eigen::Vector3d otherTranslation = other.getTranslationPart();
 
     for (unsigned int i = 0; i < 3; ++i) {
-        if ( std::abs(myTranslation[i]) > epsilon) {
-            n = std::round(otherTranslation[i] / myTranslation[i]);
+        if (std::abs(myTranslation[i]) > epsilon) {
+            n = int(std::lround(otherTranslation[i] / myTranslation[i]));
             break;
         }
     }
 
     Eigen::Vector3d difference = n*myTranslation - otherTranslation;
-    double norm = (double)(difference.adjoint()*difference);
+    double norm = double(difference.adjoint()*difference);
 
     if ( norm < epsilon)
         return n;

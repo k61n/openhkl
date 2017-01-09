@@ -22,6 +22,6 @@ BOOST_AUTO_TEST_CASE(Test_Constant_kernel)
 
     std::cout<<boxk(data)<<std::endl;
     */
-#pragma warning "test not implemented"
+#pragma message "test not implemented"
 }
 

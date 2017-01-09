@@ -40,8 +40,8 @@ using namespace SX::Crystal;
 
 FriedelDialog::FriedelDialog(const std::vector<SX::Crystal::Peak3D*>& peaks, QWidget *parent) :
     QDialog(parent),
-    _peaks(peaks),
-    _ui(new Ui::FriedelDialog)
+    _ui(new Ui::FriedelDialog),
+    _peaks(peaks)
 {
     _ui->setupUi(this);
     findFriedelPairs();
@@ -56,15 +56,13 @@ void FriedelDialog::findFriedelPairs()
 {
     _friedelPairs.clear();
 
-    int size = _peaks.size();
+    size_t size = _peaks.size();
 
-    for (int i = 0; i < size; ++i) {
-
+    for (size_t i = 0; i < size; ++i) {
         Eigen::RowVector3i hkl1 = _peaks[i]->getIntegerMillerIndices();
 
-        for (int j = i+1; j < size; ++j) {
+        for (size_t j = i+1; j < size; ++j) {
             Eigen::RowVector3i hkl2 = _peaks[j]->getIntegerMillerIndices();
-
             // Friedel condition
             if ( hkl1 == -hkl2) {
                 _friedelPairs.push_back(std::make_pair(_peaks[i], _peaks[j]));
@@ -73,7 +71,6 @@ void FriedelDialog::findFriedelPairs()
     }
 
     double percent = 2.0 * _friedelPairs.size() * 100.0 / _peaks.size();
-
     qDebug() << "Found " << _friedelPairs.size() << " Friedel pairs";
     qDebug() << "   which accounts for " << percent << " percent of the peaks.";
 }
@@ -87,7 +84,7 @@ void FriedelDialog::on_goodPairsButton_clicked()
     for (Peak3D* peak: _peaks)
         peak->setSelected(false);
 
-    for (int i = 0; i < _friedelPairs.size(); ++i) {
+    for (size_t i = 0; i < _friedelPairs.size(); ++i) {
         Peak3D* a = _friedelPairs[i].first;
         Peak3D* b = _friedelPairs[i].second;
 
@@ -97,7 +94,6 @@ void FriedelDialog::on_goodPairsButton_clicked()
 
         double int_a = a->getScaledIntensity();
         double int_b = b->getScaledIntensity();
-
 
         if ( 2.0 * std::fabs(int_a-int_b) / (int_a+int_b) < threshold) {
             ++count;
@@ -116,5 +112,4 @@ void FriedelDialog::on_goodPairsButton_clicked()
     }
 
     qDebug() << "Selected " << count * 100.0 / _friedelPairs.size() << " good Friedel pairs.";
-
 }
