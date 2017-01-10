@@ -81,7 +81,7 @@ void SampleItem::fromJson(const QJsonObject &obj)
         std::shared_ptr<SX::Crystal::UnitCell> cell = sample->addUnitCell();
         cell->setLatticeVectors(v[0], v[1], v[2]);
 
-        appendRow(new UnitCellItem(getExperiment(), cell));
+        appendRow(new UnitCellItem(_experiment, cell));
     }
 }
 
@@ -101,4 +101,12 @@ QList<UnitCellItem*> SampleItem::getUnitCellItems()
     }
 
     return unitCellItems;
+}
+
+void SampleItem::addUnitCell()
+{
+    auto sample=_experiment->getDiffractometer()->getSample();
+    auto cell=sample->addUnitCell();
+    appendRow(new UnitCellItem(_experiment,cell));
+    child(0)->setEnabled(true);
 }

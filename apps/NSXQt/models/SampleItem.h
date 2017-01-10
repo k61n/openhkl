@@ -24,6 +24,9 @@ public:
     void fromJson(const QJsonObject& obj) override;
 
     QList<UnitCellItem*> getUnitCellItems();
+
+    void addUnitCell();
+
 };
 
 #endif // SAMPLEITEM_H

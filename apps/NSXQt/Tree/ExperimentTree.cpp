@@ -157,7 +157,8 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
     }
     else {
         QStandardItem* item = _session->itemFromIndex(index);
-        if (dynamic_cast<DataItem*>(item)) {
+        if (dynamic_cast<DataItem*>(item))
+        {
             QMenu* menu = new QMenu(this);
             QAction* import = menu->addAction("Import data");
             QAction* rawImport = menu->addAction("Import raw data...");
@@ -169,7 +170,8 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             connect(findpeaks, &QAction::triggered, [=](){findPeaks(index);});
             connect(rviewer, &QAction::triggered, [=](){viewReciprocalSpace(index);});
         }
-        else if (dynamic_cast<PeakListItem*>(item)) {
+        else if (dynamic_cast<PeakListItem*>(item))
+        {
             QMenu* menu = new QMenu(this);
             QAction* abs = menu->addAction("Correct for Absorption");
             QAction* scene3d = menu->addAction("Show 3D view");
@@ -178,7 +180,19 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             connect(abs, SIGNAL(triggered()), this, SLOT(absorptionCorrection()));
             connect(scene3d, SIGNAL(triggered()), this, SLOT(showPeaksOpenGL()));
         }
-        else if (NumorItem* nitem = dynamic_cast<NumorItem*>(item)) {
+        else if (SampleItem* sitem=dynamic_cast<SampleItem*>(item))
+        {
+            QMenu* menu = new QMenu(this);
+            QAction* addUnitCell = menu->addAction("Add unit cell");
+            menu->popup(viewport()->mapToGlobal(point));
+
+            auto addUnitCellLambda = [=] {sitem->addUnitCell();};
+
+            connect(addUnitCell, &QAction::triggered, this, addUnitCellLambda);
+
+        }
+        else if (NumorItem* nitem = dynamic_cast<NumorItem*>(item))
+            {
             QMenu* menu = new QMenu(this);
             QAction* export_hdf = menu->addAction("Export to HDF5...");
             menu->popup(viewport()->mapToGlobal(point));

@@ -19,7 +19,6 @@ public:
     explicit SamplePropertyWidget(SampleItem* caller,QWidget* parent=0);
     ~SamplePropertyWidget();
 private slots:
-    void on_pushButton_addCrystal_clicked();
     void cellHasChanged(int,int);
 private:
     //!Pointer to the sample
