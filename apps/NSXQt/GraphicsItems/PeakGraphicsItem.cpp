@@ -83,10 +83,10 @@ void PeakGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
     qreal peak_w = peak_u[0]-peak_l[0];
     qreal peak_h = peak_u[1]-peak_l[1];
 
-    const Eigen::Vector3d& bkg_l = _peak->getBackground()->getLower();
-    const Eigen::Vector3d& bkg_u = _peak->getBackground()->getUpper();
-    qreal bkg_w = bkg_u[0] - bkg_l[0];
-    qreal bkg_h = bkg_u[1] - bkg_l[1];
+    // const Eigen::Vector3d& bkg_l = _peak->getBackground()->getLower();
+    // const Eigen::Vector3d& bkg_u = _peak->getBackground()->getUpper();
+    // qreal bkg_w = bkg_u[0] - bkg_l[0];
+    // qreal bkg_h = bkg_u[1] - bkg_l[1];
 
     if (_peak->isSelected()) {
         _pen.setColor(_peak->getCalculated() ? "yellow" : "green");
@@ -109,7 +109,7 @@ void PeakGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 
 }
 
-void PeakGraphicsItem::setFrame(int frame)
+void PeakGraphicsItem::setFrame(unsigned long frame)
 {
     const Eigen::Vector3d& l=_peak->getPeak()->getLower();
     const Eigen::Vector3d& u=_peak->getPeak()->getUpper();
@@ -120,8 +120,8 @@ void PeakGraphicsItem::setFrame(int frame)
         QString hkl;
         hkl=QString("%1,%2,%3").arg(v[0]).arg(v[1]).arg(v[2]);
         _label->setPlainText(hkl);
-        _peakEllipse = calculateEllipse(*_peak->getPeak(), frame);
-        _bkgEllipse = calculateEllipse(*_peak->getBackground(), frame);
+        _peakEllipse = calculateEllipse(*_peak->getPeak(), int(frame));
+        _bkgEllipse = calculateEllipse(*_peak->getBackground(), int(frame));
     }
     else {
         setVisible(false);
@@ -161,7 +161,7 @@ PeakGraphicsItem::Ellipse PeakGraphicsItem::calculateEllipse(const SX::Geometry:
         M = ellipse_shape.getRSinv();
         p = ellipse_shape.getCenter();
     }
-    catch(std::bad_cast& e){
+    catch(...){
         // bad cast, so just use information from bounding box and return early
         Eigen::Vector3d lower = shape.getLower();
         Eigen::Vector3d upper = shape.getUpper();
@@ -183,8 +183,8 @@ PeakGraphicsItem::Ellipse PeakGraphicsItem::calculateEllipse(const SX::Geometry:
     // set v = sin(alpha)*y + cos(alpha)*x
     // and transform into standard form a*(u-u0)^2 + b*(v-v0)^2 = 1
 
-    const double x0 = 0.0; //p(0);
-    const double y0 = 0.0; //p(1);
+    //const double x0 = 0.0; //p(0);
+    // const double y0 = 0.0; //p(1);
     const double z0 = p(2);
 
     const double A = M(0,0);
@@ -244,11 +244,11 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     const Eigen::VectorXd& totalSigma=_peak->getProjectionSigma();
 
     // Transform to QDouble
-    QVector<double> qx(total.size());
-    QVector<double> qtotal(total.size());
-    QVector<double> qtotalE(total.size());
-    QVector<double> qpeak(total.size());
-    QVector<double> qbkg(total.size());
+    QVector<double> qx(int(total.size()));
+    QVector<double> qtotal(int(total.size()));
+    QVector<double> qtotalE(int(total.size()));
+    QVector<double> qpeak(int(total.size()));
+    QVector<double> qbkg(int(total.size()));
 
     //Copy the data
     double min=std::floor(_peak->getBackground()->getLower()[2]);
@@ -281,12 +281,12 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     _peak->getGammaNu(gamma,nu);
     gamma/=SX::Units::deg;
     nu/=SX::Units::deg;
-    info+=" "+QString((QChar) 0x03B3)+","+QString((QChar) 0x03BD)+":"+QString::number(gamma,'f',2)+","+QString::number(nu,'f',2)+"\n";
+    info+=" "+QString(QChar(0x03B3))+","+QString(QChar(0x03BD))+":"+QString::number(gamma,'f',2)+","+QString::number(nu,'f',2)+"\n";
     double intensity=_peak->getScaledIntensity();
     double sI=_peak->getScaledSigma();
-    info+="Intensity ("+QString((QChar) 0x03C3)+"I): "+QString::number(intensity)+" ("+QString::number(sI,'f',2)+")\n";
+    info+="Intensity ("+QString(QChar(0x03C3))+"I): "+QString::number(intensity)+" ("+QString::number(sI,'f',2)+")\n";
     double l=_peak->getLorentzFactor();
-    info+="Cor. int. ("+QString((QChar) 0x03C3)+"I): "+QString::number(intensity/l,'f',2)+" ("+QString::number(sI/l,'f',2)+")\n";
+    info+="Cor. int. ("+QString(QChar(0x03C3))+"I): "+QString::number(intensity/l,'f',2)+" ("+QString::number(sI/l,'f',2)+")\n";
 
     info += "p value (" + QString::number(_peak->pValue(), 'f', 3) + ")\n";
 

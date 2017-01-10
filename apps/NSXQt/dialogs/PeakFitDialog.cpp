@@ -230,5 +230,5 @@ void PeakFitDialog::updatePeak()
 
     ui->frameScrollBar->setMinimum(_zmin);
     ui->frameScrollBar->setMaximum(_zmax);
-    ui->frameScrollBar->setValue(std::round(aabb->getAABBCenter()[2]));
+    ui->frameScrollBar->setValue(int(std::lround(aabb->getAABBCenter()[2])));
 }

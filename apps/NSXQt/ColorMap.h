@@ -66,8 +66,8 @@ public:
     static std::vector<std::string> getColorMapNames();
 
 private:
-    double* _rgb;
-    double* _log_rgb;
+    std::vector<double> _rgb;
+    std::vector<double> _log_rgb;
 };
 
 

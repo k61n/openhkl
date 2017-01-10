@@ -137,7 +137,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(_ui->experimentTree, SIGNAL(showPeakList(std::vector<std::shared_ptr<SX::Data::IData>>)),
             this, SLOT(showPeakList(std::vector<std::shared_ptr<SX::Data::IData>>)));
 
-    connect(_ui->frame,&QScrollBar::valueChanged,[=](const int& value){_ui->_dview->getScene()->changeFrame(value);});
+    connect(_ui->frame,&QScrollBar::valueChanged,[=](const int& value){_ui->_dview->getScene()->changeFrame(static_cast<unsigned int>(value));});
 
     connect(_ui->intensity,SIGNAL(valueChanged(int)),_ui->_dview->getScene(),SLOT(setMaxIntensity(int)));
     connect(_ui->selectionMode,SIGNAL(currentIndexChanged(int)),_ui->_dview->getScene(),SLOT(changeInteractionMode(int)));
@@ -147,7 +147,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this, SIGNAL(findSpaceGroup(void)), _ui->experimentTree, SLOT(findSpaceGroup()));
     connect(this, SIGNAL(computeRFactors(void)), _ui->experimentTree, SLOT(computeRFactors()));
     connect(this,SIGNAL(findFriedelPairs(void)), _ui->experimentTree, SLOT(findFriedelPairs()));
-    connect(this, SIGNAL(integrateCalculatedPeaks()), _ui->experimentTree, SLOT(integrateCalculatedPeaks()));
+    // connect(this, SIGNAL(integrateCalculatedPeaks()), _ui->experimentTree, SLOT(integrateCalculatedPeaks()));
     connect(this, SIGNAL(peakFitDialog()), _ui->experimentTree, SLOT(peakFitDialog()));
     connect(this, SIGNAL(incorporateCalculatedPeaks()), _ui->experimentTree, SLOT(incorporateCalculatedPeaks()));
 
@@ -170,14 +170,14 @@ MainWindow::MainWindow(QWidget *parent)
 
     auto names = ColorMap::getColorMapNames();
 
-    for (const auto name: names) {
+    for (auto&& name: names) {
         QAction* action = new QAction(name.c_str(), _ui->menuColor_map);
 
         auto slot_fn = [=] () -> void
         {
-            const std::string name = action->text().toStdString();
-            _session->setColorMap(name);
-            _ui->_dview->getScene()->setColorMap(name);
+            const std::string name_str = action->text().toStdString();
+            _session->setColorMap(name_str);
+            _ui->_dview->getScene()->setColorMap(name_str);
             _ui->_dview->getScene()->redrawImage();
         };
 
@@ -275,8 +275,7 @@ void MainWindow::changeData(std::shared_ptr<IData> data)
     _ui->frameFrame->setEnabled(true);
     _ui->intensityFrame->setEnabled(true);
 
-    int frameMax = data->getNFrames()-1;
-
+    int frameMax = int(data->getNFrames()-1);
     int frame = _ui->frame->value();
 
     if (frame > frameMax)
@@ -311,7 +310,7 @@ void MainWindow::plotPeak(sptrPeak3D peak)
     // Ensure that frames
     changeData(peak->getData());
     // Get frame number to adjust the data
-    int data_frame = std::round(peak->getPeak()->getAABBCenter()[2]);
+    size_t data_frame = size_t(std::lround(peak->getPeak()->getAABBCenter()[2]));
     scenePtr->setData(peak->getData(), data_frame);
     // Update the scrollbar
     _ui->frame->setValue(data_frame);
@@ -532,7 +531,8 @@ void MainWindow::on_actionCompute_R_factors_triggered()
 
 void MainWindow::on_actionIntegrate_calculated_peaks_triggered()
 {
-    emit integrateCalculatedPeaks();
+//    emit integrateCalculatedPeaks();
+    qDebug() << "what triggered this?";
 }
 
 void MainWindow::on_actionPeak_fit_dialog_triggered()
@@ -557,7 +557,7 @@ void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
     const double pmax = 1e-3;
 
     int total_peaks = 0;
-    int remaining_peaks = 0;
+    // int remaining_peaks = 0;
 
     std::vector<std::shared_ptr<IData>> numors = _session->getSelectedNumors();
     std::vector<sptrPeak3D> bad_peaks;

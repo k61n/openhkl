@@ -7,7 +7,7 @@
 
 using namespace SX::Geometry;
 
-const double tolerance=1e-5;
+// const double tolerance=1e-5;
 
 BOOST_AUTO_TEST_CASE(Test_BlobFinder)
 {

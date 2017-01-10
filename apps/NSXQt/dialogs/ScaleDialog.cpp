@@ -38,9 +38,9 @@ using SX::Crystal::Peak3D;
 
 ScaleDialog::ScaleDialog(const vector<vector<Peak3D*>>& peaks, QWidget *parent) :
     QDialog(parent),
+    ui(new Ui::ScaleDialog),
     _peaks(peaks),
-    _numFrames(0),
-    ui(new Ui::ScaleDialog)
+    _numFrames(0)
 {
     ui->setupUi(this);
 
@@ -149,10 +149,10 @@ void ScaleDialog::buildPlot()
 
 void ScaleDialog::buildScalePlot()
 {
-    double sigma_max = ui->sigmaSpinBox->value();
+    // double sigma_max = ui->sigmaSpinBox->value();
 
-    double a = ui->spinBoxA->value();
-    double b = ui->spinBoxB->value();
+    // double a = ui->spinBoxA->value();
+    // double b = ui->spinBoxB->value();
 
     QCustomPlot* plot = ui->plotWidget;
 
@@ -215,7 +215,7 @@ void ScaleDialog::calculateRFactors()
             continue;
 
         double average = 0.0;
-        double sigma, var = 0.0;
+        // double sigma, var = 0.0;
 
         for (auto&& p: peak_list) {
             double z = p->getPeak()->getAABBCenter()[2];
@@ -244,7 +244,7 @@ void ScaleDialog::calculateRFactors()
         const double Fmeas = std::sqrt(n / (n-1));
         const double Fpim = std::sqrt(1 / (n-1));
 
-        double I_total = 0.0;
+        // double I_total = 0.0;
 
         for (auto&& p: peak_list) {
             double z = p->getPeak()->getAABBCenter()[2];

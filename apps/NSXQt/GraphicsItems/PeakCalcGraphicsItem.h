@@ -13,7 +13,7 @@ class PeakCalcGraphicsItem : public SXGraphicsItem
 public:
     PeakCalcGraphicsItem(SX::Crystal::PeakCalc);
      void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-     void setFrame(int frame);
+     void setFrame(unsigned long frame);
      static void setLabelVisible(bool flag=true);
      virtual QRectF boundingRect() const;
 private:

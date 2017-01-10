@@ -22,14 +22,14 @@ using namespace SX::Instrument;
 using namespace SX::Units;
 using namespace SX::Utils;
 
-const double tolerance=1e-2;
+// const double tolerance=1e-2;
 
 BOOST_AUTO_TEST_CASE(Test_PeakFinder)
 {
     std::vector<std::shared_ptr<IData>> numors;
 
-	DiffractometerStore* ds = DiffractometerStore::Instance();
-	std::shared_ptr<Diffractometer> diff = std::shared_ptr<Diffractometer>(ds->buildDiffractomer("D10"));
+    DiffractometerStore* ds = DiffractometerStore::Instance();
+    std::shared_ptr<Diffractometer> diff = std::shared_ptr<Diffractometer>(ds->buildDiffractomer("D10"));
     std::shared_ptr<IData> dataf(new ILLAsciiData(std::string("D10_ascii_example"), diff));
 
     MetaData* meta=dataf->getMetadata();
@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_CASE(Test_PeakFinder)
     PeakFinder peakFinder;
     std::shared_ptr<ProgressHandler> handler(new ProgressHandler);
 
-	BOOST_CHECK(meta->getKey<int>("nbang")==2);
+    BOOST_CHECK(meta->getKey<int>("nbang")==2);
 
     dataf->open();
 

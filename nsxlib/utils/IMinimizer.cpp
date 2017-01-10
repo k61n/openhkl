@@ -44,7 +44,7 @@ namespace Utils {
 IMinimizer::IMinimizer():
     _numValues(0),
     _numParams(0),
-    _f(nullptr),
+    // _f(nullptr),
     _xtol(1e-7),
     _gtol(1e-7),
     _ftol(1e-7)

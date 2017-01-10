@@ -21,7 +21,7 @@ using namespace SX::Data;
 using namespace SX::Instrument;
 using namespace SX::Units;
 
-const double tolerance=1e-2;
+// const double tolerance=1e-2;
 
 BOOST_AUTO_TEST_CASE(Test_HDF5_IO)
 {

@@ -212,16 +212,16 @@ void ExperimentTree::importData()
         return;
 
     QStringList fileNames;
-    fileNames= QFileDialog::getOpenFileNames(this,"select numors","","",nullptr,QFileDialog::Option::DontUseNativeDialog);
+    fileNames = QFileDialog::getOpenFileNames(this,"select numors","","",nullptr,QFileDialog::Option::DontUseNativeDialog);
 
     // No files selected, do nothing
     if (fileNames.isEmpty())
         return;
 
-    QModelIndex parentIndex = _session->parent(currentIndex());
-    auto expItem=dynamic_cast<ExperimentItem*>(_session->itemFromIndex(parentIndex));
+    // QModelIndex parentIndex = _session->parent(currentIndex());
+    // auto expItem = dynamic_cast<ExperimentItem*>(_session->itemFromIndex(parentIndex));
 
-    for (int i=0;i<fileNames.size();++i) {
+    for (int i = 0; i < fileNames.size(); ++i) {
         dataItem->importData(fileNames[i].toStdString());
     }
 }
@@ -264,7 +264,7 @@ void ExperimentTree::importRawData()
 //<<<<<<< HEAD
 //    int max=selectedNumors.size();
 //    qWarning() << "Peak find algorithm: Searching peaks in " << max << " files";
-    
+
 //    // create a pop-up window that will show the progress
 //    ProgressView* progressView = new ProgressView(this);
 //    progressView->watch(_progressHandler);
@@ -328,7 +328,7 @@ void ExperimentTree::viewReciprocalSpace(const QModelIndex& index)
 
     std::vector<std::shared_ptr<SX::Data::IData>> selectedNumors;
     int nTotalNumors(_session->rowCount(ditem->index()));
-    selectedNumors.reserve(nTotalNumors);
+    selectedNumors.reserve(size_t(nTotalNumors));
 
     for (auto i = 0; i < nTotalNumors; ++i) {
         if (ditem->child(i)->checkState() == Qt::Checked) {
@@ -529,70 +529,70 @@ void ExperimentTree::findFriedelPairs()
     //delete friedelDialog;
 }
 
-void ExperimentTree::integrateCalculatedPeaks()
-{
-    qDebug() << "Integrating calculated peaks...";
+//void ExperimentTree::integrateCalculatedPeaks()
+//{
+//    qDebug() << "Integrating calculated peaks...";
 
-    int count = 0;
-    Eigen::Vector3d peak_extent, bg_extent;
-    peak_extent << 0.0, 0.0, 0.0;
-    bg_extent << 0.0, 0.0, 0.0;
+//    int count = 0;
+//    Eigen::Vector3d peak_extent, bg_extent;
+//    peak_extent << 0.0, 0.0, 0.0;
+//    bg_extent << 0.0, 0.0, 0.0;
 
-    std::shared_ptr<UnitCell> unit_cell;
+//    std::shared_ptr<UnitCell> unit_cell;
 
-    for (std::shared_ptr<IData> numor: _session->getSelectedNumors())
-    {
-        for (sptrPeak3D peak: numor->getPeaks())
-            if ( peak && peak->isSelected() && !peak->isMasked() )
-            {
-                peak_extent += peak->getPeak()->getAABBExtents();
-                bg_extent += peak->getBackground()->getAABBExtents();
-                ++count;
-            }
-    }
+//    for (std::shared_ptr<IData> numor: _session->getSelectedNumors())
+//    {
+//        for (sptrPeak3D peak: numor->getPeaks())
+//            if ( peak && peak->isSelected() && !peak->isMasked() )
+//            {
+//                peak_extent += peak->getPeak()->getAABBExtents();
+//                bg_extent += peak->getBackground()->getAABBExtents();
+//                ++count;
+//            }
+//    }
 
-    if ( count == 0) {
-        qDebug() << "No peaks -- cannot search for equivalences!";
-        return;
-    }
+//    if ( count == 0) {
+//        qDebug() << "No peaks -- cannot search for equivalences!";
+//        return;
+//    }
 
-    peak_extent /= count;
-    bg_extent /= count;
+//    peak_extent /= count;
+//    bg_extent /= count;
 
-    qDebug() << "Done calculating average bounding box";
+//    qDebug() << "Done calculating average bounding box";
 
-    qDebug() << peak_extent(0) << " " << peak_extent(1) << " " << peak_extent(2);
-    qDebug() << bg_extent(0) << " " << bg_extent(1) << " " << bg_extent(2);
+//    qDebug() << peak_extent(0) << " " << peak_extent(1) << " " << peak_extent(2);
+//    qDebug() << bg_extent(0) << " " << bg_extent(1) << " " << bg_extent(2);
 
-    for (std::shared_ptr<IData> numor: _session->getSelectedNumors()) {
+//    for (std::shared_ptr<IData> numor: _session->getSelectedNumors()) {
 
-        std::vector<sptrPeak3D> calculated_peaks;
+//        std::vector<sptrPeak3D> calculated_peaks;
 
-        shared_ptr<Sample> sample = numor->getDiffractometer()->getSample();
-        int ncrystals = sample->getNCrystals();
+//        shared_ptr<Sample> sample = numor->getDiffractometer()->getSample();
+//        int ncrystals = sample->getNCrystals();
 
-        if (ncrystals) {
-            for (int i = 0; i < ncrystals; ++i) {
-                SX::Crystal::SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
-                auto ub = sample->getUnitCell(i)->getReciprocalStandardM();
+//        if (ncrystals) {
+//            for (int i = 0; i < ncrystals; ++i) {
+//                SX::Crystal::SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
+//                auto ub = sample->getUnitCell(i)->getReciprocalStandardM();
 
-                qDebug() << "Calculating peak locations...";
+//                qDebug() << "Calculating peak locations...";
 
-                auto hkls = sample->getUnitCell(i)->generateReflectionsInSphere(1.5);
-                std::vector<SX::Crystal::PeakCalc> peaks = numor->hasPeaks(hkls, ub);
-                calculated_peaks.reserve(calculated_peaks.size() + peaks.size());
+//                auto hkls = sample->getUnitCell(i)->generateReflectionsInSphere(1.5);
+//                std::vector<SX::Crystal::PeakCalc> peaks = numor->hasPeaks(hkls, ub);
+//                calculated_peaks.reserve(calculated_peaks.size() + peaks.size());
 
-                qDebug() << "Adding calculated peaks...";
+//                qDebug() << "Adding calculated peaks...";
 
-                for(auto&& p: peaks) {
-                    //calculated_peaks.push_back(p);
-                }
-            }
-        }
+//                //for(auto&& p: peaks) {
+//                    //calculated_peaks.push_back(p);
+//                //}
+//            }
+//        }
 
-        qDebug() << "Done.";
-    }
-}
+//        qDebug() << "Done.";
+//    }
+//}
 
 void ExperimentTree::peakFitDialog()
 {

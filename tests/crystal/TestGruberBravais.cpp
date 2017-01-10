@@ -177,7 +177,7 @@ int run_test()
             Eigen::Matrix3d G = cell.getMetricTensor();
 
             // G = 0.5 * (G + G.transpose());
-            double det = G.determinant();
+            // double det = G.determinant();
 
             Eigen::Matrix3d P, NG, NP;
 
@@ -214,6 +214,5 @@ int run_test()
 
 BOOST_AUTO_TEST_CASE(Test_GruberBravais)
 {
-    // todo: implement me!!
     BOOST_CHECK(run_test() == 0);
 }

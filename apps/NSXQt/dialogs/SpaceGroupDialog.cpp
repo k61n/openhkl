@@ -30,10 +30,10 @@
 using namespace std;
 using namespace SX::Crystal;
 
-SpaceGroupDialog::SpaceGroupDialog(std::vector<std::shared_ptr<SX::Data::IData>> numors, QWidget *parent) :
-    _numors(numors),
+SpaceGroupDialog::SpaceGroupDialog(std::vector<std::shared_ptr<SX::Data::IData>> numors, QWidget *parent):
     QDialog(parent),
     ui(new Ui::SpaceGroupDialog),
+    _numors(numors),
     _selectedGroup("")
 {
     ui->setupUi(this);
@@ -75,9 +75,7 @@ void SpaceGroupDialog::evaluateSpaceGroups()
     using std::tuple;
 
     SpaceGroupSymbols* spaceGroupSymbols = SpaceGroupSymbols::Instance();
-
     vector<string> symbols = spaceGroupSymbols->getAllSymbols();
-
 
     vector<array<double, 3>> hkls;
     vector<sptrPeak3D> peak_list;
@@ -99,9 +97,8 @@ void SpaceGroupDialog::evaluateSpaceGroups()
         {
             Eigen::RowVector3i hkl = peak->getIntegerMillerIndices();
 
-            if (peak->isSelected() && !peak->isMasked())
-            {
-                hkls.push_back(array<double, 3>{(double)hkl[0], (double)hkl[1], (double)hkl[2]});
+            if (peak->isSelected() && !peak->isMasked()) {
+                hkls.push_back(array<double, 3>{{double(hkl[0]), double(hkl[1]), double(hkl[2])}});
                 peak_list.push_back(peak);
             }
         }
@@ -124,8 +121,8 @@ void SpaceGroupDialog::evaluateSpaceGroups()
 
     qDebug() << "Evaluating space groups based on " << hkls.size() << " peaks";
 
-    int count = 0;
-    int total = symbols.size();
+    // int count = 0;
+    // int total = symbols.size();
 
     for (auto& symbol: symbols) {
 

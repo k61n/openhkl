@@ -87,7 +87,7 @@ private:
 #endif
 
 
-    gsl_vector *f;
+    // gsl_vector *f;
     gsl_matrix *_jacobian_gsl;
     gsl_matrix* _covariance_gsl;
 
