@@ -59,9 +59,6 @@ private:
 
 private:
 
-    //! Which column is sorted and up or down
-    std::tuple<int,bool> _columnUp;
-    PeakCustomPlot* _plotter;
     //! Flag indicating that data have been normalized either to time or monitor.
     bool _normalized;
 

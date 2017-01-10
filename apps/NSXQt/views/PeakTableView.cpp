@@ -19,15 +19,13 @@
 #include "ProgressHandler.h"
 #include "ProgressView.h"
 #include "CollectedPeaksDelegate.h"
-#include <CollectedPeaksModel.h>
+#include "CollectedPeaksModel.h"
 
 PeakTableView::PeakTableView(QWidget *parent)
 : QTableView(parent),
-  _columnUp(-1,false),
   _normalized(false)
 {
-    // Make sure that the user can not edit the content of the table
-    setEditTriggers(QAbstractItemView::NoEditTriggers);
+    setEditTriggers(QAbstractItemView::DoubleClicked);
     // Selection of a cell in the table select the whole line.
     setSelectionBehavior(QAbstractItemView::SelectRows);
 
