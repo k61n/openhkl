@@ -395,14 +395,14 @@ void ExperimentTree::keyPressEvent(QKeyEvent *event)
 
 void ExperimentTree::onSingleClick(const QModelIndex &index)
 {
-        // Inspect this item if it is inspectable
-        InspectableTreeItem* item = dynamic_cast<InspectableTreeItem*>(_session->itemFromIndex(index));
-        if (item)
-            emit inspectWidget(item->inspectItem());
-        else {
-            QWidget* widget=new QWidget();
-            emit inspectWidget(widget);
-        }
+    // Inspect this item if it is inspectable
+    InspectableTreeItem* item = dynamic_cast<InspectableTreeItem*>(_session->itemFromIndex(index));
+    if (item)
+        emit inspectWidget(item->inspectItem());
+    else {
+        QWidget* widget=new QWidget();
+        emit inspectWidget(widget);
+    }
 }
 
 void ExperimentTree::showPeaksOpenGL()
