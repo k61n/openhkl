@@ -322,6 +322,20 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
                   });
         break;
     }
+    case Column::unitCell:
+    {
+        std::sort(_peaks.begin(),
+                  _peaks.end(),
+                  [&](sptrPeak3D p1, const sptrPeak3D p2)
+                  {
+                    auto uc1 = p1->getUnitCell();
+                    auto uc2 = p2->getUnitCell();
+                    std::string uc1Name = uc1 ? uc1->getName() : "";
+                    std::string uc2Name = uc2 ? uc2->getName() : "";
+                    return (uc2Name<uc1Name);
+                  });
+        break;
+    }
     }
 
     if (order == Qt::DescendingOrder)
@@ -350,6 +364,8 @@ bool CollectedPeaksModel::setData(const QModelIndex& index, const QVariant& valu
     {
         if (column == Column::unitCell)
         {
+            if (_cells.empty())
+                return false;
             int unitCellIndex = value.toInt();
             sptrUnitCell unitCell = _cells[unitCellIndex];
             _peaks[row]->setUnitCell(unitCell);

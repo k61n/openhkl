@@ -20,14 +20,12 @@ QWidget* CollectedPeaksDelegate::createEditor(QWidget *parent, const QStyleOptio
     if (index.column() == CollectedPeaksModel::Column::unitCell)
     {
         QComboBox *editor = new QComboBox(parent);
-
         QStringList cellNames = index.model()->data(index,Qt::UserRole).toStringList();
         for (const auto& name : cellNames)
             editor->addItem(name);
         return editor;
     }
-    else
-        return QStyledItemDelegate::createEditor(parent,option,index);
+    return QStyledItemDelegate::createEditor(parent,option,index);
 }
 
 void CollectedPeaksDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
@@ -37,7 +35,9 @@ void CollectedPeaksDelegate::setModelData(QWidget *editor, QAbstractItemModel *m
 
     if (column = CollectedPeaksModel::Column::unitCell)
     {
-        QComboBox *cb = static_cast<QComboBox*>(editor);
+        QComboBox *cb = static_cast<QComboBox*>(editor);        
+        if (cb->count()==0)
+            return;
         int unitCellIndex = cb->currentIndex();
         model->setData(index,unitCellIndex);
     }
