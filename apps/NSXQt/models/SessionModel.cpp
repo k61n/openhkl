@@ -91,6 +91,8 @@
 
 #include "SpaceGroupDialog.h"
 
+#include "UnitCellItem.h"
+
 #include <QVector>
 #include "Externals/qcustomplot.h"
 #include "ui_ScaleDialog.h"
@@ -119,12 +121,25 @@ using SX::Utils::ProgressHandler;
 
 SessionModel::SessionModel()
 {
+    connect(this,SIGNAL(itemChanged(QStandardItem*)),this,SLOT(onItemChanged(QStandardItem*)));
 }
 
 SessionModel::~SessionModel()
 {
     // _model should be deleted automatically during destructor by QT
     //delete _model;
+}
+
+void SessionModel::onItemChanged(QStandardItem* item)
+{
+    if (auto p=dynamic_cast<UnitCellItem*>(item))
+    {
+        // The first item of the Sample item branch is the SampleShapeItem, skip it
+        int idx = p->index().row()- 1;
+        auto expt = p->getExperiment();
+        auto sptrUnitCell = expt->getDiffractometer()->getSample()->getUnitCell(idx);
+        sptrUnitCell->setName(p->text().toStdString());
+    }
 }
 
 void SessionModel::createNewExperiment()

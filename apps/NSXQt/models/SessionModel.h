@@ -107,6 +107,8 @@ public slots:
     void peakFitDialog();
     void incorporateCalculatedPeaks();
 
+    void onItemChanged(QStandardItem* item);
+
 
 private:
     //! Filename for the save/load feature
