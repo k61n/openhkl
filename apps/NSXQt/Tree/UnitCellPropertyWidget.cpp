@@ -45,8 +45,8 @@ UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *par
     connect(ui->doubleSpinBoxbeta,SIGNAL(editingFinished()),this,SLOT(setLatticeParams()));
     connect(ui->doubleSpinBoxgamma,SIGNAL(editingFinished()),this,SLOT(setLatticeParams()));
 
-    ui->spinBox_Z->setValue(_unitCellItem->getCell()->getZ());
-    auto material=_unitCellItem->getCell()->getMaterial();
+    ui->spinBox_Z->setValue(_unitCellItem->getUnitCell()->getZ());
+    auto material=_unitCellItem->getUnitCell()->getMaterial();
     if (material)
         ui->lineEdit_ChemicalFormula->setText(material->getName().c_str());
 
@@ -60,7 +60,7 @@ UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *par
         ui->comboBox->addItem(QString::fromStdString(symbol));
     }
 
-    ui->comboBox->setCurrentText(_unitCellItem->getCell()->getSpaceGroup().c_str());
+    ui->comboBox->setCurrentText(_unitCellItem->getUnitCell()->getSpaceGroup().c_str());
 
     QSortFilterProxyModel* proxyModel = new QSortFilterProxyModel(this);
     proxyModel->setSourceModel(ui->comboBox->model());
@@ -91,7 +91,7 @@ void UnitCellPropertyWidget::setLatticeParams()
 
     try
     {
-    _unitCellItem->getCell()->setParams(a,b,c,alpha*SX::Units::deg,beta*SX::Units::deg,gamma*SX::Units::deg);
+    _unitCellItem->getUnitCell()->setParams(a,b,c,alpha*SX::Units::deg,beta*SX::Units::deg,gamma*SX::Units::deg);
     }catch(...)
     {
 
@@ -103,24 +103,24 @@ void UnitCellPropertyWidget::setLatticeParams()
 
 void UnitCellPropertyWidget::setMassDensity() const
 {
-    auto material=_unitCellItem->getCell()->getMaterial();
+    auto material=_unitCellItem->getUnitCell()->getMaterial();
     if (material)
     {
         double mm=material->getMolarMass();
         mm*=ui->spinBox_Z->value()/SX::Units::avogadro;
-        double volume=_unitCellItem->getCell()->getVolume()*SX::Units::ang3;
+        double volume=_unitCellItem->getUnitCell()->getVolume()*SX::Units::ang3;
         material->setMassDensity(mm/volume);
     }
 }
 
 void UnitCellPropertyWidget::on_pushButton_Info_clicked()
 {
-   qDebug() << "" << *(_unitCellItem->getCell());
+   qDebug() << "" << *(_unitCellItem->getUnitCell());
 }
 
 void UnitCellPropertyWidget::on_pushButton_Index_clicked()
 {
-    LatticeIndexer* indexer=new LatticeIndexer(_unitCellItem->getCell(),_unitCellItem->getExperiment());
+    LatticeIndexer* indexer=new LatticeIndexer(_unitCellItem->getUnitCell(),_unitCellItem->getExperiment());
     indexer->show();
 }
 
@@ -146,7 +146,7 @@ void UnitCellPropertyWidget::setCell(const SX::Crystal::UnitCell& cell)
     int i;
 
     //_unitCellItem->getCell()->copyMatrices(cell);
-    *_unitCellItem->getCell() = cell;
+    *_unitCellItem->getUnitCell() = cell;
 
     getLatticeParams();
     auto datamap=_unitCellItem->getExperiment()->getData();
@@ -156,7 +156,7 @@ void UnitCellPropertyWidget::setCell(const SX::Crystal::UnitCell& cell)
         auto& peaks=data.second->getPeaks();
         for (auto p: peaks)
         {
-            p->setUnitCell(_unitCellItem->getCell());
+            p->setUnitCell(_unitCellItem->getUnitCell());
             progressHandler->setProgress(i * 100.0 / peaks.size());
             ++i;
         }
@@ -164,13 +164,13 @@ void UnitCellPropertyWidget::setCell(const SX::Crystal::UnitCell& cell)
 
     qDebug() << "Set unit cell: bravais type " << cell.getBravaisTypeSymbol();
 
-    emit activateIndexingMode(_unitCellItem->getCell());
+    emit activateIndexingMode(_unitCellItem->getUnitCell());
     emit cellUpdated();
 }
 
 void UnitCellPropertyWidget::getLatticeParams()
 {
-    auto sample=_unitCellItem->getCell();
+    auto sample=_unitCellItem->getUnitCell();
     ui->doubleSpinBoxa->setValue(sample->getA());
     ui->doubleSpinBoxb->setValue(sample->getB());
     ui->doubleSpinBoxc->setValue(sample->getC());
@@ -181,7 +181,7 @@ void UnitCellPropertyWidget::getLatticeParams()
 
 void UnitCellPropertyWidget::on_pushButton_Refine_clicked()
 {
-    DialogRefineUnitCell* dialog=new DialogRefineUnitCell(_unitCellItem->getExperiment(),_unitCellItem->getCell(),this);
+    DialogRefineUnitCell* dialog=new DialogRefineUnitCell(_unitCellItem->getExperiment(),_unitCellItem->getUnitCell(),this);
     dialog->exec();
     getLatticeParams();
     emit cellUpdated();
@@ -193,7 +193,7 @@ void UnitCellPropertyWidget::setChemicalFormula(const QString &formula)
     try
     {
         auto material=mgr->buildMaterialFromChemicalFormula(formula.toStdString());
-        _unitCellItem->getCell()->setMaterial(material);
+        _unitCellItem->getUnitCell()->setMaterial(material);
     }
     catch(std::exception& e)
     {
@@ -204,7 +204,7 @@ void UnitCellPropertyWidget::setChemicalFormula(const QString &formula)
 
 void UnitCellPropertyWidget::on_spinBox_Z_valueChanged(int arg1)
 {
-        _unitCellItem->getCell()->setZ(arg1);
+        _unitCellItem->getUnitCell()->setZ(arg1);
         setMassDensity();
 }
 
@@ -223,7 +223,7 @@ void UnitCellPropertyWidget::on_pushButton_TransformationMatrix_clicked()
 
 void UnitCellPropertyWidget::transform(const Eigen::Matrix3d &P)
 {
-   _unitCellItem->getCell()->transform(P);
+   _unitCellItem->getUnitCell()->transform(P);
    getLatticeParams();
    // Update peaks
    auto datamap=_unitCellItem->getExperiment()->getData();
@@ -232,7 +232,7 @@ void UnitCellPropertyWidget::transform(const Eigen::Matrix3d &P)
        auto& peaks=data.second->getPeaks();
        for (auto p: peaks)
        {
-           p->setUnitCell(_unitCellItem->getCell());
+           p->setUnitCell(_unitCellItem->getUnitCell());
        }
    }
    emit cellUpdated();
