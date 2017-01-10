@@ -32,7 +32,8 @@ PeakListPropertyWidget::PeakListPropertyWidget(PeakListItem* caller, QWidget *pa
     std::for_each(datamap.begin(), datamap.end(), func);
 
     CollectedPeaksModel *model = new CollectedPeaksModel();
-    model->setData(datav);
+    model->setPeaks(datav);
+    model->setUnitCells(_caller->getExperiment()->getDiffractometer()->getSample()->getUnitCells());
     ui->tableView->setModel(model);
 
     ui->selectedCells->setDefaultText("Selected cells");

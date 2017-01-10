@@ -9,6 +9,7 @@
 
 #include "CollectedPeaksModel.h"
 #include "IData.h"
+#include "Sample.h"
 
 #include <QtDebug>
 
@@ -41,6 +42,18 @@ void CollectedPeaksModel::setPeaks(const std::vector<sptrPeak3D> & peaks)
     _peaks = peaks;
 }
 
+void CollectedPeaksModel::setPeaks(const std::vector<std::shared_ptr<SX::Data::IData> > &data)
+{
+    _peaks.clear();
+
+    for (auto ptr : data)
+    {
+        // Add peaks present in this numor to the model
+        for (sptrPeak3D peak : ptr->getPeaks())
+            _peaks.push_back(peak);
+    }
+}
+
 const std::vector<sptrPeak3D>& CollectedPeaksModel::getPeaks() const
 {
     return _peaks;
@@ -56,6 +69,23 @@ int CollectedPeaksModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return Column::count;
+}
+
+Qt::ItemFlags CollectedPeaksModel::flags(const QModelIndex &index) const
+{
+    if (!indexIsValid(index))
+        return Qt::ItemIsEnabled;
+
+    int col = index.column();
+
+    if (col == CollectedPeaksModel::Column::selected || col == CollectedPeaksModel::Column::observed)
+        return QAbstractTableModel::flags(index) | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable;
+
+    else if (col == CollectedPeaksModel::Column::unitCell)
+        return QAbstractTableModel::flags(index) | Qt::ItemIsEditable;
+
+    else
+        return QAbstractTableModel::flags(index);
 }
 
 QVariant CollectedPeaksModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -86,6 +116,8 @@ QVariant CollectedPeaksModel::headerData(int section, Qt::Orientation orientatio
             return QString("selected");
         case Column::observed:
             return QString("observed");
+        case Column::unitCell:
+            return QString("unit cell");
         default:
             return QVariant();
         }
@@ -95,14 +127,13 @@ QVariant CollectedPeaksModel::headerData(int section, Qt::Orientation orientatio
 
 QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
 {
-
     if (!indexIsValid(index))
         return QVariant();
 
+    int row = index.row();
+    int column = index.column();
     if (role==Qt::DisplayRole)
     {
-        int row = index.row();
-        int column = index.column();
         switch (column)
         {
         case Column::h:
@@ -141,19 +172,24 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
         }
         case Column::lorentzFactor:
         {
-            double lorentzFactor = _peaks[row]->getLorentzFactor();
-            return lorentzFactor;
+            return _peaks[row]->getLorentzFactor();
         }
         case Column::numor:
         {
             return _peaks[row]->getData()->getMetadata()->getKey<int>("Numor");
         }
+        case Column::unitCell:
+        {
+            auto unitCell = _peaks[row]->getUnitCell();
+            if (!unitCell)
+                return QString("not set");
+            else
+                return QString::fromStdString(unitCell->getName());
+        }
         }
     }
-    else if (role == Qt::UserRole)
+    else if (role == Qt::CheckStateRole)
     {
-        int row = index.row();
-        int column = index.column();
         switch (column)
         {
         case Column::selected:
@@ -166,13 +202,21 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
         }
         }
     }
-    else
-        return QVariant::Invalid;
+    else if (role == Qt::UserRole)
+    {
+        if (column == Column::unitCell)
+        {
+            QStringList cellNames;
+            for (auto cell : _cells)
+                cellNames.append(QString::fromStdString(cell->getName()));
+            return cellNames;
+        }
+    }
+    return QVariant::Invalid;
 }
 
 void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
 {
-    std::cout<<column<<Column::intensity<<std::endl;
     switch(column)
     {
     case Column::h:
@@ -276,8 +320,6 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
                   {
                     return (p2->isObserved()<p1->isObserved());
                   });
-        for (auto p : _peaks)
-            std::cout<<p->isObserved()<<std::endl;
         break;
     }
     }
@@ -288,40 +330,29 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
     emit layoutChanged();
 }
 
-void CollectedPeaksModel::setData(const std::vector<std::shared_ptr<SX::Data::IData> > &data)
-{
-    _peaks.clear();
-
-    for (auto ptr : data)
-    {
-        // Add peaks present in this numor to the model
-        for (sptrPeak3D peak : ptr->getPeaks())
-            _peaks.push_back(peak);
-    }
-}
-
 bool CollectedPeaksModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
     if (!indexIsValid(index))
         return false;
 
-    if (role == Qt::UserRole)
+    int row = index.row();
+    int column = index.column();
+
+    if (role == Qt::CheckStateRole)
     {
-        int row = index.row();
-        int column = index.column();
         bool state = value.toBool();
-        switch (column)
-        {
-        case Column::selected:
-        {
+        if (column == Column::selected)
             _peaks[row]->setSelected(state);
-            break;
-        }
-        case Column::observed:
-        {
+        else if (column == Column::observed)
             _peaks[row]->setObserved(state);
-            break;
-        }
+    }
+    else if (role == Qt::EditRole)
+    {
+        if (column == Column::unitCell)
+        {
+            int unitCellIndex = value.toInt();
+            sptrUnitCell unitCell = _cells[unitCellIndex];
+            _peaks[row]->setUnitCell(unitCell);
         }
     }
 
@@ -333,6 +364,11 @@ bool CollectedPeaksModel::setData(const QModelIndex& index, const QVariant& valu
 bool CollectedPeaksModel::indexIsValid(const QModelIndex& index) const
 {
     return index.isValid() && index.row() < _peaks.size();
+}
+
+void CollectedPeaksModel::setUnitCells(const SX::Instrument::CellList &cells)
+{
+    _cells = cells;
 }
 
 void CollectedPeaksModel::sortEquivalents()
