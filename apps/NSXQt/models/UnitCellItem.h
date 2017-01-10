@@ -20,7 +20,7 @@ public:
     UnitCellItem(std::shared_ptr<SX::Instrument::Experiment> experiment,std::shared_ptr<SX::Crystal::UnitCell>);
     ~UnitCellItem();
     QWidget* inspectItem();
-    std::shared_ptr<SX::Crystal::UnitCell> getCell();
+    std::shared_ptr<SX::Crystal::UnitCell> getUnitCell();
 private:
     std::shared_ptr<SX::Crystal::UnitCell> _cell;
 };

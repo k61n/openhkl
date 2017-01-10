@@ -29,7 +29,7 @@ QWidget* UnitCellItem::inspectItem()
 }
 
 
-std::shared_ptr<SX::Crystal::UnitCell> UnitCellItem::getCell()
+std::shared_ptr<SX::Crystal::UnitCell> UnitCellItem::getUnitCell()
 {
     return _cell;
 }
