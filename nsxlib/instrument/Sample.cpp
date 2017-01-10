@@ -79,6 +79,11 @@ std::shared_ptr<SX::Crystal::UnitCell> Sample::getUnitCell(unsigned int i)
 	return (_cells[i]);
 }
 
+const CellList& Sample::getUnitCells() const
+{
+	return _cells;
+}
+
 std::size_t Sample::getNCrystals() const
 {
 	return _cells.size();

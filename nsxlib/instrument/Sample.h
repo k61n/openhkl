@@ -46,7 +46,8 @@ namespace SX
 namespace Instrument
 {
 
-typedef std::vector<std::shared_ptr<SX::Crystal::UnitCell>> CellList;
+typedef std::shared_ptr<SX::Crystal::UnitCell> sptrUnitCell;
+typedef std::vector<sptrUnitCell> CellList;
 
 class Sample : public Component
 {
@@ -81,6 +82,7 @@ public:
 	std::shared_ptr<SX::Crystal::UnitCell> addUnitCell();
 	//! Get the UnitCell of Crystal number i in the list
 	std::shared_ptr<SX::Crystal::UnitCell> getUnitCell(unsigned int i);
+	const CellList& getUnitCells() const;
 	//! Return number of crystals
 	std::size_t getNCrystals() const;
 	//!
