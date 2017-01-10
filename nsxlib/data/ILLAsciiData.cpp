@@ -129,7 +129,7 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, std::shared_ptr<Diffract
 
     for (std::size_t i = 0; i < _nAngles; ++i) {
         std::string idesc = std::string("icdesc") + std::to_string(i+1);
-        unsigned int id = uint(_metadata->getKey<int>(idesc));
+        unsigned int id(_metadata->getKey<int>(idesc));
         scannedAxisId.push_back(id);
     }
 
