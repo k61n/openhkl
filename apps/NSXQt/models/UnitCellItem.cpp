@@ -4,7 +4,7 @@
 #include "UnitCell.h"
 
 #include "models/UnitCellItem.h"
-#include "Tree/UnitCellPropertyWidget.h"
+#include "tree/UnitCellPropertyWidget.h"
 
 UnitCellItem::UnitCellItem(std::shared_ptr<SX::Instrument::Experiment> experiment,std::shared_ptr<SX::Crystal::UnitCell> cell):
     InspectableTreeItem(experiment),

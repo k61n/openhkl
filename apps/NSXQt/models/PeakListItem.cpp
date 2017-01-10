@@ -1,7 +1,7 @@
 #include <QIcon>
 
 #include "models/PeakListItem.h"
-#include "Tree/PeakListPropertyWidget.h"
+#include "tree/PeakListPropertyWidget.h"
 
 PeakListItem::PeakListItem(std::shared_ptr<Experiment> experiment) : InspectableTreeItem(experiment)
 {

@@ -4,7 +4,7 @@
 #include "Diffractometer.h"
 #include "Sample.h"
 
-#include "Tree/SamplePropertyWidget.h"
+#include "tree/SamplePropertyWidget.h"
 #include "models/SampleShapeItem.h"
 #include "models/SampleItem.h"
 #include "models/UnitCellItem.h"

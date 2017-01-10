@@ -1,5 +1,5 @@
 #include "ui_DetectorPropertyWidget.h"
-#include "Tree/DetectorPropertyWidget.h"
+#include "tree/DetectorPropertyWidget.h"
 #include "models/DetectorItem.h"
 #include "Diffractometer.h"
 #include "Detector.h"

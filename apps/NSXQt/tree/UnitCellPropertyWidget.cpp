@@ -16,7 +16,7 @@
 #include "DialogRefineUnitCell.h"
 #include "DialogTransformationMatrix.h"
 #include "Logger.h"
-#include "Tree/UnitCellPropertyWidget.h"
+#include "tree/UnitCellPropertyWidget.h"
 #include "models/UnitCellItem.h"
 #include "Peak3D.h"
 #include "SpaceGroupSymbols.h"

@@ -37,7 +37,7 @@
 #include "models/DataItem.h"
 #include "models/DetectorItem.h"
 #include "models/ExperimentItem.h"
-#include "Tree/ExperimentTree.h"
+#include "tree/ExperimentTree.h"
 #include "models/TreeItem.h"
 #include "models/InstrumentItem.h"
 #include "models/NumorItem.h"

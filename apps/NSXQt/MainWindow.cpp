@@ -36,7 +36,7 @@
 
 #include "DetectorScene.h"
 #include "DialogExperiment.h"
-#include "Tree/ExperimentTree.h"
+#include "tree/ExperimentTree.h"
 #include "Logger.h"
 #include "NoteBook.h"
 #include "NumorsConversionDialog.h"
@@ -54,8 +54,8 @@
 #include "PeakGraphicsItem.h"
 #include "PlottableGraphicsItem.h"
 #include "PlotFactory.h"
-#include "Tree/UnitCellPropertyWidget.h"
-#include "Tree/PeakListPropertyWidget.h"
+#include "tree/UnitCellPropertyWidget.h"
+#include "tree/PeakListPropertyWidget.h"
 
 #include "DialogConvolve.h"
 

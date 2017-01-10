@@ -8,7 +8,7 @@
 
 #include "ui_SamplePropertyWidget.h"
 #include "models/SampleItem.h"
-#include "Tree/SamplePropertyWidget.h"
+#include "tree/SamplePropertyWidget.h"
 #include "models/UnitCellItem.h"
 #include "Units.h"
 

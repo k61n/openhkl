@@ -12,17 +12,17 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/nsxlib/instrument/
     ${CMAKE_SOURCE_DIR}/nsxlib/kernel/
     ${CMAKE_SOURCE_DIR}/nsxlib/utils/
-  ${CMAKE_SOURCE_DIR}/apps/NSXQt/absorption/
-  ${CMAKE_SOURCE_DIR}/apps/NSXQt/GraphicsItems/
-  ${CMAKE_SOURCE_DIR}/apps/NSXQt/OpenGL/
-  ${CMAKE_SOURCE_DIR}/apps/NSXQt/plot/
-  ${CMAKE_SOURCE_DIR}/apps/NSXQt/Tree/
-  ${CMAKE_SOURCE_DIR}/apps/NSXQt/views/
-  ${CMAKE_SOURCE_DIR}/apps/NSXQt/dialogs/
-  ${CMAKE_SOURCE_DIR}/apps/NSXQt/models/
-  ${CMAKE_SOURCE_DIR}/apps/NSXQt/chemistry/
-  ${CMAKE_SOURCE_DIR}/apps/NSXQt/widgets/
-  ${CMAKE_SOURCE_DIR}/apps/NSXQt/
+    ${CMAKE_SOURCE_DIR}/apps/NSXQt/absorption/
+    ${CMAKE_SOURCE_DIR}/apps/NSXQt/GraphicsItems/
+    ${CMAKE_SOURCE_DIR}/apps/NSXQt/OpenGL/
+    ${CMAKE_SOURCE_DIR}/apps/NSXQt/plot/
+    ${CMAKE_SOURCE_DIR}/apps/NSXQt/tree/
+    ${CMAKE_SOURCE_DIR}/apps/NSXQt/views/
+    ${CMAKE_SOURCE_DIR}/apps/NSXQt/dialogs/
+    ${CMAKE_SOURCE_DIR}/apps/NSXQt/models/
+    ${CMAKE_SOURCE_DIR}/apps/NSXQt/chemistry/
+    ${CMAKE_SOURCE_DIR}/apps/NSXQt/widgets/
+    ${CMAKE_SOURCE_DIR}/apps/NSXQt/
   )
 
 # Disable console on Windows
@@ -46,7 +46,7 @@ file(GLOB_RECURSE nsxqt_headers
 #  ${CMAKE_SOURCE_DIR}/apps/NSXQt/GraphicsItems/*.h
 #  ${CMAKE_SOURCE_DIR}/apps/NSXQt/OpenGL/*.h
 #  ${CMAKE_SOURCE_DIR}/apps/NSXQt/plot/*.h
-#  ${CMAKE_SOURCE_DIR}/apps/NSXQt/Tree/*.h
+#  ${CMAKE_SOURCE_DIR}/apps/NSXQt/tree/*.h
 #  ${CMAKE_SOURCE_DIR}/apps/NSXQt/dialogs/*.h
 #  ${CMAKE_SOURCE_DIR}/apps/NSXQt/views/*.h
 #  ${CMAKE_SOURCE_DIR}/apps/NSXQt/models/*.h
@@ -62,7 +62,7 @@ file(GLOB_RECURSE nsxqt_sources
 #    ${CMAKE_SOURCE_DIR}/apps/NSXQt/GraphicsItems/*.cpp
 #    ${CMAKE_SOURCE_DIR}/apps/NSXQt/OpenGL/*.cpp
 #    ${CMAKE_SOURCE_DIR}/apps/NSXQt/plot/*.cpp
-#    ${CMAKE_SOURCE_DIR}/apps/NSXQt/Tree/*.cpp
+#    ${CMAKE_SOURCE_DIR}/apps/NSXQt/tree/*.cpp
 #    ${CMAKE_SOURCE_DIR}/apps/NSXQt/dialogs/*.cpp
 #    ${CMAKE_SOURCE_DIR}/apps/NSXQt/views/*.cpp
 #    ${CMAKE_SOURCE_DIR}/apps/NSXQt/models/*.cpp

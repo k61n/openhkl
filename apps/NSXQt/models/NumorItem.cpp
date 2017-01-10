@@ -1,7 +1,7 @@
 #include "Experiment.h"
 #include "IData.h"
 
-#include "Tree/NumorPropertyWidget.h"
+#include "tree/NumorPropertyWidget.h"
 #include "models/NumorItem.h"
 
 #include <iostream>
