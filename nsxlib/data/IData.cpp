@@ -140,8 +140,9 @@ void IData::addPeak(sptrPeak3D peak)
 
 void IData::clearPeaks()
 {
-//    for (auto ptr : _peaks)
-//		delete ptr;
+    for (auto ptr : _peaks)
+        ptr->unlinkData();
+
     _peaks.clear();
 }
 

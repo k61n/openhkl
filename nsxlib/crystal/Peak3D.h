@@ -173,6 +173,8 @@ public:
     //! Return whether the peak was calculated from the UB matrix
     bool getCalculated() const;
 
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
 private:
     //! Pointer to the data containing the peak
     std::shared_ptr<SX::Data::IData> _data;
@@ -224,6 +226,8 @@ private:
 
         int dx;
         int dy;
+
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     };
 
     IntegrationState _state;
