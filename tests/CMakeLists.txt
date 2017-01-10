@@ -25,7 +25,11 @@ foreach(source_file ${test_sources})
   target_link_libraries(${base_name} ${Boost_LIBRARIES} NSXTool)
 
   if(${NSX_VALGRIND})
-    add_test(NAME ${base_name} COMMAND valgrind --error-exitcode=3 --leak-check=full $<TARGET_FILE:${base_name}>)
+    add_test(
+      NAME ${base_name}
+      COMMAND valgrind --error-exitcode=3 --leak-check=full $<TARGET_FILE:${base_name}>
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    )
   else()
     add_test(${base_name} ${base_name})
   endif()
