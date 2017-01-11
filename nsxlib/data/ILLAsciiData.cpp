@@ -129,7 +129,7 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, std::shared_ptr<Diffract
 
     for (std::size_t i = 0; i < _nAngles; ++i) {
         std::string idesc = std::string("icdesc") + std::to_string(i+1);
-        unsigned int id(_metadata->getKey<int>(idesc));
+        unsigned int id = static_cast<unsigned int>(_metadata->getKey<int>(idesc));
         scannedAxisId.push_back(id);
     }
 
@@ -314,7 +314,7 @@ Eigen::MatrixXi ILLAsciiData::readFrame(std::size_t idx)
 
     // Create vector and try to reserve a memory block
     Eigen::MatrixXi v;
-    v.resize(_nrows, _ncols);
+    v.resize(long(_nrows), long(_ncols));
 
     //EigenMatrixParser<const char*,TopRightColMajorMapper> parser;
     qi::phrase_parse(_mapAddress+begin,_mapAddress+begin+_dataLength,*_parser,qi::blank, v);
@@ -360,7 +360,7 @@ void ILLAsciiData::readControlIBlock(std::stringstream& buffer)
 void ILLAsciiData::readControlFBlock(std::stringstream& buffer)
 {
     _currentLine++; // Skip the FFFFFFF line.
-    goToLine(buffer, _currentLine, 0);
+    goToLine(buffer, int(_currentLine), 0);
     // Total number of entries and number of lines
     int nTot, nLines;
     buffer >> nTot >> nLines;
@@ -372,93 +372,89 @@ void ILLAsciiData::readControlFBlock(std::stringstream& buffer)
     int missing = nTot-5*nLines;
     // Unfortunately this is a fixed format, and there are spaces from some keys
     // need to read.
-    char line[80];
-    std::string s1,s2;
-    std::vector<std::string> keys(nTot);
+    std::vector<char> line(81, 0); // 81 to make space for null character at string end
+    std::string s1, s2;
+    std::vector<std::string> keys(static_cast<size_t>(nTot));
     int counter = 0;
 
     // read the keys in temp vector
-    for (int i=0;i<fullLines;++i) {
-        goToLine(buffer,++_currentLine,0);
-        buffer.read(line,80);
-        s1=line;
-        for (int j=0;j<5;j++) {
-            s2=s1.substr(j*sizeBlock,sizeBlock);
+    for (int i = 0; i < fullLines; ++i) {
+        goToLine(buffer, int(++_currentLine), 0);
+        buffer.read(&line[0], 80);
+        s1 = &line[0];
+
+        for (int j = 0; j < 5; j++) {
+            s2 = s1.substr(size_t(j*sizeBlock), size_t(sizeBlock));
             // Remove all white space from the string (For example H (HMin) and concatenate string
             boost::erase_all(s2," ");
-            keys[counter++]=s2;
+            keys[size_t(counter++)] = s2;
         }
     }
 
     // If non complete line.
-    if (missing)
-    {
-        goToLine(buffer,++_currentLine,0);
-        buffer.read(line,80);
-        s1=line;
-        for (int j=0;j<missing;j++)
-        {
-            s2=s1.substr(j*sizeBlock,sizeBlock);
+    if (missing) {
+        goToLine(buffer, int(++_currentLine), 0);
+        buffer.read(&line[0], 80);
+        s1 = &line[0];
+        for (int j = 0; j < missing; j++) {
+            s2 = s1.substr(size_t(j*sizeBlock), size_t(sizeBlock));
             // Remove all white space
             boost::erase_all(s2," ");
-            keys[counter++]=s2;
+            keys[size_t(counter++)] = s2;
         }
     }
 
     double value;
     // Read the values
-    goToLine(buffer, ++_currentLine,0);
-    for (int i = 0; i < nTot; ++i) {
+    goToLine(buffer, int(++_currentLine), 0);
+    for (size_t i = 0; i < size_t(nTot); ++i) {
         buffer >> value;
         // Ignore spare member blocks.
         if (keys[i].compare("(spare)"))
-            _metadata->add<double>(keys[i],value);
+            _metadata->add<double>(keys[i], value);
     }
     _currentLine += size_t(fullLines+missing);
-
-
 }
 
 void ILLAsciiData::readHeader(std::stringstream& buffer)
 {
     // _buffer to contains a full line
-    char line[80];
+    std::vector<char> line(81, 0);
     // Two temp strings
-    std::string s1,s2;
+    std::string s1, s2;
     // Go to Line 2, grab the numor
-    goToLine(buffer,2,0);
+    goToLine(buffer, 2, 0);
     int number;
     buffer >> number;
-
     _metadata->add<int>("Numor", number);
 
     // Go to Line 6, grab instrument, User, Local contact, date and Time.
-    goToLine(buffer,6,0);
-    buffer.read(line,80);
-    s1=line;
-    s2=s1.substr(0,4);
+    goToLine(buffer, 6, 0);
+    buffer.read(&line[0], 80);
+    s1 = &line[0];
+    s2 = s1.substr(0, 4);
     boost::trim(s2);
-    _metadata->add<std::string>("Instrument",s2);
-    s2 = s1.substr(4,6);
+    _metadata->add<std::string>("Instrument", s2);
+    s2 = s1.substr(4, 6);
     boost::trim(s2);
-    _metadata->add<std::string>("User",s2);
-    s2 = s1.substr(10,4);
+    _metadata->add<std::string>("User", s2);
+    s2 = s1.substr(10, 4);
     boost::trim(s2);
-    _metadata->add<std::string>("LocalContact",s2);
-    s2 = s1.substr(14,9);
-    _metadata->add<std::string>("Date",s2);
-    s2 = s1.substr(24,8);
-    _metadata->add<std::string>("Time",s2);
+    _metadata->add<std::string>("LocalContact", s2);
+    s2 = s1.substr(14, 9);
+    _metadata->add<std::string>("Date", s2);
+    s2 = s1.substr(24, 8);
+    _metadata->add<std::string>("Time", s2);
     // Go to Line 10, grab the title and type of scan
-    goToLine(buffer,10,0);
-    buffer.read(line,80);
-    s1 = line;
+    goToLine(buffer, 10, 0);
+    buffer.read(&line[0], 80);
+    s1 = &line[0];
     s2 = s1.substr(0,72);
     boost::trim(s2);
-    _metadata->add<std::string>("Title",s2);
+    _metadata->add<std::string>("Title", s2);
     s2 = s1.substr(72,8);
     boost::trim(s2);
-    _metadata->add<std::string>("ScanType",s2);
+    _metadata->add<std::string>("ScanType", s2);
     std::string date, time;
 
     // Enter a key for the posix time
@@ -472,7 +468,6 @@ void ILLAsciiData::readHeader(std::stringstream& buffer)
     std::string fulltime = time+std::string(".000");
     boost::posix_time::ptime pos_time(boost::gregorian::from_uk_string(full_date),boost::posix_time::duration_from_string(fulltime));
     _metadata->add<boost::posix_time::ptime>("ptime",pos_time);
-
 }
 
 void ILLAsciiData::readMetaData(const char* buf)
@@ -511,7 +506,8 @@ void ILLAsciiData::readMetaData(const char* buf)
     // Read the block containing float metadata
     try {
         readControlFBlock(buffer);
-    }catch(...) {
+    }
+    catch(...) {
         throw std::runtime_error("ILLAsciiMetaReader: Fail to read FBlock in stream");
     }
 }
