@@ -670,12 +670,12 @@ void DetectorScene::showPeakCalcs(bool flag)
         if ( std::abs(_currentFrameIndex-p._frame) > 1.0)
             continue;
 
-            PeakCalcGraphicsItem* peak = new PeakCalcGraphicsItem(p);
-            peak->setVisible(flag);
-            peak->setFrame(_currentFrameIndex);
-            peak->setEnabled(false); // testing
-            addItem(peak);
-            _peakCalcs.push_back(peak);
+        PeakCalcGraphicsItem* peak = new PeakCalcGraphicsItem(p);
+        peak->setVisible(flag);
+        peak->setFrame(_currentFrameIndex);
+        peak->setEnabled(false); // testing
+        addItem(peak);
+        _peakCalcs.push_back(peak);
     }
 }
 
