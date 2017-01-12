@@ -113,10 +113,6 @@ void UnitCellPropertyWidget::setMassDensity() const
     }
 }
 
-void UnitCellPropertyWidget::on_pushButton_Info_clicked()
-{
-   qDebug() << "" << *(_unitCellItem->getUnitCell());
-}
 
 void UnitCellPropertyWidget::on_pushButton_Index_clicked()
 {

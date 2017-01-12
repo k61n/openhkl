@@ -30,7 +30,6 @@ signals:
 private slots:
     void getLatticeParams();
     void setLatticeParams();
-    void on_pushButton_Info_clicked();
     void on_pushButton_Index_clicked();
     void on_pushButton_AutoIndexing_clicked();
     void on_pushButton_Refine_clicked();
@@ -44,7 +43,7 @@ private slots:
     void onCompleterActivated(const QString &);
 
 public slots:
-    void setCell(const SX::Crystal::UnitCell&);    
+    void setCell(const SX::Crystal::UnitCell&);
 
 private:
     UnitCellItem* _unitCellItem;
