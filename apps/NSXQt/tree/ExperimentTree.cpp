@@ -24,7 +24,6 @@
 #include <QString>
 #include <QtDebug>
 
-//#include "BlobFinder.h"
 #include "DataReaderFactory.h"
 #include "Detector.h"
 #include "DialogExperiment.h"
@@ -44,6 +43,7 @@
 #include "models/PeakListItem.h"
 #include "models/SampleItem.h"
 #include "models/SourceItem.h"
+#include "models/UnitCellItem.h"
 #include "MCAbsorptionDialog.h"
 #include "OpenGL/GLWidget.h"
 #include "OpenGL/GLSphere.h"
@@ -184,12 +184,32 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
         {
             QMenu* menu = new QMenu(this);
             QAction* addUnitCell = menu->addAction("Add unit cell");
+            QAction* autoIndexing = menu->addAction("Auto indexing");
             menu->popup(viewport()->mapToGlobal(point));
 
             auto addUnitCellLambda = [=] {sitem->addUnitCell();};
-
             connect(addUnitCell, &QAction::triggered, this, addUnitCellLambda);
 
+            auto autoIndexingLambda = [=] {sitem->autoIndexing();};
+            connect(autoIndexing, &QAction::triggered, this, autoIndexingLambda);
+        }
+        else if (UnitCellItem* ucitem=dynamic_cast<UnitCellItem*>(item))
+        {
+            QMenu* menu = new QMenu(this);
+            QAction* info = menu->addAction("Info");
+//            QAction* manualIndexing = menu->addAction("Manual indexing");
+            QAction* refine = menu->addAction("Refine UB matrix and instrument parameters");
+            QAction* basis = menu->addAction("Change of basis");
+            menu->popup(viewport()->mapToGlobal(point));
+
+            auto infoLambda = [=] {ucitem->info();};
+            connect(info, &QAction::triggered, this, infoLambda);
+
+//            auto refineLambda = [=] {ucitem->refineInstrumentParameters();};
+//            connect(refine, &QAction::triggered, this, refineLambda);
+
+//            auto basisLambda = [=] {ucitem->changeBasis();};
+//            connect(basis, &QAction::triggered, this, basisLambda);
         }
         else if (NumorItem* nitem = dynamic_cast<NumorItem*>(item))
             {
