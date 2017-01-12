@@ -27,6 +27,8 @@ public:
 
     void addUnitCell();
 
+    void autoIndexing() const;
+
 };
 
 #endif // SAMPLEITEM_H

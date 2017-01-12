@@ -4,6 +4,7 @@
 #include "Diffractometer.h"
 #include "Sample.h"
 
+#include "dialogs/DialogAutoIndexing.h"
 #include "tree/SamplePropertyWidget.h"
 #include "models/SampleShapeItem.h"
 #include "models/SampleItem.h"
@@ -109,4 +110,11 @@ void SampleItem::addUnitCell()
     auto cell=sample->addUnitCell();
     appendRow(new UnitCellItem(_experiment,cell));
     child(0)->setEnabled(true);
+}
+
+void SampleItem::autoIndexing() const
+{
+    DialogAutoIndexing* dlg = new DialogAutoIndexing(_experiment);
+    dlg->exec();
+
 }
