@@ -1,5 +1,8 @@
+#include <QtDebug>
+
 #include "Diffractometer.h"
 #include "Experiment.h"
+#include "Logger.h"
 #include "Sample.h"
 #include "UnitCell.h"
 
@@ -32,4 +35,9 @@ QWidget* UnitCellItem::inspectItem()
 std::shared_ptr<SX::Crystal::UnitCell> UnitCellItem::getUnitCell()
 {
     return _cell;
+}
+
+void UnitCellItem::info() const
+{
+    qDebug() << "" << *_cell;
 }

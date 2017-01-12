@@ -21,6 +21,9 @@ public:
     ~UnitCellItem();
     QWidget* inspectItem();
     std::shared_ptr<SX::Crystal::UnitCell> getUnitCell();
+
+    void info() const;
+
 private:
     std::shared_ptr<SX::Crystal::UnitCell> _cell;
 };
