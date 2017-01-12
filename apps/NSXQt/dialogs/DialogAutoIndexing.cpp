@@ -58,8 +58,8 @@ DialogAutoIndexing::~DialogAutoIndexing()
 void DialogAutoIndexing::autoIndex()
 {
     // Check that a minimum number of peaks have been selected for indexing
-    QModelIndexList indexList = ui->collectedPeaks->selectionModel()->selectedIndexes();
-    int nPeaks = indexList.size();
+    QModelIndexList selectedPeaks = ui->collectedPeaks->selectionModel()->selectedRows();
+    int nPeaks = selectedPeaks.count();
     if (nPeaks < 10)
     {
         QMessageBox::warning(this, tr("NSXTool"),tr("Need at least 10 peaks for autoindexing"));
@@ -72,9 +72,10 @@ void DialogAutoIndexing::autoIndex()
     // Store Q vectors at rest
     std::vector<Eigen::Vector3d> qvects;
     qvects.reserve(nPeaks);
-    for (int i = 0; i < nPeaks; ++i)
+    for (const auto& index : selectedPeaks)
     {
-        auto peak=_peaks[i];
+        auto peak=_peaks[index.row()];
+        qDebug()<<index.row()<<index.column();
         if (peak->isSelected() && !peak->isMasked())
             qvects.push_back(peak->getQ());
     }
@@ -136,8 +137,9 @@ void DialogAutoIndexing::autoIndex()
         double hklTol = ui->hklTolerance->value();
         int maxNumSolutions = ui->maxNumSolutions->value();
         int success = 0;
-        for (auto peak : _peaks)
+        for (const auto& index : selectedPeaks)
         {
+            auto peak = _peaks[index.row()];
             if (peak->hasIntegerHKL(cell,hklTol) && peak->isSelected() && !peak->isMasked())
             {
                 minimizer.addPeak(*peak);
@@ -193,12 +195,13 @@ void DialogAutoIndexing::autoIndex()
 
             double score=0.0;
             double maxscore=0.0;
-            for (auto peak : _peaks)
+            for (const auto& index : selectedPeaks)
             {
+                auto peak = _peaks[index.row()];
                 if (peak->isSelected() && !peak->isMasked())
                 {
                     maxscore++;
-                    if (peak->hasIntegerHKL(cell,0.2))
+                    if (peak->hasIntegerHKL(cell,hklTol))
                         score++;
                 }
             }
