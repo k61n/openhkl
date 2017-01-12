@@ -207,7 +207,7 @@ void ScaleDialog::calculateRFactors()
     _averages.resize(_peaks.size());
 
     // go through each equivalence class of peaks
-    for (int i = 0; i < _peaks.size(); ++i) {
+    for (size_t i = 0; i < _peaks.size(); ++i) {
         vector<Peak3D*> &peak_list = _peaks[i];
 
         // skip if there are fewer than two peaks
@@ -222,7 +222,7 @@ void ScaleDialog::calculateRFactors()
             double in = p->getScaledIntensity()*getScale(z);
 
             if ( z > _numFrames)
-                _numFrames = std::ceil(z);
+                _numFrames = int(std::lround(std::ceil(z)));
 
             average += in;
             ++_values;
@@ -301,7 +301,7 @@ void ScaleDialog::refineScale()
 {
     auto residual_fn = [&](const Eigen::VectorXd& params, Eigen::VectorXd& residuals)
     {
-        int i = 0;
+        size_t i = 0;
         int idx = 0;
 
         Eigen::VectorXd old_params = _scaleParams;
@@ -337,7 +337,7 @@ void ScaleDialog::refineScale()
 
     resetScale();
 
-    minimizer.initialize(_scaleParams.size(), _values);
+    minimizer.initialize(int(_scaleParams.size()), _values);
 
     minimizer.setxTol(1e-15);
     minimizer.setfTol(1e-15);
