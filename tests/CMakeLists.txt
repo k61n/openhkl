@@ -27,7 +27,7 @@ foreach(source_file ${test_sources})
   if(${NSX_VALGRIND})
     add_test(
       NAME ${base_name}
-      COMMAND valgrind --error-exitcode=3 --leak-check=full $<TARGET_FILE:${base_name}>
+      COMMAND valgrind --error-exitcode=3 --leak-check=full --suppressions=${CMAKE_CURRENT_BINARY_DIR}/suppressions --gen-suppressions=all $<TARGET_FILE:${base_name}>
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
   else()
@@ -69,5 +69,8 @@ configure_file(instrument/Instrument.xml Instrument.xml COPYONLY)
 
 configure_file(crystal/crystal_database.csv crystal_database.csv COPYONLY)
 configure_file(crystal/crystallography.tsv crystallography.tsv COPYONLY)
+
+# valgrind suppressions
+configure_file(valgrind/suppressions suppressions COPYONLY)
 
 
