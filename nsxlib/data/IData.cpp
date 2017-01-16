@@ -272,8 +272,8 @@ std::size_t IData::getFileSize() const
 
 void IData::saveHDF5(const std::string& filename) //const
 {
-    // blosc_init();
-    // blosc_set_nthreads(4);
+    blosc_init();
+    blosc_set_nthreads(4);
 
     //if (!_inMemory)
     //	throw std::runtime_error("Can't save "+_filename+" as HDF5, file not in memory");

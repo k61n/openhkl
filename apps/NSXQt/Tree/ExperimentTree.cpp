@@ -114,11 +114,11 @@ void ExperimentTree::setSession(std::shared_ptr<SessionModel> session)
 
 void ExperimentTree::createNewExperiment()
 {
-    DialogExperiment* dlg;
+    std::unique_ptr<DialogExperiment> dlg;
 
     // DialogExperiment could throw an exception if it fails to read the resource files
     try {
-        dlg = new DialogExperiment();
+        dlg = std::unique_ptr<DialogExperiment>(new DialogExperiment());
 
         // The user pressed cancel, return
         if (!dlg->exec())

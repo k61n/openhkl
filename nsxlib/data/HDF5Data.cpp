@@ -161,8 +161,8 @@ void HDF5Data::open()
     }
 
     // handled automaticall by HDF5 blosc filter
-    // blosc_init();
-    // blosc_set_nthreads(4);
+    blosc_init();
+    blosc_set_nthreads(4);
 
     // Register blosc filter dynamically with HDF5
     char *version, *date;
@@ -171,13 +171,11 @@ void HDF5Data::open()
         throw std::runtime_error("Problem registering BLOSC filter in HDF5 library");
 
     // Create new data set
-    try
-    {
-    _dataset = unique_ptr<H5::DataSet>(new H5::DataSet(_file->openDataSet("/Data/Counts")));
-    // Dataspace of the dataset /counts
-    _space = unique_ptr<H5::DataSpace>(new H5::DataSpace(_dataset->getSpace()));
-    }catch(...)
-    {
+    try {
+        _dataset = unique_ptr<H5::DataSet>(new H5::DataSet(_file->openDataSet("/Data/Counts")));
+        // Dataspace of the dataset /counts
+        _space = unique_ptr<H5::DataSpace>(new H5::DataSpace(_dataset->getSpace()));
+    } catch(...) {
         throw;
     }
     // Get rank of data
@@ -198,7 +196,6 @@ void HDF5Data::open()
     count[2] = _ncols;
 
     _memspace = unique_ptr<H5::DataSpace>(new H5::DataSpace(3,count,NULL));
-
     _isOpened = true;
 
     // reported by valgrind
