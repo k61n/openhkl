@@ -77,7 +77,7 @@ if(COMPILER_IS_GNU_OR_CLANG)
     message("TESTING: COMPILER IS CLANG OR GNU")
   elseif(COMPILER_IS_MSVC)
     add_definitions(/D_USE_MATH_DEFINES)
-    add_compile_options(/Wall)
+    add_compile_options(/W4)
 endif()
 
  
