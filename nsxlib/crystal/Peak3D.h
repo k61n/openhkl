@@ -38,6 +38,7 @@
 #include "UnitCell.h"
 #include "IShape.h"
 #include "Ellipsoid.h"
+#include "Types.h"
 
 namespace SX
 {
@@ -161,8 +162,9 @@ public:
     void setDetectorEvent(std::shared_ptr<SX::Instrument::DetectorEvent> event);
    	//!
     void setSource(std::shared_ptr<SX::Instrument::Source> source);
-   	bool setUnitCell(std::shared_ptr<SX::Crystal::UnitCell> basis);
-   	std::shared_ptr<SX::Crystal::UnitCell> getUnitCell() const;
+   	bool addUnitCell(std::shared_ptr<SX::Crystal::UnitCell> basis);
+   	sptrUnitCell getActiveUnitCell() const;
+   	sptrUnitCell getUnitCell(int index) const;
 	bool hasIntegerHKL(const SX::Crystal::UnitCell& basis, double tolerance=0.2);
 	friend bool operator<(const Peak3D& p1, const Peak3D& p2);
 	void setSelected(bool);
@@ -203,7 +205,7 @@ private:
     Eigen::VectorXd _countsPeak;
     Eigen::VectorXd _countsBkg;
 	//!
-	std::shared_ptr<SX::Crystal::UnitCell> _basis;
+	CellList _unitCells;
 	//! Pointer to the state of the Sample Component
     std::shared_ptr<SX::Instrument::ComponentState> _sampleState;
 	//! Pointer to a Detector Event state
@@ -217,6 +219,8 @@ private:
 	bool _masked;
 	bool _observed;
 	double _transmission;
+
+	int _activeCellIndex;
 
     
     struct IntegrationState

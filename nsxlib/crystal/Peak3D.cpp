@@ -33,6 +33,7 @@
  *
  */
 
+#include <algorithm>
 #include <cmath>
 #include <stdexcept>
 
@@ -49,6 +50,7 @@
 #include "Units.h"
 #include "Blob3D.h"
 #include "IData.h"
+#include "Types.h"
 
 #include "IFrameIterator.h"
 
@@ -67,7 +69,7 @@ Peak3D::Peak3D(std::shared_ptr<SX::Data::IData> data):
 		_hkl(Eigen::Vector3d::Zero()),
 		_peak(nullptr),
 		_bkg(nullptr),
-		_basis(nullptr),
+		_unitCells(),
 		_sampleState(nullptr),
 		_event(nullptr),
 		_source(nullptr),
@@ -78,7 +80,8 @@ Peak3D::Peak3D(std::shared_ptr<SX::Data::IData> data):
 		_observed(true),
 		_masked(false),
 		_transmission(1.0),
-		_state()
+		_state(),
+		_activeCellIndex(0)
 {
     linkData(data);
 }
@@ -107,7 +110,7 @@ Peak3D::Peak3D(const Peak3D& other):
 		_projection(other._projection),
 		_projectionPeak(other._projectionPeak),
 		_projectionBkg(other._projectionBkg),
-		_basis(other._basis),
+		_unitCells(other._unitCells),
 		_sampleState(other._sampleState),
 		_event(other._event),
 		_source(other._source),
@@ -118,7 +121,8 @@ Peak3D::Peak3D(const Peak3D& other):
 		_observed(other._observed),
 		_masked(other._masked),
 		_transmission(other._transmission),
-		_state(other._state)
+		_state(other._state),
+		_activeCellIndex(other._activeCellIndex)
 {
 }
 
@@ -136,7 +140,7 @@ Peak3D& Peak3D::operator=(const Peak3D& other)
 		_projectionPeak = other._projectionPeak;
 		_projectionBkg = other._projectionBkg;
 
-		_basis = other._basis;
+		_unitCells = other._unitCells;
 		_sampleState = other._sampleState;
 		_event = other._event;
 		_source= other._source;
@@ -149,6 +153,8 @@ Peak3D& Peak3D::operator=(const Peak3D& other)
 		_transmission = other._transmission;
 
 		_state = other._state;
+
+		_activeCellIndex = other._activeCellIndex;
 
 	}
 
@@ -273,10 +279,16 @@ Eigen::VectorXd Peak3D::getBkgProjectionSigma() const
 	return _scale*(_projectionBkg.array().sqrt());
 }
 
-bool Peak3D::setUnitCell(std::shared_ptr<SX::Crystal::UnitCell> basis)
+bool Peak3D::addUnitCell(std::shared_ptr<SX::Crystal::UnitCell> basis)
 {
-	_basis=basis;
-	_hkl=_basis->fromReciprocalStandard(this->getQ());
+	auto it = std::find(_unitCells.begin(),_unitCells.end(),basis);
+
+	if (it == _unitCells.end())
+		_unitCells.push_back(basis);
+
+	_activeCellIndex = std::distance(_unitCells.begin(),it);
+	sptrUnitCell uc = _unitCells[_activeCellIndex];
+	_hkl=uc->fromReciprocalStandard(this->getQ());
 	if (std::fabs(_hkl[0]-std::round(_hkl[0]))<0.2 && std::fabs(_hkl[1]-std::round(_hkl[1]))<0.2 && std::fabs(_hkl[2]-std::round(_hkl[2]))<0.2)
 	{
 		_hkl[0]=std::round(_hkl[0]);
@@ -287,9 +299,20 @@ bool Peak3D::setUnitCell(std::shared_ptr<SX::Crystal::UnitCell> basis)
 	return false;
 }
 
-std::shared_ptr<SX::Crystal::UnitCell> Peak3D::getUnitCell() const
+sptrUnitCell Peak3D::getActiveUnitCell() const
 {
-	return _basis;
+	if (_activeCellIndex < 0 || _activeCellIndex >= _unitCells.size())
+		return nullptr;
+
+	return _unitCells[_activeCellIndex];
+}
+
+sptrUnitCell Peak3D::getUnitCell(int index) const
+{
+	if (index < 0 || index >= _unitCells.size())
+		return nullptr;
+
+	return _unitCells[index];
 }
 
 bool Peak3D::hasIntegerHKL(const SX::Crystal::UnitCell& basis, double tolerance)
