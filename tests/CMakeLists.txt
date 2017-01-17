@@ -34,6 +34,11 @@ foreach(source_file ${test_sources})
     add_test(${base_name} ${base_name})
   endif()
   #message("Added test ${base_name}")
+
+  if(NSX_TIDY)
+    add_tidy_target(${base_name})
+  endif()
+  
 endforeach(source_file)
 
 #add_custom_target(check ALL COMMAND ${CMAKE_CTEST_COMMAND})

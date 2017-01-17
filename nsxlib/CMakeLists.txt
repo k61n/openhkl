@@ -82,3 +82,7 @@ install(FILES ${headers} DESTINATION ${INCLUDE_DIR})
 
 
 message("FROM NSXLIB: GSL_LIBRARIES is ${GSL_LIBRARIES}")
+
+if(NSX_TIDY)
+  add_tidy_target(NSXTool)
+endif()

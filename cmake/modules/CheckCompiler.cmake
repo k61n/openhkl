@@ -158,6 +158,14 @@ if(BUILD_OPTIMIZED_DEBUG)
     endif()
 endif()
 
+# code sanitizer
+if (NSX_SANITIZE)
+  message("The sanitize options are: thread, memory, undefined, dataflow, cfi, safe-stack")
+  message(STATUS "The sanitize option '${NSX_SANITIZER}' has been selected")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=${NSX_SANITIZER} -fsanitize-recover=all")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=${NSX_SANITIZER} -fsanitize-recover=all")
+endif()
+
 message("Finished configuring compiler")
 message(STATUS "The c++ compiler is ${CMAKE_CXX_COMPILER_ID}")
 message(STATUS "The build type is ${CMAKE_BUILD_TYPE}")

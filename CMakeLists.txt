@@ -23,6 +23,8 @@ option(BUILD_WITH_OPENMP "Build with OpenMP support" OFF)
 option(BUILD_DEBIAN "Build debian .deb packages" OFF)
 option(NSX_BUILD_STATIC "Link nsxlib statically" OFF)
 option(NSX_VALGRIND "Run tests with valgrind" OFF)
+option(NSX_SANITIZE "Compile with clang's -fsanitize (must also set NSX_SANITIZER variable)" OFF)
+option(NSX_TIDY "Add clang-tidy custom target" OFF)
 
 ###########################################################################
 # Scripts controlling build setup and dependencies
@@ -31,6 +33,11 @@ include(CMakeFindBinUtils)
 include(BuildType)             # build types: debug and release
 include(CheckDependencies)     # checkexternal dependencies
 include(CheckCompiler)         # configure compiler
+
+if(NSX_TIDY)
+  set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+  include(ClangTidy)
+endif()
 
 if(BUILD_COVERAGE_REPORT)
   include(CheckCoverage)        # code coverage
@@ -85,6 +92,7 @@ if(BUILD_COVERAGE_REPORT)
   #list(APPEND ignore_dirs "'*/tests/*'")
   add_coverage_target(coverage "${ignore_dirs}")
 endif()
+
 
 ###########################################################################
 # Installation settings
