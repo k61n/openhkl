@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>DialogAutoIndexing</class>
  <widget class="QDialog" name="DialogAutoIndexing">
+  <property name="windowModality">
+   <enum>Qt::ApplicationModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -148,13 +151,6 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="hklToleranceLabel">
-           <property name="text">
-            <string>HKL tolerance</string>
-           </property>
-          </widget>
-         </item>
          <item row="2" column="0">
           <widget class="QLabel" name="label_4">
            <property name="text">
@@ -166,7 +162,30 @@
           </widget>
          </item>
          <item row="3" column="1">
+          <widget class="QSpinBox" name="nStacks">
+           <property name="buttonSymbols">
+            <enum>QAbstractSpinBox::NoButtons</enum>
+           </property>
+           <property name="maximum">
+            <number>1000</number>
+           </property>
+           <property name="value">
+            <number>30</number>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>Number of stacks</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
           <widget class="QDoubleSpinBox" name="hklTolerance">
+           <property name="buttonSymbols">
+            <enum>QAbstractSpinBox::NoButtons</enum>
+           </property>
            <property name="maximum">
             <double>1.000000000000000</double>
            </property>
@@ -175,6 +194,13 @@
            </property>
            <property name="value">
             <double>0.200000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="hklToleranceLabel">
+           <property name="text">
+            <string>HKL tolerance</string>
            </property>
           </widget>
          </item>
