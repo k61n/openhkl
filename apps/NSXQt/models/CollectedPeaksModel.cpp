@@ -10,6 +10,7 @@
 #include "CollectedPeaksModel.h"
 #include "IData.h"
 #include "Sample.h"
+#include "Types.h"
 
 #include <QtDebug>
 
@@ -180,7 +181,7 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
         }
         case Column::unitCell:
         {
-            auto unitCell = _peaks[row]->getUnitCell();
+            auto unitCell = _peaks[row]->getActiveUnitCell();
             if (!unitCell)
                 return QString("not set");
             else
@@ -328,8 +329,8 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
                   _peaks.end(),
                   [&](sptrPeak3D p1, const sptrPeak3D p2)
                   {
-                    auto uc1 = p1->getUnitCell();
-                    auto uc2 = p2->getUnitCell();
+                    auto uc1 = p1->getActiveUnitCell();
+                    auto uc2 = p2->getActiveUnitCell();
                     std::string uc1Name = uc1 ? uc1->getName() : "";
                     std::string uc2Name = uc2 ? uc2->getName() : "";
                     return (uc2Name<uc1Name);
@@ -368,7 +369,7 @@ bool CollectedPeaksModel::setData(const QModelIndex& index, const QVariant& valu
                 return false;
             int unitCellIndex = value.toInt();
             sptrUnitCell unitCell = _cells[unitCellIndex];
-            _peaks[row]->setUnitCell(unitCell);
+            _peaks[row]->addUnitCell(unitCell);
         }
     }
 
@@ -389,7 +390,7 @@ void CollectedPeaksModel::setUnitCells(const SX::Instrument::CellList &cells)
 
 void CollectedPeaksModel::sortEquivalents()
 {
-    auto ptrcell=_peaks[0]->getUnitCell();
+    auto ptrcell=_peaks[0]->getActiveUnitCell();
 
     // If no unit cell defined for the peak collection, return.
     if (!ptrcell)
@@ -432,7 +433,7 @@ void CollectedPeaksModel::writeShelX(const std::string& filename, double toleran
         return;
     }
 
-    auto sptrBasis = _peaks[0]->getUnitCell();
+    auto sptrBasis = _peaks[0]->getActiveUnitCell();
     if (!sptrBasis)
     {
         qCritical()<<"No unit cell defined the peaks. No index can be defined.";
@@ -459,7 +460,7 @@ void CollectedPeaksModel::writeShelX(const std::string& filename, double toleran
 
         sptrPeak3D peak = _peaks[index.row()];
 
-        if (peak->isSelected())
+        if (peak->isSelected() && !peak->isMasked())
         {
             const Eigen::RowVector3d& hkl=peak->getMillerIndices();
 
@@ -505,7 +506,7 @@ void CollectedPeaksModel::writeFullProf(const std::string& filename, double tole
         return;
     }
 
-    auto sptrBasis = _peaks[0]->getUnitCell();
+    auto sptrBasis = _peaks[0]->getActiveUnitCell();
     if (!sptrBasis)
     {
         qCritical()<<"No unit cell defined the peaks. No index can be defined.";
@@ -533,7 +534,7 @@ void CollectedPeaksModel::writeFullProf(const std::string& filename, double tole
     for (const auto &index : indexes)
     {
         sptrPeak3D peak = _peaks[index.row()];
-        if (peak->isSelected())
+        if (peak->isSelected() && !peak->isMasked())
         {
 
             if (!(peak->hasIntegerHKL(*sptrBasis,tolerance)))

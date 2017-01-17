@@ -165,7 +165,7 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
                 p->setSelected(false);
 
             if (cell)
-                p->setUnitCell(cell);
+                p->addUnitCell(cell);
 
             numor->addPeak(p);
             npeaks++;

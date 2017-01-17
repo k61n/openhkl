@@ -152,7 +152,7 @@ void UnitCellPropertyWidget::setCell(const SX::Crystal::UnitCell& cell)
         auto& peaks=data.second->getPeaks();
         for (auto p: peaks)
         {
-            p->setUnitCell(_unitCellItem->getUnitCell());
+            p->addUnitCell(_unitCellItem->getUnitCell());
             progressHandler->setProgress(i * 100.0 / peaks.size());
             ++i;
         }
@@ -228,7 +228,7 @@ void UnitCellPropertyWidget::transform(const Eigen::Matrix3d &P)
        auto& peaks=data.second->getPeaks();
        for (auto p: peaks)
        {
-           p->setUnitCell(_unitCellItem->getUnitCell());
+           p->addUnitCell(_unitCellItem->getUnitCell());
        }
    }
    emit cellUpdated();

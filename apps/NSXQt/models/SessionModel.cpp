@@ -331,9 +331,10 @@ void SessionModel::computeRFactors()
         return;
     }
 
-    for (sptrPeak3D peak: peak_list) {
+    for (sptrPeak3D peak: peak_list)
+    {
         // what do we do if there is more than one sample/unit cell??
-        unit_cell = peak->getUnitCell();
+        unit_cell = peak->getActiveUnitCell();
 
         if (unit_cell)
             break;
