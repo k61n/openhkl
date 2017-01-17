@@ -50,7 +50,7 @@ Indexer::Indexer(ptrUnitCell cell):
 	auto UB = _cell->getReciprocalStandardM().transpose();
 
     #pragma omp parallel for
-    for (int i = 0; i < hkls.size(); ++i) {
+    for (size_t i = 0; i < hkls.size(); ++i) {
         double qnorm = (UB*hkls[i]).norm();
         _possiblePeaks[i].first = qnorm;
         _possiblePeaks[i].second = hkls[i];

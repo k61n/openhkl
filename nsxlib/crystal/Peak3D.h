@@ -67,14 +67,15 @@ namespace Crystal
 class Peak3D
 {
 public:
+    using shape_type = SX::Geometry::IShape<double,3>;
 
     Peak3D(std::shared_ptr<SX::Data::IData> data=std::shared_ptr<SX::Data::IData>());
     Peak3D(std::shared_ptr<SX::Data::IData> data, const SX::Geometry::Blob3D& blob, double confidence);
     Peak3D(const Peak3D& other);
     Peak3D& operator=(const Peak3D& other);
-    ~Peak3D();
+    ~Peak3D() = default;
     //! Attach the data
-    void linkData(std::shared_ptr<SX::Data::IData> data);
+    void linkData(const std::shared_ptr<SX::Data::IData>& data);
 
     //! Detach the data
     void unlinkData();
@@ -117,8 +118,8 @@ public:
     Eigen::VectorXd getProjectionSigma() const;
     Eigen::VectorXd getPeakProjectionSigma() const;
     Eigen::VectorXd getBkgProjectionSigma() const;
-    const SX::Geometry::IShape<double,3>* getPeak() const { return _peak;}
-    const SX::Geometry::IShape<double,3>* getBackground() const {return _bkg;}
+    const shape_type& getPeak() const { return *_peak;}
+    const shape_type& getBackground() const {return *_bkg;}
     //! Return the scaled intensity of the peak.
     double getScaledIntensity() const;
     //! Return the raw intensity of the peak.
@@ -141,12 +142,12 @@ public:
     //! Set the scaling factor.
     void setScale(double factor);
     //!
-    void setSampleState(std::shared_ptr<SX::Instrument::ComponentState> gstate);
+    void setSampleState(const std::shared_ptr<SX::Instrument::ComponentState>& gstate);
     //!
-    void setDetectorEvent(std::shared_ptr<SX::Instrument::DetectorEvent> event);
+    void setDetectorEvent(const std::shared_ptr<SX::Instrument::DetectorEvent>& event);
     //!
-    void setSource(std::shared_ptr<SX::Instrument::Source> source);
-    bool setUnitCell(std::shared_ptr<SX::Crystal::UnitCell> basis);
+    void setSource(const std::shared_ptr<SX::Instrument::Source>& source);
+    bool setUnitCell(const std::shared_ptr<SX::Crystal::UnitCell>& basis);
     std::shared_ptr<SX::Crystal::UnitCell> getUnitCell() const;
     bool hasIntegerHKL(const SX::Crystal::UnitCell& basis, double tolerance=0.2);
     friend bool operator<(const Peak3D& p1, const Peak3D& p2);
@@ -181,9 +182,9 @@ private:
     //! Miller indices of the peak
     Eigen::RowVector3d _hkl;
     //! Shape describing the Peak zone
-    SX::Geometry::IShape<double,3>* _peak;
+    std::unique_ptr<SX::Geometry::IShape<double,3>> _peak;
     //! Shape describing the background zone (must fully contain peak)
-    SX::Geometry::IShape<double,3>* _bkg;
+    std::unique_ptr<SX::Geometry::IShape<double,3>> _bkg;
     //!
     Eigen::VectorXd _projection;
     Eigen::VectorXd _projectionPeak;

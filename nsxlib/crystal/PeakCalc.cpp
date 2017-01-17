@@ -82,8 +82,8 @@ sptrPeak3D PeakCalc::averagePeaks(std::shared_ptr<Data::IData> data, double dist
     bkg_shape.setZero();
 
     for(sptrPeak3D p: neighbors) {
-        const Ellipsoid<double, 3>* ell_peak = dynamic_cast<const Ellipsoid<double, 3>*>(p->getPeak());
-        const Ellipsoid<double, 3>* ell_bkg = dynamic_cast<const Ellipsoid<double, 3>*>(p->getBackground());
+        const Ellipsoid<double, 3>* ell_peak = dynamic_cast<const Ellipsoid<double, 3>*>(&p->getPeak());
+        const Ellipsoid<double, 3>* ell_bkg = dynamic_cast<const Ellipsoid<double, 3>*>(&p->getBackground());
 
         // in current implementation these casts should always work
         assert(ell_peak != nullptr);
@@ -129,7 +129,7 @@ std::vector<sptrPeak3D> PeakCalc::findNeighbors(const std::set<sptrPeak3D>& peak
         if (peak->isMasked() || !peak->isSelected())
             continue;
 
-        const double squared_dist = (center-peak->getPeak()->getAABBCenter()).squaredNorm();
+        const double squared_dist = (center-peak->getPeak().getAABBCenter()).squaredNorm();
 
         // not close enough
         if ( squared_dist > max_squared_dist)

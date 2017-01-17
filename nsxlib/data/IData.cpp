@@ -461,11 +461,9 @@ void IData::maskPeaks() const
 void IData::maskPeak(sptrPeak3D peak) const
 {
     peak->setMasked(false);
-    for (auto m : _masks)
-    {
+    for (auto m : _masks) {
         // If the background of the peak intercept the mask, unselected the peak
-        if (m->intercept(*(peak->getBackground())))
-        {
+        if (m->intercept(peak->getBackground())) {
             peak->setMasked(true);
             break;
         }
@@ -476,8 +474,7 @@ bool IData::inMasked(const Eigen::Vector3d& point) const
 {
 
     // Loop over the defined masks and return true if one of them contains the point
-    for (auto m : _masks)
-    {
+    for (auto m : _masks) {
         if (m->isInsideAABB(point))
             return true;
     }
@@ -493,6 +490,7 @@ void IData::releaseMemory()
 
     for (auto& d : _data)
         d.resize(0,0);
+    
     _data.clear();
     _data.shrink_to_fit();
 
