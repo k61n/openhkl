@@ -1,8 +1,8 @@
-/* 
+/*
  * raw_to_tiff.cpp
  * author: Jonathan Fisher
  *         j.fisher@fz-juelich.de, jonathan.m.fisher@gmail.com
- *         Forshungszentrum Juelich GmbH
+ *         Forschungszentrum Juelich GmbH
  *
  * desc: simple command-line utitily to convert a raw binary file to grayscale tiff
  */
@@ -27,7 +27,7 @@ template<typename NumericType>
 double compute_average(const void* void_data, int length)
 {
     const NumericType* data = reinterpret_cast<const NumericType*>(void_data);
-    
+
     double average = 0.0;
     double factor = 1.0 / (double)length;
 
@@ -57,8 +57,8 @@ void swap_endian(vector<char>& data)
     for (int i = 0; i < size; ++i) {
         char c = data[2*i];
         data[2*i] = data[2*i+1];
-        data[2*i+1] = c;            
-    }    
+        data[2*i+1] = c;
+    }
 }
 
 int write_tiff(const string filename, int width, int height, int bpp, char* buffer)
@@ -84,7 +84,7 @@ int write_tiff(const string filename, int width, int height, int bpp, char* buff
 
     for (unsigned int i = 0; i < height; ++i)
         TIFFWriteScanline(file, &buffer[i*width*bpp], i);
-    
+
     TIFFClose(file);
     return 0;
 }
@@ -170,7 +170,7 @@ int main(int argc, char** argv)
         cout << "swapping endianness" << endl;
         swap_endian(data);
     }
-        
+
 
     // remove .raw from filename if necessary
     int len = filename.size();
@@ -178,12 +178,12 @@ int main(int argc, char** argv)
     if ( len > 4 )
         if (filename.substr(len-4, 4) == ".raw" )
             filename = filename.substr(0, len-4);
-  
+
     // write the tiff file
     if ( write_tiff(filename + ".tiff", width, height, bpp, &data[0]) ) {
         cout << "Error: could not successfully write tiff!" << endl;
         return 1;
     }
-        
+
     return 0;
 }
