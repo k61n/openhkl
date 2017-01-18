@@ -70,7 +70,7 @@ class IFrameIterator;
 class ThreadedFrameIterator;
 class BasicFrameIterator;
 
-using FrameIteratorCallback = std::function<IFrameIterator*(IData*, int)>;
+using FrameIteratorCallback = std::function<IFrameIterator*(IData&, int)>;
 
 /*! \brief Interface for diffraction data
  *
@@ -240,8 +240,6 @@ protected:
 };
 
 } // end namespace Data
-
 } // end namespace SX
-
 
 #endif // NSXTOOL_IDATA_H_

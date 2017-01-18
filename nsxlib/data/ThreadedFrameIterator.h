@@ -14,19 +14,16 @@ namespace SX {
 
 namespace Data {
 
-class ThreadedFrameIterator: public IFrameIterator {
-public: 
-    ThreadedFrameIterator(IData* data, unsigned int idx);
-    ~ThreadedFrameIterator();
-
+class ThreadedFrameIterator final: public IFrameIterator {
+public:
+    ThreadedFrameIterator(IData& data, unsigned int idx);
+    ~ThreadedFrameIterator() = default;
     SX::Types::RealMatrix& getFrame() override;
     void advance() override;
 
 private:
     SX::Types::RealMatrix _currentFrame;
     std::shared_future<SX::Types::RealMatrix> _nextFrame;
-
-
     std::shared_future<SX::Types::RealMatrix> getFrameAsync(int idx);
 };
 

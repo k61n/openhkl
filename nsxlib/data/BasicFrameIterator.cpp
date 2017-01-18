@@ -1,26 +1,16 @@
 // author: Jonathan Fisher
 // j.fisher@fz-juelich.de
 
-
 #include "IFrameIterator.h"
 #include "BasicFrameIterator.h"
 #include "IData.h"
 
-
 namespace SX {
-
 namespace Data {
 
-
-BasicFrameIterator::BasicFrameIterator(IData *data, unsigned int idx): IFrameIterator(data, idx)
+BasicFrameIterator::BasicFrameIterator(IData& data, unsigned int idx): IFrameIterator(data, idx)
 {
-    assert(data != nullptr);
-    _currentFrame = _data->getFrame(_index).cast<double>();
-}
-
-BasicFrameIterator::~BasicFrameIterator()
-{
-
+    _currentFrame = _data.getFrame(_index).cast<double>();
 }
 
 SX::Types::RealMatrix& BasicFrameIterator::getFrame()
@@ -31,14 +21,10 @@ SX::Types::RealMatrix& BasicFrameIterator::getFrame()
 void BasicFrameIterator::advance()
 {
     ++_index;
-
-    if (_index != _data->getNFrames())
-        _currentFrame = _data->getFrame(_index).cast<double>();
+    if (_index != _data.getNFrames()) {
+        _currentFrame = _data.getFrame(_index).cast<double>();
+    }
 }
 
-
-
-}
-
-
-}
+} // namespace Data
+} // namespace SX

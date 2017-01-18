@@ -61,13 +61,12 @@ std::unique_ptr<IFrameIterator> IData::getIterator(int idx)
 {
     // use default frame iterator if one hasn't been set
     if ( !_iteratorCallback) {
-        _iteratorCallback = [] (IData* data, int index) {
+        _iteratorCallback = [] (IData& data, int index) {
             return new BasicFrameIterator(data, static_cast<unsigned int>(index));
             //return new ThreadedFrameIterator(data, index);
         };
     }
-
-    return std::unique_ptr<IFrameIterator>(_iteratorCallback(this, idx));
+    return std::unique_ptr<IFrameIterator>(_iteratorCallback(*this, idx));
 }
 
 void IData::setIteratorCallback(FrameIteratorCallback callback)
