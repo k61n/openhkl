@@ -43,10 +43,8 @@
 #include "Diffractometer.h"
 
 
-namespace SX
-{
-    namespace Utils
-    {
+namespace SX {
+    namespace Utils {
         template <class T> struct IMatrixParser;
     }
 }
@@ -59,14 +57,14 @@ namespace Data
 /*! \brief Legacy ILL Data in ASCII format.
  *
  */
-class ILLAsciiData : public IData
+class ILLAsciiData final: public IData
 {
 public:
 
     static IData* create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer);
 
     //! Default constructor
-    ILLAsciiData(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer);
+    ILLAsciiData(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer);
     //! Copy constructor
     ILLAsciiData(const ILLAsciiData& other)=delete;
     //! Destructor

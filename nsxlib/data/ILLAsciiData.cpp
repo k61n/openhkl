@@ -56,14 +56,24 @@
 #include "Source.h"
 #include "Units.h"
 
+using SX::Utils::readIntsFromChar;
+using SX::Utils::readDoublesFromChar;
+using SX::Utils::EigenMatrixParser;
+using SX::Utils::TopLeftColMajorMapper;
+using SX::Utils::TopLeftRowMajorMapper;
+using SX::Utils::TopRightColMajorMapper;
+using SX::Utils::TopRightRowMajorMapper;
+using SX::Utils::BottomLeftColMajorMapper;
+using SX::Utils::BottomLeftRowMajorMapper;
+using SX::Utils::BottomRightColMajorMapper;
+using SX::Utils::BottomRightRowMajorMapper;
+namespace qi = boost::spirit::qi;
+
 namespace SX
 {
 
 namespace Data
 {
-
-using namespace SX::Utils;
-using namespace SX::Units;
 
 // 81 characters per line, at least 100 lines of header
 std::size_t ILLAsciiData::BlockSize = 100*81;
@@ -73,8 +83,8 @@ IData* ILLAsciiData::create(const std::string& filename, std::shared_ptr<Diffrac
     return new ILLAsciiData(filename, diffractometer);
 }
 
-ILLAsciiData::ILLAsciiData(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer)
-: IData(filename,diffractometer)
+ILLAsciiData::ILLAsciiData(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer):
+    IData(filename,diffractometer)
 {
     try {
         boost::interprocess::file_mapping filemap(_filename.c_str(), boost::interprocess::read_only);
@@ -105,8 +115,9 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, std::shared_ptr<Diffract
     std::vector<int> vi;
     std::size_t skip3Lines=3*81;
     readIntsFromChar(_mapAddress+_headerSize+skip3Lines,_mapAddress+_headerSize+skip3Lines+16,vi);
-    if ((vi.size() != 2) || (vi[0] != int(_nAngles+3)))
+    if ((vi.size() != 2) || (vi[0] != int(_nAngles+3))) {
         throw std::runtime_error("Problem parsing numor: mismatch between number of angles in header and datablock 1.");
+    }
 
     // This corresponds to the lines going from SSSSSSSSS to "            time         monitor       Total Cou     angles*1000"
     std::size_t fromStoFData = skip3Lines + size_t(vi[1]+1)*81;
@@ -116,9 +127,9 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, std::shared_ptr<Diffract
     std::size_t FData = 81*size_t(std::lround(std::ceil(vi[0]/6.0)));
     readDoublesFromChar(beginValues, beginValues + FData, vd);
 
-    if (vd.size() != (_nAngles+3))
+    if (vd.size() != (_nAngles+3)) {
         throw std::runtime_error("Problem parsing numor: mismatch between number of angles in header and datablock 2.");
-
+    }
     _metadata->add<double>("time", vd[0]);
     _metadata->add<double>("monitor", vd[1]);
 
@@ -204,8 +215,9 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, std::shared_ptr<Diffract
         for (std::size_t f = 0; f < _nFrames; ++f) {
             std::vector<double> detValues;
             detValues.reserve(detAxisIdsToNames.size());
-            for (const auto& v: detAxisIdsToNames)
+            for (const auto& v: detAxisIdsToNames) {
                 detValues.push_back(gonioValues[v][f]);
+            }
             _detectorStates.push_back(_diffractometer->getDetector()->createState(detValues));
         }
     }
@@ -220,8 +232,9 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, std::shared_ptr<Diffract
         for (std::size_t f = 0; f < _nFrames; ++f) {
             std::vector<double> sampleValues;
             sampleValues.reserve(sampleAxisIdsToNames.size());
-            for (const auto& v: sampleAxisIdsToNames)
+            for (const auto& v: sampleAxisIdsToNames) {
                 sampleValues.push_back(gonioValues[v][f]);
+            }
             _sampleStates.push_back(_diffractometer->getSample()->createState(sampleValues));
         }
     }
@@ -236,8 +249,9 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, std::shared_ptr<Diffract
         for (std::size_t f = 0; f < _nFrames; ++f) {
             std::vector<double> sourceValues;
             sourceValues.reserve(sourceAxisIdsToNames.size());
-            for (const auto& v: sourceAxisIdsToNames)
+            for (const auto& v: sourceAxisIdsToNames) {
                 sourceValues.push_back(gonioValues[v][f]);
+            }
             _sourceStates.push_back(_diffractometer->getSource()->createState(sourceValues));
         }
     }
@@ -299,8 +313,9 @@ void ILLAsciiData::open()
 
 void ILLAsciiData::close()
 {
-    if (!_isOpened)
+    if (!_isOpened) {
         return;
+    }
     _map = boost::move(boost::interprocess::mapped_region());
     _isOpened = false;
 }
@@ -308,17 +323,13 @@ void ILLAsciiData::close()
 Eigen::MatrixXi ILLAsciiData::readFrame(std::size_t idx)
 {
     assert(idx < _nFrames);
-
     // Determine the beginning of the data block
     std::size_t begin = _headerSize+(idx+1)*_skipChar+idx*_dataLength;
-
     // Create vector and try to reserve a memory block
     Eigen::MatrixXi v;
     v.resize(long(_nrows), long(_ncols));
-
     //EigenMatrixParser<const char*,TopRightColMajorMapper> parser;
     qi::phrase_parse(_mapAddress+begin,_mapAddress+begin+_dataLength,*_parser,qi::blank, v);
-
     return v;
 }
 
@@ -342,8 +353,9 @@ void ILLAsciiData::readControlIBlock(std::stringstream& buffer)
     goToLine(buffer, 13, 0);
 
     // Read the metadata keys
-    for (size_t i = 0; i < tot; ++i)
+    for (size_t i = 0; i < tot; ++i) {
         buffer >> Ientries[i];
+    }
 
     // Goto the line containing values
     goToLine(buffer, int(13+lines), 0);
@@ -351,8 +363,9 @@ void ILLAsciiData::readControlIBlock(std::stringstream& buffer)
     for (size_t i = 0; i < tot; ++i) {
         buffer >> value;
         // Skip any 0 values in this block
-        if (value != 0)
+        if (value != 0) {
             _metadata->add<int>(Ientries[i], value);
+        }
     }
     _currentLine = 13+2*lines;
 }
@@ -410,8 +423,9 @@ void ILLAsciiData::readControlFBlock(std::stringstream& buffer)
     for (size_t i = 0; i < size_t(nTot); ++i) {
         buffer >> value;
         // Ignore spare member blocks.
-        if (keys[i].compare("(spare)"))
+        if (keys[i].compare("(spare)")) {
             _metadata->add<double>(keys[i], value);
+        }
     }
     _currentLine += size_t(fullLines+missing);
 }
@@ -475,8 +489,9 @@ void ILLAsciiData::readMetaData(const char* buf)
     std::string s(buf);
     std::size_t endMetadata = s.find("SSSSSSSS");
 
-    if (endMetadata == std::string::npos)
+    if (endMetadata == std::string::npos) {
         throw std::runtime_error("Could not find end of metadata block");
+    }
 
     // Number of characters up to the "SSSS...." line
     _headerSize = endMetadata;
