@@ -668,9 +668,5 @@ bool Peak3D::getCalculated() const
     return _calculated;
 }
 
-}
-}
-
-
-
-
+} // Crsystal
+} // SX

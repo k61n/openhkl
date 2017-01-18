@@ -48,19 +48,18 @@ namespace Crystal
 
 class Peak3D;
 using sptrPeak3D = std::shared_ptr<Peak3D>;
-typedef std::vector<SymOp> groupElementsList;
+using groupElementsList =  std::vector<SymOp>;
 
 class SpaceGroup
 {
-
 public:
     //! Construct a space group from its IT symbol. Lookup in the IUCR table
     SpaceGroup(const std::string& symbol);
     //! Construct a space group from a string containing the generators given in the Jones notation and separated
     //! by ";" characters
-    SpaceGroup(const std::string& symbol, const std::string& generators);
+    SpaceGroup(std::string symbol, std::string generators);
     //! Copy
-    SpaceGroup(const SpaceGroup& other);
+    SpaceGroup(const SpaceGroup& other) = default;
     //! Assignment
     SpaceGroup& operator=(const SpaceGroup& other);
     //! Get the IT symbol for this space group
@@ -92,23 +91,18 @@ public:
     bool isEquivalent(const Eigen::Vector3d& a, const Eigen::Vector3d& b, bool friedel=false) const;
     //! Return whether two sets of indices are related by a symmetry up to Friedel reflection
     bool isFriedelEquivalent(double h1, double k1, double l1, double h2, double k2, double l2) const;
-private:
 
+private:
     void generateGroupElements();
 
-private:
-
     std::string _symbol;
-
     std::string _generators;
-
     groupElementsList _groupElements;
 };
 
 std::ostream& operator<<(std::ostream& os, const SpaceGroup& sg);
 
 } // end namespace Crystal
-
 } // end namespace SX
 
 #endif /* NSXTOOL_SYMMETRYGROUPGENERATOR_H_ */

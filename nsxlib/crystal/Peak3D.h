@@ -107,9 +107,9 @@ public:
     void integrate();
 
     //!
-    const std::shared_ptr<SX::Data::IData> getData() const { return _data.lock();}
+    // const std::shared_ptr<SX::Data::IData> getData() const { return _data.lock();}
 
-    std::shared_ptr<SX::Data::IData> getData() { return _data.lock();}
+    std::shared_ptr<SX::Data::IData> getData() const { return _data.lock();}
 
     //! Get the projection of total data in the bounding box.
     Eigen::VectorXd getProjection() const;
