@@ -165,12 +165,13 @@ public:
    	bool addUnitCell(std::shared_ptr<SX::Crystal::UnitCell> basis);
    	sptrUnitCell getActiveUnitCell() const;
    	sptrUnitCell getUnitCell(int index) const;
-	bool hasIntegerHKL(const SX::Crystal::UnitCell& basis, double tolerance=0.2);
+	bool hasIntegerHKL(const SX::Crystal::UnitCell& basis);
 	friend bool operator<(const Peak3D& p1, const Peak3D& p2);
 	void setSelected(bool);
 	bool isSelected() const;
 	void setMasked(bool masked);
 	bool isMasked() const;
+	bool isIndexed() const;
 	void setObserved(bool observed);
 	bool isObserved() const;
 	void setTransmission(double transmission);

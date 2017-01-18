@@ -279,24 +279,21 @@ Eigen::VectorXd Peak3D::getBkgProjectionSigma() const
 	return _scale*(_projectionBkg.array().sqrt());
 }
 
-bool Peak3D::addUnitCell(std::shared_ptr<SX::Crystal::UnitCell> basis)
+bool Peak3D::addUnitCell(sptrUnitCell basis)
 {
 	auto it = std::find(_unitCells.begin(),_unitCells.end(),basis);
 
 	if (it == _unitCells.end())
+    {
 		_unitCells.push_back(basis);
+        _activeCellIndex = _unitCells.size()-1;
+    }
+    else
+        _activeCellIndex = std::distance(_unitCells.begin(),it);
 
-	_activeCellIndex = std::distance(_unitCells.begin(),it);
 	sptrUnitCell uc = _unitCells[_activeCellIndex];
-	_hkl=uc->fromReciprocalStandard(this->getQ());
-	if (std::fabs(_hkl[0]-std::round(_hkl[0]))<0.2 && std::fabs(_hkl[1]-std::round(_hkl[1]))<0.2 && std::fabs(_hkl[2]-std::round(_hkl[2]))<0.2)
-	{
-		_hkl[0]=std::round(_hkl[0]);
-		_hkl[1]=std::round(_hkl[1]);
-		_hkl[2]=std::round(_hkl[2]);
-		return true;
-	}
-	return false;
+
+	return hasIntegerHKL(*uc);
 }
 
 sptrUnitCell Peak3D::getActiveUnitCell() const
@@ -315,8 +312,10 @@ sptrUnitCell Peak3D::getUnitCell(int index) const
 	return _unitCells[index];
 }
 
-bool Peak3D::hasIntegerHKL(const SX::Crystal::UnitCell& basis, double tolerance)
+bool Peak3D::hasIntegerHKL(const SX::Crystal::UnitCell& basis)
 {
+	double tolerance = basis.getHKLTolerance();
+
 	_hkl=basis.fromReciprocalStandard(this->getQ());
 	if (std::fabs(_hkl[0]-std::round(_hkl[0])) < tolerance &&
 		std::fabs(_hkl[1]-std::round(_hkl[1])) < tolerance &&
@@ -505,6 +504,11 @@ void Peak3D::setMasked(bool masked)
 bool Peak3D::isMasked() const
 {
 	return _masked;
+}
+
+bool Peak3D::isIndexed() const
+{
+	return (!_unitCells.empty());
 }
 
 void Peak3D::setObserved(bool observed)
