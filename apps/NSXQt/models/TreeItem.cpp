@@ -6,12 +6,26 @@
 
 #include "models/TreeItem.h"
 
+#include <QtDebug>
+
 TreeItem::TreeItem(std::shared_ptr<Experiment> experiment) : QStandardItem(), _experiment(experiment)
 {
 }
 
 TreeItem::~TreeItem()
 {
+}
+
+void TreeItem::setData(const QVariant &value, int role)
+{
+    if (role == Qt::EditRole)
+    {
+        QString newExptName = value.toString().trimmed();
+        if (newExptName.isEmpty())
+            return;
+        _experiment->setName(newExptName.toStdString());
+    }
+    QStandardItem::setData(value,role);
 }
 
 QJsonObject TreeItem::toJson()
