@@ -14,6 +14,7 @@ UnitCellItem::UnitCellItem(std::shared_ptr<SX::Instrument::Experiment> experimen
     _cell(cell)
 {
     QIcon icon(":/resources/unitCellIcon.png");
+    setText(QString::fromStdString(_cell->getName()));
     setIcon(icon);
     setEditable(true);
     setDragEnabled(false);

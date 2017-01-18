@@ -1,18 +1,25 @@
 #ifndef UNITCELLITEM_H
 #define UNITCELLITEM_H
+
 #include "InspectableTreeItem.h"
+
 #include <memory>
 
-namespace SX{
-    namespace Instrument{
-        class Experiment;
-    }
-    namespace Crystal{
-        class UnitCell;
-    }
+#include "Types.h"
+
+namespace SX
+{
+namespace Instrument{
+class Experiment;
+}
+namespace Crystal{
+class UnitCell;
+}
 }
 
 class QWidget;
+
+using SX::Crystal::sptrUnitCell;
 
 class UnitCellItem : public InspectableTreeItem
 {
