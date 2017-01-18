@@ -52,6 +52,7 @@
 #include "DetectorScene.h"
 
 #include "dialogs/DialogRawData.h"
+#include "dialogs/DialogAutoIndexing.h"
 
 #include "SpaceGroupSymbols.h"
 #include "SpaceGroup.h"
@@ -110,6 +111,33 @@ void ExperimentTree::setSession(std::shared_ptr<SessionModel> session)
 {
     _session = session;
     setModel(_session.get());
+}
+
+void ExperimentTree::openAutoIndexingDialog()
+{
+    QStandardItem* item=_session->itemFromIndex(currentIndex());
+    auto ucitem=dynamic_cast<UnitCellItem*>(item);
+    if (!ucitem)
+        return;
+
+    DialogAutoIndexing* dialog = new DialogAutoIndexing(ucitem->getExperiment(),ucitem->getUnitCell());
+    connect(dialog,SIGNAL(solutionAccepted(sptrUnitCell)),_session.get(),SIGNAL(updateCellParameters(sptrUnitCell)));
+    dialog->exec();
+}
+
+void ExperimentTree::setHKLTolerance()
+{
+    QStandardItem* item=_session->itemFromIndex(currentIndex());
+    auto ucitem=dynamic_cast<UnitCellItem*>(item);
+    if (!ucitem)
+        return;
+
+    bool ok;
+    double tolerance = QInputDialog::getDouble(this,tr("HKL integer tolerance"),tr("value:"),ucitem->getUnitCell()->getHKLTolerance(),0.0,1.0,2,&ok);
+    if (!ok)
+        return;
+
+    ucitem->getUnitCell()->setHKLTolerance(tolerance);
 }
 
 void ExperimentTree::createNewExperiment()
@@ -184,19 +212,18 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
         {
             QMenu* menu = new QMenu(this);
             QAction* addUnitCell = menu->addAction("Add unit cell");
-            QAction* autoIndexing = menu->addAction("Auto indexing");
             menu->popup(viewport()->mapToGlobal(point));
 
             auto addUnitCellLambda = [=] {sitem->addUnitCell();};
             connect(addUnitCell, &QAction::triggered, this, addUnitCellLambda);
 
-            auto autoIndexingLambda = [=] {sitem->autoIndexing();};
-            connect(autoIndexing, &QAction::triggered, this, autoIndexingLambda);
         }
         else if (UnitCellItem* ucitem=dynamic_cast<UnitCellItem*>(item))
         {
             QMenu* menu = new QMenu(this);
             QAction* info = menu->addAction("Info");
+            QAction* setTolerance = menu->addAction("Set HKL tolerance");
+            QAction* autoIndexing = menu->addAction("Auto indexing");
 //            QAction* manualIndexing = menu->addAction("Manual indexing");
             QAction* refine = menu->addAction("Refine UB matrix and instrument parameters");
             QAction* basis = menu->addAction("Change of basis");
@@ -204,6 +231,9 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
 
             auto infoLambda = [=] {ucitem->info();};
             connect(info, &QAction::triggered, this, infoLambda);
+
+            connect(setTolerance, SIGNAL(triggered()),this, SLOT(setHKLTolerance()));
+            connect(autoIndexing, SIGNAL(triggered()),this, SLOT(openAutoIndexingDialog()));
 
 //            auto refineLambda = [=] {ucitem->refineInstrumentParameters();};
 //            connect(refine, &QAction::triggered, this, refineLambda);
@@ -295,32 +325,7 @@ void ExperimentTree::importRawData()
     if (!dialog.exec())
         return;
 
-//<<<<<<< HEAD
-//    int max=selectedNumors.size();
-//    qWarning() << "Peak find algorithm: Searching peaks in " << max << " files";
-    
-//    // create a pop-up window that will show the progress
-//    ProgressView* progressView = new ProgressView(this);
-//    progressView->watch(_progressHandler);
 
-//    // lambda function to execute peak search in a separate thread
-//    auto task = [=] () -> bool
-//    {
-//        bool result = false;
-
-//        // execute in a try-block because the progress handler may throw if it is aborted by GUI
-//        try {
-//            result = _peakFinder->find(selectedNumors);
-//        }
-//        catch(std::exception& e) {
-//            qDebug() << "Caught exception during peak find: "
-//                     << e.what()
-//                     << " ; peak search aborted.";
-//            return false;
-//        }
-//        return result;
-//    };
-//=======
     const double wavelength = dialog.wavelength();
     const double delta_phi = dialog.deltaPhi();
     const double delta_omega = dialog.deltaOmega();
@@ -328,7 +333,6 @@ void ExperimentTree::importRawData()
     const bool swap_endian = dialog.swapEndian();
     const int bpp = dialog.bpp();
     const bool row_major = dialog.rowMajor();
-//>>>>>>> develop
 
     std::vector<std::string> filenames;
 
@@ -391,7 +395,6 @@ void ExperimentTree::onDoubleClick(const QModelIndex& index)
 {
     // Get the current item and check that is actually a Numor item. Otherwise, return.
     QStandardItem* item=_session->itemFromIndex(index);
-
     if (auto ptr=dynamic_cast<DataItem*>(item)) {
         if (ptr->model()->rowCount(ptr->index())==0)
             importData();
@@ -403,7 +406,10 @@ void ExperimentTree::onDoubleClick(const QModelIndex& index)
                     ptr->child(i)->setCheckState(Qt::Unchecked);
             }
         }
-    } else if (auto ptr=dynamic_cast<NumorItem*>(item)) {
+    }
+    else if (auto ptr=dynamic_cast<SampleItem*>(item))
+        ptr->addUnitCell();
+    else if (auto ptr=dynamic_cast<NumorItem*>(item)) {
         std::shared_ptr<SX::Instrument::Experiment> exp = ptr->getExperiment();
         emit plotData(exp->getData(item->text().toStdString()));
     }
