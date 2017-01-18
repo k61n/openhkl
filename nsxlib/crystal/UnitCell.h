@@ -149,6 +149,10 @@ public:
  	//! Get name of the unit cell
  	const std::string& getName() const;
 
+ 	//! Set the integer tolerance for this unit cell
+ 	void setHKLTolerance(double tolerance);
+ 	//! Get the integer tolerance for this unit cell
+ 	double getHKLTolerance() const;
 
 private:
 	Chemistry::sptrMaterial _material;
@@ -157,6 +161,7 @@ private:
 	unsigned int _Z;
 	SpaceGroup _group;
 	std::string _name;
+	double _hklTolerance;
 };
 
 //! Print to a stream

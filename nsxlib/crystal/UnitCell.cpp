@@ -18,7 +18,8 @@ UnitCell::UnitCell()
   _bravaisType(BravaisType::Triclinic),
   _Z(1),
   _group("P 1"),
-  _name("")
+  _name("uc"),
+  _hklTolerance(0.2)
 {
 }
 
@@ -29,7 +30,8 @@ UnitCell::UnitCell(double a, double b, double c, double alpha, double beta, doub
   _bravaisType(bravais),
   _Z(1),
   _group("P 1"),
-  _name("")
+  _name("uc"),
+  _hklTolerance(0.2)
 {
 	// b-matrix as defined by Busing-Levy paper
 	// b1, b2*cos(beta3),  b3*cos(beta2)
@@ -60,36 +62,38 @@ UnitCell::UnitCell(double a, double b, double c, double alpha, double beta, doub
 	SX::Geometry::Basis::_reference=reference;
 }
 
-UnitCell::UnitCell(const UnitCell& rhs)
-: SX::Geometry::Basis(rhs),
-  _material(rhs._material),
-  _centring(rhs._centring),
-  _bravaisType(rhs._bravaisType),
-  _Z(rhs._Z),
-  _group(rhs._group),
-  _name(rhs._name)
+UnitCell::UnitCell(const UnitCell& other)
+: SX::Geometry::Basis(other),
+  _material(other._material),
+  _centring(other._centring),
+  _bravaisType(other._bravaisType),
+  _Z(other._Z),
+  _group(other._group),
+  _name(other._name),
+  _hklTolerance(other._hklTolerance)
 {
 }
 
-UnitCell& UnitCell::operator=(const UnitCell& rhs)
+UnitCell& UnitCell::operator=(const UnitCell& other)
 {
-	if (this!=&rhs)
+	if (this!=&other)
 	{
-		_A=rhs._A;
-		_B=rhs._B;
-		_reference=rhs._reference;
-		_hasSigmas=rhs._hasSigmas;
+		_A=other._A;
+		_B=other._B;
+		_reference=other._reference;
+		_hasSigmas=other._hasSigmas;
 		if (_hasSigmas)
 		{
-			_Acov = rhs._Acov;
-			_Bcov = rhs._Bcov;
+			_Acov = other._Acov;
+			_Bcov = other._Bcov;
 		}
-		_material=rhs._material;
-		_centring=rhs._centring;
-		_bravaisType=rhs._bravaisType;
-		_Z=rhs._Z;
-		_group=rhs._group;
-		_name = rhs._name;
+		_material=other._material;
+		_centring=other._centring;
+		_bravaisType=other._bravaisType;
+		_Z=other._Z;
+		_group=other._group;
+		_name = other._name;
+		_hklTolerance = other._hklTolerance;
 	}
 	return *this;
 }
@@ -101,7 +105,8 @@ UnitCell::UnitCell(const Eigen::Vector3d& v1,const Eigen::Vector3d& v2,const Eig
   _bravaisType(bravais),
   _Z(1),
   _group("P 1"),
-  _name("")
+  _name("uc"),
+  _hklTolerance(0.2)
 {
 
 }
@@ -419,12 +424,26 @@ std::string UnitCell::getSpaceGroup() const
 
 void UnitCell::setName(const std::string& name)
 {
+	if (name.empty())
+		return;
 	_name = name;
 }
 
 const std::string& UnitCell::getName() const
 {
 	return _name;
+}
+
+void UnitCell::setHKLTolerance(double tolerance)
+{
+	if (tolerance <= 0.0 || tolerance >= 1.0)
+		throw std::runtime_error("Class UnitCell: invalid integer HKL tolerance.");
+	_hklTolerance = tolerance;
+}
+
+double UnitCell::getHKLTolerance() const
+{
+	return _hklTolerance;
 }
 
 } // end namespace Chemistry
