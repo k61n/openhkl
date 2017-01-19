@@ -28,6 +28,7 @@ PeakTableView::PeakTableView(QWidget *parent)
     setEditTriggers(QAbstractItemView::DoubleClicked);
     // Selection of a cell in the table select the whole line.
     setSelectionBehavior(QAbstractItemView::SelectRows);
+    setSelectionMode(QAbstractItemView::MultiSelection);
 
     setSortingEnabled(true);
     sortByColumn(0, Qt::AscendingOrder);
@@ -111,12 +112,32 @@ void PeakTableView::contextMenuEvent(QContextMenuEvent* event)
         }
     }
 
+    menu->addSeparator();
+
+    QAction* clearSelectedPeaks=new QAction("clear selection",menu);
+    QAction* selectAllPeaks=new QAction("select all peaks",menu);
+    QAction* selectValidPeaks=new QAction("select valid peaks",menu);
+    QAction* selectUnindexedPeaks=new QAction("select unindexed peaks",menu);
+    QAction* togglePeaksSelection=new QAction("toggle peaks selection",menu);
+    menu->addAction(selectAllPeaks);
+    menu->addAction(selectValidPeaks);
+    menu->addAction(selectUnindexedPeaks);
+    menu->addSeparator();
+    menu->addAction(clearSelectedPeaks);
+    menu->addSeparator();
+    menu->addAction(togglePeaksSelection);
+
     // Connections
     connect(normalize,SIGNAL(triggered()),this,SLOT(normalizeToMonitor()));
     connect(writeFullProf,SIGNAL(triggered()),this,SLOT(writeFullProf()));
     connect(writeShelX,SIGNAL(triggered()),this,SLOT(writeShelX()));
     menu->popup(event->globalPos());
 
+    connect(clearSelectedPeaks,SIGNAL(triggered()),this,SLOT(clearSelectedPeaks()));
+    connect(selectAllPeaks,SIGNAL(triggered()),this,SLOT(selectAllPeaks()));
+    connect(selectValidPeaks,SIGNAL(triggered()),this,SLOT(selectValidPeaks()));
+    connect(selectUnindexedPeaks,SIGNAL(triggered()),this,SLOT(selectUnindexedPeaks()));
+    connect(togglePeaksSelection,SIGNAL(triggered()),this,SLOT(togglePeaksSelection()));
 }
 
 void PeakTableView::normalizeToMonitor()
@@ -164,7 +185,7 @@ void PeakTableView::writeFullProf()
     if (!peaksModel)
         return;
 
-    peaksModel->writeFullProf(filename.toStdString(),0.2);
+    peaksModel->writeFullProf(filename.toStdString());
 
 }
 
@@ -184,7 +205,7 @@ void PeakTableView::writeShelX()
     if (!peaksModel)
         return;
 
-    peaksModel->writeShelX(filename.toStdString().c_str(),0.2);
+    peaksModel->writeShelX(filename.toStdString().c_str());
 }
 
 void PeakTableView::plotAs(const std::string& key)
@@ -301,5 +322,51 @@ void PeakTableView::showPeaksMatchingText(QString text)
     }
 }
 
+void PeakTableView::selectUnindexedPeaks()
+{
+    CollectedPeaksModel *peaksModel = dynamic_cast<CollectedPeaksModel*>(model());
+    if (!peaksModel)
+        return;
 
+    QModelIndexList unindexedPeaks = peaksModel->getUnindexedPeaks();
 
+    for (QModelIndex index : unindexedPeaks)
+        selectRow(index.row());
+}
+
+void PeakTableView::selectAllPeaks()
+{
+    selectAll();
+}
+
+void PeakTableView::clearSelectedPeaks()
+{
+    clearSelection();
+}
+
+void PeakTableView::togglePeaksSelection()
+{
+    QItemSelectionModel *selection = selectionModel();
+
+    for (int i=0;i<model()->rowCount();++i)
+        selection->select(model()->index(i,0),QItemSelectionModel::Rows|QItemSelectionModel::Toggle);
+}
+
+void PeakTableView::selectValidPeaks()
+{
+    CollectedPeaksModel *peaksModel = dynamic_cast<CollectedPeaksModel*>(model());
+    if (!peaksModel)
+        return;
+
+    QModelIndexList selectedPeaks = peaksModel->getSelectedPeaks();
+
+    for (QModelIndex index : selectedPeaks)
+        selectRow(index.row());
+}
+
+QItemSelectionModel::SelectionFlags PeakTableView::selectionCommand(const QModelIndex &index, const QEvent *event) const
+{
+    if (event==nullptr)
+        return QItemSelectionModel::NoUpdate;
+    return QTableView::selectionCommand(index,event);
+}

@@ -35,6 +35,8 @@ public:
     explicit PeakTableView(QWidget* parent = 0);
     void contextMenuEvent(QContextMenuEvent *);
 
+    QItemSelectionModel::SelectionFlags selectionCommand(const QModelIndex &index, const QEvent *event) const;
+
 signals:
     void plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&);
     void plotPeak(sptrPeak3D);
@@ -52,6 +54,12 @@ public slots:
     void showPeaksMatchingText(QString text);
     //! Plot selected peak
     void plotSelectedPeak(int index);
+
+    void clearSelectedPeaks();
+    void selectAllPeaks();
+    void selectValidPeaks();
+    void selectUnindexedPeaks();
+    void togglePeaksSelection();
 
 private:
     bool checkBeforeWritting();
