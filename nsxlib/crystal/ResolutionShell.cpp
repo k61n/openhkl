@@ -55,17 +55,20 @@ ResolutionShell::ResolutionShell(double dmin, double dmax, size_t num_shells):
     const double dv = (std::pow(dmin, -3) - std::pow(dmax, -3)) / double(_numShells);
     _d[0] = dmin;
 
-    for (size_t i = 0; i < _numShells; ++i)
+    for (size_t i = 0; i < _numShells; ++i) {
         _d[i+1] = std::pow(std::pow(_d[i], -3) - dv, -1.0/3.0);
+    }
 }
 
-void ResolutionShell::addPeak(sptrPeak3D peak)
+void ResolutionShell::addPeak(const sptrPeak3D& peak)
 {
     const double d = 1.0 / peak->getQ().norm();
 
-    for (size_t i = 0; i < _d.size()-1; ++i)
-        if (_d[i] <= d && d < _d[i+1])
+    for (size_t i = 0; i < _d.size()-1; ++i) {
+        if (_d[i] <= d && d < _d[i+1]) {
             _shells[i].push_back(peak);
+        }
+    }
 }
 
 const std::vector<std::vector<sptrPeak3D>>& ResolutionShell::getShells() const

@@ -58,7 +58,7 @@ namespace Crystal
 class ResolutionShell {
 public:
     ResolutionShell(double dmin, double dmax, size_t num_shells);
-    void addPeak(sptrPeak3D peak);
+    void addPeak(const sptrPeak3D& peak);
     const std::vector<std::vector<sptrPeak3D>>& getShells() const;
     const std::vector<double>& getD() const;
 private:

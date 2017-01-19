@@ -31,7 +31,7 @@
 #include "RFactor.h"
 #include "Peak3D.h"
 
-using namespace std;
+using std::vector;
 
 namespace SX {
 
@@ -48,8 +48,9 @@ void RFactor::recalculate(const vector<vector<sptrPeak3D> > &peak_equivs)
     // go through each equivalence class of peaks
     for (auto&& peak_list: peak_equivs) {
         // skip if there are fewer than two peaks
-        if ( peak_list.size() < 2)
+        if ( peak_list.size() < 2) {
             continue;
+        }
 
         double average = 0.0;
 
