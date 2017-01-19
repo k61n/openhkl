@@ -132,11 +132,11 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
             throw e;
         }
 
-        int ncells = numor->getDiffractometer()->getSample()->getNCrystals();
-        std::shared_ptr<SX::Crystal::UnitCell> cell;
-
-        if (ncells)
-            cell=numor->getDiffractometer()->getSample()->getUnitCell(0);
+//        int ncells = numor->getDiffractometer()->getSample()->getNCrystals();
+//        std::shared_ptr<SX::Crystal::UnitCell> cell;
+//
+//        if (ncells)
+//            cell=numor->getDiffractometer()->getSample()->getUnitCell(0);
 
         if (_handler ) {
             _handler->setStatus("Computing bounding boxes...");
@@ -164,8 +164,8 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
             if (!dAABB.contains(*(p->getPeak())))
                 p->setSelected(false);
 
-            if (cell)
-                p->addUnitCell(cell);
+//            if (cell)
+//                p->addUnitCell(cell);
 
             numor->addPeak(p);
             npeaks++;
