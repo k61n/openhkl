@@ -115,11 +115,11 @@ void DialogFindUnitCell::on_pushButton_SearchUnitCells_clicked()
 
     // Set up a FFT indexer object
     SX::Crystal::FFTIndexing indexing(5, ui->doubleSpinBox_amax->value());
-    indexing.addVectors(qvects);
+    //indexing.addVectors(qvects);
 
     unsigned int nSolutions = static_cast<unsigned int>(ui->spinBox_nSolutions->value());
     unsigned int numStacks = static_cast<unsigned int>(ui->stacksSpinBox->value());
-    std::vector<SX::Crystal::tVector> tvects = indexing.findOnSphere(numStacks, nSolutions);
+    std::vector<SX::Crystal::tVector> tvects = indexing.findOnSphere(qvects, numStacks, nSolutions);
 
     auto source = _experiment->getDiffractometer()->getSource();
     auto detector = _experiment->getDiffractometer()->getDetector();

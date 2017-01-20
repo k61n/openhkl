@@ -19,33 +19,35 @@ FFTIndexing::FFTIndexing(int nSubdiv,double amax)
 {
 }
 
-void FFTIndexing::addVector(const Eigen::Vector3d& v)
-{
-    _qVectors.push_back(std::cref(v));
-}
+//void FFTIndexing::addVector(const Eigen::Vector3d& v)
+//{
+//    _qVectors.push_back(std::cref(v));
+//}
 
-void FFTIndexing::addVectors(const std::vector<Eigen::Vector3d>& vec)
-{
-    for (const auto& v : vec)
-        _qVectors.push_back(std::cref(v));
-}
+//void FFTIndexing::addVectors(const std::vector<Eigen::Vector3d>& vec)
+//{
+//    for (const auto& v : vec)
+//        _qVectors.push_back(std::cref(v));
+//}
 
-std::vector<tVector> FFTIndexing::findOnSphere(unsigned int nstacks, unsigned int nsolutions) const
+std::vector<tVector> FFTIndexing::findOnSphere(const std::vector<Eigen::Vector3d>& qvects, unsigned int nstacks, unsigned int nsolutions) const
 {
-    std::vector<double> projs(_qVectors.size());
+    std::vector<double> projs(qvects.size());
     double qMax = 0;
 
-    for (const auto& v : _qVectors) {
-        double norm = v.get().squaredNorm();
-        if (norm > qMax)
+    for (const auto& v : qvects) {
+        double norm = v.squaredNorm();
+        if (norm > qMax) {
             qMax = norm;
+        }
     }
 
     qMax = sqrt(qMax); // max norm of all vectors
     size_t nPoints = size_t(std::lround(std::ceil(2*qMax*_nSubdiv*_amax))); // number of points in histogram
 
-    if (nPoints%2)
+    if (nPoints%2) {
         ++nPoints;
+    }
 
     size_t nPointsHalf = nPoints / 2;
     double dq = 2*qMax / nPoints;
@@ -72,8 +74,8 @@ std::vector<tVector> FFTIndexing::findOnSphere(unsigned int nstacks, unsigned in
             const Eigen::Vector3d N(stheta*cp, stheta*sp, ctheta);
             std::fill(hist.begin(), hist.end(), 0);
 
-            for (const auto& vect: _qVectors) {
-                double proj = vect.get().dot(N);
+            for (const auto& vect: qvects) {
+                double proj = vect.dot(N);
                 size_t index = size_t((std::floor((proj+qMax)*dqInv)));
                 if (index == nPoints)
                     --index;
@@ -117,9 +119,5 @@ std::vector<tVector> FFTIndexing::findOnSphere(unsigned int nstacks, unsigned in
     return result;
 }
 
-FFTIndexing::~FFTIndexing() {
-}
-
 } // end namespace Crystal
-
 } // end namespace SX
