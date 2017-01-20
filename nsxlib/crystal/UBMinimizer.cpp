@@ -517,7 +517,5 @@ std::ostream& operator<<(std::ostream& os, const UBSolution& solution)
     return os;
 }
 
-
 } // end namespace Crystal
-
 } // end namespace SX
