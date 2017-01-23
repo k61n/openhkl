@@ -23,8 +23,22 @@ foreach(source_file ${test_sources})
   #message("base name is ${base_name}")
   add_executable(${base_name} ${source_file} ${test_headers})
   target_link_libraries(${base_name} ${Boost_LIBRARIES} NSXTool)
-  add_test(${base_name} ${base_name})
+
+  if(${NSX_VALGRIND})
+    add_test(
+      NAME ${base_name}
+      COMMAND valgrind --error-exitcode=3 --leak-check=full --suppressions=${CMAKE_CURRENT_BINARY_DIR}/suppressions --gen-suppressions=all $<TARGET_FILE:${base_name}>
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    )
+  else()
+    add_test(${base_name} ${base_name})
+  endif()
   #message("Added test ${base_name}")
+
+  if(NSX_TIDY)
+    add_tidy_target(${base_name})
+  endif()
+  
 endforeach(source_file)
 
 #add_custom_target(check ALL COMMAND ${CMAKE_CTEST_COMMAND})
@@ -60,5 +74,8 @@ configure_file(instrument/Instrument.xml Instrument.xml COPYONLY)
 
 configure_file(crystal/crystal_database.csv crystal_database.csv COPYONLY)
 configure_file(crystal/crystallography.tsv crystallography.tsv COPYONLY)
+
+# valgrind suppressions
+configure_file(valgrind/suppressions suppressions COPYONLY)
 
 

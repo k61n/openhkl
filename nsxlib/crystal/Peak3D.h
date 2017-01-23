@@ -106,9 +106,9 @@ public:
     void integrate();
 
     //!
-    const std::shared_ptr<SX::Data::IData> getData() const { return _data;}
+    const std::shared_ptr<SX::Data::IData> getData() const { return _data.lock();}
 
-    std::shared_ptr<SX::Data::IData> getData() { return _data;}
+    std::shared_ptr<SX::Data::IData> getData() { return _data.lock();}
 
     //! Get the projection of total data in the bounding box.
     Eigen::VectorXd getProjection() const;
@@ -173,9 +173,11 @@ public:
     //! Return whether the peak was calculated from the UB matrix
     bool getCalculated() const;
 
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
 private:
     //! Pointer to the data containing the peak
-    std::shared_ptr<SX::Data::IData> _data;
+    std::weak_ptr<SX::Data::IData> _data;
     //! Miller indices of the peak
     Eigen::RowVector3d _hkl;
     //! Shape describing the Peak zone
@@ -224,6 +226,8 @@ private:
 
         int dx;
         int dy;
+
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     };
 
     IntegrationState _state;

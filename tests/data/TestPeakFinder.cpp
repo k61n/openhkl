@@ -61,7 +61,7 @@ BOOST_AUTO_TEST_CASE(Test_PeakFinder)
     bool result = peakFinder.find(numors);
     BOOST_CHECK(result == true);
 
-    unsigned int num_peaks = dataf->getPeaks().size();
+    size_t num_peaks = dataf->getPeaks().size();
 
     std::cout << "the result is " << result << std::endl;
     std::cout << "the number of peaks is    " << num_peaks << std::endl;
@@ -69,5 +69,6 @@ BOOST_AUTO_TEST_CASE(Test_PeakFinder)
     BOOST_CHECK(num_peaks == 1);
 
     dataf->close();
-
+    dataf->clearPeaks();
+    dataf = nullptr;
 }

@@ -55,7 +55,7 @@ DialogConvolve::DialogConvolve(const Eigen::MatrixXi& currentFrame,
 
     ui->filterComboBox->addItem("none");
 
-    QSortFilterProxyModel* proxy = new QSortFilterProxyModel();
+    QSortFilterProxyModel* proxy = new QSortFilterProxyModel(this);
     proxy->setSourceModel(ui->filterComboBox->model());
     ui->filterComboBox->model()->setParent(proxy);
     ui->filterComboBox->setModel(proxy);

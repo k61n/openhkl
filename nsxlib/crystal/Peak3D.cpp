@@ -63,7 +63,7 @@ namespace Crystal
 {
 
 Peak3D::Peak3D(std::shared_ptr<SX::Data::IData> data):
-        _data(nullptr),
+        _data(),
         _hkl(Eigen::Vector3d::Zero()),
         _peak(nullptr),
         _bkg(nullptr),
@@ -162,14 +162,14 @@ Peak3D::~Peak3D()
 
 void Peak3D::linkData(std::shared_ptr<SX::Data::IData> data)
 {
-    _data = data;
-    if (_data)
-        setSource(_data->getDiffractometer()->getSource());
+    _data = std::weak_ptr<SX::Data::IData>(data);
+    if (data)
+        setSource(data->getDiffractometer()->getSource());
 }
 
 void Peak3D::unlinkData()
 {
-    _data = nullptr;
+    _data.reset();
 }
 
 void Peak3D::setPeakShape(SX::Geometry::IShape<double,3>* p)
@@ -180,13 +180,15 @@ void Peak3D::setPeakShape(SX::Geometry::IShape<double,3>* p)
 
     using ComponentState = SX::Instrument::ComponentState;
 
-    setSampleState(std::shared_ptr<ComponentState>(new ComponentState(_data->getSampleInterpolatedState(f))));
-    ComponentState detState = _data->getDetectorInterpolatedState(f);
+    auto data = getData();
+
+    setSampleState(std::shared_ptr<ComponentState>(new ComponentState(data->getSampleInterpolatedState(f))));
+    ComponentState detState = data->getDetectorInterpolatedState(f);
 
     using DetectorEvent = SX::Instrument::DetectorEvent;
 
     setDetectorEvent(std::shared_ptr<DetectorEvent>(
-                         new DetectorEvent(_data->getDiffractometer()->getDetector()->createDetectorEvent(
+                         new DetectorEvent(data->getDiffractometer()->getDetector()->createDetectorEvent(
                                                center[0],center[1],detState.getValues()))
                     )
             );
@@ -216,21 +218,22 @@ Eigen::RowVector3i Peak3D::getIntegerMillerIndices() const
 
 void Peak3D::integrate()
 {
-    if (!_data)
+    auto data = getData();
+
+    if (!data)
         return;
 
     framewiseIntegrateBegin();
 
     unsigned int idx = _state.data_start;
-    std::unique_ptr<IFrameIterator> it = _data->getIterator(int(idx));
+    std::unique_ptr<IFrameIterator> it = data->getIterator(int(idx));
 
     for(; idx <= _state.data_end; it->advance(), ++idx) {
         Eigen::MatrixXi frame = it->getFrame().cast<int>();
         framewiseIntegrateStep(frame, idx);
     }
 
-    framewiseIntegrateEnd()
-;
+    framewiseIntegrateEnd();
 }
 
 Eigen::VectorXd Peak3D::getProjection() const
@@ -379,8 +382,10 @@ double Peak3D::getSampleStepSize() const
     // when we compute 'step' below
     double step = 0.0;
 
-    size_t numFrames = _data->getNFrames();
-    const auto& ss = _data->getSampleStates();
+    auto data = getData();
+
+    size_t numFrames = data->getNFrames();
+    const auto& ss = data->getSampleStates();
     size_t numValues = ss[0].getValues().size();
 
     for (size_t i = 0; i < numValues; ++i) {
@@ -483,7 +488,9 @@ double Peak3D::getIOverSigmaI() const
 
 void Peak3D::framewiseIntegrateBegin()
 {
-    if (!_data)
+    auto data = getData();
+
+    if (!data)
         return;
 
     // Get the lower and upper limit of the bkg Bounding box
@@ -507,12 +514,12 @@ void Peak3D::framewiseIntegrateBegin()
     if (_state.lower[2] < 0)
         _state.data_start=0;
 
-    if (_state.end_x > _data->getNCols()-1)
-        _state.end_x = static_cast<unsigned int>(_data->getNCols()-1);
-    if (_state.end_y > _data->getNRows()-1)
-        _state.end_y =  static_cast<unsigned int>(_data->getNRows()-1);
-    if (_state.data_end > _data->getNFrames()-1)
-        _state.data_end = static_cast<unsigned int>(_data->getNFrames()-1);
+    if (_state.end_x > data->getNCols()-1)
+        _state.end_x = static_cast<unsigned int>(data->getNCols()-1);
+    if (_state.end_y > data->getNRows()-1)
+        _state.end_y =  static_cast<unsigned int>(data->getNRows()-1);
+    if (_state.data_end > data->getNFrames()-1)
+        _state.data_end = static_cast<unsigned int>(data->getNFrames()-1);
 
     // Allocate all vectors
     _projection = Eigen::VectorXd::Zero(_state.data_end - _state.data_start + 1);
@@ -532,7 +539,9 @@ void Peak3D::framewiseIntegrateBegin()
 
 void Peak3D::framewiseIntegrateStep(Eigen::MatrixXi& frame, unsigned int idx)
 {
-    if (!_data || idx < _state.data_start || idx > _state.data_end)
+    auto data = getData();
+
+    if (!data || idx < _state.data_start || idx > _state.data_end)
         return;
 
     double pointsinpeak = 0;
@@ -577,29 +586,27 @@ void Peak3D::framewiseIntegrateStep(Eigen::MatrixXi& frame, unsigned int idx)
 
 void Peak3D::framewiseIntegrateEnd()
 {
-    if (!_data)
+    auto data = getData();
+
+    if (!data)
         return;
 
     // Quick fix determine the limits of the peak range
-    int datastart=0;
-    int dataend=0;
-    bool startfound=false;
-    for (int i=0;i<_projectionPeak.size();++i)
-    {
-        if (!startfound && std::fabs(_projectionPeak[i])>1e-6)
-        {
-            datastart=i;
-            startfound=true;
+    int datastart = 0;
+    int dataend = 0;
+    bool startfound = false;
+
+    for (int i = 0; i < _projectionPeak.size(); ++i) {
+        if (!startfound && std::fabs(_projectionPeak[i]) > 1e-6) {
+            datastart = i;
+            startfound = true;
         }
-        if (startfound)
-        {
-            if (std::fabs(_projectionPeak[i])<1e-6)
-            {
-                dataend=i;
+        if (startfound) {
+            if (std::fabs(_projectionPeak[i])<1e-6) {
+                dataend = i;
                 break;
             }
         }
-
     }
     //
 
@@ -614,8 +621,7 @@ void Peak3D::framewiseIntegrateEnd()
     double bkg_left=bkg[datastart];
     double bkg_right=bkg[dataend];
     double diff;
-    for (int i=datastart;i<dataend;++i)
-    {
+    for (int i=datastart;i<dataend;++i) {
         diff=bkg[i]-(bkg_left+static_cast<double>((i-datastart))/static_cast<double>((dataend-datastart))*(bkg_right-bkg_left));
         if (diff>0)
             _projectionPeak[i]+=diff;
@@ -623,11 +629,8 @@ void Peak3D::framewiseIntegrateEnd()
 
     // note: this "background" simply refers to anything in the AABB but NOT in the peak
     _projectionBkg=_projection-_projectionPeak;
-
     _counts = _projectionPeak.sum();
     _countsSigma = std::sqrt(std::abs(_counts));
-
-    return;
 }
 
 double Peak3D::pValue()

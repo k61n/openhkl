@@ -204,7 +204,7 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             _zoomend=_zoomstart;
             QRect zoom(_zoomstart,_zoomend);
             _zoomrect=addRect(zoom);
-            _zoomrect->setParentItem(_image);
+            // _zoomrect->setParentItem(_image);
             QPen pen1(QBrush(QColor("gray")),1.0);
             pen1.setWidth(1);
             pen1.setCosmetic(true);
@@ -670,12 +670,12 @@ void DetectorScene::showPeakCalcs(bool flag)
         if ( std::abs(_currentFrameIndex-p._frame) > 1.0)
             continue;
 
-            PeakCalcGraphicsItem* peak = new PeakCalcGraphicsItem(p);
-            peak->setVisible(flag);
-            peak->setFrame(_currentFrameIndex);
-            peak->setEnabled(false); // testing
-            addItem(peak);
-            _peakCalcs.push_back(peak);
+        PeakCalcGraphicsItem* peak = new PeakCalcGraphicsItem(p);
+        peak->setVisible(flag);
+        peak->setFrame(_currentFrameIndex);
+        peak->setEnabled(false); // testing
+        addItem(peak);
+        _peakCalcs.push_back(peak);
     }
 }
 

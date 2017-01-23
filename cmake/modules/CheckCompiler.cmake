@@ -70,13 +70,14 @@ endif( BUILD_WITH_DEBUG_INFO )
 
 # special configuration for GNU/clang
 if(COMPILER_IS_GNU_OR_CLANG)
-    add_definitions(-Wall)
-    add_definitions(-pthread)
+    add_compile_options(-Wall -Wextra -Wpedantic)
+    add_compile_options(-pthread)
     add_definitions(-DEIGEN_FFTW_DEFAULT)
     add_definitions(-D_USE_MATH_DEFINES)
     message("TESTING: COMPILER IS CLANG OR GNU")
   elseif(COMPILER_IS_MSVC)
     add_definitions(/D_USE_MATH_DEFINES)
+    add_compile_options(/W4)
 endif()
 
  
@@ -155,6 +156,14 @@ if(BUILD_OPTIMIZED_DEBUG)
     else()
         message(WARNING "BUILD_OPTIMIZED_DEBUG=ON has no effect on builds with ${CMAKE_CXX_COMPILER_ID}")
     endif()
+endif()
+
+# code sanitizer
+if (NSX_SANITIZE)
+  message("The sanitize options are: thread, memory, undefined, dataflow, cfi, safe-stack")
+  message(STATUS "The sanitize option '${NSX_SANITIZER}' has been selected")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=${NSX_SANITIZER} -fsanitize-recover=all")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=${NSX_SANITIZER} -fsanitize-recover=all")
 endif()
 
 message("Finished configuring compiler")

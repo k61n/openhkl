@@ -61,7 +61,7 @@ std::unique_ptr<IFrameIterator> IData::getIterator(int idx)
     // use default frame iterator if one hasn't been set
     if ( !_iteratorCallback) {
         _iteratorCallback = [] (IData* data, int index) {
-            return new BasicFrameIterator(data, index);
+            return new BasicFrameIterator(data, static_cast<unsigned int>(index));
             //return new ThreadedFrameIterator(data, index);
         };
     }
@@ -79,6 +79,7 @@ IData::~IData()
     // peaks should be cleared explicitly to avoid memory leak
     // due to cyclic shared pointers
     clearPeaks();
+    blosc_destroy();
 }
 
 std::string IData::getBasename() const
@@ -140,8 +141,9 @@ void IData::addPeak(sptrPeak3D peak)
 
 void IData::clearPeaks()
 {
-//    for (auto ptr : _peaks)
-//		delete ptr;
+    for (auto ptr : _peaks)
+        ptr->unlinkData();
+
     _peaks.clear();
 }
 
@@ -298,6 +300,10 @@ void IData::saveHDF5(const std::string& filename) //const
     if (r<=0)
         throw std::runtime_error("Problem registering BLOSC filter in HDF5 library");
 
+    // caught by valgrind memcheck
+    free(version); version = nullptr;
+    free(date); date = nullptr;
+
     plist.setFilter(FILTER_BLOSC, H5Z_FLAG_OPTIONAL, 7, cd_values);
 
     H5::DataSpace memspace(3, count, nullptr);
@@ -419,7 +425,7 @@ void IData::saveHDF5(const std::string& filename) //const
     }
 
     file.close();
-    blosc_destroy();
+    // blosc_destroy();
 }
 
 
@@ -496,7 +502,7 @@ void IData::releaseMemory()
 std::vector<PeakCalc> IData::hasPeaks(const std::vector<Eigen::Vector3d>& hkls, const Matrix3d& BU)
 {
     std::vector<PeakCalc> peaks;
-    unsigned int scanSize = _sampleStates.size();
+    unsigned int scanSize = static_cast<unsigned int>(_sampleStates.size());
     Eigen::Matrix3d UB = BU.transpose();
     Eigen::Vector3d ki=_diffractometer->getSource()->getKi();
     std::vector<Eigen::Matrix3d> rotMatrices;
@@ -584,13 +590,13 @@ void IData::readInMemory(std::shared_ptr<SX::Utils::ProgressHandler> progress)
     _data.clear();
     _data.reserve(_nFrames);
 
-    int dummy = static_cast<int>(0.01 * _nFrames)+1;
+    unsigned int dummy = static_cast<unsigned int>(0.01 * _nFrames)+1;
 
     for (unsigned int i = 0; i < _nFrames; ++i) {
         _data.push_back(readFrame(i));
 
         if ( (i%dummy) == 0 && progress) {
-            progress->setProgress(100.0 * i / _nFrames);
+            progress->setProgress(int(100.0 * i / _nFrames));
         }
     }
 
@@ -625,7 +631,7 @@ double IData::getBackgroundLevel(std::shared_ptr<SX::Utils::ProgressHandler> pro
 
         if ( progressCallback ) {
             double progress = 100.0 * it->index() / static_cast<double>(_nFrames);
-            progressCallback->setProgress(progress);
+            progressCallback->setProgress(int(progress));
         }
     }
 
@@ -651,11 +657,8 @@ void IData::integratePeaks(std::shared_ptr<Utils::ProgressHandler> handler)
     //progressDialog->setValue(0);
     //progressDialog->setLabelText("Integrating peak intensities...");
 
-    int idx = 0;
+    size_t idx = 0;
     int num_frames_done = 0;
-
-    //for ( auto it = getIterator(0); it->index() != getNFrames(); it->advance(), ++idx) {
-
 
     #pragma omp parallel for
     for ( idx = 0; idx < getNFrames(); ++idx ) {
@@ -679,7 +682,5 @@ void IData::integratePeaks(std::shared_ptr<Utils::ProgressHandler> handler)
         peak->framewiseIntegrateEnd();
 }
 
-
 } // end namespace Data
-
 } // end namespace SX
