@@ -88,10 +88,12 @@ public:
     std::string getColorMap() const;
 
     void writeLog();
-    bool writeNewShelX(std::string filename, const std::vector<sptrPeak3D> &peaks);
+    bool writeNewShellX(std::string filename, const std::vector<sptrPeak3D>& peaks);
     bool writeStatistics(std::string filename,
                          const std::vector<SX::Crystal::sptrPeak3D> &peaks,
                          double dmin, double dmax, unsigned int num_shells, bool friedel);
+
+    bool writeXDS(std::string filename, const std::vector<sptrPeak3D>& peaks, bool merge, bool friedel);
 
 
 

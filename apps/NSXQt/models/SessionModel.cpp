@@ -773,7 +773,7 @@ void SessionModel::writeLog()
     bool friedel = dialog.friedel();
 
     if (dialog.writeUnmerged()) {
-        if (!writeNewShelX(dialog.unmergedFilename(), peaks))
+        if (!writeNewShellX(dialog.unmergedFilename(), peaks))
             qCritical() << "Could not write unmerged data to " << dialog.unmergedFilename().c_str();
     }
 
@@ -789,7 +789,7 @@ void SessionModel::writeLog()
     }
 }
 
-bool SessionModel::writeNewShelX(std::string filename, const std::vector<sptrPeak3D> &peaks)
+bool SessionModel::writeNewShellX(std::string filename, const std::vector<sptrPeak3D>& peaks)
 {
     std::fstream file(filename, std::ios::out);
     std::vector<char> buf(1024, 0); // buffer for snprintf
@@ -996,6 +996,161 @@ bool SessionModel::writeStatistics(std::string filename,
 
     qDebug() << "Done writing log file.";
 
+    file.close();
+    return true;
+}
+
+bool SessionModel::writeXDS(std::string filename, const std::vector<sptrPeak3D>& peaks, bool merge, bool friedel)
+{
+    std::fstream file(filename, std::ios::out);
+    std::vector<char> buf(1024, 0); // buffer for snprintf
+    std::vector<SX::Crystal::MergedPeak> merged_peaks;
+
+    const double dmin = 1.0;
+    const double dmax = 60.0;
+    const size_t num_shells = 10;
+    SX::Crystal::ResolutionShell res = {dmin, dmax, num_shells};
+
+    if (!file.is_open()) {
+        qCritical() << "Error writing to this file, please check write permisions";
+        return false;
+    }
+
+    if (peaks.size() == 0) {
+        qCritical() << "No peaks to write to log!";
+        return false;
+    }
+
+    auto cell = peaks[0]->getUnitCell();
+    auto grp = SX::Crystal::SpaceGroup(cell->getSpaceGroup());
+
+    for (auto&& peak: peaks) {
+        if (cell != peak->getUnitCell()) {
+            qCritical() << "Only one unit cell is supported at this time!!";
+            return false;
+        }
+        res.addPeak(peak);
+    }
+
+    auto&& ds = res.getD();
+    auto&& shells = res.getShells();
+    std::vector<std::vector<sptrPeak3D>> all_equivs;
+
+
+
+    for (size_t i = 0; i < size_t(num_shells); ++i) {
+        const double d_lower = ds[i];
+        const double d_upper = ds[i+1];
+
+        auto peak_equivs = grp.findEquivalences(shells[i], friedel);
+        RFactor rfactor(peak_equivs);
+
+        for (auto&& equiv: peak_equivs)
+            all_equivs.push_back(equiv);
+
+        double redundancy = double(shells[i].size()) / double(peak_equivs.size());
+
+        std::snprintf(&buf[0], buf.size(),
+                "    %10.2f %10.2f %10d %10.3f %10.3f %10.3f %10.3f",
+                d_lower, d_upper, int(shells[i].size()), redundancy,
+                rfactor.Rmeas(), rfactor.Rmerge(), rfactor.Rpim());
+
+        file << &buf[0] << std::endl;
+
+        for (auto equiv: peak_equivs) {
+            SX::Crystal::MergedPeak new_peak(grp, friedel);
+
+            for (auto peak: equiv) {
+                // skip bad/masked peaks
+                if (peak->isMasked() || !peak->isSelected())
+                    continue;
+
+                // skip misindexed peaks
+                if (!peak->hasIntegerHKL(*cell))
+                    continue;
+
+                // peak was not equivalent to any of the merged peaks
+                new_peak.addPeak(peak);
+
+            }
+
+            if (new_peak.redundancy() > 0)
+                merged_peaks.push_back(new_peak);
+        }
+
+         qDebug() << "Finished logging shell " << i+1;
+    }
+
+    file << "--------------------------------------------------------------------------------" << std::endl;
+
+    RFactor rfactor(all_equivs);
+
+    int num_peaks = 0;
+
+    for (auto& equiv: all_equivs)
+        num_peaks += equiv.size();
+
+    double redundancy = double(num_peaks) / double(all_equivs.size());
+
+    std::snprintf(&buf[0], buf.size(),
+            "    %10.2f %10.2f %10d %10.3f %10.3f %10.3f %10.3f",
+            dmin, dmax, num_peaks, redundancy,
+            rfactor.Rmeas(), rfactor.Rmerge(), rfactor.Rpim());
+
+    file << &buf[0] << std::endl << std::endl;
+
+    auto compare_fn = [](const SX::Crystal::MergedPeak& p, const SX::Crystal::MergedPeak& q) -> bool
+    {
+        const auto a = p.getIndex();
+        const auto b = q.getIndex();
+
+        if (a(0) != b(0))
+            return a(0) < b(0);
+        else if (a(1) != b(1))
+            return a(1) < b(1);
+        else
+            return a(2) < b(2);
+    };
+
+    std::sort(merged_peaks.begin(), merged_peaks.end(), compare_fn);
+
+    file << "   h    k    l            I        sigma   nobs       chi2             std            std/I  "
+         << std::endl;
+
+    unsigned int total_peaks = 0;
+    unsigned int bad_peaks = 0;
+
+    for (auto&& peak: merged_peaks) {
+
+        const auto hkl = peak.getIndex();
+
+        const int h = hkl[0];
+        const int k = hkl[1];
+        const int l = hkl[2];
+
+        const double intensity = peak.intensity();
+        const double sigma = peak.sigma();
+        const double chi2 = peak.chiSquared();
+        const int nobs = peak.redundancy();
+        const double std = peak.std();
+        const double rel_std = std / intensity;
+
+        std::snprintf(&buf[0], buf.size(), "  %4d %4d %4d %15.2f %10.2f %3d %15.5f %15.5f %15.5f",
+                h, k, l, intensity, sigma, nobs, chi2, std, rel_std);
+
+        file << &buf[0];
+
+        if (rel_std > 1.0) {
+            file << " ***** ";
+            ++bad_peaks;
+        }
+
+        file << std::endl;
+        ++total_peaks;
+    }
+
+    file << "!END_OF_DATA" << std::endl;
+    qDebug() << "Done writing XDS file.";
     file.close();
     return true;
 }

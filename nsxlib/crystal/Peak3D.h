@@ -38,21 +38,17 @@
 #include "UnitCell.h"
 #include "IShape.h"
 
-namespace SX
-{
+namespace SX {
 
-namespace Geometry
-{
+namespace Geometry {
 class Blob3D;
 }
 
-namespace Data
-{
+namespace Data {
     class IData;
 }
 
-namespace Instrument
-{
+namespace Instrument {
     class Diffractometer;
     class ComponentState;
     class DetectorEvent;
@@ -61,11 +57,9 @@ namespace Instrument
     class Source;
 }
 
-namespace Crystal
-{
+namespace Crystal {
 
-class Peak3D
-{
+class Peak3D {
 public:
     using shape_type = SX::Geometry::IShape<double,3>;
 
@@ -210,7 +204,6 @@ private:
     bool _calculated;
     double _transmission;
 
-
     struct IntegrationState {
         Eigen::Vector3d lower;
         Eigen::Vector3d upper;
@@ -233,13 +226,11 @@ private:
     };
 
     IntegrationState _state;
-
 };
 
 using sptrPeak3D = std::shared_ptr<Peak3D>;
 
 } // namespace Crystal
-
 } // namespace SX
 
 #endif /* NSXTOOL_SIMPLEPEAK_H_ */
