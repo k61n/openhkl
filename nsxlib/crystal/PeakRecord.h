@@ -32,54 +32,30 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-#ifndef NSXTOOL_XDS_H_
-#define NSXTOOL_XDS_H_
+#ifndef NSXTOOL_PEAKRECORD_H_
+#define NSXTOOL_PEAKRECORD_H_
 
-#include <iosfwd>
-#include <string>
-#include <memory>
-#include <vector>
-
-#include "PeakRecord.h"
-
-namespace SX
-{
-
+namespace SX {
 namespace Crystal {
-    class Peak3D;
-}
 
-namespace Data
-{
+class Peak3D;
+class MergedPeak;
 
-class XDS {
+class PeakRecord {
 public:
-    using sptrPeak3D = std::shared_ptr<Crystal::Peak3D>;
-    using PeakList = std::vector<sptrPeak3D>;
-    using PeakRecord = SX::Crystal::PeakRecord;
-    using RecordList = std::vector<PeakRecord>;
+    int h, k, l;
+    double x, y, z;
+    double iobs, sigma;
+    bool merged;
 
-    XDS(const PeakList& peaks, bool merge, bool friedel, const std::string& filename = "", const std::string& date = "");
-    ~XDS() = default;
+    // conversion operators
+    PeakRecord(const Peak3D& other);
+    PeakRecord(const MergedPeak& other);
 
-    bool writeHeader(std::ostream& str) const;
-    bool writePeaks(std::ostream& str) const;
-    bool writeFooter(std::ostream& str) const;
-    bool write(std::ostream& str) const;
-
-private:
-    RecordList getMergedRecords() const;
-    RecordList getUnmergedRecords() const;
-
-
-    PeakList _peaks;
-    const bool _merge, _friedel;
-    const std::string _filename;
-    const std::string _date;
-    const std::vector<std::string> _records;
+    bool operator<(const PeakRecord& other) const;
 };
 
-} // Namespace Data
+} // Namespace Crystal
 } // Namespace SX
 
-#endif /* NSXTOOL_XDS_H_ */
+#endif /* NSXTOOL_PEAKRECORD_H_ */

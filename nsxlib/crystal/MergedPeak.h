@@ -45,14 +45,10 @@
 #include "SpaceGroup.h"
 #include "Peak3D.h"
 
-namespace SX
-{
+namespace SX {
+namespace Crystal {
 
-namespace Crystal
-{
-
-class MergedPeak
-{
+class MergedPeak {
 public:
     MergedPeak(const SpaceGroup& grp, bool friedel=false);
     MergedPeak(const MergedPeak& other) = default;
@@ -77,10 +73,7 @@ private:
     bool _friedel;
 };
 
-
-
 } // namespace Crystal
-
 } // namespace SX
 
 #endif /* NSXTOOL_SIMPLEPEAK_H_ */

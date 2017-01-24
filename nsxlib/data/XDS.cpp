@@ -35,9 +35,12 @@
 
 #include "XDS.h"
 #include "Peak3D.h"
+#include "MergedPeak.h"
+#include "ResolutionShell.h"
 
 #include <ostream>
 #include <algorithm>
+#include <iomanip>
 
 using string = std::string;
 using str_vector = std::vector<std::string>;
@@ -45,7 +48,7 @@ using Peak3D = SX::Crystal::Peak3D;
 
 static const string space = "    ";
 static const str_vector merged_records = {"H", "K", "L", "IOBS, SIGMA(IOBS)"};
-static const str_vector unmerged_records = {"H", "K", "L", "XD", "YD", "ZD" "IOBS, SIGMA(IOBS)"};
+static const str_vector unmerged_records = {"H", "K", "L", "XD", "YD", "ZD" "IOBS", "SIGMA(IOBS)"};
 
 namespace SX
 {
@@ -87,8 +90,8 @@ bool XDS::writeHeader(std::ostream &str) const
 
     // data record specification
     str << "!NUMBER_OF_ITEMS_IN_EACH_DATA_RECORD=" << _records.size() << std::endl;
-    for(size_t id = 1; id <= _records.size(); ++id) {
-        str << "!ITEM_" << _records[id] << "=" << id << std::endl;
+    for(size_t id = 0; id < _records.size(); ++id) {
+        str << "!ITEM_" << _records[id] << "=" << id+1 << std::endl;
     }
     str << "!END_OF_HEADER" << std::endl;
     return str.good();
@@ -111,18 +114,21 @@ bool XDS::writePeaks(std::ostream &str) const
         const double iobs = peak->getScaledIntensity();
         const double sigma = peak->getScaledSigma();
 
-        str.width(5);
-        str << h << k << l;
-        str.width(15);
-        str.precision(2);
-        str << iobs << sigma;
+        str << std::setw(5) << h;
+        str << std::setw(5) << k;
+        str << std::setw(5) << l;
 
-        if (_merge) {
-            continue;
+        if (!_merge) {
+            str.width(8);
+            str.precision(1);
+            str << std::fixed << std::setw( 10 ) << std::setprecision( 1 ) << x;
+            str << std::fixed << std::setw( 10 ) << std::setprecision( 1 ) << y;
+            str << std::fixed << std::setw( 10 ) << std::setprecision( 1 ) << z;
+
         }
-        str.width(8);
-        str.precision(1);
-        str << x << y << z;
+        str << std::fixed << std::setw( 15 ) << std::setprecision( 1 ) << iobs;
+        str << std::fixed << std::setw( 15 ) << std::setprecision( 1 ) << sigma;
+        str << std::endl;
     }
     return str.good();
 }
@@ -142,6 +148,68 @@ bool XDS::write(std::ostream& str) const
         return false;
     }
     return writeFooter(str);
+}
+
+XDS::RecordList XDS::getMergedRecords() const
+{
+    const double dmin = 0.0;
+    const double dmax = 200.0;
+    const int num_shells = 10;
+    SX::Crystal::ResolutionShell res = {dmin, dmax, num_shells};
+    RecordList records;
+
+    if (_peaks.size() == 0) {
+        return records;
+    }
+
+    auto cell = _peaks[0]->getUnitCell();
+    auto grp = SX::Crystal::SpaceGroup(cell->getSpaceGroup());
+
+    for (auto&& peak: _peaks) {
+        if (cell != peak->getUnitCell()) {
+            // qCritical() << "Only one unit cell is supported at this time!!";
+            continue;
+        }
+        res.addPeak(peak);
+    }
+
+    auto&& ds = res.getD();
+    auto&& shells = res.getShells();
+    std::vector<PeakList> peak_equivs;
+
+    for (size_t i = 0; i < size_t(num_shells); ++i) {
+        auto equivs = grp.findEquivalences(shells[i], _friedel);
+
+        for (auto&& equiv: equivs)
+            peak_equivs.push_back(equiv);
+    }
+
+    for (auto equiv: peak_equivs) {
+        SX::Crystal::MergedPeak new_peak(grp, _friedel);
+
+        for (auto peak: equiv) {
+            // skip bad/masked peaks
+            if (peak->isMasked() || !peak->isSelected())
+                continue;
+
+            new_peak.addPeak(peak);
+        }
+        records.emplace_back(new_peak);
+    }
+
+    std::sort(records.begin(), records.end());
+    return records;
+}
+
+XDS::RecordList XDS::getUnmergedRecords() const
+{
+    RecordList records;
+
+    for (auto&& peak: _peaks) {
+        records.emplace_back(*peak);
+    }
+
+    std::sort(records.begin(), records.end());
 }
 
 } // Namespace Data
