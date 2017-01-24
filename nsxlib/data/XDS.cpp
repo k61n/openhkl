@@ -154,7 +154,7 @@ XDS::RecordList XDS::getMergedRecords() const
 {
     const double dmin = 0.0;
     const double dmax = 200.0;
-    const int num_shells = 10;
+    const size_t num_shells = 10;
     SX::Crystal::ResolutionShell res = {dmin, dmax, num_shells};
     RecordList records;
 
