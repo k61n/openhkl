@@ -48,14 +48,15 @@ namespace SX
 namespace Crystal {
     class Peak3D;
 }
-using sptrPeak3D = std::shared_ptr<Crystal::Peak3D>;
-using PeakList = std::vector<sptrPeak3D>;
 
 namespace Data
 {
 
 class XDS {
 public:
+    using sptrPeak3D = std::shared_ptr<Crystal::Peak3D>;
+    using PeakList = std::vector<sptrPeak3D>;
+
     XDS(const PeakList& peaks, bool merge, bool friedel, const std::string& filename = "", const std::string& date = "");
     ~XDS() = default;
 

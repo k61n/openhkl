@@ -39,7 +39,6 @@
 #include <ostream>
 #include <algorithm>
 
-
 using string = std::string;
 using str_vector = std::vector<std::string>;
 using Peak3D = SX::Crystal::Peak3D;
@@ -54,7 +53,8 @@ namespace SX
 namespace Data
 {
 
-
+using sptrPeak3D = XDS::sptrPeak3D;
+using PeakList = XDS::PeakList;
 
 XDS::XDS(const PeakList &peaks, bool merge, bool friedel, const std::string &filename, const std::string &date):
     _peaks(peaks),

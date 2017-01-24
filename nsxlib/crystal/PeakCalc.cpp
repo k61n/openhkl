@@ -44,12 +44,18 @@
 
 using SX::Geometry::Ellipsoid;
 using SX::Geometry::Matrix3d;
+using std::shared_ptr;
+using SX::Data::IData;
+
 
 namespace SX
 {
 
 namespace Crystal
 {
+
+using sptrPeak3D = PeakCalc::sptrPeak3D;
+using PeakList = PeakCalc::PeakList;
 
 PeakCalc::PeakCalc(double h,double k,double l, double x,double y, double frame):
     _h(h),_k(k),_l(l),_x(x),_y(y),_frame(frame)
@@ -61,11 +67,11 @@ PeakCalc::PeakCalc(double h,double k,double l, double x,double y, double frame):
 //{
 //}
 
-sptrPeak3D PeakCalc::averagePeaks(const std::shared_ptr<Data::IData>& data, double distance)
+sptrPeak3D PeakCalc::averagePeaks(const std::shared_ptr<IData> data, double distance)
 {
     Eigen::Matrix3d peak_shape, bkg_shape;
     sptrPeak3D peak = std::make_shared<Peak3D>(Peak3D(data));
-    std::vector<sptrPeak3D> neighbors;
+    PeakList neighbors;
 
     const double original_distance = distance;
 
