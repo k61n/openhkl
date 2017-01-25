@@ -1,31 +1,26 @@
 #include <set>
 #include <memory>
 
+#include <QCompleter>
+#include <QSortFilterProxyModel>
 #include <QMessageBox>
 #include <QtDebug>
 
 #include "Gonio.h"
 #include "IData.h"
+#include "LatticeIndexer.h"
 #include "Material.h"
 #include "MaterialManager.h"
+#include "Peak3D.h"
+#include "SpaceGroupSymbols.h"
 #include "UnitCell.h"
 #include "Units.h"
 
 #include "ui_UnitCellPropertyWidget.h"
-#include "DialogFindUnitCell.h"
-#include "DialogRefineUnitCell.h"
-#include "DialogTransformationMatrix.h"
 #include "Logger.h"
-#include "tree/UnitCellPropertyWidget.h"
+#include "SessionModel.h"
 #include "models/UnitCellItem.h"
-#include "Peak3D.h"
-#include "SpaceGroupSymbols.h"
-#include <QCompleter>
-#include <QSortFilterProxyModel>
-#include "LatticeIndexer.h"
-
-#include "ProgressHandler.h"
-#include "ProgressView.h"
+#include "tree/UnitCellPropertyWidget.h"
 
 UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *parent) :
     QWidget(parent),
@@ -45,22 +40,28 @@ UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *par
     connect(ui->doubleSpinBoxbeta,SIGNAL(editingFinished()),this,SLOT(setLatticeParams()));
     connect(ui->doubleSpinBoxgamma,SIGNAL(editingFinished()),this,SLOT(setLatticeParams()));
 
-    ui->spinBox_Z->setValue(_unitCellItem->getUnitCell()->getZ());
-    auto material=_unitCellItem->getUnitCell()->getMaterial();
+    SessionModel* sessionModel = dynamic_cast<SessionModel*>(_unitCellItem->model());
+
+    connect(sessionModel,SIGNAL(updateCellParameters(sptrUnitCell)),this,SLOT(updateCellParameters(sptrUnitCell)));
+
+    sptrUnitCell cell = _unitCellItem->getUnitCell();
+
+    ui->spinBox_Z->setValue(cell->getZ());
+    auto material=cell->getMaterial();
     if (material)
         ui->lineEdit_ChemicalFormula->setText(material->getName().c_str());
 
-    getLatticeParams();
+    updateCellParameters(cell);
 
     SX::Crystal::SpaceGroupSymbols* sgs=SX::Crystal::SpaceGroupSymbols::Instance();
     std::vector<std::string> symbols=sgs->getAllSymbols();
 
     for (const auto& symbol : symbols)
-    {
         ui->comboBox->addItem(QString::fromStdString(symbol));
-    }
 
-    ui->comboBox->setCurrentText(_unitCellItem->getUnitCell()->getSpaceGroup().c_str());
+    ui->comboBox->setCurrentText(cell->getSpaceGroup().c_str());
+
+    ui->hklTolerance->setValue(cell->getHKLTolerance());
 
     QSortFilterProxyModel* proxyModel = new QSortFilterProxyModel(this);
     proxyModel->setSourceModel(ui->comboBox->model());
@@ -70,8 +71,10 @@ UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *par
     completer->setCaseSensitivity(Qt::CaseSensitive);
     ui->comboBox->setCompleter(completer);
 
-    QObject::connect(ui->comboBox->lineEdit(), SIGNAL(textChanged(QString)), proxyModel, SLOT(setFilterFixedString(QString)));
-    QObject::connect(completer, SIGNAL(activated(const QString &)), this, SLOT(onCompleterActivated(const QString &)));
+    connect(ui->comboBox->lineEdit(), SIGNAL(textChanged(QString)), proxyModel, SLOT(setFilterFixedString(QString)));
+    connect(completer, SIGNAL(activated(const QString &)), this, SLOT(onCompleterActivated(const QString &)));
+
+    connect(ui->hklTolerance,SIGNAL(valueChanged(double)),this,SLOT(setHKLTolerance(double)));
 
 }
 
@@ -91,7 +94,7 @@ void UnitCellPropertyWidget::setLatticeParams()
 
     try
     {
-    _unitCellItem->getUnitCell()->setParams(a,b,c,alpha*SX::Units::deg,beta*SX::Units::deg,gamma*SX::Units::deg);
+        _unitCellItem->getUnitCell()->setParams(a,b,c,alpha*SX::Units::deg,beta*SX::Units::deg,gamma*SX::Units::deg);
     }catch(...)
     {
 
@@ -114,73 +117,18 @@ void UnitCellPropertyWidget::setMassDensity() const
 }
 
 
-void UnitCellPropertyWidget::on_pushButton_Index_clicked()
+void UnitCellPropertyWidget::updateCellParameters(sptrUnitCell cell)
 {
-    LatticeIndexer* indexer=new LatticeIndexer(_unitCellItem->getUnitCell(),_unitCellItem->getExperiment());
-    indexer->show();
-}
-
-void UnitCellPropertyWidget::on_pushButton_AutoIndexing_clicked()
-{
-    DialogFindUnitCell* dialog = new DialogFindUnitCell(_unitCellItem->getExperiment(), this);
-    // Ensure that lattice parameters are updated if a solution is accepted
-    connect(dialog, SIGNAL(solutionAccepted(const SX::Crystal::UnitCell&)),
-            this, SLOT(setCell(const SX::Crystal::UnitCell&)));
-    dialog->exec();
-}
-
-void UnitCellPropertyWidget::setCell(const SX::Crystal::UnitCell& cell)
-{
-    // set up progress handler and view
-    std::shared_ptr<SX::Utils::ProgressHandler> progressHandler(new SX::Utils::ProgressHandler);
-    ProgressView progressView(this);
-
-    progressView.watch(progressHandler);
-    progressHandler->setStatus("Setting unit cell...");
-    progressHandler->setProgress(0);
-
-    int i;
-
-    //_unitCellItem->getCell()->copyMatrices(cell);
-    *_unitCellItem->getUnitCell() = cell;
-
-    getLatticeParams();
-    auto datamap=_unitCellItem->getExperiment()->getData();
-    for (auto data: datamap)
-    {
-        i = 0;
-        auto& peaks=data.second->getPeaks();
-        for (auto p: peaks)
-        {
-            p->addUnitCell(_unitCellItem->getUnitCell());
-            progressHandler->setProgress(i * 100.0 / peaks.size());
-            ++i;
-        }
-    }
-
-    qDebug() << "Set unit cell: bravais type " << cell.getBravaisTypeSymbol();
-
-    emit activateIndexingMode(_unitCellItem->getUnitCell());
-    emit cellUpdated();
+    ui->doubleSpinBoxa->setValue(cell->getA());
+    ui->doubleSpinBoxb->setValue(cell->getB());
+    ui->doubleSpinBoxc->setValue(cell->getC());
+    ui->doubleSpinBoxalpha->setValue(cell->getAlpha()/SX::Units::deg);
+    ui->doubleSpinBoxbeta->setValue(cell->getBeta()/SX::Units::deg);
+    ui->doubleSpinBoxgamma->setValue(cell->getGamma()/SX::Units::deg);
 }
 
 void UnitCellPropertyWidget::getLatticeParams()
 {
-    auto sample=_unitCellItem->getUnitCell();
-    ui->doubleSpinBoxa->setValue(sample->getA());
-    ui->doubleSpinBoxb->setValue(sample->getB());
-    ui->doubleSpinBoxc->setValue(sample->getC());
-    ui->doubleSpinBoxalpha->setValue(sample->getAlpha()/SX::Units::deg);
-    ui->doubleSpinBoxbeta->setValue(sample->getBeta()/SX::Units::deg);
-    ui->doubleSpinBoxgamma->setValue(sample->getGamma()/SX::Units::deg);
-}
-
-void UnitCellPropertyWidget::on_pushButton_Refine_clicked()
-{
-    DialogRefineUnitCell* dialog=new DialogRefineUnitCell(_unitCellItem->getExperiment(),_unitCellItem->getUnitCell(),this);
-    dialog->exec();
-    getLatticeParams();
-    emit cellUpdated();
 }
 
 void UnitCellPropertyWidget::setChemicalFormula(const QString &formula)
@@ -210,45 +158,6 @@ void UnitCellPropertyWidget::on_lineEdit_ChemicalFormula_editingFinished()
     setMassDensity();
 }
 
-void UnitCellPropertyWidget::on_pushButton_TransformationMatrix_clicked()
-{
-    DialogTransformationmatrix* dialog=new DialogTransformationmatrix(this);
-    connect(dialog,SIGNAL(getMatrix(Eigen::Matrix3d)),this,SLOT(transform(Eigen::Matrix3d)));
-    dialog->exec();
-}
-
-void UnitCellPropertyWidget::transform(const Eigen::Matrix3d &P)
-{
-   _unitCellItem->getUnitCell()->transform(P);
-   getLatticeParams();
-   // Update peaks
-   auto datamap=_unitCellItem->getExperiment()->getData();
-   for (auto data: datamap)
-   {
-       auto& peaks=data.second->getPeaks();
-       for (auto p: peaks)
-       {
-           p->addUnitCell(_unitCellItem->getUnitCell());
-       }
-   }
-   emit cellUpdated();
-}
-
-//void UnitCellPropertyWidget::on_comboBox_activated(const QString &arg1)
-//{
-//        auto uc=_unitCellItem->getCell();
-//        try
-//        {
-//            uc->setSpaceGroup(arg1.toStdString());
-//        }
-//        catch(...)
-//        {
-//            qWarning() << " Space group non valid, reverting to P 1";
-//            uc->setSpaceGroup("P 1");
-//            ui->comboBox->lineEdit()->setText("P 1");
-//        }
-//}
-
 void UnitCellPropertyWidget::onCompleterActivated(const QString& text)
 {
     if (text.isEmpty())
@@ -256,4 +165,9 @@ void UnitCellPropertyWidget::onCompleterActivated(const QString& text)
 
     ui->comboBox->setCurrentIndex(ui->comboBox->findText(text));
     ui->comboBox->activated(ui->comboBox->currentIndex());
+}
+
+void UnitCellPropertyWidget::setHKLTolerance(double tolerance)
+{
+    _unitCellItem->getUnitCell()->setHKLTolerance(tolerance);
 }
