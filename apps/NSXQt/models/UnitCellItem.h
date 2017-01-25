@@ -9,7 +9,8 @@
 
 namespace SX
 {
-namespace Instrument{
+namespace Instrument
+{
 class Experiment;
 }
 namespace Crystal{
@@ -30,6 +31,9 @@ public:
     std::shared_ptr<SX::Crystal::UnitCell> getUnitCell();
 
     void info() const;
+
+    void openTransformationMatrixDialog();
+    void openChangeUnitCellDialog();
 
 private:
     std::shared_ptr<SX::Crystal::UnitCell> _cell;
