@@ -113,7 +113,7 @@ void PeakFitDialog::checkCollisions()
         if ( other_peak == _peak)
             continue;
 
-        if (_peak->getBackground()->collide(*other_peak->getPeak()))
+        if (_peak->getBackground().collide(other_peak->getPeak()))
         {
             Eigen::RowVector3i hkl = other_peak->getIntegerMillerIndices();
             qDebug() << "COLLISION FOUND: ("
@@ -124,7 +124,7 @@ void PeakFitDialog::checkCollisions()
             int i;
             for (i = 0; i < 1000; ++i) {
                 _peak->scaleBackgroundShape(0.90);
-                if ( !_peak->getBackground()->collide(*other_peak->getPeak()))
+                if ( !_peak->getBackground().collide(other_peak->getPeak()))
                     break;
             }
 
@@ -195,10 +195,10 @@ void PeakFitDialog::updatePeak()
     _peak = the_peak;
 
     // get AABB
-    const SX::Geometry::IShape<double,3>* aabb = the_peak->getBackground();
+    const SX::Geometry::IShape<double,3>& aabb = the_peak->getBackground();
 
-    Eigen::Vector3d lower = aabb->getLower();
-    Eigen::Vector3d upper = aabb->getUpper();
+    Eigen::Vector3d lower = aabb.getLower();
+    Eigen::Vector3d upper = aabb.getUpper();
 
     _xmin = std::floor(lower(0));
     _ymin = std::floor(lower(1));
@@ -221,7 +221,7 @@ void PeakFitDialog::updatePeak()
     qDebug() << _xmax << "    " << _ymax << "    " << _zmax;
 
     // testing
-    const Ellipsoid<double, 3>* ellipse = dynamic_cast<const Ellipsoid<double, 3>*>(the_peak->getPeak());
+    const Ellipsoid<double, 3>* ellipse = dynamic_cast<const Ellipsoid<double, 3>*>(&the_peak->getPeak());
 
     if (ellipse) {
         Eigen::Matrix<double, 3, 1> center = ellipse->getCenter();
@@ -230,5 +230,5 @@ void PeakFitDialog::updatePeak()
 
     ui->frameScrollBar->setMinimum(_zmin);
     ui->frameScrollBar->setMaximum(_zmax);
-    ui->frameScrollBar->setValue(int(std::lround(aabb->getAABBCenter()[2])));
+    ui->frameScrollBar->setValue(int(std::lround(aabb.getAABBCenter()[2])));
 }

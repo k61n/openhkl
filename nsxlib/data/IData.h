@@ -70,7 +70,7 @@ class IFrameIterator;
 class ThreadedFrameIterator;
 class BasicFrameIterator;
 
-using FrameIteratorCallback = std::function<IFrameIterator*(IData*, int)>;
+using FrameIteratorCallback = std::function<IFrameIterator*(IData&, int)>;
 
 /*! \brief Interface for diffraction data
  *
@@ -84,7 +84,7 @@ public:
     /*! Construct a IData Object from a file on disk, and pointer to a diffractometer.
      *  @param inMemory: whether the file should be loaded in memory straight away or kept on disk
      */
-    IData(const std::string& filename, std::shared_ptr<Diffractometer> instrument);
+    IData(std::string filename, std::shared_ptr<Diffractometer> diffractometer);
 
     //! Copy constructor
     IData(const IData& other) = default;
@@ -153,7 +153,7 @@ public:
     void addMask(AABB<double,3>* mask);
 
     //! Add a new peak to the data
-    void addPeak(sptrPeak3D peak);
+    void addPeak(const sptrPeak3D& peak);
 
     //! Remove a mask from the data, by reference
     void removeMask(AABB<double, 3>* mask);
@@ -162,7 +162,7 @@ public:
     const std::set<AABB<double,3>*>& getMasks();
 
     //! Remove a peak from the data
-    bool removePeak(sptrPeak3D peak);
+    bool removePeak(const sptrPeak3D& peak);
 
     //! Clear the peaks collected for this data
     void clearPeaks();
@@ -171,7 +171,7 @@ public:
     bool isInMemory() const;
 
     //! Load all the frames in memory
-    void readInMemory(std::shared_ptr<SX::Utils::ProgressHandler> progress);
+    void readInMemory(const std::shared_ptr<SX::Utils::ProgressHandler>& progress);
 
     //! Release the data from memory
     void releaseMemory();
@@ -189,7 +189,7 @@ public:
     int dataAt(unsigned int x=0, unsigned int y=0, unsigned int z=0);
 
     //! Read a given Frame of the data
-    Eigen::MatrixXi getFrame(std::size_t i);
+    Eigen::MatrixXi getFrame(std::size_t idx);
 
     //! Read a single frame
     virtual Eigen::MatrixXi readFrame(std::size_t idx)=0;
@@ -212,10 +212,10 @@ public:
     std::vector<PeakCalc> hasPeaks(const std::vector<Eigen::Vector3d>& hkls,const Eigen::Matrix3d& BU);
 
     //! Get background
-    double getBackgroundLevel(std::shared_ptr<SX::Utils::ProgressHandler> progress);
+    double getBackgroundLevel(const std::shared_ptr<SX::Utils::ProgressHandler>& progress);
 
     //! Integrate intensities of all peaks
-    void integratePeaks(std::shared_ptr<SX::Utils::ProgressHandler> handler = nullptr);
+    void integratePeaks(const std::shared_ptr<SX::Utils::ProgressHandler>& handler = nullptr);
 
 protected:
     bool _isOpened;
@@ -240,8 +240,6 @@ protected:
 };
 
 } // end namespace Data
-
 } // end namespace SX
-
 
 #endif // NSXTOOL_IDATA_H_

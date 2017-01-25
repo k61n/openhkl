@@ -14,7 +14,7 @@
 # author: Jonathan Fisher
 #         j.fisher@fz-juelich.de, jonathan.m.fisher@gmail.com
 #
-# copyright: 2017 scientific computing group, Forshungszentrum Juelich GmbH
+# copyright: 2017 scientific computing group, Forschungszentrum Juelich GmbH
 #
 # license: see LICENSE
 #

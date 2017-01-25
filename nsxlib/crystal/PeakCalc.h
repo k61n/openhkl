@@ -51,12 +51,13 @@ using sptrPeak3D = std::shared_ptr<Peak3D>;
 
 struct PeakCalc
 {
-	PeakCalc(double h,double k,double l, double x,double y, double frame);
-	~PeakCalc();
-	double _h,_k,_l;
-	double _x,_y,_frame;
+    PeakCalc(double h,double k,double l, double x,double y, double frame); //:
+        //_h(h), _k(k), _l(l), _x(x), _y(y), _frame(frame) = default;
+    ~PeakCalc() = default;
+    double _h,_k,_l;
+    double _x,_y,_frame;
 
-    sptrPeak3D averagePeaks(std::shared_ptr<SX::Data::IData> data, double distance);
+    sptrPeak3D averagePeaks(const std::shared_ptr<SX::Data::IData>& data, double distance);
     std::vector<sptrPeak3D> findNeighbors(const std::set<sptrPeak3D>& peak_list, double distance);
 };
 

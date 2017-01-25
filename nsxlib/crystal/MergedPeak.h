@@ -12,7 +12,7 @@
  chapon[at]ill.fr
  pellegrini[at]ill.fr
 
- Forshungszentrum Juelich GmbH
+ Forschungszentrum Juelich GmbH
  52425 Juelich
  Germany
  j.fisher[at]fz-juelich.de
@@ -54,11 +54,11 @@ namespace Crystal
 class MergedPeak
 {
 public:
-    MergedPeak(SpaceGroup grp, bool friedel=false);
-    MergedPeak(const MergedPeak& other);
-    ~MergedPeak();
+    MergedPeak(const SpaceGroup& grp, bool friedel=false);
+    MergedPeak(const MergedPeak& other) = default;
+    ~MergedPeak() = default;
 
-    bool addPeak(sptrPeak3D peak);
+    bool addPeak(const sptrPeak3D& peak);
     Eigen::Vector3i getIndex() const;
     double intensity() const;
     double sigma() const;

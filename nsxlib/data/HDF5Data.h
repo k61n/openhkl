@@ -40,12 +40,12 @@ namespace Data
 /*! \brief HDF5 Data Format.
  *
  */
-class HDF5Data : public IData
+class HDF5Data final: public IData
 {
 public:
-    static IData* create(const std::string& filename, std::shared_ptr<Diffractometer> instrument);
-	HDF5Data(const std::string& filename, std::shared_ptr<Diffractometer> instrument);
-	virtual ~HDF5Data();
+    static IData* create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer);
+    HDF5Data(const std::string& filename, const std::shared_ptr<Diffractometer>& instrument);
+    virtual ~HDF5Data();
     Eigen::MatrixXi readFrame(std::size_t frame) override;
     void open() override;
     void close() override;
@@ -54,7 +54,6 @@ private:
     std::unique_ptr<H5::DataSet> _dataset;
     std::unique_ptr<H5::DataSpace> _space;
     std::unique_ptr<H5::DataSpace> _memspace;
-
 };
 
 } // Namespace Data

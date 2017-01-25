@@ -1,7 +1,7 @@
 
 // 2d convolution via FFT
 // author: Jonathan Fisher
-// Forshungszentrum Jülich GmbH
+// Forschungszentrum Jülich GmbH
 // j.fisher@fz-juelich.de
 
 #include "Convolver.h"

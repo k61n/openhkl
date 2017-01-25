@@ -4,70 +4,57 @@
 
 #include <future>
 
-
-
 namespace SX {
-
 namespace Data {
 
-
-
-ThreadedFrameIterator::ThreadedFrameIterator(IData* data, unsigned int idx)
+ThreadedFrameIterator::ThreadedFrameIterator(IData& data, unsigned int idx)
     :IFrameIterator(data, idx),
      _currentFrame(),
      _nextFrame()
 {
-    assert(data != nullptr);
-
     // unused variable
     //std::launch policy = std::launch::async;
-    unsigned int nframes = _data->getNFrames();
+    unsigned int nframes = _data.getNFrames();
 
-    if (_index < nframes)
-        _currentFrame = _data->getFrame(_index).cast<double>();
+    if (_index < nframes) {
+        _currentFrame = _data.getFrame(_index).cast<double>();
+    }
 
-    if ( _index+1 < nframes )
+    if ( _index+1 < nframes ) {
         _nextFrame = getFrameAsync(_index+1);
-}
-
-ThreadedFrameIterator::~ThreadedFrameIterator()
-{
-
+    }
 }
 
 Types::RealMatrix &ThreadedFrameIterator::getFrame()
 {
-    assert(_index < _data->getNFrames() );
+    assert(_index < _data.getNFrames() );
     return _currentFrame;
 }
 
-
 void ThreadedFrameIterator::advance()
 {
-    unsigned int nframes = _data->getNFrames();
+    unsigned int nframes = _data.getNFrames();
     ++_index;
 
-    if (_index < nframes)
+    if (_index < nframes) {
         _currentFrame = _nextFrame.get();
+    }
 
-    if (_index+1 < nframes)
+    if (_index+1 < nframes) {
         _nextFrame = getFrameAsync(_index+1);
+    }
 }
 
 std::shared_future<SX::Types::RealMatrix> ThreadedFrameIterator::getFrameAsync(int idx)
 {
-    std::launch policy = std::launch::async;
-
-    auto get_fn = [=] () -> SX::Types::RealMatrix
-    {
-        return _data->getFrame(idx).cast<double>();
+    auto get_fn = [=] () -> SX::Types::RealMatrix {
+        return _data.getFrame(idx).cast<double>();
     };
-
+    std::launch policy = std::launch::async;
     return std::shared_future<SX::Types::RealMatrix>(std::async(policy, get_fn));
 }
 
 /**/
 
 } // namespace Data
-
 } // namespace SX

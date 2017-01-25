@@ -12,7 +12,7 @@
  chapon[at]ill.fr
  pellegrini[at]ill.fr
 
- Forshungszentrum Juelich GmbH
+ Forschungszentrum Juelich GmbH
  52425 Juelich
  Germany
  j.fisher[at]fz-juelich.de
@@ -404,8 +404,8 @@ void SessionModel::integrateCalculatedPeaks()
     for (std::shared_ptr<IData> numor: getSelectedNumors()) {
         for (sptrPeak3D peak: numor->getPeaks()) {
             if ( peak && peak->isSelected() && !peak->isMasked() ) {
-                peak_extent += peak->getPeak()->getAABBExtents();
-                bg_extent += peak->getBackground()->getAABBExtents();
+                peak_extent += peak->getPeak().getAABBExtents();
+                bg_extent += peak->getBackground().getAABBExtents();
                 ++count;
             }
         }

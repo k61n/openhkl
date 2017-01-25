@@ -12,7 +12,7 @@
  chapon[at]ill.fr
  pellegrini[at]ill.fr
 
- Forshungszentrum Juelich GmbH
+ Forschungszentrum Juelich GmbH
  52425 Juelich
  Germany
  j.fisher[at]fz-juelich.de
@@ -48,7 +48,6 @@
 #include "Source.h"
 #include "Units.h"
 #include "Blob3D.h"
-#include "IData.h"
 #include "BlobFinder.h" // needed for Ellipsoid3D typedef
 
 #include "IFrameIterator.h"
@@ -129,8 +128,8 @@ Peak3D& Peak3D::operator=(const Peak3D& other)
         _data = other._data;
         _hkl = other._hkl;
 
-        _peak == nullptr ? nullptr : other._peak->clone();
-        _bkg == nullptr ? nullptr : other._bkg->clone();
+        _peak = other._peak ? std::unique_ptr<shape_type>(other._peak->clone()) : nullptr;
+        _bkg = other._bkg ? std::unique_ptr<shape_type>(other._bkg->clone()) : nullptr;
 
         _projection = other._projection;
         _projectionPeak = other._projectionPeak;
@@ -152,19 +151,12 @@ Peak3D& Peak3D::operator=(const Peak3D& other)
     return *this;
 }
 
-Peak3D::~Peak3D()
-{
-    if (_peak)
-        delete _peak;
-    if (_bkg)
-        delete _bkg;
-}
-
-void Peak3D::linkData(std::shared_ptr<SX::Data::IData> data)
+void Peak3D::linkData(const std::shared_ptr<SX::Data::IData>& data)
 {
     _data = std::weak_ptr<SX::Data::IData>(data);
-    if (data)
+    if (data != nullptr) {
         setSource(data->getDiffractometer()->getSource());
+    }
 }
 
 void Peak3D::unlinkData()
@@ -174,7 +166,7 @@ void Peak3D::unlinkData()
 
 void Peak3D::setPeakShape(SX::Geometry::IShape<double,3>* p)
 {
-    _peak = p;
+    _peak = std::unique_ptr<SX::Geometry::IShape<double,3>>(p);
     Eigen::Vector3d center = _peak->getAABBCenter();
     int f = int(std::lround(std::floor(center[2])));
 
@@ -182,21 +174,18 @@ void Peak3D::setPeakShape(SX::Geometry::IShape<double,3>* p)
 
     auto data = getData();
 
-    setSampleState(std::shared_ptr<ComponentState>(new ComponentState(data->getSampleInterpolatedState(f))));
+    setSampleState(std::make_shared<ComponentState>(data->getSampleInterpolatedState(f)));
     ComponentState detState = data->getDetectorInterpolatedState(f);
 
     using DetectorEvent = SX::Instrument::DetectorEvent;
 
-    setDetectorEvent(std::shared_ptr<DetectorEvent>(
-                         new DetectorEvent(data->getDiffractometer()->getDetector()->createDetectorEvent(
-                                               center[0],center[1],detState.getValues()))
-                    )
-            );
+    setDetectorEvent(std::make_shared<DetectorEvent>(
+        data->getDiffractometer()->getDetector()->createDetectorEvent(center[0],center[1],detState.getValues())));
 }
 
 void Peak3D::setBackgroundShape(SX::Geometry::IShape<double,3>* b)
 {
-    _bkg = b;
+    _bkg = std::unique_ptr<shape_type>(b);
 }
 
 
@@ -220,8 +209,9 @@ void Peak3D::integrate()
 {
     auto data = getData();
 
-    if (!data)
+    if (data == nullptr) {
         return;
+    }
 
     framewiseIntegrateBegin();
 
@@ -266,7 +256,7 @@ Eigen::VectorXd Peak3D::getBkgProjectionSigma() const
     return _scale*(_projectionBkg.array().sqrt());
 }
 
-bool Peak3D::setUnitCell(std::shared_ptr<SX::Crystal::UnitCell> basis)
+bool Peak3D::setUnitCell(const std::shared_ptr<SX::Crystal::UnitCell>& basis)
 {
     _basis = basis;
     _hkl = _basis->fromReciprocalStandard(this->getQ());
@@ -378,7 +368,7 @@ std::shared_ptr<SX::Instrument::ComponentState> Peak3D::getSampleState()
 
 double Peak3D::getSampleStepSize() const
 {
-    // TODO: we should NOT assume that gonio axis 0 is the one being rotated
+    // TODO(jonathan): we should NOT assume that gonio axis 0 is the one being rotated
     // when we compute 'step' below
     double step = 0.0;
 
@@ -413,28 +403,27 @@ Eigen::RowVector3d Peak3D::getQ() const
     if (!_sampleState) {
         return _event->getParent()->getQ(*_event, wav);
     }
+
     // otherwise scattering point is deducted from the sample
-    else {
-        Eigen::Vector3d q = _event->getParent()->getQ(*_event, wav,
-                                                      _sampleState->getParent()->getPosition(*_sampleState));
-        q = _sampleState->getParent()->getGonio()->getInverseHomMatrix(_sampleState->getValues()).rotation()*q;
-        return q;
-    }
+    Eigen::Vector3d q = _event->getParent()->getQ(*_event, wav,
+                                                  _sampleState->getParent()->getPosition(*_sampleState));
+    q = _sampleState->getParent()->getGonio()->getInverseHomMatrix(_sampleState->getValues()).rotation()*q;
+    return q;
 }
 
-void Peak3D::setSampleState(std::shared_ptr<SX::Instrument::ComponentState> sstate)
+void Peak3D::setSampleState(const std::shared_ptr<SX::Instrument::ComponentState>& sstate)
 {
-    _sampleState=sstate;
+    _sampleState = sstate;
 }
 
-void Peak3D::setDetectorEvent(std::shared_ptr<SX::Instrument::DetectorEvent> event)
+void Peak3D::setDetectorEvent(const std::shared_ptr<SX::Instrument::DetectorEvent>& event)
 {
-    _event=event;
+    _event = event;
 }
 
-void Peak3D::setSource(std::shared_ptr<SX::Instrument::Source> source)
+void Peak3D::setSource(const std::shared_ptr<SX::Instrument::Source>& source)
 {
-    _source=source;
+    _source = source;
 }
 
 void Peak3D::getGammaNu(double& gamma,double& nu) const
@@ -444,18 +433,24 @@ void Peak3D::getGammaNu(double& gamma,double& nu) const
 
 bool operator<(const Peak3D& p1, const Peak3D& p2)
 {
-    if (p1._hkl[0]<p2._hkl[0])
+    if (p1._hkl[0]<p2._hkl[0]) {
         return true;
-    else if (p1._hkl[0]>p2._hkl[0])
+    }
+    if (p1._hkl[0]>p2._hkl[0]) {
         return false;
-    if (p1._hkl[1]<p2._hkl[1])
+    }
+    if (p1._hkl[1]<p2._hkl[1]) {
         return true;
-    else if (p1._hkl[1]>p2._hkl[1])
+    }
+    if (p1._hkl[1]>p2._hkl[1]) {
         return false;
-    if (p1._hkl[2]<p2._hkl[2])
+    }
+    if (p1._hkl[2]<p2._hkl[2]) {
         return true;
-    else if (p1._hkl[2]>p2._hkl[2])
+    }
+    if (p1._hkl[2]>p2._hkl[2]) {
         return false;
+    }
     return false;
 }
 
@@ -466,12 +461,12 @@ bool Peak3D::isSelected() const
 
 void Peak3D::setSelected(bool s)
 {
-    _selected=s;
+    _selected = s;
 }
 
 void Peak3D::setMasked(bool masked)
 {
-    _masked=masked;
+    _masked = masked;
 }
 
 bool Peak3D::isMasked() const
@@ -490,8 +485,9 @@ void Peak3D::framewiseIntegrateBegin()
 {
     auto data = getData();
 
-    if (!data)
+    if (!data) {
         return;
+    }
 
     // Get the lower and upper limit of the bkg Bounding box
     _state.lower = _bkg->getLower();
@@ -507,19 +503,25 @@ void Peak3D::framewiseIntegrateBegin()
     _state.start_y = static_cast<unsigned int>(std::floor(_state.lower[1]));
     _state.end_y = static_cast<unsigned int>(std::ceil(_state.upper[1]));
 
-    if (_state.lower[0] < 0)
+    if (_state.lower[0] < 0) {
         _state.start_x=0;
-    if (_state.lower[1] < 0)
+    }
+    if (_state.lower[1] < 0) {
         _state.start_y=0;
-    if (_state.lower[2] < 0)
+    }
+    if (_state.lower[2] < 0) {
         _state.data_start=0;
+    }
 
-    if (_state.end_x > data->getNCols()-1)
+    if (_state.end_x > data->getNCols()-1) {
         _state.end_x = static_cast<unsigned int>(data->getNCols()-1);
-    if (_state.end_y > data->getNRows()-1)
+    }
+    if (_state.end_y > data->getNRows()-1) {
         _state.end_y =  static_cast<unsigned int>(data->getNRows()-1);
-    if (_state.data_end > data->getNFrames()-1)
+    }
+    if (_state.data_end > data->getNFrames()-1) {
         _state.data_end = static_cast<unsigned int>(data->getNFrames()-1);
+    }
 
     // Allocate all vectors
     _projection = Eigen::VectorXd::Zero(_state.data_end - _state.data_start + 1);
@@ -541,8 +543,9 @@ void Peak3D::framewiseIntegrateStep(Eigen::MatrixXi& frame, unsigned int idx)
 {
     auto data = getData();
 
-    if (!data || idx < _state.data_start || idx > _state.data_end)
+    if (!data || idx < _state.data_start || idx > _state.data_end) {
         return;
+    }
 
     double pointsinpeak = 0;
     double pointsinbkg = 0;
@@ -577,8 +580,9 @@ void Peak3D::framewiseIntegrateStep(Eigen::MatrixXi& frame, unsigned int idx)
     _countsPeak[idx-_state.data_start] = intensityP;
     _countsBkg[idx-_state.data_start] = intensityBkg;
 
-    if (pointsinpeak > 0)
+    if (pointsinpeak > 0) {
         _projectionPeak[idx-_state.data_start] = intensityP-intensityBkg*pointsinpeak/pointsinbkg;
+    }
 
     return;
 }
@@ -664,9 +668,5 @@ bool Peak3D::getCalculated() const
     return _calculated;
 }
 
-}
-}
-
-
-
-
+} // Crsystal
+} // SX

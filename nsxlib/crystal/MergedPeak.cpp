@@ -12,7 +12,7 @@
  chapon[at]ill.fr
  pellegrini[at]ill.fr
 
- Forshungszentrum Juelich GmbH
+ Forschungszentrum Juelich GmbH
  52425 Juelich
  Germany
  j.fisher[at]fz-juelich.de
@@ -44,30 +44,21 @@ namespace SX
 namespace Crystal
 {
 
-MergedPeak::MergedPeak(SpaceGroup grp, bool friedel):
+MergedPeak::MergedPeak(const SpaceGroup& grp, bool friedel):
  _hkl(), _intensity(0), _sigma(0), _chiSquared(0.0), _std(0.0), _peaks(), _grp(grp), _friedel(friedel)
 {
 }
 
-MergedPeak::MergedPeak(const MergedPeak &other):
-    _hkl(other._hkl),
-    _intensity(other._intensity), _sigma(other._sigma), _chiSquared(other._chiSquared), _std(other._std),
-    _peaks(other._peaks),  _grp(other._grp), _friedel(other._friedel)
-{
-}
 
-MergedPeak::~MergedPeak()
-{
-}
-
-bool MergedPeak::addPeak(sptrPeak3D peak)
+bool MergedPeak::addPeak(const sptrPeak3D& peak)
 {
     // peak is not equivalent to one already on the list
-    if (_peaks.size() && !_grp.isEquivalent(_hkl.cast<double>(), peak->getMillerIndices(), _friedel))
+    if (!_peaks.empty() && !_grp.isEquivalent(_hkl.cast<double>(), peak->getMillerIndices(), _friedel)) {
         return false;
+    }
 
     // add peak to list
-    _peaks.push_back(peak);
+    _peaks.emplace_back(peak);
 
     // this was the first peak, so we have to update _hkl
     _hkl = peak->getIntegerMillerIndices();
@@ -113,41 +104,44 @@ void MergedPeak::determineRepresentativeHKL()
 
     std::vector<Eigen::Vector3d> equivs;
 
-    for (auto&& g: _grp.getGroupElements())
-        equivs.push_back(g.getRotationPart()*best_hkl);
+    for (auto&& g: _grp.getGroupElements()) {
+        equivs.emplace_back(g.getRotationPart()*best_hkl);
+    }
 
-    auto num_nneg = [](const Eigen::Vector3d& v) -> int
-    {
+    auto num_nneg = [](const Eigen::Vector3d& v) -> int {
         int neg = 0;
 
-        for (int i = 0; i < 3; ++i)
-            if (v(i) >= 0)
+        for (int i = 0; i < 3; ++i) {
+            if (v(i) >= 0) {
                 ++neg;
-
+            }
+        }
         return neg;
     };
 
-    auto compare_fn = [=](const Eigen::Vector3d& a, const Eigen::Vector3d& b) -> bool
-    {
+    auto compare_fn = [=](const Eigen::Vector3d& a, const Eigen::Vector3d& b) -> bool {
         const double eps = 1e-5;
         auto neg_a = num_nneg(a);
         auto neg_b = num_nneg(b);
 
-        if (neg_a != neg_b)
+        if (neg_a != neg_b) {
             return neg_a > neg_b;
+        }
 
-        if (std::abs(a(0)-b(0)) > eps)
+        if (std::abs(a(0)-b(0)) > eps) {
             return a(0) > b(0);
-        else if (std::abs(a(1)-b(1)) > eps)
+        }
+        if (std::abs(a(1)-b(1)) > eps) {
             return a(1) > b(1);
-        else
-            return a(2) > b(2);
+        }
+        return a(2) > b(2);
     };
 
     best_hkl = *std::min_element(equivs.begin(), equivs.end(), compare_fn);
 
-    for (int i = 0; i < 3; ++i)
+    for (int i = 0; i < 3; ++i) {
         _hkl(i) = int(std::lround(best_hkl(i)));
+    }
 }
 
 void MergedPeak::update()
@@ -169,7 +163,7 @@ void MergedPeak::update()
     _sigma = std::sqrt(variance);
 
     // update chi2
-    // TODO: check that this is correct!
+    // TODO(jonathan): check that this is correct!
     _chiSquared = 0.0;
     _std = 0.0;
 
@@ -179,9 +173,9 @@ void MergedPeak::update()
         _std += res2;
     }
 
-    if (_peaks.size()>1)
+    if (_peaks.size()>1) {
         _std /= (_peaks.size()-1);
-
+    }
     _std = std::sqrt(_std);
 }
 
