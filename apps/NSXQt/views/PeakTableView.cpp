@@ -16,19 +16,26 @@
 
 #include "IData.h"
 #include "Peak3D.h"
+
 #include "ProgressHandler.h"
 #include "ProgressView.h"
+
 #include "CollectedPeaksDelegate.h"
 #include "CollectedPeaksModel.h"
+
+#include "dialogs/DialogAutoIndexing.h"
+#include "dialogs/DialogRefineUnitCell.h"
+#include "dialogs/DialogTransformationMatrix.h"
+#include "dialogs/DialogUnitCellParameters.h"
 
 PeakTableView::PeakTableView(QWidget *parent)
 : QTableView(parent),
   _normalized(false)
 {
-    setEditTriggers(QAbstractItemView::DoubleClicked);
+    setEditTriggers(QAbstractItemView::SelectedClicked);
     // Selection of a cell in the table select the whole line.
     setSelectionBehavior(QAbstractItemView::SelectRows);
-    setSelectionMode(QAbstractItemView::MultiSelection);
+    setSelectionMode(QAbstractItemView::ExtendedSelection);
 
     setSortingEnabled(true);
     sortByColumn(0, Qt::AscendingOrder);
@@ -114,20 +121,28 @@ void PeakTableView::contextMenuEvent(QContextMenuEvent* event)
 
     menu->addSeparator();
 
-    QAction* clearSelectedPeaks=new QAction("clear selection",menu);
-    QAction* selectAllPeaks=new QAction("select all peaks",menu);
-    QAction* selectValidPeaks=new QAction("select valid peaks",menu);
-    QAction* selectUnindexedPeaks=new QAction("select unindexed peaks",menu);
-    QAction* togglePeaksSelection=new QAction("toggle peaks selection",menu);
-    menu->addAction(selectAllPeaks);
-    menu->addAction(selectValidPeaks);
-    menu->addAction(selectUnindexedPeaks);
-    menu->addSeparator();
-    menu->addAction(clearSelectedPeaks);
-    menu->addSeparator();
-    menu->addAction(togglePeaksSelection);
+    QMenu* selectionMenu=menu->addMenu("Selection");
 
-    // Connections
+    QAction* selectAllPeaks=new QAction("all peaks",menu);
+    QAction* selectValidPeaks=new QAction("valid peaks",menu);
+    QAction* selectUnindexedPeaks=new QAction("unindexed peaks",menu);
+    QAction* clearSelectedPeaks=new QAction("clear selection",menu);
+    QAction* togglePeaksSelection=new QAction("toggle",menu);
+    selectionMenu->addAction(selectAllPeaks);
+    selectionMenu->addAction(selectValidPeaks);
+    selectionMenu->addAction(selectUnindexedPeaks);
+    selectionMenu->addSeparator();
+    selectionMenu->addAction(clearSelectedPeaks);
+    selectionMenu->addSeparator();
+    selectionMenu->addAction(togglePeaksSelection);
+
+    menu->addSeparator();
+
+    QAction* autoIndexing=new QAction("Auto-indexing",menu);
+    menu->addAction(autoIndexing);
+    QAction* refineParameters=new QAction("Refine unit cell and instrument parameters",menu);
+    menu->addAction(refineParameters);
+
     connect(normalize,SIGNAL(triggered()),this,SLOT(normalizeToMonitor()));
     connect(writeFullProf,SIGNAL(triggered()),this,SLOT(writeFullProf()));
     connect(writeShelX,SIGNAL(triggered()),this,SLOT(writeShelX()));
@@ -138,6 +153,9 @@ void PeakTableView::contextMenuEvent(QContextMenuEvent* event)
     connect(selectValidPeaks,SIGNAL(triggered()),this,SLOT(selectValidPeaks()));
     connect(selectUnindexedPeaks,SIGNAL(triggered()),this,SLOT(selectUnindexedPeaks()));
     connect(togglePeaksSelection,SIGNAL(triggered()),this,SLOT(togglePeaksSelection()));
+
+    connect(autoIndexing,SIGNAL(triggered()),this,SLOT(openAutoIndexingDialog()));
+    connect(refineParameters,SIGNAL(triggered()),this,SLOT(openRefiningParametersDialog()));
 }
 
 void PeakTableView::normalizeToMonitor()
@@ -314,11 +332,9 @@ void PeakTableView::showPeaksMatchingText(QString text)
     for (row=0;row<peaks.size();row++)
     {
         sptrPeak3D p=peaks[row];
-        Eigen::Vector3d hkl=p->getMillerIndices();
-        if (std::fabs(hkl[0]-h)>1e-2 || std::fabs(hkl[1]-k)>1e-2 || std::fabs(hkl[2]-l)>1e-2)
-            setRowHidden(row,true);
-        else
-            setRowHidden(row,false);
+        Eigen::RowVector3d hkl;
+        bool success = p->getMillerIndices(hkl,true);
+        setRowHidden(row,success);
     }
 }
 
@@ -358,9 +374,9 @@ void PeakTableView::selectValidPeaks()
     if (!peaksModel)
         return;
 
-    QModelIndexList selectedPeaks = peaksModel->getSelectedPeaks();
+    QModelIndexList validPeaksIndexes = peaksModel->getValidPeaks();
 
-    for (QModelIndex index : selectedPeaks)
+    for (QModelIndex index : validPeaksIndexes)
         selectRow(index.row());
 }
 
@@ -369,4 +385,65 @@ QItemSelectionModel::SelectionFlags PeakTableView::selectionCommand(const QModel
     if (event==nullptr)
         return QItemSelectionModel::NoUpdate;
     return QTableView::selectionCommand(index,event);
+}
+
+void PeakTableView::openAutoIndexingDialog()
+{
+    CollectedPeaksModel* peakModel = dynamic_cast<CollectedPeaksModel*>(model());
+    sptrExperiment experiment = peakModel->getExperiment();
+
+    std::vector<sptrPeak3D> peaks = peakModel->getPeaks(selectionModel()->selectedRows());
+
+    DialogAutoIndexing* dialog = new DialogAutoIndexing(experiment,peaks);
+    connect(dialog,SIGNAL(cellUpdated(sptrUnitCell)),this,SLOT(updateUnitCell(sptrUnitCell)));
+    dialog->exec();
+
+    selectionModel()->clear();
+}
+
+void PeakTableView::updateUnitCell(sptrUnitCell unitCell)
+{
+    QModelIndexList selectedPeaks = selectionModel()->selectedRows();
+    if (selectedPeaks.empty())
+        return;
+
+    CollectedPeaksModel* peakModel = dynamic_cast<CollectedPeaksModel*>(model());
+    peakModel->setUnitCell(unitCell,selectedPeaks);
+}
+
+void PeakTableView::openRefiningParametersDialog()
+{
+    CollectedPeaksModel* peakModel = dynamic_cast<CollectedPeaksModel*>(model());
+    sptrExperiment experiment = peakModel->getExperiment();
+
+    std::vector<sptrPeak3D> peaks = peakModel->getPeaks(selectionModel()->selectedRows());
+
+    int nPeaks = peaks.size();
+    // Check that a minimum number of peaks have been selected for indexing
+    if (nPeaks < 10)
+    {
+        QMessageBox::warning(this, tr("NSXTool"),tr("Need at least 10 peaks for refining"));
+        return;
+    }
+
+    sptrUnitCell uc(peaks[0]->getActiveUnitCell());
+    for (auto peak : peaks)
+    {
+        if (peak->getActiveUnitCell() != uc)
+        {
+            uc = nullptr;
+            break;
+        }
+    }
+
+    if (uc == nullptr)
+    {
+        QMessageBox::warning(this, tr("NSXTool"),tr("The selected peaks must have the same active unit cell for refining"));
+        return;
+    }
+
+    DialogRefineUnitCell* dialog= new DialogRefineUnitCell(experiment,uc,peaks,this);
+    dialog->exec();
+//    getLatticeParams();
+//    emit cellUpdated();
 }

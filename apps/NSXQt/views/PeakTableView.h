@@ -9,23 +9,18 @@
 #include <QFileDialog>
 #include <QMenu>
 #include <QTableView>
+
 #include <IData.h>
+#include "Types.h"
+
 #include <MainWindow.h>
 
 class PeakCustomPlot;
 class QContextMenuEvent;
 class QMouseEvent;
 
-namespace SX
-{
-namespace Crystal
-{
-class Peak3D;
-using sptrPeak3D=std::shared_ptr<Peak3D>;
-}
-}
-
 using SX::Crystal::sptrPeak3D;
+using SX::Crystal::sptrUnitCell;
 
 class PeakTableView : public QTableView
 {
@@ -40,6 +35,7 @@ public:
 signals:
     void plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&);
     void plotPeak(sptrPeak3D);
+    void autoIndexed();
 
 public slots:
     //! Write the current list to FullProf
@@ -60,6 +56,11 @@ public slots:
     void selectValidPeaks();
     void selectUnindexedPeaks();
     void togglePeaksSelection();
+
+    void updateUnitCell(sptrUnitCell);
+
+    void openAutoIndexingDialog();
+    void openRefiningParametersDialog();
 
 private:
     bool checkBeforeWritting();
