@@ -123,7 +123,9 @@ std::vector<Eigen::Vector3d> Indexer::index(const Peak3D& peak) {
             for (auto old: _peaks) {
                 auto oldQ = old->getQ();
                 double angle = acos(thisQ.dot(oldQ)/this_d_star/oldQ.norm());
-                double angle2 = _cell->getAngle((*it).second, old->getMillerIndices());
+                Eigen::RowVector3d hkl;
+                bool success =old->getMillerIndices(hkl,true);
+                double angle2 = _cell->getAngle((*it).second, hkl);
 
                 if (angle>(1.0-_angletol)*angle2 && angle<(1.0+_angletol)*angle2) {
                     hkls.push_back((*it).second);
