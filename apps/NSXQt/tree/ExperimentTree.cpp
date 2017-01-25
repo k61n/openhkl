@@ -50,6 +50,7 @@
 #include "Logger.h"
 #include "ReciprocalSpaceViewer.h"
 #include "DetectorScene.h"
+#include "dialogs/DialogTransformationMatrix.h"
 
 #include "dialogs/DialogRawData.h"
 #include "dialogs/DialogAutoIndexing.h"
@@ -113,18 +114,6 @@ void ExperimentTree::setSession(std::shared_ptr<SessionModel> session)
     setModel(_session.get());
 }
 
-void ExperimentTree::openAutoIndexingDialog()
-{
-    QStandardItem* item=_session->itemFromIndex(currentIndex());
-    auto ucitem=dynamic_cast<UnitCellItem*>(item);
-    if (!ucitem)
-        return;
-
-    DialogAutoIndexing* dialog = new DialogAutoIndexing(ucitem->getExperiment(),ucitem->getUnitCell());
-    connect(dialog,SIGNAL(solutionAccepted(sptrUnitCell)),_session.get(),SIGNAL(updateCellParameters(sptrUnitCell)));
-    dialog->exec();
-}
-
 void ExperimentTree::setHKLTolerance()
 {
     QStandardItem* item=_session->itemFromIndex(currentIndex());
@@ -138,6 +127,8 @@ void ExperimentTree::setHKLTolerance()
         return;
 
     ucitem->getUnitCell()->setHKLTolerance(tolerance);
+
+    onSingleClick(currentIndex());
 }
 
 void ExperimentTree::createNewExperiment()
@@ -222,24 +213,24 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
         {
             QMenu* menu = new QMenu(this);
             QAction* info = menu->addAction("Info");
+            menu->addSeparator();
             QAction* setTolerance = menu->addAction("Set HKL tolerance");
-            QAction* autoIndexing = menu->addAction("Auto indexing");
-//            QAction* manualIndexing = menu->addAction("Manual indexing");
-            QAction* refine = menu->addAction("Refine UB matrix and instrument parameters");
-            QAction* basis = menu->addAction("Change of basis");
+            menu->addSeparator();
+            QAction* cellParameters=menu->addAction("Change unit cell parameters");
+            QAction* transformationMatrix=menu->addAction("Transformation matrix");
             menu->popup(viewport()->mapToGlobal(point));
 
-            auto infoLambda = [=] {ucitem->info();};
+            auto infoLambda = [=]{ucitem->info();};
             connect(info, &QAction::triggered, this, infoLambda);
 
+            auto cellParametersLambda = [=]{ucitem->openChangeUnitCellDialog();};
+            connect(cellParameters, &QAction::triggered, this, cellParametersLambda);
+
+            auto transformationMatrixLambda = [=]{ucitem->openTransformationMatrixDialog();};
+            connect(transformationMatrix, &QAction::triggered, this, transformationMatrixLambda);
+
             connect(setTolerance, SIGNAL(triggered()),this, SLOT(setHKLTolerance()));
-            connect(autoIndexing, SIGNAL(triggered()),this, SLOT(openAutoIndexingDialog()));
 
-//            auto refineLambda = [=] {ucitem->refineInstrumentParameters();};
-//            connect(refine, &QAction::triggered, this, refineLambda);
-
-//            auto basisLambda = [=] {ucitem->changeBasis();};
-//            connect(basis, &QAction::triggered, this, basisLambda);
         }
         else if (NumorItem* nitem = dynamic_cast<NumorItem*>(item))
             {

@@ -62,7 +62,6 @@ public slots:
     void integrateCalculatedPeaks();
     void peakFitDialog();
     void incorporateCalculatedPeaks();
-    void openAutoIndexingDialog();
     void setHKLTolerance();
 
 private:
