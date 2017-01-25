@@ -1308,7 +1308,6 @@ border-radius: 4px;
      <addaction name="actionGamma_Nu"/>
      <addaction name="action2_Theta"/>
      <addaction name="actionD_spacing"/>
-     <addaction name="actionH_k_l"/>
     </widget>
     <widget class="QMenu" name="menuShow_Window">
      <property name="title">
@@ -1316,6 +1315,7 @@ border-radius: 4px;
      </property>
      <addaction name="actionLogger"/>
      <addaction name="action1D_Peak_Ploter"/>
+     <addaction name="actionProperty"/>
     </widget>
     <widget class="QMenu" name="menuSet_View">
      <property name="title">
@@ -1818,6 +1818,14 @@ QDockWidget::title {
     <string>Incorporate calculated peaks</string>
    </property>
   </action>
+  <action name="actionProperty">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Property</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -1854,12 +1862,12 @@ QDockWidget::title {
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>831</x>
-     <y>539</y>
+     <x>785</x>
+     <y>534</y>
     </hint>
     <hint type="destinationlabel">
-     <x>882</x>
-     <y>545</y>
+     <x>835</x>
+     <y>540</y>
     </hint>
    </hints>
   </connection>
@@ -1870,12 +1878,12 @@ QDockWidget::title {
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>882</x>
-     <y>545</y>
+     <x>835</x>
+     <y>540</y>
     </hint>
     <hint type="destinationlabel">
-     <x>820</x>
-     <y>539</y>
+     <x>785</x>
+     <y>534</y>
     </hint>
    </hints>
   </connection>

@@ -16,6 +16,7 @@
 #include <QThread>
 #include <QMouseEvent>
 #include <QProgressDialog>
+#include <QDockWidget>
 #include <QtDebug>
 #include <QTransform>
 #include <QProgressDialog>
@@ -46,6 +47,7 @@
 #include "SXPlot.h"
 #include "PeakTableView.h"
 #include "AbsorptionWidget.h"
+#include "models/CollectedPeaksModel.h"
 #include "chemistry/IsotopeDatabaseDialog.h"
 #include "chemistry/ElementManagerDialog.h"
 #include "CutLineGraphicsItem.h"
@@ -148,6 +150,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this, SIGNAL(incorporateCalculatedPeaks()), _ui->experimentTree, SLOT(incorporateCalculatedPeaks()));
 
     connect(_session.get(), SIGNAL(updatePeaks()), _ui->_dview->getScene(), SLOT(updatePeaks()));
+
+    _ui->loggerDockWidget->setFeatures(QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable);
+    _ui->plotterDockWidget->setFeatures(QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable);
+    _ui->dockWidget_Property->setFeatures(QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable);
 
     _ui->plotterDockWidget->show();
     _ui->dockWidget_Property->show();
@@ -321,6 +327,14 @@ void MainWindow::on_action1D_Peak_Ploter_triggered()
         _ui->plotterDockWidget->hide();
 }
 
+void MainWindow::on_actionProperty_triggered()
+{
+    if (_ui->dockWidget_Property->isHidden())
+        _ui->dockWidget_Property->show();
+    else
+        _ui->dockWidget_Property->hide();
+}
+
 void MainWindow::plotData(const QVector<double>& x,const QVector<double>& y,const QVector<double>& e)
 {
     if (_ui->plot1D->getType().compare("simple") != 0) {
@@ -434,12 +448,6 @@ void MainWindow::setInspectorWidget(QWidget* w)
     // Assign current property Widget
     _ui->dockWidget_Property->setWidget(w);
 
-    // Handle specific actions from these widgets
-    if (UnitCellPropertyWidget* widget=dynamic_cast<UnitCellPropertyWidget*>(w)) {
-        connect(widget,SIGNAL(activateIndexingMode(std::shared_ptr<SX::Crystal::UnitCell>)),_ui->_dview->getScene(),SLOT(activateIndexingMode(std::shared_ptr<SX::Crystal::UnitCell>)));
-        connect(widget,SIGNAL(cellUpdated()),_ui->_dview->getScene(),SLOT(updatePeaks()));
-    }
-
     if (PeakListPropertyWidget* widget=dynamic_cast<PeakListPropertyWidget*>(w)) {
         // Ensure plot1D is updated
         connect(widget->getPeakTableView(),SIGNAL(plotPeak(sptrPeak3D)),this,SLOT(plotPeak(sptrPeak3D)));
@@ -447,6 +455,9 @@ void MainWindow::setInspectorWidget(QWidget* w)
                 SIGNAL(plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&)),
                 this,
                 SLOT(plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&)));
+
+        CollectedPeaksModel* peakModel = dynamic_cast<CollectedPeaksModel*>(widget->getPeakTableView()->model());
+        connect(peakModel,SIGNAL(unitCellUpdated()),_ui->_dview->getScene(),SLOT(updatePeaks()));
     }
 }
 
@@ -533,7 +544,10 @@ void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
 
                 for (int i = 0; i < numor->getDiffractometer()->getSample()->getNCrystals(); ++i) {
                     SX::Crystal::UnitCell cell = *numor->getDiffractometer()->getSample()->getUnitCell(i);
-                    if ( (*it)->hasIntegerHKL(cell) ) {
+                    Eigen::RowVector3d hkl;
+                    bool indexingSuccess = (*it)->getMillerIndices(cell,hkl,true);
+                    if (indexingSuccess)
+                    {
                         correctly_indexed = true;
                         break;
                     }

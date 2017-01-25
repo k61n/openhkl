@@ -96,6 +96,7 @@ private slots:
     void on_actionD_spacing_triggered();
     void on_actionLogger_triggered();
     void on_action1D_Peak_Ploter_triggered();
+    void on_actionProperty_triggered();
     void updatePlot(PlottableGraphicsItem* cutter);
     void on_actionFrom_Sample_triggered();
     void on_actionBehind_Detector_triggered();

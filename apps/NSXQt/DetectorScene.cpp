@@ -178,20 +178,20 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             return;
         }
 
-        PeakGraphicsItem* peak=dynamic_cast<PeakGraphicsItem*>(item);
-        if (peak && _mode==INDEXING)
-        {
-            QMenu* menu = new QMenu();
-            std::vector<Eigen::Vector3d> peaks=_indexer->index(*peak->getPeak());
-            for (auto p : peaks)
-            {
-                std::ostringstream os;
-                os << p;
-                QAction* action=menu->addAction(os.str().c_str());
-                connect(action,&QAction::triggered,[=](){setPeakIndex(peak->getPeak(),p);});
-            }
-            menu->popup(event->screenPos());
-        }
+//        PeakGraphicsItem* peak=dynamic_cast<PeakGraphicsItem*>(item);
+//        if (peak && _mode==INDEXING)
+//        {
+//            QMenu* menu = new QMenu();
+//            std::vector<Eigen::Vector3d> peaks=_indexer->index(*peak->getPeak());
+//            for (auto p : peaks)
+//            {
+//                std::ostringstream os;
+//                os << p;
+//                QAction* action=menu->addAction(os.str().c_str());
+//                connect(action,&QAction::triggered,[=](){setPeakIndex(peak->getPeak(),p);});
+//            }
+//            menu->popup(event->screenPos());
+//        }
 
         // If the item is a NSXTools GI and is selectedit will become the current active GI
         if (auto p=dynamic_cast<SXGraphicsItem*>(item))
@@ -437,20 +437,6 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
             ttip=QString("(%1) I: %2").arg(wave/(2*sin(0.5*th2))).arg(intensity);
             break;
         }
-        case(HKL):
-        {
-            if (_cell) {
-                auto detector=_currentData->getDiffractometer()->getDetector();
-                auto sample=_currentData->getDiffractometer()->getSample();
-                auto source=_currentData->getDiffractometer()->getSource();
-                auto Qvec=detector->getQ(col,row,source->getWavelength(),_currentData->getDetectorState(_currentFrameIndex).getValues(),sample->getPosition(_currentData->getSampleState(_currentFrameIndex).getValues()));
-                sample->getGonio()->transformInverseInPlace(Qvec,_currentData->getSampleState(_currentFrameIndex).getValues());
-                auto hkl=_cell->fromReciprocalStandard(Qvec);
-                ttip=QString("(%1,%2,%3) I: %4").arg(hkl[0]).arg(hkl[1]).arg(hkl[2]).arg(intensity);
-                 break;
-            }
-
-        }
 
     }
     QToolTip::showText(event->screenPos(),ttip);
@@ -523,7 +509,8 @@ void DetectorScene::updatePeaks()
 
     auto& peaks=_currentData->getPeaks();
 
-    for (auto peak : peaks) {
+    for (auto peak : peaks)
+    {
         const Eigen::Vector3d& l = peak->getPeak()->getLower();
         const Eigen::Vector3d& u = peak->getPeak()->getUpper();
 
@@ -632,18 +619,6 @@ void DetectorScene::drawPeakBackground(bool flag)
         const auto& it=_peakGraphicsItems.begin();
         it->second->drawBackground(flag);
     }
-}
-
-void DetectorScene::activateIndexingMode(std::shared_ptr<SX::Crystal::UnitCell> cell)
-{
-    _mode = INDEXING;
-    _cell = cell;
-    _indexer = std::unique_ptr<SX::Crystal::Indexer>(new SX::Crystal::Indexer(_cell));
-}
-
-void DetectorScene::setPeakIndex(sptrPeak3D peak, const Eigen::Vector3d &index)
-{
-    peak->setMillerIndices(index[0],index[1],index[2]);
 }
 
 void DetectorScene::showPeakCalcs(bool flag)
