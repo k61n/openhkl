@@ -100,10 +100,16 @@ public:
 	void setBackgroundShape(sptrShape3D background);
 
 	//! Set the Miller indices of the peak (double to allow integration of incommensurate peaks)
-	void setMillerIndices(double h, double k, double l);
+//	void setMillerIndices(double h, double k, double l);
 
-	//! Get the Miller indices of the peak (double to allow integration of incommensurate peaks)
-	const Eigen::RowVector3d& getMillerIndices() const;
+//	//! Get the Miller indices of the peak (double to allow integration of incommensurate peaks)
+//	const Eigen::RowVector3d& getMillerIndices() const;
+
+	bool getMillerIndices(Eigen::RowVector3d& hkl, bool applyUCTolerance=true) const;
+
+	bool getMillerIndices(int unitCellIndex, Eigen::RowVector3d& hkl, bool applyUCTolerance=true) const;
+
+	bool getMillerIndices(UnitCell uc, Eigen::RowVector3d& hkl, bool applyUCTolerance=true) const;
 
     //! Get the integral Miller indices
     Eigen::RowVector3i getIntegerMillerIndices() const;
@@ -162,18 +168,25 @@ public:
     void setDetectorEvent(std::shared_ptr<SX::Instrument::DetectorEvent> event);
    	//!
     void setSource(std::shared_ptr<SX::Instrument::Source> source);
-   	bool addUnitCell(std::shared_ptr<SX::Crystal::UnitCell> basis);
+   	void addUnitCell(std::shared_ptr<SX::Crystal::UnitCell> uc, bool activate=true);
+   	int getActiveUnitCellIndex() const;
    	sptrUnitCell getActiveUnitCell() const;
    	sptrUnitCell getUnitCell(int index) const;
-	bool hasIntegerHKL(const SX::Crystal::UnitCell& basis);
+//	bool hasIntegerHKL(const SX::Crystal::UnitCell& basis);
 	friend bool operator<(const Peak3D& p1, const Peak3D& p2);
 	void setSelected(bool);
 	bool isSelected() const;
+
 	void setMasked(bool masked);
 	bool isMasked() const;
+
 	bool isIndexed() const;
+
 	void setObserved(bool observed);
 	bool isObserved() const;
+
+	bool hasUnitCells() const;
+
 	void setTransmission(double transmission);
 	double getTransmission() const;
 
@@ -192,7 +205,7 @@ private:
 	//! Pointer to the data containing the peak
     std::shared_ptr<SX::Data::IData> _data;
 	//! Miller indices of the peak
-	Eigen::RowVector3d _hkl;
+//	Eigen::RowVector3d _hkl;
 	//! Shape describing the Peak zone
 	std::shared_ptr<SX::Geometry::IShape<double,3>> _peak;
 	//! Shape describing the background zone (must fully contain peak)
@@ -221,7 +234,7 @@ private:
 	bool _observed;
 	double _transmission;
 
-	int _activeCellIndex;
+	int _activeUnitCellIndex;
 
     
     struct IntegrationState

@@ -66,7 +66,7 @@ namespace Crystal
 
 Peak3D::Peak3D(std::shared_ptr<SX::Data::IData> data):
         _data(nullptr),
-		_hkl(Eigen::Vector3d::Zero()),
+//		_hkl(Eigen::Vector3d::Zero()),
 		_peak(nullptr),
 		_bkg(nullptr),
 		_unitCells(),
@@ -81,7 +81,7 @@ Peak3D::Peak3D(std::shared_ptr<SX::Data::IData> data):
 		_masked(false),
 		_transmission(1.0),
 		_state(),
-		_activeCellIndex(0)
+		_activeUnitCellIndex(0)
 {
     linkData(data);
 }
@@ -104,7 +104,7 @@ Peak3D::Peak3D(std::shared_ptr<Data::IData> data, const Blob3D &blob, double con
 
 Peak3D::Peak3D(const Peak3D& other):
 		_data(other._data),
-		_hkl(other._hkl),
+//		_hkl(other._hkl),
 		_peak(other._peak == nullptr ? nullptr : other._peak),
 		_bkg(other._bkg == nullptr ? nullptr : other._bkg),
 		_projection(other._projection),
@@ -122,7 +122,7 @@ Peak3D::Peak3D(const Peak3D& other):
 		_masked(other._masked),
 		_transmission(other._transmission),
 		_state(other._state),
-		_activeCellIndex(other._activeCellIndex)
+		_activeUnitCellIndex(other._activeUnitCellIndex)
 {
 }
 
@@ -131,7 +131,7 @@ Peak3D& Peak3D::operator=(const Peak3D& other)
 	if (this != &other)
 	{
 		_data = other._data;
-		_hkl = other._hkl;
+//		_hkl = other._hkl;
 
 		_peak == nullptr ? nullptr : other._peak->clone();
 		_bkg == nullptr ? nullptr : other._bkg->clone();
@@ -154,7 +154,7 @@ Peak3D& Peak3D::operator=(const Peak3D& other)
 
 		_state = other._state;
 
-		_activeCellIndex = other._activeCellIndex;
+		_activeUnitCellIndex = other._activeUnitCellIndex;
 
 	}
 
@@ -214,19 +214,67 @@ void Peak3D::setBackgroundShape(sptrShape3D b)
 }
 
 
-void Peak3D::setMillerIndices(double h, double k, double l)
+//void Peak3D::setMillerIndices(double h, double k, double l)
+//{
+//	_hkl << h,k,l;
+//}
+
+//const Eigen::RowVector3d& Peak3D::getMillerIndices() const
+//{
+//	return _hkl;
+//}
+
+bool Peak3D::getMillerIndices(UnitCell uc, Eigen::RowVector3d& hkl, bool applyUCTolerance) const
 {
-	_hkl << h,k,l;
+	hkl = uc.fromReciprocalStandard(getQ());
+
+	if (applyUCTolerance)
+	{
+		double tolerance = uc.getHKLTolerance();
+
+		if (std::fabs(hkl[0]-std::round(hkl[0])) < tolerance &&
+			std::fabs(hkl[1]-std::round(hkl[1])) < tolerance &&
+			std::fabs(hkl[2]-std::round(hkl[2])) < tolerance)
+		{
+			hkl[0]=std::round(hkl[0]);
+			hkl[1]=std::round(hkl[1]);
+			hkl[2]=std::round(hkl[2]);
+			return true;
+		}
+		else
+		{
+			hkl = Eigen::Vector3d::Zero();
+			return false;
+		}
+	}
+	else
+		return true;
 }
-const Eigen::RowVector3d& Peak3D::getMillerIndices() const
+
+bool Peak3D::getMillerIndices(int ucIndex, Eigen::RowVector3d& hkl, bool applyUCTolerance) const
 {
-	return _hkl;
+	if (_unitCells.empty() || ucIndex < 0 || ucIndex >= _unitCells.size())
+	{
+		hkl = Eigen::Vector3d::Zero();
+		return false;
+	}
+
+	sptrUnitCell uc = _unitCells[ucIndex];
+
+	return getMillerIndices(*uc, hkl, applyUCTolerance);
+}
+
+bool Peak3D::getMillerIndices(Eigen::RowVector3d& hkl, bool applyUCTolerance) const
+{
+	return getMillerIndices(_activeUnitCellIndex, hkl, applyUCTolerance);
 }
 
 Eigen::RowVector3i Peak3D::getIntegerMillerIndices() const
 {
-    Eigen::RowVector3i hkl;
-    hkl << std::lround(_hkl[0]), std::lround(_hkl[1]), std::lround(_hkl[2]);
+	Eigen::RowVector3d hkld;
+	bool success = getMillerIndices(hkld,true);
+	Eigen::RowVector3i hkl;
+    hkl << std::lround(hkld[0]), std::lround(hkld[1]), std::lround(hkld[2]);
     return hkl;
 }
 
@@ -279,29 +327,25 @@ Eigen::VectorXd Peak3D::getBkgProjectionSigma() const
 	return _scale*(_projectionBkg.array().sqrt());
 }
 
-bool Peak3D::addUnitCell(sptrUnitCell basis)
+void Peak3D::addUnitCell(sptrUnitCell uc, bool activate)
 {
-	auto it = std::find(_unitCells.begin(),_unitCells.end(),basis);
+	auto it = std::find(_unitCells.begin(),_unitCells.end(), uc);
 
-	if (it == _unitCells.end())
-    {
-		_unitCells.push_back(basis);
-        _activeCellIndex = _unitCells.size()-1;
-    }
-    else
-        _activeCellIndex = std::distance(_unitCells.begin(),it);
+	if (it != _unitCells.end())
+		return;
 
-	sptrUnitCell uc = _unitCells[_activeCellIndex];
+	_unitCells.push_back(uc);
 
-	return hasIntegerHKL(*uc);
+	if (activate)
+        _activeUnitCellIndex = _unitCells.size()-1;
 }
 
 sptrUnitCell Peak3D::getActiveUnitCell() const
 {
-	if (_activeCellIndex < 0 || _activeCellIndex >= _unitCells.size())
+	if (_activeUnitCellIndex < 0 || _activeUnitCellIndex >= _unitCells.size())
 		return nullptr;
 
-	return _unitCells[_activeCellIndex];
+	return _unitCells[_activeUnitCellIndex];
 }
 
 sptrUnitCell Peak3D::getUnitCell(int index) const
@@ -312,24 +356,24 @@ sptrUnitCell Peak3D::getUnitCell(int index) const
 	return _unitCells[index];
 }
 
-bool Peak3D::hasIntegerHKL(const SX::Crystal::UnitCell& basis)
-{
-	double tolerance = basis.getHKLTolerance();
-
-	_hkl=basis.fromReciprocalStandard(this->getQ());
-	if (std::fabs(_hkl[0]-std::round(_hkl[0])) < tolerance &&
-		std::fabs(_hkl[1]-std::round(_hkl[1])) < tolerance &&
-		std::fabs(_hkl[2]-std::round(_hkl[2])) < tolerance)
-	{
-		_hkl[0]=std::round(_hkl[0]);
-		_hkl[1]=std::round(_hkl[1]);
-		_hkl[2]=std::round(_hkl[2]);
-
-		return true;
-	}
-
-	return false;
-}
+//bool Peak3D::hasIntegerHKL(const SX::Crystal::UnitCell& basis)
+//{
+//	double tolerance = basis.getHKLTolerance();
+//
+//	_hkl=basis.fromReciprocalStandard(this->getQ());
+//	if (std::fabs(_hkl[0]-std::round(_hkl[0])) < tolerance &&
+//		std::fabs(_hkl[1]-std::round(_hkl[1])) < tolerance &&
+//		std::fabs(_hkl[2]-std::round(_hkl[2])) < tolerance)
+//	{
+//		_hkl[0]=std::round(_hkl[0]);
+//		_hkl[1]=std::round(_hkl[1]);
+//		_hkl[2]=std::round(_hkl[2]);
+//
+//		return true;
+//	}
+//
+//	return false;
+//}
 
 
 double Peak3D::getRawIntensity() const
@@ -471,17 +515,23 @@ void Peak3D::getGammaNu(double& gamma,double& nu) const
 
 bool operator<(const Peak3D& p1, const Peak3D& p2)
 {
-	if (p1._hkl[0]<p2._hkl[0])
+	Eigen::RowVector3d hkl1,hkl2;
+
+	bool success;
+	success = p1.getMillerIndices(hkl1,true);
+	success = p2.getMillerIndices(hkl2,true);
+
+	if (hkl1[0]<hkl2[0])
 		return true;
-	else if (p1._hkl[0]>p2._hkl[0])
+	else if (hkl1[0]>hkl2[0])
 		return false;
-	if (p1._hkl[1]<p2._hkl[1])
+	if (hkl1[1]<hkl2[1])
 		return true;
-	else if (p1._hkl[1]>p2._hkl[1])
+	else if (hkl1[1]>hkl2[1])
 		return false;
-	if (p1._hkl[2]<p2._hkl[2])
+	if (hkl1[2]<hkl2[2])
 		return true;
-	else if (p1._hkl[2]>p2._hkl[2])
+	else if (hkl1[2]>hkl2[2])
 		return false;
 	return false;
 }
@@ -702,10 +752,17 @@ double Peak3D::pValue()
 
     return p;
 }
-   
+
+bool Peak3D::hasUnitCells() const
+{
+	return !_unitCells.empty();
+}
+
+int Peak3D::getActiveUnitCellIndex() const
+{
+	return _activeUnitCellIndex;
+}
+
 }
 }
-
-
-
 
