@@ -42,13 +42,18 @@ namespace SX
 
 namespace Crystal
 {
+	class Peak3D;
 	class UnitCell;
 	typedef std::shared_ptr<UnitCell> sptrUnitCell;
+	typedef std::shared_ptr<Peak3D> sptrPeak3D;
 	typedef std::vector<sptrUnitCell> CellList;
 }
 
 namespace Instrument
 {
+	class Experiment;
+	typedef std::shared_ptr<Experiment> sptrExperiment;
+
 
 } // end namespace instrument
 
