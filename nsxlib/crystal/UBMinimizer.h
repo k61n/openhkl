@@ -71,7 +71,7 @@ struct UBFunctor : public Utils::LMFunctor<double>
 	 * @brief Add a peak (e.g. an observation) to the minimizer
 	 * @param peak the peak to be added
 	 */
-	void addPeak(const Peak3D& peak);
+	void addPeak(const Peak3D& peak, const Eigen::RowVector3d& hkl);
 
 	void clearPeaks();
 
@@ -105,7 +105,7 @@ struct UBFunctor : public Utils::LMFunctor<double>
 	 */
 	void refineParameter(unsigned int idx, bool refine);
 
-	std::vector<Peak3D> _peaks;
+	std::vector<std::pair<Peak3D,Eigen::RowVector3d>> _peaks;
     std::shared_ptr<SX::Instrument::Detector> _detector;
     std::shared_ptr<SX::Instrument::Sample> _sample;
     std::shared_ptr<SX::Instrument::Source> _source;
@@ -152,7 +152,7 @@ public:
 	 * @brief Add a peak (e.g. an observation) to the minimizer
 	 * @param peak the peak to be added
 	 */
-	void addPeak(const Peak3D& peak);
+	void addPeak(const Peak3D& peak, const Eigen::RowVector3d& hkl);
 
 	void clearPeaks();
 
