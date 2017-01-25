@@ -20,12 +20,6 @@ public:
     ~PeakListPropertyWidget();
     PeakTableView* getPeakTableView() const;
 
-private slots:
-
-    void changeSelectedCells(QStringList);
-
-    void on_obsPeaks_clicked(bool checked);
-
 private:
     PeakListItem* _caller;
     Ui::PeakListPropertyWidget *ui;

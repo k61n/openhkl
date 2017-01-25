@@ -24,29 +24,17 @@ PeakListPropertyWidget::PeakListPropertyWidget(PeakListItem* caller, QWidget *pa
     std::map<std::string,std::shared_ptr<IData>>  datamap=_caller->getExperiment()->getData();
     std::vector<std::shared_ptr<SX::Data::IData>> datav;
 
-    auto func = [&](std::pair<std::string,std::shared_ptr<SX::Data::IData>> value)
-    {
-        datav.push_back(value.second);
-    };
+    auto func = [&](std::pair<std::string,std::shared_ptr<SX::Data::IData>> value){datav.push_back(value.second);};
 
     std::for_each(datamap.begin(), datamap.end(), func);
 
-    CollectedPeaksModel *model = new CollectedPeaksModel();
+    CollectedPeaksModel *model = new CollectedPeaksModel(_caller->getExperiment());
     model->setPeaks(datav);
     model->setUnitCells(_caller->getExperiment()->getDiffractometer()->getSample()->getUnitCells());
     ui->tableView->setModel(model);
 
-    ui->selectedCells->setDefaultText("Selected cells");
-
-    ExperimentItem* exptItem = dynamic_cast<ExperimentItem*>(_caller->parent());
-    SampleItem* sampleItem = exptItem->getInstrumentItem()->getSampleItem();
-
-    for (auto ucItem : sampleItem->getUnitCellItems())
-        ui->selectedCells->addItem(ucItem->text());
-
     //Connect search box
     connect(ui->lineEdit,SIGNAL(textChanged(QString)),ui->tableView,SLOT(showPeaksMatchingText(QString)));
-    connect(ui->selectedCells,SIGNAL(checkedItemsChanged(QStringList)),this,SLOT(changeSelectedCells(QStringList)));
 }
 
 PeakListPropertyWidget::~PeakListPropertyWidget()
@@ -57,14 +45,4 @@ PeakListPropertyWidget::~PeakListPropertyWidget()
 PeakTableView* PeakListPropertyWidget::getPeakTableView() const
 {
     return ui->tableView;
-}
-
-void PeakListPropertyWidget::changeSelectedCells(QStringList selectedCells)
-{
-    qDebug()<<selectedCells;
-}
-
-void PeakListPropertyWidget::on_obsPeaks_clicked(bool checked)
-{
-    qDebug()<<checked;
 }
