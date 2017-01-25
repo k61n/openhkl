@@ -33,7 +33,7 @@ void CollectedPeaksDelegate::setModelData(QWidget *editor, QAbstractItemModel *m
 
     int column = index.column();
 
-    if (column = CollectedPeaksModel::Column::unitCell)
+    if (column == CollectedPeaksModel::Column::unitCell)
     {
         QComboBox *cb = static_cast<QComboBox*>(editor);        
         if (cb->count()==0)
@@ -48,7 +48,7 @@ void CollectedPeaksDelegate::setModelData(QWidget *editor, QAbstractItemModel *m
 void CollectedPeaksDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     int column = index.column();
-    if (column == CollectedPeaksModel::Column::selected || column == CollectedPeaksModel::Column::observed)
+    if (column == CollectedPeaksModel::Column::selected)
     {
         bool value  = index.model()->data(index,Qt::CheckStateRole).toBool();
         QStyleOptionButton buttonVis;
@@ -71,7 +71,7 @@ bool CollectedPeaksDelegate::editorEvent(QEvent *event, QAbstractItemModel *mode
     if(event->type() == QEvent::MouseButtonRelease)
     {
         int column = index.column();
-        if (column == CollectedPeaksModel::Column::selected || column == CollectedPeaksModel::Column::observed)
+        if (column == CollectedPeaksModel::Column::selected)
         {
             bool value  = model->data(index,Qt::CheckStateRole).toBool();
             model->setData(index, !value, Qt::CheckStateRole);

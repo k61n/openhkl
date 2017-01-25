@@ -4,6 +4,7 @@
 #include <iostream>
 #include <limits>
 
+#include <QtDebug>
 #include <QIcon>
 #include <QString>
 
@@ -12,16 +13,19 @@
 #include "Sample.h"
 #include "Types.h"
 
-#include <QtDebug>
+#include "ProgressHandler.h"
+#include "ProgressView.h"
 
-CollectedPeaksModel::CollectedPeaksModel(QObject *parent)
-: QAbstractTableModel(parent)
+CollectedPeaksModel::CollectedPeaksModel(sptrExperiment experiment, QObject *parent)
+: QAbstractTableModel(parent),
+  _experiment(experiment)
 {
 }
 
-CollectedPeaksModel::CollectedPeaksModel(const std::vector<sptrPeak3D> &peaks, QObject *parent)
-: _peaks(peaks),
-  QAbstractTableModel(parent)
+CollectedPeaksModel::CollectedPeaksModel(sptrExperiment experiment, const std::vector<sptrPeak3D> &peaks, QObject *parent)
+: QAbstractTableModel(parent),
+  _experiment(experiment),
+  _peaks(peaks)
 {
 }
 
@@ -60,6 +64,16 @@ const std::vector<sptrPeak3D>& CollectedPeaksModel::getPeaks() const
     return _peaks;
 }
 
+std::vector<sptrPeak3D> CollectedPeaksModel::getPeaks(const QModelIndexList &indexes) const
+{
+    std::vector<sptrPeak3D> peaks;
+    peaks.reserve(indexes.count());
+    for (auto index : indexes)
+        peaks.push_back(_peaks[index.row()]);
+
+    return peaks;
+}
+
 int CollectedPeaksModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
@@ -77,12 +91,12 @@ Qt::ItemFlags CollectedPeaksModel::flags(const QModelIndex &index) const
     if (!indexIsValid(index))
         return Qt::ItemIsEnabled;
 
-    int col = index.column();
+    int column = index.column();
 
-    if (col == CollectedPeaksModel::Column::selected || col == CollectedPeaksModel::Column::observed)
+    if (column == Column::selected)
         return QAbstractTableModel::flags(index) | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable;
 
-    else if (col == CollectedPeaksModel::Column::unitCell)
+    else if (column == Column::unitCell)
         return QAbstractTableModel::flags(index) | Qt::ItemIsEditable;
 
     else
@@ -95,35 +109,32 @@ QVariant CollectedPeaksModel::headerData(int section, Qt::Orientation orientatio
         return QVariant();
 
     if (orientation == Qt::Horizontal)
-        switch (section)
-        {
-        case Column::h:
+    {
+        if (section == Column::h)
             return QString("h");
-        case Column::k:
+        else if (section == Column::k)
             return QString("k");
-        case Column::l:
+        else if (section == Column::l)
             return QString("l");
-        case Column::intensity:
+        else if (section == Column::intensity)
             return QString("intensity");
-        case Column::sigmaIntensity:
+        else if (section == Column::sigmaIntensity)
             return QString((QChar)0x03C3)+"(intensity)";
-        case Column::transmission:
+        else if (section == Column::transmission)
             return QString("transmission");
-        case Column::lorentzFactor:
+        else if (section == Column::lorentzFactor)
             return QString("lorentz factor");
-        case Column::numor:
+        else if (section == Column::numor)
             return QString("numor");
-        case Column::selected:
-            return QString("selected");
-        case Column::observed:
-            return QString("observed");
-        case Column::unitCell:
+        else if (section == Column::selected)
+            return QString("valid");
+        else if (section == Column::unitCell)
             return QString("unit cell");
-        default:
+        else
             return QVariant();
-        }
+    }
     else
-        return QString("Peak %1").arg(section+1);
+        return QString("Peak");
 }
 
 QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
@@ -135,73 +146,62 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
     int column = index.column();
     if (role==Qt::DisplayRole)
     {
-        switch (column)
+        if (column == Column::h)
         {
-        case Column::h:
-        {
-            const Eigen::RowVector3d& hkl = _peaks[row]->getMillerIndices();
+            Eigen::RowVector3d hkl;
+            bool success = _peaks[row]->getMillerIndices(hkl,true);
             return hkl(0);
         }
-        case Column::k:
+        else if (column == Column::k)
         {
-            const Eigen::RowVector3d& hkl = _peaks[row]->getMillerIndices();
+            Eigen::RowVector3d hkl;
+            bool success = _peaks[row]->getMillerIndices(hkl,true);
             return hkl(1);
         }
-        case Column::l:
+        else if (column == Column::l)
         {
-            const Eigen::RowVector3d& hkl = _peaks[row]->getMillerIndices();
+            Eigen::RowVector3d hkl;
+            bool success = _peaks[row]->getMillerIndices(hkl,true);
             return hkl(2);
         }
-        case Column::intensity:
+        else if (column == Column::intensity)
         {
             double lorentzFactor = _peaks[row]->getLorentzFactor();
             double transmissionFactor = _peaks[row]->getTransmission();
             double scaledIntensity=_peaks[row]->getScaledIntensity()/lorentzFactor/transmissionFactor;
             return scaledIntensity;
         }
-        case Column::sigmaIntensity:
+        else if (column == Column::sigmaIntensity)
         {
             double lorentzFactor = _peaks[row]->getLorentzFactor();
             double transmissionFactor = _peaks[row]->getTransmission();
             double sigmaScaledIntensity=_peaks[row]->getScaledSigma()/lorentzFactor/transmissionFactor;
             return sigmaScaledIntensity;
         }
-        case Column::transmission:
+        else if (column == Column::transmission)
         {
             double transmissionFactor = _peaks[row]->getTransmission();
             return transmissionFactor;
         }
-        case Column::lorentzFactor:
-        {
+        else if (column == Column::lorentzFactor)
             return _peaks[row]->getLorentzFactor();
-        }
-        case Column::numor:
-        {
+        else if (column == Column::numor)
             return _peaks[row]->getData()->getMetadata()->getKey<int>("Numor");
-        }
-        case Column::unitCell:
+        else if (column == Column::selected)
+            return _peaks[row]->isSelected();
+        else if (column == Column::unitCell)
         {
             auto unitCell = _peaks[row]->getActiveUnitCell();
-            if (!unitCell)
-                return QString("not set");
-            else
+            if (unitCell)
                 return QString::fromStdString(unitCell->getName());
-        }
+            else
+                return QString("not set");
         }
     }
     else if (role == Qt::CheckStateRole)
     {
-        switch (column)
-        {
-        case Column::selected:
-        {
+        if (column == Column::selected)
             return _peaks[row]->isSelected();
-        }
-        case Column::observed:
-        {
-            return _peaks[row]->isObserved();
-        }
-        }
     }
     else if (role == Qt::UserRole)
     {
@@ -218,80 +218,60 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
 
 void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
 {
-    switch(column)
-    {
-    case Column::h:
-    {
+    if (column == Column::h)
         std::sort(_peaks.begin(),_peaks.end(),
               [&](sptrPeak3D p1, sptrPeak3D p2)
               {
-                auto hkl1 = p1->getMillerIndices();
-                auto hkl2 = p2->getMillerIndices();
+                Eigen::RowVector3d hkl1,hkl2;
+                bool success;
+                success = p1->getMillerIndices(hkl1,true);
+                success = p2->getMillerIndices(hkl2,true);
                 return (hkl1[0]<hkl2[0]);
               }
               );
-        break;
-    }
-    case Column::k:
-    {
+    else if (column == Column::k)
         std::sort(_peaks.begin(),_peaks.end(),
               [&](sptrPeak3D p1, sptrPeak3D p2)
               {
-                auto hkl1 = p1->getMillerIndices();
-                auto hkl2 = p2->getMillerIndices();
+                Eigen::RowVector3d hkl1,hkl2;
+                bool success;
+                success = p1->getMillerIndices(hkl1,true);
+                success = p2->getMillerIndices(hkl2,true);
                 return (hkl1[1]<hkl2[1]);
               }
               );
-        break;
-    }
-    case Column::l:
-    {
+    else if (column == Column::l)
         std::sort(_peaks.begin(),_peaks.end(),
               [&](sptrPeak3D p1, sptrPeak3D p2)
               {
-                auto hkl1 = p1->getMillerIndices();
-                auto hkl2 = p2->getMillerIndices();
+                Eigen::RowVector3d hkl1,hkl2;
+                bool success;
+                success = p1->getMillerIndices(hkl1,true);
+                success = p2->getMillerIndices(hkl2,true);
                 return (hkl1[2]<hkl2[2]);
               }
               );
-        break;
-    }
-    case Column::intensity:
-    {
+    else if (column == Column::intensity)
         std::sort(_peaks.begin(),
                   _peaks.end(),
                   [&](sptrPeak3D p1, sptrPeak3D p2)
                   {return (p1->getScaledIntensity()/p1->getLorentzFactor()/p1->getTransmission())>(p2->getScaledIntensity()/p2->getLorentzFactor()/p2->getTransmission());});
-        break;
-    }
-    case Column::sigmaIntensity:
-    {
+    else if (column == Column::sigmaIntensity)
         std::sort(_peaks.begin(),
                   _peaks.end(),
                   [&](sptrPeak3D p1, sptrPeak3D p2)
                   {return (p1->getScaledSigma()/p1->getLorentzFactor()/p1->getTransmission())>(p2->getScaledSigma()/p2->getLorentzFactor()/p2->getTransmission());});
-        break;
-    }
-    case Column::transmission:
-    {
+    else if (column == Column::transmission)
         std::sort(_peaks.begin(),
                   _peaks.end(),
                   [&](sptrPeak3D p1, sptrPeak3D p2)
                   {return p1->getTransmission()>p2->getTransmission();});
-        break;
-    }
-    case Column::lorentzFactor:
-    {
+    else if (column == Column::lorentzFactor)
         std::sort(_peaks.begin(),
                   _peaks.end(),
                   [&](sptrPeak3D p1, sptrPeak3D p2)
                   {return p1->getLorentzFactor()>p2->getLorentzFactor();});
-        for (auto p : _peaks)
-            std::cout<<p->getLorentzFactor()<<std::endl;
-        break;
-    }
-    case Column::numor:
-    {
+    else if (column == Column::numor)
         std::sort(_peaks.begin(),
                   _peaks.end(),
                   [&](sptrPeak3D p1, sptrPeak3D p2)
@@ -299,32 +279,14 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
                     int numor1=p1->getData()->getMetadata()->getKey<int>("Numor");
                     int numor2=p2->getData()->getMetadata()->getKey<int>("Numor");
                     return (numor1>numor2);});
-        break;
-    }
-    case Column::selected:
-    {
+    else if (column == Column::selected)
         std::sort(_peaks.begin(),
                   _peaks.end(),
                   [&](sptrPeak3D p1, const sptrPeak3D p2)
                   {
                     return (p2->isSelected()<p1->isSelected());
                   });
-        for (auto p : _peaks)
-            std::cout<<p->isSelected()<<std::endl;
-        break;
-    }
-    case Column::observed:
-    {
-        std::sort(_peaks.begin(),
-                  _peaks.end(),
-                  [&](sptrPeak3D p1, const sptrPeak3D p2)
-                  {
-                    return (p2->isObserved()<p1->isObserved());
-                  });
-        break;
-    }
-    case Column::unitCell:
-    {
+    else if (column == Column::unitCell)
         std::sort(_peaks.begin(),
                   _peaks.end(),
                   [&](sptrPeak3D p1, const sptrPeak3D p2)
@@ -335,9 +297,6 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
                     std::string uc2Name = uc2 ? uc2->getName() : "";
                     return (uc2Name<uc1Name);
                   });
-        break;
-    }
-    }
 
     if (order == Qt::DescendingOrder)
         std::reverse(_peaks.begin(),_peaks.end());
@@ -358,8 +317,6 @@ bool CollectedPeaksModel::setData(const QModelIndex& index, const QVariant& valu
         bool state = value.toBool();
         if (column == Column::selected)
             _peaks[row]->setSelected(state);
-        else if (column == Column::observed)
-            _peaks[row]->setObserved(state);
     }
     else if (role == Qt::EditRole)
     {
@@ -369,7 +326,7 @@ bool CollectedPeaksModel::setData(const QModelIndex& index, const QVariant& valu
                 return false;
             int unitCellIndex = value.toInt();
             sptrUnitCell unitCell = _cells[unitCellIndex];
-            _peaks[row]->addUnitCell(unitCell);
+            _peaks[row]->addUnitCell(unitCell,true);
         }
     }
 
@@ -403,8 +360,10 @@ void CollectedPeaksModel::sortEquivalents()
               _peaks.end(),
               [&](sptrPeak3D p1, sptrPeak3D p2)
                 {
-                    Eigen::Vector3d hkl1=p1->getMillerIndices();
-                    Eigen::Vector3d hkl2=p2->getMillerIndices();
+                    Eigen::RowVector3d hkl1,hkl2;
+                    bool success;
+                    success = p1->getMillerIndices(hkl1,true);
+                    success = p2->getMillerIndices(hkl2,true);
                     if (ptrcell->isEquivalent(hkl1[0],hkl1[1],hkl1[2],hkl2[0],hkl2[1],hkl2[2]))
                         return true;
                     else
@@ -413,13 +372,32 @@ void CollectedPeaksModel::sortEquivalents()
               );
 }
 
+void CollectedPeaksModel::setUnitCell(sptrUnitCell unitCell, QModelIndexList selectedPeaks)
+{
+    if (selectedPeaks.isEmpty())
+    {
+        for (int i=0;i<rowCount();++i)
+            selectedPeaks << index(i,0);
+    }
+
+    for (const auto& index : selectedPeaks)
+    {
+        auto peak = _peaks[index.row()];
+        peak->addUnitCell(unitCell,true);
+    }
+
+    emit layoutChanged();
+
+    emit unitCellUpdated();
+}
+
 void CollectedPeaksModel::normalizeToMonitor(double factor)
 {
     for (sptrPeak3D peak : _peaks)
         peak->setScale(factor/peak->getData()->getMetadata()->getKey<double>("monitor"));
 }
 
-void CollectedPeaksModel::writeShelX(const std::string& filename, double tolerance, QModelIndexList indexes)
+void CollectedPeaksModel::writeShelX(const std::string& filename, QModelIndexList indexes)
 {
     if (filename.empty())
     {
@@ -430,13 +408,6 @@ void CollectedPeaksModel::writeShelX(const std::string& filename, double toleran
     if (!_peaks.size())
     {
         qCritical()<<"No peaks in the table";
-        return;
-    }
-
-    auto sptrBasis = _peaks[0]->getActiveUnitCell();
-    if (!sptrBasis)
-    {
-        qCritical()<<"No unit cell defined the peaks. No index can be defined.";
         return;
     }
 
@@ -460,11 +431,19 @@ void CollectedPeaksModel::writeShelX(const std::string& filename, double toleran
 
         sptrPeak3D peak = _peaks[index.row()];
 
-        if (peak->isSelected() && !peak->isMasked())
+        auto sptrBasis = peak->getActiveUnitCell();
+        if (!sptrBasis)
         {
-            const Eigen::RowVector3d& hkl=peak->getMillerIndices();
+            qCritical()<<QString("No unit cell defined for peak %1. It will not be written to ShelX file").arg(index.row()+1);
+            continue;
+        }
 
-            if (!(peak->hasIntegerHKL(*sptrBasis,tolerance)))
+        if (peak->isSelected() && !peak->isMasked())
+        {            
+            Eigen::RowVector3d hkl;
+            bool success = peak->getMillerIndices(hkl,true);
+
+            if (!success)
                 continue;
 
             file << std::fixed;
@@ -492,7 +471,7 @@ void CollectedPeaksModel::writeShelX(const std::string& filename, double toleran
         file.close();
 }
 
-void CollectedPeaksModel::writeFullProf(const std::string& filename, double tolerance, QModelIndexList indexes)
+void CollectedPeaksModel::writeFullProf(const std::string& filename, QModelIndexList indexes)
 {
     if (filename.empty())
     {
@@ -503,13 +482,6 @@ void CollectedPeaksModel::writeFullProf(const std::string& filename, double tole
     if (!_peaks.size())
     {
         qCritical()<<"No peaks in the table";
-        return;
-    }
-
-    auto sptrBasis = _peaks[0]->getActiveUnitCell();
-    if (!sptrBasis)
-    {
-        qCritical()<<"No unit cell defined the peaks. No index can be defined.";
         return;
     }
 
@@ -534,13 +506,19 @@ void CollectedPeaksModel::writeFullProf(const std::string& filename, double tole
     for (const auto &index : indexes)
     {
         sptrPeak3D peak = _peaks[index.row()];
+        auto sptrBasis = peak->getActiveUnitCell();
+        if (!sptrBasis)
+        {
+            qCritical()<<QString("No unit cell defined for peak %1. It will not be written to FullProf file").arg(index.row()+1);
+            continue;
+        }
         if (peak->isSelected() && !peak->isMasked())
         {
 
-            if (!(peak->hasIntegerHKL(*sptrBasis,tolerance)))
+            Eigen::RowVector3d hkl;
+            bool success = peak->getMillerIndices(hkl,true);
+            if (!success)
                 continue;
-
-            const Eigen::RowVector3d& hkl=peak->getMillerIndices();
 
             file << std::setprecision(0);
             file << std::setw(4);
@@ -554,4 +532,35 @@ void CollectedPeaksModel::writeFullProf(const std::string& filename, double tole
     }
     if (file.is_open())
         file.close();
+}
+
+QModelIndexList CollectedPeaksModel::getUnindexedPeaks()
+{
+    QModelIndexList list;
+
+    for (int i=0; i<rowCount(); ++i)
+    {
+        auto peak = _peaks[i];
+        if (!peak->hasUnitCells())
+            list.append(index(i,0));
+    }
+    return list;
+}
+
+QModelIndexList CollectedPeaksModel::getValidPeaks()
+{
+    QModelIndexList list;
+
+    for (int i=0; i<rowCount(); ++i)
+    {
+        auto peak = _peaks[i];
+        if (peak->isSelected())
+            list.append(index(i,0));
+    }
+    return list;
+}
+
+sptrExperiment CollectedPeaksModel::getExperiment()
+{
+    return _experiment;
 }
