@@ -80,7 +80,7 @@ sptrPeak3D PeakCalc::averagePeaks(std::shared_ptr<Data::IData> data, double dist
     if (neighbors.size() <= 0)
         return nullptr;
 
-    peak->setMillerIndices(_h, _k, _l);
+//    peak->setMillerIndices(_h, _k, _l);
     double weight = 1.0 / (double)neighbors.size();
     peak_shape.setZero();
     bkg_shape.setZero();
