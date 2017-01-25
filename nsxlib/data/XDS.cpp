@@ -47,8 +47,8 @@ using str_vector = std::vector<std::string>;
 using Peak3D = SX::Crystal::Peak3D;
 
 static const string space = "    ";
-static const str_vector merged_records = {"H", "K", "L", "IOBS, SIGMA(IOBS)"};
-static const str_vector unmerged_records = {"H", "K", "L", "XD", "YD", "ZD" "IOBS", "SIGMA(IOBS)"};
+static const str_vector merged_records = {"H", "K", "L", "IOBS", "SIGMA(IOBS)"};
+static const str_vector unmerged_records = {"H", "K", "L", "XD", "YD", "ZD", "IOBS", "SIGMA(IOBS)"};
 
 namespace SX
 {
