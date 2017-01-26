@@ -94,7 +94,7 @@ public slots:
     void openRefiningParametersDialog();
 
 private:
-<<<<<<< HEAD
+
     static bool writeNewShelX(std::string filename, const std::vector<sptrPeak3D>& peaks);
     static bool writeStatistics(std::string filename, const std::vector<sptrPeak3D>& peaks,
                                 double dmin, double dmax, int shells, bool friedel);
@@ -106,9 +106,9 @@ private:
     void sortByTransmission(bool up);
     bool checkBeforeWriting();
     void constructTable();
-=======
+
     bool checkBeforeWritting();
->>>>>>> feature/twins
+
     std::string getPeaksRange() const;
 
 private:
