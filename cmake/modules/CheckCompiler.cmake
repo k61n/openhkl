@@ -34,9 +34,8 @@ endif()
 
 # disable annoying warnings during msvc build
 if (COMPILER_IS_MSVC)
-    # annoying warning triggered by boost::spirit
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4348")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4348")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4348 /wd4127")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4348 /wd4127")
 endif()
 
 # enable c++11 support
@@ -77,7 +76,7 @@ if(COMPILER_IS_GNU_OR_CLANG)
     message("TESTING: COMPILER IS CLANG OR GNU")
   elseif(COMPILER_IS_MSVC)
     add_definitions(/D_USE_MATH_DEFINES)
-    add_compile_options(/W4)
+    add_compile_options(/W1) # disable all but severe warnings
 endif()
 
  
