@@ -15,18 +15,18 @@ Timer::~Timer()
 
 void Timer::start()
 {
-	_bt=clock();
+    _bt=clock();
 }
 
 void Timer::stop()
 {
-	_et=clock();
+    _et=clock();
 }
 
 std::ostream& operator<<(std::ostream& os,const Timer& t)
 {
-	os << static_cast<double>(t._et-t._bt)/CLOCKS_PER_SEC << " sec. ";
-	return os;
+    os << static_cast<double>(t._et-t._bt)/CLOCKS_PER_SEC << " sec. ";
+    return os;
 }
 
 } // end namespace SX

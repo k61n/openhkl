@@ -47,7 +47,6 @@
 
 
 namespace SX {
-
 namespace Utils {
 
 
@@ -173,20 +172,20 @@ int UBMinimizer::runEigen(unsigned int maxIter)
         // Computation of the covariance matrix
         // The covariance matrix is obtained from the estimated jacobian computed through a QR decomposition
         // (see for example:
-        // 		- http://en.wikipedia.org/wiki/Non-linear_least_squares
-        // 		- https://github.com/scipy/scipy/blob/v0.14.0/scipy/optimize/minpack.py#L256
-        // 		- http://osdir.com/ml/python.scientific.user/2005-03/msg00067.html)
+        //      - http://en.wikipedia.org/wiki/Non-linear_least_squares
+        //      - https://github.com/scipy/scipy/blob/v0.14.0/scipy/optimize/minpack.py#L256
+        //      - http://osdir.com/ml/python.scientific.user/2005-03/msg00067.html)
 
         // CMinPack does not provide directly the jacobian but the so called FJAC that is NOT the jacobian
         // FJAC is an output M by N array where M is the number of observations (_functor.values()) and N the number of parameters (_functor.inputs()).
         // The upper N by N submatrix of FJAC contains the upper triangular matrix R with diagonal elements of nonincreasing magnitude such that
         //
-        //		P^t * (J^t * J) * P = R^t * R,
+        //      P^t * (J^t * J) * P = R^t * R,
         //
         // where P is a permutation matrix and J is the final calculated jacobian
         // From (J^t * J) we can get directly get the covariance matrix C using the formula
         //
-        // 		C = (J^t * J)^-1
+        //      C = (J^t * J)^-1
 
         // The upper N*N block of the FJAC matrix
         Eigen::MatrixXd fjac=minimizer.fjac.block(0,0,_functor.inputs(),_functor.inputs());
@@ -221,6 +220,7 @@ int UBMinimizer::runEigen(unsigned int maxIter)
 
 }
 */
+
 } // namespace Utils
 
 } // namespace SX

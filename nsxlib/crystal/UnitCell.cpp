@@ -12,15 +12,15 @@ namespace SX
 namespace Crystal
 {
 
-UnitCell::UnitCell()
-: SX::Geometry::Basis(),
-  _material(),
-  _centring(LatticeCentring::P),
-  _bravaisType(BravaisType::Triclinic),
-  _Z(1),
-  _group("P 1"),
-  _name("uc"),
-  _hklTolerance(0.2)
+UnitCell::UnitCell():
+    SX::Geometry::Basis(),
+    _material(),
+    _centring(LatticeCentring::P),
+     _bravaisType(BravaisType::Triclinic),
+    _Z(1),
+    _group("P 1"),
+    _name("uc"),
+    _hklTolerance(0.2)
 {
 }
 
@@ -491,26 +491,26 @@ std::string UnitCell::getSpaceGroup() const
 
 void UnitCell::setName(const std::string& name)
 {
-	if (name.empty())
-		return;
-	_name = name;
+    if (name.empty())
+        return;
+    _name = name;
 }
 
 const std::string& UnitCell::getName() const
 {
-	return _name;
+    return _name;
 }
 
 void UnitCell::setHKLTolerance(double tolerance)
 {
-	if (tolerance <= 0.0 || tolerance >= 1.0)
-		throw std::runtime_error("Class UnitCell: invalid integer HKL tolerance.");
-	_hklTolerance = tolerance;
+    if (tolerance <= 0.0 || tolerance >= 1.0)
+        throw std::runtime_error("Class UnitCell: invalid integer HKL tolerance.");
+    _hklTolerance = tolerance;
 }
 
 double UnitCell::getHKLTolerance() const
 {
-	return _hklTolerance;
+    return _hklTolerance;
 }
 
 } // end namespace Chemistry
