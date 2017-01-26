@@ -77,45 +77,24 @@ UnitCell::UnitCell(const UnitCell& other)
 
 UnitCell& UnitCell::operator=(const UnitCell& other)
 {
-<<<<<<< HEAD
-    if (this != &rhs) {
-        _A = rhs._A;
-        _B = rhs._B;
-        _reference = rhs._reference;
-        _hasSigmas = rhs._hasSigmas;
+    if (this!=&other) {
+        _A=other._A;
+        _B=other._B;
+        _reference=other._reference;
+        _hasSigmas=other._hasSigmas;
         if (_hasSigmas) {
-            _Acov = rhs._Acov;
-            _Bcov = rhs._Bcov;
+            _Acov = other._Acov;
+            _Bcov = other._Bcov;
         }
-        _material = rhs._material;
-        _centring = rhs._centring;
-        _bravaisType = rhs._bravaisType;
-        _Z = rhs._Z;
-        _group = rhs._group;
+        _material=other._material;
+        _centring=other._centring;
+        _bravaisType=other._bravaisType;
+        _Z=other._Z;
+        _group=other._group;
+        _name = other._name;
+        _hklTolerance = other._hklTolerance;
     }
     return *this;
-=======
-	if (this!=&other)
-	{
-		_A=other._A;
-		_B=other._B;
-		_reference=other._reference;
-		_hasSigmas=other._hasSigmas;
-		if (_hasSigmas)
-		{
-			_Acov = other._Acov;
-			_Bcov = other._Bcov;
-		}
-		_material=other._material;
-		_centring=other._centring;
-		_bravaisType=other._bravaisType;
-		_Z=other._Z;
-		_group=other._group;
-		_name = other._name;
-		_hklTolerance = other._hklTolerance;
-	}
-	return *this;
->>>>>>> feature/twins
 }
 
 UnitCell::UnitCell(const Eigen::Vector3d& v1,const Eigen::Vector3d& v2,const Eigen::Vector3d& v3, LatticeCentring centring,BravaisType bravais,std::shared_ptr<SX::Geometry::Basis> reference)
@@ -510,9 +489,6 @@ std::string UnitCell::getSpaceGroup() const
     return _group.getSymbol();
 }
 
-<<<<<<< HEAD
-} // end namespace Crystal
-=======
 void UnitCell::setName(const std::string& name)
 {
 	if (name.empty())
@@ -538,6 +514,4 @@ double UnitCell::getHKLTolerance() const
 }
 
 } // end namespace Chemistry
->>>>>>> feature/twins
-
 } // end namespace SX
