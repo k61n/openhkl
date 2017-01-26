@@ -89,7 +89,7 @@ void PeakGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
     // qreal bkg_h = bkg_u[1] - bkg_l[1];
 
     if (_peak->isSelected()) {
-        _pen.setColor(_peak->getCalculated() ? "yellow" : "green");
+        _pen.setColor(_peak->isObserved() ? "green" : "yellow");
         painter->setPen(_pen);
         drawEllipse(*painter, _peakEllipse);
 

@@ -461,13 +461,6 @@ void SessionModel::integrateCalculatedPeaks()
                 calculated_peaks.reserve(calculated_peaks.size() + peaks.size());
 
                 qDebug() << "Adding calculated peaks...";
-<<<<<<< HEAD
-
-                //for(auto&& p: peaks) {
-                    //calculated_peaks.push_back(p);
-                //}
-=======
->>>>>>> feature/twins
             }
         }
 
@@ -702,8 +695,8 @@ void SessionModel::incorporateCalculatedPeaks()
                     continue;
 
                 new_peak->setSelected(true);
-                new_peak->setUnitCell(cell);
-                new_peak->setCalculated(true);
+                new_peak->addUnitCell(cell, true);
+                new_peak->setObserved(false);
 
                 #pragma omp critical
                 calculated_peaks.push_back(new_peak);
@@ -821,7 +814,7 @@ bool SessionModel::writeNewShellX(std::string filename, const std::vector<sptrPe
         return false;
     }
 
-    auto sptrBasis = peaks[0]->getUnitCell();
+    auto sptrBasis = peaks[0]->getActiveUnitCell();
 
     if (!sptrBasis) {
         qCritical() << "No unit cell defined the peaks. No index can be defined.";
@@ -833,7 +826,7 @@ bool SessionModel::writeNewShellX(std::string filename, const std::vector<sptrPe
             continue;
 
         const Eigen::RowVector3d& hkl = peak->getMillerIndices();
-        auto sptrCurrentBasis = peak->getUnitCell();
+        auto sptrCurrentBasis = peak->getActiveUnitCell();
 
         if (sptrCurrentBasis != sptrBasis) {
             qCritical() << "Not all the peaks have the same unit cell. Multi crystal not implement yet";
@@ -882,11 +875,11 @@ bool SessionModel::writeStatistics(std::string filename,
         return false;
     }
 
-    auto cell = peaks[0]->getUnitCell();
+    auto cell = peaks[0]->getActiveUnitCell();
     auto grp = SX::Crystal::SpaceGroup(cell->getSpaceGroup());
 
     for (auto&& peak: peaks) {
-        if (cell != peak->getUnitCell()) {
+        if (cell != peak->getActiveUnitCell()) {
             qCritical() << "Only one unit cell is supported at this time!!";
             return false;
         }

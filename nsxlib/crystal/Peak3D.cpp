@@ -173,6 +173,13 @@ void Peak3D::unlinkData()
     _data.reset();
 }
 
+Eigen::RowVector3d Peak3D::getMillerIndices() const
+{
+    Eigen::RowVector3d hkld;
+    bool success = getMillerIndices(hkld,true);
+    return hkld;
+}
+
 void Peak3D::setPeakShape(shape_type* p)
 {
     _peak = std::unique_ptr<SX::Geometry::IShape<double,3>>(p);
@@ -352,24 +359,22 @@ sptrUnitCell Peak3D::getUnitCell(int index) const
     return _unitCells[index];
 }
 
-//bool Peak3D::hasIntegerHKL(const SX::Crystal::UnitCell& basis)
-//{
-//	double tolerance = basis.getHKLTolerance();
-//
-//	_hkl=basis.fromReciprocalStandard(this->getQ());
-//	if (std::fabs(_hkl[0]-std::round(_hkl[0])) < tolerance &&
-//		std::fabs(_hkl[1]-std::round(_hkl[1])) < tolerance &&
-//		std::fabs(_hkl[2]-std::round(_hkl[2])) < tolerance)
-//	{
-//		_hkl[0]=std::round(_hkl[0]);
-//		_hkl[1]=std::round(_hkl[1]);
-//		_hkl[2]=std::round(_hkl[2]);
-//
-//		return true;
-//	}
-//
-//	return false;
-//}
+bool Peak3D::hasIntegerHKL(const SX::Crystal::UnitCell& basis, double tolerance)
+{
+    _hkl=basis.fromReciprocalStandard(this->getQ());
+    if (std::fabs(_hkl[0]-std::round(_hkl[0])) < tolerance &&
+        std::fabs(_hkl[1]-std::round(_hkl[1])) < tolerance &&
+        std::fabs(_hkl[2]-std::round(_hkl[2])) < tolerance)
+    {
+        _hkl[0]=std::round(_hkl[0]);
+        _hkl[1]=std::round(_hkl[1]);
+        _hkl[2]=std::round(_hkl[2]);
+
+        return true;
+    }
+
+    return false;
+}
 
 
 double Peak3D::getRawIntensity() const

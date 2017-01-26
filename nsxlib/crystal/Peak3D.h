@@ -109,7 +109,7 @@ public:
 //	void setMillerIndices(double h, double k, double l);
 
 //	//! Get the Miller indices of the peak (double to allow integration of incommensurate peaks)
-//	const Eigen::RowVector3d& getMillerIndices() const;
+    Eigen::RowVector3d getMillerIndices() const;
 
     bool getMillerIndices(Eigen::RowVector3d& hkl, bool applyUCTolerance=true) const;
 
@@ -256,11 +256,6 @@ public:
 
     //! compute P value that there is actually an observed peak, assuming Poisson statistics
     double pValue();
-
-    //! Set whether the peak was calculated from the UB matrix
-    void setCalculated(bool calculated);
-    //! Return whether the peak was calculated from the UB matrix
-    bool getCalculated() const;
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 

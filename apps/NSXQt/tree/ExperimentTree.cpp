@@ -316,36 +316,6 @@ void ExperimentTree::importRawData()
     if (!dialog.exec())
         return;
 
-<<<<<<< HEAD:apps/NSXQt/Tree/ExperimentTree.cpp
-//<<<<<<< HEAD
-//    int max=selectedNumors.size();
-//    qWarning() << "Peak find algorithm: Searching peaks in " << max << " files";
-
-//    // create a pop-up window that will show the progress
-//    ProgressView* progressView = new ProgressView(this);
-//    progressView->watch(_progressHandler);
-
-//    // lambda function to execute peak search in a separate thread
-//    auto task = [=] () -> bool
-//    {
-//        bool result = false;
-
-//        // execute in a try-block because the progress handler may throw if it is aborted by GUI
-//        try {
-//            result = _peakFinder->find(selectedNumors);
-//        }
-//        catch(std::exception& e) {
-//            qDebug() << "Caught exception during peak find: "
-//                     << e.what()
-//                     << " ; peak search aborted.";
-//            return false;
-//        }
-//        return result;
-//    };
-//=======
-=======
-
->>>>>>> feature/twins:apps/NSXQt/tree/ExperimentTree.cpp
     const double wavelength = dialog.wavelength();
     const double delta_phi = dialog.deltaPhi();
     const double delta_omega = dialog.deltaOmega();
