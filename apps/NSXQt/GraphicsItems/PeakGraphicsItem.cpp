@@ -115,24 +115,24 @@ void PeakGraphicsItem::setFrame(unsigned long frame)
     const Eigen::Vector3d& u=_peak->getPeak().getUpper();
     if (frame>=l[2] && frame<=u[2]) {
         setVisible(true);
-<<<<<<< HEAD
+//<<<<<<< HEAD
+//        _label->setVisible(_labelVisible);
+//        auto& v=_peak->getMillerIndices();
+//        QString hkl;
+//        hkl=QString("%1,%2,%3").arg(v[0]).arg(v[1]).arg(v[2]);
+//        _label->setPlainText(hkl);
+//        _peakEllipse = calculateEllipse(_peak->getPeak(), int(frame));
+//        _bkgEllipse = calculateEllipse(_peak->getBackground(), int(frame));
+//=======
         _label->setVisible(_labelVisible);
-        auto& v=_peak->getMillerIndices();
-        QString hkl;
-        hkl=QString("%1,%2,%3").arg(v[0]).arg(v[1]).arg(v[2]);
-        _label->setPlainText(hkl);
-        _peakEllipse = calculateEllipse(_peak->getPeak(), int(frame));
-        _bkgEllipse = calculateEllipse(_peak->getBackground(), int(frame));
-=======
-        _label->setVisible(_labelVisible);        
         Eigen::RowVector3d hkl;
         bool success =_peak->getMillerIndices(hkl,true);
         QString hklString;
         hklString=QString("%1,%2,%3").arg(hkl[0]).arg(hkl[1]).arg(hkl[2]);
         _label->setPlainText(hklString);
-        _peakEllipse = calculateEllipse(*_peak->getPeak(), frame);
-        _bkgEllipse = calculateEllipse(*_peak->getBackground(), frame);
->>>>>>> feature/twins
+        _peakEllipse = calculateEllipse(_peak->getPeak(), frame);
+        _bkgEllipse = calculateEllipse(_peak->getBackground(), frame);
+// >>>>>>> feature/twins
     }
     else {
         setVisible(false);
