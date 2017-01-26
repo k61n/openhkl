@@ -56,16 +56,11 @@
 #include "PeakGraphicsItem.h"
 #include "PlottableGraphicsItem.h"
 #include "PlotFactory.h"
-<<<<<<< HEAD
-#include "Tree/UnitCellPropertyWidget.h"
-#include "Tree/PeakListPropertyWidget.h"
-#include "ResolutionCutoffDialog.h"
-=======
+
 #include "tree/UnitCellPropertyWidget.h"
 #include "tree/PeakListPropertyWidget.h"
 
 #include "DialogConvolve.h"
->>>>>>> feature/twins
 
 #include "Path.h"
 #include "IFrameIterator.h"
@@ -83,6 +78,8 @@
 #include "Peak3D.h"
 
 #include "ColorMap.h"
+
+#include "ResolutionCutoffDialog.h"
 
 // jmf debug testing
 #include <functional>
@@ -143,14 +140,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(_ui->experimentTree, SIGNAL(plotData(std::shared_ptr<SX::Data::IData>)),
             this, SLOT(changeData(std::shared_ptr<SX::Data::IData>)));
 
-<<<<<<< HEAD
-    connect(_ui->experimentTree, SIGNAL(showPeakList(std::vector<std::shared_ptr<SX::Data::IData>>)),
-            this, SLOT(showPeakList(std::vector<std::shared_ptr<SX::Data::IData>>)));
-
-    connect(_ui->frame,&QScrollBar::valueChanged,[=](const int& value){_ui->_dview->getScene()->changeFrame(static_cast<unsigned int>(value));});
-=======
     connect(_ui->frame,&QScrollBar::valueChanged,[=](const int& value){_ui->_dview->getScene()->changeFrame(value);});
->>>>>>> feature/twins
 
     connect(_ui->intensity,SIGNAL(valueChanged(int)),_ui->_dview->getScene(),SLOT(setMaxIntensity(int)));
     connect(_ui->selectionMode,SIGNAL(currentIndexChanged(int)),_ui->_dview->getScene(),SLOT(changeInteractionMode(int)));

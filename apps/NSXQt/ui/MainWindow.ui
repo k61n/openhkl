@@ -1831,19 +1831,22 @@ QDockWidget::title {
     <string>Incorporate calculated peaks</string>
    </property>
   </action>
-<<<<<<< HEAD
+  
   <action name="actionLogarithmic_Scale">
-=======
-  <action name="actionProperty">
->>>>>>> feature/twins
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
-<<<<<<< HEAD
-    <string>Logarithmic Scale</string>
+     <string>Logarithmic Scale</string>
    </property>
   </action>
+    
+  <action name="actionProperty">
+    <property name="text">
+      <string>Property</string>
+    </property>
+  </action>
+  
   <action name="actionApply_resolution_cutoff">
    <property name="text">
     <string>Apply resolution cutoff</string>
@@ -1852,11 +1855,9 @@ QDockWidget::title {
   <action name="actionWrite_log_file">
    <property name="text">
     <string>Write log file</string>
-=======
-    <string>Property</string>
->>>>>>> feature/twins
    </property>
   </action>
+  
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
