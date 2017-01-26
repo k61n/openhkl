@@ -74,10 +74,6 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
     source->addMonochromator(&mono);
     source->setSelectedMonochromator(0);
 
-<<<<<<< HEAD
-    // Open the RAFUB input file to get all informations about the collected peaks
-    std::ifstream ifs("CsOsO_15K.raf", std::ifstream::in);
-=======
     UBMinimizer minimizer;
     minimizer.setDetector(D9);
     minimizer.setSample(sample);
@@ -86,9 +82,8 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
     minimizer.refineParameter(11,false); // Detector y
     minimizer.refineParameter(14,false); // Detector phi
 
-	// Open the RAFUB input file to get all informations about the collected peaks
-	std::ifstream ifs("CsOsO_15K.raf", std::ifstream::in);
->>>>>>> feature/twins
+    // Open the RAFUB input file to get all informations about the collected peaks
+    std::ifstream ifs("CsOsO_15K.raf", std::ifstream::in);
 
     // fail test if we can't open the file
     BOOST_CHECK( ifs.fail() == false );
@@ -96,51 +91,28 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
     double h,k,l,px,py,gamma,omega,chi,phi;
     std::vector<Peak3D> _peaks;
 
-    while (ifs.good())
-    {
+    while (ifs.good()) {
         ifs>>h>>k>>l>>px>>py>>gamma>>omega>>chi>>phi;
 
         // Create a peak
         Peak3D peak;
         // Create the detector event matching that peak (the px and py are given in mm in the RAFUB input file)
         peak.setDetectorEvent(std::shared_ptr<DetectorEvent>(new DetectorEvent(D9->createDetectorEvent(px/2,py/2,{gamma*deg}))));
-<<<<<<< HEAD
         // set the miller indices corresponding to the peak
-        peak.setMillerIndices(h,k,l);
-        // Set the wavelength
-        peak.setSource(source);
-
-        // Create a sample state
-        peak.setSampleState(std::shared_ptr<ComponentState>(new ComponentState(sample->createState({omega*deg,chi*deg,phi*deg}))));
-        _peaks.push_back(peak);
-    }
-
-    UBMinimizer minimizer;
-    minimizer.setDetector(D9);
-    minimizer.setSample(sample);
-    minimizer.setSource(source);
-    minimizer.refineParameter(9,false); // Source
-    minimizer.refineParameter(11,false); // Detector y
-    minimizer.refineParameter(14,false); // Detector phi
-
-    for (auto& peak : _peaks)
-        minimizer.addPeak(peak);
-=======
-		// set the miller indices corresponding to the peak
 //		peak.setMillerIndices(h,k,l);
-		// Set the wavelength
+        // Set the wavelength
         peak.setSource(source);
 
         Eigen::RowVector3d hkl;
         hkl << h,k,l;
 
-		// Create a sample state
+        // Create a sample state
         peak.setSampleState(std::shared_ptr<ComponentState>(new ComponentState(sample->createState({omega*deg,chi*deg,phi*deg}))));
 //		_peaks.push_back(peak);
 
-		minimizer.addPeak(peak,hkl);
-	}
->>>>>>> feature/twins
+        minimizer.addPeak(peak,hkl);
+    }
+
 
     Eigen::Matrix3d M;//=Eigen::Matrix3d::Identity();
     M<<sqrt(2)/2.0,-sqrt(2)/2,0,
