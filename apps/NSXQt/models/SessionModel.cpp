@@ -59,6 +59,7 @@
 #include <QStandardItem>
 #include <QString>
 #include <QtDebug>
+#include <QDate>
 
 //#include "BlobFinder.h"
 #include "DataReaderFactory.h"
@@ -112,6 +113,7 @@
 #include "DialogConvolve.h"
 #include "ResolutionShell.h"
 #include "MergedPeak.h"
+#include "XDS.h"
 
 #include <QJsonObject>
 #include <QJsonArray>
@@ -773,12 +775,13 @@ void SessionModel::writeLog()
     bool friedel = dialog.friedel();
 
     if (dialog.writeUnmerged()) {
-        if (!writeNewShelX(dialog.unmergedFilename(), peaks))
+        if (!writeXDS(dialog.unmergedFilename(), peaks, false, friedel))
             qCritical() << "Could not write unmerged data to " << dialog.unmergedFilename().c_str();
     }
 
     if (dialog.writeMerged()) {
-        qDebug() << "writing of merged data not yet implemented";
+        if (!writeXDS(dialog.mergedFilename(), peaks, true, friedel))
+            qCritical() << "Could not write unmerged data to " << dialog.mergedFilename().c_str();
     }
 
     if (dialog.writeStatistics()) {
@@ -789,7 +792,7 @@ void SessionModel::writeLog()
     }
 }
 
-bool SessionModel::writeNewShelX(std::string filename, const std::vector<sptrPeak3D> &peaks)
+bool SessionModel::writeNewShellX(std::string filename, const std::vector<sptrPeak3D>& peaks)
 {
     std::fstream file(filename, std::ios::out);
     std::vector<char> buf(1024, 0); // buffer for snprintf
@@ -998,4 +1001,19 @@ bool SessionModel::writeStatistics(std::string filename,
 
     file.close();
     return true;
+}
+
+bool SessionModel::writeXDS(std::string filename, const std::vector<sptrPeak3D>& peaks, bool merge, bool friedel)
+{
+    const std::string date = QDate::currentDate().toString("yyyy-MM-dd").toStdString();
+    SX::Data::XDS xds(peaks, merge, friedel, filename, date);
+    std::fstream file(filename, std::ios::out);
+
+    if (!file.is_open()) {
+        qCritical() << "Could not open " << filename << " for writing.";
+        return false;
+    }
+    bool result = xds.write(file);
+    qDebug() << "Done writing log file.";
+    return result;
 }

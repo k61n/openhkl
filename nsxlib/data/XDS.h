@@ -2,7 +2,7 @@
  * nsxtool : Neutron Single Crystal analysis toolkit
  ------------------------------------------------------------------------------------------
  Copyright (C)
- 2016- Laurent C. Chapon, Eric Pellegrini, Jonathan Fisher
+ 2017- Laurent C. Chapon, Eric Pellegrini, Jonathan Fisher
 
  Institut Laue-Langevin
  BP 156
@@ -32,48 +32,54 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
+#ifndef NSXTOOL_XDS_H_
+#define NSXTOOL_XDS_H_
 
-#ifndef NSXTOOL_MERGEDPEAK_H_
-#define NSXTOOL_MERGEDPEAK_H_
-
-#include <map>
+#include <iosfwd>
+#include <string>
 #include <memory>
+#include <vector>
 
-#include <Eigen/Dense>
+#include "PeakRecord.h"
 
-#include "UnitCell.h"
-#include "SpaceGroup.h"
-#include "Peak3D.h"
+namespace SX
+{
 
-namespace SX {
 namespace Crystal {
+    class Peak3D;
+}
 
-class MergedPeak {
+namespace Data
+{
+
+class XDS {
 public:
-    MergedPeak(const SpaceGroup& grp, bool friedel=false);
-    MergedPeak(const MergedPeak& other) = default;
-    ~MergedPeak() = default;
+    using sptrPeak3D = std::shared_ptr<Crystal::Peak3D>;
+    using PeakList = std::vector<sptrPeak3D>;
+    using PeakRecord = SX::Crystal::PeakRecord;
+    using RecordList = std::vector<PeakRecord>;
 
-    bool addPeak(const sptrPeak3D& peak);
-    Eigen::Vector3i getIndex() const;
-    double intensity() const;
-    double sigma() const;
-    double chiSquared() const;
-    size_t redundancy() const;
-    double std() const;
+    XDS(const PeakList& peaks, bool merge, bool friedel, const std::string& filename = "", const std::string& date = "");
+    ~XDS() = default;
+
+    bool writeHeader(std::ostream& str) const;
+    bool writePeaks(std::ostream& str) const;
+    bool writeFooter(std::ostream& str) const;
+    bool write(std::ostream& str) const;
 
 private:
-    void determineRepresentativeHKL();
-    void update();
+    RecordList getMergedRecords() const;
+    RecordList getUnmergedRecords() const;
 
-    Eigen::Vector3i _hkl;
-    double _intensity, _sigma, _chiSquared, _std;
-    std::vector<sptrPeak3D> _peaks;
-    SX::Crystal::SpaceGroup _grp;
-    bool _friedel;
+
+    PeakList _peaks;
+    const bool _merge, _friedel;
+    const std::string _filename;
+    const std::string _date;
+    const std::vector<std::string> _records;
 };
 
-} // namespace Crystal
-} // namespace SX
+} // Namespace Data
+} // Namespace SX
 
-#endif /* NSXTOOL_SIMPLEPEAK_H_ */
+#endif /* NSXTOOL_XDS_H_ */

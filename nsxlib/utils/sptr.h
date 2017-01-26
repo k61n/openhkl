@@ -2,7 +2,8 @@
  * nsxtool : Neutron Single Crystal analysis toolkit
  ------------------------------------------------------------------------------------------
  Copyright (C)
- 2012- Laurent C. Chapon Eric Pellegrini, Jonathan Fisher
+ 2017- Laurent C. Chapon, Eric Pellegrini, Jonathan Fisher
+
  Institut Laue-Langevin
  BP 156
  6, rue Jules Horowitz
@@ -10,6 +11,10 @@
  France
  chapon[at]ill.fr
  pellegrini[at]ill.fr
+
+ Forschungszentrum Juelich GmbH
+ 52425 Juelich
+ Germany
  j.fisher[at]fz-juelich.de
 
  This library is free software; you can redistribute it and/or
@@ -27,41 +32,39 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-#ifndef NSXTOOL_PEAKCALC_H_
-#define NSXTOOL_PEAKCALC_H_
+#ifndef NSXTOOL_SPTR_H_
+#define NSXTOOL_SPTR_H_
 
 #include <memory>
-#include <vector>
-#include <set>
 
-namespace SX {
+namespace SX
+{
+namespace Utils
+{
 
-namespace Data {
-class IData;
+#ifdef NSX_HAS_MAKE_SHARED
+using make_shared = std::make_shared;
+#else
+//! make-shared function
+template<typename T, typename... Args>
+std::shared_ptr<T> make_shared(Args&&... args)
+{
+    return std::shared_ptr<T>(new T(std::forward<Args>(args)...));
 }
+#endif
 
-namespace Crystal {
+#ifdef NSX_HAS_MAKE_UNIQUE
+using make_unique = std::make_unique;
+#else
+//! make-unique function (see e.g. http://stackoverflow.com/questions/17902405/how-to-implement-make-unique-function-in-c11)
+template<typename T, typename... Args>
+std::unique_ptr<T> make_unique(Args&&... args)
+{
+    return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+}
+#endif
 
-class Peak3D;
+} // Namespace Data
+} // Namespace SX
 
-struct PeakCalc {
-    using PeakList = std::vector<std::shared_ptr<Peak3D>>;
-    using PeakSet = std::set<std::shared_ptr<Peak3D>>;
-    using sptrPeak3D = std::shared_ptr<Peak3D>;
-    using IData = SX::Data::IData;
-
-    PeakCalc(double h,double k,double l, double x,double y, double frame); //:
-        //_h(h), _k(k), _l(l), _x(x), _y(y), _frame(frame) = default;
-    ~PeakCalc() = default;
-
-    double _h,_k,_l;
-    double _x,_y,_frame;
-
-    sptrPeak3D averagePeaks(const std::shared_ptr<IData> data, double distance);
-    PeakList findNeighbors(const PeakSet& peak_list, double distance);
-};
-
-} // namespace Crystal
-} // namespace SX
-
-#endif /* NSXTOOL_PEAKCALC_H_ */
+#endif /* NSXTOOL_SPTR_H_ */

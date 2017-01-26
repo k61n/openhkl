@@ -2,7 +2,8 @@
  * nsxtool : Neutron Single Crystal analysis toolkit
  ------------------------------------------------------------------------------------------
  Copyright (C)
- 2012- Laurent C. Chapon Eric Pellegrini, Jonathan Fisher
+ 2017- Laurent C. Chapon, Eric Pellegrini, Jonathan Fisher
+
  Institut Laue-Langevin
  BP 156
  6, rue Jules Horowitz
@@ -10,6 +11,10 @@
  France
  chapon[at]ill.fr
  pellegrini[at]ill.fr
+
+ Forschungszentrum Juelich GmbH
+ 52425 Juelich
+ Germany
  j.fisher[at]fz-juelich.de
 
  This library is free software; you can redistribute it and/or
@@ -27,41 +32,30 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-#ifndef NSXTOOL_PEAKCALC_H_
-#define NSXTOOL_PEAKCALC_H_
-
-#include <memory>
-#include <vector>
-#include <set>
+#ifndef NSXTOOL_PEAKRECORD_H_
+#define NSXTOOL_PEAKRECORD_H_
 
 namespace SX {
-
-namespace Data {
-class IData;
-}
-
 namespace Crystal {
 
 class Peak3D;
+class MergedPeak;
 
-struct PeakCalc {
-    using PeakList = std::vector<std::shared_ptr<Peak3D>>;
-    using PeakSet = std::set<std::shared_ptr<Peak3D>>;
-    using sptrPeak3D = std::shared_ptr<Peak3D>;
-    using IData = SX::Data::IData;
+class PeakRecord {
+public:
+    int h, k, l;
+    double x, y, z;
+    double iobs, sigma;
+    bool merged;
 
-    PeakCalc(double h,double k,double l, double x,double y, double frame); //:
-        //_h(h), _k(k), _l(l), _x(x), _y(y), _frame(frame) = default;
-    ~PeakCalc() = default;
+    // conversion operators
+    PeakRecord(const Peak3D& other);
+    PeakRecord(const MergedPeak& other);
 
-    double _h,_k,_l;
-    double _x,_y,_frame;
-
-    sptrPeak3D averagePeaks(const std::shared_ptr<IData> data, double distance);
-    PeakList findNeighbors(const PeakSet& peak_list, double distance);
+    bool operator<(const PeakRecord& other) const;
 };
 
-} // namespace Crystal
-} // namespace SX
+} // Namespace Crystal
+} // Namespace SX
 
-#endif /* NSXTOOL_PEAKCALC_H_ */
+#endif /* NSXTOOL_PEAKRECORD_H_ */
