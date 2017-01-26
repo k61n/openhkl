@@ -78,36 +78,19 @@ int UBFunctor::operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const
     }
 
     #pragma omp parallel for
-<<<<<<< HEAD
     for (unsigned int i=0; i<_peaks.size();++i)	{
-        Eigen::RowVector3d qVector=_peaks[i].getQ();
-        const Eigen::RowVector3d& hkl=_peaks[i].getMillerIndices();
+        Eigen::RowVector3d qVector=_peaks[i].first.getQ();
+        Eigen::RowVector3d hkl=_peaks[i].second;;
         fvec(3*i)   = (x[0]*hkl[0] + x[3]*hkl[1] + x[6]*hkl[2] - qVector[0]);
         fvec(3*i+1) = (x[1]*hkl[0] + x[4]*hkl[1] + x[7]*hkl[2] - qVector[1]);
         fvec(3*i+2) = (x[2]*hkl[0] + x[5]*hkl[1] + x[8]*hkl[2] - qVector[2]);
     }
     return 0;
-=======
-	for (unsigned int i=0; i<_peaks.size();++i)
-	{
-		Eigen::RowVector3d qVector=_peaks[i].first.getQ();
-		Eigen::RowVector3d hkl=_peaks[i].second;;
-		fvec(3*i)   = (x[0]*hkl[0] + x[3]*hkl[1] + x[6]*hkl[2] - qVector[0]);
-		fvec(3*i+1) = (x[1]*hkl[0] + x[4]*hkl[1] + x[7]*hkl[2] - qVector[1]);
-		fvec(3*i+2) = (x[2]*hkl[0] + x[5]*hkl[1] + x[8]*hkl[2] - qVector[2]);
-	}
-
-	return 0;
->>>>>>> feature/twins
 }
 
 void UBFunctor::addPeak(const Peak3D& peak, const Eigen::RowVector3d& hkl)
 {
-<<<<<<< HEAD
-    _peaks.emplace_back(peak);
-=======
-	_peaks.push_back(std::make_pair(peak,hkl));
->>>>>>> feature/twins
+    _peaks.push_back(std::make_pair(peak, hkl));
 }
 
 void UBFunctor::clearPeaks()
@@ -205,11 +188,7 @@ UBMinimizer::UBMinimizer() : _functor(UBFunctor()), _solution(), _start()
 
 void UBMinimizer::addPeak(const Peak3D& peak, const Eigen::RowVector3d& hkl)
 {
-<<<<<<< HEAD
-    _functor.addPeak(peak);
-=======
-	_functor.addPeak(peak,hkl);
->>>>>>> feature/twins
+    _functor.addPeak(peak,hkl);
 }
 
 void UBMinimizer::clearPeaks()
