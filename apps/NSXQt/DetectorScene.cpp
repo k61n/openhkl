@@ -173,21 +173,22 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             return;
         }
 
-<<<<<<< HEAD
-        PeakGraphicsItem* peak = dynamic_cast<PeakGraphicsItem*>(item);
+// <<<<<<< HEAD
+//         PeakGraphicsItem* peak = dynamic_cast<PeakGraphicsItem*>(item);
 
-        if (peak && _mode == INDEXING) {
-            QMenu* menu = new QMenu();
-            std::vector<Eigen::Vector3d> peaks = _indexer->index(*peak->getPeak());
-            for (auto p : peaks) {
-                std::ostringstream os;
-                os << p;
-                QAction* action = menu->addAction(os.str().c_str());
-                connect(action, &QAction::triggered, [=] () {setPeakIndex(peak->getPeak(),p);});
-            }
-            menu->popup(event->screenPos());
-        }
-=======
+//         if (peak && _mode == INDEXING) {
+//             QMenu* menu = new QMenu();
+//             std::vector<Eigen::Vector3d> peaks = _indexer->index(*peak->getPeak());
+//             for (auto p : peaks) {
+//                 std::ostringstream os;
+//                 os << p;
+//                 QAction* action = menu->addAction(os.str().c_str());
+//                 connect(action, &QAction::triggered, [=] () {setPeakIndex(peak->getPeak(),p);});
+//             }
+//             menu->popup(event->screenPos());
+//         }
+// =======
+        // jonathan: this was already commented in feature/twins
 //        PeakGraphicsItem* peak=dynamic_cast<PeakGraphicsItem*>(item);
 //        if (peak && _mode==INDEXING)
 //        {
@@ -202,7 +203,7 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 //            }
 //            menu->popup(event->screenPos());
 //        }
->>>>>>> feature/twins
+// >>>>>>> feature/twins
 
         // If the item is a NSXTools GI and is selectedit will become the current active GI
         if (auto p = dynamic_cast<SXGraphicsItem*>(item)) {
@@ -440,25 +441,25 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
             ttip = QString("(%1) I: %2").arg(wave/(2*sin(0.5*th2))).arg(intensity);
             break;
         }
-<<<<<<< HEAD
-        case(HKL):
-        {
-            if (_cell) {
-                auto detector=_currentData->getDiffractometer()->getDetector();
-                auto sample=_currentData->getDiffractometer()->getSample();
-                auto source=_currentData->getDiffractometer()->getSource();
-                auto Qvec=detector->getQ(
-                            col, row, source->getWavelength(), _currentData->getDetectorState(_currentFrameIndex).getValues(),
-                            sample->getPosition(_currentData->getSampleState(_currentFrameIndex).getValues()));
-                sample->getGonio()->transformInverseInPlace(Qvec,_currentData->getSampleState(_currentFrameIndex).getValues());
-                auto hkl = _cell->fromReciprocalStandard(Qvec);
-                ttip = QString("(%1,%2,%3) I: %4").arg(hkl[0]).arg(hkl[1]).arg(hkl[2]).arg(intensity);
-                break;
-            }
+// <<<<<<< HEAD
+//         case(HKL):
+//         {
+//             if (_cell) {
+//                 auto detector=_currentData->getDiffractometer()->getDetector();
+//                 auto sample=_currentData->getDiffractometer()->getSample();
+//                 auto source=_currentData->getDiffractometer()->getSource();
+//                 auto Qvec=detector->getQ(
+//                             col, row, source->getWavelength(), _currentData->getDetectorState(_currentFrameIndex).getValues(),
+//                             sample->getPosition(_currentData->getSampleState(_currentFrameIndex).getValues()));
+//                 sample->getGonio()->transformInverseInPlace(Qvec,_currentData->getSampleState(_currentFrameIndex).getValues());
+//                 auto hkl = _cell->fromReciprocalStandard(Qvec);
+//                 ttip = QString("(%1,%2,%3) I: %4").arg(hkl[0]).arg(hkl[1]).arg(hkl[2]).arg(intensity);
+//                 break;
+//             }
 
-        }
-=======
->>>>>>> feature/twins
+//         }
+// =======
+// >>>>>>> feature/twins
 
     }
     QToolTip::showText(event->screenPos(),ttip);
@@ -530,16 +531,16 @@ void DetectorScene::updatePeaks()
 
     auto& peaks=_currentData->getPeaks();
 
-<<<<<<< HEAD
+// <<<<<<< HEAD
     for (auto peak : peaks) {
         const Eigen::Vector3d& l = peak->getPeak().getLower();
         const Eigen::Vector3d& u = peak->getPeak().getUpper();
-=======
-    for (auto peak : peaks)
-    {
-        const Eigen::Vector3d& l = peak->getPeak()->getLower();
-        const Eigen::Vector3d& u = peak->getPeak()->getUpper();
->>>>>>> feature/twins
+// =======
+    // for (auto peak : peaks)
+    // {
+    //     const Eigen::Vector3d& l = peak->getPeak()->getLower();
+    //     const Eigen::Vector3d& u = peak->getPeak()->getUpper();
+        // >>>>>>> feature/twins
 
         if (_currentFrameIndex < l[2] || _currentFrameIndex > u[2])
             continue;
