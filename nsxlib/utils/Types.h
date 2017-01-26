@@ -30,14 +30,32 @@
 #ifndef NSXTOOL_TYPES_H_
 #define NSXTOOL_TYPES_H_
 
-#include <tuple>
 #include <complex>
+#include <memory>
+#include <tuple>
+#include <vector>
+
 #include <Eigen/Core>
 
 namespace SX
 {
 
+namespace Crystal
+{
+	class Peak3D;
+	class UnitCell;
+	typedef std::shared_ptr<UnitCell> sptrUnitCell;
+	typedef std::shared_ptr<Peak3D> sptrPeak3D;
+	typedef std::vector<sptrUnitCell> CellList;
+}
 
+namespace Instrument
+{
+	class Experiment;
+	typedef std::shared_ptr<Experiment> sptrExperiment;
+
+
+} // end namespace instrument
 
 namespace Types
 {
@@ -45,8 +63,6 @@ namespace Types
     using RealMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
     using ComplexMatrix = Eigen::Matrix<std::complex<double>, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 } // end namespace Types
-
-
 
 } // end namespace SX
 

@@ -7,8 +7,6 @@
 #include "TreeItem.h"
 #include "Experiment.h"
 
-//using namespace SX::Instrument;
-
 class InstrumentItem;
 class DataItem;
 class PeakListItem;
@@ -17,16 +15,23 @@ class ExperimentItem : public TreeItem
 {
 public:
     explicit ExperimentItem(std::shared_ptr<SX::Instrument::Experiment> experiment);
+<<<<<<< HEAD
     void setData(const QVariant & value, int role=Qt::UserRole + 1 ) override;
 
     ~ExperimentItem();
+=======
+
+    virtual ~ExperimentItem();
+>>>>>>> feature/twins
 
     //QJsonValue toJson();
 
     QJsonObject toJson() override;
     void fromJson(const QJsonObject& obj) override;
 
-signals:
+public:
+
+	InstrumentItem* getInstrumentItem();
 
 private:
     InstrumentItem* _instr;

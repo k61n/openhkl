@@ -37,15 +37,26 @@
 
 #include "UnitCell.h"
 #include "IShape.h"
+#include "Ellipsoid.h"
+#include "Types.h"
 
 namespace SX {
 
 namespace Geometry {
 class Blob3D;
+using sptrShape3D=std::shared_ptr<SX::Geometry::IShape<double,3>>;
+using Ellipsoid3D=Ellipsoid<double,3>;
+using sptrEllipsoid3D=std::shared_ptr<Ellipsoid3D>;
 }
 
+<<<<<<< HEAD
 namespace Data {
     class IData;
+=======
+namespace Data
+{
+class IData;
+>>>>>>> feature/twins
 }
 
 namespace Instrument {
@@ -57,7 +68,14 @@ namespace Instrument {
     class Source;
 }
 
+<<<<<<< HEAD
 namespace Crystal {
+=======
+using namespace SX::Geometry;
+
+namespace Crystal
+{
+>>>>>>> feature/twins
 
 class Peak3D {
 public:
@@ -65,13 +83,29 @@ public:
 
     Peak3D(std::shared_ptr<SX::Data::IData> data=std::shared_ptr<SX::Data::IData>());
     Peak3D(std::shared_ptr<SX::Data::IData> data, const SX::Geometry::Blob3D& blob, double confidence);
+<<<<<<< HEAD
     Peak3D(const Peak3D& other);
+=======
+
+    //! Copy constructor
+    Peak3D(const Peak3D& other);
+
+	//! Assignment operator
+	Peak3D& operator=(const Peak3D& other);
+
+	//! Destructor
+	~Peak3D();
+
+	//! Attach the data
+    void linkData(std::shared_ptr<SX::Data::IData> data);
+>>>>>>> feature/twins
 
     Peak3D& operator=(const Peak3D& other);
     ~Peak3D() = default;
     //! Attach the data
     void linkData(const std::shared_ptr<SX::Data::IData>& data);
 
+<<<<<<< HEAD
     //! Detach the data
     void unlinkData();
 
@@ -86,10 +120,30 @@ public:
 
     //! Get the Miller indices of the peak (double to allow integration of incommensurate peaks)
     const Eigen::RowVector3d& getMillerIndices() const;
+=======
+	//! Set the Peak region.
+	void setPeakShape(sptrShape3D peak);
+
+	//! set the background region.
+	void setBackgroundShape(sptrShape3D background);
+
+	//! Set the Miller indices of the peak (double to allow integration of incommensurate peaks)
+//	void setMillerIndices(double h, double k, double l);
+
+//	//! Get the Miller indices of the peak (double to allow integration of incommensurate peaks)
+//	const Eigen::RowVector3d& getMillerIndices() const;
+
+	bool getMillerIndices(Eigen::RowVector3d& hkl, bool applyUCTolerance=true) const;
+
+	bool getMillerIndices(int unitCellIndex, Eigen::RowVector3d& hkl, bool applyUCTolerance=true) const;
+
+	bool getMillerIndices(UnitCell uc, Eigen::RowVector3d& hkl, bool applyUCTolerance=true) const;
+>>>>>>> feature/twins
 
     //! Get the integral Miller indices
     Eigen::RowVector3i getIntegerMillerIndices() const;
 
+<<<<<<< HEAD
     //! Get kf vector in the frame of reference of the diffractometer
     Eigen::RowVector3d getKf() const;
 
@@ -152,6 +206,83 @@ public:
     bool isMasked() const;
     void setTransmission(double transmission);
     double getTransmission() const;
+=======
+	//! Get kf vector in the frame of reference of the diffractometer
+	Eigen::RowVector3d getKf() const;
+
+	//! Get q vector in the frame of reference of the diffractometer
+	Eigen::RowVector3d getQ() const;
+
+	void getGammaNu(double& gamma,double& nu) const;
+
+	//! Run the integration of the peak; iterate over the data
+	void integrate();
+
+	//!
+    const std::shared_ptr<SX::Data::IData> getData() const { return _data;}
+
+    std::shared_ptr<SX::Data::IData> getData() { return _data;}
+
+	//! Get the projection of total data in the bounding box.
+	Eigen::VectorXd getProjection() const;
+	Eigen::VectorXd getPeakProjection() const;
+	Eigen::VectorXd getBkgProjection() const;
+	Eigen::VectorXd getProjectionSigma() const;
+	Eigen::VectorXd getPeakProjectionSigma() const;
+	Eigen::VectorXd getBkgProjectionSigma() const;
+
+	std::shared_ptr<SX::Geometry::IShape<double,3>> getPeak();
+	std::shared_ptr<SX::Geometry::IShape<double,3>> getBackground();
+
+	//! Return the scaled intensity of the peak.
+   	double getScaledIntensity() const;
+	//! Return the raw intensity of the peak.
+   	double getRawIntensity() const;
+	//! Returns the error on the raw intensity.
+   	double getRawSigma() const;
+	//! Returns the error on the scaled intensity.
+   	double getScaledSigma() const;
+   	//!
+   	double getIOverSigmaI() const;
+   	//! Return the lorentz factor of the peak.
+   	double getLorentzFactor() const;
+    std::shared_ptr<SX::Instrument::ComponentState> getSampleState();
+    double getSampleStepSize() const;
+    std::shared_ptr<SX::Instrument::DetectorEvent> getDetectorEvent();
+   	//! Return the scaling factor.
+   	double getScale() const;
+   	//! Rescale the current scaling factor by scale.
+   	void rescale(double factor);
+   	//! Set the scaling factor.
+   	void setScale(double factor);
+   	//!
+    void setSampleState(std::shared_ptr<SX::Instrument::ComponentState> gstate);
+   	//!
+    void setDetectorEvent(std::shared_ptr<SX::Instrument::DetectorEvent> event);
+   	//!
+    void setSource(std::shared_ptr<SX::Instrument::Source> source);
+   	void addUnitCell(std::shared_ptr<SX::Crystal::UnitCell> uc, bool activate=true);
+   	int getActiveUnitCellIndex() const;
+   	sptrUnitCell getActiveUnitCell() const;
+   	sptrUnitCell getUnitCell(int index) const;
+//	bool hasIntegerHKL(const SX::Crystal::UnitCell& basis);
+	friend bool operator<(const Peak3D& p1, const Peak3D& p2);
+	void setSelected(bool);
+	bool isSelected() const;
+
+	void setMasked(bool masked);
+	bool isMasked() const;
+
+	bool isIndexed() const;
+
+	void setObserved(bool observed);
+	bool isObserved() const;
+
+	bool hasUnitCells() const;
+
+	void setTransmission(double transmission);
+	double getTransmission() const;
+>>>>>>> feature/twins
 
     void scalePeakShape(double scale);
     void scaleBackgroundShape(double scale);
@@ -172,6 +303,7 @@ public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
 private:
+<<<<<<< HEAD
     //! Pointer to the data containing the peak
     std::weak_ptr<SX::Data::IData> _data;
     //! Miller indices of the peak
@@ -184,18 +316,39 @@ private:
     Eigen::VectorXd _projection;
     Eigen::VectorXd _projectionPeak;
     Eigen::VectorXd _projectionBkg;
+=======
+	//! Pointer to the data containing the peak
+    std::shared_ptr<SX::Data::IData> _data;
+	//! Miller indices of the peak
+//	Eigen::RowVector3d _hkl;
+	//! Shape describing the Peak zone
+	std::shared_ptr<SX::Geometry::IShape<double,3>> _peak;
+	//! Shape describing the background zone (must fully contain peak)
+	std::shared_ptr<SX::Geometry::IShape<double,3>> _bkg;
+	//!
+	Eigen::VectorXd _projection;
+	Eigen::VectorXd _projectionPeak;
+	Eigen::VectorXd _projectionBkg;
+>>>>>>> feature/twins
     Eigen::VectorXd _pointsPeak;
     Eigen::VectorXd _pointsBkg;
     Eigen::VectorXd _countsPeak;
     Eigen::VectorXd _countsBkg;
+<<<<<<< HEAD
     //!
     std::shared_ptr<SX::Crystal::UnitCell> _basis;
     //! Pointer to the state of the Sample Component
+=======
+	//!
+	CellList _unitCells;
+	//! Pointer to the state of the Sample Component
+>>>>>>> feature/twins
     std::shared_ptr<SX::Instrument::ComponentState> _sampleState;
     //! Pointer to a Detector Event state
     std::shared_ptr<SX::Instrument::DetectorEvent> _event;
     //!
     std::shared_ptr<SX::Instrument::Source> _source;
+<<<<<<< HEAD
     double _counts;
     double _countsSigma;
     double _scale;
@@ -205,6 +358,21 @@ private:
     double _transmission;
 
     struct IntegrationState {
+=======
+	double _counts;
+	double _countsSigma;
+	double _scale;
+	bool _selected;
+	bool _masked;
+	bool _observed;
+	double _transmission;
+
+	int _activeUnitCellIndex;
+
+    
+    struct IntegrationState
+    {
+>>>>>>> feature/twins
         Eigen::Vector3d lower;
         Eigen::Vector3d upper;
 

@@ -72,11 +72,16 @@ std::shared_ptr<SX::Crystal::UnitCell> Sample::addUnitCell()
 	return (_cells.back());
 }
 
-std::shared_ptr<SX::Crystal::UnitCell> Sample::getUnitCell(unsigned int i)
+std::shared_ptr<SX::Crystal::UnitCell> Sample::getUnitCell(int i)
 {
 	if (i>=_cells.size())
 		throw std::runtime_error("Unit Cell not valid");
 	return (_cells[i]);
+}
+
+const CellList& Sample::getUnitCells() const
+{
+	return _cells;
 }
 
 std::size_t Sample::getNCrystals() const
@@ -96,39 +101,50 @@ void Sample::removeUnitCell(std::shared_ptr<SX::Crystal::UnitCell> cell)
 	}
 }
 
-unsigned int Sample::getZ(unsigned int cellIndex) const
+void Sample::removeUnitCell(int i)
 {
-	if (cellIndex >= _cells.size())
-		throw Kernel::Error<Sample>("Invalid unit cell index.");
+	if (i<0 || i>= _cells.size())
+		return;
 
-	return _cells[cellIndex]->getZ();
+	_cells.erase(_cells.begin()+i);
+
+
+
 }
 
-void Sample::setZ(unsigned int Z, unsigned int cellIndex)
+unsigned int Sample::getZ(int index) const
 {
-	if (cellIndex >= _cells.size())
+	if (index < 0 || index >= _cells.size())
+		throw Kernel::Error<Sample>("Invalid unit cell index.");
+
+	return _cells[index]->getZ();
+}
+
+void Sample::setZ(int Z, int index)
+{
+	if (index < 0 || index >= _cells.size())
 		throw Kernel::Error<Sample>("Invalid unit cell index.");
 
 	if (Z==0)
 		throw Kernel::Error<Sample>("Invalid Z value.");
 
-	_cells[cellIndex]->setZ(Z);
+	_cells[index]->setZ(Z);
 }
 
-Chemistry::sptrMaterial Sample::getMaterial(unsigned int cellIndex) const
+Chemistry::sptrMaterial Sample::getMaterial(int index) const
 {
-	if (cellIndex >= _cells.size())
+	if (index < 0 || index >= _cells.size())
 		throw Kernel::Error<Sample>("Invalid unit cell index.");
 
-	return _cells[cellIndex]->getMaterial();
+	return _cells[index]->getMaterial();
 }
 
-void Sample::setMaterial(Chemistry::sptrMaterial material, unsigned int cellIndex)
+void Sample::setMaterial(Chemistry::sptrMaterial material, int index)
 {
-	if (cellIndex >= _cells.size())
+	if (index < 0 || index >= _cells.size())
 		throw Kernel::Error<Sample>("Invalid unit cell index.");
 
-	_cells[cellIndex]->setMaterial(material);
+	_cells[index]->setMaterial(material);
 }
 
 } // end namespace Instrument

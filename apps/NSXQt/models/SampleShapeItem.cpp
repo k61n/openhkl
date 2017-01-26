@@ -1,7 +1,7 @@
 #include <QWidget>
 
 #include "models/SampleShapeItem.h"
-#include "Tree/SampleShapePropertyWidget.h"
+#include "tree/SampleShapePropertyWidget.h"
 
 SampleShapeItem::SampleShapeItem(std::shared_ptr<SX::Instrument::Experiment> experiment):
     InspectableTreeItem(experiment)

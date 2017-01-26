@@ -8,7 +8,7 @@
 
 #include "ui_SamplePropertyWidget.h"
 #include "models/SampleItem.h"
-#include "Tree/SamplePropertyWidget.h"
+#include "tree/SamplePropertyWidget.h"
 #include "models/UnitCellItem.h"
 #include "Units.h"
 
@@ -20,8 +20,6 @@ SamplePropertyWidget::SamplePropertyWidget(SampleItem* caller,QWidget *parent) :
     ui->setupUi(this);
     auto sample=_sampleItem->getExperiment()->getDiffractometer()->getSample();
     auto gonio=sample->getGonio();
-
-    ui->nsampleLabel->setText(QString::number(sample->getNCrystals()));
 
     ui->tableWidget_Sample->setEditTriggers(QAbstractItemView::DoubleClicked);
     ui->tableWidget_Sample->setRowCount(gonio->getNAxes());
@@ -77,22 +75,11 @@ SamplePropertyWidget::SamplePropertyWidget(SampleItem* caller,QWidget *parent) :
     }
 
     connect(ui->tableWidget_Sample,SIGNAL(cellChanged(int,int)),this,SLOT(cellHasChanged(int,int)));
-
 }
 
 SamplePropertyWidget::~SamplePropertyWidget()
 {
     delete ui;
-}
-
-void SamplePropertyWidget::on_pushButton_addCrystal_clicked()
-{
-     auto _sample=_sampleItem->getExperiment()->getDiffractometer()->getSample();
-     auto cell=_sample->addUnitCell();
-     std::size_t nsamples=_sample->getNCrystals();
-     _sampleItem->appendRow(new UnitCellItem(_sampleItem->getExperiment(),cell));
-     ui->nsampleLabel->setText(QString::number(nsamples));
-     _sampleItem->child(0)->setEnabled(true);
 }
 
 void SamplePropertyWidget::cellHasChanged(int i,int j)

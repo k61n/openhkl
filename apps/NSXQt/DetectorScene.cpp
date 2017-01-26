@@ -64,9 +64,6 @@ void DetectorScene::changeFrame(size_t frame)
 
     _currentFrameIndex = frame;
 
-//    for (auto& peak : _peaks)
-//        (peak.second)->setFrame(_currentFrameIndex);
-
     updatePeaks();
     showPeakCalcs(_showPeakCalcs);
 
@@ -176,6 +173,7 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             return;
         }
 
+<<<<<<< HEAD
         PeakGraphicsItem* peak = dynamic_cast<PeakGraphicsItem*>(item);
 
         if (peak && _mode == INDEXING) {
@@ -189,6 +187,22 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             }
             menu->popup(event->screenPos());
         }
+=======
+//        PeakGraphicsItem* peak=dynamic_cast<PeakGraphicsItem*>(item);
+//        if (peak && _mode==INDEXING)
+//        {
+//            QMenu* menu = new QMenu();
+//            std::vector<Eigen::Vector3d> peaks=_indexer->index(*peak->getPeak());
+//            for (auto p : peaks)
+//            {
+//                std::ostringstream os;
+//                os << p;
+//                QAction* action=menu->addAction(os.str().c_str());
+//                connect(action,&QAction::triggered,[=](){setPeakIndex(peak->getPeak(),p);});
+//            }
+//            menu->popup(event->screenPos());
+//        }
+>>>>>>> feature/twins
 
         // If the item is a NSXTools GI and is selectedit will become the current active GI
         if (auto p = dynamic_cast<SXGraphicsItem*>(item)) {
@@ -426,6 +440,7 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
             ttip = QString("(%1) I: %2").arg(wave/(2*sin(0.5*th2))).arg(intensity);
             break;
         }
+<<<<<<< HEAD
         case(HKL):
         {
             if (_cell) {
@@ -442,6 +457,8 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
             }
 
         }
+=======
+>>>>>>> feature/twins
 
     }
     QToolTip::showText(event->screenPos(),ttip);
@@ -513,9 +530,16 @@ void DetectorScene::updatePeaks()
 
     auto& peaks=_currentData->getPeaks();
 
+<<<<<<< HEAD
     for (auto peak : peaks) {
         const Eigen::Vector3d& l = peak->getPeak().getLower();
         const Eigen::Vector3d& u = peak->getPeak().getUpper();
+=======
+    for (auto peak : peaks)
+    {
+        const Eigen::Vector3d& l = peak->getPeak()->getLower();
+        const Eigen::Vector3d& u = peak->getPeak()->getUpper();
+>>>>>>> feature/twins
 
         if (_currentFrameIndex < l[2] || _currentFrameIndex > u[2])
             continue;
@@ -555,8 +579,6 @@ void DetectorScene::updatePeakCalcs()
                 _precalculatedPeaks.push_back(p);
         }
     }
-
-    showPeakCalcs(_showPeakCalcs);
 
     qDebug() << "number of calculated peaks " << _peakCalcs.size();
     clock_t end = clock();
@@ -631,35 +653,26 @@ void DetectorScene::drawPeakBackground(bool flag)
     }
 }
 
-void DetectorScene::activateIndexingMode(std::shared_ptr<SX::Crystal::UnitCell> cell)
-{
-    _mode = INDEXING;
-    _cell = cell;
-    _indexer = std::unique_ptr<SX::Crystal::Indexer>(new SX::Crystal::Indexer(_cell));
-}
-
-void DetectorScene::setPeakIndex(sptrPeak3D peak, const Eigen::Vector3d &index)
-{
-    peak->setMillerIndices(index[0],index[1],index[2]);
-}
-
 void DetectorScene::showPeakCalcs(bool flag)
 {
     _showPeakCalcs = flag;
 
-    if (!flag) {
+    if (!flag)
+    {
         for (auto&& p: _peakCalcs)
             delete p;
 
         _peakCalcs.clear();
         _precalculatedPeaks.clear();
+
         return;
     }
 
     if (_precalculatedPeaks.empty())
         updatePeakCalcs();
 
-    for (auto& peak : _peakCalcs) {
+    for (auto& peak : _peakCalcs)
+    {
         removeItem(peak);
         delete peak;
     }

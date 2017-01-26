@@ -18,7 +18,9 @@ UnitCell::UnitCell()
   _centring(LatticeCentring::P),
   _bravaisType(BravaisType::Triclinic),
   _Z(1),
-  _group("P 1")
+  _group("P 1"),
+  _name("uc"),
+  _hklTolerance(0.2)
 {
 }
 
@@ -28,7 +30,9 @@ UnitCell::UnitCell(double a, double b, double c, double alpha, double beta, doub
   _centring(centring),
   _bravaisType(bravais),
   _Z(1),
-  _group("P 1")
+  _group("P 1"),
+  _name("uc"),
+  _hklTolerance(0.2)
 {
     // b-matrix as defined by Busing-Levy paper
     // b1, b2*cos(beta3),  b3*cos(beta2)
@@ -59,18 +63,21 @@ UnitCell::UnitCell(double a, double b, double c, double alpha, double beta, doub
     SX::Geometry::Basis::_reference=reference;
 }
 
-UnitCell::UnitCell(const UnitCell& rhs)
-: SX::Geometry::Basis(rhs),
-  _material(rhs._material),
-  _centring(rhs._centring),
-  _bravaisType(rhs._bravaisType),
-  _Z(rhs._Z),
-  _group(rhs._group)
+UnitCell::UnitCell(const UnitCell& other)
+: SX::Geometry::Basis(other),
+  _material(other._material),
+  _centring(other._centring),
+  _bravaisType(other._bravaisType),
+  _Z(other._Z),
+  _group(other._group),
+  _name(other._name),
+  _hklTolerance(other._hklTolerance)
 {
 }
 
-UnitCell& UnitCell::operator=(const UnitCell& rhs)
+UnitCell& UnitCell::operator=(const UnitCell& other)
 {
+<<<<<<< HEAD
     if (this != &rhs) {
         _A = rhs._A;
         _B = rhs._B;
@@ -87,6 +94,28 @@ UnitCell& UnitCell::operator=(const UnitCell& rhs)
         _group = rhs._group;
     }
     return *this;
+=======
+	if (this!=&other)
+	{
+		_A=other._A;
+		_B=other._B;
+		_reference=other._reference;
+		_hasSigmas=other._hasSigmas;
+		if (_hasSigmas)
+		{
+			_Acov = other._Acov;
+			_Bcov = other._Bcov;
+		}
+		_material=other._material;
+		_centring=other._centring;
+		_bravaisType=other._bravaisType;
+		_Z=other._Z;
+		_group=other._group;
+		_name = other._name;
+		_hklTolerance = other._hklTolerance;
+	}
+	return *this;
+>>>>>>> feature/twins
 }
 
 UnitCell::UnitCell(const Eigen::Vector3d& v1,const Eigen::Vector3d& v2,const Eigen::Vector3d& v3, LatticeCentring centring,BravaisType bravais,std::shared_ptr<SX::Geometry::Basis> reference)
@@ -95,7 +124,9 @@ UnitCell::UnitCell(const Eigen::Vector3d& v1,const Eigen::Vector3d& v2,const Eig
   _centring(centring),
   _bravaisType(bravais),
   _Z(1),
-  _group("P 1")
+  _group("P 1"),
+  _name("uc"),
+  _hklTolerance(0.2)
 {
 
 }
@@ -479,6 +510,34 @@ std::string UnitCell::getSpaceGroup() const
     return _group.getSymbol();
 }
 
+<<<<<<< HEAD
 } // end namespace Crystal
+=======
+void UnitCell::setName(const std::string& name)
+{
+	if (name.empty())
+		return;
+	_name = name;
+}
+
+const std::string& UnitCell::getName() const
+{
+	return _name;
+}
+
+void UnitCell::setHKLTolerance(double tolerance)
+{
+	if (tolerance <= 0.0 || tolerance >= 1.0)
+		throw std::runtime_error("Class UnitCell: invalid integer HKL tolerance.");
+	_hklTolerance = tolerance;
+}
+
+double UnitCell::getHKLTolerance() const
+{
+	return _hklTolerance;
+}
+
+} // end namespace Chemistry
+>>>>>>> feature/twins
 
 } // end namespace SX

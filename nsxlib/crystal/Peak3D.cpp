@@ -33,6 +33,7 @@
  *
  */
 
+#include <algorithm>
 #include <cmath>
 #include <stdexcept>
 
@@ -48,7 +49,12 @@
 #include "Source.h"
 #include "Units.h"
 #include "Blob3D.h"
+<<<<<<< HEAD
 #include "BlobFinder.h" // needed for Ellipsoid3D typedef
+=======
+#include "IData.h"
+#include "Types.h"
+>>>>>>> feature/twins
 
 #include "IFrameIterator.h"
 
@@ -58,10 +64,12 @@ using SX::Data::IFrameIterator;
 
 namespace SX
 {
+
 namespace Crystal
 {
 
 Peak3D::Peak3D(std::shared_ptr<SX::Data::IData> data):
+<<<<<<< HEAD
         _data(),
         _hkl(Eigen::Vector3d::Zero()),
         _peak(nullptr),
@@ -78,27 +86,47 @@ Peak3D::Peak3D(std::shared_ptr<SX::Data::IData> data):
         _calculated(false),
         _transmission(1.0),
         _state()
+=======
+        _data(nullptr),
+//		_hkl(Eigen::Vector3d::Zero()),
+		_peak(nullptr),
+		_bkg(nullptr),
+		_unitCells(),
+		_sampleState(nullptr),
+		_event(nullptr),
+		_source(nullptr),
+		_counts(0.0),
+		_countsSigma(0.0),
+		_scale(1.0),
+		_selected(true),
+		_observed(true),
+		_masked(false),
+		_transmission(1.0),
+		_state(),
+		_activeUnitCellIndex(0)
+>>>>>>> feature/twins
 {
     linkData(data);
 }
 
-Peak3D::Peak3D(std::shared_ptr<Data::IData> data, const Blob3D &blob, double confidence):
-    Peak3D(data)
+Peak3D::Peak3D(std::shared_ptr<Data::IData> data, const Blob3D &blob, double confidence)
+: Peak3D(data)
 {
     Eigen::Vector3d center, eigenvalues;
     Eigen::Matrix3d eigenvectors;
 
     blob.toEllipsoid(confidence, center, eigenvalues, eigenvectors);
-    setPeakShape(new SX::Geometry::Ellipsoid3D(center,eigenvalues,eigenvectors));
+    setPeakShape(sptrEllipsoid3D(new Ellipsoid3D(center,eigenvalues,eigenvectors)));
 
     eigenvalues[0]*=2.0;
     eigenvalues[1]*=2.0;
     eigenvalues[2]*=3.0;
 
-    setBackgroundShape(new SX::Geometry::Ellipsoid3D(center,eigenvalues,eigenvectors));
+    setBackgroundShape(sptrEllipsoid3D(new Ellipsoid3D(center,eigenvalues,eigenvectors)));
 }
 
 Peak3D::Peak3D(const Peak3D& other):
+<<<<<<< HEAD
         _data(other._data),
         _hkl(other._hkl),
         _peak(other._peak == nullptr ? nullptr : other._peak->clone()),
@@ -118,11 +146,34 @@ Peak3D::Peak3D(const Peak3D& other):
         _calculated(other._calculated),
         _transmission(other._transmission),
         _state(other._state)
+=======
+		_data(other._data),
+//		_hkl(other._hkl),
+		_peak(other._peak == nullptr ? nullptr : other._peak),
+		_bkg(other._bkg == nullptr ? nullptr : other._bkg),
+		_projection(other._projection),
+		_projectionPeak(other._projectionPeak),
+		_projectionBkg(other._projectionBkg),
+		_unitCells(other._unitCells),
+		_sampleState(other._sampleState),
+		_event(other._event),
+		_source(other._source),
+		_counts(other._counts),
+		_countsSigma(other._countsSigma),
+		_scale(other._scale),
+		_selected(other._selected),
+		_observed(other._observed),
+		_masked(other._masked),
+		_transmission(other._transmission),
+		_state(other._state),
+		_activeUnitCellIndex(other._activeUnitCellIndex)
+>>>>>>> feature/twins
 {
 }
 
 Peak3D& Peak3D::operator=(const Peak3D& other)
 {
+<<<<<<< HEAD
     if (this != &other) {
 
         _data = other._data;
@@ -149,14 +200,58 @@ Peak3D& Peak3D::operator=(const Peak3D& other)
     }
 
     return *this;
+=======
+	if (this != &other)
+	{
+		_data = other._data;
+//		_hkl = other._hkl;
+
+		_peak == nullptr ? nullptr : other._peak->clone();
+		_bkg == nullptr ? nullptr : other._bkg->clone();
+
+		_projection = other._projection;
+		_projectionPeak = other._projectionPeak;
+		_projectionBkg = other._projectionBkg;
+
+		_unitCells = other._unitCells;
+		_sampleState = other._sampleState;
+		_event = other._event;
+		_source= other._source;
+		_counts = other._counts;
+		_countsSigma = other._countsSigma;
+		_scale = other._scale;
+		_selected = other._selected;
+		_observed = other._observed;
+		_masked = other._masked;
+		_transmission = other._transmission;
+
+		_state = other._state;
+
+		_activeUnitCellIndex = other._activeUnitCellIndex;
+
+	}
+
+	return *this;
+
+>>>>>>> feature/twins
 }
 
 void Peak3D::linkData(const std::shared_ptr<SX::Data::IData>& data)
 {
+<<<<<<< HEAD
     _data = std::weak_ptr<SX::Data::IData>(data);
     if (data != nullptr) {
         setSource(data->getDiffractometer()->getSource());
     }
+=======
+}
+
+void Peak3D::linkData(std::shared_ptr<SX::Data::IData> data)
+{
+    _data = data;
+    if (_data)
+        setSource(_data->getDiffractometer()->getSource());
+>>>>>>> feature/twins
 }
 
 void Peak3D::unlinkData()
@@ -164,7 +259,7 @@ void Peak3D::unlinkData()
     _data.reset();
 }
 
-void Peak3D::setPeakShape(SX::Geometry::IShape<double,3>* p)
+void Peak3D::setPeakShape(sptrShape3D p)
 {
     _peak = std::unique_ptr<SX::Geometry::IShape<double,3>>(p);
     Eigen::Vector3d center = _peak->getAABBCenter();
@@ -183,25 +278,96 @@ void Peak3D::setPeakShape(SX::Geometry::IShape<double,3>* p)
         data->getDiffractometer()->getDetector()->createDetectorEvent(center[0],center[1],detState.getValues())));
 }
 
-void Peak3D::setBackgroundShape(SX::Geometry::IShape<double,3>* b)
+std::shared_ptr<SX::Geometry::IShape<double,3>> Peak3D::getPeak()
+{
+	return _peak;
+}
+
+std::shared_ptr<SX::Geometry::IShape<double,3>> Peak3D::getBackground()
+{
+	return _bkg;
+}
+
+void Peak3D::setBackgroundShape(sptrShape3D b)
 {
     _bkg = std::unique_ptr<shape_type>(b);
 }
 
 
-void Peak3D::setMillerIndices(double h, double k, double l)
+//void Peak3D::setMillerIndices(double h, double k, double l)
+//{
+//	_hkl << h,k,l;
+//}
+
+//const Eigen::RowVector3d& Peak3D::getMillerIndices() const
+//{
+//	return _hkl;
+//}
+
+bool Peak3D::getMillerIndices(UnitCell uc, Eigen::RowVector3d& hkl, bool applyUCTolerance) const
 {
+<<<<<<< HEAD
     _hkl << h,k,l;
+=======
+	hkl = uc.fromReciprocalStandard(getQ());
+
+	if (applyUCTolerance)
+	{
+		double tolerance = uc.getHKLTolerance();
+
+		if (std::fabs(hkl[0]-std::round(hkl[0])) < tolerance &&
+			std::fabs(hkl[1]-std::round(hkl[1])) < tolerance &&
+			std::fabs(hkl[2]-std::round(hkl[2])) < tolerance)
+		{
+			hkl[0]=std::round(hkl[0]);
+			hkl[1]=std::round(hkl[1]);
+			hkl[2]=std::round(hkl[2]);
+			return true;
+		}
+		else
+		{
+			hkl = Eigen::Vector3d::Zero();
+			return false;
+		}
+	}
+	else
+		return true;
 }
-const Eigen::RowVector3d& Peak3D::getMillerIndices() const
+
+bool Peak3D::getMillerIndices(int ucIndex, Eigen::RowVector3d& hkl, bool applyUCTolerance) const
 {
+	if (_unitCells.empty() || ucIndex < 0 || ucIndex >= _unitCells.size())
+	{
+		hkl = Eigen::Vector3d::Zero();
+		return false;
+	}
+
+	sptrUnitCell uc = _unitCells[ucIndex];
+
+	return getMillerIndices(*uc, hkl, applyUCTolerance);
+>>>>>>> feature/twins
+}
+
+bool Peak3D::getMillerIndices(Eigen::RowVector3d& hkl, bool applyUCTolerance) const
+{
+<<<<<<< HEAD
     return _hkl;
+=======
+	return getMillerIndices(_activeUnitCellIndex, hkl, applyUCTolerance);
+>>>>>>> feature/twins
 }
 
 Eigen::RowVector3i Peak3D::getIntegerMillerIndices() const
 {
+<<<<<<< HEAD
     Eigen::RowVector3i hkl;
     hkl << int(std::lround(_hkl[0])), int(std::lround(_hkl[1])), int(std::lround(_hkl[2]));
+=======
+	Eigen::RowVector3d hkld;
+	bool success = getMillerIndices(hkld,true);
+	Eigen::RowVector3i hkl;
+    hkl << std::lround(hkld[0]), std::lround(hkld[1]), std::lround(hkld[2]);
+>>>>>>> feature/twins
     return hkl;
 }
 
@@ -256,6 +422,7 @@ Eigen::VectorXd Peak3D::getBkgProjectionSigma() const
     return _scale*(_projectionBkg.array().sqrt());
 }
 
+<<<<<<< HEAD
 bool Peak3D::setUnitCell(const std::shared_ptr<SX::Crystal::UnitCell>& basis)
 {
     _basis = basis;
@@ -269,15 +436,36 @@ bool Peak3D::setUnitCell(const std::shared_ptr<SX::Crystal::UnitCell>& basis)
         return true;
     }
     return false;
+=======
+void Peak3D::addUnitCell(sptrUnitCell uc, bool activate)
+{
+	auto it = std::find(_unitCells.begin(),_unitCells.end(), uc);
+
+	if (it != _unitCells.end())
+		return;
+
+	_unitCells.push_back(uc);
+
+	if (activate)
+        _activeUnitCellIndex = _unitCells.size()-1;
+>>>>>>> feature/twins
 }
 
-std::shared_ptr<SX::Crystal::UnitCell> Peak3D::getUnitCell() const
+sptrUnitCell Peak3D::getActiveUnitCell() const
 {
+<<<<<<< HEAD
     return _basis;
+=======
+	if (_activeUnitCellIndex < 0 || _activeUnitCellIndex >= _unitCells.size())
+		return nullptr;
+
+	return _unitCells[_activeUnitCellIndex];
+>>>>>>> feature/twins
 }
 
-bool Peak3D::hasIntegerHKL(const SX::Crystal::UnitCell& basis, double tolerance)
+sptrUnitCell Peak3D::getUnitCell(int index) const
 {
+<<<<<<< HEAD
     _hkl=basis.fromReciprocalStandard(this->getQ());
     if (std::fabs(_hkl[0]-std::round(_hkl[0])) < tolerance &&
         std::fabs(_hkl[1]-std::round(_hkl[1])) < tolerance &&
@@ -290,7 +478,32 @@ bool Peak3D::hasIntegerHKL(const SX::Crystal::UnitCell& basis, double tolerance)
     }
 
     return false;
+=======
+	if (index < 0 || index >= _unitCells.size())
+		return nullptr;
+
+	return _unitCells[index];
+>>>>>>> feature/twins
 }
+
+//bool Peak3D::hasIntegerHKL(const SX::Crystal::UnitCell& basis)
+//{
+//	double tolerance = basis.getHKLTolerance();
+//
+//	_hkl=basis.fromReciprocalStandard(this->getQ());
+//	if (std::fabs(_hkl[0]-std::round(_hkl[0])) < tolerance &&
+//		std::fabs(_hkl[1]-std::round(_hkl[1])) < tolerance &&
+//		std::fabs(_hkl[2]-std::round(_hkl[2])) < tolerance)
+//	{
+//		_hkl[0]=std::round(_hkl[0]);
+//		_hkl[1]=std::round(_hkl[1]);
+//		_hkl[2]=std::round(_hkl[2]);
+//
+//		return true;
+//	}
+//
+//	return false;
+//}
 
 
 double Peak3D::getRawIntensity() const
@@ -433,6 +646,7 @@ void Peak3D::getGammaNu(double& gamma,double& nu) const
 
 bool operator<(const Peak3D& p1, const Peak3D& p2)
 {
+<<<<<<< HEAD
     if (p1._hkl[0]<p2._hkl[0]) {
         return true;
     }
@@ -452,6 +666,27 @@ bool operator<(const Peak3D& p1, const Peak3D& p2)
         return false;
     }
     return false;
+=======
+	Eigen::RowVector3d hkl1,hkl2;
+
+	bool success;
+	success = p1.getMillerIndices(hkl1,true);
+	success = p2.getMillerIndices(hkl2,true);
+
+	if (hkl1[0]<hkl2[0])
+		return true;
+	else if (hkl1[0]>hkl2[0])
+		return false;
+	if (hkl1[1]<hkl2[1])
+		return true;
+	else if (hkl1[1]>hkl2[1])
+		return false;
+	if (hkl1[2]<hkl2[2])
+		return true;
+	else if (hkl1[2]>hkl2[2])
+		return false;
+	return false;
+>>>>>>> feature/twins
 }
 
 bool Peak3D::isSelected() const
@@ -474,12 +709,29 @@ bool Peak3D::isMasked() const
     return _masked;
 }
 
-double Peak3D::getIOverSigmaI() const
+bool Peak3D::isIndexed() const
 {
+<<<<<<< HEAD
     return _counts/_countsSigma;
+=======
+	return (!_unitCells.empty());
+>>>>>>> feature/twins
 }
 
+void Peak3D::setObserved(bool observed)
+{
+	_observed = observed;
+}
 
+bool Peak3D::isObserved() const
+{
+	return _observed;
+}
+
+double Peak3D::getIOverSigmaI() const
+{
+	return _counts/_countsSigma;
+}
 
 void Peak3D::framewiseIntegrateBegin()
 {
@@ -657,6 +909,7 @@ double Peak3D::pValue()
 
     return p;
 }
+<<<<<<< HEAD
 
 void Peak3D::setCalculated(bool calculated)
 {
@@ -666,6 +919,20 @@ void Peak3D::setCalculated(bool calculated)
 bool Peak3D::getCalculated() const
 {
     return _calculated;
+=======
+
+bool Peak3D::hasUnitCells() const
+{
+	return !_unitCells.empty();
+}
+
+int Peak3D::getActiveUnitCellIndex() const
+{
+	return _activeUnitCellIndex;
+}
+
+}
+>>>>>>> feature/twins
 }
 
 } // Crsystal

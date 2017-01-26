@@ -1,5 +1,6 @@
 #include <QIcon>
 #include <QString>
+#include <QtDebug>
 
 #include "models/InstrumentItem.h"
 #include "models/DetectorItem.h"
@@ -49,4 +50,19 @@ void InstrumentItem::fromJson(const QJsonObject &obj)
 {
     setText(obj["name"].toString());
     _sample->fromJson(obj["sample"].toObject());
+}
+
+DetectorItem* InstrumentItem::getDetectorItem()
+{
+    return _detector;
+}
+
+SampleItem* InstrumentItem::getSampleItem()
+{
+    return _sample;
+}
+
+SourceItem* InstrumentItem::getSourceItem()
+{
+    return _source;
 }

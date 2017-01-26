@@ -24,7 +24,6 @@
 #include <QString>
 #include <QtDebug>
 
-//#include "BlobFinder.h"
 #include "DataReaderFactory.h"
 #include "Detector.h"
 #include "DialogExperiment.h"
@@ -37,21 +36,24 @@
 #include "models/DataItem.h"
 #include "models/DetectorItem.h"
 #include "models/ExperimentItem.h"
-#include "Tree/ExperimentTree.h"
+#include "tree/ExperimentTree.h"
 #include "models/TreeItem.h"
 #include "models/InstrumentItem.h"
 #include "models/NumorItem.h"
 #include "models/PeakListItem.h"
 #include "models/SampleItem.h"
 #include "models/SourceItem.h"
+#include "models/UnitCellItem.h"
 #include "MCAbsorptionDialog.h"
 #include "OpenGL/GLWidget.h"
 #include "OpenGL/GLSphere.h"
 #include "Logger.h"
 #include "ReciprocalSpaceViewer.h"
 #include "DetectorScene.h"
+#include "dialogs/DialogTransformationMatrix.h"
 
 #include "dialogs/DialogRawData.h"
+#include "dialogs/DialogAutoIndexing.h"
 
 #include "SpaceGroupSymbols.h"
 #include "SpaceGroup.h"
@@ -112,6 +114,23 @@ void ExperimentTree::setSession(std::shared_ptr<SessionModel> session)
     setModel(_session.get());
 }
 
+void ExperimentTree::setHKLTolerance()
+{
+    QStandardItem* item=_session->itemFromIndex(currentIndex());
+    auto ucitem=dynamic_cast<UnitCellItem*>(item);
+    if (!ucitem)
+        return;
+
+    bool ok;
+    double tolerance = QInputDialog::getDouble(this,tr("HKL integer tolerance"),tr("value:"),ucitem->getUnitCell()->getHKLTolerance(),0.0,1.0,2,&ok);
+    if (!ok)
+        return;
+
+    ucitem->getUnitCell()->setHKLTolerance(tolerance);
+
+    onSingleClick(currentIndex());
+}
+
 void ExperimentTree::createNewExperiment()
 {
     std::unique_ptr<DialogExperiment> dlg;
@@ -157,7 +176,8 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
     }
     else {
         QStandardItem* item = _session->itemFromIndex(index);
-        if (dynamic_cast<DataItem*>(item)) {
+        if (dynamic_cast<DataItem*>(item))
+        {
             QMenu* menu = new QMenu(this);
             QAction* import = menu->addAction("Import data");
             QAction* rawImport = menu->addAction("Import raw data...");
@@ -169,7 +189,8 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             connect(findpeaks, &QAction::triggered, [=](){findPeaks(index);});
             connect(rviewer, &QAction::triggered, [=](){viewReciprocalSpace(index);});
         }
-        else if (dynamic_cast<PeakListItem*>(item)) {
+        else if (dynamic_cast<PeakListItem*>(item))
+        {
             QMenu* menu = new QMenu(this);
             QAction* abs = menu->addAction("Correct for Absorption");
             QAction* scene3d = menu->addAction("Show 3D view");
@@ -178,7 +199,41 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             connect(abs, SIGNAL(triggered()), this, SLOT(absorptionCorrection()));
             connect(scene3d, SIGNAL(triggered()), this, SLOT(showPeaksOpenGL()));
         }
-        else if (NumorItem* nitem = dynamic_cast<NumorItem*>(item)) {
+        else if (SampleItem* sitem=dynamic_cast<SampleItem*>(item))
+        {
+            QMenu* menu = new QMenu(this);
+            QAction* addUnitCell = menu->addAction("Add unit cell");
+            menu->popup(viewport()->mapToGlobal(point));
+
+            auto addUnitCellLambda = [=] {sitem->addUnitCell();};
+            connect(addUnitCell, &QAction::triggered, this, addUnitCellLambda);
+
+        }
+        else if (UnitCellItem* ucitem=dynamic_cast<UnitCellItem*>(item))
+        {
+            QMenu* menu = new QMenu(this);
+            QAction* info = menu->addAction("Info");
+            menu->addSeparator();
+            QAction* setTolerance = menu->addAction("Set HKL tolerance");
+            menu->addSeparator();
+            QAction* cellParameters=menu->addAction("Change unit cell parameters");
+            QAction* transformationMatrix=menu->addAction("Transformation matrix");
+            menu->popup(viewport()->mapToGlobal(point));
+
+            auto infoLambda = [=]{ucitem->info();};
+            connect(info, &QAction::triggered, this, infoLambda);
+
+            auto cellParametersLambda = [=]{ucitem->openChangeUnitCellDialog();};
+            connect(cellParameters, &QAction::triggered, this, cellParametersLambda);
+
+            auto transformationMatrixLambda = [=]{ucitem->openTransformationMatrixDialog();};
+            connect(transformationMatrix, &QAction::triggered, this, transformationMatrixLambda);
+
+            connect(setTolerance, SIGNAL(triggered()),this, SLOT(setHKLTolerance()));
+
+        }
+        else if (NumorItem* nitem = dynamic_cast<NumorItem*>(item))
+            {
             QMenu* menu = new QMenu(this);
             QAction* export_hdf = menu->addAction("Export to HDF5...");
             menu->popup(viewport()->mapToGlobal(point));
@@ -261,6 +316,7 @@ void ExperimentTree::importRawData()
     if (!dialog.exec())
         return;
 
+<<<<<<< HEAD:apps/NSXQt/Tree/ExperimentTree.cpp
 //<<<<<<< HEAD
 //    int max=selectedNumors.size();
 //    qWarning() << "Peak find algorithm: Searching peaks in " << max << " files";
@@ -287,6 +343,9 @@ void ExperimentTree::importRawData()
 //        return result;
 //    };
 //=======
+=======
+
+>>>>>>> feature/twins:apps/NSXQt/tree/ExperimentTree.cpp
     const double wavelength = dialog.wavelength();
     const double delta_phi = dialog.deltaPhi();
     const double delta_omega = dialog.deltaOmega();
@@ -294,7 +353,6 @@ void ExperimentTree::importRawData()
     const bool swap_endian = dialog.swapEndian();
     const int bpp = dialog.bpp();
     const bool row_major = dialog.rowMajor();
-//>>>>>>> develop
 
     std::vector<std::string> filenames;
 
@@ -357,7 +415,6 @@ void ExperimentTree::onDoubleClick(const QModelIndex& index)
 {
     // Get the current item and check that is actually a Numor item. Otherwise, return.
     QStandardItem* item=_session->itemFromIndex(index);
-
     if (auto ptr=dynamic_cast<DataItem*>(item)) {
         if (ptr->model()->rowCount(ptr->index())==0)
             importData();
@@ -369,7 +426,10 @@ void ExperimentTree::onDoubleClick(const QModelIndex& index)
                     ptr->child(i)->setCheckState(Qt::Unchecked);
             }
         }
-    } else if (auto ptr=dynamic_cast<NumorItem*>(item)) {
+    }
+    else if (auto ptr=dynamic_cast<SampleItem*>(item))
+        ptr->addUnitCell();
+    else if (auto ptr=dynamic_cast<NumorItem*>(item)) {
         std::shared_ptr<SX::Instrument::Experiment> exp = ptr->getExperiment();
         emit plotData(exp->getData(item->text().toStdString()));
     }
@@ -395,14 +455,14 @@ void ExperimentTree::keyPressEvent(QKeyEvent *event)
 
 void ExperimentTree::onSingleClick(const QModelIndex &index)
 {
-        // Inspect this item if it is inspectable
-        InspectableTreeItem* item = dynamic_cast<InspectableTreeItem*>(_session->itemFromIndex(index));
-        if (item)
-            emit inspectWidget(item->inspectItem());
-        else {
-            QWidget* widget=new QWidget();
-            emit inspectWidget(widget);
-        }
+    // Inspect this item if it is inspectable
+    InspectableTreeItem* item = dynamic_cast<InspectableTreeItem*>(_session->itemFromIndex(index));
+    if (item)
+        emit inspectWidget(item->inspectItem());
+    else {
+        QWidget* widget=new QWidget();
+        emit inspectWidget(widget);
+    }
 }
 
 void ExperimentTree::showPeaksOpenGL()

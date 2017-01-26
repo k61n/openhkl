@@ -96,6 +96,7 @@ private slots:
     void on_actionD_spacing_triggered();
     void on_actionLogger_triggered();
     void on_action1D_Peak_Ploter_triggered();
+    void on_actionProperty_triggered();
     void updatePlot(PlottableGraphicsItem* cutter);
     void on_actionFrom_Sample_triggered();
     void on_actionBehind_Detector_triggered();
@@ -124,7 +125,6 @@ private slots:
 
 public slots:
     void changeData(std::shared_ptr<SX::Data::IData>);
-    void showPeakList(std::vector<std::shared_ptr<SX::Data::IData>>);
     void plotPeak(sptrPeak3D);
     void plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&);
     void setInspectorWidget(QWidget*);

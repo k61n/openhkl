@@ -31,7 +31,9 @@
 
 #include <vector>
 #include <string>
+
 #include <Eigen/Dense>
+
 #include "Basis.h"
 #include "Material.h"
 #include "SpaceGroup.h"
@@ -118,6 +120,7 @@ public:
     bool isEquivalent(double h1,double k1, double l1, double h2, double k2, double l2) const;
     //! Determine whether two reflections (h1,k1,l1) and (h2,k2,l2) are equivalent up to Friedel reflection.
     bool isFriedelEquivalent(double h1,double k1, double l1, double h2, double k2, double l2) const;
+<<<<<<< HEAD
     void setBU(const Vector3d& hkl1,const Vector3d& hkl2, const Vector3d& q1, const Vector3d& q2);
 
     void setBU(const Eigen::Matrix3d& BU);
@@ -151,6 +154,52 @@ private:
     BravaisType _bravaisType;
     unsigned int _Z;
     SpaceGroup _group;
+=======
+
+    void setBU(const Vector3d& hkl1,const Vector3d& hkl2, const Vector3d& q1, const Vector3d& q2);
+ 	void setBU(const Eigen::Matrix3d& BU);
+
+ 	//! Get the Busing-Levy B matrix as defined in Acta Cryst. (1967). 22, 457
+ 	//! The returned matrix is the transposed version of the matrix since
+ 	//! reciprocal bases are contravariant in NSXTool.
+ 	Eigen::Matrix3d getBusingLevyB() const;
+ 	Eigen::Matrix3d getBusingLevyU() const;
+ 	//! Print into a stream
+ 	void printSelf(std::ostream& os) const;
+
+ 	//! Gets the Z value for the unit cell
+ 	unsigned int getZ() const;
+ 	//! Sets the Z value for the unit cell
+ 	void setZ(unsigned int Z);
+
+ 	//! Gets the Material for the unit cell
+ 	Chemistry::sptrMaterial getMaterial() const;
+ 	//! Sets the Material for the unit cell
+ 	void setMaterial(Chemistry::sptrMaterial material);
+
+ 	//! Set space group from its symbol
+ 	void setSpaceGroup(const std::string& symol);
+ 	std::string getSpaceGroup() const;
+
+ 	//! Set name of the unit cell
+ 	void setName(const std::string& name);
+ 	//! Get name of the unit cell
+ 	const std::string& getName() const;
+
+ 	//! Set the integer tolerance for this unit cell
+ 	void setHKLTolerance(double tolerance);
+ 	//! Get the integer tolerance for this unit cell
+ 	double getHKLTolerance() const;
+
+private:
+	Chemistry::sptrMaterial _material;
+ 	LatticeCentring _centring;
+	BravaisType _bravaisType;
+	unsigned int _Z;
+	SpaceGroup _group;
+	std::string _name;
+	double _hklTolerance;
+>>>>>>> feature/twins
 };
 
 //! Print to a stream

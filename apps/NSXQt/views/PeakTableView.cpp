@@ -32,7 +32,6 @@
 #include "PeakTableView.h"
 
 #include <fstream>
-#include <iomanip>
 #include <iostream>
 #include <set>
 #include <memory>
@@ -49,6 +48,7 @@
 
 #include "IData.h"
 #include "Peak3D.h"
+
 #include "ProgressHandler.h"
 #include "ProgressView.h"
 #include "LogFileDialog.h"
@@ -56,22 +56,34 @@
 #include "ResolutionShell.h"
 #include "MergedPeak.h"
 
+#include "CollectedPeaksDelegate.h"
+#include "CollectedPeaksModel.h"
+
+#include "dialogs/DialogAutoIndexing.h"
+#include "dialogs/DialogRefineUnitCell.h"
+#include "dialogs/DialogTransformationMatrix.h"
+#include "dialogs/DialogUnitCellParameters.h"
+
 PeakTableView::PeakTableView(QWidget *parent)
 : QTableView(parent),
-  _columnUp(-1,false),
   _normalized(false)
 {
-    // Make sure that the user can not edit the content of the table
-    this->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    setEditTriggers(QAbstractItemView::SelectedClicked);
     // Selection of a cell in the table select the whole line.
-    this->setSelectionBehavior(QAbstractItemView::SelectRows);
+    setSelectionBehavior(QAbstractItemView::SelectRows);
+    setSelectionMode(QAbstractItemView::ExtendedSelection);
+
+    setSortingEnabled(true);
+    sortByColumn(0, Qt::AscendingOrder);
+    horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     //
     setMinimumSize(800,400);
     setFocusPolicy(Qt::StrongFocus);
 
-    // Set selection model
-    setSelectionMode(QAbstractItemView::MultiSelection);
+    CollectedPeaksDelegate *delegate = new CollectedPeaksDelegate(this);
+    setItemDelegate(delegate);
 
+<<<<<<< HEAD
     // Signal sent when sorting by column
     QHeaderView* horizontal=this->horizontalHeader();
     connect(horizontal,SIGNAL(sectionClicked(int)),this,SLOT(sortByColumn(int)));
@@ -87,10 +99,15 @@ PeakTableView::PeakTableView(QWidget *parent)
     connect(this, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(deselectPeak(QModelIndex)));
     // Hide the vertical Header
     //this->verticalHeader()->hide();
+=======
+    QHeaderView* vertical=this->verticalHeader();
+    connect(vertical,SIGNAL(sectionClicked(int)),this,SLOT(plotSelectedPeak(int)));
+>>>>>>> feature/twins
 }
 
-void PeakTableView::setData(std::vector<std::shared_ptr<SX::Data::IData>> data)
+void PeakTableView::plotSelectedPeak(int index)
 {
+<<<<<<< HEAD
     for (auto ptr: data) {
         // Add peaks present in this numor to the LatticeFinder
         for (sptrPeak3D peak : ptr->getPeaks())
@@ -213,17 +230,26 @@ void PeakTableView::constructTable()
     connect(this->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
             this, SLOT(peakChanged(QModelIndex,QModelIndex)));
 }
-
-void PeakTableView::mousePressEvent(QMouseEvent *event)
-{
-    if (event->button() == Qt::RightButton)
+=======
+    CollectedPeaksModel *peaksModel = dynamic_cast<CollectedPeaksModel*>(model());
+    if (!peaksModel)
         return;
 
-    QTableView::mousePressEvent(event);
+    auto peaks = peaksModel->getPeaks();
+    if (peaks.empty())
+        return;
+>>>>>>> feature/twins
+
+    if (index < 0 || index >= peaks.size())
+        return;
+
+    sptrPeak3D peak=peaks[index];
+    emit plotPeak(peak);
 }
 
-void PeakTableView::keyPressEvent(QKeyEvent *event)
+void PeakTableView::contextMenuEvent(QContextMenuEvent* event)
 {
+<<<<<<< HEAD
     QModelIndexList selected = selectedIndexes();
     if (selected.isEmpty())
         return;
@@ -271,6 +297,22 @@ void PeakTableView::contextMenuEvent(QContextMenuEvent* event)
     QAction* sortbyEquivalence = new QAction("Sort by equivalences", menu);
     menu->addAction(sortbyEquivalence);
     connect(sortbyEquivalence, SIGNAL(triggered()), this, SLOT(sortEquivalents()));
+=======
+    CollectedPeaksModel *peaksModel = dynamic_cast<CollectedPeaksModel*>(model());
+    if (!peaksModel)
+        return;
+
+    auto peaks = peaksModel->getPeaks();
+    if (peaks.empty())
+        return;
+
+    // Show all peaks as selected when context menu is requested
+    QMenu* menu=new QMenu(this);
+    //
+    QAction* sortbyEquivalence=new QAction("Sort by equivalences",menu);
+    menu->addAction(sortbyEquivalence);
+    connect(sortbyEquivalence,SIGNAL(triggered()),peaksModel,SLOT(sortEquivalents()));
+>>>>>>> feature/twins
 
     QAction* normalize = new QAction("Normalize to monitor", menu);
     menu->addSeparator();
@@ -283,6 +325,7 @@ void PeakTableView::contextMenuEvent(QContextMenuEvent* event)
 
     // Menu to plot against metadata
     QModelIndexList indexList = selectionModel()->selectedIndexes();
+<<<<<<< HEAD
     //at least one peak
     if (indexList.size()) {
         QMenu* plotasmenu = menu->addMenu("Plot as");
@@ -298,22 +341,84 @@ void PeakTableView::contextMenuEvent(QContextMenuEvent* event)
             }
             QAction* newparam = new QAction(QString::fromStdString(key),plotasmenu);
             connect(newparam,&QAction::triggered, this, [&](){plotAs(key);});
+=======
+    if (indexList.size())
+    {
+        QMenu* plotasmenu=menu->addMenu("Plot as");
+        SX::Data::MetaData* met=peaks[indexList[0].row()]->getData()->getMetadata();
+        const std::set<std::string>& keys=met->getAllKeys();
+        for (const auto& key : keys)
+        {
+            try
+            {
+                //Ensure metadata is a Numeric type
+                met->getKey<double>(key);
+            }
+            catch(std::exception& e)
+            {
+                continue;
+            }
+            QAction* newparam=new QAction(QString::fromStdString(key),plotasmenu);
+            // New way to connect slot using C++ 2011 lambda sicne Qt 5
+            connect(newparam,&QAction::triggered,this,[&](){plotAs(key);});
+>>>>>>> feature/twins
             plotasmenu->addAction(newparam);
         }
     }
 
+<<<<<<< HEAD
     // Connections
     connect(normalize, SIGNAL(triggered()), this, SLOT(normalizeToMonitor()));
     connect(writeFullProf, SIGNAL(triggered()), this, SLOT(writeFullProf()));
     connect(writeShelX, SIGNAL(triggered()), this, SLOT(writeShelX()));
 
     menu->popup(event->globalPos());
+=======
+    menu->addSeparator();
+
+    QMenu* selectionMenu=menu->addMenu("Selection");
+
+    QAction* selectAllPeaks=new QAction("all peaks",menu);
+    QAction* selectValidPeaks=new QAction("valid peaks",menu);
+    QAction* selectUnindexedPeaks=new QAction("unindexed peaks",menu);
+    QAction* clearSelectedPeaks=new QAction("clear selection",menu);
+    QAction* togglePeaksSelection=new QAction("toggle",menu);
+    selectionMenu->addAction(selectAllPeaks);
+    selectionMenu->addAction(selectValidPeaks);
+    selectionMenu->addAction(selectUnindexedPeaks);
+    selectionMenu->addSeparator();
+    selectionMenu->addAction(clearSelectedPeaks);
+    selectionMenu->addSeparator();
+    selectionMenu->addAction(togglePeaksSelection);
+
+    menu->addSeparator();
+
+    QAction* autoIndexing=new QAction("Auto-indexing",menu);
+    menu->addAction(autoIndexing);
+    QAction* refineParameters=new QAction("Refine unit cell and instrument parameters",menu);
+    menu->addAction(refineParameters);
+
+    connect(normalize,SIGNAL(triggered()),this,SLOT(normalizeToMonitor()));
+    connect(writeFullProf,SIGNAL(triggered()),this,SLOT(writeFullProf()));
+    connect(writeShelX,SIGNAL(triggered()),this,SLOT(writeShelX()));
+    menu->popup(event->globalPos());
+
+    connect(clearSelectedPeaks,SIGNAL(triggered()),this,SLOT(clearSelectedPeaks()));
+    connect(selectAllPeaks,SIGNAL(triggered()),this,SLOT(selectAllPeaks()));
+    connect(selectValidPeaks,SIGNAL(triggered()),this,SLOT(selectValidPeaks()));
+    connect(selectUnindexedPeaks,SIGNAL(triggered()),this,SLOT(selectUnindexedPeaks()));
+    connect(togglePeaksSelection,SIGNAL(triggered()),this,SLOT(togglePeaksSelection()));
+
+    connect(autoIndexing,SIGNAL(triggered()),this,SLOT(openAutoIndexingDialog()));
+    connect(refineParameters,SIGNAL(triggered()),this,SLOT(openRefiningParametersDialog()));
+>>>>>>> feature/twins
 }
 
 void PeakTableView::normalizeToMonitor()
 {
     bool ok;
     double factor = QInputDialog::getDouble(this,"Enter normalization factor","",1,1,100000000,1,&ok);
+<<<<<<< HEAD
     if (ok) {
         for (sptrPeak3D peak : _peaks)
             peak->setScale(factor/peak->getData()->getMetadata()->getKey<double>("monitor"));
@@ -321,21 +426,47 @@ void PeakTableView::normalizeToMonitor()
         QModelIndex index=currentIndex();
         constructTable();
         _normalized = true;
+=======
+    if (ok)
+    {
+
+        CollectedPeaksModel *peaksModel = dynamic_cast<CollectedPeaksModel*>(model());
+        if (!peaksModel)
+            return;
+
+        auto peaks = peaksModel->getPeaks();
+        if (peaks.empty())
+            return;
+
+        peaksModel->normalizeToMonitor(factor);
+
+        // Keep track of the last selected index before rebuilding the table
+        QModelIndex index=currentIndex();
+        _normalized=true;
+>>>>>>> feature/twins
         selectRow(index.row());
         // If no row selected do nothing else.
         if (!index.isValid())
             return;
+<<<<<<< HEAD
         sptrPeak3D peak = _peaks[index.row()];
+=======
+        sptrPeak3D peak=peaks[index.row()];
+>>>>>>> feature/twins
         emit plotPeak(peak);
     }
 }
 
 void PeakTableView::writeFullProf()
 {
+<<<<<<< HEAD
     if (!_peaks.size())
         qCritical() << "No peaks in the table";
 
     if (!checkBeforeWriting())
+=======
+    if (!checkBeforeWritting())
+>>>>>>> feature/twins
         return;
 
     QString filename = QFileDialog::getSaveFileName(this,
@@ -344,16 +475,19 @@ void PeakTableView::writeFullProf()
                                                     tr("FullProf Files (*.int)"),
                                                     nullptr,
                                                     QFileDialog::DontUseNativeDialog);
-    if (filename.isEmpty())
-        return;
 
+<<<<<<< HEAD
     std::fstream file(filename.toStdString(), std::ios::out);
 
     if (!file.is_open()) {
         qCritical()<<"Error writing to this file, please check write permisions";
+=======
+    CollectedPeaksModel *peaksModel = dynamic_cast<CollectedPeaksModel*>(model());
+    if (!peaksModel)
+>>>>>>> feature/twins
         return;
-    }
 
+<<<<<<< HEAD
     file << "TITLE File written by ...\n";
     file << "(3i4,2F14.4,i5,4f8.2)\n";
     double wave = _peaks[0]->getData()->getMetadata()->getKey<double>("wavelength");
@@ -376,16 +510,24 @@ void PeakTableView::writeFullProf()
     if (file.is_open())
         file.close();
 }
+=======
+    peaksModel->writeFullProf(filename.toStdString());
+>>>>>>> feature/twins
 
+}
 
 void PeakTableView::writeShelX()
 {
+<<<<<<< HEAD
     if (!_peaks.size()) {
         qCritical() << "No peaks in the table";
         return;
     }
 
     if (!checkBeforeWriting())
+=======
+    if (!checkBeforeWritting())
+>>>>>>> feature/twins
         return;
 
     QString filename = QFileDialog::getSaveFileName(this,
@@ -394,6 +536,7 @@ void PeakTableView::writeShelX()
                                                     tr("ShelX Files (*.hkl)"),
                                                     nullptr,
                                                     QFileDialog::DontUseNativeDialog);
+<<<<<<< HEAD
     if (filename.isEmpty())
         return;
 
@@ -406,9 +549,14 @@ void PeakTableView::writeShelX()
     auto sptrBasis = _peaks[0]->getUnitCell();
     if (sptrBasis == nullptr) {
         qCritical() << "No unit cell defined the peaks. No index can be defined.";
-        return;
-    }
+=======
 
+    CollectedPeaksModel *peaksModel = dynamic_cast<CollectedPeaksModel*>(model());
+    if (!peaksModel)
+>>>>>>> feature/twins
+        return;
+
+<<<<<<< HEAD
     for (sptrPeak3D peak: _peaks) {
         if (peak->isSelected()) {
             const Eigen::RowVector3d& hkl = peak->getMillerIndices();
@@ -548,12 +696,23 @@ void PeakTableView::deselectPeak(QModelIndex index)
     sptrPeak3D peak = _peaks[index.row()];
     peak->setSelected(!peak->isSelected());
     constructTable();
+=======
+    peaksModel->writeShelX(filename.toStdString().c_str());
+>>>>>>> feature/twins
 }
 
 void PeakTableView::plotAs(const std::string& key)
 {
-     QModelIndexList indexList = selectionModel()->selectedIndexes();
+    QModelIndexList indexList = selectionModel()->selectedIndexes();
      if (!indexList.size())
+         return;
+
+     CollectedPeaksModel *peaksModel = dynamic_cast<CollectedPeaksModel*>(model());
+     if (!peaksModel)
+         return;
+
+     auto peaks = peaksModel->getPeaks();
+     if (peaks.empty())
          return;
 
     int nPoints=indexList.size();
@@ -562,8 +721,14 @@ void PeakTableView::plotAs(const std::string& key)
     QVector<double> y(nPoints);
     QVector<double> e(nPoints);
 
+<<<<<<< HEAD
     for (int i = 0; i < nPoints; ++i) {
         sptrPeak3D p=_peaks[indexList[i].row()];
+=======
+    for (int i=0;i<nPoints;++i)
+    {
+        sptrPeak3D p=peaks[indexList[i].row()];
+>>>>>>> feature/twins
         x[i]=p->getData()->getMetadata()->getKey<double>(key);
         y[i]=p->getScaledIntensity();
         e[i]=p->getScaledSigma();
@@ -574,9 +739,17 @@ void PeakTableView::plotAs(const std::string& key)
 
 std::string PeakTableView::getPeaksRange() const
 {
+    CollectedPeaksModel *peaksModel = dynamic_cast<CollectedPeaksModel*>(model());
+    if (!peaksModel)
+        return "";
+
+    auto peaks = peaksModel->getPeaks();
+    if (peaks.empty())
+        return "";
+
     std::set<std::string> temp;
 
-    for (sptrPeak3D p : _peaks)
+    for (sptrPeak3D p : peaks)
         temp.insert(std::to_string(p->getData()->getMetadata()->getKey<int>("Numor")));
 
     std::string range(*(temp.begin()));
@@ -589,6 +762,7 @@ std::string PeakTableView::getPeaksRange() const
     return range;
 }
 
+<<<<<<< HEAD
 void PeakTableView::sortEquivalents()
 {
     qDebug() << "Sorting";
@@ -608,6 +782,9 @@ void PeakTableView::sortEquivalents()
 }
 
 bool PeakTableView::checkBeforeWriting()
+=======
+bool PeakTableView::checkBeforeWritting()
+>>>>>>> feature/twins
 {
     if (!_normalized) {
         int reply=QMessageBox::question(this,"Writing data","No normalisation (time/monitor) has been found. Are you sure you want to export",(QMessageBox::Yes | QMessageBox::Abort));
@@ -619,16 +796,22 @@ bool PeakTableView::checkBeforeWriting()
 
 void PeakTableView::showPeaksMatchingText(QString text)
 {
+    CollectedPeaksModel *peaksModel = dynamic_cast<CollectedPeaksModel*>(model());
+    if (!peaksModel)
+        return;
+
+    auto peaks = peaksModel->getPeaks();
+    if (peaks.empty())
+        return;
+
     QStringList list=text.split(" ");
     int nterms=list.size();
 
     if (nterms<3) // Don't search if h,k,l not complete
     {
         unsigned int row=0;
-        for (row=0;row<_peaks.size();row++)
-        {
+        for (row=0;row<peaks.size();row++)
             setRowHidden(row,false);
-        }
         return;
     }
 
@@ -638,6 +821,7 @@ void PeakTableView::showPeaksMatchingText(QString text)
     double l=list[2].toDouble(&okl);
 
     // If problem parsing h k l into double
+<<<<<<< HEAD
     if (!(okh && okk && okl)) {
         unsigned int row=0;
         for (row = 0; row < _peaks.size(); row++) {
@@ -658,3 +842,132 @@ void PeakTableView::showPeaksMatchingText(QString text)
             setRowHidden(row, false);
     }
 }
+=======
+    if (!(okh && okk && okl))
+    {
+        unsigned int row=0;
+        for (row=0;row<peaks.size();row++)
+            setRowHidden(row,false);
+        return;
+    }
+
+    unsigned int row=0;
+    for (row=0;row<peaks.size();row++)
+    {
+        sptrPeak3D p=peaks[row];
+        Eigen::RowVector3d hkl;
+        bool success = p->getMillerIndices(hkl,true);
+        setRowHidden(row,success);
+    }
+}
+
+void PeakTableView::selectUnindexedPeaks()
+{
+    CollectedPeaksModel *peaksModel = dynamic_cast<CollectedPeaksModel*>(model());
+    if (!peaksModel)
+        return;
+
+    QModelIndexList unindexedPeaks = peaksModel->getUnindexedPeaks();
+
+    for (QModelIndex index : unindexedPeaks)
+        selectRow(index.row());
+}
+
+void PeakTableView::selectAllPeaks()
+{
+    selectAll();
+}
+
+void PeakTableView::clearSelectedPeaks()
+{
+    clearSelection();
+}
+
+void PeakTableView::togglePeaksSelection()
+{
+    QItemSelectionModel *selection = selectionModel();
+
+    for (int i=0;i<model()->rowCount();++i)
+        selection->select(model()->index(i,0),QItemSelectionModel::Rows|QItemSelectionModel::Toggle);
+}
+
+void PeakTableView::selectValidPeaks()
+{
+    CollectedPeaksModel *peaksModel = dynamic_cast<CollectedPeaksModel*>(model());
+    if (!peaksModel)
+        return;
+
+    QModelIndexList validPeaksIndexes = peaksModel->getValidPeaks();
+
+    for (QModelIndex index : validPeaksIndexes)
+        selectRow(index.row());
+}
+
+QItemSelectionModel::SelectionFlags PeakTableView::selectionCommand(const QModelIndex &index, const QEvent *event) const
+{
+    if (event==nullptr)
+        return QItemSelectionModel::NoUpdate;
+    return QTableView::selectionCommand(index,event);
+}
+
+void PeakTableView::openAutoIndexingDialog()
+{
+    CollectedPeaksModel* peakModel = dynamic_cast<CollectedPeaksModel*>(model());
+    sptrExperiment experiment = peakModel->getExperiment();
+
+    std::vector<sptrPeak3D> peaks = peakModel->getPeaks(selectionModel()->selectedRows());
+
+    DialogAutoIndexing* dialog = new DialogAutoIndexing(experiment,peaks);
+    connect(dialog,SIGNAL(cellUpdated(sptrUnitCell)),this,SLOT(updateUnitCell(sptrUnitCell)));
+    dialog->exec();
+
+    selectionModel()->clear();
+}
+
+void PeakTableView::updateUnitCell(sptrUnitCell unitCell)
+{
+    QModelIndexList selectedPeaks = selectionModel()->selectedRows();
+    if (selectedPeaks.empty())
+        return;
+
+    CollectedPeaksModel* peakModel = dynamic_cast<CollectedPeaksModel*>(model());
+    peakModel->setUnitCell(unitCell,selectedPeaks);
+}
+
+void PeakTableView::openRefiningParametersDialog()
+{
+    CollectedPeaksModel* peakModel = dynamic_cast<CollectedPeaksModel*>(model());
+    sptrExperiment experiment = peakModel->getExperiment();
+
+    std::vector<sptrPeak3D> peaks = peakModel->getPeaks(selectionModel()->selectedRows());
+
+    int nPeaks = peaks.size();
+    // Check that a minimum number of peaks have been selected for indexing
+    if (nPeaks < 10)
+    {
+        QMessageBox::warning(this, tr("NSXTool"),tr("Need at least 10 peaks for refining"));
+        return;
+    }
+
+    sptrUnitCell uc(peaks[0]->getActiveUnitCell());
+    for (auto peak : peaks)
+    {
+        if (peak->getActiveUnitCell() != uc)
+        {
+            uc = nullptr;
+            break;
+        }
+    }
+
+    if (uc == nullptr)
+    {
+        QMessageBox::warning(this, tr("NSXTool"),tr("The selected peaks must have the same active unit cell for refining"));
+        return;
+    }
+
+    DialogRefineUnitCell* dialog= new DialogRefineUnitCell(experiment,uc,peaks,this);
+    dialog->exec();
+//    getLatticeParams();
+//    emit cellUpdated();
+}
+>>>>>>> feature/twins

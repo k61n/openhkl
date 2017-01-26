@@ -4,7 +4,7 @@
 #include "Diffractometer.h"
 #include "Sample.h"
 
-#include "Tree/SamplePropertyWidget.h"
+#include "tree/SamplePropertyWidget.h"
 #include "models/SampleShapeItem.h"
 #include "models/SampleItem.h"
 #include "models/UnitCellItem.h"
@@ -81,6 +81,32 @@ void SampleItem::fromJson(const QJsonObject &obj)
         std::shared_ptr<SX::Crystal::UnitCell> cell = sample->addUnitCell();
         cell->setLatticeVectors(v[0], v[1], v[2]);
 
-        appendRow(new UnitCellItem(getExperiment(), cell));
+        appendRow(new UnitCellItem(_experiment, cell));
     }
+}
+
+QList<UnitCellItem*> SampleItem::getUnitCellItems()
+{
+    QList<UnitCellItem*> unitCellItems;
+
+    QModelIndex sampleItemIdx = model()->indexFromItem(this);
+
+    for (int i=0;i<model()->rowCount(sampleItemIdx);++i)
+    {
+        QModelIndex idx = model()->index(i,0,sampleItemIdx);
+        QStandardItem* item = model()->itemFromIndex(idx);
+        UnitCellItem* ucItem = dynamic_cast<UnitCellItem*>(item);
+        if (ucItem)
+            unitCellItems << ucItem;
+    }
+
+    return unitCellItems;
+}
+
+void SampleItem::addUnitCell()
+{
+    auto sample=_experiment->getDiffractometer()->getSample();
+    auto cell=sample->addUnitCell();
+    appendRow(new UnitCellItem(_experiment,cell));
+    child(0)->setEnabled(true);
 }

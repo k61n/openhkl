@@ -98,6 +98,8 @@
 #include "SpaceGroupDialog.h"
 #include "LogFileDialog.h"
 
+#include "UnitCellItem.h"
+
 #include <QVector>
 #include "Externals/qcustomplot.h"
 #include "ui_ScaleDialog.h"
@@ -128,12 +130,25 @@ using SX::Utils::ProgressHandler;
 
 SessionModel::SessionModel()
 {
+    connect(this,SIGNAL(itemChanged(QStandardItem*)),this,SLOT(onItemChanged(QStandardItem*)));
 }
 
 SessionModel::~SessionModel()
 {
     // _model should be deleted automatically during destructor by QT
     //delete _model;
+}
+
+void SessionModel::onItemChanged(QStandardItem* item)
+{
+    if (auto p=dynamic_cast<UnitCellItem*>(item))
+    {
+        // The first item of the Sample item branch is the SampleShapeItem, skip it
+        int idx = p->index().row()- 1;
+        auto expt = p->getExperiment();
+        auto sptrUnitCell = expt->getDiffractometer()->getSample()->getUnitCell(idx);
+        sptrUnitCell->setName(p->text().toStdString());
+    }
 }
 
 void SessionModel::createNewExperiment()
@@ -335,9 +350,10 @@ void SessionModel::computeRFactors()
         return;
     }
 
-    for (sptrPeak3D peak: peak_list) {
+    for (sptrPeak3D peak: peak_list)
+    {
         // what do we do if there is more than one sample/unit cell??
-        unit_cell = peak->getUnitCell();
+        unit_cell = peak->getActiveUnitCell();
 
         if (unit_cell)
             break;
@@ -445,10 +461,13 @@ void SessionModel::integrateCalculatedPeaks()
                 calculated_peaks.reserve(calculated_peaks.size() + peaks.size());
 
                 qDebug() << "Adding calculated peaks...";
+<<<<<<< HEAD
 
                 //for(auto&& p: peaks) {
                     //calculated_peaks.push_back(p);
                 //}
+=======
+>>>>>>> feature/twins
             }
         }
 

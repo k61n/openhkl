@@ -1,6 +1,7 @@
 #ifndef PEAKLISTPROPERTYWIDGET_H
 #define PEAKLISTPROPERTYWIDGET_H
 
+#include <QStandardItem>
 #include <QWidget>
 #include "PeakTableView.h"
 
@@ -18,8 +19,6 @@ public:
     explicit PeakListPropertyWidget(PeakListItem* caller, QWidget *parent = 0);
     ~PeakListPropertyWidget();
     PeakTableView* getPeakTableView() const;
-private slots:
-
 
 private:
     PeakListItem* _caller;

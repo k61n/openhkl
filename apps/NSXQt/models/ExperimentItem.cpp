@@ -15,6 +15,8 @@
 #include "DataItem.h"
 #include "PeakListItem.h"
 
+#include <QtDebug>
+
 using SX::Instrument::Experiment;
 
 ExperimentItem::ExperimentItem(std::shared_ptr<Experiment> experiment) : TreeItem(experiment)
@@ -39,12 +41,6 @@ ExperimentItem::ExperimentItem(std::shared_ptr<Experiment> experiment) : TreeIte
     // Create a peaks item and add it to the experiment item
      _peaks = new PeakListItem(experiment);
     appendRow(_peaks);
-}
-
-void ExperimentItem::setData(const QVariant &value, int role)
-{
-    QStandardItem::setData(value,role);
-    _experiment->setName(text().toStdString());
 }
 
 ExperimentItem::~ExperimentItem()
@@ -76,4 +72,9 @@ void ExperimentItem::fromJson(const QJsonObject &obj)
     _instr->fromJson(obj["instrument"].toObject());
     _data->fromJson(obj["data"].toObject());
     _peaks->fromJson(obj["peaks"].toObject());
+}
+
+InstrumentItem* ExperimentItem::getInstrumentItem()
+{
+	return _instr;
 }

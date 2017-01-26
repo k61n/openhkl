@@ -50,7 +50,7 @@
 #include "Experiment.h"
 #include "ProgressHandler.h"
 #include "PeakFinder.h"
-
+#include "Types.h"
 
 using namespace SX::Instrument;
 
@@ -64,6 +64,8 @@ namespace Data
 }
 }
 
+using SX::Crystal::sptrUnitCell;
+
 class SessionModel : public QStandardItemModel
 {
     Q_OBJECT
@@ -74,8 +76,6 @@ public:
     std::shared_ptr<SX::Instrument::Experiment> addExperiment(const std::string& experimentName, const std::string& instrumentName);
     std::vector<std::shared_ptr<SX::Data::IData>> getSelectedNumors() const;
     std::vector<std::shared_ptr<SX::Data::IData>> getSelectedNumors(ExperimentItem* item) const;
-
-    // ExperimentItem* getExperimentItem(Experiment* exp); // no longer used?
 
     //! Convert session into JSON object
     QJsonObject toJsonObject();
@@ -99,9 +99,9 @@ public:
 
 signals:
     void plotData(std::shared_ptr<SX::Data::IData>);
-    void showPeakList(std::vector<std::shared_ptr<SX::Data::IData>>);
     void inspectWidget(QWidget*);
     void updatePeaks();
+    void updateCellParameters(sptrUnitCell);
 
 
 public slots:
@@ -119,6 +119,8 @@ public slots:
     void peakFitDialog();
     void incorporateCalculatedPeaks();
     void applyResolutionCutoff(double dmin, double dmax);
+
+    void onItemChanged(QStandardItem* item);
 
 
 private:

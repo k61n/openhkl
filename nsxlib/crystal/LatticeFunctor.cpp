@@ -122,7 +122,8 @@ int LatticeFunctor::operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) 
 	for (unsigned int i=0; i<_peaks.size();++i)
 	{
 		Eigen::RowVector3d qVector=_peaks[i].getQ();
-		const Eigen::RowVector3d& hkl=_peaks[i].getMillerIndices();
+		Eigen::RowVector3d hkl;
+		bool success=_peaks[i].getMillerIndices(hkl,true);
 		fvec(3*i)   = (BU(0,0)*hkl[0] + BU(0,1)*hkl[1] + BU(0,2)*hkl[2] - qVector[0]);
 		fvec(3*i+1) = (BU(1,0)*hkl[0] + BU(1,1)*hkl[1] + BU(1,2)*hkl[2] - qVector[1]);
 		fvec(3*i+2) = (BU(2,0)*hkl[0] + BU(2,1)*hkl[1] + BU(2,2)*hkl[2] - qVector[2]);

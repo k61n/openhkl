@@ -51,6 +51,7 @@ namespace Crystal
 
 /** @brief UB functor is used to refine UB-matrix and instrument offsets
  */
+<<<<<<< HEAD
 struct UBFunctor : public Utils::LMFunctor<double> {
     //! Default constructor
     UBFunctor();
@@ -105,6 +106,63 @@ struct UBFunctor : public Utils::LMFunctor<double> {
     void refineParameter(unsigned int idx, bool refine);
 
     std::vector<Peak3D> _peaks;
+=======
+struct UBFunctor : public Utils::LMFunctor<double>
+{
+	//! Default constructor
+	UBFunctor();
+	//! Copy constructor
+	UBFunctor(const UBFunctor& other);
+	//! Assignment operator
+	UBFunctor& operator=(const UBFunctor& other);
+	//! Destructor
+	~UBFunctor();
+	/*
+	 * @brief Call operator
+	 * @param x the input parameters
+	 * @param fvec the residuals
+	 */
+	int operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const;
+	/*
+	 * @brief Add a peak (e.g. an observation) to the minimizer
+	 * @param peak the peak to be added
+	 */
+	void addPeak(const Peak3D& peak, const Eigen::RowVector3d& hkl);
+
+	void clearPeaks();
+
+	/*
+	 * @brief Returns the number of inputs of the functor (e.g. the number of parameters)
+	 * @return the number of inputs
+	 */
+	int inputs() const;
+	/*
+	 * @brief Returns the number of values of the functor (e.g. the number of observations)
+	 * @return the number of inputs
+	 */
+	int values() const;
+	/*
+	 * @brief Set the detector related to the peaks collected for the minimization
+	 * @param detector the detector
+	 */
+    void setDetector(std::shared_ptr<SX::Instrument::Detector> detector);
+	/*
+	 * @brief Set the sample related to the peaks collected for the minimization
+	 * @param sample the sample
+	 */
+    void setSample(std::shared_ptr<SX::Instrument::Sample> sample);
+	//! Set the source
+    void setSource(std::shared_ptr<SX::Instrument::Source> source);
+	//! Reset all the parameters (e.g. UB matrix + detector and sample offsets) to zero
+	void resetParameters();
+	/*
+	 * @brief Set the offsets that will be fixed during the minization
+	 * @param idx the index of the offset (starting from 9)
+	 */
+	void refineParameter(unsigned int idx, bool refine);
+
+	std::vector<std::pair<Peak3D,Eigen::RowVector3d>> _peaks;
+>>>>>>> feature/twins
     std::shared_ptr<SX::Instrument::Detector> _detector;
     std::shared_ptr<SX::Instrument::Sample> _sample;
     std::shared_ptr<SX::Instrument::Source> _source;
@@ -143,6 +201,7 @@ struct UBSolution {
 
 class UBMinimizer {
 public:
+<<<<<<< HEAD
     //! Default constructor
     UBMinimizer();
     /*
@@ -187,6 +246,52 @@ public:
      * @param idx the index of the parameter
      */
     void unsetStartingValue(unsigned int idx);
+=======
+	//! Default constructor
+	UBMinimizer();
+	/*
+	 * @brief Add a peak (e.g. an observation) to the minimizer
+	 * @param peak the peak to be added
+	 */
+	void addPeak(const Peak3D& peak, const Eigen::RowVector3d& hkl);
+
+	void clearPeaks();
+
+	//! Reset all the parameters (e.g. UB matrix + detector and sample offsets) to zero
+	void resetParameters();
+	/*
+	 * @brief Set the detector related to the peaks collected for the minimization
+	 * @param detector the detector
+	 */
+    void setDetector(std::shared_ptr<SX::Instrument::Detector> detector);
+	/*
+	 * @brief Set the offsets that will be fixed during the minization
+	 * @param idx the index of the offset (starting from 9)
+	 */
+	void refineParameter(unsigned int idx, bool refine);
+	/*
+	 * @brief Set the sample related to the peaks collected for the minimization
+	 * @param sample the sample
+	 */
+    void setSample(std::shared_ptr<SX::Instrument::Sample> sample);
+	/*
+	 * @brief Set the starting values of the UB matrix
+	 * @param ub the UB matrix
+	 */
+    void setSource(std::shared_ptr<SX::Instrument::Source> source);
+	void setStartingUBMatrix(const Eigen::Matrix3d& ub);
+	/*
+	 * @brief Set the starting value for a given parameter
+	 * @param idx the index of the parameter
+	 * @param value the value of the parameter to be fixed
+	 */
+	void setStartingValue(unsigned int idx, double value);
+	/*
+	 * @brief Unset the starting value for a given parameter
+	 * @param idx the index of the parameter
+	 */
+	void unsetStartingValue(unsigned int idx);
+>>>>>>> feature/twins
     /*
      * @brief Run the minimization using Eigen implementation
      * @return the status of the minimization (1 if everything OK)
