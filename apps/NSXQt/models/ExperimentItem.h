@@ -15,22 +15,9 @@ class ExperimentItem : public TreeItem
 {
 public:
     explicit ExperimentItem(std::shared_ptr<SX::Instrument::Experiment> experiment);
-//<<<<<<< HEAD
-    // void setData(const QVariant & value, int role=Qt::UserRole + 1 ) override;
-
-//    ~ExperimentItem();
-//=======
-
-    virtual ~ExperimentItem();
-//>>>>>>> feature/twins
-
-    //QJsonValue toJson();
-
+    virtual ~ExperimentItem() = default;
     QJsonObject toJson() override;
     void fromJson(const QJsonObject& obj) override;
-
-public:
-
     InstrumentItem* getInstrumentItem();
 
 private:
