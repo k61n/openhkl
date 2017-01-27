@@ -26,15 +26,11 @@ class PeakGraphicsItem : public PlottableGraphicsItem
 public:
 
     PeakGraphicsItem(sptrPeak3D p);
-
-    ~PeakGraphicsItem();
+    ~PeakGraphicsItem() = default;
 
     void plot(SXPlot* plot);
-
     QRectF boundingRect() const;
-
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-
     void setFrame(unsigned long);
 
     //! Returns the type of plot related to the item

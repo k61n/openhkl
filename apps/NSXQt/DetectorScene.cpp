@@ -432,7 +432,7 @@ void DetectorScene::loadCurrentImage(bool newimage)
     if (_currentFrameIndex >= _currentData->getNFrames()) {
         _currentFrameIndex = _currentData->getNFrames()-1;
     }
-    if (newimage != nullptr) {
+    if (newimage) {
         _currentFrame =_currentData->getFrame(_currentFrameIndex);
     }
     if (_image == nullptr) {
