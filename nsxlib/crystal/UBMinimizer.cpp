@@ -320,7 +320,7 @@ int UBMinimizer::runGSL(unsigned int maxIter)
     minimizer.setfTol(1e-10);
     minimizer.setgTol(1e-10);
 
-    int status = minimizer.fit(maxIter);
+    bool status = minimizer.fit(maxIter);
 
     if (status) {
         x = minimizer.params();
@@ -496,9 +496,9 @@ std::ostream& operator<<(std::ostream& os, const UBSolution& solution)
     for (unsigned int i=0;i<detectorG->getNAxes();++i) {
         os << detectorG->getAxis(i)->getLabel() << " ";
         SX::Instrument::Axis* axis=detectorG->getAxis(i);
-        if (dynamic_cast<SX::Instrument::TransAxis*>(axis)) {
+        if (dynamic_cast<SX::Instrument::TransAxis*>(axis) != nullptr) {
             os << solution._detectorOffsets[i]/SX::Units::mm << "(" << solution._sigmaDetectorOffsets[i]/SX::Units::mm << ") mm " << std::endl;
-        } else if (dynamic_cast<SX::Instrument::RotAxis*>(axis)) {
+        } else if (dynamic_cast<SX::Instrument::RotAxis*>(axis) != nullptr) {
             os << solution._detectorOffsets[i]/SX::Units::deg << "(" << solution._sigmaDetectorOffsets[i]/SX::Units::deg << ") deg " << std::endl;
         }
     }
@@ -508,10 +508,11 @@ std::ostream& operator<<(std::ostream& os, const UBSolution& solution)
     for (unsigned int i=0;i<sampleG->getNAxes();++i) {
         os << sampleG->getAxis(i)->getLabel() << " ";
         SX::Instrument::Axis* axis=sampleG->getAxis(i);
-        if (dynamic_cast<SX::Instrument::TransAxis*>(axis))
+        if (dynamic_cast<SX::Instrument::TransAxis*>(axis) != nullptr) {
             os << solution._sampleOffsets[i]/SX::Units::mm << "(" << solution._sigmaSampleOffsets[i]/SX::Units::mm << ") mm " << std::endl;
-        else if (dynamic_cast<SX::Instrument::RotAxis*>(axis))
+        } else if (dynamic_cast<SX::Instrument::RotAxis*>(axis) != nullptr) {
             os << solution._sampleOffsets[i]/SX::Units::deg << "(" << solution._sigmaSampleOffsets[i]/SX::Units::deg << ") deg " << std::endl;
+        }
     }
     os<<std::endl;
     return os;
