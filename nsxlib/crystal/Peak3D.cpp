@@ -130,7 +130,7 @@ Peak3D& Peak3D::operator=(const Peak3D& other)
 {
     if (this != &other) {
         _data = other._data;
-        _hkl = other._hkl;
+  //      _hkl = other._hkl;
         _peak = other._peak ? std::unique_ptr<shape_type>(other._peak->clone()) : nullptr;
         _bkg = other._bkg ? std::unique_ptr<shape_type>(other._bkg->clone()) : nullptr;
         _projection = other._projection;
@@ -320,21 +320,6 @@ sptrUnitCell Peak3D::getUnitCell(int index) const
     }
     return _unitCells[size_t(index)];
 }
-
-bool Peak3D::hasIntegerHKL(const SX::Crystal::UnitCell& basis, double tolerance)
-{
-    _hkl=basis.fromReciprocalStandard(this->getQ());
-    if (std::fabs(_hkl[0]-std::round(_hkl[0])) < tolerance &&
-        std::fabs(_hkl[1]-std::round(_hkl[1])) < tolerance &&
-        std::fabs(_hkl[2]-std::round(_hkl[2])) < tolerance) {
-        _hkl[0]=std::round(_hkl[0]);
-        _hkl[1]=std::round(_hkl[1]);
-        _hkl[2]=std::round(_hkl[2]);
-        return true;
-    }
-    return false;
-}
-
 
 double Peak3D::getRawIntensity() const
 {

@@ -340,8 +340,9 @@ void SessionModel::computeRFactors()
         std::set<sptrPeak3D> peaks = numor->getPeaks();
         for (sptrPeak3D peak: peaks)
         {
-            if ( peak && peak->isSelected() && !peak->isMasked() )
+            if ( peak && peak->isSelected() && !peak->isMasked() ) {
                 peak_list.push_back(peak);
+            }
         }
     }
 
@@ -355,8 +356,9 @@ void SessionModel::computeRFactors()
         // what do we do if there is more than one sample/unit cell??
         unit_cell = peak->getActiveUnitCell();
 
-        if (unit_cell)
+        if (unit_cell) {
             break;
+        }
     }
 
     if (!unit_cell) {
@@ -825,7 +827,7 @@ bool SessionModel::writeNewShellX(std::string filename, const std::vector<sptrPe
         if (peak->isMasked() || !peak->isSelected())
             continue;
 
-        const Eigen::RowVector3d& hkl = peak->getMillerIndices();
+        Eigen::RowVector3d hkl;
         auto sptrCurrentBasis = peak->getActiveUnitCell();
 
         if (sptrCurrentBasis != sptrBasis) {
@@ -833,7 +835,7 @@ bool SessionModel::writeNewShellX(std::string filename, const std::vector<sptrPe
             return false;
         }
 
-        if (!(peak->hasIntegerHKL(*sptrCurrentBasis,0.2)))
+        if (!(peak->getMillerIndices(*sptrCurrentBasis, hkl, true)))
             continue;
 
         const long h = std::lround(hkl[0]);
@@ -864,6 +866,7 @@ bool SessionModel::writeStatistics(std::string filename,
     SX::Crystal::ResolutionShell res = {dmin, dmax, num_shells};
     std::vector<char> buf(1024, 0); // buffer for snprintf
     std::vector<SX::Crystal::MergedPeak> merged_peaks;
+    Eigen::RowVector3d HKL(0.0, 0.0, 0.0);
 
     if (!file.is_open()) {
         qCritical() << "Error writing to this file, please check write permisions";
@@ -921,12 +924,11 @@ bool SessionModel::writeStatistics(std::string filename,
                     continue;
 
                 // skip misindexed peaks
-                if (!peak->hasIntegerHKL(*cell))
+                if (!peak->getMillerIndices(*cell, HKL, true)) {
                     continue;
-
+                }
                 // peak was not equivalent to any of the merged peaks
                 new_peak.addPeak(peak);
-
             }
 
             if (new_peak.redundancy() > 0)

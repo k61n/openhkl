@@ -154,7 +154,6 @@ public:
     //!
     void setSource(const std::shared_ptr<SX::Instrument::Source>& source);
 
-    bool hasIntegerHKL(const SX::Crystal::UnitCell& basis, double tolerance=0.2);
     friend bool operator<(const Peak3D& p1, const Peak3D& p2);
     void setSelected(bool);
     bool isSelected() const;
@@ -194,7 +193,7 @@ private:
     //! Pointer to the data containing the peak
     std::weak_ptr<SX::Data::IData> _data;
     //! Miller indices of the peak
-    Eigen::RowVector3d _hkl;
+    // Eigen::RowVector3d _hkl;
     //! Shape describing the Peak zone
     std::unique_ptr<SX::Geometry::IShape<double,3>> _peak;
     //! Shape describing the background zone (must fully contain peak)
