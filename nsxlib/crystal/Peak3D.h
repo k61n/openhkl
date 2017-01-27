@@ -69,7 +69,6 @@ public:
     using sptrEllipsoid3D=std::shared_ptr<Ellipsoid3D>;
     using shape_type = SX::Geometry::IShape<double,3>;
 
-
     Peak3D(std::shared_ptr<SX::Data::IData> data=std::shared_ptr<SX::Data::IData>());
     Peak3D(std::shared_ptr<SX::Data::IData> data, const SX::Geometry::Blob3D& blob, double confidence);
 
@@ -93,35 +92,18 @@ public:
     //! set the background region. Bkg region is owned after setting
     void setBackgroundShape(SX::Geometry::IShape<double,3>* background);
 
-    //! Set the Miller indices of the peak (double to allow integration of incommensurate peaks)
-    //    void setMillerIndices(double h, double k, double l);
-
-    //   //! Get the Miller indices of the peak (double to allow integration of incommensurate peaks)
-    //     // =======const Eigen::RowVector3d& getMillerIndices() const;
-
-    //! Set the Peak region.
-    //void setPeakShape(sptrShape3D peak);
-
-    //! set the background region.
-    // void setBackgroundShape(sptrShape3D background);
-
-    //! Set the Miller indices of the peak (double to allow integration of incommensurate peaks)
-//	void setMillerIndices(double h, double k, double l);
-
-//	//! Get the Miller indices of the peak (double to allow integration of incommensurate peaks)
+    //! Get the Miller indices of the peak (double to allow integration of incommensurate peaks)
     Eigen::RowVector3d getMillerIndices() const;
 
     bool getMillerIndices(Eigen::RowVector3d& hkl, bool applyUCTolerance=true) const;
 
-    bool getMillerIndices(int unitCellIndex, Eigen::RowVector3d& hkl, bool applyUCTolerance=true) const;
+    bool getMillerIndices(int ucIndex, Eigen::RowVector3d& hkl, bool applyUCTolerance=true) const;
 
-    bool getMillerIndices(UnitCell uc, Eigen::RowVector3d& hkl, bool applyUCTolerance=true) const;
-// >>>>>>> feature/twins
+    bool getMillerIndices(const UnitCell& uc, Eigen::RowVector3d& hkl, bool applyUCTolerance=true) const;
 
-     //! Get the integral Miller indices
-     Eigen::RowVector3i getIntegerMillerIndices() const;
+    //! Get the integral Miller indices
+    Eigen::RowVector3i getIntegerMillerIndices() const;
 
-// <<<<<<< HEAD
     //! Get kf vector in the frame of reference of the diffractometer
     Eigen::RowVector3d getKf() const;
 
@@ -132,9 +114,6 @@ public:
 
     //! Run the integration of the peak; iterate over the data
     void integrate();
-
-    //!
-    // const std::shared_ptr<SX::Data::IData> getData() const { return _data.lock();}
 
     std::shared_ptr<SX::Data::IData> getData() const { return _data.lock();}
 
@@ -169,7 +148,7 @@ public:
     //! Set the scaling factor.
     void setScale(double factor);
     //!
-    void setSampleState(const std::shared_ptr<SX::Instrument::ComponentState>& gstate);
+    void setSampleState(const std::shared_ptr<SX::Instrument::ComponentState>& sstate);
     //!
     void setDetectorEvent(const std::shared_ptr<SX::Instrument::DetectorEvent>& event);
     //!
@@ -184,58 +163,12 @@ public:
     void setTransmission(double transmission);
     double getTransmission() const;
 
-
-
-
-    //! Get the projection of total data in the bounding box.
-
-    // Eigen::VectorXd getPeakProjection() const;
-    // Eigen::VectorXd getBkgProjection() const;
-    // Eigen::VectorXd getProjectionSigma() const;
-    // Eigen::VectorXd getPeakProjectionSigma() const;
-    // Eigen::VectorXd getBkgProjectionSigma() const;
-
-    //std::shared_ptr<SX::Geometry::IShape<double,3>> getPeak();
-    //std::shared_ptr<SX::Geometry::IShape<double,3>> getBackground();
-
-    //! Return the scaled intensity of the peak.
-    // double getScaledIntensity() const;
-    // //! Return the raw intensity of the peak.
-    // double getRawIntensity() const;
-    // //! Returns the error on the raw intensity.
-    // double getRawSigma() const;
-    // //! Returns the error on the scaled intensity.
-    // double getScaledSigma() const;
-    // //!
-    // double getIOverSigmaI() const;
-    // //! Return the lorentz factor of the peak.
-    // double getLorentzFactor() const;
-    // std::shared_ptr<SX::Instrument::ComponentState> getSampleState();
-    // double getSampleStepSize() const;
-    // std::shared_ptr<SX::Instrument::DetectorEvent> getDetectorEvent();
-    // //! Return the scaling factor.
-    // double getScale() const;
-    // //! Rescale the current scaling factor by scale.
-    // void rescale(double factor);
-    // //! Set the scaling factor.
-    // void setScale(double factor);
-    // //!
-    // void setSampleState(std::shared_ptr<SX::Instrument::ComponentState> gstate);
-    // //!
-    // void setDetectorEvent(std::shared_ptr<SX::Instrument::DetectorEvent> event);
-    //!
-
     void addUnitCell(std::shared_ptr<SX::Crystal::UnitCell> uc, bool activate=true);
     int getActiveUnitCellIndex() const;
     sptrUnitCell getActiveUnitCell() const;
     sptrUnitCell getUnitCell(int index) const;
-//	bool hasIntegerHKL(const SX::Crystal::UnitCell& basis);
-    friend bool operator<(const Peak3D& p1, const Peak3D& p2);
-    // void setSelected(bool);
-    // bool isSelected() const;
 
-    // void setMasked(bool masked);
-    // bool isMasked() const;
+    friend bool operator<(const Peak3D& p1, const Peak3D& p2);
 
     bool isIndexed() const;
 
@@ -243,9 +176,6 @@ public:
     bool isObserved() const;
 
     bool hasUnitCells() const;
-
-
-
     void scalePeakShape(double scale);
     void scaleBackgroundShape(double scale);
 
@@ -298,7 +228,7 @@ private:
     double _scale;
     bool _selected;
     bool _masked;
-    bool _calculated;
+   // bool _calculated;
     bool _observed;
     double _transmission;
     int _activeUnitCellIndex;

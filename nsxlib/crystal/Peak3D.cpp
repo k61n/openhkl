@@ -77,11 +77,11 @@ Peak3D::Peak3D(std::shared_ptr<SX::Data::IData> data):
         _countsSigma(0.0),
         _scale(1.0),
         _selected(true),
-        _observed(true),
         _masked(false),
+        _observed(true),
         _transmission(1.0),
-        _state(),
-        _activeUnitCellIndex(0)
+        _activeUnitCellIndex(0),
+        _state()
 {
     linkData(data);
 }
@@ -118,28 +118,24 @@ Peak3D::Peak3D(const Peak3D& other):
         _countsSigma(other._countsSigma),
         _scale(other._scale),
         _selected(other._selected),
-        _observed(other._observed),
         _masked(other._masked),
+        _observed(other._observed),
         _transmission(other._transmission),
-        _state(other._state),
-        _activeUnitCellIndex(other._activeUnitCellIndex)
+        _activeUnitCellIndex(other._activeUnitCellIndex),
+        _state(other._state)
 {
 }
 
 Peak3D& Peak3D::operator=(const Peak3D& other)
 {
     if (this != &other) {
-
         _data = other._data;
         _hkl = other._hkl;
-
         _peak = other._peak ? std::unique_ptr<shape_type>(other._peak->clone()) : nullptr;
         _bkg = other._bkg ? std::unique_ptr<shape_type>(other._bkg->clone()) : nullptr;
-
         _projection = other._projection;
         _projectionPeak = other._projectionPeak;
         _projectionBkg = other._projectionBkg;
-
         _unitCells = other._unitCells;
         _sampleState = other._sampleState;
         _event = other._event;
@@ -151,11 +147,8 @@ Peak3D& Peak3D::operator=(const Peak3D& other)
         _observed = other._observed;
         _masked = other._masked;
         _transmission = other._transmission;
-
         _state = other._state;
-
         _activeUnitCellIndex = other._activeUnitCellIndex;
-
     }
     return *this;
 }
@@ -176,13 +169,13 @@ void Peak3D::unlinkData()
 Eigen::RowVector3d Peak3D::getMillerIndices() const
 {
     Eigen::RowVector3d hkld;
-    bool success = getMillerIndices(hkld,true);
+    getMillerIndices(hkld, true);
     return hkld;
 }
 
-void Peak3D::setPeakShape(shape_type* p)
+void Peak3D::setPeakShape(shape_type* peak)
 {
-    _peak = std::unique_ptr<SX::Geometry::IShape<double,3>>(p);
+    _peak = std::unique_ptr<SX::Geometry::IShape<double,3>>(peak);
     Eigen::Vector3d center = _peak->getAABBCenter();
     int f = int(std::lround(std::floor(center[2])));
 
@@ -199,69 +192,39 @@ void Peak3D::setPeakShape(shape_type* p)
         data->getDiffractometer()->getDetector()->createDetectorEvent(center[0],center[1],detState.getValues())));
 }
 
-// std::shared_ptr<SX::Geometry::IShape<double,3>> Peak3D::getPeak()
-// {
-// 	return _peak;
-// }
-
-// std::shared_ptr<SX::Geometry::IShape<double,3>> Peak3D::getBackground()
-// {
-// 	return _bkg;
-// }
-
-void Peak3D::setBackgroundShape(shape_type* b)
+void Peak3D::setBackgroundShape(shape_type* background)
 {
-    _bkg = std::unique_ptr<shape_type>(b);
+    _bkg = std::unique_ptr<shape_type>(background);
 }
 
-
-//void Peak3D::setMillerIndices(double h, double k, double l)
-//{
-//	_hkl << h,k,l;
-//}
-
-//const Eigen::RowVector3d& Peak3D::getMillerIndices() const
-//{
-//	return _hkl;
-//}
-
-bool Peak3D::getMillerIndices(UnitCell uc, Eigen::RowVector3d& hkl, bool applyUCTolerance) const
+bool Peak3D::getMillerIndices(const UnitCell& uc, Eigen::RowVector3d& hkl, bool applyUCTolerance) const
 {
     hkl = uc.fromReciprocalStandard(getQ());
 
-    if (applyUCTolerance)
-    {
+    if (applyUCTolerance) {
         double tolerance = uc.getHKLTolerance();
 
         if (std::fabs(hkl[0]-std::round(hkl[0])) < tolerance &&
-            std::fabs(hkl[1]-std::round(hkl[1])) < tolerance &&
-            std::fabs(hkl[2]-std::round(hkl[2])) < tolerance)
-        {
+                std::fabs(hkl[1]-std::round(hkl[1])) < tolerance &&
+                std::fabs(hkl[2]-std::round(hkl[2])) < tolerance) {
             hkl[0]=std::round(hkl[0]);
             hkl[1]=std::round(hkl[1]);
             hkl[2]=std::round(hkl[2]);
             return true;
         }
-        else
-        {
-            hkl = Eigen::Vector3d::Zero();
-            return false;
-        }
+        hkl = Eigen::Vector3d::Zero();
+        return false;
     }
-    else
-        return true;
+    return true;
 }
 
 bool Peak3D::getMillerIndices(int ucIndex, Eigen::RowVector3d& hkl, bool applyUCTolerance) const
 {
-    if (_unitCells.empty() || ucIndex < 0 || ucIndex >= _unitCells.size())
-    {
+    if (_unitCells.empty() || ucIndex < 0 || ucIndex >= int(_unitCells.size())) {
         hkl = Eigen::Vector3d::Zero();
         return false;
     }
-
-    sptrUnitCell uc = _unitCells[ucIndex];
-
+    sptrUnitCell uc = _unitCells[size_t(ucIndex)];
     return getMillerIndices(*uc, hkl, applyUCTolerance);
 }
 
@@ -273,9 +236,9 @@ bool Peak3D::getMillerIndices(Eigen::RowVector3d& hkl, bool applyUCTolerance) co
 Eigen::RowVector3i Peak3D::getIntegerMillerIndices() const
 {
     Eigen::RowVector3d hkld;
-    bool success = getMillerIndices(hkld,true);
+    getMillerIndices(hkld, true);
     Eigen::RowVector3i hkl;
-    hkl << std::lround(hkld[0]), std::lround(hkld[1]), std::lround(hkld[2]);
+    hkl << int(std::lround(hkld[0])), int(std::lround(hkld[1])), int(std::lround(hkld[2]));
     return hkl;
 }
 
@@ -288,7 +251,6 @@ void Peak3D::integrate()
     }
 
     framewiseIntegrateBegin();
-
     unsigned int idx = _state.data_start;
     std::unique_ptr<IFrameIterator> it = data->getIterator(int(idx));
 
@@ -296,7 +258,6 @@ void Peak3D::integrate()
         Eigen::MatrixXi frame = it->getFrame().cast<int>();
         framewiseIntegrateStep(frame, idx);
     }
-
     framewiseIntegrateEnd();
 }
 
@@ -334,29 +295,30 @@ void Peak3D::addUnitCell(sptrUnitCell uc, bool activate)
 {
     auto it = std::find(_unitCells.begin(),_unitCells.end(), uc);
 
-    if (it != _unitCells.end())
+    if (it != _unitCells.end()) {
         return;
+    }
+    _unitCells.emplace_back(std::move(uc));
 
-    _unitCells.push_back(uc);
-
-    if (activate)
-        _activeUnitCellIndex = _unitCells.size()-1;
+    if (activate) {
+        _activeUnitCellIndex = int(_unitCells.size())-1;
+    }
 }
 
 sptrUnitCell Peak3D::getActiveUnitCell() const
 {
-    if (_activeUnitCellIndex < 0 || _activeUnitCellIndex >= _unitCells.size())
+    if (_activeUnitCellIndex < 0 || _activeUnitCellIndex >= int(_unitCells.size())) {
         return nullptr;
-
-    return _unitCells[_activeUnitCellIndex];
+    }
+    return _unitCells[size_t(_activeUnitCellIndex)];
 }
 
 sptrUnitCell Peak3D::getUnitCell(int index) const
 {
-    if (index < 0 || index >= _unitCells.size())
+    if (index < 0 || index >= int(_unitCells.size())) {
         return nullptr;
-
-    return _unitCells[index];
+    }
+    return _unitCells[size_t(index)];
 }
 
 bool Peak3D::hasIntegerHKL(const SX::Crystal::UnitCell& basis, double tolerance)
@@ -364,15 +326,12 @@ bool Peak3D::hasIntegerHKL(const SX::Crystal::UnitCell& basis, double tolerance)
     _hkl=basis.fromReciprocalStandard(this->getQ());
     if (std::fabs(_hkl[0]-std::round(_hkl[0])) < tolerance &&
         std::fabs(_hkl[1]-std::round(_hkl[1])) < tolerance &&
-        std::fabs(_hkl[2]-std::round(_hkl[2])) < tolerance)
-    {
+        std::fabs(_hkl[2]-std::round(_hkl[2])) < tolerance) {
         _hkl[0]=std::round(_hkl[0]);
         _hkl[1]=std::round(_hkl[1]);
         _hkl[2]=std::round(_hkl[2]);
-
         return true;
     }
-
     return false;
 }
 
@@ -424,14 +383,14 @@ double Peak3D::getScale() const
     return _scale;
 }
 
-void Peak3D::rescale(double scale)
+void Peak3D::rescale(double factor)
 {
-    _scale *= scale;
+    _scale *= factor;
 }
 
-void Peak3D::setScale(double scale)
+void Peak3D::setScale(double factor)
 {
-    _scale = scale;
+    _scale = factor;
 
 }
 
@@ -517,24 +476,29 @@ void Peak3D::getGammaNu(double& gamma,double& nu) const
 
 bool operator<(const Peak3D& p1, const Peak3D& p2)
 {
-    Eigen::RowVector3d hkl1,hkl2;
+    Eigen::RowVector3d hkl1, hkl2;
 
-    bool success;
-    success = p1.getMillerIndices(hkl1,true);
-    success = p2.getMillerIndices(hkl2,true);
+    p1.getMillerIndices(hkl1, true);
+    p2.getMillerIndices(hkl2, true);
 
-    if (hkl1[0]<hkl2[0])
+    if (hkl1[0]<hkl2[0]) {
         return true;
-    else if (hkl1[0]>hkl2[0])
+    }
+    if (hkl1[0]>hkl2[0]) {
         return false;
-    if (hkl1[1]<hkl2[1])
+    }
+    if (hkl1[1]<hkl2[1]) {
         return true;
-    else if (hkl1[1]>hkl2[1])
+    }
+    if (hkl1[1]>hkl2[1]) {
         return false;
-    if (hkl1[2]<hkl2[2])
+    }
+    if (hkl1[2]<hkl2[2]) {
         return true;
-    else if (hkl1[2]>hkl2[2])
+    }
+    if (hkl1[2]>hkl2[2]) {
         return false;
+    }
     return false;
 }
 
@@ -631,10 +595,7 @@ void Peak3D::framewiseIntegrateBegin()
 
     _state.dx = int(_state.end_x - _state.start_x);
     _state.dy = int(_state.end_y - _state.start_y);
-
-    return;
 }
-
 
 void Peak3D::framewiseIntegrateStep(Eigen::MatrixXi& frame, unsigned int idx)
 {
@@ -680,8 +641,6 @@ void Peak3D::framewiseIntegrateStep(Eigen::MatrixXi& frame, unsigned int idx)
     if (pointsinpeak > 0) {
         _projectionPeak[idx-_state.data_start] = intensityP-intensityBkg*pointsinpeak/pointsinbkg;
     }
-
-    return;
 }
 
 
@@ -689,8 +648,9 @@ void Peak3D::framewiseIntegrateEnd()
 {
     auto data = getData();
 
-    if (!data)
+    if (!data) {
         return;
+    }
 
     // Quick fix determine the limits of the peak range
     int datastart = 0;
@@ -712,20 +672,23 @@ void Peak3D::framewiseIntegrateEnd()
     //
 
     Eigen::VectorXd bkg=_projection-_projectionPeak;
-    if (datastart>1)
+    if (datastart>1) {
         datastart--;
+    }
 
     // Safety check
-    if (datastart==dataend)
+    if (datastart==dataend) {
         return;
+    }
 
     double bkg_left=bkg[datastart];
     double bkg_right=bkg[dataend];
     double diff;
     for (int i=datastart;i<dataend;++i) {
         diff=bkg[i]-(bkg_left+static_cast<double>((i-datastart))/static_cast<double>((dataend-datastart))*(bkg_right-bkg_left));
-        if (diff>0)
+        if (diff>0) {
             _projectionPeak[i]+=diff;
+        }
     }
 
     // note: this "background" simply refers to anything in the AABB but NOT in the peak
@@ -765,5 +728,5 @@ int Peak3D::getActiveUnitCellIndex() const
     return _activeUnitCellIndex;
 }
 
-} // Crsystal
-} // SX
+} // namespace Crystal
+} // namespace SX
