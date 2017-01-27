@@ -24,10 +24,11 @@ public:
 
     CollectedPeaksModel(sptrExperiment experiment, const std::vector<sptrPeak3D>& peaks, QObject *parent = 0);
 
-    ~CollectedPeaksModel();
+    ~CollectedPeaksModel() = default;
 
+    // todo(jonathan): virtual/override methods should not have default arguments!
     int rowCount(const QModelIndex &parent=QModelIndex()) const override;
-
+    // todo(jonathan): virtual/override methods should not have default arguments!
     int columnCount(const QModelIndex &parent=QModelIndex()) const override;
 
     QVariant data(const QModelIndex &index, int role) const override;
@@ -37,13 +38,13 @@ public:
 
     QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
 
-    void addPeak(sptrPeak3D peak);
+    void addPeak(const sptrPeak3D& peak);
 
     void setPeaks(const std::vector<std::shared_ptr<SX::Data::IData>>& data);
     void setPeaks(const std::vector<sptrPeak3D>& peaks);
 
     const std::vector<sptrPeak3D>& getPeaks() const;
-    std::vector<sptrPeak3D> getPeaks(const QModelIndexList& indexes) const;
+    std::vector<sptrPeak3D> getPeaks(const QModelIndexList& indices) const;
 
     bool indexIsValid(const QModelIndex& index) const;
 
@@ -51,9 +52,9 @@ public:
 
     void normalizeToMonitor(double factor);
 
-    void writeShelX(const std::string& filename, QModelIndexList indexes=QModelIndexList());
+    void writeShelX(const std::string& filename, QModelIndexList indices=QModelIndexList());
 
-    void writeFullProf(const std::string& filename, QModelIndexList indexes=QModelIndexList());
+    void writeFullProf(const std::string& filename, QModelIndexList indices=QModelIndexList());
 
     void setUnitCells(const CellList& cells);
 
@@ -64,20 +65,15 @@ public:
     sptrExperiment getExperiment();
 
 public slots:
-
     void sortEquivalents();
-    void setUnitCell(sptrUnitCell unitCell, QModelIndexList selectedPeaks=QModelIndexList());
+    void setUnitCell(const sptrUnitCell& unitCell, QModelIndexList selectedPeaks=QModelIndexList());
 
 signals:
-
     void unitCellUpdated();
 
 private:
-
     sptrExperiment _experiment;
-
     std::vector<sptrPeak3D> _peaks;
-
     CellList _cells;
 };
 
