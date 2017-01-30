@@ -36,7 +36,8 @@
 
 #include <boost/algorithm/string.hpp>
 
-using namespace std;
+using std::string;
+using std::vector;
 
 namespace SX
 {
@@ -47,85 +48,81 @@ namespace Crystal
 
 SpaceGroup::SpaceGroup(const std::string& symbol)
 {
-	// Get the generators of the input space group.
-	SpaceGroupSymbols* sg=SpaceGroupSymbols::Instance();
+    // Get the generators of the input space group.
+    SpaceGroupSymbols* sg = SpaceGroupSymbols::Instance();
 
-	// Get a reduced version of the spacegroup symbol
-	_symbol = sg->getReducedSymbol(symbol);
-
-	if (!sg->getGenerators(_symbol,_generators))
+    // Get a reduced version of the spacegroup symbol
+    _symbol = sg->getReducedSymbol(symbol);
+    if (!sg->getGenerators(_symbol,_generators)) {
         throw SX::Kernel::Error<SpaceGroup>("Unknown space group: " + _symbol + "(" + symbol + ")");
-	generateGroupElements();
+    }
+    generateGroupElements();
 }
 
-SpaceGroup::SpaceGroup(const SpaceGroup& other)
-: _symbol(other._symbol),
-  _generators(other._generators),
-  _groupElements(other._groupElements)
+SpaceGroup::SpaceGroup(std::string symbol, std::string generators):
+    _symbol(std::move(symbol)),
+    _generators(std::move(generators))
 {
-}
-
-SpaceGroup::SpaceGroup(const std::string& symbol, const std::string& generators)
-: _symbol(symbol),
-  _generators(generators)
-{
-	SpaceGroupSymbols* sg=SpaceGroupSymbols::Instance();
-	if (sg->getGenerators(_symbol,_generators))
-		throw SX::Kernel::Error<SpaceGroup>("Space Group already registered");
-
-	sg->addSpaceGroup(_symbol,_generators);
-
-	generateGroupElements();
+    SpaceGroupSymbols* sg = SpaceGroupSymbols::Instance();
+    if (sg->getGenerators(_symbol,_generators)) {
+        throw SX::Kernel::Error<SpaceGroup>("Space Group already registered");
+    }
+    sg->addSpaceGroup(_symbol,_generators);
+    generateGroupElements();
 }
 
 SpaceGroup& SpaceGroup::operator=(const SpaceGroup& other)
 {
-	if (this!=&other)
-	{
-		_symbol = other._symbol;
-		_generators = other._generators;
-		_groupElements = other._groupElements;
-	}
-	return *this;
+    if (this != &other) {
+        _symbol = other._symbol;
+        _generators = other._generators;
+        _groupElements = other._groupElements;
+    }
+    return *this;
 }
 
 char SpaceGroup::getBravaisType() const
 {
     std::vector<int> nrot(13,0);
-
     int nPureTrans(0);
-    for (const auto& g : _groupElements)
-    {
-    	int order=g.getAxisOrder();
-    	nrot[order+6] += 1;
-    	if (g.isPureTranslation())
-    		nPureTrans++;
-    }
+    const int isCentro = isCentrosymmetric() ? 2 : 1;
 
-    int isCentro=isCentrosymmetric() ? 2 : 1;
-    int fact = (1+nPureTrans)*isCentro;
+    for (auto&& g : _groupElements) {
+        assert(g.getAxisOrder()+6 >= 0);
+        size_t idx = size_t(g.getAxisOrder()+6);
+        ++nrot[idx];
+        if (g.isPureTranslation()) {
+            nPureTrans++;
+        }
+    }
+    const int fact = (1+nPureTrans)*isCentro;
 
     // Cubic
-    if ((nrot[3] + nrot[9]) == 8*fact)
+    if ((nrot[3] + nrot[9]) == 8*fact) {
        return 'c';
+    }
     // Hexagonal
-    else if ((nrot[0] + nrot[12]) == 2*fact)
+    if ((nrot[0] + nrot[12]) == 2*fact) {
        return 'h';
+    }
     // Trigonal
-    else if ((nrot[3] + nrot[9]) == 2*fact)
+    if ((nrot[3] + nrot[9]) == 2*fact) {
         return 'h';
+    }
     // Tetragonal
-    else if ((nrot[2] + nrot[10]) == 2*fact)
+    if ((nrot[2] + nrot[10]) == 2*fact) {
         return 't';
+    }
     // Orthorhombic
-    else if ((nrot[4] + nrot[8]) == 3*fact)
+    if ((nrot[4] + nrot[8]) == 3*fact) {
         return 'o';
+    }
     // Monoclinic
-    else if ((nrot[4] + nrot[8]) == fact)
+    if ((nrot[4] + nrot[8]) == fact) {
         return 'm';
-    // Triclinic
-    else
-        return 'a';
+    }
+    // Triclinic, only remaining case
+    return 'a';
 }
 
 double SpaceGroup::fractionExtinct(std::vector<std::array<double, 3> > hkl)
@@ -133,17 +130,17 @@ double SpaceGroup::fractionExtinct(std::vector<std::array<double, 3> > hkl)
     unsigned int extinct = 0;
     unsigned int total = hkl.size();
 
-    for (auto& i: hkl) {
-        if (isExtinct(i[0],i[1], i[2]))
+    for (auto&& i: hkl) {
+        if (isExtinct(i[0],i[1], i[2])) {
             ++extinct;
+        }
     }
-
-    return (double)extinct / (double)total;
+    return double(extinct) / double(total);
 }
 
 std::string SpaceGroup::getBravaisTypeSymbol() const
 {
-    std::string bravais = "";
+    std::string bravais;
     bravais += getBravaisType();
     bravais += getSymbol()[0];
     return bravais;
@@ -152,7 +149,7 @@ std::string SpaceGroup::getBravaisTypeSymbol() const
 int SpaceGroup::getID() const
 {
     SpaceGroupSymbols* sg = SpaceGroupSymbols::Instance();
-    std::string full_symbol = sg->getFullSymbol(_symbol);
+    auto&& full_symbol = sg->getFullSymbol(_symbol);
     return sg->getID(full_symbol);
 }
 
@@ -160,24 +157,20 @@ vector<vector<sptrPeak3D>> SpaceGroup::findEquivalences(const vector<sptrPeak3D>
 {
     vector<vector<sptrPeak3D>> peak_equivs;
 
-    for (sptrPeak3D peak: peak_list ) {
-
+    for (auto&& peak: peak_list ) {
         bool found_equivalence = false;
-
         int h1, h2, k1, k2, l1, l2;
-
         Eigen::RowVector3i hkl = peak->getIntegerMillerIndices();
+
         h1 = hkl[0];
         k1 = hkl[1];
         l1 = hkl[2];
 
-        for (int i = 0; i < peak_equivs.size() && !found_equivalence; ++i) {
-
+        for (size_t i = 0; i < peak_equivs.size() && !found_equivalence; ++i) {
             hkl = peak_equivs[i][0]->getIntegerMillerIndices();
             h2 = hkl[0];
             k2 = hkl[1];
             l2 = hkl[2];
-
 
             if ( (friedel && isFriedelEquivalent(h1, k1, l1, h2, k2, l2))
                  || (!friedel && isEquivalent(h1, k1, l1, h2, k2, l2))) {
@@ -189,130 +182,124 @@ vector<vector<sptrPeak3D>> SpaceGroup::findEquivalences(const vector<sptrPeak3D>
 
         // didn't find an equivalence?
         if ( !found_equivalence) {
-            peak_equivs.push_back(std::vector<sptrPeak3D>{peak});
+            peak_equivs.emplace_back(std::vector<sptrPeak3D>{peak});
         }
     }
-
     return peak_equivs;
 }
 
 bool SpaceGroup::isCentrosymmetric() const
 {
-	for (const auto& g : _groupElements)
-	{
-		if (g.getAxisOrder()==-1)
-			return true;
-	}
-	return false;
+    for (auto&& g : _groupElements) {
+        if (g.getAxisOrder() == -1) {
+            return true;
+        }
+    }
+    return false;
 }
 
 const std::string& SpaceGroup::getSymbol() const
 {
-	return _symbol;
+    return _symbol;
 }
 
 const std::string& SpaceGroup::getGenerators() const
 {
-	return _generators;
+    return _generators;
 }
 
 const groupElementsList& SpaceGroup::getGroupElements() const
 {
-	return _groupElements;
+    return _groupElements;
 }
 
 void SpaceGroup::generateGroupElements()
 {
-	_groupElements.clear();
+    _groupElements.clear();
+    groupElementsList generators;
+    std::vector<std::string> gens;
+    boost::split(gens, _generators, boost::is_any_of(";"));
+    generators.reserve(gens.size()+1);
+    generators.emplace_back(SymOp(affineTransformation::Identity()));
 
-	groupElementsList generators;
+    for (auto&& g : gens) {
+        auto&& gen = SymOp(g);
+        generators.emplace_back(gen);
+    }
 
-	std::vector<std::string> gens;
-	boost::split(gens, _generators, boost::is_any_of(";"));
+    _groupElements.emplace_back(SymOp(affineTransformation::Identity()));
+    unsigned int oldSize = 0;
 
-	generators.reserve(gens.size()+1);
-	generators.push_back(SymOp(affineTransformation::Identity()));
-
-	for (auto& g : gens)
-	{
-		auto gen=SymOp(g);
-		generators.push_back(gen);
-	}
-
-	_groupElements.push_back(SymOp(affineTransformation::Identity()));
-
-	while (true)
-	{
-		unsigned int oldSize=_groupElements.size();
-		for (unsigned int i=0;i<_groupElements.size();++i)
-		{
-			for (const auto& g : generators)
-			{
-				auto newElement=_groupElements[i]*g;
-				auto it=std::find(_groupElements.begin(),_groupElements.end(),newElement);
-				if (it==_groupElements.end())
-					_groupElements.push_back(newElement);
-			}
-		}
-		if (_groupElements.size()==oldSize)
-			break;
-		oldSize=_groupElements.size();
+    while (oldSize != _groupElements.size()) {
+        oldSize = _groupElements.size();
+        for (unsigned int i = 0; i < _groupElements.size(); ++i) {
+            for (auto&& g : generators) {
+                auto newElement = _groupElements[i]*g;
+                auto it = std::find(_groupElements.begin(), _groupElements.end(), newElement);
+                if (it == _groupElements.end()) {
+                    _groupElements.push_back(newElement);
+                }
+            }
+        }
     }
 }
 
-
-
 bool SpaceGroup::isExtinct(double h, double k, double l) const
 {
-	Eigen::Vector3d hkl(h,k,l);
-	for (const auto& element : _groupElements)
-	{
-		if (element.hasTranslation())
-		{
+    // todo(jonathan): improve this routine? need a journal reference
+    Eigen::Vector3d hkl(h,k,l);
+    for (auto&& element : _groupElements) {
+        if (element.hasTranslation()) {
             Eigen::Vector3d t = element.getTranslationPart();
-			double scalar=t.dot(hkl);
+            double scalar = t.dot(hkl);
             std::complex<double> prefactor = 1.0+std::exp(std::complex<double>(0,2*M_PI)*scalar);
-            if (std::abs(prefactor)<1e-3)
-            //if (std::abs(std::remainder(scalar,1.0))>1e-3)
-			{
-				Eigen::Vector3d rhkl=element.getRotationPart()*hkl;
-				if (std::abs(rhkl(0)-hkl(0))<1e-3 && std::abs(rhkl(1)-hkl(1))<1e-3 && std::abs(rhkl(2)-hkl(2))<1e-3)
-				{
-				return true;
-				}
-			}
-		}
-	}
-
-	return false;
+            if (std::abs(prefactor)<1e-3) {
+                //if (std::abs(std::remainder(scalar,1.0))>1e-3)
+                Eigen::Vector3d rhkl = element.getRotationPart()*hkl;
+                if (std::abs(rhkl(0)-hkl(0))<1e-3 && std::abs(rhkl(1)-hkl(1))<1e-3 && std::abs(rhkl(2)-hkl(2))<1e-3) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
 }
 
 void SpaceGroup::print(std::ostream& os) const
 {
-	os << "Symmetry elements of space group "<<_symbol<<std::endl;
-	for (unsigned int i=0;i<_groupElements.size();++i)
-		os <<_groupElements[i]<< " ; ";
-	os << std::endl;
+    os << "Symmetry elements of space group "<< _symbol << std::endl;
+    for (auto&& g: _groupElements) {
+        os << g << " ; ";
+    }
+    os << std::endl;
 }
 
 std::ostream& operator<<(std::ostream& os, const SpaceGroup& sg)
 {
-	sg.print(os);
-	return os;
+    sg.print(os);
+    return os;
 }
 
-bool SpaceGroup::isEquivalent(double h1, double k1, double l1, double h2, double k2, double l2) const
+bool SpaceGroup::isEquivalent(double h1, double k1, double l1, double h2, double k2, double l2, bool friedel) const
+{
+    return isEquivalent(Eigen::Vector3d(h1, k1, l1), Eigen::Vector3d(h2, k2, l2), friedel);
+}
+
+bool SpaceGroup::isEquivalent(const Eigen::Vector3d& a, const Eigen::Vector3d& b, bool friedel) const
 {
     const auto& elements = getGroupElements();
-    Eigen::Vector3d rotated;
-    for (const auto& element : elements)
-    {
-        // jmf: check that this edit is correct!
-        //rotated = element.getMatrix()*Eigen::Vector3d(h1,k1,l1);
-        rotated = element.getRotationPart()*Eigen::Vector3d(h1,k1,l1);
+    const double eps = 1e-6;
 
-        if (std::abs(rotated[0]-h2)<1e-6 && std::abs(rotated[1]-k2)<1e-6 && std::abs(rotated[2]-l2)<1e-6)
-        {
+    for (auto&& element : elements) {
+        // todo(jonathan): check that this edit is correct!
+        const auto rotation = element.getRotationPart();
+        const auto rotated = rotation * a;
+
+        if (std::max((rotated-b).maxCoeff(), (b-rotated).maxCoeff()) < eps) {
+            return true;
+        }
+
+        if (friedel && std::max((rotated+b).maxCoeff(), (-b-rotated).maxCoeff()) < eps) {
             return true;
         }
     }
@@ -323,19 +310,16 @@ bool SpaceGroup::isFriedelEquivalent(double h1, double k1, double l1, double h2,
 {
     const auto& elements = getGroupElements();
     Eigen::Vector3d rotated;
-    for (const auto& element : elements)
-    {
-        // jmf: check that this edit is correct!
+    for (const auto& element : elements) {
+        // todo(jonathan): check that this edit is correct!
         //rotated = element.getMatrix()*Eigen::Vector3d(h1,k1,l1);
         rotated = element.getRotationPart()*Eigen::Vector3d(h1,k1,l1);
 
-        if (std::abs(rotated[0]-h2)<1e-6 && std::abs(rotated[1]-k2)<1e-6 && std::abs(rotated[2]-l2)<1e-6)
-        {
+        if (std::abs(rotated[0]-h2)<1e-6 && std::abs(rotated[1]-k2)<1e-6 && std::abs(rotated[2]-l2)<1e-6) {
             return true;
         }
         // compare against Friedel reflection
-        else if (std::abs(rotated[0]+h2)<1e-6 && std::abs(rotated[1]+k2)<1e-6 && std::abs(rotated[2]+l2)<1e-6)
-        {
+        if (std::abs(rotated[0]+h2)<1e-6 && std::abs(rotated[1]+k2)<1e-6 && std::abs(rotated[2]+l2)<1e-6) {
             return true;
         }
     }

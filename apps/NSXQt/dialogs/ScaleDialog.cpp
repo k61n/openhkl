@@ -38,9 +38,9 @@ using SX::Crystal::Peak3D;
 
 ScaleDialog::ScaleDialog(const vector<vector<Peak3D*>>& peaks, QWidget *parent) :
     QDialog(parent),
+    ui(new Ui::ScaleDialog),
     _peaks(peaks),
-    _numFrames(0),
-    ui(new Ui::ScaleDialog)
+    _numFrames(0)
 {
     ui->setupUi(this);
 
@@ -102,7 +102,7 @@ void ScaleDialog::buildPlot()
         double sigma, var = 0.0;
 
         for (auto&& p: peak_list) {
-            double frame = p->getPeak()->getAABBCenter()[2];
+            double frame = p->getPeak().getAABBCenter()[2];
             double in = p->getScaledIntensity() * (a+b*frame);
             average += in;
             var += in*in;
@@ -121,7 +121,7 @@ void ScaleDialog::buildPlot()
         for (auto&& p: peak_list) {
 
 
-            double x = p->getPeak()->getAABBCenter()[2]; // frame
+            double x = p->getPeak().getAABBCenter()[2]; // frame
             double y = (p->getScaledIntensity() * (a+b*x) - average);
 
             xmin = x < xmin? x : xmin;
@@ -149,10 +149,10 @@ void ScaleDialog::buildPlot()
 
 void ScaleDialog::buildScalePlot()
 {
-    double sigma_max = ui->sigmaSpinBox->value();
+    // double sigma_max = ui->sigmaSpinBox->value();
 
-    double a = ui->spinBoxA->value();
-    double b = ui->spinBoxB->value();
+    // double a = ui->spinBoxA->value();
+    // double b = ui->spinBoxB->value();
 
     QCustomPlot* plot = ui->plotWidget;
 
@@ -207,7 +207,7 @@ void ScaleDialog::calculateRFactors()
     _averages.resize(_peaks.size());
 
     // go through each equivalence class of peaks
-    for (int i = 0; i < _peaks.size(); ++i) {
+    for (size_t i = 0; i < _peaks.size(); ++i) {
         vector<Peak3D*> &peak_list = _peaks[i];
 
         // skip if there are fewer than two peaks
@@ -215,14 +215,14 @@ void ScaleDialog::calculateRFactors()
             continue;
 
         double average = 0.0;
-        double sigma, var = 0.0;
+        // double sigma, var = 0.0;
 
         for (auto&& p: peak_list) {
-            double z = p->getPeak()->getAABBCenter()[2];
+            double z = p->getPeak().getAABBCenter()[2];
             double in = p->getScaledIntensity()*getScale(z);
 
             if ( z > _numFrames)
-                _numFrames = std::ceil(z);
+                _numFrames = int(std::lround(std::ceil(z)));
 
             average += in;
             ++_values;
@@ -244,10 +244,10 @@ void ScaleDialog::calculateRFactors()
         const double Fmeas = std::sqrt(n / (n-1));
         const double Fpim = std::sqrt(1 / (n-1));
 
-        double I_total = 0.0;
+        // double I_total = 0.0;
 
         for (auto&& p: peak_list) {
-            double z = p->getPeak()->getAABBCenter()[2];
+            double z = p->getPeak().getAABBCenter()[2];
             double diff = std::fabs(p->getScaledIntensity()*getScale(z) - average);
             _Rmerge += diff;
             _Rmeas += Fmeas*diff;
@@ -291,7 +291,7 @@ void ScaleDialog::setScale()
 {
     for (auto& peak_list: _peaks) {
         for (auto& peak: peak_list) {
-            double z = peak->getPeak()->getAABBCenter()[2];
+            double z = peak->getPeak().getAABBCenter()[2];
             peak->setScale(getScale(z));
         }
     }
@@ -301,7 +301,7 @@ void ScaleDialog::refineScale()
 {
     auto residual_fn = [&](const Eigen::VectorXd& params, Eigen::VectorXd& residuals)
     {
-        int i = 0;
+        size_t i = 0;
         int idx = 0;
 
         Eigen::VectorXd old_params = _scaleParams;
@@ -314,14 +314,14 @@ void ScaleDialog::refineScale()
             double average = 0;
 
             for (Peak3D* peak: _peaks[i]) {
-                double z = peak->getPeak()->getAABBCenter()[2] ;
+                double z = peak->getPeak().getAABBCenter()[2] ;
                 average += getScale(z) * peak->getScaledIntensity();
             }
 
             average /= _peaks[i].size();
 
             for (Peak3D* peak: _peaks[i]) {
-                double z = peak->getPeak()->getAABBCenter()[2];
+                double z = peak->getPeak().getAABBCenter()[2];
                 residuals(idx++) = getScale(z) * peak->getScaledIntensity() - average;
             }
         }
@@ -337,7 +337,7 @@ void ScaleDialog::refineScale()
 
     resetScale();
 
-    minimizer.initialize(_scaleParams.size(), _values);
+    minimizer.initialize(int(_scaleParams.size()), _values);
 
     minimizer.setxTol(1e-15);
     minimizer.setfTol(1e-15);

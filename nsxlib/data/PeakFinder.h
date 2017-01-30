@@ -32,7 +32,7 @@ public:
     PeakFinder();
     bool find(std::vector<std::shared_ptr<IData>> numors);
 
-    void setHandler(std::shared_ptr<SX::Utils::ProgressHandler> handler);
+    void setHandler(const std::shared_ptr<SX::Utils::ProgressHandler>& handler);
 
     void setThresholdValue(double threshold);
     double getThresholdValue();
@@ -49,12 +49,12 @@ public:
     void setMaxComponents(int maxComp);
     int getMaxComponents();
 
-    void setConvolver(std::shared_ptr<SX::Imaging::Convolver> convolver);
+    void setConvolver(const std::shared_ptr<SX::Imaging::Convolver>& convolver);
     std::shared_ptr<SX::Imaging::Convolver> getConvolver();
 
-    void setConvolutionKernel(std::shared_ptr<SX::Imaging::ConvolutionKernel> kernel);
+    void setConvolutionKernel(const std::shared_ptr<SX::Imaging::ConvolutionKernel>& kernel);
 
-    void setKernel(std::shared_ptr<SX::Imaging::ConvolutionKernel> kernel);
+    void setKernel(const std::shared_ptr<SX::Imaging::ConvolutionKernel>& kernel);
     std::shared_ptr<SX::Imaging::ConvolutionKernel> getKernel();
 
 private:

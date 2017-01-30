@@ -3,7 +3,7 @@ if(POLICY CMP0020)
 endif()
 
 # Add NSXQt and NSXQt directories to the include path
-include_directories(
+include_directories(SYSTEM 
     ${CMAKE_SOURCE_DIR}/nsxlib/chemistry/
     ${CMAKE_SOURCE_DIR}/nsxlib/crystal/
     ${CMAKE_SOURCE_DIR}/nsxlib/data/
@@ -190,4 +190,7 @@ endforeach(dir)
 configure_file(NSXQt.pro.in ${CMAKE_CURRENT_BINARY_DIR}/NSXQt.pro)
 
 
-
+# tidy
+if(NSX_TIDY)
+  add_tidy_target(nsxqt)
+endif()

@@ -1,18 +1,74 @@
+/*
+ * nsxtool : Neutron Single Crystal analysis toolkit
+    ------------------------------------------------------------------------------------------
+    Copyright (C)
+    2016- Laurent C. Chapon, Eric C. Pellegrini Institut Laue-Langevin
+          Jonathan Fisher, Forschungszentrum Juelich GmbH
+    BP 156
+    6, rue Jules Horowitz
+    38042 Grenoble Cedex 9
+    France
+    chapon[at]ill.fr
+    pellegrini[at]ill.fr
+    j.fisher[at]fz-juelich.de
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Lesser General Public
+    License as published by the Free Software Foundation; either
+    version 2.1 of the License, or (at your option) any later version.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public
+    License along with this library; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ */
+
+
 #ifndef COLORMAP_H
 #define COLORMAP_H
+
 #include <QImage>
+#include <QColor>
+#include <cmath>
+
+#include <Eigen/Core>
+#include <array>
 
 
-inline QRgb BlueWhite(int v,int vmax)
-{
-    double mm=1.0/(double)vmax;
-    int r=255-v*(255*mm);
-    return (v>vmax ? 0xff0000ff : ((0xffu << 24) | r << 16 | r << 8 | 0xff ) );
-}
+class ColorMap {
+public:
+    ColorMap(const std::string& name);
+    ColorMap();
+    ColorMap(const double* rgb);
+    ~ColorMap();
 
-// Get an image from an 2D arrays of (rows,cols) with range (xmin:xmax,ymin:ymax) and
-// intensity coded with colorMax as brightest.
-QImage Mat2QImage(int* src, int rows, int cols,int xmin, int xmax, int ymin, int ymax,int colorMax);
+    inline QRgb color(double v, double vmax) {
+        double t = std::max(v/vmax*255.0, 0.0);
+        int i = std::min(255, int(t+0.5));
+        return qRgb(_rgb[3*i+0], _rgb[3*i+1], _rgb[3*i+2]);
+    }
+
+    inline QRgb log_color(double v, double vmax) {
+        double t = std::max(v/vmax*255.0, 0.0);
+        int i = std::min(255, int(t+0.5));
+        return qRgb(_log_rgb[3*i+0], _log_rgb[3*i+1], _log_rgb[3*i+2]);
+    }
+
+    QImage matToImage(const Eigen::MatrixXi& source, const QRect& rect, int colorMax, bool log=false);
+    QImage matToImage(const Eigen::MatrixXd& source, const QRect& rect, double colorMax, bool log=false);
+
+    static ColorMap getColorMap(const std::string& name);
+    static std::vector<std::string> getColorMapNames();
+
+private:
+    std::vector<double> _rgb;
+    std::vector<double> _log_rgb;
+};
 
 
 #endif // COLORMAP_H

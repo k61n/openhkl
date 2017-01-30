@@ -15,17 +15,10 @@ class ExperimentItem : public TreeItem
 {
 public:
     explicit ExperimentItem(std::shared_ptr<SX::Instrument::Experiment> experiment);
-
-    virtual ~ExperimentItem();
-
-    //QJsonValue toJson();
-
+    virtual ~ExperimentItem() = default;
     QJsonObject toJson() override;
     void fromJson(const QJsonObject& obj) override;
-
-public:
-
-	InstrumentItem* getInstrumentItem();
+    InstrumentItem* getInstrumentItem();
 
 private:
     InstrumentItem* _instr;

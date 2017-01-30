@@ -427,41 +427,39 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
     oct.setMaxDepth(6);
     oct.setMaxStorage(6);
 
-    for (auto it=boxes.begin();it!=boxes.end();++it)
-        oct.addData(it->first);
+    for (auto&& it: boxes)
+        oct.addData(it.first);
 
     std::set<Octree::collision_pair> collisions;
     oct.getPossibleCollisions(collisions);
-
-
 
     // dummies used to help progress handler
     dummy = 0;
     magic = 0.02 * std::distance(collisions.begin(), collisions.end());
 
-    for (auto it = collisions.begin(); it != collisions.end(); ++it)
-    {
-        if (it->first->collide(*(it->second)))
-        {
-            auto bit1 = boxes.find(it->first);
-            auto bit2 = boxes.find(it->second);
+    for (auto&& it = collisions.begin(); it != collisions.end(); ++it) {
+        // register collision
+        if (it->first->collide(*(it->second))) {
+            auto&& bit1 = boxes.find(it->first);
+            auto&& bit2 = boxes.find(it->second);
             registerEquivalence(bit1->second, bit2->second, equivalences);
         }
-
         // update progress handler
         if ( (dummy&magic) == 0 && _progressHandler) {
-
-            double total_dist = std::distance(collisions.begin(), collisions.end());
-            double current_dist = std::distance(collisions.begin(), it);
-            double progress = 100.0 * current_dist / total_dist;
+            const double total_dist = std::distance(collisions.begin(), collisions.end());
+            const double current_dist = std::distance(collisions.begin(), it);
+            const double progress = 100.0 * current_dist / total_dist;
             _progressHandler->setProgress(50 + 0.5*progress);
         }
     }
-
     // calculation complete
     if ( _progressHandler ) {
         _progressHandler->log("Found " + std::to_string(equivalences.size()) + " equivalences");
         _progressHandler->setProgress(100);
+    }
+    // free memory stored in unordered map
+    for (auto&& it: boxes) {
+        delete it.first;
     }
 }
 

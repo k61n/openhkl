@@ -52,11 +52,11 @@ struct MatrixFiller
 template <typename Matrix, typename Row, typename Col, typename Value>
 bool operator()(Matrix &m, Row r, Col c, Value v) const
 {
-	if (r<0 || r>3 || c<0 || c>3)
-		return false;
+    if (r<0 || r>3 || c<0 || c>3)
+        return false;
 
-	m(r,c)+=v;
-	return true;
+    m(r,c)+=v;
+    return true;
 }
 };
 
@@ -65,9 +65,9 @@ struct MatrixInit
 template <typename Matrix>
 bool operator()(Matrix &m) const
 {
-	m.setIdentity();
-	m(0,0)=m(1,1)=m(2,2)=0;
-	return true;
+    m.setIdentity();
+    m(0,0)=m(1,1)=m(2,2)=0;
+    return true;
 }
 };
 
@@ -91,7 +91,7 @@ bool operator()(Matrix &m) const
 template<typename It>
 struct AffineTransformParser : qi::grammar<It,Eigen::Transform<double,3,Eigen::Affine>()>
 {
-	AffineTransformParser(): AffineTransformParser::base_type(matrix)
+    AffineTransformParser(): AffineTransformParser::base_type(matrix)
     {
         using namespace qi;
         using namespace phx;
@@ -110,15 +110,15 @@ struct AffineTransformParser : qi::grammar<It,Eigen::Transform<double,3,Eigen::A
 
         // either prefactor followed by x, y, z or constant term
         term = eps[_a=1.0,_b=1.0,ref(col)=0] >>
-        		-(lit('+')|lit('-')[_b=-1.0]) >>
-        		 ((-prefactor[_a=_1]) >> xyz)[_val=_a*_b] |
-		         (prefactor[_val=_1])[ref(col)=3];
+                -(lit('+')|lit('-')[_b=-1.0]) >>
+                 ((-prefactor[_a=_1]) >> xyz)[_val=_a*_b] |
+                 (prefactor[_val=_1])[ref(col)=3];
 
         // Any symbol x, y, z small or capital letters
         xyz = (
-        		(lit('x')|lit('X'))[ref(col)=0] |
-        		(lit('y')|lit('Y'))[ref(col)=1] |
-        		(lit('z')|lit('Z'))[ref(col)=2]);
+                (lit('x')|lit('X'))[ref(col)=0] |
+                (lit('y')|lit('Y'))[ref(col)=1] |
+                (lit('z')|lit('Z'))[ref(col)=2]);
 
         // Either a double or a fraction
         prefactor = eps [_val=1.0] >>

@@ -27,8 +27,8 @@ using SX::Crystal::Peak3D;
 
 PeakFitDialog::PeakFitDialog(SessionModel* session, QWidget *parent):
     QDialog(parent),
-    _session(session),
     ui(new Ui::PeakFitDialog),
+    _session(session),
     _image(nullptr),
     _peak(nullptr)
 {
@@ -113,7 +113,7 @@ void PeakFitDialog::checkCollisions()
         if ( other_peak == _peak)
             continue;
 
-        if (_peak->getBackground()->collide(*other_peak->getPeak()))
+        if (_peak->getBackground().collide(other_peak->getPeak()))
         {
             Eigen::RowVector3i hkl = other_peak->getIntegerMillerIndices();
             qDebug() << "COLLISION FOUND: ("
@@ -124,7 +124,7 @@ void PeakFitDialog::checkCollisions()
             int i;
             for (i = 0; i < 1000; ++i) {
                 _peak->scaleBackgroundShape(0.90);
-                if ( !_peak->getBackground()->collide(*other_peak->getPeak()))
+                if ( !_peak->getBackground().collide(other_peak->getPeak()))
                     break;
             }
 
@@ -148,8 +148,10 @@ void PeakFitDialog::updateView()
 
 //    int ymin = frame.cols()-_ymax;
 //    int ymax = frame.cols()-_ymin;
+    auto cmap = ColorMap::getColorMap("inferno");
+    QRect rect(_xmin, _ymin, _xmax-_xmin, _ymax-_ymin);
 
-    QImage new_image = Mat2QImage(frame.data(), frame.rows(), frame.cols(), _xmin, _xmax, _ymin, _ymax, intensity);
+    QImage new_image = cmap.matToImage(frame, rect, intensity);
     new_image = new_image.scaled(ui->graphicsView->width(), ui->graphicsView->height());
 
     if (_image)
@@ -193,10 +195,11 @@ void PeakFitDialog::updatePeak()
     _peak = the_peak;
 
     // get AABB
-    sptrShape3D aabb = the_peak->getBackground();
 
-    Eigen::Vector3d lower = aabb->getLower();
-    Eigen::Vector3d upper = aabb->getUpper();
+    auto&& aabb = the_peak->getBackground();
+
+    Eigen::Vector3d lower = aabb.getLower();
+    Eigen::Vector3d upper = aabb.getUpper();
 
     _xmin = std::floor(lower(0));
     _ymin = std::floor(lower(1));
@@ -219,15 +222,14 @@ void PeakFitDialog::updatePeak()
     qDebug() << _xmax << "    " << _ymax << "    " << _zmax;
 
     // testing
-    sptrEllipsoid3D ellipse = std::dynamic_pointer_cast<Ellipsoid3D>(the_peak->getPeak());
+    const Ellipsoid<double, 3>* ellipse = dynamic_cast<const Ellipsoid<double, 3>*>(&the_peak->getPeak());
 
-    if (ellipse)
-    {
+    if (ellipse) {
         Eigen::Matrix<double, 3, 1> center = ellipse->getCenter();
         qDebug() << "center: " << center(0) << ", " << center(1) << ", " << center(2);
     }
 
     ui->frameScrollBar->setMinimum(_zmin);
     ui->frameScrollBar->setMaximum(_zmax);
-    ui->frameScrollBar->setValue(std::round(aabb->getAABBCenter()[2]));
+    ui->frameScrollBar->setValue(int(std::lround(aabb.getAABBCenter()[2])));
 }

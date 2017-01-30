@@ -2,32 +2,42 @@
  * nsxtool : Neutron Single Crystal analysis toolkit
     ------------------------------------------------------------------------------------------
     Copyright (C)
-    2012- Laurent C. Chapon, Eric C. Pellegrini Institut Laue-Langevin
-	BP 156
-	6, rue Jules Horowitz
-	38042 Grenoble Cedex 9
-	France
-	chapon[at]ill.fr
+    2012- Laurent C. Chapon, Eric C. Pellegrini
+    2017- Laurent C. Chapon, Eric C. Pellegrini, Jonathan M. Fisher
+
+    Institut Laue-Langevin
+    BP 156
+    6, rue Jules Horowitz
+    38042 Grenoble Cedex 9
+    France
+    chapon[at]ill.fr
     pellegrini[at]ill.fr
 
-	This library is free software; you can redistribute it and/or
-	modify it under the terms of the GNU Lesser General Public
-	License as published by the Free Software Foundation; either
-	version 2.1 of the License, or (at your option) any later version.
+    Forschungszentrum Juelich GmbH
+    52425 Juelich
+    Germany
+    j.fisher[at]fz-juelich.de
 
-	This library is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-	Lesser General Public License for more details.
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Lesser General Public
+    License as published by the Free Software Foundation; either
+    version 2.1 of the License, or (at your option) any later version.
 
-	You should have received a copy of the GNU Lesser General Public
-	License along with this library; if not, write to the Free Software
-	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public
+    License along with this library; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
 
 #ifndef NSXTOOL_SINGLETON_H_
 #define NSXTOOL_SINGLETON_H_
+
+#include <memory>
 
 namespace SX
 {
@@ -47,33 +57,14 @@ template <typename T,template<class> class Constructor,template <class> class De
 class Singleton
 {
 public:
-	//! return an instance of the class to be singletonized
-	static T* Instance();
-	//! destroy (if it has been instantiated) the instance of the class to be singletonized
-    static void DestroyInstance();
-private:
-	static T* _instance;
-};
-
-template <typename T,template <class> class Constructor,template <class> class Destructor>
-T* Singleton<T,Constructor,Destructor>::_instance=nullptr;
-
-template <typename T,template <class> class Constructor,template <class> class Destructor>
-T* Singleton<T,Constructor,Destructor>::Instance()
-{
-	if (!_instance)
-		_instance = Constructor<T>::construct();
-	return _instance;
-}
-
-template <typename T,template <class> class Constructor,template <class> class Destructor>
-void Singleton<T,Constructor,Destructor>::DestroyInstance()
-{
-    if (_instance) {
-		Destructor<T>::destroy(_instance);
-        _instance = nullptr;
+    //! return an instance of the class to be singletonized
+    static T* Instance()
+    {
+        static std::unique_ptr<T, Destructor<T>> ptr(Constructor<T>::construct());
+        //static std::unique_ptr<T> ptr(Constructor<T>::construct());
+        return ptr.get();
     }
-}
+};
 
 /**
  * @brief actually constructs the unique instance of the class to be singletonized
@@ -82,14 +73,11 @@ template <class T>
 class Constructor
 {
 public:
-    static T* construct();
+    static T* construct()
+    {
+        return new T;
+    }
 };
-
-template <class T>
-T* Constructor<T>::construct()
-{
-    return new T;
-}
 
 /**
  * @brief actually destroys the unique instance of the class to be singletonized
@@ -98,32 +86,13 @@ template <class T>
 class Destructor
 {
 public:
-    static void destroy(T* instance);
+    void operator()(T* p)
+    {
+        delete p;
+    }
 };
-
-template <typename T>
-void Destructor<T>::destroy(T* instance)
-{
-    delete instance;
-}
-
-/**
- * @brief actually does not destroy the unique instance of the class to be singletonized
- */
-template <class T>
-class EmptyDestructor
-{
-public:
-    static void destroy(T* instance);
-};
-
-template <typename T>
-void EmptyDestructor<T>::destroy(T* instance)
-{
-}
 
 } // end namespace Kernel
-
 } // end namespace SX
 
 #endif /* NSXTOOL_SINGLETON_H_ */

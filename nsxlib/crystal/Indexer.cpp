@@ -12,7 +12,7 @@
  chapon[at]ill.fr
  pellegrini[at]ill.fr
 
- Forshungszentrum Juelich GmbH
+ Forschungszentrum Juelich GmbH
  52425 Juelich
  Germany
  j.fisher[at]fz-juelich.de
@@ -50,7 +50,7 @@ Indexer::Indexer(ptrUnitCell cell):
 	auto UB = _cell->getReciprocalStandardM().transpose();
 
     #pragma omp parallel for
-    for (int i = 0; i < hkls.size(); ++i) {
+    for (size_t i = 0; i < hkls.size(); ++i) {
         double qnorm = (UB*hkls[i]).norm();
         _possiblePeaks[i].first = qnorm;
         _possiblePeaks[i].second = hkls[i];

@@ -47,23 +47,23 @@ template<typename _Scalar, int NX = Eigen::Dynamic, int NY = Eigen::Dynamic>
 class LMFunctor
 {
 public:
-	typedef _Scalar Scalar;
-	enum {InputsAtCompileTime = NX,ValuesAtCompileTime = NY};
-	typedef Eigen::Matrix<Scalar,InputsAtCompileTime,1> InputType;
-	typedef Eigen::Matrix<Scalar,ValuesAtCompileTime,1> ValueType;
-	typedef Eigen::Matrix<Scalar,ValuesAtCompileTime,InputsAtCompileTime> JacobianType;
+    typedef _Scalar Scalar;
+    enum {InputsAtCompileTime = NX,ValuesAtCompileTime = NY};
+    typedef Eigen::Matrix<Scalar,InputsAtCompileTime,1> InputType;
+    typedef Eigen::Matrix<Scalar,ValuesAtCompileTime,1> ValueType;
+    typedef Eigen::Matrix<Scalar,ValuesAtCompileTime,InputsAtCompileTime> JacobianType;
 
-	LMFunctor();
-	LMFunctor(int inputs, int values);
+    LMFunctor();
+    LMFunctor(int inputs, int values);
 
-	virtual int operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const=0;
+    virtual int operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const=0;
 
-	virtual int inputs() const;
-	virtual int values() const;
+    virtual int inputs() const;
+    virtual int values() const;
     virtual ~LMFunctor()=0;
 
 protected:
-	int m_inputs, m_values;
+    int m_inputs, m_values;
 
 };
 
@@ -85,12 +85,12 @@ LMFunctor<_Scalar,NX,NY>::~LMFunctor()
 template<typename _Scalar, int NX, int NY>
 int LMFunctor<_Scalar,NX,NY>::inputs() const
 {
-	return m_inputs;
+    return m_inputs;
 }
 
 template<typename _Scalar, int NX, int NY>
 int LMFunctor<_Scalar,NX,NY>::values() const {
-	return m_values;
+    return m_values;
 }
 
 } // end namespace Utils

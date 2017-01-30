@@ -12,20 +12,20 @@ using Eigen::Vector3d;
 using Eigen::Matrix3d;
 
 // 0.1% error
-const double tolerance=1e-3;
+// const double tolerance=1e-3;
 BOOST_AUTO_TEST_CASE(Test_Component_State)
 {
-	std::shared_ptr<Gonio> g(new Gonio("gamma-arm"));
-	g->addRotation("gamma",Vector3d(0,0,1),RotAxis::CW);
+    std::shared_ptr<Gonio> g(new Gonio("gamma-arm"));
+    g->addRotation("gamma",Vector3d(0,0,1),RotAxis::CW);
 
-	Sample sample("sample");
-	sample.setGonio(g);
+    Sample sample("sample");
+    sample.setGonio(g);
 
-	ComponentState cs = sample.createState({2.0});
+    ComponentState cs = sample.createState({2.0});
 
-	ComponentState* pcs(new ComponentState(cs));
+    ComponentState* pcs(new ComponentState(cs));
 
-	delete pcs;
+    delete pcs;
 
 }
 

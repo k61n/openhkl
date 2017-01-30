@@ -17,7 +17,10 @@
 #include "PeakCalc.h"
 #include "GraphicsItems/PeakCalcGraphicsItem.h"
 
+#include "ColorMap.h"
+
 // Forward declarations
+
 namespace SX
 {
 namespace Data
@@ -57,6 +60,8 @@ public:
     explicit DetectorScene(QObject *parent = 0);
     std::shared_ptr<SX::Data::IData> getData();
     const rowMatrix& getCurrentFrame() const;
+    void setLogarithmic(bool checked);
+    void setColorMap(const std::string& name);
 
 signals:
      //! Signal emitted for all changes of the image
@@ -72,14 +77,15 @@ protected:
 
 public slots:
     // To be called to update detector image
-    void setData(std::shared_ptr<SX::Data::IData>,int frame);
-    void setData(std::shared_ptr<SX::Data::IData>);
-    void changeFrame(unsigned int frame=0);
+    void setData(const std::shared_ptr<SX::Data::IData>&, size_t frame);
+    void setData(const std::shared_ptr<SX::Data::IData>&);
+    void changeFrame(size_t frame = 0);
     void setMaxIntensity(int);
-    PeakGraphicsItem* findPeakGraphicsItem(sptrPeak3D peak);
+    PeakGraphicsItem* findPeakGraphicsItem(const sptrPeak3D& peak);
 //    void setPeakIndex(sptrPeak3D peak,const Eigen::Vector3d& index);
     void updatePeaks();
     void updatePeakCalcs();
+    void redrawImage();
     //! Change interaction mode in the scene
     void changeInteractionMode(int);
     //!
@@ -91,7 +97,7 @@ public slots:
     void showPeakCalcs(bool);
     void clearPeaks();
 
-    void updateMasks(unsigned int frame);
+    void updateMasks(unsigned long frame);
 
 private:
     //! Load image from current Data and frame
@@ -100,7 +106,7 @@ private:
     void createToolTipText(QGraphicsSceneMouseEvent*);
 
     std::shared_ptr<SX::Data::IData> _currentData;
-    unsigned int _currentFrameIndex;
+    unsigned long _currentFrameIndex;
     int _currentIntensity;
     rowMatrix _currentFrame;
     CURSORMODE _cursorMode;
@@ -125,8 +131,8 @@ private:
     std::vector<SX::Crystal::PeakCalc> _precalculatedPeaks;
 
     bool _showPeakCalcs;
-
-
+    bool _logarithmic;
+    std::unique_ptr<ColorMap> _colormap;
 };
 
 #endif // DETECTORSCENE_H

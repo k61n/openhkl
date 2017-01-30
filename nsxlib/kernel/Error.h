@@ -43,30 +43,43 @@ template<typename T>
 class Error : public std::exception
 {
 public:
-	Error(const std::string& message);
+    Error(std::string message);
+    Error(const Error& other) noexcept;
+    virtual ~Error();
 
-	virtual ~Error() throw();
-
-	const char* what() const noexcept;
+    const char* what() const noexcept;
 
 private:
-	std::string _message;
+    std::string _message;
 };
 
 template<typename T>
-Error<T>::Error(const std::string& message) : std::exception(),_message(message)
+Error<T>::Error(std::string message): std::exception(), _message(std::move(message))
 {
 }
 
 template<typename T>
-Error<T>::~Error() throw()
+Error<T>::Error(const Error& other) noexcept: std::exception(other), _message()
+{
+    try {
+        // since string copying requries memory allocation, this could
+        // throw bad_alloc
+        _message = other._message;
+    }
+    catch(...) {
+        // nothing we can do if we are out of memory!
+    }
+}
+
+template<typename T>
+Error<T>::~Error()
 {
 }
 
 template<typename T>
 const char* Error<T>::what() const noexcept
 {
-	return _message.c_str();
+    return _message.c_str();
 }
 
 } // end namespace Kernel

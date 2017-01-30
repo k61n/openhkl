@@ -1237,6 +1237,9 @@ border: 1px solid #aaa;
 border-radius: 4px;
 }</string>
                </property>
+               <property name="minimum">
+                <number>1</number>
+               </property>
                <property name="maximum">
                 <number>10000</number>
                </property>
@@ -1323,6 +1326,7 @@ border-radius: 4px;
      </property>
      <addaction name="actionFrom_Sample"/>
      <addaction name="actionBehind_Detector"/>
+     <addaction name="actionLogarithmic_Scale"/>
     </widget>
     <widget class="QMenu" name="menuPeak">
      <property name="title">
@@ -1332,10 +1336,17 @@ border-radius: 4px;
      <addaction name="actionShow_calculated_peak_positions"/>
      <addaction name="actionDraw_peak_background"/>
     </widget>
+    <widget class="QMenu" name="menuColor_map">
+     <property name="title">
+      <string>Color map</string>
+     </property>
+     <addaction name="actionPlaceholder"/>
+    </widget>
     <addaction name="menuGraphics"/>
     <addaction name="menuShow_Window"/>
     <addaction name="menuSet_View"/>
     <addaction name="menuPeak"/>
+    <addaction name="menuColor_map"/>
    </widget>
    <widget class="QMenu" name="menuChemistry">
     <property name="title">
@@ -1376,10 +1387,12 @@ border-radius: 4px;
      </property>
      <addaction name="actionRemove_bad_peaks"/>
      <addaction name="actionIncorporate_calculated_peaks"/>
+     <addaction name="actionApply_resolution_cutoff"/>
     </widget>
     <addaction name="actionCompute_R_factors"/>
     <addaction name="actionFind_space_group"/>
     <addaction name="menuPeaks"/>
+    <addaction name="actionWrite_log_file"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menu_Options"/>
@@ -1818,14 +1831,33 @@ QDockWidget::title {
     <string>Incorporate calculated peaks</string>
    </property>
   </action>
-  <action name="actionProperty">
+  
+  <action name="actionLogarithmic_Scale">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Property</string>
+     <string>Logarithmic Scale</string>
    </property>
   </action>
+    
+  <action name="actionProperty">
+    <property name="text">
+      <string>Property</string>
+    </property>
+  </action>
+  
+  <action name="actionApply_resolution_cutoff">
+   <property name="text">
+    <string>Apply resolution cutoff</string>
+   </property>
+  </action>
+  <action name="actionWrite_log_file">
+   <property name="text">
+    <string>Write log file</string>
+   </property>
+  </action>
+  
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>

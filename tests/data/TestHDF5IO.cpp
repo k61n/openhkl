@@ -21,26 +21,44 @@ using namespace SX::Data;
 using namespace SX::Instrument;
 using namespace SX::Units;
 
-const double tolerance=1e-2;
+// const double tolerance=1e-2;
 
 BOOST_AUTO_TEST_CASE(Test_HDF5_IO)
 {
     DiffractometerStore* ds;
     std::shared_ptr<Diffractometer> diff;
-    std::unique_ptr<ILLAsciiData> dataf;
+    std::unique_ptr<IData> dataf;
+
+    std::vector<Eigen::MatrixXi> frames;
 
     std::cout << "beginning Test_HDF5_IO" << std::endl;
 
     try {
         ds = DiffractometerStore::Instance();
         diff = std::shared_ptr<Diffractometer>(ds->buildDiffractomer("D10"));
-        dataf = std::unique_ptr<ILLAsciiData>(new ILLAsciiData("D10_ascii_example",diff));
+        dataf = std::unique_ptr<IData>(new ILLAsciiData("D10_ascii_example", diff));
         dataf->open();
         dataf->readInMemory(nullptr);
+
+        for (size_t i = 0; i < dataf->getNFrames(); ++i)
+            frames.push_back(dataf->getFrame(i));
 
         std::cout << "ascii data successfully read. writing hdf5..." << std::endl;
 
         dataf->saveHDF5("D10_hdf5_example.h5");
+        dataf->close();
+        dataf.reset();
+
+        std::cout << "verifying integrity of hdf5 data..." << std::endl;
+
+        // read data back in and check that it agrees!
+        dataf = std::unique_ptr<IData>(new HDF5Data("D10_hdf5_example.h5", diff));
+
+        for (size_t i = 0; i < dataf->getNFrames(); ++i) {
+            BOOST_CHECK(dataf->getFrame(i) == frames[i]);
+        }
+
+        std::cout << "hdf5 data agrees with original ascii data" << std::endl;
     }
     catch (std::exception& e) {
         BOOST_FAIL(std::string("saveHDF5() threw exception: ") + e.what());

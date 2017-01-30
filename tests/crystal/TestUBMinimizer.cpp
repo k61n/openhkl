@@ -43,34 +43,34 @@ using namespace SX::Units;
 using SX::Instrument::FlatDetector;
 using std::shared_ptr;
 
-const double tolerance=1e-6;
+// const double tolerance=1e-6;
 
 BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
 {
-	// Build D9 instrument
+    // Build D9 instrument
     shared_ptr<FlatDetector> D9(new FlatDetector("D9-detector"));
-	D9->setDistance(488*mm);
-	D9->setDimensions(64*mm,64*mm);
-	D9->setNPixels(32,32);
+    D9->setDistance(488*mm);
+    D9->setDimensions(64*mm,64*mm);
+    D9->setNPixels(32,32);
 
-	// Build a detector
-	std::shared_ptr<Gonio> detectorGonio(new Gonio("Gamma"));
-	detectorGonio->addRotation("Gamma",Vector3d(0,0,1),RotAxis::CW);
-	detectorGonio->addTranslation("y-offset",Vector3d(0,1,0));
-	detectorGonio->getAxis("y-offset")->setPhysical(false);
-	D9->setGonio(detectorGonio);
+    // Build a detector
+    std::shared_ptr<Gonio> detectorGonio(new Gonio("Gamma"));
+    detectorGonio->addRotation("Gamma",Vector3d(0,0,1),RotAxis::CW);
+    detectorGonio->addTranslation("y-offset",Vector3d(0,1,0));
+    detectorGonio->getAxis("y-offset")->setPhysical(false);
+    D9->setGonio(detectorGonio);
 
 
     shared_ptr<Sample> sample(new Sample("sample"));
-	std::shared_ptr<Gonio> sampleGonio(new Gonio("Busing Levy convention"));
-	sampleGonio->addRotation("omega",Vector3d(0,0,1),RotAxis::CW);
-	sampleGonio->addRotation("chi",Vector3d(0,1,0),RotAxis::CCW);
-	sampleGonio->addRotation("phi",Vector3d(0,0,1),RotAxis::CW);
-	sample->setGonio(sampleGonio);
+    std::shared_ptr<Gonio> sampleGonio(new Gonio("Busing Levy convention"));
+    sampleGonio->addRotation("omega",Vector3d(0,0,1),RotAxis::CW);
+    sampleGonio->addRotation("chi",Vector3d(0,1,0),RotAxis::CCW);
+    sampleGonio->addRotation("phi",Vector3d(0,0,1),RotAxis::CW);
+    sample->setGonio(sampleGonio);
 
     std::shared_ptr<Source> source(new Source);
-	SX::Instrument::Monochromator mono("mono");
-	mono.setWavelength(0.8380);
+    SX::Instrument::Monochromator mono("mono");
+    mono.setWavelength(0.8380);
     source->addMonochromator(&mono);
     source->setSelectedMonochromator(0);
 
@@ -82,37 +82,37 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
     minimizer.refineParameter(11,false); // Detector y
     minimizer.refineParameter(14,false); // Detector phi
 
-	// Open the RAFUB input file to get all informations about the collected peaks
-	std::ifstream ifs("CsOsO_15K.raf", std::ifstream::in);
+    // Open the RAFUB input file to get all informations about the collected peaks
+    std::ifstream ifs("CsOsO_15K.raf", std::ifstream::in);
 
     // fail test if we can't open the file
     BOOST_CHECK( ifs.fail() == false );
 
-	double h,k,l,px,py,gamma,omega,chi,phi;
-	std::vector<Peak3D> _peaks;
+    double h,k,l,px,py,gamma,omega,chi,phi;
+    std::vector<Peak3D> _peaks;
 
-	while (ifs.good())
-	{
-		ifs>>h>>k>>l>>px>>py>>gamma>>omega>>chi>>phi;
+    while (ifs.good()) {
+        ifs>>h>>k>>l>>px>>py>>gamma>>omega>>chi>>phi;
 
-		// Create a peak
-		Peak3D peak;
-		// Create the detector event matching that peak (the px and py are given in mm in the RAFUB input file)
+        // Create a peak
+        Peak3D peak;
+        // Create the detector event matching that peak (the px and py are given in mm in the RAFUB input file)
         peak.setDetectorEvent(std::shared_ptr<DetectorEvent>(new DetectorEvent(D9->createDetectorEvent(px/2,py/2,{gamma*deg}))));
-		// set the miller indices corresponding to the peak
+        // set the miller indices corresponding to the peak
 //		peak.setMillerIndices(h,k,l);
-		// Set the wavelength
+        // Set the wavelength
         peak.setSource(source);
 
         Eigen::RowVector3d hkl;
         hkl << h,k,l;
 
-		// Create a sample state
+        // Create a sample state
         peak.setSampleState(std::shared_ptr<ComponentState>(new ComponentState(sample->createState({omega*deg,chi*deg,phi*deg}))));
 //		_peaks.push_back(peak);
 
-		minimizer.addPeak(peak,hkl);
-	}
+        minimizer.addPeak(peak,hkl);
+    }
+
 
     Eigen::Matrix3d M;//=Eigen::Matrix3d::Identity();
     M<<sqrt(2)/2.0,-sqrt(2)/2,0,

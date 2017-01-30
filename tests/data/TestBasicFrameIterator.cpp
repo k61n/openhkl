@@ -18,16 +18,14 @@
 using namespace SX::Data;
 using namespace SX::Instrument;
 
-const double tolerance=1e-2;
+// const double tolerance=1e-2;
 
 BOOST_AUTO_TEST_CASE(Test_BasicFrameIterator)
 {
     DiffractometerStore* ds = DiffractometerStore::Instance();
     std::shared_ptr<Diffractometer> diff = std::shared_ptr<Diffractometer>(ds->buildDiffractomer("D10"));
     ILLAsciiData dataf(std::string("D10_ascii_example"), diff);
-
-    dataf.setIteratorCallback([](IData* data, int idx) {return new BasicFrameIterator(data, idx);});
-
+    dataf.setIteratorCallback([](IData& data, int idx) {return new BasicFrameIterator(data, idx);});
     std::unique_ptr<IFrameIterator> it(dataf.getIterator(0));
 
     for (; it->index() != dataf.getNFrames(); it->advance()) {

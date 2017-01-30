@@ -12,7 +12,7 @@
  chapon[at]ill.fr
  pellegrini[at]ill.fr
 
- Forshungszentrum Juelich GmbH
+ Forschungszentrum Juelich GmbH
  52425 Juelich
  Germany
  j.fisher[at]fz-juelich.de
@@ -53,8 +53,8 @@ namespace Utils {
 MinimizerGSL::MinimizerGSL():
     IMinimizer(),
     _workspace(nullptr),
-    _covariance_gsl(nullptr),
     _jacobian_gsl( nullptr),
+    _covariance_gsl(nullptr),
     _x_gsl (nullptr),
     _wt_gsl (nullptr)
 {

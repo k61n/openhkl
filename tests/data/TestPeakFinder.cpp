@@ -22,14 +22,14 @@ using namespace SX::Instrument;
 using namespace SX::Units;
 using namespace SX::Utils;
 
-const double tolerance=1e-2;
+// const double tolerance=1e-2;
 
 BOOST_AUTO_TEST_CASE(Test_PeakFinder)
 {
     std::vector<std::shared_ptr<IData>> numors;
 
-	DiffractometerStore* ds = DiffractometerStore::Instance();
-	std::shared_ptr<Diffractometer> diff = std::shared_ptr<Diffractometer>(ds->buildDiffractomer("D10"));
+    DiffractometerStore* ds = DiffractometerStore::Instance();
+    std::shared_ptr<Diffractometer> diff = std::shared_ptr<Diffractometer>(ds->buildDiffractomer("D10"));
     std::shared_ptr<IData> dataf(new ILLAsciiData(std::string("D10_ascii_example"), diff));
 
     MetaData* meta=dataf->getMetadata();
@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_CASE(Test_PeakFinder)
     PeakFinder peakFinder;
     std::shared_ptr<ProgressHandler> handler(new ProgressHandler);
 
-	BOOST_CHECK(meta->getKey<int>("nbang")==2);
+    BOOST_CHECK(meta->getKey<int>("nbang")==2);
 
     dataf->open();
 
@@ -61,7 +61,7 @@ BOOST_AUTO_TEST_CASE(Test_PeakFinder)
     bool result = peakFinder.find(numors);
     BOOST_CHECK(result == true);
 
-    unsigned int num_peaks = dataf->getPeaks().size();
+    size_t num_peaks = dataf->getPeaks().size();
 
     std::cout << "the result is " << result << std::endl;
     std::cout << "the number of peaks is    " << num_peaks << std::endl;
@@ -69,5 +69,6 @@ BOOST_AUTO_TEST_CASE(Test_PeakFinder)
     BOOST_CHECK(num_peaks == 1);
 
     dataf->close();
-
+    dataf->clearPeaks();
+    dataf = nullptr;
 }

@@ -17,12 +17,12 @@ CollectedPeaksDelegate::CollectedPeaksDelegate(QObject *parent) : QStyledItemDel
 
 QWidget* CollectedPeaksDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    if (index.column() == CollectedPeaksModel::Column::unitCell)
-    {
-        QComboBox *editor = new QComboBox(parent);
+    if (index.column() == CollectedPeaksModel::Column::unitCell) {
+        auto editor = new QComboBox(parent);
         QStringList cellNames = index.model()->data(index,Qt::UserRole).toStringList();
-        for (const auto& name : cellNames)
+        for (const auto& name : cellNames) {
             editor->addItem(name);
+        }
         return editor;
     }
     return QStyledItemDelegate::createEditor(parent,option,index);
@@ -30,26 +30,25 @@ QWidget* CollectedPeaksDelegate::createEditor(QWidget *parent, const QStyleOptio
 
 void CollectedPeaksDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
-
     int column = index.column();
 
-    if (column == CollectedPeaksModel::Column::unitCell)
-    {
-        QComboBox *cb = static_cast<QComboBox*>(editor);        
-        if (cb->count()==0)
+    if (column == CollectedPeaksModel::Column::unitCell) {
+        auto cb = dynamic_cast<QComboBox*>(editor);
+        if (cb->count()==0) {
             return;
+        }
         int unitCellIndex = cb->currentIndex();
         model->setData(index,unitCellIndex);
     }
-    else
+    else {
         QStyledItemDelegate::setModelData(editor,model,index);
+    }
 }
 
 void CollectedPeaksDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     int column = index.column();
-    if (column == CollectedPeaksModel::Column::selected)
-    {
+    if (column == CollectedPeaksModel::Column::selected) {
         bool value  = index.model()->data(index,Qt::CheckStateRole).toBool();
         QStyleOptionButton buttonVis;
         buttonVis.rect = option.rect;
@@ -60,19 +59,17 @@ void CollectedPeaksDelegate::paint(QPainter *painter, const QStyleOptionViewItem
         buttonVis.state |= value ? QStyle::State_Enabled : QStyle::State_None;
         QApplication::style()->drawControl(QStyle::CE_PushButton,&buttonVis,painter);
     }
-    else
+    else {
         QStyledItemDelegate::paint(painter,option,index);
-
+    }
 }
 
 bool CollectedPeaksDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index)
 {
     Q_UNUSED(option);
-    if(event->type() == QEvent::MouseButtonRelease)
-    {
+    if(event->type() == QEvent::MouseButtonRelease) {
         int column = index.column();
-        if (column == CollectedPeaksModel::Column::selected)
-        {
+        if (column == CollectedPeaksModel::Column::selected) {
             bool value  = model->data(index,Qt::CheckStateRole).toBool();
             model->setData(index, !value, Qt::CheckStateRole);
         }

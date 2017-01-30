@@ -12,7 +12,7 @@
  chapon[at]ill.fr
  pellegrini[at]ill.fr
 
- Forshungszentrum Juelich GmbH
+ Forschungszentrum Juelich GmbH
  52425 Juelich
  Germany
  j.fisher[at]fz-juelich.de
@@ -87,7 +87,7 @@ private:
 #endif
 
 
-    gsl_vector *f;
+    // gsl_vector *f;
     gsl_matrix *_jacobian_gsl;
     gsl_matrix* _covariance_gsl;
 

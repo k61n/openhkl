@@ -12,7 +12,7 @@
  chapon[at]ill.fr
  pellegrini[at]ill.fr
 
- Forshungszentrum Juelich GmbH
+ Forschungszentrum Juelich GmbH
  52425 Juelich
  Germany
  j.fisher[at]fz-juelich.de
@@ -62,46 +62,43 @@ public:
 
     static IData* create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer);
 
-	//! Default constructor
+    //! Default constructor
     RawData(const std::vector<std::string>& filenames, std::shared_ptr<Diffractometer> diffractometer,
             double wavelength, double delta_chi, double delta_omega, double delta_phi,
-            bool rowMajor, bool swapEndian, int bpp);
+            bool rowMajor, bool swapEndian, unsigned int bpp);
 
-	//! Copy constructor
+    //! Copy constructor
     RawData(const RawData& other)=delete;
 
-	//! Destructor
+    //! Destructor
     virtual ~RawData();
 
-	// Operators
+    // Operators
 
-	//! Assignment operator
+    //! Assignment operator
     RawData& operator=(const RawData& other)=delete;
 
-	// Other methods
-	void open() override;
-	void close() override;
+    // Other methods
+    void open() override;
+    void close() override;
     //! Read a single frame
 
     Eigen::MatrixXi readFrame(std::size_t idx) override;
 
     void swapEndian();
-    void setBpp(int bpp);
+    void setBpp(unsigned int bpp);
 
 private:
     template<typename T_>
     Eigen::Matrix<T_, Eigen::Dynamic, Eigen::Dynamic> matrixFromData() const;
 
-    int _bpp;
-    int _length;
+    unsigned int _bpp;
+    size_t _length;
     bool _swapEndian;
     bool _rowMajor;
     std::vector<std::string> _filenames;
     std::vector<char> _data;
     double _wavelength;
-    double _delta_chi;
-    double _delta_omega;
-    double _delta_phi;
 };
 
 template<typename T_>

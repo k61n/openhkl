@@ -12,7 +12,7 @@
  chapon[at]ill.fr
  pellegrini[at]ill.fr
 
- Forshungszentrum Juelich GmbH
+ Forschungszentrum Juelich GmbH
  52425 Juelich
  Germany
  j.fisher[at]fz-juelich.de
@@ -71,18 +71,16 @@ IData *RawData::create(const std::string &filename, std::shared_ptr<Diffractomet
 
 RawData::RawData(const std::vector<std::string>& filenames, std::shared_ptr<Diffractometer> diffractometer,
                  double wavelength, double delta_chi, double delta_omega, double delta_phi,
-                 bool rowMajor, bool swapEndian, int bpp):
+                 bool rowMajor, bool swapEndian, unsigned int bpp):
     IData(filenames[0], diffractometer),
-    _filenames(filenames),
-    _wavelength(wavelength),
-    _delta_chi(delta_chi),
-    _delta_omega(delta_omega),
-    _delta_phi(delta_phi),
-    _rowMajor(rowMajor),
+    _bpp(bpp),
+    _length(0),
     _swapEndian(swapEndian),
-    _bpp(bpp)
+    _rowMajor(rowMajor),
+    _filenames(filenames),
+    _data(),
+    _wavelength(wavelength)
 {
-
     // ensure that there is at least one monochromator!
     if ( _diffractometer->getSource()->getNMonochromators() == 0 ) {
         Monochromator mono("mono");
@@ -90,12 +88,11 @@ RawData::RawData(const std::vector<std::string>& filenames, std::shared_ptr<Diff
     }
 
     _length = _bpp * _nrows * _ncols;
-
     _diffractometer->getSource()->setWavelength(_wavelength);
 
     _metadata->add<std::string>("Instrument", _diffractometer->getName());
     _metadata->add<double>("wavelength", _wavelength);
-    _metadata->add<int>("npdone", _filenames.size());
+    _metadata->add<int>("npdone", int(_filenames.size()));
     _metadata->add<double>("monitor", 0.0);
     _metadata->add<int>("Numor", 0.0);
 
@@ -105,7 +102,7 @@ RawData::RawData(const std::vector<std::string>& filenames, std::shared_ptr<Diff
 
     std::vector<std::string> axesS = _diffractometer->getDetector()->getGonio()->getPhysicalAxesNames();
     Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> dm
-            = Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor>::Zero(axesS.size(), _nFrames);
+            = Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor>::Zero(long(axesS.size()), long(_nFrames));
 
     _detectorStates.reserve(_nFrames);
 
@@ -115,15 +112,15 @@ RawData::RawData(const std::vector<std::string>& filenames, std::shared_ptr<Diff
 
     // Getting Scan parameters for the sample
     axesS = _diffractometer->getSample()->getGonio()->getPhysicalAxesNames();
-    dm.resize(axesS.size(), _nFrames);
+    dm.resize(long(axesS.size()), long(_nFrames));
 
     int omega, phi, chi;
-    int i;
+    unsigned int i;
 
     for (i = 0, omega = -1, phi = -1, chi = -1; i < axesS.size(); ++i) {
-        omega = axesS[i] == "omega"? i : omega;
-        chi = axesS[i] == "chi"? i : chi;
-        phi = axesS[i] == "phi"? i : phi;
+        omega = axesS[i] == "omega" ? int(i) : omega;
+        chi = axesS[i] == "chi"? int(i) : chi;
+        phi = axesS[i] == "phi"? int(i) : phi;
     }
 
     assert(omega != -1);
@@ -167,16 +164,16 @@ Eigen::MatrixXi RawData::readFrame(std::size_t idx) {
 
     file.seekg(0, std::ios_base::end);
 
-    if (_length != file.tellg()) {
+    if (_length != size_t(file.tellg())) {
         std::string err_msg = "data file " + filename + " is not of the expected size: ";
         err_msg += "expected " + std::to_string(_length) + " bytes but found " + std::to_string(file.tellg());
         throw std::runtime_error(err_msg);
     }
 
     file.seekg(0, std::ios_base::beg);
-    file.read(&_data[0], _length);
+    file.read(&_data[0], long(_length));
 
-    if ( _length != file.gcount()) {
+    if ( _length != size_t(file.gcount())) {
         std::string err_msg = "did not read " + filename + " successfully: ";
         err_msg += "expected " + std::to_string(_length) + " bytes but read " + std::to_string(file.gcount());
         throw std::runtime_error(err_msg);
@@ -200,14 +197,14 @@ void RawData::swapEndian() {
     if (!_swapEndian)
         return;
 
-    for (int i = 0; i < _nrows*_ncols; ++i) {
-        for (int byte = 0; byte < _bpp/2; ++byte) {
+    for (unsigned int i = 0; i < _nrows*_ncols; ++i) {
+        for (unsigned int byte = 0; byte < _bpp/2; ++byte) {
             std::swap(_data[_bpp*i+byte], _data[_bpp*i+(_bpp-1-byte)]);
         }
     }
 }
 
-void RawData::setBpp(int bpp) {
+void RawData::setBpp(unsigned int bpp) {
     _bpp = bpp;
     _length = _bpp*_nrows*_ncols;
 }

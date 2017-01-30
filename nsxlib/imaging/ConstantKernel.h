@@ -1,6 +1,6 @@
 // Constant kernel
 // author: Jonathan Fisher
-// Forshungszentrum Jülich GmbH
+// Forschungszentrum Jülich GmbH
 // j.fisher@fz-juelich.de
 
 

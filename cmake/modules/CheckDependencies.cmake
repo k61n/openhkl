@@ -8,7 +8,7 @@
 ###### Find boost libraries  ##############
 find_package(Boost 1.54.0 COMPONENTS date_time system filesystem unit_test_framework REQUIRED)
 if(Boost_FOUND)
-    include_directories("${Boost_INCLUDE_DIRS}")
+    include_directories(SYSTEM "${Boost_INCLUDE_DIRS}")
     set(Boost_USE_STATIC_LIBS OFF)
     set(Boost_USE_MULTITHREADED ON)
     set(Boost_USE_STATIC_RUNTIME OFF)
@@ -48,7 +48,7 @@ if(NOT HDF5_LIBRARIES)
   set(HDF5_LIBRARIES "${HDF5_LIBRARIES};${HDF5_LIBRARY_TEMP}")
 endif()
 
-include_directories("${HDF5_INCLUDE_DIRS}")
+include_directories(SYSTEM "${HDF5_INCLUDE_DIRS}")
 
 if ( HDF5_INCLUDE_DIRS AND HDF5_LIBRARIES )
    message("HDF5 found: include dir is ${HDF5_INCLUDE_DIRS} and library is ${HDF5_LIBRARIES} located in ${HDF5_LIBRARY_DIRS}")
@@ -68,7 +68,7 @@ endif()
 
 ###### TIFF library
 find_package(TIFF REQUIRED)
-include_directories(${TIFF_INCLUDE_DIR})
+include_directories(SYSTEM ${TIFF_INCLUDE_DIR})
 
 
 # find_path(FFTW_INCLUDE_DIR fftw3.h)
@@ -76,13 +76,13 @@ include_directories(${TIFF_INCLUDE_DIR})
 # find_library(FFTW_LIBRARIES NAMES fftw3 libfftw3 fftw3-3 libfftw3-3)
 
 find_package(FFTW REQUIRED)
-include_directories(${FFTW_INCLUDE_DIR})
+include_directories(SYSTEM ${FFTW_INCLUDE_DIR})
 
 # GNU scientific library
 find_package(GSL 2.0)
 
 if(GSL_FOUND)
-  include_directories(${GSL_INCLUDE_DIR})
+  include_directories(SYSTEM ${GSL_INCLUDE_DIR})
 
   message("GSL_INCLUDE_DIR is ${GSL_INCLUDE_DIR}")
 

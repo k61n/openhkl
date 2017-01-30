@@ -43,12 +43,10 @@
 #include "Diffractometer.h"
 
 
-namespace SX
-{
-	namespace Utils
-	{
-		template <class T> class IMatrixParser;
-	}
+namespace SX {
+    namespace Utils {
+        template <class T> struct IMatrixParser;
+    }
 }
 
 namespace SX
@@ -59,56 +57,56 @@ namespace Data
 /*! \brief Legacy ILL Data in ASCII format.
  *
  */
-class ILLAsciiData : public IData
+class ILLAsciiData final: public IData
 {
 public:
 
     static IData* create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer);
 
-	//! Default constructor
-	ILLAsciiData(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer);
-	//! Copy constructor
-	ILLAsciiData(const ILLAsciiData& other)=delete;
-	//! Destructor
-	virtual ~ILLAsciiData();
+    //! Default constructor
+    ILLAsciiData(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer);
+    //! Copy constructor
+    ILLAsciiData(const ILLAsciiData& other)=delete;
+    //! Destructor
+    virtual ~ILLAsciiData();
 
-	// Operators
+    // Operators
 
-	//! Assignment operator
-	ILLAsciiData& operator=(const ILLAsciiData& other)=delete;
+    //! Assignment operator
+    ILLAsciiData& operator=(const ILLAsciiData& other)=delete;
 
-	// Other methods
-	void open() override;
-	void close() override;
+    // Other methods
+    void open() override;
+    void close() override;
     //! Read a single frame
     Eigen::MatrixXi readFrame(std::size_t idx) override;
 
 private:
 
-	static std::size_t BlockSize;
+    static std::size_t BlockSize;
 
-	//! Invoke seekg to beginning the line number, at position pos. First line is 1
-	void goToLine(std::stringstream& buffer, int number,int pos);
-	//! Read the control block containing all float parameters.
-	void readControlFBlock(std::stringstream&);
-	//! Read the control block containing all Integer Metadata.
-	void readControlIBlock(std::stringstream&);
+    //! Invoke seekg to beginning the line number, at position pos. First line is 1
+    void goToLine(std::stringstream& buffer, int number,int pos);
+    //! Read the control block containing all float parameters.
+    void readControlFBlock(std::stringstream&);
+    //! Read the control block containing all Integer Metadata.
+    void readControlIBlock(std::stringstream&);
     //! Read the file header containing the numor, user, instr, local contact, date and time
     //! This is all fixed format.
-	void readHeader(std::stringstream&);
-	//! Reads MetaData from a chain of characters as written in legacy ILL format
-	//! return a MetaData Object
-	void readMetaData(const char* buf);
+    void readHeader(std::stringstream&);
+    //! Reads MetaData from a chain of characters as written in legacy ILL format
+    //! return a MetaData Object
+    void readMetaData(const char* buf);
 
-	std::size_t _dataPoints;
-	std::size_t _nAngles;
-	std::size_t _headerSize;
-	std::size_t _skipChar;
-	std::size_t _dataLength;
-	boost::interprocess::mapped_region _map;
-	const char* _mapAddress;
-	std::size_t _currentLine;
-	SX::Utils::IMatrixParser<const char*>* _parser;
+    std::size_t _dataPoints;
+    std::size_t _nAngles;
+    std::size_t _headerSize;
+    std::size_t _skipChar;
+    std::size_t _dataLength;
+    boost::interprocess::mapped_region _map;
+    const char* _mapAddress;
+    std::size_t _currentLine;
+    SX::Utils::IMatrixParser<const char*>* _parser;
 
 
 };

@@ -34,7 +34,7 @@ DetectorPropertyWidget::DetectorPropertyWidget(DetectorItem* caller,QWidget *par
 
     ui->tableWidget_Detector->setColumnCount(3);
     ui->tableWidget_Detector->verticalHeader()->setVisible(false);
-\
+
     for (unsigned int i=0;i<gonio->getNAxes();++i)
     {
         auto axis=gonio->getAxis(i);

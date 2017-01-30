@@ -31,6 +31,8 @@ using SX::Crystal::UBMinimizer;
 using SX::Crystal::UBSolution;
 using SX::Data::IData;
 
+using SX::Units::deg;
+
 DialogAutoIndexing::DialogAutoIndexing(std::shared_ptr<Experiment> experiment, std::vector<sptrPeak3D> peaks, QWidget *parent):
     QDialog(parent),
     ui(new Ui::DialogAutoIndexing),
@@ -93,12 +95,11 @@ void DialogAutoIndexing::autoIndex()
 
     // Set up a FFT indexer object
     FFTIndexing indexing(5,ui->maxCellDim->value());
-    indexing.addVectors(qvects);
 
     int nSolutions = ui->maxNumSolutions->value();
     int nStacks = ui->nStacks->value();
     // Find the best tvectors
-    std::vector<tVector> tvects=indexing.findOnSphere(nStacks, nSolutions);
+    std::vector<tVector> tvects=indexing.findOnSphere(qvects, nStacks, nSolutions);
 
     auto source = _experiment->getDiffractometer()->getSource();
     auto detector = _experiment->getDiffractometer()->getDetector();

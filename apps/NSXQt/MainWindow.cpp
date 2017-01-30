@@ -56,6 +56,7 @@
 #include "PeakGraphicsItem.h"
 #include "PlottableGraphicsItem.h"
 #include "PlotFactory.h"
+
 #include "tree/UnitCellPropertyWidget.h"
 #include "tree/PeakListPropertyWidget.h"
 
@@ -75,6 +76,10 @@
 #include "SpaceGroupSymbols.h"
 
 #include "Peak3D.h"
+
+#include "ColorMap.h"
+
+#include "ResolutionCutoffDialog.h"
 
 // jmf debug testing
 #include <functional>
@@ -145,7 +150,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this, SIGNAL(findSpaceGroup(void)), _ui->experimentTree, SLOT(findSpaceGroup()));
     connect(this, SIGNAL(computeRFactors(void)), _ui->experimentTree, SLOT(computeRFactors()));
     connect(this,SIGNAL(findFriedelPairs(void)), _ui->experimentTree, SLOT(findFriedelPairs()));
-    connect(this, SIGNAL(integrateCalculatedPeaks()), _ui->experimentTree, SLOT(integrateCalculatedPeaks()));
+    // connect(this, SIGNAL(integrateCalculatedPeaks()), _ui->experimentTree, SLOT(integrateCalculatedPeaks()));
     connect(this, SIGNAL(peakFitDialog()), _ui->experimentTree, SLOT(peakFitDialog()));
     connect(this, SIGNAL(incorporateCalculatedPeaks()), _ui->experimentTree, SLOT(incorporateCalculatedPeaks()));
 
@@ -164,6 +169,28 @@ MainWindow::MainWindow(QWidget *parent)
 
     _progressHandler = std::shared_ptr<ProgressHandler>(new ProgressHandler());
     _peakFinder = std::shared_ptr<PeakFinder>(new PeakFinder());
+
+
+    for (auto&& action: _ui->menuColor_map->actions()) {
+        _ui->menuColor_map->removeAction(action);
+    }
+
+    auto names = ColorMap::getColorMapNames();
+
+    for (auto&& name: names) {
+        QAction* action = new QAction(name.c_str(), _ui->menuColor_map);
+
+        auto slot_fn = [=] () -> void
+        {
+            const std::string name_str = action->text().toStdString();
+            _session->setColorMap(name_str);
+            _ui->_dview->getScene()->setColorMap(name_str);
+            _ui->_dview->getScene()->redrawImage();
+        };
+
+        connect(action, &QAction::triggered, this, slot_fn);
+        _ui->menuColor_map->addAction(action);
+    }
 }
 
 MainWindow::~MainWindow()
@@ -173,7 +200,7 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::on_actionNew_session_triggered()
-{    
+{
   qDebug() << "save session: not implemented yet";
 }
 
@@ -255,8 +282,7 @@ void MainWindow::changeData(std::shared_ptr<IData> data)
     _ui->frameFrame->setEnabled(true);
     _ui->intensityFrame->setEnabled(true);
 
-    int frameMax = data->getNFrames()-1;
-
+    int frameMax = int(data->getNFrames()-1);
     int frame = _ui->frame->value();
 
     if (frame > frameMax)
@@ -275,7 +301,7 @@ void MainWindow::plotPeak(sptrPeak3D peak)
     // Ensure that frames
     changeData(peak->getData());
     // Get frame number to adjust the data
-    int data_frame = std::round(peak->getPeak()->getAABBCenter()[2]);
+    size_t data_frame = size_t(std::lround(peak->getPeak().getAABBCenter()[2]));
     scenePtr->setData(peak->getData(), data_frame);
     // Update the scrollbar
     _ui->frame->setValue(data_frame);
@@ -498,12 +524,18 @@ void MainWindow::on_actionCompute_R_factors_triggered()
 
 void MainWindow::on_actionIntegrate_calculated_peaks_triggered()
 {
-    emit integrateCalculatedPeaks();
+//    emit integrateCalculatedPeaks();
+    qDebug() << "what triggered this?";
 }
 
 void MainWindow::on_actionPeak_fit_dialog_triggered()
 {
     emit peakFitDialog();
+}
+
+void MainWindow::on_actionLogarithmic_Scale_triggered(bool checked)
+{
+    _ui->_dview->getScene()->setLogarithmic(checked);
 }
 
 void MainWindow::on_actionDraw_peak_background_triggered(bool checked)
@@ -518,7 +550,7 @@ void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
     const double pmax = 1e-3;
 
     int total_peaks = 0;
-    int remaining_peaks = 0;
+    // int remaining_peaks = 0;
 
     std::vector<std::shared_ptr<IData>> numors = _session->getSelectedNumors();
     std::vector<sptrPeak3D> bad_peaks;
@@ -570,4 +602,20 @@ void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
 void MainWindow::on_actionIncorporate_calculated_peaks_triggered(bool checked)
 {
     emit incorporateCalculatedPeaks();
+}
+
+void MainWindow::on_actionApply_resolution_cutoff_triggered()
+{
+    ResolutionCutoffDialog dialog;
+
+    if (!dialog.exec())
+        return;
+
+    _session->applyResolutionCutoff(dialog.dMin(), dialog.dMax());
+}
+
+void MainWindow::on_actionWrite_log_file_triggered()
+{
+    qDebug() << "write log file triggered";
+    _session->writeLog();
 }

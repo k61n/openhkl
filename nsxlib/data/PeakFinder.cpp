@@ -31,28 +31,23 @@ PeakFinder::PeakFinder()
     _thresholdType = 0;
     _confidence = 0.997;
     _median = 0;
-
     _minComp = 30;
     _maxComp = 10000;
-
-    _convolver = std::shared_ptr<SX::Imaging::Convolver>(new SX::Imaging::Convolver);
-
+    _convolver = std::make_shared<SX::Imaging::Convolver>();
 }
 
 
 bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
 {
-
     std::size_t npeaks=0;
 
-    for (auto numor : numors) {
+    for (auto&& numor : numors) {
         numor->clearPeaks();
         numor->readInMemory(_handler);
 
         try {
             // compute median only if necessary
             if (_thresholdType == 0) {
-                // jmf: why do we round median to an integer??
                 _median = static_cast<int>(numor->getBackgroundLevel(_handler))+1;
             }
         }
@@ -65,11 +60,8 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
         SX::Geometry::blob3DCollection blobs;
 
         try {
-
             SX::Geometry::BlobFinder blob_finder(numor);
-
             blob_finder.setProgressHandler(_handler);
-
             blob_finder.setMedian(_median);
             blob_finder.setThreshold(_thresholdValue);
             blob_finder.setMinComp(_minComp);
@@ -88,16 +80,15 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
 
             // set image filter, if selected
             if ( _kernel ) {
-
-                if ( !_convolver)
-                    _convolver = std::shared_ptr<SX::Imaging::Convolver>(new SX::Imaging::Convolver);
+                if ( !_convolver) {
+                    _convolver = std::make_shared<SX::Imaging::Convolver>();
+                }
 
                 // update the convolver with the kernel
                 _convolver->setKernel(_kernel->getKernel());
 
                 // this is the filter function to be applied to each frame
-                auto callback = [&] (const RealMatrix& input) -> RealMatrix
-                {
+                auto callback = [&] (const RealMatrix& input) -> RealMatrix {
                     RealMatrix output;
                     #pragma omp critical
                     output = _convolver->apply(input);
@@ -106,28 +97,30 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
 
                 if (_handler) {
                     _handler->log("kernel " + std::string(_kernel->getName()) + " selected");
-                    for (auto& it: _kernel->getParameters())
+                    for (auto& it: _kernel->getParameters()) {
                         _handler->log(it.first + " " + std::to_string(it.second));
+                    }
                 }
 
                 blob_finder.setFilter(callback);
             }
             else {
-                if ( _handler )
+                if ( _handler ) {
                     _handler->log("no convolution filter selected");
+                }
             }
 
             blobs = blob_finder.find(0, numor->getNFrames());
 
             if ( _handler ) {
                 _handler->log("Found " + std::to_string(blobs.size()) + " blobs");
-            }            
+            }
         }
         // Warning if error
         catch(std::exception& e) {
-            if ( _handler )
+            if ( _handler ) {
                 _handler->log(std::string("Peak finder caused an exception: ") + e.what());
-
+            }
             // pass exception back to callee
             throw e;
         }
@@ -152,20 +145,23 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
                     );
 
         for (auto& blob : blobs) {
-
-            sptrPeak3D p = sptrPeak3D(new Peak3D(numor, blob.second, _confidence));
-            const auto extents = p->getPeak()->getAABBExtents();
+            sptrPeak3D p = std::make_shared<Peak3D>(Peak3D(numor, blob.second, _confidence));
+            const auto extents = p->getPeak().getAABBExtents();
 
             // peak too small or too large
-            if (extents.maxCoeff() > 1e5 || extents.minCoeff() < 1e-5)
+            if (extents.maxCoeff() > 1e5 || extents.minCoeff() < 1e-5) {
                 p->setSelected(false);
+            }
 
             // peak's bounding box not completely contained in detector image
-            if (!dAABB.contains(*(p->getPeak())))
+            if (!dAABB.contains(p->getPeak())) {
                 p->setSelected(false);
+            }
+
 
 //            if (cell)
 //                p->addUnitCell(cell);
+
 
             numor->addPeak(p);
             npeaks++;
@@ -181,7 +177,6 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
             _handler->setStatus(("Integrating " + std::to_string(numor->getPeaks().size()) + " peaks...").c_str());
             _handler->setProgress(0);
         }
-
         numor->integratePeaks();
         numor->releaseMemory();
         numor->close();
@@ -192,11 +187,10 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
         _handler->setStatus("Peak finding completed.");
         _handler->setProgress(100);
     }
-
     return true;
 }
 
-void PeakFinder::setHandler(std::shared_ptr<ProgressHandler> handler)
+void PeakFinder::setHandler(const std::shared_ptr<ProgressHandler>& handler)
 {
     _handler = handler;
 }
@@ -251,12 +245,12 @@ int PeakFinder::getMaxComponents()
     return _maxComp;
 }
 
-void PeakFinder::setConvolver(std::shared_ptr<SX::Imaging::Convolver> convolver)
+void PeakFinder::setConvolver(const std::shared_ptr<SX::Imaging::Convolver>& convolver)
 {
     _convolver = convolver;
 }
 
-void PeakFinder::setKernel(std::shared_ptr<Imaging::ConvolutionKernel> kernel)
+void PeakFinder::setKernel(const std::shared_ptr<Imaging::ConvolutionKernel>& kernel)
 {
     _kernel = kernel;
 }
@@ -272,7 +266,4 @@ std::shared_ptr<Imaging::ConvolutionKernel> PeakFinder::getKernel()
 }
 
 } // namespace Data
-
 } // namespace SX
-
-

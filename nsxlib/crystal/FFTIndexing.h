@@ -38,43 +38,36 @@
 
 namespace SX
 {
-
 namespace Crystal
 {
 
 
-using namespace SX::Units;
+//using namespace SX::Units;
 
-struct tVector
-{
-    tVector(const Eigen::Vector3d& v,double quality):_vect(v),_quality(quality)
-	{
-	}
+struct tVector {
+    tVector(const Eigen::Vector3d& v,double quality):_vect(v),_quality(quality) {}
     Eigen::Vector3d _vect;
     double _quality;
 };
 
-
-class FFTIndexing
-{
+class FFTIndexing {
 public:
-	FFTIndexing(int nSubdiv=25,double amax=50.0);
-	//! Add a Q vector to the list of observables
-	void addVector(const Eigen::Vector3d& v);
-	void addVectors(const std::vector<Eigen::Vector3d>& v);
-	//! Find a tVector in real space along the normalized direction N
-	tVector findtVector(const Eigen::Vector3d& N,std::vector<double>& v, std::vector<double>& x) const;
-	std::vector<tVector> findOnSphere(int nstacks, unsigned int nsolutions) const;
-	virtual ~FFTIndexing();
+    FFTIndexing(int nSubdiv=25,double amax=50.0);
+    //! Add a Q vector to the list of observables
+    //void addVector(const Eigen::Vector3d& v);
+    //void addVectors(const std::vector<Eigen::Vector3d>& v);
+    //! Find a tVector in real space along the normalized direction N
+    tVector findtVector(const Eigen::Vector3d& N,std::vector<double>& v, std::vector<double>& x) const;
+    std::vector<tVector> findOnSphere(const std::vector<Eigen::Vector3d>& qvects, unsigned int nstacks, unsigned int nsolutions) const;
+    //virtual ~FFTIndexing();
 
 private:
-	std::vector<std::reference_wrapper<const Eigen::Vector3d>> _qVectors;
-	int _nSubdiv;
-	double _amax;
+    //std::vector<std::reference_wrapper<const Eigen::Vector3d>> _qVectors;
+    int _nSubdiv;
+    double _amax;
 };
 
 } // end namespace Crystal
-
 } // end namespace SX
 
 #endif /* NSXTOOL_FFTINDEXING_H_ */

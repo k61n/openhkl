@@ -1,13 +1,12 @@
 
 // 2d convolution via FFT
 // author: Jonathan Fisher
-// Forshungszentrum Jülich GmbH
+// Forschungszentrum Jülich GmbH
 // j.fisher@fz-juelich.de
 
 #include "Convolver.h"
 #include <fftw3.h>
-#include <cstring>
-
+// #include <cstring>
 #include <iostream>
 
 using std::cout;
@@ -71,7 +70,7 @@ void Convolver::setKernel(const RealMatrix &kernel)
         // use fftw_malloc instead of fftw_alloc_* to support older version of fftw3
         _realData = (double*)fftw_malloc(_rows * _cols * sizeof(double));
         _transformedData = (fftw_complex*)fftw_malloc(_rows * _halfCols * sizeof(fftw_complex));
-        
+
         _transformedKernel.resize(_rows*_halfCols);
 
         cout << "allocated fftw arrays successfully" << endl;

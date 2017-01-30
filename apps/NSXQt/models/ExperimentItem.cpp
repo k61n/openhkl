@@ -43,13 +43,6 @@ ExperimentItem::ExperimentItem(std::shared_ptr<Experiment> experiment) : TreeIte
     appendRow(_peaks);
 }
 
-ExperimentItem::~ExperimentItem()
-{
-    // no longer needed since _experiment is a smart pointer
-    //if (_experiment)
-    //    delete _experiment;
-}
-
 QJsonObject ExperimentItem::toJson()
 {
     std::shared_ptr<SX::Instrument::Experiment> exp_ptr = getExperiment();
@@ -76,5 +69,5 @@ void ExperimentItem::fromJson(const QJsonObject &obj)
 
 InstrumentItem* ExperimentItem::getInstrumentItem()
 {
-	return _instr;
+    return _instr;
 }

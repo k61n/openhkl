@@ -18,12 +18,14 @@
 bool PeakGraphicsItem::_labelVisible = false;
 bool PeakGraphicsItem::_drawBackground = false;
 
-PeakGraphicsItem::PeakGraphicsItem(sptrPeak3D p)
-: PlottableGraphicsItem(nullptr,true,false),
-  _peak(p)
+PeakGraphicsItem::PeakGraphicsItem(sptrPeak3D p):
+    PlottableGraphicsItem(nullptr,true,false),
+    _peak(std::move(p)),
+    _peakEllipse(),
+    _bkgEllipse()
 {
     if (_peak) {
-        Eigen::Vector3d c=_peak->getPeak()->getAABBCenter();
+        Eigen::Vector3d c=_peak->getPeak().getAABBCenter();
         setPos(c[0], c[1]);
     }
     _pen.setWidth(2);
@@ -42,20 +44,14 @@ PeakGraphicsItem::PeakGraphicsItem(sptrPeak3D p)
     setZValue(2);
 }
 
-PeakGraphicsItem::~PeakGraphicsItem()
-{
-}
-
 QRectF PeakGraphicsItem::boundingRect() const
 {
-    const Eigen::Vector3d& l=_peak->getBackground()->getLower();
-    const Eigen::Vector3d& u=_peak->getBackground()->getUpper();
+    const Eigen::Vector3d& l=_peak->getBackground().getLower();
+    const Eigen::Vector3d& u=_peak->getBackground().getUpper();
     qreal w=u[0]-l[0];
     qreal h=u[1]-l[1];
-
     assert(w >= 0.0);
     assert(h >= 0.0);
-
     return QRectF(-w/2.0,-h/2.0,w,h);
 }
 
@@ -63,33 +59,28 @@ void PeakGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 {
     Q_UNUSED(widget);
 
-    if (!isVisible())
+    if (!isVisible()) {
         return;
-
-    if (option->state & QStyle::State_Selected)
+    }
+    if (option->state & QStyle::State_Selected) {
         _pen.setStyle(Qt::DotLine);
-    else
+    } else {
         _pen.setStyle(Qt::SolidLine);
-
+    }
     painter->setRenderHint(QPainter::Antialiasing);
 
-    if (_hovered)
+    if (_hovered) {
         painter->setBrush(QBrush(QColor(255,255,0,120)));
-
+    }
     _label->setVisible(_hovered || _labelVisible);
 
-    const Eigen::Vector3d& peak_l = _peak->getPeak()->getLower();
-    const Eigen::Vector3d& peak_u = _peak->getPeak()->getUpper();
+    const Eigen::Vector3d& peak_l = _peak->getPeak().getLower();
+    const Eigen::Vector3d& peak_u = _peak->getPeak().getUpper();
     qreal peak_w = peak_u[0]-peak_l[0];
     qreal peak_h = peak_u[1]-peak_l[1];
 
-    const Eigen::Vector3d& bkg_l = _peak->getBackground()->getLower();
-    const Eigen::Vector3d& bkg_u = _peak->getBackground()->getUpper();
-    qreal bkg_w = bkg_u[0] - bkg_l[0];
-    qreal bkg_h = bkg_u[1] - bkg_l[1];
-
     if (_peak->isSelected()) {
-        _pen.setColor("green");
+        _pen.setColor(_peak->isObserved() ? "green" : "yellow");
         painter->setPen(_pen);
         drawEllipse(*painter, _peakEllipse);
 
@@ -103,26 +94,25 @@ void PeakGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
         painter->setPen(_pen);
         drawEllipse(*painter, _peakEllipse);
     }
-
     //painter->drawRect(-w2/2,-h2/2,w2,h2);
     _label->setPos(peak_w/2,peak_h/2);
-
 }
 
-void PeakGraphicsItem::setFrame(int frame)
+void PeakGraphicsItem::setFrame(unsigned long frame)
 {
-    const Eigen::Vector3d& l=_peak->getPeak()->getLower();
-    const Eigen::Vector3d& u=_peak->getPeak()->getUpper();
+    const Eigen::Vector3d& l=_peak->getPeak().getLower();
+    const Eigen::Vector3d& u=_peak->getPeak().getUpper();
+
     if (frame>=l[2] && frame<=u[2]) {
         setVisible(true);
-        _label->setVisible(_labelVisible);        
+        _label->setVisible(_labelVisible);
         Eigen::RowVector3d hkl;
         bool success =_peak->getMillerIndices(hkl,true);
         QString hklString;
         hklString=QString("%1,%2,%3").arg(hkl[0]).arg(hkl[1]).arg(hkl[2]);
         _label->setPlainText(hklString);
-        _peakEllipse = calculateEllipse(*_peak->getPeak(), frame);
-        _bkgEllipse = calculateEllipse(*_peak->getBackground(), frame);
+        _peakEllipse = calculateEllipse(_peak->getPeak(), frame);
+        _bkgEllipse = calculateEllipse(_peak->getBackground(), frame);
     }
     else {
         setVisible(false);
@@ -162,7 +152,7 @@ PeakGraphicsItem::Ellipse PeakGraphicsItem::calculateEllipse(const SX::Geometry:
         M = ellipse_shape.getRSinv();
         p = ellipse_shape.getCenter();
     }
-    catch(std::bad_cast& e){
+    catch(...){
         // bad cast, so just use information from bounding box and return early
         Eigen::Vector3d lower = shape.getLower();
         Eigen::Vector3d upper = shape.getUpper();
@@ -184,8 +174,8 @@ PeakGraphicsItem::Ellipse PeakGraphicsItem::calculateEllipse(const SX::Geometry:
     // set v = sin(alpha)*y + cos(alpha)*x
     // and transform into standard form a*(u-u0)^2 + b*(v-v0)^2 = 1
 
-    const double x0 = 0.0; //p(0);
-    const double y0 = 0.0; //p(1);
+    //const double x0 = 0.0; //p(0);
+    // const double y0 = 0.0; //p(1);
     const double z0 = p(2);
 
     const double A = M(0,0);
@@ -235,8 +225,9 @@ void PeakGraphicsItem::plot(SXPlot* plot)
 {
 
     auto p=dynamic_cast<PeakPlot*>(plot);
-    if (!p)
+    if (p == nullptr) {
         return;
+    }
 
     const Eigen::VectorXd& total=_peak->getProjection();
     const Eigen::VectorXd& signal=_peak->getPeakProjection();
@@ -245,34 +236,34 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     const Eigen::VectorXd& totalSigma=_peak->getProjectionSigma();
 
     // Transform to QDouble
-    QVector<double> qx(total.size());
-    QVector<double> qtotal(total.size());
-    QVector<double> qtotalE(total.size());
-    QVector<double> qpeak(total.size());
-    QVector<double> qbkg(total.size());
+    QVector<double> qx(int(total.size()));
+    QVector<double> qtotal(int(total.size()));
+    QVector<double> qtotalE(int(total.size()));
+    QVector<double> qpeak(int(total.size()));
+    QVector<double> qbkg(int(total.size()));
 
     //Copy the data
-    double min=std::floor(_peak->getBackground()->getLower()[2]);
-    double max=std::ceil(_peak->getBackground()->getUpper()[2]);
-    if (min<0)
-    	min=0;
-    if (max>_peak->getData()->getNFrames()-1)
-    	max=_peak->getData()->getNFrames()-1;
-    for (int i=0;i<total.size();++i)
-    {
+    double min=std::floor(_peak->getBackground().getLower()[2]);
+    double max=std::ceil(_peak->getBackground().getUpper()[2]);
+
+    if (min<0) {
+        min=0;
+    }
+    if (max>_peak->getData()->getNFrames()-1) {
+        max=_peak->getData()->getNFrames()-1;
+    }
+    for (int i = 0; i < total.size(); ++i) {
         qx[i]= min + static_cast<double>(i)*(max-min)/(total.size()-1);
         qtotal[i]=total[i];
         qtotalE[i]=totalSigma[i];
         qpeak[i]=signal[i];
         qbkg[i]=bkg[i];
     }
-
     p->graph(0)->setDataValueError(qx, qtotal, qtotalE);
     p->graph(1)->setData(qx,qpeak);
     p->graph(2)->setData(qx,qbkg);
 
     // Now update text info:
-
     Eigen::RowVector3d hkl;
     bool success = _peak->getMillerIndices(hkl,true);
 
@@ -281,24 +272,21 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     _peak->getGammaNu(gamma,nu);
     gamma/=SX::Units::deg;
     nu/=SX::Units::deg;
-    info+=" "+QString((QChar) 0x03B3)+","+QString((QChar) 0x03BD)+":"+QString::number(gamma,'f',2)+","+QString::number(nu,'f',2)+"\n";
+    info+=" "+QString(QChar(0x03B3))+","+QString(QChar(0x03BD))+":"+QString::number(gamma,'f',2)+","+QString::number(nu,'f',2)+"\n";
     double intensity=_peak->getScaledIntensity();
     double sI=_peak->getScaledSigma();
-    info+="Intensity ("+QString((QChar) 0x03C3)+"I): "+QString::number(intensity)+" ("+QString::number(sI,'f',2)+")\n";
+    info+="Intensity ("+QString(QChar(0x03C3))+"I): "+QString::number(intensity)+" ("+QString::number(sI,'f',2)+")\n";
     double l=_peak->getLorentzFactor();
-    info+="Cor. int. ("+QString((QChar) 0x03C3)+"I): "+QString::number(intensity/l,'f',2)+" ("+QString::number(sI/l,'f',2)+")\n";
-
+    info+="Cor. int. ("+QString(QChar(0x03C3))+"I): "+QString::number(intensity/l,'f',2)+" ("+QString::number(sI/l,'f',2)+")\n";
     info += "p value (" + QString::number(_peak->pValue(), 'f', 3) + ")\n";
 
     double scale=_peak->getScale();
     double monitor=_peak->getData()->getMetadata()->getKey<double>("monitor");
     info+="Monitor "+QString::number(monitor*scale)+" counts";
     QCPPlotTitle* title=dynamic_cast<QCPPlotTitle*>(p->plotLayout()->element(0,0));
-    if (title)
+    if (title != nullptr) {
         title->setText(info);
-
+    }
     p->rescaleAxes();
-
     p->replot();
-
 }

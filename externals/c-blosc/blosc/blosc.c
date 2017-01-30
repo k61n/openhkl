@@ -394,7 +394,7 @@ static int lz4hc_wrap_compress(const char* input, size_t input_length,
     return -1;   /* input larger than 1 GB is not supported */
   /* clevel for lz4hc goes up to 16, at least in LZ4 1.1.3 */
   cbytes = LZ4_compressHC2_limitedOutput(input, output, (int)input_length,
-					 (int)maxout, clevel*2-1);
+                     (int)maxout, clevel*2-1);
   return cbytes;
 }
 
@@ -446,7 +446,7 @@ static int zlib_wrap_compress(const char* input, size_t input_length,
   int status;
   uLongf cl = maxout;
   status = compress2(
-	     (Bytef*)output, &cl, (Bytef*)input, (uLong)input_length, clevel);
+         (Bytef*)output, &cl, (Bytef*)input, (uLong)input_length, clevel);
   if (status != Z_OK){
     return 0;
   }
@@ -1130,10 +1130,10 @@ int blosc_compress(int clevel, int doshuffle, size_t typesize, size_t nbytes,
 }
 
 int blosc_run_decompression_with_context(struct blosc_context* context,
-				    const void* src,
-				    void* dest,
-				    size_t destsize,
-				    int numinternalthreads)
+                    const void* src,
+                    void* dest,
+                    size_t destsize,
+                    int numinternalthreads)
 {
   uint8_t version;
   uint8_t versionlz;
@@ -1204,7 +1204,7 @@ int blosc_run_decompression_with_context(struct blosc_context* context,
 
 /* The public routine for decompression with context. */
 int blosc_decompress_ctx(const void *src, void *dest, size_t destsize,
-			 int numinternalthreads)
+             int numinternalthreads)
 {
   struct blosc_context context;
   int result = blosc_run_decompression_with_context(&context, src, dest, destsize, numinternalthreads);
@@ -1780,18 +1780,22 @@ void blosc_set_blocksize(size_t size)
 
 void blosc_init(void)
 {
-  pthread_mutex_init(&global_comp_mutex, NULL);
-  g_global_context = (struct blosc_context*)my_malloc(sizeof(struct blosc_context));
-  g_global_context->threads_started = 0;
-  g_initlib = 1;
+  if (!g_initlib) {
+    pthread_mutex_init(&global_comp_mutex, NULL);
+    g_global_context = (struct blosc_context*)my_malloc(sizeof(struct blosc_context));
+    g_global_context->threads_started = 0;
+    g_initlib = 1;
+  }
 }
 
 void blosc_destroy(void)
 {
-  g_initlib = 0;
-  blosc_release_threadpool(g_global_context);
-  my_free(g_global_context);
-  pthread_mutex_destroy(&global_comp_mutex);
+  if (g_initlib) {
+    g_initlib = 0;
+    blosc_release_threadpool(g_global_context);
+    my_free(g_global_context);
+    pthread_mutex_destroy(&global_comp_mutex);
+  }
 }
 
 int blosc_release_threadpool(struct blosc_context* context)
