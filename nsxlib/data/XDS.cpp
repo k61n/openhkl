@@ -35,8 +35,8 @@
 
 #include "XDS.h"
 #include "Peak3D.h"
-#include "MergedPeak.h"
 #include "ResolutionShell.h"
+#include "MergedPeak.h"
 
 #include <ostream>
 #include <algorithm>
@@ -50,11 +50,8 @@ static const string space = "    ";
 static const str_vector merged_records = {"H", "K", "L", "IOBS", "SIGMA(IOBS)"};
 static const str_vector unmerged_records = {"H", "K", "L", "XD", "YD", "ZD", "IOBS", "SIGMA(IOBS)"};
 
-namespace SX
-{
-
-namespace Data
-{
+namespace SX {
+namespace Data {
 
 using sptrPeak3D = XDS::sptrPeak3D;
 using PeakList = XDS::PeakList;
@@ -162,12 +159,13 @@ XDS::RecordList XDS::getMergedRecords() const
         return records;
     }
 
-    auto cell = _peaks[0]->getUnitCell();
+    auto cell = _peaks[0]->getActiveUnitCell();
     auto grp = SX::Crystal::SpaceGroup(cell->getSpaceGroup());
 
     for (auto&& peak: _peaks) {
-        if (cell != peak->getUnitCell()) {
+        if (cell != peak->getActiveUnitCell()) {
             // qCritical() << "Only one unit cell is supported at this time!!";
+            // todo(jonathan): better handling of this case!
             continue;
         }
         res.addPeak(peak);
@@ -208,7 +206,6 @@ XDS::RecordList XDS::getUnmergedRecords() const
     for (auto&& peak: _peaks) {
         records.emplace_back(*peak);
     }
-
     std::sort(records.begin(), records.end());
 }
 

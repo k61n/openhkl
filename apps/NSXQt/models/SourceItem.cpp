@@ -5,7 +5,7 @@
 #include "Source.h"
 #include "Experiment.h"
 #include "models/SourceItem.h"
-#include "Tree/SourcePropertyWidget.h"
+#include "tree/SourcePropertyWidget.h"
 
 SourceItem::SourceItem(std::shared_ptr<SX::Instrument::Experiment> experiment) : InspectableTreeItem(experiment)
 {

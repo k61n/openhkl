@@ -15,6 +15,8 @@
 #include "DataItem.h"
 #include "PeakListItem.h"
 
+#include <QtDebug>
+
 using SX::Instrument::Experiment;
 
 ExperimentItem::ExperimentItem(std::shared_ptr<Experiment> experiment) : TreeItem(experiment)
@@ -41,19 +43,6 @@ ExperimentItem::ExperimentItem(std::shared_ptr<Experiment> experiment) : TreeIte
     appendRow(_peaks);
 }
 
-void ExperimentItem::setData(const QVariant &value, int role)
-{
-    QStandardItem::setData(value,role);
-    _experiment->setName(text().toStdString());
-}
-
-ExperimentItem::~ExperimentItem()
-{
-    // no longer needed since _experiment is a smart pointer
-    //if (_experiment)
-    //    delete _experiment;
-}
-
 QJsonObject ExperimentItem::toJson()
 {
     std::shared_ptr<SX::Instrument::Experiment> exp_ptr = getExperiment();
@@ -76,4 +65,9 @@ void ExperimentItem::fromJson(const QJsonObject &obj)
     _instr->fromJson(obj["instrument"].toObject());
     _data->fromJson(obj["data"].toObject());
     _peaks->fromJson(obj["peaks"].toObject());
+}
+
+InstrumentItem* ExperimentItem::getInstrumentItem()
+{
+    return _instr;
 }

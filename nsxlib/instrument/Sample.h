@@ -39,6 +39,7 @@
 #include "ConvexHull.h"
 #include "Material.h"
 #include "UnitCell.h"
+#include "Types.h"
 
 namespace SX
 {
@@ -46,7 +47,7 @@ namespace SX
 namespace Instrument
 {
 
-typedef std::vector<std::shared_ptr<SX::Crystal::UnitCell>> CellList;
+using SX::Crystal::CellList;
 
 class Sample : public Component
 {
@@ -80,21 +81,23 @@ public:
 	//! Create a new crystal with Empty UnitCell, and return it
 	std::shared_ptr<SX::Crystal::UnitCell> addUnitCell();
 	//! Get the UnitCell of Crystal number i in the list
-	std::shared_ptr<SX::Crystal::UnitCell> getUnitCell(unsigned int i);
+	std::shared_ptr<SX::Crystal::UnitCell> getUnitCell(int i);
+	const CellList& getUnitCells() const;
 	//! Return number of crystals
 	std::size_t getNCrystals() const;
 	//!
+	void removeUnitCell(int i);
 	void removeUnitCell(std::shared_ptr<SX::Crystal::UnitCell> cell);
 
 	//! Gets the Z number of a given unit cell
-	unsigned int getZ(unsigned int cellIndex) const;
+	unsigned int getZ(int index) const;
 	//! Sets the Z number of a given unit cell
-	void setZ(unsigned int Z, unsigned int cellIndex);
+	void setZ(int Z, int index);
 
 	//! Gets the Material of one of the unit cells of this Sample
-	SX::Chemistry::sptrMaterial getMaterial(unsigned int cellIndex) const;
+	SX::Chemistry::sptrMaterial getMaterial(int index) const;
 	//! Sets the Material of one of the unit cells of this Sample
-	void setMaterial(Chemistry::sptrMaterial material, unsigned int cellIndex);
+	void setMaterial(Chemistry::sptrMaterial material, int index);
 
 private:
 	SX::Geometry::ConvexHull<double> _sampleShape;

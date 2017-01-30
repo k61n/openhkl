@@ -43,11 +43,8 @@
 #include "Sample.h"
 #include "Source.h"
 
-namespace SX
-{
-
-namespace Crystal
-{
+namespace SX {
+namespace Crystal {
 
 /** @brief UB functor is used to refine UB-matrix and instrument offsets
  */
@@ -66,11 +63,12 @@ struct UBFunctor : public Utils::LMFunctor<double> {
      * @param fvec the residuals
      */
     int operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const;
+
     /*
      * @brief Add a peak (e.g. an observation) to the minimizer
      * @param peak the peak to be added
      */
-    void addPeak(const Peak3D& peak);
+    void addPeak(const Peak3D& peak, const Eigen::RowVector3d& hkl);
 
     void clearPeaks();
 
@@ -104,12 +102,13 @@ struct UBFunctor : public Utils::LMFunctor<double> {
      */
     void refineParameter(unsigned int idx, bool refine);
 
-    std::vector<Peak3D> _peaks;
+    std::vector<std::pair<Peak3D,Eigen::RowVector3d>> _peaks;
     std::shared_ptr<SX::Instrument::Detector> _detector;
     std::shared_ptr<SX::Instrument::Sample> _sample;
     std::shared_ptr<SX::Instrument::Source> _source;
     std::set<int> _fixedParameters;
 };
+
 
 class UBMinimizer;
 
@@ -149,7 +148,7 @@ public:
      * @brief Add a peak (e.g. an observation) to the minimizer
      * @param peak the peak to be added
      */
-    void addPeak(const Peak3D& peak);
+    void addPeak(const Peak3D& peak, const Eigen::RowVector3d& hkl);
 
     void clearPeaks();
 
@@ -208,9 +207,7 @@ private:
     std::map<unsigned int,double> _start;
 };
 
-
 } // end namespace Crystal
-
 } // end namespace SX
 
-#endif /* NSXTOOL_UBMINIMIZER_H_ */
+#endif // NSXTOOL_UBMINIMIZER_H_

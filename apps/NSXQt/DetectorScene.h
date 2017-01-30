@@ -76,14 +76,13 @@ protected:
     void wheelEvent(QGraphicsSceneWheelEvent *event);
 
 public slots:
-    void activateIndexingMode(std::shared_ptr<SX::Crystal::UnitCell>);
     // To be called to update detector image
-    void setData(std::shared_ptr<SX::Data::IData>, size_t frame);
-    void setData(std::shared_ptr<SX::Data::IData>);
+    void setData(const std::shared_ptr<SX::Data::IData>&, size_t frame);
+    void setData(const std::shared_ptr<SX::Data::IData>&);
     void changeFrame(size_t frame = 0);
     void setMaxIntensity(int);
-    PeakGraphicsItem* findPeakGraphicsItem(sptrPeak3D peak);
-    void setPeakIndex(sptrPeak3D peak,const Eigen::Vector3d& index);
+    PeakGraphicsItem* findPeakGraphicsItem(const sptrPeak3D& peak);
+//    void setPeakIndex(sptrPeak3D peak,const Eigen::Vector3d& index);
     void updatePeaks();
     void updatePeakCalcs();
     void redrawImage();
@@ -128,7 +127,6 @@ private:
     std::vector<PeakCalcGraphicsItem*> _peakCalcs;
     QList<MaskGraphicsItem*> _masks;
     SXGraphicsItem* _lastClickedGI;
-    std::shared_ptr<SX::Crystal::UnitCell> _cell;
     std::unique_ptr<SX::Crystal::Indexer> _indexer;
     std::vector<SX::Crystal::PeakCalc> _precalculatedPeaks;
 

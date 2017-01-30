@@ -70,10 +70,13 @@ PeakCalc::PeakCalc(double h,double k,double l, double x,double y, double frame):
 sptrPeak3D PeakCalc::averagePeaks(const std::shared_ptr<IData> data, double distance)
 {
     Eigen::Matrix3d peak_shape, bkg_shape;
+
     sptrPeak3D peak = std::make_shared<Peak3D>(Peak3D(data));
     PeakList neighbors;
-
     const double original_distance = distance;
+
+    // An averaged peak is by definition not an observed peak but a calculated peak
+    peak->setObserved(false);
 
     do {
         neighbors = findNeighbors(data->getPeaks(), distance);
@@ -84,14 +87,13 @@ sptrPeak3D PeakCalc::averagePeaks(const std::shared_ptr<IData> data, double dist
         return nullptr;
     }
 
-    peak->setMillerIndices(_h, _k, _l);
     double weight = 1.0 / double(neighbors.size());
     peak_shape.setZero();
     bkg_shape.setZero();
 
-    for(auto&& p: neighbors) {
-        using ellipsoid = Ellipsoid<double, 3>;
+    using ellipsoid = Ellipsoid<double, 3>;
 
+    for(auto&& p: neighbors) {
         try {
             // in current implementation these casts should always work
             const ellipsoid& ell_peak = dynamic_cast<const ellipsoid&>(p->getPeak());
@@ -119,15 +121,14 @@ sptrPeak3D PeakCalc::averagePeaks(const std::shared_ptr<IData> data, double dist
         eigenvalues(i) = 1.0 / std::sqrt(eigenvalues(i));
     }
 
-    peak->setPeakShape(new Ellipsoid<double, 3>(center, eigenvalues, solver.eigenvectors()));
+    peak->setPeakShape(new ellipsoid(center, eigenvalues, solver.eigenvectors()));
     solver.compute(bkg_shape);
     eigenvalues = solver.eigenvalues();
 
     for (int i = 0; i < 3; ++i) {
         eigenvalues(i) = 1.0 / std::sqrt(eigenvalues(i));
     }
-
-    peak->setBackgroundShape(new Ellipsoid<double, 3>(center, eigenvalues, solver.eigenvectors()));
+    peak->setBackgroundShape(new ellipsoid(center, eigenvalues, solver.eigenvectors()));
     return peak;
 }
 

@@ -15,25 +15,17 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item alignment="Qt::AlignLeft">
-      <widget class="QLineEdit" name="lineEdit"/>
-     </item>
-     <item>
-      <widget class="PeakTableView" name="tableView">
-       <property name="focusPolicy">
-        <enum>Qt::StrongFocus</enum>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QTableView::item:selected {
-background-color: qlineargradient(x1 : 0, y1 : 0, x2 : 0, y2 :   1, stop :   0.0 #f5f9ff,
-                stop :   0.5 #ddddff, stop :   0.55 #eeeeff, stop :   1.0 #f5f9ff);
-color: #000000;
-}</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <widget class="QLineEdit" name="lineEdit"/>
+   </item>
+   <item row="1" column="0">
+    <widget class="PeakTableView" name="tableView">
+     <property name="focusPolicy">
+      <enum>Qt::StrongFocus</enum>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

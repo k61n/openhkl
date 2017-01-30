@@ -4,7 +4,11 @@
 #include <string>
 #include <memory>
 
+#include <QList>
+
 #include "InspectableTreeItem.h"
+
+class UnitCellItem;
 
 using namespace SX::Instrument;
 
@@ -16,6 +20,11 @@ public:
     QWidget* inspectItem() override;
     QJsonObject toJson() override;
     void fromJson(const QJsonObject& obj) override;
+
+    QList<UnitCellItem*> getUnitCellItems();
+
+    void addUnitCell();
+
 };
 
 #endif // SAMPLEITEM_H

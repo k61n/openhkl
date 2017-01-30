@@ -40,58 +40,61 @@
 #include <QFileDialog>
 #include <QMenu>
 #include <QTableView>
+
 #include <IData.h>
+#include "Types.h"
+
 #include <MainWindow.h>
 
 class PeakCustomPlot;
 class QContextMenuEvent;
 class QMouseEvent;
 
-namespace SX
-{
-namespace Crystal
-{
-class Peak3D;
-using sptrPeak3D=std::shared_ptr<Peak3D>;
-}
-}
-
 using SX::Crystal::sptrPeak3D;
+using SX::Crystal::sptrUnitCell;
 
 class PeakTableView : public QTableView
 {
     Q_OBJECT
 public:
+
     explicit PeakTableView(QWidget* parent = 0);
-    void setData(std::vector<std::shared_ptr<SX::Data::IData>>);
     void contextMenuEvent(QContextMenuEvent *);
-    void mousePressEvent(QMouseEvent *event);
-    void keyPressEvent(QKeyEvent *event);
+
+    QItemSelectionModel::SelectionFlags selectionCommand(const QModelIndex &index, const QEvent *event) const;
+
 signals:
     void plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&);
     void plotPeak(sptrPeak3D);
+    void autoIndexed();
+
 public slots:
-    //! Selection of peak is changed
-    void peakChanged(QModelIndex current,QModelIndex last);
-    //! Display context menu
-//    void customMenuRequested(QPoint pos);
-    //! Sort the current table by column inde
-    void sortByColumn(int column);
-    //! Sort equivalent reflections
-    void sortEquivalents();
     //! Write the current list to FullProf
     void writeFullProf();
     //! Write the currrent list to ShelX
     void writeShelX();
     //! Normalize to monitor.
     void normalizeToMonitor();
-    //! Change selected status of peak when double-clicked
-    void deselectPeak(QModelIndex index);
     //! Plot as function of parameter. Needs to be a numeric type
     void plotAs(const std::string& key);
     //! Search peaks with hkl matching part of the string. Text must represent h,k,l values separated by white spaces
-    void showPeaksMatchingText(QString text);
+    void showPeaksMatchingText(const QString& text);
+    //! Plot selected peak
+    void plotSelectedPeak(int index);
+
+    void clearSelectedPeaks();
+    void selectAllPeaks();
+    void selectValidPeaks();
+    void selectUnindexedPeaks();
+    void togglePeaksSelection();
+
+    void updateUnitCell(const sptrUnitCell& unitCell);
+
+    void openAutoIndexingDialog();
+    void openRefiningParametersDialog();
+
 private:
+
     static bool writeNewShelX(std::string filename, const std::vector<sptrPeak3D>& peaks);
     static bool writeStatistics(std::string filename, const std::vector<sptrPeak3D>& peaks,
                                 double dmin, double dmax, int shells, bool friedel);
@@ -103,11 +106,13 @@ private:
     void sortByTransmission(bool up);
     bool checkBeforeWriting();
     void constructTable();
+
+    bool checkBeforeWritting();
+
     std::string getPeaksRange() const;
-    std::vector<sptrPeak3D> _peaks;
-    //! Which column is sorted and up or down
-    std::tuple<int,bool> _columnUp;
-    PeakCustomPlot* _plotter;
+
+private:
+
     //! Flag indicating that data have been normalized either to time or monitor.
     bool _normalized;
     bool _friedel;

@@ -52,8 +52,10 @@ MergedPeak::MergedPeak(const SpaceGroup& grp, bool friedel):
 
 bool MergedPeak::addPeak(const sptrPeak3D& peak)
 {
+    auto hkl1 = _hkl.cast<double>();
+    auto hkl2 = peak->getIntegerMillerIndices().cast<double>();
     // peak is not equivalent to one already on the list
-    if (!_peaks.empty() && !_grp.isEquivalent(_hkl.cast<double>(), peak->getMillerIndices(), _friedel)) {
+    if (!_peaks.empty() && !_grp.isEquivalent(hkl1, hkl2, _friedel)) {
         return false;
     }
 

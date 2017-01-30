@@ -14,6 +14,7 @@
 #include "Experiment.h"
 #include "ProgressHandler.h"
 #include "PeakFinder.h"
+#include "Types.h"
 
 using namespace SX::Instrument;
 
@@ -28,6 +29,8 @@ namespace Data
 }
 }
 
+using SX::Crystal::sptrUnitCell;
+
 class ExperimentTree : public QTreeView
 {
     Q_OBJECT
@@ -39,8 +42,8 @@ public:
 
 signals:
     void plotData(std::shared_ptr<SX::Data::IData>);
-    void showPeakList(std::vector<std::shared_ptr<SX::Data::IData>>);
     void inspectWidget(QWidget*);
+
 public slots:
     void keyPressEvent(QKeyEvent* event);
     void onCustomMenuRequested(const QPoint& point);
@@ -59,6 +62,7 @@ public slots:
     //void integrateCalculatedPeaks();
     void peakFitDialog();
     void incorporateCalculatedPeaks();
+    void setHKLTolerance();
 
 private:
 

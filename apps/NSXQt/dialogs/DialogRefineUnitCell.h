@@ -4,21 +4,19 @@
 #include <QDialog>
 
 #include <memory>
+
 #include "UnitCell.h"
 #include "UBMinimizer.h"
+#include "Types.h"
 
 namespace Ui
 {
 class DialogRefineUnitCell;
 }
 
-namespace SX
-{
-namespace Instrument
-{
-class Experiment;
-}
-}
+using SX::Crystal::sptrPeak3D;
+using SX::Crystal::sptrUnitCell;
+using SX::Instrument::sptrExperiment;
 
 class DialogRefineUnitCell : public QDialog
 {
@@ -26,7 +24,8 @@ class DialogRefineUnitCell : public QDialog
 
 public:
     explicit DialogRefineUnitCell(std::shared_ptr<SX::Instrument::Experiment> experiment,
-                                  std::shared_ptr<SX::Crystal::UnitCell> cell,
+                                  sptrUnitCell unitCell,
+                                  std::vector<sptrPeak3D> peaks,
                                   QWidget *parent = 0);
     ~DialogRefineUnitCell();
     void setLatticeParams();
@@ -35,18 +34,23 @@ public:
     void setWavelength();
     void setMinimizer();
     void setSolution(const SX::Crystal::UBSolution& solution);
+
+signals:
+    void cellUpdated(sptrUnitCell);
+
 private slots:
-    void refineParameter(bool checked,int i);
-    void cellSampleHasChanged(int i,int j);
-    void cellDetectoreHasChanged(int i,int j);
-    void on_pushButton_Refine_clicked();
+    void refineParameter(bool checked, int i);
+    void cellSampleHasChanged(int i, int j);
+    void cellDetectorHasChanged(int i, int j);
+    void refineParameters();
     void createOffsetsTables();
-    void on_pushButton_Reset_clicked();
+    void resetParameters();
 
 private:
     Ui::DialogRefineUnitCell *ui;
-    std::shared_ptr<SX::Instrument::Experiment> _experiment;
-    std::shared_ptr<SX::Crystal::UnitCell> _cell;
+    sptrExperiment _experiment;
+    sptrUnitCell _unitCell;
+    std::vector<sptrPeak3D> _peaks;
     SX::Crystal::UBMinimizer _minimizer;
 };
 

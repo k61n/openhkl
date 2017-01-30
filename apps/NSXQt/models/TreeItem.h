@@ -22,6 +22,8 @@ public:
     std::shared_ptr<Experiment> getExperiment();
     virtual ~TreeItem();
 
+    virtual void setData(const QVariant & value, int role=Qt::UserRole + 1) override;
+
     virtual QJsonObject toJson();
     virtual void fromJson(const QJsonObject& obj);
 

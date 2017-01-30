@@ -1,18 +1,26 @@
 #ifndef UNITCELLITEM_H
 #define UNITCELLITEM_H
+
 #include "InspectableTreeItem.h"
+
 #include <memory>
 
-namespace SX{
-    namespace Instrument{
-        class Experiment;
-    }
-    namespace Crystal{
-        class UnitCell;
-    }
+#include "Types.h"
+
+namespace SX
+{
+namespace Instrument
+{
+class Experiment;
+}
+namespace Crystal{
+class UnitCell;
+}
 }
 
 class QWidget;
+
+using SX::Crystal::sptrUnitCell;
 
 class UnitCellItem : public InspectableTreeItem
 {
@@ -20,7 +28,13 @@ public:
     UnitCellItem(std::shared_ptr<SX::Instrument::Experiment> experiment,std::shared_ptr<SX::Crystal::UnitCell>);
     ~UnitCellItem();
     QWidget* inspectItem();
-    std::shared_ptr<SX::Crystal::UnitCell> getCell();
+    std::shared_ptr<SX::Crystal::UnitCell> getUnitCell();
+
+    void info() const;
+
+    void openTransformationMatrixDialog();
+    void openChangeUnitCellDialog();
+
 private:
     std::shared_ptr<SX::Crystal::UnitCell> _cell;
 };

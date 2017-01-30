@@ -195,7 +195,8 @@ void PeakFitDialog::updatePeak()
     _peak = the_peak;
 
     // get AABB
-    const SX::Geometry::IShape<double,3>& aabb = the_peak->getBackground();
+
+    auto&& aabb = the_peak->getBackground();
 
     Eigen::Vector3d lower = aabb.getLower();
     Eigen::Vector3d upper = aabb.getUpper();

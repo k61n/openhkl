@@ -79,8 +79,8 @@ int UBFunctor::operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const
 
     #pragma omp parallel for
     for (unsigned int i=0; i<_peaks.size();++i)	{
-        Eigen::RowVector3d qVector=_peaks[i].getQ();
-        const Eigen::RowVector3d& hkl=_peaks[i].getMillerIndices();
+        Eigen::RowVector3d qVector=_peaks[i].first.getQ();
+        Eigen::RowVector3d hkl=_peaks[i].second;;
         fvec(3*i)   = (x[0]*hkl[0] + x[3]*hkl[1] + x[6]*hkl[2] - qVector[0]);
         fvec(3*i+1) = (x[1]*hkl[0] + x[4]*hkl[1] + x[7]*hkl[2] - qVector[1]);
         fvec(3*i+2) = (x[2]*hkl[0] + x[5]*hkl[1] + x[8]*hkl[2] - qVector[2]);
@@ -88,9 +88,9 @@ int UBFunctor::operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const
     return 0;
 }
 
-void UBFunctor::addPeak(const Peak3D& peak)
+void UBFunctor::addPeak(const Peak3D& peak, const Eigen::RowVector3d& hkl)
 {
-    _peaks.emplace_back(peak);
+    _peaks.push_back(std::make_pair(peak, hkl));
 }
 
 void UBFunctor::clearPeaks()
@@ -186,9 +186,9 @@ UBMinimizer::UBMinimizer() : _functor(UBFunctor()), _solution(), _start()
 {
 }
 
-void UBMinimizer::addPeak(const Peak3D& peak)
+void UBMinimizer::addPeak(const Peak3D& peak, const Eigen::RowVector3d& hkl)
 {
-    _functor.addPeak(peak);
+    _functor.addPeak(peak,hkl);
 }
 
 void UBMinimizer::clearPeaks()
@@ -320,7 +320,7 @@ int UBMinimizer::runGSL(unsigned int maxIter)
     minimizer.setfTol(1e-10);
     minimizer.setgTol(1e-10);
 
-    int status = minimizer.fit(maxIter);
+    bool status = minimizer.fit(maxIter);
 
     if (status) {
         x = minimizer.params();
@@ -496,9 +496,9 @@ std::ostream& operator<<(std::ostream& os, const UBSolution& solution)
     for (unsigned int i=0;i<detectorG->getNAxes();++i) {
         os << detectorG->getAxis(i)->getLabel() << " ";
         SX::Instrument::Axis* axis=detectorG->getAxis(i);
-        if (dynamic_cast<SX::Instrument::TransAxis*>(axis)) {
+        if (dynamic_cast<SX::Instrument::TransAxis*>(axis) != nullptr) {
             os << solution._detectorOffsets[i]/SX::Units::mm << "(" << solution._sigmaDetectorOffsets[i]/SX::Units::mm << ") mm " << std::endl;
-        } else if (dynamic_cast<SX::Instrument::RotAxis*>(axis)) {
+        } else if (dynamic_cast<SX::Instrument::RotAxis*>(axis) != nullptr) {
             os << solution._detectorOffsets[i]/SX::Units::deg << "(" << solution._sigmaDetectorOffsets[i]/SX::Units::deg << ") deg " << std::endl;
         }
     }
@@ -508,10 +508,11 @@ std::ostream& operator<<(std::ostream& os, const UBSolution& solution)
     for (unsigned int i=0;i<sampleG->getNAxes();++i) {
         os << sampleG->getAxis(i)->getLabel() << " ";
         SX::Instrument::Axis* axis=sampleG->getAxis(i);
-        if (dynamic_cast<SX::Instrument::TransAxis*>(axis))
+        if (dynamic_cast<SX::Instrument::TransAxis*>(axis) != nullptr) {
             os << solution._sampleOffsets[i]/SX::Units::mm << "(" << solution._sigmaSampleOffsets[i]/SX::Units::mm << ") mm " << std::endl;
-        else if (dynamic_cast<SX::Instrument::RotAxis*>(axis))
+        } else if (dynamic_cast<SX::Instrument::RotAxis*>(axis) != nullptr) {
             os << solution._sampleOffsets[i]/SX::Units::deg << "(" << solution._sigmaSampleOffsets[i]/SX::Units::deg << ") deg " << std::endl;
+        }
     }
     os<<std::endl;
     return os;

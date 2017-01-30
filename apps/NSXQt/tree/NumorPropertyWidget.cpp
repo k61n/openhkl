@@ -1,6 +1,6 @@
 #include "ui_NumorPropertyWidget.h"
 #include "models/NumorItem.h"
-#include "Tree/NumorPropertyWidget.h"
+#include "tree/NumorPropertyWidget.h"
 #include "IData.h"
 #include "MetaData.h"
 

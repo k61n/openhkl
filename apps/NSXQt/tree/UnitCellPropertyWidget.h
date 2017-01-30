@@ -5,6 +5,8 @@
 #include <memory>
 #include <Eigen/Dense>
 
+#include "Types.h"
+
 namespace Ui {
 class UnitCellPropertyWidget;
 }
@@ -16,6 +18,8 @@ namespace SX{
 
 class UnitCellItem;
 
+using SX::Crystal::sptrUnitCell;
+
 class UnitCellPropertyWidget : public QWidget
 {
     Q_OBJECT
@@ -24,27 +28,19 @@ public:
     explicit UnitCellPropertyWidget(UnitCellItem* caller,QWidget *parent = 0);
     ~UnitCellPropertyWidget();
 
-signals:
-    void activateIndexingMode(std::shared_ptr<SX::Crystal::UnitCell>);
-    void cellUpdated();
+public slots:
+
+    void updateCellParameters(sptrUnitCell);
+
 private slots:
     void getLatticeParams();
     void setLatticeParams();
-    void on_pushButton_Info_clicked();
-    void on_pushButton_Index_clicked();
-    void on_pushButton_AutoIndexing_clicked();
-    void on_pushButton_Refine_clicked();
     void setChemicalFormula(const QString &formula);
     void on_spinBox_Z_valueChanged(int arg1);
     void setMassDensity() const;
     void on_lineEdit_ChemicalFormula_editingFinished();
-    void transform(const Eigen::Matrix3d& P);
-    void on_pushButton_TransformationMatrix_clicked();
-//    void on_comboBox_activated(const QString &arg1);
     void onCompleterActivated(const QString &);
-
-public slots:
-    void setCell(const SX::Crystal::UnitCell&);    
+    void setHKLTolerance(double);
 
 private:
     UnitCellItem* _unitCellItem;
