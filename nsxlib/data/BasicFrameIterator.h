@@ -5,7 +5,7 @@
 #define NSXTOOL_BASICFRAMEITERATOR_H_
 
 #include "IFrameIterator.h"
-#include "Types.h"
+#include "../utils/Types.h"
 
 namespace SX {
 namespace Data {

@@ -3,8 +3,8 @@
 #include <stdexcept>
 
 #include "UnitCell.h"
-#include "Units.h"
-#include "gcd.h"
+#include "../utils/Units.h"
+#include "../utils/gcd.h"
 
 namespace SX
 {

@@ -34,7 +34,7 @@
 #include <initializer_list>
 #include <Eigen/Dense>
 #include "AABB.h"
-#include "Types.h"
+#include "../utils/Types.h"
 
 
 namespace SX

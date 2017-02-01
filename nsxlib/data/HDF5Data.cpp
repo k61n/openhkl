@@ -1,10 +1,10 @@
 #include "HDF5Data.h"
 #include "blosc.h"
 #include "blosc_filter.h"
-#include "Detector.h"
-#include "Gonio.h"
-#include "Sample.h"
-#include "Units.h"
+#include "../instrument/Detector.h"
+#include "../instrument/Gonio.h"
+#include "../instrument/Sample.h"
+#include "../utils/Units.h"
 
 using std::unique_ptr;
 using std::shared_ptr;

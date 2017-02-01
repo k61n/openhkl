@@ -31,7 +31,7 @@
 
 #include <string>
 
-#include "Singleton.h"
+#include "../kernel/Singleton.h"
 
 namespace SX
 {

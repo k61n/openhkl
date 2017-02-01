@@ -32,9 +32,9 @@
 
 #include <string>
 
-#include "Factory.h"
-#include "Singleton.h"
-#include "Axis.h"
+#include "../kernel/Factory.h"
+#include "../kernel/Singleton.h"
+#include "../instrument/Axis.h"
 
 namespace SX
 {
@@ -47,10 +47,10 @@ using namespace SX::Kernel;
 class AxisFactory : public Factory<Axis,std::string,const proptree::ptree&>, public Singleton<AxisFactory,Constructor,Destructor>
 {
 private:
-	friend class Constructor<AxisFactory>;
-	friend class Destructor<AxisFactory>;
-	AxisFactory();
-	~AxisFactory();
+    friend class Constructor<AxisFactory>;
+    friend class Destructor<AxisFactory>;
+    AxisFactory();
+    ~AxisFactory();
 };
 
 } // end namespace Instrument

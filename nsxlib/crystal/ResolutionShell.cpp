@@ -39,7 +39,7 @@
 #include <iostream>
 
 #include "ResolutionShell.h"
-#include "gcd.h"
+#include "../utils/gcd.h"
 
 namespace SX
 {

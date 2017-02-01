@@ -3,14 +3,14 @@
 #include <memory>
 
 #include "IData.h"
-#include "Experiment.h"
-#include "Detector.h"
-#include "BlobFinder.h"
+#include "../instrument/Experiment.h"
+#include "../instrument/Detector.h"
+#include "../geometry/BlobFinder.h"
 #include "PeakFinder.h"
-#include "Types.h"
-#include "Convolver.h"
-#include "Peak3D.h"
-#include "Sample.h"
+#include "../utils/Types.h"
+#include "../imaging/Convolver.h"
+#include "../crystal/Peak3D.h"
+#include "../instrument/Sample.h"
 #include "IFrameIterator.h"
 
 using SX::Types::RealMatrix;

@@ -39,8 +39,8 @@
 
 #include <Eigen/Dense>
 
-#include <IData.h>
-#include "Diffractometer.h"
+#include "IData.h"
+#include "../instrument/Diffractometer.h"
 
 
 namespace SX {

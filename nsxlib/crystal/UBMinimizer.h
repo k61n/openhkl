@@ -37,11 +37,11 @@
 #include <Eigen/Dense>
 
 
-#include "Detector.h"
-#include "LMFunctor.h"
-#include "Peak3D.h"
-#include "Sample.h"
-#include "Source.h"
+#include "../instrument/Detector.h"
+#include "../utils/LMFunctor.h"
+#include "../crystal/Peak3D.h"
+#include "../instrument/Sample.h"
+#include "../instrument/Source.h"
 
 namespace SX {
 namespace Crystal {

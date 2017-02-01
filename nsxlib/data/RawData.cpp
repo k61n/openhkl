@@ -42,15 +42,15 @@
 
 
 #include "RawData.h"
-#include "Component.h"
-#include "Detector.h"
-#include "Diffractometer.h"
-#include "Gonio.h"
-#include "Parser.h"
-#include "Sample.h"
-#include "Source.h"
-#include "Units.h"
-#include "Monochromator.h"
+#include "../instrument/Component.h"
+#include "../instrument/Detector.h"
+#include "../instrument/Diffractometer.h"
+#include "../instrument/Gonio.h"
+#include "../utils/Parser.h"
+#include "../instrument/Sample.h"
+#include "../instrument/Source.h"
+#include "../utils/Units.h"
+#include "../instrument/Monochromator.h"
 
 using std::ifstream;
 

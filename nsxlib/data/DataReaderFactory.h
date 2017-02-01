@@ -31,11 +31,11 @@
 
 #include <string>
 
-#include "Factory.h"
+#include "../kernel/Factory.h"
 #include "IData.h"
-#include "Singleton.h"
+#include "../kernel/Singleton.h"
 #include <memory>
-#include "Diffractometer.h"
+#include "../instrument/Diffractometer.h"
 
 namespace SX
 {

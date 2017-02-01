@@ -29,7 +29,7 @@
 
 #include <algorithm>
 #include <vector>
-#include "Error.h"
+#include "../kernel/Error.h"
 #include "SpaceGroup.h"
 #include "SpaceGroupSymbols.h"
 #include "Peak3D.h"

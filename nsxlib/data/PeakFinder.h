@@ -4,8 +4,8 @@
 
 #include <memory>
 
-#include "Convolver.h"
-#include "ConvolutionKernel.h"
+#include "../imaging/Convolver.h"
+#include "../imaging/ConvolutionKernel.h"
 
 
 namespace SX

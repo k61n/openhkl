@@ -33,8 +33,8 @@
 
 #include <Eigen/Dense>
 
-#include "Units.h"
-#include "Types.h"
+#include "../utils/Units.h"
+#include "../utils/Types.h"
 
 namespace SX
 {

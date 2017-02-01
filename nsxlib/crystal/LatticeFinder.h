@@ -31,7 +31,7 @@
 #include <vector>
 #include <map>
 #include <Eigen/Dense>
-#include "Cluster.h"
+#include "../geometry/Cluster.h"
 #include <tuple>
 
 using SX::Geometry::Cluster;

@@ -34,19 +34,19 @@
 #include <set>
 
 #include <Eigen/Dense>
-#include "AABB.h"
-#include "ComponentState.h"
+#include "../geometry/AABB.h"
+#include "../instrument/ComponentState.h"
 #include "MetaData.h"
-#include "Diffractometer.h"
-#include "Peak3D.h"
-#include "PeakCalc.h"
+#include "../instrument/Diffractometer.h"
+#include "../crystal/Peak3D.h"
+#include "../crystal/PeakCalc.h"
 
 #include <mutex>
 #include <future>
 
 //#include "IFrameIterator.h"
 
-#include "ProgressHandler.h"
+#include "../utils/ProgressHandler.h"
 
 namespace SX
 {

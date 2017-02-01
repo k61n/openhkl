@@ -34,9 +34,9 @@
  */
 
 #include "XDS.h"
-#include "Peak3D.h"
-#include "ResolutionShell.h"
-#include "MergedPeak.h"
+#include "../crystal/Peak3D.h"
+#include "../crystal/ResolutionShell.h"
+#include "../crystal/MergedPeak.h"
 
 #include <ostream>
 #include <algorithm>

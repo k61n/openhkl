@@ -1,17 +1,20 @@
 
-include_directories(${CMAKE_BINARY_DIR}/include/
-                    chemistry
-                    data
-                    geometry
-                    kernel
-                    imaging
-                    integration/include
-                    materials/include
-                    utils
-                    crystal
-                    instrument
-                    ../externals/c-blosc/blosc)
+# include_directories(${CMAKE_BINARY_DIR}/include/
+#                     chemistry
+#                     data
+#                     geometry
+#                     kernel
+#                     imaging
+#                     integration/include
+#                     materials/include
+#                     utils
+#                     crystal
+#                     instrument
+#                     ../externals/c-blosc/blosc)
 
+include_directories(${CMAKE_SOURCE_DIR}
+                    ../externals/c-blosc/blosc)
+                  
 # note: *.c needed for blosc files in data directory
 file(GLOB_RECURSE sources *.cpp *.c)
 file(GLOB_RECURSE headers *.h)

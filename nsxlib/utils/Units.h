@@ -37,7 +37,7 @@
 #include <boost/units/systems/si.hpp>
 #include <boost/units/systems/si/prefixes.hpp>
 
-#include <Singleton.h>
+#include "../kernel/Singleton.h"
 
 namespace SX
 {

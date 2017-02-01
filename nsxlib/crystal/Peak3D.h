@@ -36,9 +36,9 @@
 #include <Eigen/Dense>
 
 #include "UnitCell.h"
-#include "IShape.h"
-#include "Ellipsoid.h"
-#include "Types.h"
+#include "../geometry/IShape.h"
+#include "../geometry/Ellipsoid.h"
+#include "../utils/Types.h"
 
 namespace SX {
 

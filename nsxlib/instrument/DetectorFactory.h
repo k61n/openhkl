@@ -33,8 +33,8 @@
 #include <string>
 
 #include "Detector.h"
-#include "Factory.h"
-#include "Singleton.h"
+#include "../kernel/Factory.h"
+#include "../kernel/Singleton.h"
 
 namespace SX
 {
@@ -47,10 +47,10 @@ using namespace SX::Kernel;
 class DetectorFactory : public Factory<Detector,std::string,const proptree::ptree&>, public Singleton<DetectorFactory,Constructor,Destructor>
 {
 private:
-	friend class Constructor<DetectorFactory>;
-	friend class Destructor<DetectorFactory>;
-	DetectorFactory();
-	~DetectorFactory();
+    friend class Constructor<DetectorFactory>;
+    friend class Destructor<DetectorFactory>;
+    DetectorFactory();
+    ~DetectorFactory();
 };
 
 } // end namespace Instrument

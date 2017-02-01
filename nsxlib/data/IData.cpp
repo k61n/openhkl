@@ -2,21 +2,21 @@
 #include <stdexcept>
 #include <memory>
 
-#include "Units.h"
+#include "../utils/Units.h"
 
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/operations.hpp>
 
 #include "IData.h"
-#include "Detector.h"
-#include "Gonio.h"
-#include "Sample.h"
-#include "Source.h"
+#include "../instrument/Detector.h"
+#include "../instrument/Gonio.h"
+#include "../instrument/Sample.h"
+#include "../instrument/Source.h"
 
 #include "H5Cpp.h"
 #include "blosc_filter.h"
 #include "blosc.h"
-#include "Ellipsoid.h"
+#include "../geometry/Ellipsoid.h"
 
 #include "IFrameIterator.h"
 #include "BasicFrameIterator.h"

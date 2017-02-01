@@ -1,5 +1,5 @@
 #include "BlobFinder.h"
-#include "IFrameIterator.h"
+#include "../data/IFrameIterator.h"
 
 #include <iostream>
 
