@@ -12,9 +12,11 @@
 #                     instrument
 #                     ../externals/c-blosc/blosc)
 
-include_directories(${CMAKE_SOURCE_DIR}
-                    ../externals/c-blosc/blosc)
-                  
+include_directories(
+    ${CMAKE_BINARY_DIR}/include/
+    ../externals/c-blosc/blosc
+    )
+
 # note: *.c needed for blosc files in data directory
 file(GLOB_RECURSE sources *.cpp *.c)
 file(GLOB_RECURSE headers *.h)
@@ -76,7 +78,7 @@ endif()
 
 
 
-# Install section, installing libraries 
+# Install section, installing libraries
 install(TARGETS NSXTool DESTINATION lib)
 set(INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include/NSXTool/")
 file(GLOB_RECURSE all_headers *.h)
