@@ -9,7 +9,7 @@
 
 #include <nsxlib/crystal/Peak3D.h>
 #include <nsxlib/crystal/UnitCell.h>
-#include "Types.h"
+#include <nsxlib/utils/Types.h>
 
 namespace Ui
 {

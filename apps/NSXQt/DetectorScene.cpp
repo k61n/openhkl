@@ -12,7 +12,7 @@
 #include "IData.h"
 #include "Sample.h"
 #include "Source.h"
-#include "Units.h"
+#include <nsxlib/utils/Units.h>
 
 #include "ColorMap.h"
 #include "DetectorScene.h"

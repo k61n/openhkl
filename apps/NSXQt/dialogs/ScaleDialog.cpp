@@ -27,7 +27,7 @@
 #include <nsxlib/crystal/SpaceGroupSymbols.h>
 #include "IData.h"
 #include <nsxlib/crystal/Peak3D.h>
-#include "Minimizer.h"
+#include <nsxlib/utils/Minimizer.h>
 #include <nsxlib/crystal/RFactor.h>
 
 #include "Externals/qcustomplot.h"

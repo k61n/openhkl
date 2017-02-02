@@ -15,7 +15,7 @@
 #include "IData.h"
 #include <nsxlib/crystal/Peak3D.h>
 #include "Gonio.h"
-#include "Units.h"
+#include <nsxlib/utils/Units.h>
 #include "Monochromator.h"
 
 MCAbsorptionDialog::MCAbsorptionDialog(std::shared_ptr<SX::Instrument::Experiment> experiment, QWidget *parent):

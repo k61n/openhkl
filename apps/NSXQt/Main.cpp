@@ -6,8 +6,7 @@
 
 #include "MainWindow.h"
 #include "NSXQtApp.h"
-#include "Path.h"
-
+#include <nsxlib/utils/Path.h>
 
 int main(int argc, char *argv[])
 {
@@ -26,10 +25,9 @@ int main(int argc, char *argv[])
     QSize screenSize = QApplication::desktop()->geometry().size();
     splashScrWindow.move(screenSize.width()/2-300,screenSize.height()/2-150);
     splashScrWindow.show();
-    QTimer::singleShot(2000, &splashScrWindow ,SLOT(close()));
+    QTimer::singleShot(2000, &splashScrWindow, SLOT(close()));
     w.showMaximized();
     w.show();
-
 
     return a.exec();
 }

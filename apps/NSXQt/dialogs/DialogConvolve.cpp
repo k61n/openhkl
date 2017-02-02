@@ -19,7 +19,7 @@
 
 #include <iostream>
 
-#include "Types.h"
+#include <nsxlib/utils/Types.h>
 
 using RealMatrix = SX::Types::RealMatrix;
 

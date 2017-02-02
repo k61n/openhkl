@@ -43,7 +43,7 @@
 #include "NumorsConversionDialog.h"
 #include "PeakTableView.h"
 #include <nsxlib/crystal/UnitCell.h>
-#include "Units.h"
+#include <nsxlib/utils/Units.h>
 #include "SXPlot.h"
 #include "PeakTableView.h"
 #include "AbsorptionWidget.h"
@@ -62,12 +62,12 @@
 
 #include "DialogConvolve.h"
 
-#include "Path.h"
+#include <nsxlib/utils/Path.h>
 #include "IFrameIterator.h"
-#include "Types.h"
+#include <nsxlib/utils/Types.h>
 
 #include "PeakFinder.h"
-#include "ProgressHandler.h"
+#include <nsxlib/utils/ProgressHandler.h>
 
 #include "SessionModel.h"
 #include "JobHandler.h"

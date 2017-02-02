@@ -7,7 +7,7 @@
 
 #include "IData.h"
 #include <nsxlib/crystal/Peak3D.h>
-#include "Units.h"
+#include <nsxlib/utils/Units.h>
 
 #include "PeakGraphicsItem.h"
 #include "SXPlot.h"

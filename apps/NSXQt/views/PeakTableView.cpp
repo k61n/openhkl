@@ -49,7 +49,7 @@
 #include "IData.h"
 #include <nsxlib/crystal/Peak3D.h>
 
-#include "ProgressHandler.h"
+#include <nsxlib/utils/ProgressHandler.h>
 #include "ProgressView.h"
 #include "LogFileDialog.h"
 

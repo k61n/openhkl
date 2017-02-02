@@ -11,9 +11,9 @@
 #include "CollectedPeaksModel.h"
 #include "IData.h"
 #include "Sample.h"
-#include "Types.h"
+#include <nsxlib/utils/Types.h>
 
-#include "ProgressHandler.h"
+#include <nsxlib/utils/ProgressHandler.h>
 #include "ProgressView.h"
 
 CollectedPeaksModel::CollectedPeaksModel(sptrExperiment experiment, QObject *parent)

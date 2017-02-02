@@ -7,7 +7,7 @@
 #include "Diffractometer.h"
 #include "Monochromator.h"
 #include "Source.h"
-#include "Units.h"
+#include <nsxlib/utils/Units.h>
 
 SourcePropertyWidget::SourcePropertyWidget(SourceItem* caller,QWidget *parent) :
     QWidget(parent),
@@ -27,7 +27,7 @@ SourcePropertyWidget::SourcePropertyWidget(SourceItem* caller,QWidget *parent) :
         ui->doubleSpinBox_Width->setValue(source->getSelectedMonochromator()->getWidth()/SX::Units::mm);
     }
     catch (std::exception& e) {
-        qCritical() << e.what(); 
+        qCritical() << e.what();
     }
 }
 

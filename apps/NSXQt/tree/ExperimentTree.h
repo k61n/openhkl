@@ -12,9 +12,9 @@
 #include <QTreeView>
 
 #include "Experiment.h"
-#include "ProgressHandler.h"
+#include <nsxlib/utils/ProgressHandler.h>
 #include "PeakFinder.h"
-#include "Types.h"
+#include <nsxlib/utils/Types.h>
 
 using namespace SX::Instrument;
 

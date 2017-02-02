@@ -7,7 +7,7 @@
 
 #include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/crystal/UBMinimizer.h>
-#include "Types.h"
+#include <nsxlib/utils/Types.h>
 
 namespace Ui
 {

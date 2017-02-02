@@ -35,7 +35,7 @@
 
 #include "ui_MainWindow.h"
 #include "DialogConvolve.h"
-#include "ProgressHandler.h"
+#include <nsxlib/utils/ProgressHandler.h>
 #include "ProgressView.h"
 
 #include <memory>
@@ -68,7 +68,7 @@
 #include "Diffractometer.h"
 #include "Sample.h"
 #include "Source.h"
-#include "gcd.h"
+#include <nsxlib/utils/gcd.h>
 
 #include "dialogs/DialogCalculatedPeaks.h"
 #include "dialogs/ResolutionCutoffDialog.h"

@@ -10,7 +10,7 @@
 
 #include <memory>
 
-#include "ProgressHandler.h"
+#include <nsxlib/utils/ProgressHandler.h>
 
 class ProgressView: public QProgressDialog {
     Q_OBJECT

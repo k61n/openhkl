@@ -7,7 +7,7 @@
 #include "RotAxis.h"
 #include "TransAxis.h"
 #include <QtDebug>
-#include "Units.h"
+#include <nsxlib/utils/Units.h>
 
 DetectorPropertyWidget::DetectorPropertyWidget(DetectorItem* caller,QWidget *parent) :
     QWidget(parent),

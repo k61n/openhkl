@@ -3,7 +3,7 @@
 
 #include <QDialog>
 
-#include "Types.h"
+#include <nsxlib/utils/Types.h>
 
 namespace Ui
 {

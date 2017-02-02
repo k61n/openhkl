@@ -4,7 +4,7 @@
 #include <QDialog>
 #include <Eigen/Dense>
 
-#include "Types.h"
+#include <nsxlib/utils/Types.h>
 
 namespace Ui {
 class DialogTransformationmatrix;

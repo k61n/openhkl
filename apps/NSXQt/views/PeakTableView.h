@@ -41,8 +41,8 @@
 #include <QMenu>
 #include <QTableView>
 
-#include <IData.h>
-#include "Types.h"
+#include "IData.h"
+#include <nsxlib/utils/Types.h>
 
 #include <MainWindow.h>
 

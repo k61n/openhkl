@@ -48,26 +48,23 @@
 #include <QTreeView>
 
 #include "Experiment.h"
-#include "ProgressHandler.h"
+#include <nsxlib/utils/ProgressHandler.h>
 #include "PeakFinder.h"
-#include "Types.h"
+#include <nsxlib/utils/Types.h>
 
 using namespace SX::Instrument;
 
 class ExperimentItem;
 
-namespace SX
-{
-namespace Data
-{
+namespace SX {
+namespace Data {
     class IData;
 }
 }
 
 using SX::Crystal::sptrUnitCell;
 
-class SessionModel : public QStandardItemModel
-{
+class SessionModel : public QStandardItemModel {
     Q_OBJECT
 public:
     explicit SessionModel();
@@ -95,14 +92,11 @@ public:
 
     bool writeXDS(std::string filename, const std::vector<sptrPeak3D>& peaks, bool merge, bool friedel);
 
-
-
 signals:
     void plotData(std::shared_ptr<SX::Data::IData>);
     void inspectWidget(QWidget*);
     void updatePeaks();
     void updateCellParameters(sptrUnitCell);
-
 
 public slots:
 
@@ -119,9 +113,7 @@ public slots:
     void peakFitDialog();
     void incorporateCalculatedPeaks();
     void applyResolutionCutoff(double dmin, double dmax);
-
     void onItemChanged(QStandardItem* item);
-
 
 private:
     //! Filename for the save/load feature

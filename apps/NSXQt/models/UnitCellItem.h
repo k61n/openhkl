@@ -5,7 +5,7 @@
 
 #include <memory>
 
-#include "Types.h"
+#include <nsxlib/utils/Types.h>
 
 namespace SX
 {

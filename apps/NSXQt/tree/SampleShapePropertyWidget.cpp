@@ -20,7 +20,7 @@
 #include "AbsorptionDialog.h"
 #include "models/SampleShapeItem.h"
 #include "tree/SampleShapePropertyWidget.h"
-#include "Units.h"
+#include <nsxlib/utils/Units.h>
 
 
 SampleShapePropertyWidget::SampleShapePropertyWidget(SampleShapeItem* caller,QWidget *parent) :

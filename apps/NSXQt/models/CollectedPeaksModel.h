@@ -9,7 +9,7 @@
 
 #include "Sample.h"
 #include <nsxlib/crystal/Peak3D.h>
-#include "Types.h"
+#include <nsxlib/utils/Types.h>
 
 using namespace SX::Crystal;
 using namespace SX::Instrument;

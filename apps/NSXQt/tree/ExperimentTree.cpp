@@ -1,6 +1,6 @@
 #include "ui_MainWindow.h"
 #include "DialogConvolve.h"
-#include "ProgressHandler.h"
+#include <nsxlib/utils/ProgressHandler.h>
 #include "ProgressView.h"
 
 #include <memory>

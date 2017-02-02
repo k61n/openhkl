@@ -7,7 +7,7 @@
 #include <QGraphicsTextItem>
 #include <QMessageBox>
 #include <QtDebug>
-#include "Units.h"
+#include <nsxlib/utils/Units.h>
 
 CrystalScene::CrystalScene(SX::Geometry::ConvexHull<double>* hull, QWidget *parent) :
     QGraphicsScene(parent), pixmapitem(0),_ruler(0),_pin(0),_hull(hull),_text(nullptr)

@@ -10,7 +10,7 @@
 #include "models/SampleItem.h"
 #include "tree/SamplePropertyWidget.h"
 #include "models/UnitCellItem.h"
-#include "Units.h"
+#include <nsxlib/utils/Units.h>
 
 SamplePropertyWidget::SamplePropertyWidget(SampleItem* caller,QWidget *parent) :
     QWidget(parent),

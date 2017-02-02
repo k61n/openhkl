@@ -14,7 +14,7 @@
 #include <nsxlib/crystal/Peak3D.h>
 #include <nsxlib/crystal/SpaceGroupSymbols.h>
 #include <nsxlib/crystal/UnitCell.h>
-#include "Units.h"
+#include <nsxlib/utils/Units.h>
 
 #include "ui_UnitCellPropertyWidget.h"
 #include "Logger.h"

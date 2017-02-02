@@ -15,9 +15,9 @@
 
 #include "AABB.h"
 #include "ColorMap.h"
-#include "IMinimizer.h"
-#include "MinimizerEigen.h"
-#include "MinimizerGSL.h"
+#include <nsxlib/utils/IMinimizer.h>
+#include <nsxlib/utils/MinimizerEigen.h>
+#include <nsxlib/utils/MinimizerGSL.h>
 
 #include "SessionModel.h"
 
