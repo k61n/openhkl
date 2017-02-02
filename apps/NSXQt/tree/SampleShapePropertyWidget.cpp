@@ -17,7 +17,7 @@
 #include <nsxlib/instrument/Source.h>
 
 #include "ui_SampleShapePropertyWidget.h"
-#include "AbsorptionDialog.h"
+#include "absorption/AbsorptionDialog.h"
 #include "models/SampleShapeItem.h"
 #include "tree/SampleShapePropertyWidget.h"
 

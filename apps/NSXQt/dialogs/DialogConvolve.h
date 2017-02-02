@@ -16,8 +16,8 @@
 #include <string>
 #include <memory>
 
-#include "Convolver.h"
-#include "ConvolutionKernel.h"
+#include <nsxlib/imaging/Convolver.h>
+#include <nsxlib/imaging/ConvolutionKernel.h>
 #include <nsxlib/data/PeakFinder.h>
 #include "ColorMap.h"
 
@@ -38,9 +38,7 @@ public:
     void setPreviewFrame(const Eigen::MatrixXi& frame);
     void buildTree();
     void setColorMap(const std::string& name);
-
     int exec() override;
-
 
 private slots:
     void on_previewButton_clicked();

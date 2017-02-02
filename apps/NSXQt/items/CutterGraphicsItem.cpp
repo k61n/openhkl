@@ -6,7 +6,7 @@
 #include <QtDebug>
 #include <cmath>
 
-#include "GraphicsItems/CutterGraphicsItem.h"
+#include "items/CutterGraphicsItem.h"
 
 CutterGraphicsItem::CutterGraphicsItem(std::shared_ptr<SX::Data::IData> data)
 : PlottableGraphicsItem(nullptr,true,true),
@@ -32,7 +32,7 @@ void CutterGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
     if (event->buttons() & Qt::LeftButton)
     {
-    	// If the cutter is not selected, the move event corresponds to a modification of the size of cutter
+        // If the cutter is not selected, the move event corresponds to a modification of the size of cutter
         if (!isSelected())
         {
             if (isInScene(event->lastScenePos()))

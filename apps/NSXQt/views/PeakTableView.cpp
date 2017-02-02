@@ -51,13 +51,13 @@
 
 #include <nsxlib/utils/ProgressHandler.h>
 #include "ProgressView.h"
-#include "LogFileDialog.h"
+#include "dialogs/LogFileDialog.h"
 
 #include <nsxlib/crystal/ResolutionShell.h>
 #include <nsxlib/crystal/MergedPeak.h>
 
-#include "CollectedPeaksDelegate.h"
-#include "CollectedPeaksModel.h"
+#include "models/CollectedPeaksDelegate.h"
+#include "models/CollectedPeaksModel.h"
 
 #include "dialogs/DialogAutoIndexing.h"
 #include "dialogs/DialogRefineUnitCell.h"

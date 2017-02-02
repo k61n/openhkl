@@ -19,7 +19,7 @@
 #include <nsxlib/utils/MinimizerEigen.h>
 #include <nsxlib/utils/MinimizerGSL.h>
 
-#include "SessionModel.h"
+#include "models/SessionModel.h"
 
 #include <cmath>
 
@@ -52,7 +52,6 @@ PeakFitDialog::PeakFitDialog(SessionModel* session, QWidget *parent):
     ui->spinBoxH->setValue(_hkl[0]);
     ui->spinBoxK->setValue(_hkl[1]);
     ui->spinBoxL->setValue(_hkl[2]);
-
 }
 
 PeakFitDialog::~PeakFitDialog()
@@ -93,7 +92,6 @@ void PeakFitDialog::fitPeakShape()
 #else
     SX::Utils::MinimizerEigen minimizer;
 #endif
-
 }
 
 void PeakFitDialog::checkCollisions()

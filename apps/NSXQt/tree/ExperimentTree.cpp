@@ -1,7 +1,7 @@
 #include "ui_MainWindow.h"
-#include "DialogConvolve.h"
+#include "dialogs/DialogConvolve.h"
 #include <nsxlib/utils/ProgressHandler.h>
-#include "ProgressView.h"
+#include "views/ProgressView.h"
 
 #include <memory>
 #include <stdexcept>
@@ -26,13 +26,13 @@
 
 #include <nsxlib/data/DataReaderFactory.h>
 #include <nsxlib/instrument/Detector.h>
-#include "DialogExperiment.h"
+#include "dialogs/DialogExperiment.h"
 #include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/instrument/Sample.h>
 #include <nsxlib/instrument/Source.h>
 
-#include "PeakTableView.h"
-#include "AbsorptionDialog.h"
+#include "views/PeakTableView.h"
+#include "absorption/AbsorptionDialog.h"
 #include "models/DataItem.h"
 #include "models/DetectorItem.h"
 #include "models/ExperimentItem.h"
@@ -44,11 +44,11 @@
 #include "models/SampleItem.h"
 #include "models/SourceItem.h"
 #include "models/UnitCellItem.h"
-#include "MCAbsorptionDialog.h"
+#include "absorption/MCAbsorptionDialog.h"
 #include "OpenGL/GLWidget.h"
 #include "OpenGL/GLSphere.h"
 #include "Logger.h"
-#include "ReciprocalSpaceViewer.h"
+#include "views/ReciprocalSpaceViewer.h"
 #include "DetectorScene.h"
 #include "dialogs/DialogTransformationMatrix.h"
 
@@ -58,24 +58,23 @@
 #include <nsxlib/crystal/SpaceGroupSymbols.h>
 #include <nsxlib/crystal/SpaceGroup.h>
 
-#include "SpaceGroupDialog.h"
+#include "dialogs/SpaceGroupDialog.h"
 
 #include <QVector>
 #include "Externals/qcustomplot.h"
 #include "ui_ScaleDialog.h"
 
-#include "ScaleDialog.h"
-#include "FriedelDialog.h"
+#include "dialogs/ScaleDialog.h"
+#include "dialogs/FriedelDialog.h"
 
 #include <nsxlib/crystal/RFactor.h>
 #include <hdf5.h>
 #include <H5Exception.h>
 
-#include "PeakFitDialog.h"
+#include "dialogs/PeakFitDialog.h"
+#include "models/SessionModel.h"
 
-#include "SessionModel.h"
-
-#include "DataItem.h"
+#include "models/DataItem.h"
 
 
 using std::vector;

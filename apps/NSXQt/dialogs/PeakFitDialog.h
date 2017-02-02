@@ -3,31 +3,27 @@
 
 #include <QDialog>
 
-#include "ExperimentTree.h"
+#include "tree/ExperimentTree.h"
 
 class QGraphicsScene;
 class QGraphicsPixmapItem;
 
 class SessionModel;
 
-namespace SX
-{
-namespace Crystal
-{
+namespace SX {
+namespace Crystal {
 class Peak3D;
 using sptrPeak3D=std::shared_ptr<Peak3D>;
 }
 }
 
-namespace Ui
-{
+namespace Ui {
 class PeakFitDialog;
 }
 
 using SX::Crystal::sptrPeak3D;
 
-class PeakFitDialog : public QDialog
-{
+class PeakFitDialog : public QDialog {
     Q_OBJECT
 
 public:

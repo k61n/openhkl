@@ -14,8 +14,8 @@
 
 #include "DetectorScene.h"
 #include "CutSliceGraphicsItem.h"
-#include "SimplePlot.h"
-#include "SXPlot.h"
+#include "plot/SimplePlot.h"
+#include "plot/SXPlot.h"
 
 CutSliceGraphicsItem::CutSliceGraphicsItem(std::shared_ptr<SX::Data::IData> data, bool horizontal)
 : CutterGraphicsItem(data),

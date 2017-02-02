@@ -2,24 +2,8 @@ if(POLICY CMP0020)
     cmake_policy(SET CMP0020 NEW)
 endif()
 
-# Add NSXQt and NSXQt directories to the include path
-include_directories(#SYSTEM
-    ${CMAKE_SOURCE_DIR}/
-
-    ${CMAKE_SOURCE_DIR}/nsxlib/imaging/
-
-    ${CMAKE_SOURCE_DIR}/apps/NSXQt/absorption/
-    ${CMAKE_SOURCE_DIR}/apps/NSXQt/GraphicsItems/
-    ${CMAKE_SOURCE_DIR}/apps/NSXQt/OpenGL/
-    ${CMAKE_SOURCE_DIR}/apps/NSXQt/plot/
-    ${CMAKE_SOURCE_DIR}/apps/NSXQt/tree/
-    ${CMAKE_SOURCE_DIR}/apps/NSXQt/views/
-    ${CMAKE_SOURCE_DIR}/apps/NSXQt/dialogs/
-    ${CMAKE_SOURCE_DIR}/apps/NSXQt/models/
-    ${CMAKE_SOURCE_DIR}/apps/NSXQt/chemistry/
-    ${CMAKE_SOURCE_DIR}/apps/NSXQt/widgets/
-
-  )
+# add project root directory to include path
+include_directories(${CMAKE_SOURCE_DIR})
 
 # Disable console on Windows
 if(WIN32)
@@ -49,8 +33,6 @@ file(GLOB_RECURSE nsxqt_headers
 #  ${CMAKE_SOURCE_DIR}/apps/NSXQt/chemistry/*.h
   ${CMAKE_SOURCE_DIR}/apps/NSXQt/*.h
   )
-
-
 
 # Find recursively all the cpp source files of NSXQt
 file(GLOB_RECURSE nsxqt_sources

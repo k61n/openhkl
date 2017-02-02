@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include <GraphicsItems/CutterGraphicsItem.h>
+#include "items/CutterGraphicsItem.h"
 
 // Forward declarations
 namespace SX

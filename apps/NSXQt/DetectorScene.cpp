@@ -16,10 +16,10 @@
 
 #include "ColorMap.h"
 #include "DetectorScene.h"
-#include "GraphicsItems/PeakGraphicsItem.h"
-#include "GraphicsItems/CutSliceGraphicsItem.h"
-#include "GraphicsItems/CutLineGraphicsItem.h"
-#include "GraphicsItems/MaskGraphicsItem.h"
+#include "items/PeakGraphicsItem.h"
+#include "items/CutSliceGraphicsItem.h"
+#include "items/CutLineGraphicsItem.h"
+#include "items/MaskGraphicsItem.h"
 
 
 #include <nsxlib/instrument/Gonio.h>

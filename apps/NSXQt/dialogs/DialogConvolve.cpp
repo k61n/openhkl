@@ -4,7 +4,7 @@
 #include "DialogConvolve.h"
 #include "ui_ConvolveDialog.h"
 
-#include "KernelFactory.h"
+#include <nsxlib/imaging/KernelFactory.h>
 
 #include "ColorMap.h"
 #include <QImage>

@@ -1,4 +1,4 @@
-#include "GraphicsItems/PeakCalcGraphicsItem.h"
+#include "items/PeakCalcGraphicsItem.h"
 #include <QPainter>
 #include <nsxlib/crystal/PeakCalc.h>
 
@@ -27,9 +27,9 @@ void PeakCalcGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsIt
     Q_UNUSED(widget);
     Q_UNUSED(option);
 
-    if (!isVisible())
+    if (!isVisible()) {
         return;
-
+    }
     _label->setVisible(_labelVisible);
     painter->setRenderHint(QPainter::Antialiasing);
     painter->setPen(_pen);

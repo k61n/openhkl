@@ -18,7 +18,7 @@
 
 #include "ui_UnitCellPropertyWidget.h"
 #include "Logger.h"
-#include "SessionModel.h"
+#include "models/SessionModel.h"
 #include "models/UnitCellItem.h"
 #include "tree/UnitCellPropertyWidget.h"
 

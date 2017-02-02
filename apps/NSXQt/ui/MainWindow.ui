@@ -1869,17 +1869,17 @@ QDockWidget::title {
   <customwidget>
    <class>ExperimentTree</class>
    <extends>QTreeView</extends>
-   <header>ExperimentTree.h</header>
+   <header>tree/ExperimentTree.h</header>
   </customwidget>
   <customwidget>
    <class>DetectorGraphicsView</class>
    <extends>QGraphicsView</extends>
-   <header>DetectorGraphicsView.h</header>
+   <header>views/DetectorGraphicsView.h</header>
   </customwidget>
   <customwidget>
    <class>SXPlot</class>
    <extends>QWidget</extends>
-   <header>SXPlot.h</header>
+   <header>plot/SXPlot.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

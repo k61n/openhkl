@@ -13,7 +13,7 @@
 
 #include <nsxlib/data/IData.h>
 #include <nsxlib/instrument/Experiment.h>
-#include "Convolver.h"
+#include <nsxlib/imaging/Convolver.h>
 #include "Logger.h"
 
 
@@ -24,33 +24,26 @@ class QListWidgetItem;
 class PlottableGraphicsItem;
 class SessionModel;
 
-namespace Ui
-{
+namespace Ui {
     class MainWindow;
 }
 
-namespace SX
-{
-
-namespace Crystal
-{
+namespace SX {
+namespace Crystal {
 class Peak3D;
 using sptrPeak3D=std::shared_ptr<Peak3D>;
 }
 
-namespace Data
-{
+namespace Data {
 class IData;
 class PeakFinder;
 }
 
-namespace Instrument
-{
+namespace Instrument {
 class Experiment;
 }
 
-namespace Utils
-{
+namespace Utils {
 class ProgressHandler;
 }
 }
@@ -59,8 +52,7 @@ class QProgressDialog;
 
 using SX::Crystal::sptrPeak3D;
 
-class MainWindow : public QMainWindow
-{
+class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:

@@ -15,7 +15,7 @@
 #include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/crystal/Indexer.h>
 #include <nsxlib/crystal/PeakCalc.h>
-#include "GraphicsItems/PeakCalcGraphicsItem.h"
+#include "items/PeakCalcGraphicsItem.h"
 
 #include "ColorMap.h"
 

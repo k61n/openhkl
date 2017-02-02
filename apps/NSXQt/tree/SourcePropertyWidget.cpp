@@ -2,7 +2,7 @@
 #include "ui_SourcePropertyWidget.h"
 #include <QDebug>
 
-#include "SourceItem.h"
+#include "models/SourceItem.h"
 
 #include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/instrument/Monochromator.h>

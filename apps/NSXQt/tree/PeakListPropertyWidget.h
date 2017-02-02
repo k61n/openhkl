@@ -3,7 +3,7 @@
 
 #include <QStandardItem>
 #include <QWidget>
-#include "PeakTableView.h"
+#include "views/PeakTableView.h"
 
 namespace Ui {
 class PeakListPropertyWidget;
@@ -11,8 +11,7 @@ class PeakListPropertyWidget;
 
 class PeakListItem;
 
-class PeakListPropertyWidget : public QWidget
-{
+class PeakListPropertyWidget : public QWidget {
     Q_OBJECT
 
 public:

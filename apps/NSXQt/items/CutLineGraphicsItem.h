@@ -5,7 +5,7 @@
 #include <memory>
 
 #include <QGraphicsItem>
-#include <GraphicsItems/CutterGraphicsItem.h>
+#include "items/CutterGraphicsItem.h"
 
 namespace SX
 {

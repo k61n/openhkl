@@ -15,7 +15,7 @@
 #include <nsxlib/crystal/Peak3D.h>
 
 #include "DetectorScene.h"
-#include "GraphicsItems/MaskGraphicsItem.h"
+#include "items/MaskGraphicsItem.h"
 
 MaskGraphicsItem::MaskGraphicsItem(std::shared_ptr<SX::Data::IData> data, AABB<double, 3>* aabb)
 : SXGraphicsItem(nullptr,true,true),

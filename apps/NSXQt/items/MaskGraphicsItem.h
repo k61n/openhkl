@@ -6,7 +6,7 @@
 
 #include <nsxlib/geometry/AABB.h>
 
-#include "GraphicsItems/CutterGraphicsItem.h"
+#include "items/CutterGraphicsItem.h"
 
 // Forward declarations
 namespace SX {

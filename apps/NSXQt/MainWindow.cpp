@@ -34,51 +34,48 @@
 #include <nsxlib/crystal/Peak3D.h>
 #include <nsxlib/instrument/Sample.h>
 #include <nsxlib/instrument/Source.h>
-
-#include "DetectorScene.h"
-#include "DialogExperiment.h"
-#include "tree/ExperimentTree.h"
-#include "Logger.h"
-#include "NoteBook.h"
-#include "NumorsConversionDialog.h"
-#include "PeakTableView.h"
 #include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/utils/Units.h>
-#include "SXPlot.h"
-#include "PeakTableView.h"
-#include "AbsorptionWidget.h"
-#include "models/CollectedPeaksModel.h"
-#include "chemistry/IsotopeDatabaseDialog.h"
-#include "chemistry/ElementManagerDialog.h"
-#include "CutLineGraphicsItem.h"
-#include "CutSliceGraphicsItem.h"
-#include "CutterGraphicsItem.h"
-#include "PeakGraphicsItem.h"
-#include "PlottableGraphicsItem.h"
-#include "PlotFactory.h"
-
-#include "tree/UnitCellPropertyWidget.h"
-#include "tree/PeakListPropertyWidget.h"
-
-#include "DialogConvolve.h"
-
 #include <nsxlib/utils/Path.h>
 #include <nsxlib/data/IFrameIterator.h>
 #include <nsxlib/utils/Types.h>
-
 #include <nsxlib/data/PeakFinder.h>
 #include <nsxlib/utils/ProgressHandler.h>
-
-#include "SessionModel.h"
-#include "JobHandler.h"
-
 #include <nsxlib/crystal/SpaceGroup.h>
 #include <nsxlib/crystal/SpaceGroupSymbols.h>
 #include <nsxlib/crystal/Peak3D.h>
 
+#include "DetectorScene.h"
+#include "dialogs/DialogExperiment.h"
+#include "tree/ExperimentTree.h"
+#include "Logger.h"
+#include "NoteBook.h"
+#include "dialogs/NumorsConversionDialog.h"
+#include "views/PeakTableView.h"
+#include "plot/SXPlot.h"
+#include "views/PeakTableView.h"
+#include "absorption/AbsorptionWidget.h"
+#include "models/CollectedPeaksModel.h"
+#include "chemistry/IsotopeDatabaseDialog.h"
+#include "chemistry/ElementManagerDialog.h"
+#include "items/CutLineGraphicsItem.h"
+#include "items/CutSliceGraphicsItem.h"
+#include "items/CutterGraphicsItem.h"
+#include "items/PeakGraphicsItem.h"
+#include "items/PlottableGraphicsItem.h"
+#include "plot/PlotFactory.h"
+
+#include "tree/UnitCellPropertyWidget.h"
+#include "tree/PeakListPropertyWidget.h"
+
+#include "dialogs/DialogConvolve.h"
+
+#include "models/SessionModel.h"
+#include "JobHandler.h"
+
 #include "ColorMap.h"
 
-#include "ResolutionCutoffDialog.h"
+#include "dialogs/ResolutionCutoffDialog.h"
 
 // jmf debug testing
 #include <functional>

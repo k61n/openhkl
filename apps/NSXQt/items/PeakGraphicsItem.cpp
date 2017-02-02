@@ -10,8 +10,8 @@
 #include <nsxlib/utils/Units.h>
 
 #include "PeakGraphicsItem.h"
-#include "SXPlot.h"
-#include "PeakPlot.h"
+#include "plot/SXPlot.h"
+#include "plot/PeakPlot.h"
 
 #include <nsxlib/geometry/Ellipsoid.h>
 

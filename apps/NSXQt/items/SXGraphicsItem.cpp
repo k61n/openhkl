@@ -5,7 +5,7 @@
 
 #include "DetectorScene.h"
 #include "SXGraphicsItem.h"
-#include "SXPlot.h"
+#include "plot/SXPlot.h"
 
 SXGraphicsItem::SXGraphicsItem(QGraphicsItem *parent, bool deletable, bool movable)
 : QGraphicsItem(parent),
@@ -23,9 +23,7 @@ SXGraphicsItem::SXGraphicsItem(QGraphicsItem *parent, bool deletable, bool movab
     // By default a plottable graphics can be selected
     setFlags(QGraphicsItem::ItemIsSelectable);
     setFlag(QGraphicsItem::ItemIsMovable,_movable);
-
     setAcceptHoverEvents(true);
-
 }
 
 SXGraphicsItem::~SXGraphicsItem()
@@ -51,7 +49,6 @@ void SXGraphicsItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 bool SXGraphicsItem::isInScene(const QPointF& pos) const
 {
     QRectF rect=scene()->sceneRect();
-
     return (pos.x()>rect.left() && pos.x()<rect.right() && pos.y() > rect.top() && pos.y() <rect.bottom());
 }
 
@@ -94,32 +91,22 @@ void SXGraphicsItem::wheelEvent(QGraphicsSceneWheelEvent *event)
 void SXGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
 
-    // The item must be movable ... to be moved
-    if (!_movable)
+    if (!_movable || !isVisible() || !isSelected()) {
         return;
+    }
 
-    // The item must be visible to be moved
-    if (!isVisible())
-        return;
-
-    // The item must be selected to be moved
-    if (!isSelected())
-        return;
-
-    if (_firstMove)
+    if (_firstMove) {
         _firstMove=false;
-    else
-    {
-
+    } else {
         // The translation vector
         QPointF dr = event->lastScenePos() - _lastPos;
         QRectF itemRect=sceneBoundingRect();
         itemRect.translate(dr);
 
         // At target position the item must be fully inside the scene
-        if (scene()->sceneRect().contains(itemRect.topLeft()) && scene()->sceneRect().contains(itemRect.bottomRight()))
+        if (scene()->sceneRect().contains(itemRect.topLeft()) && scene()->sceneRect().contains(itemRect.bottomRight())) {
             moveBy(dr.x(),dr.y());
+        }
     }
     _lastPos=event->lastScenePos();
 }
-

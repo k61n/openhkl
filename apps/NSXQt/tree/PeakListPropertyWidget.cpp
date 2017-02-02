@@ -2,17 +2,16 @@
 
 #include "PeakListPropertyWidget.h"
 #include "ui_PeakListPropertyWidget.h"
-#include "PeakTableView.h"
-#include "PeakListItem.h"
-#include "ExperimentItem.h"
-#include "SampleItem.h"
-#include "InstrumentItem.h"
+#include "views/PeakTableView.h"
+#include "models/PeakListItem.h"
+#include "models/ExperimentItem.h"
+#include "models/SampleItem.h"
+#include "models/InstrumentItem.h"
 #include <nsxlib/data/IData.h>
-#include "UnitCellItem.h"
-#include "CollectedPeaksModel.h"
+#include "models/UnitCellItem.h"
+#include "models/CollectedPeaksModel.h"
 
 #include <QtDebug>
-
 #include <memory>
 
 PeakListPropertyWidget::PeakListPropertyWidget(PeakListItem* caller, QWidget *parent) :

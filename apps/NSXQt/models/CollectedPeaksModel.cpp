@@ -12,9 +12,9 @@
 #include <nsxlib/data/IData.h>
 #include <nsxlib/instrument/Sample.h>
 #include <nsxlib/utils/Types.h>
-
 #include <nsxlib/utils/ProgressHandler.h>
-#include "ProgressView.h"
+
+#include "views/ProgressView.h"
 
 CollectedPeaksModel::CollectedPeaksModel(sptrExperiment experiment, QObject *parent)
 : QAbstractTableModel(parent),

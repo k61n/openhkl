@@ -34,9 +34,9 @@
  */
 
 #include "ui_MainWindow.h"
-#include "DialogConvolve.h"
+#include "dialogs/DialogConvolve.h"
 #include <nsxlib/utils/ProgressHandler.h>
-#include "ProgressView.h"
+#include "views/ProgressView.h"
 
 #include <memory>
 #include <stdexcept>
@@ -64,7 +64,7 @@
 //#include "BlobFinder.h"
 #include <nsxlib/data/DataReaderFactory.h>
 #include <nsxlib/instrument/Detector.h>
-#include "DialogExperiment.h"
+#include "dialogs/DialogExperiment.h"
 #include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/instrument/Sample.h>
 #include <nsxlib/instrument/Source.h>
@@ -73,8 +73,8 @@
 #include "dialogs/DialogCalculatedPeaks.h"
 #include "dialogs/ResolutionCutoffDialog.h"
 
-#include "PeakTableView.h"
-#include "AbsorptionDialog.h"
+#include "views/PeakTableView.h"
+#include "absorption/AbsorptionDialog.h"
 #include "models/DataItem.h"
 #include "models/DetectorItem.h"
 #include "models/ExperimentItem.h"
@@ -85,18 +85,18 @@
 #include "models/PeakListItem.h"
 #include "models/SampleItem.h"
 #include "models/SourceItem.h"
-#include "MCAbsorptionDialog.h"
+#include "absorption/MCAbsorptionDialog.h"
 #include "OpenGL/GLWidget.h"
 #include "OpenGL/GLSphere.h"
 #include "Logger.h"
-#include "ReciprocalSpaceViewer.h"
+#include "views/ReciprocalSpaceViewer.h"
 #include "DetectorScene.h"
 
 #include <nsxlib/crystal/SpaceGroupSymbols.h>
 #include <nsxlib/crystal/SpaceGroup.h>
 
-#include "SpaceGroupDialog.h"
-#include "LogFileDialog.h"
+#include "dialogs/SpaceGroupDialog.h"
+#include "dialogs/LogFileDialog.h"
 
 #include "UnitCellItem.h"
 
@@ -104,15 +104,15 @@
 #include "Externals/qcustomplot.h"
 #include "ui_ScaleDialog.h"
 
-#include "ScaleDialog.h"
-#include "FriedelDialog.h"
+#include "dialogs/ScaleDialog.h"
+#include "dialogs/FriedelDialog.h"
 
 #include <nsxlib/crystal/RFactor.h>
 #include <hdf5.h>
 #include <H5Exception.h>
 
-#include "PeakFitDialog.h"
-#include "DialogConvolve.h"
+#include "dialogs/PeakFitDialog.h"
+#include "dialogs/DialogConvolve.h"
 #include <nsxlib/crystal/ResolutionShell.h>
 #include <nsxlib/crystal/MergedPeak.h>
 #include <nsxlib/data/XDS.h>
