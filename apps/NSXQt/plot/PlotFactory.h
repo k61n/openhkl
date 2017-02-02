@@ -3,8 +3,8 @@
 
 #include <string>
 
-#include "Factory.h"
-#include "Singleton.h"
+#include <nsxlib/kernel/Factory.h>
+#include <nsxlib/kernel/Singleton.h>
 #include "SXPlot.h"
 
 class QWidget;

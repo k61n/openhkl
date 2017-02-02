@@ -14,9 +14,9 @@
 #include <QtDebug>
 #include <QWidget>
 
-#include "Detector.h"
+#include <nsxlib/instrument/Detector.h>
 #include "DetectorScene.h"
-#include "IData.h"
+#include <nsxlib/data/IData.h>
 
 #include "CutLineGraphicsItem.h"
 #include "SimplePlot.h"

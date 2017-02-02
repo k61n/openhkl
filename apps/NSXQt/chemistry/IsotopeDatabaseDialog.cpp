@@ -12,7 +12,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
-#include "Error.h"
+#include <nsxlib/kernel/Error.h>
 #include <nsxlib/utils/ComplexParser.h>
 #include "IsotopeDatabaseDialog.h"
 #include "ui_IsotopeDatabaseDialog.h"
@@ -29,12 +29,10 @@ IsotopeDatabaseDialog::IsotopeDatabaseDialog(QWidget *parent) : QDialog(parent),
 
     // Loads the database into a property tree
     boost::property_tree::ptree root;
-    try
-    {
+    try {
         boost::property_tree::xml_parser::read_xml(imgr->getDatabasePath(),root);
     }
-    catch (const std::runtime_error& error)
-    {
+    catch (const std::runtime_error& error)  {
         qCritical()<<error.what();
     }
 
@@ -64,8 +62,7 @@ IsotopeDatabaseDialog::IsotopeDatabaseDialog(QWidget *parent) : QDialog(parent),
 
     int nRows = 0;
 
-    BOOST_FOREACH(const boost::property_tree::ptree::value_type& v, root.get_child("isotopes"))
-    {
+    BOOST_FOREACH(const boost::property_tree::ptree::value_type& v, root.get_child("isotopes")) {
         if (v.first.compare("isotope")!=0)
             continue;
 
@@ -110,21 +107,13 @@ IsotopeDatabaseDialog::IsotopeDatabaseDialog(QWidget *parent) : QDialog(parent),
         model->setItem(nRows,18,col18);
 
         model->setRowCount(++nRows);
-
     }
-
     ui->isotopeDatabaseView->setModel(model);
-
     resize(1000,500);
-
     ui->isotopeDatabaseView->show();
-
 }
 
 IsotopeDatabaseDialog::~IsotopeDatabaseDialog()
 {
     delete ui;
 }
-
-
-

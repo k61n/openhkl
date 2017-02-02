@@ -10,7 +10,7 @@
 #include <Eigen/Dense>
 
 #include "Detector.h"
-#include "IData.h"
+#include <nsxlib/data/IData.h>
 
 #include "DetectorScene.h"
 #include "CutSliceGraphicsItem.h"

@@ -4,22 +4,23 @@
 #include <QtDebug>
 #include <QMessageBox>
 
-#include "Diffractometer.h"
-#include "Gonio.h"
-#include "IData.h"
+#include <nsxlib/instrument/Diffractometer.h>
+#include <nsxlib/instrument/Gonio.h>
+#include <nsxlib/data/IData.h>
 #include <nsxlib/chemistry/Material.h>
 #include "Logger.h"
 
 #include <nsxlib/chemistry/MaterialManager.h>
-#include "MCAbsorption.h"
+#include <nsxlib/geometry/MCAbsorption.h>
 #include <nsxlib/crystal/Peak3D.h>
-#include "Sample.h"
-#include "Source.h"
+#include <nsxlib/instrument/Sample.h>
+#include <nsxlib/instrument/Source.h>
 
 #include "ui_SampleShapePropertyWidget.h"
 #include "AbsorptionDialog.h"
 #include "models/SampleShapeItem.h"
 #include "tree/SampleShapePropertyWidget.h"
+
 #include <nsxlib/utils/Units.h>
 
 

@@ -9,10 +9,10 @@
 #include <QModelIndexList>
 #include <QtDebug>
 
-#include "DataReaderFactory.h"
+#include <nsxlib/data/DataReaderFactory.h>
 #include "Diffractometer.h"
 #include "DiffractometerStore.h"
-#include "IData.h"
+#include <nsxlib/data/IData.h>
 
 #include "NumorsConversionDialog.h"
 #include "ui_NumorsConversionDialog.h"

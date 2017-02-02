@@ -4,7 +4,7 @@
 #include <QPainter>
 #include <QToolTip>
 #include <QMouseEvent>
-#include "IData.h"
+#include <nsxlib/data/IData.h>
 #include "Detector.h"
 #include <QApplication>
 #include <QClipboard>
@@ -51,8 +51,7 @@ void DetectorGraphicsView::copyViewToClipboard()
 
 void DetectorGraphicsView::keyPressEvent(QKeyEvent* event)
 {
-    if (event->matches(QKeySequence::Copy))
-    {
+    if (event->matches(QKeySequence::Copy)) {
         copyViewToClipboard();
     }
     QGraphicsView::keyPressEvent(event);
@@ -65,16 +64,12 @@ void DetectorGraphicsView::fitScene()
 
 void DetectorGraphicsView::fixDetectorAspectRatio(bool value)
 {
-    if (value)
-    {
+    if (value) {
         int h=this->height();
         double dw=_scene->getData()->getDiffractometer()->getDetector()->getWidth();
         double dh=_scene->getData()->getDiffractometer()->getDetector()->getHeight();
         resize(int(h*dw/dh),h);
-    }
-    else
-    {
+    } else {
         fitInView(_scene->sceneRect());
     }
 }
-

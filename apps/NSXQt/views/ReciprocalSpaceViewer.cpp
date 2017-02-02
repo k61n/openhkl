@@ -10,7 +10,7 @@
 #include "Diffractometer.h"
 #include "Experiment.h"
 #include "Gonio.h"
-#include "IData.h"
+#include <nsxlib/data/IData.h>
 #include "MonoDetector.h"
 #include "Sample.h"
 #include "Source.h"

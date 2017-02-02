@@ -24,12 +24,12 @@
 #include <QString>
 #include <QtDebug>
 
-#include "DataReaderFactory.h"
-#include "Detector.h"
+#include <nsxlib/data/DataReaderFactory.h>
+#include <nsxlib/instrument/Detector.h>
 #include "DialogExperiment.h"
-#include "Diffractometer.h"
-#include "Sample.h"
-#include "Source.h"
+#include <nsxlib/instrument/Diffractometer.h>
+#include <nsxlib/instrument/Sample.h>
+#include <nsxlib/instrument/Source.h>
 
 #include "PeakTableView.h"
 #include "AbsorptionDialog.h"

@@ -10,8 +10,8 @@
 #include <QWidget>
 #include <QtDebug>
 
-#include "AABB.h"
-#include "IData.h"
+#include <nsxlib/geometry/AABB.h>
+#include <nsxlib/data/IData.h>
 #include <nsxlib/crystal/Peak3D.h>
 
 #include "DetectorScene.h"

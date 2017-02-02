@@ -8,10 +8,10 @@
 #include <QtDebug>
 #include <QToolTip>
 
-#include "Detector.h"
-#include "IData.h"
-#include "Sample.h"
-#include "Source.h"
+#include <nsxlib/instrument/Detector.h>
+#include <nsxlib/data/IData.h>
+#include <nsxlib/instrument/Sample.h>
+#include <nsxlib/instrument/Source.h>
 #include <nsxlib/utils/Units.h>
 
 #include "ColorMap.h"
@@ -20,9 +20,9 @@
 #include "GraphicsItems/CutSliceGraphicsItem.h"
 #include "GraphicsItems/CutLineGraphicsItem.h"
 #include "GraphicsItems/MaskGraphicsItem.h"
-#include "Detector.h"
-#include "Sample.h"
-#include "Gonio.h"
+
+
+#include <nsxlib/instrument/Gonio.h>
 
 #include "ColorMap.h"
 

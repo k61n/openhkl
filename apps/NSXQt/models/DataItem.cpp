@@ -4,10 +4,10 @@
 #include <QStandardItem>
 #include <QJsonArray>
 
-#include "RawData.h"
+#include <nsxlib/data/RawData.h>
 #include "Experiment.h"
 #include "models/DataItem.h"
-#include "DataReaderFactory.h"
+#include <nsxlib/data/DataReaderFactory.h>
 #include "NumorItem.h"
 
 DataItem::DataItem(std::shared_ptr<Experiment> experiment) : TreeItem(experiment)

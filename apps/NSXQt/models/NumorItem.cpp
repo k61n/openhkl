@@ -1,5 +1,5 @@
 #include "Experiment.h"
-#include "IData.h"
+#include <nsxlib/data/IData.h>
 
 #include "tree/NumorPropertyWidget.h"
 #include "models/NumorItem.h"
@@ -86,8 +86,8 @@ void NumorItem::fromJson(const QJsonObject &obj)
 
 void NumorItem::exportHDF5(const std::string& filename) const
 {
-	if (filename.empty())
-		return;
+    if (filename.empty())
+        return;
 
     _data->saveHDF5(filename);
 }

@@ -21,19 +21,19 @@
 #include <QTransform>
 #include <QProgressDialog>
 
-#include "AABB.h"
-#include "Basis.h"
-#include "BlobFinder.h"
-#include "Cluster.h"
-#include "ComponentState.h"
-#include "Detector.h"
-#include "Ellipsoid.h"
+#include <nsxlib/geometry/AABB.h>
+#include <nsxlib/geometry/Basis.h>
+#include <nsxlib/geometry/BlobFinder.h>
+#include <nsxlib/geometry/Cluster.h>
+#include <nsxlib/instrument/ComponentState.h>
+#include <nsxlib/instrument/Detector.h>
+#include <nsxlib/geometry/Ellipsoid.h>
 #include <nsxlib/crystal/GruberReduction.h>
-#include "ILLAsciiData.h"
+#include <nsxlib/data/ILLAsciiData.h>
 #include <nsxlib/crystal/NiggliReduction.h>
 #include <nsxlib/crystal/Peak3D.h>
-#include "Sample.h"
-#include "Source.h"
+#include <nsxlib/instrument/Sample.h>
+#include <nsxlib/instrument/Source.h>
 
 #include "DetectorScene.h"
 #include "DialogExperiment.h"
@@ -63,10 +63,10 @@
 #include "DialogConvolve.h"
 
 #include <nsxlib/utils/Path.h>
-#include "IFrameIterator.h"
+#include <nsxlib/data/IFrameIterator.h>
 #include <nsxlib/utils/Types.h>
 
-#include "PeakFinder.h"
+#include <nsxlib/data/PeakFinder.h>
 #include <nsxlib/utils/ProgressHandler.h>
 
 #include "SessionModel.h"

@@ -11,9 +11,9 @@
 #include "ui_PeakFitDialog.h"
 
 #include <nsxlib/crystal/Peak3D.h>
-#include "IData.h"
+#include <nsxlib/data/IData.h>
 
-#include "AABB.h"
+#include <nsxlib/geometry/AABB.h>
 #include "ColorMap.h"
 #include <nsxlib/utils/IMinimizer.h>
 #include <nsxlib/utils/MinimizerEigen.h>
@@ -108,13 +108,11 @@ void PeakFitDialog::checkCollisions()
     std::shared_ptr<IData> numor = _peak->getData();
     std::set<sptrPeak3D>& peaks = numor->getPeaks();
 
-    for (sptrPeak3D other_peak: peaks)
-    {
-        if ( other_peak == _peak)
+    for (sptrPeak3D other_peak: peaks) {
+        if ( other_peak == _peak) {
             continue;
-
-        if (_peak->getBackground().collide(other_peak->getPeak()))
-        {
+        }
+        if (_peak->getBackground().collide(other_peak->getPeak())) {
             Eigen::RowVector3i hkl = other_peak->getIntegerMillerIndices();
             qDebug() << "COLLISION FOUND: ("
                      << hkl[0] << ", "
@@ -127,7 +125,6 @@ void PeakFitDialog::checkCollisions()
                 if ( !_peak->getBackground().collide(other_peak->getPeak()))
                     break;
             }
-
             qDebug() << "collision removed after " << i+1 << " iterations.";
             _peak->integrate();
         }
@@ -154,10 +151,11 @@ void PeakFitDialog::updateView()
     QImage new_image = cmap.matToImage(frame, rect, intensity);
     new_image = new_image.scaled(ui->graphicsView->width(), ui->graphicsView->height());
 
-    if (_image)
+    if (_image) {
         _image->setPixmap(QPixmap::fromImage(new_image));
-    else
+    } else {
         _image = _scene->addPixmap(QPixmap::fromImage(new_image));
+    }
 }
 
 void PeakFitDialog::updatePeak()
@@ -175,10 +173,8 @@ void PeakFitDialog::updatePeak()
     sptrPeak3D the_peak = nullptr;
     bool found_peak = false;
 
-    for(sptrPeak3D peak: peaks)
-    {
-        if ( peak->getIntegerMillerIndices() == _hkl)
-        {
+    for(sptrPeak3D peak: peaks) {
+        if ( peak->getIntegerMillerIndices() == _hkl) {
             found_peak = true;
             the_peak = peak;
             break;

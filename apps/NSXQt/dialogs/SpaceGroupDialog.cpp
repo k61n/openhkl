@@ -23,7 +23,7 @@
 #include "Sample.h"
 #include <nsxlib/crystal/SpaceGroup.h>
 #include <nsxlib/crystal/SpaceGroupSymbols.h>
-#include "IData.h"
+#include <nsxlib/data/IData.h>
 
 #include <nsxlib/crystal/RFactor.h>
 

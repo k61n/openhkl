@@ -18,7 +18,7 @@
 
 #include "Convolver.h"
 #include "ConvolutionKernel.h"
-#include "PeakFinder.h"
+#include <nsxlib/data/PeakFinder.h>
 #include "ColorMap.h"
 
 namespace Ui {

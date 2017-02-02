@@ -7,7 +7,7 @@
 #include "ExperimentItem.h"
 #include "SampleItem.h"
 #include "InstrumentItem.h"
-#include "IData.h"
+#include <nsxlib/data/IData.h>
 #include "UnitCellItem.h"
 #include "CollectedPeaksModel.h"
 

@@ -16,7 +16,7 @@
 #include "Gonio.h"
 #include "Axis.h"
 #include <nsxlib/utils/Units.h>
-#include "IData.h"
+#include <nsxlib/data/IData.h>
 #include "DoubleTableItemDelegate.h"
 #include "Monochromator.h"
 

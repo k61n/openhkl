@@ -46,7 +46,7 @@
 #include <QtDebug>
 #include <QMessageBox>
 
-#include "IData.h"
+#include <nsxlib/data/IData.h>
 #include <nsxlib/crystal/Peak3D.h>
 
 #include <nsxlib/utils/ProgressHandler.h>

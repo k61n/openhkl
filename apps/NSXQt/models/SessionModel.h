@@ -49,7 +49,7 @@
 
 #include "Experiment.h"
 #include <nsxlib/utils/ProgressHandler.h>
-#include "PeakFinder.h"
+#include <nsxlib/data/PeakFinder.h>
 #include <nsxlib/utils/Types.h>
 
 using namespace SX::Instrument;

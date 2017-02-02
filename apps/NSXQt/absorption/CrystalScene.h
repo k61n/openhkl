@@ -8,22 +8,21 @@
 #include "RulerItem.h"
 #include "CrystalNodeItem.h"
 #include "PinItem.h"
-#include "ConvexHull.h"
+#include <nsxlib/geometry/ConvexHull.h>
 #include <boost/shared_ptr.hpp>
 
-class CrystalScene : public QGraphicsScene
-{
+class CrystalScene : public QGraphicsScene {
     Q_OBJECT
 public:
     //! Enum describing the type of user interaction
-    enum crystalSelectionMode
-    {
+    enum crystalSelectionMode {
         calibrateDistance=1,
         pickingPoint=2,
         pickCenter=3,
         nodeSelected=4,
         removingPoint=5,
-        none=0};
+        none=0
+    };
 
     //! Constructors
     CrystalScene(SX::Geometry::ConvexHull<double>* hull,QWidget *parent = 0);

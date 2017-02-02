@@ -3,7 +3,7 @@
 #include <QJsonObject>
 
 #include "Diffractometer.h"
-#include "IData.h"
+#include <nsxlib/data/IData.h>
 
 #include "models/SessionModel.h"
 #include "models/ExperimentItem.h"

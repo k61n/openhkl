@@ -62,12 +62,12 @@
 #include <QDate>
 
 //#include "BlobFinder.h"
-#include "DataReaderFactory.h"
-#include "Detector.h"
+#include <nsxlib/data/DataReaderFactory.h>
+#include <nsxlib/instrument/Detector.h>
 #include "DialogExperiment.h"
-#include "Diffractometer.h"
-#include "Sample.h"
-#include "Source.h"
+#include <nsxlib/instrument/Diffractometer.h>
+#include <nsxlib/instrument/Sample.h>
+#include <nsxlib/instrument/Source.h>
 #include <nsxlib/utils/gcd.h>
 
 #include "dialogs/DialogCalculatedPeaks.h"
@@ -115,7 +115,7 @@
 #include "DialogConvolve.h"
 #include <nsxlib/crystal/ResolutionShell.h>
 #include <nsxlib/crystal/MergedPeak.h>
-#include "XDS.h"
+#include <nsxlib/data/XDS.h>
 
 #include <QJsonObject>
 #include <QJsonArray>

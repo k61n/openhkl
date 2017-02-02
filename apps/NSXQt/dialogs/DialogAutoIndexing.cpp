@@ -16,7 +16,7 @@
 #include "Experiment.h"
 #include <nsxlib/crystal/FFTIndexing.h>
 #include <nsxlib/crystal/GruberReduction.h>
-#include "IData.h"
+#include <nsxlib/data/IData.h>
 #include <nsxlib/crystal/NiggliReduction.h>
 #include <nsxlib/crystal/UBMinimizer.h>
 #include "models/CollectedPeaksModel.h"

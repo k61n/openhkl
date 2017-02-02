@@ -3,7 +3,7 @@
 #include <QtMessageHandler>
 #include <QString>
 #include <sstream>
-#include "Singleton.h"
+#include <nsxlib/kernel/Singleton.h>
 
 // Forwards
 class QTextEdit;

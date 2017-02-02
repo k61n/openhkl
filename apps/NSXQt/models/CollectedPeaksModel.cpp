@@ -9,7 +9,7 @@
 #include <QString>
 
 #include "CollectedPeaksModel.h"
-#include "IData.h"
+#include <nsxlib/data/IData.h>
 #include "Sample.h"
 #include <nsxlib/utils/Types.h>
 

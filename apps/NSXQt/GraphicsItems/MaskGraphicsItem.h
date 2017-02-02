@@ -4,16 +4,14 @@
 #include <string>
 #include <memory>
 
-#include "AABB.h"
+#include <nsxlib/geometry/AABB.h>
 
-#include <GraphicsItems/CutterGraphicsItem.h>
+#include "GraphicsItems/CutterGraphicsItem.h"
 
 // Forward declarations
-namespace SX
-{
-namespace Data
-{
-class IData;
+namespace SX {
+namespace Data {
+    class IData;
 }
 }
 
@@ -28,13 +26,9 @@ using SX::Geometry::AABB;
 /*! Creates a mask that will be used to unselect/select peaks whether their intercept or
  * not the mask
  */
-class MaskGraphicsItem : public SXGraphicsItem
-{
+class MaskGraphicsItem : public SXGraphicsItem {
 public:
-
-    // Constructors and destructor
-
-	// Constructs a mask
+    // Constructs a mask
     MaskGraphicsItem(std::shared_ptr<SX::Data::IData> data, AABB<double, 3>* aabb);
     //! The destructor
     ~MaskGraphicsItem();

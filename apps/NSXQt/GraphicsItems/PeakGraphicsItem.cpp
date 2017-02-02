@@ -5,7 +5,7 @@
 #include <QStyleOptionGraphicsItem>
 #include <QWidget>
 
-#include "IData.h"
+#include <nsxlib/data/IData.h>
 #include <nsxlib/crystal/Peak3D.h>
 #include <nsxlib/utils/Units.h>
 
@@ -13,7 +13,7 @@
 #include "SXPlot.h"
 #include "PeakPlot.h"
 
-#include "Ellipsoid.h"
+#include <nsxlib/geometry/Ellipsoid.h>
 
 bool PeakGraphicsItem::_labelVisible = false;
 bool PeakGraphicsItem::_drawBackground = false;

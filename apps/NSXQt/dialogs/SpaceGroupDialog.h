@@ -19,7 +19,7 @@
 #include <string>
 #include <memory>
 
-#include "IData.h"
+#include <nsxlib/data/IData.h>
 #include <nsxlib/crystal/SpaceGroup.h>
 
 

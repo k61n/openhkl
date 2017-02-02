@@ -6,8 +6,8 @@
 #include <QMessageBox>
 #include <QtDebug>
 
-#include "Gonio.h"
-#include "IData.h"
+#include <nsxlib/instrument/Gonio.h>
+#include <nsxlib/data/IData.h>
 #include "LatticeIndexer.h"
 #include <nsxlib/chemistry/Material.h>
 #include <nsxlib/chemistry/MaterialManager.h>

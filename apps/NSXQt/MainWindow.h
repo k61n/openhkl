@@ -11,8 +11,8 @@
 #include <QMenu>
 #include <QProgressBar>
 
-#include "IData.h"
-#include "Experiment.h"
+#include <nsxlib/data/IData.h>
+#include <nsxlib/instrument/Experiment.h>
 #include "Convolver.h"
 #include "Logger.h"
 

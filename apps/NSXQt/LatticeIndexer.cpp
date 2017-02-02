@@ -2,7 +2,7 @@
 #include "OpenGL/GLSphere.h"
 #include "LatticeIndexer.h"
 #include "ui_LatticeIndexer.h"
-#include "IData.h"
+#include <nsxlib/data/IData.h>
 #include "OpenGL/GLReciprocalLattice.h"
 
 LatticeIndexer::LatticeIndexer(std::shared_ptr<SX::Crystal::UnitCell> ptrCell,
@@ -15,8 +15,7 @@ LatticeIndexer::LatticeIndexer(std::shared_ptr<SX::Crystal::UnitCell> ptrCell,
 {
     ui->setupUi(this);
 
-    if (_experiment)
-    {
+    if (_experiment) {
         updatePeaks();
         updateCell();
     }
@@ -32,11 +31,9 @@ void LatticeIndexer::updatePeaks()
     double min=std::min(amin,bmin);
     min=std::min(min,cmin);
 
-    for (auto idata : datav)
-    {
+    for (auto idata: datav) {
        auto peaks=idata.second->getPeaks();
-       for (auto peak: peaks)
-       {
+       for (auto peak: peaks) {
            GLSphere* sphere=new GLSphere("");
            Eigen::Vector3d pos=peak->getQ();
            sphere->setPos(pos[0],pos[1],pos[2]);
@@ -51,18 +48,11 @@ void LatticeIndexer::updatePeaks()
 void LatticeIndexer::updateCell()
 {
     auto& scene=ui->glScene->getScene();
-
     GLReciprocalLattice* rcell=new GLReciprocalLattice("");
-
     rcell->setSingleCell();
-
-
     rcell->setUnitCell(_ptrCell);
-
     scene.addActor(rcell);
-
     ui->glScene->show();
-
 }
 
 LatticeIndexer::~LatticeIndexer()

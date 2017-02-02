@@ -1,8 +1,8 @@
 #include "ui_NumorPropertyWidget.h"
 #include "models/NumorItem.h"
 #include "tree/NumorPropertyWidget.h"
-#include "IData.h"
-#include "MetaData.h"
+#include <nsxlib/data/IData.h>
+#include <nsxlib/data/MetaData.h>
 
 NumorPropertyWidget::NumorPropertyWidget(NumorItem* caller,QWidget *parent) :
     QWidget(parent),
