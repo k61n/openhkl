@@ -2,7 +2,7 @@
 #include "ui_DialogUnitCellParameters.h"
 
 #include "Units.h"
-#include "UnitCell.h"
+#include <nsxlib/crystal/UnitCell.h>
 
 DialogUnitCellParameters::DialogUnitCellParameters(sptrUnitCell unitCell, QWidget *parent) :
     QDialog(parent),

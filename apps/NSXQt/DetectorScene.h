@@ -12,9 +12,9 @@
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
 #include <memory>
-#include "UnitCell.h"
-#include "Indexer.h"
-#include "PeakCalc.h"
+#include <nsxlib/crystal/UnitCell.h>
+#include <nsxlib/crystal/Indexer.h>
+#include <nsxlib/crystal/PeakCalc.h>
 #include "GraphicsItems/PeakCalcGraphicsItem.h"
 
 #include "ColorMap.h"

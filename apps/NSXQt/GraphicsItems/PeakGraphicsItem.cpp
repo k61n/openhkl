@@ -6,7 +6,7 @@
 #include <QWidget>
 
 #include "IData.h"
-#include "Peak3D.h"
+#include <nsxlib/crystal/Peak3D.h>
 #include "Units.h"
 
 #include "PeakGraphicsItem.h"

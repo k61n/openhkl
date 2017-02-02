@@ -20,7 +20,7 @@
 #include <memory>
 
 #include "IData.h"
-#include "SpaceGroup.h"
+#include <nsxlib/crystal/SpaceGroup.h>
 
 
 namespace Ui

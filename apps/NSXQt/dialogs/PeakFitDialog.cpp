@@ -10,7 +10,7 @@
 #include "dialogs/PeakFitDialog.h"
 #include "ui_PeakFitDialog.h"
 
-#include "Peak3D.h"
+#include <nsxlib/crystal/Peak3D.h>
 #include "IData.h"
 
 #include "AABB.h"

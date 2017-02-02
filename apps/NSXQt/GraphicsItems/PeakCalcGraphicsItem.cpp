@@ -1,6 +1,6 @@
 #include "GraphicsItems/PeakCalcGraphicsItem.h"
 #include <QPainter>
-#include "PeakCalc.h"
+#include <nsxlib/crystal/PeakCalc.h>
 
 bool PeakCalcGraphicsItem::_labelVisible=false;
 

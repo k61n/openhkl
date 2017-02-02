@@ -7,12 +7,12 @@
 #include "Diffractometer.h"
 #include "Gonio.h"
 #include "IData.h"
-#include "Material.h"
+#include <nsxlib/chemistry/Material.h>
 #include "Logger.h"
-#include "Material.h"
-#include "MaterialManager.h"
+
+#include <nsxlib/chemistry/MaterialManager.h>
 #include "MCAbsorption.h"
-#include "Peak3D.h"
+#include <nsxlib/crystal/Peak3D.h>
 #include "Sample.h"
 #include "Source.h"
 

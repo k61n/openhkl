@@ -12,7 +12,7 @@
 
 #include "AABB.h"
 #include "IData.h"
-#include "Peak3D.h"
+#include <nsxlib/crystal/Peak3D.h>
 
 #include "DetectorScene.h"
 #include "GraphicsItems/MaskGraphicsItem.h"
@@ -94,7 +94,7 @@ void MaskGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
     if (event->buttons() & Qt::LeftButton)
     {
-    	// If the mask is not selected, the move event corresponds to a modification of the size of mask
+        // If the mask is not selected, the move event corresponds to a modification of the size of mask
         if (!isSelected())
         {
             if (isInScene(event->lastScenePos()))
@@ -119,7 +119,7 @@ void MaskGraphicsItem::updateAABB()
 void MaskGraphicsItem::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
 
-	// The item must be visible to be wheeled
+    // The item must be visible to be wheeled
     if (!isVisible())
         return;
 

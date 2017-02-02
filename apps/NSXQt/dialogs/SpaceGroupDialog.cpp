@@ -21,11 +21,11 @@
 #include <QMessageBox>
 
 #include "Sample.h"
-#include "SpaceGroup.h"
-#include "SpaceGroupSymbols.h"
+#include <nsxlib/crystal/SpaceGroup.h>
+#include <nsxlib/crystal/SpaceGroupSymbols.h>
 #include "IData.h"
 
-#include "RFactor.h"
+#include <nsxlib/crystal/RFactor.h>
 
 using namespace std;
 using namespace SX::Crystal;

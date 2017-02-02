@@ -2,7 +2,7 @@
 #define GLRECIPROCALLATTICE_H
 
 #include "GLActor.h"
-#include "UnitCell.h"
+#include <nsxlib/crystal/UnitCell.h>
 #include <memory>
 
 class GLReciprocalLattice : public GLActor

@@ -5,7 +5,7 @@
 
 #include <QList>
 
-#include "ElementManager.h"
+#include <nsxlib/chemistry/ElementManager.h>
 
 class DragElementModel : public QAbstractTableModel
 {

@@ -92,8 +92,8 @@
 #include "ReciprocalSpaceViewer.h"
 #include "DetectorScene.h"
 
-#include "SpaceGroupSymbols.h"
-#include "SpaceGroup.h"
+#include <nsxlib/crystal/SpaceGroupSymbols.h>
+#include <nsxlib/crystal/SpaceGroup.h>
 
 #include "SpaceGroupDialog.h"
 #include "LogFileDialog.h"
@@ -107,14 +107,14 @@
 #include "ScaleDialog.h"
 #include "FriedelDialog.h"
 
-#include "RFactor.h"
+#include <nsxlib/crystal/RFactor.h>
 #include <hdf5.h>
 #include <H5Exception.h>
 
 #include "PeakFitDialog.h"
 #include "DialogConvolve.h"
-#include "ResolutionShell.h"
-#include "MergedPeak.h"
+#include <nsxlib/crystal/ResolutionShell.h>
+#include <nsxlib/crystal/MergedPeak.h>
 #include "XDS.h"
 
 #include <QJsonObject>

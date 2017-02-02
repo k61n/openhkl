@@ -1,6 +1,6 @@
-#include "IsotopeManager.h"
-#include "Element.h"
-#include "ElementManager.h"
+#include <nsxlib/chemistry/IsotopeManager.h>
+#include <nsxlib/chemistry/Element.h>
+#include <nsxlib/chemistry/ElementManager.h>
 #include "Error.h"
 
 #include "ui_ElementManagerDialog.h"

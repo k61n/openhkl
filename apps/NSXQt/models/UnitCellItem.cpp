@@ -4,7 +4,7 @@
 #include "Experiment.h"
 #include "Logger.h"
 #include "Sample.h"
-#include "UnitCell.h"
+#include <nsxlib/crystal/UnitCell.h>
 
 #include "models/UnitCellItem.h"
 #include "tree/UnitCellPropertyWidget.h"
@@ -33,7 +33,6 @@ QWidget* UnitCellItem::inspectItem()
 {
     return new UnitCellPropertyWidget(this);
 }
-
 
 std::shared_ptr<SX::Crystal::UnitCell> UnitCellItem::getUnitCell()
 {

@@ -2,10 +2,10 @@
 #include "IsotopesListWidget.h"
 #include "ElementsListWidget.h"
 
-#include "Element.h"
-#include "ElementManager.h"
-#include "Isotope.h"
-#include "IsotopeManager.h"
+#include <nsxlib/chemistry/Element.h>
+#include <nsxlib/chemistry/ElementManager.h>
+#include <nsxlib/chemistry/Isotope.h>
+#include <nsxlib/chemistry/IsotopeManager.h>
 
 DragElementModel::DragElementModel()
 : QAbstractTableModel(),

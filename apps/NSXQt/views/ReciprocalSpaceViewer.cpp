@@ -14,7 +14,7 @@
 #include "MonoDetector.h"
 #include "Sample.h"
 #include "Source.h"
-#include "UnitCell.h"
+#include <nsxlib/crystal/UnitCell.h>
 #include "Logger.h"
 
 ReciprocalSpaceViewer::ReciprocalSpaceViewer(std::shared_ptr<SX::Instrument::Experiment> experiment,QWidget *parent) :
@@ -24,12 +24,11 @@ ReciprocalSpaceViewer::ReciprocalSpaceViewer(std::shared_ptr<SX::Instrument::Exp
     _data()
 {
     ui->setupUi(this);
-
     int nUnitCells(_experiment->getDiffractometer()->getSample()->getNCrystals());
 
-    if (!nUnitCells)
+    if (!nUnitCells) {
         throw std::runtime_error("No unit cells defined for the sample");
-
+    }
     ui->unitCell->setMaximum(nUnitCells);
 }
 
@@ -43,36 +42,39 @@ void ReciprocalSpaceViewer::setData(const std::vector<std::shared_ptr<SX::Data::
     _data.clear();
     _data.reserve(data.size());
 
-    for (auto d : data)
-    {
+    for (auto d : data) {
         std::string basename(d->getBasename());
-        if (_experiment->hasData(basename))
+        if (_experiment->hasData(basename)) {
             _data.push_back(_experiment->getData(basename));
+        }
     }
 }
 
 void ReciprocalSpaceViewer::on_view_clicked()
 {
     double dq(ui->dq->value());
-    if (dq < 0.0)
+    if (dq < 0.0) {
         throw std::runtime_error("Negative q resolution");
-
+    }
     double halfwidth(ui->width->value()/2.0);
-    if (halfwidth < 0.0)
-        throw std::runtime_error("Negative plane width");
 
+    if (halfwidth < 0.0) {
+        throw std::runtime_error("Negative plane width");
+    }
     int h1(ui->h1Dir->value());
     int k1(ui->k1Dir->value());
     int l1(ui->l1Dir->value());
-    if (h1==0 && k1==0 && l1==0)
-        throw std::runtime_error("The direction 1 for defining the slice plane is the null vector");
 
+    if (h1==0 && k1==0 && l1==0) {
+        throw std::runtime_error("The direction 1 for defining the slice plane is the null vector");
+    }
     int h2(ui->h2Dir->value());
     int k2(ui->k2Dir->value());
     int l2(ui->l2Dir->value());
-    if (h2==0 && k2==0 && l2==0)
-        throw std::runtime_error("The direction 2 for defining the slice plane is the null vector");
 
+    if (h2==0 && k2==0 && l2==0) {
+        throw std::runtime_error("The direction 2 for defining the slice plane is the null vector");
+    }
     Eigen::Vector3d v1(static_cast<double>(h1),static_cast<double>(k1),static_cast<double>(l1));
     Eigen::Vector3d v2(static_cast<double>(h2),static_cast<double>(k2),static_cast<double>(l2));
 
@@ -91,9 +93,9 @@ void ReciprocalSpaceViewer::on_view_clicked()
     Eigen::Vector3d v3(v1.cross(v2));
     v3.normalize();
 
-    if (v3.norm() < 1.0e-6)
+    if (v3.norm() < 1.0e-6) {
         throw std::runtime_error("The two vectors used for defining the slice plane are colinear");
-
+    }
     // The distance from the point origin to the plane (P,v1,v2)
     double distOrigToPlane=v3.dot(from);
 
@@ -114,31 +116,22 @@ void ReciprocalSpaceViewer::on_view_clicked()
     std::vector<Eigen::Vector3d> qrest;
     qrest.reserve(nDetRows*nDetCols);
 
-
-
-
     std::shared_ptr<SX::Instrument::MonoDetector> mdetector
             = std::dynamic_pointer_cast<SX::Instrument::MonoDetector>(detector);
 
     double pixelS=mdetector->getPixelWidth()*mdetector->getPixelHeigth();
 
-    for (int j=0;j<nDetCols;++j)
-    {
-        double px=static_cast<double>(j)+0.5;
-        for (int i=0;i<nDetRows;++i)
-        {
+    for (int j = 0; j < nDetCols; ++j) {
+        double px = static_cast<double>(j)+0.5;
+        for (int i = 0; i < nDetRows; ++i) {
             double py=static_cast<double>(i)+0.5;
             qrest.push_back(detector->getPos(px,py).normalized()*invlambda);
         }
     }
-
     auto axes = detector->getGonio()->getAxes();
 
-    for (auto d : _data)
-    {
-
-        for (unsigned int f=0;f<d->getNFrames();++f)
-        {
+    for (auto d : _data) {
+        for (unsigned int f = 0; f < d->getNFrames(); ++f) {
             auto detectorStates(d->getDetectorState(f).getValues());
             Eigen::Matrix3d invM(sample->getGonio()->getInverseHomMatrix(d->getSampleState(f).getValues()).rotation());
 
@@ -146,32 +139,24 @@ void ReciprocalSpaceViewer::on_view_clicked()
             std::vector<SX::Instrument::Axis*>::const_reverse_iterator it;
             std::vector<double>::const_reverse_iterator itv=detectorStates.rbegin();
 
-            for (it=axes.rbegin();it!=axes.rend();++it)
-            {
-                if ((*it)->isPhysical())
-                {
+            for (it=axes.rbegin();it!=axes.rend();++it) {
+                if ((*it)->isPhysical()) {
                     hmatrix=(*it)->getHomMatrix(*itv)*hmatrix;
                     itv++;
-                }
-                else
+                } else {
                     hmatrix=(*it)->getHomMatrix(0.0)*hmatrix;
+                }
             }
-
             const Eigen::MatrixXi& frame = d->readFrame(f);
 
-            for (int j=0;j<nDetCols;++j)
-            {
-                for (int i=0;i<nDetRows;++i)
-                {
+            for (int j=0;j<nDetCols;++j) {
+                for (int i=0;i<nDetRows;++i) {
                     Eigen::Vector3d q=hmatrix*qrest[j*nDetRows+i].homogeneous();
-
                     q[1]-=invlambda;
-
                     q = invM*q;
-
                     double distQToPlane=(std::fabs(v3.dot(q)+distOrigToPlane));
-                    if (distQToPlane <= halfwidth)
-                    {
+
+                    if (distQToPlane <= halfwidth) {
                         double density=static_cast<double>(frame(i,j))/pixelS;
                         ptsWithinPlanes.push_back(std::pair<Eigen::Vector3d,double>(q,density));
                     }
@@ -182,31 +167,29 @@ void ReciprocalSpaceViewer::on_view_clicked()
 
     double minx(std::numeric_limits<double>::infinity());
     double miny(std::numeric_limits<double>::infinity());
-
     double maxx(-std::numeric_limits<double>::infinity());
     double maxy(-std::numeric_limits<double>::infinity());
 
-    for (const auto& point: ptsWithinPlanes)
-    {
+    for (const auto& point: ptsWithinPlanes) {
         auto pt=point.first;
-        if (pt[0] < minx)
+        if (pt[0] < minx) {
             minx = pt[0];
-        if (pt[0] > maxx)
+        }
+        if (pt[0] > maxx) {
             maxx = pt[0];
-
-        if (pt[1] < miny)
+        }
+        if (pt[1] < miny) {
             miny = pt[1];
-        if (pt[1] > maxy)
+        }
+        if (pt[1] > maxy) {
             maxy = pt[1];
+        }
     }
-
     int nqx=static_cast<int>((maxx-minx)/dq)+2;
     int nqy=static_cast<int>((maxy-miny)/dq)+2;
-
     Eigen::MatrixXd slice=Eigen::MatrixXd::Zero(nqx,nqy);
 
-    for (const auto& point : ptsWithinPlanes)
-    {
+    for (const auto& point : ptsWithinPlanes) {
         Eigen::Vector3d pt=point.first;
         double intensity(point.second);
 
@@ -232,7 +215,6 @@ void ReciprocalSpaceViewer::on_view_clicked()
         slice(ipx,ipy+1) += I2;
         slice(ipx+1,ipy+1) += I3;
     }
-
     qDebug()<<slice.rows()<<" "<<slice.cols()<<minx<<maxx<<miny<<maxy<<nqx<<nqy;
 
     // configure axis rect
@@ -253,10 +235,10 @@ void ReciprocalSpaceViewer::on_view_clicked()
     colorMap->data()->setRange(QCPRange(minx, maxx), QCPRange(miny, maxy));
 
     // Assign the data
-    for (int i=0; i<nqx; ++i)
-    {
-        for (int j=0; j<nqy; ++j)
+    for (int i=0; i<nqx; ++i) {
+        for (int j=0; j<nqy; ++j) {
             colorMap->data()->setCell(i, j, slice(i,j));
+        }
     }
 
     // Add a color scale:

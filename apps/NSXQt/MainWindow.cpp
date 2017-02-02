@@ -28,10 +28,10 @@
 #include "ComponentState.h"
 #include "Detector.h"
 #include "Ellipsoid.h"
-#include "GruberReduction.h"
+#include <nsxlib/crystal/GruberReduction.h>
 #include "ILLAsciiData.h"
-#include "NiggliReduction.h"
-#include "Peak3D.h"
+#include <nsxlib/crystal/NiggliReduction.h>
+#include <nsxlib/crystal/Peak3D.h>
 #include "Sample.h"
 #include "Source.h"
 
@@ -42,7 +42,7 @@
 #include "NoteBook.h"
 #include "NumorsConversionDialog.h"
 #include "PeakTableView.h"
-#include "UnitCell.h"
+#include <nsxlib/crystal/UnitCell.h>
 #include "Units.h"
 #include "SXPlot.h"
 #include "PeakTableView.h"
@@ -72,10 +72,9 @@
 #include "SessionModel.h"
 #include "JobHandler.h"
 
-#include "SpaceGroup.h"
-#include "SpaceGroupSymbols.h"
-
-#include "Peak3D.h"
+#include <nsxlib/crystal/SpaceGroup.h>
+#include <nsxlib/crystal/SpaceGroupSymbols.h>
+#include <nsxlib/crystal/Peak3D.h>
 
 #include "ColorMap.h"
 

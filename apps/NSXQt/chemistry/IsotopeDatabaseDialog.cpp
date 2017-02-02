@@ -16,7 +16,7 @@
 #include "ComplexParser.h"
 #include "IsotopeDatabaseDialog.h"
 #include "ui_IsotopeDatabaseDialog.h"
-#include "IsotopeManager.h"
+#include <nsxlib/chemistry/IsotopeManager.h>
 
 IsotopeDatabaseDialog::IsotopeDatabaseDialog(QWidget *parent) : QDialog(parent), ui(new Ui::IsotopeDatabaseDialog)
 {

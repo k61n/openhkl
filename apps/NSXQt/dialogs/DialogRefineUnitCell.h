@@ -5,8 +5,8 @@
 
 #include <memory>
 
-#include "UnitCell.h"
-#include "UBMinimizer.h"
+#include <nsxlib/crystal/UnitCell.h>
+#include <nsxlib/crystal/UBMinimizer.h>
 #include "Types.h"
 
 namespace Ui

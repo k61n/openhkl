@@ -35,7 +35,7 @@
 
 #include <QDialog>
 
-#include "Peak3D.h"
+#include <nsxlib/crystal/Peak3D.h>
 
 namespace Ui {
 class FriedelDialog;

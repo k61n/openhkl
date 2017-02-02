@@ -9,11 +9,11 @@
 #include "Gonio.h"
 #include "IData.h"
 #include "LatticeIndexer.h"
-#include "Material.h"
-#include "MaterialManager.h"
-#include "Peak3D.h"
-#include "SpaceGroupSymbols.h"
-#include "UnitCell.h"
+#include <nsxlib/chemistry/Material.h>
+#include <nsxlib/chemistry/MaterialManager.h>
+#include <nsxlib/crystal/Peak3D.h>
+#include <nsxlib/crystal/SpaceGroupSymbols.h>
+#include <nsxlib/crystal/UnitCell.h>
 #include "Units.h"
 
 #include "ui_UnitCellPropertyWidget.h"

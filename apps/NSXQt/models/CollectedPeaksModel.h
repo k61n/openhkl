@@ -8,7 +8,7 @@
 #include <QAbstractTableModel>
 
 #include "Sample.h"
-#include "Peak3D.h"
+#include <nsxlib/crystal/Peak3D.h>
 #include "Types.h"
 
 using namespace SX::Crystal;

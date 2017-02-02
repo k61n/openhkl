@@ -47,14 +47,14 @@
 #include <QMessageBox>
 
 #include "IData.h"
-#include "Peak3D.h"
+#include <nsxlib/crystal/Peak3D.h>
 
 #include "ProgressHandler.h"
 #include "ProgressView.h"
 #include "LogFileDialog.h"
 
-#include "ResolutionShell.h"
-#include "MergedPeak.h"
+#include <nsxlib/crystal/ResolutionShell.h>
+#include <nsxlib/crystal/MergedPeak.h>
 
 #include "CollectedPeaksDelegate.h"
 #include "CollectedPeaksModel.h"

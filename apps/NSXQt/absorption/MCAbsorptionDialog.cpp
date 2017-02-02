@@ -13,7 +13,7 @@
 #include "MCAbsorption.h"
 #include "Source.h"
 #include "IData.h"
-#include "Peak3D.h"
+#include <nsxlib/crystal/Peak3D.h>
 #include "Gonio.h"
 #include "Units.h"
 #include "Monochromator.h"

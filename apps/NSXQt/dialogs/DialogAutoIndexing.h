@@ -7,8 +7,8 @@
 #include <QDialog>
 #include <QItemSelection>
 
-#include "Peak3D.h"
-#include "UnitCell.h"
+#include <nsxlib/crystal/Peak3D.h>
+#include <nsxlib/crystal/UnitCell.h>
 #include "Types.h"
 
 namespace Ui

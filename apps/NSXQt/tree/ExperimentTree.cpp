@@ -55,8 +55,8 @@
 #include "dialogs/DialogRawData.h"
 #include "dialogs/DialogAutoIndexing.h"
 
-#include "SpaceGroupSymbols.h"
-#include "SpaceGroup.h"
+#include <nsxlib/crystal/SpaceGroupSymbols.h>
+#include <nsxlib/crystal/SpaceGroup.h>
 
 #include "SpaceGroupDialog.h"
 
@@ -67,7 +67,7 @@
 #include "ScaleDialog.h"
 #include "FriedelDialog.h"
 
-#include "RFactor.h"
+#include <nsxlib/crystal/RFactor.h>
 #include <hdf5.h>
 #include <H5Exception.h>
 

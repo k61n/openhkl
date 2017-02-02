@@ -4,17 +4,14 @@
 #include <QDialog>
 
 #include "DragElementModel.h"
-#include "ElementManager.h"
+#include <nsxlib/chemistry/ElementManager.h>
 
-namespace Ui
-{
+namespace Ui {
     class ElementManagerDialog;
 }
 
-namespace SX
-{
-namespace Chemistry
-{
+namespace SX {
+namespace Chemistry {
     class ElementManager;
     class IsotopeManager;
 }

@@ -23,12 +23,12 @@
 #include <QMessageBox>
 
 #include "Sample.h"
-#include "SpaceGroup.h"
-#include "SpaceGroupSymbols.h"
+#include <nsxlib/crystal/SpaceGroup.h>
+#include <nsxlib/crystal/SpaceGroupSymbols.h>
 #include "IData.h"
-#include "Peak3D.h"
+#include <nsxlib/crystal/Peak3D.h>
 #include "Minimizer.h"
-#include "RFactor.h"
+#include <nsxlib/crystal/RFactor.h>
 
 #include "Externals/qcustomplot.h"
 

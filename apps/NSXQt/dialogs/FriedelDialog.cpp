@@ -33,7 +33,7 @@
 #include "dialogs/FriedelDialog.h"
 #include "ui_FriedelDialog.h"
 
-#include "Peak3D.h"
+#include <nsxlib/crystal/Peak3D.h>
 
 using namespace std;
 using namespace SX::Crystal;

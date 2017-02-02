@@ -14,11 +14,11 @@
 #include <QtDebug>
 
 #include "Experiment.h"
-#include "FFTIndexing.h"
-#include "GruberReduction.h"
+#include <nsxlib/crystal/FFTIndexing.h>
+#include <nsxlib/crystal/GruberReduction.h>
 #include "IData.h"
-#include "NiggliReduction.h"
-#include "UBMinimizer.h"
+#include <nsxlib/crystal/NiggliReduction.h>
+#include <nsxlib/crystal/UBMinimizer.h>
 #include "models/CollectedPeaksModel.h"
 #include "models/CollectedPeaksDelegate.h"
 
@@ -30,7 +30,6 @@ using SX::Crystal::NiggliReduction;
 using SX::Crystal::UBMinimizer;
 using SX::Crystal::UBSolution;
 using SX::Data::IData;
-
 using SX::Units::deg;
 
 DialogAutoIndexing::DialogAutoIndexing(std::shared_ptr<Experiment> experiment, std::vector<sptrPeak3D> peaks, QWidget *parent):

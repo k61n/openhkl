@@ -2,7 +2,7 @@
 #define LATTICEINDEXER_H
 
 #include <QWidget>
-#include "UnitCell.h"
+#include <nsxlib/crystal/UnitCell.h>
 #include "Experiment.h"
 #include <memory>
 
