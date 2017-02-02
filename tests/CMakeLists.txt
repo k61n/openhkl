@@ -22,7 +22,7 @@ foreach(source_file ${test_sources})
   get_filename_component(base_name ${source_file} NAME_WE)
   #message("base name is ${base_name}")
   add_executable(${base_name} ${source_file} ${test_headers})
-  target_link_libraries(${base_name} ${Boost_LIBRARIES} NSXTool)
+  target_link_libraries(${base_name} ${Boost_LIBRARIES} nsx)
 
   if(${NSX_VALGRIND})
     add_test(
@@ -38,7 +38,7 @@ foreach(source_file ${test_sources})
   if(NSX_TIDY)
     add_tidy_target(${base_name})
   endif()
-  
+
 endforeach(source_file)
 
 #add_custom_target(check ALL COMMAND ${CMAKE_CTEST_COMMAND})
