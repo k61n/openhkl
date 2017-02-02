@@ -5,15 +5,15 @@
 #include <set>
 #include <stdexcept>
 
-#include "Axis.h"
-#include "Detector.h"
-#include "Diffractometer.h"
-#include "Experiment.h"
-#include "Gonio.h"
+#include <nsxlib/instrument/Axis.h>
+#include <nsxlib/instrument/Detector.h>
+#include <nsxlib/instrument/Diffractometer.h>
+#include <nsxlib/instrument/Experiment.h>
+#include <nsxlib/instrument/Gonio.h>
 #include <nsxlib/data/IData.h>
-#include "MonoDetector.h"
-#include "Sample.h"
-#include "Source.h"
+#include <nsxlib/instrument/MonoDetector.h>
+#include <nsxlib/instrument/Sample.h>
+#include <nsxlib/instrument/Source.h>
 #include <nsxlib/crystal/UnitCell.h>
 #include "Logger.h"
 

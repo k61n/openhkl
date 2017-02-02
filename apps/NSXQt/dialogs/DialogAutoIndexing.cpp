@@ -13,7 +13,7 @@
 #include <QStandardItemModel>
 #include <QtDebug>
 
-#include "Experiment.h"
+#include <nsxlib/instrument/Experiment.h>
 #include <nsxlib/crystal/FFTIndexing.h>
 #include <nsxlib/crystal/GruberReduction.h>
 #include <nsxlib/data/IData.h>
@@ -39,13 +39,12 @@ DialogAutoIndexing::DialogAutoIndexing(std::shared_ptr<Experiment> experiment, s
     _peaks(peaks)
 {
     ui->setupUi(this);
-
     setModal(true);
-
     _unitCells = _experiment->getDiffractometer()->getSample()->getUnitCells();
-    for (auto uc : _unitCells)
-        ui->unitCells->addItem(QString::fromStdString(uc->getName()));
 
+    for (auto uc : _unitCells) {
+        ui->unitCells->addItem(QString::fromStdString(uc->getName()));
+    }
     connect(ui->index,SIGNAL(clicked()),this,SLOT(autoIndex()));
 
     // Accept solution and set Unit-Cell
@@ -61,21 +60,17 @@ void DialogAutoIndexing::autoIndex()
 {
     int nPeaks = _peaks.size();
     // Check that a minimum number of peaks have been selected for indexing
-    if (nPeaks < 10)
-    {
+    if (nPeaks < 10) {
         QMessageBox::warning(this, tr("NSXTool"),tr("Need at least 10 peaks for autoindexing"));
         return;
     }
-
-    if (_experiment == nullptr)
+    if (_experiment == nullptr) {
         return;
-
-    if (ui->unitCells->count() == 0)
-    {
+    }
+    if (ui->unitCells->count() == 0) {
         QMessageBox::warning(this, tr("NSXTool"),tr("No unit cells defined for autoindexing"));
         return;
     }
-
     sptrUnitCell selectedUnitCell = _unitCells[ui->unitCells->currentIndex()];
 
     // Clear the current solution list
@@ -84,8 +79,7 @@ void DialogAutoIndexing::autoIndex()
     // Store Q vectors at rest
     std::vector<Eigen::Vector3d> qvects;
     qvects.reserve(nPeaks);
-    for (auto peak : _peaks)
-    {
+    for (auto peak : _peaks) {
         if (peak->isSelected() && !peak->isMasked())
             qvects.push_back(peak->getQ());
     }
@@ -107,18 +101,14 @@ void DialogAutoIndexing::autoIndex()
     std::vector<std::pair<UnitCell,double>> newSolutions;
     newSolutions.reserve(nSolutions*nSolutions*nSolutions);
 
-    for (int i = 0; i < nSolutions; ++i)
-    {
-        for (int j = i+1; j < nSolutions; ++j)
-        {
-            for (int k = j+1; k < nSolutions; ++k)
-            {
+    for (int i = 0; i < nSolutions; ++i) {
+        for (int j = i+1; j < nSolutions; ++j) {
+            for (int k = j+1; k < nSolutions; ++k) {
                 Eigen::Vector3d& v1=tvects[i]._vect;
                 Eigen::Vector3d& v2=tvects[j]._vect;
                 Eigen::Vector3d& v3=tvects[k]._vect;
 
-                if (v1.dot(v2.cross(v3)) > 20.0)
-                {
+                if (v1.dot(v2.cross(v3)) > 20.0) {
                     UnitCell cell = UnitCell::fromDirectVectors(v1, v2, v3);
                     newSolutions.push_back(std::make_pair(cell, 0.0));
                 }
@@ -147,35 +137,29 @@ void DialogAutoIndexing::autoIndex()
             minimizer.refineParameter(i,false);
 
         int success = 0;
-        for (auto peak : _peaks)
-        {
+        for (auto peak : _peaks) {
             Eigen::RowVector3d hkl;
             bool indexingSuccess = peak->getMillerIndices(cell,hkl,true);
-            if (indexingSuccess && peak->isSelected() && !peak->isMasked())
-            {
+            if (indexingSuccess && peak->isSelected() && !peak->isMasked()) {
                 minimizer.addPeak(*peak,hkl);
                 ++success;
             }
         }
 
         // The number of peaks must be at least for a proper minimization
-        if (success < 10)
+        if (success < 10) {
             continue;
-
+        }
         Eigen::Matrix3d M = cell.getReciprocalStandardM();
         minimizer.setStartingUBMatrix(M);
         int ret = minimizer.runGSL(100);
-        if (ret == 1)
-        {
+        if (ret == 1) {
             UBSolution sln = minimizer.getSolution();
-            try
-            {
+            try {
                 cell = UnitCell::fromReciprocalVectors(sln._ub.row(0),sln._ub.row(1),sln._ub.row(2));
                 cell.setReciprocalCovariance(sln._covub);
 
-            }
-            catch(std::exception& e)
-            {
+            } catch(std::exception& e) {
                 continue;
             }
 
@@ -194,8 +178,7 @@ void DialogAutoIndexing::autoIndex()
             LatticeCentring c;
             BravaisType b;
 
-            try
-            {
+            try {
                 gruber.reduce(P,c,b);
                 cell.setLatticeCentring(c);
                 cell.setBravaisType(b);
@@ -205,20 +188,20 @@ void DialogAutoIndexing::autoIndex()
                 //continue;
             }
 
-            if (!ui->niggliReduction->isChecked())
+            if (!ui->niggliReduction->isChecked()) {
                 cell.transform(P);
+            }
 
             double score=0.0;
             double maxscore=0.0;
-            for (auto peak : _peaks)
-            {
-                if (peak->isSelected() && !peak->isMasked())
-                {
+            for (auto peak : _peaks) {
+                if (peak->isSelected() && !peak->isMasked()) {
                     maxscore++;
                     Eigen::RowVector3d hkl;
                     bool indexingSuccess = peak->getMillerIndices(cell,hkl,true);
-                    if (indexingSuccess)
+                    if (indexingSuccess) {
                         score++;
+                    }
                 }
             }
             // Percentage of indexing
@@ -232,15 +215,14 @@ void DialogAutoIndexing::autoIndex()
     _solutions.reserve(newSolutions.size());
 
     // remove the false solutions
-    for (auto&& it = newSolutions.begin(); it != newSolutions.end(); ++it)
-        if (it->second > 0.1)
+    for (auto&& it = newSolutions.begin(); it != newSolutions.end(); ++it) {
+        if (it->second > 0.1) {
             _solutions.push_back(*it);
-
+        }
+    }
     _solutions.shrink_to_fit();
-
     qDebug() << "Done refining solutions, building solutions table.";
     buildSolutionsTable();
-
 }
 
 void DialogAutoIndexing::buildSolutionsTable()
@@ -271,8 +253,7 @@ void DialogAutoIndexing::buildSolutionsTable()
     model->setHorizontalHeaderItem(8,new QStandardItem("Quality"));
 
     // Display solutions
-    for (unsigned int i=0;i<_solutions.size();++i)
-    {
+    for (unsigned int i=0;i<_solutions.size();++i) {
         auto& cell=_solutions[i].first;
         double quality=_solutions[i].second;
         double a,b,c,alpha,beta,gamma;
@@ -304,10 +285,8 @@ void DialogAutoIndexing::buildSolutionsTable()
 void DialogAutoIndexing::selectSolution(int index)
 {
     *_unitCells[ui->unitCells->currentIndex()] = _solutions[index].first;
-
     QString solutionNumber = QString::number(index+1);
     QString selectedUnitCellName = ui->unitCells->currentText();
     QMessageBox::information(this, tr("NSXTool"),tr("Solution %1 set to %2 unit cell").arg(solutionNumber,selectedUnitCellName));
-
     emit cellUpdated(_unitCells[ui->unitCells->currentIndex()]);
 }

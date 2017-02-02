@@ -1,10 +1,10 @@
 #include <sstream>
 
-#include "Axis.h"
-#include "Diffractometer.h"
-#include "Gonio.h"
-#include "Sample.h"
-#include "TransAxis.h"
+#include <nsxlib/instrument/Axis.h>
+#include <nsxlib/instrument/Diffractometer.h>
+#include <nsxlib/instrument/Gonio.h>
+#include <nsxlib/instrument/Sample.h>
+#include <nsxlib/instrument/TransAxis.h>
 
 #include "ui_SamplePropertyWidget.h"
 #include "models/SampleItem.h"
@@ -27,8 +27,7 @@ SamplePropertyWidget::SamplePropertyWidget(SampleItem* caller,QWidget *parent) :
     ui->tableWidget_Sample->setColumnCount(3);
     ui->tableWidget_Sample->verticalHeader()->setVisible(false);
 
-    for (unsigned int i=0;i<gonio->getNAxes();++i)
-    {
+    for (unsigned int i=0;i<gonio->getNAxes();++i) {
         auto axis=gonio->getAxis(i);
         QTableWidgetItem* item0=new QTableWidgetItem();
         item0->setData(Qt::EditRole, QString(axis->getLabel().c_str()));
@@ -42,19 +41,18 @@ SamplePropertyWidget::SamplePropertyWidget(SampleItem* caller,QWidget *parent) :
 
         bool isrot=false;
 
-        if (RotAxis* rot=dynamic_cast<RotAxis*>(axis))
-        {
+        if (RotAxis* rot=dynamic_cast<RotAxis*>(axis)) {
             os << "R(";
             os << rot->getAxis().transpose();
             os << ")";
-            if (rot->getRotationDirection())
+            if (rot->getRotationDirection()) {
                 os << "CW";
-            else
+            } else {
                 os << "CCW";
+            }
             isrot=true;
         }
-        else if(dynamic_cast<TransAxis*>(axis))
-        {
+        else if(dynamic_cast<TransAxis*>(axis)) {
             os << "T(";
             os << axis->getAxis().transpose();
             os << ")";
@@ -62,18 +60,17 @@ SamplePropertyWidget::SamplePropertyWidget(SampleItem* caller,QWidget *parent) :
         item1->setData(Qt::EditRole, QString(os.str().c_str()));
         QTableWidgetItem* item2=new QTableWidgetItem();
 
-        if (isrot)
+        if (isrot) {
             item2->setData(Qt::EditRole, double(axis->getOffset()/SX::Units::deg));
-        else
+        } else {
             item2->setData(Qt::EditRole, double(axis->getOffset()/SX::Units::mm));
-
+        }
         item0->setFlags(item0->flags() &~Qt::ItemIsEditable);
         item1->setFlags(item1->flags() &~Qt::ItemIsEditable);
         ui->tableWidget_Sample->setItem(i,0,item0);
         ui->tableWidget_Sample->setItem(i,1,item1);
         ui->tableWidget_Sample->setItem(i,2,item2);
     }
-
     connect(ui->tableWidget_Sample,SIGNAL(cellChanged(int,int)),this,SLOT(cellHasChanged(int,int)));
 }
 
@@ -86,9 +83,10 @@ void SamplePropertyWidget::cellHasChanged(int i,int j)
 {
     auto sample=_sampleItem->getExperiment()->getDiffractometer()->getSample();
     auto axis=sample->getGonio()->getAxis(i);
-    if (dynamic_cast<TransAxis*>(axis))
+    if (dynamic_cast<TransAxis*>(axis)) {
          axis->setOffset(ui->tableWidget_Sample->item(i,j)->data(Qt::EditRole).toDouble()*SX::Units::mm); // Given in mm
-    else
+    } else {
          axis->setOffset(ui->tableWidget_Sample->item(i,j)->data(Qt::EditRole).toDouble()*SX::Units::deg); // Given in degs
+    }
 }
 

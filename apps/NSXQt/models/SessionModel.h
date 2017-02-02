@@ -47,7 +47,7 @@
 #include <QStandardItemModel>
 #include <QTreeView>
 
-#include "Experiment.h"
+#include <nsxlib/instrument/Experiment.h>
 #include <nsxlib/utils/ProgressHandler.h>
 #include <nsxlib/data/PeakFinder.h>
 #include <nsxlib/utils/Types.h>

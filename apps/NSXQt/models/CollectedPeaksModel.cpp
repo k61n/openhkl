@@ -10,7 +10,7 @@
 
 #include "CollectedPeaksModel.h"
 #include <nsxlib/data/IData.h>
-#include "Sample.h"
+#include <nsxlib/instrument/Sample.h>
 #include <nsxlib/utils/Types.h>
 
 #include <nsxlib/utils/ProgressHandler.h>

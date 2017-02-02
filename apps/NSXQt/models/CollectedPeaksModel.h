@@ -7,7 +7,7 @@
 
 #include <QAbstractTableModel>
 
-#include "Sample.h"
+#include <nsxlib/instrument/Sample.h>
 #include <nsxlib/crystal/Peak3D.h>
 #include <nsxlib/utils/Types.h>
 

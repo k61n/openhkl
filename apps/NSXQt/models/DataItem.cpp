@@ -5,7 +5,7 @@
 #include <QJsonArray>
 
 #include <nsxlib/data/RawData.h>
-#include "Experiment.h"
+#include <nsxlib/instrument/Experiment.h>
 #include "models/DataItem.h"
 #include <nsxlib/data/DataReaderFactory.h>
 #include "NumorItem.h"

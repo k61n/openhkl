@@ -3,15 +3,16 @@
 #include <fstream>
 #include <QFileDialog>
 #include <QMessageBox>
-#include "Diffractometer.h"
-#include "Sample.h"
+#include <nsxlib/instrument/Diffractometer.h>
+#include <nsxlib/instrument/Sample.h>
 #include <boost/algorithm/string.hpp>
 #include <algorithm>
 #include <sstream>
-#include "Gonio.h"
+#include <nsxlib/instrument/Gonio.h>
 #include <QtDebug>
 #include <QFileInfo>
 #include <QDir>
+
 AbsorptionWidget::AbsorptionWidget(SX::Instrument::Experiment* experiment,QWidget *parent) :
     QWidget(parent),
     ui(new Ui::AbsorptionWidget),
@@ -35,8 +36,9 @@ void AbsorptionWidget::on_pushButton_clicked()
 
     QString fileName=dialog.getOpenFileName(this,"Select Video file","",tr("Video file (*.info)"));
     // No file selected, do nothing
-    if (fileName.isEmpty())
+    if (fileName.isEmpty()) {
         return;
+    }
     readInfoFile(fileName.toStdString());
 }
 
@@ -45,13 +47,11 @@ void AbsorptionWidget::readInfoFile(const std::string &filename)
     std::ifstream file;
     file.open(filename.c_str(),std::ios::in);
 
-    if (file.is_open())
-    {
+    if (file.is_open()) {
         // First read instrument name and validate with diffractometer name
         std::string _instrumentName, date;
         file >> _instrumentName >> date;
-        if (_instrumentName.compare(_experiment->getDiffractometer()->getType())!=0)
-        {
+        if (_instrumentName.compare(_experiment->getDiffractometer()->getType())!=0) {
             QMessageBox::critical(this, tr("NSXTool"),
                                   tr("Instrument name in video file does not match the diffractometer name"));
         }
@@ -72,8 +72,7 @@ void AbsorptionWidget::readInfoFile(const std::string &filename)
         // Remove all occurences of ':' before reading
         line.erase(std::remove(line.begin(), line.end(), ':'), line.end());
         std::stringstream is(line);
-        for (std::size_t i=0;i<numberAngles;++i)
-        {
+        for (std::size_t i=0;i<numberAngles;++i) {
             std::string name;
             double value;
             is >> name >> value;
@@ -88,8 +87,7 @@ void AbsorptionWidget::readInfoFile(const std::string &filename)
 
         // Attempt to read
         getline(file,line);
-        while(!file.eof())
-        {
+        while(!file.eof()) {
             line.erase(std::remove(line.begin(), line.end(), ':'), line.end());
             std::stringstream is(line);
             std::string name,jpgfile;
@@ -105,8 +103,9 @@ void AbsorptionWidget::readInfoFile(const std::string &filename)
 
 void AbsorptionWidget::loadImage(unsigned int i)
 {
-    if (i>=_imageList.size())
+    if (i>=_imageList.size()) {
         return;
+    }
     QPixmap pix;
     QString file=QString::fromStdString(_imageList[i].second);
     pix.load(QString::fromStdString(_imageList[i].second));

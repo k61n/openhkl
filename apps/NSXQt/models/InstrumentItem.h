@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "Experiment.h"
+#include <nsxlib/instrument/Experiment.h>
 #include "models/TreeItem.h"
 
 class DetectorItem;

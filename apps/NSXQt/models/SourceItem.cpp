@@ -1,9 +1,9 @@
 #include <QIcon>
 #include <QString>
 
-#include "Diffractometer.h"
-#include "Source.h"
-#include "Experiment.h"
+#include <nsxlib/instrument/Diffractometer.h>
+#include <nsxlib/instrument/Source.h>
+#include <nsxlib/instrument/Experiment.h>
 #include "models/SourceItem.h"
 #include "tree/SourcePropertyWidget.h"
 

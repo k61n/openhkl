@@ -1,8 +1,8 @@
 #include <QIcon>
 #include <QJsonArray>
 
-#include "Diffractometer.h"
-#include "Sample.h"
+#include <nsxlib/instrument/Diffractometer.h>
+#include <nsxlib/instrument/Sample.h>
 
 #include "tree/SamplePropertyWidget.h"
 #include "models/SampleShapeItem.h"

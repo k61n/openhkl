@@ -1,11 +1,11 @@
 #include "ui_DetectorPropertyWidget.h"
 #include "tree/DetectorPropertyWidget.h"
 #include "models/DetectorItem.h"
-#include "Diffractometer.h"
-#include "Detector.h"
-#include "Gonio.h"
-#include "RotAxis.h"
-#include "TransAxis.h"
+#include <nsxlib/instrument/Diffractometer.h>
+#include <nsxlib/instrument/Detector.h>
+#include <nsxlib/instrument/Gonio.h>
+#include <nsxlib/instrument/RotAxis.h>
+#include <nsxlib/instrument/TransAxis.h>
 #include <QtDebug>
 #include <nsxlib/utils/Units.h>
 

@@ -4,14 +4,14 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <iostream>
-#include "Diffractometer.h"
-#include "Sample.h"
-#include "Experiment.h"
-#include "RotAxis.h"
+#include <nsxlib/instrument/Diffractometer.h>
+#include <nsxlib/instrument/Sample.h>
+#include <nsxlib/instrument/Experiment.h>
+#include <nsxlib/instrument/RotAxis.h>
 #include <boost/algorithm/string.hpp>
 #include <algorithm>
 #include <sstream>
-#include "Gonio.h"
+#include <nsxlib/instrument/Gonio.h>
 #include <QtDebug>
 #include <QFileInfo>
 #include <QDir>
@@ -71,14 +71,12 @@ void AbsorptionDialog::readInfoFile(const std::string &filename)
     std::ifstream file;
     file.open(filename.c_str(),std::ios::in);
 
-    if (file.is_open())
-    {
+    if (file.is_open()) {
         // First read instrument name and validate with diffractometer name
         std::string _instrumentName, date;
         file >> _instrumentName >> date;
         std::string diffType=_experiment->getDiffractometer()->getName();
-        if (_instrumentName.compare(diffType)!=0)
-        {
+        if (_instrumentName.compare(diffType)!=0) {
             QMessageBox::critical(this, tr("NSXTool"),
                                   tr("Instrument name in video file does not match the diffractometer name"));
         }
@@ -98,8 +96,7 @@ void AbsorptionDialog::readInfoFile(const std::string &filename)
         // Remove all occurences of ':' before reading
         line.erase(std::remove(line.begin(), line.end(), ':'), line.end());
         std::stringstream is(line);
-        for (std::size_t i=0;i<numberAngles;++i)
-        {
+        for (std::size_t i=0;i<numberAngles;++i) {
             std::string name;
             double value;
             is >> name >> value;
@@ -113,12 +110,10 @@ void AbsorptionDialog::readInfoFile(const std::string &filename)
         _filepath=dir.absolutePath().toStdString();
         //
         getline(file,line);
-        if (line.find("camera:")!=std::string::npos)
-        {
+        if (line.find("camera:")!=std::string::npos) {
             getline(file,line);
         }
-        while(!file.eof())
-        {
+        while(!file.eof()) {
             line.erase(std::remove(line.begin(), line.end(), ':'), line.end());
             std::stringstream is(line);
             std::string name,jpgfile;
@@ -151,8 +146,9 @@ void AbsorptionDialog::on_button_openFile_pressed()
 
     QString fileName=dialog.getOpenFileName(this,"Select Video file","",tr("Video file (*.info)"));
     // No file selected, do nothing
-    if (fileName.isEmpty())
+    if (fileName.isEmpty()) {
         return;
+    }
     readInfoFile(fileName.toStdString());
 }
 

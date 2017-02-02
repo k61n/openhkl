@@ -8,7 +8,7 @@
 #include <QVariant>
 #include <QJsonObject>
 
-#include "Experiment.h"
+#include <nsxlib/instrument/Experiment.h>
 
 class QWidget;
 

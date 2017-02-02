@@ -4,9 +4,9 @@
 
 #include "SourceItem.h"
 
-#include "Diffractometer.h"
-#include "Monochromator.h"
-#include "Source.h"
+#include <nsxlib/instrument/Diffractometer.h>
+#include <nsxlib/instrument/Monochromator.h>
+#include <nsxlib/instrument/Source.h>
 #include <nsxlib/utils/Units.h>
 
 SourcePropertyWidget::SourcePropertyWidget(SourceItem* caller,QWidget *parent) :

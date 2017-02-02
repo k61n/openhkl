@@ -10,8 +10,8 @@
 #include <QtDebug>
 
 #include <nsxlib/data/DataReaderFactory.h>
-#include "Diffractometer.h"
-#include "DiffractometerStore.h"
+#include <nsxlib/instrument/Diffractometer.h>
+#include <nsxlib/instrument/DiffractometerStore.h>
 #include <nsxlib/data/IData.h>
 
 #include "NumorsConversionDialog.h"
@@ -69,22 +69,18 @@ void NumorsConversionDialog::on_pushButton_convert_clicked()
     ui->progressBar_conversion->setValue(0);
 
     int comp(0);
-    for (auto& idx : indexes)
-    {
+    for (auto& idx : indexes) {
         QFileInfo fileInfo = model->fileInfo(idx);
         int row = -1;
-        if (idx.row()!=row && idx.column()==0)
-        {
+        if (idx.row()!=row && idx.column()==0) {
             row = idx.row();
             std::string filename=fileInfo.absoluteFilePath().toStdString();
             std::string extension=fileInfo.completeSuffix().toStdString();
             SX::Data::IData* data=nullptr;
-            try
-            {
+            try {
                 data = dataFactory->create(extension,filename,diffractometer);
             }
-            catch(std::exception& e)
-            {
+            catch(std::exception& e) {
                 qCritical() << "Error when opening file " << filename.c_str() << e.what();
                 ui->progressBar_conversion->setValue(++comp);
                 if (data)
@@ -96,18 +92,14 @@ void NumorsConversionDialog::on_pushButton_convert_clicked()
             QString basename=fileInfo.baseName();
             QString outputFilename = QDir(ui->lineEdit_outputDirectory->text()).filePath(basename+".h5");
 
-            try
-            {
+            try {
                 data->saveHDF5(outputFilename.toStdString());
-            }
-            catch(...)
-            {
+            } catch(...) {
                 qDebug() << "The filename " << filename.c_str() << " could not be saved. Maybe a permission problem.";
                 ui->progressBar_conversion->setValue(++comp);
                 delete data;
                 continue;
             }
-
             delete data;
         }
         ui->progressBar_conversion->setValue(++comp);
@@ -117,6 +109,7 @@ void NumorsConversionDialog::on_pushButton_convert_clicked()
 void NumorsConversionDialog::on_pushButton_browse_clicked()
 {
     QString outputDirectory=QFileDialog::getExistingDirectory (this, "Enter output directory", QDir::homePath());
-    if (!outputDirectory.isEmpty())
+    if (!outputDirectory.isEmpty()) {
         ui->lineEdit_outputDirectory->setText(outputDirectory);
+    }
 }

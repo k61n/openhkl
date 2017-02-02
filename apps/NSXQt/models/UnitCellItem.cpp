@@ -1,9 +1,9 @@
 #include <QtDebug>
 
-#include "Diffractometer.h"
-#include "Experiment.h"
+#include <nsxlib/instrument/Diffractometer.h>
+#include <nsxlib/instrument/Experiment.h>
 #include "Logger.h"
-#include "Sample.h"
+#include <nsxlib/instrument/Sample.h>
 #include <nsxlib/crystal/UnitCell.h>
 
 #include "models/UnitCellItem.h"

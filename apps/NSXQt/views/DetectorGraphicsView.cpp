@@ -5,7 +5,7 @@
 #include <QToolTip>
 #include <QMouseEvent>
 #include <nsxlib/data/IData.h>
-#include "Detector.h"
+#include <nsxlib/instrument/Detector.h>
 #include <QApplication>
 #include <QClipboard>
 #include <QPainter>

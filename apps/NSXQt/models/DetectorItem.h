@@ -6,7 +6,7 @@
 
 #include <QString>
 #include "InspectableTreeItem.h"
-#include "Experiment.h"
+#include <nsxlib/instrument/Experiment.h>
 
 class QWidget;
 

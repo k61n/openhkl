@@ -5,7 +5,7 @@
 #include <QJsonValue>
 
 #include "TreeItem.h"
-#include "Experiment.h"
+#include <nsxlib/instrument/Experiment.h>
 
 class InstrumentItem;
 class DataItem;

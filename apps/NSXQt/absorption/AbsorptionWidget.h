@@ -2,8 +2,8 @@
 #define ABSORPTIONWIDGET_H
 
 #include <QWidget>
-#include "Experiment.h"
-#include "RotAxis.h"
+#include <nsxlib/instrument/Experiment.h>
+#include <nsxlib/instrument/RotAxis.h>
 #include <vector>
 
 namespace Ui {

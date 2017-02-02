@@ -1,11 +1,10 @@
-#include "Experiment.h"
+#include <nsxlib/instrument/Experiment.h>
 #include <nsxlib/data/IData.h>
 
 #include "tree/NumorPropertyWidget.h"
 #include "models/NumorItem.h"
 
 #include <iostream>
-
 #include <QJsonArray>
 
 using std::cout;
@@ -24,7 +23,6 @@ NumorItem::NumorItem(std::shared_ptr<SX::Instrument::Experiment> experiment,std:
 NumorItem::~NumorItem()
 {
     cout << "NumorItem destructor: removing data " << _data->getBasename() << endl;
-
    _experiment->removeData(_data->getBasename());
    //delete _data; // JMF fix memory leak detected by valgrind
 }
@@ -86,9 +84,9 @@ void NumorItem::fromJson(const QJsonObject &obj)
 
 void NumorItem::exportHDF5(const std::string& filename) const
 {
-    if (filename.empty())
+    if (filename.empty()) {
         return;
-
+    }
     _data->saveHDF5(filename);
 }
 

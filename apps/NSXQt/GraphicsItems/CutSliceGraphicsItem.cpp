@@ -9,7 +9,7 @@
 
 #include <Eigen/Dense>
 
-#include "Detector.h"
+#include <nsxlib/instrument/Detector.h>
 #include <nsxlib/data/IData.h>
 
 #include "DetectorScene.h"
@@ -29,19 +29,18 @@ CutSliceGraphicsItem::~CutSliceGraphicsItem()
 
 void CutSliceGraphicsItem::plot(SXPlot* plot)
 {
-
     auto p=dynamic_cast<SimplePlot*>(plot);
-    if (!p)
+    if (!p) {
         return;
-
+    }
     p->xAxis->setLabel("Frame (a.u.)");
     p->yAxis->setLabel("Intensity (counts)");
 
     // Set the pointer to the detector scene to the scene that holds the cutter
     auto detPtr=dynamic_cast<DetectorScene*>(scene());
-    if (!detPtr)
+    if (!detPtr) {
         return;
-
+    }
     std::shared_ptr<SX::Data::IData> dataPtr=detPtr->getData();
     std::shared_ptr<SX::Instrument::Detector> det=dataPtr->getDiffractometer()->getDetector();
     int nrows=det->getNRows();
@@ -66,48 +65,35 @@ void CutSliceGraphicsItem::plot(SXPlot* plot)
     int dx=xmax-xmin;
     int dy=ymax-ymin;
 
-    if (horizontal)
-    {
+    if (horizontal) {
         length=dx;
         start=xmin;
-    }
-    else
-    {
+    } else {
         length=dy;
         start=ymin;
     }
-
     QVector<double> x(length);
     QVector<double> y(length);
     QVector<double> e(length);
-
     std::iota(x.begin(),x.end(),start);
-
     const rowMatrix& currentFrame=detPtr->getCurrentFrame();
 
-    if (horizontal)
-    {
+    if (horizontal) {
         int comp=0;
-        for (int i=xmin;i<xmax;++i)
+        for (int i=xmin;i<xmax;++i) {
             y[comp++] = currentFrame.col(i).segment(ymin,dy).sum();
-
-    }
-    else
-    {
+        }
+    } else {
         int comp=0;
-        for (int i=ymin;i<ymax;++i)
+        for (int i=ymin;i<ymax;++i) {
             y[comp++] = currentFrame.row(i).segment(xmin,dx).sum();
+        }
     }
-
     std::transform(y.begin(),y.end(),e.begin(),[](double p){ return sqrt(p);});
-
     p->graph(0)->setDataValueError(x,y,e);
     p->rescaleAxes();
-
     p->replot(QCustomPlot::rpHint);
-
 }
-
 
 bool CutSliceGraphicsItem::isHorizontal() const
 {
@@ -118,24 +104,22 @@ void CutSliceGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsIt
 {
     Q_UNUSED(widget);
 
-    if (_horizontal)
-       painter->setBrush(QBrush(QColor(0,255,0,50)));
-    else
-       painter->setBrush(QBrush(QColor(0,0,255,50)));
-
+    if (_horizontal) {
+        painter->setBrush(QBrush(QColor(0,255,0,50)));
+    } else {
+        painter->setBrush(QBrush(QColor(0,0,255,50)));
+    }
     // Color depending on selection
-    if (option->state & QStyle::State_Selected)
+    if (option->state & QStyle::State_Selected) {
         _pen.setStyle(Qt::DashLine);
-    else
+    } else {
         _pen.setStyle(Qt::SolidLine);
-
-   painter->setRenderHint(QPainter::Antialiasing);
-   painter->setPen(_pen);
-   qreal w=std::abs(_to.x()-_from.x());
-   qreal h=std::abs(_to.y()-_from.y());
-   painter->drawRect(-w/2.0,-h/2.0,w,h);
-
-
+    }
+    painter->setRenderHint(QPainter::Antialiasing);
+    painter->setPen(_pen);
+    qreal w=std::abs(_to.x()-_from.x());
+    qreal h=std::abs(_to.y()-_from.y());
+    painter->drawRect(-w/2.0,-h/2.0,w,h);
 }
 
 std::string CutSliceGraphicsItem::getPlotType() const
@@ -145,27 +129,20 @@ std::string CutSliceGraphicsItem::getPlotType() const
 
 void CutSliceGraphicsItem::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
-
-    if (!isVisible())
+    if (!isVisible()) {
         return;
-
-    if (!isSelected())
+    }
+    if (!isSelected()) {
         return;
-
+    }
     int step=event->delta()/120;
 
-    if (_horizontal)
-    {
+    if (_horizontal) {
         _from += QPointF(0,-step);
         _to += QPointF(0,step);
-    }
-    else
-    {
+    } else {
         _from += QPointF(-step,0);
         _to += QPointF(step,0);
     }
     update();
 }
-
-
-

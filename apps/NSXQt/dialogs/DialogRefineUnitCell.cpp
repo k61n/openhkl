@@ -8,17 +8,17 @@
 
 #include "DialogRefineUnitCell.h"
 #include "ui_DialogRefineUnitCell.h"
-#include "Experiment.h"
-#include "Diffractometer.h"
-#include "Sample.h"
-#include "Detector.h"
-#include "Source.h"
-#include "Gonio.h"
-#include "Axis.h"
+#include <nsxlib/instrument/Experiment.h>
+#include <nsxlib/instrument/Diffractometer.h>
+#include <nsxlib/instrument/Sample.h>
+#include <nsxlib/instrument/Detector.h>
+#include <nsxlib/instrument/Source.h>
+#include <nsxlib/instrument/Gonio.h>
+#include <nsxlib/instrument/Axis.h>
 #include <nsxlib/utils/Units.h>
 #include <nsxlib/data/IData.h>
 #include "DoubleTableItemDelegate.h"
-#include "Monochromator.h"
+#include <nsxlib/instrument/Monochromator.h>
 
 DialogRefineUnitCell::DialogRefineUnitCell(std::shared_ptr<SX::Instrument::Experiment> experiment,
                                            sptrUnitCell unitCell,

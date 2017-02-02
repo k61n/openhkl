@@ -1,7 +1,7 @@
 #include "DialogExperiment.h"
 #include "ui_ExperimentDialog.h"
 #include <QString>
-#include "DiffractometerStore.h"
+#include <nsxlib/instrument/DiffractometerStore.h>
 #include <QComboBox>
 
 using namespace SX::Instrument;

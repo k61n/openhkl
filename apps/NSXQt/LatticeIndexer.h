@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include <nsxlib/crystal/UnitCell.h>
-#include "Experiment.h"
+#include <nsxlib/instrument/Experiment.h>
 #include <memory>
 
 namespace Ui {

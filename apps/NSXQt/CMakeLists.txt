@@ -7,7 +7,6 @@ include_directories(#SYSTEM
     ${CMAKE_SOURCE_DIR}/
 
     ${CMAKE_SOURCE_DIR}/nsxlib/imaging/
-    ${CMAKE_SOURCE_DIR}/nsxlib/instrument/
 
     ${CMAKE_SOURCE_DIR}/apps/NSXQt/absorption/
     ${CMAKE_SOURCE_DIR}/apps/NSXQt/GraphicsItems/

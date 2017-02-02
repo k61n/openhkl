@@ -11,30 +11,24 @@
 #include <QStandardItemModel>
 #include <QTreeView>
 
-#include "Experiment.h"
+#include <nsxlib/instrument/Experiment.h>
 #include <nsxlib/utils/ProgressHandler.h>
 #include <nsxlib/data/PeakFinder.h>
 #include <nsxlib/utils/Types.h>
 
-using namespace SX::Instrument;
-
 class ExperimentItem;
 class SessionModel;
 
-namespace SX
-{
-namespace Data
-{
+namespace SX {
+namespace Data {
     class IData;
 }
 }
 
-using SX::Crystal::sptrUnitCell;
-
-class ExperimentTree : public QTreeView
-{
+class ExperimentTree : public QTreeView {
     Q_OBJECT
 public:
+    using sptrUnitCell = SX::Crystal::sptrUnitCell;
     explicit ExperimentTree(QWidget *parent = 0);
     ~ExperimentTree();
 
