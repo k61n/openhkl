@@ -1,14 +1,5 @@
 include_directories(
     ${CMAKE_SOURCE_DIR}
-   # ${CMAKE_SOURCE_DIR}/nsxlib/chemistry/
-   # ${CMAKE_SOURCE_DIR}/nsxlib/crystal/
-   # ${CMAKE_SOURCE_DIR}/nsxlib/data/
-    ${CMAKE_SOURCE_DIR}/nsxlib/geometry/
-    ${CMAKE_SOURCE_DIR}/nsxlib/imaging/
-    ${CMAKE_SOURCE_DIR}/nsxlib/instrument/
-    ${CMAKE_SOURCE_DIR}/nsxlib/kernel/
-    ${CMAKE_SOURCE_DIR}/nsxlib/physics/
-    ${CMAKE_SOURCE_DIR}/nsxlib/utils/
 )
 
 file(GLOB_RECURSE test_sources "*.cpp")

@@ -6,29 +6,26 @@
 #include <string>
 #include <memory>
 
-#include "Factory.h"
+#include <nsxlib/kernel/Factory.h>
 
 using namespace SX::Kernel;
 using std::unique_ptr;
 
 BOOST_AUTO_TEST_CASE(Test_Factory)
 {
+    struct A {
+        static A* create()
+        {
+            return new A;
+        }
 
-	struct A
-	{
-		static A* create()
-		{
-			return new A;
-		}
+    };
 
-	};
+    struct AFactory : public Factory<A,std::string>
+    {
+    };
 
-	struct AFactory : public Factory<A,std::string>
-	{
-	};
-
-	AFactory fact=AFactory();
-	fact.registerCallback("a",&A::create);
-
+    AFactory fact=AFactory();
+    fact.registerCallback("a",&A::create);
     unique_ptr<A> ptr = unique_ptr<A>(fact.create("a"));
 }

@@ -9,8 +9,8 @@
 
 #include <nsxlib/geometry/ConvexHull.h>
 #include <nsxlib/chemistry/Material.h>
-#include  <nsxlib/chemistry/MaterialManager.h>
-#include "MCAbsorption.h"
+#include <nsxlib/chemistry/MaterialManager.h>
+#include <nsxlib/geometry/MCAbsorption.h>
 #include <nsxlib/utils/Units.h>
 
 // const double tolerance=1.0e-9;

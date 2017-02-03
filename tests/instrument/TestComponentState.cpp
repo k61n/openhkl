@@ -2,9 +2,9 @@
 #define BOOST_TEST_DYN_LINK
 #include <Eigen/Dense>
 #include <boost/test/unit_test.hpp>
-#include "Sample.h"
-#include "ComponentState.h"
-#include "Gonio.h"
+#include <nsxlib/instrument/Sample.h>
+#include <nsxlib/instrument/ComponentState.h>
+#include <nsxlib/instrument/Gonio.h>
 #include <iostream>
 
 using namespace SX::Instrument;
@@ -17,15 +17,9 @@ BOOST_AUTO_TEST_CASE(Test_Component_State)
 {
     std::shared_ptr<Gonio> g(new Gonio("gamma-arm"));
     g->addRotation("gamma",Vector3d(0,0,1),RotAxis::CW);
-
     Sample sample("sample");
     sample.setGonio(g);
-
     ComponentState cs = sample.createState({2.0});
-
     ComponentState* pcs(new ComponentState(cs));
-
     delete pcs;
-
 }
-

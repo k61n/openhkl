@@ -10,11 +10,11 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
-#include "DetectorFactory.h"
-#include "Diffractometer.h"
-#include "FlatDetector.h"
-#include "Gonio.h"
-#include "Units.h"
+#include <nsxlib/instrument/DetectorFactory.h>
+#include <nsxlib/instrument/Diffractometer.h>
+#include <nsxlib/instrument/FlatDetector.h>
+#include <nsxlib/instrument/Gonio.h>
+#include <nsxlib/utils/Units.h>
 
 using boost::property_tree::ptree;
 
@@ -23,7 +23,7 @@ using SX::Units::UnitsManager;
 
 BOOST_AUTO_TEST_CASE(Tests_XML_Instrument_Parser)
 {
-
+#pragma warning "test not implemented!"
 //	UnitsManager* um = UnitsManager::Instance();
 //
 //	Diffractometer* diff=Diffractometer::create();

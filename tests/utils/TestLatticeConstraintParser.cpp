@@ -7,20 +7,18 @@
 #include <iostream>
 #include <string>
 
-#include "LatticeConstraintParser.h"
+#include <nsxlib/utils/LatticeConstraintParser.h>
 
 using namespace SX::Utils;
 
 BOOST_AUTO_TEST_CASE(Test_LatticeConstraintParser)
 {
+    namespace filesystem = boost::filesystem;
 
-	namespace filesystem=boost::filesystem;
+    LatticeConstraintParser<std::string::iterator> parser;
 
-	LatticeConstraintParser<std::string::iterator> parser;
+    SX::Utils::constraints_set constraints;
 
-	SX::Utils::constraints_set constraints;
-
-	std::string s("a=2b");
-	BOOST_CHECK(qi::phrase_parse(s.begin(),s.end(),parser,qi::blank,constraints));
-
+    std::string s("a=2b");
+    BOOST_CHECK(qi::phrase_parse(s.begin(),s.end(),parser,qi::blank,constraints));
 }

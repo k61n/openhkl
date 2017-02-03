@@ -8,7 +8,7 @@
 #include <vector>
 #include <string>
 
-#include "CSV.h"
+#include <nsxlib/utils/CSV.h>
 
 using namespace SX::Utils;
 
@@ -21,9 +21,7 @@ int run_test() {
             "\"\", \"\"\"\"\", \"as,df\", \" \"\"\" \"";
 
     std::istringstream stream(csv_file);
-
     SX::Utils::CSV csv;
-
     std::vector<std::string> row;
 
     while(!stream.eof()) {
@@ -35,7 +33,6 @@ int run_test() {
 
         std::cout << std::endl;
     }
-
     return 0;
 }
 

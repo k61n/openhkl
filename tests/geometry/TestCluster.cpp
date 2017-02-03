@@ -1,6 +1,7 @@
 #define BOOST_TEST_MODULE "Test Cluster"
 #define BOOST_TEST_DYN_LINK
-#include "Cluster.h"
+
+#include <nsxlib/geometry/Cluster.h>
 #include <boost/test/unit_test.hpp>
 #include <Eigen/Dense>
 #include <memory>

@@ -8,7 +8,7 @@
 #include <vector>
 #include <string>
 
-#include "ProgressHandler.h"
+#include <nsxlib/utils/ProgressHandler.h>
 
 using namespace SX::Utils;
 
@@ -55,6 +55,5 @@ BOOST_AUTO_TEST_CASE(Test_ProgressHandler)
     catch (std::exception& e) {
         aborted = true;
     }
-
     BOOST_CHECK(aborted == true);
 }

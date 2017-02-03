@@ -1,9 +1,10 @@
 #define BOOST_TEST_MODULE "Test Multi-dimensional Object oriented Bounding Box"
 #define BOOST_TEST_DYN_LINK
+
 #include <cmath>
 #include <boost/test/unit_test.hpp>
 #include <Eigen/Dense>
-#include "OBB.h"
+#include <nsxlib/geometry/OBB.h>
 
 using namespace SX::Geometry;
 using Eigen::Vector2d;
@@ -17,7 +18,6 @@ const double tolerance_large=1.0;
 
 BOOST_AUTO_TEST_CASE(Test_OBB)
 {
-
     // Test: the construction onf an OBB
     Vector3d center(3,4,7);
     Vector3d extent(sqrt(2),sqrt(2),1);
