@@ -6,16 +6,15 @@
 
 #include <QMainWindow>
 
-#include "LatticeMinimizer.h"
-#include "Peak3D.h"
-#include "Diffractometer.h"
+#include <nsxlib/crystal/LatticeMinimizer.h>
+#include <nsxlib/crystal/Peak3D.h>
+#include <nsxlib/instrument/Diffractometer.h>
 
 namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow
-{
+class MainWindow: public QMainWindow {
     Q_OBJECT
 
 public:
@@ -23,11 +22,9 @@ public:
     ~MainWindow();
 private slots:
     void on_actionOpen_reflections_triggered();
-
     void on_pushButton_refine_clicked();
     void selectPeaks();
     void on_comboBox_diffractometer_currentIndexChanged(const QString& diffractometerName);
-
     // void on_actionShow_calculated_peak_positions_triggered();
     // void on_actionShow_calculated_peak_positions_triggered(bool checked);
 
