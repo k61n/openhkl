@@ -11,6 +11,8 @@
 #include <nsxlib/data/ILLAsciiData.h>
 
 using namespace SX::Instrument;
+using SX::Data::IData;
+using SX::Data::ILLAsciiData;
 
 BOOST_AUTO_TEST_CASE(Test_Experiment)
 {
@@ -53,6 +55,5 @@ BOOST_AUTO_TEST_CASE(Test_Experiment)
     exp.removeData("D10_ascii_example");
     // The data must be empty again after data deletion
     BOOST_CHECK_EQUAL(exp.getDataNames().size(),0);
-
 }
 

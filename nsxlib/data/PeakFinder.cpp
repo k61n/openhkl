@@ -17,12 +17,11 @@ using SX::Types::RealMatrix;
 using SX::Crystal::sptrPeak3D;
 using SX::Imaging::Convolver;
 using SX::Utils::ProgressHandler;
+using SX::Instrument::Detector;
+using SX::Crystal::Peak3D;
 
-namespace SX
-{
-
-namespace Data
-{
+namespace SX {
+namespace Data {
 
 PeakFinder::PeakFinder()
 {

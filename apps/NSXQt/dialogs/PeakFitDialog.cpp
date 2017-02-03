@@ -24,6 +24,8 @@
 #include <cmath>
 
 using SX::Crystal::Peak3D;
+using SX::Data::IData;
+using SX::Geometry::Ellipsoid;
 
 PeakFitDialog::PeakFitDialog(SessionModel* session, QWidget *parent):
     QDialog(parent),

@@ -54,14 +54,11 @@
 
 using std::ifstream;
 
-namespace SX
-{
+namespace SX {
+namespace Data {
 
-namespace Data
-{
-
-using namespace SX::Utils;
-using namespace SX::Units;
+using SX::Instrument::Diffractometer;
+using SX::Instrument::Monochromator;
 
 IData *RawData::create(const std::string &filename, std::shared_ptr<Diffractometer> diffractometer) {
     std::vector<std::string> filenames;

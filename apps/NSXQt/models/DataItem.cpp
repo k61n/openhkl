@@ -10,13 +10,14 @@
 #include <nsxlib/data/DataReaderFactory.h>
 #include "NumorItem.h"
 
+using SX::Data::IData;
+using SX::Data::DataReaderFactory;
+
 DataItem::DataItem(std::shared_ptr<Experiment> experiment) : TreeItem(experiment)
 {
     setText("Data");
-
     QIcon icon(":/resources/dataIcon.png");
     setIcon(icon);
-
     setEditable(false);
     setSelectable(false);
 }

@@ -3,15 +3,11 @@
 
 #include "Units.h"
 
-namespace SX
-{
-
-namespace Units
-{
+namespace SX {
+namespace Units {
 
 // Needs c++0x features enabled to be able to initialize the map in the following way
-std::unordered_map<std::string,double> UnitsManager::_unitsMap =
-{
+std::unordered_map<std::string,double> UnitsManager::_unitsMap = {
         {"m",m   },
         {"cm",cm  },
         {"mm",mm  },
@@ -64,8 +60,9 @@ std::unordered_map<std::string,double> UnitsManager::_unitsMap =
 double UnitsManager::get(const std::string& units)
 {
     auto it=_unitsMap.find(units);
-    if (it==_unitsMap.end())
+    if (it==_unitsMap.end()) {
         throw std::invalid_argument("Unit "+units+" not registered in the database");
+    }
     return it->second;
 }
 

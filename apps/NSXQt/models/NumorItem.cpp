@@ -9,6 +9,7 @@
 
 using std::cout;
 using std::endl;
+using SX::Geometry::AABB;
 
 NumorItem::NumorItem(std::shared_ptr<SX::Instrument::Experiment> experiment,std::shared_ptr<SX::Data::IData> data) :
     InspectableTreeItem(experiment),

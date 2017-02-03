@@ -36,13 +36,13 @@
 #include "../kernel/Singleton.h"
 #include "../instrument/Axis.h"
 
-namespace SX
-{
-
+namespace SX {
 namespace Instrument
 {
-
-using namespace SX::Kernel;
+using SX::Kernel::Factory;
+using SX::Kernel::Constructor;
+using SX::Kernel::Destructor;
+using SX::Kernel::Singleton;
 
 class AxisFactory : public Factory<Axis,std::string,const proptree::ptree&>, public Singleton<AxisFactory,Constructor,Destructor>
 {
@@ -54,7 +54,6 @@ private:
 };
 
 } // end namespace Instrument
-
 } // end namespace SX
 
 #endif /* NSXTOOL_AXISFACTORY_H_ */

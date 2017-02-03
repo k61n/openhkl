@@ -62,11 +62,13 @@ namespace Data {
 }
 }
 
-using SX::Crystal::sptrUnitCell;
 
 class SessionModel : public QStandardItemModel {
     Q_OBJECT
 public:
+    using sptrUnitCell = SX::Crystal::sptrUnitCell;
+    using sptrPeak3D = std::shared_ptr<SX::Crystal::Peak3D>;
+
     explicit SessionModel();
     ~SessionModel();
 

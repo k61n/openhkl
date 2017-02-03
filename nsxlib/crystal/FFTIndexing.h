@@ -36,13 +36,8 @@
 #include "../utils/Units.h"
 #include "../utils/Types.h"
 
-namespace SX
-{
-namespace Crystal
-{
-
-
-//using namespace SX::Units;
+namespace SX {
+namespace Crystal {
 
 struct tVector {
     tVector(const Eigen::Vector3d& v,double quality):_vect(v),_quality(quality) {}

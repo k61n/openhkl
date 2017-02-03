@@ -24,6 +24,8 @@
 #include <nsxlib/instrument/Source.h>
 #include <nsxlib/utils/Units.h>
 
+namespace qi = boost::spirit::qi;
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),_peaks(),
@@ -184,7 +186,6 @@ void MainWindow::on_actionOpen_reflections_triggered()
 
 void MainWindow::on_pushButton_refine_clicked()
 {
-
     double val;
 
     val=ui->doubleSpinBox_a->value();

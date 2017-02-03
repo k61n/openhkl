@@ -9,11 +9,10 @@
 #include "../data/IData.h"
 #include "Source.h"
 
-namespace SX
-{
+using SX::Data::IData;
 
-namespace Instrument
-{
+namespace SX {
+namespace Instrument {
 
 Experiment::Experiment(const Experiment& other)
 : _name(other._name),
@@ -109,14 +108,14 @@ void Experiment::addData(std::shared_ptr<IData> data)
     // Add the data only if it does not exist in the current data map
     std::string basename=data->getBasename();
     auto it=_data.find(basename);
-    if (it != _data.end())
+    if (it != _data.end()) {
         return ;
-
+    }
     std::string diffName = data->getMetadata()->getKey<std::string>("Instrument");
 
-    if (!(diffName.compare(_diffractometer->getName())==0))
+    if (!(diffName.compare(_diffractometer->getName())==0)) {
         throw std::runtime_error("Mismatch between the diffractometers assigned to the experiment and the data");
-
+    }
     double wav=data->getMetadata()->getKey<double>("wavelength");
 
     // ensure that there is at least one monochromator!
@@ -125,16 +124,12 @@ void Experiment::addData(std::shared_ptr<IData> data)
         _diffractometer->getSource()->addMonochromator(&mono);
     }
 
-    if (_data.empty())
-    {
+    if (_data.empty()) {
         _diffractometer->getSource()->setWavelength(wav);
-    }
-    else
-    {
+    } else {
         if (std::abs(wav-_diffractometer->getSource()->getWavelength())>1e-5)
             throw std::runtime_error("trying to mix data with different wavelengths");
     }
-
     _data.insert(std::pair<std::string,std::shared_ptr<IData>>(basename,data));
 }
 
@@ -147,8 +142,9 @@ bool Experiment::hasData(const std::string& name) const
 void Experiment::removeData(const std::string& name)
 {
     auto it=_data.find(name);
-    if (it != _data.end())
+    if (it != _data.end()) {
         _data.erase(it);
+    }
 }
 
 

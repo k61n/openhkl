@@ -20,15 +20,10 @@
 #include "../instrument/Source.h"
 #include "../utils/Units.h"
 
-namespace SX
-{
+namespace SX {
+namespace Data {
 
-namespace Data
-{
-
-using namespace SX::Utils;
-using namespace SX::Units;
-
+using SX::Instrument::Diffractometer;
 
 IData* I16Data::create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer)
 {
@@ -41,68 +36,61 @@ I16Data::I16Data(const std::string& filename, std::shared_ptr<Diffractometer> di
     std::ifstream file;
     std::string dir;
     file.open(filename.c_str(),std::ios::in);
-    if (!file.is_open())
+    if (!file.is_open()) {
         throw std::runtime_error("Problem opening file"+filename);
-
+    }
     // Flag for founding metadata
     bool metadata_start=false;
     bool data_start=false;
     int data_count=0;
-    while(!file.eof())
-    {
+
+    while(!file.eof()) {
         std::string line;
         getline(file,line);
 
-        if (line.compare("</MetaDataAtStart>")==0)
-        {
+        if (line.compare("</MetaDataAtStart>")==0) {
             metadata_start=false;
             getline(file,line);
             getline(file,line);
             getline(file,line);
             data_start=true;
         }
-        if (metadata_start)
-        {
+        if (metadata_start)  {
             std::size_t eq=line.find_first_of("=");
-            if (eq==std::string::npos)
+            if (eq==std::string::npos) {
                 throw std::runtime_error("Could not find symbol = in metadata field");
-
+            }
             std::istringstream is(line.substr(0,eq));
             std::string key;
             is >> key;
-            if (key.compare("cmd")==0 || key.compare("date")==0)
+            if (key.compare("cmd")==0 || key.compare("date")==0) {
                 continue;
-            if (key.compare("pilatus100k_path_template")==0)
-            {
+            }
+            if (key.compare("pilatus100k_path_template")==0) {
                 std::string secondary;
                 std::istringstream is(line.substr(eq+2,std::string::npos-eq-1));
                 is >> secondary;
                 dir = boost::filesystem::path(filename).parent_path().string()+"/"+boost::filesystem::path(secondary).parent_path().string();
                 continue;
-            }
-            else
-            {
+            } else {
                 double value;
                 std::istringstream is2(line.substr(eq+1,std::string::npos-eq));
                 is2 >> value;
                 _metadata->add<double>(key,value);
             }
-
-
         }
-        if (line.compare("<MetaDataAtStart>")==0)
+        if (line.compare("<MetaDataAtStart>")==0) {
             metadata_start=true;
-
-        if (data_start)
+        }
+        if (data_start) {
             data_count++;
-
+        }
     }
     data_count--;
     _metadata->add<std::string>("Instrument","I16Kappa");
     file.close();
     _tifs.reserve(data_count);
-    for (int i=1;i<=data_count;++i)
-    {
+    for (int i=1;i<=data_count;++i) {
         std::ostringstream os;
         os << std::setw(5) << std::setfill('0') << i << ".tif";
         _tifs.push_back(dir+"/"+os.str());
@@ -121,8 +109,7 @@ I16Data::I16Data(const std::string& filename, std::shared_ptr<Diffractometer> di
     sval[2]=_metadata->getKey<double>("phi");
 
 
-    for (unsigned int i=0;i<_nFrames;++i)
-    {
+    for (unsigned int i=0;i<_nFrames;++i) {
         _detectorStates.push_back(_diffractometer->getDetector()->createState(dval));
         _sampleStates.push_back(_diffractometer->getSample()->createState(sval));
     }
@@ -136,12 +123,10 @@ I16Data::~I16Data() {
 
 void I16Data::open()
 {
-
 }
 
 void I16Data::close()
 {
-
 }
 
 Eigen::MatrixXi I16Data::readFrame(std::size_t idx)
@@ -152,16 +137,14 @@ Eigen::MatrixXi I16Data::readFrame(std::size_t idx)
 
     Eigen::Matrix<uint32,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> data32(_nrows,_ncols);
     // Read line per line
-    for(unsigned short int i=0; i< _nrows; ++i)
+    for(unsigned short int i=0; i< _nrows; ++i) {
         TIFFReadScanline(file, (char*)&data32(i,0), i);
-
+    }
     TIFFClose(file);
     // Not very nice, but need to copy the 32bits data to int
     return data32.cast<int>();
 
 }
 
-
 } // end namespace Data
-
 } // end namespace SX

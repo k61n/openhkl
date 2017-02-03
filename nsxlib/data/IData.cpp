@@ -22,12 +22,10 @@
 #include "BasicFrameIterator.h"
 #include "ThreadedFrameIterator.h"
 
-namespace SX
-{
+namespace SX {
+namespace Data {
 
-namespace Data
-{
-
+using Eigen::Matrix3d;
 using boost::filesystem::path;
 
 IData::IData(std::string filename, std::shared_ptr<Diffractometer> diffractometer):

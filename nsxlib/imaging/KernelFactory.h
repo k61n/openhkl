@@ -15,9 +15,9 @@
 namespace SX {
 namespace Imaging {
 
-using namespace SX::Kernel;
-
-class KernelFactory : public Factory<ConvolutionKernel,std::string,int,int>, public Singleton<KernelFactory,Constructor,Destructor>
+class KernelFactory :
+        public SX::Kernel::Factory<ConvolutionKernel,std::string,int,int>,
+        public SX::Kernel::Singleton<KernelFactory,SX::Kernel::Constructor,SX::Kernel::Destructor>
 {
 public:
     KernelFactory();

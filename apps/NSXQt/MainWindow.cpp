@@ -86,6 +86,7 @@ using namespace SX::Instrument;
 using SX::Types::RealMatrix;
 using SX::Utils::ProgressHandler;
 using SX::Data::PeakFinder;
+using SX::Data::IData;
 
 
 MainWindow::MainWindow(QWidget *parent)

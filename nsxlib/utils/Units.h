@@ -39,8 +39,7 @@
 
 #include "../kernel/Singleton.h"
 
-namespace SX
-{
+namespace SX {
 //! Define the units used internally in NSXTOOL.
 //! The units are defined in the international units system aka SI
 //! The Units namespace allows users of the library to specify their units when defining variables.
@@ -48,18 +47,15 @@ namespace SX
 //! a.Rotate(34*deg). This guarantees a self-consistent system of units in all calculations. This is inspired
 //! from the system of units in Geant4. Printing a property in a given unit requires to divide by the units.
 //! For example, if one wants an angle in degrees, angle/Units::deg needs to be used.
-namespace Units
-{
+namespace Units {
 
 using namespace boost::units;
 using namespace boost::units::si;
-
 using namespace SX::Kernel;
 
 //! Singleton class to map the symbol of a Unit with its value in the internal reference system.
 //! This is used for example when parsing values from input XML files.
-class UnitsManager : public Singleton<UnitsManager,Constructor,Destructor>
-{
+class UnitsManager : public Singleton<UnitsManager,Constructor,Destructor> {
 public:
     //! Get the value of a given unit with respect to the internal reference unit.
     //! Throws std::invalid_argument if not present
@@ -208,7 +204,6 @@ static const double h=6.626176e-34*J*s;
 static const double hbar=h/twopi;
 static const double kB = 1.3806513e-23*J/K;
 static const double R=8.3144621*J/mole/K;
-
 
 } //Namespace Units
 } //Namespace SX

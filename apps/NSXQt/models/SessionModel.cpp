@@ -122,11 +122,16 @@
 #include <QJsonValue>
 #include <QJsonDocument>
 
-
 using std::vector;
 using SX::Data::IData;
 using std::shared_ptr;
 using SX::Utils::ProgressHandler;
+using SX::Crystal::UnitCell;
+using SX::Crystal::SpaceGroup;
+using SX::Crystal::RFactor;
+using SX::Data::PeakFinder;
+using SX::Crystal::PeakCalc;
+using SX::Crystal::Peak3D;
 
 SessionModel::SessionModel()
 {

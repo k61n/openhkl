@@ -14,6 +14,8 @@
 #include <QtDebug>
 #include <memory>
 
+using SX::Data::IData;
+
 PeakListPropertyWidget::PeakListPropertyWidget(PeakListItem* caller, QWidget *parent) :
      QWidget(parent),
      _caller(caller),

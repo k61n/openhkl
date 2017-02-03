@@ -69,11 +69,10 @@ using SX::Utils::BottomRightColMajorMapper;
 using SX::Utils::BottomRightRowMajorMapper;
 namespace qi = boost::spirit::qi;
 
-namespace SX
-{
+namespace SX {
+namespace Data {
 
-namespace Data
-{
+using SX::Instrument::Detector;
 
 // 81 characters per line, at least 100 lines of header
 std::size_t ILLAsciiData::BlockSize = 100*81;

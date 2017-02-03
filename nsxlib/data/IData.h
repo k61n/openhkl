@@ -48,23 +48,22 @@
 
 #include "../utils/ProgressHandler.h"
 
-namespace SX
-{
-
-namespace Instrument
-{
+namespace SX {
+namespace Instrument {
     class Component;
 }
 
-namespace Data
-{
+namespace Data {
 
 using RowMatrixi = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 using RowMatrixd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
-using namespace SX::Crystal;
-using namespace SX::Geometry;
-using namespace SX::Instrument;
+using SX::Instrument::Diffractometer;
+using SX::Instrument::ComponentState;
+using SX::Crystal::sptrPeak3D;
+using SX::Geometry::AABB;
+using SX::Crystal::PeakCalc;
+
 
 class IFrameIterator;
 class ThreadedFrameIterator;
@@ -76,8 +75,7 @@ using FrameIteratorCallback = std::function<IFrameIterator*(IData&, int)>;
  *
  * Base interface for all diffraction data. IData handles the IO
  */
-class IData
-{
+class IData {
 public:
     // Constructors and destructor
 

@@ -41,49 +41,41 @@
 #include <boost/fusion/adapted/struct.hpp>
 #include <boost/variant.hpp>
 
+namespace SX {
+namespace Utils {
+
 namespace qi  = boost::spirit::qi;
 namespace phx = boost::phoenix;
 
-namespace SX
-{
+using constraint_tuple = std::tuple<unsigned int,unsigned int,double>;
+using constraints_set = std::set<constraint_tuple>;
 
-namespace Utils
-{
-
-typedef std::tuple<unsigned int,unsigned int,double> constraint_tuple;
-typedef std::set<constraint_tuple> constraints_set;
-
-struct SingleConstraint
-{
-	template <typename constraint_tuple>
-	bool operator()(constraint_tuple &constraint, int lhs, int rhs, double coeff) const
-	{
-
-		std::get<0>(constraint) = lhs;
-		std::get<1>(constraint) = rhs;
-		std::get<2>(constraint) = coeff;
-
-		return true;
-	}
+struct SingleConstraint {
+    template <typename constraint_tuple>
+    bool operator()(constraint_tuple &constraint, int lhs, int rhs, double coeff) const
+    {
+        std::get<0>(constraint) = lhs;
+        std::get<1>(constraint) = rhs;
+        std::get<2>(constraint) = coeff;
+        return true;
+    }
 };
 
-struct MultiConstraint
-{
-	template <typename constraint_set>
-	bool operator()(constraint_set &constraints, const constraint_tuple& singleConstraint) const
-	{
+struct MultiConstraint {
+    template <typename constraint_set>
+    bool operator()(constraint_set &constraints, const constraint_tuple& singleConstraint) const
+    {
 
-		constraints.insert(singleConstraint);
+        constraints.insert(singleConstraint);
 
-		return true;
-	}
+        return true;
+    }
 };
 
 template<typename It>
-struct LatticeConstraintParser : qi::grammar<It,constraints_set()>
-{
+struct LatticeConstraintParser : qi::grammar<It,constraints_set()> {
 
-	LatticeConstraintParser(): LatticeConstraintParser::base_type(constraints)
+    LatticeConstraintParser(): LatticeConstraintParser::base_type(constraints)
     {
         using namespace qi;
         using namespace phx;
@@ -98,15 +90,13 @@ struct LatticeConstraintParser : qi::grammar<It,constraints_set()>
         prefactor = eps[_val=1.0] >> double_[_val*=_1];
     }
 
-	qi::rule<It,constraints_set()> constraints;
-	qi::rule<It,constraint_tuple(),qi::locals<double,double,unsigned int,unsigned int>> single_constraint;
-	qi::rule<It,unsigned int()> param;
-	qi::rule<It,double()> prefactor;
+    qi::rule<It,constraints_set()> constraints;
+    qi::rule<It,constraint_tuple(),qi::locals<double,double,unsigned int,unsigned int>> single_constraint;
+    qi::rule<It,unsigned int()> param;
+    qi::rule<It,double()> prefactor;
 };
 
 } // Namespace Utils
-
 } // Namespace SX
 
 #endif /* NSXTOOL_LATTICECONSTRAINTPARSER_H_ */
-

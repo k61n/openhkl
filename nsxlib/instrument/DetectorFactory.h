@@ -36,13 +36,14 @@
 #include "../kernel/Factory.h"
 #include "../kernel/Singleton.h"
 
-namespace SX
-{
+namespace SX {
+namespace Instrument {
 
-namespace Instrument
-{
-
-using namespace SX::Kernel;
+using SX::Instrument::Detector;
+using SX::Kernel::Factory;
+using SX::Kernel::Singleton;
+using SX::Kernel::Constructor;
+using SX::Kernel::Destructor;
 
 class DetectorFactory : public Factory<Detector,std::string,const proptree::ptree&>, public Singleton<DetectorFactory,Constructor,Destructor>
 {
@@ -54,7 +55,6 @@ private:
 };
 
 } // end namespace Instrument
-
 } // end namespace SX
 
 #endif /* NSXTOOL_DETECTORFACTORY_H_ */
