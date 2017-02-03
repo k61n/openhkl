@@ -10,10 +10,10 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include "ThreadedFrameIterator.h"
-#include "DiffractometerStore.h"
-#include "Diffractometer.h"
-#include "ILLAsciiData.h"
+#include <nsxlib/data/ThreadedFrameIterator.h>
+#include <nsxlib/instrument/DiffractometerStore.h>
+#include <nsxlib/instrument/Diffractometer.h>
+#include <nsxlib/data/ILLAsciiData.h>
 
 using namespace SX::Data;
 using namespace SX::Instrument;

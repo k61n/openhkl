@@ -1,7 +1,8 @@
 include_directories(
-    ${CMAKE_SOURCE_DIR}/nsxlib/chemistry/
-    ${CMAKE_SOURCE_DIR}/nsxlib/crystal/
-    ${CMAKE_SOURCE_DIR}/nsxlib/data/
+    ${CMAKE_SOURCE_DIR}
+   # ${CMAKE_SOURCE_DIR}/nsxlib/chemistry/
+   # ${CMAKE_SOURCE_DIR}/nsxlib/crystal/
+   # ${CMAKE_SOURCE_DIR}/nsxlib/data/
     ${CMAKE_SOURCE_DIR}/nsxlib/geometry/
     ${CMAKE_SOURCE_DIR}/nsxlib/imaging/
     ${CMAKE_SOURCE_DIR}/nsxlib/instrument/

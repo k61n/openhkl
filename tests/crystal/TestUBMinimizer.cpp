@@ -10,19 +10,19 @@
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
 
-#include "Component.h"
-#include "ComponentState.h"
-#include "FlatDetector.h"
-#include "Gonio.h"
-#include "Peak3D.h"
-#include "Sample.h"
-#include "LatticeMinimizer.h"
-#include "LatticeSolution.h"
-#include "UBMinimizer.h"
-#include "Units.h"
-#include "UnitCell.h"
-#include "Monochromator.h"
-#include "Source.h"
+#include <nsxlib/instrument/Component.h>
+#include <nsxlib/instrument/ComponentState.h>
+#include <nsxlib/instrument/FlatDetector.h>
+#include <nsxlib/instrument/Gonio.h>
+#include <nsxlib/crystal/Peak3D.h>
+#include <nsxlib/instrument/Sample.h>
+#include <nsxlib/crystal/LatticeMinimizer.h>
+#include <nsxlib/crystal/LatticeSolution.h>
+#include <nsxlib/crystal/UBMinimizer.h>
+#include <nsxlib/utils/Units.h>
+#include <nsxlib/crystal/UnitCell.h>
+#include <nsxlib/instrument/Monochromator.h>
+#include <nsxlib/instrument/Source.h>
 
 #include <memory>
 

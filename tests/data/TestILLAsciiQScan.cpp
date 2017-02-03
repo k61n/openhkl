@@ -10,10 +10,10 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include "ComponentState.h"
-#include "DiffractometerStore.h"
-#include "ILLAsciiData.h"
-#include "Units.h"
+#include <nsxlib/instrument/ComponentState.h>
+#include <nsxlib/instrument/DiffractometerStore.h>
+#include <nsxlib/data/ILLAsciiData.h>
+#include <nsxlib/utils/Units.h>
 
 using namespace SX::Data;
 using namespace SX::Instrument;
@@ -47,11 +47,11 @@ BOOST_AUTO_TEST_CASE(Test_ILL_Ascii_QScan)
         BOOST_FAIL("unknown exception");
     }
 
-	// Check the total number of count in the frame 0
-	BOOST_CHECK_EQUAL(v.sum(),5.90800000e+03);
+    // Check the total number of count in the frame 0
+    BOOST_CHECK_EQUAL(v.sum(),5.90800000e+03);
 
-	// Check the value of the monitor
-	BOOST_CHECK_CLOSE(meta->getKey<double>("monitor"),3.74130000e+04,tolerance);
+    // Check the value of the monitor
+    BOOST_CHECK_CLOSE(meta->getKey<double>("monitor"),3.74130000e+04,tolerance);
 
 
 

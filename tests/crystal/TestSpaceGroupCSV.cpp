@@ -8,10 +8,10 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include "SpaceGroup.h"
-#include "SpaceGroupSymbols.h"
-#include "UnitCell.h"
-#include "CSV.h"
+#include <nsxlib/crystal/SpaceGroup.h>
+#include <nsxlib/crystal/SpaceGroupSymbols.h>
+#include <nsxlib/crystal/UnitCell.h>
+#include <nsxlib/utils/CSV.h>
 
 using namespace SX::Crystal;
 using namespace SX::Utils;

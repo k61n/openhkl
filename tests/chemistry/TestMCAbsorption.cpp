@@ -7,11 +7,11 @@
 
 #include <Eigen/Dense>
 
-#include "ConvexHull.h"
-#include "Material.h"
-#include "MaterialManager.h"
+#include <nsxlib/geometry/ConvexHull.h>
+#include <nsxlib/chemistry/Material.h>
+#include  <nsxlib/chemistry/MaterialManager.h>
 #include "MCAbsorption.h"
-#include "Units.h"
+#include <nsxlib/utils/Units.h>
 
 // const double tolerance=1.0e-9;
 

@@ -10,10 +10,10 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include "ComponentState.h"
-#include "DiffractometerStore.h"
-#include "ILLAsciiData.h"
-#include "Units.h"
+#include <nsxlib/instrument/ComponentState.h>
+#include <nsxlib/instrument/DiffractometerStore.h>
+#include <nsxlib/data/ILLAsciiData.h>
+#include <nsxlib/utils/Units.h>
 
 using namespace SX::Data;
 using namespace SX::Instrument;
