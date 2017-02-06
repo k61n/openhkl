@@ -323,6 +323,10 @@ void ILLAsciiData::close()
 Eigen::MatrixXi ILLAsciiData::readFrame(std::size_t idx)
 {
     assert(idx < _nFrames);
+
+    if (!_isOpened)
+        open();
+
     // Determine the beginning of the data block
     std::size_t begin = _headerSize+(idx+1)*_skipChar+idx*_dataLength;
     // Create vector and try to reserve a memory block
