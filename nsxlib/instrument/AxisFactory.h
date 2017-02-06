@@ -47,8 +47,8 @@ using SX::Kernel::Singleton;
 class AxisFactory : public Factory<Axis,std::string,const proptree::ptree&>, public Singleton<AxisFactory,Constructor,Destructor>
 {
 private:
-    friend class Constructor<AxisFactory>;
-    friend class Destructor<AxisFactory>;
+    friend class SX::Kernel::Constructor<AxisFactory>;
+    friend class SX::Kernel::Destructor<AxisFactory>;
     AxisFactory();
     ~AxisFactory();
 };
