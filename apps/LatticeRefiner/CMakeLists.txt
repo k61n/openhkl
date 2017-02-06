@@ -49,19 +49,15 @@ if (${CMAKE_VERSION} VERSION_LESS 2.8.11)
 
     # Append the moc cpp files to the NSXQt sources
     list(APPEND lattice_refiner_sources ${mocs})
-
-else ()
-
+else()
     # Find includes in corresponding build directories
     set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
     # Handle automatically moc files
     set(CMAKE_AUTOMOC ON)
     # Handle automatically ui files
     set(CMAKE_AUTOUIC ON)
     # Handle automatically resources files
     set(CMAKE_AUTORCC ON)
-
 endif()
 
 # Find recursively all the Qt ui files of Lattice Refiner

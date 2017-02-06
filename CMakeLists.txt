@@ -63,16 +63,15 @@ set(CPACK_SOURCE_IGNORE_FILES "/\\\\.git/;" )
 
 # Build the config.h on the fly
 if (UNIX)
-    set(RESOURCES_DIR ${CMAKE_INSTALL_PREFIX}/share/nsxtool)
+  set(RESOURCES_DIR ${CMAKE_INSTALL_PREFIX}/share/nsxtool)
 elseif (WIN32)
-    set(RESOURCES_DIR "$ENV{APPDATA}\\nsxtool")
-    # take care of pesky backslashes in windows path names
-    STRING(REGEX REPLACE "\\\\" "\\\\\\\\" RESOURCES_DIR ${RESOURCES_DIR})
+  set(RESOURCES_DIR "$ENV{APPDATA}\\nsxtool")
+  # take care of pesky backslashes in windows path names
+  STRING(REGEX REPLACE "\\\\" "\\\\\\\\" RESOURCES_DIR ${RESOURCES_DIR})
 endif()
 configure_file(${CMAKE_SOURCE_DIR}/cmake/NSXConfig.h.in ${CMAKE_BINARY_DIR}/include/NSXConfig.h)
 
 add_subdirectory(nsxlib)
-
 
 if (BUILD_QTAPPS)
     add_subdirectory(apps)
@@ -104,9 +103,6 @@ endif()
 #install(CODE "MESSAGE(\"Installing headers...\")")
 #install(FILES ${headers} DESTINATION ${INCLUDE_DIR})
 
-
-
-
 # Install the databases file
 install(DIRECTORY resources/databases
         DESTINATION ${RESOURCES_DIR}
@@ -127,19 +123,13 @@ install(DIRECTORY resources/instruments
 include(CPackCommon)
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR ${BUILD_DEBIAN})
-
-    include(CPackLinuxSetup)
-    message(STATUS "CPACK_PACKAGE_FILE_NAME = ${CPACK_PACKAGE_FILE_NAME}")
-
-    if ("${UNIX_DIST}" MATCHES "Ubuntu" OR ${BUILD_DEBIAN})
-
-      # automatically generate dependencies
-      set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
-
-      endif()
-
+  include(CPackLinuxSetup)
+  message(STATUS "CPACK_PACKAGE_FILE_NAME = ${CPACK_PACKAGE_FILE_NAME}")
+  if ("${UNIX_DIST}" MATCHES "Ubuntu" OR ${BUILD_DEBIAN})
+    # automatically generate dependencies
+    set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+  endif()
 endif()
 
 set(CMAKE_INSTALL_RPATH "/usr/local/lib")
-
 include(CPack)
