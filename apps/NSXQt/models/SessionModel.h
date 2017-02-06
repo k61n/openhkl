@@ -65,6 +65,7 @@ namespace Data
 }
 
 using SX::Crystal::sptrUnitCell;
+using SX::Crystal::sptrPeak3D;
 
 class SessionModel : public QStandardItemModel
 {
