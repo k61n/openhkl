@@ -75,7 +75,8 @@ Composite<component,args...>::Composite()
 }
 
 template <typename component,typename ...args>
-Composite<component,args...>::Composite(const Composite<component,args...>& other)
+Composite<component,args...>::Composite(const Composite<component,args...>& other):
+    component(other)
 {
     for (auto c : other._components)
         _components.insert(c->clone());

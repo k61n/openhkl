@@ -21,14 +21,11 @@ find_package(Qt5Gui REQUIRED)
 find_package(OpenGL REQUIRED)
 
 # Find recursively all the header files of NSXQt
-file(GLOB_RECURSE nsxqt_headers
-  ${CMAKE_SOURCE_DIR}/apps/NSXQt/*.h
-)
+file(GLOB_RECURSE nsxqt_headers *.h)
+
 
 # Find recursively all the cpp source files of NSXQt
-file(GLOB_RECURSE nsxqt_sources
-  ${CMAKE_SOURCE_DIR}/apps/NSXQt/*.cpp
-)
+file(GLOB_RECURSE nsxqt_sources *.cpp)
 
 if (${CMAKE_VERSION} VERSION_LESS 2.8.11)
     # Add the include directories for the Qt 5 Widgets module to the compile lines.
@@ -74,17 +71,13 @@ else()
 endif()
 
 # Find recursively all the Qt ui files of NSXQt
-file(GLOB_RECURSE nsxqt_uis
-  ${CMAKE_SOURCE_DIR}/apps/NSXQt/ui/*.ui
-  ${CMAKE_SOURCE_DIR}/apps/NSXQt/ui/Absorption/*.ui
-  ${CMAKE_SOURCE_DIR}/apps/NSXQt/ui/Chemistry/*.ui
-  ${CMAKE_SOURCE_DIR}/apps/NSXQt/ui/Tree/*.ui
-)
+file(GLOB_RECURSE nsxqt_uis *.ui)
+
 # Build the headers files for all Qt ui files
 qt5_wrap_ui(ui_headers ${nsxqt_uis})
 
 # Find recursively all the Qt resources files of NSXQt
-file(GLOB_RECURSE nsxqt_rcs ${CMAKE_SOURCE_DIR}/apps/NSXQt/*.qrc)
+file(GLOB_RECURSE nsxqt_rcs *.qrc)
 # "Compile" the resources files
 qt5_add_resources(resources ${nsxqt_rcs})
 

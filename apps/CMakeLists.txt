@@ -1,2 +1,2 @@
-add_subdirectory(NSXQt)
+add_subdirectory(nsxqt)
 add_subdirectory(LatticeRefiner)
