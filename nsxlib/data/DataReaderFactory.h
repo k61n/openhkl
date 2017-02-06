@@ -55,8 +55,8 @@ class DataReaderFactory :
         public Singleton<DataReaderFactory,Constructor,Destructor>
 {
 private:
-    friend class Constructor<DataReaderFactory>;
-    friend class Destructor<DataReaderFactory>;
+    friend class SX::Kernel::Constructor<DataReaderFactory>;
+    friend class SX::Kernel::Destructor<DataReaderFactory>;
     DataReaderFactory();
     ~DataReaderFactory() = default;
 };
