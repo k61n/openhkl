@@ -214,6 +214,7 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             break;
         }
         if (cutter != nullptr) {
+            cutter->setFrom(event->lastScenePos());
             addItem(cutter);
             _lastClickedGI=cutter;
         }
@@ -332,6 +333,11 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
         int nPeaksErased = int(_peakGraphicsItems.size());
         for (auto item: items) {
             auto p = dynamic_cast<SXGraphicsItem*>(item);
+
+            if (p == nullptr) {
+                continue;
+            }
+
             // The item must be deletable ... to be deleted
             if (!p->isDeletable()) {
                 continue;
