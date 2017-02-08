@@ -116,12 +116,12 @@ void DetectorScene::setData(const std::shared_ptr<SX::Data::IData>& data, size_t
 void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     // jmf debugging
-    auto the_items = items();
-    qDebug() << "graphics scene has " << the_items.size() << " items";
+//    auto the_items = items();
+//    qDebug() << "graphics scene has " << the_items.size() << " items";
 
-    for (auto&& item: the_items) {
-        auto rect = item->boundingRect();
-    }
+//    for (auto&& item: the_items) {
+//        auto rect = item->boundingRect();
+//    }
 
 
     // If no data is loaded, do nothing
