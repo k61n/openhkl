@@ -88,6 +88,11 @@ void DetectorScene::setMaxIntensity(int intensity)
 void DetectorScene::setData(const std::shared_ptr<SX::Data::IData>& data)
 {
     _currentData = data;
+
+    if (!_currentData) {
+        return;
+    }
+
     _currentData->open();
     auto det = _currentData->getDiffractometer()->getDetector();
     _zoomStack.clear();
@@ -95,7 +100,7 @@ void DetectorScene::setData(const std::shared_ptr<SX::Data::IData>& data)
 
     if (_lastClickedGI != nullptr) {
         removeItem(_lastClickedGI);
-        delete _lastClickedGI;
+//        delete _lastClickedGI;
         _lastClickedGI=nullptr;
     }
     loadCurrentImage();
@@ -110,12 +115,21 @@ void DetectorScene::setData(const std::shared_ptr<SX::Data::IData>& data, size_t
 
 void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
+    // jmf debugging
+    auto the_items = items();
+    qDebug() << "graphics scene has " << the_items.size() << " items";
+
+    for (auto&& item: the_items) {
+        auto rect = item->boundingRect();
+    }
+
 
     // If no data is loaded, do nothing
     if (!_currentData) {
         return;
     }
     createToolTipText(event);
+    auto button = event->button();
 
     // The left button was pressed
     if (event->buttons() & Qt::LeftButton) {
@@ -143,7 +157,10 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     // No button was pressed, just a mouse move
     else if (event->button() == Qt::NoButton) {
           //      jmf: testing follows
-        QGraphicsItem* gItem = itemAt(event->lastScenePos().toPoint(), QTransform());
+        auto lastPos = event->lastScenePos();
+        auto point = lastPos.toPoint();
+        QTransform trans;
+        QGraphicsItem* gItem = itemAt(point, trans);
         auto p = dynamic_cast<PlottableGraphicsItem*>(gItem);
         if (p != nullptr) {
             emit updatePlot(p);
@@ -279,16 +296,28 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             _zoomStack.push_back(_zoomrect->rect().toRect());
             emit dataChanged();
         } else {
-            if (auto p=dynamic_cast<PlottableGraphicsItem*>(_lastClickedGI)) {
+            if (auto p=dynamic_cast<CutterGraphicsItem*>(_lastClickedGI)) {
+                //if (p->to() == p->from()) {
+                if (true) {
+                    // delete p....
+                     _lastClickedGI = nullptr;
+                    removeItem(p);
+//                    delete p;
+                }
+                else {
+                    emit updatePlot(p);
+                }
+            }
+            else if (auto p=dynamic_cast<PlottableGraphicsItem*>(_lastClickedGI)) {
                 emit updatePlot(p);
             }
             else if (auto p=dynamic_cast<MaskGraphicsItem*>(_lastClickedGI)) {
                 // add a new mask
                 if (std::find(_masks.begin(), _masks.end(), p) == _masks.end()) {
                     _currentData->addMask(p->getAABB());
-                    removeItem(p);
-                    delete p;
                     _lastClickedGI = nullptr;
+                    removeItem(p);
+//                    delete p;
                 }
                 _currentData->maskPeaks();
                 update();
@@ -362,7 +391,7 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
             // Remove the item from the scene
             removeItem(item);
             // Delete the item
-            delete item;
+//            delete item;
         }
         // Computes the new number of peaks, and if it changes log it
         nPeaksErased -= _peakGraphicsItems.size();
@@ -428,6 +457,10 @@ void DetectorScene::changeInteractionMode(int mode)
 
 void DetectorScene::loadCurrentImage(bool newimage)
 {
+    if (_currentData == nullptr) {
+        return;
+    }
+
     // Full image size, front of the stack
     QRect& full = _zoomStack.front();
 
@@ -545,7 +578,7 @@ void DetectorScene::clearPeaks()
 
     for (auto& peak : _peakGraphicsItems) {
         removeItem(peak.second);
-        delete peak.second;
+//        delete peak.second;
     }
     _peakGraphicsItems.clear();
 }
@@ -556,7 +589,7 @@ void DetectorScene::updateMasks(unsigned long frame)
 
     for (auto&& mask: _masks) {
         removeItem(mask);
-        delete mask;
+//        delete mask;
     }
     _masks.clear();
 
@@ -568,7 +601,7 @@ void DetectorScene::updateMasks(unsigned long frame)
         if (frame > upper[2] || frame < lower[2]) {
             continue;
         }
-        MaskGraphicsItem* maskItem = new MaskGraphicsItem(_currentData, mask);
+        auto maskItem = new MaskGraphicsItem(_currentData, mask);
         maskItem->setFrom(QPointF(lower(0), lower(1)));
         maskItem->setTo(QPointF(upper(0), upper(1)));
         addItem(maskItem);
@@ -582,7 +615,6 @@ void DetectorScene::showPeakLabels(bool peaklabel)
         const auto& it=_peakGraphicsItems.begin();
         it->second->setLabelVisible(peaklabel);
     }
-
     if (!_peakCalcs.empty()) {
         const auto& it = _peakCalcs.begin();
         (*it)->setLabelVisible(peaklabel);
@@ -602,9 +634,9 @@ void DetectorScene::showPeakCalcs(bool flag)
     _showPeakCalcs = flag;
 
     if (!flag) {
-        for (auto&& p: _peakCalcs) {
-            delete p;
-        }
+//        for (auto&& p: _peakCalcs) {
+//            delete p;
+//        }
         _peakCalcs.clear();
         _precalculatedPeaks.clear();
         return;
@@ -612,13 +644,13 @@ void DetectorScene::showPeakCalcs(bool flag)
     if (_precalculatedPeaks.empty()) {
         updatePeakCalcs();
     }
-    for (auto& peak : _peakCalcs) {
+    for (auto& peak: _peakCalcs) {
         removeItem(peak);
-        delete peak;
+        //delete peak;
     }
     _peakCalcs.resize(0);
 
-    for (auto&& p : _precalculatedPeaks) {
+    for (auto&& p: _precalculatedPeaks) {
         if ( std::abs(_currentFrameIndex-p._frame) > 1.0) {
             continue;
         }
@@ -631,7 +663,6 @@ void DetectorScene::showPeakCalcs(bool flag)
     }
 }
 
-
 void DetectorScene::setLogarithmic(bool checked)
 {
     _logarithmic = checked;
@@ -640,4 +671,20 @@ void DetectorScene::setLogarithmic(bool checked)
 void DetectorScene::setColorMap(const std::string &name)
 {
     _colormap = std::unique_ptr<ColorMap>(new ColorMap(name));
+}
+
+void DetectorScene::resetScene()
+{
+    clearPeaks();
+    clear();
+    updatePeakCalcs();
+    updatePeaks();
+    _currentData = nullptr;
+    _currentFrameIndex = 0;
+    _zoomrect = nullptr;
+    _zoomStack.clear();
+    _image = nullptr;
+    _masks.clear();
+    _lastClickedGI = nullptr;
+    _precalculatedPeaks.clear();
 }

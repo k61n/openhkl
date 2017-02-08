@@ -642,7 +642,6 @@ void SessionModel::incorporateCalculatedPeaks()
     };
 
     int last_done = 0;
-
     int predicted_peaks = 0;
     int observed_peaks = 0;
 
@@ -718,16 +717,15 @@ void SessionModel::incorporateCalculatedPeaks()
                 }
             }
         }
-
-        for (sptrPeak3D peak: calculated_peaks)
+        for (sptrPeak3D peak: calculated_peaks) {
             numor->addPeak(peak);
-
+        }
         numor->integratePeaks(handler);
         observed_peaks += numor->getPeaks().size();
     }
-
+    updatePeaks();
     qDebug() << "Done incorporating missing peaks.";
-    qDebug() << "Q coverage = " << double(observed_peaks) / double(predicted_peaks) * 100.0 << "%";
+    // qDebug() << "Q coverage = " << double(observed_peaks) / double(predicted_peaks) * 100.0 << "%";
 }
 
 void SessionModel::applyResolutionCutoff(double dmin, double dmax)

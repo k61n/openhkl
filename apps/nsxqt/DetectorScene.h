@@ -63,6 +63,7 @@ public:
     void setLogarithmic(bool checked);
     void setColorMap(const std::string& name);
 
+
 signals:
      //! Signal emitted for all changes of the image
     void dataChanged();
@@ -76,6 +77,7 @@ protected:
     void wheelEvent(QGraphicsSceneWheelEvent *event);
 
 public slots:
+    void resetScene();
     // To be called to update detector image
     void setData(const std::shared_ptr<SX::Data::IData>&, size_t frame);
     void setData(const std::shared_ptr<SX::Data::IData>&);
