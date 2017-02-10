@@ -87,10 +87,10 @@ public:
     void unlinkData();
 
     //! Set the Peak region. Peak shaped is owned after setting
-    void setPeakShape(SX::Geometry::IShape<double,3>* peak);
+    void setPeakShape(const Ellipsoid3D& peak);
 
     //! set the background region. Bkg region is owned after setting
-    void setBackgroundShape(SX::Geometry::IShape<double,3>* background);
+    void setBackgroundShape(const Ellipsoid3D& background);
 
     //! Get the Miller indices of the peak (double to allow integration of incommensurate peaks)
     Eigen::RowVector3d getMillerIndices() const;
@@ -124,8 +124,8 @@ public:
     Eigen::VectorXd getProjectionSigma() const;
     Eigen::VectorXd getPeakProjectionSigma() const;
     Eigen::VectorXd getBkgProjectionSigma() const;
-    const shape_type& getPeak() const { return *_peak;}
-    const shape_type& getBackground() const {return *_bkg;}
+    const shape_type& getPeak() const { return _peak;}
+    const shape_type& getBackground() const {return _bkg;}
     //! Return the scaled intensity of the peak.
     double getScaledIntensity() const;
     //! Return the raw intensity of the peak.
@@ -195,9 +195,9 @@ private:
     //! Miller indices of the peak
     // Eigen::RowVector3d _hkl;
     //! Shape describing the Peak zone
-    std::unique_ptr<SX::Geometry::IShape<double,3>> _peak;
+    Ellipsoid3D _peak;
     //! Shape describing the background zone (must fully contain peak)
-    std::unique_ptr<SX::Geometry::IShape<double,3>> _bkg;
+    Ellipsoid3D _bkg;
     //!
     Eigen::VectorXd _projection;
     Eigen::VectorXd _projectionPeak;

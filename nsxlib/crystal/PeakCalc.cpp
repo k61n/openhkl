@@ -48,11 +48,8 @@ using std::shared_ptr;
 using SX::Data::IData;
 
 
-namespace SX
-{
-
-namespace Crystal
-{
+namespace SX {
+namespace Crystal {
 
 using sptrPeak3D = PeakCalc::sptrPeak3D;
 using PeakList = PeakCalc::PeakList;
@@ -60,7 +57,6 @@ using PeakList = PeakCalc::PeakList;
 PeakCalc::PeakCalc(double h,double k,double l, double x,double y, double frame):
     _h(h),_k(k),_l(l),_x(x),_y(y),_frame(frame)
 {
-
 }
 
 //PeakCalc::~PeakCalc()
@@ -121,14 +117,14 @@ sptrPeak3D PeakCalc::averagePeaks(const std::shared_ptr<IData> data, double dist
         eigenvalues(i) = 1.0 / std::sqrt(eigenvalues(i));
     }
 
-    peak->setPeakShape(new ellipsoid(center, eigenvalues, solver.eigenvectors()));
+    peak->setPeakShape(ellipsoid(center, eigenvalues, solver.eigenvectors()));
     solver.compute(bkg_shape);
     eigenvalues = solver.eigenvalues();
 
     for (int i = 0; i < 3; ++i) {
         eigenvalues(i) = 1.0 / std::sqrt(eigenvalues(i));
     }
-    peak->setBackgroundShape(new ellipsoid(center, eigenvalues, solver.eigenvectors()));
+    peak->setBackgroundShape(ellipsoid(center, eigenvalues, solver.eigenvectors()));
     return peak;
 }
 
@@ -156,7 +152,6 @@ std::vector<sptrPeak3D> PeakCalc::findNeighbors(const std::set<sptrPeak3D>& peak
     neighbors.shrink_to_fit();
     return neighbors;
 }
-
 
 } // Namespace Crystal
 } /* namespace SX */

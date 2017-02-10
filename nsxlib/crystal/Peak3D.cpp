@@ -67,8 +67,8 @@ using shape_type = Peak3D::shape_type;
 Peak3D::Peak3D(std::shared_ptr<SX::Data::IData> data):
     _data(),
 //		_hkl(Eigen::Vector3d::Zero()),
-        _peak(nullptr),
-        _bkg(nullptr),
+        _peak(),
+        _bkg(),
         _unitCells(),
         _sampleState(nullptr),
         _event(nullptr),
@@ -93,20 +93,20 @@ Peak3D::Peak3D(std::shared_ptr<Data::IData> data, const Blob3D &blob, double con
     Eigen::Matrix3d eigenvectors;
 
     blob.toEllipsoid(confidence, center, eigenvalues, eigenvectors);
-    setPeakShape(new Ellipsoid3D(center,eigenvalues,eigenvectors));
+    setPeakShape(Ellipsoid3D(center,eigenvalues,eigenvectors));
 
     eigenvalues[0]*=2.0;
     eigenvalues[1]*=2.0;
     eigenvalues[2]*=3.0;
 
-    setBackgroundShape(new Ellipsoid3D(center,eigenvalues,eigenvectors));
+    setBackgroundShape(Ellipsoid3D(center,eigenvalues,eigenvectors));
 }
 
 Peak3D::Peak3D(const Peak3D& other):
         _data(other._data),
 //		_hkl(other._hkl),
-        _peak(other._peak == nullptr ? nullptr : other._peak->clone()),
-        _bkg(other._bkg == nullptr ? nullptr : other._bkg->clone()),
+        _peak(other._peak),
+        _bkg(other._bkg),
         _projection(other._projection),
         _projectionPeak(other._projectionPeak),
         _projectionBkg(other._projectionBkg),
@@ -131,8 +131,8 @@ Peak3D& Peak3D::operator=(const Peak3D& other)
     if (this != &other) {
         _data = other._data;
   //      _hkl = other._hkl;
-        _peak = other._peak ? std::unique_ptr<shape_type>(other._peak->clone()) : nullptr;
-        _bkg = other._bkg ? std::unique_ptr<shape_type>(other._bkg->clone()) : nullptr;
+        _peak = other._peak;
+        _bkg = other._bkg;
         _projection = other._projection;
         _projectionPeak = other._projectionPeak;
         _projectionBkg = other._projectionBkg;
@@ -173,10 +173,10 @@ Eigen::RowVector3d Peak3D::getMillerIndices() const
     return hkld;
 }
 
-void Peak3D::setPeakShape(shape_type* peak)
+void Peak3D::setPeakShape(const Ellipsoid3D& peak)
 {
-    _peak = std::unique_ptr<SX::Geometry::IShape<double,3>>(peak);
-    Eigen::Vector3d center = _peak->getAABBCenter();
+    _peak = peak;
+    Eigen::Vector3d center = _peak.getAABBCenter();
     int f = int(std::lround(std::floor(center[2])));
 
     using ComponentState = SX::Instrument::ComponentState;
@@ -192,9 +192,9 @@ void Peak3D::setPeakShape(shape_type* peak)
         data->getDiffractometer()->getDetector()->createDetectorEvent(center[0],center[1],detState.getValues())));
 }
 
-void Peak3D::setBackgroundShape(shape_type* background)
+void Peak3D::setBackgroundShape(const Ellipsoid3D& background)
 {
-    _bkg = std::unique_ptr<shape_type>(background);
+    _bkg = background;
 }
 
 bool Peak3D::getMillerIndices(const UnitCell& uc, Eigen::RowVector3d& hkl, bool applyUCTolerance) const
@@ -338,12 +338,12 @@ double Peak3D::getTransmission() const
 
 void Peak3D::scalePeakShape(double scale)
 {
-    _peak->scale(scale);
+    _peak.scale(scale);
 }
 
 void Peak3D::scaleBackgroundShape(double scale)
 {
-    _bkg->scale(scale);
+    _bkg.scale(scale);
 }
 
 double Peak3D::getRawSigma() const
@@ -536,8 +536,8 @@ void Peak3D::framewiseIntegrateBegin()
     }
 
     // Get the lower and upper limit of the bkg Bounding box
-    _state.lower = _bkg->getLower();
-    _state.upper= _bkg->getUpper();
+    _state.lower = _bkg.getLower();
+    _state.upper= _bkg.getUpper();
 
     //
     _state.data_start = static_cast<unsigned int>(std::floor(_state.lower[2]));
@@ -602,8 +602,8 @@ void Peak3D::framewiseIntegrateStep(Eigen::MatrixXi& frame, unsigned int idx)
             int intensity = frame(y, x);
             _state.point1 << x+0.5, y+0.5, idx, 1;
 
-            bool inbackground = (_bkg->isInsideAABB(_state.point1) && _bkg->isInside(_state.point1));
-            bool inpeak = (_peak->isInsideAABB(_state.point1) && _peak->isInside(_state.point1));
+            bool inbackground = (_bkg.isInsideAABB(_state.point1) && _bkg.isInside(_state.point1));
+            bool inpeak = (_peak.isInsideAABB(_state.point1) && _peak.isInside(_state.point1));
 
             if (inpeak) {
                 intensityP += intensity;
