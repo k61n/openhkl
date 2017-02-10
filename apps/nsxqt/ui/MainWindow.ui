@@ -1340,7 +1340,6 @@ border-radius: 4px;
      <property name="title">
       <string>Color map</string>
      </property>
-     <addaction name="actionPlaceholder"/>
     </widget>
     <addaction name="menuGraphics"/>
     <addaction name="menuShow_Window"/>
@@ -1389,7 +1388,6 @@ border-radius: 4px;
      <addaction name="actionIncorporate_calculated_peaks"/>
      <addaction name="actionApply_resolution_cutoff"/>
     </widget>
-    <addaction name="actionCompute_R_factors"/>
     <addaction name="actionFind_space_group"/>
     <addaction name="menuPeaks"/>
     <addaction name="actionWrite_log_file"/>
@@ -1831,22 +1829,19 @@ QDockWidget::title {
     <string>Incorporate calculated peaks</string>
    </property>
   </action>
-  
   <action name="actionLogarithmic_Scale">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
-     <string>Logarithmic Scale</string>
+    <string>Logarithmic Scale</string>
    </property>
   </action>
-    
   <action name="actionProperty">
-    <property name="text">
-      <string>Property</string>
-    </property>
+   <property name="text">
+    <string>Property</string>
+   </property>
   </action>
-  
   <action name="actionApply_resolution_cutoff">
    <property name="text">
     <string>Apply resolution cutoff</string>
@@ -1857,7 +1852,6 @@ QDockWidget::title {
     <string>Write log file</string>
    </property>
   </action>
-  
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>

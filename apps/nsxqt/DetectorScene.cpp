@@ -297,6 +297,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             emit dataChanged();
         } else {
             if (auto p=dynamic_cast<CutterGraphicsItem*>(_lastClickedGI)) {
+                // check with tolerance
                 //if (p->to() == p->from()) {
                 if (true) {
                     // delete p....
