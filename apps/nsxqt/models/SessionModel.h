@@ -62,6 +62,9 @@ namespace Data {
 }
 }
 
+using SX::Crystal::sptrUnitCell;
+using SX::Crystal::sptrPeak3D;
+
 
 class SessionModel : public QStandardItemModel {
     Q_OBJECT
@@ -123,7 +126,6 @@ private:
     std::shared_ptr<SX::Utils::ProgressHandler> _progressHandler;
     std::shared_ptr<SX::Data::PeakFinder> _peakFinder;
     std::string _colormap;
-
 
     //std::map<std::string, std::shared_ptr<SX::Instrument::Experiment>> _experiments;
 };
