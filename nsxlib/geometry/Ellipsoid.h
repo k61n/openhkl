@@ -236,10 +236,10 @@ void Ellipsoid<T,D>::rotate(const matrix& eigenvectors)
 {
     // Reconstruct S
     Eigen::DiagonalMatrix<T,D+1> S;
-    for (unsigned int i=0;i<D;++i)
+    for (unsigned int i=0;i<D;++i) {
         S.diagonal()[i]=_eigenVal[i];
+    }
     S.diagonal()[D]=1.0;
-
     _TRSinv=S*_TRSinv;
 
     // Construct the inverse of the new rotation matrix
@@ -266,8 +266,9 @@ void Ellipsoid<T,D>::scale(T value)
 {
     _eigenVal*=value;
     Eigen::DiagonalMatrix<T,D+1> Sinv;
-    for (unsigned int i=0;i<D;++i)
+    for (unsigned int i=0;i<D;++i) {
         Sinv.diagonal()[i]=1.0/value;
+    }
     Sinv.diagonal()[D]=1.0;
     _TRSinv=Sinv*_TRSinv;
     this->scaleAABB(value);
@@ -278,8 +279,9 @@ void Ellipsoid<T,D>::scale(const vector& v)
 {
     _eigenVal=_eigenVal.cwiseProduct(v);
     Eigen::DiagonalMatrix<T,D+1> Sinv;
-    for (unsigned int i=0;i<D;++i)
+    for (unsigned int i=0;i<D;++i) {
         Sinv.diagonal()[i]=1.0/v[i];
+    }
     Sinv.diagonal()[D]=1.0;
     _TRSinv=Sinv*_TRSinv;
     this->scaleAABB(v);
@@ -290,8 +292,9 @@ void Ellipsoid<T,D>::translate(const vector& t)
 {
     Eigen::Matrix<T,D+1,D+1> tinv=Eigen::Matrix<T,D+1,D+1>::Constant(0.0);
     tinv.block(0,D,D,1)=-t;
-    for (SX::Types::uint i=0;i<D+1;++i)
+    for (SX::Types::uint i=0;i<D+1;++i) {
         tinv(i,i)=1.0;
+    }
     tinv(D,D)=1.0;
     _TRSinv=_TRSinv*tinv;
     this->translateAABB(t);
@@ -303,16 +306,15 @@ bool Ellipsoid<T,D>::isInside(const HomVector& point) const
 
     HomVector p;
     // Is the transformed point in the bounding box of the sphere
-    for (unsigned int i=0;i<D;++i)
-    {
+    for (unsigned int i=0;i<D;++i) {
         p[i]=_TRSinv.row(i).dot(point);
         if (p[i]<-1 || p[i]>1)
             return false;
     }
     T value=0;
-    for (unsigned int i=0;i<D;++i)
+    for (unsigned int i=0;i<D;++i) {
         value+=p[i]*p[i];
-
+    }
     return (value<=1);
 }
 
@@ -338,17 +340,16 @@ void Ellipsoid<T,D>::updateAABB()
 
     // The width of the AABB in one direction is the norm of corresponding TRS matrix row
     vector width=vector::Constant(0.0);
-    for (unsigned int i=0;i<D;++i)
-    {
-        for (unsigned int j=0;j<D;++j)
+    for (unsigned int i=0;i<D;++i) {
+        for (unsigned int j=0;j<D;++j) {
             width[i]+=TRS(i,j)*TRS(i,j);
+        }
         width[i]=sqrt(width[i]);
     }
 
     // Update the upper and lower bound of the AABB from center +-width
     _lowerBound=TRS.block(0,D,D,1)-width;
     _upperBound=TRS.block(0,D,D,1)+width;
-
 }
 
 template<typename T, SX::Types::uint D>
@@ -359,9 +360,7 @@ bool Ellipsoid<T,D>::rayIntersect(const vector& from, const vector& dir, double&
     hDir.segment(0,D) = dir;
     hDir[D] = 0.0;
     hDir = _TRSinv*hDir;
-
     Sphere<T,D> sphere(vector::Zero(),1.0);
-
     return sphere.rayIntersect(hFrom.segment(0,D),hDir.segment(0,D),t1,t2);
 }
 
@@ -377,7 +376,6 @@ Eigen::Matrix<T, D, 1> Ellipsoid<T, D>::getCenter() const
         for (int j = 0; j < D; ++j)
             A(i, j) = _TRSinv(i, j);
     }
-
     t = -A.inverse()*t;
     return t;
 }
@@ -391,7 +389,6 @@ Eigen::Matrix<T, D, D> Ellipsoid<T, D>::getRSinv() const
         for (int j = 0; j < D; ++j)
             A(i, j) = _TRSinv(i, j);
     }
-
     return A;
 }
 
@@ -583,11 +580,9 @@ bool collideEllipsoidEllipsoid(const Ellipsoid<T,3>& eA, const Ellipsoid<T,3>& e
 template<typename T,SX::Types::uint D=2>
 bool collideEllipsoidOBB(const Ellipsoid<T,2>& ell, const OBB<T,2>& obb)
 {
-
-
-    typedef Eigen::Matrix<T,D,1> vector;
-    typedef Eigen::Matrix<T,D,D> matrix;
-    typedef Eigen::Matrix<T,D+1,D+1> HomMatrix;
+    using vector = Eigen::Matrix<T,D,1>;
+    using matrix = Eigen::Matrix<T,D,D>;
+    using HomMatrix = Eigen::Matrix<T,D+1,D+1>;
 
     // Get the TRS inverse matrix of the ellipsoid
     HomMatrix ellTRSinv=ell.getInverseTransformation();
@@ -635,37 +630,32 @@ bool collideEllipsoidOBB(const Ellipsoid<T,2>& ell, const OBB<T,2>& obb)
 
     // Compute the increase in extents for the OBB
     vector L;
-    for (SX::Types::uint i=0;i<D;++i)
+    for (SX::Types::uint i=0;i<D;++i) {
         L(i)=sqrt((obbRinv.row(i)*(M.inverse())*(obbRinv.row(i).transpose()))(0,0));
-
+    }
     // Transform the ellipsoid center to the OBB coordinate system
     vector KmC=ellT-obbT;
     vector x=obbRinv*KmC;
 
     // The ellipsoid center is outside the OBB
     if (std::abs(x(0))<=(obbS.diagonal()[0]+L(0)) &&
-        std::abs(x(1))<=(obbS.diagonal()[1]+L(1)))
-    {
+        std::abs(x(1))<=(obbS.diagonal()[1]+L(1))) {
         vector s;
         vector PmC = vector::Zero();
-        for (SX::Types::uint i=0; i<D;++i)
-        {
+        for (SX::Types::uint i=0; i<D;++i) {
             s(i) = (x(i) >= 0 ? 1 : -1);
             PmC.array() += s(i)*obbS.diagonal()[i]*obbRinv.row(i).array();
         }
         vector Delta=KmC-PmC;
         vector MDelta = M*Delta;
-        for (SX::Types::uint i=0; i<D;++i)
-        {
-            if (s(i)*((obbRinv.row(i))*MDelta)(0,0) <= 0.0)
+        for (SX::Types::uint i=0; i<D;++i) {
+            if (s(i)*((obbRinv.row(i))*MDelta)(0,0) <= 0.0) {
                 return true;
+            }
         }
         return ((Delta.transpose()*(M*Delta))(0,0) <= 1);
-
     }
-
     return false;
-
 }
 
 /** Based on the method described in:
@@ -677,11 +667,9 @@ bool collideEllipsoidOBB(const Ellipsoid<T,2>& ell, const OBB<T,2>& obb)
 template<typename T,SX::Types::uint D=3>
 bool collideEllipsoidOBB(const Ellipsoid<T,3>& ell, const OBB<T,3>& obb)
 {
-
-
-    typedef Eigen::Matrix<T,D,1> vector;
-    typedef Eigen::Matrix<T,D,D> matrix;
-    typedef Eigen::Matrix<T,D+1,D+1> HomMatrix;
+    using vector = Eigen::Matrix<T, D, 1>;
+    using matrix = Eigen::Matrix<T, D, D>;
+    using HomMatrix = Eigen::Matrix<T, D+1, D+1>;
 
     // Get the TRS inverse matrix of the ellipsoid
     HomMatrix ellTRSinv=ell.getInverseTransformation();
@@ -719,8 +707,9 @@ bool collideEllipsoidOBB(const Ellipsoid<T,3>& ell, const OBB<T,3>& obb)
 
     // Compute the D2 and M matrices (defined in p.2 of the documentation)
     Eigen::DiagonalMatrix<T,D> D2;
-    for (SX::Types::uint i=0;i<D;++i)
+    for (SX::Types::uint i=0;i<D;++i) {
         D2.diagonal()[i] = 1.0/(ellS.diagonal()[i]*ellS.diagonal()[i]);
+    }
     matrix M=(ellRinv.transpose())*D2*ellRinv;
 
     /*
@@ -729,15 +718,15 @@ bool collideEllipsoidOBB(const Ellipsoid<T,3>& ell, const OBB<T,3>& obb)
 
     // Compute the increase in extents for the OBB
     vector L;
-    for (SX::Types::uint i=0;i<D;++i)
+    for (SX::Types::uint i=0;i<D;++i) {
         L(i)=sqrt((obbRinv.row(i)*(M.inverse())*(obbRinv.row(i).transpose()))(0,0));
+    }
 
     // Transform the ellipsoid center to the OBB coordinate system
     vector KmC=ellT-obbT;
     vector x=obbRinv*KmC;
 
-    for (SX::Types::uint i=0;i<D;++i)
-    {
+    for (SX::Types::uint i=0;i<D;++i) {
         // The ellipsoid center is outside the OBB
         if (std::abs(x(i))>(obbS.diagonal()[i]+L(i)))
             return false;
@@ -745,19 +734,17 @@ bool collideEllipsoidOBB(const Ellipsoid<T,3>& ell, const OBB<T,3>& obb)
 
     vector s;
     vector PmC = vector::Zero();
-    for (SX::Types::uint i=0; i<D;++i)
-    {
+    for (SX::Types::uint i=0; i<D;++i) {
         s(i) = (x(i) >= 0 ? 1 : -1);
         PmC.array() += s(i)*obbS.diagonal()[i]*obbRinv.row(i).array();
     }
 
     vector Delta = KmC-PmC;
     vector MDelta = M*Delta;
-
     vector rsqr;
+
     T r;
-    for (SX::Types::uint i=0; i<D;++i)
-    {
+    for (SX::Types::uint i=0; i<D;++i) {
         r=((ellRinv.row(i)*Delta)(0,0)/ellS.diagonal()[i]);
         rsqr(i)=r*r;
     }
@@ -768,41 +755,38 @@ bool collideEllipsoidOBB(const Ellipsoid<T,3>& ell, const OBB<T,3>& obb)
 
     matrix UMU;
     vector product;
-    for (SX::Types::uint i=0; i<D;++i)
-    {
+
+    for (SX::Types::uint i=0; i<D;++i) {
         product << M*(obbRinv.row(i).transpose());
-        for (SX::Types::uint j=i; j<D;++j)
-        {
+        for (SX::Types::uint j=i; j<D;++j) {
             // Need to use template here for disambiguation of the triangularView method.
             UMU.template triangularView<Eigen::Upper>().coeffRef(i,j)=(obbRinv.row(j)*product)(0,0);
         }
     }
 
+    // K is outside the elliptical cylinder <P,U2>
     if ((s(0)*(UMD(0)*UMU(2,2)-UMD(2)*UMU(0,2)) > 0) &&
         (s(1)*(UMD(1)*UMU(2,2)-UMD(2)*UMU(1,2)) > 0) &&
-        ((rsqr(0)+rsqr(1)) > 1.0))
-        // K is outside the elliptical cylinder <P,U2>
+        ((rsqr(0)+rsqr(1)) > 1.0)) {
         return false;
-
+    }
+    // K is outside the elliptical cylinder <P,U1>
     if ((s(0)*(UMD(0)*UMU(1,1)-UMD(1)*UMU(0,1)) > 0) &&
         (s(2)*(UMD(2)*UMU(1,1)-UMD(1)*UMU(1,2)) > 0) &&
-        ((rsqr(0)+rsqr(2)) > 1.0))
-        // K is outside the elliptical cylinder <P,U1>
+        ((rsqr(0)+rsqr(2)) > 1.0)) {
         return false;
-
+    }
+    // K is outside the elliptical cylinder <P,U0>
     if ((s(1)*(UMD(1)*UMU(0,0)-UMD(0)*UMU(0,1)) > 0) &&
-        (s(2)*(UMD(2)*UMU(0,0)-UMD(0)*UMU(0,2)) > 0) &&
-        ((rsqr(1)+rsqr(2)) > 1.0))
-        // K is outside the elliptical cylinder <P,U0>
+            (s(2)*(UMD(2)*UMU(0,0)-UMD(0)*UMU(0,2)) > 0) &&
+            ((rsqr(1)+rsqr(2)) > 1.0)) {
         return false;
-
-
-    if (((s(0)*UMD(0))>0.0) && ((s(1)*UMD(1))>0.0) && ((s(2)*UMD(2))>0.0) && ((rsqr.sum())>1.0))
-        // K is outside the ellipsoid at P
+    }
+    // K is outside the ellipsoid at P
+    if (((s(0)*UMD(0))>0.0) && ((s(1)*UMD(1))>0.0) && ((s(2)*UMD(2))>0.0) && ((rsqr.sum())>1.0)) {
         return false;
-
+    }
     return true;
-
 }
 
 /*
@@ -813,15 +797,10 @@ bool collideEllipsoidOBB(const Ellipsoid<T,3>& ell, const OBB<T,3>& obb)
 template<typename T,SX::Types::uint D>
 bool collideEllipsoidSphere(const Ellipsoid<T,D>& eA, const Sphere<T,D>& s)
 {
-
-    Eigen::Matrix<T,D,1> scale=Eigen::Matrix<T,D,1>::Constant(s.getRadius());
-
-    Eigen::Matrix<T,D,D> rot=Eigen::Matrix<T,D,D>::Identity();
-
+    Eigen::Matrix<T,D,1> scale = Eigen::Matrix<T,D,1>::Constant(s.getRadius());
+    Eigen::Matrix<T,D,D> rot = Eigen::Matrix<T,D,D>::Identity();
     Ellipsoid<T,D> eB(s.getCenter(),scale,rot);
-
     return collideEllipsoidEllipsoid<T,D>(eA,eB);
-
 }
 
 template<typename T,SX::Types::uint D>

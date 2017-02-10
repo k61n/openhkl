@@ -58,6 +58,7 @@ struct PeakCalc {
     double _x,_y,_frame;
 
     sptrPeak3D averagePeaks(const std::shared_ptr<IData> data, double distance);
+    sptrPeak3D averagePeaksQ(const std::shared_ptr<IData> data);
     PeakList findNeighbors(const PeakSet& peak_list, double distance);
 };
 

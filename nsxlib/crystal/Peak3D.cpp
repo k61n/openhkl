@@ -399,8 +399,12 @@ double Peak3D::getSampleStepSize() const
     // TODO(jonathan): we should NOT assume that gonio axis 0 is the one being rotated
     // when we compute 'step' below
     double step = 0.0;
-
     auto data = getData();
+
+    if (data == nullptr) {
+        // todo(jonathan): should it be possible to reach this branch??
+        return 0.0;
+    }
 
     size_t numFrames = data->getNFrames();
     const auto& ss = data->getSampleStates();

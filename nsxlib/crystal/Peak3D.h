@@ -124,8 +124,8 @@ public:
     Eigen::VectorXd getProjectionSigma() const;
     Eigen::VectorXd getPeakProjectionSigma() const;
     Eigen::VectorXd getBkgProjectionSigma() const;
-    const shape_type& getPeak() const { return _peak;}
-    const shape_type& getBackground() const {return _bkg;}
+    const Ellipsoid3D& getPeak() const { return _peak;}
+    const Ellipsoid3D& getBackground() const {return _bkg;}
     //! Return the scaled intensity of the peak.
     double getScaledIntensity() const;
     //! Return the raw intensity of the peak.

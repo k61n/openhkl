@@ -613,8 +613,9 @@ void SessionModel::incorporateCalculatedPeaks()
 
     DialogCalculatedPeaks dialog;
 
-    if (!dialog.exec())
+    if (!dialog.exec()) {
         return;
+    }
 
     const double dmax = dialog.dMax();
     const double dmin = dialog.dMin();
@@ -691,15 +692,18 @@ void SessionModel::incorporateCalculatedPeaks()
                 Eigen::RowVector3i hkl(int(std::lround(p._h)), int(std::lround(p._k)), int(std::lround(p._l)));
 
                 // try to find this reflection in the list of peaks, skip if found
-                if (std::find(found_hkls.begin(), found_hkls.end(), hkl) != found_hkls.end() )
+                if (std::find(found_hkls.begin(), found_hkls.end(), hkl) != found_hkls.end() ) {
                     continue;
+                }
 
                 // now we must add it, calculating shape from nearest peaks
+                 // K is outside the ellipsoid at PsptrPeak3D
                 sptrPeak3D new_peak = p.averagePeaks(numor, 200);
+                //sptrPeak3D new_peak = p.averagePeaks(numor);
 
-                if (!new_peak)
+                if (!new_peak) {
                     continue;
-
+                }
                 new_peak->setSelected(true);
                 new_peak->addUnitCell(cell, true);
                 new_peak->setObserved(false);
