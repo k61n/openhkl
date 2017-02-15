@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(Test_Cylindrical_Detector)
     d.getGammaNu(319.5,127.5,gamma,nu);
     BOOST_CHECK_SMALL(gamma,tolerance);
     BOOST_CHECK_SMALL(nu,tolerance);
-    double th2=d.get2Theta(319.5,127.5);
+    double th2=DetectorEvent(&d, 319.5, 127.5).get2Theta();
     BOOST_CHECK_SMALL(th2,tolerance);
 
     // Attach a gonio
@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_CASE(Test_Cylindrical_Detector)
     BOOST_CHECK_CLOSE(gamma,90*deg,tolerance);
     BOOST_CHECK_SMALL(nu,0.001);
 
-    th2=d.get2Theta(319.5,127.5,{90.0*deg});
+    th2 = DetectorEvent(&d, 319.5,127.5,{90.0*deg}).get2Theta();
     BOOST_CHECK_CLOSE(th2,90.0*deg,tolerance);
     // Scattering in the center of the detector with wavelength 2.0
     // should get kf = (0.5,0,0)
@@ -79,4 +79,3 @@ BOOST_AUTO_TEST_CASE(Test_Cylindrical_Detector)
     BOOST_CHECK_CLOSE(px,319.5,tolerance);
     BOOST_CHECK_CLOSE(py,127.5,tolerance);
 }
-

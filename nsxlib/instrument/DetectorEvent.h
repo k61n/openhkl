@@ -28,7 +28,9 @@
  */
 #ifndef NSXTOOL_DETECTOREVENT_H_
 #define NSXTOOL_DETECTOREVENT_H_
+
 #include <vector>
+#include <Eigen/Core>
 
 namespace SX {
 namespace Instrument {
@@ -39,24 +41,39 @@ class Detector;
 class DetectorEvent {
 public:
     // Constructor
-    DetectorEvent(Detector* detector, int x, int y, std::vector<double> values);
+    DetectorEvent(const Detector* detector, double x, double y, std::vector<double> values = {});
     //! Copy constructor
     DetectorEvent(const DetectorEvent& other);
+    //! Move constructor
+    DetectorEvent(DetectorEvent&& other);
     //! Assignment operator
     DetectorEvent& operator=(const DetectorEvent& other);
     //! Destructor
     ~DetectorEvent();
     //! return a pointer to the detector related to this detector event
-    Detector* getParent() const;
+    const Detector* getParent() const;
 
     const std::vector<double>& getValues() const;
     double getX() const;
     double getY() const;
+
+    /**
+     *  @brief Get 2\f$ \theta \f$
+     *  @param px horizontal position of the scattering event in pixels unit
+     *  @param py vertical position of the scattering event in pixels units
+     *  @param si Incident wavenumber
+     */
+    double get2Theta(const Eigen::Vector3d& si = Eigen::Vector3d(0,1,0)) const;
+
+    /**
+     * Get the scattered wavenumber for an event on this detector
+     */
+    Eigen::Vector3d getKf(double wave,const Eigen::Vector3d& from = Eigen::Vector3d::Zero()) const;
 private:
     //! Default constructor
     // DetectorEvent();
     // friend class Detector;
-    Detector* _detector;
+    const Detector* _detector;
     //! Position of the event on the detector
     double _x, _y;
     //! Setup of the detector Gonio

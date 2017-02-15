@@ -50,4 +50,5 @@ int run_test()
     BOOST_CHECK_EQUAL(v.sum(), 1282584565);
 
     dataf->close();
+    return 0;
 }

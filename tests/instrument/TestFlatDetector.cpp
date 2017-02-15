@@ -7,6 +7,7 @@
 #include <fstream>
 #include <nsxlib/instrument/FlatDetector.h>
 #include <nsxlib/instrument/Gonio.h>
+#include <nsxlib/instrument/DetectorEvent.h>
 #include <iostream>
 
 using namespace SX::Units;
@@ -29,11 +30,11 @@ BOOST_AUTO_TEST_CASE(Test_Flat_Detector)
     BOOST_CHECK_SMALL(center[2],tolerance);
 
     double gamma,nu;
-    d.getGammaNu(15.5,15.5,gamma,nu);
+    d.getGammaNu(15.5, 15.5, gamma, nu);
     BOOST_CHECK_SMALL(gamma,tolerance);
     BOOST_CHECK_SMALL(nu,tolerance);
-    double th2=d.get2Theta(15.5,15.5);
-    BOOST_CHECK_SMALL(th2,tolerance);
+    double th2 = DetectorEvent(&d, 15.5, 15.5, {}).get2Theta();
+    BOOST_CHECK_SMALL(th2, tolerance);
 
     // Attach a gonio
     std::shared_ptr<Gonio> g(new Gonio("gamma-arm"));
@@ -48,11 +49,11 @@ BOOST_AUTO_TEST_CASE(Test_Flat_Detector)
     BOOST_CHECK_CLOSE(gamma,90*deg,tolerance);
     BOOST_CHECK_SMALL(nu,0.001);
 
-    th2=d.get2Theta(15.5,15.5,{90.0*deg});
+    th2 = DetectorEvent(&d, 15.5,15.5,{90.0*deg}).get2Theta();
     BOOST_CHECK_CLOSE(th2,90.0*deg,tolerance);
     // Scattering in the center of the detector with wavelength 2.0
     // should get kf = (0.5,0,0)
-    Eigen::Vector3d kf=d.getKf(15.5,15.5,2.0,{90.0*deg});
+    Eigen::Vector3d kf = d.getKf(15.5,15.5,2.0,{90.0*deg});
     BOOST_CHECK_CLOSE(kf[0],0.5,tolerance);
     BOOST_CHECK_SMALL(kf[1],0.001);
     BOOST_CHECK_SMALL(kf[2],0.001);

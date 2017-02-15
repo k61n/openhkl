@@ -135,19 +135,18 @@ Eigen::Vector3d Detector::getEventPosition(const DetectorEvent& event) const
 Eigen::Vector3d Detector::getKf(double px, double py, double wave,const std::vector<double>& values,const Eigen::Vector3d& from) const
 {
     // Get the event position x,y,z, taking into account the Gonio current setting
-    Eigen::Vector3d p=getEventPosition(px,py,values);
-    p-=from;
-    p.normalize();
-    return (p/wave);
+    DetectorEvent event(this, px, py, values);
+    return getKf(event, wave, from);
 }
 
 Eigen::Vector3d Detector::getKf(const DetectorEvent& event, double wave,const Eigen::Vector3d& from) const
 {
-    // Get the event position x,y,z, taking into account the Gonio current setting
-    Eigen::Vector3d p=getEventPosition(event);
-    p-=from;
-    p.normalize();
-    return (p/wave);
+//    // Get the event position x,y,z, taking into account the Gonio current setting
+//    Eigen::Vector3d p=getEventPosition(event);
+//    p-=from;
+//    p.normalize();
+//    return (p/wave);
+    return event.getKf(wave, from);
 }
 
 bool Detector::receiveKf(double& px, double& py, const Eigen::Vector3d& kf, const Eigen::Vector3d& from, double& t, const std::vector<double>& goniovalues)
@@ -196,34 +195,34 @@ void Detector::getGammaNu(const DetectorEvent& event, double& gamma, double& nu,
 }
 
 
-double Detector::get2Theta(double px, double py,const std::vector<double>& values,const Eigen::Vector3d& si) const
-{
-    Eigen::Vector3d p=getEventPosition(px,py,values);
-    double proj=p.dot(si);
-    return acos(proj/p.norm()/si.norm());
-}
+//double Detector::get2Theta(double px, double py,const std::vector<double>& values,const Eigen::Vector3d& si) const
+//{
+//    DetectorEvent event(this, px, py, values);
+//    return this->get2Theta(event, si);
+//}
 
-double Detector::get2Theta(const DetectorEvent& event, const Eigen::Vector3d& si) const
-{
-    Eigen::Vector3d p=getEventPosition(event);
-    double proj=p.dot(si);
-    return acos(proj/p.norm()/si.norm());
-}
+//double Detector::get2Theta(const DetectorEvent& event, const Eigen::Vector3d& si) const
+//{
+////    Eigen::Vector3d p=getEventPosition(event);
+////    double proj=p.dot(si);
+////    return acos(proj/p.norm()/si.norm());
+//    return event.get2Theta(si);
+//}
 
-DetectorEvent Detector::createDetectorEvent(double x, double y, const std::vector<double>& values)
-{
-    if (!_gonio) {
-        if (values.size()) {
-            throw std::runtime_error("Trying to create a DetectorEvent with Goniometer values whilst no gonio is set");
-        }
-    }
-    else if (values.size()!=_gonio->getNPhysicalAxes()) {
-        throw std::runtime_error("Trying to create a DetectorEvent with invalid number of Goniometer Axes");
-    }
+//DetectorEvent Detector::createDetectorEvent(double x, double y, const std::vector<double>& values)
+//{
+//    if (!_gonio) {
+//        if (values.size()) {
+//            throw std::runtime_error("Trying to create a DetectorEvent with Goniometer values whilst no gonio is set");
+//        }
+//    }
+//    else if (values.size()!=_gonio->getNPhysicalAxes()) {
+//        throw std::runtime_error("Trying to create a DetectorEvent with invalid number of Goniometer Axes");
+//    }
 
-    DetectorEvent result(this, x, y, values);
-    return result;
-}
+//    DetectorEvent result(this, x, y, values);
+//    return result;
+//}
 
 } // End namespace Instrument
 } // End namespace SX

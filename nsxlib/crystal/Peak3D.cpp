@@ -446,7 +446,7 @@ void Peak3D::setSampleState(const std::shared_ptr<SX::Instrument::ComponentState
 
 void Peak3D::setDetectorEvent(const SX::Instrument::DetectorEvent& event)
 {
-    *_event = event;
+    _event = std::unique_ptr<DetectorEvent>(new DetectorEvent(event));
 }
 
 void Peak3D::setSource(const std::shared_ptr<SX::Instrument::Source>& source)
