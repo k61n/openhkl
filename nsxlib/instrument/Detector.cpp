@@ -2,6 +2,7 @@
 #include <stdexcept>
 
 #include "Detector.h"
+#include "DetectorEvent.h"
 #include "DetectorFactory.h"
 #include "Gonio.h"
 
@@ -113,22 +114,21 @@ Eigen::Vector3d Detector::getEventPosition(double px, double py, const std::vect
 
 Eigen::Vector3d Detector::getEventPosition(const DetectorEvent& event) const
 {
-    if (event._detector!=this)
+    if (event.getParent() != this) {
         throw std::runtime_error("Trying to assign DetectorEvent to a different detector");
-    Eigen::Vector3d v=getPos(event._x,event._y);
+    }
+    Eigen::Vector3d v = getPos(event.getX(), event.getY());
     // No gonio and no values set
-    if (!_gonio)
-    {
-        if (event._values.size())
+    if (!_gonio) {
+        if (event.getValues().size())
             throw std::runtime_error("Trying to assign a DetectorEvent with values to a Component with no Goniometer");
         else
             return v;
     }
-    else if (_gonio->getNPhysicalAxes()!=event._values.size())
-    {
+    else if (_gonio->getNPhysicalAxes()!=event.getValues().size()) {
         throw std::runtime_error("Trying to assign a DetectorEvent with wrong number of values");
     }
-    _gonio->transformInPlace(v,event._values);
+    _gonio->transformInPlace(v,event.getValues());
     return v;
 }
 
@@ -212,23 +212,18 @@ double Detector::get2Theta(const DetectorEvent& event, const Eigen::Vector3d& si
 
 DetectorEvent Detector::createDetectorEvent(double x, double y, const std::vector<double>& values)
 {
-    if (!_gonio)
-    {
-        if (values.size())
+    if (!_gonio) {
+        if (values.size()) {
             throw std::runtime_error("Trying to create a DetectorEvent with Goniometer values whilst no gonio is set");
+        }
     }
-    else if (values.size()!=_gonio->getNPhysicalAxes())
+    else if (values.size()!=_gonio->getNPhysicalAxes()) {
         throw std::runtime_error("Trying to create a DetectorEvent with invalid number of Goniometer Axes");
+    }
 
-    DetectorEvent result;
-    result._detector=this;
-    result._x=x;
-    result._y=y;
-    result._values=values;
+    DetectorEvent result(this, x, y, values);
     return result;
 }
 
 } // End namespace Instrument
-
 } // End namespace SX
-

@@ -58,6 +58,7 @@
 using SX::Geometry::Blob3D;
 
 using SX::Data::IFrameIterator;
+using SX::Instrument::DetectorEvent;
 
 namespace SX {
 namespace Crystal {
@@ -112,7 +113,7 @@ Peak3D::Peak3D(const Peak3D& other):
         _projectionBkg(other._projectionBkg),
         _unitCells(other._unitCells),
         _sampleState(other._sampleState),
-        _event(other._event),
+        _event(new DetectorEvent(*other._event)),
         _source(other._source),
         _counts(other._counts),
         _countsSigma(other._countsSigma),
@@ -138,7 +139,7 @@ Peak3D& Peak3D::operator=(const Peak3D& other)
         _projectionBkg = other._projectionBkg;
         _unitCells = other._unitCells;
         _sampleState = other._sampleState;
-        _event = other._event;
+        *_event = *other._event;
         _source= other._source;
         _counts = other._counts;
         _countsSigma = other._countsSigma;
@@ -188,8 +189,8 @@ void Peak3D::setPeakShape(const Ellipsoid3D& peak)
 
     using DetectorEvent = SX::Instrument::DetectorEvent;
 
-    setDetectorEvent(std::make_shared<DetectorEvent>(
-        data->getDiffractometer()->getDetector()->createDetectorEvent(center[0],center[1],detState.getValues())));
+    setDetectorEvent(DetectorEvent(
+       data->getDiffractometer()->getDetector().get(), center[0], center[1], detState.getValues()));
 }
 
 void Peak3D::setBackgroundShape(const Ellipsoid3D& background)
@@ -384,11 +385,6 @@ void Peak3D::setTransmission(double transmission)
     _transmission=transmission;
 }
 
-std::shared_ptr<SX::Instrument::DetectorEvent> Peak3D::getDetectorEvent()
-{
-    return _event;
-}
-
 std::shared_ptr<SX::Instrument::ComponentState> Peak3D::getSampleState()
 {
     return _sampleState;
@@ -448,9 +444,9 @@ void Peak3D::setSampleState(const std::shared_ptr<SX::Instrument::ComponentState
     _sampleState = sstate;
 }
 
-void Peak3D::setDetectorEvent(const std::shared_ptr<SX::Instrument::DetectorEvent>& event)
+void Peak3D::setDetectorEvent(const SX::Instrument::DetectorEvent& event)
 {
-    _event = event;
+    *_event = event;
 }
 
 void Peak3D::setSource(const std::shared_ptr<SX::Instrument::Source>& source)

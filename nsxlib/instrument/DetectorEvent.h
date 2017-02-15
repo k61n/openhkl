@@ -30,36 +30,37 @@
 #define NSXTOOL_DETECTOREVENT_H_
 #include <vector>
 
-namespace SX
-{
-
-namespace Instrument
-{
+namespace SX {
+namespace Instrument {
 
 // Forward declaration of detector class
 class Detector;
 
 class DetectorEvent {
 public:
-	//! Copy constructor
-	DetectorEvent(const DetectorEvent& other);
-	//! Assignment operator
-	DetectorEvent& operator=(const DetectorEvent& other);
-	//! Destructor
-	~DetectorEvent();
-	//! return a pointer to the detector related to this detector event
-	Detector* getParent();
-	//! Set the parent related to this detector event
-	void setParent(Detector*);
+    // Constructor
+    DetectorEvent(Detector* detector, int x, int y, std::vector<double> values);
+    //! Copy constructor
+    DetectorEvent(const DetectorEvent& other);
+    //! Assignment operator
+    DetectorEvent& operator=(const DetectorEvent& other);
+    //! Destructor
+    ~DetectorEvent();
+    //! return a pointer to the detector related to this detector event
+    Detector* getParent() const;
+
+    const std::vector<double>& getValues() const;
+    double getX() const;
+    double getY() const;
 private:
-	//! Default constructor
-	DetectorEvent();
-	friend class Detector;
-	Detector* _detector;
-	//! Position of the event on the detector
-	double _x, _y;
-	//! Setup of the detector Gonio
-	std::vector<double> _values;
+    //! Default constructor
+    // DetectorEvent();
+    // friend class Detector;
+    Detector* _detector;
+    //! Position of the event on the detector
+    double _x, _y;
+    //! Setup of the detector Gonio
+    std::vector<double> _values;
 
 };
 

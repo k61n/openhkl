@@ -41,6 +41,7 @@
 #include "Peak3D.h"
 #include "../data/IData.h"
 #include "../geometry/Ellipsoid.h"
+#include "../instrument/DetectorEvent.h"
 
 using SX::Geometry::Ellipsoid;
 using SX::Geometry::Matrix3d;

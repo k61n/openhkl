@@ -3,7 +3,13 @@
 namespace SX {
 namespace Instrument
 {
-DetectorEvent::DetectorEvent():_detector(nullptr),_x(0),_y(0),_values()
+//DetectorEvent::DetectorEvent():_detector(nullptr),_x(0),_y(0),_values()
+//{
+
+//}
+
+DetectorEvent::DetectorEvent(Detector *detector, int x, int y, std::vector<double> values):
+    _detector(detector), _x(x), _y(y), _values(std::move(values))
 {
 
 }
@@ -24,19 +30,28 @@ DetectorEvent& DetectorEvent::operator=(const DetectorEvent& rhs)
     return *this;
 }
 
-
 DetectorEvent::~DetectorEvent()
 {
 }
 
-Detector* DetectorEvent::getParent()
+Detector* DetectorEvent::getParent() const
 {
     return _detector;
 }
 
-void DetectorEvent::setParent(Detector* d)
+const std::vector<double> &DetectorEvent::getValues() const
 {
-    _detector=d;
+    return _values;
+}
+
+double DetectorEvent::getX() const
+{
+    return _x;
+}
+
+double DetectorEvent::getY() const
+{
+    return _y;
 }
 
 } /* namespace Instrument */

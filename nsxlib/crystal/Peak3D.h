@@ -140,7 +140,7 @@ public:
     double getLorentzFactor() const;
     std::shared_ptr<SX::Instrument::ComponentState> getSampleState();
     double getSampleStepSize() const;
-    std::shared_ptr<SX::Instrument::DetectorEvent> getDetectorEvent();
+
     //! Return the scaling factor.
     double getScale() const;
     //! Rescale the current scaling factor by scale.
@@ -150,7 +150,7 @@ public:
     //!
     void setSampleState(const std::shared_ptr<SX::Instrument::ComponentState>& sstate);
     //!
-    void setDetectorEvent(const std::shared_ptr<SX::Instrument::DetectorEvent>& event);
+    void setDetectorEvent(const SX::Instrument::DetectorEvent& event);
     //!
     void setSource(const std::shared_ptr<SX::Instrument::Source>& source);
 
@@ -217,8 +217,8 @@ private:
     //! Pointer to the state of the Sample Component
 
     std::shared_ptr<SX::Instrument::ComponentState> _sampleState;
-    //! Pointer to a Detector Event state
-    std::shared_ptr<SX::Instrument::DetectorEvent> _event;
+    //! Detector Event state
+    std::unique_ptr<SX::Instrument::DetectorEvent> _event;
     //!
     std::shared_ptr<SX::Instrument::Source> _source;
 
