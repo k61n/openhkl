@@ -30,7 +30,7 @@
 #define NSXTOOL_COMPONENTSTATE_H_
 
 #include <vector>
-#include <Eigen/Geometry>
+#include <Eigen/Core>
 
 namespace SX {
 namespace Instrument{
@@ -41,25 +41,27 @@ class Component;
 //! Maintain a state of a goniometer, following the memento pattern.
 class ComponentState {
 public:
-	//! Copy constructor
-	ComponentState(const ComponentState& other);
-	//! Destructor
-	~ComponentState();
-	//! Assignment operator
-	ComponentState& operator=(const ComponentState& other);
-	//! Return a pointer to the component related to this component state
-     Component* getParent();
- 	const std::vector<double>& getValues() const;
-     void setParent(Component*);
+    //! Copy constructor
+    ComponentState(const ComponentState& other);
+    //! Destructor
+    ~ComponentState();
+    //! Assignment operator
+    ComponentState& operator=(const ComponentState& other);
+    //! Return a pointer to the component related to this component state
+    Component* getParent() const;
+    const std::vector<double>& getValues() const;
+    void setParent(Component*);
+
+    Eigen::Vector3d getPosition() const;
 private:
-	//! Only Component class can create a state
-	ComponentState();
-	//! Component must be able to access ComponentState
-	friend class Component;
-	//! Pointer to the Component that has created the state
-	Component* _ptrComp;
-	//! Values for each axis of the Component
-	std::vector<double> _values;
+    //! Only Component class can create a state
+    ComponentState();
+    //! Component must be able to access ComponentState
+    friend class Component;
+    //! Pointer to the Component that has created the state
+    Component* _ptrComp;
+    //! Values for each axis of the Component
+    std::vector<double> _values;
 };
 
 }

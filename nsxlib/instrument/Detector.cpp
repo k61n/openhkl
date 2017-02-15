@@ -1,3 +1,40 @@
+/*
+ nsxtool : Neutron Single Crystal analysis toolkit
+ ------------------------------------------------------------------------------------------
+ Copyright (C)
+ 2012- Laurent C. Chapon Institut Laue-Langevin
+ 2017- Laurent C. Chapon, Eric Pellegrini, Jonathan Fisher
+ -----------------------------------------------------------------------------------------
+
+ Institut Laue-Langevin
+ BP 156
+ 6, rue Jules Horowitz
+ 38042 Grenoble Cedex 9
+ France
+ chapon[at]ill.fr
+ pellegrini[at]ill.fr
+
+ Forschungszentrum Juelich GmbH
+ 52425 Juelich
+ Germany
+ j.fisher[at]fz-juelich.de
+
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+
+ You should have received a copy of the GNU Lesser General Public
+ License along with this library; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ */
+
 #include <cmath>
 #include <stdexcept>
 
@@ -104,95 +141,88 @@ Detector& Detector::operator=(const Detector& other)
     return *this;
 }
 
-Eigen::Vector3d Detector::getEventPosition(double px, double py, const std::vector<double>& values) const
-{
-    Eigen::Vector3d v=getPos(px,py);
-    if (_gonio)
-        _gonio->transformInPlace(v,values);
-    return v;
-}
+//Eigen::Vector3d Detector::getEventPosition(double px, double py, const std::vector<double>& values) const
+//{
+//    Eigen::Vector3d v=getPos(px,py);
+//    if (_gonio)
+//        _gonio->transformInPlace(v,values);
+//    return v;
+//}
 
-Eigen::Vector3d Detector::getEventPosition(const DetectorEvent& event) const
-{
-    if (event.getParent() != this) {
-        throw std::runtime_error("Trying to assign DetectorEvent to a different detector");
-    }
-    Eigen::Vector3d v = getPos(event.getX(), event.getY());
-    // No gonio and no values set
-    if (!_gonio) {
-        if (event.getValues().size())
-            throw std::runtime_error("Trying to assign a DetectorEvent with values to a Component with no Goniometer");
-        else
-            return v;
-    }
-    else if (_gonio->getNPhysicalAxes()!=event.getValues().size()) {
-        throw std::runtime_error("Trying to assign a DetectorEvent with wrong number of values");
-    }
-    _gonio->transformInPlace(v,event.getValues());
-    return v;
-}
+//Eigen::Vector3d Detector::getEventPosition(const DetectorEvent& event) const
+//{
+//    if (event.getParent() != this) {
+//        throw std::runtime_error("Trying to assign DetectorEvent to a different detector");
+//    }
+//    Eigen::Vector3d v = getPos(event.getX(), event.getY());
+//    // No gonio and no values set
+//    if (!_gonio) {
+//        if (event.getValues().size())
+//            throw std::runtime_error("Trying to assign a DetectorEvent with values to a Component with no Goniometer");
+//        else
+//            return v;
+//    }
+//    else if (_gonio->getNPhysicalAxes()!=event.getValues().size()) {
+//        throw std::runtime_error("Trying to assign a DetectorEvent with wrong number of values");
+//    }
+//    _gonio->transformInPlace(v,event.getValues());
+//    return v;
+//}
 
-Eigen::Vector3d Detector::getKf(double px, double py, double wave,const std::vector<double>& values,const Eigen::Vector3d& from) const
-{
-    // Get the event position x,y,z, taking into account the Gonio current setting
-    DetectorEvent event(this, px, py, values);
-    return getKf(event, wave, from);
-}
-
-Eigen::Vector3d Detector::getKf(const DetectorEvent& event, double wave,const Eigen::Vector3d& from) const
-{
+//Eigen::Vector3d Detector::getKf(double px, double py, double wave,const std::vector<double>& values,const Eigen::Vector3d& from) const
+//{
 //    // Get the event position x,y,z, taking into account the Gonio current setting
-//    Eigen::Vector3d p=getEventPosition(event);
-//    p-=from;
-//    p.normalize();
-//    return (p/wave);
-    return event.getKf(wave, from);
-}
+//    DetectorEvent event(this, px, py, values);
+//    return event.getKf(wave, from);
+//}
+
+//Eigen::Vector3d Detector::getKf(const DetectorEvent& event, double wave,const Eigen::Vector3d& from) const
+//{
+////    // Get the event position x,y,z, taking into account the Gonio current setting
+////    Eigen::Vector3d p=getEventPosition(event);
+////    p-=from;
+////    p.normalize();
+////    return (p/wave);
+//    return event.getKf(wave, from);
+//}
 
 bool Detector::receiveKf(double& px, double& py, const Eigen::Vector3d& kf, const Eigen::Vector3d& from, double& t, const std::vector<double>& goniovalues)
 {
-
-    if (_gonio)
-    {
+    if (_gonio) {
         Eigen::Vector3d fromt=_gonio->transformInverse(from,goniovalues);
         Eigen::Vector3d kft=_gonio->getInverseHomMatrix(goniovalues).rotation()*kf;
         return hasKf(kft,fromt,px,py,t);
     }
-    else
-        return hasKf(kf,from,px,py,t);
+    return hasKf(kf,from,px,py,t);
 }
 
-Eigen::Vector3d Detector::getQ(double px, double py,double wave,const std::vector<double>& values,const Eigen::Vector3d& from) const
-{
-    if (wave<=0)
-        throw std::runtime_error("Detector:getQ incident wavelength error, must be >0");
-    Eigen::Vector3d q=getKf(px,py,wave,values,from);
-    q[1]-=1.0/wave; // ki along y
-    return q;
-}
+//Eigen::Vector3d Detector::getQ(double px, double py,double wave,const std::vector<double>& values,const Eigen::Vector3d& from) const
+//{
+//    DetectorEvent event(this, px, py, values);
+//    return event.getQ(wave, from);
+//}
 
-Eigen::Vector3d Detector::getQ(const DetectorEvent& event,double wave,const Eigen::Vector3d& from) const
-{
-    if (wave<=0)
-        throw std::runtime_error("Detector:getQ incident wavelength error, must be >0");
-    Eigen::Vector3d q=getKf(event,wave,from);
-    q[1]-=1.0/wave;
-    return q;
-}
+//Eigen::Vector3d Detector::getQ(const DetectorEvent& event,double wave,const Eigen::Vector3d& from) const
+//{
+//    if (wave<=0)
+//        throw std::runtime_error("Detector:getQ incident wavelength error, must be >0");
+//    Eigen::Vector3d q=getKf(event,wave,from);
+//    q[1]-=1.0/wave;
+//    return q;
+//}
 
-void Detector::getGammaNu(double px, double py, double& gamma, double& nu,const std::vector<double>& values,const Eigen::Vector3d& from) const
-{
-    Eigen::Vector3d p=getEventPosition(px,py,values)-from;
-    gamma=std::atan2(p[0],p[1]);
-    nu=std::asin(p[2]/p.norm());
-}
+//void Detector::getGammaNu(double px, double py, double& gamma, double& nu,const std::vector<double>& values,const Eigen::Vector3d& from) const
+//{
+//    DetectorEvent event(this, px, py);
+//    return getGammaNu(event, gamma, nu, from);
+//}
 
-void Detector::getGammaNu(const DetectorEvent& event, double& gamma, double& nu,const Eigen::Vector3d& from) const
-{
-    Eigen::Vector3d p=getEventPosition(event)-from;
-    gamma=std::atan2(p[0],p[1]);
-    nu=std::asin(p[2]/p.norm());
-}
+//void Detector::getGammaNu(const DetectorEvent& event, double& gamma, double& nu,const Eigen::Vector3d& from) const
+//{
+//    Eigen::Vector3d p=getEventPosition(event)-from;
+//    gamma=std::atan2(p[0],p[1]);
+//    nu=std::asin(p[2]/p.norm());
+//}
 
 
 //double Detector::get2Theta(double px, double py,const std::vector<double>& values,const Eigen::Vector3d& si) const

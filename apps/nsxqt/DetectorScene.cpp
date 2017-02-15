@@ -436,7 +436,7 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
         ttip = QString("(%1,%2) I:%3").arg(col).arg(row).arg(intensity);
         break;
     case GAMMA:
-        det->getGammaNu(col, row, gamma, nu, detectorv, sample->getPosition(samplev));
+        DetectorEvent(det.get(), col, row, detectorv).getGammaNu(gamma, nu, sample->getPosition(samplev));
         ttip = QString("(%1,%2) I: %3").arg(gamma/SX::Units::deg).arg(nu/SX::Units::deg).arg(intensity);
         break;
     case THETA:

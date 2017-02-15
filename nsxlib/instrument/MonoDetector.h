@@ -133,7 +133,6 @@ protected:
     double _width, _height;
     double _angularWidth, _angularHeight;
     double _distance;
-
 };
 
 } // end namespace Instrument

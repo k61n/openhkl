@@ -1,28 +1,37 @@
 /*
- * nsxtool : Neutron Single Crystal analysis toolkit
-    ------------------------------------------------------------------------------------------
-    Copyright (C)
-    2012- Laurent C. Chapon Institut Laue-Langevin
-    BP 156
-    6, rue Jules Horowitz
-    38042 Grenoble Cedex 9
-    France
-    chapon[at]ill.fr
-    pellegrini[at]ill.fr
+ nsxtool : Neutron Single Crystal analysis toolkit
+ ------------------------------------------------------------------------------------------
+ Copyright (C)
+ 2012- Laurent C. Chapon Institut Laue-Langevin
+ 2017- Laurent C. Chapon, Eric Pellegrini, Jonathan Fisher
+ -----------------------------------------------------------------------------------------
 
-    This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Lesser General Public
-    License as published by the Free Software Foundation; either
-    version 2.1 of the License, or (at your option) any later version.
+ Institut Laue-Langevin
+ BP 156
+ 6, rue Jules Horowitz
+ 38042 Grenoble Cedex 9
+ France
+ chapon[at]ill.fr
+ pellegrini[at]ill.fr
 
-    This library is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Lesser General Public License for more details.
+ Forschungszentrum Juelich GmbH
+ 52425 Juelich
+ Germany
+ j.fisher[at]fz-juelich.de
 
-    You should have received a copy of the GNU Lesser General Public
-    License along with this library; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+
+ You should have received a copy of the GNU Lesser General Public
+ License along with this library; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
 
@@ -126,9 +135,9 @@ public:
      *  @param py vertical position of the scattering event in pixels units
      *  @return spatial position of this event
      */
-    Eigen::Vector3d getEventPosition(double px, double py,const std::vector<double>& values=std::vector<double>()) const;
+    //Eigen::Vector3d getEventPosition(double px, double py,const std::vector<double>& values=std::vector<double>()) const;
     //! Get the position of a scattering event
-    Eigen::Vector3d getEventPosition(const DetectorEvent& event) const;
+    //Eigen::Vector3d getEventPosition(const DetectorEvent& event) const;
     /**
      *  @brief Get the scattering angles for an event on the detector
      *  @param px horizontal position of the scattering event in pixels unit
@@ -136,9 +145,9 @@ public:
      *  @param gamma reference to angle in the yx-plane (gamma=0 along y)
      *  @param nu reference to elevation angle
      */
-    void getGammaNu(double px, double py, double& gamma, double& nu,  const std::vector<double>& values=std::vector<double>(), const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
+    //void getGammaNu(double px, double py, double& gamma, double& nu,  const std::vector<double>& values=std::vector<double>(), const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
     //! Get the scattering angles for an event on the detector
-    void getGammaNu(const DetectorEvent& event, double& gamma, double& nu,const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
+    //void getGammaNu(const DetectorEvent& event, double& gamma, double& nu,const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
     /**
      *  @brief Get the scattered wavenumber for an event on a detector
      *  @param px horizontal position of the scattering event in pixels unit
@@ -147,11 +156,11 @@ public:
      *  @param from Optional scattering point position
      *  @return Scattered wavenumber s=\f$ \frac{k_f}{2\pi} \f$
      */
-    Eigen::Vector3d getKf(double px, double py,double wave, const std::vector<double>& values=std::vector<double>(), const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
+    //Eigen::Vector3d getKf(double px, double py,double wave, const std::vector<double>& values=std::vector<double>(), const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
     /**
      * Get the scattered wavenumber for an event on this detector
      */
-    Eigen::Vector3d getKf(const DetectorEvent& event,double wave, const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
+    //Eigen::Vector3d getKf(const DetectorEvent& event,double wave, const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
 
     /**
      *  @brief Get the transferred wavenumber for an event on a detector
@@ -161,9 +170,9 @@ public:
      *  @param from Optional scattering point position
      *  @return Transferred wavenumber s=\f$ \frac{k_f-k_i}{2\pi} \f$
      */
-    Eigen::Vector3d getQ(double px, double py,double wave, const std::vector<double>& values=std::vector<double>(), const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
+    //Eigen::Vector3d getQ(double px, double py,double wave, const std::vector<double>& values=std::vector<double>(), const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
     //! Get the transferred wavenumber for an event on this detector
-    Eigen::Vector3d getQ(const DetectorEvent& event, double wave,const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
+    //Eigen::Vector3d getQ(const DetectorEvent& event, double wave,const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
 
     //! Reuturn whether the detector with goniometer values can collect scattering at Kf. If true, px and py would be the pixel coordinates of the event
     bool receiveKf(double& px, double& py,const Eigen::Vector3d& kf,const Eigen::Vector3d& from, double& t, const std::vector<double>& values=std::vector<double>());
@@ -187,7 +196,6 @@ private:
 };
 
 } // end namespace Instrument
-
 } // end namespace SX
 
 #endif /* NSXTOOL_DETECTOR_H_ */

@@ -5,11 +5,8 @@
 #include "MonoDetector.h"
 #include "../utils/Units.h"
 
-namespace SX
-{
-
-namespace Instrument
-{
+namespace SX {
+namespace Instrument {
 
 MonoDetector::MonoDetector()
 : Detector(),

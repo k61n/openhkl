@@ -420,7 +420,7 @@ double Peak3D::getSampleStepSize() const
 Eigen::RowVector3d Peak3D::getKf() const
 {
     double wav = _source->getWavelength();
-    Eigen::Vector3d kf = _event->getParent()->getKf(*_event, wav, _sampleState->getParent()->getPosition(*_sampleState));
+    Eigen::Vector3d kf = _event->getKf(wav, _sampleState->getPosition());
     return kf;
 }
 
@@ -429,12 +429,11 @@ Eigen::RowVector3d Peak3D::getQ() const
     double wav=_source->getWavelength();
     // If sample state is not set, assume sample is at the origin
     if (!_sampleState) {
-        return _event->getParent()->getQ(*_event, wav);
+        return _event->getQ(wav);
     }
 
     // otherwise scattering point is deducted from the sample
-    Eigen::Vector3d q = _event->getParent()->getQ(*_event, wav,
-                                                  _sampleState->getParent()->getPosition(*_sampleState));
+    Eigen::Vector3d q = _event->getQ(wav, _sampleState->getPosition());
     q = _sampleState->getParent()->getGonio()->getInverseHomMatrix(_sampleState->getValues()).rotation()*q;
     return q;
 }
@@ -456,7 +455,7 @@ void Peak3D::setSource(const std::shared_ptr<SX::Instrument::Source>& source)
 
 void Peak3D::getGammaNu(double& gamma,double& nu) const
 {
-    _event->getParent()->getGammaNu(*_event,gamma,nu,_sampleState->getParent()->getPosition(*_sampleState));
+    _event->getGammaNu(gamma,nu,_sampleState->getPosition());
 }
 
 bool operator<(const Peak3D& p1, const Peak3D& p2)
