@@ -48,11 +48,14 @@ public:
     //! Assignment operator
     ComponentState& operator=(const ComponentState& other);
     //! Return a pointer to the component related to this component state
-    Component* getParent() const;
+    // Component* getParent() const;
     const std::vector<double>& getValues() const;
-    void setParent(Component*);
+    //void setParent(Component*);
 
     Eigen::Vector3d getPosition() const;
+
+    Eigen::Vector3d transformQ(const Eigen::Vector3d& q) const;
+
 private:
     //! Only Component class can create a state
     ComponentState();

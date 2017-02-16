@@ -190,7 +190,7 @@ void Peak3D::setPeakShape(const Ellipsoid3D& peak)
     using DetectorEvent = SX::Instrument::DetectorEvent;
 
     setDetectorEvent(DetectorEvent(
-       data->getDiffractometer()->getDetector().get(), center[0], center[1], detState.getValues()));
+       *data->getDiffractometer()->getDetector(), center[0], center[1], detState.getValues()));
 }
 
 void Peak3D::setBackgroundShape(const Ellipsoid3D& background)
@@ -434,8 +434,10 @@ Eigen::RowVector3d Peak3D::getQ() const
 
     // otherwise scattering point is deducted from the sample
     Eigen::Vector3d q = _event->getQ(wav, _sampleState->getPosition());
-    q = _sampleState->getParent()->getGonio()->getInverseHomMatrix(_sampleState->getValues()).rotation()*q;
-    return q;
+
+    //q = _sampleState->getParent()->getGonio()->getInverseHomMatrix(_sampleState->getValues()).rotation()*q;
+    //return q;
+    return _sampleState->transformQ(q);
 }
 
 void Peak3D::setSampleState(const std::shared_ptr<SX::Instrument::ComponentState>& sstate)

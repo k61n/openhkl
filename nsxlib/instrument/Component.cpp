@@ -57,13 +57,11 @@ Component::~Component()
 
 Component& Component::operator=(const Component& other)
 {
-    if (this != &other)
-    {
+    if (this != &other) {
         _name = other._name;
         _gonio = other._gonio;
         _position = other._position;
     }
-
     return *this;
 }
 
@@ -79,10 +77,10 @@ const std::string& Component::getName() const
 
 Eigen::Vector3d Component::getPosition(const std::vector<double>& goniosetup) const
 {
-    if (_gonio.get()==nullptr)
+    if (_gonio.get()==nullptr) {
         return _position;
-    else
-        return _gonio->transform(_position,goniosetup);
+    }
+     return _gonio->transform(_position,goniosetup);
 }
 
 //Eigen::Vector3d Component::getPosition(const ComponentState& state) const
@@ -123,19 +121,20 @@ ComponentState Component::createState()
 {
     ComponentState state;
     state._ptrComp=this;
-    if (hasGonio())
+    if (hasGonio()) {
         state._values.resize(_gonio->getNPhysicalAxes(),0);
+    }
     return state;
 }
 
 ComponentState Component::createState(const std::vector<double>& values)
 {
     ComponentState state;
-    state._ptrComp=this;
-    if (hasGonio())
-    {
-        if (values.size()!=_gonio->getNPhysicalAxes())
+    state._ptrComp = this;
+    if (hasGonio()) {
+        if (values.size()!=_gonio->getNPhysicalAxes()) {
             throw std::runtime_error("Trying to create a state from component "+_name+" with wrong number of Goniometer values");
+        }
         state._values=values;
     }
     return state;
@@ -146,10 +145,10 @@ ComponentState Component::createStateFromEigen(const Eigen::VectorXd& values)
     ComponentState state;
     state._ptrComp=this;
     unsigned int nValues=static_cast<unsigned int>(values.size());
-    if (hasGonio())
-    {
-        if (nValues!=_gonio->getNPhysicalAxes())
+    if (hasGonio())  {
+        if (nValues!=_gonio->getNPhysicalAxes()) {
             throw std::runtime_error("Trying to create a state from component "+_name+" with wrong number of Goniometer values");
+        }
         state._values.resize(nValues);
         memcpy(state._values.data(),values.data(),values.size()*sizeof(double));
     }
@@ -160,12 +159,10 @@ ComponentState Component::createState(const std::map<std::string,double>& values
 {
     ComponentState state;
     state._ptrComp=this;
-    if (hasGonio())
-    {
+    if (hasGonio()) {
         std::vector<double> v(_gonio->getNPhysicalAxes());
         std::size_t comp=0;
-        for (auto a : _gonio->getAxes())
-        {
+        for (auto a : _gonio->getAxes()) {
             if (!a->isPhysical())
                 continue;
             auto it=values.find(a->getLabel());
@@ -178,33 +175,31 @@ ComponentState Component::createState(const std::map<std::string,double>& values
 
 std::size_t Component::getNAxes() const
 {
-    if (hasGonio())
+    if (hasGonio()) {
         return _gonio->getNAxes();
-    else
-        return 0;
+    }
+    return 0;
 }
 
 std::size_t Component::getNPhysicalAxes() const
 {
-    if (hasGonio())
+    if (hasGonio()) {
         return _gonio->getNPhysicalAxes();
-    else
-        return 0;
+    }
+    return 0;
 }
 
 std::map<unsigned int,std::string> Component::getPhysicalAxesNames() const
 {
     std::map<unsigned int,std::string> names;
 
-    if (_gonio)
-    {
-        for (auto a : _gonio->getAxes())
-        {
-            if (a->isPhysical())
+    if (_gonio) {
+        for (auto a : _gonio->getAxes()) {
+            if (a->isPhysical()) {
                 names.insert(std::pair<unsigned int,std::string>(a->getId(),a->getLabel()));
+            }
         }
     }
-
     return names;
 }
 
@@ -212,20 +207,16 @@ std::vector<unsigned int> Component::getPhysicalAxesIds() const
 {
     std::vector<unsigned int> ids;
 
-    if (_gonio)
-    {
+    if (_gonio) {
         ids.reserve(_gonio->getNPhysicalAxes());
-        for (auto a : _gonio->getAxes())
-        {
-            if (a->isPhysical())
+        for (auto a : _gonio->getAxes()) {
+            if (a->isPhysical()) {
                 ids.push_back(a->getId());
+            }
         }
     }
-
     return ids;
 }
 
-} // end namespace Instrument
-
-} // end namespace SX
-
+} // namespace Instrument
+} // namespace SX

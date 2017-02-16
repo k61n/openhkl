@@ -40,15 +40,11 @@
 #include "Gonio.h"
 
 namespace SX {
-namespace Instrument
-{
-//DetectorEvent::DetectorEvent():_detector(nullptr),_x(0),_y(0),_values()
-//{
+namespace Instrument {
 
-//}
 
-DetectorEvent::DetectorEvent(const Detector *detector, double x, double y, std::vector<double> values):
-    _detector(detector), _x(x), _y(y), _values(std::move(values))
+DetectorEvent::DetectorEvent(const Detector& detector, double x, double y, std::vector<double> values):
+    _detector(&detector), _x(x), _y(y), _values(std::move(values))
 {
 
 }
@@ -69,37 +65,14 @@ DetectorEvent::DetectorEvent(DetectorEvent&& other):
 
 DetectorEvent& DetectorEvent::operator=(const DetectorEvent& rhs)
 {
-    if (this!=&rhs)
-    {
-        _detector=rhs._detector;
-        _x=rhs._x;
-        _y=rhs._y;
-    }
+    _detector = rhs._detector;
+    _x = rhs._x;
+    _y = rhs._y;
     return *this;
 }
 
 DetectorEvent::~DetectorEvent()
 {
-}
-
-const Detector* DetectorEvent::getParent() const
-{
-    return _detector;
-}
-
-const std::vector<double> &DetectorEvent::getValues() const
-{
-    return _values;
-}
-
-double DetectorEvent::getX() const
-{
-    return _x;
-}
-
-double DetectorEvent::getY() const
-{
-    return _y;
 }
 
 double DetectorEvent::get2Theta(const Eigen::Vector3d& si) const

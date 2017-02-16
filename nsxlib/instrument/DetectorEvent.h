@@ -52,7 +52,7 @@ class Detector;
 class DetectorEvent {
 public:
     // Constructor
-    DetectorEvent(const Detector* detector, double x, double y, DetectorState values = {});
+    DetectorEvent(const Detector& detector, double x, double y, DetectorState values = {});
     //! Copy constructor
     DetectorEvent(const DetectorEvent& other);
     //! Move constructor
@@ -61,12 +61,6 @@ public:
     DetectorEvent& operator=(const DetectorEvent& other);
     //! Destructor
     ~DetectorEvent();
-    //! return a pointer to the detector related to this detector event
-    const Detector* getParent() const;
-
-    const std::vector<double>& getValues() const;
-    double getX() const;
-    double getY() const;
 
     /**
      *  @brief Get 2\f$ \theta \f$
@@ -100,9 +94,8 @@ public:
       */
      void getGammaNu(double& gamma, double& nu,const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
 
-
      /**
-      *  @brief Get the position of a scattering event at px, py.
+      *  @brief Get the position of the scattering event.
       *  @param px horizontal position of the scattering event in pixels unit
       *  @param py vertical position of the scattering event in pixels units
       *  @return spatial position of this event
@@ -118,9 +111,8 @@ private:
     double _x, _y;
     //! Setup of the detector Gonio
     std::vector<double> _values;
-
 };
 
 } // Namespace Instrument
-}  // Namespace SX
+} // Namespace SX
 #endif /* NSXTOOL_DETECTOREVENT_H_ */

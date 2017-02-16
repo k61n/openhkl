@@ -48,11 +48,8 @@
 #include "Component.h"
 #include "DetectorEvent.h"
 
-namespace SX
-{
-
-namespace Instrument
-{
+namespace SX {
+namespace Instrument {
 
 namespace property_tree=boost::property_tree;
 
@@ -61,10 +58,9 @@ namespace property_tree=boost::property_tree;
  *
  *
  */
-class Detector : public Component
-{
+class Detector: public Component {
 public:
-    enum  class DataOrder {
+    enum class DataOrder {
         TopLeftColMajor,
         TopLeftRowMajor,
         TopRightColMajor,
@@ -120,68 +116,11 @@ public:
     //! Return the angular width of the detector (radians)
     virtual double getAngularWidth() const=0;
 
-    /**
-     *  @brief Get 2\f$ \theta \f$
-     *  @param px horizontal position of the scattering event in pixels unit
-     *  @param py vertical position of the scattering event in pixels units
-     *  @param si Incident wavenumber
-     */
-    //double get2Theta(double px, double py, const std::vector<double>& values=std::vector<double>(), const Eigen::Vector3d& si=Eigen::Vector3d(0,1,0)) const;
-    //! Get 2\f$ \theta \f$ from an event on the detector
-    //double get2Theta(const DetectorEvent& event, const Eigen::Vector3d& si) const;
-    /**
-     *  @brief Get the position of a scattering event at px, py.
-     *  @param px horizontal position of the scattering event in pixels unit
-     *  @param py vertical position of the scattering event in pixels units
-     *  @return spatial position of this event
-     */
-    //Eigen::Vector3d getEventPosition(double px, double py,const std::vector<double>& values=std::vector<double>()) const;
-    //! Get the position of a scattering event
-    //Eigen::Vector3d getEventPosition(const DetectorEvent& event) const;
-    /**
-     *  @brief Get the scattering angles for an event on the detector
-     *  @param px horizontal position of the scattering event in pixels unit
-     *  @param py vertical position of the scattering event in pixels units
-     *  @param gamma reference to angle in the yx-plane (gamma=0 along y)
-     *  @param nu reference to elevation angle
-     */
-    //void getGammaNu(double px, double py, double& gamma, double& nu,  const std::vector<double>& values=std::vector<double>(), const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
-    //! Get the scattering angles for an event on the detector
-    //void getGammaNu(const DetectorEvent& event, double& gamma, double& nu,const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
-    /**
-     *  @brief Get the scattered wavenumber for an event on a detector
-     *  @param px horizontal position of the scattering event in pixels unit
-     *  @param py vertical position of the scattering event in pixels units
-     *  @param wave incident wavelength in \f$ \AA^{-1} \f$
-     *  @param from Optional scattering point position
-     *  @return Scattered wavenumber s=\f$ \frac{k_f}{2\pi} \f$
-     */
-    //Eigen::Vector3d getKf(double px, double py,double wave, const std::vector<double>& values=std::vector<double>(), const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
-    /**
-     * Get the scattered wavenumber for an event on this detector
-     */
-    //Eigen::Vector3d getKf(const DetectorEvent& event,double wave, const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
-
-    /**
-     *  @brief Get the transferred wavenumber for an event on a detector
-     *  @param px horizontal position of the scattering event in pixels unit
-     *  @param py vertical position of the scattering event in pixels units
-     *  @param si incident wavenumber si=\f$ \frac{k_i}{2\pi} \f$
-     *  @param from Optional scattering point position
-     *  @return Transferred wavenumber s=\f$ \frac{k_f-k_i}{2\pi} \f$
-     */
-    //Eigen::Vector3d getQ(double px, double py,double wave, const std::vector<double>& values=std::vector<double>(), const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
-    //! Get the transferred wavenumber for an event on this detector
-    //Eigen::Vector3d getQ(const DetectorEvent& event, double wave,const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
-
     //! Reuturn whether the detector with goniometer values can collect scattering at Kf. If true, px and py would be the pixel coordinates of the event
     bool receiveKf(double& px, double& py,const Eigen::Vector3d& kf,const Eigen::Vector3d& from, double& t, const std::vector<double>& values=std::vector<double>());
 
     //! Returns the number of detector
     virtual unsigned int getNDetectors() const=0;
-
-    //! Create a detector event, a small object with state of the event on the detector and gonio setup
-    //DetectorEvent createDetectorEvent(double x, double y, const std::vector<double>& goniosetup=std::vector<double>());
 
     //! Returns the position of a given pixel in detector space. This takes into account the detector motions in detector space.
     virtual Eigen::Vector3d getPos(double x, double y) const=0;

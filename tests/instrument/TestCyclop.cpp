@@ -14,7 +14,7 @@ BOOST_AUTO_TEST_CASE(Test_Cyclop)
     for (int i = 0; i < 7680; ++i) {
         for (int j = 0; j < 2400; ++j) {
             auto detector = cyclop->getDetector().get();
-            SX::Instrument::DetectorEvent event(detector, i, j);
+            SX::Instrument::DetectorEvent event(*detector, i, j);
             event.getGammaNu(g, nu);
         }
     }

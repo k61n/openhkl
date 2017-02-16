@@ -61,15 +61,15 @@ ComponentState& ComponentState::operator=(const ComponentState& other)
     return *this;
 }
 
-Component* ComponentState::getParent() const
-{
-    return _ptrComp;
-}
+//Component* ComponentState::getParent() const
+//{
+//    return _ptrComp;
+//}
 
-void ComponentState::setParent(Component* c)
-{
-    _ptrComp = c;
-}
+//void ComponentState::setParent(Component* c)
+//{
+//    _ptrComp = c;
+//}
 
 const std::vector<double>& ComponentState::getValues() const
 {
@@ -78,15 +78,18 @@ const std::vector<double>& ComponentState::getValues() const
 
 Eigen::Vector3d ComponentState::getPosition() const
 {
-    auto parent = getParent();
-    auto gonio = parent->getGonio();
-    auto position = parent->getRestPosition();
+    auto gonio = _ptrComp->getGonio();
+    auto position = _ptrComp->getRestPosition();
 
     if (gonio == nullptr) {
         return position;
     }
-
     return gonio->transform(position, _values);
+}
+
+Eigen::Vector3d ComponentState::transformQ(const Eigen::Vector3d &q) const
+{
+    return _ptrComp->getGonio()->getInverseHomMatrix(_values).rotation()*q;
 }
 
 } // end namespace Instrument

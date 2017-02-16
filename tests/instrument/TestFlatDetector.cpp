@@ -24,14 +24,14 @@ BOOST_AUTO_TEST_CASE(Test_Flat_Detector)
     d.setNPixels(32,32);
 
     // This should be the center of the detector at rest at (0,0.764,0)
-    DetectorEvent ev(&d, 15.5, 15.5);
+    DetectorEvent ev(d, 15.5, 15.5);
     Eigen::Vector3d center=ev.getPosition();
     BOOST_CHECK_SMALL(center[0],tolerance);
     BOOST_CHECK_CLOSE(center[1],0.380,tolerance);
     BOOST_CHECK_SMALL(center[2],tolerance);
 
     double gamma,nu;
-    DetectorEvent ev2(&d, 15.5, 15.5, {});
+    DetectorEvent ev2(d, 15.5, 15.5, {});
     ev2.getGammaNu(gamma, nu);
     BOOST_CHECK_SMALL(gamma, tolerance);
     BOOST_CHECK_SMALL(nu, tolerance);
@@ -43,7 +43,7 @@ BOOST_AUTO_TEST_CASE(Test_Flat_Detector)
     g->addRotation("gamma",Vector3d(0,0,1),RotAxis::CW);
     d.setGonio(g);
 
-    DetectorEvent ev3(&d, 15.5, 15.5, {90.0*deg});
+    DetectorEvent ev3(d, 15.5, 15.5, {90.0*deg});
     center=ev3.getPosition();
     BOOST_CHECK_CLOSE(center[0],0.380,tolerance);
     BOOST_CHECK_SMALL(center[1],0.001);
