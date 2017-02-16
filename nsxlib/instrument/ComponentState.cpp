@@ -36,15 +36,27 @@
 #include "ComponentState.h"
 #include "Component.h"
 #include "Gonio.h"
+#include <cstring>
+#include <cassert>
+
+// helper function
+static std::vector<double> eigenToVector(const Eigen::VectorXd& values)
+{
+    std::vector<double> v(values.size());
+    std::memcpy(&v[0], values.data(), values.size()*sizeof(double));
+    return v;
+}
 
 namespace SX {
 namespace Instrument {
 
-ComponentState::ComponentState(const Component &parent, std::vector<double> values):
+ComponentState::ComponentState(const Component& parent, std::vector<double> values):
     _ptrComp(&parent),
     _values(std::move(values))
 {
-
+    if (parent.hasGonio()) {
+        assert(values.size() == parent.getGonio()->getNPhysicalAxes());
+    }
 }
 
 ComponentState::ComponentState(const ComponentState& other) : _ptrComp(other._ptrComp), _values(other._values)

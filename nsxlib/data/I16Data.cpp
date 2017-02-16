@@ -90,6 +90,7 @@ I16Data::I16Data(const std::string& filename, std::shared_ptr<Diffractometer> di
     _metadata->add<std::string>("Instrument","I16Kappa");
     file.close();
     _tifs.reserve(data_count);
+
     for (int i=1;i<=data_count;++i) {
         std::ostringstream os;
         os << std::setw(5) << std::setfill('0') << i << ".tif";
@@ -108,12 +109,10 @@ I16Data::I16Data(const std::string& filename, std::shared_ptr<Diffractometer> di
     sval[1]=_metadata->getKey<double>("chi");
     sval[2]=_metadata->getKey<double>("phi");
 
-
     for (unsigned int i=0;i<_nFrames;++i) {
-        _detectorStates.push_back(_diffractometer->getDetector()->createState(dval));
-        _sampleStates.push_back(_diffractometer->getSample()->createState(sval));
+        _detectorStates.emplace_back(*_diffractometer->getDetector(), dval);
+        _sampleStates.emplace_back(*_diffractometer->getSample(), sval);
     }
-
     _metadata->add<int>("Numor",atoi(boost::filesystem::path(filename).stem().string().c_str()));
     _metadata->add<double>("monitor",1.0);
 }

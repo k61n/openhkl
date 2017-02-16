@@ -165,7 +165,7 @@ ComponentState IData::getDetectorInterpolatedState(double frame)
     for (std::size_t i=0; i < nPhysicalAxes; ++i) {
         state[i] = prevState[i] + (frame-static_cast<double>(idx))*(nextState[i]-prevState[i]);
     }
-    return _diffractometer->getDetector()->createState(state);
+    return ComponentState(*_diffractometer->getDetector(), state);
 }
 
 const ComponentState& IData::getDetectorState(unsigned long frame) const
@@ -193,7 +193,7 @@ ComponentState IData::getSampleInterpolatedState(double frame)
     for (std::size_t i=0;i<nPhysicalAxes;++i) {
         state[i] = prevState[i] + (frame-static_cast<double>(idx))*(nextState[i]-prevState[i]);
     }
-    return _diffractometer->getSample()->createState(state);
+    return ComponentState(*_diffractometer->getSample(), state);
 }
 
 const ComponentState& IData::getSampleState(unsigned long frame) const
@@ -220,7 +220,7 @@ ComponentState IData::getSourceInterpolatedState(double frame)
     for (std::size_t i = 0; i < nPhysicalAxes; ++i) {
         state[i] = prevState[i] + (frame-static_cast<double>(idx))*(nextState[i]-prevState[i]);
     }
-    return _diffractometer->getSource()->createState(state);
+    return ComponentState(*_diffractometer->getSource(), state);
 }
 
 const ComponentState& IData::getSourceState(unsigned int frame) const

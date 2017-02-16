@@ -1,5 +1,6 @@
 #include "../instrument/Detector.h"
 #include "../instrument/Sample.h"
+#include "../instrument/Gonio.h"
 #include "TiffData.h"
 
 namespace SX
@@ -35,23 +36,33 @@ TiffData::TiffData(const std::string& filename, std::shared_ptr<Diffractometer> 
     _isOpened=false;
     TIFFGetField(_file, TIFFTAG_BITSPERSAMPLE, &_bits);
 
-    if (_bits!=16 && _bits!=32)
-    {
+    if (_bits!=16 && _bits!=32) {
         close();
         throw std::runtime_error("Can't read TIFF file "+_filename+" : only 16/32bits format supported");
     }
 
     _nFrames=1;
-
     _data.reserve(_nFrames);
-
     _detectorStates.reserve(_nFrames);
-    _detectorStates.push_back(_diffractometer->getDetector()->createState());
     _sampleStates.reserve(_nFrames);
-    _sampleStates.push_back(_diffractometer->getSample()->createState());
 
+    auto detector = _diffractometer->getDetector();
+    auto sample = _diffractometer->getSample();
+
+    if (detector->hasGonio()) {
+        std::vector<double> v(detector->getGonio()->getNPhysicalAxes(), 0.0);
+        _detectorStates.emplace_back(*detector, v);
+    } else {
+        _detectorStates.emplace_back(*detector);
+    }
+
+    if (sample->hasGonio()) {
+        std::vector<double> v(sample->getGonio()->getNPhysicalAxes(), 0.0);
+        _sampleStates.emplace_back(*sample, v);
+    } else {
+        _sampleStates.emplace_back(*sample);
+    }
     _metadata->add<std::string>("Instrument",diffractometer->getType());
-
 }
 
 TiffData::~TiffData()
@@ -60,46 +71,45 @@ TiffData::~TiffData()
 
 void TiffData::open()
 {
-    if (_isOpened)
+    if (_isOpened) {
         return;
-    try
-    {
-        _file=TIFFOpen(_filename.c_str(),"r");
-    }catch(...)
-    {
+    }
+    try {
+        _file = TIFFOpen(_filename.c_str(),"r");
+    }
+    catch(...) {
         throw;
     }
-    _isOpened=true;
+    _isOpened = true;
 }
 
 void TiffData::close()
 {
-    if (_isOpened)
+    if (_isOpened) {
         TIFFClose(_file);
-    _isOpened=false;
+    }
+    _isOpened = false;
 }
-
 
 Eigen::MatrixXi TiffData::readFrame(std::size_t idx)
 {
-
-    if (!_isOpened)
+    if (!_isOpened) {
         open();
+    }
 
-    if (_bits==16)
-    {
+    if (_bits==16) {
         Eigen::Matrix<uint16,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> data16(_nrows,_ncols);
         // Read line per line
         for(unsigned short int i=0; i< _nrows; ++i)
             TIFFReadScanline(_file, (char*)&data16(i,0), i);
         // Not very nice, but need to copy the 16bits data to int
         return data16.cast<int>();
-    }else
-    {
+    } else {
         Eigen::Matrix<uint32,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> data32(_nrows,_ncols);
         // Read line per line
-        for(unsigned short int i=0; i< _nrows; ++i)
+        for(unsigned short int i=0; i< _nrows; ++i) {
             TIFFReadScanline(_file, (char*)&data32(i,0), i);
+        }
         // Not very nice, but need to copy the 32bits data to int
         return data32.cast<int>();
     }

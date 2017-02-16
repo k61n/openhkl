@@ -5,15 +5,14 @@
 #include "../instrument/Gonio.h"
 #include "../instrument/Sample.h"
 #include "../utils/Units.h"
+#include "../utils/EigenToVector.h"
 
 using std::unique_ptr;
 using std::shared_ptr;
+using SX::Utils::eigenToVector;
 
-namespace SX
-{
-
-namespace Data
-{
+namespace SX {
+namespace Data {
 
 IData* HDF5Data::create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer)
 {
@@ -88,7 +87,7 @@ HDF5Data::HDF5Data(const std::string& filename, const std::shared_ptr<Diffractom
     _detectorStates.reserve(_nFrames);
 
     for (unsigned int i=0;i<_nFrames;++i) {
-        _detectorStates.push_back(_diffractometer->getDetector()->createStateFromEigen(dm.col(i)));
+        _detectorStates.emplace_back(*_diffractometer->getDetector(), eigenToVector(dm.col(i)));
     }
 
     // Getting Scan parameters for the sample
@@ -122,7 +121,7 @@ HDF5Data::HDF5Data(const std::string& filename, const std::shared_ptr<Diffractom
     _sampleStates.reserve(_nFrames);
 
     for (unsigned int i=0;i<_nFrames;++i) {
-        _sampleStates.push_back(_diffractometer->getSample()->createStateFromEigen(dm.col(i)));
+        _sampleStates.emplace_back(*_diffractometer->getSample(), eigenToVector(dm.col(i)));
     }
     _file->close();
 }

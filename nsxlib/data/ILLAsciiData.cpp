@@ -223,7 +223,7 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, const std::shared_ptr<Di
             for (const auto& v: detAxisIdsToNames) {
                 detValues.push_back(gonioValues[v][f]);
             }
-            _detectorStates.push_back(_diffractometer->getDetector()->createState(detValues));
+            _detectorStates.emplace_back(*_diffractometer->getDetector(), detValues);
         }
     }
 
@@ -243,7 +243,7 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, const std::shared_ptr<Di
             for (const auto& v: sampleAxisIdsToNames) {
                 sampleValues.push_back(gonioValues[v][f]);
             }
-            _sampleStates.push_back(_diffractometer->getSample()->createState(sampleValues));
+            _sampleStates.emplace_back(*_diffractometer->getSample(), sampleValues);
         }
     }
 
@@ -263,7 +263,7 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, const std::shared_ptr<Di
             for (const auto& v: sourceAxisIdsToNames) {
                 sourceValues.push_back(gonioValues[v][f]);
             }
-            _sourceStates.push_back(_diffractometer->getSource()->createState(sourceValues));
+            _sourceStates.emplace_back(*_diffractometer->getSource(), sourceValues);
         }
     }
 

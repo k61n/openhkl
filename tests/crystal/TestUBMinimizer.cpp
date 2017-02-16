@@ -107,7 +107,7 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
         hkl << h,k,l;
 
         // Create a sample state
-        peak.setSampleState(std::shared_ptr<ComponentState>(new ComponentState(sample->createState({omega*deg,chi*deg,phi*deg}))));
+        peak.setSampleState(std::shared_ptr<ComponentState>(new ComponentState(*sample, {omega*deg,chi*deg,phi*deg})));
 //		_peaks.push_back(peak);
 
         minimizer.addPeak(peak,hkl);

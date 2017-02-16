@@ -173,8 +173,9 @@ void MainWindow::on_actionOpen_reflections_triggered()
             // Create a peak
             SX::Crystal::Peak3D peak;
 //            peak.setMillerIndices(h,k,l);
+            using ComponentState = SX::Instrument::ComponentState;
             peak.setDetectorEvent(SX::Instrument::DetectorEvent(*_diffractometer->getDetector(), px,py,dangles));
-            peak.setSampleState(std::shared_ptr<SX::Instrument::ComponentState>(new SX::Instrument::ComponentState(_diffractometer->getSample()->createState(sangles))));
+            peak.setSampleState(std::shared_ptr<ComponentState>(new ComponentState(*_diffractometer->getSample(), sangles)));
             peak.setSource(_diffractometer->getSource());
 
             _peaks.push_back(std::pair<SX::Crystal::Peak3D,bool>(peak,true));

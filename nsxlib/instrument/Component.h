@@ -91,11 +91,11 @@ public:
     //! Attach a modifier to the component.
     void setGonio(std::shared_ptr<Gonio>);
 
-    ComponentState createState();
+    //ComponentState createState();
     //! Create a state from a vector of values
-    ComponentState createState(const std::vector<double>& values);
+    //ComponentState createState(const std::vector<double>& values);
     //! Create a state from an Eigen Vector
-    ComponentState createStateFromEigen(const Eigen::VectorXd& values);
+    //ComponentState createStateFromEigen(const Eigen::VectorXd& values);
     //! Create a state from a map of values
     ComponentState createState(const std::map<std::string,double>& values);
 

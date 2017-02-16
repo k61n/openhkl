@@ -51,8 +51,10 @@
 #include "../instrument/Source.h"
 #include "../utils/Units.h"
 #include "../instrument/Monochromator.h"
+#include "../utils/EigenToVector.h"
 
 using std::ifstream;
+using SX::Utils::eigenToVector;
 
 namespace SX {
 namespace Data {
@@ -104,7 +106,7 @@ RawData::RawData(const std::vector<std::string>& filenames, std::shared_ptr<Diff
     _detectorStates.reserve(_nFrames);
 
     for (unsigned int i = 0; i < _nFrames; ++i) {
-        _detectorStates.push_back(_diffractometer->getDetector()->createStateFromEigen(dm.col(i)));
+        _detectorStates.emplace_back(*_diffractometer->getDetector(), eigenToVector(dm.col(i)));
     }
 
     // Getting Scan parameters for the sample
@@ -135,7 +137,7 @@ RawData::RawData(const std::vector<std::string>& filenames, std::shared_ptr<Diff
     _sampleStates.reserve(_nFrames);
 
     for (unsigned int i=0;i<_nFrames;++i) {
-        _sampleStates.push_back(_diffractometer->getSample()->createStateFromEigen(dm.col(i)));
+        _sampleStates.emplace_back(*_diffractometer->getSample(), eigenToVector(dm.col(i)));
     }
 }
 
@@ -206,6 +208,5 @@ void RawData::setBpp(unsigned int bpp) {
     _length = _bpp*_nrows*_ncols;
 }
 
-} // end namespace Data
-
-} // end namespace SX
+} // namespace Data
+} // namespace SX
