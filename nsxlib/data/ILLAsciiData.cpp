@@ -155,13 +155,16 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, const std::shared_ptr<Di
                     " could not be found in the instrument definition file.");
     }
 
-    // This map will store the values over the framess of each physical axis of the goniometers bound to the instrument (detector + sample + source)
-    // 3 cases:
-    //	1) a physical axis is not a scanned axis and its name is not defined in the metadata, then the corresponding values will
+    // This map will store the values over the frames of each physical axis of the goniometers
+    // bound to the instrument (detector + sample + source) 3 cases:
+    //	1) a physical axis is not a scanned axis and its name is not
+    //     defined in the metadata, then the corresponding values will
     //	   be a constant equal to 0
-    //	2) a physical axis is not a scanned axis and its name is defined in the metadata, then the corresponding values will
-    //	   be a constant equal to the metadata value
-    // 	3) a physical axis is one of the scanned axis, then the corresponding values will be fetched from the FFFFFF dta blocks
+    //	2) a physical axis is not a scanned axis and its name is defined
+    //     in the metadata, then the corresponding values will be a
+    //     constant equal to the metadata value
+    // 	3) a physical axis is one of the scanned axis, then the
+    //     corresponding values will be fetched from the FFFFFF dta blocks
     std::map<unsigned int,std::vector<double>> gonioValues;
 
     // Loop over the physical axis of the instrument
@@ -210,7 +213,10 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, const std::shared_ptr<Di
     // of the detector the corresponding values defined previously. The gathered values being further pushed as
     // a new detector state
     if (detector) {
-        auto detAxisIdsToNames = detector->getPhysicalAxesIds();
+        std::vector<unsigned int> detAxisIdsToNames;
+        if (detector->hasGonio()) {
+            detAxisIdsToNames = detector->getGonio()->getPhysicalAxesIds();
+        }
         for (std::size_t f = 0; f < _nFrames; ++f) {
             std::vector<double> detValues;
             detValues.reserve(detAxisIdsToNames.size());
@@ -227,7 +233,10 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, const std::shared_ptr<Di
     // of the sample the corresponding values defined previously. The gathered values being further pushed as
     // a new sample state
     if (sample) {
-        auto sampleAxisIdsToNames = sample->getPhysicalAxesIds();
+        std::vector<unsigned int> sampleAxisIdsToNames;
+        if (sample->hasGonio()) {
+            sampleAxisIdsToNames = sample->getGonio()->getPhysicalAxesIds();
+        }
         for (std::size_t f = 0; f < _nFrames; ++f) {
             std::vector<double> sampleValues;
             sampleValues.reserve(sampleAxisIdsToNames.size());
@@ -244,7 +253,10 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, const std::shared_ptr<Di
     // of the source the corresponding values defined previously. The gathered values being further pushed as
     // a new source state
     if (source) {
-        auto sourceAxisIdsToNames = source->getPhysicalAxesIds();
+        std::vector<unsigned int> sourceAxisIdsToNames;
+        if (source->hasGonio()) {
+            sourceAxisIdsToNames = source->getGonio()->getPhysicalAxesIds();
+        }
         for (std::size_t f = 0; f < _nFrames; ++f) {
             std::vector<double> sourceValues;
             sourceValues.reserve(sourceAxisIdsToNames.size());
@@ -297,8 +309,9 @@ ILLAsciiData::~ILLAsciiData()
 
 void ILLAsciiData::open()
 {
-    if (_isOpened)
+    if (_isOpened) {
         return;
+    }
     try {
         boost::interprocess::file_mapping filemap(_filename.c_str(), boost::interprocess::read_only);
         boost::interprocess::mapped_region reg(filemap,boost::interprocess::read_only);
@@ -323,9 +336,9 @@ Eigen::MatrixXi ILLAsciiData::readFrame(std::size_t idx)
 {
     assert(idx < _nFrames);
 
-    if (!_isOpened)
+    if (!_isOpened) {
         open();
-
+    }
     // Determine the beginning of the data block
     std::size_t begin = _headerSize+(idx+1)*_skipChar+idx*_dataLength;
     // Create vector and try to reserve a memory block
@@ -530,6 +543,5 @@ void ILLAsciiData::readMetaData(const char* buf)
     }
 }
 
-} // end namespace Data
-
-} // end namespace SX
+} // namespace Data
+} // namespace SX

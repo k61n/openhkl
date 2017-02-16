@@ -27,27 +27,25 @@ Component::Component(const Component& other) : _name(other._name), _gonio(other.
 Component::Component(const proptree::ptree& node)
 {
     // Set the component name
-    _name=node.get<std::string>("name","");
+    _name = node.get<std::string>("name","");
 
     // Set the component goniometer
-    boost::optional<const proptree::ptree&> goniometerNode=node.get_child_optional("goniometer");
-    if (!goniometerNode)
-        _gonio=nullptr;
-    else
-    {
+    boost::optional<const proptree::ptree&> goniometerNode = node.get_child_optional("goniometer");
+    if (!goniometerNode) {
+        _gonio = nullptr;
+    } else {
         _gonio = std::shared_ptr<Gonio>(new Gonio(goniometerNode.get()));
     }
 
     // Set the component position
-    boost::optional<const proptree::ptree&> positionNode=node.get_child_optional("position");
-    if (!positionNode)
-        _position=Eigen::Vector3d::Zero();
-    else
-    {
-        double x=positionNode.get().get<double>("x");
-        double y=positionNode.get().get<double>("y");
-        double z=positionNode.get().get<double>("z");
-        _position=Eigen::Vector3d(x,y,z);
+    boost::optional<const proptree::ptree&> positionNode = node.get_child_optional("position");
+    if (!positionNode) {
+        _position = Eigen::Vector3d::Zero();
+    } else {
+        double x = positionNode.get().get<double>("x");
+        double y = positionNode.get().get<double>("y");
+        double z = positionNode.get().get<double>("z");
+        _position = Eigen::Vector3d(x,y,z);
     }
 }
 
@@ -77,19 +75,11 @@ const std::string& Component::getName() const
 
 Eigen::Vector3d Component::getPosition(const std::vector<double>& goniosetup) const
 {
-    if (_gonio.get()==nullptr) {
+    if (_gonio.get() == nullptr) {
         return _position;
     }
-     return _gonio->transform(_position,goniosetup);
+    return _gonio->transform(_position, goniosetup);
 }
-
-//Eigen::Vector3d Component::getPosition(const ComponentState& state) const
-//{
-//	if (_gonio.get()==nullptr)
-//		return _position;
-//	else
-//		return _gonio->transform(_position,state._values);
-//}
 
 const Eigen::Vector3d& Component::getRestPosition() const
 {
@@ -98,8 +88,7 @@ const Eigen::Vector3d& Component::getRestPosition() const
 
 void Component::setGonio(std::shared_ptr<Gonio> gonio)
 {
-    if (gonio.get()!=nullptr)
-        _gonio=gonio;
+    _gonio = gonio;
 }
 
 void Component::setName(const std::string& name)
@@ -109,113 +98,66 @@ void Component::setName(const std::string& name)
 
 void Component::setRestPosition(const Vector3d& v)
 {
-    _position=v;
+    _position = v;
 }
 
 bool Component::hasGonio() const
 {
-    return (_gonio.get()!=nullptr);
+    return _gonio != nullptr;
 }
 
 ComponentState Component::createState()
 {
-    ComponentState state;
-    state._ptrComp=this;
+    std::vector<double> values;
+
     if (hasGonio()) {
-        state._values.resize(_gonio->getNPhysicalAxes(),0);
+        values.resize(_gonio->getNPhysicalAxes(), 0);
     }
-    return state;
+    return ComponentState(*this, values);
 }
 
 ComponentState Component::createState(const std::vector<double>& values)
 {
-    ComponentState state;
-    state._ptrComp = this;
     if (hasGonio()) {
         if (values.size()!=_gonio->getNPhysicalAxes()) {
             throw std::runtime_error("Trying to create a state from component "+_name+" with wrong number of Goniometer values");
         }
-        state._values=values;
+        return ComponentState(*this, values);
     }
-    return state;
+    return ComponentState(*this);
 }
 
 ComponentState Component::createStateFromEigen(const Eigen::VectorXd& values)
 {
-    ComponentState state;
-    state._ptrComp=this;
-    unsigned int nValues=static_cast<unsigned int>(values.size());
-    if (hasGonio())  {
-        if (nValues!=_gonio->getNPhysicalAxes()) {
+    std::vector<double> values_vec;
+
+    if (hasGonio()) {
+        if (values.size() != _gonio->getNPhysicalAxes()) {
             throw std::runtime_error("Trying to create a state from component "+_name+" with wrong number of Goniometer values");
         }
-        state._values.resize(nValues);
-        memcpy(state._values.data(),values.data(),values.size()*sizeof(double));
+        for (auto i = 0; i < values.size(); ++i) {
+            values_vec.emplace_back(values(i));
+        }
     }
-    return state;
+    return ComponentState(*this, values_vec);
 }
 
 ComponentState Component::createState(const std::map<std::string,double>& values)
 {
-    ComponentState state;
-    state._ptrComp=this;
+    std::vector<double> values_vec;
+
     if (hasGonio()) {
-        std::vector<double> v(_gonio->getNPhysicalAxes());
-        std::size_t comp=0;
-        for (auto a : _gonio->getAxes()) {
-            if (!a->isPhysical())
+        values_vec.resize(_gonio->getNPhysicalAxes(), 0);
+        std::size_t comp = 0;
+        for (auto&& a: _gonio->getAxes()) {
+            if (!a->isPhysical()) {
                 continue;
-            auto it=values.find(a->getLabel());
-            v[comp++] = (it != values.end()) ? it->second : 0.0;
-        }
-        state._values=v;
-    }
-    return state;
-}
-
-std::size_t Component::getNAxes() const
-{
-    if (hasGonio()) {
-        return _gonio->getNAxes();
-    }
-    return 0;
-}
-
-std::size_t Component::getNPhysicalAxes() const
-{
-    if (hasGonio()) {
-        return _gonio->getNPhysicalAxes();
-    }
-    return 0;
-}
-
-std::map<unsigned int,std::string> Component::getPhysicalAxesNames() const
-{
-    std::map<unsigned int,std::string> names;
-
-    if (_gonio) {
-        for (auto a : _gonio->getAxes()) {
-            if (a->isPhysical()) {
-                names.insert(std::pair<unsigned int,std::string>(a->getId(),a->getLabel()));
             }
+            auto it = values.find(a->getLabel());
+            values_vec[comp++] = (it != values.end()) ? it->second : 0.0;
         }
     }
-    return names;
-}
-
-std::vector<unsigned int> Component::getPhysicalAxesIds() const
-{
-    std::vector<unsigned int> ids;
-
-    if (_gonio) {
-        ids.reserve(_gonio->getNPhysicalAxes());
-        for (auto a : _gonio->getAxes()) {
-            if (a->isPhysical()) {
-                ids.push_back(a->getId());
-            }
-        }
-    }
-    return ids;
+    return ComponentState(*this, values_vec);
 }
 
 } // namespace Instrument

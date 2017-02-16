@@ -103,11 +103,13 @@ int UBFunctor::inputs() const
     // 9 UB parameters + wavelength
     int nInputs=10;
 
-    if (_detector) {
-        nInputs += _detector->getNAxes();
+    if (_detector && _detector->hasGonio()) {
+        auto gonio = _detector->getGonio();
+        nInputs += gonio->getNAxes();
     }
-    if (_sample) {
-        nInputs += _sample->getNAxes();
+    if (_sample && _sample->hasGonio()) {
+        auto gonio = _sample->getGonio();
+        nInputs += gonio->getNAxes();
     }
     return nInputs;
 }
@@ -173,11 +175,13 @@ void UBFunctor::refineParameter(unsigned int idx, bool refine)
         return;
     }
     ii--;
-    if (ii < _sample->getNAxes()) {
-        _sample->getGonio()->getAxis(ii)->setOffsetFixed(fixed);
+    if (_sample->hasGonio()) {
+        if (ii < _sample->getGonio()->getNAxes()) {
+            _sample->getGonio()->getAxis(ii)->setOffsetFixed(fixed);
+        }
+        ii-=_sample->getGonio()->getNAxes();
     }
-    ii-=_sample->getNAxes();
-    if (ii<_detector->getNAxes()) {
+    if (_detector->hasGonio() && ii < _detector->getGonio()->getNAxes()) {
         _detector->getGonio()->getAxis(ii)->setOffsetFixed(fixed);
     }
 }
@@ -416,12 +420,12 @@ UBSolution::UBSolution(std::shared_ptr<SX::Instrument::Detector> detector,
     _sourceOffset=values(9);
 
     unsigned int idx = 10;
-    std::size_t nSampleAxes=_sample->getNAxes();
+    std::size_t nSampleAxes= _sample->hasGonio() ? _sample->getGonio()->getNAxes() : 0;
     _sampleOffsets = values.segment(idx,nSampleAxes);
     _sigmaSampleOffsets = Eigen::VectorXd(nSampleAxes);
 
     idx+=nSampleAxes;
-    std::size_t nDetectorAxes=_detector->getNAxes();
+    std::size_t nDetectorAxes= _detector->hasGonio() ? _detector->getGonio()->getNAxes() : 0;
     _detectorOffsets = values.segment(idx,nDetectorAxes);
     _sigmaDetectorOffsets = Eigen::VectorXd(nDetectorAxes);
 

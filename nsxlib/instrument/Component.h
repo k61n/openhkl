@@ -77,15 +77,8 @@ public:
     //! Set the name of the component
     void setName(const std::string& name);
 
-    //! Return the number of axes attached to this component
-    std::size_t getNAxes() const;
-    //! Return the number of physical axes attached to this component
-    std::size_t getNPhysicalAxes() const;
-
-    //! Get the absolute position of the component for a set of goniometer values
+     //! Get the absolute position of the component for a set of goniometer values
     Eigen::Vector3d getPosition(const std::vector<double>& goniosetup) const;
-    //! Get the absolute position from a state of this component
-    // Eigen::Vector3d getPosition(const ComponentState& state) const;
     //! Get the absolute position at rest (unmodified by gonio)
     const Eigen::Vector3d& getRestPosition() const;
     //! Set the rest position
@@ -106,11 +99,7 @@ public:
     //! Create a state from a map of values
     ComponentState createState(const std::map<std::string,double>& values);
 
-    std::map<unsigned int,std::string> getPhysicalAxesNames() const;
-
-    std::vector<unsigned int> getPhysicalAxesIds() const;
-
-protected:
+ protected:
     //! Name of the component
     std::string _name;
     //! Pointer to the goniometer attached to the component

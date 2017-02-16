@@ -41,6 +41,8 @@ class Component;
 //! Maintain a state of a goniometer, following the memento pattern.
 class ComponentState {
 public:
+    //! Constructor
+    ComponentState(const Component& parent, std::vector<double> values = {});
     //! Copy constructor
     ComponentState(const ComponentState& other);
     //! Destructor
@@ -57,12 +59,8 @@ public:
     Eigen::Vector3d transformQ(const Eigen::Vector3d& q) const;
 
 private:
-    //! Only Component class can create a state
-    ComponentState();
-    //! Component must be able to access ComponentState
-    friend class Component;
     //! Pointer to the Component that has created the state
-    Component* _ptrComp;
+    const Component* _ptrComp;
     //! Values for each axis of the Component
     std::vector<double> _values;
 };

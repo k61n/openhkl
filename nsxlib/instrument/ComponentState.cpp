@@ -40,8 +40,11 @@
 namespace SX {
 namespace Instrument {
 
-ComponentState::ComponentState() : _ptrComp(nullptr), _values()
+ComponentState::ComponentState(const Component &parent, std::vector<double> values):
+    _ptrComp(&parent),
+    _values(std::move(values))
 {
+
 }
 
 ComponentState::ComponentState(const ComponentState& other) : _ptrComp(other._ptrComp), _values(other._values)

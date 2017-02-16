@@ -75,8 +75,7 @@ std::vector<unsigned int> Gonio::getPhysicalAxesIds() const
 {
     std::vector<unsigned int> ids;
     ids.reserve(getNPhysicalAxes());
-    for (auto a : _axes)
-    {
+    for (auto a : _axes) {
         if (a->isPhysical())
             ids.push_back(a->getId());
     }

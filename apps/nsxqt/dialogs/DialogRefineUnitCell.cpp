@@ -86,7 +86,7 @@ void DialogRefineUnitCell::setMinimizer()
 
     _minimizer.refineParameter(9,!source->getSelectedMonochromator()->isOffsetFixed());
 
-    int nSampleOffsets=sample->getNAxes();
+    int nSampleOffsets = sample->hasGonio() ? sample->getGonio()->getNAxes() : 0;
     for (int i = 0; i < nSampleOffsets; ++i) {
         auto axis=sample->getGonio()->getAxis(i);
         _minimizer.refineParameter(start+i,!axis->hasOffsetFixed());
@@ -94,7 +94,7 @@ void DialogRefineUnitCell::setMinimizer()
     }
 
     start += nSampleOffsets;
-    int nDetectorOffsets=detector->getNAxes();
+    int nDetectorOffsets = detector->hasGonio() ? detector->getGonio()->getNAxes() : 0;
     for (int i = 0; i < nDetectorOffsets; ++i) {
         auto axis=detector->getGonio()->getAxis(i);
         _minimizer.refineParameter(start+i,!axis->hasOffsetFixed());
@@ -122,7 +122,7 @@ void DialogRefineUnitCell::setSampleOffsets()
 {
     //Get the sample, iterate over axis
     auto sample = _experiment->getDiffractometer()->getSample();
-    int nAxesSample = sample->getNAxes();
+    int nAxesSample = sample->hasGonio() ? sample->getGonio()->getNAxes() : 0;
 
     // Set the number of row corresponding to the number of offsets/axis
     ui->tableWidget_Sample->setRowCount(nAxesSample);
@@ -172,11 +172,12 @@ void DialogRefineUnitCell::setSampleOffsets()
 void DialogRefineUnitCell::setDetectorOffsets()
 {
     // Get the number of axis for the sample
-    int nAxesSample = _experiment->getDiffractometer()->getSample()->getNAxes();
+    auto sample = _experiment->getDiffractometer()->getSample();
+    int nAxesSample = sample->hasGonio() ? sample->getGonio()->getNAxes() : 0;
 
     // Get the detector
     auto detector = _experiment->getDiffractometer()->getDetector();
-    int nAxesDet = detector->getNAxes();
+    int nAxesDet = detector->hasGonio() ? detector->getGonio()->getNAxes() : 0;
 
     // Set the number of row corresponding to the number of offsets/axis
     ui->tableWidget_Detector->setRowCount(nAxesDet);
@@ -226,7 +227,7 @@ void DialogRefineUnitCell::setSolution(const SX::Crystal::UBSolution& solution)
 {
     // Get the sample
     auto sample = _experiment->getDiffractometer()->getSample();
-    int nAxesSample = sample->getNAxes();
+    int nAxesSample = sample->hasGonio() ? sample->getGonio()->getNAxes() : 0;
 
     for (int i = 0; i < nAxesSample; ++i) {
         ui->tableWidget_Sample->item(i,1)->setData(Qt::EditRole, solution._sampleOffsets[i]);
@@ -235,7 +236,7 @@ void DialogRefineUnitCell::setSolution(const SX::Crystal::UBSolution& solution)
 
     // Get the detector
     auto detector = _experiment->getDiffractometer()->getDetector();
-    int nAxesDet = detector->getNAxes();
+    int nAxesDet = detector->hasGonio() ? detector->getGonio()->getNAxes() : 0;
 
     for (int i = 0; i < nAxesDet; ++i) {
         ui->tableWidget_Detector->item(i,1)->setData(Qt::EditRole, solution._detectorOffsets[i]);
@@ -276,7 +277,7 @@ void DialogRefineUnitCell::cellDetectorHasChanged(int i, int j)
 
         // Get the sample
         auto sample=_experiment->getDiffractometer()->getSample();
-        int nAxesSample=sample->getNAxes();
+        int nAxesSample = sample->hasGonio() ? sample->getGonio()->getNAxes() : 0;
         _minimizer.setStartingValue(10+nAxesSample+i,value);
     }
 }
