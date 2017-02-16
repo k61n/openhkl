@@ -6,11 +6,8 @@
 #include "Component.h"
 #include "Gonio.h"
 
-namespace SX
-{
-
-namespace Instrument
-{
+namespace SX {
+namespace Instrument {
 
 Component::Component() : _name(""), _gonio(), _position(Eigen::Vector3d::Zero())
 {
@@ -105,42 +102,6 @@ bool Component::hasGonio() const
 {
     return _gonio != nullptr;
 }
-
-//ComponentState Component::createState()
-//{
-//    std::vector<double> values;
-
-//    if (hasGonio()) {
-//        values.resize(_gonio->getNPhysicalAxes(), 0);
-//    }
-//    return ComponentState(*this, values);
-//}
-
-//ComponentState Component::createState(const std::vector<double>& values)
-//{
-//    if (hasGonio()) {
-//        if (values.size()!=_gonio->getNPhysicalAxes()) {
-//            throw std::runtime_error("Trying to create a state from component "+_name+" with wrong number of Goniometer values");
-//        }
-//        return ComponentState(*this, values);
-//    }
-//    return ComponentState(*this);
-//}
-
-//ComponentState Component::createStateFromEigen(const Eigen::VectorXd& values)
-//{
-//    std::vector<double> values_vec;
-
-//    if (hasGonio()) {
-//        if (values.size() != _gonio->getNPhysicalAxes()) {
-//            throw std::runtime_error("Trying to create a state from component "+_name+" with wrong number of Goniometer values");
-//        }
-//        for (auto i = 0; i < values.size(); ++i) {
-//            values_vec.emplace_back(values(i));
-//        }
-//    }
-//    return ComponentState(*this, values_vec);
-//}
 
 ComponentState Component::createState(const std::map<std::string,double>& values)
 {

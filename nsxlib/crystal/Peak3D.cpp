@@ -113,7 +113,7 @@ Peak3D::Peak3D(const Peak3D& other):
         _projectionBkg(other._projectionBkg),
         _unitCells(other._unitCells),
         _sampleState(other._sampleState),
-        _event(new DetectorEvent(*other._event)),
+        _event(other._event == nullptr ? nullptr : new DetectorEvent(*other._event)),
         _source(other._source),
         _counts(other._counts),
         _countsSigma(other._countsSigma),
@@ -361,7 +361,8 @@ double Peak3D::getLorentzFactor() const
 {
     double gamma,nu;
     this->getGammaNu(gamma,nu);
-    return 1.0/(sin(std::fabs(gamma))*cos(nu));
+    double lorentz = 1.0/(sin(std::fabs(gamma))*cos(nu));
+    return lorentz;
 }
 
 double Peak3D::getScale() const

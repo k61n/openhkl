@@ -156,8 +156,10 @@ void MergedPeak::update()
     double variance = 0.0;
 
     for (auto&& peak: _peaks) {
-        _intensity += peak->getScaledIntensity();
-        variance += std::pow(peak->getScaledSigma(), 2);
+        double lorentz = peak->getLorentzFactor();
+        double trans = peak->getTransmission();
+        _intensity += peak->getScaledIntensity() / lorentz / trans;
+        variance += std::pow(peak->getScaledSigma() / lorentz / trans, 2);
     }
 
     _intensity /= _peaks.size();
@@ -170,7 +172,9 @@ void MergedPeak::update()
     _std = 0.0;
 
     for (auto&& peak: _peaks) {
-        const double res2 = std::pow((peak->getScaledIntensity() - _intensity), 2);
+        double lorentz = peak->getLorentzFactor();
+        double trans = peak->getTransmission();
+        const double res2 = std::pow((peak->getScaledIntensity() / lorentz / trans - _intensity), 2);
         _chiSquared += res2 / _intensity;
         _std += res2;
     }
@@ -183,7 +187,3 @@ void MergedPeak::update()
 
 } // namespace Crystal
 } // namespace SX
-
-
-
-
