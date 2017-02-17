@@ -33,24 +33,30 @@
  *
  */
 
-#ifndef NSXTOOL_MINIMIZER_H_
-#define NSXTOOL_MINIMIZER_H_
+#ifndef NSXTOOL_LORENTZIAN_H_
+#define NSXTOOL_LORENTZIAN_H_
 
-#include "IMinimizer.h"
-#include "MinimizerGSL.h"
-#include "MinimizerEigen.h"
+#include <functional>
+#include <Eigen/Dense>
 
 namespace SX {
 namespace Utils {
 
-#ifdef NSXTOOL_GSL_FOUND
-using Minimizer = MinimizerGSL;
-#else
-using Minimizer = MinimizerEigen;
-#endif
-
+class Lorentzian {
+public:
+    Lorentzian(double a = 1.0, double b = 1.0, double x0 = 0.0);
+    bool fit(const Eigen::VectorXd& y, const int max_iter=100);
+    double evaluate(double x) const;
+    double integrate() const;
+    void setParams(double a, double b, double x0);
+    double getA() const;
+    double getB() const;
+    double getX() const;
+private:
+    double _a, _b, _x0;
+};
 
 } // namespace Utils
 } // namespace SX
 
-#endif // NSXTOOL_MINIMIZER_H_
+#endif // NSXTOOL_LORENTZIAN_H_
