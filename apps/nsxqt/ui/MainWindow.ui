@@ -1387,6 +1387,7 @@ border-radius: 4px;
      <addaction name="actionRemove_bad_peaks"/>
      <addaction name="actionIncorporate_calculated_peaks"/>
      <addaction name="actionApply_resolution_cutoff"/>
+     <addaction name="actionRescale_integration_area"/>
     </widget>
     <addaction name="actionFind_space_group"/>
     <addaction name="menuPeaks"/>
@@ -1850,6 +1851,11 @@ QDockWidget::title {
   <action name="actionWrite_log_file">
    <property name="text">
     <string>Write log file</string>
+   </property>
+  </action>
+  <action name="actionRescale_integration_area">
+   <property name="text">
+    <string>Rescale integration area</string>
    </property>
   </action>
  </widget>

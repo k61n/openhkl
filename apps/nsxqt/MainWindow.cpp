@@ -548,21 +548,18 @@ void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
     //const double pmax = 2.873e-7; // corresponds to 5 sigma
     // const double pmax = 3e-5; // corresponds to 4 sigma
     const double pmax = 1e-3;
-
     int total_peaks = 0;
     // int remaining_peaks = 0;
 
     std::vector<std::shared_ptr<IData>> numors = _session->getSelectedNumors();
     std::vector<sptrPeak3D> bad_peaks;
 
-    for (std::shared_ptr<IData> numor: numors)
-    {
+    for (std::shared_ptr<IData> numor: numors) {
         std::set<sptrPeak3D>& peaks = numor->getPeaks();
 
         total_peaks += peaks.size();
 
-        for (std::set<sptrPeak3D>::iterator it = peaks.begin(); it != peaks.end();)
-        {
+        for (std::set<sptrPeak3D>::iterator it = peaks.begin(); it != peaks.end();) {
             if ( (*it)->isMasked() || !(*it)->isSelected() ) {
                 bad_peaks.push_back(*it);
                 it = peaks.erase(it);
@@ -578,8 +575,7 @@ void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
                     SX::Crystal::UnitCell cell = *numor->getDiffractometer()->getSample()->getUnitCell(i);
                     Eigen::RowVector3d hkl;
                     bool indexingSuccess = (*it)->getMillerIndices(cell,hkl,true);
-                    if (indexingSuccess)
-                    {
+                    if (indexingSuccess) {
                         correctly_indexed = true;
                         break;
                     }
@@ -587,9 +583,9 @@ void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
                 if (!correctly_indexed) {
                     bad_peaks.push_back(*it);
                     it = peaks.erase(it);
-                }
-                else
+                } else {
                     ++it;
+                }
             }
         }
     }
@@ -618,4 +614,29 @@ void MainWindow::on_actionWrite_log_file_triggered()
 {
     qDebug() << "write log file triggered";
     _session->writeLog();
+}
+
+void MainWindow::on_actionRescale_integration_area_triggered()
+{
+    qDebug() << "rescale integration area triggered";
+    const double scale_factor = 1.5;
+
+    std::vector<std::shared_ptr<IData>> numors = _session->getSelectedNumors();
+
+    for (auto&& numor: numors) {
+        for (auto&& peak: numor->getPeaks()) {
+            auto shape_peak = peak->getPeak();
+            auto shape_back = peak->getBackground();
+
+            shape_peak.scale(scale_factor);
+            shape_back.scale(scale_factor);
+
+            peak->setPeakShape(shape_peak);
+            peak->setBackgroundShape(shape_back);
+        }
+        numor->integratePeaks();
+    }
+
+    _session->updatePeaks();
+    qDebug() << "done rescaling peak integration areas";
 }

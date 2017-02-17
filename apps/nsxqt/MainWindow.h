@@ -114,6 +114,7 @@ private slots:
     void on_actionApply_resolution_cutoff_triggered();
 
     void on_actionWrite_log_file_triggered();
+    void on_actionRescale_integration_area_triggered();
 
 public slots:
     void changeData(std::shared_ptr<SX::Data::IData>);
