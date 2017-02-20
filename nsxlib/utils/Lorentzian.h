@@ -46,6 +46,7 @@ class Lorentzian {
 public:
     Lorentzian(double a = 1.0, double b = 1.0, double x0 = 0.0);
     double evaluate(double x) const;
+    double evaluateScan(double x) const;
     double integrate() const;
 private:
     double _a, _b, _x0;

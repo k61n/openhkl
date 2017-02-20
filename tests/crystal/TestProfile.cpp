@@ -19,15 +19,15 @@ using SX::Crystal::Profile;
 using SX::Utils::Lorentzian;
 using SX::Utils::Gaussian;
 
-const double eps = 5.0;
+const double eps = 1.0;
 
-void fit_and_test(const Eigen::VectorXd& y)
-{
-    Profile profile;
-    BOOST_CHECK(profile.fit(y, 100));
-//    for (auto i = 0; i < y.size(); ++i) {
-//        BOOST_CHECK_CLOSE(y(i), profile.evaluate(double(i)), eps);
-//    }
+#define fit_and_test(y) \
+{ \
+    Profile p; \
+    BOOST_CHECK(p.fit(y, 100) == true); \
+    for (auto i = 0; i < y.size(); ++i) { \
+        BOOST_CHECK_CLOSE(y(i), p.evaluate(double(i)), eps); \
+    } \
 }
 
 int run_test()
@@ -39,25 +39,21 @@ int run_test()
     Eigen::VectorXd noise_test(size);
 
     Lorentzian lor(4.0, 1.0, 14.0);
-    Gaussian gauss(2.0, 2.0, 15.0);
-    Profile profile;
-
+    Gaussian gauss(2.0, 14.0, 3.0);
 
     // simulated data
     for (auto i = 0; i < size; ++i) {
         const double x(i);
-        lorentz_test(i) = lor.evaluate(x);
-        gauss_test(i) = gauss.evaluate(x);
-        voigt_test(i) = 0.2*lorentz_test(i) + 0.8*gauss_test(i);
+        lorentz_test(i) = 0.9*lor.evaluate(x)+0.1*gauss.evaluate(x);
+        gauss_test(i) = 0.1*lor.evaluate(x)+0.9*gauss.evaluate(x);
+        voigt_test(i) = 0.5*lorentz_test(i) + 0.5*gauss_test(i);
         noise_test(i) = (i%2) == 0 ? -1 : 1;
     }
 
     fit_and_test(lorentz_test);
     fit_and_test(gauss_test);
     fit_and_test(voigt_test);
-
     BOOST_CHECK(Profile().fit(noise_test, 100) == false);
-
     return 0;
 }
 

@@ -49,7 +49,7 @@ class Profile {
     using Lorentzian = SX::Utils::Lorentzian;
     using Gaussian = SX::Utils::Gaussian;
 public:
-    Profile(const Lorentzian& lor = Lorentzian(), const Gaussian& gauss = Gaussian(), double eta = 0.5);
+    Profile(const Lorentzian& lor = Lorentzian(), const Gaussian& gauss = Gaussian());
     bool fit(const Eigen::VectorXd& y, int max_iter=100);
     double evaluate(double x) const;
     double integrate() const;
@@ -57,7 +57,6 @@ public:
 private:
     SX::Utils::Lorentzian _lorentz;
     SX::Utils::Gaussian _gauss;
-    double _eta;
 };
 
 } // namespace Crystal

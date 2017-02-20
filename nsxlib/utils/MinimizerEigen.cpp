@@ -79,13 +79,22 @@ bool MinimizerEigen::fit(int max_iter)
     _lm->parameters.gtol = _gtol;
     _lm->parameters.maxfev = 10 * max_iter * _numParams;
 
-    int status = _lm->minimize(_x);
+    auto status = _lm->minimize(_x);
 
     // evaluate the jacobian
     _fdf->df(_x, _jacobian);
     _numIter = _lm->iter;
 
-    return (status == 1);
+    // return true if successful
+    switch (status) {
+    case Eigen::LevenbergMarquardtSpace::RelativeReductionTooSmall:
+    case Eigen::LevenbergMarquardtSpace::RelativeErrorTooSmall:
+    case Eigen::LevenbergMarquardtSpace::RelativeErrorAndReductionTooSmall:
+    //case Eigen::LevenbergMarquardtSpace::CosinusTooSmall:
+        return true;
+    default:
+        return false;
+    }
 }
 
 void MinimizerEigen::deinitialize()

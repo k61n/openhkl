@@ -52,6 +52,15 @@ double Gaussian::evaluate(double x) const
     return _a*_a* std::exp(-z*z / 2.0);
 }
 
+double Gaussian::evaluateScan(double x) const
+{
+    const double den = 1.0 / std::sqrt(2.0 * _sigma *_sigma);
+    const double t1 = (x - _mu) * den;
+    const double t0 = ((x - _mu) - 1.0) * den;
+    const double factor = 0.5*integrate();
+    return factor * (std::erf(t1) - std::erf(t0));
+}
+
 double Gaussian::integrate() const
 {
     return _a*_a * std::sqrt(2.0*g_pi*_sigma*_sigma);

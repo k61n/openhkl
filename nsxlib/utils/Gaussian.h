@@ -45,6 +45,7 @@ class Gaussian {
 public:
     Gaussian(double a = 1.0, double mu = 0.0, double sigma = 1.0);
     double evaluate(double x) const;
+    double evaluateScan(double x) const;
     double integrate() const;
 private:
     double _a, _mu, _sigma;

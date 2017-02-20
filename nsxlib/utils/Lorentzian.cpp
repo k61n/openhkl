@@ -58,5 +58,12 @@ double Lorentzian::integrate() const
     return _a*_a * g_pi / _b;
 }
 
+double SX::Utils::Lorentzian::evaluateScan(double x) const
+{
+    const double t2 = (x - _x0) / _b;
+    const double t1 = (x - _x0-1.0) / _b;
+    return _a*_a/_b*(std::atan(t2) - std::atan(t1));
+}
+
 } // namespace Utils
 } // namespace SX
