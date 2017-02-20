@@ -34,12 +34,12 @@
  */
 
 #include "Profile.h"
-#include "../utils/Minimizer.h"
+#include "../utils/MinimizerEigen.h"
 #include <cmath>
 #include <iostream>
 #include <iomanip>
 
-using SX::Utils::Minimizer;
+using SX::Utils::MinimizerEigen;
 using SX::Utils::Lorentzian;
 using SX::Utils::Gaussian;
 
@@ -53,14 +53,19 @@ Profile::Profile(const Utils::Lorentzian &lor, const Utils::Gaussian &gauss, dou
     _gauss(gauss),
     _eta(eta)
 {
-
+    if (_eta < 0.0) {
+        _eta = 0.0;
+    }
+    if (_eta < 1.0) {
+        _eta = 1.0;
+    }
 }
 
 bool Profile::fit(const Eigen::VectorXd &y, int max_iter)
 {
-    Minimizer min;
+    MinimizerEigen min;
     Eigen::VectorXd wt;
-    wt.resize(y.size());
+    wt.resize(3*y.size());
 
     const int num_params = 7;
 
@@ -69,50 +74,53 @@ bool Profile::fit(const Eigen::VectorXd &y, int max_iter)
     }
 
     // produce some educated guesses
-    double guess_x = 0.0;
+    double mu = 0.0;
+    double var = 0.0;
+    Eigen::VectorXd rho = y / y.sum();
     const double sum = y.sum();
 
     for (auto i = 0; i < y.size(); ++i) {
-        guess_x += i*y(i) / sum;
+        mu += i*rho(i);
+        var += i*i*rho(i);
     }
-
-    const double guess_b = sum / (g_pi*guess_x);
-    const double guess_a = std::sqrt( std::fabs(sum * guess_b / g_pi));
+    var -= mu*mu;
+    const double sigma = std::sqrt(var);
+    const double b = sum / (g_pi*mu);
+    const double a = std::sqrt( std::fabs(sum * b / g_pi));
+    const double a2 = std::sqrt(y.sum() / std::sqrt(2*3.141592*sigma*sigma));
 
     auto func = [y, num_params](const Eigen::VectorXd params, Eigen::VectorXd& res) -> int {
         assert(params.size() == num_params);
-        assert(res.size() == y.size());
+        assert(res.size() == 3*y.size());
 
         Lorentzian lor(params(0), params(1), params(2));
         Gaussian gauss(params(3), params(4), params(5));
         double eta = params(6);
 
-        if ( eta < 0.0) {
-            eta = 0.0;
-        }
-        if (eta > 1.0) {
-            eta = 1.0;
-        }
-
         Profile pro(lor, gauss, eta);
 
         for (auto i = 0; i < y.size(); ++i) {
-            res(i) = pro.evaluate(i) - y(i);
+            res(3*i+0) = pro.evaluate(i) - y(i);
+            res(3*i+1) = lor.evaluate(i) - y(i);
+            res(3*i+2) = gauss.evaluate(i) - y(i);
         }
+
         return 0;
     };
 
     Eigen::VectorXd params(num_params);
-    params << guess_a, guess_b, guess_x, guess_a, guess_b, guess_x, 0.5;
+    params << a, b, mu,
+            a2, mu, sigma,
+            0.5;
 
-    min.initialize(num_params, y.size());
+    min.initialize(num_params, 3*y.size());
     min.setParams(params);
     min.setWeights(wt);
     min.set_f(func);
 
-    min.setxTol(1e-15);
-    min.setfTol(1e-15);
-    min.setgTol(1e-15);
+    min.setxTol(1e-10);
+    min.setfTol(1e-10);
+    min.setgTol(1e-10);
 
     bool result = min.fit(max_iter);
     auto p = min.params();
