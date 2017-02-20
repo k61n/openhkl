@@ -33,19 +33,19 @@
  *
  */
 
-#ifndef NSXTOOL_LORENTZIAN_H_
-#define NSXTOOL_LORENTZIAN_H_
+#ifndef NSXTOOL_PROFILE_H_
+#define NSXTOOL_PROFILE_H_
 
 #include <functional>
 #include <Eigen/Dense>
 
 namespace SX {
-namespace Utils {
+namespace Crystal {
 
-class Lorentzian {
+class Profile {
 public:
-    Lorentzian(double a = 1.0, double b = 1.0, double x0 = 0.0);
-    bool fit(const Eigen::VectorXd& y, const int max_iter=100);
+    Profile(double a = 1.0, double b = 1.0, double x0 = 0.0);
+    bool fit(const Eigen::VectorXd& y, int max_iter=100);
     double evaluate(double x) const;
     double integrate() const;
     void setParams(double a, double b, double x0);
@@ -56,7 +56,7 @@ private:
     double _a, _b, _x0;
 };
 
-} // namespace Utils
+} // namespace Crystal
 } // namespace SX
 
-#endif // NSXTOOL_LORENTZIAN_H_
+#endif // NSXTOOL_PROFILE_H_

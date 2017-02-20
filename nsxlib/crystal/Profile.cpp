@@ -33,31 +33,33 @@
  *
  */
 
-#include "Lorentzian.h"
-#include "Minimizer.h"
-#include "MinimizerEigen.h"
+#include "Profile.h"
+#include "../utils/Minimizer.h"
 #include <cmath>
 #include <iostream>
 #include <iomanip>
 
+using SX::Utils::Minimizer;
+
 static const double g_pi = double(M_PI);
 
 namespace SX {
-namespace Utils {
+namespace Crystal {
 
-SX::Utils::Lorentzian::Lorentzian(double a, double b, double x0)
+Profile::Profile(double a, double b, double x0)
 {
     setParams(a, b, x0);
 }
 
-bool Lorentzian::fit(const Eigen::VectorXd &y, const int max_iter)
+bool Profile::fit(const Eigen::VectorXd &y, int max_iter)
 {
     Minimizer min;
     Eigen::VectorXd wt;
-    wt.resize(y.size(), 1.0);
-    const double a = _a;
-    const double b = _b;
-    const double x0 = _x0;
+    wt.resize(y.size());
+
+    for (int i = 0; i < wt.size(); ++i) {
+        wt(i) = 1.0;
+    }
 
     // produce some educated guesses
     double guess_x = 0.0;
@@ -71,15 +73,13 @@ bool Lorentzian::fit(const Eigen::VectorXd &y, const int max_iter)
     const double guess_a = std::sqrt( std::fabs(sum * guess_b / g_pi));
 
     auto func = [y](const Eigen::VectorXd params, Eigen::VectorXd& res) -> int {
-        static int count = 0;
         assert(params.size() == 3);
         assert(res.size() == y.size());
-        Lorentzian lor(params(0), params(1), params(2));
+        Profile lor(params(0), params(1), params(2));
 
         for (auto i = 0; i < y.size(); ++i) {
             res(i) = lor.evaluate(i) - y(i);
         }
-        //std::cout << ++count << std::endl;
         return 0;
     };
 
@@ -104,38 +104,38 @@ bool Lorentzian::fit(const Eigen::VectorXd &y, const int max_iter)
     return false;
 }
 
-double Lorentzian::evaluate(double x) const
+double Profile::evaluate(double x) const
 {
     const double u = x-_x0;
     return _a*_a / (u*u+_b*_b);
 }
 
-double Lorentzian::integrate() const
+double Profile::integrate() const
 {
     return _a*_a*g_pi / _b;
 }
 
-void Lorentzian::setParams(double a, double b, double x0)
+void Profile::setParams(double a, double b, double x0)
 {
     _a = a;
     _b = b;
     _x0 = x0;
 }
 
-double Lorentzian::getA() const
+double Profile::getA() const
 {
     return _a;
 }
 
-double Lorentzian::getB() const
+double Profile::getB() const
 {
     return _b;
 }
 
-double Lorentzian::getX() const
+double Profile::getX() const
 {
     return _x0;
 }
 
-} // namespace Utils
+} // namespace Crystal
 } // namespace SX
