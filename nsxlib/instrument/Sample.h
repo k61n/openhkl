@@ -36,10 +36,10 @@
 #include <boost/property_tree/ptree.hpp>
 
 #include "Component.h"
-#include "ConvexHull.h"
-#include "Material.h"
-#include "UnitCell.h"
-#include "Types.h"
+#include "../geometry/ConvexHull.h"
+#include "../chemistry/Material.h"
+#include "../crystal/UnitCell.h"
+#include "../utils/Types.h"
 
 namespace SX
 {
@@ -53,56 +53,56 @@ class Sample : public Component
 {
 public:
 
-	//! Static constructor of a Sample from a property tree node
-	static Sample* create(const proptree::ptree& node);
+    //! Static constructor of a Sample from a property tree node
+    static Sample* create(const proptree::ptree& node);
 
-	// Default constructor
-	Sample();
-	//! Copy constructor
-	Sample(const Sample& other);
-	//! Constructs a default sample with a given name
-	Sample(const std::string& name);
-	//! Constructs a sample from a property tree node
-	Sample(const proptree::ptree& node);
-	//! Virtual copy constructor
-	Sample* clone() const;
-	//! Destructor
-	virtual ~Sample();
-	// Operators
-	//! Assignment operator
-	Sample& operator=(const Sample& other);
+    // Default constructor
+    Sample();
+    //! Copy constructor
+    Sample(const Sample& other);
+    //! Constructs a default sample with a given name
+    Sample(const std::string& name);
+    //! Constructs a sample from a property tree node
+    Sample(const proptree::ptree& node);
+    //! Virtual copy constructor
+    Sample* clone() const;
+    //! Destructor
+    virtual ~Sample();
+    // Operators
+    //! Assignment operator
+    Sample& operator=(const Sample& other);
 
-	//! Set the sample shape described as a convex hull
-	void setShape(const SX::Geometry::ConvexHull<double>& shape);
+    //! Set the sample shape described as a convex hull
+    void setShape(const SX::Geometry::ConvexHull<double>& shape);
 
-	//! Return the sample shape, described as a convex hull
-	SX::Geometry::ConvexHull<double>& getShape();
+    //! Return the sample shape, described as a convex hull
+    SX::Geometry::ConvexHull<double>& getShape();
 
-	//! Create a new crystal with Empty UnitCell, and return it
-	std::shared_ptr<SX::Crystal::UnitCell> addUnitCell();
-	//! Get the UnitCell of Crystal number i in the list
-	std::shared_ptr<SX::Crystal::UnitCell> getUnitCell(int i);
-	const CellList& getUnitCells() const;
-	//! Return number of crystals
-	std::size_t getNCrystals() const;
-	//!
-	void removeUnitCell(int i);
-	void removeUnitCell(std::shared_ptr<SX::Crystal::UnitCell> cell);
+    //! Create a new crystal with Empty UnitCell, and return it
+    std::shared_ptr<SX::Crystal::UnitCell> addUnitCell();
+    //! Get the UnitCell of Crystal number i in the list
+    std::shared_ptr<SX::Crystal::UnitCell> getUnitCell(int i);
+    const CellList& getUnitCells() const;
+    //! Return number of crystals
+    std::size_t getNCrystals() const;
+    //!
+    void removeUnitCell(int i);
+    void removeUnitCell(std::shared_ptr<SX::Crystal::UnitCell> cell);
 
-	//! Gets the Z number of a given unit cell
-	unsigned int getZ(int index) const;
-	//! Sets the Z number of a given unit cell
-	void setZ(int Z, int index);
+    //! Gets the Z number of a given unit cell
+    unsigned int getZ(int index) const;
+    //! Sets the Z number of a given unit cell
+    void setZ(int Z, int index);
 
-	//! Gets the Material of one of the unit cells of this Sample
-	SX::Chemistry::sptrMaterial getMaterial(int index) const;
-	//! Sets the Material of one of the unit cells of this Sample
-	void setMaterial(Chemistry::sptrMaterial material, int index);
+    //! Gets the Material of one of the unit cells of this Sample
+    SX::Chemistry::sptrMaterial getMaterial(int index) const;
+    //! Sets the Material of one of the unit cells of this Sample
+    void setMaterial(Chemistry::sptrMaterial material, int index);
 
 private:
-	SX::Geometry::ConvexHull<double> _sampleShape;
-	//! UnitCells of all crystals associated with this sample
-	CellList _cells;
+    SX::Geometry::ConvexHull<double> _sampleShape;
+    //! UnitCells of all crystals associated with this sample
+    CellList _cells;
 };
 
 } // Namespace Instrument

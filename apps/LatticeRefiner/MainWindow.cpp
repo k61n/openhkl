@@ -13,16 +13,18 @@
 #include <QTableWidgetItem>
 #include <QContextMenuEvent>
 
-#include "Detector.h"
-#include "DiffractometerStore.h"
-#include "Gonio.h"
-#include "LatticeConstraintParser.h"
-#include "LatticeMinimizer.h"
-#include "LatticeSolution.h"
-#include "Peak3D.h"
-#include "Sample.h"
-#include "Source.h"
-#include "Units.h"
+#include <nsxlib/instrument/Detector.h>
+#include <nsxlib/instrument/DiffractometerStore.h>
+#include <nsxlib/instrument/Gonio.h>
+#include <nsxlib/utils/LatticeConstraintParser.h>
+#include <nsxlib/crystal/LatticeMinimizer.h>
+#include <nsxlib/crystal/LatticeSolution.h>
+#include <nsxlib/crystal/Peak3D.h>
+#include <nsxlib/instrument/Sample.h>
+#include <nsxlib/instrument/Source.h>
+#include <nsxlib/utils/Units.h>
+
+namespace qi = boost::spirit::qi;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -184,7 +186,6 @@ void MainWindow::on_actionOpen_reflections_triggered()
 
 void MainWindow::on_pushButton_refine_clicked()
 {
-
     double val;
 
     val=ui->doubleSpinBox_a->value();

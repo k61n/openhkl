@@ -9,8 +9,8 @@
 
 #include "Diffractometer.h"
 #include "DiffractometerStore.h"
-#include "Error.h"
-#include "Path.h"
+#include "../kernel/Error.h"
+#include "../utils/Path.h"
 
 namespace SX
 {

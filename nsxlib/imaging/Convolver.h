@@ -13,7 +13,7 @@
 #include <vector>
 #include <complex>
 
-#include "Types.h"
+#include "../utils/Types.h"
 
 
 namespace SX

@@ -43,11 +43,11 @@
 #include "Ellipsoid.h"
 #include "IShape.h"
 #include "NDTree.h"
-#include "Types.h"
+#include "../utils/Types.h"
 
-#include "IData.h"
+#include "../data/IData.h"
 
-#include "ProgressHandler.h"
+#include "../utils/ProgressHandler.h"
 
 namespace SX {
 

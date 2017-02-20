@@ -34,8 +34,8 @@
 
 #include <Eigen/Dense>
 
-#include "Basis.h"
-#include "Material.h"
+#include "../geometry/Basis.h"
+#include "../chemistry/Material.h"
 #include "SpaceGroup.h"
 
 namespace SX
@@ -133,7 +133,7 @@ public:
     //! reciprocal bases are contravariant in NSXTool.
     Eigen::Matrix3d getBusingLevyB() const;
     Eigen::Matrix3d getBusingLevyU() const;
-    
+
     //! Print into a stream
     void printSelf(std::ostream& os) const;
 
@@ -149,25 +149,25 @@ public:
     //! Set space group from its symbol
     void setSpaceGroup(const std::string& symbol);
     std::string getSpaceGroup() const;
-  
- 	//! Set name of the unit cell
- 	void setName(const std::string& name);
- 	//! Get name of the unit cell
- 	const std::string& getName() const;
-    
- 	//! Set the integer tolerance for this unit cell
- 	void setHKLTolerance(double tolerance);
- 	//! Get the integer tolerance for this unit cell
- 	double getHKLTolerance() const;
-    
+
+    //! Set name of the unit cell
+    void setName(const std::string& name);
+    //! Get name of the unit cell
+    const std::string& getName() const;
+
+    //! Set the integer tolerance for this unit cell
+    void setHKLTolerance(double tolerance);
+    //! Get the integer tolerance for this unit cell
+    double getHKLTolerance() const;
+
 private:
     Chemistry::sptrMaterial _material;
     LatticeCentring _centring;
     BravaisType _bravaisType;
     unsigned int _Z;
     SpaceGroup _group;
-	std::string _name;
-	double _hklTolerance;
+    std::string _name;
+    double _hklTolerance;
 };
 
 //! Print to a stream

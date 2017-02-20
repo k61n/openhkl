@@ -38,7 +38,7 @@
 #include <string>
 #include <utility>
 
-#include "Error.h"
+#include "../kernel/Error.h"
 
 namespace SX
 {

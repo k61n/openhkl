@@ -1,22 +1,23 @@
 #define BOOST_TEST_MODULE "Test GruberReductionCSV"
 #define BOOST_TEST_DYN_LINK
-#include "FlatDetector.h"
-#include "Peak3D.h"
-#include "Sample.h"
+
+#include <nsxlib/instrument/FlatDetector.h>
+#include <nsxlib/crystal/Peak3D.h>
+#include <nsxlib/instrument/Sample.h>
 #include <boost/test/unit_test.hpp>
-#include "Units.h"
+#include <nsxlib/utils/Units.h>
 #include <Eigen/Dense>
 #include <Eigen/QR>
 #include <vector>
-#include "Gonio.h"
-#include "Component.h"
-#include "ComponentState.h"
-#include "Source.h"
-#include "Monochromator.h"
-#include "NiggliReduction.h"
-#include "GruberReduction.h"
-#include "UnitCell.h"
-#include "SpaceGroup.h"
+#include <nsxlib/instrument/Gonio.h>
+#include <nsxlib/instrument/Component.h>
+#include <nsxlib/instrument/ComponentState.h>
+#include <nsxlib/instrument/Source.h>
+#include <nsxlib/instrument/Monochromator.h>
+#include <nsxlib/crystal/NiggliReduction.h>
+#include <nsxlib/crystal/GruberReduction.h>
+#include <nsxlib/crystal/UnitCell.h>
+#include <nsxlib/crystal/SpaceGroup.h>
 
 #include <memory>
 #include <vector>
@@ -25,7 +26,7 @@
 #include <random>
 #include <cmath>
 
-#include "CSV.h"
+#include <nsxlib/utils/CSV.h>
 
 using namespace std;
 using namespace SX::Crystal;

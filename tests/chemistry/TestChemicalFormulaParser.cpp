@@ -8,18 +8,14 @@
 #include <iostream>
 #include <string>
 
-#include "ChemicalFormulaParser.h"
+#include <nsxlib/chemistry/ChemicalFormulaParser.h>
 
 using namespace SX::Chemistry;
 
 BOOST_AUTO_TEST_CASE(Test_Formula_Parser)
 {
-
-	formula f;
-
-	std::string form="C[12]H1.2";
-
-	ChemicalFormulaParser<std::string::iterator> fp;
-	qi::phrase_parse(form.begin(),form.end(),fp,qi::blank,f);
-
+    formula f;
+    std::string form="C[12]H1.2";
+    ChemicalFormulaParser<std::string::iterator> fp;
+    qi::phrase_parse(form.begin(),form.end(),fp,qi::blank,f);
 }

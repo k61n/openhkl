@@ -1,16 +1,8 @@
 
-include_directories(${CMAKE_BINARY_DIR}/include/
-                    chemistry
-                    data
-                    geometry
-                    kernel
-                    imaging
-                    integration/include
-                    materials/include
-                    utils
-                    crystal
-                    instrument
-                    ../externals/c-blosc/blosc)
+include_directories(
+  ${CMAKE_BINARY_DIR}/include/
+  ../externals/c-blosc/blosc
+)
 
 # note: *.c needed for blosc files in data directory
 file(GLOB_RECURSE sources *.cpp *.c)
@@ -20,14 +12,14 @@ file(GLOB_RECURSE headers *.h)
 # Under Windows and Miscrosoft Visual Studio the library will be static to avoid
 # the DLL_EXPORT mess
 if(MSVC OR NSX_BUILD_STATIC)
-    add_library(NSXTool STATIC ${sources} ${headers})
+  add_library(nsx STATIC ${sources} ${headers})
 else()
-    add_library(NSXTool SHARED ${sources} ${headers})
+  add_library(nsx SHARED ${sources} ${headers})
 endif()
 
 if(GSL_FOUND)
   if(MSVC)
-    target_link_libraries(NSXTool
+    target_link_libraries(nsx
       ${HDF5_LIBRARIES}
       blosc_static
       ${Boost_LIBRARIES}
@@ -37,7 +29,7 @@ if(GSL_FOUND)
       ${GSL_LIBRARIES}
       )
   else()
-    target_link_libraries(NSXTool
+    target_link_libraries(nsx
       ${HDF5_LIBRARIES}
       blosc_shared
       ${Boost_LIBRARIES}
@@ -50,7 +42,7 @@ if(GSL_FOUND)
 else()
   # Link
   if(MSVC)
-    target_link_libraries(NSXTool
+    target_link_libraries(nsx
       ${HDF5_LIBRARIES}
       blosc_static
       ${Boost_LIBRARIES}
@@ -59,7 +51,7 @@ else()
       ${TIFF_LIBRARY}
       )
   else()
-    target_link_libraries(NSXTool
+    target_link_libraries(nsx
       ${HDF5_LIBRARIES}
       blosc_shared
       ${Boost_LIBRARIES}
@@ -70,19 +62,15 @@ else()
   endif()
 endif()
 
-
-
-
-# Install section, installing libraries 
-install(TARGETS NSXTool DESTINATION lib)
-set(INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include/NSXTool/")
+# Install section, installing libraries
+install(TARGETS nsx DESTINATION lib)
+set(INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include/nsxlib/")
 file(GLOB_RECURSE all_headers *.h)
 install(CODE "MESSAGE(\"Installing headers...\")")
 install(FILES ${headers} DESTINATION ${INCLUDE_DIR})
 
-
 message("FROM NSXLIB: GSL_LIBRARIES is ${GSL_LIBRARIES}")
 
 if(NSX_TIDY)
-  add_tidy_target(NSXTool)
+  add_tidy_target(nsx)
 endif()

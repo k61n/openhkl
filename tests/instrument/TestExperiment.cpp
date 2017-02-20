@@ -6,27 +6,29 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include "Experiment.h"
-#include "Diffractometer.h"
-#include "ILLAsciiData.h"
+#include <nsxlib/instrument/Experiment.h>
+#include <nsxlib/instrument/Diffractometer.h>
+#include <nsxlib/data/ILLAsciiData.h>
 
 using namespace SX::Instrument;
+using SX::Data::IData;
+using SX::Data::ILLAsciiData;
 
 BOOST_AUTO_TEST_CASE(Test_Experiment)
 {
-	Experiment exp("my-exp","D10");
+    Experiment exp("my-exp","D10");
     std::shared_ptr<IData> data;
 
-	BOOST_CHECK_EQUAL(exp.getName(),"my-exp");
+    BOOST_CHECK_EQUAL(exp.getName(),"my-exp");
 
-	// Change the name of the experiment
-	exp.setName("toto");
-	BOOST_CHECK_EQUAL(exp.getName(),"toto");
+    // Change the name of the experiment
+    exp.setName("toto");
+    BOOST_CHECK_EQUAL(exp.getName(),"toto");
 
-	// The data must be empty at experiment creation
-	BOOST_CHECK_EQUAL(exp.getDataNames().size(),0);
+    // The data must be empty at experiment creation
+    BOOST_CHECK_EQUAL(exp.getDataNames().size(),0);
 
-	// Add some data
+    // Add some data
     try {
         data = std::shared_ptr<IData>(new ILLAsciiData(std::string("D10_ascii_example"),exp.getDiffractometer()));
     }
@@ -38,21 +40,20 @@ BOOST_AUTO_TEST_CASE(Test_Experiment)
     }
 
     exp.addData(data);
-	BOOST_CHECK_EQUAL(exp.getDataNames().size(),1);
-	BOOST_CHECK_EQUAL(exp.getDataNames()[0],"D10_ascii_example");
+    BOOST_CHECK_EQUAL(exp.getDataNames().size(),1);
+    BOOST_CHECK_EQUAL(exp.getDataNames()[0],"D10_ascii_example");
 
-	// Check that adding the same data is now taken into account
-	exp.addData(data);
-	exp.addData(data);
-	exp.addData(data);
-	BOOST_CHECK_EQUAL(exp.getDataNames().size(),1);
+    // Check that adding the same data is now taken into account
+    exp.addData(data);
+    exp.addData(data);
+    exp.addData(data);
+    BOOST_CHECK_EQUAL(exp.getDataNames().size(),1);
 
-	BOOST_CHECK_EQUAL(exp.getData("D10_ascii_example")->getBasename(),"D10_ascii_example");
+    BOOST_CHECK_EQUAL(exp.getData("D10_ascii_example")->getBasename(),"D10_ascii_example");
 
-	// Remove the data from the experiment
-	exp.removeData("D10_ascii_example");
-	// The data must be empty again after data deletion
-	BOOST_CHECK_EQUAL(exp.getDataNames().size(),0);
-
+    // Remove the data from the experiment
+    exp.removeData("D10_ascii_example");
+    // The data must be empty again after data deletion
+    BOOST_CHECK_EQUAL(exp.getDataNames().size(),0);
 }
 

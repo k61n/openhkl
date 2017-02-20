@@ -3,7 +3,7 @@
 #include <cmath>
 #include <boost/test/unit_test.hpp>
 #include <Eigen/Dense>
-#include "OBB.h"
+#include <nsxlib/geometry/OBB.h>
 
 using namespace SX::Geometry;
 using Eigen::Vector2d;

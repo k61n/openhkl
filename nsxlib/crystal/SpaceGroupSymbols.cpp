@@ -5,7 +5,7 @@
 #include <vector>
 #include <utility>
 
-#include "Error.h"
+#include "../kernel/Error.h"
 #include "SpaceGroupSymbols.h"
 
 namespace SX

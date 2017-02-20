@@ -40,21 +40,21 @@
 #include <set>
 #include <stdexcept>
 
-#include "EigenMatrixParser.h"
+#include "../utils/EigenMatrixParser.h"
 #include <boost/algorithm/string.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/interprocess/file_mapping.hpp>
 
 #include "ILLAsciiData.h"
-#include "Component.h"
-#include "Detector.h"
-#include "Diffractometer.h"
-#include "Gonio.h"
-#include "Parser.h"
-#include "Sample.h"
-#include "Source.h"
-#include "Units.h"
+#include "../instrument/Component.h"
+#include "../instrument/Detector.h"
+#include "../instrument/Diffractometer.h"
+#include "../instrument/Gonio.h"
+#include "../utils/Parser.h"
+#include "../instrument/Sample.h"
+#include "../instrument/Source.h"
+#include "../utils/Units.h"
 
 using SX::Utils::readIntsFromChar;
 using SX::Utils::readDoublesFromChar;
@@ -69,11 +69,10 @@ using SX::Utils::BottomRightColMajorMapper;
 using SX::Utils::BottomRightRowMajorMapper;
 namespace qi = boost::spirit::qi;
 
-namespace SX
-{
+namespace SX {
+namespace Data {
 
-namespace Data
-{
+using SX::Instrument::Detector;
 
 // 81 characters per line, at least 100 lines of header
 std::size_t ILLAsciiData::BlockSize = 100*81;

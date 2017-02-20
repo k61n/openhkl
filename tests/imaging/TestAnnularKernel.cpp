@@ -9,7 +9,7 @@
 
 #include <Eigen/Dense>
 
-#include "ConstantKernel.h"
+#include <nsxlib/imaging/ConstantKernel.h>
 
 BOOST_AUTO_TEST_CASE(Test_Constant_kernel)
 {
@@ -24,4 +24,3 @@ BOOST_AUTO_TEST_CASE(Test_Constant_kernel)
     */
 #pragma message "test not implemented"
 }
-

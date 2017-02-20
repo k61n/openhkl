@@ -38,7 +38,7 @@
 #include "AABB.h"
 #include "OBB.h"
 #include "Sphere.h"
-#include "Types.h"
+#include "../utils/Types.h"
 
 namespace SX
 {

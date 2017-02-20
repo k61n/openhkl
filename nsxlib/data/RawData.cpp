@@ -42,26 +42,23 @@
 
 
 #include "RawData.h"
-#include "Component.h"
-#include "Detector.h"
-#include "Diffractometer.h"
-#include "Gonio.h"
-#include "Parser.h"
-#include "Sample.h"
-#include "Source.h"
-#include "Units.h"
-#include "Monochromator.h"
+#include "../instrument/Component.h"
+#include "../instrument/Detector.h"
+#include "../instrument/Diffractometer.h"
+#include "../instrument/Gonio.h"
+#include "../utils/Parser.h"
+#include "../instrument/Sample.h"
+#include "../instrument/Source.h"
+#include "../utils/Units.h"
+#include "../instrument/Monochromator.h"
 
 using std::ifstream;
 
-namespace SX
-{
+namespace SX {
+namespace Data {
 
-namespace Data
-{
-
-using namespace SX::Utils;
-using namespace SX::Units;
+using SX::Instrument::Diffractometer;
+using SX::Instrument::Monochromator;
 
 IData *RawData::create(const std::string &filename, std::shared_ptr<Diffractometer> diffractometer) {
     std::vector<std::string> filenames;

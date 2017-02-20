@@ -35,8 +35,8 @@
 #include <vector>
 #include <memory>
 
-#include "LMFunctor.h"
-#include "LatticeConstraintParser.h"
+#include "../utils/LMFunctor.h"
+#include "../utils/LatticeConstraintParser.h"
 
 namespace SX
 {
@@ -57,38 +57,38 @@ class Peak3D;
  */
 struct LatticeFunctor : public Utils::LMFunctor<double>
 {
-	//! Default constructor
-	LatticeFunctor();
-	//! Copy constructor
-	LatticeFunctor(const LatticeFunctor& other);
-	//! Assignment operator
-	LatticeFunctor& operator=(const LatticeFunctor& other);
-	//! Destructor
-	~LatticeFunctor();
-	/*
-	 * @brief Call operator
-	 * @param x the input parameters
-	 * @param fvec the residuals
-	 */
-	int operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const;
+    //! Default constructor
+    LatticeFunctor();
+    //! Copy constructor
+    LatticeFunctor(const LatticeFunctor& other);
+    //! Assignment operator
+    LatticeFunctor& operator=(const LatticeFunctor& other);
+    //! Destructor
+    ~LatticeFunctor();
+    /*
+     * @brief Call operator
+     * @param x the input parameters
+     * @param fvec the residuals
+     */
+    int operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const;
 
-	/*
-	 * @brief Returns the number of inputs of the functor (e.g. the number of parameters)
-	 * @return the number of inputs
-	 */
-	int inputs() const;
-	/*
-	 * @brief Returns the number of values of the functor (e.g. the number of observations)
-	 * @return the number of inputs
-	 */
-	int values() const;
+    /*
+     * @brief Returns the number of inputs of the functor (e.g. the number of parameters)
+     * @return the number of inputs
+     */
+    int inputs() const;
+    /*
+     * @brief Returns the number of values of the functor (e.g. the number of observations)
+     * @return the number of inputs
+     */
+    int values() const;
 
-	std::vector<Peak3D> _peaks;
+    std::vector<Peak3D> _peaks;
     std::shared_ptr<Instrument::Detector> _detector;
     std::shared_ptr<Instrument::Sample> _sample;
     std::shared_ptr<Instrument::Source> _source;
-	SX::Utils::constraints_set _constraints;
-	std::map<unsigned int,double> _constants;
+    SX::Utils::constraints_set _constraints;
+    std::map<unsigned int,double> _constants;
 };
 
 } // end namespace Crystal

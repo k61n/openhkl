@@ -10,12 +10,12 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include "ComponentState.h"
-#include "DiffractometerStore.h"
-#include "ILLAsciiData.h"
-#include "Units.h"
-#include "PeakFinder.h"
-#include "ProgressHandler.h"
+#include <nsxlib/instrument/ComponentState.h>
+#include <nsxlib/instrument/DiffractometerStore.h>
+#include <nsxlib/data/ILLAsciiData.h>
+#include <nsxlib/utils/Units.h>
+#include <nsxlib/data/PeakFinder.h>
+#include <nsxlib/utils/ProgressHandler.h>
 
 using namespace SX::Data;
 using namespace SX::Instrument;
@@ -31,19 +31,14 @@ BOOST_AUTO_TEST_CASE(Test_PeakFinder)
     DiffractometerStore* ds = DiffractometerStore::Instance();
     std::shared_ptr<Diffractometer> diff = std::shared_ptr<Diffractometer>(ds->buildDiffractomer("D10"));
     std::shared_ptr<IData> dataf(new ILLAsciiData(std::string("D10_ascii_example"), diff));
-
     MetaData* meta=dataf->getMetadata();
-
     PeakFinder peakFinder;
     std::shared_ptr<ProgressHandler> handler(new ProgressHandler);
 
     BOOST_CHECK(meta->getKey<int>("nbang")==2);
 
     dataf->open();
-
-
     numors.push_back(dataf);
-
     peakFinder.setHandler(handler);
 
     peakFinder.setConfidence(0.997);

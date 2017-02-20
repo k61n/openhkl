@@ -42,7 +42,7 @@
 #include <boost/property_tree/xml_parser.hpp>
 
 #include "Isotope.h"
-#include "Singleton.h"
+#include "../kernel/Singleton.h"
 
 namespace SX
 {

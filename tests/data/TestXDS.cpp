@@ -10,11 +10,11 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include "Peak3D.h"
-#include "XDS.h"
-#include "IData.h"
-#include "DataReaderFactory.h"
-#include "DiffractometerStore.h"
+#include <nsxlib/crystal/Peak3D.h>
+#include <nsxlib/data/XDS.h>
+#include <nsxlib/data/IData.h>
+#include <nsxlib/data/DataReaderFactory.h>
+#include <nsxlib/instrument/DiffractometerStore.h>
 
 using IData = SX::Data::IData;
 using DataReaderFactory = SX::Data::DataReaderFactory;

@@ -4,7 +4,7 @@
 #include <numeric>
 
 #include "Element.h"
-#include "Error.h"
+#include "../kernel/Error.h"
 #include "Isotope.h"
 #include "IsotopeManager.h"
 

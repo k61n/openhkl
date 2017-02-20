@@ -41,7 +41,7 @@
 #include "AABB.h"
 #include "Ellipsoid.h"
 #include "OBB.h"
-#include "Types.h"
+#include "../utils/Types.h"
 
 namespace SX
 {

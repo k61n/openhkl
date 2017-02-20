@@ -8,7 +8,7 @@
 #include <vector>
 #include <string>
 
-#include "gcd.h"
+#include <nsxlib/utils/gcd.h>
 
 using namespace SX::Utils;
 

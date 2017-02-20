@@ -31,21 +31,20 @@
 
 #include <string>
 
-#include "Factory.h"
+#include "../kernel/Factory.h"
 #include "IData.h"
-#include "Singleton.h"
+#include "../kernel/Singleton.h"
 #include <memory>
-#include "Diffractometer.h"
+#include "../instrument/Diffractometer.h"
 
-namespace SX
-{
+namespace SX {
+namespace Data {
 
-namespace Data
-{
-
-using namespace SX::Kernel;
-
-typedef typename std::shared_ptr<SX::Instrument::Diffractometer> ptrInstrument;
+using SX::Kernel::Factory;
+using SX::Kernel::Constructor;
+using SX::Kernel::Destructor;
+using SX::Kernel::Singleton;
+using ptrInstrument = typename std::shared_ptr<SX::Instrument::Diffractometer>;
 
 /** \brief DataReaderFactory. All IData formats must register their "create" method with the factory in order to
  * choose the correct DataReader at runtime. Reader selection is based on the extension of the datafile.
@@ -56,14 +55,13 @@ class DataReaderFactory :
         public Singleton<DataReaderFactory,Constructor,Destructor>
 {
 private:
-    friend class Constructor<DataReaderFactory>;
-    friend class Destructor<DataReaderFactory>;
+    friend class SX::Kernel::Constructor<DataReaderFactory>;
+    friend class SX::Kernel::Destructor<DataReaderFactory>;
     DataReaderFactory();
     ~DataReaderFactory() = default;
 };
 
 } // end namespace Data
-
 } // end namespace SX
 
 #endif /* NSXTOOL_READERFACTORY_H_ */

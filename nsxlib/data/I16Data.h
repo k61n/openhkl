@@ -36,8 +36,8 @@
 #include <vector>
 #include <memory>
 #include <Eigen/Dense>
-#include <IData.h>
-#include "Diffractometer.h"
+#include "IData.h"
+#include "../instrument/Diffractometer.h"
 #include "TiffData.h"
 
 namespace SX
@@ -54,26 +54,26 @@ public:
 
     static IData* create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer);
 
-	//! Default constructor
-	I16Data(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer);
-	//! Copy constructor
-	I16Data(const I16Data& other)=delete;
-	//! Destructor
-	virtual ~I16Data();
-	// Operators
-	//! Assignment operator
-	I16Data& operator=(const I16Data& other)=delete;
+    //! Default constructor
+    I16Data(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer);
+    //! Copy constructor
+    I16Data(const I16Data& other)=delete;
+    //! Destructor
+    virtual ~I16Data();
+    // Operators
+    //! Assignment operator
+    I16Data& operator=(const I16Data& other)=delete;
 
-	// Other methods
-	void open() override;
-	void close() override;
+    // Other methods
+    void open() override;
+    void close() override;
     //! Read a single frame
     Eigen::MatrixXi readFrame(std::size_t idx) override;
 
 private:
-	//! Vector of all TIFF files.
-	std::vector<std::string> _tifs;
-	std::string _basedirectory;
+    //! Vector of all TIFF files.
+    std::vector<std::string> _tifs;
+    std::string _basedirectory;
 };
 
 } // end namespace Data

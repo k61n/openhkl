@@ -40,7 +40,7 @@
 #include <boost/property_tree/xml_parser.hpp>
 
 #include "Material.h"
-#include "Singleton.h"
+#include "../kernel/Singleton.h"
 
 namespace SX
 {
@@ -59,42 +59,42 @@ class MaterialManager : public SX::Kernel::Singleton<MaterialManager,SX::Kernel:
 
 public:
 
-	//! Default constructor
-	MaterialManager();
+    //! Default constructor
+    MaterialManager();
 
-	//! Destructor
-	~MaterialManager();
+    //! Destructor
+    ~MaterialManager();
 
-	//! Builds and register an empty material. If the material with the same name is already registered, throws.
-	sptrMaterial buildEmptyMaterial(const std::string& name, BuildingMode mode);
-	//! Constructs a material from a chemical formula and a given physical state
-	sptrMaterial buildMaterialFromChemicalFormula(std::string formula);
-	//! Find a Material
-	sptrMaterial getMaterial(const std::string& name);
-	//! Clean up the registry
-	void cleanRegistry();
-	//! Returns the number of registered materials
-	unsigned int getNMaterials() const;
-	//! Returns true if a Material with a given name is registered
-	bool hasMaterial(const std::string& name) const;
-	//! Save the registry to an XML file
-	void saveRegistry(std::string filename="") const;
+    //! Builds and register an empty material. If the material with the same name is already registered, throws.
+    sptrMaterial buildEmptyMaterial(const std::string& name, BuildingMode mode);
+    //! Constructs a material from a chemical formula and a given physical state
+    sptrMaterial buildMaterialFromChemicalFormula(std::string formula);
+    //! Find a Material
+    sptrMaterial getMaterial(const std::string& name);
+    //! Clean up the registry
+    void cleanRegistry();
+    //! Returns the number of registered materials
+    unsigned int getNMaterials() const;
+    //! Returns true if a Material with a given name is registered
+    bool hasMaterial(const std::string& name) const;
+    //! Save the registry to an XML file
+    void saveRegistry(std::string filename="") const;
 
-	//! Sets the path for the materials XML database
-	void setDatabasePath(const std::string& path);
-
-private:
-
-	//! Builds a Material from an XML node
-	sptrMaterial buildMaterial(const property_tree::ptree& node);
+    //! Sets the path for the materials XML database
+    void setDatabasePath(const std::string& path);
 
 private:
 
-	//! The path to the material database
-	std::string _database;
+    //! Builds a Material from an XML node
+    sptrMaterial buildMaterial(const property_tree::ptree& node);
 
-	//! The registry that will store the created Material objects
-	MaterialsRegistry _registry;
+private:
+
+    //! The path to the material database
+    std::string _database;
+
+    //! The registry that will store the created Material objects
+    MaterialsRegistry _registry;
 
 };
 

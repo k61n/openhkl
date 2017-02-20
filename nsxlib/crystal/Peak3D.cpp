@@ -37,23 +37,23 @@
 #include <cmath>
 #include <stdexcept>
 
-#include "ComponentState.h"
-#include "DetectorEvent.h"
-#include "Detector.h"
-#include "Diffractometer.h"
-#include "Gonio.h"
-#include "IData.h"
-#include "IShape.h"
+#include "../instrument/ComponentState.h"
+#include "../instrument/DetectorEvent.h"
+#include "../instrument/Detector.h"
+#include "../instrument/Diffractometer.h"
+#include "../instrument/Gonio.h"
+#include "../data/IData.h"
+#include "../geometry/IShape.h"
 #include "Peak3D.h"
-#include "Sample.h"
-#include "Source.h"
-#include "Units.h"
-#include "Blob3D.h"
-#include "IData.h"
-#include "Types.h"
+#include "../instrument/Sample.h"
+#include "../instrument/Source.h"
+#include "../utils/Units.h"
+#include "../geometry/Blob3D.h"
+#include "../data/IData.h"
+#include "../utils/Types.h"
 
-#include "Ellipsoid.h"
-#include "IFrameIterator.h"
+#include "../geometry/Ellipsoid.h"
+#include "../data/IFrameIterator.h"
 
 using SX::Geometry::Blob3D;
 

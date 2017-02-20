@@ -8,7 +8,7 @@
 #include <iostream>
 #include <ctime>
 
-#include "Error.h"
+#include "../kernel/Error.h"
 #include "MCAbsorption.h"
 
 namespace SX
@@ -26,78 +26,78 @@ MCAbsorption::~MCAbsorption()
 
 void MCAbsorption::setSample(ConvexHull<double>* sample, double muScat, double muAbs)
 {
-	_sample = sample;
-	_muScat=muScat;
-	_muAbs=muAbs;
+    _sample = sample;
+    _muScat=muScat;
+    _muAbs=muAbs;
 }
 
 double MCAbsorption::run(unsigned int nIterations, const Eigen::Vector3d& outV, const Eigen::Matrix3d& sampleOrientation) const
 {
 
-	TrianglesList faces=_sample->createFaceCache(sampleOrientation);
+    TrianglesList faces=_sample->createFaceCache(sampleOrientation);
 
-	if (faces.empty())
-		throw SX::Kernel::Error<MCAbsorption>("No sample defined.");
+    if (faces.empty())
+        throw SX::Kernel::Error<MCAbsorption>("No sample defined.");
 
-	Eigen::Vector3d dir(0,1,0);
+    Eigen::Vector3d dir(0,1,0);
 
-	double transmission(0.0);
+    double transmission(0.0);
 
-	unsigned int nHits(0);
+    unsigned int nHits(0);
 
-	for (unsigned int i=0;i<nIterations;++i)
-	{
-		double w=_random()*_width;
-		double h=_random()*_height;
-		Eigen::Vector3d point(w,_pos,h);
+    for (unsigned int i=0;i<nIterations;++i)
+    {
+        double w=_random()*_width;
+        double h=_random()*_height;
+        Eigen::Vector3d point(w,_pos,h);
 
-		unsigned int nIntersections(0);
+        unsigned int nIntersections(0);
 
-		double times[2];
+        double times[2];
 
-		for (const auto& triangle : faces)
-		{
-			if (triangle.isOutsideBB(w,h))
-				continue;
+        for (const auto& triangle : faces)
+        {
+            if (triangle.isOutsideBB(w,h))
+                continue;
 
-			if (triangle.rayIntersect(point,dir,times[nIntersections]))
-			{
-				if (++nIntersections==2)
-					break;
-			}
-		}
+            if (triangle.rayIntersect(point,dir,times[nIntersections]))
+            {
+                if (++nIntersections==2)
+                    break;
+            }
+        }
 
-		if (nIntersections!=2)
-			continue;
+        if (nIntersections!=2)
+            continue;
 
-		if (times[0]>times[1])
-			std::swap(times[0],times[1]);
+        if (times[0]>times[1])
+            std::swap(times[0],times[1]);
 
-		double lpm=(0.5+_random())*(times[1]-times[0]);
-		point+=lpm*dir + times[0]*dir;
+        double lpm=(0.5+_random())*(times[1]-times[0]);
+        point+=lpm*dir + times[0]*dir;
 
-		double t2;
-		for (const auto& triangle : faces)
-		{
-			if (triangle.rayIntersect(point,outV,t2))
-			{
-				lpm+=outV.norm()*t2;
-				nHits++;
-				break;
-			}
-			else
-				continue;
-		}
+        double t2;
+        for (const auto& triangle : faces)
+        {
+            if (triangle.rayIntersect(point,outV,t2))
+            {
+                lpm+=outV.norm()*t2;
+                nHits++;
+                break;
+            }
+            else
+                continue;
+        }
 
-		transmission+=exp(-(_muScat + _muAbs)*lpm);
-	}
+        transmission+=exp(-(_muScat + _muAbs)*lpm);
+    }
 
-	if (nHits==0)
-		transmission=1.0;
-	else
-		transmission /= nHits;
+    if (nHits==0)
+        transmission=1.0;
+    else
+        transmission /= nHits;
 
-	return transmission;
+    return transmission;
 }
 
 

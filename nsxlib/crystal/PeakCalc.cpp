@@ -39,8 +39,8 @@
 
 #include "PeakCalc.h"
 #include "Peak3D.h"
-#include "IData.h"
-#include "Ellipsoid.h"
+#include "../data/IData.h"
+#include "../geometry/Ellipsoid.h"
 
 using SX::Geometry::Ellipsoid;
 using SX::Geometry::Matrix3d;

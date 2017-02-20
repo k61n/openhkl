@@ -7,25 +7,25 @@
 #include <iostream>
 #include <string>
 
-#include "PhysicalUnit.h"
+#include <nsxlib/physics/PhysicalUnit.h>
 
 const double largeTolerance=1.0e-2;
 const double smallTolerance=1.0e-9;
 
 BOOST_AUTO_TEST_CASE(Test_Physical_Unit)
 {
-	// unit conversion tested according value got from
-	// http://www.translatorscafe.com/cafe/EN/units-converter/energy/1-65/joule-kelvin/
+    // unit conversion tested according value got from
+    // http://www.translatorscafe.com/cafe/EN/units-converter/energy/1-65/joule-kelvin/
 
-	// Check that a bad input unit actually throws
-	BOOST_CHECK_THROW(SX::Physics::PhysicalUnit u(1.0,"xxxxxx"),std::runtime_error);
+    // Check that a bad input unit actually throws
+    BOOST_CHECK_THROW(SX::Physics::PhysicalUnit u(1.0,"xxxxxx"),std::runtime_error);
 
-	SX::Physics::PhysicalUnit u1(1.0,"km/s");
+    SX::Physics::PhysicalUnit u1(1.0,"km/s");
 
-	// Check that an invalid conversion throws
-	BOOST_CHECK_THROW(u1.convert("km*K"),std::runtime_error);
+    // Check that an invalid conversion throws
+    BOOST_CHECK_THROW(u1.convert("km*K"),std::runtime_error);
 
-	// Check a valid conversion
+    // Check a valid conversion
     BOOST_CHECK_CLOSE(u1.convert("m/s"), 1.0e+3, smallTolerance);
     BOOST_CHECK_CLOSE(u1.convertToSI(), 1.0e+3, smallTolerance);
 
@@ -36,23 +36,23 @@ BOOST_AUTO_TEST_CASE(Test_Physical_Unit)
     BOOST_CHECK_CLOSE(u1.convert("m/s"), 5.0e+3, smallTolerance);
     BOOST_CHECK_CLOSE(u1.convertToSI(), 5.0e+3, smallTolerance);
 
-	SX::Physics::PhysicalUnit u2(5.0,"J");
+    SX::Physics::PhysicalUnit u2(5.0,"J");
     BOOST_CHECK_CLOSE(u2.convert("keV"), 3.121e+16, largeTolerance);
     BOOST_CHECK_CLOSE(u2.convert("kg"), 5.56325028e-17, largeTolerance);
     // Check that converting J to cd throws
-	BOOST_CHECK_THROW(u2.convert("cd"),std::runtime_error);
+    BOOST_CHECK_THROW(u2.convert("cd"),std::runtime_error);
 
-	SX::Physics::PhysicalUnit u3(5.0,"eV");
+    SX::Physics::PhysicalUnit u3(5.0,"eV");
     BOOST_CHECK_CLOSE(u3.convert("g"), 8.913313479732e-33, largeTolerance);
 
-	SX::Physics::PhysicalUnit u4(5.0,"g");
+    SX::Physics::PhysicalUnit u4(5.0,"g");
     BOOST_CHECK_CLOSE(u4.convert("eV"), 5.0*5.60958616722e+32, largeTolerance);
 
-	SX::Physics::PhysicalUnit u5(3.0,"J**2");
+    SX::Physics::PhysicalUnit u5(3.0,"J**2");
     BOOST_CHECK_CLOSE(u5.convert("keV**2"), 3.0*6.241506363094e+15*6.241506363094e+15, largeTolerance);
     BOOST_CHECK_CLOSE(u5.convert("g**2"), 3.0*1.112650056e-14*1.112650056e-14, largeTolerance);
 
-	SX::Physics::PhysicalUnit u6(5.0,"meV**2");
+    SX::Physics::PhysicalUnit u6(5.0,"meV**2");
 //    BOOST_CHECK_CLOSE(u2.convert("keV"), 3.121e+16, largeTolerance);
     BOOST_CHECK_CLOSE(u6.convert("g**2"), 5*1.782662695946e-36*1.782662695946e-36, largeTolerance);
 }

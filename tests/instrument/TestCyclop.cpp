@@ -2,9 +2,8 @@
 #define BOOST_TEST_DYN_LINK
 
 #include <boost/test/unit_test.hpp>
-#include "DiffractometerStore.h"
-#include "Detector.h"
-
+#include <nsxlib/instrument/DiffractometerStore.h>
+#include <nsxlib/instrument/Detector.h>
 
 BOOST_AUTO_TEST_CASE(Test_Cyclop)
 {

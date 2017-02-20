@@ -5,20 +5,20 @@
 #include <string>
 #include <iostream>
 
-#include "SpaceGroupSymbols.h"
-#include "SpaceGroup.h"
+#include <nsxlib/crystal/SpaceGroupSymbols.h>
+#include <nsxlib/crystal/SpaceGroup.h>
 
 using namespace SX::Crystal;
 
 BOOST_AUTO_TEST_CASE(Test_SpaceGroupSymbols)
 {
-	auto table=SpaceGroupSymbols::Instance();
-	std::string generators;
-	bool test=table->getGenerators("P n m a",generators);
+    auto table=SpaceGroupSymbols::Instance();
+    std::string generators;
+    bool test=table->getGenerators("P n m a",generators);
 
-	BOOST_CHECK(test);
-	// Check that string generator strings are OK s
-	BOOST_CHECK(generators.compare(" -x+1/2,-y,z+1/2; -x,y+1/2,-z; -x,-y,-z")==0);
+    BOOST_CHECK(test);
+    // Check that string generator strings are OK s
+    BOOST_CHECK(generators.compare(" -x+1/2,-y,z+1/2; -x,y+1/2,-z; -x,-y,-z")==0);
 
 
     auto symbols = table->getAllSymbols();

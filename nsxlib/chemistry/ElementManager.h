@@ -38,7 +38,7 @@
 
 #include <boost/property_tree/ptree.hpp>
 
-#include "Singleton.h"
+#include "../kernel/Singleton.h"
 
 namespace SX
 {
@@ -64,49 +64,49 @@ class ElementManager : public SX::Kernel::Singleton<ElementManager,SX::Kernel::C
 
 private:
 
-	friend class MaterialManager;
+    friend class MaterialManager;
 
 public:
 
-	//! Default constructor
-	ElementManager();
+    //! Default constructor
+    ElementManager();
 
-	//! Destructor
-	~ElementManager();
+    //! Destructor
+    ~ElementManager();
 
-	//! Clean up the Element registry
-	void cleanRegistry();
-	//! Returns a shared pointer to an Element with a given name. The Element is searched first in the registry then in the XML database. If not found return an empty element.
-	sptrElement getElement(const std::string& name);
-	//! Returns the number of registered Element objects
-	unsigned int getNElements() const;
-	//! Returns the elements registry
-	const strToElementMap& getRegistry() const;
-	//! Returns true if an Element with a given name is registered
-	bool hasElement(const std::string& name) const;
-	//! Reloads the current database
-	void reload();
-	//! Removes an Element from the registry
-	void removeElement(const std::string& name);
-	//! Save the registry to an XML file
-	void saveRegistry(std::string filename="") const;
+    //! Clean up the Element registry
+    void cleanRegistry();
+    //! Returns a shared pointer to an Element with a given name. The Element is searched first in the registry then in the XML database. If not found return an empty element.
+    sptrElement getElement(const std::string& name);
+    //! Returns the number of registered Element objects
+    unsigned int getNElements() const;
+    //! Returns the elements registry
+    const strToElementMap& getRegistry() const;
+    //! Returns true if an Element with a given name is registered
+    bool hasElement(const std::string& name) const;
+    //! Reloads the current database
+    void reload();
+    //! Removes an Element from the registry
+    void removeElement(const std::string& name);
+    //! Save the registry to an XML file
+    void saveRegistry(std::string filename="") const;
 
-	//! Sets the path for the elements XML database
-	void setDatabasePath(std::string path="");
-
-private:
-
-	//! Builds and registers an Element from an XML node
-	//! A shared pointer to the newly created Element is returned.
-	sptrElement buildElement(const property_tree::ptree& node);
+    //! Sets the path for the elements XML database
+    void setDatabasePath(std::string path="");
 
 private:
 
-	//! The path to the element database
-	std::string _database;
+    //! Builds and registers an Element from an XML node
+    //! A shared pointer to the newly created Element is returned.
+    sptrElement buildElement(const property_tree::ptree& node);
 
-	//! The registry that will store the created Element objects
-	strToElementMap _registry;
+private:
+
+    //! The path to the element database
+    std::string _database;
+
+    //! The registry that will store the created Element objects
+    strToElementMap _registry;
 
 };
 

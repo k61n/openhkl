@@ -3,11 +3,11 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include "Element.h"
-#include "ElementManager.h"
-#include "Error.h"
-#include "IsotopeManager.h"
-#include "Units.h"
+#include <nsxlib/chemistry/Element.h>
+#include <nsxlib/chemistry/ElementManager.h>
+#include <nsxlib/kernel/Error.h>
+#include <nsxlib/chemistry/IsotopeManager.h>
+#include <nsxlib/utils/Units.h>
 
 using namespace SX::Chemistry;
 using namespace SX::Units;

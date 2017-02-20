@@ -63,27 +63,26 @@ set(CPACK_SOURCE_IGNORE_FILES "/\\\\.git/;" )
 
 # Build the config.h on the fly
 if (UNIX)
-    set(RESOURCES_DIR ${CMAKE_INSTALL_PREFIX}/share/nsxtool)
+  set(RESOURCES_DIR ${CMAKE_INSTALL_PREFIX}/share/nsxtool)
 elseif (WIN32)
-    set(RESOURCES_DIR "$ENV{APPDATA}\\nsxtool")
-    # take care of pesky backslashes in windows path names
-    STRING(REGEX REPLACE "\\\\" "\\\\\\\\" RESOURCES_DIR ${RESOURCES_DIR})
+  set(RESOURCES_DIR "$ENV{APPDATA}\\nsxtool")
+  # take care of pesky backslashes in windows path names
+  STRING(REGEX REPLACE "\\\\" "\\\\\\\\" RESOURCES_DIR ${RESOURCES_DIR})
 endif()
 configure_file(${CMAKE_SOURCE_DIR}/cmake/NSXConfig.h.in ${CMAKE_BINARY_DIR}/include/NSXConfig.h)
 
 add_subdirectory(nsxlib)
 
-
 if (BUILD_QTAPPS)
-	add_subdirectory(apps)
+    add_subdirectory(apps)
 endif()
 
 # additional tools
 add_subdirectory(tools)
 
-# Enable unit testing with ctest. This must be called before any calls to add_subdirectory 
+# Enable unit testing with ctest. This must be called before any calls to add_subdirectory
 enable_testing()
-# Directory with all the unit-tests. 
+# Directory with all the unit-tests.
 add_subdirectory(tests)
 
 # code coverage report
@@ -98,24 +97,21 @@ endif()
 # Installation settings
 ###########################################################################
 
-# Install section, installing libraries 
+# Install section, installing libraries
 #install(TARGETS NSXTool DESTINATION lib)
 #set(INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include/NSXTool/")
 #install(CODE "MESSAGE(\"Installing headers...\")")
 #install(FILES ${headers} DESTINATION ${INCLUDE_DIR})
 
-
-
-
 # Install the databases file
-install(DIRECTORY resources/databases 
+install(DIRECTORY resources/databases
         DESTINATION ${RESOURCES_DIR}
         FILE_PERMISSIONS OWNER_READ OWNER_EXECUTE OWNER_WRITE GROUP_WRITE GROUP_READ GROUP_EXECUTE WORLD_WRITE WORLD_READ WORLD_EXECUTE
         DIRECTORY_PERMISSIONS OWNER_READ OWNER_EXECUTE OWNER_WRITE GROUP_WRITE GROUP_READ GROUP_EXECUTE WORLD_WRITE WORLD_READ WORLD_EXECUTE
         PATTERN ".svn" EXCLUDE)
 
-install(DIRECTORY resources/instruments 
-        DESTINATION ${RESOURCES_DIR} 
+install(DIRECTORY resources/instruments
+        DESTINATION ${RESOURCES_DIR}
         FILE_PERMISSIONS OWNER_READ OWNER_EXECUTE OWNER_WRITE GROUP_WRITE GROUP_READ GROUP_EXECUTE WORLD_WRITE WORLD_READ WORLD_EXECUTE
         DIRECTORY_PERMISSIONS OWNER_READ OWNER_EXECUTE OWNER_WRITE GROUP_WRITE GROUP_READ GROUP_EXECUTE WORLD_WRITE WORLD_READ WORLD_EXECUTE
         PATTERN ".svn" EXCLUDE)
@@ -123,39 +119,17 @@ install(DIRECTORY resources/instruments
 ###########################################################################
 # CPack settings
 ###########################################################################
-        
+
 include(CPackCommon)
-    
+
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR ${BUILD_DEBIAN})
-
-    include(CPackLinuxSetup)
-    message(STATUS "CPACK_PACKAGE_FILE_NAME = ${CPACK_PACKAGE_FILE_NAME}")
-      
-    if ("${UNIX_DIST}" MATCHES "Ubuntu" OR ${BUILD_DEBIAN})
-
-      # set(boost_version_string "${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}")
-      # 	    string(REPLACE "," ", " CPACK_DEBIAN_PACKAGE_DEPENDS
-      # 	    "libqt5core5a,"
-      # 	    "libqt5printsupport5,"
-      # 	    "libqt5widgets5,"
-      # 	    "libqt5gui5,"
-      # 	    "libboost-filesystem${boost_version_string},"
-      # 	    "libboost-date-time${boost_version_string},"
-      # 	    "libboost-system${boost_version_string},"
-      # 	    "libboost-test${boost_version_string},"
-      # 	    "libeigen3-dev,"
-      # 	    "libfftw3-bin,"
-      # 	    "libtiff5,"
-      # 	    "libhdf5-7 (>=1.8.11)")
-      # 	endif()
-
-      # automatically generate dependencies
-      set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
-
-      endif()
-
+  include(CPackLinuxSetup)
+  message(STATUS "CPACK_PACKAGE_FILE_NAME = ${CPACK_PACKAGE_FILE_NAME}")
+  if ("${UNIX_DIST}" MATCHES "Ubuntu" OR ${BUILD_DEBIAN})
+    # automatically generate dependencies
+    set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+  endif()
 endif()
 
 set(CMAKE_INSTALL_RPATH "/usr/local/lib")
-
 include(CPack)

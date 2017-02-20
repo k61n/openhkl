@@ -8,8 +8,8 @@
 #include <vector>
 #include <string>
 
-#include "MinimizerEigen.h"
-#include "MinimizerGSL.h"
+#include <nsxlib/utils/MinimizerEigen.h>
+#include <nsxlib/utils/MinimizerGSL.h>
 
 #include <Eigen/Dense>
 

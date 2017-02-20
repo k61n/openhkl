@@ -35,7 +35,7 @@
 
 #include <Eigen/Geometry>
 
-#include "Types.h"
+#include "../utils/Types.h"
 
 namespace SX
 {

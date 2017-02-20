@@ -1,21 +1,21 @@
 #include <cmath>
 
 #include "UBMinimizer.h"
-#include "MinimizerGSL.h"
-#include "MinimizerEigen.h"
+#include "../utils/MinimizerGSL.h"
+#include "../utils/MinimizerEigen.h"
 
 #include <Eigen/Dense>
-#include "Component.h"
-#include "ComponentState.h"
-#include "Detector.h"
-#include "EigenMatrixOp.h"
-#include "Error.h"
-#include "Gonio.h"
+#include "../instrument/Component.h"
+#include "../instrument/ComponentState.h"
+#include "../instrument/Detector.h"
+#include "../utils/EigenMatrixOp.h"
+#include "../kernel/Error.h"
+#include "../instrument/Gonio.h"
 #include "Peak3D.h"
-#include "Sample.h"
-#include "TransAxis.h"
-#include "RotAxis.h"
-#include "Units.h"
+#include "../instrument/Sample.h"
+#include "../instrument/TransAxis.h"
+#include "../instrument/RotAxis.h"
+#include "../utils/Units.h"
 
 namespace SX
 {

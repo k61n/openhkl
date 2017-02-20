@@ -1,10 +1,10 @@
 #include <cmath>
 #include <sstream>
 
-#include "AffineTransformParser.h"
-#include "Error.h"
+#include "../utils/AffineTransformParser.h"
+#include "../kernel/Error.h"
 #include "SymOp.h"
-#include "DoubleToFraction.h"
+#include "../utils/DoubleToFraction.h"
 
 // This include has to be AFTER the std::string include otherwise build error
 #include <boost/algorithm/string.hpp>

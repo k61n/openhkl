@@ -40,7 +40,7 @@
 #include <memory>
 #include <vector>
 
-#include "PeakRecord.h"
+#include "../crystal/PeakRecord.h"
 
 namespace SX
 {

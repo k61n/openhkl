@@ -7,13 +7,13 @@
 #include <iostream>
 #include <string>
 
-#include "Path.h"
+#include <nsxlib/utils/Path.h>
 
 using namespace SX::Utils;
 
 BOOST_AUTO_TEST_CASE(Test_Path)
 {
-	namespace filesystem=boost::filesystem;
+    namespace filesystem=boost::filesystem;
     std::string arg = "test/test.exe";
     char* argv[1] = {&arg[0]};
     Path::setArgv(1, argv);

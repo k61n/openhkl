@@ -36,7 +36,7 @@
 #include <string>
 
 #include "Diffractometer.h"
-#include "Singleton.h"
+#include "../kernel/Singleton.h"
 
 namespace SX
 {
@@ -53,12 +53,12 @@ class DiffractometerStore : public Kernel::Singleton<DiffractometerStore,Kernel:
 
 public:
 
-	//! Constructor
-	DiffractometerStore();
+    //! Constructor
+    DiffractometerStore();
 
-	sptrDiffractometer buildDiffractomer(const std::string& name);
+    sptrDiffractometer buildDiffractomer(const std::string& name);
 
-	diffractometersList getDiffractometersList() const;
+    diffractometersList getDiffractometersList() const;
 
 };
 
