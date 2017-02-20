@@ -2,7 +2,7 @@
  * nsxtool : Neutron Single Crystal analysis toolkit
  ------------------------------------------------------------------------------------------
  Copyright (C)
- 2016- Laurent C. Chapon, Eric Pellegrini, Jonathan Fisher
+ 2017- Laurent C. Chapon, Eric Pellegrini, Jonathan Fisher
 
  Institut Laue-Langevin
  BP 156
@@ -33,34 +33,29 @@
  *
  */
 
-#ifndef NSXTOOL_PROFILE_H_
-#define NSXTOOL_PROFILE_H_
+#include "Gaussian.h"
+#include <cmath>
 
-#include <functional>
-#include <Eigen/Dense>
-
-#include "../utils/Gaussian.h"
-#include "../utils/Lorentzian.h"
+static const double g_pi = double(M_PI);
 
 namespace SX {
-namespace Crystal {
+namespace Utils {
 
-class Profile {
-    using Lorentzian = SX::Utils::Lorentzian;
-    using Gaussian = SX::Utils::Gaussian;
-public:
-    Profile(const Lorentzian& lor = Lorentzian(), const Gaussian& gauss = Gaussian(), double eta = 0.5);
-    bool fit(const Eigen::VectorXd& y, int max_iter=100);
-    double evaluate(double x) const;
-    double integrate() const;
+Gaussian::Gaussian(double a, double mu, double sigma):
+    _a(a), _mu(mu), _sigma(sigma)
+{
+}
 
-private:
-    SX::Utils::Lorentzian _lorentz;
-    SX::Utils::Gaussian _gauss;
-    double _eta;
-};
+double Gaussian::evaluate(double x) const
+{
+    const double z = (x-_mu) / _sigma;
+    return _a*_a* std::exp(-z*z / 2.0);
+}
 
-} // namespace Crystal
+double Gaussian::integrate() const
+{
+    return _a*_a * std::sqrt(2.0*g_pi*_sigma*_sigma);
+}
+
+} // namespace Utils
 } // namespace SX
-
-#endif // NSXTOOL_PROFILE_H_

@@ -33,34 +33,24 @@
  *
  */
 
-#ifndef NSXTOOL_PROFILE_H_
-#define NSXTOOL_PROFILE_H_
+#ifndef NSXTOOL_GAUSSIAN_H_
+#define NSXTOOL_GAUSSIAN_H_
 
-#include <functional>
 #include <Eigen/Dense>
 
-#include "../utils/Gaussian.h"
-#include "../utils/Lorentzian.h"
-
 namespace SX {
-namespace Crystal {
+namespace Utils {
 
-class Profile {
-    using Lorentzian = SX::Utils::Lorentzian;
-    using Gaussian = SX::Utils::Gaussian;
+class Gaussian {
 public:
-    Profile(const Lorentzian& lor = Lorentzian(), const Gaussian& gauss = Gaussian(), double eta = 0.5);
-    bool fit(const Eigen::VectorXd& y, int max_iter=100);
+    Gaussian(double a = 1.0, double mu = 0.0, double sigma = 1.0);
     double evaluate(double x) const;
     double integrate() const;
-
 private:
-    SX::Utils::Lorentzian _lorentz;
-    SX::Utils::Gaussian _gauss;
-    double _eta;
+    double _a, _mu, _sigma;
 };
 
-} // namespace Crystal
+} // namespace Utils
 } // namespace SX
 
-#endif // NSXTOOL_PROFILE_H_
+#endif // NSXTOOL_GAUSSIAN_H_

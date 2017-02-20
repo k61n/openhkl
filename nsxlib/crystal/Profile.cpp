@@ -40,15 +40,20 @@
 #include <iomanip>
 
 using SX::Utils::Minimizer;
+using SX::Utils::Lorentzian;
+using SX::Utils::Gaussian;
 
 static const double g_pi = double(M_PI);
 
 namespace SX {
 namespace Crystal {
 
-Profile::Profile(double a, double b, double x0)
+Profile::Profile(const Utils::Lorentzian &lor, const Utils::Gaussian &gauss, double eta):
+    _lorentz(lor),
+    _gauss(gauss),
+    _eta(eta)
 {
-    setParams(a, b, x0);
+
 }
 
 bool Profile::fit(const Eigen::VectorXd &y, int max_iter)
@@ -56,6 +61,8 @@ bool Profile::fit(const Eigen::VectorXd &y, int max_iter)
     Minimizer min;
     Eigen::VectorXd wt;
     wt.resize(y.size());
+
+    const int num_params = 7;
 
     for (int i = 0; i < wt.size(); ++i) {
         wt(i) = 1.0;
@@ -72,69 +79,63 @@ bool Profile::fit(const Eigen::VectorXd &y, int max_iter)
     const double guess_b = sum / (g_pi*guess_x);
     const double guess_a = std::sqrt( std::fabs(sum * guess_b / g_pi));
 
-    auto func = [y](const Eigen::VectorXd params, Eigen::VectorXd& res) -> int {
-        assert(params.size() == 3);
+    auto func = [y, num_params](const Eigen::VectorXd params, Eigen::VectorXd& res) -> int {
+        assert(params.size() == num_params);
         assert(res.size() == y.size());
-        Profile lor(params(0), params(1), params(2));
+
+        Lorentzian lor(params(0), params(1), params(2));
+        Gaussian gauss(params(3), params(4), params(5));
+        double eta = params(6);
+
+        if ( eta < 0.0) {
+            eta = 0.0;
+        }
+        if (eta > 1.0) {
+            eta = 1.0;
+        }
+
+        Profile pro(lor, gauss, eta);
 
         for (auto i = 0; i < y.size(); ++i) {
-            res(i) = lor.evaluate(i) - y(i);
+            res(i) = pro.evaluate(i) - y(i);
         }
         return 0;
     };
 
-    min.initialize(3, y.size());
-    min.setParams(Eigen::Vector3d(guess_a, guess_b, guess_x));
+    Eigen::VectorXd params(num_params);
+    params << guess_a, guess_b, guess_x, guess_a, guess_b, guess_x, 0.5;
+
+    min.initialize(num_params, y.size());
+    min.setParams(params);
     min.setWeights(wt);
     min.set_f(func);
 
-//    min.setxTol(1e-15);
-//    min.setfTol(1e-15);
-//    min.setgTol(1e-15);
+    min.setxTol(1e-15);
+    min.setfTol(1e-15);
+    min.setgTol(1e-15);
 
     bool result = min.fit(max_iter);
     auto p = min.params();
 
     if (result) {
         auto p = min.params();
-        setParams(p(0), p(1), p(2));
+        _lorentz = Lorentzian(p(0), p(1), p(2));
+        _gauss = Gaussian(p(3), p(4), p(5));
+        _eta = p(6);
         return true;
     }
-    std::cout << "Lorentzian fit failed: " << min.getStatusStr() << std::endl;
+    std::cout << "Profile fit failed: " << min.getStatusStr() << std::endl;
     return false;
 }
 
 double Profile::evaluate(double x) const
 {
-    const double u = x-_x0;
-    return _a*_a / (u*u+_b*_b);
+    return _eta*_gauss.evaluate(x) + (1-_eta)*_lorentz.evaluate(x);
 }
 
 double Profile::integrate() const
 {
-    return _a*_a*g_pi / _b;
-}
-
-void Profile::setParams(double a, double b, double x0)
-{
-    _a = a;
-    _b = b;
-    _x0 = x0;
-}
-
-double Profile::getA() const
-{
-    return _a;
-}
-
-double Profile::getB() const
-{
-    return _b;
-}
-
-double Profile::getX() const
-{
-    return _x0;
+    return _eta*_gauss.integrate() + (1-_eta)*_lorentz.integrate();
 }
 
 } // namespace Crystal
