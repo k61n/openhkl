@@ -40,10 +40,8 @@
 #include "Sphere.h"
 #include "../utils/Types.h"
 
-namespace SX
-{
-namespace Geometry
-{
+namespace SX {
+namespace Geometry {
 
 template<typename T,SX::Types::uint D>
 class Ellipsoid : public IShape<T,D>

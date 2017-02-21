@@ -72,7 +72,8 @@ public:
     using IntegrationRegion = SX::Geometry::IntegrationRegion;
 
     Peak3D(std::shared_ptr<SX::Data::IData> data=std::shared_ptr<SX::Data::IData>());
-    Peak3D(std::shared_ptr<SX::Data::IData> data, const SX::Geometry::Blob3D& blob, double confidence);
+    //Peak3D(std::shared_ptr<SX::Data::IData> data, const SX::Geometry::Blob3D& blob, double confidence);
+    Peak3D(std::shared_ptr<SX::Data::IData> data, const Ellipsoid3D& shape);
 
     //! Copy constructor
     Peak3D(const Peak3D& other);

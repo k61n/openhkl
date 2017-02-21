@@ -88,20 +88,31 @@ Peak3D::Peak3D(std::shared_ptr<SX::Data::IData> data):
     linkData(data);
 }
 
-Peak3D::Peak3D(std::shared_ptr<Data::IData> data, const Blob3D &blob, double confidence)
-: Peak3D(data)
+//Peak3D::Peak3D(std::shared_ptr<Data::IData> data, const Blob3D &blob, double confidence)
+//: Peak3D(data)
+//{
+//    Eigen::Vector3d center, eigenvalues;
+//    Eigen::Matrix3d eigenvectors;
+
+//    blob.toEllipsoid(confidence, center, eigenvalues, eigenvectors);
+//    _region.setPeak(Ellipsoid3D(center,eigenvalues,eigenvectors));
+//    // setPeakShape(Ellipsoid3D(center,eigenvalues,eigenvectors));
+
+//    eigenvalues[0]*=2.0;
+//    eigenvalues[1]*=2.0;
+//    eigenvalues[2]*=3.0;
+
+//    _region.setBackground(Ellipsoid3D(center,eigenvalues,eigenvectors));
+//    //setBackgroundShape(Ellipsoid3D(center,eigenvalues,eigenvectors));
+//}
+
+Peak3D::Peak3D(std::shared_ptr<Data::IData> data, const Peak3D::Ellipsoid3D &shape):
+Peak3D(data)
 {
-    Eigen::Vector3d center, eigenvalues;
-    Eigen::Matrix3d eigenvectors;
-
-    blob.toEllipsoid(confidence, center, eigenvalues, eigenvectors);
-    setPeakShape(Ellipsoid3D(center,eigenvalues,eigenvectors));
-
-    eigenvalues[0]*=2.0;
-    eigenvalues[1]*=2.0;
-    eigenvalues[2]*=3.0;
-
-    setBackgroundShape(Ellipsoid3D(center,eigenvalues,eigenvectors));
+    _region.setPeak(shape);
+    auto bkg = shape;
+    bkg.scale(3.0);
+    _region.setBackground(bkg);
 }
 
 Peak3D::Peak3D(const Peak3D& other):
