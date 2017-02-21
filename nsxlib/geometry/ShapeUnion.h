@@ -108,7 +108,7 @@ IShape<T,D>* ShapeUnion<T,D>::clone() const
 {
 #pragma warning "this is wrong!";
     // return new ShapeUnion<T, D>(*this);
-    return nullptr;B
+    return nullptr;
 }
 
 template<typename T, SX::Types::uint D>
