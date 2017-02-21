@@ -37,12 +37,8 @@
 
 #include "../utils/Types.h"
 
-namespace SX
-{
-
-namespace Geometry
-{
-
+namespace SX {
+namespace Geometry {
 
 template<typename T, SX::Types::uint D> class AABB;
 template<typename T, SX::Types::uint D> class Ellipsoid;
