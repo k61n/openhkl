@@ -25,7 +25,7 @@ PeakGraphicsItem::PeakGraphicsItem(sptrPeak3D p):
     _bkgEllipse()
 {
     if (_peak) {
-        Eigen::Vector3d c=_peak->getPeak().getAABBCenter();
+        Eigen::Vector3d c=_peak->getRegion().getPeak().getAABBCenter();
         setPos(c[0], c[1]);
     }
     _pen.setWidth(2);
@@ -46,8 +46,8 @@ PeakGraphicsItem::PeakGraphicsItem(sptrPeak3D p):
 
 QRectF PeakGraphicsItem::boundingRect() const
 {
-    const Eigen::Vector3d& l=_peak->getBackground().getLower();
-    const Eigen::Vector3d& u=_peak->getBackground().getUpper();
+    const Eigen::Vector3d& l=_peak->getRegion().getBackground().getLower();
+    const Eigen::Vector3d& u=_peak->getRegion().getBackground().getUpper();
     qreal w=u[0]-l[0];
     qreal h=u[1]-l[1];
     assert(w >= 0.0);
@@ -74,8 +74,8 @@ void PeakGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
     }
     _label->setVisible(_hovered || _labelVisible);
 
-    const Eigen::Vector3d& peak_l = _peak->getPeak().getLower();
-    const Eigen::Vector3d& peak_u = _peak->getPeak().getUpper();
+    const Eigen::Vector3d& peak_l = _peak->getRegion().getPeak().getLower();
+    const Eigen::Vector3d& peak_u = _peak->getRegion().getPeak().getUpper();
     qreal peak_w = peak_u[0]-peak_l[0];
     qreal peak_h = peak_u[1]-peak_l[1];
 
@@ -100,8 +100,8 @@ void PeakGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 
 void PeakGraphicsItem::setFrame(unsigned long frame)
 {
-    const Eigen::Vector3d& l=_peak->getPeak().getLower();
-    const Eigen::Vector3d& u=_peak->getPeak().getUpper();
+    const Eigen::Vector3d& l=_peak->getRegion().getPeak().getLower();
+    const Eigen::Vector3d& u=_peak->getRegion().getPeak().getUpper();
 
     if (frame>=l[2] && frame<=u[2]) {
         setVisible(true);
@@ -111,8 +111,8 @@ void PeakGraphicsItem::setFrame(unsigned long frame)
         QString hklString;
         hklString=QString("%1,%2,%3").arg(hkl[0]).arg(hkl[1]).arg(hkl[2]);
         _label->setPlainText(hklString);
-        _peakEllipse = calculateEllipse(_peak->getPeak(), frame);
-        _bkgEllipse = calculateEllipse(_peak->getBackground(), frame);
+        _peakEllipse = calculateEllipse(_peak->getRegion().getPeak(), frame);
+        _bkgEllipse = calculateEllipse(_peak->getRegion().getBackground(), frame);
     }
     else {
         setVisible(false);
@@ -243,8 +243,8 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     QVector<double> qbkg(int(total.size()));
 
     //Copy the data
-    double min=std::floor(_peak->getBackground().getLower()[2]);
-    double max=std::ceil(_peak->getBackground().getUpper()[2]);
+    double min=std::floor(_peak->getRegion().getBackground().getLower()[2]);
+    double max=std::ceil(_peak->getRegion().getBackground().getUpper()[2]);
 
     if (min<0) {
         min=0;

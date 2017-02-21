@@ -39,6 +39,7 @@
 #include "../geometry/IShape.h"
 #include "../geometry/Ellipsoid.h"
 #include "../utils/Types.h"
+#include "../geometry/IntegrationRegion.h"
 
 namespace SX {
 
@@ -68,6 +69,7 @@ public:
     using Ellipsoid3D=Geometry::Ellipsoid<double,3>;
     using sptrEllipsoid3D=std::shared_ptr<Ellipsoid3D>;
     using shape_type = SX::Geometry::IShape<double,3>;
+    using IntegrationRegion = SX::Geometry::IntegrationRegion;
 
     Peak3D(std::shared_ptr<SX::Data::IData> data=std::shared_ptr<SX::Data::IData>());
     Peak3D(std::shared_ptr<SX::Data::IData> data, const SX::Geometry::Blob3D& blob, double confidence);
@@ -124,8 +126,10 @@ public:
     Eigen::VectorXd getProjectionSigma() const;
     Eigen::VectorXd getPeakProjectionSigma() const;
     Eigen::VectorXd getBkgProjectionSigma() const;
-    const Ellipsoid3D& getPeak() const { return _peak;}
-    const Ellipsoid3D& getBackground() const {return _bkg;}
+
+    const IntegrationRegion& getRegion() const { return _region; }
+    // const Ellipsoid3D& getPeak() const { return _peak;}
+    // const Ellipsoid3D& getBackground() const {return _bkg;}
     //! Return the scaled intensity of the peak.
     double getScaledIntensity() const;
     //! Return the raw intensity of the peak.
@@ -195,9 +199,11 @@ private:
     //! Miller indices of the peak
     // Eigen::RowVector3d _hkl;
     //! Shape describing the Peak zone
-    Ellipsoid3D _peak;
+    // Ellipsoid3D _peak;
     //! Shape describing the background zone (must fully contain peak)
-    Ellipsoid3D _bkg;
+    // Ellipsoid3D _bkg;
+    //! Shape used to determine integration
+    IntegrationRegion _region;
     //!
     Eigen::VectorXd _projection;
     Eigen::VectorXd _projectionPeak;

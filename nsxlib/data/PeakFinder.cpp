@@ -145,7 +145,7 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
 
         for (auto& blob : blobs) {
             sptrPeak3D p = std::make_shared<Peak3D>(Peak3D(numor, blob.second, _confidence));
-            const auto extents = p->getPeak().getAABBExtents();
+            const auto extents = p->getRegion().getPeak().getAABBExtents();
 
             // peak too small or too large
             if (extents.maxCoeff() > 1e5 || extents.minCoeff() < 1e-5) {
@@ -153,7 +153,7 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
             }
 
             // peak's bounding box not completely contained in detector image
-            if (!dAABB.contains(p->getPeak())) {
+            if (!dAABB.contains(p->getRegion().getPeak())) {
                 p->setSelected(false);
             }
 

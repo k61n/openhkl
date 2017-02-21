@@ -527,8 +527,8 @@ void DetectorScene::updatePeaks()
     auto& peaks = _currentData->getPeaks();
 
     for (auto&& peak : peaks) {
-        const Eigen::Vector3d& l = peak->getPeak().getLower();
-        const Eigen::Vector3d& u = peak->getPeak().getUpper();
+        const Eigen::Vector3d& l = peak->getRegion().getPeak().getLower();
+        const Eigen::Vector3d& u = peak->getRegion().getPeak().getUpper();
 
         if (_currentFrameIndex < l[2] || _currentFrameIndex > u[2]) {
             continue;

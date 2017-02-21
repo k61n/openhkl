@@ -46,7 +46,7 @@ namespace Crystal
 PeakRecord::PeakRecord(const Peak3D &other)
 {
     auto&& index = other.getIntegerMillerIndices();
-    auto&& center = other.getPeak().getAABBCenter();
+    auto&& center = other.getRegion().getPeak().getAABBCenter();
 
     h = index[0];
     k = index[1];

@@ -429,8 +429,8 @@ void SessionModel::integrateCalculatedPeaks()
     for (std::shared_ptr<IData> numor: getSelectedNumors()) {
         for (sptrPeak3D peak: numor->getPeaks()) {
             if ( peak && peak->isSelected() && !peak->isMasked() ) {
-                peak_extent += peak->getPeak().getAABBExtents();
-                bg_extent += peak->getBackground().getAABBExtents();
+                peak_extent += peak->getRegion().getPeak().getAABBExtents();
+                bg_extent += peak->getRegion().getBackground().getAABBExtents();
                 ++count;
             }
         }

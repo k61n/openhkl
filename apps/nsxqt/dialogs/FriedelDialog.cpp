@@ -101,8 +101,8 @@ void FriedelDialog::on_goodPairsButton_clicked()
             b->setSelected(true);
 
             // scaling factor
-            double z_a = a->getPeak().getAABBCenter()[2];
-            double z_b = b->getPeak().getAABBCenter()[2];
+            double z_a = a->getRegion().getPeak().getAABBCenter()[2];
+            double z_b = b->getRegion().getPeak().getAABBCenter()[2];
 
             if (z_a < z_b)
                 qDebug() << z_a << ", " << z_b << ": " << int_b / int_a;
