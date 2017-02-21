@@ -49,6 +49,9 @@ public:
     void setBackground(const Ellipsoid3D& background);
     const Ellipsoid3D& getBackground() const;
 
+    bool isInside(const Eigen::Vector4d& p) const;
+    bool inBackground(const Eigen::Vector4d& p) const;
+
 private:
     Ellipsoid3D _peak, _bkg;
 };

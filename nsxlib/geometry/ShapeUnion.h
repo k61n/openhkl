@@ -100,7 +100,9 @@ ShapeUnion<T, D>::ShapeUnion(const ShapeUnion& other)
 template<typename T, SX::Types::uint D>
 ShapeUnion<T, D>::ShapeUnion(std::initializer_list<const shape_t&> shapes)
 {
-    std::for_each(shapes.begin(), shapes.end(), addShape);
+    for (auto&& shape: shapes) {
+        addShape(shape);
+    }
 }
 
 template<typename T, SX::Types::uint D>

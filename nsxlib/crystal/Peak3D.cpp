@@ -618,8 +618,11 @@ void Peak3D::framewiseIntegrateStep(Eigen::MatrixXi& frame, unsigned int idx)
             auto&& peak = _region.getPeak();
             auto&& bkg = _region.getBackground();
 
-            bool inbackground = (bkg.isInsideAABB(_state.point1) && bkg.isInside(_state.point1));
-            bool inpeak = (peak.isInsideAABB(_state.point1) && peak.isInside(_state.point1));
+            //bool inbackground = (bkg.isInsideAABB(_state.point1) && bkg.isInside(_state.point1));
+            //bool inpeak = (peak.isInsideAABB(_state.point1) && peak.isInside(_state.point1));
+
+            bool inpeak = _region.isInside(_state.point1);
+            bool inbackground = _region.inBackground(_state.point1);
 
             if (inpeak) {
                 intensityP += intensity;

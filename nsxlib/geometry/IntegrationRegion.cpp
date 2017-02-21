@@ -58,6 +58,24 @@ const IntegrationRegion::Ellipsoid3D &IntegrationRegion::getBackground() const
     return _bkg;
 }
 
+bool IntegrationRegion::isInside(const Eigen::Vector4d &p) const
+{
+    //bool inbackground = (bkg.isInsideAABB(_state.point1) && bkg.isInside(_state.point1));
+    //bool inpeak = (peak.isInsideAABB(_state.point1) && peak.isInside(_state.point1));
+    if (!_peak.isInsideAABB(p)) {
+        return false;
+    }
+    return _peak.isInside(p);
+}
+
+bool IntegrationRegion::inBackground(const Eigen::Vector4d &p) const
+{
+    if (!_bkg.isInsideAABB(p)) {
+        return false;
+    }
+    return _bkg.isInside(p);
+}
+
 
 
 } // namespace Geometry
