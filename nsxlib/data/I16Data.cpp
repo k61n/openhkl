@@ -98,8 +98,7 @@ I16Data::I16Data(const std::string& filename, std::shared_ptr<Diffractometer> di
     _nFrames=data_count;
     _data.reserve(_nFrames);
 
-    _detectorStates.reserve(_nFrames);
-    _sampleStates.reserve(_nFrames);
+    _states.resize(_nFrames);
 
     std::vector<double> dval(1);
     dval[0]=_metadata->getKey<double>("delta");
@@ -110,8 +109,10 @@ I16Data::I16Data(const std::string& filename, std::shared_ptr<Diffractometer> di
 
 
     for (unsigned int i=0;i<_nFrames;++i) {
-        _detectorStates.push_back(_diffractometer->getDetector()->createState(dval));
-        _sampleStates.push_back(_diffractometer->getSample()->createState(sval));
+        _states[i].detector = _diffractometer->getDetector()->createState(dval);
+        _states[i].sample = _diffractometer->getSample()->createState(sval);
+        //_detectorStates.push_back(_diffractometer->getDetector()->createState(dval));
+        //_sampleStates.push_back(_diffractometer->getSample()->createState(sval));
     }
 
     _metadata->add<int>("Numor",atoi(boost::filesystem::path(filename).stem().string().c_str()));

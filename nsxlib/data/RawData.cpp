@@ -101,10 +101,11 @@ RawData::RawData(const std::vector<std::string>& filenames, std::shared_ptr<Diff
     Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> dm
             = Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor>::Zero(long(axesS.size()), long(_nFrames));
 
-    _detectorStates.reserve(_nFrames);
+    _states.resize(_nFrames);
 
     for (unsigned int i = 0; i < _nFrames; ++i) {
-        _detectorStates.push_back(_diffractometer->getDetector()->createStateFromEigen(dm.col(i)));
+        _states[i].detector = _diffractometer->getDetector()->createStateFromEigen(dm.col(i));
+        //_detectorStates.push_back(_diffractometer->getDetector()->createStateFromEigen(dm.col(i)));
     }
 
     // Getting Scan parameters for the sample
@@ -132,10 +133,9 @@ RawData::RawData(const std::vector<std::string>& filenames, std::shared_ptr<Diff
 
     // Use natural units internally (rad)
     dm*=SX::Units::deg;
-    _sampleStates.reserve(_nFrames);
 
     for (unsigned int i=0;i<_nFrames;++i) {
-        _sampleStates.push_back(_diffractometer->getSample()->createStateFromEigen(dm.col(i)));
+        _states[i].sample = _diffractometer->getSample()->createStateFromEigen(dm.col(i));
     }
 }
 

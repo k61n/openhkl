@@ -204,7 +204,8 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, const std::shared_ptr<Di
         }
     }
 
-    _detectorStates.reserve(_nFrames);
+    _states.resize(_nFrames);
+    //_detectorStates.reserve(_nFrames);
     auto detector = _diffractometer->getDetector();
     // If a detector is set for this instrument, loop over the frames and gather for each physical axis
     // of the detector the corresponding values defined previously. The gathered values being further pushed as
@@ -217,11 +218,12 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, const std::shared_ptr<Di
             for (const auto& v: detAxisIdsToNames) {
                 detValues.push_back(gonioValues[v][f]);
             }
-            _detectorStates.push_back(_diffractometer->getDetector()->createState(detValues));
+            _states[f].detector = _diffractometer->getDetector()->createState(detValues);
+            //_detectorStates.push_back(_diffractometer->getDetector()->createState(detValues));
         }
     }
 
-    _sampleStates.reserve(_nFrames);
+    //_sampleStates.reserve(_nFrames);
     auto sample = _diffractometer->getSample();
     // If a sample is set for this instrument, loop over the frames and gather for each physical axis
     // of the sample the corresponding values defined previously. The gathered values being further pushed as
@@ -234,11 +236,12 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, const std::shared_ptr<Di
             for (const auto& v: sampleAxisIdsToNames) {
                 sampleValues.push_back(gonioValues[v][f]);
             }
-            _sampleStates.push_back(_diffractometer->getSample()->createState(sampleValues));
+            _states[f].sample = _diffractometer->getSample()->createState(sampleValues);
+            //_sampleStates.push_back(_diffractometer->getSample()->createState(sampleValues));
         }
     }
 
-    _sourceStates.reserve(_nFrames);
+    //_sourceStates.reserve(_nFrames);
     auto source = _diffractometer->getSource();
     // If a source is set for this instrument, loop over the frames and gather for each physical axis
     // of the source the corresponding values defined previously. The gathered values being further pushed as
@@ -251,7 +254,8 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, const std::shared_ptr<Di
             for (const auto& v: sourceAxisIdsToNames) {
                 sourceValues.push_back(gonioValues[v][f]);
             }
-            _sourceStates.push_back(_diffractometer->getSource()->createState(sourceValues));
+            _states[f].source = _diffractometer->getSource()->createState(sourceValues);
+            //_sourceStates.push_back(_diffractometer->getSource()->createState(sourceValues));
         }
     }
 

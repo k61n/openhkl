@@ -35,7 +35,7 @@
 
 #include <Eigen/Dense>
 #include "../geometry/AABB.h"
-#include "../instrument/ComponentState.h"
+#include "../instrument/InstrumentState.h"
 #include "MetaData.h"
 #include "../instrument/Diffractometer.h"
 #include "../crystal/Peak3D.h"
@@ -127,25 +127,19 @@ public:
     const ComponentState& getDetectorState(unsigned long frame) const;
 
     //! Gets the the detector states.
-    const std::vector<ComponentState>& getDetectorStates() const;
+    //const std::vector<ComponentState>& getDetectorStates() const;
 
     //! Get the sample state for frame
     const ComponentState& getSampleState(unsigned long frame) const;
+
+    ComponentState getSourceInterpolatedState(double frame);
+    const ComponentState& getSourceState(unsigned int frame) const;
 
     //! Gets the interpolated state between two consecutive sample states
     ComponentState getSampleInterpolatedState(double frame);
 
     //! Gets the the sample states.
-    const std::vector<ComponentState>& getSampleStates() const;
-
-    //! Get the source state for frame
-    const ComponentState& getSourceState(unsigned int frame) const;
-
-    //! Gets the interpolated state between two consecutive source states
-    ComponentState getSourceInterpolatedState(double frame);
-
-    //! Gets the the source states.
-    const std::vector<ComponentState>& getSourceStates() const;
+    const std::vector<SX::Instrument::InstrumentState>& getInstrumentStates() const;
 
     //! Add a new mask to the data
     void addMask(AABB<double,3>* mask);
@@ -225,9 +219,7 @@ protected:
     std::unique_ptr<MetaData> _metadata;
     bool _inMemory;
     std::vector<Eigen::MatrixXi> _data;
-    std::vector<ComponentState> _detectorStates;
-    std::vector<ComponentState> _sampleStates;
-    std::vector<ComponentState> _sourceStates;
+    std::vector<SX::Instrument::InstrumentState> _states;
     std::set<sptrPeak3D> _peaks;
     std::size_t _fileSize;
     //! The set of masks bound to the data

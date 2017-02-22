@@ -85,10 +85,11 @@ HDF5Data::HDF5Data(const std::string& filename, const std::shared_ptr<Diffractom
 
     // Use natural units internally (rad)
     dm*=SX::Units::deg;
-    _detectorStates.reserve(_nFrames);
+    _states.resize(_nFrames);
 
     for (unsigned int i=0;i<_nFrames;++i) {
-        _detectorStates.push_back(_diffractometer->getDetector()->createStateFromEigen(dm.col(i)));
+        _states[i].detector = _diffractometer->getDetector()->createStateFromEigen(dm.col(i));
+        //_detectorStates.push_back(_diffractometer->getDetector()->createStateFromEigen(dm.col(i)));
     }
 
     // Getting Scan parameters for the sample
@@ -119,10 +120,9 @@ HDF5Data::HDF5Data(const std::string& filename, const std::shared_ptr<Diffractom
 
     // Use natural units internally (rad)
     dm*=SX::Units::deg;
-    _sampleStates.reserve(_nFrames);
 
     for (unsigned int i=0;i<_nFrames;++i) {
-        _sampleStates.push_back(_diffractometer->getSample()->createStateFromEigen(dm.col(i)));
+        _states[i].sample = _diffractometer->getSample()->createStateFromEigen(dm.col(i));
     }
     _file->close();
 }

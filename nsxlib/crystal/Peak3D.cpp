@@ -403,11 +403,12 @@ double Peak3D::getSampleStepSize() const
     auto data = getData();
 
     size_t numFrames = data->getNFrames();
-    const auto& ss = data->getSampleStates();
-    size_t numValues = ss[0].getValues().size();
+    //const auto& ss = data->getSampleStates();
+    auto&& ss = data->getInstrumentStates();
+    size_t numValues = ss[0].sample.getValues().size();
 
     for (size_t i = 0; i < numValues; ++i) {
-        double dx = ss[numFrames-1].getValues()[i] - ss[0].getValues()[i];
+        double dx = ss[numFrames-1].sample.getValues()[i] - ss[0].sample.getValues()[i];
         step += dx*dx;
     }
 

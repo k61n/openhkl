@@ -45,13 +45,16 @@ TiffData::TiffData(const std::string& filename, std::shared_ptr<Diffractometer> 
 
     _data.reserve(_nFrames);
 
-    _detectorStates.reserve(_nFrames);
-    _detectorStates.push_back(_diffractometer->getDetector()->createState());
-    _sampleStates.reserve(_nFrames);
-    _sampleStates.push_back(_diffractometer->getSample()->createState());
+//    _detectorStates.reserve(_nFrames);
+//    _detectorStates.push_back(_diffractometer->getDetector()->createState());
+//    _sampleStates.reserve(_nFrames);
+//    _sampleStates.push_back(_diffractometer->getSample()->createState());
+
+    _states.resize(_nFrames);
+    _states[0].detector = _diffractometer->getDetector()->createState();
+    _states[0].sample = _diffractometer->getSample()->createState();
 
     _metadata->add<std::string>("Instrument",diffractometer->getType());
-
 }
 
 TiffData::~TiffData()
