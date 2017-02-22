@@ -56,6 +56,7 @@ configure_file(instrument/Instrument.xml Instrument.xml COPYONLY)
 
 configure_file(crystal/crystal_database.csv crystal_database.csv COPYONLY)
 configure_file(crystal/crystallography.tsv crystallography.tsv COPYONLY)
+configure_file(crystal/714898.hdf 714898.hdf COPYONLY)
 
 # valgrind suppressions
 configure_file(valgrind/suppressions suppressions COPYONLY)
