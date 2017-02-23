@@ -30,6 +30,7 @@
 #include "ComponentState.h"
 
 namespace SX {
+
 namespace Instrument{
 
 struct InstrumentState {
@@ -38,7 +39,8 @@ struct InstrumentState {
     ComponentState sample;
 };
 
-} // Instrument
-} // SX
+} // end namespace Instrument
+
+} // end namespace SX
 
 #endif // NSXTOOL_INSTRUMENTSTATE_H_
