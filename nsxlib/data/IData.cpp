@@ -166,7 +166,7 @@ ComponentState IData::getInterpolatedState(std::shared_ptr<Component> component,
     return component->createState(state);
 }
 
-const ComponentState& IData::getDetectorState(unsigned long frame) const
+const ComponentState& IData::getDetectorState(size_t frame) const
 {
     if (frame > (_states.size()-1)) {
         throw std::runtime_error("Error when returning detector state: invalid frame value");
@@ -174,7 +174,7 @@ const ComponentState& IData::getDetectorState(unsigned long frame) const
     return _states[frame].detector;
 }
 
-const ComponentState& IData::getSampleState(unsigned long frame) const
+const ComponentState& IData::getSampleState(size_t frame) const
 {
     if (frame > (_states.size()-1)) {
         throw std::runtime_error("Error when returning sample state: invalid frame value");
@@ -182,7 +182,7 @@ const ComponentState& IData::getSampleState(unsigned long frame) const
     return _states[frame].sample;
 }
 
-const ComponentState& IData::getSourceState(unsigned int frame) const
+const ComponentState& IData::getSourceState(size_t frame) const
 {
     if (frame>(_states.size()-1)) {
         throw std::runtime_error("Error when returning source state: invalid frame value");

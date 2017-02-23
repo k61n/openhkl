@@ -124,12 +124,12 @@ public:
     std::set<sptrPeak3D>& getPeaks();
 
     //! Gets the the detector states.
-    const ComponentState& getDetectorState(unsigned long frame) const;
+    const ComponentState& getDetectorState(size_t frame) const;
 
     //! Get the sample state for frame
-    const ComponentState& getSampleState(unsigned long frame) const;
+    const ComponentState& getSampleState(size_t frame) const;
 
-    const ComponentState& getSourceState(unsigned int frame) const;
+    const ComponentState& getSourceState(size_t frame) const;
 
     //! Gets the the sample states
     const std::vector<SX::Instrument::InstrumentState>& getInstrumentStates() const;
