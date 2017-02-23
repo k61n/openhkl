@@ -1,9 +1,10 @@
 #include <cmath>
 #include <limits>
 #include <stdexcept>
-#include <boost/math/special_functions/erf.hpp>
+#include <cmath>
 #include <Eigen/Eigenvalues>
 #include "Blob3D.h"
+#include "../utils/erf_inv.h"
 
 using Eigen::Vector3d;
 using Eigen::Vector2d;
@@ -25,7 +26,7 @@ Blob3D::Blob3D():_m000(0),_m100(0),_m010(0),_m001(0),_m200(0),_m020(0),_m002(0),
 
 Blob3D::Blob3D(const Blob3D& b)
 :	_m000(b._m000),
- 	_m100(b._m100),_m010(b._m010),_m001(b._m001),
+    _m100(b._m100),_m010(b._m010),_m001(b._m001),
     _m200(b._m200),_m020(b._m020),_m002(b._m002),
     _m110(b._m110),_m101(b._m101),_m011(b._m011),
     _npoints(b._npoints),
@@ -119,8 +120,8 @@ Eigen::Vector3d Blob3D::getCenterOfMass() const
 
 void Blob3D::printSelf(std::ostream& os) const
 {
-	Eigen::Vector3d center;
-	center << _m100/_m000, _m010/_m000, _m001/_m000;
+    Eigen::Vector3d center;
+    center << _m100/_m000, _m010/_m000, _m001/_m000;
     os << "#Blob center: " << center.transpose() << std::endl;
     os << "Mass: " << _m000 << std::endl;
     os << "Points in the blob: " << _npoints << std::endl;
@@ -148,15 +149,15 @@ void Blob3D::toEllipsoid(double confidence,Vector3d& center, Vector3d& eigenvalu
     inertia(0,2)=inertia(2,0)=_m101/_m000-xc*zc;
     inertia(1,2)=inertia(2,1)=_m011/_m000-yc*zc;
 
-	SelfAdjointEigenSolver<Matrix3d> solver;
-	solver.compute(inertia);
+    SelfAdjointEigenSolver<Matrix3d> solver;
+    solver.compute(inertia);
 
-	double factor=sqrt(2.0)*boost::math::erf_inv(confidence);
+    double factor=sqrt(2.0)*SX::Utils::erf_inv(confidence);
     // This is the Gaussian sigma along three directions
     // (fabs is a safe-guard against very small negative eigenvalues due to precision errors)
     eigenvalues <<  sqrt(std::fabs(solver.eigenvalues()[0]))*factor,
-    			    sqrt(std::fabs(solver.eigenvalues()[1]))*factor,
-    			    sqrt(std::fabs(solver.eigenvalues()[2]))*factor;
+                    sqrt(std::fabs(solver.eigenvalues()[1]))*factor,
+                    sqrt(std::fabs(solver.eigenvalues()[2]))*factor;
 
     // Now eigenvectors
     eigenvectors= solver.eigenvectors();
@@ -211,8 +212,8 @@ bool Blob3D::intersectionWithPlane(double a, double b, double c, double d, Vecto
         double sz = vz*sd;
 
         R << cd+vx*fx, vx*fy-sz, vx*fz+sy,
-        	 vy*fx+sz, cd+vy*fy, vy*fz-sx,
-        	 vz*fx-sy, vz*fy+sx, cd+vz*fz;
+             vy*fx+sz, cd+vy*fy, vy*fz-sx,
+             vz*fx-sy, vz*fy+sx, cd+vz*fz;
 
     }
 
@@ -246,8 +247,8 @@ bool Blob3D::intersectionWithPlane(double a, double b, double c, double d, Vecto
     double Fq = u.transpose()*v - 1.0;
     Matrix3d AQ;
     AQ <<Aq,Bq,Dq,
-    	 Bq,Cq,Eq,
-    	 Dq,Eq,Fq;
+         Bq,Cq,Eq,
+         Dq,Eq,Fq;
 
     double detAq = AQ.determinant();
 
@@ -272,7 +273,7 @@ bool Blob3D::intersectionWithPlane(double a, double b, double c, double d, Vecto
     SelfAdjointEigenSolver<Matrix2d> solver;
     Matrix2d A33;
     A33 << Aq, Bq,
-    	   Bq, Cq;
+           Bq, Cq;
     solver.compute(A33);
 
     double fact = -detAq/detA33;
