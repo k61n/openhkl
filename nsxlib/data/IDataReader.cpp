@@ -16,12 +16,20 @@
 #include "H5Cpp.h"
 
 #include "../data/IDataReader.h"
+#include "../instrument/Detector.h"
+#include "../instrument/Gonio.h"
+#include "../instrument/Sample.h"
+#include "../instrument/Source.h"
+#include "../utils/Units.h"
 
 namespace SX {
 
 namespace Data {
 
 using boost::filesystem::path;
+
+using RowMatrixi = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+using RowMatrixd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
 IDataReader::IDataReader(const std::string& filename, const SX::Instrument::Diffractometer& diffractometer)
 : _diffractometer(diffractometer),
