@@ -2,7 +2,7 @@
  * nsxtool : Neutron Single Crystal analysis toolkit
     ------------------------------------------------------------------------------------------
     Copyright (C)
-    2017- Laurent C. Chapon, Eric C. Pellegrini Institut Laue-Langevin 
+    2017- Laurent C. Chapon, Eric C. Pellegrini Institut Laue-Langevin
           Jonathan Fisher, Forschungszentrum Juelich GmbH
     BP 156
     6, rue Jules Horowitz
@@ -33,6 +33,7 @@
 
 #include "Ellipsoid.h"
 #include "AABB.h"
+#include <list>
 
 namespace SX {
 namespace Geometry {
@@ -42,18 +43,22 @@ public:
     using AABB3D = AABB<double, 3>;
 
     IntegrationRegion() = default;
+    IntegrationRegion(const Ellipsoid3D& region, double scale = 1.0, double bkg_scale = 3.0);
 
-    void setPeak(const Ellipsoid3D& peak);
-    const Ellipsoid3D& getPeak() const;
-
-    void setBackground(const Ellipsoid3D& background);
-    const Ellipsoid3D& getBackground() const;
-
-    bool isInside(const Eigen::Vector4d& p) const;
+    const Ellipsoid3D& getRegion() const;
+    bool inRegion(const Eigen::Vector4d& p) const;
     bool inBackground(const Eigen::Vector4d& p) const;
+    bool inForbidden(const Eigen::Vector4d& p) const;
+
+    void addForbidden(const IntegrationRegion& other);
+    void resetForbidden();
+
+    const AABB3D& getBackground() const;
 
 private:
-    Ellipsoid3D _peak, _bkg;
+    Ellipsoid3D _region;
+    AABB3D _background;
+    std::list<Ellipsoid3D> _forbidden;
 };
 
 } // namespace Geometry

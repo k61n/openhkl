@@ -68,9 +68,9 @@ using shape_type = Peak3D::shape_type;
 Peak3D::Peak3D(std::shared_ptr<SX::Data::IData> data):
     _data(),
 //		_hkl(Eigen::Vector3d::Zero()),
-    _region(),
       //  _peak(),
       //  _bkg(),
+    _shape(),
         _unitCells(),
         _sampleState(nullptr),
         _event(nullptr),
@@ -109,34 +109,28 @@ Peak3D::Peak3D(std::shared_ptr<SX::Data::IData> data):
 Peak3D::Peak3D(std::shared_ptr<Data::IData> data, const Peak3D::Ellipsoid3D &shape):
 Peak3D(data)
 {
-    _region.setPeak(shape);
-    auto bkg = shape;
-    bkg.scale(3.0);
-    _region.setBackground(bkg);
+    setShape(shape);
 }
 
 Peak3D::Peak3D(const Peak3D& other):
-        _data(other._data),
-//		_hkl(other._hkl),
-        _region(other._region),
-        //_peak(other._peak),
-        //_bkg(other._bkg),
-        _projection(other._projection),
-        _projectionPeak(other._projectionPeak),
-        _projectionBkg(other._projectionBkg),
-        _unitCells(other._unitCells),
-        _sampleState(other._sampleState),
-        _event(other._event == nullptr ? nullptr : new DetectorEvent(*other._event)),
-        _source(other._source),
-        _counts(other._counts),
-        _countsSigma(other._countsSigma),
-        _scale(other._scale),
-        _selected(other._selected),
-        _masked(other._masked),
-        _observed(other._observed),
-        _transmission(other._transmission),
-        _activeUnitCellIndex(other._activeUnitCellIndex),
-        _state(other._state)
+    _data(other._data),
+    _shape(other._shape),
+    _projection(other._projection),
+    _projectionPeak(other._projectionPeak),
+    _projectionBkg(other._projectionBkg),
+    _unitCells(other._unitCells),
+    _sampleState(other._sampleState),
+    _event(other._event == nullptr ? nullptr :new DetectorEvent(*other._event)),
+    _source(other._source),
+    _counts(other._counts),
+    _countsSigma(other._countsSigma),
+    _scale(other._scale),
+    _selected(other._selected),
+    _masked(other._masked),
+    _observed(other._observed),
+    _transmission(other._transmission),
+    _activeUnitCellIndex(other._activeUnitCellIndex),
+    _state(other._state)
 {
 }
 
@@ -144,16 +138,13 @@ Peak3D& Peak3D::operator=(const Peak3D& other)
 {
     if (this != &other) {
         _data = other._data;
-  //      _hkl = other._hkl;
-        _region = other._region;
-        //_peak = other._peak;
-        //_bkg = other._bkg;
+        _shape = other._shape;
         _projection = other._projection;
         _projectionPeak = other._projectionPeak;
         _projectionBkg = other._projectionBkg;
         _unitCells = other._unitCells;
         _sampleState = other._sampleState;
-        *_event = *other._event;
+        _event = other._event == nullptr ? nullptr : std::unique_ptr<DetectorEvent>(new DetectorEvent(*other._event));
         _source= other._source;
         _counts = other._counts;
         _countsSigma = other._countsSigma;
@@ -188,10 +179,10 @@ Eigen::RowVector3d Peak3D::getMillerIndices() const
     return hkld;
 }
 
-void Peak3D::setPeakShape(const Ellipsoid3D& peak)
+void Peak3D::setShape(const Ellipsoid3D& peak)
 {
-    _region.setPeak(peak);
-    //_peak = peak;
+    _shape = peak;
+
     Eigen::Vector3d center = peak.getAABBCenter();
     int f = int(std::lround(std::floor(center[2])));
 
@@ -206,12 +197,6 @@ void Peak3D::setPeakShape(const Ellipsoid3D& peak)
 
     setDetectorEvent(DetectorEvent(
        *data->getDiffractometer()->getDetector(), center[0], center[1], detState.getValues()));
-}
-
-void Peak3D::setBackgroundShape(const Ellipsoid3D& background)
-{
-    _region.setBackground(background);
-    // _bkg = background;
 }
 
 bool Peak3D::getMillerIndices(const UnitCell& uc, Eigen::RowVector3d& hkl, bool applyUCTolerance) const
@@ -353,20 +338,9 @@ double Peak3D::getTransmission() const
     return _transmission;
 }
 
-void Peak3D::scalePeakShape(double scale)
+void Peak3D::scaleShape(double scale)
 {
-    Ellipsoid3D peak = _region.getPeak();
-    peak.scale(scale);
-    _region.setPeak(peak);
-    // _peak.scale(scale);
-}
-
-void Peak3D::scaleBackgroundShape(double scale)
-{
-    Ellipsoid3D bkg = _region.getBackground();
-    bkg.scale(scale);
-    _region.setBackground(bkg);
-    //_bkg.scale(scale);
+    _shape.scale(scale);
 }
 
 double Peak3D::getRawSigma() const
@@ -559,9 +533,12 @@ void Peak3D::framewiseIntegrateBegin()
         return;
     }
 
+    // set up the integration region
+    _state._region = IntegrationRegion(_shape);
+
     // Get the lower and upper limit of the bkg Bounding box
-    _state.lower = _region.getBackground().getLower();
-    _state.upper= _region.getBackground().getUpper();
+    _state.lower = _state._region.getBackground().getLower();
+    _state.upper= _state._region.getBackground().getUpper();
 
     //
     _state.data_start = static_cast<unsigned int>(std::floor(_state.lower[2]));
@@ -626,14 +603,8 @@ void Peak3D::framewiseIntegrateStep(Eigen::MatrixXi& frame, unsigned int idx)
             int intensity = frame(y, x);
             _state.point1 << x+0.5, y+0.5, idx, 1;
 
-            auto&& peak = _region.getPeak();
-            auto&& bkg = _region.getBackground();
-
-            //bool inbackground = (bkg.isInsideAABB(_state.point1) && bkg.isInside(_state.point1));
-            //bool inpeak = (peak.isInsideAABB(_state.point1) && peak.isInside(_state.point1));
-
-            bool inpeak = _region.isInside(_state.point1);
-            bool inbackground = _region.inBackground(_state.point1);
+            bool inpeak = _state._region.inRegion(_state.point1);
+            bool inbackground = _state._region.inBackground(_state.point1);
 
             if (inpeak) {
                 intensityP += intensity;

@@ -456,7 +456,7 @@ void IData::maskPeak(sptrPeak3D peak) const
     peak->setMasked(false);
     for (auto&& m : _masks) {
         // If the background of the peak intercept the mask, unselected the peak
-        if (m->intercept(peak->getRegion().getBackground())) {
+        if (m->intercept(peak->getShape())) {
             peak->setMasked(true);
             break;
         }

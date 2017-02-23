@@ -414,66 +414,6 @@ void SessionModel::findFriedelPairs()
     return;
 }
 
-// jmf: dead code??
-void SessionModel::integrateCalculatedPeaks()
-{
-    qDebug() << "Integrating calculated peaks...";
-
-    int count = 0;
-    Eigen::Vector3d peak_extent, bg_extent;
-    peak_extent << 0.0, 0.0, 0.0;
-    bg_extent << 0.0, 0.0, 0.0;
-
-    std::shared_ptr<UnitCell> unit_cell;
-
-    for (std::shared_ptr<IData> numor: getSelectedNumors()) {
-        for (sptrPeak3D peak: numor->getPeaks()) {
-            if ( peak && peak->isSelected() && !peak->isMasked() ) {
-                peak_extent += peak->getRegion().getPeak().getAABBExtents();
-                bg_extent += peak->getRegion().getBackground().getAABBExtents();
-                ++count;
-            }
-        }
-    }
-
-    if ( count == 0) {
-        qDebug() << "No peaks -- cannot search for equivalences!";
-        return;
-    }
-
-    peak_extent /= count;
-    bg_extent /= count;
-
-    qDebug() << "Done calculating average bounding box";
-
-    qDebug() << peak_extent(0) << " " << peak_extent(1) << " " << peak_extent(2);
-    qDebug() << bg_extent(0) << " " << bg_extent(1) << " " << bg_extent(2);
-
-    for (std::shared_ptr<IData> numor: getSelectedNumors())
-    {
-        std::vector<sptrPeak3D> calculated_peaks;
-
-        shared_ptr<Sample> sample = numor->getDiffractometer()->getSample();
-        unsigned int ncrystals = static_cast<unsigned int>(sample->getNCrystals());
-
-        if (ncrystals) {
-            for (unsigned int i = 0; i < ncrystals; ++i) {
-                SX::Crystal::SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
-                auto ub = sample->getUnitCell(i)->getReciprocalStandardM();
-
-                qDebug() << "Calculating peak locations...";
-
-                auto hkls = sample->getUnitCell(i)->generateReflectionsInSphere(1.5);
-                std::vector<SX::Crystal::PeakCalc> peaks = numor->hasPeaks(hkls, ub);
-                calculated_peaks.reserve(calculated_peaks.size() + peaks.size());
-
-                qDebug() << "Adding calculated peaks...";
-            }
-        }
-
-        qDebug() << "Done.";
-    }
-}
 
 void SessionModel::peakFitDialog()
 {

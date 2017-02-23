@@ -90,10 +90,7 @@ public:
     void unlinkData();
 
     //! Set the Peak region. Peak shaped is owned after setting
-    void setPeakShape(const Ellipsoid3D& peak);
-
-    //! set the background region. Bkg region is owned after setting
-    void setBackgroundShape(const Ellipsoid3D& background);
+    void setShape(const Ellipsoid3D& peak);
 
     //! Get the Miller indices of the peak (double to allow integration of incommensurate peaks)
     Eigen::RowVector3d getMillerIndices() const;
@@ -128,9 +125,8 @@ public:
     Eigen::VectorXd getPeakProjectionSigma() const;
     Eigen::VectorXd getBkgProjectionSigma() const;
 
-    const IntegrationRegion& getRegion() const { return _region; }
-    // const Ellipsoid3D& getPeak() const { return _peak;}
-    // const Ellipsoid3D& getBackground() const {return _bkg;}
+    const Ellipsoid3D& getShape() const { return _shape; }
+
     //! Return the scaled intensity of the peak.
     double getScaledIntensity() const;
     //! Return the raw intensity of the peak.
@@ -180,8 +176,7 @@ public:
     bool isObserved() const;
 
     bool hasUnitCells() const;
-    void scalePeakShape(double scale);
-    void scaleBackgroundShape(double scale);
+    void scaleShape(double scale);
 
     // testing: new implementation of integration
     void framewiseIntegrateBegin();
@@ -200,11 +195,10 @@ private:
     //! Miller indices of the peak
     // Eigen::RowVector3d _hkl;
     //! Shape describing the Peak zone
-    // Ellipsoid3D _peak;
+    Ellipsoid3D _shape;
     //! Shape describing the background zone (must fully contain peak)
     // Ellipsoid3D _bkg;
-    //! Shape used to determine integration
-    IntegrationRegion _region;
+
     //!
     Eigen::VectorXd _projection;
     Eigen::VectorXd _projectionPeak;
@@ -240,7 +234,8 @@ private:
     int _activeUnitCellIndex;
 
     struct IntegrationState {
-
+        //! Shape used to determine integration
+        IntegrationRegion _region;
 
         Eigen::Vector3d lower;
         Eigen::Vector3d upper;

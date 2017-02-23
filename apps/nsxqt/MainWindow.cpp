@@ -301,7 +301,7 @@ void MainWindow::plotPeak(sptrPeak3D peak)
     // Ensure that frames
     changeData(peak->getData());
     // Get frame number to adjust the data
-    size_t data_frame = size_t(std::lround(peak->getRegion().getPeak().getAABBCenter()[2]));
+    size_t data_frame = size_t(std::lround(peak->getShape().getAABBCenter()[2]));
     scenePtr->setData(peak->getData(), data_frame);
     // Update the scrollbar
     _ui->frame->setValue(data_frame);
@@ -625,14 +625,7 @@ void MainWindow::on_actionRescale_integration_area_triggered()
 
     for (auto&& numor: numors) {
         for (auto&& peak: numor->getPeaks()) {
-            auto shape_peak = peak->getRegion().getPeak();
-            auto shape_back = peak->getRegion().getBackground();
-
-            shape_peak.scale(scale_factor);
-            shape_back.scale(scale_factor);
-
-            peak->setPeakShape(shape_peak);
-            peak->setBackgroundShape(shape_back);
+            peak->scaleShape(scale_factor);
         }
         numor->integratePeaks();
     }

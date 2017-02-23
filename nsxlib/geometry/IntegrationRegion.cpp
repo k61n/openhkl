@@ -2,7 +2,7 @@
  * nsxtool : Neutron Single Crystal analysis toolkit
     ------------------------------------------------------------------------------------------
     Copyright (C)
-    2017- Laurent C. Chapon, Eric C. Pellegrini Institut Laue-Langevin 
+    2017- Laurent C. Chapon, Eric C. Pellegrini Institut Laue-Langevin
           Jonathan Fisher, Forschungszentrum Juelich GmbH
     BP 156
     6, rue Jules Horowitz
@@ -38,45 +38,63 @@
 namespace SX {
 namespace Geometry {
 
-void IntegrationRegion::setPeak(const IntegrationRegion::Ellipsoid3D &peak)
+IntegrationRegion::IntegrationRegion(
+        const IntegrationRegion::Ellipsoid3D &region, double scale, double bkg_scale):
+    _region(region),
+    _background(region.getLower(), region.getUpper())
 {
-    _peak = peak;
+    _region.scale(scale); // todo: need erf_inv
+    _background.scale(bkg_scale); // todo: need erf_inv
 }
 
-const IntegrationRegion::Ellipsoid3D &IntegrationRegion::getPeak() const
+bool IntegrationRegion::inRegion(const Eigen::Vector4d &p) const
 {
-    return _peak;
-}
-
-void IntegrationRegion::setBackground(const IntegrationRegion::Ellipsoid3D &background)
-{
-    _bkg = background;
-}
-
-const IntegrationRegion::Ellipsoid3D &IntegrationRegion::getBackground() const
-{
-    return _bkg;
-}
-
-bool IntegrationRegion::isInside(const Eigen::Vector4d &p) const
-{
-    //bool inbackground = (bkg.isInsideAABB(_state.point1) && bkg.isInside(_state.point1));
-    //bool inpeak = (peak.isInsideAABB(_state.point1) && peak.isInside(_state.point1));
-    if (!_peak.isInsideAABB(p)) {
+    if (inForbidden(p)) {
         return false;
     }
-    return _peak.isInside(p);
+    return _region.isInside(p);
 }
 
 bool IntegrationRegion::inBackground(const Eigen::Vector4d &p) const
 {
-    if (!_bkg.isInsideAABB(p)) {
+    // NOTE: we only us AABB for background!
+    if(!_background.isInsideAABB(p)) {
         return false;
     }
-    return _bkg.isInside(p);
+    if (inRegion(p)) {
+        return false;
+    }
+    return !inForbidden(p);
 }
 
+bool IntegrationRegion::inForbidden(const Eigen::Vector4d &p) const
+{
+    for (auto&& shape: _forbidden) {
+        if (shape.isInside(p)) {
+            return true;
+        }
+    }
+    return false;
+}
 
+void IntegrationRegion::addForbidden(const IntegrationRegion& other)
+{
+    auto&& shape = other._region;
+
+    if (_background.collide(shape)) {
+        _forbidden.push_back(shape);
+    }
+}
+
+void IntegrationRegion::resetForbidden()
+{
+    _forbidden.clear();
+}
+
+const IntegrationRegion::AABB3D& IntegrationRegion::getBackground() const
+{
+    return _background;
+}
 
 } // namespace Geometry
 } // namespace SX

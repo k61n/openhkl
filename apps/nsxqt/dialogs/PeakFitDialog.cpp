@@ -14,6 +14,7 @@
 #include <nsxlib/data/IData.h>
 
 #include <nsxlib/geometry/AABB.h>
+#include <nsxlib/geometry/IntegrationRegion.h>
 #include "ColorMap.h"
 #include <nsxlib/utils/IMinimizer.h>
 #include <nsxlib/utils/MinimizerEigen.h>
@@ -26,6 +27,7 @@
 using SX::Crystal::Peak3D;
 using SX::Data::IData;
 using SX::Geometry::Ellipsoid;
+using SX::Geometry::IntegrationRegion;
 
 PeakFitDialog::PeakFitDialog(SessionModel* session, QWidget *parent):
     QDialog(parent),
@@ -112,21 +114,12 @@ void PeakFitDialog::checkCollisions()
         if ( other_peak == _peak) {
             continue;
         }
-        if (_peak->getRegion().getBackground().collide(other_peak->getRegion().getPeak())) {
+        if (_peak->getShape().collide(other_peak->getShape())) {
             Eigen::RowVector3i hkl = other_peak->getIntegerMillerIndices();
             qDebug() << "COLLISION FOUND: ("
                      << hkl[0] << ", "
                      << hkl[1] << ", "
                      << hkl[2] << ")";
-
-            int i;
-            for (i = 0; i < 1000; ++i) {
-                _peak->scaleBackgroundShape(0.90);
-                if ( !_peak->getRegion().getBackground().collide(other_peak->getRegion().getPeak()))
-                    break;
-            }
-            qDebug() << "collision removed after " << i+1 << " iterations.";
-            _peak->integrate();
         }
     }
 }
@@ -192,7 +185,7 @@ void PeakFitDialog::updatePeak()
 
     // get AABB
 
-    auto&& aabb = the_peak->getRegion().getBackground();
+    auto&& aabb = IntegrationRegion(the_peak->getShape()).getBackground();
 
     Eigen::Vector3d lower = aabb.getLower();
     Eigen::Vector3d upper = aabb.getUpper();
@@ -218,7 +211,7 @@ void PeakFitDialog::updatePeak()
     qDebug() << _xmax << "    " << _ymax << "    " << _zmax;
 
     // testing
-    const Ellipsoid<double, 3>* ellipse = dynamic_cast<const Ellipsoid<double, 3>*>(&the_peak->getRegion().getPeak());
+    const Ellipsoid<double, 3>* ellipse = dynamic_cast<const Ellipsoid<double, 3>*>(&the_peak->getShape());
 
     if (ellipse) {
         Eigen::Matrix<double, 3, 1> center = ellipse->getCenter();

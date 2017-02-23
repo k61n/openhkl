@@ -163,7 +163,7 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
             //    //setBackgroundShape(Ellipsoid3D(center,eigenvalues,eigenvectors));
 
             sptrPeak3D p = std::make_shared<Peak3D>(Peak3D(numor, shape));
-            const auto extents = p->getRegion().getPeak().getAABBExtents();
+            const auto extents = p->getShape().getAABBExtents();
 
             // peak too small or too large
             if (extents.maxCoeff() > 1e5 || extents.minCoeff() < 1e-5) {
@@ -171,7 +171,7 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
             }
 
             // peak's bounding box not completely contained in detector image
-            if (!dAABB.contains(p->getRegion().getPeak())) {
+            if (!dAABB.contains(p->getShape())) {
                 p->setSelected(false);
             }
 
