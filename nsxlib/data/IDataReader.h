@@ -46,6 +46,24 @@ public:
 
     const Diffractometer& getDiffractometer() const;
 
+    //! Gets the data basename
+    std::string getBasename() const;
+
+    //! Gets the data filename
+    std::string getFilename() const;
+
+    //! Return true if the file is stored in memory
+    bool isInMemory() const;
+
+    //! True if file is open
+    bool isOpened() const;
+
+    //! Returns the size of the file in disk
+    std::size_t getFileSize() const;//
+
+    //! Save the file in HDF5 format
+    void saveHDF5(const std::string& filename);
+
 protected:
 
     MetaData _metadata;
