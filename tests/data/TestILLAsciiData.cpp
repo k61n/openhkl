@@ -10,7 +10,9 @@
 
 #include <boost/test/unit_test.hpp>
 
+#include <nsxlib/instrument/Component.h>
 #include <nsxlib/instrument/ComponentState.h>
+#include <nsxlib/instrument/Detector.h>
 #include <nsxlib/instrument/DiffractometerStore.h>
 #include <nsxlib/data/ILLAsciiData.h>
 #include <nsxlib/utils/Units.h>
@@ -63,13 +65,13 @@ BOOST_AUTO_TEST_CASE(Test_ILL_Data)
     BOOST_CHECK_CLOSE(states[2].sample.getValues()[1],0.48923233E+02*SX::Units::deg,tolerance);
     BOOST_CHECK_CLOSE(states[2].sample.getValues()[2],-0.48583171E+02*SX::Units::deg,tolerance);
 
-    ComponentState cs=dataf->getDetectorInterpolatedState(0.0);
+    ComponentState cs=dataf->getInterpolatedState(diff->getDetector(),0.0);
     BOOST_CHECK_CLOSE(cs.getValues()[0],states[0].detector.getValues()[0],tolerance);
 
-    cs=dataf->getDetectorInterpolatedState(0.5);
+    cs=dataf->getInterpolatedState(diff->getDetector(),0.5);
     BOOST_CHECK_CLOSE(cs.getValues()[0],states[0].detector.getValues()[0]+0.5*(states[1].detector.getValues()[0]-states[0].detector.getValues()[0]),tolerance);
 
-    cs=dataf->getDetectorInterpolatedState(2.3);
+    cs=dataf->getInterpolatedState(diff->getDetector(),2.3);
     BOOST_CHECK_CLOSE(cs.getValues()[0],states[2].detector.getValues()[0]+0.3*(states[3].detector.getValues()[0]-states[2].detector.getValues()[0]),tolerance);
 
     meta = nullptr;

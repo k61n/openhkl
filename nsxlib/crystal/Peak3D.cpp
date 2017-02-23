@@ -183,8 +183,8 @@ void Peak3D::setPeakShape(shape_type* peak)
 
     auto data = getData();
 
-    setSampleState(std::make_shared<ComponentState>(data->getSampleInterpolatedState(f)));
-    ComponentState detState = data->getDetectorInterpolatedState(f);
+    setSampleState(std::make_shared<ComponentState>(data->getInterpolatedState(data->getDiffractometer()->getSample(),f)));
+    ComponentState detState = data->getInterpolatedState(data->getDiffractometer()->getDetector(),f);
 
     using DetectorEvent = SX::Instrument::DetectorEvent;
 

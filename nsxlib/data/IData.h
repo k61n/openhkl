@@ -34,12 +34,14 @@
 #include <set>
 
 #include <Eigen/Dense>
-#include "../geometry/AABB.h"
-#include "../instrument/InstrumentState.h"
-#include "MetaData.h"
-#include "../instrument/Diffractometer.h"
+
 #include "../crystal/Peak3D.h"
 #include "../crystal/PeakCalc.h"
+#include "../geometry/AABB.h"
+#include "../instrument/Component.h"
+#include "../instrument/Diffractometer.h"
+#include "../instrument/InstrumentState.h"
+#include "MetaData.h"
 
 #include <mutex>
 #include <future>
@@ -59,6 +61,7 @@ using RowMatrixi = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::Row
 using RowMatrixd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
 using SX::Instrument::Diffractometer;
+using SX::Instrument::Component;
 using SX::Instrument::ComponentState;
 using SX::Crystal::sptrPeak3D;
 using SX::Geometry::AABB;
@@ -120,26 +123,19 @@ public:
     //! Return the peaks
     std::set<sptrPeak3D>& getPeaks();
 
-    //! Gets the interpolated state between two consecutive detector states
-    ComponentState getDetectorInterpolatedState(double frame);
-
     //! Gets the the detector states.
     const ComponentState& getDetectorState(unsigned long frame) const;
-
-    //! Gets the the detector states.
-    //const std::vector<ComponentState>& getDetectorStates() const;
 
     //! Get the sample state for frame
     const ComponentState& getSampleState(unsigned long frame) const;
 
-    ComponentState getSourceInterpolatedState(double frame);
     const ComponentState& getSourceState(unsigned int frame) const;
 
-    //! Gets the interpolated state between two consecutive sample states
-    ComponentState getSampleInterpolatedState(double frame);
-
-    //! Gets the the sample states.
+    //! Gets the the sample states
     const std::vector<SX::Instrument::InstrumentState>& getInstrumentStates() const;
+
+    //! Get the interpolated state of a given component
+    ComponentState getInterpolatedState(std::shared_ptr<Component> component, double frame) const;
 
     //! Add a new mask to the data
     void addMask(AABB<double,3>* mask);

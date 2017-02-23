@@ -146,15 +146,15 @@ bool IData::isInMemory() const
     return _inMemory;
 }
 
-ComponentState IData::getDetectorInterpolatedState(double frame)
+ComponentState IData::getInterpolatedState(std::shared_ptr<Component> component, double frame) const
 {
     if (frame>(_states.size()-1) || frame<0) {
-        throw std::runtime_error("Error when interpolating detector states: invalid frame value");
+        throw std::runtime_error("Error when interpolating state: invalid frame value");
     }
 
     std::size_t idx = static_cast<std::size_t>(std::floor(frame));
     std::size_t next = std::min(idx+1, _states.size()-1);
-    std::size_t nPhysicalAxes=_diffractometer->getDetector()->getGonio()->getNPhysicalAxes();
+    std::size_t nPhysicalAxes=component->getGonio()->getNPhysicalAxes();
 
     const std::vector<double>& prevState=_states[idx].detector.getValues();
     const std::vector<double>& nextState=_states[next].detector.getValues();
@@ -163,7 +163,7 @@ ComponentState IData::getDetectorInterpolatedState(double frame)
     for (std::size_t i=0; i < nPhysicalAxes; ++i) {
         state[i] = prevState[i] + (frame-static_cast<double>(idx))*(nextState[i]-prevState[i]);
     }
-    return _diffractometer->getDetector()->createState(state);
+    return component->createState(state);
 }
 
 const ComponentState& IData::getDetectorState(unsigned long frame) const
@@ -174,51 +174,12 @@ const ComponentState& IData::getDetectorState(unsigned long frame) const
     return _states[frame].detector;
 }
 
-ComponentState IData::getSampleInterpolatedState(double frame)
-{
-    if (frame > (_states.size()-1) || frame<0) {
-        throw std::runtime_error("Error when interpolating sample states: invalid frame value");
-    }
-
-    std::size_t idx = static_cast<std::size_t>(std::floor(frame));
-    std::size_t next = std::min(idx+1, _states.size()-1);
-    std::size_t nPhysicalAxes=_diffractometer->getSample()->getGonio()->getNPhysicalAxes();
-
-    const std::vector<double>& prevState=_states[idx].sample.getValues();
-    const std::vector<double>& nextState=_states[next].sample.getValues();
-    std::vector<double> state(nPhysicalAxes);
-
-    for (std::size_t i=0;i<nPhysicalAxes;++i) {
-        state[i] = prevState[i] + (frame-static_cast<double>(idx))*(nextState[i]-prevState[i]);
-    }
-    return _diffractometer->getSample()->createState(state);
-}
-
 const ComponentState& IData::getSampleState(unsigned long frame) const
 {
     if (frame > (_states.size()-1)) {
         throw std::runtime_error("Error when returning sample state: invalid frame value");
     }
     return _states[frame].sample;
-}
-
-ComponentState IData::getSourceInterpolatedState(double frame)
-{
-    if (frame>(_states.size()-1) || frame<0) {
-        throw std::runtime_error("Error when interpolating source states: invalid frame value");
-    }
-    std::size_t idx = static_cast<std::size_t>(std::floor(frame));
-    std::size_t next = std::min(idx+1, _states.size()-1);
-    std::size_t nPhysicalAxes=_diffractometer->getSource()->getGonio()->getNPhysicalAxes();
-    std::vector<double> state(nPhysicalAxes);
-
-    const std::vector<double>& prevState = _states[idx].source.getValues();
-    const std::vector<double>& nextState = _states[next].source.getValues();
-
-    for (std::size_t i = 0; i < nPhysicalAxes; ++i) {
-        state[i] = prevState[i] + (frame-static_cast<double>(idx))*(nextState[i]-prevState[i]);
-    }
-    return _diffractometer->getSource()->createState(state);
 }
 
 const ComponentState& IData::getSourceState(unsigned int frame) const
@@ -523,10 +484,10 @@ std::vector<PeakCalc> IData::hasPeaks(const std::vector<Eigen::Vector3d>& hkls, 
         Eigen::Vector3d kf=ki+qi0+(qi-qi0)*t;
         t+=(i-1);
 
-        ComponentState dis=getDetectorInterpolatedState(t);
+        ComponentState dis=getInterpolatedState(_diffractometer->getDetector(),t);
         double px,py;
         // If hit detector, new peak
-        ComponentState cs=getSampleInterpolatedState(t);
+        ComponentState cs=getInterpolatedState(_diffractometer->getSample(),t);
         Eigen::Vector3d from=_diffractometer->getSample()->getPosition(cs.getValues());
 
         double time;
