@@ -57,13 +57,16 @@ void MCAbsorptionDialog::on_pushButton_run_pressed()
             return;
     }
 
-    SX::Geometry::MCAbsorption mca(source->getSelectedMonochromator()->getWidth(),source->getSelectedMonochromator()->getHeight(),-1.0);
+    auto& mono = source->getSelectedMonochromator();
+
+    SX::Geometry::MCAbsorption mca(mono.getWidth(),mono.getHeight(),-1.0);
     auto& hull=sample->getShape();
     if (!hull.checkEulerConditions()) {
             QMessageBox::critical(this,"NSXTOOL","The sample shape (hull) is ill-defined");
             return;
     }
-    mca.setSample(&hull,material->getMuScattering(),material->getMuAbsorption(source->getWavelength()*SX::Units::ang));
+
+    mca.setSample(&hull,material->getMuScattering(),material->getMuAbsorption(mono.getWavelength()*SX::Units::ang));
     const auto& data=_experiment->getData();
     ui->progressBar_MCStatus->setValue(0);
     ui->progressBar_MCStatus->setTextVisible(true);

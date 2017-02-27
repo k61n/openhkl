@@ -101,7 +101,8 @@ int LatticeFunctor::operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) 
     int naxes=9;
 
     // Parameter 9 is offset in wavelength
-    _source->setOffset(xlocal[naxes++]);
+    auto& mono = _source->getSelectedMonochromator();
+    mono.setOffset(xlocal[naxes++]);
 
     // Then n parameters for the detector
     auto sgonio=_sample->getGonio();

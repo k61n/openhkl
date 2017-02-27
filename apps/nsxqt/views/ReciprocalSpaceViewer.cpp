@@ -105,7 +105,8 @@ void ReciprocalSpaceViewer::on_view_clicked()
 
     std::shared_ptr<SX::Instrument::Sample> sample(_experiment->getDiffractometer()->getSample());
 
-    double lambda(_experiment->getDiffractometer()->getSource()->getWavelength());
+    auto& mono = _experiment->getDiffractometer()->getSource()->getSelectedMonochromator();
+    double lambda(mono.getWavelength());
     double invlambda(1.0/lambda);
 
     double invdq(1.0/dq);

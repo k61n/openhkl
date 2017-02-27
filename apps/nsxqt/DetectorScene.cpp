@@ -388,7 +388,8 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
     const auto& samplev=_currentData->getSampleState(_currentFrameIndex).getValues();
     const auto& detectorv=_currentData->getDetectorState(_currentFrameIndex).getValues();
     std::shared_ptr<SX::Instrument::Sample> sample=instr->getSample();
-    double wave=instr->getSource()->getWavelength();
+    auto& mono = instr->getSource()->getSelectedMonochromator();
+    double wave=mono.getWavelength();
 
     QString ttip;
     double gamma, nu, th2;

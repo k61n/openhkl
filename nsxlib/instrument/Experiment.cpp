@@ -121,13 +121,15 @@ void Experiment::addData(std::shared_ptr<IData> data)
     // ensure that there is at least one monochromator!
     if ( _diffractometer->getSource()->getNMonochromators() == 0 ) {
         Monochromator mono("mono");
-        _diffractometer->getSource()->addMonochromator(&mono);
+        _diffractometer->getSource()->addMonochromator(mono);
     }
 
+    auto& mono = _diffractometer->getSource()->getSelectedMonochromator();
+
     if (_data.empty()) {
-        _diffractometer->getSource()->setWavelength(wav);
+        mono.setWavelength(wav);
     } else {
-        if (std::abs(wav-_diffractometer->getSource()->getWavelength())>1e-5)
+        if (std::abs(wav-mono.getWavelength())>1e-5)
             throw std::runtime_error("trying to mix data with different wavelengths");
     }
     _data.insert(std::pair<std::string,std::shared_ptr<IData>>(basename,data));

@@ -57,7 +57,6 @@ namespace Instrument {
     class DetectorEvent;
     class Sample;
     class Detector;
-    class Source;
 }
 
 namespace Crystal {
@@ -110,6 +109,9 @@ public:
     //! Get q vector in the frame of reference of the diffractometer
     Eigen::RowVector3d getQ() const;
 
+    //! Set the wavelength at which this peak was collected
+    void setWavelength(double wavelength);
+
     void getGammaNu(double& gamma,double& nu) const;
 
     //! Run the integration of the peak; iterate over the data
@@ -151,8 +153,6 @@ public:
     void setSampleState(const std::shared_ptr<SX::Instrument::ComponentState>& sstate);
     //!
     void setDetectorEvent(const std::shared_ptr<SX::Instrument::DetectorEvent>& event);
-    //!
-    void setSource(const std::shared_ptr<SX::Instrument::Source>& source);
 
     friend bool operator<(const Peak3D& p1, const Peak3D& p2);
     void setSelected(bool);
@@ -219,8 +219,6 @@ private:
     std::shared_ptr<SX::Instrument::ComponentState> _sampleState;
     //! Pointer to a Detector Event state
     std::shared_ptr<SX::Instrument::DetectorEvent> _event;
-    //!
-    std::shared_ptr<SX::Instrument::Source> _source;
 
     double _counts;
     double _countsSigma;
@@ -231,6 +229,8 @@ private:
     bool _observed;
     double _transmission;
     int _activeUnitCellIndex;
+
+    double _wavelength;
 
     struct IntegrationState {
 

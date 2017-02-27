@@ -12,6 +12,8 @@
 
 #include <boost/property_tree/ptree.hpp>
 
+#include <Eigen/Dense>
+
 namespace SX
 {
 
@@ -80,6 +82,9 @@ public:
 	bool isOffsetFixed() const;
 
     bool operator==(const Monochromator& other);
+
+    //! Get the incoming wave vector
+    Eigen::Vector3d getKi() const;
 
 private:
 

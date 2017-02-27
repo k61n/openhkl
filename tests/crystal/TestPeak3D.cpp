@@ -41,12 +41,12 @@ BOOST_AUTO_TEST_CASE(Test_Peak3D)
 
     SX::Instrument::Monochromator mono("mono");
 
-    source->addMonochromator(&mono);
+    source->addMonochromator(mono);
     source->setSelectedMonochromator(0);
 
     Peak3D peak;
     peak.setDetectorEvent(event);
-    peak.setSource(source);
+    peak.setWavelength(source->getSelectedMonochromator().getWavelength());
     Eigen::Vector3d Q=peak.getQ();
     BOOST_CHECK_SMALL(Q[0],tolerance);
     BOOST_CHECK_SMALL(Q[1],tolerance);

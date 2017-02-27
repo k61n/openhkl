@@ -189,5 +189,12 @@
         <width units="mm">1.0</width>
         <height units="mm">1.0</height>
         <wavelength>1.24</wavelength>
+        <monochromator>
+            <name>Cu(220)</name>
+            <width units="mm">60.0</width>
+            <height units="mm">80.0</height>
+            <wavelength>0.8409</wavelength>
+            <fwhm>0.00901</fwhm>
+        </monochromator>
     </source>
 </instrument>

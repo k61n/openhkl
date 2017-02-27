@@ -60,6 +60,7 @@ using SX::Geometry::Blob3D;
 using SX::Data::IFrameIterator;
 
 namespace SX {
+
 namespace Crystal {
 
 using shape_type = Peak3D::shape_type;
@@ -72,7 +73,6 @@ Peak3D::Peak3D(std::shared_ptr<SX::Data::IData> data):
         _unitCells(),
         _sampleState(nullptr),
         _event(nullptr),
-        _source(nullptr),
         _counts(0.0),
         _countsSigma(0.0),
         _scale(1.0),
@@ -81,6 +81,7 @@ Peak3D::Peak3D(std::shared_ptr<SX::Data::IData> data):
         _observed(true),
         _transmission(1.0),
         _activeUnitCellIndex(0),
+        _wavelength(1.8),
         _state()
 {
     linkData(data);
@@ -104,7 +105,6 @@ Peak3D::Peak3D(std::shared_ptr<Data::IData> data, const Blob3D &blob, double con
 
 Peak3D::Peak3D(const Peak3D& other):
         _data(other._data),
-//		_hkl(other._hkl),
         _peak(other._peak == nullptr ? nullptr : other._peak->clone()),
         _bkg(other._bkg == nullptr ? nullptr : other._bkg->clone()),
         _projection(other._projection),
@@ -113,7 +113,6 @@ Peak3D::Peak3D(const Peak3D& other):
         _unitCells(other._unitCells),
         _sampleState(other._sampleState),
         _event(other._event),
-        _source(other._source),
         _counts(other._counts),
         _countsSigma(other._countsSigma),
         _scale(other._scale),
@@ -122,6 +121,7 @@ Peak3D::Peak3D(const Peak3D& other):
         _observed(other._observed),
         _transmission(other._transmission),
         _activeUnitCellIndex(other._activeUnitCellIndex),
+        _wavelength(other._wavelength),
         _state(other._state)
 {
 }
@@ -130,7 +130,6 @@ Peak3D& Peak3D::operator=(const Peak3D& other)
 {
     if (this != &other) {
         _data = other._data;
-  //      _hkl = other._hkl;
         _peak = other._peak ? std::unique_ptr<shape_type>(other._peak->clone()) : nullptr;
         _bkg = other._bkg ? std::unique_ptr<shape_type>(other._bkg->clone()) : nullptr;
         _projection = other._projection;
@@ -139,7 +138,6 @@ Peak3D& Peak3D::operator=(const Peak3D& other)
         _unitCells = other._unitCells;
         _sampleState = other._sampleState;
         _event = other._event;
-        _source= other._source;
         _counts = other._counts;
         _countsSigma = other._countsSigma;
         _scale = other._scale;
@@ -147,8 +145,9 @@ Peak3D& Peak3D::operator=(const Peak3D& other)
         _observed = other._observed;
         _masked = other._masked;
         _transmission = other._transmission;
-        _state = other._state;
+        _wavelength = other._wavelength;
         _activeUnitCellIndex = other._activeUnitCellIndex;
+        _state = other._state;
     }
     return *this;
 }
@@ -157,7 +156,9 @@ void Peak3D::linkData(const std::shared_ptr<SX::Data::IData>& data)
 {
     _data = std::weak_ptr<SX::Data::IData>(data);
     if (data != nullptr) {
-        setSource(data->getDiffractometer()->getSource());
+        std::cout<<data->getDiffractometer()->getSource()<<std::endl;
+        auto& mono = data->getDiffractometer()->getSource()->getSelectedMonochromator();
+        _wavelength = mono.getWavelength();
     }
 }
 
@@ -420,21 +421,19 @@ double Peak3D::getSampleStepSize() const
 
 Eigen::RowVector3d Peak3D::getKf() const
 {
-    double wav = _source->getWavelength();
-    Eigen::Vector3d kf = _event->getParent()->getKf(*_event, wav, _sampleState->getParent()->getPosition(*_sampleState));
+    Eigen::Vector3d kf = _event->getParent()->getKf(*_event, _wavelength, _sampleState->getParent()->getPosition(*_sampleState));
     return kf;
 }
 
 Eigen::RowVector3d Peak3D::getQ() const
 {
-    double wav=_source->getWavelength();
     // If sample state is not set, assume sample is at the origin
     if (!_sampleState) {
-        return _event->getParent()->getQ(*_event, wav);
+        return _event->getParent()->getQ(*_event, _wavelength);
     }
 
     // otherwise scattering point is deducted from the sample
-    Eigen::Vector3d q = _event->getParent()->getQ(*_event, wav,
+    Eigen::Vector3d q = _event->getParent()->getQ(*_event, _wavelength,
                                                   _sampleState->getParent()->getPosition(*_sampleState));
     q = _sampleState->getParent()->getGonio()->getInverseHomMatrix(_sampleState->getValues()).rotation()*q;
     return q;
@@ -450,14 +449,14 @@ void Peak3D::setDetectorEvent(const std::shared_ptr<SX::Instrument::DetectorEven
     _event = event;
 }
 
-void Peak3D::setSource(const std::shared_ptr<SX::Instrument::Source>& source)
-{
-    _source = source;
-}
-
 void Peak3D::getGammaNu(double& gamma,double& nu) const
 {
     _event->getParent()->getGammaNu(*_event,gamma,nu,_sampleState->getParent()->getPosition(*_sampleState));
+}
+
+void Peak3D::setWavelength(double wavelength)
+{
+    _wavelength = wavelength;
 }
 
 bool operator<(const Peak3D& p1, const Peak3D& p2)

@@ -59,7 +59,8 @@ int UBFunctor::operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const
     int naxes=9;
 
     // Parameter 9 is offset in wavelength
-    _source->setOffset(x[naxes++]);
+    auto& mono = _source->getSelectedMonochromator();
+    mono.setOffset(x[naxes++]);
 
     // Then n parameters for the detector
     auto sgonio=_sample->getGonio();
@@ -133,7 +134,8 @@ void UBFunctor::setSource(const std::shared_ptr<SX::Instrument::Source>& source)
 
 void UBFunctor::resetParameters()
 {
-    _source->setOffset(0.0);
+    auto& mono = _source->getSelectedMonochromator();
+    mono.setOffset(0.0);
     auto dgonio=_detector->getGonio();
     if (dgonio) {
         for (unsigned int i = 0; i < dgonio->getNAxes(); ++i) {
@@ -169,7 +171,8 @@ void UBFunctor::refineParameter(unsigned int idx, bool refine)
     }
     unsigned int ii = idx-9;
     if (ii == 0) {
-        _source->setOffsetFixed(fixed);
+        auto& mono = _source->getSelectedMonochromator();
+        mono.setOffsetFixed(fixed);
         return;
     }
     ii--;
@@ -427,7 +430,9 @@ UBSolution::UBSolution(std::shared_ptr<SX::Instrument::Detector> detector,
 
     idx = 9;
 
-    if (_source->isOffsetFixed()) {
+    auto& mono = _source->getSelectedMonochromator();
+
+    if (mono.isOffsetFixed()) {
         _sigmaSourceOffset=0.0;
     } else {
         _sigmaSourceOffset=std::sqrt(cov(9,9));
@@ -488,9 +493,11 @@ UBSolution& UBSolution::operator=(const UBSolution& other)
 
 std::ostream& operator<<(std::ostream& os, const UBSolution& solution)
 {
+    auto& mono = solution._source->getSelectedMonochromator();
+
     os<<"UB matrix:"<<std::endl;
     os<<solution._ub<< std::endl;
-    os << "Wavelength:" << solution._source->getWavelength() << "("<< solution._sigmaSourceOffset<< ")" << std::endl;
+    os << "Wavelength:" << mono.getWavelength() << "("<< solution._sigmaSourceOffset<< ")" << std::endl;
     os<<"Detector offsets: " << std::endl;
     auto detectorG=solution._detector->getGonio();
     for (unsigned int i=0;i<detectorG->getNAxes();++i) {

@@ -648,7 +648,8 @@ void SessionModel::incorporateCalculatedPeaks()
     for(std::shared_ptr<IData> numor: numors) {
         qDebug() << "Finding missing peaks for numor " << ++current_numor << " of " << numors.size();
 
-        const double wavelength = numor->getDiffractometer()->getSource()->getWavelength();
+        auto& mono = numor->getDiffractometer()->getSource()->getSelectedMonochromator();
+        const double wavelength = mono.getWavelength();
         std::vector<sptrPeak3D> calculated_peaks;
 
         shared_ptr<Sample> sample = numor->getDiffractometer()->getSample();

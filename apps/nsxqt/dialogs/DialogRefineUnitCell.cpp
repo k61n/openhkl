@@ -84,7 +84,8 @@ void DialogRefineUnitCell::setMinimizer()
 
     int start=10;
 
-    _minimizer.refineParameter(9,!source->getSelectedMonochromator()->isOffsetFixed());
+    auto& mono = source->getSelectedMonochromator();
+    _minimizer.refineParameter(9,!mono.isOffsetFixed());
 
     int nSampleOffsets=sample->getNAxes();
     for (int i = 0; i < nSampleOffsets; ++i) {
@@ -114,8 +115,8 @@ void DialogRefineUnitCell::setLatticeParams()
 
 void DialogRefineUnitCell::setWavelength()
 {
-    auto source = _experiment->getDiffractometer()->getSource();
-    ui->doubleSpinBox_Wavelength->setValue(source->getWavelength());
+    auto& mono = _experiment->getDiffractometer()->getSource()->getSelectedMonochromator();
+    ui->doubleSpinBox_Wavelength->setValue(mono.getWavelength());
 }
 
 void DialogRefineUnitCell::setSampleOffsets()

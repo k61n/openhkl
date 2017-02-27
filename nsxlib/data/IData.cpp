@@ -7,9 +7,10 @@
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/operations.hpp>
 
-#include "IData.h"
+#include "../data/IData.h"
 #include "../instrument/Detector.h"
 #include "../instrument/Gonio.h"
+#include "../instrument/Monochromator.h"
 #include "../instrument/Sample.h"
 #include "../instrument/Source.h"
 
@@ -419,11 +420,12 @@ std::vector<PeakCalc> IData::hasPeaks(const std::vector<Eigen::Vector3d>& hkls, 
     std::vector<PeakCalc> peaks;
     unsigned int scanSize = static_cast<unsigned int>(_states.size());
     Eigen::Matrix3d UB = BU.transpose();
-    Eigen::Vector3d ki=_diffractometer->getSource()->getKi();
+    auto& mono = _diffractometer->getSource()->getSelectedMonochromator();
+    Eigen::Vector3d ki=mono.getKi();
     std::vector<Eigen::Matrix3d> rotMatrices;
     rotMatrices.reserve(scanSize);
     auto gonio = _diffractometer->getSample()->getGonio();
-    double wavelength_2 = -0.5 * _diffractometer->getSource()->getWavelength();
+    double wavelength_2 = -0.5 * mono.getWavelength();
 
     for (unsigned int s=0; s<scanSize; ++s) {
         rotMatrices.push_back(gonio->getHomMatrix(_states[s].sample.getValues()).rotation());

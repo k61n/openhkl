@@ -65,7 +65,8 @@ void LatticeMinimizer::setConstant(unsigned int idx, double value)
 
 void LatticeMinimizer::resetOffsets()
 {
-    _functor._source->setOffset(0.0);
+    auto& mono = _functor._source->getSelectedMonochromator();
+    mono.setOffset(0.0);
     auto dgonio=_functor._detector->getGonio();
     if (dgonio)
     {
