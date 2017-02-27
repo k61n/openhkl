@@ -28,41 +28,66 @@
  *
  */
 
-#ifndef NSXTOOL_INTEGRATIONREGION_H_
-#define NSXTOOL_INTEGRATIONREGION_H_
+#ifndef NSXTOOL_PEAKINTEGRATOR_H_
+#define NSXTOOL_PEAKINTEGRATOR_H_
 
-#include "../geometry/Ellipsoid.h"
-#include "../geometry/AABB.h"
-#include <list>
+#include "../geometry/IntegrationRegion.h"
 #include <Eigen/Core>
 
 namespace SX {
-namespace Geometry {
-class IntegrationRegion {
+
+namespace Data {
+class IData;
+}
+
+namespace Crystal {
+
+class PeakIntegrator {
 public:
-    enum class point_type {
-        REGION = 1,
-        BACKGROUND = 2,
-        EXCLUDED = 3
-    };
+    PeakIntegrator() = delete;
+    PeakIntegrator(const SX::Geometry::IntegrationRegion& region, const SX::Data::IData& data);
 
-    using Ellipsoid3D = Ellipsoid<double, 3>;
+    void step(const Eigen::MatrixXi& frame, size_t idx, const Eigen::MatrixXi& mask);
+    void end();
 
-    IntegrationRegion() = default;
-    IntegrationRegion(const Ellipsoid3D& region, double scale = 1.0, double bkg_scale = 3.0);
+    const Eigen::VectorXd& getProjectionPeak() const;
+    const Eigen::VectorXd& getProjectionBackground() const;
+    const Eigen::VectorXd& getProjection() const;
 
-    const Ellipsoid3D& getRegion() const;
-    bool inRegion(const Eigen::Vector4d& p) const;
-    bool inBackground(const Eigen::Vector4d& p) const;
-
-    const Ellipsoid3D& getBackground() const;
-    void updateMask(Eigen::MatrixXi& mask, double z) const;
-
+    const SX::Geometry::IntegrationRegion& getRegion() const;
 private:
-    Ellipsoid3D _region, _background;
+
+    SX::Geometry::IntegrationRegion _region;
+    Eigen::Vector3d _lower;
+    Eigen::Vector3d _upper;
+
+    long _data_start;
+    long _data_end;
+
+    long _start_x;
+    long _end_x;
+
+    long _start_y;
+    long _end_y;
+
+    Eigen::Vector4d _point1;
+
+    int _dx;
+    int _dy;
+
+    Eigen::VectorXd _projection;
+    Eigen::VectorXd _projectionPeak;
+    Eigen::VectorXd _projectionBkg;
+    Eigen::VectorXd _pointsPeak;
+    Eigen::VectorXd _pointsBkg;
+    Eigen::VectorXd _countsPeak;
+    Eigen::VectorXd _countsBkg;
+
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
 };
 
-} // namespace Geometry
+} // namespace Crystal
 } // namespace SX
 
-#endif // NSXTOOL_INTEGRATIONREGION_H_
+#endif // NSXTOOL_PEAKINTEGRATOR_H_

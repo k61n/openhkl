@@ -45,6 +45,7 @@
 #include "../data/IData.h"
 #include "../geometry/IShape.h"
 #include "Peak3D.h"
+#include "PeakIntegrator.h"
 #include "../instrument/Sample.h"
 #include "../instrument/Source.h"
 #include "../utils/Units.h"
@@ -67,44 +68,22 @@ using shape_type = Peak3D::shape_type;
 
 Peak3D::Peak3D(std::shared_ptr<SX::Data::IData> data):
     _data(),
-//		_hkl(Eigen::Vector3d::Zero()),
-      //  _peak(),
-      //  _bkg(),
     _shape(),
-        _unitCells(),
-        _sampleState(nullptr),
-        _event(nullptr),
-        _source(nullptr),
-        _counts(0.0),
-        _countsSigma(0.0),
-        _scale(1.0),
-        _selected(true),
-        _masked(false),
-        _observed(true),
-        _transmission(1.0),
-        _activeUnitCellIndex(0),
-        _state()
+    _unitCells(),
+    _sampleState(nullptr),
+    _event(nullptr),
+    _source(nullptr),
+    _counts(0.0),
+    _countsSigma(0.0),
+    _scale(1.0),
+    _selected(true),
+    _masked(false),
+    _observed(true),
+    _transmission(1.0),
+    _activeUnitCellIndex(0)
 {
     linkData(data);
 }
-
-//Peak3D::Peak3D(std::shared_ptr<Data::IData> data, const Blob3D &blob, double confidence)
-//: Peak3D(data)
-//{
-//    Eigen::Vector3d center, eigenvalues;
-//    Eigen::Matrix3d eigenvectors;
-
-//    blob.toEllipsoid(confidence, center, eigenvalues, eigenvectors);
-//    _region.setPeak(Ellipsoid3D(center,eigenvalues,eigenvectors));
-//    // setPeakShape(Ellipsoid3D(center,eigenvalues,eigenvectors));
-
-//    eigenvalues[0]*=2.0;
-//    eigenvalues[1]*=2.0;
-//    eigenvalues[2]*=3.0;
-
-//    _region.setBackground(Ellipsoid3D(center,eigenvalues,eigenvectors));
-//    //setBackgroundShape(Ellipsoid3D(center,eigenvalues,eigenvectors));
-//}
 
 Peak3D::Peak3D(std::shared_ptr<Data::IData> data, const Peak3D::Ellipsoid3D &shape):
 Peak3D(data)
@@ -129,33 +108,35 @@ Peak3D::Peak3D(const Peak3D& other):
     _masked(other._masked),
     _observed(other._observed),
     _transmission(other._transmission),
-    _activeUnitCellIndex(other._activeUnitCellIndex),
-    _state(other._state)
+    _activeUnitCellIndex(other._activeUnitCellIndex)
 {
 }
 
 Peak3D& Peak3D::operator=(const Peak3D& other)
 {
-    if (this != &other) {
-        _data = other._data;
-        _shape = other._shape;
-        _projection = other._projection;
-        _projectionPeak = other._projectionPeak;
-        _projectionBkg = other._projectionBkg;
-        _unitCells = other._unitCells;
-        _sampleState = other._sampleState;
-        _event = other._event == nullptr ? nullptr : std::unique_ptr<DetectorEvent>(new DetectorEvent(*other._event));
-        _source= other._source;
-        _counts = other._counts;
-        _countsSigma = other._countsSigma;
-        _scale = other._scale;
-        _selected = other._selected;
-        _observed = other._observed;
-        _masked = other._masked;
-        _transmission = other._transmission;
-        _state = other._state;
-        _activeUnitCellIndex = other._activeUnitCellIndex;
+    // nothing to do
+    if (this == &other) {
+        return *this;
     }
+
+    _data = other._data;
+    _shape = other._shape;
+    _projection = other._projection;
+    _projectionPeak = other._projectionPeak;
+    _projectionBkg = other._projectionBkg;
+    _unitCells = other._unitCells;
+    _sampleState = other._sampleState;
+    _event = other._event == nullptr ? nullptr : std::unique_ptr<DetectorEvent>(new DetectorEvent(*other._event));
+    _source= other._source;
+    _counts = other._counts;
+    _countsSigma = other._countsSigma;
+    _scale = other._scale;
+    _selected = other._selected;
+    _observed = other._observed;
+    _masked = other._masked;
+    _transmission = other._transmission;
+    _activeUnitCellIndex = other._activeUnitCellIndex;
+
     return *this;
 }
 
@@ -242,25 +223,6 @@ Eigen::RowVector3i Peak3D::getIntegerMillerIndices() const
     Eigen::RowVector3i hkl;
     hkl << int(std::lround(hkld[0])), int(std::lround(hkld[1])), int(std::lround(hkld[2]));
     return hkl;
-}
-
-void Peak3D::integrate()
-{
-    auto data = getData();
-
-    if (data == nullptr) {
-        return;
-    }
-
-    framewiseIntegrateBegin();
-    unsigned int idx = _state.data_start;
-    std::unique_ptr<IFrameIterator> it = data->getIterator(int(idx));
-
-    for(; idx <= _state.data_end; it->advance(), ++idx) {
-        Eigen::MatrixXi frame = it->getFrame().cast<int>();
-        framewiseIntegrateStep(frame, idx);
-    }
-    framewiseIntegrateEnd();
 }
 
 Eigen::VectorXd Peak3D::getProjection() const
@@ -379,7 +341,7 @@ void Peak3D::setScale(double factor)
 
 void Peak3D::setTransmission(double transmission)
 {
-    _transmission=transmission;
+    _transmission = transmission;
 }
 
 std::shared_ptr<SX::Instrument::ComponentState> Peak3D::getSampleState()
@@ -525,160 +487,12 @@ double Peak3D::getIOverSigmaI() const
     return _counts/_countsSigma;
 }
 
-void Peak3D::framewiseIntegrateBegin()
+void Peak3D::updateIntegration(const PeakIntegrator& integrator)
 {
-    auto data = getData();
-
-    if (!data) {
-        return;
-    }
-
-    // set up the integration region
-    _state._region = IntegrationRegion(_shape);
-
-    // Get the lower and upper limit of the bkg Bounding box
-    _state.lower = _state._region.getBackground().getLower();
-    _state.upper= _state._region.getBackground().getUpper();
-
-    //
-    _state.data_start = static_cast<unsigned int>(std::floor(_state.lower[2]));
-    _state.data_end = static_cast<unsigned int>(std::ceil(_state.upper[2]));
-
-    _state.start_x = static_cast<unsigned int>(std::floor(_state.lower[0]));
-    _state.end_x = static_cast<unsigned int>(std::ceil(_state.upper[0]));
-
-    _state.start_y = static_cast<unsigned int>(std::floor(_state.lower[1]));
-    _state.end_y = static_cast<unsigned int>(std::ceil(_state.upper[1]));
-
-    if (_state.lower[0] < 0) {
-        _state.start_x=0;
-    }
-    if (_state.lower[1] < 0) {
-        _state.start_y=0;
-    }
-    if (_state.lower[2] < 0) {
-        _state.data_start=0;
-    }
-
-    if (_state.end_x > data->getNCols()-1) {
-        _state.end_x = static_cast<unsigned int>(data->getNCols()-1);
-    }
-    if (_state.end_y > data->getNRows()-1) {
-        _state.end_y =  static_cast<unsigned int>(data->getNRows()-1);
-    }
-    if (_state.data_end > data->getNFrames()-1) {
-        _state.data_end = static_cast<unsigned int>(data->getNFrames()-1);
-    }
-
-    // Allocate all vectors
-    _projection = Eigen::VectorXd::Zero(_state.data_end - _state.data_start + 1);
-    _projectionPeak = Eigen::VectorXd::Zero(_state.data_end - _state.data_start + 1);
-    _projectionBkg = Eigen::VectorXd::Zero(_state.data_end - _state.data_start + 1);
-    _pointsPeak = Eigen::VectorXd::Zero(_state.data_end - _state.data_start + 1);
-    _pointsBkg = Eigen::VectorXd::Zero(_state.data_end - _state.data_start + 1);
-    _countsPeak = Eigen::VectorXd::Zero(_state.data_end - _state.data_start + 1);
-    _countsBkg = Eigen::VectorXd::Zero(_state.data_end - _state.data_start + 1);
-
-    _state.dx = int(_state.end_x - _state.start_x);
-    _state.dy = int(_state.end_y - _state.start_y);
-}
-
-void Peak3D::framewiseIntegrateStep(Eigen::MatrixXi& frame, unsigned int idx)
-{
-    auto data = getData();
-
-    if (!data || idx < _state.data_start || idx > _state.data_end) {
-        return;
-    }
-
-    double pointsinpeak = 0;
-    double pointsinbkg = 0;
-    double intensityP = 0;
-    double intensityBkg = 0;
-
-    _projection[idx-_state.data_start] += frame.block(_state.start_y, _state.start_x, _state.dy,_state.dx).sum();
-
-    for (unsigned int x = _state.start_x; x <= _state.end_x; ++x) {
-        for (unsigned int y = _state.start_y; y <= _state.end_y; ++y) {
-            int intensity = frame(y, x);
-            _state.point1 << x+0.5, y+0.5, idx, 1;
-
-            bool inpeak = _state._region.inRegion(_state.point1);
-            bool inbackground = _state._region.inBackground(_state.point1);
-
-            if (inpeak) {
-                intensityP += intensity;
-                pointsinpeak++;
-                continue;
-            }
-            else if (inbackground) {
-                intensityBkg += intensity;
-                pointsinbkg++;
-            }
-        }
-    }
-
-    _pointsPeak[idx-_state.data_start] = pointsinpeak;
-    _pointsBkg[idx-_state.data_start] = pointsinbkg;
-
-    _countsPeak[idx-_state.data_start] = intensityP;
-    _countsBkg[idx-_state.data_start] = intensityBkg;
-
-    if (pointsinpeak > 0) {
-        _projectionPeak[idx-_state.data_start] = intensityP-intensityBkg*pointsinpeak/pointsinbkg;
-    }
-}
-
-
-void Peak3D::framewiseIntegrateEnd()
-{
-    auto data = getData();
-
-    if (!data) {
-        return;
-    }
-
-    // Quick fix determine the limits of the peak range
-    int datastart = 0;
-    int dataend = 0;
-    bool startfound = false;
-
-    for (int i = 0; i < _projectionPeak.size(); ++i) {
-        if (!startfound && std::fabs(_projectionPeak[i]) > 1e-6) {
-            datastart = i;
-            startfound = true;
-        }
-        if (startfound) {
-            if (std::fabs(_projectionPeak[i])<1e-6) {
-                dataend = i;
-                break;
-            }
-        }
-    }
-    //
-
-    Eigen::VectorXd bkg=_projection-_projectionPeak;
-    if (datastart>1) {
-        datastart--;
-    }
-
-    // Safety check
-    if (datastart==dataend) {
-        return;
-    }
-
-    double bkg_left=bkg[datastart];
-    double bkg_right=bkg[dataend];
-    double diff;
-    for (int i=datastart;i<dataend;++i) {
-        diff=bkg[i]-(bkg_left+static_cast<double>((i-datastart))/static_cast<double>((dataend-datastart))*(bkg_right-bkg_left));
-        if (diff>0) {
-            _projectionPeak[i]+=diff;
-        }
-    }
-
-    // note: this "background" simply refers to anything in the AABB but NOT in the peak
-    _projectionBkg=_projection-_projectionPeak;
+    _integrationRegion = integrator.getRegion();
+    _projectionPeak = integrator.getProjectionPeak();
+    _projectionBkg = integrator.getProjectionBackground();
+    _projection = integrator.getProjection();
     _counts = _projectionPeak.sum();
     _countsSigma = std::sqrt(std::abs(_counts));
 }

@@ -63,6 +63,8 @@ namespace Instrument {
 
 namespace Crystal {
 
+class PeakIntegrator;
+
 class Peak3D {
 public:
     using sptrShape3D=std::shared_ptr<SX::Geometry::IShape<double,3>>;
@@ -113,7 +115,7 @@ public:
     void getGammaNu(double& gamma,double& nu) const;
 
     //! Run the integration of the peak; iterate over the data
-    void integrate();
+    //void integrate();
 
     std::shared_ptr<SX::Data::IData> getData() const { return _data.lock();}
 
@@ -126,6 +128,7 @@ public:
     Eigen::VectorXd getBkgProjectionSigma() const;
 
     const Ellipsoid3D& getShape() const { return _shape; }
+    const SX::Geometry::IntegrationRegion& getIntegrationRegion() const { return _integrationRegion; }
 
     //! Return the scaled intensity of the peak.
     double getScaledIntensity() const;
@@ -179,9 +182,12 @@ public:
     void scaleShape(double scale);
 
     // testing: new implementation of integration
-    void framewiseIntegrateBegin();
-    void framewiseIntegrateStep(Eigen::MatrixXi& frame, unsigned int idx);
-    void framewiseIntegrateEnd();
+    //void framewiseIntegrateBegin();
+//    void framewiseIntegrateStep(Eigen::MatrixXi& frame, unsigned int idx);
+//    void framewiseIntegrateEnd();
+
+    //! update the integration
+    void updateIntegration(const PeakIntegrator& integrator);
 
     //! compute P value that there is actually an observed peak, assuming Poisson statistics
     double pValue();
@@ -196,6 +202,8 @@ private:
     // Eigen::RowVector3d _hkl;
     //! Shape describing the Peak zone
     Ellipsoid3D _shape;
+    //! Region used to integrate the peak
+    SX::Geometry::IntegrationRegion _integrationRegion;
     //! Shape describing the background zone (must fully contain peak)
     // Ellipsoid3D _bkg;
 
@@ -232,34 +240,6 @@ private:
     bool _observed;
     double _transmission;
     int _activeUnitCellIndex;
-
-    struct IntegrationState {
-        //! Shape used to determine integration
-        IntegrationRegion _region;
-
-        Eigen::Vector3d lower;
-        Eigen::Vector3d upper;
-
-        unsigned int data_start;
-        unsigned int data_end;
-
-        unsigned int start_x;
-        unsigned int end_x;
-
-        unsigned int start_y;
-        unsigned int end_y;
-
-        Eigen::Vector4d point1;
-
-        int dx;
-        int dy;
-
-        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-    };
-
-    IntegrationState _state;
-
-
 };
 
 using sptrPeak3D = std::shared_ptr<Peak3D>;

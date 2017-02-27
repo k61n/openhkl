@@ -41,7 +41,7 @@ namespace Geometry {
 IntegrationRegion::IntegrationRegion(
         const IntegrationRegion::Ellipsoid3D &region, double scale, double bkg_scale):
     _region(region),
-    _background(region.getLower(), region.getUpper())
+    _background(region)
 {
     _region.scale(scale); // todo: need erf_inv
     _background.scale(bkg_scale); // todo: need erf_inv
@@ -49,9 +49,6 @@ IntegrationRegion::IntegrationRegion(
 
 bool IntegrationRegion::inRegion(const Eigen::Vector4d &p) const
 {
-    if (inForbidden(p)) {
-        return false;
-    }
     return _region.isInside(p);
 }
 
@@ -61,39 +58,48 @@ bool IntegrationRegion::inBackground(const Eigen::Vector4d &p) const
     if(!_background.isInsideAABB(p)) {
         return false;
     }
-    if (inRegion(p)) {
+
+    if(!_background.isInside(p)) {
         return false;
     }
-    return !inForbidden(p);
+
+    // exclude if in peak
+    return !inRegion(p);
 }
 
-bool IntegrationRegion::inForbidden(const Eigen::Vector4d &p) const
-{
-    for (auto&& shape: _forbidden) {
-        if (shape.isInside(p)) {
-            return true;
-        }
-    }
-    return false;
-}
-
-void IntegrationRegion::addForbidden(const IntegrationRegion& other)
-{
-    auto&& shape = other._region;
-
-    if (_background.collide(shape)) {
-        _forbidden.push_back(shape);
-    }
-}
-
-void IntegrationRegion::resetForbidden()
-{
-    _forbidden.clear();
-}
-
-const IntegrationRegion::AABB3D& IntegrationRegion::getBackground() const
+const IntegrationRegion::Ellipsoid3D& IntegrationRegion::getBackground() const
 {
     return _background;
+}
+
+void IntegrationRegion::updateMask(Eigen::MatrixXi& mask, double z) const
+{
+    auto lower = _background.getLower();
+    auto upper = _background.getUpper();
+
+    if (z < lower[2] || z > upper[2]) {
+        return;
+    }
+
+    long xmin = std::lround(std::floor(lower[0]));
+    long ymin = std::lround(std::floor(lower[1]));
+    long xmax = std::lround(std::ceil(upper[0])+1);
+    long ymax = std::lround(std::ceil(upper[1])+1);
+
+    xmin = std::max(0l, xmin);
+    ymin = std::max(0l, ymin);
+
+    xmax = std::min(xmax, mask.cols());
+    ymax = std::min(ymax, mask.rows());
+
+    for (auto x = xmin; x < xmax; ++x) {
+        for (auto y = ymin; y < ymax; ++y) {
+            Eigen::Vector4d p(x, y, z, 1.0);
+            if (inRegion(p)) {
+                mask(y, x) = 1;
+            }
+        }
+    }
 }
 
 } // namespace Geometry

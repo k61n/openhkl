@@ -48,7 +48,9 @@ DetectorScene::DetectorScene(QObject *parent)
   _lastClickedGI(nullptr),
   _showPeakCalcs(false),
   _logarithmic(false),
-  _colormap(new ColorMap())
+  _colormap(new ColorMap()),
+  _integrationRegion(nullptr),
+  _drawBackground(false)
 {
     //setBspTreeDepth(4);
     qDebug() << "BSP tree depth = " << bspTreeDepth();
@@ -462,6 +464,11 @@ void DetectorScene::changeInteractionMode(int mode)
 
 void DetectorScene::loadCurrentImage(bool newimage)
 {
+    const unsigned int red = (128u << 24) | (255u << 16);
+    const unsigned int green = (128u << 24) | (255u << 8);
+    const unsigned int yellow = (128u << 24) | (255u << 16) | (255u << 8);
+    const unsigned int transparent = 0;
+
     if (_currentData == nullptr) {
         return;
     }
@@ -481,10 +488,73 @@ void DetectorScene::loadCurrentImage(bool newimage)
     }
     if (_image == nullptr) {
         _image = addPixmap(QPixmap::fromImage(_colormap->matToImage(_currentFrame, full, _currentIntensity, _logarithmic)));
-        _image->setZValue(-1);
+        _image->setZValue(-2);
     } else {
         _image->setPixmap(QPixmap::fromImage(_colormap->matToImage(_currentFrame, full, _currentIntensity, _logarithmic)));
     }
+
+    // update the integration region pixmap
+    if (_drawBackground) {
+        const int ncols = _currentData->getNCols();
+        const int nrows = _currentData->getNRows();
+
+        QImage region_img(ncols, nrows, QImage::Format_ARGB32);
+
+        for (auto c = 0; c < ncols; ++c) {
+            for (auto r = 0; r < nrows; ++r) {
+                region_img.setPixel(c, r, transparent);
+            }
+        }
+
+        Eigen::MatrixXi mask(nrows, ncols);
+        mask.setZero();
+
+        for (auto&& peak: _currentData->getPeaks()) {
+            peak->getIntegrationRegion().updateMask(mask, _currentFrameIndex);
+        }
+
+        for (auto&& peak: _currentData->getPeaks()) {
+            auto&& region = peak->getIntegrationRegion();
+            auto&& lower = region.getBackground().getLower();
+            auto&& upper = region.getBackground().getUpper();
+
+            if (_currentFrameIndex < std::floor(lower[2])) {
+                continue;
+            }
+
+            if (_currentFrameIndex > std::ceil(upper[2])) {
+                continue;
+            }
+
+            long xmin = std::max(0l, std::lround(std::floor(lower[0])));
+            long ymin = std::max(0l, std::lround(std::floor(lower[1])));
+
+
+            long xmax = std::min(long(_currentData->getNCols()), std::lround(std::ceil(upper[0]))+1);
+            long ymax = std::min(long(_currentData->getNRows()), std::lround(std::ceil(upper[1]))+1);
+
+            for (auto x = xmin; x < xmax; ++x) {
+                for (auto y = 0; y < ymax; ++y) {
+                    Eigen::Vector4d p(x, y, _currentFrameIndex, 1);
+
+                    if (region.inRegion(p)) {
+                        region_img.setPixel(x, y, green);
+                    }
+                    if (region.inBackground(p) && (mask(y,x) == 0)) {
+                        region_img.setPixel(x, y, yellow);
+                    }
+                }
+            }
+        }
+
+        if (_integrationRegion == nullptr) {
+            _integrationRegion = addPixmap(QPixmap::fromImage(region_img));
+            _integrationRegion->setZValue(-1);
+        } else {
+            _integrationRegion->setPixmap(QPixmap::fromImage(region_img));
+        }
+    }
+
     setSceneRect(_zoomStack.back());
     emit dataChanged();
 
@@ -632,6 +702,14 @@ void DetectorScene::drawPeakBackground(bool flag)
         const auto& it=_peakGraphicsItems.begin();
         it->second->drawBackground(flag);
     }
+
+    // clear the background if necessary
+    if (_integrationRegion && flag == false) {
+        removeItem(_integrationRegion);
+        _integrationRegion = nullptr;
+    }
+    _drawBackground = flag;
+    redrawImage();
 }
 
 void DetectorScene::showPeakCalcs(bool flag)
@@ -689,6 +767,7 @@ void DetectorScene::resetScene()
     _zoomrect = nullptr;
     _zoomStack.clear();
     _image = nullptr;
+    _integrationRegion = nullptr;
     _masks.clear();
     _lastClickedGI = nullptr;
     _precalculatedPeaks.clear();

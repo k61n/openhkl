@@ -134,7 +134,10 @@ private:
 
     bool _showPeakCalcs;
     bool _logarithmic;
+    bool _drawBackground;
     std::unique_ptr<ColorMap> _colormap;
+
+    QGraphicsPixmapItem* _integrationRegion;
 };
 
 #endif // DETECTORSCENE_H
