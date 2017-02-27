@@ -147,7 +147,7 @@ void ReciprocalSpaceViewer::on_view_clicked()
                     hmatrix=(*it)->getHomMatrix(0.0)*hmatrix;
                 }
             }
-            const Eigen::MatrixXi& frame = d->readFrame(f);
+            const Eigen::MatrixXi& frame = d->getFrame(f);
 
             for (int j=0;j<nDetCols;++j) {
                 for (int i=0;i<nDetRows;++i) {

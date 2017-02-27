@@ -148,7 +148,7 @@ void RawData::open() {
 void RawData::close() {
 }
 
-Eigen::MatrixXi RawData::readFrame(std::size_t idx) {
+Eigen::MatrixXi RawData::getFrame(std::size_t idx) {
     std::string filename = _filenames.at(idx);
 
     _data.resize(_length);

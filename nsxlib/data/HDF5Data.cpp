@@ -207,7 +207,7 @@ void HDF5Data::close()
 }
 
 
-Eigen::MatrixXi HDF5Data::readFrame(std::size_t frame)
+Eigen::MatrixXi HDF5Data::getFrame(std::size_t frame)
 {
     if (!_isOpened) {
         open();

@@ -478,11 +478,6 @@ std::vector<PeakCalc> IData::hasPeaks(const std::vector<Eigen::Vector3d>& hkls, 
     return peaks;
 }
 
-Eigen::MatrixXi IData::getFrame(std::size_t idx)
-{
-    return readFrame(idx);
-}
-
 double IData::getBackgroundLevel(const std::shared_ptr<SX::Utils::ProgressHandler>& progress)
 {
     if ( _background > 0.0 ) {

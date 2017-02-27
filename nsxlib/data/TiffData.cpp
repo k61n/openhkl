@@ -83,7 +83,7 @@ void TiffData::close()
 }
 
 
-Eigen::MatrixXi TiffData::readFrame(std::size_t idx)
+Eigen::MatrixXi TiffData::getFrame(std::size_t idx)
 {
 
     if (!_isOpened)

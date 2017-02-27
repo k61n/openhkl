@@ -166,11 +166,8 @@ public:
     //! Return the intensity at point x,y,z.
     int dataAt(unsigned int x=0, unsigned int y=0, unsigned int z=0);
 
-    //! Read a given Frame of the data
-    Eigen::MatrixXi getFrame(std::size_t idx);
-
     //! Read a single frame
-    virtual Eigen::MatrixXi readFrame(std::size_t idx)=0;
+    virtual Eigen::MatrixXi getFrame(std::size_t idx)=0;
 
     //! Get the file handle.
     virtual void open()=0;

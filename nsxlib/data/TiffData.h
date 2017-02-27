@@ -47,7 +47,7 @@ public:
 	virtual ~TiffData();
 	void open() override;
 	void close() override;
-	Eigen::MatrixXi readFrame(std::size_t frame) override;
+	Eigen::MatrixXi getFrame(std::size_t frame) override;
 private:
 	//! Type of encoding for each pixel.
 	uint16 _bits;

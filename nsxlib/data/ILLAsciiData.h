@@ -83,7 +83,7 @@ public:
     void open() override;
     void close() override;
     //! Read a single frame
-    Eigen::MatrixXi readFrame(std::size_t idx) override;
+    Eigen::MatrixXi getFrame(std::size_t idx) override;
 
 private:
 

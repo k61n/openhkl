@@ -286,7 +286,7 @@ void ILLAsciiData::close()
     _isOpened = false;
 }
 
-Eigen::MatrixXi ILLAsciiData::readFrame(std::size_t idx)
+Eigen::MatrixXi ILLAsciiData::getFrame(std::size_t idx)
 {
     assert(idx < _nFrames);
 

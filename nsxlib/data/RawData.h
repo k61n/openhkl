@@ -83,7 +83,7 @@ public:
     void close() override;
     //! Read a single frame
 
-    Eigen::MatrixXi readFrame(std::size_t idx) override;
+    Eigen::MatrixXi getFrame(std::size_t idx) override;
 
     void swapEndian();
     void setBpp(unsigned int bpp);

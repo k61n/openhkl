@@ -130,7 +130,7 @@ void I16Data::close()
 {
 }
 
-Eigen::MatrixXi I16Data::readFrame(std::size_t idx)
+Eigen::MatrixXi I16Data::getFrame(std::size_t idx)
 {
     assert(idx<_nFrames);
 
