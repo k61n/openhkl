@@ -83,7 +83,6 @@ public:
     // Constructors and destructor
 
     /*! Construct a IData Object from a file on disk, and pointer to a diffractometer.
-     *  @param inMemory: whether the file should be loaded in memory straight away or kept on disk
      */
     IData(std::string filename, std::shared_ptr<Diffractometer> diffractometer);
 
@@ -155,15 +154,6 @@ public:
     //! Clear the peaks collected for this data
     void clearPeaks();
 
-    //! Return true if the file is stored in memory
-    bool isInMemory() const;
-
-    //! Load all the frames in memory
-    void readInMemory(const std::shared_ptr<SX::Utils::ProgressHandler>& progress);
-
-    //! Release the data from memory
-    void releaseMemory();
-
     //! Return true if a given point (in detector space) belong to a mask
     bool inMasked(const Eigen::Vector3d& point) const;
 
@@ -182,7 +172,7 @@ public:
     //! Read a single frame
     virtual Eigen::MatrixXi readFrame(std::size_t idx)=0;
 
-    //! Get the file handle. Necessary to call before readInMemory or any IO of data.
+    //! Get the file handle.
     virtual void open()=0;
 
     //! Close file and release handle
@@ -213,7 +203,6 @@ protected:
     std::size_t _ncols;
     std::shared_ptr<Diffractometer> _diffractometer;
     std::unique_ptr<MetaData> _metadata;
-    bool _inMemory;
     std::vector<Eigen::MatrixXi> _data;
     std::vector<SX::Instrument::InstrumentState> _states;
     std::set<sptrPeak3D> _peaks;
@@ -221,7 +210,6 @@ protected:
     //! The set of masks bound to the data
     std::set<AABB<double,3>*> _masks;
     double _background;
-    bool _isCached;
     FrameIteratorCallback _iteratorCallback;
 };
 

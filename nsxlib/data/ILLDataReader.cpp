@@ -16,22 +16,12 @@
 #include "../instrument/Gonio.h"
 #include "../instrument/Sample.h"
 #include "../instrument/Source.h"
-#include "../utils/EigenMatrixParser.h"
+#include "../utils/MatrixParser.h"
 #include "../utils/Parser.h"
 #include "../utils/Units.h"
 
 using SX::Utils::readIntsFromChar;
 using SX::Utils::readDoublesFromChar;
-using SX::Utils::EigenMatrixParser;
-using SX::Utils::TopLeftColMajorMapper;
-using SX::Utils::TopLeftRowMajorMapper;
-using SX::Utils::TopRightColMajorMapper;
-using SX::Utils::TopRightRowMajorMapper;
-using SX::Utils::BottomLeftColMajorMapper;
-using SX::Utils::BottomLeftRowMajorMapper;
-using SX::Utils::BottomRightColMajorMapper;
-using SX::Utils::BottomRightRowMajorMapper;
-namespace qi = boost::spirit::qi;
 
 namespace SX {
 
@@ -62,7 +52,7 @@ ILLDataReader::ILLDataReader(const std::string& filename, const Diffractometer& 
     _mapAddress = reinterpret_cast<char*>(_map.get_address());
     std::vector<char> buffer(BlockSize+1, 0); // +1 to make space for 0 at end of string
     strncpy(&buffer[0], _mapAddress, BlockSize);
-    readMetaData(&buffer[0]);
+    readMetadata(&buffer[0]);
 
     // Extract some variables from the metadata
     _nFrames = size_t(_metadata.getKey<int>("npdone"));
@@ -229,34 +219,7 @@ ILLDataReader::ILLDataReader(const std::string& filename, const Diffractometer& 
 
     std::shared_ptr<Detector> d = _diffractometer.getDetector();
 
-    switch (d->getDataOrder()) {
-    case(Detector::DataOrder::TopLeftColMajor):
-        _parser = new EigenMatrixParser<const char*, TopLeftColMajorMapper>();
-        break;
-    case(Detector::DataOrder::TopLeftRowMajor):
-        _parser = new EigenMatrixParser<const char*, TopLeftRowMajorMapper>();
-        break;
-    case(Detector::DataOrder::TopRightColMajor):
-        _parser = new EigenMatrixParser<const char*, TopRightColMajorMapper>();
-        break;
-    case(Detector::DataOrder::TopRightRowMajor):
-        _parser = new EigenMatrixParser<const char*, TopRightRowMajorMapper>();
-        break;
-    case(Detector::DataOrder::BottomLeftColMajor):
-        _parser = new EigenMatrixParser<const char*, BottomLeftColMajorMapper>();
-        break;
-    case(Detector::DataOrder::BottomLeftRowMajor):
-        _parser = new EigenMatrixParser<const char*, BottomLeftRowMajorMapper>();
-        break;
-    case(Detector::DataOrder::BottomRightColMajor):
-        _parser = new EigenMatrixParser<const char*, BottomRightColMajorMapper>();
-        break;
-    case(Detector::DataOrder::BottomRightRowMajor):
-        _parser = new EigenMatrixParser<const char*, BottomRightRowMajorMapper>();
-        break;
-    default:
-        throw std::runtime_error("Detector data-ordering mode not defined");
-    }
+    _parser = SX::Utils::getMatrixParser(d->getDataOrder());
 }
 
 ILLDataReader::~ILLDataReader()
@@ -300,8 +263,9 @@ Eigen::MatrixXi ILLDataReader::getData(size_t frame)
     // Create vector and try to reserve a memory block
     Eigen::MatrixXi v;
     v.resize(long(_nRows), long(_nCols));
-    //EigenMatrixParser<const char*,TopRightColMajorMapper> parser;
-    qi::phrase_parse(_mapAddress+begin,_mapAddress+begin+_dataLength,*_parser,qi::blank, v);
+
+    (*_parser)(_mapAddress+begin,_dataLength,v);
+
     return v;
 }
 
@@ -456,7 +420,7 @@ void ILLDataReader::readHeader(std::stringstream& buffer)
     _metadata.add<boost::posix_time::ptime>("ptime",pos_time);
 }
 
-void ILLDataReader::readMetaData(const char* buf)
+void ILLDataReader::readMetadata(const char* buf)
 {
     std::string s(buf);
     std::size_t endMetadata = s.find("SSSSSSSS");

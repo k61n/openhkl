@@ -44,9 +44,10 @@
 
 
 namespace SX {
-    namespace Utils {
-        template <class T> struct IMatrixParser;
-    }
+
+namespace Utils {
+class IMatrixParser;
+}
 }
 
 namespace SX {
@@ -95,7 +96,7 @@ private:
     void readHeader(std::stringstream&);
     //! Reads MetaData from a chain of characters as written in legacy ILL format
     //! return a MetaData Object
-    void readMetaData(const char* buf);
+    void readMetadata(const char* buf);
 
     std::size_t _dataPoints;
     std::size_t _nAngles;
@@ -105,7 +106,7 @@ private:
     boost::interprocess::mapped_region _map;
     const char* _mapAddress;
     std::size_t _currentLine;
-    SX::Utils::IMatrixParser<const char*>* _parser;
+    SX::Utils::IMatrixParser* _parser;
 
 };
 

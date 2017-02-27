@@ -584,7 +584,6 @@ void SessionModel::findPeaks(const QModelIndex& index)
 
         for (auto numor: selectedNumors) {
             num_peaks += numor->getPeaks().size();
-            numor->releaseMemory();
         }
 
         if ( succeeded ) {

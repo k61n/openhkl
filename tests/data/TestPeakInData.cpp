@@ -35,7 +35,6 @@ BOOST_AUTO_TEST_CASE(Test_Peak_Data)
         dataf = std::unique_ptr<ILLAsciiData>(new ILLAsciiData("D9_ascii_example", diff));
 
         dataf->open();
-        dataf->readInMemory(nullptr);
 
         metadata = dataf->getMetadata();
         BOOST_CHECK(metadata != nullptr);

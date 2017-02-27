@@ -36,9 +36,7 @@ IDataReader::IDataReader(const std::string& filename, const SX::Instrument::Diff
   _nFrames(0),
   _states(),
   _fileSize(0),
-  _isOpened(false),
-  _inMemory(false),
-  _isCached(true)
+  _isOpened(false)
 {
     _metadata.add<std::string>("filename",filename);
 
@@ -85,11 +83,6 @@ std::string IDataReader::getFilename() const
 }
 
 
-bool IDataReader::isInMemory() const
-{
-    return _inMemory;
-}
-
 bool IDataReader::isOpened() const
 {
     return _isOpened;
@@ -106,9 +99,6 @@ void IDataReader::saveHDF5(const std::string& filename)
 {
     blosc_init();
     blosc_set_nthreads(4);
-
-    //if (!_inMemory)
-    //  throw std::runtime_error("Can't save "+_filename+" as HDF5, file not in memory");
 
     hsize_t dims[3] = {_nFrames, _nRows,_nCols};
     hsize_t chunk[3] = {1, _nRows,_nCols};

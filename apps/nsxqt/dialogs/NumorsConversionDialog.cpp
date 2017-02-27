@@ -88,7 +88,6 @@ void NumorsConversionDialog::on_pushButton_convert_clicked()
                 continue;
             }
             // todo: implement progress handler here
-            data->readInMemory(nullptr);
             QString basename=fileInfo.baseName();
             QString outputFilename = QDir(ui->lineEdit_outputDirectory->text()).filePath(basename+".h5");
 

@@ -26,7 +26,7 @@ public:
 
     virtual ~IDataReader()=default;
 
-    //! Get the file handle. Necessary to call before readInMemory or any IO of data.
+    //! Get the file handle.
     virtual void open()=0;
 
     //! Close file and release handle
@@ -51,9 +51,6 @@ public:
 
     //! Gets the data filename
     std::string getFilename() const;
-
-    //! Return true if the file is stored in memory
-    bool isInMemory() const;
 
     //! True if file is open
     bool isOpened() const;
@@ -81,11 +78,6 @@ protected:
     std::size_t _fileSize;
 
     bool _isOpened;
-
-    bool _inMemory;
-
-    bool _isCached;
-
 
 };
 

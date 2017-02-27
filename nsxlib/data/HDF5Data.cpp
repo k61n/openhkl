@@ -23,7 +23,6 @@ IData* HDF5Data::create(const std::string& filename, std::shared_ptr<Diffractome
 HDF5Data::HDF5Data(const std::string& filename, const std::shared_ptr<Diffractometer>& instrument)
 :IData(filename,instrument), _dataset(nullptr), _space(nullptr), _memspace(nullptr)
 {
-    _isCached = false;
     _file = unique_ptr<H5::H5File>(new H5::H5File(_filename.c_str(), H5F_ACC_RDONLY));
 
     // Read the info group and store in metadata

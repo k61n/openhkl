@@ -36,8 +36,9 @@
 
 #include <Eigen/Dense>
 
-#include "Component.h"
-#include "DetectorEvent.h"
+#include "../instrument/Component.h"
+#include "../instrument/DetectorEvent.h"
+#include "../utils/Enums.h"
 
 namespace SX
 {
@@ -47,7 +48,6 @@ namespace Instrument
 
 namespace property_tree=boost::property_tree;
 
-
 /** @brief Base class for Detectors.
  *
  *
@@ -55,16 +55,7 @@ namespace property_tree=boost::property_tree;
 class Detector : public Component
 {
 public:
-	enum  class DataOrder {
-		TopLeftColMajor,
-		TopLeftRowMajor,
-		TopRightColMajor,
-		TopRightRowMajor,
-		BottomLeftColMajor,
-		BottomLeftRowMajor,
-		BottomRightColMajor,
-		BottomRightRowMajor
-	};
+
 	//! Static constructor of a Detector from a property tree node
 	static Detector* create(const proptree::ptree& node);
 
@@ -180,9 +171,10 @@ public:
 	//! Determine whether detector at rest can receive a scattering event with direction given by Kf. px and py are detector position if true.
 	virtual bool hasKf(const Eigen::Vector3d& kf, const Eigen::Vector3d& from, double& px, double& py, double& t) const =0;
 
-	//!
+	//! Returns the data order of the detector matrix
 	DataOrder getDataOrder() const {return _dataorder;}
-	private:
+
+private:
 	DataOrder _dataorder;
 };
 

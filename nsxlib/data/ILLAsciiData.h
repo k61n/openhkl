@@ -39,14 +39,15 @@
 
 #include <Eigen/Dense>
 
-#include "IData.h"
+#include "../data/IData.h"
 #include "../instrument/Diffractometer.h"
 
 
 namespace SX {
-    namespace Utils {
-        template <class T> struct IMatrixParser;
-    }
+
+namespace Utils {
+    class IMatrixParser;
+}
 }
 
 namespace SX
@@ -54,6 +55,9 @@ namespace SX
 
 namespace Data
 {
+
+using SX::Utils::IMatrixParser;
+
 /*! \brief Legacy ILL Data in ASCII format.
  *
  */
@@ -106,7 +110,7 @@ private:
     boost::interprocess::mapped_region _map;
     const char* _mapAddress;
     std::size_t _currentLine;
-    SX::Utils::IMatrixParser<const char*>* _parser;
+    IMatrixParser* _parser;
 
 
 };

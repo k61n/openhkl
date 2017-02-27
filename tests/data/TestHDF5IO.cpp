@@ -38,7 +38,6 @@ BOOST_AUTO_TEST_CASE(Test_HDF5_IO)
         diff = std::shared_ptr<Diffractometer>(ds->buildDiffractomer("D10"));
         dataf = std::unique_ptr<IData>(new ILLAsciiData("D10_ascii_example", diff));
         dataf->open();
-        dataf->readInMemory(nullptr);
 
         for (size_t i = 0; i < dataf->getNFrames(); ++i)
             frames.push_back(dataf->getFrame(i));

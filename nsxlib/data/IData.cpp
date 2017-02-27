@@ -36,14 +36,12 @@ IData::IData(std::string filename, std::shared_ptr<Diffractometer> diffractomete
     _ncols(0),
     _diffractometer(std::move(diffractometer)),
     _metadata(std::unique_ptr<MetaData>(new MetaData())),
-    _inMemory(false),
     _data(),
     _states(),
     _peaks(),
     _fileSize(0),
     _masks(),
-    _background(0.0),
-    _isCached(true)
+    _background(0.0)
 {
     if ( !boost::filesystem::exists(_filename.c_str())) {
         throw std::runtime_error("IData, file: " + _filename + " does not exist");
@@ -141,11 +139,6 @@ void IData::clearPeaks()
     _peaks.clear();
 }
 
-bool IData::isInMemory() const
-{
-    return _inMemory;
-}
-
 ComponentState IData::getInterpolatedState(std::shared_ptr<Component> component, double frame) const
 {
     if (frame>(_states.size()-1) || frame<0) {
@@ -221,9 +214,6 @@ void IData::saveHDF5(const std::string& filename) //const
 {
     blosc_init();
     blosc_set_nthreads(4);
-
-    //if (!_inMemory)
-    //	throw std::runtime_error("Can't save "+_filename+" as HDF5, file not in memory");
 
     hsize_t dims[3] = {_nFrames, _nrows,_ncols};
     hsize_t chunk[3] = {1, _nrows,_ncols};
@@ -424,19 +414,6 @@ bool IData::inMasked(const Eigen::Vector3d& point) const
     return false;
 }
 
-void IData::releaseMemory()
-{
-    if (!_inMemory) {
-        return;
-    }
-    for (auto&& d : _data) {
-        d.resize(0,0);
-    }
-    _data.clear();
-    _data.shrink_to_fit();
-    _inMemory = false;
-}
-
 std::vector<PeakCalc> IData::hasPeaks(const std::vector<Eigen::Vector3d>& hkls, const Matrix3d& BU)
 {
     std::vector<PeakCalc> peaks;
@@ -503,49 +480,7 @@ std::vector<PeakCalc> IData::hasPeaks(const std::vector<Eigen::Vector3d>& hkls, 
 
 Eigen::MatrixXi IData::getFrame(std::size_t idx)
 {
-    if ( _inMemory) {
-        return _data.at(idx);
-    }
     return readFrame(idx);
-}
-
-void IData::readInMemory(const std::shared_ptr<SX::Utils::ProgressHandler>& progress)
-{
-    // if caching is disabled, do nothing
-    if (!_isCached) {
-        return;
-    }
-
-    if (_inMemory) {
-        return;
-    }
-
-    if (progress) {
-        progress->setProgress(0);
-        progress->setStatus("Reading data into memory...");
-    }
-
-    if ( !_isOpened) {
-        open();
-    }
-
-    _data.clear();
-    _data.reserve(_nFrames);
-    unsigned int dummy = static_cast<unsigned int>(0.01 * _nFrames)+1;
-
-    for (unsigned int i = 0; i < _nFrames; ++i) {
-        _data.push_back(readFrame(i));
-
-        if ( (i%dummy) == 0 && progress) {
-            progress->setProgress(int(100.0 * i / _nFrames));
-        }
-    }
-
-    _inMemory = true;
-
-    if (progress) {
-        progress->setProgress(100);
-    }
 }
 
 double IData::getBackgroundLevel(const std::shared_ptr<SX::Utils::ProgressHandler>& progress)

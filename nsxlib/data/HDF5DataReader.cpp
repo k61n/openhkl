@@ -25,7 +25,6 @@ HDF5DataReader::HDF5DataReader(const std::string& filename, const Diffractometer
  _space(nullptr),
  _memspace(nullptr)
 {
-    _isCached = false;
     _file = unique_ptr<H5::H5File>(new H5::H5File(filename.c_str(), H5F_ACC_RDONLY));
 
     // Read the info group and store in metadata

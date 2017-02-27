@@ -40,34 +40,24 @@
 #include <set>
 #include <stdexcept>
 
-#include "../utils/EigenMatrixParser.h"
 #include <boost/algorithm/string.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/interprocess/file_mapping.hpp>
 
-#include "ILLAsciiData.h"
+#include "../data/ILLAsciiData.h"
 #include "../instrument/Component.h"
 #include "../instrument/Detector.h"
 #include "../instrument/Diffractometer.h"
 #include "../instrument/Gonio.h"
-#include "../utils/Parser.h"
 #include "../instrument/Sample.h"
 #include "../instrument/Source.h"
+#include "../utils/Parser.h"
+#include "../utils/MatrixParser.h"
 #include "../utils/Units.h"
 
 using SX::Utils::readIntsFromChar;
 using SX::Utils::readDoublesFromChar;
-using SX::Utils::EigenMatrixParser;
-using SX::Utils::TopLeftColMajorMapper;
-using SX::Utils::TopLeftRowMajorMapper;
-using SX::Utils::TopRightColMajorMapper;
-using SX::Utils::TopRightRowMajorMapper;
-using SX::Utils::BottomLeftColMajorMapper;
-using SX::Utils::BottomLeftRowMajorMapper;
-using SX::Utils::BottomRightColMajorMapper;
-using SX::Utils::BottomRightRowMajorMapper;
-namespace qi = boost::spirit::qi;
 
 namespace SX {
 namespace Data {
@@ -264,34 +254,7 @@ ILLAsciiData::ILLAsciiData(const std::string& filename, const std::shared_ptr<Di
 
     std::shared_ptr<Detector> d = _diffractometer->getDetector();
 
-    switch (d->getDataOrder()) {
-    case(Detector::DataOrder::TopLeftColMajor):
-        _parser = new EigenMatrixParser<const char*, TopLeftColMajorMapper>();
-        break;
-    case(Detector::DataOrder::TopLeftRowMajor):
-        _parser = new EigenMatrixParser<const char*, TopLeftRowMajorMapper>();
-        break;
-    case(Detector::DataOrder::TopRightColMajor):
-        _parser = new EigenMatrixParser<const char*, TopRightColMajorMapper>();
-        break;
-    case(Detector::DataOrder::TopRightRowMajor):
-        _parser = new EigenMatrixParser<const char*, TopRightRowMajorMapper>();
-        break;
-    case(Detector::DataOrder::BottomLeftColMajor):
-        _parser = new EigenMatrixParser<const char*, BottomLeftColMajorMapper>();
-        break;
-    case(Detector::DataOrder::BottomLeftRowMajor):
-        _parser = new EigenMatrixParser<const char*, BottomLeftRowMajorMapper>();
-        break;
-    case(Detector::DataOrder::BottomRightColMajor):
-        _parser = new EigenMatrixParser<const char*, BottomRightColMajorMapper>();
-        break;
-    case(Detector::DataOrder::BottomRightRowMajor):
-        _parser = new EigenMatrixParser<const char*, BottomRightRowMajorMapper>();
-        break;
-    default:
-        throw std::runtime_error("Detector data-ordering mode not defined");
-    }
+    _parser = SX::Utils::getMatrixParser(d->getDataOrder());
 }
 
 ILLAsciiData::~ILLAsciiData()
@@ -335,8 +298,9 @@ Eigen::MatrixXi ILLAsciiData::readFrame(std::size_t idx)
     // Create vector and try to reserve a memory block
     Eigen::MatrixXi v;
     v.resize(long(_nrows), long(_ncols));
-    //EigenMatrixParser<const char*,TopRightColMajorMapper> parser;
-    qi::phrase_parse(_mapAddress+begin,_mapAddress+begin+_dataLength,*_parser,qi::blank, v);
+
+    (*_parser)(_mapAddress+begin,_dataLength,v);
+
     return v;
 }
 
