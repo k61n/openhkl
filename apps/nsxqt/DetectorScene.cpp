@@ -29,6 +29,9 @@
 
 using SX::Instrument::DetectorEvent;
 
+// compile-time constant to determine whether to draw the peak masks
+static const bool g_drawMask = false;
+
 DetectorScene::DetectorScene(QObject *parent)
 : QGraphicsScene(parent),
   _currentData(nullptr),
@@ -494,7 +497,7 @@ void DetectorScene::loadCurrentImage(bool newimage)
     }
 
     // update the integration region pixmap
-    if (_drawBackground) {
+    if (_drawBackground && g_drawMask) {
         const int ncols = _currentData->getNCols();
         const int nrows = _currentData->getNRows();
 
