@@ -13,11 +13,11 @@
 #include <nsxlib/instrument/DiffractometerStore.h>
 #include <nsxlib/utils/Units.h>
 #include <nsxlib/crystal/Mosaic.h>
-#include <nsxlib/data/HDF5Data.h>
+#include <nsxlib/data/DataReaderFactory.h>
 
 using SX::Crystal::Mosaic;
-using SX::Data::IData;
-using SX::Data::HDF5Data;
+using SX::Data::DataSet;
+using SX::Data::DataReaderFactory;
 
 int run_test()
 {
@@ -46,15 +46,15 @@ int run_test()
 
     DiffractometerStore* ds;
     std::shared_ptr<Diffractometer> diff;
-    std::shared_ptr<IData> dataf;
+    std::shared_ptr<DataSet> dataf;
     Eigen::MatrixXi v;
 
     ds = DiffractometerStore::Instance();
     diff = std::shared_ptr<Diffractometer>(ds->buildDiffractomer("D9"));
-    dataf = std::shared_ptr<IData>(new HDF5Data(std::string("714898.hdf"), diff));
+    dataf = std::shared_ptr<DataSet>(DataReaderFactory::Instance()->create("hdf", "714898.hdf", diff));
 
     dataf->open();
-    dataf->readInMemory(nullptr);
+    //dataf->readInMemory(nullptr);
     mos.setSample(&s);
 
     for (int i=1; i<=1; ++i)
@@ -62,15 +62,13 @@ int run_test()
         double newmos = 0.01*static_cast<double>(i);
         mos.setMosaicity(newmos);
         double overlap{0.0};
-        std::vector<std::shared_ptr<IData>> numors;
+        std::vector<std::shared_ptr<DataSet>> numors;
         numors.push_back(dataf);
         bool result = mos.run(numors,1e5,overlap);
         BOOST_CHECK(result);
         if (result) {
             std::cout<<newmos<<"  "<< overlap<<std::endl;
         }
-
-
     }
 
     Eigen::Vector3d center1(0,0,0);

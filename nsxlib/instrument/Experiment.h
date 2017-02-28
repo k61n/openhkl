@@ -47,7 +47,7 @@ class Diffractometer;
 
 class Experiment {
 public:
-    using IData = SX::Data::DataSet;
+    using DataSet = SX::Data::DataSet;
 
     // Constructors & Destructors
     //! Default constructor (deleted)
@@ -79,10 +79,10 @@ public:
     std::shared_ptr<Diffractometer> getDiffractometer() const;
 
     //! Get a reference to the data
-    const std::map<std::string,std::shared_ptr<IData>>& getData() const;
+    const std::map<std::string,std::shared_ptr<DataSet>>& getData() const;
 
     //! Gets the pointer to a given data stored in the experiment
-    std::shared_ptr<IData> getData(std::string name);
+    std::shared_ptr<DataSet> getData(std::string name);
 
     //! Gets the names of the data stored in the experiment
     std::vector<std::string> getDataNames() const;
@@ -98,7 +98,7 @@ public:
     // Other methods
 
     //! Add some data to the experiment
-    void addData(std::shared_ptr<IData> data);
+    void addData(std::shared_ptr<DataSet> data);
 
     //! Check whether the experiment has a data
     bool hasData(const std::string& name) const;
@@ -116,7 +116,7 @@ private:
     std::shared_ptr<Diffractometer> _diffractometer;
 
     //! A map of the data related to the experiment. The keys are the basename of their corresponding file.
-    std::map<std::string,std::shared_ptr<IData>> _data;
+    std::map<std::string,std::shared_ptr<DataSet>> _data;
 };
 
 } // end namespace Instrument

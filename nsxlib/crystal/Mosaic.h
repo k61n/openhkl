@@ -22,7 +22,7 @@ class Sample;
 }
 
 namespace Data {
-class IData;
+class DataSet;
 }
 
 namespace Crystal {
@@ -33,7 +33,7 @@ public:
     Mosaic(const std::string& instr, double l, double dl, double dMonSam, double mu);
 
     // bool run(const std::vector<std::string>& numors, unsigned int n, double& overlap);
-    bool run(std::vector<std::shared_ptr<SX::Data::IData>> datas, unsigned int n, double& overlap);
+    bool run(std::vector<std::shared_ptr<SX::Data::DataSet>> datas, unsigned int n, double& overlap);
 
     void setSample(SX::Instrument::Sample* sample);
 

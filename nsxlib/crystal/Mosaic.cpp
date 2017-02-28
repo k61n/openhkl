@@ -21,7 +21,7 @@
 #include "../instrument/DiffractometerStore.h"
 #include "../instrument/Gonio.h"
 #include "../data/IData.h"
-//#include "ILLAsciiData.h"
+//#include "ILLAsciDataSet.h"
 //#include "Peak3D.h"
 #include "../instrument/Sample.h"
 #include "../instrument/Source.h"
@@ -32,7 +32,7 @@
 namespace SX {
 namespace Crystal {
 
-using SX::Data::IData;
+using SX::Data::DataSet;
 
 static double xor128(void) {
   static uint32_t x = 123456789;
@@ -120,7 +120,7 @@ void Mosaic::setMosaicity(double mosaicity)
     _mu = mosaicity*SX::Units::deg;
 }
 
-bool Mosaic::run(std::vector<std::shared_ptr<IData>> datas, unsigned int n, double& overlap)
+bool Mosaic::run(std::vector<std::shared_ptr<DataSet>> datas, unsigned int n, double& overlap)
 {
     using namespace SX::Data;
     using namespace SX::Crystal;
@@ -151,9 +151,9 @@ bool Mosaic::run(std::vector<std::shared_ptr<IData>> datas, unsigned int n, doub
     double monWidth = _diffractometer->getDetector()->getWidth();
 
     // Read the numors
-//    std::vector<IData*> datas;
+//    std::vector<DataSet*> datas;
 //    for (const auto& num: numors)
-//        datas.push_back(ILLAsciiData::create(num,_diffractometer));
+//        datas.push_back(ILLAsciDataSet::create(num,_diffractometer));
 
     // Create and get the unit cell of the sample
     std::shared_ptr<UnitCell> uc = _sample->addUnitCell();
