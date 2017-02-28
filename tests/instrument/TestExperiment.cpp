@@ -11,13 +11,13 @@
 #include <nsxlib/data/DataReaderFactory.h>
 
 using namespace SX::Instrument;
-using SX::Data::IData;
+using SX::Data::DataSet;
 using SX::Data::DataReaderFactory;
 
 BOOST_AUTO_TEST_CASE(Test_Experiment)
 {
     Experiment exp("my-exp","D10");
-    std::shared_ptr<IData> data;
+    std::shared_ptr<DataSet> data;
 
     BOOST_CHECK_EQUAL(exp.getName(),"my-exp");
 
@@ -31,7 +31,7 @@ BOOST_AUTO_TEST_CASE(Test_Experiment)
     // Add some data
     try {
         auto factory = DataReaderFactory::Instance();
-        data = std::shared_ptr<IData>(factory->create("", "D10_ascii_example", exp.getDiffractometer()));
+        data = std::shared_ptr<DataSet>(factory->create("", "D10_ascii_example", exp.getDiffractometer()));
     }
     catch(std::exception& e) {
         BOOST_FAIL(std::string("caught exception: ") + e.what());

@@ -49,7 +49,7 @@ namespace SX
 
 namespace Data
 {
-class IData;
+class DataSet;
 }
 
 namespace Crystal

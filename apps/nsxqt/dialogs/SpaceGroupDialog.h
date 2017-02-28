@@ -33,7 +33,7 @@ class SpaceGroupDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit SpaceGroupDialog(std::vector<std::shared_ptr<SX::Data::IData>> numors, QWidget *parent = 0);
+    explicit SpaceGroupDialog(std::vector<std::shared_ptr<SX::Data::DataSetet>> numors, QWidget *parent = 0);
     ~SpaceGroupDialog();
 
 
@@ -47,7 +47,7 @@ private:
     void buildTable();
 
     Ui::SpaceGroupDialog *ui;
-    std::vector<std::shared_ptr<SX::Data::IData>> _numors;
+    std::vector<std::shared_ptr<SX::Data::DataSetet>> _numors;
     //std::vector<std::tuple<std::string, double, double, double, double>> _groups;
     std::vector<std::tuple<std::string, double>> _groups;
     std::string _selectedGroup;

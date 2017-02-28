@@ -32,7 +32,7 @@ using Eigen::Matrix3d;
 using boost::filesystem::path;
 using SX::Instrument::InstrumentState;
 
-IData::IData(IDataReader* reader, const std::shared_ptr<Diffractometer>& diffractometer):
+DataSet::DataSet(IDataReader* reader, const std::shared_ptr<Diffractometer>& diffractometer):
     _isOpened(false),
     _filename(reader->getFilename()),
     _nFrames(0),
@@ -66,11 +66,11 @@ IData::IData(IDataReader* reader, const std::shared_ptr<Diffractometer>& diffrac
     }
 }
 
-std::unique_ptr<IFrameIterator> IData::getIterator(int idx)
+std::unique_ptr<IFrameIterator> DataSet::getIterator(int idx)
 {
     // use default frame iterator if one hasn't been set
     if ( !_iteratorCallback) {
-        _iteratorCallback = [] (IData& data, int index) {
+        _iteratorCallback = [] (DataSet& data, int index) {
             return new BasicFrameIterator(data, static_cast<unsigned int>(index));
             //return new ThreadedFrameIterator(data, index);
         };
@@ -78,25 +78,25 @@ std::unique_ptr<IFrameIterator> IData::getIterator(int idx)
     return std::unique_ptr<IFrameIterator>(_iteratorCallback(*this, idx));
 }
 
-void IData::setIteratorCallback(FrameIteratorCallback callback)
+void DataSet::setIteratorCallback(FrameIteratorCallback callback)
 {
     _iteratorCallback = std::move(callback);
 }
 
-IData::~IData()
+DataSet::~DataSet()
 {
     clearPeaks();
     blosc_destroy();
 }
 
-std::string IData::getBasename() const
+std::string DataSet::getBasename() const
 {
     path pathname(_filename);
     return pathname.filename().string();
 }
 
 
-int IData::dataAt(unsigned int x, unsigned int y, unsigned int z)
+int DataSet::dataAt(unsigned int x, unsigned int y, unsigned int z)
 {
     // Check that the voxel is inside the limit of the data
     if (z>=_nFrames || y>=_ncols || x>=_nrows) {
@@ -105,63 +105,63 @@ int IData::dataAt(unsigned int x, unsigned int y, unsigned int z)
     return getFrame(z)(x,y);
 }
 
-Eigen::MatrixXi IData::getFrame(std::size_t idx)
+Eigen::MatrixXi DataSet::getFrame(std::size_t idx)
 {
     return _reader->getData(idx);
 }
 
-void IData::open()
+void DataSet::open()
 {
     _reader->open();
 }
 
-void IData::close()
+void DataSet::close()
 {
     _reader->close();
 }
 
-const std::string& IData::getFilename() const
+const std::string& DataSet::getFilename() const
 {
     return _filename;
 }
 
-std::shared_ptr<Diffractometer> IData::getDiffractometer() const
+std::shared_ptr<Diffractometer> DataSet::getDiffractometer() const
 {
     return _diffractometer;
 }
 
-MetaData*  IData::getMetadata() const
+MetaData*  DataSet::getMetadata() const
 {
     return _metadata.get();
 }
 
-std::size_t IData::getNFrames() const
+std::size_t DataSet::getNFrames() const
 {
     return _nFrames;
 }
 
-std::size_t IData::getNCols() const
+std::size_t DataSet::getNCols() const
 {
     return _ncols;
 }
 
-std::size_t IData::getNRows() const
+std::size_t DataSet::getNRows() const
 {
     return _nrows;
 }
 
-std::set<sptrPeak3D>& IData::getPeaks()
+std::set<sptrPeak3D>& DataSet::getPeaks()
 {
     return _peaks;
 }
 
-void IData::addPeak(const sptrPeak3D& peak)
+void DataSet::addPeak(const sptrPeak3D& peak)
 {
     _peaks.insert(peak);
     maskPeak(peak);
 }
 
-void IData::clearPeaks()
+void DataSet::clearPeaks()
 {
     for (auto&& ptr : _peaks) {
         ptr->unlinkData();
@@ -169,7 +169,7 @@ void IData::clearPeaks()
     _peaks.clear();
 }
 
-InstrumentState IData::getInterpolatedState(double frame) const
+InstrumentState DataSet::getInterpolatedState(double frame) const
 {
     if (frame>(_states.size()-1) || frame<0) {
         throw std::runtime_error("Error when interpolating state: invalid frame value");
@@ -185,7 +185,7 @@ InstrumentState IData::getInterpolatedState(double frame) const
     return prevState.interpolate(nextState, t);
 }
 
-const ComponentState& IData::getDetectorState(size_t frame) const
+const ComponentState& DataSet::getDetectorState(size_t frame) const
 {
     if (frame > (_states.size()-1)) {
         throw std::runtime_error("Error when returning detector state: invalid frame value");
@@ -193,7 +193,7 @@ const ComponentState& IData::getDetectorState(size_t frame) const
     return _states[frame].detector;
 }
 
-const ComponentState& IData::getSampleState(size_t frame) const
+const ComponentState& DataSet::getSampleState(size_t frame) const
 {
     if (frame > (_states.size()-1)) {
         throw std::runtime_error("Error when returning sample state: invalid frame value");
@@ -201,7 +201,7 @@ const ComponentState& IData::getSampleState(size_t frame) const
     return _states[frame].sample;
 }
 
-const ComponentState& IData::getSourceState(size_t frame) const
+const ComponentState& DataSet::getSourceState(size_t frame) const
 {
     if (frame>(_states.size()-1)) {
         throw std::runtime_error("Error when returning source state: invalid frame value");
@@ -210,12 +210,12 @@ const ComponentState& IData::getSourceState(size_t frame) const
 }
 
 
-const std::vector<SX::Instrument::InstrumentState>& IData::getInstrumentStates() const
+const std::vector<SX::Instrument::InstrumentState>& DataSet::getInstrumentStates() const
 {
     return _states;
 }
 
-bool IData::removePeak(const sptrPeak3D& peak)
+bool DataSet::removePeak(const sptrPeak3D& peak)
 {
     auto&& it=_peaks.find(peak);
 
@@ -226,17 +226,17 @@ bool IData::removePeak(const sptrPeak3D& peak)
     return true;
 }
 
-bool IData::isOpened() const
+bool DataSet::isOpened() const
 {
     return _isOpened;
 }
 
-std::size_t IData::getFileSize() const
+std::size_t DataSet::getFileSize() const
 {
     return _fileSize;
 }
 
-void IData::saveHDF5(const std::string& filename) //const
+void DataSet::saveHDF5(const std::string& filename) //const
 {
     blosc_init();
     blosc_set_nthreads(4);
@@ -389,13 +389,13 @@ void IData::saveHDF5(const std::string& filename) //const
     // blosc_destroy();
 }
 
-void IData::addMask(AABB<double,3>* mask)
+void DataSet::addMask(AABB<double,3>* mask)
 {
     _masks.insert(mask);
     maskPeaks();
 }
 
-void IData::removeMask(AABB<double,3>* mask)
+void DataSet::removeMask(AABB<double,3>* mask)
 {
     auto&& p = _masks.find(mask);
     if (p != _masks.end()) {
@@ -404,19 +404,19 @@ void IData::removeMask(AABB<double,3>* mask)
     maskPeaks();
 }
 
-const std::set<AABB<double, 3> *>& IData::getMasks()
+const std::set<AABB<double, 3> *>& DataSet::getMasks()
 {
     return _masks;
 }
 
-void IData::maskPeaks() const
+void DataSet::maskPeaks() const
 {
     for (auto&& p : _peaks) {
         maskPeak(p);
     }
 }
 
-void IData::maskPeak(sptrPeak3D peak) const
+void DataSet::maskPeak(sptrPeak3D peak) const
 {
     peak->setMasked(false);
     for (auto&& m : _masks) {
@@ -428,7 +428,7 @@ void IData::maskPeak(sptrPeak3D peak) const
     }
 }
 
-bool IData::inMasked(const Eigen::Vector3d& point) const
+bool DataSet::inMasked(const Eigen::Vector3d& point) const
 {
     // Loop over the defined masks and return true if one of them contains the point
     for (auto&& m : _masks) {
@@ -440,7 +440,7 @@ bool IData::inMasked(const Eigen::Vector3d& point) const
     return false;
 }
 
-std::vector<PeakCalc> IData::hasPeaks(const std::vector<Eigen::Vector3d>& hkls, const Matrix3d& BU)
+std::vector<PeakCalc> DataSet::hasPeaks(const std::vector<Eigen::Vector3d>& hkls, const Matrix3d& BU)
 {
     std::vector<PeakCalc> peaks;
     unsigned int scanSize = static_cast<unsigned int>(_states.size());
@@ -507,7 +507,7 @@ std::vector<PeakCalc> IData::hasPeaks(const std::vector<Eigen::Vector3d>& hkls, 
     return peaks;
 }
 
-double IData::getBackgroundLevel(const std::shared_ptr<SX::Utils::ProgressHandler>& progress)
+double DataSet::getBackgroundLevel(const std::shared_ptr<SX::Utils::ProgressHandler>& progress)
 {
     if ( _background > 0.0 ) {
         return _background;
@@ -543,7 +543,7 @@ double IData::getBackgroundLevel(const std::shared_ptr<SX::Utils::ProgressHandle
     return _background;
 }
 
-void IData::integratePeaks(const std::shared_ptr<Utils::ProgressHandler>& handler)
+void DataSet::integratePeaks(const std::shared_ptr<Utils::ProgressHandler>& handler)
 {
     if (handler) {
         handler->setStatus(("Integrating " + std::to_string(getPeaks().size()) + " peaks...").c_str());

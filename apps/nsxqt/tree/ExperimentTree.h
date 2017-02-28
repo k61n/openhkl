@@ -21,7 +21,7 @@ class SessionModel;
 
 namespace SX {
 namespace Data {
-    class IData;
+    class DataSet;
 }
 }
 
@@ -35,7 +35,7 @@ public:
     void setSession(std::shared_ptr<SessionModel> session);
 
 signals:
-    void plotData(std::shared_ptr<SX::Data::IData>);
+    void plotData(std::shared_ptr<SX::Data::DataSet>);
     void inspectWidget(QWidget*);
 
 public slots:

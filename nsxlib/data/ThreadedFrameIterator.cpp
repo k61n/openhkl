@@ -7,7 +7,7 @@
 namespace SX {
 namespace Data {
 
-ThreadedFrameIterator::ThreadedFrameIterator(IData& data, unsigned int idx)
+ThreadedFrameIterator::ThreadedFrameIterator(DataSet& data, unsigned int idx)
     :IFrameIterator(data, idx),
      _currentFrame(),
      _nextFrame()

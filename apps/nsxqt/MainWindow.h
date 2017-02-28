@@ -35,7 +35,7 @@ using sptrPeak3D=std::shared_ptr<Peak3D>;
 }
 
 namespace Data {
-class IData;
+class DataSetet;
 class PeakFinder;
 }
 
@@ -65,7 +65,7 @@ public:
     void findPeaks();
 
 signals:
-    void plotDetectorData(SX::Data::IData*,int frame);
+    void plotDetectorData(SX::Data::DataSetet*,int frame);
     void findSpaceGroup();
     void computeRFactors();
     void findFriedelPairs();
@@ -116,7 +116,7 @@ private slots:
     void on_actionWrite_log_file_triggered();
 
 public slots:
-    void changeData(std::shared_ptr<SX::Data::IData>);
+    void changeData(std::shared_ptr<SX::Data::DataSetet>);
     void plotPeak(sptrPeak3D);
     void plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&);
     void setInspectorWidget(QWidget*);
@@ -125,7 +125,7 @@ public slots:
 private:
     Ui::MainWindow* _ui;
     //std::unordered_map<std::string,SX::Instrument::Experiment> _experiments;
-    std::shared_ptr<SX::Data::IData> _currentData;
+    std::shared_ptr<SX::Data::DataSetet> _currentData;
 
     std::shared_ptr<SX::Utils::ProgressHandler> _progressHandler;
     std::shared_ptr<SX::Data::PeakFinder> _peakFinder;

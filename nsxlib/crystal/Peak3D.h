@@ -48,7 +48,7 @@ class Blob3D;
 
 
 namespace Data {
-    class IData;
+    class DataSet;
 }
 
 namespace Instrument {
@@ -68,8 +68,8 @@ public:
     using sptrEllipsoid3D=std::shared_ptr<Ellipsoid3D>;
     using shape_type = SX::Geometry::IShape<double,3>;
 
-    Peak3D(std::shared_ptr<SX::Data::IData> data=std::shared_ptr<SX::Data::IData>());
-    Peak3D(std::shared_ptr<SX::Data::IData> data, const SX::Geometry::Blob3D& blob, double confidence);
+    Peak3D(std::shared_ptr<SX::Data::DataSet> data=std::shared_ptr<SX::Data::DataSet>());
+    Peak3D(std::shared_ptr<SX::Data::DataSet> data, const SX::Geometry::Blob3D& blob, double confidence);
 
     //! Copy constructor
     Peak3D(const Peak3D& other);
@@ -80,7 +80,7 @@ public:
     ~Peak3D() = default;
     //! Attach the data
 
-    void linkData(const std::shared_ptr<SX::Data::IData>& data);
+    void linkData(const std::shared_ptr<SX::Data::DataSet>& data);
 
     //! Detach the data
     void unlinkData();
@@ -117,7 +117,7 @@ public:
     //! Run the integration of the peak; iterate over the data
     void integrate();
 
-    std::shared_ptr<SX::Data::IData> getData() const { return _data.lock();}
+    std::shared_ptr<SX::Data::DataSet> getData() const { return _data.lock();}
 
     //! Get the projection of total data in the bounding box.
     Eigen::VectorXd getProjection() const;
@@ -191,7 +191,7 @@ public:
 private:
     // <<<<<<< HEAD
     //! Pointer to the data containing the peak
-    std::weak_ptr<SX::Data::IData> _data;
+    std::weak_ptr<SX::Data::DataSet> _data;
     //! Miller indices of the peak
     // Eigen::RowVector3d _hkl;
     //! Shape describing the Peak zone

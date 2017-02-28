@@ -11,7 +11,7 @@ namespace SX
 {
 namespace Data
 {
-class IData;
+class DataSet;
 }
 }
 
@@ -23,7 +23,7 @@ class CutLineGraphicsItem : public CutterGraphicsItem
 {
 public:
 
-    explicit CutLineGraphicsItem(std::shared_ptr<SX::Data::IData>);
+    explicit CutLineGraphicsItem(std::shared_ptr<SX::Data::DataSet>);
 
     ~CutLineGraphicsItem();
 

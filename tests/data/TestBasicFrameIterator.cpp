@@ -26,8 +26,8 @@ BOOST_AUTO_TEST_CASE(Test_BasicFrameIterator)
     auto factory = DataReaderFactory::Instance();
     DiffractometerStore* ds = DiffractometerStore::Instance();
     std::shared_ptr<Diffractometer> diff = std::shared_ptr<Diffractometer>(ds->buildDiffractomer("D10"));
-    std::unique_ptr<IData> dataf(factory->create("", "D10_ascii_example", diff));
-    dataf->setIteratorCallback([](IData& data, int idx) {return new BasicFrameIterator(data, idx);});
+    std::unique_ptr<DataSet> dataf(factory->create("", "D10_ascii_example", diff));
+    dataf->setIteratorCallback([](DataSet& data, int idx) {return new BasicFrameIterator(data, idx);});
     std::unique_ptr<IFrameIterator> it(dataf->getIterator(0));
 
     for (; it->index() != dataf->getNFrames(); it->advance()) {

@@ -37,7 +37,7 @@
 namespace SX {
 
 namespace Data {
-class IData;
+class DataSet;
 }
 
 namespace Crystal {
@@ -48,7 +48,7 @@ struct PeakCalc {
     using PeakList = std::vector<std::shared_ptr<Peak3D>>;
     using PeakSet = std::set<std::shared_ptr<Peak3D>>;
     using sptrPeak3D = std::shared_ptr<Peak3D>;
-    using IData = SX::Data::IData;
+    using IData = SX::Data::DataSet;
 
     PeakCalc(double h,double k,double l, double x,double y, double frame); //:
         //_h(h), _k(k), _l(l), _x(x), _y(y), _frame(frame) = default;

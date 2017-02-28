@@ -8,7 +8,7 @@
 namespace SX {
 namespace Data {
 
-BasicFrameIterator::BasicFrameIterator(IData& data, unsigned int idx): IFrameIterator(data, idx)
+BasicFrameIterator::BasicFrameIterator(DataSet& data, unsigned int idx): IFrameIterator(data, idx)
 {
     _currentFrame = _data.getFrame(_index).cast<double>();
 }

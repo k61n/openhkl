@@ -43,7 +43,7 @@ void CollectedPeaksModel::setPeaks(const std::vector<sptrPeak3D>& peaks)
     _peaks = peaks;
 }
 
-void CollectedPeaksModel::setPeaks(const std::vector<std::shared_ptr<SX::Data::IData> > &data)
+void CollectedPeaksModel::setPeaks(const std::vector<std::shared_ptr<SX::Data::DataSet> > &data)
 {
     _peaks.clear();
 

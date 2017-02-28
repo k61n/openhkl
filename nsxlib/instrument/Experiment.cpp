@@ -9,7 +9,7 @@
 #include "../data/IData.h"
 #include "Source.h"
 
-using SX::Data::IData;
+using SX::Data::DataSet;
 
 namespace SX {
 namespace Instrument {
@@ -77,13 +77,13 @@ std::vector<std::string> Experiment::getDataNames() const
     return v;
 }
 
-const std::map<std::string,std::shared_ptr<IData>>& Experiment::getData() const
+const std::map<std::string,std::shared_ptr<DataSet>>& Experiment::getData() const
 {
     return _data;
 }
 
 
-std::shared_ptr<IData> Experiment::getData(std::string name)
+std::shared_ptr<DataSet> Experiment::getData(std::string name)
 {
     auto it=_data.find(name);
     if (it == _data.end())

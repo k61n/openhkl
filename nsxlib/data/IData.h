@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef NSXTOOL_IDATA_H_
-#define NSXTOOL_IDATA_H_
+#ifndef NSXTOOL_DATA_H_
+#define NSXTOOL_DATA_H_
 
 #include <memory>
 #include <string>
@@ -73,29 +73,29 @@ class ThreadedFrameIterator;
 class BasicFrameIterator;
 class IDataReader;
 
-using FrameIteratorCallback = std::function<IFrameIterator*(IData&, int)>;
+using FrameIteratorCallback = std::function<IFrameIterator*(DataSet&, int)>;
 
 /*! \brief Interface for diffraction data
  *
  * Base interface for all diffraction data. IData handles the IO
  */
-class IData {
+class DataSet {
 public:
     // Constructors and destructor
 
     /*! Construct a IData Object from a file on disk, and pointer to a diffractometer.
      */
-    IData(IDataReader* reader, const std::shared_ptr<Diffractometer>& diffractometer);
+    DataSet(IDataReader* reader, const std::shared_ptr<Diffractometer>& diffractometer);
 
     //! Copy constructor
-    IData(const IData& other) = default;
+    DataSet(const DataSet& other) = default;
 
     //! Destructor
-    virtual ~IData();
+    virtual ~DataSet();
 
     // Operators
     //! Assignment operator
-    IData& operator=(const IData& other);
+    DataSet& operator=(const DataSet& other);
 
     // iterators
     std::unique_ptr<IFrameIterator> getIterator(int idx);
@@ -216,4 +216,4 @@ protected:
 } // end namespace Data
 } // end namespace SX
 
-#endif // NSXTOOL_IDATA_H_
+#endif // NSXTOOL_DATA_H_

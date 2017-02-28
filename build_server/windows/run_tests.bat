@@ -15,5 +15,7 @@ set PATH=%BUILD_DIR%\nsxlib\Release;%PATH%
 
 cd %CI_PROJECT_DIR%\build
 
+set NSX_ROOT_FILE=%CI_PROJECT_DIR%\resources
+
 ctest -V
 

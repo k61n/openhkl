@@ -65,7 +65,7 @@ namespace Crystal {
 
 using shape_type = Peak3D::shape_type;
 
-Peak3D::Peak3D(std::shared_ptr<SX::Data::IData> data):
+Peak3D::Peak3D(std::shared_ptr<SX::Data::DataSet> data):
     _data(),
 //		_hkl(Eigen::Vector3d::Zero()),
         _peak(nullptr),
@@ -87,7 +87,7 @@ Peak3D::Peak3D(std::shared_ptr<SX::Data::IData> data):
     linkData(data);
 }
 
-Peak3D::Peak3D(std::shared_ptr<Data::IData> data, const Blob3D &blob, double confidence)
+Peak3D::Peak3D(std::shared_ptr<Data::DataSet> data, const Blob3D &blob, double confidence)
 : Peak3D(data)
 {
     Eigen::Vector3d center, eigenvalues;
@@ -152,9 +152,9 @@ Peak3D& Peak3D::operator=(const Peak3D& other)
     return *this;
 }
 
-void Peak3D::linkData(const std::shared_ptr<SX::Data::IData>& data)
+void Peak3D::linkData(const std::shared_ptr<SX::Data::DataSet>& data)
 {
-    _data = std::weak_ptr<SX::Data::IData>(data);
+    _data = std::weak_ptr<SX::Data::DataSet>(data);
     if (data != nullptr) {
         std::cout<<data->getDiffractometer()->getSource()<<std::endl;
         auto& mono = data->getDiffractometer()->getSource()->getSelectedMonochromator();

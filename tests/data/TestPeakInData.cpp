@@ -27,13 +27,13 @@ BOOST_AUTO_TEST_CASE(Test_Peak_Data)
     auto factory = DataReaderFactory::Instance();
     DiffractometerStore* ds;
     std::shared_ptr<Diffractometer> diff;
-    std::unique_ptr<IData> dataf;
+    std::unique_ptr<DataSet> dataf;
     MetaData* metadata;
 
     try {
         ds = DiffractometerStore::Instance();
         diff = std::shared_ptr<Diffractometer>(ds->buildDiffractomer("D9"));
-        dataf = std::unique_ptr<IData>(factory->create("", "D9_ascii_example", diff));
+        dataf = std::unique_ptr<DataSet>(factory->create("", "D9_ascii_example", diff));
 
         dataf->open();
 

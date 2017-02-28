@@ -11,7 +11,7 @@
 // Forward declarations
 namespace SX {
 namespace Data {
-    class IData;
+    class DataSet;
 }
 }
 
@@ -29,7 +29,7 @@ using SX::Geometry::AABB;
 class MaskGraphicsItem : public SXGraphicsItem {
 public:
     // Constructs a mask
-    MaskGraphicsItem(std::shared_ptr<SX::Data::IData> data, AABB<double, 3>* aabb);
+    MaskGraphicsItem(std::shared_ptr<SX::Data::DataSet> data, AABB<double, 3>* aabb);
     //! The destructor
     ~MaskGraphicsItem();
 
@@ -59,7 +59,7 @@ public:
 
 protected:
     //! The data on which the cutter will act upon
-    std::shared_ptr<SX::Data::IData> _data;
+    std::shared_ptr<SX::Data::DataSet> _data;
     //! The AABB of the peak
     AABB<double,3>* _aabb;
     QPointF _from;

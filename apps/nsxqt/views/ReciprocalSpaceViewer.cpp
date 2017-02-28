@@ -37,7 +37,7 @@ ReciprocalSpaceViewer::~ReciprocalSpaceViewer()
     delete ui;
 }
 
-void ReciprocalSpaceViewer::setData(const std::vector<std::shared_ptr<SX::Data::IData>>& data)
+void ReciprocalSpaceViewer::setData(const std::vector<std::shared_ptr<SX::Data::DataSet>>& data)
 {
     _data.clear();
     _data.reserve(data.size());

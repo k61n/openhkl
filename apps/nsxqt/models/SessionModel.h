@@ -58,7 +58,7 @@ class ExperimentItem;
 
 namespace SX {
 namespace Data {
-    class IData;
+    class DataSetet;
 }
 }
 
@@ -76,8 +76,8 @@ public:
     ~SessionModel();
 
     std::shared_ptr<SX::Instrument::Experiment> addExperiment(const std::string& experimentName, const std::string& instrumentName);
-    std::vector<std::shared_ptr<SX::Data::IData>> getSelectedNumors() const;
-    std::vector<std::shared_ptr<SX::Data::IData>> getSelectedNumors(ExperimentItem* item) const;
+    std::vector<std::shared_ptr<SX::Data::DataSetet>> getSelectedNumors() const;
+    std::vector<std::shared_ptr<SX::Data::DataSetet>> getSelectedNumors(ExperimentItem* item) const;
 
     //! Convert session into JSON object
     QJsonObject toJsonObject();
@@ -98,7 +98,7 @@ public:
     bool writeXDS(std::string filename, const std::vector<sptrPeak3D>& peaks, bool merge, bool friedel);
 
 signals:
-    void plotData(std::shared_ptr<SX::Data::IData>);
+    void plotData(std::shared_ptr<SX::Data::DataSetet>);
     void inspectWidget(QWidget*);
     void updatePeaks();
     void updateCellParameters(sptrUnitCell);

@@ -123,7 +123,7 @@
 #include <QJsonDocument>
 
 using std::vector;
-using SX::Data::IData;
+using SX::Data::DataSet;
 using std::shared_ptr;
 using SX::Utils::ProgressHandler;
 using SX::Crystal::UnitCell;
@@ -202,9 +202,9 @@ std::shared_ptr<SX::Instrument::Experiment> SessionModel::addExperiment(const st
     return expPtr;
 }
 
-vector<shared_ptr<IData>> SessionModel::getSelectedNumors(ExperimentItem* item) const
+vector<shared_ptr<DataSet>> SessionModel::getSelectedNumors(ExperimentItem* item) const
 {
-    vector<shared_ptr<IData>> numors;
+    vector<shared_ptr<DataSet>> numors;
 
     QList<QStandardItem*> dataItems = findItems(QString("Data"),Qt::MatchCaseSensitive|Qt::MatchRecursive);
 
@@ -275,9 +275,9 @@ std::string SessionModel::getColorMap() const
     return _colormap;
 }
 
-vector<shared_ptr<IData>> SessionModel::getSelectedNumors() const
+vector<shared_ptr<DataSet>> SessionModel::getSelectedNumors() const
 {
-    vector<shared_ptr<IData>> numors;
+    vector<shared_ptr<DataSet>> numors;
 
     QList<QStandardItem*> dataItems = findItems(QString("Data"),Qt::MatchCaseSensitive|Qt::MatchRecursive);
 
@@ -334,13 +334,13 @@ void SessionModel::computeRFactors()
 {
     qDebug() << "Finding peak equivalences...";
 
-    std::vector<std::shared_ptr<IData>> numors = getSelectedNumors();
+    std::vector<std::shared_ptr<DataSet>> numors = getSelectedNumors();
     std::vector<std::vector<sptrPeak3D>> peak_equivs;
     std::vector<sptrPeak3D> peak_list;
 
     std::shared_ptr<UnitCell> unit_cell;
 
-    for (std::shared_ptr<IData> numor: numors)
+    for (std::shared_ptr<DataSet> numor: numors)
     {
         std::set<sptrPeak3D> peaks = numor->getPeaks();
         for (sptrPeak3D peak: peaks)
@@ -426,7 +426,7 @@ void SessionModel::integrateCalculatedPeaks()
 
     std::shared_ptr<UnitCell> unit_cell;
 
-    for (std::shared_ptr<IData> numor: getSelectedNumors()) {
+    for (std::shared_ptr<DataSet> numor: getSelectedNumors()) {
         for (sptrPeak3D peak: numor->getPeaks()) {
             if ( peak && peak->isSelected() && !peak->isMasked() ) {
                 peak_extent += peak->getPeak().getAABBExtents();
@@ -449,7 +449,7 @@ void SessionModel::integrateCalculatedPeaks()
     qDebug() << peak_extent(0) << " " << peak_extent(1) << " " << peak_extent(2);
     qDebug() << bg_extent(0) << " " << bg_extent(1) << " " << bg_extent(2);
 
-    for (std::shared_ptr<IData> numor: getSelectedNumors())
+    for (std::shared_ptr<DataSet> numor: getSelectedNumors())
     {
         std::vector<sptrPeak3D> calculated_peaks;
 
@@ -498,7 +498,7 @@ void SessionModel::findPeaks(const QModelIndex& index)
         return;
 
     QStandardItem* ditem = itemFromIndex(index);
-    std::vector<std::shared_ptr<SX::Data::IData>> selectedNumors;
+    std::vector<std::shared_ptr<SX::Data::DataSet>> selectedNumors;
     int nTotalNumors = rowCount(ditem->index());
     selectedNumors.reserve(size_t(nTotalNumors));
 
@@ -618,7 +618,7 @@ void SessionModel::incorporateCalculatedPeaks()
     const double dmax = dialog.dMax();
     const double dmin = dialog.dMin();
 
-    std::vector<std::shared_ptr<IData>> numors = getSelectedNumors();
+    std::vector<std::shared_ptr<DataSet>> numors = getSelectedNumors();
 
     std::shared_ptr<SX::Utils::ProgressHandler> handler(new SX::Utils::ProgressHandler);
     ProgressView progressView(nullptr);
@@ -645,7 +645,7 @@ void SessionModel::incorporateCalculatedPeaks()
     int predicted_peaks = 0;
     int observed_peaks = 0;
 
-    for(std::shared_ptr<IData> numor: numors) {
+    for(std::shared_ptr<DataSet> numor: numors) {
         qDebug() << "Finding missing peaks for numor " << ++current_numor << " of " << numors.size();
 
         auto& mono = numor->getDiffractometer()->getSource()->getSelectedMonochromator();
@@ -738,9 +738,9 @@ void SessionModel::applyResolutionCutoff(double dmin, double dmax)
 
     qDebug() << "Applying resolution cutoff...";
 
-    std::vector<std::shared_ptr<IData>> numors = getSelectedNumors();
+    std::vector<std::shared_ptr<DataSet>> numors = getSelectedNumors();
 
-    for(std::shared_ptr<IData> numor: numors) {
+    for(std::shared_ptr<DataSet> numor: numors) {
         std::vector<std::shared_ptr<Peak3D>> bad_peaks;
         shared_ptr<Sample> sample = numor->getDiffractometer()->getSample();
 

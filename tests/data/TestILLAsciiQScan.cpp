@@ -26,14 +26,14 @@ BOOST_AUTO_TEST_CASE(Test_ILL_Ascii_QScan)
     auto factory = DataReaderFactory::Instance();
     DiffractometerStore* ds;
     std::shared_ptr<Diffractometer> diff;
-    std::unique_ptr<IData> dataf;
+    std::unique_ptr<DataSet> dataf;
     MetaData* meta;
     Eigen::MatrixXi v;
 
     try {
         ds = DiffractometerStore::Instance();
         diff = std::shared_ptr<Diffractometer>(ds->buildDiffractomer("D9"));
-        dataf = std::unique_ptr<IData>(factory->create("", "D9_QSCAN", diff));
+        dataf = std::unique_ptr<DataSet>(factory->create("", "D9_QSCAN", diff));
         meta=dataf->getMetadata();
 
         BOOST_CHECK(meta->getKey<int>("nbang")==4);

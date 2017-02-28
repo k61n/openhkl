@@ -37,7 +37,7 @@ PeakFinder::PeakFinder()
 }
 
 
-bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
+bool PeakFinder::find(std::vector<std::shared_ptr<DataSet>> numors)
 {
     std::size_t npeaks=0;
 

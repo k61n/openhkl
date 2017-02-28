@@ -19,7 +19,7 @@ class Experiment;
 }
 namespace Data
 {
-class IData;
+class DataSetet;
 }
 }
 
@@ -30,7 +30,7 @@ class ReciprocalSpaceViewer : public QDialog
 public:
     explicit ReciprocalSpaceViewer(std::shared_ptr<SX::Instrument::Experiment> experiment, QWidget *parent = 0);
 
-    void setData(const std::vector<std::shared_ptr<SX::Data::IData>>& data);
+    void setData(const std::vector<std::shared_ptr<SX::Data::DataSetet>>& data);
 
     ~ReciprocalSpaceViewer();
 
@@ -41,7 +41,7 @@ private:
     Ui::ReciprocalSpaceViewer *ui;
 
     std::shared_ptr<SX::Instrument::Experiment> _experiment;
-    std::vector<std::shared_ptr<SX::Data::IData>> _data;
+    std::vector<std::shared_ptr<SX::Data::DataSetet>> _data;
 };
 
 #endif // RECIPROCALSPACEVIEWER_H

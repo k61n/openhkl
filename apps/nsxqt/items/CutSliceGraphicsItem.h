@@ -10,7 +10,7 @@ namespace SX
 {
 namespace Data
 {
-class IData;
+class DataSet;
 }
 }
 
@@ -28,7 +28,7 @@ public:
     // Constructors and destructor
 
     //! Construct a data slicer
-    CutSliceGraphicsItem(std::shared_ptr<SX::Data::IData>, bool horizontal=true);
+    CutSliceGraphicsItem(std::shared_ptr<SX::Data::DataSet>, bool horizontal=true);
     //! The destructor
     ~CutSliceGraphicsItem();
 

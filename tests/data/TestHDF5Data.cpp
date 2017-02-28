@@ -27,7 +27,7 @@ BOOST_AUTO_TEST_CASE(Test_HDF5Data)
     DiffractometerStore* ds = DiffractometerStore::Instance();
 
     std::shared_ptr<Diffractometer> diff = std::shared_ptr<Diffractometer>(ds->buildDiffractomer("BioDiff2500"));
-    std::shared_ptr<IData> dataf(factory->create("hdf", "H5_example.hdf", diff));
+    std::shared_ptr<DataSet> dataf(factory->create("hdf", "H5_example.hdf", diff));
 
     // MetaData* meta=dataf->getMetadata();
 

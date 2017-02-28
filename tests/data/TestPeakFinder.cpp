@@ -27,12 +27,12 @@ using namespace SX::Utils;
 
 BOOST_AUTO_TEST_CASE(Test_PeakFinder)
 {
-    std::vector<std::shared_ptr<IData>> numors;
+    std::vector<std::shared_ptr<DataSet>> numors;
 
     auto factory = DataReaderFactory::Instance();
     DiffractometerStore* ds = DiffractometerStore::Instance();
     std::shared_ptr<Diffractometer> diff = std::shared_ptr<Diffractometer>(ds->buildDiffractomer("D10"));
-    std::shared_ptr<IData> dataf(factory->create("", "D10_ascii_example", diff));
+    std::shared_ptr<DataSet> dataf(factory->create("", "D10_ascii_example", diff));
     MetaData* meta = dataf->getMetadata();
     PeakFinder peakFinder;
     std::shared_ptr<ProgressHandler> handler(new ProgressHandler);

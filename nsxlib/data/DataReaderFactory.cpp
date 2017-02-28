@@ -12,10 +12,10 @@ namespace Data {
 template <typename Reader>
 class C {
 public:
-static IData* create(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer)
+static DataSet* create(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer)
 {
     auto reader = new Reader(filename, diffractometer);
-    return new IData(reader, diffractometer);
+    return new DataSet(reader, diffractometer);
 }
 };
 

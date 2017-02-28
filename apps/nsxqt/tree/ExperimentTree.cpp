@@ -78,7 +78,7 @@
 
 
 using std::vector;
-using SX::Data::IData;
+using SX::Data::DataSet;
 using std::shared_ptr;
 using SX::Utils::ProgressHandler;
 
@@ -353,7 +353,7 @@ void ExperimentTree::viewReciprocalSpace(const QModelIndex& index)
 
     QStandardItem* ditem=_session->itemFromIndex(index);
 
-    std::vector<std::shared_ptr<SX::Data::IData>> selectedNumors;
+    std::vector<std::shared_ptr<SX::Data::DataSet>> selectedNumors;
     int nTotalNumors(_session->rowCount(ditem->index()));
     selectedNumors.reserve(size_t(nTotalNumors));
 

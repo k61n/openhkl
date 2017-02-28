@@ -16,7 +16,7 @@
 #include <nsxlib/data/DataReaderFactory.h>
 #include <nsxlib/instrument/DiffractometerStore.h>
 
-using IData = SX::Data::IData;
+using IData = SX::Data::DataSet;
 using DataReaderFactory = SX::Data::DataReaderFactory;
 using DiffractometerStore = SX::Instrument::DiffractometerStore;
 using Diffractometer = SX::Instrument::Diffractometer;
