@@ -89,8 +89,8 @@ void IntegrationRegion::updateMask(Eigen::MatrixXi& mask, double z) const
     xmin = std::max(0l, xmin);
     ymin = std::max(0l, ymin);
 
-    xmax = std::min(xmax, mask.cols());
-    ymax = std::min(ymax, mask.rows());
+    xmax = std::min(xmax, long(mask.cols()));
+    ymax = std::min(ymax, long(mask.rows()));
 
     for (auto x = xmin; x < xmax; ++x) {
         for (auto y = ymin; y < ymax; ++y) {
