@@ -48,7 +48,7 @@ class Blob3D;
 
 
 namespace Data {
-    class IData;
+    class DataSet;
 }
 
 namespace Instrument {
@@ -57,7 +57,6 @@ namespace Instrument {
     class DetectorEvent;
     class Sample;
     class Detector;
-    class Source;
 }
 
 namespace Crystal {
@@ -69,8 +68,8 @@ public:
     using sptrEllipsoid3D=std::shared_ptr<Ellipsoid3D>;
     using shape_type = SX::Geometry::IShape<double,3>;
 
-    Peak3D(std::shared_ptr<SX::Data::IData> data=std::shared_ptr<SX::Data::IData>());
-    Peak3D(std::shared_ptr<SX::Data::IData> data, const SX::Geometry::Blob3D& blob, double confidence);
+    Peak3D(std::shared_ptr<SX::Data::DataSet> data=std::shared_ptr<SX::Data::DataSet>());
+    Peak3D(std::shared_ptr<SX::Data::DataSet> data, const SX::Geometry::Blob3D& blob, double confidence);
 
     //! Copy constructor
     Peak3D(const Peak3D& other);
@@ -81,7 +80,7 @@ public:
     ~Peak3D() = default;
     //! Attach the data
 
-    void linkData(const std::shared_ptr<SX::Data::IData>& data);
+    void linkData(const std::shared_ptr<SX::Data::DataSet>& data);
 
     //! Detach the data
     void unlinkData();
@@ -110,12 +109,15 @@ public:
     //! Get q vector in the frame of reference of the diffractometer
     Eigen::RowVector3d getQ() const;
 
+    //! Set the wavelength at which this peak was collected
+    void setWavelength(double wavelength);
+
     void getGammaNu(double& gamma,double& nu) const;
 
     //! Run the integration of the peak; iterate over the data
     void integrate();
 
-    std::shared_ptr<SX::Data::IData> getData() const { return _data.lock();}
+    std::shared_ptr<SX::Data::DataSet> getData() const { return _data.lock();}
 
     //! Get the projection of total data in the bounding box.
     Eigen::VectorXd getProjection() const;
@@ -151,8 +153,6 @@ public:
     void setSampleState(const std::shared_ptr<SX::Instrument::ComponentState>& sstate);
     //!
     void setDetectorEvent(const std::shared_ptr<SX::Instrument::DetectorEvent>& event);
-    //!
-    void setSource(const std::shared_ptr<SX::Instrument::Source>& source);
 
     friend bool operator<(const Peak3D& p1, const Peak3D& p2);
     void setSelected(bool);
@@ -191,7 +191,7 @@ public:
 private:
     // <<<<<<< HEAD
     //! Pointer to the data containing the peak
-    std::weak_ptr<SX::Data::IData> _data;
+    std::weak_ptr<SX::Data::DataSet> _data;
     //! Miller indices of the peak
     // Eigen::RowVector3d _hkl;
     //! Shape describing the Peak zone
@@ -219,8 +219,6 @@ private:
     std::shared_ptr<SX::Instrument::ComponentState> _sampleState;
     //! Pointer to a Detector Event state
     std::shared_ptr<SX::Instrument::DetectorEvent> _event;
-    //!
-    std::shared_ptr<SX::Instrument::Source> _source;
 
     double _counts;
     double _countsSigma;
@@ -231,6 +229,8 @@ private:
     bool _observed;
     double _transmission;
     int _activeUnitCellIndex;
+
+    double _wavelength;
 
     struct IntegrationState {
 

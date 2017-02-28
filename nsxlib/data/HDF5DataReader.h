@@ -26,36 +26,44 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-#ifndef NSXTOOL_TIFFDATA_H_
-#define NSXTOOL_TIFFDATA_H_
+
+#ifndef NSXTOOL_HDF5DATAREADER_H_
+#define NSXTOOL_HDF5DATAREADER_H_
 
 #include <memory>
-#include "IData.h"
-#include <tiffio.h>
+#include <string>
 
+#include "H5Cpp.h"
 
-namespace SX
-{
-namespace Data
+#include "../data/IDataReader.h"
+
+namespace SX {
+
+namespace Data {
+
+class HDF5DataReader final: public IDataReader
 {
 
-class TiffData : public IData
-{
 public:
-	static IData* create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer);
-	TiffData(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer);
-	virtual ~TiffData();
-	void open() override;
-	void close() override;
-	Eigen::MatrixXi readFrame(std::size_t frame) override;
+    static IDataReader* create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer);
+
+    HDF5DataReader(const std::string& filename, std::shared_ptr<Diffractometer> instrument);
+    virtual ~HDF5DataReader();
+
+    Eigen::MatrixXi getData(size_t frame) override;
+
+    void open() override;
+    void close() override;
+
 private:
-	//! Type of encoding for each pixel.
-	uint16 _bits;
-	//!
-	TIFF* _file;
+    std::unique_ptr<H5::H5File> _file;
+    std::unique_ptr<H5::DataSet> _dataset;
+    std::unique_ptr<H5::DataSpace> _space;
+    std::unique_ptr<H5::DataSpace> _memspace;
 };
 
-} // Namespace Data
-} // Namespace SX
+} // end namespace Data
 
-#endif /* NSXTOOL_TIFFDATA_H_ */
+} // end namespace SX
+
+#endif /* NSXTOOL_HDF5DATAREADER_H_ */

@@ -1,6 +1,7 @@
-#include "HDF5Data.h"
 #include "blosc.h"
 #include "blosc_filter.h"
+
+#include "../data/HDF5DataReader.h"
 #include "../instrument/Detector.h"
 #include "../instrument/Gonio.h"
 #include "../instrument/Sample.h"
@@ -9,22 +10,22 @@
 using std::unique_ptr;
 using std::shared_ptr;
 
-namespace SX
-{
+namespace SX {
 
-namespace Data
-{
+namespace Data {
 
-IData* HDF5Data::create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer)
+IDataReader* HDF5DataReader::create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer)
 {
-    return new HDF5Data(filename, diffractometer);
+    return new HDF5DataReader(filename, diffractometer);
 }
 
-HDF5Data::HDF5Data(const std::string& filename, const std::shared_ptr<Diffractometer>& instrument)
-:IData(filename,instrument), _dataset(nullptr), _space(nullptr), _memspace(nullptr)
+HDF5DataReader::HDF5DataReader(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer)
+    :IDataReader(filename,diffractometer),
+      _dataset(nullptr),
+      _space(nullptr),
+      _memspace(nullptr)
 {
-    _isCached = false;
-    _file = unique_ptr<H5::H5File>(new H5::H5File(_filename.c_str(), H5F_ACC_RDONLY));
+    _file = unique_ptr<H5::H5File>(new H5::H5File(filename.c_str(), H5F_ACC_RDONLY));
 
     // Read the info group and store in metadata
     H5::Group infoGroup(_file->openGroup("/Info"));
@@ -34,7 +35,7 @@ HDF5Data::HDF5Data(const std::string& filename, const std::shared_ptr<Diffractom
         H5::DataType typ=attr.getDataType();
         std::string value;
         attr.read(typ,value);
-        _metadata->add<std::string>(attr.getName(),value);
+        _metadata.add<std::string>(attr.getName(),value);
     }
 
     // Read the experiment group and store all int and double attributes in metadata
@@ -46,16 +47,16 @@ HDF5Data::HDF5Data(const std::string& filename, const std::shared_ptr<Diffractom
         if (typ==H5::PredType::NATIVE_INT32) {
             int value;
             attr.read(typ,&value);
-            _metadata->add<int>(attr.getName(),value);
+            _metadata.add<int>(attr.getName(),value);
         }
         if (typ==H5::PredType::NATIVE_DOUBLE) {
             double value;
             attr.read(typ,&value);
-            _metadata->add<double>(attr.getName(),value);
+            _metadata.add<double>(attr.getName(),value);
         }
     }
 
-    _nFrames=_metadata->getKey<int>("npdone");
+    _nFrames=_metadata.getKey<int>("npdone");
 
     // Getting Scan parameters for the detector
     H5::Group detectorGroup(_file->openGroup("/Data/Scan/Detector"));
@@ -85,10 +86,11 @@ HDF5Data::HDF5Data(const std::string& filename, const std::shared_ptr<Diffractom
 
     // Use natural units internally (rad)
     dm*=SX::Units::deg;
-    _detectorStates.reserve(_nFrames);
+    _states.resize(_nFrames);
 
     for (unsigned int i=0;i<_nFrames;++i) {
-        _detectorStates.push_back(_diffractometer->getDetector()->createStateFromEigen(dm.col(i)));
+        _states[i].detector = _diffractometer->getDetector()->createStateFromEigen(dm.col(i));
+        //_detectorStates.push_back(_diffractometer->getDetector()->createStateFromEigen(dm.col(i)));
     }
 
     // Getting Scan parameters for the sample
@@ -119,29 +121,28 @@ HDF5Data::HDF5Data(const std::string& filename, const std::shared_ptr<Diffractom
 
     // Use natural units internally (rad)
     dm*=SX::Units::deg;
-    _sampleStates.reserve(_nFrames);
 
     for (unsigned int i=0;i<_nFrames;++i) {
-        _sampleStates.push_back(_diffractometer->getSample()->createStateFromEigen(dm.col(i)));
+        _states[i].sample = _diffractometer->getSample()->createStateFromEigen(dm.col(i));
     }
     _file->close();
 }
 
-HDF5Data::~HDF5Data()
+HDF5DataReader::~HDF5DataReader()
 {
     if (_isOpened) {
         close();
     }
 }
 
-void HDF5Data::open()
+void HDF5DataReader::open()
 {
     if (_isOpened) {
         return;
     }
 
     try {
-        _file = unique_ptr<H5::H5File>(new H5::H5File(_filename.c_str(), H5F_ACC_RDONLY));
+        _file = unique_ptr<H5::H5File>(new H5::H5File(_metadata.getKey<std::string>("filename").c_str(), H5F_ACC_RDONLY));
     } catch(...) {
         if (_file) {
             _file.reset();
@@ -175,14 +176,14 @@ void HDF5Data::open()
     // Get dimensions of data
     _space->getSimpleExtentDims(&dims[0], &maxdims[0]);
     _nFrames=dims[0];
-    _nrows=dims[1];
-    _ncols=dims[2];
+    _nRows=dims[1];
+    _nCols=dims[2];
 
     // Size of one hyperslab
     hsize_t  count[3];
     count[0] = 1;
-    count[1] = _nrows;
-    count[2] = _ncols;
+    count[1] = _nRows;
+    count[2] = _nCols;
     _memspace = unique_ptr<H5::DataSpace>(new H5::DataSpace(3,count,nullptr));
     _isOpened = true;
 
@@ -191,7 +192,7 @@ void HDF5Data::open()
     free(date);
 }
 
-void HDF5Data::close()
+void HDF5DataReader::close()
 {
     if (!_isOpened) {
         return;
@@ -208,15 +209,15 @@ void HDF5Data::close()
 }
 
 
-Eigen::MatrixXi HDF5Data::readFrame(std::size_t frame)
+Eigen::MatrixXi HDF5DataReader::getData(size_t frame)
 {
     if (!_isOpened) {
         open();
     }
     // HDF5 specification requires row-major storage
-    Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> m(_nrows,_ncols);
+    Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> m(_nRows,_nCols);
 
-    hsize_t count[3]={1,_nrows,_ncols};
+    hsize_t count[3]={1,_nRows,_nCols};
     hsize_t offset[3]={frame,0,0};
     _space->selectHyperslab(H5S_SELECT_SET,count,offset,nullptr,nullptr);
     _dataset->read(m.data(),H5::PredType::NATIVE_INT32,*_memspace,*_space);
@@ -224,5 +225,5 @@ Eigen::MatrixXi HDF5Data::readFrame(std::size_t frame)
     return Eigen::MatrixXi(m);
 }
 
-} // Namespace Data
-} // Namespace SX
+} // end namespace Data
+} // end namespace SX

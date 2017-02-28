@@ -11,7 +11,7 @@ using std::cout;
 using std::endl;
 using SX::Geometry::AABB;
 
-NumorItem::NumorItem(std::shared_ptr<SX::Instrument::Experiment> experiment,std::shared_ptr<SX::Data::IData> data) :
+NumorItem::NumorItem(std::shared_ptr<SX::Instrument::Experiment> experiment,std::shared_ptr<SX::Data::DataSet> data) :
     InspectableTreeItem(experiment),
     _data(data)
 {
@@ -28,7 +28,7 @@ NumorItem::~NumorItem()
    //delete _data; // JMF fix memory leak detected by valgrind
 }
 
-std::shared_ptr<SX::Data::IData> NumorItem::getData()
+std::shared_ptr<SX::Data::DataSet> NumorItem::getData()
 {
     return _data;
 }

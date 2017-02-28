@@ -36,64 +36,65 @@
 #include <cmath>
 #include <cstring>
 #include <map>
+#include <fstream>
 #include <set>
 #include <stdexcept>
-#include <fstream>
 
-
-#include "RawData.h"
+#include "../data/RawDataReader.h"
 #include "../instrument/Component.h"
 #include "../instrument/Detector.h"
 #include "../instrument/Diffractometer.h"
 #include "../instrument/Gonio.h"
-#include "../utils/Parser.h"
+#include "../instrument/Monochromator.h"
 #include "../instrument/Sample.h"
 #include "../instrument/Source.h"
 #include "../utils/Units.h"
-#include "../instrument/Monochromator.h"
+#include "../utils/Parser.h"
 
 using std::ifstream;
 
 namespace SX {
+
 namespace Data {
 
 using SX::Instrument::Diffractometer;
 using SX::Instrument::Monochromator;
 
-IData *RawData::create(const std::string &filename, std::shared_ptr<Diffractometer> diffractometer) {
+IDataReader* RawDataReader::create(const std::string &filename, const std::shared_ptr<Diffractometer>& diffractometer) {
     std::vector<std::string> filenames;
     filenames.push_back(filename);
-    return new RawData(filenames, diffractometer, 0, 0, 0, 0, true, true, 2);
+    return new RawDataReader(filenames, diffractometer, 0, 0, 0, 0, true, true, 2);
 }
 
-RawData::RawData(const std::vector<std::string>& filenames, std::shared_ptr<Diffractometer> diffractometer,
+RawDataReader::RawDataReader(const std::vector<std::string>& filenames, const std::shared_ptr<Diffractometer>& diffractometer,
                  double wavelength, double delta_chi, double delta_omega, double delta_phi,
-                 bool rowMajor, bool swapEndian, unsigned int bpp):
-    IData(filenames[0], diffractometer),
-    _bpp(bpp),
-    _length(0),
-    _swapEndian(swapEndian),
-    _rowMajor(rowMajor),
-    _filenames(filenames),
-    _data(),
-    _wavelength(wavelength)
+                 bool rowMajor, bool swapEndian, unsigned int bpp)
+: IDataReader(filenames[0], diffractometer),
+  _bpp(bpp),
+  _length(0),
+  _swapEndian(swapEndian),
+  _rowMajor(rowMajor),
+  _filenames(filenames),
+  _data(),
+  _wavelength(wavelength)
 {
     // ensure that there is at least one monochromator!
     if ( _diffractometer->getSource()->getNMonochromators() == 0 ) {
         Monochromator mono("mono");
-        _diffractometer->getSource()->addMonochromator(&mono);
+        _diffractometer->getSource()->addMonochromator(mono);
     }
 
-    _length = _bpp * _nrows * _ncols;
-    _diffractometer->getSource()->setWavelength(_wavelength);
+    _length = _bpp * _nRows * _nCols;
+    auto& mono = _diffractometer->getSource()->getSelectedMonochromator();
+    mono.setWavelength(_wavelength);
 
-    _metadata->add<std::string>("Instrument", _diffractometer->getName());
-    _metadata->add<double>("wavelength", _wavelength);
-    _metadata->add<int>("npdone", int(_filenames.size()));
-    _metadata->add<double>("monitor", 0.0);
-    _metadata->add<int>("Numor", 0.0);
+    _metadata.add<std::string>("Instrument", _diffractometer->getName());
+    _metadata.add<double>("wavelength", _wavelength);
+    _metadata.add<int>("npdone", int(_filenames.size()));
+    _metadata.add<double>("monitor", 0.0);
+    _metadata.add<int>("Numor", 0.0);
 
-    _data.resize(_bpp*_nrows*_ncols);
+    _data.resize(_bpp*_nRows*_nCols);
 
     _nFrames = _filenames.size();
 
@@ -101,10 +102,11 @@ RawData::RawData(const std::vector<std::string>& filenames, std::shared_ptr<Diff
     Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> dm
             = Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor>::Zero(long(axesS.size()), long(_nFrames));
 
-    _detectorStates.reserve(_nFrames);
+    _states.resize(_nFrames);
 
     for (unsigned int i = 0; i < _nFrames; ++i) {
-        _detectorStates.push_back(_diffractometer->getDetector()->createStateFromEigen(dm.col(i)));
+        _states[i].detector = _diffractometer->getDetector()->createStateFromEigen(dm.col(i));
+        //_detectorStates.push_back(_diffractometer->getDetector()->createStateFromEigen(dm.col(i)));
     }
 
     // Getting Scan parameters for the sample
@@ -132,26 +134,38 @@ RawData::RawData(const std::vector<std::string>& filenames, std::shared_ptr<Diff
 
     // Use natural units internally (rad)
     dm*=SX::Units::deg;
-    _sampleStates.reserve(_nFrames);
 
     for (unsigned int i=0;i<_nFrames;++i) {
-        _sampleStates.push_back(_diffractometer->getSample()->createStateFromEigen(dm.col(i)));
+        _states[i].sample = _diffractometer->getSample()->createStateFromEigen(dm.col(i));
     }
 }
 
-RawData::~RawData() {
+void RawDataReader::open() {
 }
 
-void RawData::open() {
+void RawDataReader::close() {
 }
 
-void RawData::close() {
+void RawDataReader::swapEndian() {
+
+    if (!_swapEndian)
+        return;
+
+    for (unsigned int i = 0; i < _nRows*_nCols; ++i) {
+        for (unsigned int byte = 0; byte < _bpp/2; ++byte) {
+            std::swap(_data[_bpp*i+byte], _data[_bpp*i+(_bpp-1-byte)]);
+        }
+    }
 }
 
-Eigen::MatrixXi RawData::readFrame(std::size_t idx) {
-    std::string filename = _filenames.at(idx);
+void RawDataReader::setBpp(unsigned int bpp) {
+    _bpp = bpp;
+    _length = _bpp*_nRows*_nCols;
+}
 
-    _data.resize(_length);
+Eigen::MatrixXi RawDataReader::getData(std::size_t frame) {
+
+    std::string filename = _filenames.at(frame);
 
     ifstream file;
     file.open(filename, std::ios_base::binary | std::ios_base::in);
@@ -190,22 +204,5 @@ Eigen::MatrixXi RawData::readFrame(std::size_t idx) {
     }
 }
 
-void RawData::swapEndian() {
-    if (!_swapEndian)
-        return;
-
-    for (unsigned int i = 0; i < _nrows*_ncols; ++i) {
-        for (unsigned int byte = 0; byte < _bpp/2; ++byte) {
-            std::swap(_data[_bpp*i+byte], _data[_bpp*i+(_bpp-1-byte)]);
-        }
-    }
-}
-
-void RawData::setBpp(unsigned int bpp) {
-    _bpp = bpp;
-    _length = _bpp*_nrows*_ncols;
-}
-
 } // end namespace Data
-
 } // end namespace SX

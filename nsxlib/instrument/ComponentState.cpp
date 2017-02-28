@@ -17,30 +17,26 @@ ComponentState::~ComponentState()
 
 ComponentState& ComponentState::operator=(const ComponentState& other)
 {
-	if (this != &other)
-	{
-		_ptrComp = other._ptrComp;
-		_values = other._values;
-	}
-
-	return *this;
-
+    if (this != &other) {
+        _ptrComp = other._ptrComp;
+        _values = other._values;
+    }
+    return *this;
 }
 
-Component* ComponentState::getParent()
+Component* ComponentState::getParent() const
 {
-	return _ptrComp;
+    return _ptrComp;
 }
 void ComponentState::setParent(Component* c)
 {
-	_ptrComp=c;
+    _ptrComp = c;
 }
 
 const std::vector<double>& ComponentState::getValues() const
 {
-	return _values;
+    return _values;
 }
-
 
 } // end namespace Instrument
 } // End namespace SX

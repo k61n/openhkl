@@ -51,7 +51,7 @@ using ptrInstrument = typename std::shared_ptr<SX::Instrument::Diffractometer>;
  *
  */
 class DataReaderFactory :
-        public Factory<IData,std::string,std::string,std::shared_ptr<SX::Instrument::Diffractometer> >,
+        public Factory<DataSet,std::string,std::string,std::shared_ptr<SX::Instrument::Diffractometer> >,
         public Singleton<DataReaderFactory,Constructor,Destructor>
 {
 private:

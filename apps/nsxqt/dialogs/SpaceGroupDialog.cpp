@@ -30,7 +30,7 @@
 using namespace std;
 using namespace SX::Crystal;
 
-SpaceGroupDialog::SpaceGroupDialog(std::vector<std::shared_ptr<SX::Data::IData>> numors, QWidget *parent):
+SpaceGroupDialog::SpaceGroupDialog(std::vector<std::shared_ptr<SX::Data::DataSet>> numors, QWidget *parent):
     QDialog(parent),
     ui(new Ui::SpaceGroupDialog),
     _numors(numors),
@@ -232,7 +232,7 @@ void SpaceGroupDialog::on_tableView_doubleClicked(const QModelIndex &index)
     box->setText(QString("Setting space group to ") + _selectedGroup.c_str());
 
     // todo: how to handle multiple samples and/or multiple unit cells???
-    for (shared_ptr<SX::Data::IData> numor: _numors) {
+    for (shared_ptr<SX::Data::DataSet> numor: _numors) {
         std::shared_ptr<SX::Instrument::Sample> sample = numor->getDiffractometer()->getSample();
         sample->getUnitCell(0)->setSpaceGroup(_selectedGroup);
     }

@@ -37,7 +37,7 @@
 
 namespace SX {
 namespace Data {
-class IData;
+class DataSet;
 }
 
 namespace Instrument {
@@ -47,7 +47,7 @@ class Diffractometer;
 
 class Experiment {
 public:
-    using IData = SX::Data::IData;
+    using IData = SX::Data::DataSet;
 
     // Constructors & Destructors
     //! Default constructor (deleted)

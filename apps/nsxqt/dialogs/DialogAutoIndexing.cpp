@@ -29,7 +29,7 @@ using SX::Crystal::FFTIndexing;
 using SX::Crystal::NiggliReduction;
 using SX::Crystal::UBMinimizer;
 using SX::Crystal::UBSolution;
-using SX::Data::IData;
+using SX::Data::DataSet;
 using SX::Units::deg;
 
 DialogAutoIndexing::DialogAutoIndexing(std::shared_ptr<Experiment> experiment, std::vector<sptrPeak3D> peaks, QWidget *parent):
@@ -160,6 +160,7 @@ void DialogAutoIndexing::autoIndex()
                 cell.setReciprocalCovariance(sln._covub);
 
             } catch(std::exception& e) {
+                qDebug() << "exception: " << e.what();
                 continue;
             }
 

@@ -12,7 +12,7 @@
 
 #include <nsxlib/instrument/ComponentState.h>
 #include <nsxlib/instrument/DiffractometerStore.h>
-#include <nsxlib/data/ILLAsciiData.h>
+#include <nsxlib/data/DataReaderFactory.h>
 #include <nsxlib/utils/Units.h>
 
 using namespace SX::Data;
@@ -23,16 +23,17 @@ const double tolerance=1e-2;
 
 BOOST_AUTO_TEST_CASE(Test_ILL_Ascii_QScan)
 {
+    auto factory = DataReaderFactory::Instance();
     DiffractometerStore* ds;
     std::shared_ptr<Diffractometer> diff;
-    std::unique_ptr<ILLAsciiData> dataf;
+    std::unique_ptr<DataSet> dataf;
     MetaData* meta;
     Eigen::MatrixXi v;
 
     try {
         ds = DiffractometerStore::Instance();
         diff = std::shared_ptr<Diffractometer>(ds->buildDiffractomer("D9"));
-        dataf = std::unique_ptr<ILLAsciiData>(new ILLAsciiData(std::string("D9_QSCAN"),diff));
+        dataf = std::unique_ptr<DataSet>(factory->create("", "D9_QSCAN", diff));
         meta=dataf->getMetadata();
 
         BOOST_CHECK(meta->getKey<int>("nbang")==4);

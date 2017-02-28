@@ -26,20 +26,22 @@
  *
  */
 
-#ifndef NSXTOOL_IDATA_H_
-#define NSXTOOL_IDATA_H_
+#ifndef NSXTOOL_DATA_H_
+#define NSXTOOL_DATA_H_
 
 #include <memory>
 #include <string>
 #include <set>
 
 #include <Eigen/Dense>
-#include "../geometry/AABB.h"
-#include "../instrument/ComponentState.h"
-#include "MetaData.h"
-#include "../instrument/Diffractometer.h"
+
 #include "../crystal/Peak3D.h"
 #include "../crystal/PeakCalc.h"
+#include "../geometry/AABB.h"
+#include "../instrument/Component.h"
+#include "../instrument/Diffractometer.h"
+#include "../instrument/InstrumentState.h"
+#include "MetaData.h"
 
 #include <mutex>
 #include <future>
@@ -59,6 +61,7 @@ using RowMatrixi = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::Row
 using RowMatrixd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
 using SX::Instrument::Diffractometer;
+using SX::Instrument::Component;
 using SX::Instrument::ComponentState;
 using SX::Crystal::sptrPeak3D;
 using SX::Geometry::AABB;
@@ -68,31 +71,31 @@ using SX::Crystal::PeakCalc;
 class IFrameIterator;
 class ThreadedFrameIterator;
 class BasicFrameIterator;
+class IDataReader;
 
-using FrameIteratorCallback = std::function<IFrameIterator*(IData&, int)>;
+using FrameIteratorCallback = std::function<IFrameIterator*(DataSet&, int)>;
 
 /*! \brief Interface for diffraction data
  *
  * Base interface for all diffraction data. IData handles the IO
  */
-class IData {
+class DataSet {
 public:
     // Constructors and destructor
 
     /*! Construct a IData Object from a file on disk, and pointer to a diffractometer.
-     *  @param inMemory: whether the file should be loaded in memory straight away or kept on disk
      */
-    IData(std::string filename, std::shared_ptr<Diffractometer> diffractometer);
+    DataSet(IDataReader* reader, const std::shared_ptr<Diffractometer>& diffractometer);
 
     //! Copy constructor
-    IData(const IData& other) = default;
+    DataSet(const DataSet& other) = default;
 
     //! Destructor
-    virtual ~IData()=0;
+    virtual ~DataSet();
 
     // Operators
     //! Assignment operator
-    IData& operator=(const IData& other);
+    DataSet& operator=(const DataSet& other);
 
     // iterators
     std::unique_ptr<IFrameIterator> getIterator(int idx);
@@ -120,32 +123,20 @@ public:
     //! Return the peaks
     std::set<sptrPeak3D>& getPeaks();
 
-    //! Gets the interpolated state between two consecutive detector states
-    ComponentState getDetectorInterpolatedState(double frame);
-
     //! Gets the the detector states.
-    const ComponentState& getDetectorState(unsigned long frame) const;
-
-    //! Gets the the detector states.
-    const std::vector<ComponentState>& getDetectorStates() const;
+    const ComponentState& getDetectorState(size_t frame) const;
 
     //! Get the sample state for frame
-    const ComponentState& getSampleState(unsigned long frame) const;
+    const ComponentState& getSampleState(size_t frame) const;
 
-    //! Gets the interpolated state between two consecutive sample states
-    ComponentState getSampleInterpolatedState(double frame);
+    const ComponentState& getSourceState(size_t frame) const;
 
-    //! Gets the the sample states.
-    const std::vector<ComponentState>& getSampleStates() const;
+    //! Gets the the sample states
+    const std::vector<SX::Instrument::InstrumentState>& getInstrumentStates() const;
 
-    //! Get the source state for frame
-    const ComponentState& getSourceState(unsigned int frame) const;
-
-    //! Gets the interpolated state between two consecutive source states
-    ComponentState getSourceInterpolatedState(double frame);
-
-    //! Gets the the source states.
-    const std::vector<ComponentState>& getSourceStates() const;
+    //! Get the interpolated state of a given component
+    SX::Instrument::InstrumentState getInterpolatedState(double frame) const;
+    //ComponentState getInterpolatedState(std::shared_ptr<Component> component, double frame) const;
 
     //! Add a new mask to the data
     void addMask(AABB<double,3>* mask);
@@ -165,15 +156,6 @@ public:
     //! Clear the peaks collected for this data
     void clearPeaks();
 
-    //! Return true if the file is stored in memory
-    bool isInMemory() const;
-
-    //! Load all the frames in memory
-    void readInMemory(const std::shared_ptr<SX::Utils::ProgressHandler>& progress);
-
-    //! Release the data from memory
-    void releaseMemory();
-
     //! Return true if a given point (in detector space) belong to a mask
     bool inMasked(const Eigen::Vector3d& point) const;
 
@@ -186,17 +168,14 @@ public:
     //! Return the intensity at point x,y,z.
     int dataAt(unsigned int x=0, unsigned int y=0, unsigned int z=0);
 
-    //! Read a given Frame of the data
+    //! Read a single frame
     Eigen::MatrixXi getFrame(std::size_t idx);
 
-    //! Read a single frame
-    virtual Eigen::MatrixXi readFrame(std::size_t idx)=0;
-
-    //! Get the file handle. Necessary to call before readInMemory or any IO of data.
-    virtual void open()=0;
+    //! Get the file handle.
+    void open();
 
     //! Close file and release handle
-    virtual void close()=0;
+    void close();
 
     //! True if file is open
     bool isOpened() const;
@@ -223,21 +202,18 @@ protected:
     std::size_t _ncols;
     std::shared_ptr<Diffractometer> _diffractometer;
     std::unique_ptr<MetaData> _metadata;
-    bool _inMemory;
     std::vector<Eigen::MatrixXi> _data;
-    std::vector<ComponentState> _detectorStates;
-    std::vector<ComponentState> _sampleStates;
-    std::vector<ComponentState> _sourceStates;
+    std::vector<SX::Instrument::InstrumentState> _states;
     std::set<sptrPeak3D> _peaks;
     std::size_t _fileSize;
     //! The set of masks bound to the data
     std::set<AABB<double,3>*> _masks;
     double _background;
-    bool _isCached;
     FrameIteratorCallback _iteratorCallback;
+    std::unique_ptr<IDataReader> _reader;
 };
 
 } // end namespace Data
 } // end namespace SX
 
-#endif // NSXTOOL_IDATA_H_
+#endif // NSXTOOL_DATA_H_

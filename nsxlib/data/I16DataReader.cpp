@@ -1,37 +1,40 @@
+#include <algorithm>
 #include <cmath>
 #include <cstring>
+#include <fstream>
+#include <sstream>
 #include <stdexcept>
 
-#include "../utils/EigenMatrixParser.h"
 #include <boost/algorithm/string.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/filesystem/path.hpp>
-#include <algorithm>
-#include <fstream>
-#include <sstream>
-#include "I16Data.h"
+
+#include "../data/I16DataReader.h"
+#include "../data/TiffDataReader.h"
 #include "../instrument/Component.h"
 #include "../instrument/Detector.h"
 #include "../instrument/Diffractometer.h"
 #include "../instrument/Gonio.h"
-#include "../utils/Parser.h"
 #include "../instrument/Sample.h"
 #include "../instrument/Source.h"
+#include "../utils/EigenMatrixParser.h"
+#include "../utils/Parser.h"
 #include "../utils/Units.h"
 
 namespace SX {
+
 namespace Data {
 
 using SX::Instrument::Diffractometer;
 
-IData* I16Data::create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer)
+IDataReader* I16DataReader::create(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer)
 {
-    return new I16Data(filename, diffractometer);
+    return new I16DataReader(filename, diffractometer);
 }
 
-I16Data::I16Data(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer)
-: IData(filename,diffractometer)
+I16DataReader::I16DataReader(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer)
+: IDataReader(filename,diffractometer)
 {
     std::ifstream file;
     std::string dir;
@@ -76,7 +79,7 @@ I16Data::I16Data(const std::string& filename, std::shared_ptr<Diffractometer> di
                 double value;
                 std::istringstream is2(line.substr(eq+1,std::string::npos-eq));
                 is2 >> value;
-                _metadata->add<double>(key,value);
+                _metadata.add<double>(key,value);
             }
         }
         if (line.compare("<MetaDataAtStart>")==0) {
@@ -87,7 +90,7 @@ I16Data::I16Data(const std::string& filename, std::shared_ptr<Diffractometer> di
         }
     }
     data_count--;
-    _metadata->add<std::string>("Instrument","I16Kappa");
+    _metadata.add<std::string>("Instrument","I16Kappa");
     file.close();
     _tifs.reserve(data_count);
     for (int i=1;i<=data_count;++i) {
@@ -96,48 +99,45 @@ I16Data::I16Data(const std::string& filename, std::shared_ptr<Diffractometer> di
         _tifs.push_back(dir+"/"+os.str());
     }
     _nFrames=data_count;
-    _data.reserve(_nFrames);
 
-    _detectorStates.reserve(_nFrames);
-    _sampleStates.reserve(_nFrames);
+    _states.resize(_nFrames);
 
     std::vector<double> dval(1);
-    dval[0]=_metadata->getKey<double>("delta");
+    dval[0]=_metadata.getKey<double>("delta");
     std::vector<double> sval(3);
-    sval[0]=_metadata->getKey<double>("eta");
-    sval[1]=_metadata->getKey<double>("chi");
-    sval[2]=_metadata->getKey<double>("phi");
+    sval[0]=_metadata.getKey<double>("eta");
+    sval[1]=_metadata.getKey<double>("chi");
+    sval[2]=_metadata.getKey<double>("phi");
 
 
     for (unsigned int i=0;i<_nFrames;++i) {
-        _detectorStates.push_back(_diffractometer->getDetector()->createState(dval));
-        _sampleStates.push_back(_diffractometer->getSample()->createState(sval));
+        _states[i].detector = _diffractometer->getDetector()->createState(dval);
+        _states[i].sample = _diffractometer->getSample()->createState(sval);
+        //_detectorStates.push_back(_diffractometer->getDetector()->createState(dval));
+        //_sampleStates.push_back(_diffractometer->getSample()->createState(sval));
     }
 
-    _metadata->add<int>("Numor",atoi(boost::filesystem::path(filename).stem().string().c_str()));
-    _metadata->add<double>("monitor",1.0);
+    _metadata.add<int>("Numor",atoi(boost::filesystem::path(filename).stem().string().c_str()));
+    _metadata.add<double>("monitor",1.0);
 }
 
-I16Data::~I16Data() {
-}
-
-void I16Data::open()
+void I16DataReader::open()
 {
 }
 
-void I16Data::close()
+void I16DataReader::close()
 {
 }
 
-Eigen::MatrixXi I16Data::readFrame(std::size_t idx)
+Eigen::MatrixXi I16DataReader::getData(size_t frame)
 {
-    assert(idx<_nFrames);
+    assert(frame<_nFrames);
 
-    TIFF* file=TIFFOpen(_tifs[idx].c_str(),"r");
+    TIFF* file=TIFFOpen(_tifs[frame].c_str(),"r");
 
-    Eigen::Matrix<uint32,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> data32(_nrows,_ncols);
+    Eigen::Matrix<uint32,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> data32(_nRows,_nCols);
     // Read line per line
-    for(unsigned short int i=0; i< _nrows; ++i) {
+    for(unsigned short int i=0; i< _nRows; ++i) {
         TIFFReadScanline(file, (char*)&data32(i,0), i);
     }
     TIFFClose(file);
@@ -147,4 +147,5 @@ Eigen::MatrixXi I16Data::readFrame(std::size_t idx)
 }
 
 } // end namespace Data
+
 } // end namespace SX

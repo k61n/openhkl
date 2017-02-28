@@ -2,19 +2,10 @@
  * nsxtool : Neutron Single Crystal analysis toolkit
  ------------------------------------------------------------------------------------------
  Copyright (C)
- 2016- Laurent C. Chapon, Eric Pellegrini, Jonathan Fisher
+ 2017- Laurent Chapon, Eric Pelligrini, Jonathan Fisher
 
- Institut Laue-Langevin
- BP 156
- 6, rue Jules Horowitz
- 38042 Grenoble Cedex 9
- France
  chapon[at]ill.fr
  pellegrini[at]ill.fr
-
- Forschungszentrum Juelich GmbH
- 52425 Juelich
- Germany
  j.fisher[at]fz-juelich.de
 
  This library is free software; you can redistribute it and/or
@@ -33,43 +24,24 @@
  *
  */
 
-#ifndef NSXTOOL_RESOLUTIONSHELL_H_
-#define NSXTOOL_RESOLUTIONSHELL_H_
+#ifndef NSXTOOL_INSTRUMENTSTATE_H_
+#define NSXTOOL_INSTRUMENTSTATE_H_
 
-#include <memory>
-#include <vector>
-#include <set>
+#include "ComponentState.h"
 
-#include <Eigen/Core>
+namespace SX {
 
-#include "Peak3D.h"
+namespace Instrument{
 
-namespace SX
-{
+struct InstrumentState {
+    ComponentState detector;
+    ComponentState source;
+    ComponentState sample;
 
-namespace Data
-{
-class DataSet;
-}
-
-namespace Crystal
-{
-
-class ResolutionShell {
-public:
-    ResolutionShell(double dmin, double dmax, size_t num_shells);
-    void addPeak(const sptrPeak3D& peak);
-    const std::vector<std::vector<sptrPeak3D>>& getShells() const;
-    const std::vector<double>& getD() const;
-private:
-    size_t _numShells;
-    std::vector<std::vector<sptrPeak3D>> _shells;
-    std::vector<double> _d;
-
+    InstrumentState interpolate(const InstrumentState& other, double t) const;
 };
 
-} // namespace Crystal
+} // end namespace Instrument
+} // end namespace SX
 
-} // namespace SX
-
-#endif /* NSXTOOL_PEAKCALC_H_ */
+#endif // NSXTOOL_INSTRUMENTSTATE_H_

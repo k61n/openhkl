@@ -76,7 +76,7 @@ void NumorsConversionDialog::on_pushButton_convert_clicked()
             row = idx.row();
             std::string filename=fileInfo.absoluteFilePath().toStdString();
             std::string extension=fileInfo.completeSuffix().toStdString();
-            SX::Data::IData* data=nullptr;
+            SX::Data::DataSet* data=nullptr;
             try {
                 data = dataFactory->create(extension,filename,diffractometer);
             }
@@ -88,7 +88,6 @@ void NumorsConversionDialog::on_pushButton_convert_clicked()
                 continue;
             }
             // todo: implement progress handler here
-            data->readInMemory(nullptr);
             QString basename=fileInfo.baseName();
             QString outputFilename = QDir(ui->lineEdit_outputDirectory->text()).filePath(basename+".h5");
 

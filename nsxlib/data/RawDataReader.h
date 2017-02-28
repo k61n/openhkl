@@ -33,8 +33,8 @@
  *
  */
 
-#ifndef NSXTOOL_RAWDATA_H_
-#define NSXTOOL_RAWDATA_H_
+#ifndef NSXTOOL_RAWDATAREADER_H_
+#define NSXTOOL_RAWDATAREADER_H_
 
 #include <map>
 #include <sstream>
@@ -44,46 +44,42 @@
 #include <Eigen/Core>
 #include <Eigen/Dense>
 
-#include "IData.h"
+#include "../data/IDataReader.h"
 #include "../instrument/Diffractometer.h"
 
 
-namespace SX
-{
+namespace SX {
 
-namespace Data
-{
-/*! \brief Raw data format.
- *
- */
-class RawData : public IData
-{
+namespace Data {
+
+class RawDataReader final: public IDataReader {
+
 public:
 
-    static IData* create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer);
+    static IDataReader* create(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer);
 
     //! Default constructor
-    RawData(const std::vector<std::string>& filenames, std::shared_ptr<Diffractometer> diffractometer,
+    RawDataReader(const std::vector<std::string>& filenames, const std::shared_ptr<Diffractometer>& diffractometer,
             double wavelength, double delta_chi, double delta_omega, double delta_phi,
             bool rowMajor, bool swapEndian, unsigned int bpp);
 
     //! Copy constructor
-    RawData(const RawData& other)=delete;
+    RawDataReader(const RawDataReader& other)=delete;
 
     //! Destructor
-    virtual ~RawData();
+    virtual ~RawDataReader()=default;
 
     // Operators
 
     //! Assignment operator
-    RawData& operator=(const RawData& other)=delete;
+    RawDataReader& operator=(const RawDataReader& other)=delete;
 
     // Other methods
     void open() override;
     void close() override;
     //! Read a single frame
 
-    Eigen::MatrixXi readFrame(std::size_t idx) override;
+    Eigen::MatrixXi getData(size_t frame) override;
 
     void swapEndian();
     void setBpp(unsigned int bpp);
@@ -102,18 +98,18 @@ private:
 };
 
 template<typename T_>
-Eigen::Matrix<T_, Eigen::Dynamic, Eigen::Dynamic> RawData::matrixFromData() const
+Eigen::Matrix<T_, Eigen::Dynamic, Eigen::Dynamic> RawDataReader::matrixFromData() const
 {
-    assert(sizeof(T_)*_nrows*_ncols == _length);
+    assert(sizeof(T_)*_nRows*_nCols == _length);
 
     if (_rowMajor) {
         Eigen::Matrix<T_, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> frame;
-        frame.resize(_nrows, _ncols);
+        frame.resize(_nRows, _nCols);
         memcpy(&frame(0,0), &_data[0], _length);
         return frame;
     } else {
         Eigen::Matrix<T_, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor> frame;
-        frame.resize(_nrows, _ncols);
+        frame.resize(_nRows, _nCols);
         memcpy(&frame(0,0), &_data[0], _length);
         return frame;
     }
@@ -123,4 +119,4 @@ Eigen::Matrix<T_, Eigen::Dynamic, Eigen::Dynamic> RawData::matrixFromData() cons
 
 } // end namespace SX
 
-#endif /* NSXTOOL_RAWDATA_H_ */
+#endif /* NSXTOOL_RAWDATAREADER_H_ */

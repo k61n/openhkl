@@ -8,8 +8,11 @@
 #include <boost/filesystem/operations.hpp>
 
 #include "IData.h"
+#include "IDataReader.h"
+
 #include "../instrument/Detector.h"
 #include "../instrument/Gonio.h"
+#include "../instrument/Monochromator.h"
 #include "../instrument/Sample.h"
 #include "../instrument/Source.h"
 
@@ -27,25 +30,23 @@ namespace Data {
 
 using Eigen::Matrix3d;
 using boost::filesystem::path;
+using SX::Instrument::InstrumentState;
 
-IData::IData(std::string filename, std::shared_ptr<Diffractometer> diffractometer):
+DataSet::DataSet(IDataReader* reader, const std::shared_ptr<Diffractometer>& diffractometer):
     _isOpened(false),
-    _filename(std::move(filename)),
+    _filename(reader->getFilename()),
     _nFrames(0),
     _nrows(0),
     _ncols(0),
-    _diffractometer(std::move(diffractometer)),
+    _diffractometer(diffractometer),
     _metadata(std::unique_ptr<MetaData>(new MetaData())),
-    _inMemory(false),
     _data(),
-    _detectorStates(),
-    _sampleStates(),
-    _sourceStates(),
+    _states(),
     _peaks(),
     _fileSize(0),
     _masks(),
     _background(0.0),
-    _isCached(true)
+    _reader(reader)
 {
     if ( !boost::filesystem::exists(_filename.c_str())) {
         throw std::runtime_error("IData, file: " + _filename + " does not exist");
@@ -53,13 +54,23 @@ IData::IData(std::string filename, std::shared_ptr<Diffractometer> diffractomete
 
     _nrows = _diffractometer->getDetector()->getNRows();
     _ncols = _diffractometer->getDetector()->getNCols();
+
+    _metadata = std::unique_ptr<MetaData>(new MetaData(_reader->getMetadata()));
+    _nFrames = _metadata->getKey<int>("npdone");
+
+    // Getting Scan parameters for the detector
+    _states.resize(_nFrames);
+
+    for (unsigned int i=0;i<_nFrames;++i) {
+        _states[i] = _reader->getState(i);
+    }
 }
 
-std::unique_ptr<IFrameIterator> IData::getIterator(int idx)
+std::unique_ptr<IFrameIterator> DataSet::getIterator(int idx)
 {
     // use default frame iterator if one hasn't been set
     if ( !_iteratorCallback) {
-        _iteratorCallback = [] (IData& data, int index) {
+        _iteratorCallback = [] (DataSet& data, int index) {
             return new BasicFrameIterator(data, static_cast<unsigned int>(index));
             //return new ThreadedFrameIterator(data, index);
         };
@@ -67,25 +78,25 @@ std::unique_ptr<IFrameIterator> IData::getIterator(int idx)
     return std::unique_ptr<IFrameIterator>(_iteratorCallback(*this, idx));
 }
 
-void IData::setIteratorCallback(FrameIteratorCallback callback)
+void DataSet::setIteratorCallback(FrameIteratorCallback callback)
 {
     _iteratorCallback = std::move(callback);
 }
 
-IData::~IData()
+DataSet::~DataSet()
 {
     clearPeaks();
     blosc_destroy();
 }
 
-std::string IData::getBasename() const
+std::string DataSet::getBasename() const
 {
     path pathname(_filename);
     return pathname.filename().string();
 }
 
 
-int IData::dataAt(unsigned int x, unsigned int y, unsigned int z)
+int DataSet::dataAt(unsigned int x, unsigned int y, unsigned int z)
 {
     // Check that the voxel is inside the limit of the data
     if (z>=_nFrames || y>=_ncols || x>=_nrows) {
@@ -94,48 +105,63 @@ int IData::dataAt(unsigned int x, unsigned int y, unsigned int z)
     return getFrame(z)(x,y);
 }
 
-const std::string& IData::getFilename() const
+Eigen::MatrixXi DataSet::getFrame(std::size_t idx)
+{
+    return _reader->getData(idx);
+}
+
+void DataSet::open()
+{
+    _reader->open();
+}
+
+void DataSet::close()
+{
+    _reader->close();
+}
+
+const std::string& DataSet::getFilename() const
 {
     return _filename;
 }
 
-std::shared_ptr<Diffractometer> IData::getDiffractometer() const
+std::shared_ptr<Diffractometer> DataSet::getDiffractometer() const
 {
     return _diffractometer;
 }
 
-MetaData*  IData::getMetadata() const
+MetaData*  DataSet::getMetadata() const
 {
     return _metadata.get();
 }
 
-std::size_t IData::getNFrames() const
+std::size_t DataSet::getNFrames() const
 {
     return _nFrames;
 }
 
-std::size_t IData::getNCols() const
+std::size_t DataSet::getNCols() const
 {
     return _ncols;
 }
 
-std::size_t IData::getNRows() const
+std::size_t DataSet::getNRows() const
 {
     return _nrows;
 }
 
-std::set<sptrPeak3D>& IData::getPeaks()
+std::set<sptrPeak3D>& DataSet::getPeaks()
 {
     return _peaks;
 }
 
-void IData::addPeak(const sptrPeak3D& peak)
+void DataSet::addPeak(const sptrPeak3D& peak)
 {
     _peaks.insert(peak);
     maskPeak(peak);
 }
 
-void IData::clearPeaks()
+void DataSet::clearPeaks()
 {
     for (auto&& ptr : _peaks) {
         ptr->unlinkData();
@@ -143,111 +169,53 @@ void IData::clearPeaks()
     _peaks.clear();
 }
 
-bool IData::isInMemory() const
+InstrumentState DataSet::getInterpolatedState(double frame) const
 {
-    return _inMemory;
-}
-
-ComponentState IData::getDetectorInterpolatedState(double frame)
-{
-    if (frame>(_detectorStates.size()-1) || frame<0) {
-        throw std::runtime_error("Error when interpolating detector states: invalid frame value");
+    if (frame>(_states.size()-1) || frame<0) {
+        throw std::runtime_error("Error when interpolating state: invalid frame value");
     }
 
-    std::size_t idx = static_cast<std::size_t>(std::floor(frame));
-    std::size_t next = std::min(idx+1, _detectorStates.size()-1);
-    std::size_t nPhysicalAxes=_diffractometer->getDetector()->getGonio()->getNPhysicalAxes();
+    const std::size_t idx = std::size_t(std::lround(std::floor(frame)));
+    const std::size_t next = std::min(idx+1, _states.size()-1);
+    const double t = frame-idx;
 
-    const std::vector<double>& prevState=_detectorStates[idx].getValues();
-    const std::vector<double>& nextState=_detectorStates[next].getValues();
-    std::vector<double> state(nPhysicalAxes);
+    const auto& nextState = _states[next];
+    const auto& prevState = _states[idx];
 
-    for (std::size_t i=0; i < nPhysicalAxes; ++i) {
-        state[i] = prevState[i] + (frame-static_cast<double>(idx))*(nextState[i]-prevState[i]);
-    }
-    return _diffractometer->getDetector()->createState(state);
+    return prevState.interpolate(nextState, t);
 }
 
-const ComponentState& IData::getDetectorState(unsigned long frame) const
+const ComponentState& DataSet::getDetectorState(size_t frame) const
 {
-    if (frame > (_detectorStates.size()-1)) {
+    if (frame > (_states.size()-1)) {
         throw std::runtime_error("Error when returning detector state: invalid frame value");
     }
-    return _detectorStates[frame];
+    return _states[frame].detector;
 }
 
-ComponentState IData::getSampleInterpolatedState(double frame)
+const ComponentState& DataSet::getSampleState(size_t frame) const
 {
-    if (frame > (_sampleStates.size()-1) || frame<0) {
-        throw std::runtime_error("Error when interpolating sample states: invalid frame value");
-    }
-
-    std::size_t idx = static_cast<std::size_t>(std::floor(frame));
-    std::size_t next = std::min(idx+1, _sampleStates.size()-1);
-    std::size_t nPhysicalAxes=_diffractometer->getSample()->getGonio()->getNPhysicalAxes();
-
-    const std::vector<double>& prevState=_sampleStates[idx].getValues();
-    const std::vector<double>& nextState=_sampleStates[next].getValues();
-    std::vector<double> state(nPhysicalAxes);
-
-    for (std::size_t i=0;i<nPhysicalAxes;++i) {
-        state[i] = prevState[i] + (frame-static_cast<double>(idx))*(nextState[i]-prevState[i]);
-    }
-    return _diffractometer->getSample()->createState(state);
-}
-
-const ComponentState& IData::getSampleState(unsigned long frame) const
-{
-    if (frame > (_sampleStates.size()-1)) {
+    if (frame > (_states.size()-1)) {
         throw std::runtime_error("Error when returning sample state: invalid frame value");
     }
-    return _sampleStates[frame];
+    return _states[frame].sample;
 }
 
-ComponentState IData::getSourceInterpolatedState(double frame)
+const ComponentState& DataSet::getSourceState(size_t frame) const
 {
-    if (frame>(_sourceStates.size()-1) || frame<0) {
-        throw std::runtime_error("Error when interpolating source states: invalid frame value");
-    }
-    std::size_t idx = static_cast<std::size_t>(std::floor(frame));
-    std::size_t next = std::min(idx+1, _sourceStates.size()-1);
-    std::size_t nPhysicalAxes=_diffractometer->getSource()->getGonio()->getNPhysicalAxes();
-    std::vector<double> state(nPhysicalAxes);
-
-    const std::vector<double>& prevState = _sourceStates[idx].getValues();
-    const std::vector<double>& nextState = _sourceStates[next].getValues();
-
-    for (std::size_t i = 0; i < nPhysicalAxes; ++i) {
-        state[i] = prevState[i] + (frame-static_cast<double>(idx))*(nextState[i]-prevState[i]);
-    }
-    return _diffractometer->getSource()->createState(state);
-}
-
-const ComponentState& IData::getSourceState(unsigned int frame) const
-{
-    if (frame>(_sourceStates.size()-1)) {
+    if (frame>(_states.size()-1)) {
         throw std::runtime_error("Error when returning source state: invalid frame value");
     }
-    return _sourceStates[frame];
+    return _states[frame].source;
 }
 
 
-const std::vector<ComponentState>& IData::getDetectorStates() const
+const std::vector<SX::Instrument::InstrumentState>& DataSet::getInstrumentStates() const
 {
-    return _detectorStates;
+    return _states;
 }
 
-const std::vector<ComponentState>& IData::getSampleStates() const
-{
-    return _sampleStates;
-}
-
-const std::vector<ComponentState>& IData::getSourceStates() const
-{
-    return _sourceStates;
-}
-
-bool IData::removePeak(const sptrPeak3D& peak)
+bool DataSet::removePeak(const sptrPeak3D& peak)
 {
     auto&& it=_peaks.find(peak);
 
@@ -258,23 +226,20 @@ bool IData::removePeak(const sptrPeak3D& peak)
     return true;
 }
 
-bool IData::isOpened() const
+bool DataSet::isOpened() const
 {
     return _isOpened;
 }
 
-std::size_t IData::getFileSize() const
+std::size_t DataSet::getFileSize() const
 {
     return _fileSize;
 }
 
-void IData::saveHDF5(const std::string& filename) //const
+void DataSet::saveHDF5(const std::string& filename) //const
 {
     blosc_init();
     blosc_set_nthreads(4);
-
-    //if (!_inMemory)
-    //	throw std::runtime_error("Can't save "+_filename+" as HDF5, file not in memory");
 
     hsize_t dims[3] = {_nFrames, _nrows,_ncols};
     hsize_t chunk[3] = {1, _nrows,_ncols};
@@ -330,8 +295,8 @@ void IData::saveHDF5(const std::string& filename) //const
     H5::DataSpace scanSpace(1,nf);
     RowMatrixd vals(names.size(),_nFrames);
 
-    for (unsigned int i = 0; i < _detectorStates.size(); ++i) {
-        const std::vector<double>& v = _detectorStates[i].getValues();
+    for (unsigned int i = 0; i < _states.size(); ++i) {
+        const std::vector<double>& v = _states[i].detector.getValues();
 
         for (unsigned int j = 0; j < names.size(); ++j) {
             vals(j,i) = v[j] / SX::Units::deg;
@@ -348,8 +313,8 @@ void IData::saveHDF5(const std::string& filename) //const
     std::vector<std::string> samplenames=_diffractometer->getSample()->getGonio()->getPhysicalAxesNames();
     RowMatrixd valsSamples(samplenames.size(), _nFrames);
 
-    for (unsigned int i = 0; i < _sampleStates.size(); ++i) {
-        const std::vector<double>& v = _sampleStates[i].getValues();
+    for (unsigned int i = 0; i < _states.size(); ++i) {
+        const std::vector<double>& v = _states[i].sample.getValues();
 
         for (unsigned int j = 0; j < samplenames.size(); ++j) {
             valsSamples(j,i) = v[j]/SX::Units::deg;
@@ -366,8 +331,8 @@ void IData::saveHDF5(const std::string& filename) //const
     std::vector<std::string> sourcenames = _diffractometer->getSource()->getGonio()->getPhysicalAxesNames();
     RowMatrixd valsSources(sourcenames.size(),_nFrames);
 
-    for (unsigned int i = 0; i < _sourceStates.size(); ++i) {
-        const std::vector<double>& v=_sourceStates[i].getValues();
+    for (unsigned int i = 0; i < _states.size(); ++i) {
+        const std::vector<double>& v=_states[i].source.getValues();
 
         for (unsigned int j = 0; j < sourcenames.size(); ++j) {
             valsSources(j,i) = v[j] / SX::Units::deg;
@@ -424,13 +389,13 @@ void IData::saveHDF5(const std::string& filename) //const
     // blosc_destroy();
 }
 
-void IData::addMask(AABB<double,3>* mask)
+void DataSet::addMask(AABB<double,3>* mask)
 {
     _masks.insert(mask);
     maskPeaks();
 }
 
-void IData::removeMask(AABB<double,3>* mask)
+void DataSet::removeMask(AABB<double,3>* mask)
 {
     auto&& p = _masks.find(mask);
     if (p != _masks.end()) {
@@ -439,19 +404,19 @@ void IData::removeMask(AABB<double,3>* mask)
     maskPeaks();
 }
 
-const std::set<AABB<double, 3> *>& IData::getMasks()
+const std::set<AABB<double, 3> *>& DataSet::getMasks()
 {
     return _masks;
 }
 
-void IData::maskPeaks() const
+void DataSet::maskPeaks() const
 {
     for (auto&& p : _peaks) {
         maskPeak(p);
     }
 }
 
-void IData::maskPeak(sptrPeak3D peak) const
+void DataSet::maskPeak(sptrPeak3D peak) const
 {
     peak->setMasked(false);
     for (auto&& m : _masks) {
@@ -463,7 +428,7 @@ void IData::maskPeak(sptrPeak3D peak) const
     }
 }
 
-bool IData::inMasked(const Eigen::Vector3d& point) const
+bool DataSet::inMasked(const Eigen::Vector3d& point) const
 {
     // Loop over the defined masks and return true if one of them contains the point
     for (auto&& m : _masks) {
@@ -475,32 +440,20 @@ bool IData::inMasked(const Eigen::Vector3d& point) const
     return false;
 }
 
-void IData::releaseMemory()
-{
-    if (!_inMemory) {
-        return;
-    }
-    for (auto&& d : _data) {
-        d.resize(0,0);
-    }
-    _data.clear();
-    _data.shrink_to_fit();
-    _inMemory = false;
-}
-
-std::vector<PeakCalc> IData::hasPeaks(const std::vector<Eigen::Vector3d>& hkls, const Matrix3d& BU)
+std::vector<PeakCalc> DataSet::hasPeaks(const std::vector<Eigen::Vector3d>& hkls, const Matrix3d& BU)
 {
     std::vector<PeakCalc> peaks;
-    unsigned int scanSize = static_cast<unsigned int>(_sampleStates.size());
+    unsigned int scanSize = static_cast<unsigned int>(_states.size());
     Eigen::Matrix3d UB = BU.transpose();
-    Eigen::Vector3d ki=_diffractometer->getSource()->getKi();
+    auto& mono = _diffractometer->getSource()->getSelectedMonochromator();
+    Eigen::Vector3d ki=mono.getKi();
     std::vector<Eigen::Matrix3d> rotMatrices;
     rotMatrices.reserve(scanSize);
     auto gonio = _diffractometer->getSample()->getGonio();
-    double wavelength_2 = -0.5 * _diffractometer->getSource()->getWavelength();
+    double wavelength_2 = -0.5 * mono.getWavelength();
 
     for (unsigned int s=0; s<scanSize; ++s) {
-        rotMatrices.push_back(gonio->getHomMatrix(_sampleStates[s].getValues()).rotation());
+        rotMatrices.push_back(gonio->getHomMatrix(_states[s].sample.getValues()).rotation());
     }
 
     for (const Eigen::Vector3d& hkl: hkls) {
@@ -535,14 +488,16 @@ std::vector<PeakCalc> IData::hasPeaks(const std::vector<Eigen::Vector3d>& hkls, 
         Eigen::Vector3d kf=ki+qi0+(qi-qi0)*t;
         t+=(i-1);
 
-        ComponentState dis=getDetectorInterpolatedState(t);
+        const InstrumentState& state = getInterpolatedState(t);
+
+        //const ComponentState& dis = state.detector;
         double px,py;
         // If hit detector, new peak
-        ComponentState cs=getSampleInterpolatedState(t);
-        Eigen::Vector3d from=_diffractometer->getSample()->getPosition(cs.getValues());
+        //const ComponentState& cs=state.sample;
+        Eigen::Vector3d from=_diffractometer->getSample()->getPosition(state.sample.getValues());
 
         double time;
-        bool accept=_diffractometer->getDetector()->receiveKf(px,py,kf,from,time,dis.getValues());
+        bool accept=_diffractometer->getDetector()->receiveKf(px,py,kf,from,time,state.detector.getValues());
 
         if (accept) {
             //peaks.emplace_back(PeakCalc(hkl[0],hkl[1],hkl[2],px,py,t));
@@ -552,54 +507,7 @@ std::vector<PeakCalc> IData::hasPeaks(const std::vector<Eigen::Vector3d>& hkls, 
     return peaks;
 }
 
-Eigen::MatrixXi IData::getFrame(std::size_t idx)
-{
-    if ( _inMemory) {
-        return _data.at(idx);
-    }
-    return readFrame(idx);
-}
-
-void IData::readInMemory(const std::shared_ptr<SX::Utils::ProgressHandler>& progress)
-{
-    // if caching is disabled, do nothing
-    if (!_isCached) {
-        return;
-    }
-
-    if (_inMemory) {
-        return;
-    }
-
-    if (progress) {
-        progress->setProgress(0);
-        progress->setStatus("Reading data into memory...");
-    }
-
-    if ( !_isOpened) {
-        open();
-    }
-
-    _data.clear();
-    _data.reserve(_nFrames);
-    unsigned int dummy = static_cast<unsigned int>(0.01 * _nFrames)+1;
-
-    for (unsigned int i = 0; i < _nFrames; ++i) {
-        _data.push_back(readFrame(i));
-
-        if ( (i%dummy) == 0 && progress) {
-            progress->setProgress(int(100.0 * i / _nFrames));
-        }
-    }
-
-    _inMemory = true;
-
-    if (progress) {
-        progress->setProgress(100);
-    }
-}
-
-double IData::getBackgroundLevel(const std::shared_ptr<SX::Utils::ProgressHandler>& progress)
+double DataSet::getBackgroundLevel(const std::shared_ptr<SX::Utils::ProgressHandler>& progress)
 {
     if ( _background > 0.0 ) {
         return _background;
@@ -635,7 +543,7 @@ double IData::getBackgroundLevel(const std::shared_ptr<SX::Utils::ProgressHandle
     return _background;
 }
 
-void IData::integratePeaks(const std::shared_ptr<Utils::ProgressHandler>& handler)
+void DataSet::integratePeaks(const std::shared_ptr<Utils::ProgressHandler>& handler)
 {
     if (handler) {
         handler->setStatus(("Integrating " + std::to_string(getPeaks().size()) + " peaks...").c_str());

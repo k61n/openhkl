@@ -45,7 +45,7 @@
 using SX::Geometry::Ellipsoid;
 using SX::Geometry::Matrix3d;
 using std::shared_ptr;
-using SX::Data::IData;
+using SX::Data::DataSet;
 
 
 namespace SX

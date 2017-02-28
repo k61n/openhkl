@@ -27,48 +27,45 @@
  *
  */
 
-#ifndef NSXTOOL_I16DATA_H_
-#define NSXTOOL_I16DATA_H_
+#ifndef NSXTOOL_I16DATAREADER_H_
+#define NSXTOOL_I16DATAREADER_H_
 
 #include <map>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
-#include <memory>
+
 #include <Eigen/Dense>
-#include "IData.h"
+
+#include "../data/IDataReader.h"
 #include "../instrument/Diffractometer.h"
-#include "TiffData.h"
 
-namespace SX
-{
+namespace SX {
 
-namespace Data
-{
-/*! \brief Legacy ILL Data in ASCII format.
- *
- */
-class I16Data : public IData
+namespace Data {
+
+class I16DataReader final: public IDataReader
 {
 public:
 
-    static IData* create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer);
+    static IDataReader* create(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer);
 
     //! Default constructor
-    I16Data(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer);
+    I16DataReader(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer);
     //! Copy constructor
-    I16Data(const I16Data& other)=delete;
+    I16DataReader(const I16DataReader& other)=delete;
     //! Destructor
-    virtual ~I16Data();
-    // Operators
+    virtual ~I16DataReader()=default;
+
     //! Assignment operator
-    I16Data& operator=(const I16Data& other)=delete;
+    I16DataReader& operator=(const I16DataReader& other)=delete;
 
     // Other methods
     void open() override;
     void close() override;
     //! Read a single frame
-    Eigen::MatrixXi readFrame(std::size_t idx) override;
+    Eigen::MatrixXi getData(size_t frame) override;
 
 private:
     //! Vector of all TIFF files.
@@ -80,4 +77,4 @@ private:
 
 } // end namespace SX
 
-#endif /* NSXTOOL_I16DATA_H_ */
+#endif /* NSXTOOL_I16DATAREADER_H_ */

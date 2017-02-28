@@ -12,11 +12,11 @@
 namespace SX {
 namespace Data {
 
-class IData;
+class DataSet;
 
 class IFrameIterator {
 public:
-    IFrameIterator(IData& data, unsigned int idx): _index(idx), _data(data) {}
+    IFrameIterator(DataSet& data, unsigned int idx): _index(idx), _data(data) {}
     virtual ~IFrameIterator() = default;
     unsigned int index() {return _index;}
     virtual SX::Types::RealMatrix& getFrame() = 0;
@@ -24,7 +24,7 @@ public:
 
 protected:
     unsigned int _index;
-    IData& _data;
+    DataSet& _data;
 };
 
 } // namespace Data

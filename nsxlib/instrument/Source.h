@@ -35,15 +35,14 @@
 
 #include <boost/property_tree/ptree.hpp>
 
-#include "Component.h"
+#include "../instrument/Component.h"
+#include "../instrument/Monochromator.h"
 
 namespace SX
 {
 
 namespace Instrument
 {
-
-class Monochromator;
 
 class Source : public Component
 {
@@ -68,24 +67,6 @@ public:
 	//! Assignment operator
 	Source& operator=(const Source& other);
 
-	//! Get the wavelength of the source
-	double getWavelength() const;
-	//! Set the wavelength of the source
-	void setWavelength(double wavelength);
-
-	//! Get the incoming wave vector
-	Eigen::Vector3d getKi() const;
-
-	//! Set the offset of the wavelength for the currently selected monochromator. No effect if _offsetFixed is set to True.
-	void setOffset(double offset);
-	//! Get the offset of the wavelength for the currently selected monochromator. Throw if no monochromator selected.
-	double getOffset() const;
-
-	//! Fix the offset of the wavelength for the currently selected monochromator.
-	void setOffsetFixed(bool offsetFixed);
-	//! Return whether the offset of the wavelength of the selected monochromator is fixed or not
-	bool isOffsetFixed() const;
-
 	//! Returns the monochromators registered for this Source
 	const std::vector<Monochromator>& getMonochromators() const;
 
@@ -96,11 +77,10 @@ public:
     void setSelectedMonochromator(size_t i);
 
 	//! Return a pointer to the selected monochromator
-    Monochromator* getSelectedMonochromator();
-    const Monochromator* getSelectedMonochromator() const;
+    Monochromator& getSelectedMonochromator();
 
 	//! Add a new monochromator to this source
-	void addMonochromator(Monochromator*);
+	void addMonochromator(Monochromator mono);
 
 protected:
 

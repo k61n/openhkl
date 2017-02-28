@@ -146,6 +146,8 @@ double Monochromator::getOffset() const
 
 void Monochromator::setOffset(double offset)
 {
+    if (_offsetFixed)
+        return;
     _offset = offset;
 }
 
@@ -183,6 +185,11 @@ bool Monochromator::operator==(const Monochromator& other)
         return false;
 
     return true;
+}
+
+Eigen::Vector3d Monochromator::getKi() const
+{
+    return Eigen::Vector3d(0,1.0/_wavelength,0.0);
 }
 
 } /* namespace Instrument */

@@ -40,7 +40,7 @@ public:
 
     void addPeak(const sptrPeak3D& peak);
 
-    void setPeaks(const std::vector<std::shared_ptr<SX::Data::IData>>& data);
+    void setPeaks(const std::vector<std::shared_ptr<SX::Data::DataSet>>& data);
     void setPeaks(const std::vector<sptrPeak3D>& peaks);
 
     const std::vector<sptrPeak3D>& getPeaks() const;

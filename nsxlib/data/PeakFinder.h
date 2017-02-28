@@ -24,13 +24,13 @@ class ProgressHandler;
 namespace Data
 {
 
-class IData;
+class DataSet;
 
 class PeakFinder
 {
 public:
     PeakFinder();
-    bool find(std::vector<std::shared_ptr<IData>> numors);
+    bool find(std::vector<std::shared_ptr<DataSet>> numors);
 
     void setHandler(const std::shared_ptr<SX::Utils::ProgressHandler>& handler);
 

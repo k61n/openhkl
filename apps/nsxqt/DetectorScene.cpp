@@ -85,7 +85,7 @@ void DetectorScene::setMaxIntensity(int intensity)
     loadCurrentImage(false);
 }
 
-void DetectorScene::setData(const std::shared_ptr<SX::Data::IData>& data)
+void DetectorScene::setData(const std::shared_ptr<SX::Data::DataSet>& data)
 {
     _currentData = data;
     _currentData->open();
@@ -102,7 +102,7 @@ void DetectorScene::setData(const std::shared_ptr<SX::Data::IData>& data)
     updatePeaks();
 }
 
-void DetectorScene::setData(const std::shared_ptr<SX::Data::IData>& data, size_t frame)
+void DetectorScene::setData(const std::shared_ptr<SX::Data::DataSet>& data, size_t frame)
 {
     setData(data);
     changeFrame(frame);
@@ -388,7 +388,8 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
     const auto& samplev=_currentData->getSampleState(_currentFrameIndex).getValues();
     const auto& detectorv=_currentData->getDetectorState(_currentFrameIndex).getValues();
     std::shared_ptr<SX::Instrument::Sample> sample=instr->getSample();
-    double wave=instr->getSource()->getWavelength();
+    auto& mono = instr->getSource()->getSelectedMonochromator();
+    double wave=mono.getWavelength();
 
     QString ttip;
     double gamma, nu, th2;
@@ -449,7 +450,7 @@ void DetectorScene::loadCurrentImage(bool newimage)
     }
 }
 
-std::shared_ptr<SX::Data::IData> DetectorScene::getData()
+std::shared_ptr<SX::Data::DataSet> DetectorScene::getData()
 {
     return _currentData;
 }

@@ -37,7 +37,7 @@ ReciprocalSpaceViewer::~ReciprocalSpaceViewer()
     delete ui;
 }
 
-void ReciprocalSpaceViewer::setData(const std::vector<std::shared_ptr<SX::Data::IData>>& data)
+void ReciprocalSpaceViewer::setData(const std::vector<std::shared_ptr<SX::Data::DataSet>>& data)
 {
     _data.clear();
     _data.reserve(data.size());
@@ -105,7 +105,8 @@ void ReciprocalSpaceViewer::on_view_clicked()
 
     std::shared_ptr<SX::Instrument::Sample> sample(_experiment->getDiffractometer()->getSample());
 
-    double lambda(_experiment->getDiffractometer()->getSource()->getWavelength());
+    auto& mono = _experiment->getDiffractometer()->getSource()->getSelectedMonochromator();
+    double lambda(mono.getWavelength());
     double invlambda(1.0/lambda);
 
     double invdq(1.0/dq);
@@ -147,7 +148,7 @@ void ReciprocalSpaceViewer::on_view_clicked()
                     hmatrix=(*it)->getHomMatrix(0.0)*hmatrix;
                 }
             }
-            const Eigen::MatrixXi& frame = d->readFrame(f);
+            const Eigen::MatrixXi& frame = d->getFrame(f);
 
             for (int j=0;j<nDetCols;++j) {
                 for (int i=0;i<nDetRows;++i) {

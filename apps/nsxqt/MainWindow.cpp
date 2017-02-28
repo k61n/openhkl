@@ -29,7 +29,7 @@
 #include <nsxlib/instrument/Detector.h>
 #include <nsxlib/geometry/Ellipsoid.h>
 #include <nsxlib/crystal/GruberReduction.h>
-#include <nsxlib/data/ILLAsciiData.h>
+
 #include <nsxlib/crystal/NiggliReduction.h>
 #include <nsxlib/crystal/Peak3D.h>
 #include <nsxlib/instrument/Sample.h>
@@ -86,7 +86,7 @@ using namespace SX::Instrument;
 using SX::Types::RealMatrix;
 using SX::Utils::ProgressHandler;
 using SX::Data::PeakFinder;
-using SX::Data::IData;
+using SX::Data::DataSet;
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -130,12 +130,12 @@ MainWindow::MainWindow(QWidget *parent)
     _ui->splitterHorizontal->setStretchFactor(1,90);
 
     // signals and slots
-    connect(_ui->experimentTree, SIGNAL(plotData(std::shared_ptr<SX::Data::IData>)),
-            _ui->_dview->getScene(), SLOT(setData(std::shared_ptr<SX::Data::IData>))
+    connect(_ui->experimentTree, SIGNAL(plotData(std::shared_ptr<SX::Data::DataSet>)),
+            _ui->_dview->getScene(), SLOT(setData(std::shared_ptr<SX::Data::DataSet>))
     );
 
-    connect(_ui->experimentTree, SIGNAL(plotData(std::shared_ptr<SX::Data::IData>)),
-            this, SLOT(changeData(std::shared_ptr<SX::Data::IData>)));
+    connect(_ui->experimentTree, SIGNAL(plotData(std::shared_ptr<SX::Data::DataSet>)),
+            this, SLOT(changeData(std::shared_ptr<SX::Data::DataSet>)));
 
     connect(_ui->frame,&QScrollBar::valueChanged,[=](const int& value){_ui->_dview->getScene()->changeFrame(value);});
 
@@ -274,7 +274,7 @@ Ui::MainWindow* MainWindow::getUI() const
 }
 
 
-void MainWindow::changeData(std::shared_ptr<IData> data)
+void MainWindow::changeData(std::shared_ptr<DataSet> data)
 {
     _ui->frameFrame->setEnabled(true);
     _ui->intensityFrame->setEnabled(true);
@@ -549,10 +549,10 @@ void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
     int total_peaks = 0;
     // int remaining_peaks = 0;
 
-    std::vector<std::shared_ptr<IData>> numors = _session->getSelectedNumors();
+    std::vector<std::shared_ptr<DataSet>> numors = _session->getSelectedNumors();
     std::vector<sptrPeak3D> bad_peaks;
 
-    for (std::shared_ptr<IData> numor: numors)
+    for (std::shared_ptr<DataSet> numor: numors)
     {
         std::set<sptrPeak3D>& peaks = numor->getPeaks();
 

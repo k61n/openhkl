@@ -3,6 +3,7 @@
 #include <memory>
 
 #include "IData.h"
+#include "../instrument/Diffractometer.h"
 #include "../instrument/Experiment.h"
 #include "../instrument/Detector.h"
 #include "../geometry/BlobFinder.h"
@@ -36,13 +37,12 @@ PeakFinder::PeakFinder()
 }
 
 
-bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
+bool PeakFinder::find(std::vector<std::shared_ptr<DataSet>> numors)
 {
     std::size_t npeaks=0;
 
     for (auto&& numor : numors) {
         numor->clearPeaks();
-        numor->readInMemory(_handler);
 
         try {
             // compute median only if necessary
@@ -124,12 +124,6 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
             throw e;
         }
 
-//        int ncells = numor->getDiffractometer()->getSample()->getNCrystals();
-//        std::shared_ptr<SX::Crystal::UnitCell> cell;
-//
-//        if (ncells)
-//            cell=numor->getDiffractometer()->getSample()->getUnitCell(0);
-
         if (_handler ) {
             _handler->setStatus("Computing bounding boxes...");
             _handler->setProgress(0);
@@ -157,11 +151,6 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
                 p->setSelected(false);
             }
 
-
-//            if (cell)
-//                p->addUnitCell(cell);
-
-
             numor->addPeak(p);
             npeaks++;
             ++count;
@@ -177,7 +166,6 @@ bool PeakFinder::find(std::vector<std::shared_ptr<IData>> numors)
             _handler->setProgress(0);
         }
         numor->integratePeaks();
-        numor->releaseMemory();
         numor->close();
         //_ui->progressBar->setValue(++comp);
     }

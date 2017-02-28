@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef NSXTOOL_ILLASCIIDATA_H_
-#define NSXTOOL_ILLASCIIDATA_H_
+#ifndef NSXTOOL_ILLASCIIDATAREADER_H_
+#define NSXTOOL_ILLASCIIDATAREADER_H_
 
 #include <map>
 #include <sstream>
@@ -39,47 +39,47 @@
 
 #include <Eigen/Dense>
 
-#include "IData.h"
+#include "../data/IDataReader.h"
 #include "../instrument/Diffractometer.h"
 
 
 namespace SX {
-    namespace Utils {
-        template <class T> struct IMatrixParser;
-    }
+
+namespace Utils {
+class IMatrixParser;
+}
 }
 
-namespace SX
-{
+namespace SX {
 
-namespace Data
-{
-/*! \brief Legacy ILL Data in ASCII format.
- *
- */
-class ILLAsciiData final: public IData
-{
+namespace Data {
+
+using SX::Instrument::Diffractometer;
+
+class ILLDataReader final: public IDataReader {
+
 public:
 
-    static IData* create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer);
+    static IDataReader* create(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer);
 
     //! Default constructor
-    ILLAsciiData(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer);
+    ILLDataReader(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer);
     //! Copy constructor
-    ILLAsciiData(const ILLAsciiData& other)=delete;
+    ILLDataReader(const ILLDataReader& other)=delete;
     //! Destructor
-    virtual ~ILLAsciiData();
+    virtual ~ILLDataReader();
 
     // Operators
 
     //! Assignment operator
-    ILLAsciiData& operator=(const ILLAsciiData& other)=delete;
+    ILLDataReader& operator=(const ILLDataReader& other)=delete;
 
     // Other methods
     void open() override;
+
     void close() override;
     //! Read a single frame
-    Eigen::MatrixXi readFrame(std::size_t idx) override;
+    Eigen::MatrixXi getData(size_t frame) override;
 
 private:
 
@@ -96,7 +96,7 @@ private:
     void readHeader(std::stringstream&);
     //! Reads MetaData from a chain of characters as written in legacy ILL format
     //! return a MetaData Object
-    void readMetaData(const char* buf);
+    void readMetadata(const char* buf);
 
     std::size_t _dataPoints;
     std::size_t _nAngles;
@@ -106,8 +106,7 @@ private:
     boost::interprocess::mapped_region _map;
     const char* _mapAddress;
     std::size_t _currentLine;
-    SX::Utils::IMatrixParser<const char*>* _parser;
-
+    SX::Utils::IMatrixParser* _parser;
 
 };
 
@@ -115,4 +114,4 @@ private:
 
 } // end namespace SX
 
-#endif /* NSXTOOL_ILLASCIIDATA_H_ */
+#endif /* NSXTOOL_ILLASCIIDATAREADER_H_ */

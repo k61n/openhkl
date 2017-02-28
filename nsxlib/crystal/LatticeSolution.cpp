@@ -96,7 +96,8 @@ LatticeSolution::LatticeSolution(std::shared_ptr<Instrument::Detector> detector,
 
     idx = nFreeLatticeParams;
 
-    if (_source->isOffsetFixed())
+    auto& mono = _source->getSelectedMonochromator();
+    if (mono.isOffsetFixed())
         _sigmaSourceOffset=0.0;
     else
     {
@@ -140,7 +141,9 @@ std::ostream& operator<<(std::ostream& os, const LatticeSolution& solution)
     os<<"Lattice parameters:"<<std::endl;
     os<<solution._latticeParams.transpose()<< std::endl;
 
-    os << "Wavelength:" << solution._source->getWavelength() << "("<< solution._sigmaSourceOffset<< ")" << std::endl;
+    auto& mono = solution._source->getSelectedMonochromator();
+
+    os << "Wavelength:" << mono.getWavelength() << "("<< solution._sigmaSourceOffset<< ")" << std::endl;
 
     os<<"Detector offsets: " << std::endl;
     auto detectorG=solution._detector->getGonio();

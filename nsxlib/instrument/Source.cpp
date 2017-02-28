@@ -49,7 +49,7 @@ Source::Source(const proptree::ptree& node)
         if (v.first.compare("monochromator")==0)
         {
             Monochromator m(v.second);
-            addMonochromator(&m);
+            addMonochromator(m);
         }
     }
 }
@@ -74,46 +74,6 @@ Source& Source::operator=(const Source& other)
     return *this;
 }
 
-void Source::setOffset(double offset)
-{
-    auto mono = getSelectedMonochromator();
-
-    if (mono->isOffsetFixed())
-        return;
-
-    mono->setOffset(offset);
-}
-
-void Source::setWavelength(double wavelength)
-{
-    auto mono = getSelectedMonochromator();
-    mono->setWavelength(wavelength);
-}
-
-double Source::getWavelength() const
-{
-    auto mono = getSelectedMonochromator();
-    return mono->getWavelength();
-}
-
-double Source::getOffset() const
-{
-    auto mono = getSelectedMonochromator();
-    return mono->getOffset();
-}
-
-void Source::setOffsetFixed(bool offsetFixed)
-{
-    auto mono = getSelectedMonochromator();
-    mono->setOffsetFixed(offsetFixed);
-}
-
-bool Source::isOffsetFixed() const
-{
-    auto mono = getSelectedMonochromator();
-    return mono->isOffsetFixed();
-}
-
 const std::vector<Monochromator>& Source::getMonochromators() const
 {
     return _monochromators;
@@ -132,33 +92,17 @@ void Source::setSelectedMonochromator(size_t i)
         throw std::runtime_error("setSelectedMonochromator(): index i is out of range");
 }
 
-Monochromator* Source::getSelectedMonochromator()
+Monochromator& Source::getSelectedMonochromator()
 {
     if (_selectedMonochromator<_monochromators.size())
-        return &_monochromators[_selectedMonochromator];
+        return _monochromators[_selectedMonochromator];
     else
         throw std::runtime_error("getSelectedMonochromator(): selected monochromator does not exist");
 }
 
-const Monochromator* Source::getSelectedMonochromator() const
+void Source::addMonochromator(Monochromator mono)
 {
-    if (_selectedMonochromator<_monochromators.size())
-        return &_monochromators[_selectedMonochromator];
-    else
-        throw std::runtime_error("getSelectedMonochromator(): selected monochromator does not exist");
-}
-
-void Source::addMonochromator(Monochromator* mono)
-{
-    auto it=std::find(_monochromators.begin(),_monochromators.end(),*mono);
-    if (it==_monochromators.end())
-        _monochromators.push_back(*mono);
-}
-
-Eigen::Vector3d Source::getKi() const
-{
-    const Monochromator* mono=getSelectedMonochromator();
-    return Eigen::Vector3d(0,1.0/mono->getWavelength(),0.0);
+    _monochromators.push_back(mono);
 }
 
 } // end namespace Instrument

@@ -24,7 +24,7 @@
 #include <cmath>
 
 using SX::Crystal::Peak3D;
-using SX::Data::IData;
+using SX::Data::DataSet;
 using SX::Geometry::Ellipsoid;
 
 PeakFitDialog::PeakFitDialog(SessionModel* session, QWidget *parent):
@@ -105,7 +105,7 @@ void PeakFitDialog::checkCollisions()
 
     qDebug() << "checking collisions with peak at hkl = (" << _hkl[0] << ", " << _hkl[1] << ", " << _hkl[2] << ")";
 
-    std::shared_ptr<IData> numor = _peak->getData();
+    std::shared_ptr<DataSet> numor = _peak->getData();
     std::set<sptrPeak3D>& peaks = numor->getPeaks();
 
     for (sptrPeak3D other_peak: peaks) {
@@ -138,7 +138,7 @@ void PeakFitDialog::updateView()
         return;
     }
 
-    std::shared_ptr<IData> numor = _session->getSelectedNumors()[0];
+    std::shared_ptr<DataSet> numor = _session->getSelectedNumors()[0];
     SX::Data::RowMatrixi frame = numor->getFrame(ui->frameScrollBar->value());
 
     int intensity = std::ceil(frame.sum() / (double)(frame.rows()*frame.cols())) * 5.0;
@@ -166,7 +166,7 @@ void PeakFitDialog::updatePeak()
         return;
     }
 
-    std::shared_ptr<IData> numor = _session->getSelectedNumors()[0];
+    std::shared_ptr<DataSet> numor = _session->getSelectedNumors()[0];
     SX::Data::RowMatrixi frame = numor->getFrame(ui->frameScrollBar->value());
     std::set<sptrPeak3D>& peaks = numor->getPeaks();
 

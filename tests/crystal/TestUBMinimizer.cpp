@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
     std::shared_ptr<Source> source(new Source);
     SX::Instrument::Monochromator mono("mono");
     mono.setWavelength(0.8380);
-    source->addMonochromator(&mono);
+    source->addMonochromator(mono);
     source->setSelectedMonochromator(0);
 
     UBMinimizer minimizer;
@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
         // set the miller indices corresponding to the peak
 //		peak.setMillerIndices(h,k,l);
         // Set the wavelength
-        peak.setSource(source);
+        peak.setWavelength(source->getSelectedMonochromator().getWavelength());
 
         Eigen::RowVector3d hkl;
         hkl << h,k,l;
