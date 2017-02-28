@@ -25,7 +25,7 @@ namespace SX
 {
 namespace Data
 {
-class DataSetet;
+class DataSet;
 }
 namespace Crystal
 {
@@ -58,7 +58,7 @@ public:
     //! Which mode is the cursor diplaying
     enum CURSORMODE {THETA=0, GAMMA=1, DSPACING=2, PIXEL=3, HKL=4};
     explicit DetectorScene(QObject *parent = 0);
-    std::shared_ptr<SX::Data::DataSetet> getData();
+    std::shared_ptr<SX::Data::DataSet> getData();
     const rowMatrix& getCurrentFrame() const;
     void setLogarithmic(bool checked);
     void setColorMap(const std::string& name);
@@ -77,8 +77,8 @@ protected:
 
 public slots:
     // To be called to update detector image
-    void setData(const std::shared_ptr<SX::Data::DataSetet>&, size_t frame);
-    void setData(const std::shared_ptr<SX::Data::DataSetet>&);
+    void setData(const std::shared_ptr<SX::Data::DataSet>&, size_t frame);
+    void setData(const std::shared_ptr<SX::Data::DataSet>&);
     void changeFrame(size_t frame = 0);
     void setMaxIntensity(int);
     PeakGraphicsItem* findPeakGraphicsItem(const sptrPeak3D& peak);
@@ -105,7 +105,7 @@ private:
     //! Create the text of the tooltip depending on Scene Mode.
     void createToolTipText(QGraphicsSceneMouseEvent*);
 
-    std::shared_ptr<SX::Data::DataSetet> _currentData;
+    std::shared_ptr<SX::Data::DataSet> _currentData;
     unsigned long _currentFrameIndex;
     int _currentIntensity;
     rowMatrix _currentFrame;
