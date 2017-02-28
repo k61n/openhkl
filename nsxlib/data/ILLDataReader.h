@@ -60,10 +60,10 @@ class ILLDataReader final: public IDataReader {
 
 public:
 
-    static IDataReader* create(const std::string& filename, const Diffractometer& diffractometer);
+    static IDataReader* create(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer);
 
     //! Default constructor
-    ILLDataReader(const std::string& filename, const Diffractometer& diffractometer);
+    ILLDataReader(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer);
     //! Copy constructor
     ILLDataReader(const ILLDataReader& other)=delete;
     //! Destructor

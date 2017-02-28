@@ -56,10 +56,10 @@ class RawDataReader final: public IDataReader {
 
 public:
 
-    static IDataReader* create(const std::string& filename, const Diffractometer& diffractometer);
+    static IDataReader* create(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer);
 
     //! Default constructor
-    RawDataReader(const std::vector<std::string>& filenames, const Diffractometer& diffractometer,
+    RawDataReader(const std::vector<std::string>& filenames, const std::shared_ptr<Diffractometer>& diffractometer,
             double wavelength, double delta_chi, double delta_omega, double delta_phi,
             bool rowMajor, bool swapEndian, unsigned int bpp);
 

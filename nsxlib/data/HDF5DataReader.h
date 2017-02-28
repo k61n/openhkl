@@ -45,15 +45,14 @@ class HDF5DataReader final: public IDataReader
 {
 
 public:
-    static IDataReader* create(const std::string& filename, const Diffractometer& diffractometer);
+    static IDataReader* create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer);
 
-    HDF5DataReader(const std::string& filename, const Diffractometer& instrument);
+    HDF5DataReader(const std::string& filename, std::shared_ptr<Diffractometer> instrument);
     virtual ~HDF5DataReader();
 
     Eigen::MatrixXi getData(size_t frame) override;
 
     void open() override;
-
     void close() override;
 
 private:

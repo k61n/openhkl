@@ -7,7 +7,9 @@
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/operations.hpp>
 
-#include "../data/IData.h"
+#include "IData.h"
+#include "IDataReader.h"
+
 #include "../instrument/Detector.h"
 #include "../instrument/Gonio.h"
 #include "../instrument/Monochromator.h"
@@ -30,9 +32,9 @@ using Eigen::Matrix3d;
 using boost::filesystem::path;
 using SX::Instrument::InstrumentState;
 
-IData::IData(std::string filename, std::shared_ptr<Diffractometer> diffractometer):
+IData::IData(IDataReader* reader, std::shared_ptr<Diffractometer> diffractometer):
     _isOpened(false),
-    _filename(std::move(filename)),
+    _filename(reader->getFilename()),
     _nFrames(0),
     _nrows(0),
     _ncols(0),
@@ -43,7 +45,8 @@ IData::IData(std::string filename, std::shared_ptr<Diffractometer> diffractomete
     _peaks(),
     _fileSize(0),
     _masks(),
-    _background(0.0)
+    _background(0.0),
+    _reader(reader)
 {
     if ( !boost::filesystem::exists(_filename.c_str())) {
         throw std::runtime_error("IData, file: " + _filename + " does not exist");
@@ -51,6 +54,16 @@ IData::IData(std::string filename, std::shared_ptr<Diffractometer> diffractomete
 
     _nrows = _diffractometer->getDetector()->getNRows();
     _ncols = _diffractometer->getDetector()->getNCols();
+
+    _metadata = std::unique_ptr<MetaData>(new MetaData(_reader->getMetadata()));
+    _nFrames = _metadata->getKey<int>("npdone");
+
+    // Getting Scan parameters for the detector
+    _states.resize(_nFrames);
+
+    for (unsigned int i=0;i<_nFrames;++i) {
+        _states[i] = _reader->getState(i);
+    }
 }
 
 std::unique_ptr<IFrameIterator> IData::getIterator(int idx)
@@ -90,6 +103,21 @@ int IData::dataAt(unsigned int x, unsigned int y, unsigned int z)
         return 0;
     }
     return getFrame(z)(x,y);
+}
+
+Eigen::MatrixXi IData::getFrame(std::size_t idx)
+{
+    return _reader->getData(idx);
+}
+
+void IData::open()
+{
+    _reader->open();
+}
+
+void IData::close()
+{
+    _reader->close();
 }
 
 const std::string& IData::getFilename() const

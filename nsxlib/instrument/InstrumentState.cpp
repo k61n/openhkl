@@ -46,26 +46,6 @@ InstrumentState InstrumentState::interpolate(const InstrumentState &other, doubl
     t = std::max(t, 0.0);
     t = std::min(t, 1.0);
 
-
-
-//    auto source = getDiffractometer()->getSource();
-//    auto detector = getDiffractometer()->getDetector();
-//    auto sample = getDiffractometer()->getSample();
-
-//    const double t = frame-idx;
-
-//    const auto& nextState = _states[next];
-//    const auto& prevState = _states[idx];
-
-//    const std::vector<double>& prevState=_states[idx].detector.getValues();
-//    const std::vector<double>& nextState=_states[next].detector.getValues();
-
-//    std::vector<double> state =
-
-//    for (std::size_t i=0; i < nPhysicalAxes; ++i) {
-//        state[i] = prevState[i] + t*(nextState[i]-prevState[i]);
-//    }
-
     const auto& detectorState = interpolate_vec(detector.getValues(), other.detector.getValues(), t);
     const auto& sourceState = interpolate_vec(source.getValues(), other.source.getValues(), t);
     const auto& sampleState = interpolate_vec(sample.getValues(), other.sample.getValues(), t);
@@ -83,8 +63,6 @@ InstrumentState InstrumentState::interpolate(const InstrumentState &other, doubl
     }
     return result;
 }
-
-
 
 } // end namespace Instrument
 } // end namespace SX

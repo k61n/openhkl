@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 
 #include <Eigen/Dense>
 
@@ -11,7 +12,6 @@
 #include "../instrument/InstrumentState.h"
 
 namespace SX {
-
 namespace Data {
 
 using SX::Instrument::Diffractometer;
@@ -22,7 +22,7 @@ class IDataReader
 
 public:
 
-    IDataReader(const std::string& filename, const SX::Instrument::Diffractometer& diffractometer);
+    IDataReader(const std::string& filename, const std::shared_ptr<SX::Instrument::Diffractometer>& diffractometer);
 
     virtual ~IDataReader()=default;
 
@@ -65,7 +65,7 @@ protected:
 
     MetaData _metadata;
 
-    Diffractometer _diffractometer;
+    std::shared_ptr<Diffractometer> _diffractometer;
 
     std::size_t _nFrames;
 
@@ -82,7 +82,6 @@ protected:
 };
 
 } /* namespace Data */
-
 } /* namespace SX */
 
 #endif /* IDATAREADER_H_ */

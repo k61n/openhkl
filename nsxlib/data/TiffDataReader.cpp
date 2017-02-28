@@ -6,13 +6,13 @@ namespace SX {
 
 namespace Data {
 
-IDataReader* TiffDataReader::create(const std::string& filename, const Diffractometer& diffractometer)
+IDataReader* TiffDataReader::create(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer)
 {
     return new TiffDataReader(filename,diffractometer);
 }
 
 
-TiffDataReader::TiffDataReader(const std::string& filename, const Diffractometer& diffractometer)
+TiffDataReader::TiffDataReader(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer)
 : IDataReader(filename,diffractometer)
  {
     uint32 w,h;
@@ -47,10 +47,10 @@ TiffDataReader::TiffDataReader(const std::string& filename, const Diffractometer
 //    _sampleStates.push_back(_diffractometer->getSample()->createState());
 
     _states.resize(_nFrames);
-    _states[0].detector = _diffractometer.getDetector()->createState();
-    _states[0].sample = _diffractometer.getSample()->createState();
+    _states[0].detector = _diffractometer->getDetector()->createState();
+    _states[0].sample = _diffractometer->getSample()->createState();
 
-    _metadata.add<std::string>("Instrument",diffractometer.getType());
+    _metadata.add<std::string>("Instrument",diffractometer->getType());
 }
 
 void TiffDataReader::open()

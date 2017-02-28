@@ -13,7 +13,6 @@
 #include <nsxlib/data/DataReaderFactory.h>
 #include <nsxlib/instrument/ComponentState.h>
 #include <nsxlib/instrument/DiffractometerStore.h>
-#include <nsxlib/data/HDF5Data.h>
 #include <nsxlib/utils/Units.h>
 
 using namespace SX::Data;

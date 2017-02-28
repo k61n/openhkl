@@ -12,8 +12,8 @@
 
 #include <nsxlib/instrument/ComponentState.h>
 #include <nsxlib/instrument/DiffractometerStore.h>
-#include <nsxlib/data/ILLAsciiData.h>
-#include <nsxlib/data/HDF5Data.h>
+#include <nsxlib/data/DataReaderFactory.h>
+
 #include <nsxlib/utils/Units.h>
 
 using namespace SX::Data;
@@ -24,15 +24,16 @@ using namespace SX::Units;
 
 BOOST_AUTO_TEST_CASE(Test_Peak_Data)
 {
+    auto factory = DataReaderFactory::Instance();
     DiffractometerStore* ds;
     std::shared_ptr<Diffractometer> diff;
-    std::unique_ptr<ILLAsciiData> dataf;
+    std::unique_ptr<IData> dataf;
     MetaData* metadata;
 
     try {
         ds = DiffractometerStore::Instance();
         diff = std::shared_ptr<Diffractometer>(ds->buildDiffractomer("D9"));
-        dataf = std::unique_ptr<ILLAsciiData>(new ILLAsciiData("D9_ascii_example", diff));
+        dataf = std::unique_ptr<IData>(factory->create("", "D9_ascii_example", diff));
 
         dataf->open();
 

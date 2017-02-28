@@ -35,11 +35,8 @@
 
 #include <boost/property_tree/ptree.hpp>
 
-namespace SX
-{
-
-namespace Instrument
-{
+namespace SX {
+namespace Instrument {
 
 namespace property_tree=boost::property_tree;
 
@@ -52,58 +49,58 @@ class Diffractometer
 {
 public:
 
-	Diffractometer(const property_tree::ptree& node);
+    Diffractometer(const property_tree::ptree& node);
 
-	//! Constructs a diffractometer from another one
-	Diffractometer(const Diffractometer& other);
+    //! Constructs a diffractometer from another one
+    Diffractometer(const Diffractometer& other);
 
     //! Virtual copy constructor
-	virtual Diffractometer* clone() const {return nullptr;};
+    virtual Diffractometer* clone() const {return nullptr;}
 
-	//! Destructor
-	virtual ~Diffractometer();
+    //! Destructor
+    virtual ~Diffractometer();
 
-	//! Assignment operator
-	Diffractometer& operator=(const Diffractometer& other);
+    //! Assignment operator
+    Diffractometer& operator=(const Diffractometer& other);
 
-	//! Get the name of this diffractometer
-	const std::string& getName() const;
+    //! Get the name of this diffractometer
+    const std::string& getName() const;
 
-	//! Get the detector of this diffractometer
+    //! Get the detector of this diffractometer
     std::shared_ptr<Detector> getDetector();
 
-	//! Get the sample of this diffractometer
+    //! Get the sample of this diffractometer
     std::shared_ptr<Sample> getSample();
 
-	//! Get the source of this diffractometer
+    //! Get the source of this diffractometer
     std::shared_ptr<Source> getSource();
 
-	//! Get the type of the diffractometer
-	virtual std::string getType() const {return "";};
+    //! Get the type of the diffractometer
+    virtual std::string getType() const {return "";}
 
-	//! Set the detector of this diffractometer
+    //! Set the detector of this diffractometer
     void setDetector(std::shared_ptr<Detector>);
 
-	//! Set the name of the diffractometer
-	void setName(const std::string& name);
+    //! Set the name of the diffractometer
+    void setName(const std::string& name);
 
-	//! Set the sample of this diffractometer
+    //! Set the sample of this diffractometer
     void setSample(std::shared_ptr<Sample>);
 
-	//! Set the source of this diffractometer
+    //! Set the source of this diffractometer
     void setSource(std::shared_ptr<Source>);
 
-	std::map<unsigned int,std::string> getPhysicalAxesNames() const;
+    std::map<unsigned int,std::string> getPhysicalAxesNames() const;
 
 protected:
 
-	//! Default constructor
-	Diffractometer();
+    //! Default constructor
+    Diffractometer();
 
-	//! Constructs a diffractometer with a given name
-	Diffractometer(const std::string& name);
+    //! Constructs a diffractometer with a given name
+    Diffractometer(const std::string& name);
 
-	std::string _name;
+    std::string _name;
     std::shared_ptr<Detector> _detector;
     std::shared_ptr<Sample> _sample;
     std::shared_ptr<Source> _source;

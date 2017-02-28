@@ -1,28 +1,35 @@
 #include <string>
 #include "DataReaderFactory.h"
-#include "ILLAsciiData.h"
-#include "HDF5Data.h"
-#include "TiffData.h"
-#include "I16Data.h"
-#include "RawData.h"
+#include "ILLDataReader.h"
+#include "HDF5DataReader.h"
+#include "TiffDataReader.h"
+#include "I16DataReader.h"
+#include "RawDataReader.h"
 
-namespace SX
-{
+namespace SX {
+namespace Data {
 
-namespace Data
+template <typename Reader>
+class C {
+public:
+static IData* create(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer)
 {
+    auto reader = new Reader(filename, diffractometer);
+    return new IData(reader, diffractometer);
+}
+};
 
 DataReaderFactory::DataReaderFactory()
 {
-    registerCallback("" ,    &ILLAsciiData::create); // Files with no extensions are legacy ILL ASCII
-    registerCallback("h5",   &HDF5Data::create);
-    registerCallback("hdf5", &HDF5Data::create);
-    registerCallback("hdf",  &HDF5Data::create);
-    registerCallback("nxs",  &HDF5Data::create);
-    registerCallback("tiff", &TiffData::create);
-    registerCallback("tif",  &TiffData::create);
-    registerCallback("dat",  &I16Data::create);
-    registerCallback("raw",  &RawData::create);
+    registerCallback("" ,    &C<ILLDataReader>::create); // Files with no extensions are legacy ILL ASCII
+    registerCallback("h5",   &C<HDF5DataReader>::create);
+    registerCallback("hdf5", &C<HDF5DataReader>::create);
+    registerCallback("hdf",  &C<HDF5DataReader>::create);
+    registerCallback("nxs",  &C<HDF5DataReader>::create);
+    registerCallback("tiff", &C<TiffDataReader>::create);
+    registerCallback("tif",  &C<TiffDataReader>::create);
+    registerCallback("dat",  &C<I16DataReader>::create);
+    //registerCallback("raw",  &C<RawDataReader>::create);
 }
 
 } // end namespace Data

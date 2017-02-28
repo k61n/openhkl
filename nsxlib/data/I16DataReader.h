@@ -49,10 +49,10 @@ class I16DataReader final: public IDataReader
 {
 public:
 
-    static IDataReader* create(const std::string& filename, const Diffractometer& diffractometer);
+    static IDataReader* create(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer);
 
     //! Default constructor
-    I16DataReader(const std::string& filename, const Diffractometer& diffractometer);
+    I16DataReader(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer);
     //! Copy constructor
     I16DataReader(const I16DataReader& other)=delete;
     //! Destructor

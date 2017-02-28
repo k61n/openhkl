@@ -32,12 +32,12 @@ using SX::Instrument::Detector;
 // 81 characters per line, at least 100 lines of header
 std::size_t ILLDataReader::BlockSize = 100*81;
 
-IDataReader* ILLDataReader::create(const std::string& filename, const Diffractometer& diffractometer)
+IDataReader* ILLDataReader::create(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer)
 {
     return new ILLDataReader(filename, diffractometer);
 }
 
-ILLDataReader::ILLDataReader(const std::string& filename, const Diffractometer& diffractometer)
+ILLDataReader::ILLDataReader(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer)
 : IDataReader(filename,diffractometer)
 {
     try {
@@ -99,7 +99,7 @@ ILLDataReader::ILLDataReader(const std::string& filename, const Diffractometer& 
     }
 
     // This map relates the ids of the physical axis registered in the instrument definition file with their name
-    std::map<unsigned int,std::string> instrPhysAxisIds(_diffractometer.getPhysicalAxesNames());
+    std::map<unsigned int,std::string> instrPhysAxisIds(_diffractometer->getPhysicalAxesNames());
 
     // Check that every scanned axis has been defined in the instrumnet file. Otherwise, throws.
     for (const auto& id: scannedAxisId) {
@@ -161,7 +161,7 @@ ILLDataReader::ILLDataReader(const std::string& filename, const Diffractometer& 
 
     _states.resize(_nFrames);
     //_detectorStates.reserve(_nFrames);
-    auto detector = _diffractometer.getDetector();
+    auto detector = _diffractometer->getDetector();
     // If a detector is set for this instrument, loop over the frames and gather for each physical axis
     // of the detector the corresponding values defined previously. The gathered values being further pushed as
     // a new detector state
@@ -173,13 +173,13 @@ ILLDataReader::ILLDataReader(const std::string& filename, const Diffractometer& 
             for (const auto& v: detAxisIdsToNames) {
                 detValues.push_back(gonioValues[v][f]);
             }
-            _states[f].detector = _diffractometer.getDetector()->createState(detValues);
+            _states[f].detector = _diffractometer->getDetector()->createState(detValues);
             //_detectorStates.push_back(_diffractometer->getDetector()->createState(detValues));
         }
     }
 
     //_sampleStates.reserve(_nFrames);
-    auto sample = _diffractometer.getSample();
+    auto sample = _diffractometer->getSample();
     // If a sample is set for this instrument, loop over the frames and gather for each physical axis
     // of the sample the corresponding values defined previously. The gathered values being further pushed as
     // a new sample state
@@ -191,13 +191,13 @@ ILLDataReader::ILLDataReader(const std::string& filename, const Diffractometer& 
             for (const auto& v: sampleAxisIdsToNames) {
                 sampleValues.push_back(gonioValues[v][f]);
             }
-            _states[f].sample = _diffractometer.getSample()->createState(sampleValues);
+            _states[f].sample = _diffractometer->getSample()->createState(sampleValues);
             //_sampleStates.push_back(_diffractometer->getSample()->createState(sampleValues));
         }
     }
 
     //_sourceStates.reserve(_nFrames);
-    auto source = _diffractometer.getSource();
+    auto source = _diffractometer->getSource();
     // If a source is set for this instrument, loop over the frames and gather for each physical axis
     // of the source the corresponding values defined previously. The gathered values being further pushed as
     // a new source state
@@ -209,7 +209,7 @@ ILLDataReader::ILLDataReader(const std::string& filename, const Diffractometer& 
             for (const auto& v: sourceAxisIdsToNames) {
                 sourceValues.push_back(gonioValues[v][f]);
             }
-            _states[f].source = _diffractometer.getSource()->createState(sourceValues);
+            _states[f].source = _diffractometer->getSource()->createState(sourceValues);
             //_sourceStates.push_back(_diffractometer->getSource()->createState(sourceValues));
         }
     }
@@ -217,7 +217,7 @@ ILLDataReader::ILLDataReader(const std::string& filename, const Diffractometer& 
     _fileSize = _map.get_size();
     close();
 
-    std::shared_ptr<Detector> d = _diffractometer.getDetector();
+    std::shared_ptr<Detector> d = _diffractometer->getDetector();
 
     _parser = SX::Utils::getMatrixParser(d->getDataOrder());
 }

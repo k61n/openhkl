@@ -28,12 +28,12 @@ namespace Data {
 
 using SX::Instrument::Diffractometer;
 
-IDataReader* I16DataReader::create(const std::string& filename, const Diffractometer& diffractometer)
+IDataReader* I16DataReader::create(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer)
 {
     return new I16DataReader(filename, diffractometer);
 }
 
-I16DataReader::I16DataReader(const std::string& filename, const Diffractometer& diffractometer)
+I16DataReader::I16DataReader(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer)
 : IDataReader(filename,diffractometer)
 {
     std::ifstream file;
@@ -111,8 +111,8 @@ I16DataReader::I16DataReader(const std::string& filename, const Diffractometer& 
 
 
     for (unsigned int i=0;i<_nFrames;++i) {
-        _states[i].detector = _diffractometer.getDetector()->createState(dval);
-        _states[i].sample = _diffractometer.getSample()->createState(sval);
+        _states[i].detector = _diffractometer->getDetector()->createState(dval);
+        _states[i].sample = _diffractometer->getSample()->createState(sval);
         //_detectorStates.push_back(_diffractometer->getDetector()->createState(dval));
         //_sampleStates.push_back(_diffractometer->getSample()->createState(sval));
     }

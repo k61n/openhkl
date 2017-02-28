@@ -13,8 +13,7 @@
 
 #include <nsxlib/instrument/ComponentState.h>
 #include <nsxlib/instrument/DiffractometerStore.h>
-#include <nsxlib/data/ILLAsciiData.h>
-#include <nsxlib/data/HDF5Data.h>
+#include <nsxlib/data/DataReaderFactory.h>
 #include <nsxlib/utils/Units.h>
 
 using namespace SX::Data;
@@ -25,6 +24,7 @@ using namespace SX::Units;
 
 BOOST_AUTO_TEST_CASE(Test_HDF5_IO)
 {
+    auto factory = DataReaderFactory::Instance();
     DiffractometerStore* ds;
     std::shared_ptr<Diffractometer> diff;
     std::unique_ptr<IData> dataf;
@@ -36,7 +36,7 @@ BOOST_AUTO_TEST_CASE(Test_HDF5_IO)
     try {
         ds = DiffractometerStore::Instance();
         diff = std::shared_ptr<Diffractometer>(ds->buildDiffractomer("D10"));
-        dataf = std::unique_ptr<IData>(new ILLAsciiData("D10_ascii_example", diff));
+        dataf = std::unique_ptr<IData>(factory->create("", "D10_ascii_example", diff));
         dataf->open();
 
         for (size_t i = 0; i < dataf->getNFrames(); ++i)
@@ -51,7 +51,7 @@ BOOST_AUTO_TEST_CASE(Test_HDF5_IO)
         std::cout << "verifying integrity of hdf5 data..." << std::endl;
 
         // read data back in and check that it agrees!
-        dataf = std::unique_ptr<IData>(new HDF5Data("D10_hdf5_example.h5", diff));
+        dataf = std::unique_ptr<IData>(factory->create("h5", "D10_hdf5_example.h5", diff));
 
         for (size_t i = 0; i < dataf->getNFrames(); ++i) {
             BOOST_CHECK(dataf->getFrame(i) == frames[i]);

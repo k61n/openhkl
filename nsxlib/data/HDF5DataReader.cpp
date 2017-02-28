@@ -14,16 +14,16 @@ namespace SX {
 
 namespace Data {
 
-IDataReader* HDF5DataReader::create(const std::string& filename, const Diffractometer& diffractometer)
+IDataReader* HDF5DataReader::create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer)
 {
     return new HDF5DataReader(filename, diffractometer);
 }
 
-HDF5DataReader::HDF5DataReader(const std::string& filename, const Diffractometer& diffractometer)
-:IDataReader(filename,diffractometer),
- _dataset(nullptr),
- _space(nullptr),
- _memspace(nullptr)
+HDF5DataReader::HDF5DataReader(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer)
+    :IDataReader(filename,diffractometer),
+      _dataset(nullptr),
+      _space(nullptr),
+      _memspace(nullptr)
 {
     _file = unique_ptr<H5::H5File>(new H5::H5File(filename.c_str(), H5F_ACC_RDONLY));
 
@@ -60,7 +60,7 @@ HDF5DataReader::HDF5DataReader(const std::string& filename, const Diffractometer
 
     // Getting Scan parameters for the detector
     H5::Group detectorGroup(_file->openGroup("/Data/Scan/Detector"));
-    std::vector<std::string> axesS=_diffractometer.getDetector()->getGonio()->getPhysicalAxesNames();
+    std::vector<std::string> axesS=_diffractometer->getDetector()->getGonio()->getPhysicalAxesNames();
 
     Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> dm(axesS.size(),_nFrames);
     for (unsigned int i=0;i<axesS.size();++i) {
@@ -89,13 +89,13 @@ HDF5DataReader::HDF5DataReader(const std::string& filename, const Diffractometer
     _states.resize(_nFrames);
 
     for (unsigned int i=0;i<_nFrames;++i) {
-        _states[i].detector = _diffractometer.getDetector()->createStateFromEigen(dm.col(i));
+        _states[i].detector = _diffractometer->getDetector()->createStateFromEigen(dm.col(i));
         //_detectorStates.push_back(_diffractometer->getDetector()->createStateFromEigen(dm.col(i)));
     }
 
     // Getting Scan parameters for the sample
     H5::Group sampleGroup(_file->openGroup("/Data/Scan/Sample"));
-    axesS=_diffractometer.getSample()->getGonio()->getPhysicalAxesNames();
+    axesS=_diffractometer->getSample()->getGonio()->getPhysicalAxesNames();
 
     dm.resize(axesS.size(),_nFrames);
     for (unsigned int i=0;i<axesS.size();++i) {
@@ -123,7 +123,7 @@ HDF5DataReader::HDF5DataReader(const std::string& filename, const Diffractometer
     dm*=SX::Units::deg;
 
     for (unsigned int i=0;i<_nFrames;++i) {
-        _states[i].sample = _diffractometer.getSample()->createStateFromEigen(dm.col(i));
+        _states[i].sample = _diffractometer->getSample()->createStateFromEigen(dm.col(i));
     }
     _file->close();
 }

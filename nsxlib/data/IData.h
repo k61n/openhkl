@@ -71,6 +71,7 @@ using SX::Crystal::PeakCalc;
 class IFrameIterator;
 class ThreadedFrameIterator;
 class BasicFrameIterator;
+class IDataReader;
 
 using FrameIteratorCallback = std::function<IFrameIterator*(IData&, int)>;
 
@@ -84,13 +85,13 @@ public:
 
     /*! Construct a IData Object from a file on disk, and pointer to a diffractometer.
      */
-    IData(std::string filename, std::shared_ptr<Diffractometer> diffractometer);
+    IData(IDataReader* reader, std::shared_ptr<Diffractometer> diffractometer);
 
     //! Copy constructor
     IData(const IData& other) = default;
 
     //! Destructor
-    virtual ~IData()=0;
+    virtual ~IData();
 
     // Operators
     //! Assignment operator
@@ -168,13 +169,13 @@ public:
     int dataAt(unsigned int x=0, unsigned int y=0, unsigned int z=0);
 
     //! Read a single frame
-    virtual Eigen::MatrixXi getFrame(std::size_t idx)=0;
+    virtual Eigen::MatrixXi getFrame(std::size_t idx);
 
     //! Get the file handle.
-    virtual void open()=0;
+    void open();
 
     //! Close file and release handle
-    virtual void close()=0;
+    void close();
 
     //! True if file is open
     bool isOpened() const;
@@ -209,6 +210,7 @@ protected:
     std::set<AABB<double,3>*> _masks;
     double _background;
     FrameIteratorCallback _iteratorCallback;
+    std::unique_ptr<IDataReader> _reader;
 };
 
 } // end namespace Data

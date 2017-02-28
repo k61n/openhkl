@@ -4,9 +4,10 @@
 #include <QStandardItem>
 #include <QJsonArray>
 
-#include <nsxlib/data/RawData.h>
 #include <nsxlib/instrument/Experiment.h>
 #include "models/DataItem.h"
+#include <nsxlib/data/IData.h>
+#include <nsxlib/data/RawDataReader.h>
 #include <nsxlib/data/DataReaderFactory.h>
 #include "NumorItem.h"
 
@@ -108,10 +109,10 @@ NumorItem *DataItem::importRawData(const std::vector<std::string> &filenames,
 
     try {
         auto diff = exp->getDiffractometer();
-        auto data_ptr = new SX::Data::RawData(filenames, diff,
+        auto reader = new SX::Data::RawDataReader(filenames, diff,
                                               wavelength, delta_chi, delta_omega, delta_phi,
                                               rowMajor, swapEndian, bpp);
-        data = std::shared_ptr<SX::Data::IData>(data_ptr);
+        data = std::shared_ptr<SX::Data::IData>(new IData(reader, diff));
     }
     catch(std::exception& e) {
         qWarning() << "Error reading numor: " + filename + " " + QString(e.what());

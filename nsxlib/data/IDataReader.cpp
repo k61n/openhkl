@@ -31,8 +31,8 @@ using boost::filesystem::path;
 using RowMatrixi = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 using RowMatrixd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
-IDataReader::IDataReader(const std::string& filename, const SX::Instrument::Diffractometer& diffractometer)
-: _diffractometer(diffractometer),
+IDataReader::IDataReader(const std::string& filename, const std::shared_ptr<SX::Instrument::Diffractometer>& diffractometer)
+    : _diffractometer(std::move(diffractometer)),
   _nFrames(0),
   _states(),
   _fileSize(0),
@@ -40,8 +40,8 @@ IDataReader::IDataReader(const std::string& filename, const SX::Instrument::Diff
 {
     _metadata.add<std::string>("filename",filename);
 
-    _nRows = _diffractometer.getDetector()->getNRows();
-    _nCols = _diffractometer.getDetector()->getNCols();
+    _nRows = _diffractometer->getDetector()->getNRows();
+    _nCols = _diffractometer->getDetector()->getNCols();
 }
 
 size_t IDataReader::getNFrames() const {
@@ -61,7 +61,7 @@ const MetaData& IDataReader::getMetadata() const {
 }
 
 const Diffractometer& IDataReader::getDiffractometer() const {
-    return _diffractometer;
+    return *_diffractometer;
 }
 
 InstrumentState IDataReader::getState(size_t frame) const
@@ -149,7 +149,7 @@ void IDataReader::saveHDF5(const std::string& filename)
     // Write detector states
     H5::Group detectorGroup(scanGroup.createGroup("Detector"));
 
-    std::vector<std::string> names=_diffractometer.getDetector()->getGonio()->getPhysicalAxesNames();
+    std::vector<std::string> names=_diffractometer->getDetector()->getGonio()->getPhysicalAxesNames();
     hsize_t nf[1]={_nFrames};
     H5::DataSpace scanSpace(1,nf);
     RowMatrixd vals(names.size(),_nFrames);
@@ -169,7 +169,7 @@ void IDataReader::saveHDF5(const std::string& filename)
 
     // Write sample states
     H5::Group sampleGroup(scanGroup.createGroup("Sample"));
-    std::vector<std::string> samplenames=_diffractometer.getSample()->getGonio()->getPhysicalAxesNames();
+    std::vector<std::string> samplenames=_diffractometer->getSample()->getGonio()->getPhysicalAxesNames();
     RowMatrixd valsSamples(samplenames.size(), _nFrames);
 
     for (unsigned int i = 0; i < _states.size(); ++i) {
@@ -187,7 +187,7 @@ void IDataReader::saveHDF5(const std::string& filename)
 
     // Write source states
     H5::Group sourceGroup(scanGroup.createGroup("Source"));
-    std::vector<std::string> sourcenames = _diffractometer.getSource()->getGonio()->getPhysicalAxesNames();
+    std::vector<std::string> sourcenames = _diffractometer->getSource()->getGonio()->getPhysicalAxesNames();
     RowMatrixd valsSources(sourcenames.size(),_nFrames);
 
     for (unsigned int i = 0; i < _states.size(); ++i) {

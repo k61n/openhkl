@@ -8,11 +8,11 @@
 
 #include <nsxlib/instrument/Experiment.h>
 #include <nsxlib/instrument/Diffractometer.h>
-#include <nsxlib/data/ILLAsciiData.h>
+#include <nsxlib/data/DataReaderFactory.h>
 
 using namespace SX::Instrument;
 using SX::Data::IData;
-using SX::Data::ILLAsciiData;
+using SX::Data::DataReaderFactory;
 
 BOOST_AUTO_TEST_CASE(Test_Experiment)
 {
@@ -30,7 +30,8 @@ BOOST_AUTO_TEST_CASE(Test_Experiment)
 
     // Add some data
     try {
-        data = std::shared_ptr<IData>(new ILLAsciiData(std::string("D10_ascii_example"),exp.getDiffractometer()));
+        auto factory = DataReaderFactory::Instance();
+        data = std::shared_ptr<IData>(factory->create("", "D10_ascii_example", exp.getDiffractometer()));
     }
     catch(std::exception& e) {
         BOOST_FAIL(std::string("caught exception: ") + e.what());

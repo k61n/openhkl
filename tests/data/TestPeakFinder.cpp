@@ -12,12 +12,13 @@
 
 #include <nsxlib/instrument/ComponentState.h>
 #include <nsxlib/instrument/DiffractometerStore.h>
-#include <nsxlib/data/ILLAsciiData.h>
+#include <nsxlib/data/DataReaderFactory.h>
 #include <nsxlib/utils/Units.h>
 #include <nsxlib/data/PeakFinder.h>
 #include <nsxlib/utils/ProgressHandler.h>
 
 using namespace SX::Data;
+using SX::Data::DataReaderFactory;
 using namespace SX::Instrument;
 using namespace SX::Units;
 using namespace SX::Utils;
@@ -28,10 +29,11 @@ BOOST_AUTO_TEST_CASE(Test_PeakFinder)
 {
     std::vector<std::shared_ptr<IData>> numors;
 
+    auto factory = DataReaderFactory::Instance();
     DiffractometerStore* ds = DiffractometerStore::Instance();
     std::shared_ptr<Diffractometer> diff = std::shared_ptr<Diffractometer>(ds->buildDiffractomer("D10"));
-    std::shared_ptr<IData> dataf(new ILLAsciiData(std::string("D10_ascii_example"), diff));
-    MetaData* meta=dataf->getMetadata();
+    std::shared_ptr<IData> dataf(factory->create("", "D10_ascii_example", diff));
+    MetaData* meta = dataf->getMetadata();
     PeakFinder peakFinder;
     std::shared_ptr<ProgressHandler> handler(new ProgressHandler);
 

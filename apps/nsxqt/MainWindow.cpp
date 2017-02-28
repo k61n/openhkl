@@ -29,7 +29,7 @@
 #include <nsxlib/instrument/Detector.h>
 #include <nsxlib/geometry/Ellipsoid.h>
 #include <nsxlib/crystal/GruberReduction.h>
-#include <nsxlib/data/ILLAsciiData.h>
+
 #include <nsxlib/crystal/NiggliReduction.h>
 #include <nsxlib/crystal/Peak3D.h>
 #include <nsxlib/instrument/Sample.h>

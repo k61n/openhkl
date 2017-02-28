@@ -42,24 +42,24 @@ namespace Data {
 class TiffDataReader final: public IDataReader {
 
 public:
-	static IDataReader* create(const std::string& filename, const Diffractometer& diffractometer);
+    static IDataReader* create(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer);
 
-	TiffDataReader(const std::string& filename, const Diffractometer& diffractometer);
+    TiffDataReader(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer);
 
-	virtual ~TiffDataReader()=default;
+    virtual ~TiffDataReader()=default;
 
-	void open() override;
+    void open() override;
 
-	void close() override;
+    void close() override;
 
-	Eigen::MatrixXi getData(std::size_t frame) override;
+    Eigen::MatrixXi getData(std::size_t frame) override;
 
 private:
 
-	//! Type of encoding for each pixel.
-	uint16 _bits;
-	//!
-	TIFF* _file;
+    //! Type of encoding for each pixel.
+    uint16 _bits;
+    //!
+    TIFF* _file;
 };
 
 } // end namespace Data
