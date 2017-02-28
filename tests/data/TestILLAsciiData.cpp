@@ -65,14 +65,18 @@ BOOST_AUTO_TEST_CASE(Test_ILL_Data)
     BOOST_CHECK_CLOSE(states[2].sample.getValues()[1],0.48923233E+02*SX::Units::deg,tolerance);
     BOOST_CHECK_CLOSE(states[2].sample.getValues()[2],-0.48583171E+02*SX::Units::deg,tolerance);
 
-    ComponentState cs=dataf->getInterpolatedState(diff->getDetector(),0.0);
-    BOOST_CHECK_CLOSE(cs.getValues()[0],states[0].detector.getValues()[0],tolerance);
+    InstrumentState st = dataf->getInterpolatedState(0.0);
+    BOOST_CHECK_CLOSE(st.detector.getValues()[0],states[0].detector.getValues()[0],tolerance);
+    BOOST_CHECK_CLOSE(st.sample.getValues()[0],states[0].sample.getValues()[0],tolerance);
 
-    cs=dataf->getInterpolatedState(diff->getDetector(),0.5);
-    BOOST_CHECK_CLOSE(cs.getValues()[0],states[0].detector.getValues()[0]+0.5*(states[1].detector.getValues()[0]-states[0].detector.getValues()[0]),tolerance);
+    st = dataf->getInterpolatedState(0.5);
+    BOOST_CHECK_CLOSE(st.detector.getValues()[0],states[0].detector.getValues()[0]+0.5*(states[1].detector.getValues()[0]-states[0].detector.getValues()[0]),tolerance);
+    BOOST_CHECK_CLOSE(st.sample.getValues()[0],states[0].sample.getValues()[0]+0.5*(states[1].sample.getValues()[0]-states[0].sample.getValues()[0]),tolerance);
 
-    cs=dataf->getInterpolatedState(diff->getDetector(),2.3);
-    BOOST_CHECK_CLOSE(cs.getValues()[0],states[2].detector.getValues()[0]+0.3*(states[3].detector.getValues()[0]-states[2].detector.getValues()[0]),tolerance);
+    st = dataf->getInterpolatedState(2.3);
+    BOOST_CHECK_CLOSE(st.detector.getValues()[0],states[2].detector.getValues()[0]+0.3*(states[3].detector.getValues()[0]-states[2].detector.getValues()[0]),tolerance);
+    BOOST_CHECK_CLOSE(st.sample.getValues()[0],states[2].sample.getValues()[0]+0.3*(states[3].sample.getValues()[0]-states[2].sample.getValues()[0]),tolerance);
+
 
     meta = nullptr;
     dataf->close();

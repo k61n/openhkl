@@ -240,7 +240,7 @@ void IDataReader::saveHDF5(const std::string& filename)
                 H5::Attribute intAtt(metadatagroup.createAttribute(item.first, H5::PredType::NATIVE_DOUBLE, metaSpace));
                 intAtt.write(H5::PredType::NATIVE_DOUBLE, &dvalue);
             } catch(...) {
-                // shouldn't there be some error handling here?
+                // TODO: shouldn't there be some error handling here?
             }
         }
     }
@@ -248,5 +248,4 @@ void IDataReader::saveHDF5(const std::string& filename)
 }
 
 } // end namespace Data
-
 } // end namespace SX

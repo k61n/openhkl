@@ -49,9 +49,9 @@ public:
     //! Assignment operator
     ComponentState& operator=(const ComponentState& other);
     //! Return a pointer to the component related to this component state
-     Component* getParent();
+    Component* getParent() const;
     const std::vector<double>& getValues() const;
-     void setParent(Component*);
+    void setParent(Component*);
 private:
     //! Only Component class can create a state
 
@@ -63,6 +63,7 @@ private:
     std::vector<double> _values;
 };
 
-}
-}
+} // namespace Instrument
+} // namespace SX
+
 #endif /* NSXTOOL_GONIOSTATE_H_ */

@@ -37,10 +37,11 @@ struct InstrumentState {
     ComponentState detector;
     ComponentState source;
     ComponentState sample;
+
+    InstrumentState interpolate(const InstrumentState& other, double t) const;
 };
 
 } // end namespace Instrument
-
 } // end namespace SX
 
 #endif // NSXTOOL_INSTRUMENTSTATE_H_

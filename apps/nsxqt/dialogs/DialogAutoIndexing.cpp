@@ -160,6 +160,7 @@ void DialogAutoIndexing::autoIndex()
                 cell.setReciprocalCovariance(sln._covub);
 
             } catch(std::exception& e) {
+                qDebug() << "exception: " << e.what();
                 continue;
             }
 

@@ -28,6 +28,7 @@ namespace Data {
 
 using Eigen::Matrix3d;
 using boost::filesystem::path;
+using SX::Instrument::InstrumentState;
 
 IData::IData(std::string filename, std::shared_ptr<Diffractometer> diffractometer):
     _isOpened(false),
@@ -140,24 +141,20 @@ void IData::clearPeaks()
     _peaks.clear();
 }
 
-ComponentState IData::getInterpolatedState(std::shared_ptr<Component> component, double frame) const
+InstrumentState IData::getInterpolatedState(double frame) const
 {
     if (frame>(_states.size()-1) || frame<0) {
         throw std::runtime_error("Error when interpolating state: invalid frame value");
     }
 
-    std::size_t idx = static_cast<std::size_t>(std::floor(frame));
-    std::size_t next = std::min(idx+1, _states.size()-1);
-    std::size_t nPhysicalAxes=component->getGonio()->getNPhysicalAxes();
+    const std::size_t idx = std::size_t(std::lround(std::floor(frame)));
+    const std::size_t next = std::min(idx+1, _states.size()-1);
+    const double t = frame-idx;
 
-    const std::vector<double>& prevState=_states[idx].detector.getValues();
-    const std::vector<double>& nextState=_states[next].detector.getValues();
-    std::vector<double> state(nPhysicalAxes);
+    const auto& nextState = _states[next];
+    const auto& prevState = _states[idx];
 
-    for (std::size_t i=0; i < nPhysicalAxes; ++i) {
-        state[i] = prevState[i] + (frame-static_cast<double>(idx))*(nextState[i]-prevState[i]);
-    }
-    return component->createState(state);
+    return prevState.interpolate(nextState, t);
 }
 
 const ComponentState& IData::getDetectorState(size_t frame) const
@@ -463,14 +460,16 @@ std::vector<PeakCalc> IData::hasPeaks(const std::vector<Eigen::Vector3d>& hkls, 
         Eigen::Vector3d kf=ki+qi0+(qi-qi0)*t;
         t+=(i-1);
 
-        ComponentState dis=getInterpolatedState(_diffractometer->getDetector(),t);
+        const InstrumentState& state = getInterpolatedState(t);
+
+        //const ComponentState& dis = state.detector;
         double px,py;
         // If hit detector, new peak
-        ComponentState cs=getInterpolatedState(_diffractometer->getSample(),t);
-        Eigen::Vector3d from=_diffractometer->getSample()->getPosition(cs.getValues());
+        //const ComponentState& cs=state.sample;
+        Eigen::Vector3d from=_diffractometer->getSample()->getPosition(state.sample.getValues());
 
         double time;
-        bool accept=_diffractometer->getDetector()->receiveKf(px,py,kf,from,time,dis.getValues());
+        bool accept=_diffractometer->getDetector()->receiveKf(px,py,kf,from,time,state.detector.getValues());
 
         if (accept) {
             //peaks.emplace_back(PeakCalc(hkl[0],hkl[1],hkl[2],px,py,t));

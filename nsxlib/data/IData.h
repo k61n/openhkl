@@ -134,7 +134,8 @@ public:
     const std::vector<SX::Instrument::InstrumentState>& getInstrumentStates() const;
 
     //! Get the interpolated state of a given component
-    ComponentState getInterpolatedState(std::shared_ptr<Component> component, double frame) const;
+    SX::Instrument::InstrumentState getInterpolatedState(double frame) const;
+    //ComponentState getInterpolatedState(std::shared_ptr<Component> component, double frame) const;
 
     //! Add a new mask to the data
     void addMask(AABB<double,3>* mask);

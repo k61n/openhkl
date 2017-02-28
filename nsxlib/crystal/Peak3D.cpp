@@ -184,13 +184,14 @@ void Peak3D::setPeakShape(shape_type* peak)
 
     auto data = getData();
 
-    setSampleState(std::make_shared<ComponentState>(data->getInterpolatedState(data->getDiffractometer()->getSample(),f)));
-    ComponentState detState = data->getInterpolatedState(data->getDiffractometer()->getDetector(),f);
+    auto state = data->getInterpolatedState(f);
+
+    setSampleState(std::make_shared<ComponentState>(state.sample));
 
     using DetectorEvent = SX::Instrument::DetectorEvent;
 
     setDetectorEvent(std::make_shared<DetectorEvent>(
-        data->getDiffractometer()->getDetector()->createDetectorEvent(center[0],center[1],detState.getValues())));
+        data->getDiffractometer()->getDetector()->createDetectorEvent(center[0],center[1],state.detector.getValues())));
 }
 
 void Peak3D::setBackgroundShape(shape_type* background)

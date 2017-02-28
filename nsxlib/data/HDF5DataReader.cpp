@@ -226,5 +226,4 @@ Eigen::MatrixXi HDF5DataReader::getData(size_t frame)
 }
 
 } // end namespace Data
-
 } // end namespace SX
