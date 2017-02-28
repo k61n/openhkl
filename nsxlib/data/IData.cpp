@@ -32,13 +32,13 @@ using Eigen::Matrix3d;
 using boost::filesystem::path;
 using SX::Instrument::InstrumentState;
 
-IData::IData(IDataReader* reader, std::shared_ptr<Diffractometer> diffractometer):
+IData::IData(IDataReader* reader, const std::shared_ptr<Diffractometer>& diffractometer):
     _isOpened(false),
     _filename(reader->getFilename()),
     _nFrames(0),
     _nrows(0),
     _ncols(0),
-    _diffractometer(std::move(diffractometer)),
+    _diffractometer(diffractometer),
     _metadata(std::unique_ptr<MetaData>(new MetaData())),
     _data(),
     _states(),

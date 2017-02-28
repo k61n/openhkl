@@ -20,8 +20,8 @@ bool TopLeftColMajorMatrixParser::operator()(const char* begin, size_t bufferSiz
     int c;
     size_t index(0);
     std::stringstream ss;
-    ss.write(begin,bufferSize);
-    while(ss >> c) {
+    ss.write(begin, bufferSize);
+    while(index < matrix.size() && ss >> c) {
         size_t col = index/nRows;
         size_t row = lastRow + nRows*col - index;
         matrix(row,col) = c;
@@ -39,8 +39,8 @@ bool TopLeftRowMajorMatrixParser::operator()(const char* begin, size_t bufferSiz
     int c;
     size_t index(0);
     std::stringstream ss;
-    ss.write(begin,bufferSize);
-    while(ss >> c) {
+    ss.write(begin, bufferSize);
+    while(index < matrix.size() && ss >> c) {
         size_t row = lastRow - index/nCols;
         size_t col = index - nCols*(lastRow - row);
         matrix(row,col) = c;
@@ -60,7 +60,7 @@ bool TopRightColMajorMatrixParser::operator()(const char* begin, size_t bufferSi
     size_t index(0);
     std::stringstream ss;
     ss.write(begin,bufferSize);
-    while(ss >> c) {
+    while(index < matrix.size() && ss >> c) {
         size_t col = lastCol - index/nRows;
         size_t row = lastRow + nRows*(lastCol - col) - index;
         matrix(row,col) = c;
@@ -80,7 +80,7 @@ bool TopRightRowMajorMatrixParser::operator()(const char* begin, size_t bufferSi
     size_t index(0);
     std::stringstream ss;
     ss.write(begin,bufferSize);
-    while(ss >> c) {
+    while(index < matrix.size() && ss >> c) {
         size_t row = lastRow - index/nCols;
         size_t col = lastCol + nCols*(lastRow - row) - index;
         matrix(row,col) = c;
@@ -97,7 +97,7 @@ bool BottomLeftColMajorMatrixParser::operator()(const char* begin, size_t buffer
     size_t index(0);
     std::stringstream ss;
     ss.write(begin,bufferSize);
-    while(ss >> c) {
+    while(index < matrix.size() && ss >> c) {
         size_t col = index/nRows;
         size_t row = index - nRows*col;
         matrix(row,col) = c;
@@ -114,7 +114,7 @@ bool BottomLeftRowMajorMatrixParser::operator()(const char* begin, size_t buffer
     size_t index(0);
     std::stringstream ss;
     ss.write(begin,bufferSize);
-    while(ss >> c) {
+    while(index < matrix.size() && ss >> c) {
         size_t row = index/nCols;
         size_t col = index - nCols*row;
         matrix(row,col) = c;
@@ -126,14 +126,14 @@ bool BottomLeftRowMajorMatrixParser::operator()(const char* begin, size_t buffer
 
 bool BottomRightColMajorMatrixParser::operator()(const char* begin, size_t bufferSize, Eigen::MatrixXi& matrix) const
 {
-    size_t nRows = matrix.rows();
-    size_t nCols = matrix.cols();
-    size_t lastCol = nCols - 1;
+    long nRows = matrix.rows();
+    long nCols = matrix.cols();
+    long lastCol = nCols - 1;
     int c;
     size_t index(0);
     std::stringstream ss;
     ss.write(begin,bufferSize);
-    while(ss >> c) {
+    while(index < matrix.size() && ss >> c) {
         size_t col = lastCol - index/nRows;
         size_t row = index - nRows*(lastCol - col);
         matrix(row,col) = c;
@@ -145,13 +145,13 @@ bool BottomRightColMajorMatrixParser::operator()(const char* begin, size_t buffe
 
 bool BottomRightRowMajorMatrixParser::operator()(const char* begin, size_t bufferSize, Eigen::MatrixXi& matrix) const
 {
-    size_t nCols = matrix.cols();
-    size_t lastCol = nCols - 1;
+    long nCols = matrix.cols();
+    long lastCol = nCols - 1;
     int c;
     size_t index(0);
     std::stringstream ss;
     ss.write(begin,bufferSize);
-    while(ss >> c) {
+    while(index < matrix.size() && ss >> c) {
         size_t row = index/nCols;
         size_t col = lastCol + nCols*row - index;
         matrix(row,col) = c;

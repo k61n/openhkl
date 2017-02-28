@@ -85,7 +85,7 @@ public:
 
     /*! Construct a IData Object from a file on disk, and pointer to a diffractometer.
      */
-    IData(IDataReader* reader, std::shared_ptr<Diffractometer> diffractometer);
+    IData(IDataReader* reader, const std::shared_ptr<Diffractometer>& diffractometer);
 
     //! Copy constructor
     IData(const IData& other) = default;
@@ -169,7 +169,7 @@ public:
     int dataAt(unsigned int x=0, unsigned int y=0, unsigned int z=0);
 
     //! Read a single frame
-    virtual Eigen::MatrixXi getFrame(std::size_t idx);
+    Eigen::MatrixXi getFrame(std::size_t idx);
 
     //! Get the file handle.
     void open();

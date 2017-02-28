@@ -263,6 +263,8 @@ Eigen::MatrixXi ILLDataReader::getData(size_t frame)
     // Create vector and try to reserve a memory block
     Eigen::MatrixXi v;
     v.resize(long(_nRows), long(_nCols));
+    assert(_nRows >= 1);
+    assert(_nCols >= 1);
 
     (*_parser)(_mapAddress+begin,_dataLength,v);
 
