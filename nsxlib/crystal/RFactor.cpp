@@ -51,24 +51,26 @@ void RFactor::recalculate(const vector<vector<sptrPeak3D> > &peak_equivs)
         if ( peak_list.size() < 2) {
             continue;
         }
-
         double average = 0.0;
 
         for (auto&& p: peak_list) {
-            double in = p->getScaledIntensity();
+            double lorentz = p->getLorentzFactor();
+            double trans = p->getTransmission();
+            double in = p->getScaledIntensity() / lorentz / trans;
             average += in;
         }
 
         const double n = peak_list.size();
         average /= n;
-
         I_total += n*average;
 
         const double Fmeas = std::sqrt(n / (n-1));
         const double Fpim = std::sqrt(1 / (n-1));
 
         for (auto&& p: peak_list) {
-            double diff = std::fabs(p->getScaledIntensity() - average);
+            double lorentz = p->getLorentzFactor();
+            double trans = p->getTransmission();
+            double diff = std::fabs(p->getScaledIntensity() / lorentz / trans - average);
             _Rmerge += diff;
             _Rmeas += Fmeas*diff;
             _Rpim += Fpim*diff;
@@ -94,5 +96,4 @@ RFactor::RFactor(const vector<vector<sptrPeak3D> > &peak_equivs): RFactor()
 }
 
 } // namespace Crystal
-
 } // namespace SX

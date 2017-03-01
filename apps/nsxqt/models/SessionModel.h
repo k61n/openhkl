@@ -114,7 +114,6 @@ public slots:
     void findSpaceGroup();
     void computeRFactors();
     void findFriedelPairs();
-    void integrateCalculatedPeaks();
     void peakFitDialog();
     void incorporateCalculatedPeaks();
     void applyResolutionCutoff(double dmin, double dmax);

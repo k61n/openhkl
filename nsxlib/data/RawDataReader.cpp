@@ -48,13 +48,17 @@
 #include "../instrument/Monochromator.h"
 #include "../instrument/Sample.h"
 #include "../instrument/Source.h"
+#include "../instrument/ComponentState.h"
 #include "../utils/Units.h"
 #include "../utils/Parser.h"
+#include "../utils/EigenToVector.h"
+
 
 using std::ifstream;
+using SX::Utils::eigenToVector;
+using SX::Instrument::ComponentState;
 
 namespace SX {
-
 namespace Data {
 
 using SX::Instrument::Diffractometer;
@@ -105,7 +109,7 @@ RawDataReader::RawDataReader(const std::vector<std::string>& filenames, const st
     _states.resize(_nFrames);
 
     for (unsigned int i = 0; i < _nFrames; ++i) {
-        _states[i].detector = _diffractometer->getDetector()->createStateFromEigen(dm.col(i));
+        _states[i].detector = ComponentState(_diffractometer->getDetector().get(), eigenToVector((dm.col(i))));
         //_detectorStates.push_back(_diffractometer->getDetector()->createStateFromEigen(dm.col(i)));
     }
 
@@ -136,7 +140,7 @@ RawDataReader::RawDataReader(const std::vector<std::string>& filenames, const st
     dm*=SX::Units::deg;
 
     for (unsigned int i=0;i<_nFrames;++i) {
-        _states[i].sample = _diffractometer->getSample()->createStateFromEigen(dm.col(i));
+        _states[i].sample = ComponentState(_diffractometer->getSample().get(), eigenToVector(dm.col(i)));
     }
 }
 

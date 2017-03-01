@@ -19,7 +19,7 @@ BOOST_AUTO_TEST_CASE(Test_Component_State)
     g->addRotation("gamma",Vector3d(0,0,1),RotAxis::CW);
     Sample sample("sample");
     sample.setGonio(g);
-    ComponentState cs = sample.createState({2.0});
-    ComponentState* pcs(new ComponentState(cs));
+    ComponentState cs(&sample, {2.0});
+    auto pcs = new ComponentState(cs);
     delete pcs;
 }

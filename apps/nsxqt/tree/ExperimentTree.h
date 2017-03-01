@@ -37,6 +37,7 @@ public:
 signals:
     void plotData(std::shared_ptr<SX::Data::DataSet>);
     void inspectWidget(QWidget*);
+    void resetScene();
 
 public slots:
     void keyPressEvent(QKeyEvent* event);

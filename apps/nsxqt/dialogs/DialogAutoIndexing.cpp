@@ -14,6 +14,7 @@
 #include <QtDebug>
 
 #include <nsxlib/instrument/Experiment.h>
+#include <nsxlib/instrument/Gonio.h>
 #include <nsxlib/crystal/FFTIndexing.h>
 #include <nsxlib/crystal/GruberReduction.h>
 #include <nsxlib/data/IData.h>
@@ -132,9 +133,18 @@ void DialogAutoIndexing::autoIndex()
         cell.setHKLTolerance(selectedUnitCell->getHKLTolerance());
 
         // Only the UB matrix parameters are used for fit
-        int nParameters= 10 + sample->getNAxes() + detector->getNAxes();
-        for (int i = 9; i < nParameters; ++i)
+        int nParameters = 10;
+
+        if (sample->hasGonio()) {
+            nParameters += sample->getGonio()->getNAxes();
+        }
+        if (detector->hasGonio()) {
+            nParameters += detector->getGonio()->getNAxes();
+        }
+
+        for (int i = 9; i < nParameters; ++i) {
             minimizer.refineParameter(i,false);
+        }
 
         int success = 0;
         for (auto peak : _peaks) {

@@ -138,12 +138,14 @@ int LatticeFunctor::inputs() const
     // 10 = 6 lattice parameters + 3 U matrix quaternion parameters + wavelength
     int nInputs=10;
 
-    if (_detector)
-        nInputs += _detector->getNAxes();
-
-    if (_sample)
-        nInputs += _sample->getNAxes();
-
+    if (_detector && _detector->hasGonio()) {
+        auto gonio = _detector->getGonio();
+        nInputs += gonio->getNAxes();
+    }
+    if (_sample && _sample->hasGonio()) {
+        auto gonio = _sample->getGonio();
+        nInputs += gonio->getNAxes();
+    }
     return nInputs;
 }
 
@@ -152,6 +154,5 @@ int LatticeFunctor::values() const
     return 3*_peaks.size();
 }
 
-} // end namespace Crystal
-
-} // end namespace SX
+} // namespace Crystal
+} // namespace SX

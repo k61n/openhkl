@@ -57,8 +57,7 @@ int run_test()
     //dataf->readInMemory(nullptr);
     mos.setSample(&s);
 
-    for (int i=1; i<=1; ++i)
-    {
+    for (int i=1; i<=1; ++i) {
         double newmos = 0.01*static_cast<double>(i);
         mos.setMosaicity(newmos);
         double overlap{0.0};

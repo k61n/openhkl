@@ -5,11 +5,8 @@
 #include "Sample.h"
 #include "Source.h"
 
-namespace SX
-{
-
-namespace Instrument
-{
+namespace SX {
+namespace Instrument {
 
 Diffractometer::Diffractometer() : _name(""), _detector(nullptr), _sample(nullptr), _source(nullptr)
 {
@@ -30,19 +27,19 @@ Diffractometer::Diffractometer(const std::string& name) : _name(name), _detector
 Diffractometer::Diffractometer(const proptree::ptree& node)
 {
 
-	std::string diffractometerName=node.get<std::string>("name");
-	this->setName(diffractometerName);
+    std::string diffractometerName=node.get<std::string>("name");
+    this->setName(diffractometerName);
 
-	// Build the detector from its corresponding node
-	const property_tree::ptree& detectorNode = node.get_child("detector");
+    // Build the detector from its corresponding node
+    const property_tree::ptree& detectorNode = node.get_child("detector");
     _detector = std::shared_ptr<Detector>(Detector::create(detectorNode));
 
-	// Build the sample from its corresponding node
-	const property_tree::ptree& sampleNode = node.get_child("sample");
+    // Build the sample from its corresponding node
+    const property_tree::ptree& sampleNode = node.get_child("sample");
     _sample= std::shared_ptr<Sample>(Sample::create(sampleNode));
 
-	// Build the source from its corresponding node
-	const property_tree::ptree& sourceNode = node.get_child("source");
+    // Build the source from its corresponding node
+    const property_tree::ptree& sourceNode = node.get_child("source");
     _source= std::shared_ptr<Source>(Source::create(sourceNode));
 }
 
@@ -50,91 +47,85 @@ Diffractometer::~Diffractometer()
 {
     // no longer necessary to explicitly delete since we switched to smart pointers
     /*
-	if (_detector)
-		delete _detector;
-	if (_sample)
-		delete _sample;
-	if (_source)
-		delete _source;
+    if (_detector)
+        delete _detector;
+    if (_sample)
+        delete _sample;
+    if (_source)
+        delete _source;
     */
 }
 
 Diffractometer& Diffractometer::operator=(const Diffractometer& other)
 {
-	if (this != &other)
-	{
-		_name = other._name;
+    if (this != &other) {
+        _name = other._name;
 
         _detector = std::shared_ptr<Detector>(other._detector==nullptr ? nullptr : other._detector->clone());
         _sample = std::shared_ptr<Sample>(other._detector==nullptr ? nullptr : other._sample->clone());
         _source = std::shared_ptr<Source>(other._source==nullptr ? nullptr : other._source->clone());
-	}
-	return *this;
+    }
+    return *this;
 }
 
 void Diffractometer::setDetector(std::shared_ptr<Detector> d)
 {
-	_detector=d;
+    _detector=d;
 }
 
 void Diffractometer::setName(const std::string& name)
 {
-	_name = name;
+    _name = name;
 }
 
 void Diffractometer::setSample(std::shared_ptr<Sample> s)
 {
-	_sample=s;
+    _sample=s;
 }
 void Diffractometer::setSource(std::shared_ptr<Source> s)
 {
-	_source=s;
+    _source=s;
 }
 
 const std::string& Diffractometer::getName() const
 {
-	return _name;
+    return _name;
 }
 
 std::shared_ptr<Detector> Diffractometer::getDetector()
 {
-	return _detector;
+    return _detector;
 }
 
 std::shared_ptr<Sample> Diffractometer::getSample()
 {
-	return _sample;
+    return _sample;
 }
 
 std::shared_ptr<Source> Diffractometer::getSource()
 {
-	return _source;
+    return _source;
 }
 
 std::map<unsigned int,std::string> Diffractometer::getPhysicalAxesNames() const
 {
+    std::map<unsigned int,std::string> names;
 
-	std::map<unsigned int,std::string> names;
+    if (_detector && _detector->hasGonio())	{
+        auto axisIdsToNames = _detector->getGonio()->getPhysicalAxisIdToNames();
+        names.insert(axisIdsToNames.begin(),axisIdsToNames.end());
+    }
 
-	if (_detector)
-	{
-		auto axisIdsToNames = _detector->getPhysicalAxesNames();
-		names.insert(axisIdsToNames.begin(),axisIdsToNames.end());
-	}
+    if (_sample && _sample->hasGonio())	{
+        auto axisIdsToNames = _sample->getGonio()->getPhysicalAxisIdToNames();
+        names.insert(axisIdsToNames.begin(),axisIdsToNames.end());
+    }
 
-	if (_sample)
-	{
-		auto axisIdsToNames = _sample->getPhysicalAxesNames();
-		names.insert(axisIdsToNames.begin(),axisIdsToNames.end());
-	}
-
-	if (_source)
-	{
-		auto axisIdsToNames = _source->getPhysicalAxesNames();
-		names.insert(axisIdsToNames.begin(),axisIdsToNames.end());
-	}
-
-	return names;
+    if (_source && _source->hasGonio())	{
+        auto axisIdsToNames = _source->getGonio()->getPhysicalAxisIdToNames();
+        names.insert(axisIdsToNames.begin(),axisIdsToNames.end());
+    }
+    return names;
 }
 
 }

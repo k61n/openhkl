@@ -1,7 +1,45 @@
+/*
+ nsxtool : Neutron Single Crystal analysis toolkit
+ ------------------------------------------------------------------------------------------
+ Copyright (C)
+ 2012- Laurent C. Chapon Institut Laue-Langevin
+ 2017- Laurent C. Chapon, Eric Pellegrini, Jonathan Fisher
+ -----------------------------------------------------------------------------------------
+
+ Institut Laue-Langevin
+ BP 156
+ 6, rue Jules Horowitz
+ 38042 Grenoble Cedex 9
+ France
+ chapon[at]ill.fr
+ pellegrini[at]ill.fr
+
+ Forschungszentrum Juelich GmbH
+ 52425 Juelich
+ Germany
+ j.fisher[at]fz-juelich.de
+
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+
+ You should have received a copy of the GNU Lesser General Public
+ License along with this library; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ */
+
 #include <cmath>
 #include <stdexcept>
 
 #include "Detector.h"
+#include "DetectorEvent.h"
 #include "DetectorFactory.h"
 #include "Gonio.h"
 
@@ -46,48 +84,30 @@ Detector::Detector(const proptree::ptree& node)
 {
     boost::optional<const proptree::ptree&> dataOrdernode=node.get_child_optional("data_ordering");
     // If data order is not defined assumed default
-    if (!dataOrdernode)
-    {
-        _dataorder=DataOrder::BottomRightColMajor;
+    if (!dataOrdernode) {
+        _dataorder = DataOrder::BottomRightColMajor;
         return;
     }
 
     std::string dataOrder=dataOrdernode.get().get_value<std::string>();
 
-    if (dataOrder.compare("TopLeftColMajor")==0)
-    {
+    if (dataOrder.compare("TopLeftColMajor")==0) {
         _dataorder=DataOrder::TopLeftColMajor;
-    }
-    else if (dataOrder.compare("TopLeftRowMajor")==0)
-    {
+    } else if (dataOrder.compare("TopLeftRowMajor")==0) {
         _dataorder=DataOrder::TopLeftRowMajor;
-    }
-    else if (dataOrder.compare("TopRightColMajor")==0)
-    {
+    } else if (dataOrder.compare("TopRightColMajor")==0) {
         _dataorder=DataOrder::TopRightColMajor;
-    }
-    else if (dataOrder.compare("TopRightRowMajor")==0)
-    {
+    } else if (dataOrder.compare("TopRightRowMajor")==0) {
         _dataorder=DataOrder::TopRightRowMajor;
-    }
-    else if (dataOrder.compare("BottomLeftColMajor")==0)
-    {
+    } else if (dataOrder.compare("BottomLeftColMajor")==0) {
         _dataorder=DataOrder::BottomLeftColMajor;
-    }
-    else if (dataOrder.compare("BottomLeftRowMajor")==0)
-    {
+    } else if (dataOrder.compare("BottomLeftRowMajor")==0) {
         _dataorder=DataOrder::BottomLeftRowMajor;
-    }
-    else if (dataOrder.compare("BottomRightColMajor")==0)
-    {
+    } else if (dataOrder.compare("BottomRightColMajor")==0) {
         _dataorder=DataOrder::BottomRightColMajor;
-    }
-    else if (dataOrder.compare("BottomRightRowMajor")==0)
-    {
+    } else if (dataOrder.compare("BottomRightRowMajor")==0) {
         _dataorder=DataOrder::BottomRightRowMajor;
-    }
-    else
-    {
+    } else {
         throw std::runtime_error("Detector class: Data ordering mode not valid, can not build detector");
     }
 }
@@ -98,137 +118,26 @@ Detector::~Detector()
 
 Detector& Detector::operator=(const Detector& other)
 {
-    if (this!=&other)
+    if (this != &other) {
         Component::operator=(other);
+    }
     return *this;
-}
-
-Eigen::Vector3d Detector::getEventPosition(double px, double py, const std::vector<double>& values) const
-{
-    Eigen::Vector3d v=getPos(px,py);
-    if (_gonio)
-        _gonio->transformInPlace(v,values);
-    return v;
-}
-
-Eigen::Vector3d Detector::getEventPosition(const DetectorEvent& event) const
-{
-    if (event._detector!=this)
-        throw std::runtime_error("Trying to assign DetectorEvent to a different detector");
-    Eigen::Vector3d v=getPos(event._x,event._y);
-    // No gonio and no values set
-    if (!_gonio)
-    {
-        if (event._values.size())
-            throw std::runtime_error("Trying to assign a DetectorEvent with values to a Component with no Goniometer");
-        else
-            return v;
-    }
-    else if (_gonio->getNPhysicalAxes()!=event._values.size())
-    {
-        throw std::runtime_error("Trying to assign a DetectorEvent with wrong number of values");
-    }
-    _gonio->transformInPlace(v,event._values);
-    return v;
-}
-
-Eigen::Vector3d Detector::getKf(double px, double py, double wave,const std::vector<double>& values,const Eigen::Vector3d& from) const
-{
-    // Get the event position x,y,z, taking into account the Gonio current setting
-    Eigen::Vector3d p=getEventPosition(px,py,values);
-    p-=from;
-    p.normalize();
-    return (p/wave);
-}
-
-Eigen::Vector3d Detector::getKf(const DetectorEvent& event, double wave,const Eigen::Vector3d& from) const
-{
-    // Get the event position x,y,z, taking into account the Gonio current setting
-    Eigen::Vector3d p=getEventPosition(event);
-    p-=from;
-    p.normalize();
-    return (p/wave);
 }
 
 bool Detector::receiveKf(double& px, double& py, const Eigen::Vector3d& kf, const Eigen::Vector3d& from, double& t, const std::vector<double>& goniovalues)
 {
+    Eigen::Vector3d fromt;
+    Eigen::Vector3d kft;
 
-    if (_gonio)
-    {
-        Eigen::Vector3d fromt=_gonio->transformInverse(from,goniovalues);
-        Eigen::Vector3d kft=_gonio->getInverseHomMatrix(goniovalues).rotation()*kf;
-        return hasKf(kft,fromt,px,py,t);
+    if (_gonio) {
+        fromt = _gonio->transformInverse(from, goniovalues);
+        kft = _gonio->getInverseHomMatrix(goniovalues).rotation()*kf;
+    } else {
+        fromt = from;
+        kft = kf;
     }
-    else
-        return hasKf(kf,from,px,py,t);
-}
-
-Eigen::Vector3d Detector::getQ(double px, double py,double wave,const std::vector<double>& values,const Eigen::Vector3d& from) const
-{
-    if (wave<=0)
-        throw std::runtime_error("Detector:getQ incident wavelength error, must be >0");
-    Eigen::Vector3d q=getKf(px,py,wave,values,from);
-    q[1]-=1.0/wave; // ki along y
-    return q;
-}
-
-Eigen::Vector3d Detector::getQ(const DetectorEvent& event,double wave,const Eigen::Vector3d& from) const
-{
-    if (wave<=0)
-        throw std::runtime_error("Detector:getQ incident wavelength error, must be >0");
-    Eigen::Vector3d q=getKf(event,wave,from);
-    q[1]-=1.0/wave;
-    return q;
-}
-
-void Detector::getGammaNu(double px, double py, double& gamma, double& nu,const std::vector<double>& values,const Eigen::Vector3d& from) const
-{
-    Eigen::Vector3d p=getEventPosition(px,py,values)-from;
-    gamma=std::atan2(p[0],p[1]);
-    nu=std::asin(p[2]/p.norm());
-}
-
-void Detector::getGammaNu(const DetectorEvent& event, double& gamma, double& nu,const Eigen::Vector3d& from) const
-{
-    Eigen::Vector3d p=getEventPosition(event)-from;
-    gamma=std::atan2(p[0],p[1]);
-    nu=std::asin(p[2]/p.norm());
-}
-
-
-double Detector::get2Theta(double px, double py,const std::vector<double>& values,const Eigen::Vector3d& si) const
-{
-    Eigen::Vector3d p=getEventPosition(px,py,values);
-    double proj=p.dot(si);
-    return acos(proj/p.norm()/si.norm());
-}
-
-double Detector::get2Theta(const DetectorEvent& event, const Eigen::Vector3d& si) const
-{
-    Eigen::Vector3d p=getEventPosition(event);
-    double proj=p.dot(si);
-    return acos(proj/p.norm()/si.norm());
-}
-
-DetectorEvent Detector::createDetectorEvent(double x, double y, const std::vector<double>& values)
-{
-    if (!_gonio)
-    {
-        if (values.size())
-            throw std::runtime_error("Trying to create a DetectorEvent with Goniometer values whilst no gonio is set");
-    }
-    else if (values.size()!=_gonio->getNPhysicalAxes())
-        throw std::runtime_error("Trying to create a DetectorEvent with invalid number of Goniometer Axes");
-
-    DetectorEvent result;
-    result._detector=this;
-    result._x=x;
-    result._y=y;
-    result._values=values;
-    return result;
+    return hasKf(kft, fromt, px, py, t);
 }
 
 } // End namespace Instrument
-
 } // End namespace SX
-

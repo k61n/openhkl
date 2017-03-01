@@ -13,6 +13,7 @@
 #include "../data/I16DataReader.h"
 #include "../data/TiffDataReader.h"
 #include "../instrument/Component.h"
+#include "../instrument/ComponentState.h"
 #include "../instrument/Detector.h"
 #include "../instrument/Diffractometer.h"
 #include "../instrument/Gonio.h"
@@ -23,10 +24,10 @@
 #include "../utils/Units.h"
 
 namespace SX {
-
 namespace Data {
 
 using SX::Instrument::Diffractometer;
+using SX::Instrument::ComponentState;
 
 IDataReader* I16DataReader::create(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer)
 {
@@ -111,8 +112,8 @@ I16DataReader::I16DataReader(const std::string& filename, const std::shared_ptr<
 
 
     for (unsigned int i=0;i<_nFrames;++i) {
-        _states[i].detector = _diffractometer->getDetector()->createState(dval);
-        _states[i].sample = _diffractometer->getSample()->createState(sval);
+        _states[i].detector = ComponentState(_diffractometer->getDetector().get(), dval);
+        _states[i].sample = ComponentState(_diffractometer->getSample().get(), sval);
         //_detectorStates.push_back(_diffractometer->getDetector()->createState(dval));
         //_sampleStates.push_back(_diffractometer->getSample()->createState(sval));
     }
@@ -147,5 +148,4 @@ Eigen::MatrixXi I16DataReader::getData(size_t frame)
 }
 
 } // end namespace Data
-
 } // end namespace SX

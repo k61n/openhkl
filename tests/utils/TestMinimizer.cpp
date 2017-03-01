@@ -37,8 +37,7 @@ int run_test()
 
     x_initial << 4.0, 0.2, 0.5;
 
-    for (int i = 0; i < nvalues; i++)
-    {
+    for (int i = 0; i < nvalues; i++) {
         double t = i;
         double yi = 1.0 + 5 * exp (-0.1 * t);
 
@@ -47,19 +46,16 @@ int run_test()
         cout << "data: " << i << " " << y[i] << " " << endl;
     }
 
-
-    auto residual_fn = [y] (const Eigen::VectorXd& p, Eigen::VectorXd& r) -> int
-    {
+    auto residual_fn = [y] (const Eigen::VectorXd& p, Eigen::VectorXd& r) -> int {
         int n = r.rows();
 
-        double A =p(0);
+        double A = p(0);
         double lambda = p(1);
-        double b =p(2);
+        double b = p(2);
 
         size_t i;
 
-        for (i = 0; i < n; i++)
-        {
+        for (i = 0; i < n; i++) {
             /* Model Yi = A * exp(-lambda * i) + b */
             double t = i;
             double Yi = A * exp (-lambda * t) + b;

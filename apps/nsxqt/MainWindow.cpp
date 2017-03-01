@@ -144,6 +144,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(_ui->_dview->getScene(),SIGNAL(updatePlot(PlottableGraphicsItem*)),this,SLOT(updatePlot(PlottableGraphicsItem*)));
     connect(_ui->action_open,SIGNAL(triggered()),_ui->experimentTree,SLOT(createNewExperiment()));
 
+    connect(_ui->experimentTree, SIGNAL(resetScene()),
+            _ui->_dview->getScene(), SLOT(resetScene()));
+
     connect(this, SIGNAL(findSpaceGroup(void)), _ui->experimentTree, SLOT(findSpaceGroup()));
     connect(this, SIGNAL(computeRFactors(void)), _ui->experimentTree, SLOT(computeRFactors()));
     connect(this,SIGNAL(findFriedelPairs(void)), _ui->experimentTree, SLOT(findFriedelPairs()));
@@ -298,7 +301,7 @@ void MainWindow::plotPeak(sptrPeak3D peak)
     // Ensure that frames
     changeData(peak->getData());
     // Get frame number to adjust the data
-    size_t data_frame = size_t(std::lround(peak->getPeak().getAABBCenter()[2]));
+    size_t data_frame = size_t(std::lround(peak->getShape().getAABBCenter()[2]));
     scenePtr->setData(peak->getData(), data_frame);
     // Update the scrollbar
     _ui->frame->setValue(data_frame);
@@ -545,21 +548,18 @@ void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
     //const double pmax = 2.873e-7; // corresponds to 5 sigma
     // const double pmax = 3e-5; // corresponds to 4 sigma
     const double pmax = 1e-3;
-
     int total_peaks = 0;
     // int remaining_peaks = 0;
 
     std::vector<std::shared_ptr<DataSet>> numors = _session->getSelectedNumors();
     std::vector<sptrPeak3D> bad_peaks;
 
-    for (std::shared_ptr<DataSet> numor: numors)
-    {
+    for (std::shared_ptr<DataSet> numor: numors) {
         std::set<sptrPeak3D>& peaks = numor->getPeaks();
 
         total_peaks += peaks.size();
 
-        for (std::set<sptrPeak3D>::iterator it = peaks.begin(); it != peaks.end();)
-        {
+        for (std::set<sptrPeak3D>::iterator it = peaks.begin(); it != peaks.end();) {
             if ( (*it)->isMasked() || !(*it)->isSelected() ) {
                 bad_peaks.push_back(*it);
                 it = peaks.erase(it);
@@ -575,8 +575,7 @@ void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
                     SX::Crystal::UnitCell cell = *numor->getDiffractometer()->getSample()->getUnitCell(i);
                     Eigen::RowVector3d hkl;
                     bool indexingSuccess = (*it)->getMillerIndices(cell,hkl,true);
-                    if (indexingSuccess)
-                    {
+                    if (indexingSuccess) {
                         correctly_indexed = true;
                         break;
                     }
@@ -584,9 +583,9 @@ void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
                 if (!correctly_indexed) {
                     bad_peaks.push_back(*it);
                     it = peaks.erase(it);
-                }
-                else
+                } else {
                     ++it;
+                }
             }
         }
     }
@@ -615,4 +614,22 @@ void MainWindow::on_actionWrite_log_file_triggered()
 {
     qDebug() << "write log file triggered";
     _session->writeLog();
+}
+
+void MainWindow::on_actionRescale_integration_area_triggered()
+{
+    qDebug() << "rescale integration area triggered";
+    const double scale_factor = 1.5;
+
+    std::vector<std::shared_ptr<DataSet>> numors = _session->getSelectedNumors();
+
+    for (auto&& numor: numors) {
+        for (auto&& peak: numor->getPeaks()) {
+            peak->scaleShape(scale_factor);
+        }
+        numor->integratePeaks();
+    }
+
+    _session->updatePeaks();
+    qDebug() << "done rescaling peak integration areas";
 }

@@ -194,6 +194,8 @@ public:
     //! Integrate intensities of all peaks
     void integratePeaks(const std::shared_ptr<SX::Utils::ProgressHandler>& handler = nullptr);
 
+    double getSampleStepSize() const;
+
 protected:
     bool _isOpened;
     std::string _filename;

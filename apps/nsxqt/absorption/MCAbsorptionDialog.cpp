@@ -77,7 +77,7 @@ void MCAbsorptionDialog::on_pushButton_run_pressed()
         ui->progressBar_MCStatus->setMaximum(peaks.size());
         ui->progressBar_MCStatus->setFormat(QString::fromStdString(d.second->getBasename()) + ": "+QString::number(progress)+"%");
         for (auto& p: peaks) {
-            Eigen::Transform<double,3,2> hommat=sample->getGonio()->getHomMatrix(p->getSampleState()->getValues());
+            Eigen::Transform<double,3,2> hommat=sample->getGonio()->getHomMatrix(p->getSampleState().getValues());
             Eigen::Matrix3d rot=hommat.rotation();
             double transmission=mca.run(ui->spinBox->value(),p->getKf(),rot);
             p->setTransmission(transmission);

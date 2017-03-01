@@ -81,6 +81,7 @@ void AbsorptionDialog::readInfoFile(const std::string &filename)
                                   tr("Instrument name in video file does not match the diffractometer name"));
         }
 
+
         std::string line;
         // Skip one line (comment)
         getline(file,line);
@@ -88,11 +89,13 @@ void AbsorptionDialog::readInfoFile(const std::string &filename)
         // Read line with goniometer angles
         getline(file,line);
         // Cout number of axes, validate with goniometer definition
-        std::size_t numberAngles=std::count(line.begin(),line.end(),':');
-        std::size_t sampleAngles=_experiment->getDiffractometer()->getSample()->getNPhysicalAxes();
-        if (numberAngles==0 || (numberAngles!=sampleAngles))
+        auto sample = _experiment->getDiffractometer()->getSample();
+        std::size_t numberAngles = std::count(line.begin(),line.end(),':');
+        std::size_t sampleAngles = sample->hasGonio() ? sample->getGonio()->getNPhysicalAxes() : 0;
+        if (numberAngles==0 || (numberAngles!=sampleAngles)) {
             QMessageBox::critical(this, tr("NSXTool"),
                                   tr("Number of goniometer axes in video file do not match instrument definition"));
+        }
         // Remove all occurences of ':' before reading
         line.erase(std::remove(line.begin(), line.end(), ':'), line.end());
         std::stringstream is(line);
@@ -100,9 +103,10 @@ void AbsorptionDialog::readInfoFile(const std::string &filename)
             std::string name;
             double value;
             is >> name >> value;
-            if (!_experiment->getDiffractometer()->getSample()->getGonio()->hasPhysicalAxis(name))
+            if (!_experiment->getDiffractometer()->getSample()->getGonio()->hasPhysicalAxis(name)) {
                 QMessageBox::critical(this, tr("NSXTool"),
                                       tr("Physical axes in video file do not match instrument definition"));
+            }
         }
         // Get base directory where images are stored
         QFileInfo info(filename.c_str());
