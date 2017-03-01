@@ -6,12 +6,15 @@
 #include "../instrument/Gonio.h"
 #include "../instrument/Sample.h"
 #include "../utils/Units.h"
+#include "../utils/EigenToVector.h"
+#include "../instrument/ComponentState.h"
 
 using std::unique_ptr;
 using std::shared_ptr;
+using SX::Utils::eigenToVector;
+using SX::Instrument::ComponentState;
 
 namespace SX {
-
 namespace Data {
 
 IDataReader* HDF5DataReader::create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer)
@@ -89,7 +92,8 @@ HDF5DataReader::HDF5DataReader(const std::string& filename, std::shared_ptr<Diff
     _states.resize(_nFrames);
 
     for (unsigned int i=0;i<_nFrames;++i) {
-        _states[i].detector = _diffractometer->getDetector()->createStateFromEigen(dm.col(i));
+        _states[i].detector = ComponentState(_diffractometer->getDetector().get(), eigenToVector(dm.col(i)));
+        //_states[i].detector = _diffractometer->getDetector()->createStateFromEigen(dm.col(i));
         //_detectorStates.push_back(_diffractometer->getDetector()->createStateFromEigen(dm.col(i)));
     }
 
@@ -123,7 +127,7 @@ HDF5DataReader::HDF5DataReader(const std::string& filename, std::shared_ptr<Diff
     dm*=SX::Units::deg;
 
     for (unsigned int i=0;i<_nFrames;++i) {
-        _states[i].sample = _diffractometer->getSample()->createStateFromEigen(dm.col(i));
+        _states[i].sample = ComponentState(_diffractometer->getSample().get(), eigenToVector(dm.col(i)));
     }
     _file->close();
 }

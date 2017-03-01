@@ -34,7 +34,7 @@
 namespace SX {
 namespace Crystal {
 
-PeakIntegrator::PeakIntegrator(const SX::Geometry::IntegrationRegion& region, const SX::Data::IData& data):
+PeakIntegrator::PeakIntegrator(const SX::Geometry::IntegrationRegion& region, const SX::Data::DataSet& data):
     _region(region),
     _lower(region.getBackground().getLower()),
     _upper(region.getBackground().getUpper()),

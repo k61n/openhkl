@@ -37,7 +37,7 @@
 namespace SX {
 
 namespace Data {
-class IData;
+class DataSet;
 }
 
 namespace Crystal {
@@ -45,7 +45,7 @@ namespace Crystal {
 class PeakIntegrator {
 public:
     PeakIntegrator() = delete;
-    PeakIntegrator(const SX::Geometry::IntegrationRegion& region, const SX::Data::IData& data);
+    PeakIntegrator(const SX::Geometry::IntegrationRegion& region, const SX::Data::DataSet& data);
 
     void step(const Eigen::MatrixXi& frame, size_t idx, const Eigen::MatrixXi& mask);
     void end();

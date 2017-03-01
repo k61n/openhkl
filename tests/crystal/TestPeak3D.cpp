@@ -46,7 +46,7 @@ BOOST_AUTO_TEST_CASE(Test_Peak3D)
 
     Peak3D peak;
     peak.setDetectorEvent(event);
-    peak.setWavelength(source->getSelectedMonochromator().getWavelength());
+    //peak.setWavelength(source->getSelectedMonochromator().getWavelength());
     Eigen::Vector3d Q=peak.getQ();
     BOOST_CHECK_SMALL(Q[0],tolerance);
     BOOST_CHECK_SMALL(Q[1],tolerance);
@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE(Test_Peak3D)
     bl->addRotation("phi",Vector3d(0,0,1),RotAxis::CW);
     sample.setGonio(bl);
 
-    std::shared_ptr<ComponentState> state(new ComponentState(sample, {90.0*deg,0.0,0.0}));
+    std::shared_ptr<ComponentState> state(new ComponentState(&sample, {90.0*deg,0.0,0.0}));
 
     peak.setSampleState(state);
     Q=peak.getQ();

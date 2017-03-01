@@ -38,6 +38,7 @@
 #include <stdexcept>
 
 #include "../instrument/ComponentState.h"
+#include "../instrument/InstrumentState.h"
 #include "../instrument/DetectorEvent.h"
 #include "../instrument/Detector.h"
 #include "../instrument/Diffractometer.h"
@@ -60,6 +61,7 @@ using SX::Geometry::Blob3D;
 
 using SX::Data::IFrameIterator;
 using SX::Instrument::DetectorEvent;
+using SX::Instrument::ComponentState;
 
 namespace SX {
 namespace Crystal {
@@ -162,22 +164,20 @@ Eigen::RowVector3d Peak3D::getMillerIndices() const
 
 void Peak3D::setShape(const Ellipsoid3D& peak)
 {
+    using DetectorEvent = SX::Instrument::DetectorEvent;
     _shape = peak;
 
     Eigen::Vector3d center = peak.getAABBCenter();
     int f = int(std::lround(std::floor(center[2])));
 
-    using ComponentState = SX::Instrument::ComponentState;
-
     auto data = getData();
 
-    setSampleState(std::make_shared<ComponentState>(data->getSampleInterpolatedState(f)));
-    ComponentState detState = data->getDetectorInterpolatedState(f);
+    const auto& state = data->getInterpolatedState(f);
 
-    using DetectorEvent = SX::Instrument::DetectorEvent;
+    setSampleState(std::make_shared<ComponentState>(state.sample));
 
     setDetectorEvent(DetectorEvent(
-       *data->getDiffractometer()->getDetector(), center[0], center[1], detState.getValues()));
+       *data->getDiffractometer()->getDetector(), center[0], center[1], state.detector.getValues()));
 }
 
 bool Peak3D::getMillerIndices(const UnitCell& uc, Eigen::RowVector3d& hkl, bool applyUCTolerance) const
@@ -362,11 +362,11 @@ double Peak3D::getSampleStepSize() const
     }
 
     size_t numFrames = data->getNFrames();
-    const auto& ss = data->getSampleStates();
-    size_t numValues = ss[0].getValues().size();
+    const auto& ss = data->getInstrumentStates();
+    size_t numValues = ss[0].sample.getValues().size();
 
     for (size_t i = 0; i < numValues; ++i) {
-        double dx = ss[numFrames-1].getValues()[i] - ss[0].getValues()[i];
+        double dx = ss[numFrames-1].sample.getValues()[i] - ss[0].sample.getValues()[i];
         step += dx*dx;
     }
 
@@ -378,24 +378,22 @@ double Peak3D::getSampleStepSize() const
 
 Eigen::RowVector3d Peak3D::getKf() const
 {
-    double wav = _source->getWavelength();
-    Eigen::Vector3d kf = _event->getKf(wav, _sampleState->getPosition());
+    double wavelength = _source->getSelectedMonochromator().getWavelength();
+    Eigen::Vector3d kf = _event->getKf(wavelength, _sampleState->getPosition());
     return kf;
 }
 
 Eigen::RowVector3d Peak3D::getQ() const
 {
-    double wav=_source->getWavelength();
+    double wavelength = _source->getSelectedMonochromator().getWavelength();
+
     // If sample state is not set, assume sample is at the origin
     if (!_sampleState) {
-        return _event->getQ(wav);
+        return _event->getQ(wavelength);
     }
 
     // otherwise scattering point is deducted from the sample
-    Eigen::Vector3d q = _event->getQ(wav, _sampleState->getPosition());
-
-    //q = _sampleState->getParent()->getGonio()->getInverseHomMatrix(_sampleState->getValues()).rotation()*q;
-    //return q;
+    Eigen::Vector3d q = _event->getQ(wavelength, _sampleState->getPosition());
     return _sampleState->transformQ(q);
 }
 

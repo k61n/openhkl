@@ -43,8 +43,8 @@
 namespace SX {
 namespace Instrument {
 
-ComponentState::ComponentState(const Component& parent, std::vector<double> values):
-    _ptrComp(&parent),
+ComponentState::ComponentState(const Component* parent, std::vector<double> values):
+    _ptrComp(parent),
     _values(std::move(values))
 {
     if (_ptrComp->hasGonio()) {

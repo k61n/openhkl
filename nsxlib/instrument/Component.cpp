@@ -118,7 +118,7 @@ ComponentState Component::createState(const std::map<std::string,double>& values
             values_vec[comp++] = (it != values.end()) ? it->second : 0.0;
         }
     }
-    return ComponentState(*this, values_vec);
+    return ComponentState(this, values_vec);
 }
 
 } // namespace Instrument

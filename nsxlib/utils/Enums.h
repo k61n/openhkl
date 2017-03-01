@@ -14,8 +14,7 @@ enum class DataOrder : size_t {TopLeftColMajor=0,
                                BottomRightColMajor=6,
                                BottomRightRowMajor=7};
 
-} // end namespace Detector
-
+} // end namespace Instrument
 } // end namespace SX
 
-#endif /* NSXLIB_KERNEL_ENUMS_H_ */
+#endif // NSXLIB_KERNEL_ENUMS_H_

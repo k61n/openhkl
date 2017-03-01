@@ -1,9 +1,11 @@
 #include "../data/TiffDataReader.h"
 #include "../instrument/Detector.h"
 #include "../instrument/Sample.h"
+#include "../instrument/ComponentState.h"
+
+using SX::Instrument::ComponentState;
 
 namespace SX {
-
 namespace Data {
 
 IDataReader* TiffDataReader::create(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer)
@@ -47,8 +49,8 @@ TiffDataReader::TiffDataReader(const std::string& filename, const std::shared_pt
 //    _sampleStates.push_back(_diffractometer->getSample()->createState());
 
     _states.resize(_nFrames);
-    _states[0].detector = _diffractometer->getDetector()->createState();
-    _states[0].sample = _diffractometer->getSample()->createState();
+    _states[0].detector = ComponentState(_diffractometer->getDetector().get(), {});
+    _states[0].sample = ComponentState(_diffractometer->getSample().get(), {});
 
     _metadata.add<std::string>("Instrument",diffractometer->getType());
 }

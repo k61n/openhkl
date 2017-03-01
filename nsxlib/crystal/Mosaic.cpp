@@ -200,7 +200,8 @@ bool Mosaic::run(std::vector<std::shared_ptr<DataSet>> datas, unsigned int n, do
 
             ComponentState detectorState=d->getDetectorState(z);
 
-            Eigen::Matrix3d omchiphi = sampleState.getParent()->getGonio()->getHomMatrix(sampleState.getValues()).rotation();
+            //Eigen::Matrix3d omchiphi = sampleState.getParent()->getGonio()->getHomMatrix(sampleState.getValues()).rotation();
+            Eigen::Matrix3d omchiphi = d->getDiffractometer()->getSample()->getGonio()->getHomMatrix(sampleState.getValues()).rotation();
 
             Eigen::Vector3d qvect = omchiphi*zvect;
 

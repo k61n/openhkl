@@ -24,7 +24,7 @@ BOOST_AUTO_TEST_CASE(Test_Sample)
 
     s1.setGonio(g);
     s1.setRestPosition(Eigen::Vector3d(0,0,0));
-    ComponentState state(s1, {90.0*deg,90.0*deg,0*deg});
+    ComponentState state(&s1, {90.0*deg,90.0*deg,0*deg});
 
     // Rotation should not affect the center of the sample since rest position is 0,0,0
     Eigen::Vector3d center=state.getPosition();

@@ -33,16 +33,17 @@
 #include <Eigen/Core>
 
 namespace SX {
-namespace Instrument{
+namespace Instrument {
 
 // Forward declare
 class Component;
+class InstrumentState;
 
 //! Maintain a state of a goniometer, following the memento pattern.
 class ComponentState {
 public:
     //! Constructor
-    ComponentState(const Component& parent, std::vector<double> values = {});
+    ComponentState(const Component* parent = nullptr, std::vector<double> values = {});
     //! Copy constructor
     ComponentState(const ComponentState& other);
     //! Destructor
@@ -59,6 +60,7 @@ public:
     Eigen::Vector3d transformQ(const Eigen::Vector3d& q) const;
 
 private:
+    friend class SX::Instrument::InstrumentState;
     //! Pointer to the Component that has created the state
     const Component* _ptrComp;
     //! Values for each axis of the Component

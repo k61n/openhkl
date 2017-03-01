@@ -11,6 +11,7 @@
 
 #include "../data/ILLDataReader.h"
 #include "../instrument/Component.h"
+#include "../instrument/ComponentState.h"
 #include "../instrument/Detector.h"
 #include "../instrument/Diffractometer.h"
 #include "../instrument/Gonio.h"
@@ -22,6 +23,7 @@
 
 using SX::Utils::readIntsFromChar;
 using SX::Utils::readDoublesFromChar;
+using SX::Instrument::ComponentState;
 
 namespace SX {
 
@@ -166,14 +168,14 @@ ILLDataReader::ILLDataReader(const std::string& filename, const std::shared_ptr<
     // of the detector the corresponding values defined previously. The gathered values being further pushed as
     // a new detector state
     if (detector) {
-        auto detAxisIdsToNames = detector->getPhysicalAxesIds();
+        auto detAxisIdsToNames = detector->getGonio()->getPhysicalAxesIds();
         for (std::size_t f = 0; f < _nFrames; ++f) {
             std::vector<double> detValues;
             detValues.reserve(detAxisIdsToNames.size());
             for (const auto& v: detAxisIdsToNames) {
                 detValues.push_back(gonioValues[v][f]);
             }
-            _states[f].detector = _diffractometer->getDetector()->createState(detValues);
+            _states[f].detector = ComponentState(_diffractometer->getDetector().get(), detValues);
             //_detectorStates.push_back(_diffractometer->getDetector()->createState(detValues));
         }
     }
@@ -184,14 +186,14 @@ ILLDataReader::ILLDataReader(const std::string& filename, const std::shared_ptr<
     // of the sample the corresponding values defined previously. The gathered values being further pushed as
     // a new sample state
     if (sample) {
-        auto sampleAxisIdsToNames = sample->getPhysicalAxesIds();
+        auto sampleAxisIdsToNames = sample->getGonio()->getPhysicalAxesIds();
         for (std::size_t f = 0; f < _nFrames; ++f) {
             std::vector<double> sampleValues;
             sampleValues.reserve(sampleAxisIdsToNames.size());
             for (const auto& v: sampleAxisIdsToNames) {
                 sampleValues.push_back(gonioValues[v][f]);
             }
-            _states[f].sample = _diffractometer->getSample()->createState(sampleValues);
+            _states[f].sample = ComponentState(_diffractometer->getSample().get(), sampleValues);
             //_sampleStates.push_back(_diffractometer->getSample()->createState(sampleValues));
         }
     }
@@ -202,14 +204,14 @@ ILLDataReader::ILLDataReader(const std::string& filename, const std::shared_ptr<
     // of the source the corresponding values defined previously. The gathered values being further pushed as
     // a new source state
     if (source) {
-        auto sourceAxisIdsToNames = source->getPhysicalAxesIds();
+        auto sourceAxisIdsToNames = source->getGonio()->getPhysicalAxesIds();
         for (std::size_t f = 0; f < _nFrames; ++f) {
             std::vector<double> sourceValues;
             sourceValues.reserve(sourceAxisIdsToNames.size());
             for (const auto& v: sourceAxisIdsToNames) {
                 sourceValues.push_back(gonioValues[v][f]);
             }
-            _states[f].source = _diffractometer->getSource()->createState(sourceValues);
+            _states[f].source = ComponentState( _diffractometer->getSource().get(), sourceValues);
             //_sourceStates.push_back(_diffractometer->getSource()->createState(sourceValues));
         }
     }

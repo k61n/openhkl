@@ -50,17 +50,12 @@ InstrumentState InstrumentState::interpolate(const InstrumentState &other, doubl
     const auto& sourceState = interpolate_vec(source.getValues(), other.source.getValues(), t);
     const auto& sampleState = interpolate_vec(sample.getValues(), other.sample.getValues(), t);
 
-    InstrumentState result;
+    InstrumentState result(*this);
 
-    if (detector.getParent()) {
-        result.detector = detector.getParent()->createState(detectorState);
-    }
-    if (sample.getParent()) {
-        result.sample = sample.getParent()->createState(sampleState);
-    }
-    if (source.getParent()) {
-        result.source = source.getParent()->createState(sourceState);
-    }
+    result.detector._values = detectorState;
+    result.sample._values = sampleState;
+    result.source._values = sourceState;
+
     return result;
 }
 

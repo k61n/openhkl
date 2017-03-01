@@ -621,7 +621,7 @@ void MainWindow::on_actionRescale_integration_area_triggered()
     qDebug() << "rescale integration area triggered";
     const double scale_factor = 1.5;
 
-    std::vector<std::shared_ptr<IData>> numors = _session->getSelectedNumors();
+    std::vector<std::shared_ptr<DataSet>> numors = _session->getSelectedNumors();
 
     for (auto&& numor: numors) {
         for (auto&& peak: numor->getPeaks()) {

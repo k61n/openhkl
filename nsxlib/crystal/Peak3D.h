@@ -58,6 +58,7 @@ namespace Instrument {
     class DetectorEvent;
     class Sample;
     class Detector;
+    class Source;
 }
 
 namespace Crystal {
@@ -73,7 +74,7 @@ public:
     using IntegrationRegion = SX::Geometry::IntegrationRegion;
 
 
-    Peak3D(std::shared_ptr<SX::Data::DataSet> data=std::shared_ptr<SX::Data::DataSet());
+    Peak3D(std::shared_ptr<SX::Data::DataSet> data = nullptr);
     //Peak3D(std::shared_ptr<SX::Data::IData> data, const SX::Geometry::Blob3D& blob, double confidence);
     Peak3D(std::shared_ptr<SX::Data::DataSet> data, const Ellipsoid3D& shape);
 
@@ -111,9 +112,6 @@ public:
 
     //! Get q vector in the frame of reference of the diffractometer
     Eigen::RowVector3d getQ() const;
-
-    //! Set the wavelength at which this peak was collected
-    void setWavelength(double wavelength);
 
     void getGammaNu(double& gamma,double& nu) const;
 
@@ -157,13 +155,10 @@ public:
     //!
     void setSampleState(const std::shared_ptr<SX::Instrument::ComponentState>& sstate);
     //!
-<<<<<<< HEAD
-    void setDetectorEvent(const std::shared_ptr<SX::Instrument::DetectorEvent>& event);
-=======
+
     void setDetectorEvent(const SX::Instrument::DetectorEvent& event);
     //!
     void setSource(const std::shared_ptr<SX::Instrument::Source>& source);
->>>>>>> feature/integration
 
     friend bool operator<(const Peak3D& p1, const Peak3D& p2);
     void setSelected(bool);
@@ -202,7 +197,6 @@ public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
 private:
-    // <<<<<<< HEAD
     //! Pointer to the data containing the peak
     std::weak_ptr<SX::Data::DataSet> _data;
     //! Miller indices of the peak
@@ -248,7 +242,6 @@ private:
     bool _observed;
     double _transmission;
     int _activeUnitCellIndex;
-
 };
 
 using sptrPeak3D = std::shared_ptr<Peak3D>;
