@@ -30,6 +30,7 @@ namespace SX {
 namespace Data {
 
 using SX::Instrument::Detector;
+using SX::Utils::MatrixParser;
 
 // 81 characters per line, at least 100 lines of header
 std::size_t ILLDataReader::BlockSize = 100*81;
@@ -220,13 +221,6 @@ ILLDataReader::ILLDataReader(const std::string& filename, const std::shared_ptr<
     close();
 
     std::shared_ptr<Detector> d = _diffractometer->getDetector();
-
-    _parser = SX::Utils::getMatrixParser(d->getDataOrder());
-}
-
-ILLDataReader::~ILLDataReader()
-{
-    delete _parser;
 }
 
 void ILLDataReader::open()
@@ -268,7 +262,8 @@ Eigen::MatrixXi ILLDataReader::getData(size_t frame)
     assert(_nRows >= 1);
     assert(_nCols >= 1);
 
-    (*_parser)(_mapAddress+begin,_dataLength,v);
+    MatrixParser parser;
+    parser(_diffractometer->getDetector()->getDataOrder(),_mapAddress+begin,_dataLength,v);
 
     return v;
 }
