@@ -45,6 +45,7 @@ BOOST_AUTO_TEST_CASE(Test_Peak3D)
     source->setSelectedMonochromator(0);
 
     Peak3D peak;
+    peak.setSource(source);
     peak.setDetectorEvent(event);
     //peak.setWavelength(source->getSelectedMonochromator().getWavelength());
     Eigen::Vector3d Q=peak.getQ();

@@ -385,6 +385,8 @@ Eigen::RowVector3d Peak3D::getKf() const
 
 Eigen::RowVector3d Peak3D::getQ() const
 {
+    assert(_source != nullptr);
+
     double wavelength = _source->getSelectedMonochromator().getWavelength();
 
     // If sample state is not set, assume sample is at the origin

@@ -47,7 +47,7 @@ ComponentState::ComponentState(const Component* parent, std::vector<double> valu
     _ptrComp(parent),
     _values(std::move(values))
 {
-    if (_ptrComp->hasGonio()) {
+    if (_ptrComp && _ptrComp->hasGonio()) {
         assert(_values.size() == _ptrComp->getGonio()->getNPhysicalAxes());
     }
 }
