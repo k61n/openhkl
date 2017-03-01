@@ -1,6 +1,7 @@
 #include <utility>
 #include <stdexcept>
 #include <memory>
+#include <vector>
 
 #include "../utils/Units.h"
 
@@ -19,7 +20,10 @@
 #include "H5Cpp.h"
 #include "blosc_filter.h"
 #include "blosc.h"
+
+#include "../crystal/PeakIntegrator.h"
 #include "../geometry/Ellipsoid.h"
+#include "../geometry/IntegrationRegion.h"
 
 #include "IFrameIterator.h"
 #include "BasicFrameIterator.h"
@@ -163,9 +167,9 @@ void DataSet::addPeak(const sptrPeak3D& peak)
 
 void DataSet::clearPeaks()
 {
-    for (auto&& ptr : _peaks) {
-        ptr->unlinkData();
-    }
+//    for (auto&& ptr : _peaks) {
+//        ptr->unlinkData();
+//    }
     _peaks.clear();
 }
 
@@ -421,7 +425,7 @@ void DataSet::maskPeak(sptrPeak3D peak) const
     peak->setMasked(false);
     for (auto&& m : _masks) {
         // If the background of the peak intercept the mask, unselected the peak
-        if (m->intercept(peak->getBackground())) {
+        if (m->intercept(peak->getShape())) {
             peak->setMasked(true);
             break;
         }
@@ -545,15 +549,29 @@ double DataSet::getBackgroundLevel(const std::shared_ptr<SX::Utils::ProgressHand
 
 void DataSet::integratePeaks(const std::shared_ptr<Utils::ProgressHandler>& handler)
 {
+    // these should be passed as arguments
+    const double peak_scale = 1.0;
+    const double bkg_scale = 3.0;
+
     if (handler) {
         handler->setStatus(("Integrating " + std::to_string(getPeaks().size()) + " peaks...").c_str());
         handler->setProgress(0);
     }
 
-    std::set<sptrPeak3D>& peaks = getPeaks();
+    using IntegrationRegion = SX::Geometry::IntegrationRegion;
+    using PeakIntegrator = SX::Crystal::PeakIntegrator;
+    using integrated_peak = std::pair<sptrPeak3D, PeakIntegrator>;
 
-    for (auto&& peak: peaks ) {
-        peak->framewiseIntegrateBegin();
+    std::vector<integrated_peak> peak_list;
+
+    const size_t num_peaks = _peaks.size();
+
+    peak_list.reserve(num_peaks);
+
+    for (auto&& peak: _peaks ) {
+        IntegrationRegion region(peak->getShape(), peak_scale, bkg_scale);
+        PeakIntegrator integrator(region, *this);
+        peak_list.emplace_back(peak, integrator);
     }
 
     //progressDialog->setValue(0);
@@ -564,12 +582,23 @@ void DataSet::integratePeaks(const std::shared_ptr<Utils::ProgressHandler>& hand
 
     #pragma omp parallel for
     for ( idx = 0; idx < getNFrames(); ++idx ) {
-        Eigen::MatrixXi frame;
+        Eigen::MatrixXi frame, mask;
         #pragma omp critical
         frame = getFrame(idx);
 
-        for ( auto& peak: peaks ) {
-            peak->framewiseIntegrateStep(frame, idx);
+        mask.resize(getNRows(), getNCols());
+        mask.setZero();
+
+        for (auto& tup: peak_list ) {
+            auto&& peak = tup.first;
+            auto&& integrator = tup.second;
+            integrator.getRegion().updateMask(mask, idx);
+        }
+
+        for (auto& tup: peak_list ) {
+            auto&& peak = tup.first;
+            auto&& integrator = tup.second;
+            integrator.step(frame, idx, mask);
         }
 
         if (handler) {
@@ -580,8 +609,11 @@ void DataSet::integratePeaks(const std::shared_ptr<Utils::ProgressHandler>& hand
         }
     }
 
-    for (auto&& peak: peaks) {
-        peak->framewiseIntegrateEnd();
+    for (auto&& tup: peak_list) {
+        auto&& peak = tup.first;
+        auto&& integrator = tup.second;
+        integrator.end();
+        peak->updateIntegration(integrator);
     }
 }
 

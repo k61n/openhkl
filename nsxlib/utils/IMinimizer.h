@@ -37,11 +37,9 @@
 #define NSXTOOL_IMINIMIZER_H_
 
 #include <functional>
-
 #include <Eigen/Dense>
 
 namespace SX {
-
 namespace Utils {
 
 class IMinimizer {
@@ -88,9 +86,7 @@ protected:
     f_type _f;
 };
 
-
 } // namespace Utils
-
 } // namespace SX
 
 #endif // NSXTOOL_IMINIMIZER_H_

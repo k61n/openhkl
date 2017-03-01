@@ -41,7 +41,6 @@
 #include "MinimizerEigen.h"
 
 namespace SX {
-
 namespace Utils {
 
 #ifdef NSXTOOL_GSL_FOUND
@@ -52,7 +51,6 @@ using Minimizer = MinimizerEigen;
 
 
 } // namespace Utils
-
 } // namespace SX
 
 #endif // NSXTOOL_MINIMIZER_H_

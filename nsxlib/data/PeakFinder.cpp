@@ -20,6 +20,7 @@ using SX::Imaging::Convolver;
 using SX::Utils::ProgressHandler;
 using SX::Instrument::Detector;
 using SX::Crystal::Peak3D;
+using SX::Geometry::Ellipsoid3D;
 
 namespace SX {
 namespace Data {
@@ -138,8 +139,25 @@ bool PeakFinder::find(std::vector<std::shared_ptr<DataSet>> numors)
                     );
 
         for (auto& blob : blobs) {
-            sptrPeak3D p = std::make_shared<Peak3D>(Peak3D(numor, blob.second, _confidence));
-            const auto extents = p->getPeak().getAABBExtents();
+
+            Eigen::Vector3d center, eigenvalues;
+            Eigen::Matrix3d eigenvectors;
+            blob.second.toEllipsoid(_confidence, center, eigenvalues, eigenvectors);
+            auto shape = Ellipsoid3D(center, eigenvalues, eigenvectors);
+
+            //    blob.toEllipsoid(confidence, center, eigenvalues, eigenvectors);
+            //    _region.setPeak(Ellipsoid3D(center,eigenvalues,eigenvectors));
+            //    // setPeakShape(Ellipsoid3D(center,eigenvalues,eigenvectors));
+
+            //    eigenvalues[0]*=2.0;
+            //    eigenvalues[1]*=2.0;
+            //    eigenvalues[2]*=3.0;
+
+            //    _region.setBackground(Ellipsoid3D(center,eigenvalues,eigenvectors));
+            //    //setBackgroundShape(Ellipsoid3D(center,eigenvalues,eigenvectors));
+
+            sptrPeak3D p = std::make_shared<Peak3D>(Peak3D(numor, shape));
+            const auto extents = p->getShape().getAABBExtents();
 
             // peak too small or too large
             if (extents.maxCoeff() > 1e5 || extents.minCoeff() < 1e-5) {
@@ -147,7 +165,7 @@ bool PeakFinder::find(std::vector<std::shared_ptr<DataSet>> numors)
             }
 
             // peak's bounding box not completely contained in detector image
-            if (!dAABB.contains(p->getPeak())) {
+            if (!dAABB.contains(p->getShape())) {
                 p->setSelected(false);
             }
 

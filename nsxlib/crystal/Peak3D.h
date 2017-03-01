@@ -39,6 +39,7 @@
 #include "../geometry/IShape.h"
 #include "../geometry/Ellipsoid.h"
 #include "../utils/Types.h"
+#include "../geometry/IntegrationRegion.h"
 
 namespace SX {
 
@@ -61,15 +62,20 @@ namespace Instrument {
 
 namespace Crystal {
 
+class PeakIntegrator;
+
 class Peak3D {
 public:
     using sptrShape3D=std::shared_ptr<SX::Geometry::IShape<double,3>>;
     using Ellipsoid3D=Geometry::Ellipsoid<double,3>;
     using sptrEllipsoid3D=std::shared_ptr<Ellipsoid3D>;
     using shape_type = SX::Geometry::IShape<double,3>;
+    using IntegrationRegion = SX::Geometry::IntegrationRegion;
 
-    Peak3D(std::shared_ptr<SX::Data::DataSet> data=std::shared_ptr<SX::Data::DataSet>());
-    Peak3D(std::shared_ptr<SX::Data::DataSet> data, const SX::Geometry::Blob3D& blob, double confidence);
+
+    Peak3D(std::shared_ptr<SX::Data::DataSet> data=std::shared_ptr<SX::Data::DataSet());
+    //Peak3D(std::shared_ptr<SX::Data::IData> data, const SX::Geometry::Blob3D& blob, double confidence);
+    Peak3D(std::shared_ptr<SX::Data::DataSet> data, const Ellipsoid3D& shape);
 
     //! Copy constructor
     Peak3D(const Peak3D& other);
@@ -86,10 +92,7 @@ public:
     void unlinkData();
 
     //! Set the Peak region. Peak shaped is owned after setting
-    void setPeakShape(SX::Geometry::IShape<double,3>* peak);
-
-    //! set the background region. Bkg region is owned after setting
-    void setBackgroundShape(SX::Geometry::IShape<double,3>* background);
+    void setShape(const Ellipsoid3D& peak);
 
     //! Get the Miller indices of the peak (double to allow integration of incommensurate peaks)
     Eigen::RowVector3d getMillerIndices() const;
@@ -115,7 +118,7 @@ public:
     void getGammaNu(double& gamma,double& nu) const;
 
     //! Run the integration of the peak; iterate over the data
-    void integrate();
+    //void integrate();
 
     std::shared_ptr<SX::Data::DataSet> getData() const { return _data.lock();}
 
@@ -126,8 +129,10 @@ public:
     Eigen::VectorXd getProjectionSigma() const;
     Eigen::VectorXd getPeakProjectionSigma() const;
     Eigen::VectorXd getBkgProjectionSigma() const;
-    const shape_type& getPeak() const { return *_peak;}
-    const shape_type& getBackground() const {return *_bkg;}
+
+    const Ellipsoid3D& getShape() const { return _shape; }
+    const SX::Geometry::IntegrationRegion& getIntegrationRegion() const { return _integrationRegion; }
+
     //! Return the scaled intensity of the peak.
     double getScaledIntensity() const;
     //! Return the raw intensity of the peak.
@@ -142,7 +147,7 @@ public:
     double getLorentzFactor() const;
     std::shared_ptr<SX::Instrument::ComponentState> getSampleState();
     double getSampleStepSize() const;
-    std::shared_ptr<SX::Instrument::DetectorEvent> getDetectorEvent();
+
     //! Return the scaling factor.
     double getScale() const;
     //! Rescale the current scaling factor by scale.
@@ -152,7 +157,13 @@ public:
     //!
     void setSampleState(const std::shared_ptr<SX::Instrument::ComponentState>& sstate);
     //!
+<<<<<<< HEAD
     void setDetectorEvent(const std::shared_ptr<SX::Instrument::DetectorEvent>& event);
+=======
+    void setDetectorEvent(const SX::Instrument::DetectorEvent& event);
+    //!
+    void setSource(const std::shared_ptr<SX::Instrument::Source>& source);
+>>>>>>> feature/integration
 
     friend bool operator<(const Peak3D& p1, const Peak3D& p2);
     void setSelected(bool);
@@ -175,13 +186,15 @@ public:
     bool isObserved() const;
 
     bool hasUnitCells() const;
-    void scalePeakShape(double scale);
-    void scaleBackgroundShape(double scale);
+    void scaleShape(double scale);
 
     // testing: new implementation of integration
-    void framewiseIntegrateBegin();
-    void framewiseIntegrateStep(Eigen::MatrixXi& frame, unsigned int idx);
-    void framewiseIntegrateEnd();
+    //void framewiseIntegrateBegin();
+//    void framewiseIntegrateStep(Eigen::MatrixXi& frame, unsigned int idx);
+//    void framewiseIntegrateEnd();
+
+    //! update the integration
+    void updateIntegration(const PeakIntegrator& integrator);
 
     //! compute P value that there is actually an observed peak, assuming Poisson statistics
     double pValue();
@@ -195,9 +208,12 @@ private:
     //! Miller indices of the peak
     // Eigen::RowVector3d _hkl;
     //! Shape describing the Peak zone
-    std::unique_ptr<SX::Geometry::IShape<double,3>> _peak;
+    Ellipsoid3D _shape;
+    //! Region used to integrate the peak
+    SX::Geometry::IntegrationRegion _integrationRegion;
     //! Shape describing the background zone (must fully contain peak)
-    std::unique_ptr<SX::Geometry::IShape<double,3>> _bkg;
+    // Ellipsoid3D _bkg;
+
     //!
     Eigen::VectorXd _projection;
     Eigen::VectorXd _projectionPeak;
@@ -217,8 +233,11 @@ private:
     //! Pointer to the state of the Sample Component
 
     std::shared_ptr<SX::Instrument::ComponentState> _sampleState;
-    //! Pointer to a Detector Event state
-    std::shared_ptr<SX::Instrument::DetectorEvent> _event;
+
+    //! Detector Event state
+    std::unique_ptr<SX::Instrument::DetectorEvent> _event;
+    //!
+    std::shared_ptr<SX::Instrument::Source> _source;
 
     double _counts;
     double _countsSigma;
@@ -230,32 +249,6 @@ private:
     double _transmission;
     int _activeUnitCellIndex;
 
-    double _wavelength;
-
-    struct IntegrationState {
-
-
-        Eigen::Vector3d lower;
-        Eigen::Vector3d upper;
-
-        unsigned int data_start;
-        unsigned int data_end;
-
-        unsigned int start_x;
-        unsigned int end_x;
-
-        unsigned int start_y;
-        unsigned int end_y;
-
-        Eigen::Vector4d point1;
-
-        int dx;
-        int dy;
-
-        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-    };
-
-    IntegrationState _state;
 };
 
 using sptrPeak3D = std::shared_ptr<Peak3D>;

@@ -23,8 +23,14 @@
 
 
 #include <nsxlib/instrument/Gonio.h>
+#include <nsxlib/instrument/DetectorEvent.h>
 
 #include "ColorMap.h"
+
+using SX::Instrument::DetectorEvent;
+
+// compile-time constant to determine whether to draw the peak masks
+static const bool g_drawMask = false;
 
 DetectorScene::DetectorScene(QObject *parent)
 : QGraphicsScene(parent),
@@ -45,7 +51,9 @@ DetectorScene::DetectorScene(QObject *parent)
   _lastClickedGI(nullptr),
   _showPeakCalcs(false),
   _logarithmic(false),
-  _colormap(new ColorMap())
+  _colormap(new ColorMap()),
+  _integrationRegion(nullptr),
+  _drawBackground(false)
 {
     //setBspTreeDepth(4);
     qDebug() << "BSP tree depth = " << bspTreeDepth();
@@ -88,6 +96,11 @@ void DetectorScene::setMaxIntensity(int intensity)
 void DetectorScene::setData(const std::shared_ptr<SX::Data::DataSet>& data)
 {
     _currentData = data;
+
+    if (!_currentData) {
+        return;
+    }
+
     _currentData->open();
     auto det = _currentData->getDiffractometer()->getDetector();
     _zoomStack.clear();
@@ -95,7 +108,7 @@ void DetectorScene::setData(const std::shared_ptr<SX::Data::DataSet>& data)
 
     if (_lastClickedGI != nullptr) {
         removeItem(_lastClickedGI);
-        delete _lastClickedGI;
+//        delete _lastClickedGI;
         _lastClickedGI=nullptr;
     }
     loadCurrentImage();
@@ -110,12 +123,21 @@ void DetectorScene::setData(const std::shared_ptr<SX::Data::DataSet>& data, size
 
 void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
+    // jmf debugging
+//    auto the_items = items();
+//    qDebug() << "graphics scene has " << the_items.size() << " items";
+
+//    for (auto&& item: the_items) {
+//        auto rect = item->boundingRect();
+//    }
+
 
     // If no data is loaded, do nothing
     if (!_currentData) {
         return;
     }
     createToolTipText(event);
+    auto button = event->button();
 
     // The left button was pressed
     if (event->buttons() & Qt::LeftButton) {
@@ -128,22 +150,25 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             QRectF zoom=_zoomrect->rect();
             zoom.setBottomRight(event->lastScenePos());
             _zoomrect->setRect(zoom);
-        } else {
-            if (_lastClickedGI == nullptr) {
-                return;
-            }
-            _lastClickedGI->mouseMoveEvent(event);
-            auto p = dynamic_cast<PlottableGraphicsItem*>(_lastClickedGI);
+            return;
+        }
+        if (_lastClickedGI == nullptr) {
+            return;
+        }
+        _lastClickedGI->mouseMoveEvent(event);
+        auto p = dynamic_cast<PlottableGraphicsItem*>(_lastClickedGI);
 
-            if (p != nullptr) {
-                emit updatePlot(p);
-            }
+        if (p != nullptr) {
+            emit updatePlot(p);
         }
     }
     // No button was pressed, just a mouse move
     else if (event->button() == Qt::NoButton) {
           //      jmf: testing follows
-        QGraphicsItem* gItem = itemAt(event->lastScenePos().toPoint(), QTransform());
+        auto lastPos = event->lastScenePos();
+        auto point = lastPos.toPoint();
+        QTransform trans;
+        QGraphicsItem* gItem = itemAt(point, trans);
         auto p = dynamic_cast<PlottableGraphicsItem*>(gItem);
         if (p != nullptr) {
             emit updatePlot(p);
@@ -214,6 +239,7 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             break;
         }
         if (cutter != nullptr) {
+            cutter->setFrom(event->lastScenePos());
             addItem(cutter);
             _lastClickedGI=cutter;
         }
@@ -278,16 +304,29 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             _zoomStack.push_back(_zoomrect->rect().toRect());
             emit dataChanged();
         } else {
-            if (auto p=dynamic_cast<PlottableGraphicsItem*>(_lastClickedGI)) {
+            if (auto p=dynamic_cast<CutterGraphicsItem*>(_lastClickedGI)) {
+                // check with tolerance
+                //if (p->to() == p->from()) {
+                if (true) {
+                    // delete p....
+                     _lastClickedGI = nullptr;
+                    removeItem(p);
+//                    delete p;
+                }
+                else {
+                    emit updatePlot(p);
+                }
+            }
+            else if (auto p=dynamic_cast<PlottableGraphicsItem*>(_lastClickedGI)) {
                 emit updatePlot(p);
             }
             else if (auto p=dynamic_cast<MaskGraphicsItem*>(_lastClickedGI)) {
                 // add a new mask
                 if (std::find(_masks.begin(), _masks.end(), p) == _masks.end()) {
                     _currentData->addMask(p->getAABB());
-                    removeItem(p);
-                    delete p;
                     _lastClickedGI = nullptr;
+                    removeItem(p);
+//                    delete p;
                 }
                 _currentData->maskPeaks();
                 update();
@@ -332,6 +371,11 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
         int nPeaksErased = int(_peakGraphicsItems.size());
         for (auto item: items) {
             auto p = dynamic_cast<SXGraphicsItem*>(item);
+
+            if (p == nullptr) {
+                continue;
+            }
+
             // The item must be deletable ... to be deleted
             if (!p->isDeletable()) {
                 continue;
@@ -356,7 +400,7 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
             // Remove the item from the scene
             removeItem(item);
             // Delete the item
-            delete item;
+//            delete item;
         }
         // Computes the new number of peaks, and if it changes log it
         nPeaksErased -= _peakGraphicsItems.size();
@@ -398,15 +442,16 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
         ttip = QString("(%1,%2) I:%3").arg(col).arg(row).arg(intensity);
         break;
     case GAMMA:
-        det->getGammaNu(col, row, gamma, nu, detectorv, sample->getPosition(samplev));
+        DetectorEvent(*det, col, row, detectorv).getGammaNu(gamma, nu, sample->getPosition(samplev));
         ttip = QString("(%1,%2) I: %3").arg(gamma/SX::Units::deg).arg(nu/SX::Units::deg).arg(intensity);
         break;
     case THETA:
-        th2 = det->get2Theta(col, row, detectorv, Eigen::Vector3d(0, 1.0/wave, 0));
+        th2 = DetectorEvent(*det, col, row, detectorv).get2Theta(Eigen::Vector3d(0, 1.0/wave, 0));
         ttip = QString("(%1) I: %2").arg(th2/SX::Units::deg).arg(intensity);
         break;
     case DSPACING:
-        th2 = det->get2Theta(col, row, detectorv, Eigen::Vector3d(0, 1.0/wave, 0));
+        // th2 = det->get2Theta(col, row, detectorv, Eigen::Vector3d(0, 1.0/wave, 0));
+        th2 = DetectorEvent(*det, col, row, detectorv).get2Theta(Eigen::Vector3d(0, 1.0/wave, 0));
         ttip = QString("(%1) I: %2").arg(wave/(2*sin(0.5*th2))).arg(intensity);
         break;
     case HKL:
@@ -423,6 +468,15 @@ void DetectorScene::changeInteractionMode(int mode)
 
 void DetectorScene::loadCurrentImage(bool newimage)
 {
+    const unsigned int red = (128u << 24) | (255u << 16);
+    const unsigned int green = (128u << 24) | (255u << 8);
+    const unsigned int yellow = (128u << 24) | (255u << 16) | (255u << 8);
+    const unsigned int transparent = 0;
+
+    if (_currentData == nullptr) {
+        return;
+    }
+
     // Full image size, front of the stack
     QRect& full = _zoomStack.front();
 
@@ -438,10 +492,73 @@ void DetectorScene::loadCurrentImage(bool newimage)
     }
     if (_image == nullptr) {
         _image = addPixmap(QPixmap::fromImage(_colormap->matToImage(_currentFrame, full, _currentIntensity, _logarithmic)));
-        _image->setZValue(-1);
+        _image->setZValue(-2);
     } else {
         _image->setPixmap(QPixmap::fromImage(_colormap->matToImage(_currentFrame, full, _currentIntensity, _logarithmic)));
     }
+
+    // update the integration region pixmap
+    if (_drawBackground && g_drawMask) {
+        const int ncols = _currentData->getNCols();
+        const int nrows = _currentData->getNRows();
+
+        QImage region_img(ncols, nrows, QImage::Format_ARGB32);
+
+        for (auto c = 0; c < ncols; ++c) {
+            for (auto r = 0; r < nrows; ++r) {
+                region_img.setPixel(c, r, transparent);
+            }
+        }
+
+        Eigen::MatrixXi mask(nrows, ncols);
+        mask.setZero();
+
+        for (auto&& peak: _currentData->getPeaks()) {
+            peak->getIntegrationRegion().updateMask(mask, _currentFrameIndex);
+        }
+
+        for (auto&& peak: _currentData->getPeaks()) {
+            auto&& region = peak->getIntegrationRegion();
+            auto&& lower = region.getBackground().getLower();
+            auto&& upper = region.getBackground().getUpper();
+
+            if (_currentFrameIndex < std::floor(lower[2])) {
+                continue;
+            }
+
+            if (_currentFrameIndex > std::ceil(upper[2])) {
+                continue;
+            }
+
+            long xmin = std::max(0l, std::lround(std::floor(lower[0])));
+            long ymin = std::max(0l, std::lround(std::floor(lower[1])));
+
+
+            long xmax = std::min(long(_currentData->getNCols()), std::lround(std::ceil(upper[0]))+1);
+            long ymax = std::min(long(_currentData->getNRows()), std::lround(std::ceil(upper[1]))+1);
+
+            for (auto x = xmin; x < xmax; ++x) {
+                for (auto y = 0; y < ymax; ++y) {
+                    Eigen::Vector4d p(x, y, _currentFrameIndex, 1);
+
+                    if (region.inRegion(p)) {
+                        region_img.setPixel(x, y, green);
+                    }
+                    if (region.inBackground(p) && (mask(y,x) == 0)) {
+                        region_img.setPixel(x, y, yellow);
+                    }
+                }
+            }
+        }
+
+        if (_integrationRegion == nullptr) {
+            _integrationRegion = addPixmap(QPixmap::fromImage(region_img));
+            _integrationRegion->setZValue(-1);
+        } else {
+            _integrationRegion->setPixmap(QPixmap::fromImage(region_img));
+        }
+    }
+
     setSceneRect(_zoomStack.back());
     emit dataChanged();
 
@@ -484,8 +601,8 @@ void DetectorScene::updatePeaks()
     auto& peaks = _currentData->getPeaks();
 
     for (auto&& peak : peaks) {
-        const Eigen::Vector3d& l = peak->getPeak().getLower();
-        const Eigen::Vector3d& u = peak->getPeak().getUpper();
+        const Eigen::Vector3d& l = peak->getShape().getLower();
+        const Eigen::Vector3d& u = peak->getShape().getUpper();
 
         if (_currentFrameIndex < l[2] || _currentFrameIndex > u[2]) {
             continue;
@@ -540,7 +657,7 @@ void DetectorScene::clearPeaks()
 
     for (auto& peak : _peakGraphicsItems) {
         removeItem(peak.second);
-        delete peak.second;
+//        delete peak.second;
     }
     _peakGraphicsItems.clear();
 }
@@ -551,7 +668,7 @@ void DetectorScene::updateMasks(unsigned long frame)
 
     for (auto&& mask: _masks) {
         removeItem(mask);
-        delete mask;
+//        delete mask;
     }
     _masks.clear();
 
@@ -563,7 +680,7 @@ void DetectorScene::updateMasks(unsigned long frame)
         if (frame > upper[2] || frame < lower[2]) {
             continue;
         }
-        MaskGraphicsItem* maskItem = new MaskGraphicsItem(_currentData, mask);
+        auto maskItem = new MaskGraphicsItem(_currentData, mask);
         maskItem->setFrom(QPointF(lower(0), lower(1)));
         maskItem->setTo(QPointF(upper(0), upper(1)));
         addItem(maskItem);
@@ -577,7 +694,6 @@ void DetectorScene::showPeakLabels(bool peaklabel)
         const auto& it=_peakGraphicsItems.begin();
         it->second->setLabelVisible(peaklabel);
     }
-
     if (!_peakCalcs.empty()) {
         const auto& it = _peakCalcs.begin();
         (*it)->setLabelVisible(peaklabel);
@@ -590,6 +706,14 @@ void DetectorScene::drawPeakBackground(bool flag)
         const auto& it=_peakGraphicsItems.begin();
         it->second->drawBackground(flag);
     }
+
+    // clear the background if necessary
+    if (_integrationRegion && flag == false) {
+        removeItem(_integrationRegion);
+        _integrationRegion = nullptr;
+    }
+    _drawBackground = flag;
+    redrawImage();
 }
 
 void DetectorScene::showPeakCalcs(bool flag)
@@ -597,9 +721,9 @@ void DetectorScene::showPeakCalcs(bool flag)
     _showPeakCalcs = flag;
 
     if (!flag) {
-        for (auto&& p: _peakCalcs) {
-            delete p;
-        }
+//        for (auto&& p: _peakCalcs) {
+//            delete p;
+//        }
         _peakCalcs.clear();
         _precalculatedPeaks.clear();
         return;
@@ -607,13 +731,13 @@ void DetectorScene::showPeakCalcs(bool flag)
     if (_precalculatedPeaks.empty()) {
         updatePeakCalcs();
     }
-    for (auto& peak : _peakCalcs) {
+    for (auto& peak: _peakCalcs) {
         removeItem(peak);
-        delete peak;
+        //delete peak;
     }
     _peakCalcs.resize(0);
 
-    for (auto&& p : _precalculatedPeaks) {
+    for (auto&& p: _precalculatedPeaks) {
         if ( std::abs(_currentFrameIndex-p._frame) > 1.0) {
             continue;
         }
@@ -626,7 +750,6 @@ void DetectorScene::showPeakCalcs(bool flag)
     }
 }
 
-
 void DetectorScene::setLogarithmic(bool checked)
 {
     _logarithmic = checked;
@@ -635,4 +758,21 @@ void DetectorScene::setLogarithmic(bool checked)
 void DetectorScene::setColorMap(const std::string &name)
 {
     _colormap = std::unique_ptr<ColorMap>(new ColorMap(name));
+}
+
+void DetectorScene::resetScene()
+{
+    clearPeaks();
+    clear();
+    updatePeakCalcs();
+    updatePeaks();
+    _currentData = nullptr;
+    _currentFrameIndex = 0;
+    _zoomrect = nullptr;
+    _zoomStack.clear();
+    _image = nullptr;
+    _integrationRegion = nullptr;
+    _masks.clear();
+    _lastClickedGI = nullptr;
+    _precalculatedPeaks.clear();
 }

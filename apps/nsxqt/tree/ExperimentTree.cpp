@@ -413,10 +413,13 @@ void ExperimentTree::keyPressEvent(QKeyEvent *event)
         it.toBack();
         while (it.hasPrevious()) {
             QStandardItem* item = _session->itemFromIndex(it.previous());
-            if (!item->parent())
-                 _session->removeRow(item->row());
-            else
+            if (!item->parent()) {
+                _session->removeRow(item->row());
+                emit resetScene();
+            } else {
                 _session->removeRow(item->row(),item->parent()->index());
+                emit resetScene();
+            }
         }
     }
 }
@@ -426,10 +429,10 @@ void ExperimentTree::onSingleClick(const QModelIndex &index)
 {
     // Inspect this item if it is inspectable
     InspectableTreeItem* item = dynamic_cast<InspectableTreeItem*>(_session->itemFromIndex(index));
-    if (item)
+    if (item) {
         emit inspectWidget(item->inspectItem());
-    else {
-        QWidget* widget=new QWidget();
+    } else {
+        QWidget* widget = new QWidget();
         emit inspectWidget(widget);
     }
 }

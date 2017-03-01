@@ -63,6 +63,7 @@ public:
     void setLogarithmic(bool checked);
     void setColorMap(const std::string& name);
 
+
 signals:
      //! Signal emitted for all changes of the image
     void dataChanged();
@@ -76,6 +77,7 @@ protected:
     void wheelEvent(QGraphicsSceneWheelEvent *event);
 
 public slots:
+    void resetScene();
     // To be called to update detector image
     void setData(const std::shared_ptr<SX::Data::DataSet>&, size_t frame);
     void setData(const std::shared_ptr<SX::Data::DataSet>&);
@@ -132,7 +134,10 @@ private:
 
     bool _showPeakCalcs;
     bool _logarithmic;
+    bool _drawBackground;
     std::unique_ptr<ColorMap> _colormap;
+
+    QGraphicsPixmapItem* _integrationRegion;
 };
 
 #endif // DETECTORSCENE_H

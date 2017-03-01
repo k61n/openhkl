@@ -30,7 +30,7 @@
 #define NSXTOOL_COMPONENTSTATE_H_
 
 #include <vector>
-#include <Eigen/Geometry>
+#include <Eigen/Core>
 
 namespace SX {
 namespace Instrument{
@@ -41,7 +41,8 @@ class Component;
 //! Maintain a state of a goniometer, following the memento pattern.
 class ComponentState {
 public:
-    ComponentState();
+    //! Constructor
+    ComponentState(const Component& parent, std::vector<double> values = {});
     //! Copy constructor
     ComponentState(const ComponentState& other);
     //! Destructor
@@ -49,21 +50,21 @@ public:
     //! Assignment operator
     ComponentState& operator=(const ComponentState& other);
     //! Return a pointer to the component related to this component state
-    Component* getParent() const;
+    // Component* getParent() const;
     const std::vector<double>& getValues() const;
-    void setParent(Component*);
-private:
-    //! Only Component class can create a state
+    //void setParent(Component*);
 
-    //! Component must be able to access ComponentState
-    friend class Component;
+    Eigen::Vector3d getPosition() const;
+
+    Eigen::Vector3d transformQ(const Eigen::Vector3d& q) const;
+
+private:
     //! Pointer to the Component that has created the state
-    Component* _ptrComp;
+    const Component* _ptrComp;
     //! Values for each axis of the Component
     std::vector<double> _values;
 };
 
-} // namespace Instrument
-} // namespace SX
-
+}
+}
 #endif /* NSXTOOL_GONIOSTATE_H_ */

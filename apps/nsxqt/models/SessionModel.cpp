@@ -414,67 +414,6 @@ void SessionModel::findFriedelPairs()
     return;
 }
 
-// jmf: dead code??
-void SessionModel::integrateCalculatedPeaks()
-{
-    qDebug() << "Integrating calculated peaks...";
-
-    int count = 0;
-    Eigen::Vector3d peak_extent, bg_extent;
-    peak_extent << 0.0, 0.0, 0.0;
-    bg_extent << 0.0, 0.0, 0.0;
-
-    std::shared_ptr<UnitCell> unit_cell;
-
-    for (std::shared_ptr<DataSet> numor: getSelectedNumors()) {
-        for (sptrPeak3D peak: numor->getPeaks()) {
-            if ( peak && peak->isSelected() && !peak->isMasked() ) {
-                peak_extent += peak->getPeak().getAABBExtents();
-                bg_extent += peak->getBackground().getAABBExtents();
-                ++count;
-            }
-        }
-    }
-
-    if ( count == 0) {
-        qDebug() << "No peaks -- cannot search for equivalences!";
-        return;
-    }
-
-    peak_extent /= count;
-    bg_extent /= count;
-
-    qDebug() << "Done calculating average bounding box";
-
-    qDebug() << peak_extent(0) << " " << peak_extent(1) << " " << peak_extent(2);
-    qDebug() << bg_extent(0) << " " << bg_extent(1) << " " << bg_extent(2);
-
-    for (std::shared_ptr<DataSet> numor: getSelectedNumors())
-    {
-        std::vector<sptrPeak3D> calculated_peaks;
-
-        shared_ptr<Sample> sample = numor->getDiffractometer()->getSample();
-        unsigned int ncrystals = static_cast<unsigned int>(sample->getNCrystals());
-
-        if (ncrystals) {
-            for (unsigned int i = 0; i < ncrystals; ++i) {
-                SX::Crystal::SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
-                auto ub = sample->getUnitCell(i)->getReciprocalStandardM();
-
-                qDebug() << "Calculating peak locations...";
-
-                auto hkls = sample->getUnitCell(i)->generateReflectionsInSphere(1.5);
-                std::vector<SX::Crystal::PeakCalc> peaks = numor->hasPeaks(hkls, ub);
-                calculated_peaks.reserve(calculated_peaks.size() + peaks.size());
-
-                qDebug() << "Adding calculated peaks...";
-            }
-        }
-
-        qDebug() << "Done.";
-    }
-}
-
 void SessionModel::peakFitDialog()
 {
     qDebug() << "peakFitDialog() triggered";
@@ -612,8 +551,9 @@ void SessionModel::incorporateCalculatedPeaks()
 
     DialogCalculatedPeaks dialog;
 
-    if (!dialog.exec())
+    if (!dialog.exec()) {
         return;
+    }
 
     const double dmax = dialog.dMax();
     const double dmin = dialog.dMin();
@@ -641,7 +581,6 @@ void SessionModel::incorporateCalculatedPeaks()
     };
 
     int last_done = 0;
-
     int predicted_peaks = 0;
     int observed_peaks = 0;
 
@@ -692,15 +631,18 @@ void SessionModel::incorporateCalculatedPeaks()
                 Eigen::RowVector3i hkl(int(std::lround(p._h)), int(std::lround(p._k)), int(std::lround(p._l)));
 
                 // try to find this reflection in the list of peaks, skip if found
-                if (std::find(found_hkls.begin(), found_hkls.end(), hkl) != found_hkls.end() )
+                if (std::find(found_hkls.begin(), found_hkls.end(), hkl) != found_hkls.end() ) {
                     continue;
+                }
 
                 // now we must add it, calculating shape from nearest peaks
+                 // K is outside the ellipsoid at PsptrPeak3D
                 sptrPeak3D new_peak = p.averagePeaks(numor, 200);
+                //sptrPeak3D new_peak = p.averagePeaks(numor);
 
-                if (!new_peak)
+                if (!new_peak) {
                     continue;
-
+                }
                 new_peak->setSelected(true);
                 new_peak->addUnitCell(cell, true);
                 new_peak->setObserved(false);
@@ -718,16 +660,15 @@ void SessionModel::incorporateCalculatedPeaks()
                 }
             }
         }
-
-        for (sptrPeak3D peak: calculated_peaks)
+        for (sptrPeak3D peak: calculated_peaks) {
             numor->addPeak(peak);
-
+        }
         numor->integratePeaks(handler);
         observed_peaks += numor->getPeaks().size();
     }
-
+    updatePeaks();
     qDebug() << "Done incorporating missing peaks.";
-    qDebug() << "Q coverage = " << double(observed_peaks) / double(predicted_peaks) * 100.0 << "%";
+    // qDebug() << "Q coverage = " << double(observed_peaks) / double(predicted_peaks) * 100.0 << "%";
 }
 
 void SessionModel::applyResolutionCutoff(double dmin, double dmax)

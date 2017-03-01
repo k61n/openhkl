@@ -41,6 +41,7 @@
 #include "Peak3D.h"
 #include "../data/IData.h"
 #include "../geometry/Ellipsoid.h"
+#include "../instrument/DetectorEvent.h"
 
 using SX::Geometry::Ellipsoid;
 using SX::Geometry::Matrix3d;
@@ -48,11 +49,8 @@ using std::shared_ptr;
 using SX::Data::DataSet;
 
 
-namespace SX
-{
-
-namespace Crystal
-{
+namespace SX {
+namespace Crystal {
 
 using sptrPeak3D = PeakCalc::sptrPeak3D;
 using PeakList = PeakCalc::PeakList;
@@ -60,7 +58,6 @@ using PeakList = PeakCalc::PeakList;
 PeakCalc::PeakCalc(double h,double k,double l, double x,double y, double frame):
     _h(h),_k(k),_l(l),_x(x),_y(y),_frame(frame)
 {
-
 }
 
 //PeakCalc::~PeakCalc()
@@ -69,7 +66,7 @@ PeakCalc::PeakCalc(double h,double k,double l, double x,double y, double frame):
 
 sptrPeak3D PeakCalc::averagePeaks(const std::shared_ptr<IData> data, double distance)
 {
-    Eigen::Matrix3d peak_shape, bkg_shape;
+    Eigen::Matrix3d peak_shape;
 
     sptrPeak3D peak = std::make_shared<Peak3D>(Peak3D(data));
     PeakList neighbors;
@@ -89,25 +86,13 @@ sptrPeak3D PeakCalc::averagePeaks(const std::shared_ptr<IData> data, double dist
 
     double weight = 1.0 / double(neighbors.size());
     peak_shape.setZero();
-    bkg_shape.setZero();
 
     using ellipsoid = Ellipsoid<double, 3>;
 
     for(auto&& p: neighbors) {
-        try {
-            // in current implementation these casts should always work
-            const ellipsoid& ell_peak = dynamic_cast<const ellipsoid&>(p->getPeak());
-            const ellipsoid& ell_bkg = dynamic_cast<const ellipsoid&>(p->getBackground());
-
-            const Matrix3d& peak_rs = ell_peak.getRSinv();
-            const Matrix3d& bkg_rs = ell_bkg.getRSinv();
-
-            peak_shape += weight * peak_rs.transpose() * peak_rs;
-            bkg_shape += weight * bkg_rs.transpose() * bkg_rs;
-        }
-        catch (...) {
-            // todo(jonathan): some error handling in case the casts fail!
-        }
+        const ellipsoid& ell_peak = p->getShape();
+        const Matrix3d& peak_rs = ell_peak.getRSinv();
+        peak_shape += weight * peak_rs.transpose() * peak_rs;
     }
 
     Eigen::Vector3d center(_x, _y, _frame);
@@ -120,16 +105,57 @@ sptrPeak3D PeakCalc::averagePeaks(const std::shared_ptr<IData> data, double dist
     for (int i = 0; i < 3; ++i) {
         eigenvalues(i) = 1.0 / std::sqrt(eigenvalues(i));
     }
-
-    peak->setPeakShape(new ellipsoid(center, eigenvalues, solver.eigenvectors()));
-    solver.compute(bkg_shape);
-    eigenvalues = solver.eigenvalues();
-
-    for (int i = 0; i < 3; ++i) {
-        eigenvalues(i) = 1.0 / std::sqrt(eigenvalues(i));
-    }
-    peak->setBackgroundShape(new ellipsoid(center, eigenvalues, solver.eigenvectors()));
+    peak->setShape(ellipsoid(center, eigenvalues, solver.eigenvectors()));
     return peak;
+}
+
+PeakCalc::sptrPeak3D PeakCalc::averagePeaksQ(const std::shared_ptr<PeakCalc::IData> data)
+{
+//    Eigen::Matrix3d peak_shape, bkg_shape;
+
+//    sptrPeak3D peak = std::make_shared<Peak3D>(Peak3D(data));
+
+//    // An averaged peak is by definition not an observed peak but a calculated peak
+//    peak->setObserved(false);
+
+//    peak_shape.setZero();
+//    bkg_shape.setZero();
+
+//    using ellipsoid = Ellipsoid<double, 3>;
+
+//    for(auto&& p: data->getPeaks()) {
+//        // in current implementation these casts should always work
+//        const ellipsoid& ell_peak = p->getPeak();
+//        const ellipsoid& ell_bkg = p->getBackground();
+
+//        const Matrix3d& peak_rs = ell_peak.getRSinv();
+//        const Matrix3d& bkg_rs = ell_bkg.getRSinv();
+
+//        peak_shape += weight * peak_rs.transpose() * peak_rs;
+//        bkg_shape += weight * bkg_rs.transpose() * bkg_rs;
+//    }
+
+//    Eigen::Vector3d center(_x, _y, _frame);
+//    Eigen::SelfAdjointEigenSolver<Matrix3d> solver;
+//    Eigen::Vector3d eigenvalues;
+
+//    solver.compute(peak_shape);
+//    eigenvalues = solver.eigenvalues();
+
+//    for (int i = 0; i < 3; ++i) {
+//        eigenvalues(i) = 1.0 / std::sqrt(eigenvalues(i));
+//    }
+
+//    peak->setPeakShape(ellipsoid(center, eigenvalues, solver.eigenvectors()));
+//    solver.compute(bkg_shape);
+//    eigenvalues = solver.eigenvalues();
+
+//    for (int i = 0; i < 3; ++i) {
+//        eigenvalues(i) = 1.0 / std::sqrt(eigenvalues(i));
+//    }
+//    peak->setBackgroundShape(ellipsoid(center, eigenvalues, solver.eigenvectors()));
+//    return peak;
+    return nullptr;
 }
 
 std::vector<sptrPeak3D> PeakCalc::findNeighbors(const std::set<sptrPeak3D>& peak_list, double distance)
@@ -144,7 +170,7 @@ std::vector<sptrPeak3D> PeakCalc::findNeighbors(const std::set<sptrPeak3D>& peak
         if (peak->isMasked() || !peak->isSelected()) {
             continue;
         }
-        const double squared_dist = (center-peak->getPeak().getAABBCenter()).squaredNorm();
+        const double squared_dist = (center-peak->getShape().getAABBCenter()).squaredNorm();
 
         // not close enough
         if ( squared_dist > max_squared_dist) {
@@ -156,7 +182,6 @@ std::vector<sptrPeak3D> PeakCalc::findNeighbors(const std::set<sptrPeak3D>& peak
     neighbors.shrink_to_fit();
     return neighbors;
 }
-
 
 } // Namespace Crystal
 } /* namespace SX */

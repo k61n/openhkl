@@ -102,7 +102,7 @@ void ScaleDialog::buildPlot()
         double sigma, var = 0.0;
 
         for (auto&& p: peak_list) {
-            double frame = p->getPeak().getAABBCenter()[2];
+            double frame = p->getShape().getAABBCenter()[2];
             double in = p->getScaledIntensity() * (a+b*frame);
             average += in;
             var += in*in;
@@ -121,7 +121,7 @@ void ScaleDialog::buildPlot()
         for (auto&& p: peak_list) {
 
 
-            double x = p->getPeak().getAABBCenter()[2]; // frame
+            double x = p->getShape().getAABBCenter()[2]; // frame
             double y = (p->getScaledIntensity() * (a+b*x) - average);
 
             xmin = x < xmin? x : xmin;
@@ -218,7 +218,7 @@ void ScaleDialog::calculateRFactors()
         // double sigma, var = 0.0;
 
         for (auto&& p: peak_list) {
-            double z = p->getPeak().getAABBCenter()[2];
+            double z = p->getShape().getAABBCenter()[2];
             double in = p->getScaledIntensity()*getScale(z);
 
             if ( z > _numFrames)
@@ -247,7 +247,7 @@ void ScaleDialog::calculateRFactors()
         // double I_total = 0.0;
 
         for (auto&& p: peak_list) {
-            double z = p->getPeak().getAABBCenter()[2];
+            double z = p->getShape().getAABBCenter()[2];
             double diff = std::fabs(p->getScaledIntensity()*getScale(z) - average);
             _Rmerge += diff;
             _Rmeas += Fmeas*diff;
@@ -291,7 +291,7 @@ void ScaleDialog::setScale()
 {
     for (auto& peak_list: _peaks) {
         for (auto& peak: peak_list) {
-            double z = peak->getPeak().getAABBCenter()[2];
+            double z = peak->getShape().getAABBCenter()[2];
             peak->setScale(getScale(z));
         }
     }
@@ -314,14 +314,14 @@ void ScaleDialog::refineScale()
             double average = 0;
 
             for (Peak3D* peak: _peaks[i]) {
-                double z = peak->getPeak().getAABBCenter()[2] ;
+                double z = peak->getShape().getAABBCenter()[2] ;
                 average += getScale(z) * peak->getScaledIntensity();
             }
 
             average /= _peaks[i].size();
 
             for (Peak3D* peak: _peaks[i]) {
-                double z = peak->getPeak().getAABBCenter()[2];
+                double z = peak->getShape().getAABBCenter()[2];
                 residuals(idx++) = getScale(z) * peak->getScaledIntensity() - average;
             }
         }

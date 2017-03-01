@@ -49,6 +49,9 @@ public:
     //! Sets the bottom right corner of the item
     void setTo(const QPointF& pos);
 
+    const QPointF& from() const { return _from; }
+    const QPointF& to() const { return _to; }
+
     // Other methods
 
     //! Paint the contents of the item [pure virtual]

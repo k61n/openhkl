@@ -35,7 +35,7 @@ BOOST_AUTO_TEST_CASE(Test_Peak3D)
     d.setDimensions(80*mm,80*mm);
     d.setNPixels(32,32);
 
-    std::shared_ptr<DetectorEvent> event(new DetectorEvent(d.createDetectorEvent(15.5, 15.5)));
+    DetectorEvent event(d, 15.5, 15.5, {});
     //DetectorEvent event=d.createDetectorEvent(15.5,15.5);
     std::shared_ptr<Source> source(new Source);
 
@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE(Test_Peak3D)
     g->addRotation("Gamma",Vector3d(0,0,1),RotAxis::CW);
     d.setGonio(g);
 
-    std::shared_ptr<DetectorEvent> event2( new DetectorEvent(d.createDetectorEvent(15.5,15.5,{90.0*deg})));
+    DetectorEvent event2(d, 15.5,15.5,{90.0*deg});
     peak.setDetectorEvent(event2);
     Q=peak.getQ();
     BOOST_CHECK_CLOSE(Q[0],1,tolerance);
@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE(Test_Peak3D)
     bl->addRotation("phi",Vector3d(0,0,1),RotAxis::CW);
     sample.setGonio(bl);
 
-    std::shared_ptr<ComponentState> state( new ComponentState(sample.createState({90.0*deg,0.0,0.0})));
+    std::shared_ptr<ComponentState> state(new ComponentState(sample, {90.0*deg,0.0,0.0}));
 
     peak.setSampleState(state);
     Q=peak.getQ();

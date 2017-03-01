@@ -67,8 +67,9 @@ void MinimizerEigen::initialize(int params, int values)
 
 bool MinimizerEigen::fit(int max_iter)
 {
-    if (!_f)
+    if (!_f) {
         return false;
+    }
 
     _fdf = std::unique_ptr<fdf_type>(new fdf_type(_f, _numParams, _numValues));
     _lm = std::unique_ptr<lm_type>(new lm_type(*_fdf));
@@ -76,17 +77,24 @@ bool MinimizerEigen::fit(int max_iter)
     _lm->parameters.xtol = _xtol;
     _lm->parameters.ftol = _ftol;
     _lm->parameters.gtol = _gtol;
+    _lm->parameters.maxfev = 10 * max_iter * _numParams;
 
-    _lm->parameters.maxfev = max_iter;
-
-    int status = _lm->minimize(_x);
+    auto status = _lm->minimize(_x);
 
     // evaluate the jacobian
     _fdf->df(_x, _jacobian);
-
     _numIter = _lm->iter;
 
-    return (status == 1);
+    // return true if successful
+    switch (status) {
+    case Eigen::LevenbergMarquardtSpace::RelativeReductionTooSmall:
+    case Eigen::LevenbergMarquardtSpace::RelativeErrorTooSmall:
+    case Eigen::LevenbergMarquardtSpace::RelativeErrorAndReductionTooSmall:
+    //case Eigen::LevenbergMarquardtSpace::CosinusTooSmall:
+        return true;
+    default:
+        return false;
+    }
 }
 
 void MinimizerEigen::deinitialize()
@@ -131,7 +139,7 @@ void MinimizerEigen::deinitialize()
 const char *MinimizerEigen::getStatusStr()
 {
     //return gsl_strerror(_status);
-    return "";
+    return "[no error string available]";
 }
 
 
@@ -222,5 +230,4 @@ int UBMinimizer::runEigen(unsigned int maxIter)
 */
 
 } // namespace Utils
-
 } // namespace SX

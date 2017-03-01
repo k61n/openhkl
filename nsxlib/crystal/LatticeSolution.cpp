@@ -85,44 +85,40 @@ LatticeSolution::LatticeSolution(std::shared_ptr<Instrument::Detector> detector,
     _sourceOffset=values(nFreeLatticeParams);
 
     unsigned int idx = nFreeLatticeParams+1;
-    std::size_t nSampleAxes=_sample->getNAxes();
+
+    std::size_t nSampleAxes = _sample->hasGonio() ? _sample->getGonio()->getNAxes() : 0;
     _sampleOffsets = values.segment(idx,nSampleAxes);
     _sigmaSampleOffsets = Eigen::VectorXd(nSampleAxes);
 
     idx+=nSampleAxes;
-    std::size_t nDetectorAxes=_detector->getNAxes();
+    std::size_t nDetectorAxes= _detector->hasGonio() ? _detector->getGonio()->getNAxes() : 0;
     _detectorOffsets = values.segment(idx,nDetectorAxes);
     _sigmaDetectorOffsets = Eigen::VectorXd(nDetectorAxes);
 
     idx = nFreeLatticeParams;
 
     auto& mono = _source->getSelectedMonochromator();
-    if (mono.isOffsetFixed())
+    if (mono.isOffsetFixed()) {
         _sigmaSourceOffset=0.0;
-    else
-    {
+    } else {
         _sigmaSourceOffset=sqrt(cov(nFreeLatticeParams,nFreeLatticeParams));
         ++idx;
     }
 
 
-    for (unsigned int i=0;i<nSampleAxes;++i)
-    {
-        if (_sample->getGonio()->getAxis(i)->hasOffsetFixed())
+    for (unsigned int i=0;i<nSampleAxes;++i) {
+        if (_sample->getGonio()->getAxis(i)->hasOffsetFixed()) {
             _sigmaSampleOffsets[i] = 0.0;
-        else
-        {
+        } else {
             _sigmaSampleOffsets[i]=sqrt(cov(idx,idx));
             idx++;
         }
     }
 
-    for (unsigned int i=0;i<nDetectorAxes;++i)
-    {
-        if (_detector->getGonio()->getAxis(i)->hasOffsetFixed())
+    for (unsigned int i=0;i<nDetectorAxes;++i) {
+        if (_detector->getGonio()->getAxis(i)->hasOffsetFixed()) {
             _sigmaDetectorOffsets[i] = 0.0;
-        else
-        {
+        } else {
             _sigmaDetectorOffsets[i]=sqrt(cov(idx,idx));
             idx++;
         }
