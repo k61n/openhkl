@@ -7,195 +7,81 @@ namespace SX {
 
 namespace Utils {
 
-bool IMatrixParser::operator()(const std::string& buffer, Eigen::MatrixXi& matrix) const
+bool MatrixParser::operator()(DataOrder dataOrder, const char* begin, size_t buffer_size, Eigen::MatrixXi& matrix) const
 {
-    return this->operator()(buffer.c_str(),buffer.size(),matrix);
-}
+    size_t n_rows = matrix.rows();
+    size_t n_cols = matrix.cols();
+    size_t n_elements = matrix.size();
 
-bool TopLeftColMajorMatrixParser::operator()(const char* begin, size_t bufferSize, Eigen::MatrixXi& matrix) const
-{
-    size_t nRows = matrix.rows();
-    size_t nCols = matrix.cols();
-    size_t lastRow = nRows - 1;
-    int c;
-    size_t index(0);
-    std::stringstream ss;
-    ss.write(begin, bufferSize);
-    while(index < matrix.size() && ss >> c) {
-        size_t col = index/nRows;
-        size_t row = lastRow + nRows*col - index;
-        matrix(row,col) = c;
-        ++index;
-    }
-
-    return ss.eof() && index == matrix.size();
-}
-
-bool TopLeftRowMajorMatrixParser::operator()(const char* begin, size_t bufferSize, Eigen::MatrixXi& matrix) const
-{
-    size_t nRows = matrix.rows();
-    size_t nCols = matrix.cols();
-    size_t lastRow = nRows - 1;
-    int c;
-    size_t index(0);
-    std::stringstream ss;
-    ss.write(begin, bufferSize);
-    while(index < matrix.size() && ss >> c) {
-        size_t row = lastRow - index/nCols;
-        size_t col = index - nCols*(lastRow - row);
-        matrix(row,col) = c;
-        ++index;
-    }
-
-    return ss.eof() && index == matrix.size();
-}
-
-bool TopRightColMajorMatrixParser::operator()(const char* begin, size_t bufferSize, Eigen::MatrixXi& matrix) const
-{
-    size_t nRows = matrix.rows();
-    size_t nCols = matrix.cols();
-    size_t lastRow = nRows - 1;
-    size_t lastCol = nCols - 1;
-    int c;
-    size_t index(0);
-    std::stringstream ss;
-    ss.write(begin,bufferSize);
-    while(index < matrix.size() && ss >> c) {
-        size_t col = lastCol - index/nRows;
-        size_t row = lastRow + nRows*(lastCol - col) - index;
-        matrix(row,col) = c;
-        ++index;
-    }
-
-    return ss.eof() && index == matrix.size();
-}
-
-bool TopRightRowMajorMatrixParser::operator()(const char* begin, size_t bufferSize, Eigen::MatrixXi& matrix) const
-{
-    size_t nRows = matrix.rows();
-    size_t nCols = matrix.cols();
-    size_t lastRow = nRows - 1;
-    size_t lastCol = nCols - 1;
-    int c;
-    size_t index(0);
-    std::stringstream ss;
-    ss.write(begin,bufferSize);
-    while(index < matrix.size() && ss >> c) {
-        size_t row = lastRow - index/nCols;
-        size_t col = lastCol + nCols*(lastRow - row) - index;
-        matrix(row,col) = c;
-        ++index;
-    }
-
-    return ss.eof() && index == matrix.size();
-}
-
-bool BottomLeftColMajorMatrixParser::operator()(const char* begin, size_t bufferSize, Eigen::MatrixXi& matrix) const
-{
-    size_t nRows = matrix.rows();
-    int c;
-    size_t index(0);
-    std::stringstream ss;
-    ss.write(begin,bufferSize);
-    while(index < matrix.size() && ss >> c) {
-        size_t col = index/nRows;
-        size_t row = index - nRows*col;
-        matrix(row,col) = c;
-        ++index;
-    }
-
-    return ss.eof() && index == matrix.size();
-}
-
-bool BottomLeftRowMajorMatrixParser::operator()(const char* begin, size_t bufferSize, Eigen::MatrixXi& matrix) const
-{
-    size_t nCols = matrix.cols();
-    int c;
-    size_t index(0);
-    std::stringstream ss;
-    ss.write(begin,bufferSize);
-    while(index < matrix.size() && ss >> c) {
-        size_t row = index/nCols;
-        size_t col = index - nCols*row;
-        matrix(row,col) = c;
-        ++index;
-    }
-
-    return ss.eof() && index == matrix.size();
-}
-
-bool BottomRightColMajorMatrixParser::operator()(const char* begin, size_t bufferSize, Eigen::MatrixXi& matrix) const
-{
-    long nRows = matrix.rows();
-    long nCols = matrix.cols();
-    long lastCol = nCols - 1;
-    int c;
-    size_t index(0);
-    std::stringstream ss;
-    ss.write(begin,bufferSize);
-    while(index < matrix.size() && ss >> c) {
-        size_t col = lastCol - index/nRows;
-        size_t row = index - nRows*(lastCol - col);
-        matrix(row,col) = c;
-        ++index;
-    }
-
-    return ss.eof() && index == matrix.size();
-}
-
-bool BottomRightRowMajorMatrixParser::operator()(const char* begin, size_t bufferSize, Eigen::MatrixXi& matrix) const
-{
-    long nCols = matrix.cols();
-    long lastCol = nCols - 1;
-    int c;
-    size_t index(0);
-    std::stringstream ss;
-    ss.write(begin,bufferSize);
-    while(index < matrix.size() && ss >> c) {
-        size_t row = index/nCols;
-        size_t col = lastCol + nCols*row - index;
-        matrix(row,col) = c;
-        ++index;
-    }
-
-    return ss.eof() && index == matrix.size();
-}
-
-IMatrixParser* getMatrixParser(DataOrder dataOrder)
-{
-
-    IMatrixParser* parser;
+    int s1, s2, offset;
 
     switch (dataOrder) {
     case(DataOrder::TopLeftColMajor):
-        parser = new TopLeftColMajorMatrixParser();
+        s1 = -1;
+        s2 = n_rows;
+        offset = n_rows - 1;
         break;
     case(DataOrder::TopLeftRowMajor):
-        parser = new TopLeftRowMajorMatrixParser();
+        s1 = -n_cols;
+        s2 = 1;
+        offset = n_cols*(n_rows-1);
         break;
     case(DataOrder::TopRightColMajor):
-        parser = new TopRightColMajorMatrixParser();
+        s1 = -1;
+        s2 = -n_rows;
+        offset = n_rows*n_cols - 1;
         break;
     case(DataOrder::TopRightRowMajor):
-        parser = new TopRightRowMajorMatrixParser();
+        s1 = -n_cols;
+        s2 = -1;
+        offset = n_rows*n_cols - 1;
         break;
     case(DataOrder::BottomLeftColMajor):
-        parser = new BottomLeftColMajorMatrixParser();
+        s1 = 1;
+        s2 = n_rows;
+        offset = 0;
         break;
     case(DataOrder::BottomLeftRowMajor):
-        parser = new BottomLeftRowMajorMatrixParser();
+        s1 = n_cols;
+        s2 = 1;
+        offset = 0;
         break;
     case(DataOrder::BottomRightColMajor):
-        parser = new BottomRightColMajorMatrixParser();
+        s1 = 1;
+        s2 = -n_rows;
+        offset = n_rows*(n_cols-1);
         break;
     case(DataOrder::BottomRightRowMajor):
-        parser = new BottomRightRowMajorMatrixParser();
+        s1 = n_cols;
+        s2 = -1;
+        offset = n_cols-1;
         break;
     default:
         throw std::runtime_error("Invalid data order");
     }
 
-    return parser;
+    Eigen::VectorXi data(n_elements);
+
+    int c;
+    size_t index(0);
+    std::stringstream ss;
+    ss.write(begin, buffer_size);
+    while(index < n_elements && ss >> c) {
+        data(index++) = c;
+    }
+
+    for (size_t i=0; i<n_rows; ++i) {
+        for (size_t j=0; j<n_cols; ++j) {
+            matrix(i,j) = data(i*s1+j*s2+offset);
+        }
+    }
+
+    return ss.eof() && index == n_elements;
+}
+
+bool MatrixParser::operator()(DataOrder dataOrder, const std::string& buffer, Eigen::MatrixXi& matrix) const
+{
+    return this->operator()(dataOrder,buffer.c_str(),buffer.size(),matrix);
 }
 
 } // end namespace Utils

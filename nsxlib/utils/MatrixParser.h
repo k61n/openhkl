@@ -5,6 +5,65 @@
 
 #include "../utils/Enums.h"
 
+// The convention for 2D data in NSXTOOL is to look at the detector
+// from the sample point. In the rest position, the detector is along the beam
+// (y-axis). The x-axis is horizontal and z-axis vertical, so that pixel (0,0)
+// represents the bottom left and pixel (rows,cols) represents the top right.
+// The functors in this file are used to do the mapping between written order
+// of the data and parsing into a Eigen Matrix. For example TopRightColMajorMapper
+// means that the datastream is written linearly from TopRight detector pixel and
+// Column Major order (implicitly going down)
+
+/*
+ * TopRightColMajor
+ * | .  .  .  .   n+1       1|
+   | .  .  .  .   .         2|
+   | .  .  .  .   .       ...|
+   | .  .  .  .   .         n|
+
+ * TopRightRowMajor
+ * | n  .  .  .   2     1|
+   | .  .  .  .   .   n+1|
+   | .  .  .  .   .      |
+   | .  .  .  .   .      |
+
+ * BottomRightColMajor
+ * | .  .  .  .    .     n |
+   | .  .  .  .    .    ...|
+   | .  .  .  .    .     2 |
+   | .  .  .  .   n+1    1 |
+
+ * BottomRightRowMajor
+ * | .  .  .  .    .     . |
+   | .  .  .  .    .     . |
+   | .  .  .  .    .    n+1|
+   | n  .  .  .    2     1 |
+
+ * TopLeftColMajor
+ * | 1  n+1 .  .    .    .|
+   | 2   .  .  .    .    .|
+   | .   .  .  .    .    .|
+   | n   .  .  .    .    .|
+
+ * TopLeftRowMajor
+ * | 1   2  .  .    .    n|
+   |n+1  .  .  .    .    .|
+   | .   .  .  .    .    .|
+   | .   .  .  .    .    .|
+
+ * BottomLeftColMajor
+ * | n   .  .  .    .    .|
+   | .   .  .  .    .    .|
+   | 2   .  .  .    .    .|
+   | 1  n+1 .  .    .    .|
+
+ * BottomLeftRowMajor
+ * | .   .  .  .    .    .|
+   | .   .  .  .    .    .|
+   |n+1  .  .  .    .    .|
+   | 1   2  .  .    .    n|
+ */
+
 namespace SX
 {
 
@@ -13,125 +72,18 @@ namespace Utils
 
 using SX::Instrument::DataOrder;
 
-class IMatrixParser
+class MatrixParser
 {
 public:
 
-    IMatrixParser()=default;
-    virtual ~IMatrixParser()=default;
+    MatrixParser()=default;
+    ~MatrixParser()=default;
 
-    virtual bool operator()(const char* begin, size_t bufferSize, Eigen::MatrixXi& matrix) const=0;
+    bool operator()(DataOrder dataOrder, const char* begin, size_t buffer_size, Eigen::MatrixXi& matrix) const;
 
-    bool operator()(const std::string& buffer, Eigen::MatrixXi& matrix) const;
+    bool operator()(DataOrder dataOrder, const std::string& buffer, Eigen::MatrixXi& matrix) const;
 
 };
-
-class TopLeftColMajorMatrixParser final: public IMatrixParser
-{
-public:
-
-    TopLeftColMajorMatrixParser()=default;
-    virtual ~TopLeftColMajorMatrixParser()=default;
-
-    virtual bool operator()(const char* begin, size_t bufferSize, Eigen::MatrixXi& matrix) const override;
-
-    // Used to solve name shadowing
-    using IMatrixParser::operator();
-};
-
-class TopLeftRowMajorMatrixParser final: public IMatrixParser
-{
-public:
-
-    TopLeftRowMajorMatrixParser()=default;
-    virtual ~TopLeftRowMajorMatrixParser()=default;
-
-    virtual bool operator()(const char* begin, size_t bufferSize, Eigen::MatrixXi& matrix) const override;
-
-    // Used to solve name shadowing
-    using IMatrixParser::operator();
-};
-
-class TopRightColMajorMatrixParser final: public IMatrixParser
-{
-public:
-
-    TopRightColMajorMatrixParser()=default;
-    virtual ~TopRightColMajorMatrixParser()=default;
-
-    virtual bool operator()(const char* begin, size_t bufferSize, Eigen::MatrixXi& matrix) const override;
-
-    // Used to solve name shadowing
-    using IMatrixParser::operator();
-};
-
-class TopRightRowMajorMatrixParser final: public IMatrixParser
-{
-public:
-
-    TopRightRowMajorMatrixParser()=default;
-    virtual ~TopRightRowMajorMatrixParser()=default;
-
-    virtual bool operator()(const char* begin, size_t bufferSize, Eigen::MatrixXi& matrix) const override;
-
-    // Used to solve name shadowing
-    using IMatrixParser::operator();
-};
-
-class BottomLeftColMajorMatrixParser final: public IMatrixParser
-{
-public:
-
-    BottomLeftColMajorMatrixParser()=default;
-    virtual ~BottomLeftColMajorMatrixParser()=default;
-
-    virtual bool operator()(const char* begin, size_t bufferSize, Eigen::MatrixXi& matrix) const override;
-
-    // Used to solve name shadowing
-    using IMatrixParser::operator();
-};
-
-class BottomLeftRowMajorMatrixParser final: public IMatrixParser
-{
-public:
-
-    BottomLeftRowMajorMatrixParser()=default;
-    virtual ~BottomLeftRowMajorMatrixParser()=default;
-
-    virtual bool operator()(const char* begin, size_t bufferSize, Eigen::MatrixXi& matrix) const override;
-
-    // Used to solve name shadowing
-    using IMatrixParser::operator();
-};
-
-class BottomRightColMajorMatrixParser final: public IMatrixParser
-{
-public:
-
-    BottomRightColMajorMatrixParser()=default;
-    virtual ~BottomRightColMajorMatrixParser()=default;
-
-    virtual bool operator()(const char* begin, size_t bufferSize, Eigen::MatrixXi& matrix) const override;
-
-    // Used to solve name shadowing
-    using IMatrixParser::operator();
-};
-
-class BottomRightRowMajorMatrixParser final: public IMatrixParser
-{
-public:
-
-    BottomRightRowMajorMatrixParser()=default;
-    virtual ~BottomRightRowMajorMatrixParser()=default;
-
-    virtual bool operator()(const char* begin, size_t bufferSize, Eigen::MatrixXi& matrix) const override;
-
-    // Used to solve name shadowing
-    using IMatrixParser::operator();
-};
-
-// Helper function that returns a MAtrixParser for a given data order. No need for a factory for such a case.
-IMatrixParser* getMatrixParser(DataOrder dataOrder);
 
 } // end namespace Utils
 

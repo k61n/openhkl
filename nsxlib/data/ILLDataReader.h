@@ -42,14 +42,6 @@
 #include "../data/IDataReader.h"
 #include "../instrument/Diffractometer.h"
 
-
-namespace SX {
-
-namespace Utils {
-class IMatrixParser;
-}
-}
-
 namespace SX {
 
 namespace Data {
@@ -67,7 +59,7 @@ public:
     //! Copy constructor
     ILLDataReader(const ILLDataReader& other)=delete;
     //! Destructor
-    virtual ~ILLDataReader();
+    virtual ~ILLDataReader()=default;
 
     // Operators
 
@@ -106,8 +98,6 @@ private:
     boost::interprocess::mapped_region _map;
     const char* _mapAddress;
     std::size_t _currentLine;
-    SX::Utils::IMatrixParser* _parser;
-
 };
 
 } // end namespace Data
