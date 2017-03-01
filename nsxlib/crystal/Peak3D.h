@@ -75,7 +75,6 @@ public:
 
 
     Peak3D(std::shared_ptr<SX::Data::DataSet> data = nullptr);
-    //Peak3D(std::shared_ptr<SX::Data::IData> data, const SX::Geometry::Blob3D& blob, double confidence);
     Peak3D(std::shared_ptr<SX::Data::DataSet> data, const Ellipsoid3D& shape);
 
     //! Copy constructor
@@ -143,8 +142,8 @@ public:
     double getIOverSigmaI() const;
     //! Return the lorentz factor of the peak.
     double getLorentzFactor() const;
-    std::shared_ptr<SX::Instrument::ComponentState> getSampleState();
-    double getSampleStepSize() const;
+    const SX::Instrument::ComponentState& getSampleState();
+    //double getSampleStepSize() const;
 
     //! Return the scaling factor.
     double getScale() const;
@@ -153,7 +152,7 @@ public:
     //! Set the scaling factor.
     void setScale(double factor);
     //!
-    void setSampleState(const std::shared_ptr<SX::Instrument::ComponentState>& sstate);
+    void setSampleState(const SX::Instrument::ComponentState& sstate);
     //!
 
     void setDetectorEvent(const SX::Instrument::DetectorEvent& event);
@@ -183,11 +182,6 @@ public:
     bool hasUnitCells() const;
     void scaleShape(double scale);
 
-    // testing: new implementation of integration
-    //void framewiseIntegrateBegin();
-//    void framewiseIntegrateStep(Eigen::MatrixXi& frame, unsigned int idx);
-//    void framewiseIntegrateEnd();
-
     //! update the integration
     void updateIntegration(const PeakIntegrator& integrator);
 
@@ -199,8 +193,7 @@ public:
 private:
     //! Pointer to the data containing the peak
     std::weak_ptr<SX::Data::DataSet> _data;
-    //! Miller indices of the peak
-    // Eigen::RowVector3d _hkl;
+
     //! Shape describing the Peak zone
     Ellipsoid3D _shape;
     //! Region used to integrate the peak
@@ -213,10 +206,6 @@ private:
     Eigen::VectorXd _projectionPeak;
     Eigen::VectorXd _projectionBkg;
 
-    //! Miller indices of the peak
-//	Eigen::RowVector3d _hkl;
-    //! Shape describing the Peak zone
-
     Eigen::VectorXd _pointsPeak;
     Eigen::VectorXd _pointsBkg;
     Eigen::VectorXd _countsPeak;
@@ -226,7 +215,7 @@ private:
     CellList _unitCells;
     //! Pointer to the state of the Sample Component
 
-    std::shared_ptr<SX::Instrument::ComponentState> _sampleState;
+    std::unique_ptr<SX::Instrument::ComponentState> _sampleState;
 
     //! Detector Event state
     std::unique_ptr<SX::Instrument::DetectorEvent> _event;

@@ -617,5 +617,26 @@ void DataSet::integratePeaks(const std::shared_ptr<Utils::ProgressHandler>& hand
     }
 }
 
+double DataSet::getSampleStepSize() const
+{
+    // TODO(jonathan): we should NOT assume that gonio axis 0 is the one being rotated
+    // when we compute 'step' below
+    double step = 0.0;
+
+    size_t numFrames = getNFrames();
+    const auto& ss = getInstrumentStates();
+    size_t numValues = ss[0].sample.getValues().size();
+
+    for (size_t i = 0; i < numValues; ++i) {
+        double dx = ss[numFrames-1].sample.getValues()[i] - ss[0].sample.getValues()[i];
+        step += dx*dx;
+    }
+
+    step = std::sqrt(step);
+    step /= (numFrames-1) * 0.05 * SX::Units::deg;
+
+    return step;
+}
+
 } // end namespace Data
 } // end namespace SX

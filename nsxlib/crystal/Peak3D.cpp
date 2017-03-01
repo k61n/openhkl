@@ -88,7 +88,7 @@ Peak3D::Peak3D(std::shared_ptr<SX::Data::DataSet> data):
 }
 
 Peak3D::Peak3D(std::shared_ptr<Data::DataSet> data, const Peak3D::Ellipsoid3D &shape):
-Peak3D(data)
+    Peak3D(data)
 {
     setShape(shape);
 }
@@ -100,8 +100,8 @@ Peak3D::Peak3D(const Peak3D& other):
     _projectionPeak(other._projectionPeak),
     _projectionBkg(other._projectionBkg),
     _unitCells(other._unitCells),
-    _sampleState(other._sampleState),
-    _event(other._event == nullptr ? nullptr :new DetectorEvent(*other._event)),
+    _sampleState(other._sampleState == nullptr ? nullptr : new ComponentState(*other._sampleState)),
+    _event(other._event == nullptr ? nullptr : new DetectorEvent(*other._event)),
     _source(other._source),
     _counts(other._counts),
     _countsSigma(other._countsSigma),
@@ -127,7 +127,7 @@ Peak3D& Peak3D::operator=(const Peak3D& other)
     _projectionPeak = other._projectionPeak;
     _projectionBkg = other._projectionBkg;
     _unitCells = other._unitCells;
-    _sampleState = other._sampleState;
+    _sampleState = other._sampleState == nullptr ? nullptr : std::unique_ptr<ComponentState>(new ComponentState(*other._sampleState));
     _event = other._event == nullptr ? nullptr : std::unique_ptr<DetectorEvent>(new DetectorEvent(*other._event));
     _source= other._source;
     _counts = other._counts;
@@ -174,7 +174,7 @@ void Peak3D::setShape(const Ellipsoid3D& peak)
 
     const auto& state = data->getInterpolatedState(f);
 
-    setSampleState(std::make_shared<ComponentState>(state.sample));
+    setSampleState(ComponentState(state.sample));
 
     setDetectorEvent(DetectorEvent(
        *data->getDiffractometer()->getDetector(), center[0], center[1], state.detector.getValues()));
@@ -287,7 +287,7 @@ sptrUnitCell Peak3D::getUnitCell(int index) const
 
 double Peak3D::getRawIntensity() const
 {
-    return _counts * getSampleStepSize();
+    return _counts * getData()->getSampleStepSize();
 }
 
 double Peak3D::getScaledIntensity() const
@@ -307,7 +307,7 @@ void Peak3D::scaleShape(double scale)
 
 double Peak3D::getRawSigma() const
 {
-    return _countsSigma * getSampleStepSize();
+    return _countsSigma * getData()->getSampleStepSize();
 }
 
 double Peak3D::getScaledSigma() const
@@ -344,40 +344,16 @@ void Peak3D::setTransmission(double transmission)
     _transmission = transmission;
 }
 
-std::shared_ptr<SX::Instrument::ComponentState> Peak3D::getSampleState()
+const ComponentState& Peak3D::getSampleState()
 {
-    return _sampleState;
-}
-
-double Peak3D::getSampleStepSize() const
-{
-    // TODO(jonathan): we should NOT assume that gonio axis 0 is the one being rotated
-    // when we compute 'step' below
-    double step = 0.0;
-    auto data = getData();
-
-    if (data == nullptr) {
-        // todo(jonathan): should it be possible to reach this branch??
-        return 0.0;
-    }
-
-    size_t numFrames = data->getNFrames();
-    const auto& ss = data->getInstrumentStates();
-    size_t numValues = ss[0].sample.getValues().size();
-
-    for (size_t i = 0; i < numValues; ++i) {
-        double dx = ss[numFrames-1].sample.getValues()[i] - ss[0].sample.getValues()[i];
-        step += dx*dx;
-    }
-
-    step = std::sqrt(step);
-    step /= (numFrames-1) * 0.05 * SX::Units::deg;
-
-    return step;
+    assert(_sampleState != nullptr);
+    return *_sampleState;
 }
 
 Eigen::RowVector3d Peak3D::getKf() const
 {
+    assert(_source != nullptr);
+    assert(_sampleState != nullptr);
     double wavelength = _source->getSelectedMonochromator().getWavelength();
     Eigen::Vector3d kf = _event->getKf(wavelength, _sampleState->getPosition());
     return kf;
@@ -399,9 +375,9 @@ Eigen::RowVector3d Peak3D::getQ() const
     return _sampleState->transformQ(q);
 }
 
-void Peak3D::setSampleState(const std::shared_ptr<SX::Instrument::ComponentState>& sstate)
+void Peak3D::setSampleState(const ComponentState& sstate)
 {
-    _sampleState = sstate;
+    _sampleState = std::unique_ptr<ComponentState>(new ComponentState(sstate));
 }
 
 void Peak3D::setDetectorEvent(const SX::Instrument::DetectorEvent& event)
@@ -416,6 +392,7 @@ void Peak3D::setSource(const std::shared_ptr<SX::Instrument::Source>& source)
 
 void Peak3D::getGammaNu(double& gamma,double& nu) const
 {
+    assert(_sampleState != nullptr);
     _event->getGammaNu(gamma,nu,_sampleState->getPosition());
 }
 

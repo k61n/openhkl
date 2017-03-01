@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_CASE(Test_Peak3D)
     bl->addRotation("phi",Vector3d(0,0,1),RotAxis::CW);
     sample.setGonio(bl);
 
-    std::shared_ptr<ComponentState> state(new ComponentState(&sample, {90.0*deg,0.0,0.0}));
+    ComponentState state(&sample, {90.0*deg,0.0,0.0});
 
     peak.setSampleState(state);
     Q=peak.getQ();
