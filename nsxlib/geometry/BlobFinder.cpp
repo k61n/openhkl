@@ -238,6 +238,7 @@ void BlobFinder::findBlobs(std::unordered_map<int,Blob3D>& blobs,
         for (unsigned int row = 0; row < _nrows; ++row) {
             for (unsigned int col = 0; col < _ncols; ++col) {
                 auto value = frame_data(row, col);
+                auto filterd_value = filtered_frame(row, col);
 
                 // Discard pixel if value < threshold
                 if (filtered_frame(row, col) < threshold) {

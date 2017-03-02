@@ -72,10 +72,10 @@ bool PeakFinder::find(std::vector<std::shared_ptr<DataSet>> numors)
             if ( _handler ) {
                 _handler->log("Median value is: " + std::to_string(_median));
                 _handler->log("threshold value is " + std::to_string(_thresholdValue));
-                _handler->log("min comp is" + std::to_string(_minComp));
+                _handler->log("min comp is " + std::to_string(_minComp));
                 _handler->log("max comp is " + std::to_string(_maxComp));
                 _handler->log("confidence is " + std::to_string(_confidence));
-                _handler->log("relative threshold is" + std::to_string(_thresholdType == 0));
+                _handler->log("relative threshold is " + std::to_string(_thresholdType == 0));
             }
 
             // set image filter, if selected

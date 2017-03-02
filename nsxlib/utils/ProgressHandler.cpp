@@ -21,7 +21,7 @@ SX::Utils::ProgressHandler::~ProgressHandler()
 
 }
 
-void ProgressHandler::setProcessCallback(std::function<void ()> callback)
+void ProgressHandler::setCallback(std::function<void ()> callback)
 {
     _callback = callback;
 }

@@ -25,7 +25,7 @@ public:
     ProgressHandler();
     ~ProgressHandler();
 
-    void setProcessCallback(std::function<void()> callback);
+    void setCallback(std::function<void()> callback);
 
     void setProgress(int progress);
     int getProgress();

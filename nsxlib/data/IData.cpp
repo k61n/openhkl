@@ -336,7 +336,11 @@ void DataSet::saveHDF5(const std::string& filename) //const
     RowMatrixd valsSources(sourcenames.size(),_nFrames);
 
     for (unsigned int i = 0; i < _states.size(); ++i) {
-        const std::vector<double>& v=_states[i].source.getValues();
+        std::vector<double> v = _states[i].source.getValues();
+
+        while(v.size() < sourcenames.size()) {
+            v.emplace_back(0.0);
+        }
 
         for (unsigned int j = 0; j < sourcenames.size(); ++j) {
             valsSources(j,i) = v[j] / SX::Units::deg;
