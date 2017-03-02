@@ -14,6 +14,8 @@ import numpy
 import math
 from matplotlib import pyplot
 
+g_angstrom = 1e-10
+g_cm = 1e-2 / g_angstrom # 1 centimeter in angstroms
 g_degree = math.pi / 180.0
 g_deltaw = 0.5
 
@@ -34,12 +36,18 @@ class UnitCell:
         A = numpy.array([self.u, self.v, self.w])
         AI = numpy.linalg.inv(A)
                 
-        self.a = AI[0] 
-        self.b = AI[1] 
-        self.c = AI[2] 
+        self.a = AI[0,:] 
+        self.b = AI[1,:] 
+        self.c = AI[2,:] 
 
     def getQ(self, h, k, l):
-        return h*self.a + k*self.b + l*self.c
+        return (h*self.a + k*self.b + l*self.c)
+
+    def index(self, p):
+        h = round(self.a.dot(p))
+        k = round(self.b.dot(p))
+        l = round(self.c.dot(p))
+        return [h, k, l]
 
 
 class CylindricalDetector:
@@ -49,15 +57,17 @@ class CylindricalDetector:
         self.nrows = float(nrows)
         self.ncols = float(ncols)
 
+    # tested and works
     def getDetectorCoords(self, q, wavelength):
-        ki = 2*math.pi / wavelength * numpy.array([0, 1, 0])
+        ki = 1.0 / wavelength * numpy.array([0, 1, 0])
         kf = q + ki
         scale = self.radius / math.sqrt(kf[0]**2 + kf[1]**2)
         pp = kf*scale        
         return self.getDetectorCoordsFromReal(pp)
-   
+
+    # tested and woords
     def getQ(self, px, py, wavelength):
-        norm = 2 * math.pi / wavelength
+        norm = 1.0 / wavelength
         ki = norm * numpy.array([0, 1, 0])
         p = self.getRealCoords(px, py)
         kf = norm * p / numpy.linalg.norm(p)
@@ -68,6 +78,8 @@ class CylindricalDetector:
         py = 0.5*(1.0 - 2.0*(p[2] / self.height)) * self.nrows # good
         theta = math.atan2(p[1], p[0])
         px = (1+theta/math.pi)*self.ncols
+        while (px >= self.ncols): px -= self.ncols
+        while (px < 0): px += self.ncols
         return [px, py]
 
     # tested and works
@@ -79,42 +91,104 @@ class CylindricalDetector:
         y = math.sin(theta)*self.radius
         return numpy.array([x, y, z])
 
+    def insideEwald(self, q, wav):
+        norm = 1.0 / wav
+        ki = norm * numpy.array([0, 1, 0])
+        kf = q + ki
+        return numpy.linalg.norm(kf) <= norm
+
+    def getKf(self, q, wave):
+        norm = 1.0 / wav
+        ki = norm * numpy.array([0, 1, 0])
+        return q+ki
+
+    def getFrame(self, q, wav, rotation_frames):
+        # rotation_frames is a set of rotation matrices
+        assert(len(rotation_frames) > 0)
+
+        # inital state
+        inside = self.insideEwald(rotation_frames[0].dot(q), wav)
+
+        # loop through frames and find collision
+        for i in range(len(rotation_frames)):
+            new_inside = self.insideEwald(rotation_frames[i].dot(q), wav)
+
+            if (inside != new_inside):
+                return i-0.5
+        return None
+        
 def test():
-    a = [10.0, 0.0, 0.0]
-    b = [7.0, 7.0, 0.0]
-    c = [5.0, 5.0, 5.0]
+    a = [ 36.801, 0.73207, 5.27977 ]
+    b = [ 3.3859, 49.765, -30.002 ]
+    c = [ -8.17193, 33.3248, 53.713 ]
     uc = UnitCell(a, b, c)
     wav = 2.67
+    nrows = 900
+    ncols = 2500
+    # testing units...
+    scale = 1.0
+    height = 45 * g_cm
+    radius = 19.95 * g_cm
+    
+    dmin = 2.0
+    dmax = 50.0
+    
+    hkls = [ [h, k, l, uc.getQ(h, k, l)] for h in range(-15, 15) for k in range(-15, 15) for l in range(-15,15) ]
 
-    hkls = [ [h, k, l] for h in range(0, 3) for k in range(0, 3) for l in range(0,3) ]
-    qs = [ uc.getQ(h, k, l) for [h, k, l] in hkls]
+    frames = [ rotation(0.5 * i * g_degree) for i in range(120) ]
+    images = [ numpy.zeros(shape=(nrows, ncols), dtype='int32') for f in frames ]
 
-    det = CylindricalDetector(1.0, 1.0, 100, 100)
+    det = CylindricalDetector(radius, height, nrows, ncols)
 
-    for q in qs:
+    for [h, k, l, q] in hkls:
+                
+        t = det.getFrame(q, wav, frames)
+
+        if (t == None):
+            continue
+
+        t0 = int(round(math.floor(t)))
+        t1 = int(round(math.ceil(t)))
+        
         [px, py] = det.getDetectorCoords(q, wav)
-        p = det.getRealCoords(px, py)
-        [new_px, new_py] = det.getDetectorCoordsFromReal(p)
 
-        ki = 2*math.pi / wav * numpy.array([0, 1, 0])
-        kf = q + ki
-        pp = kf * 1.0 / math.sqrt(kf[0]**2 + kf[1]**2)
-
-        print("p: {}".format(p))
-        print("pp: {}".format(pp))
-        print("dp: {}".format(numpy.linalg.norm(p-pp)))
-        print("----------------------")
-
-        print("px, py = {}, {}".format(px, py))
-        print("px, py = {}, {}".format(new_px, new_py))
-        print("------------------------------------------------")
+        # testing:
+        p = numpy.array([px, py, t])
+        RI = numpy.linalg.inv(frames[t0])
         
-        new_q = det.getQ(px, py, wav)
-        dq = q-new_q
-        print("{}".format(dq))
-        print("percent difference = {}".format(numpy.linalg.norm(dq) / numpy.linalg.norm(q) * 100.0))
+        [m, n, o] = uc.index(RI.dot(p))
+
+        print("{} {} | {} {} | {} {}".format(h, m, k, n, l, o))
         
-        print("q = {}".format(q))
-        print("real space = {}".format(det.getDetectorCoords(q, wav)))
-        print("----------------------------------------------------------------------")
+        px = int(round(px))
+        py = int(round(py))
+
+        qrot = frames[t0].dot(q)
+        qobs = det.getQ(px, py, wav)
+
+        d = 1.0 / numpy.linalg.norm(qobs)
+
+        #print("{} {}".format(1.0 / numpy.linalg.norm(qrot), d))
+        
+        if (d < dmin or d > dmax):
+            continue
+        
+        if px < 5 or py < 5:
+            continue
+
+        if px+5 > ncols or py+5 > nrows:
+            continue
+
+        if t1 >= len(frames):
+            continue
+            
+        print("({:.1f}, {:.1f}, {:.1f})".format(px, py, t))
+
+        for f in [t0, t1]:
+            for i in range(-5, 5):
+                for j in range(-5, 5):
+                    #print("{} {} {} {} {}".format(f, px, py, i, j))
+                    images[f][py+i, px+j] = 1
+
+    return images
     
