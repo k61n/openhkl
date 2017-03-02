@@ -541,7 +541,7 @@ void MainWindow::on_actionLogarithmic_Scale_triggered(bool checked)
 
 void MainWindow::on_actionDraw_peak_integration_area_triggered(bool checked)
 {
-    _ui->_dview->getScene()->drawPeakBackground(checked);
+    _ui->_dview->getScene()->drawIntegrationRegion(checked);
 }
 
 void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)

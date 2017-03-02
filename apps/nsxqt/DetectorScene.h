@@ -94,7 +94,8 @@ public slots:
     void changeCursorMode(int);
     //!
     void showPeakLabels(bool);
-    void drawPeakBackground(bool);
+
+    void drawIntegrationRegion(bool);
     //!
     void showPeakCalcs(bool);
     void clearPeaks();
@@ -134,7 +135,7 @@ private:
 
     bool _showPeakCalcs;
     bool _logarithmic;
-    bool _drawBackground;
+    bool _drawIntegrationRegion;
     std::unique_ptr<ColorMap> _colormap;
 
     QGraphicsPixmapItem* _integrationRegion;

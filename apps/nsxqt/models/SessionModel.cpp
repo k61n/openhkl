@@ -719,8 +719,11 @@ void SessionModel::writeLog()
     auto numors = this->getSelectedNumors();
 
     for (auto numor: numors) {
-        for (auto peak: numor->getPeaks())
-            peaks.push_back(peak);
+        for (auto peak: numor->getPeaks()) {
+            if (peak->isSelected() && !peak->isMasked()) {
+                peaks.push_back(peak);
+            }
+        }
     }
 
     if (!peaks.size()) {

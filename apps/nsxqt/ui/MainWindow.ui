@@ -1334,7 +1334,7 @@ border-radius: 4px;
      </property>
      <addaction name="actionShow_labels"/>
      <addaction name="actionShow_calculated_peak_positions"/>
-     <addaction name="actionDraw_peak_background"/>
+     <addaction name="actionDraw_peak_integration_area"/>
     </widget>
     <widget class="QMenu" name="menuColor_map">
      <property name="title">
@@ -1779,7 +1779,7 @@ QDockWidget::title {
     <string>Peak fit dialog</string>
    </property>
   </action>
-  <action name="actionDraw_peak_background">
+  <action name="actionDraw_peak_integration_area">
    <property name="checkable">
     <bool>true</bool>
    </property>

@@ -5,7 +5,8 @@
 #include "ui_DialogIntegrate.h"
 
 DialogIntegrate::DialogIntegrate(QWidget *parent):
-    QDialog(parent)
+    QDialog(parent),
+    _ui(new Ui::DialogIntegrate)
 {
     _ui->setupUi(this);
 
@@ -15,12 +16,15 @@ DialogIntegrate::DialogIntegrate(QWidget *parent):
     // resolve method overload
     auto valueChanged = static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged);
 
+    _peakScale = _ui->shapeScale->value();
+    _bkgScale = _ui->bkgScale->value();
+
     connect(_ui->shapeScale, valueChanged, [=](double v) {this->_peakScale = v;});
     connect(_ui->bkgScale, valueChanged, [=](double v) {this->_bkgScale = v;});
 }
 
 DialogIntegrate::~DialogIntegrate()
 {
-
+    delete _ui;
 }
 
