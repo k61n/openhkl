@@ -48,11 +48,11 @@
 namespace SX {
 namespace Crystal {
 
-AutoIndexer::AutoIndexer():
+AutoIndexer::AutoIndexer(const std::shared_ptr<SX::Instrument::Experiment>& expt, const std::shared_ptr<SX::Utils::ProgressHandler>& handler):
     _peaks(),
-    _experiment(nullptr),
+    _experiment(expt),
     _solutions(),
-    _handler(nullptr)
+    _handler(handler)
 {
 
 }
@@ -83,8 +83,9 @@ bool AutoIndexer::autoIndex(const Parameters& _params)
     std::vector<Eigen::Vector3d> qvects;
     qvects.reserve(npeaks);
     for (auto peak : _peaks) {
-        if (peak->isSelected() && !peak->isMasked())
+        if (peak->isSelected() && !peak->isMasked()) {
             qvects.push_back(peak->getQ());
+        }
     }
 
     // Set up a FFT indexer object
@@ -245,7 +246,7 @@ bool AutoIndexer::autoIndex(const Parameters& _params)
     );
 
 
-    // buildSolutionsTable();
+    return true;
 }
 
 void AutoIndexer::addPeak(const std::shared_ptr<Peak3D> &peak)

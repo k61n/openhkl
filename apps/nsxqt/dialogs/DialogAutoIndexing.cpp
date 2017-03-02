@@ -13,25 +13,31 @@
 #include <QStandardItemModel>
 #include <QtDebug>
 
+
 #include <nsxlib/instrument/Experiment.h>
-#include <nsxlib/instrument/Gonio.h>
-#include <nsxlib/crystal/FFTIndexing.h>
-#include <nsxlib/crystal/GruberReduction.h>
+//#include <nsxlib/instrument/Gonio.h>
+//#include <nsxlib/crystal/FFTIndexing.h>
+//#include <nsxlib/crystal/GruberReduction.h>
+#include <nsxlib/crystal/AutoIndexer.h>
 #include <nsxlib/data/IData.h>
-#include <nsxlib/crystal/NiggliReduction.h>
-#include <nsxlib/crystal/UBMinimizer.h>
+//#include <nsxlib/crystal/NiggliReduction.h>
+//#include <nsxlib/crystal/UBMinimizer.h>
+#include <nsxlib/utils/Units.h>
+#include <nsxlib/utils/ProgressHandler.h>
 #include "models/CollectedPeaksModel.h"
 #include "models/CollectedPeaksDelegate.h"
 
-using SX::Crystal::tVector;
+//using SX::Crystal::tVector;
 using SX::Crystal::BravaisType;
 using SX::Crystal::LatticeCentring;
-using SX::Crystal::FFTIndexing;
-using SX::Crystal::NiggliReduction;
-using SX::Crystal::UBMinimizer;
-using SX::Crystal::UBSolution;
+//using SX::Crystal::FFTIndexing;
+//using SX::Crystal::NiggliReduction;
+//using SX::Crystal::UBMinimizer;
+//using SX::Crystal::UBSolution;
+using SX::Crystal::AutoIndexer;
 using SX::Data::DataSet;
 using SX::Units::deg;
+using SX::Utils::ProgressHandler;
 
 DialogAutoIndexing::DialogAutoIndexing(std::shared_ptr<Experiment> experiment, std::vector<sptrPeak3D> peaks, QWidget *parent):
     QDialog(parent),
@@ -59,198 +65,53 @@ DialogAutoIndexing::~DialogAutoIndexing()
 
 void DialogAutoIndexing::autoIndex()
 {
-    int nPeaks = _peaks.size();
-    // Check that a minimum number of peaks have been selected for indexing
-    if (nPeaks < 10) {
-        QMessageBox::warning(this, tr("NSXTool"),tr("Need at least 10 peaks for autoindexing"));
-        return;
-    }
-    if (_experiment == nullptr) {
-        return;
-    }
-    if (ui->unitCells->count() == 0) {
-        QMessageBox::warning(this, tr("NSXTool"),tr("No unit cells defined for autoindexing"));
-        return;
-    }
+    auto handler = std::make_shared<ProgressHandler>();
+
+    handler->setCallback([=]() {
+       auto log = handler->getLog();
+       for (auto&& msg: log) {
+           qDebug() << msg.c_str();
+       }
+    });
+
+    AutoIndexer indexer(_experiment, handler);
     sptrUnitCell selectedUnitCell = _unitCells[ui->unitCells->currentIndex()];
 
     // Clear the current solution list
     _solutions.clear();
 
-    // Store Q vectors at rest
-    std::vector<Eigen::Vector3d> qvects;
-    qvects.reserve(nPeaks);
+
     for (auto peak : _peaks) {
-        if (peak->isSelected() && !peak->isMasked())
-            qvects.push_back(peak->getQ());
+        indexer.addPeak(peak);
     }
 
-    qDebug() << "Searching direct lattice vectors using" << nPeaks << "peaks defined on numors:";
+    AutoIndexer::Parameters params;
 
-    // Set up a FFT indexer object
-    FFTIndexing indexing(5,ui->maxCellDim->value());
+    params.subdiv = 5;
+    params.maxdim = ui->maxCellDim->value();
+    params.nSolutions = ui->maxNumSolutions->value();
+    params.nStacks = ui->nStacks->value();
+    params.HKLTolerance = selectedUnitCell->getHKLTolerance();
 
-    int nSolutions = ui->maxNumSolutions->value();
-    int nStacks = ui->nStacks->value();
-    // Find the best tvectors
-    std::vector<tVector> tvects=indexing.findOnSphere(qvects, nStacks, nSolutions);
+    params.niggliReduction = ui->niggliReduction->isChecked();
+    params.niggliTolerance = ui->niggliTolerance->value();
+    params.gruberTolerance = ui->gruberTolerance->value();
 
-    auto source = _experiment->getDiffractometer()->getSource();
-    auto detector = _experiment->getDiffractometer()->getDetector();
-    auto sample = _experiment->getDiffractometer()->getSample();
+    if (indexer.autoIndex(params) == false) {
+        qDebug() << "ERROR: failed to auto index!";
+        return;
+    }
+    _solutions = indexer.getSolutions();
 
-    std::vector<std::pair<UnitCell,double>> newSolutions;
-    newSolutions.reserve(nSolutions*nSolutions*nSolutions);
-
-    for (int i = 0; i < nSolutions; ++i) {
-        for (int j = i+1; j < nSolutions; ++j) {
-            for (int k = j+1; k < nSolutions; ++k) {
-                Eigen::Vector3d& v1=tvects[i]._vect;
-                Eigen::Vector3d& v2=tvects[j]._vect;
-                Eigen::Vector3d& v3=tvects[k]._vect;
-
-                if (v1.dot(v2.cross(v3)) > 20.0) {
-                    UnitCell cell = UnitCell::fromDirectVectors(v1, v2, v3);
-                    newSolutions.push_back(std::make_pair(cell, 0.0));
-                }
-            }
-        }
+    for (auto&& sol: _solutions) {
+        sol.first.setName(selectedUnitCell->getName());
     }
 
-    qDebug() << "" << newSolutions.size()<< " possible solutions found";
-    qDebug() << "Refining solutions";
-
-    //#pragma omp parallel for
-    for (int idx = 0; idx < newSolutions.size(); ++idx) {
-
-        UBMinimizer minimizer;
-        minimizer.setSample(sample);
-        minimizer.setDetector(detector);
-        minimizer.setSource(source);
-
-        UnitCell cell = newSolutions[idx].first;
-        cell.setName(selectedUnitCell->getName());
-        cell.setHKLTolerance(selectedUnitCell->getHKLTolerance());
-
-        // Only the UB matrix parameters are used for fit
-        int nParameters = 10;
-
-        if (sample->hasGonio()) {
-            nParameters += sample->getGonio()->getNAxes();
-        }
-        if (detector->hasGonio()) {
-            nParameters += detector->getGonio()->getNAxes();
-        }
-
-        for (int i = 9; i < nParameters; ++i) {
-            minimizer.refineParameter(i,false);
-        }
-
-        int success = 0;
-        for (auto peak : _peaks) {
-            Eigen::RowVector3d hkl;
-            bool indexingSuccess = peak->getMillerIndices(cell,hkl,true);
-            if (indexingSuccess && peak->isSelected() && !peak->isMasked()) {
-                minimizer.addPeak(*peak,hkl);
-                ++success;
-            }
-        }
-
-        // The number of peaks must be at least for a proper minimization
-        if (success < 10) {
-            continue;
-        }
-        Eigen::Matrix3d M = cell.getReciprocalStandardM();
-        minimizer.setStartingUBMatrix(M);
-        int ret = minimizer.runGSL(100);
-        if (ret == 1) {
-            UBSolution sln = minimizer.getSolution();
-            try {
-                cell = UnitCell::fromReciprocalVectors(sln._ub.row(0),sln._ub.row(1),sln._ub.row(2));
-                cell.setReciprocalCovariance(sln._covub);
-
-            } catch(std::exception& e) {
-                qDebug() << "exception: " << e.what();
-                continue;
-            }
-
-            cell.setName(selectedUnitCell->getName());
-            cell.setHKLTolerance(selectedUnitCell->getHKLTolerance());
-
-            double tolerance = ui->niggliTolerance->value();
-            NiggliReduction niggli(cell.getMetricTensor(), tolerance);
-            Eigen::Matrix3d newg, P;
-            niggli.reduce(newg, P);
-            cell.transform(P);
-
-            // use GruberReduction::reduce to get Bravais type
-            tolerance = ui->gruberTolerance->value();
-            GruberReduction gruber(cell.getMetricTensor(), tolerance);
-            LatticeCentring c;
-            BravaisType b;
-
-            try {
-                gruber.reduce(P,c,b);
-                cell.setLatticeCentring(c);
-                cell.setBravaisType(b);
-            }
-            catch(std::exception& e) {
-                //qDebug() << "Gruber reduction error:" << e.what();
-                //continue;
-            }
-
-            if (!ui->niggliReduction->isChecked()) {
-                cell.transform(P);
-            }
-
-            double score=0.0;
-            double maxscore=0.0;
-            for (auto peak : _peaks) {
-                if (peak->isSelected() && !peak->isMasked()) {
-                    maxscore++;
-                    Eigen::RowVector3d hkl;
-                    bool indexingSuccess = peak->getMillerIndices(cell,hkl,true);
-                    if (indexingSuccess) {
-                        score++;
-                    }
-                }
-            }
-            // Percentage of indexing
-            score /= 0.01*maxscore;
-            newSolutions[idx].first = cell;
-            newSolutions[idx].second = score;
-        }
-        minimizer.resetParameters();
-    }
-
-    _solutions.reserve(newSolutions.size());
-
-    // remove the false solutions
-    for (auto&& it = newSolutions.begin(); it != newSolutions.end(); ++it) {
-        if (it->second > 0.1) {
-            _solutions.push_back(*it);
-        }
-    }
-    _solutions.shrink_to_fit();
-    qDebug() << "Done refining solutions, building solutions table.";
     buildSolutionsTable();
 }
 
 void DialogAutoIndexing::buildSolutionsTable()
 {
-
-    // Sort solutions by decreasing quality.
-    // For equal quality, smallest volume is first
-    typedef std::pair<UnitCell,double> Soluce;
-    std::sort(_solutions.begin(),_solutions.end(),[](const Soluce& s1, const Soluce& s2) -> bool
-    {
-        if (s1.second==s2.second)
-            return (s1.first.getVolume()<s2.first.getVolume());
-        else
-            return (s1.second>s2.second);
-    }
-    );
-
     // Create table with 9 columns
     QStandardItemModel* model=new QStandardItemModel(_solutions.size(),9,this);
     model->setHorizontalHeaderItem(0,new QStandardItem("a"));

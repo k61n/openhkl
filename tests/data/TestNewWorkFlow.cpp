@@ -19,14 +19,19 @@
 #include <nsxlib/data/PeakFinder.h>
 #include <nsxlib/imaging/ConvolutionKernel.h>
 #include <nsxlib/imaging/KernelFactory.h>
+#include <nsxlib/crystal/AutoIndexer.h>
+#include <nsxlib/instrument/Experiment.h>
 
 using namespace SX::Data;
 using namespace SX::Instrument;
 using namespace SX::Units;
+
 using SX::Utils::ProgressHandler;
 using SX::Data::PeakFinder;
 using SX::Imaging::ConvolutionKernel;
 using SX::Imaging::KernelFactory;
+using SX::Crystal::AutoIndexer;
+using SX::Instrument::Experiment;
 
 // const double tolerance=1e-2;
 
@@ -42,8 +47,11 @@ int run_test()
     DataReaderFactory* factory = DataReaderFactory::Instance();
     DiffractometerStore* ds = DiffractometerStore::Instance();
 
-    std::shared_ptr<Diffractometer> diff = std::shared_ptr<Diffractometer>(ds->buildDiffractomer("BioDiff2500"));
+    std::shared_ptr<Experiment> expt(new Experiment("test", "BioDiff2500"));
+    auto diff = expt->getDiffractometer();
     std::shared_ptr<DataSet> dataf(factory->create("hdf", "gal3.hdf", diff));
+
+    expt->addData(dataf);
 
     std::shared_ptr<ProgressHandler> progressHandler(new ProgressHandler);
     std::shared_ptr<PeakFinder> peakFinder(new PeakFinder);
@@ -86,6 +94,19 @@ int run_test()
     BOOST_CHECK(dataf->getPeaks().size() == 850);
 
     // at this stage we have the peaks, now we index
+    AutoIndexer::Parameters params;
+    AutoIndexer indexer(expt, progressHandler);
+
+    for (auto&& peak: dataf->getPeaks()) {
+        indexer.addPeak(peak);
+    }
+
+    BOOST_CHECK(indexer.autoIndex(params));
+
+    auto soln = indexer.getSolutions().front();
+
+    // correctly indexed at least 92% of peaks
+    BOOST_CHECK(soln.second > 92.0);
 
     return 0;
 }

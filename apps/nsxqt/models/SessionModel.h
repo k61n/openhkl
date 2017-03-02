@@ -126,6 +126,9 @@ private:
     std::shared_ptr<SX::Data::PeakFinder> _peakFinder;
     std::string _colormap;
 
+    double _peakScale = 1.0;
+    double _bkgScale = 3.0;
+
     //std::map<std::string, std::shared_ptr<SX::Instrument::Experiment>> _experiments;
 };
 

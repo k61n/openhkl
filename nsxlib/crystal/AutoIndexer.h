@@ -59,18 +59,18 @@ public:
     struct Parameters {
         double maxdim = 200.0;
         int nSolutions = 10;
-        int nStacks = 20;
+        int nStacks = 30;
         int subdiv = 5;
         double HKLTolerance = 0.2;
-        double niggliTolerance = 1e-6;
-        double gruberTolerance = 1e-6;
+        double niggliTolerance = 1e-3;
+        double gruberTolerance = 4e-2;
         bool niggliReduction = false;
 
         //Parameters() = default;
     };
 
 public:
-    AutoIndexer();
+    AutoIndexer(const std::shared_ptr<SX::Instrument::Experiment>& expt, const std::shared_ptr<SX::Utils::ProgressHandler>& handler = nullptr);
 
     bool autoIndex(const Parameters& params);
     void addPeak(const std::shared_ptr<Peak3D>& peak);

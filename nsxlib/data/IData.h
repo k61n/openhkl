@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef NSXTOOL_DATA_H_
-#define NSXTOOL_DATA_H_
+#ifndef NSXTOOL_DATASET_H_
+#define NSXTOOL_DATASET_H_
 
 #include <memory>
 #include <string>
@@ -192,7 +192,7 @@ public:
     double getBackgroundLevel(const std::shared_ptr<SX::Utils::ProgressHandler>& progress);
 
     //! Integrate intensities of all peaks
-    void integratePeaks(const std::shared_ptr<SX::Utils::ProgressHandler>& handler = nullptr);
+    void integratePeaks(double peak_scale = 1.0, double bkg_scale = 3.0, const std::shared_ptr<SX::Utils::ProgressHandler>& handler = nullptr);
 
     double getSampleStepSize() const;
 
@@ -218,4 +218,4 @@ protected:
 } // end namespace Data
 } // end namespace SX
 
-#endif // NSXTOOL_DATA_H_
+#endif // NSXTOOL_DATASET_H_

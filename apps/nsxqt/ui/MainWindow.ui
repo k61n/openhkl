@@ -1387,7 +1387,7 @@ border-radius: 4px;
      <addaction name="actionRemove_bad_peaks"/>
      <addaction name="actionIncorporate_calculated_peaks"/>
      <addaction name="actionApply_resolution_cutoff"/>
-     <addaction name="actionRescale_integration_area"/>
+     <addaction name="actionReintegrate_peaks"/>
     </widget>
     <addaction name="actionFind_space_group"/>
     <addaction name="menuPeaks"/>
@@ -1787,7 +1787,7 @@ QDockWidget::title {
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Draw peak background</string>
+    <string>Draw peak integration area</string>
    </property>
   </action>
   <action name="actionNew_session">
@@ -1856,6 +1856,11 @@ QDockWidget::title {
   <action name="actionRescale_integration_area">
    <property name="text">
     <string>Rescale integration area</string>
+   </property>
+  </action>
+  <action name="actionReintegrate_peaks">
+   <property name="text">
+    <string>Reintegrate peaks</string>
    </property>
   </action>
  </widget>

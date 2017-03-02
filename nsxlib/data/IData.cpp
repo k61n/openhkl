@@ -551,12 +551,8 @@ double DataSet::getBackgroundLevel(const std::shared_ptr<SX::Utils::ProgressHand
     return _background;
 }
 
-void DataSet::integratePeaks(const std::shared_ptr<Utils::ProgressHandler>& handler)
+void DataSet::integratePeaks(double peak_scale, double bkg_scale, const std::shared_ptr<Utils::ProgressHandler>& handler)
 {
-    // these should be passed as arguments
-    const double peak_scale = 1.0;
-    const double bkg_scale = 3.0;
-
     if (handler) {
         handler->setStatus(("Integrating " + std::to_string(getPeaks().size()) + " peaks...").c_str());
         handler->setProgress(0);
