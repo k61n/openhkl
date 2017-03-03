@@ -663,7 +663,7 @@ void SessionModel::incorporateCalculatedPeaks()
         for (sptrPeak3D peak: calculated_peaks) {
             numor->addPeak(peak);
         }
-        numor->integratePeaks(_peakScale, _bkgScale, handler);
+        numor->integratePeaks(_peakScale, _bkgScale, false, handler);
         observed_peaks += numor->getPeaks().size();
     }
     updatePeaks();

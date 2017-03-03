@@ -35,6 +35,7 @@ namespace SX {
 namespace Crystal {
 
 PeakIntegrator::PeakIntegrator(const SX::Geometry::IntegrationRegion& region, const SX::Data::DataSet& data):
+    _blob(),
     _region(region),
     _lower(region.getBackground().getLower()),
     _upper(region.getBackground().getUpper()),
@@ -130,8 +131,26 @@ void PeakIntegrator::step(const Eigen::MatrixXi& frame, size_t idx, const Eigen:
     _countsPeak[idx-_data_start] = intensityP;
     _countsBkg[idx-_data_start] = intensityBkg;
 
+    const double avgBkg = intensityBkg / pointsinbkg;
+
     if (pointsinpeak > 0) {
         _projectionPeak[idx-_data_start] = intensityP-intensityBkg*pointsinpeak/pointsinbkg;
+    }
+
+    // update blob
+    for (unsigned int x = _start_x; x <= _end_x; ++x) {
+        for (unsigned int y = _start_y; y <= _end_y; ++y) {
+            const double intensity = frame(y, x);
+            const double thresh = intensity / avgBkg;
+            //double mass = frame(y, x) - avgBkg;
+            _point1 << x+0.5, y+0.5, idx, 1;
+
+            if(thresh < 0.99 || !_region.inRegion(_point1)) {
+                continue;
+            }
+
+            _blob.addPoint(_point1(0), _point1(1), _point1(2), intensity);
+        }
     }
 }
 
@@ -184,24 +203,32 @@ void PeakIntegrator::end()
     //_countsSigma = std::sqrt(std::abs(_counts));
 }
 
-const Eigen::VectorXd &PeakIntegrator::getProjectionPeak() const
+const Eigen::VectorXd& PeakIntegrator::getProjectionPeak() const
 {
     return _projectionPeak;
 }
 
-const Eigen::VectorXd &PeakIntegrator::getProjectionBackground() const
+const Eigen::VectorXd& PeakIntegrator::getProjectionBackground() const
 {
     return _projectionBkg;
 }
 
-const Eigen::VectorXd &PeakIntegrator::getProjection() const
+const Eigen::VectorXd& PeakIntegrator::getProjection() const
 {
     return _projection;
 }
 
-const Geometry::IntegrationRegion &PeakIntegrator::getRegion() const
+const Geometry::IntegrationRegion& PeakIntegrator::getRegion() const
 {
     return _region;
+}
+
+PeakIntegrator::Ellipsoid3D PeakIntegrator::getBlobShape(double confidence) const
+{
+    Eigen::Vector3d center, eigenvalues;
+    Eigen::Matrix3d eigenvectors;
+    _blob.toEllipsoid(confidence, center, eigenvalues, eigenvectors);
+    return Ellipsoid3D(center, eigenvalues, eigenvectors);
 }
 
 } // namespace Crystal

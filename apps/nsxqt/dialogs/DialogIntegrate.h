@@ -18,8 +18,9 @@ public:
     DialogIntegrate(QWidget *parent = 0);
     ~DialogIntegrate();
 
-    double getPeakScale() const { return _peakScale; }
-    double getBackgroundScale() const { return _bkgScale; }
+    double peakScale() const { return _peakScale; }
+    double backgroundScale() const { return _bkgScale; }
+    bool updateShape() const { return true; }
 
 private:
     double _peakScale;

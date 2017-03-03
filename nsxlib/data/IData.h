@@ -192,7 +192,7 @@ public:
     double getBackgroundLevel(const std::shared_ptr<SX::Utils::ProgressHandler>& progress);
 
     //! Integrate intensities of all peaks
-    void integratePeaks(double peak_scale = 1.0, double bkg_scale = 3.0, const std::shared_ptr<SX::Utils::ProgressHandler>& handler = nullptr);
+    void integratePeaks(double peak_scale = 1.0, double bkg_scale = 3.0, bool update_shape = false, const std::shared_ptr<SX::Utils::ProgressHandler>& handler = nullptr);
 
     double getSampleStepSize() const;
 

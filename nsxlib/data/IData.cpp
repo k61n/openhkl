@@ -551,7 +551,7 @@ double DataSet::getBackgroundLevel(const std::shared_ptr<SX::Utils::ProgressHand
     return _background;
 }
 
-void DataSet::integratePeaks(double peak_scale, double bkg_scale, const std::shared_ptr<Utils::ProgressHandler>& handler)
+void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_shape, const std::shared_ptr<Utils::ProgressHandler>& handler)
 {
     if (handler) {
         handler->setStatus(("Integrating " + std::to_string(getPeaks().size()) + " peaks...").c_str());
@@ -614,6 +614,22 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, const std::sha
         auto&& integrator = tup.second;
         integrator.end();
         peak->updateIntegration(integrator);
+
+        if (!update_shape) {
+            continue;
+        }
+
+        // update the peak shape
+        const double confidence = 0.997; // todo: should not be hard coded
+        auto&& shape = integrator.getBlobShape(confidence);
+        auto&& center = shape.getAABBCenter();
+        Eigen::Vector4d p;
+        p << center(0), center(1), center(2), 1.0;
+
+        // check that the blob is actually valid (weak peaks)
+        if (peak->getShape().isInside(p)) {
+            peak->setShape(shape);
+        }
     }
 }
 

@@ -628,13 +628,14 @@ void MainWindow::on_actionReintegrate_peaks_triggered()
         return;
     }
 
-    const double peak_scale = dialog->getPeakScale();
-    const double bkg_scale = dialog->getBackgroundScale();
+    const double peak_scale = dialog->peakScale();
+    const double bkg_scale = dialog->backgroundScale();
+    const bool update_shape = dialog->updateShape();
 
     std::vector<std::shared_ptr<DataSet>> numors = _session->getSelectedNumors();
 
     for (auto&& numor: numors) {
-        numor->integratePeaks(peak_scale, bkg_scale, _progressHandler);
+        numor->integratePeaks(peak_scale, bkg_scale, update_shape, _progressHandler);
     }
 
     _session->updatePeaks();

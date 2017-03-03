@@ -32,6 +32,8 @@
 #define NSXTOOL_PEAKINTEGRATOR_H_
 
 #include "../geometry/IntegrationRegion.h"
+#include "../geometry/Blob3D.h"
+#include "../geometry/Ellipsoid.h"
 #include <Eigen/Core>
 
 namespace SX {
@@ -44,6 +46,8 @@ namespace Crystal {
 
 class PeakIntegrator {
 public:
+    using Ellipsoid3D = SX::Geometry::Ellipsoid<double, 3>;
+
     PeakIntegrator() = delete;
     PeakIntegrator(const SX::Geometry::IntegrationRegion& region, const SX::Data::DataSet& data);
 
@@ -55,7 +59,12 @@ public:
     const Eigen::VectorXd& getProjection() const;
 
     const SX::Geometry::IntegrationRegion& getRegion() const;
+
+    //! return blob shape (not: not scaled by a confidence parameter)
+    Ellipsoid3D getBlobShape(double confidence) const;
 private:
+
+    SX::Geometry::Blob3D _blob;
 
     SX::Geometry::IntegrationRegion _region;
     Eigen::Vector3d _lower;

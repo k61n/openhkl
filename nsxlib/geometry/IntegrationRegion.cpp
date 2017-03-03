@@ -49,20 +49,20 @@ IntegrationRegion::IntegrationRegion(
 
 bool IntegrationRegion::inRegion(const Eigen::Vector4d &p) const
 {
+    if (!_region.isInsideAABB(p)) {
+        return false;
+    }
     return _region.isInside(p);
 }
 
 bool IntegrationRegion::inBackground(const Eigen::Vector4d &p) const
 {
-    // NOTE: we only us AABB for background!
     if(!_background.isInsideAABB(p)) {
         return false;
     }
-
     if(!_background.isInside(p)) {
         return false;
     }
-
     // exclude if in peak
     return !inRegion(p);
 }
