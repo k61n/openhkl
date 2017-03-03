@@ -133,9 +133,10 @@ void PeakIntegrator::step(const Eigen::MatrixXi& frame, size_t idx, const Eigen:
 
     const double avgBkg = intensityBkg / pointsinbkg;
 
-    if (pointsinpeak > 0) {
-        _projectionPeak[idx-_data_start] = intensityP-intensityBkg*pointsinpeak/pointsinbkg;
-    }
+    // commented out: no more per-frame background
+//    if (pointsinpeak > 0) {
+//        _projectionPeak[idx-_data_start] = intensityP-intensityBkg*pointsinpeak/pointsinbkg;
+//    }
 
     // update blob
     for (unsigned int x = _start_x; x <= _end_x; ++x) {
@@ -156,6 +157,12 @@ void PeakIntegrator::step(const Eigen::MatrixXi& frame, size_t idx, const Eigen:
 
 void PeakIntegrator::end()
 {
+    // get average background
+    const double avgBkg = _countsBkg.sum() / _pointsBkg.sum();
+
+    // subtract background from peak
+    _projectionPeak = _countsPeak - avgBkg*_pointsPeak;
+
     // Quick fix determine the limits of the peak range
     int datastart = 0;
     int dataend = 0;
@@ -175,7 +182,6 @@ void PeakIntegrator::end()
     }
     //
 
-    Eigen::VectorXd bkg=_projection-_projectionPeak;
     if (datastart>1) {
         datastart--;
     }
@@ -185,22 +191,20 @@ void PeakIntegrator::end()
         return;
     }
 
-    double bkg_left=bkg[datastart];
-    double bkg_right=bkg[dataend];
-    double diff;
-    for (int i=datastart;i<dataend;++i) {
-        diff=bkg[i]-(bkg_left+static_cast<double>((i-datastart))/static_cast<double>((dataend-datastart))*(bkg_right-bkg_left));
-        if (diff>0) {
-            _projectionPeak[i]+=diff;
-        }
-    }
+    // jmf testing: what does this accomplish?
+//    Eigen::VectorXd bkg=_projection-_projectionPeak;
+//    double bkg_left=bkg[datastart];
+//    double bkg_right=bkg[dataend];
+//    double diff;
+//    for (int i=datastart;i<dataend;++i) {
+//        diff=bkg[i]-(bkg_left+static_cast<double>((i-datastart))/static_cast<double>((dataend-datastart))*(bkg_right-bkg_left));
+//        if (diff>0) {
+//            _projectionPeak[i]+=diff;
+//        }
+//    }
 
     // note: this "background" simply refers to anything in the AABB but NOT in the peak
     _projectionBkg=_projection-_projectionPeak;
-
-    // this should go in Peak3D
-    //_counts = _projectionPeak.sum();
-    //_countsSigma = std::sqrt(std::abs(_counts));
 }
 
 const Eigen::VectorXd& PeakIntegrator::getProjectionPeak() const
