@@ -28,17 +28,18 @@ void ProgressHandler::setCallback(std::function<void ()> callback)
 
 void SX::Utils::ProgressHandler::setProgress(int progress)
 {
-    if ( _callback )
+    if ( _callback ) {
         _callback();
+    }
 
     std::lock_guard<std::mutex> lock(_mutex);
 
     _progress = progress > 100 ? 100 : progress;
     _progress = _progress < 0 ? 0 : _progress;
 
-    if ( aborted() )
+    if ( aborted() ) {
         throw std::runtime_error("Exception: job was aborted!");
-
+    }
 }
 
 int SX::Utils::ProgressHandler::getProgress()

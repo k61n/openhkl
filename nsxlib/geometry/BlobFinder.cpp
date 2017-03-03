@@ -121,9 +121,9 @@ blob3DCollection BlobFinder::find(unsigned int begin, unsigned int end) {
         // determine begining and ending index of current thread
         #pragma omp for
         for (int i = 0; i < _data->getNFrames(); ++i) {
-            if ( begin == -1)
+            if ( begin == -1) {
                 begin = i;
-
+            }
             end = i+1;
         }
 
@@ -139,10 +139,16 @@ blob3DCollection BlobFinder::find(unsigned int begin, unsigned int end) {
         #pragma omp critical
         {
             // merge the blobs into the global set
-            for (auto&& blob: local_blobs)
+            for (auto&& blob: local_blobs) {
                 blobs.insert(blob);
+            }
+        }
+
+        if (_progressHandler) {
+            _progressHandler->log("Done inserting local_blobs into blobs...");
         }
     }
+
 
     // serial section below
     int num_blobs;
@@ -538,5 +544,4 @@ void BlobFinder::mergeBlobs(std::unordered_map<int,Blob3D>& blobs, vipairs& equi
 }
 
 } // namespace Geometry
-
 } // namespace SX

@@ -164,20 +164,6 @@ Eigen::RowVector3d Peak3D::getMillerIndices() const
 
 void Peak3D::setShape(const Ellipsoid3D& peak)
 {
-    // jmf debugging
-    Eigen::Vector3d old_center, new_center;
-
-    old_center = _shape.getAABBCenter();
-    new_center = peak.getAABBCenter();
-
-    std::cout << "old center: " << old_center.transpose() << "; new center: " << new_center.transpose() << std::endl;
-
-    std::cout << "old upper: " << _shape.getUpper().transpose()
-              << "; new upper" << peak.getUpper().transpose() << std::endl;
-
-    std::cout << "old lower: " << _shape.getLower().transpose()
-              << "; new lower" << peak.getLower().transpose() << std::endl;
-
     using DetectorEvent = SX::Instrument::DetectorEvent;
     _shape = peak;
 
