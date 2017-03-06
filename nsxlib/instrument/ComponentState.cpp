@@ -82,7 +82,10 @@ Eigen::Vector3d ComponentState::getPosition() const
     if (gonio == nullptr) {
         return position;
     }
-    return gonio->transform(position, _values);
+
+    gonio->transformInPlace(position, _values);
+
+    return position;
 }
 
 Eigen::Vector3d ComponentState::transformQ(const Eigen::Vector3d &q) const
