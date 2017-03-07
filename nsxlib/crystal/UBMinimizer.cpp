@@ -1,20 +1,21 @@
+#include <cassert>
 #include <cmath>
 
-#include "UBMinimizer.h"
-#include "../utils/MinimizerGSL.h"
-#include "../utils/MinimizerEigen.h"
-
 #include <Eigen/Dense>
+
+#include "Peak3D.h"
+#include "UBMinimizer.h"
+#include "../kernel/Error.h"
 #include "../instrument/Component.h"
 #include "../instrument/ComponentState.h"
 #include "../instrument/Detector.h"
-#include "../utils/EigenMatrixOp.h"
-#include "../kernel/Error.h"
 #include "../instrument/Gonio.h"
-#include "Peak3D.h"
 #include "../instrument/Sample.h"
 #include "../instrument/TransAxis.h"
 #include "../instrument/RotAxis.h"
+#include "../utils/EigenMatrixOp.h"
+#include "../utils/IMinimizer.h"
+#include "../utils/MinimizerGSL.h"
 #include "../utils/Units.h"
 
 namespace SX
@@ -189,8 +190,13 @@ void UBFunctor::refineParameter(unsigned int idx, bool refine)
     }
 }
 
-UBMinimizer::UBMinimizer() : _functor(UBFunctor()), _solution(), _start()
+UBMinimizer::UBMinimizer() : _functor(UBFunctor()), _solution(), _start(), _minimizer(nullptr)
 {
+}
+
+UBMinimizer::~UBMinimizer()
+{
+    delete _minimizer;
 }
 
 void UBMinimizer::addPeak(const Peak3D& peak, const Eigen::RowVector3d& hkl)
@@ -229,88 +235,9 @@ void UBMinimizer::setSample(const std::shared_ptr<SX::Instrument::Sample>& sampl
     _functor.setSample(sample);
 }
 
-int UBMinimizer::runEigen(unsigned int maxIter)
+int UBMinimizer::run(unsigned int maxIter)
 {
-
-    int nParams=_functor.inputs();
-    Eigen::VectorXd x = Eigen::VectorXd::Zero(nParams);
-
-    for (auto&& it: _start) {
-        x[it.first] = it.second;
-    }
-
-    using NumDiffType = Eigen::NumericalDiff<UBFunctor>;
-    NumDiffType numdiff(_functor);
-    Eigen::LevenbergMarquardt<NumDiffType> minimizer(numdiff);
-    minimizer.parameters.xtol=1e-11;
-    minimizer.parameters.maxfev=maxIter;
-    int status = minimizer.minimize(x);
-
-    if (status == 1) {
-        std::vector<bool> fParams(x.size(),false);
-        for (auto&& it : _functor._fixedParameters) {
-            fParams[it] = true;
-        }
-
-        // Create a vector to calculate final residuals
-        Eigen::VectorXd fvec(_functor.values());
-        // Calculate final residuals
-        _functor(x,fvec);
-
-        // The MSE is computed as SSE/dof where dof is the number of degrees of freedom
-        int nFreeParameters=_functor.inputs()-_functor._fixedParameters.size();
-        double mse = fvec.squaredNorm()/(_functor.values()-nFreeParameters);
-
-        // Computation of the covariance matrix
-        // The covariance matrix is obtained from the estimated jacobian computed through a QR decomposition
-        // (see for example:
-        // 		- http://en.wikipedia.org/wiki/Non-linear_least_squares
-        // 		- https://github.com/scipy/scipy/blob/v0.14.0/scipy/optimize/minpack.py#L256
-        // 		- http://osdir.com/ml/python.scientific.user/2005-03/msg00067.html)
-
-        // CMinPack does not provide directly the jacobian but the so called FJAC that is NOT the jacobian
-        // FJAC is an output M by N array where M is the number of observations (_functor.values()) and N the number of parameters (_functor.inputs()).
-        // The upper N by N submatrix of FJAC contains the upper triangular matrix R with diagonal elements of nonincreasing magnitude such that
-        //
-        //		P^t * (J^t * J) * P = R^t * R,
-        //
-        // where P is a permutation matrix and J is the final calculated jacobian
-        // From (J^t * J) we can get directly get the covariance matrix C using the formula
-        //
-        // 		C = (J^t * J)^-1
-
-        // The upper N*N block of the FJAC matrix
-        Eigen::MatrixXd fjac=minimizer.fjac.block(0,0,_functor.inputs(),_functor.inputs());
-
-        // The R * P^t matrix
-        Eigen::MatrixXd RPt = fjac.triangularView<Eigen::Upper>()*(minimizer.permutation.toDenseMatrix().cast<double>().transpose());
-        Eigen::MatrixXd JtJ = RPt.transpose()*RPt;
-
-        // Remove the fixed parameters before inverting J^t * J
-        int removed=0;
-
-        for (unsigned int i=0;i<fParams.size();++i) {
-            if (fParams[i]) {
-                Utils::removeColumn(JtJ,i-removed);
-                Utils::removeRow(JtJ,i-removed);
-                removed++;
-            }
-        }
-        // The covariance matrix
-        Eigen::MatrixXd covariance=JtJ.inverse();
-        covariance *= mse;
-        _solution = UBSolution(_functor._detector, _functor._sample,_functor._source, x, covariance, fParams);
-    }
-    return status;
-}
-
-int UBMinimizer::runGSL(unsigned int maxIter)
-{
-#ifdef NSXTOOL_GSL_FOUND
-    SX::Utils::MinimizerGSL minimizer;
-#else
-    SX::Utils::MinimizerEigen minimizer;
-#endif
+    assert(_minimizer != nullptr);
 
     int nParams=_functor.inputs();
     Eigen::VectorXd x=Eigen::VectorXd::Zero(nParams);
@@ -319,18 +246,18 @@ int UBMinimizer::runGSL(unsigned int maxIter)
         x[it.first] = it.second;
     }
 
-    minimizer.initialize(nParams, _functor.values());
-    minimizer.setParams(x);
-    minimizer.set_f(_functor);
+    _minimizer->initialize(nParams, _functor.values());
+    _minimizer->setParams(x);
+    _minimizer->set_f(_functor);
 
-    minimizer.setxTol(1e-10);
-    minimizer.setfTol(1e-10);
-    minimizer.setgTol(1e-10);
+    _minimizer->setxTol(1e-10);
+    _minimizer->setfTol(1e-10);
+    _minimizer->setgTol(1e-10);
 
-    bool status = minimizer.fit(maxIter);
+    bool status = _minimizer->fit(maxIter);
 
     if (status) {
-        x = minimizer.params();
+        x = _minimizer->params();
 
         std::vector<bool> fParams(x.size(),false);
         for (auto&& it : _functor._fixedParameters) {
@@ -345,7 +272,7 @@ int UBMinimizer::runGSL(unsigned int maxIter)
         int nFreeParameters=_functor.inputs()-_functor._fixedParameters.size();
         double mse = fvec.squaredNorm()/(_functor.values()-nFreeParameters);
         int removed = 0;
-        Eigen::MatrixXd jac = minimizer.jacobian();
+        Eigen::MatrixXd jac = _minimizer->jacobian();
         Eigen::MatrixXd JtJ = jac.transpose()*jac;
 
         for (unsigned int i=0;i<fParams.size();++i) {
@@ -362,8 +289,8 @@ int UBMinimizer::runGSL(unsigned int maxIter)
         _solution = UBSolution(_functor._detector, _functor._sample,_functor._source, x, covariance, fParams);
     }
     // debugging only
-    std::cout << "status is " << minimizer.getStatusStr()
-              << " after " << minimizer.numIterations() << " iterations" << std::endl;
+    std::cout << "status is " << _minimizer->getStatusStr()
+              << " after " << _minimizer->numIterations() << " iterations" << std::endl;
 
     return status;
 }
@@ -384,6 +311,11 @@ void UBMinimizer::setStartingUBMatrix(const Eigen::Matrix3d& ub)
     setStartingValue(6,ub(2,0));
     setStartingValue(7,ub(2,1));
     setStartingValue(8,ub(2,2));
+}
+
+void UBMinimizer::setMinimizer(IMinimizer* minimizer)
+{
+    _minimizer = minimizer;
 }
 
 void UBMinimizer::setStartingValue(unsigned int idx, double value)
