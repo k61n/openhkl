@@ -125,7 +125,7 @@ template<typename T,SX::Types::uint D> bool collideSphereOBB(const Sphere<T,D>&,
 template<typename T,SX::Types::uint D> bool collideSphereSphere(const Sphere<T,D>&, const Sphere<T,D>&);
 
 template<typename T, SX::Types::uint D>
-Sphere<T,D>::Sphere(const Sphere<T,D>& other)
+Sphere<T,D>::Sphere(const Sphere<T,D>& other) : IShape<T,D>(other)
 {
     _center = other._center;
     _radius = other._radius;
@@ -229,7 +229,6 @@ bool Sphere<T,D>::isInside(const HomVector& point) const
 template<typename T, SX::Types::uint D>
 void Sphere<T,D>::rotate(const matrix& eigenvectors)
 {
-#pragma message "method not implemented"
 }
 
 template<typename T, SX::Types::uint D>
