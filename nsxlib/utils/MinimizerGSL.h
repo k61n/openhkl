@@ -36,8 +36,6 @@
 #ifndef NSXTOOL_MINIMIZERGSL_H_
 #define NSXTOOL_MINIMIZERGSL_H_
 
-#ifdef NSXTOOL_GSL_FOUND
-
 #include "IMinimizer.h"
 
 #include <functional>
@@ -100,9 +98,8 @@ private:
     Eigen::VectorXd _outputEigen;
 };
 
-} // namespace Utils
+} // end namespace Utils
 
-} // namespace SX
+} // end namespace SX
 
 #endif // NSXTOOL_MINIMIZERGSL_H_
-#endif // NSXTOOL_GSL_FOUND
