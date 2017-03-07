@@ -79,31 +79,23 @@ find_package(FFTW REQUIRED)
 include_directories(SYSTEM ${FFTW_INCLUDE_DIR})
 
 # GNU scientific library
-find_package(GSL 2.0)
+find_package(GSL 2.0 REQUIRED)
 
-if(GSL_FOUND)
-  include_directories(SYSTEM ${GSL_INCLUDE_DIR})
+include_directories(SYSTEM ${GSL_INCLUDE_DIR})
 
-  message("GSL_INCLUDE_DIR is ${GSL_INCLUDE_DIR}")
+message("GSL_INCLUDE_DIR is ${GSL_INCLUDE_DIR}")
 
-  set(temp_string ${GSL_VERSION})
-  string(REGEX REPLACE "([0-9]+)\\.([0-9]+)(\\.([0-9]+))?" "\\1" gsl_version_major ${temp_string})
-  string(REGEX REPLACE "([0-9]+)\\.([0-9]+)(\\.([0-9]+))?" "\\2" gsl_version_minor ${temp_string})
-  #string(REGEX REPLACE "([0-9]+)\\.([0-9]+)(\\.([0-9]+))?" "\\4" gsl_version_subminor ${temp_string})
+set(temp_string ${GSL_VERSION})
+string(REGEX REPLACE "([0-9]+)\\.([0-9]+)(\\.([0-9]+))?" "\\1" gsl_version_major ${temp_string})
+string(REGEX REPLACE "([0-9]+)\\.([0-9]+)(\\.([0-9]+))?" "\\2" gsl_version_minor ${temp_string})
+#string(REGEX REPLACE "([0-9]+)\\.([0-9]+)(\\.([0-9]+))?" "\\4" gsl_version_subminor ${temp_string})
   
+message("GSL_VERSION_MAJOR is ${gsl_version_major}")
+message("GSL_VERSION_MINOR is ${gsl_version_minor}")
+#message("GSL_VERSION_SUBMINOR is ${gsl_version_subminor}")
 
-  message("GSL_VERSION_MAJOR is ${gsl_version_major}")
-  message("GSL_VERSION_MINOR is ${gsl_version_minor}")
-  #message("GSL_VERSION_SUBMINOR is ${gsl_version_subminor}")
-
-  add_definitions(-DNSXTOOL_GSL_FOUND=1)
-  add_definitions(-DNSXTOOL_GSL_VERSION_MAJOR=${gsl_version_major})
-  add_definitions(-DNSXTOOL_GSL_VERSION_MINOR=${gsl_version_minor})
-    
-  else()
-  message(WARNING "GSL library not found -- will use Eigen/unsupported for Levenberg-Marquardt algorithm")
-endif()
-
+add_definitions(-DNSXTOOL_GSL_VERSION_MAJOR=${gsl_version_major})
+add_definitions(-DNSXTOOL_GSL_VERSION_MINOR=${gsl_version_minor})
 
 
 
