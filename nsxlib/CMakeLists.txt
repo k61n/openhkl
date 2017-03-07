@@ -17,49 +17,26 @@ else()
   add_library(nsx SHARED ${sources} ${headers})
 endif()
 
-if(GSL_FOUND)
-  if(MSVC)
-    target_link_libraries(nsx
-      ${HDF5_LIBRARIES}
-      blosc_static
-      ${Boost_LIBRARIES}
-      ${PYTHON_LIBRARIES}
-      ${FFTW_LIBRARIES}
-      ${TIFF_LIBRARY}
-      ${GSL_LIBRARIES}
-      )
-  else()
-    target_link_libraries(nsx
-      ${HDF5_LIBRARIES}
-      blosc_shared
-      ${Boost_LIBRARIES}
-      ${PYTHON_LIBRARIES}
-      ${FFTW_LIBRARIES}
-      ${TIFF_LIBRARY}
-      ${GSL_LIBRARIES}
-      )
-  endif()
+if(MSVC)
+  target_link_libraries(nsx
+    ${HDF5_LIBRARIES}
+    blosc_static
+    ${Boost_LIBRARIES}
+    ${PYTHON_LIBRARIES}
+    ${FFTW_LIBRARIES}
+    ${TIFF_LIBRARY}
+    ${GSL_LIBRARIES}
+    )
 else()
-  # Link
-  if(MSVC)
-    target_link_libraries(nsx
-      ${HDF5_LIBRARIES}
-      blosc_static
-      ${Boost_LIBRARIES}
-      ${PYTHON_LIBRARIES}
-      ${FFTW_LIBRARIES}
-      ${TIFF_LIBRARY}
-      )
-  else()
-    target_link_libraries(nsx
-      ${HDF5_LIBRARIES}
-      blosc_shared
-      ${Boost_LIBRARIES}
-      ${PYTHON_LIBRARIES}
-      ${FFTW_LIBRARIES}
-      ${TIFF_LIBRARY}
-      )
-  endif()
+  target_link_libraries(nsx
+    ${HDF5_LIBRARIES}
+    blosc_shared
+    ${Boost_LIBRARIES}
+    ${PYTHON_LIBRARIES}
+    ${FFTW_LIBRARIES}
+    ${TIFF_LIBRARY}
+    ${GSL_LIBRARIES}
+    )
 endif()
 
 # Install section, installing libraries
