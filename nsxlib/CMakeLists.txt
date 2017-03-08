@@ -17,10 +17,6 @@ else()
   add_library(nsx SHARED ${sources} ${headers})
 endif()
 
-foreach(path ${CMAKE_PREFIX_PATH})
-  message("Path: " ${path})
-endforeach(path)
-
 if(MSVC)
   target_link_libraries(nsx
     ${HDF5_LIBRARIES}
