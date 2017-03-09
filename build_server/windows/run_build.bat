@@ -11,7 +11,7 @@ set PATH=C:\Users\ci\Libraries\eigen;%PATH%
 set PATH=C:\Users\ci\Libraries\libtiff;%PATH%
 set PATH=C:\Program Files\LLVM;%PATH%
 call "C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\vcvarsall.bat"
-cmake .. -G"Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Release
+cmake .. -G"Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INCLUDE_PATH=C:\opt\local_x64\include -DCMAKE_LIBRARY_PATH=C:\opt\local_x64\lib
 set CL=/MP
 cmake --build . --config Release
 
