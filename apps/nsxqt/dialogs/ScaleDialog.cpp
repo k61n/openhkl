@@ -22,19 +22,22 @@
 
 #include <QMessageBox>
 
-#include <nsxlib/instrument/Sample.h>
 #include <nsxlib/crystal/SpaceGroup.h>
 #include <nsxlib/crystal/SpaceGroupSymbols.h>
 #include <nsxlib/data/IData.h>
 #include <nsxlib/crystal/Peak3D.h>
-#include <nsxlib/utils/Minimizer.h>
 #include <nsxlib/crystal/RFactor.h>
+#include <nsxlib/instrument/Sample.h>
+#include <nsxlib/utils/IMinimizer.h>
+#include <nsxlib/utils/MinimizerGSL.h>
 
 #include "Externals/qcustomplot.h"
 
 using namespace std;
 
 using SX::Crystal::Peak3D;
+using SX::Utils::IMinimizer;
+using SX::Utils::MinimizerGSL;
 
 ScaleDialog::ScaleDialog(const vector<vector<Peak3D*>>& peaks, QWidget *parent) :
     QDialog(parent),
@@ -333,24 +336,24 @@ void ScaleDialog::refineScale()
 
     qDebug() << "Refining scale using minimizer...";
 
-    SX::Utils::Minimizer minimizer;
+    IMinimizer* minimizer = new MinimizerGSL();
 
     resetScale();
 
-    minimizer.initialize(int(_scaleParams.size()), _values);
+    minimizer->initialize(int(_scaleParams.size()), _values);
 
-    minimizer.setxTol(1e-15);
-    minimizer.setfTol(1e-15);
-    minimizer.setgTol(1e-15);
+    minimizer->setxTol(1e-15);
+    minimizer->setfTol(1e-15);
+    minimizer->setgTol(1e-15);
 
-    minimizer.setParams(_scaleParams);
+    minimizer->setParams(_scaleParams);
 
-    minimizer.set_f(residual_fn);
-    minimizer.fit(1000);
+    minimizer->set_f(residual_fn);
+    minimizer->fit(1000);
 
-    _scaleParams = minimizer.params();
+    _scaleParams = minimizer->params();
 
-    qDebug() << "...done after " << minimizer.numIterations() << "iterations";
+    qDebug() << "...done after " << minimizer->numIterations() << "iterations";
 }
 
 void ScaleDialog::on_pushButton_clicked()

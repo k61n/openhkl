@@ -4,22 +4,23 @@
 #include <map>
 #include <string>
 
-#include <QMenu>
-
 #include <Eigen/Dense>
 
+#include <QtDebug>
 #include <QItemSelectionModel>
+#include <QMenu>
 #include <QMessageBox>
 #include <QStandardItemModel>
-#include <QtDebug>
 
-#include <nsxlib/instrument/Experiment.h>
-#include <nsxlib/instrument/Gonio.h>
 #include <nsxlib/crystal/FFTIndexing.h>
 #include <nsxlib/crystal/GruberReduction.h>
-#include <nsxlib/data/IData.h>
 #include <nsxlib/crystal/NiggliReduction.h>
 #include <nsxlib/crystal/UBMinimizer.h>
+#include <nsxlib/data/IData.h>
+#include <nsxlib/instrument/Experiment.h>
+#include <nsxlib/instrument/Gonio.h>
+#include <nsxlib/utils/MinimizerGSL.h>
+
 #include "models/CollectedPeaksModel.h"
 #include "models/CollectedPeaksDelegate.h"
 
@@ -32,6 +33,7 @@ using SX::Crystal::UBMinimizer;
 using SX::Crystal::UBSolution;
 using SX::Data::DataSet;
 using SX::Units::deg;
+using SX::Utils::MinimizerGSL;
 
 DialogAutoIndexing::DialogAutoIndexing(std::shared_ptr<Experiment> experiment, std::vector<sptrPeak3D> peaks, QWidget *parent):
     QDialog(parent),
@@ -121,7 +123,7 @@ void DialogAutoIndexing::autoIndex()
     qDebug() << "Refining solutions";
 
     //#pragma omp parallel for
-    for (int idx = 0; idx < newSolutions.size(); ++idx) {
+    for (size_t idx = 0; idx < newSolutions.size(); ++idx) {
 
         UBMinimizer minimizer;
         minimizer.setSample(sample);
@@ -162,7 +164,8 @@ void DialogAutoIndexing::autoIndex()
         }
         Eigen::Matrix3d M = cell.getReciprocalStandardM();
         minimizer.setStartingUBMatrix(M);
-        int ret = minimizer.runGSL(100);
+        minimizer.setMinimizer(new MinimizerGSL());
+        int ret = minimizer.run(100);
         if (ret == 1) {
             UBSolution sln = minimizer.getSolution();
             try {

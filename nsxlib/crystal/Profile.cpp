@@ -33,13 +33,14 @@
  *
  */
 
-#include "Profile.h"
-#include "../utils/MinimizerEigen.h"
 #include <cmath>
 #include <iostream>
 #include <iomanip>
 
-using SX::Utils::MinimizerEigen;
+#include "Profile.h"
+#include "../utils/MinimizerGSL.h"
+
+using SX::Utils::MinimizerGSL;
 using SX::Utils::Lorentzian;
 using SX::Utils::Gaussian;
 
@@ -56,7 +57,7 @@ Profile::Profile(const Utils::Lorentzian &lor, const Utils::Gaussian &gauss):
 
 bool Profile::fit(const Eigen::VectorXd &y, int max_iter)
 {
-    MinimizerEigen min;
+    MinimizerGSL min;
     Eigen::VectorXd wt;
     wt.resize(y.size());
 
@@ -127,5 +128,6 @@ double Profile::integrate() const
     return 0.5*_gauss.integrate() + 0.5*_lorentz.integrate();
 }
 
-} // namespace Crystal
-} // namespace SX
+} // end namespace Crystal
+
+} // end namespace SX
