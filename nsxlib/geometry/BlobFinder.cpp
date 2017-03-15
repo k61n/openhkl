@@ -14,10 +14,11 @@ namespace Geometry
 
 void BlobFinder::registerEquivalence(int a, int b, vipairs& equivalences)
 {
-    if (a < b)
+    if (a < b) {
         equivalences.push_back(vipairs::value_type(b,a));
-    else
+    } else {
         equivalences.push_back(vipairs::value_type(a,b));
+    }
 }
 
 bool BlobFinder::sortEquivalences(const ipair& pa, const ipair& pb)
@@ -464,8 +465,9 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
     oct.setMaxDepth(6);
     oct.setMaxStorage(6);
 
-    for (auto&& it: boxes)
+    for (auto&& it: boxes) {
         oct.addData(it.first);
+    }
 
     std::set<Octree::collision_pair> collisions;
 
@@ -490,7 +492,21 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
         if (it->first->collide(*(it->second))) {
             auto&& bit1 = boxes.find(it->first);
             auto&& bit2 = boxes.find(it->second);
+
+            if (_progressHandler) {
+                if (bit1 == boxes.end()) {
+                    _progressHandler->log("ERROR: bit1 is boxes.end()");
+                }
+                if (bit2 == boxes.end()) {
+                    _progressHandler->log("ERROR: bit2 is boxes.end()");
+                }
+                _progressHandler->log("registering equivalence");
+            }
+
             registerEquivalence(bit1->second, bit2->second, equivalences);
+            if (_progressHandler) {
+                _progressHandler->log("done registering equivalence");
+            }
         }
         // update progress handler
         if ( (dummy&magic) == 0 && _progressHandler) {
