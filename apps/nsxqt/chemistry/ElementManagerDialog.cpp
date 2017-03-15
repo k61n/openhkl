@@ -1,6 +1,7 @@
-#include <nsxlib/chemistry/IsotopeManager.h>
+#include <nsxlib/chemistry/ChemicalDatabaseManager.h>
 #include <nsxlib/chemistry/Element.h>
 #include <nsxlib/chemistry/ElementManager.h>
+#include <nsxlib/chemistry/Isotope.h>
 #include <nsxlib/kernel/Error.h>
 
 #include "ui_ElementManagerDialog.h"
@@ -18,6 +19,9 @@
 #include <QShortcut>
 #include <QSortFilterProxyModel>
 
+using SX::Chemistry::ChemicalDatabaseManager;
+using SX::Chemistry::Isotope;
+
 ElementManagerDialog::ElementManagerDialog(QWidget *parent)
 : QDialog(parent),
   ui(new Ui::ElementManagerDialog)
@@ -32,10 +36,10 @@ ElementManagerDialog::ElementManagerDialog(QWidget *parent)
         ui->elementsList->addItem(QString::fromStdString(p.first));
 
     // Get the isotope manager
-    _isotopeMgr = SX::Chemistry::IsotopeManager::Instance();
+    ChemicalDatabaseManager<Isotope>* _isotopeMgr = ChemicalDatabaseManager<Isotope>::Instance();
     // Fills the element list widget with the isotopes stored in the registry
-    for (const auto& isName : _isotopeMgr->getDatabaseNames())
-        ui->isotopesList->addItem(QString::fromStdString(isName));
+    for (const auto& isotope : _isotopeMgr->getDatabase())
+        ui->isotopesList->addItem(QString::fromStdString(isotope.first));
 
     // Create and set the model underlying the new element table view
     _model = new DragElementModel();

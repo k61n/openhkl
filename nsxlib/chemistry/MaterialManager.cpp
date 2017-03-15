@@ -6,7 +6,6 @@
 #include <boost/spirit/include/phoenix_fusion.hpp>
 
 #include "ChemicalFormulaParser.h"
-#include "IsotopeManager.h"
 #include "Element.h"
 #include "ElementManager.h"
 #include "../kernel/Error.h"
@@ -25,8 +24,7 @@ namespace Chemistry
 MaterialManager::MaterialManager() : _registry()
 {
     // The default path for the elements database is $HOME/.nsxtool/databases/elements.xml
-    filesystem::path p(SX::Utils::Path::getDataBasesPath());
-    p/="materials.xml";
+    filesystem::path p(SX::Utils::Path::getDataBasesPath("materials"));
     _database = p.string();
 }
 

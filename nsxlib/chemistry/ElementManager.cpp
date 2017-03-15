@@ -1,3 +1,4 @@
+#include <iostream>
 #include <stdexcept>
 #include <boost/version.hpp>
 #include <boost/filesystem.hpp>
@@ -9,7 +10,7 @@
 #include "ElementManager.h"
 #include "../utils/Path.h"
 #include "../utils/Units.h"
-#include "IsotopeManager.h"
+
 #define BOOST_MINOR BOOST_VERSION/100 % 1000
 
 namespace SX
@@ -25,8 +26,7 @@ namespace xml_parser=boost::property_tree::xml_parser;
 ElementManager::ElementManager() : _registry()
 {
     // The default path for the elements database is /usr/share/databases/elements.xml
-    filesystem::path p(SX::Utils::Path::getDataBasesPath());
-    p/="elements.xml";
+    filesystem::path p(SX::Utils::Path::getDataBasesPath("elements"));
     setDatabasePath(p.string());
 }
 
@@ -89,6 +89,7 @@ sptrElement ElementManager::buildElement(const property_tree::ptree& node)
 
     std::string name;
 
+
     // Try to get the XML attribute "name" of the current element node. If not possible, skip.
     try
     {
@@ -98,6 +99,8 @@ sptrElement ElementManager::buildElement(const property_tree::ptree& node)
     {
         return element;
     }
+
+    std::cout<<"name "<<name<<std::endl;
 
     // If an element with this name is already registered, skip
     auto it=_registry.find(name);

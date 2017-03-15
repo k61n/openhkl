@@ -2,10 +2,13 @@
 #include "IsotopesListWidget.h"
 #include "ElementsListWidget.h"
 
+#include <nsxlib/chemistry/ChemicalDatabaseManager.h>
 #include <nsxlib/chemistry/Element.h>
 #include <nsxlib/chemistry/ElementManager.h>
 #include <nsxlib/chemistry/Isotope.h>
-#include <nsxlib/chemistry/IsotopeManager.h>
+
+using SX::Chemistry::ChemicalDatabaseManager;
+using SX::Chemistry::Isotope;
 
 DragElementModel::DragElementModel()
 : QAbstractTableModel(),
@@ -111,9 +114,9 @@ bool DragElementModel::setData(const QModelIndex &index, const QVariant &value, 
         if (dynamic_cast<IsotopesListWidget*>(_sender))
         {
 
-            SX::Chemistry::IsotopeManager* imgr = SX::Chemistry::IsotopeManager::Instance();
+            ChemicalDatabaseManager<Isotope>* imgr = SX::Chemistry::ChemicalDatabaseManager<Isotope>::Instance();
 
-            SX::Chemistry::sptrIsotope isotope=imgr->getIsotope(value.toString().toStdString());
+            SX::Chemistry::sptrIsotope isotope=imgr->getChemicalObject(value.toString().toStdString());
             QString name=QString::fromStdString(isotope->getName());
             for (auto it : _isotopes)
             {
@@ -121,7 +124,7 @@ bool DragElementModel::setData(const QModelIndex &index, const QVariant &value, 
                 if (it.first.compare(name)==0)
                     return false;
             }
-            double abundance=isotope->getNaturalAbundance();
+            double abundance=isotope->getProperty<double>("natural_abundance");
             QPair<QString,double> pair(name,abundance);
 
             if (index.row() == _isotopes.size())

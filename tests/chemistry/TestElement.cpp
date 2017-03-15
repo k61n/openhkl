@@ -6,7 +6,6 @@
 #include <nsxlib/chemistry/Element.h>
 #include <nsxlib/chemistry/ElementManager.h>
 #include <nsxlib/kernel/Error.h>
-#include <nsxlib/chemistry/IsotopeManager.h>
 #include <nsxlib/utils/Units.h>
 
 using namespace SX::Chemistry;
@@ -64,7 +63,4 @@ BOOST_AUTO_TEST_CASE(Test_Element)
     BOOST_CHECK_CLOSE(dbHydrogen->getMolarMass(),hydrogen->getMolarMass(),tolerance);
 
     emgr->saveRegistry("elements_new.xml");
-
-    // ElementManager::DestroyInstance();
-    // IsotopeManager::DestroyInstance();
 }
