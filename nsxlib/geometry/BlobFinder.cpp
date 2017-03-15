@@ -489,6 +489,9 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
 
     for (auto&& it = collisions.begin(); it != collisions.end(); ++it) {
         // register collision
+        if (_progressHandler) {
+            _progressHandler->log("testing collision");
+        }
         if (it->first->collide(*(it->second))) {
             auto&& bit1 = boxes.find(it->first);
             auto&& bit2 = boxes.find(it->second);
@@ -507,6 +510,9 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
             if (_progressHandler) {
                 _progressHandler->log("done registering equivalence");
             }
+        }
+        if (_progressHandler) {
+            _progressHandler->log("done testing collision");
         }
         // update progress handler
         if ( (dummy&magic) == 0 && _progressHandler) {
