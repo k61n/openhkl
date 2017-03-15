@@ -493,6 +493,11 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
             _progressHandler->log("testing collision");
         }
         if (it->first->collide(*(it->second))) {
+
+            if (_progressHandler) {
+                _progressHandler->log("collision found");
+            }
+
             auto&& bit1 = boxes.find(it->first);
             auto&& bit2 = boxes.find(it->second);
 
