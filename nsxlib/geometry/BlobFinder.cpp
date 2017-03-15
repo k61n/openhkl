@@ -389,7 +389,7 @@ void BlobFinder::setRelative(bool isRelative)
 
 void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& equivalences) const
 {
-    // update progress handler
+    // jmf debugging
     if (_progressHandler) {
         _progressHandler->log("entering BlobFinder::findCollisions()");
     }
@@ -408,12 +408,22 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
     shape3Dmap boxes;
     boxes.reserve(blobs.size());
 
+    // jmf debugging
+    if (_progressHandler) {
+        _progressHandler->log("boxes reserved");
+    }
+
     Eigen::Vector3d center,extents;
     Eigen::Matrix3d axis;
 
     // dummies used to help progress handler
     int dummy = 0;
     int magic = 0.2 * std::distance(blobs.begin(), blobs.end());
+
+    // jmf debugging
+    if (_progressHandler) {
+        _progressHandler->log("entering loop over blobs");
+    }
 
     for (auto it = blobs.begin(); it != blobs.end();) {
         ++dummy;
@@ -445,6 +455,11 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
         }
     }
 
+    // jmf debugging
+    if (_progressHandler) {
+        _progressHandler->log("done looping over blobs");
+    }
+
     Octree oct({0.0,0.0,0.0},{double(_ncols),double(_nrows),double(_nframes)});
     oct.setMaxDepth(6);
     oct.setMaxStorage(6);
@@ -453,11 +468,22 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
         oct.addData(it.first);
 
     std::set<Octree::collision_pair> collisions;
+
+    // jmf debugging
+    if (_progressHandler) {
+        _progressHandler->log("calculating possible collisions");
+    }
+
     oct.getPossibleCollisions(collisions);
 
     // dummies used to help progress handler
     dummy = 0;
     magic = 0.02 * std::distance(collisions.begin(), collisions.end());
+
+    // jmf debugging
+    if (_progressHandler) {
+        _progressHandler->log("beginning loop over collisions");
+    }
 
     for (auto&& it = collisions.begin(); it != collisions.end(); ++it) {
         // register collision
@@ -474,6 +500,12 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
             _progressHandler->setProgress(50 + 0.5*progress);
         }
     }
+
+    // jmf debugging
+    if (_progressHandler) {
+        _progressHandler->log("done loop over collisions");
+    }
+
     // calculation complete
     if ( _progressHandler ) {
         _progressHandler->log("Found " + std::to_string(equivalences.size()) + " equivalences");
