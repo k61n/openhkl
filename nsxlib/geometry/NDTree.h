@@ -383,10 +383,14 @@ void NDTree<T,D>::getPossibleCollisions(std::set<collision_pair >& collisions) c
                 // If two AABBs intersect, add to the set sorting the addresses
                 if (bb1->IShape<T,D>::intercept(*bb2))
                 {
-                    if (bb1 < bb2)
+                    if (bb1 < bb2) {
                         collisions.insert(typename setcol::value_type(bb1,bb2));
-                    else
-                        collisions.insert(typename setcol::value_type(bb1,bb2));
+                    }
+                    else {
+                        // jmf: fix bug??
+                        //collisions.insert(typename setcol::value_type(bb1,bb2));
+                        collisions.insert(typename setcol::value_type(bb2,bb1));
+                    }
                 }
             }
         }
