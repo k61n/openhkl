@@ -149,12 +149,21 @@ blob3DCollection BlobFinder::find(unsigned int begin, unsigned int end) {
         }
     }
 
+    if (_progressHandler) {
+        _progressHandler->log("done parallel section.");
+    }
+
 
     // serial section below
     int num_blobs;
 
     do {
         num_blobs = blobs.size();
+
+        if (_progressHandler) {
+            _progressHandler->log("number of blobs is " + std::to_string(num_blobs));
+        }
+
         // determine which additional blobs should be merged due to collisions / intersection
         findCollisions(blobs, equivalences);
         // merge the remaining blobs
@@ -380,6 +389,12 @@ void BlobFinder::setRelative(bool isRelative)
 
 void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& equivalences) const
 {
+    // update progress handler
+    if (_progressHandler) {
+        _progressHandler->log("entering BlobFinder::findCollisions()");
+    }
+
+
     // Clear the equivalence vectors for reuse purpose
     equivalences.clear();
 
