@@ -1,72 +1,57 @@
+#include <stdexcept>
+
 #include "Isotope.h"
+#include "../utils/Path.h"
 
-namespace SX
-{
+namespace SX {
 
-namespace Chemistry
-{
+namespace Chemistry {
 
-Isotope* Isotope::create(const std::string& name)
-{
-	return (new Isotope(name));
-}
+using SX::Utils::Path;
 
-Isotope::Isotope()
-: _name(""),
-  _symbol(""),
-  _element(""),
-  _nProtons(0),
-  _nNucleons(0),
-  _nElectrons(0),
-  _molarMass(0.0),
-  _nuclearSpin(0.0),
-  _chemicalState(""),
-  _naturalAbundance(0.0),
-  _halfLife(0.0),
-  _stable(true),
-  _bCoherent(0.0),
-  _bIncoherent(0.0),
-  _bPlus(0.0),
-  _bMinus(0.0),
-  _xsCoherent(0.0),
-  _xsIncoherent(0.0),
-  _xsScattering(0.0),
-  _xsAbsorption(0.0)
-{
-}
+std::map<std::string,Isotope::PropertyType> Isotope::PropertyTypes = {{"string",PropertyType::String},
+                                                                      {"int",PropertyType::Int},
+                                                                      {"double",PropertyType::Double},
+                                                                      {"complex",PropertyType::Complex}};
 
-Isotope::Isotope(const std::string& name)
-: _name(name),
-  _symbol(""),
-  _element(""),
-  _nProtons(0),
-  _nNucleons(0),
-  _nElectrons(0),
-  _molarMass(0.0),
-  _nuclearSpin(0.0),
-  _chemicalState(""),
-  _naturalAbundance(0.0),
-  _halfLife(0.0),
-  _stable(true),
-  _bCoherent(0.0),
-  _bIncoherent(0.0),
-  _bPlus(0.0),
-  _bMinus(0.0),
-  _xsCoherent(0.0),
-  _xsIncoherent(0.0),
-  _xsScattering(0.0),
-  _xsAbsorption(0.0)
-{
-}
+std::string Isotope::DatabasePath = Path::getDataBasesPath("isotopes");
 
-Isotope::~Isotope()
-{
-}
+std::string Isotope::DatabaseRootNode = "isotopes";
 
-bool Isotope::operator==(const Isotope& other)
+Isotope::Isotope(const ptree& isotopeNode)
 {
-	// Two isotopes is1 and is2 are considered to be equal if Z(is1)=Z(is2) and A(is1)=A(is2)
-	return ((_nProtons==other._nProtons) && (_nNucleons==other._nNucleons));
+    UnitsManager* um=UnitsManager::Instance();
+
+    _name=isotopeNode.get<std::string>("<xmlattr>.name");
+
+    for (const auto& propertyNode : isotopeNode) {
+        std::string pname = propertyNode.first;
+
+        if (pname.compare("<xmlattr>")==0)
+            continue;
+
+        const auto& pnode = propertyNode.second;
+        _types[pname] = pnode.get<std::string>("<xmlattr>.type");
+        _units[pname] = pnode.get<std::string>("<xmlattr>.unit","unitless");
+
+        switch (PropertyTypes[_types[pname]]) {
+
+        case PropertyType::String:
+            _properties[pname] = pnode.get_value<std::string>();
+            break;
+        case PropertyType::Int:
+            _properties[pname] = pnode.get_value<int>();
+            break;
+        case PropertyType::Double:
+            _properties[pname] = pnode.get_value<double>()*um->get(_units[pname]);
+            break;
+        case PropertyType::Complex:
+            _properties[pname] = pnode.get_value<std::complex<double>>()*um->get(_units[pname]);
+            break;
+        default:
+            throw std::runtime_error("unknown property type for "+pname+" property");
+        }
+    }
 }
 
 const std::string& Isotope::getName() const
@@ -74,124 +59,35 @@ const std::string& Isotope::getName() const
 	return _name;
 }
 
-const std::string& Isotope::getSymbol() const
+bool Isotope::hasProperty(const std::string& propertyName) const
 {
-	return _symbol;
-}
-
-const std::string& Isotope::getChemicalState() const
-{
-	return _chemicalState;
-}
-
-double Isotope::getNuclearSpin() const
-{
-	return _nuclearSpin;
-}
-
-double Isotope::getNaturalAbundance() const
-{
-	return _naturalAbundance;
-}
-
-double Isotope::getHalfLife() const
-{
-	return _halfLife;
-}
-
-bool Isotope::getStable() const
-{
-	return _stable;
+    auto it = _properties.find(propertyName);
+    return (it != _properties.end());
 }
 
 double Isotope::getFormalCharge() const
 {
-	return (_nProtons-_nElectrons);
-}
-
-double Isotope::getMolarMass() const
-{
-	return _molarMass;
-}
-
-double Isotope::getNNeutrons() const
-{
-	return (_nNucleons-_nProtons);
-}
-
-double Isotope::getNNucleons() const
-{
-	return _nNucleons;
-}
-
-double Isotope::getNElectrons() const
-{
-	return _nElectrons;
-}
-
-double Isotope::getNProtons() const
-{
-	return _nProtons;
-}
-
-std::complex<double>  Isotope::getBCoherent() const
-{
-	return _bCoherent;
-}
-
-std::complex<double>  Isotope::getBIncoherent() const
-{
-	return _bIncoherent;
-}
-
-std::complex<double>  Isotope::getBPlus() const
-{
-	return _bPlus;
-}
-
-std::complex<double>  Isotope::getBMinus() const
-{
-	return _bMinus;
-}
-
-double Isotope::getXsCoherent() const
-{
-	return _xsCoherent;
-}
-
-double Isotope::getXsIncoherent() const
-{
-	return _xsIncoherent;
-}
-
-double Isotope::getXsAbsorption() const
-{
-	return _xsAbsorption;
-}
-
-double Isotope::getXsScattering() const
-{
-	return _xsScattering;
+    return getProperty<double>("n_protons") - getProperty<double>("n_electrons");
 }
 
 bool Isotope::isIon() const
 {
-	return (_nProtons!=_nElectrons);
+	return (getProperty<int>("n_protons")!=getProperty<int>("n_electrons"));
 }
 
 bool Isotope::isAnion() const
 {
-	return (_nProtons<_nElectrons);
+    return (getProperty<int>("n_protons")<getProperty<int>("n_electrons"));
 }
 
 bool Isotope::isCation() const
 {
-	return (_nProtons>_nElectrons);
+    return (getProperty<int>("n_protons")>getProperty<int>("n_electrons"));
 }
 
 void Isotope::print(std::ostream& os) const
 {
-	os<<"Isotope "<<_name<<" ["<<_nProtons<<","<<_nNucleons<<"]";
+	os<<"Isotope "<<_name<<" ["<<getProperty<int>("n_protons")<<","<<getProperty<int>("n_neutrons")<<"]";
 }
 
 std::ostream& operator<<(std::ostream& os,const Isotope& isotope)
