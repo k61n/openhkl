@@ -89,7 +89,12 @@ int run_test()
 
     peakFinder->setHandler(progressHandler);
 
-    BOOST_CHECK(peakFinder->find(numors) == true);
+    try {
+        BOOST_CHECK(peakFinder->find(numors) == true);
+    } catch(...) {
+        std::cout << "ERROR: exception in PeakFinder::find()" << std::endl;
+    }
+
     std::cout << dataf->getPeaks().size() << std::endl;
     BOOST_CHECK(dataf->getPeaks().size() >= 750);
 

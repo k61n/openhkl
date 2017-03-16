@@ -129,8 +129,9 @@ void Blob3D::printSelf(std::ostream& os) const
 }
 void Blob3D::toEllipsoid(double confidence,Vector3d& center, Vector3d& eigenvalues, Matrix3d& eigenvectors) const
 {
-    if (_m000 < minimum_blob_mass)
+    if (_m000 < minimum_blob_mass) {
         throw std::runtime_error("No mass in Blob");
+    }
 
     // Center of mass
     double xc=_m100/_m000;
@@ -160,7 +161,7 @@ void Blob3D::toEllipsoid(double confidence,Vector3d& center, Vector3d& eigenvalu
                     sqrt(std::fabs(solver.eigenvalues()[2]))*factor;
 
     // Now eigenvectors
-    eigenvectors= solver.eigenvectors();
+    eigenvectors = solver.eigenvectors();
 
     return;
 }

@@ -106,7 +106,6 @@ blob3DCollection BlobFinder::find(unsigned int begin, unsigned int end) {
     // find all blobs, possibly with multiple labels
 
     std::unordered_map<int,Blob3D> blobs;
-    vipairs equivalences;
 
     _nframes = 0;
     _currentlabel = 0;
@@ -159,6 +158,7 @@ blob3DCollection BlobFinder::find(unsigned int begin, unsigned int end) {
     int num_blobs;
 
     do {
+        vipairs equivalences;
         num_blobs = blobs.size();
 
         if (_progressHandler) {
