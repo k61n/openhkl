@@ -452,6 +452,7 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
             it = blobs.erase(it);
             std::cout << "done" << std::endl;
         } else {
+            std::cout << "inserting new box" << std::endl;
             Ellipsoid3D* ellipse = nullptr;
             try {
                 ellipse = new Ellipsoid3D(center,extents,axis);
@@ -462,16 +463,17 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
             }
             boxes.insert(shape3Dmap::value_type(ellipse, it->first));
             it++;
+            std::cout << "done" << std::endl;
         }
 
         // update progress handler
-        if ( (dummy % magic) == 0 && _progressHandler) {
-            double total_dist = std::distance(blobs.begin(), blobs.end());
-            double current_dist = std::distance(blobs.begin(), it);
-            double progress = 100.0 * current_dist / total_dist;
-            _progressHandler->setProgress(0.5*progress);
-            _progressHandler->log("blob loop: " + std::to_string(progress));
-        }
+//        if ( (dummy % magic) == 0 && _progressHandler) {
+//            double total_dist = std::distance(blobs.begin(), blobs.end());
+//            double current_dist = std::distance(blobs.begin(), it);
+//            double progress = 100.0 * current_dist / total_dist;
+//            _progressHandler->setProgress(0.5*progress);
+//            _progressHandler->log("blob loop: " + std::to_string(progress));
+//        }
     }
 
     // jmf debugging
