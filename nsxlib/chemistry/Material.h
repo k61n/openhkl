@@ -163,9 +163,9 @@ private:
 
 	double _temperature;
 
-	std::map<sptrElement,double> _elements;
+	elementsMap _elements;
 
-	std::map<sptrMaterial,double> _materials;
+	materialsMap _materials;
 
 };
 
