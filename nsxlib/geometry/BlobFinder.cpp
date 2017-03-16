@@ -430,32 +430,32 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
 
 
     for (auto it = blobs.begin(); it != blobs.end();) {
-        std::cout << "beginning of loop body" << std::endl;
+        //std::cout << "beginning of loop body" << std::endl;
 
         ++dummy;
 
         try {
-            std::cout << "converting to ellipsoid" << std::endl;
+            //std::cout << "converting to ellipsoid" << std::endl;
             // toEllipsoid throws exception if mass is too small
             it->second.toEllipsoid(_confidence,center,extents,axis);
-            std::cout << "done" << std::endl;
+            //std::cout << "done" << std::endl;
         } catch(...) {
-            std::cout << "erasing blob";
+            //std::cout << "erasing blob";
             it = blobs.erase(it);
-            std::cout << "done";
+            //std::cout << "done";
             continue;
         }
 
-        std::cout << "done converting to ellipsoid" << std::endl;
+        //std::cout << "done converting to ellipsoid" << std::endl;
 
         // if the threshold is too small it will break the OpenMP peak search
         // when the number of threads is very large
         if (extents.minCoeff()<1.0e-13) {
-            std::cout << "erasing blob (2)" << std::endl;
+            //std::cout << "erasing blob (2)" << std::endl;
             it = blobs.erase(it);
-            std::cout << "done" << std::endl;
+            //std::cout << "done" << std::endl;
         } else {
-            std::cout << "creating new Ellipsoid3D" << std::endl;
+            //std::cout << "creating new Ellipsoid3D" << std::endl;
             Ellipsoid3D* ellipse = nullptr;
             try {
                 ellipse = new Ellipsoid3D(center,extents,axis);
@@ -464,13 +464,13 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
                 std::cout << "could not allocate Ellipsoid3D" << std::endl;
                 return;
             }
-            std::cout << "inserting box into 'boxes' container" << std::endl;
+            //std::cout << "inserting box into 'boxes' container" << std::endl;
             boxes.insert(shape3Dmap::value_type(ellipse, it->first));
             it++;
-            std::cout << "done" << std::endl;
+            //std::cout << "done" << std::endl;
         }
 
-        std::cout << "end of loop body" << std::endl;
+//        std::cout << "end of loop body" << std::endl;
 
         // update progress handler
 //        if ( (dummy % magic) == 0 && _progressHandler) {
@@ -513,8 +513,16 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
     for (auto&& it = collisions.begin(); it != collisions.end(); ++it) {
         // register collision
         std::cout << "testing collision" << std::endl;
+        if (it->first == nullptr) {
+            std::cout << "ERROR: first is null" << std::endl;
+        }
+        if (it->second == nullptr) {
+            std::cout << "ERROR: second is null" << std::endl;
+        }
+        bool collided = it->first->collide(*(it->second));
+        std::cout << "done testing collision" << std::endl;
 
-        if (it->first->collide(*(it->second))) {
+        if (collided) {
             std::cout << "collision found" << std::endl;
 
             auto&& bit1 = boxes.find(it->first);
@@ -526,7 +534,9 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
             std::cout << "done registering equivalence" << std::endl;
 
         }
-        std::cout << "done testing collision" << std::endl;
+
+        std::cout << "end of loop body" << std::endl;
+
 
         // update progress handler
 //        if ( (dummy % magic) == 0 && _progressHandler) {
