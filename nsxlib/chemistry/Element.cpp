@@ -4,33 +4,40 @@
 #include <iterator>
 #include <numeric>
 #include <set>
+#include <stdexcept>
+#include <string>
 
 #include "Element.h"
 #include "Isotope.h"
 #include "ChemicalDatabaseManager.h"
-#include "../kernel/Error.h"
+#include "../utils/Path.h"
+#include "../utils/Units.h"
 
 namespace SX {
 
 namespace Chemistry {
 
-Element* Element::create(const std::string& name)
-{
-	return (new Element(name));
-}
+using SX::Units::UnitsManager;
+using SX::Utils::Path;
 
-Element::Element(const std::string& name) : _name(name), _symbol(), _isotopes(), _natural(false)
+std::string Element::DatabasePath = Path::getDataBasesPath("elements");
+
+std::string Element::DatabaseParentNode = "elements";
+
+std::string Element::DatabaseNode = "element";
+
+Element::Element(const std::string& name) : _name(name), _isotopes()
 {
-	std::size_t bracket=name.find_first_of("[");
 	ChemicalDatabaseManager<Isotope>* imgr=ChemicalDatabaseManager<Isotope>::Instance();
-	// Case of an element which is a "pure" isotope
-	if (bracket!=std::string::npos) {
+    const auto& isotopeDatabase=imgr->getDatabase();
+
+    auto it=isotopeDatabase.find(name);
+
+    // Case of a "pure" isotope (e.g. H[1],C[14])
+    if (it != isotopeDatabase.end()) {
 		sptrIsotope isotope=imgr->getChemicalObject(name);
 		addIsotope(isotope,1.0);
-	}
-	else {
-	    const auto& isotopeDatabase=imgr->getDatabase();
-
+    } else {
 	    for (const auto& isotope : isotopeDatabase) {
 
 	        std::string symbolName = isotope.second->getProperty<std::string>("symbol");
@@ -39,33 +46,27 @@ Element::Element(const std::string& name) : _name(name), _symbol(), _isotopes(),
 	            addIsotope(isotope.second,isotope.second->getProperty<double>("natural_abundance"));
 	        }
 	    }
-	}
+    }
 }
 
-Element::~Element()
+Element::Element(const ptree& node)
 {
-}
+	_name=node.get<std::string>("<xmlattr>.name");
 
-bool Element::operator==(const Element& other) const
-{
-	return (_abundances.size() == other._abundances.size()) &&
-			std::equal(_abundances.begin(),
-					   _abundances.end(),
-					   other._abundances.begin(),
-					   [] (strToDoublePair a, strToDoublePair b) { return a.first==b.first && std::abs(a.second-b.second)<0.000001;});
+    // Loop over the 'isotope' nodes
+    for (const auto& subnode : node) {
 
-}
+    	if (subnode.first.compare("isotope")!=0)
+            continue;
 
-sptrIsotope Element::operator[](const std::string& name)
-{
-	try
-	{
-		return _isotopes.at(name);
-	}
-	catch(const std::out_of_range& e)
-	{
-		throw SX::Kernel::Error<Element>("No isotope match "+name+" name in element "+_name);
-	}
+        std::string isotopeName=subnode.second.get<std::string>("<xmlattr>.name");
+
+        ChemicalDatabaseManager<Isotope>* imgr=ChemicalDatabaseManager<Isotope>::Instance();
+    	sptrIsotope isotope=imgr->getChemicalObject(isotopeName);
+
+    	double abundance = subnode.second.get<double>("abundance",isotope->getProperty<double>("natural_abundance"));
+		addIsotope(isotope,abundance*0.01);
+    }
 }
 
 sptrIsotope Element::addIsotope(sptrIsotope isotope, double abundance)
@@ -73,15 +74,16 @@ sptrIsotope Element::addIsotope(sptrIsotope isotope, double abundance)
 
 	// If the abundance is not in the interval [0,1] then throws
 	if (abundance<0.0 || abundance>1.0)
-		throw SX::Kernel::Error<Element>("Invalid value for abundance");
+		throw std::runtime_error("Element "+_name+": invalid value for abundance ("+std::to_string(abundance)+")");
 
 	std::string name=isotope->getName();
 
+	static std::string symbol;
 	if (_isotopes.empty())
 	{
-		_isotopes.insert(strToIsotopePair(name,isotope));
-		_abundances.insert(strToDoublePair(name,abundance));
-		_symbol=isotope->getProperty<std::string>("symbol");
+		_isotopes.insert(std::make_pair(name,isotope));
+		_abundances.insert(std::make_pair(name,abundance));
+		symbol=isotope->getProperty<std::string>("symbol");
 	}
 	else
 	{
@@ -90,11 +92,11 @@ sptrIsotope Element::addIsotope(sptrIsotope isotope, double abundance)
 			_abundances[name] = abundance;
 		else
 		{
-			if (_symbol.compare(isotope->getProperty<std::string>("symbol")) != 0)
-				throw SX::Kernel::Error<Element>("The element is made of isotopes of different chemical species.");
+			if (symbol.compare(isotope->getProperty<std::string>("symbol")) != 0)
+				throw std::runtime_error("Element "+_name+" is made of isotopes of different chemical species.");
 
-			_isotopes.insert(strToIsotopePair(name,isotope));
-			_abundances.insert(strToDoublePair(name,abundance));
+			_isotopes.insert(std::make_pair(name,isotope));
+			_abundances.insert(std::make_pair(name,abundance));
 		}
 	}
 	return isotope;
@@ -134,83 +136,44 @@ const isotopeMap& Element::getIsotopes() const
 	return _isotopes;
 }
 
-unsigned int Element::getNIsotopes() const
-{
-	return _isotopes.size();
-}
-
 bool Element::isEmpty() const
 {
 	return _isotopes.empty();
 }
 
-double Element::getAbundance(const std::string& name) const
-{
-	try
-	{
-		return _abundances.at(name);
-	}
-	catch (const std::out_of_range& e)
-	{
-		throw SX::Kernel::Error<Element>("No isotope match "+name+" name in element "+_name);
-	}
-}
-
-void Element::setAbundance(const std::string& name, double abundance)
-{
-	// If the abundance is not in the interval [0,1] then throws
-	if (abundance<0.0 || abundance>1.0)
-		throw SX::Kernel::Error<Element>("Invalid value for abundance");
-
-	auto it=_abundances.find(name);
-
-	if (it!=_abundances.end())
-		_abundances[name]=abundance;
-}
-
 double Element::getMolarMass() const
 {
-	// If the sum of af the abundances of all the isotopes building the element is more than 1, then throws
-	double sum=std::accumulate(std::begin(_abundances),
-			                    std::end(_abundances),
-			                    0.0,
-			                    [](double previous, const strToDoublePair& p){return previous+p.second;});
-	if (std::abs(sum-1.0)>0.000001)
-		throw SX::Kernel::Error<Element>("The sum of abundances is not equal to 1.0");
-
 	// Compute the molar mass of the Element as the abundance-weighted sum of the molar mass of the isotopes it is made of.
-	double mm(0.0);
-	for (auto& p : _abundances)
-		mm += p.second * _isotopes.at(p.first)->getProperty<double>("molar_mass");
-	return mm/sum;
+	double molarMass(0.0);
+	double sumAbundances(0.0);
+	for (const auto& p : _abundances) {
+		molarMass += p.second * _isotopes.at(p.first)->getProperty<double>("molar_mass");
+		sumAbundances += p.second;
+	}
+	return molarMass/sumAbundances;
 }
 
 
-unsigned int Element::getNElectrons() const
+size_t Element::getNElectrons() const
 {
-	if (_isotopes.empty())
-		throw SX::Kernel::Error<Element>("The element is empy");
+	if (_isotopes.empty()){
+		return 0;
+	}
 
 	return _isotopes.begin()->second->getProperty<int>("n_electrons");
 }
 
-unsigned int Element::getNProtons() const
-{
-	if (_isotopes.empty())
-		throw SX::Kernel::Error<Element>("The element is empy");
-
-	return _isotopes.begin()->second->getProperty<int>("n_protons");
-}
-
 double Element::getNNeutrons() const
 {
-	if (_isotopes.empty())
-		throw SX::Kernel::Error<Element>("The element is empy");
+	if (_isotopes.empty()) {
+		return 0.0;
+	}
 
 	// Compute the number of neutrons of the Element as the abundance-weighted sum of the number of neutrons of the isotopes it is made of.
-	double nNeutrons=0.0;
-	for (const auto& p : _abundances)
+	double nNeutrons(0.0);
+	for (const auto& p : _abundances) {
 		nNeutrons += p.second * static_cast<double>(_isotopes.at(p.first)->getProperty<int>("n_neutrons"));
+	}
 
 	return nNeutrons;
 }
@@ -239,32 +202,17 @@ const contentsMap& Element::getAbundances() const
 	return _abundances;
 }
 
-property_tree::ptree Element::writeToXML() const
+ptree Element::writeToXML() const
 {
-	property_tree::ptree node;
+	ptree node;
 	node.put("<xmlattr>.name",_name);
 	for (const auto& is : _abundances)
 	{
-		property_tree::ptree& isnode=node.add("isotope","");
+		ptree& isnode=node.add("isotope","");
 		isnode.put("<xmlattr>.name",is.first);
 		isnode.put<double>("abundance",is.second);
 	}
 	return node;
-}
-
-void Element::setNatural(bool natural)
-{
-	_natural=natural;
-}
-
-bool Element::isNatural() const
-{
-	return _natural;
-}
-
-const std::string& Element::getSymbol() const
-{
-	return _symbol;
 }
 
 void Element::print(std::ostream& os) const
