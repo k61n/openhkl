@@ -512,36 +512,21 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
 
     for (auto&& it = collisions.begin(); it != collisions.end(); ++it) {
         // register collision
-//        if (_progressHandler) {
-//            _progressHandler->log("testing collision");
-//        }
-        if (it->first->collide(*(it->second))) {
+        std::cout << "testing collision" << std::endl;
 
-//            if (_progressHandler) {
-//                _progressHandler->log("collision found");
-//            }
+        if (it->first->collide(*(it->second))) {
+            std::cout << "collision found" << std::endl;
 
             auto&& bit1 = boxes.find(it->first);
             auto&& bit2 = boxes.find(it->second);
 
-//            if (_progressHandler) {
-//                if (bit1 == boxes.end()) {
-//                    _progressHandler->log("ERROR: bit1 is boxes.end()");
-//                }
-//                if (bit2 == boxes.end()) {
-//                    _progressHandler->log("ERROR: bit2 is boxes.end()");
-//                }
-//                _progressHandler->log("registering equivalence");
-//            }
+            std::cout << "registering equivalence" << std::endl;
 
             registerEquivalence(bit1->second, bit2->second, equivalences);
-//            if (_progressHandler) {
-//                _progressHandler->log("done registering equivalence");
-//            }
+            std::cout << "done registering equivalence" << std::endl;
+
         }
-//        if (_progressHandler) {
-//            _progressHandler->log("done testing collision");
-//        }
+        std::cout << "done testing collision" << std::endl;
 
         // update progress handler
 //        if ( (dummy % magic) == 0 && _progressHandler) {
@@ -566,10 +551,13 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
 //        _progressHandler->log("Found " + std::to_string(equivalences.size()) + " equivalences");
 //        _progressHandler->setProgress(100);
 //    }
+    std::cout << "done finding collisions" << std::endl;
     // free memory stored in unordered map
     for (auto&& it: boxes) {
         delete it.first;
     }
+
+    std::cout << "reached end of findCollisions()" << std::endl;
 }
 
 void BlobFinder::setFilter(BlobFinder::FilterCallback callback)
@@ -588,8 +576,8 @@ BlobFinder::BlobFinder(std::shared_ptr<SX::Data::DataSet> data)
 void BlobFinder::mergeBlobs(std::unordered_map<int,Blob3D>& blobs, vipairs& equivalences) const
 {
     // initialize progress handler if necessary
+    std::cout << "Merging blobs..." << std::endl;
     if (_progressHandler) {
-        _progressHandler->setStatus("Merging blobs...");
         _progressHandler->setProgress(0);
     }
 
