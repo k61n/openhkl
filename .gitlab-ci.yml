@@ -3,62 +3,62 @@ stages:
   - test
   - deploy
 
-# trusty pipeline
+# # trusty pipeline
 
-build:trusty:
-  stage: build
-  script:
-    - ./build_server/debian/run_build.sh
-  allow_failure: false
-  only:
-    - triggers
-    - tags
-    - /^feature/.*$/
-    - /^release/.*$/
-    - /^hotfix/.*$/
-    - /^bugfix/.*$/
-    - develop
-  artifacts:
-    paths:
-    - build
-    expire_in: 1 day
-  tags:
-    - ubuntu14.04
+# build:trusty:
+#   stage: build
+#   script:
+#     - ./build_server/debian/run_build.sh
+#   allow_failure: false
+#   only:
+#     - triggers
+#     - tags
+#     - /^feature/.*$/
+#     - /^release/.*$/
+#     - /^hotfix/.*$/
+#     - /^bugfix/.*$/
+#     - develop
+#   artifacts:
+#     paths:
+#     - build
+#     expire_in: 1 day
+#   tags:
+#     - ubuntu14.04
 
-test:trusty:
-  stage: test
-  script:
-    - ./build_server/debian/run_tests.sh
-  allow_failure: false
-  only:
-    - triggers
-    - tags
-    - /^feature/.*$/
-    - /^release/.*$/
-    - /^hotfix/.*$/
-    - /^bugfix/.*$/
-    - develop
-  dependencies:
-    - build:trusty
-  tags:
-    - ubuntu14.04
+# test:trusty:
+#   stage: test
+#   script:
+#     - ./build_server/debian/run_tests.sh
+#   allow_failure: false
+#   only:
+#     - triggers
+#     - tags
+#     - /^feature/.*$/
+#     - /^release/.*$/
+#     - /^hotfix/.*$/
+#     - /^bugfix/.*$/
+#     - develop
+#   dependencies:
+#     - build:trusty
+#   tags:
+#     - ubuntu14.04
 
-deploy:trusty:
-  stage: deploy
-  script:
-    - ./build_server/debian/run_deploy.sh
-  only:
-    - triggers
-    - tags
-    - develop
-  when: on_success
-  dependencies:
-    - build:trusty
-  artifacts:
-    paths:
-    - nsxtool*deb
-  tags:
-    - ubuntu14.04
+# deploy:trusty:
+#   stage: deploy
+#   script:
+#     - ./build_server/debian/run_deploy.sh
+#   only:
+#     - triggers
+#     - tags
+#     - develop
+#   when: on_success
+#   dependencies:
+#     - build:trusty
+#   artifacts:
+#     paths:
+#     - nsxtool*deb
+#   tags:
+#     - ubuntu14.04
 
 # osx pipeline
 
@@ -119,58 +119,58 @@ deploy:osx:
 
 # windows pipeline
 
-build:windows:
-  stage: build
-  script:
-    - .\\build_server\\windows\\run_build.bat
-  allow_failure: false
-  only:
-    - triggers
-    - tags
-    - /^feature/.*$/
-    - /^release/.*$/
-    - /^hotfix/.*$/
-    - /^bugfix/.*$/
-    - develop
-  artifacts:
-    paths:
-    - build
-    expire_in: 1 day
-  tags:
-    - windows
+# build:windows:
+#   stage: build
+#   script:
+#     - .\\build_server\\windows\\run_build.bat
+#   allow_failure: false
+#   only:
+#     - triggers
+#     - tags
+#     - /^feature/.*$/
+#     - /^release/.*$/
+#     - /^hotfix/.*$/
+#     - /^bugfix/.*$/
+#     - develop
+#   artifacts:
+#     paths:
+#     - build
+#     expire_in: 1 day
+#   tags:
+#     - windows
 
-test:windows:
-  stage: test
-  script:
-    - .\\build_server\\windows\\run_tests.bat
-  allow_failure: false
-  only:
-    - triggers
-    - tags
-    - /^feature/.*$/
-    - /^release/.*$/
-    - /^hotfix/.*$/
-    - /^bugfix/.*$/ 
-    - develop
-  dependencies:
-    - build:windows
-  tags:
-    - windows
+# test:windows:
+#   stage: test
+#   script:
+#     - .\\build_server\\windows\\run_tests.bat
+#   allow_failure: false
+#   only:
+#     - triggers
+#     - tags
+#     - /^feature/.*$/
+#     - /^release/.*$/
+#     - /^hotfix/.*$/
+#     - /^bugfix/.*$/ 
+#     - develop
+#   dependencies:
+#     - build:windows
+#   tags:
+#     - windows
 
-deploy:windows:
-  stage: deploy
-  script:
-    - .\\build_server\\windows\\run_deploy.bat
-  only:
-    - triggers
-    - tags
-    - develop
-  when: on_success
-  dependencies:
-    - build:windows
-#  artifacts:
-#    paths:
-#    - ${CI_PROJECT_DIR}\\build\\windows\\nsxtool*exe
-  tags:
-    - windows
+# deploy:windows:
+#   stage: deploy
+#   script:
+#     - .\\build_server\\windows\\run_deploy.bat
+#   only:
+#     - triggers
+#     - tags
+#     - develop
+#   when: on_success
+#   dependencies:
+#     - build:windows
+# #  artifacts:
+# #    paths:
+# #    - ${CI_PROJECT_DIR}\\build\\windows\\nsxtool*exe
+#   tags:
+#     - windows
 
