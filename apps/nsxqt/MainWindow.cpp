@@ -57,7 +57,6 @@
 #include "absorption/AbsorptionWidget.h"
 #include "models/CollectedPeaksModel.h"
 #include "chemistry/IsotopeDatabaseDialog.h"
-#include "chemistry/ElementManagerDialog.h"
 #include "items/CutLineGraphicsItem.h"
 #include "items/CutSliceGraphicsItem.h"
 #include "items/CutterGraphicsItem.h"
@@ -447,13 +446,6 @@ void MainWindow::on_action_display_isotopes_database_triggered()
 {
     // Opens the dialog that will diplay the isotopes database
     IsotopeDatabaseDialog* dlg=new IsotopeDatabaseDialog();
-    dlg->exec();
-}
-
-void MainWindow::on_action_add_element_triggered()
-{
-    // Opens the dialog that will diplay the isotopes database
-    ElementManagerDialog* dlg=new ElementManagerDialog();
     dlg->exec();
 }
 
