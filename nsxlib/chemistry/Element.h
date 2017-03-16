@@ -78,6 +78,9 @@ public:
 	//! Copy constructor
 	Element(const Element& other)=default;
 
+	//! Assignment operator (deleted)
+	Element& operator=(const Element& other)=default;
+
 	Element(const ptree& node);
 
 	//! Destructor
@@ -117,11 +120,6 @@ public:
 
 	//! Prints informations about this Element to an output stream
 	void print(std::ostream& os) const;
-
-private:
-
-	//! Assignment operator (deleted)
-	Element& operator=(const Element& other)=delete;
 
 private:
 
