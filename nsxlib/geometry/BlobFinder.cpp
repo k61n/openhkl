@@ -434,17 +434,23 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
         ++dummy;
 
         try {
+            std::cout << "converting to ellipsoid" << std::endl;
             // toEllipsoid throws exception if mass is too small
             it->second.toEllipsoid(_confidence,center,extents,axis);
+            std::cout << "done" << std::endl;
         } catch(...) {
+            std::cout << "erasing blob";
             it = blobs.erase(it);
+            std::cout << "done";
             continue;
         }
 
         // if the threshold is too small it will break the OpenMP peak search
         // when the number of threads is very large
         if (extents.minCoeff()<1.0e-13) {
+            std::cout << "erasing blob (2)" << std::endl;
             it = blobs.erase(it);
+            std::cout << "done" << std::endl;
         } else {
             Ellipsoid3D* ellipse = nullptr;
             try {
