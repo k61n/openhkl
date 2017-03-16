@@ -528,7 +528,7 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
             auto&& bit1 = boxes.find(it->first);
             auto&& bit2 = boxes.find(it->second);
 
-            std::cout << "registering equivalence" << std::endl;
+            std::cout << "registering equivalence: " << it->first << " " << it->second << std::endl;
 
             registerEquivalence(bit1->second, bit2->second, equivalences);
             std::cout << "done registering equivalence" << std::endl;
