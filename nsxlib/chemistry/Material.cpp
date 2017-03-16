@@ -4,7 +4,6 @@
 
 #include "../kernel/Error.h"
 #include "Element.h"
-#include "ElementManager.h"
 #include "Material.h"
 #include "../utils/Units.h"
 
@@ -125,9 +124,7 @@ void Material::addElement(sptrElement element, double amount)
 
 void Material::addElement(const std::string& name, double amount)
 {
-    ElementManager* mgr=ElementManager::Instance();
-
-    sptrElement el=mgr->getElement(name);
+    sptrElement el(new Element(name));
 
     addElement(el,amount);
 }
@@ -168,15 +165,6 @@ elementsMap Material::getMassFractions() const
 {
 
     elementsMap fractions;
-
-    if (_buildingMode==BuildingMode::MassFraction || _buildingMode==BuildingMode::MolarFraction)
-    {
-        double sum = std::accumulate(std::begin(_elements),std::end(_elements),0.0,[](double previous, const std::pair<sptrElement,double>& p){return previous+p.second;});
-        sum += std::accumulate(std::begin(_materials),std::end(_materials),0.0,[](double previous, const std::pair<sptrMaterial,double>& p){return previous+p.second;});
-
-        if (std::abs(sum-1.0)>1.0-6)
-            throw SX::Kernel::Error<Material>("The sum of mass/molar fractions is not equal to 1.");
-    }
 
     if (_buildingMode==BuildingMode::MassFraction)
     {
@@ -222,15 +210,6 @@ elementsMap Material::getMolarFractions() const
 {
 
     elementsMap fractions;
-
-    if (_buildingMode==BuildingMode::MassFraction || _buildingMode==BuildingMode::MolarFraction)
-    {
-        double sum = std::accumulate(std::begin(_elements),std::end(_elements),0.0,[](double previous, const std::pair<sptrElement,double>& p){return previous+p.second;});
-        sum += std::accumulate(std::begin(_materials),std::end(_materials),0.0,[](double previous, const std::pair<sptrMaterial,double>& p){return previous+p.second;});
-
-        if (std::abs(sum-1.0)>1.0-6)
-            throw SX::Kernel::Error<Material>("The sum of mass/molar fractions is not equal to 1.");
-    }
 
     if (_buildingMode==BuildingMode::MolarFraction)
     {
