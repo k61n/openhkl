@@ -512,36 +512,36 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
 
     for (auto&& it = collisions.begin(); it != collisions.end(); ++it) {
         // register collision
-        if (_progressHandler) {
-            _progressHandler->log("testing collision");
-        }
+//        if (_progressHandler) {
+//            _progressHandler->log("testing collision");
+//        }
         if (it->first->collide(*(it->second))) {
 
-            if (_progressHandler) {
-                _progressHandler->log("collision found");
-            }
+//            if (_progressHandler) {
+//                _progressHandler->log("collision found");
+//            }
 
             auto&& bit1 = boxes.find(it->first);
             auto&& bit2 = boxes.find(it->second);
 
-            if (_progressHandler) {
-                if (bit1 == boxes.end()) {
-                    _progressHandler->log("ERROR: bit1 is boxes.end()");
-                }
-                if (bit2 == boxes.end()) {
-                    _progressHandler->log("ERROR: bit2 is boxes.end()");
-                }
-                _progressHandler->log("registering equivalence");
-            }
+//            if (_progressHandler) {
+//                if (bit1 == boxes.end()) {
+//                    _progressHandler->log("ERROR: bit1 is boxes.end()");
+//                }
+//                if (bit2 == boxes.end()) {
+//                    _progressHandler->log("ERROR: bit2 is boxes.end()");
+//                }
+//                _progressHandler->log("registering equivalence");
+//            }
 
             registerEquivalence(bit1->second, bit2->second, equivalences);
-            if (_progressHandler) {
-                _progressHandler->log("done registering equivalence");
-            }
+//            if (_progressHandler) {
+//                _progressHandler->log("done registering equivalence");
+//            }
         }
-        if (_progressHandler) {
-            _progressHandler->log("done testing collision");
-        }
+//        if (_progressHandler) {
+//            _progressHandler->log("done testing collision");
+//        }
 
         // update progress handler
 //        if ( (dummy % magic) == 0 && _progressHandler) {
@@ -551,21 +551,21 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
 //            _progressHandler->setProgress(50 + 0.5*progress);
 //        }
         ++dummy;
-        if (_progressHandler) {
-            _progressHandler->log("beginning next loop iteration");
-        }
+//        if (_progressHandler) {
+//            _progressHandler->log("beginning next loop iteration");
+//        }
     }
 
     // jmf debugging
-    if (_progressHandler) {
-        _progressHandler->log("done loop over collisions");
-    }
+//    if (_progressHandler) {
+//        _progressHandler->log("done loop over collisions");
+//    }
 
     // calculation complete
-    if ( _progressHandler ) {
-        _progressHandler->log("Found " + std::to_string(equivalences.size()) + " equivalences");
-        _progressHandler->setProgress(100);
-    }
+//    if ( _progressHandler ) {
+//        _progressHandler->log("Found " + std::to_string(equivalences.size()) + " equivalences");
+//        _progressHandler->setProgress(100);
+//    }
     // free memory stored in unordered map
     for (auto&& it: boxes) {
         delete it.first;
