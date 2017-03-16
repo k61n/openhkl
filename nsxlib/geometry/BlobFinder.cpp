@@ -528,6 +528,9 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
             _progressHandler->setProgress(50 + 0.5*progress);
         }
         ++dummy;
+        if (_progressHandler) {
+            _progressHandler->log("beginning next loop iteration");
+        }
     }
 
     // jmf debugging
