@@ -431,6 +431,8 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
     }
 
     for (auto it = blobs.begin(); it != blobs.end();) {
+        std::cout << "beginning of loop body" << std::endl;
+
         ++dummy;
 
         try {
@@ -444,6 +446,8 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
             std::cout << "done";
             continue;
         }
+
+        std::cout << "done converting to ellipsoid" << std::endl;
 
         // if the threshold is too small it will break the OpenMP peak search
         // when the number of threads is very large
@@ -465,6 +469,8 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
             it++;
             std::cout << "done" << std::endl;
         }
+
+        std::cout << "end of loop body" << std::endl;
 
         // update progress handler
 //        if ( (dummy % magic) == 0 && _progressHandler) {
