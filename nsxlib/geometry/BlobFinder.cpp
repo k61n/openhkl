@@ -419,7 +419,11 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
 
     // dummies used to help progress handler
     int dummy = 0;
-    int magic = 0.2 * std::distance(blobs.begin(), blobs.end());
+    int magic =0.2 * std::distance(blobs.begin(), blobs.end());
+
+    if (magic < 1) {
+        magic = 1;
+    }
 
     // jmf debugging
     if (_progressHandler) {
@@ -482,6 +486,10 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
     // dummies used to help progress handler
     dummy = 0;
     magic = 0.02 * std::distance(collisions.begin(), collisions.end());
+
+    if (magic < 1) {
+        magic = 1;
+    }
 
     // jmf debugging
     if (_progressHandler) {
