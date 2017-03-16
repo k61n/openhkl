@@ -7,7 +7,6 @@
 
 #include "ChemicalFormulaParser.h"
 #include "Element.h"
-#include "ElementManager.h"
 #include "../kernel/Error.h"
 #include "Material.h"
 #include "MaterialManager.h"
@@ -71,8 +70,6 @@ sptrMaterial MaterialManager::buildMaterialFromChemicalFormula(std::string formu
     ChemicalFormulaParser<std::string::iterator> parser;
     qi::phrase_parse(formula.begin(),formula.end(),parser,qi::blank,chemicalContents);
 
-    ElementManager* emgr=ElementManager::Instance();
-
     sptrMaterial mat(Material::create(formula,BuildingMode::Stoichiometry));
 
     for (auto cc : chemicalContents)
@@ -83,7 +80,7 @@ sptrMaterial MaterialManager::buildMaterialFromChemicalFormula(std::string formu
 
         std::string eName=symbol+isotope;
 
-        sptrElement element(emgr->getElement(eName));
+        sptrElement element(new Element(eName));
 
         if (element->isEmpty())
             throw Kernel::Error<MaterialManager>("The element "+eName+" is neither a natural element, neither a known isotope.");
@@ -138,15 +135,10 @@ sptrMaterial MaterialManager::buildMaterial(const property_tree::ptree& node)
         }
         else if (v.first.compare("element")==0)
         {
-            ElementManager* mgr=ElementManager::Instance();
             sptrElement element;
             name=v.second.get<std::string>("<xmlattr>.name");
             // If the element is stored in the elements registry just get it
-            if (mgr->hasElement(name))
-                element=mgr->getElement(name);
-            // Otherwise parses the XMl node, build and register an new element out of it
-            else
-                element=mgr->buildElement(v.second);
+			element=std::make_shared<Element>(Element(v.second));
 
             if (buildingMode==BuildingMode::MassFraction || buildingMode==BuildingMode::MolarFraction)
             {
