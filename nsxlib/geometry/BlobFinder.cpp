@@ -426,9 +426,8 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
     }
 
     // jmf debugging
-    if (_progressHandler) {
-        _progressHandler->log("entering loop over blobs");
-    }
+    std::cout << "entering loop over blobs" << std::endl;
+
 
     for (auto it = blobs.begin(); it != blobs.end();) {
         std::cout << "beginning of loop body" << std::endl;
@@ -463,7 +462,6 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
             }
             catch(...) {
                 std::cout << "could not allocate Ellipsoid3D" << std::endl;
-                _progressHandler->log("ERROR: could not allocate Ellipsoid3D!");
                 return;
             }
             std::cout << "inserting box into 'boxes' container" << std::endl;
@@ -484,10 +482,7 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
 //        }
     }
 
-    // jmf debugging
-    if (_progressHandler) {
-        _progressHandler->log("done looping over blobs");
-    }
+    std::cout << "done looping over blobs" << std::endl;
 
     Octree oct({0.0,0.0,0.0},{double(_ncols),double(_nrows),double(_nframes)});
     oct.setMaxDepth(6);
@@ -500,9 +495,7 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
     std::set<Octree::collision_pair> collisions;
 
     // jmf debugging
-    if (_progressHandler) {
-        _progressHandler->log("calculating possible collisions");
-    }
+    std::cout << "calculating possible collisions" << std::endl;
 
     oct.getPossibleCollisions(collisions);
 
@@ -515,9 +508,7 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
     }
 
     // jmf debugging
-    if (_progressHandler) {
-        _progressHandler->log("beginning loop over collisions");
-    }
+    std::cout << "beginning loop over collisions" << std::endl;
 
     for (auto&& it = collisions.begin(); it != collisions.end(); ++it) {
         // register collision
