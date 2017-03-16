@@ -456,15 +456,17 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
             it = blobs.erase(it);
             std::cout << "done" << std::endl;
         } else {
-            std::cout << "inserting new box" << std::endl;
+            std::cout << "creating new Ellipsoid3D" << std::endl;
             Ellipsoid3D* ellipse = nullptr;
             try {
                 ellipse = new Ellipsoid3D(center,extents,axis);
             }
             catch(...) {
+                std::cout << "could not allocate Ellipsoid3D" << std::endl;
                 _progressHandler->log("ERROR: could not allocate Ellipsoid3D!");
                 return;
             }
+            std::cout << "inserting box into 'boxes' container" << std::endl;
             boxes.insert(shape3Dmap::value_type(ellipse, it->first));
             it++;
             std::cout << "done" << std::endl;
