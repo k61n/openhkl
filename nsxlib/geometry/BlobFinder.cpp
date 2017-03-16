@@ -432,11 +432,10 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
 
     for (auto it = blobs.begin(); it != blobs.end();) {
         ++dummy;
-        Blob3D& p=it->second;
 
         try {
             // toEllipsoid throws exception if mass is too small
-            p.toEllipsoid(_confidence,center,extents,axis);
+            it->second.toEllipsoid(_confidence,center,extents,axis);
         } catch(...) {
             it = blobs.erase(it);
             continue;
@@ -444,10 +443,18 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
 
         // if the threshold is too small it will break the OpenMP peak search
         // when the number of threads is very large
-        if (extents.minCoeff()<1.0e-13)
+        if (extents.minCoeff()<1.0e-13) {
             it = blobs.erase(it);
-        else {
-            boxes.insert(shape3Dmap::value_type(new Ellipsoid3D(center,extents,axis),it->first));
+        } else {
+            Ellipsoid3D* ellipse = nullptr;
+            try {
+                ellipse = new Ellipsoid3D(center,extents,axis);
+            }
+            catch(...) {
+                _progressHandler->log("ERROR: could not allocate Ellipsoid3D!");
+                return;
+            }
+            boxes.insert(shape3Dmap::value_type(ellipse, it->first));
             it++;
         }
 
