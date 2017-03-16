@@ -31,28 +31,21 @@
 #define NSXTOOL_ISOTOPE_H_
 
 #include <map>
-#include <complex>
 #include <ostream>
 #include <memory>
-#include <set>
 #include <string>
-#include <utility>
 
 #include <boost/any.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/property_tree/ptree.hpp>
 
-#include "../kernel/Error.h"
-#include "../utils/Units.h"
-
 namespace SX {
 
 namespace Chemistry {
 
+using boost::any_cast;
 using boost::property_tree::ptree;
 using boost::filesystem::path;
-
-using SX::Units::UnitsManager;
 
 // Forward declarations
 class Isotope;
@@ -68,7 +61,9 @@ public:
 
     static std::string DatabasePath;
 
-    static std::string DatabaseRootNode;
+    static std::string DatabaseParentNode;
+
+    static std::string DatabaseNode;
 
 public:
 
@@ -104,6 +99,9 @@ public:
 	//! Print some informations about this Isotope on a stream
 	void print(std::ostream& os) const;
 
+	//! Inserts the information about this Element to an XML parent node
+	ptree writeToXML() const;
+
 private:
 
 	//! The name of this Isotope
@@ -122,7 +120,7 @@ PropertyType Isotope::getProperty(const std::string& propertyName) const
     if (pit == _properties.end())
         throw std::runtime_error("Isotope "+_name+": unknown property name ("+propertyName+")");
 
-    return boost::any_cast<PropertyType>(pit->second);
+    return any_cast<PropertyType>(pit->second);
 }
 
 //! Overloads the operator<< with an Isotope object

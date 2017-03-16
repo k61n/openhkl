@@ -1,22 +1,28 @@
+#include <complex>
 #include <stdexcept>
 
 #include "Isotope.h"
 #include "../utils/Path.h"
+#include "../utils/Units.h"
 
 namespace SX {
 
 namespace Chemistry {
 
+using SX::Units::UnitsManager;
 using SX::Utils::Path;
 
 std::map<std::string,Isotope::PropertyType> Isotope::PropertyTypes = {{"string",PropertyType::String},
                                                                       {"int",PropertyType::Int},
                                                                       {"double",PropertyType::Double},
-                                                                      {"complex",PropertyType::Complex}};
+                                                                      {"complex",PropertyType::Complex},
+                                                                      {"bool",PropertyType::Bool}};
 
 std::string Isotope::DatabasePath = Path::getDataBasesPath("isotopes");
 
-std::string Isotope::DatabaseRootNode = "isotopes";
+std::string Isotope::DatabaseParentNode = "isotopes";
+
+std::string Isotope::DatabaseNode = "isotope";
 
 Isotope::Isotope(const ptree& isotopeNode)
 {
@@ -47,6 +53,9 @@ Isotope::Isotope(const ptree& isotopeNode)
             break;
         case PropertyType::Complex:
             _properties[pname] = pnode.get_value<std::complex<double>>()*um->get(_units[pname]);
+            break;
+        case PropertyType::Bool:
+            _properties[pname] = pnode.get_value<bool>();
             break;
         default:
             throw std::runtime_error("unknown property type for "+pname+" property");
@@ -88,6 +97,40 @@ bool Isotope::isCation() const
 void Isotope::print(std::ostream& os) const
 {
 	os<<"Isotope "<<_name<<" ["<<getProperty<int>("n_protons")<<","<<getProperty<int>("n_neutrons")<<"]";
+}
+
+ptree Isotope::writeToXML() const
+{
+    UnitsManager* um=UnitsManager::Instance();
+
+	ptree node;
+	node.put("<xmlattr>.name",_name);
+	for (const auto& prop : _properties) {
+		std::string pname = prop.first;
+		ptree& isnode=node.add(pname,"");
+		isnode.put("<xmlattr>.type",_types.at(pname));
+		isnode.put("<xmlattr>.unit",_units.at(pname));
+
+        switch (PropertyTypes[_types.at(pname)]) {
+
+        case PropertyType::String:
+    		isnode.put_value(any_cast<std::string>(prop.second));
+            break;
+        case PropertyType::Int:
+    		isnode.put_value(any_cast<int>(prop.second));
+            break;
+        case PropertyType::Double:
+    		isnode.put_value(any_cast<double>(prop.second)/um->get(_units.at(pname)));
+            break;
+        case PropertyType::Complex:
+    		isnode.put_value(any_cast<std::complex<double>>(prop.second)/um->get(_units.at(pname)));
+            break;
+        case PropertyType::Bool:
+    		isnode.put_value(any_cast<bool>(prop.second));
+            break;
+        }
+	}
+	return node;
 }
 
 std::ostream& operator<<(std::ostream& os,const Isotope& isotope)
