@@ -519,7 +519,17 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
         if (it->second == nullptr) {
             std::cout << "ERROR: second is null" << std::endl;
         }
-        bool collided = it->first->collide(*(it->second));
+
+        Ellipsoid3D* a = dynamic_cast<Ellipsoid3D*>(it->first);
+        Ellipsoid3D* b = dynamic_cast<Ellipsoid3D*>(it->second);
+
+        if (a == nullptr || b == nullptr) {
+            std::cout << "ERROR: could not dynamic cast to Ellipsoid3D" << std::endl;
+        }
+
+
+        // bool collided = it->first->collide(*(it->second));
+        bool collided = a->collide(*b);
         std::cout << "done testing collision" << std::endl;
 
         if (collided) {
