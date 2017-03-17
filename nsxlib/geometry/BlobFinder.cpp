@@ -524,25 +524,22 @@ void BlobFinder::mergeBlobs(std::unordered_map<int,Blob3D>& blobs, vipairs& equi
     // dummy for calling progress updater
     int dummy = 0;
     int magic = 0.02 * std::distance(blobs.begin(), blobs.end());
-    if ( magic == 0 ) magic = 1;
+    if ( magic == 0 ) {
+        magic = 1;
+    }
 
     // Iterate on blobs and merge equivalences
-    for (auto it = blobs.begin(); it != blobs.end();)
-    {
+    for (auto it = blobs.begin(); it != blobs.end();) {
         ++dummy;
 
         auto match = mequiv.find(it->first);
-        if (match == mequiv.end())
-        {
+        if (match == mequiv.end()) {
             // Nothing is found get to the next blob
             it++;
-        }
-        else
-        {
+        } else {
             auto tomerge = blobs.find(match->second);
             // Should never be the case
-            if (tomerge != blobs.end())
-            {
+            if (tomerge != blobs.end()) {
                 tomerge->second.merge(it->second);
                 it = blobs.erase(it);
             }

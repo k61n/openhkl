@@ -129,16 +129,15 @@ Ellipsoid<T,D>::Ellipsoid() : IShape<T,D>()
 template<typename T,SX::Types::uint D>
 Ellipsoid<T,D>::Ellipsoid(const Ellipsoid<T,D>& rhs) : IShape<T,D>()
  {
-    _eigenVal=rhs._eigenVal;
-    _TRSinv=rhs._TRSinv;
+    _eigenVal = rhs._eigenVal;
+    _TRSinv = rhs._TRSinv;
     updateAABB();
  }
 
 template<typename T,SX::Types::uint D>
 Ellipsoid<T,D>& Ellipsoid<T,D>::operator=(const Ellipsoid<T,D>& other)
 {
-    if (this!=&other)
-    {
+    if (this != &other) {
         IShape<T,D>::operator=(other);
         _eigenVal=other._eigenVal;
         _TRSinv=other._TRSinv;
@@ -160,22 +159,25 @@ Ellipsoid<T,D>::Ellipsoid(const vector& center, const vector& eigenvalues, const
 {
     // Define the inverse scale matrix from the eigenvalues
     Eigen::DiagonalMatrix<T,D+1> Sinv;
-    for (unsigned int i=0;i<D;++i)
-        Sinv.diagonal()[i]=1.0/eigenvalues[i];
+    for (unsigned int i = 0; i < D; ++i) {
+        Sinv.diagonal()[i] = 1.0/eigenvalues[i];
+    }
     Sinv.diagonal()[D]=1.0;
 
     // Now prepare the R^-1.T^-1 (rotation,translation)
-    _TRSinv=Eigen::Matrix<T,D+1,D+1>::Constant(0.0);
-    _TRSinv(D,D)=1.0;
-    for (unsigned int i=0;i<D;++i)
-        _TRSinv.block(i,0,1,D)=eigenvectors.col(i).transpose().normalized();
+    _TRSinv = Eigen::Matrix<T,D+1,D+1>::Constant(0.0);
+    _TRSinv(D,D) = 1.0;
+
+    for (unsigned int i = 0; i < D; ++i) {
+        _TRSinv.block(i,0,1,D) = eigenvectors.col(i).transpose().normalized();
+    }
 
     // The translation part of the inverse transforation matrix is afected by rotation
     // (see https://fr.wikipedia.org/wiki/Coordonn%C3%A9es_homog%C3%A8nes)
-    _TRSinv.block(0,D,D,1)=-_TRSinv.block(0,0,D,D)*center;
+    _TRSinv.block(0,D,D,1) = -_TRSinv.block(0,0,D,D)*center;
 
     // Finally compute (TRS)^-1 by left-multiplying (TR)^-1 by S^-1
-    _TRSinv=Sinv*_TRSinv;
+    _TRSinv = Sinv*_TRSinv;
     updateAABB();
 }
 
@@ -185,23 +187,24 @@ Ellipsoid<T,D>::Ellipsoid(const vector& center, const matrix& RSinv): IShape<T,D
 {
     vector t = -RSinv*center;
     _TRSinv=Eigen::Matrix<T,D+1,D+1>::Constant(0.0);
-    _TRSinv(D,D)=1.0;
+    _TRSinv(D,D) = 1.0;
 
     for (unsigned int i = 0; i < D; ++i) {
         _TRSinv(i, D) = t(i, 0);
 
-        for (unsigned int j = 0; j < D; ++j)
+        for (unsigned int j = 0; j < D; ++j) {
             _TRSinv(i, j) = RSinv(i, j);
+        }
     }
-
     updateAABB();
 }
 
 template<typename T,SX::Types::uint D>
 bool Ellipsoid<T,D>::collide(const IShape<T,D>& other) const
 {
-    if (this->intercept(other))
+    if (this->intercept(other)) {
         return other.collide(*this);
+    }
     return false;
 }
 
@@ -234,23 +237,25 @@ void Ellipsoid<T,D>::rotate(const matrix& eigenvectors)
 {
     // Reconstruct S
     Eigen::DiagonalMatrix<T,D+1> S;
-    for (unsigned int i=0;i<D;++i) {
-        S.diagonal()[i]=_eigenVal[i];
+    for (unsigned int i = 0; i < D; ++i) {
+        S.diagonal()[i] = _eigenVal[i];
     }
-    S.diagonal()[D]=1.0;
+    S.diagonal()[D] = 1.0;
     _TRSinv=S*_TRSinv;
 
     // Construct the inverse of the new rotation matrix
-    HomMatrix Rnewinv=HomMatrix::Zero();
+    HomMatrix Rnewinv = HomMatrix::Zero();
     Rnewinv(D,D) = 1.0;
-    for (unsigned int i=0;i<D;++i)
+    for (unsigned int i = 0; i < D; ++i) {
         Rnewinv.block(i,0,1,D)=eigenvectors.col(i).transpose().normalized();
+    }
     _TRSinv=Rnewinv*_TRSinv;
 
     // Reconstruct Sinv
-    for (unsigned int i=0;i<D;++i)
-        S.diagonal()[i]=1.0/_eigenVal[i];
-    S.diagonal()[D]=1.0;
+    for (unsigned int i = 0; i < D; ++i) {
+        S.diagonal()[i] = 1.0/_eigenVal[i];
+    }
+    S.diagonal()[D] = 1.0;
 
     // Reconstruct the complete TRS inverse
     _TRSinv = S*_TRSinv;
@@ -262,58 +267,59 @@ void Ellipsoid<T,D>::rotate(const matrix& eigenvectors)
 template<typename T,SX::Types::uint D>
 void Ellipsoid<T,D>::scale(T value)
 {
-    _eigenVal*=value;
+    _eigenVal *= value;
     Eigen::DiagonalMatrix<T,D+1> Sinv;
-    for (unsigned int i=0;i<D;++i) {
-        Sinv.diagonal()[i]=1.0/value;
+    for (unsigned int i = 0; i < D; ++i) {
+        Sinv.diagonal()[i] = 1.0/value;
     }
-    Sinv.diagonal()[D]=1.0;
-    _TRSinv=Sinv*_TRSinv;
+    Sinv.diagonal()[D] = 1.0;
+    _TRSinv = Sinv*_TRSinv;
     this->scaleAABB(value);
 }
 
 template<typename T,SX::Types::uint D>
 void Ellipsoid<T,D>::scale(const vector& v)
 {
-    _eigenVal=_eigenVal.cwiseProduct(v);
+    _eigenVal = _eigenVal.cwiseProduct(v);
     Eigen::DiagonalMatrix<T,D+1> Sinv;
-    for (unsigned int i=0;i<D;++i) {
-        Sinv.diagonal()[i]=1.0/v[i];
+    for (unsigned int i = 0; i < D; ++i) {
+        Sinv.diagonal()[i] = 1.0/v[i];
     }
-    Sinv.diagonal()[D]=1.0;
-    _TRSinv=Sinv*_TRSinv;
+    Sinv.diagonal()[D] = 1.0;
+    _TRSinv = Sinv*_TRSinv;
     this->scaleAABB(v);
 }
 
 template<typename T,SX::Types::uint D>
 void Ellipsoid<T,D>::translate(const vector& t)
 {
-    Eigen::Matrix<T,D+1,D+1> tinv=Eigen::Matrix<T,D+1,D+1>::Constant(0.0);
-    tinv.block(0,D,D,1)=-t;
-    for (SX::Types::uint i=0;i<D+1;++i) {
-        tinv(i,i)=1.0;
+    Eigen::Matrix<T,D+1,D+1> tinv = Eigen::Matrix<T,D+1,D+1>::Constant(0.0);
+    tinv.block(0,D,D,1) = -t;
+    for (SX::Types::uint i = 0; i < D+1; ++i) {
+        tinv(i,i) = 1.0;
     }
-    tinv(D,D)=1.0;
-    _TRSinv=_TRSinv*tinv;
+    tinv(D,D) = 1.0;
+    _TRSinv = _TRSinv*tinv;
     this->translateAABB(t);
 }
 
 template<typename T,SX::Types::uint D>
 bool Ellipsoid<T,D>::isInside(const HomVector& point) const
 {
-
     HomVector p;
     // Is the transformed point in the bounding box of the sphere
-    for (unsigned int i=0;i<D;++i) {
-        p[i]=_TRSinv.row(i).dot(point);
-        if (p[i]<-1 || p[i]>1)
+    for (unsigned int i = 0; i < D; ++i) {
+        p[i] = _TRSinv.row(i).dot(point);
+        if (p[i]<-1 || p[i]>1) {
             return false;
+        }
     }
-    T value=0;
-    for (unsigned int i=0;i<D;++i) {
-        value+=p[i]*p[i];
+    T value = 0;
+
+    for (unsigned int i = 0; i < D; ++i) {
+        value += p[i]*p[i];
     }
-    return (value<=1);
+    return (value <= 1);
 }
 
 template<typename T,SX::Types::uint D>
@@ -331,20 +337,18 @@ const typename Ellipsoid<T,D>::vector& Ellipsoid<T,D>::getExtents() const
 template<typename T,SX::Types::uint D>
 void Ellipsoid<T,D>::updateAABB()
 {
-    Eigen::Matrix<T,D+1,D+1> TRS=getInverseTransformation().inverse();
+    Eigen::Matrix<T,D+1,D+1> TRS = getInverseTransformation().inverse();
 
     // See https://tavianator.com/exact-bounding-boxes-for-spheres-ellipsoids/ for details about how getting
     // AABB efficiently from transformation matrix
-
     // The width of the AABB in one direction is the norm of corresponding TRS matrix row
-    vector width=vector::Constant(0.0);
-    for (unsigned int i=0;i<D;++i) {
-        for (unsigned int j=0;j<D;++j) {
-            width[i]+=TRS(i,j)*TRS(i,j);
+    vector width = vector::Constant(0.0);
+    for (unsigned int i = 0; i < D; ++i) {
+        for (unsigned int j = 0; j < D; ++j) {
+            width[i] += TRS(i,j)*TRS(i,j);
         }
-        width[i]=sqrt(width[i]);
+        width[i] = sqrt(width[i]);
     }
-
     // Update the upper and lower bound of the AABB from center +-width
     _lowerBound=TRS.block(0,D,D,1)-width;
     _upperBound=TRS.block(0,D,D,1)+width;
@@ -371,8 +375,9 @@ Eigen::Matrix<T, D, 1> Ellipsoid<T, D>::getCenter() const
     for (int i = 0; i < D; ++i) {
         t(i,0) = _TRSinv(i, D);
 
-        for (int j = 0; j < D; ++j)
+        for (int j = 0; j < D; ++j) {
             A(i, j) = _TRSinv(i, j);
+        }
     }
     t = -A.inverse()*t;
     return t;
@@ -384,8 +389,9 @@ Eigen::Matrix<T, D, D> Ellipsoid<T, D>::getRSinv() const
     Eigen::Matrix<T, D, D> A;
 
     for (int i = 0; i < D; ++i) {
-        for (int j = 0; j < D; ++j)
+        for (int j = 0; j < D; ++j) {
             A(i, j) = _TRSinv(i, j);
+        }
     }
     return A;
 }
@@ -421,9 +427,9 @@ bool collideEllipsoidEllipsoid(const Ellipsoid<T,2>& eA, const Ellipsoid<T,2>& e
     Eigen::DiagonalMatrix<T,3> SB;
     SB.diagonal() << eigB(0), eigB(1),1.0;
     // Recover the (TR)^-1=Minv matrices
-    Eigen::Matrix<T,3,3> A=SA*trsA;
+    Eigen::Matrix<T,3,3> A = SA*trsA;
     //MA.block<0,0>(N,N).tranposeInPlace();
-    Eigen::Matrix<T,3,3> B=SB*trsB;
+    Eigen::Matrix<T,3,3> B = SB*trsB;
     // A and B are  now the characteristic matrix of the ellipsoids in their frame of references.
     SA.diagonal() << 1.0/std::pow(eigA(0),2), 1.0/std::pow(eigA(1),2),-1.0;
     SB.diagonal() << 1.0/std::pow(eigB(0),2), 1.0/std::pow(eigB(1),2),-1.0;
@@ -493,11 +499,10 @@ bool collideEllipsoidEllipsoid(const Ellipsoid<T,2>& eA, const Ellipsoid<T,2>& e
 template<typename T,SX::Types::uint D=3>
 bool collideEllipsoidEllipsoid(const Ellipsoid<T,3>& eA, const Ellipsoid<T,3>& eB)
 {
-    //
-    const Eigen::Matrix<T,4,4>& trsA=eA.getInverseTransformation();
-    const Eigen::Matrix<T,3,1>& eigA=eA.getExtents();
-    const Eigen::Matrix<T,4,4>& trsB=eB.getInverseTransformation();
-    const Eigen::Matrix<T,3,1>& eigB=eB.getExtents();
+    const Eigen::Matrix<T,4,4> trsA = eA.getInverseTransformation();
+    const Eigen::Matrix<T,3,1> eigA = eA.getExtents();
+    const Eigen::Matrix<T,4,4> trsB = eB.getInverseTransformation();
+    const Eigen::Matrix<T,3,1> eigB = eB.getExtents();
     Eigen::DiagonalMatrix<T,4> SA;
     SA.diagonal() << eigA(0), eigA(1), eigA(2), 1.0;
     Eigen::DiagonalMatrix<T,4> SB;
@@ -550,24 +555,27 @@ bool collideEllipsoidEllipsoid(const Ellipsoid<T,3>& eA, const Ellipsoid<T,3>& e
     Eigen::ComplexEigenSolver<Eigen::Matrix<T,4,4>> solver;
     solver.compute(companion);
 
-    const std::complex<T>& val0=solver.eigenvalues()(0);
-    const std::complex<T>& val1=solver.eigenvalues()(1);
-    const std::complex<T>& val2=solver.eigenvalues()(2);
-    const std::complex<T>& val3=solver.eigenvalues()(3);
+    const std::complex<T> val0 = solver.eigenvalues()(0);
+    const std::complex<T> val1 = solver.eigenvalues()(1);
+    const std::complex<T> val2 = solver.eigenvalues()(2);
+    const std::complex<T> val3 = solver.eigenvalues()(3);
 
     // One of the root is always positive.
     // Check whether two of the roots are negative and distinct, in which case the Ellipse do not collide.
     int count=0;
     T sol[2];
-    if (std::fabs(imag(val0))< 1e-5 && real(val0)<0)
+    if (std::fabs(imag(val0))< 1e-5 && real(val0)<0) {
         sol[count++]=real(val0);
-    if (std::fabs(imag(val1))< 1e-5 && real(val1)<0)
+    }
+    if (std::fabs(imag(val1))< 1e-5 && real(val1)<0) {
         sol[count++]=real(val1);
-    if (std::fabs(imag(val2))< 1e-5 && real(val2)<0)
+    }
+    if (std::fabs(imag(val2))< 1e-5 && real(val2)<0) {
         sol[count++]=real(val2);
-    if (std::fabs(imag(val3))< 1e-5 && real(val3)<0)
+    }
+    if (std::fabs(imag(val3))< 1e-5 && real(val3)<0) {
         sol[count++]=real(val3);
-
+    }
     return (!(count==2 && std::fabs(sol[0]-sol[1])>1e-5));
 }
 
