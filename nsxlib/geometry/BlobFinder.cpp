@@ -526,6 +526,9 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
         if (a == nullptr || b == nullptr) {
             std::cout << "ERROR: could not dynamic cast to Ellipsoid3D" << std::endl;
         }
+        else {
+            std::cout << "successful cast to Ellipsoid3D" << std::endl;
+        }
 
 
         // bool collided = it->first->collide(*(it->second));
