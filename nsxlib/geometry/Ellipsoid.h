@@ -410,10 +410,10 @@ template<typename T,SX::Types::uint D=2>
 bool collideEllipsoidEllipsoid(const Ellipsoid<T,2>& eA, const Ellipsoid<T,2>& eB)
 {
     // Get the (TRS)^-1 matrices from object A and B
-    const Eigen::Matrix<T,3,3>& trsA=eA.getInverseTransformation();
-    const Eigen::Matrix<T,2,1>& eigA=eA.getExtents();
-    const Eigen::Matrix<T,3,3>& trsB=eB.getInverseTransformation();
-    const Eigen::Matrix<T,2,1>& eigB=eB.getExtents();
+    const Eigen::Matrix<T,3,3> trsA = eA.getInverseTransformation();
+    const Eigen::Matrix<T,2,1> eigA = eA.getExtents();
+    const Eigen::Matrix<T,3,3> trsB = eB.getInverseTransformation();
+    const Eigen::Matrix<T,2,1> eigB = eB.getExtents();
 
     // Reconstruct the S matrices
     Eigen::DiagonalMatrix<T,3> SA;
@@ -461,22 +461,24 @@ bool collideEllipsoidEllipsoid(const Ellipsoid<T,2>& eA, const Ellipsoid<T,2>& e
     Eigen::ComplexEigenSolver<Eigen::Matrix<T,3,3>> solver;
     solver.compute(companion);
 
-    const std::complex<T>& val0=solver.eigenvalues()(0);
-    const std::complex<T>& val1=solver.eigenvalues()(1);
-    const std::complex<T>& val2=solver.eigenvalues()(2);
+    const std::complex<T> val0 = solver.eigenvalues()(0);
+    const std::complex<T> val1 = solver.eigenvalues()(1);
+    const std::complex<T> val2 = solver.eigenvalues()(2);
 
     // One of the root is always positive.
     // Check whether two of the roots are negative and distinct, in which case the Ellipse do not collide.
     int count=0;
     T sol[2];
-    if (std::fabs(imag(val0))< 1e-5 && real(val0)<0)
+    if (std::fabs(imag(val0))< 1e-5 && real(val0)<0) {
         sol[count++]=real(val0);
-    if (std::fabs(imag(val1))< 1e-5 && real(val1)<0)
+    }
+    if (std::fabs(imag(val1))< 1e-5 && real(val1)<0) {
         sol[count++]=real(val1);
-    if (std::fabs(imag(val2))< 1e-5 && real(val2)<0)
+    }
+    if (std::fabs(imag(val2))< 1e-5 && real(val2)<0) {
         sol[count++]=real(val2);
+    }
     return (!(count==2 && std::fabs(sol[0]-sol[1])>1e-5));
-
 }
 
 /** Based on the method described in:
@@ -492,7 +494,6 @@ template<typename T,SX::Types::uint D=3>
 bool collideEllipsoidEllipsoid(const Ellipsoid<T,3>& eA, const Ellipsoid<T,3>& eB)
 {
     //
-    std::cout << "collideEllipsoidEllipsoid called" << std::endl;
     const Eigen::Matrix<T,4,4>& trsA=eA.getInverseTransformation();
     const Eigen::Matrix<T,3,1>& eigA=eA.getExtents();
     const Eigen::Matrix<T,4,4>& trsB=eB.getInverseTransformation();
@@ -549,8 +550,6 @@ bool collideEllipsoidEllipsoid(const Ellipsoid<T,3>& eA, const Ellipsoid<T,3>& e
     Eigen::ComplexEigenSolver<Eigen::Matrix<T,4,4>> solver;
     solver.compute(companion);
 
-    std::cout << "computed eigenvalues" << std::endl;
-
     const std::complex<T>& val0=solver.eigenvalues()(0);
     const std::complex<T>& val1=solver.eigenvalues()(1);
     const std::complex<T>& val2=solver.eigenvalues()(2);
@@ -569,10 +568,7 @@ bool collideEllipsoidEllipsoid(const Ellipsoid<T,3>& eA, const Ellipsoid<T,3>& e
     if (std::fabs(imag(val3))< 1e-5 && real(val3)<0)
         sol[count++]=real(val3);
 
-    std::cout << "ready to return" << std::endl;
-
     return (!(count==2 && std::fabs(sol[0]-sol[1])>1e-5));
-
 }
 
 /** Based on the method described in:
@@ -624,8 +620,9 @@ bool collideEllipsoidOBB(const Ellipsoid<T,2>& ell, const OBB<T,2>& obb)
 
     // Compute the D2 and M matrices (defined in p.2 of the documentation)
     Eigen::DiagonalMatrix<T,D> D2;
-    for (SX::Types::uint i=0;i<D;++i)
+    for (SX::Types::uint i=0;i<D;++i) {
         D2.diagonal()[i] = 1.0/(ellS.diagonal()[i]*ellS.diagonal()[i]);
+    }
     matrix M=(ellRinv.transpose())*D2*ellRinv;
 
     /*
@@ -642,8 +639,7 @@ bool collideEllipsoidOBB(const Ellipsoid<T,2>& ell, const OBB<T,2>& obb)
     vector x=obbRinv*KmC;
 
     // The ellipsoid center is outside the OBB
-    if (std::abs(x(0))<=(obbS.diagonal()[0]+L(0)) &&
-        std::abs(x(1))<=(obbS.diagonal()[1]+L(1))) {
+    if (std::abs(x(0))<=(obbS.diagonal()[0]+L(0)) && std::abs(x(1))<=(obbS.diagonal()[1]+L(1))) {
         vector s;
         vector PmC = vector::Zero();
         for (SX::Types::uint i=0; i<D;++i) {
