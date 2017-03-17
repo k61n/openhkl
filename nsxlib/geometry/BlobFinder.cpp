@@ -23,36 +23,40 @@ void BlobFinder::registerEquivalence(int a, int b, vipairs& equivalences)
 
 bool BlobFinder::sortEquivalences(const ipair& pa, const ipair& pb)
 {
-    if (pa.first<pb.first)
+    if (pa.first<pb.first) {
         return true;
-    if (pa.first>pb.first)
+    }
+    if (pa.first>pb.first) {
         return false;
+    }
     return (pa.second<pb.second);
 }
 
 imap BlobFinder::removeDuplicates(vipairs& equivalences)
 {
-    auto beg=equivalences.begin();
-    auto last=std::unique(equivalences.begin(),equivalences.end());
+    auto beg = equivalences.begin();
+    auto last = std::unique(equivalences.begin(),equivalences.end());
 
     imap mequiv;
-    for (auto it=beg;it!=last;++it)
-        mequiv.insert(*it);
 
+    for (auto it = beg; it != last; ++it) {
+        mequiv.insert(*it);
+    }
     return mequiv;
 }
 
 void BlobFinder::reassignEquivalences(imap& equivalences)
 {
     for (auto it = equivalences.begin(); it != equivalences.end(); ++it) {
-        auto found=equivalences.find(it->second);
-        if (found != equivalences.end())
+        auto found = equivalences.find(it->second);
+        if (found != equivalences.end()) {
             it->second = found->second;
+        }
     }
 }
 
 
-void BlobFinder::eliminateBlobs(std::unordered_map<int,Blob3D>& blobs) const
+void BlobFinder::eliminateBlobs(std::unordered_map<int, Blob3D>& blobs) const
 {
     // update progress handler
     if ( _progressHandler ) {
@@ -68,14 +72,13 @@ void BlobFinder::eliminateBlobs(std::unordered_map<int,Blob3D>& blobs) const
         ++dummy;
 
         Blob3D& p=it->second;
-        if (p.getComponents() < _minComp || p.getComponents() > _maxComp)
+        if (p.getComponents() < _minComp || p.getComponents() > _maxComp) {
             it = blobs.erase(it);
-        else
+        } else {
             it++;
-
+        }
         // update progress handler
         if ( (dummy&magic) == 0 && _progressHandler) {
-
             double total_dist = std::distance(blobs.begin(), blobs.end());
             double current_dist = std::distance(blobs.begin(), it);
             double progress = 100.0 * current_dist / total_dist;
@@ -101,10 +104,8 @@ void BlobFinder::eliminateBlobs(std::unordered_map<int,Blob3D>& blobs) const
      * merge collisions
      *
      */
-    // the typename matrix_iterator_t should be a forward iterator of type Eigen::Matrix
 blob3DCollection BlobFinder::find(unsigned int begin, unsigned int end) {
     // find all blobs, possibly with multiple labels
-
     std::unordered_map<int,Blob3D> blobs;
 
     _nframes = 0;
@@ -143,16 +144,7 @@ blob3DCollection BlobFinder::find(unsigned int begin, unsigned int end) {
                 blobs.insert(blob);
             }
         }
-
-        if (_progressHandler) {
-            _progressHandler->log("Done inserting local_blobs into blobs...");
-        }
     }
-
-    if (_progressHandler) {
-        _progressHandler->log("done parallel section.");
-    }
-
 
     // serial section below
     int num_blobs;
@@ -346,11 +338,6 @@ void BlobFinder::findBlobs(std::unordered_map<int,Blob3D>& blobs,
         _progressHandler->log("Found " + std::to_string(blobs.size()) + " blobs");
         _progressHandler->setProgress(100);
     }
-
-    // too few frames for algorithm to be reliable
-    //if (_nframes<=1)
-    //    throw std::runtime_error("Third dimension should be at least 2 to run this algorithm. if 1, use 2D version");
-
 }
 
 void BlobFinder::setProgressHandler(std::shared_ptr<Utils::ProgressHandler> callback)
@@ -390,12 +377,6 @@ void BlobFinder::setRelative(bool isRelative)
 
 void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& equivalences) const
 {
-    // jmf debugging
-    if (_progressHandler) {
-        _progressHandler->log("entering BlobFinder::findCollisions()");
-    }
-
-
     // Clear the equivalence vectors for reuse purpose
     equivalences.clear();
 
@@ -409,11 +390,6 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
     shape3Dmap boxes;
     boxes.reserve(blobs.size());
 
-    // jmf debugging
-    if (_progressHandler) {
-        _progressHandler->log("boxes reserved");
-    }
-
     Eigen::Vector3d center,extents;
     Eigen::Matrix3d axis;
 
@@ -425,64 +401,37 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
         magic = 1;
     }
 
-    // jmf debugging
-    std::cout << "entering loop over blobs" << std::endl;
-
-
     for (auto it = blobs.begin(); it != blobs.end();) {
-        //std::cout << "beginning of loop body" << std::endl;
-
         ++dummy;
 
         try {
-            //std::cout << "converting to ellipsoid" << std::endl;
             // toEllipsoid throws exception if mass is too small
             it->second.toEllipsoid(_confidence,center,extents,axis);
-            //std::cout << "done" << std::endl;
         } catch(...) {
-            //std::cout << "erasing blob";
             it = blobs.erase(it);
-            //std::cout << "done";
             continue;
         }
-
-        //std::cout << "done converting to ellipsoid" << std::endl;
 
         // if the threshold is too small it will break the OpenMP peak search
         // when the number of threads is very large
         if (extents.minCoeff()<1.0e-13) {
-            //std::cout << "erasing blob (2)" << std::endl;
             it = blobs.erase(it);
-            //std::cout << "done" << std::endl;
-        } else {
-            //std::cout << "creating new Ellipsoid3D" << std::endl;
-            Ellipsoid3D* ellipse = nullptr;
-            try {
-                ellipse = new Ellipsoid3D(center,extents,axis);
-            }
-            catch(...) {
-                std::cout << "could not allocate Ellipsoid3D" << std::endl;
-                return;
-            }
-            //std::cout << "inserting box into 'boxes' container" << std::endl;
-            boxes.insert(shape3Dmap::value_type(ellipse, it->first));
-            it++;
-            //std::cout << "done" << std::endl;
+            continue;
         }
 
-//        std::cout << "end of loop body" << std::endl;
+        auto ellipse = new Ellipsoid3D(center,extents,axis);
+        boxes.insert(shape3Dmap::value_type(ellipse, it->first));
+        it++;
 
         // update progress handler
-//        if ( (dummy % magic) == 0 && _progressHandler) {
-//            double total_dist = std::distance(blobs.begin(), blobs.end());
-//            double current_dist = std::distance(blobs.begin(), it);
-//            double progress = 100.0 * current_dist / total_dist;
-//            _progressHandler->setProgress(0.5*progress);
-//            _progressHandler->log("blob loop: " + std::to_string(progress));
-//        }
+        if ( (dummy % magic) == 0 && _progressHandler) {
+            double total_dist = std::distance(blobs.begin(), blobs.end());
+            double current_dist = std::distance(blobs.begin(), it);
+            double progress = 100.0 * current_dist / total_dist;
+            _progressHandler->setProgress(0.5*progress);
+            _progressHandler->log("blob loop: " + std::to_string(progress));
+        }
     }
-
-    std::cout << "done looping over blobs" << std::endl;
 
     Octree oct({0.0,0.0,0.0},{double(_ncols),double(_nrows),double(_nframes)});
     oct.setMaxDepth(6);
@@ -493,10 +442,6 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
     }
 
     std::set<Octree::collision_pair> collisions;
-
-    // jmf debugging
-    std::cout << "calculating possible collisions" << std::endl;
-
     oct.getPossibleCollisions(collisions);
 
     // dummies used to help progress handler
@@ -507,80 +452,43 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
         magic = 1;
     }
 
-    // jmf debugging
-    std::cout << "beginning loop over collisions" << std::endl;
-
     for (auto&& it = collisions.begin(); it != collisions.end(); ++it) {
-        // register collision
-        std::cout << "testing collision" << std::endl;
-        if (it->first == nullptr) {
-            std::cout << "ERROR: first is null" << std::endl;
-        }
-        if (it->second == nullptr) {
-            std::cout << "ERROR: second is null" << std::endl;
-        }
 
-        Ellipsoid3D* a = dynamic_cast<Ellipsoid3D*>(it->first);
-        Ellipsoid3D* b = dynamic_cast<Ellipsoid3D*>(it->second);
+        auto shape_a = it->first;
+        auto shape_b = it->second;
 
-        if (a == nullptr || b == nullptr) {
-            std::cout << "ERROR: could not dynamic cast to Ellipsoid3D" << std::endl;
-        }
-        else {
-            std::cout << "successful cast to Ellipsoid3D" << std::endl;
-        }
+        assert(shape_a != nullptr);
+        assert(shape_b != nullptr);
 
-
-        // bool collided = it->first->collide(*(it->second));
-        bool collided = a->collide(*b);
-        std::cout << "done testing collision" << std::endl;
+        bool collided = shape_a->collide(*shape_b);
 
         if (collided) {
-            std::cout << "collision found" << std::endl;
-
             auto&& bit1 = boxes.find(it->first);
             auto&& bit2 = boxes.find(it->second);
-
-            std::cout << "registering equivalence: " << it->first << " " << it->second << std::endl;
-
             registerEquivalence(bit1->second, bit2->second, equivalences);
-            std::cout << "done registering equivalence" << std::endl;
-
         }
 
-        std::cout << "end of loop body" << std::endl;
-
-
         // update progress handler
-//        if ( (dummy % magic) == 0 && _progressHandler) {
-//            const double total_dist = std::distance(collisions.begin(), collisions.end());
-//            const double current_dist = std::distance(collisions.begin(), it);
-//            const double progress = 100.0 * current_dist / total_dist;
-//            _progressHandler->setProgress(50 + 0.5*progress);
-//        }
+        if ( (dummy % magic) == 0 && _progressHandler) {
+            const double total_dist = std::distance(collisions.begin(), collisions.end());
+            const double current_dist = std::distance(collisions.begin(), it);
+            const double progress = 100.0 * current_dist / total_dist;
+            _progressHandler->setProgress(50 + 0.5*progress);
+        }
         ++dummy;
-//        if (_progressHandler) {
-//            _progressHandler->log("beginning next loop iteration");
-//        }
     }
 
-    // jmf debugging
-//    if (_progressHandler) {
-//        _progressHandler->log("done loop over collisions");
-//    }
 
     // calculation complete
-//    if ( _progressHandler ) {
-//        _progressHandler->log("Found " + std::to_string(equivalences.size()) + " equivalences");
-//        _progressHandler->setProgress(100);
-//    }
-    std::cout << "done finding collisions" << std::endl;
+    if ( _progressHandler ) {
+        _progressHandler->log("Found " + std::to_string(equivalences.size()) + " equivalences");
+        _progressHandler->setProgress(100);
+    }
+
     // free memory stored in unordered map
     for (auto&& it: boxes) {
         delete it.first;
     }
-
-    std::cout << "reached end of findCollisions()" << std::endl;
 }
 
 void BlobFinder::setFilter(BlobFinder::FilterCallback callback)
