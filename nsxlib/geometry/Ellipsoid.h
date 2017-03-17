@@ -492,6 +492,7 @@ template<typename T,SX::Types::uint D=3>
 bool collideEllipsoidEllipsoid(const Ellipsoid<T,3>& eA, const Ellipsoid<T,3>& eB)
 {
     //
+    std::cout << "collideEllipsoidEllipsoid called" << std::endl;
     const Eigen::Matrix<T,4,4>& trsA=eA.getInverseTransformation();
     const Eigen::Matrix<T,3,1>& eigA=eA.getExtents();
     const Eigen::Matrix<T,4,4>& trsB=eB.getInverseTransformation();
@@ -548,6 +549,8 @@ bool collideEllipsoidEllipsoid(const Ellipsoid<T,3>& eA, const Ellipsoid<T,3>& e
     Eigen::ComplexEigenSolver<Eigen::Matrix<T,4,4>> solver;
     solver.compute(companion);
 
+    std::cout << "computed eigenvalues" << std::endl;
+
     const std::complex<T>& val0=solver.eigenvalues()(0);
     const std::complex<T>& val1=solver.eigenvalues()(1);
     const std::complex<T>& val2=solver.eigenvalues()(2);
@@ -565,6 +568,9 @@ bool collideEllipsoidEllipsoid(const Ellipsoid<T,3>& eA, const Ellipsoid<T,3>& e
         sol[count++]=real(val2);
     if (std::fabs(imag(val3))< 1e-5 && real(val3)<0)
         sol[count++]=real(val3);
+
+    std::cout << "ready to return" << std::endl;
+
     return (!(count==2 && std::fabs(sol[0]-sol[1])>1e-5));
 
 }
