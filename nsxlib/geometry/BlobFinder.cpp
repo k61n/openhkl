@@ -15,9 +15,9 @@ namespace Geometry
 void BlobFinder::registerEquivalence(int a, int b, vipairs& equivalences)
 {
     if (a < b) {
-        equivalences.push_back(vipairs::value_type(b,a));
+        equivalences.emplace_back(vipairs::value_type(b,a));
     } else {
-        equivalences.push_back(vipairs::value_type(a,b));
+        equivalences.emplace_back(vipairs::value_type(a,b));
     }
 }
 
@@ -113,23 +113,23 @@ blob3DCollection BlobFinder::find(unsigned int begin, unsigned int end) {
 
     #pragma omp parallel
     {
-        int begin = -1;
-        int end;
+        int loop_begin = -1;
+        int loop_end;
 
-        std::unordered_map<int,Blob3D> local_blobs;
+        std::unordered_map<int,Blob3D> local_blobs = {};
         vipairs local_equivalences;
 
         // determine begining and ending index of current thread
         #pragma omp for
         for (int i = 0; i < _data->getNFrames(); ++i) {
-            if ( begin == -1) {
-                begin = i;
+            if ( loop_begin == -1) {
+                loop_begin = i;
             }
-            end = i+1;
+            loop_end = i+1;
         }
 
         // find blobs within the current frame range
-        findBlobs(local_blobs, local_equivalences, begin, end);
+        findBlobs(local_blobs, local_equivalences, loop_begin, loop_end);
 
         // merge adjacent blobs
         mergeBlobs(local_blobs, local_equivalences);
@@ -246,7 +246,7 @@ void BlobFinder::findBlobs(std::unordered_map<int,Blob3D>& blobs,
         for (unsigned int row = 0; row < _nrows; ++row) {
             for (unsigned int col = 0; col < _ncols; ++col) {
                 auto value = frame_data(row, col);
-                auto filterd_value = filtered_frame(row, col);
+                //auto filterd_value = filtered_frame(row, col);
 
                 // Discard pixel if value < threshold
                 if (filtered_frame(row, col) < threshold) {
@@ -298,14 +298,16 @@ void BlobFinder::findBlobs(std::unordered_map<int,Blob3D>& blobs,
                     break;
                 case 7: // All three
                     label=left;
-                    if ((top==left) && (top!=previous))
+                    if ((top==left) && (top!=previous)) {
                         registerEquivalence(top, previous, equivalences);
-                    else if ((top==previous) && (top!=left))
+                    }
+                    else if ((top==previous) && (top!=left)) {
                         registerEquivalence(top, left, equivalences);
-                    else if ((left==previous) && (left!=top))
+                    }
+                    else if ((left==previous) && (left!=top)) {
                         registerEquivalence(left, top, equivalences);
-                    else if ((left!=previous) && (left!=top) && (top!=previous))
-                    {
+                    }
+                    else if ((left!=previous) && (left!=top) && (top!=previous)) {
                         registerEquivalence(top, previous, equivalences);
                         registerEquivalence(top, left, equivalences);
                         registerEquivalence(left, previous, equivalences);
