@@ -46,16 +46,28 @@ namespace Utils {
 template<typename T>
 class Maybe {
 public:
+
     using no_ref = typename std::remove_reference<T>::type;
     //using value_type = no_ref * const;
     using value_type = no_ref;
 
-    explicit Maybe(): _isNothing(true) {}
-    explicit Maybe(const T& a): _value(a), _isNothing(false) {}
-    explicit Maybe(T&& a): _value(std::move(a)), _isNothing(false) {}
+    struct nothing {};
 
-    explicit Maybe(const Maybe& other): _value(other._value), _isNothing(other._isNothing) {}
-    explicit Maybe(Maybe&& other): _value(std::move(other._value)), _isNothing(other._isNothing) {}
+    union storage_type {
+        int dummy;
+        value_type value;
+
+        storage_type(): dummy() {}
+        storage_type(const value_type& val): value(val) {}
+        storage_type(value_type&& val): value(std::move(val)) {}
+    };
+
+    explicit Maybe(): _storage(), _isNothing(true) {}
+    explicit Maybe(const T& a): _storage(a), _isNothing(false) {}
+    explicit Maybe(T&& a): _storage(std::move(a)), _isNothing(false) {}
+
+    explicit Maybe(const Maybe& other): Maybe() {*this = other; }
+    explicit Maybe(Maybe&& other): Maybe() {*this = std::move(other); }
 
     bool isNothing() const
     {
@@ -67,39 +79,43 @@ public:
         if (_isNothing) {
             throw std::runtime_error("Maybe: get() called on nothing");
         }
-        return _value;
+        return _storage.value;
     }
 
     Maybe& operator=(const Maybe& other)
     {
-        _value = other._value;
         _isNothing = other._isNothing;
+        if (_isNothing == false) {
+            _storage.value = other._storage.value;
+        }
         return *this;
     }
 
     Maybe& operator=(Maybe&& other)
     {
-        _value = std::move(other._value);
         _isNothing = other._isNothing;
+        if (_isNothing == false) {
+            _storage.value = std::move(other._storage.value);
+        }
         return *this;
     }
 
     Maybe& operator=(const value_type& value)
     {
-        _value = value;
         _isNothing = false;
+        _storage.value = value;
         return *this;
     }
 
     Maybe& operator=(value_type&& value)
     {
-        _value = std::move(value);
         _isNothing = false;
+        _storage.value = std::move(value);
         return *this;
     }
 
 private:
-    value_type _value;
+    storage_type _storage;
     bool _isNothing;
 };
 

@@ -18,8 +18,6 @@ const double eps = 1e-10;
 
 int run_test()
 {
-#pragma message "test not implemented"
-
     Maybe<int> x(5);
 
     BOOST_CHECK_EQUAL(x.get(), 5);
@@ -28,6 +26,15 @@ int run_test()
     y = 6;
 
     BOOST_CHECK_EQUAL(x.get(), 6);
+
+    // class with deleted default constructor
+    class TestClass {
+    public:
+        TestClass() = delete;
+    };
+
+    // checkt that we can create 'nothing' of type TestClass
+    Maybe<TestClass> test;
 
     return 0;
 }
