@@ -184,4 +184,4 @@ std::vector<sptrPeak3D> PeakCalc::findNeighbors(const std::set<sptrPeak3D>& peak
 }
 
 } // Namespace Crystal
-} /* namespace SX */
+} // namespace SX 

@@ -61,9 +61,11 @@ public:
     const SX::Geometry::IntegrationRegion& getRegion() const;
 
     //! return blob shape (not: not scaled by a confidence parameter)
+    //!
+    //! Note: this method can throw if the peak is too weak
     Ellipsoid3D getBlobShape(double confidence) const;
-private:
 
+private:
     SX::Geometry::Blob3D _blob;
 
     SX::Geometry::IntegrationRegion _region;

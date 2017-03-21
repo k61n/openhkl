@@ -75,6 +75,11 @@ void DialogAutoIndexing::autoIndex()
     });
 
     AutoIndexer indexer(_experiment, handler);
+
+    if (_unitCells.empty()) {
+        throw std::runtime_error("cannot auto index: no unit cell");
+    }
+
     sptrUnitCell selectedUnitCell = _unitCells[ui->unitCells->currentIndex()];
 
     // Clear the current solution list
