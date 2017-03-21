@@ -15,7 +15,6 @@
 #endif
 
 namespace SX {
-
 namespace Imaging {
 
 ConvolutionKernel* AnnularKernel::create(int nrows, int ncols)
@@ -35,14 +34,15 @@ SX::Imaging::AnnularKernel::AnnularKernel(int nrows, int ncols, const SX::Imagin
 : ConvolutionKernel(nrows,ncols,params)
 {
     // load default values if necessary
-    if ( _params["r1"] <= 0)
+    if ( _params["r1"] <= 0) {
         _params["r1"] = 3;
-
-    if ( _params["r2"] <= 0)
+    }
+    if ( _params["r2"] <= 0) {
         _params["r2"] = 6;
-
-    if ( _params["r3"] <= 0)
+    }
+    if ( _params["r3"] <= 0) {
         _params["r3"] = 10;
+    }
 }
 
 AnnularKernel::~AnnularKernel()
@@ -69,8 +69,9 @@ void SX::Imaging::AnnularKernel::update()
     SX::Types::RealMatrix outer = SX::Types::RealMatrix::Zero(rows, cols);
 
     // sanity checks
-    if (rows < 0 || cols < 0 || r1 < 0 || r2 < r1 || r3 < r2)
+    if (rows < 0 || cols < 0 || r1 < 0 || r2 < r1 || r3 < r2) {
         throw std::runtime_error("AnnularKernel::update() called with invalid parameters");
+    }
 
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
@@ -80,12 +81,15 @@ void SX::Imaging::AnnularKernel::update()
 
             double dist2 = x*x + y*y;
 
-            if (dist2 > r3*r3)
+            if (dist2 > r3*r3) {
                 continue;
-            else if (dist2 <= r1*r1)
+            }
+            else if (dist2 <= r1*r1) {
                 inner(i, j) = 1.0;
-            else if (dist2 > r2*r2)
+            }
+            else if (dist2 > r2*r2) {
                 outer(i, j) = 1.0;
+            }
         }
     }
 
@@ -94,7 +98,5 @@ void SX::Imaging::AnnularKernel::update()
     _kernel = inner - outer;
 }
 
-
 } // Imaging
-
 } // SX

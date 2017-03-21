@@ -6,8 +6,6 @@
 
 // Kronecker delta kernel. Used for testing only
 
-
-
 #ifndef NSXTOOL_INCLUDE_DELTAKERNEL_H_
 #define NSXTOOL_INCLUDE_DELTAKERNEL_H_
 
@@ -37,6 +35,6 @@ private:
 };
 
 } // Imaging
-
 } // SX
+
 #endif // NSXTOOL_INCLUDED_DELTAKERNEL_H_

@@ -37,6 +37,6 @@ private:
 };
 
 } // Imaging
-
 } // SX
+
 #endif // NSXTOOL_INCLUDED_ANNULARKERNEL_H_
