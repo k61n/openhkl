@@ -31,6 +31,7 @@ int run_test()
     class TestClass {
     public:
         TestClass() = delete;
+        ~TestClass() {}
     };
 
     // checkt that we can create 'nothing' of type TestClass

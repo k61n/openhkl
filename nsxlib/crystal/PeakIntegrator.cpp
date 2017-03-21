@@ -227,12 +227,18 @@ const Geometry::IntegrationRegion& PeakIntegrator::getRegion() const
     return _region;
 }
 
-PeakIntegrator::Ellipsoid3D PeakIntegrator::getBlobShape(double confidence) const
+PeakIntegrator::MaybeEllipsoid PeakIntegrator::getBlobShape(double confidence) const
 {
-    Eigen::Vector3d center, eigenvalues;
-    Eigen::Matrix3d eigenvectors;
-    _blob.toEllipsoid(confidence, center, eigenvalues, eigenvectors);
-    return Ellipsoid3D(center, eigenvalues, eigenvectors);
+    try {
+        Eigen::Vector3d center, eigenvalues;
+        Eigen::Matrix3d eigenvectors;
+        _blob.toEllipsoid(confidence, center, eigenvalues, eigenvectors);
+        return {Ellipsoid3D(center, eigenvalues, eigenvectors)};
+    }
+    catch(...) {
+        // return 'nothing'
+        return {};
+    }
 }
 
 } // namespace Crystal

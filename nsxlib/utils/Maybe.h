@@ -60,14 +60,23 @@ public:
         storage_type(): dummy() {}
         storage_type(const value_type& val): value(val) {}
         storage_type(value_type&& val): value(std::move(val)) {}
+
+        ~storage_type() {}
     };
 
-    explicit Maybe(): _storage(), _isNothing(true) {}
-    explicit Maybe(const T& a): _storage(a), _isNothing(false) {}
-    explicit Maybe(T&& a): _storage(std::move(a)), _isNothing(false) {}
+    /*explicit*/ Maybe(): _storage(), _isNothing(true) {}
+    /*explicit*/ Maybe(const T& a): _storage(a), _isNothing(false) {}
+    /*explicit*/ Maybe(T&& a): _storage(std::move(a)), _isNothing(false) {}
 
-    explicit Maybe(const Maybe& other): Maybe() {*this = other; }
-    explicit Maybe(Maybe&& other): Maybe() {*this = std::move(other); }
+    /*explicit*/ Maybe(const Maybe& other): Maybe() {*this = other; }
+    /*explicit*/ Maybe(Maybe&& other): Maybe() {*this = std::move(other); }
+
+    ~Maybe()
+    {
+        if (_isNothing == false) {
+            _storage.value.~value_type();
+        }
+    }
 
     bool isNothing() const
     {
@@ -84,15 +93,24 @@ public:
 
     Maybe& operator=(const Maybe& other)
     {
+        if (_isNothing == false && other._isNothing) {
+            _storage.value.~value_type();
+        }
+
         _isNothing = other._isNothing;
         if (_isNothing == false) {
             _storage.value = other._storage.value;
         }
+
         return *this;
     }
 
     Maybe& operator=(Maybe&& other)
     {
+        if (_isNothing == false && other._isNothing) {
+            _storage.value.~value_type();
+        }
+
         _isNothing = other._isNothing;
         if (_isNothing == false) {
             _storage.value = std::move(other._storage.value);

@@ -34,6 +34,7 @@
 #include "../geometry/IntegrationRegion.h"
 #include "../geometry/Blob3D.h"
 #include "../geometry/Ellipsoid.h"
+#include "../utils/Maybe.h"
 #include <Eigen/Core>
 
 namespace SX {
@@ -47,6 +48,7 @@ namespace Crystal {
 class PeakIntegrator {
 public:
     using Ellipsoid3D = SX::Geometry::Ellipsoid<double, 3>;
+    using MaybeEllipsoid = SX::Utils::Maybe<Ellipsoid3D>;
 
     PeakIntegrator() = delete;
     PeakIntegrator(const SX::Geometry::IntegrationRegion& region, const SX::Data::DataSet& data);
@@ -62,8 +64,7 @@ public:
 
     //! return blob shape (not: not scaled by a confidence parameter)
     //!
-    //! Note: this method can throw if the peak is too weak
-    Ellipsoid3D getBlobShape(double confidence) const;
+    MaybeEllipsoid getBlobShape(double confidence) const;
 
 private:
     SX::Geometry::Blob3D _blob;

@@ -621,25 +621,30 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
 
         // update the peak shape
         const double confidence = 0.98; // todo: should not be hard coded
-        try {
-            auto&& shape = integrator.getBlobShape(confidence);
-            auto&& center = shape.getAABBCenter();
-            Eigen::Vector4d p;
-            p << center(0), center(1), center(2), 1.0;
 
-            // check that the blob is actually valid (weak peaks)
-            if (peak->getShape().isInside(p)) {
-                peak->setShape(shape);
-            }
-            else {
-                // peak was too weak to get a good fit
-                peak->setSelected(false);
-            }
+
+        auto&& maybe_shape = integrator.getBlobShape(confidence);
+
+        // could not get shape (peak too weak?)
+        if (maybe_shape.isNothing()) {
+            peak->setSelected(false);
+            continue;
         }
-        catch(...) {
-            // peak was too weak to get a shape
+
+        auto&& shape = maybe_shape.get();
+        auto&& center = shape.getAABBCenter();
+        Eigen::Vector4d p;
+        p << center(0), center(1), center(2), 1.0;
+
+        // check that the blob is actually valid (weak peaks)
+        if (peak->getShape().isInside(p)) {
+            peak->setShape(shape);
+        }
+        else {
+            // peak was too weak to get a good fit
             peak->setSelected(false);
         }
+
     }
 }
 
