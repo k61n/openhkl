@@ -329,17 +329,17 @@ bool Ellipsoid<T,D>::isInside2(const HomVector& point) const
 template<typename T,SX::Types::uint D>
 bool Ellipsoid<T,D>::isInside(const HomVector& point) const
 {
-    T value(0);
+    T value = 0;
     // Is the transformed point in the bounding box of the sphere
     for (unsigned int i = 0; i < D; ++i) {
         auto&& p = _TRSinv.row(i).dot(point);
-        auto&& p2 = p*p;
-        if (p2 > 1.0) {
-            return false;
-        }
         value += p*p;
+
+//        if (value > 1) {
+//            return false;
+//        }
     }
-    return (value <= 1);
+    return true;
 }
 
 
