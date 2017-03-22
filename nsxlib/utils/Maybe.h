@@ -54,7 +54,7 @@ public:
     struct nothing {};
 
     union storage_type {
-        int dummy;
+        unsigned char dummy;
         value_type value;
 
         storage_type(): dummy() {}
@@ -93,42 +93,75 @@ public:
 
     Maybe& operator=(const Maybe& other)
     {
-        if (_isNothing == false && other._isNothing) {
-            _storage.value.~value_type();
+        // same type
+        if (_isNothing == other._isNothing) {
+            // both something: assign value
+            if (!_isNothing) {
+                _storage.value = other._storage.value;
+            }
         }
-
-        _isNothing = other._isNothing;
-        if (_isNothing == false) {
-            _storage.value = other._storage.value;
+        // different type
+        else {
+            // this = nothing: construct value
+            if (_isNothing) {
+                _storage.value.value_type(other._storage.value_type);
+                _isNothing = false;
+            }
+            // this = something: destruct value
+            else {
+                _storage.value.~value_type();
+                _isNothing = true;
+            }
         }
-
         return *this;
     }
 
     Maybe& operator=(Maybe&& other)
     {
-        if (_isNothing == false && other._isNothing) {
-            _storage.value.~value_type();
+        // same type
+        if (_isNothing == other._isNothing) {
+            // both something: assign value
+            if (!_isNothing) {
+                _storage.value = other._storage.value;
+            }
         }
-
-        _isNothing = other._isNothing;
-        if (_isNothing == false) {
-            _storage.value = std::move(other._storage.value);
+        // different type
+        else {
+            // this = nothing: construct value
+            if (_isNothing) {
+                _storage.value.value_type(std::move(other._storage.value_type));
+                _isNothing = false;
+            }
+            // this = something: destruct value
+            else {
+                _storage.value.~value_type();
+                _isNothing = true;
+            }
         }
         return *this;
     }
 
     Maybe& operator=(const value_type& value)
     {
-        _isNothing = false;
-        _storage.value = value;
+        if (_isNothing) {
+            _storage.value.value_type(value);
+            _isNothing = false;
+        }
+        else {
+            _storage.value = value;
+        }
         return *this;
     }
 
     Maybe& operator=(value_type&& value)
     {
-        _isNothing = false;
-        _storage.value = std::move(value);
+        if (_isNothing) {
+            _storage.value.value_type(std::move(value));
+            _isNothing = false;
+        }
+        else {
+            _storage.value = std::move(value);
+        }
         return *this;
     }
 

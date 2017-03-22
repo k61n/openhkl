@@ -34,8 +34,12 @@ int run_test()
         ~TestClass() {}
     };
 
-    // checkt that we can create 'nothing' of type TestClass
+    // check that we can create 'nothing' of type TestClass
     Maybe<TestClass> test;
+
+    // check that we can create maybe of string type (non-trivial destructor)
+    Maybe<std::string> str_nothing;
+    Maybe<std::string> str_something("something");
 
     return 0;
 }
