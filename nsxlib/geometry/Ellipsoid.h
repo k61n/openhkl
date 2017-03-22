@@ -339,7 +339,8 @@ bool Ellipsoid<T,D>::isInside(const HomVector& point) const
 //            return false;
 //        }
     }
-    return true;
+    // return true;
+    return (value <= 1);
 }
 
 
