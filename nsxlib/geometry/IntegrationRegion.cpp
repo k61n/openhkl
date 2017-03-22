@@ -49,22 +49,33 @@ IntegrationRegion::IntegrationRegion(
 
 bool IntegrationRegion::inRegion(const Eigen::Vector4d &p) const
 {
-    if (!_region.isInsideAABB(p)) {
-        return false;
-    }
+//    if (!_region.isInsideAABB(p)) {
+//        return false;
+//    }
     return _region.isInside(p);
 }
 
 bool IntegrationRegion::inBackground(const Eigen::Vector4d &p) const
 {
-    if(!_background.isInsideAABB(p)) {
-        return false;
-    }
+//    if(!_background.isInsideAABB(p)) {
+//        return false;
+//    }
     if(!_background.isInside(p)) {
         return false;
     }
     // exclude if in peak
     return !inRegion(p);
+}
+
+IntegrationRegion::point_type IntegrationRegion::classifyPoint(const Eigen::Vector4d &p) const
+{
+    if (!_background.isInside(p)) {
+        return point_type::EXCLUDED;
+    }
+    if (_region.isInside(p)) {
+        return point_type::REGION;
+    }
+    return point_type::BACKGROUND;
 }
 
 const IntegrationRegion::Ellipsoid3D& IntegrationRegion::getBackground() const

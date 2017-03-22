@@ -110,8 +110,11 @@ void PeakIntegrator::step(const Eigen::MatrixXi& frame, size_t idx, const Eigen:
             int intensity = frame(y, x);
             _point1 << x+0.5, y+0.5, idx, 1;
 
-            bool inpeak = _region.inRegion(_point1);
-            bool inbackground = _region.inBackground(_point1) && (mask(y, x) == 0);
+            using point_type = SX::Geometry::IntegrationRegion::point_type;
+            const auto type = _region.classifyPoint(_point1);
+
+            const bool inpeak = (type == point_type::REGION);
+            const bool inbackground = (type == point_type::BACKGROUND) && (mask(y, x) == 0);
 
             if (inpeak) {
                 intensityP += intensity;

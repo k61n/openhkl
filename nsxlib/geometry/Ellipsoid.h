@@ -84,6 +84,10 @@ public:
 
     //! Check whether a point given as Homogeneous coordinate in the (D+1) dimension is Inside the Ellipsoid.
     bool isInside(const HomVector& vector) const;
+
+    //! Check whether a point given as Homogeneous coordinate in the (D+1) dimension is Inside the Ellipsoid.
+    bool isInside2(const HomVector& vector) const;
+
     //! Rotate the ellipsoid.
     void rotate(const matrix& eigenvectors);
     //! Scale isotropically the ellipsoid.
@@ -304,7 +308,7 @@ void Ellipsoid<T,D>::translate(const vector& t)
 }
 
 template<typename T,SX::Types::uint D>
-bool Ellipsoid<T,D>::isInside(const HomVector& point) const
+bool Ellipsoid<T,D>::isInside2(const HomVector& point) const
 {
     HomVector p;
     // Is the transformed point in the bounding box of the sphere
@@ -321,6 +325,23 @@ bool Ellipsoid<T,D>::isInside(const HomVector& point) const
     }
     return (value <= 1);
 }
+
+template<typename T,SX::Types::uint D>
+bool Ellipsoid<T,D>::isInside(const HomVector& point) const
+{
+    T value(0);
+    // Is the transformed point in the bounding box of the sphere
+    for (unsigned int i = 0; i < D; ++i) {
+        auto&& p = _TRSinv.row(i).dot(point);
+        auto&& p2 = p*p;
+        if (p2 > 1.0) {
+            return false;
+        }
+        value += p*p;
+    }
+    return (value <= 1);
+}
+
 
 template<typename T,SX::Types::uint D>
 const typename Ellipsoid<T,D>::HomMatrix& Ellipsoid<T,D>::getInverseTransformation() const
