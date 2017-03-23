@@ -42,7 +42,7 @@
 #include "Blob3D.h"
 #include "Ellipsoid.h"
 #include "IShape.h"
-#include "NDTree.h"
+
 #include "../utils/Types.h"
 
 #include "../data/IData.h"
@@ -65,8 +65,8 @@ namespace Geometry
     typedef Ellipsoid<double,3> Ellipsoid3D;
     typedef IShape<double,2> IShape2D;
     typedef IShape<double,3> IShape3D;
-    typedef NDTree<double,2> Quadtree;
-    typedef NDTree<double,3> Octree;
+    //typedef NDTree<double,2> Quadtree;
+    //typedef NDTree<double,3> Octree;
     typedef std::unordered_map<IShape2D*,int> shape2Dmap;
     typedef std::unordered_map<IShape3D*,int> shape3Dmap;
 

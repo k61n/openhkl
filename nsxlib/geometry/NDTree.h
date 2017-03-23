@@ -37,13 +37,8 @@
 #include "../utils/Types.h"
 
 
-namespace SX
-{
-
-namespace Geometry
-{
-
-
+namespace SX {
+namespace Geometry {
 
 // Constant expression necessary to initialize
 // _children attribute in the NDTree class
@@ -224,76 +219,75 @@ std::vector<SX::Types::uint> NDTree<T,D>::_POWERS=createPowers();
 template<typename T, SX::Types::uint D>
 void NDTree<T,D>::nullifyChildren()
 {
-    for (SX::Types::uint i=0;i<_MULTIPLICITY;++i)
-        _children[i]=nullptr;
+    for (SX::Types::uint i = 0; i < _MULTIPLICITY; ++i) {
+        _children[i] = nullptr;
+    }
 }
 
 template<typename T, SX::Types::uint D>
-NDTree<T,D>::NDTree()
-: AABB<T,D>(), _depth(0), _parent(nullptr), _right(nullptr)
+NDTree<T,D>::NDTree():
+    AABB<T,D>(), _depth(0), _parent(nullptr), _right(nullptr)
 {
     nullifyChildren();
     _data.reserve(_MAX_STORAGE);
-
 }
 
 template<typename T, SX::Types::uint D>
 NDTree<T,D>::NDTree(const NDTree<T,D>& other):
-AABB<T,D>(other),
-_depth(other._depth),
-_parent(new NDTree<T,D>(*(other._parent))),
-_right(new NDTree<T,D>(*(other._right)))
+    AABB<T,D>(other),
+    _depth(other._depth),
+    _parent(new NDTree<T,D>(*(other._parent))),
+    _right(new NDTree<T,D>(*(other._right)))
 {
     _data.reserve(_MAX_STORAGE);
-    for (auto d : other._data)
+    for (auto d : other._data) {
         _data.push_back(d->clone());
+    }
 }
 
 template<typename T, SX::Types::uint D>
 NDTree<T,D>& NDTree<T,D>::operator=(const NDTree<T,D>& other)
 {
-    if (this!=&other)
-    {
+    if (this != &other) {
         AABB<T,D>::operator=(other);
-        _depth=other._depth;
-        _parent=new NDTree<T,D>(*(other._parent));
-        _right=new NDTree<T,D>(*(other._right));
+        _depth = other._depth;
+        _parent = new NDTree<T,D>(*(other._parent));
+        _right = new NDTree<T,D>(*(other._right));
         _data.reserve(_MAX_STORAGE);
-        for (auto d : other._data)
+
+        for (auto d : other._data) {
             _data.push_back(d->clone());
+        }
     }
     return *this;
 }
 
 template<typename T, SX::Types::uint D>
-NDTree<T,D>::NDTree(const vector& lb, const vector& ub)
-: AABB<T,D>(lb,ub), _depth(0), _parent(nullptr), _right(nullptr)
+NDTree<T,D>::NDTree(const vector& lb, const vector& ub):
+    AABB<T,D>(lb,ub), _depth(0), _parent(nullptr), _right(nullptr)
 {
     nullifyChildren();
     _data.reserve(_MAX_STORAGE);
 }
 
 template<typename T, SX::Types::uint D>
-NDTree<T,D>::NDTree(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub)
-: AABB<T,D>(lb,ub), _depth(0), _parent(nullptr), _right(nullptr)
+NDTree<T,D>::NDTree(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub):
+    AABB<T,D>(lb,ub), _depth(0), _parent(nullptr), _right(nullptr)
 {
     nullifyChildren();
     _data.reserve(_MAX_STORAGE);
 }
 
 template<typename T, SX::Types::uint D>
-NDTree<T,D>::NDTree(const NDTree<T,D>* parent, SX::Types::uint sector)
-: AABB<T,D>(), _depth(parent->_depth+1), _parent(parent)
+NDTree<T,D>::NDTree(const NDTree<T,D>* parent, SX::Types::uint sector):
+    AABB<T,D>(), _depth(parent->_depth+1), _parent(parent)
 {
     nullifyChildren();
     _data.reserve(_MAX_STORAGE);
 
-    if (sector == _MULTIPLICITY)
-    {
+    if (sector == _MULTIPLICITY) {
         _right = nullptr;
-    }
-    else
-    {
+    } else {
         _right = parent->_children[sector+1];
     }
 
@@ -302,27 +296,21 @@ NDTree<T,D>::NDTree(const NDTree<T,D>* parent, SX::Types::uint sector)
 
     // The numbering of sub-voxels is encoded into bits of an int a follows:
     // ....... | dim[2] | dim[1] | dim[0]
-    for (SX::Types::uint i=0; i<D; ++i)
-    {
+    for (SX::Types::uint i=0; i<D; ++i) {
         bool b = (sector & _POWERS[i]);
         this->AABB<T,D>::_lowerBound(i) = (b ? center[i] : parent->AABB<T,D>::_lowerBound(i));
         this->AABB<T,D>::_upperBound(i) = (b ? parent->AABB<T,D>::_upperBound(i) : center(i));
     }
-
 }
 
 template<typename T, SX::Types::uint D>
 NDTree<T,D>::~NDTree()
 {
-    if (hasChildren())
-    {
-        for (unsigned int i=0;i<_MULTIPLICITY;++i)
-        {
+    if (hasChildren()) {
+        for (unsigned int i = 0; i < _MULTIPLICITY; ++i) {
             delete _children[i];
         }
     }
-
-    return;
 }
 
 template<typename T,SX::Types::uint D>
@@ -335,28 +323,27 @@ template<typename T, SX::Types::uint D>
 void NDTree<T,D>::addData(IShape<T,D>* shape)
 {
     // AABB does not overlap with this branch
-    if (!this->intercept(*shape))
+    if (!this->intercept(*shape)) {
         return;
+    }
 
     // AABB overlap with this node
-    if (hasChildren())
-    {
-        for (unsigned int i=0;i<_MULTIPLICITY;++i)
+    if (hasChildren()) {
+        for (unsigned int i = 0; i < _MULTIPLICITY; ++i) {
             _children[i]->addData(shape);
-    }
-    else
-    {
+        }
+    } else {
         _data.push_back(shape);
-        if (_data.size() > _MAX_STORAGE)
+        if (_data.size() > _MAX_STORAGE) {
             split();
+        }
     }
-
 }
 
 template<typename T, SX::Types::uint D>
 bool NDTree<T,D>::hasChildren() const
 {
-    return (_children[0]!=nullptr);
+    return (_children[0] != nullptr);
 }
 
 template<typename T, SX::Types::uint D>
@@ -370,19 +357,15 @@ void NDTree<T,D>::getPossibleCollisions(std::set<collision_pair >& collisions) c
 {
     typedef std::set<std::pair<IShape<T,D>*,IShape<T,D>*> > setcol;
 
-    if (hasData())
-    {
-        for (auto it1=_data.begin(); it1!=_data.end(); ++it1)
-        {
+    if (hasData()) {
+        for (auto it1=_data.begin(); it1!=_data.end(); ++it1) {
             // First IShape
-            IShape<T,D>* bb1=*it1;
-            for (auto it2=it1+1; it2!=_data.end(); ++it2)
-            {
+            IShape<T,D>* bb1 = *it1;
+            for (auto it2 = it1+1; it2 != _data.end(); ++it2) {
                 // Second IShape
                 IShape<T,D>* bb2=*it2;
                 // If two AABBs intersect, add to the set sorting the addresses
-                if (bb1->IShape<T,D>::intercept(*bb2))
-                {
+                if (bb1->IShape<T,D>::intercept(*bb2)) {
                     if (bb1 < bb2) {
                         collisions.insert(typename setcol::value_type(bb1,bb2));
                     }
@@ -396,81 +379,73 @@ void NDTree<T,D>::getPossibleCollisions(std::set<collision_pair >& collisions) c
         }
     }
 
-    if (hasChildren())
-    {
-        for (SX::Types::uint i=0;i<_MULTIPLICITY;++i)
+    if (hasChildren()) {
+        for (SX::Types::uint i = 0; i < _MULTIPLICITY; ++i) {
             _children[i]->getPossibleCollisions(collisions);
+        }
     }
-
-    return;
 }
 
 template<typename T, SX::Types::uint D>
 void NDTree<T,D>::getVoxels(std::vector<AABB<T,D>* >& voxels)
 {
     voxels.push_back(this);
-    if (hasChildren())
-    {
-        for (SX::Types::uint i=0;i<_MULTIPLICITY;++i)
+    if (hasChildren()) {
+        for (SX::Types::uint i=0;i<_MULTIPLICITY;++i) {
             _children[i]->getVoxels(voxels);
+        }
     }
-    return;
 }
 
 template<typename T, SX::Types::uint D>
 void NDTree<T,D>::printSelf(std::ostream& os) const
 {
-
     os << "*** Node ***  " << this->_lowerBound  << "," << this->_upperBound << std::endl;
-    if (!hasChildren())
-    {
+    if (!hasChildren()) {
         os << " has no children" <<std::endl;
         os << "... and has " << _data.size() << " data" <<  std::endl;
-    }
-    else
-    {
+    } else {
         os << " has children :" << std::endl;
-        for (int i=0; i<_MULTIPLICITY; ++i)
+        for (int i = 0; i < _MULTIPLICITY; ++i) {
             _children[i]->printSelf(os);
+        }
     }
 }
 
 template<typename T, SX::Types::uint D>
 void NDTree<T,D>::removeData(const IShape<T,D>* data)
 {
-
-    if (hasData())
-    {
+    if (hasData()) {
         auto it = std::find(_data.begin(), _data.end(), data);
-        if (it!=_data.end())
+        if (it!=_data.end()) {
             _data.erase(it);
+        }
     }
-
-    if (hasChildren())
-    {
-        for (SX::Types::uint i=0; i<_MULTIPLICITY; ++i)
+    if (hasChildren())  {
+        for (SX::Types::uint i=0; i<_MULTIPLICITY; ++i) {
             _children[i]->removeData(data);
+        }
     }
-
 }
 
 template<typename T, SX::Types::uint D>
 void NDTree<T,D>::setMaxDepth(SX::Types::uint maxDepth)
 {
-    if (maxDepth ==0)
+    if (maxDepth ==0) {
         throw std::invalid_argument("Depth of the NDTree must be at least 1");
-    if (maxDepth >10)
+    }
+    if (maxDepth >10) {
         throw std::invalid_argument("Depth of NDTree > 10 consume too much memory");
-
+    }
     _MAX_DEPTH = maxDepth;
 }
 
 template<typename T, SX::Types::uint D>
 void NDTree<T,D>::setMaxStorage(SX::Types::uint maxStorage)
 {
-    if (maxStorage ==0)
+    if (maxStorage == 0) {
         throw std::invalid_argument("MaxStorage of NDTree must be at least 1");
-
+    }
     _MAX_STORAGE = maxStorage;
 }
 
@@ -479,15 +454,14 @@ void NDTree<T,D>::split()
 {
     // The node is already at the maximum depth: not allowed to split anymore.
     // Do nothing singe _data has already been added to parent node.
-    if (_depth > _MAX_DEPTH)
+    if (_depth > _MAX_DEPTH) {
         return;
-
+    }
     // Split the current node into 2^D subnodes
-    for (SX::Types::uint i=0; i<_MULTIPLICITY; ++i)
+    for (SX::Types::uint i=0; i<_MULTIPLICITY; ++i) {
         _children[i]=new NDTree<T,D>(this,i);
-
-    for (auto ptr=_data.begin(); ptr!=_data.end(); ++ptr)
-    {
+    }
+    for (auto ptr=_data.begin(); ptr!=_data.end(); ++ptr) {
         for (SX::Types::uint i=0; i<_MULTIPLICITY; ++i)
             _children[i]->addData(*ptr);
     }
@@ -556,10 +530,9 @@ NDTreeIterator<T,D>::NDTreeIterator(NDTree<T,D>& node) : _node(&node)
 template<typename T, SX::Types::uint D>
 NDTreeIterator<T,D>& NDTreeIterator<T,D>::operator=(const NDTreeIterator<T,D>& other)
 {
-  if (this != &other)
-    {
+  if (this != &other) {
       _node = other._node;
-    }
+  }
   return *this;
 }
 
@@ -590,16 +563,13 @@ const NDTree<T,D>* NDTreeIterator<T,D>::operator->() const
 template<typename T, SX::Types::uint D>
 NDTreeIterator<T,D>& NDTreeIterator<T,D>::operator++()
 {
-    if (_node->hasChildren())
-    {
+    if (_node->hasChildren()) {
         _node = _node->_children[0];
-    }
-    else
-    {
-        while (_node->_right == nullptr)
-        {
-            if (_node->_parent == nullptr)
+    } else {
+        while (_node->_right == nullptr) {
+            if (_node->_parent == nullptr) {
                 break;
+            }
             _node = _node->_parent;
         }
         _node = _node->_right;
@@ -616,7 +586,6 @@ NDTreeIterator<T,D>& NDTreeIterator<T,D>::operator++(int)
 }
 
 } // namespace Geometry
-
 } // namespace SX
 
 #endif /* NSXTOOL_NDTREE_H_ */

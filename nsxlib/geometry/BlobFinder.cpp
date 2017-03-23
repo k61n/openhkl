@@ -1,4 +1,5 @@
 #include "BlobFinder.h"
+#include "NDTree.h"
 #include "../data/IFrameIterator.h"
 
 #include <iostream>
@@ -6,11 +7,10 @@
 using std::cout;
 using std::endl;
 
-namespace SX
-{
+using Octree = SX::Geometry::NDTree<double,3>;
 
-namespace Geometry
-{
+namespace SX {
+namespace Geometry {
 
 void BlobFinder::registerEquivalence(int a, int b, vipairs& equivalences)
 {

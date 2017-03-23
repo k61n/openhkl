@@ -117,6 +117,8 @@
 #include <nsxlib/crystal/MergedPeak.h>
 #include <nsxlib/data/XDS.h>
 
+#include <nsxlib/geometry/NDTree.h>
+
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonValue>
@@ -132,6 +134,8 @@ using SX::Crystal::RFactor;
 using SX::Data::PeakFinder;
 using SX::Crystal::PeakCalc;
 using SX::Crystal::Peak3D;
+
+using Octree = SX::Geometry::NDTree<double, 3>;
 
 SessionModel::SessionModel()
 {
@@ -165,8 +169,9 @@ void SessionModel::createNewExperiment()
         dlg = new DialogExperiment();
 
         // The user pressed cancel, return
-        if (!dlg->exec())
+        if (!dlg->exec()) {
             return;
+        }
 
         // If no experiment name is provided, pop up a warning
         if (dlg->getExperimentName().isEmpty()) {
@@ -616,8 +621,9 @@ void SessionModel::incorporateCalculatedPeaks()
             std::set<sptrPeak3D> found_peaks = numor->getPeaks();
             std::set<Eigen::RowVector3i, compare_fn> found_hkls;
 
-            for (sptrPeak3D p: found_peaks)
+            for (sptrPeak3D p: found_peaks) {
                 found_hkls.insert(p->getIntegerMillerIndices());
+            }
 
             handler->setStatus("Adding calculated peaks...");
 
