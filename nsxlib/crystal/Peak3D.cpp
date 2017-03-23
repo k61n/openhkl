@@ -473,28 +473,38 @@ void Peak3D::updateIntegration(const PeakIntegrator& integrator)
     _projection = integrator.getProjection();
     _counts = _projectionPeak.sum();
     _countsSigma = std::sqrt(std::abs(_counts));
+    _pValue = integrator.pValue();
 }
 
-double Peak3D::pValue()
+double Peak3D::pValue() const
 {
-    // assumption: all background pixel counts are Poisson processes with rate R
-    // therefore, we can estimate the rate R as below:
-    const double R = _countsBkg.sum() / _pointsBkg.sum();
-
-    // null hypothesis: the pixels inside the peak are Poisson processes with rate R
-    // therefore, by central limit theorem the average value
-    const double avg = _countsPeak.sum() / _pointsPeak.sum();
-    // is normal with mean R and variance:
-    const double var = R / _pointsPeak.sum();
-
-    // thus we obtain the following standard normal variable
-    const double z = (avg-R) / std::sqrt(var);
-
-    // compute the p value
-    const double p = 1.0 - 0.5 * (1.0 + std::erf(z / std::sqrt(2)));
-
-    return p;
+    return _pValue;
 }
+
+//double Peak3D::pValue()
+//{
+//    // assumption: all background pixel counts are Poisson processes with rate R
+//    // therefore, we can estimate the rate R as below:
+//    const double R = _countsBkg.sum() / _pointsBkg.sum();
+
+//    assert(R > 0.0);
+
+//    // null hypothesis: the pixels inside the peak are Poisson processes with rate R
+//    // therefore, by central limit theorem the average value
+//    const double avg = _countsPeak.sum() / _pointsPeak.sum();
+//    // is normal with mean R and variance:
+//    const double var = R / _pointsPeak.sum();
+
+//    assert(var > 0.0);
+
+//    // thus we obtain the following standard normal variable
+//    const double z = (avg-R) / std::sqrt(var);
+
+//    // compute the p value
+//    const double p = 1.0 - 0.5 * (1.0 + std::erf(z / std::sqrt(2)));
+
+//    return p;
+//}
 
 bool Peak3D::hasUnitCells() const
 {

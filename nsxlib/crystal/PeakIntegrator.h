@@ -66,6 +66,8 @@ public:
     //!
     MaybeEllipsoid getBlobShape(double confidence) const;
 
+    double pValue() const;
+
 private:
     SX::Geometry::Blob3D _blob;
 

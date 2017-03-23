@@ -35,6 +35,7 @@
 
 #include <Eigen/Dense>
 
+#include "Profile.h"
 #include "UnitCell.h"
 #include "../geometry/IShape.h"
 #include "../geometry/Ellipsoid.h"
@@ -186,7 +187,7 @@ public:
     void updateIntegration(const PeakIntegrator& integrator);
 
     //! compute P value that there is actually an observed peak, assuming Poisson statistics
-    double pValue();
+    double pValue() const;
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -231,6 +232,9 @@ private:
     bool _observed;
     double _transmission;
     int _activeUnitCellIndex;
+
+    Profile _profile;
+    double _pValue;
 };
 
 using sptrPeak3D = std::shared_ptr<Peak3D>;
