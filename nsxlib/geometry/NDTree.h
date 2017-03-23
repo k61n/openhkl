@@ -128,7 +128,8 @@ public:
     static void setMaxStorage(SX::Types::uint maxStorage);
 
     //! Return the list of AABB* pairs that intercept.
-    void getPossibleCollisions(std::set<collision_pair>& collisions) const;
+    //void getPossibleCollisions(std::set<collision_pair>& collisions) const;
+    std::set<collision_pair> getPossibleCollisions() const;
 
     //! Get the voxels of the tree
     void getVoxels(std::vector<AABB<T,D>* >& voxels);
@@ -179,6 +180,9 @@ private:
 
     //! Depth of this branch with respect to root node.
     SX::Types::uint _depth;
+
+    //! Recursive collision detection
+    void getPossibleCollisionsRecursive(std::set<collision_pair>& collisions) const;
 
     const NDTree<T,D>* _parent;
 
@@ -353,7 +357,7 @@ bool NDTree<T,D>::hasData() const
 }
 
 template<typename T, SX::Types::uint D>
-void NDTree<T,D>::getPossibleCollisions(std::set<collision_pair >& collisions) const
+void NDTree<T,D>::getPossibleCollisionsRecursive(std::set<collision_pair>& collisions) const
 {
     typedef std::set<std::pair<IShape<T,D>*,IShape<T,D>*> > setcol;
 
@@ -381,9 +385,17 @@ void NDTree<T,D>::getPossibleCollisions(std::set<collision_pair >& collisions) c
 
     if (hasChildren()) {
         for (SX::Types::uint i = 0; i < _MULTIPLICITY; ++i) {
-            _children[i]->getPossibleCollisions(collisions);
+            _children[i]->getPossibleCollisionsRecursive(collisions);
         }
     }
+}
+
+template<typename T, SX::Types::uint D>
+auto NDTree<T,D>::getPossibleCollisions() const -> std::set<collision_pair>
+{
+    std::set<collision_pair> collisions;
+    getPossibleCollisionsRecursive(collisions);
+    return collisions;
 }
 
 template<typename T, SX::Types::uint D>

@@ -443,8 +443,7 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
         oct.addData(it.first);
     }
 
-    std::set<Octree::collision_pair> collisions;
-    oct.getPossibleCollisions(collisions);
+    auto collisions = oct.getPossibleCollisions();
 
     // dummies used to help progress handler
     dummy = 0;

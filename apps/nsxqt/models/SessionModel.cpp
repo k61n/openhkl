@@ -118,6 +118,7 @@
 #include <nsxlib/data/XDS.h>
 
 #include <nsxlib/geometry/NDTree.h>
+#include <nsxlib/geometry/Ellipsoid.h>
 
 #include <QJsonObject>
 #include <QJsonArray>
@@ -136,6 +137,7 @@ using SX::Crystal::PeakCalc;
 using SX::Crystal::Peak3D;
 
 using Octree = SX::Geometry::NDTree<double, 3>;
+using Ellipsoid3D = SX::Geometry::Ellipsoid<double, 3>;
 
 SessionModel::SessionModel()
 {
@@ -150,8 +152,7 @@ SessionModel::~SessionModel()
 
 void SessionModel::onItemChanged(QStandardItem* item)
 {
-    if (auto p=dynamic_cast<UnitCellItem*>(item))
-    {
+    if (auto p=dynamic_cast<UnitCellItem*>(item)) {
         // The first item of the Sample item branch is the SampleShapeItem, skip it
         int idx = p->index().row()- 1;
         auto expt = p->getExperiment();
@@ -621,9 +622,39 @@ void SessionModel::incorporateCalculatedPeaks()
             std::set<sptrPeak3D> found_peaks = numor->getPeaks();
             std::set<Eigen::RowVector3i, compare_fn> found_hkls;
 
+            struct PeakRadius {
+                Peak3D* peak;
+                Ellipsoid3D ellipse;
+
+                PeakRadius(Peak3D* ptr, const Ellipsoid3D& ell):
+                    peak(ptr), ellipse(ell) {}
+
+                bool operator==(const PeakRadius& other)
+                {
+                    return peak == other.peak;
+                }
+            };
+
+            std::vector<PeakRadius> peakRadii;
+            Octree octree({0.0, 0.0, 0.0}, {numor->getNCols(), numor->getNRows(), numor->getNFrames()});
+
+            Eigen::Vector3d vals(200.0, 200.0, 20.0);
+            Eigen::Matrix3d vects = Eigen::Matrix3d::Identity();
+
             for (sptrPeak3D p: found_peaks) {
                 found_hkls.insert(p->getIntegerMillerIndices());
+                auto center = p->getShape().getAABBCenter();
+                Ellipsoid3D ellipse(center, vals, vects);
+                peakRadii.emplace_back(p.get(), ellipse);
             }
+
+            handler->log("Building peak octree...");
+
+            for (auto&& it: peakRadii) {
+                octree.addData(&it.ellipse);
+            }
+
+            handler->log("Performing peak radius search...");
 
             handler->setStatus("Adding calculated peaks...");
 
