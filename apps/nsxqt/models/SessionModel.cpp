@@ -603,7 +603,7 @@ void SessionModel::incorporateCalculatedPeaks()
         for (unsigned int i = 0; i < ncrystals; ++i) {
             SX::Crystal::SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
             auto cell = sample->getUnitCell(i);
-            auto ub = cell->getReciprocalStandardM();
+            auto UB = cell->getReciprocalStandardM();
 
             handler->setStatus("Calculating peak locations...");
 
@@ -612,7 +612,7 @@ void SessionModel::incorporateCalculatedPeaks()
 
             predicted_peaks += predicted_hkls.size();
 
-            std::vector<SX::Crystal::PeakCalc> peaks = numor->hasPeaks(predicted_hkls, ub);
+            std::vector<SX::Crystal::PeakCalc> peaks = numor->hasPeaks(predicted_hkls, UB);
             calculated_peaks.reserve(peaks.size());
 
             int current_peak = 0;
@@ -636,7 +636,9 @@ void SessionModel::incorporateCalculatedPeaks()
             };
 
             std::vector<PeakRadius> peakRadii;
-            Octree octree({0.0, 0.0, 0.0}, {numor->getNCols(), numor->getNRows(), numor->getNFrames()});
+            Eigen::Vector3d lb = {0.0, 0.0, 0.0};
+            Eigen::Vector3d ub = {double(numor->getNCols()), double(numor->getNRows()), double(numor->getNFrames())};
+            auto octree  = Octree(lb, ub);
 
             Eigen::Vector3d vals(200.0, 200.0, 20.0);
             Eigen::Matrix3d vects = Eigen::Matrix3d::Identity();
