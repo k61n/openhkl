@@ -636,27 +636,36 @@ void SessionModel::incorporateCalculatedPeaks()
             };
 
             std::vector<PeakRadius> peakRadii;
-            Eigen::Vector3d lb = {0.0, 0.0, 0.0};
-            Eigen::Vector3d ub = {double(numor->getNCols()), double(numor->getNRows()), double(numor->getNFrames())};
-            auto octree  = Octree(lb, ub);
 
-            Eigen::Vector3d vals(200.0, 200.0, 20.0);
-            Eigen::Matrix3d vects = Eigen::Matrix3d::Identity();
 
-            for (sptrPeak3D p: found_peaks) {
-                found_hkls.insert(p->getIntegerMillerIndices());
-                auto center = p->getShape().getAABBCenter();
-                Ellipsoid3D ellipse(center, vals, vects);
-                peakRadii.emplace_back(p.get(), ellipse);
+            std::set<Octree::collision_pair> collisions;
+
+            {
+                Eigen::Vector3d lb = {0.0, 0.0, 0.0};
+                Eigen::Vector3d ub = {double(numor->getNCols()), double(numor->getNRows()), double(numor->getNFrames())};
+                auto&& octree = Octree(lb, ub);
+
+                Eigen::Vector3d vals(200.0, 200.0, 20.0);
+                Eigen::Matrix3d vects = Eigen::Matrix3d::Identity();
+
+                for (sptrPeak3D p: found_peaks) {
+                    found_hkls.insert(p->getIntegerMillerIndices());
+                    auto center = p->getShape().getAABBCenter();
+                    Ellipsoid3D ellipse(center, vals, vects);
+                    peakRadii.emplace_back(p.get(), ellipse);
+                }
+
+                handler->log("Building peak octree...");
+
+                for (auto&& it: peakRadii) {
+                    octree.addData(&it.ellipse);
+                }
+
+
+                handler->log("Performing peak radius search...");
+
+                collisions = octree.getPossibleCollisions();
             }
-
-            handler->log("Building peak octree...");
-
-            for (auto&& it: peakRadii) {
-                octree.addData(&it.ellipse);
-            }
-
-            handler->log("Performing peak radius search...");
 
             handler->setStatus("Adding calculated peaks...");
 
