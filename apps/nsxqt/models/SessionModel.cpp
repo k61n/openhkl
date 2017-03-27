@@ -664,7 +664,7 @@ void SessionModel::incorporateCalculatedPeaks()
 
                 handler->log("Performing peak radius search...");
 
-                collisions = octree.getPossibleCollisions();
+                collisions = octree.getCollisions();
             }
 
             handler->setStatus("Adding calculated peaks...");

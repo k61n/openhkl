@@ -131,10 +131,10 @@ public:
 
     //! Return the list of AABB* pairs that intercept.
     //void getPossibleCollisions(std::set<collision_pair>& collisions) const;
-    std::set<collision_pair> getPossibleCollisions() const;
+    std::set<collision_pair> getCollisions() const;
 
     //! Return collisions with a given shape
-    std::set<IShape<T, D>*> getPossibleCollisions(IShape<T, D>* given) const;
+    std::set<IShape<T, D>*> getCollisions(const IShape<T, D>& given) const;
 
     //! Get the voxels of the tree
     void getVoxels(std::vector<AABB<T,D>* >& voxels);
@@ -158,7 +158,6 @@ private:
     /*! Construct a new NDTree in the subregion i of
      *  the parent tree. For example i goes from 1 to 8 for voxels
      */
-
 
     //! Set all children to nullptr
     void nullifyChildren();
@@ -190,11 +189,6 @@ private:
 
     //! Depth of this branch with respect to root node.
     SX::Types::uint _depth;
-
-    //! Recursive collision detection
-    void getPossibleCollisionsRecursive(std::set<collision_pair>& collisions) const;
-
-    void getPossibleCollisionsRecursive(std::set<IShape<T, D>*>& collisions ) const;
 
     const NDTree<T,D>* _parent;
     long _idx = -1;
@@ -353,16 +347,7 @@ template<typename T, SX::Types::uint D>
 void NDTree<T,D>::addData(IShape<T,D>* shape)
 {
     // AABB does not overlap with this branch
-//    if (!this->intercept(*shape)) {
-//        return;
-//    }
-
-    using HomVector = Eigen::Matrix<T,D+1,1>;
-
-    auto&& x = shape->getAABBCenter();
-    const HomVector p(x(0), x(1), x(2), 1.0);
-
-    if (!this->isInside(p)) {
+    if (!this->intercept(*shape)) {
         return;
     }
 
@@ -391,87 +376,53 @@ bool NDTree<T,D>::hasData() const
     return (_data.size() != 0);
 }
 
-//template<typename T, SX::Types::uint D>
-//void NDTree<T,D>::getPossibleCollisionsRecursive(std::set<collision_pair>& collisions) const
-//{
-//    typedef std::set<std::pair<IShape<T,D>*,IShape<T,D>*> > setcol;
-
-//    if (hasData()) {
-//        for (auto it1=_data.begin(); it1!=_data.end(); ++it1) {
-//            // First IShape
-//            IShape<T,D>* bb1 = *it1;
-//            for (auto it2 = it1+1; it2 != _data.end(); ++it2) {
-//                // Second IShape
-//                IShape<T,D>* bb2=*it2;
-//                // If two AABBs intersect, add to the set sorting the addresses
-//                if (bb1->IShape<T,D>::intercept(*bb2)) {
-//                    if (bb1 < bb2) {
-//                        collisions.insert(typename setcol::value_type(bb1,bb2));
-//                    }
-//                    else {
-//                        // jmf: fix bug??
-//                        //collisions.insert(typename setcol::value_type(bb1,bb2));
-//                        collisions.insert(typename setcol::value_type(bb2,bb1));
-//                    }
-//                }
-//            }
-//        }
-//    }
-
-//    if (hasChildren()) {
-//        for (SX::Types::uint i = 0; i < _MULTIPLICITY; ++i) {
-//            _children[i]->getPossibleCollisionsRecursive(collisions);
-//        }
-//    }
-//}
-
-//template<typename T, SX::Types::uint D>
-//std::set<IShape<T, D>*> NDTree<T,D>::getPossibleCollisions(IShape<T, D>* given) const
-//{
-//    std::set<IShape<T, D>*> collisions;
-//    getPossibleCollisionsRecursive(collisions);
-//    return collisions;
-//}
-
-//template<typename T, SX::Types::uint D>
-//void NDTree<T,D>::getPossibleCollisionsRecursive(std::set<IShape<T, D>*>& collisions) const
-//{
-
-//}
-
 template<typename T, SX::Types::uint D>
-auto NDTree<T,D>::getPossibleCollisions() const -> std::set<collision_pair>
+auto NDTree<T,D>::getCollisions() const -> std::set<collision_pair>
 {
     std::set<collision_pair> collisions;
-    //getPossibleCollisionsRecursive(collisions);
 
     // loop over chambers of the ndtree
-    for (auto i = begin()++; i != end(); ++i) {
+    for (auto&& chamber: *this) {
         // loop over shapes in the chamber
-        for (auto a: i->_data) {
-            // loop over remaining chambers of ndtree
-            for (auto j = i; j != end(); ++j) {
-                // shape a does not intersect the chamber: pass
-                if (!a->intercept(*j)) {
-                    continue;
-                }
+        for (auto i = 0; i < chamber._data.size(); ++i) {
+            for (auto j = i+1; j < chamber._data.size(); ++j) {
+                auto&& a = chamber._data[i];
+                auto&& b = chamber._data[j];
 
-                // loop over shapes in chamber j
-                for (auto b: j->_data) {
-                    // avoid overcounting shapes
-                    if (b <= a) {
-                        continue;
+                // collision detected
+                if (a->collide(*b)) {
+                    if (a < b) {
+                        collisions.emplace(collision_pair(a, b));
                     }
-
-                    // collision detected
-                    if (a->collide(*b)) {
-                        collisions.insert(collision_pair(a, b));
+                    else {
+                        collisions.emplace(collision_pair(b, a));
                     }
                 }
             }
         }
     }
+    return collisions;
+}
 
+template<typename T, SX::Types::uint D>
+std::set<IShape<T, D>*> NDTree<T,D>::getCollisions(const IShape<T, D>& given) const
+{
+    std::set<IShape<double, 3>*> collisions;
+
+    // loop over chambers of the ndtree
+    for (auto&& chamber: *this) {
+        // shape doesn't intersect the chamber
+        if (!chamber.intercept(given)) {
+            continue;
+        }
+        // loop over shapes in the chamber
+        for (auto&& shape: chamber._data) {
+            // collision detected
+            if (shape->collide(given)) {
+                collisions.emplace(shape);
+            }
+        }
+    }
     return collisions;
 }
 

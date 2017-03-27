@@ -25,8 +25,11 @@ void collision_test()
 
     NDTree<double,3> tree({0,0,0},{100,100,100});
     auto vects = Eigen::Matrix3d::Identity();
-    auto vals = Eigen::Vector3d(0.45, 0.45, 0.45);
+    const double radius = 0.45;
+    auto vals = Eigen::Vector3d(radius, radius, radius);
     auto center = Eigen::Vector3d(0.0, 0.0, 0.0);
+
+    std::set<IShape<double, 3>*> test_set;
 
     std::vector<Ellipsoid3D*> shapes;
 
@@ -43,24 +46,27 @@ void collision_test()
     }
 
     // check that the data was inserted correctly
-    size_t data_size = 0;
-    for (auto it = tree.begin(); it != tree.end(); ++it) {
-        data_size += it->getData().size();
+    for (auto&& chamber: tree) {
+        for (auto&& shape: chamber.getData()) {
+            test_set.insert(shape);
+        }
     }
 
-    BOOST_CHECK_EQUAL(data_size, 19*19*19);
+    BOOST_CHECK_EQUAL(test_set.size(), 19*19*19);
 
     // check that they don't intersect!
-    BOOST_CHECK_EQUAL(tree.getPossibleCollisions().size(), 0);
+    BOOST_CHECK_EQUAL(tree.getCollisions().size(), 0);
 
     // add some spheres which will intersect
     center = Eigen::Vector3d(1.5, 1.5, 1.5);
-    vals = Eigen::Vector3d(0.2, 0.2, 0.2);
+    vals = Eigen::Vector3d(radius, radius, radius);
     auto shape = new Ellipsoid3D(center, vals, vects);
+
+
+    BOOST_CHECK_EQUAL(tree.getCollisions(*shape).size(), 8);
     shapes.emplace_back(shape);
     tree.addData(shape);
-
-    BOOST_CHECK_EQUAL(tree.getPossibleCollisions().size(), 6);
+    BOOST_CHECK_EQUAL(tree.getCollisions().size(), 8);
 
     shape = nullptr;
 

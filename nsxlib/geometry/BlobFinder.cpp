@@ -443,7 +443,7 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
         oct.addData(it.first);
     }
 
-    auto collisions = oct.getPossibleCollisions();
+    auto collisions = oct.getCollisions();
 
     // dummies used to help progress handler
     dummy = 0;
@@ -455,19 +455,9 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
 
     for (auto&& it = collisions.begin(); it != collisions.end(); ++it) {
 
-        auto shape_a = it->first;
-        auto shape_b = it->second;
-
-        assert(shape_a != nullptr);
-        assert(shape_b != nullptr);
-
-        bool collided = shape_a->collide(*shape_b);
-
-        if (collided) {
-            auto&& bit1 = boxes.find(it->first);
-            auto&& bit2 = boxes.find(it->second);
-            registerEquivalence(bit1->second, bit2->second, equivalences);
-        }
+        auto&& bit1 = boxes.find(it->first);
+        auto&& bit2 = boxes.find(it->second);
+        registerEquivalence(bit1->second, bit2->second, equivalences);
 
         // update progress handler
         if ( (dummy % magic) == 0 && _progressHandler) {
