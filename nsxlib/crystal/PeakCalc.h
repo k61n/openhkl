@@ -40,6 +40,10 @@ namespace Data {
 class DataSet;
 }
 
+namespace Geometry {
+template<typename T, unsigned int D> class NDTree;
+}
+
 namespace Crystal {
 
 class Peak3D;
@@ -49,6 +53,7 @@ struct PeakCalc {
     using PeakSet = std::set<std::shared_ptr<Peak3D>>;
     using sptrPeak3D = std::shared_ptr<Peak3D>;
     using IData = SX::Data::DataSet;
+    using Octree = SX::Geometry::NDTree<double, 3>;
 
     PeakCalc(double h,double k,double l, double x,double y, double frame); //:
         //_h(h), _k(k), _l(l), _x(x), _y(y), _frame(frame) = default;
@@ -57,9 +62,7 @@ struct PeakCalc {
     double _h,_k,_l;
     double _x,_y,_frame;
 
-    sptrPeak3D averagePeaks(const std::shared_ptr<IData> data, double distance);
-    sptrPeak3D averagePeaksQ(const std::shared_ptr<IData> data);
-    PeakList findNeighbors(const PeakSet& peak_list, double distance);
+    sptrPeak3D averagePeaks(const Octree& tree, double distance);
 };
 
 } // namespace Crystal

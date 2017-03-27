@@ -29,7 +29,7 @@ void collision_test()
     auto vals = Eigen::Vector3d(radius, radius, radius);
     auto center = Eigen::Vector3d(0.0, 0.0, 0.0);
 
-    std::set<IShape<double, 3>*> test_set;
+    std::set<const IShape<double, 3>*> test_set;
 
     std::vector<Ellipsoid3D*> shapes;
 

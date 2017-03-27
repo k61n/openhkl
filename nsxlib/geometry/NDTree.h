@@ -85,7 +85,7 @@ public:
     typedef Eigen::Matrix<T,D,1> vector;
 
     //! Pair of AABB*
-    typedef typename std::pair< IShape<T,D>*,IShape<T,D>* > collision_pair;
+    typedef typename std::pair<const IShape<T,D>*, const IShape<T,D>* > collision_pair;
 
     //! Move constructor
     NDTree(NDTree<T,D>&& other);
@@ -112,7 +112,7 @@ public:
      * 2^D sub-NDTree, unless _MAX_DEPTH is reached, in which case data will simply
      * be added to this leaf.
      */
-    void addData(IShape<T,D>* aabb);
+    void addData(const IShape<T,D>* aabb);
 
     //! Check whether the node has some children
     bool hasChildren() const;
@@ -134,7 +134,7 @@ public:
     std::set<collision_pair> getCollisions() const;
 
     //! Return collisions with a given shape
-    std::set<IShape<T, D>*> getCollisions(const IShape<T, D>& given) const;
+    std::set<const IShape<T, D>*> getCollisions(const IShape<T, D>& given) const;
 
     //! Get the voxels of the tree
     void getVoxels(std::vector<AABB<T,D>* >& voxels);
@@ -146,7 +146,7 @@ public:
 
     iterator end() const;
 
-    const std::vector<IShape<T,D>*>& getData() const {return _data;}
+    const std::vector<const IShape<T,D>*>& getData() const {return _data;}
 
     NDTree(const NDTree* parent, SX::Types::uint i);
 
@@ -185,7 +185,7 @@ private:
     // NDTree<T,D>* _children[getPow(D)];
 
     //! Vector of data object in this leaf
-    std::vector<IShape<T,D>*> _data;
+    std::vector<const IShape<T,D>*> _data;
 
     //! Depth of this branch with respect to root node.
     SX::Types::uint _depth;
@@ -344,7 +344,7 @@ NDTree<T,D>::~NDTree()
 //}
 
 template<typename T, SX::Types::uint D>
-void NDTree<T,D>::addData(IShape<T,D>* shape)
+void NDTree<T,D>::addData(const IShape<T,D>* shape)
 {
     // AABB does not overlap with this branch
     if (!this->intercept(*shape)) {
@@ -405,9 +405,9 @@ auto NDTree<T,D>::getCollisions() const -> std::set<collision_pair>
 }
 
 template<typename T, SX::Types::uint D>
-std::set<IShape<T, D>*> NDTree<T,D>::getCollisions(const IShape<T, D>& given) const
+std::set<const IShape<T, D>*> NDTree<T,D>::getCollisions(const IShape<T, D>& given) const
 {
-    std::set<IShape<double, 3>*> collisions;
+    std::set<const IShape<double, 3>*> collisions;
 
     // loop over chambers of the ndtree
     for (auto&& chamber: *this) {

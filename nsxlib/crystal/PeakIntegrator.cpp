@@ -87,9 +87,11 @@ PeakIntegrator::PeakIntegrator(const SX::Geometry::IntegrationRegion& region, co
     _countsPeak = Eigen::VectorXd::Zero(_data_end - _data_start + 1);
     _countsBkg = Eigen::VectorXd::Zero(_data_end - _data_start + 1);
 
-    _dx = int(_end_x - _start_x);
-    _dy = int(_end_y - _start_y);
+    _dx = int(_end_x - _start_x)+1;
+    _dy = int(_end_y - _start_y)+1;
 
+    _peak_mask.resize(_dy, _dx);
+    _bkg_mask.resize(_dy, _dx);
 }
 
 void PeakIntegrator::step(const Eigen::MatrixXi& frame, size_t idx, const Eigen::MatrixXi& mask)
@@ -103,12 +105,16 @@ void PeakIntegrator::step(const Eigen::MatrixXi& frame, size_t idx, const Eigen:
     double intensityP = 0;
     double intensityBkg = 0;
 
-    _projection[idx-_data_start] += frame.block(_start_y, _start_x, _dy,_dx).sum();
+    _peak_data = frame.block(_start_y, _start_x, _dy,_dx).array().cast<double>();
+    _peak_mask.setZero();
+    _bkg_mask.setZero();
+
+    _projection[idx-_data_start] += _peak_data.sum();
 
     for (unsigned int x = _start_x; x <= _end_x; ++x) {
         for (unsigned int y = _start_y; y <= _end_y; ++y) {
             int intensity = frame(y, x);
-            _point1 << x+0.5, y+0.5, idx, 1;
+            _point1 << x, y, idx, 1;
 
             using point_type = SX::Geometry::IntegrationRegion::point_type;
             const auto type = _region.classifyPoint(_point1);
@@ -117,16 +123,19 @@ void PeakIntegrator::step(const Eigen::MatrixXi& frame, size_t idx, const Eigen:
             const bool inbackground = (type == point_type::BACKGROUND) && (mask(y, x) == 0);
 
             if (inpeak) {
-                intensityP += intensity;
-                pointsinpeak++;
-                continue;
+                _peak_mask(y-_start_y, x-_start_x) = 1.0;
             }
             else if (inbackground) {
-                intensityBkg += intensity;
-                pointsinbkg++;
+                _bkg_mask(y-_start_y, x-_start_x) = 1.0;
             }
         }
     }
+
+    intensityP = (_peak_data*_peak_mask).sum();
+    pointsinpeak = _peak_mask.sum();
+
+    intensityBkg = (_peak_data*_bkg_mask).sum();
+    pointsinbkg = _bkg_mask.sum();
 
     _pointsPeak[idx-_data_start] = pointsinpeak;
     _pointsBkg[idx-_data_start] = pointsinbkg;
@@ -144,16 +153,16 @@ void PeakIntegrator::step(const Eigen::MatrixXi& frame, size_t idx, const Eigen:
     // update blob
     for (unsigned int x = _start_x; x <= _end_x; ++x) {
         for (unsigned int y = _start_y; y <= _end_y; ++y) {
-            const double intensity = frame(y, x);
-            const double thresh = intensity / avgBkg;
-            //double mass = frame(y, x) - avgBkg;
-            _point1 << x+0.5, y+0.5, idx, 1;
 
-            if(thresh < 0.99 || !_region.inRegion(_point1)) {
+            if (_peak_mask(y-_start_y, x-_start_x) < 1.0) {
                 continue;
             }
 
-            _blob.addPoint(_point1(0), _point1(1), _point1(2), intensity);
+            const double intensity = frame(y, x);
+            const double mass = frame(y, x) - avgBkg;
+
+            _point1 << x, y, idx, 1;
+            _blob.addPoint(_point1(0), _point1(1), _point1(2), mass);
         }
     }
 }

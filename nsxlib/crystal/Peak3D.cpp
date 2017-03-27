@@ -147,6 +147,8 @@ void Peak3D::linkData(const std::shared_ptr<SX::Data::DataSet>& data)
     _data = std::weak_ptr<SX::Data::DataSet>(data);
     if (data != nullptr) {
         setSource(data->getDiffractometer()->getSource());
+        // update detector event and state
+        setShape(_shape);
     }
 }
 
@@ -166,13 +168,15 @@ void Peak3D::setShape(const Ellipsoid3D& peak)
 {
     using DetectorEvent = SX::Instrument::DetectorEvent;
     _shape = peak;
-
-    Eigen::Vector3d center = peak.getAABBCenter();
-    //int f = int(std::lround(std::floor(center[2])));
-    double f = std::min(center[2], double(getData()->getNFrames())-1.0001);
-
     auto data = getData();
 
+    // no linked data?
+    if (data == nullptr) {
+        return;
+    }
+
+    Eigen::Vector3d center = peak.getAABBCenter();
+    const double f = std::min(center[2], double(getData()->getNFrames())-1.0001);
     const auto& state = data->getInterpolatedState(f);
 
     setSampleState(ComponentState(state.sample));

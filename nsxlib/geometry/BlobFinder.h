@@ -67,8 +67,8 @@ namespace Geometry
     typedef IShape<double,3> IShape3D;
     //typedef NDTree<double,2> Quadtree;
     //typedef NDTree<double,3> Octree;
-    typedef std::unordered_map<IShape2D*,int> shape2Dmap;
-    typedef std::unordered_map<IShape3D*,int> shape3Dmap;
+    typedef std::unordered_map<const IShape2D*,int> shape2Dmap;
+    typedef std::unordered_map<const IShape3D*,int> shape3Dmap;
 
 
 /* Class used for blob-finding, which is the first step of peak-finding.

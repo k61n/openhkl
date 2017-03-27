@@ -563,6 +563,7 @@ void SessionModel::incorporateCalculatedPeaks()
 
     const double dmax = dialog.dMax();
     const double dmin = dialog.dMin();
+    const double search_radius = dialog.searchRadius();
 
     std::vector<std::shared_ptr<DataSet>> numors = getSelectedNumors();
 
@@ -622,49 +623,21 @@ void SessionModel::incorporateCalculatedPeaks()
             std::set<sptrPeak3D> found_peaks = numor->getPeaks();
             std::set<Eigen::RowVector3i, compare_fn> found_hkls;
 
-            struct PeakRadius {
-                Peak3D* peak;
-                Ellipsoid3D ellipse;
 
-                PeakRadius(Peak3D* ptr, const Ellipsoid3D& ell):
-                    peak(ptr), ellipse(ell) {}
 
-                bool operator==(const PeakRadius& other)
-                {
-                    return peak == other.peak;
+            Eigen::Vector3d lb = {0.0, 0.0, 0.0};
+            Eigen::Vector3d ub = {double(numor->getNCols()), double(numor->getNRows()), double(numor->getNFrames())};
+            auto&& octree = Octree(lb, ub);
+
+            handler->log("Building peak octree...");
+
+            for (sptrPeak3D p: found_peaks) {
+                found_hkls.insert(p->getIntegerMillerIndices());
+
+                if (!p->isSelected() || p->isMasked()) {
+                    continue;
                 }
-            };
-
-            std::vector<PeakRadius> peakRadii;
-
-
-            std::set<Octree::collision_pair> collisions;
-
-            {
-                Eigen::Vector3d lb = {0.0, 0.0, 0.0};
-                Eigen::Vector3d ub = {double(numor->getNCols()), double(numor->getNRows()), double(numor->getNFrames())};
-                auto&& octree = Octree(lb, ub);
-
-                Eigen::Vector3d vals(200.0, 200.0, 20.0);
-                Eigen::Matrix3d vects = Eigen::Matrix3d::Identity();
-
-                for (sptrPeak3D p: found_peaks) {
-                    found_hkls.insert(p->getIntegerMillerIndices());
-                    auto center = p->getShape().getAABBCenter();
-                    Ellipsoid3D ellipse(center, vals, vects);
-                    peakRadii.emplace_back(p.get(), ellipse);
-                }
-
-                handler->log("Building peak octree...");
-
-                for (auto&& it: peakRadii) {
-                    octree.addData(&it.ellipse);
-                }
-
-
-                handler->log("Performing peak radius search...");
-
-                collisions = octree.getCollisions();
+                octree.addData(&p->getShape());
             }
 
             handler->setStatus("Adding calculated peaks...");
@@ -685,12 +658,14 @@ void SessionModel::incorporateCalculatedPeaks()
 
                 // now we must add it, calculating shape from nearest peaks
                  // K is outside the ellipsoid at PsptrPeak3D
-                sptrPeak3D new_peak = p.averagePeaks(numor, 200);
+                sptrPeak3D new_peak = p.averagePeaks(octree, search_radius);
                 //sptrPeak3D new_peak = p.averagePeaks(numor);
 
                 if (!new_peak) {
                     continue;
                 }
+
+                new_peak->linkData(numor);
                 new_peak->setSelected(true);
                 new_peak->addUnitCell(cell, true);
                 new_peak->setObserved(false);
@@ -711,6 +686,7 @@ void SessionModel::incorporateCalculatedPeaks()
         for (sptrPeak3D peak: calculated_peaks) {
             numor->addPeak(peak);
         }
+        qDebug() << "Integrating calculated peaks.";
         numor->integratePeaks(_peakScale, _bkgScale, false, handler);
         observed_peaks += numor->getPeaks().size();
     }

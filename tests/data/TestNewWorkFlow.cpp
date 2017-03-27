@@ -113,5 +113,8 @@ int run_test()
     // correctly indexed at least 92% of peaks
     BOOST_CHECK(soln.second > 90.0);
 
+    // reintegrate peaks
+    dataf->integratePeaks();
+
     return 0;
 }
