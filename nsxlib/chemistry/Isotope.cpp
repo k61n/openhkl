@@ -18,12 +18,6 @@ std::map<std::string,Isotope::PropertyType> Isotope::PropertyTypes = {{"string",
                                                                       {"complex",PropertyType::Complex},
                                                                       {"bool",PropertyType::Bool}};
 
-std::string Isotope::DatabasePath = Path::getDataBasesPath("isotopes");
-
-std::string Isotope::DatabaseParentNode = "isotopes";
-
-std::string Isotope::DatabaseNode = "isotope";
-
 Isotope::Isotope(const ptree& isotopeNode)
 {
     UnitsManager* um=UnitsManager::Instance();

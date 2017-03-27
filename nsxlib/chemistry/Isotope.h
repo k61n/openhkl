@@ -59,12 +59,6 @@ public:
 
     static std::map<std::string,PropertyType> PropertyTypes;
 
-    static std::string DatabasePath;
-
-    static std::string DatabaseParentNode;
-
-    static std::string DatabaseNode;
-
 public:
 
     Isotope()=delete;

@@ -31,8 +31,10 @@
 #define NSXTOOL_TYPES_H_
 
 #include <complex>
+#include <map>
 #include <memory>
 #include <tuple>
+#include <string>
 #include <vector>
 
 #include <Eigen/Core>
@@ -47,6 +49,16 @@ namespace Crystal
     typedef std::shared_ptr<UnitCell> sptrUnitCell;
     typedef std::shared_ptr<Peak3D> sptrPeak3D;
     typedef std::vector<sptrUnitCell> CellList;
+}
+
+namespace Chemistry {
+
+    class Isotope;
+    using isotopeDatabase = std::map<std::string,Isotope>;
+    using isotopeContents = std::map<std::string,double>;
+
+    class Material;
+    using sptrMaterial = std::shared_ptr<Material>;
 }
 
 namespace Instrument

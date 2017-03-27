@@ -1,14 +1,9 @@
 #define BOOST_TEST_MODULE "Test Material"
 #define BOOST_TEST_DYN_LINK
 
-#include <iostream>
-
 #include <boost/test/unit_test.hpp>
 
-#include <nsxlib/chemistry/Element.h>
-#include <nsxlib/kernel/Error.h>
 #include <nsxlib/chemistry/Material.h>
-#include <nsxlib/chemistry/MaterialManager.h>
 #include <nsxlib/utils/Units.h>
 
 const double tolerance=1.0e-9;
@@ -17,25 +12,23 @@ using namespace SX::Chemistry;
 
 BOOST_AUTO_TEST_CASE(Test_Material)
 {
-    MaterialManager* mmgr=MaterialManager::Instance();
+    Material methane("CH4");
+    const auto& isotopes=methane.isotopes();
+    BOOST_CHECK_CLOSE(isotopes.at("C[12]"),0.989,tolerance);
+    BOOST_CHECK_CLOSE(isotopes.at("C[13]"),0.110,tolerance);
+    BOOST_CHECK_CLOSE(isotopes.at("H[1]"),0.9985,tolerance);
+    BOOST_CHECK_CLOSE(isotopes.at("H[2]"),0.0015,tolerance);
+//    BOOST_CHECK_CLOSE(methane->molarMass(),0.0160425,1.0e-2);
+//    methane->setMassDensity(1.235);
 
-    // Checks that setting the materials database to a wrong path throws
-    BOOST_CHECK_THROW(mmgr->setDatabasePath("/fsdfs/fsdfsd/blablabla.xml"),SX::Kernel::Error<MaterialManager>);
-
-    sptrMaterial methane= mmgr->buildEmptyMaterial("methane",BuildingMode::Stoichiometry);
-    methane->addElement(std::make_shared<Element>(Element("C")),1);
-    methane->addElement(std::make_shared<Element>(Element("H")),4);
-    BOOST_CHECK_CLOSE(methane->getMolarMass(),0.0160425,1.0e-2);
-    methane->setMassDensity(1.235);
-
-    sptrMaterial water= mmgr->buildEmptyMaterial("water",BuildingMode::Stoichiometry);
-    water->addElement(std::make_shared<Element>(Element("O")),1);
-    water->addElement(std::make_shared<Element>(Element("H")),2);
-    BOOST_CHECK_CLOSE(water->getMolarMass(),0.01801528,1.0e-2);
-
-    sptrMaterial mixture= mmgr->buildEmptyMaterial("mixture",BuildingMode::Stoichiometry);
-    mixture->addMaterial(methane,5);
-    mixture->addMaterial(water,20);
+//    sptrMaterial water= mmgr->buildEmptyMaterial("water",BuildingMode::Stoichiometry);
+//    water->addElement(std::make_shared<Element>(Element("O")),1);
+//    water->addElement(std::make_shared<Element>(Element("H")),2);
+//    BOOST_CHECK_CLOSE(water->getMolarMass(),0.01801528,1.0e-2);
+//
+//    sptrMaterial mixture= mmgr->buildEmptyMaterial("mixture",BuildingMode::Stoichiometry);
+//    mixture->addMaterial(methane,5);
+//    mixture->addMaterial(water,20);
 
 //    // Checks the mole fractions of the methane and water molecules
 //    elementsMap moleFractions=methane->getMolarFractions();

@@ -17,10 +17,10 @@
 #include "IsotopeDatabaseDialog.h"
 #include "ui_IsotopeDatabaseDialog.h"
 #include <nsxlib/chemistry/Isotope.h>
-#include <nsxlib/chemistry/ChemicalDatabaseManager.h>
+#include <nsxlib/chemistry/IsotopeDatabaseManager.h>
 
-using SX::Chemistry::ChemicalDatabaseManager;
 using SX::Chemistry::Isotope;
+using SX::Chemistry::IsotopeDatabaseManager;
 
 IsotopeDatabaseDialog::IsotopeDatabaseDialog(QWidget *parent) : QDialog(parent), ui(new Ui::IsotopeDatabaseDialog)
 {
@@ -29,7 +29,7 @@ IsotopeDatabaseDialog::IsotopeDatabaseDialog(QWidget *parent) : QDialog(parent),
     // Make sure that the user can not edit the content of the table
     ui->isotopeDatabaseView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    ChemicalDatabaseManager<Isotope>* imgr=ChemicalDatabaseManager<Isotope>::Instance();
+    IsotopeDatabaseManager* imgr=IsotopeDatabaseManager::Instance();
 
 //    const SX::Chemistry::unitsMap& umap = imgr->getUnits();
 

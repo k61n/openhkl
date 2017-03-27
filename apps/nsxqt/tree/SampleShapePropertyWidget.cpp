@@ -10,7 +10,6 @@
 #include <nsxlib/chemistry/Material.h>
 #include "Logger.h"
 
-#include <nsxlib/chemistry/MaterialManager.h>
 #include <nsxlib/geometry/MCAbsorption.h>
 #include <nsxlib/crystal/Peak3D.h>
 #include <nsxlib/instrument/Sample.h>
