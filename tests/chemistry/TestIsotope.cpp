@@ -24,10 +24,10 @@ BOOST_AUTO_TEST_CASE(Test_Isotope)
     BOOST_CHECK_NO_THROW(mgr->loadDatabase("./isotopes.xml"));
 
     // Get an isotope known from the isotope database
-    ChemicalDatabaseManager<Isotope>::sptrChemicalObject is=mgr->getChemicalObject("H[1]");
+    Isotope is=mgr->getChemicalObject("H[1]");
 
     // Checks some of the property of the isotope
-    BOOST_CHECK_CLOSE(is->getProperty<double>("molar_mass"),1.00782504*um->get("g_per_mole"),tolerance);
+    BOOST_CHECK_CLOSE(is.getProperty<double>("molar_mass"),1.00782504*um->get("g_per_mole"),tolerance);
 
     mgr->saveDatabase("toto.xml");
 }

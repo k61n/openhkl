@@ -32,13 +32,12 @@ class ChemicalDatabaseManager : public Singleton<ChemicalDatabaseManager<Chemica
 {
 public:
 
-    using sptrChemicalObject = std::shared_ptr<ChemicalObject>;
-    using ChemicalObjectDatabase=std::map<std::string,sptrChemicalObject>;
+    using ChemicalObjectDatabase=std::map<std::string,ChemicalObject>;
 
     ChemicalDatabaseManager();
     ~ChemicalDatabaseManager();
 
-    sptrChemicalObject getChemicalObject(const std::string& name) const;
+    ChemicalObject getChemicalObject(const std::string& name) const;
 
     const ChemicalObjectDatabase& getDatabase() const;
 
@@ -66,7 +65,7 @@ ChemicalDatabaseManager<ChemicalObject>::~ChemicalDatabaseManager()
 }
 
 template <typename ChemicalObject>
-typename ChemicalDatabaseManager<ChemicalObject>::sptrChemicalObject ChemicalDatabaseManager<ChemicalObject>::getChemicalObject(const std::string& name) const
+ChemicalObject ChemicalDatabaseManager<ChemicalObject>::getChemicalObject(const std::string& name) const
 {
     // If the chemical has already been registered, just return its corresponding pointer
     auto it=_database.find(name);
@@ -107,8 +106,8 @@ void ChemicalDatabaseManager<ChemicalObject>::loadDatabase(const std::string& fi
     		continue;
     	}
 
-        sptrChemicalObject chemObj(new ChemicalObject(node.second));
-        _database.insert(std::make_pair(chemObj->getName(),chemObj));
+        ChemicalObject chemObj(node.second);
+        _database.insert(std::make_pair(chemObj.getName(),chemObj));
     }
 }
 
@@ -120,7 +119,7 @@ void ChemicalDatabaseManager<ChemicalObject>::saveDatabase(std::string filename)
 
     for (const auto& chemObject : _database)
     {
-        auto chemObjectNode = chemObject.second->writeToXML();
+        auto chemObjectNode = chemObject.second.writeToXML();
         rootNode.add_child(ChemicalObject::DatabaseNode,chemObjectNode);
     }
 
