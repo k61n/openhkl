@@ -559,7 +559,6 @@ public:
 private:
 
     const NDTree<T,D>* _node;
-
 };
 
 template<typename T, SX::Types::uint D>
@@ -612,6 +611,7 @@ NDTreeIterator<T,D>& NDTreeIterator<T,D>::operator++()
 {
     // already at end
     if (_node == nullptr || _node->_parent == nullptr) {
+        _node = nullptr;
         return *this;
     }
 
