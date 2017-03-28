@@ -150,6 +150,8 @@ public:
 
     NDTree(const NDTree* parent, SX::Types::uint i);
 
+    unsigned int numChambers() const;
+
 
 private:
     //! Prevent defining tree with null world.
@@ -304,7 +306,9 @@ NDTree<T,D>::NDTree(const std::initializer_list<T>& lb, const std::initializer_l
 
 template<typename T, SX::Types::uint D>
 NDTree<T,D>::NDTree(const NDTree<T,D>* parent, SX::Types::uint sector):
-    AABB<T,D>(), _depth(parent->_depth+1), _parent(parent), _idx(sector)//, _right(nullptr)
+    AABB<T,D>(), _depth(parent->_depth+1), _parent(parent), _idx(sector),
+    _MAX_DEPTH(parent->_MAX_DEPTH),
+    _MAX_STORAGE(parent->_MAX_STORAGE)
 {
     nullifyChildren();
     //_data.reserve(_MAX_STORAGE);
@@ -407,22 +411,36 @@ auto NDTree<T,D>::getCollisions() const -> std::set<collision_pair>
 template<typename T, SX::Types::uint D>
 std::set<const IShape<T, D>*> NDTree<T,D>::getCollisions(const IShape<T, D>& given) const
 {
-    std::set<const IShape<double, 3>*> collisions;
+    using ndtree = NDTree<T, D>;
+    using collision_set = std::set<const IShape<double, 3>*>;
+    collision_set collisions;
 
-    // loop over chambers of the ndtree
-    for (auto&& chamber: *this) {
-        // shape doesn't intersect the chamber
-        if (!chamber.intercept(given)) {
-            continue;
+    std::function<void(const ndtree*, collision_set&)> recursiveCollisions;
+
+    recursiveCollisions = [&given, &recursiveCollisions] (const ndtree* tree, collision_set& collisions) -> void
+    {
+        // shape's box does not intercept tree
+        if (!tree->intercept(given)) {
+            return;
         }
-        // loop over shapes in the chamber
-        for (auto&& shape: chamber._data) {
-            // collision detected
+
+        // tree has children
+        if (tree->hasChildren()) {
+            for (auto&& child: tree->_children) {
+                recursiveCollisions(&child, collisions);
+            }
+            return;
+        }
+
+        // otherwise, tree has no children
+        for (auto&& shape: tree->_data) {
             if (shape->collide(given)) {
                 collisions.emplace(shape);
             }
         }
-    }
+    };
+
+    recursiveCollisions(this, collisions);
     return collisions;
 }
 
@@ -643,6 +661,19 @@ NDTreeIterator<T,D> NDTreeIterator<T,D>::operator++(int)
     NDTreeIterator<T,D> tmp(*this);
     ++(*this);
     return (tmp);
+}
+
+template<typename T, SX::Types::uint D>
+unsigned int NDTree<T,D>::numChambers() const
+{
+    if (hasChildren()) {
+        unsigned int count = 0;
+        for (auto&& child: _children) {
+            count += child.numChambers();
+        }
+        return count;
+    }
+    return 1;
 }
 
 } // namespace Geometry

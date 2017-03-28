@@ -46,11 +46,15 @@ void collision_test()
     }
 
     // check that the data was inserted correctly
+    unsigned int numChambers = 0;
     for (auto&& chamber: tree) {
+        numChambers += 1;
         for (auto&& shape: chamber.getData()) {
             test_set.insert(shape);
         }
     }
+
+    BOOST_CHECK_EQUAL(numChambers, tree.numChambers());
 
     BOOST_CHECK_EQUAL(test_set.size(), 19*19*19);
 
@@ -69,6 +73,63 @@ void collision_test()
     BOOST_CHECK_EQUAL(tree.getCollisions().size(), 8);
 
     shape = nullptr;
+
+    // clear the list
+    for(auto shape: shapes) {
+        delete shape;
+    }
+}
+
+void split_test()
+{
+    using Ellipsoid3D = SX::Geometry::Ellipsoid<double, 3>;
+
+    NDTree<double,3> tree({0,0,0},{50,50,50});
+    tree.setMaxStorage(4);
+
+    auto vects = Eigen::Matrix3d::Identity();
+    const double radius = 1.0;
+    auto vals = Eigen::Vector3d(radius, radius, radius);
+
+    std::set<const IShape<double, 3>*> test_set;
+
+    std::vector<Ellipsoid3D*> shapes;
+
+    shapes.emplace_back(new Ellipsoid3D(Eigen::Vector3d(12.5, 12.5, 12.5), vals, vects));
+    shapes.emplace_back(new Ellipsoid3D(Eigen::Vector3d(12.5, 12.5, 37.5), vals, vects));
+    shapes.emplace_back(new Ellipsoid3D(Eigen::Vector3d(12.5, 37.5, 12.5), vals, vects));
+    shapes.emplace_back(new Ellipsoid3D(Eigen::Vector3d(12.5, 37.5, 37.5), vals, vects));
+    shapes.emplace_back(new Ellipsoid3D(Eigen::Vector3d(37.5, 12.5, 12.5), vals, vects));
+    shapes.emplace_back(new Ellipsoid3D(Eigen::Vector3d(37.5, 12.5, 37.5), vals, vects));
+    shapes.emplace_back(new Ellipsoid3D(Eigen::Vector3d(37.5, 37.5, 12.5), vals, vects));
+    shapes.emplace_back(new Ellipsoid3D(Eigen::Vector3d(37.5, 37.5, 37.5), vals, vects));
+
+    for (auto&& shape: shapes) {
+        tree.addData(shape);
+    }
+
+    // check that it split properly
+    BOOST_CHECK_EQUAL(tree.numChambers(), 8);
+
+    // check that the data was inserted correctly
+    for (auto&& chamber: tree) {
+        BOOST_CHECK_EQUAL(chamber.getData().size(), 1);
+    }
+
+    // check that the collisions with chambers make sense
+    for (auto&& shape: shapes) {
+        unsigned int num_intercept = 0;
+
+        for (auto&& chamber: tree) {
+            BOOST_CHECK_EQUAL(shape->intercept(chamber), chamber.intercept(*shape));
+
+            if (shape->intercept(chamber)) {
+                ++num_intercept;
+            }
+        }
+
+        BOOST_CHECK_EQUAL(num_intercept, 1);
+    }
 
     // clear the list
     for(auto shape: shapes) {
@@ -145,4 +206,6 @@ BOOST_AUTO_TEST_CASE(Test_NDTree)
     BOOST_CHECK_EQUAL(tree.hasData(),false);
 
     collision_test();
+
+    split_test();
 }
