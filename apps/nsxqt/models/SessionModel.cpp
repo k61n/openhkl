@@ -624,10 +624,12 @@ void SessionModel::incorporateCalculatedPeaks()
             std::set<Eigen::RowVector3i, compare_fn> found_hkls;
 
 
-
             Eigen::Vector3d lb = {0.0, 0.0, 0.0};
             Eigen::Vector3d ub = {double(numor->getNCols()), double(numor->getNRows()), double(numor->getNFrames())};
             auto&& octree = Octree(lb, ub);
+
+            octree.setMaxDepth(4);
+            octree.setMaxStorage(50);
 
             handler->log("Building peak octree...");
 
@@ -639,6 +641,8 @@ void SessionModel::incorporateCalculatedPeaks()
                 }
                 octree.addData(&p->getShape());
             }
+
+            handler->log("Done building octree; number of chambers is " + std::to_string(octree.numChambers()));
 
             handler->setStatus("Adding calculated peaks...");
 

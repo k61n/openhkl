@@ -75,7 +75,7 @@ private:
     Eigen::Vector3d _lower;
     Eigen::Vector3d _upper;
 
-    Eigen::ArrayXXd _peak_mask, _bkg_mask, _peak_data;
+    // Eigen::ArrayXXd _peak_mask, _bkg_mask, _peak_data;
 
     long _data_start;
     long _data_end;

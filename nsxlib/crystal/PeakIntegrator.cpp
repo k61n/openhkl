@@ -90,8 +90,8 @@ PeakIntegrator::PeakIntegrator(const SX::Geometry::IntegrationRegion& region, co
     _dx = int(_end_x - _start_x)+1;
     _dy = int(_end_y - _start_y)+1;
 
-    _peak_mask.resize(_dy, _dx);
-    _bkg_mask.resize(_dy, _dx);
+//    _peak_mask.resize(_dy, _dx);
+//    _bkg_mask.resize(_dy, _dx);
 }
 
 void PeakIntegrator::step(const Eigen::MatrixXi& frame, size_t idx, const Eigen::MatrixXi& mask)
@@ -105,7 +105,11 @@ void PeakIntegrator::step(const Eigen::MatrixXi& frame, size_t idx, const Eigen:
     double intensityP = 0;
     double intensityBkg = 0;
 
-    _peak_data = frame.block(_start_y, _start_x, _dy,_dx).array().cast<double>();
+
+    auto _peak_data = frame.block(_start_y, _start_x, _dy,_dx).array().cast<double>();
+    auto _peak_mask = Eigen::ArrayXXd(_dy, _dx);
+    auto _bkg_mask = Eigen::ArrayXXd(_dy, _dx);
+
     _peak_mask.setZero();
     _bkg_mask.setZero();
 

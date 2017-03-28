@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include <memory>
 #include <vector>
+#include <cmath>
 
 #include "../utils/Units.h"
 
@@ -28,6 +29,7 @@
 #include "IFrameIterator.h"
 #include "BasicFrameIterator.h"
 #include "ThreadedFrameIterator.h"
+
 
 namespace SX {
 namespace Data {
@@ -621,8 +623,6 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
 
         // update the peak shape
         const double confidence = 0.98; // todo: should not be hard coded
-
-
         auto&& maybe_shape = integrator.getBlobShape(confidence);
 
         // could not get shape (peak too weak?)
@@ -631,20 +631,41 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
             continue;
         }
 
-        auto&& shape = maybe_shape.get();
-        auto&& center = shape.getAABBCenter();
-        Eigen::Vector4d p;
-        p << center(0), center(1), center(2), 1.0;
+        auto&& new_shape = maybe_shape.get();
+        auto&& old_shape = peak->getShape();
+        Eigen::RowVector3d hkl_old, hkl_new;
 
-        // check that the blob is actually valid (weak peaks)
-        if (peak->getShape().isInside(p)) {
-            peak->setShape(shape);
+        auto old_center = old_shape.getAABBCenter();
+        auto new_center = new_shape.getAABBCenter();
+
+        auto lb = new_shape.getLower();
+        auto ub = new_shape.getUpper();
+
+        // not enough mass to determine ellipse
+        if (std::isnan((ub-lb).squaredNorm())) {
+            peak->setSelected(false);
+            continue;
         }
-        else {
-            // peak was too weak to get a good fit
+
+        // outside of frame
+        if (lb[0] < 0.0 || lb[1] < 0.0 || lb[2] < 0.0) {
+            peak->setSelected(false);
+            continue;
+        }
+        if (ub[0] > _ncols-1 || ub[1] > _nrows-1 || ub[2] > _nFrames-1) {
+            peak->setSelected(false);
+            continue;
+        }
+
+        peak->getMillerIndices(hkl_old);
+        peak->setShape(new_shape);
+        peak->getMillerIndices(hkl_new);
+
+        // indices disagree
+        if ( (hkl_old-hkl_new).squaredNorm() > 1e-6 ) {
+            peak->setShape(old_shape);
             peak->setSelected(false);
         }
-
     }
 }
 
