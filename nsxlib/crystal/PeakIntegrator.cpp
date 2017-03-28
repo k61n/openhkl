@@ -263,7 +263,10 @@ double PeakIntegrator::pValue() const
     // therefore, we can estimate the rate R as below:
     const double R = _countsBkg.sum() / _pointsBkg.sum();
 
-    assert(R > 0.0);
+    // R should always be positive!
+    if (std::isnan(R) || R <= 0.0) {
+        return 1.0;
+    }
 
     // null hypothesis: the pixels inside the peak are Poisson processes with rate R
     // therefore, by central limit theorem the average value
@@ -271,7 +274,15 @@ double PeakIntegrator::pValue() const
     // is normal with mean R and variance:
     const double var = R / _pointsPeak.sum();
 
-    assert(var > 0.0);
+    // avg should be finite and positive
+    if (std::isnan(avg) || avg <= 0.0) {
+        return 1.0;
+    }
+
+    // variance should be finite and positive
+    if (std::isnan(var) || var <= 0.0) {
+        return 1.0;
+    }
 
     // thus we obtain the following standard normal variable
     const double z = (avg-R) / std::sqrt(var);

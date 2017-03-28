@@ -617,6 +617,13 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
         integrator.end();
         peak->updateIntegration(integrator);
 
+        // peak is too weak
+        // todo: p value should probably not be hard-coded
+        if (integrator.pValue() > 1e-5) {
+            peak->setSelected(false);
+            continue;
+        }
+
         if (!update_shape) {
             continue;
         }
