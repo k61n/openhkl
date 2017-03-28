@@ -54,6 +54,8 @@ public:
     double evaluate(double x) const;
     double integrate() const;
 
+    bool goodFit(const Eigen::VectorXd& y, double eps) const;
+
 private:
     SX::Utils::Lorentzian _lorentz;
     SX::Utils::Gaussian _gauss;

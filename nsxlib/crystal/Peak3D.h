@@ -189,6 +189,9 @@ public:
     //! compute P value that there is actually an observed peak, assuming Poisson statistics
     double pValue() const;
 
+    //! Return fitted peak profile
+    const Profile& getProfile() const;
+
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
 private:

@@ -478,11 +478,19 @@ void Peak3D::updateIntegration(const PeakIntegrator& integrator)
     _counts = _projectionPeak.sum();
     _countsSigma = std::sqrt(std::abs(_counts));
     _pValue = integrator.pValue();
+
+    // fit peak profile
+    _profile.fit(_projectionPeak, 100);
 }
 
 double Peak3D::pValue() const
 {
     return _pValue;
+}
+
+const Profile& Peak3D::getProfile() const
+{
+    return _profile;
 }
 
 bool Peak3D::hasUnitCells() const

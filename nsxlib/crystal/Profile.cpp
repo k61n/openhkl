@@ -127,5 +127,15 @@ double Profile::integrate() const
     return 0.5*_gauss.integrate() + 0.5*_lorentz.integrate();
 }
 
+bool Profile::goodFit(const Eigen::VectorXd &y, double eps) const
+{
+    Eigen::VectorXd x(y.size());
+    for (auto i = 0; i < y.size(); ++i) {
+        x(i) = evaluate(i);
+    }
+    auto diff = (x-y).norm();
+    return diff < eps*y.norm() && diff < eps*x.norm();
+}
+
 } // namespace Crystal
 } // namespace SX
