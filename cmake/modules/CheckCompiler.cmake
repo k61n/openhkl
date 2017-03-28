@@ -34,8 +34,8 @@ endif()
 
 # disable annoying warnings during msvc build
 if (COMPILER_IS_MSVC)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4348 /wd4127")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4348 /wd4127")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4348 /wd4127 /mp")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4348 /wd4127 /mp")
 endif()
 
 # enable c++11 support
