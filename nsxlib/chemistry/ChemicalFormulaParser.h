@@ -26,11 +26,10 @@
  *
  */
 
-#ifndef NSXTOOL_FORMULAPARSER_H_
-#define NSXTOOL_FORMULAPARSER_H_
+#ifndef NSXTOOL_CHEMICALFORMULAPARSER_H_
+#define NSXTOOL_CHEMICALFORMULAPARSER_H_
 
 #define BOOST_SPIRIT_USE_PHOENIX_V3
-//#define BOOST_RESULT_OF_USE_DECLTYPE
 
 #include <map>
 #include <string>
@@ -80,9 +79,8 @@ struct BuildElementFromNaturalIsotopes
 {
 	bool operator()(isotopeContents &output, const std::string& elementSymbol) const
 	{
-	    std::cout<<"rfjksdlfjkdljklfjs"<<std::endl;
 	    IsotopeDatabaseManager* imgr=IsotopeDatabaseManager::Instance();
-		const auto& isotopeDatabase=imgr->getDatabase();
+		const auto& isotopeDatabase=imgr->database();
 		for (const auto& isotope : isotopeDatabase) {
 			std::string symbolName = isotope.second.getProperty<std::string>("symbol");
 			if (symbolName == elementSymbol) {
@@ -99,10 +97,8 @@ struct BuildElementFromNaturalIsotopes
 struct ValidateIsotopeContents {
 
     bool operator()(const isotopeContents& mixture) const {
-        std::cout<<"fsdfsdf"<<std::endl;
         double sumRatio(0.0);
         for (const auto& p : mixture) {
-            std::cout<<p.first<<p.second<<std::endl;
             if (p.second < 0.0 || p.second > 1.0) {
                 return false;
             }
@@ -153,8 +149,6 @@ struct BuildCompoundFromElement
 {
 	bool operator()(isotopeContents &output, const isotopeContents& element, double stoichiometry) const
 	{
-	    std::cout<<"sfksdlfjksdljfksdjffjkdkd"<<std::endl;
-
 		if (stoichiometry<=0.0)
 			return false;
 
@@ -200,7 +194,6 @@ struct BuidMaterialFromCompounds
 
 		for (const auto& compound : compounds) {
 			for (const auto& isotope : compound.first) {
-			    std::cout<<isotope.first<<std::endl;
 				auto it = output.find(isotope.first);
 				double ratio = compound.second;
 				double amount = ratio*isotope.second;
@@ -212,7 +205,7 @@ struct BuidMaterialFromCompounds
 			}
 		}
 
-		return true;
+		return (!output.empty());
 	}
 };
 
@@ -226,11 +219,16 @@ struct BuidMaterialFromCompounds
 template <typename Iterator>
 struct ChemicalFormulaParser : qi::grammar<Iterator,isotopeContents()>
 {
-    ChemicalFormulaParser(): ChemicalFormulaParser::base_type(_mixtureToken)
+    ChemicalFormulaParser(): ChemicalFormulaParser::base_type(_materialToken)
     {
-        using namespace qi;
         using qi::_1;
         using qi::_2;
+        using qi::_val;
+        using qi::_pass;
+        using qi::attr;
+        using qi::double_;
+        using qi::eps;
+        using qi::eoi;
     	namespace phx = boost::phoenix;
 
     	// Semantic action for building a chemical element from a unique isotope
@@ -252,7 +250,7 @@ struct ChemicalFormulaParser : qi::grammar<Iterator,isotopeContents()>
 
     	// Define the isotope names and chemical symbols tokens
         IsotopeDatabaseManager* imgr=IsotopeDatabaseManager::Instance();
-		const auto& isotopeDatabase=imgr->getDatabase();
+		const auto& isotopeDatabase=imgr->database();
 		for (const auto& isotope : isotopeDatabase) {
 			_isotopeToken.add(isotope.second.getName(),isotope.second.getName());
 			_elementToken.add(isotope.second.getProperty<std::string>("symbol"),isotope.second.getProperty<std::string>("symbol"));
@@ -269,7 +267,7 @@ struct ChemicalFormulaParser : qi::grammar<Iterator,isotopeContents()>
 
         // The tokens for setting up a material
         _compoundMixtureToken = (((_compoundToken >> (("(" > double_ > ")") | attr(1.0))) % ";") > eps(validate_compounds_contents(_val)));
-        _materialToken = (_compoundMixtureToken[_pass=build_material_from_compounds(_val,_1)]) > eoi;
+        _materialToken =  eps > ((_compoundMixtureToken[_pass=build_material_from_compounds(_val,_1)]) > eoi);
     }
 
 private:
@@ -284,10 +282,11 @@ private:
 	qi::rule<Iterator,isotopeContents()>  _compoundToken;
 	qi::rule<Iterator,compoundList()>     _compoundMixtureToken;
 	qi::rule<Iterator,isotopeContents()>  _materialToken;
+    qi::rule<Iterator,isotopeContents()>  _start;
 };
 
 } // Namespace Chemistry
 
 } // Namespace SX
 
-#endif /* NSXTOOL_FORMULAPARSER_H_ */
+#endif /* NSXTOOL_CHEMICALFORMULAPARSER_H_ */

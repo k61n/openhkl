@@ -68,26 +68,6 @@ bool Isotope::hasProperty(const std::string& propertyName) const
     return (it != _properties.end());
 }
 
-double Isotope::getFormalCharge() const
-{
-    return getProperty<double>("n_protons") - getProperty<double>("n_electrons");
-}
-
-bool Isotope::isIon() const
-{
-	return (getProperty<int>("n_protons")!=getProperty<int>("n_electrons"));
-}
-
-bool Isotope::isAnion() const
-{
-    return (getProperty<int>("n_protons")<getProperty<int>("n_electrons"));
-}
-
-bool Isotope::isCation() const
-{
-    return (getProperty<int>("n_protons")>getProperty<int>("n_electrons"));
-}
-
 void Isotope::print(std::ostream& os) const
 {
 	os<<"Isotope "<<_name<<" ["<<getProperty<int>("n_protons")<<","<<getProperty<int>("n_neutrons")<<"]";

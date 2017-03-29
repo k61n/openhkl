@@ -80,16 +80,6 @@ public:
 
 	bool hasProperty(const std::string& propertyName) const;
 
-	//! Returns the formal charge of this Isotope
-	double getFormalCharge() const;
-
-	//! Returns true if this Isotope is an ion
-	bool isIon() const;
-	//! Return true if this Isotope is an anion (Q<0)
-	bool isAnion() const;
-	//! Return true if this Isotope is an cation (Q>0)
-	bool isCation() const;
-
 	//! Print some informations about this Isotope on a stream
 	void print(std::ostream& os) const;
 

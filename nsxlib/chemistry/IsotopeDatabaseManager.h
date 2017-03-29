@@ -28,9 +28,7 @@ public:
 
     Isotope getIsotope(const std::string& name) const;
 
-    const isotopeDatabase& getDatabase() const;
-
-    isotopeDatabase& getDatabase();
+    const isotopeDatabase& database() const;
 
     void loadDatabase(const std::string& filename);
 

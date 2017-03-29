@@ -35,12 +35,7 @@ Isotope IsotopeDatabaseManager::getIsotope(const std::string& name) const
     return it->second;
 }
 
-isotopeDatabase& IsotopeDatabaseManager::getDatabase()
-{
-    return _database;
-}
-
-const isotopeDatabase& IsotopeDatabaseManager::getDatabase() const
+const isotopeDatabase& IsotopeDatabaseManager::database() const
 {
     return _database;
 }
@@ -49,7 +44,7 @@ void IsotopeDatabaseManager::loadDatabase(const std::string& filename)
 {
     // The given path does not exists, throws
     if (!exists(filename)) {
-        return;
+        throw std::runtime_error("Unknown isotope database: "+filename);
     }
 
     _database.clear();

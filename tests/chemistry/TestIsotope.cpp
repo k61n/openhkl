@@ -1,7 +1,9 @@
 #define BOOST_TEST_MODULE "Test Isotope"
 #define BOOST_TEST_DYN_LINK
 
+#include <complex>
 #include <string>
+#include <stdexcept>
 
 #include <boost/test/unit_test.hpp>
 
@@ -9,24 +11,23 @@
 #include <nsxlib/chemistry/IsotopeDatabaseManager.h>
 #include <nsxlib/utils/Units.h>
 
-using namespace SX::Chemistry;
-using namespace SX::Units;
+using SX::Chemistry::Isotope;
+using SX::Chemistry::IsotopeDatabaseManager;
+using SX::Units::fm;
 
 const double tolerance=1e-6;
 
 BOOST_AUTO_TEST_CASE(Test_Isotope)
 {
     IsotopeDatabaseManager* mgr=IsotopeDatabaseManager::Instance();
-    UnitsManager* um=UnitsManager::Instance();
 
-    // Checks that setting the isotope database to a correct path does not throw
-    BOOST_CHECK_NO_THROW(mgr->loadDatabase("./isotopes.xml"));
+    Isotope hf176=mgr->getIsotope("Hf[176]");
 
-    // Get an isotope known from the isotope database
-    Isotope is=mgr->getIsotope("H[1]");
+    BOOST_CHECK_EQUAL(hf176.getProperty<std::complex<double>>("b_coherent"),std::complex<double>(6.61*1.0e-15,0));
 
-    // Checks some of the property of the isotope
-    BOOST_CHECK_CLOSE(is.getProperty<double>("molar_mass"),1.00782504*um->get("g_per_mole"),tolerance);
+    BOOST_CHECK(hf176.hasProperty("nuclear_spin"));
 
-    mgr->saveDatabase("toto.xml");
+    BOOST_CHECK(!hf176.hasProperty("xxxxxx"));
+
+    BOOST_CHECK_THROW(hf176.getProperty<int>("xxxxxx"),std::runtime_error);
 }
