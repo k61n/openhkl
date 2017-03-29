@@ -19,20 +19,15 @@ std::map<std::string,Isotope::PropertyType> Isotope::PropertyTypes = {{"string",
                                                                       {"bool",PropertyType::Bool}};
 
 // Solve build failure on osx
-template<>
-std::string Isotope::getProperty<std::string>(const std::string& propertyName) const;
+template std::string Isotope::getProperty<std::string>(const std::string& propertyName) const;
 
-template<>
-int Isotope::getProperty<int>(const std::string& propertyName) const;
+template int Isotope::getProperty<int>(const std::string& propertyName) const;
 
-template<>
-double Isotope::getProperty<double>(const std::string& propertyName) const;
+template double Isotope::getProperty<double>(const std::string& propertyName) const;
 
-template<>
-std::complex<double> Isotope::getProperty<std::complex<double>>(const std::string& propertyName) const;
+template std::complex<double> Isotope::getProperty<std::complex<double>>(const std::string& propertyName) const;
 
-template<>
-bool Isotope::getProperty<bool>(const std::string& propertyName) const;
+template bool Isotope::getProperty<bool>(const std::string& propertyName) const;
 
 Isotope::Isotope(const ptree& isotopeNode)
 {
@@ -76,6 +71,16 @@ Isotope::Isotope(const ptree& isotopeNode)
 const std::string& Isotope::getName() const
 {
 	return _name;
+}
+
+template <typename PropertyType>
+PropertyType Isotope::getProperty(const std::string& propertyName) const
+{
+    auto pit = _properties.find(propertyName);
+    if (pit == _properties.end())
+        throw std::runtime_error("Isotope "+_name+": unknown property name ("+propertyName+")");
+
+    return any_cast<PropertyType>(pit->second);
 }
 
 bool Isotope::hasProperty(const std::string& propertyName) const

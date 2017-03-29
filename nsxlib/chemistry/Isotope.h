@@ -97,16 +97,6 @@ private:
 
 };
 
-template <typename PropertyType>
-PropertyType Isotope::getProperty(const std::string& propertyName) const
-{
-    auto pit = _properties.find(propertyName);
-    if (pit == _properties.end())
-        throw std::runtime_error("Isotope "+_name+": unknown property name ("+propertyName+")");
-
-    return any_cast<PropertyType>(pit->second);
-}
-
 //! Overloads the operator<< with an Isotope object
 std::ostream& operator<<(std::ostream&,const Isotope&);
 
