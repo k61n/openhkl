@@ -18,6 +18,22 @@ std::map<std::string,Isotope::PropertyType> Isotope::PropertyTypes = {{"string",
                                                                       {"complex",PropertyType::Complex},
                                                                       {"bool",PropertyType::Bool}};
 
+// Solve build failure on osx
+template<>
+std::string Isotope::getProperty<std::string>(const std::string& propertyName) const;
+
+template<>
+int Isotope::getProperty<int>(const std::string& propertyName) const;
+
+template<>
+double Isotope::getProperty<double>(const std::string& propertyName) const;
+
+template<>
+std::complex<double> Isotope::getProperty<std::complex<double>>(const std::string& propertyName) const;
+
+template<>
+bool Isotope::getProperty<bool>(const std::string& propertyName) const;
+
 Isotope::Isotope(const ptree& isotopeNode)
 {
     UnitsManager* um=UnitsManager::Instance();
