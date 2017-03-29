@@ -43,7 +43,7 @@ double Material::massDensity() const
 
 void Material::setMassDensity(double massDensity)
 {
-    if (massDensity<0.0) {
+    if (massDensity<=0.0) {
         throw std::runtime_error("Invalid mass density");
     }
     _massDensity = massDensity;
@@ -63,7 +63,7 @@ double Material::molarMass() const
     return molarMass;
 }
 
-isotopeContents Material::getMassFractions() const
+isotopeContents Material::massFractions() const
 {
     IsotopeDatabaseManager* imgr=IsotopeDatabaseManager::Instance();
 
@@ -83,53 +83,45 @@ isotopeContents Material::getMassFractions() const
     return massFractions;
 }
 
-
-isotopeContents Material::getNAtomsPerVolume() const
+isotopeContents Material::atomicNumberDensity() const
 {
     IsotopeDatabaseManager* imgr=IsotopeDatabaseManager::Instance();
 
     isotopeContents nAtomsPerVolume;
 
-    auto massFractions=getMassFractions();
-
-    for (const auto& p : massFractions) {
+    for (const auto& p : massFractions()) {
         const auto& isotope=imgr->getIsotope(p.first);
-        nAtomsPerVolume.insert(std::make_pair(p.first,Units::avogadro*_massDensity*p.second/isotope.getProperty<double>("molar_mass")));
+        double massFraction(_massDensity*p.second);
+        double molarFraction = massFraction/isotope.getProperty<double>("molar_mass");
+        nAtomsPerVolume.insert(std::make_pair(p.first,Units::avogadro*molarFraction));
     }
 
     return nAtomsPerVolume;
 }
 
-double Material::getMuScattering() const
+double Material::muIncoherent() const
 {
     IsotopeDatabaseManager* imgr=IsotopeDatabaseManager::Instance();
 
     double scatteringMuFactor=0.0;
-    const auto& nAtomsPerVolume=getNAtomsPerVolume();
-    for (const auto& p : nAtomsPerVolume) {
+    for (const auto& p : atomicNumberDensity()) {
         const auto& isotope=imgr->getIsotope(p.first);
         scatteringMuFactor+=p.second*isotope.getProperty<double>("xs_incoherent");
     }
     return scatteringMuFactor;
 }
 
-double Material::getMuAbsorption(double lambda) const
+double Material::muAbsorption(double lambda) const
 {
     IsotopeDatabaseManager* imgr=IsotopeDatabaseManager::Instance();
 
     double absorptionMuFactor=0.0;
-    const auto& nAtomsPerVolume=getNAtomsPerVolume();
-    for (const auto& p : nAtomsPerVolume) {
+    for (const auto& p : atomicNumberDensity()) {
         const auto& isotope=imgr->getIsotope(p.first);
-        absorptionMuFactor+=p.second*isotope.getProperty<double>("xs_absorption")*lambda/1.798/Units::ang;
+        double thermalWavelength(1.798*Units::ang);
+        absorptionMuFactor+=p.second*isotope.getProperty<double>("xs_absorption")*lambda/thermalWavelength;
     }
     return absorptionMuFactor;
-}
-
-double Material::getMu(double lambda) const
-{
-    double mu=getMuScattering() + getMuAbsorption(lambda);
-    return mu;
 }
 
 void Material::print(std::ostream& os) const

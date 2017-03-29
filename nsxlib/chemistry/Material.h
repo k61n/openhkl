@@ -83,17 +83,15 @@ public:
 	double molarMass() const;
 
 	//! Returns the mass fractions of this Material
-    isotopeContents getMassFractions() const;
+    isotopeContents massFractions() const;
 
 	//! Returns the number of atoms per volume units per element (1/m3)
-    isotopeContents getNAtomsPerVolume() const;
+    isotopeContents atomicNumberDensity() const;
 
 	//! Returns the scattering attenuation factor of this Material
-	double getMuScattering() const;
-	//! Returns the absorption attenuation factor of this Material
-	double getMuAbsorption(double lambda=1.798e-10) const;
-	//! Returns the attenuation factor of this Material
-	double getMu(double lambda=1.798e-10) const;
+	double muIncoherent() const;
+	//! Returns the absorption attenuation factor of this Material at a given wavelength
+	double muAbsorption(double lambda=1.798e-10) const;
 
 	//! Print informations about this Material to an output stream
 	void print(std::ostream& os) const;

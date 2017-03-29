@@ -45,8 +45,8 @@ BOOST_AUTO_TEST_CASE(Test_Material)
     // Create the MC absorption calculator
     MCAbsorption mca(3.2*cm,3.2*cm,-100);
 
-    double muScattering=helium->getMuScattering();
-    double muAbsorption=helium->getMuAbsorption(1.46e-10);
+    double muScattering=helium->muIncoherent();
+    double muAbsorption=helium->muAbsorption(1.46e-10);
 
     // Set the material hull and its scattering and absorption attenuation factors
     mca.setSample(&chull,muScattering,muAbsorption);
@@ -63,8 +63,8 @@ BOOST_AUTO_TEST_CASE(Test_Material)
     // Create the MC absorption calculator
     mca=SX::Geometry::MCAbsorption(3.2*cm,3.2*cm,-100);
 
-    muScattering=methane->getMuScattering();
-    muAbsorption=methane->getMuAbsorption(1.46e-10);
+    muScattering=methane->muIncoherent();
+    muAbsorption=methane->muAbsorption(1.46e-10);
 
     // Set the material hull and its scattering and absorption attenuation factors
     mca.setSample(&chull,muScattering,muAbsorption);
