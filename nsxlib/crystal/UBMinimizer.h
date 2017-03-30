@@ -36,15 +36,21 @@
 
 #include <Eigen/Dense>
 
-
-#include "../instrument/Detector.h"
-#include "../utils/LMFunctor.h"
 #include "../crystal/Peak3D.h"
+#include "../instrument/Detector.h"
 #include "../instrument/Sample.h"
 #include "../instrument/Source.h"
+#include "../utils/LMFunctor.h"
 
 namespace SX {
+
+namespace Utils {
+class IMinimizer;
+}
+
 namespace Crystal {
+
+using SX::Utils::IMinimizer;
 
 /** @brief UB functor is used to refine UB-matrix and instrument offsets
  */
@@ -144,6 +150,10 @@ class UBMinimizer {
 public:
     //! Default constructor
     UBMinimizer();
+
+    //! Destructor
+    ~UBMinimizer();
+
     /*
      * @brief Add a peak (e.g. an observation) to the minimizer
      * @param peak the peak to be added
@@ -187,27 +197,30 @@ public:
      */
     void unsetStartingValue(unsigned int idx);
     /*
-     * @brief Run the minimization using Eigen implementation
-     * @return the status of the minimization (1 if everything OK)
-     */
-    int runEigen(unsigned int maxIter);
-    /*
      * @brief Run the minimization using GSL implementation
      * @return the status of the minimization (1 if everything OK)
      */
-    int runGSL(unsigned int maxIter);
+    int run(unsigned int maxIter);
     /*
      * @brief Returns the solution of the last minization
      * @return the solution
      */
     const UBSolution& getSolution() const;
+
+    //! Set the minimizer
+    void setMinimizer(IMinimizer* minimizer);
+
 private:
     UBFunctor _functor;
     UBSolution _solution;
     std::map<unsigned int,double> _start;
+    IMinimizer* _minimizer;
+
+
 };
 
 } // end namespace Crystal
+
 } // end namespace SX
 
 #endif // NSXTOOL_UBMINIMIZER_H_

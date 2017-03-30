@@ -625,10 +625,10 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
         }
 
         // peak profile couldn't be fitted
-        if (!peak->getProfile().goodFit(integrator.getProjectionPeak(), 0.10)) {
-            peak->setSelected(false);
-            continue;
-        }
+//        if (!peak->getProfile().goodFit(integrator.getProjectionPeak(), 0.10)) {
+//            peak->setSelected(false);
+//            continue;
+//        }
 
         if (!update_shape) {
             continue;

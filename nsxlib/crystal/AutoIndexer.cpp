@@ -158,7 +158,7 @@ bool AutoIndexer::autoIndex(const Parameters& _params)
         }
         Eigen::Matrix3d M = cell.getReciprocalStandardM();
         minimizer.setStartingUBMatrix(M);
-        int ret = minimizer.runGSL(100);
+        int ret = minimizer.run(100);
         if (ret == 1) {
             UBSolution sln = minimizer.getSolution();
             try {

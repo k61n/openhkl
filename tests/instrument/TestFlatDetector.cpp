@@ -25,7 +25,7 @@ BOOST_AUTO_TEST_CASE(Test_Flat_Detector)
 
     // This should be the center of the detector at rest at (0,0.764,0)
     DetectorEvent ev(d, 15.5, 15.5);
-    Eigen::Vector3d center=ev.getPosition();
+    Eigen::Vector3d center=ev.getPixelPosition();
     BOOST_CHECK_SMALL(center[0],tolerance);
     BOOST_CHECK_CLOSE(center[1],0.380,tolerance);
     BOOST_CHECK_SMALL(center[2],tolerance);
@@ -44,7 +44,7 @@ BOOST_AUTO_TEST_CASE(Test_Flat_Detector)
     d.setGonio(g);
 
     DetectorEvent ev3(d, 15.5, 15.5, {90.0*deg});
-    center=ev3.getPosition();
+    center=ev3.getPixelPosition();
     BOOST_CHECK_CLOSE(center[0],0.380,tolerance);
     BOOST_CHECK_SMALL(center[1],0.001);
     BOOST_CHECK_SMALL(center[2],0.001);

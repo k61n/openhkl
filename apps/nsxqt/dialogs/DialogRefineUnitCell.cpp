@@ -19,6 +19,9 @@
 #include <nsxlib/data/IData.h>
 #include "DoubleTableItemDelegate.h"
 #include <nsxlib/instrument/Monochromator.h>
+#include <nsxlib/utils/MinimizerGSL.h>
+
+using SX::Utils::MinimizerGSL;
 
 DialogRefineUnitCell::DialogRefineUnitCell(std::shared_ptr<SX::Instrument::Experiment> experiment,
                                            sptrUnitCell unitCell,
@@ -301,9 +304,10 @@ void DialogRefineUnitCell::refineParameters()
     os.str("");
 
     auto M=_unitCell->getReciprocalStandardM();
+    _minimizer.setMinimizer(new MinimizerGSL());
     _minimizer.setStartingUBMatrix(M);
 
-    int test = _minimizer.runGSL(100);
+    int test = _minimizer.run(100);
     if (test != 1) {
         ui->textEdit_Solution->setTextColor(QColor("red"));
         ui->textEdit_Solution->setText("No solution found within convergence criteria.");

@@ -77,7 +77,7 @@ DetectorEvent::~DetectorEvent()
 
 double DetectorEvent::get2Theta(const Eigen::Vector3d& si) const
 {
-    Eigen::Vector3d p = getPosition();
+    Eigen::Vector3d p = getPixelPosition();
     double proj = p.dot(si);
     return acos(proj/p.norm()/si.norm());
 }
@@ -85,7 +85,7 @@ double DetectorEvent::get2Theta(const Eigen::Vector3d& si) const
 Eigen::Vector3d DetectorEvent::getKf(double wave, const Eigen::Vector3d& from) const
 {
     // Get the event position x,y,z, taking into account the Gonio current setting
-    Eigen::Vector3d p = getPosition();
+    Eigen::Vector3d p = getPixelPosition();
     p-=from;
     p.normalize();
     return (p/wave);
@@ -103,12 +103,12 @@ Eigen::Vector3d DetectorEvent::getQ(double wave, const Eigen::Vector3d& from) co
 
 void DetectorEvent::getGammaNu(double& gamma, double& nu, const Eigen::Vector3d& from) const
 {
-    Eigen::Vector3d p = getPosition()-from;
+    Eigen::Vector3d p = getPixelPosition()-from;
     gamma=std::atan2(p[0],p[1]);
     nu=std::asin(p[2]/p.norm());
 }
 
-Eigen::Vector3d DetectorEvent::getPosition() const
+Eigen::Vector3d DetectorEvent::getPixelPosition() const
 {
     Eigen::Vector3d v = _detector->getPos(_x, _y);
     auto gonio = _detector->getGonio();

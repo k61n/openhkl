@@ -17,7 +17,6 @@
 #include <nsxlib/geometry/IntegrationRegion.h>
 #include "ColorMap.h"
 #include <nsxlib/utils/IMinimizer.h>
-#include <nsxlib/utils/MinimizerEigen.h>
 #include <nsxlib/utils/MinimizerGSL.h>
 
 #include "models/SessionModel.h"
@@ -91,11 +90,7 @@ void PeakFitDialog::changeL(int value)
 
 void PeakFitDialog::fitPeakShape()
 {
-#ifdef NSXTOOL_GSL_FOUND
-    SX::Utils::MinimizerGSL minimizer;
-#else
-    SX::Utils::MinimizerEigen minimizer;
-#endif
+#pragma not implemented
 }
 
 void PeakFitDialog::checkCollisions()

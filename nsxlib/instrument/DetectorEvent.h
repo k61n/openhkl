@@ -100,7 +100,7 @@ public:
       *  @param py vertical position of the scattering event in pixels units
       *  @return spatial position of this event
       */
-     Eigen::Vector3d getPosition() const;
+     Eigen::Vector3d getPixelPosition() const;
 
 private:
     //! Default constructor

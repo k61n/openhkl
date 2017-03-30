@@ -26,7 +26,7 @@ BOOST_AUTO_TEST_CASE(Test_Cylindrical_Detector)
     DetectorEvent ev1(d, 319.5, 127.5);
 
     // This should be the center of the detector at rest at (0,0.764,0)
-    Eigen::Vector3d center=ev1.getPosition();
+    Eigen::Vector3d center=ev1.getPixelPosition();
     BOOST_CHECK_SMALL(center[0],tolerance);
     BOOST_CHECK_CLOSE(center[1],0.764,tolerance);
     BOOST_CHECK_SMALL(center[2],tolerance);
@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_CASE(Test_Cylindrical_Detector)
     // Put detector at 90 deg, event should point along x
 
     DetectorEvent ev2(d, 319.5, 127.5, {90.0*deg});
-    center=ev2.getPosition();
+    center=ev2.getPixelPosition();
     BOOST_CHECK_CLOSE(center[0],0.764,tolerance);
     BOOST_CHECK_SMALL(center[1],0.001);
     BOOST_CHECK_SMALL(center[2],0.001);

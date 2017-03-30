@@ -33,22 +33,16 @@
  *
  */
 
-#include "MinimizerGSL.h"
-
-#ifdef NSXTOOL_GSL_FOUND
-
 #include <stdlib.h>
 #include <stdio.h>
 
-
 #include <gsl/gsl_multifit_nlin.h>
 
-
+#include "MinimizerGSL.h"
 
 namespace SX {
 
 namespace Utils {
-
 
 MinimizerGSL::MinimizerGSL():
     IMinimizer(),
@@ -259,9 +253,6 @@ void MinimizerGSL::gslFromEigen(const Eigen::MatrixXd &in, gsl_matrix *out)
 }
 
 
-} // namespace Utils
+} // end namespace Utils
 
-} // namespace SX
-
-
-#endif // NSXTOOL_GSL_FOUND
+} // end namespace SX
