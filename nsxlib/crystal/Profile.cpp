@@ -63,6 +63,11 @@ bool Profile::fit(const Eigen::VectorXd &y, int max_iter)
 
     const int num_params = 6;
 
+    // too few data points to fit
+    if (y.size() <= num_params) {
+        return false;
+    }
+
     for (int i = 0; i < wt.size(); ++i) {
         wt(i) = 1.0;
     }

@@ -237,7 +237,10 @@ void UBMinimizer::setSample(const std::shared_ptr<SX::Instrument::Sample>& sampl
 
 int UBMinimizer::run(unsigned int maxIter)
 {
-    assert(_minimizer != nullptr);
+    //assert(_minimizer != nullptr);
+    if (_minimizer == nullptr) {
+        _minimizer = new SX::Utils::MinimizerGSL();
+    }
 
     int nParams=_functor.inputs();
     Eigen::VectorXd x=Eigen::VectorXd::Zero(nParams);
