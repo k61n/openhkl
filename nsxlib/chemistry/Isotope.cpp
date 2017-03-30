@@ -63,16 +63,6 @@ const std::string& Isotope::getName() const
     return _name;
 }
 
-template <typename T>
-const T& Isotope::getProperty(const std::string& propertyName) const
-{
-    auto pit = _properties.find(propertyName);
-    if (pit == _properties.end())
-        throw std::runtime_error("Isotope "+_name+": unknown property name ("+propertyName+")");
-
-    return any_cast<const T&>(pit->second);
-}
-
 bool Isotope::hasProperty(const std::string& propertyName) const
 {
     auto it = _properties.find(propertyName);
@@ -123,14 +113,6 @@ std::ostream& operator<<(std::ostream& os,const Isotope& isotope)
     isotope.print(os);
     return os;
 }
-
-// forward declarations to force template instantiation
-template const std::string& Isotope::getProperty<std::string>(const std::string& propertyName) const;
-template const int& Isotope::getProperty<int>(const std::string& propertyName) const;
-template const double& Isotope::getProperty<double>(const std::string& propertyName) const;
-template const std::complex<double>& Isotope::getProperty<std::complex<double>>(const std::string& propertyName) const;
-template const bool& Isotope::getProperty<bool>(const std::string& propertyName) const;
-
 
 } // end namespace Chemistry
 } // end namespace SX

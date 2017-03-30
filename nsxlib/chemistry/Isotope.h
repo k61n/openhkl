@@ -76,7 +76,7 @@ public:
     const std::string& getName() const;
 
     template <typename T>
-    const T& getProperty(const std::string& propertyName) const;
+    T getProperty(const std::string& propertyName) const;
 
     bool hasProperty(const std::string& propertyName) const;
 
@@ -97,10 +97,21 @@ private:
 
 };
 
+template <typename T>
+T Isotope::getProperty(const std::string& propertyName) const
+{
+    auto pit = _properties.find(propertyName);
+    if (pit == _properties.end())
+        throw std::runtime_error("Isotope "+_name+": unknown property name ("+propertyName+")");
+
+    return any_cast<T>(pit->second);
+}
+
 //! Overloads the operator<< with an Isotope object
 std::ostream& operator<<(std::ostream&,const Isotope&);
 
 } // end namespace Chemistry
+
 } // end namespace SX
 
 #endif /* NSXTOOL_ISOTOPE_H_ */
