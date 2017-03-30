@@ -18,16 +18,6 @@ std::map<std::string,Isotope::PropertyType> Isotope::PropertyTypes = {{"string",
                                                                       {"complex",PropertyType::Complex},
                                                                       {"bool",PropertyType::Bool}};
 
-// Solve build failure on osx
-template std::string Isotope::getProperty<std::string>(const std::string& propertyName) const;
-
-template int Isotope::getProperty<int>(const std::string& propertyName) const;
-
-template double Isotope::getProperty<double>(const std::string& propertyName) const;
-
-template std::complex<double> Isotope::getProperty<std::complex<double>>(const std::string& propertyName) const;
-
-template bool Isotope::getProperty<bool>(const std::string& propertyName) const;
 
 Isotope::Isotope(const ptree& isotopeNode)
 {
@@ -70,17 +60,17 @@ Isotope::Isotope(const ptree& isotopeNode)
 
 const std::string& Isotope::getName() const
 {
-	return _name;
+    return _name;
 }
 
-template <typename PropertyType>
-PropertyType Isotope::getProperty(const std::string& propertyName) const
+template <typename T>
+const T& Isotope::getProperty(const std::string& propertyName) const
 {
     auto pit = _properties.find(propertyName);
     if (pit == _properties.end())
         throw std::runtime_error("Isotope "+_name+": unknown property name ("+propertyName+")");
 
-    return any_cast<PropertyType>(pit->second);
+    return any_cast<const T&>(pit->second);
 }
 
 bool Isotope::hasProperty(const std::string& propertyName) const
@@ -91,49 +81,56 @@ bool Isotope::hasProperty(const std::string& propertyName) const
 
 void Isotope::print(std::ostream& os) const
 {
-	os<<"Isotope "<<_name<<" ["<<getProperty<int>("n_protons")<<","<<getProperty<int>("n_neutrons")<<"]";
+    os<<"Isotope "<<_name<<" ["<<getProperty<int>("n_protons")<<","<<getProperty<int>("n_neutrons")<<"]";
 }
 
 ptree Isotope::writeToXML() const
 {
     UnitsManager* um=UnitsManager::Instance();
 
-	ptree node;
-	node.put("<xmlattr>.name",_name);
-	for (const auto& prop : _properties) {
-		std::string pname = prop.first;
-		ptree& isnode=node.add(pname,"");
-		isnode.put("<xmlattr>.type",_types.at(pname));
-		isnode.put("<xmlattr>.unit",_units.at(pname));
+    ptree node;
+    node.put("<xmlattr>.name",_name);
+    for (const auto& prop : _properties) {
+        std::string pname = prop.first;
+        ptree& isnode=node.add(pname,"");
+        isnode.put("<xmlattr>.type",_types.at(pname));
+        isnode.put("<xmlattr>.unit",_units.at(pname));
 
         switch (PropertyTypes[_types.at(pname)]) {
 
         case PropertyType::String:
-    		isnode.put_value(any_cast<std::string>(prop.second));
+            isnode.put_value(any_cast<std::string>(prop.second));
             break;
         case PropertyType::Int:
-    		isnode.put_value(any_cast<int>(prop.second));
+            isnode.put_value(any_cast<int>(prop.second));
             break;
         case PropertyType::Double:
-    		isnode.put_value(any_cast<double>(prop.second)/um->get(_units.at(pname)));
+            isnode.put_value(any_cast<double>(prop.second)/um->get(_units.at(pname)));
             break;
         case PropertyType::Complex:
-    		isnode.put_value(any_cast<std::complex<double>>(prop.second)/um->get(_units.at(pname)));
+            isnode.put_value(any_cast<std::complex<double>>(prop.second)/um->get(_units.at(pname)));
             break;
         case PropertyType::Bool:
-    		isnode.put_value(any_cast<bool>(prop.second));
+            isnode.put_value(any_cast<bool>(prop.second));
             break;
         }
-	}
-	return node;
+    }
+    return node;
 }
 
 std::ostream& operator<<(std::ostream& os,const Isotope& isotope)
 {
-	isotope.print(os);
-	return os;
+    isotope.print(os);
+    return os;
 }
 
-} // end namespace Chemistry
+// forward declarations to force template instantiation
+template const std::string& Isotope::getProperty<std::string>(const std::string& propertyName) const;
+template const int& Isotope::getProperty<int>(const std::string& propertyName) const;
+template const double& Isotope::getProperty<double>(const std::string& propertyName) const;
+template const std::complex<double>& Isotope::getProperty<std::complex<double>>(const std::string& propertyName) const;
+template const bool& Isotope::getProperty<bool>(const std::string& propertyName) const;
 
+
+} // end namespace Chemistry
 } // end namespace SX

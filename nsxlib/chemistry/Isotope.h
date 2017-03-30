@@ -67,32 +67,32 @@ public:
 
     Isotope& operator=(const Isotope& other)=default;
 
-	Isotope(const ptree& isotopeNode);
+    Isotope(const ptree& isotopeNode);
 
-	//! Destructor
-	~Isotope()=default;
+    //! Destructor
+    ~Isotope()=default;
 
-	//! Returns the name of this Isotope
-	const std::string& getName() const;
+    //! Returns the name of this Isotope
+    const std::string& getName() const;
 
-	template <typename PropertyType>
-	PropertyType getProperty(const std::string& propertyName) const;
+    template <typename T>
+    const T& getProperty(const std::string& propertyName) const;
 
-	bool hasProperty(const std::string& propertyName) const;
+    bool hasProperty(const std::string& propertyName) const;
 
-	//! Print some informations about this Isotope on a stream
-	void print(std::ostream& os) const;
+    //! Print some informations about this Isotope on a stream
+    void print(std::ostream& os) const;
 
-	//! Inserts the information about this Element to an XML parent node
-	ptree writeToXML() const;
+    //! Inserts the information about this Element to an XML parent node
+    ptree writeToXML() const;
 
 private:
 
-	//! The name of this Isotope
-	std::string _name;
+    //! The name of this Isotope
+    std::string _name;
 
-	std::map<std::string,boost::any> _properties;
-	std::map<std::string,std::string> _units;
+    std::map<std::string,boost::any> _properties;
+    std::map<std::string,std::string> _units;
     std::map<std::string,std::string> _types;
 
 };
@@ -101,7 +101,6 @@ private:
 std::ostream& operator<<(std::ostream&,const Isotope&);
 
 } // end namespace Chemistry
-
 } // end namespace SX
 
 #endif /* NSXTOOL_ISOTOPE_H_ */
