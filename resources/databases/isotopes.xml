@@ -1720,48 +1720,7 @@
 		<xs_incoherent type="double" unit="barn">2.0499999999999998</xs_incoherent>
 		<xs_scattering type="double" unit="barn">7.6399999999999997</xs_scattering>
 	</isotope>
-	<isotope name="D">
-		<b_coherent type="complex" unit="fm">(6.671,0)</b_coherent>
-		<b_incoherent type="complex" unit="fm">(4.04,0)</b_incoherent>
-		<b_minus type="complex" unit="fm">(0.975,0)</b_minus>
-		<b_plus type="complex" unit="fm">(9.53,0)</b_plus>
-		<chemical_state type="string" unit="au">gas</chemical_state>
-		<element type="string" unit="au">deuterium</element>
-		<molar_mass type="double" unit="g_per_mole">2.0141017780000001</molar_mass>
-		<n_electrons type="int" unit="au">1</n_electrons>
-		<n_neutrons type="int" unit="au">1</n_neutrons>
-		<n_protons type="int" unit="au">1</n_protons>
-		<natural_abundance type="double" unit="%">0.014999999999999998</natural_abundance>
-		<nuclear_spin type="double" unit="au">1</nuclear_spin>
-		<stable type="bool" unit="au">true</stable>
-		<symbol type="string" unit="au">H</symbol>
-		<xs_absorption type="double" unit="barn">0.00051900000000000004</xs_absorption>
-		<xs_coherent type="double" unit="barn">5.5919999999999996</xs_coherent>
-		<xs_incoherent type="double" unit="barn">2.0499999999999998</xs_incoherent>
-		<xs_scattering type="double" unit="barn">7.6399999999999997</xs_scattering>
-	</isotope>
 	<isotope name="H[3]">
-		<b_coherent type="complex" unit="fm">(4.792,0)</b_coherent>
-		<b_incoherent type="complex" unit="fm">(-1.04,0)</b_incoherent>
-		<b_minus type="complex" unit="fm">(6.56,0)</b_minus>
-		<b_plus type="complex" unit="fm">(4.18,0)</b_plus>
-		<chemical_state type="string" unit="au">gas</chemical_state>
-		<element type="string" unit="au">tritium</element>
-		<half_life type="double" unit="year">12.32</half_life>
-		<molar_mass type="double" unit="g_per_mole">3.0160492680000002</molar_mass>
-		<n_electrons type="int" unit="au">1</n_electrons>
-		<n_neutrons type="int" unit="au">2</n_neutrons>
-		<n_protons type="int" unit="au">1</n_protons>
-		<natural_abundance type="double" unit="%">0</natural_abundance>
-		<nuclear_spin type="double" unit="au">0.5</nuclear_spin>
-		<stable type="bool" unit="au">false</stable>
-		<symbol type="string" unit="au">H</symbol>
-		<xs_absorption type="double" unit="barn">0</xs_absorption>
-		<xs_coherent type="double" unit="barn">2.8900000000000001</xs_coherent>
-		<xs_incoherent type="double" unit="barn">0.14000000000000001</xs_incoherent>
-		<xs_scattering type="double" unit="barn">3.0299999999999998</xs_scattering>
-	</isotope>
-	<isotope name="T">
 		<b_coherent type="complex" unit="fm">(4.792,0)</b_coherent>
 		<b_incoherent type="complex" unit="fm">(-1.04,0)</b_incoherent>
 		<b_minus type="complex" unit="fm">(6.56,0)</b_minus>
