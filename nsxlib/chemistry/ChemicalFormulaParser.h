@@ -255,6 +255,9 @@ struct ChemicalFormulaParser : qi::grammar<Iterator,isotopeContents()>
 			_isotopeToken.add(isotope.second.getName(),isotope.second.getName());
 			_elementToken.add(isotope.second.getProperty<std::string>("symbol"),isotope.second.getProperty<std::string>("symbol"));
 		}
+		//Add Deuterium and tritium symbols for H[2]
+		_isotopeToken.add("D","H[2]");
+		_isotopeToken.add("T","H[3]");
 
 		// The tokens for setting up a chemical element
         _mixtureToken = "{" > ((_isotopeToken > "(" > double_ > ")") % ","  > "}" > eps(validate_isotopes_contents(_val)));

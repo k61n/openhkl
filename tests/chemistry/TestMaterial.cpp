@@ -9,6 +9,8 @@
 #include <nsxlib/utils/Units.h>
 #include <nsxlib/utils/Types.h>
 
+#include <iostream>
+
 const double tolerance=1.0e-9;
 
 using SX::Chemistry::isotopeContents;
@@ -75,4 +77,21 @@ BOOST_AUTO_TEST_CASE(Test_Material)
                                                          dO18*0.00016000000000000001+
                                                          dH1*0.33260000000000001+
                                                          dH2*0.00051900000000000004)*4.8/1.798, tolerance);
+
+    // Check deuterium D shortcut
+    Material deuterium1("H[2]");
+    Material deuterium2("D");
+
+    for (auto p : deuterium1.isotopes()) {
+        BOOST_CHECK_CLOSE(p.second,deuterium2.isotopes().at(p.first),tolerance);
+    }
+
+    // Check Tritum T shortcut
+    Material tritium1("H[3]");
+    Material tritium2("T");
+
+    for (auto p : tritium1.isotopes()) {
+        BOOST_CHECK_CLOSE(p.second,tritium2.isotopes().at(p.first),tolerance);
+    }
+
 }
