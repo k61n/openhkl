@@ -555,6 +555,8 @@ double DataSet::getBackgroundLevel(const std::shared_ptr<SX::Utils::ProgressHand
 
 void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_shape, const std::shared_ptr<Utils::ProgressHandler>& handler)
 {
+    using Ellipsoid3D = SX::Geometry::Ellipsoid<double, 3>;
+
     if (handler) {
         handler->setStatus(("Integrating " + std::to_string(getPeaks().size()) + " peaks...").c_str());
         handler->setProgress(0);
@@ -570,7 +572,47 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
 
     peak_list.reserve(num_peaks);
 
+    auto getCovar = [](const Ellipsoid3D& ell) -> Eigen::Matrix3d {
+        auto&& rs = ell.getRSinv();
+        return rs.transpose()*rs;
+    };
+
+//    // testing: get average peak shape
+    Eigen::Matrix3d avg_peak_shape = Eigen::Matrix3d::Zero();
+    unsigned int num_good_peaks = 0;
+
+    for(auto&& p: _peaks) {
+        if (p->isMasked() || !p->isSelected()) {
+            continue;
+
+        }
+        avg_peak_shape += getCovar(p->getShape());
+        ++num_good_peaks;
+    }
+
+    // too few neighbors to get average shape
+    if (num_good_peaks < 1) {
+        return;
+    }
+
+    avg_peak_shape /= num_good_peaks;
+
+    auto peakRadius = [](const Eigen::Matrix3d& shape) -> double {
+//        Eigen::SelfAdjointEigenSolver<Matrix3d> solver;
+//        solver.compute(shape);
+//        auto vals = solver.eigenvalues();
+//        double vol = vals(0)*vals(1)*vals(2);
+        static const double factor = (4.0 * M_PI / 3.0, -2.0);
+        const double volume = factor * std::pow(shape.determinant(), -0.5);
+        return std::pow(volume, 1.0/3.0);
+    };
+
+    const double avg_peak_radius = peakRadius(avg_peak_shape);
+
     for (auto&& peak: _peaks ) {
+//        Eigen::Vector3d center(peak->getShape().getCenter());
+//        auto shape = Ellipsoid3D(center, vals, solver.eigenvectors());
+//        peak->setShape(shape);
         IntegrationRegion region(peak->getShape(), peak_scale, bkg_scale);
         PeakIntegrator integrator(region, *this);
         peak_list.emplace_back(peak, integrator);
@@ -611,6 +653,9 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
         }
     }
 
+    // testing: don't update shape?!
+    // update_shape = false;
+
     for (auto&& tup: peak_list) {
         auto&& peak = tup.first;
         auto&& integrator = tup.second;
@@ -619,7 +664,7 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
 
         // peak is too weak
         // todo: p value should probably not be hard-coded
-        if (integrator.pValue() > 1e-5) {
+        if (integrator.pValue() > 1e-6) {
             peak->setSelected(false);
             continue;
         }
@@ -647,6 +692,14 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
         auto&& new_shape = maybe_shape.get();
         auto&& old_shape = peak->getShape();
         Eigen::RowVector3d hkl_old, hkl_new;
+
+        const double radius = peakRadius(getCovar(new_shape));
+
+        if (std::fabs(radius-avg_peak_radius) > 1.5*avg_peak_radius
+                || std::fabs(radius-avg_peak_radius) < 0.5*avg_peak_radius) {
+            peak->setSelected(false);
+            continue;
+        }
 
         auto old_center = old_shape.getAABBCenter();
         auto new_center = new_shape.getAABBCenter();

@@ -183,7 +183,7 @@ bool PeakFinder::find(std::vector<std::shared_ptr<DataSet>> numors)
             _handler->setStatus(("Integrating " + std::to_string(numor->getPeaks().size()) + " peaks...").c_str());
             _handler->setProgress(0);
         }
-        numor->integratePeaks();
+        numor->integratePeaks(1.0, 2.0, true, _handler);
         numor->close();
         //_ui->progressBar->setValue(++comp);
     }
