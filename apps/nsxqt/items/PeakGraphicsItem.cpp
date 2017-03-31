@@ -151,7 +151,21 @@ PeakGraphicsItem::Ellipse PeakGraphicsItem::calculateEllipse(const SX::Geometry:
 {
     Eigen::MatrixXd M;
     Eigen::VectorXd p;
-    Ellipse ellipse;
+
+    auto fromAABB = [](const SX::Geometry::IShape<double, 3>& s) -> Ellipse
+    {
+        Ellipse ellipse;
+        Eigen::Vector3d lower = s.getLower();
+        Eigen::Vector3d upper = s.getUpper();
+
+        ellipse.a = 0.5 * (upper[0] - lower[0]);
+        ellipse.b = 0.5 * (upper[1] - lower[1]);
+        ellipse.alpha = 0.0;
+        ellipse.u = 0;
+        ellipse.v = 0;
+
+        return ellipse;
+    };
 
     try {
         const SX::Geometry::Ellipsoid<double, 3>& ellipse_shape =
@@ -161,19 +175,13 @@ PeakGraphicsItem::Ellipse PeakGraphicsItem::calculateEllipse(const SX::Geometry:
     }
     catch(...){
         // bad cast, so just use information from bounding box and return early
-        Eigen::Vector3d lower = shape.getLower();
-        Eigen::Vector3d upper = shape.getUpper();
-
-        ellipse.a = 0.5 * (upper[0] - lower[0]);
-        ellipse.b = 0.5 * (upper[1] - lower[1]);
-        ellipse.alpha = 0.0;
-        ellipse.u = 0;
-        ellipse.v = 0;
-
-        return ellipse;
+        qDebug() << "WARNING: Ellipse could not be turned into graphics item; using AABB";
+        return fromAABB(shape);
     }
 
     M = M.transpose()*M;
+
+    Ellipse ellipse;
 
     // ellipsoid defined by (x-p).M.(x-p) = 1
     // rewritten as A*x^2 + B*y^2 + C*x*y + D*x*(z-z0) + E*y*(z-z0) + F = 0
@@ -216,6 +224,33 @@ PeakGraphicsItem::Ellipse PeakGraphicsItem::calculateEllipse(const SX::Geometry:
     ellipse.alpha = alpha *180.0 / M_PI;
     ellipse.u = u0;
     ellipse.v = v0;
+
+    bool is_valid = [&]() -> bool
+    {
+        if (std::isnan(ellipse.a)) {
+            return false;
+        }
+        if (std::isnan(ellipse.b)) {
+            return false;
+        }
+        if (std::isnan(ellipse.alpha)) {
+            return false;
+        }
+        if (std::isnan(ellipse.u)) {
+            return false;
+        }
+        if (std::isnan(ellipse.v)) {
+            return false;
+        }
+        return true;
+    }();
+
+
+    // have to check in case the ellipse was ill-formed:
+    if (!is_valid) {
+        qDebug() << "WARNING: Ellipse could not be turned into graphics item; using AABB";
+        return fromAABB(shape);
+    }
 
     return ellipse;
 }
