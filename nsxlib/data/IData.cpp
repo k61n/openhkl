@@ -5,6 +5,7 @@
 #include <cmath>
 
 #include "../utils/Units.h"
+#include "../utils/erf_inv.h"
 
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -655,6 +656,7 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
 
     // testing: don't update shape?!
     // update_shape = false;
+    const double confidence = SX::Utils::getConfidence(1.0); // todo: should not be hard coded
 
     for (auto&& tup: peak_list) {
         auto&& peak = tup.first;
@@ -680,7 +682,6 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
         }
 
         // update the peak shape
-        const double confidence = 0.67; // todo: should not be hard coded
         auto&& maybe_shape = integrator.getBlobShape(confidence);
 
         // could not get shape (peak too weak?)

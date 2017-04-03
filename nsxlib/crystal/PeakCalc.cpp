@@ -77,7 +77,9 @@ sptrPeak3D PeakCalc::averagePeaks(const Octree& tree, double distance)
     Eigen::Vector3d center(_x, _y, _frame);
     Eigen::SelfAdjointEigenSolver<Matrix3d> solver;
     // todo: should the z component have a scaling factor?
-    Eigen::Vector3d vals = {distance, distance, distance};
+
+    const double val = distance;
+    Eigen::Vector3d vals = {val, val, val};
     Eigen::Matrix3d vects = Eigen::Matrix3d::Identity();
 
     Ellipsoid3D search_shape = {center, vals, vects};
@@ -86,14 +88,19 @@ sptrPeak3D PeakCalc::averagePeaks(const Octree& tree, double distance)
     unsigned int num_neighbors = 0;
     peak_shape.setZero();
 
+    double avg_volume = 0.0;
+    double avg_radius = 0.0;
+
     for(auto&& p: neighbors) {
         const Ellipsoid3D* ell_peak = dynamic_cast<const Ellipsoid3D*>(p);
 
         if (ell_peak == nullptr) {
             continue;
         }
-        const Matrix3d& peak_rs = ell_peak->getRSinv();
-        peak_shape += peak_rs.transpose() * peak_rs;
+        const Matrix3d peak_rs = ell_peak->getRSinv();
+        const Matrix3d A = (peak_rs.transpose() * peak_rs).inverse();
+        solver.compute(A);
+        avg_radius += std::sqrt(solver.eigenvalues().maxCoeff());
         ++num_neighbors;
     }
 
@@ -102,13 +109,8 @@ sptrPeak3D PeakCalc::averagePeaks(const Octree& tree, double distance)
         return nullptr;
     }
 
-    peak_shape /= num_neighbors;
-    solver.compute(peak_shape);
-    vals = solver.eigenvalues();
-
-    for (int i = 0; i < 3; ++i) {
-        vals(i) = 1.0 / std::sqrt(vals(i));
-    }
+    avg_radius /= num_neighbors;
+    vals = {avg_radius, avg_radius, avg_radius};
     peak->setShape(Ellipsoid3D(center, vals, solver.eigenvectors()));
     return peak;
 }
