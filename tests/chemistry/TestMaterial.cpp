@@ -9,8 +9,6 @@
 #include <nsxlib/utils/Units.h>
 #include <nsxlib/utils/Types.h>
 
-#include <iostream>
-
 const double tolerance=1.0e-9;
 
 using SX::Chemistry::isotopeContents;

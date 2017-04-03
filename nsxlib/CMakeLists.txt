@@ -21,6 +21,7 @@ if(GSL_FOUND)
   if(MSVC)
     target_link_libraries(nsx
       ${HDF5_LIBRARIES}
+      ${YAML_LIBRARIES}
       blosc_static
       ${Boost_LIBRARIES}
       ${PYTHON_LIBRARIES}
@@ -31,6 +32,7 @@ if(GSL_FOUND)
   else()
     target_link_libraries(nsx
       ${HDF5_LIBRARIES}
+      ${YAML_LIBRARIES}
       blosc_shared
       ${Boost_LIBRARIES}
       ${PYTHON_LIBRARIES}
@@ -43,6 +45,7 @@ else()
   # Link
   if(MSVC)
     target_link_libraries(nsx
+      ${YAML_LIBRARIES}
       ${HDF5_LIBRARIES}
       blosc_static
       ${Boost_LIBRARIES}
@@ -52,6 +55,7 @@ else()
       )
   else()
     target_link_libraries(nsx
+      ${YAML_LIBRARIES}
       ${HDF5_LIBRARIES}
       blosc_shared
       ${Boost_LIBRARIES}

@@ -53,9 +53,7 @@ namespace Crystal
 
 namespace Chemistry {
 
-    class Isotope;
-    using isotopeDatabase = std::map<std::string,Isotope>;
-    using isotopeContents = std::map<std::string,double>;
+	using isotopeContents=std::map<std::string,double>;
 
     class Material;
     using sptrMaterial = std::shared_ptr<Material>;

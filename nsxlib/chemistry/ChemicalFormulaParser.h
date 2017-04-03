@@ -41,7 +41,6 @@
 #include <boost/range/adaptors.hpp>
 #include <boost/range/numeric.hpp>
 
-#include "Isotope.h"
 #include "IsotopeDatabaseManager.h"
 
 namespace SX {

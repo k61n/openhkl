@@ -36,7 +36,7 @@ endforeach(source_file)
 #add_custom_target(check ALL COMMAND ${CMAKE_CTEST_COMMAND})
 add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
 
-configure_file(../resources/databases/isotopes.xml isotopes.xml COPYONLY)
+configure_file(../resources/databases/isotopes.yaml isotopes.yaml COPYONLY)
 
 configure_file(crystal/CsOsO_15K.raf CsOsO_15K.raf COPYONLY)
 configure_file(crystal/CsOsO_15K.lpt CsOsO_15K.lpt COPYONLY)

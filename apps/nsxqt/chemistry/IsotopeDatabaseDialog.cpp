@@ -16,10 +16,8 @@
 #include <nsxlib/utils/ComplexParser.h>
 #include "IsotopeDatabaseDialog.h"
 #include "ui_IsotopeDatabaseDialog.h"
-#include <nsxlib/chemistry/Isotope.h>
 #include <nsxlib/chemistry/IsotopeDatabaseManager.h>
 
-using SX::Chemistry::Isotope;
 using SX::Chemistry::IsotopeDatabaseManager;
 
 IsotopeDatabaseDialog::IsotopeDatabaseDialog(QWidget *parent) : QDialog(parent), ui(new Ui::IsotopeDatabaseDialog)

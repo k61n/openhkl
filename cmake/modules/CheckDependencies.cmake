@@ -66,6 +66,8 @@ else()
         message("Blosc library not found, will build from internal resources")
 endif()
 
+find_package(YAML REQUIRED)
+
 ###### TIFF library
 find_package(TIFF REQUIRED)
 include_directories(SYSTEM ${TIFF_INCLUDE_DIR})
