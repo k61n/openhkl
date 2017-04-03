@@ -31,6 +31,7 @@ using SX::Data::PeakFinder;
 using SX::Imaging::ConvolutionKernel;
 using SX::Imaging::KernelFactory;
 using SX::Crystal::AutoIndexer;
+using SX::Crystal::UnitCell;
 using SX::Instrument::Experiment;
 
 // const double tolerance=1e-2;
@@ -115,6 +116,12 @@ int run_test()
 
     // reintegrate peaks
     dataf->integratePeaks();
+
+    auto cell = std::make_shared<UnitCell>(soln.first);
+
+    for (auto&& peak: dataf->getPeaks()) {
+        peak->addUnitCell(cell, true);
+    }
 
     return 0;
 }
