@@ -680,7 +680,7 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
         }
 
         // update the peak shape
-        const double confidence = 0.98; // todo: should not be hard coded
+        const double confidence = 0.67; // todo: should not be hard coded
         auto&& maybe_shape = integrator.getBlobShape(confidence);
 
         // could not get shape (peak too weak?)

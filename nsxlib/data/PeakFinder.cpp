@@ -142,7 +142,8 @@ bool PeakFinder::find(std::vector<std::shared_ptr<DataSet>> numors)
 
             Eigen::Vector3d center, eigenvalues;
             Eigen::Matrix3d eigenvectors;
-            blob.second.toEllipsoid(_confidence, center, eigenvalues, eigenvectors);
+            //blob.second.toEllipsoid(_confidence, center, eigenvalues, eigenvectors);
+            blob.second.toEllipsoid(0.67, center, eigenvalues, eigenvectors);
             auto shape = Ellipsoid3D(center, eigenvalues, eigenvectors);
 
             //    blob.toEllipsoid(confidence, center, eigenvalues, eigenvectors);
@@ -183,7 +184,7 @@ bool PeakFinder::find(std::vector<std::shared_ptr<DataSet>> numors)
             _handler->setStatus(("Integrating " + std::to_string(numor->getPeaks().size()) + " peaks...").c_str());
             _handler->setProgress(0);
         }
-        numor->integratePeaks(1.0, 2.0, true, _handler);
+        numor->integratePeaks(1.0, 5.0/3.0, true, _handler);
         numor->close();
         //_ui->progressBar->setValue(++comp);
     }
