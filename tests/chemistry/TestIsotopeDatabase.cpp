@@ -19,11 +19,6 @@ BOOST_AUTO_TEST_CASE(Test_Isotope_Database)
     IsotopeDatabaseManager* mgr=IsotopeDatabaseManager::Instance();
     UnitsManager* um=UnitsManager::Instance();
 
-    BOOST_CHECK_THROW(mgr->loadDatabase("./xxxxxx.xml"),std::runtime_error);
-
-    // Checks that setting the isotope database to a correct path does not throw
-    BOOST_CHECK_NO_THROW(mgr->loadDatabase("./isotopes.yaml"));
-
     auto hf176=mgr->getIsotope("Hf[176]");
 
     BOOST_CHECK_EQUAL(hf176.getProperty<std::complex<double>>("b_coherent"),std::complex<double>(6.61*1.0e-15,0));
@@ -33,7 +28,6 @@ BOOST_AUTO_TEST_CASE(Test_Isotope_Database)
     BOOST_CHECK(!hf176.hasProperty("xxxxxx"));
 
     BOOST_CHECK_THROW(hf176.getProperty<int>("xxxxxx"),std::runtime_error);
-
 
     // Get an isotope known from the isotope database
     auto h1=mgr->getIsotope("H[1]");
@@ -48,6 +42,4 @@ BOOST_AUTO_TEST_CASE(Test_Isotope_Database)
 
     auto ag107 = database.at("Ag[107]");
     BOOST_CHECK_EQUAL(ag107.getProperty<int>("n_neutrons"),60);
-
-    mgr->saveDatabase("toto.yaml");
 }

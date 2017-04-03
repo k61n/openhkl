@@ -62,9 +62,6 @@ public:
         //! Print some informations about this Isotope on a stream
         void print(std::ostream& os) const;
 
-        //! Inserts the information about this Element to an XML parent node
-        ptree writeToXML() const;
-
     private:
 
         //! The name of this Isotope
@@ -87,10 +84,6 @@ public:
     const Isotope& getIsotope(const std::string& name) const;
 
     const isotopeDatabase& database() const;
-
-    void loadDatabase(const std::string& filename);
-
-    void saveDatabase(std::string filename="") const;
 
 private:
 

@@ -47,6 +47,7 @@ std::unordered_map<std::string,double> UnitsManager::_unitsMap = {
         {"day",day },
         {"year",year},
         {"au", au},
+        {"%", perCent},
         {"perCent", perCent},
         {"percentage", perCent},
         {"avogadro", avogadro},

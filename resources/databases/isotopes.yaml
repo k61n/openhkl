@@ -43,7 +43,7 @@ Ag[107]:
         value: 47
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 51.829999999999998
     nuclear_spin:
         type: double
@@ -118,7 +118,7 @@ Ag[109]:
         value: 47
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 48.170000000000002
     nuclear_spin:
         type: double
@@ -193,7 +193,7 @@ Al[27]:
         value: 13
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 100
     nuclear_spin:
         type: double
@@ -272,7 +272,7 @@ Am[243]:
         value: 95
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0
     nuclear_spin:
         type: double
@@ -339,7 +339,7 @@ Ar[36]:
         value: 18
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.33700000000000002
     nuclear_spin:
         type: double
@@ -406,7 +406,7 @@ Ar[38]:
         value: 18
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.063
     nuclear_spin:
         type: double
@@ -473,7 +473,7 @@ Ar[40]:
         value: 18
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 99.599999999999994
     nuclear_spin:
         type: double
@@ -548,7 +548,7 @@ As[75]:
         value: 33
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 100
     nuclear_spin:
         type: double
@@ -623,7 +623,7 @@ Au[197]:
         value: 79
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 100
     nuclear_spin:
         type: double
@@ -698,7 +698,7 @@ B[10]:
         value: 5
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 20
     nuclear_spin:
         type: double
@@ -773,7 +773,7 @@ B[11]:
         value: 5
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 80
     nuclear_spin:
         type: double
@@ -840,7 +840,7 @@ Ba[130]:
         value: 56
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.11
     nuclear_spin:
         type: double
@@ -907,7 +907,7 @@ Ba[132]:
         value: 56
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.10000000000000001
     nuclear_spin:
         type: double
@@ -974,7 +974,7 @@ Ba[134]:
         value: 56
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 2.4199999999999999
     nuclear_spin:
         type: double
@@ -1049,7 +1049,7 @@ Ba[135]:
         value: 56
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 6.5899999999999999
     nuclear_spin:
         type: double
@@ -1116,7 +1116,7 @@ Ba[136]:
         value: 56
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 7.8499999999999996
     nuclear_spin:
         type: double
@@ -1191,7 +1191,7 @@ Ba[137]:
         value: 56
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 11.23
     nuclear_spin:
         type: double
@@ -1258,7 +1258,7 @@ Ba[138]:
         value: 56
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 71.700000000000003
     nuclear_spin:
         type: double
@@ -1333,7 +1333,7 @@ Be[9]:
         value: 4
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 100
     nuclear_spin:
         type: double
@@ -1408,7 +1408,7 @@ Bi[209]:
         value: 83
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 100
     nuclear_spin:
         type: double
@@ -1483,7 +1483,7 @@ Br[79]:
         value: 35
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 50.689999999999998
     nuclear_spin:
         type: double
@@ -1558,7 +1558,7 @@ Br[81]:
         value: 35
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 49.310000000000002
     nuclear_spin:
         type: double
@@ -1625,7 +1625,7 @@ C[12]:
         value: 6
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 98.900000000000006
     nuclear_spin:
         type: double
@@ -1700,7 +1700,7 @@ C[13]:
         value: 6
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 1.1000000000000001
     nuclear_spin:
         type: double
@@ -1767,7 +1767,7 @@ Ca[40]:
         value: 20
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 96.941000000000003
     nuclear_spin:
         type: double
@@ -1834,7 +1834,7 @@ Ca[42]:
         value: 20
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.64700000000000002
     nuclear_spin:
         type: double
@@ -1909,7 +1909,7 @@ Ca[43]:
         value: 20
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.13500000000000001
     nuclear_spin:
         type: double
@@ -1976,7 +1976,7 @@ Ca[44]:
         value: 20
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 2.0859999999999999
     nuclear_spin:
         type: double
@@ -2043,7 +2043,7 @@ Ca[46]:
         value: 20
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.0040000000000000001
     nuclear_spin:
         type: double
@@ -2110,7 +2110,7 @@ Ca[48]:
         value: 20
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.187
     nuclear_spin:
         type: double
@@ -2177,7 +2177,7 @@ Cd[106]:
         value: 48
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 1.25
     nuclear_spin:
         type: double
@@ -2244,7 +2244,7 @@ Cd[108]:
         value: 48
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.89000000000000001
     nuclear_spin:
         type: double
@@ -2311,7 +2311,7 @@ Cd[110]:
         value: 48
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 12.509999999999998
     nuclear_spin:
         type: double
@@ -2386,7 +2386,7 @@ Cd[111]:
         value: 48
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 12.810000000000002
     nuclear_spin:
         type: double
@@ -2453,7 +2453,7 @@ Cd[112]:
         value: 48
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 24.129999999999999
     nuclear_spin:
         type: double
@@ -2528,7 +2528,7 @@ Cd[113]:
         value: 48
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 12.220000000000001
     nuclear_spin:
         type: double
@@ -2595,7 +2595,7 @@ Cd[114]:
         value: 48
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 28.719999999999999
     nuclear_spin:
         type: double
@@ -2662,7 +2662,7 @@ Cd[116]:
         value: 48
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 7.4699999999999998
     nuclear_spin:
         type: double
@@ -2729,7 +2729,7 @@ Ce[136]:
         value: 58
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.19
     nuclear_spin:
         type: double
@@ -2796,7 +2796,7 @@ Ce[138]:
         value: 58
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.25
     nuclear_spin:
         type: double
@@ -2863,7 +2863,7 @@ Ce[140]:
         value: 58
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 88.480000000000004
     nuclear_spin:
         type: double
@@ -2930,7 +2930,7 @@ Ce[142]:
         value: 58
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 11.08
     nuclear_spin:
         type: double
@@ -3005,7 +3005,7 @@ Cl[35]:
         value: 17
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 75.769999999999996
     nuclear_spin:
         type: double
@@ -3080,7 +3080,7 @@ Cl[37]:
         value: 17
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 24.23
     nuclear_spin:
         type: double
@@ -3151,7 +3151,7 @@ Cm[244]:
         value: 96
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0
     nuclear_spin:
         type: double
@@ -3222,7 +3222,7 @@ Cm[246]:
         value: 96
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0
     nuclear_spin:
         type: double
@@ -3293,7 +3293,7 @@ Cm[248]:
         value: 96
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0
     nuclear_spin:
         type: double
@@ -3368,7 +3368,7 @@ Co[59]:
         value: 27
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 100
     nuclear_spin:
         type: double
@@ -3435,7 +3435,7 @@ Cr[50]:
         value: 24
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 4.3499999999999996
     nuclear_spin:
         type: double
@@ -3502,7 +3502,7 @@ Cr[52]:
         value: 24
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 83.790000000000006
     nuclear_spin:
         type: double
@@ -3577,7 +3577,7 @@ Cr[53]:
         value: 24
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 9.5
     nuclear_spin:
         type: double
@@ -3644,7 +3644,7 @@ Cr[54]:
         value: 24
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 2.3599999999999999
     nuclear_spin:
         type: double
@@ -3719,7 +3719,7 @@ Cs[133]:
         value: 55
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 100
     nuclear_spin:
         type: double
@@ -3794,7 +3794,7 @@ Cu[63]:
         value: 29
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 69.170000000000002
     nuclear_spin:
         type: double
@@ -3869,7 +3869,7 @@ Cu[65]:
         value: 29
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 30.829999999999995
     nuclear_spin:
         type: double
@@ -3936,7 +3936,7 @@ Dy[156]:
         value: 66
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.059999999999999991
     nuclear_spin:
         type: double
@@ -4003,7 +4003,7 @@ Dy[158]:
         value: 66
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.10000000000000001
     nuclear_spin:
         type: double
@@ -4070,7 +4070,7 @@ Dy[160]:
         value: 66
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 2.3399999999999999
     nuclear_spin:
         type: double
@@ -4145,7 +4145,7 @@ Dy[161]:
         value: 66
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 19
     nuclear_spin:
         type: double
@@ -4212,7 +4212,7 @@ Dy[162]:
         value: 66
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 25.5
     nuclear_spin:
         type: double
@@ -4287,7 +4287,7 @@ Dy[163]:
         value: 66
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 24.899999999999999
     nuclear_spin:
         type: double
@@ -4354,7 +4354,7 @@ Dy[164]:
         value: 66
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 28.100000000000001
     nuclear_spin:
         type: double
@@ -4421,7 +4421,7 @@ Er[162]:
         value: 68
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.14000000000000001
     nuclear_spin:
         type: double
@@ -4488,7 +4488,7 @@ Er[164]:
         value: 68
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 1.5600000000000001
     nuclear_spin:
         type: double
@@ -4555,7 +4555,7 @@ Er[166]:
         value: 68
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 33.399999999999999
     nuclear_spin:
         type: double
@@ -4630,7 +4630,7 @@ Er[167]:
         value: 68
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 22.899999999999999
     nuclear_spin:
         type: double
@@ -4697,7 +4697,7 @@ Er[168]:
         value: 68
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 27.100000000000001
     nuclear_spin:
         type: double
@@ -4764,7 +4764,7 @@ Er[170]:
         value: 68
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 14.899999999999999
     nuclear_spin:
         type: double
@@ -4839,7 +4839,7 @@ Eu[151]:
         value: 63
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 47.799999999999997
     nuclear_spin:
         type: double
@@ -4914,7 +4914,7 @@ Eu[153]:
         value: 63
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 52.200000000000003
     nuclear_spin:
         type: double
@@ -4989,7 +4989,7 @@ F[19]:
         value: 9
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 100
     nuclear_spin:
         type: double
@@ -5056,7 +5056,7 @@ Fe[54]:
         value: 26
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 5.7999999999999998
     nuclear_spin:
         type: double
@@ -5123,7 +5123,7 @@ Fe[56]:
         value: 26
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 91.700000000000003
     nuclear_spin:
         type: double
@@ -5198,7 +5198,7 @@ Fe[57]:
         value: 26
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 2.2000000000000002
     nuclear_spin:
         type: double
@@ -5265,7 +5265,7 @@ Fe[58]:
         value: 26
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.29999999999999999
     nuclear_spin:
         type: double
@@ -5340,7 +5340,7 @@ Ga[69]:
         value: 31
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 60.099999999999994
     nuclear_spin:
         type: double
@@ -5415,7 +5415,7 @@ Ga[71]:
         value: 31
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 39.899999999999999
     nuclear_spin:
         type: double
@@ -5482,7 +5482,7 @@ Gd[152]:
         value: 64
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.20000000000000001
     nuclear_spin:
         type: double
@@ -5549,7 +5549,7 @@ Gd[154]:
         value: 64
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 2.1000000000000001
     nuclear_spin:
         type: double
@@ -5624,7 +5624,7 @@ Gd[155]:
         value: 64
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 14.800000000000002
     nuclear_spin:
         type: double
@@ -5691,7 +5691,7 @@ Gd[156]:
         value: 64
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 20.600000000000001
     nuclear_spin:
         type: double
@@ -5766,7 +5766,7 @@ Gd[157]:
         value: 64
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 15.699999999999999
     nuclear_spin:
         type: double
@@ -5833,7 +5833,7 @@ Gd[158]:
         value: 64
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 24.800000000000001
     nuclear_spin:
         type: double
@@ -5900,7 +5900,7 @@ Gd[160]:
         value: 64
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 21.800000000000001
     nuclear_spin:
         type: double
@@ -5967,7 +5967,7 @@ Ge[70]:
         value: 32
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 20.5
     nuclear_spin:
         type: double
@@ -6034,7 +6034,7 @@ Ge[72]:
         value: 32
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 27.399999999999995
     nuclear_spin:
         type: double
@@ -6109,7 +6109,7 @@ Ge[73]:
         value: 32
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 7.7999999999999998
     nuclear_spin:
         type: double
@@ -6176,7 +6176,7 @@ Ge[74]:
         value: 32
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 36.5
     nuclear_spin:
         type: double
@@ -6243,7 +6243,7 @@ Ge[76]:
         value: 32
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 7.7999999999999998
     nuclear_spin:
         type: double
@@ -6318,7 +6318,7 @@ H[1]:
         value: 1
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 99.984999999999999
     nuclear_spin:
         type: double
@@ -6393,7 +6393,7 @@ H[2]:
         value: 1
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.014999999999999998
     nuclear_spin:
         type: double
@@ -6472,7 +6472,7 @@ H[3]:
         value: 1
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0
     nuclear_spin:
         type: double
@@ -6547,7 +6547,7 @@ He[3]:
         value: 2
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.00013999999999999999
     nuclear_spin:
         type: double
@@ -6614,7 +6614,7 @@ He[4]:
         value: 2
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 99.999859999999998
     nuclear_spin:
         type: double
@@ -6681,7 +6681,7 @@ Hf[174]:
         value: 72
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.20000000000000001
     nuclear_spin:
         type: double
@@ -6748,7 +6748,7 @@ Hf[176]:
         value: 72
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 5.2000000000000002
     nuclear_spin:
         type: double
@@ -6815,7 +6815,7 @@ Hf[177]:
         value: 72
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 18.600000000000001
     nuclear_spin:
         type: double
@@ -6882,7 +6882,7 @@ Hf[178]:
         value: 72
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 27.100000000000001
     nuclear_spin:
         type: double
@@ -6957,7 +6957,7 @@ Hf[179]:
         value: 72
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 13.699999999999998
     nuclear_spin:
         type: double
@@ -7024,7 +7024,7 @@ Hf[180]:
         value: 72
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 35.200000000000003
     nuclear_spin:
         type: double
@@ -7091,7 +7091,7 @@ Hg[196]:
         value: 80
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.20000000000000001
     nuclear_spin:
         type: double
@@ -7158,7 +7158,7 @@ Hg[198]:
         value: 80
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 10.1
     nuclear_spin:
         type: double
@@ -7217,7 +7217,7 @@ Hg[199]:
         value: 80
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 17
     nuclear_spin:
         type: double
@@ -7284,7 +7284,7 @@ Hg[200]:
         value: 80
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 23.100000000000001
     nuclear_spin:
         type: double
@@ -7347,7 +7347,7 @@ Hg[201]:
         value: 80
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 13.200000000000001
     nuclear_spin:
         type: double
@@ -7402,7 +7402,7 @@ Hg[202]:
         value: 80
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 29.600000000000005
     nuclear_spin:
         type: double
@@ -7465,7 +7465,7 @@ Hg[204]:
         value: 80
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 6.8000000000000007
     nuclear_spin:
         type: double
@@ -7532,7 +7532,7 @@ Ho[165]:
         value: 67
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 100
     nuclear_spin:
         type: double
@@ -7607,7 +7607,7 @@ I[127]:
         value: 53
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 100
     nuclear_spin:
         type: double
@@ -7682,7 +7682,7 @@ In[113]:
         value: 49
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 4.2999999999999998
     nuclear_spin:
         type: double
@@ -7757,7 +7757,7 @@ In[115]:
         value: 49
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 95.700000000000003
     nuclear_spin:
         type: double
@@ -7832,7 +7832,7 @@ Ir[191]:
         value: 77
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 37.299999999999997
     nuclear_spin:
         type: double
@@ -7895,7 +7895,7 @@ Ir[193]:
         value: 77
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 62.699999999999996
     nuclear_spin:
         type: double
@@ -7958,7 +7958,7 @@ K[39]:
         value: 19
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 93.257999999999996
     nuclear_spin:
         type: double
@@ -8033,7 +8033,7 @@ K[40]:
         value: 19
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.012
     nuclear_spin:
         type: double
@@ -8108,7 +8108,7 @@ K[41]:
         value: 19
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 6.7300000000000013
     nuclear_spin:
         type: double
@@ -8175,7 +8175,7 @@ Kr[78]:
         value: 36
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.34999999999999998
     nuclear_spin:
         type: double
@@ -8234,7 +8234,7 @@ Kr[80]:
         value: 36
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 2.25
     nuclear_spin:
         type: double
@@ -8293,7 +8293,7 @@ Kr[82]:
         value: 36
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 11.6
     nuclear_spin:
         type: double
@@ -8360,7 +8360,7 @@ Kr[83]:
         value: 36
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 11.5
     nuclear_spin:
         type: double
@@ -8415,7 +8415,7 @@ Kr[84]:
         value: 36
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 57.000000000000007
     nuclear_spin:
         type: double
@@ -8478,7 +8478,7 @@ Kr[86]:
         value: 36
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 17.300000000000001
     nuclear_spin:
         type: double
@@ -8553,7 +8553,7 @@ La[138]:
         value: 57
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.089999999999999997
     nuclear_spin:
         type: double
@@ -8628,7 +8628,7 @@ La[139]:
         value: 57
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 99.909999999999997
     nuclear_spin:
         type: double
@@ -8703,7 +8703,7 @@ Li[6]:
         value: 3
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 7.5
     nuclear_spin:
         type: double
@@ -8778,7 +8778,7 @@ Li[7]:
         value: 3
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 92.5
     nuclear_spin:
         type: double
@@ -8853,7 +8853,7 @@ Lu[175]:
         value: 71
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 97.390000000000001
     nuclear_spin:
         type: double
@@ -8928,7 +8928,7 @@ Lu[176]:
         value: 71
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 2.6099999999999999
     nuclear_spin:
         type: double
@@ -8995,7 +8995,7 @@ Mg[24]:
         value: 12
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 78.989999999999995
     nuclear_spin:
         type: double
@@ -9070,7 +9070,7 @@ Mg[25]:
         value: 12
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 10
     nuclear_spin:
         type: double
@@ -9137,7 +9137,7 @@ Mg[26]:
         value: 12
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 11.01
     nuclear_spin:
         type: double
@@ -9212,7 +9212,7 @@ Mn[55]:
         value: 25
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 100
     nuclear_spin:
         type: double
@@ -9279,7 +9279,7 @@ Mo[100]:
         value: 42
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 9.6300000000000008
     nuclear_spin:
         type: double
@@ -9346,7 +9346,7 @@ Mo[92]:
         value: 42
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 14.84
     nuclear_spin:
         type: double
@@ -9413,7 +9413,7 @@ Mo[94]:
         value: 42
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 9.25
     nuclear_spin:
         type: double
@@ -9488,7 +9488,7 @@ Mo[95]:
         value: 42
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 15.92
     nuclear_spin:
         type: double
@@ -9555,7 +9555,7 @@ Mo[96]:
         value: 42
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 16.68
     nuclear_spin:
         type: double
@@ -9630,7 +9630,7 @@ Mo[97]:
         value: 42
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 9.5500000000000007
     nuclear_spin:
         type: double
@@ -9697,7 +9697,7 @@ Mo[98]:
         value: 42
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 24.129999999999999
     nuclear_spin:
         type: double
@@ -9772,7 +9772,7 @@ N[14]:
         value: 7
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 99.629999999999995
     nuclear_spin:
         type: double
@@ -9847,7 +9847,7 @@ N[15]:
         value: 7
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.37
     nuclear_spin:
         type: double
@@ -9922,7 +9922,7 @@ Na[23]:
         value: 11
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 100
     nuclear_spin:
         type: double
@@ -9997,7 +9997,7 @@ Nb[93]:
         value: 41
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 100
     nuclear_spin:
         type: double
@@ -10064,7 +10064,7 @@ Nd[142]:
         value: 60
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 27.16
     nuclear_spin:
         type: double
@@ -10139,7 +10139,7 @@ Nd[143]:
         value: 60
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 12.18
     nuclear_spin:
         type: double
@@ -10206,7 +10206,7 @@ Nd[144]:
         value: 60
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 23.800000000000001
     nuclear_spin:
         type: double
@@ -10281,7 +10281,7 @@ Nd[145]:
         value: 60
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 8.2899999999999991
     nuclear_spin:
         type: double
@@ -10348,7 +10348,7 @@ Nd[146]:
         value: 60
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 17.190000000000001
     nuclear_spin:
         type: double
@@ -10415,7 +10415,7 @@ Nd[148]:
         value: 60
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 5.75
     nuclear_spin:
         type: double
@@ -10482,7 +10482,7 @@ Nd[150]:
         value: 60
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 5.6299999999999999
     nuclear_spin:
         type: double
@@ -10549,7 +10549,7 @@ Ne[20]:
         value: 10
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 90.510000000000005
     nuclear_spin:
         type: double
@@ -10624,7 +10624,7 @@ Ne[21]:
         value: 10
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.27000000000000002
     nuclear_spin:
         type: double
@@ -10691,7 +10691,7 @@ Ne[22]:
         value: 10
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 9.2200000000000006
     nuclear_spin:
         type: double
@@ -10758,7 +10758,7 @@ Ni[58]:
         value: 28
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 68.269999999999996
     nuclear_spin:
         type: double
@@ -10825,7 +10825,7 @@ Ni[60]:
         value: 28
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 26.100000000000001
     nuclear_spin:
         type: double
@@ -10900,7 +10900,7 @@ Ni[61]:
         value: 28
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 1.1299999999999999
     nuclear_spin:
         type: double
@@ -10967,7 +10967,7 @@ Ni[62]:
         value: 28
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 3.5899999999999999
     nuclear_spin:
         type: double
@@ -11034,7 +11034,7 @@ Ni[64]:
         value: 28
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.91000000000000003
     nuclear_spin:
         type: double
@@ -11113,7 +11113,7 @@ Np[237]:
         value: 93
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0
     nuclear_spin:
         type: double
@@ -11180,7 +11180,7 @@ O[16]:
         value: 8
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 99.762
     nuclear_spin:
         type: double
@@ -11255,7 +11255,7 @@ O[17]:
         value: 8
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.037999999999999999
     nuclear_spin:
         type: double
@@ -11322,7 +11322,7 @@ O[18]:
         value: 8
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.20000000000000001
     nuclear_spin:
         type: double
@@ -11389,7 +11389,7 @@ Os[184]:
         value: 76
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.02
     nuclear_spin:
         type: double
@@ -11456,7 +11456,7 @@ Os[186]:
         value: 76
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 1.5800000000000001
     nuclear_spin:
         type: double
@@ -11531,7 +11531,7 @@ Os[187]:
         value: 76
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 1.6000000000000001
     nuclear_spin:
         type: double
@@ -11598,7 +11598,7 @@ Os[188]:
         value: 76
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 13.300000000000001
     nuclear_spin:
         type: double
@@ -11673,7 +11673,7 @@ Os[189]:
         value: 76
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 16.100000000000001
     nuclear_spin:
         type: double
@@ -11740,7 +11740,7 @@ Os[190]:
         value: 76
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 26.400000000000002
     nuclear_spin:
         type: double
@@ -11807,7 +11807,7 @@ Os[192]:
         value: 76
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 41
     nuclear_spin:
         type: double
@@ -11882,7 +11882,7 @@ P[31]:
         value: 15
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 100
     nuclear_spin:
         type: double
@@ -11961,7 +11961,7 @@ Pa[231]:
         value: 91
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0
     nuclear_spin:
         type: double
@@ -12028,7 +12028,7 @@ Pb[204]:
         value: 82
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 1.3999999999999999
     nuclear_spin:
         type: double
@@ -12095,7 +12095,7 @@ Pb[206]:
         value: 82
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 24.100000000000001
     nuclear_spin:
         type: double
@@ -12170,7 +12170,7 @@ Pb[207]:
         value: 82
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 22.100000000000001
     nuclear_spin:
         type: double
@@ -12237,7 +12237,7 @@ Pb[208]:
         value: 82
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 52.399999999999999
     nuclear_spin:
         type: double
@@ -12304,7 +12304,7 @@ Pd[102]:
         value: 46
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 1.02
     nuclear_spin:
         type: double
@@ -12371,7 +12371,7 @@ Pd[104]:
         value: 46
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 11.140000000000001
     nuclear_spin:
         type: double
@@ -12446,7 +12446,7 @@ Pd[105]:
         value: 46
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 22.329999999999998
     nuclear_spin:
         type: double
@@ -12513,7 +12513,7 @@ Pd[106]:
         value: 46
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 27.329999999999998
     nuclear_spin:
         type: double
@@ -12580,7 +12580,7 @@ Pd[108]:
         value: 46
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 26.460000000000001
     nuclear_spin:
         type: double
@@ -12647,7 +12647,7 @@ Pd[110]:
         value: 46
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 11.720000000000001
     nuclear_spin:
         type: double
@@ -12726,7 +12726,7 @@ Pm[147]:
         value: 61
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0
     nuclear_spin:
         type: double
@@ -12801,7 +12801,7 @@ Pr[141]:
         value: 59
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 100
     nuclear_spin:
         type: double
@@ -12868,7 +12868,7 @@ Pt[190]:
         value: 78
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.01
     nuclear_spin:
         type: double
@@ -12935,7 +12935,7 @@ Pt[192]:
         value: 78
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.79000000000000004
     nuclear_spin:
         type: double
@@ -13002,7 +13002,7 @@ Pt[194]:
         value: 78
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 32.899999999999999
     nuclear_spin:
         type: double
@@ -13077,7 +13077,7 @@ Pt[195]:
         value: 78
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 33.799999999999997
     nuclear_spin:
         type: double
@@ -13144,7 +13144,7 @@ Pt[196]:
         value: 78
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 25.300000000000001
     nuclear_spin:
         type: double
@@ -13211,7 +13211,7 @@ Pt[198]:
         value: 78
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 7.2000000000000011
     nuclear_spin:
         type: double
@@ -13282,7 +13282,7 @@ Pu[238]:
         value: 94
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0
     nuclear_spin:
         type: double
@@ -13361,7 +13361,7 @@ Pu[239]:
         value: 94
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0
     nuclear_spin:
         type: double
@@ -13432,7 +13432,7 @@ Pu[240]:
         value: 94
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0
     nuclear_spin:
         type: double
@@ -13503,7 +13503,7 @@ Pu[242]:
         value: 94
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0
     nuclear_spin:
         type: double
@@ -13574,7 +13574,7 @@ Ra[226]:
         value: 88
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0
     nuclear_spin:
         type: double
@@ -13649,7 +13649,7 @@ Rb[85]:
         value: 37
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 72.170000000000002
     nuclear_spin:
         type: double
@@ -13724,7 +13724,7 @@ Rb[87]:
         value: 37
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 27.829999999999998
     nuclear_spin:
         type: double
@@ -13799,7 +13799,7 @@ Re[185]:
         value: 75
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 37.399999999999999
     nuclear_spin:
         type: double
@@ -13874,7 +13874,7 @@ Re[187]:
         value: 75
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 62.600000000000001
     nuclear_spin:
         type: double
@@ -13949,7 +13949,7 @@ Rh[103]:
         value: 45
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 100
     nuclear_spin:
         type: double
@@ -14016,7 +14016,7 @@ Ru[100]:
         value: 44
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 12.6
     nuclear_spin:
         type: double
@@ -14083,7 +14083,7 @@ Ru[101]:
         value: 44
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 17
     nuclear_spin:
         type: double
@@ -14138,7 +14138,7 @@ Ru[102]:
         value: 44
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 31.600000000000001
     nuclear_spin:
         type: double
@@ -14201,7 +14201,7 @@ Ru[104]:
         value: 44
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 18.699999999999999
     nuclear_spin:
         type: double
@@ -14264,7 +14264,7 @@ Ru[96]:
         value: 44
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 5.5
     nuclear_spin:
         type: double
@@ -14323,7 +14323,7 @@ Ru[98]:
         value: 44
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 1.8999999999999999
     nuclear_spin:
         type: double
@@ -14386,7 +14386,7 @@ Ru[99]:
         value: 44
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 12.699999999999999
     nuclear_spin:
         type: double
@@ -14441,7 +14441,7 @@ S[32]:
         value: 16
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 95.019999999999996
     nuclear_spin:
         type: double
@@ -14516,7 +14516,7 @@ S[33]:
         value: 16
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.75
     nuclear_spin:
         type: double
@@ -14583,7 +14583,7 @@ S[34]:
         value: 16
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 4.21
     nuclear_spin:
         type: double
@@ -14650,7 +14650,7 @@ S[36]:
         value: 16
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.02
     nuclear_spin:
         type: double
@@ -14725,7 +14725,7 @@ Sb[121]:
         value: 51
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 57.299999999999997
     nuclear_spin:
         type: double
@@ -14800,7 +14800,7 @@ Sb[123]:
         value: 51
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 42.700000000000003
     nuclear_spin:
         type: double
@@ -14875,7 +14875,7 @@ Sc[45]:
         value: 21
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 100
     nuclear_spin:
         type: double
@@ -14942,7 +14942,7 @@ Se[74]:
         value: 34
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.90000000000000013
     nuclear_spin:
         type: double
@@ -15009,7 +15009,7 @@ Se[76]:
         value: 34
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 9
     nuclear_spin:
         type: double
@@ -15076,7 +15076,7 @@ Se[77]:
         value: 34
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 7.5999999999999996
     nuclear_spin:
         type: double
@@ -15143,7 +15143,7 @@ Se[78]:
         value: 34
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 23.5
     nuclear_spin:
         type: double
@@ -15210,7 +15210,7 @@ Se[80]:
         value: 34
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 49.600000000000001
     nuclear_spin:
         type: double
@@ -15277,7 +15277,7 @@ Se[82]:
         value: 34
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 9.4000000000000004
     nuclear_spin:
         type: double
@@ -15344,7 +15344,7 @@ Si[28]:
         value: 14
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 92.230000000000004
     nuclear_spin:
         type: double
@@ -15419,7 +15419,7 @@ Si[29]:
         value: 14
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 4.6699999999999999
     nuclear_spin:
         type: double
@@ -15486,7 +15486,7 @@ Si[30]:
         value: 14
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 3.1000000000000001
     nuclear_spin:
         type: double
@@ -15553,7 +15553,7 @@ Sm[144]:
         value: 62
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 3.1000000000000001
     nuclear_spin:
         type: double
@@ -15628,7 +15628,7 @@ Sm[147]:
         value: 62
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 15.1
     nuclear_spin:
         type: double
@@ -15695,7 +15695,7 @@ Sm[148]:
         value: 62
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 11.300000000000001
     nuclear_spin:
         type: double
@@ -15770,7 +15770,7 @@ Sm[149]:
         value: 62
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 13.9
     nuclear_spin:
         type: double
@@ -15837,7 +15837,7 @@ Sm[150]:
         value: 62
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 7.4000000000000012
     nuclear_spin:
         type: double
@@ -15904,7 +15904,7 @@ Sm[152]:
         value: 62
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 26.600000000000001
     nuclear_spin:
         type: double
@@ -15971,7 +15971,7 @@ Sm[154]:
         value: 62
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 22.600000000000001
     nuclear_spin:
         type: double
@@ -16038,7 +16038,7 @@ Sn[112]:
         value: 50
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 1
     nuclear_spin:
         type: double
@@ -16105,7 +16105,7 @@ Sn[114]:
         value: 50
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.69999999999999996
     nuclear_spin:
         type: double
@@ -16180,7 +16180,7 @@ Sn[115]:
         value: 50
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.40000000000000002
     nuclear_spin:
         type: double
@@ -16247,7 +16247,7 @@ Sn[116]:
         value: 50
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 14.699999999999999
     nuclear_spin:
         type: double
@@ -16322,7 +16322,7 @@ Sn[117]:
         value: 50
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 7.7000000000000002
     nuclear_spin:
         type: double
@@ -16389,7 +16389,7 @@ Sn[118]:
         value: 50
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 24.300000000000001
     nuclear_spin:
         type: double
@@ -16464,7 +16464,7 @@ Sn[119]:
         value: 50
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 8.5999999999999996
     nuclear_spin:
         type: double
@@ -16531,7 +16531,7 @@ Sn[120]:
         value: 50
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 32.399999999999999
     nuclear_spin:
         type: double
@@ -16598,7 +16598,7 @@ Sn[122]:
         value: 50
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 4.5999999999999996
     nuclear_spin:
         type: double
@@ -16665,7 +16665,7 @@ Sn[124]:
         value: 50
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 5.5999999999999996
     nuclear_spin:
         type: double
@@ -16732,7 +16732,7 @@ Sr[84]:
         value: 38
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.56000000000000005
     nuclear_spin:
         type: double
@@ -16799,7 +16799,7 @@ Sr[86]:
         value: 38
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 9.8599999999999994
     nuclear_spin:
         type: double
@@ -16874,7 +16874,7 @@ Sr[87]:
         value: 38
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 7.0000000000000009
     nuclear_spin:
         type: double
@@ -16941,7 +16941,7 @@ Sr[88]:
         value: 38
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 82.579999999999998
     nuclear_spin:
         type: double
@@ -17016,7 +17016,7 @@ Ta[180]:
         value: 73
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.012
     nuclear_spin:
         type: double
@@ -17091,7 +17091,7 @@ Ta[181]:
         value: 73
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 99.988
     nuclear_spin:
         type: double
@@ -17166,7 +17166,7 @@ Tb[159]:
         value: 65
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 100
     nuclear_spin:
         type: double
@@ -17245,7 +17245,7 @@ Tc[99]:
         value: 43
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0
     nuclear_spin:
         type: double
@@ -17312,7 +17312,7 @@ Te[120]:
         value: 52
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.096000000000000002
     nuclear_spin:
         type: double
@@ -17379,7 +17379,7 @@ Te[122]:
         value: 52
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 2.6000000000000001
     nuclear_spin:
         type: double
@@ -17454,7 +17454,7 @@ Te[123]:
         value: 52
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.90800000000000014
     nuclear_spin:
         type: double
@@ -17521,7 +17521,7 @@ Te[124]:
         value: 52
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 4.8159999999999998
     nuclear_spin:
         type: double
@@ -17596,7 +17596,7 @@ Te[125]:
         value: 52
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 7.1400000000000006
     nuclear_spin:
         type: double
@@ -17663,7 +17663,7 @@ Te[126]:
         value: 52
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 18.949999999999999
     nuclear_spin:
         type: double
@@ -17730,7 +17730,7 @@ Te[128]:
         value: 52
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 31.690000000000001
     nuclear_spin:
         type: double
@@ -17797,7 +17797,7 @@ Te[130]:
         value: 52
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 33.799999999999997
     nuclear_spin:
         type: double
@@ -17864,7 +17864,7 @@ Th[232]:
         value: 90
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 100
     nuclear_spin:
         type: double
@@ -17931,7 +17931,7 @@ Ti[46]:
         value: 22
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 8.1999999999999993
     nuclear_spin:
         type: double
@@ -18006,7 +18006,7 @@ Ti[47]:
         value: 22
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 7.4000000000000012
     nuclear_spin:
         type: double
@@ -18073,7 +18073,7 @@ Ti[48]:
         value: 22
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 73.799999999999997
     nuclear_spin:
         type: double
@@ -18148,7 +18148,7 @@ Ti[49]:
         value: 22
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 5.4000000000000004
     nuclear_spin:
         type: double
@@ -18215,7 +18215,7 @@ Ti[50]:
         value: 22
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 5.2000000000000002
     nuclear_spin:
         type: double
@@ -18290,7 +18290,7 @@ Tl[203]:
         value: 81
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 29.524000000000001
     nuclear_spin:
         type: double
@@ -18365,7 +18365,7 @@ Tl[205]:
         value: 81
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 70.475999999999999
     nuclear_spin:
         type: double
@@ -18440,7 +18440,7 @@ Tm[169]:
         value: 69
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 100
     nuclear_spin:
         type: double
@@ -18519,7 +18519,7 @@ U[233]:
         value: 92
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0
     nuclear_spin:
         type: double
@@ -18586,7 +18586,7 @@ U[234]:
         value: 92
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.0050000000000000001
     nuclear_spin:
         type: double
@@ -18661,7 +18661,7 @@ U[235]:
         value: 92
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.71999999999999997
     nuclear_spin:
         type: double
@@ -18728,7 +18728,7 @@ U[238]:
         value: 92
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 99.275000000000006
     nuclear_spin:
         type: double
@@ -18803,7 +18803,7 @@ V[50]:
         value: 23
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.25
     nuclear_spin:
         type: double
@@ -18878,7 +18878,7 @@ V[51]:
         value: 23
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 99.75
     nuclear_spin:
         type: double
@@ -18945,7 +18945,7 @@ W[180]:
         value: 74
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.10000000000000001
     nuclear_spin:
         type: double
@@ -19020,7 +19020,7 @@ W[182]:
         value: 74
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 26.300000000000001
     nuclear_spin:
         type: double
@@ -19095,7 +19095,7 @@ W[183]:
         value: 74
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 14.300000000000001
     nuclear_spin:
         type: double
@@ -19162,7 +19162,7 @@ W[184]:
         value: 74
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 30.699999999999999
     nuclear_spin:
         type: double
@@ -19229,7 +19229,7 @@ W[186]:
         value: 74
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 28.600000000000001
     nuclear_spin:
         type: double
@@ -19296,7 +19296,7 @@ Xe[124]:
         value: 54
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.10000000000000001
     nuclear_spin:
         type: double
@@ -19355,7 +19355,7 @@ Xe[126]:
         value: 54
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.089999999999999997
     nuclear_spin:
         type: double
@@ -19414,7 +19414,7 @@ Xe[128]:
         value: 54
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 1.9099999999999999
     nuclear_spin:
         type: double
@@ -19477,7 +19477,7 @@ Xe[129]:
         value: 54
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 26.400000000000002
     nuclear_spin:
         type: double
@@ -19532,7 +19532,7 @@ Xe[130]:
         value: 54
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 4.0999999999999996
     nuclear_spin:
         type: double
@@ -19595,7 +19595,7 @@ Xe[131]:
         value: 54
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 21.199999999999999
     nuclear_spin:
         type: double
@@ -19650,7 +19650,7 @@ Xe[132]:
         value: 54
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 26.900000000000002
     nuclear_spin:
         type: double
@@ -19709,7 +19709,7 @@ Xe[134]:
         value: 54
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 10.4
     nuclear_spin:
         type: double
@@ -19768,7 +19768,7 @@ Xe[136]:
         value: 54
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 8.9000000000000004
     nuclear_spin:
         type: double
@@ -19835,7 +19835,7 @@ Y[89]:
         value: 39
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 100
     nuclear_spin:
         type: double
@@ -19902,7 +19902,7 @@ Yb[168]:
         value: 70
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.14000000000000001
     nuclear_spin:
         type: double
@@ -19969,7 +19969,7 @@ Yb[170]:
         value: 70
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 3.0600000000000001
     nuclear_spin:
         type: double
@@ -20044,7 +20044,7 @@ Yb[171]:
         value: 70
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 14.300000000000001
     nuclear_spin:
         type: double
@@ -20111,7 +20111,7 @@ Yb[172]:
         value: 70
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 21.899999999999999
     nuclear_spin:
         type: double
@@ -20186,7 +20186,7 @@ Yb[173]:
         value: 70
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 16.100000000000001
     nuclear_spin:
         type: double
@@ -20253,7 +20253,7 @@ Yb[174]:
         value: 70
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 31.800000000000001
     nuclear_spin:
         type: double
@@ -20320,7 +20320,7 @@ Yb[176]:
         value: 70
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 12.699999999999999
     nuclear_spin:
         type: double
@@ -20387,7 +20387,7 @@ Zn[64]:
         value: 30
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 48.600000000000001
     nuclear_spin:
         type: double
@@ -20454,7 +20454,7 @@ Zn[66]:
         value: 30
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 27.899999999999995
     nuclear_spin:
         type: double
@@ -20529,7 +20529,7 @@ Zn[67]:
         value: 30
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 4.0999999999999996
     nuclear_spin:
         type: double
@@ -20596,7 +20596,7 @@ Zn[68]:
         value: 30
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 18.800000000000001
     nuclear_spin:
         type: double
@@ -20663,7 +20663,7 @@ Zn[70]:
         value: 30
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 0.59999999999999998
     nuclear_spin:
         type: double
@@ -20730,7 +20730,7 @@ Zr[90]:
         value: 40
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 51.450000000000003
     nuclear_spin:
         type: double
@@ -20805,7 +20805,7 @@ Zr[91]:
         value: 40
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 11.32
     nuclear_spin:
         type: double
@@ -20872,7 +20872,7 @@ Zr[92]:
         value: 40
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 17.190000000000001
     nuclear_spin:
         type: double
@@ -20939,7 +20939,7 @@ Zr[94]:
         value: 40
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 17.280000000000001
     nuclear_spin:
         type: double
@@ -21006,7 +21006,7 @@ Zr[96]:
         value: 40
     natural_abundance:
         type: double
-        unit: "%"
+        unit: percentage
         value: 2.7599999999999998
     nuclear_spin:
         type: double
