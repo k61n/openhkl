@@ -8,15 +8,11 @@
 #include "IsotopeDatabaseManager.h"
 #include "../utils/Path.h"
 #include "../utils/Units.h"
-#include "../utils/YAMPType.h"
+#include "../utils/YAMLType.h"
 
 namespace SX {
 
 namespace Chemistry {
-
-using boost::property_tree::xml_parser::read_xml;
-using boost::property_tree::xml_parser::write_xml;
-using boost::property_tree::ptree;
 
 using SX::Utils::Path;
 using SX::Units::UnitsManager;

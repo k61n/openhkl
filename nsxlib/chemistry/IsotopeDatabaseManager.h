@@ -11,13 +11,9 @@
 #include "yaml-cpp/yaml.h"
 
 #include <boost/any.hpp>
-#include <boost/filesystem/path.hpp>
-#include <boost/property_tree/ptree.hpp>
 
 #include "../kernel/Singleton.h"
 #include "../utils/Types.h"
-
-#define BOOST_MINOR BOOST_VERSION/100 % 1000
 
 namespace SX {
 
