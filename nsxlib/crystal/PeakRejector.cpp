@@ -49,7 +49,7 @@ namespace Crystal {
 
 bool PeakRejector::rejectPeak(const Peak3D &peak) const
 {
-
+    return true;
 }
 
 
