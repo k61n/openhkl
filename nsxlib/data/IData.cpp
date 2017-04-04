@@ -578,16 +578,34 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
         return rs.transpose()*rs;
     };
 
+
+    auto peakRadius = [](const Eigen::Matrix3d& shape) -> double {
+//        Eigen::SelfAdjointEigenSolver<Matrix3d> solver;
+//        solver.compute(shape);
+//        auto vals = solver.eigenvalues();
+//        double vol = vals(0)*vals(1)*vals(2);
+        //static const double factor = std::pow(4.0 * M_PI / 3.0, -2.0);
+        //const double volume = factor * std::pow(shape.determinant(), -0.5);
+        return std::pow(shape.determinant(), -1.0/6.0);
+    };
+
+
 //    // testing: get average peak shape
     Eigen::Matrix3d avg_peak_shape = Eigen::Matrix3d::Zero();
     unsigned int num_good_peaks = 0;
+    double avg_peak_radius = 0.0;
+    double peak_radius_std = 0.0;
+
 
     for(auto&& p: _peaks) {
         if (p->isMasked() || !p->isSelected()) {
             continue;
 
         }
+        double radius = peakRadius(getCovar(p->getShape()));
         avg_peak_shape += getCovar(p->getShape());
+        avg_peak_radius += radius;
+        peak_radius_std += radius*radius;
         ++num_good_peaks;
     }
 
@@ -597,18 +615,16 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
     }
 
     avg_peak_shape /= num_good_peaks;
+    avg_peak_radius /= num_good_peaks;
 
-    auto peakRadius = [](const Eigen::Matrix3d& shape) -> double {
-//        Eigen::SelfAdjointEigenSolver<Matrix3d> solver;
-//        solver.compute(shape);
-//        auto vals = solver.eigenvalues();
-//        double vol = vals(0)*vals(1)*vals(2);
-        static const double factor = std::pow(4.0 * M_PI / 3.0, -2.0);
-        const double volume = factor * std::pow(shape.determinant(), -0.5);
-        return std::pow(volume, 1.0/3.0);
-    };
+    const double var = (peak_radius_std - avg_peak_radius*avg_peak_radius) / (num_good_peaks-1);
+    peak_radius_std = std::sqrt(var);
 
-    const double avg_peak_radius = peakRadius(avg_peak_shape);
+    std::cout << "avg radius: " << avg_peak_radius << std::endl;
+    std::cout << "std. dev:   " << peak_radius_std << std::endl;
+
+
+    //const double avg_peak_radius = peakRadius(avg_peak_shape);
 
     for (auto&& peak: _peaks ) {
 //        Eigen::Vector3d center(peak->getShape().getCenter());
@@ -696,8 +712,7 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
 
         const double radius = peakRadius(getCovar(new_shape));
 
-        if (std::fabs(radius-avg_peak_radius) > 1.5*avg_peak_radius
-                || std::fabs(radius-avg_peak_radius) < 0.5*avg_peak_radius) {
+        if (std::fabs(radius-avg_peak_radius) > 3.5*peak_radius_std) {
             peak->setSelected(false);
             continue;
         }
@@ -755,127 +770,6 @@ double DataSet::getSampleStepSize() const
     step /= (numFrames-1) * 0.05 * SX::Units::deg;
 
     return step;
-}
-
-void SX::Data::DataSet::addPredictedPeaks(double dmin, double dmax, std::shared_ptr<SX::Utils::ProgressHandler> handler)
-{
-    using SX::Instrument::Sample;
-
-    class compare_fn {
-    public:
-        auto operator()(const Eigen::RowVector3i a, const Eigen::RowVector3i b) -> bool
-        {
-            if (a(0) != b(0))
-                return a(0) < b(0);
-
-            if (a(1) != b(1))
-                return a(1) < b(1);
-
-            return a(2) < b(2);
-        }
-    };
-
-
-    int predicted_peaks = 0;
-
-    auto& mono = getDiffractometer()->getSource()->getSelectedMonochromator();
-    const double wavelength = mono.getWavelength();
-    std::vector<sptrPeak3D> calculated_peaks;
-
-    std::shared_ptr<Sample> sample = getDiffractometer()->getSample();
-    unsigned int ncrystals = static_cast<unsigned int>(sample->getNCrystals());
-
-    for (unsigned int i = 0; i < ncrystals; ++i) {
-        SX::Crystal::SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
-        auto cell = sample->getUnitCell(i);
-        auto UB = cell->getReciprocalStandardM();
-
-        handler->setStatus("Calculating peak locations...");
-
-        //auto predicted_hkls = sample->getUnitCell(i)->generateReflectionsInSphere(1.5);
-        auto predicted_hkls = sample->getUnitCell(i)->generateReflectionsInShell(dmin, dmax, wavelength);
-
-        predicted_peaks += predicted_hkls.size();
-
-        std::vector<SX::Crystal::PeakCalc> peaks = hasPeaks(predicted_hkls, UB);
-        calculated_peaks.reserve(peaks.size());
-
-        int current_peak = 0;
-
-        handler->setStatus("Building set of previously found peaks...");
-
-        std::set<sptrPeak3D> found_peaks = getPeaks();
-        std::set<Eigen::RowVector3i, compare_fn> found_hkls;
-
-
-        Eigen::Vector3d lb = {0.0, 0.0, 0.0};
-        Eigen::Vector3d ub = {double(getNCols()), double(getNRows()), double(getNFrames())};
-        auto&& octree = Octree(lb, ub);
-
-        octree.setMaxDepth(4);
-        octree.setMaxStorage(50);
-
-        handler->log("Building peak octree...");
-
-        for (sptrPeak3D p: found_peaks) {
-            found_hkls.insert(p->getIntegerMillerIndices());
-
-            if (!p->isSelected() || p->isMasked()) {
-                continue;
-            }
-            octree.addData(&p->getShape());
-        }
-
-        handler->log("Done building octree; number of chambers is " + std::to_string(octree.numChambers()));
-
-        handler->setStatus("Adding calculated peaks...");
-
-        int done_peaks = 0;
-
-        #pragma omp parallel for
-        for (size_t peak_id = 0; peak_id < peaks.size(); ++peak_id) {
-            PeakCalc& p = peaks[peak_id];
-            ++current_peak;
-
-            Eigen::RowVector3i hkl(int(std::lround(p._h)), int(std::lround(p._k)), int(std::lround(p._l)));
-
-            // try to find this reflection in the list of peaks, skip if found
-            if (std::find(found_hkls.begin(), found_hkls.end(), hkl) != found_hkls.end() ) {
-                continue;
-            }
-
-            // now we must add it, calculating shape from nearest peaks
-             // K is outside the ellipsoid at PsptrPeak3D
-            sptrPeak3D new_peak = p.averagePeaks(octree, search_radius);
-            //sptrPeak3D new_peak = p.averagePeaks(numor);
-
-            if (!new_peak) {
-                continue;
-            }
-
-            new_peak->linkData(this);
-            new_peak->setSelected(true);
-            new_peak->addUnitCell(cell, true);
-            new_peak->setObserved(false);
-
-            #pragma omp critical
-            calculated_peaks.push_back(new_peak);
-
-            #pragma omp atomic
-            ++done_peaks;
-            int done = int(std::lround(done_peaks * 100.0 / peaks.size()));
-
-            if ( done != last_done) {
-                handler->setProgress(done);
-                last_done = done;
-            }
-        }
-    }
-    for (sptrPeak3D peak: calculated_peaks) {
-        addPeak(peak);
-    }
-    //qDebug() << "Integrating calculated peaks.";
-    integratePeaks(_peakScale, _bkgScale, false, handler);
 }
 
 } // end namespace Data

@@ -196,9 +196,6 @@ public:
 
     double getSampleStepSize() const;
 
-    //! Add predicted peaks
-    void addPredictedPeaks(double dmin, double dmax, std::shared_ptr<SX::Utils::ProgressHandler> handler);
-
 protected:
     bool _isOpened;
     std::string _filename;

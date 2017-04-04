@@ -119,6 +119,7 @@
 
 #include <nsxlib/geometry/NDTree.h>
 #include <nsxlib/geometry/Ellipsoid.h>
+#include <nsxlib/crystal/PeakPredictor.h>
 
 #include <QJsonObject>
 #include <QJsonArray>
@@ -680,7 +681,17 @@ void SessionModel::incorporateCalculatedPeaks()
 //        qDebug() << "Integrating calculated peaks.";
 //        numor->integratePeaks(_peakScale, _bkgScale, false, handler);
 
-        numor->addPredictedPeaks(dmin, dmax, handler);
+        auto predictor = SX::Crystal::PeakPredictor();
+
+        predictor._dmin = dmin;
+        predictor._dmax = dmax;
+        predictor._searchRadius = search_radius; // todo
+        predictor._peakScale = 1.0; // todo
+        predictor._bkgScale = 3.0 ; // todo
+        predictor._handler = handler;
+
+        predictor.addPredictedPeaks(numor);
+        // numor->addPredictedPeaks(dmin, dmax, handler);
         observed_peaks += numor->getPeaks().size();
     }
     updatePeaks();

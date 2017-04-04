@@ -141,7 +141,7 @@ bool MinimizerGSL::fit(int max_iter)
 #endif // version 2
 #endif // version 2.2
 
-    fprintf (stderr, "status = %s\n", gsl_strerror(_status));
+    //fprintf (stderr, "status = %s\n", gsl_strerror(_status));
 
     eigenFromGSL(_workspace->x, _x);
 

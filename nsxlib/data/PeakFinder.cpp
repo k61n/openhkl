@@ -186,7 +186,7 @@ bool PeakFinder::find(std::vector<std::shared_ptr<DataSet>> numors)
             _handler->setProgress(0);
         }
         const double scale = SX::Utils::getScale(_confidence);
-        numor->integratePeaks(scale, 2.0*scale, true, _handler);
+        numor->integratePeaks(scale, 2.0*scale, false, _handler);
         numor->close();
         //_ui->progressBar->setValue(++comp);
     }

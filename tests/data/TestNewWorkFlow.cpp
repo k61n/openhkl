@@ -15,6 +15,7 @@
 #include <nsxlib/instrument/DiffractometerStore.h>
 #include <nsxlib/data/DataReaderFactory.h>
 #include <nsxlib/utils/Units.h>
+#include <nsxlib/utils/erf_inv.h>
 #include <nsxlib/utils/ProgressHandler.h>
 #include <nsxlib/data/PeakFinder.h>
 #include <nsxlib/imaging/ConvolutionKernel.h>
@@ -97,31 +98,49 @@ int run_test()
     }
 
     std::cout << dataf->getPeaks().size() << std::endl;
-    BOOST_CHECK(dataf->getPeaks().size() >= 750);
+    BOOST_CHECK(dataf->getPeaks().size() >= 800);
 
     // at this stage we have the peaks, now we index
     AutoIndexer::Parameters params;
     AutoIndexer indexer(expt, progressHandler);
 
-    for (auto&& peak: dataf->getPeaks()) {
-        indexer.addPeak(peak);
-    }
+    auto numIndexedPeaks = [&]() -> unsigned int
+    {
+        unsigned int indexed_peaks = 0;
 
+        for (auto&& peak: dataf->getPeaks()) {
+            if (!peak->isSelected() || peak->isMasked()) {
+                continue;
+            }
+            ++indexed_peaks;
+            indexer.addPeak(peak);
+        }
+        return indexed_peaks;
+    };
+
+    unsigned int indexed_peaks = numIndexedPeaks();
+
+    BOOST_CHECK(indexed_peaks > 650);
     BOOST_CHECK(indexer.autoIndex(params));
 
     auto soln = indexer.getSolutions().front();
 
     // correctly indexed at least 92% of peaks
-    BOOST_CHECK(soln.second > 90.0);
+    BOOST_CHECK(soln.second > 92.0);
 
-    // reintegrate peaks
-    dataf->integratePeaks();
-
+    // set unit cell
     auto cell = std::make_shared<UnitCell>(soln.first);
-
     for (auto&& peak: dataf->getPeaks()) {
         peak->addUnitCell(cell, true);
     }
+
+    // reintegrate peaks
+    const double scale = SX::Utils::getScale(0.997);
+    dataf->integratePeaks(scale, 2.0*scale, true);
+
+    indexed_peaks = numIndexedPeaks();
+    std::cout << indexed_peaks << std::endl;
+    BOOST_CHECK(indexed_peaks > 600);
 
     return 0;
 }
