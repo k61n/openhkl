@@ -3,7 +3,6 @@
 
 #include <map>
 #include <complex>
-#include <memory>
 #include <ostream>
 #include <stdexcept>
 #include <string>
@@ -19,7 +18,7 @@ namespace SX {
 
 namespace Chemistry {
 
-using boost::any_cast; using boost::property_tree::ptree; using boost::filesystem::path;
+using boost::any_cast;
 using SX::Kernel::Constructor;
 using SX::Kernel::Destructor;
 using SX::Kernel::Singleton;
@@ -85,7 +84,7 @@ private:
 
     isotopeDatabase _database;
 
-    static std::string DatabasePath;
+    static const std::string DatabasePath;
 
 };
 

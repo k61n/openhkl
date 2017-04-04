@@ -1,10 +1,5 @@
 #include <stdexcept>
 
-#include <boost/filesystem.hpp>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-#include <boost/version.hpp>
-
 #include "IsotopeDatabaseManager.h"
 #include "../utils/Path.h"
 #include "../utils/Units.h"
@@ -17,7 +12,7 @@ namespace Chemistry {
 using SX::Utils::Path;
 using SX::Units::UnitsManager;
 
-std::string IsotopeDatabaseManager::DatabasePath = Path::getDataBasesPath("isotopes.yaml");
+const std::string IsotopeDatabaseManager::DatabasePath = Path::getDataBasesPath("isotopes.yaml");
 
 std::map<std::string,IsotopeDatabaseManager::PropertyType> IsotopeDatabaseManager::PropertyTypes = {{"string",PropertyType::String},
                                                                       {"int",PropertyType::Int},
