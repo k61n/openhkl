@@ -88,9 +88,6 @@ sptrPeak3D PeakCalc::averagePeaks(const Octree& tree, double distance)
     unsigned int num_neighbors = 0;
     peak_shape.setZero();
 
-    double avg_volume = 0.0;
-    double avg_radius = 0.0;
-
     for(auto&& p: neighbors) {
         const Ellipsoid3D* ell_peak = dynamic_cast<const Ellipsoid3D*>(p);
 
@@ -98,9 +95,7 @@ sptrPeak3D PeakCalc::averagePeaks(const Octree& tree, double distance)
             continue;
         }
         const Matrix3d peak_rs = ell_peak->getRSinv();
-        const Matrix3d A = (peak_rs.transpose() * peak_rs).inverse();
-        solver.compute(A);
-        avg_radius += std::sqrt(solver.eigenvalues().maxCoeff());
+        peak_shape += (peak_rs.transpose() * peak_rs).inverse();
         ++num_neighbors;
     }
 
@@ -109,8 +104,14 @@ sptrPeak3D PeakCalc::averagePeaks(const Octree& tree, double distance)
         return nullptr;
     }
 
-    avg_radius /= num_neighbors;
-    vals = {avg_radius, avg_radius, avg_radius};
+    peak_shape /= num_neighbors;
+    solver.compute(peak_shape);
+    vals = solver.eigenvalues();
+
+    for (auto i = 0; i < vals.size(); ++i) {
+        vals(i) = std::sqrt(vals(i));
+    }
+
     peak->setShape(Ellipsoid3D(center, vals, solver.eigenvectors()));
     return peak;
 }

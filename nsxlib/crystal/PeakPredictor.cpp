@@ -116,7 +116,6 @@ void PeakPredictor::addPredictedPeaks(std::shared_ptr<DataSet> data)
         }
 
         _handler->log("Done building octree; number of chambers is " + std::to_string(octree.numChambers()));
-
         _handler->setStatus("Adding calculated peaks...");
 
         int done_peaks = 0;

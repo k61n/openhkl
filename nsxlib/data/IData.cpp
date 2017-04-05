@@ -682,10 +682,10 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
 
         // peak is too weak
         // todo: p value should probably not be hard-coded
-        if (integrator.pValue() > 1e-6) {
-            peak->setSelected(false);
-            continue;
-        }
+//        if (integrator.pValue() > 1e-3) {
+//            peak->setSelected(false);
+//            continue;
+//        }
 
         // peak profile couldn't be fitted
 //        if (!peak->getProfile().goodFit(integrator.getProjectionPeak(), 0.10)) {
@@ -711,6 +711,12 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
         Eigen::RowVector3d hkl_old, hkl_new;
 
         const double radius = peakRadius(getCovar(new_shape));
+        const double volume = 4.0*M_PI/3.0 * radius*radius*radius;
+
+        if (volume < 1.0) {
+            peak->setSelected(false);
+            continue;
+        }
 
         if (std::fabs(radius-avg_peak_radius) > 3.5*peak_radius_std) {
             peak->setSelected(false);
