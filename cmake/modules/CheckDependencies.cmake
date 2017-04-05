@@ -57,14 +57,8 @@ else()
 endif()
 
 
-find_package(Blosc REQUIRED)
-if (BLOSC_FOUND==True)
-        message("Blosc library found, already installed on the system")
-else()
-        #### Internal dependencies
-        add_subdirectory(externals/c-blosc)
-        message("Blosc library not found, will build from internal resources")
-endif()
+###### C-BLOSC
+add_subdirectory(externals/c-blosc)
 
 ###### TIFF library
 find_package(TIFF REQUIRED)
@@ -78,25 +72,24 @@ include_directories(SYSTEM ${TIFF_INCLUDE_DIR})
 find_package(FFTW REQUIRED)
 include_directories(SYSTEM ${FFTW_INCLUDE_DIR})
 
+###### GSL library
+add_subdirectory(externals/gsl)
+
 # GNU scientific library
-find_package(GSL 2.0 REQUIRED)
+# find_package(GSL 2.0 REQUIRED)
 
-include_directories(SYSTEM ${GSL_INCLUDE_DIR})
+#include_directories(SYSTEM ${GSL_INCLUDE_DIR})
 
-message("GSL_INCLUDE_DIR is ${GSL_INCLUDE_DIR}")
+#message("GSL_INCLUDE_DIR is ${GSL_INCLUDE_DIR}")
 
 set(temp_string ${GSL_VERSION})
-string(REGEX REPLACE "([0-9]+)\\.([0-9]+)(\\.([0-9]+))?" "\\1" gsl_version_major ${temp_string})
-string(REGEX REPLACE "([0-9]+)\\.([0-9]+)(\\.([0-9]+))?" "\\2" gsl_version_minor ${temp_string})
+#string(REGEX REPLACE "([0-9]+)\\.([0-9]+)(\\.([0-9]+))?" "\\1" gsl_version_major ${temp_string})
+#string(REGEX REPLACE "([0-9]+)\\.([0-9]+)(\\.([0-9]+))?" "\\2" gsl_version_minor ${temp_string})
 #string(REGEX REPLACE "([0-9]+)\\.([0-9]+)(\\.([0-9]+))?" "\\4" gsl_version_subminor ${temp_string})
   
-message("GSL_VERSION_MAJOR is ${gsl_version_major}")
-message("GSL_VERSION_MINOR is ${gsl_version_minor}")
+#message("GSL_VERSION_MAJOR is ${gsl_version_major}")
+#message("GSL_VERSION_MINOR is ${gsl_version_minor}")
 #message("GSL_VERSION_SUBMINOR is ${gsl_version_subminor}")
 
-add_definitions(-DNSXTOOL_GSL_VERSION_MAJOR=${gsl_version_major})
-add_definitions(-DNSXTOOL_GSL_VERSION_MINOR=${gsl_version_minor})
-
-
-
-
+#add_definitions(-DNSXTOOL_GSL_VERSION_MAJOR=${gsl_version_major})
+#add_definitions(-DNSXTOOL_GSL_VERSION_MINOR=${gsl_version_minor})
