@@ -1,5 +1,6 @@
 include_directories(
     ${CMAKE_SOURCE_DIR}
+    ${CMAKE_BINARY_DIR}/externals/gsl/gsl
 )
 
 file(GLOB_RECURSE test_sources "*.cpp")
