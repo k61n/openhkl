@@ -3,8 +3,10 @@ if(POLICY CMP0020)
 endif()
 
 # add project root directory to include path
-include_directories(${CMAKE_SOURCE_DIR})
-
+include_directories(
+    ${CMAKE_SOURCE_DIR}
+    ${CMAKE_BINARY_DIR}/externals/gsl/gsl
+)
 # Disable console on Windows
 if(WIN32)
   set(GUI_TYPE WIN32)

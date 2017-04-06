@@ -5,9 +5,6 @@ include_directories(
 file(GLOB_RECURSE test_sources "*.cpp")
 file(GLOB_RECURSE test_headers "*.h")
 
-#set(CMAKE_INCLUDE_CURRENT_DIR ON)
-#set(CMAKE_AUTOMOC ON)
-
 foreach(source_file ${test_sources})
   #message("test sources is ${test_sources}")
   #message("source file is ${source_file}")

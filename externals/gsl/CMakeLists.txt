@@ -608,6 +608,8 @@ foreach (line ${lines})
   string(REGEX MATCHALL "[^ ]+" dirs ${dirs})
 endforeach ()
 
+add_definitions(-fPIC)
+
 # Extract sources from automake files and add tests.
 foreach (dir "." ${dirs})
   file(STRINGS ${dir}/Makefile.am lines)
@@ -639,7 +641,7 @@ endforeach ()
 #  include(CheckCCompilerFlag)
 #  check_c_compiler_flag(-fPIC HAVE_FPIC)
 #  if (HAVE_FPIC)
-    add_definitions(-fPIC)
+#add_definitions(-fPIC)
 #  endif ()
 #  if (WIN32)
 #    add_definitions(-DGSL_DLL)
