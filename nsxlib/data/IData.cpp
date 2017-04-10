@@ -778,5 +778,29 @@ double DataSet::getSampleStepSize() const
     return step;
 }
 
+Eigen::Vector3d DataSet::getQ(const Eigen::Vector3d& pix) const
+{
+    auto source = _diffractometer->getSource();
+    auto sample = _diffractometer->getSample();
+
+    double frame = pix[2];
+
+    if (frame > getNFrames()-1) {
+        frame = getNFrames()-1;
+    }
+    if (frame < 0) {
+        frame = 0.0;
+    }
+
+    double wavelength = source->getSelectedMonochromator().getWavelength();
+    auto state = getInterpolatedState(frame);
+
+    SX::Instrument::DetectorEvent event(*_diffractometer->getDetector(), pix[0], pix[1], state.detector.getValues());
+
+    // otherwise scattering point is deducted from the sample
+    Eigen::Vector3d q = event.getQ(wavelength, state.sample.getPosition());
+    return state.sample.transformQ(q);
+}
+
 } // end namespace Data
 } // end namespace SX

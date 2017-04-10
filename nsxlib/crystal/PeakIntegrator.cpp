@@ -97,6 +97,8 @@ PeakIntegrator::PeakIntegrator(const SX::Geometry::IntegrationRegion& region, co
 
 void PeakIntegrator::step(const Eigen::MatrixXi& frame, size_t idx, const Eigen::MatrixXi& mask)
 {
+    using point_type = SX::Geometry::IntegrationRegion::point_type;
+
     if (idx < _data_start || idx > _data_end) {
         return;
     }
@@ -119,9 +121,8 @@ void PeakIntegrator::step(const Eigen::MatrixXi& frame, size_t idx, const Eigen:
     for (unsigned int x = _start_x; x <= _end_x; ++x) {
         for (unsigned int y = _start_y; y <= _end_y; ++y) {
             int intensity = frame(y, x);
-            _point1 << x, y, idx, 1;
 
-            using point_type = SX::Geometry::IntegrationRegion::point_type;
+            _point1 << x, y, idx, 1;
             const auto type = _region.classifyPoint(_point1);
 
             const bool inpeak = (type == point_type::REGION);
@@ -158,16 +159,17 @@ void PeakIntegrator::step(const Eigen::MatrixXi& frame, size_t idx, const Eigen:
     // update blob
     for (unsigned int x = _start_x; x <= _end_x; ++x) {
         for (unsigned int y = _start_y; y <= _end_y; ++y) {
-
-            if (_peak_mask(y-_start_y, x-_start_x) < 1.0) {
-                continue;
-            }
-
-            const double intensity = frame(y, x);
-            const double mass = frame(y, x) - avgBkg;
+            int intensity = frame(y, x);
 
             _point1 << x, y, idx, 1;
-            _blob.addPoint(_point1(0), _point1(1), _point1(2), mass);
+            const auto type = _region.classifyPoint(_point1);
+
+            const bool inpeak = (type == point_type::REGION);
+            const bool inbackground = (type == point_type::BACKGROUND) && (mask(y, x) == 0);
+
+            if (inpeak) {
+                _blob.addPoint(x, y, idx, intensity-avgBkg);
+            }
         }
     }
 }

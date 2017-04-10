@@ -196,6 +196,9 @@ public:
 
     double getSampleStepSize() const;
 
+    //! Get the q vector corresponding to a detector pixel
+    Eigen::Vector3d getQ(const Eigen::Vector3d& pix) const;
+
 protected:
     bool _isOpened;
     std::string _filename;
