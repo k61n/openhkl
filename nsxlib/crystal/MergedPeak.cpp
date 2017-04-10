@@ -39,13 +39,11 @@
 #include "MergedPeak.h"
 
 
-namespace SX
-{
-namespace Crystal
-{
+namespace SX {
+namespace Crystal {
 
 MergedPeak::MergedPeak(const SpaceGroup& grp, bool friedel):
- _hkl(), _intensity(0), _sigma(0), _chiSquared(0.0), _std(0.0), _peaks(), _grp(grp), _friedel(friedel)
+ _hkl(), _intensity(0.0, 0.0), _chiSquared(0.0), _std(0.0), _peaks(), _grp(grp), _friedel(friedel)
 {
 }
 
@@ -74,14 +72,9 @@ Eigen::Vector3i MergedPeak::getIndex() const
     return _hkl;
 }
 
-double MergedPeak::intensity() const
+const Intensity &MergedPeak::getIntensity() const
 {
     return _intensity;
-}
-
-double MergedPeak::sigma() const
-{
-    return _sigma;
 }
 
 double MergedPeak::chiSquared() const
@@ -151,20 +144,15 @@ void MergedPeak::update()
     determineRepresentativeHKL();
 
     // update average intensity and error
-    _intensity = 0.0;
-    _sigma = 0.0;
+    _intensity = Intensity(0.0, 0.0);
+
     double variance = 0.0;
 
     for (auto&& peak: _peaks) {
-        double lorentz = peak->getLorentzFactor();
-        double trans = peak->getTransmission();
-        _intensity += peak->getScaledIntensity() / lorentz / trans;
-        variance += std::pow(peak->getScaledSigma() / lorentz / trans, 2);
+        _intensity += peak->getCorrectedIntensity();
     }
 
-    _intensity /= _peaks.size();
-    variance /= _peaks.size()*_peaks.size();
-    _sigma = std::sqrt(variance);
+    _intensity = _intensity / _peaks.size();
 
     // update chi2
     // TODO(jonathan): check that this is correct!
@@ -172,10 +160,9 @@ void MergedPeak::update()
     _std = 0.0;
 
     for (auto&& peak: _peaks) {
-        double lorentz = peak->getLorentzFactor();
-        double trans = peak->getTransmission();
-        const double res2 = std::pow((peak->getScaledIntensity() / lorentz / trans - _intensity), 2);
-        _chiSquared += res2 / _intensity;
+        const double difference = peak->getCorrectedIntensity().getValue() - _intensity.getValue();
+        const double res2 = std::pow(difference, 2);
+        _chiSquared += res2 / _intensity.getValue();
         _std += res2;
     }
 

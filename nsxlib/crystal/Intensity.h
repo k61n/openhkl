@@ -2,7 +2,7 @@
  * nsxtool : Neutron Single Crystal analysis toolkit
  ------------------------------------------------------------------------------------------
  Copyright (C)
- 2016- Laurent C. Chapon, Eric Pellegrini, Jonathan Fisher
+ 2017- Laurent C. Chapon, Eric Pellegrini, Jonathan Fisher
 
  Institut Laue-Langevin
  BP 156
@@ -33,48 +33,35 @@
  *
  */
 
-#ifndef NSXTOOL_MERGEDPEAK_H_
-#define NSXTOOL_MERGEDPEAK_H_
 
-#include <map>
-#include <memory>
-
-#include <Eigen/Dense>
-
-#include "UnitCell.h"
-#include "SpaceGroup.h"
-#include "Peak3D.h"
-#include "Intensity.h"
+#ifndef NSXTOOL_INTENSITY_H_
+#define NSXTOOL_INTENSITY_H_
 
 namespace SX {
 namespace Crystal {
 
-class MergedPeak {
+class Intensity {
 public:
-    MergedPeak(const SpaceGroup& grp, bool friedel=false);
-    MergedPeak(const MergedPeak& other) = default;
-    ~MergedPeak() = default;
+    Intensity(double value = 0.0, double sigma2 = 0.0);
+    Intensity(const Intensity& other);
 
-    bool addPeak(const sptrPeak3D& peak);
-    Eigen::Vector3i getIndex() const;
-    const Intensity& getIntensity() const;
-    double chiSquared() const;
-    size_t redundancy() const;
-    double std() const;
+    double getValue() const;
+    double getSigma() const;
+
+    Intensity operator+(const Intensity& other) const;
+    Intensity operator-(const Intensity& other) const;
+    Intensity operator*(double scale) const;
+    Intensity operator/(double denominator) const;
+
+    Intensity& operator=(const Intensity& other);
+    Intensity& operator+=(const Intensity& other);
 
 private:
-    void determineRepresentativeHKL();
-    void update();
-
-    Eigen::Vector3i _hkl;
-    Intensity _intensity;
-    double _chiSquared, _std;
-    std::vector<sptrPeak3D> _peaks;
-    SX::Crystal::SpaceGroup _grp;
-    bool _friedel;
+    double _value;
+    double _sigma2;
 };
 
 } // namespace Crystal
 } // namespace SX
 
-#endif /* NSXTOOL_SIMPLEPEAK_H_ */
+#endif // NSXTOOL_INTENSITY_H_

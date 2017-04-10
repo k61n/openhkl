@@ -317,8 +317,8 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     gamma/=SX::Units::deg;
     nu/=SX::Units::deg;
     info+=" "+QString(QChar(0x03B3))+","+QString(QChar(0x03BD))+":"+QString::number(gamma,'f',2)+","+QString::number(nu,'f',2)+"\n";
-    double intensity=_peak->getScaledIntensity();
-    double sI=_peak->getScaledSigma();
+    double intensity=_peak->getScaledIntensity().getValue();
+    double sI=_peak->getScaledIntensity().getSigma();
     info+="Intensity ("+QString(QChar(0x03C3))+"I): "+QString::number(intensity)+" ("+QString::number(sI,'f',2)+")\n";
     double l=_peak->getLorentzFactor();
     info+="Cor. int. ("+QString(QChar(0x03C3))+"I): "+QString::number(intensity/l,'f',2)+" ("+QString::number(sI/l,'f',2)+")\n";

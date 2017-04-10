@@ -152,8 +152,8 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
         success = _peaks[row]->getMillerIndices(hkl, true);
         lorentzFactor = _peaks[row]->getLorentzFactor();
         transmissionFactor = _peaks[row]->getTransmission();
-        scaledIntensity=_peaks[row]->getScaledIntensity()/lorentzFactor/transmissionFactor;
-        sigmaScaledIntensity=_peaks[row]->getScaledSigma()/lorentzFactor/transmissionFactor;
+        scaledIntensity=_peaks[row]->getCorrectedIntensity().getValue();
+        sigmaScaledIntensity=_peaks[row]->getCorrectedIntensity().getSigma();
 
         switch (column) {
         case Column::h:
@@ -234,14 +234,14 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
         break;
     case  Column::intensity:
         compareFn = [&](sptrPeak3D p1, sptrPeak3D p2) {
-            return (p1->getScaledIntensity()/p1->getLorentzFactor()/p1->getTransmission())
-                    > (p2->getScaledIntensity()/p2->getLorentzFactor()/p2->getTransmission());
+            return (p1->getCorrectedIntensity().getValue())
+                    > (p2->getCorrectedIntensity().getValue());
         };
         break;
     case Column::sigmaIntensity:
         compareFn = [&](sptrPeak3D p1, sptrPeak3D p2) {
-            return (p1->getScaledSigma()/p1->getLorentzFactor()/p1->getTransmission())
-                    > (p2->getScaledSigma()/p2->getLorentzFactor()/p2->getTransmission());
+            return (p1->getCorrectedIntensity().getSigma())
+                    > (p2->getCorrectedIntensity().getSigma());
         };
         break;
     case Column::transmission:
@@ -423,8 +423,8 @@ void CollectedPeaksModel::writeShelX(const std::string& filename, QModelIndexLis
 
             double l=peak->getLorentzFactor();
             double t=peak->getTransmission();
-            file << std::fixed << std::setw(8) << std::setprecision(2) << peak->getScaledIntensity()/l/t;
-            file << std::fixed << std::setw(8) << std::setprecision(2) << peak->getScaledSigma()/l/t <<std::endl;
+            file << std::fixed << std::setw(8) << std::setprecision(2) << peak->getCorrectedIntensity().getValue();
+            file << std::fixed << std::setw(8) << std::setprecision(2) << peak->getCorrectedIntensity().getSigma() <<std::endl;
         }
     }
     if (file.is_open()) {
@@ -477,8 +477,8 @@ void CollectedPeaksModel::writeFullProf(const std::string& filename, QModelIndex
             file << hkl[0] << std::setw(4) <<  hkl[1] << std::setw(4) << hkl[2];
             double l=peak->getLorentzFactor();
             double t=peak->getTransmission();
-            file << std::fixed << std::setw(14) << std::setprecision(4) << peak->getScaledIntensity()/l/t;
-            file << std::fixed << std::setw(14) << std::setprecision(4) << peak->getScaledSigma()/l/t;
+            file << std::fixed << std::setw(14) << std::setprecision(4) << peak->getCorrectedIntensity().getValue();
+            file << std::fixed << std::setw(14) << std::setprecision(4) << peak->getCorrectedIntensity().getSigma();
             file << std::setprecision(0) << std::setw(5) << 1  << std::endl;
         }
     }

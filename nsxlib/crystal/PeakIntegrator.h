@@ -35,6 +35,7 @@
 #include "../geometry/Blob3D.h"
 #include "../geometry/Ellipsoid.h"
 #include "../utils/Maybe.h"
+#include "Intensity.h"
 #include <Eigen/Core>
 
 namespace SX {
@@ -60,11 +61,17 @@ public:
     const Eigen::VectorXd& getProjectionBackground() const;
     const Eigen::VectorXd& getProjection() const;
 
+    double getMeanBackground() const;
+
     const SX::Geometry::IntegrationRegion& getRegion() const;
 
     //! return blob shape (not: not scaled by a confidence parameter)
     //!
     MaybeEllipsoid getBlobShape(double confidence) const;
+
+    Intensity getTotalIntensity() const;
+    Intensity getPeakIntensity() const;
+    Intensity getBackgroundIntensity() const;
 
     double pValue() const;
 

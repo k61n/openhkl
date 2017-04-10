@@ -29,6 +29,7 @@
  */
 
 #include "PeakIntegrator.h"
+#include "Intensity.h"
 #include "../data/IData.h"
 
 namespace SX {
@@ -174,38 +175,38 @@ void PeakIntegrator::step(const Eigen::MatrixXi& frame, size_t idx, const Eigen:
 void PeakIntegrator::end()
 {
     // get average background
-    const double avgBkg = _countsBkg.sum() / _pointsBkg.sum();
+    const double avgBkg = getMeanBackground();
 
     // subtract background from peak
     _projectionPeak = _countsPeak - avgBkg*_pointsPeak;
 
-    // Quick fix determine the limits of the peak range
-    int datastart = 0;
-    int dataend = 0;
-    bool startfound = false;
+//    // Quick fix determine the limits of the peak range
+//    int datastart = 0;
+//    int dataend = 0;
+//    bool startfound = false;
 
-    for (int i = 0; i < _projectionPeak.size(); ++i) {
-        if (!startfound && std::fabs(_projectionPeak[i]) > 1e-6) {
-            datastart = i;
-            startfound = true;
-        }
-        if (startfound) {
-            if (std::fabs(_projectionPeak[i])<1e-6) {
-                dataend = i;
-                break;
-            }
-        }
-    }
-    //
+//    for (int i = 0; i < _projectionPeak.size(); ++i) {
+//        if (!startfound && std::fabs(_projectionPeak[i]) > 1e-6) {
+//            datastart = i;
+//            startfound = true;
+//        }
+//        if (startfound) {
+//            if (std::fabs(_projectionPeak[i])<1e-6) {
+//                dataend = i;
+//                break;
+//            }
+//        }
+//    }
+//    //
 
-    if (datastart>1) {
-        datastart--;
-    }
+//    if (datastart>1) {
+//        datastart--;
+//    }
 
-    // Safety check
-    if (datastart==dataend) {
-        return;
-    }
+//    // Safety check
+//    if (datastart==dataend) {
+//        return;
+//    }
 
     // jmf testing: what does this accomplish?
 //    Eigen::VectorXd bkg=_projection-_projectionPeak;
@@ -238,6 +239,11 @@ const Eigen::VectorXd& PeakIntegrator::getProjection() const
     return _projection;
 }
 
+double PeakIntegrator::getMeanBackground() const
+{
+    return _countsBkg.sum() / _pointsBkg.sum();
+}
+
 const Geometry::IntegrationRegion& PeakIntegrator::getRegion() const
 {
     return _region;
@@ -255,6 +261,22 @@ PeakIntegrator::MaybeEllipsoid PeakIntegrator::getBlobShape(double confidence) c
         // return 'nothing'
         return {};
     }
+}
+
+Intensity PeakIntegrator::getTotalIntensity() const
+{
+    return Intensity(_countsPeak.sum(), _countsPeak.sum());
+}
+
+Intensity PeakIntegrator::getPeakIntensity() const
+{
+    return getTotalIntensity() - getBackgroundIntensity();
+}
+
+Intensity PeakIntegrator::getBackgroundIntensity() const
+{
+    double scale = double(_pointsPeak.sum()) / double(_pointsBkg.sum());
+    return Intensity(_countsBkg.sum(), _countsBkg.sum()) * scale;
 }
 
 double PeakIntegrator::pValue() const

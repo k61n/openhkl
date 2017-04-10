@@ -37,6 +37,7 @@
 
 #include "Profile.h"
 #include "UnitCell.h"
+#include "Intensity.h"
 #include "../geometry/IShape.h"
 #include "../geometry/Ellipsoid.h"
 #include "../utils/Types.h"
@@ -132,13 +133,17 @@ public:
     const SX::Geometry::IntegrationRegion& getIntegrationRegion() const { return _integrationRegion; }
 
     //! Return the scaled intensity of the peak.
-    double getScaledIntensity() const;
+    Intensity getScaledIntensity() const;
+
+    //! Return the intensity, after scaling, transmission, and Lorentz factor corrections
+    Intensity getCorrectedIntensity() const;
+
     //! Return the raw intensity of the peak.
-    double getRawIntensity() const;
+    Intensity getRawIntensity() const;
     //! Returns the error on the raw intensity.
-    double getRawSigma() const;
-    //! Returns the error on the scaled intensity.
-    double getScaledSigma() const;
+//    double getRawSigma() const;
+//    //! Returns the error on the scaled intensity.
+//    double getScaledSigma() const;
     //!
     double getIOverSigmaI() const;
     //! Return the lorentz factor of the peak.
@@ -238,6 +243,8 @@ private:
 
     Profile _profile;
     double _pValue;
+
+    Intensity _intensity;
 };
 
 using sptrPeak3D = std::shared_ptr<Peak3D>;

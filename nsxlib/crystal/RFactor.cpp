@@ -56,7 +56,7 @@ void RFactor::recalculate(const vector<vector<sptrPeak3D> > &peak_equivs)
         for (auto&& p: peak_list) {
             double lorentz = p->getLorentzFactor();
             double trans = p->getTransmission();
-            double in = p->getScaledIntensity() / lorentz / trans;
+            double in = p->getScaledIntensity().getValue() / lorentz / trans;
             average += in;
         }
 
@@ -70,7 +70,7 @@ void RFactor::recalculate(const vector<vector<sptrPeak3D> > &peak_equivs)
         for (auto&& p: peak_list) {
             double lorentz = p->getLorentzFactor();
             double trans = p->getTransmission();
-            double diff = std::fabs(p->getScaledIntensity() / lorentz / trans - average);
+            double diff = std::fabs(p->getScaledIntensity().getValue() / lorentz / trans - average);
             _Rmerge += diff;
             _Rmeas += Fmeas*diff;
             _Rpim += Fpim*diff;

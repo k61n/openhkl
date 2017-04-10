@@ -57,11 +57,12 @@ PeakRecord::PeakRecord(const Peak3D &other)
     z = center[2];
 
     merged = false;
-    iobs = other.getScaledIntensity();
-    sigma = other.getScaledSigma();
+    auto intensity = other.getScaledIntensity();
+    iobs = intensity.getValue();
+    sigma = intensity.getSigma();
 }
 
-PeakRecord::PeakRecord(const MergedPeak &other)
+PeakRecord::PeakRecord(const MergedPeak& other)
 {
     auto&& index = other.getIndex();
 
@@ -72,8 +73,9 @@ PeakRecord::PeakRecord(const MergedPeak &other)
     x = y = z = 0.0;
     merged = true;
 
-    iobs = other.intensity();
-    sigma = other.sigma();
+    auto intensity = other.getIntensity();
+    iobs = intensity.getValue();
+    sigma = intensity.getSigma();
 }
 
 bool PeakRecord::operator<(const PeakRecord &other) const

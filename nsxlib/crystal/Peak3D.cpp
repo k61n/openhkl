@@ -290,14 +290,21 @@ sptrUnitCell Peak3D::getUnitCell(int index) const
     return _unitCells[size_t(index)];
 }
 
-double Peak3D::getRawIntensity() const
+Intensity Peak3D::getRawIntensity() const
 {
-    return _counts * getData()->getSampleStepSize();
+     // return _counts * getData()->getSampleStepSize();
+    return _intensity * getData()->getSampleStepSize();
 }
 
-double Peak3D::getScaledIntensity() const
+Intensity Peak3D::getScaledIntensity() const
 {
-    return _scale*getRawIntensity();
+    return getRawIntensity() * _scale;
+}
+
+Intensity Peak3D::getCorrectedIntensity() const
+{
+    const double factor = _scale / (getLorentzFactor() * _transmission);
+    return getRawIntensity() * factor;
 }
 
 double Peak3D::getTransmission() const
@@ -310,15 +317,15 @@ void Peak3D::scaleShape(double scale)
     _shape.scale(scale);
 }
 
-double Peak3D::getRawSigma() const
-{
-    return _countsSigma * getData()->getSampleStepSize();
-}
+//double Peak3D::getRawSigma() const
+//{
+//    return _countsSigma * getData()->getSampleStepSize();
+//}
 
-double Peak3D::getScaledSigma() const
-{
-    return _scale*getRawSigma();
-}
+//double Peak3D::getScaledSigma() const
+//{
+//    return _scale*getRawSigma();
+//}
 
 double Peak3D::getLorentzFactor() const
 {
@@ -466,7 +473,8 @@ bool Peak3D::isObserved() const
 
 double Peak3D::getIOverSigmaI() const
 {
-    return _counts/_countsSigma;
+    //return _counts/_countsSigma;
+    return _intensity.getValue() / _intensity.getSigma();
 }
 
 void Peak3D::updateIntegration(const PeakIntegrator& integrator)
@@ -478,6 +486,7 @@ void Peak3D::updateIntegration(const PeakIntegrator& integrator)
     _counts = _projectionPeak.sum();
     _countsSigma = std::sqrt(std::abs(_counts));
     _pValue = integrator.pValue();
+    _intensity = integrator.getPeakIntensity();
 
     // fit peak profile
     _profile.fit(_projectionPeak, 100);
