@@ -80,6 +80,8 @@ if(NOT DEACTIVATE_ZLIB)
     endif(ZLIB_FOUND)
 endif(NOT DEACTIVATE_ZLIB)
 
+# NSXTool
+add_definitions(-fPIC)
 
 # targets
 add_library(blosc_shared SHARED ${SOURCES})
