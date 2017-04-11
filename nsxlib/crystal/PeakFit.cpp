@@ -37,22 +37,26 @@
 #include <stdexcept>
 
 #include "PeakFit.h"
-#include "IData.h"
-#include "IMinimizer.h"
-#include "Round.h"
-#include "Interpolator.h"
+#include "../geometry/IntegrationRegion.h"
+#include "../data/IData.h"
+#include "../utils/IMinimizer.h"
+#include "../utils/Round.h"
+#include "../utils/Interpolator.h"
 
-namespace SX
-{
+using SX::Geometry::IntegrationRegion;
+
+namespace SX {
 using namespace Utils;
 
-namespace Crystal
-{
+namespace Crystal {
 
 PeakFit::PeakFit(sptrPeak3D peak): _peak(peak)
 {
-    auto lower = _peak->getBackground()->getLower();
-    auto upper = _peak->getBackground()->getUpper();
+    IntegrationRegion region(peak->getShape());
+    auto background = region.getBackground();
+
+    auto lower = background.getLower();
+    auto upper = background.getUpper();
 
     _frameBegin = std::max(Utils::ifloor(lower(2)), 0);
     _frameEnd = std::min(static_cast<std::size_t>(Utils::iceil(upper(2))), _peak->getData()->getNFrames());
@@ -78,7 +82,7 @@ PeakFit::PeakFit(sptrPeak3D peak): _peak(peak)
         for (unsigned int r = 0; r < nrows; ++r) {
             for (unsigned int c = 0; c < ncols; ++c) {
                 Eigen::Vector4d p(c+_colMin, r+_rowMin, i, 1);
-                _maskData[i-_frameBegin](r,c) = _peak->getBackground()->isInside(p) ? 1.0 : 0.0;
+                _maskData[i-_frameBegin](r,c) = background.isInside(p) ? 1.0 : 0.0;
             }
         }
 
@@ -379,7 +383,7 @@ Eigen::VectorXd PeakFit::defaultParams() const
 
     bkg /= nbkg;
 
-    Eigen::Vector3d x0 = _peak->getPeak()->getAABBCenter();
+    Eigen::Vector3d x0 = _peak->getShape().getAABBCenter();
 
     double b0 = 0.0, b1 = 0.0;
     double c = maxIntensity()-bkg;
@@ -387,31 +391,19 @@ Eigen::VectorXd PeakFit::defaultParams() const
     double d00, d01, d02, d11, d12, d22;
 
     // rough for now!!
-    Eigen::Vector3d lower = _peak->getPeak()->getLower();
-    Eigen::Vector3d upper  =_peak->getPeak()->getUpper();
+    auto shape = _peak->getShape();
+    Eigen::Vector3d lower = _peak->getShape().getLower();
+    Eigen::Vector3d upper  =_peak->getShape().getUpper();
 
-    auto shape = dynamic_cast<const SX::Geometry::Ellipsoid<double, 3>*>(_peak->getPeak());
+    Eigen::Matrix3d rs = shape.getRSinv();
+    Eigen::Matrix3d a = 2.0 * rs.transpose()*rs;
 
-    if (shape) {
-
-        Eigen::Matrix3d rs = shape->getRSinv();
-        Eigen::Matrix3d a = 2.0 * rs.transpose()*rs;
-
-        d00 = a(0, 0);
-        d11 = a(1, 1);
-        d22 = a(2, 2);
-        d01 = a(0, 1);
-        d12 = a(1, 2);
-        d02 = a(0, 2);
-    }
-    else {
-        auto dx = upper-lower;
-        double scale = 1.0 / 3.0;
-        d00 = 2.0 / dx(0);
-        d11 = 2.0 / dx(1);
-        d22 = 2.0 / dx(2);
-        d01 = d02 = d12 = 0.0;
-    }
+    d00 = a(0, 0);
+    d11 = a(1, 1);
+    d22 = a(2, 2);
+    d01 = a(0, 1);
+    d12 = a(1, 2);
+    d02 = a(0, 2);
 
     double e0, e1, e2, e00, e01, e02, e11, e12, e22;
     e0 = e1 = e2 = e00 = e01 = e02 = e11 = e12 = e22 = 0.0;
@@ -444,11 +436,5 @@ int PeakFit::integerFrame(double f) const
     return fint;
 }
 
-
-
 } // namespace Crystal
 } // namespace SX
-
-
-
-

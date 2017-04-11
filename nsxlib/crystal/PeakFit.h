@@ -31,7 +31,7 @@
 #define NSXTOOL_PEAKFIT_H_
 
 #include "UnitCell.h"
-#include "IShape.h"
+#include "../geometry/IShape.h"
 #include "Peak3D.h"
 #include <Eigen/Dense>
 
