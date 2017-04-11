@@ -415,6 +415,20 @@ Eigen::VectorXd PeakFit::defaultParams() const
 
 bool PeakFit::fit(IMinimizer& minimizer)
 {
+    auto min_func = [this](const Eigen::VectorXd& par, Eigen::VectorXd& res) -> int
+    {
+        residuals(par, res);
+        return 0;
+    };
+
+    minimizer.initialize(numParams(), numValues());
+    minimizer.set_f(min_func);
+    minimizer.setParams(_params);
+
+    if (minimizer.fit(200) ) {
+        _params = minimizer.params();
+        return true;
+    }
     return false;
 }
 

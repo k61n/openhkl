@@ -118,6 +118,7 @@ private slots:
     void on_actionWrite_log_file_triggered();
     void on_actionReintegrate_peaks_triggered();
     void on_actionFit_peak_profiles_triggered();
+    void on_actionAuto_assign_unit_cell_triggered();
 
 public slots:
     void changeData(std::shared_ptr<SX::Data::DataSet>);

@@ -81,6 +81,8 @@ public:
     typedef T * pointer;
     typedef T & reference;
 
+    using HomVector = typename IShape<T,D>::HomVector;
+
     // ! A typedef for 1D vector
     typedef Eigen::Matrix<T,D,1> vector;
 
@@ -135,6 +137,9 @@ public:
 
     //! Return collisions with a given shape
     std::set<const IShape<T, D>*> getCollisions(const IShape<T, D>& given) const;
+
+    //! Return true if the point is contained in any object of the octree
+    bool isInsideObject(const HomVector& vector);
 
     //! Get the voxels of the tree
     void getVoxels(std::vector<AABB<T,D>* >& voxels);
@@ -442,6 +447,35 @@ std::set<const IShape<T, D>*> NDTree<T,D>::getCollisions(const IShape<T, D>& giv
 
     recursiveCollisions(this, collisions);
     return collisions;
+}
+
+template<typename T, SX::Types::uint D>
+bool NDTree<T,D>::isInsideObject(const NDTree<T,D>::HomVector &vector)
+{
+    // shape's box does not intercept tree
+    if (!isInside(vector)) {
+        return false;
+    }
+
+    // tree has children
+    if (hasChildren()) {
+        for (auto&& child: _children) {
+            if (child.isInsideObject(vector)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // otherwise, tree has no children
+    for (auto&& shape: _data) {
+        if (shape->isInside(vector)) {
+            return true;
+        }
+    }
+
+    // no collision found
+    return false;
 }
 
 template<typename T, SX::Types::uint D>

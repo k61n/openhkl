@@ -167,7 +167,7 @@ void PeakIntegrator::step(const Eigen::MatrixXi& frame, size_t idx, const Eigen:
             const bool inpeak = (type == point_type::REGION);
             const bool inbackground = (type == point_type::BACKGROUND) && (mask(y, x) == 0);
 
-            if (inpeak) {
+            if (inpeak && intensity > 1.20*avgBkg) {
                 _blob.addPoint(x, y, idx, intensity-avgBkg);
             }
         }

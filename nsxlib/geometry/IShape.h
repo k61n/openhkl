@@ -57,10 +57,11 @@ enum Direction {CW,CCW};
 template<typename T,SX::Types::uint D>
 class IShape
 {
-    typedef Eigen::Matrix<T,D,D> matrix;
-    typedef Eigen::Matrix<T,D,1> vector;
-    typedef Eigen::Matrix<T,D+1,1> HomVector;
 public:
+    using matrix = Eigen::Matrix<T,D,D>;
+    using vector = Eigen::Matrix<T,D,1>;
+    using HomVector = Eigen::Matrix<T,D+1,1>;
+
     //! Construct an unitialized IShape
     IShape();
     //! Construct a IShape from another IShape

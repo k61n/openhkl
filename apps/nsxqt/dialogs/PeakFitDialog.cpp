@@ -138,9 +138,11 @@ void PeakFitDialog::updatePlots()
     Eigen::ArrayXXd diffData = (predData-peakData).abs();
     Eigen::ArrayXXd chi2Data = _peakFit->chi2(frame);
 
-    const int max_intensity = std::round    (_peakFit->maxIntensity());
+    const int max_intensity = std::round(_peakFit->maxIntensity());
 
-    QRect sceneRect(0, 0, peakData.cols()-1, peakData.rows()-1);
+    //QRect sceneRect(0, 0, peakData.cols()-1, peakData.rows()-1);
+    QRect sceneRect(0, 0, peakData.cols(), peakData.rows());
+
     _peakScene->setSceneRect(sceneRect);
     _fitScene->setSceneRect(sceneRect);
     _differenceScene->setSceneRect(sceneRect);
@@ -196,8 +198,13 @@ void PeakFitDialog::updatePlots()
 
     auto&& peakProjection = _peak->getPeakProjection();
 
+    // debug
+    std::cout << "xmin: " << xmin << std::endl;
+    std::cout << "xmax: " << xmax << std::endl;
+    std::cout << "length of peak projections: " << peakProjection.size() << std::endl;
+
     // go through each frame
-    for(int i = 0; i < num_points; ++i) {
+        for(int i = 0; i < num_points; ++i) {
 
         double x = xmin + i*(double)(xmax-xmin) / (double)num_points;
         double t = x-std::floor(x);
@@ -276,19 +283,7 @@ void PeakFitDialog::on_runFitButton_clicked()
 
     MinimizerGSL min;
 
-    auto min_func = [&](const Eigen::VectorXd& par, Eigen::VectorXd& res) -> int
-    {
-        _peakFit->residuals(par, res);
-        return 0;
-    };
-
-    Eigen::VectorXd params = _bestParams;
-
-    min.initialize(_peakFit->numParams(), _peakFit->numValues());
-    min.set_f(min_func);
-    min.setParams(params);
-
-    if (min.fit(100) ) {
+     if (_peakFit->fit(min) ) {
         qDebug() << "Fit converged!";
     }
     else {

@@ -70,6 +70,8 @@
 #include <nsxlib/instrument/Source.h>
 #include <nsxlib/utils/gcd.h>
 
+#include <nsxlib/crystal/PeakFit.h>
+
 #include "dialogs/DialogCalculatedPeaks.h"
 #include "dialogs/ResolutionCutoffDialog.h"
 
@@ -1007,4 +1009,53 @@ bool SessionModel::writeXDS(std::string filename, const std::vector<sptrPeak3D>&
     bool result = xds.write(file);
     qDebug() << "Done writing log file.";
     return result;
+}
+
+void SessionModel::fitAllPeaks()
+{
+    auto numors = getSelectedNumors();
+
+    for (auto&& numor: numors) {
+        auto peaks = numor->getPeaks();
+
+        for (auto&& peak: peaks) {
+            if (!peak->isSelected() || peak->isMasked()) {
+                continue;
+            }
+
+            SX::Crystal::PeakFit peak_fit(peak);
+            // todo...
+        }
+    }
+}
+
+void SessionModel::autoAssignUnitCell()
+{
+    auto numors = getSelectedNumors();
+
+    for (auto&& numor: numors) {
+        auto sample = numor->getDiffractometer()->getSample();
+        auto peaks = numor->getPeaks();
+
+        for (auto&& peak: peaks) {
+            Eigen::RowVector3d hkl;
+            bool assigned = false;
+
+            for (auto i = 0; i < sample->getNCrystals(); ++i) {
+                auto cell = sample->getUnitCell(i);
+
+                if (peak->getMillerIndices(*cell, hkl, true)) {
+                    peak->addUnitCell(cell, true);
+                    assigned = true;
+                    break;
+                }
+            }
+
+            // could not assign unit cell
+            if (assigned == false) {
+                peak->setSelected(false);
+            }
+        }
+    }
+    qDebug() << "Done auto assigning unit cells";
 }

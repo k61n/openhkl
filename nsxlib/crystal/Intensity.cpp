@@ -42,12 +42,16 @@ namespace Crystal {
 
 Intensity::Intensity(double value, double sigma2): _value(value), _sigma2(sigma2)
 {
-    assert(_sigma2 >= 0.0);
+    if (_sigma2 < 0.0 || std::isnan(_sigma2)) {
+        _sigma2 = 0.0;
+    }
 }
 
 Intensity::Intensity(const Intensity& other): _value(other._value), _sigma2(other._sigma2)
 {
-    assert(_sigma2 >= 0.0);
+    if (_sigma2 < 0.0 || std::isnan(_sigma2)) {
+        _sigma2 = 0.0;
+    }
 }
 
 double Intensity::getValue() const
@@ -72,6 +76,9 @@ Intensity Intensity::operator-(const Intensity &other) const
 
 Intensity Intensity::operator*(double scale) const
 {
+    if (scale < 0.0 || std::isnan(scale)) {
+        return Intensity(0.0, 0.0);
+    }
     return Intensity(scale*_value, scale*scale*_sigma2);
 }
 

@@ -647,3 +647,9 @@ void MainWindow::on_actionFit_peak_profiles_triggered()
     qDebug() << "Fit peak profiles triggered";
     _session->peakFitDialog();
 }
+
+void MainWindow::on_actionAuto_assign_unit_cell_triggered()
+{
+    qDebug() << "Auto assign unit cell triggered";
+    _session->autoAssignUnitCell();
+}

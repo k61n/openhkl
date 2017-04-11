@@ -1388,7 +1388,8 @@ border-radius: 4px;
      <addaction name="actionIncorporate_calculated_peaks"/>
      <addaction name="actionApply_resolution_cutoff"/>
      <addaction name="actionReintegrate_peaks"/>
-     <addaction name="actionFit_peaks"/>
+     <addaction name="actionFit_peak_profiles"/>
+     <addaction name="actionAuto_assign_unit_cell"/>
     </widget>
     <addaction name="actionFind_space_group"/>
     <addaction name="menuPeaks"/>
@@ -1864,9 +1865,14 @@ QDockWidget::title {
     <string>Reintegrate peaks</string>
    </property>
   </action>
-  <action name="actionFit_peaks">
+  <action name="actionFit_peak_profiles">
    <property name="text">
     <string>Fit peak profiles</string>
+   </property>
+  </action>
+  <action name="actionAuto_assign_unit_cell">
+   <property name="text">
+    <string>Auto assign unit cell</string>
    </property>
   </action>
  </widget>
