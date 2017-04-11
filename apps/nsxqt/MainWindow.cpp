@@ -641,3 +641,9 @@ void MainWindow::on_actionReintegrate_peaks_triggered()
     _session->updatePeaks();
     qDebug() << "Done reintegrating peaks intensities";
 }
+
+void MainWindow::on_actionFit_peak_profiles_triggered()
+{
+    qDebug() << "Fit peak profiles triggered";
+    _session->peakFitDialog();
+}

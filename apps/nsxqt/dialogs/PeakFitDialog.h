@@ -38,8 +38,8 @@
 
 #include <QDialog>
 #include <memory>
-#include "Peak3D.h"
-#include "PeakFit.h"
+#include <nsxlib/crystal/Peak3D.h>
+#include <nsxlib/crystal/PeakFit.h>
 #include <Eigen/Dense>
 
 class QGraphicsScene;

@@ -59,8 +59,7 @@ public:
         return qRgb(_log_rgb[3*i+0], _log_rgb[3*i+1], _log_rgb[3*i+2]);
     }
 
-    QImage matToImage(const Eigen::MatrixXi& source, const QRect& rect, int colorMax, bool log=false);
-    QImage matToImage(const Eigen::MatrixXd& source, const QRect& rect, double colorMax, bool log=false);
+    QImage matToImage(const Eigen::ArrayXXd& source, const QRect& rect, double colorMax, bool log=false);
 
     static ColorMap getColorMap(const std::string& name);
     static std::vector<std::string> getColorMapNames();

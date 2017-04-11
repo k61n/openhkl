@@ -42,8 +42,8 @@
 #include "ui_PeakFitDialog.h"
 #include "models/SessionModel.h"
 #include "ColorMap.h"
-#include "IData.h"
-#include "Minimizer.h"
+#include <nsxlib/data/IData.h>
+#include <nsxlib/utils/MinimizerGSL.h>
 
 using namespace SX::Crystal;
 using namespace SX::Utils;
@@ -146,10 +146,17 @@ void PeakFitDialog::updatePlots()
     _differenceScene->setSceneRect(sceneRect);
     _chiSquaredScene->setSceneRect(sceneRect);
 
-    QImage peak = Mat2QImage(peakData, sceneRect, max_intensity);
-    QImage pred = Mat2QImage(predData, sceneRect, max_intensity);
-    QImage chi2 = Mat2QImage(chi2Data, sceneRect, max_intensity);
-    QImage diff = Mat2QImage(diffData, sceneRect, max_intensity);
+    ColorMap cmap;
+
+    QImage peak = cmap.matToImage(peakData.matrix(), sceneRect, max_intensity);
+    QImage pred = cmap.matToImage(predData, sceneRect, max_intensity);
+    QImage chi2 = cmap.matToImage(chi2Data, sceneRect, max_intensity);
+    QImage diff = cmap.matToImage(diffData, sceneRect, max_intensity);
+
+    //QImage peak = Mat2QImage(peakData, sceneRect, max_intensity);
+    //QImage pred = Mat2QImage(predData, sceneRect, max_intensity);
+    //QImage chi2 = Mat2QImage(chi2Data, sceneRect, max_intensity);
+    //QImage diff = Mat2QImage(diffData, sceneRect, max_intensity);
 
     if (!_peakImage) {
         _peakImage = _peakScene->addPixmap(QPixmap::fromImage(peak));
@@ -267,15 +274,13 @@ void PeakFitDialog::on_runFitButton_clicked()
         return;
     }
 
-    Minimizer min;
+    MinimizerGSL min;
 
     auto min_func = [&](const Eigen::VectorXd& par, Eigen::VectorXd& res) -> int
     {
         _peakFit->residuals(par, res);
         return 0;
     };
-
-
 
     Eigen::VectorXd params = _bestParams;
 

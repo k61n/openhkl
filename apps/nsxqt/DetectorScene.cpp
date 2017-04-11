@@ -491,10 +491,10 @@ void DetectorScene::loadCurrentImage(bool newimage)
         _currentFrame =_currentData->getFrame(_currentFrameIndex);
     }
     if (_image == nullptr) {
-        _image = addPixmap(QPixmap::fromImage(_colormap->matToImage(_currentFrame, full, _currentIntensity, _logarithmic)));
+        _image = addPixmap(QPixmap::fromImage(_colormap->matToImage(_currentFrame.cast<double>(), full, _currentIntensity, _logarithmic)));
         _image->setZValue(-2);
     } else {
-        _image->setPixmap(QPixmap::fromImage(_colormap->matToImage(_currentFrame, full, _currentIntensity, _logarithmic)));
+        _image->setPixmap(QPixmap::fromImage(_colormap->matToImage(_currentFrame.cast<double>(), full, _currentIntensity, _logarithmic)));
     }
 
     // update the integration region pixmap

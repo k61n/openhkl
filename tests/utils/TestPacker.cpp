@@ -44,7 +44,7 @@
 #include <vector>
 #include <string>
 
-#include "Packer.h"
+#include <nsxlib/utils/Packer.h>
 #include <Eigen/Dense>
 
 using namespace SX::Utils;
