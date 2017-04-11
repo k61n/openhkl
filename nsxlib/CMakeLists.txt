@@ -2,6 +2,7 @@
 include_directories(
   ${CMAKE_BINARY_DIR}/include/
   ../externals/c-blosc/blosc
+  ${CMAKE_BINARY_DIR}/externals/gsl/gsl/
 )
 
 # note: *.c needed for blosc files in data directory
@@ -17,27 +18,16 @@ else()
   add_library(nsx SHARED ${sources} ${headers})
 endif()
 
-if(MSVC)
-  target_link_libraries(nsx
+target_link_libraries(nsx 
     ${HDF5_LIBRARIES}
     blosc_static
     ${Boost_LIBRARIES}
     ${PYTHON_LIBRARIES}
     ${FFTW_LIBRARIES}
     ${TIFF_LIBRARY}
-    ${GSL_LIBRARIES}
+    gsl
+    gslcblas
     )
-else()
-  target_link_libraries(nsx
-    ${HDF5_LIBRARIES}
-    blosc_shared
-    ${Boost_LIBRARIES}
-    ${PYTHON_LIBRARIES}
-    ${FFTW_LIBRARIES}
-    ${TIFF_LIBRARY}
-    ${GSL_LIBRARIES}
-    )
-endif()
 
 # Install section, installing libraries
 install(TARGETS nsx DESTINATION lib)
@@ -46,7 +36,7 @@ file(GLOB_RECURSE all_headers *.h)
 install(CODE "MESSAGE(\"Installing headers...\")")
 install(FILES ${headers} DESTINATION ${INCLUDE_DIR})
 
-message("FROM NSXLIB: GSL_LIBRARIES is ${GSL_LIBRARIES}")
+#message("FROM NSXLIB: GSL_LIBRARIES is ${GSL_LIBRARIES}")
 
 if(NSX_TIDY)
   add_tidy_target(nsx)
