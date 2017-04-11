@@ -1,57 +1,98 @@
+/*
+ * nsxtool : Neutron Single Crystal analysis toolkit
+ ------------------------------------------------------------------------------------------
+ Copyright (C)
+ 2016- Laurent C. Chapon, Eric Pellegrini, Jonathan Fisher
+
+ Institut Laue-Langevin
+ BP 156
+ 6, rue Jules Horowitz
+ 38042 Grenoble Cedex 9
+ France
+ chapon[at]ill.fr
+ pellegrini[at]ill.fr
+
+ Forshungszentrum Juelich GmbH
+ 52425 Juelich
+ Germany
+ j.fisher[at]fz-juelich.de
+
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+
+ You should have received a copy of the GNU Lesser General Public
+ License along with this library; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ */
+
 #ifndef PEAKFITDIALOG_H
 #define PEAKFITDIALOG_H
 
 #include <QDialog>
-
-#include "tree/ExperimentTree.h"
+#include <memory>
+#include "Peak3D.h"
+#include "PeakFit.h"
+#include <Eigen/Dense>
 
 class QGraphicsScene;
-class QGraphicsPixmapItem;
+class QCustomPlot;
 
 class SessionModel;
-
-namespace SX {
-namespace Crystal {
-class Peak3D;
-using sptrPeak3D=std::shared_ptr<Peak3D>;
-}
-}
 
 namespace Ui {
 class PeakFitDialog;
 }
 
-using SX::Crystal::sptrPeak3D;
-
-class PeakFitDialog : public QDialog {
+class PeakFitDialog : public QDialog
+{
     Q_OBJECT
 
 public:
     explicit PeakFitDialog(SessionModel* session, QWidget *parent = 0);
     ~PeakFitDialog();
-    void updateView();
-    void updatePeak();
 
+    bool changePeak();
+    void updatePlots();
 
-public slots:
-    void changeFrame(int value);
-    void changeH(int value);
-    void changeK(int value);
-    void changeL(int value);
-    void fitPeakShape();
-    void checkCollisions();
+private slots:
+    void on_hSpinBox_valueChanged(int arg1);
+    void on_kSpinBox_valueChanged(int arg1);
+    void on_lSpinBox_valueChanged(int arg1);
+
+    void on_frameScrollBar_valueChanged(int value);
+
+    void on_runFitButton_clicked();
 
 private:
     Ui::PeakFitDialog *ui;
     SessionModel* _session;
-    QGraphicsScene* _scene;
-    QGraphicsPixmapItem* _image;
-    Eigen::RowVector3i _hkl;
+    SX::Crystal::sptrPeak3D _peak;
+    std::unique_ptr<SX::Crystal::PeakFit> _peakFit;
 
-    int _xmin, _xmax, _ymin, _ymax, _zmin, _zmax;
+    QGraphicsScene* _peakScene;
+    QGraphicsScene* _fitScene;
+    QGraphicsScene* _differenceScene;
+    QGraphicsScene* _chiSquaredScene;
 
-    Eigen::RowVectorXd _fitParams;
-    sptrPeak3D _peak;
+    QGraphicsPixmapItem* _peakImage;
+    QGraphicsPixmapItem* _fitImage;
+    QGraphicsPixmapItem* _differenceImage;
+    QGraphicsPixmapItem* _chiSquaredImage;
+
+    Eigen::MatrixXd _peakData;
+    Eigen::MatrixXd _fitData;
+    Eigen::MatrixXd _differenceData;
+    Eigen::MatrixXd _chiSquaredData;
+
+    Eigen::VectorXd _bestParams;
 };
 
 #endif // PEAKFITDIALOG_H
