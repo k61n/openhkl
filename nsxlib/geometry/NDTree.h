@@ -450,7 +450,7 @@ std::set<const IShape<T, D>*> NDTree<T,D>::getCollisions(const IShape<T, D>& giv
 }
 
 template<typename T, SX::Types::uint D>
-bool NDTree<T,D>::isInsideObject(const NDTree<T,D>::HomVector &vector)
+bool NDTree<T,D>::isInsideObject(const HomVector& vector)
 {
     // shape's box does not intercept tree
     if (!isInside(vector)) {
