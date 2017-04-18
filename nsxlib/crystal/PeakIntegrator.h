@@ -106,6 +106,13 @@ private:
     Eigen::VectorXd _countsPeak;
     Eigen::VectorXd _countsBkg;
 
+    Eigen::Matrix3d _fitA;
+    Eigen::Vector3d _fitP;
+    Eigen::Vector3d _fitB;
+    Eigen::VectorXd _sumX;
+    Eigen::VectorXd _sumY;
+    double _fitCC;
+
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
 };

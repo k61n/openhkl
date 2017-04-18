@@ -93,6 +93,13 @@ PeakIntegrator::PeakIntegrator(const SX::Geometry::IntegrationRegion& region, co
 
 //    _peak_mask.resize(_dy, _dx);
 //    _bkg_mask.resize(_dy, _dx);
+
+    _fitA.setZero();
+    _fitP.setZero();
+    _fitB.setZero();
+    _fitCC = 0.0;
+    _sumX = Eigen::VectorXd::Zero(_data_end - _data_start + 1);
+    _sumY = Eigen::VectorXd::Zero(_data_end - _data_start + 1);
 }
 
 void PeakIntegrator::step(const Eigen::MatrixXi& frame, size_t idx, const Eigen::MatrixXi& mask)
@@ -130,9 +137,32 @@ void PeakIntegrator::step(const Eigen::MatrixXi& frame, size_t idx, const Eigen:
 
             if (inpeak) {
                 _peak_mask(y-_start_y, x-_start_x) = 1.0;
+                _sumX(idx-_data_start) += x;
+                _sumY(idx-_data_start) += y;
             }
             else if (inbackground) {
                 _bkg_mask(y-_start_y, x-_start_x) = 1.0;
+
+                _fitA(0, 0) += 1;
+                _fitA(0, 1) += x;
+                _fitA(0, 2) += y;
+
+                _fitA(1, 0) += x;
+                _fitA(1, 1) += x*x;
+                _fitA(1, 2) += x*y;
+
+                _fitA(2, 0) += y;
+                _fitA(2, 1) += x*y;
+                _fitA(2, 2) += y*y;
+
+                _fitB(0) += intensity;
+                _fitB(1) += intensity*x;
+                _fitB(2) += intensity*y;
+
+                _fitCC += intensity*intensity;
+
+                _sumX(idx-_data_start) += x;
+                _sumY(idx-_data_start) += y;
             }
         }
     }
@@ -181,6 +211,28 @@ void PeakIntegrator::end()
 
     // subtract background from peak
     _projectionPeak = _countsPeak - avgBkg*_pointsPeak;
+
+    // get the fitted background
+    _fitP = _fitA.inverse()*_fitB;
+    // get the norm-sqared residual
+    volatile double avg_residual = (_fitCC - _fitP.dot(_fitB)) / _pointsBkg.sum();
+
+
+    Eigen::ArrayXd bkg_1 = avgBkg*(_pointsPeak+_pointsBkg);
+    Eigen::ArrayXd bkg_2 = _fitP(0)*(_pointsPeak+_pointsBkg) + _fitP(1)*_sumX + _fitP(2)*_sumY;
+
+    Eigen::ArrayXd projectionPeak2 = _countsPeak.array() + _countsBkg.array() - bkg_2;
+
+    // debugging
+    std::cout << "bkg_1 " << bkg_1.sum() << std::endl;
+    std::cout << "bkg_2 " << bkg_2.sum() << std::endl;
+    std::cout << "I_1   " << _projectionPeak.sum() << std::endl;
+    std::cout << "I_2   " << projectionPeak2.sum() << std::endl;
+
+    double b1 = bkg_1.sum();
+    double b2 = bkg_2.sum();
+
+
 
 //    // Quick fix determine the limits of the peak range
 //    int datastart = 0;
