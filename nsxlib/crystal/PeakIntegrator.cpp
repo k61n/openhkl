@@ -50,8 +50,11 @@ PeakIntegrator::PeakIntegrator(const SX::Geometry::IntegrationRegion& region, co
     _dx(),
     _dy()
 {
-    _data_start = std::lround((std::floor(_lower[2])));
-    _data_end = std::lround((std::ceil(_upper[2])));
+//    _data_start = std::lround((std::floor(_lower[2])));
+//    _data_end = std::lround((std::ceil(_upper[2])));
+
+    _data_start = std::lround((std::ceil(_lower[2])));
+    _data_end = std::lround((std::floor(_upper[2])));
 
     _start_x = std::lround((std::floor(_lower[0])));
     _end_x = std::lround((std::ceil(_upper[0])));
@@ -100,6 +103,7 @@ PeakIntegrator::PeakIntegrator(const SX::Geometry::IntegrationRegion& region, co
     _fitCC = 0.0;
     _sumX = Eigen::VectorXd::Zero(_data_end - _data_start + 1);
     _sumY = Eigen::VectorXd::Zero(_data_end - _data_start + 1);
+    _bkgStd = 0.0;
 }
 
 void PeakIntegrator::step(const Eigen::MatrixXi& frame, size_t idx, const Eigen::MatrixXi& mask)
@@ -163,6 +167,8 @@ void PeakIntegrator::step(const Eigen::MatrixXi& frame, size_t idx, const Eigen:
 
                 _sumX(idx-_data_start) += x;
                 _sumY(idx-_data_start) += y;
+
+                _bkgStd += intensity*intensity;
             }
         }
     }
@@ -197,8 +203,10 @@ void PeakIntegrator::step(const Eigen::MatrixXi& frame, size_t idx, const Eigen:
             const bool inpeak = (type == point_type::REGION);
             const bool inbackground = (type == point_type::BACKGROUND) && (mask(y, x) == 0);
 
-            if (inpeak && intensity > 1.20*avgBkg) {
-                _blob.addPoint(x, y, idx, intensity-avgBkg);
+            //if ((inpeak||inbackground) && intensity > 1.20*avgBkg) {
+            //if ((inpeak||inbackground) && intensity > 1.20*avgBkg) {
+            if (inpeak) {
+                _blob.addPoint(x, y, idx, intensity);
             }
         }
     }
@@ -208,6 +216,11 @@ void PeakIntegrator::end()
 {
     // get average background
     const double avgBkg = getMeanBackground();
+
+    // get standard deviation of background
+    _bkgStd -= (_pointsBkg.sum()) * avgBkg * avgBkg;
+    _bkgStd /= _pointsBkg.sum()-1;
+    _bkgStd = std::sqrt(_bkgStd);
 
     // subtract background from peak
     _projectionPeak = _countsPeak - avgBkg*_pointsPeak;
@@ -223,59 +236,46 @@ void PeakIntegrator::end()
 
     Eigen::ArrayXd projectionPeak2 = _countsPeak.array() + _countsBkg.array() - bkg_2;
 
+    // note: this "background" simply refers to anything in the AABB but NOT in the peak
+    _projectionBkg=_projection-_projectionPeak;
+
     // debugging
-    std::cout << "bkg_1 " << bkg_1.sum() << std::endl;
-    std::cout << "bkg_2 " << bkg_2.sum() << std::endl;
-    std::cout << "I_1   " << _projectionPeak.sum() << std::endl;
-    std::cout << "I_2   " << projectionPeak2.sum() << std::endl;
+//    std::cout << "bkg_1 " << bkg_1.sum() << std::endl;
+//    std::cout << "bkg_2 " << bkg_2.sum() << std::endl;
+//    std::cout << "I_1   " << _projectionPeak.sum() << std::endl;
+//    std::cout << "I_2   " << projectionPeak2.sum() << std::endl;
 
     double b1 = bkg_1.sum();
     double b2 = bkg_2.sum();
 
+    // still testing
+    _projectionPeak = projectionPeak2;
+    _projectionBkg = bkg_2;
+    auto total_counts = (_countsBkg + _countsPeak).array();
+    _projection = (_projectionPeak + _projectionBkg).array();
 
-
-//    // Quick fix determine the limits of the peak range
-//    int datastart = 0;
-//    int dataend = 0;
-//    bool startfound = false;
-
-//    for (int i = 0; i < _projectionPeak.size(); ++i) {
-//        if (!startfound && std::fabs(_projectionPeak[i]) > 1e-6) {
-//            datastart = i;
-//            startfound = true;
+//    for (auto i = 0; i < _projection.size(); ++i) {
+//        if (total_counts(i) > 1e-3) {
+//            _projection(i) = _projection(i) / total_counts(i) * (_dx*_dy);
 //        }
-//        if (startfound) {
-//            if (std::fabs(_projectionPeak[i])<1e-6) {
-//                dataend = i;
-//                break;
-//            }
-//        }
-//    }
-//    //
-
-//    if (datastart>1) {
-//        datastart--;
-//    }
-
-//    // Safety check
-//    if (datastart==dataend) {
-//        return;
-//    }
-
-    // jmf testing: what does this accomplish?
-//    Eigen::VectorXd bkg=_projection-_projectionPeak;
-//    double bkg_left=bkg[datastart];
-//    double bkg_right=bkg[dataend];
-//    double diff;
-//    for (int i=datastart;i<dataend;++i) {
-//        diff=bkg[i]-(bkg_left+static_cast<double>((i-datastart))/static_cast<double>((dataend-datastart))*(bkg_right-bkg_left));
-//        if (diff>0) {
-//            _projectionPeak[i]+=diff;
+//        else {
+//            _projection(i) = 0;
 //        }
 //    }
 
-    // note: this "background" simply refers to anything in the AABB but NOT in the peak
-    _projectionBkg=_projection-_projectionPeak;
+    // update blob
+    for (unsigned int idx = _data_start; idx <= _data_end; ++idx) {
+        for (unsigned int x = _start_x; x <= _end_x; ++x) {
+            for (unsigned int y = _start_y; y <= _end_y; ++y) {
+                _point1 << x, y, idx, 1;
+
+                if (_region.inRegion(_point1)) {
+                    const double bkg = _fitP(0) + _fitP(1)*x + _fitP(2)*y;
+                    _blob.addPoint(x, y, idx, -bkg);
+                }
+            }
+        }
+    }
 }
 
 const Eigen::VectorXd& PeakIntegrator::getProjectionPeak() const
@@ -361,10 +361,12 @@ double PeakIntegrator::pValue() const
     }
 
     // thus we obtain the following standard normal variable
-    const double z = (avg-R) / std::sqrt(var);
+    //const double z = (avg-R) / std::sqrt(var);
+    const double z = (avg-R) / _bkgStd;
 
     // compute the p value
-    const double p = 1.0 - 0.5 * (1.0 + std::erf(z / std::sqrt(2)));
+    //const double p = 1.0 - 0.5 * (1.0 + std::erf(z / std::sqrt(2)));
+    const double p = 0.5 - 0.5 * (std::erf(z / std::sqrt(2)));
 
     return p;
 }

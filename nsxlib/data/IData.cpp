@@ -757,6 +757,68 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
     }
 }
 
+void SX::Data::DataSet::removeDuplicatePeaks()
+{
+    using SX::Instrument::Sample;
+    using Octree = SX::Geometry::NDTree<double, 3>;
+
+    class compare_fn {
+    public:
+        auto operator()(const Eigen::RowVector3i& a, const Eigen::RowVector3i& b) -> bool
+        {
+            if (a(0) != b(0))
+                return a(0) < b(0);
+
+            if (a(1) != b(1))
+                return a(1) < b(1);
+
+            return a(2) < b(2);
+        }
+    };
+
+
+    int predicted_peaks = 0;
+
+    auto& mono = getDiffractometer()->getSource()->getSelectedMonochromator();
+    const double wavelength = mono.getWavelength();
+    std::vector<sptrPeak3D> calculated_peaks;
+
+    std::shared_ptr<Sample> sample = getDiffractometer()->getSample();
+    unsigned int ncrystals = static_cast<unsigned int>(sample->getNCrystals());
+
+    for (unsigned int i = 0; i < ncrystals; ++i) {
+        SX::Crystal::SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
+        auto cell = sample->getUnitCell(i);
+        auto UB = cell->getReciprocalStandardM();
+
+        std::map<Eigen::RowVector3i, sptrPeak3D, compare_fn> hkls;
+
+        for (auto&& peak: _peaks) {
+            Eigen::RowVector3d hkl;
+            Eigen::RowVector3i hkl_int;
+                    //bool getMillerIndices(const UnitCell& uc, Eigen::RowVector3d& hkl, bool applyUCTolerance=true) const;
+
+            if (!peak->getMillerIndices(*cell, hkl)) {
+                continue;
+            }
+
+            for (auto i = 0; i < 3; ++i) {
+                hkl_int(i) = std::lround(hkl(i));
+            }
+
+            auto it = hkls.find(hkl_int);
+
+            if (it == hkls.end()) {
+                hkls[hkl_int] = peak;
+            }
+            else {
+                it->second->setSelected(false);
+                peak->setSelected(false);
+            }
+        }
+    }
+}
+
 double DataSet::getSampleStepSize() const
 {
     // TODO(jonathan): we should NOT assume that gonio axis 0 is the one being rotated

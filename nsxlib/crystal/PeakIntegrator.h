@@ -112,6 +112,7 @@ private:
     Eigen::VectorXd _sumX;
     Eigen::VectorXd _sumY;
     double _fitCC;
+    double _bkgStd;
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 

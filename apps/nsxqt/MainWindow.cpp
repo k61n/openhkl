@@ -556,6 +556,9 @@ void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
     std::vector<sptrPeak3D> bad_peaks;
 
     for (std::shared_ptr<DataSet> numor: numors) {
+
+        numor->removeDuplicatePeaks();
+
         std::set<sptrPeak3D>& peaks = numor->getPeaks();
 
         total_peaks += peaks.size();

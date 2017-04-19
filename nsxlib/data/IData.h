@@ -194,6 +194,9 @@ public:
     //! Integrate intensities of all peaks
     void integratePeaks(double peak_scale = 3.0, double bkg_scale = 5.0, bool update_shape = false, const std::shared_ptr<SX::Utils::ProgressHandler>& handler = nullptr);
 
+    //! Remove duplicates
+    void removeDuplicatePeaks();
+
     double getSampleStepSize() const;
 
     //! Get the q vector corresponding to a detector pixel

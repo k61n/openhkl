@@ -55,8 +55,10 @@ QRectF PeakGraphicsItem::boundingRect() const
     const Eigen::Vector3d& u = bb.getUpper();
     qreal w=u[0]-l[0];
     qreal h=u[1]-l[1];
+
     assert(w >= 0.0);
     assert(h >= 0.0);
+
     return QRectF(-w/2.0,-h/2.0,w,h);
 }
 
