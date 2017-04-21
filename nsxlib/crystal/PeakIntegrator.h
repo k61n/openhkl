@@ -51,8 +51,9 @@ public:
     using Ellipsoid3D = SX::Geometry::Ellipsoid<double, 3>;
     using MaybeEllipsoid = SX::Utils::Maybe<Ellipsoid3D>;
 
-    PeakIntegrator() = delete;
+    PeakIntegrator() = default;
     PeakIntegrator(const SX::Geometry::IntegrationRegion& region, const SX::Data::DataSet& data);
+    ~PeakIntegrator() {}
 
     void step(const Eigen::MatrixXi& frame, size_t idx, const Eigen::MatrixXi& mask);
     void end();
@@ -60,6 +61,7 @@ public:
     const Eigen::VectorXd& getProjectionPeak() const;
     const Eigen::VectorXd& getProjectionBackground() const;
     const Eigen::VectorXd& getProjection() const;
+    const Eigen::VectorXd& getPeakError() const;
 
     double getMeanBackground() const;
 
@@ -69,11 +71,11 @@ public:
     //!
     MaybeEllipsoid getBlobShape(double confidence) const;
 
-    Intensity getTotalIntensity() const;
     Intensity getPeakIntensity() const;
-    Intensity getBackgroundIntensity() const;
 
     double pValue() const;
+
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
 private:
     SX::Geometry::Blob3D _blob;
@@ -101,6 +103,7 @@ private:
     Eigen::VectorXd _projection;
     Eigen::VectorXd _projectionPeak;
     Eigen::VectorXd _projectionBkg;
+    Eigen::ArrayXd _peakError;
     Eigen::VectorXd _pointsPeak;
     Eigen::VectorXd _pointsBkg;
     Eigen::VectorXd _countsPeak;
@@ -114,7 +117,7 @@ private:
     double _fitCC;
     double _bkgStd;
 
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    //
 
 };
 

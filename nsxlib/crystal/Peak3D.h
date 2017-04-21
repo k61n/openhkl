@@ -38,6 +38,7 @@
 #include "Profile.h"
 #include "UnitCell.h"
 #include "Intensity.h"
+#include "PeakIntegrator.h"
 #include "../geometry/IShape.h"
 #include "../geometry/Ellipsoid.h"
 #include "../utils/Types.h"
@@ -85,9 +86,7 @@ public:
     //! Assignment operator
     Peak3D& operator=(const Peak3D& other);
 
-    ~Peak3D() = default;
-    //! Attach the data
-
+        //! Attach the data
     void linkData(const std::shared_ptr<SX::Data::DataSet>& data);
 
     //! Detach the data
@@ -125,9 +124,9 @@ public:
     Eigen::VectorXd getProjection() const;
     Eigen::VectorXd getPeakProjection() const;
     Eigen::VectorXd getBkgProjection() const;
-    Eigen::VectorXd getProjectionSigma() const;
-    Eigen::VectorXd getPeakProjectionSigma() const;
-    Eigen::VectorXd getBkgProjectionSigma() const;
+//    Eigen::VectorXd getProjectionSigma() const;
+//    Eigen::VectorXd getPeakProjectionSigma() const;
+//    Eigen::VectorXd getBkgProjectionSigma() const;
 
     const Ellipsoid3D& getShape() const { return _shape; }
     const SX::Geometry::IntegrationRegion& getIntegrationRegion() const { return _integrationRegion; }
@@ -197,6 +196,8 @@ public:
     //! Return fitted peak profile
     const Profile& getProfile() const;
 
+    const PeakIntegrator& getIntegration() const;
+
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
 private:
@@ -210,7 +211,11 @@ private:
     //! Shape describing the background zone (must fully contain peak)
     // Ellipsoid3D _bkg;
 
+    PeakIntegrator _integration;
+
     //!
+    //! \brief _projection
+
     Eigen::VectorXd _projection;
     Eigen::VectorXd _projectionPeak;
     Eigen::VectorXd _projectionBkg;
@@ -232,7 +237,7 @@ private:
     std::shared_ptr<SX::Instrument::Source> _source;
 
     double _counts;
-    double _countsSigma;
+    //double _countsSigma;
     double _scale;
     bool _selected;
     bool _masked;

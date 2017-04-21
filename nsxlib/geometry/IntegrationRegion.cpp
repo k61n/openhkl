@@ -47,6 +47,11 @@ IntegrationRegion::IntegrationRegion(
     _background.scale(bkg_scale); // todo: need erf_inv
 }
 
+const IntegrationRegion::Ellipsoid3D &IntegrationRegion::getRegion() const
+{
+    return _region;
+}
+
 bool IntegrationRegion::inRegion(const Eigen::Vector4d &p) const
 {
 //    if (!_region.isInsideAABB(p)) {
@@ -66,6 +71,7 @@ bool IntegrationRegion::inBackground(const Eigen::Vector4d &p) const
 //    }
     // exclude if in peak
     return !inRegion(p);
+    //return !_region.isInsideAABB(p);
 }
 
 IntegrationRegion::point_type IntegrationRegion::classifyPoint(const Eigen::Vector4d &p) const

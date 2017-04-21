@@ -76,7 +76,7 @@ Peak3D::Peak3D(std::shared_ptr<SX::Data::DataSet> data):
     _event(nullptr),
     _source(nullptr),
     _counts(0.0),
-    _countsSigma(0.0),
+    //_countsSigma(0.0),
     _scale(1.0),
     _selected(true),
     _masked(false),
@@ -104,7 +104,7 @@ Peak3D::Peak3D(const Peak3D& other):
     _event(other._event == nullptr ? nullptr : new DetectorEvent(*other._event)),
     _source(other._source),
     _counts(other._counts),
-    _countsSigma(other._countsSigma),
+    //_countsSigma(other._countsSigma),
     _scale(other._scale),
     _selected(other._selected),
     _masked(other._masked),
@@ -131,7 +131,7 @@ Peak3D& Peak3D::operator=(const Peak3D& other)
     _event = other._event == nullptr ? nullptr : std::unique_ptr<DetectorEvent>(new DetectorEvent(*other._event));
     _source= other._source;
     _counts = other._counts;
-    _countsSigma = other._countsSigma;
+    //_countsSigma = other._countsSigma;
     _scale = other._scale;
     _selected = other._selected;
     _observed = other._observed;
@@ -245,20 +245,6 @@ Eigen::VectorXd Peak3D::getBkgProjection() const
     return _scale*_projectionBkg;
 }
 
-Eigen::VectorXd Peak3D::getProjectionSigma() const
-{
-    return _scale*(_projection.array().sqrt());
-}
-
-Eigen::VectorXd Peak3D::getPeakProjectionSigma() const
-{
-    return _scale*(_projectionPeak.array().sqrt());
-}
-
-Eigen::VectorXd Peak3D::getBkgProjectionSigma() const
-{
-    return _scale*(_projectionBkg.array().sqrt());
-}
 
 void Peak3D::addUnitCell(sptrUnitCell uc, bool activate)
 {
@@ -484,12 +470,14 @@ void Peak3D::updateIntegration(const PeakIntegrator& integrator)
     _projectionBkg = integrator.getProjectionBackground();
     _projection = integrator.getProjection();
     _counts = _projectionPeak.sum();
-    _countsSigma = std::sqrt(std::abs(_counts));
+    //_countsSigma = std::sqrt(std::abs(_counts));
     _pValue = integrator.pValue();
     _intensity = integrator.getPeakIntensity();
 
     // fit peak profile
     _profile.fit(_projectionPeak, 100);
+
+    _integration = integrator;
 }
 
 double Peak3D::pValue() const
@@ -500,6 +488,11 @@ double Peak3D::pValue() const
 const Profile& Peak3D::getProfile() const
 {
     return _profile;
+}
+
+const PeakIntegrator &Peak3D::getIntegration() const
+{
+    return _integration;
 }
 
 bool Peak3D::hasUnitCells() const

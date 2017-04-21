@@ -86,6 +86,7 @@ PeakIntegrator::PeakIntegrator(const SX::Geometry::IntegrationRegion& region, co
     _projection = Eigen::VectorXd::Zero(_data_end - _data_start + 1);
     _projectionPeak = Eigen::VectorXd::Zero(_data_end - _data_start + 1);
     _projectionBkg = Eigen::VectorXd::Zero(_data_end - _data_start + 1);
+    _peakError = Eigen::VectorXd::Zero(_data_end - _data_start + 1);
     _pointsPeak = Eigen::VectorXd::Zero(_data_end - _data_start + 1);
     _pointsBkg = Eigen::VectorXd::Zero(_data_end - _data_start + 1);
     _countsPeak = Eigen::VectorXd::Zero(_data_end - _data_start + 1);
@@ -249,10 +250,10 @@ void PeakIntegrator::end()
     double b2 = bkg_2.sum();
 
     // still testing
-    _projectionPeak = projectionPeak2;
-    _projectionBkg = bkg_2;
-    auto total_counts = (_countsBkg + _countsPeak).array();
-    _projection = (_projectionPeak + _projectionBkg).array();
+//    _projectionPeak = projectionPeak2;
+//    _projectionBkg = bkg_2;
+//    auto total_counts = (_countsBkg + _countsPeak).array();
+//    _projection = (_projectionPeak + _projectionBkg).array();
 
 //    for (auto i = 0; i < _projection.size(); ++i) {
 //        if (total_counts(i) > 1e-3) {
@@ -276,6 +277,23 @@ void PeakIntegrator::end()
             }
         }
     }
+
+    // testing
+    auto lb = _region.getRegion().getLower();
+    auto ub = _region.getRegion().getUpper();
+
+    double npx = (ub[0]-lb[0])*(ub[1]-lb[1]);
+
+    for (auto i = 0; i < _projectionBkg.size(); ++i) {
+        if (_pointsBkg(i) > 0.1) {
+            _projectionBkg(i) = _countsBkg(i) / _pointsBkg(i) * npx;
+        }
+        else {
+            _projectionBkg(i) = avgBkg * npx;
+        }
+        _projection(i) = _projectionPeak(i) + _projectionBkg(i);
+        _peakError(i) = std::sqrt(_projection(i) + _bkgStd*_bkgStd*npx);
+    }
 }
 
 const Eigen::VectorXd& PeakIntegrator::getProjectionPeak() const
@@ -291,6 +309,11 @@ const Eigen::VectorXd& PeakIntegrator::getProjectionBackground() const
 const Eigen::VectorXd& PeakIntegrator::getProjection() const
 {
     return _projection;
+}
+
+const Eigen::VectorXd &PeakIntegrator::getPeakError() const
+{
+    return _peakError;
 }
 
 double PeakIntegrator::getMeanBackground() const
@@ -317,20 +340,10 @@ PeakIntegrator::MaybeEllipsoid PeakIntegrator::getBlobShape(double confidence) c
     }
 }
 
-Intensity PeakIntegrator::getTotalIntensity() const
-{
-    return Intensity(_countsPeak.sum(), _countsPeak.sum());
-}
-
 Intensity PeakIntegrator::getPeakIntensity() const
 {
-    return getTotalIntensity() - getBackgroundIntensity();
-}
-
-Intensity PeakIntegrator::getBackgroundIntensity() const
-{
-    double scale = double(_pointsPeak.sum()) / double(_pointsBkg.sum());
-    return Intensity(_countsBkg.sum(), _countsBkg.sum()) * scale;
+    double points = (_pointsPeak+_pointsBkg).sum();
+    return Intensity(_projectionPeak.sum(), (_peakError*_peakError).sum());
 }
 
 double PeakIntegrator::pValue() const
@@ -362,7 +375,7 @@ double PeakIntegrator::pValue() const
 
     // thus we obtain the following standard normal variable
     //const double z = (avg-R) / std::sqrt(var);
-    const double z = (avg-R) / _bkgStd;
+    const double z = (avg-R) / (_bkgStd / _pointsPeak.sum());
 
     // compute the p value
     //const double p = 1.0 - 0.5 * (1.0 + std::erf(z / std::sqrt(2)));

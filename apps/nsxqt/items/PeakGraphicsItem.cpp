@@ -277,7 +277,8 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     const Eigen::VectorXd& signal=_peak->getPeakProjection();
     const Eigen::VectorXd& bkg=_peak->getBkgProjection();
 
-    const Eigen::VectorXd& totalSigma=_peak->getProjectionSigma();
+    //const Eigen::VectorXd& totalSigma=_peak->getProjectionSigma();
+    const double totalSigma = _peak->getRawIntensity().getSigma();
 
     // Transform to QDouble
     QVector<double> qx(int(total.size()));
@@ -301,7 +302,7 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     for (int i = 0; i < total.size(); ++i) {
         qx[i]= min + static_cast<double>(i)*(max-min)/(total.size()-1);
         qtotal[i]=total[i];
-        qtotalE[i]=totalSigma[i];
+        qtotalE[i]=totalSigma;
         qpeak[i]=signal[i];
         qbkg[i]=bkg[i];
     }
