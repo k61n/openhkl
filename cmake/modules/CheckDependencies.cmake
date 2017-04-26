@@ -49,6 +49,14 @@ else()
 endif()
 
 
+# python-dev and interpreter
+find_package(PythonLibs REQUIRED)
+find_package(PythonInterp REQUIRED)
+
+# swig
+find_package(SWIG REQUIRED)
+include(UseSWIG)
+
 ###### C-BLOSC
 add_subdirectory(externals/c-blosc)
 include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/externals/c-blosc/blosc)
