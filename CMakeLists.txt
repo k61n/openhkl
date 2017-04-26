@@ -44,11 +44,6 @@ if(BUILD_COVERAGE_REPORT)
   include(CheckCoverage)        # code coverage
 endif()
 
-if(NSX_PYTHON)
-  include(swig)
-endif()
-
-
 #Set package name here
 set(CPACK_PACKAGE_NAME "nsxtool")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Neutron Single Crystal Diffraction Data Reduction")
@@ -86,6 +81,12 @@ add_subdirectory(tools)
 enable_testing()
 # Directory with all the unit-tests.
 add_subdirectory(tests)
+
+# swig + python tests
+if(NSX_PYTHON)
+  add_subdirectory(swig)
+endif()
+
 
 # code coverage report
 if(BUILD_COVERAGE_REPORT)
