@@ -83,7 +83,7 @@ public:
 	bool isKey(const char* key) const;
 	//! Number of elements in the map
 	//@ return : Number of elements in the map
-	std::size_t size() const;
+	//std::size_t size() const;
 	//! Get all the keys available.
 	const keyset& getAllKeys() const;
 	//! Get the full map of parameters
