@@ -42,9 +42,6 @@ namespace nsx {
 class MonoDetector : public Detector {
 public:
 
-    //! Static constructor of a MonoDetector from a property tree node
-    static Detector* create(const proptree::ptree& node);
-
     //! Construct a default MonoDetector
     MonoDetector();
     //! Construct a MonoDetector from another one

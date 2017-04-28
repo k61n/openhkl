@@ -137,7 +137,9 @@ protected:
     std::vector<Axis*> _axes;
 
 public:
+#ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+#endif
 };
 
 } // end namespace nsx

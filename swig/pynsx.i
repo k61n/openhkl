@@ -1,18 +1,16 @@
 %module "pynsx"
-
- //%feature("notabstract") Animal;
- //%feature("notabstract") Gender;
-
+ 
 %include "std_shared_ptr.i"
 %include "std_string.i"
 %include "std_vector.i"
 
-%template(vdouble1d_t) std::vector<double>;
-%template(vdouble2d_t) std::vector<std::vector<double>>;
-%template(vector_integer_t) std::vector<int>;
+%template(vdouble1d_t)  std::vector<double>;
+%template(vdouble2d_t)  std::vector<std::vector<double>>;
+%template(vinteger1d_t) std::vector<int>;
 %template(vinteger2d_t) std::vector<std::vector<int>>;
 
-%shared_ptr(Peak3D)
+%shared_ptr(SX::Crystal::Peak3D)
+%shared_ptr(SX::Chemistry::Material)
 %shared_ptr(SX::Instrument::Diffractometer)
 
 %{
@@ -20,20 +18,38 @@
 
 #include <boost/property_tree/ptree.hpp>
 #include <Eigen/Dense>
+#include <Eigen/Geometry>
 
+using Eigen::Quaterniond;
 using Eigen::Vector3d;
 using Eigen::Matrix3d;
 
 namespace proptree=boost::property_tree;
 namespace property_tree=boost::property_tree;
-  //namespace property
 
+#include "utils/Enums.h"
+using SX::Instrument::DataOrder;
+
+#include "instrument/Axis.h"
+#include "instrument/RotAxis.h"
+#include "instrument/TransAxis.h"
+#include "instrument/Gonio.h"
+  
 #include "instrument/ComponentState.h"
 #include "instrument/Component.h"
 #include "instrument/Monochromator.h"
+
+#include "instrument/Detector.h"
+#include "instrument/MonoDetector.h"
+#include "instrument/CylindricalDetector.h"
+#include "instrument/FlatDetector.h"
+
 #include "instrument/Source.h"
 
 #include "chemistry/Material.h"
+
+#include "instrument/Sample.h"
+using SX::Crystal::CellList;
 
 #include "geometry/Blob3D.h"
 #include "crystal/UnitCell.h"
@@ -48,7 +64,11 @@ namespace property_tree=boost::property_tree;
 #include "data/ILLDataReader.h"
 %}
 
-//%include "data/IData.h"
+%include "instrument/Axis.h"
+%include "instrument/RotAxis.h"
+%include "instrument/TransAxis.h"
+%include "instrument/Gonio.h"
+
 %include "instrument/ComponentState.h"
 %include "instrument/Component.h"
 %include "instrument/Monochromator.h"
@@ -59,19 +79,21 @@ namespace property_tree=boost::property_tree;
 %include "chemistry/Material.h"
 %include "crystal/UnitCell.h"
 
+%include "instrument/Detector.h"
+%include "instrument/MonoDetector.h"
+%include "instrument/CylindricalDetector.h"
+%include "instrument/FlatDetector.h"
+
+%include "instrument/Sample.h"
+
 %include "instrument/Diffractometer.h"
  
 %include "kernel/Singleton.h"
 
-
-   namespace SX {
-
-  namespace Instrument { class DiffractometerStore; }
-
-  %template(DiffractometerStoreBase) Kernel::Singleton<Instrument::DiffractometerStore, Kernel::Constructor, Kernel::Destructor>;
-
-     }
-
+namespace SX {
+   namespace Instrument { class DiffractometerStore; }
+   %template(DiffractometerStoreBase) Kernel::Singleton<Instrument::DiffractometerStore, Kernel::Constructor, Kernel::Destructor>;
+}
 
 %include "instrument/DiffractometerStore.h"
 
@@ -86,16 +108,15 @@ namespace property_tree=boost::property_tree;
     {
         Eigen::MatrixXi data = ($self)->getData(frame);
         int nrows = data.rows();
-	int ncols = data.cols();
+        int ncols = data.cols();
         std::vector<std::vector<int> > result(nrows);
 	
-	for (int i = 0; i < nrows; ++i) {
+        for (int i = 0; i < nrows; ++i) {
             for (int j = 0; j < ncols; ++j) {
                 result[i].push_back(data(i, j));
             }
         }
-
-	return result;
+	    return result;
     }
 };
 
