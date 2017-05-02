@@ -54,6 +54,8 @@ using SX::Crystal::CellList;
 #include "geometry/Blob3D.h"
 #include "crystal/UnitCell.h"
 
+#include "crystal/FFTIndexing.h"
+
 #include "instrument/Diffractometer.h"
 #include "instrument/DiffractometerStore.h"
 
@@ -91,9 +93,12 @@ using SX::Crystal::CellList;
 %include "kernel/Singleton.h"
 
 namespace SX {
-   namespace Instrument { class DiffractometerStore; }
+   namespace Instrument {class DiffractometerStore;}
+   namespace Crystal {struct tVector;}
    %template(DiffractometerStoreBase) Kernel::Singleton<Instrument::DiffractometerStore, Kernel::Constructor, Kernel::Destructor>;
 }
+ 
+%include "crystal/FFTIndexing.h"
 
 %include "instrument/DiffractometerStore.h"
 
