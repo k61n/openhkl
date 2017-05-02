@@ -55,6 +55,7 @@ using SX::Crystal::CellList;
 #include "crystal/UnitCell.h"
 
 #include "crystal/FFTIndexing.h"
+#include "crystal/GruberReduction.h"
 
 #include "instrument/Diffractometer.h"
 #include "instrument/DiffractometerStore.h"
@@ -99,6 +100,7 @@ namespace SX {
 }
  
 %include "crystal/FFTIndexing.h"
+%include "crystal/GruberReduction.h"
 
 %include "instrument/DiffractometerStore.h"
 
