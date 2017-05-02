@@ -21,6 +21,7 @@
 #include <Eigen/Geometry>
 
 using Eigen::Quaterniond;
+using Eigen::RowVector3d;
 using Eigen::Vector3d;
 using Eigen::Matrix3d;
 
@@ -51,6 +52,7 @@ using SX::Instrument::DataOrder;
 #include "instrument/Sample.h"
 using SX::Crystal::CellList;
 
+#include "geometry/Basis.h"
 #include "geometry/IShape.h"
 #include "geometry/AABB.h"
 #include "geometry/Ellipsoid.h"
@@ -85,36 +87,45 @@ using SX::Crystal::CellList;
 %include "instrument/Monochromator.h"
 %include "instrument/Source.h"
 
-%include "geometry/IShape.h"
-%include "geometry/AABB.h"
-%include "geometry/Ellipsoid.h"
-%include "geometry/OBB.h"
-%include "geometry/Sphere.h"
-
-namespace SX {
-    namespace Geometry {
-        %template(IShape3D) IShape<double,3>;
-        %ignore IShape<double,3>::getLower();
-        %extend IShape<double,3> {
-            std::vector<double> getLower() 
-            {
-                Eigen::Matrix<double,3,1> data = ($self)->getLower();
-                std::vector<double> result;
-                result.reserve(3);            
-                for (int i = 0; i < 3; ++i) {
-                    result.push_back(data(i));
-                }
-                return result;
+%ignore SX::Geometry::Basis::getMetricTensor() const;
+%include "geometry/Basis.h"
+%extend SX::Geometry::Basis {
+    std::vector<std::vector<double>> getMetricTensor()
+    {
+        Eigen::Matrix3d metricTensor = ($self)->getMetricTensor();
+        std::vector<std::vector<double> > result(3);
+    
+        for (int i = 0; i < 3; ++i) {
+            result[i].reserve(3);
+            for (int j = 0; j < 3; ++j) {
+                result[i].push_back(metricTensor(i,j));
             }
-        };
-        %template(AABB3D) AABB<double,3>;
-        %template(Ellipsoid3D) Ellipsoid<double,3>;
-        %template(OBB3D) OBB<double,3>;
-        %template(Sphere3D) Sphere<double,3>;
+        }
+        return result;
     }
-}
+};
 
+%ignore SX::Geometry::IShape::getLower();
+%ignore SX::Geometry::IShape::getLower() const;
+%include "geometry/IShape.h"
 
+%extend SX::Geometry::IShape {
+    std::vector<T> getLower() 
+    {
+        Eigen::Matrix<T,D,1> data = ($self)->getLower();
+        std::vector<T> result;
+        result.reserve(D);            
+        for (int i = 0; i < D; ++i) {
+            result.push_back(data(i));
+        }
+        return result;
+    }
+};
+
+%template(IShape3D) SX::Geometry::IShape<double,3>;
+
+%include "geometry/AABB.h"
+%template(AABB3D) SX::Geometry::AABB<double,3>;
 
 %include "geometry/Blob3D.h"
 
@@ -145,9 +156,9 @@ namespace SX {
 
 %include "data/MetaData.h"
 %include "data/IDataReader.h"
-%include "data/ILLDataReader.h"
 
 %ignore SX::Data::ILLDataReader::getData(size_t);
+%include "data/ILLDataReader.h"
 %extend SX::Data::ILLDataReader {
     std::vector<std::vector<int>> getData(unsigned int frame) 
     {
@@ -157,6 +168,7 @@ namespace SX {
         std::vector<std::vector<int> > result(nrows);
 	
         for (int i = 0; i < nrows; ++i) {
+            result[i].reserve(ncols);
             for (int j = 0; j < ncols; ++j) {
                 result[i].push_back(data(i, j));
             }
