@@ -43,13 +43,19 @@ using SX::Instrument::DataOrder;
 #include "instrument/MonoDetector.h"
 #include "instrument/CylindricalDetector.h"
 #include "instrument/FlatDetector.h"
-
+ 
 #include "instrument/Source.h"
 
 #include "chemistry/Material.h"
 
 #include "instrument/Sample.h"
 using SX::Crystal::CellList;
+
+#include "geometry/IShape.h"
+#include "geometry/AABB.h"
+#include "geometry/Ellipsoid.h"
+#include "geometry/OBB.h"
+#include "geometry/Sphere.h"
 
 #include "geometry/Blob3D.h"
 #include "crystal/UnitCell.h"
@@ -67,6 +73,8 @@ using SX::Crystal::CellList;
 #include "data/ILLDataReader.h"
 %}
 
+%include <boost/property_tree/ptree.hpp>
+
 %include "instrument/Axis.h"
 %include "instrument/RotAxis.h"
 %include "instrument/TransAxis.h"
@@ -76,6 +84,37 @@ using SX::Crystal::CellList;
 %include "instrument/Component.h"
 %include "instrument/Monochromator.h"
 %include "instrument/Source.h"
+
+%include "geometry/IShape.h"
+%include "geometry/AABB.h"
+%include "geometry/Ellipsoid.h"
+%include "geometry/OBB.h"
+%include "geometry/Sphere.h"
+
+namespace SX {
+    namespace Geometry {
+        %template(IShape3D) IShape<double,3>;
+        %ignore IShape<double,3>::getLower();
+        %extend IShape<double,3> {
+            std::vector<double> getLower() 
+            {
+                Eigen::Matrix<double,3,1> data = ($self)->getLower();
+                std::vector<double> result;
+                result.reserve(3);            
+                for (int i = 0; i < 3; ++i) {
+                    result.push_back(data(i));
+                }
+                return result;
+            }
+        };
+        %template(AABB3D) AABB<double,3>;
+        %template(Ellipsoid3D) Ellipsoid<double,3>;
+        %template(OBB3D) OBB<double,3>;
+        %template(Sphere3D) Sphere<double,3>;
+    }
+}
+
+
 
 %include "geometry/Blob3D.h"
 
@@ -88,7 +127,7 @@ using SX::Crystal::CellList;
 %include "instrument/FlatDetector.h"
 
 %include "instrument/Sample.h"
-
+ 
 %include "instrument/Diffractometer.h"
  
 %include "kernel/Singleton.h"
@@ -98,7 +137,7 @@ namespace SX {
    namespace Crystal {struct tVector;}
    %template(DiffractometerStoreBase) Kernel::Singleton<Instrument::DiffractometerStore, Kernel::Constructor, Kernel::Destructor>;
 }
- 
+
 %include "crystal/FFTIndexing.h"
 %include "crystal/GruberReduction.h"
 
@@ -106,7 +145,6 @@ namespace SX {
 
 %include "data/MetaData.h"
 %include "data/IDataReader.h"
-
 %include "data/ILLDataReader.h"
 
 %ignore SX::Data::ILLDataReader::getData(size_t);

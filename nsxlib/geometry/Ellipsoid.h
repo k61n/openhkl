@@ -103,8 +103,10 @@ public:
     //! Return just the rotation and scaling matrix
     Eigen::Matrix<T, D, D> getRSinv() const;
 
+#ifndef SWIG
     // Macro to ensure that Ellipsoid can be dynamically allocated.
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+#endif
 
 private:
     Eigen::Matrix<T,D+1,D+1> _TRSinv;

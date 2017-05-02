@@ -114,9 +114,11 @@ private:
     void updateAABB();
 
 public:
+
+#ifndef SWIG
     // Macro to ensure that an OBB object can be dynamically allocated.
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
+#endif
 
 };
 

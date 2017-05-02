@@ -53,6 +53,7 @@ enum Direction {CW,CCW};
  * rotation and translation. Collisions with other shapes is
  * coded by double-dispatching.
  */
+
 template<typename T,unsigned int D>
 class IShape {
 public:
@@ -146,7 +147,9 @@ public:
 
     std::ostream& printSelf(std::ostream& os);
 
+#ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+#endif
 protected:
     // The lower bound point
     vector _lowerBound;

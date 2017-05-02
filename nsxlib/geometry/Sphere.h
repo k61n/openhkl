@@ -46,7 +46,7 @@ namespace nsx {
 
 template<typename T, unsigned int D>
 class Sphere : public IShape<T,D> {
-
+public:
     // Some useful typedefs;
     typedef Eigen::Matrix<T,D,D> matrix;
     typedef Eigen::Matrix<T,D,1> vector;
@@ -57,7 +57,6 @@ class Sphere : public IShape<T,D> {
     using IShape<T,D>::_lowerBound;
     using IShape<T,D>::_upperBound;
 
-public:
     //! The copy constructor
     Sphere(const Sphere<T,D>& other);
     //! Construct a N-dimensional sphere from its center and radius.
@@ -100,8 +99,10 @@ public:
     //! the two intersection points between the ray and this shape.
     bool rayIntersect(const vector& from, const vector& dir, double& t1, double& t2) const;
 
+#ifndef SWIG
     // Macro to ensure that Sphere object can be dynamically allocated.
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+#endif
 
 private:
     //! The center.
