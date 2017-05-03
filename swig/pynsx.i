@@ -99,8 +99,8 @@ using SX::Crystal::CellList;
 // Eigen matrices into Numpy arrays.
 %include <eigen.i>
 
- %template(vectorMatrixXd) std::vector<Eigen::MatrixXd>;
- %template(vectorVectorXd) std::vector<Eigen::VectorXd>;
+%template(vectorMatrixXd) std::vector<Eigen::MatrixXd>;
+%template(vectorVectorXd) std::vector<Eigen::VectorXd>;
 %template(vectorVector3d) std::vector<Eigen::Vector3d>;
 
 // Since Eigen uses templates, we have to declare exactly which types we'd
@@ -120,11 +120,7 @@ using SX::Crystal::CellList;
 %eigen_typemaps(Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>)
 %eigen_typemaps(Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic>)
 
-
-
 %include <boost/property_tree/ptree.hpp>
-
-
 
 %include "instrument/Axis.h"
 %include "instrument/RotAxis.h"
@@ -145,12 +141,16 @@ using SX::Crystal::CellList;
 %typemap(out) SX::Geometry::Sphere<double, 3>::vector = Eigen::Vector3d;
 
 %include "geometry/AABB.h"
-%include "geometry/Ellipsoid.h"
-%include "geometry/OBB.h"
-%include "geometry/Sphere.h"
 %template(AABB3D) SX::Geometry::AABB<double,3>;
+
+%include "geometry/Sphere.h"
+
+%include "geometry/Ellipsoid.h"
 %template(Ellipsoid3D) SX::Geometry::Ellipsoid<double,3>;
+%include "geometry/OBB.h"
 %template(OBB3D) SX::Geometry::OBB<double,3>;
+%include "geometry/Sphere.h"
+
 %template(Sphere3D) SX::Geometry::Sphere<double,3>;
 
 %include "geometry/Blob3D.h"
@@ -185,31 +185,9 @@ namespace SX {
 
 %include "data/ILLDataReader.h"
 
-
-%extend SX::Data::ILLDataReader {
-    std::vector<std::vector<int>> getData(unsigned int frame) 
-    {
-        Eigen::MatrixXi data = ($self)->getData(frame);
-        int nrows = data.rows();
-        int ncols = data.cols();
-        std::vector<std::vector<int> > result(nrows);
-	
-        for (int i = 0; i < nrows; ++i) {
-            result[i].reserve(ncols);
-            for (int j = 0; j < ncols; ++j) {
-                result[i].push_back(data(i, j));
-            }
-        }
-	    return result;
-    }
-};
-
-
-// %typemap(newfree) double* "delete ($1);";
 %newobject new_double;
 double* new_double();
 double get_value(const double*);
-
 %{
     double* new_double()
     {
