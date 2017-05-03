@@ -58,3 +58,14 @@ configure_file(crystal/714898.hdf 714898.hdf COPYONLY)
 configure_file(valgrind/suppressions suppressions COPYONLY)
 
 
+# add python tests
+if(NSX_PYTHON)
+ 
+  file(GLOB_RECURSE python_tests *.py)
+
+  foreach(python_script ${python_tests})
+    get_filename_component(base_name ${python_script} NAME_WE)
+    add_test(NAME ${base_name} COMMAND ${CMAKE_COMMAND} -E env "PYTHONPATH=${CMAKE_INSTALL_PREFIX}/lib" ${PYTHON_EXECUTABLE} ${python_script})
+  endforeach(python_script)
+
+endif(NSX_PYTHON)

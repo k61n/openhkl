@@ -12,8 +12,9 @@ swig_add_module(pynsx python pynsx.i)
 
 swig_link_libraries(pynsx nsx)
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/run_test.py ${CMAKE_CURRENT_BINARY_DIR}/run_test.py COPYONLY)
+file(GLOB swig_libraries ${CMAKE_CURRENT_BINARY_DIR}/*.so ${CMAKE_CURRENT_BINARY_DIR}/*.dll ${CMAKE_CURRENT_BINARY_DIR}/*.py)
+install(FILES ${swig_libraries} DESTINATION lib)
 
 
-add_test(NAME swig_test COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/run_test.py)
+
 
