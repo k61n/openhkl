@@ -49,8 +49,8 @@ BOOST_AUTO_TEST_CASE(Test_AABB3D)
 
     // Translate and scale operations
     bb.translateAABB(Vector3d(1,2,3));
-    Vector3d& lower=bb.getLower();
-    Vector3d& upper=bb.getUpper();
+    Vector3d lower=bb.getLower();
+    Vector3d upper=bb.getUpper();
     BOOST_CHECK_CLOSE(lower[0], 1.0, tolerance);
     BOOST_CHECK_CLOSE(lower[1], 2.0, tolerance);
     BOOST_CHECK_CLOSE(lower[2], 3.0, tolerance);

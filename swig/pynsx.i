@@ -1,5 +1,8 @@
 %module "pynsx"
- 
+
+%include "warnings.i"
+
+%include "typemaps.i"
 %include "std_shared_ptr.i"
 %include "std_string.i"
 %include "std_vector.i"
@@ -25,7 +28,10 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-
+    using Eigen::Vector3d;
+    using Eigen::Matrix3d;
+    using Eigen::Matrix;
+    using Eigen::Quaterniond;
 
 namespace proptree=boost::property_tree;
 namespace property_tree=boost::property_tree;
@@ -84,6 +90,33 @@ using SX::Crystal::CellList;
     import_array();
 %}
 
+%include <typemaps.i>
+%include <std_vector.i>
+
+// eigen.i is found in ../swig/ and contains specific definitions to convert
+// Eigen matrices into Numpy arrays.
+%include <eigen.i>
+
+ %template(vectorMatrixXd) std::vector<Eigen::MatrixXd>;
+ %template(vectorVectorXd) std::vector<Eigen::VectorXd>;
+%template(vectorVector3d) std::vector<Eigen::Vector3d>;
+
+// Since Eigen uses templates, we have to declare exactly which types we'd
+// like to generate mappings for
+%eigen_typemaps(Eigen::Vector3d)
+%eigen_typemaps(Eigen::Matrix3d)
+%eigen_typemaps(Eigen::VectorXd)
+%eigen_typemaps(Eigen::MatrixXd)
+// Even though Eigen::MatrixXd is just a typedef for Eigen::Matrix<double,
+// Eigen::Dynamic, Eigen::Dynamic>, our templatedInverse function doesn't
+// compile correctly unless we also declare typemaps for Eigen::Matrix<double,
+// Eigen::Dynamic, Eigen::Dynamic>. Not totally sure why that is.
+%eigen_typemaps(Eigen::Matrix<double, 3, 1>)
+%eigen_typemaps(Eigen::Matrix<double, 1, 3>)
+%eigen_typemaps(Eigen::Matrix<double, 3, 3>)
+%eigen_typemaps(Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>)
+
+
 
 %include <boost/property_tree/ptree.hpp>
 
@@ -103,7 +136,8 @@ using SX::Crystal::CellList;
 %include "geometry/IShape.h"
 %template(IShape3D) SX::Geometry::IShape<double,3>;
 
-%typemap(out) const SX::Geometry::AABB<double, 3>::vector& = const Eigen::Vector3d&;
+//%typemap(out) const SX::Geometry::AABB<double, 3>::vector& = const Eigen::Vector3d&;
+%typemap(out) SX::Geometry::AABB<double, 3>::vector = Eigen::Vector3d;
 //%typemap(out) const SX::Geometry::AABB<double, 3>::vector* = const Eigen::Vector3d*;
 
 %include "geometry/AABB.h"

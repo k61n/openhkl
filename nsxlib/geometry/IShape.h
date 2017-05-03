@@ -101,12 +101,8 @@ public:
     void setUpper(const vector& lb);
     //! Get a constant reference to the lower bound of the bounding box of the shape
     const vector& getLower() const;
-    //! Get a reference to the lower bound of the bounding box of the shape
-    vector& getLower();
     //! Get a constant reference to the upper bound of the bounding box of the shape
     const vector& getUpper() const;
-    //! Get a reference to the upper bound of the bounding box of the shape
-    vector& getUpper();
     //! Return the center of the bounding box of the shape
     vector getAABBCenter() const;
     //! Return the extends of the bounding box of the shape
