@@ -22,13 +22,10 @@
 
 #include <boost/property_tree/ptree.hpp>
  
-#include <Eigen/Dense>
+#include <Eigen/Core>
 #include <Eigen/Geometry>
 
-using Eigen::Quaterniond;
-using Eigen::RowVector3d;
-using Eigen::Vector3d;
-using Eigen::Matrix3d;
+
 
 namespace proptree=boost::property_tree;
 namespace property_tree=boost::property_tree;
@@ -105,6 +102,9 @@ using SX::Crystal::CellList;
 
 %include "geometry/IShape.h"
 %template(IShape3D) SX::Geometry::IShape<double,3>;
+
+%typemap(out) const SX::Geometry::AABB<double, 3>::vector& = const Eigen::Vector3d&;
+//%typemap(out) const SX::Geometry::AABB<double, 3>::vector* = const Eigen::Vector3d*;
 
 %include "geometry/AABB.h"
 %template(AABB3D) SX::Geometry::AABB<double,3>;

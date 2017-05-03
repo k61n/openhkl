@@ -16,6 +16,7 @@ namespace Eigen {
 %{
 #include <Python.h>
 #include <numpy/arrayobject.h>
+#include <Eigen/Core>
 %}
 
 %typemap(out) Eigen::VectorXd 
@@ -50,7 +51,31 @@ namespace Eigen {
         *data++ = $1.data()[i]; 
     } 
     $result = array; 
-} 
+}
+
+// %typemap(out) Eigen::Vector3d&
+// { 
+//     npy_intp dims[1] = {3}; 
+//     PyObject* array = PyArray_SimpleNew(1, dims, NPY_DOUBLE); 
+//     double* data = ((double *)PyArray_DATA( array )); 
+//     for (int i = 0; i != dims[0]; ++i){ 
+//         *data++ = $1.data()[i]; 
+//     } 
+//     $result = array; 
+// }
+
+// %typemap(out) const Eigen::Vector3d&
+// { 
+//     npy_intp dims[1] = {3}; 
+//     PyObject* array = PyArray_SimpleNew(1, dims, NPY_DOUBLE); 
+//     double* data = ((double *)PyArray_DATA( array )); 
+//     for (int i = 0; i != dims[0]; ++i){ 
+//         *data++ = $1.data()[i]; 
+//     } 
+//     $result = array; 
+// }
+
+
 
 %typemap(in) Eigen::MatrixXd (Eigen::MatrixXd TEMP)
 { 
@@ -85,6 +110,39 @@ namespace Eigen {
       }   
   }
   $1 = TEMP;
+  std::cout << "done typemape(in)" << std::endl;
+}
+
+%typemap(in) const Eigen::Vector3d& (Eigen::Vector3d TEMP)
+{ 
+  
+  int rows = 0; 
+  int cols = 0; 
+
+  PyArrayObject* temp = nullptr;
+
+  std::cout << "entering typemap in...." << std::endl;
+
+  if (PyArray_Check($input)) {
+
+        rows = PyArray_DIM($input,0); 
+  cols = PyArray_DIM($input,1); 
+      
+    temp = (PyArrayObject*)$input;
+
+    //PyArg_ParseTuple($input, "O", &temp);   
+
+      
+
+      double *  values = ((double *) PyArray_DATA($input)); 
+      for (long int i = 0; i != rows; ++i){ 
+          for(long int j = 0; j != cols; ++j){ 
+              std::cout << "typemap in: " << values[i*rows+j] << std::endl; 
+              TEMP(i,j) = values[i*rows+j]; 
+          } 
+      }   
+  }
+  $1 = &TEMP;
   std::cout << "done typemape(in)" << std::endl;
 } 
 

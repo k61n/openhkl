@@ -48,7 +48,7 @@ public:
 	//! Constructs a translation axis with a given label
 	TransAxis(const std::string& label);
 	//! Constructs a translation axis with a given label and axis
-	TransAxis(const std::string& label,const Vector3d& axis);
+	TransAxis(const std::string& label,const Eigen::Vector3d& axis);
 	//! Construct a TransAxis from a property tree node.
 	TransAxis(const proptree::ptree& node);
 	// Destructor

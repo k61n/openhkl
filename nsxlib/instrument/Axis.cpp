@@ -6,6 +6,9 @@
 
 namespace nsx {
 
+    using Eigen::Vector3d;
+    using Eigen::Transform;
+
 Axis* Axis::create(const proptree::ptree& node)
 {
 	// Create an instance of the source factory
