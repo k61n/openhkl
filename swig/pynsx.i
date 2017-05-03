@@ -107,6 +107,7 @@ using SX::Crystal::CellList;
 %eigen_typemaps(Eigen::Matrix3d)
 %eigen_typemaps(Eigen::VectorXd)
 %eigen_typemaps(Eigen::MatrixXd)
+%eigen_typemaps(Eigen::MatrixXi)
 // Even though Eigen::MatrixXd is just a typedef for Eigen::Matrix<double,
 // Eigen::Dynamic, Eigen::Dynamic>, our templatedInverse function doesn't
 // compile correctly unless we also declare typemaps for Eigen::Matrix<double,
@@ -115,6 +116,7 @@ using SX::Crystal::CellList;
 %eigen_typemaps(Eigen::Matrix<double, 1, 3>)
 %eigen_typemaps(Eigen::Matrix<double, 3, 3>)
 %eigen_typemaps(Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>)
+%eigen_typemaps(Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic>)
 
 
 
@@ -132,16 +134,22 @@ using SX::Crystal::CellList;
 %include "instrument/Monochromator.h"
 %include "instrument/Source.h"
 
-
 %include "geometry/IShape.h"
 %template(IShape3D) SX::Geometry::IShape<double,3>;
 
-//%typemap(out) const SX::Geometry::AABB<double, 3>::vector& = const Eigen::Vector3d&;
 %typemap(out) SX::Geometry::AABB<double, 3>::vector = Eigen::Vector3d;
-//%typemap(out) const SX::Geometry::AABB<double, 3>::vector* = const Eigen::Vector3d*;
+%typemap(out) SX::Geometry::Ellipsoid<double, 3>::vector = Eigen::Vector3d;
+%typemap(out) SX::Geometry::OBB<double, 3>::vector = Eigen::Vector3d;
+%typemap(out) SX::Geometry::Sphere<double, 3>::vector = Eigen::Vector3d;
 
 %include "geometry/AABB.h"
+%include "geometry/Ellipsoid.h"
+%include "geometry/OBB.h"
+%include "geometry/Sphere.h"
 %template(AABB3D) SX::Geometry::AABB<double,3>;
+%template(Ellipsoid3D) SX::Geometry::Ellipsoid<double,3>;
+%template(OBB3D) SX::Geometry::OBB<double,3>;
+%template(Sphere3D) SX::Geometry::Sphere<double,3>;
 
 %include "geometry/Blob3D.h"
 
@@ -173,23 +181,4 @@ namespace SX {
 %include "data/MetaData.h"
 %include "data/IDataReader.h"
 
-%ignore SX::Data::ILLDataReader::getData(size_t);
 %include "data/ILLDataReader.h"
-%extend SX::Data::ILLDataReader {
-    std::vector<std::vector<int>> getData(unsigned int frame) 
-    {
-        Eigen::MatrixXi data = ($self)->getData(frame);
-        int nrows = data.rows();
-        int ncols = data.cols();
-        std::vector<std::vector<int> > result(nrows);
-	
-        for (int i = 0; i < nrows; ++i) {
-            result[i].reserve(ncols);
-            for (int j = 0; j < ncols; ++j) {
-                result[i].push_back(data(i, j));
-            }
-        }
-	    return result;
-    }
-};
-
