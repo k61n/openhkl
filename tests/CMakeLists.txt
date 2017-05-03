@@ -64,8 +64,8 @@ if(NSX_PYTHON)
   file(GLOB_RECURSE python_tests *.py)
 
   foreach(python_script ${python_tests})
-    get_filename_component(base_name ${python_script} NAME_WE)
-    add_test(NAME ${base_name} COMMAND ${CMAKE_COMMAND} -E env "PYTHONPATH=${CMAKE_INSTALL_PREFIX}/lib" ${PYTHON_EXECUTABLE} ${python_script})
+    get_filename_component(base_name ${python_script} NAME)
+    add_test(NAME ${base_name} COMMAND ${CMAKE_COMMAND} -E env "PYTHONPATH=${CMAKE_BINARY_DIR}/swig" ${PYTHON_EXECUTABLE} ${python_script})
   endforeach(python_script)
 
 endif(NSX_PYTHON)

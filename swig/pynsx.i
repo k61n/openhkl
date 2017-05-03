@@ -3,6 +3,8 @@
 %include "warnings.i"
 
 %include "typemaps.i"
+%include "cpointer.i"
+
 %include "std_shared_ptr.i"
 %include "std_string.i"
 %include "std_vector.i"
@@ -182,3 +184,41 @@ namespace SX {
 %include "data/IDataReader.h"
 
 %include "data/ILLDataReader.h"
+
+
+%extend SX::Data::ILLDataReader {
+    std::vector<std::vector<int>> getData(unsigned int frame) 
+    {
+        Eigen::MatrixXi data = ($self)->getData(frame);
+        int nrows = data.rows();
+        int ncols = data.cols();
+        std::vector<std::vector<int> > result(nrows);
+	
+        for (int i = 0; i < nrows; ++i) {
+            result[i].reserve(ncols);
+            for (int j = 0; j < ncols; ++j) {
+                result[i].push_back(data(i, j));
+            }
+        }
+	    return result;
+    }
+};
+
+
+// %typemap(newfree) double* "delete ($1);";
+%newobject new_double;
+double* new_double();
+double get_value(const double*);
+
+%{
+    double* new_double()
+    {
+        return new double;
+    }
+
+    double get_value(const double* ptr)
+    {
+        return *ptr;
+    }
+%}
+
