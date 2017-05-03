@@ -103,7 +103,9 @@ private:
 	double _massDensity;
 };
 
+#ifndef SWIG
 std::ostream& operator<<(std::ostream& os, const Material& material);
+#endif
 
 } // end namespace nsx
 

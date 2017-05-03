@@ -109,6 +109,7 @@ private:
 
 };
 
+#ifndef SWIG
 std::ostream& operator<<(std::ostream& os, const Blob3D& b);
 
 } // end namespace nsx

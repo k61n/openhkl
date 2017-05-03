@@ -4,19 +4,24 @@
 %include "std_string.i"
 %include "std_vector.i"
 
-%template(vdouble1d_t)  std::vector<double>;
-%template(vdouble2d_t)  std::vector<std::vector<double>>;
-%template(vinteger1d_t) std::vector<int>;
-%template(vinteger2d_t) std::vector<std::vector<int>>;
+%template(vector_1d)  std::vector<double>;
+%template(vector_2d)  std::vector<std::vector<double>>;
+%template(vector_1i) std::vector<int>;
+%template(vector_2i) std::vector<std::vector<int>>;
 
 %shared_ptr(SX::Crystal::Peak3D)
 %shared_ptr(SX::Chemistry::Material)
 %shared_ptr(SX::Instrument::Diffractometer)
 
+
 %{
 #define SWIG_FILE_WITH_INIT
 
+#include <Python.h>
+#include <numpy/arrayobject.h>
+
 #include <boost/property_tree/ptree.hpp>
+ 
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
 
@@ -75,7 +80,17 @@ using SX::Crystal::CellList;
 #include "data/ILLDataReader.h"
 %}
 
+%include "numpy.i"
+%include "eigen.i"
+
+%init %{
+    import_array();
+%}
+
+
 %include <boost/property_tree/ptree.hpp>
+
+
 
 %include "instrument/Axis.h"
 %include "instrument/RotAxis.h"
@@ -87,41 +102,8 @@ using SX::Crystal::CellList;
 %include "instrument/Monochromator.h"
 %include "instrument/Source.h"
 
-%ignore SX::Geometry::Basis::getMetricTensor() const;
-%include "geometry/Basis.h"
-%extend SX::Geometry::Basis {
-    std::vector<std::vector<double>> getMetricTensor()
-    {
-        Eigen::Matrix3d metricTensor = ($self)->getMetricTensor();
-        std::vector<std::vector<double> > result(3);
-    
-        for (int i = 0; i < 3; ++i) {
-            result[i].reserve(3);
-            for (int j = 0; j < 3; ++j) {
-                result[i].push_back(metricTensor(i,j));
-            }
-        }
-        return result;
-    }
-};
 
-%ignore SX::Geometry::IShape::getLower();
-%ignore SX::Geometry::IShape::getLower() const;
 %include "geometry/IShape.h"
-
-%extend SX::Geometry::IShape {
-    std::vector<T> getLower() 
-    {
-        Eigen::Matrix<T,D,1> data = ($self)->getLower();
-        std::vector<T> result;
-        result.reserve(D);            
-        for (int i = 0; i < D; ++i) {
-            result.push_back(data(i));
-        }
-        return result;
-    }
-};
-
 %template(IShape3D) SX::Geometry::IShape<double,3>;
 
 %include "geometry/AABB.h"
