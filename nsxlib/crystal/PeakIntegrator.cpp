@@ -292,26 +292,26 @@ void PeakIntegrator::end()
             _projectionBkg(i) = avgBkg * npx;
         }
         _projection(i) = _projectionPeak(i) + _projectionBkg(i);
-        _peakError(i) = std::sqrt(_projection(i) + _bkgStd*_bkgStd*npx);
+        _peakError(i) = std::sqrt(_projectionPeak(i) + _bkgStd*_bkgStd*npx);
     }
 }
 
-const Eigen::VectorXd& PeakIntegrator::getProjectionPeak() const
+const Eigen::ArrayXd& PeakIntegrator::getProjectionPeak() const
 {
     return _projectionPeak;
 }
 
-const Eigen::VectorXd& PeakIntegrator::getProjectionBackground() const
+const Eigen::ArrayXd& PeakIntegrator::getProjectionBackground() const
 {
     return _projectionBkg;
 }
 
-const Eigen::VectorXd& PeakIntegrator::getProjection() const
+const Eigen::ArrayXd& PeakIntegrator::getProjection() const
 {
     return _projection;
 }
 
-const Eigen::VectorXd &PeakIntegrator::getPeakError() const
+const Eigen::ArrayXd &PeakIntegrator::getPeakError() const
 {
     return _peakError;
 }

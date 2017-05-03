@@ -299,10 +299,13 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     if (max>_peak->getData()->getNFrames()-1) {
         max=_peak->getData()->getNFrames()-1;
     }
+
+    Eigen::VectorXd error = _peak->getIntegration().getPeakError();
+
     for (int i = 0; i < total.size(); ++i) {
         qx[i]= min + static_cast<double>(i)*(max-min)/(total.size()-1);
         qtotal[i]=total[i];
-        qtotalE[i]=totalSigma;
+        qtotalE[i]=error[i];
         qpeak[i]=signal[i];
         qbkg[i]=bkg[i];
     }

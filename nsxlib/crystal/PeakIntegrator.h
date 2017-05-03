@@ -58,10 +58,10 @@ public:
     void step(const Eigen::MatrixXi& frame, size_t idx, const Eigen::MatrixXi& mask);
     void end();
 
-    const Eigen::VectorXd& getProjectionPeak() const;
-    const Eigen::VectorXd& getProjectionBackground() const;
-    const Eigen::VectorXd& getProjection() const;
-    const Eigen::VectorXd& getPeakError() const;
+    const Eigen::ArrayXd& getProjectionPeak() const;
+    const Eigen::ArrayXd& getProjectionBackground() const;
+    const Eigen::ArrayXd& getProjection() const;
+    const Eigen::ArrayXd& getPeakError() const;
 
     double getMeanBackground() const;
 
@@ -100,20 +100,20 @@ private:
     int _dx;
     int _dy;
 
-    Eigen::VectorXd _projection;
-    Eigen::VectorXd _projectionPeak;
-    Eigen::VectorXd _projectionBkg;
+    Eigen::ArrayXd _projection;
+    Eigen::ArrayXd _projectionPeak;
+    Eigen::ArrayXd _projectionBkg;
     Eigen::ArrayXd _peakError;
-    Eigen::VectorXd _pointsPeak;
-    Eigen::VectorXd _pointsBkg;
-    Eigen::VectorXd _countsPeak;
-    Eigen::VectorXd _countsBkg;
+    Eigen::ArrayXd _pointsPeak;
+    Eigen::ArrayXd _pointsBkg;
+    Eigen::ArrayXd _countsPeak;
+    Eigen::ArrayXd _countsBkg;
 
     Eigen::Matrix3d _fitA;
     Eigen::Vector3d _fitP;
     Eigen::Vector3d _fitB;
-    Eigen::VectorXd _sumX;
-    Eigen::VectorXd _sumY;
+    Eigen::ArrayXd _sumX;
+    Eigen::ArrayXd _sumY;
     double _fitCC;
     double _bkgStd;
 
