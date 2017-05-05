@@ -60,12 +60,17 @@ configure_file(valgrind/suppressions suppressions COPYONLY)
 
 # add python tests
 if(NSX_PYTHON)
+
+  SET (CTEST_ENVIRONMENT
+  "PYTHONPATH=${CMAKE_BINARY_DIR}/swig"
+  )
  
   file(GLOB_RECURSE python_tests *.py)
 
   foreach(python_script ${python_tests})
     get_filename_component(base_name ${python_script} NAME)
-    add_test(NAME ${base_name} COMMAND ${CMAKE_COMMAND} -E env "PYTHONPATH=${CMAKE_BINARY_DIR}/swig" ${PYTHON_EXECUTABLE} ${python_script})
+    add_test(NAME ${base_name} COMMAND ${PYTHON_EXECUTABLE} ${python_script})
+    set_tests_properties(${base_name} PROPERTIES ENVIRONMENT "PYTHONPATH=${CMAKE_BINARY_DIR}/swig")
   endforeach(python_script)
 
 endif(NSX_PYTHON)
