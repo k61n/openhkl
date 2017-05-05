@@ -764,7 +764,7 @@ void SX::Data::DataSet::removeDuplicatePeaks()
 
     class compare_fn {
     public:
-        auto operator()(const Eigen::RowVector3i& a, const Eigen::RowVector3i& b) -> bool
+        auto operator()(const Eigen::RowVector3i& a, const Eigen::RowVector3i& b) const -> bool
         {
             if (a(0) != b(0))
                 return a(0) < b(0);
