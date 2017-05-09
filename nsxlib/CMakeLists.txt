@@ -1,8 +1,6 @@
 
 include_directories(
   ${CMAKE_BINARY_DIR}/include/
-  ../externals/c-blosc/blosc
-  ${CMAKE_BINARY_DIR}/externals/gsl/gsl/
 )
 
 # note: *.c needed for blosc files in data directory

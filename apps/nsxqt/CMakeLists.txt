@@ -5,7 +5,6 @@ endif()
 # add project root directory to include path
 include_directories(
     ${CMAKE_SOURCE_DIR}
-    ${CMAKE_BINARY_DIR}/externals/gsl/gsl
 )
 # Disable console on Windows
 if(WIN32)
