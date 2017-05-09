@@ -1,0 +1,16 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/pellegrini/Downloads/eigen-eigen-67e894c6cd8f/test/upperbidiagonalization.cpp"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"BuildOfficial"
+		],
+		"name" : "upperbidiagonalization_2"
+	}
+}

@@ -1,10 +1,3 @@
-
-# find clang
-#if ( BUILD_WITH_CLANG )
-#    include(FindClang)
-#endif( BUILD_WITH_CLANG )
-
-
 ###### Find boost libraries  ##############
 find_package(Boost 1.54.0 COMPONENTS date_time system filesystem unit_test_framework REQUIRED)
 if(Boost_FOUND)
@@ -26,8 +19,7 @@ if (BUILD_WITH_OPENMP)
 endif()
 
 ###### Find the Eigen3
-find_package(Eigen3 REQUIRED)
-include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
+include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/externals/eigen3)
 
 ###### Search the HDF5 library
 find_package(HDF5 COMPONENTS CXX REQUIRED)
@@ -59,21 +51,18 @@ endif()
 
 ###### C-BLOSC
 add_subdirectory(externals/c-blosc)
+include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/externals/c-blosc/blosc)
 
 ###### TIFF library
 find_package(TIFF REQUIRED)
 include_directories(SYSTEM ${TIFF_INCLUDE_DIR})
-
-
-# find_path(FFTW_INCLUDE_DIR fftw3.h)
-# include_directories(${FFTW_INCLUDE_DIR})
-# find_library(FFTW_LIBRARIES NAMES fftw3 libfftw3 fftw3-3 libfftw3-3)
 
 find_package(FFTW REQUIRED)
 include_directories(SYSTEM ${FFTW_INCLUDE_DIR})
 
 ###### GSL library
 add_subdirectory(externals/gsl)
+include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/externals)
 
 # GNU scientific library
 # find_package(GSL 2.0 REQUIRED)
