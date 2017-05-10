@@ -6,11 +6,14 @@ set PATH=%QTDIR%\bin;%PATH%
 set BOOST_ROOT=c:\local\boost_1_61_0
 set BOOST_LIBRARYDIR=c:\local\boost_1_61_0\lib64-msvc-14.0
 set FFTW_DIR=C:\Users\ci\Libraries\fftw
+set PATH=C:\temp\pkg-config-0.26\bin;%PATH%
 set PATH=C:\Users\ci\Libraries\eigen;%PATH%
 set PATH=C:\Users\ci\Libraries\libtiff;%PATH%
 set PATH=C:\Program Files\LLVM;%PATH%
 call "C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\vcvarsall.bat"
-cmake .. -G"Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Release
-set CL=/MP
-cmake --build . --config Release
+cmake .. -G"Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INCLUDE_PATH=C:\opt\local_x64\include -DCMAKE_LIBRARY_PATH=C:\opt\local_x64\lib
+REM set CL=/MP
+REM cmake --build . --config Release
+msbuild ALL_BUILD.vcxproj /maxcpucount:8 /p:Configuration=Release /p:Platform=x64
+
 

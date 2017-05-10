@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <vector>
 
 #include <boost/test/unit_test.hpp>
@@ -23,8 +24,7 @@
 #include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/instrument/Monochromator.h>
 #include <nsxlib/instrument/Source.h>
-
-#include <memory>
+#include <nsxlib/utils/MinimizerGSL.h>
 
 using SX::Crystal::UBSolution;
 using SX::Crystal::UBMinimizer;
@@ -38,6 +38,7 @@ using SX::Instrument::RotAxis;
 using SX::Instrument::Sample;
 using SX::Instrument::ComponentState;
 using SX::Instrument::Source;
+using SX::Utils::MinimizerGSL;
 
 using namespace SX::Units;
 using SX::Instrument::FlatDetector;
@@ -92,6 +93,7 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
     std::vector<Peak3D> _peaks;
 
     while (ifs.good()) {
+
         ifs>>h>>k>>l>>px>>py>>gamma>>omega>>chi>>phi;
 
         // Create a peak
@@ -100,17 +102,12 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
         peak.setSource(source);
         // Create the detector event matching that peak (the px and py are given in mm in the RAFUB input file)
         peak.setDetectorEvent(DetectorEvent(*D9, px/2,py/2,{gamma*deg}));
-        // set the miller indices corresponding to the peak
-//		peak.setMillerIndices(h,k,l);
-        // Set the wavelength
-        //peak.setWavelength(source->getSelectedMonochromator().getWavelength());
 
         Eigen::RowVector3d hkl;
         hkl << h,k,l;
 
         // Create a sample state
         peak.setSampleState(ComponentState(sample.get(), {omega*deg,chi*deg,phi*deg}));
-//		_peaks.push_back(peak);
 
         minimizer.addPeak(peak,hkl);
     }
@@ -121,7 +118,8 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
        sqrt(2)/2.0, sqrt(2)/2,0,
        0          ,          0,1;
     minimizer.setStartingUBMatrix(M);
-    minimizer.runEigen(1000);
+    minimizer.setMinimizer(new MinimizerGSL());
+    minimizer.run(1000);
 
     UBSolution solution=minimizer.getSolution();
 
@@ -131,45 +129,4 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
     std::cout<<"FROM UB"<<std::endl;
     std::cout<<uc.getBusingLevyB()<<std::endl;
     std::cout<<uc.getBusingLevyU()<<std::endl;
-
-//    LatticeMinimizer lmin;
-//    lmin.setDetector(D9);
-//    lmin.setSample(sample);
-//    lmin.setSource(source);
-//    lmin.refineInstrParameter(9,false); // Source
-//    lmin.refineInstrParameter(11,false); // Detector y
-//    lmin.refineInstrParameter(14,false); // Detector phi
-//
-//    for (auto& peak : _peaks)
-//		lmin.addPeak(peak);
-//
-//    SX::Crystal::UnitCell ucStart=SX::Crystal::UnitCell::fromReciprocalVectors(M.row(0),M.row(1),M.row(2));
-//
-//    lmin.setStartingLattice(ucStart.getA(),ucStart.getB(),ucStart.getC(),ucStart.getAlpha(),ucStart.getBeta(),ucStart.getGamma());
-//
-//    Eigen::Quaterniond q(ucStart.getBusingLevyU().transpose());
-//
-//    lmin.setStartingValue(6,0.0);
-//    lmin.setStartingValue(7,0.0);
-//    lmin.setStartingValue(8,2*std::acos(q.w()));
-//
-//    lmin.run(1000);
-//
-//    LatticeSolution lsol=lmin.getSolution();
-//
-//    SX::Crystal::UnitCell luc(lsol._latticeParams[0],lsol._latticeParams[1],lsol._latticeParams[2],lsol._latticeParams[3],lsol._latticeParams[4],lsol._latticeParams[5]);
-//
-//    q.w() = cos(lsol._latticeParams[8]/2.0);
-//    q.x() = sin(lsol._latticeParams[8]/2.0)*sin(lsol._latticeParams[6])*cos(lsol._latticeParams[7]);
-//    q.y() = sin(lsol._latticeParams[8]/2.0)*sin(lsol._latticeParams[6])*sin(lsol._latticeParams[7]);
-//    q.z() = sin(lsol._latticeParams[8]/2.0)*cos(lsol._latticeParams[6]);
-//
-//
-//    std::cout<<luc.getA()<<std::endl;
-//    std::cout<<luc.getB()<<std::endl;
-//    std::cout<<luc.getC()<<std::endl;
-//    std::cout<<luc.getAlpha()<<std::endl;
-//    std::cout<<luc.getBeta()<<std::endl;
-//    std::cout<<luc.getGamma()<<std::endl;
-
 }

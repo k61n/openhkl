@@ -33,22 +33,14 @@
  *
  */
 
-#include "MinimizerGSL.h"
-
-#ifdef NSXTOOL_GSL_FOUND
-
 #include <stdlib.h>
 #include <stdio.h>
 
-
-#include <gsl/gsl_multifit_nlin.h>
-
-
+#include "MinimizerGSL.h"
 
 namespace SX {
 
 namespace Utils {
-
 
 MinimizerGSL::MinimizerGSL():
     IMinimizer(),
@@ -91,14 +83,11 @@ void MinimizerGSL::initialize(int params, int values)
     _fdf.params = this; // this is the data ptr which is passed to gsl_f_wrapper
 
     // use default parameters + Levenberg-Marquardt trust region selection
-#if ((NSXTOOL_GSL_VERSION_MAJOR == 2) && (NSXTOOL_GSL_VERSION_MINOR >= 2) )
+
     _fdfParams = gsl_multifit_nlinear_default_parameters();
     _fdfParams.trs = gsl_multifit_nlinear_trs_lm;
     _fdf.fvv = nullptr;  // not using geodesic acceleration
      _workspace = gsl_multifit_nlinear_alloc(gsl_multifit_nlinear_trust, &_fdfParams, _numValues, _numParams);
-#else
-    _workspace = gsl_multifit_fdfsolver_alloc(gsl_multifit_fdfsolver_lmsder, _numValues, _numParams);
-#endif
 
 }
 
@@ -112,40 +101,11 @@ bool MinimizerGSL::fit(int max_iter)
     gslFromEigen(_x, _x_gsl);
     gslFromEigen(_wt, _wt_gsl);
 
-#if ((NSXTOOL_GSL_VERSION_MAJOR == 2) && (NSXTOOL_GSL_VERSION_MINOR >= 2) )
     gsl_multifit_nlinear_winit (_x_gsl, _wt_gsl, &_fdf, _workspace);
     _status = gsl_multifit_nlinear_driver(max_iter, _xtol, _gtol, _ftol, NULL /*callback*/, NULL, &info, _workspace);
     gsl_multifit_nlinear_covar(_workspace->J, 1e-6, _covariance_gsl);
     _numIter = _workspace->niter;
     eigenFromGSL(_workspace->J, _jacobian);
-#else
-    gsl_multifit_fdfsolver_set(_workspace, &_fdf, _x_gsl);
-#if(NSXTOOL_GSL_VERSION_MAJOR==2)
-    _jacobian_gsl = gsl_matrix_alloc(_numValues, _numParams);
-    _status = gsl_multifit_fdfsolver_driver(_workspace, max_iter, _xtol, _gtol, _ftol, &info);
-    gsl_multifit_fdfsolver_dif_df(_workspace->x, _wt_gsl, &_fdf, _workspace->f, _jacobian_gsl);
-    eigenFromGSL(_jacobian_gsl, _jacobian);
-    gsl_matrix_free(_jacobian_gsl);
-    _jacobian_gsl = nullptr;
-    _numIter = _workspace->niter;
-#else // GSL VERSION 1.xx
-    _numIter = 0;
-    double epsabs = 0.0;
-    double epsrel = _xtol;
-
-    do {
-        _status = gsl_multifit_fdfsolver_iterate(_workspace);
-        if (_status)
-            break;
-
-        /* test for convergence */
-        _status = gsl_multifit_test_delta (_workspace->dx, _workspace->x, epsabs, epsrel);
-    }
-    while (_status == GSL_CONTINUE && ++_numIter < max_iter);
-
-    eigenFromGSL(_workspace->J, _jacobian);
-#endif // version 2
-#endif // version 2.2
 
     fprintf (stderr, "status = %s\n", gsl_strerror(_status));
 
@@ -163,11 +123,7 @@ void MinimizerGSL::deinitialize()
     IMinimizer::deinitialize();
 
     if (_workspace) {
-#if ((NSXTOOL_GSL_VERSION_MAJOR == 2) && (NSXTOOL_GSL_VERSION_MINOR >= 2) )
         gsl_multifit_nlinear_free (_workspace);
-#else
-        gsl_multifit_fdfsolver_free(_workspace);
-#endif
         _workspace = nullptr;
     }
 
@@ -259,9 +215,6 @@ void MinimizerGSL::gslFromEigen(const Eigen::MatrixXd &in, gsl_matrix *out)
 }
 
 
-} // namespace Utils
+} // end namespace Utils
 
-} // namespace SX
-
-
-#endif // NSXTOOL_GSL_FOUND
+} // end namespace SX

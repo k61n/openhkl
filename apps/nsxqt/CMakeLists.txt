@@ -3,8 +3,9 @@ if(POLICY CMP0020)
 endif()
 
 # add project root directory to include path
-include_directories(${CMAKE_SOURCE_DIR})
-
+include_directories(
+    ${CMAKE_SOURCE_DIR}
+)
 # Disable console on Windows
 if(WIN32)
   set(GUI_TYPE WIN32)

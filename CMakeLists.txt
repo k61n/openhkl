@@ -5,7 +5,7 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 # Add some paths to the cmake module search path.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/modules)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/externals/c-blosc/cmake)
-
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/externals/gsl/cmake)
 
 project(NSXTOOL_PROJECT)
 
@@ -53,9 +53,6 @@ set(CPACK_PACKAGE_VERSION_MAJOR "${NSXTOOL_VERSION_MAJOR}")
 set(CPACK_PACKAGE_VERSION_MINOR "${NSXTOOL_VERSION_MINOR}")
 set(CPACK_PACKAGE_VERSION_PATCH "0")
 set(CPACK_SOURCE_IGNORE_FILES "/\\\\.git/;" )
-
-
-
 
 ###########################################################################
 # Now add in all the components

@@ -207,6 +207,7 @@ XDS::RecordList XDS::getUnmergedRecords() const
         records.emplace_back(*peak);
     }
     std::sort(records.begin(), records.end());
+    return records;
 }
 
 } // Namespace Data

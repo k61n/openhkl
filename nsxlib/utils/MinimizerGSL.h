@@ -36,8 +36,6 @@
 #ifndef NSXTOOL_MINIMIZERGSL_H_
 #define NSXTOOL_MINIMIZERGSL_H_
 
-#ifdef NSXTOOL_GSL_FOUND
-
 #include "IMinimizer.h"
 
 #include <functional>
@@ -47,11 +45,7 @@
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_blas.h>
 
-#if ((NSXTOOL_GSL_VERSION_MAJOR == 2) && (NSXTOOL_GSL_VERSION_MINOR >= 2) )
 #include <gsl/gsl_multifit_nlinear.h>
-#else
-#include <gsl/gsl_multifit_nlin.h>
-#endif
 
 namespace SX {
 
@@ -77,15 +71,9 @@ private:
     static void gslFromEigen(const Eigen::VectorXd& in, gsl_vector* out);
     static void gslFromEigen(const Eigen::MatrixXd& in, gsl_matrix* out);
 
-#if ((NSXTOOL_GSL_VERSION_MAJOR == 2) && (NSXTOOL_GSL_VERSION_MINOR >= 2) )
     gsl_multifit_nlinear_workspace* _workspace;
     gsl_multifit_nlinear_fdf _fdf;
     gsl_multifit_nlinear_parameters _fdfParams;
-#else
-    gsl_multifit_fdfsolver* _workspace;
-    gsl_multifit_function_fdf _fdf;
-#endif
-
 
     // gsl_vector *f;
     gsl_matrix *_jacobian_gsl;
@@ -100,9 +88,8 @@ private:
     Eigen::VectorXd _outputEigen;
 };
 
-} // namespace Utils
+} // end namespace Utils
 
-} // namespace SX
+} // end namespace SX
 
 #endif // NSXTOOL_MINIMIZERGSL_H_
-#endif // NSXTOOL_GSL_FOUND

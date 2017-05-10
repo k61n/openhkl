@@ -1,0 +1,16 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/pellegrini/Downloads/eigen-eigen-67e894c6cd8f/test/eigensolver_selfadjoint.cpp"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"BuildOfficial"
+		],
+		"name" : "eigensolver_selfadjoint_3"
+	}
+}

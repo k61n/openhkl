@@ -1,0 +1,16 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/pellegrini/Downloads/eigen-eigen-67e894c6cd8f/unsupported/test/matrix_exponential.cpp"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"BuildUnsupported"
+		],
+		"name" : "matrix_exponential_5"
+	}
+}
