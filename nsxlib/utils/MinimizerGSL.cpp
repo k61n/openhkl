@@ -36,8 +36,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <gsl/gsl_multifit_nlin.h>
-
 #include "MinimizerGSL.h"
 
 namespace SX {
