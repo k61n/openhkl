@@ -54,6 +54,7 @@ add_subdirectory(externals/c-blosc)
 include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/externals/c-blosc/blosc)
 
 find_package(YAML REQUIRED)
+include_directories(SYSTEM ${YAML_INCLUDES})
 
 ###### TIFF library
 find_package(TIFF REQUIRED)
