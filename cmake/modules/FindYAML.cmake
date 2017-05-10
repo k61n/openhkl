@@ -51,7 +51,7 @@ if (NOT YAML_FOUND)
   ##_____________________________________________________________________________
   ## Check for the library
 
-  find_library (YAML_LIBRARIES yaml-cpp yaml-cppmd
+  find_library (YAML_LIBRARIES yaml-cpp libyaml-cppmd
     HINTS ${YAML_ROOT_DIR} ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES lib
     )
