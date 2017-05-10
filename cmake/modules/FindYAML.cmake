@@ -45,9 +45,6 @@ if (NOT YAML_FOUND)
     PATH_SUFFIXES include
     )
     
-    message("YAML ROOT DIR ----> ${YAML_ROOT_DIR}")
-    message("YAML INCLUDES ----> ${YAML_INCLUDES}")
-
   ##_____________________________________________________________________________
   ## Check for the library
 
@@ -55,7 +52,6 @@ if (NOT YAML_FOUND)
     HINTS ${YAML_ROOT_DIR} ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES lib
     )
-    message("YAML LIBRARIES ----> ${YAML_LIBRARIES}")
 
   ##_____________________________________________________________________________
   ## Actions taken when all components have been found
