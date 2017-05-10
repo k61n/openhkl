@@ -62,7 +62,7 @@ include_directories(SYSTEM ${FFTW_INCLUDE_DIR})
 
 ###### GSL library
 add_subdirectory(externals/gsl)
-include_directories(SYSTEM ${CMAKE_BINARY_DIR}/externals/gsl)
+include_directories(SYSTEM ${CMAKE_BINARY_DIR}/externals/gsl/gsl)
     
 # GNU scientific library
 # find_package(GSL 2.0 REQUIRED)
