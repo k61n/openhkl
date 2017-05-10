@@ -71,7 +71,7 @@ include_directories(SYSTEM ${CMAKE_BINARY_DIR}/externals/gsl/gsl)
 
 #message("GSL_INCLUDE_DIR is ${GSL_INCLUDE_DIR}")
 
-set(temp_string ${GSL_VERSION})
+#set(temp_string ${GSL_VERSION})
 #string(REGEX REPLACE "([0-9]+)\\.([0-9]+)(\\.([0-9]+))?" "\\1" gsl_version_major ${temp_string})
 #string(REGEX REPLACE "([0-9]+)\\.([0-9]+)(\\.([0-9]+))?" "\\2" gsl_version_minor ${temp_string})
 #string(REGEX REPLACE "([0-9]+)\\.([0-9]+)(\\.([0-9]+))?" "\\4" gsl_version_subminor ${temp_string})
