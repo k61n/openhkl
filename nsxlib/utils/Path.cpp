@@ -110,7 +110,7 @@ std::string Path::getDataBasesPath(const std::string& database)
 {
     boost::filesystem::path p(getResourcesDir());
     p /= "databases";
-    p /= (database + ".xml");
+    p /= database;
     return p.string();
 }
 

@@ -37,6 +37,7 @@
 
 #include <boost/property_tree/ptree.hpp>
 
+#include "IsotopeDatabaseManager.h"
 #include "../utils/Types.h"
 
 namespace SX {
