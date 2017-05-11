@@ -62,13 +62,15 @@ public:
     size_t redundancy() const;
     double std() const;
 
+    double d() const;
+
 private:
     void determineRepresentativeHKL();
     void update();
 
     Eigen::Vector3i _hkl;
     Intensity _intensity;
-    double _chiSquared, _std;
+    double _chiSquared, _std, _d;
     std::vector<sptrPeak3D> _peaks;
     SX::Crystal::SpaceGroup _grp;
     bool _friedel;

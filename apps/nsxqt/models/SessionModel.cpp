@@ -950,7 +950,7 @@ bool SessionModel::writeStatistics(std::string filename,
 
     std::sort(merged_peaks.begin(), merged_peaks.end(), compare_fn);
 
-    file << "   h    k    l            I        sigma   nobs       chi2             std            std/I  "
+    file << "   h    k    l            I        sigma   d   nobs       chi2             std            std/I  "
          << std::endl;
 
     unsigned int total_peaks = 0;
@@ -967,12 +967,13 @@ bool SessionModel::writeStatistics(std::string filename,
         const double intensity = peak.getIntensity().getValue();
         const double sigma = peak.getIntensity().getSigma();
         const double chi2 = peak.chiSquared();
+        const double d = peak.d();
         const int nobs = peak.redundancy();
         const double std = peak.std();
         const double rel_std = std / intensity;
 
-        std::snprintf(&buf[0], buf.size(), "  %4d %4d %4d %15.2f %10.2f %3d %15.5f %15.5f %15.5f",
-                h, k, l, intensity, sigma, nobs, chi2, std, rel_std);
+        std::snprintf(&buf[0], buf.size(), "  %4d %4d %4d %15.2f %10.2f %15.5f %3d %15.5f %15.5f %15.5f",
+                      h, k, l, intensity, sigma, d, nobs, chi2, std, rel_std);
 
         file << &buf[0];
 

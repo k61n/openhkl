@@ -43,7 +43,7 @@ namespace SX {
 namespace Crystal {
 
 MergedPeak::MergedPeak(const SpaceGroup& grp, bool friedel):
- _hkl(), _intensity(0.0, 0.0), _chiSquared(0.0), _std(0.0), _peaks(), _grp(grp), _friedel(friedel)
+    _hkl(), _intensity(0.0, 0.0), _chiSquared(0.0), _std(0.0), _peaks(), _grp(grp), _friedel(friedel), _d(0.0)
 {
 }
 
@@ -158,18 +158,27 @@ void MergedPeak::update()
     // TODO(jonathan): check that this is correct!
     _chiSquared = 0.0;
     _std = 0.0;
+    _d = 0.0;
 
     for (auto&& peak: _peaks) {
         const double difference = peak->getCorrectedIntensity().getValue() - _intensity.getValue();
         const double res2 = std::pow(difference, 2);
         _chiSquared += res2 / _intensity.getValue();
         _std += res2;
+        _d += 1.0 / peak->getQ().norm();
     }
+
+    _d /= _peaks.size();
 
     if (_peaks.size()>1) {
         _std /= (_peaks.size()-1);
     }
     _std = std::sqrt(_std);
+}
+
+double MergedPeak::d() const
+{
+    return _d;
 }
 
 } // namespace Crystal
