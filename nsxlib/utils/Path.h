@@ -56,7 +56,7 @@ public:
     //! Returns the path where the diffractomers XML defininition files are stored
     static std::string getDiffractometersPath();
 
-    static std::string getDataBasesPath();
+    static std::string getDataBasesPath(const std::string& database);
 
     static std::string getResourcesDir();
 

@@ -10,17 +10,20 @@
 #include <nsxlib/data/IData.h>
 #include "LatticeIndexer.h"
 #include <nsxlib/chemistry/Material.h>
-#include <nsxlib/chemistry/MaterialManager.h>
 #include <nsxlib/crystal/Peak3D.h>
 #include <nsxlib/crystal/SpaceGroupSymbols.h>
 #include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/utils/Units.h>
+#include <nsxlib/utils/Types.h>
 
 #include "ui_UnitCellPropertyWidget.h"
 #include "Logger.h"
 #include "models/SessionModel.h"
 #include "models/UnitCellItem.h"
 #include "tree/UnitCellPropertyWidget.h"
+
+using SX::Chemistry::Material;
+using SX::Chemistry::sptrMaterial;
 
 UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *parent) :
     QWidget(parent),
@@ -49,7 +52,7 @@ UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *par
     ui->spinBox_Z->setValue(cell->getZ());
     auto material=cell->getMaterial();
     if (material)
-        ui->lineEdit_ChemicalFormula->setText(material->getName().c_str());
+        ui->lineEdit_ChemicalFormula->setText(material->formula().c_str());
 
     updateCellParameters(cell);
 
@@ -109,7 +112,7 @@ void UnitCellPropertyWidget::setMassDensity() const
     auto material=_unitCellItem->getUnitCell()->getMaterial();
     if (material)
     {
-        double mm=material->getMolarMass();
+        double mm=material->molarMass();
         mm*=ui->spinBox_Z->value()/SX::Units::avogadro;
         double volume=_unitCellItem->getUnitCell()->getVolume()*SX::Units::ang3;
         material->setMassDensity(mm/volume);
@@ -133,10 +136,9 @@ void UnitCellPropertyWidget::getLatticeParams()
 
 void UnitCellPropertyWidget::setChemicalFormula(const QString &formula)
 {
-    auto mgr=SX::Chemistry::MaterialManager::Instance();
     try
     {
-        auto material=mgr->buildMaterialFromChemicalFormula(formula.toStdString());
+        sptrMaterial material(new Material(formula.toStdString()));
         _unitCellItem->getUnitCell()->setMaterial(material);
     }
     catch(std::exception& e)

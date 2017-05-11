@@ -9,25 +9,24 @@
 
 #include <nsxlib/geometry/ConvexHull.h>
 #include <nsxlib/chemistry/Material.h>
-#include <nsxlib/chemistry/MaterialManager.h>
 #include <nsxlib/geometry/MCAbsorption.h>
+#include <nsxlib/utils/Types.h>
 #include <nsxlib/utils/Units.h>
 
 // const double tolerance=1.0e-9;
 
-using namespace SX::Chemistry;
+using SX::Chemistry::Material;
+using SX::Chemistry::sptrMaterial;
+using SX::Geometry::MCAbsorption;
+using SX::Units::cm;
 
 BOOST_AUTO_TEST_CASE(Test_Material)
 {
     typedef Eigen::Vector3d vector3;
     typedef SX::Geometry::ConvexHull<double> CHullDouble;
 
-    MaterialManager* mmgr=MaterialManager::Instance();
-
     // Build an isotopically pure methane material
-    SX::Chemistry::sptrMaterial helium= mmgr->buildEmptyMaterial("helium3",BuildingMode::PartialPressure);
-    helium->addElement("He[3]",5.0*SX::Units::Bar);
-    helium->setTemperature(298);
+    sptrMaterial helium(new Material("He[3]"));
 
     // Create a cubic convex hull
     CHullDouble chull;
@@ -44,10 +43,10 @@ BOOST_AUTO_TEST_CASE(Test_Material)
     chull.scale(0.032);
 
     // Create the MC absorption calculator
-    SX::Geometry::MCAbsorption mca(3.2*SX::Units::cm,3.2*SX::Units::cm,-100);
+    MCAbsorption mca(3.2*cm,3.2*cm,-100);
 
-    double muScattering=helium->getMuScattering();
-    double muAbsorption=helium->getMuAbsorption(1.46e-10);
+    double muScattering=helium->muIncoherent();
+    double muAbsorption=helium->muAbsorption(1.46e-10);
 
     // Set the material hull and its scattering and absorption attenuation factors
     mca.setSample(&chull,muScattering,muAbsorption);
@@ -56,16 +55,16 @@ BOOST_AUTO_TEST_CASE(Test_Material)
     mca.run(10,vector3(0,1,0),Eigen::Matrix3d::Identity());
 
     // Build an isotopically pure methane material
-    SX::Chemistry::sptrMaterial methane= mmgr->buildMaterialFromChemicalFormula("CH4");
-    double mm=methane->getMolarMass();
+    sptrMaterial methane(new Material("CH4"));
+    double mm=methane->molarMass();
     double volume=chull.getVolume();
     methane->setMassDensity(mm/volume);
 
     // Create the MC absorption calculator
-    mca=SX::Geometry::MCAbsorption(3.2*SX::Units::cm,3.2*SX::Units::cm,-100);
+    mca=SX::Geometry::MCAbsorption(3.2*cm,3.2*cm,-100);
 
-    muScattering=methane->getMuScattering();
-    muAbsorption=methane->getMuAbsorption(1.46e-10);
+    muScattering=methane->muIncoherent();
+    muAbsorption=methane->muAbsorption(1.46e-10);
 
     // Set the material hull and its scattering and absorption attenuation factors
     mca.setSample(&chull,muScattering,muAbsorption);

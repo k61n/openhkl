@@ -317,10 +317,10 @@ void UnitCell::printSelf(std::ostream& os) const
     if (_material)
     {
         os << *(_material) << std::endl;
-        os << "Molar mass: "<< _material->getMolarMass()/SX::Units::g << "g.mol-1 \n";
-        os << "Density:" << _material->getMassDensity()/SX::Units::g_per_cm3 << "g.cm-3\n";
-        os << "Linear absorption coef: " << _material->getMuAbsorption()*SX::Units::cm << "cm-1 @ 1.798 AA \n";
-        os << "Linear incoherent coef: " << _material->getMuScattering()*SX::Units::cm << "cm-1";
+        os << "Molar mass: "<< _material->molarMass()/SX::Units::g << "g.mol-1 \n";
+        os << "Density:" << _material->massDensity()/SX::Units::g_per_cm3 << "g.cm-3\n";
+        os << "Linear absorption coef: " << _material->muAbsorption()*SX::Units::cm << "cm-1 @ 1.798 AA \n";
+        os << "Linear incoherent coef: " << _material->muIncoherent()*SX::Units::cm << "cm-1";
     }
 
 

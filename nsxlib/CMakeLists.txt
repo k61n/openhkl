@@ -22,6 +22,7 @@ target_link_libraries(nsx
     ${Boost_LIBRARIES}
     ${PYTHON_LIBRARIES}
     ${FFTW_LIBRARIES}
+    ${YAML_LIBRARIES}
     ${TIFF_LIBRARY}
     gsl
     gslcblas

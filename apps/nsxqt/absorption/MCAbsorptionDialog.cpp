@@ -66,7 +66,7 @@ void MCAbsorptionDialog::on_pushButton_run_pressed()
             return;
     }
 
-    mca.setSample(&hull,material->getMuScattering(),material->getMuAbsorption(mono.getWavelength()*SX::Units::ang));
+    mca.setSample(&hull,material->muIncoherent(),material->muAbsorption(mono.getWavelength()*SX::Units::ang));
     const auto& data=_experiment->getData();
     ui->progressBar_MCStatus->setValue(0);
     ui->progressBar_MCStatus->setTextVisible(true);
