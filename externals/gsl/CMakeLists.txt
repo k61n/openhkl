@@ -664,6 +664,8 @@ endforeach ()
 #endif ()
 
 add_library(gsl STATIC ${GSL_SOURCES})
+target_link_libraries(gsl gslcblas)
+add_dependencies(gsl copy-headers)
 
 #add_library(gsl ${shared} ${GSL_SOURCES})
 #set_target_properties(gsl PROPERTIES COMPILE_DEFINITIONS DLL_EXPORT)
