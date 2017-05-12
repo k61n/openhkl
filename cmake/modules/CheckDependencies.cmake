@@ -88,4 +88,3 @@ message("GSL_VERSION_MINOR is ${gsl_version_minor}")
 
 add_definitions(-DNSXTOOL_GSL_VERSION_MAJOR=${gsl_version_major})
 add_definitions(-DNSXTOOL_GSL_VERSION_MINOR=${gsl_version_minor})
-
