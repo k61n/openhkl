@@ -37,136 +37,73 @@
 
 #include <boost/property_tree/ptree.hpp>
 
-namespace SX
-{
+#include "IsotopeDatabaseManager.h"
+#include "../utils/Types.h"
+
+namespace SX {
 
 namespace Chemistry
 {
 
-class Element;
-class Material;
-class MaterialManager;
-
-typedef std::shared_ptr<Element> sptrElement;
-typedef std::shared_ptr<Material> sptrMaterial;
-typedef std::map<sptrElement,double> elementsMap;
-typedef std::map<sptrMaterial,double> materialsMap;
-
 namespace property_tree=boost::property_tree;
-
-//! The different modes that can be used to build a Material with its components
-enum class BuildingMode : unsigned int {MassFraction=0,MolarFraction=1,Stoichiometry=2,PartialPressure=3};
 
 class Material
 {
 
 public:
-	//! A lookup between the enum FillingMode and its corresponding string representation
-	static std::map<BuildingMode,std::string> buildingModeToString;
-	//! A lookup between the string representation of the enum FillingMode and its corresponding FillingMode
-	static std::map<std::string,BuildingMode> stringToBuildingMode;
 
-private:
+    //! Default constructor (deleted)
+    Material()=delete;
 
-	friend class MaterialManager;
+    //! Constructs a Material with a given name
+    Material(const std::string& formula);
 
-private:
-
-	//! Returns a shared pointer to a Material.
-	//! If a chemical symbol is given the element will be built from its natural isotopes otherwise it is empty and will have to be filled later by addIsotope method.
-	static Material* create(const std::string& name, BuildingMode mode);
-
-public:
+    //! Copy constructor (deleted)
+    Material(const Material& other)=default;
 
 	//! Destructor
-	~Material();
+	~Material()=default;
 
-	//! Return true if two Material objects are the same (same elements with the same contents)
-	bool operator==(const Material& other) const;
+    //! Assignment operator (deleted)
+    Material& operator=(const Material& other)=delete;
+
+//	//! Return true if two Material objects are the same (same elements with the same contents)
+//	bool operator==(const Material& other) const;
 
 	//! Returns the name of this Material
-	const std::string& getName() const;
+	const std::string& formula() const;
 
-	//! Returns the building mode of this Material
-	BuildingMode getBuildingMode() const;
+	const isotopeContents& isotopes() const;
 
 	//! Returns the mass density of this Material
-	double getMassDensity() const;
+	double massDensity() const;
 	//! Sets the mass density of this Material
 	void setMassDensity(double massDensity);
 
-	//! Returns the temperature of this Material
-	double getTemperature() const;
-	//! Sets the temperature of this Material
-	void setTemperature(double temperature);
-
-	//! Add an Element with a given amount to this Material
-	void addElement(sptrElement element, double amount);
-	//! Add an Element with a given amount to this Material.
-	void addElement(const std::string& name, double amount);
-	//! Add a Material with a given amount to this Material
-	void addMaterial(sptrMaterial material, double amount);
-
 	//! Returns the molar mass of this Material
-	double getMolarMass() const;
+	double molarMass() const;
 
 	//! Returns the mass fractions of this Material
-	elementsMap getMassFractions() const;
-	//! Returns the molar fractions of this Material
-	elementsMap getMolarFractions() const;
+    isotopeContents massFractions() const;
 
 	//! Returns the number of atoms per volume units per element (1/m3)
-	elementsMap getNAtomsPerVolume() const;
-	//! Returns the number of electrons per volume units per element (1/m3)
-	elementsMap getNElectronsPerVolume() const;
-	//! Returns the total number of atoms per volume units (1/m3)
-	double getNAtomsTotalPerVolume() const;
-	//! Returns the total number of electrons per volume units (1/m3)
-	double getNElectronsTotalPerVolume() const;
-	//! Returns the scattering attenuation factor of this Material
-	double getMuScattering() const;
-	//! Returns the absorption attenuation factor of this Material
-	double getMuAbsorption(double lambda=1.798e-10) const;
-	//! Returns the attenuation factor of this Material
-	double getMu(double lambda=1.798e-10) const;
+    isotopeContents atomicNumberDensity() const;
 
-	//! Write an XML node out of this Material and insert it into a parent node
-	property_tree::ptree writeToXML() const;
+	//! Returns the scattering attenuation factor of this Material
+	double muIncoherent() const;
+	//! Returns the absorption attenuation factor of this Material at a given wavelength
+	double muAbsorption(double lambda=1.798e-10) const;
 
 	//! Print informations about this Material to an output stream
 	void print(std::ostream& os) const;
 
 private:
 
-	//! Default constructor (deleted)
-	Material()=delete;
+	std::string _formula;
 
-	//! Copy constructor (deleted)
-	Material(const Material& other)=delete;
-
-	//! Constructs a Material with a given name
-	Material(const std::string& name);
-
-	//! Constructs a Material with a given name and building mode
-	Material(const std::string& name, BuildingMode mode);
-
-	//! Assignment operator (deleted)
-	Material& operator=(const Material& other)=delete;
-
-private:
-
-	std::string _name;
-
-	BuildingMode _buildingMode;
+	isotopeContents _isotopes;
 
 	double _massDensity;
-
-	double _temperature;
-
-	std::map<sptrElement,double> _elements;
-
-	std::map<sptrMaterial,double> _materials;
-
 };
 
 std::ostream& operator<<(std::ostream& os, const Material& material);

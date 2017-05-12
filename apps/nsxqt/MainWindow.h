@@ -96,7 +96,6 @@ private slots:
     void on_actionBehind_Detector_triggered();
     void on_actionShow_labels_triggered(bool checked);
     void on_action_display_isotopes_database_triggered();
-    void on_action_add_element_triggered();
     void on_actionConvert_to_HDF5_triggered();
     void on_actionH_k_l_triggered();
     void on_actionShow_calculated_peak_positions_triggered(bool checked);

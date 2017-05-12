@@ -1,10 +1,10 @@
 #include <functional>
-#include <numeric>
 #include <iostream>
+#include <numeric>
+#include <stdexcept>
 
-#include "../kernel/Error.h"
-#include "Element.h"
-#include "ElementManager.h"
+#include "ChemicalFormulaParser.h"
+#include "IsotopeDatabaseManager.h"
 #include "Material.h"
 #include "../utils/Units.h"
 
@@ -14,414 +14,122 @@ namespace SX
 namespace Chemistry
 {
 
-std::map<std::string,BuildingMode> Material::stringToBuildingMode={
-        {"mass_fraction",BuildingMode::MassFraction},
-        {"molar_fraction",BuildingMode::MolarFraction},
-        {"stoichiometry",BuildingMode::Stoichiometry},
-        {"partial_pressure",BuildingMode::PartialPressure}
-};
-
-std::map<BuildingMode,std::string> Material::buildingModeToString={
-        {BuildingMode::MassFraction,"mass_fraction"},
-        {BuildingMode::MolarFraction,"molar_fraction"},
-        {BuildingMode::Stoichiometry,"stoichiometry"},
-        {BuildingMode::PartialPressure,"partial_pressure"}
-};
-
-Material* Material::create(const std::string& name, BuildingMode mode)
+Material::Material(const std::string& formula)
+: _formula(formula),
+  _isotopes(),
+  _massDensity(1.0)
 {
-    return (new Material(name,mode));
+    ChemicalFormulaParser<std::string::const_iterator> parser;
+    bool success = qi::phrase_parse(formula.begin(),formula.end(),parser,qi::blank,_isotopes);
+    if (!success) {
+        throw std::runtime_error("Invalid input formula");
+    }
 }
 
-Material::Material(const std::string& name)
-: _name(name),
-  _buildingMode(BuildingMode::MolarFraction),
-  _massDensity(0.0),
-  _temperature(0.0),
-  _elements(),
-  _materials()
+const std::string& Material::formula() const
 {
+    return _formula;
 }
 
-Material::Material(const std::string& name, BuildingMode mode)
-: _name(name),
-  _buildingMode(mode),
-  _massDensity(0.0),
-  _temperature(0.0),
-  _elements(),
-  _materials()
+const isotopeContents& Material::isotopes() const
 {
+    return _isotopes;
 }
 
-Material::~Material()
-{
-}
-
-bool Material::operator==(const Material& other) const
-{
-
-    elementsMap mf1=getMolarFractions();
-    elementsMap mf2=other.getMolarFractions();
-
-    return (mf1==mf2);
-}
-
-const std::string& Material::getName() const
-{
-    return _name;
-}
-
-BuildingMode Material::getBuildingMode() const
-{
-    return _buildingMode;
-}
-
-double Material::getTemperature() const
-{
-    return _temperature;
-}
-
-double Material::getMassDensity() const
+double Material::massDensity() const
 {
     return _massDensity;
 }
 
 void Material::setMassDensity(double massDensity)
 {
-    if (_buildingMode==BuildingMode::PartialPressure)
-        return;
-
-    if (massDensity<0.0)
-        throw SX::Kernel::Error<Material>("Invalid mass density.");
-
+    if (massDensity<=0.0) {
+        throw std::runtime_error("Invalid mass density");
+    }
     _massDensity = massDensity;
 }
 
-void Material::setTemperature(double temperature)
+double Material::molarMass() const
 {
-    if (temperature<0.0)
-        throw SX::Kernel::Error<Material>("Invalid temperature.");
+    IsotopeDatabaseManager* imgr=IsotopeDatabaseManager::Instance();
 
-    _temperature=temperature;
+    double molarMass(0.0);
 
-    if (_buildingMode==BuildingMode::PartialPressure)
-    {
-        double totalPressure = std::accumulate(std::begin(_elements),std::end(_elements),0.0,[](double previous, const std::pair<sptrElement,double>& p){return previous+p.second;});
-        totalPressure += std::accumulate(std::begin(_materials),std::end(_materials),0.0,[](double previous, const std::pair<sptrMaterial,double>& p){return previous+p.second;});
-        // The molar density (eta) is computed as eta=P/RT
-        _massDensity=getMolarMass()*totalPressure/SX::Units::R/_temperature;
+    for (const auto& p : _isotopes) {
+        const auto& isotope=imgr->getIsotope(p.first);
+        molarMass += p.second*isotope.getProperty<double>("molar_mass");
     }
+
+    return molarMass;
 }
 
-void Material::addElement(sptrElement element, double amount)
+isotopeContents Material::massFractions() const
 {
-    auto it=_elements.find(element);
+    IsotopeDatabaseManager* imgr=IsotopeDatabaseManager::Instance();
 
-    if (it==_elements.end())
-        _elements.insert(elementsMap::value_type(element,amount));
-    else
-        it->second += amount;
+    isotopeContents massFractions;
+
+    double molarMass(0.0);
+    for (const auto& p : _isotopes){
+        const auto& isotope=imgr->getIsotope(p.first);
+        massFractions.insert(std::make_pair(p.first,p.second*isotope.getProperty<double>("molar_mass")));
+        molarMass += massFractions[p.first];
+    }
+
+    for (auto& p : massFractions) {
+        p.second/=molarMass;
+    }
+
+    return massFractions;
 }
 
-void Material::addElement(const std::string& name, double amount)
+isotopeContents Material::atomicNumberDensity() const
 {
-    ElementManager* mgr=ElementManager::Instance();
+    IsotopeDatabaseManager* imgr=IsotopeDatabaseManager::Instance();
 
-    sptrElement el=mgr->getElement(name);
+    isotopeContents nAtomsPerVolume;
 
-    addElement(el,amount);
-}
-
-void Material::addMaterial(sptrMaterial material, double amount)
-{
-    auto it=_materials.find(material);
-
-    if (it==_materials.end())
-        _materials.insert(materialsMap::value_type(material,amount));
-    else
-        it->second += amount;
-}
-
-double Material::getMolarMass() const
-{
-    double mass(0.0);
-
-    if (_buildingMode==BuildingMode::Stoichiometry)
-    {
-        for (auto e : _elements)
-            mass += e.second*e.first->getMolarMass();
-        for (auto m : _materials)
-            mass += m.second*m.first->getMolarMass();
+    for (const auto& p : massFractions()) {
+        const auto& isotope=imgr->getIsotope(p.first);
+        double massFraction(_massDensity*p.second);
+        double molarFraction = massFraction/isotope.getProperty<double>("molar_mass");
+        nAtomsPerVolume.insert(std::make_pair(p.first,Units::avogadro*molarFraction));
     }
-    else
-    {
-        auto molarFractions=getMolarFractions();
-
-        for (const auto& mf : molarFractions)
-            mass += mf.second*mf.first->getMolarMass();
-    }
-
-    return mass;
-}
-
-elementsMap Material::getMassFractions() const
-{
-
-    elementsMap fractions;
-
-    if (_buildingMode==BuildingMode::MassFraction || _buildingMode==BuildingMode::MolarFraction)
-    {
-        double sum = std::accumulate(std::begin(_elements),std::end(_elements),0.0,[](double previous, const std::pair<sptrElement,double>& p){return previous+p.second;});
-        sum += std::accumulate(std::begin(_materials),std::end(_materials),0.0,[](double previous, const std::pair<sptrMaterial,double>& p){return previous+p.second;});
-
-        if (std::abs(sum-1.0)>1.0-6)
-            throw SX::Kernel::Error<Material>("The sum of mass/molar fractions is not equal to 1.");
-    }
-
-    if (_buildingMode==BuildingMode::MassFraction)
-    {
-        for (auto e : _elements)
-        {
-            auto it=fractions.find(e.first);
-            if (it==fractions.end())
-                fractions.insert(elementsMap::value_type(e.first,e.second));
-            else
-                it->second += e.second;
-        }
-        for (auto m : _materials)
-        {
-            auto subfractions = m.first->getMassFractions();
-            for (auto f : subfractions)
-            {
-                auto it=fractions.find(f.first);
-                if (it==fractions.end())
-                    fractions.insert(elementsMap::value_type(f.first,m.second*f.second));
-                else
-                    it->second += m.second*f.second;
-            }
-        }
-    }
-    else
-    {
-        auto molarFractions=getMolarFractions();
-        double fact=0.0;
-        for (auto mf : molarFractions)
-        {
-            double temp=mf.second*mf.first->getMolarMass();
-            fact+=temp;
-            fractions.insert(elementsMap::value_type(mf.first,temp));
-        }
-        for (auto& f : fractions)
-            f.second/=fact;
-    }
-
-    return fractions;
-}
-
-elementsMap Material::getMolarFractions() const
-{
-
-    elementsMap fractions;
-
-    if (_buildingMode==BuildingMode::MassFraction || _buildingMode==BuildingMode::MolarFraction)
-    {
-        double sum = std::accumulate(std::begin(_elements),std::end(_elements),0.0,[](double previous, const std::pair<sptrElement,double>& p){return previous+p.second;});
-        sum += std::accumulate(std::begin(_materials),std::end(_materials),0.0,[](double previous, const std::pair<sptrMaterial,double>& p){return previous+p.second;});
-
-        if (std::abs(sum-1.0)>1.0-6)
-            throw SX::Kernel::Error<Material>("The sum of mass/molar fractions is not equal to 1.");
-    }
-
-    if (_buildingMode==BuildingMode::MolarFraction)
-    {
-        for (auto e : _elements)
-        {
-            auto it=fractions.find(e.first);
-            if (it==fractions.end())
-                fractions.insert(elementsMap::value_type(e.first,e.second));
-            else
-                it->second += e.second;
-        }
-        for (auto m : _materials)
-        {
-            auto subfractions = m.first->getMolarFractions();
-            for (auto f : subfractions)
-            {
-                auto it=fractions.find(f.first);
-                if (it==fractions.end())
-                    fractions.insert(elementsMap::value_type(f.first,m.second*f.second));
-                else
-                    it->second += m.second*f.second;
-            }
-        }
-    }
-    else if (_buildingMode==BuildingMode::PartialPressure || _buildingMode==BuildingMode::Stoichiometry)
-    {
-        double total = std::accumulate(std::begin(_elements),std::end(_elements),0.0,[](double previous, const std::pair<sptrElement,double>& p){return previous+p.second;});
-        total += std::accumulate(std::begin(_materials),std::end(_materials),0.0,[](double previous, const std::pair<sptrMaterial,double>& p){return previous+p.second;});
-
-        for (auto e : _elements)
-        {
-            auto it=fractions.find(e.first);
-            if (it==fractions.end())
-                fractions.insert(elementsMap::value_type(e.first,e.second/total));
-            else
-                it->second += e.second;
-        }
-        for (auto m : _materials)
-        {
-            auto subfractions = m.first->getMolarFractions();
-            for (auto f : subfractions)
-            {
-                auto it=fractions.find(f.first);
-                if (it==fractions.end())
-                    fractions.insert(elementsMap::value_type(f.first,m.second*f.second/total));
-                else
-                    it->second += m.second*f.second;
-            }
-        }
-    }
-    else
-    {
-        auto massFractions=getMassFractions();
-        double fact=0.0;
-        for (auto mf : massFractions)
-        {
-            double temp=mf.second/mf.first->getMolarMass();
-            fact+=temp;
-            fractions.insert(elementsMap::value_type(mf.first,temp));
-        }
-        for (auto& f : fractions)
-            f.second/=fact;
-    }
-
-    return fractions;
-}
-
-elementsMap Material::getNAtomsPerVolume() const
-{
-    elementsMap nAtomsPerVolume;
-
-    double fact=Units::avogadro*_massDensity;
-
-    auto massFractions=getMassFractions();
-
-    for (const auto& mf : massFractions)
-        nAtomsPerVolume.insert(elementsMap::value_type(mf.first,fact*mf.second/mf.first->getMolarMass()));
 
     return nAtomsPerVolume;
 }
 
-elementsMap Material::getNElectronsPerVolume() const
+double Material::muIncoherent() const
 {
-    elementsMap nElectronsPerVolume;
+    IsotopeDatabaseManager* imgr=IsotopeDatabaseManager::Instance();
 
-    double fact=Units::avogadro*_massDensity;
-
-    for (const auto& mf : getMassFractions())
-    {
-        double nElectrons=static_cast<double>(mf.first->getNElectrons());
-        nElectronsPerVolume.insert(elementsMap::value_type(mf.first,fact*nElectrons*mf.second/mf.first->getMolarMass()));
+    double scatteringMuFactor=0.0;
+    for (const auto& p : atomicNumberDensity()) {
+        const auto& isotope=imgr->getIsotope(p.first);
+        scatteringMuFactor+=p.second*isotope.getProperty<double>("xs_incoherent");
     }
-
-    return nElectronsPerVolume;
+    return scatteringMuFactor;
 }
 
-double Material::getNAtomsTotalPerVolume() const
+double Material::muAbsorption(double lambda) const
 {
-    auto nAtomsPerVolume=getNAtomsPerVolume();
+    IsotopeDatabaseManager* imgr=IsotopeDatabaseManager::Instance();
 
-    double nAtomsPerVolumeTotal = std::accumulate(std::begin(nAtomsPerVolume),
-                                                   std::end(nAtomsPerVolume),
-                                                   0.0,
-                                                   [](double previous, const std::pair<sptrElement,double>& p){return previous+p.second;});
-    return nAtomsPerVolumeTotal;
-}
-
-double Material::getNElectronsTotalPerVolume() const
-{
-    auto nElectronsPerVolume=getNElectronsPerVolume();
-
-    double nElectronsPerVolumeTotal=std::accumulate(std::begin(nElectronsPerVolume),
-                                                     std::end(nElectronsPerVolume),
-                                                     0.0,
-                                                     [](double previous, const std::pair<sptrElement,double>& p){return previous+p.second;});
-    return nElectronsPerVolumeTotal;
-}
-
-double Material::getMuScattering() const
-{
-    double muScat=0.0;
-    auto nAtomsPerVolume=getNAtomsPerVolume();
-    for (const auto& p : nAtomsPerVolume)
-    {
-        double xsInc=p.first->getIncoherentXs();
-        muScat+=p.second*xsInc;
+    double absorptionMuFactor=0.0;
+    for (const auto& p : atomicNumberDensity()) {
+        const auto& isotope=imgr->getIsotope(p.first);
+        double thermalWavelength(1.798*Units::ang);
+        absorptionMuFactor+=p.second*isotope.getProperty<double>("xs_absorption")*lambda/thermalWavelength;
     }
-    return muScat;
-}
-
-double Material::getMuAbsorption(double lambda) const
-{
-    double muAbs=0.0;
-    auto nAtomsPerVolume=getNAtomsPerVolume();
-    for (const auto& p : nAtomsPerVolume)
-    {
-        double xsAbs=p.first->getAbsorptionXs(lambda);
-        muAbs+=p.second*xsAbs;
-    }
-    return muAbs;
-}
-
-double Material::getMu(double lambda) const
-{
-    double mu=getMuScattering() + getMuAbsorption(lambda);
-    return mu;
-}
-
-property_tree::ptree Material::writeToXML() const
-{
-
-    property_tree::ptree node;
-    node.put("<xmlattr>.name",_name);
-    node.put("<xmlattr>.building_mode",buildingModeToString[_buildingMode]);
-
-    for (const auto& e : _elements)
-    {
-        auto enode=e.first->writeToXML();
-        enode.put<double>("amount",e.second);
-        node.add_child("element",enode);
-    }
-
-    for (const auto& m : _materials)
-    {
-        auto mnode=m.first->writeToXML();
-        mnode.put<double>("amount",m.second);
-        node.add_child("material",mnode);
-    }
-
-    return node;
+    return absorptionMuFactor;
 }
 
 void Material::print(std::ostream& os) const
 {
-    os<<"Name          = "<<_name<<std::endl;
-    os<<"Building mode = "+buildingModeToString.at(_buildingMode)<<std::endl;
-    for (const auto & m : _materials)
+    os<<"Formula = "<<_formula<<std::endl;
+    for (const auto & p : _isotopes)
     {
-        os<<"##########################################"<<std::endl;
-        os<<"Submaterial"<<std::endl;
-        os<<"##########################################"<<std::endl;
-        os<<"amout         = "<<m.second<<std::endl;
-        os<<*(m.first)<<std::endl;
-    }
-    for (const auto & e : _elements)
-    {
-        os<<"##########################################"<<std::endl;
-        os<<"Element"<<std::endl;
-        os<<"##########################################"<<std::endl;
-        os<<"amout   = "<<e.second<<std::endl;
-        os<<*(e.first);
+        os<<"Isotope "<<p.first << " --- "<<p.second<<std::endl;
     }
 }
 

@@ -106,10 +106,11 @@ std::string Path::getDiffractometersPath()
     return p.string();
 }
 
-std::string Path::getDataBasesPath()
+std::string Path::getDataBasesPath(const std::string& database)
 {
     boost::filesystem::path p(getResourcesDir());
     p /= "databases";
+    p /= database;
     return p.string();
 }
 

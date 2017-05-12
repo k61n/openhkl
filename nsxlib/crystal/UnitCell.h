@@ -36,6 +36,7 @@
 
 #include "../geometry/Basis.h"
 #include "../chemistry/Material.h"
+#include "../utils/Types.h"
 #include "SpaceGroup.h"
 
 namespace SX
