@@ -24,8 +24,7 @@ target_link_libraries(nsx
     ${FFTW_LIBRARIES}
     ${YAML_LIBRARIES}
     ${TIFF_LIBRARY}
-    gsl
-    gslcblas
+    ${GSL_LIBRARIES}
     )
 
 # Install section, installing libraries

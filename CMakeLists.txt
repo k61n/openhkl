@@ -5,7 +5,6 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 # Add some paths to the cmake module search path.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/modules)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/externals/c-blosc/cmake)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/externals/gsl/cmake)
 
 project(NSXTOOL_PROJECT)
 
@@ -21,6 +20,7 @@ option(BUILD_OPTIMIZED_DEBUG "Set optimization level -O1 or -Og for debug build"
 option(BUILD_COVERAGE_REPORT "Build code coverage report" OFF)
 option(BUILD_WITH_OPENMP "Build with OpenMP support" OFF)
 option(BUILD_DEBIAN "Build debian .deb packages" OFF)
+option(BUILD_GSL "Build GSL external dependency" OFF)
 option(NSX_BUILD_STATIC "Link nsxlib statically" OFF)
 option(NSX_VALGRIND "Run tests with valgrind" OFF)
 option(NSX_SANITIZE "Compile with clang's -fsanitize (must also set NSX_SANITIZER variable)" OFF)
