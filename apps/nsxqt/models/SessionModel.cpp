@@ -977,6 +977,14 @@ bool SessionModel::writeStatistics(std::string filename,
 
         file << &buf[0];
 
+        // debugging
+        if (std::abs(intensity) < 10) {
+            std::cout << "zero intensity!!" << std::endl;
+
+            std::shared_ptr<Peak3D> ptr = *peak.getPeaks().begin();
+
+        }
+
         if (rel_std > 1.0) {
             file << " ***** ";
             ++bad_peaks;

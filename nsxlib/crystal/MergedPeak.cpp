@@ -84,7 +84,7 @@ double MergedPeak::chiSquared() const
 
 size_t MergedPeak::redundancy() const
 {
-    assert(_peaks.size() <= (_friedel ? 2:1) * _grp.getGroupElements().size());
+    //assert(_peaks.size() <= (_friedel ? 2:1) * _grp.getGroupElements().size());
     return _peaks.size();
 }
 
@@ -179,6 +179,11 @@ void MergedPeak::update()
 double MergedPeak::d() const
 {
     return _d;
+}
+
+const std::vector<SX::Crystal::sptrPeak3D> &SX::Crystal::MergedPeak::getPeaks() const
+{
+    return _peaks;
 }
 
 } // namespace Crystal

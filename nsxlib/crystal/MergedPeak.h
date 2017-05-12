@@ -63,6 +63,7 @@ public:
     double std() const;
 
     double d() const;
+    const std::vector<sptrPeak3D>& getPeaks() const;
 
 private:
     void determineRepresentativeHKL();
