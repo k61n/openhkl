@@ -76,6 +76,6 @@ T_ interpolate(const std::vector<T_>& elements, double index)
 
 } // namespace Utils
 
-} // namespace nsx
+} // end namespace nsx
 
 #endif // NSXTOOL_MINIMIZER_H_

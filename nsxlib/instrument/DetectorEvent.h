@@ -114,5 +114,5 @@ private:
 };
 
 } // Namespace Instrument
-} // Namespace SX
+} // end namespace nsx
 #endif /* NSXTOOL_DETECTOREVENT_H_ */

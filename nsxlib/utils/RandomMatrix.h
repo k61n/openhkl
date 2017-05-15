@@ -44,7 +44,7 @@ Eigen::MatrixXd randomMatrix(unsigned int n);
 
 } //Namespace Utils
 
-} //Namespace SX
+} //namespace nsx
 
 
 #endif /* NSXTOOL_RANDOMMATIRX_H_ */

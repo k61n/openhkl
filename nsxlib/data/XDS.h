@@ -80,6 +80,6 @@ private:
 };
 
 } // Namespace Data
-} // Namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_XDS_H_ */

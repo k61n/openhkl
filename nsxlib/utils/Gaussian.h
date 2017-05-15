@@ -52,6 +52,6 @@ private:
 };
 
 } // namespace Utils
-} // namespace nsx
+} // end namespace nsx
 
 #endif // NSXTOOL_GAUSSIAN_H_

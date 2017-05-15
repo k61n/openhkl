@@ -28,4 +28,4 @@ double xor128(void)
 
 } /* namespace Utils */
 
-} /* namespace nsx */
+} // end namespace nsx

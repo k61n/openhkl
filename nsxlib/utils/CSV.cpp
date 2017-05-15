@@ -137,4 +137,4 @@ std::string CSV::getToken(std::istream &stream, char &delim)
 
 } // namespace Utils
 
-} // namespace nsx
+} // end namespace nsx

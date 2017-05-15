@@ -47,5 +47,5 @@ namespace nsx
 	void calculateFlipping(const nsx::Data::Numor& n, double& fr, double& frs,DTCorrection& correction, bool asymmetry=false);
 	//! Strip out a data array from a numor consisting of a bpb measurement
 	std::vector<double> getFlippingData(const nsx::Data::Numor&);
-} /* namespace nsx */
+} // end namespace nsx
 #endif /* SX_BPB_H_ */

@@ -119,6 +119,6 @@ private:
 std::ostream& operator<<(std::ostream& os, const Blob3D& b);
 
 } // Namespace Geometry
-} // namespace nsx
+} // end namespace nsx
 
 #endif /*NXSTOOL_Blob3D_H_*/

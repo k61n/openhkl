@@ -50,6 +50,6 @@ double getScale(double confidence);
 double getConfidence(double x);
 
 } // namespace Utils
-} // namespace nsx
+} // end namespace nsx
 
 #endif // NSXTOOL_ERF_INV_H_

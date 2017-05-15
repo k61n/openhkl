@@ -45,6 +45,6 @@ namespace Utils {
 std::vector<double> eigenToVector(const Eigen::VectorXd& ev);
 
 } // namespace Utils
-} // namespace nsx
+} // end namespace nsx
 
 #endif // NSXTOOL_IMINIMIZER_H_

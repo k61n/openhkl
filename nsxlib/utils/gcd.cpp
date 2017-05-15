@@ -53,4 +53,4 @@ int gcd(int a, int b)
 
 } // namespace Utils
 
-} // namespace nsx
+} // end namespace nsx

@@ -87,6 +87,6 @@ protected:
 };
 
 } // namespace Utils
-} // namespace nsx
+} // end namespace nsx
 
 #endif // NSXTOOL_IMINIMIZER_H_

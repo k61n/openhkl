@@ -97,6 +97,6 @@ private:
 std::ostream& operator<<(std::ostream& os, const Blob2D& b);
 
 } // Namespace Geometry
-} // namespace nsx
+} // end namespace nsx
 
 #endif /*NXSTOOL_Blob2D_H_*/

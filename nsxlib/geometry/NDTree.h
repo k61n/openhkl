@@ -711,6 +711,6 @@ unsigned int NDTree<T,D>::numChambers() const
 }
 
 } // namespace Geometry
-} // namespace nsx
+} // end namespace nsx
 
 #endif /* NSXTOOL_NDTREE_H_ */

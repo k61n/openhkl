@@ -187,4 +187,4 @@ const std::vector<nsx::Crystal::sptrPeak3D> &nsx::Crystal::MergedPeak::getPeaks(
 }
 
 } // namespace Crystal
-} // namespace nsx
+} // end namespace nsx

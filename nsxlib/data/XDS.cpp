@@ -211,4 +211,4 @@ XDS::RecordList XDS::getUnmergedRecords() const
 }
 
 } // Namespace Data
-} // Namespace SX
+} // end namespace nsx

@@ -62,6 +62,6 @@ private:
 };
 
 } // namespace Crystal
-} // namespace nsx
+} // end namespace nsx
 
 #endif // NSXTOOL_PROFILE_H_

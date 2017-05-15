@@ -144,4 +144,4 @@ void Sample::setMaterial(Chemistry::sptrMaterial material, int index)
 }
 
 } // end namespace Instrument
-} // namespace nsx
+} // end namespace nsx

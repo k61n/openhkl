@@ -56,6 +56,6 @@ public:
 };
 
 } // Namespace Crystal
-} // Namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_PEAKRECORD_H_ */

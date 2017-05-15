@@ -181,6 +181,6 @@ void HMatrix<T,D>::translation(T value)
 
 } // namespace Geometry
 
-} // namespace nsx
+} // end namespace nsx
 
 #endif /* NSXTOOL_HMatrix_H_ */

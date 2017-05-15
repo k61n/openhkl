@@ -255,6 +255,6 @@ private:
 using sptrPeak3D = std::shared_ptr<Peak3D>;
 
 } // namespace Crystal
-} // namespace nsx
+} // end namespace nsx
 
 #endif /* NSXTOOL_SIMPLEPEAK_H_ */

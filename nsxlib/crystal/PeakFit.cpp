@@ -451,4 +451,4 @@ int PeakFit::integerFrame(double f) const
 }
 
 } // namespace Crystal
-} // namespace nsx
+} // end namespace nsx

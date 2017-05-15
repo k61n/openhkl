@@ -84,4 +84,4 @@ const std::vector<double>& ResolutionShell::getD() const
 
 
 } // Namespace Crystal
-} /* namespace nsx */
+} // end namespace nsx

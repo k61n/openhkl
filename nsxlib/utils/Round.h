@@ -53,7 +53,7 @@ inline int ifloor(double x) {
 
 } //Namespace Units
 
-} //Namespace SX
+} //namespace nsx
 
 
 #endif /* NSXTOOL_UNITS_H_ */

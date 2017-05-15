@@ -119,4 +119,4 @@ std::vector<double> getFlippingData(const nsx::Data::Numor& n)
 			return data;
 }
 
-} /* namespace nsx */
+} // end namespace nsx

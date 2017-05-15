@@ -168,4 +168,4 @@ void PeakPredictor::addPredictedPeaks(std::shared_ptr<DataSet> data)
 }
 
 } // namespace Crystal
-} // namespace nsx
+} // end namespace nsx

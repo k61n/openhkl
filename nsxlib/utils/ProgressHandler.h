@@ -53,7 +53,7 @@ private:
 
 } // namespace Utils
 
-} // namespace nsx
+} // end namespace nsx
 
 
 #endif // PROGRESSHANDLER_H

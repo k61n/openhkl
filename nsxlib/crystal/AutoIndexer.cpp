@@ -260,4 +260,4 @@ const std::vector<std::pair<UnitCell, double> > &AutoIndexer::getSolutions() con
 }
 
 } // namespace Crystal
-} // namespace nsx
+} // end namespace nsx

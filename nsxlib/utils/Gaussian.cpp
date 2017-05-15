@@ -67,4 +67,4 @@ double Gaussian::integrate() const
 }
 
 } // namespace Utils
-} // namespace nsx
+} // end namespace nsx

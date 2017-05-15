@@ -129,4 +129,4 @@ std::map<unsigned int,std::string> Diffractometer::getPhysicalAxesNames() const
 }
 
 }
-} /* namespace nsx */
+} // end namespace nsx

@@ -122,4 +122,4 @@ ComponentState Component::createState(const std::map<std::string,double>& values
 }
 
 } // namespace Instrument
-} // namespace nsx
+} // end namespace nsx

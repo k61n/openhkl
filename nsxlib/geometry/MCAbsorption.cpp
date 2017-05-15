@@ -102,4 +102,4 @@ double MCAbsorption::run(unsigned int nIterations, const Eigen::Vector3d& outV, 
 
 
 } // Namespace Geometry
-} // Namespace SX
+} // end namespace nsx

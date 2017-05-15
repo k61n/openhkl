@@ -62,7 +62,7 @@ private:
 
 } // namespace Crystal
 
-} // namespace nsx
+} // end namespace nsx
 
 
 #endif // NSXTOOL_RFACTOR_R_

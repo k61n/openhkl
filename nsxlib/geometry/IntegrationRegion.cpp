@@ -124,4 +124,4 @@ void IntegrationRegion::updateMask(Eigen::MatrixXi& mask, double z) const
 }
 
 } // namespace Geometry
-} // namespace nsx
+} // end namespace nsx

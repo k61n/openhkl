@@ -64,7 +64,7 @@ private:
 };
 
 } // Namespace Geometry
-} // Namespace SX
+} // end namespace nsx
 
 #endif /*NXSTOOL_Cluster_H_*/
 

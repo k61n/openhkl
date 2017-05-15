@@ -459,4 +459,4 @@ bool GruberReduction::equal(double A, double B) const
 }
 
 } // namespace Crystal
-} // namespace nsx
+} // end namespace nsx

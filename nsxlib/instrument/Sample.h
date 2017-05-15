@@ -106,6 +106,6 @@ private:
 };
 
 } // Namespace Instrument
-} /* namespace nsx */
+} // end namespace nsx
 
 #endif /* NSXTOOL_SAMPLE_H_ */

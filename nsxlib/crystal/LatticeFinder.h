@@ -64,6 +64,6 @@ public:
 };
 
 } // Namespace Crystal
-} /* namespace nsx */
+} // end namespace nsx
 
 #endif /* NSXTOOL_LATTICEFINDER_H_ */

@@ -66,4 +66,4 @@ double nsx::Utils::Lorentzian::evaluateScan(double x) const
 }
 
 } // namespace Utils
-} // namespace nsx
+} // end namespace nsx

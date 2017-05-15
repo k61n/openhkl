@@ -287,8 +287,8 @@ private:
     qi::rule<Iterator,isotopeContents()>  _start;
 };
 
-} // Namespace Chemistry
+}
 
-} // Namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_CHEMICALFORMULAPARSER_H_ */

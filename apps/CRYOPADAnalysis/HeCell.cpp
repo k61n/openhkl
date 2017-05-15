@@ -167,4 +167,4 @@ double HeCell::normalizebpb(const nsx::Data::Numor& numor,double& polar, double&
 	return time;
 }
 
-} /* namespace nsx */
+} // end namespace nsx

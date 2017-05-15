@@ -76,4 +76,4 @@ bool Cluster::addVector(const Eigen::Vector3d& vect)
 
 
 } // Namespace Geometry
-} // Namespace SX
+} // end namespace nsx

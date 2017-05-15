@@ -74,6 +74,6 @@ private:
 
 } // namespace Data
 
-} // namespace nsx
+} // end namespace nsx
 
 #endif // PEAKFINDER_H

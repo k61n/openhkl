@@ -155,4 +155,4 @@ int LatticeFunctor::values() const
 }
 
 } // namespace Crystal
-} // namespace nsx
+} // end namespace nsx

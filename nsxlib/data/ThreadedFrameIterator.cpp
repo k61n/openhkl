@@ -57,4 +57,4 @@ std::shared_future<nsx::Types::RealMatrix> ThreadedFrameIterator::getFrameAsync(
 /**/
 
 } // namespace Data
-} // namespace nsx
+} // end namespace nsx

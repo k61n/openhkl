@@ -144,5 +144,5 @@ bool Profile::goodFit(const Eigen::VectorXd &y, double eps) const
 }
 
 } // namespace Crystal
-} // namespace nsx
+} // end namespace nsx
 

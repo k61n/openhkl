@@ -58,6 +58,6 @@ private:
 
 
 } // Namespace Crystal
-} // Namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_SPACEGROUPSYMBOLS_H_ */

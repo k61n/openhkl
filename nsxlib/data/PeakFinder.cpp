@@ -274,4 +274,4 @@ std::shared_ptr<Imaging::ConvolutionKernel> PeakFinder::getKernel()
 }
 
 } // namespace Data
-} // namespace nsx
+} // end namespace nsx

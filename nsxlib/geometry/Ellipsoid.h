@@ -809,6 +809,6 @@ typename Ellipsoid<T,D>::HomMatrix Ellipsoid<T,D>::getTransformation() const
 }
 
 } // Namespace Geometry
-} // Namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_ELLIPSOID_H_ */

@@ -152,4 +152,4 @@ bool CylindricalDetector::hasKf(const Eigen::Vector3d& kf,const Eigen::Vector3d&
 }
 
 } // Namespace Instrument
-} // Namespace SX
+} // end namespace nsx

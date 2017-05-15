@@ -96,7 +96,7 @@ std::string complexToString(const std::complex<T>& number, double tolerance=1.0e
 
 } // end namespace Utils
 
-} // Namespace SX
+} // end namespace nsx
 
 
 #endif /* NSXTOOL_COMPLEXPARSER_H_ */

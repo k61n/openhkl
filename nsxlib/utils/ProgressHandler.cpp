@@ -98,4 +98,4 @@ bool ProgressHandler::aborted()
 
 } // namespace Utils
 
-} // namespace nsx
+} // end namespace nsx

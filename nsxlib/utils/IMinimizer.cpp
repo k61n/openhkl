@@ -129,4 +129,4 @@ int IMinimizer::numIterations()
 
 } // namespace Utils
 
-} // namespace nsx
+} // end namespace nsx

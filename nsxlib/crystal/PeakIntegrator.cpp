@@ -385,4 +385,4 @@ double PeakIntegrator::pValue() const
 }
 
 } // namespace Crystal
-} // namespace nsx
+} // end namespace nsx

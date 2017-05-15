@@ -506,4 +506,4 @@ int Peak3D::getActiveUnitCellIndex() const
 }
 
 } // namespace Crystal
-} // namespace nsx
+} // end namespace nsx

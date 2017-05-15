@@ -218,4 +218,4 @@ std::vector<LatticeVectors> LatticeFinder::determineLattice(std::size_t clusterm
 
 
 } // Namespace Crystal
-} /* namespace nsx */
+} // end namespace nsx

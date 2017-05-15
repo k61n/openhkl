@@ -82,7 +82,7 @@ public:
 
 } // Namespace Instrument
 
-} // Namespace SX
+} // end namespace nsx
 
 
 #endif /* NSXTOOL_FLATDETECTOR_H_ */

@@ -169,6 +169,6 @@ bool ShapeUnion<T,D>::collide(const Sphere<T,D>& rhs) const
 }
 
 } // namespace Geometry
-} // namespace nsx
+} // end namespace nsx
 
 #endif // NSXTOOL_SHAPEUNION_H_

@@ -96,4 +96,4 @@ RFactor::RFactor(const vector<vector<sptrPeak3D> > &peak_equivs): RFactor()
 }
 
 } // namespace Crystal
-} // namespace nsx
+} // end namespace nsx

@@ -55,4 +55,4 @@ bool PeakRejector::rejectPeak(const Peak3D &peak) const
 
 
 } // namespace Crystal
-} // namespace nsx
+} // end namespace nsx

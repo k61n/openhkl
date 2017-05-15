@@ -56,6 +56,6 @@ private:
 double ellipsoids_overlap(const nsx::Geometry::Ellipsoid<double,3>& ell1,const nsx::Geometry::Ellipsoid<double,3>& ell2);
 
 } // namespace Crystal
-} // namespace nsx
+} // end namespace nsx
 
 #endif /* MOSAIC_H_ */

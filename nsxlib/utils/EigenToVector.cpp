@@ -50,4 +50,4 @@ std::vector<double> eigenToVector(const Eigen::VectorXd &ev)
 
 
 } // namespace Utils
-} // namespace nsx
+} // end namespace nsx

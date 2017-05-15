@@ -393,4 +393,4 @@ Mosaic::~Mosaic()
 }
 
 } // namespace Crystal
-} // namespace nsx
+} // end namespace nsx

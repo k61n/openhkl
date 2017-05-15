@@ -145,6 +145,6 @@ public:
 };
 
 } // namespace Geometry
-} // namespace nsx
+} // end namespace nsx
 
 #endif /* SX_GONIO_H_ */

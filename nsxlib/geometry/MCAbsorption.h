@@ -64,6 +64,6 @@ private:
 
 } // end namespace Geometry
 
-} /* namespace nsx */
+} // end namespace nsx
 
 #endif /* NSXTOOL_MCABSORPTION_H_ */

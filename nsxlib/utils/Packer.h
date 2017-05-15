@@ -76,6 +76,6 @@ private:
 
 } // namespace Utils
 
-} // namespace nsx
+} // end namespace nsx
 
 #endif // NSXTOOL_PACKER_H_

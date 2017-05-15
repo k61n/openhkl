@@ -53,7 +53,7 @@ int gcd(int a, Args... args)
 
 } // namespace Utils
 
-} // namespace nsx
+} // end namespace nsx
 
 
 #endif // NSXTOOL_GCD_H_

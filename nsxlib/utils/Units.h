@@ -206,7 +206,7 @@ static const double kB = 1.3806513e-23*J/K;
 static const double R=8.3144621*J/mole/K;
 
 } //Namespace Units
-} //Namespace SX
+} //namespace nsx
 
 
 #endif /* NSXTOOL_UNITS_H_ */

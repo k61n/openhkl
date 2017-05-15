@@ -99,4 +99,4 @@ double getConfidence(double x)
 }
 
 } // namespace Utils
-} // namespace nsx
+} // end namespace nsx

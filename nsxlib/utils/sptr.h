@@ -65,6 +65,6 @@ std::unique_ptr<T> make_unique(Args&&... args)
 #endif
 
 } // Namespace Data
-} // Namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_SPTR_H_ */

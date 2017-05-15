@@ -592,7 +592,7 @@ bool collideOBBSphere(const OBB<T,D>& obb, const Sphere<T,D>& s)
 
 } // namespace Geometry
 
-} // namespace nsx
+} // end namespace nsx
 
 #endif // NSXTOOL_OBB_H_
 

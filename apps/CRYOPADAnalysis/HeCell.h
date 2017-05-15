@@ -102,5 +102,5 @@ private:
 	double _P0, _P0s, _alpha0, _alpha0s;
 };
 
-} /* namespace nsx */
+} // end namespace nsx
 #endif /* NSXTOOL_HECELL_H_ */

@@ -38,4 +38,4 @@ namespace Crystal {
 
 
 } // namespace Crystal
-} // namespace nsx
+} // end namespace nsx

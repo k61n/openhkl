@@ -117,4 +117,4 @@ sptrPeak3D PeakCalc::averagePeaks(const Octree& tree, double distance)
 }
 
 } // Namespace Crystal
-} // namespace nsx
+} // end namespace nsx

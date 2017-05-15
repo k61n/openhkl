@@ -40,6 +40,6 @@ namespace Crystal {
 
 
 } // namespace Crystal
-} // namespace nsx
+} // end namespace nsx
 
 #endif /* NSXTOOL_PEAK2D_H_ */

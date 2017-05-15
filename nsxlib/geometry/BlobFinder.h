@@ -146,7 +146,7 @@ private:
 };
 
 } // namespace Geometry
-} // namespace nsx
+} // end namespace nsx
 
 #endif /*NSXTOOL_BLOB_FINDER_H_*/
 

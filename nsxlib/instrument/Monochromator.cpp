@@ -194,4 +194,4 @@ Eigen::Vector3d Monochromator::getKi() const
 
 } /* namespace Instrument */
 
-} /* namespace nsx */
+} // end namespace nsx

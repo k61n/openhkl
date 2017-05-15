@@ -64,6 +64,6 @@ private:
 };
 
 } // namespace Geometry
-} // namespace nsx
+} // end namespace nsx
 
 #endif // NSXTOOL_INTEGRATIONREGION_H_

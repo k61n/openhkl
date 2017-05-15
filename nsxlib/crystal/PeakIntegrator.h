@@ -122,6 +122,6 @@ private:
 };
 
 } // namespace Crystal
-} // namespace nsx
+} // end namespace nsx
 
 #endif // NSXTOOL_PEAKINTEGRATOR_H_

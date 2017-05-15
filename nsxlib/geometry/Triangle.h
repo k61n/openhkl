@@ -68,6 +68,6 @@ struct Triangle
 
 
 } // Namespace Greometry
-} /* namespace nsx */
+} // end namespace nsx
 
 #endif /* NSXTOOL_TRIANGLECACHE_H_ */

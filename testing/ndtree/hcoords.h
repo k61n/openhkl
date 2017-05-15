@@ -137,6 +137,6 @@ void HCoords<T,D>::normalize()
 
 } //namespace Geometry
 
-} // namespace nsx
+} // end namespace nsx
 
 #endif /* NSXTOOL_HCoords_H_ */

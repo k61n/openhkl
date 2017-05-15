@@ -27,4 +27,4 @@ void BasicFrameIterator::advance()
 }
 
 } // namespace Data
-} // namespace nsx
+} // end namespace nsx

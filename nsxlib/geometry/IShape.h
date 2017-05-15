@@ -413,6 +413,6 @@ void IShape<T,D>::rotate(T angle,const vector& axis,Direction dir)
 
 } // namespace Geometry
 
-} // namespace nsx
+} // end namespace nsx
 
 #endif // NSXTOOL_ISHAPE_H_

@@ -553,4 +553,4 @@ void BlobFinder::mergeBlobs(std::unordered_map<int,Blob3D>& blobs, vipairs& equi
 }
 
 } // namespace Geometry
-} // namespace nsx
+} // end namespace nsx

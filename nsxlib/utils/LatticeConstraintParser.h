@@ -98,6 +98,6 @@ struct LatticeConstraintParser : qi::grammar<It,constraints_set()> {
 };
 
 } // Namespace Utils
-} // Namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_LATTICECONSTRAINTPARSER_H_ */

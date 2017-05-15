@@ -28,6 +28,6 @@ protected:
 };
 
 } // namespace Data
-} // namespace nsx
+} // end namespace nsx
 
 #endif // NSXTOOL_IFRAME_ITERATOR_H_

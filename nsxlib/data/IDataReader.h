@@ -82,6 +82,6 @@ protected:
 };
 
 } /* namespace Data */
-} /* namespace nsx */
+} // end namespace nsx
 
 #endif /* IDATAREADER_H_ */

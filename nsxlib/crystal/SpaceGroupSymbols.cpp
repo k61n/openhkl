@@ -396,4 +396,4 @@ int SpaceGroupSymbols::getID(const std::string& symbol) const
 
 
 } // Namespace Crystal
-} // Namespace SX
+} // end namespace nsx

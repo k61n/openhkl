@@ -86,6 +86,6 @@ private:
 
 } // namespace Crystal
 
-} // namespace nsx
+} // end namespace nsx
 
 #endif /* NSXTOOL_PEAKFIT_H_ */

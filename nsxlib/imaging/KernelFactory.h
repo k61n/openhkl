@@ -25,6 +25,6 @@ public:
 };
 
 } // namespace Imaging
-} // namespace nsx
+} // end namespace nsx
 
 #endif /* NSXLIB_IMAGING_KERNELFACTORY_H_ */

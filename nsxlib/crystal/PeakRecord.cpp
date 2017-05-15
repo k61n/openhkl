@@ -111,4 +111,4 @@ bool PeakRecord::operator<(const PeakRecord &other) const
 }
 
 } // Namespace Crystal
-} // Namespace SX
+} // end namespace nsx

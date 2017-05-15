@@ -297,6 +297,6 @@ bool collideAABBSphere(const AABB<T,D>& aabb, const Sphere<T,D>& sphere)
 
 } // namespace Geometry
 
-} // namespace nsx
+} // end namespace nsx
 
 #endif /*NSXTOOL_AABB_H_*/

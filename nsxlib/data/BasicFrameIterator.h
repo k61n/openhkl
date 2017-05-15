@@ -21,6 +21,6 @@ private:
 };
 
 } // namespace Data
-} // namespace nsx
+} // end namespace nsx
 
 #endif // NSXTOOL_BASICFRAMEITERATOR_H_

@@ -84,6 +84,6 @@ private:
 };
 
 } // namespace Crystal
-} // namespace nsx
+} // end namespace nsx
 
 #endif // NSXTOOL_AUTOINDEXER_H_

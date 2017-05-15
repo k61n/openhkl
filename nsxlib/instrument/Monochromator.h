@@ -106,6 +106,6 @@ private:
 
 } /* namespace Instrument */
 
-} /* namespace nsx */
+} // end namespace nsx
 
 #endif /* INSTRUMENT_INCLUDE_MONOCHROMATOR_H_ */

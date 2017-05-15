@@ -107,6 +107,6 @@ protected:
 };
 
 } // Namespace Instrument
-} /* Namespace SX */
+} // end namespace nsx
 
 #endif /* NSXTOOL_DIFFRACTOMETER_H_ */

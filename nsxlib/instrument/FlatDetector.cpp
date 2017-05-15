@@ -140,4 +140,4 @@ bool FlatDetector::hasKf(const Eigen::Vector3d& kf,const Eigen::Vector3d& f, dou
 
 } // Namespace Instrument
 
-} // Namespace SX
+} // end namespace nsx

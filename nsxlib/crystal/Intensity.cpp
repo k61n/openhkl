@@ -103,4 +103,4 @@ Intensity& Intensity::operator+=(const Intensity& other)
 }
 
 } // namespace Crystal
-} // namespace nsx
+} // end namespace nsx

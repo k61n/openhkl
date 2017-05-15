@@ -128,4 +128,4 @@ Eigen::Vector3d DetectorEvent::getPixelPosition() const
 }
 
 } /* namespace Instrument */
-} // Namespace SX
+} // end namespace nsx
