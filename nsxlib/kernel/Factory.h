@@ -36,7 +36,7 @@
 #include <map>
 #include <vector>
 
-namespace SX
+namespace nsx
 {
 
 namespace Kernel
@@ -129,6 +129,6 @@ bool Factory<base,keytype,args...>::hasCallback(const keytype& key)
 
 } // end namespace Kernel
 
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_FACTORY_H_ */

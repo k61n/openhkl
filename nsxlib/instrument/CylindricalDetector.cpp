@@ -11,7 +11,7 @@
 #include "TransAxis.h"
 #include "../utils/Units.h"
 
-namespace SX {
+namespace nsx {
 namespace Instrument {
 
 Detector* CylindricalDetector::create(const proptree::ptree& node)
@@ -33,7 +33,7 @@ CylindricalDetector::CylindricalDetector(const std::string& name) : MonoDetector
 
 CylindricalDetector::CylindricalDetector(const proptree::ptree& node) : MonoDetector(node)
 {
-    Units::UnitsManager* um=SX::Units::UnitsManager::Instance();
+    Units::UnitsManager* um=nsx::Units::UnitsManager::Instance();
 
     // Set the detector angular width from the property tree node
     const property_tree::ptree& angularWidthNode = node.get_child("angular_width");

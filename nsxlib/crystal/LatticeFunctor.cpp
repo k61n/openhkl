@@ -11,7 +11,7 @@
 #include "../crystal/UnitCell.h"
 #include "../crystal/Peak3D.h"
 
-namespace SX
+namespace nsx
 {
 
 namespace Crystal
@@ -60,7 +60,7 @@ LatticeFunctor::~LatticeFunctor()
 int LatticeFunctor::operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const
 {
     if (!_detector || !_sample || !_source)
-        throw SX::Kernel::Error<LatticeFunctor>("A detector, sample and source must be specified prior to calculate residuals.");
+        throw nsx::Kernel::Error<LatticeFunctor>("A detector, sample and source must be specified prior to calculate residuals.");
 
     Eigen::VectorXd xlocal(x);
 
@@ -155,4 +155,4 @@ int LatticeFunctor::values() const
 }
 
 } // namespace Crystal
-} // namespace SX
+} // namespace nsx

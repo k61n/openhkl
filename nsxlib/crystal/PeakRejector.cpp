@@ -42,9 +42,9 @@
 
 #include "PeakRejector.h"
 
-using SX::Data::DataSet;
+using nsx::Data::DataSet;
 
-namespace SX {
+namespace nsx {
 namespace Crystal {
 
 bool PeakRejector::rejectPeak(const Peak3D &peak) const
@@ -55,4 +55,4 @@ bool PeakRejector::rejectPeak(const Peak3D &peak) const
 
 
 } // namespace Crystal
-} // namespace SX
+} // namespace nsx

@@ -29,9 +29,9 @@
 #include <nsxlib/utils/CSV.h>
 
 using namespace std;
-using namespace SX::Crystal;
-using namespace SX::Units;
-using namespace SX::Utils;
+using namespace nsx::Crystal;
+using namespace nsx::Units;
+using namespace nsx::Utils;
 
 const double niggli_tolerance = 1e-9;
 const double gruber_tolerance = 1e-5;

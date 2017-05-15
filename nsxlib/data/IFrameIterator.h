@@ -9,7 +9,7 @@
 
 
 
-namespace SX {
+namespace nsx {
 namespace Data {
 
 class DataSet;
@@ -19,7 +19,7 @@ public:
     IFrameIterator(DataSet& data, unsigned int idx): _index(idx), _data(data) {}
     virtual ~IFrameIterator() = default;
     unsigned int index() {return _index;}
-    virtual SX::Types::RealMatrix& getFrame() = 0;
+    virtual nsx::Types::RealMatrix& getFrame() = 0;
     virtual void advance() = 0;
 
 protected:
@@ -28,6 +28,6 @@ protected:
 };
 
 } // namespace Data
-} // namespace SX
+} // namespace nsx
 
 #endif // NSXTOOL_IFRAME_ITERATOR_H_

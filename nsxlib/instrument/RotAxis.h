@@ -34,7 +34,7 @@
 
 #include "Axis.h"
 
-namespace SX
+namespace nsx
 {
 
 namespace Instrument
@@ -104,6 +104,6 @@ static const RotAxis AxisZCCW=RotAxis("ZCCW",Vector3d(0,0,1),RotAxis::CCW);
 
 } //namespace Geometry
 
-} // End namespace SX
+} // End namespace nsx
 
 #endif /* NSXTOOL_ROTAXIS_H_ */

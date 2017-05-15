@@ -35,9 +35,9 @@
 
 using namespace std;
 
-using SX::Crystal::Peak3D;
-using SX::Utils::IMinimizer;
-using SX::Utils::MinimizerGSL;
+using nsx::Crystal::Peak3D;
+using nsx::Utils::IMinimizer;
+using nsx::Utils::MinimizerGSL;
 
 ScaleDialog::ScaleDialog(const vector<vector<Peak3D*>>& peaks, QWidget *parent) :
     QDialog(parent),

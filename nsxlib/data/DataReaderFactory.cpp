@@ -6,7 +6,7 @@
 #include "I16DataReader.h"
 #include "RawDataReader.h"
 
-namespace SX {
+namespace nsx {
 namespace Data {
 
 template <typename Reader>
@@ -33,4 +33,4 @@ DataReaderFactory::DataReaderFactory()
 }
 
 } // end namespace Data
-} // end namespace SX
+} // end namespace nsx

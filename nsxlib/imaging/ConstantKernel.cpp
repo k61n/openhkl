@@ -6,7 +6,7 @@
 #include "ConstantKernel.h"
 
 
-namespace SX
+namespace nsx
 {
 
 namespace Imaging
@@ -21,7 +21,7 @@ ConstantKernel::ConstantKernel(int nrows, int ncols) : ConvolutionKernel(nrows,n
 {
 }
 
-ConstantKernel::ConstantKernel(int nrows, int ncols, const SX::Imaging::ConvolutionKernel::ParameterMap &params)
+ConstantKernel::ConstantKernel(int nrows, int ncols, const nsx::Imaging::ConvolutionKernel::ParameterMap &params)
 : ConvolutionKernel(nrows,ncols,params)
 {
 }
@@ -35,7 +35,7 @@ const char *ConstantKernel::getName()
     return "Constant";
 }
 
-void SX::Imaging::ConstantKernel::update()
+void nsx::Imaging::ConstantKernel::update()
 {
     int rows, cols;
 

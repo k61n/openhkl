@@ -4,7 +4,7 @@
 
 #include "NiggliReduction.h"
 
-namespace SX
+namespace nsx
 {
 namespace Crystal
 {

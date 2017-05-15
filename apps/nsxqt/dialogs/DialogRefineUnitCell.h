@@ -14,16 +14,16 @@ namespace Ui
 class DialogRefineUnitCell;
 }
 
-using SX::Crystal::sptrPeak3D;
-using SX::Crystal::sptrUnitCell;
-using SX::Instrument::sptrExperiment;
+using nsx::Crystal::sptrPeak3D;
+using nsx::Crystal::sptrUnitCell;
+using nsx::Instrument::sptrExperiment;
 
 class DialogRefineUnitCell : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit DialogRefineUnitCell(std::shared_ptr<SX::Instrument::Experiment> experiment,
+    explicit DialogRefineUnitCell(std::shared_ptr<nsx::Instrument::Experiment> experiment,
                                   sptrUnitCell unitCell,
                                   std::vector<sptrPeak3D> peaks,
                                   QWidget *parent = 0);
@@ -33,7 +33,7 @@ public:
     void setDetectorOffsets();
     void setWavelength();
     void setMinimizer();
-    void setSolution(const SX::Crystal::UBSolution& solution);
+    void setSolution(const nsx::Crystal::UBSolution& solution);
 
 signals:
     void cellUpdated(sptrUnitCell);
@@ -51,7 +51,7 @@ private:
     sptrExperiment _experiment;
     sptrUnitCell _unitCell;
     std::vector<sptrPeak3D> _peaks;
-    SX::Crystal::UBMinimizer _minimizer;
+    nsx::Crystal::UBMinimizer _minimizer;
 };
 
 #endif // DIALOGREFINEUNITCELL_H

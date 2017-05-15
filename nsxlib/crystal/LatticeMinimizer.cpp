@@ -14,7 +14,7 @@
 #include "../instrument/Source.h"
 #include "../crystal/Peak3D.h"
 
-namespace SX
+namespace nsx
 {
 
 namespace Crystal
@@ -240,4 +240,4 @@ int LatticeMinimizer::run(unsigned int maxIter)
 
 } // end namespace Crystal
 
-} // end namespace SX
+} // end namespace nsx

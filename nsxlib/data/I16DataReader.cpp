@@ -23,11 +23,11 @@
 #include "../utils/Parser.h"
 #include "../utils/Units.h"
 
-namespace SX {
+namespace nsx {
 namespace Data {
 
-using SX::Instrument::Diffractometer;
-using SX::Instrument::ComponentState;
+using nsx::Instrument::Diffractometer;
+using nsx::Instrument::ComponentState;
 
 IDataReader* I16DataReader::create(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer)
 {
@@ -148,4 +148,4 @@ Eigen::MatrixXi I16DataReader::getData(size_t frame)
 }
 
 } // end namespace Data
-} // end namespace SX
+} // end namespace nsx

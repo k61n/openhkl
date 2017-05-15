@@ -30,7 +30,7 @@
 #define NSXTOOL_NIGGLIREDUCTION_H_
 #include <Eigen/Dense>
 
-namespace SX {
+namespace nsx {
 namespace Crystal {
 
 /** Implementation of primitive unit-cell reduction using the method described in :

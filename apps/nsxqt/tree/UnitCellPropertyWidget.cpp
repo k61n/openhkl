@@ -22,8 +22,8 @@
 #include "models/UnitCellItem.h"
 #include "tree/UnitCellPropertyWidget.h"
 
-using SX::Chemistry::Material;
-using SX::Chemistry::sptrMaterial;
+using nsx::Chemistry::Material;
+using nsx::Chemistry::sptrMaterial;
 
 UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *parent) :
     QWidget(parent),
@@ -56,7 +56,7 @@ UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *par
 
     updateCellParameters(cell);
 
-    SX::Crystal::SpaceGroupSymbols* sgs=SX::Crystal::SpaceGroupSymbols::Instance();
+    nsx::Crystal::SpaceGroupSymbols* sgs=nsx::Crystal::SpaceGroupSymbols::Instance();
     std::vector<std::string> symbols=sgs->getAllSymbols();
 
     for (const auto& symbol : symbols)
@@ -97,7 +97,7 @@ void UnitCellPropertyWidget::setLatticeParams()
 
     try
     {
-        _unitCellItem->getUnitCell()->setParams(a,b,c,alpha*SX::Units::deg,beta*SX::Units::deg,gamma*SX::Units::deg);
+        _unitCellItem->getUnitCell()->setParams(a,b,c,alpha*nsx::Units::deg,beta*nsx::Units::deg,gamma*nsx::Units::deg);
     }catch(...)
     {
 
@@ -113,8 +113,8 @@ void UnitCellPropertyWidget::setMassDensity() const
     if (material)
     {
         double mm=material->molarMass();
-        mm*=ui->spinBox_Z->value()/SX::Units::avogadro;
-        double volume=_unitCellItem->getUnitCell()->getVolume()*SX::Units::ang3;
+        mm*=ui->spinBox_Z->value()/nsx::Units::avogadro;
+        double volume=_unitCellItem->getUnitCell()->getVolume()*nsx::Units::ang3;
         material->setMassDensity(mm/volume);
     }
 }
@@ -125,9 +125,9 @@ void UnitCellPropertyWidget::updateCellParameters(sptrUnitCell cell)
     ui->doubleSpinBoxa->setValue(cell->getA());
     ui->doubleSpinBoxb->setValue(cell->getB());
     ui->doubleSpinBoxc->setValue(cell->getC());
-    ui->doubleSpinBoxalpha->setValue(cell->getAlpha()/SX::Units::deg);
-    ui->doubleSpinBoxbeta->setValue(cell->getBeta()/SX::Units::deg);
-    ui->doubleSpinBoxgamma->setValue(cell->getGamma()/SX::Units::deg);
+    ui->doubleSpinBoxalpha->setValue(cell->getAlpha()/nsx::Units::deg);
+    ui->doubleSpinBoxbeta->setValue(cell->getBeta()/nsx::Units::deg);
+    ui->doubleSpinBoxgamma->setValue(cell->getGamma()/nsx::Units::deg);
 }
 
 void UnitCellPropertyWidget::getLatticeParams()

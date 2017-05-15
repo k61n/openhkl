@@ -43,7 +43,7 @@ void SampleShapePropertyWidget::on_pushButton_LoadMovie_clicked()
     AbsorptionDialog* dialog=new AbsorptionDialog(_caller->getExperiment(),nullptr);
     if (!dialog->exec())
     {
-        std::shared_ptr<SX::Instrument::Sample> sample=_caller->getExperiment()->getDiffractometer()->getSample();
+        std::shared_ptr<nsx::Instrument::Sample> sample=_caller->getExperiment()->getDiffractometer()->getSample();
         auto& hull=sample->getShape();
         if (hull.checkEulerConditions())
         {
@@ -57,7 +57,7 @@ void SampleShapePropertyWidget::on_pushButton_LoadMovie_clicked()
                   -1, 0, 0;
             hull.rotate(mat);
             //Convert to m
-            hull.scale(SX::Units::mm);
+            hull.scale(nsx::Units::mm);
             qDebug() << "Coordinates of the Hull at rest:" << hull;
             setHullProperties();
         }
@@ -66,10 +66,10 @@ void SampleShapePropertyWidget::on_pushButton_LoadMovie_clicked()
 
 void SampleShapePropertyWidget::setHullProperties()
 {
-    std::shared_ptr<SX::Instrument::Sample> sample=_caller->getExperiment()->getDiffractometer()->getSample();
+    std::shared_ptr<nsx::Instrument::Sample> sample=_caller->getExperiment()->getDiffractometer()->getSample();
     auto& hull=sample->getShape();
 
-    ui->lineEdit_Volume->setText(QString::number(hull.getVolume()/SX::Units::mm3)+" mm^3");
+    ui->lineEdit_Volume->setText(QString::number(hull.getVolume()/nsx::Units::mm3)+" mm^3");
     ui->lineEdit_Faces->setText(QString::number(hull.getNFaces()));
     ui->lineEdit_Edges->setText(QString::number(hull.getNEdges()));
     ui->lineEdit_Vertices->setText(QString::number(hull.getNVertices()));

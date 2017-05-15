@@ -1,6 +1,6 @@
 #include "EigenMatrixOp.h"
 
-namespace SX
+namespace nsx
 {
 
 namespace Utils
@@ -30,4 +30,4 @@ void removeRow(Eigen::MatrixXd& matrix, unsigned int rowToRemove)
 
 } // end namespace Utils
 
-} // end namespace SX
+} // end namespace nsx

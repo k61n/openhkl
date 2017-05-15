@@ -37,13 +37,13 @@
 
 #include "../utils/Types.h"
 
-namespace SX {
+namespace nsx {
 namespace Geometry {
 
-template<typename T, SX::Types::uint D> class AABB;
-template<typename T, SX::Types::uint D> class Ellipsoid;
-template<typename T, SX::Types::uint D> class OBB;
-template<typename T, SX::Types::uint D> class Sphere;
+template<typename T, nsx::Types::uint D> class AABB;
+template<typename T, nsx::Types::uint D> class Ellipsoid;
+template<typename T, nsx::Types::uint D> class OBB;
+template<typename T, nsx::Types::uint D> class Sphere;
 
 enum Direction {CW,CCW};
 
@@ -54,7 +54,7 @@ enum Direction {CW,CCW};
  * rotation and translation. Collisions with other shapes is
  * coded by double-dispatching.
  */
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 class IShape
 {
 public:
@@ -157,29 +157,29 @@ protected:
 
 };
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 IShape<T,D>::IShape()
 {
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 IShape<T,D>::IShape(const IShape<T,D>& other)
 {
     _lowerBound = other._lowerBound;
     _upperBound = other._upperBound;
 }
 
-template<typename T, SX::Types::uint D>
+template<typename T, nsx::Types::uint D>
 IShape<T,D>::IShape(const vector& lb, const vector& ub) : _lowerBound(lb), _upperBound(ub)
 {
-    for (SX::Types::uint i=0;i<D;++i)
+    for (nsx::Types::uint i=0;i<D;++i)
     {
         if (_lowerBound(i)>_upperBound(i))
             throw std::invalid_argument("AABB: upper limit must be > lower limit");
     }
 }
 
-template<typename T, SX::Types::uint D>
+template<typename T, nsx::Types::uint D>
 IShape<T,D>::IShape(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub)
 {
     auto it1 = lb.begin();
@@ -196,12 +196,12 @@ IShape<T,D>::IShape(const std::initializer_list<T>& lb, const std::initializer_l
     }
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 IShape<T,D>::~IShape()
 {
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 IShape<T,D>& IShape<T,D>::operator=(const IShape<T,D>& other)
 {
       if (this != &other)
@@ -213,10 +213,10 @@ IShape<T,D>& IShape<T,D>::operator=(const IShape<T,D>& other)
 
 }
 
-template<typename T, SX::Types::uint D>
+template<typename T, nsx::Types::uint D>
 bool IShape<T,D>::contains(const IShape<T,D>& other) const
 {
-    for (SX::Types::uint i=0; i<D; ++i)
+    for (nsx::Types::uint i=0; i<D; ++i)
     {
         if (_lowerBound(i) >= other._lowerBound(i) || _upperBound(i) <= other._upperBound(i))
             return false;
@@ -224,20 +224,20 @@ bool IShape<T,D>::contains(const IShape<T,D>& other) const
     return true;
 }
 
-template<typename T, SX::Types::uint D>
+template<typename T, nsx::Types::uint D>
 bool IShape<T,D>::intercept(const IShape<T,D>& other) const
 {
-    for (SX::Types::uint i = 0; i < D; ++i) {
+    for (nsx::Types::uint i = 0; i < D; ++i) {
         if (_upperBound(i) < other._lowerBound(i) || _lowerBound(i) > other._upperBound(i))
             return false;
     }
     return true;
 }
 
-template<typename T, SX::Types::uint D>
+template<typename T, nsx::Types::uint D>
 void IShape<T,D>::setBounds(const vector& lb, const vector& ub)
 {
-    for (SX::Types::uint i=0;i<D;++i) {
+    for (nsx::Types::uint i=0;i<D;++i) {
         if (lb(i)>ub(i))
             throw std::invalid_argument("IShape: upper limit must be > lower limit");
     }
@@ -245,64 +245,64 @@ void IShape<T,D>::setBounds(const vector& lb, const vector& ub)
     _upperBound = ub;
 }
 
-template<typename T, SX::Types::uint D>
+template<typename T, nsx::Types::uint D>
 void IShape<T,D>::setLower(const vector& lb)
 {
-    for (SX::Types::uint i=0;i<D;++i) {
+    for (nsx::Types::uint i=0;i<D;++i) {
         if (lb(i)>_upperBound(i))
             throw std::invalid_argument("IShape: upper limit must be > lower limit");
     }
     _lowerBound = lb;
 }
 
-template<typename T, SX::Types::uint D>
+template<typename T, nsx::Types::uint D>
 void IShape<T,D>::setUpper(const vector& ub)
 {
-    for (SX::Types::uint i=0;i<D;++i) {
+    for (nsx::Types::uint i=0;i<D;++i) {
         if (_lowerBound(i)>ub(i))
             throw std::invalid_argument("AABB: upper limit must be > lower limit");
     }
     _upperBound = ub;
 }
 
-template<typename T, SX::Types::uint D>
+template<typename T, nsx::Types::uint D>
 const typename IShape<T,D>::vector& IShape<T,D>::getLower() const
 {
     return _lowerBound;
 }
 
-template<typename T, SX::Types::uint D>
+template<typename T, nsx::Types::uint D>
 typename IShape<T,D>::vector& IShape<T,D>::getLower()
 {
     return _lowerBound;
 }
 
-template<typename T, SX::Types::uint D>
+template<typename T, nsx::Types::uint D>
 const typename IShape<T,D>::vector& IShape<T,D>::getUpper() const
 {
     return _upperBound;
 }
 
-template<typename T, SX::Types::uint D>
+template<typename T, nsx::Types::uint D>
 typename IShape<T,D>::vector& IShape<T,D>::getUpper()
 {
     return _upperBound;
 }
 
-template<typename T, SX::Types::uint D>
+template<typename T, nsx::Types::uint D>
 T IShape<T,D>::AABBVolume() const
 {
     return (_upperBound-_lowerBound).prod();
 }
 
-template<typename T, SX::Types::uint D>
+template<typename T, nsx::Types::uint D>
 typename IShape<T,D>::vector IShape<T,D>::getAABBCenter() const
 {
     vector center((_lowerBound + _upperBound)*0.5);
     return center;
 }
 
-template<typename T, SX::Types::uint D>
+template<typename T, nsx::Types::uint D>
 typename IShape<T,D>::vector IShape<T,D>::getAABBExtents() const
 {
     vector dim(_upperBound - _lowerBound);
@@ -310,7 +310,7 @@ typename IShape<T,D>::vector IShape<T,D>::getAABBExtents() const
 }
 
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 bool IShape<T,D>::isInsideAABB(const std::initializer_list<T>& point) const
 {
 
@@ -329,7 +329,7 @@ bool IShape<T,D>::isInsideAABB(const std::initializer_list<T>& point) const
     return true;
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 bool IShape<T,D>::isInsideAABB(const vector& point) const
 {
 
@@ -345,7 +345,7 @@ bool IShape<T,D>::isInsideAABB(const vector& point) const
     return true;
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 bool IShape<T,D>::isInsideAABB(const HomVector& point) const
 {
 
@@ -361,28 +361,28 @@ bool IShape<T,D>::isInsideAABB(const HomVector& point) const
     return true;
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 std::ostream& operator<<(std::ostream& os, const IShape<T,D>& shape)
 {
     return shape.printSelf(os);
 }
 
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 std::ostream& IShape<T,D>::printSelf(std::ostream& os)
 {
       os<<"AABB --> "<<"lower bound: "<<_lowerBound<<" , upper bound: "<<_upperBound;
       return os;
 }
 
-template<typename T, SX::Types::uint D>
+template<typename T, nsx::Types::uint D>
 void IShape<T,D>::translateAABB(const vector& t)
 {
     _lowerBound+=t;
     _upperBound+=t;
 }
 
-template<typename T, SX::Types::uint D>
+template<typename T, nsx::Types::uint D>
 void IShape<T,D>::scaleAABB(const vector& s)
 {
     vector center=IShape<T,D>::getAABBCenter();
@@ -390,7 +390,7 @@ void IShape<T,D>::scaleAABB(const vector& s)
     _upperBound=center+(_upperBound-center).cwiseProduct(s);
 }
 
-template<typename T, SX::Types::uint D>
+template<typename T, nsx::Types::uint D>
 void IShape<T,D>::scaleAABB(T s)
 {
     vector center=IShape<T,D>::getAABBCenter();
@@ -398,7 +398,7 @@ void IShape<T,D>::scaleAABB(T s)
     _upperBound=center+(_upperBound-center)*s;
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 void IShape<T,D>::rotate(T angle,const vector& axis,Direction dir)
 {
     if (dir==CW)
@@ -413,6 +413,6 @@ void IShape<T,D>::rotate(T angle,const vector& axis,Direction dir)
 
 } // namespace Geometry
 
-} // namespace SX
+} // namespace nsx
 
 #endif // NSXTOOL_ISHAPE_H_

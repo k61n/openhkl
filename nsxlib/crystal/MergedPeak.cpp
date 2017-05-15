@@ -39,7 +39,7 @@
 #include "MergedPeak.h"
 
 
-namespace SX {
+namespace nsx {
 namespace Crystal {
 
 MergedPeak::MergedPeak(const SpaceGroup& grp, bool friedel):
@@ -181,10 +181,10 @@ double MergedPeak::d() const
     return _d;
 }
 
-const std::vector<SX::Crystal::sptrPeak3D> &SX::Crystal::MergedPeak::getPeaks() const
+const std::vector<nsx::Crystal::sptrPeak3D> &nsx::Crystal::MergedPeak::getPeaks() const
 {
     return _peaks;
 }
 
 } // namespace Crystal
-} // namespace SX
+} // namespace nsx

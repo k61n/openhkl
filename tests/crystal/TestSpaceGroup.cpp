@@ -10,7 +10,7 @@
 #include <nsxlib/crystal/SpaceGroup.h>
 #include <nsxlib/crystal/UnitCell.h>
 
-using namespace SX::Crystal;
+using namespace nsx::Crystal;
 
 BOOST_AUTO_TEST_CASE(Test_SpaceGroup)
 {

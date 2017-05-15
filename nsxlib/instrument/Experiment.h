@@ -35,7 +35,7 @@
 #include <string>
 #include <vector>
 
-namespace SX {
+namespace nsx {
 namespace Data {
 class DataSet;
 }
@@ -47,7 +47,7 @@ class Diffractometer;
 
 class Experiment {
 public:
-    using DataSet = SX::Data::DataSet;
+    using DataSet = nsx::Data::DataSet;
 
     // Constructors & Destructors
     //! Default constructor (deleted)
@@ -120,6 +120,6 @@ private:
 };
 
 } // end namespace Instrument
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_EXPERIMENT_H_ */

@@ -14,7 +14,7 @@
 BOOST_AUTO_TEST_CASE(Test_Constant_kernel)
 {
     /*
-    SX::Imaging::BoxKernel boxk(5,{});
+    nsx::Imaging::BoxKernel boxk(5,{});
 
     Eigen::MatrixXd data=Eigen::MatrixXd::Ones(10,10);
 

@@ -35,7 +35,7 @@
 
 #include "EigenToVector.h"
 
-namespace SX {
+namespace nsx {
 namespace Utils {
 
 std::vector<double> eigenToVector(const Eigen::VectorXd &ev)
@@ -50,4 +50,4 @@ std::vector<double> eigenToVector(const Eigen::VectorXd &ev)
 
 
 } // namespace Utils
-} // namespace SX
+} // namespace nsx

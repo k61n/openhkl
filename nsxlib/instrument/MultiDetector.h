@@ -38,13 +38,13 @@
 #include "../kernel/Composite.h"
 #include "Detector.h"
 
-namespace SX
+namespace nsx
 {
 
 namespace Instrument
 {
 
-class MultiDetector : public SX::Kernel::Composite<Detector,const proptree::ptree&>
+class MultiDetector : public nsx::Kernel::Composite<Detector,const proptree::ptree&>
 {
 public:
 

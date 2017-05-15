@@ -10,7 +10,7 @@
 #include "Sample.h"
 #include "TransAxis.h"
 
-namespace SX
+namespace nsx
 {
 
 namespace Instrument
@@ -55,23 +55,23 @@ Sample& Sample::operator=(const Sample& other)
     return *this;
 }
 
-void Sample::setShape(const SX::Geometry::ConvexHull<double>& shape)
+void Sample::setShape(const nsx::Geometry::ConvexHull<double>& shape)
 {
     _sampleShape = shape;
 }
 
-SX::Geometry::ConvexHull<double>& Sample::getShape()
+nsx::Geometry::ConvexHull<double>& Sample::getShape()
 {
     return _sampleShape;
 }
 
-std::shared_ptr<SX::Crystal::UnitCell> Sample::addUnitCell()
+std::shared_ptr<nsx::Crystal::UnitCell> Sample::addUnitCell()
 {
-    _cells.push_back(std::shared_ptr<SX::Crystal::UnitCell>(new SX::Crystal::UnitCell()));
+    _cells.push_back(std::shared_ptr<nsx::Crystal::UnitCell>(new nsx::Crystal::UnitCell()));
     return (_cells.back());
 }
 
-std::shared_ptr<SX::Crystal::UnitCell> Sample::getUnitCell(int i)
+std::shared_ptr<nsx::Crystal::UnitCell> Sample::getUnitCell(int i)
 {
     if (i >= _cells.size()) {
         throw std::runtime_error("Unit Cell not valid");
@@ -89,7 +89,7 @@ std::size_t Sample::getNCrystals() const
     return _cells.size();
 }
 
-void Sample::removeUnitCell(std::shared_ptr<SX::Crystal::UnitCell> cell)
+void Sample::removeUnitCell(std::shared_ptr<nsx::Crystal::UnitCell> cell)
 {
     for (auto it = _cells.begin(); it != _cells.end(); ++it) {
         if ( *it == cell) {
@@ -144,4 +144,4 @@ void Sample::setMaterial(Chemistry::sptrMaterial material, int index)
 }
 
 } // end namespace Instrument
-} // namespace SX
+} // namespace nsx

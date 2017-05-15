@@ -34,7 +34,7 @@
 #include "Triangle.h"
 #include "ConvexHull.h"
 #include <vector>
-namespace SX
+namespace nsx
 {
 
 namespace Geometry
@@ -64,6 +64,6 @@ private:
 
 } // end namespace Geometry
 
-} /* namespace SX */
+} /* namespace nsx */
 
 #endif /* NSXTOOL_MCABSORPTION_H_ */

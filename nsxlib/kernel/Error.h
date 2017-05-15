@@ -33,7 +33,7 @@
 #include <exception>
 #include <string>
 
-namespace SX
+namespace nsx
 {
 
 namespace Kernel
@@ -84,6 +84,6 @@ const char* Error<T>::what() const noexcept
 
 } // end namespace Kernel
 
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_ERROR_H_ */

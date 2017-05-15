@@ -25,7 +25,7 @@ public:
     };
 
     //! Constructors
-    CrystalScene(SX::Geometry::ConvexHull<double>* hull,QWidget *parent = 0);
+    CrystalScene(nsx::Geometry::ConvexHull<double>* hull,QWidget *parent = 0);
     ~CrystalScene();
     //! Mouse interactions
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
@@ -69,7 +69,7 @@ private:
     CrystalNodeItem* _current;
     PinItem* _pin;
     bool _pinCreated;
-    SX::Geometry::ConvexHull<double>* _hull;
+    nsx::Geometry::ConvexHull<double>* _hull;
     QPixmap _pix;
     QGraphicsTextItem* _text;
 };

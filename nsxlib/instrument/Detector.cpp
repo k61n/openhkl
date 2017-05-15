@@ -43,7 +43,7 @@
 #include "DetectorFactory.h"
 #include "Gonio.h"
 
-namespace SX {
+namespace nsx {
 namespace Instrument {
 
 
@@ -140,4 +140,4 @@ bool Detector::receiveKf(double& px, double& py, const Eigen::Vector3d& kf, cons
 }
 
 } // End namespace Instrument
-} // End namespace SX
+} // End namespace nsx

@@ -35,12 +35,12 @@
 #include <boost/shared_ptr.hpp>
 
 // A few typedefs.
-typedef boost::shared_ptr<SX::Data::Numor> sptrNumor;
+typedef boost::shared_ptr<nsx::Data::Numor> sptrNumor;
 typedef std::map<int,sptrNumor> numMap;
 typedef numMap::iterator numMapit;
 typedef numMap::const_iterator numMapconstit;
 
-namespace SX
+namespace nsx
 {
 
 namespace Data
@@ -93,6 +93,6 @@ std::vector<T> NumorSet::getMValues(const std::string& key)
 
 } // end namespace Data
 
-} // end namespace SX
+} // end namespace nsx
 
 #endif // NSXTOOL_NUMORSET_H_

@@ -3,7 +3,7 @@
 
 #include "MatrixParser.h"
 
-namespace SX {
+namespace nsx {
 
 namespace Utils {
 
@@ -86,4 +86,4 @@ bool MatrixParser::operator()(DataOrder dataOrder, const std::string& buffer, Ei
 
 } // end namespace Utils
 
-} // end namespace SX
+} // end namespace nsx

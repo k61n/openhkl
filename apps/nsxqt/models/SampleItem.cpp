@@ -41,10 +41,10 @@ QJsonObject SampleItem::toJson()
     QJsonObject obj;
     QJsonArray cells;
 
-    std::shared_ptr<SX::Instrument::Sample> sample = _experiment->getDiffractometer()->getSample();
+    std::shared_ptr<nsx::Instrument::Sample> sample = _experiment->getDiffractometer()->getSample();
 
     for (unsigned int i = 0; i < sample->getNCrystals(); ++i) {
-        std::shared_ptr<SX::Crystal::UnitCell> cell = sample->getUnitCell(i);
+        std::shared_ptr<nsx::Crystal::UnitCell> cell = sample->getUnitCell(i);
 
         Eigen::Vector3d v[3];
         v[0] = cell->getAVector();
@@ -67,7 +67,7 @@ QJsonObject SampleItem::toJson()
 
 void SampleItem::fromJson(const QJsonObject &obj)
 {
-    std::shared_ptr<SX::Instrument::Sample> sample = _experiment->getDiffractometer()->getSample();
+    std::shared_ptr<nsx::Instrument::Sample> sample = _experiment->getDiffractometer()->getSample();
     QJsonArray shapes = obj["shapes"].toArray();
 
     for(QJsonValueRef shape: shapes) {
@@ -78,7 +78,7 @@ void SampleItem::fromJson(const QJsonObject &obj)
             for (int j = 0; j < 3; ++j)
                 v[i][j] = params[i*3+j].toDouble();
 
-        std::shared_ptr<SX::Crystal::UnitCell> cell = sample->addUnitCell();
+        std::shared_ptr<nsx::Crystal::UnitCell> cell = sample->addUnitCell();
         cell->setLatticeVectors(v[0], v[1], v[2]);
 
         appendRow(new UnitCellItem(_experiment, cell));

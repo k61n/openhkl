@@ -31,7 +31,7 @@
 #include <vector>
 #include <string>
 
-namespace SX
+namespace nsx
 {
 
 namespace Data
@@ -68,6 +68,6 @@ private:
 
 } // end namespace Data
 
-} // end namespace SX
+} // end namespace nsx
 
 #endif // NSXTOOL_SCAN1D_H_

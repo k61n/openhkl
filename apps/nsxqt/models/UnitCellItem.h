@@ -7,7 +7,7 @@
 
 #include <nsxlib/utils/Types.h>
 
-namespace SX
+namespace nsx
 {
 namespace Instrument
 {
@@ -20,15 +20,15 @@ class UnitCell;
 
 class QWidget;
 
-using SX::Crystal::sptrUnitCell;
+using nsx::Crystal::sptrUnitCell;
 
 class UnitCellItem : public InspectableTreeItem
 {
 public:
-    UnitCellItem(std::shared_ptr<SX::Instrument::Experiment> experiment,std::shared_ptr<SX::Crystal::UnitCell>);
+    UnitCellItem(std::shared_ptr<nsx::Instrument::Experiment> experiment,std::shared_ptr<nsx::Crystal::UnitCell>);
     ~UnitCellItem();
     QWidget* inspectItem();
-    std::shared_ptr<SX::Crystal::UnitCell> getUnitCell();
+    std::shared_ptr<nsx::Crystal::UnitCell> getUnitCell();
 
     void info() const;
 
@@ -36,7 +36,7 @@ public:
     void openChangeUnitCellDialog();
 
 private:
-    std::shared_ptr<SX::Crystal::UnitCell> _cell;
+    std::shared_ptr<nsx::Crystal::UnitCell> _cell;
 };
 
 #endif // UNITCELLITEM_H

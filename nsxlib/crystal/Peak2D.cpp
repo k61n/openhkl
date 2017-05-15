@@ -33,9 +33,9 @@
  *
  */
 
-namespace SX {
+namespace nsx {
 namespace Crystal {
 
 
 } // namespace Crystal
-} // namespace SX
+} // namespace nsx

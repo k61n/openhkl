@@ -9,7 +9,7 @@
 // This include has to be AFTER the std::string include otherwise build error
 #include <boost/algorithm/string.hpp>
 
-namespace SX
+namespace nsx
 {
 
 namespace Crystal
@@ -18,11 +18,11 @@ namespace Crystal
 SymOp::SymOp(std::string generator)
 {
     // The parser for generator expression
-    SX::Utils::AffineTransformParser<std::string::iterator> parser;
+    nsx::Utils::AffineTransformParser<std::string::iterator> parser;
 
     bool match=qi::phrase_parse(generator.begin(),generator.end(),parser,qi::blank, _matrix);
     if (!match)
-        throw SX::Kernel::Error<SymOp>("Invalid generator expression: "+ generator);
+        throw nsx::Kernel::Error<SymOp>("Invalid generator expression: "+ generator);
 }
 
 SymOp::SymOp(const affineTransformation& symmetryOperation) : _matrix(symmetryOperation)
@@ -238,4 +238,4 @@ int SymOp::translationIsIntegralMultiple(const SymOp &other) const
 }
 
 } // end namespace Crystal
-} // end namespace SX
+} // end namespace nsx

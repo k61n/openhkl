@@ -42,7 +42,7 @@
 namespace qi    = boost::spirit::qi;
 namespace phx   = boost::phoenix;
 
-namespace SX
+namespace nsx
 {
 namespace Utils
 {

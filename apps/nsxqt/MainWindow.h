@@ -30,7 +30,7 @@ namespace Ui {
     class MainWindow;
 }
 
-namespace SX {
+namespace nsx {
 namespace Crystal {
 class Peak3D;
 using sptrPeak3D=std::shared_ptr<Peak3D>;
@@ -52,7 +52,7 @@ class ProgressHandler;
 
 class QProgressDialog;
 
-using SX::Crystal::sptrPeak3D;
+using nsx::Crystal::sptrPeak3D;
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -67,7 +67,7 @@ public:
     void findPeaks();
 
 signals:
-    void plotDetectorData(SX::Data::DataSet*,int frame);
+    void plotDetectorData(nsx::Data::DataSet*,int frame);
     void findSpaceGroup();
     void computeRFactors();
     void findFriedelPairs();
@@ -120,7 +120,7 @@ private slots:
     void on_actionAuto_assign_unit_cell_triggered();
 
 public slots:
-    void changeData(std::shared_ptr<SX::Data::DataSet>);
+    void changeData(std::shared_ptr<nsx::Data::DataSet>);
     void plotPeak(sptrPeak3D);
     void plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&);
     void setInspectorWidget(QWidget*);
@@ -128,12 +128,12 @@ public slots:
 
 private:
     Ui::MainWindow* _ui;
-    //std::unordered_map<std::string,SX::Instrument::Experiment> _experiments;
-    std::shared_ptr<SX::Data::DataSet> _currentData;
+    //std::unordered_map<std::string,nsx::Instrument::Experiment> _experiments;
+    std::shared_ptr<nsx::Data::DataSet> _currentData;
 
-    std::shared_ptr<SX::Utils::ProgressHandler> _progressHandler;
-    std::shared_ptr<SX::Data::PeakFinder> _peakFinder;
-    std::shared_ptr<SX::Imaging::Convolver> _convolver;
+    std::shared_ptr<nsx::Utils::ProgressHandler> _progressHandler;
+    std::shared_ptr<nsx::Data::PeakFinder> _peakFinder;
+    std::shared_ptr<nsx::Imaging::Convolver> _convolver;
     //threshold, confidence, minComp, maxComp
 
     std::shared_ptr<SessionModel> _session;

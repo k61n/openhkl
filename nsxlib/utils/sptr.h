@@ -37,7 +37,7 @@
 
 #include <memory>
 
-namespace SX
+namespace nsx
 {
 namespace Utils
 {

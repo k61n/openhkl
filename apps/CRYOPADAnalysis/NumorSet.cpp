@@ -2,7 +2,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/bind.hpp>
 
-namespace SX
+namespace nsx
 {
 
 namespace Data
@@ -33,7 +33,7 @@ void NumorSet::addNumorFromFile(const std::string& filename)
 		throw std::runtime_error("Can't find file"+filename);
 	// Make sure there is no problem lading the numor
 
-	sptrNumor a(new SX::Data::Numor(filename));
+	sptrNumor a(new nsx::Data::Numor(filename));
 	// Insert in the map using the key/
 	_numors[a->getNo()]=a;
 }
@@ -79,4 +79,4 @@ std::vector<sptrNumor> NumorSet::getNumors()
 
 } // end namespace Data
 
-} // end namespace SX
+} // end namespace nsx

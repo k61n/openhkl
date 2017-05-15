@@ -34,7 +34,7 @@
 #include <memory>
 #include <vector>
 
-namespace SX
+namespace nsx
 {
 
 namespace Crystal
@@ -62,7 +62,7 @@ private:
 
 } // namespace Crystal
 
-} // namespace SX
+} // namespace nsx
 
 
 #endif // NSXTOOL_RFACTOR_R_

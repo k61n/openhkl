@@ -26,22 +26,22 @@
 #include <nsxlib/instrument/Source.h>
 #include <nsxlib/utils/MinimizerGSL.h>
 
-using SX::Crystal::UBSolution;
-using SX::Crystal::UBMinimizer;
-using SX::Crystal::LatticeMinimizer;
-using SX::Crystal::LatticeSolution;
-using SX::Crystal::Peak3D;
-using SX::Instrument::DetectorEvent;
-using SX::Instrument::FlatDetector;
-using SX::Instrument::Gonio;
-using SX::Instrument::RotAxis;
-using SX::Instrument::Sample;
-using SX::Instrument::ComponentState;
-using SX::Instrument::Source;
-using SX::Utils::MinimizerGSL;
+using nsx::Crystal::UBSolution;
+using nsx::Crystal::UBMinimizer;
+using nsx::Crystal::LatticeMinimizer;
+using nsx::Crystal::LatticeSolution;
+using nsx::Crystal::Peak3D;
+using nsx::Instrument::DetectorEvent;
+using nsx::Instrument::FlatDetector;
+using nsx::Instrument::Gonio;
+using nsx::Instrument::RotAxis;
+using nsx::Instrument::Sample;
+using nsx::Instrument::ComponentState;
+using nsx::Instrument::Source;
+using nsx::Utils::MinimizerGSL;
 
-using namespace SX::Units;
-using SX::Instrument::FlatDetector;
+using namespace nsx::Units;
+using nsx::Instrument::FlatDetector;
 using std::shared_ptr;
 
 // const double tolerance=1e-6;
@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
     sample->setGonio(sampleGonio);
 
     std::shared_ptr<Source> source(new Source);
-    SX::Instrument::Monochromator mono("mono");
+    nsx::Instrument::Monochromator mono("mono");
     mono.setWavelength(0.8380);
     source->addMonochromator(mono);
     source->setSelectedMonochromator(0);
@@ -123,7 +123,7 @@ BOOST_AUTO_TEST_CASE(Test_UBMinimizer)
 
     UBSolution solution=minimizer.getSolution();
 
-    SX::Crystal::UnitCell uc=SX::Crystal::UnitCell::fromReciprocalVectors(solution._ub.row(0),solution._ub.row(1),solution._ub.row(2));
+    nsx::Crystal::UnitCell uc=nsx::Crystal::UnitCell::fromReciprocalVectors(solution._ub.row(0),solution._ub.row(1),solution._ub.row(2));
     uc.setReciprocalCovariance(solution._covub);
 
     std::cout<<"FROM UB"<<std::endl;

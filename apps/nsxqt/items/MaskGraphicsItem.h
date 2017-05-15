@@ -9,7 +9,7 @@
 #include "items/CutterGraphicsItem.h"
 
 // Forward declarations
-namespace SX {
+namespace nsx {
 namespace Data {
     class DataSet;
 }
@@ -21,7 +21,7 @@ class QPainter;
 class QStyleOptionGraphicsItem;
 class QWidget;
 
-using SX::Geometry::AABB;
+using nsx::Geometry::AABB;
 
 /*! Creates a mask that will be used to unselect/select peaks whether their intercept or
  * not the mask
@@ -29,7 +29,7 @@ using SX::Geometry::AABB;
 class MaskGraphicsItem : public SXGraphicsItem {
 public:
     // Constructs a mask
-    MaskGraphicsItem(std::shared_ptr<SX::Data::DataSet> data, AABB<double, 3>* aabb);
+    MaskGraphicsItem(std::shared_ptr<nsx::Data::DataSet> data, AABB<double, 3>* aabb);
     //! The destructor
     ~MaskGraphicsItem();
 
@@ -59,7 +59,7 @@ public:
 
 protected:
     //! The data on which the cutter will act upon
-    std::shared_ptr<SX::Data::DataSet> _data;
+    std::shared_ptr<nsx::Data::DataSet> _data;
     //! The AABB of the peak
     AABB<double,3>* _aabb;
     QPointF _from;

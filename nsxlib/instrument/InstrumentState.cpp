@@ -27,7 +27,7 @@
 #include "InstrumentState.h"
 #include "Component.h"
 
-namespace SX {
+namespace nsx {
 namespace Instrument {
 
 InstrumentState InstrumentState::interpolate(const InstrumentState &other, double t) const
@@ -60,4 +60,4 @@ InstrumentState InstrumentState::interpolate(const InstrumentState &other, doubl
 }
 
 } // end namespace Instrument
-} // end namespace SX
+} // end namespace nsx

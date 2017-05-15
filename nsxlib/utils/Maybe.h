@@ -39,7 +39,7 @@
 #include <type_traits>
 #include <stdexcept>
 
-namespace SX {
+namespace nsx {
 namespace Utils {
 
 //! Maybe monad
@@ -171,6 +171,6 @@ private:
 };
 
 } // namespace Utils
-} // namespace SX
+} // namespace nsx
 
 #endif // NSXTOOL_GAUSSIAN_H_

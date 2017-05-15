@@ -41,13 +41,13 @@
 #include "../crystal/UnitCell.h"
 #include "../utils/Types.h"
 
-namespace SX
+namespace nsx
 {
 
 namespace Instrument
 {
 
-using SX::Crystal::CellList;
+using nsx::Crystal::CellList;
 
 class Sample : public Component
 {
@@ -73,21 +73,21 @@ public:
     Sample& operator=(const Sample& other);
 
     //! Set the sample shape described as a convex hull
-    void setShape(const SX::Geometry::ConvexHull<double>& shape);
+    void setShape(const nsx::Geometry::ConvexHull<double>& shape);
 
     //! Return the sample shape, described as a convex hull
-    SX::Geometry::ConvexHull<double>& getShape();
+    nsx::Geometry::ConvexHull<double>& getShape();
 
     //! Create a new crystal with Empty UnitCell, and return it
-    std::shared_ptr<SX::Crystal::UnitCell> addUnitCell();
+    std::shared_ptr<nsx::Crystal::UnitCell> addUnitCell();
     //! Get the UnitCell of Crystal number i in the list
-    std::shared_ptr<SX::Crystal::UnitCell> getUnitCell(int i);
+    std::shared_ptr<nsx::Crystal::UnitCell> getUnitCell(int i);
     const CellList& getUnitCells() const;
     //! Return number of crystals
     std::size_t getNCrystals() const;
     //!
     void removeUnitCell(int i);
-    void removeUnitCell(std::shared_ptr<SX::Crystal::UnitCell> cell);
+    void removeUnitCell(std::shared_ptr<nsx::Crystal::UnitCell> cell);
 
     //! Gets the Z number of a given unit cell
     unsigned int getZ(int index) const;
@@ -95,17 +95,17 @@ public:
     void setZ(int Z, int index);
 
     //! Gets the Material of one of the unit cells of this Sample
-    SX::Chemistry::sptrMaterial getMaterial(int index) const;
+    nsx::Chemistry::sptrMaterial getMaterial(int index) const;
     //! Sets the Material of one of the unit cells of this Sample
     void setMaterial(Chemistry::sptrMaterial material, int index);
 
 private:
-    SX::Geometry::ConvexHull<double> _sampleShape;
+    nsx::Geometry::ConvexHull<double> _sampleShape;
     //! UnitCells of all crystals associated with this sample
     CellList _cells;
 };
 
 } // Namespace Instrument
-} /* namespace SX */
+} /* namespace nsx */
 
 #endif /* NSXTOOL_SAMPLE_H_ */

@@ -14,7 +14,7 @@ class PeakListItem;
 class ExperimentItem : public TreeItem
 {
 public:
-    explicit ExperimentItem(std::shared_ptr<SX::Instrument::Experiment> experiment);
+    explicit ExperimentItem(std::shared_ptr<nsx::Instrument::Experiment> experiment);
     virtual ~ExperimentItem() = default;
     QJsonObject toJson() override;
     void fromJson(const QJsonObject& obj) override;

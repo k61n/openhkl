@@ -8,7 +8,7 @@
 #include "../utils/Units.h"
 #include "FFTIndexing.h"
 #include <iostream>
-namespace SX
+namespace nsx
 {
 
 namespace Crystal
@@ -120,4 +120,4 @@ std::vector<tVector> FFTIndexing::findOnSphere(const std::vector<Eigen::Vector3d
 }
 
 } // end namespace Crystal
-} // end namespace SX
+} // end namespace nsx

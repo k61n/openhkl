@@ -34,9 +34,9 @@
 #include "../geometry/Cluster.h"
 #include <tuple>
 
-using SX::Geometry::Cluster;
+using nsx::Geometry::Cluster;
 
-namespace SX
+namespace nsx
 {
 namespace Crystal
 {
@@ -64,6 +64,6 @@ public:
 };
 
 } // Namespace Crystal
-} /* namespace SX */
+} /* namespace nsx */
 
 #endif /* NSXTOOL_LATTICEFINDER_H_ */

@@ -39,7 +39,7 @@
 
 #include <Eigen/Core>
 
-namespace SX
+namespace nsx
 {
 
 namespace Crystal
@@ -74,7 +74,7 @@ namespace Types
     using ComplexMatrix = Eigen::Matrix<std::complex<double>, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 } // end namespace Types
 
-} // end namespace SX
+} // end namespace nsx
 
 
 

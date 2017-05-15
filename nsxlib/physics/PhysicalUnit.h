@@ -48,7 +48,7 @@
 
 namespace qi = boost::spirit::qi;
 
-namespace SX
+namespace nsx
 {
 
 namespace Physics
@@ -214,7 +214,7 @@ private:
 
 } // end namespace Physics
 
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_PHYSICALUNIT_H_ */
 

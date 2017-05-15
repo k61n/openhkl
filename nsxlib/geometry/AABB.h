@@ -44,7 +44,7 @@
 #include "Sphere.h"
 #include "../utils/Types.h"
 
-namespace SX
+namespace nsx
 {
 
 namespace Geometry
@@ -59,7 +59,7 @@ namespace Geometry
  * way to iterate quickly over region of interest in data
  * from images or volumes.
  */
-template<typename T, SX::Types::uint D>
+template<typename T, nsx::Types::uint D>
 class AABB : public IShape<T,D>
 {
 public:
@@ -122,37 +122,37 @@ public:
 
 };
 
-template<typename T,SX::Types::uint D> bool collideAABBAABB(const AABB<T,D>&, const AABB<T,D>&);
-template<typename T,SX::Types::uint D> bool collideAABBEllipsoid(const AABB<T,D>&, const Ellipsoid<T,D>&);
-template<typename T,SX::Types::uint D> bool collideAABBOBB(const AABB<T,D>&, const OBB<T,D>&);
-template<typename T,SX::Types::uint D> bool collideAABBSphere(const AABB<T,D>&, const Sphere<T,D>&);
+template<typename T,nsx::Types::uint D> bool collideAABBAABB(const AABB<T,D>&, const AABB<T,D>&);
+template<typename T,nsx::Types::uint D> bool collideAABBEllipsoid(const AABB<T,D>&, const Ellipsoid<T,D>&);
+template<typename T,nsx::Types::uint D> bool collideAABBOBB(const AABB<T,D>&, const OBB<T,D>&);
+template<typename T,nsx::Types::uint D> bool collideAABBSphere(const AABB<T,D>&, const Sphere<T,D>&);
 
-template<typename T, SX::Types::uint D>
+template<typename T, nsx::Types::uint D>
 AABB<T,D>::AABB() : IShape<T,D>()
 {
 }
 
-template<typename T, SX::Types::uint D>
+template<typename T, nsx::Types::uint D>
 AABB<T,D>::AABB(const AABB<T,D>& other) : IShape<T,D>(other)
 {
 }
 
-template<typename T, SX::Types::uint D>
+template<typename T, nsx::Types::uint D>
 AABB<T,D>::AABB(const vector& lb, const vector& ub) : IShape<T,D>(lb,ub)
 {
 }
 
-template<typename T, SX::Types::uint D>
+template<typename T, nsx::Types::uint D>
 AABB<T,D>::AABB(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub) : IShape<T,D>(lb,ub)
 {
 }
 
-template<typename T, SX::Types::uint D>
+template<typename T, nsx::Types::uint D>
 AABB<T,D>::~AABB()
 {
 }
 
-template<typename T, SX::Types::uint D>
+template<typename T, nsx::Types::uint D>
 AABB<T,D>& AABB<T,D>::operator=(const AABB<T,D>& other)
 {
   if (this != &other)
@@ -160,44 +160,44 @@ AABB<T,D>& AABB<T,D>::operator=(const AABB<T,D>& other)
   return *this;
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 IShape<T,D>* AABB<T,D>::clone() const
 {
     return new AABB<T,D>(*this);
 }
 
-template<typename T, SX::Types::uint D>
+template<typename T, nsx::Types::uint D>
 void AABB<T,D>::rotate(const matrix& eigenvectors)
 {
     _lowerBound=eigenvectors*_lowerBound;
     _upperBound=eigenvectors*_upperBound;
 }
 
-template<typename T, SX::Types::uint D>
+template<typename T, nsx::Types::uint D>
 void AABB<T,D>::scale(T value)
 {
     IShape<T,D>::scaleAABB(value);
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 void AABB<T,D>::scale(const vector& v)
 {
     IShape<T,D>::scaleAABB(v);
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 void AABB<T,D>::translate(const vector& t)
 {
     IShape<T,D>::translateAABB(t);
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 bool AABB<T,D>::isInside(const HomVector& vector) const
 {
     return IShape<T,D>::isInsideAABB(vector);
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 bool AABB<T,D>::collide(const IShape<T,D>& other) const
 {
     if (this->intercept(other))
@@ -205,31 +205,31 @@ bool AABB<T,D>::collide(const IShape<T,D>& other) const
     return false;
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 bool AABB<T,D>::collide(const AABB<T,D>& other) const
 {
     return collideAABBAABB<T,D>(*this,other);
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 bool AABB<T,D>::collide(const Ellipsoid<T,D>& other) const
 {
     return collideAABBEllipsoid<T,D>(*this,other);
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 bool AABB<T,D>::collide(const OBB<T,D>& other) const
 {
     return collideAABBOBB<T,D>(*this,other);
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 bool AABB<T,D>::collide(const Sphere<T,D>& other) const
 {
     return collideAABBSphere<T,D>(*this,other);
 }
 
-template<typename T, SX::Types::uint D>
+template<typename T, nsx::Types::uint D>
 bool AABB<T,D>::rayIntersect(const vector& from, const vector& dir, double& t1, double& t2) const
 {
     // Adapted from
@@ -271,25 +271,25 @@ bool AABB<T,D>::rayIntersect(const vector& from, const vector& dir, double& t1, 
     return IShape<T,D>::isInsideAABB(halfvect);
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 bool collideAABBAABB(const AABB<T,D>& a, const AABB<T,D>& b)
 {
     return a.collide(b);
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 bool collideAABBEllipsoid(const AABB<T,D>& aabb, const Ellipsoid<T,D>& ell)
 {
     return collideEllipsoidAABB(ell,aabb);
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 bool collideAABBOBB(const AABB<T,D>& aabb, const OBB<T,D>& obb)
 {
     return collideOBBAABB(obb,aabb);
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 bool collideAABBSphere(const AABB<T,D>& aabb, const Sphere<T,D>& sphere)
 {
     return collideSphereAABB(sphere,aabb);
@@ -297,6 +297,6 @@ bool collideAABBSphere(const AABB<T,D>& aabb, const Sphere<T,D>& sphere)
 
 } // namespace Geometry
 
-} // namespace SX
+} // namespace nsx
 
 #endif /*NSXTOOL_AABB_H_*/

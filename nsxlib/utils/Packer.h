@@ -38,7 +38,7 @@
 
 #include <Eigen/Dense>
 
-namespace SX {
+namespace nsx {
 
 namespace Utils {
 
@@ -76,6 +76,6 @@ private:
 
 } // namespace Utils
 
-} // namespace SX
+} // namespace nsx
 
 #endif // NSXTOOL_PACKER_H_

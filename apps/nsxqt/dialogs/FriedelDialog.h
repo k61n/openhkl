@@ -48,7 +48,7 @@ class FriedelDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit FriedelDialog(const std::vector<SX::Crystal::Peak3D*>& peaks, QWidget *parent = 0);
+    explicit FriedelDialog(const std::vector<nsx::Crystal::Peak3D*>& peaks, QWidget *parent = 0);
     ~FriedelDialog();
 
     void findFriedelPairs();
@@ -58,8 +58,8 @@ private slots:
 
 private:
     Ui::FriedelDialog *_ui;
-    std::vector<SX::Crystal::Peak3D*> _peaks;
-    std::vector<std::pair<SX::Crystal::Peak3D*, SX::Crystal::Peak3D*>> _friedelPairs;
+    std::vector<nsx::Crystal::Peak3D*> _peaks;
+    std::vector<std::pair<nsx::Crystal::Peak3D*, nsx::Crystal::Peak3D*>> _friedelPairs;
 };
 
 #endif // FRIEDELDIALOG_H

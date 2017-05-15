@@ -32,7 +32,7 @@
 
 #include <Eigen/Dense>
 
-namespace SX
+namespace nsx
 {
 
 namespace Utils
@@ -95,6 +95,6 @@ int LMFunctor<_Scalar,NX,NY>::values() const {
 
 } // end namespace Utils
 
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_LMFUNCTOR_H_ */

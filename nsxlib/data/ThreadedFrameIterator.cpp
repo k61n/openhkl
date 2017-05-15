@@ -4,7 +4,7 @@
 
 #include <future>
 
-namespace SX {
+namespace nsx {
 namespace Data {
 
 ThreadedFrameIterator::ThreadedFrameIterator(DataSet& data, unsigned int idx)
@@ -45,16 +45,16 @@ void ThreadedFrameIterator::advance()
     }
 }
 
-std::shared_future<SX::Types::RealMatrix> ThreadedFrameIterator::getFrameAsync(int idx)
+std::shared_future<nsx::Types::RealMatrix> ThreadedFrameIterator::getFrameAsync(int idx)
 {
-    auto get_fn = [=] () -> SX::Types::RealMatrix {
+    auto get_fn = [=] () -> nsx::Types::RealMatrix {
         return _data.getFrame(idx).cast<double>();
     };
     std::launch policy = std::launch::async;
-    return std::shared_future<SX::Types::RealMatrix>(std::async(policy, get_fn));
+    return std::shared_future<nsx::Types::RealMatrix>(std::async(policy, get_fn));
 }
 
 /**/
 
 } // namespace Data
-} // namespace SX
+} // namespace nsx

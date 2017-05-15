@@ -9,7 +9,7 @@
 
 class QWidget;
 
-using namespace SX::Kernel;
+using namespace nsx::Kernel;
 
 class PlotFactory : public Factory<SXPlot,std::string,QWidget*>, public Singleton<PlotFactory,Constructor,Destructor>
 {

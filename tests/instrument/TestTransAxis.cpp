@@ -8,8 +8,8 @@
 #include <boost/test/unit_test.hpp>
 #include <fstream>
 
-using namespace SX::Units;
-using namespace SX::Instrument;
+using namespace nsx::Units;
+using namespace nsx::Instrument;
 using Eigen::Vector3d;
 using Eigen::Matrix3d;
 const double tolerance=1e-6;

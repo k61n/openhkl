@@ -10,7 +10,7 @@
 #include "DeltaKernel.h"
 #include "KernelFactory.h"
 
-namespace SX {
+namespace nsx {
 namespace Imaging {
 
 KernelFactory::KernelFactory()

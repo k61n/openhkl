@@ -49,7 +49,7 @@
 
 #include "../utils/ProgressHandler.h"
 
-namespace SX {
+namespace nsx {
 
 namespace Geometry
 {
@@ -78,10 +78,10 @@ namespace Geometry
  */
 class BlobFinder {
 public:
-    using RealMatrix = SX::Types::RealMatrix;
+    using RealMatrix = nsx::Types::RealMatrix;
     using FilterCallback = std::function<RealMatrix(const RealMatrix&)>;
 
-    BlobFinder(std::shared_ptr<SX::Data::DataSet> data);
+    BlobFinder(std::shared_ptr<nsx::Data::DataSet> data);
 
     blob3DCollection find(unsigned int begin, unsigned int end);
 
@@ -100,7 +100,7 @@ public:
     //void mergeBlobs();
 
     //! sets progress handler callback function
-    void setProgressHandler(std::shared_ptr<SX::Utils::ProgressHandler> handler);
+    void setProgressHandler(std::shared_ptr<nsx::Utils::ProgressHandler> handler);
 
     void setThreshold(double threshold);
 
@@ -137,16 +137,16 @@ private:
 
     bool _isRelative;
 
-    mutable std::shared_ptr<SX::Data::DataSet> _data;
+    mutable std::shared_ptr<nsx::Data::DataSet> _data;
     FilterCallback _filterCallback;
-    mutable std::shared_ptr<SX::Utils::ProgressHandler> _progressHandler;
+    mutable std::shared_ptr<nsx::Utils::ProgressHandler> _progressHandler;
 
     unsigned int _nrows, _ncols, _nframes;
     unsigned int _currentlabel;
 };
 
 } // namespace Geometry
-} // namespace SX
+} // namespace nsx
 
 #endif /*NSXTOOL_BLOB_FINDER_H_*/
 

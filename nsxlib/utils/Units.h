@@ -39,7 +39,7 @@
 
 #include "../kernel/Singleton.h"
 
-namespace SX {
+namespace nsx {
 //! Define the units used internally in NSXTOOL.
 //! The units are defined in the international units system aka SI
 //! The Units namespace allows users of the library to specify their units when defining variables.
@@ -51,7 +51,7 @@ namespace Units {
 
 using namespace boost::units;
 using namespace boost::units::si;
-using namespace SX::Kernel;
+using namespace nsx::Kernel;
 
 //! Singleton class to map the symbol of a Unit with its value in the internal reference system.
 //! This is used for example when parsing values from input XML files.

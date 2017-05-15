@@ -35,7 +35,7 @@
 #include <map>
 #include <stdexcept>
 
-namespace SX
+namespace nsx
 {
 
 namespace Data
@@ -135,7 +135,7 @@ template <typename _type>
 
 } // end namespace Data
 
-} // end namespace SX
+} // end namespace nsx
 
 
 

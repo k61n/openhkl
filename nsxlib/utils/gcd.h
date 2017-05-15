@@ -37,7 +37,7 @@
 #define NSXTOOL_GCD_H_
 
 
-namespace SX {
+namespace nsx {
 
 namespace Utils {
 
@@ -53,7 +53,7 @@ int gcd(int a, Args... args)
 
 } // namespace Utils
 
-} // namespace SX
+} // namespace nsx
 
 
 #endif // NSXTOOL_GCD_H_

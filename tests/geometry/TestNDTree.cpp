@@ -13,7 +13,7 @@
 #include <nsxlib/geometry/NDTree.h>
 #include <nsxlib/geometry/Ellipsoid.h>
 
-using namespace SX::Geometry;
+using namespace nsx::Geometry;
 using Eigen::Vector3d;
 
 const double tolerance=1e-5;
@@ -21,7 +21,7 @@ using uint = unsigned int;
 
 void collision_test()
 {
-    using Ellipsoid3D = SX::Geometry::Ellipsoid<double, 3>;
+    using Ellipsoid3D = nsx::Geometry::Ellipsoid<double, 3>;
 
     NDTree<double,3> tree({0,0,0},{100,100,100});
     auto vects = Eigen::Matrix3d::Identity();
@@ -82,7 +82,7 @@ void collision_test()
 
 void split_test()
 {
-    using Ellipsoid3D = SX::Geometry::Ellipsoid<double, 3>;
+    using Ellipsoid3D = nsx::Geometry::Ellipsoid<double, 3>;
 
     NDTree<double,3> tree({0,0,0},{50,50,50});
     tree.setMaxStorage(4);

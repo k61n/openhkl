@@ -57,18 +57,18 @@
 #include "../geometry/Ellipsoid.h"
 #include "../data/IFrameIterator.h"
 
-using SX::Geometry::Blob3D;
+using nsx::Geometry::Blob3D;
 
-using SX::Data::IFrameIterator;
-using SX::Instrument::DetectorEvent;
-using SX::Instrument::ComponentState;
+using nsx::Data::IFrameIterator;
+using nsx::Instrument::DetectorEvent;
+using nsx::Instrument::ComponentState;
 
-namespace SX {
+namespace nsx {
 namespace Crystal {
 
 using shape_type = Peak3D::shape_type;
 
-Peak3D::Peak3D(std::shared_ptr<SX::Data::DataSet> data):
+Peak3D::Peak3D(std::shared_ptr<nsx::Data::DataSet> data):
     _data(),
     _shape(),
     _unitCells(),
@@ -142,9 +142,9 @@ Peak3D& Peak3D::operator=(const Peak3D& other)
     return *this;
 }
 
-void Peak3D::linkData(const std::shared_ptr<SX::Data::DataSet>& data)
+void Peak3D::linkData(const std::shared_ptr<nsx::Data::DataSet>& data)
 {
-    _data = std::weak_ptr<SX::Data::DataSet>(data);
+    _data = std::weak_ptr<nsx::Data::DataSet>(data);
     if (data != nullptr) {
         setSource(data->getDiffractometer()->getSource());
         // update detector event and state
@@ -166,7 +166,7 @@ Eigen::RowVector3d Peak3D::getMillerIndices() const
 
 void Peak3D::setShape(const Ellipsoid3D& peak)
 {
-    using DetectorEvent = SX::Instrument::DetectorEvent;
+    using DetectorEvent = nsx::Instrument::DetectorEvent;
     _shape = peak;
     auto data = getData();
 
@@ -378,12 +378,12 @@ void Peak3D::setSampleState(const ComponentState& sstate)
     _sampleState = std::unique_ptr<ComponentState>(new ComponentState(sstate));
 }
 
-void Peak3D::setDetectorEvent(const SX::Instrument::DetectorEvent& event)
+void Peak3D::setDetectorEvent(const nsx::Instrument::DetectorEvent& event)
 {
     _event = std::unique_ptr<DetectorEvent>(new DetectorEvent(event));
 }
 
-void Peak3D::setSource(const std::shared_ptr<SX::Instrument::Source>& source)
+void Peak3D::setSource(const std::shared_ptr<nsx::Instrument::Source>& source)
 {
     _source = source;
 }
@@ -506,4 +506,4 @@ int Peak3D::getActiveUnitCellIndex() const
 }
 
 } // namespace Crystal
-} // namespace SX
+} // namespace nsx

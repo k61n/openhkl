@@ -30,7 +30,7 @@
 #define NSXTOOL_TRIANGLECACHE_H_
 #include <Eigen/Dense>
 
-namespace SX
+namespace nsx
 {
 namespace Geometry
 {
@@ -68,6 +68,6 @@ struct Triangle
 
 
 } // Namespace Greometry
-} /* namespace SX */
+} /* namespace nsx */
 
 #endif /* NSXTOOL_TRIANGLECACHE_H_ */

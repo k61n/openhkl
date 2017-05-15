@@ -35,7 +35,7 @@
 #include "LatticeFunctor.h"
 #include "LatticeSolution.h"
 
-namespace SX
+namespace nsx
 {
 
 namespace Instrument
@@ -128,6 +128,6 @@ private:
 
 } // end namespace Crystal
 
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_LATTICEMINIMIZER_H_ */

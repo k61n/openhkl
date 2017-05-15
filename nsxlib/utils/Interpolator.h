@@ -39,7 +39,7 @@
 #include <vector>
 #include "Round.h"
 
-namespace SX {
+namespace nsx {
 
 namespace Utils {
 
@@ -76,6 +76,6 @@ T_ interpolate(const std::vector<T_>& elements, double index)
 
 } // namespace Utils
 
-} // namespace SX
+} // namespace nsx
 
 #endif // NSXTOOL_MINIMIZER_H_

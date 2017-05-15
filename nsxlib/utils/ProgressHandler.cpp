@@ -5,7 +5,7 @@
 
 #include "ProgressHandler.h"
 
-namespace SX {
+namespace nsx {
 
 namespace Utils {
 
@@ -16,7 +16,7 @@ ProgressHandler::ProgressHandler()
     _callback = nullptr;
 }
 
-SX::Utils::ProgressHandler::~ProgressHandler()
+nsx::Utils::ProgressHandler::~ProgressHandler()
 {
 
 }
@@ -26,7 +26,7 @@ void ProgressHandler::setCallback(std::function<void ()> callback)
     _callback = callback;
 }
 
-void SX::Utils::ProgressHandler::setProgress(int progress)
+void nsx::Utils::ProgressHandler::setProgress(int progress)
 {
     if ( _callback ) {
         _callback();
@@ -42,7 +42,7 @@ void SX::Utils::ProgressHandler::setProgress(int progress)
     }
 }
 
-int SX::Utils::ProgressHandler::getProgress()
+int nsx::Utils::ProgressHandler::getProgress()
 {
     std::lock_guard<std::mutex> lock(_mutex);
     int progress = _progress;
@@ -98,4 +98,4 @@ bool ProgressHandler::aborted()
 
 } // namespace Utils
 
-} // namespace SX
+} // namespace nsx

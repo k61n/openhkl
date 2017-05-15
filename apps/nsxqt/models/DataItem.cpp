@@ -11,8 +11,8 @@
 #include <nsxlib/data/DataReaderFactory.h>
 #include "NumorItem.h"
 
-using SX::Data::DataSet;
-using SX::Data::DataReaderFactory;
+using nsx::Data::DataSet;
+using nsx::Data::DataReaderFactory;
 
 DataItem::DataItem(std::shared_ptr<Experiment> experiment) : TreeItem(experiment)
 {
@@ -29,7 +29,7 @@ NumorItem *DataItem::importData(std::shared_ptr<DataSet> data)
     QString filename(data->getFilename().c_str());
     QFileInfo fileinfo(filename);
     std::string basename = fileinfo.fileName().toStdString();
-    std::shared_ptr<SX::Instrument::Experiment> exp = getExperiment();
+    std::shared_ptr<nsx::Instrument::Experiment> exp = getExperiment();
 
     // If the experience already stores the current numor, skip it
     if (exp->hasData(basename))
@@ -62,7 +62,7 @@ NumorItem* DataItem::importData(const std::string &filename_str)
     QString filename(filename_str.c_str());
     QFileInfo fileinfo(filename);
     std::string basename = fileinfo.fileName().toStdString();
-    std::shared_ptr<SX::Instrument::Experiment> exp = getExperiment();
+    std::shared_ptr<nsx::Instrument::Experiment> exp = getExperiment();
 
     // If the experience already stores the current numor, skip it
     if (exp->hasData(basename))
@@ -99,7 +99,7 @@ NumorItem *DataItem::importRawData(const std::vector<std::string> &filenames,
     QString filename(filenames[0].c_str());
     QFileInfo fileinfo(filename);
     std::string basename = fileinfo.fileName().toStdString();
-    std::shared_ptr<SX::Instrument::Experiment> exp = getExperiment();
+    std::shared_ptr<nsx::Instrument::Experiment> exp = getExperiment();
 
     // If the experience already stores the current numor, skip it
     if (exp->hasData(basename))
@@ -109,10 +109,10 @@ NumorItem *DataItem::importRawData(const std::vector<std::string> &filenames,
 
     try {
         auto diff = exp->getDiffractometer();
-        auto reader = new SX::Data::RawDataReader(filenames, diff,
+        auto reader = new nsx::Data::RawDataReader(filenames, diff,
                                               wavelength, delta_chi, delta_omega, delta_phi,
                                               rowMajor, swapEndian, bpp);
-        data = std::shared_ptr<SX::Data::DataSet>(new DataSet(reader, diff));
+        data = std::shared_ptr<nsx::Data::DataSet>(new DataSet(reader, diff));
     }
     catch(std::exception& e) {
         qWarning() << "Error reading numor: " + filename + " " + QString(e.what());

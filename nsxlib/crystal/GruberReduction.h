@@ -32,7 +32,7 @@
 #include "UnitCell.h"
 #include <Eigen/Dense>
 
-namespace SX {
+namespace nsx {
 namespace Crystal {
 
 

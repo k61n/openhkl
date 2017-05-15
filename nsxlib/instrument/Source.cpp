@@ -5,7 +5,7 @@
 #include "Source.h"
 #include "../utils/Units.h"
 
-namespace SX
+namespace nsx
 {
 
 namespace Instrument
@@ -107,4 +107,4 @@ void Source::addMonochromator(Monochromator mono)
 
 } // end namespace Instrument
 
-} // end namespace SX
+} // end namespace nsx

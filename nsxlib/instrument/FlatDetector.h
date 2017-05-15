@@ -33,7 +33,7 @@
 
 #include "MonoDetector.h"
 
-namespace SX
+namespace nsx
 {
 
 namespace Instrument

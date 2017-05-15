@@ -3,7 +3,7 @@
 
 #include "Units.h"
 
-namespace SX {
+namespace nsx {
 namespace Units {
 
 // Needs c++0x features enabled to be able to initialize the map in the following way
@@ -68,4 +68,4 @@ double UnitsManager::get(const std::string& units)
 }
 
 } // End namespace Units
-} // End namespace SX
+} // End namespace nsx

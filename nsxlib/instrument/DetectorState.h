@@ -31,7 +31,7 @@
 #define NSXTOOL_DETECTORSTATE_H_
 
 #include <vector>
-namespace SX {
+namespace nsx {
 namespace Instrument {
 
 //class DetectorState: public std::vector<double> {

@@ -44,13 +44,13 @@
 #include "Sphere.h"
 #include "../utils/Types.h"
 
-namespace SX
+namespace nsx
 {
 
 namespace Geometry
 {
 
-template<typename T, SX::Types::uint D>
+template<typename T, nsx::Types::uint D>
 class OBB : public IShape<T,D>
 {
 
@@ -128,17 +128,17 @@ public:
 };
 
 // Collision detection in the 3D case.
-template<typename T,SX::Types::uint D> bool collideOBBAABB(const OBB<T,D>&, const AABB<T,D>&);
-template<typename T,SX::Types::uint D> bool collideOBBEllipsoid(const OBB<T,D>&, const Ellipsoid<T,D>&);
-template<typename T,SX::Types::uint D> bool collideOBBOBB(const OBB<T,D>&, const OBB<T,D>&);
-template<typename T,SX::Types::uint D> bool collideOBBSphere(const OBB<T,D>&, const Sphere<T,D>&);
+template<typename T,nsx::Types::uint D> bool collideOBBAABB(const OBB<T,D>&, const AABB<T,D>&);
+template<typename T,nsx::Types::uint D> bool collideOBBEllipsoid(const OBB<T,D>&, const Ellipsoid<T,D>&);
+template<typename T,nsx::Types::uint D> bool collideOBBOBB(const OBB<T,D>&, const OBB<T,D>&);
+template<typename T,nsx::Types::uint D> bool collideOBBSphere(const OBB<T,D>&, const Sphere<T,D>&);
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 OBB<T,D>::OBB() : IShape<T,D>()
 {
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 OBB<T,D>::OBB(const OBB<T,D>& other) : IShape<T,D>(other)
 {
     _eigenVal=other._eigenVal;
@@ -146,7 +146,7 @@ OBB<T,D>::OBB(const OBB<T,D>& other) : IShape<T,D>(other)
     updateAABB();
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 OBB<T,D>::OBB(const AABB<T,D>& aabb)
 {
     _TRSinv=Eigen::Matrix<T,D+1,D+1>::Identity();
@@ -154,7 +154,7 @@ OBB<T,D>::OBB(const AABB<T,D>& aabb)
     updateAABB();
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 OBB<T,D>& OBB<T,D>::operator=(const OBB<T,D>& other)
 {
     if (this!=&other)
@@ -167,7 +167,7 @@ OBB<T,D>& OBB<T,D>::operator=(const OBB<T,D>& other)
     return *this;
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 OBB<T,D>::OBB(const vector& center, const vector& eigenvalues, const matrix& eigenvectors)
 : IShape<T,D>(),
   _eigenVal(eigenvalues)
@@ -190,18 +190,18 @@ OBB<T,D>::OBB(const vector& center, const vector& eigenvalues, const matrix& eig
     updateAABB();
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 IShape<T,D>* OBB<T,D>::clone() const
 {
     return new OBB<T,D>(*this);
 }
 
-template<typename T, SX::Types::uint D>
+template<typename T, nsx::Types::uint D>
 OBB<T,D>::~OBB()
 {
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 bool OBB<T,D>::collide(const IShape<T,D>& other) const
 {
     if (this->intercept(other))
@@ -209,43 +209,43 @@ bool OBB<T,D>::collide(const IShape<T,D>& other) const
     return false;
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 bool OBB<T,D>::collide(const AABB<T,D>& aabb) const
 {
     return collideOBBAABB<T,D>(*this,aabb);
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 bool OBB<T,D>::collide(const Ellipsoid<T,D>& other) const
 {
     return collideOBBEllipsoid<T,D>(*this,other);
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 bool OBB<T,D>::collide(const OBB<T,D>& other) const
 {
     return collideOBBOBB<T,D>(*this,other);
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 bool OBB<T,D>::collide(const Sphere<T,D>& other) const
 {
     return collideOBBSphere<T,D>(*this,other);
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 const typename OBB<T,D>::vector& OBB<T,D>::getExtents() const
 {
     return _eigenVal;
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 const typename OBB<T,D>::HomMatrix& OBB<T,D>::getInverseTransformation() const
 {
     return _TRSinv;
 }
 
-template<typename T, SX::Types::uint D>
+template<typename T, nsx::Types::uint D>
 bool OBB<T,D>::isInside(const HomVector& point) const
 {
     HomVector p=_TRSinv*point;
@@ -259,7 +259,7 @@ bool OBB<T,D>::isInside(const HomVector& point) const
     return true;
 }
 
-template<typename T, SX::Types::uint D>
+template<typename T, nsx::Types::uint D>
 void OBB<T,D>::rotate(const matrix& eigenvectors)
 {
     // Reconstruct S
@@ -290,7 +290,7 @@ void OBB<T,D>::rotate(const matrix& eigenvectors)
 }
 
 
-template<typename T, SX::Types::uint D>
+template<typename T, nsx::Types::uint D>
 void OBB<T,D>::scale(T value)
 {
     _eigenVal*=value;
@@ -302,7 +302,7 @@ void OBB<T,D>::scale(T value)
     updateAABB();
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 void OBB<T,D>::scale(const vector& v)
 {
     _eigenVal=_eigenVal.cwiseProduct(v);
@@ -314,18 +314,18 @@ void OBB<T,D>::scale(const vector& v)
     updateAABB();
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 void OBB<T,D>::translate(const vector& t)
 {
     HomMatrix tinv=HomMatrix::Zero();
-    for (SX::Types::uint i=0;i<D+1;++i)
+    for (nsx::Types::uint i=0;i<D+1;++i)
         tinv(i,i)=1.0;
     tinv.block(0,D,D,1)=-t;
     _TRSinv=_TRSinv*tinv;
     updateAABB();
 }
 
-template<typename T, SX::Types::uint D>
+template<typename T, nsx::Types::uint D>
 void OBB<T,D>::updateAABB()
 {
 
@@ -344,9 +344,9 @@ void OBB<T,D>::updateAABB()
 
     // Calculate the width of the bounding box
     vector width=vector::Constant(0.0);
-    for (SX::Types::uint i=0;i<D;++i)
+    for (nsx::Types::uint i=0;i<D;++i)
     {
-        for (SX::Types::uint j=0;j<D;++j)
+        for (nsx::Types::uint j=0;j<D;++j)
             width[i]+=std::abs(_eigenVal[j]*R(j,i));
     }
 
@@ -356,7 +356,7 @@ void OBB<T,D>::updateAABB()
 
 }
 
-template<typename T, SX::Types::uint D>
+template<typename T, nsx::Types::uint D>
 bool OBB<T,D>::rayIntersect(const vector& from, const vector& dir, double& t1, double& t2) const
 {
 
@@ -374,14 +374,14 @@ bool OBB<T,D>::rayIntersect(const vector& from, const vector& dir, double& t1, d
 
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 bool collideOBBAABB(const OBB<T,D>& obb, const AABB<T,D>& aabb)
 {
     OBB<T,D> obb1(aabb);
     return collideOBBOBB(obb,obb1);
 }
 
-template<typename T,SX::Types::uint D=2>
+template<typename T,nsx::Types::uint D=2>
 bool collideOBBOBB(const OBB<T,2>& a, const OBB<T,2>& b)
 {
 
@@ -449,7 +449,7 @@ bool collideOBBOBB(const OBB<T,2>& a, const OBB<T,2>& b)
  *	Geometric Tools, LLC
  *	http://www.geometrictools.com
  */
-template<typename T,SX::Types::uint D=3>
+template<typename T,nsx::Types::uint D=3>
 bool collideOBBOBB(const OBB<T,3>& a, const OBB<T,3>& b)
 {
 
@@ -578,13 +578,13 @@ bool collideOBBOBB(const OBB<T,3>& a, const OBB<T,3>& b)
     return true;
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 bool collideOBBEllipsoid(const OBB<T,D>& obb, const Ellipsoid<T,D>& ell)
 {
     return collideEllipsoidOBB(ell,obb);
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,nsx::Types::uint D>
 bool collideOBBSphere(const OBB<T,D>& obb, const Sphere<T,D>& s)
 {
     return collideSphereOBB(s,obb);
@@ -592,7 +592,7 @@ bool collideOBBSphere(const OBB<T,D>& obb, const Sphere<T,D>& s)
 
 } // namespace Geometry
 
-} // namespace SX
+} // namespace nsx
 
 #endif // NSXTOOL_OBB_H_
 

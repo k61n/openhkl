@@ -5,7 +5,7 @@
 #include <boost/foreach.hpp>
 #include <cmath>
 
-namespace SX
+namespace nsx
 {
 
 namespace Instrument
@@ -102,5 +102,5 @@ std::ostream& operator<<(std::ostream& os, const RotAxis& Rot)
 
 } // End namespace Instrument
 
-} // End namespace SX
+} // End namespace nsx
 

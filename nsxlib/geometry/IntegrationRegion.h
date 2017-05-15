@@ -36,7 +36,7 @@
 #include <list>
 #include <Eigen/Core>
 
-namespace SX {
+namespace nsx {
 namespace Geometry {
 class IntegrationRegion {
 public:
@@ -64,6 +64,6 @@ private:
 };
 
 } // namespace Geometry
-} // namespace SX
+} // namespace nsx
 
 #endif // NSXTOOL_INTEGRATIONREGION_H_

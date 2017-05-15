@@ -44,7 +44,7 @@
 
 #include "Peak3D.h"
 
-namespace SX
+namespace nsx
 {
 
 namespace Data
@@ -70,6 +70,6 @@ private:
 
 } // namespace Crystal
 
-} // namespace SX
+} // namespace nsx
 
 #endif /* NSXTOOL_PEAKCALC_H_ */

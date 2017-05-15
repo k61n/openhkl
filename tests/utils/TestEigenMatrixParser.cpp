@@ -9,7 +9,7 @@
 #include <nsxlib/utils/EigenMatrixParser.h>
 #include <Eigen/Dense>
 
-using namespace SX::Utils;
+using namespace nsx::Utils;
 using namespace Eigen;
 
 BOOST_AUTO_TEST_CASE(Test_EigenMatrixParser)

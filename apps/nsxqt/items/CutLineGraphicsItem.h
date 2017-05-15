@@ -7,7 +7,7 @@
 #include <QGraphicsItem>
 #include "items/CutterGraphicsItem.h"
 
-namespace SX
+namespace nsx
 {
 namespace Data
 {
@@ -23,7 +23,7 @@ class CutLineGraphicsItem : public CutterGraphicsItem
 {
 public:
 
-    explicit CutLineGraphicsItem(std::shared_ptr<SX::Data::DataSet>);
+    explicit CutLineGraphicsItem(std::shared_ptr<nsx::Data::DataSet>);
 
     ~CutLineGraphicsItem();
 

@@ -33,7 +33,7 @@ class ScaleDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit ScaleDialog(const std::vector<std::vector<SX::Crystal::Peak3D*>>& peaks, QWidget *parent = 0);
+    explicit ScaleDialog(const std::vector<std::vector<nsx::Crystal::Peak3D*>>& peaks, QWidget *parent = 0);
     ~ScaleDialog();
 
     void buildPlot();
@@ -57,7 +57,7 @@ private:
     double getScale(double z);
 
     Ui::ScaleDialog *ui;
-    std::vector<std::vector<SX::Crystal::Peak3D*>> _peaks;
+    std::vector<std::vector<nsx::Crystal::Peak3D*>> _peaks;
     std::vector<double> _averages;
 
     Eigen::VectorXd _scaleParams;

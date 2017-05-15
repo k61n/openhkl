@@ -46,7 +46,7 @@
 #include "Peak3D.h"
 #include "Intensity.h"
 
-namespace SX {
+namespace nsx {
 namespace Crystal {
 
 class MergedPeak {
@@ -73,11 +73,11 @@ private:
     Intensity _intensity;
     double _chiSquared, _std, _d;
     std::vector<sptrPeak3D> _peaks;
-    SX::Crystal::SpaceGroup _grp;
+    nsx::Crystal::SpaceGroup _grp;
     bool _friedel;
 };
 
 } // namespace Crystal
-} // namespace SX
+} // namespace nsx
 
 #endif /* NSXTOOL_SIMPLEPEAK_H_ */

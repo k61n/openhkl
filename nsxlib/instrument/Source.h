@@ -38,7 +38,7 @@
 #include "../instrument/Component.h"
 #include "../instrument/Monochromator.h"
 
-namespace SX
+namespace nsx
 {
 
 namespace Instrument
@@ -90,6 +90,6 @@ protected:
 
 } // end namespace Instrument
 
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_SOURCE_H_ */

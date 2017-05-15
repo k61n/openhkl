@@ -6,7 +6,7 @@
 #include "../utils/Units.h"
 #include "../crystal/NiggliReduction.h"
 
-namespace SX
+namespace nsx
 {
 namespace Geometry
 {

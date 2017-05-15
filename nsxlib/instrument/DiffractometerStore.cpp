@@ -12,7 +12,7 @@
 #include "../kernel/Error.h"
 #include "../utils/Path.h"
 
-namespace SX
+namespace nsx
 {
 
 namespace Instrument
@@ -38,7 +38,7 @@ sptrDiffractometer DiffractometerStore::buildDiffractomer(const std::string& nam
         xml::read_xml(diffractometersPath.string(),root);
     }
     catch (const std::runtime_error& error)	{
-        throw SX::Kernel::Error<DiffractometerStore>(error.what());
+        throw nsx::Kernel::Error<DiffractometerStore>(error.what());
     }
 
     const property_tree::ptree& instrumentNode=root.get_child("instrument");
@@ -65,4 +65,4 @@ diffractometersList DiffractometerStore::getDiffractometersList() const
 
 } // end namespace Instrument
 
-} // end namespace SX
+} // end namespace nsx

@@ -11,7 +11,7 @@
 #include "MonoDetector.h"
 #include "MultiDetector.h"
 
-namespace SX {
+namespace nsx {
 namespace Instrument {
 
 Detector* MultiDetector::create(const proptree::ptree& node)
@@ -200,4 +200,4 @@ unsigned int MultiDetector::getNDetectors() const
 }
 
 } // end namespace Instrument
-} // end namespace SX
+} // end namespace nsx

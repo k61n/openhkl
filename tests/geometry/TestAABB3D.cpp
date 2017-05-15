@@ -10,7 +10,7 @@
 
 #include <nsxlib/geometry/AABB.h>
 
-using namespace SX::Geometry;
+using namespace nsx::Geometry;
 using Eigen::Vector2d;
 using Eigen::Vector3d;
 const double tolerance=1e-5;

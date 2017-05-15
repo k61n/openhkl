@@ -16,10 +16,10 @@
 #include <nsxlib/data/DataReaderFactory.h>
 #include <nsxlib/instrument/DiffractometerStore.h>
 
-using IData = SX::Data::DataSet;
-using DataReaderFactory = SX::Data::DataReaderFactory;
-using DiffractometerStore = SX::Instrument::DiffractometerStore;
-using Diffractometer = SX::Instrument::Diffractometer;
+using IData = nsx::Data::DataSet;
+using DataReaderFactory = nsx::Data::DataReaderFactory;
+using DiffractometerStore = nsx::Instrument::DiffractometerStore;
+using Diffractometer = nsx::Instrument::Diffractometer;
 
 // const double tolerance=1e-2;
 

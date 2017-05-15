@@ -14,14 +14,14 @@
 #include "../kernel/Singleton.h"
 #include "../utils/Types.h"
 
-namespace SX {
+namespace nsx {
 
 namespace Chemistry {
 
 using boost::any_cast;
-using SX::Kernel::Constructor;
-using SX::Kernel::Destructor;
-using SX::Kernel::Singleton;
+using nsx::Kernel::Constructor;
+using nsx::Kernel::Destructor;
+using nsx::Kernel::Singleton;
 
 class IsotopeDatabaseManager : public Singleton<IsotopeDatabaseManager,Constructor,Destructor> {
 
@@ -103,6 +103,6 @@ std::ostream& operator<<(std::ostream&,const IsotopeDatabaseManager::Isotope&);
 
 } // end namespace Chemistry
 
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXLIB_ISOTOPEDATABASEMANAGER_H_ */

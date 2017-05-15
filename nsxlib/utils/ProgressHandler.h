@@ -10,7 +10,7 @@
 #include <vector>
 #include <atomic>
 
-namespace SX {
+namespace nsx {
 
 namespace Utils {
 
@@ -53,7 +53,7 @@ private:
 
 } // namespace Utils
 
-} // namespace SX
+} // namespace nsx
 
 
 #endif // PROGRESSHANDLER_H

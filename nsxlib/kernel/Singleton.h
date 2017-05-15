@@ -39,7 +39,7 @@
 
 #include <memory>
 
-namespace SX
+namespace nsx
 {
 
 namespace Kernel
@@ -93,6 +93,6 @@ public:
 };
 
 } // end namespace Kernel
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_SINGLETON_H_ */

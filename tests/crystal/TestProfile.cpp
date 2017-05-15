@@ -12,12 +12,12 @@
 #include <nsxlib/crystal/Profile.h>
 #include <Eigen/Dense>
 
-//using namespace SX::Crystal;
+//using namespace nsx::Crystal;
 //using namespace std;
 
-using SX::Crystal::Profile;
-using SX::Utils::Lorentzian;
-using SX::Utils::Gaussian;
+using nsx::Crystal::Profile;
+using nsx::Utils::Lorentzian;
+using nsx::Utils::Gaussian;
 
 const double eps = 1.0;
 

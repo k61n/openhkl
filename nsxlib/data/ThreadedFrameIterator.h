@@ -10,7 +10,7 @@
 
 #include <future>
 
-namespace SX {
+namespace nsx {
 
 namespace Data {
 
@@ -18,13 +18,13 @@ class ThreadedFrameIterator final: public IFrameIterator {
 public:
     ThreadedFrameIterator(DataSet& data, unsigned int idx);
     ~ThreadedFrameIterator() = default;
-    SX::Types::RealMatrix& getFrame() override;
+    nsx::Types::RealMatrix& getFrame() override;
     void advance() override;
 
 private:
-    SX::Types::RealMatrix _currentFrame;
-    std::shared_future<SX::Types::RealMatrix> _nextFrame;
-    std::shared_future<SX::Types::RealMatrix> getFrameAsync(int idx);
+    nsx::Types::RealMatrix _currentFrame;
+    std::shared_future<nsx::Types::RealMatrix> _nextFrame;
+    std::shared_future<nsx::Types::RealMatrix> getFrameAsync(int idx);
 };
 
 } // Data

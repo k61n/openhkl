@@ -40,7 +40,7 @@
 
 #include "SymOp.h"
 
-namespace SX
+namespace nsx
 {
 
 namespace Crystal
@@ -103,6 +103,6 @@ private:
 std::ostream& operator<<(std::ostream& os, const SpaceGroup& sg);
 
 } // end namespace Crystal
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_SYMMETRYGROUPGENERATOR_H_ */

@@ -35,7 +35,7 @@
 #ifndef NSXTOOL_PEAKRECORD_H_
 #define NSXTOOL_PEAKRECORD_H_
 
-namespace SX {
+namespace nsx {
 namespace Crystal {
 
 class Peak3D;

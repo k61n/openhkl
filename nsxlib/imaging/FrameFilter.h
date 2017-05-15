@@ -2,8 +2,8 @@
 
 #include "IData.h"
 
-namespace SX {
+namespace nsx {
     namespace Imaging {
-        using FrameFilter = std::function<SX::Data::RowMatrixd(SX::Data::RowMatrixd)>;
+        using FrameFilter = std::function<nsx::Data::RowMatrixd(nsx::Data::RowMatrixd)>;
     }
 }

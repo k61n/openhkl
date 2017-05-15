@@ -33,13 +33,13 @@
 
 #include "../kernel/Singleton.h"
 
-namespace SX
+namespace nsx
 {
 
 namespace Utils
 {
 
-class Path : public SX::Kernel::Singleton<Path,SX::Kernel::Constructor,SX::Kernel::Destructor>
+class Path : public nsx::Kernel::Singleton<Path,nsx::Kernel::Constructor,nsx::Kernel::Destructor>
 {
 
 public:
@@ -71,6 +71,6 @@ private:
 
 } // end namespace Utils
 
-} // end namespace SX
+} // end namespace nsx
 
 #endif

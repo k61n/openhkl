@@ -6,7 +6,7 @@
 #include "items/CutterGraphicsItem.h"
 
 // Forward declarations
-namespace SX
+namespace nsx
 {
 namespace Data
 {
@@ -28,7 +28,7 @@ public:
     // Constructors and destructor
 
     //! Construct a data slicer
-    CutSliceGraphicsItem(std::shared_ptr<SX::Data::DataSet>, bool horizontal=true);
+    CutSliceGraphicsItem(std::shared_ptr<nsx::Data::DataSet>, bool horizontal=true);
     //! The destructor
     ~CutSliceGraphicsItem();
 

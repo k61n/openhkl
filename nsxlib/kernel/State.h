@@ -31,7 +31,7 @@
 
 #include <tuple>
 
-namespace SX
+namespace nsx
 {
 
 namespace Kernel
@@ -62,7 +62,7 @@ void State<Ts...>::set(Ts... vals)
 
 } // end namespace Kernel
 
-} // end namespace SX
+} // end namespace nsx
 
 
 

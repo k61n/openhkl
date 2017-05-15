@@ -40,7 +40,7 @@
 #include <cassert>
 #include <iostream>
 
-namespace SX {
+namespace nsx {
 namespace Instrument {
 
 ComponentState::ComponentState(const Component* parent, std::vector<double> values):
@@ -94,4 +94,4 @@ Eigen::Vector3d ComponentState::transformQ(const Eigen::Vector3d &q) const
 }
 
 } // end namespace Instrument
-} // End namespace SX
+} // End namespace nsx

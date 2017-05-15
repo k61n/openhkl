@@ -33,7 +33,7 @@
 
 #include <Eigen/Dense>
 
-namespace SX
+namespace nsx
 {
 
 namespace Utils

@@ -37,7 +37,7 @@
 
 #include "../data/IDataReader.h"
 
-namespace SX {
+namespace nsx {
 
 namespace Data {
 
@@ -64,6 +64,6 @@ private:
 
 } // end namespace Data
 
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_HDF5DATAREADER_H_ */

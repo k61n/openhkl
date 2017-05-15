@@ -34,7 +34,7 @@
 
 #include <Eigen/Dense>
 
-namespace SX
+namespace nsx
 {
 
 namespace Crystal
@@ -98,6 +98,6 @@ std::ostream& operator<<(std::ostream& os, const SymOp& sym);
 
 } // end namespace Crystal
 
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_SYMOP_H_ */

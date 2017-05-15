@@ -45,8 +45,8 @@
 #include <nsxlib/data/IData.h>
 #include <nsxlib/utils/MinimizerGSL.h>
 
-using namespace SX::Crystal;
-using namespace SX::Utils;
+using namespace nsx::Crystal;
+using namespace nsx::Utils;
 
 PeakFitDialog::PeakFitDialog(SessionModel* session, QWidget *parent) :
     QDialog(parent),

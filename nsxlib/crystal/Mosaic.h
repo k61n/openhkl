@@ -15,7 +15,7 @@
 #include "../geometry/Ellipsoid.h"
 #include "../geometry/ConvexHull.h"
 
-namespace SX {
+namespace nsx {
 namespace Instrument {
 class Diffractometer;
 class Sample;
@@ -33,9 +33,9 @@ public:
     Mosaic(const std::string& instr, double l, double dl, double dMonSam, double mu);
 
     // bool run(const std::vector<std::string>& numors, unsigned int n, double& overlap);
-    bool run(std::vector<std::shared_ptr<SX::Data::DataSet>> datas, unsigned int n, double& overlap);
+    bool run(std::vector<std::shared_ptr<nsx::Data::DataSet>> datas, unsigned int n, double& overlap);
 
-    void setSample(SX::Instrument::Sample* sample);
+    void setSample(nsx::Instrument::Sample* sample);
 
     void setMosaicity(double mosaicity);
 
@@ -43,9 +43,9 @@ public:
 
 private:
 
-    std::shared_ptr<SX::Instrument::Diffractometer> _diffractometer;
+    std::shared_ptr<nsx::Instrument::Diffractometer> _diffractometer;
 
-    SX::Instrument::Sample* _sample;
+    nsx::Instrument::Sample* _sample;
 
     double _l;
     double _dl;
@@ -53,9 +53,9 @@ private:
     double _mu;
 };
 
-double ellipsoids_overlap(const SX::Geometry::Ellipsoid<double,3>& ell1,const SX::Geometry::Ellipsoid<double,3>& ell2);
+double ellipsoids_overlap(const nsx::Geometry::Ellipsoid<double,3>& ell1,const nsx::Geometry::Ellipsoid<double,3>& ell2);
 
 } // namespace Crystal
-} // namespace SX
+} // namespace nsx
 
 #endif /* MOSAIC_H_ */

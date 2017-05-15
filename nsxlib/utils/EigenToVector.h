@@ -39,12 +39,12 @@
 #include <vector>
 #include <Eigen/Dense>
 
-namespace SX {
+namespace nsx {
 namespace Utils {
 
 std::vector<double> eigenToVector(const Eigen::VectorXd& ev);
 
 } // namespace Utils
-} // namespace SX
+} // namespace nsx
 
 #endif // NSXTOOL_IMINIMIZER_H_

@@ -7,7 +7,7 @@
 #include "models/SourceItem.h"
 #include "tree/SourcePropertyWidget.h"
 
-SourceItem::SourceItem(std::shared_ptr<SX::Instrument::Experiment> experiment) : InspectableTreeItem(experiment)
+SourceItem::SourceItem(std::shared_ptr<nsx::Instrument::Experiment> experiment) : InspectableTreeItem(experiment)
 {
     setText(QString::fromStdString(_experiment->getDiffractometer()->getSource()->getName()));
 

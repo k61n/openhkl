@@ -13,13 +13,13 @@ using std::cout;
 using std::endl;
 
 
-namespace SX
+namespace nsx
 {
 
 namespace Imaging
 {
 
-using RealMatrix = SX::Types::RealMatrix;
+using RealMatrix = nsx::Types::RealMatrix;
 
 
 Convolver::Convolver():

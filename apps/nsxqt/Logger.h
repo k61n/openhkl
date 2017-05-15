@@ -23,7 +23,7 @@ QDebug& operator<<(QDebug& dbg, const T& object)
 }
 
 // A singleton Logger class to log all applications output
-class Logger : public SX::Kernel::Singleton<Logger,SX::Kernel::Constructor,SX::Kernel::Destructor>
+class Logger : public nsx::Kernel::Singleton<Logger,nsx::Kernel::Constructor,nsx::Kernel::Destructor>
 {
 public:
     // Attach a QTextEdit to the logger

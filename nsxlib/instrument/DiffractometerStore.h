@@ -38,7 +38,7 @@
 #include "Diffractometer.h"
 #include "../kernel/Singleton.h"
 
-namespace SX
+namespace nsx
 {
 
 namespace Instrument
@@ -64,6 +64,6 @@ public:
 
 } // end namespace Instrument
 
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_DIFFRACTOMETERSTORE_H_ */

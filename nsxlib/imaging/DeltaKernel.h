@@ -11,7 +11,7 @@
 
 #include "ConvolutionKernel.h"
 
-namespace SX
+namespace nsx
 {
 
 namespace Imaging

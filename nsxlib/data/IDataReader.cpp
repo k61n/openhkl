@@ -22,7 +22,7 @@
 #include "../instrument/Source.h"
 #include "../utils/Units.h"
 
-namespace SX {
+namespace nsx {
 
 namespace Data {
 
@@ -31,7 +31,7 @@ using boost::filesystem::path;
 using RowMatrixi = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 using RowMatrixd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
-IDataReader::IDataReader(const std::string& filename, const std::shared_ptr<SX::Instrument::Diffractometer>& diffractometer)
+IDataReader::IDataReader(const std::string& filename, const std::shared_ptr<nsx::Instrument::Diffractometer>& diffractometer)
     : _diffractometer(std::move(diffractometer)),
   _nFrames(0),
   _states(),
@@ -158,7 +158,7 @@ void IDataReader::saveHDF5(const std::string& filename)
         const std::vector<double>& v = _states[i].detector.getValues();
 
         for (unsigned int j = 0; j < names.size(); ++j) {
-            vals(j,i) = v[j] / SX::Units::deg;
+            vals(j,i) = v[j] / nsx::Units::deg;
         }
     }
 
@@ -176,7 +176,7 @@ void IDataReader::saveHDF5(const std::string& filename)
         const std::vector<double>& v = _states[i].sample.getValues();
 
         for (unsigned int j = 0; j < samplenames.size(); ++j) {
-            valsSamples(j,i) = v[j]/SX::Units::deg;
+            valsSamples(j,i) = v[j]/nsx::Units::deg;
         }
     }
 
@@ -194,7 +194,7 @@ void IDataReader::saveHDF5(const std::string& filename)
         const std::vector<double>& v=_states[i].source.getValues();
 
         for (unsigned int j = 0; j < sourcenames.size(); ++j) {
-            valsSources(j,i) = v[j] / SX::Units::deg;
+            valsSources(j,i) = v[j] / nsx::Units::deg;
         }
     }
 
@@ -248,4 +248,4 @@ void IDataReader::saveHDF5(const std::string& filename)
 }
 
 } // end namespace Data
-} // end namespace SX
+} // end namespace nsx

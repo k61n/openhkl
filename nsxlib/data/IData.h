@@ -50,7 +50,7 @@
 
 #include "../utils/ProgressHandler.h"
 
-namespace SX {
+namespace nsx {
 namespace Instrument {
     class Component;
 }
@@ -60,12 +60,12 @@ namespace Data {
 using RowMatrixi = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 using RowMatrixd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
-using SX::Instrument::Diffractometer;
-using SX::Instrument::Component;
-using SX::Instrument::ComponentState;
-using SX::Crystal::sptrPeak3D;
-using SX::Geometry::AABB;
-using SX::Crystal::PeakCalc;
+using nsx::Instrument::Diffractometer;
+using nsx::Instrument::Component;
+using nsx::Instrument::ComponentState;
+using nsx::Crystal::sptrPeak3D;
+using nsx::Geometry::AABB;
+using nsx::Crystal::PeakCalc;
 
 
 class IFrameIterator;
@@ -132,10 +132,10 @@ public:
     const ComponentState& getSourceState(size_t frame) const;
 
     //! Gets the the sample states
-    const std::vector<SX::Instrument::InstrumentState>& getInstrumentStates() const;
+    const std::vector<nsx::Instrument::InstrumentState>& getInstrumentStates() const;
 
     //! Get the interpolated state of a given component
-    SX::Instrument::InstrumentState getInterpolatedState(double frame) const;
+    nsx::Instrument::InstrumentState getInterpolatedState(double frame) const;
     //ComponentState getInterpolatedState(std::shared_ptr<Component> component, double frame) const;
 
     //! Add a new mask to the data
@@ -189,10 +189,10 @@ public:
     std::vector<PeakCalc> hasPeaks(const std::vector<Eigen::Vector3d>& hkls,const Eigen::Matrix3d& BU);
 
     //! Get background
-    double getBackgroundLevel(const std::shared_ptr<SX::Utils::ProgressHandler>& progress);
+    double getBackgroundLevel(const std::shared_ptr<nsx::Utils::ProgressHandler>& progress);
 
     //! Integrate intensities of all peaks
-    void integratePeaks(double peak_scale = 3.0, double bkg_scale = 5.0, bool update_shape = false, const std::shared_ptr<SX::Utils::ProgressHandler>& handler = nullptr);
+    void integratePeaks(double peak_scale = 3.0, double bkg_scale = 5.0, bool update_shape = false, const std::shared_ptr<nsx::Utils::ProgressHandler>& handler = nullptr);
 
     //! Remove duplicates
     void removeDuplicatePeaks();
@@ -211,7 +211,7 @@ protected:
     std::shared_ptr<Diffractometer> _diffractometer;
     std::unique_ptr<MetaData> _metadata;
     std::vector<Eigen::MatrixXi> _data;
-    std::vector<SX::Instrument::InstrumentState> _states;
+    std::vector<nsx::Instrument::InstrumentState> _states;
     std::set<sptrPeak3D> _peaks;
     std::size_t _fileSize;
     //! The set of masks bound to the data
@@ -222,6 +222,6 @@ protected:
 };
 
 } // end namespace Data
-} // end namespace SX
+} // end namespace nsx
 
 #endif // NSXTOOL_DATASET_H_

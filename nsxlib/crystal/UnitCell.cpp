@@ -6,14 +6,14 @@
 #include "../utils/Units.h"
 #include "../utils/gcd.h"
 
-namespace SX
+namespace nsx
 {
 
 namespace Crystal
 {
 
 UnitCell::UnitCell():
-    SX::Geometry::Basis(),
+    nsx::Geometry::Basis(),
     _material(),
     _centring(LatticeCentring::P),
      _bravaisType(BravaisType::Triclinic),
@@ -25,7 +25,7 @@ UnitCell::UnitCell():
 }
 
 
-UnitCell::UnitCell(double a, double b, double c, double alpha, double beta, double gamma, LatticeCentring centring,BravaisType bravais,std::shared_ptr<SX::Geometry::Basis> reference)
+UnitCell::UnitCell(double a, double b, double c, double alpha, double beta, double gamma, LatticeCentring centring,BravaisType bravais,std::shared_ptr<nsx::Geometry::Basis> reference)
 : _material(),
   _centring(centring),
   _bravaisType(bravais),
@@ -60,11 +60,11 @@ UnitCell::UnitCell(double a, double b, double c, double alpha, double beta, doub
           cs*cos(betas),-cs*sin(betas)*ca,1.0/c;
 
     _A=_B.inverse();
-    SX::Geometry::Basis::_reference=reference;
+    nsx::Geometry::Basis::_reference=reference;
 }
 
 UnitCell::UnitCell(const UnitCell& other)
-: SX::Geometry::Basis(other),
+: nsx::Geometry::Basis(other),
   _material(other._material),
   _centring(other._centring),
   _bravaisType(other._bravaisType),
@@ -97,8 +97,8 @@ UnitCell& UnitCell::operator=(const UnitCell& other)
     return *this;
 }
 
-UnitCell::UnitCell(const Eigen::Vector3d& v1,const Eigen::Vector3d& v2,const Eigen::Vector3d& v3, LatticeCentring centring,BravaisType bravais,std::shared_ptr<SX::Geometry::Basis> reference)
-: SX::Geometry::Basis(v1,v2,v3,reference),
+UnitCell::UnitCell(const Eigen::Vector3d& v1,const Eigen::Vector3d& v2,const Eigen::Vector3d& v3, LatticeCentring centring,BravaisType bravais,std::shared_ptr<nsx::Geometry::Basis> reference)
+: nsx::Geometry::Basis(v1,v2,v3,reference),
   _material(),
   _centring(centring),
   _bravaisType(bravais),
@@ -160,7 +160,7 @@ Eigen::Vector3d UnitCell::getReciprocalCVector() const
     return _B.row(2);
 }
 
-UnitCell UnitCell::fromDirectVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c, LatticeCentring centring, BravaisType bravais,const std::shared_ptr<SX::Geometry::Basis>& reference)
+UnitCell UnitCell::fromDirectVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c, LatticeCentring centring, BravaisType bravais,const std::shared_ptr<nsx::Geometry::Basis>& reference)
 {
     if (coplanar(a,b,c)) {
         throw std::runtime_error("Class UnitCell: the direct vectors are coplanar.");
@@ -169,7 +169,7 @@ UnitCell UnitCell::fromDirectVectors(const Vector3d& a, const Vector3d& b, const
 }
 
 //! Build a basis from a set of three reciprocal vectors.
-UnitCell UnitCell::fromReciprocalVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c,LatticeCentring centring, BravaisType bravais,const std::shared_ptr<SX::Geometry::Basis>& reference)
+UnitCell UnitCell::fromReciprocalVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c,LatticeCentring centring, BravaisType bravais,const std::shared_ptr<nsx::Geometry::Basis>& reference)
 {
     if (coplanar(a,b,c)) {
         throw std::runtime_error("Class UnitCell: the reciprocal vectors are coplanar.");
@@ -268,7 +268,7 @@ double UnitCell::getD(int h, int k, int l)
     const Eigen::Vector3d b2(getReciprocalBVector());
     const Eigen::Vector3d b3(getReciprocalCVector());
     const Eigen::Vector3d q = h*b1 + k*b2 + l*b3;
-    return SX::Utils::gcd(h, k, l) / q.norm();
+    return nsx::Utils::gcd(h, k, l) / q.norm();
 }
 
 Eigen::Matrix3d UnitCell::getBusingLevyB() const
@@ -301,26 +301,26 @@ void UnitCell::printSelf(std::ostream& os) const
     os << std::fixed << std::setw(10) << std::setprecision(5) << getA();
     os << std::fixed << std::setw(10) << std::setprecision(5) << getB();
     os << std::fixed << std::setw(10) << std::setprecision(5) << getC();
-    os << std::fixed << std::setw(10) << std::setprecision(5) << getAlpha()/SX::Units::deg;
-    os << std::fixed << std::setw(10) << std::setprecision(5) << getBeta()/SX::Units::deg;
-    os << std::fixed << std::setw(10) << std::setprecision(5) << getGamma()/SX::Units::deg << std::endl;
+    os << std::fixed << std::setw(10) << std::setprecision(5) << getAlpha()/nsx::Units::deg;
+    os << std::fixed << std::setw(10) << std::setprecision(5) << getBeta()/nsx::Units::deg;
+    os << std::fixed << std::setw(10) << std::setprecision(5) << getGamma()/nsx::Units::deg << std::endl;
     os << "Reciprocal Lattice:\n";
     os << std::fixed << std::setw(10) << std::setprecision(5) << getReciprocalA();
     os << std::fixed << std::setw(10) << std::setprecision(5) << getReciprocalB();
     os << std::fixed << std::setw(10) << std::setprecision(5) << getReciprocalC();
-    os << std::fixed << std::setw(10) << std::setprecision(5) << getReciprocalAlpha()/SX::Units::deg;
-    os << std::fixed << std::setw(10) << std::setprecision(5) << getReciprocalBeta()/SX::Units::deg;
-    os << std::fixed << std::setw(10) << std::setprecision(5) << getReciprocalGamma()/SX::Units::deg << std::endl;
+    os << std::fixed << std::setw(10) << std::setprecision(5) << getReciprocalAlpha()/nsx::Units::deg;
+    os << std::fixed << std::setw(10) << std::setprecision(5) << getReciprocalBeta()/nsx::Units::deg;
+    os << std::fixed << std::setw(10) << std::setprecision(5) << getReciprocalGamma()/nsx::Units::deg << std::endl;
     os << "UB matrix (in Busing Levy convention):" << std::endl;
     os << _B.transpose() << std::endl;
     //
     if (_material)
     {
         os << *(_material) << std::endl;
-        os << "Molar mass: "<< _material->molarMass()/SX::Units::g << "g.mol-1 \n";
-        os << "Density:" << _material->massDensity()/SX::Units::g_per_cm3 << "g.cm-3\n";
-        os << "Linear absorption coef: " << _material->muAbsorption()*SX::Units::cm << "cm-1 @ 1.798 AA \n";
-        os << "Linear incoherent coef: " << _material->muIncoherent()*SX::Units::cm << "cm-1";
+        os << "Molar mass: "<< _material->molarMass()/nsx::Units::g << "g.mol-1 \n";
+        os << "Density:" << _material->massDensity()/nsx::Units::g_per_cm3 << "g.cm-3\n";
+        os << "Linear absorption coef: " << _material->muAbsorption()*nsx::Units::cm << "cm-1 @ 1.798 AA \n";
+        os << "Linear incoherent coef: " << _material->muIncoherent()*nsx::Units::cm << "cm-1";
     }
 
 
@@ -349,7 +349,7 @@ std::vector<Eigen::Vector3d> UnitCell::generateReflectionsInSphere(double dstarm
 
     hkls.reserve(deltah*deltak*deltal);
 
-    SX::Crystal::SpaceGroup group(getSpaceGroup());
+    nsx::Crystal::SpaceGroup group(getSpaceGroup());
 
     // Iterate over the cuve and insert element in the map if dstar is not exceeded
     for (int h=-hmax;h<=hmax;++h) {
@@ -388,7 +388,7 @@ std::vector<Eigen::Vector3d> UnitCell::generateReflectionsInShell(double dmin, d
     const int num_hkl = 2*hkl_max+1;
     hkls.reserve(num_hkl*num_hkl*num_hkl);
 
-    SX::Crystal::SpaceGroup group(getSpaceGroup());
+    nsx::Crystal::SpaceGroup group(getSpaceGroup());
 
     for (int h = -hkl_max; h <= hkl_max; ++h) {
         for (int k = -hkl_max; k <= hkl_max; ++k) {
@@ -396,7 +396,7 @@ std::vector<Eigen::Vector3d> UnitCell::generateReflectionsInShell(double dmin, d
 
                 Eigen::Vector3d q = h*b1 + k*b2 + l*b3;
 
-//                double gcd = (double)SX::Utils::gcd(h, k, l);
+//                double gcd = (double)nsx::Utils::gcd(h, k, l);
 //                const double d = gcd / q.norm();
                 const double d = 1.0 / q.norm();
 
@@ -514,4 +514,4 @@ double UnitCell::getHKLTolerance() const
 }
 
 } // end namespace Chemistry
-} // end namespace SX
+} // end namespace nsx

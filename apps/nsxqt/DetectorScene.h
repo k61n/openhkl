@@ -21,7 +21,7 @@
 
 // Forward declarations
 
-namespace SX
+namespace nsx
 {
 namespace Data
 {
@@ -45,7 +45,7 @@ class SXGraphicsItem;
 // optimize cache hit.
 typedef Eigen::Matrix<int,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> rowMatrix;
 
-using SX::Crystal::sptrPeak3D;
+using nsx::Crystal::sptrPeak3D;
 
 //! Master Scene containing the pixmap of the detector counts
 //! and overlayed graphics items (peaks, data cutters, masks ...)
@@ -58,7 +58,7 @@ public:
     //! Which mode is the cursor diplaying
     enum CURSORMODE {THETA=0, GAMMA=1, DSPACING=2, PIXEL=3, HKL=4};
     explicit DetectorScene(QObject *parent = 0);
-    std::shared_ptr<SX::Data::DataSet> getData();
+    std::shared_ptr<nsx::Data::DataSet> getData();
     const rowMatrix& getCurrentFrame() const;
     void setLogarithmic(bool checked);
     void setColorMap(const std::string& name);
@@ -79,8 +79,8 @@ protected:
 public slots:
     void resetScene();
     // To be called to update detector image
-    void setData(const std::shared_ptr<SX::Data::DataSet>&, size_t frame);
-    void setData(const std::shared_ptr<SX::Data::DataSet>&);
+    void setData(const std::shared_ptr<nsx::Data::DataSet>&, size_t frame);
+    void setData(const std::shared_ptr<nsx::Data::DataSet>&);
     void changeFrame(size_t frame = 0);
     void setMaxIntensity(int);
     PeakGraphicsItem* findPeakGraphicsItem(const sptrPeak3D& peak);
@@ -108,7 +108,7 @@ private:
     //! Create the text of the tooltip depending on Scene Mode.
     void createToolTipText(QGraphicsSceneMouseEvent*);
 
-    std::shared_ptr<SX::Data::DataSet> _currentData;
+    std::shared_ptr<nsx::Data::DataSet> _currentData;
     unsigned long _currentFrameIndex;
     int _currentIntensity;
     rowMatrix _currentFrame;
@@ -130,8 +130,8 @@ private:
     std::vector<PeakCalcGraphicsItem*> _peakCalcs;
     QList<MaskGraphicsItem*> _masks;
     SXGraphicsItem* _lastClickedGI;
-    std::unique_ptr<SX::Crystal::Indexer> _indexer;
-    std::vector<SX::Crystal::PeakCalc> _precalculatedPeaks;
+    std::unique_ptr<nsx::Crystal::Indexer> _indexer;
+    std::vector<nsx::Crystal::PeakCalc> _precalculatedPeaks;
 
     bool _showPeakCalcs;
     bool _logarithmic;

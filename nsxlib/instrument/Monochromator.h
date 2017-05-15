@@ -14,7 +14,7 @@
 
 #include <Eigen/Dense>
 
-namespace SX
+namespace nsx
 {
 
 namespace Instrument
@@ -106,6 +106,6 @@ private:
 
 } /* namespace Instrument */
 
-} /* namespace SX */
+} /* namespace nsx */
 
 #endif /* INSTRUMENT_INCLUDE_MONOCHROMATOR_H_ */

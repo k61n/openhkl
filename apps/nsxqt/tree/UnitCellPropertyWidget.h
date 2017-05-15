@@ -10,7 +10,7 @@
 namespace Ui {
 class UnitCellPropertyWidget;
 }
-namespace SX{
+namespace nsx{
     namespace Crystal{
     class UnitCell;
     }
@@ -18,7 +18,7 @@ namespace SX{
 
 class UnitCellItem;
 
-using SX::Crystal::sptrUnitCell;
+using nsx::Crystal::sptrUnitCell;
 
 class UnitCellPropertyWidget : public QWidget
 {

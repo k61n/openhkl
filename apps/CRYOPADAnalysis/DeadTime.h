@@ -33,7 +33,7 @@
 #include <utility>
 #include <vector>
 
-namespace SX{
+namespace nsx{
 
 //! Simple dead-time correction of polynomial form.
 //
@@ -58,6 +58,6 @@ private:
 	std::vector<std::pair<double,double> > _ai;
 };
 
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_DEADTIME_H_ */

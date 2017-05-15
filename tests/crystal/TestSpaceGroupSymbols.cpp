@@ -8,7 +8,7 @@
 #include <nsxlib/crystal/SpaceGroupSymbols.h>
 #include <nsxlib/crystal/SpaceGroup.h>
 
-using namespace SX::Crystal;
+using namespace nsx::Crystal;
 
 BOOST_AUTO_TEST_CASE(Test_SpaceGroupSymbols)
 {

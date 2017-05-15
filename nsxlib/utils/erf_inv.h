@@ -36,7 +36,7 @@
 #ifndef NSXTOOL_ERF_INV_H_
 #define NSXTOOL_ERF_INV_H_
 
-namespace SX {
+namespace nsx {
 namespace Utils {
 
 //! Inverse Error function
@@ -50,6 +50,6 @@ double getScale(double confidence);
 double getConfidence(double x);
 
 } // namespace Utils
-} // namespace SX
+} // namespace nsx
 
 #endif // NSXTOOL_ERF_INV_H_

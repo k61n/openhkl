@@ -11,18 +11,18 @@
 #include "../instrument/Diffractometer.h"
 #include "../instrument/InstrumentState.h"
 
-namespace SX {
+namespace nsx {
 namespace Data {
 
-using SX::Instrument::Diffractometer;
-using SX::Instrument::InstrumentState;
+using nsx::Instrument::Diffractometer;
+using nsx::Instrument::InstrumentState;
 
 class IDataReader
 {
 
 public:
 
-    IDataReader(const std::string& filename, const std::shared_ptr<SX::Instrument::Diffractometer>& diffractometer);
+    IDataReader(const std::string& filename, const std::shared_ptr<nsx::Instrument::Diffractometer>& diffractometer);
 
     virtual ~IDataReader()=default;
 
@@ -82,6 +82,6 @@ protected:
 };
 
 } /* namespace Data */
-} /* namespace SX */
+} /* namespace nsx */
 
 #endif /* IDATAREADER_H_ */

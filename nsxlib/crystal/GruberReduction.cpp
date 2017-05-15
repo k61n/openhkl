@@ -3,7 +3,7 @@
 #include <cmath>
 #include <stdexcept>
 
-namespace SX
+namespace nsx
 {
 namespace Crystal
 {
@@ -459,4 +459,4 @@ bool GruberReduction::equal(double A, double B) const
 }
 
 } // namespace Crystal
-} // namespace SX
+} // namespace nsx

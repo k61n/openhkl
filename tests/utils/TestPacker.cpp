@@ -47,7 +47,7 @@
 #include <nsxlib/utils/Packer.h>
 #include <Eigen/Dense>
 
-using namespace SX::Utils;
+using namespace nsx::Utils;
 using namespace std;
 
 

@@ -74,8 +74,8 @@ private slots:
 private:
     Ui::PeakFitDialog *ui;
     SessionModel* _session;
-    SX::Crystal::sptrPeak3D _peak;
-    std::unique_ptr<SX::Crystal::PeakFit> _peakFit;
+    nsx::Crystal::sptrPeak3D _peak;
+    std::unique_ptr<nsx::Crystal::PeakFit> _peakFit;
 
     QGraphicsScene* _peakScene;
     QGraphicsScene* _fitScene;

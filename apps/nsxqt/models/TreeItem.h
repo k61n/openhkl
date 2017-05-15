@@ -12,7 +12,7 @@
 
 class QWidget;
 
-using namespace SX::Instrument;
+using namespace nsx::Instrument;
 
 class TreeItem : public QStandardItem
 {

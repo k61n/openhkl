@@ -78,9 +78,9 @@
 
 
 using std::vector;
-using SX::Data::DataSet;
+using nsx::Data::DataSet;
 using std::shared_ptr;
-using SX::Utils::ProgressHandler;
+using nsx::Utils::ProgressHandler;
 
 ExperimentTree::ExperimentTree(QWidget *parent):
     QTreeView(parent)//,
@@ -288,7 +288,7 @@ void ExperimentTree::importRawData()
     if (!dataItem)
         return;
 
-    std::shared_ptr<SX::Instrument::Experiment> exmt = dataItem->getExperiment();
+    std::shared_ptr<nsx::Instrument::Experiment> exmt = dataItem->getExperiment();
 
     if (!exmt)
         return;
@@ -346,14 +346,14 @@ void ExperimentTree::viewReciprocalSpace(const QModelIndex& index)
     if (!titem)
         return;
 
-    std::shared_ptr<SX::Instrument::Experiment> expt(titem->getExperiment());
+    std::shared_ptr<nsx::Instrument::Experiment> expt(titem->getExperiment());
 
     if (!expt)
         return;
 
     QStandardItem* ditem=_session->itemFromIndex(index);
 
-    std::vector<std::shared_ptr<SX::Data::DataSet>> selectedNumors;
+    std::vector<std::shared_ptr<nsx::Data::DataSet>> selectedNumors;
     int nTotalNumors(_session->rowCount(ditem->index()));
     selectedNumors.reserve(size_t(nTotalNumors));
 
@@ -399,7 +399,7 @@ void ExperimentTree::onDoubleClick(const QModelIndex& index)
     else if (auto ptr=dynamic_cast<SampleItem*>(item))
         ptr->addUnitCell();
     else if (auto ptr=dynamic_cast<NumorItem*>(item)) {
-        std::shared_ptr<SX::Instrument::Experiment> exp = ptr->getExperiment();
+        std::shared_ptr<nsx::Instrument::Experiment> exp = ptr->getExperiment();
         emit plotData(exp->getData(item->text().toStdString()));
     }
 }
@@ -605,13 +605,13 @@ void ExperimentTree::findFriedelPairs()
 
 //        if (ncrystals) {
 //            for (int i = 0; i < ncrystals; ++i) {
-//                SX::Crystal::SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
+//                nsx::Crystal::SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
 //                auto ub = sample->getUnitCell(i)->getReciprocalStandardM();
 
 //                qDebug() << "Calculating peak locations...";
 
 //                auto hkls = sample->getUnitCell(i)->generateReflectionsInSphere(1.5);
-//                std::vector<SX::Crystal::PeakCalc> peaks = numor->hasPeaks(hkls, ub);
+//                std::vector<nsx::Crystal::PeakCalc> peaks = numor->hasPeaks(hkls, ub);
 //                calculated_peaks.reserve(calculated_peaks.size() + peaks.size());
 
 //                qDebug() << "Adding calculated peaks...";

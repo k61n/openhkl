@@ -4,10 +4,10 @@
 #include <cminpack-1/cminpack.h>
 #include <Eigen/Dense>
 
-namespace SX
+namespace nsx
 {
 
-HeCell::HeCell(const char* name): _pvst(new SX::Data::Scan1D("Time (s)", "Polar.")),_peaks(0)
+HeCell::HeCell(const char* name): _pvst(new nsx::Data::Scan1D("Time (s)", "Polar.")),_peaks(0)
 {
 	if (name)
 		_name=name;
@@ -21,7 +21,7 @@ void HeCell::setDeadTime(const boost::shared_ptr<DTCorrection>& dt)
 {
 	_deadt=dt;
 }
-void HeCell::setNumors(const boost::shared_ptr<SX::Data::NumorSet>& numors)
+void HeCell::setNumors(const boost::shared_ptr<nsx::Data::NumorSet>& numors)
 {
 	_numors=numors;
 }
@@ -79,7 +79,7 @@ void HeCell::calculateDecay()
 	_pvst->setData(time,polar,error);
 
 }
-const boost::shared_ptr<SX::Data::Scan1D>& HeCell::getDecay() const
+const boost::shared_ptr<nsx::Data::Scan1D>& HeCell::getDecay() const
 {
 	return _pvst;
 }
@@ -137,7 +137,7 @@ int HeCell::fitExponential(double& A0,double& A0s, double& alpha,double& alphas)
 	return info;
 }
 
-double HeCell::getPolar(const SX::Data::Numor& numor,double& Pcell, double& Pcells)
+double HeCell::getPolar(const nsx::Data::Numor& numor,double& Pcell, double& Pcells)
 {
 	boost::posix_time::ptime ntime;
 	try
@@ -157,7 +157,7 @@ double HeCell::getPolar(const SX::Data::Numor& numor,double& Pcell, double& Pcel
 	Pcells=sqrt(sigma);
 	return dts;
 }
-double HeCell::normalizebpb(const SX::Data::Numor& numor,double& polar, double& polars)
+double HeCell::normalizebpb(const nsx::Data::Numor& numor,double& polar, double& polars)
 {
 	double polarin=polar;
 	double pcell, pcells;
@@ -167,4 +167,4 @@ double HeCell::normalizebpb(const SX::Data::Numor& numor,double& polar, double& 
 	return time;
 }
 
-} /* namespace SX */
+} /* namespace nsx */

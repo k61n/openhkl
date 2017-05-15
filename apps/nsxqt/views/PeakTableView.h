@@ -50,8 +50,8 @@ class PeakCustomPlot;
 class QContextMenuEvent;
 class QMouseEvent;
 
-using SX::Crystal::sptrPeak3D;
-using SX::Crystal::sptrUnitCell;
+using nsx::Crystal::sptrPeak3D;
+using nsx::Crystal::sptrUnitCell;
 
 class PeakTableView : public QTableView
 {

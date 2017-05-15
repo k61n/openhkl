@@ -15,15 +15,15 @@ class AbsorptionWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit AbsorptionWidget(SX::Instrument::Experiment* experiment,QWidget *parent = nullptr);
+    explicit AbsorptionWidget(nsx::Instrument::Experiment* experiment,QWidget *parent = nullptr);
     ~AbsorptionWidget();
 
 private:
     Ui::AbsorptionWidget *ui;
     //! Link to the experiment
-    SX::Instrument::Experiment* _experiment;
+    nsx::Instrument::Experiment* _experiment;
     //!
-    SX::Instrument::RotAxis* _spindleAxis;
+    nsx::Instrument::RotAxis* _spindleAxis;
     //! Map of angle and
     std::vector<std::pair<double,std::string>> _imageList;
     //!Path of the file

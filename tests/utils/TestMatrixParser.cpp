@@ -11,8 +11,8 @@
 #include <nsxlib/utils/Enums.h>
 #include <nsxlib/utils/MatrixParser.h>
 
-using SX::Utils::MatrixParser;
-using SX::Instrument::DataOrder;
+using nsx::Utils::MatrixParser;
+using nsx::Instrument::DataOrder;
 
 BOOST_AUTO_TEST_CASE(Test_MatrixParser)
 {

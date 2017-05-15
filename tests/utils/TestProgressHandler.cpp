@@ -10,7 +10,7 @@
 
 #include <nsxlib/utils/ProgressHandler.h>
 
-using namespace SX::Utils;
+using namespace nsx::Utils;
 
 BOOST_AUTO_TEST_CASE(Test_ProgressHandler)
 {

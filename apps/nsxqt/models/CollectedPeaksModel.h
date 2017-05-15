@@ -11,8 +11,8 @@
 #include <nsxlib/crystal/Peak3D.h>
 #include <nsxlib/utils/Types.h>
 
-using namespace SX::Crystal;
-using namespace SX::Instrument;
+using namespace nsx::Crystal;
+using namespace nsx::Instrument;
 
 class CollectedPeaksModel : public QAbstractTableModel
 {
@@ -40,7 +40,7 @@ public:
 
     void addPeak(const sptrPeak3D& peak);
 
-    void setPeaks(const std::vector<std::shared_ptr<SX::Data::DataSet>>& data);
+    void setPeaks(const std::vector<std::shared_ptr<nsx::Data::DataSet>>& data);
     void setPeaks(const std::vector<sptrPeak3D>& peaks);
 
     const std::vector<sptrPeak3D>& getPeaks() const;

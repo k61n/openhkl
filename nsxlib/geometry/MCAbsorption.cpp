@@ -11,7 +11,7 @@
 #include "../kernel/Error.h"
 #include "MCAbsorption.h"
 
-namespace SX
+namespace nsx
 {
 namespace Geometry
 {
@@ -37,7 +37,7 @@ double MCAbsorption::run(unsigned int nIterations, const Eigen::Vector3d& outV, 
     TrianglesList faces=_sample->createFaceCache(sampleOrientation);
 
     if (faces.empty())
-        throw SX::Kernel::Error<MCAbsorption>("No sample defined.");
+        throw nsx::Kernel::Error<MCAbsorption>("No sample defined.");
 
     Eigen::Vector3d dir(0,1,0);
 

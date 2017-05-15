@@ -38,7 +38,7 @@
 
 static const double g_pi = double(M_PI);
 
-namespace SX {
+namespace nsx {
 namespace Utils {
 
 Gaussian::Gaussian(double a, double mu, double sigma):
@@ -67,4 +67,4 @@ double Gaussian::integrate() const
 }
 
 } // namespace Utils
-} // namespace SX
+} // namespace nsx

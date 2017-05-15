@@ -81,12 +81,12 @@
 #include <functional>
 extern std::function<void(void)> processEvents;
 
-using namespace SX::Units;
-using namespace SX::Instrument;
-using SX::Types::RealMatrix;
-using SX::Utils::ProgressHandler;
-using SX::Data::PeakFinder;
-using SX::Data::DataSet;
+using namespace nsx::Units;
+using namespace nsx::Instrument;
+using nsx::Types::RealMatrix;
+using nsx::Utils::ProgressHandler;
+using nsx::Data::PeakFinder;
+using nsx::Data::DataSet;
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -130,12 +130,12 @@ MainWindow::MainWindow(QWidget *parent)
     _ui->splitterHorizontal->setStretchFactor(1,90);
 
     // signals and slots
-    connect(_ui->experimentTree, SIGNAL(plotData(std::shared_ptr<SX::Data::DataSet>)),
-            _ui->_dview->getScene(), SLOT(setData(std::shared_ptr<SX::Data::DataSet>))
+    connect(_ui->experimentTree, SIGNAL(plotData(std::shared_ptr<nsx::Data::DataSet>)),
+            _ui->_dview->getScene(), SLOT(setData(std::shared_ptr<nsx::Data::DataSet>))
     );
 
-    connect(_ui->experimentTree, SIGNAL(plotData(std::shared_ptr<SX::Data::DataSet>)),
-            this, SLOT(changeData(std::shared_ptr<SX::Data::DataSet>)));
+    connect(_ui->experimentTree, SIGNAL(plotData(std::shared_ptr<nsx::Data::DataSet>)),
+            this, SLOT(changeData(std::shared_ptr<nsx::Data::DataSet>)));
 
     connect(_ui->frame,&QScrollBar::valueChanged,[=](const int& value){_ui->_dview->getScene()->changeFrame(value);});
 
@@ -165,7 +165,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(_ui->experimentTree,SIGNAL(inspectWidget(QWidget*)),this,SLOT(setInspectorWidget(QWidget*)));
 
-    qDebug() << "The resources directory is " << SX::Utils::Path().getResourcesDir().c_str();
+    qDebug() << "The resources directory is " << nsx::Utils::Path().getResourcesDir().c_str();
 
     _progressHandler = std::shared_ptr<ProgressHandler>(new ProgressHandler());
     _peakFinder = std::shared_ptr<PeakFinder>(new PeakFinder());
@@ -233,14 +233,14 @@ void MainWindow::on_actionSave_session_triggered()
 
 void MainWindow::on_actionSave_session_as_triggered()
 {
-    QString homeDir = SX::Utils::Path::getHomeDirectory().c_str();
+    QString homeDir = nsx::Utils::Path::getHomeDirectory().c_str();
     QString filename = QFileDialog::getSaveFileName(this, "Save session as..", homeDir, "Json document (*.json)", nullptr, QFileDialog::Option::DontUseNativeDialog);
     saveSession(filename);
 }
 
 void MainWindow::on_actionLoad_session_triggered()
 {
-    QString homeDir = SX::Utils::Path::getHomeDirectory().c_str();
+    QString homeDir = nsx::Utils::Path::getHomeDirectory().c_str();
     QString filename = QFileDialog::getOpenFileName(this, "Load session", homeDir, "Json document (*.json)", nullptr, QFileDialog::Option::DontUseNativeDialog);
     qDebug() << "Loading session from file '" << filename << "'";
 
@@ -568,7 +568,7 @@ void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
                 bool correctly_indexed = false;
 
                 for (int i = 0; i < numor->getDiffractometer()->getSample()->getNCrystals(); ++i) {
-                    SX::Crystal::UnitCell cell = *numor->getDiffractometer()->getSample()->getUnitCell(i);
+                    nsx::Crystal::UnitCell cell = *numor->getDiffractometer()->getSample()->getUnitCell(i);
                     Eigen::RowVector3d hkl;
                     bool indexingSuccess = (*it)->getMillerIndices(cell,hkl,true);
                     if (indexingSuccess) {

@@ -9,7 +9,7 @@
 
 #include <nsxlib/utils/LatticeConstraintParser.h>
 
-using namespace SX::Utils;
+using namespace nsx::Utils;
 
 BOOST_AUTO_TEST_CASE(Test_LatticeConstraintParser)
 {
@@ -17,7 +17,7 @@ BOOST_AUTO_TEST_CASE(Test_LatticeConstraintParser)
 
     LatticeConstraintParser<std::string::iterator> parser;
 
-    SX::Utils::constraints_set constraints;
+    nsx::Utils::constraints_set constraints;
 
     std::string s("a=2b");
     BOOST_CHECK(qi::phrase_parse(s.begin(),s.end(),parser,qi::blank,constraints));

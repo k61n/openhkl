@@ -34,7 +34,7 @@
 
 #include <ostream>
 
-namespace SX
+namespace nsx
 {
 
 namespace Geometry
@@ -121,6 +121,6 @@ std::ostream& operator<<(std::ostream& os, const Vertex<T>& vertex)
 
 } // end namespace Geometry
 
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_VERTEX_H_ */

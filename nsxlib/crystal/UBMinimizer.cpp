@@ -18,7 +18,7 @@
 #include "../utils/MinimizerGSL.h"
 #include "../utils/Units.h"
 
-namespace SX
+namespace nsx
 {
 
 namespace Crystal
@@ -53,7 +53,7 @@ UBFunctor& UBFunctor::operator=(const UBFunctor& other)
 int UBFunctor::operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const
 {
     if (!_detector || !_sample || !_source) {
-        throw SX::Kernel::Error<UBFunctor>("A detector, sample and source must be specified prior to calculate residuals.");
+        throw nsx::Kernel::Error<UBFunctor>("A detector, sample and source must be specified prior to calculate residuals.");
     }
 
     // First 9 parameters are UB matrix
@@ -121,16 +121,16 @@ int UBFunctor::values() const
     return 3*_peaks.size();
 }
 
-void UBFunctor::setDetector(const std::shared_ptr<SX::Instrument::Detector>& detector)
+void UBFunctor::setDetector(const std::shared_ptr<nsx::Instrument::Detector>& detector)
 {
     _detector = detector;
 }
 
-void UBFunctor::setSample(const std::shared_ptr<SX::Instrument::Sample>& sample)
+void UBFunctor::setSample(const std::shared_ptr<nsx::Instrument::Sample>& sample)
 {
     _sample = sample;
 }
-void UBFunctor::setSource(const std::shared_ptr<SX::Instrument::Source>& source)
+void UBFunctor::setSource(const std::shared_ptr<nsx::Instrument::Source>& source)
 {
     _source = source;
 }
@@ -156,7 +156,7 @@ void UBFunctor::resetParameters()
 void UBFunctor::refineParameter(unsigned int idx, bool refine)
 {
     if (!_detector || !_sample || !_source) {
-        throw SX::Kernel::Error<UBFunctor>("A detector, sample and source must be specified prior to fixing parameters.");
+        throw nsx::Kernel::Error<UBFunctor>("A detector, sample and source must be specified prior to fixing parameters.");
     }
     if (idx >= static_cast<unsigned int>(inputs())) {
         return;
@@ -214,12 +214,12 @@ void UBMinimizer::resetParameters()
     _functor.resetParameters();
 }
 
-void UBMinimizer::setDetector(const std::shared_ptr<SX::Instrument::Detector>& detector)
+void UBMinimizer::setDetector(const std::shared_ptr<nsx::Instrument::Detector>& detector)
 {
     _functor.setDetector(detector);
 }
 
-void UBMinimizer::setSource(const std::shared_ptr<SX::Instrument::Source>& source)
+void UBMinimizer::setSource(const std::shared_ptr<nsx::Instrument::Source>& source)
 {
     _functor.setSource(source);
 }
@@ -230,7 +230,7 @@ void UBMinimizer::refineParameter(unsigned int idx, bool refine)
 }
 
 
-void UBMinimizer::setSample(const std::shared_ptr<SX::Instrument::Sample>& sample)
+void UBMinimizer::setSample(const std::shared_ptr<nsx::Instrument::Sample>& sample)
 {
     _functor.setSample(sample);
 }
@@ -239,7 +239,7 @@ int UBMinimizer::run(unsigned int maxIter)
 {
     //assert(_minimizer != nullptr);
     if (_minimizer == nullptr) {
-        _minimizer = new SX::Utils::MinimizerGSL();
+        _minimizer = new nsx::Utils::MinimizerGSL();
     }
 
     int nParams=_functor.inputs();
@@ -341,9 +341,9 @@ UBSolution::UBSolution() : _detector(nullptr), _sample(nullptr),_source(nullptr)
 {
 }
 
-UBSolution::UBSolution(std::shared_ptr<SX::Instrument::Detector> detector,
-                       std::shared_ptr<SX::Instrument::Sample> sample,
-                       std::shared_ptr<SX::Instrument::Source> source,
+UBSolution::UBSolution(std::shared_ptr<nsx::Instrument::Detector> detector,
+                       std::shared_ptr<nsx::Instrument::Sample> sample,
+                       std::shared_ptr<nsx::Instrument::Source> source,
                        const Eigen::VectorXd& values,
                        const Eigen::MatrixXd& cov,
                        std::vector<bool> fixedParameters):
@@ -441,11 +441,11 @@ std::ostream& operator<<(std::ostream& os, const UBSolution& solution)
     auto detectorG=solution._detector->getGonio();
     for (unsigned int i=0;i<detectorG->getNAxes();++i) {
         os << detectorG->getAxis(i)->getLabel() << " ";
-        SX::Instrument::Axis* axis=detectorG->getAxis(i);
-        if (dynamic_cast<SX::Instrument::TransAxis*>(axis) != nullptr) {
-            os << solution._detectorOffsets[i]/SX::Units::mm << "(" << solution._sigmaDetectorOffsets[i]/SX::Units::mm << ") mm " << std::endl;
-        } else if (dynamic_cast<SX::Instrument::RotAxis*>(axis) != nullptr) {
-            os << solution._detectorOffsets[i]/SX::Units::deg << "(" << solution._sigmaDetectorOffsets[i]/SX::Units::deg << ") deg " << std::endl;
+        nsx::Instrument::Axis* axis=detectorG->getAxis(i);
+        if (dynamic_cast<nsx::Instrument::TransAxis*>(axis) != nullptr) {
+            os << solution._detectorOffsets[i]/nsx::Units::mm << "(" << solution._sigmaDetectorOffsets[i]/nsx::Units::mm << ") mm " << std::endl;
+        } else if (dynamic_cast<nsx::Instrument::RotAxis*>(axis) != nullptr) {
+            os << solution._detectorOffsets[i]/nsx::Units::deg << "(" << solution._sigmaDetectorOffsets[i]/nsx::Units::deg << ") deg " << std::endl;
         }
     }
     os <<std::endl;
@@ -453,11 +453,11 @@ std::ostream& operator<<(std::ostream& os, const UBSolution& solution)
     auto sampleG=solution._sample->getGonio();
     for (unsigned int i=0;i<sampleG->getNAxes();++i) {
         os << sampleG->getAxis(i)->getLabel() << " ";
-        SX::Instrument::Axis* axis=sampleG->getAxis(i);
-        if (dynamic_cast<SX::Instrument::TransAxis*>(axis) != nullptr) {
-            os << solution._sampleOffsets[i]/SX::Units::mm << "(" << solution._sigmaSampleOffsets[i]/SX::Units::mm << ") mm " << std::endl;
-        } else if (dynamic_cast<SX::Instrument::RotAxis*>(axis) != nullptr) {
-            os << solution._sampleOffsets[i]/SX::Units::deg << "(" << solution._sigmaSampleOffsets[i]/SX::Units::deg << ") deg " << std::endl;
+        nsx::Instrument::Axis* axis=sampleG->getAxis(i);
+        if (dynamic_cast<nsx::Instrument::TransAxis*>(axis) != nullptr) {
+            os << solution._sampleOffsets[i]/nsx::Units::mm << "(" << solution._sigmaSampleOffsets[i]/nsx::Units::mm << ") mm " << std::endl;
+        } else if (dynamic_cast<nsx::Instrument::RotAxis*>(axis) != nullptr) {
+            os << solution._sampleOffsets[i]/nsx::Units::deg << "(" << solution._sigmaSampleOffsets[i]/nsx::Units::deg << ") deg " << std::endl;
         }
     }
     os<<std::endl;
@@ -465,4 +465,4 @@ std::ostream& operator<<(std::ostream& os, const UBSolution& solution)
 }
 
 } // end namespace Crystal
-} // end namespace SX
+} // end namespace nsx

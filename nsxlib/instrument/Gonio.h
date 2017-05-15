@@ -44,7 +44,7 @@
 #include "Axis.h"
 #include "RotAxis.h"
 
-namespace SX
+namespace nsx
 {
 
 namespace Instrument
@@ -145,6 +145,6 @@ public:
 };
 
 } // namespace Geometry
-} // namespace SX
+} // namespace nsx
 
 #endif /* SX_GONIO_H_ */

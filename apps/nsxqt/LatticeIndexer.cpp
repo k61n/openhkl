@@ -5,8 +5,8 @@
 #include <nsxlib/data/IData.h>
 #include "OpenGL/GLReciprocalLattice.h"
 
-LatticeIndexer::LatticeIndexer(std::shared_ptr<SX::Crystal::UnitCell> ptrCell,
-                               std::shared_ptr<SX::Instrument::Experiment> experiment,
+LatticeIndexer::LatticeIndexer(std::shared_ptr<nsx::Crystal::UnitCell> ptrCell,
+                               std::shared_ptr<nsx::Instrument::Experiment> experiment,
                                QWidget *parent)
     : QWidget(parent),
       _ptrCell(ptrCell),

@@ -21,13 +21,13 @@
 
 #include <nsxlib/utils/Types.h>
 
-using RealMatrix = SX::Types::RealMatrix;
+using RealMatrix = nsx::Types::RealMatrix;
 
 using std::cout;
 using std::endl;
 
 DialogConvolve::DialogConvolve(const Eigen::MatrixXi& currentFrame,
-                               std::shared_ptr<SX::Data::PeakFinder> peakFinder,
+                               std::shared_ptr<nsx::Data::PeakFinder> peakFinder,
                                QWidget *parent):
     QDialog(parent),
     ui(new Ui::DialogConvolve),
@@ -48,7 +48,7 @@ DialogConvolve::DialogConvolve(const Eigen::MatrixXi& currentFrame,
     ui->graphicsView->scale(1, -1);
 
     ui->filterComboBox->clear();
-    SX::Imaging::KernelFactory* kernelFactory=SX::Imaging::KernelFactory::Instance();
+    nsx::Imaging::KernelFactory* kernelFactory=nsx::Imaging::KernelFactory::Instance();
 
     for (const auto& k : kernelFactory->list())
         ui->filterComboBox->addItem(QString::fromStdString(k));
@@ -84,7 +84,7 @@ void DialogConvolve::buildTree()
         return;
 
     // get the selected kernel (if any)
-    std::shared_ptr<SX::Imaging::ConvolutionKernel> kernel = _peakFinder->getKernel();
+    std::shared_ptr<nsx::Imaging::ConvolutionKernel> kernel = _peakFinder->getKernel();
 
     QStandardItemModel* model = new QStandardItemModel(this);
 
@@ -178,13 +178,13 @@ void DialogConvolve::on_previewButton_clicked()
 
 void DialogConvolve::on_filterComboBox_currentIndexChanged(int index)
 {
-    std::shared_ptr<SX::Imaging::ConvolutionKernel> kernel;
+    std::shared_ptr<nsx::Imaging::ConvolutionKernel> kernel;
 
     if (QString::compare(ui->filterComboBox->currentText(),"none") == 0)
         kernel.reset();
     else {
         std::string kernelName = ui->filterComboBox->currentText().toStdString();
-        SX::Imaging::KernelFactory* kernelFactory = SX::Imaging::KernelFactory::Instance();
+        nsx::Imaging::KernelFactory* kernelFactory = nsx::Imaging::KernelFactory::Instance();
         kernel.reset(kernelFactory->create(kernelName, int(_frame.rows()), int(_frame.cols())));
     }
 

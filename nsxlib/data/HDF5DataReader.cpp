@@ -11,10 +11,10 @@
 
 using std::unique_ptr;
 using std::shared_ptr;
-using SX::Utils::eigenToVector;
-using SX::Instrument::ComponentState;
+using nsx::Utils::eigenToVector;
+using nsx::Instrument::ComponentState;
 
-namespace SX {
+namespace nsx {
 namespace Data {
 
 IDataReader* HDF5DataReader::create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer)
@@ -88,7 +88,7 @@ HDF5DataReader::HDF5DataReader(const std::string& filename, std::shared_ptr<Diff
     }
 
     // Use natural units internally (rad)
-    dm*=SX::Units::deg;
+    dm*=nsx::Units::deg;
     _states.resize(_nFrames);
 
     for (unsigned int i=0;i<_nFrames;++i) {
@@ -124,7 +124,7 @@ HDF5DataReader::HDF5DataReader(const std::string& filename, std::shared_ptr<Diff
     }
 
     // Use natural units internally (rad)
-    dm*=SX::Units::deg;
+    dm*=nsx::Units::deg;
 
     for (unsigned int i=0;i<_nFrames;++i) {
         _states[i].sample = ComponentState(_diffractometer->getSample().get(), eigenToVector(dm.col(i)));
@@ -230,4 +230,4 @@ Eigen::MatrixXi HDF5DataReader::getData(size_t frame)
 }
 
 } // end namespace Data
-} // end namespace SX
+} // end namespace nsx

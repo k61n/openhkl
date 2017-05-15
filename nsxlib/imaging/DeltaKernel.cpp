@@ -5,7 +5,7 @@
 
 #include "DeltaKernel.h"
 
-namespace SX
+namespace nsx
 {
 
 namespace Imaging
@@ -21,7 +21,7 @@ DeltaKernel::DeltaKernel(int nrows, int ncols) : ConvolutionKernel(nrows,ncols)
     update();
 }
 
-DeltaKernel::DeltaKernel(int nrows, int ncols, const SX::Imaging::ConvolutionKernel::ParameterMap &params)
+DeltaKernel::DeltaKernel(int nrows, int ncols, const nsx::Imaging::ConvolutionKernel::ParameterMap &params)
 : ConvolutionKernel(nrows,ncols,params)
 {
     update();
@@ -50,7 +50,7 @@ void DeltaKernel::update()
     }
 
     // set kernel equal to kronecker delta
-    _kernel = SX::Types::RealMatrix::Zero(rows, cols);
+    _kernel = nsx::Types::RealMatrix::Zero(rows, cols);
     _kernel(0,0) = 1.0;
 }
 

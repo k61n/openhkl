@@ -37,7 +37,7 @@
 #include <map>
 #include <vector>
 
-namespace SX
+namespace nsx
 {
 
 namespace Kernel
@@ -121,6 +121,6 @@ std::size_t SharedFactory<base,keytype,args...>::unregisterCallback(const keytyp
 
 } // end namespace Kernel
 
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_SharedFactory_H_ */

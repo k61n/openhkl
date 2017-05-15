@@ -38,7 +38,7 @@
 
 #include <QDialog>
 
-namespace SX {
+namespace nsx {
 namespace Instrument {
 class Experiment;
 }

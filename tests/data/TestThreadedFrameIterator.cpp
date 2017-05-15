@@ -15,8 +15,8 @@
 #include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/data/DataReaderFactory.h>
 
-using namespace SX::Data;
-using namespace SX::Instrument;
+using namespace nsx::Data;
+using namespace nsx::Instrument;
 
 // const double tolerance=1e-2;
 

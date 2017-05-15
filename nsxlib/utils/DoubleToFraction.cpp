@@ -20,7 +20,7 @@
 ** we just keep the last partial product of these matrices.
 */
 
-namespace SX
+namespace nsx
 {
 
 namespace Utils

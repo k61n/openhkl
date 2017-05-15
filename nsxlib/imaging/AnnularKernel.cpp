@@ -14,7 +14,7 @@
 #define M_PI 3.141592653589793238462643383279502884
 #endif
 
-namespace SX {
+namespace nsx {
 namespace Imaging {
 
 ConvolutionKernel* AnnularKernel::create(int nrows, int ncols)
@@ -30,7 +30,7 @@ AnnularKernel::AnnularKernel(int nrows, int ncols) : ConvolutionKernel(nrows,nco
     _params["r3"] = 15;
 }
 
-SX::Imaging::AnnularKernel::AnnularKernel(int nrows, int ncols, const SX::Imaging::ConvolutionKernel::ParameterMap &params)
+nsx::Imaging::AnnularKernel::AnnularKernel(int nrows, int ncols, const nsx::Imaging::ConvolutionKernel::ParameterMap &params)
 : ConvolutionKernel(nrows,ncols,params)
 {
     // load default values if necessary
@@ -54,7 +54,7 @@ const char *AnnularKernel::getName()
     return "Annular";
 }
 
-void SX::Imaging::AnnularKernel::update()
+void nsx::Imaging::AnnularKernel::update()
 {
     int rows, cols, r1, r2, r3;
 
@@ -65,8 +65,8 @@ void SX::Imaging::AnnularKernel::update()
     r2 = static_cast<int>(_params["r2"]);
     r3 = static_cast<int>(_params["r3"]);
 
-    SX::Types::RealMatrix inner = SX::Types::RealMatrix::Zero(rows, cols);
-    SX::Types::RealMatrix outer = SX::Types::RealMatrix::Zero(rows, cols);
+    nsx::Types::RealMatrix inner = nsx::Types::RealMatrix::Zero(rows, cols);
+    nsx::Types::RealMatrix outer = nsx::Types::RealMatrix::Zero(rows, cols);
 
     // sanity checks
     if (rows < 0 || cols < 0 || r1 < 0 || r2 < r1 || r3 < r2) {

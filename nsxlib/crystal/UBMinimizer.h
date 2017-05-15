@@ -42,7 +42,7 @@
 #include "../instrument/Source.h"
 #include "../utils/LMFunctor.h"
 
-namespace SX {
+namespace nsx {
 
 namespace Utils {
 class IMinimizer;
@@ -50,7 +50,7 @@ class IMinimizer;
 
 namespace Crystal {
 
-using SX::Utils::IMinimizer;
+using nsx::Utils::IMinimizer;
 
 /** @brief UB functor is used to refine UB-matrix and instrument offsets
  */
@@ -92,14 +92,14 @@ struct UBFunctor : public Utils::LMFunctor<double> {
      * @brief Set the detector related to the peaks collected for the minimization
      * @param detector the detector
      */
-    void setDetector(const std::shared_ptr<SX::Instrument::Detector>& detector);
+    void setDetector(const std::shared_ptr<nsx::Instrument::Detector>& detector);
     /*
      * @brief Set the sample related to the peaks collected for the minimization
      * @param sample the sample
      */
-    void setSample(const std::shared_ptr<SX::Instrument::Sample>& sample);
+    void setSample(const std::shared_ptr<nsx::Instrument::Sample>& sample);
     //! Set the source
-    void setSource(const std::shared_ptr<SX::Instrument::Source>& source);
+    void setSource(const std::shared_ptr<nsx::Instrument::Source>& source);
     //! Reset all the parameters (e.g. UB matrix + detector and sample offsets) to zero
     void resetParameters();
     /*
@@ -109,9 +109,9 @@ struct UBFunctor : public Utils::LMFunctor<double> {
     void refineParameter(unsigned int idx, bool refine);
 
     std::vector<std::pair<Peak3D,Eigen::RowVector3d>> _peaks;
-    std::shared_ptr<SX::Instrument::Detector> _detector;
-    std::shared_ptr<SX::Instrument::Sample> _sample;
-    std::shared_ptr<SX::Instrument::Source> _source;
+    std::shared_ptr<nsx::Instrument::Detector> _detector;
+    std::shared_ptr<nsx::Instrument::Sample> _sample;
+    std::shared_ptr<nsx::Instrument::Source> _source;
     std::set<int> _fixedParameters;
 };
 
@@ -123,18 +123,18 @@ struct UBSolution {
     friend class UBMinimizer;
     UBSolution();
 
-    UBSolution(std::shared_ptr<SX::Instrument::Detector> detector,
-               std::shared_ptr<SX::Instrument::Sample> sample,
-               std::shared_ptr<SX::Instrument::Source> source,
+    UBSolution(std::shared_ptr<nsx::Instrument::Detector> detector,
+               std::shared_ptr<nsx::Instrument::Sample> sample,
+               std::shared_ptr<nsx::Instrument::Source> source,
                const Eigen::VectorXd& values,
                const Eigen::MatrixXd& cov,
                std::vector<bool> fixedParameters);
 
     UBSolution& operator=(const UBSolution& ubsol);
 
-    std::shared_ptr<SX::Instrument::Detector> _detector;
-    std::shared_ptr<SX::Instrument::Sample> _sample;
-    std::shared_ptr<SX::Instrument::Source> _source;
+    std::shared_ptr<nsx::Instrument::Detector> _detector;
+    std::shared_ptr<nsx::Instrument::Sample> _sample;
+    std::shared_ptr<nsx::Instrument::Source> _source;
     Eigen::Matrix3d _ub;
     Eigen::Matrix<double,9,9> _covub;
     double _sourceOffset,_sigmaSourceOffset;
@@ -168,7 +168,7 @@ public:
      * @brief Set the detector related to the peaks collected for the minimization
      * @param detector the detector
      */
-    void setDetector(const std::shared_ptr<SX::Instrument::Detector>& detector);
+    void setDetector(const std::shared_ptr<nsx::Instrument::Detector>& detector);
     /*
      * @brief Set the offsets that will be fixed during the minization
      * @param idx the index of the offset (starting from 9)
@@ -178,12 +178,12 @@ public:
      * @brief Set the sample related to the peaks collected for the minimization
      * @param sample the sample
      */
-    void setSample(const std::shared_ptr<SX::Instrument::Sample>& sample);
+    void setSample(const std::shared_ptr<nsx::Instrument::Sample>& sample);
     /*
      * @brief Set the starting values of the UB matrix
      * @param ub the UB matrix
      */
-    void setSource(const std::shared_ptr<SX::Instrument::Source>& source);
+    void setSource(const std::shared_ptr<nsx::Instrument::Source>& source);
     void setStartingUBMatrix(const Eigen::Matrix3d& ub);
     /*
      * @brief Set the starting value for a given parameter
@@ -221,6 +221,6 @@ private:
 
 } // end namespace Crystal
 
-} // end namespace SX
+} // end namespace nsx
 
 #endif // NSXTOOL_UBMINIMIZER_H_

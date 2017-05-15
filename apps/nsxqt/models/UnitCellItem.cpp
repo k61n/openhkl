@@ -11,7 +11,7 @@
 #include "dialogs/DialogUnitCellParameters.h"
 #include "dialogs/DialogTransformationMatrix.h"
 
-UnitCellItem::UnitCellItem(std::shared_ptr<SX::Instrument::Experiment> experiment,std::shared_ptr<SX::Crystal::UnitCell> cell):
+UnitCellItem::UnitCellItem(std::shared_ptr<nsx::Instrument::Experiment> experiment,std::shared_ptr<nsx::Crystal::UnitCell> cell):
     InspectableTreeItem(experiment),
     _cell(cell)
 {
@@ -34,7 +34,7 @@ QWidget* UnitCellItem::inspectItem()
     return new UnitCellPropertyWidget(this);
 }
 
-std::shared_ptr<SX::Crystal::UnitCell> UnitCellItem::getUnitCell()
+std::shared_ptr<nsx::Crystal::UnitCell> UnitCellItem::getUnitCell()
 {
     return _cell;
 }

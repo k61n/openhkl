@@ -39,7 +39,7 @@
 
 #include "ComponentState.h"
 
-namespace SX
+namespace nsx
 {
 
 namespace Instrument
@@ -110,6 +110,6 @@ public:
 
 } // end namespace Instrument
 
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_COMPONENT_H_ */

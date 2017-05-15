@@ -15,15 +15,15 @@
 
 // const double tolerance=1.0e-9;
 
-using SX::Chemistry::Material;
-using SX::Chemistry::sptrMaterial;
-using SX::Geometry::MCAbsorption;
-using SX::Units::cm;
+using nsx::Chemistry::Material;
+using nsx::Chemistry::sptrMaterial;
+using nsx::Geometry::MCAbsorption;
+using nsx::Units::cm;
 
 BOOST_AUTO_TEST_CASE(Test_Material)
 {
     typedef Eigen::Vector3d vector3;
-    typedef SX::Geometry::ConvexHull<double> CHullDouble;
+    typedef nsx::Geometry::ConvexHull<double> CHullDouble;
 
     // Build an isotopically pure methane material
     sptrMaterial helium(new Material("He[3]"));
@@ -61,7 +61,7 @@ BOOST_AUTO_TEST_CASE(Test_Material)
     methane->setMassDensity(mm/volume);
 
     // Create the MC absorption calculator
-    mca=SX::Geometry::MCAbsorption(3.2*cm,3.2*cm,-100);
+    mca=nsx::Geometry::MCAbsorption(3.2*cm,3.2*cm,-100);
 
     muScattering=methane->muIncoherent();
     muAbsorption=methane->muAbsorption(1.46e-10);

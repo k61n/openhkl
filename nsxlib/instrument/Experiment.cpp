@@ -9,9 +9,9 @@
 #include "../data/IData.h"
 #include "Source.h"
 
-using SX::Data::DataSet;
+using nsx::Data::DataSet;
 
-namespace SX {
+namespace nsx {
 namespace Instrument {
 
 Experiment::Experiment(const Experiment& other)
@@ -152,4 +152,4 @@ void Experiment::removeData(const std::string& name)
 
 } // end namespace Instrument
 
-} // end namespace SX
+} // end namespace nsx

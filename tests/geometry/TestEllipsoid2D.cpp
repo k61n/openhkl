@@ -6,7 +6,7 @@
 #include <boost/test/unit_test.hpp>
 #include <Eigen/Dense>
 
-using namespace SX::Geometry;
+using namespace nsx::Geometry;
 using Eigen::Vector2d;
 using Eigen::Vector3d;
 using Eigen::Matrix2d;

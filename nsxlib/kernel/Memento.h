@@ -32,7 +32,7 @@
 #include <stdexcept>
 #include <unordered_map>
 
-namespace SX
+namespace nsx
 {
 
 namespace Kernel
@@ -125,6 +125,6 @@ void CareTaker<key_type,mem_type>::remove(const key_type& key)
 
 } // end namespace Kernel
 
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_MEMENTO_H_ */

@@ -64,13 +64,13 @@
    | 1   2  .  .    .    n|
  */
 
-namespace SX
+namespace nsx
 {
 
 namespace Utils
 {
 
-using SX::Instrument::DataOrder;
+using nsx::Instrument::DataOrder;
 
 class MatrixParser
 {
@@ -87,6 +87,6 @@ public:
 
 } // end namespace Utils
 
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXLIB_UTILS_MATRIXPARSER_H_ */

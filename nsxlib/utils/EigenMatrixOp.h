@@ -32,7 +32,7 @@
 
 #include <Eigen/Dense>
 
-namespace SX
+namespace nsx
 {
 
 namespace Utils
@@ -44,6 +44,6 @@ void removeRow(Eigen::MatrixXd& matrix, unsigned int rowToRemove);
 
 } // end namespace Utils
 
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_EIGENMATRIXOP_H_ */

@@ -137,7 +137,7 @@ void PeakTableView::contextMenuEvent(QContextMenuEvent* event)
 
     if (indexList.size()) {
         QMenu* plotasmenu=menu->addMenu("Plot as");
-        SX::Data::MetaData* met=peaks[indexList[0].row()]->getData()->getMetadata();
+        nsx::Data::MetaData* met=peaks[indexList[0].row()]->getData()->getMetadata();
         const std::set<std::string>& keys=met->getAllKeys();
         for (const auto& key : keys) {
             try {

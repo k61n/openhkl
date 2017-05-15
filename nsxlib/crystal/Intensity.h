@@ -37,7 +37,7 @@
 #ifndef NSXTOOL_INTENSITY_H_
 #define NSXTOOL_INTENSITY_H_
 
-namespace SX {
+namespace nsx {
 namespace Crystal {
 
 class Intensity {
@@ -62,6 +62,6 @@ private:
 };
 
 } // namespace Crystal
-} // namespace SX
+} // namespace nsx
 
 #endif // NSXTOOL_INTENSITY_H_

@@ -19,7 +19,7 @@
 class ExperimentItem;
 class SessionModel;
 
-namespace SX {
+namespace nsx {
 namespace Data {
     class DataSet;
 }
@@ -28,14 +28,14 @@ namespace Data {
 class ExperimentTree : public QTreeView {
     Q_OBJECT
 public:
-    using sptrUnitCell = SX::Crystal::sptrUnitCell;
+    using sptrUnitCell = nsx::Crystal::sptrUnitCell;
     explicit ExperimentTree(QWidget *parent = 0);
     ~ExperimentTree();
 
     void setSession(std::shared_ptr<SessionModel> session);
 
 signals:
-    void plotData(std::shared_ptr<SX::Data::DataSet>);
+    void plotData(std::shared_ptr<nsx::Data::DataSet>);
     void inspectWidget(QWidget*);
     void resetScene();
 
@@ -61,8 +61,8 @@ public slots:
 
 private:
 
-    std::shared_ptr<SX::Utils::ProgressHandler> _progressHandler;
-    std::shared_ptr<SX::Data::PeakFinder> _peakFinder;
+    std::shared_ptr<nsx::Utils::ProgressHandler> _progressHandler;
+    std::shared_ptr<nsx::Data::PeakFinder> _peakFinder;
     std::shared_ptr<SessionModel> _session;
 };
 

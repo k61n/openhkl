@@ -43,7 +43,7 @@
 
 #include "DetectorState.h"
 
-namespace SX {
+namespace nsx {
 namespace Instrument {
 
 // Forward declaration of detector class

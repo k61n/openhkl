@@ -16,7 +16,7 @@
 #include <QFileInfo>
 #include <QDir>
 
-AbsorptionDialog::AbsorptionDialog(std::shared_ptr<SX::Instrument::Experiment> experiment, QWidget *parent) :
+AbsorptionDialog::AbsorptionDialog(std::shared_ptr<nsx::Instrument::Experiment> experiment, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::AbsorptionDialog),
     _experiment(experiment),

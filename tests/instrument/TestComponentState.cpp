@@ -7,7 +7,7 @@
 #include <nsxlib/instrument/Gonio.h>
 #include <iostream>
 
-using namespace SX::Instrument;
+using namespace nsx::Instrument;
 using Eigen::Vector3d;
 using Eigen::Matrix3d;
 

@@ -39,7 +39,7 @@
 using std::string;
 using std::vector;
 
-namespace SX
+namespace nsx
 {
 
 namespace Crystal
@@ -54,7 +54,7 @@ SpaceGroup::SpaceGroup(const std::string& symbol)
     // Get a reduced version of the spacegroup symbol
     _symbol = sg->getReducedSymbol(symbol);
     if (!sg->getGenerators(_symbol,_generators)) {
-        throw SX::Kernel::Error<SpaceGroup>("Unknown space group: " + _symbol + "(" + symbol + ")");
+        throw nsx::Kernel::Error<SpaceGroup>("Unknown space group: " + _symbol + "(" + symbol + ")");
     }
     generateGroupElements();
 }
@@ -65,7 +65,7 @@ SpaceGroup::SpaceGroup(std::string symbol, std::string generators):
 {
     SpaceGroupSymbols* sg = SpaceGroupSymbols::Instance();
     if (sg->getGenerators(_symbol,_generators)) {
-        throw SX::Kernel::Error<SpaceGroup>("Space Group already registered");
+        throw nsx::Kernel::Error<SpaceGroup>("Space Group already registered");
     }
     sg->addSpaceGroup(_symbol,_generators);
     generateGroupElements();
@@ -328,4 +328,4 @@ bool SpaceGroup::isFriedelEquivalent(double h1, double k1, double l1, double h2,
 
 } // end namespace Crystal
 
-} // end namespace SX
+} // end namespace nsx

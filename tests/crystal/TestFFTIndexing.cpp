@@ -16,16 +16,16 @@
 
 #include <memory>
 
-//using SX::Crystal::Peak3D;
-//using SX::Instrument::DetectorEvent;
-//using SX::Instrument::FlatDetector;
-//using SX::Instrument::Gonio;
-//using SX::Instrument::RotAxis;
-//using SX::Instrument::Sample;
-//using SX::Instrument::ComponentState;
-//using SX::Instrument::Source;
+//using nsx::Crystal::Peak3D;
+//using nsx::Instrument::DetectorEvent;
+//using nsx::Instrument::FlatDetector;
+//using nsx::Instrument::Gonio;
+//using nsx::Instrument::RotAxis;
+//using nsx::Instrument::Sample;
+//using nsx::Instrument::ComponentState;
+//using nsx::Instrument::Source;
 
-// using namespace SX::Units;
+// using namespace nsx::Units;
 //const double tolerance=1e-6;
 
 BOOST_AUTO_TEST_CASE(Test_FFTIndexing)

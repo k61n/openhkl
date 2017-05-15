@@ -29,10 +29,10 @@
 #include "../utils/Units.h"
 //#include "Ellipsoid.h"
 
-namespace SX {
+namespace nsx {
 namespace Crystal {
 
-using SX::Data::DataSet;
+using nsx::Data::DataSet;
 
 static double xor128(void) {
   static uint32_t x = 123456789;
@@ -66,7 +66,7 @@ bool intersect(double p0, double p1, double p2, double u0, double u1, double u2,
     return (t1>0 && t2>0);
 }
 
-double ellipsoids_overlap(const SX::Geometry::Ellipsoid<double,3>& ell1,const SX::Geometry::Ellipsoid<double,3>& ell2)
+double ellipsoids_overlap(const nsx::Geometry::Ellipsoid<double,3>& ell1,const nsx::Geometry::Ellipsoid<double,3>& ell2)
 {
     const Eigen::Vector3d& lb1 = ell1.getLower();
     const Eigen::Vector3d& ub1 = ell1.getUpper();
@@ -101,31 +101,31 @@ Mosaic::Mosaic(const std::string& instr, double l, double dl, double dMonSam, do
   _l(l),
   _dl(dl),
   _dMonSam(dMonSam),
-  _mu(mu*SX::Units::deg)
+  _mu(mu*nsx::Units::deg)
 {
-    using namespace SX::Instrument;
+    using namespace nsx::Instrument;
 
     // Set up the diffractometer
     DiffractometerStore* ds=DiffractometerStore::Instance();
     _diffractometer = std::shared_ptr<Diffractometer>(ds->buildDiffractomer(instr));
 }
 
-void Mosaic::setSample(SX::Instrument::Sample* sample)
+void Mosaic::setSample(nsx::Instrument::Sample* sample)
 {
     _sample = sample;
 }
 
 void Mosaic::setMosaicity(double mosaicity)
 {
-    _mu = mosaicity*SX::Units::deg;
+    _mu = mosaicity*nsx::Units::deg;
 }
 
 bool Mosaic::run(std::vector<std::shared_ptr<DataSet>> datas, unsigned int n, double& overlap)
 {
-    using namespace SX::Data;
-    using namespace SX::Crystal;
-    using namespace SX::Geometry;
-    using namespace SX::Instrument;
+    using namespace nsx::Data;
+    using namespace nsx::Crystal;
+    using namespace nsx::Geometry;
+    using namespace nsx::Instrument;
 
     double cmu = cos(_mu);
     double oneMinuscmu = 1.0-cmu;
@@ -393,4 +393,4 @@ Mosaic::~Mosaic()
 }
 
 } // namespace Crystal
-} // namespace SX
+} // namespace nsx

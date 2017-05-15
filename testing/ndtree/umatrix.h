@@ -3,7 +3,7 @@
 
 #include <boost/numeric/ublas/matrix.hpp>
 
-namespace SX
+namespace nsx
 {
 
 namespace Geometry
@@ -23,6 +23,6 @@ typedef boost::numeric::ublas::bounded_matrix<double,3,3> M44D;
 
 } // end namepace Geometry
 
-} // end namespace SX
+} // end namespace nsx
 
 #endif /*NSXTOOL_UMATRIX_H_*/

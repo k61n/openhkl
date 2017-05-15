@@ -5,7 +5,7 @@
 #include "AxisFactory.h"
 
 
-namespace SX
+namespace nsx
 {
 namespace Instrument
 {

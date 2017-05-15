@@ -9,8 +9,8 @@
 #include <nsxlib/instrument/Gonio.h>
 #include <iostream>
 
-using namespace SX::Units;
-using namespace SX::Instrument;
+using namespace nsx::Units;
+using namespace nsx::Instrument;
 using Eigen::Vector3d;
 using Eigen::Matrix3d;
 // 0.1% error

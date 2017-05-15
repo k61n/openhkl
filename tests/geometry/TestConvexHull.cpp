@@ -16,7 +16,7 @@
 //! checking that the signed volume between every face and every point is positive.
 //! This shows that each point is inside every face and therefore the hull is convex.
 template <typename T>
-bool CheckConvexity(const SX::Geometry::ConvexHull<T>& chull)
+bool CheckConvexity(const nsx::Geometry::ConvexHull<T>& chull)
 {
     const auto& faces=chull.getFaces();
     const auto& vertices=chull.getVertices();
@@ -39,26 +39,26 @@ BOOST_AUTO_TEST_CASE(Test_ConvexHull)
 {
     typedef Eigen::Vector3d vector3;
 
-    typedef SX::Geometry::ConvexHull<double> CHullDouble;
+    typedef nsx::Geometry::ConvexHull<double> CHullDouble;
 
     // Create an empty convex hull
     CHullDouble chull;
 
     // Checks that the hull can not be updated with 0 point to be processed
-    BOOST_CHECK_THROW(chull.updateHull(),SX::Kernel::Error<CHullDouble>);
+    BOOST_CHECK_THROW(chull.updateHull(),nsx::Kernel::Error<CHullDouble>);
 
     // Fill it with three vertices to form a tetrahedron
     chull.addVertex(vector3( 0, 0, 0));
     // Checks that the hull can not be updated with only 1 point to be processed
-    BOOST_CHECK_THROW(chull.updateHull(),SX::Kernel::Error<CHullDouble>);
+    BOOST_CHECK_THROW(chull.updateHull(),nsx::Kernel::Error<CHullDouble>);
 
     chull.addVertex(vector3(10, 0, 0));
     // Checks that the hull can not be updated with only 2 point to be processed
-    BOOST_CHECK_THROW(chull.updateHull(),SX::Kernel::Error<CHullDouble>);
+    BOOST_CHECK_THROW(chull.updateHull(),nsx::Kernel::Error<CHullDouble>);
 
     chull.addVertex(vector3( 0,10, 0));
     // Checks that the hull can not be updated with only 3 point to be processed
-    BOOST_CHECK_THROW(chull.updateHull(),SX::Kernel::Error<CHullDouble>);
+    BOOST_CHECK_THROW(chull.updateHull(),nsx::Kernel::Error<CHullDouble>);
 
     chull.addVertex(vector3( 0, 0,10));
     // Checks that with 4 vertices the hull can be built

@@ -8,7 +8,7 @@
 #include "../kernel/Error.h"
 #include "SpaceGroupSymbols.h"
 
-namespace SX
+namespace nsx
 {
 namespace Crystal
 {
@@ -300,7 +300,7 @@ void SpaceGroupSymbols::addSpaceGroup(const std::string& spaceGroup, const std::
 {
     auto it=_spaceGroupTables.find(spaceGroup);
     if (it!=_spaceGroupTables.end())
-        throw SX::Kernel::Error<SpaceGroupSymbols>("The space group "+spaceGroup+" is already registered.");
+        throw nsx::Kernel::Error<SpaceGroupSymbols>("The space group "+spaceGroup+" is already registered.");
     _spaceGroupTables.insert(std::unordered_map<std::string,std::string>::value_type(spaceGroup,generators));
     _spaceGroupTableVector.push_back(std::make_pair(spaceGroup, generators));
 }

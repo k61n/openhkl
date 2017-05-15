@@ -33,7 +33,7 @@
 
 using std::vector;
 
-namespace SX {
+namespace nsx {
 
 namespace Crystal {
 
@@ -96,4 +96,4 @@ RFactor::RFactor(const vector<vector<sptrPeak3D> > &peak_equivs): RFactor()
 }
 
 } // namespace Crystal
-} // namespace SX
+} // namespace nsx

@@ -5,7 +5,7 @@
 #include "RotAxis.h"
 #include "TransAxis.h"
 
-namespace SX {
+namespace nsx {
 namespace Instrument {
 
 AxisFactory::AxisFactory()
@@ -19,4 +19,4 @@ AxisFactory::~AxisFactory()
 }
 
 } // end namespace Instrument
-} // end namespace SX
+} // end namespace nsx

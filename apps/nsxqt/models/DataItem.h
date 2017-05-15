@@ -5,7 +5,7 @@
 
 class NumorItem;
 
-namespace SX
+namespace nsx
 {
     namespace Instrument
     {
@@ -18,7 +18,7 @@ class DataItem : public TreeItem
 public:
     explicit DataItem(std::shared_ptr<Experiment> experiment);
 
-    NumorItem *importData(std::shared_ptr<SX::Data::DataSet> data);
+    NumorItem *importData(std::shared_ptr<nsx::Data::DataSet> data);
     NumorItem* importData(const std::string& filename);
     NumorItem *importRawData(const std::vector<std::string>& filenames,
                              double wavelength, double delta_chi, double delta_omega, double delta_phi,

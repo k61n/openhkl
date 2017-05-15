@@ -16,7 +16,7 @@ namespace Ui
 class DialogAutoIndexing;
 }
 
-namespace SX
+namespace nsx
 {
 namespace Instrument
 {
@@ -28,10 +28,10 @@ class Peak3D;
 }
 }
 
-using SX::Instrument::Experiment;
-using SX::Crystal::UnitCell;
-using SX::Crystal::sptrUnitCell;
-using SX::Crystal::sptrPeak3D;
+using nsx::Instrument::Experiment;
+using nsx::Crystal::UnitCell;
+using nsx::Crystal::sptrUnitCell;
+using nsx::Crystal::sptrPeak3D;
 
 class DialogAutoIndexing : public QDialog
 {
@@ -62,7 +62,7 @@ private:
 
     std::vector<sptrPeak3D> _peaks;
 
-    SX::Crystal::CellList _unitCells;
+    nsx::Crystal::CellList _unitCells;
 
     std::vector<std::pair<UnitCell,double>> _solutions;
 };

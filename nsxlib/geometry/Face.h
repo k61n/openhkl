@@ -37,7 +37,7 @@
 
 #include "Edge.h"
 
-namespace SX
+namespace nsx
 {
 
 namespace Geometry
@@ -155,6 +155,6 @@ std::ostream& operator<<(std::ostream& os, const Face<T>& face)
 
 } // end namespace Geometry
 
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_FACE_H_ */

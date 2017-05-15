@@ -8,8 +8,8 @@
 #include <nsxlib/instrument/Gonio.h>
 #include <memory>
 
-using namespace SX::Units;
-using namespace SX::Instrument;
+using namespace nsx::Units;
+using namespace nsx::Instrument;
 using Eigen::Vector3d;
 const double tolerance=1e-6;
 

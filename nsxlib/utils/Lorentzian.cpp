@@ -38,7 +38,7 @@
 
 static const double g_pi = double(M_PI);
 
-namespace SX {
+namespace nsx {
 namespace Utils {
 
 Lorentzian::Lorentzian(double a, double b, double x0):
@@ -58,7 +58,7 @@ double Lorentzian::integrate() const
     return _a*_a * g_pi / _b;
 }
 
-double SX::Utils::Lorentzian::evaluateScan(double x) const
+double nsx::Utils::Lorentzian::evaluateScan(double x) const
 {
     const double t2 = (x - _x0) / _b;
     const double t1 = (x - _x0-1.0) / _b;
@@ -66,4 +66,4 @@ double SX::Utils::Lorentzian::evaluateScan(double x) const
 }
 
 } // namespace Utils
-} // namespace SX
+} // namespace nsx

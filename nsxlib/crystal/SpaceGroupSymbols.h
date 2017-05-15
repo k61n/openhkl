@@ -35,13 +35,13 @@
 
 #include "../kernel/Singleton.h"
 
-namespace SX
+namespace nsx
 {
 namespace Crystal
 {
 
 
-class SpaceGroupSymbols: public SX::Kernel::Singleton<SpaceGroupSymbols,SX::Kernel::Constructor,SX::Kernel::Destructor>
+class SpaceGroupSymbols: public nsx::Kernel::Singleton<SpaceGroupSymbols,nsx::Kernel::Constructor,nsx::Kernel::Destructor>
 {
 public:
     SpaceGroupSymbols();

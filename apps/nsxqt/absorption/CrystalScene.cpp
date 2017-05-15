@@ -9,7 +9,7 @@
 #include <QtDebug>
 #include <nsxlib/utils/Units.h>
 
-CrystalScene::CrystalScene(SX::Geometry::ConvexHull<double>* hull, QWidget *parent) :
+CrystalScene::CrystalScene(nsx::Geometry::ConvexHull<double>* hull, QWidget *parent) :
     QGraphicsScene(parent), pixmapitem(0),_ruler(0),_pin(0),_hull(hull),_text(nullptr)
 {
     distance=1.0;
@@ -267,8 +267,8 @@ void CrystalScene::triangulate()
         QMessageBox::critical(nullptr, tr("NSXTool"), tr(e.what()));
         return;
     }
-    const std::vector<SX::Geometry::Triangle>& tcache=_hull->createFaceCache();
-    std::vector<SX::Geometry::Triangle>::const_iterator it;
+    const std::vector<nsx::Geometry::Triangle>& tcache=_hull->createFaceCache();
+    std::vector<nsx::Geometry::Triangle>::const_iterator it;
     double yc, zc;
     _pin->getCenter(yc,zc,_rotationAngle);
     for (QList<QGraphicsItem*>::iterator it=list.begin();it!=list.end();it++)

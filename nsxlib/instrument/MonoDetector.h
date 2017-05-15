@@ -34,7 +34,7 @@
 #include "Detector.h"
 #include "../utils/Types.h"
 
-namespace SX {
+namespace nsx {
 namespace Instrument {
 
 /** @brief Base class for Mono Detectors.
@@ -128,7 +128,7 @@ public:
     unsigned int getNDetectors() const;
 
 protected:
-    SX::Types::uint _nRows, _nCols;
+    nsx::Types::uint _nRows, _nCols;
     double _minRow, _minCol;
     double _width, _height;
     double _angularWidth, _angularHeight;
@@ -136,6 +136,6 @@ protected:
 };
 
 } // end namespace Instrument
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_MONODETECTOR_H_ */

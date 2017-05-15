@@ -37,7 +37,7 @@
 #include "Peak3D.h"
 #include "MergedPeak.h"
 
-namespace SX
+namespace nsx
 {
 
 namespace Crystal

@@ -9,7 +9,7 @@
 #include "TransAxis.h"
 #include "../utils/Units.h"
 
-namespace SX
+namespace nsx
 {
 
 namespace Instrument
@@ -34,7 +34,7 @@ FlatDetector::FlatDetector(const std::string& name) : MonoDetector(name)
 
 FlatDetector::FlatDetector(const proptree::ptree& node) : MonoDetector(node)
 {
-    Units::UnitsManager* um=SX::Units::UnitsManager::Instance();
+    Units::UnitsManager* um=nsx::Units::UnitsManager::Instance();
 
     // Set the detector width from the property tree node
     const property_tree::ptree& widthNode = node.get_child("width");

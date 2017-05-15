@@ -5,9 +5,9 @@
 #include <cmath>
 #include <nsxlib/utils/erf_inv.h>
 
-using SX::Utils::erf_inv;
-using SX::Utils::getConfidence;
-using SX::Utils::getScale;
+using nsx::Utils::erf_inv;
+using nsx::Utils::getConfidence;
+using nsx::Utils::getScale;
 
 int run_test() {
 

@@ -49,7 +49,7 @@
 #include "DetectorEvent.h"
 #include "../utils/Enums.h"
 
-namespace SX {
+namespace nsx {
 namespace Instrument {
 
 namespace property_tree=boost::property_tree;
@@ -61,7 +61,7 @@ namespace property_tree=boost::property_tree;
  */
 class Detector: public Component {
 public:
-    using DataOrder = SX::Instrument::DataOrder;
+    using DataOrder = nsx::Instrument::DataOrder;
 //    enum class DataOrder {
 //        TopLeftColMajor,
 //        TopLeftRowMajor,
@@ -137,6 +137,6 @@ private:
 };
 
 } // end namespace Instrument
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_DETECTOR_H_ */

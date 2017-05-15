@@ -11,7 +11,7 @@
 
 BOOST_AUTO_TEST_CASE(Test_DiffractometerStore)
 {
-    SX::Instrument::DiffractometerStore* ds=SX::Instrument::DiffractometerStore::Instance();
+    nsx::Instrument::DiffractometerStore* ds=nsx::Instrument::DiffractometerStore::Instance();
     for (const auto& p : ds->getDiffractometersList()) {
         std::cout<<p<<std::endl;
         auto diffracto = ds->buildDiffractomer(p);

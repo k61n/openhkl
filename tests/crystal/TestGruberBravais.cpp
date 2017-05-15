@@ -27,8 +27,8 @@
 #include <map>
 
 using namespace std;
-using namespace SX::Crystal;
-using namespace SX::Units;
+using namespace nsx::Crystal;
+using namespace nsx::Units;
 
 const double gruber_tolerance = 1e-4;
 const double niggli_tolerance = 1e-4;

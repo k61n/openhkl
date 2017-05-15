@@ -12,7 +12,7 @@
 #include <nsxlib/utils/Lorentzian.h>
 #include <Eigen/Dense>
 
-using namespace SX::Utils;
+using namespace nsx::Utils;
 using namespace std;
 
 const double eps = 1e-10;

@@ -13,8 +13,8 @@
 #include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/utils/CSV.h>
 
-using namespace SX::Crystal;
-using namespace SX::Utils;
+using namespace nsx::Crystal;
+using namespace nsx::Utils;
 using namespace std;
 
 int run_test()

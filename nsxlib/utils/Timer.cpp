@@ -1,6 +1,6 @@
 #include "Timer.h"
 
-namespace SX {
+namespace nsx {
 
 
 Timer::Timer():_bt(0),_et(0)
@@ -29,4 +29,4 @@ std::ostream& operator<<(std::ostream& os,const Timer& t)
     return os;
 }
 
-} // end namespace SX
+} // end namespace nsx

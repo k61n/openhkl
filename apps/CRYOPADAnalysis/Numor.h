@@ -35,7 +35,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "MetaData.h"
 
-namespace SX
+namespace nsx
 {
 
 namespace Data
@@ -93,6 +93,6 @@ private:
 
 } // end namespace Data
 
-} // end namespace SX
+} // end namespace nsx
 
 #endif // NSXTOOL_NUMOR_H_

@@ -43,7 +43,7 @@
 
 #include "IsotopeDatabaseManager.h"
 
-namespace SX {
+namespace nsx {
 
 namespace Chemistry {
 

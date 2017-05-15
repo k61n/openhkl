@@ -35,10 +35,10 @@
 #include "ConvolutionKernel.h"
 #include "AnnularKernel.h"
 
-namespace SX {
+namespace nsx {
 namespace Imaging {
 
-using RealMatrix = SX::Types::RealMatrix;
+using RealMatrix = nsx::Types::RealMatrix;
 
 ConvolutionKernel::ConvolutionKernel(int nrows, int ncols) : _kernel(), _hasChanged(true), _params()
 {
@@ -104,4 +104,4 @@ std::ostream& operator<<(std::ostream& os, const ConvolutionKernel& kernel)
 }
 
 } // namespace Imaging
-} // namespace SX
+} // namespace nsx

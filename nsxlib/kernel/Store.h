@@ -32,7 +32,7 @@
 #include <map>
 #include <string>
 
-namespace SX
+namespace nsx
 {
 
 namespace Kernel
@@ -66,6 +66,6 @@ storable Store<keytype,storable>::get(const keytype& key)
 
 } // end namespace Kernel
 
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_STORE_H_ */

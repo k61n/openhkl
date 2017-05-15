@@ -27,7 +27,7 @@ NumorsConversionDialog::NumorsConversionDialog(QWidget *parent)
     ui->comboBox_diffractometers->setInsertPolicy(QComboBox::InsertAlphabetically);
 
     // Add the available instruments to the combo box
-    SX::Instrument::DiffractometerStore* ds = SX::Instrument::DiffractometerStore::Instance();
+    nsx::Instrument::DiffractometerStore* ds = nsx::Instrument::DiffractometerStore::Instance();
     for (const auto& diffractometer : ds->getDiffractometersList())
         ui->comboBox_diffractometers->addItem(QString::fromStdString(diffractometer));
 
@@ -57,10 +57,10 @@ void NumorsConversionDialog::on_pushButton_convert_clicked()
         return;
     }
 
-    SX::Data::DataReaderFactory* dataFactory=SX::Data::DataReaderFactory::Instance();
-    SX::Instrument::DiffractometerStore* ds=SX::Instrument::DiffractometerStore::Instance();
+    nsx::Data::DataReaderFactory* dataFactory=nsx::Data::DataReaderFactory::Instance();
+    nsx::Instrument::DiffractometerStore* ds=nsx::Instrument::DiffractometerStore::Instance();
     std::string diffractometerName=ui->comboBox_diffractometers->currentText().toStdString();
-    std::shared_ptr<SX::Instrument::Diffractometer> diffractometer=std::shared_ptr<SX::Instrument::Diffractometer>(ds->buildDiffractomer(diffractometerName));
+    std::shared_ptr<nsx::Instrument::Diffractometer> diffractometer=std::shared_ptr<nsx::Instrument::Diffractometer>(ds->buildDiffractomer(diffractometerName));
 
     auto model = dynamic_cast<QDirModel*>(ui->treeView_inputFiles->model());
     QModelIndexList indexes = ui->treeView_inputFiles->selectionModel()->selectedIndexes();
@@ -76,7 +76,7 @@ void NumorsConversionDialog::on_pushButton_convert_clicked()
             row = idx.row();
             std::string filename=fileInfo.absoluteFilePath().toStdString();
             std::string extension=fileInfo.completeSuffix().toStdString();
-            SX::Data::DataSet* data=nullptr;
+            nsx::Data::DataSet* data=nullptr;
             try {
                 data = dataFactory->create(extension,filename,diffractometer);
             }

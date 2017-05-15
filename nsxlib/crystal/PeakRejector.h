@@ -45,7 +45,7 @@
 //#include "SpaceGroup.h"
 //#include "Peak3D.h"
 
-namespace SX {
+namespace nsx {
 
 namespace Crystal {
     class Peak3D;
@@ -71,6 +71,6 @@ public:
 };
 
 } // namespace Crystal
-} // namespace SX
+} // namespace nsx
 
 #endif // NSXTOOL_PEAKREJECTOR

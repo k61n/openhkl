@@ -32,7 +32,7 @@
 
 #include "IBlob.h"
 
-namespace SX
+namespace nsx
 {
 
 namespace Geometry
@@ -97,6 +97,6 @@ private:
 std::ostream& operator<<(std::ostream& os, const Blob2D& b);
 
 } // Namespace Geometry
-} // namespace SX
+} // namespace nsx
 
 #endif /*NXSTOOL_Blob2D_H_*/

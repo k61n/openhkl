@@ -44,14 +44,14 @@
 #include "../geometry/NDTree.h"
 #include "../instrument/DetectorEvent.h"
 
-using SX::Geometry::Ellipsoid;
-using SX::Geometry::Matrix3d;
+using nsx::Geometry::Ellipsoid;
+using nsx::Geometry::Matrix3d;
 using std::shared_ptr;
-using SX::Data::DataSet;
-using Ellipsoid3D = SX::Geometry::Ellipsoid<double, 3>;
+using nsx::Data::DataSet;
+using Ellipsoid3D = nsx::Geometry::Ellipsoid<double, 3>;
 
 
-namespace SX {
+namespace nsx {
 namespace Crystal {
 
 using sptrPeak3D = PeakCalc::sptrPeak3D;
@@ -117,4 +117,4 @@ sptrPeak3D PeakCalc::averagePeaks(const Octree& tree, double distance)
 }
 
 } // Namespace Crystal
-} // namespace SX
+} // namespace nsx

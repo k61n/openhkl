@@ -8,7 +8,7 @@
 
 #include "items/CutterGraphicsItem.h"
 
-CutterGraphicsItem::CutterGraphicsItem(std::shared_ptr<SX::Data::DataSet> data)
+CutterGraphicsItem::CutterGraphicsItem(std::shared_ptr<nsx::Data::DataSet> data)
 : PlottableGraphicsItem(nullptr,true,true),
   _data(data),
   _from(0,0),
@@ -44,7 +44,7 @@ void CutterGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     }
 }
 
-std::shared_ptr<SX::Data::DataSet> CutterGraphicsItem::getData()
+std::shared_ptr<nsx::Data::DataSet> CutterGraphicsItem::getData()
 {
     return _data;
 }

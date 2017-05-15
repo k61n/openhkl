@@ -18,7 +18,7 @@
 #include <nsxlib/utils/Units.h>
 #include <nsxlib/instrument/Monochromator.h>
 
-MCAbsorptionDialog::MCAbsorptionDialog(std::shared_ptr<SX::Instrument::Experiment> experiment, QWidget *parent):
+MCAbsorptionDialog::MCAbsorptionDialog(std::shared_ptr<nsx::Instrument::Experiment> experiment, QWidget *parent):
     QDialog(parent),
      ui(new Ui::MCAbsorptionDialog),
     _experiment(experiment)
@@ -46,12 +46,12 @@ void MCAbsorptionDialog::on_pushButton_run_pressed()
         return;
     }
     // Get the source
-    std::shared_ptr<SX::Instrument::Source> source=_experiment->getDiffractometer()->getSource();
-    std::shared_ptr<SX::Instrument::Sample> sample=_experiment->getDiffractometer()->getSample();
+    std::shared_ptr<nsx::Instrument::Source> source=_experiment->getDiffractometer()->getSource();
+    std::shared_ptr<nsx::Instrument::Sample> sample=_experiment->getDiffractometer()->getSample();
 
     // Get the material
     unsigned int cellIndex=static_cast<unsigned int>(ui->comboBox->currentIndex());
-    SX::Chemistry::sptrMaterial material=sample->getMaterial(cellIndex);
+    nsx::Chemistry::sptrMaterial material=sample->getMaterial(cellIndex);
     if (material==nullptr) {
         QMessageBox::critical(this,"NSXTOOL","No material defined for this crystal");
             return;
@@ -59,14 +59,14 @@ void MCAbsorptionDialog::on_pushButton_run_pressed()
 
     auto& mono = source->getSelectedMonochromator();
 
-    SX::Geometry::MCAbsorption mca(mono.getWidth(),mono.getHeight(),-1.0);
+    nsx::Geometry::MCAbsorption mca(mono.getWidth(),mono.getHeight(),-1.0);
     auto& hull=sample->getShape();
     if (!hull.checkEulerConditions()) {
             QMessageBox::critical(this,"NSXTOOL","The sample shape (hull) is ill-defined");
             return;
     }
 
-    mca.setSample(&hull,material->muIncoherent(),material->muAbsorption(mono.getWavelength()*SX::Units::ang));
+    mca.setSample(&hull,material->muIncoherent(),material->muAbsorption(mono.getWavelength()*nsx::Units::ang));
     const auto& data=_experiment->getData();
     ui->progressBar_MCStatus->setValue(0);
     ui->progressBar_MCStatus->setTextVisible(true);

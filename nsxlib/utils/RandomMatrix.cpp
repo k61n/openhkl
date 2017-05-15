@@ -37,7 +37,7 @@
 
 #include <Eigen/QR>
 
-namespace SX
+namespace nsx
 {
 
 namespace Utils
@@ -60,4 +60,4 @@ Eigen::MatrixXd randomMatrix(unsigned int n)
 
 
 } // End namespace Utils
-} // End namespace SX
+} // End namespace nsx

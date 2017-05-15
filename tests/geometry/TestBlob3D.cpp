@@ -6,7 +6,7 @@
 #include <Eigen/Dense>
 #include <boost/test/unit_test.hpp>
 
-using namespace SX::Geometry;
+using namespace nsx::Geometry;
 
 const double tolerance=1e-5;
 

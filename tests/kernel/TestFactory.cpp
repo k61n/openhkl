@@ -8,7 +8,7 @@
 
 #include <nsxlib/kernel/Factory.h>
 
-using namespace SX::Kernel;
+using namespace nsx::Kernel;
 using std::unique_ptr;
 
 BOOST_AUTO_TEST_CASE(Test_Factory)

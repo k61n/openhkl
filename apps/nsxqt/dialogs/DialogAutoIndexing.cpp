@@ -27,17 +27,17 @@
 #include "models/CollectedPeaksModel.h"
 #include "models/CollectedPeaksDelegate.h"
 
-//using SX::Crystal::tVector;
-using SX::Crystal::BravaisType;
-using SX::Crystal::LatticeCentring;
-//using SX::Crystal::FFTIndexing;
-//using SX::Crystal::NiggliReduction;
-//using SX::Crystal::UBMinimizer;
-//using SX::Crystal::UBSolution;
-using SX::Crystal::AutoIndexer;
-using SX::Data::DataSet;
-using SX::Units::deg;
-using SX::Utils::ProgressHandler;
+//using nsx::Crystal::tVector;
+using nsx::Crystal::BravaisType;
+using nsx::Crystal::LatticeCentring;
+//using nsx::Crystal::FFTIndexing;
+//using nsx::Crystal::NiggliReduction;
+//using nsx::Crystal::UBMinimizer;
+//using nsx::Crystal::UBSolution;
+using nsx::Crystal::AutoIndexer;
+using nsx::Data::DataSet;
+using nsx::Units::deg;
+using nsx::Utils::ProgressHandler;
 
 DialogAutoIndexing::DialogAutoIndexing(std::shared_ptr<Experiment> experiment, std::vector<sptrPeak3D> peaks, QWidget *parent):
     QDialog(parent),

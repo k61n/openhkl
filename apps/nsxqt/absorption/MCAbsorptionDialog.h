@@ -9,7 +9,7 @@ namespace Ui {
 class MCAbsorptionDialog;
 }
 
-namespace SX{
+namespace nsx{
     namespace Instrument{
         class Experiment;
     }
@@ -20,7 +20,7 @@ class MCAbsorptionDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit MCAbsorptionDialog(std::shared_ptr<SX::Instrument::Experiment> experiment, QWidget *parent = 0);
+    explicit MCAbsorptionDialog(std::shared_ptr<nsx::Instrument::Experiment> experiment, QWidget *parent = 0);
     ~MCAbsorptionDialog();
 
 private slots:
@@ -28,7 +28,7 @@ private slots:
 
 private:
     Ui::MCAbsorptionDialog *ui;
-    std::shared_ptr<SX::Instrument::Experiment> _experiment;
+    std::shared_ptr<nsx::Instrument::Experiment> _experiment;
 };
 
 #endif // MCABSORPTIONDIALOG_H

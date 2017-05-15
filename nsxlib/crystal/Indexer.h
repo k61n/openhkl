@@ -70,7 +70,7 @@
  *
  */
 
-namespace SX{
+namespace nsx{
 namespace Crystal{
 
 typedef std::shared_ptr<UnitCell> ptrUnitCell;

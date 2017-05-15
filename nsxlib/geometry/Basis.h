@@ -34,7 +34,7 @@
 
 #include <Eigen/Dense>
 
-namespace SX
+namespace nsx
 {
 
 namespace Geometry
@@ -218,6 +218,6 @@ protected:
 
 } // end namespace Geometry
 
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_BASIS_H_ */

@@ -43,9 +43,9 @@
 #include "../utils/Round.h"
 #include "../utils/Interpolator.h"
 
-using SX::Geometry::IntegrationRegion;
+using nsx::Geometry::IntegrationRegion;
 
-namespace SX {
+namespace nsx {
 using namespace Utils;
 
 namespace Crystal {
@@ -451,4 +451,4 @@ int PeakFit::integerFrame(double f) const
 }
 
 } // namespace Crystal
-} // namespace SX
+} // namespace nsx

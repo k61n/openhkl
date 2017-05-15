@@ -10,9 +10,9 @@
 #include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/data/DataReaderFactory.h>
 
-using namespace SX::Instrument;
-using SX::Data::DataSet;
-using SX::Data::DataReaderFactory;
+using namespace nsx::Instrument;
+using nsx::Data::DataSet;
+using nsx::Data::DataReaderFactory;
 
 BOOST_AUTO_TEST_CASE(Test_Experiment)
 {

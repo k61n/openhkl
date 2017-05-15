@@ -1,7 +1,7 @@
 #include "Triangle.h"
 
 
-namespace SX
+namespace nsx
 {
 namespace Geometry
 {
@@ -73,4 +73,4 @@ void Triangle::rotate(const Eigen::Matrix<double,3,3>& rot)
 }
 
 } // End namespace Geometry
-} // End namespace SX
+} // End namespace nsx

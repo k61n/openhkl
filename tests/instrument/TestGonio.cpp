@@ -7,8 +7,8 @@
 #include <boost/test/unit_test.hpp>
 #include <nsxlib/instrument/Axis.h>
 
-using namespace SX::Units;
-using namespace SX::Instrument;
+using namespace nsx::Units;
+using namespace nsx::Instrument;
 using Eigen::Vector3d;
 using Eigen::RowVector3d;
 using Eigen::Matrix3d;

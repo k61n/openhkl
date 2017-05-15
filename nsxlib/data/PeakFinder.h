@@ -8,7 +8,7 @@
 #include "../imaging/ConvolutionKernel.h"
 
 
-namespace SX
+namespace nsx
 {
 
 namespace Imaging
@@ -32,7 +32,7 @@ public:
     PeakFinder();
     bool find(std::vector<std::shared_ptr<DataSet>> numors);
 
-    void setHandler(const std::shared_ptr<SX::Utils::ProgressHandler>& handler);
+    void setHandler(const std::shared_ptr<nsx::Utils::ProgressHandler>& handler);
 
     void setThresholdValue(double threshold);
     double getThresholdValue();
@@ -49,18 +49,18 @@ public:
     void setMaxComponents(int maxComp);
     int getMaxComponents();
 
-    void setConvolver(const std::shared_ptr<SX::Imaging::Convolver>& convolver);
-    std::shared_ptr<SX::Imaging::Convolver> getConvolver();
+    void setConvolver(const std::shared_ptr<nsx::Imaging::Convolver>& convolver);
+    std::shared_ptr<nsx::Imaging::Convolver> getConvolver();
 
-    void setConvolutionKernel(const std::shared_ptr<SX::Imaging::ConvolutionKernel>& kernel);
+    void setConvolutionKernel(const std::shared_ptr<nsx::Imaging::ConvolutionKernel>& kernel);
 
-    void setKernel(const std::shared_ptr<SX::Imaging::ConvolutionKernel>& kernel);
-    std::shared_ptr<SX::Imaging::ConvolutionKernel> getKernel();
+    void setKernel(const std::shared_ptr<nsx::Imaging::ConvolutionKernel>& kernel);
+    std::shared_ptr<nsx::Imaging::ConvolutionKernel> getKernel();
 
 private:
-    std::shared_ptr<SX::Utils::ProgressHandler> _handler;
-    std::shared_ptr<SX::Imaging::Convolver> _convolver;
-    std::shared_ptr<SX::Imaging::ConvolutionKernel> _kernel;
+    std::shared_ptr<nsx::Utils::ProgressHandler> _handler;
+    std::shared_ptr<nsx::Imaging::Convolver> _convolver;
+    std::shared_ptr<nsx::Imaging::ConvolutionKernel> _kernel;
 
     double _thresholdValue;
     int _thresholdType;
@@ -74,6 +74,6 @@ private:
 
 } // namespace Data
 
-} // namespace SX
+} // namespace nsx
 
 #endif // PEAKFINDER_H

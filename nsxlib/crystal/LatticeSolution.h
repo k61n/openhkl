@@ -34,7 +34,7 @@
 
 #include <memory>
 
-namespace SX
+namespace nsx
 {
 
 namespace Instrument
@@ -83,6 +83,6 @@ struct LatticeSolution
 
 } // end namespace Crystal
 
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_LATTICESOLUTION_H_ */

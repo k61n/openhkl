@@ -17,7 +17,7 @@
 
 #include <QtDebug>
 
-using SX::Instrument::Experiment;
+using nsx::Instrument::Experiment;
 
 ExperimentItem::ExperimentItem(std::shared_ptr<Experiment> experiment) : TreeItem(experiment)
 {
@@ -45,7 +45,7 @@ ExperimentItem::ExperimentItem(std::shared_ptr<Experiment> experiment) : TreeIte
 
 QJsonObject ExperimentItem::toJson()
 {
-    std::shared_ptr<SX::Instrument::Experiment> exp_ptr = getExperiment();
+    std::shared_ptr<nsx::Instrument::Experiment> exp_ptr = getExperiment();
     QJsonObject experiment;
 
     experiment["name"] = QString(exp_ptr->getName().c_str());

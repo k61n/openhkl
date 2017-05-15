@@ -6,7 +6,7 @@
 
 #include "PhysicalUnit.h"
 
-namespace SX
+namespace nsx
 {
 
 namespace Physics
@@ -316,5 +316,5 @@ void PhysicalUnit::PhysicalUnitParser::updateUnitParser(const std::string& name,
 
 } // end namespace Physics
 
-} //end namespace SX
+} //end namespace nsx
 

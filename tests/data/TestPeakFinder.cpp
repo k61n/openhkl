@@ -17,11 +17,11 @@
 #include <nsxlib/data/PeakFinder.h>
 #include <nsxlib/utils/ProgressHandler.h>
 
-using namespace SX::Data;
-using SX::Data::DataReaderFactory;
-using namespace SX::Instrument;
-using namespace SX::Units;
-using namespace SX::Utils;
+using namespace nsx::Data;
+using nsx::Data::DataReaderFactory;
+using namespace nsx::Instrument;
+using namespace nsx::Units;
+using namespace nsx::Utils;
 
 // const double tolerance=1e-2;
 

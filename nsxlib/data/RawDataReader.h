@@ -48,7 +48,7 @@
 #include "../instrument/Diffractometer.h"
 
 
-namespace SX {
+namespace nsx {
 
 namespace Data {
 
@@ -117,6 +117,6 @@ Eigen::Matrix<T_, Eigen::Dynamic, Eigen::Dynamic> RawDataReader::matrixFromData(
 
 } // end namespace Data
 
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_RAWDATAREADER_H_ */

@@ -36,7 +36,7 @@
 #include "../utils/Units.h"
 #include "../utils/Types.h"
 
-namespace SX {
+namespace nsx {
 namespace Crystal {
 
 struct tVector {
@@ -63,6 +63,6 @@ private:
 };
 
 } // end namespace Crystal
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_FFTINDEXING_H_ */

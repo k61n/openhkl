@@ -11,7 +11,7 @@ namespace Ui
 class ReciprocalSpaceViewer;
 }
 
-namespace SX
+namespace nsx
 {
 namespace Instrument
 {
@@ -28,9 +28,9 @@ class ReciprocalSpaceViewer : public QDialog
     Q_OBJECT
 
 public:
-    explicit ReciprocalSpaceViewer(std::shared_ptr<SX::Instrument::Experiment> experiment, QWidget *parent = 0);
+    explicit ReciprocalSpaceViewer(std::shared_ptr<nsx::Instrument::Experiment> experiment, QWidget *parent = 0);
 
-    void setData(const std::vector<std::shared_ptr<SX::Data::DataSet>>& data);
+    void setData(const std::vector<std::shared_ptr<nsx::Data::DataSet>>& data);
 
     ~ReciprocalSpaceViewer();
 
@@ -40,8 +40,8 @@ private slots:
 private:
     Ui::ReciprocalSpaceViewer *ui;
 
-    std::shared_ptr<SX::Instrument::Experiment> _experiment;
-    std::vector<std::shared_ptr<SX::Data::DataSet>> _data;
+    std::shared_ptr<nsx::Instrument::Experiment> _experiment;
+    std::vector<std::shared_ptr<nsx::Data::DataSet>> _data;
 };
 
 #endif // RECIPROCALSPACEVIEWER_H

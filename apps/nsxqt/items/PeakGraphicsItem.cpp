@@ -16,8 +16,8 @@
 #include <nsxlib/geometry/Ellipsoid.h>
 #include <nsxlib/geometry/IntegrationRegion.h>
 
-using SX::Geometry::IntegrationRegion;
-using Ellipsoid3D = SX::Geometry::Ellipsoid<double, 3>;
+using nsx::Geometry::IntegrationRegion;
+using Ellipsoid3D = nsx::Geometry::Ellipsoid<double, 3>;
 
 bool PeakGraphicsItem::_labelVisible = false;
 bool PeakGraphicsItem::_drawBackground = false;
@@ -149,12 +149,12 @@ void PeakGraphicsItem::drawBackground(bool flag)
     _drawBackground = flag;
 }
 
-PeakGraphicsItem::Ellipse PeakGraphicsItem::calculateEllipse(const SX::Geometry::IShape<double, 3> &shape, int frame)
+PeakGraphicsItem::Ellipse PeakGraphicsItem::calculateEllipse(const nsx::Geometry::IShape<double, 3> &shape, int frame)
 {
     Eigen::MatrixXd M;
     Eigen::VectorXd p;
 
-    auto fromAABB = [](const SX::Geometry::IShape<double, 3>& s) -> Ellipse
+    auto fromAABB = [](const nsx::Geometry::IShape<double, 3>& s) -> Ellipse
     {
         Ellipse ellipse;
         Eigen::Vector3d lower = s.getLower();
@@ -170,8 +170,8 @@ PeakGraphicsItem::Ellipse PeakGraphicsItem::calculateEllipse(const SX::Geometry:
     };
 
     try {
-        const SX::Geometry::Ellipsoid<double, 3>& ellipse_shape =
-                dynamic_cast<const SX::Geometry::Ellipsoid<double, 3>&>(shape);
+        const nsx::Geometry::Ellipsoid<double, 3>& ellipse_shape =
+                dynamic_cast<const nsx::Geometry::Ellipsoid<double, 3>&>(shape);
         M = ellipse_shape.getRSinv();
         p = ellipse_shape.getCenter();
     }
@@ -320,8 +320,8 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     QString info="(h,k,l):"+QString::number(hkl[0])+","+QString::number(hkl[1])+","+QString::number(hkl[2]);
     double gamma,nu;
     _peak->getGammaNu(gamma,nu);
-    gamma/=SX::Units::deg;
-    nu/=SX::Units::deg;
+    gamma/=nsx::Units::deg;
+    nu/=nsx::Units::deg;
     info+=" "+QString(QChar(0x03B3))+","+QString(QChar(0x03BD))+":"+QString::number(gamma,'f',2)+","+QString::number(nu,'f',2)+"\n";
     double intensity=_peak->getScaledIntensity().getValue();
     double sI=_peak->getScaledIntensity().getSigma();

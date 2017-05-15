@@ -42,7 +42,7 @@
 
 #include "../crystal/PeakRecord.h"
 
-namespace SX
+namespace nsx
 {
 
 namespace Crystal {
@@ -56,7 +56,7 @@ class XDS {
 public:
     using sptrPeak3D = std::shared_ptr<Crystal::Peak3D>;
     using PeakList = std::vector<sptrPeak3D>;
-    using PeakRecord = SX::Crystal::PeakRecord;
+    using PeakRecord = nsx::Crystal::PeakRecord;
     using RecordList = std::vector<PeakRecord>;
 
     XDS(const PeakList& peaks, bool merge, bool friedel, const std::string& filename = "", const std::string& date = "");

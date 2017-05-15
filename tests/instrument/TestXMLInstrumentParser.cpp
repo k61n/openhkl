@@ -18,8 +18,8 @@
 
 using boost::property_tree::ptree;
 
-using namespace SX::Instrument;
-using SX::Units::UnitsManager;
+using namespace nsx::Instrument;
+using nsx::Units::UnitsManager;
 
 BOOST_AUTO_TEST_CASE(Tests_XML_Instrument_Parser)
 {

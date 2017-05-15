@@ -40,13 +40,13 @@
 #include "Profile.h"
 #include "../utils/MinimizerGSL.h"
 
-using SX::Utils::MinimizerGSL;
-using SX::Utils::Lorentzian;
-using SX::Utils::Gaussian;
+using nsx::Utils::MinimizerGSL;
+using nsx::Utils::Lorentzian;
+using nsx::Utils::Gaussian;
 
 static const double g_pi = double(M_PI);
 
-namespace SX {
+namespace nsx {
 namespace Crystal {
 
 Profile::Profile(const Utils::Lorentzian &lor, const Utils::Gaussian &gauss):
@@ -144,5 +144,5 @@ bool Profile::goodFit(const Eigen::VectorXd &y, double eps) const
 }
 
 } // namespace Crystal
-} // namespace SX
+} // namespace nsx
 

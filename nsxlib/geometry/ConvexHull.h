@@ -47,7 +47,7 @@
 
 //
 
-namespace SX
+namespace nsx
 {
 
 namespace Geometry
@@ -427,7 +427,7 @@ typename ConvexHull<T>::pVertex ConvexHull<T>::addVertex(const vector3& coords)
     for (const auto& v : _vertices)
     {
         if (std::abs(coords[0]-v->_coords[0])<1.0e-6 && std::abs(coords[1]-v->_coords[1])<1.0e-6 && std::abs(coords[2]-v->_coords[2])<1.0e-6)
-            throw SX::Kernel::Error<ConvexHull>("Duplicate vertex (within 1.0e6 tolerance).");
+            throw nsx::Kernel::Error<ConvexHull>("Duplicate vertex (within 1.0e6 tolerance).");
     }
 
     pVertex v=new Vertex<T>(coords);
@@ -477,7 +477,7 @@ template <typename T>
 bool ConvexHull<T>::findInitialVertices(pVertex& v0, pVertex& v1, pVertex& v2) const
 {
     if (_vertices.size()<3)
-        throw SX::Kernel::Error<ConvexHull>("Can not set the initial polytope with less than 3 vertices.");
+        throw nsx::Kernel::Error<ConvexHull>("Can not set the initial polytope with less than 3 vertices.");
 
     for (auto it1=_vertices.begin();it1!=_vertices.end();++it1)
     {
@@ -503,7 +503,7 @@ void ConvexHull<T>::initalizeHull()
     // Find 3 non colinear vertices
     Vertex<T> *v0(nullptr),*v1(nullptr),*v2(nullptr);
     if (!findInitialVertices(v0,v1,v2))
-        throw SX::Kernel::Error<ConvexHull>("All vertices are coplanar 1.");
+        throw nsx::Kernel::Error<ConvexHull>("All vertices are coplanar 1.");
 
     // Mark the three non colinear vertices found as processed
     v0->_mark=true;
@@ -598,7 +598,7 @@ void ConvexHull<T>::updateHull()
     }
 
     if (_vertices.size()<4)
-        throw SX::Kernel::Error<ConvexHull>("Not enough vertices to build a convex hull.");
+        throw nsx::Kernel::Error<ConvexHull>("Not enough vertices to build a convex hull.");
 
     auto it=_vertices.begin();
     while(it!=_vertices.end())
@@ -972,7 +972,7 @@ template<typename T>
 std::vector<Triangle > ConvexHull<T>::createFaceCache(const matrix33& rotation) const
 {
     if (_vertices.size()<4)
-        throw SX::Kernel::Error<ConvexHull<T> >("Hull is flat or undefined, can not construct faces information");
+        throw nsx::Kernel::Error<ConvexHull<T> >("Hull is flat or undefined, can not construct faces information");
 
     std::vector<Triangle > triangles;
     triangles.reserve(_faces.size());
@@ -1003,6 +1003,6 @@ std::ostream& operator<<(std::ostream& os, const ConvexHull<T>& chull)
 
 } // end namespace Geometry
 
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_CONVEXHULL_H_ */

@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-namespace SX
+namespace nsx
 {
 
 namespace Geometry

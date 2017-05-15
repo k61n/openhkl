@@ -34,7 +34,7 @@
 
 #include "Vertex.h"
 
-namespace SX
+namespace nsx
 {
 
 namespace Geometry
@@ -113,6 +113,6 @@ std::ostream& operator<<(std::ostream& os, const Edge<T>& edge)
 
 } // end namespace Geometry
 
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_EDGE_H_ */

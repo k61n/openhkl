@@ -41,7 +41,7 @@
 #include <vector>
 #include <memory>
 
-namespace SX {
+namespace nsx {
 
 namespace Instrument {
 class Experiment;
@@ -70,7 +70,7 @@ public:
     };
 
 public:
-    AutoIndexer(const std::shared_ptr<SX::Instrument::Experiment>& expt, const std::shared_ptr<SX::Utils::ProgressHandler>& handler = nullptr);
+    AutoIndexer(const std::shared_ptr<nsx::Instrument::Experiment>& expt, const std::shared_ptr<nsx::Utils::ProgressHandler>& handler = nullptr);
 
     bool autoIndex(const Parameters& params);
     void addPeak(const std::shared_ptr<Peak3D>& peak);
@@ -78,12 +78,12 @@ public:
     //void buildSolutionsTable();
 private:
     std::vector<std::shared_ptr<Peak3D>> _peaks;
-    std::shared_ptr<SX::Instrument::Experiment> _experiment;
+    std::shared_ptr<nsx::Instrument::Experiment> _experiment;
     std::vector<std::pair<UnitCell,double>> _solutions;
-    std::shared_ptr<SX::Utils::ProgressHandler> _handler;
+    std::shared_ptr<nsx::Utils::ProgressHandler> _handler;
 };
 
 } // namespace Crystal
-} // namespace SX
+} // namespace nsx
 
 #endif // NSXTOOL_AUTOINDEXER_H_

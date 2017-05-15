@@ -41,7 +41,7 @@
 #include "ResolutionShell.h"
 #include "../utils/gcd.h"
 
-namespace SX
+namespace nsx
 {
 
 namespace Crystal
@@ -84,4 +84,4 @@ const std::vector<double>& ResolutionShell::getD() const
 
 
 } // Namespace Crystal
-} /* namespace SX */
+} /* namespace nsx */

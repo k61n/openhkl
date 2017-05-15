@@ -36,7 +36,7 @@
 #include "IMinimizer.h"
 
 
-namespace SX {
+namespace nsx {
 
 namespace Utils {
 
@@ -129,4 +129,4 @@ int IMinimizer::numIterations()
 
 } // namespace Utils
 
-} // namespace SX
+} // namespace nsx

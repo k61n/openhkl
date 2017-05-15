@@ -43,7 +43,7 @@ void CollectedPeaksModel::setPeaks(const std::vector<sptrPeak3D>& peaks)
     _peaks = peaks;
 }
 
-void CollectedPeaksModel::setPeaks(const std::vector<std::shared_ptr<SX::Data::DataSet> > &data)
+void CollectedPeaksModel::setPeaks(const std::vector<std::shared_ptr<nsx::Data::DataSet> > &data)
 {
     _peaks.clear();
 
@@ -318,7 +318,7 @@ bool CollectedPeaksModel::indexIsValid(const QModelIndex& index) const
     return index.isValid() && index.row() < _peaks.size();
 }
 
-void CollectedPeaksModel::setUnitCells(const SX::Instrument::CellList &cells)
+void CollectedPeaksModel::setUnitCells(const nsx::Instrument::CellList &cells)
 {
     _cells = cells;
 }

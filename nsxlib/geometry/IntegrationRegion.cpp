@@ -35,7 +35,7 @@
 
 #include <list>
 
-namespace SX {
+namespace nsx {
 namespace Geometry {
 
 IntegrationRegion::IntegrationRegion(
@@ -124,4 +124,4 @@ void IntegrationRegion::updateMask(Eigen::MatrixXi& mask, double z) const
 }
 
 } // namespace Geometry
-} // namespace SX
+} // namespace nsx

@@ -39,7 +39,7 @@
 #include "DetectorEvent.h"
 #include "Gonio.h"
 
-namespace SX {
+namespace nsx {
 namespace Instrument {
 
 

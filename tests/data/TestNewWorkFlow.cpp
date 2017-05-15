@@ -23,17 +23,17 @@
 #include <nsxlib/crystal/AutoIndexer.h>
 #include <nsxlib/instrument/Experiment.h>
 
-using namespace SX::Data;
-using namespace SX::Instrument;
-using namespace SX::Units;
+using namespace nsx::Data;
+using namespace nsx::Instrument;
+using namespace nsx::Units;
 
-using SX::Utils::ProgressHandler;
-using SX::Data::PeakFinder;
-using SX::Imaging::ConvolutionKernel;
-using SX::Imaging::KernelFactory;
-using SX::Crystal::AutoIndexer;
-using SX::Crystal::UnitCell;
-using SX::Instrument::Experiment;
+using nsx::Utils::ProgressHandler;
+using nsx::Data::PeakFinder;
+using nsx::Imaging::ConvolutionKernel;
+using nsx::Imaging::KernelFactory;
+using nsx::Crystal::AutoIndexer;
+using nsx::Crystal::UnitCell;
+using nsx::Instrument::Experiment;
 
 // const double tolerance=1e-2;
 
@@ -70,9 +70,9 @@ int run_test()
     std::vector<std::shared_ptr<DataSet>> numors;
     numors.push_back(dataf);
 
-    std::shared_ptr<SX::Imaging::ConvolutionKernel> kernel;
+    std::shared_ptr<nsx::Imaging::ConvolutionKernel> kernel;
     std::string kernelName = "annular";
-    SX::Imaging::KernelFactory* kernelFactory = SX::Imaging::KernelFactory::Instance();
+    nsx::Imaging::KernelFactory* kernelFactory = nsx::Imaging::KernelFactory::Instance();
     kernel.reset(kernelFactory->create(kernelName, int(dataf->getNRows()), int(dataf->getNCols())));
 
     auto k = kernel->getKernel();
@@ -135,7 +135,7 @@ int run_test()
     }
 
     // reintegrate peaks
-    const double scale = SX::Utils::getScale(0.997);
+    const double scale = nsx::Utils::getScale(0.997);
     dataf->integratePeaks(scale, 2.0*scale, true);
 
     indexed_peaks = numIndexedPeaks();

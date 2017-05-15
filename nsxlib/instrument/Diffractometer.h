@@ -35,7 +35,7 @@
 
 #include <boost/property_tree/ptree.hpp>
 
-namespace SX {
+namespace nsx {
 namespace Instrument {
 
 namespace property_tree=boost::property_tree;

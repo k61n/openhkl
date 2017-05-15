@@ -5,7 +5,7 @@
 #include <Eigen/Dense>
 #include <nsxlib/geometry/Sphere.h>
 
-using namespace SX::Geometry;
+using namespace nsx::Geometry;
 using Eigen::Vector2d;
 using Eigen::Vector3d;
 using Eigen::Matrix2d;

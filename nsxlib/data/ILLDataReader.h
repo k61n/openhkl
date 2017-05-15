@@ -42,11 +42,11 @@
 #include "../data/IDataReader.h"
 #include "../instrument/Diffractometer.h"
 
-namespace SX {
+namespace nsx {
 
 namespace Data {
 
-using SX::Instrument::Diffractometer;
+using nsx::Instrument::Diffractometer;
 
 class ILLDataReader final: public IDataReader {
 
@@ -102,6 +102,6 @@ private:
 
 } // end namespace Data
 
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_ILLASCIIDATAREADER_H_ */

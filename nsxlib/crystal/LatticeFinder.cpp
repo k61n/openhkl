@@ -2,7 +2,7 @@
 
 #include "LatticeFinder.h"
 
-namespace SX
+namespace nsx
 {
 namespace Crystal
 {
@@ -218,4 +218,4 @@ std::vector<LatticeVectors> LatticeFinder::determineLattice(std::size_t clusterm
 
 
 } // Namespace Crystal
-} /* namespace SX */
+} /* namespace nsx */

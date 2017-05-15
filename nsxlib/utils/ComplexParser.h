@@ -35,7 +35,7 @@
 #include <complex>
 #include <string>
 
-namespace SX
+namespace nsx
 {
 
 namespace Utils

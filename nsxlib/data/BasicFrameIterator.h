@@ -7,20 +7,20 @@
 #include "IFrameIterator.h"
 #include "../utils/Types.h"
 
-namespace SX {
+namespace nsx {
 namespace Data {
 
 class BasicFrameIterator final: public IFrameIterator {
 public:
     BasicFrameIterator(DataSet& data, unsigned int idx);
     ~BasicFrameIterator() = default;
-    SX::Types::RealMatrix& getFrame() override;
+    nsx::Types::RealMatrix& getFrame() override;
     void advance() override;
 private:
-    SX::Types::RealMatrix _currentFrame;
+    nsx::Types::RealMatrix _currentFrame;
 };
 
 } // namespace Data
-} // namespace SX
+} // namespace nsx
 
 #endif // NSXTOOL_BASICFRAMEITERATOR_H_

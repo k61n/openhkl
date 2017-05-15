@@ -38,7 +38,7 @@
 #include "../utils/LMFunctor.h"
 #include "../utils/LatticeConstraintParser.h"
 
-namespace SX
+namespace nsx
 {
 
 namespace Instrument
@@ -87,12 +87,12 @@ struct LatticeFunctor : public Utils::LMFunctor<double>
     std::shared_ptr<Instrument::Detector> _detector;
     std::shared_ptr<Instrument::Sample> _sample;
     std::shared_ptr<Instrument::Source> _source;
-    SX::Utils::constraints_set _constraints;
+    nsx::Utils::constraints_set _constraints;
     std::map<unsigned int,double> _constants;
 };
 
 } // end namespace Crystal
 
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_LATTICEFUNCTOR_H_ */

@@ -7,7 +7,7 @@
 
 #include "PlottableGraphicsItem.h"
 
-namespace SX
+namespace nsx
 {
 namespace Crystal
 {
@@ -19,7 +19,7 @@ using sptrPeak3D = std::shared_ptr<Peak3D>;
 class QWidget;
 class SXPlot;
 
-using SX::Crystal::sptrPeak3D;
+using nsx::Crystal::sptrPeak3D;
 
 class PeakGraphicsItem : public PlottableGraphicsItem
 {
@@ -47,7 +47,7 @@ private:
         double a, b, u, v, alpha;
     };
 
-    static Ellipse calculateEllipse(const SX::Geometry::IShape<double, 3>& shape, int frame);
+    static Ellipse calculateEllipse(const nsx::Geometry::IShape<double, 3>& shape, int frame);
     static void drawEllipse(QPainter& painter, Ellipse ellipse);
 
     //! Pointer to the Peak3D object

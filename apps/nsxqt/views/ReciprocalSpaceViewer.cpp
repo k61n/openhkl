@@ -17,7 +17,7 @@
 #include <nsxlib/crystal/UnitCell.h>
 #include "Logger.h"
 
-ReciprocalSpaceViewer::ReciprocalSpaceViewer(std::shared_ptr<SX::Instrument::Experiment> experiment,QWidget *parent) :
+ReciprocalSpaceViewer::ReciprocalSpaceViewer(std::shared_ptr<nsx::Instrument::Experiment> experiment,QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ReciprocalSpaceViewer),
     _experiment(experiment),
@@ -37,7 +37,7 @@ ReciprocalSpaceViewer::~ReciprocalSpaceViewer()
     delete ui;
 }
 
-void ReciprocalSpaceViewer::setData(const std::vector<std::shared_ptr<SX::Data::DataSet>>& data)
+void ReciprocalSpaceViewer::setData(const std::vector<std::shared_ptr<nsx::Data::DataSet>>& data)
 {
     _data.clear();
     _data.reserve(data.size());
@@ -78,7 +78,7 @@ void ReciprocalSpaceViewer::on_view_clicked()
     Eigen::Vector3d v1(static_cast<double>(h1),static_cast<double>(k1),static_cast<double>(l1));
     Eigen::Vector3d v2(static_cast<double>(h2),static_cast<double>(k2),static_cast<double>(l2));
 
-//    std::shared_ptr<SX::Crystal::UnitCell> uc(_experiment->getDiffractometer()->getSample()->getUnitCell(ui->unitCell->value()));
+//    std::shared_ptr<nsx::Crystal::UnitCell> uc(_experiment->getDiffractometer()->getSample()->getUnitCell(ui->unitCell->value()));
 
 //    Eigen::Matrix3d UB=uc->getReciprocalReferenceM().transpose();
 
@@ -99,11 +99,11 @@ void ReciprocalSpaceViewer::on_view_clicked()
     // The distance from the point origin to the plane (P,v1,v2)
     double distOrigToPlane=v3.dot(from);
 
-    std::shared_ptr<SX::Instrument::Detector> detector(_experiment->getDiffractometer()->getDetector());
+    std::shared_ptr<nsx::Instrument::Detector> detector(_experiment->getDiffractometer()->getDetector());
     int nDetRows = detector->getNRows();
     int nDetCols = detector->getNCols();
 
-    std::shared_ptr<SX::Instrument::Sample> sample(_experiment->getDiffractometer()->getSample());
+    std::shared_ptr<nsx::Instrument::Sample> sample(_experiment->getDiffractometer()->getSample());
 
     auto& mono = _experiment->getDiffractometer()->getSource()->getSelectedMonochromator();
     double lambda(mono.getWavelength());
@@ -117,8 +117,8 @@ void ReciprocalSpaceViewer::on_view_clicked()
     std::vector<Eigen::Vector3d> qrest;
     qrest.reserve(nDetRows*nDetCols);
 
-    std::shared_ptr<SX::Instrument::MonoDetector> mdetector
-            = std::dynamic_pointer_cast<SX::Instrument::MonoDetector>(detector);
+    std::shared_ptr<nsx::Instrument::MonoDetector> mdetector
+            = std::dynamic_pointer_cast<nsx::Instrument::MonoDetector>(detector);
 
     double pixelS=mdetector->getPixelWidth()*mdetector->getPixelHeigth();
 
@@ -137,7 +137,7 @@ void ReciprocalSpaceViewer::on_view_clicked()
             Eigen::Matrix3d invM(sample->getGonio()->getInverseHomMatrix(d->getSampleState(f).getValues()).rotation());
 
             Eigen::Transform<double,3,Eigen::Affine> hmatrix=Eigen::Transform<double,3,Eigen::Affine>::Identity();
-            std::vector<SX::Instrument::Axis*>::const_reverse_iterator it;
+            std::vector<nsx::Instrument::Axis*>::const_reverse_iterator it;
             std::vector<double>::const_reverse_iterator itv=detectorStates.rbegin();
 
             for (it=axes.rbegin();it!=axes.rend();++it) {

@@ -41,7 +41,7 @@
 #include "../data/IDataReader.h"
 #include "../instrument/Diffractometer.h"
 
-namespace SX {
+namespace nsx {
 
 namespace Data {
 
@@ -75,6 +75,6 @@ private:
 
 } // end namespace Data
 
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_I16DATAREADER_H_ */

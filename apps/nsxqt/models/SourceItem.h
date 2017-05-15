@@ -5,7 +5,7 @@
 #include "InspectableTreeItem.h"
 
 class QWidget;
-namespace SX{
+namespace nsx{
     namespace Instrument{
         class Experiment;
     }
@@ -15,7 +15,7 @@ namespace SX{
 class SourceItem : public InspectableTreeItem
 {
 public:
-    explicit SourceItem(std::shared_ptr<SX::Instrument::Experiment> experiment);
+    explicit SourceItem(std::shared_ptr<nsx::Instrument::Experiment> experiment);
     QWidget* inspectItem();
 };
 

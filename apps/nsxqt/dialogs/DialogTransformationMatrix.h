@@ -10,7 +10,7 @@ namespace Ui {
 class DialogTransformationmatrix;
 }
 
-using SX::Crystal::sptrUnitCell;
+using nsx::Crystal::sptrUnitCell;
 
 class DialogTransformationmatrix : public QDialog
 {

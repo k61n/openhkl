@@ -33,7 +33,7 @@
 
 #include "MonoDetector.h"
 
-namespace SX
+namespace nsx
 {
 
 namespace Instrument
@@ -81,5 +81,5 @@ public:
 };
 
 } //End namespace Instrument
-} // End namespace SX
+} // End namespace nsx
 #endif /* NSXTOOL_CYLINDRICALDETECTOR_H_ */

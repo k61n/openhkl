@@ -42,7 +42,7 @@
 #include <boost/fusion/adapted/struct.hpp>
 #include <boost/variant.hpp>
 
-namespace SX {
+namespace nsx {
 namespace Utils {
 
 namespace qi  = boost::spirit::qi;

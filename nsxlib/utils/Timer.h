@@ -32,7 +32,7 @@
 #include <iostream>
 
 
-namespace SX {
+namespace nsx {
 //! A simple timer base on CPU clock
 
 struct Timer {

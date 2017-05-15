@@ -32,7 +32,7 @@
 
 #include <vector>
 
-namespace SX
+namespace nsx
 {
 
 namespace Utils
@@ -47,6 +47,6 @@ void readDoublesFromChar(const char* begin, const char* end, std::vector<double>
 
 } // end namespace Utils
 
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_PARSER_H_ */

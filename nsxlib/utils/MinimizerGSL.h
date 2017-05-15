@@ -51,7 +51,7 @@
 #include <gsl/gsl_multifit_nlin.h>
 #endif
 
-namespace SX {
+namespace nsx {
 
 namespace Utils {
 
@@ -99,6 +99,6 @@ private:
 
 } // end namespace Utils
 
-} // end namespace SX
+} // end namespace nsx
 
 #endif // NSXTOOL_MINIMIZERGSL_H_

@@ -10,7 +10,7 @@
 
 class UnitCellItem;
 
-using namespace SX::Instrument;
+using namespace nsx::Instrument;
 
 class SampleItem : public InspectableTreeItem
 {

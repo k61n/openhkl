@@ -1,6 +1,6 @@
 #include <cmath>
 
-namespace SX
+namespace nsx
 {
 
 namespace Utils

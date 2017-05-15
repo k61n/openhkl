@@ -18,7 +18,7 @@
 #include "ui_IsotopeDatabaseDialog.h"
 #include <nsxlib/chemistry/IsotopeDatabaseManager.h>
 
-using SX::Chemistry::IsotopeDatabaseManager;
+using nsx::Chemistry::IsotopeDatabaseManager;
 
 IsotopeDatabaseDialog::IsotopeDatabaseDialog(QWidget *parent) : QDialog(parent), ui(new Ui::IsotopeDatabaseDialog)
 {
@@ -29,7 +29,7 @@ IsotopeDatabaseDialog::IsotopeDatabaseDialog(QWidget *parent) : QDialog(parent),
 
     IsotopeDatabaseManager* imgr=IsotopeDatabaseManager::Instance();
 
-//    const SX::Chemistry::unitsMap& umap = imgr->getUnits();
+//    const nsx::Chemistry::unitsMap& umap = imgr->getUnits();
 
 //    QStandardItemModel* model=new QStandardItemModel(0,umap.size(),this);
 //
@@ -70,10 +70,10 @@ IsotopeDatabaseDialog::IsotopeDatabaseDialog(QWidget *parent) : QDialog(parent),
 //        QStandardItem* col8 = new QStandardItem(QString::number(v.second.get<double>("natural_abundance",0.0)));
 //        QStandardItem* col9 = new QStandardItem(QString::number(v.second.get<bool>("stable")));
 //        QStandardItem* col10= new QStandardItem(QString::number(v.second.get<double>("half_life",std::numeric_limits<double>::infinity())));
-//        QStandardItem* col11= new QStandardItem(QString::fromStdString(SX::Utils::complexToString(v.second.get<std::complex<double>>("b_coherent"))));
-//        QStandardItem* col12= new QStandardItem(QString::fromStdString(SX::Utils::complexToString(v.second.get<std::complex<double>>("b_incoherent"))));
-//        QStandardItem* col13= new QStandardItem(QString::fromStdString(SX::Utils::complexToString(v.second.get<std::complex<double>>("b_plus",0))));
-//        QStandardItem* col14= new QStandardItem(QString::fromStdString(SX::Utils::complexToString(v.second.get<std::complex<double>>("b_minus",0))));
+//        QStandardItem* col11= new QStandardItem(QString::fromStdString(nsx::Utils::complexToString(v.second.get<std::complex<double>>("b_coherent"))));
+//        QStandardItem* col12= new QStandardItem(QString::fromStdString(nsx::Utils::complexToString(v.second.get<std::complex<double>>("b_incoherent"))));
+//        QStandardItem* col13= new QStandardItem(QString::fromStdString(nsx::Utils::complexToString(v.second.get<std::complex<double>>("b_plus",0))));
+//        QStandardItem* col14= new QStandardItem(QString::fromStdString(nsx::Utils::complexToString(v.second.get<std::complex<double>>("b_minus",0))));
 //        QStandardItem* col15= new QStandardItem(QString::number(v.second.get<double>("xs_coherent",0.0)));
 //        QStandardItem* col16= new QStandardItem(QString::number(v.second.get<double>("xs_incoherent",0.0)));
 //        QStandardItem* col17= new QStandardItem(QString::number(v.second.get<double>("xs_scattering",0.0)));

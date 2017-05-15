@@ -14,9 +14,9 @@
 #include <nsxlib/imaging/DeltaKernel.h>
 
 // Generate a image to use for testing the Fourier transform
-SX::Types::RealMatrix generateImage(int rows, int cols)
+nsx::Types::RealMatrix generateImage(int rows, int cols)
 {
-    SX::Types::RealMatrix image(rows, cols);
+    nsx::Types::RealMatrix image(rows, cols);
 
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
@@ -28,13 +28,13 @@ SX::Types::RealMatrix generateImage(int rows, int cols)
 
 double computeError(int rows, int cols)
 {
-    SX::Types::RealMatrix original = generateImage(rows,cols);
-    SX::Imaging::Convolver convolver;
-    SX::Imaging::DeltaKernel kernel(rows,cols);
+    nsx::Types::RealMatrix original = generateImage(rows,cols);
+    nsx::Imaging::Convolver convolver;
+    nsx::Imaging::DeltaKernel kernel(rows,cols);
 
     convolver.setKernel(kernel.getKernel());
-    SX::Types::RealMatrix transformed = convolver.apply(original);
-    SX::Types::RealMatrix difference =  original-transformed;
+    nsx::Types::RealMatrix transformed = convolver.apply(original);
+    nsx::Types::RealMatrix difference =  original-transformed;
     double error = (difference * difference.transpose()).sum() / rows / cols;
     return std::sqrt(error);
 }

@@ -12,12 +12,12 @@
 #include "../kernel/Factory.h"
 #include "../kernel/Singleton.h"
 
-namespace SX {
+namespace nsx {
 namespace Imaging {
 
 class KernelFactory :
-        public SX::Kernel::Factory<ConvolutionKernel,std::string,int,int>,
-        public SX::Kernel::Singleton<KernelFactory,SX::Kernel::Constructor,SX::Kernel::Destructor>
+        public nsx::Kernel::Factory<ConvolutionKernel,std::string,int,int>,
+        public nsx::Kernel::Singleton<KernelFactory,nsx::Kernel::Constructor,nsx::Kernel::Destructor>
 {
 public:
     KernelFactory();
@@ -25,6 +25,6 @@ public:
 };
 
 } // namespace Imaging
-} // namespace SX
+} // namespace nsx
 
 #endif /* NSXLIB_IMAGING_KERNELFACTORY_H_ */

@@ -32,7 +32,7 @@
 
 #include <cassert>
 
-namespace SX {
+namespace nsx {
 
 namespace Utils {
 
@@ -137,4 +137,4 @@ std::string CSV::getToken(std::istream &stream, char &delim)
 
 } // namespace Utils
 
-} // namespace SX
+} // namespace nsx

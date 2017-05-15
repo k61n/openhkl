@@ -11,7 +11,7 @@
 #include <boost/algorithm/string.hpp>
 #include <vector>
 
-using namespace SX::Utils;
+using namespace nsx::Utils;
 using namespace Eigen;
 const double tolerance=1e-6;
 BOOST_AUTO_TEST_CASE(Test_AffineTransformParser)

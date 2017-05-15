@@ -16,9 +16,9 @@
 #include <nsxlib/data/DataReaderFactory.h>
 #include <nsxlib/utils/Units.h>
 
-using namespace SX::Data;
-using namespace SX::Instrument;
-using namespace SX::Units;
+using namespace nsx::Data;
+using namespace nsx::Instrument;
+using namespace nsx::Units;
 
 // const double tolerance=1e-2;
 

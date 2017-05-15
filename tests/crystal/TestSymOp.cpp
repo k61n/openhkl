@@ -6,7 +6,7 @@
 #include <string>
 #include <nsxlib/crystal/SymOp.h>
 
-using namespace SX::Crystal;
+using namespace nsx::Crystal;
 
 BOOST_AUTO_TEST_CASE(Test_SymOp)
 {
@@ -39,6 +39,6 @@ BOOST_AUTO_TEST_CASE(Test_SymOp)
     BOOST_CHECK_EQUAL(op10.getAxisOrder(),-6);
 
     SymOp op11("x-y,x+2y,-3z");
-    BOOST_CHECK_THROW(op11.getAxisOrder(),SX::Kernel::Error<SymOp>);
+    BOOST_CHECK_THROW(op11.getAxisOrder(),nsx::Kernel::Error<SymOp>);
 
 }

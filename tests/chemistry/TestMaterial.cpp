@@ -11,12 +11,12 @@
 
 const double tolerance=1.0e-9;
 
-using SX::Chemistry::isotopeContents;
-using SX::Chemistry::Material;
-using SX::Units::ang;
-using SX::Units::avogadro;
-using SX::Units::barn;
-using SX::Units::kilo;
+using nsx::Chemistry::isotopeContents;
+using nsx::Chemistry::Material;
+using nsx::Units::ang;
+using nsx::Units::avogadro;
+using nsx::Units::barn;
+using nsx::Units::kilo;
 
 BOOST_AUTO_TEST_CASE(Test_Material)
 {

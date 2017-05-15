@@ -47,7 +47,7 @@
 
 
 
-namespace SX
+namespace nsx
 {
 
 namespace Imaging
@@ -67,7 +67,7 @@ public:
     const ParameterMap& getParameters() const;
 
 
-    const SX::Types::RealMatrix& getKernel();
+    const nsx::Types::RealMatrix& getKernel();
     virtual const char* getName() = 0;
 
     void print(std::ostream& os) const;
@@ -83,7 +83,7 @@ protected:
 
     int _nrows, _ncols;
 
-    SX::Types::RealMatrix _kernel;
+    nsx::Types::RealMatrix _kernel;
     bool _hasChanged; // used to record if parameters have changed since last update
     ParameterMap _params;
 };
@@ -91,6 +91,6 @@ protected:
 std::ostream& operator<<(std::ostream& os, const ConvolutionKernel& kernel);
 
 } // namespace Imaging 
-} // namespace SX 
+} // namespace nsx 
 
 #endif /* NSXTOOL_CONVOLUTIONKERNEL_H_ */

@@ -2,7 +2,7 @@
 
 #include "Basis.h"
 
-namespace SX
+namespace nsx
 {
 
 namespace Geometry
@@ -727,4 +727,4 @@ const Basis::covMat&  Basis::getReciprocalCovariance()
 
 } // end namespace Geometry
 
-} // end namespace SX
+} // end namespace nsx

@@ -32,10 +32,10 @@
 #include "Intensity.h"
 #include "../data/IData.h"
 
-namespace SX {
+namespace nsx {
 namespace Crystal {
 
-PeakIntegrator::PeakIntegrator(const SX::Geometry::IntegrationRegion& region, const SX::Data::DataSet& data):
+PeakIntegrator::PeakIntegrator(const nsx::Geometry::IntegrationRegion& region, const nsx::Data::DataSet& data):
     _blob(),
     _region(region),
     _lower(region.getBackground().getLower()),
@@ -109,7 +109,7 @@ PeakIntegrator::PeakIntegrator(const SX::Geometry::IntegrationRegion& region, co
 
 void PeakIntegrator::step(const Eigen::MatrixXi& frame, size_t idx, const Eigen::MatrixXi& mask)
 {
-    using point_type = SX::Geometry::IntegrationRegion::point_type;
+    using point_type = nsx::Geometry::IntegrationRegion::point_type;
 
     if (idx < _data_start || idx > _data_end) {
         return;
@@ -385,4 +385,4 @@ double PeakIntegrator::pValue() const
 }
 
 } // namespace Crystal
-} // namespace SX
+} // namespace nsx

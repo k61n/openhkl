@@ -10,8 +10,8 @@
 #include <Eigen/Dense>
 #include <iostream>
 
-using namespace SX::Crystal;
-using namespace SX::Units;
+using namespace nsx::Crystal;
+using namespace nsx::Units;
 const double tolerance=1e-6;
 BOOST_AUTO_TEST_CASE(Test_Niggli_Reduction)
 {

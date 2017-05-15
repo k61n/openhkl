@@ -8,7 +8,7 @@
 #include "Material.h"
 #include "../utils/Units.h"
 
-namespace SX
+namespace nsx
 {
 
 namespace Chemistry
@@ -141,4 +141,4 @@ std::ostream& operator<<(std::ostream& os, const Material& material)
 
 } // end namespace Chemistry
 
-} // end namespace SX
+} // end namespace nsx

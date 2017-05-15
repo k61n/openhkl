@@ -19,14 +19,14 @@ public:
     ProgressView(QWidget* parent);
     ~ProgressView();
 
-    void watch(std::shared_ptr<SX::Utils::ProgressHandler> handler);
+    void watch(std::shared_ptr<nsx::Utils::ProgressHandler> handler);
 
 public slots:
     void updateProgress();
     void abort();
 
 private:
-    std::shared_ptr<SX::Utils::ProgressHandler> _handler;
+    std::shared_ptr<nsx::Utils::ProgressHandler> _handler;
     QTimer* _timer;
 };
 

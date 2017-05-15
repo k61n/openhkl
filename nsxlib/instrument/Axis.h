@@ -39,7 +39,7 @@
 using Eigen::Vector3d;
 using Eigen::Transform;
 
-namespace SX
+namespace nsx
 {
 
 namespace Instrument
@@ -143,6 +143,6 @@ protected:
 
 } // end namespace Instrument
 
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_AXIS_H_ */

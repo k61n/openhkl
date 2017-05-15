@@ -12,7 +12,7 @@
 #include <Eigen/Dense>
 
 
-namespace SX {
+namespace nsx {
 namespace Utils {
 
 namespace qi    = boost::spirit::qi;
@@ -223,6 +223,6 @@ struct EigenMatrixParser : IMatrixParser<It> {
 };
 
 } //end namespace Utils
-} // end namespace SX
+} // end namespace nsx
 
 #endif

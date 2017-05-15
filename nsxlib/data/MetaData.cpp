@@ -1,7 +1,7 @@
 
 #include "MetaData.h"
 
-namespace SX
+namespace nsx
 {
 
 namespace Data
@@ -78,4 +78,4 @@ const hetermap& MetaData::getMap() const
 
 } // end namespace Data
 
-} // End namespace SX
+} // End namespace nsx

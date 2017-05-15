@@ -1,7 +1,7 @@
 #include "TransAxis.h"
 
 
-namespace SX
+namespace nsx
 {
 
 namespace Instrument

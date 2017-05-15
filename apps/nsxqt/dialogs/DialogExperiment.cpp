@@ -4,7 +4,7 @@
 #include <nsxlib/instrument/DiffractometerStore.h>
 #include <QComboBox>
 
-using namespace SX::Instrument;
+using namespace nsx::Instrument;
 
 DialogExperiment::DialogExperiment(QWidget *parent) : QDialog(parent), ui(new Ui::DialogExperiment)
 {

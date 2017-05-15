@@ -10,7 +10,7 @@
 
 int main(int argc, char *argv[])
 {
-    SX::Utils::Path::setArgv(argc, argv);
+    nsx::Utils::Path::setArgv(argc, argv);
     NSXQtApp a(argc, argv);
 
 

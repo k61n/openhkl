@@ -38,7 +38,7 @@
 #include <iostream>
 #include <limits>
 
-namespace SX {
+namespace nsx {
 namespace Utils {
 
 static double erf_inv_approx(double y);
@@ -99,4 +99,4 @@ double getConfidence(double x)
 }
 
 } // namespace Utils
-} // namespace SX
+} // namespace nsx

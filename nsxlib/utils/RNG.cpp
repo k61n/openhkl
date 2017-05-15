@@ -8,7 +8,7 @@
 #include <cstdint>
 #include "RNG.h"
 
-namespace SX {
+namespace nsx {
 
 namespace Utils {
 
@@ -28,4 +28,4 @@ double xor128(void)
 
 } /* namespace Utils */
 
-} /* namespace SX */
+} /* namespace nsx */

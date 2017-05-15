@@ -17,9 +17,9 @@
 #include <nsxlib/data/DataReaderFactory.h>
 #include <nsxlib/utils/Units.h>
 
-using namespace SX::Data;
-using namespace SX::Instrument;
-using namespace SX::Units;
+using namespace nsx::Data;
+using namespace nsx::Instrument;
+using namespace nsx::Units;
 
 const double tolerance=1e-2;
 
@@ -61,10 +61,10 @@ BOOST_AUTO_TEST_CASE(Test_ILL_Data)
     //const std::vector<ComponentState> sampleStates=dataf->getSampleStates();
     auto&& states = dataf->getInstrumentStates();
 
-    BOOST_CHECK_CLOSE(states[3].detector.getValues()[0],0.54347000E+05/1000.0*SX::Units::deg,tolerance);
-    BOOST_CHECK_CLOSE(states[2].sample.getValues()[0],0.26572000E+05/1000.0*SX::Units::deg,tolerance);
-    BOOST_CHECK_CLOSE(states[2].sample.getValues()[1],0.48923233E+02*SX::Units::deg,tolerance);
-    BOOST_CHECK_CLOSE(states[2].sample.getValues()[2],-0.48583171E+02*SX::Units::deg,tolerance);
+    BOOST_CHECK_CLOSE(states[3].detector.getValues()[0],0.54347000E+05/1000.0*nsx::Units::deg,tolerance);
+    BOOST_CHECK_CLOSE(states[2].sample.getValues()[0],0.26572000E+05/1000.0*nsx::Units::deg,tolerance);
+    BOOST_CHECK_CLOSE(states[2].sample.getValues()[1],0.48923233E+02*nsx::Units::deg,tolerance);
+    BOOST_CHECK_CLOSE(states[2].sample.getValues()[2],-0.48583171E+02*nsx::Units::deg,tolerance);
 
     InstrumentState st = dataf->getInterpolatedState(0.0);
     BOOST_CHECK_CLOSE(st.detector.getValues()[0],states[0].detector.getValues()[0],tolerance);

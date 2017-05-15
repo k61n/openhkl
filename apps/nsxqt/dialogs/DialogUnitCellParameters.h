@@ -10,7 +10,7 @@ namespace Ui
 class DialogUnitCellParameters;
 }
 
-using SX::Crystal::sptrUnitCell;
+using nsx::Crystal::sptrUnitCell;
 
 class DialogUnitCellParameters : public QDialog
 {

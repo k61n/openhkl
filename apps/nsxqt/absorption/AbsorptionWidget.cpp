@@ -13,7 +13,7 @@
 #include <QFileInfo>
 #include <QDir>
 
-AbsorptionWidget::AbsorptionWidget(SX::Instrument::Experiment* experiment,QWidget *parent) :
+AbsorptionWidget::AbsorptionWidget(nsx::Instrument::Experiment* experiment,QWidget *parent) :
     QWidget(parent),
     ui(new Ui::AbsorptionWidget),
     _experiment(experiment)
