@@ -50,9 +50,7 @@ using std::shared_ptr;
 using nsx::Data::DataSet;
 using Ellipsoid3D = nsx::Geometry::Ellipsoid<double, 3>;
 
-
 namespace nsx {
-namespace Crystal {
 
 using sptrPeak3D = PeakCalc::sptrPeak3D;
 using PeakList = PeakCalc::PeakList;
@@ -116,5 +114,4 @@ sptrPeak3D PeakCalc::averagePeaks(const Octree& tree, double distance)
     return peak;
 }
 
-} // Namespace Crystal
 } // end namespace nsx

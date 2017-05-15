@@ -8,7 +8,6 @@
 #include "../utils/Types.h"
 
 namespace nsx {
-namespace Data {
 
 class BasicFrameIterator final: public IFrameIterator {
 public:
@@ -20,7 +19,6 @@ private:
     nsx::Types::RealMatrix _currentFrame;
 };
 
-} // namespace Data
 } // end namespace nsx
 
 #endif // NSXTOOL_BASICFRAMEITERATOR_H_

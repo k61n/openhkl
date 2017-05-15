@@ -12,8 +12,6 @@
 
 namespace nsx {
 
-namespace Data {
-
 class ThreadedFrameIterator final: public IFrameIterator {
 public:
     ThreadedFrameIterator(DataSet& data, unsigned int idx);
@@ -27,8 +25,6 @@ private:
     std::shared_future<nsx::Types::RealMatrix> getFrameAsync(int idx);
 };
 
-} // Data
-
-} // SX
+} // end namespace nsx
 
 #endif // NSXTOOL_THREADEDFRAMEITERATOR_H_

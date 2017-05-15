@@ -5,7 +5,6 @@
 #include <future>
 
 namespace nsx {
-namespace Data {
 
 ThreadedFrameIterator::ThreadedFrameIterator(DataSet& data, unsigned int idx)
     :IFrameIterator(data, idx),
@@ -54,7 +53,4 @@ std::shared_future<nsx::Types::RealMatrix> ThreadedFrameIterator::getFrameAsync(
     return std::shared_future<nsx::Types::RealMatrix>(std::async(policy, get_fn));
 }
 
-/**/
-
-} // namespace Data
 } // end namespace nsx

@@ -14,11 +14,7 @@
 #include "../instrument/Source.h"
 #include "../crystal/Peak3D.h"
 
-namespace nsx
-{
-
-namespace Crystal
-{
+namespace nsx {
 
 LatticeMinimizer::LatticeMinimizer() : _functor(LatticeFunctor()), _solution(), _start()
 {
@@ -80,42 +76,6 @@ void LatticeMinimizer::resetOffsets()
             sgonio->getAxis(i)->setOffset(0.0,true);
     }
 }
-
-//void LatticeMinimizer::refineInstrParameter(unsigned int idx, bool refine)
-//{
-//	if (!_functor._detector || !_functor._sample || !_functor._source)
-//		throw Kernel::Error<LatticeMinimizer>("A detector, sample and source must be specified prior to fixing parameters.");
-//
-//	if (idx>=static_cast<unsigned int>(_functor.inputs()))
-//		return;
-//
-//	bool fixed=!refine;
-//
-//	if (fixed)
-//		_functor._fixedInstrParams.insert(idx);
-//	else
-//	{
-//		auto it=_functor._fixedInstrParams.find(idx);
-//		if (it!=_functor._fixedInstrParams.end())
-//			_functor._fixedInstrParams.erase(it);
-//	}
-//
-//	unsigned int ii=idx-9;
-//	if (ii==0)
-//	{
-//		_functor._source->setOffsetFixed(fixed);
-//		return;
-//	}
-//
-//	ii--;
-//
-//	if (ii<_functor._sample->getNAxes())
-//		_functor._sample->getGonio()->getAxis(ii)->setOffsetFixed(fixed);
-//
-//	ii-=_functor._sample->getNAxes();
-//	if (ii<_functor._detector->getNAxes())
-//		_functor._detector->getGonio()->getAxis(ii)->setOffsetFixed(fixed);
-//}
 
 void LatticeMinimizer::setStartingValue(unsigned int idx, double value, bool constant)
 {
@@ -237,7 +197,5 @@ int LatticeMinimizer::run(unsigned int maxIter)
 
     return status;
 }
-
-} // end namespace Crystal
 
 } // end namespace nsx

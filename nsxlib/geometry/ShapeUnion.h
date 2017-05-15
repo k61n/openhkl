@@ -41,10 +41,9 @@
 #include "../utils/Types.h"
 
 namespace nsx {
-namespace Geometry {
 
 template<typename T, nsx::Types::uint D>
-class ShapeUnion { //: public IShape<T, D> {
+class ShapeUnion {
 public:
     using shape_t = IShape<T, D>;
 
@@ -168,7 +167,6 @@ bool ShapeUnion<T,D>::collide(const Sphere<T,D>& rhs) const
     return false;
 }
 
-} // namespace Geometry
 } // end namespace nsx
 
 #endif // NSXTOOL_SHAPEUNION_H_

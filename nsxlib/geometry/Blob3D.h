@@ -30,13 +30,7 @@
 #include <iostream>
 #include <Eigen/Dense>
 
-//#include "IBlob.h"
-
-namespace nsx
-{
-
-namespace Geometry
-{
+namespace nsx {
 
 using Eigen::Vector3d;
 using Eigen::Matrix3d;
@@ -51,8 +45,7 @@ using Eigen::Matrix3d;
  * Blob3D can be transformed into an Ellipsoid, by diagonalizing the variance tensor.
  *
  */
-class Blob3D//: public IBlob
-{
+class Blob3D {
 public:
   //!Initialize an empty blob
   Blob3D();
@@ -118,7 +111,6 @@ private:
 
 std::ostream& operator<<(std::ostream& os, const Blob3D& b);
 
-} // Namespace Geometry
 } // end namespace nsx
 
 #endif /*NXSTOOL_Blob3D_H_*/

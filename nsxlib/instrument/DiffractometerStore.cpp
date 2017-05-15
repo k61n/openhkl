@@ -12,11 +12,7 @@
 #include "../kernel/Error.h"
 #include "../utils/Path.h"
 
-namespace nsx
-{
-
-namespace Instrument
-{
+namespace nsx {
 
 namespace fs=boost::filesystem;
 namespace pt=boost::property_tree;
@@ -63,6 +59,5 @@ diffractometersList DiffractometerStore::getDiffractometersList() const
     return diffractometers;
 }
 
-} // end namespace Instrument
-
 } // end namespace nsx
+

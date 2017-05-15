@@ -6,21 +6,14 @@
 
 #include "Convolver.h"
 #include <fftw3.h>
-// #include <cstring>
 #include <iostream>
 
 using std::cout;
 using std::endl;
 
-
-namespace nsx
-{
-
-namespace Imaging
-{
+namespace nsx {
 
 using RealMatrix = nsx::Types::RealMatrix;
-
 
 Convolver::Convolver():
     _rows(0), _cols(0), _halfCols(0),
@@ -125,5 +118,5 @@ RealMatrix Convolver::apply(const RealMatrix &image)
     return result;
 }
 
-} // Imaging
-} // SX
+} // end namespace nsx
+

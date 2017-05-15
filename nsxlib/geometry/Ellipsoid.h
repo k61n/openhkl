@@ -41,11 +41,9 @@
 #include "../utils/Types.h"
 
 namespace nsx {
-namespace Geometry {
 
 template<typename T,nsx::Types::uint D>
-class Ellipsoid : public IShape<T,D>
-{
+class Ellipsoid : public IShape<T,D> {
 public:
     typedef Eigen::Matrix<T,D,1> vector;
     typedef Eigen::Matrix<T,D+1,1> HomVector;
@@ -807,8 +805,6 @@ typename Ellipsoid<T,D>::HomMatrix Ellipsoid<T,D>::getTransformation() const
 {
     return _TRSinv.inverse();
 }
-
-} // Namespace Geometry
 } // end namespace nsx
 
 #endif /* NSXTOOL_ELLIPSOID_H_ */

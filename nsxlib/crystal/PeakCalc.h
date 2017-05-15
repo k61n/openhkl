@@ -36,15 +36,9 @@
 
 namespace nsx {
 
-namespace Data {
 class DataSet;
-}
 
-namespace Geometry {
 template<typename T, unsigned int D> class NDTree;
-}
-
-namespace Crystal {
 
 class Peak3D;
 
@@ -65,7 +59,6 @@ struct PeakCalc {
     sptrPeak3D averagePeaks(const Octree& tree, double distance);
 };
 
-} // namespace Crystal
 } // end namespace nsx
 
 #endif /* NSXTOOL_PEAKCALC_H_ */

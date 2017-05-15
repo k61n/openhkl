@@ -11,14 +11,9 @@
 
 #include "ConvolutionKernel.h"
 
-namespace nsx
-{
+namespace nsx {
 
-namespace Imaging
-{
-
-class DeltaKernel : public ConvolutionKernel
-{
+class DeltaKernel : public ConvolutionKernel {
 public:
 	static ConvolutionKernel* create(int nrows, int ncols);
 
@@ -34,7 +29,6 @@ private:
     void update() override;
 };
 
-} // Imaging
-} // SX
+} // end namespace nsx
 
 #endif // NSXTOOL_INCLUDED_DELTAKERNEL_H_

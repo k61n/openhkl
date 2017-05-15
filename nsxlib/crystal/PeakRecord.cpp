@@ -37,11 +37,7 @@
 #include "Peak3D.h"
 #include "MergedPeak.h"
 
-namespace nsx
-{
-
-namespace Crystal
-{
+namespace nsx {
 
 PeakRecord::PeakRecord(const Peak3D &other)
 {
@@ -110,5 +106,4 @@ bool PeakRecord::operator<(const PeakRecord &other) const
     return iobs < other.iobs;
 }
 
-} // Namespace Crystal
 } // end namespace nsx

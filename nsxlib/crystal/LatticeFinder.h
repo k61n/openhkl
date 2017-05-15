@@ -26,8 +26,10 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
+
 #ifndef NSXTOOL_LATTICEFINDER_H_
 #define NSXTOOL_LATTICEFINDER_H_
+
 #include <vector>
 #include <map>
 #include <Eigen/Dense>
@@ -36,10 +38,7 @@
 
 using nsx::Geometry::Cluster;
 
-namespace nsx
-{
-namespace Crystal
-{
+namespace nsx {
 
 typedef std::tuple<Eigen::Vector3d,Eigen::Vector3d,Eigen::Vector3d,double> LatticeVectors;
 
@@ -63,7 +62,6 @@ public:
     std::multimap<double,Cluster> _clusters;
 };
 
-} // Namespace Crystal
 } // end namespace nsx
 
 #endif /* NSXTOOL_LATTICEFINDER_H_ */

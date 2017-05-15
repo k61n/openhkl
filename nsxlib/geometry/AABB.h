@@ -44,11 +44,7 @@
 #include "Sphere.h"
 #include "../utils/Types.h"
 
-namespace nsx
-{
-
-namespace Geometry
-{
+namespace nsx {
 
 
 /*! \brief Axis-Aligned Bounding-Box in D dimension.
@@ -60,8 +56,7 @@ namespace Geometry
  * from images or volumes.
  */
 template<typename T, nsx::Types::uint D>
-class AABB : public IShape<T,D>
-{
+class AABB : public IShape<T,D> {
 public:
 
     typedef Eigen::Matrix<T,D,D> matrix;
@@ -294,8 +289,6 @@ bool collideAABBSphere(const AABB<T,D>& aabb, const Sphere<T,D>& sphere)
 {
     return collideSphereAABB(sphere,aabb);
 }
-
-} // namespace Geometry
 
 } // end namespace nsx
 

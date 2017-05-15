@@ -37,7 +37,6 @@
 #include "../utils/Types.h"
 
 namespace nsx {
-namespace Crystal {
 
 struct tVector {
     tVector(const Eigen::Vector3d& v,double quality):_vect(v),_quality(quality) {}
@@ -62,7 +61,6 @@ private:
     double _amax;
 };
 
-} // end namespace Crystal
 } // end namespace nsx
 
 #endif /* NSXTOOL_FFTINDEXING_H_ */

@@ -9,11 +9,7 @@
 #include "TransAxis.h"
 #include "../utils/Units.h"
 
-namespace nsx
-{
-
-namespace Instrument
-{
+namespace nsx {
 
 Detector* FlatDetector::create(const proptree::ptree& node)
 {
@@ -137,7 +133,5 @@ bool FlatDetector::hasKf(const Eigen::Vector3d& kf,const Eigen::Vector3d& f, dou
 
     return true;
 }
-
-} // Namespace Instrument
-
 } // end namespace nsx
+

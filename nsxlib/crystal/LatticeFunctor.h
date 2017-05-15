@@ -38,18 +38,11 @@
 #include "../utils/LMFunctor.h"
 #include "../utils/LatticeConstraintParser.h"
 
-namespace nsx
-{
+namespace nsx {
 
-namespace Instrument
-{
 class Detector;
 class Sample;
 class Source;
-}
-
-namespace Crystal
-{
 
 class Peak3D;
 
@@ -90,8 +83,6 @@ struct LatticeFunctor : public Utils::LMFunctor<double>
     nsx::Utils::constraints_set _constraints;
     std::map<unsigned int,double> _constants;
 };
-
-} // end namespace Crystal
 
 } // end namespace nsx
 

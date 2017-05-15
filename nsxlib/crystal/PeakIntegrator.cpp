@@ -33,7 +33,6 @@
 #include "../data/IData.h"
 
 namespace nsx {
-namespace Crystal {
 
 PeakIntegrator::PeakIntegrator(const nsx::Geometry::IntegrationRegion& region, const nsx::Data::DataSet& data):
     _blob(),
@@ -384,5 +383,4 @@ double PeakIntegrator::pValue() const
     return p;
 }
 
-} // namespace Crystal
 } // end namespace nsx

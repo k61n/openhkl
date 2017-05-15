@@ -39,11 +39,9 @@
 #include "../instrument/Sample.h"
 #include "../instrument/Source.h"
 
-
 using nsx::Data::DataSet;
 
 namespace nsx {
-namespace Crystal {
 
 void PeakPredictor::addPredictedPeaks(std::shared_ptr<DataSet> data)
 {
@@ -167,5 +165,4 @@ void PeakPredictor::addPredictedPeaks(std::shared_ptr<DataSet> data)
     data->integratePeaks(_peakScale, _bkgScale, false, _handler);
 }
 
-} // namespace Crystal
 } // end namespace nsx

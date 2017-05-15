@@ -10,7 +10,6 @@ using std::endl;
 using Octree = nsx::Geometry::NDTree<double,3>;
 
 namespace nsx {
-namespace Geometry {
 
 void BlobFinder::registerEquivalence(int a, int b, vipairs& equivalences)
 {
@@ -552,5 +551,4 @@ void BlobFinder::mergeBlobs(std::unordered_map<int,Blob3D>& blobs, vipairs& equi
     }
 }
 
-} // namespace Geometry
 } // end namespace nsx

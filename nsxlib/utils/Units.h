@@ -40,6 +40,7 @@
 #include "../kernel/Singleton.h"
 
 namespace nsx {
+
 //! Define the units used internally in NSXTOOL.
 //! The units are defined in the international units system aka SI
 //! The Units namespace allows users of the library to specify their units when defining variables.
@@ -47,7 +48,6 @@ namespace nsx {
 //! a.Rotate(34*deg). This guarantees a self-consistent system of units in all calculations. This is inspired
 //! from the system of units in Geant4. Printing a property in a given unit requires to divide by the units.
 //! For example, if one wants an angle in degrees, angle/Units::deg needs to be used.
-namespace Units {
 
 using namespace boost::units;
 using namespace boost::units::si;
@@ -205,8 +205,6 @@ static const double hbar=h/twopi;
 static const double kB = 1.3806513e-23*J/K;
 static const double R=8.3144621*J/mole/K;
 
-} //Namespace Units
-} //namespace nsx
-
+} // end namespace nsx
 
 #endif /* NSXTOOL_UNITS_H_ */

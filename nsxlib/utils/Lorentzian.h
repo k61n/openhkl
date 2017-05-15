@@ -40,7 +40,6 @@
 #include <Eigen/Dense>
 
 namespace nsx {
-namespace Utils {
 
 class Lorentzian {
 public:
@@ -52,7 +51,6 @@ private:
     double _a, _b, _x0;
 };
 
-} // namespace Utils
 } // end namespace nsx
 
 #endif // NSXTOOL_GAUSSIAN_H_

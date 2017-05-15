@@ -15,7 +15,6 @@ using nsx::Utils::eigenToVector;
 using nsx::Instrument::ComponentState;
 
 namespace nsx {
-namespace Data {
 
 IDataReader* HDF5DataReader::create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer)
 {
@@ -229,5 +228,4 @@ Eigen::MatrixXi HDF5DataReader::getData(size_t frame)
     return Eigen::MatrixXi(m);
 }
 
-} // end namespace Data
 } // end namespace nsx

@@ -36,7 +36,6 @@
 #include "EigenToVector.h"
 
 namespace nsx {
-namespace Utils {
 
 std::vector<double> eigenToVector(const Eigen::VectorXd &ev)
 {
@@ -48,6 +47,4 @@ std::vector<double> eigenToVector(const Eigen::VectorXd &ev)
    return v;
 }
 
-
-} // namespace Utils
 } // end namespace nsx

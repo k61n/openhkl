@@ -13,7 +13,6 @@
 
 
 namespace nsx {
-namespace Utils {
 
 namespace qi    = boost::spirit::qi;
 namespace phx   = boost::phoenix;
@@ -222,7 +221,6 @@ struct EigenMatrixParser : IMatrixParser<It> {
     }
 };
 
-} //end namespace Utils
 } // end namespace nsx
 
 #endif

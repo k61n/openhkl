@@ -44,16 +44,9 @@
 
 #include "Peak3D.h"
 
-namespace nsx
-{
+namespace nsx {
 
-namespace Data
-{
 class DataSet;
-}
-
-namespace Crystal
-{
 
 class ResolutionShell {
 public:
@@ -67,8 +60,6 @@ private:
     std::vector<double> _d;
 
 };
-
-} // namespace Crystal
 
 } // end namespace nsx
 

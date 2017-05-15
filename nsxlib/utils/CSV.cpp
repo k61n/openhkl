@@ -34,12 +34,8 @@
 
 namespace nsx {
 
-namespace Utils {
-
-
 CSV::CSV(char delim, char quotchar): _delim(delim), _quotchar(quotchar)
 {
-
 }
 
 CSV::~CSV()
@@ -134,7 +130,5 @@ std::string CSV::getToken(std::istream &stream, char &delim)
     return tok;
 }
 
-
-} // namespace Utils
-
 } // end namespace nsx
+

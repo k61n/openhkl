@@ -40,8 +40,6 @@
 #include "Gonio.h"
 
 namespace nsx {
-namespace Instrument {
-
 
 DetectorEvent::DetectorEvent(const Detector& detector, double x, double y, std::vector<double> values):
     _detector(&detector), _x(x), _y(y), _values(std::move(values))
@@ -127,5 +125,4 @@ Eigen::Vector3d DetectorEvent::getPixelPosition() const
     return v;
 }
 
-} /* namespace Instrument */
 } // end namespace nsx

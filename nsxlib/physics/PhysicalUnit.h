@@ -48,11 +48,7 @@
 
 namespace qi = boost::spirit::qi;
 
-namespace nsx
-{
-
-namespace Physics
-{
+namespace nsx {
 
 // Define a dimension as a 7 elements array, each element corresponding to one of the SI unit
 // The order is the following [m,s,K,kg,A,mol,cd]
@@ -67,29 +63,25 @@ using physical_unit = std::tuple<double,double,dimension>;
 
 //! @class: PrefixOperator.
 //! Apply a prefix to a given physical unit.
-struct PrefixOperator
-{
+struct PrefixOperator {
     bool operator()(double factor, physical_unit& unit) const;
 };
 
 //! @class: PowerOperator.
 //! Apply the power operator to a given physical unit.
-struct PowerOperator
-{
+struct PowerOperator {
     bool operator()(physical_unit& unit, int power) const;
 };
 
 //! @class: MultiplyOperator.
 //! Multiply a physical unit by another one.
-struct MultiplyOperator
-{
+struct MultiplyOperator {
     bool operator()(physical_unit& unit1, const physical_unit& unit2) const;
 };
 
 //! @class: DivideOperator.
 //! Divide a physical unit by another one.
-struct DivideOperator
-{
+struct DivideOperator {
     bool operator()(physical_unit& unit1, const physical_unit& unit2) const;
 };
 
@@ -101,8 +93,7 @@ struct DivideOperator
 //! For a physical unit to be convertible to another physical unit, the two units must either:
 //! - have the same dimension
 //! - have an equivalence registered
-class PhysicalUnit
-{
+class PhysicalUnit {
 private:
     //! Stores the prefixes defined so far
     static std::map<std::string,double> _definedPrefixes;
@@ -169,8 +160,7 @@ public:
 
 private:
     //! Inner class that defines the boost::spirit parser for a physical unit
-    struct PhysicalUnitParser : qi::grammar<std::string::const_iterator, physical_unit()>
-    {
+    struct PhysicalUnitParser : qi::grammar<std::string::const_iterator, physical_unit()> {
         //! Default constructor
         PhysicalUnitParser();
 
@@ -211,8 +201,6 @@ private:
     dimension _dimension;
 
 };
-
-} // end namespace Physics
 
 } // end namespace nsx
 

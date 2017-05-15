@@ -39,8 +39,6 @@
 
 namespace nsx {
 
-namespace Data {
-
 class HDF5DataReader final: public IDataReader
 {
 
@@ -61,8 +59,6 @@ private:
     std::unique_ptr<H5::DataSpace> _space;
     std::unique_ptr<H5::DataSpace> _memspace;
 };
-
-} // end namespace Data
 
 } // end namespace nsx
 

@@ -33,12 +33,7 @@
 
 #include "../utils/Types.h"
 
-namespace nsx
-{
-
-namespace Kernel
-{
-
+namespace nsx {
 
 template <typename component, typename ...args>
 class Composite : public component
@@ -135,8 +130,6 @@ Composite<component,args...>::~Composite()
 {
     clear();
 }
-
-} // end namespace Kernel
 
 } // end namespace nsx
 

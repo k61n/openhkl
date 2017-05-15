@@ -50,8 +50,6 @@
 
 namespace nsx {
 
-namespace Data {
-
 class RawDataReader final: public IDataReader {
 
 public:
@@ -114,8 +112,6 @@ Eigen::Matrix<T_, Eigen::Dynamic, Eigen::Dynamic> RawDataReader::matrixFromData(
         return frame;
     }
 }
-
-} // end namespace Data
 
 } // end namespace nsx
 

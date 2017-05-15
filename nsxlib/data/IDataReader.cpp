@@ -24,8 +24,6 @@
 
 namespace nsx {
 
-namespace Data {
-
 using boost::filesystem::path;
 
 using RowMatrixi = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
@@ -247,5 +245,4 @@ void IDataReader::saveHDF5(const std::string& filename)
     file.close();
 }
 
-} // end namespace Data
 } // end namespace nsx

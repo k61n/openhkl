@@ -40,7 +40,6 @@
 #include <Eigen/Dense>
 
 namespace nsx {
-namespace Utils {
 
 class IMinimizer {
 public:
@@ -86,7 +85,6 @@ protected:
     f_type _f;
 };
 
-} // namespace Utils
 } // end namespace nsx
 
 #endif // NSXTOOL_IMINIMIZER_H_

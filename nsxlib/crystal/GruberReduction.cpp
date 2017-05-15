@@ -3,10 +3,7 @@
 #include <cmath>
 #include <stdexcept>
 
-namespace nsx
-{
-namespace Crystal
-{
+namespace nsx {
 
 GruberReduction::GruberReduction(const Eigen::Matrix3d& g, double epsilon):
     _g(g),
@@ -458,5 +455,4 @@ bool GruberReduction::equal(double A, double B) const
     return (std::fabs(A-B)<_epsilon);
 }
 
-} // namespace Crystal
 } // end namespace nsx

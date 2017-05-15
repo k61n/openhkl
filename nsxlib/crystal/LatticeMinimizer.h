@@ -35,18 +35,11 @@
 #include "LatticeFunctor.h"
 #include "LatticeSolution.h"
 
-namespace nsx
-{
+namespace nsx {
 
-namespace Instrument
-{
 class Detector;
 class Sample;
 class Source;
-}
-
-namespace Crystal
-{
 
 class Peak3D;
 
@@ -125,8 +118,6 @@ private:
 	LatticeSolution _solution;
 	std::map<unsigned int,double> _start;
 };
-
-} // end namespace Crystal
 
 } // end namespace nsx
 

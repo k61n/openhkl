@@ -9,11 +9,7 @@
 // This include has to be AFTER the std::string include otherwise build error
 #include <boost/algorithm/string.hpp>
 
-namespace nsx
-{
-
-namespace Crystal
-{
+namespace nsx {
 
 SymOp::SymOp(std::string generator)
 {
@@ -237,5 +233,4 @@ int SymOp::translationIsIntegralMultiple(const SymOp &other) const
         return 0;
 }
 
-} // end namespace Crystal
 } // end namespace nsx

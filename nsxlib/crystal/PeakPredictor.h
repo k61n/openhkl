@@ -36,26 +36,13 @@
 #ifndef NSXTOOL_PEAKPREDICTOR_H_
 #define NSXTOOL_PEAKPREDICTOR_H_
 
-//#include <map>
 #include <memory>
-
-//#include <Eigen/Dense>
-
-//#include "UnitCell.h"
-//#include "SpaceGroup.h"
-//#include "Peak3D.h"
 
 namespace nsx {
 
-namespace Data {
-    class DataSet;
-}
+class DataSet;
 
-namespace Utils {
-    class ProgressHandler;
-}
-
-namespace Crystal {
+class ProgressHandler;
 
 class PeakPredictor {
 public:
@@ -67,7 +54,6 @@ public:
     std::shared_ptr<nsx::Utils::ProgressHandler> _handler;
 };
 
-} // namespace Crystal
 } // end namespace nsx
 
 #endif // NSXTOOL_PEAKPREDICTOR

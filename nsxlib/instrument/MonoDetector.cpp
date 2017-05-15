@@ -6,7 +6,6 @@
 #include "../utils/Units.h"
 
 namespace nsx {
-namespace Instrument {
 
 MonoDetector::MonoDetector()
 : Detector(),
@@ -229,7 +228,5 @@ unsigned int MonoDetector::getNDetectors() const
     return 1;
 }
 
-} // End namespace Instrument
-
-} // End namespace nsx
+} // end namespace nsx
 

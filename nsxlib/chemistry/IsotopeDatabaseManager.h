@@ -16,8 +16,6 @@
 
 namespace nsx {
 
-namespace Chemistry {
-
 using boost::any_cast;
 using nsx::Kernel::Constructor;
 using nsx::Kernel::Destructor;
@@ -100,8 +98,6 @@ T IsotopeDatabaseManager::Isotope::getProperty(const std::string& propertyName) 
 
 //! Overloads the operator<< with an Isotope object
 std::ostream& operator<<(std::ostream&,const IsotopeDatabaseManager::Isotope&);
-
-} // end namespace Chemistry
 
 } // end namespace nsx
 

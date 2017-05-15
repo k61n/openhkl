@@ -24,7 +24,6 @@ using nsx::Crystal::Peak3D;
 using nsx::Geometry::Ellipsoid3D;
 
 namespace nsx {
-namespace Data {
 
 PeakFinder::PeakFinder()
 {
@@ -273,5 +272,4 @@ std::shared_ptr<Imaging::ConvolutionKernel> PeakFinder::getKernel()
     return _kernel;
 }
 
-} // namespace Data
 } // end namespace nsx

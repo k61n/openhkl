@@ -33,14 +33,9 @@
 
 #include "MonoDetector.h"
 
-namespace nsx
-{
+namespace nsx {
 
-namespace Instrument
-{
-
-class FlatDetector : public MonoDetector
-{
+class FlatDetector : public MonoDetector {
 public:
 
 	//! Static constructor of a FlatDetector from a property tree node
@@ -80,9 +75,6 @@ public:
 
 };
 
-} // Namespace Instrument
-
 } // end namespace nsx
-
 
 #endif /* NSXTOOL_FLATDETECTOR_H_ */

@@ -37,15 +37,13 @@
 #include "../instrument/Axis.h"
 
 namespace nsx {
-namespace Instrument
-{
+
 using nsx::Kernel::Factory;
 using nsx::Kernel::Constructor;
 using nsx::Kernel::Destructor;
 using nsx::Kernel::Singleton;
 
-class AxisFactory : public Factory<Axis,std::string,const proptree::ptree&>, public Singleton<AxisFactory,Constructor,Destructor>
-{
+class AxisFactory : public Factory<Axis,std::string,const proptree::ptree&>, public Singleton<AxisFactory,Constructor,Destructor> {
 private:
     friend class nsx::Kernel::Constructor<AxisFactory>;
     friend class nsx::Kernel::Destructor<AxisFactory>;
@@ -53,7 +51,6 @@ private:
     ~AxisFactory();
 };
 
-} // end namespace Instrument
 } // end namespace nsx
 
 #endif /* NSXTOOL_AXISFACTORY_H_ */

@@ -23,12 +23,8 @@
 namespace nsx
 {
 
-namespace Utils
-{
-
 // Convert number into nominator and denominator
 void doubleToFraction(double number, int nmax, long& nom, long& dnom);
 
-}
+} // end namespace nsx
 
-}

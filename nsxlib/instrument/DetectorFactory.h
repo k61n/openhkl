@@ -37,7 +37,6 @@
 #include "../kernel/Singleton.h"
 
 namespace nsx {
-namespace Instrument {
 
 using nsx::Instrument::Detector;
 using nsx::Kernel::Factory;
@@ -45,8 +44,7 @@ using nsx::Kernel::Singleton;
 using nsx::Kernel::Constructor;
 using nsx::Kernel::Destructor;
 
-class DetectorFactory : public Factory<Detector,std::string,const proptree::ptree&>, public Singleton<DetectorFactory,Constructor,Destructor>
-{
+class DetectorFactory : public Factory<Detector,std::string,const proptree::ptree&>, public Singleton<DetectorFactory,Constructor,Destructor> {
 private:
     friend class nsx::Kernel::Constructor<DetectorFactory>;
     friend class nsx::Kernel::Destructor<DetectorFactory>;
@@ -54,7 +52,6 @@ private:
     ~DetectorFactory();
 };
 
-} // end namespace Instrument
 } // end namespace nsx
 
 #endif /* NSXTOOL_DETECTORFACTORY_H_ */

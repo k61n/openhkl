@@ -26,6 +26,7 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
+
 #ifndef NSXTOOL_BLOB_FINDER_H_
 #define NSXTOOL_BLOB_FINDER_H_
 
@@ -51,24 +52,20 @@
 
 namespace nsx {
 
-namespace Geometry
-{
+typedef std::map<int,int> imap;
+typedef std::pair<int,int> ipair;
+typedef std::vector<int> vints;
+typedef std::vector<ipair> vipairs;
+typedef std::unordered_map<int,Blob2D> blob2DCollection;
+typedef std::unordered_map<int,Blob3D> blob3DCollection;
 
-    typedef std::map<int,int> imap;
-    typedef std::pair<int,int> ipair;
-    typedef std::vector<int> vints;
-    typedef std::vector<ipair> vipairs;
-    typedef std::unordered_map<int,Blob2D> blob2DCollection;
-    typedef std::unordered_map<int,Blob3D> blob3DCollection;
+typedef Ellipsoid<double,2> Ellipsoid2D;
+typedef Ellipsoid<double,3> Ellipsoid3D;
+typedef IShape<double,2> IShape2D;
+typedef IShape<double,3> IShape3D;
 
-    typedef Ellipsoid<double,2> Ellipsoid2D;
-    typedef Ellipsoid<double,3> Ellipsoid3D;
-    typedef IShape<double,2> IShape2D;
-    typedef IShape<double,3> IShape3D;
-    //typedef NDTree<double,2> Quadtree;
-    //typedef NDTree<double,3> Octree;
-    typedef std::unordered_map<const IShape2D*,int> shape2Dmap;
-    typedef std::unordered_map<const IShape3D*,int> shape3Dmap;
+typedef std::unordered_map<const IShape2D*,int> shape2Dmap;
+typedef std::unordered_map<const IShape3D*,int> shape3Dmap;
 
 
 /* Class used for blob-finding, which is the first step of peak-finding.
@@ -145,7 +142,6 @@ private:
     unsigned int _currentlabel;
 };
 
-} // namespace Geometry
 } // end namespace nsx
 
 #endif /*NSXTOOL_BLOB_FINDER_H_*/

@@ -47,7 +47,6 @@ using nsx::Utils::Gaussian;
 static const double g_pi = double(M_PI);
 
 namespace nsx {
-namespace Crystal {
 
 Profile::Profile(const Utils::Lorentzian &lor, const Utils::Gaussian &gauss):
     _lorentz(lor),
@@ -143,6 +142,5 @@ bool Profile::goodFit(const Eigen::VectorXd &y, double eps) const
     return diff < eps*y.norm() && diff < eps*x.norm();
 }
 
-} // namespace Crystal
 } // end namespace nsx
 

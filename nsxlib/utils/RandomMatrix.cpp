@@ -37,11 +37,7 @@
 
 #include <Eigen/QR>
 
-namespace nsx
-{
-
-namespace Utils
-{
+namespace nsx {
 
 Eigen::MatrixXd randomMatrix(unsigned int n)
 {
@@ -58,6 +54,5 @@ Eigen::MatrixXd randomMatrix(unsigned int n)
     return QR.householderQ();
 }
 
+} // end namespace nsx
 
-} // End namespace Utils
-} // End namespace nsx

@@ -40,9 +40,6 @@
 
 namespace nsx {
 
-namespace Utils {
-
-
 template <typename... Ts> class Packer {
 public:
     const Eigen::VectorXd& pack() { return _data; }
@@ -62,19 +59,12 @@ public:
         return super::pack(xs...);
     }
 
-
-
     void unpack(T& x, Ts&... xs) {
-//        Packer<Ts...>::unpack(xs...);
-//        auto&& data = Packer<Ts...>::_data;
-//        std::memcpy(&x, &data[offset], sizeof(T));
     }
 
 private:
     size_t _offset;
 };
-
-} // namespace Utils
 
 } // end namespace nsx
 

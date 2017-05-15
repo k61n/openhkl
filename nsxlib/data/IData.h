@@ -46,16 +46,11 @@
 #include <mutex>
 #include <future>
 
-//#include "IFrameIterator.h"
-
 #include "../utils/ProgressHandler.h"
 
 namespace nsx {
-namespace Instrument {
-    class Component;
-}
 
-namespace Data {
+class Component;
 
 using RowMatrixi = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 using RowMatrixd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
@@ -221,7 +216,6 @@ protected:
     std::unique_ptr<IDataReader> _reader;
 };
 
-} // end namespace Data
 } // end namespace nsx
 
 #endif // NSXTOOL_DATASET_H_

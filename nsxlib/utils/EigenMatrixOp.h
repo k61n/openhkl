@@ -32,17 +32,11 @@
 
 #include <Eigen/Dense>
 
-namespace nsx
-{
-
-namespace Utils
-{
+namespace nsx {
 
 void removeColumn(Eigen::MatrixXd& matrix, unsigned int colToRemove);
 
 void removeRow(Eigen::MatrixXd& matrix, unsigned int rowToRemove);
-
-} // end namespace Utils
 
 } // end namespace nsx
 

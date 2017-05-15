@@ -4,11 +4,7 @@
 #include "Axis.h"
 #include "AxisFactory.h"
 
-
-namespace nsx
-{
-namespace Instrument
-{
+namespace nsx {
 
 Axis* Axis::create(const proptree::ptree& node)
 {
@@ -218,6 +214,5 @@ bool Axis::isPhysical() const
 	return _physical;
 }
 
-}
+} // end namespace nsx
 
-}

@@ -59,7 +59,6 @@ using nsx::Utils::eigenToVector;
 using nsx::Instrument::ComponentState;
 
 namespace nsx {
-namespace Data {
 
 using nsx::Instrument::Diffractometer;
 using nsx::Instrument::Monochromator;
@@ -208,5 +207,4 @@ Eigen::MatrixXi RawDataReader::getData(std::size_t frame) {
     }
 }
 
-} // end namespace Data
 } // end namespace nsx

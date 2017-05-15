@@ -6,15 +6,10 @@
 #include <Eigen/Eigenvalues>
 #include "../utils/erf_inv.h"
 
-
-
 using Eigen::MatrixXd;
 using Eigen::SelfAdjointEigenSolver;
 
-namespace nsx
-{
-namespace Geometry
-{
+namespace nsx {
 
 Blob2D::Blob2D():_m00(0),_m10(0),_m01(0),_m20(0),_m02(0),_m11(0)
 ,_npoints(0),_minValue(std::numeric_limits<double>::max()),_maxValue(std::numeric_limits<double>::min())
@@ -166,5 +161,4 @@ std::ostream& operator<<(std::ostream& os, const Blob2D& b)
     return os;
 }
 
-} // End namespace Geometry
 } // End namspace SX

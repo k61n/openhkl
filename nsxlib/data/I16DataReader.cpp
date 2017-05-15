@@ -24,7 +24,6 @@
 #include "../utils/Units.h"
 
 namespace nsx {
-namespace Data {
 
 using nsx::Instrument::Diffractometer;
 using nsx::Instrument::ComponentState;
@@ -147,5 +146,4 @@ Eigen::MatrixXi I16DataReader::getData(size_t frame)
 
 }
 
-} // end namespace Data
 } // end namespace nsx

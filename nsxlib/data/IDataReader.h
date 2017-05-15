@@ -12,13 +12,11 @@
 #include "../instrument/InstrumentState.h"
 
 namespace nsx {
-namespace Data {
 
 using nsx::Instrument::Diffractometer;
 using nsx::Instrument::InstrumentState;
 
-class IDataReader
-{
+class IDataReader {
 
 public:
 
@@ -81,7 +79,6 @@ protected:
 
 };
 
-} /* namespace Data */
 } // end namespace nsx
 
 #endif /* IDATAREADER_H_ */

@@ -44,11 +44,7 @@
 
 namespace nsx {
 
-namespace Utils {
 class IMinimizer;
-}
-
-namespace Crystal {
 
 using nsx::Utils::IMinimizer;
 
@@ -216,10 +212,7 @@ private:
     std::map<unsigned int,double> _start;
     IMinimizer* _minimizer;
 
-
 };
-
-} // end namespace Crystal
 
 } // end namespace nsx
 

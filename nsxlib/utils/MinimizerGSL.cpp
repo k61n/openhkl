@@ -40,8 +40,6 @@
 
 namespace nsx {
 
-namespace Utils {
-
 MinimizerGSL::MinimizerGSL():
     IMinimizer(),
     _workspace(nullptr),
@@ -230,8 +228,5 @@ void MinimizerGSL::gslFromEigen(const Eigen::MatrixXd &in, gsl_matrix *out)
         for (int j = 0; j < out->size2; ++j)
             gsl_matrix_set(out, i, j, in(i));
 }
-
-
-} // end namespace Utils
 
 } // end namespace nsx

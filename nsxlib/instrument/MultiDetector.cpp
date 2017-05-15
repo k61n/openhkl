@@ -12,7 +12,6 @@
 #include "MultiDetector.h"
 
 namespace nsx {
-namespace Instrument {
 
 Detector* MultiDetector::create(const proptree::ptree& node)
 {
@@ -199,5 +198,4 @@ unsigned int MultiDetector::getNDetectors() const
     return getNComponents();
 }
 
-} // end namespace Instrument
 } // end namespace nsx

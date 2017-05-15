@@ -38,14 +38,9 @@
 #include "../kernel/Composite.h"
 #include "Detector.h"
 
-namespace nsx
-{
+namespace nsx {
 
-namespace Instrument
-{
-
-class MultiDetector : public nsx::Kernel::Composite<Detector,const proptree::ptree&>
-{
+class MultiDetector : public nsx::Kernel::Composite<Detector,const proptree::ptree&> {
 public:
 
     //! Static constructor of a MultiDetector from a property tree node
@@ -101,8 +96,6 @@ public:
     virtual bool hasKf(const Eigen::Vector3d& kf,const Eigen::Vector3d& from, double& px, double& py, double& t) const;
 
 };
-
-} // Namespace Instrument
 
 } // end namespace nsx
 

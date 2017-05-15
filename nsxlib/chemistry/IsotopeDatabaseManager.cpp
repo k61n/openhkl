@@ -7,8 +7,6 @@
 
 namespace nsx {
 
-namespace Chemistry {
-
 using nsx::Utils::Path;
 using nsx::Units::UnitsManager;
 
@@ -104,7 +102,5 @@ std::ostream& operator<<(std::ostream& os,const IsotopeDatabaseManager::Isotope&
     isotope.print(os);
     return os;
 }
-
-} // end namespace Chemistry
 
 } // end namespace nsx

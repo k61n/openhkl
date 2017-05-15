@@ -43,7 +43,6 @@
 #include <boost/variant.hpp>
 
 namespace nsx {
-namespace Utils {
 
 namespace qi  = boost::spirit::qi;
 namespace phx = boost::phoenix;
@@ -97,7 +96,6 @@ struct LatticeConstraintParser : qi::grammar<It,constraints_set()> {
     qi::rule<It,double()> prefactor;
 };
 
-} // Namespace Utils
 } // end namespace nsx
 
 #endif /* NSXTOOL_LATTICECONSTRAINTPARSER_H_ */

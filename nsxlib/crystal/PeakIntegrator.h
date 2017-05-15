@@ -40,11 +40,7 @@
 
 namespace nsx {
 
-namespace Data {
 class DataSet;
-}
-
-namespace Crystal {
 
 class PeakIntegrator {
 public:
@@ -121,7 +117,6 @@ private:
 
 };
 
-} // namespace Crystal
 } // end namespace nsx
 
 #endif // NSXTOOL_PEAKINTEGRATOR_H_

@@ -42,13 +42,9 @@
 namespace qi    = boost::spirit::qi;
 namespace phx   = boost::phoenix;
 
-namespace nsx
-{
-namespace Utils
-{
+namespace nsx {
 
-struct MatrixFiller
-{
+struct MatrixFiller {
 template <typename Matrix, typename Row, typename Col, typename Value>
 bool operator()(Matrix &m, Row r, Col c, Value v) const
 {
@@ -60,8 +56,7 @@ bool operator()(Matrix &m, Row r, Col c, Value v) const
 }
 };
 
-struct MatrixInit
-{
+struct MatrixInit {
 template <typename Matrix>
 bool operator()(Matrix &m) const
 {
@@ -89,8 +84,7 @@ bool operator()(Matrix &m) const
 */
 
 template<typename It>
-struct AffineTransformParser : qi::grammar<It,Eigen::Transform<double,3,Eigen::Affine>()>
-{
+struct AffineTransformParser : qi::grammar<It,Eigen::Transform<double,3,Eigen::Affine>()> {
     AffineTransformParser(): AffineTransformParser::base_type(matrix)
     {
         using namespace qi;
@@ -130,8 +124,6 @@ struct AffineTransformParser : qi::grammar<It,Eigen::Transform<double,3,Eigen::A
         qi::rule<It> xyz;
         qi::rule<It,double()> prefactor;
 };
-
-} // Namespace Utils
 
 } // end namespace nsx
 

@@ -43,8 +43,6 @@
 
 namespace nsx {
 
-namespace Data {
-
 class I16DataReader final: public IDataReader
 {
 public:
@@ -72,8 +70,6 @@ private:
     std::vector<std::string> _tifs;
     std::string _basedirectory;
 };
-
-} // end namespace Data
 
 } // end namespace nsx
 

@@ -7,10 +7,7 @@
 #include <functional>
 #include "../utils/Types.h"
 
-
-
 namespace nsx {
-namespace Data {
 
 class DataSet;
 
@@ -27,7 +24,6 @@ protected:
     DataSet& _data;
 };
 
-} // namespace Data
 } // end namespace nsx
 
 #endif // NSXTOOL_IFRAME_ITERATOR_H_

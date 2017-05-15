@@ -46,9 +46,6 @@
 using nsx::Geometry::IntegrationRegion;
 
 namespace nsx {
-using namespace Utils;
-
-namespace Crystal {
 
 PeakFit::PeakFit(sptrPeak3D peak): _peak(peak)
 {
@@ -450,5 +447,4 @@ int PeakFit::integerFrame(double f) const
     return fint;
 }
 
-} // namespace Crystal
 } // end namespace nsx

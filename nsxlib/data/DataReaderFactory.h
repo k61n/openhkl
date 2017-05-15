@@ -38,7 +38,6 @@
 #include "../instrument/Diffractometer.h"
 
 namespace nsx {
-namespace Data {
 
 using nsx::Kernel::Factory;
 using nsx::Kernel::Constructor;
@@ -61,7 +60,6 @@ private:
     ~DataReaderFactory() = default;
 };
 
-} // end namespace Data
 } // end namespace nsx
 
 #endif /* NSXTOOL_READERFACTORY_H_ */

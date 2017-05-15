@@ -11,9 +11,6 @@
 namespace nsx
 {
 
-namespace Chemistry
-{
-
 Material::Material(const std::string& formula)
 : _formula(formula),
   _isotopes(),
@@ -138,7 +135,5 @@ std::ostream& operator<<(std::ostream& os, const Material& material)
     material.print(os);
     return os;
 }
-
-} // end namespace Chemistry
 
 } // end namespace nsx

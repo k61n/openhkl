@@ -42,9 +42,6 @@
 
 namespace nsx {
 
-namespace Chemistry
-{
-
 namespace property_tree=boost::property_tree;
 
 class Material
@@ -107,8 +104,6 @@ private:
 };
 
 std::ostream& operator<<(std::ostream& os, const Material& material);
-
-} // end namespace Chemistry
 
 } // end namespace nsx
 

@@ -37,19 +37,14 @@
 #include <map>
 #include <vector>
 
-namespace nsx
-{
-
-namespace Kernel
-{
+namespace nsx {
 
 /**
  * @brief generic SharedFactory class templated on the return type, the key and accepts any number
  * and/or type of parameters using variadic templates for the callback.
  */
 template <typename returnType, typename keytype, typename ...args>
-class SharedFactory
-{
+class SharedFactory {
 	typedef std::function<returnType*(args...)> callback;
 	typedef std::map<keytype,callback> callbackmap;
 
@@ -118,8 +113,6 @@ std::size_t SharedFactory<base,keytype,args...>::unregisterCallback(const keytyp
 {
 	return _map.erase(key);
 }
-
-} // end namespace Kernel
 
 } // end namespace nsx
 

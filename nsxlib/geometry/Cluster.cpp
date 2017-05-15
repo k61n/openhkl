@@ -6,11 +6,7 @@
 #include "../utils/Units.h"
 #include "../crystal/NiggliReduction.h"
 
-namespace nsx
-{
-namespace Geometry
-{
-
+namespace nsx {
 
 Cluster::Cluster(const Cluster& rhs)
 {
@@ -67,13 +63,9 @@ bool Cluster::addVector(const Eigen::Vector3d& vect)
     Eigen::Vector3d v(_center-vect*_size);
     if (v.squaredNorm()>_tolerance*_tolerance*_center.squaredNorm())
         return false;
-//	double tp=_size*_tolerance;
-//	bool b=(v.squaredNorm() < tp*tp);
     _center += vect;
     _size++;
     return true;
 }
 
-
-} // Namespace Geometry
 } // end namespace nsx

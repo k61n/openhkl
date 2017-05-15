@@ -1,12 +1,7 @@
 #include <boost/spirit/include/qi.hpp>
 #include "Parser.h"
 
-
-namespace nsx
-{
-
-namespace Utils
-{
+namespace nsx {
 
 void readIntsFromChar(const char* begin, const char* end, std::vector<int>& v)
 {
@@ -22,6 +17,5 @@ void readDoublesFromChar(const char* begin, const char* end, std::vector<double>
     qi::phrase_parse(begin, end, *qi::double_ >> qi::eoi, ascii::space, v);
 }
 
-} // end namespace Utils
-
 } // end namespace nsx
+

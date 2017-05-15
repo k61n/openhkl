@@ -33,7 +33,6 @@
 #include <Eigen/Core>
 
 namespace nsx {
-namespace Instrument {
 
 // Forward declare
 class Component;
@@ -67,6 +66,6 @@ private:
     std::vector<double> _values;
 };
 
-}
-}
+} // end namespace nsx
+
 #endif /* NSXTOOL_GONIOSTATE_H_ */

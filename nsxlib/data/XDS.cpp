@@ -51,7 +51,6 @@ static const str_vector merged_records = {"H", "K", "L", "IOBS", "SIGMA(IOBS)"};
 static const str_vector unmerged_records = {"H", "K", "L", "XD", "YD", "ZD", "IOBS", "SIGMA(IOBS)"};
 
 namespace nsx {
-namespace Data {
 
 using sptrPeak3D = XDS::sptrPeak3D;
 using PeakList = XDS::PeakList;
@@ -210,5 +209,4 @@ XDS::RecordList XDS::getUnmergedRecords() const
     return records;
 }
 
-} // Namespace Data
 } // end namespace nsx

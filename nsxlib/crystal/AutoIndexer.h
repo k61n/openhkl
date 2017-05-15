@@ -43,15 +43,10 @@
 
 namespace nsx {
 
-namespace Instrument {
 class Experiment;
-}
 
-namespace Utils {
 class ProgressHandler;
-}
 
-namespace Crystal {
 class Peak3D;
 
 class AutoIndexer {
@@ -83,7 +78,6 @@ private:
     std::shared_ptr<nsx::Utils::ProgressHandler> _handler;
 };
 
-} // namespace Crystal
 } // end namespace nsx
 
 #endif // NSXTOOL_AUTOINDEXER_H_

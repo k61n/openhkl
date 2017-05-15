@@ -36,11 +36,8 @@
 #include <vector>
 
 namespace nsx {
-namespace Data {
-class DataSet;
-}
 
-namespace Instrument {
+class DataSet;
 
 // Forward declarations
 class Diffractometer;
@@ -119,7 +116,6 @@ private:
     std::map<std::string,std::shared_ptr<DataSet>> _data;
 };
 
-} // end namespace Instrument
 } // end namespace nsx
 
 #endif /* NSXTOOL_EXPERIMENT_H_ */

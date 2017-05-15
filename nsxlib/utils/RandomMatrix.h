@@ -33,18 +33,11 @@
 
 #include <Eigen/Dense>
 
-namespace nsx
-{
-
-namespace Utils
-{
+namespace nsx {
 
 //! Create random orthogonal matrix (used for testing geometry)
 Eigen::MatrixXd randomMatrix(unsigned int n);
 
-} //Namespace Utils
-
-} //namespace nsx
-
+} // end namespace nsx
 
 #endif /* NSXTOOL_RANDOMMATIRX_H_ */

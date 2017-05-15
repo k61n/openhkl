@@ -37,8 +37,6 @@
 
 namespace nsx {
 
-namespace Utils {
-
 //! @class CSV
 //! @brief Simple CSV parser
 class CSV {
@@ -54,8 +52,6 @@ private:
 
     std::string getToken(std::istream& stream, char& delim); //!<< Get next token, write delimeter type
 };
-
-} // namespace Utils
 
 } // end namespace nsx
 

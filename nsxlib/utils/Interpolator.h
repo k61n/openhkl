@@ -41,11 +41,8 @@
 
 namespace nsx {
 
-namespace Utils {
-
 template<typename T_>
-T_ interpolate(const std::vector<T_>& elements, double index)
-{
+T_ interpolate(const std::vector<T_>& elements, double index) {
     if (index < 0)
         index = 0;
 
@@ -73,8 +70,6 @@ T_ interpolate(const std::vector<T_>& elements, double index)
 
     return (1-t)*elements[index0] + t*elements[index1];
 }
-
-} // namespace Utils
 
 } // end namespace nsx
 

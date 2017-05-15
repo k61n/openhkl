@@ -37,7 +37,6 @@
 #define NSXTOOL_ERF_INV_H_
 
 namespace nsx {
-namespace Utils {
 
 //! Inverse Error function
 double erf_inv(double y);
@@ -49,7 +48,6 @@ double getScale(double confidence);
 //! Get confidence level: equal to the integral on [-x,x] of a standard normal.
 double getConfidence(double x);
 
-} // namespace Utils
 } // end namespace nsx
 
 #endif // NSXTOOL_ERF_INV_H_

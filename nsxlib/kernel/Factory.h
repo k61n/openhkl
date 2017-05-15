@@ -36,19 +36,14 @@
 #include <map>
 #include <vector>
 
-namespace nsx
-{
-
-namespace Kernel
-{
+namespace nsx {
 
 /**
  * @brief generic factory class templated on the return type, the key and accepts any number
  * and/or type of parameters using variadic templates for the callback.
  */
 template <typename returnType, typename keytype, typename ...args>
-class Factory
-{
+class Factory {
     typedef std::function<returnType*(args...)> callback;
     typedef std::map<keytype,callback> callbackmap;
 
@@ -126,8 +121,6 @@ bool Factory<base,keytype,args...>::hasCallback(const keytype& key)
     auto it=_map.find(key);
     return (it!=_map.end());
 }
-
-} // end namespace Kernel
 
 } // end namespace nsx
 

@@ -33,14 +33,9 @@
 
 #include "../kernel/Singleton.h"
 
-namespace nsx
-{
+namespace nsx {
 
-namespace Utils
-{
-
-class Path : public nsx::Kernel::Singleton<Path,nsx::Kernel::Constructor,nsx::Kernel::Destructor>
-{
+class Path : public nsx::Kernel::Singleton<Path,nsx::Kernel::Constructor,nsx::Kernel::Destructor> {
 
 public:
 
@@ -67,9 +62,6 @@ private:
     static int _argc;
     static char** _argv;
 };
-
-
-} // end namespace Utils
 
 } // end namespace nsx
 

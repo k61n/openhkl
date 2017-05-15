@@ -11,11 +11,7 @@
 #include "../crystal/UnitCell.h"
 #include "../crystal/Peak3D.h"
 
-namespace nsx
-{
-
-namespace Crystal
-{
+namespace nsx {
 
 LatticeFunctor::LatticeFunctor()
 : Utils::LMFunctor<double>(),
@@ -154,5 +150,4 @@ int LatticeFunctor::values() const
     return 3*_peaks.size();
 }
 
-} // namespace Crystal
 } // end namespace nsx

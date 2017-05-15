@@ -33,14 +33,9 @@
 
 #include "MonoDetector.h"
 
-namespace nsx
-{
+namespace nsx {
 
-namespace Instrument
-{
-
-class CylindricalDetector : public MonoDetector
-{
+class CylindricalDetector : public MonoDetector {
 public:
 
 	//! Static constructor of a CylindricalDetector from a property tree node
@@ -80,6 +75,6 @@ public:
 
 };
 
-} //End namespace Instrument
-} // End namespace nsx
+} // end namespace nsx
+
 #endif /* NSXTOOL_CYLINDRICALDETECTOR_H_ */

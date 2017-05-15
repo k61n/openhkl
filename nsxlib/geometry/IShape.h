@@ -38,7 +38,6 @@
 #include "../utils/Types.h"
 
 namespace nsx {
-namespace Geometry {
 
 template<typename T, nsx::Types::uint D> class AABB;
 template<typename T, nsx::Types::uint D> class Ellipsoid;
@@ -55,8 +54,7 @@ enum Direction {CW,CCW};
  * coded by double-dispatching.
  */
 template<typename T,nsx::Types::uint D>
-class IShape
-{
+class IShape {
 public:
     using matrix = Eigen::Matrix<T,D,D>;
     using vector = Eigen::Matrix<T,D,1>;
@@ -410,8 +408,6 @@ void IShape<T,D>::rotate(T angle,const vector& axis,Direction dir)
     Eigen::Quaterniond temp(hc,axis(0)*hs/norm,axis(1)*hs/norm,axis(2)*hs/norm);
     rotate(temp.toRotationMatrix());
 }
-
-} // namespace Geometry
 
 } // end namespace nsx
 

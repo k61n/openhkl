@@ -4,10 +4,7 @@
 
 #include "NiggliReduction.h"
 
-namespace nsx
-{
-namespace Crystal
-{
+namespace nsx {
 
 unsigned int NiggliReduction::_itermax = 10000;
 
@@ -196,6 +193,4 @@ void NiggliReduction::transformG()
     return;
 }
 
-
-}
-}
+} // end namespace nsx

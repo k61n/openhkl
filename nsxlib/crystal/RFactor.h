@@ -34,17 +34,12 @@
 #include <memory>
 #include <vector>
 
-namespace nsx
-{
-
-namespace Crystal
-{
+namespace nsx {
 
 class Peak3D;
 using sptrPeak3D=std::shared_ptr<Peak3D>;
 
-class RFactor
-{
+class RFactor {
 public:
     RFactor(): _Rmerge(0.0), _Rmeas(0.0), _Rpim(0.0) {}
     RFactor(const std::vector<std::vector<sptrPeak3D>>&peak_equivs);
@@ -60,9 +55,6 @@ private:
     double _Rmerge, _Rmeas, _Rpim;
 };
 
-} // namespace Crystal
-
 } // end namespace nsx
-
 
 #endif // NSXTOOL_RFACTOR_R_

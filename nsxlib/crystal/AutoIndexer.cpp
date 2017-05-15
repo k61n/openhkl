@@ -46,7 +46,6 @@
 #include <string>
 
 namespace nsx {
-namespace Crystal {
 
 AutoIndexer::AutoIndexer(const std::shared_ptr<nsx::Instrument::Experiment>& expt, const std::shared_ptr<nsx::Utils::ProgressHandler>& handler):
     _peaks(),
@@ -259,5 +258,4 @@ const std::vector<std::pair<UnitCell, double> > &AutoIndexer::getSolutions() con
     return _solutions;
 }
 
-} // namespace Crystal
 } // end namespace nsx

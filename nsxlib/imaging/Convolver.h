@@ -16,11 +16,7 @@
 #include "../utils/Types.h"
 
 
-namespace nsx
-{
-
-namespace Imaging
-{
+namespace nsx {
 
 class Convolver
 {
@@ -50,7 +46,6 @@ private:
     std::vector<std::complex<double>> _transformedKernel;
 };
 
-} // Imaging
-} // SX
+} // end namespace nsx
 
 #endif // NSXTOOL_INCLUDE_CONVOLVER_H_

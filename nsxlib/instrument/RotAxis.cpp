@@ -5,11 +5,7 @@
 #include <boost/foreach.hpp>
 #include <cmath>
 
-namespace nsx
-{
-
-namespace Instrument
-{
+namespace nsx {
 
 Axis* RotAxis::create(const proptree::ptree& node)
 {
@@ -100,7 +96,5 @@ std::ostream& operator<<(std::ostream& os, const RotAxis& Rot)
 	return os;
 }
 
-} // End namespace Instrument
-
-} // End namespace nsx
+} // end namespace nsx
 

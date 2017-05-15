@@ -25,6 +25,7 @@
 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
+
 #ifndef NSXTOOL_METADATA_H_
 #define NSXTOOL_METADATA_H_
 
@@ -35,12 +36,7 @@
 #include <map>
 #include <stdexcept>
 
-namespace nsx
-{
-
-namespace Data
-{
-
+namespace nsx {
 
 // Maps
 typedef std::map<const char*,boost::any> hetermap;
@@ -133,10 +129,6 @@ template <typename _type>
 	return getKey<_type>(std::string(key));
 }
 
-} // end namespace Data
-
 } // end namespace nsx
-
-
 
 #endif // NSXTOOL_METADATA_H_

@@ -39,43 +39,26 @@
 
 #include <Eigen/Core>
 
-namespace nsx
-{
+namespace nsx {
 
-namespace Crystal
-{
-    class Peak3D;
-    class UnitCell;
-    typedef std::shared_ptr<UnitCell> sptrUnitCell;
-    typedef std::shared_ptr<Peak3D> sptrPeak3D;
-    typedef std::vector<sptrUnitCell> CellList;
-}
+class Peak3D;
+class UnitCell;
+typedef std::shared_ptr<UnitCell> sptrUnitCell;
+typedef std::shared_ptr<Peak3D> sptrPeak3D;
+typedef std::vector<sptrUnitCell> CellList;
 
-namespace Chemistry {
+using isotopeContents=std::map<std::string,double>;
 
-	using isotopeContents=std::map<std::string,double>;
+class Material;
+using sptrMaterial = std::shared_ptr<Material>;
 
-    class Material;
-    using sptrMaterial = std::shared_ptr<Material>;
-}
+class Experiment;
+typedef std::shared_ptr<Experiment> sptrExperiment;
 
-namespace Instrument
-{
-    class Experiment;
-    typedef std::shared_ptr<Experiment> sptrExperiment;
-
-
-} // end namespace instrument
-
-namespace Types
-{
-    using uint = unsigned int;
-    using RealMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
-    using ComplexMatrix = Eigen::Matrix<std::complex<double>, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
-} // end namespace Types
+using uint = unsigned int;
+using RealMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+using ComplexMatrix = Eigen::Matrix<std::complex<double>, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
 } // end namespace nsx
-
-
 
 #endif /* NSXTOOL_TYPES_H_ */

@@ -39,11 +39,7 @@
 
 #include <memory>
 
-namespace nsx
-{
-
-namespace Kernel
-{
+namespace nsx {
 
 /**
  * @brief generic singleton class templated on the type of the object to be singletonized,
@@ -54,8 +50,7 @@ namespace Kernel
  * deeper than 1.
  */
 template <typename T,template<class> class Constructor,template <class> class Destructor>
-class Singleton
-{
+class Singleton {
 public:
     //! return an instance of the class to be singletonized
     static T* Instance()
@@ -92,7 +87,6 @@ public:
     }
 };
 
-} // end namespace Kernel
 } // end namespace nsx
 
 #endif /* NSXTOOL_SINGLETON_H_ */

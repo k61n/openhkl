@@ -5,11 +5,7 @@
 
 #include "DeltaKernel.h"
 
-namespace nsx
-{
-
-namespace Imaging
-{
+namespace nsx {
 
 ConvolutionKernel* DeltaKernel::create(int nrows, int ncols)
 {
@@ -54,7 +50,5 @@ void DeltaKernel::update()
     _kernel(0,0) = 1.0;
 }
 
+} // end namespace nsx
 
-} // Imaging
-
-} // SX

@@ -10,11 +10,7 @@
 #include "../instrument/TransAxis.h"
 #include "../utils/Units.h"
 
-namespace nsx
-{
-
-namespace Crystal
-{
+namespace nsx {
 
 LatticeSolution::LatticeSolution()
 : _detector(nullptr),
@@ -169,7 +165,5 @@ std::ostream& operator<<(std::ostream& os, const LatticeSolution& solution)
 
     return os;
 }
-
-} // end namespace Crystal
 
 } // end namespace nsx

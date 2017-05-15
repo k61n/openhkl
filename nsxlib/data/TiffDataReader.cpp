@@ -6,7 +6,6 @@
 using nsx::Instrument::ComponentState;
 
 namespace nsx {
-namespace Data {
 
 IDataReader* TiffDataReader::create(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer)
 {
@@ -102,7 +101,5 @@ Eigen::MatrixXi TiffDataReader::getData(std::size_t frame)
         return data32.cast<int>();
     }
 }
-
-} // end namespace Data
 
 } // end namespace nsx

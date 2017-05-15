@@ -31,15 +31,10 @@
 
 #include <tuple>
 
-namespace nsx
-{
-
-namespace Kernel
-{
+namespace nsx {
 
 template <typename ...Ts>
-class State
-{
+class State {
 public:
 	const std::tuple<Ts...> get() const;
 	void set(Ts... args);
@@ -60,10 +55,6 @@ void State<Ts...>::set(Ts... vals)
 	_state = std::make_tuple(vals...);
 }
 
-} // end namespace Kernel
-
 } // end namespace nsx
-
-
 
 #endif /* NSXTOOL_STATE_H_ */

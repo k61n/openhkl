@@ -39,15 +39,9 @@
 #include "../utils/Types.h"
 #include "SpaceGroup.h"
 
-namespace nsx
-{
-
-namespace Crystal
-{
+namespace nsx {
 
 using Eigen::Vector3d;
-
-
 
 //! Centering type of the Bravais lattice
 enum  class LatticeCentring : char  {P='P',A='A',B='B',C='C',I='I',F='F',R='R'};
@@ -174,7 +168,6 @@ private:
 //! Print to a stream
 std::ostream& operator<<(std::ostream&,const UnitCell&);
 
-}
-}
+} // end namespace nsx
 
 #endif

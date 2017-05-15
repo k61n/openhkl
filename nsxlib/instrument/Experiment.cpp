@@ -12,7 +12,6 @@
 using nsx::Data::DataSet;
 
 namespace nsx {
-namespace Instrument {
 
 Experiment::Experiment(const Experiment& other)
 : _name(other._name),
@@ -148,8 +147,5 @@ void Experiment::removeData(const std::string& name)
         _data.erase(it);
     }
 }
-
-
-} // end namespace Instrument
 
 } // end namespace nsx

@@ -45,8 +45,6 @@
 
 namespace nsx {
 
-namespace Chemistry {
-
 namespace qi = boost::spirit::qi;
 
 //! map an isotope name to its ratio in a given compound
@@ -286,8 +284,6 @@ private:
 	qi::rule<Iterator,isotopeContents()>  _materialToken;
     qi::rule<Iterator,isotopeContents()>  _start;
 };
-
-}
 
 } // end namespace nsx
 

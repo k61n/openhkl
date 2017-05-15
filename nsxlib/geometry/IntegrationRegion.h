@@ -37,7 +37,7 @@
 #include <Eigen/Core>
 
 namespace nsx {
-namespace Geometry {
+
 class IntegrationRegion {
 public:
     enum class point_type {
@@ -63,7 +63,6 @@ private:
     Ellipsoid3D _region, _background;
 };
 
-} // namespace Geometry
 } // end namespace nsx
 
 #endif // NSXTOOL_INTEGRATIONREGION_H_

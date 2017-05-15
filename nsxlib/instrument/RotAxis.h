@@ -34,14 +34,12 @@
 
 #include "Axis.h"
 
-namespace nsx
-{
+namespace nsx {
 
-namespace Instrument
-{
-	using Eigen::Vector3d;
-	using Eigen::Matrix3d;
-	using Eigen::Quaterniond;
+using Eigen::Vector3d;
+using Eigen::Matrix3d;
+using Eigen::Quaterniond;
+
 /**
  * @brief Class defining a rotation axis.
  *
@@ -49,8 +47,7 @@ namespace Instrument
  *  and a rotation direction (CW or CCW). The direction vector needs not be normalized.
  *
  */
-class RotAxis : public Axis
-{
+class RotAxis : public Axis {
 public:
 	enum Direction {CCW,CW};
 
@@ -102,8 +99,6 @@ static const RotAxis AxisYCCW=RotAxis("YCCW",Vector3d(0,1,0),RotAxis::CCW);
 static const RotAxis AxisZCW=RotAxis("ZCW",Vector3d(0,0,1),RotAxis::CW);
 static const RotAxis AxisZCCW=RotAxis("ZCCW",Vector3d(0,0,1),RotAxis::CCW);
 
-} //namespace Geometry
-
-} // End namespace nsx
+} // end namespace nsx
 
 #endif /* NSXTOOL_ROTAXIS_H_ */

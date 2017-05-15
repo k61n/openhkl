@@ -14,23 +14,16 @@
 
 #include "../geometry/BlobFinder.h"
 #include "../geometry/Blob3D.h"
-//#include "ComponentState.h"
-//#include "ConvexHull.h"
 #include "../instrument/Detector.h"
 #include "../instrument/Diffractometer.h"
 #include "../instrument/DiffractometerStore.h"
 #include "../instrument/Gonio.h"
 #include "../data/IData.h"
-//#include "ILLAsciDataSet.h"
-//#include "Peak3D.h"
 #include "../instrument/Sample.h"
 #include "../instrument/Source.h"
-//#include "Triangle.h"
 #include "../utils/Units.h"
-//#include "Ellipsoid.h"
 
 namespace nsx {
-namespace Crystal {
 
 using nsx::Data::DataSet;
 
@@ -392,5 +385,4 @@ Mosaic::~Mosaic()
 {
 }
 
-} // namespace Crystal
 } // end namespace nsx

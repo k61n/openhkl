@@ -35,14 +35,12 @@
 #include "../utils/Types.h"
 
 namespace nsx {
-namespace Instrument {
 
 /** @brief Base class for Mono Detectors.
  *
  *
  */
-class MonoDetector : public Detector
-{
+class MonoDetector : public Detector {
 public:
 
     //! Static constructor of a MonoDetector from a property tree node
@@ -135,7 +133,6 @@ protected:
     double _distance;
 };
 
-} // end namespace Instrument
 } // end namespace nsx
 
 #endif /* NSXTOOL_MONODETECTOR_H_ */

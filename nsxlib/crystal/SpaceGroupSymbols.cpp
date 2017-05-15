@@ -8,10 +8,8 @@
 #include "../kernel/Error.h"
 #include "SpaceGroupSymbols.h"
 
-namespace nsx
-{
-namespace Crystal
-{
+namespace nsx {
+
 /* Copied from the CRYSFML library, module CFML_Symmetry_Tables
 !!-------------------------------------------------------
 !!---- Crystallographic Fortran Modules Library (CrysFML)
@@ -394,6 +392,4 @@ int SpaceGroupSymbols::getID(const std::string& symbol) const
     return -1;
 }
 
-
-} // Namespace Crystal
 } // end namespace nsx

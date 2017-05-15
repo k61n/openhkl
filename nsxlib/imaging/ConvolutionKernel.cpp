@@ -36,7 +36,6 @@
 #include "AnnularKernel.h"
 
 namespace nsx {
-namespace Imaging {
 
 using RealMatrix = nsx::Types::RealMatrix;
 
@@ -103,5 +102,5 @@ std::ostream& operator<<(std::ostream& os, const ConvolutionKernel& kernel)
     return os;
 }
 
-} // namespace Imaging
 } // end namespace nsx
+

@@ -33,15 +33,10 @@
 #include <exception>
 #include <string>
 
-namespace nsx
-{
-
-namespace Kernel
-{
+namespace nsx {
 
 template<typename T>
-class Error : public std::exception
-{
+class Error : public std::exception {
 public:
     Error(std::string message);
     Error(const Error& other) noexcept;
@@ -81,8 +76,6 @@ const char* Error<T>::what() const noexcept
 {
     return _message.c_str();
 }
-
-} // end namespace Kernel
 
 } // end namespace nsx
 

@@ -32,15 +32,10 @@
 #include <map>
 #include <string>
 
-namespace nsx
-{
-
-namespace Kernel
-{
+namespace nsx {
 
 template <typename keytype,typename storable>
-class Store : public std::map<std::string,storable>
-{
+class Store : public std::map<std::string,storable> {
 
 public:
 	Store();
@@ -63,8 +58,6 @@ template <typename keytype,typename storable>
 storable Store<keytype,storable>::get(const keytype& key)
 {
 }
-
-} // end namespace Kernel
 
 } // end namespace nsx
 

@@ -13,7 +13,6 @@
 #include "../kernel/Singleton.h"
 
 namespace nsx {
-namespace Imaging {
 
 class KernelFactory :
         public nsx::Kernel::Factory<ConvolutionKernel,std::string,int,int>,
@@ -24,7 +23,6 @@ public:
     virtual ~KernelFactory();
 };
 
-} // namespace Imaging
 } // end namespace nsx
 
 #endif /* NSXLIB_IMAGING_KERNELFACTORY_H_ */

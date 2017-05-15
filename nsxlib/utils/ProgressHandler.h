@@ -12,8 +12,6 @@
 
 namespace nsx {
 
-namespace Utils {
-
 // progress handler callback:
 // progressHandler(double progress) -> int
 // argument progress is the progress (as a percentage)
@@ -51,9 +49,6 @@ private:
     std::function<void(void)> _callback;
 };
 
-} // namespace Utils
-
 } // end namespace nsx
-
 
 #endif // PROGRESSHANDLER_H

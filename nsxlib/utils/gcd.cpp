@@ -37,8 +37,6 @@
 
 namespace nsx {
 
-namespace Utils {
-
 int gcd(int a, int b)
 {
     int c;
@@ -51,6 +49,5 @@ int gcd(int a, int b)
     return b < 0 ? -b : b;
 }
 
-} // namespace Utils
-
 } // end namespace nsx
+

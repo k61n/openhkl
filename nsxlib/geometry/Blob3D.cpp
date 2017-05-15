@@ -14,10 +14,7 @@ using Eigen::SelfAdjointEigenSolver;
 
 static const double minimum_blob_mass = 1e-15;
 
-namespace nsx
-{
-namespace Geometry
-{
+namespace nsx {
 
 Blob3D::Blob3D():_m000(0),_m100(0),_m010(0),_m001(0),_m200(0),_m020(0),_m002(0),_m110(0),_m101(0),_m011(0)
 ,_npoints(0),_minValue(std::numeric_limits<double>::max()),_maxValue(std::numeric_limits<double>::min())
@@ -312,6 +309,5 @@ std::ostream& operator<<(std::ostream& os, const Blob3D& b)
     return os;
 }
 
-} // End namespace Geometry
-} // End namspace SX
+} // end namespace nsx
 

@@ -64,16 +64,11 @@
    | 1   2  .  .    .    n|
  */
 
-namespace nsx
-{
-
-namespace Utils
-{
+namespace nsx {
 
 using nsx::Instrument::DataOrder;
 
-class MatrixParser
-{
+class MatrixParser {
 public:
 
     MatrixParser()=default;
@@ -84,8 +79,6 @@ public:
     bool operator()(DataOrder dataOrder, const std::string& buffer, Eigen::MatrixXi& matrix) const;
 
 };
-
-} // end namespace Utils
 
 } // end namespace nsx
 

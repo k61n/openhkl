@@ -5,8 +5,6 @@
 
 namespace nsx {
 
-namespace Utils {
-
 bool MatrixParser::operator()(DataOrder dataOrder, const char* begin, size_t buffer_size, Eigen::MatrixXi& matrix) const
 {
     size_t n_rows = matrix.rows();
@@ -83,7 +81,5 @@ bool MatrixParser::operator()(DataOrder dataOrder, const std::string& buffer, Ei
 {
     return this->operator()(dataOrder,buffer.c_str(),buffer.size(),matrix);
 }
-
-} // end namespace Utils
 
 } // end namespace nsx

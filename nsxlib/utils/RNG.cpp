@@ -10,8 +10,6 @@
 
 namespace nsx {
 
-namespace Utils {
-
 double xor128(void)
 {
     static uint32_t x = 123456789;
@@ -26,6 +24,5 @@ double xor128(void)
     return w/4294967295.0;
 }
 
-} /* namespace Utils */
-
 } // end namespace nsx
+

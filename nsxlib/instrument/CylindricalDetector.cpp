@@ -12,7 +12,6 @@
 #include "../utils/Units.h"
 
 namespace nsx {
-namespace Instrument {
 
 Detector* CylindricalDetector::create(const proptree::ptree& node)
 {
@@ -151,5 +150,5 @@ bool CylindricalDetector::hasKf(const Eigen::Vector3d& kf,const Eigen::Vector3d&
     return true;
 }
 
-} // Namespace Instrument
 } // end namespace nsx
+

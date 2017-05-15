@@ -45,13 +45,7 @@
 #include "Triangle.h"
 #include "../kernel/Error.h"
 
-//
-
-namespace nsx
-{
-
-namespace Geometry
-{
+namespace nsx {
 
 /* !
  * \brief Class ConvexHull.
@@ -1000,8 +994,6 @@ std::ostream& operator<<(std::ostream& os, const ConvexHull<T>& chull)
     chull.print(os);
     return os;
 }
-
-} // end namespace Geometry
 
 } // end namespace nsx
 

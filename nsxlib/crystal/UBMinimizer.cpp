@@ -18,11 +18,7 @@
 #include "../utils/MinimizerGSL.h"
 #include "../utils/Units.h"
 
-namespace nsx
-{
-
-namespace Crystal
-{
+namespace nsx {
 
 UBFunctor::UBFunctor() : Utils::LMFunctor<double>(), _peaks(0), _detector(nullptr), _sample(nullptr),_source(nullptr), _fixedParameters()
 {
@@ -464,5 +460,4 @@ std::ostream& operator<<(std::ostream& os, const UBSolution& solution)
     return os;
 }
 
-} // end namespace Crystal
 } // end namespace nsx

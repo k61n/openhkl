@@ -8,11 +8,7 @@
 #include "Monochromator.h"
 #include "../utils/Units.h"
 
-namespace nsx
-{
-
-namespace Instrument
-{
+namespace nsx {
 
 Monochromator::Monochromator()
 : _name(""),
@@ -192,6 +188,5 @@ Eigen::Vector3d Monochromator::getKi() const
     return Eigen::Vector3d(0,1.0/_wavelength,0.0);
 }
 
-} /* namespace Instrument */
-
 } // end namespace nsx
+

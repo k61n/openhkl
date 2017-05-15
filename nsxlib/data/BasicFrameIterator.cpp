@@ -6,7 +6,6 @@
 #include "IData.h"
 
 namespace nsx {
-namespace Data {
 
 BasicFrameIterator::BasicFrameIterator(DataSet& data, unsigned int idx): IFrameIterator(data, idx)
 {
@@ -26,5 +25,4 @@ void BasicFrameIterator::advance()
     }
 }
 
-} // namespace Data
 } // end namespace nsx

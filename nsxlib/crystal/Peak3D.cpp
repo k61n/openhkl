@@ -64,7 +64,6 @@ using nsx::Instrument::DetectorEvent;
 using nsx::Instrument::ComponentState;
 
 namespace nsx {
-namespace Crystal {
 
 using shape_type = Peak3D::shape_type;
 
@@ -505,5 +504,4 @@ int Peak3D::getActiveUnitCellIndex() const
     return _activeUnitCellIndex;
 }
 
-} // namespace Crystal
 } // end namespace nsx

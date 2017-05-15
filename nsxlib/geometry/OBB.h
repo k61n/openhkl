@@ -44,15 +44,10 @@
 #include "Sphere.h"
 #include "../utils/Types.h"
 
-namespace nsx
-{
-
-namespace Geometry
-{
+namespace nsx {
 
 template<typename T, nsx::Types::uint D>
-class OBB : public IShape<T,D>
-{
+class OBB : public IShape<T,D> {
 
 public:
 
@@ -589,8 +584,6 @@ bool collideOBBSphere(const OBB<T,D>& obb, const Sphere<T,D>& s)
 {
     return collideSphereOBB(s,obb);
 }
-
-} // namespace Geometry
 
 } // end namespace nsx
 

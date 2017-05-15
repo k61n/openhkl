@@ -46,25 +46,16 @@
 
 namespace nsx {
 
-namespace Geometry {
 class Blob3D;
-}
 
+class DataSet;
 
-namespace Data {
-    class DataSet;
-}
-
-namespace Instrument {
-    class Diffractometer;
-    class ComponentState;
-    class DetectorEvent;
-    class Sample;
-    class Detector;
-    class Source;
-}
-
-namespace Crystal {
+class Diffractometer;
+class ComponentState;
+class DetectorEvent;
+class Sample;
+class Detector;
+class Source;
 
 class PeakIntegrator;
 
@@ -254,7 +245,6 @@ private:
 
 using sptrPeak3D = std::shared_ptr<Peak3D>;
 
-} // namespace Crystal
 } // end namespace nsx
 
-#endif /* NSXTOOL_SIMPLEPEAK_H_ */
+#endif /* NSXTOOL_PEAK3D_H_ */

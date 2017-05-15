@@ -11,7 +11,6 @@
 #include "KernelFactory.h"
 
 namespace nsx {
-namespace Imaging {
 
 KernelFactory::KernelFactory()
 {
@@ -24,5 +23,5 @@ KernelFactory::~KernelFactory()
 {
 }
 
-} // Imaging
-} // SX
+} // end namespace nsx
+

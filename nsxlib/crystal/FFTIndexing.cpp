@@ -8,27 +8,13 @@
 #include "../utils/Units.h"
 #include "FFTIndexing.h"
 #include <iostream>
-namespace nsx
-{
 
-namespace Crystal
-{
+namespace nsx {
 
 FFTIndexing::FFTIndexing(int nSubdiv,double amax)
     : _nSubdiv(nSubdiv), _amax(amax)
 {
 }
-
-//void FFTIndexing::addVector(const Eigen::Vector3d& v)
-//{
-//    _qVectors.push_back(std::cref(v));
-//}
-
-//void FFTIndexing::addVectors(const std::vector<Eigen::Vector3d>& vec)
-//{
-//    for (const auto& v : vec)
-//        _qVectors.push_back(std::cref(v));
-//}
 
 std::vector<tVector> FFTIndexing::findOnSphere(const std::vector<Eigen::Vector3d>& qvects, unsigned int nstacks, unsigned int nsolutions) const
 {
@@ -119,5 +105,4 @@ std::vector<tVector> FFTIndexing::findOnSphere(const std::vector<Eigen::Vector3d
     return result;
 }
 
-} // end namespace Crystal
 } // end namespace nsx

@@ -13,14 +13,9 @@
 
 #include "ConvolutionKernel.h"
 
-namespace nsx
-{
+namespace nsx {
 
-namespace Imaging
-{
-
-class ConstantKernel : public ConvolutionKernel
-{
+class ConstantKernel : public ConvolutionKernel {
 public:
 	static ConvolutionKernel* create(int nrows, int ncols);
 
@@ -36,7 +31,6 @@ private:
     void update() override;
 };
 
-} // Imaging
-} // SX
+} // end namespace nsx
 
 #endif // NSXTOOL_INCLUDED_ANNULARKERNEL_H_

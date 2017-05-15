@@ -34,11 +34,7 @@
 
 #include <ostream>
 
-namespace nsx
-{
-
-namespace Geometry
-{
+namespace nsx {
 
 // Forward declaration
 template <typename T>
@@ -49,8 +45,7 @@ class Edge;
  * This class implements the Vertex object used in the incremental convex hull algorithm.
  */
 template<typename T>
-class Vertex
-{
+class Vertex {
 
 public:
 
@@ -118,8 +113,6 @@ std::ostream& operator<<(std::ostream& os, const Vertex<T>& vertex)
 	vertex.print(os);
 	return os;
 }
-
-} // end namespace Geometry
 
 } // end namespace nsx
 

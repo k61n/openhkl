@@ -4,7 +4,6 @@
 #include "Units.h"
 
 namespace nsx {
-namespace Units {
 
 // Needs c++0x features enabled to be able to initialize the map in the following way
 std::unordered_map<std::string,double> UnitsManager::_unitsMap = {
@@ -67,5 +66,5 @@ double UnitsManager::get(const std::string& units)
     return it->second;
 }
 
-} // End namespace Units
-} // End namespace nsx
+} // end namespace nsx
+

@@ -42,15 +42,9 @@
 
 #include "../crystal/PeakRecord.h"
 
-namespace nsx
-{
+namespace nsx {
 
-namespace Crystal {
-    class Peak3D;
-}
-
-namespace Data
-{
+class Peak3D;
 
 class XDS {
 public:
@@ -79,7 +73,6 @@ private:
     const std::vector<std::string> _records;
 };
 
-} // Namespace Data
 } // end namespace nsx
 
 #endif /* NSXTOOL_XDS_H_ */

@@ -31,8 +31,6 @@
 
 namespace nsx {
 
-namespace Instrument{
-
 struct InstrumentState {
     ComponentState detector;
     ComponentState source;
@@ -41,7 +39,6 @@ struct InstrumentState {
     InstrumentState interpolate(const InstrumentState& other, double t) const;
 };
 
-} // end namespace Instrument
 } // end namespace nsx
 
 #endif // NSXTOOL_INSTRUMENTSTATE_H_

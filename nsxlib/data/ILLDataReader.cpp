@@ -27,8 +27,6 @@ using nsx::Instrument::ComponentState;
 
 namespace nsx {
 
-namespace Data {
-
 using nsx::Instrument::Detector;
 using nsx::Utils::MatrixParser;
 
@@ -461,7 +459,5 @@ void ILLDataReader::readMetadata(const char* buf)
         throw std::runtime_error("ILLAsciiMetaReader: Fail to read FBlock in stream");
     }
 }
-
-} // end namespace Data
 
 } // end namespace nsx

@@ -43,15 +43,10 @@
 #include "OBB.h"
 #include "../utils/Types.h"
 
-namespace nsx
-{
-
-namespace Geometry
-{
+namespace nsx {
 
 template<typename T, nsx::Types::uint D>
-class Sphere : public IShape<T,D>
-{
+class Sphere : public IShape<T,D> {
 
     // Some useful typedefs;
     typedef Eigen::Matrix<T,D,D> matrix;
@@ -303,8 +298,6 @@ bool collideSphereOBB(const Sphere<T,D>& s, const OBB<T,D>& obb)
     Ellipsoid<T,D> ell(s.getCenter(),scale,rot);
     return collideEllipsoidOBB(ell,obb);
 }
-
-} // namespace Geometry
 
 } // end namespace nsx
 

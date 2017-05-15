@@ -45,16 +45,9 @@
 #include "Convolver.h"
 #include "../utils/Types.h"
 
+namespace nsx {
 
-
-namespace nsx
-{
-
-namespace Imaging
-{
-
-class ConvolutionKernel
-{
+class ConvolutionKernel {
 public:
     typedef std::map<std::string, double> ParameterMap;
 
@@ -90,7 +83,6 @@ protected:
 
 std::ostream& operator<<(std::ostream& os, const ConvolutionKernel& kernel);
 
-} // namespace Imaging 
-} // end namespace nsx 
+} // end namespace nsx
 
 #endif /* NSXTOOL_CONVOLUTIONKERNEL_H_ */

@@ -46,10 +46,7 @@
 
 namespace nsx {
 
-namespace Imaging {
-
-class AnnularKernel : public ConvolutionKernel
-{
+class AnnularKernel : public ConvolutionKernel {
 public:
 	static ConvolutionKernel* create(int nrows, int ncols);
 
@@ -65,7 +62,6 @@ private:
     void update() override;
 };
 
-} // Imaging
-} // SX
+} // end namespace nsx
 
 #endif // NSXTOOL_INCLUDED_ANNULARKERNEL_H_

@@ -39,7 +39,6 @@
 static const double g_pi = double(M_PI);
 
 namespace nsx {
-namespace Utils {
 
 Lorentzian::Lorentzian(double a, double b, double x0):
     _a(a), _b(b), _x0(x0)
@@ -65,5 +64,5 @@ double nsx::Utils::Lorentzian::evaluateScan(double x) const
     return _a*_a/_b*(std::atan(t2) - std::atan(t1));
 }
 
-} // namespace Utils
 } // end namespace nsx
+

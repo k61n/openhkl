@@ -39,8 +39,6 @@
 
 namespace nsx {
 
-namespace Utils {
-
 //! Compute gcd of two integers
 int gcd(int a, int b);
 
@@ -51,9 +49,6 @@ int gcd(int a, Args... args)
     return gcd(a, gcd(args...));
 }
 
-} // namespace Utils
-
 } // end namespace nsx
-
 
 #endif // NSXTOOL_GCD_H_

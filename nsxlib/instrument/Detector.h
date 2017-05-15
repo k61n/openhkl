@@ -50,7 +50,6 @@
 #include "../utils/Enums.h"
 
 namespace nsx {
-namespace Instrument {
 
 namespace property_tree=boost::property_tree;
 
@@ -136,7 +135,6 @@ private:
     DataOrder _dataorder;
 };
 
-} // end namespace Instrument
 } // end namespace nsx
 
 #endif /* NSXTOOL_DETECTOR_H_ */

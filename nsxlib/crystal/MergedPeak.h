@@ -47,7 +47,6 @@
 #include "Intensity.h"
 
 namespace nsx {
-namespace Crystal {
 
 class MergedPeak {
 public:
@@ -77,7 +76,6 @@ private:
     bool _friedel;
 };
 
-} // namespace Crystal
 } // end namespace nsx
 
 #endif /* NSXTOOL_SIMPLEPEAK_H_ */

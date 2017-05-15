@@ -6,7 +6,6 @@
 #include "TransAxis.h"
 
 namespace nsx {
-namespace Instrument {
 
 AxisFactory::AxisFactory()
 {
@@ -18,5 +17,5 @@ AxisFactory::~AxisFactory()
 {
 }
 
-} // end namespace Instrument
 } // end namespace nsx
+

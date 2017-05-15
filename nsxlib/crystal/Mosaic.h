@@ -16,16 +16,12 @@
 #include "../geometry/ConvexHull.h"
 
 namespace nsx {
-namespace Instrument {
+
 class Diffractometer;
 class Sample;
-}
 
-namespace Data {
 class DataSet;
-}
 
-namespace Crystal {
 class Mosaic {
 
 public:
@@ -55,7 +51,6 @@ private:
 
 double ellipsoids_overlap(const nsx::Geometry::Ellipsoid<double,3>& ell1,const nsx::Geometry::Ellipsoid<double,3>& ell2);
 
-} // namespace Crystal
 } // end namespace nsx
 
 #endif /* MOSAIC_H_ */

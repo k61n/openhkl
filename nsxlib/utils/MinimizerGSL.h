@@ -53,8 +53,6 @@
 
 namespace nsx {
 
-namespace Utils {
-
 class MinimizerGSL: public IMinimizer {
 public:
     MinimizerGSL();
@@ -96,8 +94,6 @@ private:
     Eigen::VectorXd _inputEigen;
     Eigen::VectorXd _outputEigen;
 };
-
-} // end namespace Utils
 
 } // end namespace nsx
 

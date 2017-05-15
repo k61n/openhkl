@@ -7,7 +7,6 @@
 #include "Gonio.h"
 
 namespace nsx {
-namespace Instrument {
 
 Component::Component() : _name(""), _gonio(), _position(Eigen::Vector3d::Zero())
 {
@@ -121,5 +120,4 @@ ComponentState Component::createState(const std::map<std::string,double>& values
     return ComponentState(this, values_vec);
 }
 
-} // namespace Instrument
 } // end namespace nsx

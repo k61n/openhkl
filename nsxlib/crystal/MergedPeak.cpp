@@ -40,7 +40,6 @@
 
 
 namespace nsx {
-namespace Crystal {
 
 MergedPeak::MergedPeak(const SpaceGroup& grp, bool friedel):
     _hkl(), _intensity(0.0, 0.0), _chiSquared(0.0), _std(0.0), _peaks(), _grp(grp), _friedel(friedel), _d(0.0)
@@ -186,5 +185,4 @@ const std::vector<nsx::Crystal::sptrPeak3D> &nsx::Crystal::MergedPeak::getPeaks(
     return _peaks;
 }
 
-} // namespace Crystal
 } // end namespace nsx

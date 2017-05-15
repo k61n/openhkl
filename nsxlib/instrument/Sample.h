@@ -41,16 +41,11 @@
 #include "../crystal/UnitCell.h"
 #include "../utils/Types.h"
 
-namespace nsx
-{
-
-namespace Instrument
-{
+namespace nsx {
 
 using nsx::Crystal::CellList;
 
-class Sample : public Component
-{
+class Sample : public Component {
 public:
 
     //! Static constructor of a Sample from a property tree node
@@ -105,7 +100,6 @@ private:
     CellList _cells;
 };
 
-} // Namespace Instrument
 } // end namespace nsx
 
 #endif /* NSXTOOL_SAMPLE_H_ */

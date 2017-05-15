@@ -39,11 +39,7 @@
 
 #include "ComponentState.h"
 
-namespace nsx
-{
-
-namespace Instrument
-{
+namespace nsx {
 
 class Gonio;
 
@@ -52,8 +48,7 @@ namespace proptree=boost::property_tree;
 /*
  * Interface for the components of an instrument (e.g. detector, goniometer, source ...).
  */
-class Component
-{
+class Component {
 public:
 
     //! Default constructor
@@ -107,8 +102,6 @@ public:
     //! The position of the component at rest, i.e. not modified by the Gonio.
     Eigen::Vector3d _position;
 };
-
-} // end namespace Instrument
 
 } // end namespace nsx
 

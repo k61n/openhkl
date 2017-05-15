@@ -8,7 +8,6 @@
 #include "../utils/Path.h"
 
 namespace nsx {
-namespace Utils {
 
 int Path::_argc = 0;
 char** Path::_argv = nullptr;
@@ -130,5 +129,5 @@ void Path::setArgv(int argc, char **argv)
     _argv = argv;
 }
 
-} // end namespace Utils
 } // end namespace nsx
+

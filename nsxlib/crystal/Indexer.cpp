@@ -35,9 +35,7 @@
 
 #include "Indexer.h"
 
-namespace nsx{
-	namespace Crystal{
-
+namespace nsx {
 
 Indexer::Indexer(ptrUnitCell cell):
 		_cell(cell),
@@ -144,5 +142,4 @@ void Indexer::storePeak(Peak3D* peak) {
 	}
 }
 
-}
-}
+} // end namespace nsx

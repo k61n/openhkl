@@ -38,9 +38,6 @@
 
 namespace nsx {
 
-namespace Utils {
-
-
 IMinimizer::IMinimizer():
     _numValues(0),
     _numParams(0),
@@ -126,7 +123,5 @@ int IMinimizer::numIterations()
     return _numIter;
 }
 
-
-} // namespace Utils
-
 } // end namespace nsx
+

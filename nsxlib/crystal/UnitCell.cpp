@@ -6,11 +6,7 @@
 #include "../utils/Units.h"
 #include "../utils/gcd.h"
 
-namespace nsx
-{
-
-namespace Crystal
-{
+namespace nsx {
 
 UnitCell::UnitCell():
     nsx::Geometry::Basis(),
@@ -23,7 +19,6 @@ UnitCell::UnitCell():
     _hklTolerance(0.2)
 {
 }
-
 
 UnitCell::UnitCell(double a, double b, double c, double alpha, double beta, double gamma, LatticeCentring centring,BravaisType bravais,std::shared_ptr<nsx::Geometry::Basis> reference)
 : _material(),
@@ -513,5 +508,4 @@ double UnitCell::getHKLTolerance() const
     return _hklTolerance;
 }
 
-} // end namespace Chemistry
 } // end namespace nsx

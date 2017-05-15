@@ -34,18 +34,11 @@
 
 #include <memory>
 
-namespace nsx
-{
+namespace nsx {
 
-namespace Instrument
-{
 class Detector;
 class Sample;
 class Source;
-}
-
-namespace Crystal
-{
 
 class LatticeMinimizer;
 
@@ -80,8 +73,6 @@ struct LatticeSolution
 
 	friend std::ostream& operator<<(std::ostream& os, const LatticeSolution& solution);
 };
-
-} // end namespace Crystal
 
 } // end namespace nsx
 

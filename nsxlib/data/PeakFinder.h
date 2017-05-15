@@ -8,26 +8,15 @@
 #include "../imaging/ConvolutionKernel.h"
 
 
-namespace nsx
-{
+namespace nsx {
 
-namespace Imaging
-{
 class Convolver;
-}
 
-namespace Utils
-{
 class ProgressHandler;
-}
-
-namespace Data
-{
 
 class DataSet;
 
-class PeakFinder
-{
+class PeakFinder {
 public:
     PeakFinder();
     bool find(std::vector<std::shared_ptr<DataSet>> numors);
@@ -71,8 +60,6 @@ private:
     int _minComp;
     int _maxComp;
 };
-
-} // namespace Data
 
 } // end namespace nsx
 

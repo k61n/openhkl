@@ -32,11 +32,11 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
+
 #ifndef NSXTOOL_PEAKRECORD_H_
 #define NSXTOOL_PEAKRECORD_H_
 
 namespace nsx {
-namespace Crystal {
 
 class Peak3D;
 class MergedPeak;
@@ -55,7 +55,6 @@ public:
     bool operator<(const PeakRecord& other) const;
 };
 
-} // Namespace Crystal
 } // end namespace nsx
 
 #endif /* NSXTOOL_PEAKRECORD_H_ */

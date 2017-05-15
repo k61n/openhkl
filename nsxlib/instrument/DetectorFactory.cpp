@@ -6,11 +6,7 @@
 #include "FlatDetector.h"
 #include "MultiDetector.h"
 
-namespace nsx
-{
-
-namespace Instrument
-{
+namespace nsx {
 
 DetectorFactory::DetectorFactory()
 {
@@ -23,6 +19,5 @@ DetectorFactory::~DetectorFactory()
 {
 }
 
-} // end namespace Instrument
-
 } // end namespace nsx
+

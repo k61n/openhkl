@@ -25,19 +25,16 @@
 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
+
 #ifndef NSXTOOL_Cluster_H_
 #define NSXTOOL_Cluster_H_
 
 #include <Eigen/Dense>
 
-namespace nsx
-{
+namespace nsx {
 
-namespace Geometry
-{
 //! Class to group peaks in clusters in 3Dimensions.
-class Cluster
-{
+class Cluster {
 public:
 	//! Create a cluster with a tolerance on the norm
 	//! Create a cluster from a fist vector with a tolerance on the norm
@@ -63,7 +60,6 @@ private:
 
 };
 
-} // Namespace Geometry
 } // end namespace nsx
 
 #endif /*NXSTOOL_Cluster_H_*/

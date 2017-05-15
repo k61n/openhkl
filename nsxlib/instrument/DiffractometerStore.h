@@ -38,11 +38,7 @@
 #include "Diffractometer.h"
 #include "../kernel/Singleton.h"
 
-namespace nsx
-{
-
-namespace Instrument
-{
+namespace nsx {
 
 typedef std::set<std::string> diffractometersList;
 typedef std::shared_ptr<Diffractometer> sptrDiffractometer;
@@ -61,8 +57,6 @@ public:
     diffractometersList getDiffractometersList() const;
 
 };
-
-} // end namespace Instrument
 
 } // end namespace nsx
 

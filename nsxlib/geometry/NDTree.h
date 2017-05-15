@@ -38,7 +38,6 @@
 
 
 namespace nsx {
-namespace Geometry {
 
 // Constant expression necessary to initialize
 // _children attribute in the NDTree class
@@ -710,7 +709,6 @@ unsigned int NDTree<T,D>::numChambers() const
     return 1;
 }
 
-} // namespace Geometry
 } // end namespace nsx
 
 #endif /* NSXTOOL_NDTREE_H_ */

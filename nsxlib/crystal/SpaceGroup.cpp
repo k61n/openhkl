@@ -39,12 +39,7 @@
 using std::string;
 using std::vector;
 
-namespace nsx
-{
-
-namespace Crystal
-{
-
+namespace nsx {
 
 SpaceGroup::SpaceGroup(const std::string& symbol)
 {
@@ -325,7 +320,5 @@ bool SpaceGroup::isFriedelEquivalent(double h1, double k1, double l1, double h2,
     }
     return false;
 }
-
-} // end namespace Crystal
 
 } // end namespace nsx

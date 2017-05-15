@@ -44,11 +44,7 @@
 #include "Axis.h"
 #include "RotAxis.h"
 
-namespace nsx
-{
-
-namespace Instrument
-{
+namespace nsx {
 
 namespace proptree=boost::property_tree;
 
@@ -144,7 +140,6 @@ public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
-} // namespace Geometry
 } // end namespace nsx
 
 #endif /* SX_GONIO_H_ */

@@ -44,8 +44,6 @@
 
 namespace nsx {
 
-namespace Data {
-
 using nsx::Instrument::Diffractometer;
 
 class ILLDataReader final: public IDataReader {
@@ -99,8 +97,6 @@ private:
     const char* _mapAddress;
     std::size_t _currentLine;
 };
-
-} // end namespace Data
 
 } // end namespace nsx
 

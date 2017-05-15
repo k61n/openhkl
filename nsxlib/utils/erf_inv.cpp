@@ -39,7 +39,6 @@
 #include <limits>
 
 namespace nsx {
-namespace Utils {
 
 static double erf_inv_approx(double y);
 
@@ -98,5 +97,4 @@ double getConfidence(double x)
     return std::erf(x *factor);
 }
 
-} // namespace Utils
 } // end namespace nsx

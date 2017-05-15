@@ -7,7 +7,6 @@
 #include "RawDataReader.h"
 
 namespace nsx {
-namespace Data {
 
 template <typename Reader>
 class C {
@@ -32,5 +31,4 @@ DataReaderFactory::DataReaderFactory()
     //registerCallback("raw",  &C<RawDataReader>::create);
 }
 
-} // end namespace Data
 } // end namespace nsx

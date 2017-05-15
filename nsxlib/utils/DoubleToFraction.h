@@ -1,10 +1,6 @@
 #include <cmath>
 
-namespace nsx
-{
-
-namespace Utils
-{
+namespace nsx {
 
 void doubleToFraction(double number, int nmax, long& nom, long& dnom)
 {
@@ -65,7 +61,5 @@ void doubleToFraction(double number, int nmax, long& nom, long& dnom)
     return;
 }
 
-}
-
-}
+} // end namespace nsx
 

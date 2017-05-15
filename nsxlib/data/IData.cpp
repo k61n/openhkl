@@ -33,7 +33,6 @@
 
 
 namespace nsx {
-namespace Data {
 
 using Eigen::Matrix3d;
 using boost::filesystem::path;
@@ -864,5 +863,4 @@ Eigen::Vector3d DataSet::getQ(const Eigen::Vector3d& pix) const
     return state.sample.transformQ(q);
 }
 
-} // end namespace Data
 } // end namespace nsx

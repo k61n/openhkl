@@ -14,16 +14,11 @@
 
 #include <Eigen/Dense>
 
-namespace nsx
-{
-
-namespace Instrument
-{
+namespace nsx {
 
 namespace proptree=boost::property_tree;
 
-class Monochromator
-{
+class Monochromator {
 
 public:
 
@@ -103,8 +98,6 @@ private:
 	double _height;
 
 };
-
-} /* namespace Instrument */
 
 } // end namespace nsx
 

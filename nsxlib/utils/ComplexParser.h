@@ -35,16 +35,11 @@
 #include <complex>
 #include <string>
 
-namespace nsx
-{
-
-namespace Utils
-{
+namespace nsx {
 
 //! Parse an expression for complex number of the type a+bi
 template <typename Iterator>
-bool strToComplex(Iterator first, Iterator last, std::complex<double>& c)
-{
+bool strToComplex(Iterator first, Iterator last, std::complex<double>& c) {
     using boost::spirit::qi::double_;
     using boost::spirit::qi::_1;
     using boost::spirit::qi::phrase_parse;
@@ -72,8 +67,7 @@ bool strToComplex(Iterator first, Iterator last, std::complex<double>& c)
 }
 
 template <typename T>
-std::string complexToString(const std::complex<T>& number, double tolerance=1.0e-6)
-{
+std::string complexToString(const std::complex<T>& number, double tolerance=1.0e-6) {
     if (std::norm(number) <= tolerance)
         return "0";
 
@@ -92,11 +86,6 @@ std::string complexToString(const std::complex<T>& number, double tolerance=1.0e
     return v;
 }
 
-
-
-} // end namespace Utils
-
 } // end namespace nsx
-
 
 #endif /* NSXTOOL_COMPLEXPARSER_H_ */

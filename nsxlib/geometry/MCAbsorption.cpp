@@ -11,10 +11,8 @@
 #include "../kernel/Error.h"
 #include "MCAbsorption.h"
 
-namespace nsx
-{
-namespace Geometry
-{
+namespace nsx {
+
 MCAbsorption::MCAbsorption(double width, double height, double pos):_sample(nullptr), _width(width),_height(height), _pos(pos), _muScat(0.0), _muAbs(0.0)
 {
     _random=std::bind(std::uniform_real_distribution<double>(-0.5,0.5),std::mt19937(std::time(0)));
@@ -100,6 +98,4 @@ double MCAbsorption::run(unsigned int nIterations, const Eigen::Vector3d& outV, 
     return transmission;
 }
 
-
-} // Namespace Geometry
 } // end namespace nsx

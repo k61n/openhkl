@@ -2,7 +2,6 @@
 
 namespace nsx {
 
-
 Timer::Timer():_bt(0),_et(0)
 {
 

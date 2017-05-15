@@ -44,8 +44,6 @@
 #include "Gonio.h"
 
 namespace nsx {
-namespace Instrument {
-
 
 Detector* Detector::create(const proptree::ptree& node)
 {
@@ -139,5 +137,5 @@ bool Detector::receiveKf(double& px, double& py, const Eigen::Vector3d& kf, cons
     return hasKf(kft, fromt, px, py, t);
 }
 
-} // End namespace Instrument
-} // End namespace nsx
+} // end namespace nsx
+

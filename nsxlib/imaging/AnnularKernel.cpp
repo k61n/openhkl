@@ -15,7 +15,6 @@
 #endif
 
 namespace nsx {
-namespace Imaging {
 
 ConvolutionKernel* AnnularKernel::create(int nrows, int ncols)
 {
@@ -98,5 +97,5 @@ void nsx::Imaging::AnnularKernel::update()
     _kernel = inner - outer;
 }
 
-} // Imaging
-} // SX
+} // end namespace nsx
+

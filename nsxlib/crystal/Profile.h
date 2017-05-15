@@ -43,7 +43,6 @@
 #include "../utils/Lorentzian.h"
 
 namespace nsx {
-namespace Crystal {
 
 class Profile {
     using Lorentzian = nsx::Utils::Lorentzian;
@@ -61,7 +60,6 @@ private:
     nsx::Utils::Gaussian _gauss;
 };
 
-} // namespace Crystal
 } // end namespace nsx
 
 #endif // NSXTOOL_PROFILE_H_

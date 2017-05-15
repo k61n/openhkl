@@ -33,8 +33,6 @@
 #include <Eigen/Dense>
 
 namespace nsx {
-namespace Crystal {
-
 
 class GruberReduction
 {
@@ -50,6 +48,6 @@ private:
     double _epsilon;
 };
 
-}
-}
+} // end namespace nsx
+
 #endif

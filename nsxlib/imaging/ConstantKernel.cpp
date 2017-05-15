@@ -6,11 +6,7 @@
 #include "ConstantKernel.h"
 
 
-namespace nsx
-{
-
-namespace Imaging
-{
+namespace nsx {
 
 ConvolutionKernel* ConstantKernel::create(int nrows, int ncols)
 {
@@ -57,7 +53,5 @@ void nsx::Imaging::ConstantKernel::update()
     }
 }
 
+} // end namespace nsx
 
-} // Imaging
-
-} // SX

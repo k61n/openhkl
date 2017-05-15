@@ -28,10 +28,10 @@
 
 #ifndef NSXTOOL_NIGGLIREDUCTION_H_
 #define NSXTOOL_NIGGLIREDUCTION_H_
+
 #include <Eigen/Dense>
 
 namespace nsx {
-namespace Crystal {
 
 /** Implementation of primitive unit-cell reduction using the method described in :
  *	"Numerically stable algorithms for the computation of reduced Unit cells"
@@ -71,6 +71,6 @@ private:
     int _l,_m,_n;
 };
 
-}
-}
+} // end namespace nsx
+
 #endif

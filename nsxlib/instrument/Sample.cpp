@@ -10,11 +10,7 @@
 #include "Sample.h"
 #include "TransAxis.h"
 
-namespace nsx
-{
-
-namespace Instrument
-{
+namespace nsx {
 
 Sample* Sample::create(const proptree::ptree& node)
 {
@@ -143,5 +139,5 @@ void Sample::setMaterial(Chemistry::sptrMaterial material, int index)
     _cells[index]->setMaterial(material);
 }
 
-} // end namespace Instrument
 } // end namespace nsx
+

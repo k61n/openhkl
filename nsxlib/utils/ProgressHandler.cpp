@@ -7,8 +7,6 @@
 
 namespace nsx {
 
-namespace Utils {
-
 ProgressHandler::ProgressHandler()
 {
     _progress = 0;
@@ -94,8 +92,5 @@ bool ProgressHandler::aborted()
     return _aborted;
 }
 
-
-
-} // namespace Utils
-
 } // end namespace nsx
+
