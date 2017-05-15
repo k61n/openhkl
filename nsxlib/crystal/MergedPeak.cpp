@@ -39,13 +39,11 @@
 #include "MergedPeak.h"
 
 
-namespace SX
-{
-namespace Crystal
-{
+namespace SX {
+namespace Crystal {
 
 MergedPeak::MergedPeak(const SpaceGroup& grp, bool friedel):
- _hkl(), _intensity(0), _sigma(0), _chiSquared(0.0), _std(0.0), _peaks(), _grp(grp), _friedel(friedel)
+    _hkl(), _intensity(0.0, 0.0), _chiSquared(0.0), _std(0.0), _peaks(), _grp(grp), _friedel(friedel), _d(0.0)
 {
 }
 
@@ -74,14 +72,9 @@ Eigen::Vector3i MergedPeak::getIndex() const
     return _hkl;
 }
 
-double MergedPeak::intensity() const
+const Intensity &MergedPeak::getIntensity() const
 {
     return _intensity;
-}
-
-double MergedPeak::sigma() const
-{
-    return _sigma;
 }
 
 double MergedPeak::chiSquared() const
@@ -91,7 +84,7 @@ double MergedPeak::chiSquared() const
 
 size_t MergedPeak::redundancy() const
 {
-    assert(_peaks.size() <= (_friedel ? 2:1) * _grp.getGroupElements().size());
+    //assert(_peaks.size() <= (_friedel ? 2:1) * _grp.getGroupElements().size());
     return _peaks.size();
 }
 
@@ -151,38 +144,46 @@ void MergedPeak::update()
     determineRepresentativeHKL();
 
     // update average intensity and error
-    _intensity = 0.0;
-    _sigma = 0.0;
+    _intensity = Intensity(0.0, 0.0);
+
     double variance = 0.0;
 
     for (auto&& peak: _peaks) {
-        double lorentz = peak->getLorentzFactor();
-        double trans = peak->getTransmission();
-        _intensity += peak->getScaledIntensity() / lorentz / trans;
-        variance += std::pow(peak->getScaledSigma() / lorentz / trans, 2);
+        _intensity += peak->getCorrectedIntensity();
     }
 
-    _intensity /= _peaks.size();
-    variance /= _peaks.size()*_peaks.size();
-    _sigma = std::sqrt(variance);
+    _intensity = _intensity / _peaks.size();
 
     // update chi2
     // TODO(jonathan): check that this is correct!
     _chiSquared = 0.0;
     _std = 0.0;
+    _d = 0.0;
 
     for (auto&& peak: _peaks) {
-        double lorentz = peak->getLorentzFactor();
-        double trans = peak->getTransmission();
-        const double res2 = std::pow((peak->getScaledIntensity() / lorentz / trans - _intensity), 2);
-        _chiSquared += res2 / _intensity;
+        const double difference = peak->getCorrectedIntensity().getValue() - _intensity.getValue();
+        const double res2 = std::pow(difference, 2);
+        _chiSquared += res2 / _intensity.getValue();
         _std += res2;
+        _d += 1.0 / peak->getQ().norm();
     }
+
+    _d /= _peaks.size();
 
     if (_peaks.size()>1) {
         _std /= (_peaks.size()-1);
     }
     _std = std::sqrt(_std);
+}
+
+double MergedPeak::d() const
+{
+    return _d;
+}
+
+const std::vector<SX::Crystal::sptrPeak3D> &SX::Crystal::MergedPeak::getPeaks() const
+{
+    return _peaks;
 }
 
 } // namespace Crystal

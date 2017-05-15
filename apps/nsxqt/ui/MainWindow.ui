@@ -1334,7 +1334,7 @@ border-radius: 4px;
      </property>
      <addaction name="actionShow_labels"/>
      <addaction name="actionShow_calculated_peak_positions"/>
-     <addaction name="actionDraw_peak_background"/>
+     <addaction name="actionDraw_peak_integration_area"/>
     </widget>
     <widget class="QMenu" name="menuColor_map">
      <property name="title">
@@ -1387,7 +1387,9 @@ border-radius: 4px;
      <addaction name="actionRemove_bad_peaks"/>
      <addaction name="actionIncorporate_calculated_peaks"/>
      <addaction name="actionApply_resolution_cutoff"/>
-     <addaction name="actionRescale_integration_area"/>
+     <addaction name="actionReintegrate_peaks"/>
+     <addaction name="actionFit_peak_profiles"/>
+     <addaction name="actionAuto_assign_unit_cell"/>
     </widget>
     <addaction name="actionFind_space_group"/>
     <addaction name="menuPeaks"/>
@@ -1779,7 +1781,7 @@ QDockWidget::title {
     <string>Peak fit dialog</string>
    </property>
   </action>
-  <action name="actionDraw_peak_background">
+  <action name="actionDraw_peak_integration_area">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -1787,7 +1789,7 @@ QDockWidget::title {
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Draw peak background</string>
+    <string>Draw peak integration area</string>
    </property>
   </action>
   <action name="actionNew_session">
@@ -1856,6 +1858,21 @@ QDockWidget::title {
   <action name="actionRescale_integration_area">
    <property name="text">
     <string>Rescale integration area</string>
+   </property>
+  </action>
+  <action name="actionReintegrate_peaks">
+   <property name="text">
+    <string>Reintegrate peaks</string>
+   </property>
+  </action>
+  <action name="actionFit_peak_profiles">
+   <property name="text">
+    <string>Fit peak profiles</string>
+   </property>
+  </action>
+  <action name="actionAuto_assign_unit_cell">
+   <property name="text">
+    <string>Auto assign unit cell</string>
    </property>
   </action>
  </widget>

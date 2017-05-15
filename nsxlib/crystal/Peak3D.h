@@ -35,7 +35,10 @@
 
 #include <Eigen/Dense>
 
+#include "Profile.h"
 #include "UnitCell.h"
+#include "Intensity.h"
+#include "PeakIntegrator.h"
 #include "../geometry/IShape.h"
 #include "../geometry/Ellipsoid.h"
 #include "../utils/Types.h"
@@ -83,9 +86,7 @@ public:
     //! Assignment operator
     Peak3D& operator=(const Peak3D& other);
 
-    ~Peak3D() = default;
-    //! Attach the data
-
+        //! Attach the data
     void linkData(const std::shared_ptr<SX::Data::DataSet>& data);
 
     //! Detach the data
@@ -123,21 +124,25 @@ public:
     Eigen::VectorXd getProjection() const;
     Eigen::VectorXd getPeakProjection() const;
     Eigen::VectorXd getBkgProjection() const;
-    Eigen::VectorXd getProjectionSigma() const;
-    Eigen::VectorXd getPeakProjectionSigma() const;
-    Eigen::VectorXd getBkgProjectionSigma() const;
+//    Eigen::VectorXd getProjectionSigma() const;
+//    Eigen::VectorXd getPeakProjectionSigma() const;
+//    Eigen::VectorXd getBkgProjectionSigma() const;
 
     const Ellipsoid3D& getShape() const { return _shape; }
     const SX::Geometry::IntegrationRegion& getIntegrationRegion() const { return _integrationRegion; }
 
     //! Return the scaled intensity of the peak.
-    double getScaledIntensity() const;
+    Intensity getScaledIntensity() const;
+
+    //! Return the intensity, after scaling, transmission, and Lorentz factor corrections
+    Intensity getCorrectedIntensity() const;
+
     //! Return the raw intensity of the peak.
-    double getRawIntensity() const;
+    Intensity getRawIntensity() const;
     //! Returns the error on the raw intensity.
-    double getRawSigma() const;
-    //! Returns the error on the scaled intensity.
-    double getScaledSigma() const;
+//    double getRawSigma() const;
+//    //! Returns the error on the scaled intensity.
+//    double getScaledSigma() const;
     //!
     double getIOverSigmaI() const;
     //! Return the lorentz factor of the peak.
@@ -186,7 +191,12 @@ public:
     void updateIntegration(const PeakIntegrator& integrator);
 
     //! compute P value that there is actually an observed peak, assuming Poisson statistics
-    double pValue();
+    double pValue() const;
+
+    //! Return fitted peak profile
+    const Profile& getProfile() const;
+
+    const PeakIntegrator& getIntegration() const;
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -201,7 +211,11 @@ private:
     //! Shape describing the background zone (must fully contain peak)
     // Ellipsoid3D _bkg;
 
+    PeakIntegrator _integration;
+
     //!
+    //! \brief _projection
+
     Eigen::VectorXd _projection;
     Eigen::VectorXd _projectionPeak;
     Eigen::VectorXd _projectionBkg;
@@ -223,7 +237,7 @@ private:
     std::shared_ptr<SX::Instrument::Source> _source;
 
     double _counts;
-    double _countsSigma;
+    //double _countsSigma;
     double _scale;
     bool _selected;
     bool _masked;
@@ -231,6 +245,11 @@ private:
     bool _observed;
     double _transmission;
     int _activeUnitCellIndex;
+
+    Profile _profile;
+    double _pValue;
+
+    Intensity _intensity;
 };
 
 using sptrPeak3D = std::shared_ptr<Peak3D>;

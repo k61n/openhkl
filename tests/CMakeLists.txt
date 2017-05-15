@@ -42,6 +42,7 @@ configure_file(data/D10_ascii_example D10_ascii_example COPYONLY)
 configure_file(data/D9_ascii_example D9_ascii_example COPYONLY)
 configure_file(data/D9_QSCAN D9_QSCAN COPYONLY)
 
+configure_file(data/gal3.hdf gal3.hdf COPYONLY)
 configure_file(data/H5_example.hdf H5_example.hdf COPYONLY)
 
 configure_file(instrument/RotAxis.xml RotAxis.xml COPYONLY)

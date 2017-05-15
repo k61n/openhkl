@@ -55,8 +55,10 @@ QRectF PeakGraphicsItem::boundingRect() const
     const Eigen::Vector3d& u = bb.getUpper();
     qreal w=u[0]-l[0];
     qreal h=u[1]-l[1];
+
     assert(w >= 0.0);
     assert(h >= 0.0);
+
     return QRectF(-w/2.0,-h/2.0,w,h);
 }
 
@@ -151,7 +153,21 @@ PeakGraphicsItem::Ellipse PeakGraphicsItem::calculateEllipse(const SX::Geometry:
 {
     Eigen::MatrixXd M;
     Eigen::VectorXd p;
-    Ellipse ellipse;
+
+    auto fromAABB = [](const SX::Geometry::IShape<double, 3>& s) -> Ellipse
+    {
+        Ellipse ellipse;
+        Eigen::Vector3d lower = s.getLower();
+        Eigen::Vector3d upper = s.getUpper();
+
+        ellipse.a = 0.5 * (upper[0] - lower[0]);
+        ellipse.b = 0.5 * (upper[1] - lower[1]);
+        ellipse.alpha = 0.0;
+        ellipse.u = 0;
+        ellipse.v = 0;
+
+        return ellipse;
+    };
 
     try {
         const SX::Geometry::Ellipsoid<double, 3>& ellipse_shape =
@@ -161,19 +177,13 @@ PeakGraphicsItem::Ellipse PeakGraphicsItem::calculateEllipse(const SX::Geometry:
     }
     catch(...){
         // bad cast, so just use information from bounding box and return early
-        Eigen::Vector3d lower = shape.getLower();
-        Eigen::Vector3d upper = shape.getUpper();
-
-        ellipse.a = 0.5 * (upper[0] - lower[0]);
-        ellipse.b = 0.5 * (upper[1] - lower[1]);
-        ellipse.alpha = 0.0;
-        ellipse.u = 0;
-        ellipse.v = 0;
-
-        return ellipse;
+        qDebug() << "WARNING: Ellipse could not be turned into graphics item; using AABB";
+        return fromAABB(shape);
     }
 
     M = M.transpose()*M;
+
+    Ellipse ellipse;
 
     // ellipsoid defined by (x-p).M.(x-p) = 1
     // rewritten as A*x^2 + B*y^2 + C*x*y + D*x*(z-z0) + E*y*(z-z0) + F = 0
@@ -217,6 +227,33 @@ PeakGraphicsItem::Ellipse PeakGraphicsItem::calculateEllipse(const SX::Geometry:
     ellipse.u = u0;
     ellipse.v = v0;
 
+    bool is_valid = [&]() -> bool
+    {
+        if (std::isnan(ellipse.a)) {
+            return false;
+        }
+        if (std::isnan(ellipse.b)) {
+            return false;
+        }
+        if (std::isnan(ellipse.alpha)) {
+            return false;
+        }
+        if (std::isnan(ellipse.u)) {
+            return false;
+        }
+        if (std::isnan(ellipse.v)) {
+            return false;
+        }
+        return true;
+    }();
+
+
+    // have to check in case the ellipse was ill-formed:
+    if (!is_valid) {
+        qDebug() << "WARNING: Ellipse could not be turned into graphics item; using AABB";
+        return fromAABB(shape);
+    }
+
     return ellipse;
 }
 
@@ -240,7 +277,8 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     const Eigen::VectorXd& signal=_peak->getPeakProjection();
     const Eigen::VectorXd& bkg=_peak->getBkgProjection();
 
-    const Eigen::VectorXd& totalSigma=_peak->getProjectionSigma();
+    //const Eigen::VectorXd& totalSigma=_peak->getProjectionSigma();
+    const double totalSigma = _peak->getRawIntensity().getSigma();
 
     // Transform to QDouble
     QVector<double> qx(int(total.size()));
@@ -261,10 +299,13 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     if (max>_peak->getData()->getNFrames()-1) {
         max=_peak->getData()->getNFrames()-1;
     }
+
+    Eigen::VectorXd error = _peak->getIntegration().getPeakError();
+
     for (int i = 0; i < total.size(); ++i) {
         qx[i]= min + static_cast<double>(i)*(max-min)/(total.size()-1);
         qtotal[i]=total[i];
-        qtotalE[i]=totalSigma[i];
+        qtotalE[i]=error[i];
         qpeak[i]=signal[i];
         qbkg[i]=bkg[i];
     }
@@ -282,8 +323,8 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     gamma/=SX::Units::deg;
     nu/=SX::Units::deg;
     info+=" "+QString(QChar(0x03B3))+","+QString(QChar(0x03BD))+":"+QString::number(gamma,'f',2)+","+QString::number(nu,'f',2)+"\n";
-    double intensity=_peak->getScaledIntensity();
-    double sI=_peak->getScaledSigma();
+    double intensity=_peak->getScaledIntensity().getValue();
+    double sI=_peak->getScaledIntensity().getSigma();
     info+="Intensity ("+QString(QChar(0x03C3))+"I): "+QString::number(intensity)+" ("+QString::number(sI,'f',2)+")\n";
     double l=_peak->getLorentzFactor();
     info+="Cor. int. ("+QString(QChar(0x03C3))+"I): "+QString::number(intensity/l,'f',2)+" ("+QString::number(sI/l,'f',2)+")\n";

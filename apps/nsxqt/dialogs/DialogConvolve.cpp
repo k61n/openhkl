@@ -168,7 +168,7 @@ void DialogConvolve::on_previewButton_clicked()
 
     QRect rect(0, 0, ncols, nrows);
 
-    QImage image = _colormap->matToImage(clamped_result, rect, maxData);
+    QImage image = _colormap->matToImage(clamped_result.cast<double>(), rect, maxData);
 
     if (!_pxmapPreview)
         _pxmapPreview = _scene->addPixmap(QPixmap::fromImage(image));

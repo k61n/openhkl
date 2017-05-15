@@ -41,7 +41,7 @@ void ProgressView::watch(std::shared_ptr<SX::Utils::ProgressHandler> handler)
 
     _timer->start();
 
-    _handler->setProcessCallback([] () {QApplication::processEvents();});
+    _handler->setCallback([] () {QApplication::processEvents();});
 }
 
 void ProgressView::updateProgress()

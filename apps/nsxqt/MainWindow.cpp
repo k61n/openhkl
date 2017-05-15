@@ -68,6 +68,7 @@
 #include "tree/PeakListPropertyWidget.h"
 
 #include "dialogs/DialogConvolve.h"
+#include "dialogs/DialogIntegrate.h"
 
 #include "models/SessionModel.h"
 #include "JobHandler.h"
@@ -530,9 +531,9 @@ void MainWindow::on_actionLogarithmic_Scale_triggered(bool checked)
     _ui->_dview->getScene()->setLogarithmic(checked);
 }
 
-void MainWindow::on_actionDraw_peak_background_triggered(bool checked)
+void MainWindow::on_actionDraw_peak_integration_area_triggered(bool checked)
 {
-    _ui->_dview->getScene()->drawPeakBackground(checked);
+    _ui->_dview->getScene()->drawIntegrationRegion(checked);
 }
 
 void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
@@ -547,6 +548,9 @@ void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
     std::vector<sptrPeak3D> bad_peaks;
 
     for (std::shared_ptr<DataSet> numor: numors) {
+
+        numor->removeDuplicatePeaks();
+
         std::set<sptrPeak3D>& peaks = numor->getPeaks();
 
         total_peaks += peaks.size();
@@ -608,20 +612,39 @@ void MainWindow::on_actionWrite_log_file_triggered()
     _session->writeLog();
 }
 
-void MainWindow::on_actionRescale_integration_area_triggered()
+void MainWindow::on_actionReintegrate_peaks_triggered()
 {
-    qDebug() << "rescale integration area triggered";
-    const double scale_factor = 1.5;
+    qDebug() << "Reintegrating peaks...";
+
+    auto dialog = new DialogIntegrate();
+
+    if (!dialog->exec()) {
+        qDebug() << "Peak integration canceled.";
+        return;
+    }
+
+    const double peak_scale = dialog->peakScale();
+    const double bkg_scale = dialog->backgroundScale();
+    const bool update_shape = dialog->updateShape();
 
     std::vector<std::shared_ptr<DataSet>> numors = _session->getSelectedNumors();
 
     for (auto&& numor: numors) {
-        for (auto&& peak: numor->getPeaks()) {
-            peak->scaleShape(scale_factor);
-        }
-        numor->integratePeaks();
+        numor->integratePeaks(peak_scale, bkg_scale, update_shape, _progressHandler);
     }
 
     _session->updatePeaks();
-    qDebug() << "done rescaling peak integration areas";
+    qDebug() << "Done reintegrating peaks intensities";
+}
+
+void MainWindow::on_actionFit_peak_profiles_triggered()
+{
+    qDebug() << "Fit peak profiles triggered";
+    _session->peakFitDialog();
+}
+
+void MainWindow::on_actionAuto_assign_unit_cell_triggered()
+{
+    qDebug() << "Auto assign unit cell triggered";
+    _session->autoAssignUnitCell();
 }

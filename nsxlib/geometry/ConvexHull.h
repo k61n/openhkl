@@ -38,6 +38,7 @@
 
 #include <Eigen/Dense>
 
+#include "AABB.h"
 #include "Edge.h"
 #include "Vertex.h"
 #include "Face.h"
@@ -205,6 +206,12 @@ private:
 
     //! Cleans the edges, faces and vertices of the hull that are not visible anymore
     void cleanUp();
+
+    //! Get AABB of the convex hull
+    AABB<T, 3> getAABB() const;
+
+    //! Return whether a vertex is contained in the hull
+    bool constains(const Vertex<T>& v) const;
 
 private:
 
@@ -837,6 +844,28 @@ void ConvexHull<T>::cleanUp()
     cleanEdges();
     cleanFaces();
     cleanVertices();
+}
+
+template<typename T>
+AABB<T, 3> ConvexHull<T>::getAABB() const
+{
+    using vector = typename AABB<T,3>::vector;
+    vector lower, upper;
+    lower.setZero();
+    upper.setZero();
+
+    for (auto&& v: getVertices()) {
+        for (auto i = 0; i < 3; ++i) {
+            if ( (*v)(i) < lower(i)) {
+                lower(i) = (*v)(i);
+            }
+            if ( (*v)(i) > upper(i)) {
+                upper(i) = (*v)(i);
+            }
+        }
+    }
+
+    return AABB<T, 3>(lower, upper);
 }
 
 template <typename T>

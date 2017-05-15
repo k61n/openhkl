@@ -35,17 +35,14 @@
 #include "ConvolutionKernel.h"
 #include "AnnularKernel.h"
 
-namespace SX
-{
-
-namespace Imaging
-{
+namespace SX {
+namespace Imaging {
 
 using RealMatrix = SX::Types::RealMatrix;
 
-ConvolutionKernel::ConvolutionKernel(int nrows, int ncols) : _kernel(), _hasChanged(false), _params()
+ConvolutionKernel::ConvolutionKernel(int nrows, int ncols) : _kernel(), _hasChanged(true), _params()
 {
-	_kernel.resize(nrows,ncols);
+    _kernel.resize(nrows,ncols);
 }
 
 ConvolutionKernel::ConvolutionKernel(const ConvolutionKernel &rhs)
@@ -57,7 +54,7 @@ ConvolutionKernel::ConvolutionKernel(const ConvolutionKernel &rhs)
 
 ConvolutionKernel::ConvolutionKernel(int nrows, int ncols, const ConvolutionKernel::ParameterMap &parameters)
 {
-	_kernel.resize(nrows,ncols);
+    _kernel.resize(nrows,ncols);
     _params = parameters;
     _hasChanged = true;
 }
@@ -79,19 +76,17 @@ const ConvolutionKernel::ParameterMap &ConvolutionKernel::getParameters() const
 
 const RealMatrix& ConvolutionKernel::getKernel()
 {
-    if ( _hasChanged )
-    {
+    if ( _hasChanged ) {
         update();
         _hasChanged = false;
     }
-
     return _kernel;
 }
 
 void ConvolutionKernel::print(std::ostream& os) const
 {
-	os<<"Kernel Matrix ("<<_kernel.rows()<<","<<_kernel.cols()<<"):"<<std::endl;
-    os<<_kernel<<std::endl;
+    os << "Kernel Matrix (" << _kernel.rows() << "," << _kernel.cols() << "):" << std::endl;
+    os << _kernel << std::endl;
 }
 
 ConvolutionKernel &ConvolutionKernel::operator=(const ConvolutionKernel &rhs)
@@ -104,10 +99,9 @@ ConvolutionKernel &ConvolutionKernel::operator=(const ConvolutionKernel &rhs)
 
 std::ostream& operator<<(std::ostream& os, const ConvolutionKernel& kernel)
 {
-	kernel.print(os);
-	return os;
+    kernel.print(os);
+    return os;
 }
 
-} /* namespace Imaging */
-
-} /* namespace SX */
+} // namespace Imaging
+} // namespace SX

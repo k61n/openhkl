@@ -70,6 +70,8 @@
 #include <nsxlib/instrument/Source.h>
 #include <nsxlib/utils/gcd.h>
 
+#include <nsxlib/crystal/PeakFit.h>
+
 #include "dialogs/DialogCalculatedPeaks.h"
 #include "dialogs/ResolutionCutoffDialog.h"
 
@@ -117,6 +119,10 @@
 #include <nsxlib/crystal/MergedPeak.h>
 #include <nsxlib/data/XDS.h>
 
+#include <nsxlib/geometry/NDTree.h>
+#include <nsxlib/geometry/Ellipsoid.h>
+#include <nsxlib/crystal/PeakPredictor.h>
+
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonValue>
@@ -133,6 +139,9 @@ using SX::Data::PeakFinder;
 using SX::Crystal::PeakCalc;
 using SX::Crystal::Peak3D;
 
+using Octree = SX::Geometry::NDTree<double, 3>;
+using Ellipsoid3D = SX::Geometry::Ellipsoid<double, 3>;
+
 SessionModel::SessionModel()
 {
     connect(this,SIGNAL(itemChanged(QStandardItem*)),this,SLOT(onItemChanged(QStandardItem*)));
@@ -146,8 +155,7 @@ SessionModel::~SessionModel()
 
 void SessionModel::onItemChanged(QStandardItem* item)
 {
-    if (auto p=dynamic_cast<UnitCellItem*>(item))
-    {
+    if (auto p=dynamic_cast<UnitCellItem*>(item)) {
         // The first item of the Sample item branch is the SampleShapeItem, skip it
         int idx = p->index().row()- 1;
         auto expt = p->getExperiment();
@@ -165,8 +173,9 @@ void SessionModel::createNewExperiment()
         dlg = new DialogExperiment();
 
         // The user pressed cancel, return
-        if (!dlg->exec())
+        if (!dlg->exec()) {
             return;
+        }
 
         // If no experiment name is provided, pop up a warning
         if (dlg->getExperimentName().isEmpty()) {
@@ -557,6 +566,7 @@ void SessionModel::incorporateCalculatedPeaks()
 
     const double dmax = dialog.dMax();
     const double dmin = dialog.dMin();
+    const double search_radius = dialog.searchRadius();
 
     std::vector<std::shared_ptr<DataSet>> numors = getSelectedNumors();
 
@@ -566,104 +576,124 @@ void SessionModel::incorporateCalculatedPeaks()
 
     int current_numor = 0;
 
-    class compare_fn {
-    public:
-        auto operator()(const Eigen::RowVector3i a, const Eigen::RowVector3i b) -> bool
-        {
-            if (a(0) != b(0))
-                return a(0) < b(0);
-
-            if (a(1) != b(1))
-                return a(1) < b(1);
-
-            return a(2) < b(2);
-        }
-    };
 
     int last_done = 0;
-    int predicted_peaks = 0;
+//    int predicted_peaks = 0;
     int observed_peaks = 0;
 
     for(std::shared_ptr<DataSet> numor: numors) {
         qDebug() << "Finding missing peaks for numor " << ++current_numor << " of " << numors.size();
 
-        auto& mono = numor->getDiffractometer()->getSource()->getSelectedMonochromator();
-        const double wavelength = mono.getWavelength();
-        std::vector<sptrPeak3D> calculated_peaks;
+//        auto& mono = numor->getDiffractometer()->getSource()->getSelectedMonochromator();
+//        const double wavelength = mono.getWavelength();
+//        std::vector<sptrPeak3D> calculated_peaks;
 
-        shared_ptr<Sample> sample = numor->getDiffractometer()->getSample();
-        unsigned int ncrystals = static_cast<unsigned int>(sample->getNCrystals());
+//        shared_ptr<Sample> sample = numor->getDiffractometer()->getSample();
+//        unsigned int ncrystals = static_cast<unsigned int>(sample->getNCrystals());
 
-        for (unsigned int i = 0; i < ncrystals; ++i) {
-            SX::Crystal::SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
-            auto cell = sample->getUnitCell(i);
-            auto ub = cell->getReciprocalStandardM();
+//        for (unsigned int i = 0; i < ncrystals; ++i) {
+//            SX::Crystal::SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
+//            auto cell = sample->getUnitCell(i);
+//            auto UB = cell->getReciprocalStandardM();
 
-            handler->setStatus("Calculating peak locations...");
+//            handler->setStatus("Calculating peak locations...");
 
-            //auto predicted_hkls = sample->getUnitCell(i)->generateReflectionsInSphere(1.5);
-            auto predicted_hkls = sample->getUnitCell(i)->generateReflectionsInShell(dmin, dmax, wavelength);
+//            //auto predicted_hkls = sample->getUnitCell(i)->generateReflectionsInSphere(1.5);
+//            auto predicted_hkls = sample->getUnitCell(i)->generateReflectionsInShell(dmin, dmax, wavelength);
 
-            predicted_peaks += predicted_hkls.size();
+//            predicted_peaks += predicted_hkls.size();
 
-            std::vector<SX::Crystal::PeakCalc> peaks = numor->hasPeaks(predicted_hkls, ub);
-            calculated_peaks.reserve(peaks.size());
+//            std::vector<SX::Crystal::PeakCalc> peaks = numor->hasPeaks(predicted_hkls, UB);
+//            calculated_peaks.reserve(peaks.size());
 
-            int current_peak = 0;
+//            int current_peak = 0;
 
-            handler->setStatus("Building set of previously found peaks...");
+//            handler->setStatus("Building set of previously found peaks...");
 
-            std::set<sptrPeak3D> found_peaks = numor->getPeaks();
-            std::set<Eigen::RowVector3i, compare_fn> found_hkls;
+//            std::set<sptrPeak3D> found_peaks = numor->getPeaks();
+//            std::set<Eigen::RowVector3i, compare_fn> found_hkls;
 
-            for (sptrPeak3D p: found_peaks)
-                found_hkls.insert(p->getIntegerMillerIndices());
 
-            handler->setStatus("Adding calculated peaks...");
+//            Eigen::Vector3d lb = {0.0, 0.0, 0.0};
+//            Eigen::Vector3d ub = {double(numor->getNCols()), double(numor->getNRows()), double(numor->getNFrames())};
+//            auto&& octree = Octree(lb, ub);
 
-            int done_peaks = 0;
+//            octree.setMaxDepth(4);
+//            octree.setMaxStorage(50);
 
-            #pragma omp parallel for
-            for (size_t peak_id = 0; peak_id < peaks.size(); ++peak_id) {
-                PeakCalc& p = peaks[peak_id];
-                ++current_peak;
+//            handler->log("Building peak octree...");
 
-                Eigen::RowVector3i hkl(int(std::lround(p._h)), int(std::lround(p._k)), int(std::lround(p._l)));
+//            for (sptrPeak3D p: found_peaks) {
+//                found_hkls.insert(p->getIntegerMillerIndices());
 
-                // try to find this reflection in the list of peaks, skip if found
-                if (std::find(found_hkls.begin(), found_hkls.end(), hkl) != found_hkls.end() ) {
-                    continue;
-                }
+//                if (!p->isSelected() || p->isMasked()) {
+//                    continue;
+//                }
+//                octree.addData(&p->getShape());
+//            }
 
-                // now we must add it, calculating shape from nearest peaks
-                 // K is outside the ellipsoid at PsptrPeak3D
-                sptrPeak3D new_peak = p.averagePeaks(numor, 200);
-                //sptrPeak3D new_peak = p.averagePeaks(numor);
+//            handler->log("Done building octree; number of chambers is " + std::to_string(octree.numChambers()));
 
-                if (!new_peak) {
-                    continue;
-                }
-                new_peak->setSelected(true);
-                new_peak->addUnitCell(cell, true);
-                new_peak->setObserved(false);
+//            handler->setStatus("Adding calculated peaks...");
 
-                #pragma omp critical
-                calculated_peaks.push_back(new_peak);
+//            int done_peaks = 0;
 
-                #pragma omp atomic
-                ++done_peaks;
-                int done = int(std::lround(done_peaks * 100.0 / peaks.size()));
+//            #pragma omp parallel for
+//            for (size_t peak_id = 0; peak_id < peaks.size(); ++peak_id) {
+//                PeakCalc& p = peaks[peak_id];
+//                ++current_peak;
 
-                if ( done != last_done) {
-                    handler->setProgress(done);
-                    last_done = done;
-                }
-            }
-        }
-        for (sptrPeak3D peak: calculated_peaks) {
-            numor->addPeak(peak);
-        }
-        numor->integratePeaks(handler);
+//                Eigen::RowVector3i hkl(int(std::lround(p._h)), int(std::lround(p._k)), int(std::lround(p._l)));
+
+//                // try to find this reflection in the list of peaks, skip if found
+//                if (std::find(found_hkls.begin(), found_hkls.end(), hkl) != found_hkls.end() ) {
+//                    continue;
+//                }
+
+//                // now we must add it, calculating shape from nearest peaks
+//                 // K is outside the ellipsoid at PsptrPeak3D
+//                sptrPeak3D new_peak = p.averagePeaks(octree, search_radius);
+//                //sptrPeak3D new_peak = p.averagePeaks(numor);
+
+//                if (!new_peak) {
+//                    continue;
+//                }
+
+//                new_peak->linkData(numor);
+//                new_peak->setSelected(true);
+//                new_peak->addUnitCell(cell, true);
+//                new_peak->setObserved(false);
+
+//                #pragma omp critical
+//                calculated_peaks.push_back(new_peak);
+
+//                #pragma omp atomic
+//                ++done_peaks;
+//                int done = int(std::lround(done_peaks * 100.0 / peaks.size()));
+
+//                if ( done != last_done) {
+//                    handler->setProgress(done);
+//                    last_done = done;
+//                }
+//            }
+//        }
+//        for (sptrPeak3D peak: calculated_peaks) {
+//            numor->addPeak(peak);
+//        }
+//        qDebug() << "Integrating calculated peaks.";
+//        numor->integratePeaks(_peakScale, _bkgScale, false, handler);
+
+        auto predictor = SX::Crystal::PeakPredictor();
+
+        predictor._dmin = dmin;
+        predictor._dmax = dmax;
+        predictor._searchRadius = search_radius; // todo
+        predictor._peakScale = 1.0; // todo
+        predictor._bkgScale = 3.0 ; // todo
+        predictor._handler = handler;
+
+        predictor.addPredictedPeaks(numor);
+        // numor->addPredictedPeaks(dmin, dmax, handler);
         observed_peaks += numor->getPeaks().size();
     }
     updatePeaks();
@@ -719,8 +749,11 @@ void SessionModel::writeLog()
     auto numors = this->getSelectedNumors();
 
     for (auto numor: numors) {
-        for (auto peak: numor->getPeaks())
-            peaks.push_back(peak);
+        for (auto peak: numor->getPeaks()) {
+            if (peak->isSelected() && !peak->isMasked()) {
+                peaks.push_back(peak);
+            }
+        }
     }
 
     if (!peaks.size()) {
@@ -791,8 +824,8 @@ bool SessionModel::writeNewShellX(std::string filename, const std::vector<sptrPe
         double lorentz = peak->getLorentzFactor();
         double trans = peak->getTransmission();
 
-        double intensity = peak->getScaledIntensity() / lorentz / trans;
-        double sigma = peak->getScaledSigma() / lorentz / trans;
+        double intensity = peak->getCorrectedIntensity().getValue();
+        double sigma = peak->getCorrectedIntensity().getSigma();
 
         std::snprintf(&buf[0], buf.size(), "  %4ld %4ld %4ld %15.2f %10.2f", h, k, l, intensity, sigma);
         file << &buf[0] << std::endl;
@@ -917,7 +950,7 @@ bool SessionModel::writeStatistics(std::string filename,
 
     std::sort(merged_peaks.begin(), merged_peaks.end(), compare_fn);
 
-    file << "   h    k    l            I        sigma   nobs       chi2             std            std/I  "
+    file << "   h    k    l            I        sigma   d   nobs       chi2             std            std/I  "
          << std::endl;
 
     unsigned int total_peaks = 0;
@@ -931,17 +964,26 @@ bool SessionModel::writeStatistics(std::string filename,
         const int k = hkl[1];
         const int l = hkl[2];
 
-        const double intensity = peak.intensity();
-        const double sigma = peak.sigma();
+        const double intensity = peak.getIntensity().getValue();
+        const double sigma = peak.getIntensity().getSigma();
         const double chi2 = peak.chiSquared();
+        const double d = peak.d();
         const int nobs = peak.redundancy();
         const double std = peak.std();
         const double rel_std = std / intensity;
 
-        std::snprintf(&buf[0], buf.size(), "  %4d %4d %4d %15.2f %10.2f %3d %15.5f %15.5f %15.5f",
-                h, k, l, intensity, sigma, nobs, chi2, std, rel_std);
+        std::snprintf(&buf[0], buf.size(), "  %4d %4d %4d %15.2f %10.2f %15.5f %3d %15.5f %15.5f %15.5f",
+                      h, k, l, intensity, sigma, d, nobs, chi2, std, rel_std);
 
         file << &buf[0];
+
+        // debugging
+        if (std::abs(intensity) < 10) {
+            std::cout << "zero intensity!!" << std::endl;
+
+            std::shared_ptr<Peak3D> ptr = *peak.getPeaks().begin();
+
+        }
 
         if (rel_std > 1.0) {
             file << " ***** ";
@@ -976,4 +1018,53 @@ bool SessionModel::writeXDS(std::string filename, const std::vector<sptrPeak3D>&
     bool result = xds.write(file);
     qDebug() << "Done writing log file.";
     return result;
+}
+
+void SessionModel::fitAllPeaks()
+{
+    auto numors = getSelectedNumors();
+
+    for (auto&& numor: numors) {
+        auto peaks = numor->getPeaks();
+
+        for (auto&& peak: peaks) {
+            if (!peak->isSelected() || peak->isMasked()) {
+                continue;
+            }
+
+            SX::Crystal::PeakFit peak_fit(peak);
+            // todo...
+        }
+    }
+}
+
+void SessionModel::autoAssignUnitCell()
+{
+    auto numors = getSelectedNumors();
+
+    for (auto&& numor: numors) {
+        auto sample = numor->getDiffractometer()->getSample();
+        auto peaks = numor->getPeaks();
+
+        for (auto&& peak: peaks) {
+            Eigen::RowVector3d hkl;
+            bool assigned = false;
+
+            for (auto i = 0; i < sample->getNCrystals(); ++i) {
+                auto cell = sample->getUnitCell(i);
+
+                if (peak->getMillerIndices(*cell, hkl, true)) {
+                    peak->addUnitCell(cell, true);
+                    assigned = true;
+                    break;
+                }
+            }
+
+            // could not assign unit cell
+            if (assigned == false) {
+                peak->setSelected(false);
+            }
+        }
+    }
+    qDebug() << "Done auto assigning unit cells";
 }

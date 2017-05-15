@@ -1,5 +1,4 @@
 #!/bin/bash
 
 cd ${CI_PROJECT_DIR}/build
-
-ninja test
+ctest -j2 -l2

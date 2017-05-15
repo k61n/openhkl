@@ -2,7 +2,7 @@
  * nsxtool : Neutron Single Crystal analysis toolkit
  ------------------------------------------------------------------------------------------
  Copyright (C)
- 2016- Laurent C. Chapon, Eric Pellegrini, Jonathan Fisher
+ 2017- Laurent C. Chapon, Eric Pellegrini, Jonathan Fisher
 
  Institut Laue-Langevin
  BP 156
@@ -53,6 +53,8 @@ public:
     bool fit(const Eigen::VectorXd& y, int max_iter=100);
     double evaluate(double x) const;
     double integrate() const;
+
+    bool goodFit(const Eigen::VectorXd& y, double eps) const;
 
 private:
     SX::Utils::Lorentzian _lorentz;

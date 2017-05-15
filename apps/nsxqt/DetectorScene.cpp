@@ -30,7 +30,7 @@
 using SX::Instrument::DetectorEvent;
 
 // compile-time constant to determine whether to draw the peak masks
-static const bool g_drawMask = false;
+static const bool g_drawMask = true;
 
 DetectorScene::DetectorScene(QObject *parent)
 : QGraphicsScene(parent),
@@ -53,7 +53,7 @@ DetectorScene::DetectorScene(QObject *parent)
   _logarithmic(false),
   _colormap(new ColorMap()),
   _integrationRegion(nullptr),
-  _drawBackground(false)
+  _drawIntegrationRegion(false)
 {
     //setBspTreeDepth(4);
     qDebug() << "BSP tree depth = " << bspTreeDepth();
@@ -491,14 +491,14 @@ void DetectorScene::loadCurrentImage(bool newimage)
         _currentFrame =_currentData->getFrame(_currentFrameIndex);
     }
     if (_image == nullptr) {
-        _image = addPixmap(QPixmap::fromImage(_colormap->matToImage(_currentFrame, full, _currentIntensity, _logarithmic)));
+        _image = addPixmap(QPixmap::fromImage(_colormap->matToImage(_currentFrame.cast<double>(), full, _currentIntensity, _logarithmic)));
         _image->setZValue(-2);
     } else {
-        _image->setPixmap(QPixmap::fromImage(_colormap->matToImage(_currentFrame, full, _currentIntensity, _logarithmic)));
+        _image->setPixmap(QPixmap::fromImage(_colormap->matToImage(_currentFrame.cast<double>(), full, _currentIntensity, _logarithmic)));
     }
 
     // update the integration region pixmap
-    if (_drawBackground && g_drawMask) {
+    if (_drawIntegrationRegion && g_drawMask) {
         const int ncols = _currentData->getNCols();
         const int nrows = _currentData->getNRows();
 
@@ -700,7 +700,7 @@ void DetectorScene::showPeakLabels(bool peaklabel)
     }
 }
 
-void DetectorScene::drawPeakBackground(bool flag)
+void DetectorScene::drawIntegrationRegion(bool flag)
 {
     if (!_peakGraphicsItems.empty()) {
         const auto& it=_peakGraphicsItems.begin();
@@ -712,7 +712,7 @@ void DetectorScene::drawPeakBackground(bool flag)
         removeItem(_integrationRegion);
         _integrationRegion = nullptr;
     }
-    _drawBackground = flag;
+    _drawIntegrationRegion = flag;
     redrawImage();
 }
 

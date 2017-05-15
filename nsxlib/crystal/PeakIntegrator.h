@@ -32,6 +32,10 @@
 #define NSXTOOL_PEAKINTEGRATOR_H_
 
 #include "../geometry/IntegrationRegion.h"
+#include "../geometry/Blob3D.h"
+#include "../geometry/Ellipsoid.h"
+#include "../utils/Maybe.h"
+#include "Intensity.h"
 #include <Eigen/Core>
 
 namespace SX {
@@ -44,22 +48,43 @@ namespace Crystal {
 
 class PeakIntegrator {
 public:
-    PeakIntegrator() = delete;
+    using Ellipsoid3D = SX::Geometry::Ellipsoid<double, 3>;
+    using MaybeEllipsoid = SX::Utils::Maybe<Ellipsoid3D>;
+
+    PeakIntegrator() = default;
     PeakIntegrator(const SX::Geometry::IntegrationRegion& region, const SX::Data::DataSet& data);
+    ~PeakIntegrator() {}
 
     void step(const Eigen::MatrixXi& frame, size_t idx, const Eigen::MatrixXi& mask);
     void end();
 
-    const Eigen::VectorXd& getProjectionPeak() const;
-    const Eigen::VectorXd& getProjectionBackground() const;
-    const Eigen::VectorXd& getProjection() const;
+    const Eigen::ArrayXd& getProjectionPeak() const;
+    const Eigen::ArrayXd& getProjectionBackground() const;
+    const Eigen::ArrayXd& getProjection() const;
+    const Eigen::ArrayXd& getPeakError() const;
+
+    double getMeanBackground() const;
 
     const SX::Geometry::IntegrationRegion& getRegion() const;
+
+    //! return blob shape (not: not scaled by a confidence parameter)
+    //!
+    MaybeEllipsoid getBlobShape(double confidence) const;
+
+    Intensity getPeakIntensity() const;
+
+    double pValue() const;
+
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
 private:
+    SX::Geometry::Blob3D _blob;
 
     SX::Geometry::IntegrationRegion _region;
     Eigen::Vector3d _lower;
     Eigen::Vector3d _upper;
+
+    // Eigen::ArrayXXd _peak_mask, _bkg_mask, _peak_data;
 
     long _data_start;
     long _data_end;
@@ -75,15 +100,24 @@ private:
     int _dx;
     int _dy;
 
-    Eigen::VectorXd _projection;
-    Eigen::VectorXd _projectionPeak;
-    Eigen::VectorXd _projectionBkg;
-    Eigen::VectorXd _pointsPeak;
-    Eigen::VectorXd _pointsBkg;
-    Eigen::VectorXd _countsPeak;
-    Eigen::VectorXd _countsBkg;
+    Eigen::ArrayXd _projection;
+    Eigen::ArrayXd _projectionPeak;
+    Eigen::ArrayXd _projectionBkg;
+    Eigen::ArrayXd _peakError;
+    Eigen::ArrayXd _pointsPeak;
+    Eigen::ArrayXd _pointsBkg;
+    Eigen::ArrayXd _countsPeak;
+    Eigen::ArrayXd _countsBkg;
 
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    Eigen::Matrix3d _fitA;
+    Eigen::Vector3d _fitP;
+    Eigen::Vector3d _fitB;
+    Eigen::ArrayXd _sumX;
+    Eigen::ArrayXd _sumY;
+    double _fitCC;
+    double _bkgStd;
+
+    //
 
 };
 

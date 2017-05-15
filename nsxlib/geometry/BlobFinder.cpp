@@ -1,4 +1,5 @@
 #include "BlobFinder.h"
+#include "NDTree.h"
 #include "../data/IFrameIterator.h"
 
 #include <iostream>
@@ -6,52 +7,56 @@
 using std::cout;
 using std::endl;
 
-namespace SX
-{
+using Octree = SX::Geometry::NDTree<double,3>;
 
-namespace Geometry
-{
+namespace SX {
+namespace Geometry {
 
 void BlobFinder::registerEquivalence(int a, int b, vipairs& equivalences)
 {
-    if (a < b)
-        equivalences.push_back(vipairs::value_type(b,a));
-    else
-        equivalences.push_back(vipairs::value_type(a,b));
+    if (a < b) {
+        equivalences.emplace_back(vipairs::value_type(b,a));
+    } else {
+        equivalences.emplace_back(vipairs::value_type(a,b));
+    }
 }
 
 bool BlobFinder::sortEquivalences(const ipair& pa, const ipair& pb)
 {
-    if (pa.first<pb.first)
+    if (pa.first<pb.first) {
         return true;
-    if (pa.first>pb.first)
+    }
+    if (pa.first>pb.first) {
         return false;
+    }
     return (pa.second<pb.second);
 }
 
 imap BlobFinder::removeDuplicates(vipairs& equivalences)
 {
-    auto beg=equivalences.begin();
-    auto last=std::unique(equivalences.begin(),equivalences.end());
+    auto beg = equivalences.begin();
+    auto last = std::unique(equivalences.begin(),equivalences.end());
 
     imap mequiv;
-    for (auto it=beg;it!=last;++it)
-        mequiv.insert(*it);
 
+    for (auto it = beg; it != last; ++it) {
+        mequiv.insert(*it);
+    }
     return mequiv;
 }
 
 void BlobFinder::reassignEquivalences(imap& equivalences)
 {
     for (auto it = equivalences.begin(); it != equivalences.end(); ++it) {
-        auto found=equivalences.find(it->second);
-        if (found != equivalences.end())
+        auto found = equivalences.find(it->second);
+        if (found != equivalences.end()) {
             it->second = found->second;
+        }
     }
 }
 
 
-void BlobFinder::eliminateBlobs(std::unordered_map<int,Blob3D>& blobs) const
+void BlobFinder::eliminateBlobs(std::unordered_map<int, Blob3D>& blobs) const
 {
     // update progress handler
     if ( _progressHandler ) {
@@ -67,14 +72,13 @@ void BlobFinder::eliminateBlobs(std::unordered_map<int,Blob3D>& blobs) const
         ++dummy;
 
         Blob3D& p=it->second;
-        if (p.getComponents() < _minComp || p.getComponents() > _maxComp)
+        if (p.getComponents() < _minComp || p.getComponents() > _maxComp) {
             it = blobs.erase(it);
-        else
+        } else {
             it++;
-
+        }
         // update progress handler
         if ( (dummy&magic) == 0 && _progressHandler) {
-
             double total_dist = std::distance(blobs.begin(), blobs.end());
             double current_dist = std::distance(blobs.begin(), it);
             double progress = 100.0 * current_dist / total_dist;
@@ -100,35 +104,32 @@ void BlobFinder::eliminateBlobs(std::unordered_map<int,Blob3D>& blobs) const
      * merge collisions
      *
      */
-    // the typename matrix_iterator_t should be a forward iterator of type Eigen::Matrix
 blob3DCollection BlobFinder::find(unsigned int begin, unsigned int end) {
     // find all blobs, possibly with multiple labels
-
     std::unordered_map<int,Blob3D> blobs;
-    vipairs equivalences;
 
     _nframes = 0;
     _currentlabel = 0;
 
     #pragma omp parallel
     {
-        int begin = -1;
-        int end;
+        int loop_begin = -1;
+        int loop_end;
 
-        std::unordered_map<int,Blob3D> local_blobs;
+        std::unordered_map<int,Blob3D> local_blobs = {};
         vipairs local_equivalences;
 
         // determine begining and ending index of current thread
         #pragma omp for
         for (int i = 0; i < _data->getNFrames(); ++i) {
-            if ( begin == -1)
-                begin = i;
-
-            end = i+1;
+            if ( loop_begin == -1) {
+                loop_begin = i;
+            }
+            loop_end = i+1;
         }
 
         // find blobs within the current frame range
-        findBlobs(local_blobs, local_equivalences, begin, end);
+        findBlobs(local_blobs, local_equivalences, loop_begin, loop_end);
 
         // merge adjacent blobs
         mergeBlobs(local_blobs, local_equivalences);
@@ -139,8 +140,9 @@ blob3DCollection BlobFinder::find(unsigned int begin, unsigned int end) {
         #pragma omp critical
         {
             // merge the blobs into the global set
-            for (auto&& blob: local_blobs)
+            for (auto&& blob: local_blobs) {
                 blobs.insert(blob);
+            }
         }
     }
 
@@ -148,7 +150,13 @@ blob3DCollection BlobFinder::find(unsigned int begin, unsigned int end) {
     int num_blobs;
 
     do {
+        vipairs equivalences;
         num_blobs = blobs.size();
+
+        if (_progressHandler) {
+            _progressHandler->log("number of blobs is " + std::to_string(num_blobs));
+        }
+
         // determine which additional blobs should be merged due to collisions / intersection
         findCollisions(blobs, equivalences);
         // merge the remaining blobs
@@ -238,6 +246,7 @@ void BlobFinder::findBlobs(std::unordered_map<int,Blob3D>& blobs,
         for (unsigned int row = 0; row < _nrows; ++row) {
             for (unsigned int col = 0; col < _ncols; ++col) {
                 auto value = frame_data(row, col);
+                //auto filterd_value = filtered_frame(row, col);
 
                 // Discard pixel if value < threshold
                 if (filtered_frame(row, col) < threshold) {
@@ -289,14 +298,16 @@ void BlobFinder::findBlobs(std::unordered_map<int,Blob3D>& blobs,
                     break;
                 case 7: // All three
                     label=left;
-                    if ((top==left) && (top!=previous))
+                    if ((top==left) && (top!=previous)) {
                         registerEquivalence(top, previous, equivalences);
-                    else if ((top==previous) && (top!=left))
+                    }
+                    else if ((top==previous) && (top!=left)) {
                         registerEquivalence(top, left, equivalences);
-                    else if ((left==previous) && (left!=top))
+                    }
+                    else if ((left==previous) && (left!=top)) {
                         registerEquivalence(left, top, equivalences);
-                    else if ((left!=previous) && (left!=top) && (top!=previous))
-                    {
+                    }
+                    else if ((left!=previous) && (left!=top) && (top!=previous)) {
                         registerEquivalence(top, previous, equivalences);
                         registerEquivalence(top, left, equivalences);
                         registerEquivalence(left, previous, equivalences);
@@ -329,11 +340,6 @@ void BlobFinder::findBlobs(std::unordered_map<int,Blob3D>& blobs,
         _progressHandler->log("Found " + std::to_string(blobs.size()) + " blobs");
         _progressHandler->setProgress(100);
     }
-
-    // too few frames for algorithm to be reliable
-    //if (_nframes<=1)
-    //    throw std::runtime_error("Third dimension should be at least 2 to run this algorithm. if 1, use 2D version");
-
 }
 
 void BlobFinder::setProgressHandler(std::shared_ptr<Utils::ProgressHandler> callback)
@@ -391,15 +397,18 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
 
     // dummies used to help progress handler
     int dummy = 0;
-    int magic = 0.2 * std::distance(blobs.begin(), blobs.end());
+    int magic =0.2 * std::distance(blobs.begin(), blobs.end());
+
+    if (magic < 1) {
+        magic = 1;
+    }
 
     for (auto it = blobs.begin(); it != blobs.end();) {
         ++dummy;
-        Blob3D& p=it->second;
 
         try {
             // toEllipsoid throws exception if mass is too small
-            p.toEllipsoid(_confidence,center,extents,axis);
+            it->second.toEllipsoid(_confidence,center,extents,axis);
         } catch(...) {
             it = blobs.erase(it);
             continue;
@@ -407,19 +416,22 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
 
         // if the threshold is too small it will break the OpenMP peak search
         // when the number of threads is very large
-        if (extents.minCoeff()<1.0e-13)
+        if (extents.minCoeff()<1.0e-13) {
             it = blobs.erase(it);
-        else {
-            boxes.insert(shape3Dmap::value_type(new Ellipsoid3D(center,extents,axis),it->first));
-            it++;
+            continue;
         }
 
+        auto ellipse = new Ellipsoid3D(center,extents,axis);
+        boxes.insert(shape3Dmap::value_type(ellipse, it->first));
+        it++;
+
         // update progress handler
-        if ( (dummy&magic) == 0 && _progressHandler) {
+        if ( (dummy % magic) == 0 && _progressHandler) {
             double total_dist = std::distance(blobs.begin(), blobs.end());
             double current_dist = std::distance(blobs.begin(), it);
             double progress = 100.0 * current_dist / total_dist;
             _progressHandler->setProgress(0.5*progress);
+            _progressHandler->log("blob loop: " + std::to_string(progress));
         }
     }
 
@@ -427,36 +439,43 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
     oct.setMaxDepth(6);
     oct.setMaxStorage(6);
 
-    for (auto&& it: boxes)
+    for (auto&& it: boxes) {
         oct.addData(it.first);
+    }
 
-    std::set<Octree::collision_pair> collisions;
-    oct.getPossibleCollisions(collisions);
+    auto collisions = oct.getCollisions();
 
     // dummies used to help progress handler
     dummy = 0;
     magic = 0.02 * std::distance(collisions.begin(), collisions.end());
 
+    if (magic < 1) {
+        magic = 1;
+    }
+
     for (auto&& it = collisions.begin(); it != collisions.end(); ++it) {
-        // register collision
-        if (it->first->collide(*(it->second))) {
-            auto&& bit1 = boxes.find(it->first);
-            auto&& bit2 = boxes.find(it->second);
-            registerEquivalence(bit1->second, bit2->second, equivalences);
-        }
+
+        auto&& bit1 = boxes.find(it->first);
+        auto&& bit2 = boxes.find(it->second);
+        registerEquivalence(bit1->second, bit2->second, equivalences);
+
         // update progress handler
-        if ( (dummy&magic) == 0 && _progressHandler) {
+        if ( (dummy % magic) == 0 && _progressHandler) {
             const double total_dist = std::distance(collisions.begin(), collisions.end());
             const double current_dist = std::distance(collisions.begin(), it);
             const double progress = 100.0 * current_dist / total_dist;
             _progressHandler->setProgress(50 + 0.5*progress);
         }
+        ++dummy;
     }
+
+
     // calculation complete
     if ( _progressHandler ) {
         _progressHandler->log("Found " + std::to_string(equivalences.size()) + " equivalences");
         _progressHandler->setProgress(100);
     }
+
     // free memory stored in unordered map
     for (auto&& it: boxes) {
         delete it.first;
@@ -479,8 +498,8 @@ BlobFinder::BlobFinder(std::shared_ptr<SX::Data::DataSet> data)
 void BlobFinder::mergeBlobs(std::unordered_map<int,Blob3D>& blobs, vipairs& equivalences) const
 {
     // initialize progress handler if necessary
+    std::cout << "Merging blobs..." << std::endl;
     if (_progressHandler) {
-        _progressHandler->setStatus("Merging blobs...");
         _progressHandler->setProgress(0);
     }
 
@@ -496,25 +515,22 @@ void BlobFinder::mergeBlobs(std::unordered_map<int,Blob3D>& blobs, vipairs& equi
     // dummy for calling progress updater
     int dummy = 0;
     int magic = 0.02 * std::distance(blobs.begin(), blobs.end());
-    if ( magic == 0 ) magic = 1;
+    if ( magic == 0 ) {
+        magic = 1;
+    }
 
     // Iterate on blobs and merge equivalences
-    for (auto it = blobs.begin(); it != blobs.end();)
-    {
+    for (auto it = blobs.begin(); it != blobs.end();) {
         ++dummy;
 
         auto match = mequiv.find(it->first);
-        if (match == mequiv.end())
-        {
+        if (match == mequiv.end()) {
             // Nothing is found get to the next blob
             it++;
-        }
-        else
-        {
+        } else {
             auto tomerge = blobs.find(match->second);
             // Should never be the case
-            if (tomerge != blobs.end())
-            {
+            if (tomerge != blobs.end()) {
                 tomerge->second.merge(it->second);
                 it = blobs.erase(it);
             }
@@ -537,5 +553,4 @@ void BlobFinder::mergeBlobs(std::unordered_map<int,Blob3D>& blobs, vipairs& equi
 }
 
 } // namespace Geometry
-
 } // namespace SX

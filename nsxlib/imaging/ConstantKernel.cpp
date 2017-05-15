@@ -44,8 +44,9 @@ void SX::Imaging::ConstantKernel::update()
     cols = _kernel.cols();
 
     // sanity checks
-    if ( rows < 0 || cols < 0 )
+    if ( rows < 0 || cols < 0 ) {
         throw std::runtime_error("DeltaKernel::update() called with invalid parameters");
+    }
 
     double value = 1.0 / (rows * cols);
 

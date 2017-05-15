@@ -1,60 +1,73 @@
+/*
+ * nsxtool : Neutron Single Crystal analysis toolkit
+ ------------------------------------------------------------------------------------------
+ Copyright (C)
+ 2016- Laurent C. Chapon, Eric Pellegrini, Jonathan Fisher
+
+ Institut Laue-Langevin
+ BP 156
+ 6, rue Jules Horowitz
+ 38042 Grenoble Cedex 9
+ France
+ chapon[at]ill.fr
+ pellegrini[at]ill.fr
+
+ Forshungszentrum Juelich GmbH
+ 52425 Juelich
+ Germany
+ j.fisher[at]fz-juelich.de
+
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+
+ You should have received a copy of the GNU Lesser General Public
+ License along with this library; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ */
+
+#include <QDebug>
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
-#include <QImage>
-#include <QPixmap>
-#include <QDebug>
-#include <QGraphicsView>
-
-#include <set>
+#include <Externals/qcustomplot.h>
 
 #include "dialogs/PeakFitDialog.h"
 #include "ui_PeakFitDialog.h"
-
-#include <nsxlib/crystal/Peak3D.h>
-#include <nsxlib/data/IData.h>
-
-#include <nsxlib/geometry/AABB.h>
-#include <nsxlib/geometry/IntegrationRegion.h>
+#include "models/SessionModel.h"
 #include "ColorMap.h"
-#include <nsxlib/utils/IMinimizer.h>
+#include <nsxlib/data/IData.h>
 #include <nsxlib/utils/MinimizerGSL.h>
 
-#include "models/SessionModel.h"
+using namespace SX::Crystal;
+using namespace SX::Utils;
 
-#include <cmath>
-
-using SX::Crystal::Peak3D;
-using SX::Data::DataSet;
-using SX::Geometry::Ellipsoid;
-using SX::Geometry::IntegrationRegion;
-
-PeakFitDialog::PeakFitDialog(SessionModel* session, QWidget *parent):
+PeakFitDialog::PeakFitDialog(SessionModel* session, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::PeakFitDialog),
     _session(session),
-    _image(nullptr),
-    _peak(nullptr)
+    _peakImage(nullptr),
+    _fitImage(nullptr),
+    _differenceImage(nullptr),
+    _chiSquaredImage(nullptr),
+    ui(new Ui::PeakFitDialog)
 {
     ui->setupUi(this);
 
-    assert(_session != nullptr);
+    _peakScene = new QGraphicsScene(this);
+    _fitScene = new QGraphicsScene(this);
+    _differenceScene = new QGraphicsScene(this);
+    _chiSquaredScene = new QGraphicsScene(this);
 
-    _scene = new QGraphicsScene(this);
-    ui->graphicsView->setScene(_scene);
-    ui->graphicsView->scale(1, -1); // flip image vertically to agree with conventions
-
-    connect(ui->frameScrollBar, SIGNAL(valueChanged(int)), this, SLOT(changeFrame(int)));
-    connect(ui->spinBoxH, SIGNAL(valueChanged(int)), this, SLOT(changeH(int)));
-    connect(ui->spinBoxK, SIGNAL(valueChanged(int)), this, SLOT(changeK(int)));
-    connect(ui->spinBoxL, SIGNAL(valueChanged(int)), this, SLOT(changeL(int)));
-    connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(fitPeakShape()));
-    connect(ui->collisionButton, SIGNAL(clicked()), this, SLOT(checkCollisions()));
-
-    _hkl << 1, 0, 0;
-
-    ui->spinBoxH->setValue(_hkl[0]);
-    ui->spinBoxK->setValue(_hkl[1]);
-    ui->spinBoxL->setValue(_hkl[2]);
+    ui->peakView->setScene(_peakScene);
+    ui->fitView->setScene(_fitScene);
+    ui->differenceView->setScene(_differenceScene);
+    ui->chiSquaredView->setScene(_chiSquaredScene);
 }
 
 PeakFitDialog::~PeakFitDialog()
@@ -62,158 +75,221 @@ PeakFitDialog::~PeakFitDialog()
     delete ui;
 }
 
-void PeakFitDialog::changeFrame(int value)
+bool PeakFitDialog::changePeak()
 {
-    updateView();
-}
+    int h, k, l;
 
-void PeakFitDialog::changeH(int value)
-{
-    _hkl[0] = value;
-    updatePeak();
-    updateView();
-}
+    h = ui->hSpinBox->value();
+    k = ui->kSpinBox->value();
+    l = ui->lSpinBox->value();
 
-void PeakFitDialog::changeK(int value)
-{
-    _hkl[1] = value;
-    updatePeak();
-    updateView();
-}
+    auto hkl = Eigen::Vector3i(h, k, l);
 
-void PeakFitDialog::changeL(int value)
-{
-    _hkl[2] = value;
-    updatePeak();
-    updateView();
-}
+    bool peak_found = false;
 
-void PeakFitDialog::fitPeakShape()
-{
-#pragma not implemented
-}
+    auto numors = _session->getSelectedNumors();
 
-void PeakFitDialog::checkCollisions()
-{
-    if (!_peak) {
-        qDebug() << "error: no peak selected!";
-        return;
-    }
+    for (int i = 0; i < numors.size() && !peak_found; ++i) {
+        auto& peaks = numors[i]->getPeaks();
 
-    qDebug() << "checking collisions with peak at hkl = (" << _hkl[0] << ", " << _hkl[1] << ", " << _hkl[2] << ")";
+        for (auto peak: peaks) {
+            Eigen::Vector3i peak_hkl = peak->getIntegerMillerIndices();
 
-    std::shared_ptr<DataSet> numor = _peak->getData();
-    std::set<sptrPeak3D>& peaks = numor->getPeaks();
-
-    for (sptrPeak3D other_peak: peaks) {
-        if ( other_peak == _peak) {
-            continue;
-        }
-        if (_peak->getShape().collide(other_peak->getShape())) {
-            Eigen::RowVector3i hkl = other_peak->getIntegerMillerIndices();
-            qDebug() << "COLLISION FOUND: ("
-                     << hkl[0] << ", "
-                     << hkl[1] << ", "
-                     << hkl[2] << ")";
+            if (hkl == peak_hkl) {
+                _peak = peak;
+                peak_found = true;
+                break;
+            }
         }
     }
+
+    // could not find it in the list!
+    if (!peak_found) {
+        qCritical() << "Peak with specified HKL not found!";
+        _peakFit = nullptr;
+        _peak = nullptr;
+        return false;
+    }
+
+    _peakFit = std::unique_ptr<PeakFit>(new PeakFit(_peak));
+    _bestParams = _peakFit->defaultParams();
+
+    int min = _peakFit->frameBegin();
+    int max = _peakFit->frameEnd()-1;
+
+    ui->frameScrollBar->setMinimum(min);
+    ui->frameScrollBar->setMaximum(max);
+    ui->frameScrollBar->setValue(std::round((min+max)/2.0));
+
+    updatePlots();
+    return true;
 }
 
-void PeakFitDialog::updateView()
+void PeakFitDialog::updatePlots()
 {
-    if (_session->getSelectedNumors().size() != 1) {
-        qDebug() << "must have exactly 1 numor selected!";
+    if (!_peak)
         return;
+
+    int frame = ui->frameScrollBar->value();
+
+    Eigen::ArrayXXd peakData = _peakFit->peakData(frame);
+    Eigen::ArrayXXd predData = _peakFit->predict(_bestParams, frame);
+
+    Eigen::ArrayXXd diffData = (predData-peakData).abs();
+    Eigen::ArrayXXd chi2Data = _peakFit->chi2(frame);
+
+    const int max_intensity = std::round(_peakFit->maxIntensity());
+
+    //QRect sceneRect(0, 0, peakData.cols()-1, peakData.rows()-1);
+    QRect sceneRect(0, 0, peakData.cols(), peakData.rows());
+
+    _peakScene->setSceneRect(sceneRect);
+    _fitScene->setSceneRect(sceneRect);
+    _differenceScene->setSceneRect(sceneRect);
+    _chiSquaredScene->setSceneRect(sceneRect);
+
+    ColorMap cmap;
+
+    QImage peak = cmap.matToImage(peakData.matrix(), sceneRect, max_intensity);
+    QImage pred = cmap.matToImage(predData, sceneRect, max_intensity);
+    QImage chi2 = cmap.matToImage(chi2Data, sceneRect, max_intensity);
+    QImage diff = cmap.matToImage(diffData, sceneRect, max_intensity);
+
+    //QImage peak = Mat2QImage(peakData, sceneRect, max_intensity);
+    //QImage pred = Mat2QImage(predData, sceneRect, max_intensity);
+    //QImage chi2 = Mat2QImage(chi2Data, sceneRect, max_intensity);
+    //QImage diff = Mat2QImage(diffData, sceneRect, max_intensity);
+
+    if (!_peakImage) {
+        _peakImage = _peakScene->addPixmap(QPixmap::fromImage(peak));
+        _fitImage = _fitScene->addPixmap(QPixmap::fromImage(pred));
+        _chiSquaredImage = _chiSquaredScene->addPixmap((QPixmap::fromImage(chi2)));
+        _differenceImage = _differenceScene->addPixmap((QPixmap::fromImage(diff)));
+    }
+    else {
+        _peakImage->setPixmap(QPixmap::fromImage(peak));
+        _fitImage->setPixmap(QPixmap::fromImage(pred));
+        _chiSquaredImage->setPixmap(QPixmap::fromImage(chi2));
+        _differenceImage->setPixmap(QPixmap::fromImage(diff));
     }
 
-    std::shared_ptr<DataSet> numor = _session->getSelectedNumors()[0];
-    SX::Data::RowMatrixi frame = numor->getFrame(ui->frameScrollBar->value());
+    ui->peakView->fitInView(_peakScene->sceneRect(), Qt::KeepAspectRatio);
+    ui->fitView->fitInView(_fitScene->sceneRect(), Qt::KeepAspectRatio);
+    ui->chiSquaredView->fitInView(_chiSquaredScene->sceneRect(), Qt::KeepAspectRatio);
+    ui->differenceView->fitInView(_differenceScene->sceneRect(), Qt::KeepAspectRatio);
 
-    int intensity = std::ceil(frame.sum() / (double)(frame.rows()*frame.cols())) * 5.0;
 
-//    int ymin = frame.cols()-_ymax;
-//    int ymax = frame.cols()-_ymin;
-    auto cmap = ColorMap::getColorMap("inferno");
-    QRect rect(_xmin, _ymin, _xmax-_xmin, _ymax-_ymin);
-
-    QImage new_image = cmap.matToImage(frame, rect, intensity);
-    new_image = new_image.scaled(ui->graphicsView->width(), ui->graphicsView->height());
-
-    if (_image) {
-        _image->setPixmap(QPixmap::fromImage(new_image));
-    } else {
-        _image = _scene->addPixmap(QPixmap::fromImage(new_image));
-    }
-}
-
-void PeakFitDialog::updatePeak()
-{
-    // todo: handle the case of more than one selected numor!!
-    if (_session->getSelectedNumors().size() != 1) {
-        qDebug() << "ERROR: as currently implemented this method supports only one selected numor!!";
-        return;
+    // clear all previous graphs in custom plot
+    while(ui->chartWidget->graphCount()) {
+        QCPGraph* graph = ui->chartWidget->graph(0);
+        ui->chartWidget->removeGraph(graph);
     }
 
-    std::shared_ptr<DataSet> numor = _session->getSelectedNumors()[0];
-    SX::Data::RowMatrixi frame = numor->getFrame(ui->frameScrollBar->value());
-    std::set<sptrPeak3D>& peaks = numor->getPeaks();
+    // update qcustomplot plot
+    int xmin(0), xmax(0), ymin(0), ymax(0);
 
-    sptrPeak3D the_peak = nullptr;
-    bool found_peak = false;
 
-    for(sptrPeak3D peak: peaks) {
-        if ( peak->getIntegerMillerIndices() == _hkl) {
-            found_peak = true;
-            the_peak = peak;
+    xmin = _peakFit->frameBegin();
+    xmax = _peakFit->frameEnd();
+
+    int num_points = 100;
+
+    QVector<double> xs, Ipred, Iobs;
+
+    auto&& peakProjection = _peak->getPeakProjection();
+
+    // debug
+    std::cout << "xmin: " << xmin << std::endl;
+    std::cout << "xmax: " << xmax << std::endl;
+    std::cout << "length of peak projections: " << peakProjection.size() << std::endl;
+
+    // go through each frame
+        for(int i = 0; i < num_points; ++i) {
+
+        double x = xmin + i*(double)(xmax-xmin) / (double)num_points;
+        double t = x-std::floor(x);
+
+        int i0 = std::rint(std::floor(x));
+        int i1 = std::rint(std::floor(x+1));
+
+        if (i1 >= num_points)
             break;
-        }
+
+        Eigen::ArrayXXd peakData = _peakFit->peakData(std::rint(x));
+        Eigen::ArrayXXd backData = _peakFit->background(_bestParams, x);
+        Eigen::ArrayXXd predData = _peakFit->predict(_bestParams, x);
+
+        double obs = t*peakProjection(i1-xmin) + (1-t)*peakProjection(i0-xmin);
+        double pred = (predData-backData).sum();
+
+        double new_ymin = obs < pred ? obs : pred;
+        double new_ymax = obs > pred ? obs : pred;
+
+        ymin = new_ymin < ymin ? new_ymin : ymin;
+        ymax = new_ymax > ymax ? new_ymax : ymax;
+
+        Iobs.push_back(obs);
+        Ipred.push_back(pred);
+        xs.push_back(x);
+
+        double average = 0.0;
+        double sigma, var = 0.0;
     }
 
-    // didn't find peak, so return
-    if (!found_peak) {
-        qDebug() << "Peak not found in dataset!";
+    // do the QCP plotting
+    ui->chartWidget->addGraph();
+    ui->chartWidget->addGraph();
+
+    ui->chartWidget->graph(0)->setPen(QPen(Qt::black));
+    ui->chartWidget->graph(0)->setData(xs, Iobs);
+    ui->chartWidget->graph(1)->setPen(QPen(Qt::blue));
+    ui->chartWidget->graph(1)->setData(xs, Ipred);
+
+    ui->chartWidget->xAxis->setLabel("Frame");
+    ui->chartWidget->yAxis->setLabel("Difference: Obs (black) and Pred (blue)");
+    ui->chartWidget->xAxis->setRange(xmin, xmax);
+    ui->chartWidget->yAxis->setRange(ymin, ymax);
+    ui->chartWidget->replot();
+}
+
+
+
+void PeakFitDialog::on_hSpinBox_valueChanged(int arg1)
+{
+    changePeak();
+}
+
+void PeakFitDialog::on_kSpinBox_valueChanged(int arg1)
+{
+    changePeak();
+}
+
+void PeakFitDialog::on_lSpinBox_valueChanged(int arg1)
+{
+    changePeak();
+}
+
+void PeakFitDialog::on_frameScrollBar_valueChanged(int value)
+{
+    updatePlots();
+}
+
+void PeakFitDialog::on_runFitButton_clicked()
+{
+    if (!_peak || !_peakFit) {
+        qCritical() << "No peak selected for fitting!";
         return;
     }
 
-    // update current peak
-    _peak = the_peak;
+    MinimizerGSL min;
 
-    // get AABB
-
-    auto&& aabb = IntegrationRegion(the_peak->getShape()).getBackground();
-
-    Eigen::Vector3d lower = aabb.getLower();
-    Eigen::Vector3d upper = aabb.getUpper();
-
-    _xmin = std::floor(lower(0));
-    _ymin = std::floor(lower(1));
-    _zmin = std::floor(lower(2));
-
-    _xmax = std::ceil(upper(0));
-    _ymax = std::ceil(upper(1));
-    _zmax = std::ceil(upper(2));
-
-    _xmin = _xmin < 0? 0 : _xmin;
-    _ymin = _ymin < 0? 0 : _ymin;
-    _zmin = _zmin < 0? 0 : _zmin;
-
-    _xmax = _xmax >= frame.cols()? frame.cols()-1 : _xmax;
-    _ymax = _ymax >= frame.rows()? frame.rows()-1 : _ymax;
-    _zmax = _zmax >= numor->getNFrames()? numor->getNFrames()-1 : _zmax;
-
-
-    qDebug() << _xmin << "    " << _ymin << "    " << _zmin;
-    qDebug() << _xmax << "    " << _ymax << "    " << _zmax;
-
-    // testing
-    const Ellipsoid<double, 3>* ellipse = dynamic_cast<const Ellipsoid<double, 3>*>(&the_peak->getShape());
-
-    if (ellipse) {
-        Eigen::Matrix<double, 3, 1> center = ellipse->getCenter();
-        qDebug() << "center: " << center(0) << ", " << center(1) << ", " << center(2);
+     if (_peakFit->fit(min) ) {
+        qDebug() << "Fit converged!";
+    }
+    else {
+        qDebug() << "Fit did not converge! " << min.getStatusStr();
     }
 
-    ui->frameScrollBar->setMinimum(_zmin);
-    ui->frameScrollBar->setMaximum(_zmax);
-    ui->frameScrollBar->setValue(int(std::lround(aabb.getAABBCenter()[2])));
+    _bestParams = min.params();
+    updatePlots();
 }

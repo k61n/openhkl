@@ -44,6 +44,7 @@
 #include "UnitCell.h"
 #include "SpaceGroup.h"
 #include "Peak3D.h"
+#include "Intensity.h"
 
 namespace SX {
 namespace Crystal {
@@ -56,18 +57,21 @@ public:
 
     bool addPeak(const sptrPeak3D& peak);
     Eigen::Vector3i getIndex() const;
-    double intensity() const;
-    double sigma() const;
+    const Intensity& getIntensity() const;
     double chiSquared() const;
     size_t redundancy() const;
     double std() const;
+
+    double d() const;
+    const std::vector<sptrPeak3D>& getPeaks() const;
 
 private:
     void determineRepresentativeHKL();
     void update();
 
     Eigen::Vector3i _hkl;
-    double _intensity, _sigma, _chiSquared, _std;
+    Intensity _intensity;
+    double _chiSquared, _std, _d;
     std::vector<sptrPeak3D> _peaks;
     SX::Crystal::SpaceGroup _grp;
     bool _friedel;

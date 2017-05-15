@@ -18,11 +18,11 @@ BOOST_AUTO_TEST_CASE(Test_ProgressHandler)
     ProgressHandler handler;
 
     // check that it handles nullptr without exception
-    handler.setProcessCallback(nullptr);
+    handler.setCallback(nullptr);
 
     // send it a dummy callback
     int count = 0;
-    handler.setProcessCallback([&count] () {++count;});
+    handler.setCallback([&count] () {++count;});
 
     handler.setProgress(50);
     BOOST_CHECK(handler.getProgress() == 50);

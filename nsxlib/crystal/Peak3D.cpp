@@ -76,7 +76,7 @@ Peak3D::Peak3D(std::shared_ptr<SX::Data::DataSet> data):
     _event(nullptr),
     _source(nullptr),
     _counts(0.0),
-    _countsSigma(0.0),
+    //_countsSigma(0.0),
     _scale(1.0),
     _selected(true),
     _masked(false),
@@ -104,7 +104,7 @@ Peak3D::Peak3D(const Peak3D& other):
     _event(other._event == nullptr ? nullptr : new DetectorEvent(*other._event)),
     _source(other._source),
     _counts(other._counts),
-    _countsSigma(other._countsSigma),
+    //_countsSigma(other._countsSigma),
     _scale(other._scale),
     _selected(other._selected),
     _masked(other._masked),
@@ -131,7 +131,7 @@ Peak3D& Peak3D::operator=(const Peak3D& other)
     _event = other._event == nullptr ? nullptr : std::unique_ptr<DetectorEvent>(new DetectorEvent(*other._event));
     _source= other._source;
     _counts = other._counts;
-    _countsSigma = other._countsSigma;
+    //_countsSigma = other._countsSigma;
     _scale = other._scale;
     _selected = other._selected;
     _observed = other._observed;
@@ -147,6 +147,8 @@ void Peak3D::linkData(const std::shared_ptr<SX::Data::DataSet>& data)
     _data = std::weak_ptr<SX::Data::DataSet>(data);
     if (data != nullptr) {
         setSource(data->getDiffractometer()->getSource());
+        // update detector event and state
+        setShape(_shape);
     }
 }
 
@@ -166,12 +168,15 @@ void Peak3D::setShape(const Ellipsoid3D& peak)
 {
     using DetectorEvent = SX::Instrument::DetectorEvent;
     _shape = peak;
-
-    Eigen::Vector3d center = peak.getAABBCenter();
-    int f = int(std::lround(std::floor(center[2])));
-
     auto data = getData();
 
+    // no linked data?
+    if (data == nullptr) {
+        return;
+    }
+
+    Eigen::Vector3d center = peak.getAABBCenter();
+    const double f = std::min(center[2], double(getData()->getNFrames())-1.0001);
     const auto& state = data->getInterpolatedState(f);
 
     setSampleState(ComponentState(state.sample));
@@ -240,20 +245,6 @@ Eigen::VectorXd Peak3D::getBkgProjection() const
     return _scale*_projectionBkg;
 }
 
-Eigen::VectorXd Peak3D::getProjectionSigma() const
-{
-    return _scale*(_projection.array().sqrt());
-}
-
-Eigen::VectorXd Peak3D::getPeakProjectionSigma() const
-{
-    return _scale*(_projectionPeak.array().sqrt());
-}
-
-Eigen::VectorXd Peak3D::getBkgProjectionSigma() const
-{
-    return _scale*(_projectionBkg.array().sqrt());
-}
 
 void Peak3D::addUnitCell(sptrUnitCell uc, bool activate)
 {
@@ -285,14 +276,21 @@ sptrUnitCell Peak3D::getUnitCell(int index) const
     return _unitCells[size_t(index)];
 }
 
-double Peak3D::getRawIntensity() const
+Intensity Peak3D::getRawIntensity() const
 {
-    return _counts * getData()->getSampleStepSize();
+     // return _counts * getData()->getSampleStepSize();
+    return _intensity * getData()->getSampleStepSize();
 }
 
-double Peak3D::getScaledIntensity() const
+Intensity Peak3D::getScaledIntensity() const
 {
-    return _scale*getRawIntensity();
+    return getRawIntensity() * _scale;
+}
+
+Intensity Peak3D::getCorrectedIntensity() const
+{
+    const double factor = _scale / (getLorentzFactor() * _transmission);
+    return getRawIntensity() * factor;
 }
 
 double Peak3D::getTransmission() const
@@ -305,15 +303,15 @@ void Peak3D::scaleShape(double scale)
     _shape.scale(scale);
 }
 
-double Peak3D::getRawSigma() const
-{
-    return _countsSigma * getData()->getSampleStepSize();
-}
+//double Peak3D::getRawSigma() const
+//{
+//    return _countsSigma * getData()->getSampleStepSize();
+//}
 
-double Peak3D::getScaledSigma() const
-{
-    return _scale*getRawSigma();
-}
+//double Peak3D::getScaledSigma() const
+//{
+//    return _scale*getRawSigma();
+//}
 
 double Peak3D::getLorentzFactor() const
 {
@@ -461,7 +459,8 @@ bool Peak3D::isObserved() const
 
 double Peak3D::getIOverSigmaI() const
 {
-    return _counts/_countsSigma;
+    //return _counts/_countsSigma;
+    return _intensity.getValue() / _intensity.getSigma();
 }
 
 void Peak3D::updateIntegration(const PeakIntegrator& integrator)
@@ -471,28 +470,29 @@ void Peak3D::updateIntegration(const PeakIntegrator& integrator)
     _projectionBkg = integrator.getProjectionBackground();
     _projection = integrator.getProjection();
     _counts = _projectionPeak.sum();
-    _countsSigma = std::sqrt(std::abs(_counts));
+    //_countsSigma = std::sqrt(std::abs(_counts));
+    _pValue = integrator.pValue();
+    _intensity = integrator.getPeakIntensity();
+
+    // fit peak profile
+    _profile.fit(_projectionPeak, 100);
+
+    _integration = integrator;
 }
 
-double Peak3D::pValue()
+double Peak3D::pValue() const
 {
-    // assumption: all background pixel counts are Poisson processes with rate R
-    // therefore, we can estimate the rate R as below:
-    const double R = _countsBkg.sum() / _pointsBkg.sum();
+    return _pValue;
+}
 
-    // null hypothesis: the pixels inside the peak are Poisson processes with rate R
-    // therefore, by central limit theorem the average value
-    const double avg = _countsPeak.sum() / _pointsPeak.sum();
-    // is normal with mean R and variance:
-    const double var = R / _pointsPeak.sum();
+const Profile& Peak3D::getProfile() const
+{
+    return _profile;
+}
 
-    // thus we obtain the following standard normal variable
-    const double z = (avg-R) / std::sqrt(var);
-
-    // compute the p value
-    const double p = 1.0 - 0.5 * (1.0 + std::erf(z / std::sqrt(2)));
-
-    return p;
+const PeakIntegrator &Peak3D::getIntegration() const
+{
+    return _integration;
 }
 
 bool Peak3D::hasUnitCells() const

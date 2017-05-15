@@ -9,6 +9,7 @@
 #include "../geometry/BlobFinder.h"
 #include "PeakFinder.h"
 #include "../utils/Types.h"
+#include "../utils/erf_inv.h"
 #include "../imaging/Convolver.h"
 #include "../crystal/Peak3D.h"
 #include "../instrument/Sample.h"
@@ -72,10 +73,10 @@ bool PeakFinder::find(std::vector<std::shared_ptr<DataSet>> numors)
             if ( _handler ) {
                 _handler->log("Median value is: " + std::to_string(_median));
                 _handler->log("threshold value is " + std::to_string(_thresholdValue));
-                _handler->log("min comp is" + std::to_string(_minComp));
+                _handler->log("min comp is " + std::to_string(_minComp));
                 _handler->log("max comp is " + std::to_string(_maxComp));
                 _handler->log("confidence is " + std::to_string(_confidence));
-                _handler->log("relative threshold is" + std::to_string(_thresholdType == 0));
+                _handler->log("relative threshold is " + std::to_string(_thresholdType == 0));
             }
 
             // set image filter, if selected
@@ -142,7 +143,8 @@ bool PeakFinder::find(std::vector<std::shared_ptr<DataSet>> numors)
 
             Eigen::Vector3d center, eigenvalues;
             Eigen::Matrix3d eigenvectors;
-            blob.second.toEllipsoid(_confidence, center, eigenvalues, eigenvectors);
+            //blob.second.toEllipsoid(_confidence, center, eigenvalues, eigenvectors);
+            blob.second.toEllipsoid(SX::Utils::getConfidence(1.0), center, eigenvalues, eigenvectors);
             auto shape = Ellipsoid3D(center, eigenvalues, eigenvectors);
 
             //    blob.toEllipsoid(confidence, center, eigenvalues, eigenvectors);
@@ -183,7 +185,8 @@ bool PeakFinder::find(std::vector<std::shared_ptr<DataSet>> numors)
             _handler->setStatus(("Integrating " + std::to_string(numor->getPeaks().size()) + " peaks...").c_str());
             _handler->setProgress(0);
         }
-        numor->integratePeaks();
+        const double scale = SX::Utils::getScale(_confidence);
+        numor->integratePeaks(scale, 2.0*scale, false, _handler);
         numor->close();
         //_ui->progressBar->setValue(++comp);
     }

@@ -120,7 +120,7 @@ bool MinimizerGSL::fit(int max_iter)
     _numIter = _workspace->niter;
 #endif
 
-    fprintf (stderr, "status = %s\n", gsl_strerror(_status));
+    //fprintf (stderr, "status = %s\n", gsl_strerror(_status));
 
     eigenFromGSL(_workspace->x, _x);
 

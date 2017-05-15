@@ -10,17 +10,14 @@
 #include "DeltaKernel.h"
 #include "KernelFactory.h"
 
-namespace SX
-{
-
-namespace Imaging
-{
+namespace SX {
+namespace Imaging {
 
 KernelFactory::KernelFactory()
 {
-	registerCallback("annular",&AnnularKernel::create);
-	registerCallback("constant",&ConstantKernel::create);
-	registerCallback("delta",&DeltaKernel::create);
+    registerCallback("annular",&AnnularKernel::create);
+    registerCallback("constant",&ConstantKernel::create);
+    registerCallback("delta",&DeltaKernel::create);
 }
 
 KernelFactory::~KernelFactory()
@@ -28,5 +25,4 @@ KernelFactory::~KernelFactory()
 }
 
 } // Imaging
-
 } // SX

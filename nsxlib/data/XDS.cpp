@@ -108,8 +108,8 @@ bool XDS::writePeaks(std::ostream &str) const
         const double y = center[1];
         const double z = center[2];
 
-        const double iobs = peak->getScaledIntensity();
-        const double sigma = peak->getScaledSigma();
+        const double iobs = peak->getScaledIntensity().getValue();
+        const double sigma = peak->getScaledIntensity().getSigma();
 
         str << std::setw(5) << h;
         str << std::setw(5) << k;

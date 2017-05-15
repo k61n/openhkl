@@ -57,10 +57,11 @@ enum Direction {CW,CCW};
 template<typename T,SX::Types::uint D>
 class IShape
 {
-    typedef Eigen::Matrix<T,D,D> matrix;
-    typedef Eigen::Matrix<T,D,1> vector;
-    typedef Eigen::Matrix<T,D+1,1> HomVector;
 public:
+    using matrix = Eigen::Matrix<T,D,D>;
+    using vector = Eigen::Matrix<T,D,1>;
+    using HomVector = Eigen::Matrix<T,D+1,1>;
+
     //! Construct an unitialized IShape
     IShape();
     //! Construct a IShape from another IShape
@@ -226,8 +227,7 @@ bool IShape<T,D>::contains(const IShape<T,D>& other) const
 template<typename T, SX::Types::uint D>
 bool IShape<T,D>::intercept(const IShape<T,D>& other) const
 {
-    for (SX::Types::uint i=0; i<D; ++i)
-    {
+    for (SX::Types::uint i = 0; i < D; ++i) {
         if (_upperBound(i) < other._lowerBound(i) || _lowerBound(i) > other._upperBound(i))
             return false;
     }
@@ -237,8 +237,7 @@ bool IShape<T,D>::intercept(const IShape<T,D>& other) const
 template<typename T, SX::Types::uint D>
 void IShape<T,D>::setBounds(const vector& lb, const vector& ub)
 {
-    for (SX::Types::uint i=0;i<D;++i)
-    {
+    for (SX::Types::uint i=0;i<D;++i) {
         if (lb(i)>ub(i))
             throw std::invalid_argument("IShape: upper limit must be > lower limit");
     }
@@ -249,8 +248,7 @@ void IShape<T,D>::setBounds(const vector& lb, const vector& ub)
 template<typename T, SX::Types::uint D>
 void IShape<T,D>::setLower(const vector& lb)
 {
-    for (SX::Types::uint i=0;i<D;++i)
-    {
+    for (SX::Types::uint i=0;i<D;++i) {
         if (lb(i)>_upperBound(i))
             throw std::invalid_argument("IShape: upper limit must be > lower limit");
     }
@@ -260,8 +258,7 @@ void IShape<T,D>::setLower(const vector& lb)
 template<typename T, SX::Types::uint D>
 void IShape<T,D>::setUpper(const vector& ub)
 {
-    for (SX::Types::uint i=0;i<D;++i)
-    {
+    for (SX::Types::uint i=0;i<D;++i) {
         if (_lowerBound(i)>ub(i))
             throw std::invalid_argument("AABB: upper limit must be > lower limit");
     }
@@ -324,8 +321,7 @@ bool IShape<T,D>::isInsideAABB(const std::initializer_list<T>& point) const
     auto lbit = _lowerBound.data();
     auto ubit = _upperBound.data();
 
-    for(; it!=point.end(); it++,lbit++,ubit++)
-    {
+    for(; it!=point.end(); it++,lbit++,ubit++) {
         if (*it < *lbit || *it > *ubit)
             return false;
     }
@@ -341,8 +337,7 @@ bool IShape<T,D>::isInsideAABB(const vector& point) const
     auto lbit = _lowerBound.data();
     auto ubit = _upperBound.data();
 
-    for(unsigned int i=0; i<D; i++,lbit++,ubit++,it++)
-    {
+    for(unsigned int i=0; i<D; i++,lbit++,ubit++,it++) {
         if (*it < *lbit || *it > *ubit)
             return false;
     }
@@ -358,8 +353,7 @@ bool IShape<T,D>::isInsideAABB(const HomVector& point) const
     auto lbit = _lowerBound.data();
     auto ubit = _upperBound.data();
 
-    for(unsigned int i=0; i<D; i++,lbit++,ubit++,it++)
-    {
+    for(unsigned int i=0; i<D; i++,lbit++,ubit++,it++) {
         if (*it < *lbit || *it > *ubit)
             return false;
     }

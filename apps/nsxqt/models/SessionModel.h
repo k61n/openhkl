@@ -97,6 +97,9 @@ public:
 
     bool writeXDS(std::string filename, const std::vector<sptrPeak3D>& peaks, bool merge, bool friedel);
 
+    void fitAllPeaks();
+    void autoAssignUnitCell();
+
 signals:
     void plotData(std::shared_ptr<SX::Data::DataSet>);
     void inspectWidget(QWidget*);

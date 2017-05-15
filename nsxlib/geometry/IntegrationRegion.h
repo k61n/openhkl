@@ -54,6 +54,7 @@ public:
     const Ellipsoid3D& getRegion() const;
     bool inRegion(const Eigen::Vector4d& p) const;
     bool inBackground(const Eigen::Vector4d& p) const;
+    point_type classifyPoint(const Eigen::Vector4d& p) const;
 
     const Ellipsoid3D& getBackground() const;
     void updateMask(Eigen::MatrixXi& mask, double z) const;

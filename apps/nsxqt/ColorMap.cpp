@@ -71,7 +71,7 @@ ColorMap::~ColorMap()
 {
 }
 
-QImage ColorMap::matToImage(const Eigen::MatrixXi& source, const QRect& rect, int colorMax, bool log)
+QImage ColorMap::matToImage(const Eigen::ArrayXXd &source, const QRect &rect, double colorMax, bool log)
 {
     // invalid rectangle: early return
     if (rect.left() < 0 || rect.top() < 0)
@@ -104,5 +104,3 @@ QImage ColorMap::matToImage(const Eigen::MatrixXi& source, const QRect& rect, in
 
     return dest;
 }
-
-

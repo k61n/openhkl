@@ -2,8 +2,10 @@
 #include <stdexcept>
 #include <memory>
 #include <vector>
+#include <cmath>
 
 #include "../utils/Units.h"
+#include "../utils/erf_inv.h"
 
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -28,6 +30,7 @@
 #include "IFrameIterator.h"
 #include "BasicFrameIterator.h"
 #include "ThreadedFrameIterator.h"
+
 
 namespace SX {
 namespace Data {
@@ -336,7 +339,11 @@ void DataSet::saveHDF5(const std::string& filename) //const
     RowMatrixd valsSources(sourcenames.size(),_nFrames);
 
     for (unsigned int i = 0; i < _states.size(); ++i) {
-        const std::vector<double>& v=_states[i].source.getValues();
+        std::vector<double> v = _states[i].source.getValues();
+
+        while(v.size() < sourcenames.size()) {
+            v.emplace_back(0.0);
+        }
 
         for (unsigned int j = 0; j < sourcenames.size(); ++j) {
             valsSources(j,i) = v[j] / SX::Units::deg;
@@ -547,11 +554,9 @@ double DataSet::getBackgroundLevel(const std::shared_ptr<SX::Utils::ProgressHand
     return _background;
 }
 
-void DataSet::integratePeaks(const std::shared_ptr<Utils::ProgressHandler>& handler)
+void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_shape, const std::shared_ptr<Utils::ProgressHandler>& handler)
 {
-    // these should be passed as arguments
-    const double peak_scale = 1.0;
-    const double bkg_scale = 3.0;
+    using Ellipsoid3D = SX::Geometry::Ellipsoid<double, 3>;
 
     if (handler) {
         handler->setStatus(("Integrating " + std::to_string(getPeaks().size()) + " peaks...").c_str());
@@ -568,7 +573,63 @@ void DataSet::integratePeaks(const std::shared_ptr<Utils::ProgressHandler>& hand
 
     peak_list.reserve(num_peaks);
 
+    auto getCovar = [](const Ellipsoid3D& ell) -> Eigen::Matrix3d {
+        auto&& rs = ell.getRSinv();
+        return rs.transpose()*rs;
+    };
+
+
+    auto peakRadius = [](const Eigen::Matrix3d& shape) -> double {
+//        Eigen::SelfAdjointEigenSolver<Matrix3d> solver;
+//        solver.compute(shape);
+//        auto vals = solver.eigenvalues();
+//        double vol = vals(0)*vals(1)*vals(2);
+        //static const double factor = std::pow(4.0 * M_PI / 3.0, -2.0);
+        //const double volume = factor * std::pow(shape.determinant(), -0.5);
+        return std::pow(shape.determinant(), -1.0/6.0);
+    };
+
+
+//    // testing: get average peak shape
+    Eigen::Matrix3d avg_peak_shape = Eigen::Matrix3d::Zero();
+    unsigned int num_good_peaks = 0;
+    double avg_peak_radius = 0.0;
+    double peak_radius_std = 0.0;
+
+
+    for(auto&& p: _peaks) {
+        if (p->isMasked() || !p->isSelected()) {
+            continue;
+
+        }
+        double radius = peakRadius(getCovar(p->getShape()));
+        avg_peak_shape += getCovar(p->getShape());
+        avg_peak_radius += radius;
+        peak_radius_std += radius*radius;
+        ++num_good_peaks;
+    }
+
+    // too few neighbors to get average shape
+    if (num_good_peaks < 1) {
+        return;
+    }
+
+    avg_peak_shape /= num_good_peaks;
+    avg_peak_radius /= num_good_peaks;
+
+    const double var = (peak_radius_std - avg_peak_radius*avg_peak_radius) / (num_good_peaks-1);
+    peak_radius_std = std::sqrt(var);
+
+    std::cout << "avg radius: " << avg_peak_radius << std::endl;
+    std::cout << "std. dev:   " << peak_radius_std << std::endl;
+
+
+    //const double avg_peak_radius = peakRadius(avg_peak_shape);
+
     for (auto&& peak: _peaks ) {
+//        Eigen::Vector3d center(peak->getShape().getCenter());
+//        auto shape = Ellipsoid3D(center, vals, solver.eigenvectors());
+//        peak->setShape(shape);
         IntegrationRegion region(peak->getShape(), peak_scale, bkg_scale);
         PeakIntegrator integrator(region, *this);
         peak_list.emplace_back(peak, integrator);
@@ -609,11 +670,152 @@ void DataSet::integratePeaks(const std::shared_ptr<Utils::ProgressHandler>& hand
         }
     }
 
+    // testing: don't update shape?!
+    // update_shape = false;
+    const double confidence = SX::Utils::getConfidence(1.0); // todo: should not be hard coded
+
     for (auto&& tup: peak_list) {
         auto&& peak = tup.first;
         auto&& integrator = tup.second;
         integrator.end();
         peak->updateIntegration(integrator);
+
+        // peak is too weak
+        // todo: p value should probably not be hard-coded
+//        if (integrator.pValue() > 1e-3) {
+//            peak->setSelected(false);
+//            continue;
+//        }
+
+        // peak profile couldn't be fitted
+//        if (!peak->getProfile().goodFit(integrator.getProjectionPeak(), 0.10)) {
+//            peak->setSelected(false);
+//            continue;
+//        }
+
+        if (!update_shape) {
+            continue;
+        }
+
+        // update the peak shape
+        auto&& maybe_shape = integrator.getBlobShape(confidence);
+
+        // could not get shape (peak too weak?)
+        if (maybe_shape.isNothing()) {
+            peak->setSelected(false);
+            continue;
+        }
+
+        auto&& new_shape = maybe_shape.get();
+        auto&& old_shape = peak->getShape();
+        Eigen::RowVector3d hkl_old, hkl_new;
+
+        const double radius = peakRadius(getCovar(new_shape));
+        const double volume = 4.0*M_PI/3.0 * radius*radius*radius;
+
+        if (volume < 1.0) {
+            peak->setSelected(false);
+            continue;
+        }
+
+        if (std::fabs(radius-avg_peak_radius) > 3.5*peak_radius_std) {
+            peak->setSelected(false);
+            continue;
+        }
+
+        auto old_center = old_shape.getAABBCenter();
+        auto new_center = new_shape.getAABBCenter();
+
+        auto lb = new_shape.getLower();
+        auto ub = new_shape.getUpper();
+
+        // not enough mass to determine ellipse
+        if (std::isnan((ub-lb).squaredNorm())) {
+            peak->setSelected(false);
+            continue;
+        }
+
+        // outside of frame
+        if (lb[0] < 0.0 || lb[1] < 0.0 || lb[2] < 0.0) {
+            peak->setSelected(false);
+            continue;
+        }
+        if (ub[0] > _ncols-1 || ub[1] > _nrows-1 || ub[2] > _nFrames-1) {
+            peak->setSelected(false);
+            continue;
+        }
+
+        peak->getMillerIndices(hkl_old);
+        peak->setShape(new_shape);
+        peak->getMillerIndices(hkl_new);
+
+        // indices disagree
+        if ( (hkl_old-hkl_new).squaredNorm() > 1e-6 ) {
+            peak->setShape(old_shape);
+            peak->setSelected(false);
+        }
+    }
+}
+
+void SX::Data::DataSet::removeDuplicatePeaks()
+{
+    using SX::Instrument::Sample;
+    using Octree = SX::Geometry::NDTree<double, 3>;
+
+    class compare_fn {
+    public:
+        auto operator()(const Eigen::RowVector3i& a, const Eigen::RowVector3i& b) const -> bool
+        {
+            if (a(0) != b(0))
+                return a(0) < b(0);
+
+            if (a(1) != b(1))
+                return a(1) < b(1);
+
+            return a(2) < b(2);
+        }
+    };
+
+
+    int predicted_peaks = 0;
+
+    auto& mono = getDiffractometer()->getSource()->getSelectedMonochromator();
+    const double wavelength = mono.getWavelength();
+    std::vector<sptrPeak3D> calculated_peaks;
+
+    std::shared_ptr<Sample> sample = getDiffractometer()->getSample();
+    unsigned int ncrystals = static_cast<unsigned int>(sample->getNCrystals());
+
+    for (unsigned int i = 0; i < ncrystals; ++i) {
+        SX::Crystal::SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
+        auto cell = sample->getUnitCell(i);
+        auto UB = cell->getReciprocalStandardM();
+
+        std::map<Eigen::RowVector3i, sptrPeak3D, compare_fn> hkls;
+
+        for (auto&& peak: _peaks) {
+            Eigen::RowVector3d hkl;
+            Eigen::RowVector3i hkl_int;
+                    //bool getMillerIndices(const UnitCell& uc, Eigen::RowVector3d& hkl, bool applyUCTolerance=true) const;
+
+            if (!peak->getMillerIndices(*cell, hkl)) {
+                continue;
+            }
+
+            for (auto i = 0; i < 3; ++i) {
+                hkl_int(i) = std::lround(hkl(i));
+            }
+
+            auto it = hkls.find(hkl_int);
+
+            if (it == hkls.end()) {
+                hkls[hkl_int] = peak;
+            }
+            else {
+                it->second->setSelected(false);
+                peak->setSelected(false);
+            }
+        }
     }
 }
 
@@ -636,6 +838,30 @@ double DataSet::getSampleStepSize() const
     step /= (numFrames-1) * 0.05 * SX::Units::deg;
 
     return step;
+}
+
+Eigen::Vector3d DataSet::getQ(const Eigen::Vector3d& pix) const
+{
+    auto source = _diffractometer->getSource();
+    auto sample = _diffractometer->getSample();
+
+    double frame = pix[2];
+
+    if (frame > getNFrames()-1) {
+        frame = getNFrames()-1;
+    }
+    if (frame < 0) {
+        frame = 0.0;
+    }
+
+    double wavelength = source->getSelectedMonochromator().getWavelength();
+    auto state = getInterpolatedState(frame);
+
+    SX::Instrument::DetectorEvent event(*_diffractometer->getDetector(), pix[0], pix[1], state.detector.getValues());
+
+    // otherwise scattering point is deducted from the sample
+    Eigen::Vector3d q = event.getQ(wavelength, state.sample.getPosition());
+    return state.sample.transformQ(q);
 }
 
 } // end namespace Data

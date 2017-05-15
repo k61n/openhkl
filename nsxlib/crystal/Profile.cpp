@@ -63,6 +63,11 @@ bool Profile::fit(const Eigen::VectorXd &y, int max_iter)
 
     const int num_params = 6;
 
+    // too few data points to fit
+    if (y.size() <= num_params) {
+        return false;
+    }
+
     for (int i = 0; i < wt.size(); ++i) {
         wt(i) = 1.0;
     }
@@ -128,6 +133,16 @@ double Profile::integrate() const
     return 0.5*_gauss.integrate() + 0.5*_lorentz.integrate();
 }
 
-} // end namespace Crystal
+bool Profile::goodFit(const Eigen::VectorXd &y, double eps) const
+{
+    Eigen::VectorXd x(y.size());
+    for (auto i = 0; i < y.size(); ++i) {
+        x(i) = evaluate(i);
+    }
+    auto diff = (x-y).norm();
+    return diff < eps*y.norm() && diff < eps*x.norm();
+}
 
-} // end namespace SX
+} // namespace Crystal
+} // namespace SX
+

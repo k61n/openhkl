@@ -90,8 +90,7 @@ protected:
 
 std::ostream& operator<<(std::ostream& os, const ConvolutionKernel& kernel);
 
-} /* namespace Imaging */
-
-} /* namespace SX */
+} // namespace Imaging 
+} // namespace SX 
 
 #endif /* NSXTOOL_CONVOLUTIONKERNEL_H_ */

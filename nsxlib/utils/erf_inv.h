@@ -42,6 +42,13 @@ namespace Utils {
 //! Inverse Error function
 double erf_inv(double y);
 
+//! Get a scale from confidence (for Gaussian distribution).
+//! The result y is such that the integral of standard normal on [-y, y] is equal to confidence.
+double getScale(double confidence);
+
+//! Get confidence level: equal to the integral on [-x,x] of a standard normal.
+double getConfidence(double x);
+
 } // namespace Utils
 } // namespace SX
 

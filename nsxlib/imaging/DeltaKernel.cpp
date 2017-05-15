@@ -45,8 +45,9 @@ void DeltaKernel::update()
     cols = _kernel.cols();
 
     // sanity checks
-    if ( rows < 0 || cols < 0 )
+    if ( rows < 0 || cols < 0 ) {
         throw std::runtime_error("DeltaKernel::update() called with invalid parameters");
+    }
 
     // set kernel equal to kronecker delta
     _kernel = SX::Types::RealMatrix::Zero(rows, cols);

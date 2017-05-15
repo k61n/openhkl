@@ -106,7 +106,7 @@ void ScaleDialog::buildPlot()
 
         for (auto&& p: peak_list) {
             double frame = p->getShape().getAABBCenter()[2];
-            double in = p->getScaledIntensity() * (a+b*frame);
+            double in = p->getScaledIntensity().getValue() * (a+b*frame);
             average += in;
             var += in*in;
         }
@@ -125,7 +125,7 @@ void ScaleDialog::buildPlot()
 
 
             double x = p->getShape().getAABBCenter()[2]; // frame
-            double y = (p->getScaledIntensity() * (a+b*x) - average);
+            double y = (p->getScaledIntensity().getValue() * (a+b*x) - average);
 
             xmin = x < xmin? x : xmin;
             xmax = x > xmax? x : xmax;
@@ -222,7 +222,7 @@ void ScaleDialog::calculateRFactors()
 
         for (auto&& p: peak_list) {
             double z = p->getShape().getAABBCenter()[2];
-            double in = p->getScaledIntensity()*getScale(z);
+            double in = p->getScaledIntensity().getValue()*getScale(z);
 
             if ( z > _numFrames)
                 _numFrames = int(std::lround(std::ceil(z)));
@@ -251,7 +251,7 @@ void ScaleDialog::calculateRFactors()
 
         for (auto&& p: peak_list) {
             double z = p->getShape().getAABBCenter()[2];
-            double diff = std::fabs(p->getScaledIntensity()*getScale(z) - average);
+            double diff = std::fabs(p->getScaledIntensity().getValue()*getScale(z) - average);
             _Rmerge += diff;
             _Rmeas += Fmeas*diff;
             _Rpim += Fpim*diff;
@@ -318,14 +318,14 @@ void ScaleDialog::refineScale()
 
             for (Peak3D* peak: _peaks[i]) {
                 double z = peak->getShape().getAABBCenter()[2] ;
-                average += getScale(z) * peak->getScaledIntensity();
+                average += getScale(z) * peak->getScaledIntensity().getValue();
             }
 
             average /= _peaks[i].size();
 
             for (Peak3D* peak: _peaks[i]) {
                 double z = peak->getShape().getAABBCenter()[2];
-                residuals(idx++) = getScale(z) * peak->getScaledIntensity() - average;
+                residuals(idx++) = getScale(z) * peak->getScaledIntensity().getValue() - average;
             }
         }
 

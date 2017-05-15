@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef NSXTOOL_DATA_H_
-#define NSXTOOL_DATA_H_
+#ifndef NSXTOOL_DATASET_H_
+#define NSXTOOL_DATASET_H_
 
 #include <memory>
 #include <string>
@@ -192,9 +192,15 @@ public:
     double getBackgroundLevel(const std::shared_ptr<SX::Utils::ProgressHandler>& progress);
 
     //! Integrate intensities of all peaks
-    void integratePeaks(const std::shared_ptr<SX::Utils::ProgressHandler>& handler = nullptr);
+    void integratePeaks(double peak_scale = 3.0, double bkg_scale = 5.0, bool update_shape = false, const std::shared_ptr<SX::Utils::ProgressHandler>& handler = nullptr);
+
+    //! Remove duplicates
+    void removeDuplicatePeaks();
 
     double getSampleStepSize() const;
+
+    //! Get the q vector corresponding to a detector pixel
+    Eigen::Vector3d getQ(const Eigen::Vector3d& pix) const;
 
 protected:
     bool _isOpened;
@@ -218,4 +224,4 @@ protected:
 } // end namespace Data
 } // end namespace SX
 
-#endif // NSXTOOL_DATA_H_
+#endif // NSXTOOL_DATASET_H_

@@ -86,5 +86,17 @@ double erf_inv_approx(double y)
     return sign*D;
 }
 
+double getScale(double confidence)
+{
+    static const double factor = std::sqrt(2.0);
+    return factor * erf_inv(confidence);
+}
+
+double getConfidence(double x)
+{
+    static const double factor = 1.0 / std::sqrt(2.0);
+    return std::erf(x *factor);
+}
+
 } // namespace Utils
 } // namespace SX
