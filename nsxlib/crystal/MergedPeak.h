@@ -53,8 +53,8 @@ public:
 
     bool addPeak(const sptrPeak3D& peak);
     Eigen::Vector3i getIndex() const;
-    const Intensity& getIntensity() const;
-    double chiSquared() const;
+    Intensity getIntensity() const;
+
     size_t redundancy() const;
     double std() const;
 
@@ -64,11 +64,11 @@ public:
 private:
     void determineRepresentativeHKL();
     void update();
-
+    
     Eigen::Vector3i _hkl;
-    Intensity _intensity;
-    double _chiSquared, _std, _d;
-    PeakList _peaks;
+    Intensity _intensitySum;
+    double _dSum, _squaredIntensitySum;
+    std::vector<sptrPeak3D> _peaks;
     SpaceGroup _grp;
     bool _friedel;
 };
