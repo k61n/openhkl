@@ -979,10 +979,13 @@ bool SessionModel::writeStatistics(std::string filename,
 
         // debugging
         if (std::abs(intensity) < 10) {
-            std::cout << "zero intensity!!" << std::endl;
+
 
             std::shared_ptr<Peak3D> ptr = *peak.getPeaks().begin();
 
+            auto center = ptr->getShape().getCenter();
+
+            std::cout << "zero intensity" << center[0] << " " << center[1] << " " << center[2] << std::endl;
         }
 
         if (rel_std > 1.0) {
