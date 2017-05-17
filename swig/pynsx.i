@@ -58,7 +58,8 @@ using SX::Instrument::DataOrder;
 #include "instrument/Source.h"
 
 #include "chemistry/Material.h"
-
+using SX::Chemistry::isotopeContents;
+ 
 #include "instrument/Sample.h"
 using SX::Crystal::CellList;
 
@@ -156,6 +157,7 @@ using SX::Crystal::CellList;
 %include "geometry/Blob3D.h"
 
 %include "chemistry/Material.h"
+
 %include "crystal/UnitCell.h"
 
 %include "instrument/Detector.h"
