@@ -1,9 +1,22 @@
 stages:
+  - ci
   - build
   - test
   - deploy
 
 # trusty pipeline
+
+ci:trusty
+  stage: ci
+  script:
+    - ./build_server/debian/run_build.sh
+    - ./build_server/debian/run_tests.sh
+  allow_failure: false
+  only:
+    - /^feature/.*$/
+    - /^bugfix/.*$/
+  tags:
+    - ubuntu14.04
 
 build:trusty:
   stage: build
@@ -13,10 +26,8 @@ build:trusty:
   only:
     - triggers
     - tags
-    - /^feature/.*$/
     - /^release/.*$/
     - /^hotfix/.*$/
-    - /^bugfix/.*$/
     - develop
   artifacts:
     paths:
@@ -33,10 +44,8 @@ test:trusty:
   only:
     - triggers
     - tags
-    - /^feature/.*$/
     - /^release/.*$/
     - /^hotfix/.*$/
-    - /^bugfix/.*$/
     - develop
   dependencies:
     - build:trusty
@@ -62,6 +71,18 @@ deploy:trusty:
 
 # osx pipeline
 
+ci:osx:
+  stage: ci
+  script:
+    - ./build_server/osx/run_build.sh
+    - ./build_server/osx/run_tests.sh
+  allow_failure: false
+  only:
+    - /^feature/.*$/
+    - /^bugfix/.*$/
+  tags:
+    - mac
+
 build:osx:
   stage: build
   script:
@@ -70,10 +91,8 @@ build:osx:
   only:
     - triggers
     - tags
-    - /^feature/.*$/
     - /^release/.*$/
     - /^hotfix/.*$/
-    - /^bugfix/.*$/
     - develop
   artifacts:
     paths:
@@ -90,10 +109,8 @@ test:osx:
   only:
     - triggers
     - tags
-    - /^feature/.*$/
     - /^release/.*$/
     - /^hotfix/.*$/
-    - /^bugfix/.*$/
     - develop
   dependencies:
     - build:osx
@@ -119,6 +136,18 @@ deploy:osx:
 
 # windows pipeline
 
+ci:windows
+  stage: ci
+  script:
+    - .\\build_server\\windows\\run_build.bat
+    - .\\build_server\\windows\\run_tests.bat
+  allow_failure: false
+  only:
+    - /^feature/.*$/
+    - /^bugfix/.*$/
+  tags:
+    - windows
+
 build:windows:
   stage: build
   script:
@@ -127,10 +156,8 @@ build:windows:
   only:
     - triggers
     - tags
-    - /^feature/.*$/
     - /^release/.*$/
     - /^hotfix/.*$/
-    - /^bugfix/.*$/
     - develop
   artifacts:
     paths:
@@ -147,10 +174,8 @@ test:windows:
   only:
     - triggers
     - tags
-    - /^feature/.*$/
     - /^release/.*$/
     - /^hotfix/.*$/
-    - /^bugfix/.*$/ 
     - develop
   dependencies:
     - build:windows
@@ -168,9 +193,6 @@ deploy:windows:
   when: on_success
   dependencies:
     - build:windows
-#  artifacts:
-#    paths:
-#    - ${CI_PROJECT_DIR}\\build\\windows\\nsxtool*exe
   tags:
     - windows
 
