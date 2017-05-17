@@ -66,7 +66,7 @@ PeakCalc::PeakCalc(double h,double k,double l, double x,double y, double frame):
 //{
 //}
 
-sptrPeak3D PeakCalc::averagePeaks(const Octree& tree, double distance)
+sptrPeak3D PeakCalc::averagePeaks(const Octree& tree, double distance, double min_axis)
 {
     Eigen::Matrix3d peak_shape;
     sptrPeak3D peak = std::make_shared<Peak3D>();
@@ -110,6 +110,10 @@ sptrPeak3D PeakCalc::averagePeaks(const Octree& tree, double distance)
 
     for (auto i = 0; i < vals.size(); ++i) {
         vals(i) = std::sqrt(vals(i));
+
+        if (vals(i) < min_axis) {
+            vals(i) = min_axis;
+        }
     }
 
     peak->setShape(Ellipsoid3D(center, vals, solver.eigenvectors()));
