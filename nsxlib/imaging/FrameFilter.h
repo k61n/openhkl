@@ -1,6 +1,6 @@
 #include <functional>
 
-#include "IData.h"
+#include "../data/IData.h"
 
 namespace nsx {
 

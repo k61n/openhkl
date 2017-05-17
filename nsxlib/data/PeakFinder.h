@@ -40,10 +40,11 @@ public:
     void setConvolver(const std::shared_ptr<Convolver>& convolver);
     std::shared_ptr<Convolver> getConvolver();
 
-    void setConvolutionKernel(const std::shared_ptr<ConvolutionKernel>& kernel);
+    std::shared_ptr<ConvolutionKernel> getKernel();
 
     void setKernel(const std::shared_ptr<ConvolutionKernel>& kernel);
-    std::shared_ptr<ConvolutionKernel> getKernel();
+
+
 
 private:
     std::shared_ptr<ProgressHandler> _handler;

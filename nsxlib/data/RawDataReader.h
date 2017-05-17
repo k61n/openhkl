@@ -50,7 +50,7 @@
 
 namespace nsx {
 
-class RawDataReader final: public IDataReader {
+class RawDataReader: public IDataReader {
 
 public:
 

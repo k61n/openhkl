@@ -38,7 +38,7 @@
 
 namespace nsx {
 
-class TiffDataReader final: public IDataReader {
+class TiffDataReader: public IDataReader {
 
 public:
     static IDataReader* create(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer);

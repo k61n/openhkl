@@ -85,7 +85,9 @@ protected:
     ParameterMap _params;
 };
 
+#ifndef SWIG
 std::ostream& operator<<(std::ostream& os, const ConvolutionKernel& kernel);
+#endif
 
 } // end namespace nsx
 

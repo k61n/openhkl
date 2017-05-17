@@ -76,7 +76,7 @@ public:
     DataSet(IDataReader* reader, const std::shared_ptr<Diffractometer>& diffractometer);
 
     //! Copy constructor
-    DataSet(const DataSet& other) = default;
+    //DataSet(const DataSet& other) = default;
 
     //! Destructor
     virtual ~DataSet();
@@ -86,8 +86,11 @@ public:
     DataSet& operator=(const DataSet& other);
 
     // iterators
+    #ifndef SWIG
     std::unique_ptr<IFrameIterator> getIterator(int idx);
+    #endif
     void setIteratorCallback(FrameIteratorCallback callback);
+
 
     // Getters and setters
 

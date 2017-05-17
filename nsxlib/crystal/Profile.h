@@ -45,8 +45,9 @@
 namespace nsx {
 
 class Profile {
-
 public:
+    using Lorentzian = SX::Utils::Lorentzian;
+    using Gaussian = SX::Utils::Gaussian;
 
     Profile(const Lorentzian& lor = Lorentzian(), const Gaussian& gauss = Gaussian());
 

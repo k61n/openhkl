@@ -9,7 +9,7 @@
 
 namespace nsx {
 
-class BasicFrameIterator final: public IFrameIterator {
+class BasicFrameIterator: public IFrameIterator {
 public:
     BasicFrameIterator(DataSet& data, unsigned int idx);
     ~BasicFrameIterator() = default;

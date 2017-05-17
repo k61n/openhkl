@@ -321,7 +321,7 @@ bool NDTree<T,D>::hasData() const
 }
 
 template<typename T, unsigned int D>
-auto NDTree<T,D>::getCollisions() const -> std::set<collision_pair>
+std::set<typename NDTree<T,D>::collision_pair> NDTree<T,D>::getCollisions() const
 {
     std::set<collision_pair> collisions;
 

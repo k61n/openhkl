@@ -103,7 +103,7 @@ public:
         else {
             // this = nothing: construct value
             if (_isNothing) {
-                _storage.value.value_type(other._storage.value_type);
+                _storage.value = other._storage.value;
                 _isNothing = false;
             }
             // this = something: destruct value
