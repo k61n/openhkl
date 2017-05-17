@@ -136,7 +136,7 @@ deploy:osx:
 
 # windows pipeline
 
-ci:windows
+ci:windows:
   stage: ci
   script:
     - .\\build_server\\windows\\run_build.bat
