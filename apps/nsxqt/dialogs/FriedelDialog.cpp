@@ -78,12 +78,12 @@ void FriedelDialog::on_goodPairsButton_clicked()
     double threshold = _ui->thresholdSpinBox->value();
 
     // deselect ALL peaks
-    for (Peak3D* peak: _peaks)
+    for (nsx::Peak3D* peak: _peaks)
         peak->setSelected(false);
 
     for (size_t i = 0; i < _friedelPairs.size(); ++i) {
-        Peak3D* a = _friedelPairs[i].first;
-        Peak3D* b = _friedelPairs[i].second;
+        nsx::Peak3D* a = _friedelPairs[i].first;
+        nsx::Peak3D* b = _friedelPairs[i].second;
 
         // skip if masked
         if (a->isMasked() || b->isMasked())

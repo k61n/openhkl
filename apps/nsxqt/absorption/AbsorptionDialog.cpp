@@ -15,6 +15,7 @@
 #include <nsxlib/instrument/Gonio.h>
 
 #include "AbsorptionDialog.h"
+#include "CrystalScene.h"
 
 #include "ui_AbsorptionDialog.h"
 

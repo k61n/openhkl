@@ -1,93 +1,73 @@
-#include "MainWindow.h"
-#include "ui_MainWindow.h"
-
 #include <cmath>
 #include <functional>
 #include <stdexcept>
-#include <utility>
 
 #include <Eigen/Dense>
 
 #include <QDateTime>
+#include <QDebug>
+#include <QDockWidget>
 #include <QFileDialog>
 #include <QGraphicsBlurEffect>
 #include <QGraphicsEllipseItem>
-#include <QShortcut>
-#include <QThread>
 #include <QMouseEvent>
 #include <QProgressDialog>
-#include <QDockWidget>
-#include <QtDebug>
+#include <QShortcut>
+#include <QThread>
 #include <QTransform>
-#include <QProgressDialog>
 
+#include <nsxlib/crystal/GruberReduction.h>
+#include <nsxlib/crystal/NiggliReduction.h>
+#include <nsxlib/crystal/Peak3D.h>
+#include <nsxlib/crystal/SpaceGroup.h>
+#include <nsxlib/crystal/SpaceGroupSymbols.h>
+#include <nsxlib/crystal/UnitCell.h>
+#include <nsxlib/data/IFrameIterator.h>
 #include <nsxlib/geometry/AABB.h>
 #include <nsxlib/geometry/Basis.h>
 #include <nsxlib/geometry/BlobFinder.h>
 #include <nsxlib/geometry/Cluster.h>
+#include <nsxlib/geometry/Ellipsoid.h>
 #include <nsxlib/instrument/ComponentState.h>
 #include <nsxlib/instrument/Detector.h>
-#include <nsxlib/geometry/Ellipsoid.h>
-#include <nsxlib/crystal/GruberReduction.h>
-
-#include <nsxlib/crystal/NiggliReduction.h>
-#include <nsxlib/crystal/Peak3D.h>
 #include <nsxlib/instrument/Sample.h>
 #include <nsxlib/instrument/Source.h>
-#include <nsxlib/crystal/UnitCell.h>
-#include <nsxlib/utils/Units.h>
-#include <nsxlib/utils/Path.h>
-#include <nsxlib/data/IFrameIterator.h>
-#include <nsxlib/utils/Types.h>
 #include <nsxlib/data/PeakFinder.h>
 #include <nsxlib/utils/ProgressHandler.h>
-#include <nsxlib/crystal/SpaceGroup.h>
-#include <nsxlib/crystal/SpaceGroupSymbols.h>
-#include <nsxlib/crystal/Peak3D.h>
+#include <nsxlib/utils/Path.h>
+#include <nsxlib/utils/Types.h>
+#include <nsxlib/utils/Units.h>
 
-#include "DetectorScene.h"
-#include "dialogs/DialogExperiment.h"
-#include "tree/ExperimentTree.h"
-#include "Logger.h"
-#include "NoteBook.h"
-#include "dialogs/NumorsConversionDialog.h"
-#include "views/PeakTableView.h"
-#include "plot/SXPlot.h"
-#include "views/PeakTableView.h"
 #include "absorption/AbsorptionWidget.h"
-#include "models/CollectedPeaksModel.h"
 #include "chemistry/IsotopeDatabaseDialog.h"
+#include "DetectorScene.h"
+#include "ColorMap.h"
+#include "dialogs/DialogConvolve.h"
+#include "dialogs/DialogExperiment.h"
+#include "dialogs/DialogIntegrate.h"
+#include "dialogs/NumorsConversionDialog.h"
+#include "dialogs/ResolutionCutoffDialog.h"
 #include "items/CutLineGraphicsItem.h"
 #include "items/CutSliceGraphicsItem.h"
 #include "items/CutterGraphicsItem.h"
 #include "items/PeakGraphicsItem.h"
 #include "items/PlottableGraphicsItem.h"
-#include "plot/PlotFactory.h"
-
-#include "tree/UnitCellPropertyWidget.h"
-#include "tree/PeakListPropertyWidget.h"
-
-#include "dialogs/DialogConvolve.h"
-#include "dialogs/DialogIntegrate.h"
-
-#include "models/SessionModel.h"
 #include "JobHandler.h"
+#include "Logger.h"
+#include "models/CollectedPeaksModel.h"
+#include "models/SessionModel.h"
+#include "NoteBook.h"
+#include "plot/PlotFactory.h"
+#include "plot/SXPlot.h"
+#include "tree/ExperimentTree.h"
+#include "tree/PeakListPropertyWidget.h"
+#include "tree/UnitCellPropertyWidget.h"
+#include "views/PeakTableView.h"
+#include "views/PeakTableView.h"
 
-#include "ColorMap.h"
+#include "MainWindow.h"
 
-#include "dialogs/ResolutionCutoffDialog.h"
-
-// jmf debug testing
-#include <functional>
-extern std::function<void(void)> processEvents;
-
-using namespace nsx::Units;
-using namespace nsx::Instrument;
-using nsx::Types::RealMatrix;
-using nsx::Utils::ProgressHandler;
-using nsx::Data::PeakFinder;
-using nsx::Data::DataSet;
-
+#include "ui_MainWindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
 : QMainWindow(parent),
@@ -130,12 +110,12 @@ MainWindow::MainWindow(QWidget *parent)
     _ui->splitterHorizontal->setStretchFactor(1,90);
 
     // signals and slots
-    connect(_ui->experimentTree, SIGNAL(plotData(std::shared_ptr<nsx::Data::DataSet>)),
-            _ui->_dview->getScene(), SLOT(setData(std::shared_ptr<nsx::Data::DataSet>))
+    connect(_ui->experimentTree, SIGNAL(plotData(std::shared_ptr<nsx::DataSet>)),
+            _ui->_dview->getScene(), SLOT(setData(std::shared_ptr<nsx::DataSet>))
     );
 
-    connect(_ui->experimentTree, SIGNAL(plotData(std::shared_ptr<nsx::Data::DataSet>)),
-            this, SLOT(changeData(std::shared_ptr<nsx::Data::DataSet>)));
+    connect(_ui->experimentTree, SIGNAL(plotData(std::shared_ptr<nsx::DataSet>)),
+            this, SLOT(changeData(std::shared_ptr<nsx::DataSet>)));
 
     connect(_ui->frame,&QScrollBar::valueChanged,[=](const int& value){_ui->_dview->getScene()->changeFrame(value);});
 
@@ -165,7 +145,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(_ui->experimentTree,SIGNAL(inspectWidget(QWidget*)),this,SLOT(setInspectorWidget(QWidget*)));
 
-    qDebug() << "The resources directory is " << nsx::Utils::Path().getResourcesDir().c_str();
+    qDebug() << "The resources directory is " << nsx::Path().getResourcesDir().c_str();
 
     _progressHandler = std::shared_ptr<ProgressHandler>(new ProgressHandler());
     _peakFinder = std::shared_ptr<PeakFinder>(new PeakFinder());
@@ -233,14 +213,14 @@ void MainWindow::on_actionSave_session_triggered()
 
 void MainWindow::on_actionSave_session_as_triggered()
 {
-    QString homeDir = nsx::Utils::Path::getHomeDirectory().c_str();
+    QString homeDir = nsx::Path::getHomeDirectory().c_str();
     QString filename = QFileDialog::getSaveFileName(this, "Save session as..", homeDir, "Json document (*.json)", nullptr, QFileDialog::Option::DontUseNativeDialog);
     saveSession(filename);
 }
 
 void MainWindow::on_actionLoad_session_triggered()
 {
-    QString homeDir = nsx::Utils::Path::getHomeDirectory().c_str();
+    QString homeDir = nsx::Path::getHomeDirectory().c_str();
     QString filename = QFileDialog::getOpenFileName(this, "Load session", homeDir, "Json document (*.json)", nullptr, QFileDialog::Option::DontUseNativeDialog);
     qDebug() << "Loading session from file '" << filename << "'";
 
@@ -568,7 +548,7 @@ void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
                 bool correctly_indexed = false;
 
                 for (int i = 0; i < numor->getDiffractometer()->getSample()->getNCrystals(); ++i) {
-                    nsx::Crystal::UnitCell cell = *numor->getDiffractometer()->getSample()->getUnitCell(i);
+                    nsx::UnitCell cell = *numor->getDiffractometer()->getSample()->getUnitCell(i);
                     Eigen::RowVector3d hkl;
                     bool indexingSuccess = (*it)->getMillerIndices(cell,hkl,true);
                     if (indexingSuccess) {

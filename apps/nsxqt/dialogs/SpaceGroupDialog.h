@@ -4,7 +4,6 @@
 #ifndef NSXTOOL_SPACEGROUPDIALOG_H_
 #define NSXTOOL_SPACEGROUPDIALOG_H_
 
-#include <map>
 #include <memory>
 #include <string>
 #include <tuple>

@@ -111,7 +111,7 @@ bool PeakFitDialog::changePeak()
         return false;
     }
 
-    _peakFit = std::unique_ptr<PeakFit>(new PeakFit(_peak));
+    _peakFit = std::unique_ptr<nsx::PeakFit>(new nsx::PeakFit(_peak));
     _bestParams = _peakFit->defaultParams();
 
     int min = _peakFit->frameBegin();
@@ -242,23 +242,27 @@ void PeakFitDialog::updatePlots()
 
 
 
-void PeakFitDialog::on_hSpinBox_valueChanged(int arg1)
+void PeakFitDialog::on_hSpinBox_valueChanged(int value)
 {
+    Q_UNUSED(value);
     changePeak();
 }
 
-void PeakFitDialog::on_kSpinBox_valueChanged(int arg1)
+void PeakFitDialog::on_kSpinBox_valueChanged(int value)
 {
+    Q_UNUSED(value);
     changePeak();
 }
 
-void PeakFitDialog::on_lSpinBox_valueChanged(int arg1)
+void PeakFitDialog::on_lSpinBox_valueChanged(int value)
 {
+    Q_UNUSED(value);
     changePeak();
 }
 
 void PeakFitDialog::on_frameScrollBar_valueChanged(int value)
 {
+    Q_UNUSED(value);
     updatePlots();
 }
 

@@ -1,6 +1,6 @@
-#include <QMessageBox>
-
 #include <memory>
+
+#include <QMessageBox>
 
 #include <Eigen/Dense>
 
@@ -52,7 +52,7 @@ void MCAbsorptionDialog::on_pushButton_run_pressed()
 
     // Get the material
     unsigned int cellIndex=static_cast<unsigned int>(ui->comboBox->currentIndex());
-    nsx::Chemistry::sptrMaterial material=sample->getMaterial(cellIndex);
+    nsx::sptrMaterial material=sample->getMaterial(cellIndex);
     if (material==nullptr) {
         QMessageBox::critical(this,"NSXTOOL","No material defined for this crystal");
             return;
@@ -60,14 +60,14 @@ void MCAbsorptionDialog::on_pushButton_run_pressed()
 
     auto& mono = source->getSelectedMonochromator();
 
-    nsx::Geometry::MCAbsorption mca(mono.getWidth(),mono.getHeight(),-1.0);
+    nsx::MCAbsorption mca(mono.getWidth(),mono.getHeight(),-1.0);
     auto& hull=sample->getShape();
     if (!hull.checkEulerConditions()) {
             QMessageBox::critical(this,"NSXTOOL","The sample shape (hull) is ill-defined");
             return;
     }
 
-    mca.setSample(&hull,material->muIncoherent(),material->muAbsorption(mono.getWavelength()*nsx::Units::ang));
+    mca.setSample(&hull,material->muIncoherent(),material->muAbsorption(mono.getWavelength()*nsx::ang));
     const auto& data=_experiment->getData();
     ui->progressBar_MCStatus->setValue(0);
     ui->progressBar_MCStatus->setTextVisible(true);

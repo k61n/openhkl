@@ -279,14 +279,14 @@ void ScaleDialog::refineScale()
 
             double average = 0;
 
-            for (Peak3D* peak: _peaks[i]) {
+            for (nsx::Peak3D* peak: _peaks[i]) {
                 double z = peak->getShape().getAABBCenter()[2] ;
                 average += getScale(z) * peak->getScaledIntensity().getValue();
             }
 
             average /= _peaks[i].size();
 
-            for (Peak3D* peak: _peaks[i]) {
+            for (nsx::Peak3D* peak: _peaks[i]) {
                 double z = peak->getShape().getAABBCenter()[2];
                 residuals(idx++) = getScale(z) * peak->getScaledIntensity().getValue() - average;
             }
@@ -299,7 +299,7 @@ void ScaleDialog::refineScale()
 
     qDebug() << "Refining scale using minimizer...";
 
-    nsx::IMinimizer* minimizer = new MinimizerGSL();
+    nsx::IMinimizer* minimizer = new nsx::MinimizerGSL();
 
     resetScale();
 

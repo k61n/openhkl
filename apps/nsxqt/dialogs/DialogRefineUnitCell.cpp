@@ -110,9 +110,9 @@ void DialogRefineUnitCell::setLatticeParams()
     ui->doubleSpinBoxa->setValue(_unitCell->getA());
     ui->doubleSpinBoxb->setValue(_unitCell->getB());
     ui->doubleSpinBoxc->setValue(_unitCell->getC());
-    ui->doubleSpinBoxalpha->setValue(_unitCell->getAlpha()/nsx::Units::deg);
-    ui->doubleSpinBoxbeta->setValue(_unitCell->getBeta()/nsx::Units::deg);
-    ui->doubleSpinBoxgamma->setValue(_unitCell->getGamma()/nsx::Units::deg);
+    ui->doubleSpinBoxalpha->setValue(_unitCell->getAlpha()/nsx::deg);
+    ui->doubleSpinBoxbeta->setValue(_unitCell->getBeta()/nsx::deg);
+    ui->doubleSpinBoxgamma->setValue(_unitCell->getGamma()/nsx::deg);
 }
 
 void DialogRefineUnitCell::setWavelength()
@@ -226,7 +226,7 @@ void DialogRefineUnitCell::setDetectorOffsets()
     }
 }
 
-void DialogRefineUnitCell::setSolution(const nsx::Crystal::UBSolution& solution)
+void DialogRefineUnitCell::setSolution(const nsx::UBSolution& solution)
 {
     // Get the sample
     auto sample = _experiment->getDiffractometer()->getSample();
