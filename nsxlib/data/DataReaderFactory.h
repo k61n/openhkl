@@ -49,11 +49,13 @@ class DataReaderFactory :
         public Factory<DataSet,std::string,std::string,std::shared_ptr<Diffractometer> >,
         public Singleton<DataReaderFactory,Constructor,Destructor>
 {
-private:
-    friend class Constructor<DataReaderFactory>;
-    friend class Destructor<DataReaderFactory>;
+public:
     DataReaderFactory();
     ~DataReaderFactory() = default;
+private:
+
+    friend class Constructor<DataReaderFactory>;
+    friend class Destructor<DataReaderFactory>;
 };
 
 } // end namespace nsx

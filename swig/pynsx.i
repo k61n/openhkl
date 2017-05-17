@@ -8,15 +8,24 @@
 %include "std_shared_ptr.i"
 %include "std_string.i"
 %include "std_vector.i"
+%include "std_set.i"
 
 %template(vector_1d)  std::vector<double>;
 %template(vector_2d)  std::vector<std::vector<double>>;
 %template(vector_1i) std::vector<int>;
 %template(vector_2i) std::vector<std::vector<int>>;
+%template(vector_string) std::vector<std::string>;
 
 %shared_ptr(SX::Crystal::Peak3D)
 %shared_ptr(SX::Chemistry::Material)
 %shared_ptr(SX::Instrument::Diffractometer)
+%shared_ptr(SX::Imaging::ConvolutionKernel)
+%shared_ptr(SX::Imaging::DeltaKernel)
+%shared_ptr(SX::Imaging::AnnularKernel)
+%shared_ptr(SX::Imaging::Convolver)
+%shared_ptr(SX::Data::DataSet)
+
+
 
 
 %{
@@ -27,6 +36,8 @@
 
 #include <boost/property_tree/ptree.hpp>
  
+#include <memory>
+
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
@@ -336,6 +347,7 @@ using sptrUnitCell = std::shared_ptr<SX::Crystal::UnitCell>;
 %include "instrument/Diffractometer.h"
  
 %include "kernel/Singleton.h"
+ //%include "kernel/Factory.h"
 
 namespace SX {
    namespace Instrument {class DiffractometerStore;}
@@ -343,10 +355,12 @@ namespace SX {
    namespace Crystal {struct tVector;}
    %template(DiffractometerStoreBase) Kernel::Singleton<Instrument::DiffractometerStore, Kernel::Constructor, Kernel::Destructor>;
     %template(DataReaderFactorySingletonBase) Kernel::Singleton<Data::DataReaderFactory, Kernel::Constructor, Kernel::Destructor>;
+    //  %template(DataReaderFactoryFactoryBase) Kernel::Factory<Data::DataSet,std::string,std::string,std::shared_ptr<Instrument::Diffractometer> >;
 }
 
 %include "crystal/FFTIndexing.h"
 %include "crystal/GruberReduction.h"
+%include "crystal/Intensity.h"
 %include "crystal/Peak3D.h"
 
 %include "instrument/DiffractometerStore.h"
@@ -362,6 +376,9 @@ namespace SX {
 %include "data/IData.h"
 %include "data/PeakFinder.h"
 
+%template(vector_data) std::vector<std::shared_ptr<SX::Data::DataSet>>;
+%template(vector_peak) std::vector<std::shared_ptr<SX::Crystal::Peak3D>>;
+%template(set_peak) std::set<std::shared_ptr<SX::Crystal::Peak3D>>;
 
 
 
@@ -491,10 +508,10 @@ using SX::Instrument::DetectorState;
 %include "imaging/FrameFilter.h"
 %include "imaging/ConstantKernel.h"
 %include "imaging/KernelFactory.h"
-%include "imaging/Convolver.h"
+%include "imaging/ConvolutionKernel.h"
 %include "imaging/DeltaKernel.h"
 %include "imaging/AnnularKernel.h"
-%include "imaging/ConvolutionKernel.h"
+%include "imaging/Convolver.h"
 %include "kernel/Error.h"
  //%include "kernel/Composite.h"
 %include "kernel/Store.h"

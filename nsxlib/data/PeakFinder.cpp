@@ -169,6 +169,7 @@ bool PeakFinder::find(std::vector<std::shared_ptr<DataSet>> numors)
         numor->integratePeaks(scale, 2.0*scale, false, _handler);
         numor->close();
         //_ui->progressBar->setValue(++comp);
+        std::cout << "Found " << numor->getPeaks().size() << " peaks." << std::endl;
     }
 
     if (_handler) {
