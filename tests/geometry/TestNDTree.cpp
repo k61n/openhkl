@@ -149,7 +149,7 @@ BOOST_AUTO_TEST_CASE(Test_NDTree)
     std::vector<AABB<double,3>> bb;
     bb.reserve(100);
 
-    for (uint i=0;i<=maxStorage;++i) {
+    for (unsigned int i=0;i<=maxStorage;++i) {
         Eigen::Vector3d v1(d1(gen),d1(gen),d1(gen));
         Eigen::Vector3d v2(d2(gen),d2(gen),d2(gen));
         bb.push_back(AABB<double,3>(v1,v2));
