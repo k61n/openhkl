@@ -71,10 +71,19 @@ using SX::Crystal::CellList;
 #include "geometry/Sphere.h"
 
 #include "geometry/Blob3D.h"
-#include "crystal/UnitCell.h"
 
 #include "crystal/FFTIndexing.h"
 #include "crystal/GruberReduction.h"
+#include "crystal/Peak3D.h"
+#include "crystal/SpaceGroup.h"
+#include "crystal/UnitCell.h"
+#include "crystal/PeakIntegrator.h"
+#include "crystal/Profile.h"
+#include "crystal/Intensity.h"
+using SX::Crystal::Profile;
+using SX::Crystal::Intensity; 
+
+using sptrUnitCell = std::shared_ptr<SX::Crystal::UnitCell>;
 
 #include "instrument/Diffractometer.h"
 #include "instrument/DiffractometerStore.h"
@@ -83,7 +92,10 @@ using SX::Crystal::CellList;
 
 #include "data/MetaData.h"
 #include "data/IDataReader.h"
+#include "data/DataReaderFactory.h"
 #include "data/ILLDataReader.h"
+#include "data/HDF5DataReader.h"
+
 %}
 
 %include "numpy.i"
@@ -173,19 +185,29 @@ using SX::Crystal::CellList;
 
 namespace SX {
    namespace Instrument {class DiffractometerStore;}
+   namespace Data { class DataReaderFactory; }
    namespace Crystal {struct tVector;}
    %template(DiffractometerStoreBase) Kernel::Singleton<Instrument::DiffractometerStore, Kernel::Constructor, Kernel::Destructor>;
+    %template(DataReaderFactorySingletonBase) Kernel::Singleton<Data::DataReaderFactory, Kernel::Constructor, Kernel::Destructor>;
 }
 
 %include "crystal/FFTIndexing.h"
 %include "crystal/GruberReduction.h"
+%include "crystal/Peak3D.h"
 
 %include "instrument/DiffractometerStore.h"
 
 %include "data/MetaData.h"
 %include "data/IDataReader.h"
 
+%include "data/DataReaderFactory.h"
+
 %include "data/ILLDataReader.h"
+%include "data/HDF5DataReader.h"
+
+ //%ignore SX::Data::ILLDataReader::getData(size_t);
+ //%include "data/ILLDataReader.h"
+
 
 %newobject new_double;
 double* new_double();
