@@ -6,7 +6,7 @@ stages:
 
 # trusty pipeline
 
-ci:trusty
+ci:trusty:
   stage: ci
   script:
     - ./build_server/debian/run_build.sh
