@@ -32,7 +32,6 @@
 #include <string>
 
 #include "Detector.h"
-#include "../utils/Types.h"
 
 namespace nsx {
 
@@ -126,7 +125,7 @@ public:
     unsigned int getNDetectors() const;
 
 protected:
-    uint _nRows, _nCols;
+    unsigned int _nRows, _nCols;
     double _minRow, _minCol;
     double _width, _height;
     double _angularWidth, _angularHeight;

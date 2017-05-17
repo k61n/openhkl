@@ -6,6 +6,7 @@
  */
 
 #include <cstdint>
+
 #include "RNG.h"
 
 namespace nsx {

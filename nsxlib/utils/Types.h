@@ -55,7 +55,6 @@ using sptrMaterial = std::shared_ptr<Material>;
 class Experiment;
 typedef std::shared_ptr<Experiment> sptrExperiment;
 
-using uint = unsigned int;
 using RealMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 using ComplexMatrix = Eigen::Matrix<std::complex<double>, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 

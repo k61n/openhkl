@@ -137,7 +137,7 @@ void split_test()
 
 BOOST_AUTO_TEST_CASE(Test_NDTree)
 {
-    uint maxStorage(10);
+    unsigned int maxStorage(10);
 
     // Build up a NDTree with (0,0,0) as lower corner and (100,100,100) as upper corner
     NDTree<double,3> tree({0,0,0},{100,100,100});

@@ -31,8 +31,6 @@
 
 #include <set>
 
-#include "../utils/Types.h"
-
 namespace nsx {
 
 template <typename component, typename ...args>
@@ -55,7 +53,7 @@ public:
 
     component* add(component*);
     void clear();
-    uint getNComponents() const;
+    unsigned int getNComponents() const;
     void remove(component*);
 
     virtual ~Composite();
@@ -110,7 +108,7 @@ void Composite<component,args...>::clear()
 }
 
 template <typename component,typename ...args>
-uint Composite<component,args...>::getNComponents() const
+unsigned int Composite<component,args...>::getNComponents() const
 {
     return _components.size();
 }
