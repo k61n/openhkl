@@ -3,17 +3,10 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include <iostream>
-#include <vector>
-#include <string>
-#include <cmath>
-#include <random>
-
 #include <nsxlib/utils/Gaussian.h>
-#include <Eigen/Dense>
 
-using namespace nsx::Utils;
 using namespace std;
+using namespace nsx;
 
 const double eps = 1e-10;
 

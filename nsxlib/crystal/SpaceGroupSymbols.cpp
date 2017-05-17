@@ -298,7 +298,7 @@ void SpaceGroupSymbols::addSpaceGroup(const std::string& spaceGroup, const std::
 {
     auto it=_spaceGroupTables.find(spaceGroup);
     if (it!=_spaceGroupTables.end())
-        throw nsx::Kernel::Error<SpaceGroupSymbols>("The space group "+spaceGroup+" is already registered.");
+        throw Error<SpaceGroupSymbols>("The space group "+spaceGroup+" is already registered.");
     _spaceGroupTables.insert(std::unordered_map<std::string,std::string>::value_type(spaceGroup,generators));
     _spaceGroupTableVector.push_back(std::make_pair(spaceGroup, generators));
 }

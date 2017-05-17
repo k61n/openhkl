@@ -1,20 +1,20 @@
 #define BOOST_TEST_MODULE "Test Cylindrical Detector"
 #define BOOST_TEST_DYN_LINK
-#include <nsxlib/utils/Units.h>
+
 #include <cmath>
-#include <Eigen/Dense>
+
 #include <boost/test/unit_test.hpp>
-#include <fstream>
+
+#include <Eigen/Dense>
+
 #include <nsxlib/instrument/CylindricalDetector.h>
 #include <nsxlib/instrument/Gonio.h>
-#include <iostream>
+#include <nsxlib/utils/Units.h>
 
-using namespace nsx::Units;
-using namespace nsx::Instrument;
-using Eigen::Vector3d;
-using Eigen::Matrix3d;
-// 0.1% error
+using namespace nsx;
+
 const double tolerance=1e-3;
+
 BOOST_AUTO_TEST_CASE(Test_Cylindrical_Detector)
 {
     CylindricalDetector d("D19-detector");

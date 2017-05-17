@@ -1,25 +1,25 @@
 #define BOOST_TEST_MODULE "Test Niggli Reduction"
 #define BOOST_TEST_DYN_LINK
 
+#include <cmath>
+
+#include <boost/test/unit_test.hpp>
+
 #include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/crystal/NiggliReduction.h>
-#include <boost/test/unit_test.hpp>
-#include <string>
 #include <nsxlib/utils/Units.h>
-#include <cmath>
-#include <Eigen/Dense>
-#include <iostream>
 
-using namespace nsx::Crystal;
-using namespace nsx::Units;
+using namespace nsx;
+
 const double tolerance=1e-6;
+
 BOOST_AUTO_TEST_CASE(Test_Niggli_Reduction)
 {
     // An oblique cell representing an orthorhombic 2,1,3 cell
     // o-----o-----o
     // |     |     |
     // o-----o-----o
-    UnitCell cell(2.0,sqrt(17.0),3.0,90*deg,90*deg,atan(1.0/4));
+    UnitCell cell(2.0,sqrt(17.0),3.0,90*deg,90*deg,std::atan(1.0/4));
     const Eigen::Matrix3d& g=cell.getMetricTensor();
 
     NiggliReduction n(g,1e-3);

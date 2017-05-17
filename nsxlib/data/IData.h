@@ -55,14 +55,6 @@ class Component;
 using RowMatrixi = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 using RowMatrixd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
-using nsx::Instrument::Diffractometer;
-using nsx::Instrument::Component;
-using nsx::Instrument::ComponentState;
-using nsx::Crystal::sptrPeak3D;
-using nsx::Geometry::AABB;
-using nsx::Crystal::PeakCalc;
-
-
 class IFrameIterator;
 class ThreadedFrameIterator;
 class BasicFrameIterator;
@@ -75,6 +67,7 @@ using FrameIteratorCallback = std::function<IFrameIterator*(DataSet&, int)>;
  * Base interface for all diffraction data. IData handles the IO
  */
 class DataSet {
+
 public:
     // Constructors and destructor
 
@@ -127,10 +120,10 @@ public:
     const ComponentState& getSourceState(size_t frame) const;
 
     //! Gets the the sample states
-    const std::vector<nsx::Instrument::InstrumentState>& getInstrumentStates() const;
+    const std::vector<InstrumentState>& getInstrumentStates() const;
 
     //! Get the interpolated state of a given component
-    nsx::Instrument::InstrumentState getInterpolatedState(double frame) const;
+    InstrumentState getInterpolatedState(double frame) const;
     //ComponentState getInterpolatedState(std::shared_ptr<Component> component, double frame) const;
 
     //! Add a new mask to the data
@@ -184,10 +177,10 @@ public:
     std::vector<PeakCalc> hasPeaks(const std::vector<Eigen::Vector3d>& hkls,const Eigen::Matrix3d& BU);
 
     //! Get background
-    double getBackgroundLevel(const std::shared_ptr<nsx::Utils::ProgressHandler>& progress);
+    double getBackgroundLevel(const std::shared_ptr<ProgressHandler>& progress);
 
     //! Integrate intensities of all peaks
-    void integratePeaks(double peak_scale = 3.0, double bkg_scale = 5.0, bool update_shape = false, const std::shared_ptr<nsx::Utils::ProgressHandler>& handler = nullptr);
+    void integratePeaks(double peak_scale = 3.0, double bkg_scale = 5.0, bool update_shape = false, const std::shared_ptr<ProgressHandler>& handler = nullptr);
 
     //! Remove duplicates
     void removeDuplicatePeaks();
@@ -206,7 +199,7 @@ protected:
     std::shared_ptr<Diffractometer> _diffractometer;
     std::unique_ptr<MetaData> _metadata;
     std::vector<Eigen::MatrixXi> _data;
-    std::vector<nsx::Instrument::InstrumentState> _states;
+    std::vector<InstrumentState> _states;
     std::set<sptrPeak3D> _peaks;
     std::size_t _fileSize;
     //! The set of masks bound to the data

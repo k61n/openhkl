@@ -8,8 +8,10 @@
 #include <QtDebug>
 #include <QToolTip>
 
-#include <nsxlib/instrument/Detector.h>
 #include <nsxlib/data/IData.h>
+#include <nsxlib/instrument/Detector.h>
+#include <nsxlib/instrument/DetectorEvent.h>
+#include <nsxlib/instrument/Gonio.h>
 #include <nsxlib/instrument/Sample.h>
 #include <nsxlib/instrument/Source.h>
 #include <nsxlib/utils/Units.h>
@@ -21,13 +23,7 @@
 #include "items/CutLineGraphicsItem.h"
 #include "items/MaskGraphicsItem.h"
 
-
-#include <nsxlib/instrument/Gonio.h>
-#include <nsxlib/instrument/DetectorEvent.h>
-
-#include "ColorMap.h"
-
-using nsx::Instrument::DetectorEvent;
+using namespace nsx;
 
 // compile-time constant to determine whether to draw the peak masks
 static const bool g_drawMask = true;
@@ -93,7 +89,7 @@ void DetectorScene::setMaxIntensity(int intensity)
     loadCurrentImage(false);
 }
 
-void DetectorScene::setData(const std::shared_ptr<nsx::Data::DataSet>& data)
+void DetectorScene::setData(const std::shared_ptr<nsx::DataSet>& data)
 {
     _currentData = data;
 
@@ -115,7 +111,7 @@ void DetectorScene::setData(const std::shared_ptr<nsx::Data::DataSet>& data)
     updatePeaks();
 }
 
-void DetectorScene::setData(const std::shared_ptr<nsx::Data::DataSet>& data, size_t frame)
+void DetectorScene::setData(const std::shared_ptr<nsx::DataSet>& data, size_t frame)
 {
     setData(data);
     changeFrame(frame);
@@ -416,7 +412,7 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
         return;
     }
     auto instr=_currentData->getDiffractometer();
-    std::shared_ptr<nsx::Instrument::Detector> det=instr->getDetector();
+    std::shared_ptr<nsx::Detector> det=instr->getDetector();
 
     int nrows = int(det->getNRows());
     int ncols = int(det->getNCols());
@@ -431,7 +427,7 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
 
     const auto& samplev=_currentData->getSampleState(_currentFrameIndex).getValues();
     const auto& detectorv=_currentData->getDetectorState(_currentFrameIndex).getValues();
-    std::shared_ptr<nsx::Instrument::Sample> sample=instr->getSample();
+    std::shared_ptr<nsx::Sample> sample=instr->getSample();
     auto& mono = instr->getSource()->getSelectedMonochromator();
     double wave=mono.getWavelength();
 
@@ -443,11 +439,11 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
         break;
     case GAMMA:
         DetectorEvent(*det, col, row, detectorv).getGammaNu(gamma, nu, sample->getPosition(samplev));
-        ttip = QString("(%1,%2) I: %3").arg(gamma/nsx::Units::deg).arg(nu/nsx::Units::deg).arg(intensity);
+        ttip = QString("(%1,%2) I: %3").arg(gamma/nsx::deg).arg(nu/nsx::deg).arg(intensity);
         break;
     case THETA:
         th2 = DetectorEvent(*det, col, row, detectorv).get2Theta(Eigen::Vector3d(0, 1.0/wave, 0));
-        ttip = QString("(%1) I: %2").arg(th2/nsx::Units::deg).arg(intensity);
+        ttip = QString("(%1) I: %2").arg(th2/nsx::deg).arg(intensity);
         break;
     case DSPACING:
         // th2 = det->get2Theta(col, row, detectorv, Eigen::Vector3d(0, 1.0/wave, 0));
@@ -480,9 +476,7 @@ void DetectorScene::loadCurrentImage(bool newimage)
     // Full image size, front of the stack
     QRect& full = _zoomStack.front();
 
-    std::shared_ptr<nsx::Instrument::Detector> det = _currentData->getDiffractometer()->getDetector();
-    //std::size_t nrows=det->getNRows();
-    //std::size_t ncols=det->getNCols();
+    std::shared_ptr<nsx::Detector> det = _currentData->getDiffractometer()->getDetector();
 
     if (_currentFrameIndex >= _currentData->getNFrames()) {
         _currentFrameIndex = _currentData->getNFrames()-1;
@@ -567,7 +561,7 @@ void DetectorScene::loadCurrentImage(bool newimage)
     }
 }
 
-std::shared_ptr<nsx::Data::DataSet> DetectorScene::getData()
+std::shared_ptr<nsx::DataSet> DetectorScene::getData()
 {
     return _currentData;
 }
@@ -627,10 +621,10 @@ void DetectorScene::updatePeakCalcs()
 
     if (ncrystals) {
         for (unsigned int i = 0; i < ncrystals; ++i) {
-            nsx::Crystal::SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
+            nsx::SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
             auto ub=sample->getUnitCell(i)->getReciprocalStandardM();
             auto hkls=sample->getUnitCell(i)->generateReflectionsInSphere(1.5);
-            std::vector<nsx::Crystal::PeakCalc> peaks=_currentData->hasPeaks(hkls,ub);
+            std::vector<nsx::PeakCalc> peaks=_currentData->hasPeaks(hkls,ub);
             _precalculatedPeaks.reserve(_precalculatedPeaks.size() + peaks.size());
 
             for(auto&& p: peaks) {

@@ -36,17 +36,17 @@
 #include <QDebug>
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
+
 #include <Externals/qcustomplot.h>
 
-#include "dialogs/PeakFitDialog.h"
-#include "ui_PeakFitDialog.h"
-#include "models/SessionModel.h"
-#include "ColorMap.h"
 #include <nsxlib/data/IData.h>
 #include <nsxlib/utils/MinimizerGSL.h>
 
-using namespace nsx::Crystal;
-using namespace nsx::Utils;
+#include "ColorMap.h"
+#include "dialogs/PeakFitDialog.h"
+#include "models/SessionModel.h"
+
+#include "ui_PeakFitDialog.h"
 
 PeakFitDialog::PeakFitDialog(SessionModel* session, QWidget *parent) :
     QDialog(parent),
@@ -140,7 +140,6 @@ void PeakFitDialog::updatePlots()
 
     const int max_intensity = std::round(_peakFit->maxIntensity());
 
-    //QRect sceneRect(0, 0, peakData.cols()-1, peakData.rows()-1);
     QRect sceneRect(0, 0, peakData.cols(), peakData.rows());
 
     _peakScene->setSceneRect(sceneRect);
@@ -154,11 +153,6 @@ void PeakFitDialog::updatePlots()
     QImage pred = cmap.matToImage(predData, sceneRect, max_intensity);
     QImage chi2 = cmap.matToImage(chi2Data, sceneRect, max_intensity);
     QImage diff = cmap.matToImage(diffData, sceneRect, max_intensity);
-
-    //QImage peak = Mat2QImage(peakData, sceneRect, max_intensity);
-    //QImage pred = Mat2QImage(predData, sceneRect, max_intensity);
-    //QImage chi2 = Mat2QImage(chi2Data, sceneRect, max_intensity);
-    //QImage diff = Mat2QImage(diffData, sceneRect, max_intensity);
 
     if (!_peakImage) {
         _peakImage = _peakScene->addPixmap(QPixmap::fromImage(peak));
@@ -198,14 +192,8 @@ void PeakFitDialog::updatePlots()
 
     auto&& peakProjection = _peak->getPeakProjection();
 
-    // debug
-    std::cout << "xmin: " << xmin << std::endl;
-    std::cout << "xmax: " << xmax << std::endl;
-    std::cout << "length of peak projections: " << peakProjection.size() << std::endl;
-
     // go through each frame
-        for(int i = 0; i < num_points; ++i) {
-
+    for(int i = 0; i < num_points; ++i) {
         double x = xmin + i*(double)(xmax-xmin) / (double)num_points;
         double t = x-std::floor(x);
 
@@ -281,7 +269,7 @@ void PeakFitDialog::on_runFitButton_clicked()
         return;
     }
 
-    MinimizerGSL min;
+    nsx::MinimizerGSL min;
 
      if (_peakFit->fit(min) ) {
         qDebug() << "Fit converged!";

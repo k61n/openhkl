@@ -4,6 +4,6 @@
 
 namespace nsx {
 
-using FrameFilter = std::function<nsx::Data::RowMatrixd(nsx::Data::RowMatrixd)>;
+using FrameFilter = std::function<RowMatrixd(RowMatrixd)>;
 
 }

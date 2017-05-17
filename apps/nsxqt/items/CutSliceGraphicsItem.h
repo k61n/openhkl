@@ -1,17 +1,11 @@
 #ifndef CUTSLICEGRAPHICSITEM_H
 #define CUTSLICEGRAPHICSITEM_H
 
-#include <string>
-
 #include "items/CutterGraphicsItem.h"
 
-// Forward declarations
 namespace nsx
 {
-namespace Data
-{
 class DataSet;
-}
 }
 
 class QGraphicsSceneMouseEvent;
@@ -28,7 +22,7 @@ public:
     // Constructors and destructor
 
     //! Construct a data slicer
-    CutSliceGraphicsItem(std::shared_ptr<nsx::Data::DataSet>, bool horizontal=true);
+    CutSliceGraphicsItem(std::shared_ptr<nsx::DataSet>, bool horizontal=true);
     //! The destructor
     ~CutSliceGraphicsItem();
 

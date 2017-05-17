@@ -24,7 +24,7 @@ ThreadedFrameIterator::ThreadedFrameIterator(DataSet& data, unsigned int idx)
     }
 }
 
-Types::RealMatrix &ThreadedFrameIterator::getFrame()
+RealMatrix &ThreadedFrameIterator::getFrame()
 {
     assert(_index < _data.getNFrames() );
     return _currentFrame;
@@ -44,13 +44,13 @@ void ThreadedFrameIterator::advance()
     }
 }
 
-std::shared_future<nsx::Types::RealMatrix> ThreadedFrameIterator::getFrameAsync(int idx)
+std::shared_future<RealMatrix> ThreadedFrameIterator::getFrameAsync(int idx)
 {
-    auto get_fn = [=] () -> nsx::Types::RealMatrix {
+    auto get_fn = [=] () -> RealMatrix {
         return _data.getFrame(idx).cast<double>();
     };
     std::launch policy = std::launch::async;
-    return std::shared_future<nsx::Types::RealMatrix>(std::async(policy, get_fn));
+    return std::shared_future<RealMatrix>(std::async(policy, get_fn));
 }
 
 } // end namespace nsx

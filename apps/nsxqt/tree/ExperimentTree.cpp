@@ -1,15 +1,16 @@
 #include "ui_MainWindow.h"
-#include "dialogs/DialogConvolve.h"
-#include <nsxlib/utils/ProgressHandler.h>
-#include "views/ProgressView.h"
+#include "ui_ScaleDialog.h"
 
-#include <memory>
-#include <stdexcept>
-#include <utility>
-#include <map>
 #include <array>
+#include <memory>
+#include <map>
+#include <stdexcept>
 #include <tuple>
+#include <utility>
 #include <vector>
+
+#include <hdf5.h>
+#include <H5Exception.h>
 
 #include <QAbstractItemView>
 #include <QDebug>
@@ -23,73 +24,48 @@
 #include <QStandardItem>
 #include <QString>
 #include <QtDebug>
+#include <QVector>
 
-#include <nsxlib/data/DataReaderFactory.h>
-#include <nsxlib/instrument/Detector.h>
-#include "dialogs/DialogExperiment.h"
-#include <nsxlib/instrument/Diffractometer.h>
-#include <nsxlib/instrument/Sample.h>
-#include <nsxlib/instrument/Source.h>
+#include "Externals/qcustomplot.h"
 
-#include "views/PeakTableView.h"
+#include <nsxlib/instrument/Experiment.h>
+
 #include "absorption/AbsorptionDialog.h"
+#include "absorption/MCAbsorptionDialog.h"
+#include "dialogs/DialogAutoIndexing.h"
+#include "dialogs/DialogConvolve.h"
+#include "dialogs/DialogExperiment.h"
+#include "dialogs/DialogRawData.h"
+#include "dialogs/DialogTransformationMatrix.h"
+#include "dialogs/FriedelDialog.h"
+#include "dialogs/PeakFitDialog.h"
+#include "dialogs/ScaleDialog.h"
+#include "dialogs/SpaceGroupDialog.h"
+#include "DetectorScene.h"
 #include "models/DataItem.h"
 #include "models/DetectorItem.h"
 #include "models/ExperimentItem.h"
-#include "tree/ExperimentTree.h"
-#include "models/TreeItem.h"
 #include "models/InstrumentItem.h"
 #include "models/NumorItem.h"
 #include "models/PeakListItem.h"
 #include "models/SampleItem.h"
+#include "models/SessionModel.h"
 #include "models/SourceItem.h"
+#include "models/TreeItem.h"
 #include "models/UnitCellItem.h"
-#include "absorption/MCAbsorptionDialog.h"
 #include "OpenGL/GLWidget.h"
 #include "OpenGL/GLSphere.h"
 #include "Logger.h"
+#include "tree/ExperimentTree.h"
+#include "views/ProgressView.h"
+#include "views/PeakTableView.h"
 #include "views/ReciprocalSpaceViewer.h"
-#include "DetectorScene.h"
-#include "dialogs/DialogTransformationMatrix.h"
-
-#include "dialogs/DialogRawData.h"
-#include "dialogs/DialogAutoIndexing.h"
-
-#include <nsxlib/crystal/SpaceGroupSymbols.h>
-#include <nsxlib/crystal/SpaceGroup.h>
-
-#include "dialogs/SpaceGroupDialog.h"
-
-#include <QVector>
-#include "Externals/qcustomplot.h"
-#include "ui_ScaleDialog.h"
-
-#include "dialogs/ScaleDialog.h"
-#include "dialogs/FriedelDialog.h"
-
-#include <nsxlib/crystal/RFactor.h>
-#include <hdf5.h>
-#include <H5Exception.h>
-
-#include "dialogs/PeakFitDialog.h"
-#include "models/SessionModel.h"
-
-#include "models/DataItem.h"
-
-
-using std::vector;
-using nsx::Data::DataSet;
-using std::shared_ptr;
-using nsx::Utils::ProgressHandler;
 
 ExperimentTree::ExperimentTree(QWidget *parent):
-    QTreeView(parent)//,
-    //_session(nullptr)
+    QTreeView(parent)
 {
     setContextMenuPolicy(Qt::CustomContextMenu);
 
-    //_session=new QStandardItemModel(this);
-    //setModel(_session);
     expandAll();
     setSelectionMode(QAbstractItemView::ContiguousSelection);
     update();
@@ -103,8 +79,6 @@ ExperimentTree::ExperimentTree(QWidget *parent):
 
 ExperimentTree::~ExperimentTree()
 {
-    // _session should be deleted automatically during destructor by QT
-    //delete _session;
 }
 
 void ExperimentTree::setSession(std::shared_ptr<SessionModel> session)
@@ -272,9 +246,6 @@ void ExperimentTree::importData()
     if (fileNames.isEmpty())
         return;
 
-    // QModelIndex parentIndex = _session->parent(currentIndex());
-    // auto expItem = dynamic_cast<ExperimentItem*>(_session->itemFromIndex(parentIndex));
-
     for (int i = 0; i < fileNames.size(); ++i) {
         dataItem->importData(fileNames[i].toStdString());
     }
@@ -288,17 +259,10 @@ void ExperimentTree::importRawData()
     if (!dataItem)
         return;
 
-    std::shared_ptr<nsx::Instrument::Experiment> exmt = dataItem->getExperiment();
+    std::shared_ptr<nsx::Experiment> exmt = dataItem->getExperiment();
 
     if (!exmt)
         return;
-
-//    QStringList files = QFileDialog::getOpenFileNames(
-//                            //this,
-//                            nullptr,
-//                            "Select one or more files to open",
-//                            ".",
-//                            "Raw data (*)");
 
     QStringList files;
     files = QFileDialog::getOpenFileNames(this,"import raw data","","",nullptr,QFileDialog::Option::DontUseNativeDialog);
@@ -310,7 +274,6 @@ void ExperimentTree::importRawData()
         return;
 
     DialogRawData dialog(this);
-    //dialog.setWavelength(exmt->getDiffractometer()->getSource()->getWavelength());
 
     if (!dialog.exec())
         return;
@@ -346,14 +309,14 @@ void ExperimentTree::viewReciprocalSpace(const QModelIndex& index)
     if (!titem)
         return;
 
-    std::shared_ptr<nsx::Instrument::Experiment> expt(titem->getExperiment());
+    std::shared_ptr<Experiment> expt(titem->getExperiment());
 
     if (!expt)
         return;
 
     QStandardItem* ditem=_session->itemFromIndex(index);
 
-    std::vector<std::shared_ptr<nsx::Data::DataSet>> selectedNumors;
+    std::vector<std::shared_ptr<nsx::DataSet>> selectedNumors;
     int nTotalNumors(_session->rowCount(ditem->index()));
     selectedNumors.reserve(size_t(nTotalNumors));
 
@@ -399,7 +362,7 @@ void ExperimentTree::onDoubleClick(const QModelIndex& index)
     else if (auto ptr=dynamic_cast<SampleItem*>(item))
         ptr->addUnitCell();
     else if (auto ptr=dynamic_cast<NumorItem*>(item)) {
-        std::shared_ptr<nsx::Instrument::Experiment> exp = ptr->getExperiment();
+        std::shared_ptr<nsx::Experiment> exp = ptr->getExperiment();
         emit plotData(exp->getData(item->text().toStdString()));
     }
 }
@@ -466,76 +429,6 @@ void ExperimentTree::findSpaceGroup()
 void ExperimentTree::computeRFactors()
 {
     _session->computeRFactors();
-
-//    qDebug() << "Finding peak equivalences...";
-
-//    std::vector<std::shared_ptr<IData>> numors = _session->getSelectedNumors();
-//    std::vector<std::vector<Peak3D*>> peak_equivs;
-//    std::vector<Peak3D*> peak_list;
-
-//    std::shared_ptr<UnitCell> unit_cell;
-
-//    for (std::shared_ptr<IData> numor: numors) {
-//        std::set<Peak3D*> peaks = numor->getPeaks();
-//        for (Peak3D* peak: peaks)
-//            if ( peak && peak->isSelected() && !peak->isMasked() )
-//                peak_list.push_back(peak);
-//    }
-
-//    if ( peak_list.size() == 0) {
-//        qDebug() << "No peaks -- cannot search for equivalences!";
-//        return;
-//    }
-
-//    for (Peak3D* peak: peak_list) {
-//        // what do we do if there is more than one sample/unit cell??
-//        unit_cell = peak->getUnitCell();
-
-//        if (unit_cell)
-//            break;
-//    }
-
-//    if (!unit_cell) {
-//        qDebug() << "No unit cell selected! Cannot compute R factors.";
-//        return;
-//    }
-
-//    SpaceGroup grp("P 1");
-
-//    // spacegroup construct can throw
-//    try {
-//        grp = SpaceGroup(unit_cell->getSpaceGroup());
-//    }
-//    catch(std::exception& e) {
-//        qDebug() << "Caught exception: " << e.what() << endl;
-//        return;
-//    }
-
-//    peak_equivs = grp.findEquivalences(peak_list, true);
-
-//    qDebug() << "Found " << peak_equivs.size() << " equivalence classes of peaks:";
-
-//    std::map<int, int> size_counts;
-
-//    for (auto& peaks: peak_equivs) {
-//        ++size_counts[peaks.size()];
-//    }
-
-//    for (auto& it: size_counts) {
-//        qDebug() << "Found " << it.second << " classes of size " << it.first;
-//    }
-
-//    qDebug() << "Computing R factors:";
-
-//    RFactor rfactor(peak_equivs);
-
-//    qDebug() << "    Rmerge = " << rfactor.Rmerge();
-//    qDebug() << "    Rmeas  = " << rfactor.Rmeas();
-//    qDebug() << "    Rpim   = " << rfactor.Rpim();
-
-    // WIP: disabled for now
-    // ScaleDialog* scaleDialog = new ScaleDialog(peak_equivs, this);
-    // scaleDialog->exec();
 }
 
 void ExperimentTree::findFriedelPairs()
@@ -543,88 +436,7 @@ void ExperimentTree::findFriedelPairs()
     qDebug() << "findFriedelParis() is not yet implemented!";
     return;
 
-//    std::vector<Peak3D*> peaks;
-//    std::vector<std::shared_ptr<IData>> numors = getSelectedNumors();
-
-//    for (std::shared_ptr<IData> numor: numors) {
-//        std::set<Peak3D*> peak_list = numor->getPeaks();
-
-//        for (Peak3D* peak: peak_list)
-//            peaks.push_back(peak);
-//    }
-
-
-
-    // todo: something with FriedelDialog!
-    //FriedelDialog* friedelDialog = new FriedelDialog(peaks, this);
-    //friedelDialog->exec();
-    //delete friedelDialog;
 }
-
-//void ExperimentTree::integrateCalculatedPeaks()
-//{
-//    qDebug() << "Integrating calculated peaks...";
-
-//    int count = 0;
-//    Eigen::Vector3d peak_extent, bg_extent;
-//    peak_extent << 0.0, 0.0, 0.0;
-//    bg_extent << 0.0, 0.0, 0.0;
-
-//    std::shared_ptr<UnitCell> unit_cell;
-
-//    for (std::shared_ptr<IData> numor: _session->getSelectedNumors())
-//    {
-//        for (sptrPeak3D peak: numor->getPeaks())
-//            if ( peak && peak->isSelected() && !peak->isMasked() )
-//            {
-//                peak_extent += peak->getPeak()->getAABBExtents();
-//                bg_extent += peak->getBackground()->getAABBExtents();
-//                ++count;
-//            }
-//    }
-
-//    if ( count == 0) {
-//        qDebug() << "No peaks -- cannot search for equivalences!";
-//        return;
-//    }
-
-//    peak_extent /= count;
-//    bg_extent /= count;
-
-//    qDebug() << "Done calculating average bounding box";
-
-//    qDebug() << peak_extent(0) << " " << peak_extent(1) << " " << peak_extent(2);
-//    qDebug() << bg_extent(0) << " " << bg_extent(1) << " " << bg_extent(2);
-
-//    for (std::shared_ptr<IData> numor: _session->getSelectedNumors()) {
-
-//        std::vector<sptrPeak3D> calculated_peaks;
-
-//        shared_ptr<Sample> sample = numor->getDiffractometer()->getSample();
-//        int ncrystals = sample->getNCrystals();
-
-//        if (ncrystals) {
-//            for (int i = 0; i < ncrystals; ++i) {
-//                nsx::Crystal::SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
-//                auto ub = sample->getUnitCell(i)->getReciprocalStandardM();
-
-//                qDebug() << "Calculating peak locations...";
-
-//                auto hkls = sample->getUnitCell(i)->generateReflectionsInSphere(1.5);
-//                std::vector<nsx::Crystal::PeakCalc> peaks = numor->hasPeaks(hkls, ub);
-//                calculated_peaks.reserve(calculated_peaks.size() + peaks.size());
-
-//                qDebug() << "Adding calculated peaks...";
-
-//                //for(auto&& p: peaks) {
-//                    //calculated_peaks.push_back(p);
-//                //}
-//            }
-//        }
-
-//        qDebug() << "Done.";
-//    }
-//}
 
 void ExperimentTree::peakFitDialog()
 {

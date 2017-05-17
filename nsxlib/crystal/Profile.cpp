@@ -40,15 +40,11 @@
 #include "Profile.h"
 #include "../utils/MinimizerGSL.h"
 
-using nsx::Utils::MinimizerGSL;
-using nsx::Utils::Lorentzian;
-using nsx::Utils::Gaussian;
-
 static const double g_pi = double(M_PI);
 
 namespace nsx {
 
-Profile::Profile(const Utils::Lorentzian &lor, const Utils::Gaussian &gauss):
+Profile::Profile(const Lorentzian &lor, const Gaussian &gauss):
     _lorentz(lor),
     _gauss(gauss)
 {

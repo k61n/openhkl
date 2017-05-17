@@ -1,12 +1,11 @@
+#include <cassert>
+
 #include <QStandardItem>
 #include <QString>
 #include <QJsonObject>
 #include <QJsonArray>
-#include <cassert>
 
 #include "models/TreeItem.h"
-
-#include <QtDebug>
 
 TreeItem::TreeItem(std::shared_ptr<Experiment> experiment) : QStandardItem(), _experiment(experiment)
 {

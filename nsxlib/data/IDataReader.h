@@ -13,14 +13,11 @@
 
 namespace nsx {
 
-using nsx::Instrument::Diffractometer;
-using nsx::Instrument::InstrumentState;
-
 class IDataReader {
 
 public:
 
-    IDataReader(const std::string& filename, const std::shared_ptr<nsx::Instrument::Diffractometer>& diffractometer);
+    IDataReader(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer);
 
     virtual ~IDataReader()=default;
 

@@ -44,32 +44,40 @@
 
 namespace nsx {
 
-class Peak3D;
-
 class XDS {
+
 public:
-    using sptrPeak3D = std::shared_ptr<Crystal::Peak3D>;
+
+    using sptrPeak3D = std::shared_ptr<Peak3D>;
     using PeakList = std::vector<sptrPeak3D>;
-    using PeakRecord = nsx::Crystal::PeakRecord;
     using RecordList = std::vector<PeakRecord>;
 
     XDS(const PeakList& peaks, bool merge, bool friedel, const std::string& filename = "", const std::string& date = "");
+
     ~XDS() = default;
 
     bool writeHeader(std::ostream& str) const;
+
     bool writePeaks(std::ostream& str) const;
+
     bool writeFooter(std::ostream& str) const;
+
     bool write(std::ostream& str) const;
 
 private:
+
     RecordList getMergedRecords() const;
+
     RecordList getUnmergedRecords() const;
 
-
     PeakList _peaks;
+
     const bool _merge, _friedel;
+
     const std::string _filename;
+
     const std::string _date;
+
     const std::vector<std::string> _records;
 };
 

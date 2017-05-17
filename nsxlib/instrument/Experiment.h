@@ -44,7 +44,6 @@ class Diffractometer;
 
 class Experiment {
 public:
-    using DataSet = nsx::Data::DataSet;
 
     // Constructors & Destructors
     //! Default constructor (deleted)

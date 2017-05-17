@@ -45,19 +45,24 @@
 namespace nsx {
 
 class Profile {
-    using Lorentzian = nsx::Utils::Lorentzian;
-    using Gaussian = nsx::Utils::Gaussian;
+
 public:
+
     Profile(const Lorentzian& lor = Lorentzian(), const Gaussian& gauss = Gaussian());
+
     bool fit(const Eigen::VectorXd& y, int max_iter=100);
+
     double evaluate(double x) const;
+
     double integrate() const;
 
     bool goodFit(const Eigen::VectorXd& y, double eps) const;
 
 private:
-    nsx::Utils::Lorentzian _lorentz;
-    nsx::Utils::Gaussian _gauss;
+
+    Lorentzian _lorentz;
+
+    Gaussian _gauss;
 };
 
 } // end namespace nsx

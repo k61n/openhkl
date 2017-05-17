@@ -1,22 +1,18 @@
 #define BOOST_TEST_MODULE "Test Convolver"
 #define BOOST_TEST_DYN_LINK
 
-#include <boost/test/unit_test.hpp>
-
-#include <iostream>
-#include <map>
-#include <string>
 #include <cmath>
 
-#include <Eigen/Dense>
+#include <boost/test/unit_test.hpp>
 
 #include <nsxlib/imaging/Convolver.h>
 #include <nsxlib/imaging/DeltaKernel.h>
+#include <nsxlib/utils/Types.h>
 
 // Generate a image to use for testing the Fourier transform
-nsx::Types::RealMatrix generateImage(int rows, int cols)
+nsx::RealMatrix generateImage(int rows, int cols)
 {
-    nsx::Types::RealMatrix image(rows, cols);
+    nsx::RealMatrix image(rows, cols);
 
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
@@ -28,13 +24,13 @@ nsx::Types::RealMatrix generateImage(int rows, int cols)
 
 double computeError(int rows, int cols)
 {
-    nsx::Types::RealMatrix original = generateImage(rows,cols);
-    nsx::Imaging::Convolver convolver;
-    nsx::Imaging::DeltaKernel kernel(rows,cols);
+    nsx::RealMatrix original = generateImage(rows,cols);
+    nsx::Convolver convolver;
+    nsx::DeltaKernel kernel(rows,cols);
 
     convolver.setKernel(kernel.getKernel());
-    nsx::Types::RealMatrix transformed = convolver.apply(original);
-    nsx::Types::RealMatrix difference =  original-transformed;
+    nsx::RealMatrix transformed = convolver.apply(original);
+    nsx::RealMatrix difference =  original-transformed;
     double error = (difference * difference.transpose()).sum() / rows / cols;
     return std::sqrt(error);
 }

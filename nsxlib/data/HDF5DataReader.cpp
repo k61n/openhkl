@@ -11,8 +11,6 @@
 
 using std::unique_ptr;
 using std::shared_ptr;
-using nsx::Utils::eigenToVector;
-using nsx::Instrument::ComponentState;
 
 namespace nsx {
 
@@ -71,7 +69,7 @@ HDF5DataReader::HDF5DataReader(const std::string& filename, std::shared_ptr<Diff
             H5::DataSpace space(dset.getSpace());
             hsize_t dim=space.getSimpleExtentNdims();
             if (dim!=1) {
-                throw std::runtime_error("Read HDF5, problem reading detector scan parameters, dimension of array should be 1");;
+                throw std::runtime_error("Read HDF5, problem reading detector scan parameters, dimension of array should be 1");
             }
             std::vector<hsize_t> dims(dim), maxdims(dim);
             space.getSimpleExtentDims(&dims[0], &maxdims[0]);
@@ -87,7 +85,7 @@ HDF5DataReader::HDF5DataReader(const std::string& filename, std::shared_ptr<Diff
     }
 
     // Use natural units internally (rad)
-    dm*=nsx::Units::deg;
+    dm*=deg;
     _states.resize(_nFrames);
 
     for (unsigned int i=0;i<_nFrames;++i) {
@@ -107,7 +105,7 @@ HDF5DataReader::HDF5DataReader(const std::string& filename, std::shared_ptr<Diff
             H5::DataSpace space(dset.getSpace());
             hsize_t dim=space.getSimpleExtentNdims();
             if (dim!=1) {
-                throw std::runtime_error("Read HDF5, problem reading sample scan parameters, dimension of array should be 1");;
+                throw std::runtime_error("Read HDF5, problem reading sample scan parameters, dimension of array should be 1");
             }
             std::vector<hsize_t> dims(dim), maxdims(dim);
             space.getSimpleExtentDims(&dims[0], &maxdims[0]);
@@ -123,7 +121,7 @@ HDF5DataReader::HDF5DataReader(const std::string& filename, std::shared_ptr<Diff
     }
 
     // Use natural units internally (rad)
-    dm*=nsx::Units::deg;
+    dm*=deg;
 
     for (unsigned int i=0;i<_nFrames;++i) {
         _states[i].sample = ComponentState(_diffractometer->getSample().get(), eigenToVector(dm.col(i)));

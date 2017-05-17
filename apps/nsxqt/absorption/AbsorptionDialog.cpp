@@ -1,22 +1,24 @@
-#include "AbsorptionDialog.h"
-#include "ui_AbsorptionDialog.h"
+#include <algorithm>
 #include <fstream>
+#include <sstream>
+
+#include <QDebug>
+#include <QDir>
 #include <QFileDialog>
+#include <QFileInfo>
 #include <QMessageBox>
-#include <iostream>
+
 #include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/instrument/Sample.h>
 #include <nsxlib/instrument/Experiment.h>
 #include <nsxlib/instrument/RotAxis.h>
-#include <boost/algorithm/string.hpp>
-#include <algorithm>
-#include <sstream>
 #include <nsxlib/instrument/Gonio.h>
-#include <QtDebug>
-#include <QFileInfo>
-#include <QDir>
 
-AbsorptionDialog::AbsorptionDialog(std::shared_ptr<nsx::Instrument::Experiment> experiment, QWidget *parent) :
+#include "AbsorptionDialog.h"
+
+#include "ui_AbsorptionDialog.h"
+
+AbsorptionDialog::AbsorptionDialog(std::shared_ptr<nsx::Experiment> experiment, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::AbsorptionDialog),
     _experiment(experiment),

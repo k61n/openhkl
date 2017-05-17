@@ -13,10 +13,10 @@ class BasicFrameIterator final: public IFrameIterator {
 public:
     BasicFrameIterator(DataSet& data, unsigned int idx);
     ~BasicFrameIterator() = default;
-    nsx::Types::RealMatrix& getFrame() override;
+    RealMatrix& getFrame() override;
     void advance() override;
 private:
-    nsx::Types::RealMatrix _currentFrame;
+    RealMatrix _currentFrame;
 };
 
 } // end namespace nsx

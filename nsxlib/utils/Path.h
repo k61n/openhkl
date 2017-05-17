@@ -35,7 +35,7 @@
 
 namespace nsx {
 
-class Path : public nsx::Kernel::Singleton<Path,nsx::Kernel::Constructor,nsx::Kernel::Destructor> {
+class Path : public Singleton<Path,Constructor,Destructor> {
 
 public:
 
@@ -59,7 +59,9 @@ public:
     static void setArgv(int argc, char** argv);
 
 private:
+
     static int _argc;
+
     static char** _argv;
 };
 

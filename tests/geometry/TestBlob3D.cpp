@@ -1,16 +1,19 @@
-#define BOOST_TEST_MODULE "Test Blob3D"
+#define BOOST_TEST_MODULE "Test 3D Blob"
 #define BOOST_TEST_DYN_LINK
 
-#include <nsxlib/geometry/Blob3D.h>
 #include <cmath>
-#include <Eigen/Dense>
+
 #include <boost/test/unit_test.hpp>
 
-using namespace nsx::Geometry;
+#include <Eigen/Dense>
+
+#include <nsxlib/geometry/Blob3D.h>
+
+using namespace nsx;
 
 const double tolerance=1e-5;
 
-BOOST_AUTO_TEST_CASE(Test_Blob3D)
+BOOST_AUTO_TEST_CASE(Test_3D_Blob)
 {
     Blob3D blob;
     // Create a set of points for a 3D Gaussian.

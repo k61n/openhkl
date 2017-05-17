@@ -12,7 +12,7 @@
 
 #include <nsxlib/chemistry/ChemicalFormulaParser.h>
 
-using namespace nsx::Chemistry;
+using namespace nsx;
 
 const double tolerance=1.0e-9;
 

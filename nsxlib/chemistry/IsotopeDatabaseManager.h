@@ -17,9 +17,6 @@
 namespace nsx {
 
 using boost::any_cast;
-using nsx::Kernel::Constructor;
-using nsx::Kernel::Destructor;
-using nsx::Kernel::Singleton;
 
 class IsotopeDatabaseManager : public Singleton<IsotopeDatabaseManager,Constructor,Destructor> {
 

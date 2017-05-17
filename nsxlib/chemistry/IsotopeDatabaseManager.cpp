@@ -7,9 +7,6 @@
 
 namespace nsx {
 
-using nsx::Utils::Path;
-using nsx::Units::UnitsManager;
-
 const std::string IsotopeDatabaseManager::DatabasePath = Path::getDataBasesPath("isotopes.yaml");
 
 std::map<std::string,IsotopeDatabaseManager::PropertyType> IsotopeDatabaseManager::PropertyTypes = {{"string",PropertyType::String},

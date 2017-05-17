@@ -90,7 +90,7 @@ isotopeContents Material::atomicNumberDensity() const
         const auto& isotope=imgr->getIsotope(p.first);
         double massFraction(_massDensity*p.second);
         double molarFraction = massFraction/isotope.getProperty<double>("molar_mass");
-        nAtomsPerVolume.insert(std::make_pair(p.first,Units::avogadro*molarFraction));
+        nAtomsPerVolume.insert(std::make_pair(p.first,avogadro*molarFraction));
     }
 
     return nAtomsPerVolume;
@@ -115,7 +115,7 @@ double Material::muAbsorption(double lambda) const
     double absorptionMuFactor=0.0;
     for (const auto& p : atomicNumberDensity()) {
         const auto& isotope=imgr->getIsotope(p.first);
-        double thermalWavelength(1.798*Units::ang);
+        double thermalWavelength(1.798*ang);
         absorptionMuFactor+=p.second*isotope.getProperty<double>("xs_absorption")*lambda/thermalWavelength;
     }
     return absorptionMuFactor;

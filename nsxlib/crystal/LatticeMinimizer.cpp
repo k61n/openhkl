@@ -31,16 +31,16 @@ void LatticeMinimizer::clearPeaks()
     _functor._peaks.clear();
 }
 
-void LatticeMinimizer::setDetector(std::shared_ptr<Instrument::Detector> detector)
+void LatticeMinimizer::setDetector(std::shared_ptr<Detector> detector)
 {
     _functor._detector=detector;
 }
 
-void LatticeMinimizer::setSample(std::shared_ptr<Instrument::Sample> sample)
+void LatticeMinimizer::setSample(std::shared_ptr<Sample> sample)
 {
     _functor._sample=sample;
 }
-void LatticeMinimizer::setSource(std::shared_ptr<Instrument::Source> source)
+void LatticeMinimizer::setSource(std::shared_ptr<Source> source)
 {
     _functor._source=source;
 }
@@ -181,8 +181,8 @@ int LatticeMinimizer::run(unsigned int maxIter)
         {
             if (fParams[i])
             {
-                Utils::removeColumn(JtJ,i-removed);
-                Utils::removeRow(JtJ,i-removed);
+                removeColumn(JtJ,i-removed);
+                removeRow(JtJ,i-removed);
                 removed++;
             }
         }

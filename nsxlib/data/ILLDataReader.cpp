@@ -21,14 +21,7 @@
 #include "../utils/Parser.h"
 #include "../utils/Units.h"
 
-using nsx::Utils::readIntsFromChar;
-using nsx::Utils::readDoublesFromChar;
-using nsx::Instrument::ComponentState;
-
 namespace nsx {
-
-using nsx::Instrument::Detector;
-using nsx::Utils::MatrixParser;
 
 // 81 characters per line, at least 100 lines of header
 std::size_t ILLDataReader::BlockSize = 100*81;
@@ -138,7 +131,7 @@ ILLDataReader::ILLDataReader(const std::string& filename, const std::shared_ptr<
             // other wise it will be 0
             double val = _metadata.isKey(p.second) ? _metadata.getKey<double>(p.second) : 0.0;
             // Data are given in deg for angles
-            std::vector<double> values(_nFrames,val*nsx::Units::deg);
+            std::vector<double> values(_nFrames,val*deg);
             gonioValues.insert(std::pair<unsigned int,std::vector<double>>(p.first,values));
         }
     }
@@ -156,7 +149,7 @@ ILLDataReader::ILLDataReader(const std::string& filename, const std::shared_ptr<
         unsigned int comp(3);
         for (const auto& id: scannedAxisId) {
             // The values are given in degrees in the metadata block and multiplied by 1000
-            gonioValues[id].push_back(scannedValues[comp++]/1000*nsx::Units::deg);
+            gonioValues[id].push_back(scannedValues[comp++]/1000*deg);
         }
     }
 

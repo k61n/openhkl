@@ -41,26 +41,28 @@
 
 #include <Eigen/Dense>
 
-
 #include "Convolver.h"
 #include "../utils/Types.h"
 
 namespace nsx {
 
 class ConvolutionKernel {
+
 public:
+
     typedef std::map<std::string, double> ParameterMap;
 
     ConvolutionKernel(int nrows, int ncols);
+
     ConvolutionKernel(const ConvolutionKernel& rhs);
+
     ConvolutionKernel(int nrows, int ncols, const ParameterMap& parameters);
 
     // used to get/set parameters
     ParameterMap& getParameters();
     const ParameterMap& getParameters() const;
 
-
-    const nsx::Types::RealMatrix& getKernel();
+    const RealMatrix& getKernel();
     virtual const char* getName() = 0;
 
     void print(std::ostream& os) const;
@@ -74,9 +76,11 @@ protected:
     // update the kernel using current parameters
     virtual void update() {};
 
-    int _nrows, _ncols;
+    int _nrows;
 
-    nsx::Types::RealMatrix _kernel;
+    int _ncols;
+
+    RealMatrix _kernel;
     bool _hasChanged; // used to record if parameters have changed since last update
     ParameterMap _params;
 };

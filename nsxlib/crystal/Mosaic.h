@@ -17,10 +17,9 @@
 
 namespace nsx {
 
+class DataSet;
 class Diffractometer;
 class Sample;
-
-class DataSet;
 
 class Mosaic {
 
@@ -29,9 +28,9 @@ public:
     Mosaic(const std::string& instr, double l, double dl, double dMonSam, double mu);
 
     // bool run(const std::vector<std::string>& numors, unsigned int n, double& overlap);
-    bool run(std::vector<std::shared_ptr<nsx::Data::DataSet>> datas, unsigned int n, double& overlap);
+    bool run(std::vector<std::shared_ptr<DataSet>> datas, unsigned int n, double& overlap);
 
-    void setSample(nsx::Instrument::Sample* sample);
+    void setSample(Sample* sample);
 
     void setMosaicity(double mosaicity);
 
@@ -39,9 +38,9 @@ public:
 
 private:
 
-    std::shared_ptr<nsx::Instrument::Diffractometer> _diffractometer;
+    std::shared_ptr<Diffractometer> _diffractometer;
 
-    nsx::Instrument::Sample* _sample;
+    Sample* _sample;
 
     double _l;
     double _dl;
@@ -49,7 +48,7 @@ private:
     double _mu;
 };
 
-double ellipsoids_overlap(const nsx::Geometry::Ellipsoid<double,3>& ell1,const nsx::Geometry::Ellipsoid<double,3>& ell2);
+double ellipsoids_overlap(const Ellipsoid<double,3>& ell1,const Ellipsoid<double,3>& ell2);
 
 } // end namespace nsx
 

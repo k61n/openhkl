@@ -35,20 +35,22 @@
 
 #include <QDialog>
 
-#include <nsxlib/crystal/Peak3D.h>
+class Qwidget;
+
+namespace nsx {
+class Peak3D;
+}
 
 namespace Ui {
 class FriedelDialog;
 }
-
-
 
 class FriedelDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit FriedelDialog(const std::vector<nsx::Crystal::Peak3D*>& peaks, QWidget *parent = 0);
+    explicit FriedelDialog(const std::vector<nsx::Peak3D*>& peaks, QWidget *parent = 0);
     ~FriedelDialog();
 
     void findFriedelPairs();
@@ -58,8 +60,8 @@ private slots:
 
 private:
     Ui::FriedelDialog *_ui;
-    std::vector<nsx::Crystal::Peak3D*> _peaks;
-    std::vector<std::pair<nsx::Crystal::Peak3D*, nsx::Crystal::Peak3D*>> _friedelPairs;
+    std::vector<nsx::Peak3D*> _peaks;
+    std::vector<std::pair<nsx::Peak3D*, nsx::Peak3D*>> _friedelPairs;
 };
 
 #endif // FRIEDELDIALOG_H

@@ -1,9 +1,8 @@
 #include <QIcon>
 #include <QString>
-#include <QtDebug>
 
-#include "models/InstrumentItem.h"
 #include "models/DetectorItem.h"
+#include "models/InstrumentItem.h"
 #include "models/SampleItem.h"
 #include "models/SourceItem.h"
 

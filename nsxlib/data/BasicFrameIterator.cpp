@@ -12,7 +12,7 @@ BasicFrameIterator::BasicFrameIterator(DataSet& data, unsigned int idx): IFrameI
     _currentFrame = _data.getFrame(_index).cast<double>();
 }
 
-nsx::Types::RealMatrix& BasicFrameIterator::getFrame()
+RealMatrix& BasicFrameIterator::getFrame()
 {
     return _currentFrame;
 }

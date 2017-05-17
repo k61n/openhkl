@@ -44,8 +44,6 @@
 
 namespace nsx {
 
-using nsx::Instrument::Diffractometer;
-
 class ILLDataReader final: public IDataReader {
 
 public:

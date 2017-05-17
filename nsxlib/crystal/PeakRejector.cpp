@@ -37,8 +37,6 @@
 
 #include "PeakRejector.h"
 
-using nsx::Data::DataSet;
-
 namespace nsx {
 
 bool PeakRejector::rejectPeak(const Peak3D &peak) const

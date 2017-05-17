@@ -2,8 +2,6 @@
 #define MAINWINDOW_H
 
 #include <map>
-#include <unordered_map>
-#include <vector>
 #include <memory>
 
 #include <QGraphicsScene>
@@ -14,13 +12,10 @@
 #include <nsxlib/data/IData.h>
 #include <nsxlib/instrument/Experiment.h>
 #include <nsxlib/imaging/Convolver.h>
-#include "Logger.h"
-
 
 #include "JobHandler.h"
+#include "Logger.h"
 #include "views/ProgressView.h"
-
-
 
 class QListWidgetItem;
 class PlottableGraphicsItem;
@@ -31,28 +26,17 @@ namespace Ui {
 }
 
 namespace nsx {
-namespace Crystal {
-class Peak3D;
-using sptrPeak3D=std::shared_ptr<Peak3D>;
-}
-
-namespace Data {
-class DataSet;
-class PeakFinder;
-}
-
-namespace Instrument {
-class Experiment;
-}
-
-namespace Utils {
-class ProgressHandler;
-}
+    class Peak3D;
+    using sptrPeak3D=std::shared_ptr<Peak3D>;
+    class DataSet;
+    class PeakFinder;
+    class Experiment;
+    class ProgressHandler;
 }
 
 class QProgressDialog;
 
-using nsx::Crystal::sptrPeak3D;
+using nsx::sptrPeak3D;
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -67,16 +51,15 @@ public:
     void findPeaks();
 
 signals:
-    void plotDetectorData(nsx::Data::DataSet*,int frame);
+    void plotDetectorData(nsx::DataSet*,int frame);
     void findSpaceGroup();
     void computeRFactors();
     void findFriedelPairs();
     //void integrateCalculatedPeaks();
     void peakFitDialog();
     void incorporateCalculatedPeaks();
-private slots:
-//    void on_action_open_triggered();
 
+private slots:
     void on_actionNew_session_triggered();
     void on_actionSave_session_triggered();
     void on_actionSave_session_as_triggered();
@@ -120,7 +103,7 @@ private slots:
     void on_actionAuto_assign_unit_cell_triggered();
 
 public slots:
-    void changeData(std::shared_ptr<nsx::Data::DataSet>);
+    void changeData(std::shared_ptr<nsx::DataSet>);
     void plotPeak(sptrPeak3D);
     void plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&);
     void setInspectorWidget(QWidget*);
@@ -128,13 +111,11 @@ public slots:
 
 private:
     Ui::MainWindow* _ui;
-    //std::unordered_map<std::string,nsx::Instrument::Experiment> _experiments;
-    std::shared_ptr<nsx::Data::DataSet> _currentData;
+    std::shared_ptr<nsx::DataSet> _currentData;
 
-    std::shared_ptr<nsx::Utils::ProgressHandler> _progressHandler;
-    std::shared_ptr<nsx::Data::PeakFinder> _peakFinder;
-    std::shared_ptr<nsx::Imaging::Convolver> _convolver;
-    //threshold, confidence, minComp, maxComp
+    std::shared_ptr<nsx::ProgressHandler> _progressHandler;
+    std::shared_ptr<nsx::PeakFinder> _peakFinder;
+    std::shared_ptr<nsx::Convolver> _convolver;
 
     std::shared_ptr<SessionModel> _session;
 };

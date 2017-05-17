@@ -1,10 +1,13 @@
 #ifndef INSTRUMENTITEM_H
 #define INSTRUMENTITEM_H
 
-#include <string>
+#include <QJsonObject>
 
-#include <nsxlib/instrument/Experiment.h>
 #include "models/TreeItem.h"
+
+namespace nsx {
+class Experiment;
+}
 
 class DetectorItem;
 class SampleItem;
@@ -13,7 +16,7 @@ class SourceItem;
 class InstrumentItem : public TreeItem
 {
 public:
-    explicit InstrumentItem(std::shared_ptr<Experiment> experiment);
+    explicit InstrumentItem(std::shared_ptr<nsx::Experiment> experiment);
 
     QJsonObject toJson() override;
     void fromJson(const QJsonObject& obj) override;

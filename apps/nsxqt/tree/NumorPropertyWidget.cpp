@@ -1,8 +1,12 @@
-#include "ui_NumorPropertyWidget.h"
-#include "models/NumorItem.h"
-#include "tree/NumorPropertyWidget.h"
+#include <QWidget>
+
 #include <nsxlib/data/IData.h>
 #include <nsxlib/data/MetaData.h>
+
+#include "models/NumorItem.h"
+#include "tree/NumorPropertyWidget.h"
+
+#include "ui_NumorPropertyWidget.h"
 
 NumorPropertyWidget::NumorPropertyWidget(NumorItem* caller,QWidget *parent) :
     QWidget(parent),
@@ -19,7 +23,7 @@ NumorPropertyWidget::NumorPropertyWidget(NumorItem* caller,QWidget *parent) :
     if (!data)
         return;
 
-    ui->label_Data->setText(QString::fromStdString(caller->getData()->getBasename()));
+    ui->label_Data->setText(QString::fromStdString(data->getBasename()));
 
     auto metadata=data->getMetadata();
     const auto& map=metadata->getMap();

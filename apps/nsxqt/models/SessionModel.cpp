@@ -34,24 +34,44 @@
  */
 
 #include "ui_MainWindow.h"
-#include "dialogs/DialogConvolve.h"
-#include <nsxlib/utils/ProgressHandler.h>
-#include "views/ProgressView.h"
+#include "ui_ScaleDialog.h"
 
+#include <fstream>
 #include <memory>
 #include <stdexcept>
-#include <utility>
 #include <map>
-#include <array>
-#include <tuple>
 #include <vector>
-#include <fstream>
+
+#include <hdf5.h>
+#include <H5Exception.h>
+
+#include <nsxlib/crystal/MergedPeak.h>
+#include <nsxlib/crystal/PeakFit.h>
+#include <nsxlib/crystal/PeakPredictor.h>
+#include <nsxlib/crystal/ResolutionShell.h>
+#include <nsxlib/crystal/RFactor.h>
+#include <nsxlib/crystal/SpaceGroup.h>
+#include <nsxlib/crystal/SpaceGroupSymbols.h>
+#include <nsxlib/data/DataReaderFactory.h>
+#include <nsxlib/data/XDS.h>
+#include <nsxlib/geometry/Ellipsoid.h>
+#include <nsxlib/geometry/NDTree.h>
+#include <nsxlib/instrument/Detector.h>
+#include <nsxlib/instrument/Diffractometer.h>
+#include <nsxlib/instrument/Sample.h>
+#include <nsxlib/instrument/Source.h>
+#include <nsxlib/utils/gcd.h>
+#include <nsxlib/utils/ProgressHandler.h>
 
 #include <QAbstractItemView>
-#include <QDebug>
+#include <QDate>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QKeyEvent>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <QJsonValue>
 #include <QList>
 #include <QListIterator>
 #include <QMenu>
@@ -59,24 +79,23 @@
 #include <QStandardItem>
 #include <QString>
 #include <QtDebug>
-#include <QDate>
+#include <QVector>
 
-//#include "BlobFinder.h"
-#include <nsxlib/data/DataReaderFactory.h>
-#include <nsxlib/instrument/Detector.h>
-#include "dialogs/DialogExperiment.h"
-#include <nsxlib/instrument/Diffractometer.h>
-#include <nsxlib/instrument/Sample.h>
-#include <nsxlib/instrument/Source.h>
-#include <nsxlib/utils/gcd.h>
+#include "Externals/qcustomplot.h"
 
-#include <nsxlib/crystal/PeakFit.h>
-
-#include "dialogs/DialogCalculatedPeaks.h"
-#include "dialogs/ResolutionCutoffDialog.h"
-
-#include "views/PeakTableView.h"
 #include "absorption/AbsorptionDialog.h"
+#include "absorption/MCAbsorptionDialog.h"
+#include "DetectorScene.h"
+#include "dialogs/DialogCalculatedPeaks.h"
+#include "dialogs/DialogConvolve.h"
+#include "dialogs/DialogExperiment.h"
+#include "dialogs/FriedelDialog.h"
+#include "dialogs/LogFileDialog.h"
+#include "dialogs/PeakFitDialog.h"
+#include "dialogs/ResolutionCutoffDialog.h"
+#include "dialogs/ScaleDialog.h"
+#include "dialogs/SpaceGroupDialog.h"
+#include "Logger.h"
 #include "models/DataItem.h"
 #include "models/DetectorItem.h"
 #include "models/ExperimentItem.h"
@@ -87,60 +106,15 @@
 #include "models/PeakListItem.h"
 #include "models/SampleItem.h"
 #include "models/SourceItem.h"
-#include "absorption/MCAbsorptionDialog.h"
-#include "OpenGL/GLWidget.h"
 #include "OpenGL/GLSphere.h"
-#include "Logger.h"
-#include "views/ReciprocalSpaceViewer.h"
-#include "DetectorScene.h"
-
-#include <nsxlib/crystal/SpaceGroupSymbols.h>
-#include <nsxlib/crystal/SpaceGroup.h>
-
-#include "dialogs/SpaceGroupDialog.h"
-#include "dialogs/LogFileDialog.h"
-
+#include "OpenGL/GLWidget.h"
 #include "UnitCellItem.h"
+#include "views/PeakTableView.h"
+#include "views/ProgressView.h"
+#include "views/ReciprocalSpaceViewer.h"
 
-#include <QVector>
-#include "Externals/qcustomplot.h"
-#include "ui_ScaleDialog.h"
-
-#include "dialogs/ScaleDialog.h"
-#include "dialogs/FriedelDialog.h"
-
-#include <nsxlib/crystal/RFactor.h>
-#include <hdf5.h>
-#include <H5Exception.h>
-
-#include "dialogs/PeakFitDialog.h"
-#include "dialogs/DialogConvolve.h"
-#include <nsxlib/crystal/ResolutionShell.h>
-#include <nsxlib/crystal/MergedPeak.h>
-#include <nsxlib/data/XDS.h>
-
-#include <nsxlib/geometry/NDTree.h>
-#include <nsxlib/geometry/Ellipsoid.h>
-#include <nsxlib/crystal/PeakPredictor.h>
-
-#include <QJsonObject>
-#include <QJsonArray>
-#include <QJsonValue>
-#include <QJsonDocument>
-
-using std::vector;
-using nsx::Data::DataSet;
-using std::shared_ptr;
-using nsx::Utils::ProgressHandler;
-using nsx::Crystal::UnitCell;
-using nsx::Crystal::SpaceGroup;
-using nsx::Crystal::RFactor;
-using nsx::Data::PeakFinder;
-using nsx::Crystal::PeakCalc;
-using nsx::Crystal::Peak3D;
-
-using Octree = nsx::Geometry::NDTree<double, 3>;
-using Ellipsoid3D = nsx::Geometry::Ellipsoid<double, 3>;
+using Octree = nsx::NDTree<double, 3>;
+using Ellipsoid3D = nsx::Ellipsoid<double, 3>;
 
 SessionModel::SessionModel()
 {
@@ -198,10 +172,10 @@ void SessionModel::createNewExperiment()
     }
 }
 
-std::shared_ptr<nsx::Instrument::Experiment> SessionModel::addExperiment(const std::string& experimentName, const std::string& instrumentName)
+std::shared_ptr<nsx::Experiment> SessionModel::addExperiment(const std::string& experimentName, const std::string& instrumentName)
 {
     // Create an experiment
-    std::shared_ptr<nsx::Instrument::Experiment> expPtr(new nsx::Instrument::Experiment(experimentName,instrumentName));
+    std::shared_ptr<nsx::Experiment> expPtr(new nsx::Experiment(experimentName,instrumentName));
 
     // Create an experiment item
     ExperimentItem* expt = new ExperimentItem(expPtr);
@@ -211,9 +185,9 @@ std::shared_ptr<nsx::Instrument::Experiment> SessionModel::addExperiment(const s
     return expPtr;
 }
 
-vector<shared_ptr<DataSet>> SessionModel::getSelectedNumors(ExperimentItem* item) const
+std::vector<std::shared_ptr<DataSet>> SessionModel::getSelectedNumors(ExperimentItem* item) const
 {
-    vector<shared_ptr<DataSet>> numors;
+    std::vector<std::shared_ptr<DataSet>> numors;
 
     QList<QStandardItem*> dataItems = findItems(QString("Data"),Qt::MatchCaseSensitive|Qt::MatchRecursive);
 
@@ -284,9 +258,9 @@ std::string SessionModel::getColorMap() const
     return _colormap;
 }
 
-vector<shared_ptr<DataSet>> SessionModel::getSelectedNumors() const
+std::vector<std::shared_ptr<DataSet>> SessionModel::getSelectedNumors() const
 {
-    vector<shared_ptr<DataSet>> numors;
+    std::vector<std::shared_ptr<DataSet>> numors;
 
     QList<QStandardItem*> dataItems = findItems(QString("Data"),Qt::MatchCaseSensitive|Qt::MatchRecursive);
 
@@ -440,13 +414,13 @@ void SessionModel::findPeaks(const QModelIndex& index)
     if (!titem)
         return;
 
-    std::shared_ptr<nsx::Instrument::Experiment> expt(titem->getExperiment());
+    std::shared_ptr<nsx::Experiment> expt(titem->getExperiment());
 
     if (!expt)
         return;
 
     QStandardItem* ditem = itemFromIndex(index);
-    std::vector<std::shared_ptr<nsx::Data::DataSet>> selectedNumors;
+    std::vector<std::shared_ptr<nsx::DataSet>> selectedNumors;
     int nTotalNumors = rowCount(ditem->index());
     selectedNumors.reserve(size_t(nTotalNumors));
 
@@ -570,7 +544,7 @@ void SessionModel::incorporateCalculatedPeaks()
 
     std::vector<std::shared_ptr<DataSet>> numors = getSelectedNumors();
 
-    std::shared_ptr<nsx::Utils::ProgressHandler> handler(new nsx::Utils::ProgressHandler);
+    std::shared_ptr<nsx::ProgressHandler> handler(new nsx::ProgressHandler);
     ProgressView progressView(nullptr);
     progressView.watch(handler);
 
@@ -584,106 +558,7 @@ void SessionModel::incorporateCalculatedPeaks()
     for(std::shared_ptr<DataSet> numor: numors) {
         qDebug() << "Finding missing peaks for numor " << ++current_numor << " of " << numors.size();
 
-//        auto& mono = numor->getDiffractometer()->getSource()->getSelectedMonochromator();
-//        const double wavelength = mono.getWavelength();
-//        std::vector<sptrPeak3D> calculated_peaks;
-
-//        shared_ptr<Sample> sample = numor->getDiffractometer()->getSample();
-//        unsigned int ncrystals = static_cast<unsigned int>(sample->getNCrystals());
-
-//        for (unsigned int i = 0; i < ncrystals; ++i) {
-//            nsx::Crystal::SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
-//            auto cell = sample->getUnitCell(i);
-//            auto UB = cell->getReciprocalStandardM();
-
-//            handler->setStatus("Calculating peak locations...");
-
-//            //auto predicted_hkls = sample->getUnitCell(i)->generateReflectionsInSphere(1.5);
-//            auto predicted_hkls = sample->getUnitCell(i)->generateReflectionsInShell(dmin, dmax, wavelength);
-
-//            predicted_peaks += predicted_hkls.size();
-
-//            std::vector<nsx::Crystal::PeakCalc> peaks = numor->hasPeaks(predicted_hkls, UB);
-//            calculated_peaks.reserve(peaks.size());
-
-//            int current_peak = 0;
-
-//            handler->setStatus("Building set of previously found peaks...");
-
-//            std::set<sptrPeak3D> found_peaks = numor->getPeaks();
-//            std::set<Eigen::RowVector3i, compare_fn> found_hkls;
-
-
-//            Eigen::Vector3d lb = {0.0, 0.0, 0.0};
-//            Eigen::Vector3d ub = {double(numor->getNCols()), double(numor->getNRows()), double(numor->getNFrames())};
-//            auto&& octree = Octree(lb, ub);
-
-//            octree.setMaxDepth(4);
-//            octree.setMaxStorage(50);
-
-//            handler->log("Building peak octree...");
-
-//            for (sptrPeak3D p: found_peaks) {
-//                found_hkls.insert(p->getIntegerMillerIndices());
-
-//                if (!p->isSelected() || p->isMasked()) {
-//                    continue;
-//                }
-//                octree.addData(&p->getShape());
-//            }
-
-//            handler->log("Done building octree; number of chambers is " + std::to_string(octree.numChambers()));
-
-//            handler->setStatus("Adding calculated peaks...");
-
-//            int done_peaks = 0;
-
-//            #pragma omp parallel for
-//            for (size_t peak_id = 0; peak_id < peaks.size(); ++peak_id) {
-//                PeakCalc& p = peaks[peak_id];
-//                ++current_peak;
-
-//                Eigen::RowVector3i hkl(int(std::lround(p._h)), int(std::lround(p._k)), int(std::lround(p._l)));
-
-//                // try to find this reflection in the list of peaks, skip if found
-//                if (std::find(found_hkls.begin(), found_hkls.end(), hkl) != found_hkls.end() ) {
-//                    continue;
-//                }
-
-//                // now we must add it, calculating shape from nearest peaks
-//                 // K is outside the ellipsoid at PsptrPeak3D
-//                sptrPeak3D new_peak = p.averagePeaks(octree, search_radius);
-//                //sptrPeak3D new_peak = p.averagePeaks(numor);
-
-//                if (!new_peak) {
-//                    continue;
-//                }
-
-//                new_peak->linkData(numor);
-//                new_peak->setSelected(true);
-//                new_peak->addUnitCell(cell, true);
-//                new_peak->setObserved(false);
-
-//                #pragma omp critical
-//                calculated_peaks.push_back(new_peak);
-
-//                #pragma omp atomic
-//                ++done_peaks;
-//                int done = int(std::lround(done_peaks * 100.0 / peaks.size()));
-
-//                if ( done != last_done) {
-//                    handler->setProgress(done);
-//                    last_done = done;
-//                }
-//            }
-//        }
-//        for (sptrPeak3D peak: calculated_peaks) {
-//            numor->addPeak(peak);
-//        }
-//        qDebug() << "Integrating calculated peaks.";
-//        numor->integratePeaks(_peakScale, _bkgScale, false, handler);
-
-        auto predictor = nsx::Crystal::PeakPredictor();
+        auto predictor = nsx::PeakPredictor();
 
         predictor._dmin = dmin;
         predictor._dmax = dmax;
@@ -713,7 +588,7 @@ void SessionModel::applyResolutionCutoff(double dmin, double dmax)
 
     for(std::shared_ptr<DataSet> numor: numors) {
         std::vector<std::shared_ptr<Peak3D>> bad_peaks;
-        shared_ptr<Sample> sample = numor->getDiffractometer()->getSample();
+        std::shared_ptr<nsx::Sample> sample = numor->getDiffractometer()->getSample();
 
         for (std::shared_ptr<Peak3D> peak: numor->getPeaks()) {
             if (!peak->isSelected() || peak->isMasked())
@@ -838,13 +713,13 @@ bool SessionModel::writeNewShellX(std::string filename, const std::vector<sptrPe
 }
 
 bool SessionModel::writeStatistics(std::string filename,
-                                    const std::vector<nsx::Crystal::sptrPeak3D> &peaks,
+                                    const std::vector<nsx::sptrPeak3D> &peaks,
                                     double dmin, double dmax, unsigned int num_shells, bool friedel)
 {
     std::fstream file(filename, std::ios::out);
-    nsx::Crystal::ResolutionShell res = {dmin, dmax, num_shells};
+    nsx::ResolutionShell res = {dmin, dmax, num_shells};
     std::vector<char> buf(1024, 0); // buffer for snprintf
-    std::vector<nsx::Crystal::MergedPeak> merged_peaks;
+    std::vector<nsx::MergedPeak> merged_peaks;
     Eigen::RowVector3d HKL(0.0, 0.0, 0.0);
 
     if (!file.is_open()) {
@@ -858,7 +733,7 @@ bool SessionModel::writeStatistics(std::string filename,
     }
 
     auto cell = peaks[0]->getActiveUnitCell();
-    auto grp = nsx::Crystal::SpaceGroup(cell->getSpaceGroup());
+    auto grp = nsx::SpaceGroup(cell->getSpaceGroup());
 
     for (auto&& peak: peaks) {
         if (cell != peak->getActiveUnitCell()) {
@@ -895,7 +770,7 @@ bool SessionModel::writeStatistics(std::string filename,
         file << &buf[0] << std::endl;
 
         for (auto equiv: peak_equivs) {
-            nsx::Crystal::MergedPeak new_peak(grp, friedel);
+            nsx::MergedPeak new_peak(grp, friedel);
 
             for (auto peak: equiv) {
                 // skip bad/masked peaks
@@ -935,7 +810,7 @@ bool SessionModel::writeStatistics(std::string filename,
 
     file << &buf[0] << std::endl << std::endl;
 
-    auto compare_fn = [](const nsx::Crystal::MergedPeak& p, const nsx::Crystal::MergedPeak& q) -> bool
+    auto compare_fn = [](const nsx::MergedPeak& p, const nsx::MergedPeak& q) -> bool
     {
         const auto a = p.getIndex();
         const auto b = q.getIndex();
@@ -982,7 +857,6 @@ bool SessionModel::writeStatistics(std::string filename,
             std::cout << "zero intensity!!" << std::endl;
 
             std::shared_ptr<Peak3D> ptr = *peak.getPeaks().begin();
-
         }
 
         if (rel_std > 1.0) {
@@ -1008,7 +882,7 @@ bool SessionModel::writeStatistics(std::string filename,
 bool SessionModel::writeXDS(std::string filename, const std::vector<sptrPeak3D>& peaks, bool merge, bool friedel)
 {
     const std::string date = QDate::currentDate().toString("yyyy-MM-dd").toStdString();
-    nsx::Data::XDS xds(peaks, merge, friedel, filename, date);
+    nsx::XDS xds(peaks, merge, friedel, filename, date);
     std::fstream file(filename, std::ios::out);
 
     if (!file.is_open()) {
@@ -1032,7 +906,7 @@ void SessionModel::fitAllPeaks()
                 continue;
             }
 
-            nsx::Crystal::PeakFit peak_fit(peak);
+            nsx::PeakFit peak_fit(peak);
             // todo...
         }
     }

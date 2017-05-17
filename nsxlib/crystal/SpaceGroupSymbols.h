@@ -37,7 +37,7 @@
 
 namespace nsx {
 
-class SpaceGroupSymbols: public nsx::Kernel::Singleton<SpaceGroupSymbols,nsx::Kernel::Constructor,nsx::Kernel::Destructor>
+class SpaceGroupSymbols: public Singleton<SpaceGroupSymbols,Constructor,Destructor>
 {
 public:
     SpaceGroupSymbols();

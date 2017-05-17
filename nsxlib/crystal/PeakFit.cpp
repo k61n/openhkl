@@ -43,8 +43,6 @@
 #include "../utils/Round.h"
 #include "../utils/Interpolator.h"
 
-using nsx::Geometry::IntegrationRegion;
-
 namespace nsx {
 
 PeakFit::PeakFit(sptrPeak3D peak): _peak(peak)
@@ -55,14 +53,14 @@ PeakFit::PeakFit(sptrPeak3D peak): _peak(peak)
     auto lower = background.getLower();
     auto upper = background.getUpper();
 
-    _frameBegin = std::max(Utils::ifloor(lower(2)), 0);
-    _frameEnd = std::min(static_cast<std::size_t>(Utils::iceil(upper(2))), _peak->getData()->getNFrames());
+    _frameBegin = std::max(ifloor(lower(2)), 0);
+    _frameEnd = std::min(static_cast<std::size_t>(iceil(upper(2))), _peak->getData()->getNFrames());
 
-    _rowMin = Utils::ifloor(lower(1));
-    _rowMax = Utils::iceil(upper(1));
+    _rowMin = ifloor(lower(1));
+    _rowMax = iceil(upper(1));
 
-    _colMin = Utils::ifloor(lower(0));
-    _colMax = Utils::iceil(upper(0));
+    _colMin = ifloor(lower(0));
+    _colMax = iceil(upper(0));
 
     const int nrows = _rowMax-_rowMin;
     const int ncols = _colMax-_colMin;
@@ -138,7 +136,7 @@ int PeakFit::numValues() const
 
 Eigen::ArrayXXd PeakFit::peakData(double frame) const
 {
-    return Utils::interpolate(_peakData, frame-frameBegin());
+    return interpolate(_peakData, frame-frameBegin());
 }
 
 Eigen::ArrayXXd PeakFit::predict(double frame) const
@@ -307,8 +305,8 @@ Eigen::ArrayXXd PeakFit::mask(double frame) const
     if ( frame > frameEnd()-1)
         frame = frameEnd()-1;
 
-    int frame0 = Utils::ifloor(frame);
-    int frame1 = Utils::ifloor(frame+1);
+    int frame0 = ifloor(frame);
+    int frame1 = ifloor(frame+1);
 
     if (frame0 < frameBegin())
         frame0 = frameBegin();
@@ -441,7 +439,7 @@ int PeakFit::frameEnd() const
 
 int PeakFit::integerFrame(double f) const
 {
-    int fint = Utils::iround(f);
+    int fint = iround(f);
     if (fint < _frameBegin) fint = _frameBegin;
     if (fint >= _frameEnd) fint = _frameEnd-1;
     return fint;

@@ -38,16 +38,10 @@
 
 namespace nsx {
 
-using nsx::Instrument::Detector;
-using nsx::Kernel::Factory;
-using nsx::Kernel::Singleton;
-using nsx::Kernel::Constructor;
-using nsx::Kernel::Destructor;
-
 class DetectorFactory : public Factory<Detector,std::string,const proptree::ptree&>, public Singleton<DetectorFactory,Constructor,Destructor> {
 private:
-    friend class nsx::Kernel::Constructor<DetectorFactory>;
-    friend class nsx::Kernel::Destructor<DetectorFactory>;
+    friend class Constructor<DetectorFactory>;
+    friend class Destructor<DetectorFactory>;
     DetectorFactory();
     ~DetectorFactory();
 };

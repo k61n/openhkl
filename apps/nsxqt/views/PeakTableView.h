@@ -32,10 +32,8 @@
 #ifndef PEAKTABLEVIEW_H
 #define PEAKTABLEVIEW_H
 
-#include <map>
-#include <string>
-#include <tuple>
 #include <memory>
+#include <string>
 
 #include <QFileDialog>
 #include <QMenu>
@@ -49,9 +47,8 @@
 class PeakCustomPlot;
 class QContextMenuEvent;
 class QMouseEvent;
-
-using nsx::Crystal::sptrPeak3D;
-using nsx::Crystal::sptrUnitCell;
+class QString;
+class QWidget;
 
 class PeakTableView : public QTableView
 {
@@ -65,7 +62,7 @@ public:
 
 signals:
     void plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&);
-    void plotPeak(sptrPeak3D);
+    void plotPeak(nsx::sptrPeak3D);
     void autoIndexed();
 
 public slots:
@@ -88,7 +85,7 @@ public slots:
     void selectUnindexedPeaks();
     void togglePeaksSelection();
 
-    void updateUnitCell(const sptrUnitCell& unitCell);
+    void updateUnitCell(const nsx::sptrUnitCell& unitCell);
 
     void openAutoIndexingDialog();
     void openRefiningParametersDialog();

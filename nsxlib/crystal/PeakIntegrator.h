@@ -44,11 +44,11 @@ class DataSet;
 
 class PeakIntegrator {
 public:
-    using Ellipsoid3D = nsx::Geometry::Ellipsoid<double, 3>;
-    using MaybeEllipsoid = nsx::Utils::Maybe<Ellipsoid3D>;
+    using Ellipsoid3D = Ellipsoid<double, 3>;
+    using MaybeEllipsoid = Maybe<Ellipsoid3D>;
 
     PeakIntegrator() = default;
-    PeakIntegrator(const nsx::Geometry::IntegrationRegion& region, const nsx::Data::DataSet& data);
+    PeakIntegrator(const IntegrationRegion& region, const DataSet& data);
     ~PeakIntegrator() {}
 
     void step(const Eigen::MatrixXi& frame, size_t idx, const Eigen::MatrixXi& mask);
@@ -61,7 +61,7 @@ public:
 
     double getMeanBackground() const;
 
-    const nsx::Geometry::IntegrationRegion& getRegion() const;
+    const IntegrationRegion& getRegion() const;
 
     //! return blob shape (not: not scaled by a confidence parameter)
     //!
@@ -74,9 +74,9 @@ public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
 private:
-    nsx::Geometry::Blob3D _blob;
+    Blob3D _blob;
 
-    nsx::Geometry::IntegrationRegion _region;
+    IntegrationRegion _region;
     Eigen::Vector3d _lower;
     Eigen::Vector3d _upper;
 

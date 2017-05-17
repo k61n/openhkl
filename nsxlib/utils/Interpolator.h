@@ -49,8 +49,8 @@ T_ interpolate(const std::vector<T_>& elements, double index) {
     if (index > elements.size()-1)
         index = elements.size()-1;
 
-    auto index0 = Utils::ifloor(index);
-    auto index1 = Utils::ifloor(index+1);
+    auto index0 = ifloor(index);
+    auto index1 = ifloor(index+1);
 
     if (index1 > elements.size()-1)
         index1 = elements.size()-1;

@@ -35,10 +35,7 @@
 
 #include <nsxlib/crystal/Peak3D.h>
 
-using namespace std;
-using namespace nsx::Crystal;
-
-FriedelDialog::FriedelDialog(const std::vector<nsx::Crystal::Peak3D*>& peaks, QWidget *parent) :
+FriedelDialog::FriedelDialog(const std::vector<nsx::Peak3D*>& peaks, QWidget *parent) :
     QDialog(parent),
     _ui(new Ui::FriedelDialog),
     _peaks(peaks)

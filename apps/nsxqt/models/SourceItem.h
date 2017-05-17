@@ -1,21 +1,19 @@
 #ifndef SOURCEITEM_H
 #define SOURCEITEM_H
 
-#include <string>
+#include <memory>
+
 #include "InspectableTreeItem.h"
 
-class QWidget;
 namespace nsx{
-    namespace Instrument{
-        class Experiment;
-    }
+class Experiment;
 }
 
 
 class SourceItem : public InspectableTreeItem
 {
 public:
-    explicit SourceItem(std::shared_ptr<nsx::Instrument::Experiment> experiment);
+    explicit SourceItem(std::shared_ptr<nsx::Experiment> experiment);
     QWidget* inspectItem();
 };
 

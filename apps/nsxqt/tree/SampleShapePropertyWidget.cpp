@@ -1,27 +1,22 @@
-#include <map>
-#include <set>
-
-#include <QtDebug>
-#include <QMessageBox>
-
+#include <nsxlib/chemistry/Material.h>
+#include <nsxlib/crystal/Peak3D.h>
+#include <nsxlib/data/IData.h>
+#include <nsxlib/geometry/MCAbsorption.h>
 #include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/instrument/Gonio.h>
-#include <nsxlib/data/IData.h>
-#include <nsxlib/chemistry/Material.h>
-#include "Logger.h"
-
-#include <nsxlib/geometry/MCAbsorption.h>
-#include <nsxlib/crystal/Peak3D.h>
 #include <nsxlib/instrument/Sample.h>
 #include <nsxlib/instrument/Source.h>
-
-#include "ui_SampleShapePropertyWidget.h"
-#include "absorption/AbsorptionDialog.h"
-#include "models/SampleShapeItem.h"
-#include "tree/SampleShapePropertyWidget.h"
-
 #include <nsxlib/utils/Units.h>
 
+#include <QDebug>
+#include <QMessageBox>
+
+#include "../absorption/AbsorptionDialog.h"
+#include "Logger.h"
+#include "../models/SampleShapeItem.h"
+#include "../tree/SampleShapePropertyWidget.h"
+
+#include "ui_SampleShapePropertyWidget.h"
 
 SampleShapePropertyWidget::SampleShapePropertyWidget(SampleShapeItem* caller,QWidget *parent) :
      QWidget(parent),
@@ -43,7 +38,7 @@ void SampleShapePropertyWidget::on_pushButton_LoadMovie_clicked()
     AbsorptionDialog* dialog=new AbsorptionDialog(_caller->getExperiment(),nullptr);
     if (!dialog->exec())
     {
-        std::shared_ptr<nsx::Instrument::Sample> sample=_caller->getExperiment()->getDiffractometer()->getSample();
+        std::shared_ptr<nsx::Sample> sample=_caller->getExperiment()->getDiffractometer()->getSample();
         auto& hull=sample->getShape();
         if (hull.checkEulerConditions())
         {
@@ -57,7 +52,7 @@ void SampleShapePropertyWidget::on_pushButton_LoadMovie_clicked()
                   -1, 0, 0;
             hull.rotate(mat);
             //Convert to m
-            hull.scale(nsx::Units::mm);
+            hull.scale(nsx::mm);
             qDebug() << "Coordinates of the Hull at rest:" << hull;
             setHullProperties();
         }
@@ -66,10 +61,10 @@ void SampleShapePropertyWidget::on_pushButton_LoadMovie_clicked()
 
 void SampleShapePropertyWidget::setHullProperties()
 {
-    std::shared_ptr<nsx::Instrument::Sample> sample=_caller->getExperiment()->getDiffractometer()->getSample();
+    std::shared_ptr<nsx::Sample> sample=_caller->getExperiment()->getDiffractometer()->getSample();
     auto& hull=sample->getShape();
 
-    ui->lineEdit_Volume->setText(QString::number(hull.getVolume()/nsx::Units::mm3)+" mm^3");
+    ui->lineEdit_Volume->setText(QString::number(hull.getVolume()/nsx::mm3)+" mm^3");
     ui->lineEdit_Faces->setText(QString::number(hull.getNFaces()));
     ui->lineEdit_Edges->setText(QString::number(hull.getNEdges()));
     ui->lineEdit_Vertices->setText(QString::number(hull.getNVertices()));

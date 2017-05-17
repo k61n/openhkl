@@ -18,14 +18,13 @@ namespace fs=boost::filesystem;
 namespace pt=boost::property_tree;
 namespace xml=boost::property_tree::xml_parser;
 
-DiffractometerStore::DiffractometerStore()
-: Kernel::Singleton<DiffractometerStore,Kernel::Constructor,Kernel::Destructor>()
+DiffractometerStore::DiffractometerStore() : Singleton<DiffractometerStore,Constructor,Destructor>()
 {
 }
 
-sptrDiffractometer DiffractometerStore::buildDiffractomer(const std::string& name)
+sptrDiffractometer DiffractometerStore::buildDiffractometer(const std::string& name) const
 {
-    fs::path diffractometersPath(Utils::Path::getDiffractometersPath());
+    fs::path diffractometersPath(Path::getDiffractometersPath());
     diffractometersPath/=name;
     diffractometersPath+=".xml";
 
@@ -34,7 +33,7 @@ sptrDiffractometer DiffractometerStore::buildDiffractomer(const std::string& nam
         xml::read_xml(diffractometersPath.string(),root);
     }
     catch (const std::runtime_error& error)	{
-        throw nsx::Kernel::Error<DiffractometerStore>(error.what());
+        throw Error<DiffractometerStore>(error.what());
     }
 
     const property_tree::ptree& instrumentNode=root.get_child("instrument");
@@ -47,7 +46,7 @@ diffractometersList DiffractometerStore::getDiffractometersList() const
 
     diffractometersList diffractometers;
 
-    fs::path diffractometersPath(Utils::Path::getDiffractometersPath());
+    fs::path diffractometersPath(Path::getDiffractometersPath());
 
     for (const auto& p : boost::make_iterator_range(fs::directory_iterator(diffractometersPath),fs::directory_iterator()))
     {

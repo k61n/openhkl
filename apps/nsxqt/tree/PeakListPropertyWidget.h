@@ -3,6 +3,7 @@
 
 #include <QStandardItem>
 #include <QWidget>
+
 #include "views/PeakTableView.h"
 
 namespace Ui {

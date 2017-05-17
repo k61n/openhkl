@@ -1,8 +1,7 @@
-#define BOOST_TEST_MODULE "Test AABB bounding box for 3D case"
+#define BOOST_TEST_MODULE "Test AABB bounding box for 2D case"
 #define BOOST_TEST_DYN_LINK
 
 #include <cmath>
-#include <iostream>
 
 #include <boost/test/unit_test.hpp>
 
@@ -10,13 +9,13 @@
 
 #include <nsxlib/geometry/AABB.h>
 
-using namespace nsx::Geometry;
 using Eigen::Vector2d;
 using Eigen::Vector3d;
+using namespace nsx;
+
 const double tolerance=1e-5;
 
-
-BOOST_AUTO_TEST_CASE(Test_AABB)
+BOOST_AUTO_TEST_CASE(Test_AABB2D)
 {
     AABB<double,2> bb;
     bb.setBounds(Vector2d(0,0),Vector2d(1,2));

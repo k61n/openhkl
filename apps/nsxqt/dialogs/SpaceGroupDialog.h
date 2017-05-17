@@ -4,24 +4,20 @@
 #ifndef NSXTOOL_SPACEGROUPDIALOG_H_
 #define NSXTOOL_SPACEGROUPDIALOG_H_
 
-#include <QDialog>
-#include <QGraphicsScene>
-#include <QGraphicsPixmapItem>
-#include <QStandardItemModel>
-#include <QStandardItem>
-#include <QWidget>
-
-#include <QTableWidgetItem>
+#include <map>
+#include <memory>
+#include <string>
+#include <tuple>
 
 #include <Eigen/Core>
 
-#include <map>
-#include <string>
-#include <memory>
+#include <QDialog>
 
-#include <nsxlib/data/IData.h>
 #include <nsxlib/crystal/SpaceGroup.h>
+#include <nsxlib/data/IData.h>
 
+class QModelIndex;
+class QWidget;
 
 namespace Ui
 {
@@ -33,9 +29,8 @@ class SpaceGroupDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit SpaceGroupDialog(std::vector<std::shared_ptr<nsx::Data::DataSet>> numors, QWidget *parent = 0);
+    explicit SpaceGroupDialog(std::vector<std::shared_ptr<nsx::DataSet>> numors, QWidget *parent = 0);
     ~SpaceGroupDialog();
-
 
     std::string getSelectedGroup();
 
@@ -47,8 +42,7 @@ private:
     void buildTable();
 
     Ui::SpaceGroupDialog *ui;
-    std::vector<std::shared_ptr<nsx::Data::DataSet>> _numors;
-    //std::vector<std::tuple<std::string, double, double, double, double>> _groups;
+    std::vector<std::shared_ptr<nsx::DataSet>> _numors;
     std::vector<std::tuple<std::string, double>> _groups;
     std::string _selectedGroup;
 };

@@ -16,11 +16,15 @@
 namespace nsx {
 
 class ConstantKernel : public ConvolutionKernel {
-public:
-	static ConvolutionKernel* create(int nrows, int ncols);
 
 public:
+
+    static ConvolutionKernel* create(int nrows, int ncols);
+
+public:
+
     ConstantKernel(int nrows, int ncols);
+
     ConstantKernel(int nrows, int ncols, const ConvolutionKernel::ParameterMap& params);
 
     const char* getName() override;
@@ -28,7 +32,9 @@ public:
     virtual ~ConstantKernel();
 
 private:
+
     void update() override;
+
 };
 
 } // end namespace nsx

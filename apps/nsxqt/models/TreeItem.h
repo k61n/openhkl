@@ -1,8 +1,8 @@
 #ifndef EDITABLETREEITEM_H
 #define EDITABLETREEITEM_H
 
-#include <string>
 #include <memory>
+#include <string>
 
 #include <QStandardItem>
 #include <QVariant>
@@ -12,7 +12,7 @@
 
 class QWidget;
 
-using namespace nsx::Instrument;
+using namespace nsx;
 
 class TreeItem : public QStandardItem
 {

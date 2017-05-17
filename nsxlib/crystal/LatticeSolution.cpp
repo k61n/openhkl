@@ -60,9 +60,9 @@ LatticeSolution& LatticeSolution::operator=(const LatticeSolution& other)
     return *this;
 }
 
-LatticeSolution::LatticeSolution(std::shared_ptr<Instrument::Detector> detector,
-                                 std::shared_ptr<Instrument::Sample> sample,
-                                 std::shared_ptr<Instrument::Source> source,
+LatticeSolution::LatticeSolution(std::shared_ptr<Detector> detector,
+                                 std::shared_ptr<Sample> sample,
+                                 std::shared_ptr<Source> source,
                                  const Eigen::VectorXd& values,
                                  const Eigen::MatrixXd& cov,
                                  const std::vector<bool>& fixedParameters)
@@ -142,11 +142,11 @@ std::ostream& operator<<(std::ostream& os, const LatticeSolution& solution)
     for (unsigned int i=0;i<detectorG->getNAxes();++i)
     {
         os << detectorG->getAxis(i)->getLabel() << " ";
-        nsx::Instrument::Axis* axis=detectorG->getAxis(i);
-        if (dynamic_cast<nsx::Instrument::TransAxis*>(axis))
-            os << solution._detectorOffsets[i]/nsx::Units::mm << "(" << solution._sigmaDetectorOffsets[i]/nsx::Units::mm << ") mm " << std::endl;
-        else if (dynamic_cast<nsx::Instrument::RotAxis*>(axis))
-            os << solution._detectorOffsets[i]/nsx::Units::deg << "(" << solution._sigmaDetectorOffsets[i]/nsx::Units::deg << ") deg " << std::endl;
+        Axis* axis=detectorG->getAxis(i);
+        if (dynamic_cast<TransAxis*>(axis))
+            os << solution._detectorOffsets[i]/mm << "(" << solution._sigmaDetectorOffsets[i]/mm << ") mm " << std::endl;
+        else if (dynamic_cast<RotAxis*>(axis))
+            os << solution._detectorOffsets[i]/deg << "(" << solution._sigmaDetectorOffsets[i]/deg << ") deg " << std::endl;
     }
     os <<std::endl;
 
@@ -155,11 +155,11 @@ std::ostream& operator<<(std::ostream& os, const LatticeSolution& solution)
     for (unsigned int i=0;i<sampleG->getNAxes();++i)
     {
         os << sampleG->getAxis(i)->getLabel() << " ";
-        nsx::Instrument::Axis* axis=sampleG->getAxis(i);
-        if (dynamic_cast<nsx::Instrument::TransAxis*>(axis))
-            os << solution._sampleOffsets[i]/nsx::Units::mm << "(" << solution._sigmaSampleOffsets[i]/nsx::Units::mm << ") mm " << std::endl;
-        else if (dynamic_cast<nsx::Instrument::RotAxis*>(axis))
-            os << solution._sampleOffsets[i]/nsx::Units::deg << "(" << solution._sigmaSampleOffsets[i]/nsx::Units::deg << ") deg " << std::endl;
+        Axis* axis=sampleG->getAxis(i);
+        if (dynamic_cast<TransAxis*>(axis))
+            os << solution._sampleOffsets[i]/mm << "(" << solution._sigmaSampleOffsets[i]/mm << ") mm " << std::endl;
+        else if (dynamic_cast<RotAxis*>(axis))
+            os << solution._sampleOffsets[i]/deg << "(" << solution._sigmaSampleOffsets[i]/deg << ") deg " << std::endl;
     }
     os<<std::endl;
 

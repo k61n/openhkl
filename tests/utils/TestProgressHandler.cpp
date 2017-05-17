@@ -1,20 +1,17 @@
 #define BOOST_TEST_MODULE "Test ProgressHandler class"
 #define BOOST_TEST_DYN_LINK
 
-#include <boost/test/unit_test.hpp>
-#include <boost/filesystem.hpp>
-
-#include <iostream>
-#include <vector>
 #include <string>
+#include <vector>
+
+#include <boost/test/unit_test.hpp>
 
 #include <nsxlib/utils/ProgressHandler.h>
 
-using namespace nsx::Utils;
+using namespace nsx;
 
 BOOST_AUTO_TEST_CASE(Test_ProgressHandler)
 {
-    // todo : implement me!!
     ProgressHandler handler;
 
     // check that it handles nullptr without exception

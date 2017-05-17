@@ -67,18 +67,18 @@ typedef IShape<double,3> IShape3D;
 typedef std::unordered_map<const IShape2D*,int> shape2Dmap;
 typedef std::unordered_map<const IShape3D*,int> shape3Dmap;
 
-
 /* Class used for blob-finding, which is the first step of peak-finding.
  * The use of IFrameIterator allows for custom iterators, e.g. which work multi-threaded.
  * Since blob-finding may take some time on large data sets, ProgressHandler is used to give feedback to the GUI.
  *
  */
 class BlobFinder {
+
 public:
-    using RealMatrix = nsx::Types::RealMatrix;
+
     using FilterCallback = std::function<RealMatrix(const RealMatrix&)>;
 
-    BlobFinder(std::shared_ptr<nsx::Data::DataSet> data);
+    BlobFinder(std::shared_ptr<DataSet> data);
 
     blob3DCollection find(unsigned int begin, unsigned int end);
 
@@ -97,7 +97,7 @@ public:
     //void mergeBlobs();
 
     //! sets progress handler callback function
-    void setProgressHandler(std::shared_ptr<nsx::Utils::ProgressHandler> handler);
+    void setProgressHandler(std::shared_ptr<ProgressHandler> handler);
 
     void setThreshold(double threshold);
 
@@ -134,9 +134,9 @@ private:
 
     bool _isRelative;
 
-    mutable std::shared_ptr<nsx::Data::DataSet> _data;
+    mutable std::shared_ptr<DataSet> _data;
     FilterCallback _filterCallback;
-    mutable std::shared_ptr<nsx::Utils::ProgressHandler> _progressHandler;
+    mutable std::shared_ptr<ProgressHandler> _progressHandler;
 
     unsigned int _nrows, _ncols, _nframes;
     unsigned int _currentlabel;

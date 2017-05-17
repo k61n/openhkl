@@ -139,7 +139,7 @@ void Blob2D::toEllipse(double confidence,Eigen::Vector2d& center, Eigen::Vector2
     //
     center<< xc,yc;
     // Multiplicating factor from confidence to sigma.
-    double factor=sqrt(2.0)*nsx::Utils::erf_inv(confidence);
+    double factor=sqrt(2.0)*erf_inv(confidence);
     eigenvalues(0)=sqrt(std::abs(solver.eigenvalues()[0]))*factor;
     eigenvalues(1)=sqrt(std::abs(solver.eigenvalues()[1]))*factor;
     //

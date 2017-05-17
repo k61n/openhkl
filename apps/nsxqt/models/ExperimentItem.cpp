@@ -5,21 +5,17 @@
 #include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/data/IData.h>
 
+#include "DataItem.h"
+#include "DetectorItem.h"
+#include "InstrumentItem.h"
 #include "models/SessionModel.h"
 #include "models/ExperimentItem.h"
-
-#include "InstrumentItem.h"
-#include "DetectorItem.h"
+#include "PeakListItem.h"
 #include "SampleItem.h"
 #include "SourceItem.h"
-#include "DataItem.h"
-#include "PeakListItem.h"
+#include "TreeItem.h"
 
-#include <QtDebug>
-
-using nsx::Instrument::Experiment;
-
-ExperimentItem::ExperimentItem(std::shared_ptr<Experiment> experiment) : TreeItem(experiment)
+ExperimentItem::ExperimentItem(std::shared_ptr<nsx::Experiment> experiment) : TreeItem(experiment)
 {
     setText(QString::fromStdString(_experiment->getName()));
     setForeground(QBrush(QColor("blue")));
@@ -45,7 +41,7 @@ ExperimentItem::ExperimentItem(std::shared_ptr<Experiment> experiment) : TreeIte
 
 QJsonObject ExperimentItem::toJson()
 {
-    std::shared_ptr<nsx::Instrument::Experiment> exp_ptr = getExperiment();
+    std::shared_ptr<nsx::Experiment> exp_ptr = getExperiment();
     QJsonObject experiment;
 
     experiment["name"] = QString(exp_ptr->getName().c_str());

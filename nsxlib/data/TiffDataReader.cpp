@@ -3,8 +3,6 @@
 #include "../instrument/Sample.h"
 #include "../instrument/ComponentState.h"
 
-using nsx::Instrument::ComponentState;
-
 namespace nsx {
 
 IDataReader* TiffDataReader::create(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer)

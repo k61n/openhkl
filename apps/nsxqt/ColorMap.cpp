@@ -28,11 +28,11 @@
  *
  */
 
+#include <cmath>
+
+#include <QImage>
 
 #include "ColorMap.h"
-#include <ctime>
-#include <cmath>
-#include <array>
 
 ColorMap::ColorMap(const double *rgb):
     _rgb(256*3, 0),

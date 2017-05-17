@@ -1,34 +1,33 @@
 #define BOOST_TEST_MODULE "Test GruberReduction"
 #define BOOST_TEST_DYN_LINK
 
-#include <nsxlib/instrument/FlatDetector.h>
-#include <nsxlib/crystal/Peak3D.h>
-#include <nsxlib/instrument/Sample.h>
+#include <cmath>
+#include <map>
+#include <random>
+#include <utility>
+#include <vector>
+
 #include <boost/test/unit_test.hpp>
-#include <nsxlib/utils/Units.h>
+
 #include <Eigen/Dense>
 #include <Eigen/QR>
-#include <vector>
-#include <nsxlib/instrument/Gonio.h>
+
+#include <nsxlib/crystal/GruberReduction.h>
+#include <nsxlib/crystal/NiggliReduction.h>
+#include <nsxlib/crystal/Peak3D.h>
+#include <nsxlib/crystal/SpaceGroup.h>
+#include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/instrument/Component.h>
 #include <nsxlib/instrument/ComponentState.h>
-#include <nsxlib/instrument/Source.h>
+#include <nsxlib/instrument/FlatDetector.h>
+#include <nsxlib/instrument/Gonio.h>
 #include <nsxlib/instrument/Monochromator.h>
-#include <nsxlib/crystal/NiggliReduction.h>
-#include <nsxlib/crystal/GruberReduction.h>
-#include <nsxlib/crystal/UnitCell.h>
-#include <nsxlib/crystal/SpaceGroup.h>
-
-#include <memory>
-#include <vector>
-#include <utility>
-#include <fstream>
-#include <random>
-#include <map>
+#include <nsxlib/instrument/Sample.h>
+#include <nsxlib/instrument/Source.h>
+#include <nsxlib/utils/Units.h>
 
 using namespace std;
-using namespace nsx::Crystal;
-using namespace nsx::Units;
+using namespace nsx;
 
 const double gruber_tolerance = 1e-4;
 const double niggli_tolerance = 1e-4;
@@ -38,7 +37,6 @@ Eigen::Matrix3d random_orthogonal_matrix()
 {
     std::default_random_engine generator;
     std::uniform_real_distribution<double> distribution(-1.0,1.0);
-
 
     Eigen::Matrix3d A;
 
@@ -177,9 +175,6 @@ int run_test()
             UnitCell cell(a, b, c, alpha, beta, gamma);
             Eigen::Matrix3d G = cell.getMetricTensor();
 
-            // G = 0.5 * (G + G.transpose());
-            // double det = G.determinant();
-
             Eigen::Matrix3d P, NG, NP;
 
             NG = G;
@@ -193,12 +188,6 @@ int run_test()
             cell.setLatticeCentring(centering);
 
             cell.transform(P);
-
-            cout << "test case " << condition << " match: " << match << endl;
-
-            if ( condition != match) {
-                cout << "error" << endl;
-            }
 
             BOOST_CHECK(match == condition);
             BOOST_CHECK(cell.getBravaisTypeSymbol() == expected_bravais);

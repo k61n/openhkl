@@ -38,7 +38,7 @@ std::string Path::getHomeDirectory()
         }
     }
     // Otherwise throw and error
-    throw nsx::Kernel::Error<Path>("The home directory could not be defined");
+    throw Error<Path>("The home directory could not be defined");
 }
 
 std::string Path::expandUser(std::string path)
@@ -92,7 +92,7 @@ std::string Path::getApplicationDataPath()
 
     // did not find a match
     if ( match == "" ) {
-        throw nsx::Kernel::Error<Path>("The application data directory could not be defined");
+        throw Error<Path>("The application data directory could not be defined");
     }
     return boost::filesystem::path(match).string();
 }

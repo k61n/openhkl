@@ -14,7 +14,7 @@ ProgressHandler::ProgressHandler()
     _callback = nullptr;
 }
 
-nsx::Utils::ProgressHandler::~ProgressHandler()
+ProgressHandler::~ProgressHandler()
 {
 
 }
@@ -24,7 +24,7 @@ void ProgressHandler::setCallback(std::function<void ()> callback)
     _callback = callback;
 }
 
-void nsx::Utils::ProgressHandler::setProgress(int progress)
+void ProgressHandler::setProgress(int progress)
 {
     if ( _callback ) {
         _callback();
@@ -40,7 +40,7 @@ void nsx::Utils::ProgressHandler::setProgress(int progress)
     }
 }
 
-int nsx::Utils::ProgressHandler::getProgress()
+int ProgressHandler::getProgress()
 {
     std::lock_guard<std::mutex> lock(_mutex);
     int progress = _progress;

@@ -3,7 +3,7 @@
 
 #include <QDialog>
 
-#include <string>
+class QWidget;
 
 namespace Ui {
 class IsotopeDatabaseDialog;

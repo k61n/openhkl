@@ -2,12 +2,13 @@
 #include <QString>
 
 #include <nsxlib/instrument/Diffractometer.h>
-#include <nsxlib/instrument/Source.h>
 #include <nsxlib/instrument/Experiment.h>
+#include <nsxlib/instrument/Source.h>
+
 #include "models/SourceItem.h"
 #include "tree/SourcePropertyWidget.h"
 
-SourceItem::SourceItem(std::shared_ptr<nsx::Instrument::Experiment> experiment) : InspectableTreeItem(experiment)
+SourceItem::SourceItem(std::shared_ptr<nsx::Experiment> experiment) : InspectableTreeItem(experiment)
 {
     setText(QString::fromStdString(_experiment->getDiffractometer()->getSource()->getName()));
 

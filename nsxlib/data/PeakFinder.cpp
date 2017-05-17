@@ -3,25 +3,17 @@
 #include <memory>
 
 #include "IData.h"
+#include "IFrameIterator.h"
+#include "PeakFinder.h"
 #include "../instrument/Diffractometer.h"
 #include "../instrument/Experiment.h"
 #include "../instrument/Detector.h"
 #include "../geometry/BlobFinder.h"
-#include "PeakFinder.h"
 #include "../utils/Types.h"
 #include "../utils/erf_inv.h"
 #include "../imaging/Convolver.h"
 #include "../crystal/Peak3D.h"
 #include "../instrument/Sample.h"
-#include "IFrameIterator.h"
-
-using nsx::Types::RealMatrix;
-using nsx::Crystal::sptrPeak3D;
-using nsx::Imaging::Convolver;
-using nsx::Utils::ProgressHandler;
-using nsx::Instrument::Detector;
-using nsx::Crystal::Peak3D;
-using nsx::Geometry::Ellipsoid3D;
 
 namespace nsx {
 
@@ -30,11 +22,11 @@ PeakFinder::PeakFinder()
     // default values
     _thresholdValue = 3.0;
     _thresholdType = 0;
-    _confidence = 0.997;
+    _confidence = nsx::getConfidence(3.0);
     _median = 0;
     _minComp = 30;
     _maxComp = 10000;
-    _convolver = std::make_shared<nsx::Imaging::Convolver>();
+    _convolver = std::make_shared<Convolver>();
 }
 
 
@@ -57,10 +49,10 @@ bool PeakFinder::find(std::vector<std::shared_ptr<DataSet>> numors)
         }
 
         // Finding peaks
-        nsx::Geometry::blob3DCollection blobs;
+        blob3DCollection blobs;
 
         try {
-            nsx::Geometry::BlobFinder blob_finder(numor);
+            BlobFinder blob_finder(numor);
             blob_finder.setProgressHandler(_handler);
             blob_finder.setMedian(_median);
             blob_finder.setThreshold(_thresholdValue);
@@ -81,7 +73,7 @@ bool PeakFinder::find(std::vector<std::shared_ptr<DataSet>> numors)
             // set image filter, if selected
             if ( _kernel ) {
                 if ( !_convolver) {
-                    _convolver = std::make_shared<nsx::Imaging::Convolver>();
+                    _convolver = std::make_shared<Convolver>();
                 }
 
                 // update the convolver with the kernel
@@ -133,7 +125,7 @@ bool PeakFinder::find(std::vector<std::shared_ptr<DataSet>> numors)
         int count = 0;
         std::shared_ptr<Detector> dect = numor->getDiffractometer()->getDetector();
 
-        nsx::Geometry::AABB<double,3> dAABB(
+        AABB<double,3> dAABB(
                     Eigen::Vector3d(0,0,0),
                     Eigen::Vector3d(dect->getNCols(), dect->getNRows(), numor->getNFrames()-1)
                     );
@@ -142,20 +134,9 @@ bool PeakFinder::find(std::vector<std::shared_ptr<DataSet>> numors)
 
             Eigen::Vector3d center, eigenvalues;
             Eigen::Matrix3d eigenvectors;
-            //blob.second.toEllipsoid(_confidence, center, eigenvalues, eigenvectors);
-            blob.second.toEllipsoid(nsx::Utils::getConfidence(1.0), center, eigenvalues, eigenvectors);
+
+            blob.second.toEllipsoid(nsx::getConfidence(1.0), center, eigenvalues, eigenvectors);
             auto shape = Ellipsoid3D(center, eigenvalues, eigenvectors);
-
-            //    blob.toEllipsoid(confidence, center, eigenvalues, eigenvectors);
-            //    _region.setPeak(Ellipsoid3D(center,eigenvalues,eigenvectors));
-            //    // setPeakShape(Ellipsoid3D(center,eigenvalues,eigenvectors));
-
-            //    eigenvalues[0]*=2.0;
-            //    eigenvalues[1]*=2.0;
-            //    eigenvalues[2]*=3.0;
-
-            //    _region.setBackground(Ellipsoid3D(center,eigenvalues,eigenvectors));
-            //    //setBackgroundShape(Ellipsoid3D(center,eigenvalues,eigenvectors));
 
             sptrPeak3D p = std::make_shared<Peak3D>(Peak3D(numor, shape));
             const auto extents = p->getShape().getAABBExtents();
@@ -184,7 +165,7 @@ bool PeakFinder::find(std::vector<std::shared_ptr<DataSet>> numors)
             _handler->setStatus(("Integrating " + std::to_string(numor->getPeaks().size()) + " peaks...").c_str());
             _handler->setProgress(0);
         }
-        const double scale = nsx::Utils::getScale(_confidence);
+        const double scale = getScale(_confidence);
         numor->integratePeaks(scale, 2.0*scale, false, _handler);
         numor->close();
         //_ui->progressBar->setValue(++comp);
@@ -227,7 +208,7 @@ void PeakFinder::setConfidence(double confidence)
     _confidence = confidence;
 }
 
-double PeakFinder::getConfidence()
+double PeakFinder::confidence() const
 {
     return _confidence;
 }
@@ -252,22 +233,22 @@ int PeakFinder::getMaxComponents()
     return _maxComp;
 }
 
-void PeakFinder::setConvolver(const std::shared_ptr<nsx::Imaging::Convolver>& convolver)
+void PeakFinder::setConvolver(const std::shared_ptr<Convolver>& convolver)
 {
     _convolver = convolver;
 }
 
-void PeakFinder::setKernel(const std::shared_ptr<Imaging::ConvolutionKernel>& kernel)
+void PeakFinder::setKernel(const std::shared_ptr<ConvolutionKernel>& kernel)
 {
     _kernel = kernel;
 }
 
-std::shared_ptr<Imaging::Convolver> PeakFinder::getConvolver()
+std::shared_ptr<Convolver> PeakFinder::getConvolver()
 {
     return _convolver;
 }
 
-std::shared_ptr<Imaging::ConvolutionKernel> PeakFinder::getKernel()
+std::shared_ptr<ConvolutionKernel> PeakFinder::getKernel()
 {
     return _kernel;
 }

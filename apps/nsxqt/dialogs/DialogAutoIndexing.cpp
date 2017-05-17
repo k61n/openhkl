@@ -13,31 +13,15 @@
 #include <QStandardItemModel>
 #include <QtDebug>
 
-
-#include <nsxlib/instrument/Experiment.h>
-//#include <nsxlib/instrument/Gonio.h>
-//#include <nsxlib/crystal/FFTIndexing.h>
-//#include <nsxlib/crystal/GruberReduction.h>
 #include <nsxlib/crystal/AutoIndexer.h>
 #include <nsxlib/data/IData.h>
-//#include <nsxlib/crystal/NiggliReduction.h>
-//#include <nsxlib/crystal/UBMinimizer.h>
+#include <nsxlib/instrument/Experiment.h>
 #include <nsxlib/utils/Units.h>
 #include <nsxlib/utils/ProgressHandler.h>
 #include "models/CollectedPeaksModel.h"
 #include "models/CollectedPeaksDelegate.h"
 
-//using nsx::Crystal::tVector;
-using nsx::Crystal::BravaisType;
-using nsx::Crystal::LatticeCentring;
-//using nsx::Crystal::FFTIndexing;
-//using nsx::Crystal::NiggliReduction;
-//using nsx::Crystal::UBMinimizer;
-//using nsx::Crystal::UBSolution;
-using nsx::Crystal::AutoIndexer;
-using nsx::Data::DataSet;
-using nsx::Units::deg;
-using nsx::Utils::ProgressHandler;
+using namespace nsx;
 
 DialogAutoIndexing::DialogAutoIndexing(std::shared_ptr<Experiment> experiment, std::vector<sptrPeak3D> peaks, QWidget *parent):
     QDialog(parent),

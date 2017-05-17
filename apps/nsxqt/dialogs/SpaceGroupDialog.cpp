@@ -1,36 +1,30 @@
 // author: Jonathan Fisher
 // j.fisher@fz-juelich.de
 
+#include <array>
+#include <tuple>
+
+#include <Eigen/Core>
+
+#include <QImage>
+#include <QList>
+#include <QMessageBox>
+#include <QModelIndex>
+#include <QStandardItem>
+#include <QStandardItemModel>
+#include <QString>
+#include <QTreeView>
+
+#include <nsxlib/data/IData.h>
+#include <nsxlib/instrument/Sample.h>
+#include <nsxlib/crystal/RFactor.h>
+#include <nsxlib/crystal/SpaceGroup.h>
+#include <nsxlib/crystal/SpaceGroupSymbols.h>
+
 #include "SpaceGroupDialog.h"
 #include "ui_SpaceGroupDialog.h"
 
-#include <QImage>
-#include <QTreeView>
-#include <QStandardItem>
-#include <QStandardItemModel>
-#include <QList>
-#include <QString>
-
-#include <QModelIndex>
-
-#include <Eigen/Core>
-#include <QDebug>
-
-#include <iostream>
-
-#include <QMessageBox>
-
-#include <nsxlib/instrument/Sample.h>
-#include <nsxlib/crystal/SpaceGroup.h>
-#include <nsxlib/crystal/SpaceGroupSymbols.h>
-#include <nsxlib/data/IData.h>
-
-#include <nsxlib/crystal/RFactor.h>
-
-using namespace std;
-using namespace nsx::Crystal;
-
-SpaceGroupDialog::SpaceGroupDialog(std::vector<std::shared_ptr<nsx::Data::DataSet>> numors, QWidget *parent):
+SpaceGroupDialog::SpaceGroupDialog(std::vector<std::shared_ptr<nsx::DataSet>> numors, QWidget *parent):
     QDialog(parent),
     ui(new Ui::SpaceGroupDialog),
     _numors(numors),
@@ -64,24 +58,12 @@ string SpaceGroupDialog::getSelectedGroup()
 
 void SpaceGroupDialog::evaluateSpaceGroups()
 {
-    // testing for now
-    using nsx::Crystal::SpaceGroup;
-    using nsx::Crystal::SpaceGroupSymbols;
-    using std::vector;
-    using std::string;
-    using std::map;
-    using std::array;
-    using nsx::Crystal::sptrPeak3D;
-    using std::tuple;
+    nsx::SpaceGroupSymbols* spaceGroupSymbols = nsx::SpaceGroupSymbols::Instance();
+    std::vector<std::string> symbols = spaceGroupSymbols->getAllSymbols();
 
-    SpaceGroupSymbols* spaceGroupSymbols = SpaceGroupSymbols::Instance();
-    vector<string> symbols = spaceGroupSymbols->getAllSymbols();
-
-    vector<array<double, 3>> hkls;
-    vector<sptrPeak3D> peak_list;
-    vector<vector<sptrPeak3D>> peak_equivs;
-
-    //auto numors = getSelectedNumors();
+    std::vector<std::array<double, 3>> hkls;
+    std::vector<nsx::sptrPeak3D> peak_list;
+    std::vector<std::vector<sptrPeak3D>> peak_equivs;
 
     if ( _numors.size()  == 0) {
         qDebug() << "Need at least one numor to find space group!";
@@ -93,7 +75,7 @@ void SpaceGroupDialog::evaluateSpaceGroups()
     for (auto& numor: _numors) {
         auto peaks = numor->getPeaks();
 
-        for (sptrPeak3D peak : peaks)
+        for (nsx::sptrPeak3D peak : peaks)
         {
             Eigen::RowVector3i hkl = peak->getIntegerMillerIndices();
 
@@ -110,7 +92,7 @@ void SpaceGroupDialog::evaluateSpaceGroups()
     }
 
     // todo: how to we handle multiple samples??
-    std::shared_ptr<nsx::Instrument::Sample> sample = _numors[0]->getDiffractometer()->getSample();
+    std::shared_ptr<nsx::Sample> sample = _numors[0]->getDiffractometer()->getSample();
 
     if (!sample) {
         qDebug() << "Need to have a sample in order to find space group!";
@@ -121,12 +103,9 @@ void SpaceGroupDialog::evaluateSpaceGroups()
 
     qDebug() << "Evaluating space groups based on " << hkls.size() << " peaks";
 
-    // int count = 0;
-    // int total = symbols.size();
-
     for (auto& symbol: symbols) {
 
-        SpaceGroup group = SpaceGroup(symbol);
+        nsx::SpaceGroup group = nsx::SpaceGroup(symbol);
         std::string bravais = sample->getUnitCell(0)->getBravaisTypeSymbol();
 
         // space group not compatible with bravais type
@@ -134,27 +113,13 @@ void SpaceGroupDialog::evaluateSpaceGroups()
         if (group.getBravaisTypeSymbol() != bravais)
             continue;
 
-//        if ( group.fractionExtinct(hkls) > 0.0)
-//            continue;
-
-        //peak_equivs = group.findEquivalences(peak_list);
-        //RFactor rfactor(peak_equivs);
-
         tuple<string, double> entry;
 
-        get<0>(entry) = symbol;
-        get<1>(entry) = 100.0*(1-group.fractionExtinct(hkls));
-        //get<2>(entry) = rfactor.Rmerge();
-        //get<3>(entry) = rfactor.Rmeas();
-        //get<4>(entry) = rfactor.Rpim();
+        std::get<0>(entry) = symbol;
+        std::get<1>(entry) = 100.0*(1-group.fractionExtinct(hkls));
 
         // group is compatible with observed reflections, so add it to list
         _groups.push_back(entry);
-
-//        qDebug() << "    evaluating group " << (++count) << " of " << total
-//                 << ": " << symbol.c_str() << " "
-//                 << rfactor.Rmerge() << " " << rfactor.Rmeas() << " " << rfactor.Rpim();
-
     }
 
     auto compare_fn = [](const tuple<string, double>& a,
@@ -168,7 +133,7 @@ void SpaceGroupDialog::evaluateSpaceGroups()
             return quality_a > quality_b;
 
         // otherwise we sort by properties of the groups
-        nsx::Crystal::SpaceGroup grp_a(get<0>(a)), grp_b(get<0>(b));
+        nsx::SpaceGroup grp_a(get<0>(a)), grp_b(get<0>(b));
 
         // sort by group ID
         return grp_a.getID() < grp_b.getID();
@@ -187,9 +152,6 @@ void SpaceGroupDialog::buildTable()
     model->setHorizontalHeaderItem(1,new QStandardItem("Group ID"));
     model->setHorizontalHeaderItem(2,new QStandardItem("Bravais Type"));
     model->setHorizontalHeaderItem(3,new QStandardItem("Agreement"));
-    //model->setHorizontalHeaderItem(4,new QStandardItem("R merge"));
-    //model->setHorizontalHeaderItem(5,new QStandardItem("R meas"));
-    //model->setHorizontalHeaderItem(6,new QStandardItem("R pim"));
 
     unsigned int row = 0;
 
@@ -198,10 +160,7 @@ void SpaceGroupDialog::buildTable()
 
         const std::string& symbol = get<0>(item);
         double agreement = get<1>(item);
-        //double Rmerge = get<2>(item);
-        //double Rmeas = get<3>(item);
-        //double Rpim = get<4>(item);
-        nsx::Crystal::SpaceGroup grp(symbol);
+        nsx::SpaceGroup grp(symbol);
 
         QStandardItem* col0 = new QStandardItem(symbol.c_str());
         QStandardItem* col1 = new QStandardItem(to_string(grp.getID()).c_str());
@@ -232,8 +191,8 @@ void SpaceGroupDialog::on_tableView_doubleClicked(const QModelIndex &index)
     box->setText(QString("Setting space group to ") + _selectedGroup.c_str());
 
     // todo: how to handle multiple samples and/or multiple unit cells???
-    for (shared_ptr<nsx::Data::DataSet> numor: _numors) {
-        std::shared_ptr<nsx::Instrument::Sample> sample = numor->getDiffractometer()->getSample();
+    for (shared_ptr<nsx::DataSet> numor: _numors) {
+        std::shared_ptr<nsx::Sample> sample = numor->getDiffractometer()->getSample();
         sample->getUnitCell(0)->setSpaceGroup(_selectedGroup);
     }
 

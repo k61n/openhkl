@@ -1,24 +1,25 @@
-#include <QtDebug>
 #include <QMessageBox>
 
 #include <memory>
 
 #include <Eigen/Dense>
 
-#include "MCAbsorptionDialog.h"
-#include "ui_MCAbsorptionDialog.h"
-#include <nsxlib/instrument/Experiment.h>
-#include <nsxlib/instrument/Diffractometer.h>
-#include <nsxlib/instrument/Sample.h>
-#include <nsxlib/geometry/MCAbsorption.h>
-#include <nsxlib/instrument/Source.h>
-#include <nsxlib/data/IData.h>
 #include <nsxlib/crystal/Peak3D.h>
+#include <nsxlib/data/IData.h>
+#include <nsxlib/geometry/MCAbsorption.h>
+#include <nsxlib/instrument/Diffractometer.h>
+#include <nsxlib/instrument/Experiment.h>
 #include <nsxlib/instrument/Gonio.h>
-#include <nsxlib/utils/Units.h>
 #include <nsxlib/instrument/Monochromator.h>
+#include <nsxlib/instrument/Sample.h>
+#include <nsxlib/instrument/Source.h>
+#include <nsxlib/utils/Units.h>
 
-MCAbsorptionDialog::MCAbsorptionDialog(std::shared_ptr<nsx::Instrument::Experiment> experiment, QWidget *parent):
+#include "MCAbsorptionDialog.h"
+
+#include "ui_MCAbsorptionDialog.h"
+
+MCAbsorptionDialog::MCAbsorptionDialog(std::shared_ptr<nsx::Experiment> experiment, QWidget *parent):
     QDialog(parent),
      ui(new Ui::MCAbsorptionDialog),
     _experiment(experiment)
@@ -46,8 +47,8 @@ void MCAbsorptionDialog::on_pushButton_run_pressed()
         return;
     }
     // Get the source
-    std::shared_ptr<nsx::Instrument::Source> source=_experiment->getDiffractometer()->getSource();
-    std::shared_ptr<nsx::Instrument::Sample> sample=_experiment->getDiffractometer()->getSample();
+    std::shared_ptr<nsx::Source> source=_experiment->getDiffractometer()->getSource();
+    std::shared_ptr<nsx::Sample> sample=_experiment->getDiffractometer()->getSample();
 
     // Get the material
     unsigned int cellIndex=static_cast<unsigned int>(ui->comboBox->currentIndex());

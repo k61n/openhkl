@@ -1,7 +1,6 @@
 #define BOOST_TEST_MODULE "Test Space group CSV"
 #define BOOST_TEST_DYN_LINK
 
-#include <iostream>
 #include <fstream>
 #include <map>
 #include <string>
@@ -13,9 +12,8 @@
 #include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/utils/CSV.h>
 
-using namespace nsx::Crystal;
-using namespace nsx::Utils;
 using namespace std;
+using namespace nsx;
 
 int run_test()
 {
@@ -33,7 +31,6 @@ int run_test()
     CSV csv_reader('\t', '#');
     std::vector<std::string> unrecognized_symbols;
 
-
     csv_file.open("crystallography.tsv", std::ifstream::in);
 
     BOOST_CHECK(csv_file.is_open());
@@ -49,16 +46,6 @@ int run_test()
             continue;
 
         BOOST_CHECK(row.size() == 8);
-
-        if (row.size() != 8) {
-            std::cout << "CSV READ ERROR ROW " << num_rows << std::endl;
-            std::cout << "    ";
-
-            for (auto&& item: row)
-                std::cout << item << "#### ";
-
-            std::cout << std::endl;
-        }
 
         string sg, sgHall;
 
@@ -84,20 +71,8 @@ int run_test()
             ++counts[full_name];
         }
 
-        if ( num_rows%10000 == 0)
-            std::cout << "row " << num_rows << std::endl;
-
         ++num_rows;
     }
-
-    for (auto&& sg: unrecognized_symbols)
-        std::cout << sg << std::endl;
-
-    std::cout << unrecognized_symbols.size() << std::endl;
-
-    for (auto&& item: counts)
-        if ( item.second == 0)
-            std::cout << item.first << std::endl;
 
     return 0;
 }

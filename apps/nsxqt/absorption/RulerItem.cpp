@@ -1,9 +1,11 @@
-#include "RulerItem.h"
 #include <cmath>
-#include <QPen>
-#include <QPainter>
-#include <QGraphicsTextItem>
 #include <sstream>
+
+#include <QGraphicsTextItem>
+#include <QPainter>
+#include <QPen>
+
+#include "RulerItem.h"
 
 RulerItem::RulerItem(QGraphicsItem *parent):QGraphicsItem(parent)
 {

@@ -16,7 +16,7 @@ public:
     IFrameIterator(DataSet& data, unsigned int idx): _index(idx), _data(data) {}
     virtual ~IFrameIterator() = default;
     unsigned int index() {return _index;}
-    virtual nsx::Types::RealMatrix& getFrame() = 0;
+    virtual RealMatrix& getFrame() = 0;
     virtual void advance() = 0;
 
 protected:

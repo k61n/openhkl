@@ -9,8 +9,6 @@
 #include "../data/IData.h"
 #include "Source.h"
 
-using nsx::Data::DataSet;
-
 namespace nsx {
 
 Experiment::Experiment(const Experiment& other)
@@ -27,7 +25,7 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
   _data()
 {
     DiffractometerStore* ds=DiffractometerStore::Instance();
-    _diffractometer = std::shared_ptr<Diffractometer>(ds->buildDiffractomer(diffractometerName));
+    _diffractometer = std::shared_ptr<Diffractometer>(ds->buildDiffractometer(diffractometerName));
 }
 
 Experiment::Experiment(const std::string& diffractometerName)
@@ -36,7 +34,7 @@ Experiment::Experiment(const std::string& diffractometerName)
   _data()
 {
     DiffractometerStore* ds=DiffractometerStore::Instance();
-    _diffractometer = std::shared_ptr<Diffractometer>(ds->buildDiffractomer(diffractometerName));
+    _diffractometer = std::shared_ptr<Diffractometer>(ds->buildDiffractometer(diffractometerName));
 }
 
 Experiment::~Experiment()

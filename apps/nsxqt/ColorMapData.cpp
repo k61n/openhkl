@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+
 #include "ColorMap.h"
 
 static double g_BlueWhite_rgb[256*3] = {

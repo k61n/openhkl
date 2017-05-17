@@ -47,7 +47,7 @@
 
 namespace nsx {
 
-AutoIndexer::AutoIndexer(const std::shared_ptr<nsx::Instrument::Experiment>& expt, const std::shared_ptr<nsx::Utils::ProgressHandler>& handler):
+AutoIndexer::AutoIndexer(const std::shared_ptr<Experiment>& expt, const std::shared_ptr<ProgressHandler>& handler):
     _peaks(),
     _experiment(expt),
     _solutions(),

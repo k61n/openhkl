@@ -1,7 +1,6 @@
 #define BOOST_TEST_MODULE "Test Space group"
 #define BOOST_TEST_DYN_LINK
 
-#include <iostream>
 #include <map>
 #include <string>
 
@@ -10,7 +9,7 @@
 #include <nsxlib/crystal/SpaceGroup.h>
 #include <nsxlib/crystal/UnitCell.h>
 
-using namespace nsx::Crystal;
+using namespace nsx;
 
 BOOST_AUTO_TEST_CASE(Test_SpaceGroup)
 {

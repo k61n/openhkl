@@ -12,7 +12,7 @@
 
 #include <nsxlib/utils/MinimizerGSL.h>
 
-using namespace nsx::Utils;
+using namespace nsx;
 using namespace std;
 
 int run_test()

@@ -1,33 +1,31 @@
-#define BOOST_TEST_MODULE "Test Multi-dimensional Object oriented Bounding Box"
+#define BOOST_TEST_MODULE "Test 3D Object oriented Bounding Box"
 #define BOOST_TEST_DYN_LINK
 
 #include <cmath>
+
 #include <boost/test/unit_test.hpp>
+
 #include <Eigen/Dense>
+
 #include <nsxlib/geometry/OBB.h>
 
-using namespace nsx::Geometry;
-using Eigen::Vector2d;
-using Eigen::Vector3d;
-using Eigen::Vector4d;
-using Eigen::Matrix2d;
-using Eigen::Matrix3d;
+using namespace nsx;
 
 const double tolerance=1e-5;
 const double tolerance_large=1.0;
 
-BOOST_AUTO_TEST_CASE(Test_OBB)
+BOOST_AUTO_TEST_CASE(Test_OBB_3D)
 {
     // Test: the construction onf an OBB
-    Vector3d center(3,4,7);
-    Vector3d extent(sqrt(2),sqrt(2),1);
-    Matrix3d axis;
+    Eigen::Vector3d center(3,4,7);
+    Eigen::Vector3d extent(sqrt(2),sqrt(2),1);
+    Eigen::Matrix3d axis;
     axis << 1,0,0,
             0,1,0,
             0,0,1;
     OBB<double,3> obb1(center,extent,axis);
-    Vector3d lower(obb1.getLower());
-    Vector3d upper(obb1.getUpper());
+    Eigen::Vector3d lower(obb1.getLower());
+    Eigen::Vector3d upper(obb1.getUpper());
 
     BOOST_CHECK_CLOSE(lower[0],3.0-sqrt(2),tolerance);
     BOOST_CHECK_CLOSE(lower[1],4.0-sqrt(2),tolerance);
@@ -37,7 +35,7 @@ BOOST_AUTO_TEST_CASE(Test_OBB)
     BOOST_CHECK_CLOSE(upper[2],8.0,tolerance);
 
     // Test: the rotation of an OBB
-    Matrix3d r;
+    Eigen::Matrix3d r;
     r << 1,-1,0,
          1, 1,0,
          0, 0,1;
@@ -77,7 +75,7 @@ BOOST_AUTO_TEST_CASE(Test_OBB)
             1, 1 ,0,
             0, 0 ,1;
     OBB<double,3> obb3(center,extent,axis);
-    obb3.scale(Vector3d(3,2,5));
+    obb3.scale(Eigen::Vector3d(3,2,5));
     lower=obb3.getLower();
     upper=obb3.getUpper();
     BOOST_CHECK_CLOSE(lower[0],-1.5,tolerance);
@@ -88,7 +86,7 @@ BOOST_AUTO_TEST_CASE(Test_OBB)
     BOOST_CHECK_CLOSE(upper[2],11.0,tolerance);
 
     // Test: the translation of an OBB
-    obb3.translate(Vector3d(-1,2,4));
+    obb3.translate(Eigen::Vector3d(-1,2,4));
     lower = obb3.getLower();
     upper = obb3.getUpper();
     BOOST_CHECK_CLOSE(lower[0],-2.5,tolerance);
@@ -100,7 +98,7 @@ BOOST_AUTO_TEST_CASE(Test_OBB)
 
     // Test: a given point falls inside the OBB
 
-    obb3.translate(Vector3d(1,-2,-4));
+    obb3.translate(Eigen::Vector3d(1,-2,-4));
     lower=obb3.getLower();
     upper=obb3.getUpper();
 
@@ -112,8 +110,8 @@ BOOST_AUTO_TEST_CASE(Test_OBB)
     BOOST_CHECK_CLOSE(upper[2],11.0,tolerance);
 
     int nSteps(500);
-    Vector3d delta=(upper-lower)/nSteps;
-    Vector4d point(0,0,0,1);
+    Eigen::Vector3d delta=(upper-lower)/nSteps;
+    Eigen::Vector4d point(0,0,0,1);
     double sum(0.0);
     for(int i = 0; i <= nSteps; ++i) {
         point.x() = lower[0]+i*delta[0];

@@ -1,10 +1,10 @@
+#include <nsxlib/crystal/UnitCell.h>
+#include <nsxlib/utils/Units.h>
+
 #include "dialogs/DialogUnitCellParameters.h"
 #include "ui_DialogUnitCellParameters.h"
 
-#include <nsxlib/utils/Units.h>
-#include <nsxlib/crystal/UnitCell.h>
-
-DialogUnitCellParameters::DialogUnitCellParameters(sptrUnitCell unitCell, QWidget *parent) :
+DialogUnitCellParameters::DialogUnitCellParameters(nsx::sptrUnitCell unitCell, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DialogUnitCellParameters),
     _unitCell(unitCell)
@@ -18,9 +18,9 @@ DialogUnitCellParameters::DialogUnitCellParameters(sptrUnitCell unitCell, QWidge
     ui->a->setValue(_unitCell->getA());
     ui->b->setValue(_unitCell->getB());
     ui->c->setValue(_unitCell->getC());
-    ui->alpha->setValue(_unitCell->getAlpha()/nsx::Units::deg);
-    ui->beta->setValue(_unitCell->getBeta()/nsx::Units::deg);
-    ui->gamma->setValue(_unitCell->getGamma()/nsx::Units::deg);
+    ui->alpha->setValue(_unitCell->getAlpha()/nsx::deg);
+    ui->beta->setValue(_unitCell->getBeta()/nsx::deg);
+    ui->gamma->setValue(_unitCell->getGamma()/nsx::deg);
 
     connect(ui->buttonBox,SIGNAL(accepted()),this,SLOT(setUnitCellParameters()));
 }
@@ -36,9 +36,9 @@ void DialogUnitCellParameters::setUnitCellParameters()
     double a=ui->a->value();
     double b=ui->b->value();
     double c=ui->c->value();
-    double alpha=ui->alpha->value()*nsx::Units::deg;
-    double beta=ui->beta->value()*nsx::Units::deg;
-    double gamma=ui->gamma->value()*nsx::Units::deg;
+    double alpha=ui->alpha->value()*nsx::deg;
+    double beta=ui->beta->value()*nsx::deg;
+    double gamma=ui->gamma->value()*nsx::deg;
 
     _unitCell->setParams(a,b,c,alpha,beta,gamma);
 }

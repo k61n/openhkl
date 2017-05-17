@@ -25,9 +25,6 @@
 
 namespace nsx {
 
-using nsx::Instrument::Diffractometer;
-using nsx::Instrument::ComponentState;
-
 IDataReader* I16DataReader::create(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer)
 {
     return new I16DataReader(filename, diffractometer);

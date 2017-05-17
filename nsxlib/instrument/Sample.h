@@ -43,8 +43,6 @@
 
 namespace nsx {
 
-using nsx::Crystal::CellList;
-
 class Sample : public Component {
 public:
 
@@ -68,21 +66,21 @@ public:
     Sample& operator=(const Sample& other);
 
     //! Set the sample shape described as a convex hull
-    void setShape(const nsx::Geometry::ConvexHull<double>& shape);
+    void setShape(const ConvexHull<double>& shape);
 
     //! Return the sample shape, described as a convex hull
-    nsx::Geometry::ConvexHull<double>& getShape();
+    ConvexHull<double>& getShape();
 
     //! Create a new crystal with Empty UnitCell, and return it
-    std::shared_ptr<nsx::Crystal::UnitCell> addUnitCell();
+    std::shared_ptr<UnitCell> addUnitCell();
     //! Get the UnitCell of Crystal number i in the list
-    std::shared_ptr<nsx::Crystal::UnitCell> getUnitCell(int i);
+    std::shared_ptr<UnitCell> getUnitCell(int i);
     const CellList& getUnitCells() const;
     //! Return number of crystals
     std::size_t getNCrystals() const;
     //!
     void removeUnitCell(int i);
-    void removeUnitCell(std::shared_ptr<nsx::Crystal::UnitCell> cell);
+    void removeUnitCell(std::shared_ptr<UnitCell> cell);
 
     //! Gets the Z number of a given unit cell
     unsigned int getZ(int index) const;
@@ -90,12 +88,12 @@ public:
     void setZ(int Z, int index);
 
     //! Gets the Material of one of the unit cells of this Sample
-    nsx::Chemistry::sptrMaterial getMaterial(int index) const;
+    sptrMaterial getMaterial(int index) const;
     //! Sets the Material of one of the unit cells of this Sample
-    void setMaterial(Chemistry::sptrMaterial material, int index);
+    void setMaterial(sptrMaterial material, int index);
 
 private:
-    nsx::Geometry::ConvexHull<double> _sampleShape;
+    ConvexHull<double> _sampleShape;
     //! UnitCells of all crystals associated with this sample
     CellList _cells;
 };

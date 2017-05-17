@@ -1,17 +1,16 @@
 #ifndef PEAKCALCGRAPHICSITEM_H
 #define PEAKCALCGRAPHICSITEM_H
+
 #include "SXGraphicsItem.h"
 
 namespace nsx{
-    namespace Crystal{
-        struct PeakCalc;
-    }
+struct PeakCalc;
 }
 
 class PeakCalcGraphicsItem : public SXGraphicsItem
 {
 public:
-    PeakCalcGraphicsItem(nsx::Crystal::PeakCalc);
+    PeakCalcGraphicsItem(nsx::PeakCalc p);
      void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
      void setFrame(unsigned long frame);
      static void setLabelVisible(bool flag=true);

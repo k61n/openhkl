@@ -60,17 +60,6 @@ namespace property_tree=boost::property_tree;
  */
 class Detector: public Component {
 public:
-    using DataOrder = nsx::Instrument::DataOrder;
-//    enum class DataOrder {
-//        TopLeftColMajor,
-//        TopLeftRowMajor,
-//        TopRightColMajor,
-//        TopRightRowMajor,
-//        BottomLeftColMajor,
-//        BottomLeftRowMajor,
-//        BottomRightColMajor,
-//        BottomRightRowMajor
-//    };
     //! Static constructor of a Detector from a property tree node
     static Detector* create(const proptree::ptree& node);
 

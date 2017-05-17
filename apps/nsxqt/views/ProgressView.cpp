@@ -29,7 +29,7 @@ ProgressView::~ProgressView()
 
 }
 
-void ProgressView::watch(std::shared_ptr<nsx::Utils::ProgressHandler> handler)
+void ProgressView::watch(std::shared_ptr<nsx::ProgressHandler> handler)
 {
     _handler = handler;
 

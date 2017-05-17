@@ -50,7 +50,7 @@ Monochromator::Monochromator(const proptree::ptree& node)
     _name=node.get<std::string>("name");
     _wavelength=node.get<double>("wavelength");
     _fwhm=node.get<double>("fwhm");
-    Units::UnitsManager* um=nsx::Units::UnitsManager::Instance();
+    UnitsManager* um=UnitsManager::Instance();
 
     // Set the source slit width from the property tree node
     const proptree::ptree& widthNode = node.get_child("width");

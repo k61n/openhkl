@@ -49,18 +49,18 @@ struct LatticeSolution
 
 	LatticeSolution(const LatticeSolution& ubsol);
 
-    LatticeSolution(std::shared_ptr<Instrument::Detector> detector,
-                    std::shared_ptr<Instrument::Sample> sample,
-                    std::shared_ptr<Instrument::Source> source,
+    LatticeSolution(std::shared_ptr<Detector> detector,
+                    std::shared_ptr<Sample> sample,
+                    std::shared_ptr<Source> source,
                     const Eigen::VectorXd& values,
                     const Eigen::MatrixXd& cov,
                     const std::vector<bool>& fixedParameters);
 
 	LatticeSolution& operator=(const LatticeSolution& ubsol);
 
-    std::shared_ptr<Instrument::Detector> _detector;
-    std::shared_ptr<Instrument::Sample> _sample;
-    std::shared_ptr<Instrument::Source> _source;
+    std::shared_ptr<Detector> _detector;
+    std::shared_ptr<Sample> _sample;
+    std::shared_ptr<Source> _source;
 	Eigen::VectorXd _latticeParams;
     Eigen::Matrix<double,9,9> _covLatticeParams;
     double _sourceOffset;

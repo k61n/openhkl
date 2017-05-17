@@ -39,23 +39,19 @@
 
 namespace nsx {
 
-using nsx::Kernel::Factory;
-using nsx::Kernel::Constructor;
-using nsx::Kernel::Destructor;
-using nsx::Kernel::Singleton;
-using ptrInstrument = typename std::shared_ptr<nsx::Instrument::Diffractometer>;
+using ptrInstrument = typename std::shared_ptr<Diffractometer>;
 
 /** \brief DataReaderFactory. All IData formats must register their "create" method with the factory in order to
  * choose the correct DataReader at runtime. Reader selection is based on the extension of the datafile.
  *
  */
 class DataReaderFactory :
-        public Factory<DataSet,std::string,std::string,std::shared_ptr<nsx::Instrument::Diffractometer> >,
+        public Factory<DataSet,std::string,std::string,std::shared_ptr<Diffractometer> >,
         public Singleton<DataReaderFactory,Constructor,Destructor>
 {
 private:
-    friend class nsx::Kernel::Constructor<DataReaderFactory>;
-    friend class nsx::Kernel::Destructor<DataReaderFactory>;
+    friend class Constructor<DataReaderFactory>;
+    friend class Destructor<DataReaderFactory>;
     DataReaderFactory();
     ~DataReaderFactory() = default;
 };

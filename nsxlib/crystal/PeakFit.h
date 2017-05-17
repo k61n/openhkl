@@ -60,7 +60,7 @@ public:
 
     Eigen::VectorXd defaultParams() const;
 
-    bool fit(nsx::Utils::IMinimizer& minimizer);
+    bool fit(IMinimizer& minimizer);
 
     int frameBegin() const;
     int frameEnd() const;

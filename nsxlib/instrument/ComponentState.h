@@ -59,7 +59,7 @@ public:
     Eigen::Vector3d transformQ(const Eigen::Vector3d& q) const;
 
 private:
-    friend class nsx::Instrument::InstrumentState;
+    friend class InstrumentState;
     //! Pointer to the Component that has created the state
     const Component* _ptrComp;
     //! Values for each axis of the Component

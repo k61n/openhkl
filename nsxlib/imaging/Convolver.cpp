@@ -13,7 +13,7 @@ using std::endl;
 
 namespace nsx {
 
-using RealMatrix = nsx::Types::RealMatrix;
+using RealMatrix = RealMatrix;
 
 Convolver::Convolver():
     _rows(0), _cols(0), _halfCols(0),

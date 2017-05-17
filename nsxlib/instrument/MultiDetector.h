@@ -40,7 +40,7 @@
 
 namespace nsx {
 
-class MultiDetector : public nsx::Kernel::Composite<Detector,const proptree::ptree&> {
+class MultiDetector : public Composite<Detector,const proptree::ptree&> {
 public:
 
     //! Static constructor of a MultiDetector from a property tree node

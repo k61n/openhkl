@@ -60,16 +60,16 @@ class Source;
 class PeakIntegrator;
 
 class Peak3D {
+
 public:
-    using sptrShape3D=std::shared_ptr<nsx::Geometry::IShape<double,3>>;
-    using Ellipsoid3D=Geometry::Ellipsoid<double,3>;
+    using sptrShape3D=std::shared_ptr<IShape<double,3>>;
+    using Ellipsoid3D=Ellipsoid<double,3>;
     using sptrEllipsoid3D=std::shared_ptr<Ellipsoid3D>;
-    using shape_type = nsx::Geometry::IShape<double,3>;
-    using IntegrationRegion = nsx::Geometry::IntegrationRegion;
+    using shape_type = IShape<double,3>;
 
+    Peak3D(std::shared_ptr<DataSet> data = nullptr);
 
-    Peak3D(std::shared_ptr<nsx::Data::DataSet> data = nullptr);
-    Peak3D(std::shared_ptr<nsx::Data::DataSet> data, const Ellipsoid3D& shape);
+    Peak3D(std::shared_ptr<DataSet> data, const Ellipsoid3D& shape);
 
     //! Copy constructor
     Peak3D(const Peak3D& other);
@@ -78,7 +78,7 @@ public:
     Peak3D& operator=(const Peak3D& other);
 
         //! Attach the data
-    void linkData(const std::shared_ptr<nsx::Data::DataSet>& data);
+    void linkData(const std::shared_ptr<DataSet>& data);
 
     //! Detach the data
     void unlinkData();
@@ -109,7 +109,7 @@ public:
     //! Run the integration of the peak; iterate over the data
     //void integrate();
 
-    std::shared_ptr<nsx::Data::DataSet> getData() const { return _data.lock();}
+    std::shared_ptr<DataSet> getData() const { return _data.lock();}
 
     //! Get the projection of total data in the bounding box.
     Eigen::VectorXd getProjection() const;
@@ -120,7 +120,7 @@ public:
 //    Eigen::VectorXd getBkgProjectionSigma() const;
 
     const Ellipsoid3D& getShape() const { return _shape; }
-    const nsx::Geometry::IntegrationRegion& getIntegrationRegion() const { return _integrationRegion; }
+    const IntegrationRegion& getIntegrationRegion() const { return _integrationRegion; }
 
     //! Return the scaled intensity of the peak.
     Intensity getScaledIntensity() const;
@@ -138,7 +138,7 @@ public:
     double getIOverSigmaI() const;
     //! Return the lorentz factor of the peak.
     double getLorentzFactor() const;
-    const nsx::Instrument::ComponentState& getSampleState();
+    const ComponentState& getSampleState();
     //double getSampleStepSize() const;
 
     //! Return the scaling factor.
@@ -148,12 +148,12 @@ public:
     //! Set the scaling factor.
     void setScale(double factor);
     //!
-    void setSampleState(const nsx::Instrument::ComponentState& sstate);
+    void setSampleState(const ComponentState& sstate);
     //!
 
-    void setDetectorEvent(const nsx::Instrument::DetectorEvent& event);
+    void setDetectorEvent(const DetectorEvent& event);
     //!
-    void setSource(const std::shared_ptr<nsx::Instrument::Source>& source);
+    void setSource(const std::shared_ptr<Source>& source);
 
     friend bool operator<(const Peak3D& p1, const Peak3D& p2);
     void setSelected(bool);
@@ -163,7 +163,7 @@ public:
     void setTransmission(double transmission);
     double getTransmission() const;
 
-    void addUnitCell(std::shared_ptr<nsx::Crystal::UnitCell> uc, bool activate=true);
+    void addUnitCell(std::shared_ptr<UnitCell> uc, bool activate=true);
     int getActiveUnitCellIndex() const;
     sptrUnitCell getActiveUnitCell() const;
     sptrUnitCell getUnitCell(int index) const;
@@ -193,12 +193,12 @@ public:
 
 private:
     //! Pointer to the data containing the peak
-    std::weak_ptr<nsx::Data::DataSet> _data;
+    std::weak_ptr<DataSet> _data;
 
     //! Shape describing the Peak zone
     Ellipsoid3D _shape;
     //! Region used to integrate the peak
-    nsx::Geometry::IntegrationRegion _integrationRegion;
+    IntegrationRegion _integrationRegion;
     //! Shape describing the background zone (must fully contain peak)
     // Ellipsoid3D _bkg;
 
@@ -220,12 +220,12 @@ private:
     CellList _unitCells;
     //! Pointer to the state of the Sample Component
 
-    std::unique_ptr<nsx::Instrument::ComponentState> _sampleState;
+    std::unique_ptr<ComponentState> _sampleState;
 
     //! Detector Event state
-    std::unique_ptr<nsx::Instrument::DetectorEvent> _event;
+    std::unique_ptr<DetectorEvent> _event;
     //!
-    std::shared_ptr<nsx::Instrument::Source> _source;
+    std::shared_ptr<Source> _source;
 
     double _counts;
     //double _countsSigma;

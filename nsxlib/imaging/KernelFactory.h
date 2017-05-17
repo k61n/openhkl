@@ -15,8 +15,8 @@
 namespace nsx {
 
 class KernelFactory :
-        public nsx::Kernel::Factory<ConvolutionKernel,std::string,int,int>,
-        public nsx::Kernel::Singleton<KernelFactory,nsx::Kernel::Constructor,nsx::Kernel::Destructor>
+        public Factory<ConvolutionKernel,std::string,int,int>,
+        public Singleton<KernelFactory,Constructor,Destructor>
 {
 public:
     KernelFactory();

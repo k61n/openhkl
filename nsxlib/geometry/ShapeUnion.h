@@ -42,7 +42,7 @@
 
 namespace nsx {
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 class ShapeUnion {
 public:
     using shape_t = IShape<T, D>;
@@ -74,13 +74,13 @@ private:
 
 // implementation
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 void ShapeUnion<T, D>::addShape(const shape_t& shape)
 {
     _shapes.push_back(shape.clone());
 }
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 ShapeUnion<T, D>::~ShapeUnion()
 {
     for (auto&& shape: _shapes) {
@@ -88,7 +88,7 @@ ShapeUnion<T, D>::~ShapeUnion()
     }
 }
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 ShapeUnion<T, D>::ShapeUnion(const ShapeUnion& other)
 {
     for (auto&& shape: other._shapes) {
@@ -96,7 +96,7 @@ ShapeUnion<T, D>::ShapeUnion(const ShapeUnion& other)
     }
 }
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 ShapeUnion<T, D>::ShapeUnion(std::initializer_list<const shape_t&> shapes)
 {
     for (auto&& shape: shapes) {
@@ -104,7 +104,7 @@ ShapeUnion<T, D>::ShapeUnion(std::initializer_list<const shape_t&> shapes)
     }
 }
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 IShape<T,D>* ShapeUnion<T,D>::clone() const
 {
 #pragma warning "this is wrong!";
@@ -112,7 +112,7 @@ IShape<T,D>* ShapeUnion<T,D>::clone() const
     return nullptr;
 }
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 bool ShapeUnion<T,D>::collide(const IShape<T,D>& rhs) const
 {
     for (auto&& shape: _shapes) {
@@ -123,7 +123,7 @@ bool ShapeUnion<T,D>::collide(const IShape<T,D>& rhs) const
     return false;
 }
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 bool ShapeUnion<T,D>::collide(const AABB<T,D>& rhs) const
 {
     for (auto&& shape: _shapes) {
@@ -134,7 +134,7 @@ bool ShapeUnion<T,D>::collide(const AABB<T,D>& rhs) const
     return false;
 }
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 bool ShapeUnion<T,D>::collide(const Ellipsoid<T,D>& rhs) const
 {
     for (auto&& shape: _shapes) {
@@ -145,7 +145,7 @@ bool ShapeUnion<T,D>::collide(const Ellipsoid<T,D>& rhs) const
     return false;
 }
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 bool ShapeUnion<T,D>::collide(const OBB<T,D>& rhs) const
 {
     for (auto&& shape: _shapes) {
@@ -156,7 +156,7 @@ bool ShapeUnion<T,D>::collide(const OBB<T,D>& rhs) const
     return false;
 }
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 bool ShapeUnion<T,D>::collide(const Sphere<T,D>& rhs) const
 {
     for (auto&& shape: _shapes) {

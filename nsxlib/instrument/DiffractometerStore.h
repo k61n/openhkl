@@ -35,24 +35,24 @@
 #include <set>
 #include <string>
 
-#include "Diffractometer.h"
 #include "../kernel/Singleton.h"
 
 namespace nsx {
+
+class Diffractometer;
 
 typedef std::set<std::string> diffractometersList;
 typedef std::shared_ptr<Diffractometer> sptrDiffractometer;
 typedef std::map<std::string,sptrDiffractometer> diffractomersMap;
 
-class DiffractometerStore : public Kernel::Singleton<DiffractometerStore,Kernel::Constructor,Kernel::Destructor>
-{
+class DiffractometerStore : public Singleton<DiffractometerStore,Constructor,Destructor> {
 
 public:
 
     //! Constructor
     DiffractometerStore();
 
-    sptrDiffractometer buildDiffractomer(const std::string& name);
+    sptrDiffractometer buildDiffractometer(const std::string& name) const;
 
     diffractometersList getDiffractometersList() const;
 

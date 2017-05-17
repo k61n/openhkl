@@ -10,7 +10,7 @@
 
 #include <nsxlib/utils/CSV.h>
 
-using namespace nsx::Utils;
+using namespace nsx;
 
 int run_test() {
     std::string csv_file =
@@ -21,7 +21,7 @@ int run_test() {
             "\"\", \"\"\"\"\", \"as,df\", \" \"\"\" \"";
 
     std::istringstream stream(csv_file);
-    nsx::Utils::CSV csv;
+    CSV csv;
     std::vector<std::string> row;
 
     while(!stream.eof()) {

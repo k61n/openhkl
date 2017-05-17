@@ -43,11 +43,14 @@ template<typename T, unsigned int D> class NDTree;
 class Peak3D;
 
 struct PeakCalc {
+
     using PeakList = std::vector<std::shared_ptr<Peak3D>>;
     using PeakSet = std::set<std::shared_ptr<Peak3D>>;
     using sptrPeak3D = std::shared_ptr<Peak3D>;
-    using IData = nsx::Data::DataSet;
-    using Octree = nsx::Geometry::NDTree<double, 3>;
+
+    using IData = DataSet;
+
+    using Octree = NDTree<double, 3>;
 
     PeakCalc(double h,double k,double l, double x,double y, double frame); //:
         //_h(h), _k(k), _l(l), _x(x), _y(y), _frame(frame) = default;

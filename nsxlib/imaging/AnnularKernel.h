@@ -47,18 +47,23 @@
 namespace nsx {
 
 class AnnularKernel : public ConvolutionKernel {
-public:
-	static ConvolutionKernel* create(int nrows, int ncols);
 
 public:
+
+    static ConvolutionKernel* create(int nrows, int ncols);
+
+public:
+
     AnnularKernel(int nrows, int ncols);
-    AnnularKernel(int nrows, int ncols,const ConvolutionKernel::ParameterMap& params);
+
+    AnnularKernel(int nrows, int ncols, const ConvolutionKernel::ParameterMap& params);
 
     virtual ~AnnularKernel();
 
     const char* getName() override;
 
 private:
+
     void update() override;
 };
 

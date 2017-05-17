@@ -66,12 +66,12 @@
 
 namespace nsx {
 
-using nsx::Instrument::DataOrder;
-
 class MatrixParser {
+
 public:
 
     MatrixParser()=default;
+
     ~MatrixParser()=default;
 
     bool operator()(DataOrder dataOrder, const char* begin, size_t buffer_size, Eigen::MatrixXi& matrix) const;

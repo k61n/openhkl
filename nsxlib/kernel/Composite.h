@@ -55,7 +55,7 @@ public:
 
     component* add(component*);
     void clear();
-    nsx::Types::uint getNComponents() const;
+    uint getNComponents() const;
     void remove(component*);
 
     virtual ~Composite();
@@ -110,7 +110,7 @@ void Composite<component,args...>::clear()
 }
 
 template <typename component,typename ...args>
-nsx::Types::uint Composite<component,args...>::getNComponents() const
+uint Composite<component,args...>::getNComponents() const
 {
     return _components.size();
 }

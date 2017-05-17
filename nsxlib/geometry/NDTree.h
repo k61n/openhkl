@@ -63,9 +63,9 @@ constexpr int getPow (int factor)
 */
 
 // ! Forward declaration of the iterator class
-template<typename T, nsx::Types::uint D> class NDTreeIterator;
+template<typename T, uint D> class NDTreeIterator;
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 class NDTree : public AABB<T,D> {
 public:
 
@@ -125,10 +125,10 @@ public:
     void printSelf(std::ostream& os) const;
 
     //! Change the _MAX_DEPTH property of the Tree
-    void setMaxDepth(nsx::Types::uint maxDepth);
+    void setMaxDepth(uint maxDepth);
 
     //! Change the _MAX_STORAGE property of the Tree
-    void setMaxStorage(nsx::Types::uint maxStorage);
+    void setMaxStorage(uint maxStorage);
 
     //! Return the list of AABB* pairs that intercept.
     //void getPossibleCollisions(std::set<collision_pair>& collisions) const;
@@ -152,7 +152,7 @@ public:
 
     const std::vector<const IShape<T,D>*>& getData() const {return _data;}
 
-    NDTree(const NDTree* parent, nsx::Types::uint i);
+    NDTree(const NDTree* parent, uint i);
 
     unsigned int numChambers() const;
 
@@ -172,19 +172,19 @@ private:
     void split();
 
     //! Method to initialize vector of powers 2^D
-    static std::vector<nsx::Types::uint> createPowers();
+    static std::vector<uint> createPowers();
 
     //! Maximum number of recursive splits of NDTree
-    nsx::Types::uint _MAX_DEPTH = 5;
+    uint _MAX_DEPTH = 5;
 
     //! Maximum number of AABB* data object stored in each leaf
-    nsx::Types::uint _MAX_STORAGE = 5;
+    uint _MAX_STORAGE = 5;
 
     //! Multiplicity of the tree branch (D=2 ->4), (D=3 ->8)
-    const nsx::Types::uint _MULTIPLICITY = std::pow(2,D);
+    const uint _MULTIPLICITY = std::pow(2,D);
 
     //! vector of powers 2^D
-    std::vector<nsx::Types::uint> _POWERS = createPowers();
+    std::vector<uint> _POWERS = createPowers();
 
     //! Vector of 2^D children
     std::vector<NDTree<T,D>> _children;
@@ -194,16 +194,16 @@ private:
     std::vector<const IShape<T,D>*> _data;
 
     //! Depth of this branch with respect to root node.
-    nsx::Types::uint _depth;
+    uint _depth;
 
     const NDTree<T,D>* _parent;
     long _idx = -1;
 };
 
-template<typename T, nsx::Types::uint D>
-std::vector<nsx::Types::uint> NDTree<T,D>::createPowers()
+template<typename T, uint D>
+std::vector<uint> NDTree<T,D>::createPowers()
 {
-    std::vector<nsx::Types::uint> p(D);
+    std::vector<uint> p(D);
     int i=0;
     // Powers of 2
     std::generate(p.begin(),
@@ -217,7 +217,7 @@ std::vector<nsx::Types::uint> NDTree<T,D>::createPowers()
     return p;
 }
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 NDTree<T, D>::NDTree(NDTree<T,D>&& other):
     _MAX_DEPTH(other._MAX_DEPTH),
     _MAX_STORAGE(other._MAX_STORAGE),
@@ -232,29 +232,29 @@ NDTree<T, D>::NDTree(NDTree<T,D>&& other):
 
 }
 
-//template<typename T, nsx::Types::uint D>
-//nsx::Types::uint NDTree<T,D>::_MAX_DEPTH(10);
+//template<typename T, uint D>
+//uint NDTree<T,D>::_MAX_DEPTH(10);
 
-//template<typename T, nsx::Types::uint D>
-//nsx::Types::uint NDTree<T,D>::_MAX_STORAGE(5);
+//template<typename T, uint D>
+//uint NDTree<T,D>::_MAX_STORAGE(5);
 
-//template<typename T, nsx::Types::uint D>
-//const nsx::Types::uint NDTree<T,D>::_MULTIPLICITY(std::pow(2,D));
+//template<typename T, uint D>
+//const uint NDTree<T,D>::_MULTIPLICITY(std::pow(2,D));
 
-//template<typename T, nsx::Types::uint D>
-//std::vector<nsx::Types::uint> NDTree<T,D>::_POWERS=createPowers();
+//template<typename T, uint D>
+//std::vector<uint> NDTree<T,D>::_POWERS=createPowers();
 
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 void NDTree<T,D>::nullifyChildren()
 {
-//    for (nsx::Types::uint i = 0; i < _MULTIPLICITY; ++i) {
+//    for (uint i = 0; i < _MULTIPLICITY; ++i) {
 //        _children[i] = nullptr;
 //    }
     _children.clear();
 }
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 NDTree<T,D>::NDTree():
     AABB<T,D>(), _depth(0), _parent(nullptr)//, _right(nullptr)
 {
@@ -262,7 +262,7 @@ NDTree<T,D>::NDTree():
     //_data.reserve(_MAX_STORAGE);
 }
 
-//template<typename T, nsx::Types::uint D>
+//template<typename T, uint D>
 //NDTree<T,D>::NDTree(const NDTree<T,D>& other):
 //    AABB<T,D>(other),
 //    _depth(other._depth),
@@ -275,7 +275,7 @@ NDTree<T,D>::NDTree():
 //    }
 //}
 
-//template<typename T, nsx::Types::uint D>
+//template<typename T, uint D>
 //NDTree<T,D>& NDTree<T,D>::operator=(const NDTree<T,D>& other)
 //{
 //    if (this != &other) {
@@ -292,7 +292,7 @@ NDTree<T,D>::NDTree():
 //    return *this;
 //}
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 NDTree<T,D>::NDTree(const vector& lb, const vector& ub):
     AABB<T,D>(lb,ub), _depth(0), _parent(nullptr)//, _right(nullptr)
 {
@@ -300,7 +300,7 @@ NDTree<T,D>::NDTree(const vector& lb, const vector& ub):
     //_data.reserve(_MAX_STORAGE);
 }
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 NDTree<T,D>::NDTree(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub):
     AABB<T,D>(lb,ub), _depth(0), _parent(nullptr)//, _right(nullptr)
 {
@@ -308,8 +308,8 @@ NDTree<T,D>::NDTree(const std::initializer_list<T>& lb, const std::initializer_l
     //_data.reserve(_MAX_STORAGE);
 }
 
-template<typename T, nsx::Types::uint D>
-NDTree<T,D>::NDTree(const NDTree<T,D>* parent, nsx::Types::uint sector):
+template<typename T, uint D>
+NDTree<T,D>::NDTree(const NDTree<T,D>* parent, uint sector):
     AABB<T,D>(), _depth(parent->_depth+1), _parent(parent), _idx(sector),
     _MAX_DEPTH(parent->_MAX_DEPTH),
     _MAX_STORAGE(parent->_MAX_STORAGE)
@@ -328,14 +328,14 @@ NDTree<T,D>::NDTree(const NDTree<T,D>* parent, nsx::Types::uint sector):
 
     // The numbering of sub-voxels is encoded into bits of an int a follows:
     // ....... | dim[2] | dim[1] | dim[0]
-    for (nsx::Types::uint i=0; i<D; ++i) {
+    for (uint i=0; i<D; ++i) {
         bool b = (sector & _POWERS[i]);
         this->AABB<T,D>::_lowerBound(i) = (b ? center[i] : parent->AABB<T,D>::_lowerBound(i));
         this->AABB<T,D>::_upperBound(i) = (b ? parent->AABB<T,D>::_upperBound(i) : center(i));
     }
 }
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 NDTree<T,D>::~NDTree()
 {
 //    if (hasChildren()) {
@@ -345,13 +345,13 @@ NDTree<T,D>::~NDTree()
 //    }
 }
 
-//template<typename T,nsx::Types::uint D>
+//template<typename T,uint D>
 //IShape<T,D>* NDTree<T,D>::clone() const
 //{
 //    return new NDTree<T,D>(*this);
 //}
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 void NDTree<T,D>::addData(const IShape<T,D>* shape)
 {
     // AABB does not overlap with this branch
@@ -372,19 +372,19 @@ void NDTree<T,D>::addData(const IShape<T,D>* shape)
     }
 }
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 bool NDTree<T,D>::hasChildren() const
 {
     return (!_children.empty());
 }
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 bool NDTree<T,D>::hasData() const
 {
     return (_data.size() != 0);
 }
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 auto NDTree<T,D>::getCollisions() const -> std::set<collision_pair>
 {
     std::set<collision_pair> collisions;
@@ -412,7 +412,7 @@ auto NDTree<T,D>::getCollisions() const -> std::set<collision_pair>
     return collisions;
 }
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 std::set<const IShape<T, D>*> NDTree<T,D>::getCollisions(const IShape<T, D>& given) const
 {
     using ndtree = NDTree<T, D>;
@@ -448,7 +448,7 @@ std::set<const IShape<T, D>*> NDTree<T,D>::getCollisions(const IShape<T, D>& giv
     return collisions;
 }
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 bool NDTree<T,D>::isInsideObject(const HomVector& vector)
 {
     // shape's box does not intercept tree
@@ -477,18 +477,18 @@ bool NDTree<T,D>::isInsideObject(const HomVector& vector)
     return false;
 }
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 void NDTree<T,D>::getVoxels(std::vector<AABB<T,D>* >& voxels)
 {
     voxels.push_back(this);
     if (hasChildren()) {
-        for (nsx::Types::uint i=0;i<_MULTIPLICITY;++i) {
+        for (uint i=0;i<_MULTIPLICITY;++i) {
             _children[i]->getVoxels(voxels);
         }
     }
 }
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 void NDTree<T,D>::printSelf(std::ostream& os) const
 {
     os << "*** Node ***  " << this->_lowerBound  << "," << this->_upperBound << std::endl;
@@ -503,7 +503,7 @@ void NDTree<T,D>::printSelf(std::ostream& os) const
     }
 }
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 void NDTree<T,D>::removeData(const IShape<T,D>* data)
 {
     if (hasData()) {
@@ -513,14 +513,14 @@ void NDTree<T,D>::removeData(const IShape<T,D>* data)
         }
     }
     if (hasChildren())  {
-        for (nsx::Types::uint i=0; i<_MULTIPLICITY; ++i) {
+        for (uint i=0; i<_MULTIPLICITY; ++i) {
             _children[i].removeData(data);
         }
     }
 }
 
-template<typename T, nsx::Types::uint D>
-void NDTree<T,D>::setMaxDepth(nsx::Types::uint maxDepth)
+template<typename T, uint D>
+void NDTree<T,D>::setMaxDepth(uint maxDepth)
 {
     if (maxDepth ==0) {
         throw std::invalid_argument("Depth of the NDTree must be at least 1");
@@ -531,8 +531,8 @@ void NDTree<T,D>::setMaxDepth(nsx::Types::uint maxDepth)
     _MAX_DEPTH = maxDepth;
 }
 
-template<typename T, nsx::Types::uint D>
-void NDTree<T,D>::setMaxStorage(nsx::Types::uint maxStorage)
+template<typename T, uint D>
+void NDTree<T,D>::setMaxStorage(uint maxStorage)
 {
     if (maxStorage == 0) {
         throw std::invalid_argument("MaxStorage of NDTree must be at least 1");
@@ -540,7 +540,7 @@ void NDTree<T,D>::setMaxStorage(nsx::Types::uint maxStorage)
     _MAX_STORAGE = maxStorage;
 }
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 void NDTree<T,D>::split()
 {
     // The node is already at the maximum depth: not allowed to split anymore.
@@ -553,7 +553,7 @@ void NDTree<T,D>::split()
     _children.reserve(_MULTIPLICITY);
 
     // Split the current node into 2^D subnodes
-    for (nsx::Types::uint i=0; i<_MULTIPLICITY; ++i) {
+    for (uint i=0; i<_MULTIPLICITY; ++i) {
         _children.emplace_back(this, i);
     }
     for (auto ptr=_data.begin(); ptr!=_data.end(); ++ptr) {
@@ -564,26 +564,26 @@ void NDTree<T,D>::split()
     _data.clear();
 }
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 typename NDTree<T,D>::iterator NDTree<T,D>::begin() const
 {
     return iterator(*this);
 }
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 typename NDTree<T,D>::iterator NDTree<T,D>::end() const
 {
     return iterator();
 }
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 std::ostream& operator<<(std::ostream& os, const NDTree<T,D>& tree)
 {
     tree.printSelf(os);
     return os;
 }
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 class NDTreeIterator
 {
 public:
@@ -612,12 +612,12 @@ private:
     const NDTree<T,D>* _node;
 };
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 NDTreeIterator<T,D>::NDTreeIterator() : _node(nullptr)
 {
 }
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 NDTreeIterator<T,D>::NDTreeIterator(const NDTree<T,D>& node) : _node(&node)
 {
     // find the leftmost leaf
@@ -626,38 +626,38 @@ NDTreeIterator<T,D>::NDTreeIterator(const NDTree<T,D>& node) : _node(&node)
     }
 }
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 NDTreeIterator<T,D>& NDTreeIterator<T,D>::operator=(const NDTreeIterator<T,D>& other)
 {
   _node = other._node;
   return *this;
 }
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 bool NDTreeIterator<T,D>::operator!=(const NDTreeIterator<T,D>& other) const
 {
     return (_node != other._node);
 }
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 bool NDTreeIterator<T,D>::operator==(const NDTreeIterator<T,D>& other) const
 {
     return (_node == other._node);
 }
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 const NDTree<T,D>& NDTreeIterator<T,D>::operator*() const
 {
     return *_node;
 }
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 const NDTree<T,D>* NDTreeIterator<T,D>::operator->() const
 {
     return _node;
 }
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 NDTreeIterator<T,D>& NDTreeIterator<T,D>::operator++()
 {
     // already at end
@@ -688,7 +688,7 @@ NDTreeIterator<T,D>& NDTreeIterator<T,D>::operator++()
     return ++(*this);
 }
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 NDTreeIterator<T,D> NDTreeIterator<T,D>::operator++(int)
 {
     NDTreeIterator<T,D> tmp(*this);
@@ -696,7 +696,7 @@ NDTreeIterator<T,D> NDTreeIterator<T,D>::operator++(int)
     return (tmp);
 }
 
-template<typename T, nsx::Types::uint D>
+template<typename T, uint D>
 unsigned int NDTree<T,D>::numChambers() const
 {
     if (hasChildren()) {

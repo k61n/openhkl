@@ -126,7 +126,7 @@ public:
     unsigned int getNDetectors() const;
 
 protected:
-    nsx::Types::uint _nRows, _nCols;
+    uint _nRows, _nCols;
     double _minRow, _minCol;
     double _width, _height;
     double _angularWidth, _angularHeight;

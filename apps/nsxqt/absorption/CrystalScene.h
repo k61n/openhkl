@@ -1,15 +1,26 @@
 #ifndef CRYSTALSCENE_H
 #define CRYSTALSCENE_H
 
-#include <QGraphicsView>
+#include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
-#include <QGraphicsLineItem>
-#include "CalibrateDistanceDialog.h"
-#include "RulerItem.h"
-#include "CrystalNodeItem.h"
-#include "PinItem.h"
+#include <QPixmap>
+#include <QString>
+
 #include <nsxlib/geometry/ConvexHull.h>
-#include <boost/shared_ptr.hpp>
+
+class QGraphicsPixmapItem;
+class QGraphicsTextItem;
+class QWidget;
+
+namespace {
+template <typename D>
+class ConvexHull;
+}
+
+class CalibrateDistanceDialog;
+class CrystalNodeItem;
+class PinItem;
+class RulerItem;
 
 class CrystalScene : public QGraphicsScene {
     Q_OBJECT
@@ -25,7 +36,7 @@ public:
     };
 
     //! Constructors
-    CrystalScene(nsx::Geometry::ConvexHull<double>* hull,QWidget *parent = 0);
+    CrystalScene(nsx::ConvexHull<double>* hull,QWidget *parent = 0);
     ~CrystalScene();
     //! Mouse interactions
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
@@ -69,7 +80,7 @@ private:
     CrystalNodeItem* _current;
     PinItem* _pin;
     bool _pinCreated;
-    nsx::Geometry::ConvexHull<double>* _hull;
+    nsx::ConvexHull<double>* _hull;
     QPixmap _pix;
     QGraphicsTextItem* _text;
 };

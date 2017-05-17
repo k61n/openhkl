@@ -1,20 +1,20 @@
-#include <iostream>
+#include <cmath>
 
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneHoverEvent>
 #include <QtDebug>
-#include <cmath>
+
+#include <nsxlib/data/IData.h>
 
 #include "items/CutterGraphicsItem.h"
 
-CutterGraphicsItem::CutterGraphicsItem(std::shared_ptr<nsx::Data::DataSet> data)
+CutterGraphicsItem::CutterGraphicsItem(std::shared_ptr<nsx::DataSet> data)
 : PlottableGraphicsItem(nullptr,true,true),
   _data(data),
   _from(0,0),
   _to(0,0)
 {
-
     setZValue(1);
 
     _pen.setWidth(1);
@@ -44,7 +44,7 @@ void CutterGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     }
 }
 
-std::shared_ptr<nsx::Data::DataSet> CutterGraphicsItem::getData()
+std::shared_ptr<nsx::DataSet> CutterGraphicsItem::getData()
 {
     return _data;
 }

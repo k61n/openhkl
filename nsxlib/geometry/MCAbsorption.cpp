@@ -35,7 +35,7 @@ double MCAbsorption::run(unsigned int nIterations, const Eigen::Vector3d& outV, 
     TrianglesList faces=_sample->createFaceCache(sampleOrientation);
 
     if (faces.empty())
-        throw nsx::Kernel::Error<MCAbsorption>("No sample defined.");
+        throw Error<MCAbsorption>("No sample defined.");
 
     Eigen::Vector3d dir(0,1,0);
 

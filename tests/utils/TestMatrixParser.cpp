@@ -1,7 +1,6 @@
 #define BOOST_TEST_MODULE "Test Matrix Parser"
 #define BOOST_TEST_DYN_LINK
 
-#include <iostream>
 #include <string>
 
 #include <boost/test/unit_test.hpp>
@@ -11,8 +10,7 @@
 #include <nsxlib/utils/Enums.h>
 #include <nsxlib/utils/MatrixParser.h>
 
-using nsx::Utils::MatrixParser;
-using nsx::Instrument::DataOrder;
+using namespace nsx;
 
 BOOST_AUTO_TEST_CASE(Test_MatrixParser)
 {

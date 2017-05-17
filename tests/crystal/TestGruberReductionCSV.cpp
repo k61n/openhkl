@@ -1,41 +1,29 @@
 #define BOOST_TEST_MODULE "Test GruberReductionCSV"
 #define BOOST_TEST_DYN_LINK
 
-#include <nsxlib/instrument/FlatDetector.h>
-#include <nsxlib/crystal/Peak3D.h>
-#include <nsxlib/instrument/Sample.h>
-#include <boost/test/unit_test.hpp>
-#include <nsxlib/utils/Units.h>
-#include <Eigen/Dense>
-#include <Eigen/QR>
+#include <fstream>
+#include <string>
+#include <utility>
 #include <vector>
-#include <nsxlib/instrument/Gonio.h>
+
+#include <boost/test/unit_test.hpp>
+
+#include <Eigen/Dense>
+
+#include <nsxlib/crystal/GruberReduction.h>
+#include <nsxlib/crystal/NiggliReduction.h>
+#include <nsxlib/crystal/SpaceGroup.h>
+#include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/instrument/Component.h>
 #include <nsxlib/instrument/ComponentState.h>
-#include <nsxlib/instrument/Source.h>
-#include <nsxlib/instrument/Monochromator.h>
-#include <nsxlib/crystal/NiggliReduction.h>
-#include <nsxlib/crystal/GruberReduction.h>
-#include <nsxlib/crystal/UnitCell.h>
-#include <nsxlib/crystal/SpaceGroup.h>
-
-#include <memory>
-#include <vector>
-#include <utility>
-#include <fstream>
-#include <random>
-#include <cmath>
-
 #include <nsxlib/utils/CSV.h>
+#include <nsxlib/utils/Units.h>
 
 using namespace std;
-using namespace nsx::Crystal;
-using namespace nsx::Units;
-using namespace nsx::Utils;
+using namespace nsx;
 
 const double niggli_tolerance = 1e-9;
 const double gruber_tolerance = 1e-5;
-// const double tolerance = 1e-4;
 
 int run_test()
 {
@@ -65,6 +53,7 @@ int run_test()
     csv_reader.getRow(database);
 
     while ( !database.eof()) {
+
         vector<string> row =  csv_reader.getRow(database);
 
         if ( row.size() < 8)
@@ -84,8 +73,6 @@ int run_test()
             bravais = SpaceGroup(symbol).getBravaisTypeSymbol();
         }
         catch(...) {
-            //BOOST_FAIL("unknown space group");
-            //std::cout << "unknown space group: " << symbol << std::endl;
             continue; // unknown space group
         }
 
@@ -97,20 +84,12 @@ int run_test()
 
         cell.setParams(a, b, c, alpha, beta, gamma);
 
-        // randomly transform the cell so that it is not in a normal form
-        //Eigen::Matrix3d P = random_orthogonal_matrix();
-        //niggliCell.transform(P);
-        //gruberCell.transform(P);
-
         // perform reduction using NiggliReduction class
         Eigen::Matrix3d niggli_g, niggli_P;
         NiggliReduction niggli(niggliCell.getMetricTensor(), niggli_tolerance);
         niggli.reduce(niggli_g, niggli_P);
         niggliCell.transform(niggli_P);
         gruberCell.transform(niggli_P);
-
-        // testing
-        // gruberCell.transform(niggli_P);
 
         // perform reduction using GruberReduction class
         Eigen::Matrix3d gruber_g, gruber_P;
@@ -125,31 +104,12 @@ int run_test()
         }
         catch (std::exception& e) {
             BOOST_CHECK(false);
-            std::cout << e.what() << std::endl;
         }
 
         ++counts[condition];
 
-
         gruberCell.setBravaisType(bravaisType);
         gruberCell.setLatticeCentring(centering);
-        //gruberCell.transform(gruber_P);
-        //gruber_g = gruberCell.getMetricTensor();
-
-        // check agreement between niggli and gruber
-//        BOOST_CHECK_CLOSE(niggliCell.getA(), gruberCell.getA(), tolerance);
-//        BOOST_CHECK_CLOSE(niggliCell.getB(), gruberCell.getB(), tolerance);
-//        BOOST_CHECK_CLOSE(niggliCell.getC(), gruberCell.getC(), tolerance);
-//        BOOST_CHECK_CLOSE(niggliCell.getAlpha(), gruberCell.getAlpha(), tolerance);
-//        BOOST_CHECK_CLOSE(niggliCell.getBeta(), gruberCell.getBeta(), tolerance);
-//        BOOST_CHECK_CLOSE(niggliCell.getGamma(), gruberCell.getGamma(), tolerance);
-
-        std::cout << symbol << " "
-                  << a << " " << b << " " << c << " "
-                  << alpha/deg << " " << beta/deg << " " << gamma/deg << " "
-                  << bravais << " " << gruberCell.getBravaisTypeSymbol() << " "
-                  << condition << " "
-                  << correct*100.0/total << std::endl;
 
         if ( gruberCell.getBravaisTypeSymbol() == bravais) {
             ++correct;
@@ -166,20 +126,9 @@ int run_test()
             ++failures[condition];
         }
 
-//        BOOST_CHECK_CLOSE(gruberCell.getA(), a, tolerance);
-//        BOOST_CHECK_CLOSE(gruberCell.getB(), b, tolerance);
-//        BOOST_CHECK_CLOSE(gruberCell.getC(), c, tolerance);
-//        BOOST_CHECK_CLOSE(gruberCell.getAlpha(), alpha, tolerance);
-//        BOOST_CHECK_CLOSE(gruberCell.getBeta(), beta, tolerance);
-//        BOOST_CHECK_CLOSE(gruberCell.getGamma(), gamma, tolerance);
         BOOST_CHECK(gruberCell.getBravaisTypeSymbol()[0] == bravais[0]);
         BOOST_CHECK(gruberCell.getBravaisTypeSymbol()[1] == bravais[1]);
     }
-
-    std::cout<< correct * 100.0 / total << "% correct out of " << total << " total" << std::endl;
-
-    for (int i = 1; i < failures.size(); ++i)
-        std::cout << i << " " << failures[i] << " " << counts[i] << std::endl;
 
     return 0;
 }

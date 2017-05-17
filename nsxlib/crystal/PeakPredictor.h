@@ -47,11 +47,11 @@ class ProgressHandler;
 class PeakPredictor {
 public:
 
-    void addPredictedPeaks(std::shared_ptr<nsx::Data::DataSet> data);
+    void addPredictedPeaks(std::shared_ptr<DataSet> data);
 
 public:
     double _dmin, _dmax, _searchRadius, _peakScale, _bkgScale;
-    std::shared_ptr<nsx::Utils::ProgressHandler> _handler;
+    std::shared_ptr<ProgressHandler> _handler;
 };
 
 } // end namespace nsx

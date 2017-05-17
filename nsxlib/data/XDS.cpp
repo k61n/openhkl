@@ -44,7 +44,6 @@
 
 using string = std::string;
 using str_vector = std::vector<std::string>;
-using Peak3D = nsx::Crystal::Peak3D;
 
 static const string space = "    ";
 static const str_vector merged_records = {"H", "K", "L", "IOBS", "SIGMA(IOBS)"};
@@ -151,7 +150,7 @@ XDS::RecordList XDS::getMergedRecords() const
     const double dmin = 0.0;
     const double dmax = 200.0;
     const size_t num_shells = 10;
-    nsx::Crystal::ResolutionShell res = {dmin, dmax, num_shells};
+    ResolutionShell res = {dmin, dmax, num_shells};
     RecordList records;
 
     if (_peaks.size() == 0) {
@@ -159,7 +158,7 @@ XDS::RecordList XDS::getMergedRecords() const
     }
 
     auto cell = _peaks[0]->getActiveUnitCell();
-    auto grp = nsx::Crystal::SpaceGroup(cell->getSpaceGroup());
+    auto grp = SpaceGroup(cell->getSpaceGroup());
 
     for (auto&& peak: _peaks) {
         if (cell != peak->getActiveUnitCell()) {
@@ -182,7 +181,7 @@ XDS::RecordList XDS::getMergedRecords() const
     }
 
     for (auto equiv: peak_equivs) {
-        nsx::Crystal::MergedPeak new_peak(grp, _friedel);
+        MergedPeak new_peak(grp, _friedel);
 
         for (auto peak: equiv) {
             // skip bad/masked peaks

@@ -2,36 +2,40 @@
 #define ABSORPTIONDIALOG_H
 
 #include <memory>
+#include <string>
+#include <utility>
+#include <vector>
 
 #include <QDialog>
-#include "CrystalScene.h"
+#include <QString>
 
-//Forwards
-namespace nsx
-{
-    namespace Instrument
-    {
-        class Experiment;
-        class RotAxis;
-    }
-}
 namespace Ui {
 class AbsorptionDialog;
 }
+
+namespace nsx
+{
+class Experiment;
+class RotAxis;
+template <typename T>
+class ConvexHull;
+}
+
+class CrystalScene;
 
 class AbsorptionDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit AbsorptionDialog(std::shared_ptr<nsx::Instrument::Experiment> experiment, QWidget *parent = nullptr);
+    explicit AbsorptionDialog(std::shared_ptr<nsx::Experiment> experiment, QWidget *parent = nullptr);
     const std::string& getMovieFilename() const;
     ~AbsorptionDialog();
 signals:
     //! Emitted when the image is changed in the movie
     void loadImage(QString image);
     void angleText(QString text);
-    void exportHull(const nsx::Geometry::ConvexHull<double>& hull);
+    void exportHull(const nsx::ConvexHull<double>& hull);
 public slots:
     void initializeSlider(int i);
 private slots:
@@ -41,9 +45,9 @@ private slots:
 private:
     Ui::AbsorptionDialog *ui;
     //! Link to the experiment
-    std::shared_ptr<nsx::Instrument::Experiment> _experiment;
+    std::shared_ptr<nsx::Experiment> _experiment;
     //! Rotation axis to collect movie
-    nsx::Instrument::RotAxis* _spindleAxis;
+    nsx::RotAxis* _spindleAxis;
     //! Set of Roatation angle and absolute fileName for jpg image
     std::vector<std::pair<double,std::string>> _imageList;
     //!Path of the file

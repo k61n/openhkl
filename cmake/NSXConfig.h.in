@@ -4,9 +4,7 @@
 #include <string>
 
 namespace nsx {
-    namespace Utils {
-            constexpr const char* g_resourcesDir = "@RESOURCES_DIR@";
-    }
+constexpr const char* g_resourcesDir = "@RESOURCES_DIR@";
 }
 
 

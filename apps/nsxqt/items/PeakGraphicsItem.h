@@ -9,17 +9,14 @@
 
 namespace nsx
 {
-namespace Crystal
-{
 class Peak3D;
 using sptrPeak3D = std::shared_ptr<Peak3D>;
-}
 }
 
 class QWidget;
 class SXPlot;
 
-using nsx::Crystal::sptrPeak3D;
+using namespace nsx;
 
 class PeakGraphicsItem : public PlottableGraphicsItem
 {
@@ -47,7 +44,7 @@ private:
         double a, b, u, v, alpha;
     };
 
-    static Ellipse calculateEllipse(const nsx::Geometry::IShape<double, 3>& shape, int frame);
+    static Ellipse calculateEllipse(const IShape<double, 3>& shape, int frame);
     static void drawEllipse(QPainter& painter, Ellipse ellipse);
 
     //! Pointer to the Peak3D object

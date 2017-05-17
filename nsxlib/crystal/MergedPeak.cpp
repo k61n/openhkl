@@ -180,7 +180,7 @@ double MergedPeak::d() const
     return _d;
 }
 
-const std::vector<nsx::Crystal::sptrPeak3D> &nsx::Crystal::MergedPeak::getPeaks() const
+const std::vector<sptrPeak3D> &MergedPeak::getPeaks() const
 {
     return _peaks;
 }

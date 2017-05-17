@@ -34,7 +34,7 @@
 
 namespace nsx {
 
-PeakIntegrator::PeakIntegrator(const nsx::Geometry::IntegrationRegion& region, const nsx::Data::DataSet& data):
+PeakIntegrator::PeakIntegrator(const IntegrationRegion& region, const DataSet& data):
     _blob(),
     _region(region),
     _lower(region.getBackground().getLower()),
@@ -108,7 +108,7 @@ PeakIntegrator::PeakIntegrator(const nsx::Geometry::IntegrationRegion& region, c
 
 void PeakIntegrator::step(const Eigen::MatrixXi& frame, size_t idx, const Eigen::MatrixXi& mask)
 {
-    using point_type = nsx::Geometry::IntegrationRegion::point_type;
+    using point_type = IntegrationRegion::point_type;
 
     if (idx < _data_start || idx > _data_end) {
         return;
@@ -320,7 +320,7 @@ double PeakIntegrator::getMeanBackground() const
     return _countsBkg.sum() / _pointsBkg.sum();
 }
 
-const Geometry::IntegrationRegion& PeakIntegrator::getRegion() const
+const IntegrationRegion& PeakIntegrator::getRegion() const
 {
     return _region;
 }

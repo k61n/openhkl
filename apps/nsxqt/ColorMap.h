@@ -32,13 +32,15 @@
 #ifndef COLORMAP_H
 #define COLORMAP_H
 
-#include <QImage>
-#include <QColor>
 #include <cmath>
+#include <string>
+#include <vector>
 
 #include <Eigen/Core>
-#include <array>
 
+#include <QImage>
+#include <QColor>
+#include <QRect>
 
 class ColorMap {
 public:

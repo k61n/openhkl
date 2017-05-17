@@ -39,45 +39,35 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include <memory>
-#include <map>
 
 #include <QPoint>
 #include <QStandardItem>
 #include <QStandardItemModel>
 #include <QTreeView>
 
+#include <nsxlib/data/PeakFinder.h>
 #include <nsxlib/instrument/Experiment.h>
 #include <nsxlib/utils/ProgressHandler.h>
-#include <nsxlib/data/PeakFinder.h>
 #include <nsxlib/utils/Types.h>
-
-using namespace nsx::Instrument;
 
 class ExperimentItem;
 
 namespace nsx {
-namespace Data {
-    class DataSet;
+class DataSet;
 }
-}
-
-using nsx::Crystal::sptrUnitCell;
-using nsx::Crystal::sptrPeak3D;
-
 
 class SessionModel : public QStandardItemModel {
     Q_OBJECT
 public:
-    using sptrUnitCell = nsx::Crystal::sptrUnitCell;
-    using sptrPeak3D = std::shared_ptr<nsx::Crystal::Peak3D>;
+    using sptrUnitCell = nsx::sptrUnitCell;
+    using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 
     explicit SessionModel();
     ~SessionModel();
 
-    std::shared_ptr<nsx::Instrument::Experiment> addExperiment(const std::string& experimentName, const std::string& instrumentName);
-    std::vector<std::shared_ptr<nsx::Data::DataSet>> getSelectedNumors() const;
-    std::vector<std::shared_ptr<nsx::Data::DataSet>> getSelectedNumors(ExperimentItem* item) const;
+    std::shared_ptr<nsx::Experiment> addExperiment(const std::string& experimentName, const std::string& instrumentName);
+    std::vector<std::shared_ptr<nsx::DataSet>> getSelectedNumors() const;
+    std::vector<std::shared_ptr<nsx::DataSet>> getSelectedNumors(ExperimentItem* item) const;
 
     //! Convert session into JSON object
     QJsonObject toJsonObject();
@@ -92,7 +82,7 @@ public:
     void writeLog();
     bool writeNewShellX(std::string filename, const std::vector<sptrPeak3D>& peaks);
     bool writeStatistics(std::string filename,
-                         const std::vector<nsx::Crystal::sptrPeak3D> &peaks,
+                         const std::vector<nsx::sptrPeak3D> &peaks,
                          double dmin, double dmax, unsigned int num_shells, bool friedel);
 
     bool writeXDS(std::string filename, const std::vector<sptrPeak3D>& peaks, bool merge, bool friedel);
@@ -101,7 +91,7 @@ public:
     void autoAssignUnitCell();
 
 signals:
-    void plotData(std::shared_ptr<nsx::Data::DataSet>);
+    void plotData(std::shared_ptr<nsx::DataSet>);
     void inspectWidget(QWidget*);
     void updatePeaks();
     void updateCellParameters(sptrUnitCell);
@@ -125,11 +115,9 @@ public slots:
 private:
     //! Filename for the save/load feature
     QString _filename;
-    std::shared_ptr<nsx::Utils::ProgressHandler> _progressHandler;
-    std::shared_ptr<nsx::Data::PeakFinder> _peakFinder;
+    std::shared_ptr<nsx::ProgressHandler> _progressHandler;
+    std::shared_ptr<nsx::PeakFinder> _peakFinder;
     std::string _colormap;
-
-    //std::map<std::string, std::shared_ptr<nsx::Instrument::Experiment>> _experiments;
 };
 
 #endif // NSXTOOL_SESSIONMODEL_H_

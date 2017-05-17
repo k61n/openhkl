@@ -2,35 +2,33 @@
 #define NUMORITEM_H
 
 #include <string>
-#include <memory>
+
+#include <QJsonObject>
+
 #include "InspectableTreeItem.h"
 
-class QWidget;
 namespace nsx
 {
-    namespace Instrument
-    {
-       class Experiment;
-    }
-    namespace Data{
-        class DataSet;
-    }
+class DataSet;
+class Experiment;
 }
+
+class QWidget;
 
 class NumorItem : public InspectableTreeItem
 {
 public:
-    explicit NumorItem(std::shared_ptr<Experiment> experiment, std::shared_ptr<nsx::Data::DataSet> data);
+    explicit NumorItem(std::shared_ptr<Experiment> experiment, std::shared_ptr<nsx::DataSet> data);
     ~NumorItem();
     QWidget* inspectItem() override;
-    std::shared_ptr<nsx::Data::DataSet> getData();
+    std::shared_ptr<nsx::DataSet> getData();
 
     QJsonObject toJson() override;
     void fromJson(const QJsonObject& obj) override;
     void exportHDF5(const std::string& filename) const;
 
 private:
-    std::shared_ptr<nsx::Data::DataSet> _data;
+    std::shared_ptr<nsx::DataSet> _data;
 };
 
 #endif // NUMORITEM_H

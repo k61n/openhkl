@@ -36,14 +36,18 @@
 #ifndef PEAKFITDIALOG_H
 #define PEAKFITDIALOG_H
 
-#include <QDialog>
 #include <memory>
-#include <nsxlib/crystal/Peak3D.h>
-#include <nsxlib/crystal/PeakFit.h>
+
 #include <Eigen/Dense>
 
-class QGraphicsScene;
+#include <QDialog>
+
+#include <nsxlib/crystal/Peak3D.h>
+#include <nsxlib/crystal/PeakFit.h>
+
 class QCustomPlot;
+class QGraphicsPixmapItem;
+class QGraphicsScene;
 
 class SessionModel;
 
@@ -74,8 +78,8 @@ private slots:
 private:
     Ui::PeakFitDialog *ui;
     SessionModel* _session;
-    nsx::Crystal::sptrPeak3D _peak;
-    std::unique_ptr<nsx::Crystal::PeakFit> _peakFit;
+    nsx::sptrPeak3D _peak;
+    std::unique_ptr<nsx::PeakFit> _peakFit;
 
     QGraphicsScene* _peakScene;
     QGraphicsScene* _fitScene;

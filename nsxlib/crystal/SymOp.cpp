@@ -14,11 +14,11 @@ namespace nsx {
 SymOp::SymOp(std::string generator)
 {
     // The parser for generator expression
-    nsx::Utils::AffineTransformParser<std::string::iterator> parser;
+    AffineTransformParser<std::string::iterator> parser;
 
     bool match=qi::phrase_parse(generator.begin(),generator.end(),parser,qi::blank, _matrix);
     if (!match)
-        throw nsx::Kernel::Error<SymOp>("Invalid generator expression: "+ generator);
+        throw Error<SymOp>("Invalid generator expression: "+ generator);
 }
 
 SymOp::SymOp(const affineTransformation& symmetryOperation) : _matrix(symmetryOperation)
@@ -113,7 +113,7 @@ std::string SymOp::getJonesSymbol() const
             if (_matrix(i,3) > 0)
                 os << "+";
             long num, den;
-            Utils::doubleToFraction(_matrix(i,3), 100, num, den);
+            doubleToFraction(_matrix(i,3), 100, num, den);
             os << num << "/" << den;
         }
 
@@ -169,7 +169,7 @@ int SymOp::getAxisOrder() const
     }
 
     if (order == 0)
-        throw Kernel::Error<SymOp>("Invalid axis order.");
+        throw Error<SymOp>("Invalid axis order.");
 
     return order;
 }

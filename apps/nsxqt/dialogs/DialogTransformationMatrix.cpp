@@ -1,9 +1,9 @@
+#include <nsxlib/crystal/UnitCell.h>
+
 #include "DialogTransformationMatrix.h"
 #include "ui_TransformationMatrixDialog.h"
 
-#include <nsxlib/crystal/UnitCell.h>
-
-DialogTransformationmatrix::DialogTransformationmatrix(sptrUnitCell unitCell, QWidget *parent) :
+DialogTransformationmatrix::DialogTransformationmatrix(nsx::sptrUnitCell unitCell, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DialogTransformationmatrix),
     _unitCell(unitCell)

@@ -1,4 +1,5 @@
-#include <iostream>
+#include "ui_DialogRefineUnitCell.h"
+
 #include <sstream>
 
 #include <QtDebug>
@@ -6,24 +7,22 @@
 #include <QLayout>
 #include <QStatusBar>
 
-#include "DialogRefineUnitCell.h"
-#include "ui_DialogRefineUnitCell.h"
-#include <nsxlib/instrument/Experiment.h>
-#include <nsxlib/instrument/Diffractometer.h>
-#include <nsxlib/instrument/Sample.h>
-#include <nsxlib/instrument/Detector.h>
-#include <nsxlib/instrument/Source.h>
-#include <nsxlib/instrument/Gonio.h>
-#include <nsxlib/instrument/Axis.h>
-#include <nsxlib/utils/Units.h>
 #include <nsxlib/data/IData.h>
-#include "DoubleTableItemDelegate.h"
+#include <nsxlib/instrument/Axis.h>
+#include <nsxlib/instrument/Detector.h>
+#include <nsxlib/instrument/Diffractometer.h>
+#include <nsxlib/instrument/Experiment.h>
+#include <nsxlib/instrument/Gonio.h>
 #include <nsxlib/instrument/Monochromator.h>
+#include <nsxlib/instrument/Sample.h>
+#include <nsxlib/instrument/Source.h>
 #include <nsxlib/utils/MinimizerGSL.h>
+#include <nsxlib/utils/Units.h>
 
-using nsx::Utils::MinimizerGSL;
+#include "DialogRefineUnitCell.h"
+#include "DoubleTableItemDelegate.h"
 
-DialogRefineUnitCell::DialogRefineUnitCell(std::shared_ptr<nsx::Instrument::Experiment> experiment,
+DialogRefineUnitCell::DialogRefineUnitCell(std::shared_ptr<nsx::Experiment> experiment,
                                            sptrUnitCell unitCell,
                                            std::vector<sptrPeak3D> peaks,
                                            QWidget *parent):

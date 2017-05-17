@@ -53,15 +53,9 @@
 #include "../utils/Parser.h"
 #include "../utils/EigenToVector.h"
 
-
 using std::ifstream;
-using nsx::Utils::eigenToVector;
-using nsx::Instrument::ComponentState;
 
 namespace nsx {
-
-using nsx::Instrument::Diffractometer;
-using nsx::Instrument::Monochromator;
 
 IDataReader* RawDataReader::create(const std::string &filename, const std::shared_ptr<Diffractometer>& diffractometer) {
     std::vector<std::string> filenames;
@@ -136,7 +130,7 @@ RawDataReader::RawDataReader(const std::vector<std::string>& filenames, const st
     }
 
     // Use natural units internally (rad)
-    dm*=nsx::Units::deg;
+    dm*=deg;
 
     for (unsigned int i=0;i<_nFrames;++i) {
         _states[i].sample = ComponentState(_diffractometer->getSample().get(), eigenToVector(dm.col(i)));

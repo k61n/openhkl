@@ -10,14 +10,13 @@
 #include <QWidget>
 #include <QtDebug>
 
-#include <nsxlib/geometry/AABB.h>
 #include <nsxlib/data/IData.h>
-#include <nsxlib/crystal/Peak3D.h>
+#include <nsxlib/geometry/AABB.h>
 
 #include "DetectorScene.h"
 #include "items/MaskGraphicsItem.h"
 
-MaskGraphicsItem::MaskGraphicsItem(std::shared_ptr<nsx::Data::DataSet> data, AABB<double, 3>* aabb)
+MaskGraphicsItem::MaskGraphicsItem(std::shared_ptr<nsx::DataSet> data, nsx::AABB<double, 3>* aabb)
 : SXGraphicsItem(nullptr,true,true),
   _data(data),
   _aabb(aabb),
@@ -30,8 +29,6 @@ MaskGraphicsItem::MaskGraphicsItem(std::shared_ptr<nsx::Data::DataSet> data, AAB
     _text=new QGraphicsTextItem(this);
     _text->setFlag(QGraphicsItem::ItemIgnoresTransformations);
     _text->setParentItem(this);
-
-
 }
 
 MaskGraphicsItem::~MaskGraphicsItem()
@@ -84,7 +81,7 @@ void MaskGraphicsItem::setTo(const QPointF& pos)
     updateAABB();
 }
 
-AABB<double,3>* MaskGraphicsItem::getAABB()
+nsx::AABB<double,3>* MaskGraphicsItem::getAABB()
 {
     return _aabb;
 }

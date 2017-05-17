@@ -32,7 +32,7 @@ CylindricalDetector::CylindricalDetector(const std::string& name) : MonoDetector
 
 CylindricalDetector::CylindricalDetector(const proptree::ptree& node) : MonoDetector(node)
 {
-    Units::UnitsManager* um=nsx::Units::UnitsManager::Instance();
+    UnitsManager* um=UnitsManager::Instance();
 
     // Set the detector angular width from the property tree node
     const property_tree::ptree& angularWidthNode = node.get_child("angular_width");

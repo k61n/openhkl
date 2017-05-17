@@ -3,7 +3,6 @@
 
 #include <QWidget>
 
-
 namespace Ui {
 class SamplePropertyWidget;
 }

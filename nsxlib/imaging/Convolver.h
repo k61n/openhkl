@@ -24,15 +24,15 @@ public:
     Convolver();
 
     // kernel must be padded so that dimensions match dimensions of image
-    Convolver(const nsx::Types::RealMatrix& kernel);
+    Convolver(const RealMatrix& kernel);
 
     ~Convolver();
 
     void reset();
-    void setKernel(const nsx::Types::RealMatrix& kernel);
+    void setKernel(const RealMatrix& kernel);
 
     // throws exception if image dimensions do not match kernel
-    nsx::Types::RealMatrix apply(const nsx::Types::RealMatrix& image);
+    RealMatrix apply(const RealMatrix& image);
 
 private:
     int _rows, _cols, _halfCols;

@@ -11,28 +11,22 @@
 #include <QStack>
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
-#include <memory>
-#include <nsxlib/crystal/UnitCell.h>
+
 #include <nsxlib/crystal/Indexer.h>
 #include <nsxlib/crystal/PeakCalc.h>
+#include <nsxlib/crystal/UnitCell.h>
+
 #include "items/PeakCalcGraphicsItem.h"
 
 #include "ColorMap.h"
 
-// Forward declarations
-
 namespace nsx
 {
-namespace Data
-{
 class DataSet;
-}
-namespace Crystal
-{
 class Peak3D;
 using sptrPeak3D = std::shared_ptr<Peak3D>;
 }
-}
+
 class QImage;
 class QGraphicsSceneWheelEvent;
 class PeakGraphicsItem;
@@ -45,7 +39,7 @@ class SXGraphicsItem;
 // optimize cache hit.
 typedef Eigen::Matrix<int,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> rowMatrix;
 
-using nsx::Crystal::sptrPeak3D;
+using nsx::sptrPeak3D;
 
 //! Master Scene containing the pixmap of the detector counts
 //! and overlayed graphics items (peaks, data cutters, masks ...)
@@ -58,11 +52,10 @@ public:
     //! Which mode is the cursor diplaying
     enum CURSORMODE {THETA=0, GAMMA=1, DSPACING=2, PIXEL=3, HKL=4};
     explicit DetectorScene(QObject *parent = 0);
-    std::shared_ptr<nsx::Data::DataSet> getData();
+    std::shared_ptr<nsx::DataSet> getData();
     const rowMatrix& getCurrentFrame() const;
     void setLogarithmic(bool checked);
     void setColorMap(const std::string& name);
-
 
 signals:
      //! Signal emitted for all changes of the image
@@ -79,12 +72,13 @@ protected:
 public slots:
     void resetScene();
     // To be called to update detector image
-    void setData(const std::shared_ptr<nsx::Data::DataSet>&, size_t frame);
-    void setData(const std::shared_ptr<nsx::Data::DataSet>&);
+    void setData(const std::shared_ptr<nsx::DataSet>&, size_t frame);
+    void setData(const std::shared_ptr<nsx::DataSet>&);
     void changeFrame(size_t frame = 0);
     void setMaxIntensity(int);
+
     PeakGraphicsItem* findPeakGraphicsItem(const sptrPeak3D& peak);
-//    void setPeakIndex(sptrPeak3D peak,const Eigen::Vector3d& index);
+
     void updatePeaks();
     void updatePeakCalcs();
     void redrawImage();
@@ -108,7 +102,7 @@ private:
     //! Create the text of the tooltip depending on Scene Mode.
     void createToolTipText(QGraphicsSceneMouseEvent*);
 
-    std::shared_ptr<nsx::Data::DataSet> _currentData;
+    std::shared_ptr<nsx::DataSet> _currentData;
     unsigned long _currentFrameIndex;
     int _currentIntensity;
     rowMatrix _currentFrame;
@@ -130,8 +124,8 @@ private:
     std::vector<PeakCalcGraphicsItem*> _peakCalcs;
     QList<MaskGraphicsItem*> _masks;
     SXGraphicsItem* _lastClickedGI;
-    std::unique_ptr<nsx::Crystal::Indexer> _indexer;
-    std::vector<nsx::Crystal::PeakCalc> _precalculatedPeaks;
+    std::unique_ptr<nsx::Indexer> _indexer;
+    std::vector<nsx::PeakCalc> _precalculatedPeaks;
 
     bool _showPeakCalcs;
     bool _logarithmic;
