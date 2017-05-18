@@ -26,6 +26,7 @@ option(NSX_VALGRIND "Run tests with valgrind" OFF)
 option(NSX_SANITIZE "Compile with clang's -fsanitize (must also set NSX_SANITIZER variable)" OFF)
 option(NSX_TIDY "Add clang-tidy custom target" OFF)
 option(NSX_PYTHON "Generate Python bindings" ON)
+option(NSX_PYTHON3 "Force Python 3" ON)
 
 ###########################################################################
 # Scripts controlling build setup and dependencies

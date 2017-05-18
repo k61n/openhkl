@@ -50,8 +50,14 @@ endif()
 
 if(NSX_PYTHON)
   # python-dev and interpreter
-  find_package(PythonLibs REQUIRED)
+  if (NSX_PYTHON3)
+    set(Python_ADDITIONAL_VERSIONS 3.7 3.6 3.5 3.4)
+  else()
+    set(Python_ADDITIONAL_VERSIONS 2.7)
+  endif()
+
   find_package(PythonInterp REQUIRED)
+  find_package(PythonLibs REQUIRED)
 
   # swig
   find_package(SWIG REQUIRED)

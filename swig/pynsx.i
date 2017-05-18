@@ -57,12 +57,12 @@ namespace property_tree=boost::property_tree;
 #include "utils/MinimizerGSL.h"
 #include "utils/EigenToVector.h"
 #include "utils/Types.h"
-#include "utils/ComplexParser.h"
+//#include "utils/ComplexParser.h"
 #include "utils/System.h"
 #include "utils/CSV.h"
 #include "utils/Enums.h"
 #include "utils/Units.h"
-#include "utils/LatticeConstraintParser.h"
+//#include "utils/LatticeConstraintParser.h"
 
 #include "utils/DoubleToFraction.h"
 #include "utils/Gaussian.h"
@@ -302,7 +302,8 @@ using namespace nsx;
 %eigen_typemaps(Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>)
 %eigen_typemaps(Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic>)
 
-%include <boost/property_tree/ptree.hpp>
+ //%include <boost/property_tree/ptree.hpp>
+namespace boost { namespace property_tree {} }
 
 %include "instrument/Axis.h"
 %include "instrument/RotAxis.h"
@@ -403,7 +404,7 @@ namespace nsx {
 %include "utils/MinimizerGSL.h"
 %include "utils/EigenToVector.h"
 %include "utils/Types.h"
-%include "utils/ComplexParser.h"
+ //%include "utils/ComplexParser.h"
 %include "utils/System.h"
 %include "utils/CSV.h"
 %include "utils/Enums.h"
