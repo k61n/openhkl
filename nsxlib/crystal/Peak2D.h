@@ -32,11 +32,11 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef NSXTOOL_PEAK2D_H_
-#define NSXTOOL_PEAK2D_H_
+#ifndef NSXLIB_PEAK2D_H
+#define NSXLIB_PEAK2D_H
 
 namespace nsx {
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_PEAK2D_H_ */
+#endif // NSXLIB_PEAK2D_H

@@ -1,5 +1,5 @@
-#ifndef DIALOGEXPERIMENT_H
-#define DIALOGEXPERIMENT_H
+#ifndef NSXQT_DIALOGEXPERIMENT_H
+#define NSXQT_DIALOGEXPERIMENT_H
 
 #include <QDialog>
 
@@ -25,4 +25,4 @@ private:
     Ui::DialogExperiment *ui;
 };
 
-#endif // DIALOGEXPERIMENT_H
+#endif // NSXQT_DIALOGEXPERIMENT_H

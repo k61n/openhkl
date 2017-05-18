@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef NSXTOOL_BASIS_H_
-#define NSXTOOL_BASIS_H_
+#ifndef NSXLIB_BASIS_H
+#define NSXLIB_BASIS_H
 
 #include <iostream>
 #include <memory>
@@ -215,4 +215,4 @@ protected:
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_BASIS_H_ */
+#endif // NSXLIB_BASIS_H

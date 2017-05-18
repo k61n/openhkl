@@ -1,5 +1,5 @@
-#ifndef ABSORPTIONWIDGET_H
-#define ABSORPTIONWIDGET_H
+#ifndef NSXQT_ABSORPTIONWIDGET_H
+#define NSXQT_ABSORPTIONWIDGET_H
 
 #include <string>
 #include <utility>
@@ -44,4 +44,4 @@ private slots:
 
 };
 
-#endif // ABSORPTIONWIDGET_H
+#endif // NSXQT_ABSORPTIONWIDGET_H

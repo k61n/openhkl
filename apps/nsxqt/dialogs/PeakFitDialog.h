@@ -33,8 +33,8 @@
  *
  */
 
-#ifndef PEAKFITDIALOG_H
-#define PEAKFITDIALOG_H
+#ifndef NSXQT_PEAKFITDIALOG_H
+#define NSXQT_PEAKFITDIALOG_H
 
 #include <memory>
 
@@ -99,4 +99,4 @@ private:
     Eigen::VectorXd _bestParams;
 };
 
-#endif // PEAKFITDIALOG_H
+#endif // NSXQT_PEAKFITDIALOG_H

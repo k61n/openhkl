@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef NSXTOOL_DATAREADERFACTORY_H_
-#define NSXTOOL_DATAREADERFACTORY_H_
+#ifndef NSXLIB_DATAREADERFACTORY_H
+#define NSXLIB_DATAREADERFACTORY_H
 
 #include <string>
 
@@ -58,4 +58,4 @@ private:
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_READERFACTORY_H_ */
+#endif // NSXLIB_DATAREADERFACTORY_H

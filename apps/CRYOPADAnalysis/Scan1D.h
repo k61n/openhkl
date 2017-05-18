@@ -26,10 +26,11 @@
  *
  */
 
-#ifndef NSXTOOL_SCAN1D_H_
-#define NSXTOOL_SCAN1D_H_
-#include <vector>
+#ifndef CRYOPADANALYSIS_SCAN1D_H
+#define CRYOPADANALYSIS_SCAN1D_H
+
 #include <string>
+#include <vector>
 
 namespace nsx
 {
@@ -70,4 +71,4 @@ private:
 
 } // end namespace nsx
 
-#endif // NSXTOOL_SCAN1D_H_
+#endif // CRYOPADANALYSIS_SCAN1D_H

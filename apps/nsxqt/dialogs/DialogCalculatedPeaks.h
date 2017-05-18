@@ -1,5 +1,5 @@
-#ifndef DIALOGCALCULATEDPEAKS_H
-#define DIALOGCALCULATEDPEAKS_H
+#ifndef NSXQT_DIALOGCALCULATEDPEAKS_H
+#define NSXQT_DIALOGCALCULATEDPEAKS_H
 
 #include <QDialog>
 
@@ -23,4 +23,4 @@ private:
     Ui::DialogCalculatedPeaks *ui;
 };
 
-#endif // DIALOGCALCULATEDPEAKS_H
+#endif // NSXQT_DIALOGCALCULATEDPEAKS_H

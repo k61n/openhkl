@@ -32,8 +32,8 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-#ifndef NSXTOOL_XDS_H_
-#define NSXTOOL_XDS_H_
+#ifndef NSXLIB_XDS_H
+#define NSXLIB_XDS_H
 
 #include <iosfwd>
 #include <string>
@@ -83,4 +83,4 @@ private:
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_XDS_H_ */
+#endif // NSXLIB_XDS_H

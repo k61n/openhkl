@@ -27,12 +27,12 @@
  *
  */
 
-#ifndef NSXTOOL_LATTICESOLUTION_H_
-#define NSXTOOL_LATTICESOLUTION_H_
-
-#include <Eigen/Dense>
+#ifndef NSXLIB_LATTICESOLUTION_H
+#define NSXLIB_LATTICESOLUTION_H
 
 #include <memory>
+
+#include <Eigen/Dense>
 
 namespace nsx {
 
@@ -76,4 +76,4 @@ struct LatticeSolution
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_LATTICESOLUTION_H_ */
+#endif // NSXLIB_LATTICESOLUTION_H

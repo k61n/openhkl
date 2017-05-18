@@ -1,5 +1,5 @@
-#ifndef INSTRUMENTITEM_H
-#define INSTRUMENTITEM_H
+#ifndef NSXQT_INSTRUMENTITEM_H
+#define NSXQT_INSTRUMENTITEM_H
 
 #include <QJsonObject>
 
@@ -33,4 +33,4 @@ private:
     SourceItem* _source;
 };
 
-#endif // INSTRUMENTITEM_H
+#endif // NSXQT_INSTRUMENTITEM_H

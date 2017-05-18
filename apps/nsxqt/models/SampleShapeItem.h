@@ -1,5 +1,5 @@
-#ifndef SAMPLESHAPEITEM_H
-#define SAMPLESHAPEITEM_H
+#ifndef NSXQT_SAMPLESHAPEITEM_H
+#define NSXQT_SAMPLESHAPEITEM_H
 
 #include "InspectableTreeItem.h"
 
@@ -15,4 +15,4 @@ public:
     QWidget* inspectItem();
 };
 
-#endif // SAMPLESHAPEITEM_H
+#endif // NSXQT_SAMPLESHAPEITEM_H

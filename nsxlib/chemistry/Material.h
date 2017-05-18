@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef NSXTOOL_MATERIAL_H_
-#define NSXTOOL_MATERIAL_H_
+#ifndef NSXLIB_MATERIAL_H
+#define NSXLIB_MATERIAL_H
 
 #include <map>
 #include <memory>
@@ -107,4 +107,4 @@ std::ostream& operator<<(std::ostream& os, const Material& material);
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_MATERIAL_H_ */
+#endif // NSXLIB_MATERIAL_H

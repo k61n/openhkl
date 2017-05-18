@@ -8,8 +8,8 @@
 // Convolving with this kernel has the effect of taking the average value of the frame.
 
 
-#ifndef NSXTOOL_INCLUDE_CONSTANTKERNEL_H_
-#define NSXTOOL_INCLUDE_CONSTANTKERNEL_H_
+#ifndef NSXLIB_CONSTANTKERNEL_H
+#define NSXLIB_CONSTANTKERNEL_H
 
 #include "ConvolutionKernel.h"
 
@@ -39,4 +39,4 @@ private:
 
 } // end namespace nsx
 
-#endif // NSXTOOL_INCLUDED_ANNULARKERNEL_H_
+#endif // NSXLIB_CONSTANTKERNEL_H

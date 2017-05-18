@@ -1,8 +1,8 @@
 // author: Jonathan Fisher
 // j.fisher@fz-juelich.de
 
-#ifndef NSXTOOL_PROGRESSVIEW_H_
-#define NSXTOOL_PROGRESSVIEW_H_
+#ifndef NSXQT_PROGRESSVIEW_H
+#define NSXQT_PROGRESSVIEW_H
 
 #include <memory>
 
@@ -32,4 +32,4 @@ private:
 
 
 
-#endif
+#endif // NSXQT_PROGRESSVIEW_H

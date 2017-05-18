@@ -5,8 +5,8 @@
  *      Author: pellegrini
  */
 
-#ifndef UTILS_INCLUDE_RNG_H_
-#define UTILS_INCLUDE_RNG_H_
+#ifndef NSXLIB_RNG_H
+#define NSXLIB_RNG_H
 
 namespace nsx {
 
@@ -14,4 +14,4 @@ double xor128(void);
 
 } // end namespace nsx
 
-#endif /* UTILS_INCLUDE_RNG_H_ */
+#endif // NSXLIB_RNG_H

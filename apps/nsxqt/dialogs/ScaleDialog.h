@@ -1,8 +1,8 @@
 // author: Jonathan Fisher
 // j.fisher@fz-juelich.de
 
-#ifndef NSXTOOL_SCALEDIALOG_H_
-#define NSXTOOL_SCALEDIALOG_H_
+#ifndef NSXQT_SCALEDIALOG_H
+#define NSXQT_SCALEDIALOG_H
 
 #include <vector>
 
@@ -56,4 +56,4 @@ private:
 
     double _Rmerge, _Rmeas, _Rpim;
 };
-#endif // NSXTOOL_SCALEDIALOG_H_
+#endif // NSXQT_SCALEDIALOG_H

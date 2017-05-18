@@ -26,8 +26,10 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-#ifndef NSXTOOL_TRIANGLECACHE_H_
-#define NSXTOOL_TRIANGLECACHE_H_
+
+#ifndef NSXLIB_TRIANGLE_H
+#define NSXLIB_TRIANGLE_H
+
 #include <Eigen/Dense>
 
 namespace nsx {
@@ -64,4 +66,4 @@ struct Triangle
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_TRIANGLECACHE_H_ */
+#endif // NSXLIB_TRIANGLE_H

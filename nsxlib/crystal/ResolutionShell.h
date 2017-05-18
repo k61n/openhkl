@@ -33,8 +33,8 @@
  *
  */
 
-#ifndef NSXTOOL_RESOLUTIONSHELL_H_
-#define NSXTOOL_RESOLUTIONSHELL_H_
+#ifndef NSXLIB_RESOLUTIONSHELL_H
+#define NSXLIB_RESOLUTIONSHELL_H
 
 #include <memory>
 #include <vector>
@@ -63,4 +63,4 @@ private:
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_PEAKCALC_H_ */
+#endif // NSXLIB_RESOLUTIONSHELL_H

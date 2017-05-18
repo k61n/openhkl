@@ -1,5 +1,5 @@
-#ifndef PEAKCALCGRAPHICSITEM_H
-#define PEAKCALCGRAPHICSITEM_H
+#ifndef NSXQT_PEAKCALCGRAPHICSITEM_H
+#define NSXQT_PEAKCALCGRAPHICSITEM_H
 
 #include "SXGraphicsItem.h"
 
@@ -20,4 +20,4 @@ private:
       static bool _labelVisible;
 };
 
-#endif // PEAKCALCGRAPHICSITEM_H
+#endif // NSXQT_PEAKCALCGRAPHICSITEM_H

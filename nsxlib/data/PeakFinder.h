@@ -1,6 +1,6 @@
 
-#ifndef NSXTOOL_PEAKFINDER_H_
-#define NSXTOOL_PEAKFINDER_H_
+#ifndef NSXLIB_PEAKFINDER_H
+#define NSXLIB_PEAKFINDER_H
 
 #include <memory>
 
@@ -62,4 +62,4 @@ private:
 
 } // end namespace nsx
 
-#endif // PEAKFINDER_H
+#endif // NSXLIB_PEAKFINDER_H

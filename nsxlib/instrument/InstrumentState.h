@@ -24,8 +24,8 @@
  *
  */
 
-#ifndef NSXTOOL_INSTRUMENTSTATE_H_
-#define NSXTOOL_INSTRUMENTSTATE_H_
+#ifndef NSXLIB_INSTRUMENTSTATE_H
+#define NSXLIB_INSTRUMENTSTATE_H
 
 #include "ComponentState.h"
 
@@ -41,4 +41,4 @@ struct InstrumentState {
 
 } // end namespace nsx
 
-#endif // NSXTOOL_INSTRUMENTSTATE_H_
+#endif // NSXLIB_INSTRUMENTSTATE_H

@@ -29,8 +29,8 @@
  */
 
 
-#ifndef PEAKTABLEVIEW_H
-#define PEAKTABLEVIEW_H
+#ifndef NSXQT_PEAKTABLEVIEW_H
+#define NSXQT_PEAKTABLEVIEW_H
 
 #include <memory>
 #include <string>
@@ -116,4 +116,4 @@ private:
 
 };
 
-#endif // PEAKTABLEVIEW_H
+#endif // NSXQT_PEAKTABLEVIEW_H

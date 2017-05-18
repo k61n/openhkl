@@ -1,8 +1,8 @@
 // author: Jonathan Fisher
 // j.fisher@fz-juelich.de
 
-#ifndef NSXTOOL_SPACEGROUPDIALOG_H_
-#define NSXTOOL_SPACEGROUPDIALOG_H_
+#ifndef NSXQT_SPACEGROUPDIALOG_H
+#define NSXQT_SPACEGROUPDIALOG_H
 
 #include <memory>
 #include <string>
@@ -12,8 +12,8 @@
 
 #include <QDialog>
 
-#include <nsxlib/crystal/SpaceGroup.h>
 #include <nsxlib/data/IData.h>
+#include <nsxlib/crystal/SpaceGroup.h>
 
 class QModelIndex;
 class QWidget;
@@ -45,4 +45,5 @@ private:
     std::vector<std::tuple<std::string, double>> _groups;
     std::string _selectedGroup;
 };
-#endif // NSXTOOL_SPACEGROUPDIALOG_H_
+
+#endif // NSXQT_SPACEGROUPDIALOG_H

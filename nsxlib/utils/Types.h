@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef NSXTOOL_TYPES_H_
-#define NSXTOOL_TYPES_H_
+#ifndef NSXLIB_TYPES_H
+#define NSXLIB_TYPES_H
 
 #include <complex>
 #include <map>
@@ -60,4 +60,4 @@ using ComplexMatrix = Eigen::Matrix<std::complex<double>, Eigen::Dynamic, Eigen:
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_TYPES_H_ */
+#endif // NSXLIB_TYPES_H

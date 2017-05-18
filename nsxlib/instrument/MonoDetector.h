@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef NSXTOOL_MONODETECTOR_H_
-#define NSXTOOL_MONODETECTOR_H_
+#ifndef NSXLIB_MONODETECTOR_H
+#define NSXLIB_MONODETECTOR_H
 
 #include <string>
 
@@ -134,4 +134,4 @@ protected:
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_MONODETECTOR_H_ */
+#endif // NSXLIB_MONODETECTOR_H

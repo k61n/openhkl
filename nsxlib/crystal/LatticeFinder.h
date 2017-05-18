@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef NSXTOOL_LATTICEFINDER_H_
-#define NSXTOOL_LATTICEFINDER_H_
+#ifndef NSXLIB_LATTICEFINDER_H
+#define NSXLIB_LATTICEFINDER_H
 
 #include <vector>
 #include <map>
@@ -76,4 +76,4 @@ public:
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_LATTICEFINDER_H_ */
+#endif // NSXLIB_LATTICEFINDER_H

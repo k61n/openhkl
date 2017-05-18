@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef NSXTOOL_OBB_H_
-#define NSXTOOL_OBB_H_
+#ifndef NSXLIB_OBB_H
+#define NSXLIB_OBB_H
 
 #include <cmath>
 #include <initializer_list>
@@ -585,5 +585,5 @@ bool collideOBBSphere(const OBB<T,D>& obb, const Sphere<T,D>& s)
 
 } // end namespace nsx
 
-#endif // NSXTOOL_OBB_H_
+#endif // NSXLIB_OBB_H
 

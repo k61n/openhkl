@@ -1,5 +1,5 @@
-#ifndef PEAKLISTPROPERTYWIDGET_H
-#define PEAKLISTPROPERTYWIDGET_H
+#ifndef NSXQT_PEAKLISTPROPERTYWIDGET_H
+#define NSXQT_PEAKLISTPROPERTYWIDGET_H
 
 #include <QStandardItem>
 #include <QWidget>
@@ -25,4 +25,4 @@ private:
     Ui::PeakListPropertyWidget *ui;
 };
 
-#endif // PEAKLISTPROPERTYWIDGET_H
+#endif // NSXQT_PEAKLISTPROPERTYWIDGET_H

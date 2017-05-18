@@ -28,8 +28,8 @@
  *
  */
 
-#ifndef NSXTOOL_RANDOMMATRIX_H_
-#define NSXTOOL_RANDOMMATRIX_H_
+#ifndef NSXLIB_RANDOMMATRIX_H
+#define NSXLIB_RANDOMMATRIX_H
 
 #include <Eigen/Dense>
 
@@ -40,4 +40,4 @@ Eigen::MatrixXd randomMatrix(unsigned int n);
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_RANDOMMATIRX_H_ */
+#endif // NSXLIB_RANDOMMATRIX_H

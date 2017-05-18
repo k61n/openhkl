@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef NSXTOOL_NIGGLIREDUCTION_H_
-#define NSXTOOL_NIGGLIREDUCTION_H_
+#ifndef NSXLIB_NIGGLIREDUCTION_H
+#define NSXLIB_NIGGLIREDUCTION_H
 
 #include <Eigen/Dense>
 
@@ -73,4 +73,4 @@ private:
 
 } // end namespace nsx
 
-#endif
+#endif // NSXLIB_NIGGLIREDUCTION_H

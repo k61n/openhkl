@@ -1,5 +1,5 @@
-#ifndef UNITCELLITEM_H
-#define UNITCELLITEM_H
+#ifndef NSXQT_UNITCELLITEM_H
+#define NSXQT_UNITCELLITEM_H
 
 #include <memory>
 
@@ -32,4 +32,4 @@ private:
     std::shared_ptr<nsx::UnitCell> _cell;
 };
 
-#endif // UNITCELLITEM_H
+#endif // NSXQT_UNITCELLITEM_H

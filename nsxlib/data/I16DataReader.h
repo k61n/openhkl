@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef NSXTOOL_I16DATAREADER_H_
-#define NSXTOOL_I16DATAREADER_H_
+#ifndef NSXLIB_I16DATAREADER_H
+#define NSXLIB_I16DATAREADER_H
 
 #include <map>
 #include <memory>
@@ -73,4 +73,4 @@ private:
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_I16DATAREADER_H_ */
+#endif // NSXLIB_I16DATAREADER_H

@@ -1,5 +1,5 @@
-#ifndef EXPERIMENTTREE_H
-#define EXPERIMENTTREE_H
+#ifndef NSXQT_EXPERIMENTTREE_H
+#define NSXQT_EXPERIMENTTREE_H
 
 #include <memory>
 #include <string>
@@ -57,4 +57,4 @@ private:
     std::shared_ptr<SessionModel> _session;
 };
 
-#endif // EXPERIMENTTREE_H
+#endif // NSXQT_EXPERIMENTTREE_H

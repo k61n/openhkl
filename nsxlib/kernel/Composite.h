@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef NSXTOOL_COMPOSITE_H_
-#define NSXTOOL_COMPOSITE_H_
+#ifndef NSXLIB_COMPOSITE_H
+#define NSXLIB_COMPOSITE_H
 
 #include <set>
 
@@ -131,4 +131,4 @@ Composite<component,args...>::~Composite()
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_COMPOSITE_H_ */
+#endif // NSXLIB_COMPOSITE_H

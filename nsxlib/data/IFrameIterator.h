@@ -1,8 +1,8 @@
 // author: Jonathan Fisher
 // j.fisher@fz-juelich.de
 
-#ifndef NSXTOOL_IFRAMEITERATOR_H_
-#define NSXTOOL_IFRAMEITERATOR_H_
+#ifndef NSXLIB_IFRAMEITERATOR_H
+#define NSXLIB_IFRAMEITERATOR_H
 
 #include <functional>
 #include "../utils/Types.h"
@@ -26,4 +26,4 @@ protected:
 
 } // end namespace nsx
 
-#endif // NSXTOOL_IFRAME_ITERATOR_H_
+#endif // NSXLIB_IFRAMEITERATOR_H

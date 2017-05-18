@@ -1,5 +1,5 @@
-#ifndef DETECTORITEM_H
-#define DETECTORITEM_H
+#ifndef NSXQT_DETECTORITEM_H
+#define NSXQT_DETECTORITEM_H
 
 #include <memory>
 #include <string>
@@ -21,4 +21,4 @@ public:
     QJsonObject toJson() override;
 };
 
-#endif // DETECTORITEM_H
+#endif // NSXQT_DETECTORITEM_H

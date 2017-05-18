@@ -1,5 +1,5 @@
-#ifndef DIALOGAUTOINDEXING_H
-#define DIALOGAUTOINDEXING_H
+#ifndef NSXQT_DIALOGAUTOINDEXING_H
+#define NSXQT_DIALOGAUTOINDEXING_H
 
 #include <memory>
 #include <vector>
@@ -58,4 +58,4 @@ private:
     std::vector<std::pair<UnitCell,double>> _solutions;
 };
 
-#endif // DIALOGAUTOINDEXING_H
+#endif // NSXQT_DIALOGAUTOINDEXING_H

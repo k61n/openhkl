@@ -1,5 +1,5 @@
-#ifndef RECIPROCALSPACEVIEWER_H
-#define RECIPROCALSPACEVIEWER_H
+#ifndef NSXQT_RECIPROCALSPACEVIEWER_H
+#define NSXQT_RECIPROCALSPACEVIEWER_H
 
 #include <memory>
 #include <vector>
@@ -8,13 +8,13 @@
 
 namespace Ui
 {
-    class ReciprocalSpaceViewer;
+class ReciprocalSpaceViewer;
 }
 
 namespace nsx
 {
-    class DataSet;
-    class Experiment;
+class DataSet;
+class Experiment;
 }
 
 class ReciprocalSpaceViewer : public QDialog
@@ -38,4 +38,4 @@ private:
     std::vector<std::shared_ptr<nsx::DataSet>> _data;
 };
 
-#endif // RECIPROCALSPACEVIEWER_H
+#endif // NSXQT_RECIPROCALSPACEVIEWER_H

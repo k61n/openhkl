@@ -5,8 +5,8 @@
  *      Author: pellegrini
  */
 
-#ifndef NSXLIB_IMAGING_KERNELFACTORY_H_
-#define NSXLIB_IMAGING_KERNELFACTORY_H_
+#ifndef NSXLIB_KERNELFACTORY_H
+#define NSXLIB_KERNELFACTORY_H
 
 #include "ConvolutionKernel.h"
 #include "../kernel/Factory.h"
@@ -25,4 +25,4 @@ public:
 
 } // end namespace nsx
 
-#endif /* NSXLIB_IMAGING_KERNELFACTORY_H_ */
+#endif // NSXLIB_KERNELFACTORY_H

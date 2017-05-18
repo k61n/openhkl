@@ -1,5 +1,5 @@
-#ifndef NUMORITEM_H
-#define NUMORITEM_H
+#ifndef NSXQT_NUMORITEM_H
+#define NSXQT_NUMORITEM_H
 
 #include <string>
 
@@ -31,4 +31,4 @@ private:
     std::shared_ptr<nsx::DataSet> _data;
 };
 
-#endif // NUMORITEM_H
+#endif // NSXQT_NUMORITEM_H

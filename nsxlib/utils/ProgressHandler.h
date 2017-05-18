@@ -1,8 +1,8 @@
 // author: Jonathan Fisher
 // j.fisher@fz-juelich.de
 
-#ifndef PROGRESSHANDLER_H
-#define PROGRESSHANDLER_H
+#ifndef NSXLIB_PROGRESSHANDLER_H
+#define NSXLIB_PROGRESSHANDLER_H
 
 #include <mutex>
 #include <functional>
@@ -51,4 +51,4 @@ private:
 
 } // end namespace nsx
 
-#endif // PROGRESSHANDLER_H
+#endif // NSXLIB_PROGRESSHANDLER_H

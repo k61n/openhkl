@@ -39,8 +39,8 @@
 // background.
 
 
-#ifndef NSXTOOL_INCLUDE_ANNULARKERNEL_H_
-#define NSXTOOL_INCLUDE_ANNULARKERNEL_H_
+#ifndef NSXLIB_ANNULARKERNEL_H
+#define NSXLIB_ANNULARKERNEL_H
 
 #include "ConvolutionKernel.h"
 
@@ -69,4 +69,4 @@ private:
 
 } // end namespace nsx
 
-#endif // NSXTOOL_INCLUDED_ANNULARKERNEL_H_
+#endif // NSXLIB_ANNULARKERNEL_H

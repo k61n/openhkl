@@ -1,5 +1,5 @@
-#ifndef NumorPropertyWidget_H
-#define NumorPropertyWidget_H
+#ifndef NSXQT_NUMORPROPERTYWIDGET_H
+#define NSXQT_NUMORPROPERTYWIDGET_H
 
 #include <QWidget>
 
@@ -22,4 +22,4 @@ private:
     NumorItem* _numorItem;
 };
 
-#endif // NumorPropertyWidget_H
+#endif // NSXQT_NUMORPROPERTYWIDGET_H

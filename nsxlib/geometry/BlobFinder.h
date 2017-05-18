@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef NSXTOOL_BLOB_FINDER_H_
-#define NSXTOOL_BLOB_FINDER_H_
+#ifndef NSXLIB_BLOBFINDER_H
+#define NSXLIB_BLOBFINDER_H
 
 #include <algorithm>
 #include <map>
@@ -144,5 +144,5 @@ private:
 
 } // end namespace nsx
 
-#endif /*NSXTOOL_BLOB_FINDER_H_*/
+#endif // NSXLIB_BLOBFINDER_H
 

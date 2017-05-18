@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef NSXTOOL_Cluster_H_
-#define NSXTOOL_Cluster_H_
+#ifndef NSXLIB_CLUSTER_H
+#define NSXLIB_CLUSTER_H
 
 #include <Eigen/Dense>
 
@@ -62,6 +62,6 @@ private:
 
 } // end namespace nsx
 
-#endif /*NXSTOOL_Cluster_H_*/
+#endif // NSXLIB_CLUSTER_H
 
  

@@ -33,8 +33,8 @@
  *
  */
 
-#ifndef NSXTOOL_SESSIONMODEL_H_
-#define NSXTOOL_SESSIONMODEL_H_
+#ifndef NSXQT_SESSIONMODEL_H
+#define NSXQT_SESSIONMODEL_H
 
 #include <memory>
 #include <string>
@@ -120,4 +120,4 @@ private:
     std::string _colormap;
 };
 
-#endif // NSXTOOL_SESSIONMODEL_H_
+#endif // NSXQT_SESSIONMODEL_H

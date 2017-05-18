@@ -1,5 +1,5 @@
-#ifndef ISOTOPESLISTWIDGET_H
-#define ISOTOPESLISTWIDGET_H
+#ifndef NSXQT_ISOTOPESLISTWIDGET_H
+#define NSXQT_ISOTOPESLISTWIDGET_H
 
 #include <QListWidget>
 
@@ -15,4 +15,4 @@ public slots:
 
 };
 
-#endif // ISOTOPESLISTWIDGET_H
+#endif // NSXQT_ISOTOPESLISTWIDGET_H

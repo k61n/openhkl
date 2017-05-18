@@ -33,8 +33,8 @@
  *
  */
 
-#ifndef NSXTOOL_PROFILE_H_
-#define NSXTOOL_PROFILE_H_
+#ifndef NSXLIB_PROFILE_H
+#define NSXLIB_PROFILE_H
 
 #include <functional>
 #include <Eigen/Dense>
@@ -67,4 +67,4 @@ private:
 
 } // end namespace nsx
 
-#endif // NSXTOOL_PROFILE_H_
+#endif // NSXLIB_PROFILE_H

@@ -1,5 +1,5 @@
-#ifndef NSXLIB_UTILS_MATRIXPARSER_H_
-#define NSXLIB_UTILS_MATRIXPARSER_H_
+#ifndef NSXLIB_MATRIXPARSER_H
+#define NSXLIB_MATRIXPARSER_H
 
 #include <Eigen/Dense>
 
@@ -82,4 +82,4 @@ public:
 
 } // end namespace nsx
 
-#endif /* NSXLIB_UTILS_MATRIXPARSER_H_ */
+#endif // NSXLIB_MATRIXPARSER_H

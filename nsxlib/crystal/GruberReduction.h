@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef NSXTOOL_GRUBBERREDUCTION_H_
-#define NSXTOOL_GRUBBERREDUCTION_H_
+#ifndef NSXLIB_GRUBBERREDUCTION_H
+#define NSXLIB_GRUBBERREDUCTION_H
 
 #include "UnitCell.h"
 #include <Eigen/Dense>
@@ -50,4 +50,4 @@ private:
 
 } // end namespace nsx
 
-#endif
+#endif // NSXLIB_GRUBBERREDUCTION_H

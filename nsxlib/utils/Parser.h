@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef NSXTOOL_PARSER_H_
-#define NSXTOOL_PARSER_H_
+#ifndef NSXLIB_PARSER_H
+#define NSXLIB_PARSER_H
 
 #include <vector>
 
@@ -43,4 +43,4 @@ void readDoublesFromChar(const char* begin, const char* end, std::vector<double>
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_PARSER_H_ */
+#endif // NSXLIB_PARSER_H

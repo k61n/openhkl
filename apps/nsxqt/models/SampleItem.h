@@ -1,5 +1,5 @@
-#ifndef SAMPLEITEM_H
-#define SAMPLEITEM_H
+#ifndef NSXQT_SAMPLEITEM_H
+#define NSXQT_SAMPLEITEM_H
 
 #include <QJsonObject>
 #include <QList>
@@ -27,4 +27,4 @@ public:
 
 };
 
-#endif // SAMPLEITEM_H
+#endif // NSXQT_SAMPLEITEM_H

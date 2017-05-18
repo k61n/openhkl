@@ -1,5 +1,5 @@
-#ifndef LATTICEINDEXER_H
-#define LATTICEINDEXER_H
+#ifndef NSXQT_LATTICEINDEXER_H
+#define NSXQT_LATTICEINDEXER_H
 
 #include <memory>
 
@@ -29,4 +29,4 @@ private:
 
 };
 
-#endif // LATTICEINDEXER_H
+#endif // NSXQT_LATTICEINDEXER_H

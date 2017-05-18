@@ -25,8 +25,9 @@
 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-#ifndef NSXTOOL_BLOB3D_H_
-#define NSXTOOL_BLOB3D_H_
+#ifndef NSXLIB_BLOB3D_H
+#define NSXLIB_BLOB3D_H
+
 #include <iostream>
 #include <Eigen/Dense>
 
@@ -113,4 +114,4 @@ std::ostream& operator<<(std::ostream& os, const Blob3D& b);
 
 } // end namespace nsx
 
-#endif /*NXSTOOL_Blob3D_H_*/
+#endif // NSXLIB_BLOB3D_H

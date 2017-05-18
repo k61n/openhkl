@@ -33,8 +33,8 @@
  *
  */
 
-#ifndef NSXTOOL_MERGEDPEAK_H_
-#define NSXTOOL_MERGEDPEAK_H_
+#ifndef NSXLIB_MERGEDPEAK_H
+#define NSXLIB_MERGEDPEAK_H
 
 #include <map>
 #include <memory>
@@ -78,4 +78,4 @@ private:
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_SIMPLEPEAK_H_ */
+#endif // NSXLIB_MERGEDPEAK_H

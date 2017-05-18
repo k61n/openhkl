@@ -1,5 +1,5 @@
-#ifndef UnitCellPropertyWidget_H
-#define UnitCellPropertyWidget_H
+#ifndef NSXQT_UNITCELLPROPERTYWIDGET_H
+#define NSXQT_UNITCELLPROPERTYWIDGET_H
 
 #include <memory>
 
@@ -46,4 +46,4 @@ private:
     Ui::UnitCellPropertyWidget *ui;
 };
 
-#endif // UnitCellPropertyWidget_H
+#endif // NSXQT_UNITCELLPROPERTYWIDGET_H

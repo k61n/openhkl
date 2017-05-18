@@ -29,12 +29,12 @@
  */
 
 
-#ifndef LOGFILEDIALOG_H
-#define LOGFILEDIALOG_H
+#ifndef NSXQT_LOGFILEDIALOG_H
+#define NSXQT_LOGFILEDIALOG_H
+
+#include <string>
 
 #include <QDialog>
-
-#include <iostream>
 
 namespace Ui {
 class LogFileDialog;
@@ -72,4 +72,4 @@ private:
     Ui::LogFileDialog *ui;
 };
 
-#endif // LOGFILEDIALOG_H
+#endif // NSXQT_LOGFILEDIALOG_H

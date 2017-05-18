@@ -33,8 +33,8 @@
  *
  */
 
-#ifndef DIALOGRAWDATA_H
-#define DIALOGRAWDATA_H
+#ifndef NSXQT_DIALOGRAWDATA_H
+#define NSXQT_DIALOGRAWDATA_H
 
 #include <QDialog>
 
@@ -71,4 +71,4 @@ private:
     Ui::DialogRawData *ui;
 };
 
-#endif // DIALOGRAWDATA_H
+#endif // NSXQT_DIALOGRAWDATA_H

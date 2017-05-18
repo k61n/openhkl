@@ -1,5 +1,5 @@
-#ifndef CRYSTALFACEITEM_H
-#define CRYSTALFACEITEM_H
+#ifndef NSXQT_CRYSTALFACEITEM_H
+#define NSXQT_CRYSTALFACEITEM_H
 
 #include <QGraphicsItem>
 #include <Eigen/Dense>
@@ -18,4 +18,4 @@ private:
     QPointF* _points;
 };
 
-#endif // CRYSTALFACEITEM_H
+#endif // NSXQT_CRYSTALFACEITEM_H

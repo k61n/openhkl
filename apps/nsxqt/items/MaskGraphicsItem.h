@@ -1,5 +1,5 @@
-#ifndef SLICEGRAPHICSITEM_H
-#define SLICEGRAPHICSITEM_H
+#ifndef NSXQT_MASKGRAPHICSITEM_H
+#define NSXQT_MASKGRAPHICSITEM_H
 
 #include <string>
 #include <memory>
@@ -65,4 +65,4 @@ private:
 
 };
 
-#endif // MASkGRAPHICSITEM_H
+#endif // NSXQT_MASKGRAPHICSITEM_H

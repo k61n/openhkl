@@ -1,5 +1,5 @@
-#ifndef IDATAREADER_H_
-#define IDATAREADER_H_
+#ifndef NSXLIB_IDATAREADER_H
+#define NSXLIB_IDATAREADER_H
 
 #include <string>
 #include <vector>
@@ -78,4 +78,4 @@ protected:
 
 } // end namespace nsx
 
-#endif /* IDATAREADER_H_ */
+#endif // NSXLIB_IDATAREADER_H

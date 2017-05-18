@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef NSXTOOL_CONVEXHULL_H_
-#define NSXTOOL_CONVEXHULL_H_
+#ifndef NSXLIB_CONVEXHULL_H
+#define NSXLIB_CONVEXHULL_H
 
 #include <array>
 #include <cmath>
@@ -997,4 +997,4 @@ std::ostream& operator<<(std::ostream& os, const ConvexHull<T>& chull)
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_CONVEXHULL_H_ */
+#endif // NSXLIB_CONVEXHULL_H

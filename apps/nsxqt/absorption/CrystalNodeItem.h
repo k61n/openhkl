@@ -1,5 +1,5 @@
-#ifndef CRYSTALNODEITEM_H
-#define CRYSTALNODEITEM_H
+#ifndef NSXQT_CRYSTALNODEITEM_H
+#define NSXQT_CRYSTALNODEITEM_H
 
 #include <QGraphicsItem>
 #include <QPainter>
@@ -42,4 +42,4 @@ public slots:
       double _p1x,_p1y,_p1z,_angle;
 };
 
-#endif // CRYSTALNODEITEM_H
+#endif // NSXQT_CRYSTALNODEITEM_H

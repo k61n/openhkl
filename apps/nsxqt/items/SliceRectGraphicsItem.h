@@ -1,5 +1,5 @@
-#ifndef SLICERECTGRAPHICSITEM_H
-#define SLICERECTGRAPHICSITEM_H
+#ifndef NSXQT_SLICERECTGRAPHICSITEM_H
+#define NSXQT_SLICERECTGRAPHICSITEM_H
 
 #include <QGraphicsRectItem>
 
@@ -9,4 +9,4 @@ public:
     SliceRectGraphicsItem(qreal x, qreal y, qreal width, qreal height, QGraphicsItem * parent = 0);
 };
 
-#endif // SLICERECTGRAPHICSITEM_H
+#endif // NSXQT_SLICERECTGRAPHICSITEM_H

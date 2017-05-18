@@ -29,8 +29,8 @@
  */
 
 
-#ifndef COLORMAP_H
-#define COLORMAP_H
+#ifndef NSXQT_COLORMAP_H
+#define NSXQT_COLORMAP_H
 
 #include <cmath>
 #include <string>
@@ -72,4 +72,4 @@ private:
 };
 
 
-#endif // COLORMAP_H
+#endif // NSXQT_COLORMAP_H

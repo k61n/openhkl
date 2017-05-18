@@ -1,5 +1,5 @@
-#ifndef NSXQTAPP_H
-#define NSXQTAPP_H
+#ifndef NSXQT_NSXQTAPP_H
+#define NSXQT_NSXQTAPP_H
 
 #include <QApplication>
 
@@ -12,4 +12,4 @@ private:
     bool notify(QObject* receiver, QEvent* event);
 };
 
-#endif // NSXQTAPP_H
+#endif // NSXQT_NSXQTAPP_H

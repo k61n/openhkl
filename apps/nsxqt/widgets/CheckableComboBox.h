@@ -1,5 +1,5 @@
-#ifndef CHECKABLECOMBOBOX_H
-#define CHECKABLECOMBOBOX_H
+#ifndef NSXQT_CHECKABLECOMBOBOX_H
+#define NSXQT_CHECKABLECOMBOBOX_H
 
 #include <string>
 #include <vector>
@@ -49,4 +49,4 @@ private:
 
 };
 
-#endif // CHECKABLECOMBOBOX_H
+#endif // NSXQT_CHECKABLECOMBOBOX_H

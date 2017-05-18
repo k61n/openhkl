@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef NSXTOOL_STORE_H_
-#define NSXTOOL_STORE_H_
+#ifndef NSXLIB_STORE_H
+#define NSXLIB_STORE_H
 
 #include <map>
 #include <string>
@@ -61,4 +61,4 @@ storable Store<keytype,storable>::get(const keytype& key)
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_STORE_H_ */
+#endif // NSXLIB_STORE_H

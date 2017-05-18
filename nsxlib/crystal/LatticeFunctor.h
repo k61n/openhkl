@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef NSXTOOL_LATTICEFUNCTOR_H_
-#define NSXTOOL_LATTICEFUNCTOR_H_
+#ifndef NSXLIB_LATTICEFUNCTOR_H
+#define NSXLIB_LATTICEFUNCTOR_H
 
 #include <map>
 #include <set>
@@ -81,4 +81,4 @@ struct LatticeFunctor : public LMFunctor<double>
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_LATTICEFUNCTOR_H_ */
+#endif // NSXLIB_LATTICEFUNCTOR_H

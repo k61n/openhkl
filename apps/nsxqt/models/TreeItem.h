@@ -1,5 +1,5 @@
-#ifndef EDITABLETREEITEM_H
-#define EDITABLETREEITEM_H
+#ifndef NSXQT_TREEITEM_H
+#define NSXQT_TREEITEM_H
 
 #include <memory>
 #include <string>
@@ -32,4 +32,4 @@ protected:
 
 };
 
-#endif // EDITABLETREEITEM_H
+#endif // NSXQT_TREEITEM_H

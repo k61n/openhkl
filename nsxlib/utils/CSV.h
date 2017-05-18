@@ -28,8 +28,8 @@
  *
  */
 
-#ifndef NSXTOOL_CSV_H_
-#define NSXTOOL_CSV_H_
+#ifndef NSXLIB_CSV_H
+#define NSXLIB_CSV_H
 
 #include <vector>
 #include <iostream>
@@ -55,4 +55,4 @@ private:
 
 } // end namespace nsx
 
-#endif // NSXTOOL_CSV_H_
+#endif // NSXLIB_CSV_H

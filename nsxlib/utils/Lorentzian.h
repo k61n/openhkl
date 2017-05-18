@@ -34,8 +34,8 @@
  */
 
 
-#ifndef NSXTOOL_LORENTZIAN_H_
-#define NSXTOOL_LORENTZIAN_H_
+#ifndef NSXLIB_LORENTZIAN_H
+#define NSXLIB_LORENTZIAN_H
 
 #include <Eigen/Dense>
 
@@ -53,4 +53,4 @@ private:
 
 } // end namespace nsx
 
-#endif // NSXTOOL_GAUSSIAN_H_
+#endif // NSXLIB_LORENTZIAN_H

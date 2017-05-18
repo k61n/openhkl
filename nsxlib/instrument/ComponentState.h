@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef NSXTOOL_COMPONENTSTATE_H_
-#define NSXTOOL_COMPONENTSTATE_H_
+#ifndef NSXLIB_COMPONENTSTATE_H
+#define NSXLIB_COMPONENTSTATE_H
 
 #include <vector>
 #include <Eigen/Core>
@@ -68,4 +68,4 @@ private:
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_GONIOSTATE_H_ */
+#endif // NSXLIB_COMPONENTSTATE_H

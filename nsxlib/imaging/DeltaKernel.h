@@ -6,8 +6,8 @@
 
 // Kronecker delta kernel. Used for testing only
 
-#ifndef NSXTOOL_INCLUDE_DELTAKERNEL_H_
-#define NSXTOOL_INCLUDE_DELTAKERNEL_H_
+#ifndef NSXLIB_DELTAKERNEL_H
+#define NSXLIB_DELTAKERNEL_H
 
 #include "ConvolutionKernel.h"
 
@@ -37,4 +37,4 @@ private:
 
 } // end namespace nsx
 
-#endif // NSXTOOL_INCLUDED_DELTAKERNEL_H_
+#endif // NSXLIB_DELTAKERNEL_H

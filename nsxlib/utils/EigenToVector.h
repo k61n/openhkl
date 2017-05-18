@@ -33,8 +33,8 @@
  *
  */
 
-#ifndef NSXTOOL_EIGENTOVECTOR_H_
-#define NSXTOOL_EIGENTOVECTOR_H_
+#ifndef NSXLIB_EIGENTOVECTOR_H
+#define NSXLIB_EIGENTOVECTOR_H
 
 #include <vector>
 #include <Eigen/Dense>
@@ -45,4 +45,4 @@ std::vector<double> eigenToVector(const Eigen::VectorXd& ev);
 
 } // end namespace nsx
 
-#endif // NSXTOOL_IMINIMIZER_H_
+#endif // NSXLIB_EIGENTOVECTOR_H

@@ -1,9 +1,10 @@
-#ifndef DETECTORGRAPHICSVIEW_H
-#define DETECTORGRAPHICSVIEW_H
+#ifndef NSXQT_DETECTORGRAPHICSVIEW_H
+#define NSXQT_DETECTORGRAPHICSVIEW_H
 
 #include <QGraphicsView>
 
 class DetectorScene;
+
 class DetectorGraphicsView : public QGraphicsView
 {
     Q_OBJECT
@@ -21,4 +22,4 @@ private:
     DetectorScene* _scene;
 };
 
-#endif // DETECTORGRAPHICSVIEW_H
+#endif // NSXQT_DETECTORGRAPHICSVIEW_H

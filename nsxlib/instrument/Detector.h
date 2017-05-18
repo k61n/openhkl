@@ -35,8 +35,8 @@
  *
  */
 
-#ifndef NSXTOOL_DETECTOR_H_
-#define NSXTOOL_DETECTOR_H_
+#ifndef NSXLIB_DETECTOR_H
+#define NSXLIB_DETECTOR_H
 
 #include <string>
 #include <vector>
@@ -126,4 +126,4 @@ private:
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_DETECTOR_H_ */
+#endif // NSXLIB_DETECTOR_H

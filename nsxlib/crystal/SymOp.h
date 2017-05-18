@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef NSXTOOL_SYMOP_H_
-#define NSXTOOL_SYMOP_H_
+#ifndef NSXLIB_SYMOP_H
+#define NSXLIB_SYMOP_H
 
 #include <ostream>
 
@@ -93,4 +93,4 @@ std::ostream& operator<<(std::ostream& os, const SymOp& sym);
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_SYMOP_H_ */
+#endif // NSXLIB_SYMOP_H

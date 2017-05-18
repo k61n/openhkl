@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef NSXTOOL_DEADTIME_H_
-#define NSXTOOL_DEADTIME_H_
+#ifndef CRYOPADANALYSIS_DEADTIME_H
+#define CRYOPADANALYSIS_DEADTIME_H
 
 #include <string>
 #include <utility>
@@ -60,4 +60,4 @@ private:
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_DEADTIME_H_ */
+#endif // CRYOPADANALYSIS_DEADTIME_H

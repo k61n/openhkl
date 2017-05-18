@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef NSXTOOL_FACTORY_H_
-#define NSXTOOL_FACTORY_H_
+#ifndef NSXLIB_FACTORY_H
+#define NSXLIB_FACTORY_H
 
 #include <algorithm>
 #include <functional>
@@ -124,4 +124,4 @@ bool Factory<base,keytype,args...>::hasCallback(const keytype& key)
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_FACTORY_H_ */
+#endif // NSXLIB_FACTORY_H

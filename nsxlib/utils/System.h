@@ -25,12 +25,12 @@
  *
  */
 
-#ifndef NSXTOOL_SYSTEM_H_
-#define NSXTOOL_SYSTEM_H_
+#ifndef NSXLIB_SYSTEM_H
+#define NSXLIB_SYSTEM_H
 
 // Define necessary symbols for exporting symbols in dll table.
 #ifdef _WIN32
-#    ifdef NSXTOOL_EXPORT
+#    ifdef NSXLIB_EXPORT
 #        define DLLExport __declspec(dllexport)
 #    else
 #        define DLLEXport __declspec(dllimport)
@@ -39,4 +39,4 @@
 #    define DLLExport
 #endif
 
-#endif /* NSXTOOL_SYSTEM_H_ */
+#endif // NSXLIB_SYSTEM_H

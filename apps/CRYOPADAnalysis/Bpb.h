@@ -26,8 +26,9 @@
  *
  */
 
-#ifndef  NSXTOOL_BPB_H_
-#define NSXTOOL_BPB_H_
+#ifndef CRYOPADANALYSIS_BPB_H
+#define CRYOPADANALYSIS_BPB_H
+
 #include <vector>
 #include <algorithm>
 #include "DeadTime.h"
@@ -48,4 +49,5 @@ namespace nsx
 	//! Strip out a data array from a numor consisting of a bpb measurement
 	std::vector<double> getFlippingData(const nsx::Data::Numor&);
 } // end namespace nsx
-#endif /* SX_BPB_H_ */
+
+#endif // CRYOPADANALYSIS_BPB_H

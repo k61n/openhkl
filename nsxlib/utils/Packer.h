@@ -33,8 +33,8 @@
  *
  */
 
-#ifndef NSXTOOL_PACKER_H_
-#define NSXTOOL_PACKER_H_
+#ifndef NSXLIB_PACKER_H
+#define NSXLIB_PACKER_H
 
 #include <Eigen/Dense>
 
@@ -68,4 +68,4 @@ private:
 
 } // end namespace nsx
 
-#endif // NSXTOOL_PACKER_H_
+#endif // NSXLIB_PACKER_H

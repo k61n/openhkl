@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef NSXTOOL_ELLIPSOID_H_
-#define NSXTOOL_ELLIPSOID_H_
+#ifndef NSXLIB_ELLIPSOID_H
+#define NSXLIB_ELLIPSOID_H
 
 #include <cmath>
 
@@ -807,4 +807,4 @@ typename Ellipsoid<T,D>::HomMatrix Ellipsoid<T,D>::getTransformation() const
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_ELLIPSOID_H_ */
+#endif // NSXLIB_ELLIPSOID_H

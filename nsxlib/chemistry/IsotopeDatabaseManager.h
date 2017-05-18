@@ -1,5 +1,5 @@
-#ifndef NSXLIB_ISOTOPEDATABASEMANAGER_H_
-#define NSXLIB_ISOTOPEDATABASEMANAGER_H_
+#ifndef NSXLIB_ISOTOPEDATABASEMANAGER_H
+#define NSXLIB_ISOTOPEDATABASEMANAGER_H
 
 #include <map>
 #include <complex>
@@ -98,4 +98,4 @@ std::ostream& operator<<(std::ostream&,const IsotopeDatabaseManager::Isotope&);
 
 } // end namespace nsx
 
-#endif /* NSXLIB_ISOTOPEDATABASEMANAGER_H_ */
+#endif // NSXLIB_ISOTOPEDATABASEMANAGER_H

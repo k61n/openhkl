@@ -33,8 +33,8 @@
  *
  */
 
-#ifndef NSXTOOL_AUTOINDEXER_H_
-#define NSXTOOL_AUTOINDEXER_H_
+#ifndef NSXLIB_AUTOINDEXER_H
+#define NSXLIB_AUTOINDEXER_H
 
 #include "UnitCell.h"
 
@@ -80,4 +80,4 @@ private:
 
 } // end namespace nsx
 
-#endif // NSXTOOL_AUTOINDEXER_H_
+#endif // NSXLIB_AUTOINDEXER_H

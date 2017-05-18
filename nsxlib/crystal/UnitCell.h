@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef NSXTOOL_UNITCELL_H_
-#define NSXTOOL_UNITCELL_H_
+#ifndef NSXLIB_UNITCELL_H
+#define NSXLIB_UNITCELL_H
 
 #include <vector>
 #include <string>
@@ -170,4 +170,4 @@ std::ostream& operator<<(std::ostream&,const UnitCell&);
 
 } // end namespace nsx
 
-#endif
+#endif // NSXLIB_UNITCELL_H
