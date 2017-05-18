@@ -14,25 +14,16 @@
 
 #include "../geometry/BlobFinder.h"
 #include "../geometry/Blob3D.h"
-//#include "ComponentState.h"
-//#include "ConvexHull.h"
 #include "../instrument/Detector.h"
 #include "../instrument/Diffractometer.h"
 #include "../instrument/DiffractometerStore.h"
 #include "../instrument/Gonio.h"
 #include "../data/IData.h"
-//#include "ILLAsciDataSet.h"
-//#include "Peak3D.h"
 #include "../instrument/Sample.h"
 #include "../instrument/Source.h"
-//#include "Triangle.h"
 #include "../utils/Units.h"
-//#include "Ellipsoid.h"
 
-namespace SX {
-namespace Crystal {
-
-using SX::Data::DataSet;
+namespace nsx {
 
 static double xor128(void) {
   static uint32_t x = 123456789;
@@ -66,7 +57,7 @@ bool intersect(double p0, double p1, double p2, double u0, double u1, double u2,
     return (t1>0 && t2>0);
 }
 
-double ellipsoids_overlap(const SX::Geometry::Ellipsoid<double,3>& ell1,const SX::Geometry::Ellipsoid<double,3>& ell2)
+double ellipsoids_overlap(const Ellipsoid<double,3>& ell1,const Ellipsoid<double,3>& ell2)
 {
     const Eigen::Vector3d& lb1 = ell1.getLower();
     const Eigen::Vector3d& ub1 = ell1.getUpper();
@@ -101,32 +92,25 @@ Mosaic::Mosaic(const std::string& instr, double l, double dl, double dMonSam, do
   _l(l),
   _dl(dl),
   _dMonSam(dMonSam),
-  _mu(mu*SX::Units::deg)
+  _mu(mu*deg)
 {
-    using namespace SX::Instrument;
-
     // Set up the diffractometer
     DiffractometerStore* ds=DiffractometerStore::Instance();
-    _diffractometer = std::shared_ptr<Diffractometer>(ds->buildDiffractomer(instr));
+    _diffractometer = std::shared_ptr<Diffractometer>(ds->buildDiffractometer(instr));
 }
 
-void Mosaic::setSample(SX::Instrument::Sample* sample)
+void Mosaic::setSample(Sample* sample)
 {
     _sample = sample;
 }
 
 void Mosaic::setMosaicity(double mosaicity)
 {
-    _mu = mosaicity*SX::Units::deg;
+    _mu = mosaicity*deg;
 }
 
 bool Mosaic::run(std::vector<std::shared_ptr<DataSet>> datas, unsigned int n, double& overlap)
 {
-    using namespace SX::Data;
-    using namespace SX::Crystal;
-    using namespace SX::Geometry;
-    using namespace SX::Instrument;
-
     double cmu = cos(_mu);
     double oneMinuscmu = 1.0-cmu;
 
@@ -392,5 +376,4 @@ Mosaic::~Mosaic()
 {
 }
 
-} // namespace Crystal
-} // namespace SX
+} // end namespace nsx

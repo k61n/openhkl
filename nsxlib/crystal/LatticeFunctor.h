@@ -35,27 +35,15 @@
 #include <vector>
 #include <memory>
 
+#include "../crystal/Peak3D.h"
 #include "../utils/LMFunctor.h"
 #include "../utils/LatticeConstraintParser.h"
 
-namespace SX
-{
-
-namespace Instrument
-{
-class Detector;
-class Sample;
-class Source;
-}
-
-namespace Crystal
-{
-
-class Peak3D;
+namespace nsx {
 
 /** @brief LatticeFunctor is used to refine lattice parameters and instrument offsets
  */
-struct LatticeFunctor : public Utils::LMFunctor<double>
+struct LatticeFunctor : public LMFunctor<double>
 {
     //! Default constructor
     LatticeFunctor();
@@ -84,15 +72,13 @@ struct LatticeFunctor : public Utils::LMFunctor<double>
     int values() const;
 
     std::vector<Peak3D> _peaks;
-    std::shared_ptr<Instrument::Detector> _detector;
-    std::shared_ptr<Instrument::Sample> _sample;
-    std::shared_ptr<Instrument::Source> _source;
-    SX::Utils::constraints_set _constraints;
+    std::shared_ptr<Detector> _detector;
+    std::shared_ptr<Sample> _sample;
+    std::shared_ptr<Source> _source;
+    constraints_set _constraints;
     std::map<unsigned int,double> _constants;
 };
 
-} // end namespace Crystal
-
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_LATTICEFUNCTOR_H_ */

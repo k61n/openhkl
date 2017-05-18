@@ -4,26 +4,29 @@
 #ifndef NSXTOOL_DIALOGCONVOLVE_H_
 #define NSXTOOL_DIALOGCONVOLVE_H_
 
-#include <QDialog>
-#include <QGraphicsScene>
-#include <QGraphicsPixmapItem>
-#include <QStandardItemModel>
-#include <QStandardItem>
-
-#include <Eigen/Core>
-
 #include <map>
-#include <string>
 #include <memory>
+#include <string>
 
-#include <nsxlib/imaging/Convolver.h>
-#include <nsxlib/imaging/ConvolutionKernel.h>
-#include <nsxlib/data/PeakFinder.h>
+#include <Eigen/Dense>
+
+#include <QDialog>
+
 #include "ColorMap.h"
+
+class QGraphicsPixmapItem;
+class QGraphicsScene;
+class QStandardItem;
+class QWidget;
+
+namespace nsx {
+class PeakFinder;
+}
 
 namespace Ui {
 class DialogConvolve;
 }
+
 
 class DialogConvolve : public QDialog
 {
@@ -31,7 +34,7 @@ class DialogConvolve : public QDialog
 
 public:
     explicit DialogConvolve(const Eigen::MatrixXi& currentFrame,
-                            std::shared_ptr<SX::Data::PeakFinder> peakFinder=nullptr,
+                            std::shared_ptr<nsx::PeakFinder> peakFinder=nullptr,
                             QWidget *parent = 0);
     ~DialogConvolve();
 
@@ -56,7 +59,7 @@ private:
     QGraphicsPixmapItem* _pxmapPreview;
     Eigen::MatrixXi _frame;
 
-    std::shared_ptr<SX::Data::PeakFinder> _peakFinder;
+    std::shared_ptr<nsx::PeakFinder> _peakFinder;
     std::unique_ptr<ColorMap> _colormap;
 };
 #endif // NSXTOOL_DIALOGCONVOLVE_H_

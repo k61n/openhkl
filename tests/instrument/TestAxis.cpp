@@ -1,16 +1,16 @@
 #define BOOST_TEST_MODULE "Test Axis"
 #define BOOST_TEST_DYN_LINK
-#include <nsxlib/instrument/Axis.h>
-#include <nsxlib/utils/Units.h>
-#include <Eigen/Geometry>
+
 #include <boost/test/unit_test.hpp>
 
-using namespace SX::Units;
-using namespace SX::Instrument;
-using Eigen::Vector3d;
-// const double tolerance=1e-6;
+#include <Eigen/Dense>
+#include <Eigen/Geometry>
 
-// Necessary since Axis is pure abstract
+#include <nsxlib/instrument/Axis.h>
+#include <nsxlib/utils/Units.h>
+
+using namespace nsx;
+
 class TestAxis: public Axis
 {
 public:
@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_CASE(Tests_Axis)
     const std::string& label=axis.getLabel();
 
     BOOST_CHECK_EQUAL(label,"Omega");
-    Vector3d v;
+    Eigen::Vector3d v;
     v << 0,0,1;
     axis.setAxis(v);
     BOOST_CHECK_EQUAL(v,axis.getAxis());

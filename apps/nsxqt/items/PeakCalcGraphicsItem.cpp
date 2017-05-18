@@ -1,10 +1,12 @@
-#include "items/PeakCalcGraphicsItem.h"
 #include <QPainter>
+
 #include <nsxlib/crystal/PeakCalc.h>
+
+#include "items/PeakCalcGraphicsItem.h"
 
 bool PeakCalcGraphicsItem::_labelVisible=false;
 
-PeakCalcGraphicsItem::PeakCalcGraphicsItem(SX::Crystal::PeakCalc p):SXGraphicsItem(),_x(p._x), _y(p._y), _frame(p._frame)
+PeakCalcGraphicsItem::PeakCalcGraphicsItem(nsx::PeakCalc p):SXGraphicsItem(),_x(p._x), _y(p._y), _frame(p._frame)
 {
     _label=new QGraphicsTextItem(this);
     //Ensure text is alwyas real size despite zoom

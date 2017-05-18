@@ -35,8 +35,7 @@
 
 #include <list>
 
-namespace SX {
-namespace Geometry {
+namespace nsx {
 
 IntegrationRegion::IntegrationRegion(
         const IntegrationRegion::Ellipsoid3D &region, double scale, double bkg_scale):
@@ -123,5 +122,4 @@ void IntegrationRegion::updateMask(Eigen::MatrixXi& mask, double z) const
     }
 }
 
-} // namespace Geometry
-} // namespace SX
+} // end namespace nsx

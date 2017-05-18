@@ -1,24 +1,25 @@
-#include <QtDebug>
-#include <QMessageBox>
-
 #include <memory>
+
+#include <QMessageBox>
 
 #include <Eigen/Dense>
 
-#include "MCAbsorptionDialog.h"
-#include "ui_MCAbsorptionDialog.h"
-#include <nsxlib/instrument/Experiment.h>
-#include <nsxlib/instrument/Diffractometer.h>
-#include <nsxlib/instrument/Sample.h>
-#include <nsxlib/geometry/MCAbsorption.h>
-#include <nsxlib/instrument/Source.h>
-#include <nsxlib/data/IData.h>
 #include <nsxlib/crystal/Peak3D.h>
+#include <nsxlib/data/IData.h>
+#include <nsxlib/geometry/MCAbsorption.h>
+#include <nsxlib/instrument/Diffractometer.h>
+#include <nsxlib/instrument/Experiment.h>
 #include <nsxlib/instrument/Gonio.h>
-#include <nsxlib/utils/Units.h>
 #include <nsxlib/instrument/Monochromator.h>
+#include <nsxlib/instrument/Sample.h>
+#include <nsxlib/instrument/Source.h>
+#include <nsxlib/utils/Units.h>
 
-MCAbsorptionDialog::MCAbsorptionDialog(std::shared_ptr<SX::Instrument::Experiment> experiment, QWidget *parent):
+#include "MCAbsorptionDialog.h"
+
+#include "ui_MCAbsorptionDialog.h"
+
+MCAbsorptionDialog::MCAbsorptionDialog(std::shared_ptr<nsx::Experiment> experiment, QWidget *parent):
     QDialog(parent),
      ui(new Ui::MCAbsorptionDialog),
     _experiment(experiment)
@@ -46,12 +47,12 @@ void MCAbsorptionDialog::on_pushButton_run_pressed()
         return;
     }
     // Get the source
-    std::shared_ptr<SX::Instrument::Source> source=_experiment->getDiffractometer()->getSource();
-    std::shared_ptr<SX::Instrument::Sample> sample=_experiment->getDiffractometer()->getSample();
+    std::shared_ptr<nsx::Source> source=_experiment->getDiffractometer()->getSource();
+    std::shared_ptr<nsx::Sample> sample=_experiment->getDiffractometer()->getSample();
 
     // Get the material
     unsigned int cellIndex=static_cast<unsigned int>(ui->comboBox->currentIndex());
-    SX::Chemistry::sptrMaterial material=sample->getMaterial(cellIndex);
+    nsx::sptrMaterial material=sample->getMaterial(cellIndex);
     if (material==nullptr) {
         QMessageBox::critical(this,"NSXTOOL","No material defined for this crystal");
             return;
@@ -59,14 +60,14 @@ void MCAbsorptionDialog::on_pushButton_run_pressed()
 
     auto& mono = source->getSelectedMonochromator();
 
-    SX::Geometry::MCAbsorption mca(mono.getWidth(),mono.getHeight(),-1.0);
+    nsx::MCAbsorption mca(mono.getWidth(),mono.getHeight(),-1.0);
     auto& hull=sample->getShape();
     if (!hull.checkEulerConditions()) {
             QMessageBox::critical(this,"NSXTOOL","The sample shape (hull) is ill-defined");
             return;
     }
 
-    mca.setSample(&hull,material->muIncoherent(),material->muAbsorption(mono.getWavelength()*SX::Units::ang));
+    mca.setSample(&hull,material->muIncoherent(),material->muAbsorption(mono.getWavelength()*nsx::ang));
     const auto& data=_experiment->getData();
     ui->progressBar_MCStatus->setValue(0);
     ui->progressBar_MCStatus->setTextVisible(true);

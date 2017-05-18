@@ -1,18 +1,16 @@
 #ifndef CUTLINEGRAPHICSITEM_H
 #define CUTLINEGRAPHICSITEM_H
 
-#include <string>
 #include <memory>
+#include <string>
 
 #include <QGraphicsItem>
+
 #include "items/CutterGraphicsItem.h"
 
-namespace SX
-{
-namespace Data
+namespace nsx
 {
 class DataSet;
-}
 }
 
 class QGraphicsSceneWheelEvent;
@@ -23,7 +21,7 @@ class CutLineGraphicsItem : public CutterGraphicsItem
 {
 public:
 
-    explicit CutLineGraphicsItem(std::shared_ptr<SX::Data::DataSet>);
+    explicit CutLineGraphicsItem(std::shared_ptr<nsx::DataSet>);
 
     ~CutLineGraphicsItem();
 

@@ -11,14 +11,10 @@
 #include "../crystal/UnitCell.h"
 #include "../crystal/Peak3D.h"
 
-namespace SX
-{
-
-namespace Crystal
-{
+namespace nsx {
 
 LatticeFunctor::LatticeFunctor()
-: Utils::LMFunctor<double>(),
+: LMFunctor<double>(),
   _peaks(0),
   _detector(nullptr),
   _sample(nullptr),
@@ -28,7 +24,7 @@ LatticeFunctor::LatticeFunctor()
 {
 }
 
-LatticeFunctor::LatticeFunctor(const LatticeFunctor& other) : Utils::LMFunctor<double>(other)
+LatticeFunctor::LatticeFunctor(const LatticeFunctor& other) : LMFunctor<double>(other)
 {
     _peaks = other._peaks;
     _detector = other._detector;
@@ -42,7 +38,7 @@ LatticeFunctor& LatticeFunctor::operator=(const LatticeFunctor& other)
 {
     if (this != &other)
     {
-        Utils::LMFunctor<double>::operator=(other);
+        LMFunctor<double>::operator=(other);
         _peaks = other._peaks;
         _detector = other._detector;
         _sample = other._sample;
@@ -60,7 +56,7 @@ LatticeFunctor::~LatticeFunctor()
 int LatticeFunctor::operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const
 {
     if (!_detector || !_sample || !_source)
-        throw SX::Kernel::Error<LatticeFunctor>("A detector, sample and source must be specified prior to calculate residuals.");
+        throw Error<LatticeFunctor>("A detector, sample and source must be specified prior to calculate residuals.");
 
     Eigen::VectorXd xlocal(x);
 
@@ -154,5 +150,4 @@ int LatticeFunctor::values() const
     return 3*_peaks.size();
 }
 
-} // namespace Crystal
-} // namespace SX
+} // end namespace nsx

@@ -1,33 +1,29 @@
 // author: Jonathan Fisher
 // j.fisher@fz-juelich.de
 
-#include "DialogConvolve.h"
-#include "ui_ConvolveDialog.h"
+#include <QDebug>
+#include <QImage>
+#include <QList>
+#include <QGraphicsPixmapItem>
+#include <QGraphicsScene>
+#include <QSortFilterProxyModel>
+#include <QStandardItemModel>
+#include <QStandardItem>
+#include <QTreeView>
 
+#include <nsxlib/data/PeakFinder.h>
 #include <nsxlib/imaging/KernelFactory.h>
+#include <nsxlib/utils/Types.h>
+#include <nsxlib/imaging/Convolver.h>
+#include <nsxlib/imaging/ConvolutionKernel.h>
 
 #include "ColorMap.h"
-#include <QImage>
-#include <QSortFilterProxyModel>
-#include <QTreeView>
-#include <QStandardItem>
-#include <QStandardItemModel>
-#include <QList>
+#include "DialogConvolve.h"
 
-#include <Eigen/Core>
-#include <QDebug>
-
-#include <iostream>
-
-#include <nsxlib/utils/Types.h>
-
-using RealMatrix = SX::Types::RealMatrix;
-
-using std::cout;
-using std::endl;
+#include "ui_ConvolveDialog.h"
 
 DialogConvolve::DialogConvolve(const Eigen::MatrixXi& currentFrame,
-                               std::shared_ptr<SX::Data::PeakFinder> peakFinder,
+                               std::shared_ptr<nsx::PeakFinder> peakFinder,
                                QWidget *parent):
     QDialog(parent),
     ui(new Ui::DialogConvolve),
@@ -48,7 +44,7 @@ DialogConvolve::DialogConvolve(const Eigen::MatrixXi& currentFrame,
     ui->graphicsView->scale(1, -1);
 
     ui->filterComboBox->clear();
-    SX::Imaging::KernelFactory* kernelFactory=SX::Imaging::KernelFactory::Instance();
+    nsx::KernelFactory* kernelFactory=nsx::KernelFactory::Instance();
 
     for (const auto& k : kernelFactory->list())
         ui->filterComboBox->addItem(QString::fromStdString(k));
@@ -61,8 +57,6 @@ DialogConvolve::DialogConvolve(const Eigen::MatrixXi& currentFrame,
     ui->filterComboBox->setModel(proxy);
     ui->filterComboBox->model()->sort(0);
 
-    // automatically generate preview
-    // on_previewButton_clicked();
 }
 
 DialogConvolve::~DialogConvolve()
@@ -84,7 +78,7 @@ void DialogConvolve::buildTree()
         return;
 
     // get the selected kernel (if any)
-    std::shared_ptr<SX::Imaging::ConvolutionKernel> kernel = _peakFinder->getKernel();
+    std::shared_ptr<nsx::ConvolutionKernel> kernel = _peakFinder->getKernel();
 
     QStandardItemModel* model = new QStandardItemModel(this);
 
@@ -127,7 +121,7 @@ int DialogConvolve::exec()
 
 void DialogConvolve::on_previewButton_clicked()
 {
-    RealMatrix data, result;
+    nsx::RealMatrix data, result;
     Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> clamped_result;
 
     int nrows = int(_frame.rows());
@@ -178,13 +172,13 @@ void DialogConvolve::on_previewButton_clicked()
 
 void DialogConvolve::on_filterComboBox_currentIndexChanged(int index)
 {
-    std::shared_ptr<SX::Imaging::ConvolutionKernel> kernel;
+    std::shared_ptr<nsx::ConvolutionKernel> kernel;
 
     if (QString::compare(ui->filterComboBox->currentText(),"none") == 0)
         kernel.reset();
     else {
         std::string kernelName = ui->filterComboBox->currentText().toStdString();
-        SX::Imaging::KernelFactory* kernelFactory = SX::Imaging::KernelFactory::Instance();
+        nsx::KernelFactory* kernelFactory = nsx::KernelFactory::Instance();
         kernel.reset(kernelFactory->create(kernelName, int(_frame.rows()), int(_frame.cols())));
     }
 
@@ -194,7 +188,7 @@ void DialogConvolve::on_filterComboBox_currentIndexChanged(int index)
     // need to update widgets with appropriate values
     ui->thresholdSpinBox->setValue(_peakFinder->getThresholdValue());
     ui->thresholdComboBox->setCurrentIndex(_peakFinder->getThresholdType());
-    ui->confidenceSpinBox->setValue(_peakFinder->getConfidence());
+    ui->confidenceSpinBox->setValue(_peakFinder->confidence());
     ui->minCompBox->setValue(_peakFinder->getMinComponents());
     ui->maxCompBox->setValue(_peakFinder->getMaxComponents());
 

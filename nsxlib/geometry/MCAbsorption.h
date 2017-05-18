@@ -34,16 +34,11 @@
 #include "Triangle.h"
 #include "ConvexHull.h"
 #include <vector>
-namespace SX
-{
-
-namespace Geometry
-{
+namespace nsx {
 
 typedef std::vector<Triangle> TrianglesList;
 
-class MCAbsorption
-{
+class MCAbsorption {
 public:
 	//! Define absorption Engine with a rectangular source of WxH
 	MCAbsorption(double width, double height, double pos);
@@ -62,8 +57,6 @@ private:
 
 };
 
-} // end namespace Geometry
-
-} /* namespace SX */
+} // end namespace nsx
 
 #endif /* NSXTOOL_MCABSORPTION_H_ */

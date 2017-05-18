@@ -35,13 +35,9 @@
 
 #include "../kernel/Singleton.h"
 
-namespace SX
-{
-namespace Crystal
-{
+namespace nsx {
 
-
-class SpaceGroupSymbols: public SX::Kernel::Singleton<SpaceGroupSymbols,SX::Kernel::Constructor,SX::Kernel::Destructor>
+class SpaceGroupSymbols: public Singleton<SpaceGroupSymbols,Constructor,Destructor>
 {
 public:
     SpaceGroupSymbols();
@@ -56,8 +52,6 @@ private:
     static std::unordered_map<std::string,std::string> _spaceGroupTables;
 };
 
-
-} // Namespace Crystal
-} // Namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_SPACEGROUPSYMBOLS_H_ */

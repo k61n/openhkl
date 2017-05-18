@@ -35,11 +35,8 @@
 #ifndef NSXTOOL_PEAK2D_H_
 #define NSXTOOL_PEAK2D_H_
 
-namespace SX {
-namespace Crystal {
+namespace nsx {
 
-
-} // namespace Crystal
-} // namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_PEAK2D_H_ */

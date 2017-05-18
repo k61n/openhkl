@@ -36,17 +36,17 @@
 #include <QDebug>
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
+
 #include <Externals/qcustomplot.h>
 
-#include "dialogs/PeakFitDialog.h"
-#include "ui_PeakFitDialog.h"
-#include "models/SessionModel.h"
-#include "ColorMap.h"
 #include <nsxlib/data/IData.h>
 #include <nsxlib/utils/MinimizerGSL.h>
 
-using namespace SX::Crystal;
-using namespace SX::Utils;
+#include "ColorMap.h"
+#include "dialogs/PeakFitDialog.h"
+#include "models/SessionModel.h"
+
+#include "ui_PeakFitDialog.h"
 
 PeakFitDialog::PeakFitDialog(SessionModel* session, QWidget *parent) :
     QDialog(parent),
@@ -111,7 +111,7 @@ bool PeakFitDialog::changePeak()
         return false;
     }
 
-    _peakFit = std::unique_ptr<PeakFit>(new PeakFit(_peak));
+    _peakFit = std::unique_ptr<nsx::PeakFit>(new nsx::PeakFit(_peak));
     _bestParams = _peakFit->defaultParams();
 
     int min = _peakFit->frameBegin();
@@ -140,7 +140,6 @@ void PeakFitDialog::updatePlots()
 
     const int max_intensity = std::round(_peakFit->maxIntensity());
 
-    //QRect sceneRect(0, 0, peakData.cols()-1, peakData.rows()-1);
     QRect sceneRect(0, 0, peakData.cols(), peakData.rows());
 
     _peakScene->setSceneRect(sceneRect);
@@ -154,11 +153,6 @@ void PeakFitDialog::updatePlots()
     QImage pred = cmap.matToImage(predData, sceneRect, max_intensity);
     QImage chi2 = cmap.matToImage(chi2Data, sceneRect, max_intensity);
     QImage diff = cmap.matToImage(diffData, sceneRect, max_intensity);
-
-    //QImage peak = Mat2QImage(peakData, sceneRect, max_intensity);
-    //QImage pred = Mat2QImage(predData, sceneRect, max_intensity);
-    //QImage chi2 = Mat2QImage(chi2Data, sceneRect, max_intensity);
-    //QImage diff = Mat2QImage(diffData, sceneRect, max_intensity);
 
     if (!_peakImage) {
         _peakImage = _peakScene->addPixmap(QPixmap::fromImage(peak));
@@ -198,14 +192,8 @@ void PeakFitDialog::updatePlots()
 
     auto&& peakProjection = _peak->getPeakProjection();
 
-    // debug
-    std::cout << "xmin: " << xmin << std::endl;
-    std::cout << "xmax: " << xmax << std::endl;
-    std::cout << "length of peak projections: " << peakProjection.size() << std::endl;
-
     // go through each frame
-        for(int i = 0; i < num_points; ++i) {
-
+    for(int i = 0; i < num_points; ++i) {
         double x = xmin + i*(double)(xmax-xmin) / (double)num_points;
         double t = x-std::floor(x);
 
@@ -254,23 +242,27 @@ void PeakFitDialog::updatePlots()
 
 
 
-void PeakFitDialog::on_hSpinBox_valueChanged(int arg1)
+void PeakFitDialog::on_hSpinBox_valueChanged(int value)
 {
+    Q_UNUSED(value);
     changePeak();
 }
 
-void PeakFitDialog::on_kSpinBox_valueChanged(int arg1)
+void PeakFitDialog::on_kSpinBox_valueChanged(int value)
 {
+    Q_UNUSED(value);
     changePeak();
 }
 
-void PeakFitDialog::on_lSpinBox_valueChanged(int arg1)
+void PeakFitDialog::on_lSpinBox_valueChanged(int value)
 {
+    Q_UNUSED(value);
     changePeak();
 }
 
 void PeakFitDialog::on_frameScrollBar_valueChanged(int value)
 {
+    Q_UNUSED(value);
     updatePlots();
 }
 
@@ -281,7 +273,7 @@ void PeakFitDialog::on_runFitButton_clicked()
         return;
     }
 
-    MinimizerGSL min;
+    nsx::MinimizerGSL min;
 
      if (_peakFit->fit(min) ) {
         qDebug() << "Fit converged!";

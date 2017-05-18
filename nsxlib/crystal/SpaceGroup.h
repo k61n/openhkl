@@ -40,18 +40,13 @@
 
 #include "SymOp.h"
 
-namespace SX
-{
-
-namespace Crystal
-{
+namespace nsx {
 
 class Peak3D;
 using sptrPeak3D = std::shared_ptr<Peak3D>;
 using groupElementsList =  std::vector<SymOp>;
 
-class SpaceGroup
-{
+class SpaceGroup {
 public:
     //! Construct a space group from its IT symbol. Lookup in the IUCR table
     SpaceGroup(const std::string& symbol);
@@ -102,7 +97,6 @@ private:
 
 std::ostream& operator<<(std::ostream& os, const SpaceGroup& sg);
 
-} // end namespace Crystal
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_SYMMETRYGROUPGENERATOR_H_ */

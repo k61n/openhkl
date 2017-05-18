@@ -38,14 +38,9 @@
 #include "../kernel/Composite.h"
 #include "Detector.h"
 
-namespace SX
-{
+namespace nsx {
 
-namespace Instrument
-{
-
-class MultiDetector : public SX::Kernel::Composite<Detector,const proptree::ptree&>
-{
+class MultiDetector : public Composite<Detector,const proptree::ptree&> {
 public:
 
     //! Static constructor of a MultiDetector from a property tree node
@@ -102,8 +97,6 @@ public:
 
 };
 
-} // Namespace Instrument
-
-} // Namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_MULTIDETECTOR_H_ */

@@ -33,10 +33,7 @@
 
 #include <cmath>
 
-namespace SX
-{
-namespace Utils
-{
+namespace nsx {
 
 inline int iround(double x) {
     return static_cast<int>(std::lround(std::round(x)));
@@ -50,10 +47,6 @@ inline int ifloor(double x) {
     return iround(std::floor(x));
 }
 
-
-} //Namespace Units
-
-} //Namespace SX
-
+} // end namespace nsx
 
 #endif /* NSXTOOL_UNITS_H_ */

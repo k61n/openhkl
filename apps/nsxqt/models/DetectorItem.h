@@ -1,12 +1,14 @@
 #ifndef DETECTORITEM_H
 #define DETECTORITEM_H
 
-#include <string>
 #include <memory>
+#include <string>
 
 #include <QString>
-#include "InspectableTreeItem.h"
+
 #include <nsxlib/instrument/Experiment.h>
+
+#include "InspectableTreeItem.h"
 
 class QWidget;
 

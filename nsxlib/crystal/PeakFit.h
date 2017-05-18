@@ -35,18 +35,11 @@
 #include "Peak3D.h"
 #include <Eigen/Dense>
 
-namespace SX
-{
+namespace nsx {
 
-namespace Utils {
 class IMinimizer;
-}
 
-namespace Crystal
-{
-
-class PeakFit
-{
+class PeakFit {
 public:
     PeakFit(sptrPeak3D peak);
     ~PeakFit();
@@ -67,7 +60,7 @@ public:
 
     Eigen::VectorXd defaultParams() const;
 
-    bool fit(SX::Utils::IMinimizer& minimizer);
+    bool fit(IMinimizer& minimizer);
 
     int frameBegin() const;
     int frameEnd() const;
@@ -84,8 +77,6 @@ private:
     Eigen::VectorXd _params;
 };
 
-} // namespace Crystal
-
-} // namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_PEAKFIT_H_ */

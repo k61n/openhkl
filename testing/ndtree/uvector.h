@@ -3,7 +3,7 @@
 
 #include <boost/numeric/ublas/vector.hpp>
 
-namespace SX
+namespace nsx
 {
 
 namespace Geometry
@@ -23,6 +23,6 @@ typedef boost::numeric::ublas::bounded_vector<double,3> V4D;
 
 } // end namepace Geometry
 
-} // end namespace SX
+} // end namespace nsx
 
 #endif /*NSXTOOL_UVECTOR_H_*/

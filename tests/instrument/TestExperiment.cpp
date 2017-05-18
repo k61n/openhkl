@@ -2,17 +2,13 @@
 #define BOOST_TEST_DYN_LINK
 
 #include <memory>
-#include <stdexcept>
 
 #include <boost/test/unit_test.hpp>
 
 #include <nsxlib/instrument/Experiment.h>
-#include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/data/DataReaderFactory.h>
 
-using namespace SX::Instrument;
-using SX::Data::DataSet;
-using SX::Data::DataReaderFactory;
+using namespace nsx;
 
 BOOST_AUTO_TEST_CASE(Test_Experiment)
 {

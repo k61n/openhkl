@@ -35,19 +35,15 @@
 #include <string>
 #include <vector>
 
-namespace SX {
-namespace Data {
-class DataSet;
-}
+namespace nsx {
 
-namespace Instrument {
+class DataSet;
 
 // Forward declarations
 class Diffractometer;
 
 class Experiment {
 public:
-    using DataSet = SX::Data::DataSet;
 
     // Constructors & Destructors
     //! Default constructor (deleted)
@@ -119,7 +115,6 @@ private:
     std::map<std::string,std::shared_ptr<DataSet>> _data;
 };
 
-} // end namespace Instrument
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_EXPERIMENT_H_ */

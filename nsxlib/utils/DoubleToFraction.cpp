@@ -20,15 +20,11 @@
 ** we just keep the last partial product of these matrices.
 */
 
-namespace SX
-{
-
-namespace Utils
+namespace nsx
 {
 
 // Convert number into nominator and denominator
 void doubleToFraction(double number, int nmax, long& nom, long& dnom);
 
-}
+} // end namespace nsx
 
-}

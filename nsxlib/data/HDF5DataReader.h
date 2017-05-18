@@ -37,9 +37,7 @@
 
 #include "../data/IDataReader.h"
 
-namespace SX {
-
-namespace Data {
+namespace nsx {
 
 class HDF5DataReader final: public IDataReader
 {
@@ -62,8 +60,6 @@ private:
     std::unique_ptr<H5::DataSpace> _memspace;
 };
 
-} // end namespace Data
-
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_HDF5DATAREADER_H_ */

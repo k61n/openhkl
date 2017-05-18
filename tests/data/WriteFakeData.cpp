@@ -1,12 +1,11 @@
-#include <iostream>
 #include <cmath>
 #include <ios>
 #include <iomanip>
 #include <sstream>
 #include <fstream>
-#include <Eigen/Dense>
 #include <sstream>
 
+#include <Eigen/Dense>
 
 struct Scan
 {
@@ -174,8 +173,6 @@ int main()
 				scan.cx=31-(15.5+sqrt(newpos[0]*newpos[0]+newpos[1]*newpos[1])*sin(angle-theta2)/64.0*32);
 				// Offset along z detector
 				scan.cy=15.5+newpos[2]/64.0*32;
-				std::cout << "Peak " << h << " " << k << " " << l << std::endl;
-				std::cout << scan.cx << " " << scan.cy << std::endl;
 				// Write angles in metadata
 				scan.theta2=theta2*180.0/M_PI;
 				scan.omega_center=omega*180.0/M_PI;

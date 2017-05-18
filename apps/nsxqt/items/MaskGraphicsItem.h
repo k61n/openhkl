@@ -8,11 +8,8 @@
 
 #include "items/CutterGraphicsItem.h"
 
-// Forward declarations
-namespace SX {
-namespace Data {
-    class DataSet;
-}
+namespace nsx {
+class DataSet;
 }
 
 class QGraphicsSceneMouseEvent;
@@ -21,15 +18,13 @@ class QPainter;
 class QStyleOptionGraphicsItem;
 class QWidget;
 
-using SX::Geometry::AABB;
-
 /*! Creates a mask that will be used to unselect/select peaks whether their intercept or
  * not the mask
  */
 class MaskGraphicsItem : public SXGraphicsItem {
 public:
     // Constructs a mask
-    MaskGraphicsItem(std::shared_ptr<SX::Data::DataSet> data, AABB<double, 3>* aabb);
+    MaskGraphicsItem(std::shared_ptr<nsx::DataSet> data, nsx::AABB<double, 3>* aabb);
     //! The destructor
     ~MaskGraphicsItem();
 
@@ -46,7 +41,7 @@ public:
 
     //! Returns the bounding rectangle of the mask
     QRectF boundingRect() const;
-    AABB<double,3>* getAABB();
+    nsx::AABB<double,3>* getAABB();
     //! Sets the starting corner of the mask
     void setFrom(const QPointF& pos);
     //! Sets the ending corner of the mask
@@ -59,9 +54,9 @@ public:
 
 protected:
     //! The data on which the cutter will act upon
-    std::shared_ptr<SX::Data::DataSet> _data;
+    std::shared_ptr<nsx::DataSet> _data;
     //! The AABB of the peak
-    AABB<double,3>* _aabb;
+    nsx::AABB<double,3>* _aabb;
     QPointF _from;
     QPointF _to;
     QGraphicsTextItem* _text;

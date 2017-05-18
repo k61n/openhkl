@@ -36,30 +36,13 @@
 #ifndef NSXTOOL_PEAKPREJECTOR_H_
 #define NSXTOOL_PEAKREJECTOR_H_
 
-//#include <map>
-//#include <memory>
+namespace nsx {
 
-//#include <Eigen/Dense>
+class Peak3D;
 
-//#include "UnitCell.h"
-//#include "SpaceGroup.h"
-//#include "Peak3D.h"
+class DataSet;
 
-namespace SX {
-
-namespace Crystal {
-    class Peak3D;
-}
-
-namespace Data {
-    class DataSet;
-}
-
-namespace Utils {
-    class ProgressHandler;
-}
-
-namespace Crystal {
+class ProgressHandler;
 
 class PeakRejector {
 public:
@@ -70,7 +53,6 @@ public:
 
 };
 
-} // namespace Crystal
-} // namespace SX
+} // end namespace nsx
 
 #endif // NSXTOOL_PEAKREJECTOR

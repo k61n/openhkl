@@ -10,7 +10,7 @@
 
 #include <nsxlib/utils/gcd.h>
 
-using namespace SX::Utils;
+using namespace nsx;
 
 BOOST_AUTO_TEST_CASE(Test_GCD)
 {

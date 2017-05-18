@@ -6,8 +6,7 @@
 #include "Component.h"
 #include "Gonio.h"
 
-namespace SX {
-namespace Instrument {
+namespace nsx {
 
 Component::Component() : _name(""), _gonio(), _position(Eigen::Vector3d::Zero())
 {
@@ -121,5 +120,4 @@ ComponentState Component::createState(const std::map<std::string,double>& values
     return ComponentState(this, values_vec);
 }
 
-} // namespace Instrument
-} // namespace SX
+} // end namespace nsx

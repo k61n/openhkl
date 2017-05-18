@@ -5,8 +5,7 @@
 #include "Sample.h"
 #include "Source.h"
 
-namespace SX {
-namespace Instrument {
+namespace nsx {
 
 Diffractometer::Diffractometer() : _name(""), _detector(nullptr), _sample(nullptr), _source(nullptr)
 {
@@ -128,5 +127,5 @@ std::map<unsigned int,std::string> Diffractometer::getPhysicalAxesNames() const
     return names;
 }
 
-}
-} /* namespace SX */
+} // end namespace nsx
+

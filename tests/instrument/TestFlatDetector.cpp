@@ -1,21 +1,24 @@
 #define BOOST_TEST_MODULE "Test Flat Detector"
 #define BOOST_TEST_DYN_LINK
-#include <nsxlib/utils/Units.h>
+
 #include <cmath>
-#include <Eigen/Dense>
+
 #include <boost/test/unit_test.hpp>
-#include <fstream>
+
+#include <Eigen/Dense>
+
+#include <nsxlib/instrument/DetectorEvent.h>
 #include <nsxlib/instrument/FlatDetector.h>
 #include <nsxlib/instrument/Gonio.h>
-#include <nsxlib/instrument/DetectorEvent.h>
-#include <iostream>
+#include <nsxlib/utils/Units.h>
 
-using namespace SX::Units;
-using namespace SX::Instrument;
 using Eigen::Vector3d;
 using Eigen::Matrix3d;
-// 0.1% error
+
+using namespace nsx;
+
 const double tolerance=1e-3;
+
 BOOST_AUTO_TEST_CASE(Test_Flat_Detector)
 {
     FlatDetector d("D10-detector");

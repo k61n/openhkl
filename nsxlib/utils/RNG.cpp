@@ -6,11 +6,10 @@
  */
 
 #include <cstdint>
+
 #include "RNG.h"
 
-namespace SX {
-
-namespace Utils {
+namespace nsx {
 
 double xor128(void)
 {
@@ -26,6 +25,5 @@ double xor128(void)
     return w/4294967295.0;
 }
 
-} /* namespace Utils */
+} // end namespace nsx
 
-} /* namespace SX */

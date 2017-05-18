@@ -44,16 +44,9 @@
 
 #include "Peak3D.h"
 
-namespace SX
-{
+namespace nsx {
 
-namespace Data
-{
 class DataSet;
-}
-
-namespace Crystal
-{
 
 class ResolutionShell {
 public:
@@ -68,8 +61,6 @@ private:
 
 };
 
-} // namespace Crystal
-
-} // namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_PEAKCALC_H_ */

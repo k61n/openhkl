@@ -1,24 +1,23 @@
 #ifndef UnitCellPropertyWidget_H
 #define UnitCellPropertyWidget_H
 
-#include <QWidget>
 #include <memory>
-#include <Eigen/Dense>
+
+#include <QWidget>
 
 #include <nsxlib/utils/Types.h>
 
 namespace Ui {
 class UnitCellPropertyWidget;
 }
-namespace SX{
-    namespace Crystal{
-    class UnitCell;
-    }
+
+namespace nsx {
+class UnitCell;
 }
 
-class UnitCellItem;
+class QString;
 
-using SX::Crystal::sptrUnitCell;
+class UnitCellItem;
 
 class UnitCellPropertyWidget : public QWidget
 {
@@ -35,11 +34,11 @@ public slots:
 private slots:
     void getLatticeParams();
     void setLatticeParams();
-    void setChemicalFormula(const QString &formula);
+    void setChemicalFormula(const QString& formula);
     void on_spinBox_Z_valueChanged(int arg1);
     void setMassDensity() const;
     void on_lineEdit_ChemicalFormula_editingFinished();
-    void onCompleterActivated(const QString &);
+    void onCompleterActivated(const QString&);
     void setHKLTolerance(double);
 
 private:

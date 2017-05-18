@@ -4,42 +4,31 @@
 #include "ScaleDialog.h"
 #include "ui_ScaleDialog.h"
 
+#include <Eigen/Core>
+
+#include <QDebug>
+#include <QDoubleSpinBox>
 #include <QImage>
-#include <QTreeView>
+#include <QList>
+#include <QMessageBox>
+#include <QModelIndex>
 #include <QStandardItem>
 #include <QStandardItemModel>
-#include <QList>
 #include <QString>
-#include <QDoubleSpinBox>
-
-#include <QModelIndex>
-#include <QDebug>
-
-#include <Eigen/Core>
-#include <QDebug>
-
-#include <iostream>
-
-#include <QMessageBox>
-
-#include <nsxlib/crystal/SpaceGroup.h>
-#include <nsxlib/crystal/SpaceGroupSymbols.h>
-#include <nsxlib/data/IData.h>
-#include <nsxlib/crystal/Peak3D.h>
-#include <nsxlib/crystal/RFactor.h>
-#include <nsxlib/instrument/Sample.h>
-#include <nsxlib/utils/IMinimizer.h>
-#include <nsxlib/utils/MinimizerGSL.h>
+#include <QTreeView>
 
 #include "Externals/qcustomplot.h"
 
-using namespace std;
+#include <nsxlib/data/IData.h>
+#include <nsxlib/utils/IMinimizer.h>
+#include <nsxlib/utils/MinimizerGSL.h>
+#include <nsxlib/crystal/Peak3D.h>
+#include <nsxlib/crystal/RFactor.h>
+#include <nsxlib/crystal/SpaceGroup.h>
+#include <nsxlib/crystal/SpaceGroupSymbols.h>
+#include <nsxlib/instrument/Sample.h>
 
-using SX::Crystal::Peak3D;
-using SX::Utils::IMinimizer;
-using SX::Utils::MinimizerGSL;
-
-ScaleDialog::ScaleDialog(const vector<vector<Peak3D*>>& peaks, QWidget *parent) :
+ScaleDialog::ScaleDialog(const std::vector<std::vector<nsx::Peak3D*>>& peaks, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ScaleDialog),
     _peaks(peaks),
@@ -52,16 +41,6 @@ ScaleDialog::ScaleDialog(const vector<vector<Peak3D*>>& peaks, QWidget *parent) 
 
     // calculate and build
     calculateRFactors();
-
-
-    // reserve enough space in _scale!!
-//    for (auto& peak_list: _peaks) {
-//        for (auto& peak: peak_list) {
-//            int frame = std::ceil(peak->getPeak()->getAABBCenter()[2]);
-//            if ( frame > _scale.size() )
-//                _scale.resize(frame+1);
-//        }
-//    }
 
     // initialize the plot
     buildScalePlot();
@@ -152,11 +131,6 @@ void ScaleDialog::buildPlot()
 
 void ScaleDialog::buildScalePlot()
 {
-    // double sigma_max = ui->sigmaSpinBox->value();
-
-    // double a = ui->spinBoxA->value();
-    // double b = ui->spinBoxB->value();
-
     QCustomPlot* plot = ui->plotWidget;
 
     double xmin, xmax, ymin, ymax;
@@ -211,7 +185,7 @@ void ScaleDialog::calculateRFactors()
 
     // go through each equivalence class of peaks
     for (size_t i = 0; i < _peaks.size(); ++i) {
-        vector<Peak3D*> &peak_list = _peaks[i];
+        std::vector<nsx::Peak3D*> &peak_list = _peaks[i];
 
         // skip if there are fewer than two peaks
         if ( peak_list.size() < 2)
@@ -240,7 +214,7 @@ void ScaleDialog::calculateRFactors()
         // that the average is less than zero
         //assert(average > 0.0);
         if (average < 0.0)
-            qDebug() << "warning: averge intensity of reflections is negative";
+            qDebug() << "warning: average intensity of reflections is negative";
 
         I_total += n*average;
 
@@ -275,17 +249,6 @@ void ScaleDialog::on_redrawButton_clicked()
 
 void ScaleDialog::resetScale()
 {
-//    for (auto& peak_list: _peaks) {
-//        for (auto& peak: peak_list) {
-//            peak->setScale(1.0);
-//            int frame = std::ceil(peak->getPeak()->getAABBCenter()[2]);
-//            if ( frame >= _scale.size())
-//                _scale.resize(frame+1);
-//        }
-//    }
-
-//    for (int i = 0; i < _scale.size(); ++i)
-//        _scale[i] = 1.0;
     _scaleParams.resize(2);
     _scaleParams << 0.0, 0.0;
 }
@@ -316,14 +279,14 @@ void ScaleDialog::refineScale()
 
             double average = 0;
 
-            for (Peak3D* peak: _peaks[i]) {
+            for (nsx::Peak3D* peak: _peaks[i]) {
                 double z = peak->getShape().getAABBCenter()[2] ;
                 average += getScale(z) * peak->getScaledIntensity().getValue();
             }
 
             average /= _peaks[i].size();
 
-            for (Peak3D* peak: _peaks[i]) {
+            for (nsx::Peak3D* peak: _peaks[i]) {
                 double z = peak->getShape().getAABBCenter()[2];
                 residuals(idx++) = getScale(z) * peak->getScaledIntensity().getValue() - average;
             }
@@ -336,7 +299,7 @@ void ScaleDialog::refineScale()
 
     qDebug() << "Refining scale using minimizer...";
 
-    IMinimizer* minimizer = new MinimizerGSL();
+    nsx::IMinimizer* minimizer = new nsx::MinimizerGSL();
 
     resetScale();
 

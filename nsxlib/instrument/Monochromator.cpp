@@ -8,11 +8,7 @@
 #include "Monochromator.h"
 #include "../utils/Units.h"
 
-namespace SX
-{
-
-namespace Instrument
-{
+namespace nsx {
 
 Monochromator::Monochromator()
 : _name(""),
@@ -54,7 +50,7 @@ Monochromator::Monochromator(const proptree::ptree& node)
     _name=node.get<std::string>("name");
     _wavelength=node.get<double>("wavelength");
     _fwhm=node.get<double>("fwhm");
-    Units::UnitsManager* um=SX::Units::UnitsManager::Instance();
+    UnitsManager* um=UnitsManager::Instance();
 
     // Set the source slit width from the property tree node
     const proptree::ptree& widthNode = node.get_child("width");
@@ -192,6 +188,5 @@ Eigen::Vector3d Monochromator::getKi() const
     return Eigen::Vector3d(0,1.0/_wavelength,0.0);
 }
 
-} /* namespace Instrument */
+} // end namespace nsx
 
-} /* namespace SX */

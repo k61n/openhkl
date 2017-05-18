@@ -12,7 +12,7 @@
 #include "ndtree.h"
 #include "hmatrix.h"
 
-using namespace SX::Geometry;
+using namespace nsx::Geometry;
 using namespace boost::numeric::ublas;
 
 int main()
@@ -57,7 +57,7 @@ int main()
 	int intersection=0;
 	for(auto it=treeData.begin();it!=treeData.end();++it)
 	{
-		SX::Geometry::NDTree<double,dim>::data_range_pair& p=*it;
+		nsx::Geometry::NDTree<double,dim>::data_range_pair& p=*it;
 		std::size_t d=std::distance(p.first,p.second);
 		intersection += d*(d-1)/2;
 			//std::cout<<*(*it2)<<std::endl;
@@ -71,14 +71,14 @@ int main()
 //	typedef typename std::vector<AABB<double,3>*>::iterator data_iterator;
 //	typedef std::pair< data_iterator , data_iterator > data_range_pair;
 
-//    std::vector<SX::Geometry::NDTree<double,dim>::data_range_pair> data;
+//    std::vector<nsx::Geometry::NDTree<double,dim>::data_range_pair> data;
 
 //    data = tree.getData();
 
 //    int intersection=0;
 //    for(auto it=data.begin();it!=data.end();++it)
 //    {
-//    	SX::Geometry::NDTree<double,dim>::data_range_pair& p=*it;
+//    	nsx::Geometry::NDTree<double,dim>::data_range_pair& p=*it;
 //    	std::size_t d=std::distance(p.first,p.second);
 //    	intersection+=d*(d-1)/2;
 //    		//std::cout<<*(*it2)<<std::endl;

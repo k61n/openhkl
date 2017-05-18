@@ -1,9 +1,6 @@
 #define BOOST_TEST_MODULE "Test Shape Union"
 #define BOOST_TEST_DYN_LINK
 
-#include <cmath>
-#include <iostream>
-
 #include <boost/test/unit_test.hpp>
 
 #include <Eigen/Dense>
@@ -11,9 +8,11 @@
 #include <nsxlib/geometry/AABB.h>
 #include <nsxlib/geometry/ShapeUnion.h>
 
-using namespace SX::Geometry;
 using Eigen::Vector2d;
 using Eigen::Vector3d;
+
+using namespace nsx;
+
 const double tolerance=1e-5;
 
 BOOST_AUTO_TEST_CASE(Test_ShapeUnion)

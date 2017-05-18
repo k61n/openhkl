@@ -26,6 +26,7 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
+
 #ifndef NSXTOOL_DIFFRACTOMETER_H_
 #define NSXTOOL_DIFFRACTOMETER_H_
 
@@ -35,8 +36,7 @@
 
 #include <boost/property_tree/ptree.hpp>
 
-namespace SX {
-namespace Instrument {
+namespace nsx {
 
 namespace property_tree=boost::property_tree;
 
@@ -45,8 +45,7 @@ class Detector;
 class Sample;
 class Source;
 
-class Diffractometer
-{
+class Diffractometer {
 public:
 
     Diffractometer(const property_tree::ptree& node);
@@ -106,7 +105,6 @@ protected:
     std::shared_ptr<Source> _source;
 };
 
-} // Namespace Instrument
-} /* Namespace SX */
+} // end namespace nsx
 
 #endif /* NSXTOOL_DIFFRACTOMETER_H_ */

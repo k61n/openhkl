@@ -1,17 +1,14 @@
+#include <string>
+
+#include <QJsonArray>
+
 #include <nsxlib/instrument/Experiment.h>
 #include <nsxlib/data/IData.h>
 
-#include "tree/NumorPropertyWidget.h"
 #include "models/NumorItem.h"
+#include "tree/NumorPropertyWidget.h"
 
-#include <iostream>
-#include <QJsonArray>
-
-using std::cout;
-using std::endl;
-using SX::Geometry::AABB;
-
-NumorItem::NumorItem(std::shared_ptr<SX::Instrument::Experiment> experiment,std::shared_ptr<SX::Data::DataSet> data) :
+NumorItem::NumorItem(std::shared_ptr<nsx::Experiment> experiment,std::shared_ptr<nsx::DataSet> data) :
     InspectableTreeItem(experiment),
     _data(data)
 {
@@ -23,12 +20,10 @@ NumorItem::NumorItem(std::shared_ptr<SX::Instrument::Experiment> experiment,std:
 
 NumorItem::~NumorItem()
 {
-    cout << "NumorItem destructor: removing data " << _data->getBasename() << endl;
    _experiment->removeData(_data->getBasename());
-   //delete _data; // JMF fix memory leak detected by valgrind
 }
 
-std::shared_ptr<SX::Data::DataSet> NumorItem::getData()
+std::shared_ptr<nsx::DataSet> NumorItem::getData()
 {
     return _data;
 }

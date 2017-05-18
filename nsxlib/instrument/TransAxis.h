@@ -33,14 +33,9 @@
 
 #include "Axis.h"
 
-namespace SX
-{
+namespace nsx {
 
-namespace Instrument
-{
-
-class TransAxis : public Axis
-{
+class TransAxis : public Axis {
 public:
 
 	//! Static constructor for a TransAxis
@@ -67,6 +62,6 @@ public:
 
 };
 
-} // End namespace instrument
-} // End namesapce SX
+} // end namespace nsx
+
 #endif /* NSXTOOL_TRANSAXIS_H_ */

@@ -9,11 +9,7 @@
 #include "TransAxis.h"
 #include "../utils/Units.h"
 
-namespace SX
-{
-
-namespace Instrument
-{
+namespace nsx {
 
 Detector* FlatDetector::create(const proptree::ptree& node)
 {
@@ -34,7 +30,7 @@ FlatDetector::FlatDetector(const std::string& name) : MonoDetector(name)
 
 FlatDetector::FlatDetector(const proptree::ptree& node) : MonoDetector(node)
 {
-    Units::UnitsManager* um=SX::Units::UnitsManager::Instance();
+    UnitsManager* um=UnitsManager::Instance();
 
     // Set the detector width from the property tree node
     const property_tree::ptree& widthNode = node.get_child("width");
@@ -110,7 +106,7 @@ Eigen::Vector3d FlatDetector::getPos(double px, double py) const
 
     Eigen::Vector3d result;
     // take the center of the bin
-    result[0]=0.5*_width*((2*x+1.0)/_nCols-1);;
+    result[0]=0.5*_width*((2*x+1.0)/_nCols-1);
     result[1]=_distance;
     result[2]=0.5*_height*((2*y+1.0)/_nRows-1);
     return result;
@@ -137,7 +133,5 @@ bool FlatDetector::hasKf(const Eigen::Vector3d& kf,const Eigen::Vector3d& f, dou
 
     return true;
 }
+} // end namespace nsx
 
-} // Namespace Instrument
-
-} // Namespace SX

@@ -51,9 +51,7 @@
 #include <gsl/gsl_multifit_nlin.h>
 #endif
 
-namespace SX {
-
-namespace Utils {
+namespace nsx {
 
 class MinimizerGSL: public IMinimizer {
 public:
@@ -97,8 +95,6 @@ private:
     Eigen::VectorXd _outputEigen;
 };
 
-} // end namespace Utils
-
-} // end namespace SX
+} // end namespace nsx
 
 #endif // NSXTOOL_MINIMIZERGSL_H_

@@ -1,16 +1,16 @@
 #define BOOST_TEST_MODULE "Test Eigen Matrix Parser"
 #define BOOST_TEST_DYN_LINK
 
-#include <boost/test/unit_test.hpp>
-
-#include <iostream>
 #include <string>
 
-#include <nsxlib/utils/EigenMatrixParser.h>
+#include <boost/test/unit_test.hpp>
+
 #include <Eigen/Dense>
 
-using namespace SX::Utils;
+#include <nsxlib/utils/EigenMatrixParser.h>
+
 using namespace Eigen;
+using namespace nsx;
 
 BOOST_AUTO_TEST_CASE(Test_EigenMatrixParser)
 {

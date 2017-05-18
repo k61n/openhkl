@@ -3,10 +3,7 @@
 #include "../instrument/Sample.h"
 #include "../instrument/ComponentState.h"
 
-using SX::Instrument::ComponentState;
-
-namespace SX {
-namespace Data {
+namespace nsx {
 
 IDataReader* TiffDataReader::create(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer)
 {
@@ -103,6 +100,4 @@ Eigen::MatrixXi TiffDataReader::getData(std::size_t frame)
     }
 }
 
-} // end namespace Data
-
-} // end namespace SX
+} // end namespace nsx

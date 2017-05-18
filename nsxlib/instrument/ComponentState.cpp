@@ -40,8 +40,7 @@
 #include <cassert>
 #include <iostream>
 
-namespace SX {
-namespace Instrument {
+namespace nsx {
 
 ComponentState::ComponentState(const Component* parent, std::vector<double> values):
     _ptrComp(parent),
@@ -93,5 +92,4 @@ Eigen::Vector3d ComponentState::transformQ(const Eigen::Vector3d &q) const
     return _ptrComp->getGonio()->getInverseHomMatrix(_values).rotation()*q;
 }
 
-} // end namespace Instrument
-} // End namespace SX
+} // End namespace nsx

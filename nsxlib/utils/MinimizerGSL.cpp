@@ -38,9 +38,7 @@
 
 #include "MinimizerGSL.h"
 
-namespace SX {
-
-namespace Utils {
+namespace nsx {
 
 MinimizerGSL::MinimizerGSL():
     IMinimizer(),
@@ -231,7 +229,4 @@ void MinimizerGSL::gslFromEigen(const Eigen::MatrixXd &in, gsl_matrix *out)
             gsl_matrix_set(out, i, j, in(i));
 }
 
-
-} // end namespace Utils
-
-} // end namespace SX
+} // end namespace nsx

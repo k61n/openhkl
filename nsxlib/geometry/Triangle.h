@@ -30,10 +30,7 @@
 #define NSXTOOL_TRIANGLECACHE_H_
 #include <Eigen/Dense>
 
-namespace SX
-{
-namespace Geometry
-{
+namespace nsx {
 
 //! Small helper class that stores information for fast computation
 // of intersection between lines and triangle in 3D.
@@ -65,9 +62,6 @@ struct Triangle
 
 };
 
-
-
-} // Namespace Greometry
-} /* namespace SX */
+} // end namespace nsx
 
 #endif /* NSXTOOL_TRIANGLECACHE_H_ */

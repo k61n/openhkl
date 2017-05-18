@@ -6,11 +6,7 @@
 
 #include "PhysicalUnit.h"
 
-namespace SX
-{
-
-namespace Physics
-{
+namespace nsx {
 
 bool PrefixOperator::operator()(double prefix, physical_unit& unit) const
 {
@@ -314,7 +310,5 @@ void PhysicalUnit::PhysicalUnitParser::updateUnitParser(const std::string& name,
     _unit.add(name,physicalUnit);
 }
 
-} // end namespace Physics
-
-} //end namespace SX
+} // end namespace nsx
 

@@ -15,14 +15,14 @@
 #include <QWidget>
 
 #include <nsxlib/instrument/Detector.h>
-#include "DetectorScene.h"
 #include <nsxlib/data/IData.h>
 
 #include "CutLineGraphicsItem.h"
+#include "DetectorScene.h"
 #include "plot/SimplePlot.h"
 #include "plot/SXPlot.h"
 
-CutLineGraphicsItem::CutLineGraphicsItem(std::shared_ptr<SX::Data::DataSet> data)
+CutLineGraphicsItem::CutLineGraphicsItem(std::shared_ptr<nsx::DataSet> data)
 : CutterGraphicsItem(data),
   _nPoints(10)
 {

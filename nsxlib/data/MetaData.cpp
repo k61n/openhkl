@@ -1,11 +1,7 @@
 
 #include "MetaData.h"
 
-namespace SX
-{
-
-namespace Data
-{
+namespace nsx {
 
 // Static that contains all available keys.
 keyset MetaData::_metakeys=std::set<std::string>();
@@ -76,6 +72,4 @@ const hetermap& MetaData::getMap() const
 	return _map;
 }
 
-} // end namespace Data
-
-} // End namespace SX
+} // End namespace nsx

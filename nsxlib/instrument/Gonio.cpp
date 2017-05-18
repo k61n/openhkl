@@ -11,11 +11,7 @@
 #include "TransAxis.h"
 #include "../utils/Units.h"
 
-namespace SX
-{
-
-namespace Instrument
-{
+namespace nsx {
 
 using Eigen::Quaterniond;
 
@@ -272,5 +268,5 @@ bool Gonio::hasPhysicalAxis(const std::string& name) const
     return false;
 }
 
-}
-}
+} // end namespace nsx
+

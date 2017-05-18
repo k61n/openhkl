@@ -1,8 +1,10 @@
 #ifndef LOGGER_H
 #define LOGGER_H
+
 #include <QtMessageHandler>
 #include <QString>
 #include <sstream>
+
 #include <nsxlib/kernel/Singleton.h>
 
 // Forwards
@@ -23,7 +25,7 @@ QDebug& operator<<(QDebug& dbg, const T& object)
 }
 
 // A singleton Logger class to log all applications output
-class Logger : public SX::Kernel::Singleton<Logger,SX::Kernel::Constructor,SX::Kernel::Destructor>
+class Logger : public nsx::Singleton<Logger,nsx::Constructor,nsx::Destructor>
 {
 public:
     // Attach a QTextEdit to the logger
@@ -35,6 +37,5 @@ private:
     QTextEdit* _notebook;
 
 };
-
 
 #endif // LOGGER_H

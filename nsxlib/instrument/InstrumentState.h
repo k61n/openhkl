@@ -29,9 +29,7 @@
 
 #include "ComponentState.h"
 
-namespace SX {
-
-namespace Instrument{
+namespace nsx {
 
 struct InstrumentState {
     ComponentState detector;
@@ -41,7 +39,6 @@ struct InstrumentState {
     InstrumentState interpolate(const InstrumentState& other, double t) const;
 };
 
-} // end namespace Instrument
-} // end namespace SX
+} // end namespace nsx
 
 #endif // NSXTOOL_INSTRUMENTSTATE_H_

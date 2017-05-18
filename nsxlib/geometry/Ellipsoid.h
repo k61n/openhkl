@@ -38,14 +38,11 @@
 #include "AABB.h"
 #include "OBB.h"
 #include "Sphere.h"
-#include "../utils/Types.h"
 
-namespace SX {
-namespace Geometry {
+namespace nsx {
 
-template<typename T,SX::Types::uint D>
-class Ellipsoid : public IShape<T,D>
-{
+template<typename T,unsigned int D>
+class Ellipsoid : public IShape<T,D> {
 public:
     typedef Eigen::Matrix<T,D,1> vector;
     typedef Eigen::Matrix<T,D+1,1> HomVector;
@@ -117,17 +114,17 @@ private:
     vector _eigenVal;
 };
 
-template<typename T,SX::Types::uint D> bool collideEllipsoidAABB(const Ellipsoid<T,D>&, const AABB<T,D>&);
-template<typename T,SX::Types::uint D> bool collideEllipsoidEllipsoid(const Ellipsoid<T,D>&, const Ellipsoid<T,D>&);
-template<typename T,SX::Types::uint D> bool collideEllipsoidOBB(const Ellipsoid<T,D>&, const OBB<T,D>&);
-template<typename T,SX::Types::uint D> bool collideEllipsoidSphere(const Ellipsoid<T,D>&, const Sphere<T,D>&);
+template<typename T,unsigned int D> bool collideEllipsoidAABB(const Ellipsoid<T,D>&, const AABB<T,D>&);
+template<typename T,unsigned int D> bool collideEllipsoidEllipsoid(const Ellipsoid<T,D>&, const Ellipsoid<T,D>&);
+template<typename T,unsigned int D> bool collideEllipsoidOBB(const Ellipsoid<T,D>&, const OBB<T,D>&);
+template<typename T,unsigned int D> bool collideEllipsoidSphere(const Ellipsoid<T,D>&, const Sphere<T,D>&);
 
-template<typename T,SX::Types::uint D>
+template<typename T,unsigned int D>
 Ellipsoid<T,D>::Ellipsoid() : IShape<T,D>()
 {
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,unsigned int D>
 Ellipsoid<T,D>::Ellipsoid(const Ellipsoid<T,D>& rhs) : IShape<T,D>()
  {
     _eigenVal = rhs._eigenVal;
@@ -135,7 +132,7 @@ Ellipsoid<T,D>::Ellipsoid(const Ellipsoid<T,D>& rhs) : IShape<T,D>()
     updateAABB();
  }
 
-template<typename T,SX::Types::uint D>
+template<typename T,unsigned int D>
 Ellipsoid<T,D>& Ellipsoid<T,D>::operator=(const Ellipsoid<T,D>& other)
 {
     if (this != &other) {
@@ -147,13 +144,13 @@ Ellipsoid<T,D>& Ellipsoid<T,D>::operator=(const Ellipsoid<T,D>& other)
     return *this;
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,unsigned int D>
 IShape<T,D>* Ellipsoid<T,D>::clone() const
 {
     return new Ellipsoid<T,D>(*this);
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,unsigned int D>
 Ellipsoid<T,D>::Ellipsoid(const vector& center, const vector& eigenvalues, const matrix& eigenvectors)
 : IShape<T,D>(),
   _eigenVal(eigenvalues)
@@ -183,7 +180,7 @@ Ellipsoid<T,D>::Ellipsoid(const vector& center, const vector& eigenvalues, const
 }
 
 
-template<typename T,SX::Types::uint D>
+template<typename T,unsigned int D>
 Ellipsoid<T,D>::Ellipsoid(const vector& center, const matrix& RSinv): IShape<T,D>()
 {
     vector t = -RSinv*center;
@@ -200,7 +197,7 @@ Ellipsoid<T,D>::Ellipsoid(const vector& center, const matrix& RSinv): IShape<T,D
     updateAABB();
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,unsigned int D>
 bool Ellipsoid<T,D>::collide(const IShape<T,D>& other) const
 {
     if (this->intercept(other)) {
@@ -209,31 +206,31 @@ bool Ellipsoid<T,D>::collide(const IShape<T,D>& other) const
     return false;
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,unsigned int D>
 bool Ellipsoid<T,D>::collide(const AABB<T,D>& aabb) const
 {
     return collideEllipsoidAABB<T,D>(*this,aabb);
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,unsigned int D>
 bool Ellipsoid<T,D>::collide(const Ellipsoid<T,D>& other) const
 {
     return collideEllipsoidEllipsoid<T,D>(*this,other);
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,unsigned int D>
 bool Ellipsoid<T,D>::collide(const OBB<T,D>& other) const
 {
     return collideEllipsoidOBB<T,D>(*this,other);
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,unsigned int D>
 bool Ellipsoid<T,D>::collide(const Sphere<T,D>& other) const
 {
     return collideEllipsoidSphere<T,D>(*this,other);
 }
 
-template<typename T, SX::Types::uint D>
+template<typename T, unsigned int D>
 void Ellipsoid<T,D>::rotate(const matrix& eigenvectors)
 {
     // Reconstruct S
@@ -265,7 +262,7 @@ void Ellipsoid<T,D>::rotate(const matrix& eigenvectors)
     updateAABB();
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,unsigned int D>
 void Ellipsoid<T,D>::scale(T value)
 {
     _eigenVal *= value;
@@ -278,7 +275,7 @@ void Ellipsoid<T,D>::scale(T value)
     this->scaleAABB(value);
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,unsigned int D>
 void Ellipsoid<T,D>::scale(const vector& v)
 {
     _eigenVal = _eigenVal.cwiseProduct(v);
@@ -291,12 +288,12 @@ void Ellipsoid<T,D>::scale(const vector& v)
     this->scaleAABB(v);
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,unsigned int D>
 void Ellipsoid<T,D>::translate(const vector& t)
 {
     Eigen::Matrix<T,D+1,D+1> tinv = Eigen::Matrix<T,D+1,D+1>::Constant(0.0);
     tinv.block(0,D,D,1) = -t;
-    for (SX::Types::uint i = 0; i < D+1; ++i) {
+    for (unsigned int i = 0; i < D+1; ++i) {
         tinv(i,i) = 1.0;
     }
     tinv(D,D) = 1.0;
@@ -304,7 +301,7 @@ void Ellipsoid<T,D>::translate(const vector& t)
     this->translateAABB(t);
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,unsigned int D>
 bool Ellipsoid<T,D>::isInside(const HomVector& point) const
 {
     auto&& x = _TRSinv * point;
@@ -313,19 +310,19 @@ bool Ellipsoid<T,D>::isInside(const HomVector& point) const
 
 
 
-template<typename T,SX::Types::uint D>
+template<typename T,unsigned int D>
 const typename Ellipsoid<T,D>::HomMatrix& Ellipsoid<T,D>::getInverseTransformation() const
 {
     return _TRSinv;
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,unsigned int D>
 const typename Ellipsoid<T,D>::vector& Ellipsoid<T,D>::getExtents() const
 {
     return _eigenVal;
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,unsigned int D>
 void Ellipsoid<T,D>::updateAABB()
 {
     Eigen::Matrix<T,D+1,D+1> TRS = getInverseTransformation().inverse();
@@ -345,7 +342,7 @@ void Ellipsoid<T,D>::updateAABB()
     _upperBound=TRS.block(0,D,D,1)+width;
 }
 
-template<typename T, SX::Types::uint D>
+template<typename T, unsigned int D>
 bool Ellipsoid<T,D>::rayIntersect(const vector& from, const vector& dir, double& t1, double& t2) const
 {
     HomVector hFrom = _TRSinv * from.homogeneous();
@@ -357,7 +354,7 @@ bool Ellipsoid<T,D>::rayIntersect(const vector& from, const vector& dir, double&
     return sphere.rayIntersect(hFrom.segment(0,D),hDir.segment(0,D),t1,t2);
 }
 
-template<typename T, SX::Types::uint D>
+template<typename T, unsigned int D>
 Eigen::Matrix<T, D, 1> Ellipsoid<T, D>::getCenter() const
 {
     Eigen::Matrix<T, D, 1> t;
@@ -374,7 +371,7 @@ Eigen::Matrix<T, D, 1> Ellipsoid<T, D>::getCenter() const
     return t;
 }
 
-template<typename T, SX::Types::uint D>
+template<typename T, unsigned int D>
 Eigen::Matrix<T, D, D> Ellipsoid<T, D>::getRSinv() const
 {
     Eigen::Matrix<T, D, D> A;
@@ -387,7 +384,7 @@ Eigen::Matrix<T, D, D> Ellipsoid<T, D>::getRSinv() const
     return A;
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,unsigned int D>
 bool collideEllipsoidAABB(const Ellipsoid<T,D>& ell, const AABB<T,D>& aabb)
 {
     OBB<T,D> obb(aabb);
@@ -403,7 +400,7 @@ bool collideEllipsoidAABB(const Ellipsoid<T,D>& ell, const AABB<T,D>& aabb)
   than using the Sturm's sequence
   */
 
-template<typename T,SX::Types::uint D=2>
+template<typename T,unsigned int D=2>
 bool collideEllipsoidEllipsoid(const Ellipsoid<T,2>& eA, const Ellipsoid<T,2>& eB)
 {
     // Get the (TRS)^-1 matrices from object A and B
@@ -487,7 +484,7 @@ bool collideEllipsoidEllipsoid(const Ellipsoid<T,2>& eA, const Ellipsoid<T,2>& e
  *  than using the Sturm's sequence
  */
 
-template<typename T,SX::Types::uint D=3>
+template<typename T,unsigned int D=3>
 bool collideEllipsoidEllipsoid(const Ellipsoid<T,3>& eA, const Ellipsoid<T,3>& eB)
 {
     const Eigen::Matrix<T,4,4> trsA = eA.getInverseTransformation();
@@ -576,7 +573,7 @@ bool collideEllipsoidEllipsoid(const Ellipsoid<T,3>& eA, const Ellipsoid<T,3>& e
  *	Geometric Tools, LLC
  *	http://www.geometrictools.com
  */
-template<typename T,SX::Types::uint D=2>
+template<typename T,unsigned int D=2>
 bool collideEllipsoidOBB(const Ellipsoid<T,2>& ell, const OBB<T,2>& obb)
 {
     using vector = Eigen::Matrix<T,D,1>;
@@ -619,7 +616,7 @@ bool collideEllipsoidOBB(const Ellipsoid<T,2>& ell, const OBB<T,2>& obb)
 
     // Compute the D2 and M matrices (defined in p.2 of the documentation)
     Eigen::DiagonalMatrix<T,D> D2;
-    for (SX::Types::uint i=0;i<D;++i) {
+    for (unsigned int i=0;i<D;++i) {
         D2.diagonal()[i] = 1.0/(ellS.diagonal()[i]*ellS.diagonal()[i]);
     }
     matrix M=(ellRinv.transpose())*D2*ellRinv;
@@ -630,7 +627,7 @@ bool collideEllipsoidOBB(const Ellipsoid<T,2>& ell, const OBB<T,2>& obb)
 
     // Compute the increase in extents for the OBB
     vector L;
-    for (SX::Types::uint i=0;i<D;++i) {
+    for (unsigned int i=0;i<D;++i) {
         L(i)=sqrt((obbRinv.row(i)*(M.inverse())*(obbRinv.row(i).transpose()))(0,0));
     }
     // Transform the ellipsoid center to the OBB coordinate system
@@ -641,13 +638,13 @@ bool collideEllipsoidOBB(const Ellipsoid<T,2>& ell, const OBB<T,2>& obb)
     if (std::abs(x(0))<=(obbS.diagonal()[0]+L(0)) && std::abs(x(1))<=(obbS.diagonal()[1]+L(1))) {
         vector s;
         vector PmC = vector::Zero();
-        for (SX::Types::uint i=0; i<D;++i) {
+        for (unsigned int i=0; i<D;++i) {
             s(i) = (x(i) >= 0 ? 1 : -1);
             PmC.array() += s(i)*obbS.diagonal()[i]*obbRinv.row(i).array();
         }
         vector Delta=KmC-PmC;
         vector MDelta = M*Delta;
-        for (SX::Types::uint i=0; i<D;++i) {
+        for (unsigned int i=0; i<D;++i) {
             if (s(i)*((obbRinv.row(i))*MDelta)(0,0) <= 0.0) {
                 return true;
             }
@@ -663,7 +660,7 @@ bool collideEllipsoidOBB(const Ellipsoid<T,2>& ell, const OBB<T,2>& obb)
  *	Geometric Tools, LLC
  *	http://www.geometrictools.com
  */
-template<typename T,SX::Types::uint D=3>
+template<typename T,unsigned int D=3>
 bool collideEllipsoidOBB(const Ellipsoid<T,3>& ell, const OBB<T,3>& obb)
 {
     using vector = Eigen::Matrix<T, D, 1>;
@@ -706,7 +703,7 @@ bool collideEllipsoidOBB(const Ellipsoid<T,3>& ell, const OBB<T,3>& obb)
 
     // Compute the D2 and M matrices (defined in p.2 of the documentation)
     Eigen::DiagonalMatrix<T,D> D2;
-    for (SX::Types::uint i=0;i<D;++i) {
+    for (unsigned int i=0;i<D;++i) {
         D2.diagonal()[i] = 1.0/(ellS.diagonal()[i]*ellS.diagonal()[i]);
     }
     matrix M=(ellRinv.transpose())*D2*ellRinv;
@@ -717,7 +714,7 @@ bool collideEllipsoidOBB(const Ellipsoid<T,3>& ell, const OBB<T,3>& obb)
 
     // Compute the increase in extents for the OBB
     vector L;
-    for (SX::Types::uint i=0;i<D;++i) {
+    for (unsigned int i=0;i<D;++i) {
         L(i)=sqrt((obbRinv.row(i)*(M.inverse())*(obbRinv.row(i).transpose()))(0,0));
     }
 
@@ -725,7 +722,7 @@ bool collideEllipsoidOBB(const Ellipsoid<T,3>& ell, const OBB<T,3>& obb)
     vector KmC=ellT-obbT;
     vector x=obbRinv*KmC;
 
-    for (SX::Types::uint i=0;i<D;++i) {
+    for (unsigned int i=0;i<D;++i) {
         // The ellipsoid center is outside the OBB
         if (std::abs(x(i))>(obbS.diagonal()[i]+L(i)))
             return false;
@@ -733,7 +730,7 @@ bool collideEllipsoidOBB(const Ellipsoid<T,3>& ell, const OBB<T,3>& obb)
 
     vector s;
     vector PmC = vector::Zero();
-    for (SX::Types::uint i=0; i<D;++i) {
+    for (unsigned int i=0; i<D;++i) {
         s(i) = (x(i) >= 0 ? 1 : -1);
         PmC.array() += s(i)*obbS.diagonal()[i]*obbRinv.row(i).array();
     }
@@ -743,21 +740,21 @@ bool collideEllipsoidOBB(const Ellipsoid<T,3>& ell, const OBB<T,3>& obb)
     vector rsqr;
 
     T r;
-    for (SX::Types::uint i=0; i<D;++i) {
+    for (unsigned int i=0; i<D;++i) {
         r=((ellRinv.row(i)*Delta)(0,0)/ellS.diagonal()[i]);
         rsqr(i)=r*r;
     }
 
     vector UMD;
-    for (SX::Types::uint i=0; i<D;++i)
+    for (unsigned int i=0; i<D;++i)
         UMD(i)=(obbRinv.row(i)*MDelta)(0,0);
 
     matrix UMU;
     vector product;
 
-    for (SX::Types::uint i=0; i<D;++i) {
+    for (unsigned int i=0; i<D;++i) {
         product << M*(obbRinv.row(i).transpose());
-        for (SX::Types::uint j=i; j<D;++j) {
+        for (unsigned int j=i; j<D;++j) {
             // Need to use template here for disambiguation of the triangularView method.
             UMU.template triangularView<Eigen::Upper>().coeffRef(i,j)=(obbRinv.row(j)*product)(0,0);
         }
@@ -793,7 +790,7 @@ bool collideEllipsoidOBB(const Ellipsoid<T,3>& ell, const OBB<T,3>& obb)
  * It consists in building up a ellipsoid from the input sphere and just checking for
  * the intersection between two ellipsoids
  */
-template<typename T,SX::Types::uint D>
+template<typename T,unsigned int D>
 bool collideEllipsoidSphere(const Ellipsoid<T,D>& eA, const Sphere<T,D>& s)
 {
     Eigen::Matrix<T,D,1> scale = Eigen::Matrix<T,D,1>::Constant(s.getRadius());
@@ -802,13 +799,12 @@ bool collideEllipsoidSphere(const Ellipsoid<T,D>& eA, const Sphere<T,D>& s)
     return collideEllipsoidEllipsoid<T,D>(eA,eB);
 }
 
-template<typename T,SX::Types::uint D>
+template<typename T,unsigned int D>
 typename Ellipsoid<T,D>::HomMatrix Ellipsoid<T,D>::getTransformation() const
 {
     return _TRSinv.inverse();
 }
 
-} // Namespace Geometry
-} // Namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_ELLIPSOID_H_ */

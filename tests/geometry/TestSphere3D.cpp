@@ -1,14 +1,13 @@
 #define BOOST_TEST_MODULE "Test Multi-dimensional Sphere"
 #define BOOST_TEST_DYN_LINK
-#include <cmath>
+
 #include <boost/test/unit_test.hpp>
+
 #include <Eigen/Dense>
+
 #include <nsxlib/geometry/Sphere.h>
 
-using namespace SX::Geometry;
-using Eigen::Vector3d;
-using Eigen::Vector4d;
-using Eigen::Matrix3d;
+using namespace nsx;
 
 const double tolerance=1e-5;
 const double tolerance_large=1.0;
@@ -17,11 +16,11 @@ BOOST_AUTO_TEST_CASE(Test_Sphere)
 {
 
     // Test: the construction of a 3D sphere
-    Vector3d center(3,-2,4);
+    Eigen::Vector3d center(3,-2,4);
     double radius(10);
     Sphere<double,3> s1(center,radius);
-    Vector3d lower(s1.getLower());
-    Vector3d upper(s1.getUpper());
+    Eigen::Vector3d lower(s1.getLower());
+    Eigen::Vector3d upper(s1.getUpper());
 
     BOOST_CHECK_CLOSE(lower[0], -7.0,tolerance);
     BOOST_CHECK_CLOSE(lower[1],-12.0,tolerance);
@@ -42,7 +41,7 @@ BOOST_AUTO_TEST_CASE(Test_Sphere)
     BOOST_CHECK_CLOSE(upper[2], 9.0,tolerance);
 
     // Test: the translation of a Sphere
-    s1.translate(Vector3d(3,1,-2));
+    s1.translate(Eigen::Vector3d(3,1,-2));
     lower = s1.getLower();
     upper = s1.getUpper();
     BOOST_CHECK_CLOSE(lower[0], 1.0,tolerance);
@@ -54,8 +53,8 @@ BOOST_AUTO_TEST_CASE(Test_Sphere)
 
     // Test: a given point falls inside the Sphere
     int nSteps(500);
-    Vector3d delta=(upper-lower)/nSteps;
-    Vector4d point(0,0,0,1);
+    Eigen::Vector3d delta=(upper-lower)/nSteps;
+    Eigen::Vector4d point(0,0,0,1);
     double sum(0.0);
     for(int i=0;i<=nSteps;++i)
     {
@@ -76,23 +75,23 @@ BOOST_AUTO_TEST_CASE(Test_Sphere)
     BOOST_CHECK_CLOSE(sum,523.6,tolerance_large);
 
     s1.translate(-s1.getCenter());
-    Sphere<double,3> s2(Vector3d(10,0,0),1.0);
+    Sphere<double,3> s2(Eigen::Vector3d(10,0,0),1.0);
     BOOST_CHECK_EQUAL(s1.collide(s2),false);
-    s2.translate(Vector3d(-2,0,0));
+    s2.translate(Eigen::Vector3d(-2,0,0));
     BOOST_CHECK_EQUAL(s1.collide(s2),false);
-    s2.translate(Vector3d(-2,0,0));
+    s2.translate(Eigen::Vector3d(-2,0,0));
     BOOST_CHECK_EQUAL(s1.collide(s2),false);
-    s2.translate(Vector3d(-2,0,0));
+    s2.translate(Eigen::Vector3d(-2,0,0));
     BOOST_CHECK_EQUAL(s1.collide(s2),true);
-    s2.translate(Vector3d(-2,0,0));
+    s2.translate(Eigen::Vector3d(-2,0,0));
     BOOST_CHECK_EQUAL(s1.collide(s2),true);
-    s2.translate(Vector3d(-2,0,0));
+    s2.translate(Eigen::Vector3d(-2,0,0));
     BOOST_CHECK_EQUAL(s1.collide(s2),true);
-    s2.translate(Vector3d(-2,0,0));
+    s2.translate(Eigen::Vector3d(-2,0,0));
     BOOST_CHECK_EQUAL(s1.collide(s2),true);
-    s2.translate(Vector3d(-2,0,0));
+    s2.translate(Eigen::Vector3d(-2,0,0));
     BOOST_CHECK_EQUAL(s1.collide(s2),true);
-    s2.translate(Vector3d(-2,0,0));
+    s2.translate(Eigen::Vector3d(-2,0,0));
     BOOST_CHECK_EQUAL(s1.collide(s2),false);
 
 }

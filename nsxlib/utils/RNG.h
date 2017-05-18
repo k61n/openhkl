@@ -8,12 +8,10 @@
 #ifndef UTILS_INCLUDE_RNG_H_
 #define UTILS_INCLUDE_RNG_H_
 
-namespace SX {
-namespace Utils {
+namespace nsx {
 
 double xor128(void);
 
-} /* namespace Utils */
-} /* namespace SX */
+} // end namespace nsx
 
 #endif /* UTILS_INCLUDE_RNG_H_ */

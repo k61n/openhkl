@@ -14,10 +14,7 @@ using Eigen::SelfAdjointEigenSolver;
 
 static const double minimum_blob_mass = 1e-15;
 
-namespace SX
-{
-namespace Geometry
-{
+namespace nsx {
 
 Blob3D::Blob3D():_m000(0),_m100(0),_m010(0),_m001(0),_m200(0),_m020(0),_m002(0),_m110(0),_m101(0),_m011(0)
 ,_npoints(0),_minValue(std::numeric_limits<double>::max()),_maxValue(std::numeric_limits<double>::min())
@@ -153,7 +150,7 @@ void Blob3D::toEllipsoid(double confidence,Vector3d& center, Vector3d& eigenvalu
     SelfAdjointEigenSolver<Matrix3d> solver;
     solver.compute(inertia);
 
-    double factor=sqrt(2.0)*SX::Utils::erf_inv(confidence);
+    double factor=sqrt(2.0)*erf_inv(confidence);
     // This is the Gaussian sigma along three directions
     // (fabs is a safe-guard against very small negative eigenvalues due to precision errors)
     eigenvalues <<  sqrt(std::fabs(solver.eigenvalues()[0]))*factor,
@@ -312,6 +309,5 @@ std::ostream& operator<<(std::ostream& os, const Blob3D& b)
     return os;
 }
 
-} // End namespace Geometry
-} // End namspace SX
+} // end namespace nsx
 

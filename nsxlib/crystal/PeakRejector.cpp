@@ -35,24 +35,13 @@
 
 #include "Peak3D.h"
 
-//#include "../data/IData.h"
-//#include "../geometry/NDTree.h"
-//#include "../instrument/Sample.h"
-//#include "../instrument/Source.h"
-
 #include "PeakRejector.h"
 
-using SX::Data::DataSet;
-
-namespace SX {
-namespace Crystal {
+namespace nsx {
 
 bool PeakRejector::rejectPeak(const Peak3D &peak) const
 {
     return true;
 }
 
-
-
-} // namespace Crystal
-} // namespace SX
+} // end namespace nsx

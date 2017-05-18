@@ -1,19 +1,23 @@
 #define BOOST_TEST_MODULE "Test Gonio"
 #define BOOST_TEST_DYN_LINK
+
+#include <cmath>
+
+#include <boost/test/unit_test.hpp>
+
+#include <Eigen/Dense>
+
+#include <nsxlib/instrument/Axis.h>
 #include <nsxlib/instrument/Gonio.h>
 #include <nsxlib/utils/Units.h>
-#include <cmath>
-#include <Eigen/Dense>
-#include <boost/test/unit_test.hpp>
-#include <nsxlib/instrument/Axis.h>
 
-using namespace SX::Units;
-using namespace SX::Instrument;
 using Eigen::Vector3d;
 using Eigen::RowVector3d;
 using Eigen::Matrix3d;
-const double tolerance=1e-6;
 
+using namespace nsx;
+
+const double tolerance=1e-6;
 
 BOOST_AUTO_TEST_CASE(Test_Gonio)
 {
@@ -47,7 +51,6 @@ BOOST_AUTO_TEST_CASE(Test_Gonio)
     g.addRotation("omega",Vector3d(0,0,1),RotAxis::CW);
     g.addRotation("chi",Vector3d(0,1,0),RotAxis::CCW);
     g.addRotation("phi",Vector3d(0,0,1),RotAxis::CW);
-
 
     // Check that result of combined rotation is Ok.
     double om=12*deg;

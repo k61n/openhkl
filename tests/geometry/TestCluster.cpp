@@ -1,14 +1,15 @@
 #define BOOST_TEST_MODULE "Test Cluster"
 #define BOOST_TEST_DYN_LINK
 
-#include <nsxlib/geometry/Cluster.h>
-#include <boost/test/unit_test.hpp>
 #include <Eigen/Dense>
-#include <memory>
 
-using namespace SX::Geometry;
+#include <boost/test/unit_test.hpp>
+
+#include <nsxlib/geometry/Cluster.h>
+
 using Eigen::Vector3d;
-// const double tolerance=1e-5;
+
+using namespace nsx;
 
 BOOST_AUTO_TEST_CASE(Test_Basis)
 {

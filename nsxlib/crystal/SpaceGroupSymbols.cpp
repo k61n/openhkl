@@ -8,10 +8,8 @@
 #include "../kernel/Error.h"
 #include "SpaceGroupSymbols.h"
 
-namespace SX
-{
-namespace Crystal
-{
+namespace nsx {
+
 /* Copied from the CRYSFML library, module CFML_Symmetry_Tables
 !!-------------------------------------------------------
 !!---- Crystallographic Fortran Modules Library (CrysFML)
@@ -300,7 +298,7 @@ void SpaceGroupSymbols::addSpaceGroup(const std::string& spaceGroup, const std::
 {
     auto it=_spaceGroupTables.find(spaceGroup);
     if (it!=_spaceGroupTables.end())
-        throw SX::Kernel::Error<SpaceGroupSymbols>("The space group "+spaceGroup+" is already registered.");
+        throw Error<SpaceGroupSymbols>("The space group "+spaceGroup+" is already registered.");
     _spaceGroupTables.insert(std::unordered_map<std::string,std::string>::value_type(spaceGroup,generators));
     _spaceGroupTableVector.push_back(std::make_pair(spaceGroup, generators));
 }
@@ -394,6 +392,4 @@ int SpaceGroupSymbols::getID(const std::string& symbol) const
     return -1;
 }
 
-
-} // Namespace Crystal
-} // Namespace SX
+} // end namespace nsx

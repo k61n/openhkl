@@ -33,14 +33,9 @@
 
 #include "../kernel/Singleton.h"
 
-namespace SX
-{
+namespace nsx {
 
-namespace Utils
-{
-
-class Path : public SX::Kernel::Singleton<Path,SX::Kernel::Constructor,SX::Kernel::Destructor>
-{
+class Path : public Singleton<Path,Constructor,Destructor> {
 
 public:
 
@@ -64,13 +59,12 @@ public:
     static void setArgv(int argc, char** argv);
 
 private:
+
     static int _argc;
+
     static char** _argv;
 };
 
-
-} // end namespace Utils
-
-} // end namespace SX
+} // end namespace nsx
 
 #endif

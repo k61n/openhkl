@@ -32,15 +32,10 @@
 #include <map>
 #include <string>
 
-namespace SX
-{
-
-namespace Kernel
-{
+namespace nsx {
 
 template <typename keytype,typename storable>
-class Store : public std::map<std::string,storable>
-{
+class Store : public std::map<std::string,storable> {
 
 public:
 	Store();
@@ -64,8 +59,6 @@ storable Store<keytype,storable>::get(const keytype& key)
 {
 }
 
-} // end namespace Kernel
-
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_STORE_H_ */

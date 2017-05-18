@@ -38,14 +38,9 @@
 #include "../instrument/Component.h"
 #include "../instrument/Monochromator.h"
 
-namespace SX
-{
+namespace nsx {
 
-namespace Instrument
-{
-
-class Source : public Component
-{
+class Source : public Component {
 public:
 
 	//! Static constructor of a monochromatic source from a property tree node
@@ -88,8 +83,6 @@ protected:
 	size_t _selectedMonochromator;
 };
 
-} // end namespace Instrument
-
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_SOURCE_H_ */

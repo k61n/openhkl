@@ -10,11 +10,7 @@
 #include "Sample.h"
 #include "TransAxis.h"
 
-namespace SX
-{
-
-namespace Instrument
-{
+namespace nsx {
 
 Sample* Sample::create(const proptree::ptree& node)
 {
@@ -55,23 +51,23 @@ Sample& Sample::operator=(const Sample& other)
     return *this;
 }
 
-void Sample::setShape(const SX::Geometry::ConvexHull<double>& shape)
+void Sample::setShape(const ConvexHull<double>& shape)
 {
     _sampleShape = shape;
 }
 
-SX::Geometry::ConvexHull<double>& Sample::getShape()
+ConvexHull<double>& Sample::getShape()
 {
     return _sampleShape;
 }
 
-std::shared_ptr<SX::Crystal::UnitCell> Sample::addUnitCell()
+std::shared_ptr<UnitCell> Sample::addUnitCell()
 {
-    _cells.push_back(std::shared_ptr<SX::Crystal::UnitCell>(new SX::Crystal::UnitCell()));
+    _cells.push_back(std::shared_ptr<UnitCell>(new UnitCell()));
     return (_cells.back());
 }
 
-std::shared_ptr<SX::Crystal::UnitCell> Sample::getUnitCell(int i)
+std::shared_ptr<UnitCell> Sample::getUnitCell(int i)
 {
     if (i >= _cells.size()) {
         throw std::runtime_error("Unit Cell not valid");
@@ -89,7 +85,7 @@ std::size_t Sample::getNCrystals() const
     return _cells.size();
 }
 
-void Sample::removeUnitCell(std::shared_ptr<SX::Crystal::UnitCell> cell)
+void Sample::removeUnitCell(std::shared_ptr<UnitCell> cell)
 {
     for (auto it = _cells.begin(); it != _cells.end(); ++it) {
         if ( *it == cell) {
@@ -110,7 +106,7 @@ void Sample::removeUnitCell(int i)
 unsigned int Sample::getZ(int index) const
 {
     if (index < 0 || index >= _cells.size()) {
-        throw Kernel::Error<Sample>("Invalid unit cell index.");
+        throw Error<Sample>("Invalid unit cell index.");
     }
     return _cells[index]->getZ();
 }
@@ -118,30 +114,30 @@ unsigned int Sample::getZ(int index) const
 void Sample::setZ(int Z, int index)
 {
     if (index < 0 || index >= _cells.size()) {
-        throw Kernel::Error<Sample>("Invalid unit cell index.");
+        throw Error<Sample>("Invalid unit cell index.");
     }
 
     if (Z==0) {
-        throw Kernel::Error<Sample>("Invalid Z value.");
+        throw Error<Sample>("Invalid Z value.");
     }
     _cells[index]->setZ(Z);
 }
 
-Chemistry::sptrMaterial Sample::getMaterial(int index) const
+sptrMaterial Sample::getMaterial(int index) const
 {
     if (index < 0 || index >= _cells.size()) {
-        throw Kernel::Error<Sample>("Invalid unit cell index.");
+        throw Error<Sample>("Invalid unit cell index.");
     }
     return _cells[index]->getMaterial();
 }
 
-void Sample::setMaterial(Chemistry::sptrMaterial material, int index)
+void Sample::setMaterial(sptrMaterial material, int index)
 {
     if (index < 0 || index >= _cells.size()) {
-        throw Kernel::Error<Sample>("Invalid unit cell index.");
+        throw Error<Sample>("Invalid unit cell index.");
     }
     _cells[index]->setMaterial(material);
 }
 
-} // end namespace Instrument
-} // namespace SX
+} // end namespace nsx
+

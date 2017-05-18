@@ -39,11 +39,7 @@
 using Eigen::Vector3d;
 using Eigen::Transform;
 
-namespace SX
-{
-
-namespace Instrument
-{
+namespace nsx {
 
 namespace proptree=boost::property_tree;
 
@@ -54,8 +50,7 @@ namespace proptree=boost::property_tree;
 * does not maintain a given state and only return the homogeneous matrix for a input value, i.e.
 * for a rotation of M_PI about the axis, the method getHomMatrix(M_PI) will return the hom. Matrix.
 */
-class Axis
-{
+class Axis {
 
 public:
 
@@ -141,8 +136,6 @@ protected:
 	unsigned int _id;
 };
 
-} // end namespace Instrument
-
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_AXIS_H_ */

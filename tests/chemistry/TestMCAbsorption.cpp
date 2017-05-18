@@ -1,43 +1,37 @@
 #define BOOST_TEST_MODULE "Test Monte-Carlo Absorption"
 #define BOOST_TEST_DYN_LINK
 
-#include <iostream>
-
 #include <boost/test/unit_test.hpp>
 
 #include <Eigen/Dense>
 
-#include <nsxlib/geometry/ConvexHull.h>
 #include <nsxlib/chemistry/Material.h>
+#include <nsxlib/geometry/ConvexHull.h>
 #include <nsxlib/geometry/MCAbsorption.h>
 #include <nsxlib/utils/Types.h>
 #include <nsxlib/utils/Units.h>
 
-// const double tolerance=1.0e-9;
+using namespace Eigen;
 
-using SX::Chemistry::Material;
-using SX::Chemistry::sptrMaterial;
-using SX::Geometry::MCAbsorption;
-using SX::Units::cm;
+using namespace nsx;
 
-BOOST_AUTO_TEST_CASE(Test_Material)
+BOOST_AUTO_TEST_CASE(Test_MCAbsorption)
 {
-    typedef Eigen::Vector3d vector3;
-    typedef SX::Geometry::ConvexHull<double> CHullDouble;
+    using CHullDouble = ConvexHull<double>;
 
     // Build an isotopically pure methane material
     sptrMaterial helium(new Material("He[3]"));
 
     // Create a cubic convex hull
     CHullDouble chull;
-    chull.addVertex(vector3( 0, 0, 0));
-    chull.addVertex(vector3( 1, 0, 0));
-    chull.addVertex(vector3( 0, 1, 0));
-    chull.addVertex(vector3( 0, 0, 1));
-    chull.addVertex(vector3( 1, 1, 0));
-    chull.addVertex(vector3( 1, 0, 1));
-    chull.addVertex(vector3( 0, 1, 1));
-    chull.addVertex(vector3( 1, 1, 1));
+    chull.addVertex(Vector3d( 0, 0, 0));
+    chull.addVertex(Vector3d( 1, 0, 0));
+    chull.addVertex(Vector3d( 0, 1, 0));
+    chull.addVertex(Vector3d( 0, 0, 1));
+    chull.addVertex(Vector3d( 1, 1, 0));
+    chull.addVertex(Vector3d( 1, 0, 1));
+    chull.addVertex(Vector3d( 0, 1, 1));
+    chull.addVertex(Vector3d( 1, 1, 1));
     chull.updateHull();
     chull.translateToCenter();
     chull.scale(0.032);
@@ -52,7 +46,7 @@ BOOST_AUTO_TEST_CASE(Test_Material)
     mca.setSample(&chull,muScattering,muAbsorption);
 
     // Compute the transmission factor
-    mca.run(10,vector3(0,1,0),Eigen::Matrix3d::Identity());
+    mca.run(10,Vector3d(0,1,0),Matrix3d::Identity());
 
     // Build an isotopically pure methane material
     sptrMaterial methane(new Material("CH4"));
@@ -61,7 +55,7 @@ BOOST_AUTO_TEST_CASE(Test_Material)
     methane->setMassDensity(mm/volume);
 
     // Create the MC absorption calculator
-    mca=SX::Geometry::MCAbsorption(3.2*cm,3.2*cm,-100);
+    mca=nsx::MCAbsorption(3.2*cm,3.2*cm,-100);
 
     muScattering=methane->muIncoherent();
     muAbsorption=methane->muAbsorption(1.46e-10);
@@ -70,5 +64,5 @@ BOOST_AUTO_TEST_CASE(Test_Material)
     mca.setSample(&chull,muScattering,muAbsorption);
 
     // Compute the transmission factor
-    mca.run(10000,vector3(0,1,0),Eigen::Matrix3d::Identity());
+    mca.run(10000,Vector3d(0,1,0),Matrix3d::Identity());
 }

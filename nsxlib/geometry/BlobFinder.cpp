@@ -7,10 +7,9 @@
 using std::cout;
 using std::endl;
 
-using Octree = SX::Geometry::NDTree<double,3>;
+namespace nsx {
 
-namespace SX {
-namespace Geometry {
+using Octree = NDTree<double,3>;
 
 void BlobFinder::registerEquivalence(int a, int b, vipairs& equivalences)
 {
@@ -342,7 +341,7 @@ void BlobFinder::findBlobs(std::unordered_map<int,Blob3D>& blobs,
     }
 }
 
-void BlobFinder::setProgressHandler(std::shared_ptr<Utils::ProgressHandler> callback)
+void BlobFinder::setProgressHandler(std::shared_ptr<ProgressHandler> callback)
 {
     _progressHandler = callback;
 }
@@ -489,7 +488,7 @@ void BlobFinder::setFilter(BlobFinder::FilterCallback callback)
 
 /**/
 
-BlobFinder::BlobFinder(std::shared_ptr<SX::Data::DataSet> data)
+BlobFinder::BlobFinder(std::shared_ptr<DataSet> data)
 {
     _data = data;
 }
@@ -552,5 +551,4 @@ void BlobFinder::mergeBlobs(std::unordered_map<int,Blob3D>& blobs, vipairs& equi
     }
 }
 
-} // namespace Geometry
-} // namespace SX
+} // end namespace nsx

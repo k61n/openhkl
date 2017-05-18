@@ -38,21 +38,17 @@
 #include "Intensity.h"
 #include <Eigen/Core>
 
-namespace SX {
+namespace nsx {
 
-namespace Data {
 class DataSet;
-}
-
-namespace Crystal {
 
 class PeakIntegrator {
 public:
-    using Ellipsoid3D = SX::Geometry::Ellipsoid<double, 3>;
-    using MaybeEllipsoid = SX::Utils::Maybe<Ellipsoid3D>;
+    using Ellipsoid3D = Ellipsoid<double, 3>;
+    using MaybeEllipsoid = Maybe<Ellipsoid3D>;
 
     PeakIntegrator() = default;
-    PeakIntegrator(const SX::Geometry::IntegrationRegion& region, const SX::Data::DataSet& data);
+    PeakIntegrator(const IntegrationRegion& region, const DataSet& data);
     ~PeakIntegrator() {}
 
     void step(const Eigen::MatrixXi& frame, size_t idx, const Eigen::MatrixXi& mask);
@@ -65,7 +61,7 @@ public:
 
     double getMeanBackground() const;
 
-    const SX::Geometry::IntegrationRegion& getRegion() const;
+    const IntegrationRegion& getRegion() const;
 
     //! return blob shape (not: not scaled by a confidence parameter)
     //!
@@ -78,9 +74,9 @@ public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
 private:
-    SX::Geometry::Blob3D _blob;
+    Blob3D _blob;
 
-    SX::Geometry::IntegrationRegion _region;
+    IntegrationRegion _region;
     Eigen::Vector3d _lower;
     Eigen::Vector3d _upper;
 
@@ -121,7 +117,6 @@ private:
 
 };
 
-} // namespace Crystal
-} // namespace SX
+} // end namespace nsx
 
 #endif // NSXTOOL_PEAKINTEGRATOR_H_

@@ -31,14 +31,7 @@
 
 #include <set>
 
-#include "../utils/Types.h"
-
-namespace SX
-{
-
-namespace Kernel
-{
-
+namespace nsx {
 
 template <typename component, typename ...args>
 class Composite : public component
@@ -60,7 +53,7 @@ public:
 
     component* add(component*);
     void clear();
-    SX::Types::uint getNComponents() const;
+    unsigned int getNComponents() const;
     void remove(component*);
 
     virtual ~Composite();
@@ -115,7 +108,7 @@ void Composite<component,args...>::clear()
 }
 
 template <typename component,typename ...args>
-SX::Types::uint Composite<component,args...>::getNComponents() const
+unsigned int Composite<component,args...>::getNComponents() const
 {
     return _components.size();
 }
@@ -136,8 +129,6 @@ Composite<component,args...>::~Composite()
     clear();
 }
 
-} // end namespace Kernel
-
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_COMPOSITE_H_ */

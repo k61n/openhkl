@@ -44,28 +44,29 @@
 
 #include "ConvolutionKernel.h"
 
-namespace SX {
+namespace nsx {
 
-namespace Imaging {
-
-class AnnularKernel : public ConvolutionKernel
-{
-public:
-	static ConvolutionKernel* create(int nrows, int ncols);
+class AnnularKernel : public ConvolutionKernel {
 
 public:
+
+    static ConvolutionKernel* create(int nrows, int ncols);
+
+public:
+
     AnnularKernel(int nrows, int ncols);
-    AnnularKernel(int nrows, int ncols,const ConvolutionKernel::ParameterMap& params);
+
+    AnnularKernel(int nrows, int ncols, const ConvolutionKernel::ParameterMap& params);
 
     virtual ~AnnularKernel();
 
     const char* getName() override;
 
 private:
+
     void update() override;
 };
 
-} // Imaging
-} // SX
+} // end namespace nsx
 
 #endif // NSXTOOL_INCLUDED_ANNULARKERNEL_H_

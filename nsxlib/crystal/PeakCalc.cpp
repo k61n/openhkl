@@ -44,15 +44,11 @@
 #include "../geometry/NDTree.h"
 #include "../instrument/DetectorEvent.h"
 
-using SX::Geometry::Ellipsoid;
-using SX::Geometry::Matrix3d;
 using std::shared_ptr;
-using SX::Data::DataSet;
-using Ellipsoid3D = SX::Geometry::Ellipsoid<double, 3>;
 
+namespace nsx {
 
-namespace SX {
-namespace Crystal {
+using Ellipsoid3D = Ellipsoid<double, 3>;
 
 using sptrPeak3D = PeakCalc::sptrPeak3D;
 using PeakList = PeakCalc::PeakList;
@@ -61,10 +57,6 @@ PeakCalc::PeakCalc(double h,double k,double l, double x,double y, double frame):
     _h(h),_k(k),_l(l),_x(x),_y(y),_frame(frame)
 {
 }
-
-//PeakCalc::~PeakCalc()
-//{
-//}
 
 sptrPeak3D PeakCalc::averagePeaks(const Octree& tree, double distance, double min_axis)
 {
@@ -75,7 +67,7 @@ sptrPeak3D PeakCalc::averagePeaks(const Octree& tree, double distance, double mi
     peak->setObserved(false);
 
     Eigen::Vector3d center(_x, _y, _frame);
-    Eigen::SelfAdjointEigenSolver<Matrix3d> solver;
+    Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver;
     // todo: should the z component have a scaling factor?
 
     const double val = distance;
@@ -120,5 +112,4 @@ sptrPeak3D PeakCalc::averagePeaks(const Octree& tree, double distance, double mi
     return peak;
 }
 
-} // Namespace Crystal
-} // namespace SX
+} // end namespace nsx

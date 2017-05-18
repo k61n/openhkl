@@ -42,11 +42,7 @@
 #include "../data/IDataReader.h"
 #include "../instrument/Diffractometer.h"
 
-namespace SX {
-
-namespace Data {
-
-using SX::Instrument::Diffractometer;
+namespace nsx {
 
 class ILLDataReader final: public IDataReader {
 
@@ -100,8 +96,6 @@ private:
     std::size_t _currentLine;
 };
 
-} // end namespace Data
-
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_ILLASCIIDATAREADER_H_ */

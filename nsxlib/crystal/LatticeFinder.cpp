@@ -2,10 +2,7 @@
 
 #include "LatticeFinder.h"
 
-namespace SX
-{
-namespace Crystal
-{
+namespace nsx {
 
 LatticeFinder::LatticeFinder(double threshold, double tolerance)
 {
@@ -216,6 +213,4 @@ std::vector<LatticeVectors> LatticeFinder::determineLattice(std::size_t clusterm
     return solutions;
 }
 
-
-} // Namespace Crystal
-} /* namespace SX */
+} // end namespace nsx

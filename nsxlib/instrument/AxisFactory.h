@@ -36,24 +36,16 @@
 #include "../kernel/Singleton.h"
 #include "../instrument/Axis.h"
 
-namespace SX {
-namespace Instrument
-{
-using SX::Kernel::Factory;
-using SX::Kernel::Constructor;
-using SX::Kernel::Destructor;
-using SX::Kernel::Singleton;
+namespace nsx {
 
-class AxisFactory : public Factory<Axis,std::string,const proptree::ptree&>, public Singleton<AxisFactory,Constructor,Destructor>
-{
+class AxisFactory : public Factory<Axis,std::string,const proptree::ptree&>, public Singleton<AxisFactory,Constructor,Destructor> {
 private:
-    friend class SX::Kernel::Constructor<AxisFactory>;
-    friend class SX::Kernel::Destructor<AxisFactory>;
+    friend class Constructor<AxisFactory>;
+    friend class Destructor<AxisFactory>;
     AxisFactory();
     ~AxisFactory();
 };
 
-} // end namespace Instrument
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_AXISFACTORY_H_ */

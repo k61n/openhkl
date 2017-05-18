@@ -36,10 +36,7 @@
 #include "IMinimizer.h"
 
 
-namespace SX {
-
-namespace Utils {
-
+namespace nsx {
 
 IMinimizer::IMinimizer():
     _numValues(0),
@@ -126,7 +123,5 @@ int IMinimizer::numIterations()
     return _numIter;
 }
 
+} // end namespace nsx
 
-} // namespace Utils
-
-} // namespace SX

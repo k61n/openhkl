@@ -32,12 +32,10 @@
 #include "ThreadedFrameIterator.h"
 
 
-namespace SX {
-namespace Data {
+namespace nsx {
 
 using Eigen::Matrix3d;
 using boost::filesystem::path;
-using SX::Instrument::InstrumentState;
 
 DataSet::DataSet(IDataReader* reader, const std::shared_ptr<Diffractometer>& diffractometer):
     _isOpened(false),
@@ -217,7 +215,7 @@ const ComponentState& DataSet::getSourceState(size_t frame) const
 }
 
 
-const std::vector<SX::Instrument::InstrumentState>& DataSet::getInstrumentStates() const
+const std::vector<InstrumentState>& DataSet::getInstrumentStates() const
 {
     return _states;
 }
@@ -306,7 +304,7 @@ void DataSet::saveHDF5(const std::string& filename) //const
         const std::vector<double>& v = _states[i].detector.getValues();
 
         for (unsigned int j = 0; j < names.size(); ++j) {
-            vals(j,i) = v[j] / SX::Units::deg;
+            vals(j,i) = v[j] / deg;
         }
     }
 
@@ -324,7 +322,7 @@ void DataSet::saveHDF5(const std::string& filename) //const
         const std::vector<double>& v = _states[i].sample.getValues();
 
         for (unsigned int j = 0; j < samplenames.size(); ++j) {
-            valsSamples(j,i) = v[j]/SX::Units::deg;
+            valsSamples(j,i) = v[j]/deg;
         }
     }
 
@@ -346,7 +344,7 @@ void DataSet::saveHDF5(const std::string& filename) //const
         }
 
         for (unsigned int j = 0; j < sourcenames.size(); ++j) {
-            valsSources(j,i) = v[j] / SX::Units::deg;
+            valsSources(j,i) = v[j] / deg;
         }
     }
 
@@ -518,7 +516,7 @@ std::vector<PeakCalc> DataSet::hasPeaks(const std::vector<Eigen::Vector3d>& hkls
     return peaks;
 }
 
-double DataSet::getBackgroundLevel(const std::shared_ptr<SX::Utils::ProgressHandler>& progress)
+double DataSet::getBackgroundLevel(const std::shared_ptr<ProgressHandler>& progress)
 {
     if ( _background > 0.0 ) {
         return _background;
@@ -554,17 +552,17 @@ double DataSet::getBackgroundLevel(const std::shared_ptr<SX::Utils::ProgressHand
     return _background;
 }
 
-void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_shape, const std::shared_ptr<Utils::ProgressHandler>& handler)
+void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_shape, const std::shared_ptr<ProgressHandler>& handler)
 {
-    using Ellipsoid3D = SX::Geometry::Ellipsoid<double, 3>;
+    using Ellipsoid3D = Ellipsoid<double, 3>;
 
     if (handler) {
         handler->setStatus(("Integrating " + std::to_string(getPeaks().size()) + " peaks...").c_str());
         handler->setProgress(0);
     }
 
-    using IntegrationRegion = SX::Geometry::IntegrationRegion;
-    using PeakIntegrator = SX::Crystal::PeakIntegrator;
+    using IntegrationRegion = IntegrationRegion;
+    using PeakIntegrator = PeakIntegrator;
     using integrated_peak = std::pair<sptrPeak3D, PeakIntegrator>;
 
     std::vector<integrated_peak> peak_list;
@@ -672,7 +670,7 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
 
     // testing: don't update shape?!
     // update_shape = false;
-    const double confidence = SX::Utils::getConfidence(1.0); // todo: should not be hard coded
+    const double confidence = getConfidence(1.0); // todo: should not be hard coded
 
     for (auto&& tup: peak_list) {
         auto&& peak = tup.first;
@@ -757,10 +755,9 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
     }
 }
 
-void SX::Data::DataSet::removeDuplicatePeaks()
+void DataSet::removeDuplicatePeaks()
 {
-    using SX::Instrument::Sample;
-    using Octree = SX::Geometry::NDTree<double, 3>;
+    using Octree = NDTree<double, 3>;
 
     class compare_fn {
     public:
@@ -787,7 +784,7 @@ void SX::Data::DataSet::removeDuplicatePeaks()
     unsigned int ncrystals = static_cast<unsigned int>(sample->getNCrystals());
 
     for (unsigned int i = 0; i < ncrystals; ++i) {
-        SX::Crystal::SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
+        SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
         auto cell = sample->getUnitCell(i);
         auto UB = cell->getReciprocalStandardM();
 
@@ -835,7 +832,7 @@ double DataSet::getSampleStepSize() const
     }
 
     step = std::sqrt(step);
-    step /= (numFrames-1) * 0.05 * SX::Units::deg;
+    step /= (numFrames-1) * 0.05 * deg;
 
     return step;
 }
@@ -857,12 +854,11 @@ Eigen::Vector3d DataSet::getQ(const Eigen::Vector3d& pix) const
     double wavelength = source->getSelectedMonochromator().getWavelength();
     auto state = getInterpolatedState(frame);
 
-    SX::Instrument::DetectorEvent event(*_diffractometer->getDetector(), pix[0], pix[1], state.detector.getValues());
+    DetectorEvent event(*_diffractometer->getDetector(), pix[0], pix[1], state.detector.getValues());
 
     // otherwise scattering point is deducted from the sample
     Eigen::Vector3d q = event.getQ(wavelength, state.sample.getPosition());
     return state.sample.transformQ(q);
 }
 
-} // end namespace Data
-} // end namespace SX
+} // end namespace nsx

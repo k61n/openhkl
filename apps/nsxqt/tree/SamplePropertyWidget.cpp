@@ -5,12 +5,13 @@
 #include <nsxlib/instrument/Gonio.h>
 #include <nsxlib/instrument/Sample.h>
 #include <nsxlib/instrument/TransAxis.h>
+#include <nsxlib/utils/Units.h>
+
+#include "models/SampleItem.h"
+#include "models/UnitCellItem.h"
+#include "tree/SamplePropertyWidget.h"
 
 #include "ui_SamplePropertyWidget.h"
-#include "models/SampleItem.h"
-#include "tree/SamplePropertyWidget.h"
-#include "models/UnitCellItem.h"
-#include <nsxlib/utils/Units.h>
 
 SamplePropertyWidget::SamplePropertyWidget(SampleItem* caller,QWidget *parent) :
     QWidget(parent),
@@ -61,9 +62,9 @@ SamplePropertyWidget::SamplePropertyWidget(SampleItem* caller,QWidget *parent) :
         QTableWidgetItem* item2=new QTableWidgetItem();
 
         if (isrot) {
-            item2->setData(Qt::EditRole, double(axis->getOffset()/SX::Units::deg));
+            item2->setData(Qt::EditRole, double(axis->getOffset()/nsx::deg));
         } else {
-            item2->setData(Qt::EditRole, double(axis->getOffset()/SX::Units::mm));
+            item2->setData(Qt::EditRole, double(axis->getOffset()/nsx::mm));
         }
         item0->setFlags(item0->flags() &~Qt::ItemIsEditable);
         item1->setFlags(item1->flags() &~Qt::ItemIsEditable);
@@ -84,9 +85,9 @@ void SamplePropertyWidget::cellHasChanged(int i,int j)
     auto sample=_sampleItem->getExperiment()->getDiffractometer()->getSample();
     auto axis=sample->getGonio()->getAxis(i);
     if (dynamic_cast<TransAxis*>(axis)) {
-         axis->setOffset(ui->tableWidget_Sample->item(i,j)->data(Qt::EditRole).toDouble()*SX::Units::mm); // Given in mm
+         axis->setOffset(ui->tableWidget_Sample->item(i,j)->data(Qt::EditRole).toDouble()*nsx::mm); // Given in mm
     } else {
-         axis->setOffset(ui->tableWidget_Sample->item(i,j)->data(Qt::EditRole).toDouble()*SX::Units::deg); // Given in degs
+         axis->setOffset(ui->tableWidget_Sample->item(i,j)->data(Qt::EditRole).toDouble()*nsx::deg); // Given in degs
     }
 }
 

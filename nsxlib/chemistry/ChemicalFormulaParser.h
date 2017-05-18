@@ -43,9 +43,7 @@
 
 #include "IsotopeDatabaseManager.h"
 
-namespace SX {
-
-namespace Chemistry {
+namespace nsx {
 
 namespace qi = boost::spirit::qi;
 
@@ -287,8 +285,6 @@ private:
     qi::rule<Iterator,isotopeContents()>  _start;
 };
 
-} // Namespace Chemistry
-
-} // Namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_CHEMICALFORMULAPARSER_H_ */

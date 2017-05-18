@@ -6,7 +6,7 @@
 
 #include "DeadTime.h"
 
-namespace SX
+namespace nsx
 {
 
 DTCorrection::DTCorrection(const char* name):_name(name)
@@ -78,6 +78,6 @@ void DTCorrection::apply(double& ccount,double& sccount, double time) const
 
 
 
-} // End namespace SX
+} // End namespace nsx
 
 

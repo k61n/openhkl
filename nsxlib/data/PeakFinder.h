@@ -7,32 +7,20 @@
 #include "../imaging/Convolver.h"
 #include "../imaging/ConvolutionKernel.h"
 
-
-namespace SX
-{
-
-namespace Imaging
-{
-class Convolver;
-}
-
-namespace Utils
-{
-class ProgressHandler;
-}
-
-namespace Data
-{
+namespace nsx {
 
 class DataSet;
+class ProgressHandler;
 
-class PeakFinder
-{
+class PeakFinder {
+
 public:
+
     PeakFinder();
+
     bool find(std::vector<std::shared_ptr<DataSet>> numors);
 
-    void setHandler(const std::shared_ptr<SX::Utils::ProgressHandler>& handler);
+    void setHandler(const std::shared_ptr<ProgressHandler>& handler);
 
     void setThresholdValue(double threshold);
     double getThresholdValue();
@@ -41,7 +29,7 @@ public:
     int getThresholdType();
 
     void setConfidence(double confidence);
-    double getConfidence();
+    double confidence() const;
 
     void setMinComponents(int minComp);
     int getMinComponents();
@@ -49,18 +37,18 @@ public:
     void setMaxComponents(int maxComp);
     int getMaxComponents();
 
-    void setConvolver(const std::shared_ptr<SX::Imaging::Convolver>& convolver);
-    std::shared_ptr<SX::Imaging::Convolver> getConvolver();
+    void setConvolver(const std::shared_ptr<Convolver>& convolver);
+    std::shared_ptr<Convolver> getConvolver();
 
-    void setConvolutionKernel(const std::shared_ptr<SX::Imaging::ConvolutionKernel>& kernel);
+    void setConvolutionKernel(const std::shared_ptr<ConvolutionKernel>& kernel);
 
-    void setKernel(const std::shared_ptr<SX::Imaging::ConvolutionKernel>& kernel);
-    std::shared_ptr<SX::Imaging::ConvolutionKernel> getKernel();
+    void setKernel(const std::shared_ptr<ConvolutionKernel>& kernel);
+    std::shared_ptr<ConvolutionKernel> getKernel();
 
 private:
-    std::shared_ptr<SX::Utils::ProgressHandler> _handler;
-    std::shared_ptr<SX::Imaging::Convolver> _convolver;
-    std::shared_ptr<SX::Imaging::ConvolutionKernel> _kernel;
+    std::shared_ptr<ProgressHandler> _handler;
+    std::shared_ptr<Convolver> _convolver;
+    std::shared_ptr<ConvolutionKernel> _kernel;
 
     double _thresholdValue;
     int _thresholdType;
@@ -72,8 +60,6 @@ private:
     int _maxComp;
 };
 
-} // namespace Data
-
-} // namespace SX
+} // end namespace nsx
 
 #endif // PEAKFINDER_H

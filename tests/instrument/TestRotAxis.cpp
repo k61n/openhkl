@@ -1,21 +1,23 @@
 #define BOOST_TEST_MODULE "Test Rotation Axis"
 #define BOOST_TEST_DYN_LINK
+
+#include <boost/test/unit_test.hpp>
+
+#include <Eigen/Dense>
+
 #include <nsxlib/instrument/RotAxis.h>
 #include <nsxlib/utils/Units.h>
-#include <cmath>
-#include <Eigen/Dense>
-#include <boost/test/unit_test.hpp>
-#include <fstream>
 
-using namespace SX::Units;
-using namespace SX::Instrument;
 using Eigen::Vector3d;
-using Eigen::Matrix3d;
+
+using namespace nsx;
+
 const double tolerance=1e-6;
+
 BOOST_AUTO_TEST_CASE(Test_Rot_Axis)
 {
     //Empty Rotation axis initialize to (0,0,1)
-    SX::Instrument::RotAxis a("omega",Vector3d(0,0,1));
+    nsx::RotAxis a("omega",Vector3d(0,0,1));
     Vector3d axis=a.getAxis();
     BOOST_CHECK(axis[0]==0);
     BOOST_CHECK(axis[1]==0);

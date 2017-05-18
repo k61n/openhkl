@@ -1,14 +1,9 @@
-#include <set>
-#include <memory>
-
 #include <QCompleter>
-#include <QSortFilterProxyModel>
 #include <QMessageBox>
-#include <QtDebug>
+#include <QSortFilterProxyModel>
 
 #include <nsxlib/instrument/Gonio.h>
 #include <nsxlib/data/IData.h>
-#include "LatticeIndexer.h"
 #include <nsxlib/chemistry/Material.h>
 #include <nsxlib/crystal/Peak3D.h>
 #include <nsxlib/crystal/SpaceGroupSymbols.h>
@@ -16,14 +11,14 @@
 #include <nsxlib/utils/Units.h>
 #include <nsxlib/utils/Types.h>
 
-#include "ui_UnitCellPropertyWidget.h"
+#include "LatticeIndexer.h"
 #include "Logger.h"
 #include "models/SessionModel.h"
 #include "models/UnitCellItem.h"
 #include "tree/UnitCellPropertyWidget.h"
 
-using SX::Chemistry::Material;
-using SX::Chemistry::sptrMaterial;
+#include "ui_UnitCellPropertyWidget.h"
+
 
 UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *parent) :
     QWidget(parent),
@@ -56,7 +51,7 @@ UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *par
 
     updateCellParameters(cell);
 
-    SX::Crystal::SpaceGroupSymbols* sgs=SX::Crystal::SpaceGroupSymbols::Instance();
+    nsx::SpaceGroupSymbols* sgs=nsx::SpaceGroupSymbols::Instance();
     std::vector<std::string> symbols=sgs->getAllSymbols();
 
     for (const auto& symbol : symbols)
@@ -97,7 +92,7 @@ void UnitCellPropertyWidget::setLatticeParams()
 
     try
     {
-        _unitCellItem->getUnitCell()->setParams(a,b,c,alpha*SX::Units::deg,beta*SX::Units::deg,gamma*SX::Units::deg);
+        _unitCellItem->getUnitCell()->setParams(a,b,c,alpha*nsx::deg,beta*nsx::deg,gamma*nsx::deg);
     }catch(...)
     {
 
@@ -113,8 +108,8 @@ void UnitCellPropertyWidget::setMassDensity() const
     if (material)
     {
         double mm=material->molarMass();
-        mm*=ui->spinBox_Z->value()/SX::Units::avogadro;
-        double volume=_unitCellItem->getUnitCell()->getVolume()*SX::Units::ang3;
+        mm*=ui->spinBox_Z->value()/nsx::avogadro;
+        double volume=_unitCellItem->getUnitCell()->getVolume()*nsx::ang3;
         material->setMassDensity(mm/volume);
     }
 }
@@ -125,9 +120,9 @@ void UnitCellPropertyWidget::updateCellParameters(sptrUnitCell cell)
     ui->doubleSpinBoxa->setValue(cell->getA());
     ui->doubleSpinBoxb->setValue(cell->getB());
     ui->doubleSpinBoxc->setValue(cell->getC());
-    ui->doubleSpinBoxalpha->setValue(cell->getAlpha()/SX::Units::deg);
-    ui->doubleSpinBoxbeta->setValue(cell->getBeta()/SX::Units::deg);
-    ui->doubleSpinBoxgamma->setValue(cell->getGamma()/SX::Units::deg);
+    ui->doubleSpinBoxalpha->setValue(cell->getAlpha()/nsx::deg);
+    ui->doubleSpinBoxbeta->setValue(cell->getBeta()/nsx::deg);
+    ui->doubleSpinBoxgamma->setValue(cell->getGamma()/nsx::deg);
 }
 
 void UnitCellPropertyWidget::getLatticeParams()

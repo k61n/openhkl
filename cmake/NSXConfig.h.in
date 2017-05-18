@@ -3,10 +3,8 @@
 
 #include <string>
 
-namespace SX {
-    namespace Utils {
-            constexpr const char* g_resourcesDir = "@RESOURCES_DIR@";
-    }
+namespace nsx {
+constexpr const char* g_resourcesDir = "@RESOURCES_DIR@";
 }
 
 

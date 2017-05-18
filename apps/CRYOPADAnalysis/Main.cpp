@@ -12,8 +12,8 @@
 
 int main()
 {
-	using namespace SX::Data;
-	using namespace SX;
+	using namespace nsx::Data;
+	using namespace nsx;
 
 	boost::shared_ptr<NumorSet> ptrnumor(new NumorSet("Set"));
 	std::cout << "Give data directory\n";

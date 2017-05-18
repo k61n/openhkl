@@ -13,15 +13,13 @@
 #include <nsxlib/geometry/NDTree.h>
 #include <nsxlib/geometry/Ellipsoid.h>
 
-using namespace SX::Geometry;
-using Eigen::Vector3d;
+using namespace nsx;
 
 const double tolerance=1e-5;
-using uint = unsigned int;
 
 void collision_test()
 {
-    using Ellipsoid3D = SX::Geometry::Ellipsoid<double, 3>;
+    using Ellipsoid3D = Ellipsoid<double, 3>;
 
     NDTree<double,3> tree({0,0,0},{100,100,100});
     auto vects = Eigen::Matrix3d::Identity();
@@ -82,7 +80,7 @@ void collision_test()
 
 void split_test()
 {
-    using Ellipsoid3D = SX::Geometry::Ellipsoid<double, 3>;
+    using Ellipsoid3D = nsx::Ellipsoid<double, 3>;
 
     NDTree<double,3> tree({0,0,0},{50,50,50});
     tree.setMaxStorage(4);
@@ -139,7 +137,7 @@ void split_test()
 
 BOOST_AUTO_TEST_CASE(Test_NDTree)
 {
-    uint maxStorage(10);
+    unsigned int maxStorage(10);
 
     // Build up a NDTree with (0,0,0) as lower corner and (100,100,100) as upper corner
     NDTree<double,3> tree({0,0,0},{100,100,100});
@@ -151,9 +149,9 @@ BOOST_AUTO_TEST_CASE(Test_NDTree)
     std::vector<AABB<double,3>> bb;
     bb.reserve(100);
 
-    for (uint i=0;i<=maxStorage;++i) {
-        Vector3d v1(d1(gen),d1(gen),d1(gen));
-        Vector3d v2(d2(gen),d2(gen),d2(gen));
+    for (unsigned int i=0;i<=maxStorage;++i) {
+        Eigen::Vector3d v1(d1(gen),d1(gen),d1(gen));
+        Eigen::Vector3d v2(d2(gen),d2(gen),d2(gen));
         bb.push_back(AABB<double,3>(v1,v2));
         // Test: the root node has no children until it is not splitted
         BOOST_CHECK_EQUAL(tree.hasChildren(),false);
@@ -172,29 +170,6 @@ BOOST_AUTO_TEST_CASE(Test_NDTree)
 
     // Test: the root node does not have any data anymore once it has been splitted
     BOOST_CHECK_EQUAL(tree.hasData(),false);
-
-//    //Test: the iterator on a NDTree begins with the root node
-//    NDTree<double,3>::iterator it(tree.begin());
-
-//    Eigen::Vector3d center(it->getAABBCenter());
-//    BOOST_CHECK_CLOSE(center(0),50.0,tolerance);
-//    BOOST_CHECK_CLOSE(center(1),50.0,tolerance);
-//    BOOST_CHECK_CLOSE(center(2),50.0,tolerance);
-
-//    Eigen::Vector3d lower((*it).getLower());
-//    BOOST_CHECK_CLOSE(lower(0),0.0,tolerance);
-//    BOOST_CHECK_CLOSE(lower(1),0.0,tolerance);
-//    BOOST_CHECK_CLOSE(lower(2),0.0,tolerance);
-
-//    Eigen::Vector3d upper((*it).getUpper());
-//    BOOST_CHECK_CLOSE(upper(0),100.0,tolerance);
-//    BOOST_CHECK_CLOSE(upper(1),100.0,tolerance);
-//    BOOST_CHECK_CLOSE(upper(2),100.0,tolerance);
-
-//    Eigen::Vector3d extents((*it).getAABBExtents());
-//    BOOST_CHECK_CLOSE(extents(0),100.0,tolerance);
-//    BOOST_CHECK_CLOSE(extents(1),100.0,tolerance);
-//    BOOST_CHECK_CLOSE(extents(2),100.0,tolerance);
 
     std::vector<AABB<double,3>>::const_iterator it1;
 

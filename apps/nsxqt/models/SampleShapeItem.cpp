@@ -1,9 +1,7 @@
-#include <QWidget>
+#include "../models/SampleShapeItem.h"
+#include "../tree/SampleShapePropertyWidget.h"
 
-#include "models/SampleShapeItem.h"
-#include "tree/SampleShapePropertyWidget.h"
-
-SampleShapeItem::SampleShapeItem(std::shared_ptr<SX::Instrument::Experiment> experiment):
+SampleShapeItem::SampleShapeItem(std::shared_ptr<nsx::Experiment> experiment):
     InspectableTreeItem(experiment)
 {
     QIcon icon(":/resources/sampleIcon.png");

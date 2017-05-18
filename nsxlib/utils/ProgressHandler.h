@@ -10,9 +10,7 @@
 #include <vector>
 #include <atomic>
 
-namespace SX {
-
-namespace Utils {
+namespace nsx {
 
 // progress handler callback:
 // progressHandler(double progress) -> int
@@ -51,9 +49,6 @@ private:
     std::function<void(void)> _callback;
 };
 
-} // namespace Utils
-
-} // namespace SX
-
+} // end namespace nsx
 
 #endif // PROGRESSHANDLER_H

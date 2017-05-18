@@ -1,14 +1,14 @@
 #define BOOST_TEST_MODULE "Test Space group symbols"
 #define BOOST_TEST_DYN_LINK
 
-#include <boost/test/unit_test.hpp>
 #include <string>
-#include <iostream>
+
+#include <boost/test/unit_test.hpp>
 
 #include <nsxlib/crystal/SpaceGroupSymbols.h>
 #include <nsxlib/crystal/SpaceGroup.h>
 
-using namespace SX::Crystal;
+using namespace nsx;
 
 BOOST_AUTO_TEST_CASE(Test_SpaceGroupSymbols)
 {
@@ -20,7 +20,6 @@ BOOST_AUTO_TEST_CASE(Test_SpaceGroupSymbols)
     // Check that string generator strings are OK s
     BOOST_CHECK(generators.compare(" -x+1/2,-y,z+1/2; -x,y+1/2,-z; -x,-y,-z")==0);
 
-
     auto symbols = table->getAllSymbols();
 
     for (auto&& symbol: symbols) {
@@ -28,16 +27,12 @@ BOOST_AUTO_TEST_CASE(Test_SpaceGroupSymbols)
 
             std::string reduced = table->getReducedSymbol(symbol);
 
-            if (reduced != symbol)
-                std::cout << symbol << " \t\t " << reduced << std::endl;
-
             BOOST_CHECK(symbol == table->getFullSymbol(symbol));
             BOOST_CHECK(table->getFullSymbol(reduced) == symbol);
 
             SpaceGroup grp(symbol);
         }
         catch(std::exception& e) {
-            std::cout << "Caught exception: " << e.what() << std::endl;
             BOOST_ERROR("Caught exception");
         }
     }

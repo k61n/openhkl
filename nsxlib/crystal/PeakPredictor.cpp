@@ -39,16 +39,11 @@
 #include "../instrument/Sample.h"
 #include "../instrument/Source.h"
 
-
-using SX::Data::DataSet;
-
-namespace SX {
-namespace Crystal {
+namespace nsx {
 
 void PeakPredictor::addPredictedPeaks(std::shared_ptr<DataSet> data)
 {
-    using SX::Instrument::Sample;
-    using Octree = SX::Geometry::NDTree<double, 3>;
+    using Octree = NDTree<double, 3>;
 
     class compare_fn {
     public:
@@ -75,7 +70,7 @@ void PeakPredictor::addPredictedPeaks(std::shared_ptr<DataSet> data)
     unsigned int ncrystals = static_cast<unsigned int>(sample->getNCrystals());
 
     for (unsigned int i = 0; i < ncrystals; ++i) {
-        SX::Crystal::SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
+        SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
         auto cell = sample->getUnitCell(i);
         auto UB = cell->getReciprocalStandardM();
 
@@ -86,7 +81,7 @@ void PeakPredictor::addPredictedPeaks(std::shared_ptr<DataSet> data)
 
         predicted_peaks += predicted_hkls.size();
 
-        std::vector<SX::Crystal::PeakCalc> peaks = data->hasPeaks(predicted_hkls, UB);
+        std::vector<PeakCalc> peaks = data->hasPeaks(predicted_hkls, UB);
         calculated_peaks.reserve(peaks.size());
 
         int current_peak = 0;
@@ -167,5 +162,4 @@ void PeakPredictor::addPredictedPeaks(std::shared_ptr<DataSet> data)
     data->integratePeaks(_peakScale, _bkgScale, false, _handler);
 }
 
-} // namespace Crystal
-} // namespace SX
+} // end namespace nsx

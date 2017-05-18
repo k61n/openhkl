@@ -10,14 +10,14 @@ namespace Ui
 class DialogUnitCellParameters;
 }
 
-using SX::Crystal::sptrUnitCell;
+class Widget;
 
 class DialogUnitCellParameters : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit DialogUnitCellParameters(sptrUnitCell unitCell, QWidget *parent=0);
+    explicit DialogUnitCellParameters(nsx::sptrUnitCell unitCell, QWidget *parent=0);
     ~DialogUnitCellParameters();
 
 public slots:
@@ -26,7 +26,7 @@ public slots:
 
 private:
     Ui::DialogUnitCellParameters *ui;
-    sptrUnitCell _unitCell;
+    nsx::sptrUnitCell _unitCell;
 };
 
 #endif // DIALOGUNITCELLPARAMETERS_H

@@ -11,19 +11,18 @@
 
 #include "ConvolutionKernel.h"
 
-namespace SX
-{
+namespace nsx {
 
-namespace Imaging
-{
-
-class DeltaKernel : public ConvolutionKernel
-{
-public:
-	static ConvolutionKernel* create(int nrows, int ncols);
+class DeltaKernel : public ConvolutionKernel {
 
 public:
+
+    static ConvolutionKernel* create(int nrows, int ncols);
+
+public:
+
     DeltaKernel(int nrows, int ncols);
+
     DeltaKernel(int nrows, int ncols, const ConvolutionKernel::ParameterMap& params);
 
     virtual ~DeltaKernel();
@@ -31,10 +30,11 @@ public:
     const char* getName() override;
 
 private:
+
     void update() override;
+
 };
 
-} // Imaging
-} // SX
+} // end namespace nsx
 
 #endif // NSXTOOL_INCLUDED_DELTAKERNEL_H_

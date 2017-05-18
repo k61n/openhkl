@@ -35,18 +35,11 @@
 #include "LatticeFunctor.h"
 #include "LatticeSolution.h"
 
-namespace SX
-{
+namespace nsx {
 
-namespace Instrument
-{
 class Detector;
 class Sample;
 class Source;
-}
-
-namespace Crystal
-{
 
 class Peak3D;
 
@@ -84,17 +77,17 @@ public:
 	 * @brief Set the detector related to the peaks collected for the minimization
 	 * @param detector the detector
 	 */
-    void setDetector(std::shared_ptr<Instrument::Detector> detector);
+    void setDetector(std::shared_ptr<Detector> detector);
 	/*
 	 * @brief Set the sample related to the peaks collected for the minimization
 	 * @param sample the sample
 	 */
-    void setSample(std::shared_ptr<Instrument::Sample> sample);
+    void setSample(std::shared_ptr<Sample> sample);
 	/*
 	 * @brief Set the starting values of the UB matrix
 	 * @param ub the UB matrix
 	 */
-    void setSource(std::shared_ptr<Instrument::Source> source);
+    void setSource(std::shared_ptr<Source> source);
 
 	void setStartingLattice(double a, double b, double c, double alpha, double beta, double gamma, bool constant=false);
 
@@ -126,8 +119,6 @@ private:
 	std::map<unsigned int,double> _start;
 };
 
-} // end namespace Crystal
-
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_LATTICEMINIMIZER_H_ */

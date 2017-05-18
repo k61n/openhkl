@@ -3,21 +3,11 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include <iostream>
-#include <vector>
-#include <string>
-#include <cmath>
-#include <random>
-
-#include <nsxlib/crystal/Profile.h>
 #include <Eigen/Dense>
 
-//using namespace SX::Crystal;
-//using namespace std;
+#include <nsxlib/crystal/Profile.h>
 
-using SX::Crystal::Profile;
-using SX::Utils::Lorentzian;
-using SX::Utils::Gaussian;
+using namespace nsx;
 
 const double eps = 1.0;
 

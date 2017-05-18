@@ -32,14 +32,10 @@
 
 #include <cassert>
 
-namespace SX {
-
-namespace Utils {
-
+namespace nsx {
 
 CSV::CSV(char delim, char quotchar): _delim(delim), _quotchar(quotchar)
 {
-
 }
 
 CSV::~CSV()
@@ -134,7 +130,5 @@ std::string CSV::getToken(std::istream &stream, char &delim)
     return tok;
 }
 
+} // end namespace nsx
 
-} // namespace Utils
-
-} // namespace SX

@@ -38,8 +38,7 @@
 
 #include <Eigen/Dense>
 
-namespace SX {
-namespace Utils {
+namespace nsx {
 
 class Gaussian {
 public:
@@ -51,7 +50,6 @@ private:
     double _a, _mu, _sigma;
 };
 
-} // namespace Utils
-} // namespace SX
+} // end namespace nsx
 
 #endif // NSXTOOL_GAUSSIAN_H_

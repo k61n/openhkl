@@ -1,10 +1,9 @@
-#include "DialogExperiment.h"
-#include "ui_ExperimentDialog.h"
-#include <QString>
-#include <nsxlib/instrument/DiffractometerStore.h>
 #include <QComboBox>
 
-using namespace SX::Instrument;
+#include <nsxlib/instrument/DiffractometerStore.h>
+
+#include "DialogExperiment.h"
+#include "ui_ExperimentDialog.h"
 
 DialogExperiment::DialogExperiment(QWidget *parent) : QDialog(parent), ui(new Ui::DialogExperiment)
 {
@@ -14,7 +13,7 @@ DialogExperiment::DialogExperiment(QWidget *parent) : QDialog(parent), ui(new Ui
     ui->instrument->setInsertPolicy(QComboBox::InsertAlphabetically);
 
     // Add the available instruments to the combo box
-    DiffractometerStore* ds = DiffractometerStore::Instance();
+    nsx::DiffractometerStore* ds = nsx::DiffractometerStore::Instance();
 
     auto diffractometers=ds->getDiffractometersList();
     for (const auto& d : diffractometers)

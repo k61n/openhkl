@@ -57,18 +57,9 @@
 #include "../geometry/Ellipsoid.h"
 #include "../data/IFrameIterator.h"
 
-using SX::Geometry::Blob3D;
+namespace nsx {
 
-using SX::Data::IFrameIterator;
-using SX::Instrument::DetectorEvent;
-using SX::Instrument::ComponentState;
-
-namespace SX {
-namespace Crystal {
-
-using shape_type = Peak3D::shape_type;
-
-Peak3D::Peak3D(std::shared_ptr<SX::Data::DataSet> data):
+Peak3D::Peak3D(std::shared_ptr<DataSet> data):
     _data(),
     _shape(),
     _unitCells(),
@@ -87,7 +78,7 @@ Peak3D::Peak3D(std::shared_ptr<SX::Data::DataSet> data):
     linkData(data);
 }
 
-Peak3D::Peak3D(std::shared_ptr<Data::DataSet> data, const Peak3D::Ellipsoid3D &shape):
+Peak3D::Peak3D(std::shared_ptr<DataSet> data, const Ellipsoid3D &shape):
     Peak3D(data)
 {
     setShape(shape);
@@ -142,9 +133,9 @@ Peak3D& Peak3D::operator=(const Peak3D& other)
     return *this;
 }
 
-void Peak3D::linkData(const std::shared_ptr<SX::Data::DataSet>& data)
+void Peak3D::linkData(const std::shared_ptr<DataSet>& data)
 {
-    _data = std::weak_ptr<SX::Data::DataSet>(data);
+    _data = std::weak_ptr<DataSet>(data);
     if (data != nullptr) {
         setSource(data->getDiffractometer()->getSource());
         // update detector event and state
@@ -166,7 +157,7 @@ Eigen::RowVector3d Peak3D::getMillerIndices() const
 
 void Peak3D::setShape(const Ellipsoid3D& peak)
 {
-    using DetectorEvent = SX::Instrument::DetectorEvent;
+    using DetectorEvent = DetectorEvent;
     _shape = peak;
     auto data = getData();
 
@@ -378,12 +369,12 @@ void Peak3D::setSampleState(const ComponentState& sstate)
     _sampleState = std::unique_ptr<ComponentState>(new ComponentState(sstate));
 }
 
-void Peak3D::setDetectorEvent(const SX::Instrument::DetectorEvent& event)
+void Peak3D::setDetectorEvent(const DetectorEvent& event)
 {
     _event = std::unique_ptr<DetectorEvent>(new DetectorEvent(event));
 }
 
-void Peak3D::setSource(const std::shared_ptr<SX::Instrument::Source>& source)
+void Peak3D::setSource(const std::shared_ptr<Source>& source)
 {
     _source = source;
 }
@@ -505,5 +496,4 @@ int Peak3D::getActiveUnitCellIndex() const
     return _activeUnitCellIndex;
 }
 
-} // namespace Crystal
-} // namespace SX
+} // end namespace nsx

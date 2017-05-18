@@ -11,29 +11,28 @@
 #include "MonoDetector.h"
 #include "MultiDetector.h"
 
-namespace SX {
-namespace Instrument {
+namespace nsx {
 
 Detector* MultiDetector::create(const proptree::ptree& node)
 {
     return new MultiDetector(node);
 }
 
-MultiDetector::MultiDetector() : Kernel::Composite<Detector,const proptree::ptree&>()
+MultiDetector::MultiDetector() : Composite<Detector,const proptree::ptree&>()
 {
 }
 
-MultiDetector::MultiDetector(const MultiDetector& other) : Kernel::Composite<Detector,const proptree::ptree&>(other)
+MultiDetector::MultiDetector(const MultiDetector& other) : Composite<Detector,const proptree::ptree&>(other)
 {
 
 }
 
-MultiDetector::MultiDetector(const std::string& name) : Kernel::Composite<Detector,const proptree::ptree&>()
+MultiDetector::MultiDetector(const std::string& name) : Composite<Detector,const proptree::ptree&>()
 {
     _name = name;
 }
 
-MultiDetector::MultiDetector(const proptree::ptree& node) : Kernel::Composite<Detector,const proptree::ptree&>(node)
+MultiDetector::MultiDetector(const proptree::ptree& node) : Composite<Detector,const proptree::ptree&>(node)
 {
     // Set each subdetector of the multi detector from the property tree "detector" subnodes
     BOOST_FOREACH(const property_tree::ptree::value_type& v, node)
@@ -44,7 +43,7 @@ MultiDetector::MultiDetector(const proptree::ptree& node) : Kernel::Composite<De
             MonoDetector* detector = dynamic_cast<MonoDetector*>(Detector::create(v.second));
 
             if (!detector)
-                throw Kernel::Error<MultiDetector>("NSXTool does not support nested multi detector.");
+                throw Error<MultiDetector>("NSXTool does not support nested multi detector.");
 
             const property_tree::ptree& pixelOriginNode=v.second.get_child("origin");
             double opx=pixelOriginNode.get<double>("pixel_x");
@@ -199,5 +198,4 @@ unsigned int MultiDetector::getNDetectors() const
     return getNComponents();
 }
 
-} // end namespace Instrument
-} // end namespace SX
+} // end namespace nsx

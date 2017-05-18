@@ -1,21 +1,18 @@
-#define BOOST_TEST_MODULE "Test Multi-dimensional Ellipsoid"
+#define BOOST_TEST_MODULE "Test Ellipsoid 3D"
 #define BOOST_TEST_DYN_LINK
 
-#include <nsxlib/geometry/Ellipsoid.h>
-#include <cmath>
 #include <boost/test/unit_test.hpp>
+
 #include <Eigen/Dense>
 
-using namespace SX::Geometry;
+#include <nsxlib/geometry/Ellipsoid.h>
+
 using Eigen::Vector3d;
-using Eigen::Vector4d;
 using Eigen::Matrix3d;
-using Eigen::Vector2d;
-using Eigen::Matrix2d;
-// const double tolerance=1e-5;
 
+using namespace nsx;
 
-BOOST_AUTO_TEST_CASE(Test_NDEllipsoid)
+BOOST_AUTO_TEST_CASE(Test_Ellipsoid_3D)
 {
     Vector3d center(10,10,10);
     Vector3d semi_axes(3,3,4);

@@ -1,11 +1,7 @@
 #include "TransAxis.h"
 
 
-namespace SX
-{
-
-namespace Instrument
-{
+namespace nsx {
 
 Axis* TransAxis::create(const proptree::ptree& node)
 {
@@ -56,6 +52,5 @@ Eigen::Transform<double,3,Eigen::Affine> TransAxis::getHomMatrix(double value) c
 	return mat;
 }
 
-}
+} // end namespace nsx
 
-}

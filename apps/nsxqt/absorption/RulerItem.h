@@ -3,8 +3,6 @@
 
 #include <QGraphicsItem>
 
-//!
-
 class RulerItem : public QGraphicsItem
 {
 public:

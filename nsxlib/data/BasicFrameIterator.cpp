@@ -5,15 +5,14 @@
 #include "BasicFrameIterator.h"
 #include "IData.h"
 
-namespace SX {
-namespace Data {
+namespace nsx {
 
 BasicFrameIterator::BasicFrameIterator(DataSet& data, unsigned int idx): IFrameIterator(data, idx)
 {
     _currentFrame = _data.getFrame(_index).cast<double>();
 }
 
-SX::Types::RealMatrix& BasicFrameIterator::getFrame()
+RealMatrix& BasicFrameIterator::getFrame()
 {
     return _currentFrame;
 }
@@ -26,5 +25,4 @@ void BasicFrameIterator::advance()
     }
 }
 
-} // namespace Data
-} // namespace SX
+} // end namespace nsx

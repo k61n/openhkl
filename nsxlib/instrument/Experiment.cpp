@@ -9,10 +9,7 @@
 #include "../data/IData.h"
 #include "Source.h"
 
-using SX::Data::DataSet;
-
-namespace SX {
-namespace Instrument {
+namespace nsx {
 
 Experiment::Experiment(const Experiment& other)
 : _name(other._name),
@@ -28,7 +25,7 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
   _data()
 {
     DiffractometerStore* ds=DiffractometerStore::Instance();
-    _diffractometer = std::shared_ptr<Diffractometer>(ds->buildDiffractomer(diffractometerName));
+    _diffractometer = std::shared_ptr<Diffractometer>(ds->buildDiffractometer(diffractometerName));
 }
 
 Experiment::Experiment(const std::string& diffractometerName)
@@ -37,7 +34,7 @@ Experiment::Experiment(const std::string& diffractometerName)
   _data()
 {
     DiffractometerStore* ds=DiffractometerStore::Instance();
-    _diffractometer = std::shared_ptr<Diffractometer>(ds->buildDiffractomer(diffractometerName));
+    _diffractometer = std::shared_ptr<Diffractometer>(ds->buildDiffractometer(diffractometerName));
 }
 
 Experiment::~Experiment()
@@ -149,7 +146,4 @@ void Experiment::removeData(const std::string& name)
     }
 }
 
-
-} // end namespace Instrument
-
-} // end namespace SX
+} // end namespace nsx

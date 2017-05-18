@@ -6,11 +6,7 @@
 #include "ConstantKernel.h"
 
 
-namespace SX
-{
-
-namespace Imaging
-{
+namespace nsx {
 
 ConvolutionKernel* ConstantKernel::create(int nrows, int ncols)
 {
@@ -21,7 +17,7 @@ ConstantKernel::ConstantKernel(int nrows, int ncols) : ConvolutionKernel(nrows,n
 {
 }
 
-ConstantKernel::ConstantKernel(int nrows, int ncols, const SX::Imaging::ConvolutionKernel::ParameterMap &params)
+ConstantKernel::ConstantKernel(int nrows, int ncols, const ConvolutionKernel::ParameterMap &params)
 : ConvolutionKernel(nrows,ncols,params)
 {
 }
@@ -30,12 +26,12 @@ ConstantKernel::~ConstantKernel()
 {
 }
 
-const char *ConstantKernel::getName()
+const char* ConstantKernel::getName()
 {
     return "Constant";
 }
 
-void SX::Imaging::ConstantKernel::update()
+void ConstantKernel::update()
 {
     int rows, cols;
 
@@ -45,7 +41,7 @@ void SX::Imaging::ConstantKernel::update()
 
     // sanity checks
     if ( rows < 0 || cols < 0 ) {
-        throw std::runtime_error("DeltaKernel::update() called with invalid parameters");
+        throw std::runtime_error("Deltaupdate() called with invalid parameters");
     }
 
     double value = 1.0 / (rows * cols);
@@ -57,7 +53,5 @@ void SX::Imaging::ConstantKernel::update()
     }
 }
 
+} // end namespace nsx
 
-} // Imaging
-
-} // SX

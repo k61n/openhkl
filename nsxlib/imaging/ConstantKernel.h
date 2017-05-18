@@ -13,19 +13,18 @@
 
 #include "ConvolutionKernel.h"
 
-namespace SX
-{
+namespace nsx {
 
-namespace Imaging
-{
-
-class ConstantKernel : public ConvolutionKernel
-{
-public:
-	static ConvolutionKernel* create(int nrows, int ncols);
+class ConstantKernel : public ConvolutionKernel {
 
 public:
+
+    static ConvolutionKernel* create(int nrows, int ncols);
+
+public:
+
     ConstantKernel(int nrows, int ncols);
+
     ConstantKernel(int nrows, int ncols, const ConvolutionKernel::ParameterMap& params);
 
     const char* getName() override;
@@ -33,10 +32,11 @@ public:
     virtual ~ConstantKernel();
 
 private:
+
     void update() override;
+
 };
 
-} // Imaging
-} // SX
+} // end namespace nsx
 
 #endif // NSXTOOL_INCLUDED_ANNULARKERNEL_H_

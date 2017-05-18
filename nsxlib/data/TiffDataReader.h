@@ -26,6 +26,7 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
+
 #ifndef NSXTOOL_TIFFDATAREADER_H_
 #define NSXTOOL_TIFFDATAREADER_H_
 
@@ -35,9 +36,7 @@
 
 #include "../data/IDataReader.h"
 
-namespace SX {
-
-namespace Data {
+namespace nsx {
 
 class TiffDataReader final: public IDataReader {
 
@@ -62,8 +61,6 @@ private:
     TIFF* _file;
 };
 
-} // end namespace Data
-
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_TIFFDATAREADER_H_ */

@@ -32,15 +32,10 @@
 #include <stdexcept>
 #include <unordered_map>
 
-namespace SX
-{
-
-namespace Kernel
-{
+namespace nsx {
 
 template <typename statetype>
-class Memento
-{
+class Memento {
 public:
 	Memento(const statetype& s);
 	const statetype& getState() const;
@@ -123,8 +118,7 @@ void CareTaker<key_type,mem_type>::remove(const key_type& key)
 	_mementos.erase(key);
 }
 
-} // end namespace Kernel
 
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_MEMENTO_H_ */

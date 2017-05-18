@@ -6,17 +6,12 @@
 #include <boost/test/unit_test.hpp>
 
 #include <nsxlib/chemistry/Material.h>
-#include <nsxlib/utils/Units.h>
 #include <nsxlib/utils/Types.h>
+#include <nsxlib/utils/Units.h>
+
+using namespace nsx;
 
 const double tolerance=1.0e-9;
-
-using SX::Chemistry::isotopeContents;
-using SX::Chemistry::Material;
-using SX::Units::ang;
-using SX::Units::avogadro;
-using SX::Units::barn;
-using SX::Units::kilo;
 
 BOOST_AUTO_TEST_CASE(Test_Material)
 {
@@ -39,7 +34,7 @@ BOOST_AUTO_TEST_CASE(Test_Material)
 
     isotopeContents massFractions=methane.massFractions();
     // Set the molar in g_per_mol
-    double methaneMolarMass = kilo*methane.molarMass();
+    double methaneMolarMass = nsx::kilo*methane.molarMass();
     BOOST_CHECK_CLOSE(massFractions.at("C[12]"), 12.00000000*0.98900/methaneMolarMass            , tolerance);
     BOOST_CHECK_CLOSE(massFractions.at("C[13]"), 13.00335484*0.01100/methaneMolarMass            , tolerance);
     BOOST_CHECK_CLOSE(massFractions.at("H[1]") ,  4.00000000*1.007825032*0.99985/methaneMolarMass, tolerance);

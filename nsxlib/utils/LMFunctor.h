@@ -32,11 +32,7 @@
 
 #include <Eigen/Dense>
 
-namespace SX
-{
-
-namespace Utils
-{
+namespace nsx {
 
 /** @brief Functor that complies with the interface of Eigen Minimizer
  *
@@ -44,8 +40,7 @@ namespace Utils
  * Ny : number of values (points) at compile time
  */
 template<typename _Scalar, int NX = Eigen::Dynamic, int NY = Eigen::Dynamic>
-class LMFunctor
-{
+class LMFunctor {
 public:
     typedef _Scalar Scalar;
     enum {InputsAtCompileTime = NX,ValuesAtCompileTime = NY};
@@ -93,8 +88,6 @@ int LMFunctor<_Scalar,NX,NY>::values() const {
     return m_values;
 }
 
-} // end namespace Utils
-
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_LMFUNCTOR_H_ */

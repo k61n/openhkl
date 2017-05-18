@@ -40,10 +40,7 @@
 #include "IsotopeDatabaseManager.h"
 #include "../utils/Types.h"
 
-namespace SX {
-
-namespace Chemistry
-{
+namespace nsx {
 
 namespace property_tree=boost::property_tree;
 
@@ -108,8 +105,6 @@ private:
 
 std::ostream& operator<<(std::ostream& os, const Material& material);
 
-} // end namespace Chemistry
-
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_MATERIAL_H_ */

@@ -26,44 +26,54 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
+
 #ifndef NSXTOOL_LATTICEFINDER_H_
 #define NSXTOOL_LATTICEFINDER_H_
+
 #include <vector>
 #include <map>
 #include <Eigen/Dense>
 #include "../geometry/Cluster.h"
 #include <tuple>
 
-using SX::Geometry::Cluster;
-
-namespace SX
-{
-namespace Crystal
-{
+namespace nsx {
 
 typedef std::tuple<Eigen::Vector3d,Eigen::Vector3d,Eigen::Vector3d,double> LatticeVectors;
 
-class LatticeFinder
-{
+class LatticeFinder {
+
 public:
+
     LatticeFinder(double threshold, double tolerance);
+
     void addPoint(double x, double y, double z);
+
     void addPoint(const Eigen::Vector3d& v);
+
     void addPoints(const std::vector<Eigen::Vector3d>&);
+
     void run(double cellmin=2.0);
+
     std::vector<LatticeVectors> determineLattice(std::size_t clustermax=20,int numberofsolutions=50) const;
+
     int getNumberOfClusters() { return _clusters.size();}
+
     const std::multimap<double,Cluster>& getClusters() const { return _clusters;}
+
     double costFunction(const Eigen::Vector3d& v1, const Eigen::Vector3d& v2, const Eigen::Vector3d& v3, double epsilon,  double delta) const;
+
 private:
+
     double _threshold;
     double _tolerance;
     std::vector<Eigen::Vector3d> _peaks;
+
 public:
+
     std::multimap<double,Cluster> _clusters;
+
 };
 
-} // Namespace Crystal
-} /* namespace SX */
+} // end namespace nsx
 
 #endif /* NSXTOOL_LATTICEFINDER_H_ */

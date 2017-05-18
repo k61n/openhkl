@@ -41,11 +41,7 @@
 #include "ResolutionShell.h"
 #include "../utils/gcd.h"
 
-namespace SX
-{
-
-namespace Crystal
-{
+namespace nsx {
 
 ResolutionShell::ResolutionShell(double dmin, double dmax, size_t num_shells):
     _numShells(std::max(num_shells, size_t(1))),
@@ -81,7 +77,4 @@ const std::vector<double>& ResolutionShell::getD() const
     return _d;
 }
 
-
-
-} // Namespace Crystal
-} /* namespace SX */
+} // end namespace nsx

@@ -5,12 +5,7 @@
 #include "../utils/Units.h"
 #include "../utils/YAMLType.h"
 
-namespace SX {
-
-namespace Chemistry {
-
-using SX::Utils::Path;
-using SX::Units::UnitsManager;
+namespace nsx {
 
 const std::string IsotopeDatabaseManager::DatabasePath = Path::getDataBasesPath("isotopes.yaml");
 
@@ -105,6 +100,4 @@ std::ostream& operator<<(std::ostream& os,const IsotopeDatabaseManager::Isotope&
     return os;
 }
 
-} // end namespace Chemistry
-
-} // end namespace SX
+} // end namespace nsx

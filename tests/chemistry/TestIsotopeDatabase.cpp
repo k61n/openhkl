@@ -2,6 +2,7 @@
 #define BOOST_TEST_DYN_LINK
 
 #include <string>
+
 #include <stdexcept>
 
 #include <boost/test/unit_test.hpp>
@@ -9,8 +10,7 @@
 #include <nsxlib/chemistry/IsotopeDatabaseManager.h>
 #include <nsxlib/utils/Units.h>
 
-using namespace SX::Chemistry;
-using namespace SX::Units;
+using namespace nsx;
 
 const double tolerance=1e-6;
 

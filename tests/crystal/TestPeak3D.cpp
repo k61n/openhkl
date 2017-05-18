@@ -1,31 +1,25 @@
 #define BOOST_TEST_MODULE "Test Peak3D"
 #define BOOST_TEST_DYN_LINK
 
-#include <nsxlib/instrument/FlatDetector.h>
-#include <nsxlib/crystal/Peak3D.h>
-#include <nsxlib/instrument/Sample.h>
 #include <boost/test/unit_test.hpp>
-#include <nsxlib/utils/Units.h>
-#include <Eigen/Dense>
-#include <vector>
-#include <nsxlib/instrument/Gonio.h>
-#include <nsxlib/instrument/Component.h>
-#include <nsxlib/instrument/ComponentState.h>
-#include <nsxlib/instrument/Source.h>
-#include <nsxlib/instrument/Monochromator.h>
 
 #include <memory>
+#include <vector>
 
-using SX::Crystal::Peak3D;
-using SX::Instrument::DetectorEvent;
-using SX::Instrument::FlatDetector;
-using SX::Instrument::Gonio;
-using SX::Instrument::RotAxis;
-using SX::Instrument::Sample;
-using SX::Instrument::ComponentState;
-using SX::Instrument::Source;
+#include <Eigen/Dense>
 
-using namespace SX::Units;
+#include <nsxlib/crystal/Peak3D.h>
+#include <nsxlib/instrument/Component.h>
+#include <nsxlib/instrument/ComponentState.h>
+#include <nsxlib/instrument/FlatDetector.h>
+#include <nsxlib/instrument/Gonio.h>
+#include <nsxlib/instrument/Monochromator.h>
+#include <nsxlib/instrument/Sample.h>
+#include <nsxlib/instrument/Source.h>
+#include <nsxlib/utils/Units.h>
+
+using namespace nsx;
+
 const double tolerance=1e-6;
 
 BOOST_AUTO_TEST_CASE(Test_Peak3D)
@@ -36,10 +30,10 @@ BOOST_AUTO_TEST_CASE(Test_Peak3D)
     d.setNPixels(32,32);
 
     DetectorEvent event(d, 15.5, 15.5, {});
-    //DetectorEvent event=d.createDetectorEvent(15.5,15.5);
+
     std::shared_ptr<Source> source(new Source);
 
-    SX::Instrument::Monochromator mono("mono");
+    nsx::Monochromator mono("mono");
 
     source->addMonochromator(mono);
     source->setSelectedMonochromator(0);
@@ -47,7 +41,7 @@ BOOST_AUTO_TEST_CASE(Test_Peak3D)
     Peak3D peak;
     peak.setSource(source);
     peak.setDetectorEvent(event);
-    //peak.setWavelength(source->getSelectedMonochromator().getWavelength());
+
     Eigen::Vector3d Q=peak.getQ();
     BOOST_CHECK_SMALL(Q[0],tolerance);
     BOOST_CHECK_SMALL(Q[1],tolerance);

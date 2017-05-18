@@ -26,6 +26,7 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
+
 #ifndef NSXTOOL_BASIS_H_
 #define NSXTOOL_BASIS_H_
 
@@ -34,11 +35,7 @@
 
 #include <Eigen/Dense>
 
-namespace SX
-{
-
-namespace Geometry
-{
+namespace nsx {
 
 using Eigen::RowVector3d;
 using Eigen::Vector3d;
@@ -216,8 +213,6 @@ protected:
 
 };
 
-} // end namespace Geometry
-
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_BASIS_H_ */

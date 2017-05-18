@@ -5,7 +5,7 @@ GLReciprocalLattice::GLReciprocalLattice(const char* name):GLActor(name)
 
 }
 
-void GLReciprocalLattice::setUnitCell(std::shared_ptr<SX::Crystal::UnitCell> pUnitCell)
+void GLReciprocalLattice::setUnitCell(std::shared_ptr<nsx::UnitCell> pUnitCell)
 {
     _ptrCell=pUnitCell;
 }

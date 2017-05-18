@@ -3,20 +3,19 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include <initializer_list>
-#include <iostream>
-#include <algorithm>
-#include <cstdlib>
-
+#include <nsxlib/geometry/ConvexHull.h>
 #include <nsxlib/kernel/Error.h>
 #include <nsxlib/geometry/Face.h>
-#include <nsxlib/geometry/ConvexHull.h>
+
+using namespace nsx;
+
+const double tolerance=1e-9;
 
 //! Check that the Hull satisfies the convexity condition. This consists in
 //! checking that the signed volume between every face and every point is positive.
 //! This shows that each point is inside every face and therefore the hull is convex.
 template <typename T>
-bool CheckConvexity(const SX::Geometry::ConvexHull<T>& chull)
+bool CheckConvexity(const ConvexHull<T>& chull)
 {
     const auto& faces=chull.getFaces();
     const auto& vertices=chull.getVertices();
@@ -32,35 +31,30 @@ bool CheckConvexity(const SX::Geometry::ConvexHull<T>& chull)
     return true;
 }
 
-using Eigen::Vector3d;
-const double tolerance=1e-9;
-
 BOOST_AUTO_TEST_CASE(Test_ConvexHull)
 {
-    typedef Eigen::Vector3d vector3;
-
-    typedef SX::Geometry::ConvexHull<double> CHullDouble;
+    using CHullDouble=ConvexHull<double>;
 
     // Create an empty convex hull
     CHullDouble chull;
 
     // Checks that the hull can not be updated with 0 point to be processed
-    BOOST_CHECK_THROW(chull.updateHull(),SX::Kernel::Error<CHullDouble>);
+    BOOST_CHECK_THROW(chull.updateHull(),Error<CHullDouble>);
 
     // Fill it with three vertices to form a tetrahedron
-    chull.addVertex(vector3( 0, 0, 0));
+    chull.addVertex(Eigen::Vector3d( 0, 0, 0));
     // Checks that the hull can not be updated with only 1 point to be processed
-    BOOST_CHECK_THROW(chull.updateHull(),SX::Kernel::Error<CHullDouble>);
+    BOOST_CHECK_THROW(chull.updateHull(),Error<CHullDouble>);
 
-    chull.addVertex(vector3(10, 0, 0));
+    chull.addVertex(Eigen::Vector3d(10, 0, 0));
     // Checks that the hull can not be updated with only 2 point to be processed
-    BOOST_CHECK_THROW(chull.updateHull(),SX::Kernel::Error<CHullDouble>);
+    BOOST_CHECK_THROW(chull.updateHull(),nsx::Error<CHullDouble>);
 
-    chull.addVertex(vector3( 0,10, 0));
+    chull.addVertex(Eigen::Vector3d( 0,10, 0));
     // Checks that the hull can not be updated with only 3 point to be processed
-    BOOST_CHECK_THROW(chull.updateHull(),SX::Kernel::Error<CHullDouble>);
+    BOOST_CHECK_THROW(chull.updateHull(),Error<CHullDouble>);
 
-    chull.addVertex(vector3( 0, 0,10));
+    chull.addVertex(Eigen::Vector3d( 0, 0,10));
     // Checks that with 4 vertices the hull can be built
     BOOST_CHECK_NO_THROW(chull.updateHull());
 
@@ -80,10 +74,10 @@ BOOST_AUTO_TEST_CASE(Test_ConvexHull)
     BOOST_CHECK(CheckConvexity(chull));
 
     // Fill the convex hull with new vertices in order to make a cube
-    chull.addVertex(vector3(10,10, 0));
-    chull.addVertex(vector3(10, 0,10));
-    chull.addVertex(vector3(0, 10,10));
-    chull.addVertex(vector3(10,10,10));
+    chull.addVertex(Eigen::Vector3d(10,10, 0));
+    chull.addVertex(Eigen::Vector3d(10, 0,10));
+    chull.addVertex(Eigen::Vector3d(0, 10,10));
+    chull.addVertex(Eigen::Vector3d(10,10,10));
 
     // Update the hull
     chull.updateHull();
@@ -113,6 +107,5 @@ BOOST_AUTO_TEST_CASE(Test_ConvexHull)
     BOOST_CHECK_EQUAL(chull.getNEdges(),newhull.getNEdges());
     BOOST_CHECK_EQUAL(chull.getNFaces(),newhull.getNFaces());
     BOOST_CHECK_CLOSE(chull.getVolume(),newhull.getVolume(),tolerance);
-
 }
 

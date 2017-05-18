@@ -41,9 +41,7 @@
 #include "../data/IDataReader.h"
 #include "../instrument/Diffractometer.h"
 
-namespace SX {
-
-namespace Data {
+namespace nsx {
 
 class I16DataReader final: public IDataReader
 {
@@ -73,8 +71,6 @@ private:
     std::string _basedirectory;
 };
 
-} // end namespace Data
-
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_I16DATAREADER_H_ */

@@ -38,8 +38,7 @@
 #include <iostream>
 #include <limits>
 
-namespace SX {
-namespace Utils {
+namespace nsx {
 
 static double erf_inv_approx(double y);
 
@@ -95,8 +94,7 @@ double getScale(double confidence)
 double getConfidence(double x)
 {
     static const double factor = 1.0 / std::sqrt(2.0);
-    return std::erf(x *factor);
+    return std::erf(x*factor);
 }
 
-} // namespace Utils
-} // namespace SX
+} // end namespace nsx

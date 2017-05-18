@@ -35,9 +35,7 @@
 
 #include "gcd.h"
 
-namespace SX {
-
-namespace Utils {
+namespace nsx {
 
 int gcd(int a, int b)
 {
@@ -51,6 +49,5 @@ int gcd(int a, int b)
     return b < 0 ? -b : b;
 }
 
-} // namespace Utils
+} // end namespace nsx
 
-} // namespace SX

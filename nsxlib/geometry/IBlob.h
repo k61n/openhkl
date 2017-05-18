@@ -3,11 +3,7 @@
 
 #include <iostream>
 
-namespace SX
-{
-
-namespace Geometry
-{
+namespace nsx {
 
 /* !
  * \brief Class IBlob.
@@ -20,8 +16,7 @@ namespace Geometry
  * Blobs can be merged and maintain zero, first and second momentum.
  *
  */
-class IBlob
-{
+class IBlob {
 public:
   //!Initialize an empty blob
   IBlob();
@@ -50,7 +45,7 @@ public:
 };
 
 std::ostream& operator<<(std::ostream& os, const IBlob& b);
-}
 
-}
+} // end namespace nsx
+
 #endif // NSXTOOL_IBLOB_H_

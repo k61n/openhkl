@@ -16,11 +16,7 @@
 #include "../utils/Types.h"
 
 
-namespace SX
-{
-
-namespace Imaging
-{
+namespace nsx {
 
 class Convolver
 {
@@ -28,15 +24,15 @@ public:
     Convolver();
 
     // kernel must be padded so that dimensions match dimensions of image
-    Convolver(const SX::Types::RealMatrix& kernel);
+    Convolver(const RealMatrix& kernel);
 
     ~Convolver();
 
     void reset();
-    void setKernel(const SX::Types::RealMatrix& kernel);
+    void setKernel(const RealMatrix& kernel);
 
     // throws exception if image dimensions do not match kernel
-    SX::Types::RealMatrix apply(const SX::Types::RealMatrix& image);
+    RealMatrix apply(const RealMatrix& image);
 
 private:
     int _rows, _cols, _halfCols;
@@ -50,7 +46,6 @@ private:
     std::vector<std::complex<double>> _transformedKernel;
 };
 
-} // Imaging
-} // SX
+} // end namespace nsx
 
 #endif // NSXTOOL_INCLUDE_CONVOLVER_H_

@@ -1,15 +1,15 @@
 #define BOOST_TEST_MODULE "Test Unit Cell"
 #define BOOST_TEST_DYN_LINK
 
-#include <nsxlib/crystal/UnitCell.h>
 #include <boost/test/unit_test.hpp>
-#include <string>
-#include <nsxlib/utils/Units.h>
-#include <Eigen/Dense>
 
-using namespace SX::Crystal;
-using namespace SX::Units;
+#include <nsxlib/crystal/UnitCell.h>
+#include <nsxlib/utils/Units.h>
+
+using namespace nsx;
+
 const double tolerance=1e-6;
+
 BOOST_AUTO_TEST_CASE(Test_Unit_Cell)
 {
     double a=6.32;

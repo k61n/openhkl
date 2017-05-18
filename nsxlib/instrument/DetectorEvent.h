@@ -43,8 +43,7 @@
 
 #include "DetectorState.h"
 
-namespace SX {
-namespace Instrument {
+namespace nsx {
 
 // Forward declaration of detector class
 class Detector;
@@ -113,6 +112,6 @@ private:
     std::vector<double> _values;
 };
 
-} // Namespace Instrument
-} // Namespace SX
+} // end namespace nsx
+
 #endif /* NSXTOOL_DETECTOREVENT_H_ */

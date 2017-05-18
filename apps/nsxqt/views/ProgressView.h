@@ -4,11 +4,11 @@
 #ifndef NSXTOOL_PROGRESSVIEW_H_
 #define NSXTOOL_PROGRESSVIEW_H_
 
+#include <memory>
+
 #include <QObject>
 #include <QProgressDialog>
 #include <QTimer>
-
-#include <memory>
 
 #include <nsxlib/utils/ProgressHandler.h>
 
@@ -19,14 +19,14 @@ public:
     ProgressView(QWidget* parent);
     ~ProgressView();
 
-    void watch(std::shared_ptr<SX::Utils::ProgressHandler> handler);
+    void watch(std::shared_ptr<nsx::ProgressHandler> handler);
 
 public slots:
     void updateProgress();
     void abort();
 
 private:
-    std::shared_ptr<SX::Utils::ProgressHandler> _handler;
+    std::shared_ptr<nsx::ProgressHandler> _handler;
     QTimer* _timer;
 };
 

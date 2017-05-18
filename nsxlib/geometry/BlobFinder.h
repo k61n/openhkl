@@ -26,6 +26,7 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
+
 #ifndef NSXTOOL_BLOB_FINDER_H_
 #define NSXTOOL_BLOB_FINDER_H_
 
@@ -49,27 +50,22 @@
 
 #include "../utils/ProgressHandler.h"
 
-namespace SX {
+namespace nsx {
 
-namespace Geometry
-{
+typedef std::map<int,int> imap;
+typedef std::pair<int,int> ipair;
+typedef std::vector<int> vints;
+typedef std::vector<ipair> vipairs;
+typedef std::unordered_map<int,Blob2D> blob2DCollection;
+typedef std::unordered_map<int,Blob3D> blob3DCollection;
 
-    typedef std::map<int,int> imap;
-    typedef std::pair<int,int> ipair;
-    typedef std::vector<int> vints;
-    typedef std::vector<ipair> vipairs;
-    typedef std::unordered_map<int,Blob2D> blob2DCollection;
-    typedef std::unordered_map<int,Blob3D> blob3DCollection;
+typedef Ellipsoid<double,2> Ellipsoid2D;
+typedef Ellipsoid<double,3> Ellipsoid3D;
+typedef IShape<double,2> IShape2D;
+typedef IShape<double,3> IShape3D;
 
-    typedef Ellipsoid<double,2> Ellipsoid2D;
-    typedef Ellipsoid<double,3> Ellipsoid3D;
-    typedef IShape<double,2> IShape2D;
-    typedef IShape<double,3> IShape3D;
-    //typedef NDTree<double,2> Quadtree;
-    //typedef NDTree<double,3> Octree;
-    typedef std::unordered_map<const IShape2D*,int> shape2Dmap;
-    typedef std::unordered_map<const IShape3D*,int> shape3Dmap;
-
+typedef std::unordered_map<const IShape2D*,int> shape2Dmap;
+typedef std::unordered_map<const IShape3D*,int> shape3Dmap;
 
 /* Class used for blob-finding, which is the first step of peak-finding.
  * The use of IFrameIterator allows for custom iterators, e.g. which work multi-threaded.
@@ -77,11 +73,12 @@ namespace Geometry
  *
  */
 class BlobFinder {
+
 public:
-    using RealMatrix = SX::Types::RealMatrix;
+
     using FilterCallback = std::function<RealMatrix(const RealMatrix&)>;
 
-    BlobFinder(std::shared_ptr<SX::Data::DataSet> data);
+    BlobFinder(std::shared_ptr<DataSet> data);
 
     blob3DCollection find(unsigned int begin, unsigned int end);
 
@@ -100,7 +97,7 @@ public:
     //void mergeBlobs();
 
     //! sets progress handler callback function
-    void setProgressHandler(std::shared_ptr<SX::Utils::ProgressHandler> handler);
+    void setProgressHandler(std::shared_ptr<ProgressHandler> handler);
 
     void setThreshold(double threshold);
 
@@ -137,16 +134,15 @@ private:
 
     bool _isRelative;
 
-    mutable std::shared_ptr<SX::Data::DataSet> _data;
+    mutable std::shared_ptr<DataSet> _data;
     FilterCallback _filterCallback;
-    mutable std::shared_ptr<SX::Utils::ProgressHandler> _progressHandler;
+    mutable std::shared_ptr<ProgressHandler> _progressHandler;
 
     unsigned int _nrows, _ncols, _nframes;
     unsigned int _currentlabel;
 };
 
-} // namespace Geometry
-} // namespace SX
+} // end namespace nsx
 
 #endif /*NSXTOOL_BLOB_FINDER_H_*/
 

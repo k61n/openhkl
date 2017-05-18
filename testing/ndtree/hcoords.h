@@ -32,7 +32,7 @@
 
 #include <boost/numeric/ublas/vector.hpp>
 
-namespace SX
+namespace nsx
 {
 
 namespace Geometry
@@ -137,6 +137,6 @@ void HCoords<T,D>::normalize()
 
 } //namespace Geometry
 
-} // namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_HCoords_H_ */

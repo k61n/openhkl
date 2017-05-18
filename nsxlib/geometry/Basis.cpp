@@ -2,11 +2,7 @@
 
 #include "Basis.h"
 
-namespace SX
-{
-
-namespace Geometry
-{
+namespace nsx {
 
 Basis::Basis():_A(Eigen::Matrix3d::Identity()),_B(Eigen::Matrix3d::Identity()),_reference(nullptr), _Acov(covMat::Zero()), _Bcov(covMat::Zero()), _hasSigmas(false)
 {
@@ -725,6 +721,4 @@ const Basis::covMat&  Basis::getReciprocalCovariance()
 	return _Bcov;
 }
 
-} // end namespace Geometry
-
-} // end namespace SX
+} // end namespace nsx

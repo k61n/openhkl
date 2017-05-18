@@ -4,7 +4,7 @@
 #include <QWidget>
 
 namespace Ui {
-class DetectorPropertyWidget;
+    class DetectorPropertyWidget;
 }
 
 class DetectorItem;
@@ -16,6 +16,7 @@ class DetectorPropertyWidget : public QWidget
 public:
     explicit DetectorPropertyWidget(DetectorItem* caller,QWidget *parent = 0);
     ~DetectorPropertyWidget();
+
 private slots:
     void cellHasChanged(int,int);
     void on_doubleSpinBox_Distance_valueChanged(double arg1);

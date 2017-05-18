@@ -38,54 +38,10 @@
 #define BOOST_TEST_DYN_LINK
 
 #include <boost/test/unit_test.hpp>
-#include <boost/filesystem.hpp>
-
-#include <iostream>
-#include <vector>
-#include <string>
 
 #include <nsxlib/utils/Packer.h>
-#include <Eigen/Dense>
-
-using namespace SX::Utils;
-using namespace std;
-
-
-int run_test()
-{
-//    double x= 3.14;
-//    Eigen::Vector3d v(1.0, 2.0, 3.0);
-//    Eigen::Matrix3d m;
-//    m << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9;
-
-//    Eigen::MatrixXd blah;
-
-//    blah << m, v;
-
-//    Eigen::Vector3d w;
-//    Eigen::Matrix3d n;
-
-    // NOT IMPLEMENTED YET
-
-    //blah >> n, w;
-
-   // BOOST_CHECK_CLOSE(n(1,1), m(1,1), 1e-6);
-
-
-//    Packer<double, Eigen::Vector3d, Eigen::Matrix3d> pk;
-//    pk.pack(3.14, v, m);
-
-//    pk.unpack(a, x, b, y);
-
-//    BOOST_CHECK(a == 4);
-//    BOOST_CHECK(b == -3);
-//    BOOST_CHECK_CLOSE(x, 3.14, 1e-12);
-//    BOOST_CHECK_CLOSE(y, 4.5f, 1e-6);
-
-    return 0;
-}
 
 BOOST_AUTO_TEST_CASE(Test_Packer)
 {
-    BOOST_CHECK(run_test() == 0);
+#pragma message "test not implemented"
 }

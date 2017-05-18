@@ -1,19 +1,22 @@
 #define BOOST_TEST_MODULE "Test Basis"
 #define BOOST_TEST_DYN_LINK
 
-#include <nsxlib/geometry/Basis.h>
-#include <boost/test/unit_test.hpp>
-#include <Eigen/Dense>
 #include <memory>
 
-using namespace SX::Geometry;
-using Eigen::Vector3d;
-const double tolerance=1e-5;
+#include <boost/test/unit_test.hpp>
 
+#include <Eigen/Dense>
+
+#include <nsxlib/geometry/Basis.h>
+
+using Eigen::Vector3d;
+
+using namespace nsx;
+
+const double tolerance=1e-5;
 
 BOOST_AUTO_TEST_CASE(Test_Basis)
 {
-
     std::shared_ptr<Basis> bprime(new Basis(Vector3d(2,0,0),Vector3d(0,2,0),Vector3d(0,0,1)));
 
     Basis bsecond(Vector3d(1,1,0),Vector3d(-1,1,0),Vector3d(0,0,1),bprime);

@@ -39,8 +39,7 @@
 #include <type_traits>
 #include <stdexcept>
 
-namespace SX {
-namespace Utils {
+namespace nsx {
 
 //! Maybe monad
 template<typename T>
@@ -170,7 +169,6 @@ private:
     bool _isNothing;
 };
 
-} // namespace Utils
-} // namespace SX
+} // end namespace nsx
 
 #endif // NSXTOOL_GAUSSIAN_H_

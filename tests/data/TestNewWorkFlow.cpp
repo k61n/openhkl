@@ -2,40 +2,26 @@
 #define BOOST_TEST_DYN_LINK
 
 #include <fstream>
+#include <iostream>
 #include <memory>
 #include <string>
 #include <vector>
-#include <Eigen/Dense>
-#include <iostream>
 
 #include <boost/test/unit_test.hpp>
 
+#include <Eigen/Dense>
+
+#include <nsxlib/crystal/AutoIndexer.h>
 #include <nsxlib/data/DataReaderFactory.h>
-#include <nsxlib/instrument/ComponentState.h>
-#include <nsxlib/instrument/DiffractometerStore.h>
-#include <nsxlib/data/DataReaderFactory.h>
-#include <nsxlib/utils/Units.h>
-#include <nsxlib/utils/erf_inv.h>
-#include <nsxlib/utils/ProgressHandler.h>
 #include <nsxlib/data/PeakFinder.h>
 #include <nsxlib/imaging/ConvolutionKernel.h>
 #include <nsxlib/imaging/KernelFactory.h>
-#include <nsxlib/crystal/AutoIndexer.h>
 #include <nsxlib/instrument/Experiment.h>
+#include <nsxlib/utils/erf_inv.h>
+#include <nsxlib/utils/Units.h>
+#include <nsxlib/utils/ProgressHandler.h>
 
-using namespace SX::Data;
-using namespace SX::Instrument;
-using namespace SX::Units;
-
-using SX::Utils::ProgressHandler;
-using SX::Data::PeakFinder;
-using SX::Imaging::ConvolutionKernel;
-using SX::Imaging::KernelFactory;
-using SX::Crystal::AutoIndexer;
-using SX::Crystal::UnitCell;
-using SX::Instrument::Experiment;
-
-// const double tolerance=1e-2;
+using namespace nsx;
 
 int run_test();
 
@@ -47,7 +33,6 @@ BOOST_AUTO_TEST_CASE(Test_NewWorkFlow)
 int run_test()
 {
     DataReaderFactory* factory = DataReaderFactory::Instance();
-    DiffractometerStore* ds = DiffractometerStore::Instance();
 
     std::shared_ptr<Experiment> expt(new Experiment("test", "BioDiff2500"));
     auto diff = expt->getDiffractometer();
@@ -70,14 +55,12 @@ int run_test()
     std::vector<std::shared_ptr<DataSet>> numors;
     numors.push_back(dataf);
 
-    std::shared_ptr<SX::Imaging::ConvolutionKernel> kernel;
+    std::shared_ptr<ConvolutionKernel> kernel;
     std::string kernelName = "annular";
-    SX::Imaging::KernelFactory* kernelFactory = SX::Imaging::KernelFactory::Instance();
+    KernelFactory* kernelFactory = KernelFactory::Instance();
     kernel.reset(kernelFactory->create(kernelName, int(dataf->getNRows()), int(dataf->getNCols())));
 
     auto k = kernel->getKernel();
-    double norm2 = (k*k.transpose()).sum();
-    std::cout << "norm 2" << norm2 << std::endl;
 
     // propagate changes to peak finder
     auto convolver = peakFinder->getConvolver();
@@ -97,7 +80,6 @@ int run_test()
         std::cout << "ERROR: exception in PeakFinder::find()" << std::endl;
     }
 
-    std::cout << dataf->getPeaks().size() << std::endl;
     BOOST_CHECK(dataf->getPeaks().size() >= 800);
 
     // at this stage we have the peaks, now we index
@@ -135,11 +117,10 @@ int run_test()
     }
 
     // reintegrate peaks
-    const double scale = SX::Utils::getScale(0.997);
+    const double scale = getScale(0.997);
     dataf->integratePeaks(scale, 2.0*scale, true);
 
     indexed_peaks = numIndexedPeaks();
-    std::cout << indexed_peaks << std::endl;
     BOOST_CHECK(indexed_peaks > 600);
 
     return 0;

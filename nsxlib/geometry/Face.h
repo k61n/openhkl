@@ -37,11 +37,7 @@
 
 #include "Edge.h"
 
-namespace SX
-{
-
-namespace Geometry
-{
+namespace nsx {
 
 // Forward declarations
 template <typename T>
@@ -55,8 +51,7 @@ class Edge;
  * This class implements the Face object used in the incremental convex hull algorithm.
  */
 template <typename T>
-class Face
-{
+class Face {
 
 public:
 
@@ -153,8 +148,6 @@ std::ostream& operator<<(std::ostream& os, const Face<T>& face)
 	return os;
 }
 
-} // end namespace Geometry
-
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_FACE_H_ */

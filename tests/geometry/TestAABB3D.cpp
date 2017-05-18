@@ -10,12 +10,13 @@
 
 #include <nsxlib/geometry/AABB.h>
 
-using namespace SX::Geometry;
 using Eigen::Vector2d;
 using Eigen::Vector3d;
+using namespace nsx;
+
 const double tolerance=1e-5;
 
-BOOST_AUTO_TEST_CASE(Test_AABB)
+BOOST_AUTO_TEST_CASE(Test_AABB3D)
 {
     AABB<double,3> bb;
     bb.setBounds(Vector3d(0,0,0),Vector3d(1,2,3));

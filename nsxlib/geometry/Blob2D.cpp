@@ -6,15 +6,10 @@
 #include <Eigen/Eigenvalues>
 #include "../utils/erf_inv.h"
 
-
-
 using Eigen::MatrixXd;
 using Eigen::SelfAdjointEigenSolver;
 
-namespace SX
-{
-namespace Geometry
-{
+namespace nsx {
 
 Blob2D::Blob2D():_m00(0),_m10(0),_m01(0),_m20(0),_m02(0),_m11(0)
 ,_npoints(0),_minValue(std::numeric_limits<double>::max()),_maxValue(std::numeric_limits<double>::min())
@@ -144,7 +139,7 @@ void Blob2D::toEllipse(double confidence,Eigen::Vector2d& center, Eigen::Vector2
     //
     center<< xc,yc;
     // Multiplicating factor from confidence to sigma.
-    double factor=sqrt(2.0)*SX::Utils::erf_inv(confidence);
+    double factor=sqrt(2.0)*erf_inv(confidence);
     eigenvalues(0)=sqrt(std::abs(solver.eigenvalues()[0]))*factor;
     eigenvalues(1)=sqrt(std::abs(solver.eigenvalues()[1]))*factor;
     //
@@ -166,5 +161,4 @@ std::ostream& operator<<(std::ostream& os, const Blob2D& b)
     return os;
 }
 
-} // End namespace Geometry
 } // End namspace SX

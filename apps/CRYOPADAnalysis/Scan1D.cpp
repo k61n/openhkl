@@ -1,7 +1,7 @@
 #include "Scan1D.h"
 #include <stdexcept>
 
-namespace SX
+namespace nsx
 {
 
 namespace Data
@@ -80,4 +80,4 @@ void Scan1D::clear()
 
 } // end namespace Data
 
-} // end namespace SX
+} // end namespace nsx

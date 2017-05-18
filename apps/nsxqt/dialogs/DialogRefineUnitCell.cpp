@@ -1,4 +1,5 @@
-#include <iostream>
+#include "ui_DialogRefineUnitCell.h"
+
 #include <sstream>
 
 #include <QtDebug>
@@ -6,24 +7,22 @@
 #include <QLayout>
 #include <QStatusBar>
 
-#include "DialogRefineUnitCell.h"
-#include "ui_DialogRefineUnitCell.h"
-#include <nsxlib/instrument/Experiment.h>
-#include <nsxlib/instrument/Diffractometer.h>
-#include <nsxlib/instrument/Sample.h>
-#include <nsxlib/instrument/Detector.h>
-#include <nsxlib/instrument/Source.h>
-#include <nsxlib/instrument/Gonio.h>
-#include <nsxlib/instrument/Axis.h>
-#include <nsxlib/utils/Units.h>
 #include <nsxlib/data/IData.h>
-#include "DoubleTableItemDelegate.h"
+#include <nsxlib/instrument/Axis.h>
+#include <nsxlib/instrument/Detector.h>
+#include <nsxlib/instrument/Diffractometer.h>
+#include <nsxlib/instrument/Experiment.h>
+#include <nsxlib/instrument/Gonio.h>
 #include <nsxlib/instrument/Monochromator.h>
+#include <nsxlib/instrument/Sample.h>
+#include <nsxlib/instrument/Source.h>
 #include <nsxlib/utils/MinimizerGSL.h>
+#include <nsxlib/utils/Units.h>
 
-using SX::Utils::MinimizerGSL;
+#include "DialogRefineUnitCell.h"
+#include "DoubleTableItemDelegate.h"
 
-DialogRefineUnitCell::DialogRefineUnitCell(std::shared_ptr<SX::Instrument::Experiment> experiment,
+DialogRefineUnitCell::DialogRefineUnitCell(std::shared_ptr<nsx::Experiment> experiment,
                                            sptrUnitCell unitCell,
                                            std::vector<sptrPeak3D> peaks,
                                            QWidget *parent):
@@ -111,9 +110,9 @@ void DialogRefineUnitCell::setLatticeParams()
     ui->doubleSpinBoxa->setValue(_unitCell->getA());
     ui->doubleSpinBoxb->setValue(_unitCell->getB());
     ui->doubleSpinBoxc->setValue(_unitCell->getC());
-    ui->doubleSpinBoxalpha->setValue(_unitCell->getAlpha()/SX::Units::deg);
-    ui->doubleSpinBoxbeta->setValue(_unitCell->getBeta()/SX::Units::deg);
-    ui->doubleSpinBoxgamma->setValue(_unitCell->getGamma()/SX::Units::deg);
+    ui->doubleSpinBoxalpha->setValue(_unitCell->getAlpha()/nsx::deg);
+    ui->doubleSpinBoxbeta->setValue(_unitCell->getBeta()/nsx::deg);
+    ui->doubleSpinBoxgamma->setValue(_unitCell->getGamma()/nsx::deg);
 }
 
 void DialogRefineUnitCell::setWavelength()
@@ -227,7 +226,7 @@ void DialogRefineUnitCell::setDetectorOffsets()
     }
 }
 
-void DialogRefineUnitCell::setSolution(const SX::Crystal::UBSolution& solution)
+void DialogRefineUnitCell::setSolution(const nsx::UBSolution& solution)
 {
     // Get the sample
     auto sample = _experiment->getDiffractometer()->getSample();

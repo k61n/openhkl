@@ -17,7 +17,7 @@
 #include "plot/SimplePlot.h"
 #include "plot/SXPlot.h"
 
-CutSliceGraphicsItem::CutSliceGraphicsItem(std::shared_ptr<SX::Data::DataSet> data, bool horizontal)
+CutSliceGraphicsItem::CutSliceGraphicsItem(std::shared_ptr<nsx::DataSet> data, bool horizontal)
 : CutterGraphicsItem(data),
   _horizontal(horizontal)
 {
@@ -41,8 +41,8 @@ void CutSliceGraphicsItem::plot(SXPlot* plot)
     if (!detPtr) {
         return;
     }
-    std::shared_ptr<SX::Data::DataSet> dataPtr=detPtr->getData();
-    std::shared_ptr<SX::Instrument::Detector> det=dataPtr->getDiffractometer()->getDetector();
+    std::shared_ptr<nsx::DataSet> dataPtr=detPtr->getData();
+    std::shared_ptr<nsx::Detector> det=dataPtr->getDiffractometer()->getDetector();
     int nrows=det->getNRows();
     int ncols=det->getNCols();
 

@@ -32,15 +32,13 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
+
 #ifndef NSXTOOL_SPTR_H_
 #define NSXTOOL_SPTR_H_
 
 #include <memory>
 
-namespace SX
-{
-namespace Utils
-{
+namespace nsx {
 
 #ifdef NSX_HAS_MAKE_SHARED
 using make_shared = std::make_shared;
@@ -64,7 +62,6 @@ std::unique_ptr<T> make_unique(Args&&... args)
 }
 #endif
 
-} // Namespace Data
-} // Namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_SPTR_H_ */

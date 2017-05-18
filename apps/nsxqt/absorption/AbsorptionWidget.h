@@ -1,13 +1,19 @@
 #ifndef ABSORPTIONWIDGET_H
 #define ABSORPTIONWIDGET_H
 
-#include <QWidget>
-#include <nsxlib/instrument/Experiment.h>
-#include <nsxlib/instrument/RotAxis.h>
+#include <string>
+#include <utility>
 #include <vector>
+
+#include <QWidget>
 
 namespace Ui {
 class AbsorptionWidget;
+}
+
+namespace nsx {
+class Experiment;
+class RotAxis;
 }
 
 class AbsorptionWidget : public QWidget
@@ -15,15 +21,15 @@ class AbsorptionWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit AbsorptionWidget(SX::Instrument::Experiment* experiment,QWidget *parent = nullptr);
+    explicit AbsorptionWidget(nsx::Experiment* experiment,QWidget *parent = nullptr);
     ~AbsorptionWidget();
 
 private:
     Ui::AbsorptionWidget *ui;
     //! Link to the experiment
-    SX::Instrument::Experiment* _experiment;
+    nsx::Experiment* _experiment;
     //!
-    SX::Instrument::RotAxis* _spindleAxis;
+    nsx::RotAxis* _spindleAxis;
     //! Map of angle and
     std::vector<std::pair<double,std::string>> _imageList;
     //!Path of the file

@@ -38,10 +38,7 @@
 
 #include <Eigen/Dense>
 
-namespace SX {
-
-namespace Utils {
-
+namespace nsx {
 
 template <typename... Ts> class Packer {
 public:
@@ -62,20 +59,13 @@ public:
         return super::pack(xs...);
     }
 
-
-
     void unpack(T& x, Ts&... xs) {
-//        Packer<Ts...>::unpack(xs...);
-//        auto&& data = Packer<Ts...>::_data;
-//        std::memcpy(&x, &data[offset], sizeof(T));
     }
 
 private:
     size_t _offset;
 };
 
-} // namespace Utils
-
-} // namespace SX
+} // end namespace nsx
 
 #endif // NSXTOOL_PACKER_H_

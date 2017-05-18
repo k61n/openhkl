@@ -12,7 +12,6 @@
 #include <functional>
 #include <memory>
 
-
 class WorkerThread : public QThread
 {
     Q_OBJECT

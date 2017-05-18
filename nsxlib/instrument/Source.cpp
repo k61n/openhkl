@@ -5,11 +5,7 @@
 #include "Source.h"
 #include "../utils/Units.h"
 
-namespace SX
-{
-
-namespace Instrument
-{
+namespace nsx {
 
 Source* Source::create(const proptree::ptree& node)
 {
@@ -105,6 +101,5 @@ void Source::addMonochromator(Monochromator mono)
     _monochromators.push_back(mono);
 }
 
-} // end namespace Instrument
+} // end namespace nsx
 
-} // end namespace SX

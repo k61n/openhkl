@@ -1,10 +1,6 @@
 #include "EigenMatrixOp.h"
 
-namespace SX
-{
-
-namespace Utils
-{
+namespace nsx {
 
 void removeColumn(Eigen::MatrixXd& matrix, unsigned int colToRemove)
 {
@@ -28,6 +24,5 @@ void removeRow(Eigen::MatrixXd& matrix, unsigned int rowToRemove)
     matrix.conservativeResize(numRows,numCols);
 }
 
-} // end namespace Utils
+} // end namespace nsx
 
-} // end namespace SX

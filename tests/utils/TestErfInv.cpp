@@ -1,13 +1,13 @@
 #define BOOST_TEST_MODULE "Test Inverse Error function"
 #define BOOST_TEST_DYN_LINK
 
-#include <boost/test/unit_test.hpp>
 #include <cmath>
+
+#include <boost/test/unit_test.hpp>
+
 #include <nsxlib/utils/erf_inv.h>
 
-using SX::Utils::erf_inv;
-using SX::Utils::getConfidence;
-using SX::Utils::getScale;
+using namespace nsx;
 
 int run_test() {
 

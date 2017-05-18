@@ -36,38 +36,24 @@
 #ifndef NSXTOOL_PEAKPREDICTOR_H_
 #define NSXTOOL_PEAKPREDICTOR_H_
 
-//#include <map>
 #include <memory>
 
-//#include <Eigen/Dense>
+namespace nsx {
 
-//#include "UnitCell.h"
-//#include "SpaceGroup.h"
-//#include "Peak3D.h"
+class DataSet;
 
-namespace SX {
-
-namespace Data {
-    class DataSet;
-}
-
-namespace Utils {
-    class ProgressHandler;
-}
-
-namespace Crystal {
+class ProgressHandler;
 
 class PeakPredictor {
 public:
 
-    void addPredictedPeaks(std::shared_ptr<SX::Data::DataSet> data);
+    void addPredictedPeaks(std::shared_ptr<DataSet> data);
 
 public:
     double _dmin, _dmax, _searchRadius, _peakScale, _bkgScale;
-    std::shared_ptr<SX::Utils::ProgressHandler> _handler;
+    std::shared_ptr<ProgressHandler> _handler;
 };
 
-} // namespace Crystal
-} // namespace SX
+} // end namespace nsx
 
 #endif // NSXTOOL_PEAKPREDICTOR

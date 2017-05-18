@@ -1,18 +1,22 @@
 #define BOOST_TEST_MODULE "Test Sample"
 #define BOOST_TEST_DYN_LINK
-#include <nsxlib/instrument/Axis.h>
-#include <nsxlib/utils/Units.h>
-#include <nsxlib/instrument/Sample.h>
-#include <Eigen/Geometry>
-#include <boost/test/unit_test.hpp>
-#include <nsxlib/instrument/Gonio.h>
+
 #include <memory>
 
-using namespace SX::Units;
-using namespace SX::Instrument;
-using Eigen::Vector3d;
-const double tolerance=1e-6;
+#include <boost/test/unit_test.hpp>
 
+#include <Eigen/Dense>
+
+#include <nsxlib/instrument/Axis.h>
+#include <nsxlib/instrument/ComponentState.h>
+#include <nsxlib/instrument/Gonio.h>
+#include <nsxlib/instrument/Sample.h>
+#include <nsxlib/utils/Units.h>
+
+using Eigen::Vector3d;
+using namespace nsx;
+
+const double tolerance=1e-6;
 
 BOOST_AUTO_TEST_CASE(Test_Sample)
 {

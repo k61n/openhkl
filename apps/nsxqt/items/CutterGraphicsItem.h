@@ -8,7 +8,7 @@
 
 #include "PlottableGraphicsItem.h"
 
-namespace SX
+namespace nsx
 {
 namespace Data
 {
@@ -27,7 +27,7 @@ public:
     // Constructors and destructor
 
     //! Constructs a data cutter
-    CutterGraphicsItem(std::shared_ptr<SX::Data::DataSet> data);
+    CutterGraphicsItem(std::shared_ptr<nsx::DataSet> data);
     //! Destructor
     virtual ~CutterGraphicsItem();
 
@@ -43,7 +43,7 @@ public:
     //! Returns the bounding rectangle of the item
     QRectF boundingRect() const;
     //! Returns the data bound to the item
-    std::shared_ptr<SX::Data::DataSet> getData();
+    std::shared_ptr<nsx::DataSet> getData();
     //! Sets the top left corner of the item
     void setFrom(const QPointF& pos);
     //! Sets the bottom right corner of the item
@@ -60,7 +60,7 @@ public:
 
 protected:
     //! The data on which the cutter will act upon
-    std::shared_ptr<SX::Data::DataSet> _data;
+    std::shared_ptr<nsx::DataSet> _data;
     //! The top left coordinates of the slice
     QPointF _from;
     //! The bottom right coordinates of the slice

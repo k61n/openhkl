@@ -39,21 +39,18 @@
 #include <vector>
 #include "Round.h"
 
-namespace SX {
-
-namespace Utils {
+namespace nsx {
 
 template<typename T_>
-T_ interpolate(const std::vector<T_>& elements, double index)
-{
+T_ interpolate(const std::vector<T_>& elements, double index) {
     if (index < 0)
         index = 0;
 
     if (index > elements.size()-1)
         index = elements.size()-1;
 
-    auto index0 = Utils::ifloor(index);
-    auto index1 = Utils::ifloor(index+1);
+    auto index0 = ifloor(index);
+    auto index1 = ifloor(index+1);
 
     if (index1 > elements.size()-1)
         index1 = elements.size()-1;
@@ -74,8 +71,6 @@ T_ interpolate(const std::vector<T_>& elements, double index)
     return (1-t)*elements[index0] + t*elements[index1];
 }
 
-} // namespace Utils
-
-} // namespace SX
+} // end namespace nsx
 
 #endif // NSXTOOL_MINIMIZER_H_

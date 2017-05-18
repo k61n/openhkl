@@ -7,10 +7,7 @@
 #include <functional>
 #include "../utils/Types.h"
 
-
-
-namespace SX {
-namespace Data {
+namespace nsx {
 
 class DataSet;
 
@@ -19,7 +16,7 @@ public:
     IFrameIterator(DataSet& data, unsigned int idx): _index(idx), _data(data) {}
     virtual ~IFrameIterator() = default;
     unsigned int index() {return _index;}
-    virtual SX::Types::RealMatrix& getFrame() = 0;
+    virtual RealMatrix& getFrame() = 0;
     virtual void advance() = 0;
 
 protected:
@@ -27,7 +24,6 @@ protected:
     DataSet& _data;
 };
 
-} // namespace Data
-} // namespace SX
+} // end namespace nsx
 
 #endif // NSXTOOL_IFRAME_ITERATOR_H_

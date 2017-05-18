@@ -37,8 +37,7 @@
 #include <cmath>
 #include <cassert>
 
-namespace SX {
-namespace Crystal {
+namespace nsx {
 
 Intensity::Intensity(double value, double sigma2): _value(value), _sigma2(sigma2)
 {
@@ -102,5 +101,4 @@ Intensity& Intensity::operator+=(const Intensity& other)
     return *this;
 }
 
-} // namespace Crystal
-} // namespace SX
+} // end namespace nsx

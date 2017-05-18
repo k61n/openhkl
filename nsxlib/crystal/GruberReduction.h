@@ -32,9 +32,7 @@
 #include "UnitCell.h"
 #include <Eigen/Dense>
 
-namespace SX {
-namespace Crystal {
-
+namespace nsx {
 
 class GruberReduction
 {
@@ -50,6 +48,6 @@ private:
     double _epsilon;
 };
 
-}
-}
+} // end namespace nsx
+
 #endif

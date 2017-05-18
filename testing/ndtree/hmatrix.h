@@ -33,7 +33,7 @@
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/vector.hpp>
 
-namespace SX
+namespace nsx
 {
 
 namespace Geometry
@@ -181,6 +181,6 @@ void HMatrix<T,D>::translation(T value)
 
 } // namespace Geometry
 
-} // namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_HMatrix_H_ */

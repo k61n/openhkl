@@ -3,7 +3,7 @@
 
 #include "models/TreeItem.h"
 
-namespace SX
+namespace nsx
 {
     namespace Instrument
     {

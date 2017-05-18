@@ -1,9 +1,7 @@
 #ifndef NSXLIB_KERNEL_ENUMS_H_
 #define NSXLIB_KERNEL_ENUMS_H_
 
-namespace SX {
-
-namespace Instrument {
+namespace nsx {
 
 enum class DataOrder : size_t {TopLeftColMajor=0,
                                TopLeftRowMajor=1,
@@ -14,7 +12,6 @@ enum class DataOrder : size_t {TopLeftColMajor=0,
                                BottomRightColMajor=6,
                                BottomRightRowMajor=7};
 
-} // end namespace Instrument
-} // end namespace SX
+} // end namespace nsx
 
 #endif // NSXLIB_KERNEL_ENUMS_H_

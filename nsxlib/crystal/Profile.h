@@ -42,26 +42,29 @@
 #include "../utils/Gaussian.h"
 #include "../utils/Lorentzian.h"
 
-namespace SX {
-namespace Crystal {
+namespace nsx {
 
 class Profile {
-    using Lorentzian = SX::Utils::Lorentzian;
-    using Gaussian = SX::Utils::Gaussian;
+
 public:
+
     Profile(const Lorentzian& lor = Lorentzian(), const Gaussian& gauss = Gaussian());
+
     bool fit(const Eigen::VectorXd& y, int max_iter=100);
+
     double evaluate(double x) const;
+
     double integrate() const;
 
     bool goodFit(const Eigen::VectorXd& y, double eps) const;
 
 private:
-    SX::Utils::Lorentzian _lorentz;
-    SX::Utils::Gaussian _gauss;
+
+    Lorentzian _lorentz;
+
+    Gaussian _gauss;
 };
 
-} // namespace Crystal
-} // namespace SX
+} // end namespace nsx
 
 #endif // NSXTOOL_PROFILE_H_

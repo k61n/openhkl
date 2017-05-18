@@ -1,13 +1,14 @@
 #include "ui_DetectorPropertyWidget.h"
-#include "tree/DetectorPropertyWidget.h"
-#include "models/DetectorItem.h"
+
 #include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/instrument/Detector.h>
 #include <nsxlib/instrument/Gonio.h>
 #include <nsxlib/instrument/RotAxis.h>
 #include <nsxlib/instrument/TransAxis.h>
-#include <QtDebug>
 #include <nsxlib/utils/Units.h>
+
+#include "models/DetectorItem.h"
+#include "tree/DetectorPropertyWidget.h"
 
 DetectorPropertyWidget::DetectorPropertyWidget(DetectorItem* caller,QWidget *parent) :
     QWidget(parent),
@@ -70,9 +71,9 @@ DetectorPropertyWidget::DetectorPropertyWidget(DetectorItem* caller,QWidget *par
 
         QTableWidgetItem* item2=new QTableWidgetItem();
         if (isRot)
-            item2->setData(Qt::EditRole, double(axis->getOffset()/SX::Units::deg));
+            item2->setData(Qt::EditRole, double(axis->getOffset()/nsx::deg));
         else
-            item2->setData(Qt::EditRole, double(axis->getOffset()/SX::Units::mm));
+            item2->setData(Qt::EditRole, double(axis->getOffset()/nsx::mm));
 
 
         // First two columns non-editable
@@ -97,9 +98,9 @@ void DetectorPropertyWidget::cellHasChanged(int i,int j)
     auto detector=_detectorItem->getExperiment()->getDiffractometer()->getDetector();
     auto axis=detector->getGonio()->getAxis(i);
     if (dynamic_cast<TransAxis*>(axis))
-        axis->setOffset(ui->tableWidget_Detector->item(i,j)->data(Qt::EditRole).toDouble()*SX::Units::mm);
+        axis->setOffset(ui->tableWidget_Detector->item(i,j)->data(Qt::EditRole).toDouble()*nsx::mm);
     else
-        axis->setOffset(ui->tableWidget_Detector->item(i,j)->data(Qt::EditRole).toDouble()*SX::Units::deg);
+        axis->setOffset(ui->tableWidget_Detector->item(i,j)->data(Qt::EditRole).toDouble()*nsx::deg);
 }
 
 

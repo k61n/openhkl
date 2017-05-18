@@ -21,7 +21,7 @@
 #define VIEWING_DISTANCE_MIN  3.0
 
 using namespace std;
-using namespace SX::Geometry;
+using namespace nsx::Geometry;
 
 static bool g_bButton1Down = false;
 static GLfloat g_fViewDistance = 3 * VIEWING_DISTANCE_MIN;
@@ -116,7 +116,7 @@ int Data::getNumberOfFrames()
 
 void Data::fromFile(const std::string& filename)
 {
-	SX::Data::MMILLAsciiReader mm;
+	nsx::Data::MMILLAsciiReader mm;
 	mm.mapFile(filename.c_str());
 
 	_nFrames = mm.nBlocks();

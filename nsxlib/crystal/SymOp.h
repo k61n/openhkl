@@ -34,16 +34,11 @@
 
 #include <Eigen/Dense>
 
-namespace SX
-{
-
-namespace Crystal
-{
+namespace nsx {
 
 typedef Eigen::Transform<double,3,Eigen::Affine> affineTransformation;
 
-class SymOp
-{
+class SymOp {
 
 public:
 
@@ -96,8 +91,6 @@ private:
 
 std::ostream& operator<<(std::ostream& os, const SymOp& sym);
 
-} // end namespace Crystal
-
-} // end namespace SX
+} // end namespace nsx
 
 #endif /* NSXTOOL_SYMOP_H_ */

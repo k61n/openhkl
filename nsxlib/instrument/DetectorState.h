@@ -31,16 +31,11 @@
 #define NSXTOOL_DETECTORSTATE_H_
 
 #include <vector>
-namespace SX {
-namespace Instrument {
 
-//class DetectorState: public std::vector<double> {
-//public:
-//    using std::vector<double>::vector;
-//};
+namespace nsx {
 
 using DetectorState = std::vector<double>;
 
-} // Namespace Instrument
-}  // Namespace SX
+} // end namespace nsx
+
 #endif /* NSXTOOL_DETECTOREVENT_H_ */

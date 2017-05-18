@@ -18,17 +18,13 @@
 #include "../utils/MinimizerGSL.h"
 #include "../utils/Units.h"
 
-namespace SX
-{
+namespace nsx {
 
-namespace Crystal
-{
-
-UBFunctor::UBFunctor() : Utils::LMFunctor<double>(), _peaks(0), _detector(nullptr), _sample(nullptr),_source(nullptr), _fixedParameters()
+UBFunctor::UBFunctor() : LMFunctor<double>(), _peaks(0), _detector(nullptr), _sample(nullptr),_source(nullptr), _fixedParameters()
 {
 }
 
-UBFunctor::UBFunctor(const UBFunctor& other) : Utils::LMFunctor<double>(other)
+UBFunctor::UBFunctor(const UBFunctor& other) : LMFunctor<double>(other)
 {
     _peaks = other._peaks;
     _detector = other._detector;
@@ -40,7 +36,7 @@ UBFunctor::UBFunctor(const UBFunctor& other) : Utils::LMFunctor<double>(other)
 UBFunctor& UBFunctor::operator=(const UBFunctor& other)
 {
     if (this != &other) {
-        Utils::LMFunctor<double>::operator=(other);
+        LMFunctor<double>::operator=(other);
         _peaks = other._peaks;
         _detector = other._detector;
         _sample = other._sample;
@@ -53,7 +49,7 @@ UBFunctor& UBFunctor::operator=(const UBFunctor& other)
 int UBFunctor::operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const
 {
     if (!_detector || !_sample || !_source) {
-        throw SX::Kernel::Error<UBFunctor>("A detector, sample and source must be specified prior to calculate residuals.");
+        throw Error<UBFunctor>("A detector, sample and source must be specified prior to calculate residuals.");
     }
 
     // First 9 parameters are UB matrix
@@ -82,7 +78,7 @@ int UBFunctor::operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const
     #pragma omp parallel for
     for (unsigned int i=0; i<_peaks.size();++i)	{
         Eigen::RowVector3d qVector=_peaks[i].first.getQ();
-        Eigen::RowVector3d hkl=_peaks[i].second;;
+        Eigen::RowVector3d hkl=_peaks[i].second;
         fvec(3*i)   = (x[0]*hkl[0] + x[3]*hkl[1] + x[6]*hkl[2] - qVector[0]);
         fvec(3*i+1) = (x[1]*hkl[0] + x[4]*hkl[1] + x[7]*hkl[2] - qVector[1]);
         fvec(3*i+2) = (x[2]*hkl[0] + x[5]*hkl[1] + x[8]*hkl[2] - qVector[2]);
@@ -121,16 +117,16 @@ int UBFunctor::values() const
     return 3*_peaks.size();
 }
 
-void UBFunctor::setDetector(const std::shared_ptr<SX::Instrument::Detector>& detector)
+void UBFunctor::setDetector(const std::shared_ptr<Detector>& detector)
 {
     _detector = detector;
 }
 
-void UBFunctor::setSample(const std::shared_ptr<SX::Instrument::Sample>& sample)
+void UBFunctor::setSample(const std::shared_ptr<Sample>& sample)
 {
     _sample = sample;
 }
-void UBFunctor::setSource(const std::shared_ptr<SX::Instrument::Source>& source)
+void UBFunctor::setSource(const std::shared_ptr<Source>& source)
 {
     _source = source;
 }
@@ -156,7 +152,7 @@ void UBFunctor::resetParameters()
 void UBFunctor::refineParameter(unsigned int idx, bool refine)
 {
     if (!_detector || !_sample || !_source) {
-        throw SX::Kernel::Error<UBFunctor>("A detector, sample and source must be specified prior to fixing parameters.");
+        throw Error<UBFunctor>("A detector, sample and source must be specified prior to fixing parameters.");
     }
     if (idx >= static_cast<unsigned int>(inputs())) {
         return;
@@ -214,12 +210,12 @@ void UBMinimizer::resetParameters()
     _functor.resetParameters();
 }
 
-void UBMinimizer::setDetector(const std::shared_ptr<SX::Instrument::Detector>& detector)
+void UBMinimizer::setDetector(const std::shared_ptr<Detector>& detector)
 {
     _functor.setDetector(detector);
 }
 
-void UBMinimizer::setSource(const std::shared_ptr<SX::Instrument::Source>& source)
+void UBMinimizer::setSource(const std::shared_ptr<Source>& source)
 {
     _functor.setSource(source);
 }
@@ -230,7 +226,7 @@ void UBMinimizer::refineParameter(unsigned int idx, bool refine)
 }
 
 
-void UBMinimizer::setSample(const std::shared_ptr<SX::Instrument::Sample>& sample)
+void UBMinimizer::setSample(const std::shared_ptr<Sample>& sample)
 {
     _functor.setSample(sample);
 }
@@ -239,7 +235,7 @@ int UBMinimizer::run(unsigned int maxIter)
 {
     //assert(_minimizer != nullptr);
     if (_minimizer == nullptr) {
-        _minimizer = new SX::Utils::MinimizerGSL();
+        _minimizer = new MinimizerGSL();
     }
 
     int nParams=_functor.inputs();
@@ -280,8 +276,8 @@ int UBMinimizer::run(unsigned int maxIter)
 
         for (unsigned int i=0;i<fParams.size();++i) {
             if (fParams[i]) {
-                Utils::removeColumn(JtJ,i-removed);
-                Utils::removeRow(JtJ,i-removed);
+                removeColumn(JtJ,i-removed);
+                removeRow(JtJ,i-removed);
                 removed++;
             }
         }
@@ -341,9 +337,9 @@ UBSolution::UBSolution() : _detector(nullptr), _sample(nullptr),_source(nullptr)
 {
 }
 
-UBSolution::UBSolution(std::shared_ptr<SX::Instrument::Detector> detector,
-                       std::shared_ptr<SX::Instrument::Sample> sample,
-                       std::shared_ptr<SX::Instrument::Source> source,
+UBSolution::UBSolution(std::shared_ptr<Detector> detector,
+                       std::shared_ptr<Sample> sample,
+                       std::shared_ptr<Source> source,
                        const Eigen::VectorXd& values,
                        const Eigen::MatrixXd& cov,
                        std::vector<bool> fixedParameters):
@@ -441,11 +437,11 @@ std::ostream& operator<<(std::ostream& os, const UBSolution& solution)
     auto detectorG=solution._detector->getGonio();
     for (unsigned int i=0;i<detectorG->getNAxes();++i) {
         os << detectorG->getAxis(i)->getLabel() << " ";
-        SX::Instrument::Axis* axis=detectorG->getAxis(i);
-        if (dynamic_cast<SX::Instrument::TransAxis*>(axis) != nullptr) {
-            os << solution._detectorOffsets[i]/SX::Units::mm << "(" << solution._sigmaDetectorOffsets[i]/SX::Units::mm << ") mm " << std::endl;
-        } else if (dynamic_cast<SX::Instrument::RotAxis*>(axis) != nullptr) {
-            os << solution._detectorOffsets[i]/SX::Units::deg << "(" << solution._sigmaDetectorOffsets[i]/SX::Units::deg << ") deg " << std::endl;
+        Axis* axis=detectorG->getAxis(i);
+        if (dynamic_cast<TransAxis*>(axis) != nullptr) {
+            os << solution._detectorOffsets[i]/mm << "(" << solution._sigmaDetectorOffsets[i]/mm << ") mm " << std::endl;
+        } else if (dynamic_cast<RotAxis*>(axis) != nullptr) {
+            os << solution._detectorOffsets[i]/deg << "(" << solution._sigmaDetectorOffsets[i]/deg << ") deg " << std::endl;
         }
     }
     os <<std::endl;
@@ -453,16 +449,15 @@ std::ostream& operator<<(std::ostream& os, const UBSolution& solution)
     auto sampleG=solution._sample->getGonio();
     for (unsigned int i=0;i<sampleG->getNAxes();++i) {
         os << sampleG->getAxis(i)->getLabel() << " ";
-        SX::Instrument::Axis* axis=sampleG->getAxis(i);
-        if (dynamic_cast<SX::Instrument::TransAxis*>(axis) != nullptr) {
-            os << solution._sampleOffsets[i]/SX::Units::mm << "(" << solution._sigmaSampleOffsets[i]/SX::Units::mm << ") mm " << std::endl;
-        } else if (dynamic_cast<SX::Instrument::RotAxis*>(axis) != nullptr) {
-            os << solution._sampleOffsets[i]/SX::Units::deg << "(" << solution._sigmaSampleOffsets[i]/SX::Units::deg << ") deg " << std::endl;
+        Axis* axis=sampleG->getAxis(i);
+        if (dynamic_cast<TransAxis*>(axis) != nullptr) {
+            os << solution._sampleOffsets[i]/mm << "(" << solution._sigmaSampleOffsets[i]/mm << ") mm " << std::endl;
+        } else if (dynamic_cast<RotAxis*>(axis) != nullptr) {
+            os << solution._sampleOffsets[i]/deg << "(" << solution._sigmaSampleOffsets[i]/deg << ") deg " << std::endl;
         }
     }
     os<<std::endl;
     return os;
 }
 
-} // end namespace Crystal
-} // end namespace SX
+} // end namespace nsx

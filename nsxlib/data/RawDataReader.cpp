@@ -53,16 +53,9 @@
 #include "../utils/Parser.h"
 #include "../utils/EigenToVector.h"
 
-
 using std::ifstream;
-using SX::Utils::eigenToVector;
-using SX::Instrument::ComponentState;
 
-namespace SX {
-namespace Data {
-
-using SX::Instrument::Diffractometer;
-using SX::Instrument::Monochromator;
+namespace nsx {
 
 IDataReader* RawDataReader::create(const std::string &filename, const std::shared_ptr<Diffractometer>& diffractometer) {
     std::vector<std::string> filenames;
@@ -137,7 +130,7 @@ RawDataReader::RawDataReader(const std::vector<std::string>& filenames, const st
     }
 
     // Use natural units internally (rad)
-    dm*=SX::Units::deg;
+    dm*=deg;
 
     for (unsigned int i=0;i<_nFrames;++i) {
         _states[i].sample = ComponentState(_diffractometer->getSample().get(), eigenToVector(dm.col(i)));
@@ -208,5 +201,4 @@ Eigen::MatrixXi RawDataReader::getData(std::size_t frame) {
     }
 }
 
-} // end namespace Data
-} // end namespace SX
+} // end namespace nsx

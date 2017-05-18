@@ -7,8 +7,7 @@
 #include "../kernel/Error.h"
 #include "../utils/Path.h"
 
-namespace SX {
-namespace Utils {
+namespace nsx {
 
 int Path::_argc = 0;
 char** Path::_argv = nullptr;
@@ -39,7 +38,7 @@ std::string Path::getHomeDirectory()
         }
     }
     // Otherwise throw and error
-    throw SX::Kernel::Error<Path>("The home directory could not be defined");
+    throw Error<Path>("The home directory could not be defined");
 }
 
 std::string Path::expandUser(std::string path)
@@ -93,7 +92,7 @@ std::string Path::getApplicationDataPath()
 
     // did not find a match
     if ( match == "" ) {
-        throw SX::Kernel::Error<Path>("The application data directory could not be defined");
+        throw Error<Path>("The application data directory could not be defined");
     }
     return boost::filesystem::path(match).string();
 }
@@ -130,5 +129,5 @@ void Path::setArgv(int argc, char **argv)
     _argv = argv;
 }
 
-} // end namespace Utils
-} // end namespace SX
+} // end namespace nsx
+

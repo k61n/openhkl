@@ -33,26 +33,24 @@
 #include <utility>
 
 #include "ConvolutionKernel.h"
-#include "AnnularKernel.h"
 
-namespace SX {
-namespace Imaging {
+namespace nsx {
 
-using RealMatrix = SX::Types::RealMatrix;
-
-ConvolutionKernel::ConvolutionKernel(int nrows, int ncols) : _kernel(), _hasChanged(true), _params()
+ConvolutionKernel::ConvolutionKernel(int nrows, int ncols) : _nrows(nrows), _ncols(ncols), _kernel(), _hasChanged(true), _params()
 {
     _kernel.resize(nrows,ncols);
 }
 
 ConvolutionKernel::ConvolutionKernel(const ConvolutionKernel &rhs)
 {
+    _nrows = rhs._nrows;
+    _ncols = rhs._ncols;
     _kernel = rhs._kernel;
     _hasChanged = rhs._hasChanged;
     _params = rhs._params;
 }
 
-ConvolutionKernel::ConvolutionKernel(int nrows, int ncols, const ConvolutionKernel::ParameterMap &parameters)
+ConvolutionKernel::ConvolutionKernel(int nrows, int ncols, const ParameterMap &parameters) : _nrows(nrows), _ncols(ncols)
 {
     _kernel.resize(nrows,ncols);
     _params = parameters;
@@ -63,13 +61,13 @@ ConvolutionKernel::~ConvolutionKernel()
 {
 }
 
-ConvolutionKernel::ParameterMap &ConvolutionKernel::getParameters()
+ConvolutionKernel::ParameterMap& ConvolutionKernel::getParameters()
 {
     _hasChanged = true;
     return _params;
 }
 
-const ConvolutionKernel::ParameterMap &ConvolutionKernel::getParameters() const
+const ConvolutionKernel::ParameterMap& ConvolutionKernel::getParameters() const
 {
     return _params;
 }
@@ -89,7 +87,7 @@ void ConvolutionKernel::print(std::ostream& os) const
     os << _kernel << std::endl;
 }
 
-ConvolutionKernel &ConvolutionKernel::operator=(const ConvolutionKernel &rhs)
+ConvolutionKernel& ConvolutionKernel::operator=(const ConvolutionKernel& rhs)
 {
     _kernel = rhs._kernel;
     _hasChanged = rhs._hasChanged;
@@ -103,5 +101,5 @@ std::ostream& operator<<(std::ostream& os, const ConvolutionKernel& kernel)
     return os;
 }
 
-} // namespace Imaging
-} // namespace SX
+} // end namespace nsx
+

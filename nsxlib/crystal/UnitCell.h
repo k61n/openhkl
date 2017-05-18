@@ -39,15 +39,9 @@
 #include "../utils/Types.h"
 #include "SpaceGroup.h"
 
-namespace SX
-{
-
-namespace Crystal
-{
+namespace nsx {
 
 using Eigen::Vector3d;
-
-
 
 //! Centering type of the Bravais lattice
 enum  class LatticeCentring : char  {P='P',A='A',B='B',C='C',I='I',F='F',R='R'};
@@ -63,15 +57,15 @@ enum  class BravaisType : char  {Triclinic='a',Monoclinic='m',Orthorhombic='o',T
  * are given in degrees.
  * The a axis is chosen as pointing along the x-direction, and the b-axis is in the xy-plane.
  */
-class UnitCell : public SX::Geometry::Basis
+class UnitCell : public Basis
 {
 public:
     //! Empty UnitCell, initialiazed to right-handed orthonormal system
     UnitCell();
     //! Construct unitCell from lattice parameters, the A matrix is built with avector along x, bvector in the xy-plane.
-    UnitCell(double a, double b, double c, double alpha, double beta, double gamma,LatticeCentring centring=LatticeCentring::P, BravaisType bravais=BravaisType::Triclinic, std::shared_ptr<SX::Geometry::Basis> reference=nullptr);
+    UnitCell(double a, double b, double c, double alpha, double beta, double gamma,LatticeCentring centring=LatticeCentring::P, BravaisType bravais=BravaisType::Triclinic, std::shared_ptr<Basis> reference=nullptr);
     //! Build Unit-cell from 3 non-coplanar vectors. Throw if coplanars.
-    UnitCell(const Vector3d& v1,const Vector3d& v2,const Vector3d& v3, LatticeCentring centring=LatticeCentring::P, BravaisType bravais=BravaisType::Triclinic,std::shared_ptr<SX::Geometry::Basis> reference=nullptr );
+    UnitCell(const Vector3d& v1,const Vector3d& v2,const Vector3d& v3, LatticeCentring centring=LatticeCentring::P, BravaisType bravais=BravaisType::Triclinic,std::shared_ptr<Basis> reference=nullptr );
     //! Copy constructor
     UnitCell(const UnitCell&);
     //! Assignment
@@ -99,9 +93,9 @@ public:
     void setLatticeVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c);
     void copyMatrices(const UnitCell& other);
     //! Build a UnitCell from a set of three direct vectors.
-    static UnitCell fromDirectVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c, LatticeCentring centring=LatticeCentring::P, BravaisType bravais=BravaisType::Triclinic,const std::shared_ptr<SX::Geometry::Basis>& reference=nullptr);
+    static UnitCell fromDirectVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c, LatticeCentring centring=LatticeCentring::P, BravaisType bravais=BravaisType::Triclinic,const std::shared_ptr<Basis>& reference=nullptr);
     //! Build a UnitCell from a set of three reciprocal vectors.
-    static UnitCell fromReciprocalVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c,LatticeCentring centring=LatticeCentring::P, BravaisType bravais=BravaisType::Triclinic, const std::shared_ptr<SX::Geometry::Basis>& reference=nullptr);
+    static UnitCell fromReciprocalVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c,LatticeCentring centring=LatticeCentring::P, BravaisType bravais=BravaisType::Triclinic, const std::shared_ptr<Basis>& reference=nullptr);
     //!
     void setLatticeCentring(LatticeCentring centring);
     //!
@@ -144,9 +138,9 @@ public:
     void setZ(unsigned int Z);
 
     //! Gets the Material for the unit cell
-    Chemistry::sptrMaterial getMaterial() const;
+    sptrMaterial getMaterial() const;
     //! Sets the Material for the unit cell
-    void setMaterial(const Chemistry::sptrMaterial& material);
+    void setMaterial(const sptrMaterial& material);
     //! Set space group from its symbol
     void setSpaceGroup(const std::string& symbol);
     std::string getSpaceGroup() const;
@@ -162,7 +156,7 @@ public:
     double getHKLTolerance() const;
 
 private:
-    Chemistry::sptrMaterial _material;
+    sptrMaterial _material;
     LatticeCentring _centring;
     BravaisType _bravaisType;
     unsigned int _Z;
@@ -174,7 +168,6 @@ private:
 //! Print to a stream
 std::ostream& operator<<(std::ostream&,const UnitCell&);
 
-}
-}
+} // end namespace nsx
 
 #endif

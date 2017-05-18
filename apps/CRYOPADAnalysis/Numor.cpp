@@ -10,7 +10,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "Numor.h"
 
-namespace SX {
+namespace nsx {
 
 namespace Data {
 
@@ -339,4 +339,4 @@ bool Numor::isbpb() const
 
 } //end namespace Data
 
-} //end namespace SX
+} //end namespace nsx

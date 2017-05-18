@@ -5,8 +5,7 @@
 #include "MonoDetector.h"
 #include "../utils/Units.h"
 
-namespace SX {
-namespace Instrument {
+namespace nsx {
 
 MonoDetector::MonoDetector()
 : Detector(),
@@ -52,7 +51,7 @@ MonoDetector::MonoDetector(const std::string& name)
 
 MonoDetector::MonoDetector(const proptree::ptree& node) : Detector(node)
 {
-    Units::UnitsManager* um=SX::Units::UnitsManager::Instance();
+    UnitsManager* um=UnitsManager::Instance();
 
     // Set the detector to sample distance from the property tree node
     const property_tree::ptree& distanceNode = node.get_child("sample_distance");
@@ -229,7 +228,5 @@ unsigned int MonoDetector::getNDetectors() const
     return 1;
 }
 
-} // End namespace Instrument
-
-} // End namespace SX
+} // end namespace nsx
 
