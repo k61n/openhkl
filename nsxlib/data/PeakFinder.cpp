@@ -234,12 +234,12 @@ int PeakFinder::getMaxComponents()
     return _maxComp;
 }
 
-void PeakFinder::setConvolver(const std::shared_ptr<Convolver>& convolver)
+void PeakFinder::setConvolver(std::shared_ptr<Convolver> convolver)
 {
     _convolver = convolver;
 }
 
-void PeakFinder::setKernel(const std::shared_ptr<ConvolutionKernel>& kernel)
+void PeakFinder::setKernel(std::shared_ptr<ConvolutionKernel> kernel)
 {
     _kernel = kernel;
 }

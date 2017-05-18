@@ -37,12 +37,12 @@ public:
     void setMaxComponents(int maxComp);
     int getMaxComponents();
 
-    void setConvolver(const std::shared_ptr<Convolver>& convolver);
+    void setConvolver(std::shared_ptr<Convolver> convolver);
     std::shared_ptr<Convolver> getConvolver();
 
     std::shared_ptr<ConvolutionKernel> getKernel();
 
-    void setKernel(const std::shared_ptr<ConvolutionKernel>& kernel);
+    void setKernel(std::shared_ptr<ConvolutionKernel> kernel);
 
 
 

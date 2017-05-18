@@ -17,7 +17,7 @@ public:
     TestAxis(const std::string& label, bool physical);
     ~TestAxis();
     TestAxis* clone() const;
-    Transform<double,3,Eigen::Affine> getHomMatrix(double value) const;
+    Eigen::Transform<double,3,Eigen::Affine> getHomMatrix(double value) const;
 };
 
 TestAxis::TestAxis(const std::string& label, bool physical) : Axis(label)
@@ -34,7 +34,7 @@ TestAxis* TestAxis::clone() const
     return new TestAxis(*this);
 }
 
-Transform<double,3,Eigen::Affine> TestAxis::getHomMatrix(double value) const
+Eigen::Transform<double,3,Eigen::Affine> TestAxis::getHomMatrix(double value) const
 {
     return Eigen::Transform<double,3,Eigen::Affine>();
 }

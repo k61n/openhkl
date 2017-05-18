@@ -16,17 +16,15 @@
 %template(vector_2i) std::vector<std::vector<int>>;
 %template(vector_string) std::vector<std::string>;
 
-%shared_ptr(SX::Crystal::Peak3D)
-%shared_ptr(SX::Chemistry::Material)
-%shared_ptr(SX::Instrument::Diffractometer)
-%shared_ptr(SX::Imaging::ConvolutionKernel)
-%shared_ptr(SX::Imaging::DeltaKernel)
-%shared_ptr(SX::Imaging::AnnularKernel)
-%shared_ptr(SX::Imaging::Convolver)
-%shared_ptr(SX::Data::DataSet)
-
-
-
+%shared_ptr(nsx::Peak3D)
+%shared_ptr(nsx::Material)
+%shared_ptr(nsx::Diffractometer)
+%shared_ptr(nsx::ConvolutionKernel)
+%shared_ptr(nsx::DeltaKernel)
+%shared_ptr(nsx::AnnularKernel)
+%shared_ptr(nsx::Convolver)
+%shared_ptr(nsx::DataSet)
+%shared_ptr(nsx::Source)
 
 %{
 #define SWIG_FILE_WITH_INIT
@@ -65,12 +63,14 @@ namespace property_tree=boost::property_tree;
 #include "utils/Enums.h"
 #include "utils/Units.h"
 #include "utils/LatticeConstraintParser.h"
+
 #include "utils/DoubleToFraction.h"
 #include "utils/Gaussian.h"
 #include "utils/EigenMatrixOp.h"
 #include "utils/Timer.h"
 #include "utils/Path.h"
 #include "utils/Maybe.h"
+
 #include "utils/Packer.h"
 //#include "utils/AffineTransformParser.h"
 #include "utils/Lorentzian.h"
@@ -86,6 +86,7 @@ namespace property_tree=boost::property_tree;
 #include "utils/MatrixParser.h"
 #include "utils/EigenMatrixParser.h"
 #include "utils/ProgressHandler.h"
+
 #include "utils/Interpolator.h"
 #include "crystal/PeakPredictor.h"
 #include "crystal/UBMinimizer.h"
@@ -102,6 +103,7 @@ namespace property_tree=boost::property_tree;
 #include "crystal/RFactor.h"
 #include "crystal/Peak3D.h"
 #include "crystal/PeakCalc.h"
+
 #include "crystal/PeakRecord.h"
 #include "crystal/Mosaic.h"
 #include "crystal/PeakRejector.h"
@@ -109,7 +111,7 @@ namespace property_tree=boost::property_tree;
 #include "crystal/PeakFit.h"
 #include "crystal/FFTIndexing.h"
 #include "crystal/LatticeSolution.h"
-using SX::Crystal::LatticeSolution;
+
 #include "crystal/MergedPeak.h"
 #include "crystal/Peak2D.h"
 #include "crystal/SpaceGroup.h"
@@ -130,13 +132,15 @@ using SX::Crystal::LatticeSolution;
 #include "geometry/ShapeUnion.h"
 #include "geometry/NDTree.h"
 #include "geometry/ConvexHull.h"
-using SX::Geometry::ConvexHull;
+
 #include "geometry/BlobFinder.h"
 #include "geometry/Cluster.h"
+
 #include "geometry/AABB.h"
 #include "geometry/Edge.h"
 #include "geometry/Blob3D.h"
 #include "geometry/IntegrationRegion.h"
+
 #include "data/XDS.h"
 #include "data/IData.h"
 #include "data/MetaData.h"
@@ -171,7 +175,7 @@ using SX::Geometry::ConvexHull;
 #include "instrument/Axis.h"
 #include "instrument/Experiment.h"
 #include "instrument/DetectorState.h"
-using SX::Instrument::DetectorState;
+
 #include "instrument/Component.h"
 #include "instrument/AxisFactory.h"
 #include "instrument/RotAxis.h"
@@ -180,10 +184,11 @@ using SX::Instrument::DetectorState;
 #include "imaging/ConstantKernel.h"
 #include "imaging/KernelFactory.h"
 #include "imaging/Convolver.h"
+
 #include "imaging/DeltaKernel.h"
 #include "imaging/AnnularKernel.h"
 #include "imaging/ConvolutionKernel.h"
- using SX::Imaging::ConvolutionKernel;
+
 #include "kernel/Error.h"
 #include "kernel/Composite.h"
 #include "kernel/Store.h"
@@ -194,10 +199,7 @@ using SX::Instrument::DetectorState;
 #include "kernel/Factory.h"
 #include "kernel/SharedFactory.h"
 
-
-
 #include "utils/Enums.h"
-using SX::Instrument::DataOrder;
 
 #include "instrument/Axis.h"
 #include "instrument/RotAxis.h"
@@ -217,15 +219,17 @@ using SX::Instrument::DataOrder;
 
 
 #include "chemistry/Material.h"
-using SX::Chemistry::isotopeContents;
+
+using sptrMaterial = std::shared_ptr<nsx::Material>;
  
 #include "instrument/Sample.h"
-using SX::Crystal::CellList;
+
 
 #include "geometry/Basis.h"
+
 #include "geometry/IShape.h"
 #include "geometry/AABB.h"
-using SX::Geometry::AABB;
+
 #include "geometry/Ellipsoid.h"
 #include "geometry/OBB.h"
 #include "geometry/Sphere.h"
@@ -236,15 +240,13 @@ using SX::Geometry::AABB;
 #include "crystal/GruberReduction.h"
 #include "crystal/Peak3D.h"
 #include "crystal/SpaceGroup.h"
-using SX::Crystal::SpaceGroup;
+
 #include "crystal/UnitCell.h"
 #include "crystal/PeakIntegrator.h"
 #include "crystal/Profile.h"
 #include "crystal/Intensity.h"
-using SX::Crystal::Profile;
-using SX::Crystal::Intensity; 
 
-using sptrUnitCell = std::shared_ptr<SX::Crystal::UnitCell>;
+using sptrUnitCell = std::shared_ptr<nsx::UnitCell>;
 
 #include "instrument/Diffractometer.h"
 #include "instrument/DiffractometerStore.h"
@@ -260,6 +262,8 @@ using sptrUnitCell = std::shared_ptr<SX::Crystal::UnitCell>;
 
 #include "data/IData.h"
 #include "data/PeakFinder.h"
+
+using namespace nsx;
 
 %}
 
@@ -311,25 +315,26 @@ using sptrUnitCell = std::shared_ptr<SX::Crystal::UnitCell>;
 %include "instrument/Source.h"
 
 %include "geometry/IShape.h"
-%template(IShape3D) SX::Geometry::IShape<double,3>;
+%template(IShape3D) nsx::IShape<double,3>;
 
-%typemap(out) SX::Geometry::AABB<double, 3>::vector = Eigen::Vector3d;
-%typemap(out) SX::Geometry::Ellipsoid<double, 3>::vector = Eigen::Vector3d;
-%typemap(out) SX::Geometry::OBB<double, 3>::vector = Eigen::Vector3d;
-%typemap(out) SX::Geometry::Sphere<double, 3>::vector = Eigen::Vector3d;
+%typemap(out) AABB<double, 3>::vector = Eigen::Vector3d;
+%typemap(out) Ellipsoid<double, 3>::vector = Eigen::Vector3d;
+%typemap(out) OBB<double, 3>::vector = Eigen::Vector3d;
+%typemap(out) Sphere<double, 3>::vector = Eigen::Vector3d;
+
 
 %include "geometry/AABB.h"
-%template(AABB3D) SX::Geometry::AABB<double,3>;
+%template(AABB3D) nsx::AABB<double,3>;
 
 %include "geometry/Sphere.h"
 
 %include "geometry/Ellipsoid.h"
-%template(Ellipsoid3D) SX::Geometry::Ellipsoid<double,3>;
+%template(Ellipsoid3D) nsx::Ellipsoid<double,3>;
 %include "geometry/OBB.h"
-%template(OBB3D) SX::Geometry::OBB<double,3>;
+%template(OBB3D) nsx::OBB<double,3>;
 %include "geometry/Sphere.h"
 
-%template(Sphere3D) SX::Geometry::Sphere<double,3>;
+%template(Sphere3D) nsx::Sphere<double,3>;
 
 %include "geometry/Blob3D.h"
 
@@ -349,13 +354,13 @@ using sptrUnitCell = std::shared_ptr<SX::Crystal::UnitCell>;
 %include "kernel/Singleton.h"
  //%include "kernel/Factory.h"
 
-namespace SX {
-   namespace Instrument {class DiffractometerStore;}
-   namespace Data { class DataReaderFactory; }
-   namespace Crystal {struct tVector;}
-   %template(DiffractometerStoreBase) Kernel::Singleton<Instrument::DiffractometerStore, Kernel::Constructor, Kernel::Destructor>;
-    %template(DataReaderFactorySingletonBase) Kernel::Singleton<Data::DataReaderFactory, Kernel::Constructor, Kernel::Destructor>;
-    //  %template(DataReaderFactoryFactoryBase) Kernel::Factory<Data::DataSet,std::string,std::string,std::shared_ptr<Instrument::Diffractometer> >;
+namespace nsx {
+   class DiffractometerStore;
+   class DataReaderFactory; 
+   struct tVector;
+   %template(DiffractometerStoreBase) Singleton<DiffractometerStore, Constructor, Destructor>;
+    %template(DataReaderFactorySingletonBase) Singleton<DataReaderFactory, Constructor, Destructor>;
+    //  %template(DataReaderFactoryFactoryBase) Factory<DataSet,std::string,std::string,std::shared_ptr<Diffractometer> >;
 }
 
 %include "crystal/FFTIndexing.h"
@@ -364,6 +369,14 @@ namespace SX {
 %include "crystal/Peak3D.h"
 
 %include "instrument/DiffractometerStore.h"
+
+%include "imaging/FrameFilter.h"
+%include "imaging/ConstantKernel.h"
+%include "imaging/KernelFactory.h"
+%include "imaging/ConvolutionKernel.h"
+%include "imaging/DeltaKernel.h"
+%include "imaging/AnnularKernel.h"
+%include "imaging/Convolver.h"
 
 %include "data/MetaData.h"
 %include "data/IDataReader.h"
@@ -376,9 +389,9 @@ namespace SX {
 %include "data/IData.h"
 %include "data/PeakFinder.h"
 
-%template(vector_data) std::vector<std::shared_ptr<SX::Data::DataSet>>;
-%template(vector_peak) std::vector<std::shared_ptr<SX::Crystal::Peak3D>>;
-%template(set_peak) std::set<std::shared_ptr<SX::Crystal::Peak3D>>;
+%template(vector_data) std::vector<std::shared_ptr<nsx::DataSet>>;
+%template(vector_peak) std::vector<std::shared_ptr<nsx::Peak3D>>;
+%template(set_peak) std::set<std::shared_ptr<nsx::Peak3D>>;
 
 
 
@@ -479,7 +492,8 @@ namespace SX {
  //%include "data/IFrameIterator.h"
 %include "data/TiffDataReader.h"
 %include "data/blosc_filter.h"
-%include "data/PeakFinder.h"
+
+
 %include "data/DataReaderFactory.h"
 %include "instrument/Detector.h"
 %include "instrument/DetectorFactory.h"
@@ -500,18 +514,12 @@ namespace SX {
 %include "instrument/Axis.h"
 %include "instrument/Experiment.h"
 %include "instrument/DetectorState.h"
-using SX::Instrument::DetectorState;
+
 %include "instrument/Component.h"
 %include "instrument/AxisFactory.h"
 %include "instrument/RotAxis.h"
  //%include "physics/PhysicalUnit.h"
-%include "imaging/FrameFilter.h"
-%include "imaging/ConstantKernel.h"
-%include "imaging/KernelFactory.h"
-%include "imaging/ConvolutionKernel.h"
-%include "imaging/DeltaKernel.h"
-%include "imaging/AnnularKernel.h"
-%include "imaging/Convolver.h"
+
 %include "kernel/Error.h"
  //%include "kernel/Composite.h"
 %include "kernel/Store.h"
@@ -523,8 +531,9 @@ using SX::Instrument::DetectorState;
 
 
 
- //%ignore SX::Data::ILLDataReader::getData(size_t);
+ //%ignore nsx::getData(size_t);
  //%include "data/ILLDataReader.h"
+
 
 
 %newobject new_double;
@@ -541,4 +550,5 @@ double get_value(const double*);
         return *ptr;
     }
 %}
+
 

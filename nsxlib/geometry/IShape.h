@@ -269,19 +269,7 @@ const typename IShape<T,D>::vector& IShape<T,D>::getLower() const
 }
 
 template<typename T, unsigned int D>
-typename IShape<T,D>::vector& IShape<T,D>::getLower()
-{
-    return _lowerBound;
-}
-
-template<typename T, unsigned int D>
 const typename IShape<T,D>::vector& IShape<T,D>::getUpper() const
-{
-    return _upperBound;
-}
-
-template<typename T, unsigned int D>
-typename IShape<T,D>::vector& IShape<T,D>::getUpper()
 {
     return _upperBound;
 }

@@ -111,7 +111,7 @@ private:
 
 #ifndef SWIG
 std::ostream& operator<<(std::ostream& os, const Blob3D& b);
-
+#endif
 } // end namespace nsx
 
 #endif /*NXSTOOL_Blob3D_H_*/

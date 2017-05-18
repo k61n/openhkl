@@ -16,21 +16,17 @@
 #include <nsxlib/crystal/Mosaic.h>
 #include <nsxlib/data/DataReaderFactory.h>
 
-using SX::Crystal::Mosaic;
-using SX::Data::DataSet;
-using SX::Data::DataReaderFactory;
+using namespace nsx;
 
 int run_test()
 {
-    using namespace SX::Geometry;
-    using namespace SX::Instrument;
 
     Sample s("test");
 
     ConvexHull<double> hull;
 
 //	double halfa = 3.1*SX::Units::mm/2.0;
-    double halfa = 1.0*SX::Units::mm/2.0;
+    double halfa = 1.0*mm/2.0;
     hull.addVertex(-halfa,-halfa,-halfa);
     hull.addVertex(-halfa, halfa,-halfa);
     hull.addVertex( halfa,-halfa,-halfa);
@@ -84,9 +80,12 @@ int run_test()
     evecs2 << 1,0,0,0,1,0,0,0,1;
     Ellipsoid<double,3> ell2(center2,evals2,evecs2);
 
-    std::cout<<SX::Crystal::ellipsoids_overlap(ell1,ell2)<<std::endl;
+    std::cout<<ellipsoids_overlap(ell1,ell2)<<std::endl;
 
     return 0;
 }
 
-
+BOOST_AUTO_TEST_CASE(Test_Mosaic)
+{
+    BOOST_CHECK(run_test() == 0);
+}
