@@ -4,6 +4,7 @@
 #include <QGraphicsView>
 
 class DetectorScene;
+
 class DetectorGraphicsView : public QGraphicsView
 {
     Q_OBJECT

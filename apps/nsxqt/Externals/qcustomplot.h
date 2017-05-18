@@ -23,7 +23,7 @@
 **          Version: 1.2.1                                                **
 ****************************************************************************/
 
-#ifndef NSXQT_QCUSTOMPLOT_H
+#ifndef QCUSTOMPLOT_H
 #define QCUSTOMPLOT_H
 
 #include <QObject>

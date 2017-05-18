@@ -1,6 +1,3 @@
-#include "ui_MainWindow.h"
-#include "ui_ScaleDialog.h"
-
 #include <array>
 #include <memory>
 #include <map>
@@ -23,7 +20,7 @@
 #include <QModelIndexList>
 #include <QStandardItem>
 #include <QString>
-#include <QtDebug>
+#include <QDebug>
 #include <QVector>
 
 #include "Externals/qcustomplot.h"
@@ -60,6 +57,9 @@
 #include "views/ProgressView.h"
 #include "views/PeakTableView.h"
 #include "views/ReciprocalSpaceViewer.h"
+
+#include "ui_MainWindow.h"
+#include "ui_ScaleDialog.h"
 
 ExperimentTree::ExperimentTree(QWidget *parent):
     QTreeView(parent)

@@ -14,7 +14,7 @@ class Experiment;
 class InspectableTreeItem : public TreeItem
 {
 public:
-    InspectableTreeItem(std::shared_ptr<sx::Experiment> experiment);
+    InspectableTreeItem(std::shared_ptr<nsx::Experiment> experiment);
     ~InspectableTreeItem();
     //! Tree items can expose a QWidget that show their internal properties.
     virtual QWidget* inspectItem() = 0;
