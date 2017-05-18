@@ -1,5 +1,5 @@
-#ifndef PEAKGRAPHICSITEM_H
-#define PEAKGRAPHICSITEM_H
+#ifndef NSXQT_PEAKGRAPHICSITEM_H
+#define NSXQT_PEAKGRAPHICSITEM_H
 
 #include <QPointF>
 
@@ -57,4 +57,4 @@ private:
     Ellipse _bkgEllipse;
 };
 
-#endif // PEAKGRAPHICSITEM_H
+#endif // NSXQT_PEAKGRAPHICSITEM_H

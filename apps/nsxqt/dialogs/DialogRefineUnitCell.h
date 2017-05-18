@@ -1,5 +1,5 @@
-#ifndef DIALOGREFINEUNITCELL_H
-#define DIALOGREFINEUNITCELL_H
+#ifndef NSXQT_DIALOGREFINEUNITCELL_H
+#define NSXQT_DIALOGREFINEUNITCELL_H
 
 #include <memory>
 
@@ -52,4 +52,4 @@ private:
     nsx::UBMinimizer _minimizer;
 };
 
-#endif // DIALOGREFINEUNITCELL_H
+#endif // NSXQT_DIALOGREFINEUNITCELL_H

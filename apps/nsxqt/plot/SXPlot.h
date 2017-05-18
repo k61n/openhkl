@@ -1,5 +1,5 @@
-#ifndef SXPLOT_H
-#define SXPLOT_H
+#ifndef NSXQT_SXPLOT_H
+#define NSXQT_SXPLOT_H
 
 #include <string>
 
@@ -41,4 +41,4 @@ private:
 
 };
 
-#endif // SXPLOT_H
+#endif // NSXQT_SXPLOT_H

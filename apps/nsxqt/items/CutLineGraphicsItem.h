@@ -1,5 +1,5 @@
-#ifndef CUTLINEGRAPHICSITEM_H
-#define CUTLINEGRAPHICSITEM_H
+#ifndef NSXQT_CUTLINEGRAPHICSITEM_H
+#define NSXQT_CUTLINEGRAPHICSITEM_H
 
 #include <memory>
 #include <string>
@@ -44,4 +44,4 @@ private:
 
 };
 
-#endif // CUTLINEGRAPHICSITEM_H
+#endif // NSXQT_CUTLINEGRAPHICSITEM_H

@@ -1,14 +1,11 @@
-#ifndef INSPECTABLETREEITEM_H
-#define INSPECTABLETREEITEM_H
-#include "TreeItem.h"
+#ifndef NSXQT_INSPECTABLETREEITEM_H
+#define NSXQT_INSPECTABLETREEITEM_H
 
+#include "TreeItem.h"
 
 namespace nsx
 {
-    namespace Instrument
-    {
-       class Experiment;
-    }
+class Experiment;
 }
 
 //! Interface for tree Items for which
@@ -17,10 +14,10 @@ namespace nsx
 class InspectableTreeItem : public TreeItem
 {
 public:
-    InspectableTreeItem(std::shared_ptr<Experiment> experiment);
+    InspectableTreeItem(std::shared_ptr<sx::Experiment> experiment);
     ~InspectableTreeItem();
     //! Tree items can expose a QWidget that show their internal properties.
     virtual QWidget* inspectItem() = 0;
 };
 
-#endif // INSPECTABLETREEITEM_H
+#endif // NSXQT_INSPECTABLETREEITEM_H

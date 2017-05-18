@@ -56,4 +56,4 @@ public:
 
 } // end namespace nsx
 
-#endif // NSXTOOL_PEAKPREDICTOR_H
+#endif // NSXLIB_PEAKPREDICTOR_H

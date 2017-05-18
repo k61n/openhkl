@@ -1,5 +1,5 @@
-#ifndef GLSCENE_H
-#define GLSCENE_H
+#ifndef NSXQT_GLSCENE_H
+#define NSXQT_GLSCENE_H
 
 #include <QHash>
 #include <QQueue>
@@ -27,4 +27,4 @@ private:
     Eigen::Vector3d _bbmin,_bbmax;
 };
 
-#endif // GLSCENE_H
+#endif // NSXQT_GLSCENE_H

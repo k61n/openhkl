@@ -1,5 +1,5 @@
-#ifndef CUTSLICEGRAPHICSITEM_H
-#define CUTSLICEGRAPHICSITEM_H
+#ifndef NSXQT_CUTSLICEGRAPHICSITEM_H
+#define NSXQT_CUTSLICEGRAPHICSITEM_H
 
 #include "items/CutterGraphicsItem.h"
 
@@ -50,4 +50,4 @@ private:
     bool _horizontal;
 };
 
-#endif // CUTSLICEGRAPHICSITEM_H
+#endif // NSXQT_CUTSLICEGRAPHICSITEM_H

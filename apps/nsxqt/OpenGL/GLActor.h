@@ -1,5 +1,5 @@
-#ifndef GLACTOR_H
-#define GLACTOR_H
+#ifndef NSXQT_GLACTOR_H
+#define NSXQT_GLACTOR_H
 
 /*
 #ifdef __APPLE__
@@ -34,4 +34,4 @@ protected:
     QString _name;
 };
 
-#endif // GLActor_H
+#endif // NSXQT_GLACTOR_H

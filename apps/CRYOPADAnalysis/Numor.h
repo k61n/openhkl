@@ -26,8 +26,9 @@
  *
  */
 
-#ifndef NSXTOOL_NUMOR_H_
-#define NSXTOOL_NUMOR_H_
+#ifndef CRYOPADANALYSIS_NUMOR_H_
+#define CRYOPADANALYSIS_NUMOR_H_
+
 #include <string>
 #include <sstream>
 #include <vector>
@@ -95,4 +96,4 @@ private:
 
 } // end namespace nsx
 
-#endif // NSXTOOL_NUMOR_H_
+#endif // CRYOPADANALYSIS_NUMOR_H_

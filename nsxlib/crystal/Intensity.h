@@ -62,4 +62,4 @@ private:
 
 } // end namespace nsx
 
-#endif // NSXTOOL_INTENSITY_H
+#endif // NSXLIB_INTENSITY_H

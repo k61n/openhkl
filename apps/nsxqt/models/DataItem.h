@@ -1,5 +1,5 @@
-#ifndef DATAITEM_H
-#define DATAITEM_H
+#ifndef NSXQT_DATAITEM_H
+#define NSXQT_DATAITEM_H
 
 #include <nsxlib/data/IData.h>
 
@@ -27,4 +27,4 @@ public:
     void fromJson(const QJsonObject& obj) override;
 };
 
-#endif // DATAITEM_H
+#endif // NSXQT_DATAITEM_H

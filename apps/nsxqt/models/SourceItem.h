@@ -1,5 +1,5 @@
-#ifndef SOURCEITEM_H
-#define SOURCEITEM_H
+#ifndef NSXQT_SOURCEITEM_H
+#define NSXQT_SOURCEITEM_H
 
 #include <memory>
 
@@ -17,4 +17,4 @@ public:
     QWidget* inspectItem();
 };
 
-#endif // SOURCEITEM_H
+#endif // NSXQT_SOURCEITEM_H

@@ -119,4 +119,4 @@ private:
 
 } // end namespace nsx
 
-#endif // NSXTOOL_PEAKINTEGRATOR_H
+#endif // NSXLIB_PEAKINTEGRATOR_H

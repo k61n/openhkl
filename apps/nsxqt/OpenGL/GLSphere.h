@@ -1,5 +1,6 @@
-#ifndef GLSphere_H
-#define GLSphere_H
+#ifndef NSXQT_GLSphere_H
+#define NSXQT_GLSphere_H
+
 #include "GLActor.h"
 
 class GLSphere : public GLActor

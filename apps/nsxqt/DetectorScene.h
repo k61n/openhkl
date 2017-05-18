@@ -1,5 +1,5 @@
-#ifndef DETECTORSCENE_H
-#define DETECTORSCENE_H
+#ifndef NSXQT_DETECTORSCENE_H
+#define NSXQT_DETECTORSCENE_H
 
 #include <map>
 #include <list>
@@ -135,4 +135,4 @@ private:
     QGraphicsPixmapItem* _integrationRegion;
 };
 
-#endif // DETECTORSCENE_H
+#endif // NSXQT_DETECTORSCENE_H

@@ -1,5 +1,5 @@
-#ifndef GLRECIPROCALLATTICE_H
-#define GLRECIPROCALLATTICE_H
+#ifndef NSXQT_GLRECIPROCALLATTICE_H
+#define NSXQT_GLRECIPROCALLATTICE_H
 
 #include <memory>
 
@@ -27,4 +27,4 @@ private:
     void GLCode();
 };
 
-#endif // GLRECIPROCALLATTICE_H
+#endif // NSXQT_GLRECIPROCALLATTICE_H

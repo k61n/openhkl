@@ -1,5 +1,5 @@
-#ifndef PEAKLISTITEM_H
-#define PEAKLISTITEM_H
+#ifndef NSXQT_PEAKLISTITEM_H
+#define NSXQT_PEAKLISTITEM_H
 
 #include <string>
 
@@ -14,4 +14,4 @@ public:
 
 };
 
-#endif // PEAKLISTITEM_H
+#endif // NSXQT_PEAKLISTITEM_H

@@ -1,5 +1,5 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef NSXQT_MAINWINDOW_H
+#define NSXQT_MAINWINDOW_H
 
 #include <map>
 #include <memory>
@@ -22,16 +22,16 @@ class PlottableGraphicsItem;
 class SessionModel;
 
 namespace Ui {
-    class MainWindow;
+class MainWindow;
 }
 
 namespace nsx {
-    class Peak3D;
-    using sptrPeak3D=std::shared_ptr<Peak3D>;
-    class DataSet;
-    class PeakFinder;
-    class Experiment;
-    class ProgressHandler;
+class Peak3D;
+using sptrPeak3D=std::shared_ptr<Peak3D>;
+class DataSet;
+class PeakFinder;
+class Experiment;
+class ProgressHandler;
 }
 
 class QProgressDialog;

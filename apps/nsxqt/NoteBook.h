@@ -1,5 +1,5 @@
-#ifndef NOTEBOOK_H
-#define NOTEBOOK_H
+#ifndef NSXQT_NOTEBOOK_H
+#define NSXQT_NOTEBOOK_H
 
 #include <sstream>
 #include <string>
@@ -34,4 +34,4 @@ public slots:
     void write2pdf();
 
 };
-#endif // NOTEBOOK_H
+#endif // NSXQT_NOTEBOOK_H

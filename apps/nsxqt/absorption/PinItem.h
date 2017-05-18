@@ -1,5 +1,5 @@
-#ifndef PINITEM_H
-#define PINITEM_H
+#ifndef NSXQT_PINITEM_H
+#define NSXQT_PINITEM_H
 
 #include <QGraphicsItem>
 
@@ -33,4 +33,4 @@ private:
     bool _calibrated;
 };
 
-#endif // PINITEM_H
+#endif // NSXQT_PINITEM_H

@@ -1,8 +1,8 @@
 // author: Jonathan Fisher
 // j.fisher@fz-juelich.de
 
-#ifndef NSXTOOL_DIALOGINTEGRATE_H_
-#define NSXTOOL_DIALOGINTEGRATE_H_
+#ifndef NSXQT_DIALOGINTEGRATE_H_
+#define NSXQT_DIALOGINTEGRATE_H_
 
 #include <QDialog>
 
@@ -28,4 +28,4 @@ private:
     Ui::DialogIntegrate* _ui;
 
 };
-#endif // NSXTOOL_DIALOGINTEGRATE_H_
+#endif // NSXQT_DIALOGINTEGRATE_H_

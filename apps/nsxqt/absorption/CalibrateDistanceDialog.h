@@ -1,5 +1,5 @@
-#ifndef CalibrateDistanceDialog_H
-#define CalibrateDistanceDialog_H
+#ifndef NSXQT_CALIBRATIONDISTANCEDIALOG_H
+#define NSXQT_CALIBRATIONDISTANCEDIALOG_H
 
 #include <QDialog>
 
@@ -26,4 +26,4 @@ private:
     Ui::CalibrateDistanceDialog *ui;
 };
 
-#endif // CalibrateDistanceDialog_H
+#endif // NSXQT_CALIBRATIONDISTANCEDIALOG_H

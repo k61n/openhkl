@@ -1,5 +1,5 @@
-#ifndef SXGRAPHICSITEM_H
-#define SXGRAPHICSITEM_H
+#ifndef NSXQT_SXGRAPHICSITEM_H
+#define NSXQT_SXGRAPHICSITEM_H
 
 #include <QGraphicsItem>
 #include <QPen>
@@ -67,4 +67,4 @@ protected:
 
 };
 
-#endif // SXGRAPHICSITEM_H
+#endif // NSXQT_SXGRAPHICSITEM_H

@@ -1,5 +1,5 @@
-#ifndef EXPERIMENTITEM_H
-#define EXPERIMENTITEM_H
+#ifndef NSXQT_EXPERIMENTITEM_H
+#define NSXQT_EXPERIMENTITEM_H
 
 #include <string>
 
@@ -30,4 +30,4 @@ private:
     PeakListItem* _peaks;
 };
 
-#endif // EXPERIMENTITEM_H
+#endif // NSXQT_EXPERIMENTITEM_H

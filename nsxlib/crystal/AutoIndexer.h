@@ -80,4 +80,4 @@ private:
 
 } // end namespace nsx
 
-#endif // NSXTOOL_AUTOINDEXER_H
+#endif // NSXLIB_AUTOINDEXER_H

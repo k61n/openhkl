@@ -1,5 +1,5 @@
-#ifndef MCABSORPTIONDIALOG_H
-#define MCABSORPTIONDIALOG_H
+#ifndef NSXQT_MCABSORPTIONDIALOG_H
+#define NSXQT_MCABSORPTIONDIALOG_H
 
 #include <memory>
 
@@ -31,4 +31,4 @@ private:
     std::shared_ptr<nsx::Experiment> _experiment;
 };
 
-#endif // MCABSORPTIONDIALOG_H
+#endif // NSXQT_MCABSORPTIONDIALOG_H

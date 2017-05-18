@@ -1,5 +1,5 @@
-#ifndef LOGGER_H
-#define LOGGER_H
+#ifndef NSXQT_LOGGER_H
+#define NSXQT_LOGGER_H
 
 #include <QtMessageHandler>
 #include <QString>
@@ -38,4 +38,4 @@ private:
 
 };
 
-#endif // LOGGER_H
+#endif // NSXQT_LOGGER_H

@@ -26,8 +26,9 @@
  *
  */
 
-#ifndef NSXTOOL_HECELL_H_
-#define NSXTOOL_HECELL_H_
+#ifndef CRYOPADANALYSIS_HECELL_H_
+#define CRYOPADANALYSIS_HECELL_H_
+
 #include "NumorSet.h"
 #include "DeadTime.h"
 #include "Scan1D.h"
@@ -103,4 +104,5 @@ private:
 };
 
 } // end namespace nsx
-#endif /* NSXTOOL_HECELL_H_ */
+
+#endif // CRYOPADANALYSIS_HECELL_H_

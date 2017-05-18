@@ -1,5 +1,5 @@
-#ifndef ABSORPTIONDIALOG_H
-#define ABSORPTIONDIALOG_H
+#ifndef NSXQT_ABSORPTIONDIALOG_H
+#define NSXQT_ABSORPTIONDIALOG_H
 
 #include <memory>
 #include <string>
@@ -58,4 +58,4 @@ private:
     CrystalScene* _cscene;
 };
 
-#endif // ABSORPTIONDIALOG_H
+#endif // NSXQT_ABSORPTIONDIALOG_H

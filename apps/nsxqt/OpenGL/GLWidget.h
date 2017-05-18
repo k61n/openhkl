@@ -1,7 +1,8 @@
-#ifndef GLWIDGET_H
-#define GLWIDGET_H
+#ifndef NSXQT_GLWIDGET_H
+#define NSXQT_GLWIDGET_H
 
 #include <QGLWidget>
+
 #include "OpenGL/GLTrackball.h"
 #include "GLScene.h"
 
@@ -32,4 +33,4 @@ private:
     GLuint _list;
 };
 
-#endif // GLWIDGET_H
+#endif // NSXQT_GLWIDGET_H

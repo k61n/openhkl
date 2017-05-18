@@ -28,8 +28,8 @@
  *
  */
 
-#ifndef FRIEDELDIALOG_H
-#define FRIEDELDIALOG_H
+#ifndef NSXQT_FRIEDELDIALOG_H
+#define NSXQT_FRIEDELDIALOG_H
 
 #include <vector>
 
@@ -64,4 +64,4 @@ private:
     std::vector<std::pair<nsx::Peak3D*, nsx::Peak3D*>> _friedelPairs;
 };
 
-#endif // FRIEDELDIALOG_H
+#endif // NSXQT_FRIEDELDIALOG_H

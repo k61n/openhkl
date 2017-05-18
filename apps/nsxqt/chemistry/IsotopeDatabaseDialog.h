@@ -1,5 +1,5 @@
-#ifndef ISOTOPEDATABASEDIALOG_H
-#define ISOTOPEDATABASEDIALOG_H
+#ifndef NSXQT_ISOTOPEDATABASEDIALOG_H
+#define NSXQT_ISOTOPEDATABASEDIALOG_H
 
 #include <QDialog>
 
@@ -22,4 +22,4 @@ private:
     Ui::IsotopeDatabaseDialog *ui;
 };
 
-#endif // ISOTOPEDATABASEDIALOG_H
+#endif // NSXQT_ISOTOPEDATABASEDIALOG_H

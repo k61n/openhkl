@@ -1,5 +1,5 @@
-#ifndef PEAKPLOT_H
-#define PEAKPLOT_H
+#ifndef NSXQT_PEAKPLOT_H
+#define NSXQT_PEAKPLOT_H
 
 #include <string>
 
@@ -21,4 +21,4 @@ public:
 
 };
 
-#endif // PEAKPLOT_H
+#endif // NSXQT_PEAKPLOT_H

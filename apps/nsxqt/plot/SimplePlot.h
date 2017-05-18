@@ -1,5 +1,5 @@
-#ifndef SIMPLEPLOT_H
-#define SIMPLEPLOT_H
+#ifndef NSXQT_SIMPLEPLOT_H
+#define NSXQT_SIMPLEPLOT_H
 
 #include <string>
 
@@ -21,4 +21,4 @@ public:
 
 };
 
-#endif // SIMPLEPLOT_H
+#endif // NSXQT_SIMPLEPLOT_H
