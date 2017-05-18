@@ -59,7 +59,7 @@ struct PeakCalc {
     double _h,_k,_l;
     double _x,_y,_frame;
 
-    sptrPeak3D averagePeaks(const Octree& tree, double distance);
+    sptrPeak3D averagePeaks(const Octree& tree, double distance, double min_axis=2.0);
 };
 
 } // end namespace nsx
