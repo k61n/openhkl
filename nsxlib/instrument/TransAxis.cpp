@@ -16,7 +16,7 @@ TransAxis::TransAxis(const std::string& label) : Axis(label)
 {
 }
 
-TransAxis::TransAxis(const std::string& label, const Vector3d& axis) : Axis(label,axis)
+    TransAxis::TransAxis(const std::string& label, const Eigen::Vector3d& axis) : Axis(label,axis)
 {
 }
 
@@ -47,7 +47,7 @@ TransAxis& TransAxis::operator=(const TransAxis& other)
 
 Eigen::Transform<double,3,Eigen::Affine> TransAxis::getHomMatrix(double value) const
 {
-	Transform<double,3,Eigen::Affine> mat=Transform<double,3,Eigen::Affine>::Identity();
+    Eigen::Transform<double,3,Eigen::Affine> mat = Eigen::Transform<double,3,Eigen::Affine>::Identity();
 	mat.translation()=_axis*(value+_offset);
 	return mat;
 }

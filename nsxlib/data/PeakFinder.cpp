@@ -169,6 +169,7 @@ bool PeakFinder::find(std::vector<std::shared_ptr<DataSet>> numors)
         numor->integratePeaks(scale, 2.0*scale, false, _handler);
         numor->close();
         //_ui->progressBar->setValue(++comp);
+        std::cout << "Found " << numor->getPeaks().size() << " peaks." << std::endl;
     }
 
     if (_handler) {
@@ -233,12 +234,12 @@ int PeakFinder::getMaxComponents()
     return _maxComp;
 }
 
-void PeakFinder::setConvolver(const std::shared_ptr<Convolver>& convolver)
+void PeakFinder::setConvolver(std::shared_ptr<Convolver> convolver)
 {
     _convolver = convolver;
 }
 
-void PeakFinder::setKernel(const std::shared_ptr<ConvolutionKernel>& kernel)
+void PeakFinder::setKernel(std::shared_ptr<ConvolutionKernel> kernel)
 {
     _kernel = kernel;
 }

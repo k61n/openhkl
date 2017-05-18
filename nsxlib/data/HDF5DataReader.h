@@ -39,7 +39,7 @@
 
 namespace nsx {
 
-class HDF5DataReader final: public IDataReader
+class HDF5DataReader: public IDataReader
 {
 
 public:

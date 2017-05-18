@@ -53,6 +53,7 @@ enum Direction {CW,CCW};
  * rotation and translation. Collisions with other shapes is
  * coded by double-dispatching.
  */
+
 template<typename T,unsigned int D>
 class IShape {
 public:
@@ -100,12 +101,8 @@ public:
     void setUpper(const vector& lb);
     //! Get a constant reference to the lower bound of the bounding box of the shape
     const vector& getLower() const;
-    //! Get a reference to the lower bound of the bounding box of the shape
-    vector& getLower();
     //! Get a constant reference to the upper bound of the bounding box of the shape
     const vector& getUpper() const;
-    //! Get a reference to the upper bound of the bounding box of the shape
-    vector& getUpper();
     //! Return the center of the bounding box of the shape
     vector getAABBCenter() const;
     //! Return the extends of the bounding box of the shape
@@ -146,7 +143,9 @@ public:
 
     std::ostream& printSelf(std::ostream& os);
 
+#ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+#endif
 protected:
     // The lower bound point
     vector _lowerBound;
@@ -270,19 +269,7 @@ const typename IShape<T,D>::vector& IShape<T,D>::getLower() const
 }
 
 template<typename T, unsigned int D>
-typename IShape<T,D>::vector& IShape<T,D>::getLower()
-{
-    return _lowerBound;
-}
-
-template<typename T, unsigned int D>
 const typename IShape<T,D>::vector& IShape<T,D>::getUpper() const
-{
-    return _upperBound;
-}
-
-template<typename T, unsigned int D>
-typename IShape<T,D>::vector& IShape<T,D>::getUpper()
 {
     return _upperBound;
 }

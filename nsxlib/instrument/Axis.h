@@ -36,8 +36,8 @@
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
 
-using Eigen::Vector3d;
-using Eigen::Transform;
+//using Eigen::Vector3d;
+//using Eigen::Transform;
 
 namespace nsx {
 
@@ -79,9 +79,9 @@ public:
 	const std::string& getLabel() const;
 	//! Give the direction of the axis.
 	//! Axis is normalized
-	void setAxis(const Vector3d& axis);
+	void setAxis(const Eigen::Vector3d& axis);
 	//! Get the normalized direction of this axis
-	const Vector3d& getAxis() const;
+	const Eigen::Vector3d& getAxis() const;
 	//! Set the axis as offsetable or not
 	void setOffsetFixed(bool fixed=true);
 	//! Return true if the axis offset can't be modidied
@@ -107,9 +107,9 @@ public:
 	//! Set the instrument id of the axis
 	void setId(unsigned int id);
 	//! Get the homogeneous (4x4) matrix corresponding to the value
-	virtual Transform<double,3,Eigen::Affine> getHomMatrix(double value) const=0;
+	virtual Eigen::Transform<double,3,Eigen::Affine> getHomMatrix(double value) const=0;
 	//! Transform vector
-	Vector3d transform(const Vector3d& v, double value);
+    Eigen::Vector3d transform(const Eigen::Vector3d& v, double value);
 	//! Set the axis to physical (true) or virtual (true)
 	void setPhysical(bool physical);
 	//! Return whether or not the axis is physical or not
@@ -121,7 +121,7 @@ protected:
 	//! Label of the axis.
 	std::string _label;
 	//! Axis direction, a normalized vector.
-	Vector3d _axis;
+    Eigen::Vector3d _axis;
 	//! Offset so that finalvalue=offset+given value.
 	double _offset;
 	//! The minimum value allowed for the value of the axis.

@@ -189,7 +189,9 @@ public:
 
     const PeakIntegrator& getIntegration() const;
 
+    #ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    #endif
 
 private:
     //! Pointer to the data containing the peak

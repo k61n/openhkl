@@ -48,6 +48,21 @@ else()
    messagE("ERROR: HDF5 not found")
 endif()
 
+if(NSX_PYTHON)
+  # python-dev and interpreter
+  if (NSX_PYTHON3)
+    set(Python_ADDITIONAL_VERSIONS 3.7 3.6 3.5 3.4)
+  else()
+    set(Python_ADDITIONAL_VERSIONS 2.7)
+  endif()
+
+  find_package(PythonInterp REQUIRED)
+  find_package(PythonLibs REQUIRED)
+
+  # swig
+  find_package(SWIG REQUIRED)
+  include(UseSWIG)
+endif(NSX_PYTHON)
 
 ###### C-BLOSC
 add_subdirectory(externals/c-blosc)

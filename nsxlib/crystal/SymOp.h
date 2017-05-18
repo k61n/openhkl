@@ -41,8 +41,9 @@ typedef Eigen::Transform<double,3,Eigen::Affine> affineTransformation;
 class SymOp {
 
 public:
-
+#ifndef SWIG
 	SymOp()=delete;
+#endif
 
 	SymOp(std::string generator);
 

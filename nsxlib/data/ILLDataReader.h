@@ -44,7 +44,7 @@
 
 namespace nsx {
 
-class ILLDataReader final: public IDataReader {
+class ILLDataReader: public IDataReader {
 
 public:
 
