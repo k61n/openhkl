@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef CRYOPADANALYSIS_BPB_H_
-#define CRYOPADANALYSIS_BPB_H_
+#ifndef CRYOPADANALYSIS_BPB_H
+#define CRYOPADANALYSIS_BPB_H
 
 #include <vector>
 #include <algorithm>
@@ -50,4 +50,4 @@ namespace nsx
 	std::vector<double> getFlippingData(const nsx::Data::Numor&);
 } // end namespace nsx
 
-#endif // CRYOPADANALYSIS_BPB_H_
+#endif // CRYOPADANALYSIS_BPB_H

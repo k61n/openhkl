@@ -1,8 +1,8 @@
 // author: Jonathan Fisher
 // j.fisher@fz-juelich.de
 
-#ifndef NSXQT_SPACEGROUPDIALOG_H_
-#define NSXQT_SPACEGROUPDIALOG_H_
+#ifndef NSXQT_SPACEGROUPDIALOG_H
+#define NSXQT_SPACEGROUPDIALOG_H
 
 #include <memory>
 #include <string>
@@ -46,4 +46,4 @@ private:
     std::string _selectedGroup;
 };
 
-#endif // NSXQT_SPACEGROUPDIALOG_H_
+#endif // NSXQT_SPACEGROUPDIALOG_H

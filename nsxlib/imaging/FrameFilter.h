@@ -1,5 +1,5 @@
-#ifndef NSXLIB_FRAMEFILTER_H_
-#define NSXLIB_FRAMEFILTER_H_
+#ifndef NSXLIB_FRAMEFILTER_H
+#define NSXLIB_FRAMEFILTER_H
 
 #include <functional>
 
@@ -9,4 +9,4 @@ using FrameFilter = std::function<RowMatrixd(RowMatrixd)>;
 
 } // end namespace nsx
 
-#endif // NSXLIB_FRAMEFILTER_H_
+#endif // NSXLIB_FRAMEFILTER_H

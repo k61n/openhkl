@@ -2,8 +2,8 @@
 // j.fisher@fz-juelich.de
 
 
-#ifndef NSXQT_JOBHANDLER_H_
-#define NSXQT_JOBHANDLER_H_
+#ifndef NSXQT_JOBHANDLER_H
+#define NSXQT_JOBHANDLER_H
 
 #include <QObject>
 #include <QThread>
@@ -56,4 +56,4 @@ private:
     bool _synchronous;
 };
 
-#endif // NSXQT_JOBHANDLER_H_
+#endif // NSXQT_JOBHANDLER_H

@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef CRYOPADANALYSIS_NUMORSET_H_
-#define CRYOPADANALYSIS_NUMORSET_H_
+#ifndef CRYOPADANALYSIS_NUMORSET_H
+#define CRYOPADANALYSIS_NUMORSET_H
 
 #include "Numor.h"
 #include <string>
@@ -96,4 +96,4 @@ std::vector<T> NumorSet::getMValues(const std::string& key)
 
 } // end namespace nsx
 
-#endif // CRYOPADANALYSIS_NUMORSET_H_
+#endif // CRYOPADANALYSIS_NUMORSET_H

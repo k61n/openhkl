@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef CRYOPADANALYSIS_NUMOR_H_
-#define CRYOPADANALYSIS_NUMOR_H_
+#ifndef CRYOPADANALYSIS_NUMOR_H
+#define CRYOPADANALYSIS_NUMOR_H
 
 #include <string>
 #include <sstream>
@@ -96,4 +96,4 @@ private:
 
 } // end namespace nsx
 
-#endif // CRYOPADANALYSIS_NUMOR_H_
+#endif // CRYOPADANALYSIS_NUMOR_H

@@ -1,5 +1,5 @@
-#ifndef NSXQT_PLOTFACTORY_H_
-#define NSXQT_PLOTFACTORY_H_
+#ifndef NSXQT_PLOTFACTORY_H
+#define NSXQT_PLOTFACTORY_H
 
 #include <string>
 
@@ -23,4 +23,4 @@ private:
     ~PlotFactory();
 };
 
-#endif // NSXQT_PLOTFACTORY_H_
+#endif // NSXQT_PLOTFACTORY_H

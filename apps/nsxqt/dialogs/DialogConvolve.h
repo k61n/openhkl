@@ -1,8 +1,8 @@
 // author: Jonathan Fisher
 // j.fisher@fz-juelich.de
 
-#ifndef NSXQT_DIALOGCONVOLVE_H_
-#define NSXQT_DIALOGCONVOLVE_H_
+#ifndef NSXQT_DIALOGCONVOLVE_H
+#define NSXQT_DIALOGCONVOLVE_H
 
 #include <map>
 #include <memory>
@@ -62,4 +62,4 @@ private:
     std::shared_ptr<nsx::PeakFinder> _peakFinder;
     std::unique_ptr<ColorMap> _colormap;
 };
-#endif // NSXQT_DIALOGCONVOLVE_H_
+#endif // NSXQT_DIALOGCONVOLVE_H

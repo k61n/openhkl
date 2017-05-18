@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef CRYOPADANALYSIS_SCAN1D_H_
-#define CRYOPADANALYSIS_SCAN1D_H_
+#ifndef CRYOPADANALYSIS_SCAN1D_H
+#define CRYOPADANALYSIS_SCAN1D_H
 
 #include <string>
 #include <vector>
@@ -71,4 +71,4 @@ private:
 
 } // end namespace nsx
 
-#endif // CRYOPADANALYSIS_SCAN1D_H_
+#endif // CRYOPADANALYSIS_SCAN1D_H

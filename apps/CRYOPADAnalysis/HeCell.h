@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef CRYOPADANALYSIS_HECELL_H_
-#define CRYOPADANALYSIS_HECELL_H_
+#ifndef CRYOPADANALYSIS_HECELL_H
+#define CRYOPADANALYSIS_HECELL_H
 
 #include "NumorSet.h"
 #include "DeadTime.h"
@@ -105,4 +105,4 @@ private:
 
 } // end namespace nsx
 
-#endif // CRYOPADANALYSIS_HECELL_H_
+#endif // CRYOPADANALYSIS_HECELL_H

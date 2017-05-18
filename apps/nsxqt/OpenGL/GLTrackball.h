@@ -1,5 +1,5 @@
-#ifndef NSXQT_GLTRACKBALL_H_
-#define NSXQT_GLTRACKBALL_H_
+#ifndef NSXQT_GLTRACKBALL_H
+#define NSXQT_GLTRACKBALL_H
 
 #include <Eigen/Geometry>
 #include <Eigen/Dense>
@@ -46,4 +46,4 @@ private:
 };
 
 
-#endif // NSXQT_GLTRACKBALL_H_
+#endif // NSXQT_GLTRACKBALL_H
