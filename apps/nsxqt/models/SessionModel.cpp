@@ -584,105 +584,6 @@ void SessionModel::incorporateCalculatedPeaks()
     for(std::shared_ptr<DataSet> numor: numors) {
         qDebug() << "Finding missing peaks for numor " << ++current_numor << " of " << numors.size();
 
-//        auto& mono = numor->getDiffractometer()->getSource()->getSelectedMonochromator();
-//        const double wavelength = mono.getWavelength();
-//        std::vector<sptrPeak3D> calculated_peaks;
-
-//        shared_ptr<Sample> sample = numor->getDiffractometer()->getSample();
-//        unsigned int ncrystals = static_cast<unsigned int>(sample->getNCrystals());
-
-//        for (unsigned int i = 0; i < ncrystals; ++i) {
-//            SX::Crystal::SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
-//            auto cell = sample->getUnitCell(i);
-//            auto UB = cell->getReciprocalStandardM();
-
-//            handler->setStatus("Calculating peak locations...");
-
-//            //auto predicted_hkls = sample->getUnitCell(i)->generateReflectionsInSphere(1.5);
-//            auto predicted_hkls = sample->getUnitCell(i)->generateReflectionsInShell(dmin, dmax, wavelength);
-
-//            predicted_peaks += predicted_hkls.size();
-
-//            std::vector<SX::Crystal::PeakCalc> peaks = numor->hasPeaks(predicted_hkls, UB);
-//            calculated_peaks.reserve(peaks.size());
-
-//            int current_peak = 0;
-
-//            handler->setStatus("Building set of previously found peaks...");
-
-//            std::set<sptrPeak3D> found_peaks = numor->getPeaks();
-//            std::set<Eigen::RowVector3i, compare_fn> found_hkls;
-
-
-//            Eigen::Vector3d lb = {0.0, 0.0, 0.0};
-//            Eigen::Vector3d ub = {double(numor->getNCols()), double(numor->getNRows()), double(numor->getNFrames())};
-//            auto&& octree = Octree(lb, ub);
-
-//            octree.setMaxDepth(4);
-//            octree.setMaxStorage(50);
-
-//            handler->log("Building peak octree...");
-
-//            for (sptrPeak3D p: found_peaks) {
-//                found_hkls.insert(p->getIntegerMillerIndices());
-
-//                if (!p->isSelected() || p->isMasked()) {
-//                    continue;
-//                }
-//                octree.addData(&p->getShape());
-//            }
-
-//            handler->log("Done building octree; number of chambers is " + std::to_string(octree.numChambers()));
-
-//            handler->setStatus("Adding calculated peaks...");
-
-//            int done_peaks = 0;
-
-//            #pragma omp parallel for
-//            for (size_t peak_id = 0; peak_id < peaks.size(); ++peak_id) {
-//                PeakCalc& p = peaks[peak_id];
-//                ++current_peak;
-
-//                Eigen::RowVector3i hkl(int(std::lround(p._h)), int(std::lround(p._k)), int(std::lround(p._l)));
-
-//                // try to find this reflection in the list of peaks, skip if found
-//                if (std::find(found_hkls.begin(), found_hkls.end(), hkl) != found_hkls.end() ) {
-//                    continue;
-//                }
-
-//                // now we must add it, calculating shape from nearest peaks
-//                 // K is outside the ellipsoid at PsptrPeak3D
-//                sptrPeak3D new_peak = p.averagePeaks(octree, search_radius);
-//                //sptrPeak3D new_peak = p.averagePeaks(numor);
-
-//                if (!new_peak) {
-//                    continue;
-//                }
-
-//                new_peak->linkData(numor);
-//                new_peak->setSelected(true);
-//                new_peak->addUnitCell(cell, true);
-//                new_peak->setObserved(false);
-
-//                #pragma omp critical
-//                calculated_peaks.push_back(new_peak);
-
-//                #pragma omp atomic
-//                ++done_peaks;
-//                int done = int(std::lround(done_peaks * 100.0 / peaks.size()));
-
-//                if ( done != last_done) {
-//                    handler->setProgress(done);
-//                    last_done = done;
-//                }
-//            }
-//        }
-//        for (sptrPeak3D peak: calculated_peaks) {
-//            numor->addPeak(peak);
-//        }
-//        qDebug() << "Integrating calculated peaks.";
-//        numor->integratePeaks(_peakScale, _bkgScale, false, handler);
-
         auto predictor = SX::Crystal::PeakPredictor();
 
         predictor._dmin = dmin;
@@ -979,10 +880,13 @@ bool SessionModel::writeStatistics(std::string filename,
 
         // debugging
         if (std::abs(intensity) < 10) {
-            std::cout << "zero intensity!!" << std::endl;
+
 
             std::shared_ptr<Peak3D> ptr = *peak.getPeaks().begin();
 
+            auto center = ptr->getShape().getCenter();
+
+            std::cout << "zero intensity" << center[0] << " " << center[1] << " " << center[2] << std::endl;
         }
 
         if (rel_std > 1.0) {

@@ -357,11 +357,19 @@ double PeakIntegrator::pValue() const
         return 1.0;
     }
 
+    const auto points_peak = _pointsPeak.sum();
+
+    // integration region too small: no points in peak!
+    // todo: threshold should not be arbitrary
+    if (points_peak < 10) {
+        return 1.0;
+    }
+
     // null hypothesis: the pixels inside the peak are Poisson processes with rate R
     // therefore, by central limit theorem the average value
-    const double avg = _countsPeak.sum() / _pointsPeak.sum();
+    const double avg = _countsPeak.sum() / points_peak;
     // is normal with mean R and variance:
-    const double var = R / _pointsPeak.sum();
+    const double var = R / points_peak;
 
     // avg should be finite and positive
     if (std::isnan(avg) || avg <= 0.0) {
@@ -375,7 +383,7 @@ double PeakIntegrator::pValue() const
 
     // thus we obtain the following standard normal variable
     //const double z = (avg-R) / std::sqrt(var);
-    const double z = (avg-R) / (_bkgStd / _pointsPeak.sum());
+    const double z = (avg-R) / (_bkgStd / points_peak);
 
     // compute the p value
     //const double p = 1.0 - 0.5 * (1.0 + std::erf(z / std::sqrt(2)));
