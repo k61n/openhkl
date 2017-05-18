@@ -39,8 +39,8 @@
 #include <functional>
 #include <Eigen/Dense>
 
-#include "../utils/Gaussian.h"
-#include "../utils/Lorentzian.h"
+#include "../mathematics/Gaussian.h"
+#include "../mathematics/Lorentzian.h"
 
 namespace nsx {
 

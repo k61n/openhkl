@@ -29,7 +29,6 @@
 #ifndef NSXLIB_BLOB2D_H
 #define NSXLIB_BLOB2D_H
 
-#include <iostream>
 #include <Eigen/Dense>
 
 #include "IBlob.h"

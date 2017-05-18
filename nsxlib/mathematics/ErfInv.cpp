@@ -33,10 +33,11 @@
  *
  */
 
-#include "erf_inv.h"
 #include <cmath>
 #include <iostream>
 #include <limits>
+
+#include "../mathematics/ErfInv.h"
 
 namespace nsx {
 

@@ -1,10 +1,11 @@
-#include "Blob2D.h"
-#include <stdexcept>
 #include <cmath>
 #include <limits>
-#include <cmath>
+#include <stdexcept>
+
 #include <Eigen/Eigenvalues>
-#include "../utils/erf_inv.h"
+
+#include "../geometry/Blob2D.h"
+#include "../mathematics/ErfInv.h"
 
 using Eigen::MatrixXd;
 using Eigen::SelfAdjointEigenSolver;
