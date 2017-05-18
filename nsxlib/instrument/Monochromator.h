@@ -5,8 +5,8 @@
  *      Author: pellegrini
  */
 
-#ifndef INSTRUMENT_INCLUDE_MONOCHROMATOR_H_
-#define INSTRUMENT_INCLUDE_MONOCHROMATOR_H_
+#ifndef NSXLIB_MONOCHROMATOR_H
+#define NSXLIB_MONOCHROMATOR_H
 
 #include <string>
 
@@ -101,4 +101,4 @@ private:
 
 } // end namespace nsx
 
-#endif /* INSTRUMENT_INCLUDE_MONOCHROMATOR_H_ */
+#endif // NSXLIB_MONOCHROMATOR_H

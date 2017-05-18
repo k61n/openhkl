@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef NSXTOOL_ERROR_H_
-#define NSXTOOL_ERROR_H_
+#ifndef NSXLIB_ERROR_H
+#define NSXLIB_ERROR_H
 
 #include <exception>
 #include <string>
@@ -79,4 +79,4 @@ const char* Error<T>::what() const noexcept
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_ERROR_H_ */
+#endif // NSXLIB_ERROR_H

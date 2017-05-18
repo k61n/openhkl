@@ -33,8 +33,8 @@
  *
  */
 
-#ifndef NSXTOOL_IMINIMIZER_H_
-#define NSXTOOL_IMINIMIZER_H_
+#ifndef NSXLIB_IMINIMIZER_H
+#define NSXLIB_IMINIMIZER_H
 
 #include <functional>
 #include <Eigen/Dense>
@@ -87,4 +87,4 @@ protected:
 
 } // end namespace nsx
 
-#endif // NSXTOOL_IMINIMIZER_H_
+#endif // NSXLIB_IMINIMIZER_H

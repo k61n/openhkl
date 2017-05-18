@@ -4,8 +4,8 @@
 // Forschungszentrum Jülich GmbH
 // j.fisher@fz-juelich.de
 
-#ifndef NSXTOOL_INCLUDE_CONVOLVER_H_
-#define NSXTOOL_INCLUDE_CONVOLVER_H_
+#ifndef NSXLIB_CONVOLVER_H
+#define NSXLIB_CONVOLVER_H
 
 #include <Eigen/Core>
 #include <vector>
@@ -48,4 +48,4 @@ private:
 
 } // end namespace nsx
 
-#endif // NSXTOOL_INCLUDE_CONVOLVER_H_
+#endif // NSXLIB_CONVOLVER_H

@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef NSXTOOL_PATH_H_
-#define NSXTOOL_PATH_H_
+#ifndef NSXLIB_PATH_H
+#define NSXLIB_PATH_H
 
 #include <string>
 
@@ -67,4 +67,4 @@ private:
 
 } // end namespace nsx
 
-#endif
+#endif // NSXLIB_PATH_H

@@ -1,5 +1,5 @@
-#ifndef NSXTOOL_EIGENMATRIXPARSER_H_
-#define NSXTOOL_EIGENMATRIXPARSER_H_
+#ifndef NSXLIB_EIGENMATRIXPARSER_H
+#define NSXLIB_EIGENMATRIXPARSER_H
 
 #define BOOST_SPIRIT_USE_PHOENIX_V3
 #define BOOST_RESULT_OF_USE_DECLTYPE
@@ -223,4 +223,4 @@ struct EigenMatrixParser : IMatrixParser<It> {
 
 } // end namespace nsx
 
-#endif
+#endif // NSXLIB_EIGENMATRIXPARSER_H

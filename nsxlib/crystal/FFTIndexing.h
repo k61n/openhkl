@@ -26,8 +26,9 @@
  *
  */
 
-#ifndef NSXTOOL_FFTINDEXING_H_
-#define NSXTOOL_FFTINDEXING_H_
+#ifndef NSXLIB_FFTINDEXING_H
+#define NSXLIB_FFTINDEXING_H
+
 #include <functional>
 #include <vector>
 
@@ -63,4 +64,4 @@ private:
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_FFTINDEXING_H_ */
+#endif // NSXLIB_FFTINDEXING_H

@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef NSXTOOL_TIFFDATAREADER_H_
-#define NSXTOOL_TIFFDATAREADER_H_
+#ifndef NSXLIB_TIFFDATAREADER_H
+#define NSXLIB_TIFFDATAREADER_H
 
 #include <memory>
 
@@ -63,4 +63,4 @@ private:
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_TIFFDATAREADER_H_ */
+#endif // NSXLIB_TIFFDATAREADER_H

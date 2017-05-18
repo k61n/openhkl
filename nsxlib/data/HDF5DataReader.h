@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef NSXTOOL_HDF5DATAREADER_H_
-#define NSXTOOL_HDF5DATAREADER_H_
+#ifndef NSXLIB_HDF5DATAREADER_H
+#define NSXLIB_HDF5DATAREADER_H
 
 #include <memory>
 #include <string>
@@ -62,4 +62,4 @@ private:
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_HDF5DATAREADER_H_ */
+#endif // NSXLIB_HDF5DATAREADER_H

@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef NSXTOOL_METADATA_H_
-#define NSXTOOL_METADATA_H_
+#ifndef NSXLIB_METADATA_H
+#define NSXLIB_METADATA_H
 
 #include <map>
 #include <set>
@@ -131,4 +131,4 @@ template <typename _type>
 
 } // end namespace nsx
 
-#endif // NSXTOOL_METADATA_H_
+#endif // NSXLIB_METADATA_H

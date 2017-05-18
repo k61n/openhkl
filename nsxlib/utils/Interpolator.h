@@ -33,8 +33,8 @@
  *
  */
 
-#ifndef NSXTOOL_INTERPOLATOR_H_
-#define NSXTOOL_INTERPOLATOR_H_
+#ifndef NSXLIB_INTERPOLATOR_H
+#define NSXLIB_INTERPOLATOR_H
 
 #include <vector>
 #include "Round.h"
@@ -73,4 +73,4 @@ T_ interpolate(const std::vector<T_>& elements, double index) {
 
 } // end namespace nsx
 
-#endif // NSXTOOL_MINIMIZER_H_
+#endif // NSXLIB_INTERPOLATOR_H

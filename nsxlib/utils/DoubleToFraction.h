@@ -1,3 +1,6 @@
+#ifndef NSXLIB_DOUBLETOFRACTION_H
+#define NSXLIB_DOUBLETOFRACTION_H
+
 #include <cmath>
 
 namespace nsx {
@@ -62,4 +65,6 @@ void doubleToFraction(double number, int nmax, long& nom, long& dnom)
 }
 
 } // end namespace nsx
+
+#endif // NSXLIB_DOUBLETOFRACTION_H
 

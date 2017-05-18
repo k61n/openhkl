@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef NSXTOOL_EDGE_H_
-#define NSXTOOL_EDGE_H_
+#ifndef NSXLIB_EDGE_H
+#define NSXLIB_EDGE_H
 
 #include <array>
 
@@ -108,4 +108,4 @@ std::ostream& operator<<(std::ostream& os, const Edge<T>& edge)
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_EDGE_H_ */
+#endif // NSXLIB_EDGE_H

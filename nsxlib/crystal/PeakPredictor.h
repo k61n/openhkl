@@ -33,8 +33,8 @@
  *
  */
 
-#ifndef NSXTOOL_PEAKPREDICTOR_H_
-#define NSXTOOL_PEAKPREDICTOR_H_
+#ifndef NSXLIB_PEAKPREDICTOR_H
+#define NSXLIB_PEAKPREDICTOR_H
 
 #include <memory>
 
@@ -56,4 +56,4 @@ public:
 
 } // end namespace nsx
 
-#endif // NSXTOOL_PEAKPREDICTOR
+#endif // NSXTOOL_PEAKPREDICTOR_H

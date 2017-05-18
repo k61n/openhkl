@@ -33,8 +33,8 @@
  *
  */
 
-#ifndef NSXTOOL_RAWDATAREADER_H_
-#define NSXTOOL_RAWDATAREADER_H_
+#ifndef NSXLIB_RAWDATAREADER_H
+#define NSXLIB_RAWDATAREADER_H
 
 #include <map>
 #include <sstream>
@@ -115,4 +115,4 @@ Eigen::Matrix<T_, Eigen::Dynamic, Eigen::Dynamic> RawDataReader::matrixFromData(
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_RAWDATAREADER_H_ */
+#endif // NSXLIB_RAWDATAREADER_H

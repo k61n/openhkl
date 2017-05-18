@@ -26,11 +26,11 @@
  *
  */
 
-#ifndef NSXTOOL_TIMER_H_
-#define NSXTOOL_TIMER_H_
+#ifndef NSXLIB_TIMER_H
+#define NSXLIB_TIMER_H
+
 #include <ctime>
 #include <iostream>
-
 
 namespace nsx {
 
@@ -46,4 +46,4 @@ struct Timer {
 
 } // end namespace nsx
 
-#endif
+#endif // NSXLIB_TIMER_H

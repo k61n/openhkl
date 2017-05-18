@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef NSXTOOL_COMPONENT_H_
-#define NSXTOOL_COMPONENT_H_
+#ifndef NSXLIB_COMPONENT_H
+#define NSXLIB_COMPONENT_H
 
 #include <map>
 #include <memory>
@@ -105,4 +105,4 @@ public:
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_COMPONENT_H_ */
+#endif // NSXLIB_COMPONENT_H

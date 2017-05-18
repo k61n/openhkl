@@ -5,8 +5,8 @@
  *      Author: pellegrini
  */
 
-#ifndef MOSAIC_H_
-#define MOSAIC_H_
+#ifndef NSXLIB_MOSAIC_H
+#define NSXLIB_MOSAIC_H
 
 #include <memory>
 #include <string>
@@ -52,4 +52,4 @@ double ellipsoids_overlap(const Ellipsoid<double,3>& ell1,const Ellipsoid<double
 
 } // end namespace nsx
 
-#endif /* MOSAIC_H_ */
+#endif // NSXLIB_MOSAIC_H

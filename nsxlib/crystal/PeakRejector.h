@@ -33,8 +33,8 @@
  *
  */
 
-#ifndef NSXTOOL_PEAKPREJECTOR_H_
-#define NSXTOOL_PEAKREJECTOR_H_
+#ifndef NSXLIB_PEAKREJECTOR_H
+#define NSXLIB_PEAKREJECTOR_H
 
 namespace nsx {
 
@@ -55,4 +55,4 @@ public:
 
 } // end namespace nsx
 
-#endif // NSXTOOL_PEAKREJECTOR
+#endif // NSXLIB_PEAKREJECTOR_H

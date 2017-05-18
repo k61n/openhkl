@@ -26,8 +26,9 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-#ifndef NSXTOOL_LATTICECONSTRAINTPARSER_H_
-#define NSXTOOL_LATTICECONSTRAINTPARSER_H_
+
+#ifndef NSXLIB_LATTICECONSTRAINTPARSER_H
+#define NSXLIB_LATTICECONSTRAINTPARSER_H
 
 #define BOOST_SPIRIT_USE_PHOENIX_V3
 #define BOOST_RESULT_OF_USE_DECLTYPE
@@ -98,4 +99,4 @@ struct LatticeConstraintParser : qi::grammar<It,constraints_set()> {
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_LATTICECONSTRAINTPARSER_H_ */
+#endif // NSXLIB_LATTICECONSTRAINTPARSER_H

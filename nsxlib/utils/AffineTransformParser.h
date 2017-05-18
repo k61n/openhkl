@@ -26,8 +26,9 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-#ifndef NSXTOOL_AFFINETRANSFORMPARSER_H_
-#define NSXTOOL_AFFINETRANSFORMPARSER_H_
+#ifndef NSXLIB_AFFINETRANSFORMPARSER_H
+#define NSXLIB_AFFINETRANSFORMPARSER_H
+
 #define BOOST_SPIRIT_USE_PHOENIX_V3
 #define BOOST_RESULT_OF_USE_DECLTYPE
 
@@ -127,4 +128,4 @@ struct AffineTransformParser : qi::grammar<It,Eigen::Transform<double,3,Eigen::A
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_JONESSYMBOLPARSER_H_ */
+#endif // NSXLIB_AFFINETRANSFORMPARSER_H

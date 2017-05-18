@@ -26,14 +26,16 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-#ifndef NSXTOOL_MCABSORPTION_H_
-#define NSXTOOL_MCABSORPTION_H_
+#ifndef NSXLIB_MCABSORPTION_H
+#define NSXLIB_MCABSORPTION_H
 
 #include <random>
 #include <functional>
-#include "Triangle.h"
-#include "ConvexHull.h"
 #include <vector>
+
+#include "ConvexHull.h"
+#include "Triangle.h"
+
 namespace nsx {
 
 typedef std::vector<Triangle> TrianglesList;
@@ -59,4 +61,4 @@ private:
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_MCABSORPTION_H_ */
+#endif // NSXLIB_MCABSORPTION_H

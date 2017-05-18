@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef NSXTOOL_UNITS_H_
-#define NSXTOOL_UNITS_H_
+#ifndef NSXLIB_UNITS_H
+#define NSXLIB_UNITS_H
 
 #include <cmath>
 #include <unordered_map>
@@ -206,4 +206,4 @@ static const double R=8.3144621*J/mole/K;
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_UNITS_H_ */
+#endif // NSXLIB_UNITS_H

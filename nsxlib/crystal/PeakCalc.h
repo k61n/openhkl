@@ -27,8 +27,8 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-#ifndef NSXTOOL_PEAKCALC_H_
-#define NSXTOOL_PEAKCALC_H_
+#ifndef NSXLIB_PEAKCALC_H
+#define NSXLIB_PEAKCALC_H
 
 #include <memory>
 #include <vector>
@@ -64,4 +64,4 @@ struct PeakCalc {
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_PEAKCALC_H_ */
+#endif // NSXLIB_PEAKCALC_H

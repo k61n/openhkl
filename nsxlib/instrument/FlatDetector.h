@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef NSXTOOL_FLATDETECTOR_H_
-#define NSXTOOL_FLATDETECTOR_H_
+#ifndef NSXLIB_FLATDETECTOR_H
+#define NSXLIB_FLATDETECTOR_H
 
 #include <boost/property_tree/ptree.hpp>
 
@@ -77,4 +77,4 @@ public:
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_FLATDETECTOR_H_ */
+#endif // NSXLIB_FLATDETECTOR_H

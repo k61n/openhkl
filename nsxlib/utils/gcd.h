@@ -33,9 +33,8 @@
  *
  */
 
-#ifndef NSXTOOL_GCD_H_
-#define NSXTOOL_GCD_H_
-
+#ifndef NSXLIB_GCD_H
+#define NSXLIB_GCD_H
 
 namespace nsx {
 
@@ -51,4 +50,4 @@ int gcd(int a, Args... args)
 
 } // end namespace nsx
 
-#endif // NSXTOOL_GCD_H_
+#endif // NSXLIB_GCD_H

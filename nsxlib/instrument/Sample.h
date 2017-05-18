@@ -26,8 +26,8 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-#ifndef NSXTOOL_SAMPLE_H_
-#define NSXTOOL_SAMPLE_H_
+#ifndef NSXLIB_SAMPLE_H
+#define NSXLIB_SAMPLE_H
 
 #include <memory>
 #include <string>
@@ -100,4 +100,4 @@ private:
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_SAMPLE_H_ */
+#endif // NSXLIB_SAMPLE_H

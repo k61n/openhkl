@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef NSXTOOL_COMPLEXPARSER_H_
-#define NSXTOOL_COMPLEXPARSER_H_
+#ifndef NSXLIB_COMPLEXPARSER_H
+#define NSXLIB_COMPLEXPARSER_H
 
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/phoenix_core.hpp>
@@ -88,4 +88,4 @@ std::string complexToString(const std::complex<T>& number, double tolerance=1.0e
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_COMPLEXPARSER_H_ */
+#endif // NSXLIB_COMPLEXPARSER_H

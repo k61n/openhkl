@@ -26,8 +26,9 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-#ifndef NSXTOOL_INDEXER_H_
-#define NSXTOOL_INDEXER_H_
+#ifndef NSXLIB_INDEXER_H
+#define NSXLIB_INDEXER_H
+
 #include <memory>
 #include "UnitCell.h"
 #include "Peak3D.h"
@@ -73,4 +74,4 @@ private:
 } // end namespace nsx
 
 
-#endif /* NSXTOOL_INDEXER_H_ */
+#endif // NSXLIB_INDEXER_H

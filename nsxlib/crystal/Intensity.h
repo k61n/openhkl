@@ -34,8 +34,8 @@
  */
 
 
-#ifndef NSXTOOL_INTENSITY_H_
-#define NSXTOOL_INTENSITY_H_
+#ifndef NSXLIB_INTENSITY_H
+#define NSXLIB_INTENSITY_H
 
 namespace nsx {
 
@@ -62,4 +62,4 @@ private:
 
 } // end namespace nsx
 
-#endif // NSXTOOL_INTENSITY_H_
+#endif // NSXTOOL_INTENSITY_H

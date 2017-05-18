@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef NSXTOOL_DATASET_H_
-#define NSXTOOL_DATASET_H_
+#ifndef NSXLIB_DATASET_H
+#define NSXLIB_DATASET_H
 
 #include <memory>
 #include <string>
@@ -211,4 +211,4 @@ protected:
 
 } // end namespace nsx
 
-#endif // NSXTOOL_DATASET_H_
+#endif // NSXLIB_DATASET_H

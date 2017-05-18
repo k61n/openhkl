@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef NSXTOOL_SIMPLEPEAK_H_
-#define NSXTOOL_SIMPLEPEAK_H_
+#ifndef NSXLIB_PEAK3D_H
+#define NSXLIB_PEAK3D_H
 
 #include <map>
 #include <memory>
@@ -247,4 +247,4 @@ using sptrPeak3D = std::shared_ptr<Peak3D>;
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_PEAK3D_H_ */
+#endif // NSXLIB_PEAK3D_H

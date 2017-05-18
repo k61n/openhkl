@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef NSXTOOL_DETECTORSTATE_H_
-#define NSXTOOL_DETECTORSTATE_H_
+#ifndef NSXLIB_DETECTORSTATE_H
+#define NSXLIB_DETECTORSTATE_H
 
 #include <vector>
 
@@ -38,4 +38,4 @@ using DetectorState = std::vector<double>;
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_DETECTOREVENT_H_ */
+#endif // NSXLIB_DETECTORSTATE_H

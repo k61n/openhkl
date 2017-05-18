@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef NSXTOOL_SOURCE_H_
-#define NSXTOOL_SOURCE_H_
+#ifndef NSXLIB_SOURCE_H
+#define NSXLIB_SOURCE_H
 
 #include <string>
 #include <vector>
@@ -85,4 +85,4 @@ protected:
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_SOURCE_H_ */
+#endif // NSXLIB_SOURCE_H

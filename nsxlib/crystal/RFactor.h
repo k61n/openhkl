@@ -28,8 +28,8 @@
  *
  */
 
-#ifndef NSXTOOL_RFACTOR_H_
-#define NSXTOOL_RFACTOR_H_
+#ifndef NSXLIB_RFACTOR_H
+#define NSXLIB_RFACTOR_H
 
 #include <memory>
 #include <vector>
@@ -57,4 +57,4 @@ private:
 
 } // end namespace nsx
 
-#endif // NSXTOOL_RFACTOR_R_
+#endif // NSXLIB_RFACTOR_H

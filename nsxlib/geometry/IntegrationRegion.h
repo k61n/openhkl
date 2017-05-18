@@ -28,8 +28,8 @@
  *
  */
 
-#ifndef NSXTOOL_INTEGRATIONREGION_H_
-#define NSXTOOL_INTEGRATIONREGION_H_
+#ifndef NSXLIB_INTEGRATIONREGION_H
+#define NSXLIB_INTEGRATIONREGION_H
 
 #include "../geometry/Ellipsoid.h"
 #include "../geometry/AABB.h"
@@ -65,4 +65,4 @@ private:
 
 } // end namespace nsx
 
-#endif // NSXTOOL_INTEGRATIONREGION_H_
+#endif // NSXLIB_INTEGRATIONREGION_H

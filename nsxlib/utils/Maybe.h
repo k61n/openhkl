@@ -33,8 +33,8 @@
  *
  */
 
-#ifndef NSXTOOL_MAYBE_H_
-#define NSXTOOL_MAYBE_H_
+#ifndef NSXLIB_MAYBE_H
+#define NSXLIB_MAYBE_H
 
 #include <type_traits>
 #include <stdexcept>
@@ -171,4 +171,4 @@ private:
 
 } // end namespace nsx
 
-#endif // NSXTOOL_GAUSSIAN_H_
+#endif // NSXLIB_MAYBE_H

@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef NSXTOOL_ROTAXIS_H_
-#define NSXTOOL_ROTAXIS_H_
+#ifndef NSXLIB_ROTAXIS_H
+#define NSXLIB_ROTAXIS_H
 
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
@@ -101,4 +101,4 @@ static const RotAxis AxisZCCW=RotAxis("ZCCW",Vector3d(0,0,1),RotAxis::CCW);
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_ROTAXIS_H_ */
+#endif // NSXLIB_ROTAXIS_H

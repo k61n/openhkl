@@ -1,8 +1,8 @@
 // author: Jonathan Fisher
 // j.fisher@fz-juelich.de
 
-#ifndef NSXTOOL_THREADEDFRAMEITERATOR_H_
-#define NSXTOOL_THREADEDFRAMEITERATOR_H_
+#ifndef NSXLIB_THREADEDFRAMEITERATOR_H
+#define NSXLIB_THREADEDFRAMEITERATOR_H
 
 #include "IData.h"
 #include "IFrameIterator.h"
@@ -27,4 +27,4 @@ private:
 
 } // end namespace nsx
 
-#endif // NSXTOOL_THREADEDFRAMEITERATOR_H_
+#endif // NSXLIB_THREADEDFRAMEITERATOR_H

@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef NSXTOOL_SHAREDFACTORY_H_
-#define NSXTOOL_SHAREDFACTORY_H_
+#ifndef NSXLIB_SHAREDFACTORY_H
+#define NSXLIB_SHAREDFACTORY_H
 
 #include <algorithm>
 #include <memory>
@@ -116,4 +116,4 @@ std::size_t SharedFactory<base,keytype,args...>::unregisterCallback(const keytyp
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_SharedFactory_H_ */
+#endif // NSXLIB_SHAREDFACTORY_H

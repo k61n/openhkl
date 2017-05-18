@@ -33,8 +33,8 @@
  *
  */
 
-#ifndef NSXTOOL_ERF_INV_H_
-#define NSXTOOL_ERF_INV_H_
+#ifndef NSXLIB_ERF_INV_H
+#define NSXLIB_ERF_INV_H
 
 namespace nsx {
 
@@ -50,4 +50,4 @@ double getConfidence(double x);
 
 } // end namespace nsx
 
-#endif // NSXTOOL_ERF_INV_H_
+#endif // NSXLIB_ERF_INV_H

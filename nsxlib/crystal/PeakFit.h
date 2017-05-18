@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef NSXTOOL_PEAKFIT_H_
-#define NSXTOOL_PEAKFIT_H_
+#ifndef NSXLIB_PEAKFIT_H
+#define NSXLIB_PEAKFIT_H
 
 #include "UnitCell.h"
 #include "../geometry/IShape.h"
@@ -79,4 +79,4 @@ private:
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_PEAKFIT_H_ */
+#endif // NSXLIB_PEAKFIT_H

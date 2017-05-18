@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef NSXTOOL_ILLASCIIDATAREADER_H_
-#define NSXTOOL_ILLASCIIDATAREADER_H_
+#ifndef NSXLIB_ILLDATAREADER_H
+#define NSXLIB_ILLDATAREADER_H
 
 #include <map>
 #include <sstream>
@@ -98,4 +98,4 @@ private:
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_ILLASCIIDATAREADER_H_ */
+#endif // NSXLIB_ILLDATAREADER_H

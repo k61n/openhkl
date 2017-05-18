@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef NSXTOOL_VERTEX_H_
-#define NSXTOOL_VERTEX_H_
+#ifndef NSXLIB_VERTEX_H
+#define NSXLIB_VERTEX_H
 
 #include <Eigen/Dense>
 
@@ -116,4 +116,4 @@ std::ostream& operator<<(std::ostream& os, const Vertex<T>& vertex)
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_VERTEX_H_ */
+#endif // NSXLIB_VERTEX_H

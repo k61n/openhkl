@@ -28,8 +28,8 @@
  *
  */
 
-#ifndef NSXTOOL_PEAKINTEGRATOR_H_
-#define NSXTOOL_PEAKINTEGRATOR_H_
+#ifndef NSXLIB_PEAKINTEGRATOR_H
+#define NSXLIB_PEAKINTEGRATOR_H
 
 #include "../geometry/IntegrationRegion.h"
 #include "../geometry/Blob3D.h"
@@ -119,4 +119,4 @@ private:
 
 } // end namespace nsx
 
-#endif // NSXTOOL_PEAKINTEGRATOR_H_
+#endif // NSXTOOL_PEAKINTEGRATOR_H

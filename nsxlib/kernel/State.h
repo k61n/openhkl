@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef NSXTOOL_STATE_H_
-#define NSXTOOL_STATE_H_
+#ifndef NSXLIB_STATE_H
+#define NSXLIB_STATE_H
 
 #include <tuple>
 
@@ -57,4 +57,4 @@ void State<Ts...>::set(Ts... vals)
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_STATE_H_ */
+#endif // NSXLIB_STATE_H

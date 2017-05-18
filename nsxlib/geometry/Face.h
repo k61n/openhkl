@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef NSXTOOL_FACE_H_
-#define NSXTOOL_FACE_H_
+#ifndef NSXLIB_FACE_H
+#define NSXLIB_FACE_H
 
 #include <array>
 #include <ostream>
@@ -150,4 +150,4 @@ std::ostream& operator<<(std::ostream& os, const Face<T>& face)
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_FACE_H_ */
+#endif // NSXLIB_FACE_H

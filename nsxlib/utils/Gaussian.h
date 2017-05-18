@@ -33,8 +33,8 @@
  *
  */
 
-#ifndef NSXTOOL_GAUSSIAN_H_
-#define NSXTOOL_GAUSSIAN_H_
+#ifndef NSXLIB_GAUSSIAN_H
+#define NSXLIB_GAUSSIAN_H
 
 #include <Eigen/Dense>
 
@@ -52,4 +52,4 @@ private:
 
 } // end namespace nsx
 
-#endif // NSXTOOL_GAUSSIAN_H_
+#endif // NSXLIB_GAUSSIAN_H

@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef NSXTOOL_TRANSAXIS_H_
-#define NSXTOOL_TRANSAXIS_H_
+#ifndef NSXLIB_TRANSAXIS_H
+#define NSXLIB_TRANSAXIS_H
 
 #include <Eigen/Geometry>
 
@@ -64,4 +64,4 @@ public:
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_TRANSAXIS_H_ */
+#endif // NSXLIB_TRANSAXIS_H

@@ -33,8 +33,8 @@
  *
  */
 
-#ifndef NSXTOOL_MINIMIZERGSL_H_
-#define NSXTOOL_MINIMIZERGSL_H_
+#ifndef NSXLIB_MINIMIZERGSL_H
+#define NSXLIB_MINIMIZERGSL_H
 
 #include "IMinimizer.h"
 
@@ -97,4 +97,4 @@ private:
 
 } // end namespace nsx
 
-#endif // NSXTOOL_MINIMIZERGSL_H_
+#endif // NSXLIB_MINIMIZERGSL_H

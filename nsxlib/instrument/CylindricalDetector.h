@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef NSXTOOL_CYLINDRICALDETECTOR_H_
-#define NSXTOOL_CYLINDRICALDETECTOR_H_
+#ifndef NSXLIB_CYLINDRICALDETECTOR_H
+#define NSXLIB_CYLINDRICALDETECTOR_H
 
 #include <boost/property_tree/ptree.hpp>
 
@@ -77,4 +77,4 @@ public:
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_CYLINDRICALDETECTOR_H_ */
+#endif // NSXLIB_CYLINDRICALDETECTOR_H

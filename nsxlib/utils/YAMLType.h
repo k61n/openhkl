@@ -1,5 +1,5 @@
-#ifndef YAMPTYPE_H_
-#define YAMPTYPE_H_
+#ifndef NSXLIB_YAMPTYPE_H
+#define NSXLIB_YAMPTYPE_H
 
 #include <complex>
 
@@ -31,4 +31,4 @@ struct convert<std::complex<T>> {
 
 } // end namespace YAML
 
-#endif /* YAMPTYPE_H_ */
+#endif // NSXLIB_YAMPTYPE_H

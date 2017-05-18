@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef NSXTOOL_EXPERIMENT_H_
-#define NSXTOOL_EXPERIMENT_H_
+#ifndef NSXLIB_EXPERIMENT_H
+#define NSXLIB_EXPERIMENT_H
 
 #include <map>
 #include <memory>
@@ -117,4 +117,4 @@ private:
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_EXPERIMENT_H_ */
+#endif // NSXLIB_EXPERIMENT_H

@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef NSXTOOL_SYMMETRYGROUPGENERATOR_H_
-#define NSXTOOL_SYMMETRYGROUPGENERATOR_H_
+#ifndef NSXLIB_SPACEGROUP_H
+#define NSXLIB_SPACEGROUP_H
 
 #include <array>
 #include <memory>
@@ -99,4 +99,4 @@ std::ostream& operator<<(std::ostream& os, const SpaceGroup& sg);
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_SYMMETRYGROUPGENERATOR_H_ */
+#endif // NSXLIB_SPACEGROUP_H

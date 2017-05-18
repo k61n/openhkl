@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef NSXTOOL_PHYSICALUNIT_H_
-#define NSXTOOL_PHYSICALUNIT_H_
+#ifndef NSXLIB_PHYSICALUNIT_H
+#define NSXLIB_PHYSICALUNIT_H
 
 #define BOOST_SPIRIT_USE_PHOENIX_V3
 #define BOOST_RESULT_OF_USE_DECLTYPE
@@ -204,5 +204,5 @@ private:
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_PHYSICALUNIT_H_ */
+#endif // NSXLIB_PHYSICALUNIT_H
 

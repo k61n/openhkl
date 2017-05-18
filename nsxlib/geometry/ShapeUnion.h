@@ -28,8 +28,8 @@
  *
  */
 
-#ifndef NSXTOOL_SHAPEUNION_H_
-#define NSXTOOL_SHAPEUNION_H_
+#ifndef NSXLIB_SHAPEUNION_H
+#define NSXLIB_SHAPEUNION_H
 
 #include <initializer_list>
 #include <list>
@@ -166,4 +166,4 @@ bool ShapeUnion<T,D>::collide(const Sphere<T,D>& rhs) const
 
 } // end namespace nsx
 
-#endif // NSXTOOL_SHAPEUNION_H_
+#endif // NSXLIB_SHAPEUNION_H

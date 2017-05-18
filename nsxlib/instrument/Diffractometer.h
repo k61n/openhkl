@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef NSXTOOL_DIFFRACTOMETER_H_
-#define NSXTOOL_DIFFRACTOMETER_H_
+#ifndef NSXLIB_DIFFRACTOMETER_H
+#define NSXLIB_DIFFRACTOMETER_H
 
 #include <map>
 #include <string>
@@ -107,4 +107,4 @@ protected:
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_DIFFRACTOMETER_H_ */
+#endif // NSXLIB_DIFFRACTOMETER_H

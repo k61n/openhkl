@@ -1,5 +1,5 @@
-#ifndef NSXTOOL_IBLOB_H_
-#define NSXTOOL_IBLOB_H_
+#ifndef NSXLIB_IBLOB_H
+#define NSXLIB_IBLOB_H
 
 #include <iostream>
 
@@ -48,4 +48,4 @@ std::ostream& operator<<(std::ostream& os, const IBlob& b);
 
 } // end namespace nsx
 
-#endif // NSXTOOL_IBLOB_H_
+#endif // NSXLIB_IBLOB_H

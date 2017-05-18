@@ -26,8 +26,9 @@
  *
  */
 
-#ifndef NSXTOOL_NDTREE_H_
-#define NSXTOOL_NDTREE_H_
+#ifndef NSXLIB_NDTREE_H
+#define NSXLIB_NDTREE_H
+
 #include <cmath>
 #include <initializer_list>
 #include <set>
@@ -647,4 +648,4 @@ unsigned int NDTree<T,D>::numChambers() const
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_NDTREE_H_ */
+#endif // NSXLIB_NDTREE_H

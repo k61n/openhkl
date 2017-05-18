@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef NSXTOOL_AXISFACTORY_H_
-#define NSXTOOL_AXISFACTORY_H_
+#ifndef NSXLIB_AXISFACTORY_H
+#define NSXLIB_AXISFACTORY_H
 
 #include <string>
 
@@ -48,4 +48,4 @@ private:
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_AXISFACTORY_H_ */
+#endif // NSXLIB_AXISFACTORY_H

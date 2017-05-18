@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef NSXTOOL_MULTIDETECTOR_H_
-#define NSXTOOL_MULTIDETECTOR_H_
+#ifndef NSXLIB_MULTIDETECTOR_H
+#define NSXLIB_MULTIDETECTOR_H
 
 #include <string>
 #include <vector>
@@ -99,4 +99,4 @@ public:
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_MULTIDETECTOR_H_ */
+#endif // NSXLIB_MULTIDETECTOR_H

@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef NSXTOOL_ISHAPE_H_
-#define NSXTOOL_ISHAPE_H_
+#ifndef NSXLIB_ISHAPE_H
+#define NSXLIB_ISHAPE_H
 
 #include <iostream>
 #include <initializer_list>
@@ -411,4 +411,4 @@ void IShape<T,D>::rotate(T angle,const vector& axis,Direction dir)
 
 } // end namespace nsx
 
-#endif // NSXTOOL_ISHAPE_H_
+#endif // NSXLIB_ISHAPE_H

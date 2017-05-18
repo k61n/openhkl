@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef NSXTOOL_AXIS_H_
-#define NSXTOOL_AXIS_H_
+#ifndef NSXLIB_AXIS_H
+#define NSXLIB_AXIS_H
 
 #include <string>
 
@@ -138,4 +138,4 @@ protected:
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_AXIS_H_ */
+#endif // NSXLIB_AXIS_H

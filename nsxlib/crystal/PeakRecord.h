@@ -33,8 +33,8 @@
  *
  */
 
-#ifndef NSXTOOL_PEAKRECORD_H_
-#define NSXTOOL_PEAKRECORD_H_
+#ifndef NSXLIB_PEAKRECORD_H
+#define NSXLIB_PEAKRECORD_H
 
 namespace nsx {
 
@@ -57,4 +57,4 @@ public:
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_PEAKRECORD_H_ */
+#endif // NSXLIB_PEAKRECORD_H

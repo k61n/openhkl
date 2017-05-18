@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef NSXTOOL_DETECTORFACTORY_H_
-#define NSXTOOL_DETECTORFACTORY_H_
+#ifndef NSXLIB_DETECTORFACTORY_H
+#define NSXLIB_DETECTORFACTORY_H
 
 #include <string>
 
@@ -48,4 +48,4 @@ private:
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_DETECTORFACTORY_H_ */
+#endif // NSXLIB_DETECTORFACTORY_H

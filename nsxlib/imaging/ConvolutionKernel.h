@@ -28,8 +28,8 @@
  *
  */
 
-#ifndef NSXTOOL_CONVOLUTIONKERNEL_H_
-#define NSXTOOL_CONVOLUTIONKERNEL_H_
+#ifndef NSXLIB_CONVOLUTIONKERNEL_H
+#define NSXLIB_CONVOLUTIONKERNEL_H
 
 #include <map>
 #include <stdexcept>
@@ -89,4 +89,4 @@ std::ostream& operator<<(std::ostream& os, const ConvolutionKernel& kernel);
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_CONVOLUTIONKERNEL_H_ */
+#endif // NSXLIB_CONVOLUTIONKERNEL_H

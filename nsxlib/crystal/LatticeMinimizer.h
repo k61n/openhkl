@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef NSXTOOL_LATTICEMINIMIZER_H_
-#define NSXTOOL_LATTICEMINIMIZER_H_
+#ifndef NSXLIB_LATTICEMINIMIZER_H
+#define NSXLIB_LATTICEMINIMIZER_H
 
 #include <Eigen/Dense>
 
@@ -121,4 +121,4 @@ private:
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_LATTICEMINIMIZER_H_ */
+#endif // NSXLIB_LATTICEMINIMIZER_H

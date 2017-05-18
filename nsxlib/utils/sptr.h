@@ -33,8 +33,8 @@
  *
  */
 
-#ifndef NSXTOOL_SPTR_H_
-#define NSXTOOL_SPTR_H_
+#ifndef NSXLIB_SPTR_H
+#define NSXLIB_SPTR_H
 
 #include <memory>
 
@@ -64,4 +64,4 @@ std::unique_ptr<T> make_unique(Args&&... args)
 
 } // end namespace nsx
 
-#endif /* NSXTOOL_SPTR_H_ */
+#endif // NSXLIB_SPTR_H

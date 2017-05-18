@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef NSXTOOL_AABB_H_
-#define NSXTOOL_AABB_H_
+#ifndef NSXLIB_AABB_H
+#define NSXLIB_AABB_H
 
 #include <initializer_list>
 #include <stdexcept>
@@ -291,4 +291,4 @@ bool collideAABBSphere(const AABB<T,D>& aabb, const Sphere<T,D>& sphere)
 
 } // end namespace nsx
 
-#endif /*NSXTOOL_AABB_H_*/
+#endif // NSXLIB_AABB_H
