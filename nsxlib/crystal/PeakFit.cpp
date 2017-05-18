@@ -36,12 +36,12 @@
 #include <cmath>
 #include <stdexcept>
 
-#include "PeakFit.h"
-#include "../geometry/IntegrationRegion.h"
+#include "../crystal/PeakFit.h"
 #include "../data/IData.h"
+#include "../geometry/IntegrationRegion.h"
+#include "../mathematics/Interpolator.h"
+#include "../mathematics/Round.h"
 #include "../utils/IMinimizer.h"
-#include "../utils/Round.h"
-#include "../utils/Interpolator.h"
 
 namespace nsx {
 

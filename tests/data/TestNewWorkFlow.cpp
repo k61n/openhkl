@@ -17,7 +17,7 @@
 #include <nsxlib/imaging/ConvolutionKernel.h>
 #include <nsxlib/imaging/KernelFactory.h>
 #include <nsxlib/instrument/Experiment.h>
-#include <nsxlib/utils/erf_inv.h>
+#include <nsxlib/mathematics/ErfInv.h>
 #include <nsxlib/utils/Units.h>
 #include <nsxlib/utils/ProgressHandler.h>
 

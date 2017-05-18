@@ -1,6 +1,4 @@
-#include "OpenGL/GLSphere.h"
-#include <iostream>
-
+#include "opengl/GLSphere.h"
 
 GLSphere::GLSphere(const char* name):GLActor(name)
 {

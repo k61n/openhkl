@@ -3,7 +3,7 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include <nsxlib/utils/Gaussian.h>
+#include <nsxlib/mathematics/Gaussian.h>
 
 using namespace std;
 using namespace nsx;

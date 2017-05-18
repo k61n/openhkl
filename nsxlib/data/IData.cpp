@@ -4,33 +4,29 @@
 #include <vector>
 #include <cmath>
 
-#include "../utils/Units.h"
-#include "../utils/erf_inv.h"
-
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/operations.hpp>
 
-#include "IData.h"
-#include "IDataReader.h"
+#include "blosc_filter.h"
+#include "blosc.h"
 
+#include "H5Cpp.h"
+
+#include "../crystal/PeakIntegrator.h"
+#include "../data/BasicFrameIterator.h"
+#include "../data/IData.h"
+#include "../data/IDataReader.h"
+#include "../data/IFrameIterator.h"
+#include "../data/ThreadedFrameIterator.h"
+#include "../geometry/Ellipsoid.h"
+#include "../geometry/IntegrationRegion.h"
 #include "../instrument/Detector.h"
 #include "../instrument/Gonio.h"
 #include "../instrument/Monochromator.h"
 #include "../instrument/Sample.h"
 #include "../instrument/Source.h"
-
-#include "H5Cpp.h"
-#include "blosc_filter.h"
-#include "blosc.h"
-
-#include "../crystal/PeakIntegrator.h"
-#include "../geometry/Ellipsoid.h"
-#include "../geometry/IntegrationRegion.h"
-
-#include "IFrameIterator.h"
-#include "BasicFrameIterator.h"
-#include "ThreadedFrameIterator.h"
-
+#include "../mathematics/ErfInv.h"
+#include "../utils/Units.h"
 
 namespace nsx {
 

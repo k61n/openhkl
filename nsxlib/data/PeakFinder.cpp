@@ -1,19 +1,19 @@
 
-#include <vector>
 #include <memory>
+#include <vector>
 
-#include "IData.h"
-#include "IFrameIterator.h"
-#include "PeakFinder.h"
-#include "../instrument/Diffractometer.h"
-#include "../instrument/Experiment.h"
-#include "../instrument/Detector.h"
-#include "../geometry/BlobFinder.h"
-#include "../utils/Types.h"
-#include "../utils/erf_inv.h"
-#include "../imaging/Convolver.h"
 #include "../crystal/Peak3D.h"
+#include "../data/IData.h"
+#include "../data/IFrameIterator.h"
+#include "../data/PeakFinder.h"
+#include "../geometry/BlobFinder.h"
+#include "../imaging/Convolver.h"
+#include "../instrument/Diffractometer.h"
+#include "../instrument/Detector.h"
+#include "../instrument/Experiment.h"
 #include "../instrument/Sample.h"
+#include "../mathematics/ErfInv.h"
+#include "../utils/Types.h"
 
 namespace nsx {
 

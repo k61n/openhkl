@@ -37,12 +37,12 @@
 #define NSXLIB_RESOLUTIONSHELL_H
 
 #include <memory>
-#include <vector>
 #include <set>
+#include <vector>
 
 #include <Eigen/Core>
 
-#include "Peak3D.h"
+#include "../crystal/Peak3D.h"
 
 namespace nsx {
 

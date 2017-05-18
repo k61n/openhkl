@@ -37,7 +37,8 @@
 #define NSXLIB_INTERPOLATOR_H
 
 #include <vector>
-#include "Round.h"
+
+#include "../mathematics/Round.h"
 
 namespace nsx {
 

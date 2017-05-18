@@ -35,11 +35,11 @@
 
 #include <cmath>
 #include <set>
-#include <Eigen/Eigenvalues>
-#include <iostream>
 
-#include "ResolutionShell.h"
-#include "../utils/gcd.h"
+#include <Eigen/Eigenvalues>
+
+#include "../mathematics/GCD.h"
+#include "../crystal/ResolutionShell.h"
 
 namespace nsx {
 

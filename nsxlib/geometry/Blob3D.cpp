@@ -1,10 +1,11 @@
 #include <cmath>
 #include <limits>
 #include <stdexcept>
-#include <cmath>
+
 #include <Eigen/Eigenvalues>
-#include "Blob3D.h"
-#include "../utils/erf_inv.h"
+
+#include "../geometry/Blob3D.h"
+#include "../mathematics/ErfInv.h"
 
 using Eigen::Vector3d;
 using Eigen::Vector2d;

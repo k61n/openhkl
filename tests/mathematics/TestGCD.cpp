@@ -4,11 +4,7 @@
 #include <boost/test/unit_test.hpp>
 #include <boost/filesystem.hpp>
 
-#include <iostream>
-#include <vector>
-#include <string>
-
-#include <nsxlib/utils/gcd.h>
+#include <nsxlib/mathematics/GCD.h>
 
 using namespace nsx;
 
