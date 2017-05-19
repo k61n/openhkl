@@ -43,7 +43,7 @@
 
 namespace nsx {
 
-class I16DataReader final: public IDataReader
+class I16DataReader: public IDataReader
 {
 public:
 

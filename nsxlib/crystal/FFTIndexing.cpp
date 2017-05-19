@@ -11,8 +11,7 @@
 
 namespace nsx {
 
-FFTIndexing::FFTIndexing(int nSubdiv,double amax)
-    : _nSubdiv(nSubdiv), _amax(amax)
+FFTIndexing::FFTIndexing(int nSubdiv,double amax) : _nSubdiv(nSubdiv), _amax(amax)
 {
 }
 

@@ -45,7 +45,6 @@
 namespace nsx {
 
 class Profile {
-
 public:
 
     Profile(const Lorentzian& lor = Lorentzian(), const Gaussian& gauss = Gaussian());

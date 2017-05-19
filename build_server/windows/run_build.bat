@@ -1,5 +1,4 @@
 mkdir build
-
 cd build
 
 set HDF5_ROOT=C:\Program Files\HDF_Group\HDF5\1.8.17
@@ -19,7 +18,5 @@ set PATH=C:\opt\local_x64\bin;%PATH%
 
 call "C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\vcvarsall.bat" amd64
 
-cmake .. -G"Ninja" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INCLUDE_PATH=C:\opt\local_x64\include -DCMAKE_LIBRARY_PATH=C:\opt\local_x64\lib
-
+cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INCLUDE_PATH=C:\opt\local_x64\include -DCMAKE_LIBRARY_PATH=C:\opt\local_x64\lib -DNSX_PYTHON=OFF
 cmake --build . --config Release
-

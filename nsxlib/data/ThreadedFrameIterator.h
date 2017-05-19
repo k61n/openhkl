@@ -13,7 +13,7 @@ namespace nsx {
 
 class DataSet;
 
-class ThreadedFrameIterator final: public IFrameIterator {
+class ThreadedFrameIterator: public IFrameIterator {
 public:
     ThreadedFrameIterator(DataSet& data, unsigned int idx);
     ~ThreadedFrameIterator() = default;

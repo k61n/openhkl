@@ -20,6 +20,7 @@
 
 using namespace nsx;
 
+
 const double tolerance=1e-6;
 
 BOOST_AUTO_TEST_CASE(Test_Peak3D)

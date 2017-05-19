@@ -1,5 +1,5 @@
 #!/bin/bash
 
 cd ${CI_PROJECT_DIR}/build
-
-ninja test
+export CTEST_OUTPUT_ON_FAILURE=1
+ctest -j2 -l2

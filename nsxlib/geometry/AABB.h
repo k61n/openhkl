@@ -111,8 +111,10 @@ public:
     //! the two intersection points between the ray and this shape.
     bool rayIntersect(const vector& from, const vector& dir, double& t1, double& t2) const;
 
+#ifndef SWIG
     // Macro to ensure that an OBB object can be dynamically allocated.
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+#endif
 
 };
 

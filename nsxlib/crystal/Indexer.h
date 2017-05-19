@@ -50,10 +50,7 @@ public:
 	Indexer& operator=(const Indexer& other);
 
 	~Indexer();
-	//! Set the dspacing tolerance
-	void setdSpacingTolerance(double percent);
-	//! Set the tolerance for Angle comnparison between two reflections
-	void setAngularTolerance(double percent);
+
 	//! Return possible h,k,l for this peak based on dspacing and angle with stored peaks
 	std::vector<Eigen::Vector3d> index(const Peak3D&);
 	//! Store this peak as being indexed, this is used for angle comparison for next peaks.

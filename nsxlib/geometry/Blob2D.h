@@ -31,7 +31,7 @@
 
 #include <Eigen/Dense>
 
-#include "IBlob.h"
+//#include "IBlob.h"
 
 namespace nsx {
 
@@ -91,7 +91,9 @@ private:
 
 };
 
+#ifndef SWIG
 std::ostream& operator<<(std::ostream& os, const Blob2D& b);
+#endif
 
 } // end namespace nsx
 

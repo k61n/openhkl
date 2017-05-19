@@ -71,7 +71,9 @@ public:
 
     double pValue() const;
 
+    #ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    #endif
 
 private:
     Blob3D _blob;
