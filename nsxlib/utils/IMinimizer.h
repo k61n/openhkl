@@ -46,31 +46,26 @@ public:
     using f_type = std::function<int(const Eigen::VectorXd&, Eigen::VectorXd&)>;
 
     IMinimizer();
-    virtual ~IMinimizer();
 
-    template <typename Fun_>
-    void set_f(Fun_ functor)
-    {
-        _f = static_cast<f_type>(functor);
-    }
+    virtual const char* getStatusStr()=0;
+    virtual bool fit(int max_iter)=0;
 
-    void setParams(const Eigen::VectorXd& x);
-    void setWeights(const Eigen::VectorXd& wt);
+    virtual void initialize(int params, int values)=0;
+    virtual void deinitialize()=0;
 
-    Eigen::MatrixXd covariance();
-    Eigen::MatrixXd jacobian();
-    Eigen::VectorXd params();
+    virtual void setParams(const Eigen::VectorXd& x)=0;
+    virtual void setWeights(const Eigen::VectorXd& wt)=0;
 
-    void setxTol(double xtol);
-    void setgTol(double gtol);
-    void setfTol(double ftol);
+    virtual int numIterations()=0;
 
-    int numIterations();
+    virtual void setxTol(double xtol)=0;
+    virtual void setgTol(double gtol)=0;
+    virtual void setfTol(double ftol)=0;
 
-    virtual void initialize(int params, int values);
-    virtual void deinitialize();
-    virtual bool fit(int max_iter) = 0;
-    virtual const char* getStatusStr() = 0;
+    virtual Eigen::MatrixXd jacobian()=0;
+    virtual Eigen::VectorXd params()=0;
+
+    virtual Eigen::MatrixXd covariance()=0;
 
 protected:
     int _numValues, _numParams, _numIter;

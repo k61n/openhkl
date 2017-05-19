@@ -41,7 +41,7 @@
 #include "../geometry/IntegrationRegion.h"
 #include "../mathematics/Interpolator.h"
 #include "../mathematics/Round.h"
-#include "../utils/IMinimizer.h"
+#include "../utils/MinimizerGSL.h"
 
 namespace nsx {
 
@@ -408,7 +408,7 @@ Eigen::VectorXd PeakFit::defaultParams() const
     return p;
 }
 
-bool PeakFit::fit(IMinimizer& minimizer)
+bool PeakFit::fit(MinimizerGSL& minimizer)
 {
     auto min_func = [this](const Eigen::VectorXd& par, Eigen::VectorXd& res) -> int
     {

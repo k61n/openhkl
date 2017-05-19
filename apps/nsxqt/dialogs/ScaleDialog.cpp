@@ -20,7 +20,6 @@
 #include "Externals/qcustomplot.h"
 
 #include <nsxlib/data/IData.h>
-#include <nsxlib/utils/IMinimizer.h>
 #include <nsxlib/utils/MinimizerGSL.h>
 #include <nsxlib/crystal/Peak3D.h>
 #include <nsxlib/crystal/RFactor.h>
@@ -299,24 +298,24 @@ void ScaleDialog::refineScale()
 
     qDebug() << "Refining scale using minimizer...";
 
-    nsx::IMinimizer* minimizer = new nsx::MinimizerGSL();
+    nsx::MinimizerGSL minimizer;
 
     resetScale();
 
-    minimizer->initialize(int(_scaleParams.size()), _values);
+    minimizer.initialize(int(_scaleParams.size()), _values);
 
-    minimizer->setxTol(1e-15);
-    minimizer->setfTol(1e-15);
-    minimizer->setgTol(1e-15);
+    minimizer.setxTol(1e-15);
+    minimizer.setfTol(1e-15);
+    minimizer.setgTol(1e-15);
 
-    minimizer->setParams(_scaleParams);
+    minimizer.setParams(_scaleParams);
 
-    minimizer->set_f(residual_fn);
-    minimizer->fit(1000);
+    minimizer.set_f(residual_fn);
+    minimizer.fit(1000);
 
-    _scaleParams = minimizer->params();
+    _scaleParams = minimizer.params();
 
-    qDebug() << "...done after " << minimizer->numIterations() << "iterations";
+    qDebug() << "...done after " << minimizer.numIterations() << "iterations";
 }
 
 void ScaleDialog::on_pushButton_clicked()

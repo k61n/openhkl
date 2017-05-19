@@ -41,12 +41,18 @@
 namespace nsx {
 
 MinimizerGSL::MinimizerGSL():
-    IMinimizer(),
     _workspace(nullptr),
     _jacobian_gsl( nullptr),
     _covariance_gsl(nullptr),
+    _status(0),
+    _info(0),
     _x_gsl (nullptr),
-    _wt_gsl (nullptr)
+    _wt_gsl (nullptr),
+    _numValues(0),
+    _numParams(0),
+    _xtol(1e-7),
+    _gtol(1e-7),
+    _ftol(1e-7)
 {
 }
 
@@ -58,7 +64,18 @@ MinimizerGSL::~MinimizerGSL()
 void MinimizerGSL::initialize(int params, int values)
 {
     deinitialize();
-    IMinimizer::initialize(params, values);
+
+    _numParams = params;
+    _numValues = values;
+
+    _x.resize(_numParams);
+    _wt.resize(_numValues);
+
+    for (int i = 0; i < _numValues; ++i)
+        _wt(i) = 1.0;
+
+    _jacobian.resize(_numValues, _numParams);
+    _covariance.resize(_numParams, _numParams);
 
     // allocate initial paramter values and weights
     _x_gsl = gsl_vector_alloc(_numParams);
@@ -103,22 +120,20 @@ bool MinimizerGSL::fit(int max_iter)
 
 #if ((NSXTOOL_GSL_VERSION_MAJOR == 2) && (NSXTOOL_GSL_VERSION_MINOR >= 2) )
     gsl_multifit_nlinear_winit (_x_gsl, _wt_gsl, &_fdf, _workspace);
-    _status = gsl_multifit_nlinear_driver(max_iter, _xtol, _gtol, _ftol, NULL /*callback*/, NULL, &info, _workspace);
+    _status = gsl_multifit_nlinear_driver(max_iter, _xtol, _gtol, _ftol, NULL /*callback*/, NULL, &_info, _workspace);
     gsl_multifit_nlinear_covar(_workspace->J, 1e-6, _covariance_gsl);
     _numIter = _workspace->niter;
     eigenFromGSL(_workspace->J, _jacobian);
 #else
     gsl_multifit_fdfsolver_set(_workspace, &_fdf, _x_gsl);
     _jacobian_gsl = gsl_matrix_alloc(_numValues, _numParams);
-    _status = gsl_multifit_fdfsolver_driver(_workspace, max_iter, _xtol, _gtol, _ftol, &info);
+    _status = gsl_multifit_fdfsolver_driver(_workspace, max_iter, _xtol, _gtol, _ftol, &_info);
     gsl_multifit_fdfsolver_dif_df(_workspace->x, _wt_gsl, &_fdf, _workspace->f, _jacobian_gsl);
     eigenFromGSL(_jacobian_gsl, _jacobian);
     gsl_matrix_free(_jacobian_gsl);
     _jacobian_gsl = nullptr;
     _numIter = _workspace->niter;
 #endif
-
-    //fprintf (stderr, "status = %s\n", gsl_strerror(_status));
 
     eigenFromGSL(_workspace->x, _x);
 
@@ -131,7 +146,7 @@ bool MinimizerGSL::fit(int max_iter)
 
 void MinimizerGSL::deinitialize()
 {
-    IMinimizer::deinitialize();
+    _f = nullptr;
 
     if (_workspace) {
 #if ((NSXTOOL_GSL_VERSION_MAJOR == 2) && (NSXTOOL_GSL_VERSION_MINOR >= 2) )
@@ -228,5 +243,53 @@ void MinimizerGSL::gslFromEigen(const Eigen::MatrixXd &in, gsl_matrix *out)
         for (int j = 0; j < out->size2; ++j)
             gsl_matrix_set(out, i, j, in(i));
 }
+
+Eigen::MatrixXd MinimizerGSL::covariance()
+{
+    return _covariance;
+}
+
+void MinimizerGSL::setxTol(double xtol)
+{
+    _xtol = xtol;
+}
+
+void MinimizerGSL::setgTol(double gtol)
+{
+    _gtol = gtol;
+}
+
+void MinimizerGSL::setfTol(double ftol)
+{
+    _ftol = ftol;
+}
+
+Eigen::MatrixXd MinimizerGSL::jacobian()
+{
+    return _jacobian;
+}
+
+Eigen::VectorXd MinimizerGSL::params()
+{
+    return _x;
+}
+
+void MinimizerGSL::setParams(const Eigen::VectorXd &x)
+{
+    assert(_numParams == x.size());
+    _x = x;
+}
+
+void MinimizerGSL::setWeights(const Eigen::VectorXd &wt)
+{
+    assert(_numValues == wt.size());
+    _wt = wt;
+}
+
+int MinimizerGSL::numIterations()
+{
+    return _numIter;
+}
+
 
 } // end namespace nsx

@@ -17,7 +17,7 @@ using namespace std;
 
 int run_test()
 {
-    std::unique_ptr<IMinimizer> m_gsl;
+    std::unique_ptr<MinimizerGSL> m_gsl;
 
     Eigen::VectorXd x_initial, x_gsl, y, wt;
 
@@ -58,7 +58,7 @@ int run_test()
         return 0;
     };
 
-    m_gsl = std::unique_ptr<IMinimizer>(new MinimizerGSL);
+    m_gsl = std::unique_ptr<MinimizerGSL>(new MinimizerGSL());
 
     m_gsl->initialize(nparams, nvalues);
     m_gsl->setParams(x_initial);

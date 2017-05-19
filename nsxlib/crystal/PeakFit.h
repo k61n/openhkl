@@ -30,14 +30,15 @@
 #ifndef NSXLIB_PEAKFIT_H
 #define NSXLIB_PEAKFIT_H
 
-#include "UnitCell.h"
-#include "../geometry/IShape.h"
-#include "Peak3D.h"
 #include <Eigen/Dense>
+
+#include "../crystal/Peak3D.h"
+#include "../crystal/UnitCell.h"
+#include "../geometry/IShape.h"
 
 namespace nsx {
 
-class IMinimizer;
+class MinimizerGSL;
 
 class PeakFit {
 public:
@@ -60,7 +61,7 @@ public:
 
     Eigen::VectorXd defaultParams() const;
 
-    bool fit(IMinimizer& minimizer);
+    bool fit(MinimizerGSL& minimizer);
 
     int frameBegin() const;
     int frameEnd() const;

@@ -36,10 +36,7 @@
 #ifndef NSXLIB_MINIMIZERGSL_H
 #define NSXLIB_MINIMIZERGSL_H
 
-#include "IMinimizer.h"
-
 #include <functional>
-#include <Eigen/Dense>
 
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_vector.h>
@@ -51,18 +48,43 @@
 #include <gsl/gsl_multifit_nlin.h>
 #endif
 
+#include <Eigen/Dense>
+
 namespace nsx {
 
-class MinimizerGSL: public IMinimizer {
+class MinimizerGSL {
 public:
+    using f_type = std::function<int(const Eigen::VectorXd&, Eigen::VectorXd&)>;
+
     MinimizerGSL();
+
     ~MinimizerGSL();
 
-    void initialize(int params, int values) override;
-    void deinitialize() override;
+    void initialize(int params, int values);
+    void deinitialize();
 
-    const char* getStatusStr() override;
-    bool fit(int max_iter) override;
+    const char* getStatusStr();
+    bool fit(int max_iter);
+
+    virtual Eigen::MatrixXd covariance();
+
+    void setxTol(double xtol);
+    void setgTol(double gtol);
+    void setfTol(double ftol);
+
+    Eigen::MatrixXd jacobian();
+    Eigen::VectorXd params();
+
+    void setParams(const Eigen::VectorXd& x);
+    void setWeights(const Eigen::VectorXd& wt);
+
+    int numIterations();
+
+    template <typename Fun_>
+    void set_f(Fun_ functor)
+    {
+        _f = static_cast<f_type>(functor);
+    }
 
 private:
     static int gsl_f_wrapper(const gsl_vector*, void*, gsl_vector*);
@@ -86,13 +108,24 @@ private:
     gsl_matrix *_jacobian_gsl;
     gsl_matrix* _covariance_gsl;
 
-    int _status, info;
+    int _status, _info;
 
     gsl_vector* _x_gsl;
     gsl_vector* _wt_gsl;
 
     Eigen::VectorXd _inputEigen;
     Eigen::VectorXd _outputEigen;
+
+    int _numValues, _numParams, _numIter;
+
+    double _xtol;
+    double _gtol;
+    double _ftol;
+
+    Eigen::VectorXd _x,  _wt;
+    Eigen::MatrixXd _jacobian, _covariance;
+
+    f_type _f;
 };
 
 } // end namespace nsx

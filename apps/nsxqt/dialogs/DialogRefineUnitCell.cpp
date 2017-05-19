@@ -303,7 +303,7 @@ void DialogRefineUnitCell::refineParameters()
     os.str("");
 
     auto M=_unitCell->getReciprocalStandardM();
-    _minimizer.setMinimizer(new MinimizerGSL());
+    _minimizer.setMinimizer(MinimizerGSL());
     _minimizer.setStartingUBMatrix(M);
 
     int test = _minimizer.run(100);
