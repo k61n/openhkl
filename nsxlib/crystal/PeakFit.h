@@ -38,7 +38,7 @@
 
 namespace nsx {
 
-class MinimizerGSL;
+class Minimizer;
 
 class PeakFit {
 public:
@@ -61,7 +61,7 @@ public:
 
     Eigen::VectorXd defaultParams() const;
 
-    bool fit(MinimizerGSL& minimizer);
+    bool fit(Minimizer& minimizer);
 
     int frameBegin() const;
     int frameEnd() const;

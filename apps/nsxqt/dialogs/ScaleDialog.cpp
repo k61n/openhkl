@@ -19,12 +19,12 @@
 
 #include "Externals/qcustomplot.h"
 
-#include <nsxlib/data/IData.h>
-#include <nsxlib/utils/MinimizerGSL.h>
 #include <nsxlib/crystal/Peak3D.h>
 #include <nsxlib/crystal/RFactor.h>
 #include <nsxlib/crystal/SpaceGroup.h>
 #include <nsxlib/crystal/SpaceGroupSymbols.h>
+#include <nsxlib/data/IData.h>
+#include <nsxlib/mathematics/Minimizer.h>
 #include <nsxlib/instrument/Sample.h>
 
 ScaleDialog::ScaleDialog(const std::vector<std::vector<nsx::Peak3D*>>& peaks, QWidget *parent) :
@@ -298,7 +298,7 @@ void ScaleDialog::refineScale()
 
     qDebug() << "Refining scale using minimizer...";
 
-    nsx::MinimizerGSL minimizer;
+    nsx::Minimizer minimizer;
 
     resetScale();
 

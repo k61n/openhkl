@@ -16,7 +16,7 @@
 #include <nsxlib/instrument/Monochromator.h>
 #include <nsxlib/instrument/Sample.h>
 #include <nsxlib/instrument/Source.h>
-#include <nsxlib/utils/MinimizerGSL.h>
+#include <nsxlib/mathematics/Minimizer.h>
 #include <nsxlib/utils/Units.h>
 
 #include "DialogRefineUnitCell.h"
@@ -303,7 +303,7 @@ void DialogRefineUnitCell::refineParameters()
     os.str("");
 
     auto M=_unitCell->getReciprocalStandardM();
-    _minimizer.setMinimizer(MinimizerGSL());
+    _minimizer.setMinimizer(Minimizer());
     _minimizer.setStartingUBMatrix(M);
 
     int test = _minimizer.run(100);

@@ -33,8 +33,8 @@
  *
  */
 
-#ifndef NSXLIB_MINIMIZERGSL_H
-#define NSXLIB_MINIMIZERGSL_H
+#ifndef NSXLIB_MINIMIZER_H
+#define NSXLIB_MINIMIZER_H
 
 #include <functional>
 
@@ -52,13 +52,13 @@
 
 namespace nsx {
 
-class MinimizerGSL {
+class Minimizer {
 public:
     using f_type = std::function<int(const Eigen::VectorXd&, Eigen::VectorXd&)>;
 
-    MinimizerGSL();
+    Minimizer();
 
-    ~MinimizerGSL();
+    ~Minimizer();
 
     void initialize(int params, int values);
     void deinitialize();
@@ -130,4 +130,4 @@ private:
 
 } // end namespace nsx
 
-#endif // NSXLIB_MINIMIZERGSL_H
+#endif // NSXLIB_MINIMIZER_H

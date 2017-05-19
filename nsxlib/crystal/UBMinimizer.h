@@ -41,8 +41,8 @@
 #include "../instrument/Detector.h"
 #include "../instrument/Sample.h"
 #include "../instrument/Source.h"
+#include "../mathematics/Minimizer.h"
 #include "../utils/LMFunctor.h"
-#include "../utils/MinimizerGSL.h"
 
 namespace nsx {
 
@@ -202,13 +202,13 @@ public:
     const UBSolution& getSolution() const;
 
     //! Set the minimizer
-    void setMinimizer(const MinimizerGSL& minimizer);
+    void setMinimizer(const Minimizer& minimizer);
 
 private:
     UBFunctor _functor;
     UBSolution _solution;
     std::map<unsigned int,double> _start;
-    MinimizerGSL _minimizer;
+    Minimizer _minimizer;
 
 };
 

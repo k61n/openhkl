@@ -36,11 +36,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "MinimizerGSL.h"
+#include "Minimizer.h"
 
 namespace nsx {
 
-MinimizerGSL::MinimizerGSL():
+Minimizer::Minimizer():
     _workspace(nullptr),
     _jacobian_gsl( nullptr),
     _covariance_gsl(nullptr),
@@ -56,12 +56,12 @@ MinimizerGSL::MinimizerGSL():
 {
 }
 
-MinimizerGSL::~MinimizerGSL()
+Minimizer::~Minimizer()
 {
     deinitialize();
 }
 
-void MinimizerGSL::initialize(int params, int values)
+void Minimizer::initialize(int params, int values)
 {
     deinitialize();
 
@@ -90,7 +90,7 @@ void MinimizerGSL::initialize(int params, int values)
     _inputEigen.resize(_numParams);
     _outputEigen.resize(_numValues);
 
-    _fdf.f = &MinimizerGSL::gsl_f_wrapper; // function to be minimized: wrapper which calls _f
+    _fdf.f = &Minimizer::gsl_f_wrapper; // function to be minimized: wrapper which calls _f
     _fdf.df = nullptr;  // set to nullptr since we compute the jacobian numerically
 
     _fdf.p = _numParams; // number of parameters to be fit
@@ -108,7 +108,7 @@ void MinimizerGSL::initialize(int params, int values)
 #endif
 }
 
-bool MinimizerGSL::fit(int max_iter)
+bool Minimizer::fit(int max_iter)
 {
     if (!_workspace || !_f)
         return false;
@@ -144,7 +144,7 @@ bool MinimizerGSL::fit(int max_iter)
     return (_status == GSL_SUCCESS);
 }
 
-void MinimizerGSL::deinitialize()
+void Minimizer::deinitialize()
 {
     _f = nullptr;
 
@@ -182,16 +182,16 @@ void MinimizerGSL::deinitialize()
 }
 
 
-const char *MinimizerGSL::getStatusStr()
+const char *Minimizer::getStatusStr()
 {
     return gsl_strerror(_status);
 }
 
 
-int MinimizerGSL::gsl_f_wrapper(const gsl_vector *input, void *data, gsl_vector *output)
+int Minimizer::gsl_f_wrapper(const gsl_vector *input, void *data, gsl_vector *output)
 {
     // call the function
-    MinimizerGSL* self = reinterpret_cast<MinimizerGSL*>(data);
+    Minimizer* self = reinterpret_cast<Minimizer*>(data);
 
     Eigen::VectorXd& in = self->_inputEigen;
     Eigen::VectorXd& out = self->_outputEigen;
@@ -207,7 +207,7 @@ int MinimizerGSL::gsl_f_wrapper(const gsl_vector *input, void *data, gsl_vector 
     return result;
 }
 
-void MinimizerGSL::eigenFromGSL(const gsl_vector *in, Eigen::VectorXd &out)
+void Minimizer::eigenFromGSL(const gsl_vector *in, Eigen::VectorXd &out)
 {
     assert(in->size == out.size());
 
@@ -215,7 +215,7 @@ void MinimizerGSL::eigenFromGSL(const gsl_vector *in, Eigen::VectorXd &out)
         out(i) = gsl_vector_get(in, i);
 }
 
-void MinimizerGSL::eigenFromGSL(const gsl_matrix *in, Eigen::MatrixXd &out)
+void Minimizer::eigenFromGSL(const gsl_matrix *in, Eigen::MatrixXd &out)
 {
     assert(in->size1 == out.rows());
     assert(in->size2 == out.cols());
@@ -225,7 +225,7 @@ void MinimizerGSL::eigenFromGSL(const gsl_matrix *in, Eigen::MatrixXd &out)
             out(i, j) = gsl_matrix_get(in, i, j);
 }
 
-void MinimizerGSL::gslFromEigen(const Eigen::VectorXd &in, gsl_vector *out)
+void Minimizer::gslFromEigen(const Eigen::VectorXd &in, gsl_vector *out)
 {
     assert(in.size() == out->size);
 
@@ -233,7 +233,7 @@ void MinimizerGSL::gslFromEigen(const Eigen::VectorXd &in, gsl_vector *out)
         gsl_vector_set(out, i, in(i));
 }
 
-void MinimizerGSL::gslFromEigen(const Eigen::MatrixXd &in, gsl_matrix *out)
+void Minimizer::gslFromEigen(const Eigen::MatrixXd &in, gsl_matrix *out)
 {
     assert(out->size1 == in.rows());
     assert(out->size2 == in.cols());
@@ -244,52 +244,51 @@ void MinimizerGSL::gslFromEigen(const Eigen::MatrixXd &in, gsl_matrix *out)
             gsl_matrix_set(out, i, j, in(i));
 }
 
-Eigen::MatrixXd MinimizerGSL::covariance()
+Eigen::MatrixXd Minimizer::covariance()
 {
     return _covariance;
 }
 
-void MinimizerGSL::setxTol(double xtol)
+void Minimizer::setxTol(double xtol)
 {
     _xtol = xtol;
 }
 
-void MinimizerGSL::setgTol(double gtol)
+void Minimizer::setgTol(double gtol)
 {
     _gtol = gtol;
 }
 
-void MinimizerGSL::setfTol(double ftol)
+void Minimizer::setfTol(double ftol)
 {
     _ftol = ftol;
 }
 
-Eigen::MatrixXd MinimizerGSL::jacobian()
+Eigen::MatrixXd Minimizer::jacobian()
 {
     return _jacobian;
 }
 
-Eigen::VectorXd MinimizerGSL::params()
+Eigen::VectorXd Minimizer::params()
 {
     return _x;
 }
 
-void MinimizerGSL::setParams(const Eigen::VectorXd &x)
+void Minimizer::setParams(const Eigen::VectorXd &x)
 {
     assert(_numParams == x.size());
     _x = x;
 }
 
-void MinimizerGSL::setWeights(const Eigen::VectorXd &wt)
+void Minimizer::setWeights(const Eigen::VectorXd &wt)
 {
     assert(_numValues == wt.size());
     _wt = wt;
 }
 
-int MinimizerGSL::numIterations()
+int Minimizer::numIterations()
 {
     return _numIter;
 }
-
 
 } // end namespace nsx

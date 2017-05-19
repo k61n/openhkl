@@ -13,8 +13,8 @@
 #include "../instrument/Sample.h"
 #include "../instrument/TransAxis.h"
 #include "../instrument/RotAxis.h"
+#include "../mathematics/Minimizer.h"
 #include "../utils/EigenMatrixOp.h"
-#include "../utils/MinimizerGSL.h"
 #include "../utils/Units.h"
 
 namespace nsx {
@@ -305,7 +305,7 @@ void UBMinimizer::setStartingUBMatrix(const Eigen::Matrix3d& ub)
     setStartingValue(8,ub(2,2));
 }
 
-void UBMinimizer::setMinimizer(const MinimizerGSL& minimizer)
+void UBMinimizer::setMinimizer(const Minimizer& minimizer)
 {
     _minimizer = minimizer;
 }
