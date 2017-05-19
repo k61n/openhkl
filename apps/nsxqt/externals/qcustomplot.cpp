@@ -23,7 +23,7 @@
 **          Version: 1.2.1                                                **
 ****************************************************************************/
 
-#include "Externals/qcustomplot.h"
+#include "externals/qcustomplot.h"
 
 
 

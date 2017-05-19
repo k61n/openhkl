@@ -23,8 +23,6 @@
 #include <QDebug>
 #include <QVector>
 
-#include "Externals/qcustomplot.h"
-
 #include <nsxlib/instrument/Experiment.h>
 
 #include "absorption/AbsorptionDialog.h"
@@ -38,6 +36,7 @@
 #include "dialogs/PeakFitDialog.h"
 #include "dialogs/ScaleDialog.h"
 #include "dialogs/SpaceGroupDialog.h"
+#include "externals/qcustomplot.h"
 #include "DetectorScene.h"
 #include "models/DataItem.h"
 #include "models/DetectorItem.h"

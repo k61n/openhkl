@@ -37,7 +37,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
 
-#include <Externals/qcustomplot.h>
+#include "externals/qcustomplot.h"
 
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/mathematics/Minimizer.h>
