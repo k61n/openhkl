@@ -12,8 +12,8 @@
 
 #include <QDialog>
 
-#include <nsxlib/data/IData.h>
 #include <nsxlib/crystal/SpaceGroup.h>
+#include <nsxlib/data/DataSet.h>
 
 class QModelIndex;
 class QWidget;

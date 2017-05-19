@@ -4,20 +4,19 @@
 #include <boost/test/unit_test.hpp>
 #include <boost/filesystem.hpp>
 
-#include <iostream>
 #include <vector>
 #include <string>
 
 #include <Eigen/Dense>
 
-#include <nsxlib/utils/MinimizerGSL.h>
+#include <nsxlib/mathematics/Minimizer.h>
 
 using namespace nsx;
 using namespace std;
 
 int run_test()
 {
-    std::unique_ptr<IMinimizer> m_gsl;
+    std::unique_ptr<Minimizer> m_gsl;
 
     Eigen::VectorXd x_initial, x_gsl, y, wt;
 
@@ -58,7 +57,7 @@ int run_test()
         return 0;
     };
 
-    m_gsl = std::unique_ptr<IMinimizer>(new MinimizerGSL);
+    m_gsl = std::unique_ptr<Minimizer>(new Minimizer());
 
     m_gsl->initialize(nparams, nvalues);
     m_gsl->setParams(x_initial);
@@ -72,9 +71,6 @@ int run_test()
     BOOST_CHECK_CLOSE(x_gsl(2), 1.0, 1e-6);
 
     Eigen::MatrixXd j_gsl;
-
-    cout << "Number of iterations:" << endl;
-    cout << "    GSL:   " << m_gsl->numIterations() << endl;
 
     return 0;
 }

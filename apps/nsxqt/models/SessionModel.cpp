@@ -33,9 +33,6 @@
  *
  */
 
-#include "ui_MainWindow.h"
-#include "ui_ScaleDialog.h"
-
 #include <fstream>
 #include <memory>
 #include <stdexcept>
@@ -44,24 +41,6 @@
 
 #include <hdf5.h>
 #include <H5Exception.h>
-
-#include <nsxlib/crystal/MergedPeak.h>
-#include <nsxlib/crystal/PeakFit.h>
-#include <nsxlib/crystal/PeakPredictor.h>
-#include <nsxlib/crystal/ResolutionShell.h>
-#include <nsxlib/crystal/RFactor.h>
-#include <nsxlib/crystal/SpaceGroup.h>
-#include <nsxlib/crystal/SpaceGroupSymbols.h>
-#include <nsxlib/data/DataReaderFactory.h>
-#include <nsxlib/data/XDS.h>
-#include <nsxlib/geometry/Ellipsoid.h>
-#include <nsxlib/geometry/NDTree.h>
-#include <nsxlib/instrument/Detector.h>
-#include <nsxlib/instrument/Diffractometer.h>
-#include <nsxlib/instrument/Sample.h>
-#include <nsxlib/instrument/Source.h>
-#include <nsxlib/utils/gcd.h>
-#include <nsxlib/utils/ProgressHandler.h>
 
 #include <QAbstractItemView>
 #include <QDate>
@@ -82,6 +61,23 @@
 #include <QVector>
 
 #include "Externals/qcustomplot.h"
+
+#include <nsxlib/crystal/MergedPeak.h>
+#include <nsxlib/crystal/PeakFit.h>
+#include <nsxlib/crystal/PeakPredictor.h>
+#include <nsxlib/crystal/ResolutionShell.h>
+#include <nsxlib/crystal/RFactor.h>
+#include <nsxlib/crystal/SpaceGroup.h>
+#include <nsxlib/crystal/SpaceGroupSymbols.h>
+#include <nsxlib/data/DataReaderFactory.h>
+#include <nsxlib/data/XDS.h>
+#include <nsxlib/geometry/Ellipsoid.h>
+#include <nsxlib/geometry/NDTree.h>
+#include <nsxlib/instrument/Detector.h>
+#include <nsxlib/instrument/Diffractometer.h>
+#include <nsxlib/instrument/Sample.h>
+#include <nsxlib/instrument/Source.h>
+#include <nsxlib/utils/ProgressHandler.h>
 
 #include "absorption/AbsorptionDialog.h"
 #include "absorption/MCAbsorptionDialog.h"
@@ -106,12 +102,15 @@
 #include "models/PeakListItem.h"
 #include "models/SampleItem.h"
 #include "models/SourceItem.h"
-#include "OpenGL/GLSphere.h"
-#include "OpenGL/GLWidget.h"
+#include "opengl/GLSphere.h"
+#include "opengl/GLWidget.h"
 #include "UnitCellItem.h"
 #include "views/PeakTableView.h"
 #include "views/ProgressView.h"
 #include "views/ReciprocalSpaceViewer.h"
+
+#include "ui_MainWindow.h"
+#include "ui_ScaleDialog.h"
 
 using Octree = nsx::NDTree<double, 3>;
 using Ellipsoid3D = nsx::Ellipsoid<double, 3>;

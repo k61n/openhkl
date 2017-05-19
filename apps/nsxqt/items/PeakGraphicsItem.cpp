@@ -6,7 +6,7 @@
 #include <QWidget>
 
 #include <nsxlib/crystal/Peak3D.h>
-#include <nsxlib/data/IData.h>
+#include <nsxlib/data/DataSet.h>
 #include <nsxlib/geometry/Ellipsoid.h>
 #include <nsxlib/geometry/IntegrationRegion.h>
 #include <nsxlib/utils/Units.h>

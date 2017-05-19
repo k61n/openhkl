@@ -5,7 +5,7 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include <nsxlib/utils/erf_inv.h>
+#include <nsxlib/mathematics/ErfInv.h>
 
 using namespace nsx;
 

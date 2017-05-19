@@ -48,8 +48,6 @@ struct PeakCalc {
     using PeakSet = std::set<std::shared_ptr<Peak3D>>;
     using sptrPeak3D = std::shared_ptr<Peak3D>;
 
-    using IData = DataSet;
-
     using Octree = NDTree<double, 3>;
 
     PeakCalc(double h,double k,double l, double x,double y, double frame); //:

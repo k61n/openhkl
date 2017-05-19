@@ -33,8 +33,8 @@
  *
  */
 
-#include "PeakPredictor.h"
-#include "../data/IData.h"
+#include "../crystal/PeakPredictor.h"
+#include "../data/DataSet.h"
 #include "../geometry/NDTree.h"
 #include "../instrument/Sample.h"
 #include "../instrument/Source.h"

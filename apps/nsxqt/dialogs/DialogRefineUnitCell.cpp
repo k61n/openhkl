@@ -7,7 +7,7 @@
 #include <QLayout>
 #include <QStatusBar>
 
-#include <nsxlib/data/IData.h>
+#include <nsxlib/data/DataSet.h>
 #include <nsxlib/instrument/Axis.h>
 #include <nsxlib/instrument/Detector.h>
 #include <nsxlib/instrument/Diffractometer.h>
@@ -16,7 +16,7 @@
 #include <nsxlib/instrument/Monochromator.h>
 #include <nsxlib/instrument/Sample.h>
 #include <nsxlib/instrument/Source.h>
-#include <nsxlib/utils/MinimizerGSL.h>
+#include <nsxlib/mathematics/Minimizer.h>
 #include <nsxlib/utils/Units.h>
 
 #include "DialogRefineUnitCell.h"
@@ -303,7 +303,7 @@ void DialogRefineUnitCell::refineParameters()
     os.str("");
 
     auto M=_unitCell->getReciprocalStandardM();
-    _minimizer.setMinimizer(new MinimizerGSL());
+    _minimizer.setMinimizer(Minimizer());
     _minimizer.setStartingUBMatrix(M);
 
     int test = _minimizer.run(100);

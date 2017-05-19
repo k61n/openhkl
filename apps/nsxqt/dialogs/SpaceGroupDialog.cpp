@@ -16,7 +16,7 @@
 #include <QString>
 #include <QTreeView>
 
-#include <nsxlib/data/IData.h>
+#include <nsxlib/data/DataSet.h>
 #include <nsxlib/instrument/Sample.h>
 #include <nsxlib/crystal/RFactor.h>
 #include <nsxlib/crystal/SpaceGroup.h>

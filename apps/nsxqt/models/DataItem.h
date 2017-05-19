@@ -1,14 +1,13 @@
 #ifndef NSXQT_DATAITEM_H
 #define NSXQT_DATAITEM_H
 
-#include <nsxlib/data/IData.h>
-
 #include "TreeItem.h"
 
 class NumorItem;
 
 namespace nsx
 {
+class DataSet;
 class Experiment;
 }
 

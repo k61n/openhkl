@@ -37,9 +37,9 @@
 
 #include <Eigen/Eigenvalues>
 
-#include "PeakCalc.h"
-#include "Peak3D.h"
-#include "../data/IData.h"
+#include "../crystal/Peak3D.h"
+#include "../crystal/PeakCalc.h"
+#include "../data/DataSet.h"
 #include "../geometry/Ellipsoid.h"
 #include "../geometry/NDTree.h"
 #include "../instrument/DetectorEvent.h"

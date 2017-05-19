@@ -1,6 +1,6 @@
 #include <nsxlib/chemistry/Material.h>
 #include <nsxlib/crystal/Peak3D.h>
-#include <nsxlib/data/IData.h>
+#include <nsxlib/data/DataSet.h>
 #include <nsxlib/geometry/MCAbsorption.h>
 #include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/instrument/Gonio.h>

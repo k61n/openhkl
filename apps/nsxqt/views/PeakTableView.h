@@ -39,7 +39,7 @@
 #include <QMenu>
 #include <QTableView>
 
-#include <nsxlib/data/IData.h>
+#include <nsxlib/data/DataSet.h>
 #include <nsxlib/utils/Types.h>
 
 #include <MainWindow.h>

@@ -7,7 +7,7 @@
 #include <QIcon>
 #include <QString>
 
-#include <nsxlib/data/IData.h>
+#include <nsxlib/data/DataSet.h>
 #include <nsxlib/instrument/Sample.h>
 #include <nsxlib/utils/ProgressHandler.h>
 #include <nsxlib/utils/Types.h>

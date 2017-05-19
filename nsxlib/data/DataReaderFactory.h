@@ -29,12 +29,12 @@
 #ifndef NSXLIB_DATAREADERFACTORY_H
 #define NSXLIB_DATAREADERFACTORY_H
 
+#include <memory>
 #include <string>
 
+#include "../data/DataSet.h"
 #include "../kernel/Factory.h"
-#include "IData.h"
 #include "../kernel/Singleton.h"
-#include <memory>
 #include "../instrument/Diffractometer.h"
 
 namespace nsx {

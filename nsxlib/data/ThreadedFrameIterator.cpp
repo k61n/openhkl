@@ -1,8 +1,8 @@
 #include "IFrameIterator.h"
-#include "ThreadedFrameIterator.h"
-#include "IData.h"
-
 #include <future>
+
+#include "../data/DataSet.h"
+#include "../data/ThreadedFrameIterator.h"
 
 namespace nsx {
 

@@ -37,8 +37,8 @@
 #include <iostream>
 #include <iomanip>
 
-#include "Profile.h"
-#include "../utils/MinimizerGSL.h"
+#include "../crystal/Profile.h"
+#include "../mathematics/Minimizer.h"
 
 static const double g_pi = double(M_PI);
 
@@ -52,7 +52,7 @@ Profile::Profile(const Lorentzian &lor, const Gaussian &gauss):
 
 bool Profile::fit(const Eigen::VectorXd &y, int max_iter)
 {
-    MinimizerGSL min;
+    Minimizer min;
     Eigen::VectorXd wt;
     wt.resize(y.size());
 

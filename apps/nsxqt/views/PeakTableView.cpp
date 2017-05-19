@@ -29,8 +29,8 @@
  */
 
 #include <cstdio>
-#include <set>
 #include <memory>
+#include <set>
 
 #include <QContextMenuEvent>
 #include <QHeaderView>
@@ -43,7 +43,7 @@
 #include <nsxlib/crystal/Peak3D.h>
 #include <nsxlib/crystal/MergedPeak.h>
 #include <nsxlib/crystal/ResolutionShell.h>
-#include <nsxlib/data/IData.h>
+#include <nsxlib/data/DataSet.h>
 #include <nsxlib/utils/ProgressHandler.h>
 
 #include "dialogs/DialogAutoIndexing.h"

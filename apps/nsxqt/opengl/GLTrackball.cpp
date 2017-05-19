@@ -1,9 +1,9 @@
+#include <cmath>
+
 #include <QtOpenGL>
 
-#include "OpenGL/GLTrackball.h"
+#include "opengl/GLTrackball.h"
 
-
-#include <cmath>
 
 /*
 #ifdef __APPLE__

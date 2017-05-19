@@ -30,6 +30,7 @@
 #define NSXLIB_DATASET_H
 
 #include <memory>
+#include <mutex>
 #include <string>
 #include <set>
 
@@ -37,15 +38,11 @@
 
 #include "../crystal/Peak3D.h"
 #include "../crystal/PeakCalc.h"
+#include "../data/MetaData.h"
 #include "../geometry/AABB.h"
 #include "../instrument/Component.h"
 #include "../instrument/Diffractometer.h"
 #include "../instrument/InstrumentState.h"
-#include "MetaData.h"
-
-#include <mutex>
-#include <future>
-
 #include "../utils/ProgressHandler.h"
 
 namespace nsx {

@@ -2,7 +2,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
-#include <nsxlib/data/IData.h>
+#include <nsxlib/data/DataSet.h>
 #include <nsxlib/instrument/Diffractometer.h>
 
 #include "DataItem.h"

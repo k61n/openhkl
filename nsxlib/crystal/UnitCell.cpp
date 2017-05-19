@@ -2,9 +2,9 @@
 #include <iomanip>
 #include <stdexcept>
 
-#include "UnitCell.h"
+#include "../crystal/UnitCell.h"
+#include "../mathematics/GCD.h"
 #include "../utils/Units.h"
-#include "../utils/gcd.h"
 
 namespace nsx {
 

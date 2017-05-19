@@ -2,7 +2,7 @@
  * nsxtool : Neutron Single Crystal analysis toolkit
  ------------------------------------------------------------------------------------------
  Copyright (C)
- 2017- Laurent C. Chapon, Eric Pellegrini, Jonathan Fisher
+ 2016- Laurent C. Chapon, Eric Pellegrini, Jonathan Fisher
 
  Institut Laue-Langevin
  BP 156
@@ -12,7 +12,7 @@
  chapon[at]ill.fr
  pellegrini[at]ill.fr
 
- Forschungszentrum Juelich GmbH
+ Forshungszentrum Juelich GmbH
  52425 Juelich
  Germany
  j.fisher[at]fz-juelich.de
@@ -33,35 +33,45 @@
  *
  */
 
-#ifndef NSXLIB_SPTR_H
-#define NSXLIB_SPTR_H
+#ifndef NSXLIB_INTERPOLATOR_H
+#define NSXLIB_INTERPOLATOR_H
 
-#include <memory>
+#include <vector>
+
+#include "../mathematics/Round.h"
 
 namespace nsx {
 
-#ifdef NSX_HAS_MAKE_SHARED
-using make_shared = std::make_shared;
-#else
-//! make-shared function
-template<typename T, typename... Args>
-std::shared_ptr<T> make_shared(Args&&... args)
-{
-    return std::shared_ptr<T>(new T(std::forward<Args>(args)...));
-}
-#endif
+template<typename T_>
+T_ interpolate(const std::vector<T_>& elements, double index) {
+    if (index < 0)
+        index = 0;
 
-#ifdef NSX_HAS_MAKE_UNIQUE
-using make_unique = std::make_unique;
-#else
-//! make-unique function (see e.g. http://stackoverflow.com/questions/17902405/how-to-implement-make-unique-function-in-c11)
-template<typename T, typename... Args>
-std::unique_ptr<T> make_unique(Args&&... args)
-{
-    return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+    if (index > elements.size()-1)
+        index = elements.size()-1;
+
+    auto index0 = ifloor(index);
+    auto index1 = ifloor(index+1);
+
+    if (index1 > elements.size()-1)
+        index1 = elements.size()-1;
+
+    double t = index-index0;
+
+
+    assert(index0 >= 0);
+    assert(index1 >= 0);
+
+    assert(index0 < elements.size());
+    assert(index1 < elements.size());
+
+    assert(t >= 0.0);
+    assert(t <= 1.0);
+
+
+    return (1-t)*elements[index0] + t*elements[index1];
 }
-#endif
 
 } // end namespace nsx
 
-#endif // NSXLIB_SPTR_H
+#endif // NSXLIB_INTERPOLATOR_H

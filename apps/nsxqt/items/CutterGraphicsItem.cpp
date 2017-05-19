@@ -5,7 +5,7 @@
 #include <QGraphicsSceneHoverEvent>
 #include <QtDebug>
 
-#include <nsxlib/data/IData.h>
+#include <nsxlib/data/DataSet.h>
 
 #include "items/CutterGraphicsItem.h"
 

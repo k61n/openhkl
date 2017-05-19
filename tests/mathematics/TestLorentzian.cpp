@@ -3,7 +3,7 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include <nsxlib/utils/Lorentzian.h>
+#include <nsxlib/mathematics/Lorentzian.h>
 
 using namespace std;
 using namespace nsx;

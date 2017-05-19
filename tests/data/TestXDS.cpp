@@ -4,11 +4,11 @@
 #include <memory>
 #include <vector>
 
-#include <Eigen/Dense>
-
 #include <boost/test/unit_test.hpp>
 
-#include <nsxlib/data/IData.h>
+#include <Eigen/Dense>
+
+#include <nsxlib/data/DataSet.h>
 #include <nsxlib/data/XDS.h>
 #include <nsxlib/data/DataReaderFactory.h>
 #include <nsxlib/instrument/DiffractometerStore.h>

@@ -6,7 +6,7 @@
 #include <stdexcept>
 
 #include <nsxlib/crystal/UnitCell.h>
-#include <nsxlib/data/IData.h>
+#include <nsxlib/data/DataSet.h>
 #include <nsxlib/instrument/Axis.h>
 #include <nsxlib/instrument/Detector.h>
 #include <nsxlib/instrument/Diffractometer.h>

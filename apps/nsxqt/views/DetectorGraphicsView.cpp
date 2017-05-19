@@ -1,14 +1,14 @@
-#include "DetectorGraphicsView.h"
-#include "DetectorScene.h"
-
-#include <QPainter>
-#include <QToolTip>
-#include <QMouseEvent>
-#include <nsxlib/data/IData.h>
-#include <nsxlib/instrument/Detector.h>
 #include <QApplication>
 #include <QClipboard>
+#include <QMouseEvent>
 #include <QPainter>
+#include <QToolTip>
+
+#include <nsxlib/data/DataSet.h>
+#include <nsxlib/instrument/Detector.h>
+
+#include "DetectorGraphicsView.h"
+#include "DetectorScene.h"
 
 DetectorGraphicsView::DetectorGraphicsView(QWidget* parent) : QGraphicsView(parent), _scene(new DetectorScene(this))
 {

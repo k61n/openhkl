@@ -41,11 +41,10 @@
 #include "../instrument/Detector.h"
 #include "../instrument/Sample.h"
 #include "../instrument/Source.h"
+#include "../mathematics/Minimizer.h"
 #include "../utils/LMFunctor.h"
 
 namespace nsx {
-
-class IMinimizer;
 
 /** @brief UB functor is used to refine UB-matrix and instrument offsets
  */
@@ -203,13 +202,13 @@ public:
     const UBSolution& getSolution() const;
 
     //! Set the minimizer
-    void setMinimizer(IMinimizer* minimizer);
+    void setMinimizer(const Minimizer& minimizer);
 
 private:
     UBFunctor _functor;
     UBSolution _solution;
     std::map<unsigned int,double> _start;
-    IMinimizer* _minimizer;
+    Minimizer _minimizer;
 
 };
 

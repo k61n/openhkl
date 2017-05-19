@@ -39,8 +39,8 @@
 
 #include <Externals/qcustomplot.h>
 
-#include <nsxlib/data/IData.h>
-#include <nsxlib/utils/MinimizerGSL.h>
+#include <nsxlib/data/DataSet.h>
+#include <nsxlib/mathematics/Minimizer.h>
 
 #include "ColorMap.h"
 #include "dialogs/PeakFitDialog.h"
@@ -273,7 +273,7 @@ void PeakFitDialog::on_runFitButton_clicked()
         return;
     }
 
-    nsx::MinimizerGSL min;
+    nsx::Minimizer min;
 
      if (_peakFit->fit(min) ) {
         qDebug() << "Fit converged!";

@@ -5,7 +5,7 @@
 #include <QStandardItem>
 #include <QString>
 
-#include <nsxlib/data/IData.h>
+#include <nsxlib/data/DataSet.h>
 #include <nsxlib/data/DataReaderFactory.h>
 #include <nsxlib/data/RawDataReader.h>
 #include <nsxlib/instrument/Experiment.h>

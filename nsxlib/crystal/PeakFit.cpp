@@ -36,12 +36,12 @@
 #include <cmath>
 #include <stdexcept>
 
-#include "PeakFit.h"
+#include "../crystal/PeakFit.h"
+#include "../data/DataSet.h"
 #include "../geometry/IntegrationRegion.h"
-#include "../data/IData.h"
-#include "../utils/IMinimizer.h"
-#include "../utils/Round.h"
-#include "../utils/Interpolator.h"
+#include "../mathematics/Interpolator.h"
+#include "../mathematics/Minimizer.h"
+#include "../mathematics/Round.h"
 
 namespace nsx {
 
@@ -408,7 +408,7 @@ Eigen::VectorXd PeakFit::defaultParams() const
     return p;
 }
 
-bool PeakFit::fit(IMinimizer& minimizer)
+bool PeakFit::fit(Minimizer& minimizer)
 {
     auto min_func = [this](const Eigen::VectorXd& par, Eigen::VectorXd& res) -> int
     {

@@ -1,9 +1,9 @@
-#include <nsxlib/data/IData.h>
+#include <nsxlib/data/DataSet.h>
 
 #include "LatticeIndexer.h"
-#include "OpenGL/GLWidget.h"
-#include "OpenGL/GLSphere.h"
-#include "OpenGL/GLReciprocalLattice.h"
+#include "opengl/GLWidget.h"
+#include "opengl/GLSphere.h"
+#include "opengl/GLReciprocalLattice.h"
 
 #include "ui_LatticeIndexer.h"
 
