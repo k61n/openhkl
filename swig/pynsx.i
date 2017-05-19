@@ -142,7 +142,7 @@ namespace property_tree=boost::property_tree;
 #include "geometry/IntegrationRegion.h"
 
 #include "data/XDS.h"
-#include "data/IData.h"
+#include "data/DataSet.h"
 #include "data/MetaData.h"
 #include "data/ILLDataReader.h"
 #include "data/IDataReader.h"
