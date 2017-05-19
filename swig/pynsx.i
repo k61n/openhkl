@@ -180,7 +180,7 @@ namespace property_tree=boost::property_tree;
 #include "instrument/AxisFactory.h"
 #include "instrument/RotAxis.h"
 #include "physics/PhysicalUnit.h"
-#include "imaging/FrameFilter.h"
+//#include "imaging/FrameFilter.h"
 #include "imaging/ConstantKernel.h"
 #include "imaging/KernelFactory.h"
 #include "imaging/Convolver.h"
@@ -371,7 +371,7 @@ namespace nsx {
 
 %include "instrument/DiffractometerStore.h"
 
-%include "imaging/FrameFilter.h"
+//%include "imaging/FrameFilter.h"
 %include "imaging/ConstantKernel.h"
 %include "imaging/KernelFactory.h"
 %include "imaging/ConvolutionKernel.h"
