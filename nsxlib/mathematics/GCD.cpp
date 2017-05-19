@@ -33,7 +33,7 @@
  *
  */
 
-#include "gcd.h"
+#include "GCD.h"
 
 namespace nsx {
 
