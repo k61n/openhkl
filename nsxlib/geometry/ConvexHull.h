@@ -32,18 +32,17 @@
 
 #include <array>
 #include <cmath>
-#include <iostream>
 #include <iterator>
 #include <list>
+#include <stdexcept>
 
 #include <Eigen/Dense>
 
-#include "AABB.h"
-#include "Edge.h"
-#include "Vertex.h"
-#include "Face.h"
-#include "Triangle.h"
-#include "../kernel/Error.h"
+#include "../geometry/AABB.h"
+#include "../geometry/Edge.h"
+#include "../geometry/Vertex.h"
+#include "../geometry/Face.h"
+#include "../geometry/Triangle.h"
 
 namespace nsx {
 
@@ -421,7 +420,7 @@ typename ConvexHull<T>::pVertex ConvexHull<T>::addVertex(const vector3& coords)
     for (const auto& v : _vertices)
     {
         if (std::abs(coords[0]-v->_coords[0])<1.0e-6 && std::abs(coords[1]-v->_coords[1])<1.0e-6 && std::abs(coords[2]-v->_coords[2])<1.0e-6)
-            throw Error<ConvexHull>("Duplicate vertex (within 1.0e6 tolerance).");
+            throw std::runtime_error("Duplicate vertex (within 1.0e6 tolerance).");
     }
 
     pVertex v=new Vertex<T>(coords);
@@ -471,7 +470,7 @@ template <typename T>
 bool ConvexHull<T>::findInitialVertices(pVertex& v0, pVertex& v1, pVertex& v2) const
 {
     if (_vertices.size()<3)
-        throw Error<ConvexHull>("Can not set the initial polytope with less than 3 vertices.");
+        throw std::runtime_error("Can not set the initial polytope with less than 3 vertices.");
 
     for (auto it1=_vertices.begin();it1!=_vertices.end();++it1)
     {
@@ -497,7 +496,7 @@ void ConvexHull<T>::initalizeHull()
     // Find 3 non colinear vertices
     Vertex<T> *v0(nullptr),*v1(nullptr),*v2(nullptr);
     if (!findInitialVertices(v0,v1,v2))
-        throw Error<ConvexHull>("All vertices are coplanar 1.");
+        throw std::runtime_error("All vertices are coplanar 1.");
 
     // Mark the three non colinear vertices found as processed
     v0->_mark=true;
@@ -592,7 +591,7 @@ void ConvexHull<T>::updateHull()
     }
 
     if (_vertices.size()<4)
-        throw Error<ConvexHull>("Not enough vertices to build a convex hull.");
+        throw std::runtime_error("Not enough vertices to build a convex hull.");
 
     auto it=_vertices.begin();
     while(it!=_vertices.end())
@@ -966,7 +965,7 @@ template<typename T>
 std::vector<Triangle > ConvexHull<T>::createFaceCache(const matrix33& rotation) const
 {
     if (_vertices.size()<4)
-        throw Error<ConvexHull<T> >("Hull is flat or undefined, can not construct faces information");
+        throw std::runtime_error("Hull is flat or undefined, can not construct faces information");
 
     std::vector<Triangle > triangles;
     triangles.reserve(_faces.size());

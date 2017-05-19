@@ -1,14 +1,11 @@
 #include <memory>
 
-#include <boost/foreach.hpp>
-
 #include <Eigen/Dense>
 
-#include "CylindricalDetector.h"
-#include "../kernel/Error.h"
-#include "Gonio.h"
-#include "RotAxis.h"
-#include "TransAxis.h"
+#include "../instrument/CylindricalDetector.h"
+#include "../instrument/Gonio.h"
+#include "../instrument/RotAxis.h"
+#include "../instrument/TransAxis.h"
 #include "../utils/Units.h"
 
 namespace nsx {

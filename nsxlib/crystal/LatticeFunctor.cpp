@@ -1,15 +1,15 @@
 #include <cmath>
+#include <stdexcept>
 
-#include <Eigen/Geometry>
+#include <Eigen/Dense>
 
+#include "../crystal/Peak3D.h"
+#include "../crystal/UnitCell.h"
+#include "../crystal/LatticeFunctor.h"
 #include "../instrument/Detector.h"
-#include "../kernel/Error.h"
 #include "../instrument/Gonio.h"
-#include "LatticeFunctor.h"
 #include "../instrument/Sample.h"
 #include "../instrument/Source.h"
-#include "../crystal/UnitCell.h"
-#include "../crystal/Peak3D.h"
 
 namespace nsx {
 
@@ -56,7 +56,7 @@ LatticeFunctor::~LatticeFunctor()
 int LatticeFunctor::operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const
 {
     if (!_detector || !_sample || !_source)
-        throw Error<LatticeFunctor>("A detector, sample and source must be specified prior to calculate residuals.");
+        throw std::runtime_error("A detector, sample and source must be specified prior to calculate residuals.");
 
     Eigen::VectorXd xlocal(x);
 

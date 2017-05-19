@@ -1,5 +1,5 @@
 #include <initializer_list>
-#include <iostream>
+#include <stdexcept>
 
 #include <boost/filesystem.hpp>
 #include <boost/foreach.hpp>
@@ -7,9 +7,8 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
-#include "Diffractometer.h"
-#include "DiffractometerStore.h"
-#include "../kernel/Error.h"
+#include "../instrument/Diffractometer.h"
+#include "../instrument/DiffractometerStore.h"
 #include "../utils/Path.h"
 
 namespace nsx {
@@ -33,7 +32,7 @@ sptrDiffractometer DiffractometerStore::buildDiffractometer(const std::string& n
         xml::read_xml(diffractometersPath.string(),root);
     }
     catch (const std::runtime_error& error)	{
-        throw Error<DiffractometerStore>(error.what());
+        throw std::runtime_error(error.what());
     }
 
     const property_tree::ptree& instrumentNode=root.get_child("instrument");

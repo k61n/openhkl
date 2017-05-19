@@ -28,13 +28,14 @@
  */
 
 #include <algorithm>
+#include <stdexcept>
 #include <vector>
-#include "../kernel/Error.h"
-#include "SpaceGroup.h"
-#include "SpaceGroupSymbols.h"
-#include "Peak3D.h"
 
 #include <boost/algorithm/string.hpp>
+
+#include "../crystal/SpaceGroup.h"
+#include "../crystal/SpaceGroupSymbols.h"
+#include "../crystal/Peak3D.h"
 
 using std::string;
 using std::vector;
@@ -49,7 +50,7 @@ SpaceGroup::SpaceGroup(const std::string& symbol)
     // Get a reduced version of the spacegroup symbol
     _symbol = sg->getReducedSymbol(symbol);
     if (!sg->getGenerators(_symbol,_generators)) {
-        throw Error<SpaceGroup>("Unknown space group: " + _symbol + "(" + symbol + ")");
+        throw std::runtime_error("Unknown space group: " + _symbol + "(" + symbol + ")");
     }
     generateGroupElements();
 }
@@ -60,7 +61,7 @@ SpaceGroup::SpaceGroup(std::string symbol, std::string generators):
 {
     SpaceGroupSymbols* sg = SpaceGroupSymbols::Instance();
     if (sg->getGenerators(_symbol,_generators)) {
-        throw Error<SpaceGroup>("Space Group already registered");
+        throw std::runtime_error("Space Group already registered");
     }
     sg->addSpaceGroup(_symbol,_generators);
     generateGroupElements();

@@ -31,9 +31,9 @@
 #define NSXLIB_LATTICEFUNCTOR_H
 
 #include <map>
+#include <memory>
 #include <set>
 #include <vector>
-#include <memory>
 
 #include "../crystal/Peak3D.h"
 #include "../utils/LMFunctor.h"

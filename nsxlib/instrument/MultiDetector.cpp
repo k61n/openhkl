@@ -1,15 +1,13 @@
-#include <limits.h>
+#include <limits>
 #include <memory>
-
-#include <boost/foreach.hpp>
+#include <stdexcept>
 
 #include <Eigen/Dense>
 
-#include "DetectorFactory.h"
-#include "../kernel/Error.h"
-#include "Gonio.h"
-#include "MonoDetector.h"
-#include "MultiDetector.h"
+#include "../instrument/DetectorFactory.h"
+#include "../instrument/Gonio.h"
+#include "../instrument/MonoDetector.h"
+#include "../instrument/MultiDetector.h"
 
 namespace nsx {
 
@@ -35,7 +33,7 @@ MultiDetector::MultiDetector(const std::string& name) : Composite<Detector,const
 MultiDetector::MultiDetector(const proptree::ptree& node) : Composite<Detector,const proptree::ptree&>(node)
 {
     // Set each subdetector of the multi detector from the property tree "detector" subnodes
-    BOOST_FOREACH(const property_tree::ptree::value_type& v, node)
+    for (const auto& v : node)
     {
         if (v.first.compare("detector")==0)
         {
@@ -43,7 +41,7 @@ MultiDetector::MultiDetector(const proptree::ptree& node) : Composite<Detector,c
             MonoDetector* detector = dynamic_cast<MonoDetector*>(Detector::create(v.second));
 
             if (!detector)
-                throw Error<MultiDetector>("NSXTool does not support nested multi detector.");
+                throw std::runtime_error("NSXTool does not support nested multi detector.");
 
             const property_tree::ptree& pixelOriginNode=v.second.get_child("origin");
             double opx=pixelOriginNode.get<double>("pixel_x");

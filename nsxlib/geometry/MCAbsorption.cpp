@@ -5,10 +5,9 @@
  *      Author: chapon
  */
 
-#include <iostream>
 #include <ctime>
+#include <stdexcept>
 
-#include "../kernel/Error.h"
 #include "MCAbsorption.h"
 
 namespace nsx {
@@ -35,7 +34,7 @@ double MCAbsorption::run(unsigned int nIterations, const Eigen::Vector3d& outV, 
     TrianglesList faces=_sample->createFaceCache(sampleOrientation);
 
     if (faces.empty())
-        throw Error<MCAbsorption>("No sample defined.");
+        throw std::runtime_error("No sample defined.");
 
     Eigen::Vector3d dir(0,1,0);
 

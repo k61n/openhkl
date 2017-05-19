@@ -1,10 +1,10 @@
 #include <cstdlib>
+#include <fstream>
+#include <stdexcept>
 
 #include <boost/filesystem.hpp>
-#include <fstream>
 
 #include "NSXConfig.h"
-#include "../kernel/Error.h"
 #include "../utils/Path.h"
 
 namespace nsx {
@@ -38,7 +38,7 @@ std::string Path::getHomeDirectory()
         }
     }
     // Otherwise throw and error
-    throw Error<Path>("The home directory could not be defined");
+    throw std::runtime_error("The home directory could not be defined");
 }
 
 std::string Path::expandUser(std::string path)
@@ -92,7 +92,7 @@ std::string Path::getApplicationDataPath()
 
     // did not find a match
     if ( match == "" ) {
-        throw Error<Path>("The application data directory could not be defined");
+        throw std::runtime_error("The application data directory could not be defined");
     }
     return boost::filesystem::path(match).string();
 }

@@ -4,15 +4,14 @@
 #include <unsupported/Eigen/NonLinearOptimization>
 #include <unsupported/Eigen/NumericalDiff>
 
+#include "../crystal/LatticeMinimizer.h"
+#include "../crystal/Peak3D.h"
 #include "../instrument/Axis.h"
 #include "../instrument/Detector.h"
-#include "../utils/EigenMatrixOp.h"
-#include "../kernel/Error.h"
 #include "../instrument/Gonio.h"
-#include "LatticeMinimizer.h"
 #include "../instrument/Sample.h"
 #include "../instrument/Source.h"
-#include "../crystal/Peak3D.h"
+#include "../utils/EigenMatrixOp.h"
 
 namespace nsx {
 
