@@ -37,7 +37,7 @@
 #include <stdexcept>
 
 #include "../crystal/PeakFit.h"
-#include "../data/IData.h"
+#include "../data/DataSet.h"
 #include "../geometry/IntegrationRegion.h"
 #include "../mathematics/Interpolator.h"
 #include "../mathematics/Minimizer.h"

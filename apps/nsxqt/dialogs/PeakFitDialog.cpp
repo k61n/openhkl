@@ -39,7 +39,7 @@
 
 #include <Externals/qcustomplot.h>
 
-#include <nsxlib/data/IData.h>
+#include <nsxlib/data/DataSet.h>
 #include <nsxlib/mathematics/Minimizer.h>
 
 #include "ColorMap.h"

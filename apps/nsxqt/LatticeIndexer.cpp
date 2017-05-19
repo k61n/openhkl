@@ -1,4 +1,4 @@
-#include <nsxlib/data/IData.h>
+#include <nsxlib/data/DataSet.h>
 
 #include "LatticeIndexer.h"
 #include "opengl/GLWidget.h"

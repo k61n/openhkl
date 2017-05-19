@@ -14,7 +14,7 @@
 #include <QtDebug>
 
 #include <nsxlib/crystal/AutoIndexer.h>
-#include <nsxlib/data/IData.h>
+#include <nsxlib/data/DataSet.h>
 #include <nsxlib/instrument/Experiment.h>
 #include <nsxlib/utils/Units.h>
 #include <nsxlib/utils/ProgressHandler.h>

@@ -8,7 +8,7 @@
 #include <QtDebug>
 #include <QToolTip>
 
-#include <nsxlib/data/IData.h>
+#include <nsxlib/data/DataSet.h>
 #include <nsxlib/instrument/Detector.h>
 #include <nsxlib/instrument/DetectorEvent.h>
 #include <nsxlib/instrument/Gonio.h>

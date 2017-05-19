@@ -12,7 +12,7 @@
 #include <nsxlib/data/DataReaderFactory.h>
 #include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/instrument/DiffractometerStore.h>
-#include <nsxlib/data/IData.h>
+#include <nsxlib/data/DataSet.h>
 
 #include "NumorsConversionDialog.h"
 #include "ui_NumorsConversionDialog.h"

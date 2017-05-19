@@ -37,25 +37,23 @@
 #include <cmath>
 #include <stdexcept>
 
+#include "../crystal/Peak3D.h"
+#include "../crystal/PeakIntegrator.h"
+#include "../data/DataSet.h"
+#include "../data/IFrameIterator.h"
+#include "../geometry/Blob3D.h"
+#include "../geometry/IShape.h"
+#include "../geometry/Ellipsoid.h"
 #include "../instrument/ComponentState.h"
 #include "../instrument/InstrumentState.h"
 #include "../instrument/DetectorEvent.h"
 #include "../instrument/Detector.h"
 #include "../instrument/Diffractometer.h"
 #include "../instrument/Gonio.h"
-#include "../data/IData.h"
-#include "../geometry/IShape.h"
-#include "Peak3D.h"
-#include "PeakIntegrator.h"
 #include "../instrument/Sample.h"
 #include "../instrument/Source.h"
 #include "../utils/Units.h"
-#include "../geometry/Blob3D.h"
-#include "../data/IData.h"
 #include "../utils/Types.h"
-
-#include "../geometry/Ellipsoid.h"
-#include "../data/IFrameIterator.h"
 
 namespace nsx {
 

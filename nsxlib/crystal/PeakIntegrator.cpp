@@ -28,9 +28,9 @@
  *
  */
 
-#include "PeakIntegrator.h"
-#include "Intensity.h"
-#include "../data/IData.h"
+#include "../crystal/Intensity.h"
+#include "../crystal/PeakIntegrator.h"
+#include "../data/DataSet.h"
 
 namespace nsx {
 

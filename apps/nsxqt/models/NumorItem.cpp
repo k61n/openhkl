@@ -2,8 +2,8 @@
 
 #include <QJsonArray>
 
+#include <nsxlib/data/DataSet.h>
 #include <nsxlib/instrument/Experiment.h>
-#include <nsxlib/data/IData.h>
 
 #include "models/NumorItem.h"
 #include "tree/NumorPropertyWidget.h"

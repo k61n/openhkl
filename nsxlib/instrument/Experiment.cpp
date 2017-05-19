@@ -2,12 +2,12 @@
 #include <stdexcept>
 #include <utility>
 
-#include "Monochromator.h"
-#include "Diffractometer.h"
-#include "DiffractometerStore.h"
-#include "Experiment.h"
-#include "../data/IData.h"
-#include "Source.h"
+#include "../data/DataSet.h"
+#include "../instrument/Experiment.h"
+#include "../instrument/Diffractometer.h"
+#include "../instrument/DiffractometerStore.h"
+#include "../instrument/Monochromator.h"
+#include "../instrument/Source.h"
 
 namespace nsx {
 

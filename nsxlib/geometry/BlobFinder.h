@@ -31,24 +31,21 @@
 #define NSXLIB_BLOBFINDER_H
 
 #include <algorithm>
+#include <iterator>
 #include <map>
+#include <memory>
 #include <queue>
-#include <stdexcept>
 #include <unordered_map>
 #include <vector>
-#include <iterator>
-#include <memory>
+#include <stdexcept>
 
-#include "Blob2D.h"
-#include "Blob3D.h"
-#include "Ellipsoid.h"
-#include "IShape.h"
-
-#include "../utils/Types.h"
-
-#include "../data/IData.h"
-
+#include "../data/DataSet.h"
+#include "../geometry/Blob2D.h"
+#include "../geometry/Blob3D.h"
+#include "../geometry/Ellipsoid.h"
+#include "../geometry/IShape.h"
 #include "../utils/ProgressHandler.h"
+#include "../utils/Types.h"
 
 namespace nsx {
 

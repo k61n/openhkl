@@ -14,7 +14,7 @@
 
 #include "../crystal/PeakIntegrator.h"
 #include "../data/BasicFrameIterator.h"
-#include "../data/IData.h"
+#include "../data/DataSet.h"
 #include "../data/IDataReader.h"
 #include "../data/IFrameIterator.h"
 #include "../data/ThreadedFrameIterator.h"

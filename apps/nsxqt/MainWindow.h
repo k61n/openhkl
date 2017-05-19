@@ -9,7 +9,7 @@
 #include <QMenu>
 #include <QProgressBar>
 
-#include <nsxlib/data/IData.h>
+#include <nsxlib/data/DataSet.h>
 #include <nsxlib/instrument/Experiment.h>
 #include <nsxlib/imaging/Convolver.h>
 

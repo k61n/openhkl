@@ -4,13 +4,14 @@
 #ifndef NSXLIB_THREADEDFRAMEITERATOR_H
 #define NSXLIB_THREADEDFRAMEITERATOR_H
 
-#include "IData.h"
-#include "IFrameIterator.h"
-#include "../utils/Types.h"
-
 #include <future>
 
+#include "../data/IFrameIterator.h"
+#include "../utils/Types.h"
+
 namespace nsx {
+
+class DataSet;
 
 class ThreadedFrameIterator final: public IFrameIterator {
 public:

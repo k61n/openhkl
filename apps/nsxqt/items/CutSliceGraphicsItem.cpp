@@ -9,8 +9,8 @@
 
 #include <Eigen/Dense>
 
+#include <nsxlib/data/DataSet.h>
 #include <nsxlib/instrument/Detector.h>
-#include <nsxlib/data/IData.h>
 
 #include "DetectorScene.h"
 #include "CutSliceGraphicsItem.h"

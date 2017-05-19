@@ -10,7 +10,7 @@
 #include <QWidget>
 #include <QtDebug>
 
-#include <nsxlib/data/IData.h>
+#include <nsxlib/data/DataSet.h>
 #include <nsxlib/geometry/AABB.h>
 
 #include "DetectorScene.h"

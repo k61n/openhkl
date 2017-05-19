@@ -12,13 +12,13 @@
 
 #include "Mosaic.h"
 
+#include "../data/DataSet.h"
 #include "../geometry/BlobFinder.h"
 #include "../geometry/Blob3D.h"
 #include "../instrument/Detector.h"
 #include "../instrument/Diffractometer.h"
 #include "../instrument/DiffractometerStore.h"
 #include "../instrument/Gonio.h"
-#include "../data/IData.h"
 #include "../instrument/Sample.h"
 #include "../instrument/Source.h"
 #include "../utils/Units.h"

@@ -2,8 +2,8 @@
 #include <QMessageBox>
 #include <QSortFilterProxyModel>
 
+#include <nsxlib/data/DataSet.h>
 #include <nsxlib/instrument/Gonio.h>
-#include <nsxlib/data/IData.h>
 #include <nsxlib/chemistry/Material.h>
 #include <nsxlib/crystal/Peak3D.h>
 #include <nsxlib/crystal/SpaceGroupSymbols.h>

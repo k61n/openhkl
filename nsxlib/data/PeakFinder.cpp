@@ -3,7 +3,7 @@
 #include <vector>
 
 #include "../crystal/Peak3D.h"
-#include "../data/IData.h"
+#include "../data/DataSet.h"
 #include "../data/IFrameIterator.h"
 #include "../data/PeakFinder.h"
 #include "../geometry/BlobFinder.h"

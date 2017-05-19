@@ -1,6 +1,6 @@
 #include <QWidget>
 
-#include <nsxlib/data/IData.h>
+#include <nsxlib/data/DataSet.h>
 #include <nsxlib/data/MetaData.h>
 
 #include "models/NumorItem.h"

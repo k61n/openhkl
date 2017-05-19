@@ -2,9 +2,9 @@
 
 #include <memory>
 
-#include <nsxlib/data/IData.h>
-
 #include <QSortFilterProxyModel>
+
+#include <nsxlib/data/DataSet.h>
 
 #include "models/CollectedPeaksModel.h"
 #include "models/ExperimentItem.h"
