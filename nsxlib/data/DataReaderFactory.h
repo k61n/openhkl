@@ -39,8 +39,6 @@
 
 namespace nsx {
 
-using ptrInstrument = typename std::shared_ptr<Diffractometer>;
-
 /** \brief DataReaderFactory. All IData formats must register their "create" method with the factory in order to
  * choose the correct DataReader at runtime. Reader selection is based on the extension of the datafile.
  *

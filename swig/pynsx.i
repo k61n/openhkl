@@ -94,7 +94,6 @@ namespace property_tree=boost::property_tree;
 #include "crystal/AutoIndexer.h"
 #include "crystal/Profile.h"
 #include "crystal/Intensity.h"
-#include "crystal/LatticeFinder.h"
 #include "crystal/PeakIntegrator.h"
 #include "crystal/LatticeFunctor.h"
 #include "crystal/UnitCell.h"
@@ -105,7 +104,6 @@ namespace property_tree=boost::property_tree;
 
 #include "crystal/PeakRecord.h"
 #include "crystal/Mosaic.h"
-#include "crystal/PeakRejector.h"
 #include "crystal/PeakFit.h"
 #include "crystal/FFTIndexing.h"
 
@@ -131,7 +129,6 @@ namespace property_tree=boost::property_tree;
 #include "geometry/ConvexHull.h"
 
 #include "geometry/BlobFinder.h"
-#include "geometry/Cluster.h"
 
 #include "geometry/AABB.h"
 #include "geometry/Edge.h"
@@ -432,7 +429,6 @@ namespace nsx {
  //%include "crystal/AutoIndexer.h"
 %include "crystal/Profile.h"
 %include "crystal/Intensity.h"
-%include "crystal/LatticeFinder.h"
 %include "crystal/PeakIntegrator.h"
 %include "crystal/LatticeFunctor.h"
 %include "crystal/UnitCell.h"
@@ -442,7 +438,6 @@ namespace nsx {
 %include "crystal/PeakCalc.h"
 %include "crystal/PeakRecord.h"
 %include "crystal/Mosaic.h"
-%include "crystal/PeakRejector.h"
 %include "crystal/PeakFit.h"
 %include "crystal/FFTIndexing.h"
 %include "crystal/MergedPeak.h"
@@ -466,7 +461,6 @@ namespace nsx {
 %include "geometry/NDTree.h"
 %include "geometry/ConvexHull.h"
 %include "geometry/BlobFinder.h"
-%include "geometry/Cluster.h"
 %include "geometry/AABB.h"
 %include "geometry/Edge.h"
 %include "geometry/Blob3D.h"

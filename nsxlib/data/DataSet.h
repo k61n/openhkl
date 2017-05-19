@@ -49,20 +49,14 @@ namespace nsx {
 
 class Component;
 
-using RowMatrixi = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
-using RowMatrixd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
-
 class IFrameIterator;
 class ThreadedFrameIterator;
 class BasicFrameIterator;
 class IDataReader;
+class DataSet;
 
 using FrameIteratorCallback = std::function<IFrameIterator*(DataSet&, int)>;
 
-/*! \brief Interface for diffraction data
- *
- * Base interface for all diffraction data. IData handles the IO
- */
 class DataSet {
 
 public:
