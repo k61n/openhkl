@@ -1,11 +1,11 @@
 #include <cassert>
 #include <cmath>
+#include <stdexcept>
 
 #include <Eigen/Dense>
 
-#include "Peak3D.h"
-#include "UBMinimizer.h"
-#include "../kernel/Error.h"
+#include "../crystal/Peak3D.h"
+#include "../crystal/UBMinimizer.h"
 #include "../instrument/Component.h"
 #include "../instrument/ComponentState.h"
 #include "../instrument/Detector.h"
@@ -48,7 +48,7 @@ UBFunctor& UBFunctor::operator=(const UBFunctor& other)
 int UBFunctor::operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const
 {
     if (!_detector || !_sample || !_source) {
-        throw Error<UBFunctor>("A detector, sample and source must be specified prior to calculate residuals.");
+        throw std::runtime_error("A detector, sample and source must be specified prior to calculate residuals.");
     }
 
     // First 9 parameters are UB matrix
@@ -151,7 +151,7 @@ void UBFunctor::resetParameters()
 void UBFunctor::refineParameter(unsigned int idx, bool refine)
 {
     if (!_detector || !_sample || !_source) {
-        throw Error<UBFunctor>("A detector, sample and source must be specified prior to fixing parameters.");
+        throw std::runtime_error("A detector, sample and source must be specified prior to fixing parameters.");
     }
     if (idx >= static_cast<unsigned int>(inputs())) {
         return;

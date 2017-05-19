@@ -1,10 +1,11 @@
 #define BOOST_TEST_MODULE "Test Convex Hull"
 #define BOOST_TEST_DYN_LINK
 
+#include <stdexcept>
+
 #include <boost/test/unit_test.hpp>
 
 #include <nsxlib/geometry/ConvexHull.h>
-#include <nsxlib/kernel/Error.h>
 #include <nsxlib/geometry/Face.h>
 
 using namespace nsx;
@@ -39,20 +40,20 @@ BOOST_AUTO_TEST_CASE(Test_ConvexHull)
     CHullDouble chull;
 
     // Checks that the hull can not be updated with 0 point to be processed
-    BOOST_CHECK_THROW(chull.updateHull(),Error<CHullDouble>);
+    BOOST_CHECK_THROW(chull.updateHull(),std::runtime_error);
 
     // Fill it with three vertices to form a tetrahedron
     chull.addVertex(Eigen::Vector3d( 0, 0, 0));
     // Checks that the hull can not be updated with only 1 point to be processed
-    BOOST_CHECK_THROW(chull.updateHull(),Error<CHullDouble>);
+    BOOST_CHECK_THROW(chull.updateHull(),std::runtime_error);
 
     chull.addVertex(Eigen::Vector3d(10, 0, 0));
     // Checks that the hull can not be updated with only 2 point to be processed
-    BOOST_CHECK_THROW(chull.updateHull(),nsx::Error<CHullDouble>);
+    BOOST_CHECK_THROW(chull.updateHull(),std::runtime_error);
 
     chull.addVertex(Eigen::Vector3d( 0,10, 0));
     // Checks that the hull can not be updated with only 3 point to be processed
-    BOOST_CHECK_THROW(chull.updateHull(),Error<CHullDouble>);
+    BOOST_CHECK_THROW(chull.updateHull(),std::runtime_error);
 
     chull.addVertex(Eigen::Vector3d( 0, 0,10));
     // Checks that with 4 vertices the hull can be built

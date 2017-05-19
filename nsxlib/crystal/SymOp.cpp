@@ -1,13 +1,10 @@
 #include <cmath>
+#include <stdexcept>
 #include <sstream>
 
+#include "../crystal/SymOp.h"
 #include "../utils/AffineTransformParser.h"
-#include "../kernel/Error.h"
-#include "SymOp.h"
 #include "../utils/DoubleToFraction.h"
-
-// This include has to be AFTER the std::string include otherwise build error
-#include <boost/algorithm/string.hpp>
 
 namespace nsx {
 
@@ -18,7 +15,7 @@ SymOp::SymOp(std::string generator)
 
     bool match=qi::phrase_parse(generator.begin(),generator.end(),parser,qi::blank, _matrix);
     if (!match)
-        throw Error<SymOp>("Invalid generator expression: "+ generator);
+        throw std::runtime_error("Invalid generator expression: "+ generator);
 }
 
 SymOp::SymOp(const affineTransformation& symmetryOperation) : _matrix(symmetryOperation)
@@ -169,7 +166,7 @@ int SymOp::getAxisOrder() const
     }
 
     if (order == 0)
-        throw Error<SymOp>("Invalid axis order.");
+        throw std::runtime_error("Invalid axis order.");
 
     return order;
 }

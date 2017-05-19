@@ -2,11 +2,10 @@
 
 #include <Eigen/Dense>
 
-#include "../kernel/Error.h"
-#include "FlatDetector.h"
-#include "Gonio.h"
-#include "RotAxis.h"
-#include "TransAxis.h"
+#include "../instrument/FlatDetector.h"
+#include "../instrument/Gonio.h"
+#include "../instrument/RotAxis.h"
+#include "../instrument/TransAxis.h"
 #include "../utils/Units.h"
 
 namespace nsx {

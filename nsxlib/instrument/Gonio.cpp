@@ -1,14 +1,11 @@
 #include <algorithm>
 #include <stdexcept>
 
-#include <boost/foreach.hpp>
-
 #include <Eigen/Geometry>
 
-#include "../kernel/Error.h"
-#include "Gonio.h"
-#include "RotAxis.h"
-#include "TransAxis.h"
+#include "../instrument/Gonio.h"
+#include "../instrument/RotAxis.h"
+#include "../instrument/TransAxis.h"
 #include "../utils/Units.h"
 
 namespace nsx {
@@ -36,7 +33,7 @@ Gonio::Gonio(const proptree::ptree& node)
     _label=node.get<std::string>("name","");
 
     // Set the axis of the detector goniometer from the XML node
-    BOOST_FOREACH(const proptree::ptree::value_type& v, node)
+    for(const auto& v : node)
     {
         if (v.first.compare("axis")==0)
             addAxis(Axis::create(v.second));

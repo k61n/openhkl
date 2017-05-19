@@ -12,7 +12,6 @@
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
 
-#include <nsxlib/crystal/Indexer.h>
 #include <nsxlib/crystal/PeakCalc.h>
 #include <nsxlib/crystal/UnitCell.h>
 
@@ -124,7 +123,6 @@ private:
     std::vector<PeakCalcGraphicsItem*> _peakCalcs;
     QList<MaskGraphicsItem*> _masks;
     SXGraphicsItem* _lastClickedGI;
-    std::unique_ptr<nsx::Indexer> _indexer;
     std::vector<nsx::PeakCalc> _precalculatedPeaks;
 
     bool _showPeakCalcs;

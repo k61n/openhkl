@@ -60,8 +60,6 @@
 #include <QtDebug>
 #include <QVector>
 
-#include "Externals/qcustomplot.h"
-
 #include <nsxlib/crystal/MergedPeak.h>
 #include <nsxlib/crystal/PeakFit.h>
 #include <nsxlib/crystal/PeakPredictor.h>
@@ -91,6 +89,7 @@
 #include "dialogs/ResolutionCutoffDialog.h"
 #include "dialogs/ScaleDialog.h"
 #include "dialogs/SpaceGroupDialog.h"
+#include "externals/qcustomplot.h"
 #include "Logger.h"
 #include "models/DataItem.h"
 #include "models/DetectorItem.h"

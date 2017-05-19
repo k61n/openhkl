@@ -1,8 +1,5 @@
-#include <boost/foreach.hpp>
-
-#include "../kernel/Error.h"
-#include "Monochromator.h"
-#include "Source.h"
+#include "../instrument/Monochromator.h"
+#include "../instrument/Source.h"
 #include "../utils/Units.h"
 
 namespace nsx {
@@ -40,7 +37,7 @@ Source::Source(const proptree::ptree& node)
   _selectedMonochromator(0)
 {
     // Loop over the "monochromator" nodes and add the corresponding pointer to Monochromator objects to the Source
-    BOOST_FOREACH(const boost::property_tree::ptree::value_type& v, node)
+    for (const auto& v : node)
     {
         if (v.first.compare("monochromator")==0)
         {

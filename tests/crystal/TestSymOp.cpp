@@ -1,12 +1,12 @@
 #define BOOST_TEST_MODULE "Test Symmetry Operator"
 #define BOOST_TEST_DYN_LINK
 
+#include <stdexcept>
 #include <string>
 
 #include <boost/test/unit_test.hpp>
 
 #include <nsxlib/crystal/SymOp.h>
-#include <nsxlib/kernel/Error.h>
 
 using namespace nsx;
 
@@ -41,6 +41,6 @@ BOOST_AUTO_TEST_CASE(Test_SymOp)
     BOOST_CHECK_EQUAL(op10.getAxisOrder(),-6);
 
     SymOp op11("x-y,x+2y,-3z");
-    BOOST_CHECK_THROW(op11.getAxisOrder(),nsx::Error<SymOp>);
+    BOOST_CHECK_THROW(op11.getAxisOrder(),std::runtime_error);
 
 }

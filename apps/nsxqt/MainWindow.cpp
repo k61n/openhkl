@@ -26,7 +26,6 @@
 #include <nsxlib/geometry/AABB.h>
 #include <nsxlib/geometry/Basis.h>
 #include <nsxlib/geometry/BlobFinder.h>
-#include <nsxlib/geometry/Cluster.h>
 #include <nsxlib/geometry/Ellipsoid.h>
 #include <nsxlib/instrument/ComponentState.h>
 #include <nsxlib/instrument/Detector.h>

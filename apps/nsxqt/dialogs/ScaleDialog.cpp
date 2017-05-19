@@ -17,8 +17,6 @@
 #include <QString>
 #include <QTreeView>
 
-#include "Externals/qcustomplot.h"
-
 #include <nsxlib/crystal/Peak3D.h>
 #include <nsxlib/crystal/RFactor.h>
 #include <nsxlib/crystal/SpaceGroup.h>
@@ -26,6 +24,8 @@
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/mathematics/Minimizer.h>
 #include <nsxlib/instrument/Sample.h>
+
+#include "externals/qcustomplot.h"
 
 ScaleDialog::ScaleDialog(const std::vector<std::vector<nsx::Peak3D*>>& peaks, QWidget *parent) :
     QDialog(parent),

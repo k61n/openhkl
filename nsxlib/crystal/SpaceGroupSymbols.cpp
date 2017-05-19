@@ -1,12 +1,11 @@
+#include <stdexcept>
 #include <sstream>
+#include <utility>
+#include <vector>
 
 #include <boost/algorithm/string/join.hpp>
 
-#include <vector>
-#include <utility>
-
-#include "../kernel/Error.h"
-#include "SpaceGroupSymbols.h"
+#include "../crystal/SpaceGroupSymbols.h"
 
 namespace nsx {
 
@@ -298,7 +297,7 @@ void SpaceGroupSymbols::addSpaceGroup(const std::string& spaceGroup, const std::
 {
     auto it=_spaceGroupTables.find(spaceGroup);
     if (it!=_spaceGroupTables.end())
-        throw Error<SpaceGroupSymbols>("The space group "+spaceGroup+" is already registered.");
+        throw std::runtime_error("The space group "+spaceGroup+" is already registered.");
     _spaceGroupTables.insert(std::unordered_map<std::string,std::string>::value_type(spaceGroup,generators));
     _spaceGroupTableVector.push_back(std::make_pair(spaceGroup, generators));
 }

@@ -1,5 +1,4 @@
 #include <QCursor>
-#include <QtDebug>
 #include <QGraphicsSceneHoverEvent>
 #include <QGraphicsSceneMouseEvent>
 

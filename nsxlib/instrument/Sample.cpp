@@ -1,14 +1,12 @@
 #include <memory>
-
-#include <boost/foreach.hpp>
+#include <stdexcept>
 
 #include <Eigen/Dense>
 
-#include "../kernel/Error.h"
-#include "Gonio.h"
-#include "RotAxis.h"
-#include "Sample.h"
-#include "TransAxis.h"
+#include "../instrument/Gonio.h"
+#include "../instrument/RotAxis.h"
+#include "../instrument/Sample.h"
+#include "../instrument/TransAxis.h"
 
 namespace nsx {
 
@@ -106,7 +104,7 @@ void Sample::removeUnitCell(int i)
 unsigned int Sample::getZ(int index) const
 {
     if (index < 0 || index >= _cells.size()) {
-        throw Error<Sample>("Invalid unit cell index.");
+        throw std::runtime_error("Invalid unit cell index.");
     }
     return _cells[index]->getZ();
 }
@@ -114,11 +112,11 @@ unsigned int Sample::getZ(int index) const
 void Sample::setZ(int Z, int index)
 {
     if (index < 0 || index >= _cells.size()) {
-        throw Error<Sample>("Invalid unit cell index.");
+        throw std::runtime_error("Invalid unit cell index.");
     }
 
     if (Z==0) {
-        throw Error<Sample>("Invalid Z value.");
+        throw std::runtime_error("Invalid Z value.");
     }
     _cells[index]->setZ(Z);
 }
@@ -126,7 +124,7 @@ void Sample::setZ(int Z, int index)
 sptrMaterial Sample::getMaterial(int index) const
 {
     if (index < 0 || index >= _cells.size()) {
-        throw Error<Sample>("Invalid unit cell index.");
+        throw std::runtime_error("Invalid unit cell index.");
     }
     return _cells[index]->getMaterial();
 }
@@ -134,7 +132,7 @@ sptrMaterial Sample::getMaterial(int index) const
 void Sample::setMaterial(sptrMaterial material, int index)
 {
     if (index < 0 || index >= _cells.size()) {
-        throw Error<Sample>("Invalid unit cell index.");
+        throw std::runtime_error("Invalid unit cell index.");
     }
     _cells[index]->setMaterial(material);
 }

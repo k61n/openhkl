@@ -33,6 +33,9 @@ namespace nsx {
 using Eigen::Matrix3d;
 using boost::filesystem::path;
 
+using RowMatrixi = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+using RowMatrixd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+
 DataSet::DataSet(IDataReader* reader, const std::shared_ptr<Diffractometer>& diffractometer):
     _isOpened(false),
     _filename(reader->getFilename()),
