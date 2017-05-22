@@ -58,9 +58,26 @@ class TestHDF5(unittest.TestCase):
         self.assertTrue(soln[1] > 92.0)
 
         uc = nsx.UnitCell(soln[0])
+        sample = diff.getSample()
+        sample.addUnitCell(uc)
 
         for peak in peaks:
             peak.addUnitCell(uc, True)
+
+        num_peaks = len(peaks)
+
+        predictor = nsx.PeakPredictor()
+        predictor._dmin = 2.1
+        predictor._dmax = 50.0
+        predictor._searchRadius = 100.0
+        predictor._peakScale = 1.0
+        predictor._bkgScale = 3.0
+        predictor._handler = nsx.ProgressHandler()
+
+        predictor.addPredictedPeaks(data)
+        predicted_peaks = len(data.getPeaks()) - num_peaks
+
+        self.assertTrue(predicted_peaks > 3000)
 
 
 if __name__ == '__main__':

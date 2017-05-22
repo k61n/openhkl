@@ -26,6 +26,7 @@
 %shared_ptr(nsx::Convolver)
 %shared_ptr(nsx::DataSet)
 %shared_ptr(nsx::Source)
+%shared_ptr(nsx::Sample)
 %shared_ptr(nsx::IDataReader)
 %shared_ptr(nsx::HDF5DataReader)
 %shared_ptr(nsx::ILLDataReader)
