@@ -1,8 +1,5 @@
-#include "ui_DialogRefineUnitCell.h"
-
 #include <sstream>
 
-#include <QtDebug>
 #include <QCheckBox>
 #include <QLayout>
 #include <QStatusBar>
@@ -22,6 +19,8 @@
 
 #include "DialogRefineUnitCell.h"
 #include "DoubleTableItemDelegate.h"
+
+#include "ui_DialogRefineUnitCell.h"
 
 DialogRefineUnitCell::DialogRefineUnitCell(nsx::sptrExperiment experiment,
                                            nsx::sptrUnitCell unitCell,

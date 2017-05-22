@@ -1,7 +1,7 @@
 #include <Eigen/Dense>
 
+#include <QDebug>
 #include <QPainter>
-#include <QtDebug>
 #include <QStyleOptionGraphicsItem>
 #include <QWidget>
 

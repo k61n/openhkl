@@ -3,15 +3,13 @@
 
 #include <Eigen/Dense>
 
-#include <QGraphicsSceneWheelEvent>
-#include <QPen>
-#include <QStyleOptionGraphicsItem>
-#include <QPainter>
-#include <iostream>
 #include <QDrag>
 #include <QGraphicsSceneMouseEvent>
+#include <QGraphicsSceneWheelEvent>
 #include <QMimeData>
-#include <QtDebug>
+#include <QPainter>
+#include <QPen>
+#include <QStyleOptionGraphicsItem>
 #include <QWidget>
 
 #include <nsxlib/data/DataSet.h>

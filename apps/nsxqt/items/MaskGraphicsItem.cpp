@@ -8,7 +8,6 @@
 #include <QPen>
 #include <QStyleOptionGraphicsItem>
 #include <QWidget>
-#include <QtDebug>
 
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/geometry/AABB.h>

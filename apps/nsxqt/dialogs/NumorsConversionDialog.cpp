@@ -1,13 +1,12 @@
 #include <iostream>
-#include <memory>
 
+#include <QDebug>
 #include <QDirModel>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QMessageBox>
 #include <QModelIndex>
 #include <QModelIndexList>
-#include <QtDebug>
 
 #include <nsxlib/data/DataReaderFactory.h>
 #include <nsxlib/instrument/Diffractometer.h>

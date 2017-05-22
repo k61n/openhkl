@@ -44,6 +44,7 @@
 
 #include <QAbstractItemView>
 #include <QDate>
+#include <QDebug>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QKeyEvent>
@@ -57,7 +58,6 @@
 #include <QModelIndexList>
 #include <QStandardItem>
 #include <QString>
-#include <QtDebug>
 #include <QVector>
 
 #include <nsxlib/crystal/MergedPeak.h>

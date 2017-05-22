@@ -1,11 +1,11 @@
 #include <ctime>
 #include <vector>
 
+#include <QDebug>
 #include <QGraphicsSceneMouseEvent>
 #include <QKeyEvent>
 #include <QMenu>
 #include <QPixmap>
-#include <QtDebug>
 #include <QToolTip>
 
 #include <nsxlib/crystal/Peak3D.h>
@@ -54,8 +54,6 @@ DetectorScene::DetectorScene(QObject *parent)
   _integrationRegion(nullptr),
   _drawIntegrationRegion(false)
 {
-    //setBspTreeDepth(4);
-    qDebug() << "BSP tree depth = " << bspTreeDepth();
 }
 
 void DetectorScene::changeFrame(size_t frame)
