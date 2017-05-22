@@ -44,6 +44,7 @@
 #include <nsxlib/crystal/MergedPeak.h>
 #include <nsxlib/crystal/ResolutionShell.h>
 #include <nsxlib/data/DataSet.h>
+#include <nsxlib/data/MetaData.h>
 #include <nsxlib/utils/ProgressHandler.h>
 
 #include "dialogs/DialogAutoIndexing.h"
@@ -54,7 +55,6 @@
 #include "models/CollectedPeaksDelegate.h"
 #include "models/CollectedPeaksModel.h"
 #include "PeakTableView.h"
-#include "ProgressView.h"
 
 using sptrExperiment = std::shared_ptr<nsx::Experiment>;
 

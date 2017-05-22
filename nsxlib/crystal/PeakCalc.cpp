@@ -42,6 +42,7 @@
 #include "../data/DataSet.h"
 #include "../geometry/Ellipsoid.h"
 #include "../geometry/NDTree.h"
+#include "../instrument/ComponentState.h"
 #include "../instrument/DetectorEvent.h"
 
 using std::shared_ptr;

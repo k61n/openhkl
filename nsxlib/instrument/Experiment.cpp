@@ -3,6 +3,7 @@
 #include <utility>
 
 #include "../data/DataSet.h"
+#include "../data/MetaData.h"
 #include "../instrument/Experiment.h"
 #include "../instrument/Diffractometer.h"
 #include "../instrument/DiffractometerStore.h"

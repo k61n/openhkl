@@ -36,18 +36,13 @@
 #ifndef NSXLIB_AUTOINDEXER_H
 #define NSXLIB_AUTOINDEXER_H
 
-#include "UnitCell.h"
-
 #include <vector>
-#include <memory>
+
+#include "../crystal/UnitCell.h"
+#include "../instrument/InstrumentTypes.h"
+#include "../utils/UtilsTypes.h"
 
 namespace nsx {
-
-class Experiment;
-
-class ProgressHandler;
-
-class Peak3D;
 
 class AutoIndexer {
 public:
@@ -60,22 +55,20 @@ public:
         double niggliTolerance = 1e-3;
         double gruberTolerance = 4e-2;
         bool niggliReduction = false;
-
-        //Parameters() = default;
     };
 
 public:
-    AutoIndexer(const std::shared_ptr<Experiment>& expt, const std::shared_ptr<ProgressHandler>& handler = nullptr);
+    AutoIndexer(const sptrExperiment& expt, const sptrProgressHandler& handler = nullptr);
 
     bool autoIndex(const Parameters& params);
-    void addPeak(const std::shared_ptr<Peak3D>& peak);
+    void addPeak(const sptrPeak3D& peak);
     const std::vector<std::pair<UnitCell,double>>& getSolutions() const;
-    //void buildSolutionsTable();
+
 private:
-    std::vector<std::shared_ptr<Peak3D>> _peaks;
-    std::shared_ptr<Experiment> _experiment;
+    PeakList _peaks;
+    sptrExperiment _experiment;
     std::vector<std::pair<UnitCell,double>> _solutions;
-    std::shared_ptr<ProgressHandler> _handler;
+    sptrProgressHandler _handler;
 };
 
 } // end namespace nsx

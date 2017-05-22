@@ -1,11 +1,10 @@
-#include "BlobFinder.h"
-#include "NDTree.h"
-#include "../data/IFrameIterator.h"
-
 #include <iostream>
 
-using std::cout;
-using std::endl;
+#include "../data/DataSet.h"
+#include "../data/IFrameIterator.h"
+#include "../geometry/BlobFinder.h"
+#include "../geometry/NDTree.h"
+#include "../utils/ProgressHandler.h"
 
 namespace nsx {
 
@@ -341,7 +340,7 @@ void BlobFinder::findBlobs(std::unordered_map<int,Blob3D>& blobs,
     }
 }
 
-void BlobFinder::setProgressHandler(std::shared_ptr<ProgressHandler> callback)
+void BlobFinder::setProgressHandler(sptrProgressHandler callback)
 {
     _progressHandler = callback;
 }
@@ -481,14 +480,14 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
     }
 }
 
-void BlobFinder::setFilter(BlobFinder::FilterCallback callback)
+void BlobFinder::setFilter(FilterCallback callback)
 {
     _filterCallback = callback;
 }
 
 /**/
 
-BlobFinder::BlobFinder(std::shared_ptr<DataSet> data)
+BlobFinder::BlobFinder(sptrDataSet data)
 {
     _data = data;
 }

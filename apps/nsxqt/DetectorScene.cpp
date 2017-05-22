@@ -9,11 +9,13 @@
 #include <QToolTip>
 
 #include <nsxlib/crystal/Peak3D.h>
+#include <nsxlib/crystal/PeakCalc.h>
 #include <nsxlib/crystal/SpaceGroup.h>
 #include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/instrument/Detector.h>
 #include <nsxlib/instrument/DetectorEvent.h>
+#include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/instrument/Gonio.h>
 #include <nsxlib/instrument/Sample.h>
 #include <nsxlib/instrument/Source.h>

@@ -8,11 +8,13 @@
 #include "../data/PeakFinder.h"
 #include "../geometry/BlobFinder.h"
 #include "../imaging/Convolver.h"
+#include "../imaging/ConvolutionKernel.h"
 #include "../instrument/Diffractometer.h"
 #include "../instrument/Detector.h"
 #include "../instrument/Experiment.h"
 #include "../instrument/Sample.h"
 #include "../mathematics/ErfInv.h"
+#include "../utils/ProgressHandler.h"
 #include "../utils/Types.h"
 
 namespace nsx {

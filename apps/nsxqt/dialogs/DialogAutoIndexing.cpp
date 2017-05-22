@@ -12,6 +12,7 @@
 
 #include <nsxlib/crystal/AutoIndexer.h>
 #include <nsxlib/data/DataSet.h>
+#include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/instrument/Experiment.h>
 #include <nsxlib/instrument/Sample.h>
 #include <nsxlib/utils/Units.h>

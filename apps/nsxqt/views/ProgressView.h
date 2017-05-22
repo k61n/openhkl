@@ -10,7 +10,7 @@
 #include <QProgressDialog>
 #include <QTimer>
 
-#include <nsxlib/utils/ProgressHandler.h>
+#include <nsxlib/utils/UtilsTypes.h>
 
 class ProgressView: public QProgressDialog {
     Q_OBJECT
@@ -19,14 +19,14 @@ public:
     ProgressView(QWidget* parent);
     ~ProgressView();
 
-    void watch(std::shared_ptr<nsx::ProgressHandler> handler);
+    void watch(nsx::sptrProgressHandler handler);
 
 public slots:
     void updateProgress();
     void abort();
 
 private:
-    std::shared_ptr<nsx::ProgressHandler> _handler;
+    nsx::sptrProgressHandler _handler;
     QTimer* _timer;
 };
 

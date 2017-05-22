@@ -5,6 +5,7 @@
 #include <QSortFilterProxyModel>
 
 #include <nsxlib/data/DataSet.h>
+#include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/instrument/Sample.h>
 
 #include "models/CollectedPeaksModel.h"

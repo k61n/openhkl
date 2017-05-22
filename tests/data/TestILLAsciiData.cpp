@@ -9,8 +9,10 @@
 
 #include <Eigen/Dense>
 
-#include <nsxlib/instrument/DiffractometerStore.h>
 #include <nsxlib/data/DataReaderFactory.h>
+#include <nsxlib/data/MetaData.h>
+#include <nsxlib/instrument/DiffractometerStore.h>
+#include <nsxlib/instrument/InstrumentState.h>
 #include <nsxlib/utils/Units.h>
 
 using namespace nsx;

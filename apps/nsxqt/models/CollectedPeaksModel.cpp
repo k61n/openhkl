@@ -10,7 +10,7 @@
 #include <nsxlib/crystal/Peak3D.h>
 #include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/data/DataSet.h>
-#include <nsxlib/utils/ProgressHandler.h>
+#include <nsxlib/data/MetaData.h>
 
 #include "CollectedPeaksModel.h"
 #include "views/ProgressView.h"
@@ -141,7 +141,6 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
     }
 
     Eigen::RowVector3d hkl;
-    bool success;
     double lorentzFactor, transmissionFactor, scaledIntensity, sigmaScaledIntensity;
 
     int row = index.row();
@@ -150,7 +149,7 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
     switch (role) {
 
     case Qt::DisplayRole:
-        success = _peaks[row]->getMillerIndices(hkl, true);
+        _peaks[row]->getMillerIndices(hkl, true);
         lorentzFactor = _peaks[row]->getLorentzFactor();
         transmissionFactor = _peaks[row]->getTransmission();
         scaledIntensity=_peaks[row]->getCorrectedIntensity().getValue();
@@ -209,27 +208,24 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
     case Column::h:
         compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
             Eigen::RowVector3d hkl1,hkl2;
-            bool success;
-            success = p1->getMillerIndices(hkl1,true);
-            success = p2->getMillerIndices(hkl2,true);
+            p1->getMillerIndices(hkl1,true);
+            p2->getMillerIndices(hkl2,true);
             return (hkl1[0]<hkl2[0]);
         };
         break;
     case Column::k:
         compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
             Eigen::RowVector3d hkl1,hkl2;
-            bool success;
-            success = p1->getMillerIndices(hkl1,true);
-            success = p2->getMillerIndices(hkl2,true);
+            p1->getMillerIndices(hkl1,true);
+            p2->getMillerIndices(hkl2,true);
             return (hkl1[1]<hkl2[1]);
         };
         break;
     case Column::l:
         compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
             Eigen::RowVector3d hkl1,hkl2;
-            bool success;
-            success = p1->getMillerIndices(hkl1,true);
-            success = p2->getMillerIndices(hkl2,true);
+            p1->getMillerIndices(hkl1,true);
+            p2->getMillerIndices(hkl2,true);
             return (hkl1[2]<hkl2[2]);
         };
         break;
@@ -336,9 +332,8 @@ void CollectedPeaksModel::sortEquivalents()
 
     std::sort(_peaks.begin(), _peaks.end(), [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
         Eigen::RowVector3d hkl1,hkl2;
-        bool success;
-        success = p1->getMillerIndices(hkl1,true);
-        success = p2->getMillerIndices(hkl2,true);
+        p1->getMillerIndices(hkl1,true);
+        p2->getMillerIndices(hkl2,true);
         return ptrcell->isEquivalent(hkl1[0],hkl1[1],hkl1[2],hkl2[0],hkl2[1],hkl2[2]);
     });
 }
@@ -422,8 +417,6 @@ void CollectedPeaksModel::writeShelX(const std::string& filename, QModelIndexLis
             file << std::setw(4);
             file << hkl[2];
 
-            double l=peak->getLorentzFactor();
-            double t=peak->getTransmission();
             file << std::fixed << std::setw(8) << std::setprecision(2) << peak->getCorrectedIntensity().getValue();
             file << std::fixed << std::setw(8) << std::setprecision(2) << peak->getCorrectedIntensity().getSigma() <<std::endl;
         }
@@ -476,8 +469,6 @@ void CollectedPeaksModel::writeFullProf(const std::string& filename, QModelIndex
             file << std::setprecision(0);
             file << std::setw(4);
             file << hkl[0] << std::setw(4) <<  hkl[1] << std::setw(4) << hkl[2];
-            double l=peak->getLorentzFactor();
-            double t=peak->getTransmission();
             file << std::fixed << std::setw(14) << std::setprecision(4) << peak->getCorrectedIntensity().getValue();
             file << std::fixed << std::setw(14) << std::setprecision(4) << peak->getCorrectedIntensity().getSigma();
             file << std::setprecision(0) << std::setw(5) << 1  << std::endl;

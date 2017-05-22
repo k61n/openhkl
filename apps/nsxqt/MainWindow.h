@@ -13,7 +13,7 @@
 #include <nsxlib/data/DataTypes.h>
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/imaging/ImagingTypes.h>
-#include <nsxlib/instrument/Experiment.h>
+#include <nsxlib/utils/UtilsTypes.h>
 
 #include "JobHandler.h"
 #include "Logger.h"
@@ -25,11 +25,6 @@ class SessionModel;
 
 namespace Ui {
 class MainWindow;
-}
-
-namespace nsx {
-class Experiment;
-class ProgressHandler;
 }
 
 class QProgressDialog;
@@ -107,9 +102,10 @@ public slots:
 
 private:
     Ui::MainWindow* _ui;
-    std::shared_ptr<nsx::DataSet> _currentData;
 
-    std::shared_ptr<nsx::ProgressHandler> _progressHandler;
+    nsx::sptrDataSet _currentData;
+
+    nsx::sptrProgressHandler _progressHandler;
     nsx::sptrPeakFinder _peakFinder;
     nsx::sptrConvolver _convolver;
 

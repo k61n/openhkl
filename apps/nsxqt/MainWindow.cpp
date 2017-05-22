@@ -29,6 +29,7 @@
 #include <nsxlib/geometry/Ellipsoid.h>
 #include <nsxlib/instrument/ComponentState.h>
 #include <nsxlib/instrument/Detector.h>
+#include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/instrument/Sample.h>
 #include <nsxlib/instrument/Source.h>
 #include <nsxlib/data/PeakFinder.h>
@@ -146,8 +147,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     qDebug() << "The resources directory is " << nsx::Path().getResourcesDir().c_str();
 
-    _progressHandler = std::shared_ptr<nsx::ProgressHandler>(new nsx::ProgressHandler());
+    _progressHandler = nsx::sptrProgressHandler(new nsx::ProgressHandler());
     _peakFinder = nsx::sptrPeakFinder(new nsx::PeakFinder());
+
 
 
     for (auto&& action: _ui->menuColor_map->actions()) {

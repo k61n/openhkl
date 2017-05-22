@@ -13,6 +13,7 @@
 #include "../crystal/Mosaic.h"
 #include "../crystal/UnitCell.h"
 #include "../data/DataSet.h"
+#include "../data/MetaData.h"
 #include "../geometry/BlobFinder.h"
 #include "../geometry/Blob3D.h"
 #include "../instrument/Detector.h"

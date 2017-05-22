@@ -9,6 +9,7 @@ namespace nsx {
 
 class MergedPeak;
 class Peak3D;
+class PeakCalc;
 class PeakRecord;
 class SpaceGroup;
 class SymOp;
@@ -20,6 +21,7 @@ using sptrUnitCell = std::shared_ptr<UnitCell>;
 using PeakSet    = std::set<sptrPeak3D>;
 
 using PeakList     = std::vector<sptrPeak3D>;
+using PeakCalcList = std::vector<PeakCalc>;
 using RecordList   = std::vector<PeakRecord>;
 using SymOpList    = std::vector<SymOp>;
 using UnitCellList = std::vector<sptrUnitCell>;

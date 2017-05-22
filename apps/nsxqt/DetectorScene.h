@@ -12,6 +12,7 @@
 #include <QGraphicsPixmapItem>
 
 #include <nsxlib/crystal/CrystalTypes.h>
+#include <nsxlib/crystal/PeakCalc.h>
 #include <nsxlib/data/DataTypes.h>
 
 #include "items/PeakCalcGraphicsItem.h"
@@ -113,7 +114,7 @@ private:
     std::vector<PeakCalcGraphicsItem*> _peakCalcs;
     QList<MaskGraphicsItem*> _masks;
     SXGraphicsItem* _lastClickedGI;
-    std::vector<nsx::PeakCalc> _precalculatedPeaks;
+    nsx::PeakCalcList _precalculatedPeaks;
 
     bool _showPeakCalcs;
     bool _logarithmic;

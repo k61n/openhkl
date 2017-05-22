@@ -6,6 +6,7 @@
 
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/instrument/Detector.h>
+#include <nsxlib/instrument/Diffractometer.h>
 
 #include "DetectorGraphicsView.h"
 #include "DetectorScene.h"

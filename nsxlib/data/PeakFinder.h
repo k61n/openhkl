@@ -2,15 +2,11 @@
 #ifndef NSXLIB_PEAKFINDER_H
 #define NSXLIB_PEAKFINDER_H
 
-#include <memory>
-
-#include "../imaging/Convolver.h"
-#include "../imaging/ConvolutionKernel.h"
+#include "../data/DataTypes.h"
+#include "../imaging/ImagingTypes.h"
+#include "../utils/UtilsTypes.h"
 
 namespace nsx {
-
-class DataSet;
-class ProgressHandler;
 
 class PeakFinder {
 
@@ -18,9 +14,9 @@ public:
 
     PeakFinder();
 
-    bool find(std::vector<std::shared_ptr<DataSet>> numors);
+    bool find(DataList numors);
 
-    void setHandler(const std::shared_ptr<ProgressHandler>& handler);
+    void setHandler(const sptrProgressHandler& handler);
 
     void setThresholdValue(double threshold);
     double getThresholdValue();
@@ -37,19 +33,17 @@ public:
     void setMaxComponents(int maxComp);
     int getMaxComponents();
 
-    void setConvolver(std::shared_ptr<Convolver> convolver);
-    std::shared_ptr<Convolver> getConvolver();
+    void setConvolver(sptrConvolver convolver);
+    sptrConvolver getConvolver();
 
-    std::shared_ptr<ConvolutionKernel> getKernel();
+    sptrConvolutionKernel getKernel();
 
-    void setKernel(std::shared_ptr<ConvolutionKernel> kernel);
-
-
+    void setKernel(sptrConvolutionKernel kernel);
 
 private:
-    std::shared_ptr<ProgressHandler> _handler;
-    std::shared_ptr<Convolver> _convolver;
-    std::shared_ptr<ConvolutionKernel> _kernel;
+    sptrProgressHandler _handler;
+    sptrConvolver _convolver;
+    sptrConvolutionKernel _kernel;
 
     double _thresholdValue;
     int _thresholdType;

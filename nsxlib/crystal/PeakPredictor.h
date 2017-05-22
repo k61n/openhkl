@@ -36,22 +36,19 @@
 #ifndef NSXLIB_PEAKPREDICTOR_H
 #define NSXLIB_PEAKPREDICTOR_H
 
-#include <memory>
+#include "../data/DataTypes.h"
+#include "../utils/UtilsTypes.h"
 
 namespace nsx {
-
-class DataSet;
-
-class ProgressHandler;
 
 class PeakPredictor {
 public:
 
-    void addPredictedPeaks(std::shared_ptr<DataSet> data);
+    void addPredictedPeaks(sptrDataSet data);
 
 public:
     double _dmin, _dmax, _searchRadius, _peakScale, _bkgScale;
-    std::shared_ptr<ProgressHandler> _handler;
+    sptrProgressHandler _handler;
 };
 
 } // end namespace nsx

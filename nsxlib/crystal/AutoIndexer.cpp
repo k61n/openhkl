@@ -33,21 +33,21 @@
  *
  */
 
-#include "AutoIndexer.h"
-#include "FFTIndexing.h"
-#include "../instrument/Experiment.h"
-#include "../utils/ProgressHandler.h"
+#include "../crystal/AutoIndexer.h"
+#include "../crystal/FFTIndexing.h"
+#include "../crystal/GruberReduction.h"
+#include "../crystal/NiggliReduction.h"
+#include "../crystal/UBMinimizer.h"
 #include "../instrument/Diffractometer.h"
+#include "../instrument/Experiment.h"
 #include "../instrument/Gonio.h"
-#include "UBMinimizer.h"
-#include "NiggliReduction.h"
-#include "GruberReduction.h"
+#include "../utils/ProgressHandler.h"
 
 #include <string>
 
 namespace nsx {
 
-AutoIndexer::AutoIndexer(const std::shared_ptr<Experiment>& expt, const std::shared_ptr<ProgressHandler>& handler):
+AutoIndexer::AutoIndexer(const sptrExperiment& expt, const sptrProgressHandler& handler):
     _peaks(),
     _experiment(expt),
     _solutions(),
@@ -248,7 +248,7 @@ bool AutoIndexer::autoIndex(const Parameters& _params)
     return true;
 }
 
-void AutoIndexer::addPeak(const std::shared_ptr<Peak3D> &peak)
+void AutoIndexer::addPeak(const sptrPeak3D &peak)
 {
     _peaks.emplace_back(peak);
 }

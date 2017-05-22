@@ -39,12 +39,13 @@
 #include <vector>
 #include <stdexcept>
 
-#include "../data/DataSet.h"
+#include "../data/DataTypes.h"
 #include "../geometry/Blob2D.h"
 #include "../geometry/Blob3D.h"
 #include "../geometry/Ellipsoid.h"
+#include "../geometry/GeometryTypes.h"
 #include "../geometry/IShape.h"
-#include "../utils/ProgressHandler.h"
+#include "../utils/UtilsTypes.h"
 #include "../utils/Types.h"
 
 namespace nsx {
@@ -73,9 +74,7 @@ class BlobFinder {
 
 public:
 
-    using FilterCallback = std::function<RealMatrix(const RealMatrix&)>;
-
-    BlobFinder(std::shared_ptr<DataSet> data);
+    BlobFinder(sptrDataSet data);
 
     blob3DCollection find(unsigned int begin, unsigned int end);
 
@@ -89,12 +88,8 @@ public:
 
     static void reassignEquivalences(imap& equivalences);
 
-    //void findBlobs() const;
-
-    //void mergeBlobs();
-
     //! sets progress handler callback function
-    void setProgressHandler(std::shared_ptr<ProgressHandler> handler);
+    void setProgressHandler(sptrProgressHandler handler);
 
     void setThreshold(double threshold);
 
@@ -108,7 +103,6 @@ public:
 
     void setRelative(bool isRelative);
 
-
     void findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& equivalences) const;
 
     //! Sets the filter, which allows for more sophisticated blob-finding
@@ -118,8 +112,6 @@ public:
 
 
     void eliminateBlobs(std::unordered_map<int,Blob3D>& blobs) const;
-
-
 
 private:
     double _threshold;
@@ -131,9 +123,9 @@ private:
 
     bool _isRelative;
 
-    mutable std::shared_ptr<DataSet> _data;
+    mutable sptrDataSet _data;
     FilterCallback _filterCallback;
-    mutable std::shared_ptr<ProgressHandler> _progressHandler;
+    mutable sptrProgressHandler _progressHandler;
 
     unsigned int _nrows, _ncols, _nframes;
     unsigned int _currentlabel;

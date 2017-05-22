@@ -48,12 +48,9 @@
 #include <nsxlib/crystal/CrystalTypes.h>
 #include <nsxlib/data/DataTypes.h>
 #include <nsxlib/instrument/InstrumentTypes.h>
+#include <nsxlib/utils/UtilsTypes.h>
 
 class ExperimentItem;
-
-namespace nsx {
-class ProgressHandler;
-}
 
 class SessionModel : public QStandardItemModel {
     Q_OBJECT
@@ -111,7 +108,7 @@ public slots:
 private:
     //! Filename for the save/load feature
     QString _filename;
-    std::shared_ptr<nsx::ProgressHandler> _progressHandler;
+    nsx::sptrProgressHandler _progressHandler;
     nsx::sptrPeakFinder _peakFinder;
     std::string _colormap;
 };

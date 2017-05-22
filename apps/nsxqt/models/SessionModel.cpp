@@ -454,7 +454,7 @@ void SessionModel::findPeaks(const QModelIndex& index)
     // qDebug() << "Preview frame has dimensions" << frame.rows() << " " << frame.cols();
 
     // reset progress handler
-    _progressHandler = std::shared_ptr<nsx::ProgressHandler>(new nsx::ProgressHandler);
+    _progressHandler = nsx::sptrProgressHandler(new nsx::ProgressHandler);
 
     // set up peak finder
     if ( !_peakFinder)
@@ -543,7 +543,7 @@ void SessionModel::incorporateCalculatedPeaks()
 
     nsx::DataList numors = getSelectedNumors();
 
-    std::shared_ptr<nsx::ProgressHandler> handler(new nsx::ProgressHandler);
+    nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
     ProgressView progressView(nullptr);
     progressView.watch(handler);
 

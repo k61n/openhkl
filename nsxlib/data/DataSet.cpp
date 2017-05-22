@@ -13,6 +13,7 @@
 #include "H5Cpp.h"
 
 #include "../crystal/Peak3D.h"
+#include "../crystal/PeakCalc.h"
 #include "../crystal/PeakIntegrator.h"
 #include "../crystal/SpaceGroup.h"
 #include "../crystal/UnitCell.h"
@@ -29,6 +30,7 @@
 #include "../instrument/Sample.h"
 #include "../instrument/Source.h"
 #include "../mathematics/ErfInv.h"
+#include "../utils/ProgressHandler.h"
 #include "../utils/Units.h"
 
 namespace nsx {
@@ -515,7 +517,7 @@ std::vector<PeakCalc> DataSet::hasPeaks(const std::vector<Eigen::Vector3d>& hkls
     return peaks;
 }
 
-double DataSet::getBackgroundLevel(const std::shared_ptr<ProgressHandler>& progress)
+double DataSet::getBackgroundLevel(const sptrProgressHandler& progress)
 {
     if ( _background > 0.0 ) {
         return _background;
@@ -551,7 +553,7 @@ double DataSet::getBackgroundLevel(const std::shared_ptr<ProgressHandler>& progr
     return _background;
 }
 
-void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_shape, const std::shared_ptr<ProgressHandler>& handler)
+void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_shape, const sptrProgressHandler& handler)
 {
     using Ellipsoid3D = Ellipsoid<double, 3>;
 
@@ -744,7 +746,6 @@ void DataSet::removeDuplicatePeaks()
         }
     };
 
-    auto& mono = getDiffractometer()->getSource()->getSelectedMonochromator();
     PeakList calculated_peaks;
 
     std::shared_ptr<Sample> sample = getDiffractometer()->getSample();
@@ -753,7 +754,6 @@ void DataSet::removeDuplicatePeaks()
     for (unsigned int i = 0; i < ncrystals; ++i) {
         SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
         auto cell = sample->getUnitCell(i);
-        auto UB = cell->getReciprocalStandardM();
 
         std::map<Eigen::RowVector3i, sptrPeak3D, compare_fn> hkls;
 

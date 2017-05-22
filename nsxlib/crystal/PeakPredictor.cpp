@@ -35,14 +35,17 @@
 
 #include "../crystal/CrystalTypes.h"
 #include "../crystal/Peak3D.h"
+#include "../crystal/PeakCalc.h"
 #include "../crystal/PeakPredictor.h"
 #include "../crystal/SpaceGroup.h"
 #include "../crystal/UnitCell.h"
 #include "../data/DataSet.h"
 #include "../data/DataTypes.h"
 #include "../geometry/NDTree.h"
+#include "../instrument/Diffractometer.h"
 #include "../instrument/Sample.h"
 #include "../instrument/Source.h"
+#include "../utils/ProgressHandler.h"
 
 namespace nsx {
 
@@ -71,7 +74,7 @@ void PeakPredictor::addPredictedPeaks(sptrDataSet data)
     const double wavelength = mono.getWavelength();
     PeakList calculated_peaks;
 
-    std::shared_ptr<Sample> sample = data->getDiffractometer()->getSample();
+    auto sample = data->getDiffractometer()->getSample();
     unsigned int ncrystals = static_cast<unsigned int>(sample->getNCrystals());
 
     for (unsigned int i = 0; i < ncrystals; ++i) {
@@ -86,7 +89,7 @@ void PeakPredictor::addPredictedPeaks(sptrDataSet data)
 
         predicted_peaks += predicted_hkls.size();
 
-        std::vector<PeakCalc> peaks = data->hasPeaks(predicted_hkls, UB);
+        PeakCalcList peaks = data->hasPeaks(predicted_hkls, UB);
         calculated_peaks.reserve(peaks.size());
 
         int current_peak = 0;
@@ -95,7 +98,6 @@ void PeakPredictor::addPredictedPeaks(sptrDataSet data)
 
         PeakSet found_peaks = data->getPeaks();
         std::set<Eigen::RowVector3i, compare_fn> found_hkls;
-
 
         Eigen::Vector3d lb = {0.0, 0.0, 0.0};
         Eigen::Vector3d ub = {double(data->getNCols()), double(data->getNRows()), double(data->getNFrames())};
