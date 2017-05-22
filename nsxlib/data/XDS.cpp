@@ -44,10 +44,9 @@
 #include "../crystal/UnitCell.h"
 #include "../data/XDS.h"
 
-using string = std::string;
 using str_vector = std::vector<std::string>;
 
-static const string space = "    ";
+static const std::string space = "    ";
 static const str_vector merged_records = {"H", "K", "L", "IOBS", "SIGMA(IOBS)"};
 static const str_vector unmerged_records = {"H", "K", "L", "XD", "YD", "ZD", "IOBS", "SIGMA(IOBS)"};
 
@@ -144,7 +143,7 @@ bool XDS::write(std::ostream& str) const
     return writeFooter(str);
 }
 
-XDS::RecordList XDS::getMergedRecords() const
+RecordList XDS::getMergedRecords() const
 {
     const double dmin = 0.0;
     const double dmax = 200.0;
@@ -195,7 +194,7 @@ XDS::RecordList XDS::getMergedRecords() const
     return records;
 }
 
-XDS::RecordList XDS::getUnmergedRecords() const
+RecordList XDS::getUnmergedRecords() const
 {
     RecordList records;
 

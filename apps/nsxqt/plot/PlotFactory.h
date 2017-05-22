@@ -10,15 +10,13 @@
 
 class QWidget;
 
-using namespace nsx;
-
-class PlotFactory : public Factory<SXPlot,std::string,QWidget*>, public Singleton<PlotFactory,Constructor,Destructor>
+class PlotFactory : public nsx::Factory<SXPlot,std::string,QWidget*>, public nsx::Singleton<PlotFactory,nsx::Constructor,nsx::Destructor>
 {
 
 private:
 
-    friend class Constructor<PlotFactory>;
-    friend class Destructor<PlotFactory>;
+    friend class nsx::Constructor<PlotFactory>;
+    friend class nsx::Destructor<PlotFactory>;
     PlotFactory();
     ~PlotFactory();
 };

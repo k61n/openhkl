@@ -14,6 +14,7 @@
 
 #include <nsxlib/crystal/SpaceGroup.h>
 #include <nsxlib/data/DataSet.h>
+#include <nsxlib/data/DataTypes.h>
 
 class QModelIndex;
 class QWidget;
@@ -28,7 +29,7 @@ class SpaceGroupDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit SpaceGroupDialog(std::vector<std::shared_ptr<nsx::DataSet>> numors, QWidget *parent = 0);
+    explicit SpaceGroupDialog(nsx::DataList numors, QWidget *parent = 0);
     ~SpaceGroupDialog();
 
     std::string getSelectedGroup();
@@ -41,7 +42,7 @@ private:
     void buildTable();
 
     Ui::SpaceGroupDialog *ui;
-    std::vector<std::shared_ptr<nsx::DataSet>> _numors;
+    nsx::DataList _numors;
     std::vector<std::tuple<std::string, double>> _groups;
     std::string _selectedGroup;
 };

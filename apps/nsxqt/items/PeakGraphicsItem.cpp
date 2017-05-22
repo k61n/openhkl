@@ -17,12 +17,10 @@
 
 using Ellipsoid3D = nsx::Ellipsoid<double, 3>;
 
-using namespace nsx;
-
 bool PeakGraphicsItem::_labelVisible = false;
 bool PeakGraphicsItem::_drawBackground = false;
 
-PeakGraphicsItem::PeakGraphicsItem(sptrPeak3D p):
+PeakGraphicsItem::PeakGraphicsItem(nsx::sptrPeak3D p):
     PlottableGraphicsItem(nullptr,true,false),
     _peak(std::move(p)),
     _peakEllipse(),
@@ -50,7 +48,7 @@ PeakGraphicsItem::PeakGraphicsItem(sptrPeak3D p):
 
 QRectF PeakGraphicsItem::boundingRect() const
 {
-    auto bb = IntegrationRegion(_peak->getShape()).getBackground();
+    auto bb = nsx::IntegrationRegion(_peak->getShape()).getBackground();
     const Eigen::Vector3d& l = bb.getLower();
     const Eigen::Vector3d& u = bb.getUpper();
     qreal w=u[0]-l[0];
@@ -134,7 +132,7 @@ std::string PeakGraphicsItem::getPlotType() const
     return "peak";
 }
 
-sptrPeak3D PeakGraphicsItem::getPeak()
+nsx::sptrPeak3D PeakGraphicsItem::getPeak()
 {
     return _peak;
 }

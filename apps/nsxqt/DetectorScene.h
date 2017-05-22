@@ -3,7 +3,6 @@
 
 #include <map>
 #include <list>
-#include <memory>
 
 #include <Eigen/Dense>
 
@@ -12,19 +11,12 @@
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
 
-#include <nsxlib/crystal/PeakCalc.h>
-#include <nsxlib/crystal/UnitCell.h>
+#include <nsxlib/crystal/CrystalTypes.h>
+#include <nsxlib/data/DataTypes.h>
 
 #include "items/PeakCalcGraphicsItem.h"
 
 #include "ColorMap.h"
-
-namespace nsx
-{
-class DataSet;
-class Peak3D;
-using sptrPeak3D = std::shared_ptr<Peak3D>;
-}
 
 class QImage;
 class QGraphicsSceneWheelEvent;
@@ -38,8 +30,6 @@ class SXGraphicsItem;
 // optimize cache hit.
 typedef Eigen::Matrix<int,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> rowMatrix;
 
-using nsx::sptrPeak3D;
-
 //! Master Scene containing the pixmap of the detector counts
 //! and overlayed graphics items (peaks, data cutters, masks ...)
 class DetectorScene : public QGraphicsScene
@@ -51,7 +41,7 @@ public:
     //! Which mode is the cursor diplaying
     enum CURSORMODE {THETA=0, GAMMA=1, DSPACING=2, PIXEL=3, HKL=4};
     explicit DetectorScene(QObject *parent = 0);
-    std::shared_ptr<nsx::DataSet> getData();
+    nsx::sptrDataSet getData();
     const rowMatrix& getCurrentFrame() const;
     void setLogarithmic(bool checked);
     void setColorMap(const std::string& name);
@@ -71,12 +61,12 @@ protected:
 public slots:
     void resetScene();
     // To be called to update detector image
-    void setData(const std::shared_ptr<nsx::DataSet>&, size_t frame);
-    void setData(const std::shared_ptr<nsx::DataSet>&);
+    void setData(const nsx::sptrDataSet&, size_t frame);
+    void setData(const nsx::sptrDataSet&);
     void changeFrame(size_t frame = 0);
     void setMaxIntensity(int);
 
-    PeakGraphicsItem* findPeakGraphicsItem(const sptrPeak3D& peak);
+    PeakGraphicsItem* findPeakGraphicsItem(const nsx::sptrPeak3D& peak);
 
     void updatePeaks();
     void updatePeakCalcs();
@@ -101,7 +91,7 @@ private:
     //! Create the text of the tooltip depending on Scene Mode.
     void createToolTipText(QGraphicsSceneMouseEvent*);
 
-    std::shared_ptr<nsx::DataSet> _currentData;
+    nsx::sptrDataSet _currentData;
     unsigned long _currentFrameIndex;
     int _currentIntensity;
     rowMatrix _currentFrame;
@@ -119,7 +109,7 @@ private:
     bool _itemSelected;
     QGraphicsPixmapItem* _image;
     //! Contains peaks item of current data, reinitialized with new data set.
-    std::map<sptrPeak3D,PeakGraphicsItem*> _peakGraphicsItems;
+    std::map<nsx::sptrPeak3D,PeakGraphicsItem*> _peakGraphicsItems;
     std::vector<PeakCalcGraphicsItem*> _peakCalcs;
     QList<MaskGraphicsItem*> _masks;
     SXGraphicsItem* _lastClickedGI;

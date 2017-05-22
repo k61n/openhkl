@@ -50,9 +50,6 @@ namespace nsx {
 
 using Ellipsoid3D = Ellipsoid<double, 3>;
 
-using sptrPeak3D = PeakCalc::sptrPeak3D;
-using PeakList = PeakCalc::PeakList;
-
 PeakCalc::PeakCalc(double h,double k,double l, double x,double y, double frame):
     _h(h),_k(k),_l(l),_x(x),_y(y),_frame(frame)
 {

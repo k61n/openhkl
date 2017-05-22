@@ -7,7 +7,7 @@
 #include <QDialog>
 #include <QItemSelection>
 
-#include <nsxlib/crystal/UnitCell.h>
+#include <nsxlib/crystal/CrystalTypes.h>
 
 namespace Ui
 {
@@ -17,7 +17,6 @@ class DialogAutoIndexing;
 namespace nsx
 {
 class Experiment;
-class Peak3D;
 }
 
 class DialogAutoIndexing : public QDialog
@@ -27,11 +26,8 @@ class DialogAutoIndexing : public QDialog
 public:
 
     using sptrExperiment = std::shared_ptr<nsx::Experiment>;
-    using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
-    using sptrUnitCell = std::shared_ptr<nsx::UnitCell>;
-    using CellList = std::vector<sptrUnitCell>;
 
-    explicit DialogAutoIndexing(sptrExperiment experiment, const std::vector<sptrPeak3D> peaks, QWidget *parent=0);
+    explicit DialogAutoIndexing(sptrExperiment experiment, const nsx::PeakList peaks, QWidget *parent=0);
     ~DialogAutoIndexing();
 
     void buildSolutionsTable();
@@ -46,16 +42,16 @@ private slots:
 
 signals:
 
-    void cellUpdated(sptrUnitCell);
+    void cellUpdated(nsx::sptrUnitCell);
 
 private:
     Ui::DialogAutoIndexing *ui;
 
     sptrExperiment _experiment;
 
-    std::vector<sptrPeak3D> _peaks;
+    nsx::PeakList _peaks;
 
-    CellList _unitCells;
+    nsx::UnitCellList _unitCells;
 
     std::vector<std::pair<nsx::UnitCell,double>> _solutions;
 };

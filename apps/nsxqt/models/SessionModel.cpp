@@ -132,8 +132,8 @@ void SessionModel::onItemChanged(QStandardItem* item)
         // The first item of the Sample item branch is the SampleShapeItem, skip it
         int idx = p->index().row()- 1;
         auto expt = p->getExperiment();
-        auto sptrUnitCell = expt->getDiffractometer()->getSample()->getUnitCell(idx);
-        sptrUnitCell->setName(p->text().toStdString());
+        auto uc = expt->getDiffractometer()->getSample()->getUnitCell(idx);
+        uc->setName(p->text().toStdString());
     }
 }
 
@@ -171,10 +171,10 @@ void SessionModel::createNewExperiment()
     }
 }
 
-std::shared_ptr<nsx::Experiment> SessionModel::addExperiment(const std::string& experimentName, const std::string& instrumentName)
+nsx::sptrExperiment SessionModel::addExperiment(const std::string& experimentName, const std::string& instrumentName)
 {
     // Create an experiment
-    std::shared_ptr<nsx::Experiment> expPtr(new nsx::Experiment(experimentName,instrumentName));
+    nsx::sptrExperiment expPtr(new nsx::Experiment(experimentName,instrumentName));
 
     // Create an experiment item
     ExperimentItem* expt = new ExperimentItem(expPtr);
@@ -184,9 +184,9 @@ std::shared_ptr<nsx::Experiment> SessionModel::addExperiment(const std::string& 
     return expPtr;
 }
 
-std::vector<std::shared_ptr<DataSet>> SessionModel::getSelectedNumors(ExperimentItem* item) const
+nsx::DataList SessionModel::getSelectedNumors(ExperimentItem* item) const
 {
-    std::vector<std::shared_ptr<DataSet>> numors;
+    nsx::DataList numors;
 
     QList<QStandardItem*> dataItems = findItems(QString("Data"),Qt::MatchCaseSensitive|Qt::MatchRecursive);
 
@@ -229,7 +229,7 @@ void SessionModel::fromJsonObject(const QJsonObject &obj)
         QJsonObject exp_obj = expr.toObject();
         std::string name = exp_obj["name"].toString().toStdString();
         std::string instrument = exp_obj["instrument"].toObject()["name"].toString().toStdString();
-        std::shared_ptr<Experiment> ptr = addExperiment(name, instrument);
+        nsx::sptrExperiment ptr = addExperiment(name, instrument);
 
         ExperimentItem* expItem = dynamic_cast<ExperimentItem*>(item(rowCount()-1,0));
         assert(expItem != nullptr);
@@ -257,9 +257,9 @@ std::string SessionModel::getColorMap() const
     return _colormap;
 }
 
-std::vector<std::shared_ptr<DataSet>> SessionModel::getSelectedNumors() const
+nsx::DataList SessionModel::getSelectedNumors() const
 {
-    std::vector<std::shared_ptr<DataSet>> numors;
+    nsx::DataList numors;
 
     QList<QStandardItem*> dataItems = findItems(QString("Data"),Qt::MatchCaseSensitive|Qt::MatchRecursive);
 
@@ -316,16 +316,16 @@ void SessionModel::computeRFactors()
 {
     qDebug() << "Finding peak equivalences...";
 
-    std::vector<std::shared_ptr<DataSet>> numors = getSelectedNumors();
-    std::vector<std::vector<sptrPeak3D>> peak_equivs;
-    std::vector<sptrPeak3D> peak_list;
+    nsx::DataList numors = getSelectedNumors();
+    std::vector<nsx::PeakList> peak_equivs;
+    nsx::PeakList peak_list;
 
-    std::shared_ptr<UnitCell> unit_cell;
+    nsx::sptrUnitCell unit_cell;
 
-    for (std::shared_ptr<DataSet> numor: numors)
+    for (auto numor: numors)
     {
-        std::set<sptrPeak3D> peaks = numor->getPeaks();
-        for (sptrPeak3D peak: peaks)
+        nsx::PeakSet peaks = numor->getPeaks();
+        for (auto peak: peaks)
         {
             if ( peak && peak->isSelected() && !peak->isMasked() ) {
                 peak_list.push_back(peak);
@@ -338,7 +338,7 @@ void SessionModel::computeRFactors()
         return;
     }
 
-    for (sptrPeak3D peak: peak_list)
+    for (auto peak: peak_list)
     {
         // what do we do if there is more than one sample/unit cell??
         unit_cell = peak->getActiveUnitCell();
@@ -353,11 +353,11 @@ void SessionModel::computeRFactors()
         return;
     }
 
-    SpaceGroup grp("P 1");
+    nsx::SpaceGroup grp("P 1");
 
     // spacegroup construct can throw
     try {
-        grp = SpaceGroup(unit_cell->getSpaceGroup());
+        grp = nsx::SpaceGroup(unit_cell->getSpaceGroup());
     }
     catch(std::exception& e) {
         qDebug() << "Caught exception: " << e.what() << endl;
@@ -380,7 +380,7 @@ void SessionModel::computeRFactors()
 
     qDebug() << "Computing R factors:";
 
-    RFactor rfactor(peak_equivs);
+    nsx::RFactor rfactor(peak_equivs);
 
     qDebug() << "    Rmerge = " << rfactor.Rmerge();
     qDebug() << "    Rmeas  = " << rfactor.Rmeas();
@@ -454,11 +454,11 @@ void SessionModel::findPeaks(const QModelIndex& index)
     // qDebug() << "Preview frame has dimensions" << frame.rows() << " " << frame.cols();
 
     // reset progress handler
-    _progressHandler = std::shared_ptr<ProgressHandler>(new ProgressHandler);
+    _progressHandler = std::shared_ptr<nsx::ProgressHandler>(new nsx::ProgressHandler);
 
     // set up peak finder
     if ( !_peakFinder)
-        _peakFinder = std::shared_ptr<PeakFinder>(new PeakFinder);
+        _peakFinder = nsx::sptrPeakFinder(new nsx::PeakFinder);
     _peakFinder->setHandler(_progressHandler);
 
     DialogConvolve* dialog = new DialogConvolve(frame, _peakFinder, nullptr);
@@ -541,7 +541,7 @@ void SessionModel::incorporateCalculatedPeaks()
     const double dmin = dialog.dMin();
     const double search_radius = dialog.searchRadius();
 
-    std::vector<std::shared_ptr<DataSet>> numors = getSelectedNumors();
+    nsx::DataList numors = getSelectedNumors();
 
     std::shared_ptr<nsx::ProgressHandler> handler(new nsx::ProgressHandler);
     ProgressView progressView(nullptr);
@@ -554,7 +554,7 @@ void SessionModel::incorporateCalculatedPeaks()
 //    int predicted_peaks = 0;
     int observed_peaks = 0;
 
-    for(std::shared_ptr<DataSet> numor: numors) {
+    for(auto numor: numors) {
         qDebug() << "Finding missing peaks for numor " << ++current_numor << " of " << numors.size();
 
         auto predictor = nsx::PeakPredictor();
@@ -583,13 +583,13 @@ void SessionModel::applyResolutionCutoff(double dmin, double dmax)
 
     qDebug() << "Applying resolution cutoff...";
 
-    std::vector<std::shared_ptr<DataSet>> numors = getSelectedNumors();
+    nsx::DataList numors = getSelectedNumors();
 
-    for(std::shared_ptr<DataSet> numor: numors) {
-        std::vector<std::shared_ptr<Peak3D>> bad_peaks;
-        std::shared_ptr<nsx::Sample> sample = numor->getDiffractometer()->getSample();
+    for(auto numor: numors) {
+        nsx::PeakList bad_peaks;
+        auto sample = numor->getDiffractometer()->getSample();
 
-        for (std::shared_ptr<Peak3D> peak: numor->getPeaks()) {
+        for (auto peak: numor->getPeaks()) {
             if (!peak->isSelected() || peak->isMasked())
                 continue;
 
@@ -618,7 +618,7 @@ void SessionModel::applyResolutionCutoff(double dmin, double dmax)
 void SessionModel::writeLog()
 {
     LogFileDialog dialog;
-    std::vector<sptrPeak3D> peaks;
+    nsx::PeakList peaks;
 
     auto numors = this->getSelectedNumors();
 
@@ -659,7 +659,7 @@ void SessionModel::writeLog()
     }
 }
 
-bool SessionModel::writeNewShellX(std::string filename, const std::vector<sptrPeak3D>& peaks)
+bool SessionModel::writeNewShellX(std::string filename, const nsx::PeakList& peaks)
 {
     std::fstream file(filename, std::ios::out);
     std::vector<char> buf(1024, 0); // buffer for snprintf
@@ -669,26 +669,26 @@ bool SessionModel::writeNewShellX(std::string filename, const std::vector<sptrPe
         return false;
     }
 
-    auto sptrBasis = peaks[0]->getActiveUnitCell();
+    auto basis = peaks[0]->getActiveUnitCell();
 
-    if (!sptrBasis) {
+    if (!basis) {
         qCritical() << "No unit cell defined the peaks. No index can be defined.";
         return false;
     }
 
-    for (sptrPeak3D peak: peaks) {
+    for (auto peak: peaks) {
         if (peak->isMasked() || !peak->isSelected())
             continue;
 
         Eigen::RowVector3d hkl;
-        auto sptrCurrentBasis = peak->getActiveUnitCell();
+        auto currentBasis = peak->getActiveUnitCell();
 
-        if (sptrCurrentBasis != sptrBasis) {
+        if (currentBasis != basis) {
             qCritical() << "Not all the peaks have the same unit cell. Multi crystal not implement yet";
             return false;
         }
 
-        if (!(peak->getMillerIndices(*sptrCurrentBasis, hkl, true)))
+        if (!(peak->getMillerIndices(*currentBasis, hkl, true)))
             continue;
 
         const long h = std::lround(hkl[0]);
@@ -712,7 +712,7 @@ bool SessionModel::writeNewShellX(std::string filename, const std::vector<sptrPe
 }
 
 bool SessionModel::writeStatistics(std::string filename,
-                                    const std::vector<nsx::sptrPeak3D> &peaks,
+                                    const nsx::PeakList &peaks,
                                     double dmin, double dmax, unsigned int num_shells, bool friedel)
 {
     std::fstream file(filename, std::ios::out);
@@ -745,7 +745,7 @@ bool SessionModel::writeStatistics(std::string filename,
     auto&& ds = res.getD();
     auto&& shells = res.getShells();
 
-    std::vector<std::vector<sptrPeak3D>> all_equivs;
+    std::vector<nsx::PeakList> all_equivs;
 
     file << "          dmin       dmax       nobs redundancy     r_meas    r_merge      r_pim" << std::endl;
 
@@ -754,7 +754,7 @@ bool SessionModel::writeStatistics(std::string filename,
         const double d_upper = ds[i+1];
 
         auto peak_equivs = grp.findEquivalences(shells[i], friedel);
-        RFactor rfactor(peak_equivs);
+        nsx::RFactor rfactor(peak_equivs);
 
         for (auto&& equiv: peak_equivs)
             all_equivs.push_back(equiv);
@@ -793,7 +793,7 @@ bool SessionModel::writeStatistics(std::string filename,
 
     file << "--------------------------------------------------------------------------------" << std::endl;
 
-    RFactor rfactor(all_equivs);
+    nsx::RFactor rfactor(all_equivs);
 
     int num_peaks = 0;
 
@@ -851,11 +851,6 @@ bool SessionModel::writeStatistics(std::string filename,
 
         file << &buf[0];
 
-        // debugging
-        if (std::abs(intensity) < 10) {
-            std::shared_ptr<Peak3D> ptr = *peak.getPeaks().begin();
-        }
-
         if (rel_std > 1.0) {
             file << " ***** ";
             ++bad_peaks;
@@ -876,7 +871,7 @@ bool SessionModel::writeStatistics(std::string filename,
     return true;
 }
 
-bool SessionModel::writeXDS(std::string filename, const std::vector<sptrPeak3D>& peaks, bool merge, bool friedel)
+bool SessionModel::writeXDS(std::string filename, const nsx::PeakList& peaks, bool merge, bool friedel)
 {
     const std::string date = QDate::currentDate().toString("yyyy-MM-dd").toStdString();
     nsx::XDS xds(peaks, merge, friedel, filename, date);

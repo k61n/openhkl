@@ -8,7 +8,7 @@
 #include "models/NumorItem.h"
 #include "tree/NumorPropertyWidget.h"
 
-NumorItem::NumorItem(std::shared_ptr<nsx::Experiment> experiment,std::shared_ptr<nsx::DataSet> data) :
+NumorItem::NumorItem(sptrExperiment experiment,nsx::sptrDataSet data) :
     InspectableTreeItem(experiment),
     _data(data)
 {
@@ -74,7 +74,7 @@ void NumorItem::fromJson(const QJsonObject &obj)
         upper(1) = mask_arr[4].toDouble();
         upper(2) = mask_arr[5].toDouble();
 
-        getData()->addMask(new AABB<double, 3>(lower, upper));
+        getData()->addMask(new nsx::AABB<double, 3>(lower, upper));
     }
 }
 

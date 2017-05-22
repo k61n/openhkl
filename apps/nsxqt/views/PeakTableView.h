@@ -39,7 +39,7 @@
 #include <QMenu>
 #include <QTableView>
 
-#include <nsxlib/data/DataSet.h>
+#include <nsxlib/crystal/CrystalTypes.h>
 
 #include <MainWindow.h>
 
@@ -48,19 +48,12 @@ class QMouseEvent;
 class QString;
 class QWidget;
 
-namespace nsx {
-class UnitCell;
-}
-
 class PeakCustomPlot;
 
 class PeakTableView : public QTableView
 {
     Q_OBJECT
 public:
-
-    using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
-    using sptrUnitCell = std::shared_ptr<nsx::UnitCell>;
 
     explicit PeakTableView(QWidget* parent = 0);
     void contextMenuEvent(QContextMenuEvent *);
@@ -69,7 +62,7 @@ public:
 
 signals:
     void plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&);
-    void plotPeak(sptrPeak3D);
+    void plotPeak(nsx::sptrPeak3D);
     void autoIndexed();
 
 public slots:
@@ -92,15 +85,15 @@ public slots:
     void selectUnindexedPeaks();
     void togglePeaksSelection();
 
-    void updateUnitCell(const sptrUnitCell& unitCell);
+    void updateUnitCell(const nsx::sptrUnitCell& unitCell);
 
     void openAutoIndexingDialog();
     void openRefiningParametersDialog();
 
 private:
 
-    static bool writeNewShelX(std::string filename, const std::vector<sptrPeak3D>& peaks);
-    static bool writeStatistics(std::string filename, const std::vector<sptrPeak3D>& peaks,
+    static bool writeNewShelX(std::string filename, const nsx::PeakList& peaks);
+    static bool writeStatistics(std::string filename, const nsx::PeakList& peaks,
                                 double dmin, double dmax, int shells, bool friedel);
 
     void sortByHKL(bool up);

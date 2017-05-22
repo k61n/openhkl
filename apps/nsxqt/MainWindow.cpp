@@ -109,12 +109,12 @@ MainWindow::MainWindow(QWidget *parent)
     _ui->splitterHorizontal->setStretchFactor(1,90);
 
     // signals and slots
-    connect(_ui->experimentTree, SIGNAL(plotData(std::shared_ptr<nsx::DataSet>)),
-            _ui->_dview->getScene(), SLOT(setData(std::shared_ptr<nsx::DataSet>))
+    connect(_ui->experimentTree, SIGNAL(plotData(nsx::sptrDataSet)),
+            _ui->_dview->getScene(), SLOT(setData(nsx::sptrDataSet))
     );
 
-    connect(_ui->experimentTree, SIGNAL(plotData(std::shared_ptr<nsx::DataSet>)),
-            this, SLOT(changeData(std::shared_ptr<nsx::DataSet>)));
+    connect(_ui->experimentTree, SIGNAL(plotData(nsx::sptrDataSet)),
+            this, SLOT(changeData(nsx::sptrDataSet)));
 
     connect(_ui->frame,&QScrollBar::valueChanged,[=](const int& value){_ui->_dview->getScene()->changeFrame(value);});
 
@@ -146,8 +146,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     qDebug() << "The resources directory is " << nsx::Path().getResourcesDir().c_str();
 
-    _progressHandler = std::shared_ptr<ProgressHandler>(new ProgressHandler());
-    _peakFinder = std::shared_ptr<PeakFinder>(new PeakFinder());
+    _progressHandler = std::shared_ptr<nsx::ProgressHandler>(new nsx::ProgressHandler());
+    _peakFinder = nsx::sptrPeakFinder(new nsx::PeakFinder());
 
 
     for (auto&& action: _ui->menuColor_map->actions()) {
@@ -256,7 +256,7 @@ Ui::MainWindow* MainWindow::getUI() const
 }
 
 
-void MainWindow::changeData(std::shared_ptr<DataSet> data)
+void MainWindow::changeData(nsx::sptrDataSet data)
 {
     _ui->frameFrame->setEnabled(true);
     _ui->intensityFrame->setEnabled(true);
@@ -274,7 +274,7 @@ void MainWindow::changeData(std::shared_ptr<DataSet> data)
     //_ui->intensity->setValue(10);
 }
 
-void MainWindow::plotPeak(sptrPeak3D peak)
+void MainWindow::plotPeak(nsx::sptrPeak3D peak)
 {
     auto scenePtr = _ui->_dview->getScene();
     // Ensure that frames
@@ -448,7 +448,7 @@ void MainWindow::setInspectorWidget(QWidget* w)
 
     if (PeakListPropertyWidget* widget=dynamic_cast<PeakListPropertyWidget*>(w)) {
         // Ensure plot1D is updated
-        connect(widget->getPeakTableView(),SIGNAL(plotPeak(sptrPeak3D)),this,SLOT(plotPeak(sptrPeak3D)));
+        connect(widget->getPeakTableView(),SIGNAL(plotPeak(nsx::sptrPeak3D)),this,SLOT(plotPeak(nsx::sptrPeak3D)));
         connect(widget->getPeakTableView(),
                 SIGNAL(plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&)),
                 this,
@@ -523,18 +523,18 @@ void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
     int total_peaks = 0;
     // int remaining_peaks = 0;
 
-    std::vector<std::shared_ptr<DataSet>> numors = _session->getSelectedNumors();
-    std::vector<sptrPeak3D> bad_peaks;
+    nsx::DataList numors = _session->getSelectedNumors();
+    nsx::PeakList bad_peaks;
 
-    for (std::shared_ptr<DataSet> numor: numors) {
+    for (nsx::sptrDataSet numor: numors) {
 
         numor->removeDuplicatePeaks();
 
-        std::set<sptrPeak3D>& peaks = numor->getPeaks();
+        nsx::PeakSet& peaks = numor->getPeaks();
 
         total_peaks += peaks.size();
 
-        for (std::set<sptrPeak3D>::iterator it = peaks.begin(); it != peaks.end();) {
+        for (auto it = peaks.begin(); it != peaks.end();) {
             if ( (*it)->isMasked() || !(*it)->isSelected() ) {
                 bad_peaks.push_back(*it);
                 it = peaks.erase(it);
@@ -606,7 +606,7 @@ void MainWindow::on_actionReintegrate_peaks_triggered()
     const double bkg_scale = dialog->backgroundScale();
     const bool update_shape = dialog->updateShape();
 
-    std::vector<std::shared_ptr<DataSet>> numors = _session->getSelectedNumors();
+    nsx::DataList numors = _session->getSelectedNumors();
 
     for (auto&& numor: numors) {
         numor->integratePeaks(peak_scale, bkg_scale, update_shape, _progressHandler);

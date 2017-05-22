@@ -10,13 +10,10 @@
 #include <QStandardItemModel>
 #include <QTreeView>
 
+#include <nsxlib/data/DataTypes.h>
+
 class ExperimentItem;
 class SessionModel;
-
-namespace nsx {
-class DataSet;
-class UnitCell;
-}
 
 class ExperimentTree : public QTreeView {
     Q_OBJECT
@@ -27,7 +24,7 @@ public:
     void setSession(std::shared_ptr<SessionModel> session);
 
 signals:
-    void plotData(std::shared_ptr<nsx::DataSet>);
+    void plotData(nsx::sptrDataSet);
     void inspectWidget(QWidget*);
     void resetScene();
 

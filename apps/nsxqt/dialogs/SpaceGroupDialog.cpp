@@ -16,6 +16,7 @@
 #include <QString>
 #include <QTreeView>
 
+#include <nsxlib/crystal/CrystalTypes.h>
 #include <nsxlib/crystal/Peak3D.h>
 #include <nsxlib/crystal/RFactor.h>
 #include <nsxlib/crystal/SpaceGroup.h>
@@ -27,7 +28,7 @@
 #include "SpaceGroupDialog.h"
 #include "ui_SpaceGroupDialog.h"
 
-SpaceGroupDialog::SpaceGroupDialog(std::vector<std::shared_ptr<nsx::DataSet>> numors, QWidget *parent):
+SpaceGroupDialog::SpaceGroupDialog(nsx::DataList numors, QWidget *parent):
     QDialog(parent),
     ui(new Ui::SpaceGroupDialog),
     _numors(numors),
@@ -63,8 +64,8 @@ void SpaceGroupDialog::evaluateSpaceGroups()
     std::vector<std::string> symbols = spaceGroupSymbols->getAllSymbols();
 
     std::vector<std::array<double, 3>> hkls;
-    std::vector<nsx::sptrPeak3D> peak_list;
-    std::vector<std::vector<nsx::sptrPeak3D>> peak_equivs;
+    nsx::PeakList peak_list;
+    std::vector<nsx::PeakList> peak_equivs;
 
     if ( _numors.size()  == 0) {
         qDebug() << "Need at least one numor to find space group!";

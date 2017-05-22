@@ -157,7 +157,7 @@ std::size_t DataSet::getNRows() const
     return _nrows;
 }
 
-std::set<sptrPeak3D>& DataSet::getPeaks()
+PeakSet& DataSet::getPeaks()
 {
     return _peaks;
 }
@@ -170,9 +170,6 @@ void DataSet::addPeak(const sptrPeak3D& peak)
 
 void DataSet::clearPeaks()
 {
-//    for (auto&& ptr : _peaks) {
-//        ptr->unlinkData();
-//    }
     _peaks.clear();
 }
 
@@ -623,20 +620,11 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
     std::cout << "avg radius: " << avg_peak_radius << std::endl;
     std::cout << "std. dev:   " << peak_radius_std << std::endl;
 
-
-    //const double avg_peak_radius = peakRadius(avg_peak_shape);
-
     for (auto&& peak: _peaks ) {
-//        Eigen::Vector3d center(peak->getShape().getCenter());
-//        auto shape = Ellipsoid3D(center, vals, solver.eigenvectors());
-//        peak->setShape(shape);
         IntegrationRegion region(peak->getShape(), peak_scale, bkg_scale);
         PeakIntegrator integrator(region, *this);
         peak_list.emplace_back(peak, integrator);
     }
-
-    //progressDialog->setValue(0);
-    //progressDialog->setLabelText("Integrating peak intensities...");
 
     size_t idx = 0;
     int num_frames_done = 0;
@@ -651,7 +639,6 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
         mask.setZero();
 
         for (auto& tup: peak_list ) {
-            auto&& peak = tup.first;
             auto&& integrator = tup.second;
             integrator.getRegion().updateMask(mask, idx);
         }
@@ -679,19 +666,6 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
         auto&& integrator = tup.second;
         integrator.end();
         peak->updateIntegration(integrator);
-
-        // peak is too weak
-        // todo: p value should probably not be hard-coded
-//        if (integrator.pValue() > 1e-3) {
-//            peak->setSelected(false);
-//            continue;
-//        }
-
-        // peak profile couldn't be fitted
-//        if (!peak->getProfile().goodFit(integrator.getProjectionPeak(), 0.10)) {
-//            peak->setSelected(false);
-//            continue;
-//        }
 
         if (!update_shape) {
             continue;
@@ -722,9 +696,6 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
             peak->setSelected(false);
             continue;
         }
-
-        auto old_center = old_shape.getAABBCenter();
-        auto new_center = new_shape.getAABBCenter();
 
         auto lb = new_shape.getLower();
         auto ub = new_shape.getUpper();
@@ -773,12 +744,8 @@ void DataSet::removeDuplicatePeaks()
         }
     };
 
-
-    int predicted_peaks = 0;
-
     auto& mono = getDiffractometer()->getSource()->getSelectedMonochromator();
-    const double wavelength = mono.getWavelength();
-    std::vector<sptrPeak3D> calculated_peaks;
+    PeakList calculated_peaks;
 
     std::shared_ptr<Sample> sample = getDiffractometer()->getSample();
     unsigned int ncrystals = static_cast<unsigned int>(sample->getNCrystals());

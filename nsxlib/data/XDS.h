@@ -48,8 +48,6 @@ class XDS {
 
 public:
 
-    using RecordList = std::vector<PeakRecord>;
-
     XDS(const PeakList& peaks, bool merge, bool friedel, const std::string& filename = "", const std::string& date = "");
 
     ~XDS() = default;

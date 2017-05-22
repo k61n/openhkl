@@ -12,10 +12,17 @@
 
 class QWidget;
 
+namespace nsx {
+class Experiment;
+}
+
 class DetectorItem : public InspectableTreeItem
 {
 public:
-    explicit DetectorItem(std::shared_ptr<Experiment> experiment);
+
+    using sptrExperiment = std::shared_ptr<nsx::Experiment>;
+
+    explicit DetectorItem(sptrExperiment experiment);
     QWidget* inspectItem() override;
 
     QJsonObject toJson() override;

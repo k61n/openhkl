@@ -36,8 +36,8 @@
 #include <cmath>
 #include <stdexcept>
 
-#include "MergedPeak.h"
-
+#include "../crystal/MergedPeak.h"
+#include "../crystal/Peak3D.h"
 
 namespace nsx {
 
@@ -180,7 +180,7 @@ double MergedPeak::d() const
     return _d;
 }
 
-const std::vector<sptrPeak3D> &MergedPeak::getPeaks() const
+const PeakList& MergedPeak::getPeaks() const
 {
     return _peaks;
 }

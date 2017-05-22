@@ -36,6 +36,7 @@
 
 #include <Eigen/Dense>
 
+#include "../crystal/CrystalTypes.h"
 #include "../crystal/PeakCalc.h"
 #include "../data/MetaData.h"
 #include "../geometry/AABB.h"
@@ -52,7 +53,6 @@ class BasicFrameIterator;
 class DataSet;
 class IDataReader;
 class IFrameIterator;
-class Peak3D;
 class ThreadedFrameIterator;
 
 using FrameIteratorCallback = std::function<IFrameIterator*(DataSet&, int)>;
@@ -60,8 +60,6 @@ using FrameIteratorCallback = std::function<IFrameIterator*(DataSet&, int)>;
 class DataSet {
 
 public:
-
-    using sptrPeak3D = std::shared_ptr<Peak3D>;
 
     // Constructors and destructor
 
@@ -106,7 +104,7 @@ public:
     MetaData* getMetadata() const;
 
     //! Return the peaks
-    std::set<sptrPeak3D>& getPeaks();
+    PeakSet& getPeaks();
 
     //! Gets the the detector states.
     const ComponentState& getDetectorState(size_t frame) const;
@@ -197,7 +195,7 @@ protected:
     std::unique_ptr<MetaData> _metadata;
     std::vector<Eigen::MatrixXi> _data;
     std::vector<InstrumentState> _states;
-    std::set<sptrPeak3D> _peaks;
+    PeakSet _peaks;
     std::size_t _fileSize;
     //! The set of masks bound to the data
     std::set<AABB<double,3>*> _masks;

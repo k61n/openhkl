@@ -6,10 +6,18 @@
 #include "InspectableTreeItem.h"
 #include <nsxlib/instrument/Experiment.h>
 
+namespace nsx
+{
+class Experiment;
+}
+
 class PeakListItem : public InspectableTreeItem
 {
 public:
-    explicit PeakListItem(std::shared_ptr<Experiment> experiment);
+
+    using sptrExperiment = std::shared_ptr<nsx::Experiment>;
+
+    explicit PeakListItem(sptrExperiment experiment);
     QWidget* inspectItem();
 
 };

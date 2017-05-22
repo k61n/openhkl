@@ -45,31 +45,25 @@
 #include <QStandardItemModel>
 #include <QTreeView>
 
+#include <nsxlib/crystal/CrystalTypes.h>
+#include <nsxlib/data/DataTypes.h>
+#include <nsxlib/instrument/InstrumentTypes.h>
+
 class ExperimentItem;
 
 namespace nsx {
-class DataSet;
-class Experiment;
 class ProgressHandler;
-class Peak3D;
-class PeakFinder;
-class UnitCell;
 }
 
 class SessionModel : public QStandardItemModel {
     Q_OBJECT
 public:
-    using sptrDataSet = std::shared_ptr<nsx::DataSet>;
-    using sptrExperiment = std::shared_ptr<nsx::Experiment>;
-    using sptrUnitCell = std::shared_ptr<nsx::UnitCell>;
-    using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
-
     explicit SessionModel();
     ~SessionModel();
 
-    sptrExperiment addExperiment(const std::string& experimentName, const std::string& instrumentName);
-    std::vector<sptrDataSet> getSelectedNumors() const;
-    std::vector<sptrDataSet> getSelectedNumors(ExperimentItem* item) const;
+    nsx::sptrExperiment addExperiment(const std::string& experimentName, const std::string& instrumentName);
+    nsx::DataList getSelectedNumors() const;
+    nsx::DataList getSelectedNumors(ExperimentItem* item) const;
 
     //! Convert session into JSON object
     QJsonObject toJsonObject();
@@ -82,21 +76,21 @@ public:
     std::string getColorMap() const;
 
     void writeLog();
-    bool writeNewShellX(std::string filename, const std::vector<sptrPeak3D>& peaks);
+    bool writeNewShellX(std::string filename, const nsx::PeakList& peaks);
     bool writeStatistics(std::string filename,
-                         const std::vector<sptrPeak3D> &peaks,
+                         const nsx::PeakList &peaks,
                          double dmin, double dmax, unsigned int num_shells, bool friedel);
 
-    bool writeXDS(std::string filename, const std::vector<sptrPeak3D>& peaks, bool merge, bool friedel);
+    bool writeXDS(std::string filename, const nsx::PeakList& peaks, bool merge, bool friedel);
 
     void fitAllPeaks();
     void autoAssignUnitCell();
 
 signals:
-    void plotData(sptrDataSet);
+    void plotData(nsx::sptrDataSet);
     void inspectWidget(QWidget*);
     void updatePeaks();
-    void updateCellParameters(sptrUnitCell);
+    void updateCellParameters(nsx::sptrUnitCell);
 
 public slots:
 
@@ -118,7 +112,7 @@ private:
     //! Filename for the save/load feature
     QString _filename;
     std::shared_ptr<nsx::ProgressHandler> _progressHandler;
-    std::shared_ptr<nsx::PeakFinder> _peakFinder;
+    nsx::sptrPeakFinder _peakFinder;
     std::string _colormap;
 };
 

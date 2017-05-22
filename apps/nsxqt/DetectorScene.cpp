@@ -9,6 +9,8 @@
 #include <QToolTip>
 
 #include <nsxlib/crystal/Peak3D.h>
+#include <nsxlib/crystal/SpaceGroup.h>
+#include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/instrument/Detector.h>
 #include <nsxlib/instrument/DetectorEvent.h>
@@ -23,8 +25,6 @@
 #include "items/CutSliceGraphicsItem.h"
 #include "items/CutLineGraphicsItem.h"
 #include "items/MaskGraphicsItem.h"
-
-using namespace nsx;
 
 // compile-time constant to determine whether to draw the peak masks
 static const bool g_drawMask = true;
@@ -225,7 +225,7 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             break;
             // Case of Mask mode
         case MASK:
-            mask = new MaskGraphicsItem(_currentData, new AABB<double, 3>);
+            mask = new MaskGraphicsItem(_currentData, new nsx::AABB<double, 3>);
             mask->setFrom(event->lastScenePos());
             mask->setTo(event->lastScenePos());
             addItem(mask);
@@ -439,16 +439,16 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
         ttip = QString("(%1,%2) I:%3").arg(col).arg(row).arg(intensity);
         break;
     case GAMMA:
-        DetectorEvent(*det, col, row, detectorv).getGammaNu(gamma, nu, sample->getPosition(samplev));
+        nsx::DetectorEvent(*det, col, row, detectorv).getGammaNu(gamma, nu, sample->getPosition(samplev));
         ttip = QString("(%1,%2) I: %3").arg(gamma/nsx::deg).arg(nu/nsx::deg).arg(intensity);
         break;
     case THETA:
-        th2 = DetectorEvent(*det, col, row, detectorv).get2Theta(Eigen::Vector3d(0, 1.0/wave, 0));
+        th2 = nsx::DetectorEvent(*det, col, row, detectorv).get2Theta(Eigen::Vector3d(0, 1.0/wave, 0));
         ttip = QString("(%1) I: %2").arg(th2/nsx::deg).arg(intensity);
         break;
     case DSPACING:
         // th2 = det->get2Theta(col, row, detectorv, Eigen::Vector3d(0, 1.0/wave, 0));
-        th2 = DetectorEvent(*det, col, row, detectorv).get2Theta(Eigen::Vector3d(0, 1.0/wave, 0));
+        th2 = nsx::DetectorEvent(*det, col, row, detectorv).get2Theta(Eigen::Vector3d(0, 1.0/wave, 0));
         ttip = QString("(%1) I: %2").arg(wave/(2*sin(0.5*th2))).arg(intensity);
         break;
     case HKL:
@@ -577,7 +577,7 @@ void DetectorScene::changeCursorMode(int mode)
     _cursorMode=static_cast<CURSORMODE>(mode);
 }
 
-PeakGraphicsItem* DetectorScene::findPeakGraphicsItem(const sptrPeak3D& peak)
+PeakGraphicsItem* DetectorScene::findPeakGraphicsItem(const nsx::sptrPeak3D& peak)
 {
     auto it = _peakGraphicsItems.find(peak);
 
@@ -605,7 +605,7 @@ void DetectorScene::updatePeaks()
         PeakGraphicsItem* pgi = new PeakGraphicsItem(peak);
         pgi->setFrame(_currentFrameIndex);
         addItem(pgi);
-        _peakGraphicsItems.insert(std::pair<sptrPeak3D, PeakGraphicsItem*>(peak,pgi));
+        _peakGraphicsItems.insert(std::pair<nsx::sptrPeak3D, PeakGraphicsItem*>(peak,pgi));
     }
 }
 

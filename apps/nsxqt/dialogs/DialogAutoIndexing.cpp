@@ -25,7 +25,7 @@
 
 using sptrExperiment = DialogAutoIndexing::sptrExperiment;
 
-DialogAutoIndexing::DialogAutoIndexing(sptrExperiment experiment, std::vector<sptrPeak3D> peaks, QWidget *parent):
+DialogAutoIndexing::DialogAutoIndexing(sptrExperiment experiment, nsx::PeakList peaks, QWidget *parent):
     QDialog(parent),
     ui(new Ui::DialogAutoIndexing),
     _experiment(experiment),
@@ -66,7 +66,7 @@ void DialogAutoIndexing::autoIndex()
         throw std::runtime_error("cannot auto index: no unit cell");
     }
 
-    sptrUnitCell selectedUnitCell = _unitCells[ui->unitCells->currentIndex()];
+    nsx::sptrUnitCell selectedUnitCell = _unitCells[ui->unitCells->currentIndex()];
 
     // Clear the current solution list
     _solutions.clear();

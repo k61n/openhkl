@@ -38,13 +38,11 @@
 
 #include <Eigen/Eigenvalues>
 
-#include "../crystal/ResolutionShell.h"
 #include "../crystal/Peak3D.h"
+#include "../crystal/ResolutionShell.h"
 #include "../mathematics/GCD.h"
 
 namespace nsx {
-
-using sptrPeak3D = ResolutionShell::sptrPeak3D;
 
 ResolutionShell::ResolutionShell(double dmin, double dmax, size_t num_shells):
     _numShells(std::max(num_shells, size_t(1))),
@@ -70,7 +68,7 @@ void ResolutionShell::addPeak(const sptrPeak3D& peak)
     }
 }
 
-const std::vector<std::vector<sptrPeak3D>>& ResolutionShell::getShells() const
+const std::vector<PeakList>& ResolutionShell::getShells() const
 {
     return _shells;
 }

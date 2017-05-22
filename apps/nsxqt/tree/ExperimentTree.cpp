@@ -258,7 +258,7 @@ void ExperimentTree::importRawData()
     if (!dataItem)
         return;
 
-    std::shared_ptr<nsx::Experiment> exmt = dataItem->getExperiment();
+    auto exmt = dataItem->getExperiment();
 
     if (!exmt)
         return;
@@ -308,7 +308,7 @@ void ExperimentTree::viewReciprocalSpace(const QModelIndex& index)
     if (!titem)
         return;
 
-    std::shared_ptr<Experiment> expt(titem->getExperiment());
+    auto expt(titem->getExperiment());
 
     if (!expt)
         return;
@@ -361,7 +361,7 @@ void ExperimentTree::onDoubleClick(const QModelIndex& index)
     else if (auto ptr=dynamic_cast<SampleItem*>(item))
         ptr->addUnitCell();
     else if (auto ptr=dynamic_cast<NumorItem*>(item)) {
-        std::shared_ptr<nsx::Experiment> exp = ptr->getExperiment();
+        auto exp = ptr->getExperiment();
         emit plotData(exp->getData(item->text().toStdString()));
     }
 }

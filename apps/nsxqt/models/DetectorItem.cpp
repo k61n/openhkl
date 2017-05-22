@@ -3,11 +3,12 @@
 
 #include <nsxlib/instrument/Detector.h>
 #include <nsxlib/instrument/Diffractometer.h>
+#include <nsxlib/instrument/InstrumentTypes.h>
 
 #include "models/DetectorItem.h"
 #include "tree/DetectorPropertyWidget.h"
 
-DetectorItem::DetectorItem(std::shared_ptr<Experiment> experiment) : InspectableTreeItem(experiment)
+DetectorItem::DetectorItem(nsx::sptrExperiment experiment) : InspectableTreeItem(experiment)
 {
     setText("Detector");
     QIcon icon(":/resources/detectorIcon.png");

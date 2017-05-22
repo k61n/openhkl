@@ -31,21 +31,19 @@
 #ifndef NSXLIB_RFACTOR_H
 #define NSXLIB_RFACTOR_H
 
-#include <memory>
 #include <vector>
 
-namespace nsx {
+#include "../crystal/CrystalTypes.h"
 
-class Peak3D;
-using sptrPeak3D=std::shared_ptr<Peak3D>;
+namespace nsx {
 
 class RFactor {
 public:
     RFactor(): _Rmerge(0.0), _Rmeas(0.0), _Rpim(0.0) {}
-    RFactor(const std::vector<std::vector<sptrPeak3D>>&peak_equivs);
+    RFactor(const std::vector<PeakList>&peak_equivs);
     ~RFactor() {}
 
-    void recalculate(const std::vector<std::vector<sptrPeak3D>>&peak_equivs);
+    void recalculate(const std::vector<PeakList>& peak_equivs);
 
     double Rmerge() {return _Rmerge;}
     double Rmeas() {return _Rmeas;}

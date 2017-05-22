@@ -7,7 +7,7 @@
 
 #include "models/TreeItem.h"
 
-TreeItem::TreeItem(std::shared_ptr<Experiment> experiment) : QStandardItem(), _experiment(experiment)
+TreeItem::TreeItem(nsx::sptrExperiment experiment) : QStandardItem(), _experiment(experiment)
 {
 }
 
@@ -51,7 +51,7 @@ void TreeItem::fromJson(const QJsonObject &obj)
     QJsonArray data = obj["data"].toArray();
 }
 
-std::shared_ptr<Experiment> TreeItem::getExperiment()
+nsx::sptrExperiment TreeItem::getExperiment()
 {
     return _experiment;
 }

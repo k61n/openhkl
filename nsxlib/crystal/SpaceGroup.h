@@ -31,20 +31,16 @@
 #define NSXLIB_SPACEGROUP_H
 
 #include <array>
-#include <memory>
 #include <ostream>
 #include <string>
 #include <vector>
 
 #include <Eigen/Dense>
 
-#include "SymOp.h"
+#include "../crystal/CrystalTypes.h"
+#include "../crystal/SymOp.h"
 
 namespace nsx {
-
-class Peak3D;
-using sptrPeak3D = std::shared_ptr<Peak3D>;
-using groupElementsList =  std::vector<SymOp>;
 
 class SpaceGroup {
 public:
@@ -62,7 +58,7 @@ public:
     //! Get the string containing the generators (in the Jones notation), separated bt ";' character
     const std::string& getGenerators() const;
     //! Get a vector containing the Symmetry operations for this space group
-    const groupElementsList& getGroupElements() const;
+    const SymOpList& getGroupElements() const;
     //! Determine whether a h,k,l reflection is forbidden
     bool isExtinct(double h, double k, double l) const;
     //! Return true if centrosymmetric
@@ -78,8 +74,8 @@ public:
     //! Return the ID of the space group
     int getID() const;
     //! Find equivalences in a list of peaks
-    std::vector<std::vector<sptrPeak3D>>
-    findEquivalences(const std::vector<sptrPeak3D>&peak_list, bool friedel=true) const;
+    std::vector<PeakList>
+    findEquivalences(const PeakList& peak_list, bool friedel=true) const;
     //! Return whether two sets of indices are related by a symmetry
     bool isEquivalent(double h1, double k1, double l1, double h2, double k2, double l2, bool friedel=false) const;
     //! Return whether two sets of indices are related by a symmetry
@@ -92,7 +88,7 @@ private:
 
     std::string _symbol;
     std::string _generators;
-    groupElementsList _groupElements;
+    SymOpList _groupElements;
 };
 
 std::ostream& operator<<(std::ostream& os, const SpaceGroup& sg);

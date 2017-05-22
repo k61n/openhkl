@@ -5,11 +5,12 @@
 
 #include <QJsonObject>
 
+#include <nsxlib/data/DataTypes.h>
+
 #include "InspectableTreeItem.h"
 
 namespace nsx
 {
-class DataSet;
 class Experiment;
 }
 
@@ -18,17 +19,20 @@ class QWidget;
 class NumorItem : public InspectableTreeItem
 {
 public:
-    explicit NumorItem(std::shared_ptr<Experiment> experiment, std::shared_ptr<nsx::DataSet> data);
+
+    using sptrExperiment = std::shared_ptr<nsx::Experiment>;
+
+    explicit NumorItem(sptrExperiment experiment, nsx::sptrDataSet data);
     ~NumorItem();
     QWidget* inspectItem() override;
-    std::shared_ptr<nsx::DataSet> getData();
+    nsx::sptrDataSet getData();
 
     QJsonObject toJson() override;
     void fromJson(const QJsonObject& obj) override;
     void exportHDF5(const std::string& filename) const;
 
 private:
-    std::shared_ptr<nsx::DataSet> _data;
+    nsx::sptrDataSet _data;
 };
 
 #endif // NSXQT_NUMORITEM_H

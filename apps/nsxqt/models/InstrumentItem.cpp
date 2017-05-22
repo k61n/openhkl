@@ -6,7 +6,7 @@
 #include "models/SampleItem.h"
 #include "models/SourceItem.h"
 
-InstrumentItem::InstrumentItem(std::shared_ptr<Experiment> experiment) : TreeItem(experiment)
+InstrumentItem::InstrumentItem(nsx::sptrExperiment experiment) : TreeItem(experiment)
 {
     setText(QString::fromStdString(_experiment->getDiffractometerType()));
 

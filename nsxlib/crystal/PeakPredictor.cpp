@@ -33,18 +33,20 @@
  *
  */
 
+#include "../crystal/CrystalTypes.h"
 #include "../crystal/Peak3D.h"
 #include "../crystal/PeakPredictor.h"
 #include "../crystal/SpaceGroup.h"
 #include "../crystal/UnitCell.h"
 #include "../data/DataSet.h"
+#include "../data/DataTypes.h"
 #include "../geometry/NDTree.h"
 #include "../instrument/Sample.h"
 #include "../instrument/Source.h"
 
 namespace nsx {
 
-void PeakPredictor::addPredictedPeaks(std::shared_ptr<DataSet> data)
+void PeakPredictor::addPredictedPeaks(sptrDataSet data)
 {
     using Octree = NDTree<double, 3>;
 
@@ -67,7 +69,7 @@ void PeakPredictor::addPredictedPeaks(std::shared_ptr<DataSet> data)
 
     auto& mono = data->getDiffractometer()->getSource()->getSelectedMonochromator();
     const double wavelength = mono.getWavelength();
-    std::vector<sptrPeak3D> calculated_peaks;
+    PeakList calculated_peaks;
 
     std::shared_ptr<Sample> sample = data->getDiffractometer()->getSample();
     unsigned int ncrystals = static_cast<unsigned int>(sample->getNCrystals());
@@ -91,7 +93,7 @@ void PeakPredictor::addPredictedPeaks(std::shared_ptr<DataSet> data)
 
         _handler->setStatus("Building set of previously found peaks...");
 
-        std::set<sptrPeak3D> found_peaks = data->getPeaks();
+        PeakSet found_peaks = data->getPeaks();
         std::set<Eigen::RowVector3i, compare_fn> found_hkls;
 
 

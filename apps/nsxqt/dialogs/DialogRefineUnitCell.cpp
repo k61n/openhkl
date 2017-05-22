@@ -24,8 +24,8 @@
 #include "DoubleTableItemDelegate.h"
 
 DialogRefineUnitCell::DialogRefineUnitCell(sptrExperiment experiment,
-                                           sptrUnitCell unitCell,
-                                           std::vector<sptrPeak3D> peaks,
+                                           nsx::sptrUnitCell unitCell,
+                                           nsx::PeakList peaks,
                                            QWidget *parent):
     QDialog(parent),
     ui(new Ui::DialogRefineUnitCell),

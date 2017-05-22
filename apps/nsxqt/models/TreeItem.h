@@ -9,17 +9,17 @@
 #include <QJsonObject>
 
 #include <nsxlib/instrument/Experiment.h>
+#include <nsxlib/instrument/InstrumentTypes.h>
 
 class QWidget;
-
-using namespace nsx;
 
 class TreeItem : public QStandardItem
 {
 
 public:
-    explicit TreeItem(std::shared_ptr<Experiment> experiment);
-    std::shared_ptr<Experiment> getExperiment();
+
+    explicit TreeItem(nsx::sptrExperiment experiment);
+    nsx::sptrExperiment getExperiment();
     virtual ~TreeItem();
 
     virtual void setData(const QVariant & value, int role=Qt::UserRole + 1) override;
@@ -28,7 +28,7 @@ public:
     virtual void fromJson(const QJsonObject& obj);
 
 protected:
-    std::shared_ptr<Experiment> _experiment;
+    nsx::sptrExperiment _experiment;
 
 };
 
