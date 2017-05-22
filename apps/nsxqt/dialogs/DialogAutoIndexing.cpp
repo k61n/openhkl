@@ -74,7 +74,7 @@ void DialogAutoIndexing::autoIndex()
         indexer.addPeak(peak);
     }
 
-    AutoIndexer::Parameters params;
+    IndexerParameters params;
 
     params.subdiv = 5;
     params.maxdim = ui->maxCellDim->value();

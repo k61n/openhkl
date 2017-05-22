@@ -17,11 +17,11 @@ using namespace nsx;
 
 BOOST_AUTO_TEST_CASE(Test_XDS)
 {
-    DataReaderFactory* factory = DataReaderFactory::Instance();
+    DataReaderFactory factory;
     DiffractometerStore* ds = DiffractometerStore::Instance();
 
     std::shared_ptr<Diffractometer> diff = std::shared_ptr<Diffractometer>(ds->buildDiffractometer("BioDiff2500"));
-    std::shared_ptr<DataSet> dataf(factory->create("hdf", "H5_example.hdf", diff));
+    std::shared_ptr<DataSet> dataf(factory.create("hdf", "H5_example.hdf", diff));
 
     dataf->open();
     Eigen::MatrixXi v=dataf->getFrame(0);

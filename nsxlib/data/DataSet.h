@@ -64,7 +64,7 @@ public:
 
     /*! Construct a IData Object from a file on disk, and pointer to a diffractometer.
      */
-    DataSet(IDataReader* reader, const std::shared_ptr<Diffractometer>& diffractometer);
+    DataSet(std::shared_ptr<IDataReader>& reader, const std::shared_ptr<Diffractometer>& diffractometer);
 
     //! Copy constructor
     //DataSet(const DataSet& other) = default;
@@ -200,7 +200,7 @@ protected:
     std::set<AABB<double,3>*> _masks;
     double _background;
     FrameIteratorCallback _iteratorCallback;
-    std::unique_ptr<IDataReader> _reader;
+    std::shared_ptr<IDataReader> _reader;
 };
 
 } // end namespace nsx

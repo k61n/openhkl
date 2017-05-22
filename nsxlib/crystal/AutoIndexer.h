@@ -49,25 +49,25 @@ class ProgressHandler;
 
 class Peak3D;
 
-class AutoIndexer {
-public:
-    struct Parameters {
-        double maxdim = 200.0;
-        int nSolutions = 10;
-        int nStacks = 30;
-        int subdiv = 5;
-        double HKLTolerance = 0.2;
-        double niggliTolerance = 1e-3;
-        double gruberTolerance = 4e-2;
-        bool niggliReduction = false;
-
+// note: cannot use nested classes in swig
+struct IndexerParameters {
+    double maxdim = 200.0;
+    int nSolutions = 10;
+    int nStacks = 30;
+    int subdiv = 5;
+    double HKLTolerance = 0.2;
+    double niggliTolerance = 1e-3;
+    double gruberTolerance = 4e-2;
+    bool niggliReduction = false;
         //Parameters() = default;
-    };
+};
+
+class AutoIndexer {
 
 public:
-    AutoIndexer(const std::shared_ptr<Experiment>& expt, const std::shared_ptr<ProgressHandler>& handler = nullptr);
+    AutoIndexer(std::shared_ptr<Experiment>& expt, const std::shared_ptr<ProgressHandler>& handler = nullptr);
 
-    bool autoIndex(const Parameters& params);
+    bool autoIndex(const IndexerParameters& params);
     void addPeak(const std::shared_ptr<Peak3D>& peak);
     const std::vector<std::pair<UnitCell,double>>& getSolutions() const;
     //void buildSolutionsTable();

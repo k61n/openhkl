@@ -7,6 +7,7 @@
 
 #include <nsxlib/instrument/DiffractometerStore.h>
 #include <nsxlib/data/DataReaderFactory.h>
+#include <nsxlib/data/DataSet.h>
 
 using namespace nsx;
 
@@ -14,16 +15,16 @@ using namespace nsx;
 
 BOOST_AUTO_TEST_CASE(Test_Peak_Data)
 {
-    auto factory = DataReaderFactory::Instance();
+    DataReaderFactory factory;
     DiffractometerStore* ds;
     std::shared_ptr<Diffractometer> diff;
-    std::unique_ptr<DataSet> dataf;
+    std::shared_ptr<DataSet> dataf;
     MetaData* metadata;
 
     try {
         ds = DiffractometerStore::Instance();
         diff = std::shared_ptr<Diffractometer>(ds->buildDiffractometer("D9"));
-        dataf = std::unique_ptr<DataSet>(factory->create("", "D9_ascii_example", diff));
+        dataf = factory.create("", "D9_ascii_example", diff);
 
         dataf->open();
 

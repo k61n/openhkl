@@ -10,44 +10,47 @@
 
 #include <nsxlib/instrument/DiffractometerStore.h>
 #include <nsxlib/data/DataReaderFactory.h>
+#include <nsxlib/data/DataSet.h>
 
 using namespace nsx;
 
 BOOST_AUTO_TEST_CASE(Test_HDF5_IO)
 {
-    auto factory = DataReaderFactory::Instance();
+    DataReaderFactory factory;
     DiffractometerStore* ds;
     std::shared_ptr<Diffractometer> diff;
-    std::unique_ptr<DataSet> dataf;
+    std::shared_ptr<DataSet> dataf;
 
     std::vector<Eigen::MatrixXi> frames;
 
     try {
         ds = DiffractometerStore::Instance();
         diff = std::shared_ptr<Diffractometer>(ds->buildDiffractometer("D10"));
-        dataf = std::unique_ptr<DataSet>(factory->create("", "D10_ascii_example", diff));
+        dataf = factory.create("", "D10_ascii_example", diff);
         dataf->open();
 
-        for (size_t i = 0; i < dataf->getNFrames(); ++i)
+        for (size_t i = 0; i < dataf->getNFrames(); ++i) {
             frames.push_back(dataf->getFrame(i));
+        }
 
         dataf->saveHDF5("D10_hdf5_example.h5");
         dataf->close();
         dataf.reset();
 
         // read data back in and check that it agrees!
-        dataf = std::unique_ptr<DataSet>(factory->create("h5", "D10_hdf5_example.h5", diff));
+        auto dataf = factory.create("h5", "D10_hdf5_example.h5", diff);
+
+        BOOST_ASSERT(dataf != nullptr);
 
         for (size_t i = 0; i < dataf->getNFrames(); ++i) {
             BOOST_CHECK(dataf->getFrame(i) == frames[i]);
         }
+        dataf->close();
     }
     catch (std::exception& e) {
         BOOST_FAIL(std::string("saveHDF5() threw exception: ") + e.what());
     }
     catch(...) {
         BOOST_FAIL("saveHDF5() threw unknown exception");
-    }
-
-    dataf->close();
+    }  
 }
