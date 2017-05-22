@@ -69,12 +69,12 @@ public:
 
     bool autoIndex(const IndexerParameters& params);
     void addPeak(const std::shared_ptr<Peak3D>& peak);
-    const std::vector<std::pair<UnitCell,double>>& getSolutions() const;
+    const std::vector<std::pair<sptrUnitCell,double>>& getSolutions() const;
     //void buildSolutionsTable();
 private:
     std::vector<std::shared_ptr<Peak3D>> _peaks;
     std::shared_ptr<Experiment> _experiment;
-    std::vector<std::pair<UnitCell,double>> _solutions;
+    std::vector<std::pair<sptrUnitCell,double>> _solutions;
     std::shared_ptr<ProgressHandler> _handler;
 };
 

@@ -112,7 +112,7 @@ int run_test()
     BOOST_CHECK(soln.second > 92.0);
 
     // set unit cell
-    auto cell = std::make_shared<UnitCell>(soln.first);
+    auto cell = soln.first;
     for (auto&& peak: dataf->getPeaks()) {
         peak->addUnitCell(cell, true);
     }

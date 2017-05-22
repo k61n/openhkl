@@ -9,6 +9,7 @@
 %include "std_string.i"
 %include "std_vector.i"
 %include "std_set.i"
+%include "std_pair.i"
 
 %template(vector_1d)  std::vector<double>;
 %template(vector_2d)  std::vector<std::vector<double>>;
@@ -33,6 +34,7 @@
 %shared_ptr(nsx::TiffDataReader)
 %shared_ptr(nsx::Experiment)
 %shared_ptr(nsx::ProgressHandler)
+%shared_ptr(nsx::UnitCell)
 
 %{
 #define SWIG_FILE_WITH_INIT
@@ -341,6 +343,8 @@ namespace boost { namespace property_tree {} }
 %include "chemistry/Material.h"
 
 %include "crystal/UnitCell.h"
+%template(scored_uc) std::pair<std::shared_ptr<nsx::UnitCell>, double>;
+%template(indexer_solutions) std::vector<std::pair<std::shared_ptr<nsx::UnitCell>,double>>;
 
 %include "instrument/Detector.h"
 %include "instrument/MonoDetector.h"

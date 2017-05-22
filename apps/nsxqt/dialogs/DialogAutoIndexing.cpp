@@ -93,7 +93,7 @@ void DialogAutoIndexing::autoIndex()
     _solutions = indexer.getSolutions();
 
     for (auto&& sol: _solutions) {
-        sol.first.setName(selectedUnitCell->getName());
+        sol.first->setName(selectedUnitCell->getName());
     }
 
     buildSolutionsTable();
@@ -119,16 +119,16 @@ void DialogAutoIndexing::buildSolutionsTable()
         double quality=_solutions[i].second;
         double a,b,c,alpha,beta,gamma;
         double sa,sb,sc,salpha,sbeta,sgamma;
-        cell.getParameters(a,b,c,alpha,beta,gamma);
-        cell.getParametersSigmas(sa,sb,sc,salpha,sbeta,sgamma);
+        cell->getParameters(a,b,c,alpha,beta,gamma);
+        cell->getParametersSigmas(sa,sb,sc,salpha,sbeta,sgamma);
         QStandardItem* col1=new QStandardItem(QString::number(a,'f',3) + "("+ QString::number(sa*1000,'f',0)+")");
         QStandardItem* col2=new QStandardItem(QString::number(b,'f',3) + "("+ QString::number(sb*1000,'f',0)+")");
         QStandardItem* col3=new QStandardItem(QString::number(c,'f',3) + "("+ QString::number(sc*1000,'f',0)+")");
         QStandardItem* col4=new QStandardItem(QString::number(alpha/deg,'f',3)+ "("+ QString::number(salpha/deg*1000,'f',0)+")");
         QStandardItem* col5=new QStandardItem(QString::number(beta/deg,'f',3)+"("+ QString::number(sbeta/deg*1000,'f',0)+")");
         QStandardItem* col6=new QStandardItem(QString::number(gamma/deg,'f',3)+ "("+ QString::number(sgamma/deg*1000,'f',0)+")");
-        QStandardItem* col7=new QStandardItem(QString::number(cell.getVolume(),'f',3));
-        QStandardItem* col8=new QStandardItem(QString::fromStdString(cell.getBravaisTypeSymbol()));
+        QStandardItem* col7=new QStandardItem(QString::number(cell->getVolume(),'f',3));
+        QStandardItem* col8=new QStandardItem(QString::fromStdString(cell->getBravaisTypeSymbol()));
         QStandardItem* col9=new QStandardItem(QString::number(quality,'f',2)+"%");
         model->setItem(i,0,col1);
         model->setItem(i,1,col2);
@@ -145,7 +145,7 @@ void DialogAutoIndexing::buildSolutionsTable()
 
 void DialogAutoIndexing::selectSolution(int index)
 {
-    *_unitCells[ui->unitCells->currentIndex()] = _solutions[index].first;
+    _unitCells[ui->unitCells->currentIndex()] = _solutions[index].first;
     QString solutionNumber = QString::number(index+1);
     QString selectedUnitCellName = ui->unitCells->currentText();
     QMessageBox::information(this, tr("NSXTool"),tr("Solution %1 set to %2 unit cell").arg(solutionNumber,selectedUnitCellName));

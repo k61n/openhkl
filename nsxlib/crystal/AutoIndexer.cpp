@@ -98,7 +98,7 @@ bool AutoIndexer::autoIndex(const IndexerParameters& _params)
     auto detector = _experiment->getDiffractometer()->getDetector();
     auto sample = _experiment->getDiffractometer()->getSample();
 
-    std::vector<std::pair<UnitCell,double>> newSolutions;
+    std::vector<std::pair<sptrUnitCell,double>> newSolutions;
     newSolutions.reserve(_params.nSolutions*_params.nSolutions*_params.nSolutions);
 
     for (int i = 0; i < _params.nSolutions; ++i) {
@@ -109,7 +109,7 @@ bool AutoIndexer::autoIndex(const IndexerParameters& _params)
                 Eigen::Vector3d& v3=tvects[k]._vect;
 
                 if (v1.dot(v2.cross(v3)) > 20.0) {
-                    UnitCell cell = UnitCell::fromDirectVectors(v1, v2, v3);
+                    auto cell = std::shared_ptr<UnitCell>(new UnitCell(UnitCell::fromDirectVectors(v1, v2, v3)));
                     newSolutions.push_back(std::make_pair(cell, 0.0));
                 }
             }
@@ -124,8 +124,8 @@ bool AutoIndexer::autoIndex(const IndexerParameters& _params)
         minimizer.setDetector(detector);
         minimizer.setSource(source);
 
-        UnitCell cell = newSolutions[idx].first;
-        cell.setHKLTolerance(_params.HKLTolerance);
+        auto cell = newSolutions[idx].first;
+        cell->setHKLTolerance(_params.HKLTolerance);
 
         // Only the UB matrix parameters are used for fit
         int nParameters = 10;
@@ -144,7 +144,7 @@ bool AutoIndexer::autoIndex(const IndexerParameters& _params)
         int success = 0;
         for (auto peak : _peaks) {
             Eigen::RowVector3d hkl;
-            bool indexingSuccess = peak->getMillerIndices(cell,hkl,true);
+            bool indexingSuccess = peak->getMillerIndices(*cell,hkl,true);
             if (indexingSuccess && peak->isSelected() && !peak->isMasked()) {
                 minimizer.addPeak(*peak,hkl);
                 ++success;
@@ -155,14 +155,14 @@ bool AutoIndexer::autoIndex(const IndexerParameters& _params)
         if (success < 10) {
             continue;
         }
-        Eigen::Matrix3d M = cell.getReciprocalStandardM();
+        Eigen::Matrix3d M = cell->getReciprocalStandardM();
         minimizer.setStartingUBMatrix(M);
         int ret = minimizer.run(100);
         if (ret == 1) {
             UBSolution sln = minimizer.getSolution();
             try {
-                cell = UnitCell::fromReciprocalVectors(sln._ub.row(0),sln._ub.row(1),sln._ub.row(2));
-                cell.setReciprocalCovariance(sln._covub);
+                cell = sptrUnitCell(new UnitCell(UnitCell::fromReciprocalVectors(sln._ub.row(0),sln._ub.row(1),sln._ub.row(2))));
+                cell->setReciprocalCovariance(sln._covub);
 
             } catch(std::exception& e) {
                 if (_handler) {
@@ -172,22 +172,22 @@ bool AutoIndexer::autoIndex(const IndexerParameters& _params)
             }
 
             // cell.setName(selectedUnitCell->getName());
-            cell.setHKLTolerance(_params.HKLTolerance);
+            cell->setHKLTolerance(_params.HKLTolerance);
 
-            NiggliReduction niggli(cell.getMetricTensor(), _params.niggliTolerance);
+            NiggliReduction niggli(cell->getMetricTensor(), _params.niggliTolerance);
             Eigen::Matrix3d newg, P;
             niggli.reduce(newg, P);
-            cell.transform(P);
+            cell->transform(P);
 
             // use GruberReduction::reduce to get Bravais type
-            GruberReduction gruber(cell.getMetricTensor(), _params.gruberTolerance);
+            GruberReduction gruber(cell->getMetricTensor(), _params.gruberTolerance);
             LatticeCentring c;
             BravaisType b;
 
             try {
                 gruber.reduce(P,c,b);
-                cell.setLatticeCentring(c);
-                cell.setBravaisType(b);
+                cell->setLatticeCentring(c);
+                cell->setBravaisType(b);
             }
             catch(std::exception& e) {
                 //qDebug() << "Gruber reduction error:" << e.what();
@@ -195,7 +195,7 @@ bool AutoIndexer::autoIndex(const IndexerParameters& _params)
             }
 
             if (_params.niggliReduction == false) {
-                cell.transform(P);
+                cell->transform(P);
             }
 
             double score = 0.0;
@@ -204,7 +204,7 @@ bool AutoIndexer::autoIndex(const IndexerParameters& _params)
                 if (peak->isSelected() && !peak->isMasked()) {
                     maxscore++;
                     Eigen::RowVector3d hkl;
-                    bool indexingSuccess = peak->getMillerIndices(cell,hkl,true);
+                    bool indexingSuccess = peak->getMillerIndices(*cell,hkl,true);
                     if (indexingSuccess) {
                         score++;
                     }
@@ -234,11 +234,11 @@ bool AutoIndexer::autoIndex(const IndexerParameters& _params)
 
     // Sort solutions by decreasing quality.
     // For equal quality, smallest volume is first
-    typedef std::pair<UnitCell,double> Soluce;
-    std::sort(_solutions.begin(),_solutions.end(),[](const Soluce& s1, const Soluce& s2) -> bool
+    using soluce = std::pair<sptrUnitCell,double>;
+    std::sort(_solutions.begin(),_solutions.end(),[](const soluce& s1, const soluce& s2) -> bool
     {
         if (s1.second==s2.second)
-            return (s1.first.getVolume()<s2.first.getVolume());
+            return (s1.first->getVolume()<s2.first->getVolume());
         else
             return (s1.second>s2.second);
     }
@@ -253,7 +253,7 @@ void AutoIndexer::addPeak(const std::shared_ptr<Peak3D> &peak)
     _peaks.emplace_back(peak);
 }
 
-const std::vector<std::pair<UnitCell, double> > &AutoIndexer::getSolutions() const
+const std::vector<std::pair<sptrUnitCell, double> > &AutoIndexer::getSolutions() const
 {
     return _solutions;
 }
