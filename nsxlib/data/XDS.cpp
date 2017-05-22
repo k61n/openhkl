@@ -53,9 +53,6 @@ static const str_vector unmerged_records = {"H", "K", "L", "XD", "YD", "ZD", "IO
 
 namespace nsx {
 
-using sptrPeak3D = XDS::sptrPeak3D;
-using PeakList = XDS::PeakList;
-
 XDS::XDS(const PeakList &peaks, bool merge, bool friedel, const std::string &filename, const std::string &date):
     _peaks(peaks),
     _merge(merge),
@@ -171,7 +168,6 @@ XDS::RecordList XDS::getMergedRecords() const
         res.addPeak(peak);
     }
 
-    auto&& ds = res.getD();
     auto&& shells = res.getShells();
     std::vector<PeakList> peak_equivs;
 

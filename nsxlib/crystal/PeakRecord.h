@@ -36,10 +36,9 @@
 #ifndef NSXLIB_PEAKRECORD_H
 #define NSXLIB_PEAKRECORD_H
 
-namespace nsx {
+#include "../crystal/CrystalTypes.h"
 
-class Peak3D;
-class MergedPeak;
+namespace nsx {
 
 class PeakRecord {
 public:
