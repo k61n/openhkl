@@ -3,12 +3,17 @@
 
 #include <Eigen/Dense>
 
+#include "../crystal/UnitCell.h"
 #include "../instrument/Gonio.h"
 #include "../instrument/RotAxis.h"
 #include "../instrument/Sample.h"
 #include "../instrument/TransAxis.h"
 
 namespace nsx {
+
+using CellList = Sample::CellList;
+using sptrMaterial = Sample::sptrMaterial;
+using sptrUnitCell = Sample::sptrUnitCell;
 
 Sample* Sample::create(const proptree::ptree& node)
 {
@@ -59,13 +64,13 @@ ConvexHull<double>& Sample::getShape()
     return _sampleShape;
 }
 
-std::shared_ptr<UnitCell> Sample::addUnitCell()
+sptrUnitCell Sample::addUnitCell()
 {
-    _cells.push_back(std::shared_ptr<UnitCell>(new UnitCell()));
+    _cells.push_back(sptrUnitCell(new UnitCell()));
     return (_cells.back());
 }
 
-std::shared_ptr<UnitCell> Sample::getUnitCell(int i)
+sptrUnitCell Sample::getUnitCell(int i)
 {
     if (i >= _cells.size()) {
         throw std::runtime_error("Unit Cell not valid");
@@ -83,7 +88,7 @@ std::size_t Sample::getNCrystals() const
     return _cells.size();
 }
 
-void Sample::removeUnitCell(std::shared_ptr<UnitCell> cell)
+void Sample::removeUnitCell(sptrUnitCell cell)
 {
     for (auto it = _cells.begin(); it != _cells.end(); ++it) {
         if ( *it == cell) {

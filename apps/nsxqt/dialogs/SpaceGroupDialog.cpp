@@ -16,11 +16,13 @@
 #include <QString>
 #include <QTreeView>
 
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/instrument/Sample.h>
+#include <nsxlib/crystal/Peak3D.h>
 #include <nsxlib/crystal/RFactor.h>
 #include <nsxlib/crystal/SpaceGroup.h>
 #include <nsxlib/crystal/SpaceGroupSymbols.h>
+#include <nsxlib/crystal/UnitCell.h>
+#include <nsxlib/data/DataSet.h>
+#include <nsxlib/instrument/Sample.h>
 
 #include "SpaceGroupDialog.h"
 #include "ui_SpaceGroupDialog.h"

@@ -30,30 +30,11 @@
 #ifndef NSXLIB_TYPES_H
 #define NSXLIB_TYPES_H
 
-#include <complex>
-#include <map>
 #include <memory>
-#include <tuple>
-#include <string>
-#include <vector>
 
 #include <Eigen/Core>
 
 namespace nsx {
-
-class Peak3D;
-class UnitCell;
-typedef std::shared_ptr<UnitCell> sptrUnitCell;
-typedef std::shared_ptr<Peak3D> sptrPeak3D;
-typedef std::vector<sptrUnitCell> CellList;
-
-using isotopeContents=std::map<std::string,double>;
-
-class Material;
-using sptrMaterial = std::shared_ptr<Material>;
-
-class Experiment;
-typedef std::shared_ptr<Experiment> sptrExperiment;
 
 using RealMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 using ComplexMatrix = Eigen::Matrix<std::complex<double>, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;

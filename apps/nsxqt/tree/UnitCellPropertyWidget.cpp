@@ -2,14 +2,13 @@
 #include <QMessageBox>
 #include <QSortFilterProxyModel>
 
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/instrument/Gonio.h>
 #include <nsxlib/chemistry/Material.h>
 #include <nsxlib/crystal/Peak3D.h>
 #include <nsxlib/crystal/SpaceGroupSymbols.h>
 #include <nsxlib/crystal/UnitCell.h>
+#include <nsxlib/data/DataSet.h>
+#include <nsxlib/instrument/Gonio.h>
 #include <nsxlib/utils/Units.h>
-#include <nsxlib/utils/Types.h>
 
 #include "LatticeIndexer.h"
 #include "Logger.h"
@@ -19,6 +18,8 @@
 
 #include "ui_UnitCellPropertyWidget.h"
 
+using sptrMaterial = std::shared_ptr<nsx::Material>;
+using sptrUnitCell = UnitCellPropertyWidget::sptrUnitCell;
 
 UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *parent) :
     QWidget(parent),
@@ -133,7 +134,7 @@ void UnitCellPropertyWidget::setChemicalFormula(const QString &formula)
 {
     try
     {
-        sptrMaterial material(new Material(formula.toStdString()));
+        sptrMaterial material(new nsx::Material(formula.toStdString()));
         _unitCellItem->getUnitCell()->setMaterial(material);
     }
     catch(std::exception& e)

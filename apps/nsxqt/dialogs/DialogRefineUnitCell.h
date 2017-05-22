@@ -5,7 +5,6 @@
 
 #include <nsxlib/crystal/UBMinimizer.h>
 #include <nsxlib/crystal/UnitCell.h>
-#include <nsxlib/utils/Types.h>
 
 #include <QDialog>
 
@@ -14,14 +13,23 @@ namespace Ui
 class DialogRefineUnitCell;
 }
 
-using namespace nsx;
+namespace nsx {
+class Experiment;
+class Peak3D;
+class UnitCell;
+}
 
 class DialogRefineUnitCell : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit DialogRefineUnitCell(std::shared_ptr<nsx::Experiment> experiment,
+
+    using sptrExperiment = std::shared_ptr<nsx::Experiment>;
+    using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
+    using sptrUnitCell = std::shared_ptr<nsx::UnitCell>;
+    
+    explicit DialogRefineUnitCell(sptrExperiment experiment,
                                   sptrUnitCell unitCell,
                                   std::vector<sptrPeak3D> peaks,
                                   QWidget *parent = 0);

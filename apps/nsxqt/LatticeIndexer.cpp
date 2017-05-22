@@ -1,3 +1,4 @@
+#include <nsxlib/crystal/Peak3D.h>
 #include <nsxlib/data/DataSet.h>
 
 #include "LatticeIndexer.h"

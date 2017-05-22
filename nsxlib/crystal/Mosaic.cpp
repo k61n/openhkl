@@ -10,8 +10,8 @@
 #include <random>
 #include <vector>
 
-#include "Mosaic.h"
-
+#include "../crystal/Mosaic.h"
+#include "../crystal/UnitCell.h"
 #include "../data/DataSet.h"
 #include "../geometry/BlobFinder.h"
 #include "../geometry/Blob3D.h"
@@ -31,6 +31,7 @@ static double xor128(void) {
   static uint32_t z = 521288629;
   static uint32_t w = 88675123;
   uint32_t t;
+
   t = x ^ (x << 11);
   x = y; y = z; z = w;
   w = w ^ (w >> 19) ^ (t ^ (t >> 8));

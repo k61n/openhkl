@@ -1,9 +1,9 @@
 #ifndef NSXQT_DIALOGUNITCELLPARAMETERS_H
 #define NSXQT_DIALOGUNITCELLPARAMETERS_H
 
-#include <QDialog>
+#include <memory>
 
-#include <nsxlib/utils/Types.h>
+#include <QDialog>
 
 namespace Ui
 {
@@ -12,12 +12,16 @@ class DialogUnitCellParameters;
 
 class Widget;
 
+namespace nsx {
+class UnitCell;
+}
+
 class DialogUnitCellParameters : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit DialogUnitCellParameters(nsx::sptrUnitCell unitCell, QWidget *parent=0);
+    explicit DialogUnitCellParameters(std::shared_ptr<nsx::UnitCell> unitCell, QWidget *parent=0);
     ~DialogUnitCellParameters();
 
 public slots:
@@ -26,7 +30,7 @@ public slots:
 
 private:
     Ui::DialogUnitCellParameters *ui;
-    nsx::sptrUnitCell _unitCell;
+    std::shared_ptr<nsx::UnitCell> _unitCell;
 };
 
 #endif // NSXQT_DIALOGUNITCELLPARAMETERS_H

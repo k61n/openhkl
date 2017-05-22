@@ -1,6 +1,3 @@
-#include "dialogs/DialogAutoIndexing.h"
-#include "ui_DialogAutoIndexing.h"
-
 #include <map>
 #include <string>
 
@@ -11,19 +8,24 @@
 #include <QItemSelectionModel>
 #include <QMessageBox>
 #include <QStandardItemModel>
-#include <QtDebug>
+#include <QDebug>
 
 #include <nsxlib/crystal/AutoIndexer.h>
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/instrument/Experiment.h>
+#include <nsxlib/instrument/Sample.h>
 #include <nsxlib/utils/Units.h>
 #include <nsxlib/utils/ProgressHandler.h>
+
+#include "dialogs/DialogAutoIndexing.h"
 #include "models/CollectedPeaksModel.h"
 #include "models/CollectedPeaksDelegate.h"
 
-using namespace nsx;
+#include "ui_DialogAutoIndexing.h"
 
-DialogAutoIndexing::DialogAutoIndexing(std::shared_ptr<Experiment> experiment, std::vector<sptrPeak3D> peaks, QWidget *parent):
+using sptrExperiment = DialogAutoIndexing::sptrExperiment;
+
+DialogAutoIndexing::DialogAutoIndexing(sptrExperiment experiment, std::vector<sptrPeak3D> peaks, QWidget *parent):
     QDialog(parent),
     ui(new Ui::DialogAutoIndexing),
     _experiment(experiment),
@@ -49,7 +51,7 @@ DialogAutoIndexing::~DialogAutoIndexing()
 
 void DialogAutoIndexing::autoIndex()
 {
-    auto handler = std::make_shared<ProgressHandler>();
+    auto handler = std::make_shared<nsx::ProgressHandler>();
 
     handler->setCallback([=]() {
        auto log = handler->getLog();
@@ -58,7 +60,7 @@ void DialogAutoIndexing::autoIndex()
        }
     });
 
-    AutoIndexer indexer(_experiment, handler);
+    nsx::AutoIndexer indexer(_experiment, handler);
 
     if (_unitCells.empty()) {
         throw std::runtime_error("cannot auto index: no unit cell");
@@ -74,7 +76,7 @@ void DialogAutoIndexing::autoIndex()
         indexer.addPeak(peak);
     }
 
-    AutoIndexer::Parameters params;
+    nsx::AutoIndexer::Parameters params;
 
     params.subdiv = 5;
     params.maxdim = ui->maxCellDim->value();
@@ -124,9 +126,9 @@ void DialogAutoIndexing::buildSolutionsTable()
         QStandardItem* col1=new QStandardItem(QString::number(a,'f',3) + "("+ QString::number(sa*1000,'f',0)+")");
         QStandardItem* col2=new QStandardItem(QString::number(b,'f',3) + "("+ QString::number(sb*1000,'f',0)+")");
         QStandardItem* col3=new QStandardItem(QString::number(c,'f',3) + "("+ QString::number(sc*1000,'f',0)+")");
-        QStandardItem* col4=new QStandardItem(QString::number(alpha/deg,'f',3)+ "("+ QString::number(salpha/deg*1000,'f',0)+")");
-        QStandardItem* col5=new QStandardItem(QString::number(beta/deg,'f',3)+"("+ QString::number(sbeta/deg*1000,'f',0)+")");
-        QStandardItem* col6=new QStandardItem(QString::number(gamma/deg,'f',3)+ "("+ QString::number(sgamma/deg*1000,'f',0)+")");
+        QStandardItem* col4=new QStandardItem(QString::number(alpha/nsx::deg,'f',3)+ "("+ QString::number(salpha/nsx::deg*1000,'f',0)+")");
+        QStandardItem* col5=new QStandardItem(QString::number(beta/nsx::deg,'f',3)+"("+ QString::number(sbeta/nsx::deg*1000,'f',0)+")");
+        QStandardItem* col6=new QStandardItem(QString::number(gamma/nsx::deg,'f',3)+ "("+ QString::number(sgamma/nsx::deg*1000,'f',0)+")");
         QStandardItem* col7=new QStandardItem(QString::number(cell.getVolume(),'f',3));
         QStandardItem* col8=new QStandardItem(QString::fromStdString(cell.getBravaisTypeSymbol()));
         QStandardItem* col9=new QStandardItem(QString::number(quality,'f',2)+"%");

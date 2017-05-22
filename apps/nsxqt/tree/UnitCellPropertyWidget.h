@@ -24,6 +24,9 @@ class UnitCellPropertyWidget : public QWidget
     Q_OBJECT
 
 public:
+
+    using sptrUnitCell = std::shared_ptr<nsx::UnitCell>;
+
     explicit UnitCellPropertyWidget(UnitCellItem* caller,QWidget *parent = 0);
     ~UnitCellPropertyWidget();
 

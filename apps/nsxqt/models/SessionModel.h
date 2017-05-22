@@ -45,29 +45,31 @@
 #include <QStandardItemModel>
 #include <QTreeView>
 
-#include <nsxlib/data/PeakFinder.h>
-#include <nsxlib/instrument/Experiment.h>
-#include <nsxlib/utils/ProgressHandler.h>
-#include <nsxlib/utils/Types.h>
-
 class ExperimentItem;
 
 namespace nsx {
 class DataSet;
+class Experiment;
+class ProgressHandler;
+class Peak3D;
+class PeakFinder;
+class UnitCell;
 }
 
 class SessionModel : public QStandardItemModel {
     Q_OBJECT
 public:
-    using sptrUnitCell = nsx::sptrUnitCell;
+    using sptrDataSet = std::shared_ptr<nsx::DataSet>;
+    using sptrExperiment = std::shared_ptr<nsx::Experiment>;
+    using sptrUnitCell = std::shared_ptr<nsx::UnitCell>;
     using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 
     explicit SessionModel();
     ~SessionModel();
 
-    std::shared_ptr<nsx::Experiment> addExperiment(const std::string& experimentName, const std::string& instrumentName);
-    std::vector<std::shared_ptr<nsx::DataSet>> getSelectedNumors() const;
-    std::vector<std::shared_ptr<nsx::DataSet>> getSelectedNumors(ExperimentItem* item) const;
+    sptrExperiment addExperiment(const std::string& experimentName, const std::string& instrumentName);
+    std::vector<sptrDataSet> getSelectedNumors() const;
+    std::vector<sptrDataSet> getSelectedNumors(ExperimentItem* item) const;
 
     //! Convert session into JSON object
     QJsonObject toJsonObject();
@@ -82,7 +84,7 @@ public:
     void writeLog();
     bool writeNewShellX(std::string filename, const std::vector<sptrPeak3D>& peaks);
     bool writeStatistics(std::string filename,
-                         const std::vector<nsx::sptrPeak3D> &peaks,
+                         const std::vector<sptrPeak3D> &peaks,
                          double dmin, double dmax, unsigned int num_shells, bool friedel);
 
     bool writeXDS(std::string filename, const std::vector<sptrPeak3D>& peaks, bool merge, bool friedel);
@@ -91,7 +93,7 @@ public:
     void autoAssignUnitCell();
 
 signals:
-    void plotData(std::shared_ptr<nsx::DataSet>);
+    void plotData(sptrDataSet);
     void inspectWidget(QWidget*);
     void updatePeaks();
     void updateCellParameters(sptrUnitCell);

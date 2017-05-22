@@ -8,6 +8,8 @@
 
 namespace nsx {
 
+using sptrMaterial = UnitCell::sptrMaterial;
+
 UnitCell::UnitCell():
     Basis(),
     _material(),

@@ -40,20 +40,27 @@
 #include <QTableView>
 
 #include <nsxlib/data/DataSet.h>
-#include <nsxlib/utils/Types.h>
 
 #include <MainWindow.h>
 
-class PeakCustomPlot;
 class QContextMenuEvent;
 class QMouseEvent;
 class QString;
 class QWidget;
 
+namespace nsx {
+class UnitCell;
+}
+
+class PeakCustomPlot;
+
 class PeakTableView : public QTableView
 {
     Q_OBJECT
 public:
+
+    using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
+    using sptrUnitCell = std::shared_ptr<nsx::UnitCell>;
 
     explicit PeakTableView(QWidget* parent = 0);
     void contextMenuEvent(QContextMenuEvent *);
@@ -62,7 +69,7 @@ public:
 
 signals:
     void plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&);
-    void plotPeak(nsx::sptrPeak3D);
+    void plotPeak(sptrPeak3D);
     void autoIndexed();
 
 public slots:
@@ -85,7 +92,7 @@ public slots:
     void selectUnindexedPeaks();
     void togglePeaksSelection();
 
-    void updateUnitCell(const nsx::sptrUnitCell& unitCell);
+    void updateUnitCell(const sptrUnitCell& unitCell);
 
     void openAutoIndexingDialog();
     void openRefiningParametersDialog();

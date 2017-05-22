@@ -1,6 +1,8 @@
 #define BOOST_TEST_MODULE "Test Monte-Carlo Absorption"
 #define BOOST_TEST_DYN_LINK
 
+#include <memory>
+
 #include <boost/test/unit_test.hpp>
 
 #include <Eigen/Dense>
@@ -8,19 +10,18 @@
 #include <nsxlib/chemistry/Material.h>
 #include <nsxlib/geometry/ConvexHull.h>
 #include <nsxlib/geometry/MCAbsorption.h>
-#include <nsxlib/utils/Types.h>
 #include <nsxlib/utils/Units.h>
-
-using namespace Eigen;
-
-using namespace nsx;
 
 BOOST_AUTO_TEST_CASE(Test_MCAbsorption)
 {
-    using CHullDouble = ConvexHull<double>;
+    using CHullDouble = nsx::ConvexHull<double>;
+    using sptrMaterial = std::shared_ptr<nsx::Material>;
+
+    using Eigen::Matrix3d;
+    using Eigen::Vector3d;
 
     // Build an isotopically pure methane material
-    sptrMaterial helium(new Material("He[3]"));
+    sptrMaterial helium(new nsx::Material("He[3]"));
 
     // Create a cubic convex hull
     CHullDouble chull;
@@ -37,7 +38,7 @@ BOOST_AUTO_TEST_CASE(Test_MCAbsorption)
     chull.scale(0.032);
 
     // Create the MC absorption calculator
-    MCAbsorption mca(3.2*cm,3.2*cm,-100);
+    nsx::MCAbsorption mca(3.2*nsx::cm,3.2*nsx::cm,-100);
 
     double muScattering=helium->muIncoherent();
     double muAbsorption=helium->muAbsorption(1.46e-10);
@@ -49,13 +50,13 @@ BOOST_AUTO_TEST_CASE(Test_MCAbsorption)
     mca.run(10,Vector3d(0,1,0),Matrix3d::Identity());
 
     // Build an isotopically pure methane material
-    sptrMaterial methane(new Material("CH4"));
+    sptrMaterial methane(new nsx::Material("CH4"));
     double mm=methane->molarMass();
     double volume=chull.getVolume();
     methane->setMassDensity(mm/volume);
 
     // Create the MC absorption calculator
-    mca=nsx::MCAbsorption(3.2*cm,3.2*cm,-100);
+    mca=nsx::MCAbsorption(3.2*nsx::cm,3.2*nsx::cm,-100);
 
     muScattering=methane->muIncoherent();
     muAbsorption=methane->muAbsorption(1.46e-10);

@@ -39,6 +39,7 @@
 
 #include "../crystal/Peak3D.h"
 #include "../crystal/PeakIntegrator.h"
+#include "../crystal/UnitCell.h"
 #include "../data/DataSet.h"
 #include "../data/IFrameIterator.h"
 #include "../geometry/Blob3D.h"
@@ -53,11 +54,12 @@
 #include "../instrument/Sample.h"
 #include "../instrument/Source.h"
 #include "../utils/Units.h"
-#include "../utils/Types.h"
 
 namespace nsx {
 
-Peak3D::Peak3D(std::shared_ptr<DataSet> data):
+using sptrUnitCell = Peak3D::sptrUnitCell;
+
+Peak3D::Peak3D(sptrDataSet data):
     _data(),
     _shape(),
     _unitCells(),

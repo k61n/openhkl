@@ -35,16 +35,20 @@
 
 #include <boost/property_tree/ptree.hpp>
 
-#include "Component.h"
 #include "../geometry/ConvexHull.h"
-#include "../chemistry/Material.h"
-#include "../crystal/UnitCell.h"
-#include "../utils/Types.h"
+#include "../instrument/Component.h"
 
 namespace nsx {
 
+class Material;
+class UnitCell;
+
 class Sample : public Component {
 public:
+
+    using sptrMaterial = std::shared_ptr<Material>;
+    using sptrUnitCell = std::shared_ptr<UnitCell>;
+    using CellList = std::vector<sptrUnitCell>;
 
     //! Static constructor of a Sample from a property tree node
     static Sample* create(const proptree::ptree& node);

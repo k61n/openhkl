@@ -7,6 +7,7 @@
 #include <QLayout>
 #include <QStatusBar>
 
+#include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/instrument/Axis.h>
 #include <nsxlib/instrument/Detector.h>
@@ -22,7 +23,7 @@
 #include "DialogRefineUnitCell.h"
 #include "DoubleTableItemDelegate.h"
 
-DialogRefineUnitCell::DialogRefineUnitCell(std::shared_ptr<nsx::Experiment> experiment,
+DialogRefineUnitCell::DialogRefineUnitCell(sptrExperiment experiment,
                                            sptrUnitCell unitCell,
                                            std::vector<sptrPeak3D> peaks,
                                            QWidget *parent):
@@ -303,7 +304,7 @@ void DialogRefineUnitCell::refineParameters()
     os.str("");
 
     auto M=_unitCell->getReciprocalStandardM();
-    _minimizer.setMinimizer(Minimizer());
+    _minimizer.setMinimizer(nsx::Minimizer());
     _minimizer.setStartingUBMatrix(M);
 
     int test = _minimizer.run(100);

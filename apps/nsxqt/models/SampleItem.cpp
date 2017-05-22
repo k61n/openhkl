@@ -3,6 +3,7 @@
 #include <QIcon>
 #include <QJsonArray>
 
+#include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/instrument/Sample.h>
 

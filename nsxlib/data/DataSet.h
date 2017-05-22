@@ -36,7 +36,6 @@
 
 #include <Eigen/Dense>
 
-#include "../crystal/Peak3D.h"
 #include "../crystal/PeakCalc.h"
 #include "../data/MetaData.h"
 #include "../geometry/AABB.h"
@@ -49,17 +48,21 @@ namespace nsx {
 
 class Component;
 
-class IFrameIterator;
-class ThreadedFrameIterator;
 class BasicFrameIterator;
-class IDataReader;
 class DataSet;
+class IDataReader;
+class IFrameIterator;
+class Peak3D;
+class ThreadedFrameIterator;
 
 using FrameIteratorCallback = std::function<IFrameIterator*(DataSet&, int)>;
 
 class DataSet {
 
 public:
+
+    using sptrPeak3D = std::shared_ptr<Peak3D>;
+
     // Constructors and destructor
 
     /*! Construct a IData Object from a file on disk, and pointer to a diffractometer.

@@ -8,6 +8,7 @@
 #include <QtDebug>
 #include <QToolTip>
 
+#include <nsxlib/crystal/Peak3D.h>
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/instrument/Detector.h>
 #include <nsxlib/instrument/DetectorEvent.h>

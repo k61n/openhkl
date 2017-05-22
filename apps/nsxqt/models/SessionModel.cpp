@@ -68,6 +68,7 @@
 #include <nsxlib/crystal/SpaceGroup.h>
 #include <nsxlib/crystal/SpaceGroupSymbols.h>
 #include <nsxlib/data/DataReaderFactory.h>
+#include <nsxlib/data/PeakFinder.h>
 #include <nsxlib/data/XDS.h>
 #include <nsxlib/geometry/Ellipsoid.h>
 #include <nsxlib/geometry/NDTree.h>

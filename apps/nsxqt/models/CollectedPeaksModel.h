@@ -8,21 +8,31 @@
 #include <QAbstractTableModel>
 #include <QModelIndexList>
 
-#include <nsxlib/crystal/Peak3D.h>
-#include <nsxlib/instrument/Sample.h>
-#include <nsxlib/utils/Types.h>
-
 class QObject;
+
+namespace nsx {
+class DataSet;
+class Experiment;
+class Peak3D;
+class UnitCell;
+}
 
 class CollectedPeaksModel : public QAbstractTableModel
 {
     Q_OBJECT
 public:
+
+    using sptrDataSet = std::shared_ptr<nsx::DataSet>;
+    using sptrExperiment = std::shared_ptr<nsx::Experiment>;
+    using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
+    using sptrUnitCell = std::shared_ptr<nsx::UnitCell>;
+    using CellList = std::vector<sptrUnitCell>;
+
     enum Column {h,k,l,intensity,sigmaIntensity,transmission,lorentzFactor,numor,selected,unitCell,count};
 
-    explicit CollectedPeaksModel(nsx::sptrExperiment experiment,QObject* parent = 0);
+    explicit CollectedPeaksModel(sptrExperiment experiment,QObject* parent = 0);
 
-    CollectedPeaksModel(nsx::sptrExperiment experiment, const std::vector<nsx::sptrPeak3D>& peaks, QObject *parent = 0);
+    CollectedPeaksModel(sptrExperiment experiment, const std::vector<sptrPeak3D>& peaks, QObject *parent = 0);
 
     ~CollectedPeaksModel() = default;
 
@@ -38,13 +48,13 @@ public:
 
     QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
 
-    void addPeak(const nsx::sptrPeak3D& peak);
+    void addPeak(const sptrPeak3D& peak);
 
-    void setPeaks(const std::vector<std::shared_ptr<nsx::DataSet>>& data);
-    void setPeaks(const std::vector<nsx::sptrPeak3D>& peaks);
+    void setPeaks(const std::vector<sptrDataSet>& data);
+    void setPeaks(const std::vector<sptrPeak3D>& peaks);
 
-    const std::vector<nsx::sptrPeak3D>& getPeaks() const;
-    std::vector<nsx::sptrPeak3D> getPeaks(const QModelIndexList& indices) const;
+    const std::vector<sptrPeak3D>& getPeaks() const;
+    std::vector<sptrPeak3D> getPeaks(const QModelIndexList& indices) const;
 
     bool indexIsValid(const QModelIndex& index) const;
 
@@ -56,25 +66,25 @@ public:
 
     void writeFullProf(const std::string& filename, QModelIndexList indices=QModelIndexList());
 
-    void setUnitCells(const nsx::CellList& cells);
+    void setUnitCells(const CellList& cells);
 
     QModelIndexList getUnindexedPeaks();
 
     QModelIndexList getValidPeaks();
 
-    nsx::sptrExperiment getExperiment();
+    sptrExperiment getExperiment();
 
 public slots:
     void sortEquivalents();
-    void setUnitCell(const nsx::sptrUnitCell& unitCell, QModelIndexList selectedPeaks=QModelIndexList());
+    void setUnitCell(const sptrUnitCell& unitCell, QModelIndexList selectedPeaks=QModelIndexList());
 
 signals:
     void unitCellUpdated();
 
 private:
-    nsx::sptrExperiment _experiment;
-    std::vector<nsx::sptrPeak3D> _peaks;
-    nsx::CellList _cells;
+    sptrExperiment _experiment;
+    std::vector<sptrPeak3D> _peaks;
+    CellList _cells;
 };
 
 #endif // NSXQT_COLLECTEDPEAKSMODEL_H

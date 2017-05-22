@@ -138,7 +138,7 @@ bool PeakFinder::find(std::vector<std::shared_ptr<DataSet>> numors)
             blob.second.toEllipsoid(nsx::getConfidence(1.0), center, eigenvalues, eigenvectors);
             auto shape = Ellipsoid3D(center, eigenvalues, eigenvectors);
 
-            sptrPeak3D p = std::make_shared<Peak3D>(Peak3D(numor, shape));
+            auto p = std::make_shared<Peak3D>(Peak3D(numor, shape));
             const auto extents = p->getShape().getAABBExtents();
 
             // peak too small or too large

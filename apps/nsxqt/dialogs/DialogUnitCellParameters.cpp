@@ -4,7 +4,7 @@
 #include "dialogs/DialogUnitCellParameters.h"
 #include "ui_DialogUnitCellParameters.h"
 
-DialogUnitCellParameters::DialogUnitCellParameters(nsx::sptrUnitCell unitCell, QWidget *parent) :
+DialogUnitCellParameters::DialogUnitCellParameters(std::shared_ptr<nsx::UnitCell> unitCell, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DialogUnitCellParameters),
     _unitCell(unitCell)

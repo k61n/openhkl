@@ -12,7 +12,10 @@
 
 #include "H5Cpp.h"
 
+#include "../crystal/Peak3D.h"
 #include "../crystal/PeakIntegrator.h"
+#include "../crystal/SpaceGroup.h"
+#include "../crystal/UnitCell.h"
 #include "../data/BasicFrameIterator.h"
 #include "../data/DataSet.h"
 #include "../data/IDataReader.h"
@@ -756,8 +759,6 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
 
 void DataSet::removeDuplicatePeaks()
 {
-    using Octree = NDTree<double, 3>;
-
     class compare_fn {
     public:
         auto operator()(const Eigen::RowVector3i& a, const Eigen::RowVector3i& b) const -> bool

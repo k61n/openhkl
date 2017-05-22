@@ -42,14 +42,16 @@
 
 #include <Eigen/Core>
 
-#include "../crystal/Peak3D.h"
-
 namespace nsx {
 
 class DataSet;
+class Peak3D;
 
 class ResolutionShell {
 public:
+
+    using sptrPeak3D = std::shared_ptr<Peak3D>;
+
     ResolutionShell(double dmin, double dmax, size_t num_shells);
     void addPeak(const sptrPeak3D& peak);
     const std::vector<std::vector<sptrPeak3D>>& getShells() const;

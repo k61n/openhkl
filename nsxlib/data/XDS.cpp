@@ -33,14 +33,16 @@
  *
  */
 
-#include "XDS.h"
-#include "../crystal/Peak3D.h"
-#include "../crystal/ResolutionShell.h"
-#include "../crystal/MergedPeak.h"
-
-#include <ostream>
 #include <algorithm>
 #include <iomanip>
+#include <ostream>
+
+#include "../crystal/MergedPeak.h"
+#include "../crystal/Peak3D.h"
+#include "../crystal/ResolutionShell.h"
+#include "../crystal/SpaceGroup.h"
+#include "../crystal/UnitCell.h"
+#include "../data/XDS.h"
 
 using string = std::string;
 using str_vector = std::vector<std::string>;

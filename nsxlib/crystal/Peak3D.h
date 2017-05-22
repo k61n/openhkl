@@ -32,32 +32,29 @@
 
 #include <map>
 #include <memory>
+#include <vector>
 
 #include <Eigen/Dense>
 
-#include "Profile.h"
-#include "UnitCell.h"
-#include "Intensity.h"
-#include "PeakIntegrator.h"
-#include "../geometry/IShape.h"
+#include "../crystal/Intensity.h"
+#include "../crystal/PeakIntegrator.h"
+#include "../crystal/Profile.h"
 #include "../geometry/Ellipsoid.h"
-#include "../utils/Types.h"
+#include "../geometry/IShape.h"
 #include "../geometry/IntegrationRegion.h"
 
 namespace nsx {
 
 class Blob3D;
-
-class DataSet;
-
-class Diffractometer;
 class ComponentState;
-class DetectorEvent;
-class Sample;
+class DataSet;
 class Detector;
-class Source;
-
+class DetectorEvent;
+class Diffractometer;
 class PeakIntegrator;
+class Sample;
+class Source;
+class UnitCell;
 
 class Peak3D {
 
@@ -66,10 +63,14 @@ public:
     using Ellipsoid3D=Ellipsoid<double,3>;
     using sptrEllipsoid3D=std::shared_ptr<Ellipsoid3D>;
     using shape_type = IShape<double,3>;
+    using sptrDataSet = std::shared_ptr<DataSet>;
+    using sptrSource = std::shared_ptr<Source>;
+    using sptrUnitCell = std::shared_ptr<UnitCell>;
+    using CellList = std::vector<sptrUnitCell>;
 
-    Peak3D(std::shared_ptr<DataSet> data = nullptr);
+    Peak3D(sptrDataSet data = nullptr);
 
-    Peak3D(std::shared_ptr<DataSet> data, const Ellipsoid3D& shape);
+    Peak3D(sptrDataSet data, const Ellipsoid3D& shape);
 
     //! Copy constructor
     Peak3D(const Peak3D& other);
@@ -78,7 +79,7 @@ public:
     Peak3D& operator=(const Peak3D& other);
 
         //! Attach the data
-    void linkData(const std::shared_ptr<DataSet>& data);
+    void linkData(const sptrDataSet& data);
 
     //! Detach the data
     void unlinkData();
@@ -109,7 +110,7 @@ public:
     //! Run the integration of the peak; iterate over the data
     //void integrate();
 
-    std::shared_ptr<DataSet> getData() const { return _data.lock();}
+    sptrDataSet getData() const { return _data.lock();}
 
     //! Get the projection of total data in the bounding box.
     Eigen::VectorXd getProjection() const;
@@ -153,7 +154,7 @@ public:
 
     void setDetectorEvent(const DetectorEvent& event);
     //!
-    void setSource(const std::shared_ptr<Source>& source);
+    void setSource(const sptrSource& source);
 
     friend bool operator<(const Peak3D& p1, const Peak3D& p2);
     void setSelected(bool);
@@ -163,7 +164,7 @@ public:
     void setTransmission(double transmission);
     double getTransmission() const;
 
-    void addUnitCell(std::shared_ptr<UnitCell> uc, bool activate=true);
+    void addUnitCell(sptrUnitCell uc, bool activate=true);
     int getActiveUnitCellIndex() const;
     sptrUnitCell getActiveUnitCell() const;
     sptrUnitCell getUnitCell(int index) const;
@@ -227,7 +228,7 @@ private:
     //! Detector Event state
     std::unique_ptr<DetectorEvent> _event;
     //!
-    std::shared_ptr<Source> _source;
+    sptrSource _source;
 
     double _counts;
     //double _countsSigma;
@@ -244,8 +245,6 @@ private:
 
     Intensity _intensity;
 };
-
-using sptrPeak3D = std::shared_ptr<Peak3D>;
 
 } // end namespace nsx
 

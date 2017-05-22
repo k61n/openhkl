@@ -1,14 +1,18 @@
 #ifndef NSXQT_DIALOGTRANSFORMATIONMATRIX_H
 #define NSXQT_DIALOGTRANSFORMATIONMATRIX_H
 
+#include <memory>
+
 #include <Eigen/Dense>
 
 #include <QDialog>
 
-#include <nsxlib/utils/Types.h>
-
 namespace Ui {
 class DialogTransformationmatrix;
+}
+
+namespace nsx {
+class UnitCell;
 }
 
 class Widget;
@@ -21,7 +25,7 @@ signals:
     void getMatrix(const Eigen::Matrix3d& m);
 
 public:
-    explicit DialogTransformationmatrix(nsx::sptrUnitCell unitCell, QWidget *parent=0);
+    explicit DialogTransformationmatrix(std::shared_ptr<nsx::UnitCell> unitCell, QWidget *parent=0);
     ~DialogTransformationmatrix();
 
 public slots:
@@ -29,7 +33,7 @@ public slots:
 
 private:
     Ui::DialogTransformationmatrix *ui;
-    nsx::sptrUnitCell _unitCell;
+    std::shared_ptr<nsx::UnitCell> _unitCell;
 };
 
 #endif // NSXQT_DIALOGTRANSFORMATIONMATRIX_H

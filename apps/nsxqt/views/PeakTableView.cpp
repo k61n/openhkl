@@ -56,6 +56,8 @@
 #include "PeakTableView.h"
 #include "ProgressView.h"
 
+using sptrExperiment = std::shared_ptr<nsx::Experiment>;
+
 PeakTableView::PeakTableView(QWidget *parent)
 : QTableView(parent),
   _normalized(false),
@@ -93,7 +95,7 @@ void PeakTableView::plotSelectedPeak(int index)
     if (index < 0 || index >= peaks.size()) {
         return;
     }
-    nsx::sptrPeak3D peak=peaks[index];
+    sptrPeak3D peak=peaks[index];
     emit plotPeak(peak);
 }
 
@@ -209,7 +211,7 @@ void PeakTableView::normalizeToMonitor()
     if (!index.isValid()) {
         return;
     }
-    nsx::sptrPeak3D peak=peaks[index.row()];
+    sptrPeak3D peak=peaks[index.row()];
     emit plotPeak(peak);
 }
 
@@ -278,7 +280,7 @@ void PeakTableView::plotAs(const std::string& key)
     QVector<double> e(nPoints);
 
     for (int i=0;i<nPoints;++i) {
-        nsx::sptrPeak3D p=peaks[indexList[i].row()];
+        sptrPeak3D p=peaks[indexList[i].row()];
         x[i]=p->getData()->getMetadata()->getKey<double>(key);
         y[i]=p->getScaledIntensity().getValue();
         e[i]=p->getScaledIntensity().getSigma();
@@ -364,7 +366,7 @@ void PeakTableView::showPeaksMatchingText(const QString& text)
 
     unsigned int row=0;
     for (row=0;row<peaks.size();row++) {
-        nsx::sptrPeak3D p=peaks[row];
+        sptrPeak3D p=peaks[row];
         Eigen::RowVector3d hkl;
         bool success = p->getMillerIndices(hkl,true);
         setRowHidden(row,success);
@@ -427,15 +429,15 @@ QItemSelectionModel::SelectionFlags PeakTableView::selectionCommand(const QModel
 void PeakTableView::openAutoIndexingDialog()
 {
     auto peakModel = dynamic_cast<CollectedPeaksModel*>(model());
-    nsx::sptrExperiment experiment = peakModel->getExperiment();
-    std::vector<nsx::sptrPeak3D> peaks = peakModel->getPeaks(selectionModel()->selectedRows());
+    sptrExperiment experiment = peakModel->getExperiment();
+    std::vector<sptrPeak3D> peaks = peakModel->getPeaks(selectionModel()->selectedRows());
     auto dialog = new DialogAutoIndexing(experiment,peaks);
-    connect(dialog,SIGNAL(cellUpdated(nsx::sptrUnitCell)),this,SLOT(updateUnitCell(nsx::sptrUnitCell)));
+    connect(dialog,SIGNAL(cellUpdated(sptrUnitCell)),this,SLOT(updateUnitCell(sptrUnitCell)));
     dialog->exec();
     selectionModel()->clear();
 }
 
-void PeakTableView::updateUnitCell(const nsx::sptrUnitCell& unitCell)
+void PeakTableView::updateUnitCell(const sptrUnitCell& unitCell)
 {
     QModelIndexList selectedPeaks = selectionModel()->selectedRows();
     if (selectedPeaks.empty()) {
@@ -448,8 +450,8 @@ void PeakTableView::updateUnitCell(const nsx::sptrUnitCell& unitCell)
 void PeakTableView::openRefiningParametersDialog()
 {
     auto peakModel = dynamic_cast<CollectedPeaksModel*>(model());
-    nsx::sptrExperiment experiment = peakModel->getExperiment();
-    std::vector<nsx::sptrPeak3D> peaks = peakModel->getPeaks(selectionModel()->selectedRows());
+    sptrExperiment experiment = peakModel->getExperiment();
+    std::vector<sptrPeak3D> peaks = peakModel->getPeaks(selectionModel()->selectedRows());
 
     int nPeaks = peaks.size();
     // Check that a minimum number of peaks have been selected for indexing
@@ -458,7 +460,7 @@ void PeakTableView::openRefiningParametersDialog()
         return;
     }
 
-    nsx::sptrUnitCell uc(peaks[0]->getActiveUnitCell());
+    sptrUnitCell uc(peaks[0]->getActiveUnitCell());
     for (auto&& peak : peaks) {
         if (peak->getActiveUnitCell() != uc) {
             uc = nullptr;

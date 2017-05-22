@@ -5,6 +5,7 @@
 #include <QSortFilterProxyModel>
 
 #include <nsxlib/data/DataSet.h>
+#include <nsxlib/instrument/Sample.h>
 
 #include "models/CollectedPeaksModel.h"
 #include "models/ExperimentItem.h"
@@ -15,16 +16,18 @@
 #include "PeakListPropertyWidget.h"
 #include "views/PeakTableView.h"
 
+using sptrDataSet = std::shared_ptr<nsx::DataSet>;
+
 PeakListPropertyWidget::PeakListPropertyWidget(PeakListItem* caller, QWidget *parent) :
      QWidget(parent),
      _caller(caller),
      ui(new Ui::PeakListPropertyWidget)
 {
     ui->setupUi(this);
-    std::map<std::string,std::shared_ptr<DataSet>>  datamap=_caller->getExperiment()->getData();
-    std::vector<std::shared_ptr<nsx::DataSet>> datav;
+    std::map<std::string,sptrDataSet>  datamap=_caller->getExperiment()->getData();
+    std::vector<sptrDataSet> datav;
 
-    auto func = [&](std::pair<std::string,std::shared_ptr<nsx::DataSet>> value){datav.push_back(value.second);};
+    auto func = [&](std::pair<std::string,sptrDataSet> value){datav.push_back(value.second);};
 
     std::for_each(datamap.begin(), datamap.end(), func);
 

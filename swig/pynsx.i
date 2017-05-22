@@ -39,13 +39,13 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-    using Eigen::RowVector2d;
-    using Eigen::Vector2d;
-    using Eigen::RowVector3d;
-    using Eigen::Vector3d;
-    using Eigen::Matrix3d;
-    using Eigen::Matrix;
-    using Eigen::Quaterniond;
+using Eigen::RowVector2d;
+using Eigen::Vector2d;
+using Eigen::RowVector3d;
+using Eigen::Vector3d;
+using Eigen::Matrix3d;
+using Eigen::Matrix;
+using Eigen::Quaterniond;
 
 namespace proptree=boost::property_tree;
 namespace property_tree=boost::property_tree;

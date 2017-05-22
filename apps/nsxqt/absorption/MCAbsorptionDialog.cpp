@@ -4,6 +4,7 @@
 
 #include <Eigen/Dense>
 
+#include <nsxlib/chemistry/Material.h>
 #include <nsxlib/crystal/Peak3D.h>
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/geometry/MCAbsorption.h>
@@ -52,7 +53,7 @@ void MCAbsorptionDialog::on_pushButton_run_pressed()
 
     // Get the material
     unsigned int cellIndex=static_cast<unsigned int>(ui->comboBox->currentIndex());
-    nsx::sptrMaterial material=sample->getMaterial(cellIndex);
+    auto material=sample->getMaterial(cellIndex);
     if (material==nullptr) {
         QMessageBox::critical(this,"NSXTOOL","No material defined for this crystal");
             return;

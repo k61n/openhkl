@@ -44,6 +44,9 @@
 
 namespace nsx {
 
+class Peak3D;
+class UnitCell;
+
 class XDS {
 
 public:

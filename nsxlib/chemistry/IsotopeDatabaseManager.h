@@ -12,7 +12,6 @@
 #include <boost/any.hpp>
 
 #include "../kernel/Singleton.h"
-#include "../utils/Types.h"
 
 namespace nsx {
 

@@ -33,7 +33,10 @@
  *
  */
 
+#include "../crystal/Peak3D.h"
 #include "../crystal/PeakPredictor.h"
+#include "../crystal/SpaceGroup.h"
+#include "../crystal/UnitCell.h"
 #include "../data/DataSet.h"
 #include "../geometry/NDTree.h"
 #include "../instrument/Sample.h"

@@ -10,19 +10,17 @@
 #include <QStandardItemModel>
 #include <QTreeView>
 
-#include <nsxlib/utils/Types.h>
-
 class ExperimentItem;
 class SessionModel;
 
 namespace nsx {
 class DataSet;
+class UnitCell;
 }
 
 class ExperimentTree : public QTreeView {
     Q_OBJECT
 public:
-    using sptrUnitCell = nsx::sptrUnitCell;
     explicit ExperimentTree(QWidget *parent = 0);
     ~ExperimentTree();
 
