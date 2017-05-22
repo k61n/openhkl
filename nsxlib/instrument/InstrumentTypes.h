@@ -11,6 +11,7 @@ class ComponentState;
 class Detector;
 class Diffractometer;
 class Experiment;
+class Gonio;
 class InstrumentState;
 class MonoDetector;
 class RotAxis;
@@ -20,6 +21,7 @@ class Sample;
 class Source;
 
 using sptrDetector       = std::shared_ptr<Detector>;
+using sptrGonio          = std::shared_ptr<Gonio>;
 using sptrMonoDetector   = std::shared_ptr<MonoDetector>;
 using sptrDiffractometer = std::shared_ptr<Diffractometer>;
 using sptrExperiment     = std::shared_ptr<Experiment>;

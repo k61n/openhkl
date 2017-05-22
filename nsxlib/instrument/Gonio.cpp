@@ -27,7 +27,7 @@ Gonio::Gonio(const Gonio& other) : _label(other._label)
         _axes.push_back(ax->clone());
 }
 
-Gonio::Gonio(const proptree::ptree& node)
+Gonio::Gonio(const boost::property_tree::ptree& node)
 {
 
     _label=node.get<std::string>("name","");
@@ -130,13 +130,13 @@ void Gonio::addAxis(Axis* axis)
     _axes.push_back(axis);
 }
 
-Axis* Gonio::addRotation(const std::string& label, const Vector3d& axis,RotAxis::Direction dir)
+Axis* Gonio::addRotation(const std::string& label, const Eigen::Vector3d& axis,RotAxis::Direction dir)
 {
     _axes.push_back(new RotAxis(label,axis,dir));
     return _axes.back();
 }
 
-Axis* Gonio::addTranslation(const std::string& label, const Vector3d& axis)
+Axis* Gonio::addTranslation(const std::string& label, const Eigen::Vector3d& axis)
 {
     _axes.push_back(new TransAxis(label,axis));
     return _axes.back();
@@ -222,25 +222,25 @@ void Gonio::resetOffsets()
     }
 }
 
-Vector3d Gonio::transform(const Vector3d& v,const std::vector<double>& values)
+Eigen::Vector3d Gonio::transform(const Eigen::Vector3d& v,const std::vector<double>& values)
 {
     Eigen::Transform<double,3,Eigen::Affine> result=getHomMatrix(values);
     return (result*v.homogeneous());
 }
 
-void Gonio::transformInPlace(Vector3d& v,const std::vector<double>& values)
+void Gonio::transformInPlace(Eigen::Vector3d& v,const std::vector<double>& values)
 {
     Eigen::Transform<double,3,Eigen::Affine> result=getHomMatrix(values);
     v=result*v.homogeneous();
 }
 
-Vector3d Gonio::transformInverse(const Vector3d& v,const std::vector<double>& values)
+Eigen::Vector3d Gonio::transformInverse(const Eigen::Vector3d& v,const std::vector<double>& values)
 {
     Eigen::Transform<double,3,Eigen::Affine> result=getInverseHomMatrix(values);
     return (result*v.homogeneous());
 }
 
-void Gonio::transformInverseInPlace(Vector3d& v,const std::vector<double>& values)
+void Gonio::transformInverseInPlace(Eigen::Vector3d& v,const std::vector<double>& values)
 {
     v=getInverseHomMatrix(values)*v.homogeneous();
 }

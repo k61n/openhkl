@@ -29,6 +29,8 @@
 #ifndef NSXLIB_TRANSAXIS_H
 #define NSXLIB_TRANSAXIS_H
 
+#include <boost/property_tree/ptree.hpp>
+
 #include <Eigen/Geometry>
 
 #include "Axis.h"
@@ -39,7 +41,7 @@ class TransAxis : public Axis {
 public:
 
 	//! Static constructor for a TransAxis
-	static Axis* create(const proptree::ptree& node);
+	static Axis* create(const boost::property_tree::ptree& node);
 
 	//! Default constructor
 	TransAxis();
@@ -50,7 +52,7 @@ public:
 	//! Constructs a translation axis with a given label and axis
 	TransAxis(const std::string& label,const Eigen::Vector3d& axis);
 	//! Construct a TransAxis from a property tree node.
-	TransAxis(const proptree::ptree& node);
+	TransAxis(const boost::property_tree::ptree& node);
 	// Destructor
 	~TransAxis();
 	//! Virtual copy constructor

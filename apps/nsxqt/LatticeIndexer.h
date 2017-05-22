@@ -1,8 +1,6 @@
 #ifndef NSXQT_LATTICEINDEXER_H
 #define NSXQT_LATTICEINDEXER_H
 
-#include <memory>
-
 #include <QWidget>
 
 #include <nsxlib/crystal/CrystalTypes.h>

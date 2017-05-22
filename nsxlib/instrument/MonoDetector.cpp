@@ -49,21 +49,21 @@ MonoDetector::MonoDetector(const std::string& name)
 {
 }
 
-MonoDetector::MonoDetector(const proptree::ptree& node) : Detector(node)
+MonoDetector::MonoDetector(const boost::property_tree::ptree& node) : Detector(node)
 {
     UnitsManager* um=UnitsManager::Instance();
 
     // Set the detector to sample distance from the property tree node
-    const property_tree::ptree& distanceNode = node.get_child("sample_distance");
+    const auto& distanceNode = node.get_child("sample_distance");
     double units=um->get(distanceNode.get<std::string>("<xmlattr>.units"));
     double distance=distanceNode.get_value<double>();
     distance *= units;
     setDistance(distance);
 
     // Set the detector number of pixels from the property tree node
-    const property_tree::ptree& nColsNode = node.get_child("ncols");
+    const auto& nColsNode = node.get_child("ncols");
     unsigned int nCols=nColsNode.get_value<unsigned int>();
-    const property_tree::ptree& nRowsNode = node.get_child("nrows");
+    const auto& nRowsNode = node.get_child("nrows");
     unsigned int nRows=nRowsNode.get_value<unsigned int>();
     setNPixels(nCols,nRows);
 

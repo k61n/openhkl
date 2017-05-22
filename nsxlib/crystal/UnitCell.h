@@ -34,7 +34,7 @@
 
 #include <Eigen/Dense>
 
-#include "../chemistry/Material.h"
+#include "../chemistry/ChemistryTypes.h"
 #include "../crystal/SpaceGroup.h"
 #include "../geometry/Basis.h"
 
@@ -57,8 +57,6 @@ enum  class BravaisType : char  {Triclinic='a',Monoclinic='m',Orthorhombic='o',T
 class UnitCell : public Basis
 {
 public:
-
-    using sptrMaterial = std::shared_ptr<Material>;
 
     //! Empty UnitCell, initialiazed to right-handed orthonormal system
     UnitCell();

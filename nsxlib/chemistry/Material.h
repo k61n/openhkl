@@ -35,19 +35,14 @@
 #include <ostream>
 #include <string>
 
-#include <boost/property_tree/ptree.hpp>
-
+#include "../chemistry/ChemistryTypes.h"
 #include "../chemistry/IsotopeDatabaseManager.h"
 
 namespace nsx {
 
-namespace property_tree=boost::property_tree;
-
 class Material {
 
 public:
-
-    using isotopeContents=std::map<std::string,double>;
 
     //! Default constructor (deleted)
     Material()=delete;

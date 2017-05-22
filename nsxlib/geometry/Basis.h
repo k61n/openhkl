@@ -31,15 +31,12 @@
 #define NSXLIB_BASIS_H
 
 #include <iostream>
-#include <memory>
 
 #include <Eigen/Dense>
 
-namespace nsx {
+#include "../geometry/GeometryTypes.h"
 
-using Eigen::RowVector3d;
-using Eigen::Vector3d;
-using Eigen::Matrix3d;
+namespace nsx {
 
 /** @brief Class to define a Basis in 3D Euclidean space.
  *
@@ -54,13 +51,10 @@ class Basis {
 
 public:
 
-	typedef std::shared_ptr<Basis> ptrBasis;
-	typedef Eigen::Matrix<double,9,9> covMat;
-
 	Basis();
 	//! Constructor from a set of three non coplanar vectors.
 	//! These vectors will be used column-wised for building the transformation matrix from the reference basis to the current one.
-	Basis(const Vector3d& a, const Vector3d& b, const Vector3d& c, ptrBasis reference=nullptr);
+	Basis(const Eigen::Vector3d& a, const Eigen::Vector3d& b, const Eigen::Vector3d& c, sptrBasis reference=nullptr);
 	//! Copy constructor.
 	Basis(const Basis& other);
 	//! Assignment operator.
@@ -68,12 +62,12 @@ public:
 	//! Destructor.
 	virtual ~Basis();
 	//! Build a basis from a set of three direct vectors.
-	static Basis fromDirectVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c, ptrBasis reference=nullptr);
+	static Basis fromDirectVectors(const Eigen::Vector3d& a, const Eigen::Vector3d& b, const Eigen::Vector3d& c, sptrBasis reference=nullptr);
 	//! Build a basis from a set of three reciprocal vectors.
-	static Basis fromReciprocalVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c, ptrBasis reference=nullptr);
+	static Basis fromReciprocalVectors(const Eigen::Vector3d& a, const Eigen::Vector3d& b, const Eigen::Vector3d& c, sptrBasis reference=nullptr);
 	//! Returns the norm of e1 basis vector.
-	void setDirectVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c);
-	void setReciprocalVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c);
+	void setDirectVectors(const Eigen::Vector3d& a, const Eigen::Vector3d& b, const Eigen::Vector3d& c);
+	void setReciprocalVectors(const Eigen::Vector3d& a, const Eigen::Vector3d& b, const Eigen::Vector3d& c);
 	double getA() const;
 	//! Returns the norm of e2 basis vector.
 	double getB() const;
@@ -104,9 +98,9 @@ public:
 	//! Get the errors on reciprocal basis parameters
 	void getReciprocalParametersSigmas(double& sas,double& sbs ,double& scs,double& salphas, double& sbetas, double& sgammas) const;
 	//! Returns the current basis' metric tensor.
-	Matrix3d getMetricTensor() const;
+	Eigen::Matrix3d getMetricTensor() const;
 	//! Returns the current reciprocal basis' metric tensor.
-	Matrix3d getReciprocalMetricTensor() const;
+	Eigen::Matrix3d getReciprocalMetricTensor() const;
 	//! Returns the direct volume fraction with respect to the reference volume.
 	double getFractionalVolume() const;
 	//! Returns the reciprocal volume fraction with respect to the reference volume.
@@ -117,62 +111,62 @@ public:
 	double getReciprocalVolume() const;
 	//! Transform direct (contravariant) coordinates from the standard basis to the current one.
 	//! The coordinates triplet v = (x,y,z)^T must be given as a column vector.
-	Vector3d fromStandard(const Vector3d& v) const;
+	Eigen::Vector3d fromStandard(const Eigen::Vector3d& v) const;
 	//! Transform direct (contravariant) coordinates from the current basis to the standard one.
 	//! The coordinates triplet v = (x,y,z)^T must be given as a column vector.
-	Vector3d toStandard(const Vector3d& v) const;
+	Eigen::Vector3d toStandard(const Eigen::Vector3d& v) const;
 	//! Transform direct (contravariant) coordinates from the reference basis to the current one.
 	//! The coordinates triplet v = (x,y,z)^T must be given as a column vector.
-	Vector3d fromReference(const Vector3d& v) const;
+	Eigen::Vector3d fromReference(const Eigen::Vector3d& v) const;
 	//! Transform direct (contravariant) coordinates from the current basis to the reference one.
 	//! The coordinates triplet v = (x,y,z)^T must be given as a column vector.
-	Vector3d toReference(const Vector3d& v) const;
+	Eigen::Vector3d toReference(const Eigen::Vector3d& v) const;
 
 	//! Transform reciprocal (covariant) coordinates from the standard basis to the current one.
 	//! The coordinates triplet rv = (h,k,l) can be given as a row vector or a column vector.
-	RowVector3d fromReciprocalStandard(const RowVector3d& rv) const;
+	Eigen::RowVector3d fromReciprocalStandard(const Eigen::RowVector3d& rv) const;
 	//! Transform reciprocal (covariant) coordinates from the current basis to the standard one.
 	//! The coordinates triplet rv = (h,k,l) can be given as a row vector or a column vector.
-	RowVector3d toReciprocalStandard(const RowVector3d& rv) const;
+	Eigen::RowVector3d toReciprocalStandard(const Eigen::RowVector3d& rv) const;
 	//! Transform reciprocal (covariant) coordinates from the reference basis to the current one.
 	//! The coordinates triplet rv = (h,k,l) can be given as a row vector or a column vector.
-	RowVector3d fromReciprocalReference(const RowVector3d& rv) const;
+	Eigen::RowVector3d fromReciprocalReference(const Eigen::RowVector3d& rv) const;
 	//! Transform reciprocal (covariant) coordinates from the current basis to the reference one.
 	//! The coordinates triplet rv = (h,k,l) can be given as a row vector or a column vector.
-	RowVector3d toReciprocalReference(const RowVector3d& rv) const;
+	Eigen::RowVector3d toReciprocalReference(const Eigen::RowVector3d& rv) const;
 
 	//! Returns the transformation matrix that relates the current basis to other.
-	Matrix3d getM(const Basis& other) const;
+	Eigen::Matrix3d getM(const Basis& other) const;
 	//! Returns the transformation matrix that relates the current basis to the standard basis.
-	Matrix3d getStandardM() const;
+	Eigen::Matrix3d getStandardM() const;
 	//! Returns the transformation matrix that relates the current basis to the reference basis.
-	const Matrix3d& getReferenceM() const;
+	const Eigen::Matrix3d& getReferenceM() const;
 
 	//! Returns the transformation matrix that relates the current basis to other.
-	Matrix3d getReciprocalM(const Basis& other) const;
+	Eigen::Matrix3d getReciprocalM(const Basis& other) const;
 	//! Returns the transformation matrix that relates the current basis to the standard basis.
-	Matrix3d getReciprocalStandardM() const;
+	Eigen::Matrix3d getReciprocalStandardM() const;
 	//! Returns the transformation matrix that relates the current basis to the reference basis.
-	const Matrix3d& getReciprocalReferenceM() const;
+	const Eigen::Matrix3d& getReciprocalReferenceM() const;
 
 	//! Rebase the current basis to the standard orthonormal basis by conjugating all intermediate basis.
 	//! The reference basis is lost and set to nullptr.
 	void rebaseToStandard();
 	//! Rebase the current basis to a new one which becomes the new reference.
-	void rebaseTo(std::shared_ptr<Basis> other,bool sigmasFromReference=false);
+	void rebaseTo(sptrBasis other,bool sigmasFromReference=false);
 	//! Transform the current Basis given a new transformation matrix M.
 	//! M represents the components of new basis vectors with respect the old ones, given in columns.
 	//! Reference is preserved, only A and B are recalculated.
-	void transform(const Matrix3d& M);
+	void transform(const Eigen::Matrix3d& M);
 
 	//! Set the errors on the A matrix, assume that
 	void setDirectSigmas(const Eigen::Vector3d& sa,const Eigen::Vector3d& sb,const Eigen::Vector3d& sc);
 	//! Set the errors on the B matrix
 	void setReciprocalSigmas(const Eigen::Vector3d& sas,const Eigen::Vector3d& sbs,const Eigen::Vector3d& scs);
 	//! Set the errors on the A matrix
-	void setDirectSigmas(const Matrix3d& sigmas);
+	void setDirectSigmas(const Eigen::Matrix3d& sigmas);
 	//! Set the errors on the B matrix
-	void setReciprocalSigmas(const Matrix3d& sigmas);
+	void setReciprocalSigmas(const Eigen::Matrix3d& sigmas);
 	//! Set the errors on the A matrix
 	void setDirectCovariance(const covMat& sigmas);
 	//! Set the errors on the B matrix
@@ -194,16 +188,16 @@ protected:
 	void calculateSigmasDirectToReciprocal(bool direction=true);
 
 	//! Propagates the errors on direct and reciprocal covariance matrices under a basis transformation
-	void propagateSigmas(const Matrix3d& M);
+	void propagateSigmas(const Eigen::Matrix3d& M);
 
 	//! Returns true if three vectors are coplanar within a given tolerance.
-	static bool coplanar(const Vector3d& v1, const Vector3d& v2, const Vector3d& v3, double tolerance=1.0e-6);
+	static bool coplanar(const Eigen::Vector3d& v1, const Eigen::Vector3d& v2, const Eigen::Vector3d& v3, double tolerance=1.0e-6);
 	//! The transformation matrix form the direct reference basis to the current one.
-	Matrix3d _A;
+	Eigen::Matrix3d _A;
 	//! The transformation matrix form the reciprocal reference basis to the current one.
-	Matrix3d _B;
+	Eigen::Matrix3d _B;
 	//! A shared pointer to the reference basis. If null assume that the reference is the standard basis.
-	ptrBasis _reference;
+	sptrBasis _reference;
 	//! Stores the errors on A matrix parameters
 	covMat _Acov;
 	//! Stores the errors on B matrix parameters

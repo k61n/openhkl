@@ -10,7 +10,7 @@
 
 namespace nsx {
 
-Detector* CylindricalDetector::create(const proptree::ptree& node)
+Detector* CylindricalDetector::create(const boost::property_tree::ptree& node)
 {
     return new CylindricalDetector(node);
 }
@@ -27,19 +27,19 @@ CylindricalDetector::CylindricalDetector(const std::string& name) : MonoDetector
 {
 }
 
-CylindricalDetector::CylindricalDetector(const proptree::ptree& node) : MonoDetector(node)
+CylindricalDetector::CylindricalDetector(const boost::property_tree::ptree& node) : MonoDetector(node)
 {
     UnitsManager* um=UnitsManager::Instance();
 
     // Set the detector angular width from the property tree node
-    const property_tree::ptree& angularWidthNode = node.get_child("angular_width");
+    const auto& angularWidthNode = node.get_child("angular_width");
     double units=um->get(angularWidthNode.get<std::string>("<xmlattr>.units"));
     double angularWidth=angularWidthNode.get_value<double>();
     angularWidth *= units;
     setAngularWidth(angularWidth);
 
     // Set the detector height from the property tree node
-    const property_tree::ptree& heightNode = node.get_child("height");
+    const auto& heightNode = node.get_child("height");
     units=um->get(heightNode.get<std::string>("<xmlattr>.units"));
     double height=heightNode.get_value<double>();
     height *= units;

@@ -8,7 +8,7 @@ Basis::Basis():_A(Eigen::Matrix3d::Identity()),_B(Eigen::Matrix3d::Identity()),_
 {
 }
 
-Basis::Basis(const Vector3d& a, const Vector3d& b, const Vector3d& c, ptrBasis reference): _reference(reference),_Acov(covMat::Zero()),_Bcov(covMat::Zero())
+Basis::Basis(const Eigen::Vector3d& a, const Eigen::Vector3d& b, const Eigen::Vector3d& c, sptrBasis reference): _reference(reference),_Acov(covMat::Zero()),_Bcov(covMat::Zero())
 {
 
 	if (coplanar(a,b,c))
@@ -77,14 +77,14 @@ Basis::~Basis()
 
 }
 
-Basis Basis::fromDirectVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c, ptrBasis reference)
+Basis Basis::fromDirectVectors(const Eigen::Vector3d& a, const Eigen::Vector3d& b, const Eigen::Vector3d& c, sptrBasis reference)
 {
 	if (coplanar(a,b,c))
 		throw std::runtime_error("Class Basis: the direct vectors are coplanar.");
 	return Basis(a,b,c,reference);
 }
 
-Basis Basis::fromReciprocalVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c, ptrBasis reference)
+Basis Basis::fromReciprocalVectors(const Eigen::Vector3d& a, const Eigen::Vector3d& b, const Eigen::Vector3d& c, sptrBasis reference)
 {
 
 	if (coplanar(a,b,c))
@@ -92,14 +92,14 @@ Basis Basis::fromReciprocalVectors(const Vector3d& a, const Vector3d& b, const V
 
 	double rVolume = std::abs(a.dot(b.cross(c)));
 
-	Vector3d av=b.cross(c)/rVolume;
-	Vector3d bv=c.cross(a)/rVolume;
-	Vector3d cv=a.cross(b)/rVolume;
+	Eigen::Vector3d av=b.cross(c)/rVolume;
+	Eigen::Vector3d bv=c.cross(a)/rVolume;
+	Eigen::Vector3d cv=a.cross(b)/rVolume;
 
 	return Basis(av,bv,cv,reference);
 }
 
-void Basis::setDirectVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c)
+void Basis::setDirectVectors(const Eigen::Vector3d& a, const Eigen::Vector3d& b, const Eigen::Vector3d& c)
 {
 
 	if (coplanar(a,b,c))
@@ -112,18 +112,18 @@ void Basis::setDirectVectors(const Vector3d& a, const Vector3d& b, const Vector3
 
 }
 
-void Basis::setReciprocalVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c)
+void Basis::setReciprocalVectors(const Eigen::Vector3d& a, const Eigen::Vector3d& b, const Eigen::Vector3d& c)
 {
 	double rVolume = std::abs(a.dot(b.cross(c)));
 
-	Vector3d av=b.cross(c)/rVolume;
-	Vector3d bv=c.cross(a)/rVolume;
-	Vector3d cv=a.cross(b)/rVolume;
+	Eigen::Vector3d av=b.cross(c)/rVolume;
+	Eigen::Vector3d bv=c.cross(a)/rVolume;
+	Eigen::Vector3d cv=a.cross(b)/rVolume;
 
 	return setDirectVectors(av,bv,cv);
 }
 
-bool Basis::coplanar(const Vector3d& v1, const Vector3d& v2, const Vector3d& v3, double tolerance)
+bool Basis::coplanar(const Eigen::Vector3d& v1, const Eigen::Vector3d& v2, const Eigen::Vector3d& v3, double tolerance)
 {
 	return (std::abs(v1.dot(v2.cross(v3))) < tolerance);
 }
@@ -382,7 +382,7 @@ void Basis::getReciprocalParametersSigmas(double& sas,double& sbs ,double& scs,d
 
 }
 
-Matrix3d Basis::getMetricTensor() const
+Eigen::Matrix3d Basis::getMetricTensor() const
 {
 
 	if (!_reference)
@@ -391,7 +391,7 @@ Matrix3d Basis::getMetricTensor() const
 		return _A.transpose()*_reference->getMetricTensor()*_A;
 }
 
-Matrix3d Basis::getReciprocalMetricTensor() const
+Eigen::Matrix3d Basis::getReciprocalMetricTensor() const
 {
 	if (!_reference)
 		return _B*_B.transpose();
@@ -411,17 +411,17 @@ double Basis::getFractionalReciprocalVolume() const
 
 double Basis::getVolume() const
 {
-	Matrix3d g=getMetricTensor();
+	Eigen::Matrix3d g=getMetricTensor();
 	return sqrt(g.determinant());
 }
 
 double Basis::getReciprocalVolume() const
 {
-	Matrix3d gs=getReciprocalMetricTensor();
+	Eigen::Matrix3d gs=getReciprocalMetricTensor();
 	return sqrt(gs.determinant());
 }
 
-Vector3d Basis::fromStandard(const Vector3d& v) const
+Eigen::Vector3d Basis::fromStandard(const Eigen::Vector3d& v) const
 {
 	if (!_reference)
 		return _B*v;
@@ -429,7 +429,7 @@ Vector3d Basis::fromStandard(const Vector3d& v) const
 		return _B*_reference->fromStandard(v);
 }
 
-Vector3d Basis::toStandard(const Vector3d& v) const
+Eigen::Vector3d Basis::toStandard(const Eigen::Vector3d& v) const
 {
 	if (!_reference)
 		return _A*v;
@@ -437,17 +437,17 @@ Vector3d Basis::toStandard(const Vector3d& v) const
 		return _reference->toStandard(_A*v);
 }
 
-Vector3d Basis::fromReference(const Vector3d& v) const
+Eigen::Vector3d Basis::fromReference(const Eigen::Vector3d& v) const
 {
 	return _B*v;
 }
 
-Vector3d Basis::toReference(const Vector3d& v) const
+Eigen::Vector3d Basis::toReference(const Eigen::Vector3d& v) const
 {
 	return _A*v;
 }
 
-RowVector3d Basis::fromReciprocalStandard(const RowVector3d& rv) const
+Eigen::RowVector3d Basis::fromReciprocalStandard(const Eigen::RowVector3d& rv) const
 {
 	if (!_reference)
 		return rv*_A;
@@ -455,7 +455,7 @@ RowVector3d Basis::fromReciprocalStandard(const RowVector3d& rv) const
 		return _reference->fromReciprocalStandard(rv)*_A;
 }
 
-RowVector3d Basis::toReciprocalStandard(const RowVector3d& rv) const
+Eigen::RowVector3d Basis::toReciprocalStandard(const Eigen::RowVector3d& rv) const
 {
 	if (!_reference)
 		return rv*_B;
@@ -463,17 +463,17 @@ RowVector3d Basis::toReciprocalStandard(const RowVector3d& rv) const
 		return _reference->toReciprocalStandard(rv*_B);
 }
 
-RowVector3d Basis::fromReciprocalReference(const RowVector3d& rv) const
+Eigen::RowVector3d Basis::fromReciprocalReference(const Eigen::RowVector3d& rv) const
 {
 	return rv*_A;
 }
 
-RowVector3d Basis::toReciprocalReference(const RowVector3d& rv) const
+Eigen::RowVector3d Basis::toReciprocalReference(const Eigen::RowVector3d& rv) const
 {
 	return rv*_B;
 }
 
-Matrix3d Basis::getStandardM() const
+Eigen::Matrix3d Basis::getStandardM() const
 {
 
 	if (!_reference)
@@ -482,31 +482,31 @@ Matrix3d Basis::getStandardM() const
 		return _reference->getStandardM()*_A;
 }
 
-Matrix3d Basis::getReciprocalStandardM() const
+Eigen::Matrix3d Basis::getReciprocalStandardM() const
 {
 
 	return getStandardM().inverse();
 }
 
-const Matrix3d& Basis::getReferenceM() const
+const Eigen::Matrix3d& Basis::getReferenceM() const
 {
 	return _A;
 }
 
-const Matrix3d& Basis::getReciprocalReferenceM() const
+const Eigen::Matrix3d& Basis::getReciprocalReferenceM() const
 {
 
 	return _B;
 }
 
-Matrix3d Basis::getM(const Basis& other) const
+Eigen::Matrix3d Basis::getM(const Basis& other) const
 {
-	Matrix3d A = getStandardM();
-	Matrix3d Aother = other.getStandardM();
+	Eigen::Matrix3d A = getStandardM();
+	Eigen::Matrix3d Aother = other.getStandardM();
 	return Aother.inverse()*A;
 }
 
-Matrix3d Basis::getReciprocalM(const Basis& other) const
+Eigen::Matrix3d Basis::getReciprocalM(const Basis& other) const
 {
 	return getM(other).inverse();
 }
@@ -518,7 +518,7 @@ void Basis::rebaseToStandard()
 	_reference.reset();
 }
 
-void Basis::rebaseTo(std::shared_ptr<Basis> other,bool sigmasFromReference)
+void Basis::rebaseTo(sptrBasis other,bool sigmasFromReference)
 {
 	if (other != nullptr)
 	{
@@ -541,7 +541,7 @@ void Basis::rebaseTo(std::shared_ptr<Basis> other,bool sigmasFromReference)
 		rebaseToStandard();
 }
 
-void Basis::transform(const Matrix3d& M)
+void Basis::transform(const Eigen::Matrix3d& M)
 {
 	_A=_A*M;
 	_B=_A.inverse();
@@ -550,7 +550,7 @@ void Basis::transform(const Matrix3d& M)
 		propagateSigmas(M);
 }
 
-void Basis::propagateSigmas(const Matrix3d& M)
+void Basis::propagateSigmas(const Eigen::Matrix3d& M)
 {
 	Eigen::Matrix<double,9,9> MM=Eigen::Matrix<double,9,9>::Zero();
 
@@ -585,7 +585,7 @@ void Basis::calculateSigmasDirectToReciprocal(bool direction)
 	// Nuclear Instruments and Methods in Physics Research Section A: Accelerators, Spectrometers, Detectors and Associated Equipment, Volume 451, Issue 2, 1 September 2000, Pages 520-528
 
 
-	Matrix3d input;
+	Eigen::Matrix3d input;
 	covMat* inputS;
 	covMat* outputS;
 	if (direction)
@@ -645,7 +645,7 @@ void Basis::setReciprocalSigmas(const Eigen::Vector3d& sas,const Eigen::Vector3d
 	_hasSigmas = true;
 }
 
-void Basis::setReciprocalSigmas(const Matrix3d& sigmas)
+void Basis::setReciprocalSigmas(const Eigen::Matrix3d& sigmas)
 {
 	_Bcov.setZero();
 
@@ -685,7 +685,7 @@ void Basis::setDirectSigmas(const Eigen::Vector3d& sa,const Eigen::Vector3d& sb,
 
 }
 
-void Basis::setDirectSigmas(const Matrix3d& sigmas)
+void Basis::setDirectSigmas(const Eigen::Matrix3d& sigmas)
 {
 	_Acov.setZero();
 
@@ -711,12 +711,12 @@ void Basis::setDirectCovariance(const covMat& dCov)
 	_hasSigmas = true;
 }
 
-const Basis::covMat&  Basis::getDirectCovariance()
+const covMat&  Basis::getDirectCovariance()
 {
 		return _Acov;
 }
 
-const Basis::covMat&  Basis::getReciprocalCovariance()
+const covMat&  Basis::getReciprocalCovariance()
 {
 	return _Bcov;
 }

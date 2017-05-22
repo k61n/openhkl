@@ -11,26 +11,26 @@
 
 namespace nsx {
 
-Detector* MultiDetector::create(const proptree::ptree& node)
+Detector* MultiDetector::create(const boost::property_tree::ptree& node)
 {
     return new MultiDetector(node);
 }
 
-MultiDetector::MultiDetector() : Composite<Detector,const proptree::ptree&>()
+MultiDetector::MultiDetector() : Composite<Detector,const boost::property_tree::ptree&>()
 {
 }
 
-MultiDetector::MultiDetector(const MultiDetector& other) : Composite<Detector,const proptree::ptree&>(other)
+MultiDetector::MultiDetector(const MultiDetector& other) : Composite<Detector,const boost::property_tree::ptree&>(other)
 {
 
 }
 
-MultiDetector::MultiDetector(const std::string& name) : Composite<Detector,const proptree::ptree&>()
+MultiDetector::MultiDetector(const std::string& name) : Composite<Detector,const boost::property_tree::ptree&>()
 {
     _name = name;
 }
 
-MultiDetector::MultiDetector(const proptree::ptree& node) : Composite<Detector,const proptree::ptree&>(node)
+MultiDetector::MultiDetector(const boost::property_tree::ptree& node) : Composite<Detector,const boost::property_tree::ptree&>(node)
 {
     // Set each subdetector of the multi detector from the property tree "detector" subnodes
     for (const auto& v : node)
@@ -43,7 +43,7 @@ MultiDetector::MultiDetector(const proptree::ptree& node) : Composite<Detector,c
             if (!detector)
                 throw std::runtime_error("NSXTool does not support nested multi detector.");
 
-            const property_tree::ptree& pixelOriginNode=v.second.get_child("origin");
+            const auto& pixelOriginNode=v.second.get_child("origin");
             double opx=pixelOriginNode.get<double>("pixel_x");
             double opy=pixelOriginNode.get<double>("pixel_y");
             detector->setOrigin(opx,opy);

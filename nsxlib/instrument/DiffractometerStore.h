@@ -30,20 +30,13 @@
 #ifndef NSXLIB_DIFFRACTOMETERSTORE_H
 #define NSXLIB_DIFFRACTOMETERSTORE_H
 
-#include <memory>
-#include <map>
 #include <set>
 #include <string>
 
 #include "../kernel/Singleton.h"
+#include "../instrument/InstrumentTypes.h"
 
 namespace nsx {
-
-class Diffractometer;
-
-typedef std::set<std::string> diffractometersList;
-typedef std::shared_ptr<Diffractometer> sptrDiffractometer;
-typedef std::map<std::string,sptrDiffractometer> diffractomersMap;
 
 class DiffractometerStore : public Singleton<DiffractometerStore,Constructor,Destructor> {
 
@@ -54,7 +47,7 @@ public:
 
     sptrDiffractometer buildDiffractometer(const std::string& name) const;
 
-    diffractometersList getDiffractometersList() const;
+    std::set<std::string> getDiffractometersList() const;
 
 };
 

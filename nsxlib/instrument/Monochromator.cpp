@@ -43,7 +43,7 @@ Monochromator::Monochromator(const Monochromator& other)
 {
 }
 
-Monochromator::Monochromator(const proptree::ptree& node)
+Monochromator::Monochromator(const boost::property_tree::ptree& node)
 : _offset(0.0),
   _offsetFixed(true)
 {
@@ -53,13 +53,13 @@ Monochromator::Monochromator(const proptree::ptree& node)
     UnitsManager* um=UnitsManager::Instance();
 
     // Set the source slit width from the property tree node
-    const proptree::ptree& widthNode = node.get_child("width");
+    const auto& widthNode = node.get_child("width");
     double units=um->get(widthNode.get<std::string>("<xmlattr>.units"));
     _width=widthNode.get_value<double>();
     _width *= units;
 
     // Set the source slit height from the property tree node
-    const proptree::ptree& heightNode = node.get_child("height");
+    const auto& heightNode = node.get_child("height");
     units=um->get(heightNode.get<std::string>("<xmlattr>.units"));
     _height=heightNode.get_value<double>();
     _height *= units;

@@ -36,12 +36,7 @@
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
 
-//using Eigen::Vector3d;
-//using Eigen::Transform;
-
 namespace nsx {
-
-namespace proptree=boost::property_tree;
 
 /** @brief Interface use for homogeneous transform, Rotation and translation, scale
 *
@@ -55,7 +50,7 @@ class Axis {
 public:
 
 	//! Static constructor for an Axis
-	static Axis* create(const proptree::ptree& node);
+	static Axis* create(const boost::property_tree::ptree& node);
 
 	//! Default constructor
 	Axis();
@@ -66,7 +61,7 @@ public:
 	//! Construct a labelized axis from a vector
 	Axis(const std::string& label, const Eigen::Vector3d& axis);
 	//! Construct an Axis from a property tree node.
-	Axis(const proptree::ptree& node);
+	Axis(const boost::property_tree::ptree& node);
 	//! Assignment operator
 	Axis& operator=(const Axis& other);
 	//! Destructor

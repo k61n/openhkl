@@ -32,13 +32,15 @@
 
 #include <string>
 
+#include <boost/property_tree/ptree.hpp>
+
 #include "../kernel/Factory.h"
 #include "../kernel/Singleton.h"
 #include "../instrument/Axis.h"
 
 namespace nsx {
 
-class AxisFactory : public Factory<Axis,std::string,const proptree::ptree&>, public Singleton<AxisFactory,Constructor,Destructor> {
+class AxisFactory : public Factory<Axis,std::string,const boost::property_tree::ptree&>, public Singleton<AxisFactory,Constructor,Destructor> {
 private:
     friend class Constructor<AxisFactory>;
     friend class Destructor<AxisFactory>;

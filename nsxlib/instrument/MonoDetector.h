@@ -31,6 +31,8 @@
 
 #include <string>
 
+#include <boost/property_tree/ptree.hpp>
+
 #include "Detector.h"
 
 namespace nsx {
@@ -49,7 +51,7 @@ public:
     //! Construct a MonoDetector with a given name
     MonoDetector(const std::string& name);
     //! Constructs a MonoDetector from a property tree node
-    MonoDetector(const proptree::ptree& node);
+    MonoDetector(const boost::property_tree::ptree& node);
     // Destructor
     virtual ~MonoDetector()=0;
 

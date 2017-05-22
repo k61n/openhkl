@@ -29,7 +29,7 @@ BOOST_AUTO_TEST_CASE(Test_Material)
     BOOST_CHECK_THROW(methane.setMassDensity(-10.0),std::runtime_error);
     BOOST_CHECK_NO_THROW(methane.setMassDensity(1.235));
 
-    nsx::Material::isotopeContents massFractions=methane.massFractions();
+    nsx::isotopeContents massFractions=methane.massFractions();
     // Set the molar in g_per_mol
     double methaneMolarMass = nsx::kilo*methane.molarMass();
     BOOST_CHECK_CLOSE(massFractions.at("C[12]"), 12.00000000*0.98900/methaneMolarMass            , tolerance);
@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(Test_Material)
     // mass density in kg/m3
     water.setMassDensity(2.3);
     double waterMolarMass = water.molarMass();
-    nsx::Material::isotopeContents atomicDensity=water.atomicNumberDensity();
+    nsx::isotopeContents atomicDensity=water.atomicNumberDensity();
     BOOST_CHECK_CLOSE(atomicDensity.at("O[16]"),      nsx::avogadro*0.99762*water.massDensity()/waterMolarMass, tolerance);
     BOOST_CHECK_CLOSE(atomicDensity.at("O[17]"),      nsx::avogadro*0.00038*water.massDensity()/waterMolarMass, tolerance);
     BOOST_CHECK_CLOSE(atomicDensity.at("O[18]"),        nsx::avogadro*0.002*water.massDensity()/waterMolarMass, tolerance);

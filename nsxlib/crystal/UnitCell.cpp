@@ -2,13 +2,12 @@
 #include <iomanip>
 #include <stdexcept>
 
+#include "../chemistry/Material.h"
 #include "../crystal/UnitCell.h"
 #include "../mathematics/GCD.h"
 #include "../utils/Units.h"
 
 namespace nsx {
-
-using sptrMaterial = UnitCell::sptrMaterial;
 
 UnitCell::UnitCell():
     Basis(),
@@ -157,7 +156,7 @@ Eigen::Vector3d UnitCell::getReciprocalCVector() const
     return _B.row(2);
 }
 
-UnitCell UnitCell::fromDirectVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c, LatticeCentring centring, BravaisType bravais,const std::shared_ptr<Basis>& reference)
+UnitCell UnitCell::fromDirectVectors(const Eigen::Vector3d& a, const Eigen::Vector3d& b, const Eigen::Vector3d& c, LatticeCentring centring, BravaisType bravais,const std::shared_ptr<Basis>& reference)
 {
     if (coplanar(a,b,c)) {
         throw std::runtime_error("Class UnitCell: the direct vectors are coplanar.");
@@ -166,15 +165,15 @@ UnitCell UnitCell::fromDirectVectors(const Vector3d& a, const Vector3d& b, const
 }
 
 //! Build a basis from a set of three reciprocal vectors.
-UnitCell UnitCell::fromReciprocalVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c,LatticeCentring centring, BravaisType bravais,const std::shared_ptr<Basis>& reference)
+UnitCell UnitCell::fromReciprocalVectors(const Eigen::Vector3d& a, const Eigen::Vector3d& b, const Eigen::Vector3d& c,LatticeCentring centring, BravaisType bravais,const std::shared_ptr<Basis>& reference)
 {
     if (coplanar(a,b,c)) {
         throw std::runtime_error("Class UnitCell: the reciprocal vectors are coplanar.");
     }
     double rVolume = std::abs(a.dot(b.cross(c)));
-    Vector3d av = b.cross(c)/rVolume;
-    Vector3d bv = c.cross(a)/rVolume;
-    Vector3d cv = a.cross(b)/rVolume;
+    Eigen::Vector3d av = b.cross(c)/rVolume;
+    Eigen::Vector3d bv = c.cross(a)/rVolume;
+    Eigen::Vector3d cv = a.cross(b)/rVolume;
 
     return UnitCell(av,bv,cv,centring,bravais,reference);
 }
@@ -188,7 +187,7 @@ void UnitCell::copyMatrices(const UnitCell& other)
     return;
 }
 
-void UnitCell::setLatticeVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c)
+void UnitCell::setLatticeVectors(const Eigen::Vector3d& a, const Eigen::Vector3d& b, const Eigen::Vector3d& c)
 {
     if (coplanar(a,b,c)) {
         throw std::runtime_error("Class UnitCell: the direct vectors are coplanar.");
@@ -219,13 +218,13 @@ std::string UnitCell::getBravaisTypeSymbol() const
     return os.str();
 }
 
-void UnitCell::setBU(const Vector3d& hkl1, const Vector3d& hkl2, const Vector3d& q1, const Vector3d& q2)
+void UnitCell::setBU(const Eigen::Vector3d& hkl1, const Eigen::Vector3d& hkl2, const Eigen::Vector3d& q1, const Eigen::Vector3d& q2)
 {
     // Get Q1 and Q2 in the diffractometer basis
     Eigen::Vector3d q3u=q1.cross(q2);
     q3u.normalize();
-    Vector3d q1u=q1.normalized();
-    Vector3d q2u=q3u.cross(q1u);
+    Eigen::Vector3d q1u=q1.normalized();
+    Eigen::Vector3d q2u=q3u.cross(q1u);
 
     //
     Eigen::Vector3d q1prime=this->toReciprocalStandard(hkl1);
@@ -393,8 +392,6 @@ std::vector<Eigen::Vector3d> UnitCell::generateReflectionsInShell(double dmin, d
 
                 Eigen::Vector3d q = h*b1 + k*b2 + l*b3;
 
-//                double gcd = (double)gcd(h, k, l);
-//                const double d = gcd / q.norm();
                 const double d = 1.0 / q.norm();
 
                 const double sin_theta = wavelength / (2.0 * d);

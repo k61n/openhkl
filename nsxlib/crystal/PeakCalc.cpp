@@ -45,8 +45,6 @@
 #include "../instrument/ComponentState.h"
 #include "../instrument/DetectorEvent.h"
 
-using std::shared_ptr;
-
 namespace nsx {
 
 using Ellipsoid3D = Ellipsoid<double, 3>;

@@ -11,11 +11,7 @@
 
 namespace nsx {
 
-using CellList = Sample::CellList;
-using sptrMaterial = Sample::sptrMaterial;
-using sptrUnitCell = Sample::sptrUnitCell;
-
-Sample* Sample::create(const proptree::ptree& node)
+Sample* Sample::create(const boost::property_tree::ptree& node)
 {
     return new Sample(node);
 }
@@ -32,7 +28,7 @@ Sample::Sample(const std::string& name): Component(name), _sampleShape()
 {
 }
 
-Sample::Sample(const proptree::ptree& node): Component(node)
+Sample::Sample(const boost::property_tree::ptree& node): Component(node)
 {
 }
 
@@ -78,7 +74,7 @@ sptrUnitCell Sample::getUnitCell(int i)
     return _cells[i];
 }
 
-const CellList& Sample::getUnitCells() const
+const UnitCellList& Sample::getUnitCells() const
 {
     return _cells;
 }

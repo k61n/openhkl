@@ -9,7 +9,7 @@ namespace nsx {
     using Eigen::Vector3d;
     using Eigen::Transform;
 
-Axis* Axis::create(const proptree::ptree& node)
+Axis* Axis::create(const boost::property_tree::ptree& node)
 {
 	// Create an instance of the source factory
 	AxisFactory* axisFactory=AxisFactory::Instance();
@@ -71,11 +71,11 @@ Axis::Axis(const Axis& other)
 {
 }
 
-Axis::Axis(const proptree::ptree& node)
+Axis::Axis(const boost::property_tree::ptree& node)
 {
 	_label=node.get<std::string>("name");
 
-	const proptree::ptree& axisDirectionNode=node.get_child("direction");
+	const auto& axisDirectionNode=node.get_child("direction");
 	double nx=axisDirectionNode.get<double>("x");
 	double ny=axisDirectionNode.get<double>("y");
 	double nz=axisDirectionNode.get<double>("z");
