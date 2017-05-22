@@ -10,25 +10,20 @@
 
 #include <nsxlib/crystal/CrystalTypes.h>
 #include <nsxlib/data/DataTypes.h>
+#include <nsxlib/instrument/InstrumentTypes.h>
 
 class QObject;
-
-namespace nsx {
-class Experiment;
-}
 
 class CollectedPeaksModel : public QAbstractTableModel
 {
     Q_OBJECT
 public:
 
-    using sptrExperiment = std::shared_ptr<nsx::Experiment>;
-
     enum Column {h,k,l,intensity,sigmaIntensity,transmission,lorentzFactor,numor,selected,unitCell,count};
 
-    explicit CollectedPeaksModel(sptrExperiment experiment,QObject* parent = 0);
+    explicit CollectedPeaksModel(nsx::sptrExperiment experiment,QObject* parent = 0);
 
-    CollectedPeaksModel(sptrExperiment experiment, const nsx::PeakList& peaks, QObject *parent = 0);
+    CollectedPeaksModel(nsx::sptrExperiment experiment, const nsx::PeakList& peaks, QObject *parent = 0);
 
     ~CollectedPeaksModel() = default;
 
@@ -68,7 +63,7 @@ public:
 
     QModelIndexList getValidPeaks();
 
-    sptrExperiment getExperiment();
+    nsx::sptrExperiment getExperiment();
 
 public slots:
     void sortEquivalents();
@@ -78,7 +73,7 @@ signals:
     void unitCellUpdated();
 
 private:
-    sptrExperiment _experiment;
+    nsx::sptrExperiment _experiment;
     nsx::PeakList _peaks;
     nsx::UnitCellList _cells;
 };

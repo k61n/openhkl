@@ -12,16 +12,14 @@
 
 #include <QDialog>
 
+#include <nsxlib/data/DataTypes.h>
+
 #include "ColorMap.h"
 
 class QGraphicsPixmapItem;
 class QGraphicsScene;
 class QStandardItem;
 class QWidget;
-
-namespace nsx {
-class PeakFinder;
-}
 
 namespace Ui {
 class DialogConvolve;
@@ -34,7 +32,7 @@ class DialogConvolve : public QDialog
 
 public:
     explicit DialogConvolve(const Eigen::MatrixXi& currentFrame,
-                            std::shared_ptr<nsx::PeakFinder> peakFinder=nullptr,
+                            nsx::sptrPeakFinder peakFinder=nullptr,
                             QWidget *parent = 0);
     ~DialogConvolve();
 
@@ -59,7 +57,7 @@ private:
     QGraphicsPixmapItem* _pxmapPreview;
     Eigen::MatrixXi _frame;
 
-    std::shared_ptr<nsx::PeakFinder> _peakFinder;
+    nsx::sptrPeakFinder _peakFinder;
     std::unique_ptr<ColorMap> _colormap;
 };
 #endif // NSXQT_DIALOGCONVOLVE_H

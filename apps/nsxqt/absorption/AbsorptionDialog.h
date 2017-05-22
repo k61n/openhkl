@@ -9,16 +9,11 @@
 #include <QDialog>
 #include <QString>
 
+#include <nsxlib/geometry/GeometryTypes.h>
+#include <nsxlib/instrument/InstrumentTypes.h>
+
 namespace Ui {
 class AbsorptionDialog;
-}
-
-namespace nsx
-{
-class Experiment;
-class RotAxis;
-template <typename T>
-class ConvexHull;
 }
 
 class CrystalScene;
@@ -28,7 +23,7 @@ class AbsorptionDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit AbsorptionDialog(std::shared_ptr<nsx::Experiment> experiment, QWidget *parent = nullptr);
+    explicit AbsorptionDialog(nsx::sptrExperiment experiment, QWidget *parent = nullptr);
     const std::string& getMovieFilename() const;
     ~AbsorptionDialog();
 signals:
@@ -45,7 +40,7 @@ private slots:
 private:
     Ui::AbsorptionDialog *ui;
     //! Link to the experiment
-    std::shared_ptr<nsx::Experiment> _experiment;
+    nsx::sptrExperiment _experiment;
     //! Rotation axis to collect movie
     nsx::RotAxis* _spindleAxis;
     //! Set of Roatation angle and absolute fileName for jpg image

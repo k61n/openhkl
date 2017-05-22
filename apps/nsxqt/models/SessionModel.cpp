@@ -413,13 +413,13 @@ void SessionModel::findPeaks(const QModelIndex& index)
     if (!titem)
         return;
 
-    std::shared_ptr<nsx::Experiment> expt(titem->getExperiment());
+    auto expt = titem->getExperiment();
 
     if (!expt)
         return;
 
     QStandardItem* ditem = itemFromIndex(index);
-    std::vector<std::shared_ptr<nsx::DataSet>> selectedNumors;
+    nsx::DataList selectedNumors;
     int nTotalNumors = rowCount(ditem->index());
     selectedNumors.reserve(size_t(nTotalNumors));
 

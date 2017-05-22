@@ -19,7 +19,7 @@
 
 #include "ui_AbsorptionDialog.h"
 
-AbsorptionDialog::AbsorptionDialog(std::shared_ptr<nsx::Experiment> experiment, QWidget *parent) :
+AbsorptionDialog::AbsorptionDialog(nsx::sptrExperiment experiment, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::AbsorptionDialog),
     _experiment(experiment),

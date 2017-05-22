@@ -3,7 +3,7 @@
 #include "DialogTransformationMatrix.h"
 #include "ui_TransformationMatrixDialog.h"
 
-DialogTransformationmatrix::DialogTransformationmatrix(std::shared_ptr<nsx::UnitCell> unitCell, QWidget *parent) :
+DialogTransformationmatrix::DialogTransformationmatrix(nsx::sptrUnitCell unitCell, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DialogTransformationmatrix),
     _unitCell(unitCell)

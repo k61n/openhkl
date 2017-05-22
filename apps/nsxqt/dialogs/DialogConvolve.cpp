@@ -11,10 +11,12 @@
 #include <QStandardItem>
 #include <QTreeView>
 
+#include <nsxlib/data/DataTypes.h>
 #include <nsxlib/data/PeakFinder.h>
 #include <nsxlib/imaging/KernelFactory.h>
 #include <nsxlib/utils/Types.h>
 #include <nsxlib/imaging/Convolver.h>
+#include <nsxlib/imaging/ImagingTypes.h>
 #include <nsxlib/imaging/ConvolutionKernel.h>
 
 #include "ColorMap.h"
@@ -23,7 +25,7 @@
 #include "ui_ConvolveDialog.h"
 
 DialogConvolve::DialogConvolve(const Eigen::MatrixXi& currentFrame,
-                               std::shared_ptr<nsx::PeakFinder> peakFinder,
+                               nsx::sptrPeakFinder peakFinder,
                                QWidget *parent):
     QDialog(parent),
     ui(new Ui::DialogConvolve),
@@ -78,7 +80,7 @@ void DialogConvolve::buildTree()
         return;
 
     // get the selected kernel (if any)
-    std::shared_ptr<nsx::ConvolutionKernel> kernel = _peakFinder->getKernel();
+    auto kernel = _peakFinder->getKernel();
 
     QStandardItemModel* model = new QStandardItemModel(this);
 
@@ -172,13 +174,13 @@ void DialogConvolve::on_previewButton_clicked()
 
 void DialogConvolve::on_filterComboBox_currentIndexChanged(int index)
 {
-    std::shared_ptr<nsx::ConvolutionKernel> kernel;
+    nsx::sptrConvolutionKernel kernel;
 
     if (QString::compare(ui->filterComboBox->currentText(),"none") == 0)
         kernel.reset();
     else {
         std::string kernelName = ui->filterComboBox->currentText().toStdString();
-        nsx::KernelFactory* kernelFactory = nsx::KernelFactory::Instance();
+        auto kernelFactory = nsx::KernelFactory::Instance();
         kernel.reset(kernelFactory->create(kernelName, int(_frame.rows()), int(_frame.cols())));
     }
 

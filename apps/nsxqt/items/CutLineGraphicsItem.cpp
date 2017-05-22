@@ -22,7 +22,7 @@
 #include "plot/SimplePlot.h"
 #include "plot/SXPlot.h"
 
-CutLineGraphicsItem::CutLineGraphicsItem(std::shared_ptr<nsx::DataSet> data)
+CutLineGraphicsItem::CutLineGraphicsItem(nsx::sptrDataSet data)
 : CutterGraphicsItem(data),
   _nPoints(10)
 {

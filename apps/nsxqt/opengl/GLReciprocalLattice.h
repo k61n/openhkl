@@ -1,9 +1,7 @@
 #ifndef NSXQT_GLRECIPROCALLATTICE_H
 #define NSXQT_GLRECIPROCALLATTICE_H
 
-#include <memory>
-
-#include <nsxlib/crystal/UnitCell.h>
+#include <nsxlib/crystal/CrystalTypes.h>
 
 #include "GLActor.h"
 
@@ -13,14 +11,14 @@ class GLReciprocalLattice : public GLActor
 public:
 
     GLReciprocalLattice(const char* name);
-    void setUnitCell(std::shared_ptr<nsx::UnitCell> pUnitCell);
+    void setUnitCell(nsx::sptrUnitCell cell);
     void setPeriodicCells(int xmin,int xmax,int ymin,int ymax,int zmin,int zmax);
     void setSingleCell();
     int pickableElements() {return 1;}
 
 private:
     //! Pointer to the UnitCell
-    std::shared_ptr<nsx::UnitCell> _ptrCell;
+    nsx::sptrUnitCell _cell;
     int _xmin, _xmax, _ymin, _ymax, _zmin, _zmax;
     //! If false draw only primitive cell,otherwise use multiple cells between xmin, xmax...
     bool _periodicCell;

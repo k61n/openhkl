@@ -20,7 +20,7 @@
 
 #include "ui_MCAbsorptionDialog.h"
 
-MCAbsorptionDialog::MCAbsorptionDialog(std::shared_ptr<nsx::Experiment> experiment, QWidget *parent):
+MCAbsorptionDialog::MCAbsorptionDialog(nsx::sptrExperiment experiment, QWidget *parent):
     QDialog(parent),
      ui(new Ui::MCAbsorptionDialog),
     _experiment(experiment)
@@ -48,8 +48,8 @@ void MCAbsorptionDialog::on_pushButton_run_pressed()
         return;
     }
     // Get the source
-    std::shared_ptr<nsx::Source> source=_experiment->getDiffractometer()->getSource();
-    std::shared_ptr<nsx::Sample> sample=_experiment->getDiffractometer()->getSample();
+    auto source=_experiment->getDiffractometer()->getSource();
+    auto sample=_experiment->getDiffractometer()->getSample();
 
     // Get the material
     unsigned int cellIndex=static_cast<unsigned int>(ui->comboBox->currentIndex());

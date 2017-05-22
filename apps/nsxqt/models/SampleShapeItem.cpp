@@ -1,7 +1,7 @@
 #include "../models/SampleShapeItem.h"
 #include "../tree/SampleShapePropertyWidget.h"
 
-SampleShapeItem::SampleShapeItem(std::shared_ptr<nsx::Experiment> experiment):
+SampleShapeItem::SampleShapeItem(nsx::sptrExperiment experiment):
     InspectableTreeItem(experiment)
 {
     QIcon icon(":/resources/sampleIcon.png");
@@ -11,11 +11,6 @@ SampleShapeItem::SampleShapeItem(std::shared_ptr<nsx::Experiment> experiment):
     setSelectable(false);
     setDragEnabled(false);
     setDropEnabled(false);
-}
-
-SampleShapeItem::~SampleShapeItem()
-{
-
 }
 
 QWidget* SampleShapeItem::inspectItem()

@@ -15,15 +15,13 @@
 #include "CollectedPeaksModel.h"
 #include "views/ProgressView.h"
 
-using sptrExperiment = CollectedPeaksModel::sptrExperiment;
-
-CollectedPeaksModel::CollectedPeaksModel(sptrExperiment experiment, QObject *parent)
+CollectedPeaksModel::CollectedPeaksModel(nsx::sptrExperiment experiment, QObject *parent)
 : QAbstractTableModel(parent),
   _experiment(std::move(experiment))
 {
 }
 
-CollectedPeaksModel::CollectedPeaksModel(sptrExperiment experiment, const nsx::PeakList &peaks, QObject *parent)
+CollectedPeaksModel::CollectedPeaksModel(nsx::sptrExperiment experiment, const nsx::PeakList &peaks, QObject *parent)
 : QAbstractTableModel(parent),
   _experiment(std::move(experiment)),
   _peaks(peaks)
@@ -302,7 +300,7 @@ bool CollectedPeaksModel::setData(const QModelIndex& index, const QVariant& valu
                 return false;
             }
             int unitCellIndex = value.toInt();
-            nsx::sptrUnitCell unitCell = _cells[unitCellIndex];
+            auto unitCell = _cells[unitCellIndex];
             _peaks[row]->addUnitCell(unitCell,true);
         }
     }
@@ -505,7 +503,7 @@ QModelIndexList CollectedPeaksModel::getValidPeaks()
     return list;
 }
 
-sptrExperiment CollectedPeaksModel::getExperiment()
+nsx::sptrExperiment CollectedPeaksModel::getExperiment()
 {
     return _experiment;
 }

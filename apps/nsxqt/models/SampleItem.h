@@ -4,18 +4,16 @@
 #include <QJsonObject>
 #include <QList>
 
-#include "InspectableTreeItem.h"
+#include <nsxlib/instrument/InstrumentTypes.h>
 
-namespace nsx {
-class Experiment;
-}
+#include "InspectableTreeItem.h"
 
 class UnitCellItem;
 
 class SampleItem : public InspectableTreeItem
 {
 public:
-    explicit SampleItem(std::shared_ptr<nsx::Experiment> experiment);
+    explicit SampleItem(nsx::sptrExperiment experiment);
     void setData(const QVariant& value, int role = Qt::UserRole + 1) override;
     QWidget* inspectItem() override;
     QJsonObject toJson() override;

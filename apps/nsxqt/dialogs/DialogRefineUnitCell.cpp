@@ -23,7 +23,7 @@
 #include "DialogRefineUnitCell.h"
 #include "DoubleTableItemDelegate.h"
 
-DialogRefineUnitCell::DialogRefineUnitCell(sptrExperiment experiment,
+DialogRefineUnitCell::DialogRefineUnitCell(nsx::sptrExperiment experiment,
                                            nsx::sptrUnitCell unitCell,
                                            nsx::PeakList peaks,
                                            QWidget *parent):

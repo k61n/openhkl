@@ -56,8 +56,6 @@
 #include "models/CollectedPeaksModel.h"
 #include "PeakTableView.h"
 
-using sptrExperiment = std::shared_ptr<nsx::Experiment>;
-
 PeakTableView::PeakTableView(QWidget *parent)
 : QTableView(parent),
   _normalized(false),
@@ -429,7 +427,7 @@ QItemSelectionModel::SelectionFlags PeakTableView::selectionCommand(const QModel
 void PeakTableView::openAutoIndexingDialog()
 {
     auto peakModel = dynamic_cast<CollectedPeaksModel*>(model());
-    sptrExperiment experiment = peakModel->getExperiment();
+    auto experiment = peakModel->getExperiment();
     nsx::PeakList peaks = peakModel->getPeaks(selectionModel()->selectedRows());
     auto dialog = new DialogAutoIndexing(experiment,peaks);
     connect(dialog,SIGNAL(cellUpdated(nsx::sptrUnitCell)),this,SLOT(updateUnitCell(nsx::sptrUnitCell)));
@@ -450,7 +448,7 @@ void PeakTableView::updateUnitCell(const nsx::sptrUnitCell& unitCell)
 void PeakTableView::openRefiningParametersDialog()
 {
     auto peakModel = dynamic_cast<CollectedPeaksModel*>(model());
-    sptrExperiment experiment = peakModel->getExperiment();
+    auto experiment = peakModel->getExperiment();
     nsx::PeakList peaks = peakModel->getPeaks(selectionModel()->selectedRows());
 
     int nPeaks = peaks.size();

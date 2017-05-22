@@ -8,7 +8,7 @@
 #include "models/NumorItem.h"
 #include "tree/NumorPropertyWidget.h"
 
-NumorItem::NumorItem(sptrExperiment experiment,nsx::sptrDataSet data) :
+NumorItem::NumorItem(nsx::sptrExperiment experiment,nsx::sptrDataSet data) :
     InspectableTreeItem(experiment),
     _data(data)
 {
@@ -23,7 +23,7 @@ NumorItem::~NumorItem()
    _experiment->removeData(_data->getBasename());
 }
 
-std::shared_ptr<nsx::DataSet> NumorItem::getData()
+nsx::sptrDataSet NumorItem::getData()
 {
     return _data;
 }

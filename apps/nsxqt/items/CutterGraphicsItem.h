@@ -4,17 +4,9 @@
 #include <QPen>
 #include <QPointF>
 
-#include <memory>
+#include <nsxlib/data/DataTypes.h>
 
 #include "PlottableGraphicsItem.h"
-
-namespace nsx
-{
-namespace Data
-{
-class DataSet;
-}
-}
 
 class QGraphicsSceneHoverEvent;
 class QGraphicsSceneMouseEvent;
@@ -27,7 +19,7 @@ public:
     // Constructors and destructor
 
     //! Constructs a data cutter
-    CutterGraphicsItem(std::shared_ptr<nsx::DataSet> data);
+    CutterGraphicsItem(nsx::sptrDataSet data);
     //! Destructor
     virtual ~CutterGraphicsItem();
 
@@ -43,7 +35,7 @@ public:
     //! Returns the bounding rectangle of the item
     QRectF boundingRect() const;
     //! Returns the data bound to the item
-    std::shared_ptr<nsx::DataSet> getData();
+    nsx::sptrDataSet getData();
     //! Sets the top left corner of the item
     void setFrom(const QPointF& pos);
     //! Sets the bottom right corner of the item
@@ -60,7 +52,7 @@ public:
 
 protected:
     //! The data on which the cutter will act upon
-    std::shared_ptr<nsx::DataSet> _data;
+    nsx::sptrDataSet _data;
     //! The top left coordinates of the slice
     QPointF _from;
     //! The bottom right coordinates of the slice

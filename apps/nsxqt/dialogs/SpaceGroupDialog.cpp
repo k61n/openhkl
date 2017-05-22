@@ -95,7 +95,7 @@ void SpaceGroupDialog::evaluateSpaceGroups()
     }
 
     // todo: how to we handle multiple samples??
-    std::shared_ptr<nsx::Sample> sample = _numors[0]->getDiffractometer()->getSample();
+    auto sample = _numors[0]->getDiffractometer()->getSample();
 
     if (!sample) {
         qDebug() << "Need to have a sample in order to find space group!";
@@ -187,8 +187,8 @@ void SpaceGroupDialog::on_tableView_doubleClicked(const QModelIndex &index)
     box->setText(QString("Setting space group to ") + _selectedGroup.c_str());
 
     // todo: how to handle multiple samples and/or multiple unit cells???
-    for (std::shared_ptr<nsx::DataSet> numor: _numors) {
-        std::shared_ptr<nsx::Sample> sample = numor->getDiffractometer()->getSample();
+    for (auto numor: _numors) {
+        auto sample = numor->getDiffractometer()->getSample();
         sample->getUnitCell(0)->setSpaceGroup(_selectedGroup);
     }
 

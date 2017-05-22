@@ -6,6 +6,7 @@
 #include <QJsonObject>
 
 #include <nsxlib/data/DataTypes.h>
+#include <nsxlib/instrument/InstrumentTypes.h>
 
 #include "InspectableTreeItem.h"
 
@@ -20,9 +21,7 @@ class NumorItem : public InspectableTreeItem
 {
 public:
 
-    using sptrExperiment = std::shared_ptr<nsx::Experiment>;
-
-    explicit NumorItem(sptrExperiment experiment, nsx::sptrDataSet data);
+    explicit NumorItem(nsx::sptrExperiment experiment, nsx::sptrDataSet data);
     ~NumorItem();
     QWidget* inspectItem() override;
     nsx::sptrDataSet getData();

@@ -315,7 +315,7 @@ void ExperimentTree::viewReciprocalSpace(const QModelIndex& index)
 
     QStandardItem* ditem=_session->itemFromIndex(index);
 
-    std::vector<std::shared_ptr<nsx::DataSet>> selectedNumors;
+    nsx::DataList selectedNumors;
     int nTotalNumors(_session->rowCount(ditem->index()));
     selectedNumors.reserve(size_t(nTotalNumors));
 

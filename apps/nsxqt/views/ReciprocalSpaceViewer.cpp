@@ -18,7 +18,7 @@
 
 #include "Logger.h"
 
-ReciprocalSpaceViewer::ReciprocalSpaceViewer(std::shared_ptr<nsx::Experiment> experiment,QWidget *parent) :
+ReciprocalSpaceViewer::ReciprocalSpaceViewer(nsx::sptrExperiment experiment,QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ReciprocalSpaceViewer),
     _experiment(experiment),
@@ -38,7 +38,7 @@ ReciprocalSpaceViewer::~ReciprocalSpaceViewer()
     delete ui;
 }
 
-void ReciprocalSpaceViewer::setData(const std::vector<std::shared_ptr<nsx::DataSet>>& data)
+void ReciprocalSpaceViewer::setData(const nsx::DataList& data)
 {
     _data.clear();
     _data.reserve(data.size());
@@ -96,11 +96,11 @@ void ReciprocalSpaceViewer::on_view_clicked()
     // The distance from the point origin to the plane (P,v1,v2)
     double distOrigToPlane=v3.dot(from);
 
-    std::shared_ptr<nsx::Detector> detector(_experiment->getDiffractometer()->getDetector());
+    auto detector = _experiment->getDiffractometer()->getDetector();
     int nDetRows = detector->getNRows();
     int nDetCols = detector->getNCols();
 
-    std::shared_ptr<nsx::Sample> sample(_experiment->getDiffractometer()->getSample());
+    auto sample(_experiment->getDiffractometer()->getSample());
 
     auto& mono = _experiment->getDiffractometer()->getSource()->getSelectedMonochromator();
     double lambda(mono.getWavelength());
@@ -114,7 +114,7 @@ void ReciprocalSpaceViewer::on_view_clicked()
     std::vector<Eigen::Vector3d> qrest;
     qrest.reserve(nDetRows*nDetCols);
 
-    std::shared_ptr<nsx::MonoDetector> mdetector = std::dynamic_pointer_cast<nsx::MonoDetector>(detector);
+    nsx::sptrMonoDetector mdetector = std::dynamic_pointer_cast<nsx::MonoDetector>(detector);
 
     double pixelS=mdetector->getPixelWidth()*mdetector->getPixelHeigth();
 

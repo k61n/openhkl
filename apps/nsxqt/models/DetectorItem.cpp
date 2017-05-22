@@ -1,9 +1,4 @@
 #include <QIcon>
-#include <QString>
-
-#include <nsxlib/instrument/Detector.h>
-#include <nsxlib/instrument/Diffractometer.h>
-#include <nsxlib/instrument/InstrumentTypes.h>
 
 #include "models/DetectorItem.h"
 #include "tree/DetectorPropertyWidget.h"

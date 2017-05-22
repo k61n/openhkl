@@ -1,3 +1,5 @@
+#include <nsxlib/crystal/UnitCell.h>
+
 #include "GLReciprocalLattice.h"
 
 GLReciprocalLattice::GLReciprocalLattice(const char* name):GLActor(name)
@@ -5,9 +7,9 @@ GLReciprocalLattice::GLReciprocalLattice(const char* name):GLActor(name)
 
 }
 
-void GLReciprocalLattice::setUnitCell(std::shared_ptr<nsx::UnitCell> pUnitCell)
+void GLReciprocalLattice::setUnitCell(nsx::sptrUnitCell cell)
 {
-    _ptrCell=pUnitCell;
+    _cell=cell;
 }
 
 void GLReciprocalLattice::setPeriodicCells(int xmin, int xmax, int ymin, int ymax, int zmin, int zmax)
@@ -35,7 +37,7 @@ void GLReciprocalLattice::setSingleCell()
 
 void GLReciprocalLattice::GLCode()
 {
-    if (!_ptrCell)
+    if (!_cell)
         return;
     //
     glDisable(GL_LIGHTING);
@@ -47,9 +49,9 @@ void GLReciprocalLattice::GLCode()
 
     glBegin(GL_LINES);
 
-    auto aStarVector = _ptrCell->getReciprocalAVector();
-    auto bStarVector = _ptrCell->getReciprocalBVector();
-    auto cStarVector = _ptrCell->getReciprocalCVector();
+    auto aStarVector = _cell->getReciprocalAVector();
+    auto bStarVector = _cell->getReciprocalBVector();
+    auto cStarVector = _cell->getReciprocalCVector();
 
     double ax = aStarVector[0];
     double ay = aStarVector[1];

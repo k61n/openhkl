@@ -2,6 +2,7 @@
 #include <QMessageBox>
 #include <QSortFilterProxyModel>
 
+#include <nsxlib/chemistry/ChemistryTypes.h>
 #include <nsxlib/chemistry/Material.h>
 #include <nsxlib/crystal/Peak3D.h>
 #include <nsxlib/crystal/SpaceGroupSymbols.h>
@@ -17,9 +18,6 @@
 #include "tree/UnitCellPropertyWidget.h"
 
 #include "ui_UnitCellPropertyWidget.h"
-
-using sptrMaterial = std::shared_ptr<nsx::Material>;
-using sptrUnitCell = UnitCellPropertyWidget::sptrUnitCell;
 
 UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *parent) :
     QWidget(parent),
@@ -41,9 +39,9 @@ UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *par
 
     SessionModel* sessionModel = dynamic_cast<SessionModel*>(_unitCellItem->model());
 
-    connect(sessionModel,SIGNAL(updateCellParameters(sptrUnitCell)),this,SLOT(updateCellParameters(sptrUnitCell)));
+    connect(sessionModel,SIGNAL(updateCellParameters(nsx::sptrUnitCell)),this,SLOT(updateCellParameters(nsx::sptrUnitCell)));
 
-    sptrUnitCell cell = _unitCellItem->getUnitCell();
+    auto cell = _unitCellItem->getUnitCell();
 
     ui->spinBox_Z->setValue(cell->getZ());
     auto material=cell->getMaterial();
@@ -116,7 +114,7 @@ void UnitCellPropertyWidget::setMassDensity() const
 }
 
 
-void UnitCellPropertyWidget::updateCellParameters(sptrUnitCell cell)
+void UnitCellPropertyWidget::updateCellParameters(nsx::sptrUnitCell cell)
 {
     ui->doubleSpinBoxa->setValue(cell->getA());
     ui->doubleSpinBoxb->setValue(cell->getB());
@@ -134,7 +132,7 @@ void UnitCellPropertyWidget::setChemicalFormula(const QString &formula)
 {
     try
     {
-        sptrMaterial material(new nsx::Material(formula.toStdString()));
+        nsx::sptrMaterial material(new nsx::Material(formula.toStdString()));
         _unitCellItem->getUnitCell()->setMaterial(material);
     }
     catch(std::exception& e)

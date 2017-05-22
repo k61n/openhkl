@@ -24,9 +24,7 @@
 
 #include "ui_DialogAutoIndexing.h"
 
-using sptrExperiment = DialogAutoIndexing::sptrExperiment;
-
-DialogAutoIndexing::DialogAutoIndexing(sptrExperiment experiment, nsx::PeakList peaks, QWidget *parent):
+DialogAutoIndexing::DialogAutoIndexing(nsx::sptrExperiment experiment, nsx::PeakList peaks, QWidget *parent):
     QDialog(parent),
     ui(new Ui::DialogAutoIndexing),
     _experiment(experiment),

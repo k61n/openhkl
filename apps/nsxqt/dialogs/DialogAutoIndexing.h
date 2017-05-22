@@ -8,15 +8,11 @@
 #include <QItemSelection>
 
 #include <nsxlib/crystal/CrystalTypes.h>
+#include <nsxlib/instrument/InstrumentTypes.h>
 
 namespace Ui
 {
 class DialogAutoIndexing;
-}
-
-namespace nsx
-{
-class Experiment;
 }
 
 class DialogAutoIndexing : public QDialog
@@ -25,9 +21,7 @@ class DialogAutoIndexing : public QDialog
 
 public:
 
-    using sptrExperiment = std::shared_ptr<nsx::Experiment>;
-
-    explicit DialogAutoIndexing(sptrExperiment experiment, const nsx::PeakList peaks, QWidget *parent=0);
+    explicit DialogAutoIndexing(nsx::sptrExperiment experiment, const nsx::PeakList peaks, QWidget *parent=0);
     ~DialogAutoIndexing();
 
     void buildSolutionsTable();
@@ -47,7 +41,7 @@ signals:
 private:
     Ui::DialogAutoIndexing *ui;
 
-    sptrExperiment _experiment;
+    nsx::sptrExperiment _experiment;
 
     nsx::PeakList _peaks;
 

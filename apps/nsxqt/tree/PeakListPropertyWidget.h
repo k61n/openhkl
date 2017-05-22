@@ -10,10 +10,6 @@ namespace Ui {
 class PeakListPropertyWidget;
 }
 
-namespace nsx {
-class DataSet;
-}
-
 class PeakListItem;
 
 class PeakListPropertyWidget : public QWidget {

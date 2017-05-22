@@ -92,7 +92,7 @@ void DetectorScene::setMaxIntensity(int intensity)
     loadCurrentImage(false);
 }
 
-void DetectorScene::setData(const std::shared_ptr<nsx::DataSet>& data)
+void DetectorScene::setData(const nsx::sptrDataSet& data)
 {
     _currentData = data;
 
@@ -114,7 +114,7 @@ void DetectorScene::setData(const std::shared_ptr<nsx::DataSet>& data)
     updatePeaks();
 }
 
-void DetectorScene::setData(const std::shared_ptr<nsx::DataSet>& data, size_t frame)
+void DetectorScene::setData(const nsx::sptrDataSet& data, size_t frame)
 {
     setData(data);
     changeFrame(frame);
@@ -415,7 +415,7 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
         return;
     }
     auto instr=_currentData->getDiffractometer();
-    std::shared_ptr<nsx::Detector> det=instr->getDetector();
+    auto det=instr->getDetector();
 
     int nrows = int(det->getNRows());
     int ncols = int(det->getNCols());
@@ -430,7 +430,7 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
 
     const auto& samplev=_currentData->getSampleState(_currentFrameIndex).getValues();
     const auto& detectorv=_currentData->getDetectorState(_currentFrameIndex).getValues();
-    std::shared_ptr<nsx::Sample> sample=instr->getSample();
+    auto sample=instr->getSample();
     auto& mono = instr->getSource()->getSelectedMonochromator();
     double wave=mono.getWavelength();
 
@@ -479,7 +479,7 @@ void DetectorScene::loadCurrentImage(bool newimage)
     // Full image size, front of the stack
     QRect& full = _zoomStack.front();
 
-    std::shared_ptr<nsx::Detector> det = _currentData->getDiffractometer()->getDetector();
+    auto det = _currentData->getDiffractometer()->getDetector();
 
     if (_currentFrameIndex >= _currentData->getNFrames()) {
         _currentFrameIndex = _currentData->getNFrames()-1;
@@ -564,7 +564,7 @@ void DetectorScene::loadCurrentImage(bool newimage)
     }
 }
 
-std::shared_ptr<nsx::DataSet> DetectorScene::getData()
+nsx::sptrDataSet DetectorScene::getData()
 {
     return _currentData;
 }

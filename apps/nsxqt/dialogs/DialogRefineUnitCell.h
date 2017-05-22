@@ -1,11 +1,9 @@
 #ifndef NSXQT_DIALOGREFINEUNITCELL_H
 #define NSXQT_DIALOGREFINEUNITCELL_H
 
-#include <memory>
-
 #include <nsxlib/crystal/CrystalTypes.h>
 #include <nsxlib/crystal/UBMinimizer.h>
-#include <nsxlib/crystal/UnitCell.h>
+#include <nsxlib/instrument/InstrumentTypes.h>
 
 #include <QDialog>
 
@@ -14,19 +12,13 @@ namespace Ui
 class DialogRefineUnitCell;
 }
 
-namespace nsx {
-class Experiment;
-}
-
 class DialogRefineUnitCell : public QDialog
 {
     Q_OBJECT
 
 public:
-
-    using sptrExperiment = std::shared_ptr<nsx::Experiment>;
     
-    explicit DialogRefineUnitCell(sptrExperiment experiment,
+    explicit DialogRefineUnitCell(nsx::sptrExperiment experiment,
                                   nsx::sptrUnitCell unitCell,
                                   nsx::PeakList peaks,
                                   QWidget *parent = 0);
@@ -51,7 +43,7 @@ private slots:
 
 private:
     Ui::DialogRefineUnitCell *ui;
-    sptrExperiment _experiment;
+    nsx::sptrExperiment _experiment;
     nsx::sptrUnitCell _unitCell;
     nsx::PeakList _peaks;
     nsx::UBMinimizer _minimizer;

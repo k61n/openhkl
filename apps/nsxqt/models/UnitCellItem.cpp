@@ -1,4 +1,4 @@
-#include <QtDebug>
+#include <QDebug>
 
 #include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/instrument/Diffractometer.h>
@@ -11,7 +11,7 @@
 #include "models/UnitCellItem.h"
 #include "tree/UnitCellPropertyWidget.h"
 
-UnitCellItem::UnitCellItem(std::shared_ptr<nsx::Experiment> experiment,std::shared_ptr<nsx::UnitCell> cell):
+UnitCellItem::UnitCellItem(nsx::sptrExperiment experiment, nsx::sptrUnitCell cell):
     InspectableTreeItem(experiment),
     _cell(cell)
 {
@@ -34,7 +34,7 @@ QWidget* UnitCellItem::inspectItem()
     return new UnitCellPropertyWidget(this);
 }
 
-std::shared_ptr<nsx::UnitCell> UnitCellItem::getUnitCell()
+nsx::sptrUnitCell UnitCellItem::getUnitCell()
 {
     return _cell;
 }
