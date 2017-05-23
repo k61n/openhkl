@@ -45,7 +45,7 @@ include_directories(SYSTEM "${HDF5_INCLUDE_DIRS}")
 if ( HDF5_INCLUDE_DIRS AND HDF5_LIBRARIES )
    message("HDF5 found: include dir is ${HDF5_INCLUDE_DIRS} and library is ${HDF5_LIBRARIES} located in ${HDF5_LIBRARY_DIRS}")
 else()
-   messagE("ERROR: HDF5 not found")
+   message(FATAL_ERROR "HDF5 not found")
 endif()
 
 if(NSX_PYTHON)
@@ -58,6 +58,25 @@ if(NSX_PYTHON)
 
   find_package(PythonInterp REQUIRED)
   find_package(PythonLibs REQUIRED)
+  #find_package(Python REQUIRED)
+  #find_package(NumPy REQUIRED)
+
+  execute_process (
+    COMMAND ${PYTHON_EXECUTABLE} -c "from __future__ import print_function; import numpy; print(numpy.get_include())"
+        ERROR_VARIABLE NUMPY_FIND_ERROR
+        RESULT_VARIABLE NUMPY_FIND_RESULT
+        OUTPUT_VARIABLE NUMPY_FIND_OUTPUT
+        OUTPUT_STRIP_TRAILING_WHITESPACE      
+    )
+
+    ## process the output from the execution of the command
+    if (NOT NUMPY_FIND_RESULT)
+        set (NUMPY_INCLUDES ${NUMPY_FIND_OUTPUT})
+        message(STATUS "numpy includes ${NUMPY_INCLUDES}")
+        include_directories(SYSTEM ${NUMPY_INCLUDES})
+    else()
+        message(FATAL_ERROR "Could NOT find numpy headers")
+    endif()
 
   # swig
   find_package(SWIG REQUIRED)
