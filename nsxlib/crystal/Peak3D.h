@@ -41,23 +41,15 @@
 #include "../crystal/PeakIntegrator.h"
 #include "../crystal/Profile.h"
 #include "../data/DataTypes.h"
-#include "../geometry/Ellipsoid.h"
-#include "../geometry/IShape.h"
+#include "../geometry/GeometryTypes.h"
 #include "../geometry/IntegrationRegion.h"
 #include "../instrument/InstrumentTypes.h"
 
 namespace nsx {
 
-class Blob3D;
-class PeakIntegrator;
-
 class Peak3D {
 
 public:
-    using sptrShape3D=std::shared_ptr<IShape<double,3>>;
-    using Ellipsoid3D=Ellipsoid<double,3>;
-    using sptrEllipsoid3D=std::shared_ptr<Ellipsoid3D>;
-    using shape_type = IShape<double,3>;
 
     Peak3D(sptrDataSet data = nullptr);
 
