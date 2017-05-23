@@ -31,29 +31,28 @@
 
 #include <memory>
 #include <string>
-
-#include "../data/DataSet.h"
-#include "../kernel/Factory.h"
-#include "../kernel/Singleton.h"
-#include "../instrument/Diffractometer.h"
+#include <map>
+#include <functional>
 
 namespace nsx {
+
+    class IDataReader;
+    class DataSet;
+    class Diffractometer;
 
 /** \brief DataReaderFactory. All IData formats must register their "create" method with the factory in order to
  * choose the correct DataReader at runtime. Reader selection is based on the extension of the datafile.
  *
  */
-class DataReaderFactory :
-        public Factory<DataSet,std::string,std::string,std::shared_ptr<Diffractometer> >,
-        public Singleton<DataReaderFactory,Constructor,Destructor>
-{
+class DataReaderFactory {
 public:
-    DataReaderFactory();
-    ~DataReaderFactory() = default;
-private:
+    using callback = std::function<std::shared_ptr<DataSet>(const std::string&, const std::shared_ptr<Diffractometer>&)>;
 
-    friend class Constructor<DataReaderFactory>;
-    friend class Destructor<DataReaderFactory>;
+    DataReaderFactory();
+    std::shared_ptr<DataSet> create(const std::string& extension, const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer) const;
+
+private:
+    std::map<std::string, callback> _callbacks;
 };
 
 } // end namespace nsx

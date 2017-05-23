@@ -59,10 +59,14 @@ ConvexHull<double>& Sample::getShape()
     return _sampleShape;
 }
 
-std::shared_ptr<UnitCell> Sample::addUnitCell()
+std::shared_ptr<UnitCell> Sample::addUnitCell(std::shared_ptr<UnitCell> cell)
 {
-    _cells.push_back(std::shared_ptr<UnitCell>(new UnitCell()));
-    return (_cells.back());
+    if (cell == nullptr) {
+        cell = std::shared_ptr<UnitCell>(new UnitCell());
+    }
+
+    _cells.push_back(cell);
+    return _cells.back();
 }
 
 std::shared_ptr<UnitCell> Sample::getUnitCell(int i)

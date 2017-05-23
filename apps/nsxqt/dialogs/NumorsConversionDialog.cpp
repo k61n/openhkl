@@ -57,7 +57,7 @@ void NumorsConversionDialog::on_pushButton_convert_clicked()
         return;
     }
 
-    nsx::DataReaderFactory* dataFactory=nsx::DataReaderFactory::Instance();
+    nsx::DataReaderFactory dataFactory;
     nsx::DiffractometerStore* ds=nsx::DiffractometerStore::Instance();
     std::string diffractometerName=ui->comboBox_diffractometers->currentText().toStdString();
     std::shared_ptr<nsx::Diffractometer> diffractometer=std::shared_ptr<nsx::Diffractometer>(ds->buildDiffractometer(diffractometerName));
@@ -76,15 +76,16 @@ void NumorsConversionDialog::on_pushButton_convert_clicked()
             row = idx.row();
             std::string filename=fileInfo.absoluteFilePath().toStdString();
             std::string extension=fileInfo.completeSuffix().toStdString();
-            nsx::DataSet* data=nullptr;
+            std::shared_ptr<nsx::DataSet> data;
             try {
-                data = dataFactory->create(extension,filename,diffractometer);
+                data = dataFactory.create(extension,filename,diffractometer);
             }
             catch(std::exception& e) {
                 qCritical() << "Error when opening file " << filename.c_str() << e.what();
                 ui->progressBar_conversion->setValue(++comp);
-                if (data)
-                    delete data;
+                if (data) {
+                    data.reset();
+                }
                 continue;
             }
             // todo: implement progress handler here
@@ -96,10 +97,10 @@ void NumorsConversionDialog::on_pushButton_convert_clicked()
             } catch(...) {
                 qDebug() << "The filename " << filename.c_str() << " could not be saved. Maybe a permission problem.";
                 ui->progressBar_conversion->setValue(++comp);
-                delete data;
+                data.reset();
                 continue;
             }
-            delete data;
+            data.reset();
         }
         ui->progressBar_conversion->setValue(++comp);
     }

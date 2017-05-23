@@ -72,7 +72,7 @@ public:
     ConvexHull<double>& getShape();
 
     //! Create a new crystal with Empty UnitCell, and return it
-    std::shared_ptr<UnitCell> addUnitCell();
+    std::shared_ptr<UnitCell> addUnitCell(std::shared_ptr<UnitCell> cell = nullptr);
     //! Get the UnitCell of Crystal number i in the list
     std::shared_ptr<UnitCell> getUnitCell(int i);
     const CellList& getUnitCells() const;

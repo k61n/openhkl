@@ -14,6 +14,7 @@
 #include <nsxlib/crystal/AutoIndexer.h>
 #include <nsxlib/data/DataReaderFactory.h>
 #include <nsxlib/data/PeakFinder.h>
+#include <nsxlib/data/DataSet.h>
 #include <nsxlib/imaging/ConvolutionKernel.h>
 #include <nsxlib/imaging/KernelFactory.h>
 #include <nsxlib/instrument/Experiment.h>
@@ -32,11 +33,11 @@ BOOST_AUTO_TEST_CASE(Test_NewWorkFlow)
 
 int run_test()
 {
-    DataReaderFactory* factory = DataReaderFactory::Instance();
+    DataReaderFactory factory;
 
     std::shared_ptr<Experiment> expt(new Experiment("test", "BioDiff2500"));
     auto diff = expt->getDiffractometer();
-    std::shared_ptr<DataSet> dataf(factory->create("hdf", "gal3.hdf", diff));
+    std::shared_ptr<DataSet> dataf(factory.create("hdf", "gal3.hdf", diff));
 
     expt->addData(dataf);
 
@@ -83,7 +84,7 @@ int run_test()
     BOOST_CHECK(dataf->getPeaks().size() >= 800);
 
     // at this stage we have the peaks, now we index
-    AutoIndexer::Parameters params;
+    IndexerParameters params;
     AutoIndexer indexer(expt, progressHandler);
 
     auto numIndexedPeaks = [&]() -> unsigned int
@@ -111,7 +112,7 @@ int run_test()
     BOOST_CHECK(soln.second > 92.0);
 
     // set unit cell
-    auto cell = std::make_shared<UnitCell>(soln.first);
+    auto cell = soln.first;
     for (auto&& peak: dataf->getPeaks()) {
         peak->addUnitCell(cell, true);
     }

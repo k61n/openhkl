@@ -7,6 +7,7 @@
 
 #include <nsxlib/instrument/Experiment.h>
 #include <nsxlib/data/DataReaderFactory.h>
+#include <nsxlib/data/DataSet.h>
 
 using namespace nsx;
 
@@ -26,8 +27,7 @@ BOOST_AUTO_TEST_CASE(Test_Experiment)
 
     // Add some data
     try {
-        auto factory = DataReaderFactory::Instance();
-        data = std::shared_ptr<DataSet>(factory->create("", "D10_ascii_example", exp.getDiffractometer()));
+        data = std::shared_ptr<DataSet>(DataReaderFactory().create("", "D10_ascii_example", exp.getDiffractometer()));
     }
     catch(std::exception& e) {
         BOOST_FAIL(std::string("caught exception: ") + e.what());

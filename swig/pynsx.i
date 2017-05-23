@@ -9,6 +9,7 @@
 %include "std_string.i"
 %include "std_vector.i"
 %include "std_set.i"
+%include "std_pair.i"
 
 %template(vector_1d)  std::vector<double>;
 %template(vector_2d)  std::vector<std::vector<double>>;
@@ -25,6 +26,16 @@
 %shared_ptr(nsx::Convolver)
 %shared_ptr(nsx::DataSet)
 %shared_ptr(nsx::Source)
+%shared_ptr(nsx::Sample)
+%shared_ptr(nsx::IDataReader)
+%shared_ptr(nsx::HDF5DataReader)
+%shared_ptr(nsx::ILLDataReader)
+%shared_ptr(nsx::I16DataReader)
+%shared_ptr(nsx::RawDataReader)
+%shared_ptr(nsx::TiffDataReader)
+%shared_ptr(nsx::Experiment)
+%shared_ptr(nsx::ProgressHandler)
+%shared_ptr(nsx::UnitCell)
 
 %{
 #define SWIG_FILE_WITH_INIT
@@ -333,6 +344,8 @@ namespace boost { namespace property_tree {} }
 %include "chemistry/Material.h"
 
 %include "crystal/UnitCell.h"
+%template(scored_uc) std::pair<std::shared_ptr<nsx::UnitCell>, double>;
+%template(indexer_solutions) std::vector<std::pair<std::shared_ptr<nsx::UnitCell>,double>>;
 
 %include "instrument/Detector.h"
 %include "instrument/MonoDetector.h"
@@ -344,7 +357,7 @@ namespace boost { namespace property_tree {} }
 %include "instrument/Diffractometer.h"
  
 %include "kernel/Singleton.h"
- //%include "kernel/Factory.h"
+// %include "kernel/Factory.h"
 
 namespace nsx {
    class DiffractometerStore;
@@ -352,7 +365,7 @@ namespace nsx {
    struct tVector;
    %template(DiffractometerStoreBase) Singleton<DiffractometerStore, Constructor, Destructor>;
     %template(DataReaderFactorySingletonBase) Singleton<DataReaderFactory, Constructor, Destructor>;
-    //  %template(DataReaderFactoryFactoryBase) Factory<DataSet,std::string,std::string,std::shared_ptr<Diffractometer> >;
+    //%template(DataReaderFactoryFactoryBase) Factory<DataSet,std::string,std::string,std::shared_ptr<Diffractometer> >;
 }
 
 %include "crystal/FFTIndexing.h"
@@ -425,7 +438,7 @@ namespace nsx {
 %include "crystal/PeakPredictor.h"
 %include "crystal/UBMinimizer.h"
 %include "crystal/SpaceGroupSymbols.h"
- //%include "crystal/AutoIndexer.h"
+
 %include "crystal/Profile.h"
 %include "crystal/Intensity.h"
 %include "crystal/PeakIntegrator.h"
@@ -494,14 +507,20 @@ namespace nsx {
 %include "instrument/Diffractometer.h"
 %include "instrument/CylindricalDetector.h"
 %include "instrument/Gonio.h"
+
+%include "instrument/DetectorState.h"
 %include "instrument/DetectorEvent.h"
 %include "instrument/Axis.h"
 %include "instrument/Experiment.h"
-%include "instrument/DetectorState.h"
+
 
 %include "instrument/Component.h"
 %include "instrument/AxisFactory.h"
 %include "instrument/RotAxis.h"
+
+%include "crystal/AutoIndexer.h"
+
+
  //%include "physics/PhysicalUnit.h"
 
  //%include "kernel/Composite.h"

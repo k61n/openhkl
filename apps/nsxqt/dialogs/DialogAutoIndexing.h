@@ -55,7 +55,7 @@ private:
 
     nsx::CellList _unitCells;
 
-    std::vector<std::pair<UnitCell,double>> _solutions;
+    std::vector<std::pair<sptrUnitCell,double>> _solutions;
 };
 
 #endif // NSXQT_DIALOGAUTOINDEXING_H

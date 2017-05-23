@@ -10,6 +10,7 @@
 
 #include <nsxlib/data/DataReaderFactory.h>
 #include <nsxlib/data/PeakFinder.h>
+#include <nsxlib/data/DataSet.h>
 #include <nsxlib/instrument/DiffractometerStore.h>
 #include <nsxlib/utils/ProgressHandler.h>
 
@@ -19,10 +20,10 @@ BOOST_AUTO_TEST_CASE(Test_PeakFinder)
 {
     std::vector<std::shared_ptr<DataSet>> numors;
 
-    auto factory = DataReaderFactory::Instance();
+    DataReaderFactory factory;
     DiffractometerStore* ds = DiffractometerStore::Instance();
     std::shared_ptr<Diffractometer> diff = std::shared_ptr<Diffractometer>(ds->buildDiffractometer("D10"));
-    std::shared_ptr<DataSet> dataf(factory->create("", "D10_ascii_example", diff));
+    std::shared_ptr<DataSet> dataf(factory.create("", "D10_ascii_example", diff));
     MetaData* meta = dataf->getMetadata();
     PeakFinder peakFinder;
     std::shared_ptr<ProgressHandler> handler(new ProgressHandler);

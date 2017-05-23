@@ -12,6 +12,7 @@
 #include <nsxlib/instrument/DiffractometerStore.h>
 #include <nsxlib/data/DataReaderFactory.h>
 #include <nsxlib/utils/Units.h>
+#include <nsxlib/data/DataSet.h>
 
 using namespace nsx;
 
@@ -19,17 +20,17 @@ const double tolerance=1e-2;
 
 BOOST_AUTO_TEST_CASE(Test_ILL_Data)
 {
-    auto factory = DataReaderFactory::Instance();
+    DataReaderFactory factory;
     DiffractometerStore* ds;
     std::shared_ptr<Diffractometer> diff;
-    std::unique_ptr<DataSet> dataf;
+    std::shared_ptr<DataSet> dataf;
     MetaData* meta;
     Eigen::MatrixXi v;
 
     try {
         ds = DiffractometerStore::Instance();
         diff = std::shared_ptr<Diffractometer>(ds->buildDiffractometer("D10"));
-        dataf = std::unique_ptr<DataSet>(factory->create("", "D10_ascii_example", diff));
+        dataf = factory.create("", "D10_ascii_example", diff);
         meta=dataf->getMetadata();
 
         BOOST_CHECK(meta != nullptr);
@@ -71,5 +72,4 @@ BOOST_AUTO_TEST_CASE(Test_ILL_Data)
     BOOST_CHECK_CLOSE(st.sample.getValues()[0],states[2].sample.getValues()[0]+0.3*(states[3].sample.getValues()[0]-states[2].sample.getValues()[0]),tolerance);
 
     meta = nullptr;
-    dataf->close();
 }

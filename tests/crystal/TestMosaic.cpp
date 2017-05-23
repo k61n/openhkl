@@ -15,6 +15,7 @@
 #include <nsxlib/utils/Units.h>
 #include <nsxlib/crystal/Mosaic.h>
 #include <nsxlib/data/DataReaderFactory.h>
+#include <nsxlib/data/DataSet.h>
 
 using namespace nsx;
 
@@ -48,7 +49,7 @@ int run_test()
 
     ds = DiffractometerStore::Instance();
     diff = std::shared_ptr<Diffractometer>(ds->buildDiffractometer("D9"));
-    dataf = std::shared_ptr<DataSet>(DataReaderFactory::Instance()->create("hdf", "714898.hdf", diff));
+    dataf = std::shared_ptr<DataSet>(DataReaderFactory().create("hdf", "714898.hdf", diff));
 
     dataf->open();
     //dataf->readInMemory(nullptr);

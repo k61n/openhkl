@@ -1,34 +1,45 @@
-#include <string>
+
 #include "DataReaderFactory.h"
+#include "DataSet.h"
 #include "ILLDataReader.h"
 #include "HDF5DataReader.h"
 #include "TiffDataReader.h"
 #include "I16DataReader.h"
 #include "RawDataReader.h"
 
+#include <stdexcept>
+
 namespace nsx {
 
-template <typename Reader>
-class C {
-public:
-static DataSet* create(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer)
+template <typename T> 
+std::shared_ptr<DataSet> create_reader(const std::string& filename, const std::shared_ptr<Diffractometer>& diff)
 {
-    auto reader = new Reader(filename, diffractometer);
-    return new DataSet(reader, diffractometer);
+    auto reader = std::shared_ptr<IDataReader>(new T(filename, diff));
+    return std::shared_ptr<DataSet>(new DataSet(reader, diff));
 }
-};
 
-DataReaderFactory::DataReaderFactory()
+DataReaderFactory::DataReaderFactory(): _callbacks()
 {
-    registerCallback("" ,    &C<ILLDataReader>::create); // Files with no extensions are legacy ILL ASCII
-    registerCallback("h5",   &C<HDF5DataReader>::create);
-    registerCallback("hdf5", &C<HDF5DataReader>::create);
-    registerCallback("hdf",  &C<HDF5DataReader>::create);
-    registerCallback("nxs",  &C<HDF5DataReader>::create);
-    registerCallback("tiff", &C<TiffDataReader>::create);
-    registerCallback("tif",  &C<TiffDataReader>::create);
-    registerCallback("dat",  &C<I16DataReader>::create);
-    //registerCallback("raw",  &C<RawDataReader>::create);
+    _callbacks[""] = &create_reader<ILLDataReader>; // Files with no extensions are legacy ILL ASCII
+    _callbacks["h5"] = &create_reader<HDF5DataReader>;
+    _callbacks["hdf5"] = &create_reader<HDF5DataReader>;
+    _callbacks["hdf"] = &create_reader<HDF5DataReader>;                                   
+    _callbacks["nxs"] = &create_reader<HDF5DataReader>;
+    _callbacks["tif"] = &create_reader<TiffDataReader>;
+    _callbacks["tiff"] = &create_reader<TiffDataReader>;
+    //_callbacks["raw"] = &create_reader<RawDataReader>;
+}
+
+std::shared_ptr<DataSet> DataReaderFactory::create(const std::string& extension, const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer) const
+{
+    const auto it = _callbacks.find(extension);
+
+    // could not find key
+    if (it == _callbacks.end()) {
+        throw std::runtime_error("could not find given extension in map of callbacks");
+    }
+
+    return (it->second)(filename, diffractometer);
 }
 
 } // end namespace nsx

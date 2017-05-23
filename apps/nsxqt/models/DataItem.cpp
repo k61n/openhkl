@@ -71,12 +71,7 @@ NumorItem* DataItem::importData(const std::string &filename_str)
 
     try {
         std::string extension = fileinfo.completeSuffix().toStdString();
-
-        DataSet* raw_ptr = DataReaderFactory::Instance()->create(
-                    extension, filename_str, exp->getDiffractometer()
-                    );
-
-        data_ptr = std::shared_ptr<nsx::DataSet>(raw_ptr);
+        data_ptr = DataReaderFactory().create(extension, filename_str, exp->getDiffractometer());
     }
     catch(std::exception& e) {
         qWarning() << "Error reading numor: " + filename + " " + QString(e.what());
@@ -105,12 +100,13 @@ NumorItem *DataItem::importRawData(const std::vector<std::string> &filenames,
         return nullptr;
 
     std::shared_ptr<DataSet> data;
+    std::shared_ptr<IDataReader> reader;
 
     try {
         auto diff = exp->getDiffractometer();
-        auto reader = new nsx::RawDataReader(filenames, diff,
+        reader = std::shared_ptr<IDataReader>(new nsx::RawDataReader(filenames, diff,
                                               wavelength, delta_chi, delta_omega, delta_phi,
-                                              rowMajor, swapEndian, bpp);
+                                              rowMajor, swapEndian, bpp));
         data = std::shared_ptr<nsx::DataSet>(new nsx::DataSet(reader, diff));
     }
     catch(std::exception& e) {
