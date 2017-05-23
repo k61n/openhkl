@@ -29,13 +29,12 @@
 #ifndef NSXLIB_DATAREADERFACTORY_H
 #define NSXLIB_DATAREADERFACTORY_H
 
-#include <memory>
 #include <string>
 
 #include "../data/DataSet.h"
 #include "../kernel/Factory.h"
 #include "../kernel/Singleton.h"
-#include "../instrument/Diffractometer.h"
+#include "../instrument/InstrumentTypes.h"
 
 namespace nsx {
 
@@ -44,7 +43,7 @@ namespace nsx {
  *
  */
 class DataReaderFactory :
-        public Factory<DataSet,std::string,std::string,std::shared_ptr<Diffractometer> >,
+        public Factory<DataSet,std::string,std::string,sptrDiffractometer>,
         public Singleton<DataReaderFactory,Constructor,Destructor>
 {
 public:

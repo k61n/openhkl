@@ -1,5 +1,3 @@
-#include <memory>
-
 #include <Eigen/Dense>
 
 #include "../instrument/FlatDetector.h"

@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <set>
+#include <utility>
 #include <vector>
 
 namespace nsx {
@@ -14,6 +15,8 @@ class PeakRecord;
 class SpaceGroup;
 class SymOp;
 class UnitCell;
+
+using UnitCellSolution = std::pair<UnitCell,double>;
 
 using sptrPeak3D   = std::shared_ptr<Peak3D>;
 using sptrUnitCell = std::shared_ptr<UnitCell>;

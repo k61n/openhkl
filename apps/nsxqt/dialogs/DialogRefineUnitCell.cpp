@@ -4,6 +4,7 @@
 #include <QLayout>
 #include <QStatusBar>
 
+#include <nsxlib/crystal/Peak3D.h>
 #include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/instrument/Axis.h>

@@ -57,8 +57,6 @@
 
 namespace nsx {
 
-using sptrUnitCell = Peak3D::sptrUnitCell;
-
 Peak3D::Peak3D(sptrDataSet data):
     _data(),
     _shape(),
@@ -78,7 +76,7 @@ Peak3D::Peak3D(sptrDataSet data):
     linkData(data);
 }
 
-Peak3D::Peak3D(std::shared_ptr<DataSet> data, const Ellipsoid3D &shape):
+Peak3D::Peak3D(sptrDataSet data, const Ellipsoid3D &shape):
     Peak3D(data)
 {
     setShape(shape);
@@ -118,8 +116,8 @@ Peak3D& Peak3D::operator=(const Peak3D& other)
     _projectionPeak = other._projectionPeak;
     _projectionBkg = other._projectionBkg;
     _unitCells = other._unitCells;
-    _sampleState = other._sampleState == nullptr ? nullptr : std::unique_ptr<ComponentState>(new ComponentState(*other._sampleState));
-    _event = other._event == nullptr ? nullptr : std::unique_ptr<DetectorEvent>(new DetectorEvent(*other._event));
+    _sampleState = other._sampleState == nullptr ? nullptr : uptrComponentState(new ComponentState(*other._sampleState));
+    _event = other._event == nullptr ? nullptr : uptrDetectorEvent(new DetectorEvent(*other._event));
     _source= other._source;
     _counts = other._counts;
     //_countsSigma = other._countsSigma;
@@ -133,9 +131,9 @@ Peak3D& Peak3D::operator=(const Peak3D& other)
     return *this;
 }
 
-void Peak3D::linkData(const std::shared_ptr<DataSet>& data)
+void Peak3D::linkData(const sptrDataSet& data)
 {
-    _data = std::weak_ptr<DataSet>(data);
+    _data = wptrDataSet(data);
     if (data != nullptr) {
         setSource(data->getDiffractometer()->getSource());
         // update detector event and state
@@ -294,16 +292,6 @@ void Peak3D::scaleShape(double scale)
     _shape.scale(scale);
 }
 
-//double Peak3D::getRawSigma() const
-//{
-//    return _countsSigma * getData()->getSampleStepSize();
-//}
-
-//double Peak3D::getScaledSigma() const
-//{
-//    return _scale*getRawSigma();
-//}
-
 double Peak3D::getLorentzFactor() const
 {
     double gamma,nu;
@@ -366,15 +354,15 @@ Eigen::RowVector3d Peak3D::getQ() const
 
 void Peak3D::setSampleState(const ComponentState& sstate)
 {
-    _sampleState = std::unique_ptr<ComponentState>(new ComponentState(sstate));
+    _sampleState = uptrComponentState(new ComponentState(sstate));
 }
 
 void Peak3D::setDetectorEvent(const DetectorEvent& event)
 {
-    _event = std::unique_ptr<DetectorEvent>(new DetectorEvent(event));
+    _event = uptrDetectorEvent(new DetectorEvent(event));
 }
 
-void Peak3D::setSource(const std::shared_ptr<Source>& source)
+void Peak3D::setSource(const sptrSource& source)
 {
     _source = source;
 }

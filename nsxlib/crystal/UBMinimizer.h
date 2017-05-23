@@ -33,14 +33,11 @@
 #include <ostream>
 #include <set>
 #include <vector>
-#include <memory>
 
 #include <Eigen/Dense>
 
-#include "../crystal/Peak3D.h"
-#include "../instrument/Detector.h"
-#include "../instrument/Sample.h"
-#include "../instrument/Source.h"
+#include "../crystal/CrystalTypes.h"
+#include "../instrument/InstrumentTypes.h"
 #include "../mathematics/Minimizer.h"
 #include "../utils/LMFunctor.h"
 
@@ -86,14 +83,14 @@ struct UBFunctor : public LMFunctor<double> {
      * @brief Set the detector related to the peaks collected for the minimization
      * @param detector the detector
      */
-    void setDetector(const std::shared_ptr<Detector>& detector);
+    void setDetector(const sptrDetector& detector);
     /*
      * @brief Set the sample related to the peaks collected for the minimization
      * @param sample the sample
      */
-    void setSample(const std::shared_ptr<Sample>& sample);
+    void setSample(const sptrSample& sample);
     //! Set the source
-    void setSource(const std::shared_ptr<Source>& source);
+    void setSource(const sptrSource& source);
     //! Reset all the parameters (e.g. UB matrix + detector and sample offsets) to zero
     void resetParameters();
     /*
@@ -103,9 +100,9 @@ struct UBFunctor : public LMFunctor<double> {
     void refineParameter(unsigned int idx, bool refine);
 
     std::vector<std::pair<Peak3D,Eigen::RowVector3d>> _peaks;
-    std::shared_ptr<Detector> _detector;
-    std::shared_ptr<Sample> _sample;
-    std::shared_ptr<Source> _source;
+    sptrDetector _detector;
+    sptrSample _sample;
+    sptrSource _source;
     std::set<int> _fixedParameters;
 };
 

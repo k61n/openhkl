@@ -29,7 +29,6 @@
 #ifndef NSXLIB_DATASET_H
 #define NSXLIB_DATASET_H
 
-#include <memory>
 #include <mutex>
 #include <string>
 #include <set>
@@ -66,10 +65,9 @@ public:
 
     // iterators
     #ifndef SWIG
-    std::unique_ptr<IFrameIterator> getIterator(int idx);
+    uptrIFrameIterator getIterator(int idx);
     #endif
     void setIteratorCallback(FrameIteratorCallback callback);
-
 
     // Getters and setters
 
@@ -102,7 +100,7 @@ public:
     const ComponentState& getSourceState(size_t frame) const;
 
     //! Gets the the sample states
-    const std::vector<InstrumentState>& getInstrumentStates() const;
+    const InstrumentStateList& getInstrumentStates() const;
 
     //! Get the interpolated state of a given component
     InstrumentState getInterpolatedState(double frame) const;

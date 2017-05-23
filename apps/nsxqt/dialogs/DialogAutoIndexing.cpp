@@ -11,6 +11,7 @@
 #include <QDebug>
 
 #include <nsxlib/crystal/AutoIndexer.h>
+#include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/instrument/Experiment.h>

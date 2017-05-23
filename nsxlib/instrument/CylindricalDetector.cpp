@@ -1,5 +1,3 @@
-#include <memory>
-
 #include <Eigen/Dense>
 
 #include "../instrument/CylindricalDetector.h"

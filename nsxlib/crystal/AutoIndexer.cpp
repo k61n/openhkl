@@ -37,10 +37,13 @@
 #include "../crystal/FFTIndexing.h"
 #include "../crystal/GruberReduction.h"
 #include "../crystal/NiggliReduction.h"
+#include "../crystal/Peak3D.h"
 #include "../crystal/UBMinimizer.h"
+#include "../instrument/Detector.h"
 #include "../instrument/Diffractometer.h"
 #include "../instrument/Experiment.h"
 #include "../instrument/Gonio.h"
+#include "../instrument/Sample.h"
 #include "../utils/ProgressHandler.h"
 
 #include <string>
@@ -53,7 +56,6 @@ AutoIndexer::AutoIndexer(const sptrExperiment& expt, const sptrProgressHandler& 
     _solutions(),
     _handler(handler)
 {
-
 }
 
 bool AutoIndexer::autoIndex(const Parameters& _params)

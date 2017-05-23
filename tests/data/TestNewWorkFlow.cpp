@@ -13,6 +13,7 @@
 
 #include <nsxlib/crystal/AutoIndexer.h>
 #include <nsxlib/crystal/Peak3D.h>
+#include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/data/DataReaderFactory.h>
 #include <nsxlib/data/PeakFinder.h>
 #include <nsxlib/imaging/ConvolutionKernel.h>

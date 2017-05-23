@@ -31,7 +31,6 @@
 #define NSXLIB_I16DATAREADER_H
 
 #include <map>
-#include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -39,7 +38,7 @@
 #include <Eigen/Dense>
 
 #include "../data/IDataReader.h"
-#include "../instrument/Diffractometer.h"
+#include "../instrument/InstrumentTypes.h"
 
 namespace nsx {
 
@@ -47,10 +46,10 @@ class I16DataReader: public IDataReader
 {
 public:
 
-    static IDataReader* create(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer);
+    static IDataReader* create(const std::string& filename, const sptrDiffractometer& diffractometer);
 
     //! Default constructor
-    I16DataReader(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer);
+    I16DataReader(const std::string& filename, const sptrDiffractometer& diffractometer);
     //! Copy constructor
     I16DataReader(const I16DataReader& other)=delete;
     //! Destructor

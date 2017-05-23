@@ -1,7 +1,8 @@
 #include "../data/TiffDataReader.h"
-#include "../instrument/Detector.h"
-#include "../instrument/Sample.h"
 #include "../instrument/ComponentState.h"
+#include "../instrument/Detector.h"
+#include "../instrument/Diffractometer.h"
+#include "../instrument/Sample.h"
 
 namespace nsx {
 
@@ -39,11 +40,6 @@ TiffDataReader::TiffDataReader(const std::string& filename, const std::shared_pt
     }
 
     _nFrames=1;
-
-//    _detectorStates.reserve(_nFrames);
-//    _detectorStates.push_back(_diffractometer->getDetector()->createState());
-//    _sampleStates.reserve(_nFrames);
-//    _sampleStates.push_back(_diffractometer->getSample()->createState());
 
     _states.resize(_nFrames);
     _states[0].detector = ComponentState(_diffractometer->getDetector().get(), {});

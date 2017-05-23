@@ -36,25 +36,20 @@
 
 #include <Eigen/Dense>
 
+#include "../crystal/CrystalTypes.h"
 #include "../crystal/Intensity.h"
 #include "../crystal/PeakIntegrator.h"
 #include "../crystal/Profile.h"
+#include "../data/DataTypes.h"
 #include "../geometry/Ellipsoid.h"
 #include "../geometry/IShape.h"
 #include "../geometry/IntegrationRegion.h"
+#include "../instrument/InstrumentTypes.h"
 
 namespace nsx {
 
 class Blob3D;
-class ComponentState;
-class DataSet;
-class Detector;
-class DetectorEvent;
-class Diffractometer;
 class PeakIntegrator;
-class Sample;
-class Source;
-class UnitCell;
 
 class Peak3D {
 
@@ -63,10 +58,6 @@ public:
     using Ellipsoid3D=Ellipsoid<double,3>;
     using sptrEllipsoid3D=std::shared_ptr<Ellipsoid3D>;
     using shape_type = IShape<double,3>;
-    using sptrDataSet = std::shared_ptr<DataSet>;
-    using sptrSource = std::shared_ptr<Source>;
-    using sptrUnitCell = std::shared_ptr<UnitCell>;
-    using CellList = std::vector<sptrUnitCell>;
 
     Peak3D(sptrDataSet data = nullptr);
 
@@ -116,9 +107,6 @@ public:
     Eigen::VectorXd getProjection() const;
     Eigen::VectorXd getPeakProjection() const;
     Eigen::VectorXd getBkgProjection() const;
-//    Eigen::VectorXd getProjectionSigma() const;
-//    Eigen::VectorXd getPeakProjectionSigma() const;
-//    Eigen::VectorXd getBkgProjectionSigma() const;
 
     const Ellipsoid3D& getShape() const { return _shape; }
     const IntegrationRegion& getIntegrationRegion() const { return _integrationRegion; }
@@ -131,10 +119,7 @@ public:
 
     //! Return the raw intensity of the peak.
     Intensity getRawIntensity() const;
-    //! Returns the error on the raw intensity.
-//    double getRawSigma() const;
-//    //! Returns the error on the scaled intensity.
-//    double getScaledSigma() const;
+
     //!
     double getIOverSigmaI() const;
     //! Return the lorentz factor of the peak.
@@ -220,13 +205,13 @@ private:
     Eigen::VectorXd _countsBkg;
 
     //!
-    CellList _unitCells;
+    UnitCellList _unitCells;
     //! Pointer to the state of the Sample Component
 
-    std::unique_ptr<ComponentState> _sampleState;
+    uptrComponentState _sampleState;
 
     //! Detector Event state
-    std::unique_ptr<DetectorEvent> _event;
+    uptrDetectorEvent _event;
     //!
     sptrSource _source;
 

@@ -1,8 +1,7 @@
-#include <utility>
-#include <stdexcept>
-#include <memory>
-#include <vector>
 #include <cmath>
+#include <stdexcept>
+#include <utility>
+#include <vector>
 
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -25,6 +24,7 @@
 #include "../geometry/Ellipsoid.h"
 #include "../geometry/IntegrationRegion.h"
 #include "../instrument/Detector.h"
+#include "../instrument/Diffractometer.h"
 #include "../instrument/Gonio.h"
 #include "../instrument/Monochromator.h"
 #include "../instrument/Sample.h"
@@ -41,14 +41,14 @@ using boost::filesystem::path;
 using RowMatrixi = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 using RowMatrixd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
-DataSet::DataSet(IDataReader* reader, const std::shared_ptr<Diffractometer>& diffractometer):
+DataSet::DataSet(IDataReader* reader, const sptrDiffractometer& diffractometer):
     _isOpened(false),
     _filename(reader->getFilename()),
     _nFrames(0),
     _nrows(0),
     _ncols(0),
     _diffractometer(diffractometer),
-    _metadata(std::unique_ptr<MetaData>(new MetaData())),
+    _metadata(uptrMetaData(new MetaData())),
     _data(),
     _states(),
     _peaks(),
@@ -64,7 +64,7 @@ DataSet::DataSet(IDataReader* reader, const std::shared_ptr<Diffractometer>& dif
     _nrows = _diffractometer->getDetector()->getNRows();
     _ncols = _diffractometer->getDetector()->getNCols();
 
-    _metadata = std::unique_ptr<MetaData>(new MetaData(_reader->getMetadata()));
+    _metadata = uptrMetaData(new MetaData(_reader->getMetadata()));
     _nFrames = _metadata->getKey<int>("npdone");
 
     // Getting Scan parameters for the detector
@@ -75,7 +75,7 @@ DataSet::DataSet(IDataReader* reader, const std::shared_ptr<Diffractometer>& dif
     }
 }
 
-std::unique_ptr<IFrameIterator> DataSet::getIterator(int idx)
+uptrIFrameIterator DataSet::getIterator(int idx)
 {
     // use default frame iterator if one hasn't been set
     if ( !_iteratorCallback) {
@@ -84,7 +84,7 @@ std::unique_ptr<IFrameIterator> DataSet::getIterator(int idx)
             //return new ThreadedFrameIterator(data, index);
         };
     }
-    return std::unique_ptr<IFrameIterator>(_iteratorCallback(*this, idx));
+    return uptrIFrameIterator(_iteratorCallback(*this, idx));
 }
 
 void DataSet::setIteratorCallback(FrameIteratorCallback callback)
@@ -134,7 +134,7 @@ const std::string& DataSet::getFilename() const
     return _filename;
 }
 
-std::shared_ptr<Diffractometer> DataSet::getDiffractometer() const
+sptrDiffractometer DataSet::getDiffractometer() const
 {
     return _diffractometer;
 }
@@ -579,12 +579,6 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
 
 
     auto peakRadius = [](const Eigen::Matrix3d& shape) -> double {
-//        Eigen::SelfAdjointEigenSolver<Matrix3d> solver;
-//        solver.compute(shape);
-//        auto vals = solver.eigenvalues();
-//        double vol = vals(0)*vals(1)*vals(2);
-        //static const double factor = std::pow(4.0 * M_PI / 3.0, -2.0);
-        //const double volume = factor * std::pow(shape.determinant(), -0.5);
         return std::pow(shape.determinant(), -1.0/6.0);
     };
 
@@ -748,7 +742,7 @@ void DataSet::removeDuplicatePeaks()
 
     PeakList calculated_peaks;
 
-    std::shared_ptr<Sample> sample = getDiffractometer()->getSample();
+    auto sample = getDiffractometer()->getSample();
     unsigned int ncrystals = static_cast<unsigned int>(sample->getNCrystals());
 
     for (unsigned int i = 0; i < ncrystals; ++i) {
@@ -760,7 +754,6 @@ void DataSet::removeDuplicatePeaks()
         for (auto&& peak: _peaks) {
             Eigen::RowVector3d hkl;
             Eigen::RowVector3i hkl_int;
-                    //bool getMillerIndices(const UnitCell& uc, Eigen::RowVector3d& hkl, bool applyUCTolerance=true) const;
 
             if (!peak->getMillerIndices(*cell, hkl)) {
                 continue;

@@ -38,7 +38,7 @@
 
 #include <vector>
 
-#include "../crystal/UnitCell.h"
+#include "../crystal/CrystalTypes.h"
 #include "../instrument/InstrumentTypes.h"
 #include "../utils/UtilsTypes.h"
 
@@ -62,12 +62,12 @@ public:
 
     bool autoIndex(const Parameters& params);
     void addPeak(const sptrPeak3D& peak);
-    const std::vector<std::pair<UnitCell,double>>& getSolutions() const;
+    const std::vector<UnitCellSolution>& getSolutions() const;
 
 private:
     PeakList _peaks;
     sptrExperiment _experiment;
-    std::vector<std::pair<UnitCell,double>> _solutions;
+    std::vector<UnitCellSolution> _solutions;
     sptrProgressHandler _handler;
 };
 

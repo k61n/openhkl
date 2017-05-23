@@ -26,12 +26,12 @@ namespace nsx {
 // 81 characters per line, at least 100 lines of header
 std::size_t ILLDataReader::BlockSize = 100*81;
 
-IDataReader* ILLDataReader::create(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer)
+IDataReader* ILLDataReader::create(const std::string& filename, const sptrDiffractometer& diffractometer)
 {
     return new ILLDataReader(filename, diffractometer);
 }
 
-ILLDataReader::ILLDataReader(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer)
+ILLDataReader::ILLDataReader(const std::string& filename, const sptrDiffractometer& diffractometer)
 : IDataReader(filename,diffractometer)
 {
     try {
@@ -210,8 +210,6 @@ ILLDataReader::ILLDataReader(const std::string& filename, const std::shared_ptr<
 
     _fileSize = _map.get_size();
     close();
-
-    std::shared_ptr<Detector> d = _diffractometer->getDetector();
 }
 
 void ILLDataReader::open()

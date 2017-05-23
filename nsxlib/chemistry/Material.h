@@ -31,7 +31,6 @@
 #define NSXLIB_MATERIAL_H
 
 #include <map>
-#include <memory>
 #include <ostream>
 #include <string>
 
@@ -58,9 +57,6 @@ public:
 
     //! Assignment operator (deleted)
     Material& operator=(const Material& other)=delete;
-
-//	//! Return true if two Material objects are the same (same elements with the same contents)
-//	bool operator==(const Material& other) const;
 
 	//! Returns the name of this Material
 	const std::string& formula() const;

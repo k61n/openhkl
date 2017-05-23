@@ -30,7 +30,6 @@
 #define NSXLIB_GONIO_H
 
 #include <map>
-#include <memory>
 #include <set>
 #include <string>
 #include <vector>

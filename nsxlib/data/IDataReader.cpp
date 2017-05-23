@@ -17,6 +17,7 @@
 
 #include "../data/IDataReader.h"
 #include "../instrument/Detector.h"
+#include "../instrument/Diffractometer.h"
 #include "../instrument/Gonio.h"
 #include "../instrument/Sample.h"
 #include "../instrument/Source.h"
@@ -29,7 +30,7 @@ using boost::filesystem::path;
 using RowMatrixi = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 using RowMatrixd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
-IDataReader::IDataReader(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer)
+IDataReader::IDataReader(const std::string& filename, const sptrDiffractometer& diffractometer)
     : _diffractometer(std::move(diffractometer)),
   _nFrames(0),
   _states(),

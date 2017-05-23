@@ -19,8 +19,11 @@ class ThreadedFrameIterator;
 using sptrDataSet = std::shared_ptr<DataSet>;
 using sptrPeakFinder = std::shared_ptr<PeakFinder>;
 
-using uptrMetaData = std::unique_ptr<MetaData>;
-using uptrIDataReader = std::unique_ptr<IDataReader>;
+using uptrMetaData       = std::unique_ptr<MetaData>;
+using uptrIDataReader    = std::unique_ptr<IDataReader>;
+using uptrIFrameIterator = std::unique_ptr<IFrameIterator>;
+
+using wptrDataSet  = std::weak_ptr<DataSet>;
 
 using DataList = std::vector<sptrDataSet>;
 

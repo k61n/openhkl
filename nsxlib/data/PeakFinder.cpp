@@ -1,5 +1,3 @@
-
-#include <memory>
 #include <vector>
 
 #include "../crystal/Peak3D.h"
@@ -28,11 +26,11 @@ PeakFinder::PeakFinder()
     _median = 0;
     _minComp = 30;
     _maxComp = 10000;
-    _convolver = std::make_shared<Convolver>();
+    _convolver = sptrConvolver(new Convolver());
 }
 
 
-bool PeakFinder::find(std::vector<std::shared_ptr<DataSet>> numors)
+bool PeakFinder::find(DataList numors)
 {
     std::size_t npeaks=0;
 
@@ -75,7 +73,7 @@ bool PeakFinder::find(std::vector<std::shared_ptr<DataSet>> numors)
             // set image filter, if selected
             if ( _kernel ) {
                 if ( !_convolver) {
-                    _convolver = std::make_shared<Convolver>();
+                    _convolver = sptrConvolver(new Convolver());
                 }
 
                 // update the convolver with the kernel
@@ -125,7 +123,7 @@ bool PeakFinder::find(std::vector<std::shared_ptr<DataSet>> numors)
         }
 
         int count = 0;
-        std::shared_ptr<Detector> dect = numor->getDiffractometer()->getDetector();
+        auto dect = numor->getDiffractometer()->getDetector();
 
         AABB<double,3> dAABB(
                     Eigen::Vector3d(0,0,0),
@@ -140,7 +138,7 @@ bool PeakFinder::find(std::vector<std::shared_ptr<DataSet>> numors)
             blob.second.toEllipsoid(nsx::getConfidence(1.0), center, eigenvalues, eigenvectors);
             auto shape = Ellipsoid3D(center, eigenvalues, eigenvectors);
 
-            auto p = std::make_shared<Peak3D>(Peak3D(numor, shape));
+            auto p = sptrPeak3D(new Peak3D(numor, shape));
             const auto extents = p->getShape().getAABBExtents();
 
             // peak too small or too large
@@ -181,7 +179,7 @@ bool PeakFinder::find(std::vector<std::shared_ptr<DataSet>> numors)
     return true;
 }
 
-void PeakFinder::setHandler(const std::shared_ptr<ProgressHandler>& handler)
+void PeakFinder::setHandler(const sptrProgressHandler& handler)
 {
     _handler = handler;
 }
@@ -236,22 +234,22 @@ int PeakFinder::getMaxComponents()
     return _maxComp;
 }
 
-void PeakFinder::setConvolver(std::shared_ptr<Convolver> convolver)
+void PeakFinder::setConvolver(sptrConvolver convolver)
 {
     _convolver = convolver;
 }
 
-void PeakFinder::setKernel(std::shared_ptr<ConvolutionKernel> kernel)
+void PeakFinder::setKernel(sptrConvolutionKernel kernel)
 {
     _kernel = kernel;
 }
 
-std::shared_ptr<Convolver> PeakFinder::getConvolver()
+sptrConvolver PeakFinder::getConvolver()
 {
     return _convolver;
 }
 
-std::shared_ptr<ConvolutionKernel> PeakFinder::getKernel()
+sptrConvolutionKernel PeakFinder::getKernel()
 {
     return _kernel;
 }
