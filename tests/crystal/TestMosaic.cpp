@@ -23,9 +23,8 @@ int run_test()
 
     Sample s("test");
 
-    ConvexHull<double> hull;
+    ConvexHull hull;
 
-//	double halfa = 3.1*SX::Units::mm/2.0;
     double halfa = 1.0*mm/2.0;
     hull.addVertex(-halfa,-halfa,-halfa);
     hull.addVertex(-halfa, halfa,-halfa);

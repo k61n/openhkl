@@ -46,8 +46,8 @@ ConvexHull::ConvexHull(const ConvexHull& other) : _initialized(other._initialize
         }
     }
 
-    std::list<Face*>::iterator fit(_faces.begin());
-    std::list<Face*>::const_iterator ofit(other._faces.begin());
+    auto fit(_faces.begin());
+    auto ofit(other._faces.begin());
 
     for (unsigned int i=0;i<_faces.size();++i,++fit,++ofit)
     {
@@ -609,11 +609,11 @@ AABB ConvexHull::getAABB() const
 
     for (auto&& v: getVertices()) {
         for (auto i = 0; i < 3; ++i) {
-            if ( (*v)(i) < lower(i)) {
-                lower(i) = (*v)(i);
+            if ( (*v)._coords(i) < lower(i)) {
+                lower(i) = (*v)._coords(i);
             }
-            if ( (*v)(i) > upper(i)) {
-                upper(i) = (*v)(i);
+            if ( (*v)._coords(i) > upper(i)) {
+                upper(i) = (*v)._coords(i);
             }
         }
     }

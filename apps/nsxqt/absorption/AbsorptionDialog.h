@@ -30,7 +30,7 @@ signals:
     //! Emitted when the image is changed in the movie
     void loadImage(QString image);
     void angleText(QString text);
-    void exportHull(const nsx::ConvexHull<double>& hull);
+    void exportHull(const nsx::ConvexHull& hull);
 public slots:
     void initializeSlider(int i);
 private slots:
