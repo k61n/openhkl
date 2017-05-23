@@ -60,7 +60,7 @@ Ellipsoid::Ellipsoid(const Eigen::Vector3d& center, const Eigen::Vector3d& eigen
 
 Ellipsoid::Ellipsoid(const Eigen::Vector3d& center, const Eigen::Matrix3d& RSinv): IShape()
 {
-    vector t = -RSinv*center;
+    Eigen::Vector3d t = -RSinv*center;
     _TRSinv=HomMatrix::Constant(0.0);
     _TRSinv(3,3) = 1.0;
 
@@ -133,7 +133,7 @@ void Ellipsoid::rotate(const Eigen::Matrix3d& eigenvectors)
     updateAABB();
 }
 
-void Ellipsoid::scale(T value)
+void Ellipsoid::scale(double value)
 {
     _eigenVal *= value;
     Eigen::DiagonalMatrix<double,4> Sinv;
@@ -175,7 +175,7 @@ bool Ellipsoid::isInside(const HomVector& point) const
     return (x.squaredNorm() <= 2.0);
 }
 
-const typename Ellipsoid::HomMatrix& Ellipsoid::getInverseTransformation() const
+const HomMatrix& Ellipsoid::getInverseTransformation() const
 {
     return _TRSinv;
 }
@@ -281,30 +281,29 @@ bool collideEllipsoidEllipsoid(const Ellipsoid& eA, const Ellipsoid& eB)
     // Calculate the [bij] matrix (reference to publication).
     B=MA.transpose()*B.transpose()*SB*B*MA;
     //
-    T ea=SA.diagonal()[0],eb=SA.diagonal()[1],ec=SA.diagonal()[2];
-    T ab=ea*eb, ac=ea*ec, bc= eb*ec;
-    T abc=ea*eb*ec;
-    T b12s=B(0,1)*B(0,1);
-    T b13s=B(0,2)*B(0,2);
-    T b14s=B(0,3)*B(0,3);
-    T b23s=B(1,2)*B(1,2);
-    T b24s=B(1,3)*B(1,3);
-    T b34s=B(2,3)*B(2,3);
-    T b2233=B(1,1)*B(2,2);
-    T termA=B(0,0)*bc+B(1,1)*ac+B(2,2)*ab;
-    T termB=(b2233-b23s)*ea+(B(0,0)*B(2,2)-b13s)*eb+(B(0,0)*B(1,1)-b12s)*ec;
-    T T4=-abc;
-    T T3=termA-B(3,3)*abc;
-    T T2 = termA*B(3,3)-termB-b34s*ab-b14s*bc-b24s*ac;
-    T tmp1=termB*B(3,3);
-    T tmp2=B(0,0)*(b2233+eb*b34s+ec*b24s-b23s);
-    T tmp3=B(1,1)*(ea*b34s+ec*b14s-b13s);
-    T tmp4=B(2,2)*(ea*b24s+eb*b14s-b12s);
-    T tmp5=B(2,3)*(ea*B(1,2)*B(1,3)+eb*B(0,2)*B(0,3))
-    + B(0,1)*(ec*B(0,3)*B(1,3)-B(0,2)*B(1,2));
+    double ea=SA.diagonal()[0],eb=SA.diagonal()[1],ec=SA.diagonal()[2];
+    double ab=ea*eb, ac=ea*ec, bc= eb*ec;
+    double abc=ea*eb*ec;
+    double b12s=B(0,1)*B(0,1);
+    double b13s=B(0,2)*B(0,2);
+    double b14s=B(0,3)*B(0,3);
+    double b23s=B(1,2)*B(1,2);
+    double b24s=B(1,3)*B(1,3);
+    double b34s=B(2,3)*B(2,3);
+    double b2233=B(1,1)*B(2,2);
+    double termA=B(0,0)*bc+B(1,1)*ac+B(2,2)*ab;
+    double termB=(b2233-b23s)*ea+(B(0,0)*B(2,2)-b13s)*eb+(B(0,0)*B(1,1)-b12s)*ec;
+    double T4=-abc;
+    double T3=termA-B(3,3)*abc;
+    double T2 = termA*B(3,3)-termB-b34s*ab-b14s*bc-b24s*ac;
+    double tmp1=termB*B(3,3);
+    double tmp2=B(0,0)*(b2233+eb*b34s+ec*b24s-b23s);
+    double tmp3=B(1,1)*(ea*b34s+ec*b14s-b13s);
+    double tmp4=B(2,2)*(ea*b24s+eb*b14s-b12s);
+    double tmp5=B(2,3)*(ea*B(1,2)*B(1,3)+eb*B(0,2)*B(0,3))+ B(0,1)*(ec*B(0,3)*B(1,3)-B(0,2)*B(1,2));
     tmp5+= tmp5;
-    T T1=-tmp1+tmp2+tmp3+tmp4-tmp5;
-    T T0 = (-B).determinant();
+    double T1=-tmp1+tmp2+tmp3+tmp4-tmp5;
+    double T0 = (-B).determinant();
     // Normalize the polynomial coeffs.
     T3/=T4;T2/=T4;T1/=T4;T0/=T4;T4=1.0;
     // Solve roots of the polynomial equation
@@ -325,7 +324,7 @@ bool collideEllipsoidEllipsoid(const Ellipsoid& eA, const Ellipsoid& eB)
     // One of the root is always positive.
     // Check whether two of the roots are negative and distinct, in which case the Ellipse do not collide.
     int count=0;
-    T sol[2];
+    double sol[2];
     if (std::fabs(imag(val0))< 1e-5 && real(val0)<0) {
         sol[count++]=real(val0);
     }

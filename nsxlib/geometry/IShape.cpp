@@ -12,7 +12,7 @@ IShape::IShape(const IShape& other)
     _upperBound = other._upperBound;
 }
 
-IShape::IShape(const vector& lb, const vector& ub) : _lowerBound(lb), _upperBound(ub)
+IShape::IShape(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub) : _lowerBound(lb), _upperBound(ub)
 {
     for (unsigned int i=0;i<3;++i)
     {

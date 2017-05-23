@@ -139,7 +139,7 @@ void OBB::rotate(const Eigen::Matrix3d& eigenvectors)
 }
 
 
-void OBB::scale(T value)
+void OBB::scale(double value)
 {
     _eigenVal*=value;
     Eigen::DiagonalMatrix<double,4> Sinv;
@@ -206,8 +206,8 @@ bool OBB::rayIntersect(const Eigen::Vector3d& from, const Eigen::Vector3d& dir, 
 
     HomVector hFrom = _TRSinv * from.homogeneous();
     HomVector hDir;
-    hDir.segment(0,D) = dir;
-    hDir[D] = 0.0;
+    hDir.segment(0,3) = dir;
+    hDir[3] = 0.0;
     hDir = _TRSinv*hDir;
 
     AABB aabb(-Eigen::Vector3d::Ones(),Eigen::Vector3d::Ones());
@@ -252,12 +252,12 @@ bool collideOBBOBB(const OBB& a, const OBB& b)
     const HomMatrix trinvb(sb*trsinvb);
 
     // Reconstruct R for the two OBBs
-    Eigen::Matrix3d ra(trinva.block(0,0,D,D).transpose());
-    Eigen::Matrix3d rb(trinvb.block(0,0,D,D).transpose());
+    Eigen::Matrix3d ra(trinva.block(0,0,3,3).transpose());
+    Eigen::Matrix3d rb(trinvb.block(0,0,3,3).transpose());
 
     // Extract T matrix from TRinv
-    Eigen::Matrix3d ta=-ra*trinva.block(0,D,D,1);
-    Eigen::Matrix3d tb=-rb*trinvb.block(0,D,D,1);
+    Eigen::Matrix3d ta=-ra*trinva.block(0,3,3,1);
+    Eigen::Matrix3d tb=-rb*trinvb.block(0,3,3,1);
 
     Eigen::Matrix3d C=ra.transpose()*rb;
     Eigen::Matrix3d Cabs=C.array().abs();
@@ -266,14 +266,14 @@ bool collideOBBOBB(const OBB& a, const OBB& b)
     Eigen::Matrix<double,1,3> diff=(tb-ta).transpose();
 
     // If for one of the following 15 conditions, R<=(R0+R1) then the two OBBs collide.
-    T R0, R, R1;
+    double R0, R, R1;
 
     // condition 1,2,3
-    for (unsigned int i=0;i<D;++i)
+    for (unsigned int i=0;i<3;++i)
     {
         R0=eiga[i];
-        R1=(Cabs.block(i,0,1,D)*eigb)(0,0);
-        R=std::abs((diff*ra.block(0,i,D,1))(0,0));
+        R1=(Cabs.block(i,0,1,3)*eigb)(0,0);
+        R=std::abs((diff*ra.block(0,i,3,1))(0,0));
         if (R>(R0+R1))
             return false;
     }
