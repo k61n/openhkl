@@ -157,12 +157,11 @@ std::set<NDTree::collision_pair> NDTree::getCollisions() const
 
 std::set<const IShape*> NDTree::getCollisions(const IShape& given) const
 {
-    using collision_set = std::set<const IShape*>;
-    collision_set collisions;
+    CollisionSet collisions;
 
-    std::function<void(const NDTree*, collision_set&)> recursiveCollisions;
+    std::function<void(const NDTree*, CollisionSet&)> recursiveCollisions;
 
-    recursiveCollisions = [&given, &recursiveCollisions] (const NDTree* tree, collision_set& collisions) -> void
+    recursiveCollisions = [&given, &recursiveCollisions] (const NDTree* tree, CollisionSet& collisions) -> void
     {
         // shape's box does not intercept tree
         if (!tree->intercept(given)) {

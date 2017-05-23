@@ -384,9 +384,8 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, Equivalen
         _progressHandler->setProgress(0);
     }
 
-    using shape3Dmap = std::unordered_map<const IShape*,int>;
     // Determine the AABB of the blobs
-    shape3Dmap boxes;
+    Shape3DMap boxes;
     boxes.reserve(blobs.size());
 
     Eigen::Vector3d center,extents;
@@ -419,7 +418,7 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, Equivalen
         }
 
         auto ellipse = new Ellipsoid(center,extents,axis);
-        boxes.insert(shape3Dmap::value_type(ellipse, it->first));
+        boxes.insert(Shape3DMap::value_type(ellipse, it->first));
         it++;
 
         // update progress handler

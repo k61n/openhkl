@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(Test_Peak3D)
     BOOST_CHECK_SMALL(Q[2],tolerance);
 
     std::shared_ptr<Gonio> g(new Gonio("Gamma"));
-    g->addRotation("Gamma",Vector3d(0,0,1),RotAxis::CW);
+    g->addRotation("Gamma",Eigen::Vector3d(0,0,1),RotAxis::CW);
     d.setGonio(g);
 
     DetectorEvent event2(d, 15.5,15.5,{90.0*deg});
@@ -61,9 +61,9 @@ BOOST_AUTO_TEST_CASE(Test_Peak3D)
 
     Sample sample("sample");
     std::shared_ptr<Gonio> bl(new Gonio("Busing Levy convention"));
-    bl->addRotation("omega",Vector3d(0,0,1),RotAxis::CW);
-    bl->addRotation("chi",Vector3d(0,1,0),RotAxis::CCW);
-    bl->addRotation("phi",Vector3d(0,0,1),RotAxis::CW);
+    bl->addRotation("omega",Eigen::Vector3d(0,0,1),RotAxis::CW);
+    bl->addRotation("chi",Eigen::Vector3d(0,1,0),RotAxis::CCW);
+    bl->addRotation("phi",Eigen::Vector3d(0,0,1),RotAxis::CW);
     sample.setGonio(bl);
 
     ComponentState state(&sample, {90.0*deg,0.0,0.0});

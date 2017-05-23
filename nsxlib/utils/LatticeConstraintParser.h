@@ -33,9 +33,6 @@
 #define BOOST_SPIRIT_USE_PHOENIX_V3
 #define BOOST_RESULT_OF_USE_DECLTYPE
 
-#include <tuple>
-#include <set>
-
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/qi_char.hpp>
 #include <boost/phoenix/function/adapt_callable.hpp>
@@ -43,17 +40,13 @@
 #include <boost/fusion/adapted/struct.hpp>
 #include <boost/variant.hpp>
 
+#include "../utils/UtilsTypes.h"
+
 namespace nsx {
 
-namespace qi  = boost::spirit::qi;
-namespace phx = boost::phoenix;
-
-using constraint_tuple = std::tuple<unsigned int,unsigned int,double>;
-using constraints_set = std::set<constraint_tuple>;
-
 struct SingleConstraint {
-    template <typename constraint_tuple>
-    bool operator()(constraint_tuple &constraint, int lhs, int rhs, double coeff) const
+    template <typename ConstraintTuple>
+    bool operator()(ConstraintTuple &constraint, int lhs, int rhs, double coeff) const
     {
         std::get<0>(constraint) = lhs;
         std::get<1>(constraint) = rhs;
@@ -63,8 +56,8 @@ struct SingleConstraint {
 };
 
 struct MultiConstraint {
-    template <typename constraint_set>
-    bool operator()(constraint_set &constraints, const constraint_tuple& singleConstraint) const
+    template <typename ConstraintSet>
+    bool operator()(ConstraintSet &constraints, const ConstraintTuple& singleConstraint) const
     {
 
         constraints.insert(singleConstraint);
@@ -74,27 +67,35 @@ struct MultiConstraint {
 };
 
 template<typename It>
-struct LatticeConstraintParser : qi::grammar<It,constraints_set()> {
+struct LatticeConstraintParser : boost::spirit::qi::grammar<It,ConstraintSet()> {
 
     LatticeConstraintParser(): LatticeConstraintParser::base_type(constraints)
     {
-        using namespace qi;
-        using namespace phx;
-        using qi::_1;
+        using boost::spirit::qi::_1;
+        using boost::spirit::qi::_a;
+        using boost::spirit::qi::_b;
+        using boost::spirit::qi::_c;
+        using boost::spirit::qi::_d;
+        using boost::spirit::qi::_pass;
+        using boost::spirit::qi::_val;
+        using boost::spirit::qi::double_;
+        using boost::spirit::qi::eps;
+        using boost::spirit::qi::lit;
+        using boost::spirit::qi::string;
 
-        phx::function<SingleConstraint> const set_single_constraint = SingleConstraint();
-        phx::function<MultiConstraint> const add_single_constraint = MultiConstraint();
+        boost::phoenix::function<SingleConstraint> const set_single_constraint = SingleConstraint();
+        boost::phoenix::function<MultiConstraint> const add_single_constraint = MultiConstraint();
 
-        constraints= (single_constraint[_pass=add_single_constraint(_val,_1)] >> *(lit(',') >> single_constraint[_pass=add_single_constraint(_val,_1)]));
-        single_constraint = (eps[_a=1.0,_b=1.0] >> -(prefactor[_a*=_1]) >> param[_c=_1] >> lit('=') >> -(prefactor[_b*=_1]) >> param[_d=_1])[_pass=set_single_constraint(_val,_c,_d,_b/_a)];
+        constraints = (singleConstraint[_pass=add_single_constraint(_val,_1)] >> *(lit(',') >> singleConstraint[_pass=add_single_constraint(_val,_1)]));
+        singleConstraint = (eps[_a=1.0,_b=1.0] >> -(prefactor[_a*=_1]) >> param[_c=_1] >> lit('=') >> -(prefactor[_b*=_1]) >> param[_d=_1])[_pass=set_single_constraint(_val,_c,_d,_b/_a)];
         param = (string("alpha")[_val=3]|string("beta")[_val=4]|string("gamma")[_val=5]|lit('a')[_val=0]|lit('b')[_val=1]|lit('c')[_val=2]);
         prefactor = eps[_val=1.0] >> double_[_val*=_1];
     }
 
-    qi::rule<It,constraints_set()> constraints;
-    qi::rule<It,constraint_tuple(),qi::locals<double,double,unsigned int,unsigned int>> single_constraint;
-    qi::rule<It,unsigned int()> param;
-    qi::rule<It,double()> prefactor;
+    boost::spirit::qi::rule<It,ConstraintSet()> constraints;
+    boost::spirit::qi::rule<It,ConstraintTuple(),boost::spirit::qi::locals<double,double,unsigned int,unsigned int>> singleConstraint;
+    boost::spirit::qi::rule<It,unsigned int()> param;
+    boost::spirit::qi::rule<It,double()> prefactor;
 };
 
 } // end namespace nsx

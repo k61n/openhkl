@@ -1,19 +1,8 @@
-
-// 2d convolution via FFT
-// author: Jonathan Fisher
-// Forschungszentrum Jülich GmbH
-// j.fisher@fz-juelich.de
+#include <fftw3.h>
 
 #include "Convolver.h"
-#include <fftw3.h>
-#include <iostream>
-
-using std::cout;
-using std::endl;
 
 namespace nsx {
-
-using RealMatrix = RealMatrix;
 
 Convolver::Convolver():
     _rows(0), _cols(0), _halfCols(0),

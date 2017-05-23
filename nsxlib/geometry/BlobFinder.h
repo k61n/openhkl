@@ -38,7 +38,6 @@
 #include <stdexcept>
 
 #include "../data/DataTypes.h"
-#include "../geometry/Blob2D.h"
 #include "../geometry/Blob3D.h"
 #include "../geometry/Ellipsoid.h"
 #include "../geometry/GeometryTypes.h"

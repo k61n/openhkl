@@ -33,8 +33,6 @@
 
 namespace nsx {
 
-using Eigen::Vector3d;
-using Eigen::Matrix3d;
 /* !
  * \brief Class Blob3D.
  * Blob3D are used to store region of interest in a 3D image.
@@ -80,19 +78,19 @@ public:
   double getMaximumMass() const;
 
   //! Return the center of Mass
-  Vector3d getCenterOfMass() const;
+  Eigen::Vector3d getCenterOfMass() const;
 
   //! Get the ellipsoid parameters
-  void toEllipsoid(double confidence, Vector3d& center,
-                   Vector3d& eigenvalues,Matrix3d& eigenvectors) const;
+  void toEllipsoid(double confidence, Eigen::Vector3d& center,
+                   Eigen::Vector3d& eigenvalues,Eigen::Matrix3d& eigenvectors) const;
 
   //! Print
   void printSelf(std::ostream& os) const;
 
   //! Compute the intersection with a plane of equation \f$ax+by+cz+d=0\f$
   bool intersectionWithPlane(double a, double b, double c, double d,
-                             Vector3d& center, Vector3d& semi_axes,
-                             Vector3d& axis1, Vector3d& axis2, double confidence) const;
+                             Eigen::Vector3d& center, Eigen::Vector3d& semi_axes,
+                             Eigen::Vector3d& axis1, Eigen::Vector3d& axis2, double confidence) const;
 
 private:
   //! Total mass=zeroth order momentum

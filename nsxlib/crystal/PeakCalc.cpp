@@ -76,7 +76,7 @@ sptrPeak3D PeakCalc::averagePeaks(const NDTree& tree, double distance, double mi
         if (ell_peak == nullptr) {
             continue;
         }
-        const Matrix3d peak_rs = ell_peak->getRSinv();
+        const Eigen::Matrix3d peak_rs = ell_peak->getRSinv();
         peak_shape += (peak_rs.transpose() * peak_rs).inverse();
         ++num_neighbors;
     }
