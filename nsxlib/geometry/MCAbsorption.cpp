@@ -8,7 +8,9 @@
 #include <ctime>
 #include <stdexcept>
 
-#include "MCAbsorption.h"
+#include "../geometry/ConvexHull.h"
+#include "../geometry/MCAbsorption.h"
+#include "../geometry/Triangle.h"
 
 namespace nsx {
 
@@ -21,7 +23,7 @@ MCAbsorption::~MCAbsorption()
 {
 }
 
-void MCAbsorption::setSample(ConvexHull<double>* sample, double muScat, double muAbs)
+void MCAbsorption::setSample(ConvexHull* sample, double muScat, double muAbs)
 {
     _sample = sample;
     _muScat=muScat;

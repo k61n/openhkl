@@ -232,8 +232,6 @@ bool collideOBBAABB(const OBB& obb, const AABB& aabb)
  */
 bool collideOBBOBB(const OBB& a, const OBB& b)
 {
-    const int D = 3; // todo: replace below
-
     // Get the (TRS)^-1 matrices of the two OBBs
     const HomMatrix& trsinva=a.getInverseTransformation();
     const HomMatrix& trsinvb=b.getInverseTransformation();
