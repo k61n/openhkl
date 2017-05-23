@@ -386,7 +386,7 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
         _progressHandler->setProgress(0);
     }
 
-    using shape3Dmap = std::unordered_map<IShape*,int>;
+    using shape3Dmap = std::unordered_map<const IShape*,int>;
     // Determine the AABB of the blobs
     shape3Dmap boxes;
     boxes.reserve(blobs.size());

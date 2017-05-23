@@ -1,4 +1,5 @@
 #include "Ellipsoid.h"
+#include "GeometryTypes.h"
 
 namespace nsx {
 
@@ -60,7 +61,7 @@ Ellipsoid::Ellipsoid(const Eigen::Vector3d& center, const Eigen::Vector3d& eigen
 
 Ellipsoid::Ellipsoid(const Eigen::Vector3d& center, const Eigen::Matrix3d& RSinv): IShape()
 {
-    vector t = -RSinv*center;
+    Eigen::Vector3d t = -RSinv*center;
     _TRSinv=HomMatrix::Constant(0.0);
     _TRSinv(3,3) = 1.0;
 
@@ -133,7 +134,7 @@ void Ellipsoid::rotate(const Eigen::Matrix3d& eigenvectors)
     updateAABB();
 }
 
-void Ellipsoid::scale(T value)
+void Ellipsoid::scale(double value)
 {
     _eigenVal *= value;
     Eigen::DiagonalMatrix<double,4> Sinv;
@@ -175,7 +176,7 @@ bool Ellipsoid::isInside(const HomVector& point) const
     return (x.squaredNorm() <= 2.0);
 }
 
-const typename Ellipsoid::HomMatrix& Ellipsoid::getInverseTransformation() const
+const HomMatrix& Ellipsoid::getInverseTransformation() const
 {
     return _TRSinv;
 }
@@ -281,6 +282,7 @@ bool collideEllipsoidEllipsoid(const Ellipsoid& eA, const Ellipsoid& eB)
     // Calculate the [bij] matrix (reference to publication).
     B=MA.transpose()*B.transpose()*SB*B*MA;
     //
+    using T = double;
     T ea=SA.diagonal()[0],eb=SA.diagonal()[1],ec=SA.diagonal()[2];
     T ab=ea*eb, ac=ea*ec, bc= eb*ec;
     T abc=ea*eb*ec;
@@ -476,7 +478,7 @@ bool collideEllipsoidOBB(const Ellipsoid& ell, const OBB& obb)
 bool collideEllipsoidSphere(const Ellipsoid& eA, const Sphere& s)
 {
     Eigen::Vector3d scale = Eigen::Vector3d::Constant(s.getRadius());
-    HomMatrix rot = HomMatrix::Identity();
+    Eigen::Matrix3d rot = Eigen::Matrix3d::Identity();
     Ellipsoid eB(s.getCenter(),scale,rot);
     return collideEllipsoidEllipsoid(eA,eB);
 }

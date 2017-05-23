@@ -20,6 +20,6 @@ BOOST_AUTO_TEST_CASE(Test_Ellipsoid_3D)
     eigV << 1,0,0,
             0,1,0,
             0,0,1;
-    Ellipsoid<double,3> e(center,semi_axes,eigV);
+    Ellipsoid e(center,semi_axes,eigV);
     e.translate(Vector3d(1,0,0));
 }

@@ -18,7 +18,7 @@ BOOST_AUTO_TEST_CASE(Test_Sphere)
     // Test: the construction of a 3D sphere
     Eigen::Vector3d center(3,-2,4);
     double radius(10);
-    Sphere<double,3> s1(center,radius);
+    Sphere s1(center,radius);
     Eigen::Vector3d lower(s1.getLower());
     Eigen::Vector3d upper(s1.getUpper());
 
@@ -75,7 +75,7 @@ BOOST_AUTO_TEST_CASE(Test_Sphere)
     BOOST_CHECK_CLOSE(sum,523.6,tolerance_large);
 
     s1.translate(-s1.getCenter());
-    Sphere<double,3> s2(Eigen::Vector3d(10,0,0),1.0);
+    Sphere s2(Eigen::Vector3d(10,0,0),1.0);
     BOOST_CHECK_EQUAL(s1.collide(s2),false);
     s2.translate(Eigen::Vector3d(-2,0,0));
     BOOST_CHECK_EQUAL(s1.collide(s2),false);

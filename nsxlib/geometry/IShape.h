@@ -131,7 +131,7 @@ public:
     //! the two intersection points between the ray and this shape.
     virtual bool rayIntersect(const Eigen::Vector3d& from, const Eigen::Vector3d& dir, double& t1, double& t2) const=0;
 
-    std::ostream& printSelf(std::ostream& os);
+    std::ostream& printSelf(std::ostream& os) const;
 
 #ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW

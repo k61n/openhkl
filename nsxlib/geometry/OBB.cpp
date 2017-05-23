@@ -139,7 +139,7 @@ void OBB::rotate(const Eigen::Matrix3d& eigenvectors)
 }
 
 
-void OBB::scale(T value)
+void OBB::scale(double value)
 {
     _eigenVal*=value;
     Eigen::DiagonalMatrix<double,4> Sinv;
@@ -206,8 +206,8 @@ bool OBB::rayIntersect(const Eigen::Vector3d& from, const Eigen::Vector3d& dir, 
 
     HomVector hFrom = _TRSinv * from.homogeneous();
     HomVector hDir;
-    hDir.segment(0,D) = dir;
-    hDir[D] = 0.0;
+    hDir.segment(0,3) = dir;
+    hDir[3] = 0.0;
     hDir = _TRSinv*hDir;
 
     AABB aabb(-Eigen::Vector3d::Ones(),Eigen::Vector3d::Ones());
@@ -232,6 +232,7 @@ bool collideOBBAABB(const OBB& obb, const AABB& aabb)
  */
 bool collideOBBOBB(const OBB& a, const OBB& b)
 {
+    const int D = 3; // todo: replace below
 
     // Get the (TRS)^-1 matrices of the two OBBs
     const HomMatrix& trsinva=a.getInverseTransformation();
@@ -263,10 +264,10 @@ bool collideOBBOBB(const OBB& a, const OBB& b)
     Eigen::Matrix3d Cabs=C.array().abs();
 
     // The difference vector between the centers of OBB2 and OBB1
-    Eigen::Matrix<double,1,3> diff=(tb-ta).transpose();
+    auto diff = (tb-ta).transpose();
 
     // If for one of the following 15 conditions, R<=(R0+R1) then the two OBBs collide.
-    T R0, R, R1;
+    double R0, R, R1;
 
     // condition 1,2,3
     for (unsigned int i=0;i<D;++i)

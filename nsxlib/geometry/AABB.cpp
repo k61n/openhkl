@@ -1,4 +1,5 @@
 #include "AABB.h"
+#include "Ellipsoid.h"
 
 namespace nsx {
 
@@ -36,7 +37,7 @@ void AABB::rotate(const Eigen::Matrix3d& eigenvectors)
     _upperBound=eigenvectors*_upperBound;
 }
 
-void AABB::scale(T value)
+void AABB::scale(double value)
 {
     IShape::scaleAABB(value);
 }
@@ -119,7 +120,7 @@ bool AABB::rayIntersect(const Eigen::Vector3d& from, const Eigen::Vector3d& dir,
 
     double midt = (t1+t2)/2.0;
 
-    vector halfvect = from + midt*dir;
+    Eigen::Vector3d halfvect = from + midt*dir;
 
     return IShape::isInsideAABB(halfvect);
 }

@@ -19,7 +19,7 @@ const double tolerance=1e-5;
 
 void collision_test()
 {
-    using Ellipsoid3D = Ellipsoid<double, 3>;
+    using Ellipsoid3D = Ellipsoid;
 
     NDTree<double,3> tree({0,0,0},{100,100,100});
     auto vects = Eigen::Matrix3d::Identity();
@@ -27,7 +27,7 @@ void collision_test()
     auto vals = Eigen::Vector3d(radius, radius, radius);
     auto center = Eigen::Vector3d(0.0, 0.0, 0.0);
 
-    std::set<const IShape<double, 3>*> test_set;
+    std::set<const IShape*> test_set;
 
     std::vector<Ellipsoid3D*> shapes;
 
@@ -80,7 +80,7 @@ void collision_test()
 
 void split_test()
 {
-    using Ellipsoid3D = nsx::Ellipsoid<double, 3>;
+    using Ellipsoid3D = nsx::Ellipsoid;
 
     NDTree<double,3> tree({0,0,0},{50,50,50});
     tree.setMaxStorage(4);
@@ -89,7 +89,7 @@ void split_test()
     const double radius = 1.0;
     auto vals = Eigen::Vector3d(radius, radius, radius);
 
-    std::set<const IShape<double, 3>*> test_set;
+    std::set<const IShape*> test_set;
 
     std::vector<Ellipsoid3D*> shapes;
 
@@ -146,13 +146,13 @@ BOOST_AUTO_TEST_CASE(Test_NDTree)
     std::uniform_real_distribution<> d1(0,50), d2(50,100);
     std::mt19937 gen;
 
-    std::vector<AABB<double,3>> bb;
+    std::vector<AABB> bb;
     bb.reserve(100);
 
     for (unsigned int i=0;i<=maxStorage;++i) {
         Eigen::Vector3d v1(d1(gen),d1(gen),d1(gen));
         Eigen::Vector3d v2(d2(gen),d2(gen),d2(gen));
-        bb.push_back(AABB<double,3>(v1,v2));
+        bb.push_back(AABB(v1,v2));
         // Test: the root node has no children until it is not splitted
         BOOST_CHECK_EQUAL(tree.hasChildren(),false);
         tree.addData(&bb[i]);
@@ -171,7 +171,7 @@ BOOST_AUTO_TEST_CASE(Test_NDTree)
     // Test: the root node does not have any data anymore once it has been splitted
     BOOST_CHECK_EQUAL(tree.hasData(),false);
 
-    std::vector<AABB<double,3>>::const_iterator it1;
+    std::vector<AABB>::const_iterator it1;
 
     // Remove all the data stored in the NDTree
     for (it1=bb.begin();it1!=bb.end();++it1) {

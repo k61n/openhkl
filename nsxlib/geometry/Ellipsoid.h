@@ -34,6 +34,7 @@
 #include <Eigen/Geometry>
 #include <Eigen/Eigenvalues>
 
+#include "GeometryTypes.h"
 #include "IShape.h"
 #include "AABB.h"
 #include "OBB.h"
