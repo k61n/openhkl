@@ -143,6 +143,8 @@ protected:
     Eigen::Vector3d _upperBound;
 };
 
+std::ostream& operator<<(std::ostream& os, const IShape& shape);
+
 } // end namespace nsx
 
 #endif // NSXLIB_ISHAPE_H

@@ -253,12 +253,12 @@ bool collideOBBOBB(const OBB& a, const OBB& b)
     const HomMatrix trinvb(sb*trsinvb);
 
     // Reconstruct R for the two OBBs
-    Eigen::Matrix3d ra(trinva.block(0,0,D,D).transpose());
-    Eigen::Matrix3d rb(trinvb.block(0,0,D,D).transpose());
+    Eigen::Matrix3d ra(trinva.block(0,0,3,3).transpose());
+    Eigen::Matrix3d rb(trinvb.block(0,0,3,3).transpose());
 
     // Extract T matrix from TRinv
-    Eigen::Matrix3d ta=-ra*trinva.block(0,D,D,1);
-    Eigen::Matrix3d tb=-rb*trinvb.block(0,D,D,1);
+    Eigen::Matrix3d ta=-ra*trinva.block(0,3,3,1);
+    Eigen::Matrix3d tb=-rb*trinvb.block(0,3,3,1);
 
     Eigen::Matrix3d C=ra.transpose()*rb;
     Eigen::Matrix3d Cabs=C.array().abs();
@@ -270,11 +270,11 @@ bool collideOBBOBB(const OBB& a, const OBB& b)
     double R0, R, R1;
 
     // condition 1,2,3
-    for (unsigned int i=0;i<D;++i)
+    for (unsigned int i=0;i<3;++i)
     {
         R0=eiga[i];
-        R1=(Cabs.block(i,0,1,D)*eigb)(0,0);
-        R=std::abs((diff*ra.block(0,i,D,1))(0,0));
+        R1=(Cabs.block(i,0,1,3)*eigb)(0,0);
+        R=std::abs((diff*ra.block(0,i,3,1))(0,0));
         if (R>(R0+R1))
             return false;
     }

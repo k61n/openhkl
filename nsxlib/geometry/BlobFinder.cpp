@@ -8,8 +8,6 @@
 
 namespace nsx {
 
-using Octree = NDTree<double,3>;
-
 void BlobFinder::registerEquivalence(int a, int b, vipairs& equivalences)
 {
     if (a < b) {
