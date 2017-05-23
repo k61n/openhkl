@@ -68,8 +68,6 @@ public:
     bool collide(const OBB& other) const;
     //! Return true if the ellipsoid intersects a Sphere.
     bool collide(const Sphere& other) const;
-    //! Return the semi-axes of the Ellipsoids
-    const Eigen::Vector3d& getExtents() const;
     //! Return the inverse of the Mapping matrix (\f$ S^{-1}.R^{-1}.T^{-1} \f$)
     const HomMatrix& getInverseTransformation() const;
     HomMatrix getTransformation() const;
@@ -98,6 +96,9 @@ public:
     //! Return just the rotation and scaling matrix
     Eigen::Matrix3d getRSinv() const;
 
+    //! Return the volume of the ellipsoid
+    double getVolume() const;
+
 #ifndef SWIG
     // Macro to ensure that Ellipsoid can be dynamically allocated.
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -112,8 +113,8 @@ private:
 };
 
 bool collideEllipsoidAABB(const Ellipsoid&, const AABB&);
-bool collideEllipsoidEllipsoid(const Ellipsoid&, const Ellipsoid&);
-bool collideEllipsoidOBB(const Ellipsoid&, const OBB&);
+//bool collideEllipsoidEllipsoid(const Ellipsoid&, const Ellipsoid&);
+//bool collideEllipsoidOBB(const Ellipsoid&, const OBB&);
 bool collideEllipsoidSphere(const Ellipsoid&, const Sphere&);
 
 } // end namespace nsx

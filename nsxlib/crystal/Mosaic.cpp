@@ -83,7 +83,7 @@ double ellipsoids_overlap(const Ellipsoid& ell1,const Ellipsoid& ell2)
         }
         }
 
-    double overlap = 4.0*M_PI*ell1.getExtents().prod()*static_cast<double>(inside2)/static_cast<double>(inside1)/3.0;
+    double overlap = ell1.getVolume()*static_cast<double>(inside2)/static_cast<double>(inside1);
 
     return overlap;
 }
@@ -360,8 +360,8 @@ bool Mosaic::run(std::vector<std::shared_ptr<DataSet>> datas, unsigned int n, do
             ellexp.translate(center-center1);
             std::cout<<ellexp.getAABBExtents()<<std::endl;
             std::cout<<ellmc.getAABBExtents()<<std::endl;
-            std::cout<<"exp = "<<4.0*M_PI*ellexp.getExtents().prod()/3.0<<std::endl;
-            std::cout<<"mc = "<<4.0*M_PI*ellmc.getExtents().prod()/3.0<<std::endl;
+            std::cout<<"exp = "<<ellexp.getVolume()<<std::endl;
+            std::cout<<"mc = "<<ellmc.getVolume()<<std::endl;
             overlap = ellipsoids_overlap(ellexp,ellmc);
         }
 

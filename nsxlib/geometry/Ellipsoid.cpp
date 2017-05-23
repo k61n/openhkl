@@ -88,168 +88,6 @@ bool Ellipsoid::collide(const AABB& aabb) const
     return collideEllipsoidAABB(*this,aabb);
 }
 
-bool Ellipsoid::collide(const Ellipsoid& other) const
-{
-    return collideEllipsoidEllipsoid(*this,other);
-}
-
-bool Ellipsoid::collide(const OBB& other) const
-{
-    return collideEllipsoidOBB(*this,other);
-}
-
-bool Ellipsoid::collide(const Sphere& other) const
-{
-    return collideEllipsoidSphere(*this,other);
-}
-
-void Ellipsoid::rotate(const Eigen::Matrix3d& eigenvectors)
-{
-    // Reconstruct S
-    Eigen::DiagonalMatrix<double,4> S;
-    for (unsigned int i = 0; i < 3; ++i) {
-        S.diagonal()[i] = _eigenVal[i];
-    }
-    S.diagonal()[3] = 1.0;
-    _TRSinv=S*_TRSinv;
-
-    // Construct the inverse of the new rotation matrix
-    HomMatrix Rnewinv = HomMatrix::Zero();
-    Rnewinv(3,3) = 1.0;
-    for (unsigned int i = 0; i < 3; ++i) {
-        Rnewinv.block(i,0,1,3)=eigenvectors.col(i).transpose().normalized();
-    }
-    _TRSinv=Rnewinv*_TRSinv;
-
-    // Reconstruct Sinv
-    for (unsigned int i = 0; i < 3; ++i) {
-        S.diagonal()[i] = 1.0/_eigenVal[i];
-    }
-    S.diagonal()[3] = 1.0;
-
-    // Reconstruct the complete TRS inverse
-    _TRSinv = S*_TRSinv;
-
-    // Update the bounds of the AABB
-    updateAABB();
-}
-
-void Ellipsoid::scale(double value)
-{
-    _eigenVal *= value;
-    Eigen::DiagonalMatrix<double,4> Sinv;
-    for (unsigned int i = 0; i < 3; ++i) {
-        Sinv.diagonal()[i] = 1.0/value;
-    }
-    Sinv.diagonal()[3] = 1.0;
-    _TRSinv = Sinv*_TRSinv;
-    this->scaleAABB(value);
-}
-
-void Ellipsoid::scale(const Eigen::Vector3d& v)
-{
-    _eigenVal = _eigenVal.cwiseProduct(v);
-    Eigen::DiagonalMatrix<double,4> Sinv;
-    for (unsigned int i = 0; i < 3; ++i) {
-        Sinv.diagonal()[i] = 1.0/v[i];
-    }
-    Sinv.diagonal()[3] = 1.0;
-    _TRSinv = Sinv*_TRSinv;
-    this->scaleAABB(v);
-}
-
-void Ellipsoid::translate(const Eigen::Vector3d& t)
-{
-    HomMatrix tinv = HomMatrix::Constant(0.0);
-    tinv.block(0,3,3,1) = -t;
-    for (unsigned int i = 0; i < 4; ++i) {
-        tinv(i,i) = 1.0;
-    }
-    tinv(3,3) = 1.0;
-    _TRSinv = _TRSinv*tinv;
-    this->translateAABB(t);
-}
-
-bool Ellipsoid::isInside(const HomVector& point) const
-{
-    auto&& x = _TRSinv * point;
-    return (x.squaredNorm() <= 2.0);
-}
-
-const HomMatrix& Ellipsoid::getInverseTransformation() const
-{
-    return _TRSinv;
-}
-
-const Eigen::Vector3d& Ellipsoid::getExtents() const
-{
-    return _eigenVal;
-}
-
-void Ellipsoid::updateAABB()
-{
-    HomMatrix TRS = getInverseTransformation().inverse();
-
-    // See https://tavianator.com/exact-bounding-boxes-for-spheres-ellipsoids/ for details about how getting
-    // AABB efficiently from transformation matrix
-    // The width of the AABB in one direction is the norm of corresponding TRS matrix row
-    Eigen::Vector3d width = Eigen::Vector3d::Constant(0.0);
-    for (unsigned int i = 0; i < 3; ++i) {
-        for (unsigned int j = 0; j < 3; ++j) {
-            width[i] += TRS(i,j)*TRS(i,j);
-        }
-        width[i] = sqrt(width[i]);
-    }
-    // Update the upper and lower bound of the AABB from center +-width
-    _lowerBound=TRS.block(0,3,3,1)-width;
-    _upperBound=TRS.block(0,3,3,1)+width;
-}
-
-bool Ellipsoid::rayIntersect(const Eigen::Vector3d& from, const Eigen::Vector3d& dir, double& t1, double& t2) const
-{
-    HomVector hFrom = _TRSinv * from.homogeneous();
-    HomVector hDir;
-    hDir.segment(0,3) = dir;
-    hDir[3] = 0.0;
-    hDir = _TRSinv*hDir;
-    Sphere sphere(Eigen::Vector3d::Zero(),1.0);
-    return sphere.rayIntersect(hFrom.segment(0,3),hDir.segment(0,3),t1,t2);
-}
-
-Eigen::Vector3d Ellipsoid::getCenter() const
-{
-    Eigen::Vector3d t;
-    Eigen::Matrix3d A;
-
-    for (int i = 0; i < 3; ++i) {
-        t(i,0) = _TRSinv(i, 3);
-
-        for (int j = 0; j < 3; ++j) {
-            A(i, j) = _TRSinv(i, j);
-        }
-    }
-    t = -A.inverse()*t;
-    return t;
-}
-
-Eigen::Matrix3d Ellipsoid::getRSinv() const
-{
-    Eigen::Matrix3d A;
-
-    for (int i = 0; i < 3; ++i) {
-        for (int j = 0; j < 3; ++j) {
-            A(i, j) = _TRSinv(i, j);
-        }
-    }
-    return A;
-}
-
-bool collideEllipsoidAABB(const Ellipsoid& ell, const AABB& aabb)
-{
-    OBB obb(aabb);
-    return collideEllipsoidOBB(ell,obb);
-}
-
 /** Based on the method described in:
  *  "Continuous Collision Detection for Ellipsoids"
  *	Choi, Yi-King; Jung-Woo Chang; Wenping Wang; Myung-Soo Kim; Elber, G.,
@@ -259,12 +97,15 @@ bool collideEllipsoidAABB(const Ellipsoid& ell, const AABB& aabb)
  *  than using the Sturm's sequence
  */
 
-bool collideEllipsoidEllipsoid(const Ellipsoid& eA, const Ellipsoid& eB)
+bool Ellipsoid::collide(const Ellipsoid& other) const
 {
+    const Ellipsoid& eA = *this;
+    const Ellipsoid& eB = other;
+
     const HomMatrix trsA = eA.getInverseTransformation();
-    const Eigen::Vector3d eigA = eA.getExtents();
+    const Eigen::Vector3d eigA = eA._eigenVal;
     const HomMatrix trsB = eB.getInverseTransformation();
-    const Eigen::Vector3d eigB = eB.getExtents();
+    const Eigen::Vector3d eigB = eB._eigenVal;
 
     Eigen::DiagonalMatrix<double,4> SA;
     SA.diagonal() << eigA(0), eigA(1), eigA(2), 1.0;
@@ -349,8 +190,11 @@ bool collideEllipsoidEllipsoid(const Ellipsoid& eA, const Ellipsoid& eB)
  *	Geometric Tools, LLC
  *	http://www.geometrictools.com
  */
-bool collideEllipsoidOBB(const Ellipsoid& ell, const OBB& obb)
+bool Ellipsoid::collide(const OBB& other) const
 {
+    const Ellipsoid& ell = *this;
+    const OBB& obb = other;
+
     // Get the TRS inverse matrix of the ellipsoid
     HomMatrix ellTRSinv=ell.getInverseTransformation();
 
@@ -359,7 +203,7 @@ bool collideEllipsoidOBB(const Ellipsoid& ell, const OBB& obb)
 
     // Construct the S matrice for the ellipsoid
     Eigen::DiagonalMatrix<double,4> ellS;
-    ellS.diagonal().segment(0,3) = ell.getExtents();
+    ellS.diagonal().segment(0,3) = ell._eigenVal;
     ellS.diagonal()[3] = 1.0;
 
     // Construct the S matrice for the OBB
@@ -470,6 +314,156 @@ bool collideEllipsoidOBB(const Ellipsoid& ell, const OBB& obb)
     return true;
 }
 
+bool Ellipsoid::collide(const Sphere& other) const
+{
+    return collideEllipsoidSphere(*this,other);
+}
+
+void Ellipsoid::rotate(const Eigen::Matrix3d& eigenvectors)
+{
+    // Reconstruct S
+    Eigen::DiagonalMatrix<double,4> S;
+    for (unsigned int i = 0; i < 3; ++i) {
+        S.diagonal()[i] = _eigenVal[i];
+    }
+    S.diagonal()[3] = 1.0;
+    _TRSinv=S*_TRSinv;
+
+    // Construct the inverse of the new rotation matrix
+    HomMatrix Rnewinv = HomMatrix::Zero();
+    Rnewinv(3,3) = 1.0;
+    for (unsigned int i = 0; i < 3; ++i) {
+        Rnewinv.block(i,0,1,3)=eigenvectors.col(i).transpose().normalized();
+    }
+    _TRSinv=Rnewinv*_TRSinv;
+
+    // Reconstruct Sinv
+    for (unsigned int i = 0; i < 3; ++i) {
+        S.diagonal()[i] = 1.0/_eigenVal[i];
+    }
+    S.diagonal()[3] = 1.0;
+
+    // Reconstruct the complete TRS inverse
+    _TRSinv = S*_TRSinv;
+
+    // Update the bounds of the AABB
+    updateAABB();
+}
+
+void Ellipsoid::scale(double value)
+{
+    _eigenVal *= value;
+    Eigen::DiagonalMatrix<double,4> Sinv;
+    for (unsigned int i = 0; i < 3; ++i) {
+        Sinv.diagonal()[i] = 1.0/value;
+    }
+    Sinv.diagonal()[3] = 1.0;
+    _TRSinv = Sinv*_TRSinv;
+    this->scaleAABB(value);
+}
+
+void Ellipsoid::scale(const Eigen::Vector3d& v)
+{
+    _eigenVal = _eigenVal.cwiseProduct(v);
+    Eigen::DiagonalMatrix<double,4> Sinv;
+    for (unsigned int i = 0; i < 3; ++i) {
+        Sinv.diagonal()[i] = 1.0/v[i];
+    }
+    Sinv.diagonal()[3] = 1.0;
+    _TRSinv = Sinv*_TRSinv;
+    this->scaleAABB(v);
+}
+
+void Ellipsoid::translate(const Eigen::Vector3d& t)
+{
+    HomMatrix tinv = HomMatrix::Constant(0.0);
+    tinv.block(0,3,3,1) = -t;
+    for (unsigned int i = 0; i < 4; ++i) {
+        tinv(i,i) = 1.0;
+    }
+    tinv(3,3) = 1.0;
+    _TRSinv = _TRSinv*tinv;
+    this->translateAABB(t);
+}
+
+bool Ellipsoid::isInside(const HomVector& point) const
+{
+    auto&& x = _TRSinv * point;
+    return (x.squaredNorm() <= 2.0);
+}
+
+const HomMatrix& Ellipsoid::getInverseTransformation() const
+{
+    return _TRSinv;
+}
+
+void Ellipsoid::updateAABB()
+{
+    HomMatrix TRS = getInverseTransformation().inverse();
+
+    // See https://tavianator.com/exact-bounding-boxes-for-spheres-ellipsoids/ for details about how getting
+    // AABB efficiently from transformation matrix
+    // The width of the AABB in one direction is the norm of corresponding TRS matrix row
+    Eigen::Vector3d width = Eigen::Vector3d::Constant(0.0);
+    for (unsigned int i = 0; i < 3; ++i) {
+        for (unsigned int j = 0; j < 3; ++j) {
+            width[i] += TRS(i,j)*TRS(i,j);
+        }
+        width[i] = sqrt(width[i]);
+    }
+    // Update the upper and lower bound of the AABB from center +-width
+    _lowerBound=TRS.block(0,3,3,1)-width;
+    _upperBound=TRS.block(0,3,3,1)+width;
+}
+
+bool Ellipsoid::rayIntersect(const Eigen::Vector3d& from, const Eigen::Vector3d& dir, double& t1, double& t2) const
+{
+    HomVector hFrom = _TRSinv * from.homogeneous();
+    HomVector hDir;
+    hDir.segment(0,3) = dir;
+    hDir[3] = 0.0;
+    hDir = _TRSinv*hDir;
+    Sphere sphere(Eigen::Vector3d::Zero(),1.0);
+    return sphere.rayIntersect(hFrom.segment(0,3),hDir.segment(0,3),t1,t2);
+}
+
+Eigen::Vector3d Ellipsoid::getCenter() const
+{
+    Eigen::Vector3d t;
+    Eigen::Matrix3d A;
+
+    for (int i = 0; i < 3; ++i) {
+        t(i,0) = _TRSinv(i, 3);
+
+        for (int j = 0; j < 3; ++j) {
+            A(i, j) = _TRSinv(i, j);
+        }
+    }
+    t = -A.inverse()*t;
+    return t;
+}
+
+Eigen::Matrix3d Ellipsoid::getRSinv() const
+{
+    Eigen::Matrix3d A;
+
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            A(i, j) = _TRSinv(i, j);
+        }
+    }
+    return A;
+}
+
+bool collideEllipsoidAABB(const Ellipsoid& ell, const AABB& aabb)
+{
+    OBB obb(aabb);
+    return ell.collide(obb);
+}
+
+
+
+
 /*
  * To compute the intersection between an ellipsoid and a sphere a little trick is done.
  * It consists in building up a ellipsoid from the input sphere and just checking for
@@ -480,12 +474,18 @@ bool collideEllipsoidSphere(const Ellipsoid& eA, const Sphere& s)
     Eigen::Vector3d scale = Eigen::Vector3d::Constant(s.getRadius());
     Eigen::Matrix3d rot = Eigen::Matrix3d::Identity();
     Ellipsoid eB(s.getCenter(),scale,rot);
-    return collideEllipsoidEllipsoid(eA,eB);
+    return eA.collide(eB);
 }
 
 HomMatrix Ellipsoid::getTransformation() const
 {
     return _TRSinv.inverse();
+}
+
+double Ellipsoid::getVolume() const
+{
+    static constexpr double c = 4.0*M_PI / 3.0;
+    return c * _eigenVal.prod();
 }
 
 } // end namespace nsx

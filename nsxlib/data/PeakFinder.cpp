@@ -137,7 +137,7 @@ bool PeakFinder::find(DataList numors)
             blob.second.toEllipsoid(nsx::getConfidence(1.0), center, eigenvalues, eigenvectors);
             auto shape = Ellipsoid(center, eigenvalues, eigenvectors);
 
-            auto p = sptrPeak3D(new Peak3D(numor, shape));
+            auto p = sptrPeak3D(new Peak3D(shape, numor));
             const auto extents = p->getShape().getAABBExtents();
 
             // peak too small or too large

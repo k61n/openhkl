@@ -361,7 +361,7 @@ bool collideOBBOBB(const OBB& a, const OBB& b)
 
 bool collideOBBEllipsoid(const OBB& obb, const Ellipsoid& ell)
 {
-    return collideEllipsoidOBB(ell,obb);
+    return ell.collide(obb);
 }
 
 bool collideOBBSphere(const OBB& obb, const Sphere& s)

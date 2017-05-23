@@ -55,10 +55,6 @@ PeakCalc::PeakCalc(double h,double k,double l, double x,double y, double frame):
 sptrPeak3D PeakCalc::averagePeaks(const Octree& tree, double distance, double min_axis)
 {
     Eigen::Matrix3d peak_shape;
-    sptrPeak3D peak = std::make_shared<Peak3D>();
-
-    // An averaged peak is by definition not an observed peak but a calculated peak
-    peak->setObserved(false);
 
     Eigen::Vector3d center(_x, _y, _frame);
     Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver;
@@ -102,7 +98,11 @@ sptrPeak3D PeakCalc::averagePeaks(const Octree& tree, double distance, double mi
         }
     }
 
-    peak->setShape(Ellipsoid(center, vals, solver.eigenvectors()));
+    sptrPeak3D peak = std::make_shared<Peak3D>(Ellipsoid(center, vals, solver.eigenvectors()));
+
+    // An averaged peak is by definition not an observed peak but a calculated peak
+    peak->setObserved(false);
+
     return peak;
 }
 

@@ -152,7 +152,7 @@ bool collideSphereOBB(const Sphere& s, const OBB& obb)
     Eigen::Vector3d scale=Eigen::Vector3d::Constant(s.getRadius());
     Eigen::Matrix3d rot=Eigen::Matrix3d::Identity();
     Ellipsoid ell(s.getCenter(),scale,rot);
-    return collideEllipsoidOBB(ell,obb);
+    return ell.collide(obb);
 }
 
 } // end namespace nsx

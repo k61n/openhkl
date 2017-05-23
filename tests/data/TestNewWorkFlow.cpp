@@ -78,8 +78,8 @@ int run_test()
 
     try {
         BOOST_CHECK(peakFinder->find(numors) == true);
-    } catch(...) {
-        std::cout << "ERROR: exception in PeakFinder::find()" << std::endl;
+    } catch(std::exception& e) {
+        std::cout << "ERROR: exception in PeakFinder::find() " << e.what() << std::endl;
     }
 
     BOOST_CHECK(dataf->getPeaks().size() >= 800);

@@ -52,9 +52,9 @@ class Peak3D {
 
 public:
 
-    Peak3D(sptrDataSet data = nullptr);
-
-    Peak3D(sptrDataSet data, const Ellipsoid& shape);
+    Peak3D();
+    
+    Peak3D(const Ellipsoid& shape, sptrDataSet data = nullptr);
 
     //! Copy constructor
     Peak3D(const Peak3D& other);

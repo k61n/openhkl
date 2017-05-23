@@ -56,7 +56,7 @@
 
 namespace nsx {
 
-Peak3D::Peak3D(sptrDataSet data):
+Peak3D::Peak3D():
     _data(),
     _shape(),
     _unitCells(),
@@ -72,13 +72,14 @@ Peak3D::Peak3D(sptrDataSet data):
     _transmission(1.0),
     _activeUnitCellIndex(0)
 {
-    linkData(data);
+  
 }
 
-Peak3D::Peak3D(sptrDataSet data, const Ellipsoid &shape):
-    Peak3D(data)
+Peak3D::Peak3D(const Ellipsoid &shape, sptrDataSet data):
+    Peak3D()
 {
     setShape(shape);
+    linkData(data);    
 }
 
 Peak3D::Peak3D(const Peak3D& other):
