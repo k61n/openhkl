@@ -5,7 +5,7 @@ cd ${CI_PROJECT_DIR}
 mkdir build
 cd build
 
-cmake -G"Ninja" -DCMAKE_BUILD_TYPE=Release -DNSX_PYTHON=ON -DNSX_PYTHON§=OFF -DBUILD_QTAPPS=ON -DCMAKE_INSTALL_PREFIX=. -DCMAKE_PREFIX_PATH="/usr/local;/usr/local/Cellar/qt5/5.6.0;/usr/local/Cellar/gsl/2.3" -DCMAKE_LIBRARY_PATH=/usr/local/lib  ..
+cmake -G"Ninja" -DCMAKE_BUILD_TYPE=Release -DNSX_PYTHON=ON -DNSX_PYTHON§=OFF -DBUILD_QTAPPS=ON -DCMAKE_INSTALL_PREFIX=. -DCMAKE_PREFIX_PATH="/usr/local/Cellar/python/2.7.11/Frameworks/Python.framework/Versions/2.7;/usr/local/Cellar/qt5/5.6.0;/usr/local/Cellar/gsl/2.3"  ..
 
 cmake --build . --config Release
 
