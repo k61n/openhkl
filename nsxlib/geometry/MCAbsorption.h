@@ -29,16 +29,13 @@
 #ifndef NSXLIB_MCABSORPTION_H
 #define NSXLIB_MCABSORPTION_H
 
-#include <random>
 #include <functional>
+#include <random>
 #include <vector>
 
-#include "ConvexHull.h"
-#include "Triangle.h"
+#include "../geometry/GeometryTypes.h"
 
 namespace nsx {
-
-typedef std::vector<Triangle> TrianglesList;
 
 class MCAbsorption {
 public:

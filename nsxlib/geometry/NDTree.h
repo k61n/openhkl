@@ -63,46 +63,42 @@ constexpr int getPow (int factor)
  *
 */
 
-// ! Forward declaration of the iterator class
-template<typename T, unsigned int D> class NDTreeIterator;
+class NDTreeIterator;
 
-template<typename T, unsigned int D>
 class NDTree : public AABB {
 public:
 
     //! The NDTree iterator class is made friend with NDTree in order to access some of its private data
-    friend class NDTreeIterator<T,D>;
+    friend class NDTreeIterator;
 
     // These typedefs insure compatibility with STL
-    typedef NDTreeIterator<T,D> iterator;
-    typedef ptrdiff_t difference_type;
-    typedef size_t size_type;
-    typedef T value_type;
-    typedef T * pointer;
-    typedef T & reference;
+    using size_type = size_t;
+    using difference_type = ptrdiff_t;
+    using iterator = NDTreeIterator;
+    using value_type=double;
+    using pointer = double*;
+    using reference = double&;
 
     //! Pair of AABB*
-    typedef typename std::pair<const IShape*, const IShape* > collision_pair;
+    using collision_pair = std::pair<const IShape*,const IShape*>;
 
     //! Move constructor
-    NDTree(NDTree<T,D>&& other);
+    NDTree(NDTree&& other);
 
     //! Copy constructor
-    NDTree(const NDTree<T,D>& other) = delete;
+    NDTree(const NDTree& other) = delete;
 
     //! Assignment operator
-    NDTree<T,D>& operator=(const NDTree<T,D>& other) = delete;
+    NDTree& operator=(const NDTree& other) = delete;
 
     //! Constructor from two Eigen3 vectors, throw invalid_argument if lb < ub
     NDTree(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub);
 
     //! Constructor from two initializer lists, throw invalid_argument if lb< ub
-    NDTree(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub);
+    NDTree(const std::initializer_list<double>& lb, const std::initializer_list<double>& ub);
 
     //! destructor
-    ~NDTree();
-
-    //IShape<T,D>* clone() const;
+    ~NDTree()=default;
 
     /*! Add a new AABB object to the deepest leaf.
      * If the leaf has reached capacity of _MAX_STORAGE, then it will be split into
@@ -137,7 +133,7 @@ public:
     bool isInsideObject(const HomVector& vector);
 
     //! Get the voxels of the tree
-    void getVoxels(std::vector<AABB* >& voxels);
+    void getVoxels(std::vector<AABB*>& voxels);
 
     //! Remove a data from the NDTree
     void removeData(const IShape* data);
@@ -177,13 +173,13 @@ private:
     unsigned int _MAX_STORAGE = 5;
 
     //! Multiplicity of the tree branch (D=2 ->4), (D=3 ->8)
-    const unsigned int _MULTIPLICITY = std::pow(2,D);
+    const unsigned int _MULTIPLICITY = std::pow(2,3);
 
     //! vector of powers 2^D
     std::vector<unsigned int> _POWERS = createPowers();
 
     //! Vector of 2^D children
-    std::vector<NDTree<T,D>> _children;
+    std::vector<NDTree> _children;
     // NDTree<T,D>* _children[getPow(D)];
 
     //! Vector of data object in this leaf
@@ -192,330 +188,10 @@ private:
     //! Depth of this branch with respect to root node.
     unsigned int _depth;
 
-    const NDTree<T,D>* _parent;
+    const NDTree* _parent;
     long _idx = -1;
 };
 
-template<typename T, unsigned int D>
-std::vector<unsigned int> NDTree<T,D>::createPowers()
-{
-    std::vector<unsigned int> p(D);
-    int i=0;
-    // Powers of 2
-    std::generate(p.begin(),
-                  p.end(),
-                  [&i]()
-                  {
-                    return std::pow(2,i++);
-                  }
-    );
-
-    return p;
-}
-
-template<typename T, unsigned int D>
-NDTree<T, D>::NDTree(NDTree<T,D>&& other):
-    _MAX_DEPTH(other._MAX_DEPTH),
-    _MAX_STORAGE(other._MAX_STORAGE),
-    _MULTIPLICITY(other._MULTIPLICITY),
-    _POWERS(std::move(other._POWERS)),
-    _children(std::move(other._children)),
-    _data(std::move(other._data)),
-    _depth(other._depth),
-    _parent(other._parent),
-    _idx(other._idx)
-{
-
-}
-
-template<typename T, unsigned int D>
-void NDTree<T,D>::nullifyChildren()
-{
-    _children.clear();
-}
-
-template<typename T, unsigned int D>
-NDTree<T,D>::NDTree():
-    AABB(), _depth(0), _parent(nullptr)//, _right(nullptr)
-{
-    nullifyChildren();
-    //_data.reserve(_MAX_STORAGE);
-}
-
-template<typename T, unsigned int D>
-NDTree<T,D>::NDTree(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub):
-    AABB(lb,ub), _depth(0), _parent(nullptr)//, _right(nullptr)
-{
-    nullifyChildren();
-    //_data.reserve(_MAX_STORAGE);
-}
-
-template<typename T, unsigned int D>
-NDTree<T,D>::NDTree(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub):
-    AABB(lb,ub), _depth(0), _parent(nullptr)//, _right(nullptr)
-{
-    nullifyChildren();
-    //_data.reserve(_MAX_STORAGE);
-}
-
-template<typename T, unsigned int D>
-NDTree<T,D>::NDTree(const NDTree<T,D>* parent, unsigned int sector):
-    AABB(), _depth(parent->_depth+1), _parent(parent), _idx(sector),
-    _MAX_DEPTH(parent->_MAX_DEPTH),
-    _MAX_STORAGE(parent->_MAX_STORAGE)
-{
-    nullifyChildren();
-
-    // Calculate the center of the current branch
-    Eigen::Vector3d center = parent->getAABBCenter();
-
-    // The numbering of sub-voxels is encoded into bits of an int a follows:
-    // ....... | dim[2] | dim[1] | dim[0]
-    for (unsigned int i=0; i<D; ++i) {
-        bool b = (sector & _POWERS[i]);
-        this->AABB::_lowerBound(i) = (b ? center[i] : parent->AABB::_lowerBound(i));
-        this->AABB::_upperBound(i) = (b ? parent->AABB::_upperBound(i) : center(i));
-    }
-}
-
-template<typename T, unsigned int D>
-NDTree<T,D>::~NDTree()
-{
-}
-
-template<typename T, unsigned int D>
-void NDTree<T,D>::addData(const IShape* shape)
-{
-    // AABB does not overlap with this branch
-    if (!this->intercept(*shape)) {
-        return;
-    }
-
-    // AABB overlap with this node
-    if (hasChildren()) {
-        for (auto&& child: _children) {
-            child.addData(shape);
-        }
-    } else {
-        _data.push_back(shape);
-        if (_data.size() > _MAX_STORAGE) {
-            split();
-        }
-    }
-}
-
-template<typename T, unsigned int D>
-bool NDTree<T,D>::hasChildren() const
-{
-    return (!_children.empty());
-}
-
-template<typename T, unsigned int D>
-bool NDTree<T,D>::hasData() const
-{
-    return (_data.size() != 0);
-}
-
-template<typename T, unsigned int D>
-std::set<typename NDTree<T,D>::collision_pair> NDTree<T,D>::getCollisions() const
-{
-    std::set<collision_pair> collisions;
-
-    // loop over chambers of the ndtree
-    for (auto&& chamber: *this) {
-        // loop over shapes in the chamber
-        for (auto i = 0; i < chamber._data.size(); ++i) {
-            for (auto j = i+1; j < chamber._data.size(); ++j) {
-                auto&& a = chamber._data[i];
-                auto&& b = chamber._data[j];
-
-                // collision detected
-                if (a->collide(*b)) {
-                    if (a < b) {
-                        collisions.emplace(collision_pair(a, b));
-                    }
-                    else {
-                        collisions.emplace(collision_pair(b, a));
-                    }
-                }
-            }
-        }
-    }
-    return collisions;
-}
-
-template<typename T, unsigned int D>
-std::set<const IShape*> NDTree<T,D>::getCollisions(const IShape& given) const
-{
-    using ndtree = NDTree<T, D>;
-    using collision_set = std::set<const IShape*>;
-    collision_set collisions;
-
-    std::function<void(const ndtree*, collision_set&)> recursiveCollisions;
-
-    recursiveCollisions = [&given, &recursiveCollisions] (const ndtree* tree, collision_set& collisions) -> void
-    {
-        // shape's box does not intercept tree
-        if (!tree->intercept(given)) {
-            return;
-        }
-
-        // tree has children
-        if (tree->hasChildren()) {
-            for (auto&& child: tree->_children) {
-                recursiveCollisions(&child, collisions);
-            }
-            return;
-        }
-
-        // otherwise, tree has no children
-        for (auto&& shape: tree->_data) {
-            if (shape->collide(given)) {
-                collisions.emplace(shape);
-            }
-        }
-    };
-
-    recursiveCollisions(this, collisions);
-    return collisions;
-}
-
-template<typename T, unsigned int D>
-bool NDTree<T,D>::isInsideObject(const HomVector& vector)
-{
-    // shape's box does not intercept tree
-    if (!isInside(vector)) {
-        return false;
-    }
-
-    // tree has children
-    if (hasChildren()) {
-        for (auto&& child: _children) {
-            if (child.isInsideObject(vector)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    // otherwise, tree has no children
-    for (auto&& shape: _data) {
-        if (shape->isInside(vector)) {
-            return true;
-        }
-    }
-
-    // no collision found
-    return false;
-}
-
-template<typename T, unsigned int D>
-void NDTree<T,D>::getVoxels(std::vector<AABB* >& voxels)
-{
-    voxels.push_back(this);
-    if (hasChildren()) {
-        for (unsigned int i=0;i<_MULTIPLICITY;++i) {
-            _children[i]->getVoxels(voxels);
-        }
-    }
-}
-
-template<typename T, unsigned int D>
-void NDTree<T,D>::printSelf(std::ostream& os) const
-{
-    os << "*** Node ***  " << this->_lowerBound  << "," << this->_upperBound << std::endl;
-    if (!hasChildren()) {
-        os << " has no children" <<std::endl;
-        os << "... and has " << _data.size() << " data" <<  std::endl;
-    } else {
-        os << " has children :" << std::endl;
-        for (int i = 0; i < _MULTIPLICITY; ++i) {
-            _children[i]->printSelf(os);
-        }
-    }
-}
-
-template<typename T, unsigned int D>
-void NDTree<T,D>::removeData(const IShape* data)
-{
-    if (hasData()) {
-        auto it = std::find(_data.begin(), _data.end(), data);
-        if (it!=_data.end()) {
-            _data.erase(it);
-        }
-    }
-    if (hasChildren())  {
-        for (unsigned int i=0; i<_MULTIPLICITY; ++i) {
-            _children[i].removeData(data);
-        }
-    }
-}
-
-template<typename T, unsigned int D>
-void NDTree<T,D>::setMaxDepth(unsigned int maxDepth)
-{
-    if (maxDepth ==0) {
-        throw std::invalid_argument("Depth of the NDTree must be at least 1");
-    }
-    if (maxDepth >10) {
-        throw std::invalid_argument("Depth of NDTree > 10 consume too much memory");
-    }
-    _MAX_DEPTH = maxDepth;
-}
-
-template<typename T, unsigned int D>
-void NDTree<T,D>::setMaxStorage(unsigned int maxStorage)
-{
-    if (maxStorage == 0) {
-        throw std::invalid_argument("MaxStorage of NDTree must be at least 1");
-    }
-    _MAX_STORAGE = maxStorage;
-}
-
-template<typename T, unsigned int D>
-void NDTree<T,D>::split()
-{
-    // The node is already at the maximum depth: not allowed to split anymore.
-    // Do nothing singe _data has already been added to parent node.
-    if (_depth > _MAX_DEPTH) {
-        return;
-    }
-
-    _children.clear();
-    _children.reserve(_MULTIPLICITY);
-
-    // Split the current node into 2^D subnodes
-    for (unsigned int i=0; i<_MULTIPLICITY; ++i) {
-        _children.emplace_back(this, i);
-    }
-    for (auto ptr=_data.begin(); ptr!=_data.end(); ++ptr) {
-        for (auto&& child: _children) {
-            child.addData(*ptr);
-        }
-    }
-    _data.clear();
-}
-
-template<typename T, unsigned int D>
-typename NDTree<T,D>::iterator NDTree<T,D>::begin() const
-{
-    return iterator(*this);
-}
-
-template<typename T, unsigned int D>
-typename NDTree<T,D>::iterator NDTree<T,D>::end() const
-{
-    return iterator();
-}
-
-template<typename T, unsigned int D>
-std::ostream& operator<<(std::ostream& os, const NDTree<T,D>& tree)
-{
-    tree.printSelf(os);
-    return os;
-}
-
-template<typename T, unsigned int D>
 class NDTreeIterator
 {
 public:
@@ -523,123 +199,26 @@ public:
     NDTreeIterator();
 
     //; The constructor from a reference to the NDTree to be iterated.
-    NDTreeIterator(const NDTree<T,D>& tree);
+    NDTreeIterator(const NDTree& tree);
 
-    NDTreeIterator<T,D>& operator=(const NDTreeIterator<T,D>& other);
+    NDTreeIterator& operator=(const NDTreeIterator& other);
 
-    bool operator==(const NDTreeIterator<T,D>& other) const;
+    bool operator==(const NDTreeIterator& other) const;
 
-    bool operator!=(const NDTreeIterator<T,D>& other) const;
+    bool operator!=(const NDTreeIterator& other) const;
 
-    const NDTree<T,D>& operator*() const;
+    const NDTree& operator*() const;
 
-    const NDTree<T,D>* operator->() const;
+    const NDTree* operator->() const;
 
-    NDTreeIterator<T,D>& operator++();
+    NDTreeIterator& operator++();
 
-    NDTreeIterator<T,D> operator++(int);
+    NDTreeIterator operator++(int);
 
 private:
 
-    const NDTree<T,D>* _node;
+    const NDTree* _node;
 };
-
-template<typename T, unsigned int D>
-NDTreeIterator<T,D>::NDTreeIterator() : _node(nullptr)
-{
-}
-
-template<typename T, unsigned int D>
-NDTreeIterator<T,D>::NDTreeIterator(const NDTree<T,D>& node) : _node(&node)
-{
-    // find the leftmost leaf
-    while(_node->hasChildren()) {
-        _node = &_node->_children[0];
-    }
-}
-
-template<typename T, unsigned int D>
-NDTreeIterator<T,D>& NDTreeIterator<T,D>::operator=(const NDTreeIterator<T,D>& other)
-{
-  _node = other._node;
-  return *this;
-}
-
-template<typename T, unsigned int D>
-bool NDTreeIterator<T,D>::operator!=(const NDTreeIterator<T,D>& other) const
-{
-    return (_node != other._node);
-}
-
-template<typename T, unsigned int D>
-bool NDTreeIterator<T,D>::operator==(const NDTreeIterator<T,D>& other) const
-{
-    return (_node == other._node);
-}
-
-template<typename T, unsigned int D>
-const NDTree<T,D>& NDTreeIterator<T,D>::operator*() const
-{
-    return *_node;
-}
-
-template<typename T, unsigned int D>
-const NDTree<T,D>* NDTreeIterator<T,D>::operator->() const
-{
-    return _node;
-}
-
-template<typename T, unsigned int D>
-NDTreeIterator<T,D>& NDTreeIterator<T,D>::operator++()
-{
-    // already at end
-    if (_node == nullptr || _node->_parent == nullptr) {
-        _node = nullptr;
-        return *this;
-    }
-
-    // can move right
-    if (_node->_idx < _node->_parent->_children.size()-1) {
-        _node = &_node->_parent->_children[_node->_idx+1];
-
-        while(_node->hasChildren()) {
-            _node = &_node->_children[0];
-        }
-
-        return *this;
-    }
-
-    // can't move right: move up
-    _node = _node->_parent;
-
-    // reached the root: at end
-    if (_node && _node->_parent == nullptr) {
-        _node = nullptr;
-    }
-
-    return ++(*this);
-}
-
-template<typename T, unsigned int D>
-NDTreeIterator<T,D> NDTreeIterator<T,D>::operator++(int)
-{
-    NDTreeIterator<T,D> tmp(*this);
-    ++(*this);
-    return (tmp);
-}
-
-template<typename T, unsigned int D>
-unsigned int NDTree<T,D>::numChambers() const
-{
-    if (hasChildren()) {
-        unsigned int count = 0;
-        for (auto&& child: _children) {
-            count += child.numChambers();
-        }
-        return count;
-    }
-    return 1;
-}
 
 } // end namespace nsx
 

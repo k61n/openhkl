@@ -16,8 +16,6 @@
 #include "plot/SXPlot.h"
 #include "plot/PeakPlot.h"
 
-using Ellipsoid3D = nsx::Ellipsoid<double, 3>;
-
 bool PeakGraphicsItem::_labelVisible = false;
 bool PeakGraphicsItem::_drawBackground = false;
 
@@ -148,12 +146,12 @@ void PeakGraphicsItem::drawBackground(bool flag)
     _drawBackground = flag;
 }
 
-PeakGraphicsItem::Ellipse PeakGraphicsItem::calculateEllipse(const nsx::IShape<double, 3> &shape, int frame)
+PeakGraphicsItem::Ellipse PeakGraphicsItem::calculateEllipse(const nsx::IShape &shape, int frame)
 {
     Eigen::MatrixXd M;
     Eigen::VectorXd p;
 
-    auto fromAABB = [](const nsx::IShape<double, 3>& s) -> Ellipse
+    auto fromAABB = [](const nsx::IShape& s) -> Ellipse
     {
         Ellipse ellipse;
         Eigen::Vector3d lower = s.getLower();
@@ -169,7 +167,7 @@ PeakGraphicsItem::Ellipse PeakGraphicsItem::calculateEllipse(const nsx::IShape<d
     };
 
     try {
-        const nsx::Ellipsoid<double, 3>& ellipse_shape = dynamic_cast<const nsx::Ellipsoid<double, 3>&>(shape);
+        const nsx::Ellipsoid& ellipse_shape = dynamic_cast<const nsx::Ellipsoid&>(shape);
         M = ellipse_shape.getRSinv();
         p = ellipse_shape.getCenter();
     }
@@ -286,7 +284,7 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     QVector<double> qbkg(int(total.size()));
 
     //Copy the data
-    Ellipsoid3D background = _peak->getShape();
+    nsx::Ellipsoid background = _peak->getShape();
     background.scale(3.0);
     double min=std::floor(background.getLower()[2]);
     double max=std::ceil(background.getUpper()[2]);

@@ -432,7 +432,7 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
         }
     }
 
-    Octree oct({0.0,0.0,0.0},{double(_ncols),double(_nrows),double(_nframes)});
+    NDTree oct({0.0,0.0,0.0},{double(_ncols),double(_nrows),double(_nframes)});
     oct.setMaxDepth(6);
     oct.setMaxStorage(6);
 

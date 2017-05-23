@@ -2,7 +2,7 @@
  * nsxtool : Neutron Single Crystal analysis toolkit
  ------------------------------------------------------------------------------------------
  Copyright (C)
- 2012- Laurent C. Chapon Eric Pellegrini, Jonathan Fisher
+ 2012- Laurent C. Chapon, Eric Pellegrini
  Institut Laue-Langevin
  BP 156
  6, rue Jules Horowitz
@@ -10,7 +10,6 @@
  France
  chapon[at]ill.fr
  pellegrini[at]ill.fr
- j.fisher[at]fz-juelich.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -28,26 +27,28 @@
  *
  */
 
-#ifndef NSXLIB_PEAKCALC_H
-#define NSXLIB_PEAKCALC_H
-
-#include "../crystal/CrystalTypes.h"
-#include "../geometry/GeometryTypes.h"
+#include "../geometry/Vertex.h"
 
 namespace nsx {
 
-struct PeakCalc {
+Vertex::Vertex() : _coords(), _duplicate(nullptr), _onHull(false), _mark(false)
+{
+}
 
-    PeakCalc(double h,double k,double l, double x,double y, double frame); //:
-        //_h(h), _k(k), _l(l), _x(x), _y(y), _frame(frame) = default;
-    ~PeakCalc() = default;
+Vertex::Vertex(const Eigen::Vector3d& coords) : _coords(coords), _duplicate(nullptr), _onHull(false), _mark(false)
+{
+}
 
-    double _h,_k,_l;
-    double _x,_y,_frame;
+void Vertex::print(std::ostream& os) const
+{
+	os<<"Vertex @ "<<_coords.transpose();
+}
 
-    sptrPeak3D averagePeaks(const NDTree& tree, double distance, double min_axis=2.0);
-};
+std::ostream& operator<<(std::ostream& os, const Vertex& vertex)
+{
+	vertex.print(os);
+	return os;
+}
 
 } // end namespace nsx
 
-#endif // NSXLIB_PEAKCALC_H

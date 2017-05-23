@@ -34,8 +34,8 @@
 
 #include <Eigen/Dense>
 
+#include "../mathematics/MathematicsTypes.h"
 #include "../utils/Units.h"
-#include "../utils/Types.h"
 
 namespace nsx {
 

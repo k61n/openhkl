@@ -3,6 +3,7 @@
 #include <QJsonArray>
 
 #include <nsxlib/data/DataSet.h>
+#include <nsxlib/geometry/AABB.h>
 #include <nsxlib/instrument/Experiment.h>
 
 #include "models/NumorItem.h"
@@ -74,7 +75,7 @@ void NumorItem::fromJson(const QJsonObject &obj)
         upper(1) = mask_arr[4].toDouble();
         upper(2) = mask_arr[5].toDouble();
 
-        getData()->addMask(new nsx::AABB<double, 3>(lower, upper));
+        getData()->addMask(new nsx::AABB(lower, upper));
     }
 }
 

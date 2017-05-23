@@ -52,7 +52,7 @@ PeakCalc::PeakCalc(double h,double k,double l, double x,double y, double frame):
 {
 }
 
-sptrPeak3D PeakCalc::averagePeaks(const Octree& tree, double distance, double min_axis)
+sptrPeak3D PeakCalc::averagePeaks(const NDTree& tree, double distance, double min_axis)
 {
     Eigen::Matrix3d peak_shape;
     sptrPeak3D peak = std::make_shared<Peak3D>();

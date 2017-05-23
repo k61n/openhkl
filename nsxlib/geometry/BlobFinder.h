@@ -44,8 +44,8 @@
 #include "../geometry/Ellipsoid.h"
 #include "../geometry/GeometryTypes.h"
 #include "../geometry/IShape.h"
+#include "../mathematics/MathematicsTypes.h"
 #include "../utils/UtilsTypes.h"
-#include "../utils/Types.h"
 
 namespace nsx {
 

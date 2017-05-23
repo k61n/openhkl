@@ -41,6 +41,7 @@
 #include "../crystal/UnitCell.h"
 #include "../data/DataSet.h"
 #include "../data/DataTypes.h"
+#include "../geometry/GeometryTypes.h"
 #include "../geometry/NDTree.h"
 #include "../instrument/Diffractometer.h"
 #include "../instrument/Sample.h"
@@ -51,8 +52,6 @@ namespace nsx {
 
 void PeakPredictor::addPredictedPeaks(sptrDataSet data)
 {
-    using Octree = NDTree<double, 3>;
-
     class compare_fn {
     public:
         auto operator()(const Eigen::RowVector3i a, const Eigen::RowVector3i b) -> bool
@@ -101,7 +100,7 @@ void PeakPredictor::addPredictedPeaks(sptrDataSet data)
 
         Eigen::Vector3d lb = {0.0, 0.0, 0.0};
         Eigen::Vector3d ub = {double(data->getNCols()), double(data->getNRows()), double(data->getNFrames())};
-        auto&& octree = Octree(lb, ub);
+        auto&& octree = NDTree(lb, ub);
 
         octree.setMaxDepth(4);
         octree.setMaxStorage(50);

@@ -12,8 +12,8 @@
 #include "../instrument/Experiment.h"
 #include "../instrument/Sample.h"
 #include "../mathematics/ErfInv.h"
+#include "../mathematics/MathematicsTypes.h"
 #include "../utils/ProgressHandler.h"
-#include "../utils/Types.h"
 
 namespace nsx {
 

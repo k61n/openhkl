@@ -225,7 +225,7 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             break;
             // Case of Mask mode
         case MASK:
-            mask = new MaskGraphicsItem(_currentData, new nsx::AABB<double, 3>);
+            mask = new MaskGraphicsItem(_currentData, new nsx::AABB);
             mask->setFrom(event->lastScenePos());
             mask->setTo(event->lastScenePos());
             addItem(mask);
