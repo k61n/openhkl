@@ -3,6 +3,8 @@
 
 #include <functional>
 #include <memory>
+#include <unordered_map>
+#include <utility>
 #include <vector>
 
 #include <Eigen/Dense>
@@ -33,6 +35,11 @@ using sptrIShape    = std::shared_ptr<IShape>;
 using sptrEllipsoid = std::shared_ptr<Ellipsoid>;
 
 using TrianglesList = std::vector<Triangle>;
+
+using EquivalencePair = std::pair<int,int>;
+using EquivalenceList = std::vector<EquivalencePair>;
+
+using Blob3DUMap = std::unordered_map<int,Blob3D>;
 
 enum class Direction {CW,CCW};
 

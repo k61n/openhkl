@@ -34,7 +34,6 @@
 #include <iterator>
 #include <map>
 #include <queue>
-#include <unordered_map>
 #include <vector>
 #include <stdexcept>
 
@@ -49,13 +48,6 @@
 
 namespace nsx {
 
-typedef std::map<int,int> imap;
-typedef std::pair<int,int> ipair;
-typedef std::vector<int> vints;
-typedef std::vector<ipair> vipairs;
-typedef std::unordered_map<int,Blob2D> blob2DCollection;
-typedef std::unordered_map<int,Blob3D> blob3DCollection;
-
 /* Class used for blob-finding, which is the first step of peak-finding.
  * The use of IFrameIterator allows for custom iterators, e.g. which work multi-threaded.
  * Since blob-finding may take some time on large data sets, ProgressHandler is used to give feedback to the GUI.
@@ -67,17 +59,17 @@ public:
 
     BlobFinder(sptrDataSet data);
 
-    blob3DCollection find(unsigned int begin, unsigned int end);
+    Blob3DUMap find(unsigned int begin, unsigned int end);
 
-    void findBlobs(std::unordered_map<int,Blob3D>& blobs, vipairs& equivalences, unsigned int begin, unsigned int end);
+    void findBlobs(std::unordered_map<int,Blob3D>& blobs, EquivalenceList& equivalences, unsigned int begin, unsigned int end);
 
-    static void registerEquivalence(int a, int b, vipairs& equivalences);
+    static void registerEquivalence(int a, int b, EquivalenceList& equivalences);
 
-    static bool sortEquivalences(const ipair& pa, const ipair& pb);
+    static bool sortEquivalences(const std::pair<int,int>& pa, const std::pair<int,int>& pb);
 
-    static imap removeDuplicates(vipairs& equivalences);
+    static std::map<int,int> removeDuplicates(EquivalenceList& equivalences);
 
-    static void reassignEquivalences(imap& equivalences);
+    static void reassignEquivalences(std::map<int,int>& equivalences);
 
     //! sets progress handler callback function
     void setProgressHandler(sptrProgressHandler handler);
@@ -94,12 +86,12 @@ public:
 
     void setRelative(bool isRelative);
 
-    void findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& equivalences) const;
+    void findCollisions(std::unordered_map<int,Blob3D>& blobs, EquivalenceList& equivalences) const;
 
     //! Sets the filter, which allows for more sophisticated blob-finding
     void setFilter(FilterCallback callback);
 
-    void mergeBlobs(std::unordered_map<int,Blob3D>& blobs, vipairs& equivalences) const;
+    void mergeBlobs(std::unordered_map<int,Blob3D>& blobs, EquivalenceList& equivalences) const;
 
 
     void eliminateBlobs(std::unordered_map<int,Blob3D>& blobs) const;

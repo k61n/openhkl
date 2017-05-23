@@ -5,6 +5,7 @@
 #include "../data/IFrameIterator.h"
 #include "../data/PeakFinder.h"
 #include "../geometry/BlobFinder.h"
+#include "../geometry/GeometryTypes.h"
 #include "../imaging/Convolver.h"
 #include "../imaging/ConvolutionKernel.h"
 #include "../instrument/Diffractometer.h"
@@ -49,7 +50,7 @@ bool PeakFinder::find(DataList numors)
         }
 
         // Finding peaks
-        blob3DCollection blobs;
+        Blob3DUMap blobs;
 
         try {
             BlobFinder blob_finder(numor);
