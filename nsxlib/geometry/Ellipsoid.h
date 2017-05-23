@@ -115,4 +115,6 @@ bool collideEllipsoidEllipsoid(const Ellipsoid&, const Ellipsoid&);
 bool collideEllipsoidOBB(const Ellipsoid&, const OBB&);
 bool collideEllipsoidSphere(const Ellipsoid&, const Sphere&);
 
+} // end namespace nsx
+
 #endif // NSXLIB_ELLIPSOID_H

@@ -1,4 +1,4 @@
-#include <IShape.h>
+#include "../geometry/IShape.h"
 
 namespace nsx {
 
@@ -67,7 +67,7 @@ bool IShape::intercept(const IShape& other) const
     return true;
 }
 
-void IShape::setBounds(const vector& lb, const vector& ub)
+void IShape::setBounds(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub)
 {
     for (unsigned int i=0;i<3;++i) {
         if (lb(i)>ub(i))
@@ -77,7 +77,7 @@ void IShape::setBounds(const vector& lb, const vector& ub)
     _upperBound = ub;
 }
 
-void IShape::setLower(const vector& lb)
+void IShape::setLower(const Eigen::Vector3d& lb)
 {
     for (unsigned int i=0;i<3;++i) {
         if (lb(i)>_upperBound(i))
@@ -86,7 +86,7 @@ void IShape::setLower(const vector& lb)
     _lowerBound = lb;
 }
 
-void IShape::setUpper(const vector& ub)
+void IShape::setUpper(const Eigen::Vector3d& ub)
 {
     for (unsigned int i=0;i<3;++i) {
         if (_lowerBound(i)>ub(i))
@@ -183,13 +183,13 @@ std::ostream& IShape::printSelf(std::ostream& os)
       return os;
 }
 
-void IShape::translateAABB(const vector& t)
+void IShape::translateAABB(const Eigen::Vector3d& t)
 {
     _lowerBound+=t;
     _upperBound+=t;
 }
 
-void IShape::scaleAABB(const vector& s)
+void IShape::scaleAABB(const Eigen::Vector3d& s)
 {
     Eigen::Vector3d center=IShape::getAABBCenter();
     _lowerBound=center+(_lowerBound-center).cwiseProduct(s);

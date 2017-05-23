@@ -47,8 +47,6 @@
 
 namespace nsx {
 
-using Ellipsoid3D = Ellipsoid<double, 3>;
-
 PeakCalc::PeakCalc(double h,double k,double l, double x,double y, double frame):
     _h(h),_k(k),_l(l),_x(x),_y(y),_frame(frame)
 {
@@ -70,14 +68,14 @@ sptrPeak3D PeakCalc::averagePeaks(const Octree& tree, double distance, double mi
     Eigen::Vector3d vals = {val, val, val};
     Eigen::Matrix3d vects = Eigen::Matrix3d::Identity();
 
-    Ellipsoid3D search_shape = {center, vals, vects};
+    Ellipsoid search_shape = {center, vals, vects};
     auto&& neighbors = tree.getCollisions(search_shape);
 
     unsigned int num_neighbors = 0;
     peak_shape.setZero();
 
     for(auto&& p: neighbors) {
-        const Ellipsoid3D* ell_peak = dynamic_cast<const Ellipsoid3D*>(p);
+        const Ellipsoid* ell_peak = dynamic_cast<const Ellipsoid*>(p);
 
         if (ell_peak == nullptr) {
             continue;
@@ -104,7 +102,7 @@ sptrPeak3D PeakCalc::averagePeaks(const Octree& tree, double distance, double mi
         }
     }
 
-    peak->setShape(Ellipsoid3D(center, vals, solver.eigenvectors()));
+    peak->setShape(Ellipsoid(center, vals, solver.eigenvectors()));
     return peak;
 }
 

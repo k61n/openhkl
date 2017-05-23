@@ -31,6 +31,7 @@
 #include "../crystal/Intensity.h"
 #include "../crystal/PeakIntegrator.h"
 #include "../data/DataSet.h"
+#include "../geometry/Ellipsoid.h"
 
 namespace nsx {
 
@@ -239,29 +240,8 @@ void PeakIntegrator::end()
     // note: this "background" simply refers to anything in the AABB but NOT in the peak
     _projectionBkg=_projection-_projectionPeak;
 
-    // debugging
-//    std::cout << "bkg_1 " << bkg_1.sum() << std::endl;
-//    std::cout << "bkg_2 " << bkg_2.sum() << std::endl;
-//    std::cout << "I_1   " << _projectionPeak.sum() << std::endl;
-//    std::cout << "I_2   " << projectionPeak2.sum() << std::endl;
-
     double b1 = bkg_1.sum();
     double b2 = bkg_2.sum();
-
-    // still testing
-//    _projectionPeak = projectionPeak2;
-//    _projectionBkg = bkg_2;
-//    auto total_counts = (_countsBkg + _countsPeak).array();
-//    _projection = (_projectionPeak + _projectionBkg).array();
-
-//    for (auto i = 0; i < _projection.size(); ++i) {
-//        if (total_counts(i) > 1e-3) {
-//            _projection(i) = _projection(i) / total_counts(i) * (_dx*_dy);
-//        }
-//        else {
-//            _projection(i) = 0;
-//        }
-//    }
 
     // update blob
     for (unsigned int idx = _data_start; idx <= _data_end; ++idx) {
@@ -331,7 +311,7 @@ PeakIntegrator::MaybeEllipsoid PeakIntegrator::getBlobShape(double confidence) c
         Eigen::Vector3d center, eigenvalues;
         Eigen::Matrix3d eigenvectors;
         _blob.toEllipsoid(confidence, center, eigenvalues, eigenvectors);
-        return {Ellipsoid3D(center, eigenvalues, eigenvectors)};
+        return {Ellipsoid(center, eigenvalues, eigenvectors)};
     }
     catch(...) {
         // return 'nothing'

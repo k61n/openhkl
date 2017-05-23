@@ -56,14 +56,6 @@ typedef std::vector<ipair> vipairs;
 typedef std::unordered_map<int,Blob2D> blob2DCollection;
 typedef std::unordered_map<int,Blob3D> blob3DCollection;
 
-typedef Ellipsoid<double,2> Ellipsoid2D;
-typedef Ellipsoid<double,3> Ellipsoid3D;
-typedef IShape<double,2> IShape2D;
-typedef IShape<double,3> IShape3D;
-
-typedef std::unordered_map<const IShape2D*,int> shape2Dmap;
-typedef std::unordered_map<const IShape3D*,int> shape3Dmap;
-
 /* Class used for blob-finding, which is the first step of peak-finding.
  * The use of IFrameIterator allows for custom iterators, e.g. which work multi-threaded.
  * Since blob-finding may take some time on large data sets, ProgressHandler is used to give feedback to the GUI.

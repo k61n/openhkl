@@ -12,7 +12,7 @@
 #include <vector>
 
 #include "../data/DataTypes.h"
-#include "../geometry/Ellipsoid.h"
+#include "../geometry/GeometryTypes.h"
 #include "../geometry/ConvexHull.h"
 #include "../instrument/InstrumentTypes.h"
 
@@ -44,7 +44,7 @@ private:
     double _mu;
 };
 
-double ellipsoids_overlap(const Ellipsoid<double,3>& ell1,const Ellipsoid<double,3>& ell2);
+double ellipsoids_overlap(const Ellipsoid& ell1,const Ellipsoid& ell2);
 
 } // end namespace nsx
 

@@ -43,8 +43,7 @@
 #include "../data/DataSet.h"
 #include "../data/IFrameIterator.h"
 #include "../geometry/Blob3D.h"
-#include "../geometry/IShape.h"
-#include "../geometry/Ellipsoid.h"
+#include "../geometry/GeometryTypes.h"
 #include "../instrument/ComponentState.h"
 #include "../instrument/InstrumentState.h"
 #include "../instrument/DetectorEvent.h"
@@ -76,7 +75,7 @@ Peak3D::Peak3D(sptrDataSet data):
     linkData(data);
 }
 
-Peak3D::Peak3D(sptrDataSet data, const Ellipsoid3D &shape):
+Peak3D::Peak3D(sptrDataSet data, const Ellipsoid &shape):
     Peak3D(data)
 {
     setShape(shape);
@@ -153,7 +152,7 @@ Eigen::RowVector3d Peak3D::getMillerIndices() const
     return hkld;
 }
 
-void Peak3D::setShape(const Ellipsoid3D& peak)
+void Peak3D::setShape(const Ellipsoid& peak)
 {
     _shape = peak;
     auto data = getData();

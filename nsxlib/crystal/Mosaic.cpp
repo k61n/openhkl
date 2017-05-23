@@ -59,7 +59,7 @@ bool intersect(double p0, double p1, double p2, double u0, double u1, double u2,
     return (t1>0 && t2>0);
 }
 
-double ellipsoids_overlap(const Ellipsoid<double,3>& ell1,const Ellipsoid<double,3>& ell2)
+double ellipsoids_overlap(const Ellipsoid& ell1,const Ellipsoid& ell2)
 {
     const Eigen::Vector3d& lb1 = ell1.getLower();
     const Eigen::Vector3d& ub1 = ell1.getUpper();
@@ -328,7 +328,7 @@ bool Mosaic::run(std::vector<std::shared_ptr<DataSet>> datas, unsigned int n, do
         Eigen::Vector3d eigenvalues;
         Eigen::Matrix3d eigenvectors;
         blob.toEllipsoid(0.997,center,eigenvalues,eigenvectors);
-        Ellipsoid<double,3> ellmc(center,eigenvalues,eigenvectors);
+        Ellipsoid ellmc(center,eigenvalues,eigenvectors);
 
         // d->readInMemory();
         std::vector<int*> temp(d->getNFrames());
@@ -356,10 +356,8 @@ bool Mosaic::run(std::vector<std::shared_ptr<DataSet>> datas, unsigned int n, do
             Eigen::Vector3d eigenvalues1;
             Eigen::Matrix3d eigenvectors1;
             p.second.toEllipsoid(0.997,center1,eigenvalues1,eigenvectors1);
-            Ellipsoid<double,3> ellexp(center1,eigenvalues1,eigenvectors1);
+            Ellipsoid ellexp(center1,eigenvalues1,eigenvectors1);
             ellexp.translate(center-center1);
-//    		std::cout<<eigenvectors<<std::endl;
-//    		std::cout<<eigenvectors1<<std::endl;
             std::cout<<ellexp.getAABBExtents()<<std::endl;
             std::cout<<ellmc.getAABBExtents()<<std::endl;
             std::cout<<"exp = "<<4.0*M_PI*ellexp.getExtents().prod()/3.0<<std::endl;

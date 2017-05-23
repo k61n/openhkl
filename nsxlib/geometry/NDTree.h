@@ -67,7 +67,7 @@ constexpr int getPow (int factor)
 template<typename T, unsigned int D> class NDTreeIterator;
 
 template<typename T, unsigned int D>
-class NDTree : public AABB<T,D> {
+class NDTree : public AABB {
 public:
 
     //! The NDTree iterator class is made friend with NDTree in order to access some of its private data
@@ -81,13 +81,8 @@ public:
     typedef T * pointer;
     typedef T & reference;
 
-    using HomVector = typename IShape<T,D>::HomVector;
-
-    // ! A typedef for 1D vector
-    typedef Eigen::Matrix<T,D,1> vector;
-
     //! Pair of AABB*
-    typedef typename std::pair<const IShape<T,D>*, const IShape<T,D>* > collision_pair;
+    typedef typename std::pair<const IShape*, const IShape* > collision_pair;
 
     //! Move constructor
     NDTree(NDTree<T,D>&& other);
@@ -99,7 +94,7 @@ public:
     NDTree<T,D>& operator=(const NDTree<T,D>& other) = delete;
 
     //! Constructor from two Eigen3 vectors, throw invalid_argument if lb < ub
-    NDTree(const vector& lb, const vector& ub);
+    NDTree(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub);
 
     //! Constructor from two initializer lists, throw invalid_argument if lb< ub
     NDTree(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub);
@@ -114,7 +109,7 @@ public:
      * 2^D sub-NDTree, unless _MAX_DEPTH is reached, in which case data will simply
      * be added to this leaf.
      */
-    void addData(const IShape<T,D>* aabb);
+    void addData(const IShape* aabb);
 
     //! Check whether the node has some children
     bool hasChildren() const;
@@ -136,22 +131,22 @@ public:
     std::set<collision_pair> getCollisions() const;
 
     //! Return collisions with a given shape
-    std::set<const IShape<T, D>*> getCollisions(const IShape<T, D>& given) const;
+    std::set<const IShape*> getCollisions(const IShape& given) const;
 
     //! Return true if the point is contained in any object of the octree
     bool isInsideObject(const HomVector& vector);
 
     //! Get the voxels of the tree
-    void getVoxels(std::vector<AABB<T,D>* >& voxels);
+    void getVoxels(std::vector<AABB* >& voxels);
 
     //! Remove a data from the NDTree
-    void removeData(const IShape<T,D>* data);
+    void removeData(const IShape* data);
 
     iterator begin() const;
 
     iterator end() const;
 
-    const std::vector<const IShape<T,D>*>& getData() const {return _data;}
+    const std::vector<const IShape*>& getData() const {return _data;}
 
     NDTree(const NDTree* parent, unsigned int i);
 
@@ -192,7 +187,7 @@ private:
     // NDTree<T,D>* _children[getPow(D)];
 
     //! Vector of data object in this leaf
-    std::vector<const IShape<T,D>*> _data;
+    std::vector<const IShape*> _data;
 
     //! Depth of this branch with respect to root node.
     unsigned int _depth;
@@ -241,15 +236,15 @@ void NDTree<T,D>::nullifyChildren()
 
 template<typename T, unsigned int D>
 NDTree<T,D>::NDTree():
-    AABB<T,D>(), _depth(0), _parent(nullptr)//, _right(nullptr)
+    AABB(), _depth(0), _parent(nullptr)//, _right(nullptr)
 {
     nullifyChildren();
     //_data.reserve(_MAX_STORAGE);
 }
 
 template<typename T, unsigned int D>
-NDTree<T,D>::NDTree(const vector& lb, const vector& ub):
-    AABB<T,D>(lb,ub), _depth(0), _parent(nullptr)//, _right(nullptr)
+NDTree<T,D>::NDTree(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub):
+    AABB(lb,ub), _depth(0), _parent(nullptr)//, _right(nullptr)
 {
     nullifyChildren();
     //_data.reserve(_MAX_STORAGE);
@@ -257,7 +252,7 @@ NDTree<T,D>::NDTree(const vector& lb, const vector& ub):
 
 template<typename T, unsigned int D>
 NDTree<T,D>::NDTree(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub):
-    AABB<T,D>(lb,ub), _depth(0), _parent(nullptr)//, _right(nullptr)
+    AABB(lb,ub), _depth(0), _parent(nullptr)//, _right(nullptr)
 {
     nullifyChildren();
     //_data.reserve(_MAX_STORAGE);
@@ -265,21 +260,21 @@ NDTree<T,D>::NDTree(const std::initializer_list<T>& lb, const std::initializer_l
 
 template<typename T, unsigned int D>
 NDTree<T,D>::NDTree(const NDTree<T,D>* parent, unsigned int sector):
-    AABB<T,D>(), _depth(parent->_depth+1), _parent(parent), _idx(sector),
+    AABB(), _depth(parent->_depth+1), _parent(parent), _idx(sector),
     _MAX_DEPTH(parent->_MAX_DEPTH),
     _MAX_STORAGE(parent->_MAX_STORAGE)
 {
     nullifyChildren();
 
     // Calculate the center of the current branch
-    vector center = parent->getAABBCenter();
+    Eigen::Vector3d center = parent->getAABBCenter();
 
     // The numbering of sub-voxels is encoded into bits of an int a follows:
     // ....... | dim[2] | dim[1] | dim[0]
     for (unsigned int i=0; i<D; ++i) {
         bool b = (sector & _POWERS[i]);
-        this->AABB<T,D>::_lowerBound(i) = (b ? center[i] : parent->AABB<T,D>::_lowerBound(i));
-        this->AABB<T,D>::_upperBound(i) = (b ? parent->AABB<T,D>::_upperBound(i) : center(i));
+        this->AABB::_lowerBound(i) = (b ? center[i] : parent->AABB::_lowerBound(i));
+        this->AABB::_upperBound(i) = (b ? parent->AABB::_upperBound(i) : center(i));
     }
 }
 
@@ -289,7 +284,7 @@ NDTree<T,D>::~NDTree()
 }
 
 template<typename T, unsigned int D>
-void NDTree<T,D>::addData(const IShape<T,D>* shape)
+void NDTree<T,D>::addData(const IShape* shape)
 {
     // AABB does not overlap with this branch
     if (!this->intercept(*shape)) {
@@ -350,10 +345,10 @@ std::set<typename NDTree<T,D>::collision_pair> NDTree<T,D>::getCollisions() cons
 }
 
 template<typename T, unsigned int D>
-std::set<const IShape<T, D>*> NDTree<T,D>::getCollisions(const IShape<T, D>& given) const
+std::set<const IShape*> NDTree<T,D>::getCollisions(const IShape& given) const
 {
     using ndtree = NDTree<T, D>;
-    using collision_set = std::set<const IShape<double, 3>*>;
+    using collision_set = std::set<const IShape*>;
     collision_set collisions;
 
     std::function<void(const ndtree*, collision_set&)> recursiveCollisions;
@@ -415,7 +410,7 @@ bool NDTree<T,D>::isInsideObject(const HomVector& vector)
 }
 
 template<typename T, unsigned int D>
-void NDTree<T,D>::getVoxels(std::vector<AABB<T,D>* >& voxels)
+void NDTree<T,D>::getVoxels(std::vector<AABB* >& voxels)
 {
     voxels.push_back(this);
     if (hasChildren()) {
@@ -441,7 +436,7 @@ void NDTree<T,D>::printSelf(std::ostream& os) const
 }
 
 template<typename T, unsigned int D>
-void NDTree<T,D>::removeData(const IShape<T,D>* data)
+void NDTree<T,D>::removeData(const IShape* data)
 {
     if (hasData()) {
         auto it = std::find(_data.begin(), _data.end(), data);

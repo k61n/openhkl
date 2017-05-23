@@ -4,6 +4,10 @@
 
 #include <Eigen/Geometry>
 
+#include "../geometry/Ellipsoid.h"
+#include "../geometry/IShape.h"
+#include "../geometry/ShapeUnion.h"
+
 namespace nsx {
 
 void ShapeUnion::addShape(const IShape& shape)

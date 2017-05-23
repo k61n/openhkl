@@ -135,7 +135,7 @@ bool PeakFinder::find(DataList numors)
             Eigen::Matrix3d eigenvectors;
 
             blob.second.toEllipsoid(nsx::getConfidence(1.0), center, eigenvalues, eigenvectors);
-            auto shape = Ellipsoid3D(center, eigenvalues, eigenvectors);
+            auto shape = Ellipsoid(center, eigenvalues, eigenvectors);
 
             auto p = sptrPeak3D(new Peak3D(numor, shape));
             const auto extents = p->getShape().getAABBExtents();

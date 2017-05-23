@@ -82,7 +82,7 @@ HomMatrix Sphere::getInverseTransformation() const
 
 bool Sphere::isInside(const HomVector& point) const
 {
-    Eigen::Vector3d diff = point.segment(0,D) - _center;
+    Eigen::Vector3d diff = point.segment(0,3) - _center;
     return (diff.squaredNorm() < (_radius*_radius));
 }
 
@@ -138,7 +138,7 @@ bool collideSphereAABB(const Sphere& sphere, const AABB& aabb)
 bool collideSphereSphere(const Sphere& a, const Sphere& b)
 {
     Eigen::Vector3d diff=b.getCenter()-a.getCenter();
-    T sumRadii=a.getRadius()+b.getRadius();
+    double sumRadii=a.getRadius()+b.getRadius();
     return (diff.squaredNorm()<(sumRadii*sumRadii));
 }
 

@@ -386,6 +386,7 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
         _progressHandler->setProgress(0);
     }
 
+    using shape3Dmap = std::unordered_map<IShape*,int>;
     // Determine the AABB of the blobs
     shape3Dmap boxes;
     boxes.reserve(blobs.size());
@@ -419,7 +420,7 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
             continue;
         }
 
-        auto ellipse = new Ellipsoid3D(center,extents,axis);
+        auto ellipse = new Ellipsoid(center,extents,axis);
         boxes.insert(shape3Dmap::value_type(ellipse, it->first));
         it++;
 

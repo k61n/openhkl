@@ -555,8 +555,6 @@ double DataSet::getBackgroundLevel(const sptrProgressHandler& progress)
 
 void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_shape, const sptrProgressHandler& handler)
 {
-    using Ellipsoid3D = Ellipsoid<double, 3>;
-
     if (handler) {
         handler->setStatus(("Integrating " + std::to_string(getPeaks().size()) + " peaks...").c_str());
         handler->setProgress(0);
@@ -572,7 +570,7 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
 
     peak_list.reserve(num_peaks);
 
-    auto getCovar = [](const Ellipsoid3D& ell) -> Eigen::Matrix3d {
+    auto getCovar = [](const Ellipsoid& ell) -> Eigen::Matrix3d {
         auto&& rs = ell.getRSinv();
         return rs.transpose()*rs;
     };
