@@ -8,6 +8,7 @@
 #include <QWidget>
 
 #include <nsxlib/geometry/ConvexHull.h>
+#include <nsxlib/geometry/Triangle.h>
 #include <nsxlib/utils/Units.h>
 
 #include "CalibrateDistanceDialog.h"
@@ -17,7 +18,7 @@
 #include "PinItem.h"
 #include "RulerItem.h"
 
-CrystalScene::CrystalScene(nsx::ConvexHull<double>* hull, QWidget *parent) :
+CrystalScene::CrystalScene(nsx::ConvexHull* hull, QWidget *parent) :
     QGraphicsScene(parent), pixmapitem(0),_ruler(0),_pin(0),_hull(hull),_text(nullptr)
 {
     distance=1.0;

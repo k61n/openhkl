@@ -14,7 +14,6 @@
 
 BOOST_AUTO_TEST_CASE(Test_MCAbsorption)
 {
-    using CHullDouble = nsx::ConvexHull<double>;
     using sptrMaterial = std::shared_ptr<nsx::Material>;
 
     using Eigen::Matrix3d;
@@ -24,7 +23,7 @@ BOOST_AUTO_TEST_CASE(Test_MCAbsorption)
     sptrMaterial helium(new nsx::Material("He[3]"));
 
     // Create a cubic convex hull
-    CHullDouble chull;
+    nsx::ConvexHull chull;
     chull.addVertex(Vector3d( 0, 0, 0));
     chull.addVertex(Vector3d( 1, 0, 0));
     chull.addVertex(Vector3d( 0, 1, 0));

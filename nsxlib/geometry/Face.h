@@ -35,22 +35,14 @@
 
 #include <Eigen/Dense>
 
-#include "Edge.h"
+#include "../geometry/GeometryTypes.h"
 
 namespace nsx {
-
-// Forward declarations
-template <typename T>
-class Vertex;
-
-template <typename T>
-class Edge;
 
 /* !
  * \brief Class Face.
  * This class implements the Face object used in the incremental convex hull algorithm.
  */
-template <typename T>
 class Face {
 
 public:
@@ -62,7 +54,7 @@ public:
 	Face(const Face& other)=delete;
 
 	//! Destructor
-	~Face();
+	~Face()=default;
 
 	//! Assignment operator
 	Face& operator=(const Face& other)=delete;
@@ -70,7 +62,7 @@ public:
 	//! Returns the int signed volume of the tetrahedron formed by this Face and a vertex.
 	//! It is equal respectively to 1 and -1  if the vertex is on the negative or positive side of this Face
 	//! with the positive side determined by the right hand rule. It is equal to 0 if the vertice is within the face
-	int volumeSign(Vertex<T>* v) const;
+	int volumeSign(Vertex* v) const;
 
 	//! Returns the volume of the tetrahedron formed by this Face and any point.
 	double volume(const Eigen::Vector3d& pos) const;
@@ -80,73 +72,14 @@ public:
 
 public:
 	//! The three pointer to the edges of this Face
-	std::array<Edge<T>*,3> _edges;
+	std::array<Edge*,3> _edges;
 	//! The three pointers to the vertices of this Face
-	std::array<Vertex<T>*,3> _vertices;
+	std::array<Vertex*,3> _vertices;
 	//! Indicates whether or not this Face is visible
 	bool _visible;
 };
 
-template <typename T>
-Face<T>::Face() : _edges(), _vertices(), _visible(false)
-{
-	_edges.fill(nullptr);
-	_vertices.fill(nullptr);
-}
-
-template <typename T>
-Face<T>::~Face()
-{
-}
-
-template <typename T>
-double Face<T>::volume(const Eigen::Vector3d& pos) const
-{
-	Eigen::Matrix<T,3,3> mat;
-
-	mat.row(0)=_vertices[0]->_coords - pos;
-	mat.row(1)=_vertices[1]->_coords - pos;
-	mat.row(2)=_vertices[2]->_coords - pos;
-
-	T det=mat.determinant();
-
-	return std::abs(det)/6.0;
-}
-
-template <typename T>
-int Face<T>::volumeSign(Vertex<T>* v) const
-{
-	Eigen::Matrix<T,3,3> mat;
-
-	mat.row(0)=_vertices[0]->_coords - v->_coords;
-	mat.row(1)=_vertices[1]->_coords - v->_coords;
-	mat.row(2)=_vertices[2]->_coords - v->_coords;
-
-	T det=mat.determinant();
-
-	if (std::abs(det)<1.0e-9)
-		return 0;
-	else
-		return (det > 0) ? 1 : -1;
-}
-
-template<typename T>
-void Face<T>::print(std::ostream& os) const
-{
-	os<<"Face:"<<std::endl;
-	for (auto it=_edges.begin();it!=_edges.end();++it)
-		if (*it)
-			os<<**it;
-		else
-			os<<" NULL ";
-}
-
-template<typename T>
-std::ostream& operator<<(std::ostream& os, const Face<T>& face)
-{
-	face.print(os);
-	return os;
-}
+std::ostream& operator<<(std::ostream& os, const Face& face);
 
 } // end namespace nsx
 

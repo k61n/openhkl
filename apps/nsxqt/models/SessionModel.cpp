@@ -112,9 +112,6 @@
 #include "ui_MainWindow.h"
 #include "ui_ScaleDialog.h"
 
-using Octree = nsx::NDTree<double, 3>;
-using Ellipsoid3D = nsx::Ellipsoid<double, 3>;
-
 SessionModel::SessionModel()
 {
     connect(this,SIGNAL(itemChanged(QStandardItem*)),this,SLOT(onItemChanged(QStandardItem*)));

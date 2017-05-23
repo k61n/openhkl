@@ -23,6 +23,7 @@
 #include <nsxlib/crystal/SpaceGroupSymbols.h>
 #include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/data/IFrameIterator.h>
+#include <nsxlib/data/PeakFinder.h>
 #include <nsxlib/geometry/AABB.h>
 #include <nsxlib/geometry/Basis.h>
 #include <nsxlib/geometry/BlobFinder.h>
@@ -32,10 +33,9 @@
 #include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/instrument/Sample.h>
 #include <nsxlib/instrument/Source.h>
-#include <nsxlib/data/PeakFinder.h>
+#include <nsxlib/mathematics/MathematicsTypes.h>
 #include <nsxlib/utils/ProgressHandler.h>
 #include <nsxlib/utils/Path.h>
-#include <nsxlib/utils/Types.h>
 #include <nsxlib/utils/Units.h>
 
 #include "absorption/AbsorptionWidget.h"

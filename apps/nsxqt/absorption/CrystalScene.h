@@ -6,16 +6,11 @@
 #include <QPixmap>
 #include <QString>
 
-#include <nsxlib/geometry/ConvexHull.h>
+#include <nsxlib/geometry/GeometryTypes.h>
 
 class QGraphicsPixmapItem;
 class QGraphicsTextItem;
 class QWidget;
-
-namespace {
-template <typename D>
-class ConvexHull;
-}
 
 class CalibrateDistanceDialog;
 class CrystalNodeItem;
@@ -36,7 +31,7 @@ public:
     };
 
     //! Constructors
-    CrystalScene(nsx::ConvexHull<double>* hull,QWidget *parent = 0);
+    CrystalScene(nsx::ConvexHull* hull,QWidget *parent = 0);
     ~CrystalScene();
     //! Mouse interactions
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
@@ -80,7 +75,7 @@ private:
     CrystalNodeItem* _current;
     PinItem* _pin;
     bool _pinCreated;
-    nsx::ConvexHull<double>* _hull;
+    nsx::ConvexHull* _hull;
     QPixmap _pix;
     QGraphicsTextItem* _text;
 };

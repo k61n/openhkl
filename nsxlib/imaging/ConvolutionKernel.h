@@ -31,18 +31,15 @@
 #ifndef NSXLIB_CONVOLUTIONKERNEL_H
 #define NSXLIB_CONVOLUTIONKERNEL_H
 
-#include <map>
-#include <stdexcept>
-#include <string>
 #include <ostream>
-
+#include <stdexcept>
 #include <string>
 #include <map>
 
 #include <Eigen/Dense>
 
 #include "Convolver.h"
-#include "../utils/Types.h"
+#include "../mathematics/MathematicsTypes.h"
 
 namespace nsx {
 

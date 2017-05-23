@@ -19,9 +19,7 @@ const double tolerance=1e-5;
 
 void collision_test()
 {
-    using Ellipsoid3D = Ellipsoid;
-
-    NDTree<double,3> tree({0,0,0},{100,100,100});
+    NDTree tree({0,0,0},{100,100,100});
     auto vects = Eigen::Matrix3d::Identity();
     const double radius = 0.45;
     auto vals = Eigen::Vector3d(radius, radius, radius);
@@ -29,14 +27,14 @@ void collision_test()
 
     std::set<const IShape*> test_set;
 
-    std::vector<Ellipsoid3D*> shapes;
+    std::vector<Ellipsoid*> shapes;
 
     // lattice of non-intersecting spheres
     for (int i = 1; i < 20; ++i) {
         for (int j = 1; j < 20; ++j) {
             for (int k = 1; k < 20; ++k) {
                 center = Eigen::Vector3d(i, j, k);
-                auto shape = new Ellipsoid3D(center, vals, vects);
+                auto shape = new Ellipsoid(center, vals, vects);
                 shapes.emplace_back(shape);
                 tree.addData(shape);
             }
@@ -62,7 +60,7 @@ void collision_test()
     // add some spheres which will intersect
     center = Eigen::Vector3d(1.5, 1.5, 1.5);
     vals = Eigen::Vector3d(radius, radius, radius);
-    auto shape = new Ellipsoid3D(center, vals, vects);
+    auto shape = new Ellipsoid(center, vals, vects);
 
 
     BOOST_CHECK_EQUAL(tree.getCollisions(*shape).size(), 8);
@@ -80,9 +78,7 @@ void collision_test()
 
 void split_test()
 {
-    using Ellipsoid3D = nsx::Ellipsoid;
-
-    NDTree<double,3> tree({0,0,0},{50,50,50});
+    NDTree tree({0,0,0},{50,50,50});
     tree.setMaxStorage(4);
 
     auto vects = Eigen::Matrix3d::Identity();
@@ -91,16 +87,16 @@ void split_test()
 
     std::set<const IShape*> test_set;
 
-    std::vector<Ellipsoid3D*> shapes;
+    std::vector<Ellipsoid*> shapes;
 
-    shapes.emplace_back(new Ellipsoid3D(Eigen::Vector3d(12.5, 12.5, 12.5), vals, vects));
-    shapes.emplace_back(new Ellipsoid3D(Eigen::Vector3d(12.5, 12.5, 37.5), vals, vects));
-    shapes.emplace_back(new Ellipsoid3D(Eigen::Vector3d(12.5, 37.5, 12.5), vals, vects));
-    shapes.emplace_back(new Ellipsoid3D(Eigen::Vector3d(12.5, 37.5, 37.5), vals, vects));
-    shapes.emplace_back(new Ellipsoid3D(Eigen::Vector3d(37.5, 12.5, 12.5), vals, vects));
-    shapes.emplace_back(new Ellipsoid3D(Eigen::Vector3d(37.5, 12.5, 37.5), vals, vects));
-    shapes.emplace_back(new Ellipsoid3D(Eigen::Vector3d(37.5, 37.5, 12.5), vals, vects));
-    shapes.emplace_back(new Ellipsoid3D(Eigen::Vector3d(37.5, 37.5, 37.5), vals, vects));
+    shapes.emplace_back(new Ellipsoid(Eigen::Vector3d(12.5, 12.5, 12.5), vals, vects));
+    shapes.emplace_back(new Ellipsoid(Eigen::Vector3d(12.5, 12.5, 37.5), vals, vects));
+    shapes.emplace_back(new Ellipsoid(Eigen::Vector3d(12.5, 37.5, 12.5), vals, vects));
+    shapes.emplace_back(new Ellipsoid(Eigen::Vector3d(12.5, 37.5, 37.5), vals, vects));
+    shapes.emplace_back(new Ellipsoid(Eigen::Vector3d(37.5, 12.5, 12.5), vals, vects));
+    shapes.emplace_back(new Ellipsoid(Eigen::Vector3d(37.5, 12.5, 37.5), vals, vects));
+    shapes.emplace_back(new Ellipsoid(Eigen::Vector3d(37.5, 37.5, 12.5), vals, vects));
+    shapes.emplace_back(new Ellipsoid(Eigen::Vector3d(37.5, 37.5, 37.5), vals, vects));
 
     for (auto&& shape: shapes) {
         tree.addData(shape);
@@ -140,7 +136,7 @@ BOOST_AUTO_TEST_CASE(Test_NDTree)
     unsigned int maxStorage(10);
 
     // Build up a NDTree with (0,0,0) as lower corner and (100,100,100) as upper corner
-    NDTree<double,3> tree({0,0,0},{100,100,100});
+    NDTree tree({0,0,0},{100,100,100});
     tree.setMaxStorage(maxStorage);
 
     std::uniform_real_distribution<> d1(0,50), d2(50,100);

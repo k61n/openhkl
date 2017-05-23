@@ -27,60 +27,66 @@
  *
  */
 
-#ifndef NSXLIB_VERTEX_H
-#define NSXLIB_VERTEX_H
-
-#include <ostream>
+#include <array>
 
 #include <Eigen/Dense>
 
-#include "../geometry/GeometryTypes.h"
+#include "../geometry/Edge.h"
+#include "../geometry/Face.h"
+#include "../geometry/Vertex.h"
 
 namespace nsx {
 
-class Edge;
+Face::Face() : _edges(), _vertices(), _visible(false)
+{
+	_edges.fill(nullptr);
+	_vertices.fill(nullptr);
+}
 
-/* !
- * \brief Class Vertex.
- * This class implements the Vertex object used in the incremental convex hull algorithm.
- */
-class Vertex {
+double Face::volume(const Eigen::Vector3d& pos) const
+{
+	Eigen::Matrix3d mat;
 
-public:
+	mat.row(0)=_vertices[0]->_coords - pos;
+	mat.row(1)=_vertices[1]->_coords - pos;
+	mat.row(2)=_vertices[2]->_coords - pos;
 
-	//! Default constructor
-	Vertex();
+	double det=mat.determinant();
 
-	//! Copy constructor
-	Vertex(const Vertex& other)=delete;
+	return std::abs(det)/6.0;
+}
 
-	//! Constructs a Vertex object from a vector of coordinates
-	Vertex(const Eigen::Vector3d& coords);
+int Face::volumeSign(Vertex* v) const
+{
+	Eigen::Matrix3d mat;
 
-	//! Destructor
-	~Vertex()=default;
+	mat.row(0)=_vertices[0]->_coords - v->_coords;
+	mat.row(1)=_vertices[1]->_coords - v->_coords;
+	mat.row(2)=_vertices[2]->_coords - v->_coords;
 
-	//! Assignment operator
-	Vertex& operator=(const Vertex& other)=delete;
+	double det=mat.determinant();
 
-	//! Send some informations about this Vertex on an output stream
-	void print(std::ostream& os) const;
+	if (std::abs(det)<1.0e-9)
+		return 0;
+	else
+		return (det > 0) ? 1 : -1;
+}
 
-public:
+void Face::print(std::ostream& os) const
+{
+	os<<"Face:"<<std::endl;
+	for (auto it=_edges.begin();it!=_edges.end();++it)
+		if (*it)
+			os<<**it;
+		else
+			os<<" NULL ";
+}
 
-	//! The coordinates of this Vertex
-	Eigen::Vector3d _coords;
-	//! A pointer to the incident cone edge (or nullptr)
-	Edge* _duplicate;
-	//! True if this Vertex is on the hull
-	bool _onHull;
-	//! True if the vertex has been processed
-	bool _mark;
-
-};
-
-std::ostream& operator<<(std::ostream& os, const Vertex& vertex);
+std::ostream& operator<<(std::ostream& os, const Face& face)
+{
+	face.print(os);
+	return os;
+}
 
 } // end namespace nsx
 
-#endif // NSXLIB_VERTEX_H

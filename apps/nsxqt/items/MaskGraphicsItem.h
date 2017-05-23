@@ -5,7 +5,7 @@
 #include <memory>
 
 #include <nsxlib/data/DataTypes.h>
-#include <nsxlib/geometry/AABB.h>
+#include <nsxlib/geometry/GeometryTypes.h>
 
 #include "items/CutterGraphicsItem.h"
 
@@ -21,7 +21,7 @@ class QWidget;
 class MaskGraphicsItem : public SXGraphicsItem {
 public:
     // Constructs a mask
-    MaskGraphicsItem(nsx::sptrDataSet data, nsx::AABB<double, 3>* aabb);
+    MaskGraphicsItem(nsx::sptrDataSet data, nsx::AABB* aabb);
     //! The destructor
     ~MaskGraphicsItem();
 
@@ -38,7 +38,7 @@ public:
 
     //! Returns the bounding rectangle of the mask
     QRectF boundingRect() const;
-    nsx::AABB<double,3>* getAABB();
+    nsx::AABB* getAABB();
     //! Sets the starting corner of the mask
     void setFrom(const QPointF& pos);
     //! Sets the ending corner of the mask
@@ -53,7 +53,7 @@ protected:
     //! The data on which the cutter will act upon
     nsx::sptrDataSet _data;
     //! The AABB of the peak
-    nsx::AABB<double,3>* _aabb;
+    nsx::AABB* _aabb;
     QPointF _from;
     QPointF _to;
     QGraphicsTextItem* _text;

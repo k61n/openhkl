@@ -15,8 +15,7 @@ const double tolerance=1e-9;
 //! Check that the Hull satisfies the convexity condition. This consists in
 //! checking that the signed volume between every face and every point is positive.
 //! This shows that each point is inside every face and therefore the hull is convex.
-template <typename T>
-bool CheckConvexity(const ConvexHull<T>& chull)
+bool CheckConvexity(const ConvexHull& chull)
 {
     const auto& faces=chull.getFaces();
     const auto& vertices=chull.getVertices();
@@ -34,10 +33,8 @@ bool CheckConvexity(const ConvexHull<T>& chull)
 
 BOOST_AUTO_TEST_CASE(Test_ConvexHull)
 {
-    using CHullDouble=ConvexHull<double>;
-
     // Create an empty convex hull
-    CHullDouble chull;
+    ConvexHull chull;
 
     // Checks that the hull can not be updated with 0 point to be processed
     BOOST_CHECK_THROW(chull.updateHull(),std::runtime_error);
@@ -103,7 +100,7 @@ BOOST_AUTO_TEST_CASE(Test_ConvexHull)
     BOOST_CHECK_CLOSE(oldVolume,newVolume,tolerance);
 
     // Check that the copy construction is OK
-    CHullDouble newhull(chull);
+    ConvexHull newhull(chull);
     BOOST_CHECK_EQUAL(chull.getNVertices(),newhull.getNVertices());
     BOOST_CHECK_EQUAL(chull.getNEdges(),newhull.getNEdges());
     BOOST_CHECK_EQUAL(chull.getNFaces(),newhull.getNFaces());

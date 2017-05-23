@@ -30,7 +30,7 @@ public:
 
     void setMosaicity(double mosaicity);
 
-    virtual ~Mosaic();
+    virtual ~Mosaic()=default;
 
 private:
 

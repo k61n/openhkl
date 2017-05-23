@@ -49,12 +49,12 @@ Sample& Sample::operator=(const Sample& other)
     return *this;
 }
 
-void Sample::setShape(const ConvexHull<double>& shape)
+void Sample::setShape(const ConvexHull& shape)
 {
     _sampleShape = shape;
 }
 
-ConvexHull<double>& Sample::getShape()
+ConvexHull& Sample::getShape()
 {
     return _sampleShape;
 }

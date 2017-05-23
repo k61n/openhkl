@@ -15,7 +15,7 @@
 #include "DetectorScene.h"
 #include "items/MaskGraphicsItem.h"
 
-MaskGraphicsItem::MaskGraphicsItem(nsx::sptrDataSet data, nsx::AABB<double, 3>* aabb)
+MaskGraphicsItem::MaskGraphicsItem(nsx::sptrDataSet data, nsx::AABB* aabb)
 : SXGraphicsItem(nullptr,true,true),
   _data(data),
   _aabb(aabb),
@@ -80,7 +80,7 @@ void MaskGraphicsItem::setTo(const QPointF& pos)
     updateAABB();
 }
 
-nsx::AABB<double,3>* MaskGraphicsItem::getAABB()
+nsx::AABB* MaskGraphicsItem::getAABB()
 {
     return _aabb;
 }

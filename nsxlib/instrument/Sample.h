@@ -64,10 +64,10 @@ public:
     Sample& operator=(const Sample& other);
 
     //! Set the sample shape described as a convex hull
-    void setShape(const ConvexHull<double>& shape);
+    void setShape(const ConvexHull& shape);
 
     //! Return the sample shape, described as a convex hull
-    ConvexHull<double>& getShape();
+    ConvexHull& getShape();
 
     //! Create a new crystal with Empty UnitCell, and return it
     sptrUnitCell addUnitCell();
@@ -91,7 +91,7 @@ public:
     void setMaterial(sptrMaterial material, int index);
 
 private:
-    ConvexHull<double> _sampleShape;
+    ConvexHull _sampleShape;
     //! UnitCells of all crystals associated with this sample
     UnitCellList _cells;
 };

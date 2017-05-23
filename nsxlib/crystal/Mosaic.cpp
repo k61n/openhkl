@@ -16,6 +16,8 @@
 #include "../data/MetaData.h"
 #include "../geometry/BlobFinder.h"
 #include "../geometry/Blob3D.h"
+#include "../geometry/GeometryTypes.h"
+#include "../geometry/Triangle.h"
 #include "../instrument/Detector.h"
 #include "../instrument/Diffractometer.h"
 #include "../instrument/DiffractometerStore.h"
@@ -175,7 +177,7 @@ bool Mosaic::run(std::vector<std::shared_ptr<DataSet>> datas, unsigned int n, do
         Eigen::Matrix3d umat = uc->getBusingLevyU();
 
         // The convex hull of the sample is rotated by u
-        ConvexHull<double>& hull = _sample->getShape();
+        ConvexHull& hull = _sample->getShape();
 
         Blob3D blob;
 
@@ -319,8 +321,6 @@ bool Mosaic::run(std::vector<std::shared_ptr<DataSet>> datas, unsigned int n, do
             }
         }
 
-        std::cout<<blob<<std::endl;
-
         if (blob.getComponents()==0)
             return false;
 
@@ -338,7 +338,7 @@ bool Mosaic::run(std::vector<std::shared_ptr<DataSet>> datas, unsigned int n, do
             temp[i] = const_cast<int*>(counts.data());
         }
         int median = d->getBackgroundLevel(nullptr) + 1;
-        blob3DCollection blobs;
+        Blob3DUMap blobs;
         BlobFinder finder(d);
 
         //blobs=findBlobs3D<int>(temp,d->getDiffractometer()->getDetector()->getNRows(),d->getDiffractometer()->getDetector()->getNCols(),3.0*median,30,10000,0.997,0);
@@ -370,10 +370,6 @@ bool Mosaic::run(std::vector<std::shared_ptr<DataSet>> datas, unsigned int n, do
     }
 
     return true;
-}
-
-Mosaic::~Mosaic()
-{
 }
 
 } // end namespace nsx

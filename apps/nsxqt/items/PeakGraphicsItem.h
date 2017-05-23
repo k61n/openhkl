@@ -6,6 +6,7 @@
 #include <string>
 
 #include <nsxlib/crystal/CrystalTypes.h>
+#include <nsxlib/geometry/GeometryTypes.h>
 
 #include "PlottableGraphicsItem.h"
 
@@ -38,7 +39,7 @@ private:
         double a, b, u, v, alpha;
     };
 
-    static Ellipse calculateEllipse(const nsx::IShape<double, 3>& shape, int frame);
+    static Ellipse calculateEllipse(const nsx::IShape& shape, int frame);
     static void drawEllipse(QPainter& painter, Ellipse ellipse);
 
     //! Pointer to the Peak3D object

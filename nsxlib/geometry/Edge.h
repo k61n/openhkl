@@ -32,19 +32,14 @@
 
 #include <array>
 
-#include "Vertex.h"
+#include "../geometry/GeometryTypes.h"
 
 namespace nsx {
-
-// Forward declaration
-template <typename T>
-class Face;
 
 /* !
  * \brief Class Edge.
  * This class implements the Edge object used in the incremental convex hull algorithm.
  */
-template <typename T>
 class Edge {
 public:
 
@@ -55,7 +50,7 @@ public:
 	Edge(const Edge& other)=delete;
 
 	//! Destructor
-	~Edge();
+	~Edge()=default;
 
 	//! Assignment operator
 	Edge& operator=(const Edge& other)=delete;
@@ -65,46 +60,16 @@ public:
 
 public:
 	//! The two pointers to the faces adjacent to this Edge
-	std::array<Face<T>*,2> _adjFace;
+	std::array<Face*,2> _adjFace;
 	//! The two pointers to the vertices that makes this Edge
-	std::array<Vertex<T>*,2> _endPts;
+	std::array<Vertex*,2> _endPts;
 	//! When not null indicates the new face formed by this Edge and a new vertex of the hull
-	Face<T>* _newFace;
+	Face* _newFace;
 	//! If true this Edge is marked to be deleted at the next clean up step
 	bool _delete;
 };
 
-template <typename T>
-Edge<T>::Edge() : _adjFace(), _endPts(), _newFace(nullptr), _delete(false)
-{
-	_adjFace.fill(nullptr);
-	_endPts.fill(nullptr);
-}
-
-template <typename T>
-Edge<T>::~Edge()
-{
-}
-
-template <typename T>
-void Edge<T>::print(std::ostream& os) const
-{
-	os<<"Edge: ";
-	for (auto it=_endPts.begin();it!=_endPts.end();++it)
-	{
-		if (*it)
-			os<<"     "<<**it;
-		else
-			os<<" NULL ";
-	}
-}
-
-template <typename T>
-std::ostream& operator<<(std::ostream& os, const Edge<T>& edge)
-{
-	edge.print(os);
-	return os;
-}
+std::ostream& operator<<(std::ostream& os, const Edge& edge);
 
 } // end namespace nsx
 

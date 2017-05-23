@@ -5,7 +5,8 @@
 #define NSXLIB_BASICFRAMEITERATOR_H
 
 #include "IFrameIterator.h"
-#include "../utils/Types.h"
+#include "../data/DataTypes.h"
+#include "../mathematics/MathematicsTypes.h"
 
 namespace nsx {
 

@@ -14,10 +14,10 @@
 #include <nsxlib/data/DataTypes.h>
 #include <nsxlib/data/PeakFinder.h>
 #include <nsxlib/imaging/KernelFactory.h>
-#include <nsxlib/utils/Types.h>
 #include <nsxlib/imaging/Convolver.h>
 #include <nsxlib/imaging/ImagingTypes.h>
 #include <nsxlib/imaging/ConvolutionKernel.h>
+#include <nsxlib/mathematics/MathematicsTypes.h>
 
 #include "ColorMap.h"
 #include "DialogConvolve.h"

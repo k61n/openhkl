@@ -7,7 +7,7 @@
 
 #include <nsxlib/imaging/Convolver.h>
 #include <nsxlib/imaging/DeltaKernel.h>
-#include <nsxlib/utils/Types.h>
+#include <nsxlib/mathematics/MathematicsTypes.h>
 
 // Generate a image to use for testing the Fourier transform
 nsx::RealMatrix generateImage(int rows, int cols)
