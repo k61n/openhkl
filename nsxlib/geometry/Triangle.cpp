@@ -3,7 +3,7 @@
 
 namespace nsx {
 
-Triangle::Triangle(const vector& a,const vector& b,const vector& c):_A(a),_B(b),_C(c)
+Triangle::Triangle(const Eigen::Vector3d& a,const Eigen::Vector3d& b,const Eigen::Vector3d& c):_A(a),_B(b),_C(c)
 {
   calculate();
 }
@@ -38,7 +38,7 @@ void Triangle::calculate()
 	_dot012d=dot012d/overd2d;
 }
 
-bool Triangle::rayIntersect(const vector& point,const vector& dir, double& t1) const
+bool Triangle::rayIntersect(const Eigen::Vector3d& point,const Eigen::Vector3d& dir, double& t1) const
 {
 	//Face is either flat or pointing in wrong direction.
 	double direction=_normal.dot(dir);
@@ -51,7 +51,7 @@ bool Triangle::rayIntersect(const vector& point,const vector& dir, double& t1) c
 		return false;
 
 	// Vector difference between point of intersection V and A
-	vector VA=point+t1*dir-_A;
+	Eigen::Vector3d VA=point+t1*dir-_A;
 	double dot02=VA.dot(_AB);
 	double dot12=VA.dot(_AC);
 	// Intersect triangle if uu>=0 and vv>=0 and (uu+vv)<1

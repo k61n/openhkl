@@ -31,22 +31,12 @@
 
 #include <map>
 #include <set>
-#include <string>
-#include <boost/any.hpp>
-#include <map>
 #include <stdexcept>
+#include <string>
+
+#include "../data/DataTypes.h"
 
 namespace nsx {
-
-// Maps
-typedef std::map<const char*,boost::any> hetermap;
-typedef hetermap::const_iterator heterit;
-
-// Set
-typedef std::set<std::string> keyset;
-typedef keyset::iterator keysetit;
-typedef keyset::const_iterator keysetcit;
-
 
 /*! \brief Class to store MetaData of a DataSet stored by a map of key/value pair
  *
@@ -85,14 +75,14 @@ public:
 	//@ return : Number of elements in the map
 	//std::size_t size() const;
 	//! Get all the keys available.
-	const keyset& getAllKeys() const;
+	const MetaDataKeySet& getAllKeys() const;
 	//! Get the full map of parameters
-	const hetermap& getMap() const;
+	const MetaDataMap& getMap() const;
 private:
 	//! Contains the map of all key/value pairs.
-	hetermap _map;
+	MetaDataMap _map;
 	//! Contains all available keys so far.
-	static keyset  _metakeys;
+	static MetaDataKeySet  _metakeys;
 
 };
 
@@ -101,7 +91,7 @@ void MetaData::add(const std::string& key,const _type& value)
 {
 	// First, make sure the key is already in the keyset
 	// Since this is a set, no duplicate will be found. No need to search explicitely.
-	std::pair<keysetit, bool> it=_metakeys.insert(key);
+	std::pair<MetaDataKeySet::iterator, bool> it=_metakeys.insert(key);
 
 	//  If all OK, then add the key to the map
 	const char* ptr=(*it.first).c_str();
@@ -112,12 +102,12 @@ template <typename _type>
  _type MetaData::getKey(const std::string& key) const
 {
 	// Search if this key is in the set.
-	keysetit it=_metakeys.find(key);
+	auto it=_metakeys.find(key);
 	if (it==_metakeys.end())
 		throw std::runtime_error("Could not find key :"+key+" in MetaData");
 	// Then search in the map
 	const char* ptr=(*it).c_str();
-	heterit it2=_map.find(ptr);
+	auto it2=_map.find(ptr);
 	if (it2==_map.end())
 		throw std::runtime_error("Could not find key :"+key+" in MetaData");
 	return boost::any_cast<_type>((*it2).second);

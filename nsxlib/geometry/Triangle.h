@@ -38,23 +38,22 @@ namespace nsx {
 // of intersection between lines and triangle in 3D.
 struct Triangle
 {
-	typedef Eigen::Matrix<double,3,1> vector;
 	Triangle() = delete;
-	Triangle(const vector& p1,const vector& p2,const vector& p3);
+	Triangle(const Eigen::Vector3d& p1,const Eigen::Vector3d& p2,const Eigen::Vector3d& p3);
 	~Triangle(){}
 	//! Test whether a ray generated in the xz plane and with direction y positive
 	//! hits the bounding box of this triangle. Return false if inside the box.
 	inline bool isOutsideBB(double px, double pz) const {
 		return (px<_xmin || px>_xmax || pz<_zmin || pz>_zmax);
 	}
-	bool rayIntersect(const vector& point, const vector& dir,double& t1) const;
+	bool rayIntersect(const Eigen::Vector3d& point, const Eigen::Vector3d& dir,double& t1) const;
 	void calculate();
 	//! Rotation of the face
 	void rotate(const Eigen::Matrix<double,3,3>& rotation);
 	//! Vector values of point A and vector B-A and C-A
-	vector _A,_B,_C,_AB,_AC;
+	Eigen::Vector3d _A,_B,_C,_AB,_AC;
 	//! Face normal to the plane. Pointing outside the Hull.
-	vector _normal;
+	Eigen::Vector3d _normal;
 	//! d value of the corresponding plane ax+by+cz+d=0;
 	double _d;
 	double _dot00,_dot11,_dot01;
