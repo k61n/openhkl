@@ -11,24 +11,21 @@ namespace nsx {
 class Basis;
 class Blob3D;
 
-template <typename T, unsigned int D>
-class AABB;
-
 template <typename T>
 class ConvexHull;
 
-template <typename T, unsigned int D>
-class IShape;
-
-template <typename T, unsigned int D>
+class AABB;
 class Ellipsoid;
+class IShape;
+class OBB;
+class Sphere;
 
 template <typename T, unsigned int>
 class NDTree;
 
-using AABB3D      = AABB<double,3>;
-using Ellipsoid3D = Ellipsoid<double,3>;
-using IShape3D    = IShape<double,3>;
+using HomVector   = Eigen::Matrix<double,4,1>;
+using HomMatrix   = Eigen::Matrix<double,4,4>;
+
 using Octree      = NDTree<double,3>;
 
 using RealMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
@@ -36,9 +33,11 @@ using FilterCallback = std::function<RealMatrix(const RealMatrix&)>;
 
 using covMat = Eigen::Matrix<double,9,9>;
 
-using sptrBasis  = std::shared_ptr<Basis>;
-using sptrIShape3D = std::shared_ptr<IShape3D>;
-using sptrEllipsoid3D = std::shared_ptr<Ellipsoid3D>;
+using sptrBasis     = std::shared_ptr<Basis>;
+using sptrIShape    = std::shared_ptr<IShape>;
+using sptrEllipsoid = std::shared_ptr<Ellipsoid>;
+
+enum class Direction {CW,CCW};
 
 } // end namespace nsx
 

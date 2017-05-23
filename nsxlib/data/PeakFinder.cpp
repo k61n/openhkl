@@ -125,9 +125,8 @@ bool PeakFinder::find(DataList numors)
         int count = 0;
         auto dect = numor->getDiffractometer()->getDetector();
 
-        AABB<double,3> dAABB(
-                    Eigen::Vector3d(0,0,0),
-                    Eigen::Vector3d(dect->getNCols(), dect->getNRows(), numor->getNFrames()-1)
+        AABB dAABB(Eigen::Vector3d(0,0,0),
+                   Eigen::Vector3d(dect->getNCols(), dect->getNRows(), numor->getNFrames()-1)
                     );
 
         for (auto& blob : blobs) {

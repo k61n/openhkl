@@ -155,7 +155,6 @@ Eigen::RowVector3d Peak3D::getMillerIndices() const
 
 void Peak3D::setShape(const Ellipsoid3D& peak)
 {
-    using DetectorEvent = DetectorEvent;
     _shape = peak;
     auto data = getData();
 

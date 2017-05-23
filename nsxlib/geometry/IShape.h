@@ -35,16 +35,9 @@
 
 #include <Eigen/Geometry>
 
-#include "../utils/Types.h"
+#include "../geometry/GeometryTypes.h"
 
 namespace nsx {
-
-template<typename T, unsigned int D> class AABB;
-template<typename T, unsigned int D> class Ellipsoid;
-template<typename T, unsigned int D> class OBB;
-template<typename T, unsigned int D> class Sphere;
-
-enum Direction {CW,CCW};
 
 /*! \brief Interface for Geometric Shapes in D dimensions.
  *
@@ -54,67 +47,64 @@ enum Direction {CW,CCW};
  * coded by double-dispatching.
  */
 
-template<typename T,unsigned int D>
 class IShape {
+
 public:
-    using matrix = Eigen::Matrix<T,D,D>;
-    using vector = Eigen::Matrix<T,D,1>;
-    using HomVector = Eigen::Matrix<T,D+1,1>;
 
     //! Construct an unitialized IShape
     IShape();
     //! Construct a IShape from another IShape
     IShape(const IShape& other);
     //! Construct a IShape from two Eigen vectors representing the lower and upper bound of its bounding box
-    IShape(const vector& lower, const vector& upper);
+    IShape(const Eigen::Vector3d& lower, const Eigen::Vector3d& upper);
     //! Construct a IShape from two initializer lists representing respectively its lower and upper bound
-    IShape(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub);
+    IShape(const std::initializer_list<double>& lb, const std::initializer_list<double>& ub);
     // Destructor
-    virtual ~IShape();
+    virtual ~IShape()=default;
 
     IShape& operator=(const IShape& other);
 
     //! Return a pointer to a copy of the IShape object
-    virtual IShape<T,D>* clone() const=0;
+    virtual IShape* clone() const=0;
 
     //! Double dispatching
     virtual bool collide(const IShape& rhs) const =0;
     //! Interface for AABB collisions
-    virtual bool collide(const AABB<T,D>& rhs) const =0;
+    virtual bool collide(const AABB& rhs) const =0;
     //! Interface for Ellipsoid collisions
-    virtual bool collide(const Ellipsoid<T,D>& rhs) const =0;
+    virtual bool collide(const Ellipsoid& rhs) const =0;
     //! Interface for OBB collisions
-    virtual bool collide(const OBB<T,D>& rhs) const =0;
+    virtual bool collide(const OBB& rhs) const =0;
     //! Interface for Sphere collisions
-    virtual bool collide(const Sphere<T,D>& rhs) const =0;
+    virtual bool collide(const Sphere& rhs) const =0;
 
     //! Check whether the bounding box of the shape contains the bounding box of the another shape
-    bool contains(const IShape<T,D>& other) const;
+    bool contains(const IShape& other) const;
     //! Check whether the bounding box of the shape intersects (e.g. touches or overlaps) the bounding box of another shape
     bool intercept(const IShape& other) const;
 
     //! Set the lower and upper bounds of the shape bounding box
-    void setBounds(const vector& lb, const vector& ub);
+    void setBounds(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub);
     //! Set the lower bound of the shape bounding box
-    void setLower(const vector& lb);
+    void setLower(const Eigen::Vector3d& lb);
     //! Set the upper bound of the shape bounding box
-    void setUpper(const vector& lb);
+    void setUpper(const Eigen::Vector3d& lb);
     //! Get a constant reference to the lower bound of the bounding box of the shape
-    const vector& getLower() const;
+    const Eigen::Vector3d& getLower() const;
     //! Get a constant reference to the upper bound of the bounding box of the shape
-    const vector& getUpper() const;
+    const Eigen::Vector3d& getUpper() const;
     //! Return the center of the bounding box of the shape
-    vector getAABBCenter() const;
+    Eigen::Vector3d getAABBCenter() const;
     //! Return the extends of the bounding box of the shape
-    vector getAABBExtents() const;
+    Eigen::Vector3d getAABBExtents() const;
 
     //! Returns the volume of the bounding box of the shape
-    T AABBVolume() const;
+    double AABBVolume() const;
 
     //! Check whether a given point is inside the AABB of the shape
-    bool isInsideAABB(const std::initializer_list<T>& point) const;
+    bool isInsideAABB(const std::initializer_list<double>& point) const;
     //! Check whether a given point is inside the AABB of the shape
-    bool isInsideAABB(const vector& point) const;
+    bool isInsideAABB(const Eigen::Vector3d& point) const;
     //! Check whether a given Homogeneous vector is inside the AABB of the shape
     bool isInsideAABB(const HomVector& point) const;
 
@@ -122,24 +112,24 @@ public:
     //! @param vector : Homogeneous vector representing the point (x,y,z,1);
     virtual bool isInside(const HomVector& vector) const =0;
 
-    virtual void rotate(const matrix& eigenvectors)=0;
-    virtual void scale(T value) =0;
-    virtual void translate(const vector& t) =0;
+    virtual void rotate(const Eigen::Matrix3d& eigenvectors)=0;
+    virtual void scale(double value) =0;
+    virtual void translate(const Eigen::Vector3d& t) =0;
 
-    void rotate(T angle,const vector& axis,Direction=CCW);
+    void rotate(double angle,const Eigen::Vector3d& axis,Direction direction=Direction::CCW);
     //! Translate the bounding box
-    void translateAABB(const vector&);
+    void translateAABB(const Eigen::Vector3d&);
     //! Scale by a constant factor
-    void scaleAABB(T);
+    void scaleAABB(double);
     //! Scale the bounding box
-    void scaleAABB(const vector&);
+    void scaleAABB(const Eigen::Vector3d&);
 
     //! Compute the intersection between the shape and a given ray.
     //! Return true if an intersection was found, false otherwise.
     //! If the return value is true the intersection "times" will be stored
     //! in t1 and t2 in such a way that from + t1*dir and from + t2*dir are
     //! the two intersection points between the ray and this shape.
-    virtual bool rayIntersect(const vector& from, const vector& dir, double& t1, double& t2) const=0;
+    virtual bool rayIntersect(const Eigen::Vector3d& from, const Eigen::Vector3d& dir, double& t1, double& t2) const=0;
 
     std::ostream& printSelf(std::ostream& os);
 
@@ -148,253 +138,10 @@ public:
 #endif
 protected:
     // The lower bound point
-    vector _lowerBound;
+    Eigen::Vector3d _lowerBound;
     // The upper bound point
-    vector _upperBound;
-
+    Eigen::Vector3d _upperBound;
 };
-
-template<typename T,unsigned int D>
-IShape<T,D>::IShape()
-{
-}
-
-template<typename T,unsigned int D>
-IShape<T,D>::IShape(const IShape<T,D>& other)
-{
-    _lowerBound = other._lowerBound;
-    _upperBound = other._upperBound;
-}
-
-template<typename T, unsigned int D>
-IShape<T,D>::IShape(const vector& lb, const vector& ub) : _lowerBound(lb), _upperBound(ub)
-{
-    for (unsigned int i=0;i<D;++i)
-    {
-        if (_lowerBound(i)>_upperBound(i))
-            throw std::invalid_argument("AABB: upper limit must be > lower limit");
-    }
-}
-
-template<typename T, unsigned int D>
-IShape<T,D>::IShape(const std::initializer_list<T>& lb, const std::initializer_list<T>& ub)
-{
-    auto it1 = lb.begin();
-    auto it2 = ub.begin();
-    auto lbit = _lowerBound.data();
-    auto ubit = _upperBound.data();
-
-    for(;it1!=lb.end();it1++,it2++)
-    {
-        if ((*it1)>(*it2))
-            throw std::invalid_argument("AABB: upper limit must be > lower limit");
-        *(lbit++) = *it1;
-        *(ubit++) = *it2;
-    }
-}
-
-template<typename T,unsigned int D>
-IShape<T,D>::~IShape()
-{
-}
-
-template<typename T,unsigned int D>
-IShape<T,D>& IShape<T,D>::operator=(const IShape<T,D>& other)
-{
-      if (this != &other)
-      {
-          _lowerBound = other._lowerBound;
-          _upperBound = other._upperBound;
-      }
-      return *this;
-
-}
-
-template<typename T, unsigned int D>
-bool IShape<T,D>::contains(const IShape<T,D>& other) const
-{
-    for (unsigned int i=0; i<D; ++i)
-    {
-        if (_lowerBound(i) >= other._lowerBound(i) || _upperBound(i) <= other._upperBound(i))
-            return false;
-    }
-    return true;
-}
-
-template<typename T, unsigned int D>
-bool IShape<T,D>::intercept(const IShape<T,D>& other) const
-{
-    for (unsigned int i = 0; i < D; ++i) {
-        if (_upperBound(i) < other._lowerBound(i) || _lowerBound(i) > other._upperBound(i))
-            return false;
-    }
-    return true;
-}
-
-template<typename T, unsigned int D>
-void IShape<T,D>::setBounds(const vector& lb, const vector& ub)
-{
-    for (unsigned int i=0;i<D;++i) {
-        if (lb(i)>ub(i))
-            throw std::invalid_argument("IShape: upper limit must be > lower limit");
-    }
-    _lowerBound = lb;
-    _upperBound = ub;
-}
-
-template<typename T, unsigned int D>
-void IShape<T,D>::setLower(const vector& lb)
-{
-    for (unsigned int i=0;i<D;++i) {
-        if (lb(i)>_upperBound(i))
-            throw std::invalid_argument("IShape: upper limit must be > lower limit");
-    }
-    _lowerBound = lb;
-}
-
-template<typename T, unsigned int D>
-void IShape<T,D>::setUpper(const vector& ub)
-{
-    for (unsigned int i=0;i<D;++i) {
-        if (_lowerBound(i)>ub(i))
-            throw std::invalid_argument("AABB: upper limit must be > lower limit");
-    }
-    _upperBound = ub;
-}
-
-template<typename T, unsigned int D>
-const typename IShape<T,D>::vector& IShape<T,D>::getLower() const
-{
-    return _lowerBound;
-}
-
-template<typename T, unsigned int D>
-const typename IShape<T,D>::vector& IShape<T,D>::getUpper() const
-{
-    return _upperBound;
-}
-
-template<typename T, unsigned int D>
-T IShape<T,D>::AABBVolume() const
-{
-    return (_upperBound-_lowerBound).prod();
-}
-
-template<typename T, unsigned int D>
-typename IShape<T,D>::vector IShape<T,D>::getAABBCenter() const
-{
-    vector center((_lowerBound + _upperBound)*0.5);
-    return center;
-}
-
-template<typename T, unsigned int D>
-typename IShape<T,D>::vector IShape<T,D>::getAABBExtents() const
-{
-    vector dim(_upperBound - _lowerBound);
-    return dim;
-}
-
-
-template<typename T,unsigned int D>
-bool IShape<T,D>::isInsideAABB(const std::initializer_list<T>& point) const
-{
-
-    if (point.size() != D)
-        throw("AABB: invalid point size");
-
-    auto it = point.begin();
-    auto lbit = _lowerBound.data();
-    auto ubit = _upperBound.data();
-
-    for(; it!=point.end(); it++,lbit++,ubit++) {
-        if (*it < *lbit || *it > *ubit)
-            return false;
-    }
-
-    return true;
-}
-
-template<typename T,unsigned int D>
-bool IShape<T,D>::isInsideAABB(const vector& point) const
-{
-
-    auto it = point.data();
-    auto lbit = _lowerBound.data();
-    auto ubit = _upperBound.data();
-
-    for(unsigned int i=0; i<D; i++,lbit++,ubit++,it++) {
-        if (*it < *lbit || *it > *ubit)
-            return false;
-    }
-
-    return true;
-}
-
-template<typename T,unsigned int D>
-bool IShape<T,D>::isInsideAABB(const HomVector& point) const
-{
-
-    auto it = point.data();
-    auto lbit = _lowerBound.data();
-    auto ubit = _upperBound.data();
-
-    for(unsigned int i=0; i<D; i++,lbit++,ubit++,it++) {
-        if (*it < *lbit || *it > *ubit)
-            return false;
-    }
-
-    return true;
-}
-
-template<typename T,unsigned int D>
-std::ostream& operator<<(std::ostream& os, const IShape<T,D>& shape)
-{
-    return shape.printSelf(os);
-}
-
-
-template<typename T,unsigned int D>
-std::ostream& IShape<T,D>::printSelf(std::ostream& os)
-{
-      os<<"AABB --> "<<"lower bound: "<<_lowerBound<<" , upper bound: "<<_upperBound;
-      return os;
-}
-
-template<typename T, unsigned int D>
-void IShape<T,D>::translateAABB(const vector& t)
-{
-    _lowerBound+=t;
-    _upperBound+=t;
-}
-
-template<typename T, unsigned int D>
-void IShape<T,D>::scaleAABB(const vector& s)
-{
-    vector center=IShape<T,D>::getAABBCenter();
-    _lowerBound=center+(_lowerBound-center).cwiseProduct(s);
-    _upperBound=center+(_upperBound-center).cwiseProduct(s);
-}
-
-template<typename T, unsigned int D>
-void IShape<T,D>::scaleAABB(T s)
-{
-    vector center=IShape<T,D>::getAABBCenter();
-    _lowerBound=center+(_lowerBound-center)*s;
-    _upperBound=center+(_upperBound-center)*s;
-}
-
-template<typename T,unsigned int D>
-void IShape<T,D>::rotate(T angle,const vector& axis,Direction dir)
-{
-    if (dir==CW)
-        angle*=-1;
-    // Create the quaternion representing this rotation
-    T hc=cos(0.5*angle);
-    T hs=sin(0.5*angle);
-    T norm=axis.norm();
-    Eigen::Quaterniond temp(hc,axis(0)*hs/norm,axis(1)*hs/norm,axis(2)*hs/norm);
-    rotate(temp.toRotationMatrix());
-}
 
 } // end namespace nsx
 

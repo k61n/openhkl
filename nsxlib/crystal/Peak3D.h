@@ -41,6 +41,7 @@
 #include "../crystal/PeakIntegrator.h"
 #include "../crystal/Profile.h"
 #include "../data/DataTypes.h"
+#include "../geometry/Ellipsoid.h"
 #include "../geometry/GeometryTypes.h"
 #include "../geometry/IntegrationRegion.h"
 #include "../instrument/InstrumentTypes.h"
@@ -53,7 +54,7 @@ public:
 
     Peak3D(sptrDataSet data = nullptr);
 
-    Peak3D(sptrDataSet data, const Ellipsoid3D& shape);
+    Peak3D(sptrDataSet data, const Ellipsoid& shape);
 
     //! Copy constructor
     Peak3D(const Peak3D& other);
@@ -68,7 +69,7 @@ public:
     void unlinkData();
 
     //! Set the Peak region. Peak shaped is owned after setting
-    void setShape(const Ellipsoid3D& peak);
+    void setShape(const Ellipsoid& peak);
 
     //! Get the Miller indices of the peak (double to allow integration of incommensurate peaks)
     Eigen::RowVector3d getMillerIndices() const;
@@ -100,7 +101,7 @@ public:
     Eigen::VectorXd getPeakProjection() const;
     Eigen::VectorXd getBkgProjection() const;
 
-    const Ellipsoid3D& getShape() const { return _shape; }
+    const Ellipsoid& getShape() const { return _shape; }
     const IntegrationRegion& getIntegrationRegion() const { return _integrationRegion; }
 
     //! Return the scaled intensity of the peak.
@@ -176,7 +177,7 @@ private:
     std::weak_ptr<DataSet> _data;
 
     //! Shape describing the Peak zone
-    Ellipsoid3D _shape;
+    Ellipsoid _shape;
     //! Region used to integrate the peak
     IntegrationRegion _integrationRegion;
     //! Shape describing the background zone (must fully contain peak)

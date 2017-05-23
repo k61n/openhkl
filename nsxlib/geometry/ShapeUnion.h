@@ -37,132 +37,35 @@
 
 #include <Eigen/Geometry>
 
+#include "../geometry/GeometryTypes.h"
+
 namespace nsx {
 
-template<typename T, unsigned int D>
 class ShapeUnion {
 public:
-    using shape_t = IShape<T, D>;
-
     ShapeUnion() = default;
     ShapeUnion(const ShapeUnion& un);
-    ShapeUnion(std::initializer_list<const shape_t&> lst);
+    ShapeUnion(std::initializer_list<const IShape&> lst);
     virtual ~ShapeUnion();
 
-    void addShape(const shape_t& shape);
+    void addShape(const IShape& shape);
 
-
-    virtual IShape<T,D>* clone() const;
+    virtual IShape* clone() const;
 
     //! Double dispatching
-    virtual bool collide(const IShape<T,D>& rhs) const;
+    virtual bool collide(const IShape& rhs) const;
     //! Interface for AABB collisions
-    virtual bool collide(const AABB<T,D>& rhs) const;
+    virtual bool collide(const AABB& rhs) const;
     //! Interface for Ellipsoid collisions
-    virtual bool collide(const Ellipsoid<T,D>& rhs) const;
+    virtual bool collide(const Ellipsoid& rhs) const;
     //! Interface for OBB collisions
-    virtual bool collide(const OBB<T,D>& rhs) const;
+    virtual bool collide(const OBB& rhs) const;
     //! Interface for Sphere collisions
-    virtual bool collide(const Sphere<T,D>& rhs) const;
+    virtual bool collide(const Sphere& rhs) const;
 
 private:
-    std::list<shape_t*> _shapes;
+    std::list<IShape*> _shapes;
 };
-
-// implementation
-
-template<typename T, unsigned int D>
-void ShapeUnion<T, D>::addShape(const shape_t& shape)
-{
-    _shapes.push_back(shape.clone());
-}
-
-template<typename T, unsigned int D>
-ShapeUnion<T, D>::~ShapeUnion()
-{
-    for (auto&& shape: _shapes) {
-        delete shape;
-    }
-}
-
-template<typename T, unsigned int D>
-ShapeUnion<T, D>::ShapeUnion(const ShapeUnion& other)
-{
-    for (auto&& shape: other._shapes) {
-        addShape(*shape);
-    }
-}
-
-template<typename T, unsigned int D>
-ShapeUnion<T, D>::ShapeUnion(std::initializer_list<const shape_t&> shapes)
-{
-    for (auto&& shape: shapes) {
-        addShape(shape);
-    }
-}
-
-template<typename T, unsigned int D>
-IShape<T,D>* ShapeUnion<T,D>::clone() const
-{
-#pragma warning "this is wrong!";
-    // return new ShapeUnion<T, D>(*this);
-    return nullptr;
-}
-
-template<typename T, unsigned int D>
-bool ShapeUnion<T,D>::collide(const IShape<T,D>& rhs) const
-{
-    for (auto&& shape: _shapes) {
-        if (shape->collide(rhs)) {
-            return true;
-        }
-    }
-    return false;
-}
-
-template<typename T, unsigned int D>
-bool ShapeUnion<T,D>::collide(const AABB<T,D>& rhs) const
-{
-    for (auto&& shape: _shapes) {
-        if (shape->collide(rhs)) {
-            return true;
-        }
-    }
-    return false;
-}
-
-template<typename T, unsigned int D>
-bool ShapeUnion<T,D>::collide(const Ellipsoid<T,D>& rhs) const
-{
-    for (auto&& shape: _shapes) {
-        if (shape->collide(rhs)) {
-            return true;
-        }
-    }
-    return false;
-}
-
-template<typename T, unsigned int D>
-bool ShapeUnion<T,D>::collide(const OBB<T,D>& rhs) const
-{
-    for (auto&& shape: _shapes) {
-        if (shape->collide(rhs)) {
-            return true;
-        }
-    }
-    return false;
-}
-
-template<typename T, unsigned int D>
-bool ShapeUnion<T,D>::collide(const Sphere<T,D>& rhs) const
-{
-    for (auto&& shape: _shapes) {
-        if (shape->collide(rhs)) {
-            return true;
-        }
-    }
-    return false;
-}
 
 } // end namespace nsx
 

@@ -31,12 +31,13 @@
 #ifndef NSXLIB_PEAKINTEGRATOR_H
 #define NSXLIB_PEAKINTEGRATOR_H
 
+#include <Eigen/Core>
+
 #include "../geometry/IntegrationRegion.h"
 #include "../geometry/Blob3D.h"
-#include "../geometry/Ellipsoid.h"
+#include "../geometry/GeometryTypes.h"
+#include "../crystal/Intensity.h"
 #include "../utils/Maybe.h"
-#include "Intensity.h"
-#include <Eigen/Core>
 
 namespace nsx {
 
@@ -44,8 +45,8 @@ class DataSet;
 
 class PeakIntegrator {
 public:
-    using Ellipsoid3D = Ellipsoid<double, 3>;
-    using MaybeEllipsoid = Maybe<Ellipsoid3D>;
+
+    using MaybeEllipsoid = Maybe<Ellipsoid>;
 
     PeakIntegrator() = default;
     PeakIntegrator(const IntegrationRegion& region, const DataSet& data);

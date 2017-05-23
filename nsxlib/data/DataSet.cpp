@@ -399,13 +399,13 @@ void DataSet::saveHDF5(const std::string& filename) //const
     // blosc_destroy();
 }
 
-void DataSet::addMask(AABB<double,3>* mask)
+void DataSet::addMask(AABB* mask)
 {
     _masks.insert(mask);
     maskPeaks();
 }
 
-void DataSet::removeMask(AABB<double,3>* mask)
+void DataSet::removeMask(AABB* mask)
 {
     auto&& p = _masks.find(mask);
     if (p != _masks.end()) {
@@ -414,7 +414,7 @@ void DataSet::removeMask(AABB<double,3>* mask)
     maskPeaks();
 }
 
-const std::set<AABB<double, 3> *>& DataSet::getMasks()
+const std::set<AABB*>& DataSet::getMasks()
 {
     return _masks;
 }

@@ -37,7 +37,7 @@
 
 #include "../crystal/CrystalTypes.h"
 #include "../data/DataTypes.h"
-#include "../geometry/AABB.h"
+#include "../geometry/GeometryTypes.h"
 #include "../instrument/InstrumentTypes.h"
 #include "../utils/UtilsTypes.h"
 
@@ -107,16 +107,16 @@ public:
     //ComponentState getInterpolatedState(std::shared_ptr<Component> component, double frame) const;
 
     //! Add a new mask to the data
-    void addMask(AABB<double,3>* mask);
+    void addMask(AABB* mask);
 
     //! Add a new peak to the data
     void addPeak(const sptrPeak3D& peak);
 
     //! Remove a mask from the data, by reference
-    void removeMask(AABB<double, 3>* mask);
+    void removeMask(AABB* mask);
 
     //! Return the list of masks
-    const std::set<AABB<double,3>*>& getMasks();
+    const std::set<AABB*>& getMasks();
 
     //! Remove a peak from the data
     bool removePeak(const sptrPeak3D& peak);
@@ -183,7 +183,7 @@ protected:
     PeakSet _peaks;
     std::size_t _fileSize;
     //! The set of masks bound to the data
-    std::set<AABB<double,3>*> _masks;
+    std::set<AABB*> _masks;
     double _background;
     FrameIteratorCallback _iteratorCallback;
     uptrIDataReader _reader;

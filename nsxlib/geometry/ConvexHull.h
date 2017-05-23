@@ -201,7 +201,7 @@ private:
     void cleanUp();
 
     //! Get AABB of the convex hull
-    AABB<T, 3> getAABB() const;
+    AABB getAABB() const;
 
     //! Return whether a vertex is contained in the hull
     bool constains(const Vertex<T>& v) const;
@@ -840,10 +840,9 @@ void ConvexHull<T>::cleanUp()
 }
 
 template<typename T>
-AABB<T, 3> ConvexHull<T>::getAABB() const
+AABB ConvexHull<T>::getAABB() const
 {
-    using vector = typename AABB<T,3>::vector;
-    vector lower, upper;
+    Eigen::Vector3d lower, upper;
     lower.setZero();
     upper.setZero();
 
@@ -858,7 +857,7 @@ AABB<T, 3> ConvexHull<T>::getAABB() const
         }
     }
 
-    return AABB<T, 3>(lower, upper);
+    return AABB(lower, upper);
 }
 
 template <typename T>
