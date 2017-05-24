@@ -64,7 +64,7 @@
 #include <nsxlib/crystal/PeakFit.h>
 #include <nsxlib/crystal/PeakPredictor.h>
 #include <nsxlib/crystal/ResolutionShell.h>
-#include <nsxlib/crystal/RFactor.h>
+#include <nsxlib/statistics/RFactor.h>
 #include <nsxlib/crystal/SpaceGroup.h>
 #include <nsxlib/crystal/SpaceGroupSymbols.h>
 #include <nsxlib/data/DataReaderFactory.h>
@@ -737,6 +737,14 @@ bool SessionModel::writeStatistics(std::string filename,
             qCritical() << "Only one unit cell is supported at this time!!";
             return false;
         }
+        // skip bad/masked peaks
+        if (peak->isMasked() || !peak->isSelected()) {
+            continue;
+        }
+        // skip misindexed peaks
+        if (!peak->getMillerIndices(*cell, HKL, true)) {
+            continue;
+        }
         res.addPeak(peak);
     }
 
@@ -765,14 +773,7 @@ bool SessionModel::writeStatistics(std::string filename,
             nsx::MergedPeak new_peak(grp, friedel);
 
             for (auto peak: equiv) {
-                // skip bad/masked peaks
-                if (peak->isMasked() || !peak->isSelected())
-                    continue;
 
-                // skip misindexed peaks
-                if (!peak->getMillerIndices(*cell, HKL, true)) {
-                    continue;
-                }
                 // peak was not equivalent to any of the merged peaks
                 new_peak.addPeak(peak);
             }
@@ -787,9 +788,9 @@ bool SessionModel::writeStatistics(std::string filename,
         cc.calculate(merged_peaks_shell);
 
         std::snprintf(&buf[0], buf.size(),
-                "    %10.2f %10.2f %10d %10.3f %10.3f %10.3f %10.3 %10.3f $10.3f",
+                "    %10.2f %10.2f %10d %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f",
                 d_lower, d_upper, int(shells[i].size()), redundancy,
-                rfactor.Rmeas(), rfactor.Rmerge(), rfactor.Rpim()), cc.CChalf(), cc.CCstar();
+                rfactor.Rmeas(), rfactor.Rmerge(), rfactor.Rpim(), cc.CChalf(), cc.CCstar());
 
         file << &buf[0] << std::endl;
 
@@ -811,7 +812,7 @@ bool SessionModel::writeStatistics(std::string filename,
     cc.calculate(merged_peaks);
 
     std::snprintf(&buf[0], buf.size(),
-            "    %10.2f %10.2f %10d %10.3f %10.3f %10.3f %10.3f %10.3f %10.f",
+            "    %10.2f %10.2f %10d %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f",
             dmin, dmax, num_peaks, redundancy,
             rfactor.Rmeas(), rfactor.Rmerge(), rfactor.Rpim(), cc.CChalf(), cc.CCstar());
 

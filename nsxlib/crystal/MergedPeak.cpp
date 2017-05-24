@@ -139,23 +139,29 @@ const PeakList& MergedPeak::getPeaks() const
 std::pair<MergedPeak, MergedPeak> MergedPeak::split() const
 {
     // make copy of peak list
-    std::vector<sptrPeak3D> random_peaks = _peaks;
-    // randomly reorder
-    std::random_shuffle(random_peaks.begin(), random_peaks.end());
+    std::vector<size_t> random_idx(_peaks.size());
 
-    unsigned int i = 0;
+    for (unsigned int j = 0; j < _peaks.size(); ++j) {
+        random_idx[j] = j;
+    }
+
+    // randomly reorder
+    std::random_shuffle(random_idx.begin(), random_idx.end());
+
     unsigned int parity = std::rand()%2;
 
     MergedPeak p1(_grp, _friedel), p2(_grp, _friedel);
 
-    for (auto&& p: random_peaks) {
+    for (unsigned int i = 0; i < _peaks.size(); ++i) {
+        auto idx = random_idx[i];
+        auto p = _peaks[idx];
+
         if ((i%2) == parity) {
             p1.addPeak(p);
         }
         else {
             p2.addPeak(p);
         }
-        ++i;
     }
 
     return std::make_pair(p1, p2);

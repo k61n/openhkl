@@ -28,7 +28,7 @@
  *
  */
 
-#include "../crystal/RFactor.h"
+#include "RFactor.h"
 #include "../crystal/Peak3D.h"
 
 namespace nsx {

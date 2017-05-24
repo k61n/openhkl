@@ -71,6 +71,11 @@ void CC::calculate(const std::vector<MergedPeak>& peaks)
         ++_nPeaks;
     }
 
+    if (_nPeaks == 0) {
+        _CChalf = _CCstar = 0.0;
+        return;
+    }
+
     const double numerator = xy - x*y / _nPeaks;
     const double varx = xx - x*x / _nPeaks;
     const double vary = yy - y*y / _nPeaks;

@@ -18,7 +18,7 @@
 #include <QTreeView>
 
 #include <nsxlib/crystal/Peak3D.h>
-#include <nsxlib/crystal/RFactor.h>
+#include <nsxlib/statistics/RFactor.h>
 #include <nsxlib/crystal/SpaceGroup.h>
 #include <nsxlib/crystal/SpaceGroupSymbols.h>
 #include <nsxlib/data/DataSet.h>
