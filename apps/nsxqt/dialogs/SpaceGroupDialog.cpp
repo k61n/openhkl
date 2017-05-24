@@ -104,7 +104,7 @@ void SpaceGroupDialog::evaluateSpaceGroups()
 
     _groups.clear();
 
-    qDebug() << "Evaluating space groups based on " << hkls.size() << " peaks";
+    qDebug() << "Evaluating " << symbols.size() << " space groups based on " << hkls.size() << " peaks";
 
     for (auto& symbol: symbols) {
 
