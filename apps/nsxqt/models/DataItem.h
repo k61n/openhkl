@@ -1,22 +1,19 @@
 #ifndef NSXQT_DATAITEM_H
 #define NSXQT_DATAITEM_H
 
+#include <nsxlib/data/DataTypes.h>
+#include <nsxlib/instrument/InstrumentTypes.h>
+
 #include "TreeItem.h"
 
 class NumorItem;
 
-namespace nsx
-{
-class DataSet;
-class Experiment;
-}
-
 class DataItem : public TreeItem
 {
 public:
-    explicit DataItem(std::shared_ptr<nsx::Experiment> experiment);
+    explicit DataItem(nsx::sptrExperiment experiment);
 
-    NumorItem *importData(std::shared_ptr<nsx::DataSet> data);
+    NumorItem *importData(nsx::sptrDataSet data);
     NumorItem* importData(const std::string& filename);
     NumorItem *importRawData(const std::vector<std::string>& filenames,
                              double wavelength, double delta_chi, double delta_omega, double delta_phi,

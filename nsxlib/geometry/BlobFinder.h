@@ -33,36 +33,19 @@
 #include <algorithm>
 #include <iterator>
 #include <map>
-#include <memory>
 #include <queue>
-#include <unordered_map>
 #include <vector>
 #include <stdexcept>
 
-#include "../data/DataSet.h"
-#include "../geometry/Blob2D.h"
+#include "../data/DataTypes.h"
 #include "../geometry/Blob3D.h"
 #include "../geometry/Ellipsoid.h"
+#include "../geometry/GeometryTypes.h"
 #include "../geometry/IShape.h"
-#include "../utils/ProgressHandler.h"
-#include "../utils/Types.h"
+#include "../mathematics/MathematicsTypes.h"
+#include "../utils/UtilsTypes.h"
 
 namespace nsx {
-
-typedef std::map<int,int> imap;
-typedef std::pair<int,int> ipair;
-typedef std::vector<int> vints;
-typedef std::vector<ipair> vipairs;
-typedef std::unordered_map<int,Blob2D> blob2DCollection;
-typedef std::unordered_map<int,Blob3D> blob3DCollection;
-
-typedef Ellipsoid<double,2> Ellipsoid2D;
-typedef Ellipsoid<double,3> Ellipsoid3D;
-typedef IShape<double,2> IShape2D;
-typedef IShape<double,3> IShape3D;
-
-typedef std::unordered_map<const IShape2D*,int> shape2Dmap;
-typedef std::unordered_map<const IShape3D*,int> shape3Dmap;
 
 /* Class used for blob-finding, which is the first step of peak-finding.
  * The use of IFrameIterator allows for custom iterators, e.g. which work multi-threaded.
@@ -73,28 +56,22 @@ class BlobFinder {
 
 public:
 
-    using FilterCallback = std::function<RealMatrix(const RealMatrix&)>;
+    BlobFinder(sptrDataSet data);
 
-    BlobFinder(std::shared_ptr<DataSet> data);
+    Blob3DUMap find(unsigned int begin, unsigned int end);
 
-    blob3DCollection find(unsigned int begin, unsigned int end);
+    void findBlobs(std::unordered_map<int,Blob3D>& blobs, EquivalenceList& equivalences, unsigned int begin, unsigned int end);
 
-    void findBlobs(std::unordered_map<int,Blob3D>& blobs, vipairs& equivalences, unsigned int begin, unsigned int end);
+    static void registerEquivalence(int a, int b, EquivalenceList& equivalences);
 
-    static void registerEquivalence(int a, int b, vipairs& equivalences);
+    static bool sortEquivalences(const std::pair<int,int>& pa, const std::pair<int,int>& pb);
 
-    static bool sortEquivalences(const ipair& pa, const ipair& pb);
+    static std::map<int,int> removeDuplicates(EquivalenceList& equivalences);
 
-    static imap removeDuplicates(vipairs& equivalences);
-
-    static void reassignEquivalences(imap& equivalences);
-
-    //void findBlobs() const;
-
-    //void mergeBlobs();
+    static void reassignEquivalences(std::map<int,int>& equivalences);
 
     //! sets progress handler callback function
-    void setProgressHandler(std::shared_ptr<ProgressHandler> handler);
+    void setProgressHandler(sptrProgressHandler handler);
 
     void setThreshold(double threshold);
 
@@ -108,18 +85,15 @@ public:
 
     void setRelative(bool isRelative);
 
-
-    void findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& equivalences) const;
+    void findCollisions(std::unordered_map<int,Blob3D>& blobs, EquivalenceList& equivalences) const;
 
     //! Sets the filter, which allows for more sophisticated blob-finding
     void setFilter(FilterCallback callback);
 
-    void mergeBlobs(std::unordered_map<int,Blob3D>& blobs, vipairs& equivalences) const;
+    void mergeBlobs(std::unordered_map<int,Blob3D>& blobs, EquivalenceList& equivalences) const;
 
 
     void eliminateBlobs(std::unordered_map<int,Blob3D>& blobs) const;
-
-
 
 private:
     double _threshold;
@@ -131,9 +105,9 @@ private:
 
     bool _isRelative;
 
-    mutable std::shared_ptr<DataSet> _data;
+    mutable sptrDataSet _data;
     FilterCallback _filterCallback;
-    mutable std::shared_ptr<ProgressHandler> _progressHandler;
+    mutable sptrProgressHandler _progressHandler;
 
     unsigned int _nrows, _ncols, _nframes;
     unsigned int _currentlabel;

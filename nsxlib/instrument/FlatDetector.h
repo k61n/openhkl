@@ -39,7 +39,7 @@ class FlatDetector : public MonoDetector {
 public:
 
 	//! Static constructor of a FlatDetector from a property tree node
-	static Detector* create(const proptree::ptree& node);
+	static Detector* create(const boost::property_tree::ptree& node);
 
 	//! Construct a FlatDetector
 	FlatDetector();
@@ -48,7 +48,7 @@ public:
 	//! Construct a FlatDetector with a given name
 	FlatDetector(const std::string& name);
 	//! Constructs a FlatDetector from a property tree node
-	FlatDetector(const proptree::ptree& node);
+	FlatDetector(const boost::property_tree::ptree& node);
 	//! Return a pointer to a copy of a FlatDetector
 	Detector* clone() const;
 	//! Destructor

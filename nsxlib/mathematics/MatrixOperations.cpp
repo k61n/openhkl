@@ -1,4 +1,4 @@
-#include "EigenMatrixOp.h"
+#include "MatrixOperations.h"
 
 namespace nsx {
 

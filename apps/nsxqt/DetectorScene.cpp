@@ -1,16 +1,22 @@
 #include <ctime>
 #include <vector>
 
+#include <QDebug>
 #include <QGraphicsSceneMouseEvent>
 #include <QKeyEvent>
 #include <QMenu>
 #include <QPixmap>
-#include <QtDebug>
 #include <QToolTip>
 
+#include <nsxlib/crystal/Peak3D.h>
+#include <nsxlib/crystal/PeakCalc.h>
+#include <nsxlib/crystal/SpaceGroup.h>
+#include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/data/DataSet.h>
+#include <nsxlib/geometry/AABB.h>
 #include <nsxlib/instrument/Detector.h>
 #include <nsxlib/instrument/DetectorEvent.h>
+#include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/instrument/Gonio.h>
 #include <nsxlib/instrument/Sample.h>
 #include <nsxlib/instrument/Source.h>
@@ -22,8 +28,6 @@
 #include "items/CutSliceGraphicsItem.h"
 #include "items/CutLineGraphicsItem.h"
 #include "items/MaskGraphicsItem.h"
-
-using namespace nsx;
 
 // compile-time constant to determine whether to draw the peak masks
 static const bool g_drawMask = true;
@@ -51,8 +55,6 @@ DetectorScene::DetectorScene(QObject *parent)
   _integrationRegion(nullptr),
   _drawIntegrationRegion(false)
 {
-    //setBspTreeDepth(4);
-    qDebug() << "BSP tree depth = " << bspTreeDepth();
 }
 
 void DetectorScene::changeFrame(size_t frame)
@@ -89,7 +91,7 @@ void DetectorScene::setMaxIntensity(int intensity)
     loadCurrentImage(false);
 }
 
-void DetectorScene::setData(const std::shared_ptr<nsx::DataSet>& data)
+void DetectorScene::setData(const nsx::sptrDataSet& data)
 {
     _currentData = data;
 
@@ -111,7 +113,7 @@ void DetectorScene::setData(const std::shared_ptr<nsx::DataSet>& data)
     updatePeaks();
 }
 
-void DetectorScene::setData(const std::shared_ptr<nsx::DataSet>& data, size_t frame)
+void DetectorScene::setData(const nsx::sptrDataSet& data, size_t frame)
 {
     setData(data);
     changeFrame(frame);
@@ -224,7 +226,7 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             break;
             // Case of Mask mode
         case MASK:
-            mask = new MaskGraphicsItem(_currentData, new AABB<double, 3>);
+            mask = new MaskGraphicsItem(_currentData, new nsx::AABB);
             mask->setFrom(event->lastScenePos());
             mask->setTo(event->lastScenePos());
             addItem(mask);
@@ -412,7 +414,7 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
         return;
     }
     auto instr=_currentData->getDiffractometer();
-    std::shared_ptr<nsx::Detector> det=instr->getDetector();
+    auto det=instr->getDetector();
 
     int nrows = int(det->getNRows());
     int ncols = int(det->getNCols());
@@ -427,7 +429,7 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
 
     const auto& samplev=_currentData->getSampleState(_currentFrameIndex).getValues();
     const auto& detectorv=_currentData->getDetectorState(_currentFrameIndex).getValues();
-    std::shared_ptr<nsx::Sample> sample=instr->getSample();
+    auto sample=instr->getSample();
     auto& mono = instr->getSource()->getSelectedMonochromator();
     double wave=mono.getWavelength();
 
@@ -438,16 +440,16 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
         ttip = QString("(%1,%2) I:%3").arg(col).arg(row).arg(intensity);
         break;
     case GAMMA:
-        DetectorEvent(*det, col, row, detectorv).getGammaNu(gamma, nu, sample->getPosition(samplev));
+        nsx::DetectorEvent(*det, col, row, detectorv).getGammaNu(gamma, nu, sample->getPosition(samplev));
         ttip = QString("(%1,%2) I: %3").arg(gamma/nsx::deg).arg(nu/nsx::deg).arg(intensity);
         break;
     case THETA:
-        th2 = DetectorEvent(*det, col, row, detectorv).get2Theta(Eigen::Vector3d(0, 1.0/wave, 0));
+        th2 = nsx::DetectorEvent(*det, col, row, detectorv).get2Theta(Eigen::Vector3d(0, 1.0/wave, 0));
         ttip = QString("(%1) I: %2").arg(th2/nsx::deg).arg(intensity);
         break;
     case DSPACING:
         // th2 = det->get2Theta(col, row, detectorv, Eigen::Vector3d(0, 1.0/wave, 0));
-        th2 = DetectorEvent(*det, col, row, detectorv).get2Theta(Eigen::Vector3d(0, 1.0/wave, 0));
+        th2 = nsx::DetectorEvent(*det, col, row, detectorv).get2Theta(Eigen::Vector3d(0, 1.0/wave, 0));
         ttip = QString("(%1) I: %2").arg(wave/(2*sin(0.5*th2))).arg(intensity);
         break;
     case HKL:
@@ -476,7 +478,7 @@ void DetectorScene::loadCurrentImage(bool newimage)
     // Full image size, front of the stack
     QRect& full = _zoomStack.front();
 
-    std::shared_ptr<nsx::Detector> det = _currentData->getDiffractometer()->getDetector();
+    auto det = _currentData->getDiffractometer()->getDetector();
 
     if (_currentFrameIndex >= _currentData->getNFrames()) {
         _currentFrameIndex = _currentData->getNFrames()-1;
@@ -561,7 +563,7 @@ void DetectorScene::loadCurrentImage(bool newimage)
     }
 }
 
-std::shared_ptr<nsx::DataSet> DetectorScene::getData()
+nsx::sptrDataSet DetectorScene::getData()
 {
     return _currentData;
 }
@@ -576,7 +578,7 @@ void DetectorScene::changeCursorMode(int mode)
     _cursorMode=static_cast<CURSORMODE>(mode);
 }
 
-PeakGraphicsItem* DetectorScene::findPeakGraphicsItem(const sptrPeak3D& peak)
+PeakGraphicsItem* DetectorScene::findPeakGraphicsItem(const nsx::sptrPeak3D& peak)
 {
     auto it = _peakGraphicsItems.find(peak);
 
@@ -604,7 +606,7 @@ void DetectorScene::updatePeaks()
         PeakGraphicsItem* pgi = new PeakGraphicsItem(peak);
         pgi->setFrame(_currentFrameIndex);
         addItem(pgi);
-        _peakGraphicsItems.insert(std::pair<sptrPeak3D, PeakGraphicsItem*>(peak,pgi));
+        _peakGraphicsItems.insert(std::pair<nsx::sptrPeak3D, PeakGraphicsItem*>(peak,pgi));
     }
 }
 

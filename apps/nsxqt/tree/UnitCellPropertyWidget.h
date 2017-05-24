@@ -5,14 +5,10 @@
 
 #include <QWidget>
 
-#include <nsxlib/utils/Types.h>
+#include <nsxlib/crystal/CrystalTypes.h>
 
 namespace Ui {
 class UnitCellPropertyWidget;
-}
-
-namespace nsx {
-class UnitCell;
 }
 
 class QString;
@@ -24,12 +20,13 @@ class UnitCellPropertyWidget : public QWidget
     Q_OBJECT
 
 public:
+
     explicit UnitCellPropertyWidget(UnitCellItem* caller,QWidget *parent = 0);
     ~UnitCellPropertyWidget();
 
 public slots:
 
-    void updateCellParameters(sptrUnitCell);
+    void updateCellParameters(nsx::sptrUnitCell);
 
 private slots:
     void getLatticeParams();

@@ -42,6 +42,7 @@
 
 #include <QDialog>
 
+#include <nsxlib/crystal/CrystalTypes.h>
 #include <nsxlib/crystal/Peak3D.h>
 #include <nsxlib/crystal/PeakFit.h>
 

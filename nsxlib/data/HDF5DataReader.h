@@ -30,12 +30,12 @@
 #ifndef NSXLIB_HDF5DATAREADER_H
 #define NSXLIB_HDF5DATAREADER_H
 
-#include <memory>
 #include <string>
 
 #include "H5Cpp.h"
 
 #include "../data/IDataReader.h"
+#include "../instrument/InstrumentTypes.h"
 
 namespace nsx {
 
@@ -43,9 +43,9 @@ class HDF5DataReader: public IDataReader
 {
 
 public:
-    static IDataReader* create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer);
+    static IDataReader* create(const std::string& filename, sptrDiffractometer diffractometer);
 
-    HDF5DataReader(const std::string& filename, std::shared_ptr<Diffractometer> instrument);
+    HDF5DataReader(const std::string& filename, sptrDiffractometer instrument);
     virtual ~HDF5DataReader();
 
     Eigen::MatrixXi getData(size_t frame) override;

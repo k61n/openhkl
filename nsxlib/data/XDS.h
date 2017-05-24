@@ -37,9 +37,9 @@
 
 #include <iosfwd>
 #include <string>
-#include <memory>
 #include <vector>
 
+#include "../crystal/CrystalTypes.h"
 #include "../crystal/PeakRecord.h"
 
 namespace nsx {
@@ -47,10 +47,6 @@ namespace nsx {
 class XDS {
 
 public:
-
-    using sptrPeak3D = std::shared_ptr<Peak3D>;
-    using PeakList = std::vector<sptrPeak3D>;
-    using RecordList = std::vector<PeakRecord>;
 
     XDS(const PeakList& peaks, bool merge, bool friedel, const std::string& filename = "", const std::string& date = "");
 

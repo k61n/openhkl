@@ -1,6 +1,3 @@
-#include "dialogs/DialogAutoIndexing.h"
-#include "ui_DialogAutoIndexing.h"
-
 #include <map>
 #include <string>
 
@@ -11,19 +8,24 @@
 #include <QItemSelectionModel>
 #include <QMessageBox>
 #include <QStandardItemModel>
-#include <QtDebug>
+#include <QDebug>
 
 #include <nsxlib/crystal/AutoIndexer.h>
+#include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/data/DataSet.h>
+#include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/instrument/Experiment.h>
+#include <nsxlib/instrument/Sample.h>
 #include <nsxlib/utils/Units.h>
 #include <nsxlib/utils/ProgressHandler.h>
+
+#include "dialogs/DialogAutoIndexing.h"
 #include "models/CollectedPeaksModel.h"
 #include "models/CollectedPeaksDelegate.h"
 
-using namespace nsx;
+#include "ui_DialogAutoIndexing.h"
 
-DialogAutoIndexing::DialogAutoIndexing(std::shared_ptr<Experiment> experiment, std::vector<sptrPeak3D> peaks, QWidget *parent):
+DialogAutoIndexing::DialogAutoIndexing(nsx::sptrExperiment experiment, nsx::PeakList peaks, QWidget *parent):
     QDialog(parent),
     ui(new Ui::DialogAutoIndexing),
     _experiment(experiment),
@@ -49,7 +51,7 @@ DialogAutoIndexing::~DialogAutoIndexing()
 
 void DialogAutoIndexing::autoIndex()
 {
-    auto handler = std::make_shared<ProgressHandler>();
+    auto handler = std::make_shared<nsx::ProgressHandler>();
 
     handler->setCallback([=]() {
        auto log = handler->getLog();
@@ -58,13 +60,13 @@ void DialogAutoIndexing::autoIndex()
        }
     });
 
-    AutoIndexer indexer(_experiment, handler);
+    nsx::AutoIndexer indexer(_experiment, handler);
 
     if (_unitCells.empty()) {
         throw std::runtime_error("cannot auto index: no unit cell");
     }
 
-    sptrUnitCell selectedUnitCell = _unitCells[ui->unitCells->currentIndex()];
+    nsx::sptrUnitCell selectedUnitCell = _unitCells[ui->unitCells->currentIndex()];
 
     // Clear the current solution list
     _solutions.clear();
@@ -74,7 +76,7 @@ void DialogAutoIndexing::autoIndex()
         indexer.addPeak(peak);
     }
 
-    IndexerParameters params;
+    nsx::IndexerParameters params;
 
     params.subdiv = 5;
     params.maxdim = ui->maxCellDim->value();

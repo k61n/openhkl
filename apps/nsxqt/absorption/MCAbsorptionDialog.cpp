@@ -4,6 +4,7 @@
 
 #include <Eigen/Dense>
 
+#include <nsxlib/chemistry/Material.h>
 #include <nsxlib/crystal/Peak3D.h>
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/geometry/MCAbsorption.h>
@@ -19,7 +20,7 @@
 
 #include "ui_MCAbsorptionDialog.h"
 
-MCAbsorptionDialog::MCAbsorptionDialog(std::shared_ptr<nsx::Experiment> experiment, QWidget *parent):
+MCAbsorptionDialog::MCAbsorptionDialog(nsx::sptrExperiment experiment, QWidget *parent):
     QDialog(parent),
      ui(new Ui::MCAbsorptionDialog),
     _experiment(experiment)
@@ -47,12 +48,12 @@ void MCAbsorptionDialog::on_pushButton_run_pressed()
         return;
     }
     // Get the source
-    std::shared_ptr<nsx::Source> source=_experiment->getDiffractometer()->getSource();
-    std::shared_ptr<nsx::Sample> sample=_experiment->getDiffractometer()->getSample();
+    auto source=_experiment->getDiffractometer()->getSource();
+    auto sample=_experiment->getDiffractometer()->getSample();
 
     // Get the material
     unsigned int cellIndex=static_cast<unsigned int>(ui->comboBox->currentIndex());
-    nsx::sptrMaterial material=sample->getMaterial(cellIndex);
+    auto material=sample->getMaterial(cellIndex);
     if (material==nullptr) {
         QMessageBox::critical(this,"NSXTOOL","No material defined for this crystal");
             return;

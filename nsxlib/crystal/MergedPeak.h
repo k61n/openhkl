@@ -36,19 +36,16 @@
 #ifndef NSXLIB_MERGEDPEAK_H
 #define NSXLIB_MERGEDPEAK_H
 
-#include <map>
-#include <memory>
-
 #include <Eigen/Dense>
 
-#include "UnitCell.h"
-#include "SpaceGroup.h"
-#include "Peak3D.h"
-#include "Intensity.h"
+#include "../crystal/CrystalTypes.h"
+#include "../crystal/Intensity.h"
+#include "../crystal/SpaceGroup.h"
 
 namespace nsx {
 
 class MergedPeak {
+
 public:
     MergedPeak(const SpaceGroup& grp, bool friedel=false);
     MergedPeak(const MergedPeak& other) = default;
@@ -62,7 +59,7 @@ public:
     double std() const;
 
     double d() const;
-    const std::vector<sptrPeak3D>& getPeaks() const;
+    const PeakList& getPeaks() const;
 
 private:
     void determineRepresentativeHKL();
@@ -71,7 +68,7 @@ private:
     Eigen::Vector3i _hkl;
     Intensity _intensity;
     double _chiSquared, _std, _d;
-    std::vector<sptrPeak3D> _peaks;
+    PeakList _peaks;
     SpaceGroup _grp;
     bool _friedel;
 };

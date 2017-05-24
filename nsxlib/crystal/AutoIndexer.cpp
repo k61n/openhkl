@@ -33,27 +33,31 @@
  *
  */
 
-#include "AutoIndexer.h"
-#include "FFTIndexing.h"
-#include "../instrument/Experiment.h"
-#include "../utils/ProgressHandler.h"
+#include "../crystal/AutoIndexer.h"
+#include "../crystal/FFTIndexing.h"
+#include "../crystal/GruberReduction.h"
+#include "../crystal/NiggliReduction.h"
+#include "../crystal/Peak3D.h"
+#include "../crystal/UBMinimizer.h"
+#include "../instrument/Detector.h"
 #include "../instrument/Diffractometer.h"
+#include "../instrument/Experiment.h"
 #include "../instrument/Gonio.h"
-#include "UBMinimizer.h"
-#include "NiggliReduction.h"
-#include "GruberReduction.h"
+#include "../instrument/Sample.h"
+#include "../utils/ProgressHandler.h"
 
 #include <string>
 
 namespace nsx {
 
-AutoIndexer::AutoIndexer(std::shared_ptr<Experiment>& expt, const std::shared_ptr<ProgressHandler>& handler):
+
+AutoIndexer::AutoIndexer(const sptrExperiment& expt, const sptrProgressHandler& handler):
+
     _peaks(),
     _experiment(expt),
     _solutions(),
     _handler(handler)
 {
-
 }
 
 bool AutoIndexer::autoIndex(const IndexerParameters& _params)
@@ -234,8 +238,12 @@ bool AutoIndexer::autoIndex(const IndexerParameters& _params)
 
     // Sort solutions by decreasing quality.
     // For equal quality, smallest volume is first
+<<<<<<< HEAD
     using soluce = std::pair<sptrUnitCell,double>;
     std::sort(_solutions.begin(),_solutions.end(),[](const soluce& s1, const soluce& s2) -> bool
+=======
+    std::sort(_solutions.begin(),_solutions.end(),[](const AutoIndexingSoluce& s1, const AutoIndexingSoluce& s2) -> bool
+>>>>>>> feature/typedef-using-refactoring
     {
         if (s1.second==s2.second)
             return (s1.first->getVolume()<s2.first->getVolume());
@@ -248,7 +256,7 @@ bool AutoIndexer::autoIndex(const IndexerParameters& _params)
     return true;
 }
 
-void AutoIndexer::addPeak(const std::shared_ptr<Peak3D> &peak)
+void AutoIndexer::addPeak(const sptrPeak3D &peak)
 {
     _peaks.emplace_back(peak);
 }

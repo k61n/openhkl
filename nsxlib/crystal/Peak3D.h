@@ -32,44 +32,29 @@
 
 #include <map>
 #include <memory>
+#include <vector>
 
 #include <Eigen/Dense>
 
-#include "Profile.h"
-#include "UnitCell.h"
-#include "Intensity.h"
-#include "PeakIntegrator.h"
-#include "../geometry/IShape.h"
+#include "../crystal/CrystalTypes.h"
+#include "../crystal/Intensity.h"
+#include "../crystal/PeakIntegrator.h"
+#include "../crystal/Profile.h"
+#include "../data/DataTypes.h"
 #include "../geometry/Ellipsoid.h"
-#include "../utils/Types.h"
+#include "../geometry/GeometryTypes.h"
 #include "../geometry/IntegrationRegion.h"
+#include "../instrument/InstrumentTypes.h"
 
 namespace nsx {
-
-class Blob3D;
-
-class DataSet;
-
-class Diffractometer;
-class ComponentState;
-class DetectorEvent;
-class Sample;
-class Detector;
-class Source;
-
-class PeakIntegrator;
 
 class Peak3D {
 
 public:
-    using sptrShape3D=std::shared_ptr<IShape<double,3>>;
-    using Ellipsoid3D=Ellipsoid<double,3>;
-    using sptrEllipsoid3D=std::shared_ptr<Ellipsoid3D>;
-    using shape_type = IShape<double,3>;
 
-    Peak3D(std::shared_ptr<DataSet> data = nullptr);
-
-    Peak3D(std::shared_ptr<DataSet> data, const Ellipsoid3D& shape);
+    Peak3D();
+    
+    Peak3D(const Ellipsoid& shape, sptrDataSet data = nullptr);
 
     //! Copy constructor
     Peak3D(const Peak3D& other);
@@ -78,13 +63,13 @@ public:
     Peak3D& operator=(const Peak3D& other);
 
         //! Attach the data
-    void linkData(const std::shared_ptr<DataSet>& data);
+    void linkData(const sptrDataSet& data);
 
     //! Detach the data
     void unlinkData();
 
     //! Set the Peak region. Peak shaped is owned after setting
-    void setShape(const Ellipsoid3D& peak);
+    void setShape(const Ellipsoid& peak);
 
     //! Get the Miller indices of the peak (double to allow integration of incommensurate peaks)
     Eigen::RowVector3d getMillerIndices() const;
@@ -109,17 +94,14 @@ public:
     //! Run the integration of the peak; iterate over the data
     //void integrate();
 
-    std::shared_ptr<DataSet> getData() const { return _data.lock();}
+    sptrDataSet getData() const { return _data.lock();}
 
     //! Get the projection of total data in the bounding box.
     Eigen::VectorXd getProjection() const;
     Eigen::VectorXd getPeakProjection() const;
     Eigen::VectorXd getBkgProjection() const;
-//    Eigen::VectorXd getProjectionSigma() const;
-//    Eigen::VectorXd getPeakProjectionSigma() const;
-//    Eigen::VectorXd getBkgProjectionSigma() const;
 
-    const Ellipsoid3D& getShape() const { return _shape; }
+    const Ellipsoid& getShape() const { return _shape; }
     const IntegrationRegion& getIntegrationRegion() const { return _integrationRegion; }
 
     //! Return the scaled intensity of the peak.
@@ -130,10 +112,7 @@ public:
 
     //! Return the raw intensity of the peak.
     Intensity getRawIntensity() const;
-    //! Returns the error on the raw intensity.
-//    double getRawSigma() const;
-//    //! Returns the error on the scaled intensity.
-//    double getScaledSigma() const;
+
     //!
     double getIOverSigmaI() const;
     //! Return the lorentz factor of the peak.
@@ -153,7 +132,7 @@ public:
 
     void setDetectorEvent(const DetectorEvent& event);
     //!
-    void setSource(const std::shared_ptr<Source>& source);
+    void setSource(const sptrSource& source);
 
     friend bool operator<(const Peak3D& p1, const Peak3D& p2);
     void setSelected(bool);
@@ -163,7 +142,7 @@ public:
     void setTransmission(double transmission);
     double getTransmission() const;
 
-    void addUnitCell(std::shared_ptr<UnitCell> uc, bool activate=true);
+    void addUnitCell(sptrUnitCell uc, bool activate=true);
     int getActiveUnitCellIndex() const;
     sptrUnitCell getActiveUnitCell() const;
     sptrUnitCell getUnitCell(int index) const;
@@ -198,7 +177,7 @@ private:
     std::weak_ptr<DataSet> _data;
 
     //! Shape describing the Peak zone
-    Ellipsoid3D _shape;
+    Ellipsoid _shape;
     //! Region used to integrate the peak
     IntegrationRegion _integrationRegion;
     //! Shape describing the background zone (must fully contain peak)
@@ -219,15 +198,15 @@ private:
     Eigen::VectorXd _countsBkg;
 
     //!
-    CellList _unitCells;
+    UnitCellList _unitCells;
     //! Pointer to the state of the Sample Component
 
-    std::unique_ptr<ComponentState> _sampleState;
+    uptrComponentState _sampleState;
 
     //! Detector Event state
-    std::unique_ptr<DetectorEvent> _event;
+    uptrDetectorEvent _event;
     //!
-    std::shared_ptr<Source> _source;
+    sptrSource _source;
 
     double _counts;
     //double _countsSigma;
@@ -244,8 +223,6 @@ private:
 
     Intensity _intensity;
 };
-
-using sptrPeak3D = std::shared_ptr<Peak3D>;
 
 } // end namespace nsx
 

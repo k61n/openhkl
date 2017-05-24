@@ -1,18 +1,16 @@
 #ifndef NSXQT_CUTSLICEGRAPHICSITEM_H
 #define NSXQT_CUTSLICEGRAPHICSITEM_H
 
-#include "items/CutterGraphicsItem.h"
+#include <nsxlib/data/DataTypes.h>
 
-namespace nsx
-{
-class DataSet;
-}
+#include "items/CutterGraphicsItem.h"
 
 class QGraphicsSceneMouseEvent;
 class QGraphicsSceneWheelEvent;
 class QPainter;
 class QStyleOptionGraphicsItem;
 class QWidget;
+
 class SXPlot;
 
 class CutSliceGraphicsItem : public CutterGraphicsItem
@@ -22,7 +20,7 @@ public:
     // Constructors and destructor
 
     //! Construct a data slicer
-    CutSliceGraphicsItem(std::shared_ptr<nsx::DataSet>, bool horizontal=true);
+    CutSliceGraphicsItem(nsx::sptrDataSet, bool horizontal=true);
     //! The destructor
     ~CutSliceGraphicsItem();
 

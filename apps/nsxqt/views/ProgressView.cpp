@@ -4,6 +4,8 @@
 #include <QDebug>
 #include <QApplication>
 
+#include <nsxlib/utils/ProgressHandler.h>
+
 #include "ProgressView.h"
 
 ProgressView::ProgressView(QWidget* parent): QProgressDialog(parent)
@@ -29,7 +31,7 @@ ProgressView::~ProgressView()
 
 }
 
-void ProgressView::watch(std::shared_ptr<nsx::ProgressHandler> handler)
+void ProgressView::watch(nsx::sptrProgressHandler handler)
 {
     _handler = handler;
 

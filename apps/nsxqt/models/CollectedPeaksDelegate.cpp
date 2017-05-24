@@ -3,7 +3,6 @@
 #include <QComboBox>
 #include <QPainter>
 #include <QPixmap>
-#include <QtDebug>
 
 #include "CollectedPeaksModel.h"
 #include "CollectedPeaksDelegate.h"

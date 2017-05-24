@@ -44,7 +44,7 @@ class Source : public Component {
 public:
 
 	//! Static constructor of a monochromatic source from a property tree node
-	static Source* create(const proptree::ptree& node);
+	static Source* create(const boost::property_tree::ptree& node);
 
 	// Default constructor
 	Source();
@@ -53,7 +53,7 @@ public:
 	//! Constructs a default source with a given name
 	Source(const std::string& name);
 	//! Constructs a source from a property tree node
-	Source(const proptree::ptree& node);
+	Source(const boost::property_tree::ptree& node);
 	//! Virtual copy constructor
 	Source* clone() const;
 	//! Destructor

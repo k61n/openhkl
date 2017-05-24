@@ -17,7 +17,7 @@ Material::Material(const std::string& formula)
   _massDensity(1.0)
 {
     ChemicalFormulaParser<std::string::const_iterator> parser;
-    bool success = qi::phrase_parse(formula.begin(),formula.end(),parser,qi::blank,_isotopes);
+    bool success = boost::spirit::qi::phrase_parse(formula.begin(),formula.end(),parser,boost::spirit::qi::blank,_isotopes);
     if (!success) {
         throw std::runtime_error("Invalid input formula");
     }

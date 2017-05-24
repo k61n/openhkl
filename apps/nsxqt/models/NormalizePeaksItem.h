@@ -1,17 +1,14 @@
 #ifndef NSXQT_NORMALIZEPEAKSITEM_H
 #define NSXQT_NORMALIZEPEAKSITEM_H
 
-#include "models/TreeItem.h"
+#include <nsxlib/instrument/InstrumentTypes.h>
 
-namespace nsx
-{
-class Experiment;
-}
+#include "models/TreeItem.h"
 
 class NormalizePeaksItem : public TreeItem
 {
 public:
-    NormalizePeaksItem(std::shared_ptr<nsx::Experiment> experiment);
+    NormalizePeaksItem(nsx::sptrExperiment experiment);
 };
 
 #endif // NSXQT_NORMALIZEPEAKSITEM_H

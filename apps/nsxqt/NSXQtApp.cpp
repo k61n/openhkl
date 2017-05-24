@@ -1,8 +1,7 @@
-#include "NSXQtApp.h"
-
-#include <QtDebug>
+#include <QDebug>
 
 #include "Logger.h"
+#include "NSXQtApp.h"
 
 NSXQtApp::NSXQtApp(int &argc, char *argv[]) : QApplication(argc,argv)
 {

@@ -1,8 +1,8 @@
-#include <memory>
 #include <stdexcept>
 
 #include <Eigen/Dense>
 
+#include "../crystal/UnitCell.h"
 #include "../instrument/Gonio.h"
 #include "../instrument/RotAxis.h"
 #include "../instrument/Sample.h"
@@ -10,7 +10,7 @@
 
 namespace nsx {
 
-Sample* Sample::create(const proptree::ptree& node)
+Sample* Sample::create(const boost::property_tree::ptree& node)
 {
     return new Sample(node);
 }
@@ -27,7 +27,7 @@ Sample::Sample(const std::string& name): Component(name), _sampleShape()
 {
 }
 
-Sample::Sample(const proptree::ptree& node): Component(node)
+Sample::Sample(const boost::property_tree::ptree& node): Component(node)
 {
 }
 
@@ -49,27 +49,26 @@ Sample& Sample::operator=(const Sample& other)
     return *this;
 }
 
-void Sample::setShape(const ConvexHull<double>& shape)
+void Sample::setShape(const ConvexHull& shape)
 {
     _sampleShape = shape;
 }
 
-ConvexHull<double>& Sample::getShape()
+ConvexHull& Sample::getShape()
 {
     return _sampleShape;
 }
 
-std::shared_ptr<UnitCell> Sample::addUnitCell(std::shared_ptr<UnitCell> cell)
+sptrUnitCell Sample::addUnitCell(std::shared_ptr<UnitCell> cell)
 {
     if (cell == nullptr) {
         cell = std::shared_ptr<UnitCell>(new UnitCell());
     }
-
     _cells.push_back(cell);
     return _cells.back();
 }
 
-std::shared_ptr<UnitCell> Sample::getUnitCell(int i)
+sptrUnitCell Sample::getUnitCell(int i)
 {
     if (i >= _cells.size()) {
         throw std::runtime_error("Unit Cell not valid");
@@ -77,7 +76,7 @@ std::shared_ptr<UnitCell> Sample::getUnitCell(int i)
     return _cells[i];
 }
 
-const CellList& Sample::getUnitCells() const
+const UnitCellList& Sample::getUnitCells() const
 {
     return _cells;
 }
@@ -87,7 +86,7 @@ std::size_t Sample::getNCrystals() const
     return _cells.size();
 }
 
-void Sample::removeUnitCell(std::shared_ptr<UnitCell> cell)
+void Sample::removeUnitCell(sptrUnitCell cell)
 {
     for (auto it = _cells.begin(); it != _cells.end(); ++it) {
         if ( *it == cell) {

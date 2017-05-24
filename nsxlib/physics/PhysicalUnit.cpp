@@ -2,7 +2,7 @@
 #include <cmath>
 #include <functional>
 #include <numeric>
-#include <exception>
+#include <stdexcept>
 
 #include "PhysicalUnit.h"
 
@@ -118,7 +118,7 @@ PhysicalUnit::PhysicalUnit(double value, const std::string& unit) : _value(value
     physical_unit u;
     auto f = unit.begin();
     auto l = unit.end();
-    bool ok = qi::phrase_parse(f,l,_parser,qi::space,u);
+    bool ok = boost::spirit::qi::phrase_parse(f,l,_parser,boost::spirit::qi::space,u);
     if (ok)
     {
         _prefix = std::get<0>(u);
@@ -135,7 +135,7 @@ PhysicalUnit::PhysicalUnit(const std::string& unit) : _value(1.0)
     physical_unit u;
     auto f = unit.begin();
     auto l = unit.end();
-    bool ok = qi::phrase_parse(f,l,_parser,qi::space,u);
+    bool ok = boost::spirit::qi::phrase_parse(f,l,_parser,boost::spirit::qi::space,u);
     if (ok)
     {
         _prefix = std::get<0>(u);
@@ -192,7 +192,7 @@ double PhysicalUnit::convert(const std::string& ounit) const
     physical_unit u;
     auto f = ounit.begin();
     auto l = ounit.end();
-    bool ok = qi::phrase_parse(f,l,_parser,qi::space,u);
+    bool ok = boost::spirit::qi::phrase_parse(f,l,_parser,boost::spirit::qi::space,u);
     if (ok)
         return convert(std::get<0>(u),std::get<1>(u),std::get<2>(u));
     else
@@ -277,11 +277,18 @@ double PhysicalUnit::convertToSI() const
 PhysicalUnit::PhysicalUnitParser::PhysicalUnitParser() : PhysicalUnitParser::base_type(_start)
 {
 
-    namespace phx = boost::phoenix;
-    phx::function<PrefixOperator> const update_prefix = PrefixOperator();
-    phx::function<PowerOperator> const powerize_unit = PowerOperator();
-    phx::function<MultiplyOperator> const multiply_unit = MultiplyOperator();
-    phx::function<DivideOperator> const divide_unit = DivideOperator();
+    using boost::spirit::qi::_1;
+    using boost::spirit::qi::_a;
+    using boost::spirit::qi::_pass;
+    using boost::spirit::qi::_val;
+    using boost::spirit::qi::attr;
+    using boost::spirit::qi::int_;
+    using boost::spirit::qi::lit;
+
+    boost::phoenix::function<PrefixOperator> const update_prefix = PrefixOperator();
+    boost::phoenix::function<PowerOperator> const powerize_unit = PowerOperator();
+    boost::phoenix::function<MultiplyOperator> const multiply_unit = MultiplyOperator();
+    boost::phoenix::function<DivideOperator> const divide_unit = DivideOperator();
 
     for (const auto& prefix : _definedPrefixes)
         _prefix.add(prefix.first,prefix.second);
@@ -289,14 +296,14 @@ PhysicalUnit::PhysicalUnitParser::PhysicalUnitParser() : PhysicalUnitParser::bas
     for (const auto& dim : _definedUnits)
         _unit.add(dim.first,dim.second);
 
-    _prefixedUnit = ((_prefix[qi::_a=qi::_1] >> _unit[qi::_val=qi::_1]) | (qi::attr(1.0)[qi::_a=qi::_1] >> _unit[qi::_val=qi::_1]))[qi::_pass=update_prefix(qi::_a,qi::_val)];
+    _prefixedUnit = ((_prefix[_a=_1] >> _unit[_val=_1]) | (attr(1.0)[_a=_1] >> _unit[_val=_1]))[_pass=update_prefix(_a,_val)];
 
-    _poweredUnit = (_prefixedUnit[qi::_val=qi::_1,qi::_a=1] >> -(qi::lit("**") >> qi::int_[qi::_a=qi::_1]))[qi::_pass=powerize_unit(qi::_val,qi::_a)];
+    _poweredUnit = (_prefixedUnit[_val=_1,_a=1] >> -(lit("**") >> int_[_a=_1]))[_pass=powerize_unit(_val,_a)];
 
-    _compositeUnit = (_poweredUnit[qi::_val=qi::_1] >> -((qi::lit("/") >> _poweredUnit[qi::_a=qi::_1])[qi::_pass=divide_unit(qi::_val,qi::_a)] |
-                                                         (qi::lit("*") >> _poweredUnit[qi::_a=qi::_1])[qi::_pass=multiply_unit(qi::_val,qi::_a)]));
+    _compositeUnit = (_poweredUnit[_val=_1] >> -((lit("/") >> _poweredUnit[_a=_1])[_pass=divide_unit(_val,_a)] |
+                                                         (lit("*") >> _poweredUnit[_a=_1])[_pass=multiply_unit(_val,_a)]));
 
-    _start = _compositeUnit[qi::_val=qi::_1];
+    _start = _compositeUnit[_val=_1];
 
 }
 

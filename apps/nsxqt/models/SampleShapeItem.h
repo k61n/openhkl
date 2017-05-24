@@ -1,17 +1,15 @@
 #ifndef NSXQT_SAMPLESHAPEITEM_H
 #define NSXQT_SAMPLESHAPEITEM_H
 
-#include "InspectableTreeItem.h"
+#include <nsxlib/instrument/InstrumentTypes.h>
 
-namespace nsx {
-class Experiment;
-}
+#include "InspectableTreeItem.h"
 
 class SampleShapeItem : public InspectableTreeItem
 {
 public:
-    SampleShapeItem(std::shared_ptr<nsx::Experiment> experiment);
-    ~SampleShapeItem();
+    SampleShapeItem(nsx::sptrExperiment experiment);
+    ~SampleShapeItem()=default;
     QWidget* inspectItem();
 };
 

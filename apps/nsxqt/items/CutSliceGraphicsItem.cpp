@@ -11,13 +11,14 @@
 
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/instrument/Detector.h>
+#include <nsxlib/instrument/Diffractometer.h>
 
 #include "DetectorScene.h"
 #include "CutSliceGraphicsItem.h"
 #include "plot/SimplePlot.h"
 #include "plot/SXPlot.h"
 
-CutSliceGraphicsItem::CutSliceGraphicsItem(std::shared_ptr<nsx::DataSet> data, bool horizontal)
+CutSliceGraphicsItem::CutSliceGraphicsItem(nsx::sptrDataSet data, bool horizontal)
 : CutterGraphicsItem(data),
   _horizontal(horizontal)
 {
@@ -41,8 +42,10 @@ void CutSliceGraphicsItem::plot(SXPlot* plot)
     if (!detPtr) {
         return;
     }
-    std::shared_ptr<nsx::DataSet> dataPtr=detPtr->getData();
-    std::shared_ptr<nsx::Detector> det=dataPtr->getDiffractometer()->getDetector();
+
+    auto dataPtr=detPtr->getData();
+    auto det=dataPtr->getDiffractometer()->getDetector();
+    
     int nrows=det->getNRows();
     int ncols=det->getNCols();
 

@@ -28,17 +28,13 @@
  *
  */
 
-#include "IntegrationRegion.h"
-
-#include "AABB.h"
 #include "Ellipsoid.h"
-
-#include <list>
+#include "IntegrationRegion.h"
 
 namespace nsx {
 
 IntegrationRegion::IntegrationRegion(
-        const IntegrationRegion::Ellipsoid3D &region, double scale, double bkg_scale):
+        const Ellipsoid &region, double scale, double bkg_scale):
     _region(region),
     _background(region)
 {
@@ -46,18 +42,14 @@ IntegrationRegion::IntegrationRegion(
     _background.scale(bkg_scale); // todo: need erf_inv
 }
 
-const IntegrationRegion::Ellipsoid3D &IntegrationRegion::getRegion() const
+const Ellipsoid &IntegrationRegion::getRegion() const
 {
     return _region;
 }
 
 bool IntegrationRegion::inRegion(const Eigen::Vector4d &p) const
 {
-//    if (!_region.isInsideAABB(p)) {
-//        return false;
-//    }
     return _region.isInside(p);
-    //return _region.isInsideAABB(p);
 }
 
 bool IntegrationRegion::inBackground(const Eigen::Vector4d &p) const
@@ -65,29 +57,22 @@ bool IntegrationRegion::inBackground(const Eigen::Vector4d &p) const
     if(!_background.isInsideAABB(p)) {
         return false;
     }
-//    if(!_background.isInside(p)) {
-//        return false;
-//    }
     // exclude if in peak
     return !inRegion(p);
-    //return !_region.isInsideAABB(p);
 }
 
-IntegrationRegion::point_type IntegrationRegion::classifyPoint(const Eigen::Vector4d &p) const
+PointType IntegrationRegion::classifyPoint(const Eigen::Vector4d &p) const
 {
-//    if (!_background.isInside(p)) {
-//        return point_type::EXCLUDED;
-//    }
     if (!_background.isInsideAABB(p)) {
-        return point_type::EXCLUDED;
+        return PointType::EXCLUDED;
     }
     if (_region.isInside(p)) {
-        return point_type::REGION;
+        return PointType::REGION;
     }
-    return point_type::BACKGROUND;
+    return PointType::BACKGROUND;
 }
 
-const IntegrationRegion::Ellipsoid3D& IntegrationRegion::getBackground() const
+const Ellipsoid& IntegrationRegion::getBackground() const
 {
     return _background;
 }

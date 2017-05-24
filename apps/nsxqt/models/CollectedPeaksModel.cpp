@@ -7,14 +7,13 @@
 #include <QIcon>
 #include <QString>
 
+#include <nsxlib/crystal/Peak3D.h>
+#include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/data/DataSet.h>
-#include <nsxlib/instrument/Sample.h>
-#include <nsxlib/utils/ProgressHandler.h>
-#include <nsxlib/utils/Types.h>
+#include <nsxlib/data/MetaData.h>
 
 #include "CollectedPeaksModel.h"
 #include "views/ProgressView.h"
-
 
 CollectedPeaksModel::CollectedPeaksModel(nsx::sptrExperiment experiment, QObject *parent)
 : QAbstractTableModel(parent),
@@ -22,7 +21,7 @@ CollectedPeaksModel::CollectedPeaksModel(nsx::sptrExperiment experiment, QObject
 {
 }
 
-CollectedPeaksModel::CollectedPeaksModel(nsx::sptrExperiment experiment, const std::vector<nsx::sptrPeak3D> &peaks, QObject *parent)
+CollectedPeaksModel::CollectedPeaksModel(nsx::sptrExperiment experiment, const nsx::PeakList &peaks, QObject *parent)
 : QAbstractTableModel(parent),
   _experiment(std::move(experiment)),
   _peaks(peaks)
@@ -38,12 +37,12 @@ void CollectedPeaksModel::addPeak(const nsx::sptrPeak3D& peak)
     _peaks.push_back(peak);
 }
 
-void CollectedPeaksModel::setPeaks(const std::vector<nsx::sptrPeak3D>& peaks)
+void CollectedPeaksModel::setPeaks(const nsx::PeakList& peaks)
 {
     _peaks = peaks;
 }
 
-void CollectedPeaksModel::setPeaks(const std::vector<std::shared_ptr<nsx::DataSet> > &data)
+void CollectedPeaksModel::setPeaks(const nsx::DataList &data)
 {
     _peaks.clear();
 
@@ -55,14 +54,14 @@ void CollectedPeaksModel::setPeaks(const std::vector<std::shared_ptr<nsx::DataSe
     }
 }
 
-const std::vector<nsx::sptrPeak3D>& CollectedPeaksModel::getPeaks() const
+const nsx::PeakList& CollectedPeaksModel::getPeaks() const
 {
     return _peaks;
 }
 
-std::vector<nsx::sptrPeak3D> CollectedPeaksModel::getPeaks(const QModelIndexList &indices) const
+nsx::PeakList CollectedPeaksModel::getPeaks(const QModelIndexList &indices) const
 {
-    std::vector<nsx::sptrPeak3D> peaks;
+    nsx::PeakList peaks;
     peaks.reserve(indices.count());
     for (auto&& index: indices) {
         peaks.push_back(_peaks[index.row()]);
@@ -140,7 +139,6 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
     }
 
     Eigen::RowVector3d hkl;
-    bool success;
     double lorentzFactor, transmissionFactor, scaledIntensity, sigmaScaledIntensity;
 
     int row = index.row();
@@ -149,7 +147,7 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
     switch (role) {
 
     case Qt::DisplayRole:
-        success = _peaks[row]->getMillerIndices(hkl, true);
+        _peaks[row]->getMillerIndices(hkl, true);
         lorentzFactor = _peaks[row]->getLorentzFactor();
         transmissionFactor = _peaks[row]->getTransmission();
         scaledIntensity=_peaks[row]->getCorrectedIntensity().getValue();
@@ -208,27 +206,24 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
     case Column::h:
         compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
             Eigen::RowVector3d hkl1,hkl2;
-            bool success;
-            success = p1->getMillerIndices(hkl1,true);
-            success = p2->getMillerIndices(hkl2,true);
+            p1->getMillerIndices(hkl1,true);
+            p2->getMillerIndices(hkl2,true);
             return (hkl1[0]<hkl2[0]);
         };
         break;
     case Column::k:
         compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
             Eigen::RowVector3d hkl1,hkl2;
-            bool success;
-            success = p1->getMillerIndices(hkl1,true);
-            success = p2->getMillerIndices(hkl2,true);
+            p1->getMillerIndices(hkl1,true);
+            p2->getMillerIndices(hkl2,true);
             return (hkl1[1]<hkl2[1]);
         };
         break;
     case Column::l:
         compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
             Eigen::RowVector3d hkl1,hkl2;
-            bool success;
-            success = p1->getMillerIndices(hkl1,true);
-            success = p2->getMillerIndices(hkl2,true);
+            p1->getMillerIndices(hkl1,true);
+            p2->getMillerIndices(hkl2,true);
             return (hkl1[2]<hkl2[2]);
         };
         break;
@@ -305,7 +300,7 @@ bool CollectedPeaksModel::setData(const QModelIndex& index, const QVariant& valu
                 return false;
             }
             int unitCellIndex = value.toInt();
-            nsx::sptrUnitCell unitCell = _cells[unitCellIndex];
+            auto unitCell = _cells[unitCellIndex];
             _peaks[row]->addUnitCell(unitCell,true);
         }
     }
@@ -318,7 +313,7 @@ bool CollectedPeaksModel::indexIsValid(const QModelIndex& index) const
     return index.isValid() && index.row() < _peaks.size();
 }
 
-void CollectedPeaksModel::setUnitCells(const nsx::CellList &cells)
+void CollectedPeaksModel::setUnitCells(const nsx::UnitCellList &cells)
 {
     _cells = cells;
 }
@@ -335,9 +330,8 @@ void CollectedPeaksModel::sortEquivalents()
 
     std::sort(_peaks.begin(), _peaks.end(), [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
         Eigen::RowVector3d hkl1,hkl2;
-        bool success;
-        success = p1->getMillerIndices(hkl1,true);
-        success = p2->getMillerIndices(hkl2,true);
+        p1->getMillerIndices(hkl1,true);
+        p2->getMillerIndices(hkl2,true);
         return ptrcell->isEquivalent(hkl1[0],hkl1[1],hkl1[2],hkl2[0],hkl2[1],hkl2[2]);
     });
 }
@@ -390,10 +384,10 @@ void CollectedPeaksModel::writeShelX(const std::string& filename, QModelIndexLis
         if (!index.isValid()) {
             continue;
         }
-        nsx::sptrPeak3D peak = _peaks[index.row()];
-        auto sptrBasis = peak->getActiveUnitCell();
+        auto peak = _peaks[index.row()];
+        auto basis = peak->getActiveUnitCell();
 
-        if (sptrBasis == nullptr) {
+        if (basis == nullptr) {
             qCritical()<<QString("No unit cell defined for peak %1. It will not be written to ShelX file").arg(index.row()+1);
             continue;
         }
@@ -421,8 +415,6 @@ void CollectedPeaksModel::writeShelX(const std::string& filename, QModelIndexLis
             file << std::setw(4);
             file << hkl[2];
 
-            double l=peak->getLorentzFactor();
-            double t=peak->getTransmission();
             file << std::fixed << std::setw(8) << std::setprecision(2) << peak->getCorrectedIntensity().getValue();
             file << std::fixed << std::setw(8) << std::setprecision(2) << peak->getCorrectedIntensity().getSigma() <<std::endl;
         }
@@ -460,9 +452,9 @@ void CollectedPeaksModel::writeFullProf(const std::string& filename, QModelIndex
     file << std::fixed << std::setw(8) << std::setprecision(3) << wave << " 0 0" << std::endl;
 
     for (const auto &index : indices) {
-        nsx::sptrPeak3D peak = _peaks[index.row()];
-        auto sptrBasis = peak->getActiveUnitCell();
-        if (!sptrBasis) {
+        auto peak = _peaks[index.row()];
+        auto basis = peak->getActiveUnitCell();
+        if (!basis) {
             qCritical()<<QString("No unit cell defined for peak %1. It will not be written to FullProf file").arg(index.row()+1);
             continue;
         }
@@ -475,8 +467,6 @@ void CollectedPeaksModel::writeFullProf(const std::string& filename, QModelIndex
             file << std::setprecision(0);
             file << std::setw(4);
             file << hkl[0] << std::setw(4) <<  hkl[1] << std::setw(4) << hkl[2];
-            double l=peak->getLorentzFactor();
-            double t=peak->getTransmission();
             file << std::fixed << std::setw(14) << std::setprecision(4) << peak->getCorrectedIntensity().getValue();
             file << std::fixed << std::setw(14) << std::setprecision(4) << peak->getCorrectedIntensity().getSigma();
             file << std::setprecision(0) << std::setw(5) << 1  << std::endl;

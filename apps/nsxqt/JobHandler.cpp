@@ -1,13 +1,6 @@
-// author: Jonathan Fisher
-// j.fisher@fz-juelich.de
-
 #include "JobHandler.h"
 
-using TaskCallback = WorkerThread::TaskCallback;
-using FinishedCallback = WorkerThread::FinishedCallback;
-
-
-WorkerThread::WorkerThread(QObject *parent, TaskCallback task): QThread(parent), _task(task)
+WorkerThread::WorkerThread(QObject *parent, nsx::TaskCallback task): QThread(parent), _task(task)
 {
 
 }
@@ -27,7 +20,7 @@ void WorkerThread::run()
     emit resultReady(success);
 }
 
-Job::Job(QObject *parent, TaskCallback task, FinishedCallback onFinished, bool executeSynchronous):
+Job::Job(QObject *parent, nsx::TaskCallback task, nsx::FinishedCallback onFinished, bool executeSynchronous):
     QObject(parent), _task(task), _onFinished(onFinished), _synchronous(executeSynchronous)
 {
     if ( _synchronous) {

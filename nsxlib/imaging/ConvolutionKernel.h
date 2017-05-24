@@ -31,18 +31,16 @@
 #ifndef NSXLIB_CONVOLUTIONKERNEL_H
 #define NSXLIB_CONVOLUTIONKERNEL_H
 
-#include <map>
-#include <stdexcept>
-#include <string>
 #include <ostream>
-
+#include <stdexcept>
 #include <string>
 #include <map>
 
 #include <Eigen/Dense>
 
 #include "Convolver.h"
-#include "../utils/Types.h"
+#include "../imaging/ImagingTypes.h"
+#include "../mathematics/MathematicsTypes.h"
 
 namespace nsx {
 
@@ -50,17 +48,15 @@ class ConvolutionKernel {
 
 public:
 
-    typedef std::map<std::string, double> ParameterMap;
-
     ConvolutionKernel(int nrows, int ncols);
 
     ConvolutionKernel(const ConvolutionKernel& rhs);
 
-    ConvolutionKernel(int nrows, int ncols, const ParameterMap& parameters);
+    ConvolutionKernel(int nrows, int ncols, const ConvolutionKernelParameters& parameters);
 
     // used to get/set parameters
-    ParameterMap& getParameters();
-    const ParameterMap& getParameters() const;
+    ConvolutionKernelParameters& getParameters();
+    const ConvolutionKernelParameters& getParameters() const;
 
     const RealMatrix& getKernel();
     virtual const char* getName() = 0;
@@ -82,7 +78,7 @@ protected:
 
     RealMatrix _kernel;
     bool _hasChanged; // used to record if parameters have changed since last update
-    ParameterMap _params;
+    ConvolutionKernelParameters _params;
 };
 
 #ifndef SWIG

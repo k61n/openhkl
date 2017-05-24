@@ -9,9 +9,11 @@
 #include <QMenu>
 #include <QProgressBar>
 
+#include <nsxlib/crystal/CrystalTypes.h>
+#include <nsxlib/data/DataTypes.h>
 #include <nsxlib/data/DataSet.h>
-#include <nsxlib/instrument/Experiment.h>
-#include <nsxlib/imaging/Convolver.h>
+#include <nsxlib/imaging/ImagingTypes.h>
+#include <nsxlib/utils/UtilsTypes.h>
 
 #include "JobHandler.h"
 #include "Logger.h"
@@ -25,18 +27,7 @@ namespace Ui {
 class MainWindow;
 }
 
-namespace nsx {
-class Peak3D;
-using sptrPeak3D=std::shared_ptr<Peak3D>;
-class DataSet;
-class PeakFinder;
-class Experiment;
-class ProgressHandler;
-}
-
 class QProgressDialog;
-
-using nsx::sptrPeak3D;
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -103,19 +94,20 @@ private slots:
     void on_actionAuto_assign_unit_cell_triggered();
 
 public slots:
-    void changeData(std::shared_ptr<nsx::DataSet>);
-    void plotPeak(sptrPeak3D);
+    void changeData(nsx::sptrDataSet);
+    void plotPeak(nsx::sptrPeak3D);
     void plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&);
     void setInspectorWidget(QWidget*);
     void saveSession(QString filename);
 
 private:
     Ui::MainWindow* _ui;
-    std::shared_ptr<nsx::DataSet> _currentData;
 
-    std::shared_ptr<nsx::ProgressHandler> _progressHandler;
-    std::shared_ptr<nsx::PeakFinder> _peakFinder;
-    std::shared_ptr<nsx::Convolver> _convolver;
+    nsx::sptrDataSet _currentData;
+
+    nsx::sptrProgressHandler _progressHandler;
+    nsx::sptrPeakFinder _peakFinder;
+    nsx::sptrConvolver _convolver;
 
     std::shared_ptr<SessionModel> _session;
 };

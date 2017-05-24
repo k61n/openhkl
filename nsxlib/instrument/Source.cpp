@@ -4,7 +4,7 @@
 
 namespace nsx {
 
-Source* Source::create(const proptree::ptree& node)
+Source* Source::create(const boost::property_tree::ptree& node)
 {
     // Fetch the source from the factory
     Source* source = new Source(node);
@@ -32,7 +32,7 @@ Source::Source(const std::string& name)
 {
 }
 
-Source::Source(const proptree::ptree& node)
+Source::Source(const boost::property_tree::ptree& node)
 : Component(node),
   _selectedMonochromator(0)
 {

@@ -8,18 +8,15 @@
 #ifndef NSXLIB_MOSAIC_H
 #define NSXLIB_MOSAIC_H
 
-#include <memory>
 #include <string>
 #include <vector>
 
-#include "../geometry/Ellipsoid.h"
+#include "../data/DataTypes.h"
+#include "../geometry/GeometryTypes.h"
 #include "../geometry/ConvexHull.h"
+#include "../instrument/InstrumentTypes.h"
 
 namespace nsx {
-
-class DataSet;
-class Diffractometer;
-class Sample;
 
 class Mosaic {
 
@@ -27,18 +24,17 @@ public:
 
     Mosaic(const std::string& instr, double l, double dl, double dMonSam, double mu);
 
-    // bool run(const std::vector<std::string>& numors, unsigned int n, double& overlap);
-    bool run(std::vector<std::shared_ptr<DataSet>> datas, unsigned int n, double& overlap);
+    bool run(DataList datas, unsigned int n, double& overlap);
 
     void setSample(Sample* sample);
 
     void setMosaicity(double mosaicity);
 
-    virtual ~Mosaic();
+    virtual ~Mosaic()=default;
 
 private:
 
-    std::shared_ptr<Diffractometer> _diffractometer;
+    sptrDiffractometer _diffractometer;
 
     Sample* _sample;
 
@@ -48,7 +44,7 @@ private:
     double _mu;
 };
 
-double ellipsoids_overlap(const Ellipsoid<double,3>& ell1,const Ellipsoid<double,3>& ell2);
+double ellipsoids_overlap(const Ellipsoid& ell1,const Ellipsoid& ell2);
 
 } // end namespace nsx
 

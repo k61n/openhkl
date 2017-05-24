@@ -1,11 +1,9 @@
 #ifndef NSXQT_DIALOGREFINEUNITCELL_H
 #define NSXQT_DIALOGREFINEUNITCELL_H
 
-#include <memory>
-
+#include <nsxlib/crystal/CrystalTypes.h>
 #include <nsxlib/crystal/UBMinimizer.h>
-#include <nsxlib/crystal/UnitCell.h>
-#include <nsxlib/utils/Types.h>
+#include <nsxlib/instrument/InstrumentTypes.h>
 
 #include <QDialog>
 
@@ -14,16 +12,15 @@ namespace Ui
 class DialogRefineUnitCell;
 }
 
-using namespace nsx;
-
 class DialogRefineUnitCell : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit DialogRefineUnitCell(std::shared_ptr<nsx::Experiment> experiment,
-                                  sptrUnitCell unitCell,
-                                  std::vector<sptrPeak3D> peaks,
+    
+    explicit DialogRefineUnitCell(nsx::sptrExperiment experiment,
+                                  nsx::sptrUnitCell unitCell,
+                                  nsx::PeakList peaks,
                                   QWidget *parent = 0);
     ~DialogRefineUnitCell();
     void setLatticeParams();
@@ -34,7 +31,7 @@ public:
     void setSolution(const nsx::UBSolution& solution);
 
 signals:
-    void cellUpdated(sptrUnitCell);
+    void cellUpdated(nsx::sptrUnitCell);
 
 private slots:
     void refineParameter(bool checked, int i);
@@ -46,9 +43,9 @@ private slots:
 
 private:
     Ui::DialogRefineUnitCell *ui;
-    sptrExperiment _experiment;
-    sptrUnitCell _unitCell;
-    std::vector<sptrPeak3D> _peaks;
+    nsx::sptrExperiment _experiment;
+    nsx::sptrUnitCell _unitCell;
+    nsx::PeakList _peaks;
     nsx::UBMinimizer _minimizer;
 };
 

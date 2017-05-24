@@ -31,36 +31,28 @@
 #ifndef NSXLIB_INTEGRATIONREGION_H
 #define NSXLIB_INTEGRATIONREGION_H
 
-#include "../geometry/Ellipsoid.h"
-#include "../geometry/AABB.h"
-#include <list>
 #include <Eigen/Core>
+
+#include "../geometry/Ellipsoid.h"
+#include "../geometry/GeometryTypes.h"
 
 namespace nsx {
 
 class IntegrationRegion {
 public:
-    enum class point_type {
-        REGION = 1,
-        BACKGROUND = 2,
-        EXCLUDED = 3
-    };
-
-    using Ellipsoid3D = Ellipsoid<double, 3>;
-
     IntegrationRegion() = default;
-    IntegrationRegion(const Ellipsoid3D& region, double scale = 1.0, double bkg_scale = 3.0);
+    IntegrationRegion(const Ellipsoid& region, double scale = 1.0, double bkg_scale = 3.0);
 
-    const Ellipsoid3D& getRegion() const;
+    const Ellipsoid& getRegion() const;
     bool inRegion(const Eigen::Vector4d& p) const;
     bool inBackground(const Eigen::Vector4d& p) const;
-    point_type classifyPoint(const Eigen::Vector4d& p) const;
+    PointType classifyPoint(const Eigen::Vector4d& p) const;
 
-    const Ellipsoid3D& getBackground() const;
+    const Ellipsoid& getBackground() const;
     void updateMask(Eigen::MatrixXi& mask, double z) const;
 
 private:
-    Ellipsoid3D _region, _background;
+    Ellipsoid _region, _background;
 };
 
 } // end namespace nsx

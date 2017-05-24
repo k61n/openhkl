@@ -15,7 +15,7 @@
 #include "SourceItem.h"
 #include "TreeItem.h"
 
-ExperimentItem::ExperimentItem(std::shared_ptr<nsx::Experiment> experiment) : TreeItem(experiment)
+ExperimentItem::ExperimentItem(nsx::sptrExperiment experiment) : TreeItem(experiment)
 {
     setText(QString::fromStdString(_experiment->getName()));
     setForeground(QBrush(QColor("blue")));
@@ -41,12 +41,11 @@ ExperimentItem::ExperimentItem(std::shared_ptr<nsx::Experiment> experiment) : Tr
 
 QJsonObject ExperimentItem::toJson()
 {
-    std::shared_ptr<nsx::Experiment> exp_ptr = getExperiment();
+    auto exp_ptr = getExperiment();
     QJsonObject experiment;
 
     experiment["name"] = QString(exp_ptr->getName().c_str());
     experiment["instrument"] = _instr->toJson();
-    //experiment["instrument"] = exp_ptr->getDiffractometer()->getName().c_str();
     experiment["data"] = _data->toJson();
     experiment["peaks"] = _peaks->toJson();
 

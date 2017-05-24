@@ -7,11 +7,10 @@
 #include <future>
 
 #include "../data/IFrameIterator.h"
-#include "../utils/Types.h"
+#include "../data/DataTypes.h"
+#include "../mathematics/MathematicsTypes.h"
 
 namespace nsx {
-
-class DataSet;
 
 class ThreadedFrameIterator: public IFrameIterator {
 public:

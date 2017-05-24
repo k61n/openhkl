@@ -7,13 +7,10 @@
 
 #include <QWidget>
 
+#include <nsxlib/instrument/InstrumentTypes.h>
+
 namespace Ui {
 class AbsorptionWidget;
-}
-
-namespace nsx {
-class Experiment;
-class RotAxis;
 }
 
 class AbsorptionWidget : public QWidget

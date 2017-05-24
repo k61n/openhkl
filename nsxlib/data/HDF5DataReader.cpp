@@ -1,3 +1,5 @@
+#include <memory>
+
 #include "blosc.h"
 #include "blosc_filter.h"
 
@@ -8,24 +10,22 @@
 #include "../utils/Units.h"
 #include "../utils/EigenToVector.h"
 #include "../instrument/ComponentState.h"
-
-using std::unique_ptr;
-using std::shared_ptr;
+#include "../instrument/Diffractometer.h"
 
 namespace nsx {
 
-IDataReader* HDF5DataReader::create(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer)
+IDataReader* HDF5DataReader::create(const std::string& filename, sptrDiffractometer diffractometer)
 {
     return new HDF5DataReader(filename, diffractometer);
 }
 
-HDF5DataReader::HDF5DataReader(const std::string& filename, std::shared_ptr<Diffractometer> diffractometer)
+HDF5DataReader::HDF5DataReader(const std::string& filename, sptrDiffractometer diffractometer)
     :IDataReader(filename,diffractometer),
       _dataset(nullptr),
       _space(nullptr),
       _memspace(nullptr)
 {
-    _file = unique_ptr<H5::H5File>(new H5::H5File(filename.c_str(), H5F_ACC_RDONLY));
+    _file = std::unique_ptr<H5::H5File>(new H5::H5File(filename.c_str(), H5F_ACC_RDONLY));
 
     // Read the info group and store in metadata
     H5::Group infoGroup(_file->openGroup("/Info"));
@@ -143,7 +143,7 @@ void HDF5DataReader::open()
     }
 
     try {
-        _file = unique_ptr<H5::H5File>(new H5::H5File(_metadata.getKey<std::string>("filename").c_str(), H5F_ACC_RDONLY));
+        _file = std::unique_ptr<H5::H5File>(new H5::H5File(_metadata.getKey<std::string>("filename").c_str(), H5F_ACC_RDONLY));
     } catch(...) {
         if (_file) {
             _file.reset();
@@ -164,9 +164,9 @@ void HDF5DataReader::open()
 
     // Create new data set
     try {
-        _dataset = unique_ptr<H5::DataSet>(new H5::DataSet(_file->openDataSet("/Data/Counts")));
+        _dataset = std::unique_ptr<H5::DataSet>(new H5::DataSet(_file->openDataSet("/Data/Counts")));
         // Dataspace of the dataset /counts
-        _space = unique_ptr<H5::DataSpace>(new H5::DataSpace(_dataset->getSpace()));
+        _space = std::unique_ptr<H5::DataSpace>(new H5::DataSpace(_dataset->getSpace()));
     } catch(...) {
         throw;
     }
@@ -185,7 +185,7 @@ void HDF5DataReader::open()
     count[0] = 1;
     count[1] = _nRows;
     count[2] = _nCols;
-    _memspace = unique_ptr<H5::DataSpace>(new H5::DataSpace(3,count,nullptr));
+    _memspace = std::unique_ptr<H5::DataSpace>(new H5::DataSpace(3,count,nullptr));
     _isOpened = true;
 
     // reported by valgrind

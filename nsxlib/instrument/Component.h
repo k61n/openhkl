@@ -30,20 +30,16 @@
 #define NSXLIB_COMPONENT_H
 
 #include <map>
-#include <memory>
 #include <string>
 
 #include <boost/property_tree/ptree.hpp>
 
 #include <Eigen/Dense>
 
-#include "ComponentState.h"
+#include "../instrument/ComponentState.h"
+#include "../instrument/InstrumentTypes.h"
 
 namespace nsx {
-
-class Gonio;
-
-namespace proptree=boost::property_tree;
 
 /*
  * Interface for the components of an instrument (e.g. detector, goniometer, source ...).
@@ -58,7 +54,7 @@ public:
     //! Constructs a component with a given name
     Component(const std::string& name);
     //! Construct a component from a property tree node
-    Component(const proptree::ptree& node);
+    Component(const boost::property_tree::ptree& node);
     //! Virtual copy constructor
     virtual Component* clone() const=0;
     //! Destructor.
@@ -80,25 +76,19 @@ public:
     virtual void setRestPosition(const Eigen::Vector3d& pos);
 
     //! Return the goniometer attached to this component
-    std::shared_ptr<Gonio> getGonio() const;
+    sptrGonio getGonio() const;
     //! Return true if a geometric modifier is attached
     bool hasGonio() const;
     //! Attach a modifier to the component.
-    void setGonio(std::shared_ptr<Gonio>);
+    void setGonio(sptrGonio gonio);
 
-    //ComponentState createState();
-    //! Create a state from a vector of values
-    //ComponentState createState(const std::vector<double>& values);
-    //! Create a state from an Eigen Vector
-    //ComponentState createStateFromEigen(const Eigen::VectorXd& values);
-    //! Create a state from a map of values
     ComponentState createState(const std::map<std::string,double>& values);
 
  protected:
     //! Name of the component
     std::string _name;
     //! Pointer to the goniometer attached to the component
-    std::shared_ptr<Gonio> _gonio;
+    sptrGonio _gonio;
     //! The position of the component at rest, i.e. not modified by the Gonio.
     Eigen::Vector3d _position;
 };

@@ -3,7 +3,7 @@
 
 namespace nsx {
 
-Axis* TransAxis::create(const proptree::ptree& node)
+Axis* TransAxis::create(const boost::property_tree::ptree& node)
 {
 	return new TransAxis(node);
 }
@@ -24,7 +24,7 @@ TransAxis::TransAxis(const TransAxis& other) : Axis(other)
 {
 }
 
-TransAxis::TransAxis(const proptree::ptree& node) : Axis(node)
+TransAxis::TransAxis(const boost::property_tree::ptree& node) : Axis(node)
 {
 }
 

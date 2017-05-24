@@ -41,17 +41,11 @@
 #include "../crystal/PeakCalc.h"
 #include "../data/DataSet.h"
 #include "../geometry/Ellipsoid.h"
-#include "../geometry/NDTree.h"
+#include "../geometry/Octree.h"
+#include "../instrument/ComponentState.h"
 #include "../instrument/DetectorEvent.h"
 
-using std::shared_ptr;
-
 namespace nsx {
-
-using Ellipsoid3D = Ellipsoid<double, 3>;
-
-using sptrPeak3D = PeakCalc::sptrPeak3D;
-using PeakList = PeakCalc::PeakList;
 
 PeakCalc::PeakCalc(double h,double k,double l, double x,double y, double frame):
     _h(h),_k(k),_l(l),_x(x),_y(y),_frame(frame)
@@ -61,10 +55,6 @@ PeakCalc::PeakCalc(double h,double k,double l, double x,double y, double frame):
 sptrPeak3D PeakCalc::averagePeaks(const Octree& tree, double distance, double min_axis)
 {
     Eigen::Matrix3d peak_shape;
-    sptrPeak3D peak = std::make_shared<Peak3D>();
-
-    // An averaged peak is by definition not an observed peak but a calculated peak
-    peak->setObserved(false);
 
     Eigen::Vector3d center(_x, _y, _frame);
     Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver;
@@ -74,19 +64,19 @@ sptrPeak3D PeakCalc::averagePeaks(const Octree& tree, double distance, double mi
     Eigen::Vector3d vals = {val, val, val};
     Eigen::Matrix3d vects = Eigen::Matrix3d::Identity();
 
-    Ellipsoid3D search_shape = {center, vals, vects};
+    Ellipsoid search_shape = {center, vals, vects};
     auto&& neighbors = tree.getCollisions(search_shape);
 
     unsigned int num_neighbors = 0;
     peak_shape.setZero();
 
     for(auto&& p: neighbors) {
-        const Ellipsoid3D* ell_peak = dynamic_cast<const Ellipsoid3D*>(p);
+        const Ellipsoid* ell_peak = dynamic_cast<const Ellipsoid*>(p);
 
         if (ell_peak == nullptr) {
             continue;
         }
-        const Matrix3d peak_rs = ell_peak->getRSinv();
+        const Eigen::Matrix3d peak_rs = ell_peak->getRSinv();
         peak_shape += (peak_rs.transpose() * peak_rs).inverse();
         ++num_neighbors;
     }
@@ -108,7 +98,11 @@ sptrPeak3D PeakCalc::averagePeaks(const Octree& tree, double distance, double mi
         }
     }
 
-    peak->setShape(Ellipsoid3D(center, vals, solver.eigenvectors()));
+    sptrPeak3D peak = std::make_shared<Peak3D>(Ellipsoid(center, vals, solver.eigenvectors()));
+
+    // An averaged peak is by definition not an observed peak but a calculated peak
+    peak->setObserved(false);
+
     return peak;
 }
 

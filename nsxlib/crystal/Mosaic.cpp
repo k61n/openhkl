@@ -10,11 +10,14 @@
 #include <random>
 #include <vector>
 
-#include "Mosaic.h"
-
+#include "../crystal/Mosaic.h"
+#include "../crystal/UnitCell.h"
 #include "../data/DataSet.h"
+#include "../data/MetaData.h"
 #include "../geometry/BlobFinder.h"
 #include "../geometry/Blob3D.h"
+#include "../geometry/GeometryTypes.h"
+#include "../geometry/Triangle.h"
 #include "../instrument/Detector.h"
 #include "../instrument/Diffractometer.h"
 #include "../instrument/DiffractometerStore.h"
@@ -31,6 +34,7 @@ static double xor128(void) {
   static uint32_t z = 521288629;
   static uint32_t w = 88675123;
   uint32_t t;
+
   t = x ^ (x << 11);
   x = y; y = z; z = w;
   w = w ^ (w >> 19) ^ (t ^ (t >> 8));
@@ -57,7 +61,7 @@ bool intersect(double p0, double p1, double p2, double u0, double u1, double u2,
     return (t1>0 && t2>0);
 }
 
-double ellipsoids_overlap(const Ellipsoid<double,3>& ell1,const Ellipsoid<double,3>& ell2)
+double ellipsoids_overlap(const Ellipsoid& ell1,const Ellipsoid& ell2)
 {
     const Eigen::Vector3d& lb1 = ell1.getLower();
     const Eigen::Vector3d& ub1 = ell1.getUpper();
@@ -81,7 +85,7 @@ double ellipsoids_overlap(const Ellipsoid<double,3>& ell1,const Ellipsoid<double
         }
         }
 
-    double overlap = 4.0*M_PI*ell1.getExtents().prod()*static_cast<double>(inside2)/static_cast<double>(inside1)/3.0;
+    double overlap = ell1.getVolume()*static_cast<double>(inside2)/static_cast<double>(inside1);
 
     return overlap;
 }
@@ -173,7 +177,7 @@ bool Mosaic::run(std::vector<std::shared_ptr<DataSet>> datas, unsigned int n, do
         Eigen::Matrix3d umat = uc->getBusingLevyU();
 
         // The convex hull of the sample is rotated by u
-        ConvexHull<double>& hull = _sample->getShape();
+        ConvexHull& hull = _sample->getShape();
 
         Blob3D blob;
 
@@ -317,8 +321,6 @@ bool Mosaic::run(std::vector<std::shared_ptr<DataSet>> datas, unsigned int n, do
             }
         }
 
-        std::cout<<blob<<std::endl;
-
         if (blob.getComponents()==0)
             return false;
 
@@ -326,7 +328,7 @@ bool Mosaic::run(std::vector<std::shared_ptr<DataSet>> datas, unsigned int n, do
         Eigen::Vector3d eigenvalues;
         Eigen::Matrix3d eigenvectors;
         blob.toEllipsoid(0.997,center,eigenvalues,eigenvectors);
-        Ellipsoid<double,3> ellmc(center,eigenvalues,eigenvectors);
+        Ellipsoid ellmc(center,eigenvalues,eigenvectors);
 
         // d->readInMemory();
         std::vector<int*> temp(d->getNFrames());
@@ -336,7 +338,7 @@ bool Mosaic::run(std::vector<std::shared_ptr<DataSet>> datas, unsigned int n, do
             temp[i] = const_cast<int*>(counts.data());
         }
         int median = d->getBackgroundLevel(nullptr) + 1;
-        blob3DCollection blobs;
+        Blob3DUMap blobs;
         BlobFinder finder(d);
 
         //blobs=findBlobs3D<int>(temp,d->getDiffractometer()->getDetector()->getNRows(),d->getDiffractometer()->getDetector()->getNCols(),3.0*median,30,10000,0.997,0);
@@ -354,14 +356,12 @@ bool Mosaic::run(std::vector<std::shared_ptr<DataSet>> datas, unsigned int n, do
             Eigen::Vector3d eigenvalues1;
             Eigen::Matrix3d eigenvectors1;
             p.second.toEllipsoid(0.997,center1,eigenvalues1,eigenvectors1);
-            Ellipsoid<double,3> ellexp(center1,eigenvalues1,eigenvectors1);
+            Ellipsoid ellexp(center1,eigenvalues1,eigenvectors1);
             ellexp.translate(center-center1);
-//    		std::cout<<eigenvectors<<std::endl;
-//    		std::cout<<eigenvectors1<<std::endl;
             std::cout<<ellexp.getAABBExtents()<<std::endl;
             std::cout<<ellmc.getAABBExtents()<<std::endl;
-            std::cout<<"exp = "<<4.0*M_PI*ellexp.getExtents().prod()/3.0<<std::endl;
-            std::cout<<"mc = "<<4.0*M_PI*ellmc.getExtents().prod()/3.0<<std::endl;
+            std::cout<<"exp = "<<ellexp.getVolume()<<std::endl;
+            std::cout<<"mc = "<<ellmc.getVolume()<<std::endl;
             overlap = ellipsoids_overlap(ellexp,ellmc);
         }
 
@@ -370,10 +370,6 @@ bool Mosaic::run(std::vector<std::shared_ptr<DataSet>> datas, unsigned int n, do
     }
 
     return true;
-}
-
-Mosaic::~Mosaic()
-{
 }
 
 } // end namespace nsx

@@ -4,7 +4,7 @@
 namespace nsx {
 
 // Static that contains all available keys.
-keyset MetaData::_metakeys=std::set<std::string>();
+MetaDataKeySet MetaData::_metakeys=std::set<std::string>();
 
 MetaData::MetaData()
 {
@@ -26,48 +26,48 @@ MetaData& MetaData::operator=(const MetaData& rhs)
 	return *this;
 }
 
-const keyset& MetaData::getAllKeys() const
+const MetaDataKeySet& MetaData::getAllKeys() const
 {
 	return _metakeys;
 }
 bool MetaData::isKey(const char* key) const
 {
 	// Search if this key is in the set.
-	keysetcit it=_metakeys.find(std::string(key));
+	auto it=_metakeys.find(std::string(key));
 	if (it==_metakeys.end())
 		return false;
 	const char* ptr=(*it).c_str();
-	heterit it2=_map.find(ptr);
+	auto it2=_map.find(ptr);
 	return  (it2!=_map.end());
 }
 bool MetaData::isKey(const std::string& key) const
 {
 	// Search if this key is in the set.
-	keysetcit it=_metakeys.find(key);
-		if (it==_metakeys.end())
-			return false;
-		const char* ptr=(*it).c_str();
-		heterit it2=_map.find(ptr);
-		return  (it2!=_map.end());
+	auto it=_metakeys.find(key);
+	if (it==_metakeys.end())
+		return false;
+	const char* ptr=(*it).c_str();
+	auto it2=_map.find(ptr);
+	return  (it2!=_map.end());
 }
 
 boost::any MetaData::getKey(const std::string& key) const
 {
 	// Search if this key is in the set.
-	keysetcit it=_metakeys.find(key);
-		if (it==_metakeys.end())
-			throw std::runtime_error("Could not locate key "+key+ " in the set of available keys");
-		const char* ptr=(*it).c_str();
-		heterit it2=_map.find(ptr);
-		if (it2!=_map.end())
-		{
-			return it2->second;
-		}
-		else
-			throw std::runtime_error("Could not locate key "+key+ " in the set of available keys");
+	auto it=_metakeys.find(key);
+	if (it==_metakeys.end())
+		throw std::runtime_error("Could not locate key "+key+ " in the set of available keys");
+	const char* ptr=(*it).c_str();
+	auto it2=_map.find(ptr);
+	if (it2!=_map.end())
+	{
+		return it2->second;
+	}
+	else
+		throw std::runtime_error("Could not locate key "+key+ " in the set of available keys");
 }
 
-const hetermap& MetaData::getMap() const
+const MetaDataMap& MetaData::getMap() const
 {
 	return _map;
 }

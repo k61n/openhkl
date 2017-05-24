@@ -4,12 +4,10 @@
 #ifndef NSXLIB_IFRAMEITERATOR_H
 #define NSXLIB_IFRAMEITERATOR_H
 
-#include <functional>
-#include "../utils/Types.h"
+#include "../data/DataTypes.h"
+#include "../mathematics/MathematicsTypes.h"
 
 namespace nsx {
-
-class DataSet;
 
 class IFrameIterator {
 public:

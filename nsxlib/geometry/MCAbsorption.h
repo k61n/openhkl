@@ -29,29 +29,26 @@
 #ifndef NSXLIB_MCABSORPTION_H
 #define NSXLIB_MCABSORPTION_H
 
-#include <random>
 #include <functional>
+#include <random>
 #include <vector>
 
-#include "ConvexHull.h"
-#include "Triangle.h"
+#include "../geometry/GeometryTypes.h"
 
 namespace nsx {
-
-typedef std::vector<Triangle> TrianglesList;
 
 class MCAbsorption {
 public:
 	//! Define absorption Engine with a rectangular source of WxH
 	MCAbsorption(double width, double height, double pos);
 	~MCAbsorption();
-	void setSample(ConvexHull<double>* sample, double muScat, double muAbs);
+	void setSample(ConvexHull* sample, double muScat, double muAbs);
 	double run(unsigned int nIterations, const Eigen::Vector3d& outV, const Eigen::Matrix3d& sampleOrientation) const;
 
 
 private:
 	//! Description of the sample in terms of individual oriented triangles
-	ConvexHull<double>* _sample;
+	ConvexHull* _sample;
 	double _width, _height, _pos;
 	double _muScat, _muAbs;
     //! A random uniform distribution of double [0,1[

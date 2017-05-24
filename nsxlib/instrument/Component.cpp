@@ -20,21 +20,21 @@ Component::Component(const Component& other) : _name(other._name), _gonio(other.
 {
 }
 
-Component::Component(const proptree::ptree& node)
+Component::Component(const boost::property_tree::ptree& node)
 {
     // Set the component name
     _name = node.get<std::string>("name","");
 
     // Set the component goniometer
-    boost::optional<const proptree::ptree&> goniometerNode = node.get_child_optional("goniometer");
+    boost::optional<const boost::property_tree::ptree&> goniometerNode = node.get_child_optional("goniometer");
     if (!goniometerNode) {
         _gonio = nullptr;
     } else {
-        _gonio = std::shared_ptr<Gonio>(new Gonio(goniometerNode.get()));
+        _gonio = sptrGonio(new Gonio(goniometerNode.get()));
     }
 
     // Set the component position
-    boost::optional<const proptree::ptree&> positionNode = node.get_child_optional("position");
+    boost::optional<const boost::property_tree::ptree&> positionNode = node.get_child_optional("position");
     if (!positionNode) {
         _position = Eigen::Vector3d::Zero();
     } else {
@@ -59,7 +59,7 @@ Component& Component::operator=(const Component& other)
     return *this;
 }
 
-std::shared_ptr<Gonio> Component::getGonio() const
+sptrGonio Component::getGonio() const
 {
     return _gonio;
 }
@@ -82,7 +82,7 @@ const Eigen::Vector3d& Component::getRestPosition() const
     return _position;
 }
 
-void Component::setGonio(std::shared_ptr<Gonio> gonio)
+void Component::setGonio(sptrGonio gonio)
 {
     _gonio = gonio;
 }
@@ -92,7 +92,7 @@ void Component::setName(const std::string& name)
     _name = name;
 }
 
-void Component::setRestPosition(const Vector3d& v)
+void Component::setRestPosition(const Eigen::Vector3d& v)
 {
     _position = v;
 }

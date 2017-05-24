@@ -29,8 +29,8 @@
 #ifndef NSXLIB_DATAREADERFACTORY_H
 #define NSXLIB_DATAREADERFACTORY_H
 
-#include <memory>
 #include <string>
+
 #include <map>
 #include <functional>
 
@@ -45,6 +45,7 @@ namespace nsx {
  *
  */
 class DataReaderFactory {
+
 public:
     using callback = std::function<std::shared_ptr<DataSet>(const std::string&, const std::shared_ptr<Diffractometer>&)>;
 

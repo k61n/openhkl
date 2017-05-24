@@ -39,9 +39,10 @@
 #define NSXLIB_DETECTOREVENT_H
 
 #include <vector>
+
 #include <Eigen/Core>
 
-#include "DetectorState.h"
+#include "../instrument/InstrumentTypes.h"
 
 namespace nsx {
 

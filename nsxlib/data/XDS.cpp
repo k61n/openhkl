@@ -33,26 +33,22 @@
  *
  */
 
-#include "XDS.h"
-#include "../crystal/Peak3D.h"
-#include "../crystal/ResolutionShell.h"
-#include "../crystal/MergedPeak.h"
-
-#include <ostream>
 #include <algorithm>
 #include <iomanip>
+#include <ostream>
 
-using string = std::string;
-using str_vector = std::vector<std::string>;
+#include "../crystal/MergedPeak.h"
+#include "../crystal/Peak3D.h"
+#include "../crystal/ResolutionShell.h"
+#include "../crystal/SpaceGroup.h"
+#include "../crystal/UnitCell.h"
+#include "../data/XDS.h"
 
-static const string space = "    ";
-static const str_vector merged_records = {"H", "K", "L", "IOBS", "SIGMA(IOBS)"};
-static const str_vector unmerged_records = {"H", "K", "L", "XD", "YD", "ZD", "IOBS", "SIGMA(IOBS)"};
+static const std::string space = "    ";
+static const std::vector<std::string> merged_records = {"H", "K", "L", "IOBS", "SIGMA(IOBS)"};
+static const std::vector<std::string> unmerged_records = {"H", "K", "L", "XD", "YD", "ZD", "IOBS", "SIGMA(IOBS)"};
 
 namespace nsx {
-
-using sptrPeak3D = XDS::sptrPeak3D;
-using PeakList = XDS::PeakList;
 
 XDS::XDS(const PeakList &peaks, bool merge, bool friedel, const std::string &filename, const std::string &date):
     _peaks(peaks),
@@ -145,7 +141,7 @@ bool XDS::write(std::ostream& str) const
     return writeFooter(str);
 }
 
-XDS::RecordList XDS::getMergedRecords() const
+RecordList XDS::getMergedRecords() const
 {
     const double dmin = 0.0;
     const double dmax = 200.0;
@@ -169,7 +165,6 @@ XDS::RecordList XDS::getMergedRecords() const
         res.addPeak(peak);
     }
 
-    auto&& ds = res.getD();
     auto&& shells = res.getShells();
     std::vector<PeakList> peak_equivs;
 
@@ -197,7 +192,7 @@ XDS::RecordList XDS::getMergedRecords() const
     return records;
 }
 
-XDS::RecordList XDS::getUnmergedRecords() const
+RecordList XDS::getUnmergedRecords() const
 {
     RecordList records;
 

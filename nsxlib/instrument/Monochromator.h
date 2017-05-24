@@ -16,8 +16,6 @@
 
 namespace nsx {
 
-namespace proptree=boost::property_tree;
-
 class Monochromator {
 
 public:
@@ -30,7 +28,7 @@ public:
 
 	Monochromator(const Monochromator& other);
 
-	Monochromator(const proptree::ptree& node);
+	Monochromator(const boost::property_tree::ptree& node);
 
 	Monochromator& operator=(const Monochromator& other);
 

@@ -45,7 +45,7 @@
 
 namespace nsx {
 
-Detector* Detector::create(const proptree::ptree& node)
+Detector* Detector::create(const boost::property_tree::ptree& node)
 {
     // Create an instance of the detector factory
     DetectorFactory* detectorFactory=DetectorFactory::Instance();
@@ -77,10 +77,10 @@ Detector::Detector(const std::string& name)
 {
 }
 
-Detector::Detector(const proptree::ptree& node)
+Detector::Detector(const boost::property_tree::ptree& node)
 : Component(node)
 {
-    boost::optional<const proptree::ptree&> dataOrdernode=node.get_child_optional("data_ordering");
+    boost::optional<const boost::property_tree::ptree&> dataOrdernode=node.get_child_optional("data_ordering");
     // If data order is not defined assumed default
     if (!dataOrdernode) {
         _dataorder = DataOrder::BottomRightColMajor;

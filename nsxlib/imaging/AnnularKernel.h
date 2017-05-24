@@ -42,6 +42,7 @@
 #ifndef NSXLIB_ANNULARKERNEL_H
 #define NSXLIB_ANNULARKERNEL_H
 
+#include "../imaging/ImagingTypes.h"
 #include "ConvolutionKernel.h"
 
 namespace nsx {
@@ -56,7 +57,7 @@ public:
 
     AnnularKernel(int nrows, int ncols);
 
-    AnnularKernel(int nrows, int ncols, const ConvolutionKernel::ParameterMap& params);
+    AnnularKernel(int nrows, int ncols, const ConvolutionKernelParameters& params);
 
     virtual ~AnnularKernel();
 

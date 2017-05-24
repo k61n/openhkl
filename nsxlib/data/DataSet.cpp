@@ -1,8 +1,7 @@
-#include <utility>
-#include <stdexcept>
-#include <memory>
-#include <vector>
 #include <cmath>
+#include <stdexcept>
+#include <utility>
+#include <vector>
 
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -12,7 +11,11 @@
 
 #include "H5Cpp.h"
 
+#include "../crystal/Peak3D.h"
+#include "../crystal/PeakCalc.h"
 #include "../crystal/PeakIntegrator.h"
+#include "../crystal/SpaceGroup.h"
+#include "../crystal/UnitCell.h"
 #include "../data/BasicFrameIterator.h"
 #include "../data/DataSet.h"
 #include "../data/IDataReader.h"
@@ -20,30 +23,28 @@
 #include "../data/ThreadedFrameIterator.h"
 #include "../geometry/Ellipsoid.h"
 #include "../geometry/IntegrationRegion.h"
+#include "../geometry/AABB.h"
 #include "../instrument/Detector.h"
+#include "../instrument/Diffractometer.h"
 #include "../instrument/Gonio.h"
 #include "../instrument/Monochromator.h"
 #include "../instrument/Sample.h"
 #include "../instrument/Source.h"
 #include "../mathematics/ErfInv.h"
+#include "../mathematics/MathematicsTypes.h"
+#include "../utils/ProgressHandler.h"
 #include "../utils/Units.h"
 
 namespace nsx {
 
-using Eigen::Matrix3d;
-using boost::filesystem::path;
-
-using RowMatrixi = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
-using RowMatrixd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
-
-DataSet::DataSet(std::shared_ptr<IDataReader>& reader, const std::shared_ptr<Diffractometer>& diffractometer):
+DataSet::DataSet(IDataReader* reader, const sptrDiffractometer& diffractometer):
     _isOpened(false),
     _filename(reader->getFilename()),
     _nFrames(0),
     _nrows(0),
     _ncols(0),
     _diffractometer(diffractometer),
-    _metadata(std::unique_ptr<MetaData>(new MetaData())),
+    _metadata(uptrMetaData(new MetaData())),
     _data(),
     _states(),
     _peaks(),
@@ -59,7 +60,7 @@ DataSet::DataSet(std::shared_ptr<IDataReader>& reader, const std::shared_ptr<Dif
     _nrows = _diffractometer->getDetector()->getNRows();
     _ncols = _diffractometer->getDetector()->getNCols();
 
-    _metadata = std::unique_ptr<MetaData>(new MetaData(_reader->getMetadata()));
+    _metadata = uptrMetaData(new MetaData(_reader->getMetadata()));
     _nFrames = _metadata->getKey<int>("npdone");
 
     // Getting Scan parameters for the detector
@@ -70,7 +71,7 @@ DataSet::DataSet(std::shared_ptr<IDataReader>& reader, const std::shared_ptr<Dif
     }
 }
 
-std::unique_ptr<IFrameIterator> DataSet::getIterator(int idx)
+uptrIFrameIterator DataSet::getIterator(int idx)
 {
     // use default frame iterator if one hasn't been set
     if ( !_iteratorCallback) {
@@ -79,7 +80,7 @@ std::unique_ptr<IFrameIterator> DataSet::getIterator(int idx)
             //return new ThreadedFrameIterator(data, index);
         };
     }
-    return std::unique_ptr<IFrameIterator>(_iteratorCallback(*this, idx));
+    return uptrIFrameIterator(_iteratorCallback(*this, idx));
 }
 
 void DataSet::setIteratorCallback(FrameIteratorCallback callback)
@@ -95,7 +96,7 @@ DataSet::~DataSet()
 
 std::string DataSet::getBasename() const
 {
-    path pathname(_filename);
+    boost::filesystem::path pathname(_filename);
     return pathname.filename().string();
 }
 
@@ -129,7 +130,7 @@ const std::string& DataSet::getFilename() const
     return _filename;
 }
 
-std::shared_ptr<Diffractometer> DataSet::getDiffractometer() const
+sptrDiffractometer DataSet::getDiffractometer() const
 {
     return _diffractometer;
 }
@@ -154,7 +155,7 @@ std::size_t DataSet::getNRows() const
     return _nrows;
 }
 
-std::set<sptrPeak3D>& DataSet::getPeaks()
+PeakSet& DataSet::getPeaks()
 {
     return _peaks;
 }
@@ -167,9 +168,6 @@ void DataSet::addPeak(const sptrPeak3D& peak)
 
 void DataSet::clearPeaks()
 {
-//    for (auto&& ptr : _peaks) {
-//        ptr->unlinkData();
-//    }
     _peaks.clear();
 }
 
@@ -284,7 +282,7 @@ void DataSet::saveHDF5(const std::string& filename) //const
     for(offset[0]=0; offset[0] < _nFrames; offset[0] += count[0]) {
         space.selectHyperslab(H5S_SELECT_SET, count, offset, nullptr, nullptr);
         // HDF5 requires row-major storage, so copy frame into a row-major matrix
-        RowMatrixi frame(getFrame(offset[0]));
+        IntMatrix frame(getFrame(offset[0]));
         dset.write(frame.data(), H5::PredType::NATIVE_INT32, memspace, space);
     }
 
@@ -297,7 +295,7 @@ void DataSet::saveHDF5(const std::string& filename) //const
     std::vector<std::string> names=_diffractometer->getDetector()->getGonio()->getPhysicalAxesNames();
     hsize_t nf[1]={_nFrames};
     H5::DataSpace scanSpace(1,nf);
-    RowMatrixd vals(names.size(),_nFrames);
+    RealMatrix vals(names.size(),_nFrames);
 
     for (unsigned int i = 0; i < _states.size(); ++i) {
         const std::vector<double>& v = _states[i].detector.getValues();
@@ -315,7 +313,7 @@ void DataSet::saveHDF5(const std::string& filename) //const
     // Write sample states
     H5::Group sampleGroup(scanGroup.createGroup("Sample"));
     std::vector<std::string> samplenames=_diffractometer->getSample()->getGonio()->getPhysicalAxesNames();
-    RowMatrixd valsSamples(samplenames.size(), _nFrames);
+    RealMatrix valsSamples(samplenames.size(), _nFrames);
 
     for (unsigned int i = 0; i < _states.size(); ++i) {
         const std::vector<double>& v = _states[i].sample.getValues();
@@ -333,7 +331,7 @@ void DataSet::saveHDF5(const std::string& filename) //const
     // Write source states
     H5::Group sourceGroup(scanGroup.createGroup("Source"));
     std::vector<std::string> sourcenames = _diffractometer->getSource()->getGonio()->getPhysicalAxesNames();
-    RowMatrixd valsSources(sourcenames.size(),_nFrames);
+    RealMatrix valsSources(sourcenames.size(),_nFrames);
 
     for (unsigned int i = 0; i < _states.size(); ++i) {
         std::vector<double> v = _states[i].source.getValues();
@@ -397,13 +395,13 @@ void DataSet::saveHDF5(const std::string& filename) //const
     // blosc_destroy();
 }
 
-void DataSet::addMask(AABB<double,3>* mask)
+void DataSet::addMask(AABB* mask)
 {
     _masks.insert(mask);
     maskPeaks();
 }
 
-void DataSet::removeMask(AABB<double,3>* mask)
+void DataSet::removeMask(AABB* mask)
 {
     auto&& p = _masks.find(mask);
     if (p != _masks.end()) {
@@ -412,7 +410,7 @@ void DataSet::removeMask(AABB<double,3>* mask)
     maskPeaks();
 }
 
-const std::set<AABB<double, 3> *>& DataSet::getMasks()
+const std::set<AABB*>& DataSet::getMasks()
 {
     return _masks;
 }
@@ -448,7 +446,7 @@ bool DataSet::inMasked(const Eigen::Vector3d& point) const
     return false;
 }
 
-std::vector<PeakCalc> DataSet::hasPeaks(const std::vector<Eigen::Vector3d>& hkls, const Matrix3d& BU)
+std::vector<PeakCalc> DataSet::hasPeaks(const std::vector<Eigen::Vector3d>& hkls, const Eigen::Matrix3d& BU)
 {
     std::vector<PeakCalc> peaks;
     unsigned int scanSize = static_cast<unsigned int>(_states.size());
@@ -515,7 +513,7 @@ std::vector<PeakCalc> DataSet::hasPeaks(const std::vector<Eigen::Vector3d>& hkls
     return peaks;
 }
 
-double DataSet::getBackgroundLevel(const std::shared_ptr<ProgressHandler>& progress)
+double DataSet::getBackgroundLevel(const sptrProgressHandler& progress)
 {
     if ( _background > 0.0 ) {
         return _background;
@@ -551,10 +549,8 @@ double DataSet::getBackgroundLevel(const std::shared_ptr<ProgressHandler>& progr
     return _background;
 }
 
-void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_shape, const std::shared_ptr<ProgressHandler>& handler)
+void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_shape, const sptrProgressHandler& handler)
 {
-    using Ellipsoid3D = Ellipsoid<double, 3>;
-
     if (handler) {
         handler->setStatus(("Integrating " + std::to_string(getPeaks().size()) + " peaks...").c_str());
         handler->setProgress(0);
@@ -570,19 +566,13 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
 
     peak_list.reserve(num_peaks);
 
-    auto getCovar = [](const Ellipsoid3D& ell) -> Eigen::Matrix3d {
+    auto getCovar = [](const Ellipsoid& ell) -> Eigen::Matrix3d {
         auto&& rs = ell.getRSinv();
         return rs.transpose()*rs;
     };
 
 
     auto peakRadius = [](const Eigen::Matrix3d& shape) -> double {
-//        Eigen::SelfAdjointEigenSolver<Matrix3d> solver;
-//        solver.compute(shape);
-//        auto vals = solver.eigenvalues();
-//        double vol = vals(0)*vals(1)*vals(2);
-        //static const double factor = std::pow(4.0 * M_PI / 3.0, -2.0);
-        //const double volume = factor * std::pow(shape.determinant(), -0.5);
         return std::pow(shape.determinant(), -1.0/6.0);
     };
 
@@ -620,20 +610,11 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
     std::cout << "avg radius: " << avg_peak_radius << std::endl;
     std::cout << "std. dev:   " << peak_radius_std << std::endl;
 
-
-    //const double avg_peak_radius = peakRadius(avg_peak_shape);
-
     for (auto&& peak: _peaks ) {
-//        Eigen::Vector3d center(peak->getShape().getCenter());
-//        auto shape = Ellipsoid3D(center, vals, solver.eigenvectors());
-//        peak->setShape(shape);
         IntegrationRegion region(peak->getShape(), peak_scale, bkg_scale);
         PeakIntegrator integrator(region, *this);
         peak_list.emplace_back(peak, integrator);
     }
-
-    //progressDialog->setValue(0);
-    //progressDialog->setLabelText("Integrating peak intensities...");
 
     size_t idx = 0;
     int num_frames_done = 0;
@@ -648,7 +629,6 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
         mask.setZero();
 
         for (auto& tup: peak_list ) {
-            auto&& peak = tup.first;
             auto&& integrator = tup.second;
             integrator.getRegion().updateMask(mask, idx);
         }
@@ -676,19 +656,6 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
         auto&& integrator = tup.second;
         integrator.end();
         peak->updateIntegration(integrator);
-
-        // peak is too weak
-        // todo: p value should probably not be hard-coded
-//        if (integrator.pValue() > 1e-3) {
-//            peak->setSelected(false);
-//            continue;
-//        }
-
-        // peak profile couldn't be fitted
-//        if (!peak->getProfile().goodFit(integrator.getProjectionPeak(), 0.10)) {
-//            peak->setSelected(false);
-//            continue;
-//        }
 
         if (!update_shape) {
             continue;
@@ -719,9 +686,6 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
             peak->setSelected(false);
             continue;
         }
-
-        auto old_center = old_shape.getAABBCenter();
-        auto new_center = new_shape.getAABBCenter();
 
         auto lb = new_shape.getLower();
         auto ub = new_shape.getUpper();
@@ -756,8 +720,6 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
 
 void DataSet::removeDuplicatePeaks()
 {
-    using Octree = NDTree<double, 3>;
-
     class compare_fn {
     public:
         auto operator()(const Eigen::RowVector3i& a, const Eigen::RowVector3i& b) const -> bool
@@ -772,27 +734,20 @@ void DataSet::removeDuplicatePeaks()
         }
     };
 
+    PeakList calculated_peaks;
 
-    int predicted_peaks = 0;
-
-    auto& mono = getDiffractometer()->getSource()->getSelectedMonochromator();
-    const double wavelength = mono.getWavelength();
-    std::vector<sptrPeak3D> calculated_peaks;
-
-    std::shared_ptr<Sample> sample = getDiffractometer()->getSample();
+    auto sample = getDiffractometer()->getSample();
     unsigned int ncrystals = static_cast<unsigned int>(sample->getNCrystals());
 
     for (unsigned int i = 0; i < ncrystals; ++i) {
         SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
         auto cell = sample->getUnitCell(i);
-        auto UB = cell->getReciprocalStandardM();
 
         std::map<Eigen::RowVector3i, sptrPeak3D, compare_fn> hkls;
 
         for (auto&& peak: _peaks) {
             Eigen::RowVector3d hkl;
             Eigen::RowVector3i hkl_int;
-                    //bool getMillerIndices(const UnitCell& uc, Eigen::RowVector3d& hkl, bool applyUCTolerance=true) const;
 
             if (!peak->getMillerIndices(*cell, hkl)) {
                 continue;

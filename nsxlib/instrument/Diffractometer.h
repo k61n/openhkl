@@ -32,23 +32,17 @@
 
 #include <map>
 #include <string>
-#include <memory>
 
 #include <boost/property_tree/ptree.hpp>
 
+#include "../instrument/InstrumentTypes.h"
+
 namespace nsx {
-
-namespace property_tree=boost::property_tree;
-
-// Forwards
-class Detector;
-class Sample;
-class Source;
 
 class Diffractometer {
 public:
 
-    Diffractometer(const property_tree::ptree& node);
+    Diffractometer(const boost::property_tree::ptree& node);
 
     //! Constructs a diffractometer from another one
     Diffractometer(const Diffractometer& other);
@@ -66,28 +60,28 @@ public:
     const std::string& getName() const;
 
     //! Get the detector of this diffractometer
-    std::shared_ptr<Detector> getDetector();
+    sptrDetector getDetector();
 
     //! Get the sample of this diffractometer
-    std::shared_ptr<Sample> getSample();
+    sptrSample getSample();
 
     //! Get the source of this diffractometer
-    std::shared_ptr<Source> getSource();
+    sptrSource getSource();
 
     //! Get the type of the diffractometer
     virtual std::string getType() const {return "";}
 
     //! Set the detector of this diffractometer
-    void setDetector(std::shared_ptr<Detector>);
+    void setDetector(sptrDetector detector);
 
     //! Set the name of the diffractometer
     void setName(const std::string& name);
 
     //! Set the sample of this diffractometer
-    void setSample(std::shared_ptr<Sample>);
+    void setSample(sptrSample sample);
 
     //! Set the source of this diffractometer
-    void setSource(std::shared_ptr<Source>);
+    void setSource(sptrSource source);
 
     std::map<unsigned int,std::string> getPhysicalAxesNames() const;
 
@@ -100,9 +94,9 @@ protected:
     Diffractometer(const std::string& name);
 
     std::string _name;
-    std::shared_ptr<Detector> _detector;
-    std::shared_ptr<Sample> _sample;
-    std::shared_ptr<Source> _source;
+    sptrDetector _detector;
+    sptrSample _sample;
+    sptrSource _source;
 };
 
 } // end namespace nsx

@@ -40,7 +40,7 @@ BOOST_AUTO_TEST_CASE(Test_Cylindrical_Detector)
 
     // Attach a gonio
     std::shared_ptr<Gonio> g(new Gonio("gamma-arm"));
-    g->addRotation("gamma",Vector3d(0,0,1),RotAxis::CW);
+    g->addRotation("gamma",Eigen::Vector3d(0,0,1),RotAxis::CW);
     d.setGonio(g);
     // Put detector at 90 deg, event should point along x
 
@@ -74,11 +74,11 @@ BOOST_AUTO_TEST_CASE(Test_Cylindrical_Detector)
     BOOST_CHECK_CLOSE(px,319.5,tolerance);
     BOOST_CHECK_CLOSE(py,127.5,tolerance);
 
-    d.receiveKf(px,py,Vector3d(0.0,0.764,0.10),from,t,{0.0*deg});
+    d.receiveKf(px,py,Eigen::Vector3d(0.0,0.764,0.10),from,t,{0.0*deg});
     BOOST_CHECK_CLOSE(px,319.5,tolerance);
     BOOST_CHECK_CLOSE(py,191.25,tolerance);
 
-    d.receiveKf(px,py,Vector3d(1,0,0),from,t,{90.0*deg});
+    d.receiveKf(px,py,Eigen::Vector3d(1,0,0),from,t,{90.0*deg});
     BOOST_CHECK_CLOSE(px,319.5,tolerance);
     BOOST_CHECK_CLOSE(py,127.5,tolerance);
 }

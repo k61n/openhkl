@@ -29,17 +29,15 @@
 #ifndef NSXLIB_SAMPLE_H
 #define NSXLIB_SAMPLE_H
 
-#include <memory>
 #include <string>
 #include <vector>
 
 #include <boost/property_tree/ptree.hpp>
 
-#include "Component.h"
+#include "../chemistry/ChemistryTypes.h"
+#include "../crystal/CrystalTypes.h"
 #include "../geometry/ConvexHull.h"
-#include "../chemistry/Material.h"
-#include "../crystal/UnitCell.h"
-#include "../utils/Types.h"
+#include "../instrument/Component.h"
 
 namespace nsx {
 
@@ -47,7 +45,7 @@ class Sample : public Component {
 public:
 
     //! Static constructor of a Sample from a property tree node
-    static Sample* create(const proptree::ptree& node);
+    static Sample* create(const boost::property_tree::ptree& node);
 
     // Default constructor
     Sample();
@@ -56,7 +54,7 @@ public:
     //! Constructs a default sample with a given name
     Sample(const std::string& name);
     //! Constructs a sample from a property tree node
-    Sample(const proptree::ptree& node);
+    Sample(const boost::property_tree::ptree& node);
     //! Virtual copy constructor
     Sample* clone() const;
     //! Destructor
@@ -66,21 +64,22 @@ public:
     Sample& operator=(const Sample& other);
 
     //! Set the sample shape described as a convex hull
-    void setShape(const ConvexHull<double>& shape);
+    void setShape(const ConvexHull& shape);
 
     //! Return the sample shape, described as a convex hull
-    ConvexHull<double>& getShape();
+    ConvexHull& getShape();
 
     //! Create a new crystal with Empty UnitCell, and return it
     std::shared_ptr<UnitCell> addUnitCell(std::shared_ptr<UnitCell> cell = nullptr);
+
     //! Get the UnitCell of Crystal number i in the list
-    std::shared_ptr<UnitCell> getUnitCell(int i);
-    const CellList& getUnitCells() const;
+    sptrUnitCell getUnitCell(int i);
+    const UnitCellList& getUnitCells() const;
     //! Return number of crystals
     std::size_t getNCrystals() const;
     //!
     void removeUnitCell(int i);
-    void removeUnitCell(std::shared_ptr<UnitCell> cell);
+    void removeUnitCell(sptrUnitCell cell);
 
     //! Gets the Z number of a given unit cell
     unsigned int getZ(int index) const;
@@ -93,9 +92,9 @@ public:
     void setMaterial(sptrMaterial material, int index);
 
 private:
-    ConvexHull<double> _sampleShape;
+    ConvexHull _sampleShape;
     //! UnitCells of all crystals associated with this sample
-    CellList _cells;
+    UnitCellList _cells;
 };
 
 } // end namespace nsx

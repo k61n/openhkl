@@ -8,9 +8,9 @@
 #include <QAbstractTableModel>
 #include <QModelIndexList>
 
-#include <nsxlib/crystal/Peak3D.h>
-#include <nsxlib/instrument/Sample.h>
-#include <nsxlib/utils/Types.h>
+#include <nsxlib/crystal/CrystalTypes.h>
+#include <nsxlib/data/DataTypes.h>
+#include <nsxlib/instrument/InstrumentTypes.h>
 
 class QObject;
 
@@ -18,11 +18,12 @@ class CollectedPeaksModel : public QAbstractTableModel
 {
     Q_OBJECT
 public:
+
     enum Column {h,k,l,intensity,sigmaIntensity,transmission,lorentzFactor,numor,selected,unitCell,count};
 
     explicit CollectedPeaksModel(nsx::sptrExperiment experiment,QObject* parent = 0);
 
-    CollectedPeaksModel(nsx::sptrExperiment experiment, const std::vector<nsx::sptrPeak3D>& peaks, QObject *parent = 0);
+    CollectedPeaksModel(nsx::sptrExperiment experiment, const nsx::PeakList& peaks, QObject *parent = 0);
 
     ~CollectedPeaksModel() = default;
 
@@ -40,11 +41,11 @@ public:
 
     void addPeak(const nsx::sptrPeak3D& peak);
 
-    void setPeaks(const std::vector<std::shared_ptr<nsx::DataSet>>& data);
-    void setPeaks(const std::vector<nsx::sptrPeak3D>& peaks);
+    void setPeaks(const nsx::DataList& data);
+    void setPeaks(const nsx::PeakList& peaks);
 
-    const std::vector<nsx::sptrPeak3D>& getPeaks() const;
-    std::vector<nsx::sptrPeak3D> getPeaks(const QModelIndexList& indices) const;
+    const nsx::PeakList& getPeaks() const;
+    nsx::PeakList getPeaks(const QModelIndexList& indices) const;
 
     bool indexIsValid(const QModelIndex& index) const;
 
@@ -56,7 +57,7 @@ public:
 
     void writeFullProf(const std::string& filename, QModelIndexList indices=QModelIndexList());
 
-    void setUnitCells(const nsx::CellList& cells);
+    void setUnitCells(const nsx::UnitCellList& cells);
 
     QModelIndexList getUnindexedPeaks();
 
@@ -73,8 +74,8 @@ signals:
 
 private:
     nsx::sptrExperiment _experiment;
-    std::vector<nsx::sptrPeak3D> _peaks;
-    nsx::CellList _cells;
+    nsx::PeakList _peaks;
+    nsx::UnitCellList _cells;
 };
 
 #endif // NSXQT_COLLECTEDPEAKSMODEL_H

@@ -42,7 +42,7 @@ SamplePropertyWidget::SamplePropertyWidget(SampleItem* caller,QWidget *parent) :
 
         bool isrot=false;
 
-        if (RotAxis* rot=dynamic_cast<RotAxis*>(axis)) {
+        if (nsx::RotAxis* rot=dynamic_cast<nsx::RotAxis*>(axis)) {
             os << "R(";
             os << rot->getAxis().transpose();
             os << ")";
@@ -53,7 +53,7 @@ SamplePropertyWidget::SamplePropertyWidget(SampleItem* caller,QWidget *parent) :
             }
             isrot=true;
         }
-        else if(dynamic_cast<TransAxis*>(axis)) {
+        else if(dynamic_cast<nsx::TransAxis*>(axis)) {
             os << "T(";
             os << axis->getAxis().transpose();
             os << ")";
@@ -84,7 +84,7 @@ void SamplePropertyWidget::cellHasChanged(int i,int j)
 {
     auto sample=_sampleItem->getExperiment()->getDiffractometer()->getSample();
     auto axis=sample->getGonio()->getAxis(i);
-    if (dynamic_cast<TransAxis*>(axis)) {
+    if (dynamic_cast<nsx::TransAxis*>(axis)) {
          axis->setOffset(ui->tableWidget_Sample->item(i,j)->data(Qt::EditRole).toDouble()*nsx::mm); // Given in mm
     } else {
          axis->setOffset(ui->tableWidget_Sample->item(i,j)->data(Qt::EditRole).toDouble()*nsx::deg); // Given in degs

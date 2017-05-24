@@ -33,18 +33,25 @@
  *
  */
 
+#include "../crystal/CrystalTypes.h"
+#include "../crystal/Peak3D.h"
+#include "../crystal/PeakCalc.h"
 #include "../crystal/PeakPredictor.h"
+#include "../crystal/SpaceGroup.h"
+#include "../crystal/UnitCell.h"
 #include "../data/DataSet.h"
-#include "../geometry/NDTree.h"
+#include "../data/DataTypes.h"
+#include "../geometry/GeometryTypes.h"
+#include "../geometry/Octree.h"
+#include "../instrument/Diffractometer.h"
 #include "../instrument/Sample.h"
 #include "../instrument/Source.h"
+#include "../utils/ProgressHandler.h"
 
 namespace nsx {
 
-void PeakPredictor::addPredictedPeaks(std::shared_ptr<DataSet> data)
+void PeakPredictor::addPredictedPeaks(sptrDataSet data)
 {
-    using Octree = NDTree<double, 3>;
-
     class compare_fn {
     public:
         auto operator()(const Eigen::RowVector3i a, const Eigen::RowVector3i b) -> bool
@@ -64,9 +71,9 @@ void PeakPredictor::addPredictedPeaks(std::shared_ptr<DataSet> data)
 
     auto& mono = data->getDiffractometer()->getSource()->getSelectedMonochromator();
     const double wavelength = mono.getWavelength();
-    std::vector<sptrPeak3D> calculated_peaks;
+    PeakList calculated_peaks;
 
-    std::shared_ptr<Sample> sample = data->getDiffractometer()->getSample();
+    auto sample = data->getDiffractometer()->getSample();
     unsigned int ncrystals = static_cast<unsigned int>(sample->getNCrystals());
 
     for (unsigned int i = 0; i < ncrystals; ++i) {
@@ -81,16 +88,15 @@ void PeakPredictor::addPredictedPeaks(std::shared_ptr<DataSet> data)
 
         predicted_peaks += predicted_hkls.size();
 
-        std::vector<PeakCalc> peaks = data->hasPeaks(predicted_hkls, UB);
+        PeakCalcList peaks = data->hasPeaks(predicted_hkls, UB);
         calculated_peaks.reserve(peaks.size());
 
         int current_peak = 0;
 
         _handler->setStatus("Building set of previously found peaks...");
 
-        std::set<sptrPeak3D> found_peaks = data->getPeaks();
+        PeakSet found_peaks = data->getPeaks();
         std::set<Eigen::RowVector3i, compare_fn> found_hkls;
-
 
         Eigen::Vector3d lb = {0.0, 0.0, 0.0};
         Eigen::Vector3d ub = {double(data->getNCols()), double(data->getNRows()), double(data->getNFrames())};

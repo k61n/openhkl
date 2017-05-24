@@ -2,7 +2,7 @@
  * nsxtool : Neutron Single Crystal analysis toolkit
  ------------------------------------------------------------------------------------------
  Copyright (C)
- 2012- Laurent C. Chapon Eric Pellegrini
+ 2012- Laurent C. Chapon, Eric Pellegrini
  Institut Laue-Langevin
  BP 156
  6, rue Jules Horowitz
@@ -27,15 +27,17 @@
  *
  */
 
-#ifndef NSXLIB_DETECTORSTATE_H
-#define NSXLIB_DETECTORSTATE_H
+#ifndef NSXLIB_MATRIXOPERATIONS_H
+#define NSXLIB_MATRIXOPERATIONS_H
 
-#include <vector>
+#include <Eigen/Dense>
 
 namespace nsx {
 
-using DetectorState = std::vector<double>;
+void removeColumn(Eigen::MatrixXd& matrix, unsigned int colToRemove);
+
+void removeRow(Eigen::MatrixXd& matrix, unsigned int rowToRemove);
 
 } // end namespace nsx
 
-#endif // NSXLIB_DETECTORSTATE_H
+#endif // NSXLIB_MATRIXOPERATIONS_H

@@ -9,6 +9,7 @@
 #ifndef NSXLIB_DELTAKERNEL_H
 #define NSXLIB_DELTAKERNEL_H
 
+#include "../imaging/ImagingTypes.h"
 #include "ConvolutionKernel.h"
 
 namespace nsx {
@@ -23,7 +24,7 @@ public:
 
     DeltaKernel(int nrows, int ncols);
 
-    DeltaKernel(int nrows, int ncols, const ConvolutionKernel::ParameterMap& params);
+    DeltaKernel(int nrows, int ncols, const ConvolutionKernelParameters& params);
 
     virtual ~DeltaKernel();
 

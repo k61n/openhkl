@@ -34,14 +34,11 @@
 
 #include <Eigen/Dense>
 
+#include "../chemistry/ChemistryTypes.h"
+#include "../crystal/SpaceGroup.h"
 #include "../geometry/Basis.h"
-#include "../chemistry/Material.h"
-#include "../utils/Types.h"
-#include "SpaceGroup.h"
 
 namespace nsx {
-
-using Eigen::Vector3d;
 
 //! Centering type of the Bravais lattice
 enum  class LatticeCentring : char  {P='P',A='A',B='B',C='C',I='I',F='F',R='R'};
@@ -60,12 +57,13 @@ enum  class BravaisType : char  {Triclinic='a',Monoclinic='m',Orthorhombic='o',T
 class UnitCell : public Basis
 {
 public:
+
     //! Empty UnitCell, initialiazed to right-handed orthonormal system
     UnitCell();
     //! Construct unitCell from lattice parameters, the A matrix is built with avector along x, bvector in the xy-plane.
     UnitCell(double a, double b, double c, double alpha, double beta, double gamma,LatticeCentring centring=LatticeCentring::P, BravaisType bravais=BravaisType::Triclinic, std::shared_ptr<Basis> reference=nullptr);
     //! Build Unit-cell from 3 non-coplanar vectors. Throw if coplanars.
-    UnitCell(const Vector3d& v1,const Vector3d& v2,const Vector3d& v3, LatticeCentring centring=LatticeCentring::P, BravaisType bravais=BravaisType::Triclinic,std::shared_ptr<Basis> reference=nullptr );
+    UnitCell(const Eigen::Vector3d& v1,const Eigen::Vector3d& v2,const Eigen::Vector3d& v3, LatticeCentring centring=LatticeCentring::P, BravaisType bravais=BravaisType::Triclinic,std::shared_ptr<Basis> reference=nullptr );
     //! Copy constructor
     UnitCell(const UnitCell&);
     //! Assignment
@@ -90,12 +88,12 @@ public:
     //! Get C* vector
     Eigen::Vector3d getReciprocalCVector() const;
 
-    void setLatticeVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c);
+    void setLatticeVectors(const Eigen::Vector3d& a, const Eigen::Vector3d& b, const Eigen::Vector3d& c);
     void copyMatrices(const UnitCell& other);
     //! Build a UnitCell from a set of three direct vectors.
-    static UnitCell fromDirectVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c, LatticeCentring centring=LatticeCentring::P, BravaisType bravais=BravaisType::Triclinic,const std::shared_ptr<Basis>& reference=nullptr);
+    static UnitCell fromDirectVectors(const Eigen::Vector3d& a, const Eigen::Vector3d& b, const Eigen::Vector3d& c, LatticeCentring centring=LatticeCentring::P, BravaisType bravais=BravaisType::Triclinic,const std::shared_ptr<Basis>& reference=nullptr);
     //! Build a UnitCell from a set of three reciprocal vectors.
-    static UnitCell fromReciprocalVectors(const Vector3d& a, const Vector3d& b, const Vector3d& c,LatticeCentring centring=LatticeCentring::P, BravaisType bravais=BravaisType::Triclinic, const std::shared_ptr<Basis>& reference=nullptr);
+    static UnitCell fromReciprocalVectors(const Eigen::Vector3d& a, const Eigen::Vector3d& b, const Eigen::Vector3d& c,LatticeCentring centring=LatticeCentring::P, BravaisType bravais=BravaisType::Triclinic, const std::shared_ptr<Basis>& reference=nullptr);
     //!
     void setLatticeCentring(LatticeCentring centring);
     //!
@@ -116,7 +114,7 @@ public:
     //! Determine whether two reflections (h1,k1,l1) and (h2,k2,l2) are equivalent up to Friedel reflection.
     bool isFriedelEquivalent(double h1,double k1, double l1, double h2, double k2, double l2) const;
 
-    void setBU(const Vector3d& hkl1,const Vector3d& hkl2, const Vector3d& q1, const Vector3d& q2);
+    void setBU(const Eigen::Vector3d& hkl1,const Eigen::Vector3d& hkl2, const Eigen::Vector3d& q1, const Eigen::Vector3d& q2);
     void setBU(const Eigen::Matrix3d& BU);
 
 

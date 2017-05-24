@@ -1,17 +1,17 @@
 #include <iostream>
-#include <memory>
 
+#include <QDebug>
 #include <QDirModel>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QMessageBox>
 #include <QModelIndex>
 #include <QModelIndexList>
-#include <QtDebug>
 
 #include <nsxlib/data/DataReaderFactory.h>
 #include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/instrument/DiffractometerStore.h>
+#include <nsxlib/instrument/InstrumentTypes.h>
 #include <nsxlib/data/DataSet.h>
 
 #include "NumorsConversionDialog.h"
@@ -60,7 +60,7 @@ void NumorsConversionDialog::on_pushButton_convert_clicked()
     nsx::DataReaderFactory dataFactory;
     nsx::DiffractometerStore* ds=nsx::DiffractometerStore::Instance();
     std::string diffractometerName=ui->comboBox_diffractometers->currentText().toStdString();
-    std::shared_ptr<nsx::Diffractometer> diffractometer=std::shared_ptr<nsx::Diffractometer>(ds->buildDiffractometer(diffractometerName));
+    auto diffractometer=nsx::sptrDiffractometer(ds->buildDiffractometer(diffractometerName));
 
     auto model = dynamic_cast<QDirModel*>(ui->treeView_inputFiles->model());
     QModelIndexList indexes = ui->treeView_inputFiles->selectionModel()->selectedIndexes();

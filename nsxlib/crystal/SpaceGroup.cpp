@@ -37,9 +37,6 @@
 #include "../crystal/SpaceGroupSymbols.h"
 #include "../crystal/Peak3D.h"
 
-using std::string;
-using std::vector;
-
 namespace nsx {
 
 SpaceGroup::SpaceGroup(const std::string& symbol)
@@ -149,9 +146,9 @@ int SpaceGroup::getID() const
     return sg->getID(full_symbol);
 }
 
-vector<vector<sptrPeak3D>> SpaceGroup::findEquivalences(const vector<sptrPeak3D> &peak_list, bool friedel) const
+std::vector<PeakList> SpaceGroup::findEquivalences(const PeakList &peak_list, bool friedel) const
 {
-    vector<vector<sptrPeak3D>> peak_equivs;
+    std::vector<PeakList> peak_equivs;
 
     for (auto&& peak: peak_list ) {
         bool found_equivalence = false;
@@ -178,7 +175,7 @@ vector<vector<sptrPeak3D>> SpaceGroup::findEquivalences(const vector<sptrPeak3D>
 
         // didn't find an equivalence?
         if ( !found_equivalence) {
-            peak_equivs.emplace_back(std::vector<sptrPeak3D>{peak});
+            peak_equivs.emplace_back(PeakList{peak});
         }
     }
     return peak_equivs;
@@ -204,7 +201,7 @@ const std::string& SpaceGroup::getGenerators() const
     return _generators;
 }
 
-const groupElementsList& SpaceGroup::getGroupElements() const
+const SymOpList& SpaceGroup::getGroupElements() const
 {
     return _groupElements;
 }
@@ -212,7 +209,7 @@ const groupElementsList& SpaceGroup::getGroupElements() const
 void SpaceGroup::generateGroupElements()
 {
     _groupElements.clear();
-    groupElementsList generators;
+    SymOpList generators;
     std::vector<std::string> gens;
     boost::split(gens, _generators, boost::is_any_of(";"));
     generators.reserve(gens.size()+1);

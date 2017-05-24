@@ -40,11 +40,11 @@
 
 namespace nsx {
 
-class MultiDetector : public Composite<Detector,const proptree::ptree&> {
+class MultiDetector : public Composite<Detector,const boost::property_tree::ptree&> {
 public:
 
     //! Static constructor of a MultiDetector from a property tree node
-    static Detector* create(const proptree::ptree& node);
+    static Detector* create(const boost::property_tree::ptree& node);
 
     //! Construct a MultiDetector
     MultiDetector();
@@ -53,7 +53,7 @@ public:
     //! Construct a MultiDetector with a given name
     MultiDetector(const std::string& name);
     //! Constructs a MultiDetector from a property tree node
-    MultiDetector(const proptree::ptree& node);
+    MultiDetector(const boost::property_tree::ptree& node);
     //! Return a pointer to a copy of a MultiDetector
     Detector* clone() const;
     //! Destructor

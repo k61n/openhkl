@@ -11,10 +11,11 @@
 #include "../instrument/Detector.h"
 #include "../instrument/Gonio.h"
 #include "../instrument/Sample.h"
+#include "../instrument/Source.h"
 #include "../instrument/TransAxis.h"
 #include "../instrument/RotAxis.h"
+#include "../mathematics/MatrixOperations.h"
 #include "../mathematics/Minimizer.h"
-#include "../utils/EigenMatrixOp.h"
 #include "../utils/Units.h"
 
 namespace nsx {
@@ -116,16 +117,16 @@ int UBFunctor::values() const
     return 3*_peaks.size();
 }
 
-void UBFunctor::setDetector(const std::shared_ptr<Detector>& detector)
+void UBFunctor::setDetector(const sptrDetector& detector)
 {
     _detector = detector;
 }
 
-void UBFunctor::setSample(const std::shared_ptr<Sample>& sample)
+void UBFunctor::setSample(const sptrSample& sample)
 {
     _sample = sample;
 }
-void UBFunctor::setSource(const std::shared_ptr<Source>& source)
+void UBFunctor::setSource(const sptrSource& source)
 {
     _source = source;
 }
@@ -208,12 +209,12 @@ void UBMinimizer::resetParameters()
     _functor.resetParameters();
 }
 
-void UBMinimizer::setDetector(const std::shared_ptr<Detector>& detector)
+void UBMinimizer::setDetector(const sptrDetector& detector)
 {
     _functor.setDetector(detector);
 }
 
-void UBMinimizer::setSource(const std::shared_ptr<Source>& source)
+void UBMinimizer::setSource(const sptrSource& source)
 {
     _functor.setSource(source);
 }
@@ -224,7 +225,7 @@ void UBMinimizer::refineParameter(unsigned int idx, bool refine)
 }
 
 
-void UBMinimizer::setSample(const std::shared_ptr<Sample>& sample)
+void UBMinimizer::setSample(const sptrSample& sample)
 {
     _functor.setSample(sample);
 }
@@ -330,9 +331,9 @@ UBSolution::UBSolution() : _detector(nullptr), _sample(nullptr),_source(nullptr)
 {
 }
 
-UBSolution::UBSolution(std::shared_ptr<Detector> detector,
-                       std::shared_ptr<Sample> sample,
-                       std::shared_ptr<Source> source,
+UBSolution::UBSolution(sptrDetector detector,
+                       sptrSample sample,
+                       sptrSource source,
                        const Eigen::VectorXd& values,
                        const Eigen::MatrixXd& cov,
                        std::vector<bool> fixedParameters):

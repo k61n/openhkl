@@ -2,6 +2,7 @@
 
 #include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/instrument/Monochromator.h>
+#include <nsxlib/instrument/InstrumentTypes.h>
 #include <nsxlib/instrument/Source.h>
 #include <nsxlib/utils/Units.h>
 
@@ -16,7 +17,7 @@ SourcePropertyWidget::SourcePropertyWidget(SourceItem* caller,QWidget *parent) :
     _caller(caller)
 {
     ui->setupUi(this);
-    std::shared_ptr<Source> source=_caller->getExperiment()->getDiffractometer()->getSource();
+    nsx::sptrSource source=_caller->getExperiment()->getDiffractometer()->getSource();
     auto monos = source->getMonochromators();
     for (auto&& m : monos) {
         ui->comboBox_Monochromators->addItem(QString::fromStdString(m.getName()));

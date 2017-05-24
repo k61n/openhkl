@@ -1,12 +1,11 @@
-#include "ui_DialogRefineUnitCell.h"
-
 #include <sstream>
 
-#include <QtDebug>
 #include <QCheckBox>
 #include <QLayout>
 #include <QStatusBar>
 
+#include <nsxlib/crystal/Peak3D.h>
+#include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/instrument/Axis.h>
 #include <nsxlib/instrument/Detector.h>
@@ -22,9 +21,11 @@
 #include "DialogRefineUnitCell.h"
 #include "DoubleTableItemDelegate.h"
 
-DialogRefineUnitCell::DialogRefineUnitCell(std::shared_ptr<nsx::Experiment> experiment,
-                                           sptrUnitCell unitCell,
-                                           std::vector<sptrPeak3D> peaks,
+#include "ui_DialogRefineUnitCell.h"
+
+DialogRefineUnitCell::DialogRefineUnitCell(nsx::sptrExperiment experiment,
+                                           nsx::sptrUnitCell unitCell,
+                                           nsx::PeakList peaks,
                                            QWidget *parent):
     QDialog(parent),
     ui(new Ui::DialogRefineUnitCell),
@@ -303,7 +304,7 @@ void DialogRefineUnitCell::refineParameters()
     os.str("");
 
     auto M=_unitCell->getReciprocalStandardM();
-    _minimizer.setMinimizer(Minimizer());
+    _minimizer.setMinimizer(nsx::Minimizer());
     _minimizer.setStartingUBMatrix(M);
 
     int test = _minimizer.run(100);

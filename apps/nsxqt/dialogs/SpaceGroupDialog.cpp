@@ -16,16 +16,20 @@
 #include <QString>
 #include <QTreeView>
 
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/instrument/Sample.h>
+#include <nsxlib/crystal/CrystalTypes.h>
+#include <nsxlib/crystal/Peak3D.h>
 #include <nsxlib/crystal/RFactor.h>
 #include <nsxlib/crystal/SpaceGroup.h>
 #include <nsxlib/crystal/SpaceGroupSymbols.h>
+#include <nsxlib/crystal/UnitCell.h>
+#include <nsxlib/data/DataSet.h>
+#include <nsxlib/instrument/Diffractometer.h>
+#include <nsxlib/instrument/Sample.h>
 
 #include "SpaceGroupDialog.h"
 #include "ui_SpaceGroupDialog.h"
 
-SpaceGroupDialog::SpaceGroupDialog(std::vector<std::shared_ptr<nsx::DataSet>> numors, QWidget *parent):
+SpaceGroupDialog::SpaceGroupDialog(nsx::DataList numors, QWidget *parent):
     QDialog(parent),
     ui(new Ui::SpaceGroupDialog),
     _numors(numors),
@@ -61,8 +65,8 @@ void SpaceGroupDialog::evaluateSpaceGroups()
     std::vector<std::string> symbols = spaceGroupSymbols->getAllSymbols();
 
     std::vector<std::array<double, 3>> hkls;
-    std::vector<nsx::sptrPeak3D> peak_list;
-    std::vector<std::vector<nsx::sptrPeak3D>> peak_equivs;
+    nsx::PeakList peak_list;
+    std::vector<nsx::PeakList> peak_equivs;
 
     if ( _numors.size()  == 0) {
         qDebug() << "Need at least one numor to find space group!";
@@ -91,7 +95,7 @@ void SpaceGroupDialog::evaluateSpaceGroups()
     }
 
     // todo: how to we handle multiple samples??
-    std::shared_ptr<nsx::Sample> sample = _numors[0]->getDiffractometer()->getSample();
+    auto sample = _numors[0]->getDiffractometer()->getSample();
 
     if (!sample) {
         qDebug() << "Need to have a sample in order to find space group!";
@@ -183,8 +187,8 @@ void SpaceGroupDialog::on_tableView_doubleClicked(const QModelIndex &index)
     box->setText(QString("Setting space group to ") + _selectedGroup.c_str());
 
     // todo: how to handle multiple samples and/or multiple unit cells???
-    for (std::shared_ptr<nsx::DataSet> numor: _numors) {
-        std::shared_ptr<nsx::Sample> sample = numor->getDiffractometer()->getSample();
+    for (auto numor: _numors) {
+        auto sample = numor->getDiffractometer()->getSample();
         sample->getUnitCell(0)->setSpaceGroup(_selectedGroup);
     }
 

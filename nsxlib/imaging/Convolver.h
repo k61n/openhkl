@@ -7,14 +7,14 @@
 #ifndef NSXLIB_CONVOLVER_H
 #define NSXLIB_CONVOLVER_H
 
-#include <Eigen/Core>
-#include <vector>
-#include <fftw3.h>
-#include <vector>
 #include <complex>
+#include <vector>
 
-#include "../utils/Types.h"
+#include <fftw3.h>
 
+#include <Eigen/Core>
+
+#include "../mathematics/MathematicsTypes.h"
 
 namespace nsx {
 

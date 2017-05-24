@@ -51,8 +51,6 @@
 
 namespace nsx {
 
-namespace property_tree=boost::property_tree;
-
 
 /** @brief Base class for Detectors.
  *
@@ -61,7 +59,7 @@ namespace property_tree=boost::property_tree;
 class Detector: public Component {
 public:
     //! Static constructor of a Detector from a property tree node
-    static Detector* create(const proptree::ptree& node);
+    static Detector* create(const boost::property_tree::ptree& node);
 
     //! Construct a Detector
     Detector();
@@ -70,7 +68,7 @@ public:
     //! Construct a Detector with a given name
     Detector(const std::string& name);
     //! Constructs a sample from a property tree node
-    Detector(const proptree::ptree& node);
+    Detector(const boost::property_tree::ptree& node);
     //! Return a pointer to a copy of the Detector
     virtual Detector* clone() const=0;
     // Destructor

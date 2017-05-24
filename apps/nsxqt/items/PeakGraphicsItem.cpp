@@ -1,12 +1,13 @@
 #include <Eigen/Dense>
 
+#include <QDebug>
 #include <QPainter>
-#include <QtDebug>
 #include <QStyleOptionGraphicsItem>
 #include <QWidget>
 
 #include <nsxlib/crystal/Peak3D.h>
 #include <nsxlib/data/DataSet.h>
+#include <nsxlib/data/MetaData.h>
 #include <nsxlib/geometry/Ellipsoid.h>
 #include <nsxlib/geometry/IntegrationRegion.h>
 #include <nsxlib/utils/Units.h>
@@ -15,14 +16,10 @@
 #include "plot/SXPlot.h"
 #include "plot/PeakPlot.h"
 
-using Ellipsoid3D = nsx::Ellipsoid<double, 3>;
-
-using namespace nsx;
-
 bool PeakGraphicsItem::_labelVisible = false;
 bool PeakGraphicsItem::_drawBackground = false;
 
-PeakGraphicsItem::PeakGraphicsItem(sptrPeak3D p):
+PeakGraphicsItem::PeakGraphicsItem(nsx::sptrPeak3D p):
     PlottableGraphicsItem(nullptr,true,false),
     _peak(std::move(p)),
     _peakEllipse(),
@@ -50,7 +47,7 @@ PeakGraphicsItem::PeakGraphicsItem(sptrPeak3D p):
 
 QRectF PeakGraphicsItem::boundingRect() const
 {
-    auto bb = IntegrationRegion(_peak->getShape()).getBackground();
+    auto bb = nsx::IntegrationRegion(_peak->getShape()).getBackground();
     const Eigen::Vector3d& l = bb.getLower();
     const Eigen::Vector3d& u = bb.getUpper();
     qreal w=u[0]-l[0];
@@ -134,7 +131,7 @@ std::string PeakGraphicsItem::getPlotType() const
     return "peak";
 }
 
-sptrPeak3D PeakGraphicsItem::getPeak()
+nsx::sptrPeak3D PeakGraphicsItem::getPeak()
 {
     return _peak;
 }
@@ -149,12 +146,12 @@ void PeakGraphicsItem::drawBackground(bool flag)
     _drawBackground = flag;
 }
 
-PeakGraphicsItem::Ellipse PeakGraphicsItem::calculateEllipse(const nsx::IShape<double, 3> &shape, int frame)
+PeakGraphicsItem::Ellipse PeakGraphicsItem::calculateEllipse(const nsx::IShape &shape, int frame)
 {
     Eigen::MatrixXd M;
     Eigen::VectorXd p;
 
-    auto fromAABB = [](const nsx::IShape<double, 3>& s) -> Ellipse
+    auto fromAABB = [](const nsx::IShape& s) -> Ellipse
     {
         Ellipse ellipse;
         Eigen::Vector3d lower = s.getLower();
@@ -170,7 +167,7 @@ PeakGraphicsItem::Ellipse PeakGraphicsItem::calculateEllipse(const nsx::IShape<d
     };
 
     try {
-        const nsx::Ellipsoid<double, 3>& ellipse_shape = dynamic_cast<const nsx::Ellipsoid<double, 3>&>(shape);
+        const nsx::Ellipsoid& ellipse_shape = dynamic_cast<const nsx::Ellipsoid&>(shape);
         M = ellipse_shape.getRSinv();
         p = ellipse_shape.getCenter();
     }
@@ -287,7 +284,7 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     QVector<double> qbkg(int(total.size()));
 
     //Copy the data
-    Ellipsoid3D background = _peak->getShape();
+    nsx::Ellipsoid background = _peak->getShape();
     background.scale(3.0);
     double min=std::floor(background.getLower()[2]);
     double max=std::ceil(background.getUpper()[2]);

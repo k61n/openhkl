@@ -44,6 +44,7 @@
 #include <nsxlib/crystal/MergedPeak.h>
 #include <nsxlib/crystal/ResolutionShell.h>
 #include <nsxlib/data/DataSet.h>
+#include <nsxlib/data/MetaData.h>
 #include <nsxlib/utils/ProgressHandler.h>
 
 #include "dialogs/DialogAutoIndexing.h"
@@ -54,7 +55,6 @@
 #include "models/CollectedPeaksDelegate.h"
 #include "models/CollectedPeaksModel.h"
 #include "PeakTableView.h"
-#include "ProgressView.h"
 
 PeakTableView::PeakTableView(QWidget *parent)
 : QTableView(parent),
@@ -427,8 +427,8 @@ QItemSelectionModel::SelectionFlags PeakTableView::selectionCommand(const QModel
 void PeakTableView::openAutoIndexingDialog()
 {
     auto peakModel = dynamic_cast<CollectedPeaksModel*>(model());
-    nsx::sptrExperiment experiment = peakModel->getExperiment();
-    std::vector<nsx::sptrPeak3D> peaks = peakModel->getPeaks(selectionModel()->selectedRows());
+    auto experiment = peakModel->getExperiment();
+    nsx::PeakList peaks = peakModel->getPeaks(selectionModel()->selectedRows());
     auto dialog = new DialogAutoIndexing(experiment,peaks);
     connect(dialog,SIGNAL(cellUpdated(nsx::sptrUnitCell)),this,SLOT(updateUnitCell(nsx::sptrUnitCell)));
     dialog->exec();
@@ -448,8 +448,8 @@ void PeakTableView::updateUnitCell(const nsx::sptrUnitCell& unitCell)
 void PeakTableView::openRefiningParametersDialog()
 {
     auto peakModel = dynamic_cast<CollectedPeaksModel*>(model());
-    nsx::sptrExperiment experiment = peakModel->getExperiment();
-    std::vector<nsx::sptrPeak3D> peaks = peakModel->getPeaks(selectionModel()->selectedRows());
+    auto experiment = peakModel->getExperiment();
+    nsx::PeakList peaks = peakModel->getPeaks(selectionModel()->selectedRows());
 
     int nPeaks = peaks.size();
     // Check that a minimum number of peaks have been selected for indexing

@@ -7,7 +7,7 @@
 
 namespace nsx {
 
-Axis* RotAxis::create(const proptree::ptree& node)
+Axis* RotAxis::create(const boost::property_tree::ptree& node)
 {
 	return new RotAxis(node);
 }
@@ -20,7 +20,7 @@ RotAxis::RotAxis(const std::string& label) : Axis(label),_dir(CCW)
 {
 }
 
-RotAxis::RotAxis(const std::string& label, const Vector3d& axis, Direction direction) : Axis(label,axis), _dir(direction)
+RotAxis::RotAxis(const std::string& label, const Eigen::Vector3d& axis, Direction direction) : Axis(label,axis), _dir(direction)
 {
 }
 
@@ -38,7 +38,7 @@ RotAxis& RotAxis::operator=(const RotAxis& other)
 	return *this;
 }
 
-RotAxis::RotAxis(const proptree::ptree& node) : Axis(node)
+RotAxis::RotAxis(const boost::property_tree::ptree& node) : Axis(node)
 {
 	bool clockwise=node.get<bool>("clockwise");
 	_dir=clockwise ? RotAxis::Direction::CW : RotAxis::Direction::CCW;
@@ -61,20 +61,21 @@ RotAxis::Direction RotAxis::getRotationDirection() const
 {
 	return _dir;
 }
-Matrix3d RotAxis::getRotationMatrix(double angle) const
+
+Eigen::Matrix3d RotAxis::getRotationMatrix(double angle) const
 {
-	Quaterniond temp=getQuat(angle);
+	Eigen::Quaterniond temp=getQuat(angle);
 	return temp.toRotationMatrix();
 }
 Eigen::Transform<double,3,Eigen::Affine> RotAxis::getHomMatrix(double angle) const
 {
 	Eigen::Transform<double,3,Eigen::Affine> hom=Eigen::Transform<double,3,Eigen::Affine>::Identity();
-	Quaterniond temp=getQuat(angle);
+	Eigen::Quaterniond temp=getQuat(angle);
 	hom.linear()=temp.toRotationMatrix();
 	return hom;
 }
 
-Quaterniond RotAxis::getQuat(double angle) const
+Eigen::Quaterniond RotAxis::getQuat(double angle) const
 {
 	//Apply offset first (offset in the same direction).
 	angle+=_offset;
@@ -83,7 +84,7 @@ Quaterniond RotAxis::getQuat(double angle) const
 	// Create the quaternion representing this rotation
 	double hc=cos(0.5*angle);
 	double hs=sin(0.5*angle);
-	Quaterniond temp(hc,_axis(0)*hs,_axis(1)*hs,_axis(2)*hs);
+	Eigen::Quaterniond temp(hc,_axis(0)*hs,_axis(1)*hs,_axis(2)*hs);
 	return temp;
 }
 std::ostream& operator<<(std::ostream& os, const RotAxis& Rot)

@@ -6,7 +6,7 @@
 
 #include <QString>
 
-#include <nsxlib/instrument/Experiment.h>
+#include <nsxlib/instrument/InstrumentTypes.h>
 
 #include "InspectableTreeItem.h"
 
@@ -15,7 +15,8 @@ class QWidget;
 class DetectorItem : public InspectableTreeItem
 {
 public:
-    explicit DetectorItem(std::shared_ptr<Experiment> experiment);
+
+    explicit DetectorItem(nsx::sptrExperiment experiment);
     QWidget* inspectItem() override;
 
     QJsonObject toJson() override;

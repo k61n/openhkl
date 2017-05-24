@@ -39,11 +39,11 @@
 
 #include "../crystal/Peak3D.h"
 #include "../crystal/PeakIntegrator.h"
+#include "../crystal/UnitCell.h"
 #include "../data/DataSet.h"
 #include "../data/IFrameIterator.h"
 #include "../geometry/Blob3D.h"
-#include "../geometry/IShape.h"
-#include "../geometry/Ellipsoid.h"
+#include "../geometry/GeometryTypes.h"
 #include "../instrument/ComponentState.h"
 #include "../instrument/InstrumentState.h"
 #include "../instrument/DetectorEvent.h"
@@ -53,11 +53,10 @@
 #include "../instrument/Sample.h"
 #include "../instrument/Source.h"
 #include "../utils/Units.h"
-#include "../utils/Types.h"
 
 namespace nsx {
 
-Peak3D::Peak3D(std::shared_ptr<DataSet> data):
+Peak3D::Peak3D():
     _data(),
     _shape(),
     _unitCells(),
@@ -73,13 +72,14 @@ Peak3D::Peak3D(std::shared_ptr<DataSet> data):
     _transmission(1.0),
     _activeUnitCellIndex(0)
 {
-    linkData(data);
+  
 }
 
-Peak3D::Peak3D(std::shared_ptr<DataSet> data, const Ellipsoid3D &shape):
-    Peak3D(data)
+Peak3D::Peak3D(const Ellipsoid &shape, sptrDataSet data):
+    Peak3D()
 {
     setShape(shape);
+    linkData(data);    
 }
 
 Peak3D::Peak3D(const Peak3D& other):
@@ -116,8 +116,8 @@ Peak3D& Peak3D::operator=(const Peak3D& other)
     _projectionPeak = other._projectionPeak;
     _projectionBkg = other._projectionBkg;
     _unitCells = other._unitCells;
-    _sampleState = other._sampleState == nullptr ? nullptr : std::unique_ptr<ComponentState>(new ComponentState(*other._sampleState));
-    _event = other._event == nullptr ? nullptr : std::unique_ptr<DetectorEvent>(new DetectorEvent(*other._event));
+    _sampleState = other._sampleState == nullptr ? nullptr : uptrComponentState(new ComponentState(*other._sampleState));
+    _event = other._event == nullptr ? nullptr : uptrDetectorEvent(new DetectorEvent(*other._event));
     _source= other._source;
     _counts = other._counts;
     //_countsSigma = other._countsSigma;
@@ -131,9 +131,9 @@ Peak3D& Peak3D::operator=(const Peak3D& other)
     return *this;
 }
 
-void Peak3D::linkData(const std::shared_ptr<DataSet>& data)
+void Peak3D::linkData(const sptrDataSet& data)
 {
-    _data = std::weak_ptr<DataSet>(data);
+    _data = wptrDataSet(data);
     if (data != nullptr) {
         setSource(data->getDiffractometer()->getSource());
         // update detector event and state
@@ -153,9 +153,8 @@ Eigen::RowVector3d Peak3D::getMillerIndices() const
     return hkld;
 }
 
-void Peak3D::setShape(const Ellipsoid3D& peak)
+void Peak3D::setShape(const Ellipsoid& peak)
 {
-    using DetectorEvent = DetectorEvent;
     _shape = peak;
     auto data = getData();
 
@@ -292,16 +291,6 @@ void Peak3D::scaleShape(double scale)
     _shape.scale(scale);
 }
 
-//double Peak3D::getRawSigma() const
-//{
-//    return _countsSigma * getData()->getSampleStepSize();
-//}
-
-//double Peak3D::getScaledSigma() const
-//{
-//    return _scale*getRawSigma();
-//}
-
 double Peak3D::getLorentzFactor() const
 {
     double gamma,nu;
@@ -364,15 +353,15 @@ Eigen::RowVector3d Peak3D::getQ() const
 
 void Peak3D::setSampleState(const ComponentState& sstate)
 {
-    _sampleState = std::unique_ptr<ComponentState>(new ComponentState(sstate));
+    _sampleState = uptrComponentState(new ComponentState(sstate));
 }
 
 void Peak3D::setDetectorEvent(const DetectorEvent& event)
 {
-    _event = std::unique_ptr<DetectorEvent>(new DetectorEvent(event));
+    _event = uptrDetectorEvent(new DetectorEvent(event));
 }
 
-void Peak3D::setSource(const std::shared_ptr<Source>& source)
+void Peak3D::setSource(const sptrSource& source)
 {
     _source = source;
 }

@@ -36,27 +36,23 @@
 #ifndef NSXLIB_RESOLUTIONSHELL_H
 #define NSXLIB_RESOLUTIONSHELL_H
 
-#include <memory>
-#include <set>
 #include <vector>
 
-#include <Eigen/Core>
-
-#include "../crystal/Peak3D.h"
+#include "../crystal/CrystalTypes.h"
 
 namespace nsx {
 
-class DataSet;
-
 class ResolutionShell {
+
 public:
     ResolutionShell(double dmin, double dmax, size_t num_shells);
     void addPeak(const sptrPeak3D& peak);
-    const std::vector<std::vector<sptrPeak3D>>& getShells() const;
+    const std::vector<PeakList>& getShells() const;
     const std::vector<double>& getD() const;
+
 private:
     size_t _numShells;
-    std::vector<std::vector<sptrPeak3D>> _shells;
+    std::vector<PeakList> _shells;
     std::vector<double> _d;
 
 };

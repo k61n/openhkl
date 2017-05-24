@@ -31,16 +31,13 @@
 #define NSXLIB_EXPERIMENT_H
 
 #include <map>
-#include <memory>
 #include <string>
 #include <vector>
 
+#include "../data/DataTypes.h"
+#include "../instrument/InstrumentTypes.h"
+
 namespace nsx {
-
-class DataSet;
-
-// Forward declarations
-class Diffractometer;
 
 class Experiment {
 public:
@@ -72,13 +69,13 @@ public:
     const std::string& getDiffractometerType() const;
 
     //! Gets a shared pointer to the diffractometer related to the experiment
-    std::shared_ptr<Diffractometer> getDiffractometer() const;
+    sptrDiffractometer getDiffractometer() const;
 
     //! Get a reference to the data
-    const std::map<std::string,std::shared_ptr<DataSet>>& getData() const;
+    const std::map<std::string,sptrDataSet>& getData() const;
 
     //! Gets the pointer to a given data stored in the experiment
-    std::shared_ptr<DataSet> getData(std::string name);
+    sptrDataSet getData(std::string name);
 
     //! Gets the names of the data stored in the experiment
     std::vector<std::string> getDataNames() const;
@@ -94,7 +91,7 @@ public:
     // Other methods
 
     //! Add some data to the experiment
-    void addData(std::shared_ptr<DataSet> data);
+    void addData(sptrDataSet data);
 
     //! Check whether the experiment has a data
     bool hasData(const std::string& name) const;
@@ -109,10 +106,10 @@ private:
     std::string _diffractometerName;
 
     //! A pointer to the detector assigned to this experiment
-    std::shared_ptr<Diffractometer> _diffractometer;
+    sptrDiffractometer _diffractometer;
 
     //! A map of the data related to the experiment. The keys are the basename of their corresponding file.
-    std::map<std::string,std::shared_ptr<DataSet>> _data;
+    std::map<std::string,sptrDataSet> _data;
 };
 
 } // end namespace nsx

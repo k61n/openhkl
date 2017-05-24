@@ -40,9 +40,6 @@
 #include <boost/variant.hpp>
 #include <Eigen/Dense>
 
-namespace qi    = boost::spirit::qi;
-namespace phx   = boost::phoenix;
-
 namespace nsx {
 
 struct MatrixFiller {
@@ -85,13 +82,21 @@ bool operator()(Matrix &m) const
 */
 
 template<typename It>
-struct AffineTransformParser : qi::grammar<It,Eigen::Transform<double,3,Eigen::Affine>()> {
+struct AffineTransformParser : boost::spirit::qi::grammar<It,Eigen::Transform<double,3,Eigen::Affine>()> {
     AffineTransformParser(): AffineTransformParser::base_type(matrix)
     {
-        using namespace qi;
-        using namespace phx;
-        phx::function<MatrixFiller> const matrix_insert = MatrixFiller();
-        phx::function<MatrixInit> const matrix_init = MatrixInit();
+        using boost::spirit::qi::_1;
+        using boost::spirit::qi::_a;
+        using boost::spirit::qi::_b;
+        using boost::spirit::qi::_pass;
+        using boost::spirit::qi::_val;
+        using boost::spirit::qi::double_;
+        using boost::spirit::qi::eps;
+        using boost::spirit::qi::lit;
+        using boost::phoenix::ref;
+
+        boost::phoenix::function<MatrixFiller> const matrix_insert = MatrixFiller();
+        boost::phoenix::function<MatrixInit> const matrix_init = MatrixInit();
 
         static double row=0;
         static double col=0;
@@ -120,10 +125,10 @@ struct AffineTransformParser : qi::grammar<It,Eigen::Transform<double,3,Eigen::A
                  double_[_val*=_1] >>
                  -(lit('/') >> double_[_val/=_1]) ;
     }
-        qi::rule<It,Eigen::Transform<double,3,Eigen::Affine>()> matrix;
-        qi::rule<It,double(),qi::locals<double,double> > term;
-        qi::rule<It> xyz;
-        qi::rule<It,double()> prefactor;
+        boost::spirit::qi::rule<It,Eigen::Transform<double,3,Eigen::Affine>()> matrix;
+        boost::spirit::qi::rule<It,double(),boost::spirit::qi::locals<double,double> > term;
+        boost::spirit::qi::rule<It> xyz;
+        boost::spirit::qi::rule<It,double()> prefactor;
 };
 
 } // end namespace nsx

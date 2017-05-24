@@ -2,8 +2,7 @@
  * nsxtool : Neutron Single Crystal analysis toolkit
  ------------------------------------------------------------------------------------------
  Copyright (C)
- 2016- Laurent C. Chapon, Eric Pellegrini, Jonathan Fisher
-
+ 2012- Laurent C. Chapon, Eric Pellegrini
  Institut Laue-Langevin
  BP 156
  6, rue Jules Horowitz
@@ -11,11 +10,6 @@
  France
  chapon[at]ill.fr
  pellegrini[at]ill.fr
-
- Forshungszentrum Juelich GmbH
- 52425 Juelich
- Germany
- j.fisher[at]fz-juelich.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -33,15 +27,36 @@
  *
  */
 
+#include <array>
 
-#define BOOST_TEST_MODULE "Test Packer class"
-#define BOOST_TEST_DYN_LINK
+#include "../geometry/Edge.h"
+#include "../geometry/Vertex.h"
 
-#include <boost/test/unit_test.hpp>
+namespace nsx {
 
-#include <nsxlib/utils/Packer.h>
-
-BOOST_AUTO_TEST_CASE(Test_Packer)
+Edge::Edge() : _adjFace(), _endPts(), _newFace(nullptr), _delete(false)
 {
-#pragma message "test not implemented"
+	_adjFace.fill(nullptr);
+	_endPts.fill(nullptr);
 }
+
+void Edge::print(std::ostream& os) const
+{
+	os<<"Edge: ";
+	for (auto it=_endPts.begin();it!=_endPts.end();++it)
+	{
+		if (*it)
+			os<<"     "<<**it;
+		else
+			os<<" NULL ";
+	}
+}
+
+std::ostream& operator<<(std::ostream& os, const Edge& edge)
+{
+	edge.print(os);
+	return os;
+}
+
+} // end namespace nsx
+

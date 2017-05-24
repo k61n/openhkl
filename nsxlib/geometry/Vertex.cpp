@@ -27,17 +27,28 @@
  *
  */
 
-#ifndef NSXLIB_EIGENMATRIXOP_H
-#define NSXLIB_EIGENMATRIXOP_H
-
-#include <Eigen/Dense>
+#include "../geometry/Vertex.h"
 
 namespace nsx {
 
-void removeColumn(Eigen::MatrixXd& matrix, unsigned int colToRemove);
+Vertex::Vertex() : _coords(), _duplicate(nullptr), _onHull(false), _mark(false)
+{
+}
 
-void removeRow(Eigen::MatrixXd& matrix, unsigned int rowToRemove);
+Vertex::Vertex(const Eigen::Vector3d& coords) : _coords(coords), _duplicate(nullptr), _onHull(false), _mark(false)
+{
+}
+
+void Vertex::print(std::ostream& os) const
+{
+	os<<"Vertex @ "<<_coords.transpose();
+}
+
+std::ostream& operator<<(std::ostream& os, const Vertex& vertex)
+{
+	vertex.print(os);
+	return os;
+}
 
 } // end namespace nsx
 
-#endif // NSXLIB_EIGENMATRIXOP_H

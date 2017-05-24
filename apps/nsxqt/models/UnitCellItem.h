@@ -1,27 +1,20 @@
 #ifndef NSXQT_UNITCELLITEM_H
 #define NSXQT_UNITCELLITEM_H
 
-#include <memory>
-
 #include "InspectableTreeItem.h"
 
-#include <nsxlib/utils/Types.h>
-
-namespace nsx
-{
-class Experiment;
-class UnitCell;
-}
+#include <nsxlib/crystal/CrystalTypes.h>
+#include <nsxlib/instrument/InstrumentTypes.h>
 
 class QWidget;
 
 class UnitCellItem : public InspectableTreeItem
 {
 public:
-    UnitCellItem(std::shared_ptr<nsx::Experiment> experiment,std::shared_ptr<nsx::UnitCell>);
+    UnitCellItem(nsx::sptrExperiment experiment, nsx::sptrUnitCell);
     ~UnitCellItem();
     QWidget* inspectItem();
-    std::shared_ptr<nsx::UnitCell> getUnitCell();
+    nsx::sptrUnitCell getUnitCell();
 
     void info() const;
 
@@ -29,7 +22,7 @@ public:
     void openChangeUnitCellDialog();
 
 private:
-    std::shared_ptr<nsx::UnitCell> _cell;
+    nsx::sptrUnitCell _cell;
 };
 
 #endif // NSXQT_UNITCELLITEM_H

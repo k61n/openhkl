@@ -3,9 +3,7 @@
 
 #include "SXGraphicsItem.h"
 
-namespace nsx{
-struct PeakCalc;
-}
+#include <nsxlib/crystal/PeakCalc.h>
 
 class PeakCalcGraphicsItem : public SXGraphicsItem
 {

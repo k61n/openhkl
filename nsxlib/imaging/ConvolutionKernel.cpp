@@ -50,7 +50,7 @@ ConvolutionKernel::ConvolutionKernel(const ConvolutionKernel &rhs)
     _params = rhs._params;
 }
 
-ConvolutionKernel::ConvolutionKernel(int nrows, int ncols, const ParameterMap &parameters) : _nrows(nrows), _ncols(ncols)
+ConvolutionKernel::ConvolutionKernel(int nrows, int ncols, const ConvolutionKernelParameters &parameters) : _nrows(nrows), _ncols(ncols)
 {
     _kernel.resize(nrows,ncols);
     _params = parameters;
@@ -61,13 +61,13 @@ ConvolutionKernel::~ConvolutionKernel()
 {
 }
 
-ConvolutionKernel::ParameterMap& ConvolutionKernel::getParameters()
+ConvolutionKernelParameters& ConvolutionKernel::getParameters()
 {
     _hasChanged = true;
     return _params;
 }
 
-const ConvolutionKernel::ParameterMap& ConvolutionKernel::getParameters() const
+const ConvolutionKernelParameters& ConvolutionKernel::getParameters() const
 {
     return _params;
 }

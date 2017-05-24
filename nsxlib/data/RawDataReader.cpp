@@ -53,8 +53,6 @@
 #include "../utils/Parser.h"
 #include "../utils/EigenToVector.h"
 
-using std::ifstream;
-
 namespace nsx {
 
 IDataReader* RawDataReader::create(const std::string &filename, const std::shared_ptr<Diffractometer>& diffractometer) {
@@ -164,7 +162,7 @@ Eigen::MatrixXi RawDataReader::getData(std::size_t frame) {
 
     std::string filename = _filenames.at(frame);
 
-    ifstream file;
+    std::ifstream file;
     file.open(filename, std::ios_base::binary | std::ios_base::in);
 
     if (!file.is_open())

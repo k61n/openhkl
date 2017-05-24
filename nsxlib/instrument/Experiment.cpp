@@ -3,6 +3,7 @@
 #include <utility>
 
 #include "../data/DataSet.h"
+#include "../data/MetaData.h"
 #include "../instrument/Experiment.h"
 #include "../instrument/Diffractometer.h"
 #include "../instrument/DiffractometerStore.h"
@@ -25,7 +26,7 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
   _data()
 {
     DiffractometerStore* ds=DiffractometerStore::Instance();
-    _diffractometer = std::shared_ptr<Diffractometer>(ds->buildDiffractometer(diffractometerName));
+    _diffractometer = sptrDiffractometer(ds->buildDiffractometer(diffractometerName));
 }
 
 Experiment::Experiment(const std::string& diffractometerName)
@@ -34,7 +35,7 @@ Experiment::Experiment(const std::string& diffractometerName)
   _data()
 {
     DiffractometerStore* ds=DiffractometerStore::Instance();
-    _diffractometer = std::shared_ptr<Diffractometer>(ds->buildDiffractometer(diffractometerName));
+    _diffractometer = sptrDiffractometer(ds->buildDiffractometer(diffractometerName));
 }
 
 Experiment::~Experiment()
@@ -53,7 +54,7 @@ Experiment& Experiment::operator=(const Experiment& other)
     return *this;
 }
 
-std::shared_ptr<Diffractometer> Experiment::getDiffractometer() const
+sptrDiffractometer Experiment::getDiffractometer() const
 {
     return _diffractometer;
 }
@@ -68,19 +69,19 @@ std::vector<std::string> Experiment::getDataNames() const
     std::vector<std::string> v;
     v.reserve(_data.size());
     std::for_each(_data.begin(),_data.end(),[&v]
-                                             (const std::map<std::string,std::shared_ptr<DataSet>>::value_type& p)
+                                             (const std::map<std::string,sptrDataSet>::value_type& p)
                                              {v.push_back(p.first);});
 
     return v;
 }
 
-const std::map<std::string,std::shared_ptr<DataSet>>& Experiment::getData() const
+const std::map<std::string,sptrDataSet>& Experiment::getData() const
 {
     return _data;
 }
 
 
-std::shared_ptr<DataSet> Experiment::getData(std::string name)
+sptrDataSet Experiment::getData(std::string name)
 {
     auto it=_data.find(name);
     if (it == _data.end())
@@ -99,7 +100,7 @@ void Experiment::setName(const std::string& name)
     _name = name;
 }
 
-void Experiment::addData(std::shared_ptr<DataSet> data)
+void Experiment::addData(sptrDataSet data)
 {
 
     // Add the data only if it does not exist in the current data map
@@ -129,7 +130,7 @@ void Experiment::addData(std::shared_ptr<DataSet> data)
         if (std::abs(wav-mono.getWavelength())>1e-5)
             throw std::runtime_error("trying to mix data with different wavelengths");
     }
-    _data.insert(std::pair<std::string,std::shared_ptr<DataSet>>(basename,data));
+    _data.insert(std::pair<std::string,sptrDataSet>(basename,data));
 }
 
 bool Experiment::hasData(const std::string& name) const

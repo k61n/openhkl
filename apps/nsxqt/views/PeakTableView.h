@@ -39,16 +39,16 @@
 #include <QMenu>
 #include <QTableView>
 
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/utils/Types.h>
+#include <nsxlib/crystal/CrystalTypes.h>
 
 #include <MainWindow.h>
 
-class PeakCustomPlot;
 class QContextMenuEvent;
 class QMouseEvent;
 class QString;
 class QWidget;
+
+class PeakCustomPlot;
 
 class PeakTableView : public QTableView
 {
@@ -92,8 +92,8 @@ public slots:
 
 private:
 
-    static bool writeNewShelX(std::string filename, const std::vector<sptrPeak3D>& peaks);
-    static bool writeStatistics(std::string filename, const std::vector<sptrPeak3D>& peaks,
+    static bool writeNewShelX(std::string filename, const nsx::PeakList& peaks);
+    static bool writeStatistics(std::string filename, const nsx::PeakList& peaks,
                                 double dmin, double dmax, int shells, bool friedel);
 
     void sortByHKL(bool up);

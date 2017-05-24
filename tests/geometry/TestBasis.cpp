@@ -35,8 +35,8 @@ BOOST_AUTO_TEST_CASE(Test_Basis)
     BOOST_CHECK_SMALL(x(1),tolerance);
     BOOST_CHECK_SMALL(x(2),tolerance);
 
-    RowVector3d xr(1,0,0);
-    RowVector3d xrsecond=bsecond.fromReciprocalStandard(xr);
+    Eigen::RowVector3d xr(1,0,0);
+    Eigen::RowVector3d xrsecond=bsecond.fromReciprocalStandard(xr);
 
     BOOST_CHECK_CLOSE(xrsecond(0),2.0,tolerance);
     BOOST_CHECK_CLOSE(xrsecond(1),-2.0,tolerance);

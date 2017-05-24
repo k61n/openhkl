@@ -13,7 +13,7 @@
 #include "models/DataItem.h"
 #include "NumorItem.h"
 
-DataItem::DataItem(std::shared_ptr<nsx::Experiment> experiment) : TreeItem(experiment)
+DataItem::DataItem(nsx::sptrExperiment experiment) : TreeItem(experiment)
 {
     setText("Data");
     QIcon icon(":/resources/dataIcon.png");
@@ -22,13 +22,13 @@ DataItem::DataItem(std::shared_ptr<nsx::Experiment> experiment) : TreeItem(exper
     setSelectable(false);
 }
 
-NumorItem *DataItem::importData(std::shared_ptr<nsx::DataSet> data)
+NumorItem *DataItem::importData(nsx::sptrDataSet data)
 {
     // Get the basename of the current numor
     QString filename(data->getFilename().c_str());
     QFileInfo fileinfo(filename);
     std::string basename = fileinfo.fileName().toStdString();
-    std::shared_ptr<nsx::Experiment> exp = getExperiment();
+    auto exp = getExperiment();
 
     // If the experience already stores the current numor, skip it
     if (exp->hasData(basename))
@@ -61,17 +61,26 @@ NumorItem* DataItem::importData(const std::string &filename_str)
     QString filename(filename_str.c_str());
     QFileInfo fileinfo(filename);
     std::string basename = fileinfo.fileName().toStdString();
-    std::shared_ptr<nsx::Experiment> exp = getExperiment();
+    auto exp = getExperiment();
 
     // If the experience already stores the current numor, skip it
     if (exp->hasData(basename))
         return nullptr;
 
-    std::shared_ptr<DataSet> data_ptr;
+    nsx::sptrDataSet data_ptr;
 
     try {
         std::string extension = fileinfo.completeSuffix().toStdString();
+<<<<<<< HEAD
         data_ptr = DataReaderFactory().create(extension, filename_str, exp->getDiffractometer());
+=======
+
+        nsx::DataSet* raw_ptr = nsx::DataReaderFactory::Instance()->create(
+                    extension, filename_str, exp->getDiffractometer()
+                    );
+
+        data_ptr = nsx::sptrDataSet(raw_ptr);
+>>>>>>> feature/typedef-using-refactoring
     }
     catch(std::exception& e) {
         qWarning() << "Error reading numor: " + filename + " " + QString(e.what());
@@ -93,11 +102,12 @@ NumorItem *DataItem::importRawData(const std::vector<std::string> &filenames,
     QString filename(filenames[0].c_str());
     QFileInfo fileinfo(filename);
     std::string basename = fileinfo.fileName().toStdString();
-    std::shared_ptr<nsx::Experiment> exp = getExperiment();
+    auto exp = getExperiment();
 
     // If the experience already stores the current numor, skip it
     if (exp->hasData(basename))
         return nullptr;
+
 
     std::shared_ptr<DataSet> data;
     std::shared_ptr<IDataReader> reader;
@@ -106,8 +116,9 @@ NumorItem *DataItem::importRawData(const std::vector<std::string> &filenames,
         auto diff = exp->getDiffractometer();
         reader = std::shared_ptr<IDataReader>(new nsx::RawDataReader(filenames, diff,
                                               wavelength, delta_chi, delta_omega, delta_phi,
-                                              rowMajor, swapEndian, bpp));
-        data = std::shared_ptr<nsx::DataSet>(new nsx::DataSet(reader, diff));
+                                              rowMajor, swapEndian, bpp);
+        data = nsx::sptrDataSet(new nsx::DataSet(reader, diff));
+
     }
     catch(std::exception& e) {
         qWarning() << "Error reading numor: " + filename + " " + QString(e.what());

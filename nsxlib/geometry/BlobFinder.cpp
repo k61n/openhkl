@@ -1,26 +1,23 @@
-#include "BlobFinder.h"
-#include "NDTree.h"
-#include "../data/IFrameIterator.h"
-
 #include <iostream>
 
-using std::cout;
-using std::endl;
+#include "../data/DataSet.h"
+#include "../data/IFrameIterator.h"
+#include "../geometry/BlobFinder.h"
+#include "../geometry/Octree.h"
+#include "../utils/ProgressHandler.h"
 
 namespace nsx {
 
-using Octree = NDTree<double,3>;
-
-void BlobFinder::registerEquivalence(int a, int b, vipairs& equivalences)
+void BlobFinder::registerEquivalence(int a, int b, EquivalenceList& equivalences)
 {
     if (a < b) {
-        equivalences.emplace_back(vipairs::value_type(b,a));
+        equivalences.emplace_back(EquivalenceList::value_type(b,a));
     } else {
-        equivalences.emplace_back(vipairs::value_type(a,b));
+        equivalences.emplace_back(EquivalenceList::value_type(a,b));
     }
 }
 
-bool BlobFinder::sortEquivalences(const ipair& pa, const ipair& pb)
+bool BlobFinder::sortEquivalences(const EquivalencePair& pa, const EquivalencePair& pb)
 {
     if (pa.first<pb.first) {
         return true;
@@ -31,12 +28,12 @@ bool BlobFinder::sortEquivalences(const ipair& pa, const ipair& pb)
     return (pa.second<pb.second);
 }
 
-imap BlobFinder::removeDuplicates(vipairs& equivalences)
+std::map<int,int> BlobFinder::removeDuplicates(EquivalenceList& equivalences)
 {
     auto beg = equivalences.begin();
     auto last = std::unique(equivalences.begin(),equivalences.end());
 
-    imap mequiv;
+    std::map<int,int> mequiv;
 
     for (auto it = beg; it != last; ++it) {
         mequiv.insert(*it);
@@ -44,7 +41,7 @@ imap BlobFinder::removeDuplicates(vipairs& equivalences)
     return mequiv;
 }
 
-void BlobFinder::reassignEquivalences(imap& equivalences)
+void BlobFinder::reassignEquivalences(std::map<int,int>& equivalences)
 {
     for (auto it = equivalences.begin(); it != equivalences.end(); ++it) {
         auto found = equivalences.find(it->second);
@@ -103,7 +100,7 @@ void BlobFinder::eliminateBlobs(std::unordered_map<int, Blob3D>& blobs) const
      * merge collisions
      *
      */
-blob3DCollection BlobFinder::find(unsigned int begin, unsigned int end) {
+Blob3DUMap BlobFinder::find(unsigned int begin, unsigned int end) {
     // find all blobs, possibly with multiple labels
     std::unordered_map<int,Blob3D> blobs;
 
@@ -116,7 +113,7 @@ blob3DCollection BlobFinder::find(unsigned int begin, unsigned int end) {
         int loop_end;
 
         std::unordered_map<int,Blob3D> local_blobs = {};
-        vipairs local_equivalences;
+        EquivalenceList local_equivalences;
 
         // determine begining and ending index of current thread
         #pragma omp for
@@ -149,7 +146,7 @@ blob3DCollection BlobFinder::find(unsigned int begin, unsigned int end) {
     int num_blobs;
 
     do {
-        vipairs equivalences;
+        EquivalenceList equivalences;
         num_blobs = blobs.size();
 
         if (_progressHandler) {
@@ -175,7 +172,7 @@ blob3DCollection BlobFinder::find(unsigned int begin, unsigned int end) {
 }
 
 void BlobFinder::findBlobs(std::unordered_map<int,Blob3D>& blobs,
-                           vipairs& equivalences,
+                           EquivalenceList& equivalences,
                            unsigned int begin, unsigned int end)
 {
     // update via handler if necessary
@@ -205,8 +202,8 @@ void BlobFinder::findBlobs(std::unordered_map<int,Blob3D>& blobs,
     _ncols = _data->getNCols();
 
     // Store labels of current and previous frames.
-    vints labels(_nrows*_ncols,0);
-    vints labels2(_nrows*_ncols,0);
+    std::vector<int> labels(_nrows*_ncols,0);
+    std::vector<int> labels2(_nrows*_ncols,0);
 
     // Create empty equivalence table
     equivalences.clear();
@@ -321,7 +318,7 @@ void BlobFinder::findBlobs(std::unordered_map<int,Blob3D>& blobs,
                 index2D++;
                 // Create a new blob if necessary
                 if (newlabel) {
-                    blobs.insert(blob3DCollection::value_type(label,Blob3D(col,row,idx,value)));
+                    blobs.insert(Blob3DUMap::value_type(label,Blob3D(col,row,idx,value)));
                 } else {
                     auto it = blobs.find(label);
                     it->second.addPoint(col,row,idx,value);
@@ -341,7 +338,7 @@ void BlobFinder::findBlobs(std::unordered_map<int,Blob3D>& blobs,
     }
 }
 
-void BlobFinder::setProgressHandler(std::shared_ptr<ProgressHandler> callback)
+void BlobFinder::setProgressHandler(sptrProgressHandler callback)
 {
     _progressHandler = callback;
 }
@@ -376,7 +373,7 @@ void BlobFinder::setRelative(bool isRelative)
     _isRelative = isRelative;
 }
 
-void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& equivalences) const
+void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, EquivalenceList& equivalences) const
 {
     // Clear the equivalence vectors for reuse purpose
     equivalences.clear();
@@ -388,7 +385,7 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
     }
 
     // Determine the AABB of the blobs
-    shape3Dmap boxes;
+    Shape3DMap boxes;
     boxes.reserve(blobs.size());
 
     Eigen::Vector3d center,extents;
@@ -420,8 +417,8 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
             continue;
         }
 
-        auto ellipse = new Ellipsoid3D(center,extents,axis);
-        boxes.insert(shape3Dmap::value_type(ellipse, it->first));
+        auto ellipse = new Ellipsoid(center,extents,axis);
+        boxes.insert(Shape3DMap::value_type(ellipse, it->first));
         it++;
 
         // update progress handler
@@ -481,20 +478,20 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, vipairs& 
     }
 }
 
-void BlobFinder::setFilter(BlobFinder::FilterCallback callback)
+void BlobFinder::setFilter(FilterCallback callback)
 {
     _filterCallback = callback;
 }
 
 /**/
 
-BlobFinder::BlobFinder(std::shared_ptr<DataSet> data)
+BlobFinder::BlobFinder(sptrDataSet data)
 {
     _data = data;
 }
 
 
-void BlobFinder::mergeBlobs(std::unordered_map<int,Blob3D>& blobs, vipairs& equivalences) const
+void BlobFinder::mergeBlobs(std::unordered_map<int,Blob3D>& blobs, EquivalenceList& equivalences) const
 {
     // initialize progress handler if necessary
     std::cout << "Merging blobs..." << std::endl;
@@ -507,7 +504,7 @@ void BlobFinder::mergeBlobs(std::unordered_map<int,Blob3D>& blobs, vipairs& equi
     std::sort(equivalences.begin(), equivalences.end(), sortEquivalences);
 
     // Remove the duplicate pairs
-    imap mequiv = removeDuplicates(equivalences);
+    auto mequiv = removeDuplicates(equivalences);
 
     reassignEquivalences(mequiv);
 

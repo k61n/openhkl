@@ -6,10 +6,7 @@
 
 namespace nsx {
 
-    using Eigen::Vector3d;
-    using Eigen::Transform;
-
-Axis* Axis::create(const proptree::ptree& node)
+Axis* Axis::create(const boost::property_tree::ptree& node)
 {
 	// Create an instance of the source factory
 	AxisFactory* axisFactory=AxisFactory::Instance();
@@ -71,11 +68,11 @@ Axis::Axis(const Axis& other)
 {
 }
 
-Axis::Axis(const proptree::ptree& node)
+Axis::Axis(const boost::property_tree::ptree& node)
 {
 	_label=node.get<std::string>("name");
 
-	const proptree::ptree& axisDirectionNode=node.get_child("direction");
+	const auto& axisDirectionNode=node.get_child("direction");
 	double nx=axisDirectionNode.get<double>("x");
 	double ny=axisDirectionNode.get<double>("y");
 	double nz=axisDirectionNode.get<double>("z");
@@ -126,7 +123,7 @@ const std::string& Axis::getLabel() const
 	return _label;
 }
 
-void Axis::setAxis(const Vector3d& axis)
+void Axis::setAxis(const Eigen::Vector3d& axis)
 {
 	if (axis.isZero())
 		throw std::runtime_error("Invalid null axis for axis "+_label);
@@ -194,7 +191,7 @@ double Axis::getHighLimit() const
 	return _max;
 }
 
-Vector3d Axis::transform(const Vector3d& v,double value)
+Eigen::Vector3d Axis::transform(const Eigen::Vector3d& v,double value)
 {
 	Eigen::Transform<double,3,Eigen::Affine> hom=getHomMatrix(value);
 	return (hom*v.homogeneous());

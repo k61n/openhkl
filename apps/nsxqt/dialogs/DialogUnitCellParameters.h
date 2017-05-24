@@ -3,7 +3,7 @@
 
 #include <QDialog>
 
-#include <nsxlib/utils/Types.h>
+#include <nsxlib/crystal/CrystalTypes.h>
 
 namespace Ui
 {

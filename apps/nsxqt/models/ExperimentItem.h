@@ -5,11 +5,9 @@
 
 #include <QJsonObject>
 
-#include "TreeItem.h"
+#include <nsxlib/instrument/InstrumentTypes.h>
 
-namespace nsx {
-class Experiment;
-}
+#include "TreeItem.h"
 
 class DataItem;
 class InstrumentItem;
@@ -18,7 +16,7 @@ class PeakListItem;
 class ExperimentItem : public TreeItem
 {
 public:
-    explicit ExperimentItem(std::shared_ptr<nsx::Experiment> experiment);
+    explicit ExperimentItem(nsx::sptrExperiment experiment);
     virtual ~ExperimentItem() = default;
     QJsonObject toJson() override;
     void fromJson(const QJsonObject& obj) override;

@@ -30,7 +30,6 @@
 #define NSXLIB_GONIO_H
 
 #include <map>
-#include <memory>
 #include <set>
 #include <string>
 #include <vector>
@@ -46,9 +45,6 @@
 
 namespace nsx {
 
-namespace proptree=boost::property_tree;
-
-using Eigen::Vector3d;
 /* !
  * \brief Class Gonio.
  * Base class for all goniometers (system of several rotation axis). Any number of axis can be used.
@@ -69,7 +65,7 @@ public:
     //! Constructs a gonio with a given name
     Gonio(const std::string& name);
     //! Constructs a Gonio from a property tree node
-    Gonio(const proptree::ptree& node);
+    Gonio(const boost::property_tree::ptree& node);
     //! Destructor
     ~Gonio();
 
@@ -107,19 +103,19 @@ public:
     //! Add an Axis to this Goniometer.
     void addAxis(Axis* axis);
     //! Add a rotation axis to this goniometer
-    Axis* addRotation(const std::string& label,const Vector3d& axis, RotAxis::Direction dir=RotAxis::Direction::CCW);
+    Axis* addRotation(const std::string& label,const Eigen::Vector3d& axis, RotAxis::Direction dir=RotAxis::Direction::CCW);
     //! Add a translation axis to this goniometer
-    Axis* addTranslation(const std::string& label,const Vector3d& axis);
+    Axis* addTranslation(const std::string& label,const Eigen::Vector3d& axis);
     //! Return the inverse of the homogeneous matrix corresponding to this set of parameters. Throw if angles outside limits.
     Eigen::Transform<double,3,Eigen::Affine> getInverseHomMatrix(const std::vector<double>& values=std::vector<double>()) const;
     //! Transform a point in 3D space, given a vector of parameters
-    Vector3d transform(const Vector3d& v,const std::vector<double>& values=std::vector<double>());
+    Eigen::Vector3d transform(const Eigen::Vector3d& v,const std::vector<double>& values=std::vector<double>());
     //! Reverse transform a point in 3D space, given a vector of parameters
-    Vector3d transformInverse(const Vector3d& v,const std::vector<double>& values=std::vector<double>());
+    Eigen::Vector3d transformInverse(const Eigen::Vector3d& v,const std::vector<double>& values=std::vector<double>());
     //! Transform a vector inplace, for a values of Gonio parameters
-    void transformInPlace(Vector3d& v,const std::vector<double>& values=std::vector<double>());
+    void transformInPlace(Eigen::Vector3d& v,const std::vector<double>& values=std::vector<double>());
     //! Reverse transform a vector inplace, for a values of Gonio parameters
-    void transformInverseInPlace(Vector3d& v,const std::vector<double>& values=std::vector<double>());
+    void transformInverseInPlace(Eigen::Vector3d& v,const std::vector<double>& values=std::vector<double>());
     //! Reset all offsets
     void resetOffsets();
 

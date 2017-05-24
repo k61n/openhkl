@@ -30,20 +30,19 @@
 #ifndef NSXLIB_TIFFDATAREADER_H
 #define NSXLIB_TIFFDATAREADER_H
 
-#include <memory>
-
 #include <tiffio.h>
 
 #include "../data/IDataReader.h"
+#include "../instrument/InstrumentTypes.h"
 
 namespace nsx {
 
 class TiffDataReader: public IDataReader {
 
 public:
-    static IDataReader* create(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer);
+    static IDataReader* create(const std::string& filename, const sptrDiffractometer& diffractometer);
 
-    TiffDataReader(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer);
+    TiffDataReader(const std::string& filename, const sptrDiffractometer& diffractometer);
 
     virtual ~TiffDataReader()=default;
 

@@ -3,13 +3,12 @@
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneHoverEvent>
-#include <QtDebug>
 
 #include <nsxlib/data/DataSet.h>
 
 #include "items/CutterGraphicsItem.h"
 
-CutterGraphicsItem::CutterGraphicsItem(std::shared_ptr<nsx::DataSet> data)
+CutterGraphicsItem::CutterGraphicsItem(nsx::sptrDataSet data)
 : PlottableGraphicsItem(nullptr,true,true),
   _data(data),
   _from(0,0),
@@ -44,7 +43,7 @@ void CutterGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     }
 }
 
-std::shared_ptr<nsx::DataSet> CutterGraphicsItem::getData()
+nsx::sptrDataSet CutterGraphicsItem::getData()
 {
     return _data;
 }

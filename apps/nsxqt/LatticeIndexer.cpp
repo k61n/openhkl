@@ -1,4 +1,7 @@
+#include <nsxlib/crystal/Peak3D.h>
+#include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/data/DataSet.h>
+#include <nsxlib/instrument/Experiment.h>
 
 #include "LatticeIndexer.h"
 #include "opengl/GLWidget.h"
@@ -7,11 +10,11 @@
 
 #include "ui_LatticeIndexer.h"
 
-LatticeIndexer::LatticeIndexer(std::shared_ptr<nsx::UnitCell> ptrCell,
-                               std::shared_ptr<nsx::Experiment> experiment,
+LatticeIndexer::LatticeIndexer(nsx::sptrUnitCell cell,
+                               nsx::sptrExperiment experiment,
                                QWidget *parent)
     : QWidget(parent),
-      _ptrCell(ptrCell),
+      _cell(cell),
       _experiment(experiment),
     ui(new Ui::LatticeIndexer)
 {
@@ -27,9 +30,9 @@ void LatticeIndexer::updatePeaks()
 {
     auto& scene=ui->glScene->getScene();
     auto datav=_experiment->getData();
-    double amin=_ptrCell->getReciprocalA();
-    double bmin=_ptrCell->getReciprocalB();
-    double cmin=_ptrCell->getReciprocalC();
+    double amin=_cell->getReciprocalA();
+    double bmin=_cell->getReciprocalB();
+    double cmin=_cell->getReciprocalC();
     double min=std::min(amin,bmin);
     min=std::min(min,cmin);
 
@@ -52,7 +55,7 @@ void LatticeIndexer::updateCell()
     auto& scene=ui->glScene->getScene();
     GLReciprocalLattice* rcell=new GLReciprocalLattice("");
     rcell->setSingleCell();
-    rcell->setUnitCell(_ptrCell);
+    rcell->setUnitCell(_cell);
     scene.addActor(rcell);
     ui->glScene->show();
 }

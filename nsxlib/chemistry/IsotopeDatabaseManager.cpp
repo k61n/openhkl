@@ -1,6 +1,6 @@
 #include <stdexcept>
 
-#include "IsotopeDatabaseManager.h"
+#include "../chemistry/IsotopeDatabaseManager.h"
 #include "../utils/Path.h"
 #include "../utils/Units.h"
 #include "../utils/YAMLType.h"
@@ -9,11 +9,11 @@ namespace nsx {
 
 const std::string IsotopeDatabaseManager::DatabasePath = Path::getDataBasesPath("isotopes.yaml");
 
-std::map<std::string,IsotopeDatabaseManager::PropertyType> IsotopeDatabaseManager::PropertyTypes = {{"string",PropertyType::String},
-                                                                      {"int",PropertyType::Int},
-                                                                      {"double",PropertyType::Double},
-                                                                      {"complex",PropertyType::Complex},
-                                                                      {"bool",PropertyType::Bool}};
+std::map<std::string,ChemicalPropertyType> IsotopeDatabaseManager::PropertyTypes = {{"string",ChemicalPropertyType::String},
+                                                                      {"int",ChemicalPropertyType::Int},
+                                                                      {"double",ChemicalPropertyType::Double},
+                                                                      {"complex",ChemicalPropertyType::Complex},
+                                                                      {"bool",ChemicalPropertyType::Bool}};
 
 IsotopeDatabaseManager::IsotopeDatabaseManager()
 {
@@ -33,7 +33,7 @@ const IsotopeDatabaseManager::Isotope& IsotopeDatabaseManager::getIsotope(const 
     return it->second;
 }
 
-const IsotopeDatabaseManager::isotopeDatabase& IsotopeDatabaseManager::database() const
+const std::map<std::string,IsotopeDatabaseManager::Isotope>& IsotopeDatabaseManager::database() const
 {
     return _database;
 }
@@ -57,19 +57,19 @@ IsotopeDatabaseManager::Isotope::Isotope(const YAML::Node& isotopeNode)
 
         switch (PropertyTypes[_types[pname]]) {
 
-        case PropertyType::String:
+        case ChemicalPropertyType::String:
             _properties[pname] = pnode["value"].as<std::string>();
             break;
-        case PropertyType::Int:
+        case ChemicalPropertyType::Int:
             _properties[pname] = pnode["value"].as<int>();
             break;
-        case PropertyType::Double:
+        case ChemicalPropertyType::Double:
             _properties[pname] = pnode["value"].as<double>()*um->get(_units[pname]);
             break;
-        case PropertyType::Complex:
+        case ChemicalPropertyType::Complex:
             _properties[pname] = pnode["value"].as<std::complex<double>>()*um->get(_units[pname]);
             break;
-        case PropertyType::Bool:
+        case ChemicalPropertyType::Bool:
             _properties[pname] = pnode["value"].as<bool>();
             break;
         default:

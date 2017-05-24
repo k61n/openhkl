@@ -30,27 +30,21 @@
 #ifndef NSXLIB_VERTEX_H
 #define NSXLIB_VERTEX_H
 
+#include <ostream>
+
 #include <Eigen/Dense>
 
-#include <ostream>
+#include "../geometry/GeometryTypes.h"
 
 namespace nsx {
 
-// Forward declaration
-template <typename T>
 class Edge;
 
 /* !
  * \brief Class Vertex.
  * This class implements the Vertex object used in the incremental convex hull algorithm.
  */
-template<typename T>
 class Vertex {
-
-public:
-
-	// Typedefs
-	typedef Eigen::Matrix<T,3,1> vector3;
 
 public:
 
@@ -61,10 +55,10 @@ public:
 	Vertex(const Vertex& other)=delete;
 
 	//! Constructs a Vertex object from a vector of coordinates
-	Vertex(const vector3& coords);
+	Vertex(const Eigen::Vector3d& coords);
 
 	//! Destructor
-	~Vertex();
+	~Vertex()=default;
 
 	//! Assignment operator
 	Vertex& operator=(const Vertex& other)=delete;
@@ -75,44 +69,17 @@ public:
 public:
 
 	//! The coordinates of this Vertex
-	vector3 _coords;
+	Eigen::Vector3d _coords;
 	//! A pointer to the incident cone edge (or nullptr)
-	Edge<T>* _duplicate;
+	Edge* _duplicate;
 	//! True if this Vertex is on the hull
 	bool _onHull;
 	//! True if the vertex has been processed
 	bool _mark;
 
-private:
 };
 
-template <typename T>
-Vertex<T>::Vertex() : _coords(), _duplicate(nullptr), _onHull(false), _mark(false)
-{
-}
-
-template <typename T>
-Vertex<T>::Vertex(const vector3& coords) : _coords(coords), _duplicate(nullptr), _onHull(false), _mark(false)
-{
-}
-
-template <typename T>
-Vertex<T>::~Vertex()
-{
-}
-
-template <typename T>
-void Vertex<T>::print(std::ostream& os) const
-{
-	os<<"Vertex @ "<<_coords.transpose();
-}
-
-template <typename T>
-std::ostream& operator<<(std::ostream& os, const Vertex<T>& vertex)
-{
-	vertex.print(os);
-	return os;
-}
+std::ostream& operator<<(std::ostream& os, const Vertex& vertex);
 
 } // end namespace nsx
 

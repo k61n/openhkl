@@ -23,7 +23,7 @@ BOOST_AUTO_TEST_CASE(Test_OBB_3D)
     axis << 1,0,0,
             0,1,0,
             0,0,1;
-    OBB<double,3> obb1(center,extent,axis);
+    OBB obb1(center,extent,axis);
     Eigen::Vector3d lower(obb1.getLower());
     Eigen::Vector3d upper(obb1.getUpper());
 
@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(Test_OBB_3D)
             0, 1 ,0,
             0, 0 ,1;
 
-    OBB<double,3> obb2(center,extent,axis);
+    OBB obb2(center,extent,axis);
     obb2.scale(5);
     lower = obb2.getLower();
     upper = obb2.getUpper();
@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_CASE(Test_OBB_3D)
     axis << 1,-1 ,0,
             1, 1 ,0,
             0, 0 ,1;
-    OBB<double,3> obb3(center,extent,axis);
+    OBB obb3(center,extent,axis);
     obb3.scale(Eigen::Vector3d(3,2,5));
     lower=obb3.getLower();
     upper=obb3.getUpper();

@@ -8,7 +8,6 @@
 #include <QPen>
 #include <QStyleOptionGraphicsItem>
 #include <QWidget>
-#include <QtDebug>
 
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/geometry/AABB.h>
@@ -16,7 +15,7 @@
 #include "DetectorScene.h"
 #include "items/MaskGraphicsItem.h"
 
-MaskGraphicsItem::MaskGraphicsItem(std::shared_ptr<nsx::DataSet> data, nsx::AABB<double, 3>* aabb)
+MaskGraphicsItem::MaskGraphicsItem(nsx::sptrDataSet data, nsx::AABB* aabb)
 : SXGraphicsItem(nullptr,true,true),
   _data(data),
   _aabb(aabb),
@@ -81,7 +80,7 @@ void MaskGraphicsItem::setTo(const QPointF& pos)
     updateAABB();
 }
 
-nsx::AABB<double,3>* MaskGraphicsItem::getAABB()
+nsx::AABB* MaskGraphicsItem::getAABB()
 {
     return _aabb;
 }

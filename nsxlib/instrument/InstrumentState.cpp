@@ -31,11 +31,9 @@ namespace nsx {
 
 InstrumentState InstrumentState::interpolate(const InstrumentState &other, double t) const
 {
-    using dvec = std::vector<double>;
-
-    auto interpolate_vec = [] (const dvec& u, const dvec& v, double t) -> dvec {
+    auto interpolate_vec = [] (const std::vector<double>& u, const std::vector<double>& v, double t) -> std::vector<double> {
         assert(u.size() == v.size());
-        dvec w(u);
+        std::vector<double> w(u);
         for (auto i = 0; i < w.size(); ++i) {
             w[i] += t*(v[i]-u[i]);
         }

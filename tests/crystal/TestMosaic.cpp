@@ -24,9 +24,8 @@ int run_test()
 
     Sample s("test");
 
-    ConvexHull<double> hull;
+    ConvexHull hull;
 
-//	double halfa = 3.1*SX::Units::mm/2.0;
     double halfa = 1.0*mm/2.0;
     hull.addVertex(-halfa,-halfa,-halfa);
     hull.addVertex(-halfa, halfa,-halfa);
@@ -73,13 +72,13 @@ int run_test()
     Eigen::Matrix3d evecs1;
     evecs1 << 1,0,0,0,1,0,0,0,1;
 
-    Ellipsoid<double,3> ell1(center1,evals1,evecs1);
+    Ellipsoid ell1(center1,evals1,evecs1);
 
     Eigen::Vector3d center2(0,0,0);
     Eigen::Vector3d evals2(4,4,4);
     Eigen::Matrix3d evecs2;
     evecs2 << 1,0,0,0,1,0,0,0,1;
-    Ellipsoid<double,3> ell2(center2,evals2,evecs2);
+    Ellipsoid ell2(center2,evals2,evecs2);
 
     std::cout<<ellipsoids_overlap(ell1,ell2)<<std::endl;
 

@@ -36,18 +36,13 @@
 #ifndef NSXLIB_AUTOINDEXER_H
 #define NSXLIB_AUTOINDEXER_H
 
-#include "UnitCell.h"
-
 #include <vector>
-#include <memory>
+
+#include "../crystal/CrystalTypes.h"
+#include "../instrument/InstrumentTypes.h"
+#include "../utils/UtilsTypes.h"
 
 namespace nsx {
-
-class Experiment;
-
-class ProgressHandler;
-
-class Peak3D;
 
 // note: cannot use nested classes in swig
 struct IndexerParameters {

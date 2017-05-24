@@ -17,7 +17,7 @@ DeltaKernel::DeltaKernel(int nrows, int ncols) : ConvolutionKernel(nrows,ncols)
     update();
 }
 
-DeltaKernel::DeltaKernel(int nrows, int ncols, const ConvolutionKernel::ParameterMap &params)
+DeltaKernel::DeltaKernel(int nrows, int ncols, const ConvolutionKernelParameters &params)
 : ConvolutionKernel(nrows,ncols,params)
 {
     update();

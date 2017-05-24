@@ -50,7 +50,7 @@ DetectorPropertyWidget::DetectorPropertyWidget(DetectorItem* caller,QWidget *par
         std::ostringstream os;
 
         bool isRot=false;
-        if (RotAxis* rot=dynamic_cast<RotAxis*>(axis))
+        if (nsx::RotAxis* rot=dynamic_cast<nsx::RotAxis*>(axis))
         {
             os << "R(";
             os << rot->getAxis().transpose();
@@ -61,7 +61,7 @@ DetectorPropertyWidget::DetectorPropertyWidget(DetectorItem* caller,QWidget *par
                 os << "CCW";
             isRot=true;
         }
-        else if(dynamic_cast<TransAxis*>(axis))
+        else if(dynamic_cast<nsx::TransAxis*>(axis))
         {
             os << "T(";
             os << axis->getAxis().transpose();
@@ -97,7 +97,7 @@ void DetectorPropertyWidget::cellHasChanged(int i,int j)
 {
     auto detector=_detectorItem->getExperiment()->getDiffractometer()->getDetector();
     auto axis=detector->getGonio()->getAxis(i);
-    if (dynamic_cast<TransAxis*>(axis))
+    if (dynamic_cast<nsx::TransAxis*>(axis))
         axis->setOffset(ui->tableWidget_Detector->item(i,j)->data(Qt::EditRole).toDouble()*nsx::mm);
     else
         axis->setOffset(ui->tableWidget_Detector->item(i,j)->data(Qt::EditRole).toDouble()*nsx::deg);
