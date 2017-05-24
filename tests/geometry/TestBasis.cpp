@@ -24,26 +24,26 @@ BOOST_AUTO_TEST_CASE(Test_Basis)
     Vector3d x(1,0,0);
 
     Vector3d xsecond=bsecond.fromStandard(x);
-
+    //1
     BOOST_CHECK_CLOSE(xsecond(0),0.25,tolerance);
     BOOST_CHECK_CLOSE(xsecond(1),-0.25,tolerance);
     BOOST_CHECK_SMALL(xsecond(2),tolerance);
 
     x=bsecond.toStandard(xsecond);
-
+    //2
     BOOST_CHECK_CLOSE(x(0),1.0,tolerance);
     BOOST_CHECK_SMALL(x(1),tolerance);
     BOOST_CHECK_SMALL(x(2),tolerance);
 
     RowVector3d xr(1,0,0);
     RowVector3d xrsecond=bsecond.fromReciprocalStandard(xr);
-
+    //3
     BOOST_CHECK_CLOSE(xrsecond(0),2.0,tolerance);
     BOOST_CHECK_CLOSE(xrsecond(1),-2.0,tolerance);
     BOOST_CHECK_SMALL(xrsecond(2),tolerance);
 
     xr=bsecond.toReciprocalStandard(xrsecond);
-
+    //4
     BOOST_CHECK_CLOSE(xr(0),1.0,tolerance);
     BOOST_CHECK_SMALL(xr(1),tolerance);
     BOOST_CHECK_SMALL(xr(2),tolerance);
@@ -52,25 +52,25 @@ BOOST_AUTO_TEST_CASE(Test_Basis)
     bsecond.rebaseToStandard();
 
     xsecond=bsecond.fromStandard(x);
-
+    //5
     BOOST_CHECK_CLOSE(xsecond(0),0.25,tolerance);
     BOOST_CHECK_CLOSE(xsecond(1),-0.25,tolerance);
     BOOST_CHECK_SMALL(xsecond(2),tolerance);
 
     x=bsecond.toStandard(xsecond);
-
+    //6
     BOOST_CHECK_CLOSE(x(0),1.0,tolerance);
     BOOST_CHECK_SMALL(x(1),tolerance);
     BOOST_CHECK_SMALL(x(2),tolerance);
 
     xrsecond=bsecond.fromReciprocalStandard(xr);
-
+    //7
     BOOST_CHECK_CLOSE(xrsecond(0),2.0,tolerance);
     BOOST_CHECK_CLOSE(xrsecond(1),-2.0,tolerance);
     BOOST_CHECK_SMALL(xrsecond(2),tolerance);
 
     xr=bsecond.toReciprocalStandard(xrsecond);
-
+    //8
     BOOST_CHECK_CLOSE(xr(0),1.0,tolerance);
     BOOST_CHECK_SMALL(xr(1),tolerance);
     BOOST_CHECK_SMALL(xr(2),tolerance);
@@ -79,25 +79,25 @@ BOOST_AUTO_TEST_CASE(Test_Basis)
     bsecond.rebaseTo(bprime);
 
     xsecond=bsecond.fromStandard(x);
-
+    //9
     BOOST_CHECK_CLOSE(xsecond(0),0.25,tolerance);
     BOOST_CHECK_CLOSE(xsecond(1),-0.25,tolerance);
     BOOST_CHECK_SMALL(xsecond(2),tolerance);
 
     x=bsecond.toStandard(xsecond);
-
+    //10
     BOOST_CHECK_CLOSE(x(0),1.0,tolerance);
     BOOST_CHECK_SMALL(x(1),tolerance);
     BOOST_CHECK_SMALL(x(2),tolerance);
 
     xrsecond=bsecond.fromReciprocalStandard(xr);
-
+    //11
     BOOST_CHECK_CLOSE(xrsecond(0),2.0,tolerance);
     BOOST_CHECK_CLOSE(xrsecond(1),-2.0,tolerance);
     BOOST_CHECK_SMALL(xrsecond(2),tolerance);
 
     xr=bsecond.toReciprocalStandard(xrsecond);
-
+    //12
     BOOST_CHECK_CLOSE(xr(0),1.0,tolerance);
     BOOST_CHECK_SMALL(xr(1),tolerance);
     BOOST_CHECK_SMALL(xr(2),tolerance);
