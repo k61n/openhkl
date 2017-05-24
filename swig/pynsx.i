@@ -64,7 +64,7 @@ namespace property_tree=boost::property_tree;
 #include "mathematics/RNG.h"
 
 #include "utils/EigenToVector.h"
-#include "utils/Types.h"
+//#include "utils/Types.h"
 //#include "utils/ComplexParser.h"
 #include "utils/System.h"
 #include "utils/CSV.h"
@@ -73,19 +73,19 @@ namespace property_tree=boost::property_tree;
 //#include "utils/LatticeConstraintParser.h"
 
 #include "utils/DoubleToFraction.h"
-#include "utils/EigenMatrixOp.h"
+//#include "utils/EigenMatrixOp.h"
 #include "utils/Timer.h"
 #include "utils/Path.h"
 #include "utils/Maybe.h"
 
-#include "utils/Packer.h"
+//#include "utils/Packer.h"
 //#include "utils/AffineTransformParser.h"
 #include "utils/LMFunctor.h"
 #include "utils/RandomMatrix.h"
 #include "utils/Parser.h"
 #include "utils/YAMLType.h"
 #include "utils/MatrixParser.h"
-#include "utils/EigenMatrixParser.h"
+//#include "utils/EigenMatrixParser.h"
 #include "utils/ProgressHandler.h"
 
 #include "crystal/PeakPredictor.h"
@@ -113,7 +113,7 @@ namespace property_tree=boost::property_tree;
 #include "crystal/GruberReduction.h"
 #include "crystal/SymOp.h"
 #include "geometry/Vertex.h"
-#include "geometry/Blob2D.h"
+//#include "geometry/Blob2D.h"
 #include "geometry/Sphere.h"
 #include "geometry/Triangle.h"
 
@@ -123,8 +123,8 @@ namespace property_tree=boost::property_tree;
 #include "geometry/Ellipsoid.h"
 #include "geometry/Face.h"
 #include "geometry/MCAbsorption.h"
-#include "geometry/ShapeUnion.h"
-#include "geometry/NDTree.h"
+//#include "geometry/ShapeUnion.h"
+//#include "geometry/NDTree.h"
 #include "geometry/ConvexHull.h"
 
 #include "geometry/BlobFinder.h"
@@ -167,7 +167,7 @@ namespace property_tree=boost::property_tree;
 #include "instrument/DetectorEvent.h"
 #include "instrument/Axis.h"
 #include "instrument/Experiment.h"
-#include "instrument/DetectorState.h"
+//#include "instrument/DetectorState.h"
 
 #include "instrument/Component.h"
 #include "instrument/AxisFactory.h"
@@ -188,7 +188,7 @@ namespace property_tree=boost::property_tree;
 #include "kernel/Memento.h"
 #include "kernel/Singleton.h"
 #include "kernel/Factory.h"
-#include "kernel/SharedFactory.h"
+//#include "kernel/SharedFactory.h"
 
 #include "utils/Enums.h"
 
@@ -307,26 +307,24 @@ namespace boost { namespace property_tree {} }
 %include "instrument/Source.h"
 
 %include "geometry/IShape.h"
-%template(IShape3D) nsx::IShape<double,3>;
 
-%typemap(out) AABB<double, 3>::vector = Eigen::Vector3d;
-%typemap(out) Ellipsoid<double, 3>::vector = Eigen::Vector3d;
-%typemap(out) OBB<double, 3>::vector = Eigen::Vector3d;
-%typemap(out) Sphere<double, 3>::vector = Eigen::Vector3d;
+
+//%typemap(out) AABB::vector = Eigen::Vector3d;
+//%typemap(out) Ellipsoid::vector = Eigen::Vector3d;
+//%typemap(out) OBB::vector = Eigen::Vector3d;
+//%typemap(out) Sphere::vector = Eigen::Vector3d;
 
 
 %include "geometry/AABB.h"
-%template(AABB3D) nsx::AABB<double,3>;
+
 
 %include "geometry/Sphere.h"
 
 %include "geometry/Ellipsoid.h"
-%template(Ellipsoid3D) nsx::Ellipsoid<double,3>;
-%include "geometry/OBB.h"
-%template(OBB3D) nsx::OBB<double,3>;
-%include "geometry/Sphere.h"
 
-%template(Sphere3D) nsx::Sphere<double,3>;
+%include "geometry/OBB.h"
+
+%include "geometry/Sphere.h"
 
 %include "geometry/Blob3D.h"
 
@@ -401,7 +399,7 @@ namespace nsx {
 %include "mathematics/RNG.h"
 
 %include "utils/EigenToVector.h"
-%include "utils/Types.h"
+//%include "utils/Types.h"
  //%include "utils/ComplexParser.h"
 %include "utils/System.h"
 %include "utils/CSV.h"
@@ -409,7 +407,7 @@ namespace nsx {
  //%include "utils/Units.h"
  //%include "utils/LatticeConstraintParser.h"
 %include "utils/DoubleToFraction.h"
-%include "utils/EigenMatrixOp.h"
+//%include "utils/EigenMatrixOp.h"
 %include "utils/Timer.h"
 %include "utils/Path.h"
  //%include "utils/Maybe.h"
@@ -445,7 +443,7 @@ namespace nsx {
 %include "crystal/GruberReduction.h"
 %include "crystal/SymOp.h"
 %include "geometry/Vertex.h"
-%include "geometry/Blob2D.h"
+//%include "geometry/Blob2D.h"
 %include "geometry/Sphere.h"
 %include "geometry/Triangle.h"
 
@@ -455,8 +453,8 @@ namespace nsx {
 %include "geometry/Ellipsoid.h"
 %include "geometry/Face.h"
 %include "geometry/MCAbsorption.h"
-%include "geometry/ShapeUnion.h"
-%include "geometry/NDTree.h"
+//%include "geometry/ShapeUnion.h"
+//%include "geometry/NDTree.h"
 %include "geometry/ConvexHull.h"
 %include "geometry/BlobFinder.h"
 %include "geometry/AABB.h"
@@ -497,7 +495,7 @@ namespace nsx {
 %include "instrument/DetectorEvent.h"
 %include "instrument/Axis.h"
 %include "instrument/Experiment.h"
-%include "instrument/DetectorState.h"
+//%include "instrument/DetectorState.h"
 
 %include "instrument/Component.h"
 %include "instrument/AxisFactory.h"

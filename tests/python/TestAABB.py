@@ -9,7 +9,7 @@ class TestAABB3D(unittest.TestCase):
     def testBounds(self):
         lb = np.array([0, 0, 0], dtype=float)
         ub = np.array([1, 2, 3], dtype=float)
-        bb = nsx.AABB3D()
+        bb = nsx.AABB()
         bb.setBounds(lb, ub)
         center = bb.getAABBCenter()
         extents = bb.getAABBExtents()
@@ -25,7 +25,7 @@ class TestAABB3D(unittest.TestCase):
     def testConstructor(self):
         lb = np.array([-1, -2, -3], dtype=float)
         ub = np.array([1, 2, 3], dtype=float)
-        bb = nsx.AABB3D(lb, ub)
+        bb = nsx.AABB(lb, ub)
 
         lb = bb.getLower();
         ub = bb.getUpper();
@@ -41,7 +41,7 @@ class TestAABB3D(unittest.TestCase):
     def testVolume(self):
         lb = np.array([-1, -2, -3], dtype=float)
         ub = np.array([1, 2, 3], dtype=float)
-        bb = nsx.AABB3D(lb, ub)
+        bb = nsx.AABB(lb, ub)
 
         self.assertAlmostEqual(bb.AABBVolume(), 48)
 
@@ -50,7 +50,7 @@ class TestAABB3D(unittest.TestCase):
         t2 = nsx.new_double()
         lb = np.array([1,1,1], dtype=float)
         ub = np.array([3,3,3], dtype=float)
-        bb = nsx.AABB3D(lb, ub)
+        bb = nsx.AABB(lb, ub)
 
         start = np.array([-1, -1, -1], dtype=float)
         end = np.array([1,1,1], dtype=float)

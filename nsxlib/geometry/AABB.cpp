@@ -7,6 +7,11 @@ AABB::AABB() : IShape()
 {
 }
 
+AABB::~AABB()
+{
+    
+}
+
 AABB::AABB(const AABB& other) : IShape(other)
 {
 }

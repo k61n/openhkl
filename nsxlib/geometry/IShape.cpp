@@ -6,6 +6,11 @@ IShape::IShape()
 {
 }
 
+IShape::~IShape()
+{
+    
+}
+
 IShape::IShape(const IShape& other)
 {
     _lowerBound = other._lowerBound;

@@ -64,7 +64,7 @@ public:
     //! Constructs a AABB object from two initializer lists representing respectively its lower and upper bound
     AABB(const std::initializer_list<double>& lb, const std::initializer_list<double>& ub);
     //! Destructor
-    virtual ~AABB()=default;
+    virtual ~AABB();
     //! Assignment operator
     AABB& operator=(const AABB& other);
 
@@ -72,33 +72,33 @@ public:
     IShape* clone() const;
 
     //! Scale isotropically the AABB.
-    void scale(double value);
+    void scale(double value) override;
     //! Scale anisotropically the AABB.
     void scale(const Eigen::Vector3d& scale);
     //! Rotate the AABB.
-    void rotate(const Eigen::Matrix3d& eigenvectors);
+    void rotate(const Eigen::Matrix3d& eigenvectors) override;
     //! Translate the AABB.
-    void translate(const Eigen::Vector3d& t);
+    void translate(const Eigen::Vector3d& t) override;
 
     //! Check whether a point given as Homogeneous coordinate is inside the AABB.
-    bool isInside(const HomVector& vector) const;
+    bool isInside(const HomVector& vector) const override;
     //! Return true if the AABB intersects any kind of shape
-    bool collide(const IShape& other) const;
+    bool collide(const IShape& other) const override;
     //! Return true if the AABB intersects an ellipsoid.
-    bool collide(const AABB& other) const;
+    bool collide(const AABB& other) const override;
     //! Return true if the AABB intersects an ellipsoid.
-    bool collide(const Ellipsoid& other) const;
+    bool collide(const Ellipsoid& other) const override;
     //! Return true if the AABB intersects an OBB.
-    bool collide(const OBB& other) const;
+    bool collide(const OBB& other) const override;
     //! Return true if the AABB intersects a Sphere.
-    bool collide(const Sphere& other) const;
+    bool collide(const Sphere& other) const override;
 
     //! Compute the intersection between the AABB and a given ray.
     //! Return true if an intersection was found, false otherwise.
     //! If the return value is true the intersection "times" will be stored
     //! in t1 and t2 in such a way that from + t1*dir and from + t2*dir are
     //! the two intersection points between the ray and this shape.
-    bool rayIntersect(const Eigen::Vector3d& from, const Eigen::Vector3d& dir, double& t1, double& t2) const;
+    bool rayIntersect(const Eigen::Vector3d& from, const Eigen::Vector3d& dir, double& t1, double& t2) const override;
 
 #ifndef SWIG
     // Macro to ensure that an OBB object can be dynamically allocated.

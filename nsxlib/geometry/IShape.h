@@ -60,7 +60,7 @@ public:
     //! Construct a IShape from two initializer lists representing respectively its lower and upper bound
     IShape(const std::initializer_list<double>& lb, const std::initializer_list<double>& ub);
     // Destructor
-    virtual ~IShape()=default;
+    virtual ~IShape();
 
     IShape& operator=(const IShape& other);
 
