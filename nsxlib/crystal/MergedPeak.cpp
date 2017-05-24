@@ -38,14 +38,8 @@
 #include <algorithm>
 #include <cstdlib>
 
-<<<<<<< HEAD
-#include "../crystal/MergedPeak.h"
-#include "../crystal/Peak3D.h"
-=======
 #include "MergedPeak.h"
 #include "Peak3D.h"
-
->>>>>>> add CC factor calculation
 
 namespace nsx {
 
