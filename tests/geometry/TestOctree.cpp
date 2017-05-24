@@ -13,28 +13,26 @@
 #include <nsxlib/geometry/Octree.h>
 #include <nsxlib/geometry/Ellipsoid.h>
 
-using namespace nsx;
-
 const double tolerance=1e-5;
 
 void collision_test()
 {
-    Octree tree({0,0,0},{100,100,100});
+    nsx::Octree tree({0,0,0},{100,100,100});
     auto vects = Eigen::Matrix3d::Identity();
     const double radius = 0.45;
     auto vals = Eigen::Vector3d(radius, radius, radius);
     auto center = Eigen::Vector3d(0.0, 0.0, 0.0);
 
-    std::set<const IShape*> test_set;
+    std::set<const nsx::IShape*> test_set;
 
-    std::vector<Ellipsoid*> shapes;
+    std::vector<nsx::Ellipsoid*> shapes;
 
     // lattice of non-intersecting spheres
     for (int i = 1; i < 20; ++i) {
         for (int j = 1; j < 20; ++j) {
             for (int k = 1; k < 20; ++k) {
                 center = Eigen::Vector3d(i, j, k);
-                auto shape = new Ellipsoid(center, vals, vects);
+                auto shape = new nsx::Ellipsoid(center, vals, vects);
                 shapes.emplace_back(shape);
                 tree.addData(shape);
             }
@@ -60,7 +58,7 @@ void collision_test()
     // add some spheres which will intersect
     center = Eigen::Vector3d(1.5, 1.5, 1.5);
     vals = Eigen::Vector3d(radius, radius, radius);
-    auto shape = new Ellipsoid(center, vals, vects);
+    auto shape = new nsx::Ellipsoid(center, vals, vects);
 
 
     BOOST_CHECK_EQUAL(tree.getCollisions(*shape).size(), 8);
@@ -78,25 +76,25 @@ void collision_test()
 
 void split_test()
 {
-    Octree tree({0,0,0},{50,50,50});
+    nsx::Octree tree({0,0,0},{50,50,50});
     tree.setMaxStorage(4);
 
     auto vects = Eigen::Matrix3d::Identity();
     const double radius = 1.0;
     auto vals = Eigen::Vector3d(radius, radius, radius);
 
-    std::set<const IShape*> test_set;
+    std::set<const nsx::IShape*> test_set;
 
-    std::vector<Ellipsoid*> shapes;
+    std::vector<nsx::Ellipsoid*> shapes;
 
-    shapes.emplace_back(new Ellipsoid(Eigen::Vector3d(12.5, 12.5, 12.5), vals, vects));
-    shapes.emplace_back(new Ellipsoid(Eigen::Vector3d(12.5, 12.5, 37.5), vals, vects));
-    shapes.emplace_back(new Ellipsoid(Eigen::Vector3d(12.5, 37.5, 12.5), vals, vects));
-    shapes.emplace_back(new Ellipsoid(Eigen::Vector3d(12.5, 37.5, 37.5), vals, vects));
-    shapes.emplace_back(new Ellipsoid(Eigen::Vector3d(37.5, 12.5, 12.5), vals, vects));
-    shapes.emplace_back(new Ellipsoid(Eigen::Vector3d(37.5, 12.5, 37.5), vals, vects));
-    shapes.emplace_back(new Ellipsoid(Eigen::Vector3d(37.5, 37.5, 12.5), vals, vects));
-    shapes.emplace_back(new Ellipsoid(Eigen::Vector3d(37.5, 37.5, 37.5), vals, vects));
+    shapes.emplace_back(new nsx::Ellipsoid(Eigen::Vector3d(12.5, 12.5, 12.5), vals, vects));
+    shapes.emplace_back(new nsx::Ellipsoid(Eigen::Vector3d(12.5, 12.5, 37.5), vals, vects));
+    shapes.emplace_back(new nsx::Ellipsoid(Eigen::Vector3d(12.5, 37.5, 12.5), vals, vects));
+    shapes.emplace_back(new nsx::Ellipsoid(Eigen::Vector3d(12.5, 37.5, 37.5), vals, vects));
+    shapes.emplace_back(new nsx::Ellipsoid(Eigen::Vector3d(37.5, 12.5, 12.5), vals, vects));
+    shapes.emplace_back(new nsx::Ellipsoid(Eigen::Vector3d(37.5, 12.5, 37.5), vals, vects));
+    shapes.emplace_back(new nsx::Ellipsoid(Eigen::Vector3d(37.5, 37.5, 12.5), vals, vects));
+    shapes.emplace_back(new nsx::Ellipsoid(Eigen::Vector3d(37.5, 37.5, 37.5), vals, vects));
 
     for (auto&& shape: shapes) {
         tree.addData(shape);
@@ -136,19 +134,19 @@ BOOST_AUTO_TEST_CASE(Test_NDTree)
     unsigned int maxStorage(10);
 
     // Build up a NDTree with (0,0,0) as lower corner and (100,100,100) as upper corner
-    Octree tree({0,0,0},{100,100,100});
+    nsx::Octree tree({0,0,0},{100,100,100});
     tree.setMaxStorage(maxStorage);
 
     std::uniform_real_distribution<> d1(0,50), d2(50,100);
     std::mt19937 gen;
 
-    std::vector<AABB> bb;
+    std::vector<nsx::AABB> bb;
     bb.reserve(100);
 
     for (unsigned int i=0;i<=maxStorage;++i) {
         Eigen::Vector3d v1(d1(gen),d1(gen),d1(gen));
         Eigen::Vector3d v2(d2(gen),d2(gen),d2(gen));
-        bb.push_back(AABB(v1,v2));
+        bb.push_back(nsx::AABB(v1,v2));
         // Test: the root node has no children until it is not splitted
         BOOST_CHECK_EQUAL(tree.hasChildren(),false);
         tree.addData(&bb[i]);
@@ -167,7 +165,7 @@ BOOST_AUTO_TEST_CASE(Test_NDTree)
     // Test: the root node does not have any data anymore once it has been splitted
     BOOST_CHECK_EQUAL(tree.hasData(),false);
 
-    std::vector<AABB>::const_iterator it1;
+    std::vector<nsx::AABB>::const_iterator it1;
 
     // Remove all the data stored in the NDTree
     for (it1=bb.begin();it1!=bb.end();++it1) {

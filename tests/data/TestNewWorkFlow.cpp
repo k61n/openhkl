@@ -3,7 +3,6 @@
 
 #include <fstream>
 #include <iostream>
-#include <memory>
 #include <string>
 #include <vector>
 
@@ -23,8 +22,6 @@
 #include <nsxlib/utils/Units.h>
 #include <nsxlib/utils/ProgressHandler.h>
 
-using namespace nsx;
-
 int run_test();
 
 BOOST_AUTO_TEST_CASE(Test_NewWorkFlow)
@@ -34,16 +31,16 @@ BOOST_AUTO_TEST_CASE(Test_NewWorkFlow)
 
 int run_test()
 {
-    DataReaderFactory factory;
+    nsx::DataReaderFactory factory;
 
-    std::shared_ptr<Experiment> expt(new Experiment("test", "BioDiff2500"));
+    nsx::sptrExperiment expt(new nsx::Experiment("test", "BioDiff2500"));
     auto diff = expt->getDiffractometer();
-    std::shared_ptr<DataSet> dataf(factory.create("hdf", "gal3.hdf", diff));
+    nsx::sptrDataSet dataf(factory.create("hdf", "gal3.hdf", diff));
 
     expt->addData(dataf);
 
-    std::shared_ptr<ProgressHandler> progressHandler(new ProgressHandler);
-    std::shared_ptr<PeakFinder> peakFinder(new PeakFinder);
+    nsx::sptrProgressHandler progressHandler(new nsx::ProgressHandler);
+    nsx::sptrPeakFinder peakFinder(new nsx::PeakFinder);
 
     auto callback = [progressHandler] () {
         auto log = progressHandler->getLog();
@@ -54,12 +51,12 @@ int run_test()
 
     progressHandler->setCallback(callback);
 
-    std::vector<std::shared_ptr<DataSet>> numors;
+    nsx::DataList numors;
     numors.push_back(dataf);
 
-    std::shared_ptr<ConvolutionKernel> kernel;
+    nsx::sptrConvolutionKernel kernel;
     std::string kernelName = "annular";
-    KernelFactory* kernelFactory = KernelFactory::Instance();
+    auto kernelFactory = nsx::KernelFactory::Instance();
     kernel.reset(kernelFactory->create(kernelName, int(dataf->getNRows()), int(dataf->getNCols())));
 
     auto k = kernel->getKernel();
@@ -85,8 +82,8 @@ int run_test()
     BOOST_CHECK(dataf->getPeaks().size() >= 800);
 
     // at this stage we have the peaks, now we index
-    IndexerParameters params;
-    AutoIndexer indexer(expt, progressHandler);
+    nsx::IndexerParameters params;
+    nsx::AutoIndexer indexer(expt, progressHandler);
 
     auto numIndexedPeaks = [&]() -> unsigned int
     {
@@ -119,7 +116,7 @@ int run_test()
     }
 
     // reintegrate peaks
-    const double scale = getScale(0.997);
+    const double scale = nsx::getScale(0.997);
     dataf->integratePeaks(scale, 2.0*scale, true);
 
     indexed_peaks = numIndexedPeaks();

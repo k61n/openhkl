@@ -26,9 +26,6 @@
 #include <nsxlib/instrument/Source.h>
 #include <nsxlib/utils/Units.h>
 
-using namespace std;
-using namespace nsx;
-
 const double gruber_tolerance = 1e-4;
 const double niggli_tolerance = 1e-4;
 const double tolerance = 1e-6;
@@ -49,7 +46,7 @@ Eigen::Matrix3d random_orthogonal_matrix()
     return QR.householderQ();
 }
 
-UnitCell cell_from_params(double A, double B, double C, double D, double E, double F)
+nsx::UnitCell cell_from_params(double A, double B, double C, double D, double E, double F)
 {
     double a = sqrt(A);
     double b = sqrt(B);
@@ -59,7 +56,7 @@ UnitCell cell_from_params(double A, double B, double C, double D, double E, doub
     double beta = acos(E / a / c);
     double gamma = acos(F / a / b);
 
-    UnitCell cell(a, b, c, alpha, beta, gamma);
+    nsx::UnitCell cell(a, b, c, alpha, beta, gamma);
     Eigen::Matrix3d g = cell.getMetricTensor();
 
     BOOST_CHECK_CLOSE(g(0,0), A, tolerance);
@@ -84,8 +81,8 @@ int run_test()
     F = 8.8888888;
 
     // scaling factor for a couple of special cases
-    map<unsigned int, double> s;
-    map<unsigned int, double> t;
+    std::map<unsigned int, double> s;
+    std::map<unsigned int, double> t;
 
     s[6]  = A / (2*D+F);
     s[7]  = A / (D+2*E);
@@ -98,7 +95,7 @@ int run_test()
     s[43] = (2*(D+E+F)-t[43]*B) / A;
 
 
-    vector<pair<string, vector<double>>> test_cases = {
+    std::vector<std::pair<std::string, std::vector<double>>> test_cases = {
         {"cF", {A, A, A, A/2, A/2, A/2}},  // condition 1
         {"hR", {A, A, A, D, D, D}},   // condition 2
         {"cP", {A, A, A, 0, 0, 0}},   // condition 3
@@ -151,8 +148,8 @@ int run_test()
         std::default_random_engine generator;
         std::uniform_real_distribution<double> distribution(-0.1*gruber_tolerance, 0.1*gruber_tolerance);
 
-        string expected_bravais(test_case.first);
-        vector<double> p(test_case.second);
+        std::string expected_bravais(test_case.first);
+        std::vector<double> p(test_case.second);
 
         for ( int i = 0; i < 10; ++i) {
             double a, b, c, alpha, beta, gamma;
@@ -172,16 +169,16 @@ int run_test()
             beta = std::acos(E / a / c);
             gamma = std::acos(F / a / b);
 
-            UnitCell cell(a, b, c, alpha, beta, gamma);
+            nsx::UnitCell cell(a, b, c, alpha, beta, gamma);
             Eigen::Matrix3d G = cell.getMetricTensor();
 
             Eigen::Matrix3d P, NG, NP;
 
             NG = G;
 
-            GruberReduction gruber(G, gruber_tolerance);
-            BravaisType bravais_type;
-            LatticeCentring centering;
+            nsx::GruberReduction gruber(G, gruber_tolerance);
+            nsx::BravaisType bravais_type;
+            nsx::LatticeCentring centering;
 
             int match = gruber.reduce(P, centering, bravais_type);
             cell.setBravaisType(bravais_type);
@@ -192,7 +189,7 @@ int run_test()
             BOOST_CHECK(match == condition);
             BOOST_CHECK(cell.getBravaisTypeSymbol() == expected_bravais);
 
-            NiggliReduction niggli(G, niggli_tolerance);
+            nsx::NiggliReduction niggli(G, niggli_tolerance);
             niggli.reduce(NG, NP);
         }
         ++condition;

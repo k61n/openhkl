@@ -10,8 +10,8 @@
 
 BOOST_AUTO_TEST_CASE(Test_Cyclop)
 {
-    nsx::DiffractometerStore* ds = nsx::DiffractometerStore::Instance();
-    nsx::sptrDiffractometer cyclop = ds->buildDiffractometer("Cyclops");
+    auto ds = nsx::DiffractometerStore::Instance();
+    auto cyclop = ds->buildDiffractometer("Cyclops");
     double g,nu;
     for (int i = 0; i < 7680; ++i) {
         for (int j = 0; j < 2400; ++j) {

@@ -1,7 +1,6 @@
 #define BOOST_TEST_MODULE "Test PeakFinder"
 #define BOOST_TEST_DYN_LINK
 
-#include <memory>
 #include <vector>
 
 #include <boost/test/unit_test.hpp>
@@ -15,19 +14,17 @@
 #include <nsxlib/instrument/DiffractometerStore.h>
 #include <nsxlib/utils/ProgressHandler.h>
 
-using namespace nsx;
-
 BOOST_AUTO_TEST_CASE(Test_PeakFinder)
 {
-    std::vector<std::shared_ptr<DataSet>> numors;
+    nsx::DataList numors;
 
-    DataReaderFactory factory;
-    DiffractometerStore* ds = DiffractometerStore::Instance();
-    std::shared_ptr<Diffractometer> diff = std::shared_ptr<Diffractometer>(ds->buildDiffractometer("D10"));
-    std::shared_ptr<DataSet> dataf(factory.create("", "D10_ascii_example", diff));
-    MetaData* meta = dataf->getMetadata();
-    PeakFinder peakFinder;
-    std::shared_ptr<ProgressHandler> handler(new ProgressHandler);
+    nsx::DataReaderFactory factory;
+    auto ds = nsx::DiffractometerStore::Instance();
+    auto diff = nsx::sptrDiffractometer(ds->buildDiffractometer("D10"));
+    auto dataf = factory.create("", "D10_ascii_example", diff);
+    auto meta = dataf->getMetadata();
+    nsx::PeakFinder peakFinder;
+    nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
 
     BOOST_CHECK(meta->getKey<int>("nbang")==2);
 

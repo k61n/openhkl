@@ -1,12 +1,11 @@
 #define BOOST_TEST_MODULE "Test Monte-Carlo Absorption"
 #define BOOST_TEST_DYN_LINK
 
-#include <memory>
-
 #include <boost/test/unit_test.hpp>
 
 #include <Eigen/Dense>
 
+#include <nsxlib/chemistry/ChemistryTypes.h>
 #include <nsxlib/chemistry/Material.h>
 #include <nsxlib/geometry/ConvexHull.h>
 #include <nsxlib/geometry/MCAbsorption.h>
@@ -14,24 +13,19 @@
 
 BOOST_AUTO_TEST_CASE(Test_MCAbsorption)
 {
-    using sptrMaterial = std::shared_ptr<nsx::Material>;
-
-    using Eigen::Matrix3d;
-    using Eigen::Vector3d;
-
     // Build an isotopically pure methane material
-    sptrMaterial helium(new nsx::Material("He[3]"));
+    nsx::sptrMaterial helium(new nsx::Material("He[3]"));
 
     // Create a cubic convex hull
     nsx::ConvexHull chull;
-    chull.addVertex(Vector3d( 0, 0, 0));
-    chull.addVertex(Vector3d( 1, 0, 0));
-    chull.addVertex(Vector3d( 0, 1, 0));
-    chull.addVertex(Vector3d( 0, 0, 1));
-    chull.addVertex(Vector3d( 1, 1, 0));
-    chull.addVertex(Vector3d( 1, 0, 1));
-    chull.addVertex(Vector3d( 0, 1, 1));
-    chull.addVertex(Vector3d( 1, 1, 1));
+    chull.addVertex(Eigen::Vector3d( 0, 0, 0));
+    chull.addVertex(Eigen::Vector3d( 1, 0, 0));
+    chull.addVertex(Eigen::Vector3d( 0, 1, 0));
+    chull.addVertex(Eigen::Vector3d( 0, 0, 1));
+    chull.addVertex(Eigen::Vector3d( 1, 1, 0));
+    chull.addVertex(Eigen::Vector3d( 1, 0, 1));
+    chull.addVertex(Eigen::Vector3d( 0, 1, 1));
+    chull.addVertex(Eigen::Vector3d( 1, 1, 1));
     chull.updateHull();
     chull.translateToCenter();
     chull.scale(0.032);
@@ -46,10 +40,10 @@ BOOST_AUTO_TEST_CASE(Test_MCAbsorption)
     mca.setSample(&chull,muScattering,muAbsorption);
 
     // Compute the transmission factor
-    mca.run(10,Vector3d(0,1,0),Matrix3d::Identity());
+    mca.run(10,Eigen::Vector3d(0,1,0),Eigen::Matrix3d::Identity());
 
     // Build an isotopically pure methane material
-    sptrMaterial methane(new nsx::Material("CH4"));
+    nsx::sptrMaterial methane(new nsx::Material("CH4"));
     double mm=methane->molarMass();
     double volume=chull.getVolume();
     methane->setMassDensity(mm/volume);
@@ -64,5 +58,5 @@ BOOST_AUTO_TEST_CASE(Test_MCAbsorption)
     mca.setSample(&chull,muScattering,muAbsorption);
 
     // Compute the transmission factor
-    mca.run(10000,Vector3d(0,1,0),Matrix3d::Identity());
+    mca.run(10000,Eigen::Vector3d(0,1,0),Eigen::Matrix3d::Identity());
 }

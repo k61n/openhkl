@@ -1,29 +1,23 @@
 #define BOOST_TEST_MODULE "Test Basis"
 #define BOOST_TEST_DYN_LINK
 
-#include <memory>
-
 #include <boost/test/unit_test.hpp>
 
 #include <Eigen/Dense>
 
 #include <nsxlib/geometry/Basis.h>
 
-using Eigen::Vector3d;
-
-using namespace nsx;
-
 const double tolerance=1e-5;
 
 BOOST_AUTO_TEST_CASE(Test_Basis)
 {
-    std::shared_ptr<Basis> bprime(new Basis(Vector3d(2,0,0),Vector3d(0,2,0),Vector3d(0,0,1)));
+    nsx::sptrBasis bprime(new nsx::Basis(Eigen::Vector3d(2,0,0),Eigen::Vector3d(0,2,0),Eigen::Vector3d(0,0,1)));
 
-    Basis bsecond(Vector3d(1,1,0),Vector3d(-1,1,0),Vector3d(0,0,1),bprime);
+    nsx::Basis bsecond(Eigen::Vector3d(1,1,0),Eigen::Vector3d(-1,1,0),Eigen::Vector3d(0,0,1),bprime);
 
-    Vector3d x(1,0,0);
+    Eigen::Vector3d x(1,0,0);
 
-    Vector3d xsecond=bsecond.fromStandard(x);
+    Eigen::Vector3d xsecond=bsecond.fromStandard(x);
 
     BOOST_CHECK_CLOSE(xsecond(0),0.25,tolerance);
     BOOST_CHECK_CLOSE(xsecond(1),-0.25,tolerance);
@@ -102,7 +96,9 @@ BOOST_AUTO_TEST_CASE(Test_Basis)
     BOOST_CHECK_SMALL(xr(1),tolerance);
     BOOST_CHECK_SMALL(xr(2),tolerance);
 
-    std::shared_ptr<Basis> reference(new Basis(Basis::fromDirectVectors(Vector3d(1,0,0),Vector3d(0,1,0),Vector3d(0,0,1))));
+    nsx::sptrBasis reference(new nsx::Basis(nsx::Basis::fromDirectVectors(Eigen::Vector3d(1,0,0),
+                                                                          Eigen::Vector3d(0,1,0),
+                                                                          Eigen::Vector3d(0,0,1))));
 
     Eigen::Matrix3d P;
 
@@ -110,7 +106,9 @@ BOOST_AUTO_TEST_CASE(Test_Basis)
     BOOST_CHECK(!reference->hasSigmas());
 
     // Set some errors along each direction of the basis vector.
-    reference->setDirectSigmas(Vector3d(0.010,0.000,0.000),Vector3d(0.000,0.010,0.000),Vector3d(0.000,0.000,0.010));
+    reference->setDirectSigmas(Eigen::Vector3d(0.010,0.000,0.000),
+                               Eigen::Vector3d(0.000,0.010,0.000),
+                               Eigen::Vector3d(0.000,0.000,0.010));
 
     BOOST_CHECK(reference->hasSigmas());
 
@@ -123,12 +121,4 @@ BOOST_AUTO_TEST_CASE(Test_Basis)
     BOOST_CHECK_SMALL(err_alpha,tolerance);
     BOOST_CHECK_SMALL(err_beta,tolerance);
     BOOST_CHECK_SMALL(err_gamma,tolerance);
-
-    P << 0,2,0,4,0,0,0,0,-1;
-    reference->transform(P);
-
-    reference->getParametersSigmas(err_a,err_b,err_c,err_alpha,err_beta,err_gamma);
-
-    double err_as, err_bs, err_cs, err_alphas, err_betas, err_gammas;
-    reference->getReciprocalParametersSigmas(err_as,err_bs,err_cs,err_alphas,err_betas,err_gammas);
 }

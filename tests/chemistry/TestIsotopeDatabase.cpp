@@ -10,14 +10,12 @@
 #include <nsxlib/chemistry/IsotopeDatabaseManager.h>
 #include <nsxlib/utils/Units.h>
 
-using namespace nsx;
-
 const double tolerance=1e-6;
 
 BOOST_AUTO_TEST_CASE(Test_Isotope_Database)
 {
-    IsotopeDatabaseManager* mgr=IsotopeDatabaseManager::Instance();
-    UnitsManager* um=UnitsManager::Instance();
+    nsx::IsotopeDatabaseManager* mgr = nsx::IsotopeDatabaseManager::Instance();
+    nsx::UnitsManager* um = nsx::UnitsManager::Instance();
 
     auto hf176=mgr->getIsotope("Hf[176]");
 

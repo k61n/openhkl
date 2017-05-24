@@ -5,14 +5,11 @@
 
 #include <nsxlib/utils/Maybe.h>
 
-using namespace std;
-using namespace nsx;
-
 const double eps = 1e-10;
 
 int run_test()
 {
-    Maybe<int> x(5);
+    nsx::Maybe<int> x(5);
 
     BOOST_CHECK_EQUAL(x.get(), 5);
 
@@ -29,11 +26,11 @@ int run_test()
     };
 
     // check that we can create 'nothing' of type TestClass
-    Maybe<TestClass> test;
+    nsx::Maybe<TestClass> test;
 
     // check that we can create maybe of string type (non-trivial destructor)
-    Maybe<std::string> str_nothing;
-    Maybe<std::string> str_something("something");
+    nsx::Maybe<std::string> str_nothing;
+    nsx::Maybe<std::string> str_something("something");
 
     return 0;
 }
