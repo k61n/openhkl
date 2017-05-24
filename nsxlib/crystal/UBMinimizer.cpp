@@ -14,8 +14,8 @@
 #include "../instrument/Source.h"
 #include "../instrument/TransAxis.h"
 #include "../instrument/RotAxis.h"
+#include "../mathematics/MatrixOperations.h"
 #include "../mathematics/Minimizer.h"
-#include "../utils/EigenMatrixOp.h"
 #include "../utils/Units.h"
 
 namespace nsx {
