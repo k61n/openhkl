@@ -27,7 +27,6 @@ class TestBlob3D(unittest.TestCase):
                     blob.addPoint(i,j,k,mass)
                     tot = (tot + mass)    
 
-        # todo: test failed while running assertalmostequal, says its not defined
         self.assertAlmostEqual(tot,1.0)
         self.assertAlmostEqual(tot,blob.getMass())
         
@@ -37,20 +36,19 @@ class TestBlob3D(unittest.TestCase):
 
         sigma1 = 0.682689492
     
-        # todo: error in 'toEllipsoid' argument type- not imported from c++ to py 
         blob.toEllipsoid(sigma1,center,eigVal,eigVec)
 
-        #todo: check if center is ok AND also test failed while running asserAlms..
+        #todo: check if center is ok 
         self.assertAlmostEqual(center(0),c_x)
         self.assertAlmostEqual(center(1),c_y)
         self.assertAlmostEqual(center(2),c_z)
 
-        # todo: check if the semi_axes are ok AND same issue of assertAlm...
+        # todo: check if the semi_axes are ok 
         self.assertAlmostEqual(eigVal(0),sqrt(sx2))
         self.assertAlmostEqual(eigVal(1),sqrt(sy2))
         self.assertAlmostEqual(eigVal(2),sqrt(sz2))
     
-        # todo: check the eigenvectors AND same issue of assertAlm...
+        # todo: check the eigenvectors 
         self.assertAlmostEqual(((eigVec.col(0))(0)),1.0)
         self.assertAlmostEqual(((eigVec.col(1))(1)),1.0)
         self.assertAlmostEqual(((eigVec.col(2))(2)),1.0)
