@@ -29,6 +29,11 @@ deploy:trusty:
     - /^release/.*$/
     - /^hotfix/.*$/
     - develop
+  artifacts:
+    paths:
+    - nsxtool*deb
+  tags:
+    - ubuntu14.04
 
 # osx pipeline
 
@@ -57,6 +62,9 @@ deploy:osx:
     - /^release/.*$/
     - /^hotfix/.*$/
     - develop
+  artifacts:
+    paths:
+    - ${CI_PROJECT_DIR}/build/qmake-build/nsxtool*dmg
   tags:
     - mac
 
