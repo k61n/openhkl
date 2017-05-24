@@ -76,6 +76,7 @@
 #include <nsxlib/instrument/Sample.h>
 #include <nsxlib/instrument/Source.h>
 #include <nsxlib/utils/ProgressHandler.h>
+#include <nsxlib/statistics/CC.h>
 
 #include "absorption/AbsorptionDialog.h"
 #include "absorption/MCAbsorptionDialog.h"
@@ -715,6 +716,7 @@ bool SessionModel::writeStatistics(std::string filename,
     nsx::ResolutionShell res = {dmin, dmax, num_shells};
     std::vector<char> buf(1024, 0); // buffer for snprintf
     std::vector<nsx::MergedPeak> merged_peaks;
+    std::vector<nsx::MergedPeak> merged_peaks_shell;
     Eigen::RowVector3d HKL(0.0, 0.0, 0.0);
 
     if (!file.is_open()) {
@@ -743,11 +745,13 @@ bool SessionModel::writeStatistics(std::string filename,
 
     std::vector<nsx::PeakList> all_equivs;
 
-    file << "          dmin       dmax       nobs redundancy     r_meas    r_merge      r_pim" << std::endl;
+    file << "          dmin       dmax       nobs redundancy     r_meas    r_merge      r_pim    CChalf    CC*" << std::endl;
 
     for (size_t i = 0; i < size_t(num_shells); ++i) {
         const double d_lower = ds[i];
         const double d_upper = ds[i+1];
+
+        merged_peaks_shell.clear();
 
         auto peak_equivs = grp.findEquivalences(shells[i], friedel);
         nsx::RFactor rfactor(peak_equivs);
@@ -756,13 +760,6 @@ bool SessionModel::writeStatistics(std::string filename,
             all_equivs.push_back(equiv);
 
         double redundancy = double(shells[i].size()) / double(peak_equivs.size());
-
-        std::snprintf(&buf[0], buf.size(),
-                "    %10.2f %10.2f %10d %10.3f %10.3f %10.3f %10.3f",
-                d_lower, d_upper, int(shells[i].size()), redundancy,
-                rfactor.Rmeas(), rfactor.Rmerge(), rfactor.Rpim());
-
-        file << &buf[0] << std::endl;
 
         for (auto equiv: peak_equivs) {
             nsx::MergedPeak new_peak(grp, friedel);
@@ -780,11 +777,23 @@ bool SessionModel::writeStatistics(std::string filename,
                 new_peak.addPeak(peak);
             }
 
-            if (new_peak.redundancy() > 0)
+            if (new_peak.redundancy() > 0) {
                 merged_peaks.push_back(new_peak);
+                merged_peaks_shell.push_back(new_peak);
+            }
         }
 
-         qDebug() << "Finished logging shell " << i+1;
+        nsx::CC cc;
+        cc.calculate(merged_peaks_shell);
+
+        std::snprintf(&buf[0], buf.size(),
+                "    %10.2f %10.2f %10d %10.3f %10.3f %10.3f %10.3 %10.3f $10.3f",
+                d_lower, d_upper, int(shells[i].size()), redundancy,
+                rfactor.Rmeas(), rfactor.Rmerge(), rfactor.Rpim()), cc.CChalf(), cc.CCstar();
+
+        file << &buf[0] << std::endl;
+
+        qDebug() << "Finished logging shell " << i+1;
     }
 
     file << "--------------------------------------------------------------------------------" << std::endl;
@@ -798,10 +807,13 @@ bool SessionModel::writeStatistics(std::string filename,
 
     double redundancy = double(num_peaks) / double(all_equivs.size());
 
+    nsx::CC cc;
+    cc.calculate(merged_peaks);
+
     std::snprintf(&buf[0], buf.size(),
-            "    %10.2f %10.2f %10d %10.3f %10.3f %10.3f %10.3f",
+            "    %10.2f %10.2f %10d %10.3f %10.3f %10.3f %10.3f %10.3f %10.f",
             dmin, dmax, num_peaks, redundancy,
-            rfactor.Rmeas(), rfactor.Rmerge(), rfactor.Rpim());
+            rfactor.Rmeas(), rfactor.Rmerge(), rfactor.Rpim(), cc.CChalf(), cc.CCstar());
 
     file << &buf[0] << std::endl << std::endl;
 

@@ -33,52 +33,29 @@
  *
  */
 
-#ifndef NSXLIB_MERGEDPEAK_H
-#define NSXLIB_MERGEDPEAK_H
+#ifndef NSXLIB_CC_H
+#define NSXLIB_CC_H
 
-#include <Eigen/Dense>
-
-#include "../crystal/CrystalTypes.h"
-#include "../crystal/Intensity.h"
-#include "../crystal/SpaceGroup.h"
+#include "../crystal/MergedPeak.h"
 
 namespace nsx {
-    class Peak3D;
-    using sptrPeak3D = std::shared_ptr<Peak3D>;
 
-//! Class to handle calculation of merged data
-class MergedPeak {
-
+//! Class to handle calculation of correlation coefficients (CChalf and CC*)
+class CC {
 public:
-    MergedPeak(const SpaceGroup& grp, bool friedel=false);
-    MergedPeak(const MergedPeak& other) = default;
-    ~MergedPeak() = default;
-
-    bool addPeak(const sptrPeak3D& peak);
-    Eigen::Vector3i getIndex() const;
-    Intensity getIntensity() const;
-
-    size_t redundancy() const;
-    double std() const;
-
-    double d() const;
-    const PeakList& getPeaks() const;
-
-    //! split the merged peak randomly into two, for calculation of CC
-    std::pair<MergedPeak, MergedPeak> split() const;
-
-private:
-    void determineRepresentativeHKL();
-    void update();
+    CC();
     
-    Eigen::Vector3i _hkl;
-    Intensity _intensitySum;
-    double _dSum, _squaredIntensitySum;
-    std::vector<sptrPeak3D> _peaks;
-    SpaceGroup _grp;
-    bool _friedel;
+    void calculate(const std::vector<MergedPeak>& peaks);
+
+    double CChalf() const;
+    double CCstar() const;
+    unsigned int nPeaks() const;
+private:
+    double _CChalf;
+    double _CCstar;
+    unsigned int _nPeaks;
 };
 
 } // end namespace nsx
 
-#endif // NSXLIB_MERGEDPEAK_H
+#endif // NSXLIB_CC_H

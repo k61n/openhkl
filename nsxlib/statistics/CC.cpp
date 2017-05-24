@@ -33,52 +33,65 @@
  *
  */
 
-#ifndef NSXLIB_MERGEDPEAK_H
-#define NSXLIB_MERGEDPEAK_H
 
-#include <Eigen/Dense>
 
-#include "../crystal/CrystalTypes.h"
-#include "../crystal/Intensity.h"
-#include "../crystal/SpaceGroup.h"
+#include "CC.h"
 
 namespace nsx {
-    class Peak3D;
-    using sptrPeak3D = std::shared_ptr<Peak3D>;
 
-//! Class to handle calculation of merged data
-class MergedPeak {
+CC::CC():_CChalf(0), _CCstar(0)
+{
 
-public:
-    MergedPeak(const SpaceGroup& grp, bool friedel=false);
-    MergedPeak(const MergedPeak& other) = default;
-    ~MergedPeak() = default;
+}
 
-    bool addPeak(const sptrPeak3D& peak);
-    Eigen::Vector3i getIndex() const;
-    Intensity getIntensity() const;
+void CC::calculate(const std::vector<MergedPeak>& peaks)
+{
+    double xx, xy, yy, x, y;
+    xx = xy = yy = x = y = 0.0;
+    _nPeaks = 0;
 
-    size_t redundancy() const;
-    double std() const;
+    for (auto&& peak: peaks) {
+        if (peak.redundancy() < 2) {
+            continue;
+        }
 
-    double d() const;
-    const PeakList& getPeaks() const;
+        auto split = peak.split();
+        MergedPeak& p1 = split.first;
+        MergedPeak& p2 = split.second;
 
-    //! split the merged peak randomly into two, for calculation of CC
-    std::pair<MergedPeak, MergedPeak> split() const;
+        const double I1 = p1.getIntensity().getValue();
+        const double I2 = p2.getIntensity().getValue();
 
-private:
-    void determineRepresentativeHKL();
-    void update();
-    
-    Eigen::Vector3i _hkl;
-    Intensity _intensitySum;
-    double _dSum, _squaredIntensitySum;
-    std::vector<sptrPeak3D> _peaks;
-    SpaceGroup _grp;
-    bool _friedel;
-};
+        xx += I1*I1;
+        xy += I1*I2;
+        yy += I2*I2;
+        x += I1;
+        y += I2;
+
+        ++_nPeaks;
+    }
+
+    const double numerator = xy - x*y / _nPeaks;
+    const double varx = xx - x*x / _nPeaks;
+    const double vary = yy - y*y / _nPeaks;
+
+    _CChalf = numerator / std::sqrt(varx*vary);
+    _CCstar = std::sqrt( 2*_CChalf / (1.0 + _CChalf));
+}
+
+double CC::CChalf() const
+{
+    return _CChalf;
+}
+
+double CC::CCstar() const
+{
+    return _CCstar;
+}
+
+unsigned int CC::nPeaks() const
+{
+    return _nPeaks;
+}
 
 } // end namespace nsx
-
-#endif // NSXLIB_MERGEDPEAK_H

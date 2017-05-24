@@ -24,7 +24,7 @@
 
  This library is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNUctest
  Lesser General Public License for more details.
 
  You should have received a copy of the GNU Lesser General Public
@@ -35,9 +35,17 @@
 
 #include <cmath>
 #include <stdexcept>
+#include <algorithm>
+#include <cstdlib>
 
+<<<<<<< HEAD
 #include "../crystal/MergedPeak.h"
 #include "../crystal/Peak3D.h"
+=======
+#include "MergedPeak.h"
+#include "Peak3D.h"
+
+>>>>>>> add CC factor calculation
 
 namespace nsx {
 
@@ -132,6 +140,31 @@ double MergedPeak::d() const
 const PeakList& MergedPeak::getPeaks() const
 {
     return _peaks;
+}
+
+std::pair<MergedPeak, MergedPeak> MergedPeak::split() const
+{
+    // make copy of peak list
+    std::vector<sptrPeak3D> random_peaks = _peaks;
+    // randomly reorder
+    std::random_shuffle(random_peaks.begin(), random_peaks.end());
+
+    unsigned int i = 0;
+    unsigned int parity = std::rand()%2;
+
+    MergedPeak p1(_grp, _friedel), p2(_grp, _friedel);
+
+    for (auto&& p: random_peaks) {
+        if ((i%2) == parity) {
+            p1.addPeak(p);
+        }
+        else {
+            p2.addPeak(p);
+        }
+        ++i;
+    }
+
+    return std::make_pair(p1, p2);
 }
 
 } // end namespace nsx
