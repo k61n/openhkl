@@ -8,6 +8,7 @@
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/data/DataReaderFactory.h>
 #include <nsxlib/data/RawDataReader.h>
+#include <nsxlib/data/IDataReader.h>
 #include <nsxlib/instrument/Experiment.h>
 
 #include "models/DataItem.h"
@@ -71,16 +72,7 @@ NumorItem* DataItem::importData(const std::string &filename_str)
 
     try {
         std::string extension = fileinfo.completeSuffix().toStdString();
-<<<<<<< HEAD
-        data_ptr = DataReaderFactory().create(extension, filename_str, exp->getDiffractometer());
-=======
-
-        nsx::DataSet* raw_ptr = nsx::DataReaderFactory::Instance()->create(
-                    extension, filename_str, exp->getDiffractometer()
-                    );
-
-        data_ptr = nsx::sptrDataSet(raw_ptr);
->>>>>>> feature/typedef-using-refactoring
+        data_ptr = nsx::DataReaderFactory().create(extension, filename_str, exp->getDiffractometer());
     }
     catch(std::exception& e) {
         qWarning() << "Error reading numor: " + filename + " " + QString(e.what());
@@ -109,14 +101,14 @@ NumorItem *DataItem::importRawData(const std::vector<std::string> &filenames,
         return nullptr;
 
 
-    std::shared_ptr<DataSet> data;
-    std::shared_ptr<IDataReader> reader;
+    std::shared_ptr<nsx::DataSet> data;
+    std::shared_ptr<nsx::IDataReader> reader;
 
     try {
         auto diff = exp->getDiffractometer();
-        reader = std::shared_ptr<IDataReader>(new nsx::RawDataReader(filenames, diff,
+        reader = std::shared_ptr<nsx::IDataReader>(new nsx::RawDataReader(filenames, diff,
                                               wavelength, delta_chi, delta_omega, delta_phi,
-                                              rowMajor, swapEndian, bpp);
+                                              rowMajor, swapEndian, bpp));
         data = nsx::sptrDataSet(new nsx::DataSet(reader, diff));
 
     }

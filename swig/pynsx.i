@@ -307,6 +307,16 @@ using namespace nsx;
  //%include <boost/property_tree/ptree.hpp>
 namespace boost { namespace property_tree {} }
 
+
+%include "chemistry/ChemistryTypes.h"
+%include "crystal/CrystalTypes.h"
+%include "data/DataTypes.h"
+%include "geometry/GeometryTypes.h"
+%include "imaging/ImagingTypes.h"
+%include "instrument/InstrumentTypes.h"
+%include "utils/UtilsTypes.h"
+
+
 %include "instrument/Axis.h"
 %include "instrument/RotAxis.h"
 %include "instrument/TransAxis.h"
@@ -362,7 +372,7 @@ namespace nsx {
    class DataReaderFactory; 
    struct tVector;
    %template(DiffractometerStoreBase) Singleton<DiffractometerStore, Constructor, Destructor>;
-    %template(DataReaderFactorySingletonBase) Singleton<DataReaderFactory, Constructor, Destructor>;
+    //%template(DataReaderFactorySingletonBase) Singleton<DataReaderFactory, Constructor, Destructor>;
     //%template(DataReaderFactoryFactoryBase) Factory<DataSet,std::string,std::string,std::shared_ptr<Diffractometer> >;
 }
 
@@ -506,12 +516,12 @@ namespace nsx {
 %include "instrument/CylindricalDetector.h"
 %include "instrument/Gonio.h"
 
-%include "instrument/DetectorState.h"
+//%include "instrument/DetectorState.h"
 %include "instrument/DetectorEvent.h"
 %include "instrument/Axis.h"
 %include "instrument/Experiment.h"
 
-%include "instrument/DetectorState.h"
+//%include "instrument/DetectorState.h"
 
 %include "instrument/Component.h"
 %include "instrument/AxisFactory.h"

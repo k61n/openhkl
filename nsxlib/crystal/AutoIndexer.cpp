@@ -50,9 +50,8 @@
 
 namespace nsx {
 
-
-AutoIndexer::AutoIndexer(const sptrExperiment& expt, const sptrProgressHandler& handler):
-
+ 
+AutoIndexer::AutoIndexer(std::shared_ptr<Experiment>& expt, const std::shared_ptr<ProgressHandler>& handler):
     _peaks(),
     _experiment(expt),
     _solutions(),
@@ -238,12 +237,9 @@ bool AutoIndexer::autoIndex(const IndexerParameters& _params)
 
     // Sort solutions by decreasing quality.
     // For equal quality, smallest volume is first
-<<<<<<< HEAD
+
     using soluce = std::pair<sptrUnitCell,double>;
     std::sort(_solutions.begin(),_solutions.end(),[](const soluce& s1, const soluce& s2) -> bool
-=======
-    std::sort(_solutions.begin(),_solutions.end(),[](const AutoIndexingSoluce& s1, const AutoIndexingSoluce& s2) -> bool
->>>>>>> feature/typedef-using-refactoring
     {
         if (s1.second==s2.second)
             return (s1.first->getVolume()<s2.first->getVolume());

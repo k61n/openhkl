@@ -11,6 +11,7 @@
 #include <nsxlib/data/DataReaderFactory.h>
 #include <nsxlib/data/PeakFinder.h>
 #include <nsxlib/data/DataSet.h>
+#include <nsxlib/data/MetaData.h>
 #include <nsxlib/instrument/DiffractometerStore.h>
 #include <nsxlib/utils/ProgressHandler.h>
 

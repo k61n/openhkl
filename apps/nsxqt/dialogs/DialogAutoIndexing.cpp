@@ -115,6 +115,8 @@ void DialogAutoIndexing::buildSolutionsTable()
     model->setHorizontalHeaderItem(7,new QStandardItem("Bravais Type"));
     model->setHorizontalHeaderItem(8,new QStandardItem("Quality"));
 
+    using nsx::deg;
+
     // Display solutions
     for (unsigned int i=0;i<_solutions.size();++i) {
         auto& cell=_solutions[i].first;

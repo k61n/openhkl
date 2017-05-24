@@ -37,7 +37,7 @@
 
 namespace nsx {
 
-DataSet::DataSet(IDataReader* reader, const sptrDiffractometer& diffractometer):
+DataSet::DataSet(std::shared_ptr<IDataReader> reader, const sptrDiffractometer& diffractometer):
     _isOpened(false),
     _filename(reader->getFilename()),
     _nFrames(0),

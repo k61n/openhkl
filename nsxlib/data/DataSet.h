@@ -32,6 +32,7 @@
 #include <mutex>
 #include <string>
 #include <set>
+#include <memory>
 
 #include <Eigen/Dense>
 
@@ -51,7 +52,7 @@ public:
 
     /*! Construct a IData Object from a file on disk, and pointer to a diffractometer.
      */
-    DataSet(IDataReader* reader, const sptrDiffractometer& diffractometer);
+    DataSet(std::shared_ptr<IDataReader> reader, const sptrDiffractometer& diffractometer);
 
 
     //! Copy constructor
