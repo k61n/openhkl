@@ -1,6 +1,7 @@
 #ifndef NSXLIB_UTILSTYPES_H
 #define NSXLIB_UTILSTYPES_H
 
+#include <functional>
 #include <memory>
 #include <set>
 #include <tuple>
