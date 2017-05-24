@@ -10,7 +10,7 @@
 #include <Eigen/Dense>
 
 #include <nsxlib/geometry/AABB.h>
-#include <nsxlib/geometry/NDTree.h>
+#include <nsxlib/geometry/Octree.h>
 #include <nsxlib/geometry/Ellipsoid.h>
 
 using namespace nsx;
@@ -19,7 +19,7 @@ const double tolerance=1e-5;
 
 void collision_test()
 {
-    NDTree tree({0,0,0},{100,100,100});
+    Octree tree({0,0,0},{100,100,100});
     auto vects = Eigen::Matrix3d::Identity();
     const double radius = 0.45;
     auto vals = Eigen::Vector3d(radius, radius, radius);
@@ -78,7 +78,7 @@ void collision_test()
 
 void split_test()
 {
-    NDTree tree({0,0,0},{50,50,50});
+    Octree tree({0,0,0},{50,50,50});
     tree.setMaxStorage(4);
 
     auto vects = Eigen::Matrix3d::Identity();
@@ -136,7 +136,7 @@ BOOST_AUTO_TEST_CASE(Test_NDTree)
     unsigned int maxStorage(10);
 
     // Build up a NDTree with (0,0,0) as lower corner and (100,100,100) as upper corner
-    NDTree tree({0,0,0},{100,100,100});
+    Octree tree({0,0,0},{100,100,100});
     tree.setMaxStorage(maxStorage);
 
     std::uniform_real_distribution<> d1(0,50), d2(50,100);

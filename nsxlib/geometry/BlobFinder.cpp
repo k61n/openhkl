@@ -3,7 +3,7 @@
 #include "../data/DataSet.h"
 #include "../data/IFrameIterator.h"
 #include "../geometry/BlobFinder.h"
-#include "../geometry/NDTree.h"
+#include "../geometry/Octree.h"
 #include "../utils/ProgressHandler.h"
 
 namespace nsx {
@@ -431,7 +431,7 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, Equivalen
         }
     }
 
-    NDTree oct({0.0,0.0,0.0},{double(_ncols),double(_nrows),double(_nframes)});
+    Octree oct({0.0,0.0,0.0},{double(_ncols),double(_nrows),double(_nframes)});
     oct.setMaxDepth(6);
     oct.setMaxStorage(6);
 

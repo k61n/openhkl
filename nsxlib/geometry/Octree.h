@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef NSXLIB_NDTREE_H
-#define NSXLIB_NDTREE_H
+#ifndef NSXLIB_OCTREE_H
+#define NSXLIB_OCTREE_H
 
 #include <cmath>
 #include <initializer_list>
@@ -41,7 +41,7 @@
 namespace nsx {
 
 // Constant expression necessary to initialize
-// _children attribute in the NDTree class
+// _children attribute in the Octree class
 // which requires a constant literal.
 constexpr int getPow (int factor)
 {
@@ -51,30 +51,30 @@ constexpr int getPow (int factor)
 
 /*! \brief A template class to handle binary trees in D dimensions
  *
- * NDTree is used to partition space in D dimensions and employed for fast sorting
+ * Octree is used to partition space in D dimensions and employed for fast sorting
  * or collision detections of AABB objects. NdTree derived from AABB since each
  * voxel is a bounded object itself. The root node has dimensions of the full world.
- * The NDTree instance does not own the AABB* objects: since users deals with
+ * The Octree instance does not own the AABB* objects: since users deals with
  * the lifetime of AABB* objects outside of the class, one must ensure that these
- * have a greater lifetime than that of NdTree. NDTree define a soft constraint on the
+ * have a greater lifetime than that of NdTree. Octree define a soft constraint on the
  * the maximum number of AABB* objects that can be stored in each leaf of the tree (_MAX_STORAGE),
  * and a maximal depth for each branch (_MAX_DEPTH). If the number of subdivisions reaches
  * _MAX_DEPTH, the soft constraint on _MAX_STORAGE is broken.
  *
 */
 
-class NDTreeIterator;
+class OctreeIterator;
 
-class NDTree : public AABB {
+class Octree : public AABB {
 public:
 
-    //! The NDTree iterator class is made friend with NDTree in order to access some of its private data
-    friend class NDTreeIterator;
+    //! The Octree iterator class is made friend with Octree in order to access some of its private data
+    friend class OctreeIterator;
 
     // These typedefs insure compatibility with STL
     using size_type = size_t;
     using difference_type = ptrdiff_t;
-    using iterator = NDTreeIterator;
+    using iterator = OctreeIterator;
     using value_type=double;
     using pointer = double*;
     using reference = double&;
@@ -83,26 +83,26 @@ public:
     using collision_pair = std::pair<const IShape*,const IShape*>;
 
     //! Move constructor
-    NDTree(NDTree&& other);
+    Octree(Octree&& other);
 
     //! Copy constructor
-    NDTree(const NDTree& other) = delete;
+    Octree(const Octree& other) = delete;
 
     //! Assignment operator
-    NDTree& operator=(const NDTree& other) = delete;
+    Octree& operator=(const Octree& other) = delete;
 
     //! Constructor from two Eigen3 vectors, throw invalid_argument if lb < ub
-    NDTree(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub);
+    Octree(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub);
 
     //! Constructor from two initializer lists, throw invalid_argument if lb< ub
-    NDTree(const std::initializer_list<double>& lb, const std::initializer_list<double>& ub);
+    Octree(const std::initializer_list<double>& lb, const std::initializer_list<double>& ub);
 
     //! destructor
-    ~NDTree()=default;
+    ~Octree()=default;
 
     /*! Add a new AABB object to the deepest leaf.
      * If the leaf has reached capacity of _MAX_STORAGE, then it will be split into
-     * 2^D sub-NDTree, unless _MAX_DEPTH is reached, in which case data will simply
+     * 2^D sub-Octree, unless _MAX_DEPTH is reached, in which case data will simply
      * be added to this leaf.
      */
     void addData(const IShape* aabb);
@@ -135,7 +135,7 @@ public:
     //! Get the voxels of the tree
     void getVoxels(std::vector<AABB*>& voxels);
 
-    //! Remove a data from the NDTree
+    //! Remove a data from the Octree
     void removeData(const IShape* data);
 
     iterator begin() const;
@@ -144,16 +144,16 @@ public:
 
     const std::vector<const IShape*>& getData() const {return _data;}
 
-    NDTree(const NDTree* parent, unsigned int i);
+    Octree(const Octree* parent, unsigned int i);
 
     unsigned int numChambers() const;
 
 
 private:
     //! Prevent defining tree with null world.
-    NDTree();
+    Octree();
 
-    /*! Construct a new NDTree in the subregion i of
+    /*! Construct a new Octree in the subregion i of
      *  the parent tree. For example i goes from 1 to 8 for voxels
      */
 
@@ -166,7 +166,7 @@ private:
     //! Method to initialize vector of powers 2^D
     static std::vector<unsigned int> createPowers();
 
-    //! Maximum number of recursive splits of NDTree
+    //! Maximum number of recursive splits of Octree
     unsigned int _MAX_DEPTH = 5;
 
     //! Maximum number of AABB* data object stored in each leaf
@@ -179,8 +179,8 @@ private:
     std::vector<unsigned int> _POWERS = createPowers();
 
     //! Vector of 2^D children
-    std::vector<NDTree> _children;
-    // NDTree<T,D>* _children[getPow(D)];
+    std::vector<Octree> _children;
+    // Octree<T,D>* _children[getPow(D)];
 
     //! Vector of data object in this leaf
     std::vector<const IShape*> _data;
@@ -188,38 +188,38 @@ private:
     //! Depth of this branch with respect to root node.
     unsigned int _depth;
 
-    const NDTree* _parent;
+    const Octree* _parent;
     long _idx = -1;
 };
 
-class NDTreeIterator
+class OctreeIterator
 {
 public:
     //; The default constructor. Used only for end condition.
-    NDTreeIterator();
+    OctreeIterator();
 
-    //; The constructor from a reference to the NDTree to be iterated.
-    NDTreeIterator(const NDTree& tree);
+    //; The constructor from a reference to the Octree to be iterated.
+    OctreeIterator(const Octree& tree);
 
-    NDTreeIterator& operator=(const NDTreeIterator& other);
+    OctreeIterator& operator=(const OctreeIterator& other);
 
-    bool operator==(const NDTreeIterator& other) const;
+    bool operator==(const OctreeIterator& other) const;
 
-    bool operator!=(const NDTreeIterator& other) const;
+    bool operator!=(const OctreeIterator& other) const;
 
-    const NDTree& operator*() const;
+    const Octree& operator*() const;
 
-    const NDTree* operator->() const;
+    const Octree* operator->() const;
 
-    NDTreeIterator& operator++();
+    OctreeIterator& operator++();
 
-    NDTreeIterator operator++(int);
+    OctreeIterator operator++(int);
 
 private:
 
-    const NDTree* _node;
+    const Octree* _node;
 };
 
 } // end namespace nsx
 
-#endif // NSXLIB_NDTREE_H
+#endif // NSXLIB_OCTREE_H

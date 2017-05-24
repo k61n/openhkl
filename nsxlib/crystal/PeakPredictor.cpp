@@ -42,7 +42,7 @@
 #include "../data/DataSet.h"
 #include "../data/DataTypes.h"
 #include "../geometry/GeometryTypes.h"
-#include "../geometry/NDTree.h"
+#include "../geometry/Octree.h"
 #include "../instrument/Diffractometer.h"
 #include "../instrument/Sample.h"
 #include "../instrument/Source.h"
@@ -100,7 +100,7 @@ void PeakPredictor::addPredictedPeaks(sptrDataSet data)
 
         Eigen::Vector3d lb = {0.0, 0.0, 0.0};
         Eigen::Vector3d ub = {double(data->getNCols()), double(data->getNRows()), double(data->getNFrames())};
-        auto&& octree = NDTree(lb, ub);
+        auto&& octree = Octree(lb, ub);
 
         octree.setMaxDepth(4);
         octree.setMaxStorage(50);

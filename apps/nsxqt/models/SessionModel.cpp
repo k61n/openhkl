@@ -71,7 +71,6 @@
 #include <nsxlib/data/PeakFinder.h>
 #include <nsxlib/data/XDS.h>
 #include <nsxlib/geometry/Ellipsoid.h>
-#include <nsxlib/geometry/NDTree.h>
 #include <nsxlib/instrument/Detector.h>
 #include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/instrument/Sample.h>

@@ -26,11 +26,11 @@
  *
  */
 
-#include "NDTree.h"
+#include "Octree.h"
 
 namespace nsx {
 
-std::vector<unsigned int> NDTree::createPowers()
+std::vector<unsigned int> Octree::createPowers()
 {
     std::vector<unsigned int> p(3);
     int i=0;
@@ -40,7 +40,7 @@ std::vector<unsigned int> NDTree::createPowers()
     return p;
 }
 
-NDTree::NDTree(NDTree&& other):
+Octree::Octree(Octree&& other):
     _MAX_DEPTH(other._MAX_DEPTH),
     _MAX_STORAGE(other._MAX_STORAGE),
     _MULTIPLICITY(other._MULTIPLICITY),
@@ -54,18 +54,18 @@ NDTree::NDTree(NDTree&& other):
 
 }
 
-void NDTree::nullifyChildren()
+void Octree::nullifyChildren()
 {
     _children.clear();
 }
 
-NDTree::NDTree():
+Octree::Octree():
     AABB(), _depth(0), _parent(nullptr)
 {
     nullifyChildren();
 }
 
-NDTree::NDTree(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub)
+Octree::Octree(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub)
 : AABB(lb,ub), 
   _depth(0), 
   _parent(nullptr)
@@ -73,13 +73,13 @@ NDTree::NDTree(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub)
     nullifyChildren();
 }
 
-NDTree::NDTree(const std::initializer_list<double>& lb, const std::initializer_list<double>& ub):
+Octree::Octree(const std::initializer_list<double>& lb, const std::initializer_list<double>& ub):
     AABB(lb,ub), _depth(0), _parent(nullptr)
 {
     nullifyChildren();
 }
 
-NDTree::NDTree(const NDTree* parent, unsigned int sector):
+Octree::Octree(const Octree* parent, unsigned int sector):
     AABB(), _depth(parent->_depth+1), _parent(parent), _idx(sector),
     _MAX_DEPTH(parent->_MAX_DEPTH),
     _MAX_STORAGE(parent->_MAX_STORAGE)
@@ -98,7 +98,7 @@ NDTree::NDTree(const NDTree* parent, unsigned int sector):
     }
 }
 
-void NDTree::addData(const IShape* shape)
+void Octree::addData(const IShape* shape)
 {
     // AABB does not overlap with this branch
     if (!this->intercept(*shape)) {
@@ -118,17 +118,17 @@ void NDTree::addData(const IShape* shape)
     }
 }
 
-bool NDTree::hasChildren() const
+bool Octree::hasChildren() const
 {
     return (!_children.empty());
 }
 
-bool NDTree::hasData() const
+bool Octree::hasData() const
 {
     return (_data.size() != 0);
 }
 
-std::set<NDTree::collision_pair> NDTree::getCollisions() const
+std::set<Octree::collision_pair> Octree::getCollisions() const
 {
     std::set<collision_pair> collisions;
 
@@ -155,13 +155,13 @@ std::set<NDTree::collision_pair> NDTree::getCollisions() const
     return collisions;
 }
 
-std::set<const IShape*> NDTree::getCollisions(const IShape& given) const
+std::set<const IShape*> Octree::getCollisions(const IShape& given) const
 {
     CollisionSet collisions;
 
-    std::function<void(const NDTree*, CollisionSet&)> recursiveCollisions;
+    std::function<void(const Octree*, CollisionSet&)> recursiveCollisions;
 
-    recursiveCollisions = [&given, &recursiveCollisions] (const NDTree* tree, CollisionSet& collisions) -> void
+    recursiveCollisions = [&given, &recursiveCollisions] (const Octree* tree, CollisionSet& collisions) -> void
     {
         // shape's box does not intercept tree
         if (!tree->intercept(given)) {
@@ -188,7 +188,7 @@ std::set<const IShape*> NDTree::getCollisions(const IShape& given) const
     return collisions;
 }
 
-bool NDTree::isInsideObject(const HomVector& vector)
+bool Octree::isInsideObject(const HomVector& vector)
 {
     // shape's box does not intercept tree
     if (!isInside(vector)) {
@@ -216,7 +216,7 @@ bool NDTree::isInsideObject(const HomVector& vector)
     return false;
 }
 
-void NDTree::getVoxels(std::vector<AABB*>& voxels)
+void Octree::getVoxels(std::vector<AABB*>& voxels)
 {
     voxels.push_back(this);
     if (hasChildren()) {
@@ -226,7 +226,7 @@ void NDTree::getVoxels(std::vector<AABB*>& voxels)
     }
 }
 
-void NDTree::printSelf(std::ostream& os) const
+void Octree::printSelf(std::ostream& os) const
 {
     os << "*** Node ***  " << this->_lowerBound  << "," << this->_upperBound << std::endl;
     if (!hasChildren()) {
@@ -240,7 +240,7 @@ void NDTree::printSelf(std::ostream& os) const
     }
 }
 
-void NDTree::removeData(const IShape* data)
+void Octree::removeData(const IShape* data)
 {
     if (hasData()) {
         auto it = std::find(_data.begin(), _data.end(), data);
@@ -255,26 +255,26 @@ void NDTree::removeData(const IShape* data)
     }
 }
 
-void NDTree::setMaxDepth(unsigned int maxDepth)
+void Octree::setMaxDepth(unsigned int maxDepth)
 {
     if (maxDepth ==0) {
-        throw std::invalid_argument("Depth of the NDTree must be at least 1");
+        throw std::invalid_argument("Depth of the Octree must be at least 1");
     }
     if (maxDepth >10) {
-        throw std::invalid_argument("Depth of NDTree > 10 consume too much memory");
+        throw std::invalid_argument("Depth of Octree > 10 consume too much memory");
     }
     _MAX_DEPTH = maxDepth;
 }
 
-void NDTree::setMaxStorage(unsigned int maxStorage)
+void Octree::setMaxStorage(unsigned int maxStorage)
 {
     if (maxStorage == 0) {
-        throw std::invalid_argument("MaxStorage of NDTree must be at least 1");
+        throw std::invalid_argument("MaxStorage of Octree must be at least 1");
     }
     _MAX_STORAGE = maxStorage;
 }
 
-void NDTree::split()
+void Octree::split()
 {
     // The node is already at the maximum depth: not allowed to split anymore.
     // Do nothing singe _data has already been added to parent node.
@@ -297,27 +297,27 @@ void NDTree::split()
     _data.clear();
 }
 
-NDTree::iterator NDTree::begin() const
+Octree::iterator Octree::begin() const
 {
     return iterator(*this);
 }
 
-NDTree::iterator NDTree::end() const
+Octree::iterator Octree::end() const
 {
     return iterator();
 }
 
-std::ostream& operator<<(std::ostream& os, const NDTree& tree)
+std::ostream& operator<<(std::ostream& os, const Octree& tree)
 {
     tree.printSelf(os);
     return os;
 }
 
-NDTreeIterator::NDTreeIterator() : _node(nullptr)
+OctreeIterator::OctreeIterator() : _node(nullptr)
 {
 }
 
-NDTreeIterator::NDTreeIterator(const NDTree& node) : _node(&node)
+OctreeIterator::OctreeIterator(const Octree& node) : _node(&node)
 {
     // find the leftmost leaf
     while(_node->hasChildren()) {
@@ -325,33 +325,33 @@ NDTreeIterator::NDTreeIterator(const NDTree& node) : _node(&node)
     }
 }
 
-NDTreeIterator& NDTreeIterator::operator=(const NDTreeIterator& other)
+OctreeIterator& OctreeIterator::operator=(const OctreeIterator& other)
 {
   _node = other._node;
   return *this;
 }
 
-bool NDTreeIterator::operator!=(const NDTreeIterator& other) const
+bool OctreeIterator::operator!=(const OctreeIterator& other) const
 {
     return (_node != other._node);
 }
 
-bool NDTreeIterator::operator==(const NDTreeIterator& other) const
+bool OctreeIterator::operator==(const OctreeIterator& other) const
 {
     return (_node == other._node);
 }
 
-const NDTree& NDTreeIterator::operator*() const
+const Octree& OctreeIterator::operator*() const
 {
     return *_node;
 }
 
-const NDTree* NDTreeIterator::operator->() const
+const Octree* OctreeIterator::operator->() const
 {
     return _node;
 }
 
-NDTreeIterator& NDTreeIterator::operator++()
+OctreeIterator& OctreeIterator::operator++()
 {
     // already at end
     if (_node == nullptr || _node->_parent == nullptr) {
@@ -381,14 +381,14 @@ NDTreeIterator& NDTreeIterator::operator++()
     return ++(*this);
 }
 
-NDTreeIterator NDTreeIterator::operator++(int)
+OctreeIterator OctreeIterator::operator++(int)
 {
-    NDTreeIterator tmp(*this);
+    OctreeIterator tmp(*this);
     ++(*this);
     return (tmp);
 }
 
-unsigned int NDTree::numChambers() const
+unsigned int Octree::numChambers() const
 {
     if (hasChildren()) {
         unsigned int count = 0;

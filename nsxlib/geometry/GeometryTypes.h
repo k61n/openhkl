@@ -20,7 +20,7 @@ class Edge;
 class Ellipsoid;
 class Face;
 class IShape;
-class NDTree;
+class Octree;
 class OBB;
 class Sphere;
 class Triangle;
