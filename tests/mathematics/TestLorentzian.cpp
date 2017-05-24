@@ -5,14 +5,11 @@
 
 #include <nsxlib/mathematics/Lorentzian.h>
 
-using namespace std;
-using namespace nsx;
-
 const double eps = 1e-10;
 
 int run_test()
 {
-    Lorentzian l1(2.0, 3.0, 1.0);
+    nsx::Lorentzian l1(2.0, 3.0, 1.0);
     BOOST_CHECK_CLOSE(l1.evaluate(1.0), 4.0 / 9.0, eps);
 
     return 0;

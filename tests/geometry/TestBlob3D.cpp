@@ -9,13 +9,11 @@
 
 #include <nsxlib/geometry/Blob3D.h>
 
-using namespace nsx;
-
 const double tolerance=1e-5;
 
 BOOST_AUTO_TEST_CASE(Test_3D_Blob)
 {
-    Blob3D blob;
+    nsx::Blob3D blob;
     // Create a set of points for a 3D Gaussian.
     double c_x=12.0;
     double c_y=15.0;

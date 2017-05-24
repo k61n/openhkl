@@ -1,6 +1,7 @@
 #define BOOST_TEST_MODULE "Test Space group symbols"
 #define BOOST_TEST_DYN_LINK
 
+#include <stdexcept>
 #include <string>
 
 #include <boost/test/unit_test.hpp>
@@ -8,11 +9,9 @@
 #include <nsxlib/crystal/SpaceGroupSymbols.h>
 #include <nsxlib/crystal/SpaceGroup.h>
 
-using namespace nsx;
-
 BOOST_AUTO_TEST_CASE(Test_SpaceGroupSymbols)
 {
-    auto table=SpaceGroupSymbols::Instance();
+    auto table=nsx::SpaceGroupSymbols::Instance();
     std::string generators;
     bool test=table->getGenerators("P n m a",generators);
 
@@ -30,7 +29,7 @@ BOOST_AUTO_TEST_CASE(Test_SpaceGroupSymbols)
             BOOST_CHECK(symbol == table->getFullSymbol(symbol));
             BOOST_CHECK(table->getFullSymbol(reduced) == symbol);
 
-            SpaceGroup grp(symbol);
+            nsx::SpaceGroup grp(symbol);
         }
         catch(std::exception& e) {
             BOOST_ERROR("Caught exception");

@@ -1,7 +1,7 @@
 #define BOOST_TEST_MODULE "Test Physical Unit"
 #define BOOST_TEST_DYN_LINK
 
-#include <exception>
+#include <stdexcept>
 #include <string>
 
 #include <boost/test/unit_test.hpp>

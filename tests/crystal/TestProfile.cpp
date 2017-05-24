@@ -7,13 +7,11 @@
 
 #include <nsxlib/crystal/Profile.h>
 
-using namespace nsx;
-
 const double eps = 1.0;
 
 #define fit_and_test(y) \
 { \
-    Profile p; \
+    nsx::Profile p; \
     BOOST_CHECK(p.fit(y, 100) == true); \
     for (auto i = 0; i < y.size(); ++i) { \
         BOOST_CHECK_CLOSE(y(i), p.evaluate(double(i)), eps); \
@@ -28,8 +26,8 @@ int run_test()
     Eigen::VectorXd voigt_test(size);
     Eigen::VectorXd noise_test(size);
 
-    Lorentzian lor(4.0, 1.0, 14.0);
-    Gaussian gauss(2.0, 14.0, 3.0);
+    nsx::Lorentzian lor(4.0, 1.0, 14.0);
+    nsx::Gaussian gauss(2.0, 14.0, 3.0);
 
     // simulated data
     for (auto i = 0; i < size; ++i) {
@@ -43,7 +41,7 @@ int run_test()
     fit_and_test(lorentz_test);
     fit_and_test(gauss_test);
     fit_and_test(voigt_test);
-    BOOST_CHECK(Profile().fit(noise_test, 100) == false);
+    BOOST_CHECK(nsx::Profile().fit(noise_test, 100) == false);
     return 0;
 }
 

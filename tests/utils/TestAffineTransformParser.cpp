@@ -12,15 +12,13 @@
 
 #include <nsxlib/utils/AffineTransformParser.h>
 
-using namespace nsx;
-
 const double tolerance=1e-6;
 BOOST_AUTO_TEST_CASE(Test_AffineTransformParser)
 {
     std::string s("x-z+1/3,y-2x,z+3.4");
 
     Eigen::Transform<double,3,Eigen::Affine> m;
-    AffineTransformParser<std::string::iterator> parser1;
+    nsx::AffineTransformParser<std::string::iterator> parser1;
     bool test=boost::spirit::qi::phrase_parse(s.begin(),s.end(),parser1,boost::spirit::qi::blank, m);
 
     // Validate parsing

@@ -1,7 +1,7 @@
 #define BOOST_TEST_MODULE "Test Experiment"
 #define BOOST_TEST_DYN_LINK
 
-#include <memory>
+#include <stdexcept>
 
 #include <boost/test/unit_test.hpp>
 
@@ -9,12 +9,10 @@
 #include <nsxlib/data/DataReaderFactory.h>
 #include <nsxlib/data/DataSet.h>
 
-using namespace nsx;
-
 BOOST_AUTO_TEST_CASE(Test_Experiment)
 {
-    Experiment exp("my-exp","D10");
-    std::shared_ptr<DataSet> data;
+    nsx::Experiment exp("my-exp","D10");
+    nsx::sptrDataSet data;
 
     BOOST_CHECK_EQUAL(exp.getName(),"my-exp");
 
@@ -27,7 +25,7 @@ BOOST_AUTO_TEST_CASE(Test_Experiment)
 
     // Add some data
     try {
-        data = std::shared_ptr<DataSet>(DataReaderFactory().create("", "D10_ascii_example", exp.getDiffractometer()));
+        data = nsx::sptrDataSet(nsx::DataReaderFactory().create("", "D10_ascii_example", exp.getDiffractometer()));
     }
     catch(std::exception& e) {
         BOOST_FAIL(std::string("caught exception: ") + e.what());

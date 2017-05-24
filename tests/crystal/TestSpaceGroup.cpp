@@ -6,10 +6,9 @@
 
 #include <boost/test/unit_test.hpp>
 
+#include <nsxlib/crystal/CrystalTypes.h>
 #include <nsxlib/crystal/SpaceGroup.h>
 #include <nsxlib/crystal/UnitCell.h>
-
-using namespace nsx;
 
 BOOST_AUTO_TEST_CASE(Test_SpaceGroup)
 {
@@ -250,12 +249,12 @@ BOOST_AUTO_TEST_CASE(Test_SpaceGroup)
 
     for (const auto& p : nElementsPerSpaceGroup)
     {
-        SpaceGroup sg(p.first);
+        nsx::SpaceGroup sg(p.first);
         BOOST_CHECK_EQUAL(sg.getGroupElements().size(),p.second);
     }
 
     // Test extinction conditions
-    SpaceGroup sg("F d -3 m");
+    nsx::SpaceGroup sg("F d -3 m");
     BOOST_CHECK(sg.isExtinct(0,0,1));
     BOOST_CHECK(sg.isExtinct(0,0,2));
     BOOST_CHECK(sg.isExtinct(0,0,3));
@@ -266,7 +265,7 @@ BOOST_AUTO_TEST_CASE(Test_SpaceGroup)
     BOOST_CHECK(!sg.isExtinct(0,2,6));
 
     // Test extinction conditions
-    SpaceGroup sg2("I 41/a");
+    nsx::SpaceGroup sg2("I 41/a");
     BOOST_CHECK(!sg2.isExtinct(1,2,1));
     BOOST_CHECK(sg2.isExtinct(1,2,2));
     BOOST_CHECK(sg2.isExtinct(1,2,0));
@@ -279,42 +278,41 @@ BOOST_AUTO_TEST_CASE(Test_SpaceGroup)
     BOOST_CHECK(sg2.isExtinct(1,-1,0));
     BOOST_CHECK(!sg2.isExtinct(2,-2,0));
 
-    SpaceGroup sg3("I m -3 m");
+    nsx::SpaceGroup sg3("I m -3 m");
     BOOST_CHECK(sg3.getBravaisType()=='c');
 
-    SpaceGroup sg4("P n m a");
+    nsx::SpaceGroup sg4("P n m a");
     BOOST_CHECK(sg4.getBravaisType()=='o');
 
-    SpaceGroup sg5("F d -3 m");
+    nsx::SpaceGroup sg5("F d -3 m");
     BOOST_CHECK(sg5.getBravaisType()=='c');
 
-    SpaceGroup sg6("C 2/m");
+    nsx::SpaceGroup sg6("C 2/m");
     BOOST_CHECK(sg6.getBravaisType()=='m');
 
-    SpaceGroup sg7("P 21/c");
+    nsx::SpaceGroup sg7("P 21/c");
     BOOST_CHECK(sg7.getBravaisType()=='m');
 
-    SpaceGroup sg8("P 4 m m");
+    nsx::SpaceGroup sg8("P 4 m m");
     BOOST_CHECK(sg8.getBravaisType()=='t');
 
-    SpaceGroup sg9("P 4/m m m");
+    nsx::SpaceGroup sg9("P 4/m m m");
     BOOST_CHECK(sg9.getBravaisType()=='t');
 
-    SpaceGroup sg10("P 63/m m c");
+    nsx::SpaceGroup sg10("P 63/m m c");
     BOOST_CHECK(sg10.getBravaisType()=='h');
 
-    SpaceGroup sg11("P 3 2 1");
+    nsx::SpaceGroup sg11("P 3 2 1");
     BOOST_CHECK(sg11.getBravaisType()=='h');
 
-    SpaceGroup sg12("P -1");
+    nsx::SpaceGroup sg12("P -1");
     BOOST_CHECK(sg12.getBravaisType()=='a');
 
-    SpaceGroup sg13("R -3 c");
+    nsx::SpaceGroup sg13("R -3 c");
     BOOST_CHECK(sg13.getBravaisType()=='h');
 
-
     // Test extinction conditions
-    SpaceGroup sg14("P 21 21 21");
+    nsx::SpaceGroup sg14("P 21 21 21");
     BOOST_CHECK(sg14.isExtinct(3,0,0));
     BOOST_CHECK(sg14.isExtinct(0,3,0));
     BOOST_CHECK(sg14.isExtinct(0,0,3));
@@ -323,7 +321,7 @@ BOOST_AUTO_TEST_CASE(Test_SpaceGroup)
     BOOST_CHECK(!sg14.isExtinct(0,0,2));
 
     // Test extinction conditions
-    SpaceGroup sg15("P 2 2 21");
+    nsx::SpaceGroup sg15("P 2 2 21");
     BOOST_CHECK(!sg15.isExtinct(2,0,0));
     BOOST_CHECK(!sg15.isExtinct(0,2,0));
     BOOST_CHECK(!sg15.isExtinct(0,0,2));

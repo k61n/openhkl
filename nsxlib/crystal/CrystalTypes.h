@@ -15,6 +15,7 @@ class PeakIntegrator;
 class PeakRecord;
 class Profile;
 class SpaceGroup;
+class SpaceGroupSymbols;
 class SymOp;
 class UnitCell;
 

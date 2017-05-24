@@ -7,22 +7,17 @@
 
 #include <nsxlib/geometry/Ellipsoid.h>
 
-using Eigen::Vector3d;
-using Eigen::Matrix3d;
-
-using namespace nsx;
-
 const double eps = 1e-8;
 
 BOOST_AUTO_TEST_CASE(Test_Ellipsoid_3D)
 {
-    Vector3d center(10,10,10);
-    Vector3d semi_axes(3,3,4);
-    Matrix3d eigV;
+    Eigen::Vector3d center(10,10,10);
+    Eigen::Vector3d semi_axes(3,3,4);
+    Eigen::Matrix3d eigV;
     eigV << 1,0,0,
             0,1,0,
             0,0,1;
-    Ellipsoid e(center,semi_axes,eigV);
+    nsx::Ellipsoid e(center,semi_axes,eigV);
 
     auto p = e.getAABBCenter();
 

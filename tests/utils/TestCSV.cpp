@@ -1,16 +1,13 @@
 #define BOOST_TEST_MODULE "Test CSV class"
 #define BOOST_TEST_DYN_LINK
 
+#include <string>
+#include <vector>
+
 #include <boost/test/unit_test.hpp>
 #include <boost/filesystem.hpp>
 
-#include <iostream>
-#include <vector>
-#include <string>
-
 #include <nsxlib/utils/CSV.h>
-
-using namespace nsx;
 
 int run_test() {
     std::string csv_file =
@@ -21,17 +18,12 @@ int run_test() {
             "\"\", \"\"\"\"\", \"as,df\", \" \"\"\" \"";
 
     std::istringstream stream(csv_file);
-    CSV csv;
+    nsx::CSV csv;
     std::vector<std::string> row;
 
     while(!stream.eof()) {
         row = csv.getRow(stream);
         BOOST_CHECK(row.size() == 4);
-
-        for (auto&& entry: row)
-            std::cout << entry << ", ";
-
-        std::cout << std::endl;
     }
     return 0;
 }
