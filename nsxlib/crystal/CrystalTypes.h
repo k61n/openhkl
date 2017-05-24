@@ -31,6 +31,8 @@ using RecordList   = std::vector<PeakRecord>;
 using SymOpList    = std::vector<SymOp>;
 using UnitCellList = std::vector<sptrUnitCell>;
 
+using AutoIndexingSoluce = std::pair<UnitCell,double>;
+
 } // end namespace nsx
 
 #endif // NSXLIB_CRYSTALTYPES_H

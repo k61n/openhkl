@@ -46,8 +46,6 @@
 #include <string>
 #include <tuple>
 
-namespace qi = boost::spirit::qi;
-
 namespace nsx {
 
 // Define a dimension as a 7 elements array, each element corresponding to one of the SI unit
@@ -160,7 +158,7 @@ public:
 
 private:
     //! Inner class that defines the boost::spirit parser for a physical unit
-    struct PhysicalUnitParser : qi::grammar<std::string::const_iterator, physical_unit()> {
+    struct PhysicalUnitParser : boost::spirit::qi::grammar<std::string::const_iterator, physical_unit()> {
         //! Default constructor
         PhysicalUnitParser();
 
@@ -179,17 +177,17 @@ private:
 
     private:
         //! Defines the rule for matching a prefix
-        qi::symbols<char,double> _prefix;
+        boost::spirit::qi::symbols<char,double> _prefix;
         //! Defines the rule for matching a unit
-        qi::symbols<char,physical_unit> _unit;
+        boost::spirit::qi::symbols<char,physical_unit> _unit;
         //! Defines the rule for matching a prefixed unit
-        qi::rule<std::string::const_iterator,physical_unit(),qi::locals<double>> _prefixedUnit;
+        boost::spirit::qi::rule<std::string::const_iterator,physical_unit(),boost::spirit::qi::locals<double>> _prefixedUnit;
         //! Defines the rule for matching a prefixed unit with an integer exponent
-        qi::rule<std::string::const_iterator,physical_unit(),qi::locals<int>> _poweredUnit;
+        boost::spirit::qi::rule<std::string::const_iterator,physical_unit(),boost::spirit::qi::locals<int>> _poweredUnit;
         //! Defines the rule for matching an arithmetic expression of several physical units
-        qi::rule<std::string::const_iterator,physical_unit(),qi::locals<physical_unit>> _compositeUnit;
+        boost::spirit::qi::rule<std::string::const_iterator,physical_unit(),boost::spirit::qi::locals<physical_unit>> _compositeUnit;
         //! The starting rule
-        qi::rule<std::string::const_iterator,physical_unit()> _start;
+        boost::spirit::qi::rule<std::string::const_iterator,physical_unit()> _start;
     };
 
 private:

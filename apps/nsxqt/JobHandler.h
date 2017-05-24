@@ -8,24 +8,22 @@
 #include <QObject>
 #include <QThread>
 
-#include <functional>
 #include <memory>
+
+#include <nsxlib/utils/UtilsTypes.h>
 
 class WorkerThread : public QThread
 {
     Q_OBJECT
 public:
-    using TaskCallback = std::function<bool(void)>;
-    using FinishedCallback = std::function<void(bool)>;
-
-    WorkerThread(QObject* parent, TaskCallback task);
+    WorkerThread(QObject* parent, nsx::TaskCallback task);
     void run();
 
 signals:
     void resultReady(bool success);
 
 private:
-    TaskCallback _task;
+    nsx::TaskCallback _task;
 };
 
 
@@ -35,8 +33,8 @@ class Job : public QObject
 
 public:
     Job(QObject* parent,
-        WorkerThread::TaskCallback task,
-        WorkerThread::FinishedCallback onFinished,
+        nsx::TaskCallback task,
+        nsx::FinishedCallback onFinished,
         bool executeSynchronous);
     void exec();
 
@@ -50,8 +48,8 @@ signals:
 
 private:
     std::unique_ptr<WorkerThread> _worker;
-    WorkerThread::TaskCallback _task;
-    WorkerThread::FinishedCallback _onFinished;
+    nsx::TaskCallback _task;
+    nsx::FinishedCallback _onFinished;
     WorkerThread* _workerThread;
     bool _synchronous;
 };

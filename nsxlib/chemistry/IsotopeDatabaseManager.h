@@ -12,18 +12,15 @@
 #include <boost/any.hpp>
 
 #include "../kernel/Singleton.h"
+#include "../chemistry/ChemistryTypes.h"
 
 namespace nsx {
-
-using boost::any_cast;
 
 class IsotopeDatabaseManager : public Singleton<IsotopeDatabaseManager,Constructor,Destructor> {
 
 public:
 
-    enum class PropertyType {String, Int, Double, Complex, Bool};
-
-    static std::map<std::string,PropertyType> PropertyTypes;
+    static std::map<std::string,ChemicalPropertyType> PropertyTypes;
 
     class Isotope {
 
@@ -64,19 +61,17 @@ public:
 
 public:
 
-    using isotopeDatabase = std::map<std::string,IsotopeDatabaseManager::Isotope>;
-
     IsotopeDatabaseManager();
 
     ~IsotopeDatabaseManager()=default;
 
     const Isotope& getIsotope(const std::string& name) const;
 
-    const isotopeDatabase& database() const;
+    const std::map<std::string,Isotope>& database() const;
 
 private:
 
-    isotopeDatabase _database;
+    std::map<std::string,Isotope> _database;
 
     static const std::string DatabasePath;
 
@@ -89,7 +84,7 @@ T IsotopeDatabaseManager::Isotope::getProperty(const std::string& propertyName) 
     if (pit == _properties.end())
         throw std::runtime_error("Isotope "+_name+": unknown property name ("+propertyName+")");
 
-    return any_cast<T>(pit->second);
+    return boost::any_cast<T>(pit->second);
 }
 
 //! Overloads the operator<< with an Isotope object

@@ -46,8 +46,6 @@ class DataSet;
 class PeakIntegrator {
 public:
 
-    using MaybeEllipsoid = Maybe<Ellipsoid>;
-
     PeakIntegrator() = default;
     PeakIntegrator(const IntegrationRegion& region, const DataSet& data);
     ~PeakIntegrator() {}
@@ -66,7 +64,7 @@ public:
 
     //! return blob shape (not: not scaled by a confidence parameter)
     //!
-    MaybeEllipsoid getBlobShape(double confidence) const;
+    Maybe<Ellipsoid> getBlobShape(double confidence) const;
 
     Intensity getPeakIntensity() const;
 

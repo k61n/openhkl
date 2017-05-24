@@ -11,6 +11,7 @@
 #ifndef NSXLIB_CONSTANTKERNEL_H
 #define NSXLIB_CONSTANTKERNEL_H
 
+#include "../imaging/ImagingTypes.h"
 #include "ConvolutionKernel.h"
 
 namespace nsx {
@@ -25,7 +26,7 @@ public:
 
     ConstantKernel(int nrows, int ncols);
 
-    ConstantKernel(int nrows, int ncols, const ConvolutionKernel::ParameterMap& params);
+    ConstantKernel(int nrows, int ncols, const ConvolutionKernelParameters& params);
 
     const char* getName() override;
 

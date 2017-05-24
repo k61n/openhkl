@@ -13,7 +13,7 @@ SymOp::SymOp(std::string generator)
     // The parser for generator expression
     AffineTransformParser<std::string::iterator> parser;
 
-    bool match=qi::phrase_parse(generator.begin(),generator.end(),parser,qi::blank, _matrix);
+    bool match=boost::spirit::qi::phrase_parse(generator.begin(),generator.end(),parser,boost::spirit::qi::blank, _matrix);
     if (!match)
         throw std::runtime_error("Invalid generator expression: "+ generator);
 }

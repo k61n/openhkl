@@ -10,10 +10,7 @@
 
 #include "InspectableTreeItem.h"
 
-namespace nsx
-{
-class Experiment;
-}
+#include <nsxlib/instrument/InstrumentTypes.h>
 
 class QWidget;
 

@@ -35,11 +35,9 @@
 
 #include <QDialog>
 
-class Qwidget;
+#include <nsxlib/crystal/CrystalTypes.h>
 
-namespace nsx {
-class Peak3D;
-}
+class Qwidget;
 
 namespace Ui {
 class FriedelDialog;

@@ -12,11 +12,6 @@
 
 namespace nsx {
 
-// progress handler callback:
-// progressHandler(double progress) -> int
-// argument progress is the progress (as a percentage)
-//using ProgressHandler = std::function<void(double)>;
-
 //! thread safe class to handle progress and status messages
 class ProgressHandler {
 public:

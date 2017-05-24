@@ -33,10 +33,6 @@
 #include <unordered_map>
 #include <string>
 
-
-#include <boost/units/systems/si.hpp>
-#include <boost/units/systems/si/prefixes.hpp>
-
 #include "../kernel/Singleton.h"
 
 namespace nsx {
@@ -48,9 +44,6 @@ namespace nsx {
 //! a.Rotate(34*deg). This guarantees a self-consistent system of units in all calculations. This is inspired
 //! from the system of units in Geant4. Printing a property in a given unit requires to divide by the units.
 //! For example, if one wants an angle in degrees, angle/deg needs to be used.
-
-using namespace boost::units;
-using namespace boost::units::si;
 
 //! Singleton class to map the symbol of a Unit with its value in the internal reference system.
 //! This is used for example when parsing values from input XML files.

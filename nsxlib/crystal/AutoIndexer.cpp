@@ -236,8 +236,7 @@ bool AutoIndexer::autoIndex(const Parameters& _params)
 
     // Sort solutions by decreasing quality.
     // For equal quality, smallest volume is first
-    typedef std::pair<UnitCell,double> Soluce;
-    std::sort(_solutions.begin(),_solutions.end(),[](const Soluce& s1, const Soluce& s2) -> bool
+    std::sort(_solutions.begin(),_solutions.end(),[](const AutoIndexingSoluce& s1, const AutoIndexingSoluce& s2) -> bool
     {
         if (s1.second==s2.second)
             return (s1.first.getVolume()<s2.first.getVolume());

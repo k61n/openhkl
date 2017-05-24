@@ -11,7 +11,6 @@ using IntMatrix = Eigen::Matrix<int,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajo
 using RealMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
 using FilterCallback = std::function<RealMatrix(const RealMatrix&)>;
-
 } // end namespace nsx
 
 #endif // NSXLIB_MATHEMATICSTYPES_H

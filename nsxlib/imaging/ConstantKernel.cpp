@@ -17,7 +17,7 @@ ConstantKernel::ConstantKernel(int nrows, int ncols) : ConvolutionKernel(nrows,n
 {
 }
 
-ConstantKernel::ConstantKernel(int nrows, int ncols, const ConvolutionKernel::ParameterMap &params)
+ConstantKernel::ConstantKernel(int nrows, int ncols, const ConvolutionKernelParameters &params)
 : ConvolutionKernel(nrows,ncols,params)
 {
 }

@@ -30,16 +30,11 @@
 #include "../instrument/Sample.h"
 #include "../instrument/Source.h"
 #include "../mathematics/ErfInv.h"
+#include "../mathematics/MathematicsTypes.h"
 #include "../utils/ProgressHandler.h"
 #include "../utils/Units.h"
 
 namespace nsx {
-
-using Eigen::Matrix3d;
-using boost::filesystem::path;
-
-using RowMatrixi = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
-using RowMatrixd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
 DataSet::DataSet(IDataReader* reader, const sptrDiffractometer& diffractometer):
     _isOpened(false),
@@ -100,7 +95,7 @@ DataSet::~DataSet()
 
 std::string DataSet::getBasename() const
 {
-    path pathname(_filename);
+    boost::filesystem::path pathname(_filename);
     return pathname.filename().string();
 }
 
@@ -286,7 +281,7 @@ void DataSet::saveHDF5(const std::string& filename) //const
     for(offset[0]=0; offset[0] < _nFrames; offset[0] += count[0]) {
         space.selectHyperslab(H5S_SELECT_SET, count, offset, nullptr, nullptr);
         // HDF5 requires row-major storage, so copy frame into a row-major matrix
-        RowMatrixi frame(getFrame(offset[0]));
+        IntMatrix frame(getFrame(offset[0]));
         dset.write(frame.data(), H5::PredType::NATIVE_INT32, memspace, space);
     }
 
@@ -299,7 +294,7 @@ void DataSet::saveHDF5(const std::string& filename) //const
     std::vector<std::string> names=_diffractometer->getDetector()->getGonio()->getPhysicalAxesNames();
     hsize_t nf[1]={_nFrames};
     H5::DataSpace scanSpace(1,nf);
-    RowMatrixd vals(names.size(),_nFrames);
+    RealMatrix vals(names.size(),_nFrames);
 
     for (unsigned int i = 0; i < _states.size(); ++i) {
         const std::vector<double>& v = _states[i].detector.getValues();
@@ -317,7 +312,7 @@ void DataSet::saveHDF5(const std::string& filename) //const
     // Write sample states
     H5::Group sampleGroup(scanGroup.createGroup("Sample"));
     std::vector<std::string> samplenames=_diffractometer->getSample()->getGonio()->getPhysicalAxesNames();
-    RowMatrixd valsSamples(samplenames.size(), _nFrames);
+    RealMatrix valsSamples(samplenames.size(), _nFrames);
 
     for (unsigned int i = 0; i < _states.size(); ++i) {
         const std::vector<double>& v = _states[i].sample.getValues();
@@ -335,7 +330,7 @@ void DataSet::saveHDF5(const std::string& filename) //const
     // Write source states
     H5::Group sourceGroup(scanGroup.createGroup("Source"));
     std::vector<std::string> sourcenames = _diffractometer->getSource()->getGonio()->getPhysicalAxesNames();
-    RowMatrixd valsSources(sourcenames.size(),_nFrames);
+    RealMatrix valsSources(sourcenames.size(),_nFrames);
 
     for (unsigned int i = 0; i < _states.size(); ++i) {
         std::vector<double> v = _states[i].source.getValues();
@@ -450,7 +445,7 @@ bool DataSet::inMasked(const Eigen::Vector3d& point) const
     return false;
 }
 
-std::vector<PeakCalc> DataSet::hasPeaks(const std::vector<Eigen::Vector3d>& hkls, const Matrix3d& BU)
+std::vector<PeakCalc> DataSet::hasPeaks(const std::vector<Eigen::Vector3d>& hkls, const Eigen::Matrix3d& BU)
 {
     std::vector<PeakCalc> peaks;
     unsigned int scanSize = static_cast<unsigned int>(_states.size());

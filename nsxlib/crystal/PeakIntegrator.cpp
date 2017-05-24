@@ -109,8 +109,6 @@ PeakIntegrator::PeakIntegrator(const IntegrationRegion& region, const DataSet& d
 
 void PeakIntegrator::step(const Eigen::MatrixXi& frame, size_t idx, const Eigen::MatrixXi& mask)
 {
-    using point_type = IntegrationRegion::point_type;
-
     if (idx < _data_start || idx > _data_end) {
         return;
     }
@@ -137,8 +135,8 @@ void PeakIntegrator::step(const Eigen::MatrixXi& frame, size_t idx, const Eigen:
             _point1 << x, y, idx, 1;
             const auto type = _region.classifyPoint(_point1);
 
-            const bool inpeak = (type == point_type::REGION);
-            const bool inbackground = (type == point_type::BACKGROUND) && (mask(y, x) == 0);
+            const bool inpeak = (type == PointType::REGION);
+            const bool inbackground = (type == PointType::BACKGROUND) && (mask(y, x) == 0);
 
             if (inpeak) {
                 _peak_mask(y-_start_y, x-_start_x) = 1.0;
@@ -201,11 +199,8 @@ void PeakIntegrator::step(const Eigen::MatrixXi& frame, size_t idx, const Eigen:
             _point1 << x, y, idx, 1;
             const auto type = _region.classifyPoint(_point1);
 
-            const bool inpeak = (type == point_type::REGION);
-            const bool inbackground = (type == point_type::BACKGROUND) && (mask(y, x) == 0);
+            const bool inpeak = (type == PointType::REGION);
 
-            //if ((inpeak||inbackground) && intensity > 1.20*avgBkg) {
-            //if ((inpeak||inbackground) && intensity > 1.20*avgBkg) {
             if (inpeak) {
                 _blob.addPoint(x, y, idx, intensity);
             }
@@ -239,9 +234,6 @@ void PeakIntegrator::end()
 
     // note: this "background" simply refers to anything in the AABB but NOT in the peak
     _projectionBkg=_projection-_projectionPeak;
-
-    double b1 = bkg_1.sum();
-    double b2 = bkg_2.sum();
 
     // update blob
     for (unsigned int idx = _data_start; idx <= _data_end; ++idx) {
@@ -305,7 +297,7 @@ const IntegrationRegion& PeakIntegrator::getRegion() const
     return _region;
 }
 
-PeakIntegrator::MaybeEllipsoid PeakIntegrator::getBlobShape(double confidence) const
+Maybe<Ellipsoid> PeakIntegrator::getBlobShape(double confidence) const
 {
     try {
         Eigen::Vector3d center, eigenvalues;
@@ -321,7 +313,6 @@ PeakIntegrator::MaybeEllipsoid PeakIntegrator::getBlobShape(double confidence) c
 
 Intensity PeakIntegrator::getPeakIntensity() const
 {
-    double points = (_pointsPeak+_pointsBkg).sum();
     return Intensity(_projectionPeak.sum(), (_peakError*_peakError).sum());
 }
 

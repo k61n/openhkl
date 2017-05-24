@@ -5,11 +5,6 @@
 
 #include "models/TreeItem.h"
 
-namespace nsx
-{
-class Experiment;
-}
-
 class NormalizePeaksItem : public TreeItem
 {
 public:

@@ -5,11 +5,6 @@
 
 #include "InspectableTreeItem.h"
 
-namespace nsx
-{
-class Experiment;
-}
-
 class PeakListItem : public InspectableTreeItem
 {
 public:

@@ -41,18 +41,10 @@
 #include <boost/range/adaptors.hpp>
 #include <boost/range/numeric.hpp>
 
+#include "../chemistry/ChemistryTypes.h"
 #include "IsotopeDatabaseManager.h"
 
 namespace nsx {
-
-namespace qi = boost::spirit::qi;
-
-//! map an isotope name to its ratio in a given compound
-using isotopeContents = std::map<std::string,double>;
-
-//! define a material as a list of compound, defined through their isotope contents, and
-//! their associated molar ratio in the compound
-using compoundList = std::vector<std::pair<isotopeContents,double>>;
 
 //! @Class: BuildElementFromUniqueIsotope.
 //! Functor for setting up a chemical element made of a unique isotope.
@@ -214,36 +206,35 @@ struct BuidMaterialFromCompounds
 //! The parser is used as usual in spirit given two iterators (begin and end) : parse(begin,end,parser)
 //! Example: C3H[2]8 will parse a molecule with three natural  carbons and eight deuterium atoms i.e. a deuterated propane.
 template <typename Iterator>
-struct ChemicalFormulaParser : qi::grammar<Iterator,isotopeContents()>
+struct ChemicalFormulaParser : boost::spirit::qi::grammar<Iterator,isotopeContents()>
 {
     ChemicalFormulaParser(): ChemicalFormulaParser::base_type(_materialToken)
     {
-        using qi::_1;
-        using qi::_2;
-        using qi::_val;
-        using qi::_pass;
-        using qi::attr;
-        using qi::double_;
-        using qi::eps;
-        using qi::eoi;
-    	namespace phx = boost::phoenix;
+        using boost::spirit::qi::_1;
+        using boost::spirit::qi::_2;
+        using boost::spirit::qi::_val;
+        using boost::spirit::qi::_pass;
+        using boost::spirit::qi::attr;
+        using boost::spirit::qi::double_;
+        using boost::spirit::qi::eps;
+        using boost::spirit::qi::eoi;
 
     	// Semantic action for building a chemical element from a unique isotope
-    	phx::function<BuildElementFromUniqueIsotope> build_element_from_unique_isotope;
+    	boost::phoenix::function<BuildElementFromUniqueIsotope> build_element_from_unique_isotope;
         // Semantic action for validating the sum of the molar ratio of a set of isotopes
-        phx::function<ValidateIsotopeContents> validate_isotopes_contents;
+        boost::phoenix::function<ValidateIsotopeContents> validate_isotopes_contents;
         // Semantic action for building a chemical element from a mixture of isotopes
-    	phx::function<BuildElementFromIsotopeMixture> build_element_from_isotope_mixture;
+    	boost::phoenix::function<BuildElementFromIsotopeMixture> build_element_from_isotope_mixture;
         // Semantic action for building a chemical element from its natural isotopes
-    	phx::function<BuildElementFromNaturalIsotopes> build_element_from_natural_isotopes;
+    	boost::phoenix::function<BuildElementFromNaturalIsotopes> build_element_from_natural_isotopes;
 
         // Semantic action for building incrementally a chemical compound from a chemical element
-    	phx::function<BuildCompoundFromElement> build_compound_from_element;
+    	boost::phoenix::function<BuildCompoundFromElement> build_compound_from_element;
 
     	// Semantic action for validating the sum of the molar ratio of a list of compounds
-        phx::function<ValidateCompoundContents> validate_compounds_contents;
+        boost::phoenix::function<ValidateCompoundContents> validate_compounds_contents;
         // Semantic action for building a material from a list of chemical compounds
-    	phx::function<BuidMaterialFromCompounds> build_material_from_compounds;
+    	boost::phoenix::function<BuidMaterialFromCompounds> build_material_from_compounds;
 
     	// Define the isotope names and chemical symbols tokens
         IsotopeDatabaseManager* imgr=IsotopeDatabaseManager::Instance();
@@ -272,17 +263,17 @@ struct ChemicalFormulaParser : qi::grammar<Iterator,isotopeContents()>
 
 private:
 
-    qi::symbols<char,std::string> _isotopeToken;
-    qi::symbols<char,std::string> _elementToken;
+    boost::spirit::qi::symbols<char,std::string> _isotopeToken;
+    boost::spirit::qi::symbols<char,std::string> _elementToken;
 
-	qi::rule<Iterator,isotopeContents()>  _mixtureToken;
-	qi::rule<Iterator,isotopeContents()>  _isotopeMixtureToken;
-	qi::rule<Iterator,isotopeContents()>  _uniqueIsotopeToken;
-	qi::rule<Iterator,isotopeContents()>  _naturalElementToken;
-	qi::rule<Iterator,isotopeContents()>  _compoundToken;
-	qi::rule<Iterator,compoundList()>     _compoundMixtureToken;
-	qi::rule<Iterator,isotopeContents()>  _materialToken;
-    qi::rule<Iterator,isotopeContents()>  _start;
+	boost::spirit::qi::rule<Iterator,isotopeContents()>  _mixtureToken;
+	boost::spirit::qi::rule<Iterator,isotopeContents()>  _isotopeMixtureToken;
+	boost::spirit::qi::rule<Iterator,isotopeContents()>  _uniqueIsotopeToken;
+	boost::spirit::qi::rule<Iterator,isotopeContents()>  _naturalElementToken;
+	boost::spirit::qi::rule<Iterator,isotopeContents()>  _compoundToken;
+	boost::spirit::qi::rule<Iterator,compoundList()>     _compoundMixtureToken;
+	boost::spirit::qi::rule<Iterator,isotopeContents()>  _materialToken;
+    boost::spirit::qi::rule<Iterator,isotopeContents()>  _start;
 };
 
 } // end namespace nsx

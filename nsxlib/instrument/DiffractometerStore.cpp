@@ -13,11 +13,6 @@
 
 namespace nsx {
 
-using boost::filesystem::path;
-using boost::filesystem::directory_iterator;
-using boost::filesystem::is_regular_file;
-using boost::property_tree::xml_parser::read_xml;
-
 DiffractometerStore::DiffractometerStore() : Singleton<DiffractometerStore,Constructor,Destructor>()
 {
 }
@@ -25,13 +20,13 @@ DiffractometerStore::DiffractometerStore() : Singleton<DiffractometerStore,Const
 sptrDiffractometer DiffractometerStore::buildDiffractometer(const std::string& name) const
 {
 
-    path diffractometersPath(Path::getDiffractometersPath());
+    boost::filesystem::path diffractometersPath(Path::getDiffractometersPath());
     diffractometersPath/=name;
     diffractometersPath+=".xml";
 
     boost::property_tree::ptree root;
     try {
-        read_xml(diffractometersPath.string(),root);
+        boost::property_tree::xml_parser::read_xml(diffractometersPath.string(),root);
     }
     catch (const std::runtime_error& error)	{
         throw std::runtime_error(error.what());
@@ -44,14 +39,15 @@ sptrDiffractometer DiffractometerStore::buildDiffractometer(const std::string& n
 
 std::set<std::string> DiffractometerStore::getDiffractometersList() const
 {
+    using boost::filesystem::directory_iterator;
 
     std::set<std::string> diffractometers;
 
-    path diffractometersPath(Path::getDiffractometersPath());
+    boost::filesystem::path diffractometersPath(Path::getDiffractometersPath());
 
     for (const auto& p : boost::make_iterator_range(directory_iterator(diffractometersPath),directory_iterator()))
     {
-        if (!is_regular_file(p) || p.path().extension() != ".xml")
+        if (!boost::filesystem::is_regular_file(p) || p.path().extension() != ".xml")
             continue;
         diffractometers.insert(p.path().stem().string());
     }

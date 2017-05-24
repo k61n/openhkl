@@ -33,6 +33,8 @@ using uptrDetectorEvent  = std::unique_ptr<DetectorEvent>;
 
 using InstrumentStateList = std::vector<InstrumentState>;
 
+using DetectorState = std::vector<double>;
+
 } // end namespace nsx
 
 #endif // NSXLIB_INSTRUMENTTYPES_H

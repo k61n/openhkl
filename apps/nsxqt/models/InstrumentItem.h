@@ -7,10 +7,6 @@
 
 #include "models/TreeItem.h"
 
-namespace nsx {
-class Experiment;
-}
-
 class DetectorItem;
 class SampleItem;
 class SourceItem;

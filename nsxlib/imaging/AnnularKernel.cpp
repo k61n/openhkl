@@ -29,7 +29,7 @@ AnnularKernel::AnnularKernel(int nrows, int ncols) : ConvolutionKernel(nrows,nco
     _params["r3"] = 15;
 }
 
-AnnularKernel::AnnularKernel(int nrows, int ncols, const ConvolutionKernel::ParameterMap &params)
+AnnularKernel::AnnularKernel(int nrows, int ncols, const ConvolutionKernelParameters &params)
 : ConvolutionKernel(nrows,ncols,params)
 {
     // load default values if necessary

@@ -10,12 +10,10 @@
 
 #include <QDialog>
 
+#include <nsxlib/crystal/CrystalTypes.h>
+
 namespace Ui {
 class ScaleDialog;
-}
-
-namespace nsx {
-class Peak3D;
 }
 
 class Widget;

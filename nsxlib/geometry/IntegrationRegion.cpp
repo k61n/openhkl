@@ -28,8 +28,6 @@
  *
  */
 
-#include <list>
-
 #include "Ellipsoid.h"
 #include "IntegrationRegion.h"
 
@@ -63,15 +61,15 @@ bool IntegrationRegion::inBackground(const Eigen::Vector4d &p) const
     return !inRegion(p);
 }
 
-IntegrationRegion::point_type IntegrationRegion::classifyPoint(const Eigen::Vector4d &p) const
+PointType IntegrationRegion::classifyPoint(const Eigen::Vector4d &p) const
 {
     if (!_background.isInsideAABB(p)) {
-        return point_type::EXCLUDED;
+        return PointType::EXCLUDED;
     }
     if (_region.isInside(p)) {
-        return point_type::REGION;
+        return PointType::REGION;
     }
-    return point_type::BACKGROUND;
+    return PointType::BACKGROUND;
 }
 
 const Ellipsoid& IntegrationRegion::getBackground() const

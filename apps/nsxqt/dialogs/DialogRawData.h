@@ -38,12 +38,6 @@
 
 #include <QDialog>
 
-namespace nsx {
-namespace Instrument {
-class Experiment;
-}
-}
-
 namespace Ui {
 class DialogRawData;
 }

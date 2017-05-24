@@ -46,7 +46,9 @@ using Shape3DMap = std::unordered_map<const IShape*,int>;
 
 using CollisionSet = std::set<const IShape*>;
 
-enum class Direction {CW,CCW};
+enum class Direction {CW=1,CCW=2};
+
+enum class PointType {REGION = 1, BACKGROUND = 2, EXCLUDED = 3};
 
 } // end namespace nsx
 

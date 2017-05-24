@@ -10,8 +10,6 @@
 
 namespace nsx {
 
-using Eigen::Quaterniond;
-
 Gonio::Gonio() : _label("goniometer")
 {
 }
