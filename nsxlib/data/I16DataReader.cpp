@@ -19,7 +19,6 @@
 #include "../instrument/Gonio.h"
 #include "../instrument/Sample.h"
 #include "../instrument/Source.h"
-#include "../utils/EigenMatrixParser.h"
 #include "../utils/Parser.h"
 #include "../utils/Units.h"
 
