@@ -36,9 +36,9 @@
 
 #include "GeometryTypes.h"
 #include "IShape.h"
-#include "AABB.h"
-#include "OBB.h"
-#include "Sphere.h"
+//#include "AABB.h"
+//#include "OBB.h"
+//#include "Sphere.h"
 
 namespace nsx {
 

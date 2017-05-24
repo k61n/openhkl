@@ -6,6 +6,7 @@
 #include "../data/PeakFinder.h"
 #include "../geometry/BlobFinder.h"
 #include "../geometry/GeometryTypes.h"
+#include "../geometry/AABB.h"
 #include "../imaging/Convolver.h"
 #include "../imaging/ConvolutionKernel.h"
 #include "../instrument/Diffractometer.h"

@@ -23,6 +23,7 @@
 #include "../data/ThreadedFrameIterator.h"
 #include "../geometry/Ellipsoid.h"
 #include "../geometry/IntegrationRegion.h"
+#include "../geometry/AABB.h"
 #include "../instrument/Detector.h"
 #include "../instrument/Diffractometer.h"
 #include "../instrument/Gonio.h"

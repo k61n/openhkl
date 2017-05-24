@@ -38,8 +38,8 @@
 
 #include <Eigen/Dense>
 
-#include "../geometry/GeometryTypes.h"
 #include "../geometry/IShape.h"
+#include "../geometry/GeometryTypes.h"
 
 namespace nsx {
 
@@ -69,7 +69,7 @@ public:
     AABB& operator=(const AABB& other);
 
     //! Constructs a pointer to a copy of the AABB
-    IShape* clone() const;
+    IShape* clone() const override;
 
     //! Scale isotropically the AABB.
     void scale(double value) override;

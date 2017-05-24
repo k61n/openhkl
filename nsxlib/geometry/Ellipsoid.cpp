@@ -1,5 +1,8 @@
 #include "Ellipsoid.h"
 #include "GeometryTypes.h"
+#include "AABB.h"
+#include "OBB.h"
+
 
 namespace nsx {
 

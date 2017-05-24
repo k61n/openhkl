@@ -13,6 +13,7 @@
 #include <nsxlib/crystal/SpaceGroup.h>
 #include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/data/DataSet.h>
+#include <nsxlib/geometry/AABB.h>
 #include <nsxlib/instrument/Detector.h>
 #include <nsxlib/instrument/DetectorEvent.h>
 #include <nsxlib/instrument/Diffractometer.h>

@@ -1,5 +1,6 @@
 #include "AABB.h"
 #include "Ellipsoid.h"
+#include "Sphere.h"
 
 namespace nsx {
 
