@@ -63,6 +63,7 @@ class TestHDF5(unittest.TestCase):
 
         for peak in peaks:
             peak.addUnitCell(uc, True)
+            peak.getQ()
 
         num_peaks = len(peaks)
 

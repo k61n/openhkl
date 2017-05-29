@@ -54,6 +54,8 @@ using Eigen::RowVector2d;
 using Eigen::Vector2d;
 using Eigen::RowVector3d;
 using Eigen::Vector3d;
+using Eigen::RowVector3i;
+using Eigen::Vector3i;
 using Eigen::Matrix3d;
 using Eigen::Matrix;
 using Eigen::Quaterniond;
@@ -290,7 +292,10 @@ using namespace nsx;
 
 // Since Eigen uses templates, we have to declare exactly which types we'd
 // like to generate mappings for
+//%eigen_typemaps(Eigen::Vector3i)
 %eigen_typemaps(Eigen::Vector3d)
+%eigen_typemaps(Eigen::RowVector3i)
+%eigen_typemaps(Eigen::RowVector3d)
 %eigen_typemaps(Eigen::Matrix3d)
 %eigen_typemaps(Eigen::VectorXd)
 %eigen_typemaps(Eigen::MatrixXd)
@@ -301,6 +306,8 @@ using namespace nsx;
 // Eigen::Dynamic, Eigen::Dynamic>. Not totally sure why that is.
 %eigen_typemaps(Eigen::Matrix<double, 3, 1>)
 %eigen_typemaps(Eigen::Matrix<double, 1, 3>)
+%eigen_typemaps(Eigen::Matrix<int, 3, 1>)
+%eigen_typemaps(Eigen::Matrix<int, 1, 3>)
 %eigen_typemaps(Eigen::Matrix<double, 3, 3>)
 %eigen_typemaps(Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>)
 %eigen_typemaps(Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic>)
