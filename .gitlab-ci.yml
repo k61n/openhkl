@@ -31,7 +31,7 @@ deploy:trusty:
     - develop
   artifacts:
     paths:
-    - nsxtool*deb
+    - ${CI_PROJECT_DIR}/build/nsxtool*deb
   tags:
     - ubuntu14.04
 
