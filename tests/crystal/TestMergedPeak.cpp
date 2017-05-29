@@ -27,8 +27,6 @@ BOOST_AUTO_TEST_CASE(Test_MergedPeak)
     const double beta = 90.0 * deg;
     const double gamma = 90.0 * deg;
 
-
-
     const double gruber_tolerance = 1e-2;
 
     //SpaceGroup group("P 21 21 21");

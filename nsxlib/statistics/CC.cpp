@@ -36,12 +36,23 @@
 
 
 #include "CC.h"
+#include "../data/MergedData.h"
 
 namespace nsx {
 
 CC::CC():_CChalf(0), _CCstar(0)
 {
 
+}
+
+void CC::calculate(const MergedData& data)
+{
+    std::vector<MergedPeak> peaks;
+
+    for (auto&& peak: data.getPeaks()) {
+        peaks.push_back(peak);
+    }
+    calculate(peaks);
 }
 
 void CC::calculate(const std::vector<MergedPeak>& peaks)

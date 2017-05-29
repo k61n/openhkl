@@ -39,6 +39,7 @@
 #include "../crystal/MergedPeak.h"
 
 namespace nsx {
+    class MergedData;
 
 //! Class to handle calculation of correlation coefficients (CChalf and CC*)
 class CC {
@@ -46,6 +47,7 @@ public:
     CC();
     
     void calculate(const std::vector<MergedPeak>& peaks);
+    void calculate(const MergedData& data);
 
     double CChalf() const;
     double CCstar() const;
