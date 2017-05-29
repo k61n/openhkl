@@ -44,15 +44,19 @@
 namespace nsx {
 
 MergedPeak::MergedPeak(const SpaceGroup& grp, bool friedel):
-    _hkl(), _intensitySum(0.0, 0.0), _peaks(), _grp(grp), _friedel(friedel), _dSum(0.0), _squaredIntensitySum(0.0)
+    _hkl(), _intensitySum(0.0, 0.0), _peaks(), _grp(grp), _friedel(friedel), _squaredIntensitySum(0.0)
 {
 }
 
-
 bool MergedPeak::addPeak(const sptrPeak3D& peak)
 {
+    return addPeak(PeakCalc(*peak));
+}
+
+bool MergedPeak::addPeak(const PeakCalc& peak)
+{
     auto hkl1 = _hkl.cast<double>();
-    auto hkl2 = peak->getIntegerMillerIndices().cast<double>();
+    auto hkl2 = Eigen::Vector3d(peak._h, peak._k, peak._l);
     // peak is not equivalent to one already on the list
     if (!_peaks.empty() && !_grp.isEquivalent(hkl1, hkl2, _friedel)) {
         return false;
@@ -69,9 +73,8 @@ bool MergedPeak::addPeak(const sptrPeak3D& peak)
         determineRepresentativeHKL();
     }
 
-    _intensitySum += peak->getCorrectedIntensity();
-    _squaredIntensitySum += std::pow(peak->getCorrectedIntensity().getValue(), 2);
-    _dSum += 1.0 / peak->getQ().norm();
+    _intensitySum += peak._intensity;
+    _squaredIntensitySum += std::pow(peak._intensity.getValue(), 2);
 
     return true;
 }
@@ -107,6 +110,10 @@ void MergedPeak::determineRepresentativeHKL()
 
     for (auto&& g: _grp.getGroupElements()) {
         equivs.emplace_back(g.getRotationPart()*best_hkl);
+
+        if (_friedel) {
+            equivs.emplace_back(-g.getRotationPart()*best_hkl);
+        }
     }
 
     auto compare_fn = [=](const Eigen::Vector3d& a, const Eigen::Vector3d& b) -> bool {
@@ -126,12 +133,7 @@ void MergedPeak::determineRepresentativeHKL()
     }
 }
 
-double MergedPeak::d() const
-{
-    return _dSum / _peaks.size();
-}
-
-const PeakList& MergedPeak::getPeaks() const
+const std::vector<PeakCalc>& MergedPeak::getPeaks() const
 {
     return _peaks;
 }
@@ -166,5 +168,21 @@ std::pair<MergedPeak, MergedPeak> MergedPeak::split() const
 
     return std::make_pair(p1, p2);
 }
+
+
+bool operator<(const MergedPeak& p, const MergedPeak& q)
+{
+    const Eigen::Vector3i& a = p.getIndex();
+    const Eigen::Vector3i& b = q.getIndex();
+
+    if (a(0) != b(0)) {
+        return a(0) < b(0);
+    }
+    if (a(1) != b(1)) {
+        return a(1) < b(1);
+    }
+    return a(2) < b(2);
+}
+
 
 } // end namespace nsx

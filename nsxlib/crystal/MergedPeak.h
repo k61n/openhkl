@@ -41,6 +41,7 @@
 #include "../crystal/CrystalTypes.h"
 #include "../crystal/Intensity.h"
 #include "../crystal/SpaceGroup.h"
+#include "../crystal/PeakCalc.h"
 
 namespace nsx {
     class Peak3D;
@@ -55,14 +56,15 @@ public:
     ~MergedPeak() = default;
 
     bool addPeak(const sptrPeak3D& peak);
+    bool addPeak(const PeakCalc& peak);
+
     Eigen::Vector3i getIndex() const;
     Intensity getIntensity() const;
 
     size_t redundancy() const;
     double std() const;
 
-    double d() const;
-    const PeakList& getPeaks() const;
+    const std::vector<PeakCalc>& getPeaks() const;
 
     //! split the merged peak randomly into two, for calculation of CC
     std::pair<MergedPeak, MergedPeak> split() const;
@@ -73,11 +75,16 @@ private:
     
     Eigen::Vector3i _hkl;
     Intensity _intensitySum;
-    double _dSum, _squaredIntensitySum;
-    std::vector<sptrPeak3D> _peaks;
+    double _squaredIntensitySum;
+    std::vector<PeakCalc> _peaks;
     SpaceGroup _grp;
     bool _friedel;
 };
+
+#ifndef SWIG
+bool operator<(const MergedPeak& p, const MergedPeak& q);
+#endif
+
 
 } // end namespace nsx
 

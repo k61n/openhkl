@@ -849,7 +849,7 @@ bool SessionModel::writeStatistics(std::string filename,
 
         const double intensity = peak.getIntensity().getValue();
         const double sigma = peak.getIntensity().getSigma();
-        const double d = peak.d();
+        const double d = 0.0; //peak.d();
         const int nobs = peak.redundancy();
         const double std = peak.std();
         const double rel_std = std / intensity;

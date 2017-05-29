@@ -86,9 +86,16 @@ void PeakPredictor::addPredictedPeaks(sptrDataSet data)
         //auto predicted_hkls = sample->getUnitCell(i)->generateReflectionsInSphere(1.5);
         auto predicted_hkls = sample->getUnitCell(i)->generateReflectionsInShell(_dmin, _dmax, wavelength);
 
+        // todo: clean up DataSet interface for predicted peaks
+        std::vector<Eigen::Vector3d> hkls_double;
+
+        for (auto&& hkl: predicted_hkls) {
+            hkls_double.emplace_back(hkl.cast<double>());
+        }
+
         predicted_peaks += predicted_hkls.size();
 
-        PeakCalcList peaks = data->hasPeaks(predicted_hkls, UB);
+        PeakCalcList peaks = data->hasPeaks(hkls_double, UB);
         calculated_peaks.reserve(peaks.size());
 
         int current_peak = 0;

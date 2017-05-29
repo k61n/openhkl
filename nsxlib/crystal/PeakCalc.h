@@ -33,16 +33,19 @@
 
 #include "../crystal/CrystalTypes.h"
 #include "../geometry/GeometryTypes.h"
+#include "../crystal/Intensity.h"
 
 namespace nsx {
 
 struct PeakCalc {
 
-    PeakCalc(double h,double k,double l, double x,double y, double frame); //:
-        //_h(h), _k(k), _l(l), _x(x), _y(y), _frame(frame) = default;
+    PeakCalc(const Peak3D& peak);
+    PeakCalc();
+    PeakCalc(int h, int k, int l, double x,double y, double frame); 
     ~PeakCalc() = default;
 
-    double _h,_k,_l;
+    Intensity _intensity;
+    int _h,_k,_l;
     double _x,_y,_frame;
 
     sptrPeak3D averagePeaks(const Octree& tree, double distance, double min_axis=2.0);
