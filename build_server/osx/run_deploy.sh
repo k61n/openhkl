@@ -11,7 +11,7 @@ cmake --build . --config Release
 
 cmake --build . --config Release --target install
 
-declare -x CPLUS_INCLUDE_PATH=/usr/local/include:/usr/local/opt/eigen/include/eigen3:/usr/local/opt/boost/include:${CI_PROJECT_DIR}/build/include/NSXTool
+declare -x CPLUS_INCLUDE_PATH=/usr/local/include:/usr/local/opt/eigen/include/eigen3:/usr/local/opt/boost/include:${CI_PROJECT_DIR}/build/include/NSXTool:${CI_PROJECT_DIR}/apps/nsxqt
 
 declare -x LIBRARY_PATH=${CI_PROJECT_DIR}/build/nsxlib:/usr/local/opt/boost/lib/:/usr/local/opt/fftw/lib/
 
@@ -19,6 +19,6 @@ mkdir qmake-build
 cd qmake-build
 
 /usr/local/opt/qt5/bin/qmake ${CI_PROJECT_DIR}/build/apps/NSXQt/NSXQt.pro CONFIG+=release
-make -j4 -l4
+make -j4
 
 /usr/local/opt/qt5/bin/macdeployqt nsxtool.app/ -dmg
