@@ -37,6 +37,7 @@ class TestComplexHull(unittest.TestCase):
         vec1 = np.array([0,0,0])
         chull.addVertex(vec1)
         # Checks that the hull can not be updated with only 1 point to be processed
+        # todo : what is conversion of BOOST_CHECK_THROW and NO_THROW
         self.assertAlmostEqual([chull.updateHull(),0])
                     
         # Fill it with three vertices to form a tetrahedron
