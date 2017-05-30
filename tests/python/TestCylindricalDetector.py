@@ -24,22 +24,19 @@ class TestCylindricalDetector(unittest.TestCase):
         #vec3d = np.array([0,0,0], dtype=float)
         center = ev1.getPixelPosition()
 
-
-        print(center)
-        print(center.shape)
-
         self.assertLess(center[0,0],tolerance)
-        self.assertAlmostEqual(center[1,0],0.764)
-        # self.assertLess([center[2],0])
+        self.assertAlmostEqual(center[1,0],0.764,tolerance)
+        self.assertLess(center[2,0],tolerance)
 
-        # shouldd be center of the detector so gamma, nu =0 at rest
-        gamma = 0.0
-        nu = 0.0
+        # should be center of the detector so gamma, nu =0 at rest
+        # todo : cannot run - 'ev1.getGammaNu(gamma,nu)'
+        gamma = np.array([],dtype =float)
+        nu = np.array([])
         # ev1.getGammaNu(gamma,nu)
-        # self.assertLess([gamma,0])        
-        # self.assertLess([nu,0])
-        # th2 = ev1.get2Theta()
-        # self.assertLess([th2,0])
+        # self.assertLess(gamma,tolerance)        
+        # self.assertLess(nu,tolerence)
+        th2 = ev1.get2Theta()
+        self.assertLess(th2,tolerance)
 
         # attach a gonio
         # todo: problem in importing 'std::shared_ptr<Gonio> g(new Gonio("gamma-arm"))'
@@ -49,13 +46,14 @@ class TestCylindricalDetector(unittest.TestCase):
         # d.setGonio(g)
 
         # put detetctor at 90deg, event should point along x
-        # ev2 = DetectorEvent(d,319.5,127.5,{90.0*deg}) 
+        # todo: denying 4th argument in the DetectorEvent()
+        # ev2 = nsx.DetectorEvent(d,319.5,127.5,{90.0*deg}) 
         # center = ev2.getPixelPosition()
-        # self.assertAlmostEqual([center[0],0.764,0])
+        # self.assertAlmostEqual([center[0],0.764,tolerance])
         # self.assertLess([center[1],0.001])
         # self.assrtLess([center[2],0.001])
         # ev2.getGammaNu(gamma,nu)
-        # self.assertAlmostEqual([gamma,90*deg,10e-3])
+        # self.assertAlmostEqual([gamma,90*deg,tolerance])
         # self.assertLess(nu,0.001,0)
 
         # th2 = ev2.get2Theta()
@@ -80,8 +78,9 @@ class TestCylindricalDetector(unittest.TestCase):
         py = 0.0 
         t = 0.0 
 
-        # from = np.array([0,0,0])
-        # d.receiveKf(px,py,kf,from,t, {90.0*deg})
+        # todo: d.receiveKf(...) doesnt work
+        frm = np.array([0,0,0])
+        # d.receiveKf(px,py,kf,frm,t, {90.0*deg})
         # self.assertAlmostEqual([px,319.5,0])
         # self.assertAlmostEqual([py,127.5,0])
         
