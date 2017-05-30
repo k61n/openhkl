@@ -3,27 +3,33 @@ import numpy as np
 import ctypes as c
 import unittest
 
+tolerance = 1e-3
+
 class TestCylindricalDetector(unittest.TestCase):
     def test(self):
         d = nsx.CylindricalDetector("D19-detector") 
-        mm = 1.0
+        mm = 1e-3
         # todo : convert mm from unit.h
         d.setDistance(764*mm)
         # todo : define 'deg'
         deg = 3.14/180.0
         d.setAngularWidth(120.0*deg)
-        cm = 1.0
+        cm = 1e-2
         d.setHeight(40.0*cm)
         d.setNPixels(640,256)
 
         # todo : DetectorEvent is not defined
-        # ev1 =DetectorEvent(d,319.5,127.5)
+        ev1 = nsx.DetectorEvent(d,319.5,127.5)
         # This should be the center of the detector at rest at (0,0.764,0)
-        # vec3d = np.array([])
-        # center = ev1.getPixelPosition(vec3d)
+        #vec3d = np.array([0,0,0], dtype=float)
+        center = ev1.getPixelPosition()
 
-        # self.assertLess([center[0],0])
-        # self.assertAlmostEqual([center[0],0.764,0])
+
+        print(center)
+        print(center.shape)
+
+        self.assertLess(center[0,0],tolerance)
+        self.assertAlmostEqual(center[1,0],0.764)
         # self.assertLess([center[2],0])
 
         # shouldd be center of the detector so gamma, nu =0 at rest

@@ -34,7 +34,7 @@ class TestFlatDetector(unittest.TestCase):
         # attach a gonio
         # todo : all the same things as TestCylindricalDetector.py - apply changes there then here
 
-
+        
 if __name__ == '__main__':
     unittest.main()
 
