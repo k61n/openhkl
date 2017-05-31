@@ -51,7 +51,7 @@ class TestHDF5IO(unittest.TestCase):
             # }
         # catch(...) {
         # BOOST_FAIL("saveHDF5() threw unknown exception");
-
+        
 
 if __name__ == '__main__':
     unittest.main()
