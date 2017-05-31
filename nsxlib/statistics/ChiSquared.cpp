@@ -3,6 +3,7 @@
  ------------------------------------------------------------------------------------------
  Copyright (C)
  2016- Laurent C. Chapon, Eric Pellegrini, Jonathan Fisher
+
  Institut Laue-Langevin
  BP 156
  6, rue Jules Horowitz
@@ -10,6 +11,10 @@
  France
  chapon[at]ill.fr
  pellegrini[at]ill.fr
+
+ Forschungszentrum Juelich GmbH
+ 52425 Juelich
+ Germany
  j.fisher[at]fz-juelich.de
 
  This library is free software; you can redistribute it and/or
@@ -28,34 +33,26 @@
  *
  */
 
-#ifndef NSXLIB_RFACTOR_H
-#define NSXLIB_RFACTOR_H
+#include "ChiSquared.h"
+#include <cmath>
+#include <gsl/gsl_sf_gamma.h>
 
-#include <vector>
-#include <set>
-
-#include "../crystal/CrystalTypes.h"
 
 namespace nsx {
 
-    class MergedData;
+ChiSquared::ChiSquared(double k): _k(k), _c(0.0)
+{
+    _c = std::pow(2.0, -_k/2) / gsl_sf_gamma(_k/2);
+}
 
-class RFactor {
-public:
-    RFactor(): _Rmerge(0.0), _Rmeas(0.0), _Rpim(0.0) {}
-    ~RFactor() {}
+double ChiSquared::pdf(double x) const
+{
+    return _c * std::pow(x, _k/2-1.0) * std::exp(-x/2);
+}
 
-    void calculate(const MergedData& data);
-
-    double Rmerge() {return _Rmerge;}
-    double Rmeas() {return _Rmeas;}
-    double Rpim() {return _Rpim;}
-
-
-private:
-    double _Rmerge, _Rmeas, _Rpim;
-};
-
+double ChiSquared::cdf(double x) const
+{
+    return gsl_sf_gamma_inc_P(_k/2, x/2);
+}
+    
 } // end namespace nsx
-
-#endif // NSXLIB_RFACTOR_H

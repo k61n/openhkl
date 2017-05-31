@@ -2,7 +2,8 @@
  * nsxtool : Neutron Single Crystal analysis toolkit
  ------------------------------------------------------------------------------------------
  Copyright (C)
- 2016- Laurent C. Chapon, Eric Pellegrini, Jonathan Fisher
+ 2017- Laurent C. Chapon, Eric Pellegrini, Jonathan Fisher
+
  Institut Laue-Langevin
  BP 156
  6, rue Jules Horowitz
@@ -10,6 +11,10 @@
  France
  chapon[at]ill.fr
  pellegrini[at]ill.fr
+
+ Forschungszentrum Juelich GmbH
+ 52425 Juelich
+ Germany
  j.fisher[at]fz-juelich.de
 
  This library is free software; you can redistribute it and/or
@@ -28,34 +33,23 @@
  *
  */
 
-#ifndef NSXLIB_RFACTOR_H
-#define NSXLIB_RFACTOR_H
-
-#include <vector>
-#include <set>
-
-#include "../crystal/CrystalTypes.h"
+#ifndef NSXLIB_CHISQUARED_H
+#define NSXLIB_CHISQUARED_H
 
 namespace nsx {
 
-    class MergedData;
-
-class RFactor {
+//! Class to handle chi-squared distribution
+class ChiSquared {
 public:
-    RFactor(): _Rmerge(0.0), _Rmeas(0.0), _Rpim(0.0) {}
-    ~RFactor() {}
+    ChiSquared(double k);
 
-    void calculate(const MergedData& data);
-
-    double Rmerge() {return _Rmerge;}
-    double Rmeas() {return _Rmeas;}
-    double Rpim() {return _Rpim;}
-
+    double pdf(double x) const;
+    double cdf(double x) const;
 
 private:
-    double _Rmerge, _Rmeas, _Rpim;
+    double _k, _c;
 };
 
 } // end namespace nsx
 
-#endif // NSXLIB_RFACTOR_H
+#endif // NSXLIB_CHISQUARED_H

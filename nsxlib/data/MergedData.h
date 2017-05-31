@@ -43,7 +43,7 @@ class DataSet;
 
 class MergedData {
 public:
-    MergedData(const SpaceGroup& grp = SpaceGroup("P 1"), bool friedel = true);
+    MergedData(const SpaceGroup& grp, bool friedel);
 
     bool addPeak(const PeakCalc& peak);
 

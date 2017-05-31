@@ -68,6 +68,7 @@
 #include <nsxlib/crystal/SpaceGroup.h>
 #include <nsxlib/crystal/SpaceGroupSymbols.h>
 #include <nsxlib/data/DataReaderFactory.h>
+#include <nsxlib/data/MergedData.h>
 #include <nsxlib/data/PeakFinder.h>
 #include <nsxlib/data/XDS.h>
 #include <nsxlib/geometry/Ellipsoid.h>
@@ -311,80 +312,8 @@ void SessionModel::findSpaceGroup()
 
 void SessionModel::computeRFactors()
 {
-    qDebug() << "Finding peak equivalences...";
-
-    nsx::DataList numors = getSelectedNumors();
-    std::vector<nsx::PeakList> peak_equivs;
-    nsx::PeakList peak_list;
-
-    nsx::sptrUnitCell unit_cell;
-
-    for (auto numor: numors)
-    {
-        nsx::PeakSet peaks = numor->getPeaks();
-        for (auto peak: peaks)
-        {
-            if ( peak && peak->isSelected() && !peak->isMasked() ) {
-                peak_list.push_back(peak);
-            }
-        }
-    }
-
-    if ( peak_list.size() == 0) {
-        qDebug() << "No peaks -- cannot search for equivalences!";
-        return;
-    }
-
-    for (auto peak: peak_list)
-    {
-        // what do we do if there is more than one sample/unit cell??
-        unit_cell = peak->getActiveUnitCell();
-
-        if (unit_cell) {
-            break;
-        }
-    }
-
-    if (!unit_cell) {
-        qDebug() << "No unit cell selected! Cannot compute R factors.";
-        return;
-    }
-
-    nsx::SpaceGroup grp("P 1");
-
-    // spacegroup construct can throw
-    try {
-        grp = nsx::SpaceGroup(unit_cell->getSpaceGroup());
-    }
-    catch(std::exception& e) {
-        qDebug() << "Caught exception: " << e.what() << endl;
-        return;
-    }
-
-    peak_equivs = grp.findEquivalences(peak_list, true);
-
-    qDebug() << "Found " << peak_equivs.size() << " equivalence classes of peaks:";
-
-    std::map<size_t, int> size_counts;
-
-    for (auto& peaks: peak_equivs) {
-        ++size_counts[peaks.size()];
-    }
-
-    for (auto& it: size_counts) {
-        qDebug() << "Found " << it.second << " classes of size " << it.first;
-    }
-
-    qDebug() << "Computing R factors:";
-
-    nsx::RFactor rfactor(peak_equivs);
-
-    qDebug() << "    Rmerge = " << rfactor.Rmerge();
-    qDebug() << "    Rmeas  = " << rfactor.Rmeas();
-    qDebug() << "    Rpim   = " << rfactor.Rpim();
-
-    //ScaleDialog* scaleDialog = new ScaleDialog(peak_equivs, this);
-    //scaleDialog->exec();
+    // todo: reimplement this method
+    qDebug() << "not currently implemented!";
 }
 
 void SessionModel::findFriedelPairs()
@@ -715,8 +644,9 @@ bool SessionModel::writeStatistics(std::string filename,
     std::fstream file(filename, std::ios::out);
     nsx::ResolutionShell res = {dmin, dmax, num_shells};
     std::vector<char> buf(1024, 0); // buffer for snprintf
-    std::vector<nsx::MergedPeak> merged_peaks;
-    std::vector<nsx::MergedPeak> merged_peaks_shell;
+    //std::vector<nsx::MergedPeak> merged_peaks;
+    //std::vector<nsx::MergedPeak> merged_peaks_shell;
+
     Eigen::RowVector3d HKL(0.0, 0.0, 0.0);
 
     if (!file.is_open()) {
@@ -731,6 +661,8 @@ bool SessionModel::writeStatistics(std::string filename,
 
     auto cell = peaks[0]->getActiveUnitCell();
     auto grp = nsx::SpaceGroup(cell->getSpaceGroup());
+
+    nsx::MergedData merged(grp, friedel);
 
     for (auto&& peak: peaks) {
         if (cell != peak->getActiveUnitCell()) {
@@ -759,33 +691,33 @@ bool SessionModel::writeStatistics(std::string filename,
         const double d_lower = ds[i];
         const double d_upper = ds[i+1];
 
-        merged_peaks_shell.clear();
+        nsx::MergedData merged_shell(grp, friedel);
 
         auto peak_equivs = grp.findEquivalences(shells[i], friedel);
-        nsx::RFactor rfactor(peak_equivs);
-
+        
         for (auto&& equiv: peak_equivs)
             all_equivs.push_back(equiv);
 
         double redundancy = double(shells[i].size()) / double(peak_equivs.size());
 
         for (auto equiv: peak_equivs) {
-            nsx::MergedPeak new_peak(grp, friedel);
 
             for (auto peak: equiv) {
-
-                // peak was not equivalent to any of the merged peaks
-                new_peak.addPeak(peak);
+                auto peak_calc = nsx::PeakCalc(*peak);
+                merged_shell.addPeak(peak_calc);
+                merged.addPeak(peak_calc);
             }
 
-            if (new_peak.redundancy() > 0) {
-                merged_peaks.push_back(new_peak);
-                merged_peaks_shell.push_back(new_peak);
-            }
+            //if (new_peak.redundancy() > 0) {
+            //    merged_peaks.push_back(new_peak);
+            //    merged_peaks_shell.push_back(new_peak);
+            //}
         }
 
         nsx::CC cc;
-        cc.calculate(merged_peaks_shell);
+        cc.calculate(merged_shell);
+        nsx::RFactor rfactor;
+        rfactor.calculate(merged_shell);
 
         std::snprintf(&buf[0], buf.size(),
                 "    %10.2f %10.2f %10d %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f",
@@ -799,7 +731,7 @@ bool SessionModel::writeStatistics(std::string filename,
 
     file << "--------------------------------------------------------------------------------" << std::endl;
 
-    nsx::RFactor rfactor(all_equivs);
+    
 
     int num_peaks = 0;
 
@@ -809,7 +741,10 @@ bool SessionModel::writeStatistics(std::string filename,
     double redundancy = double(num_peaks) / double(all_equivs.size());
 
     nsx::CC cc;
-    cc.calculate(merged_peaks);
+    cc.calculate(merged);
+
+    nsx::RFactor rfactor;    
+    rfactor.calculate(merged);
 
     std::snprintf(&buf[0], buf.size(),
             "    %10.2f %10.2f %10d %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f",
@@ -831,7 +766,7 @@ bool SessionModel::writeStatistics(std::string filename,
             return a(2) < b(2);
     };
 
-    std::sort(merged_peaks.begin(), merged_peaks.end(), compare_fn);
+    //std::sort(merged_peaks.begin(), merged_peaks.end(), compare_fn);
 
     file << "   h    k    l            I        sigma   d   nobs       chi2             std            std/I  "
          << std::endl;
@@ -839,7 +774,7 @@ bool SessionModel::writeStatistics(std::string filename,
     unsigned int total_peaks = 0;
     unsigned int bad_peaks = 0;
 
-    for (auto&& peak: merged_peaks) {
+    for (auto&& peak: merged.getPeaks()) {
 
         const auto hkl = peak.getIndex();
 

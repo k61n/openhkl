@@ -300,6 +300,8 @@ using namespace nsx;
 %eigen_typemaps(Eigen::VectorXd)
 %eigen_typemaps(Eigen::MatrixXd)
 %eigen_typemaps(Eigen::MatrixXi)
+%eigen_typemaps(Eigen::ArrayXd)
+%eigen_typemaps(Eigen::ArrayXXd)
 // Even though Eigen::MatrixXd is just a typedef for Eigen::Matrix<double,
 // Eigen::Dynamic, Eigen::Dynamic>, our templatedInverse function doesn't
 // compile correctly unless we also declare typemaps for Eigen::Matrix<double,
@@ -311,6 +313,8 @@ using namespace nsx;
 %eigen_typemaps(Eigen::Matrix<double, 3, 3>)
 %eigen_typemaps(Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>)
 %eigen_typemaps(Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic>)
+%eigen_typemaps(Eigen::Array<double, Eigen::Dynamic, 1>)
+%eigen_typemaps(Eigen::Array<double, Eigen::Dynamic, Eigen::Dynamic>)
 
  //%include <boost/property_tree/ptree.hpp>
 namespace boost { namespace property_tree {} }

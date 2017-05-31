@@ -40,6 +40,7 @@
 
 #include "MergedPeak.h"
 #include "Peak3D.h"
+#include "../statistics/ChiSquared.h"
 
 namespace nsx {
 
@@ -184,5 +185,26 @@ bool operator<(const MergedPeak& p, const MergedPeak& q)
     return a(2) < b(2);
 }
 
+double MergedPeak::chi2() const
+{
+    const double Iave = getIntensity().getValue();
+    double chi_sq = 0.0;
+
+    for (auto&& peak: _peaks) {
+        auto&& I = peak._intensity; 
+        const double z = (I.getValue() - Iave) / I.getSigma();
+        chi_sq += z*z;
+    }
+    return chi_sq;
+}
+
+double MergedPeak::pValue() const
+{
+    // todo: k or k-1?? need to check
+    const double k = redundancy();
+    const double x = chi2();
+    ChiSquared chi(k);
+    return chi.cdf(x);
+}
 
 } // end namespace nsx

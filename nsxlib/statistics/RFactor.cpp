@@ -30,11 +30,15 @@
 
 #include "RFactor.h"
 #include "../crystal/Peak3D.h"
+#include "../crystal/MergedPeak.h"
+#include "../data/MergedData.h"
 
 namespace nsx {
 
-void RFactor::recalculate(const std::vector<PeakList> &peak_equivs)
+void RFactor::calculate(const MergedData& data)
 {
+    auto&& peaks = data.getPeaks();
+
     _Rmerge = 0;
     _Rmeas = 0;
     _Rpim = 0;
@@ -42,31 +46,22 @@ void RFactor::recalculate(const std::vector<PeakList> &peak_equivs)
     double I_total = 0.0;
 
     // go through each equivalence class of peaks
-    for (auto&& peak_list: peak_equivs) {
+    for (auto&& peak: peaks) {        
+        const double n = double(peak.redundancy());
+
         // skip if there are fewer than two peaks
-        if ( peak_list.size() < 2) {
+        if (n < 1.999) {
             continue;
-        }
-        double average = 0.0;
+        }  
 
-        for (auto&& p: peak_list) {
-            double lorentz = p->getLorentzFactor();
-            double trans = p->getTransmission();
-            double in = p->getScaledIntensity().getValue() / lorentz / trans;
-            average += in;
-        }
-
-        const double n = peak_list.size();
-        average /= n;
-        I_total += n*average;
-
+        const double Iave = peak.getIntensity().getValue();
         const double Fmeas = std::sqrt(n / (n-1));
         const double Fpim = std::sqrt(1 / (n-1));
 
-        for (auto&& p: peak_list) {
-            double lorentz = p->getLorentzFactor();
-            double trans = p->getTransmission();
-            double diff = std::fabs(p->getScaledIntensity().getValue() / lorentz / trans - average);
+        I_total += std::fabs(Iave);
+
+        for (auto&& p: peak.getPeaks()) {
+            double diff = std::fabs(p._intensity.getValue() - Iave);
             _Rmerge += diff;
             _Rmeas += Fmeas*diff;
             _Rpim += Fpim*diff;
@@ -84,11 +79,6 @@ void RFactor::recalculate(const std::vector<PeakList> &peak_equivs)
         _Rmeas /= I_total;
         _Rpim /= I_total;
     }
-}
-
-RFactor::RFactor(const std::vector<PeakList> &peak_equivs): RFactor()
-{
-    recalculate(peak_equivs);
 }
 
 } // end namespace nsx

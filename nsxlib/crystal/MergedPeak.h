@@ -63,6 +63,8 @@ public:
 
     size_t redundancy() const;
     double std() const;
+    double chi2() const;
+    double pValue() const;
 
     const std::vector<PeakCalc>& getPeaks() const;
 
