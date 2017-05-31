@@ -17,7 +17,7 @@ BOOST_AUTO_TEST_CASE(Test_SpaceGroupSymbols)
 
     BOOST_CHECK_EQUAL(symbols.size(), 230);
 
-    auto table=SpaceGroupSymbols::Instance();
+    auto table= nsx::SpaceGroupSymbols::Instance();
     std::string generators;
     bool test=table->getGenerators("P n m a",generators);
 
