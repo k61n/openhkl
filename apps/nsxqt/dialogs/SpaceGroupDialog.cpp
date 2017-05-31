@@ -18,7 +18,7 @@
 
 #include <nsxlib/crystal/CrystalTypes.h>
 #include <nsxlib/crystal/Peak3D.h>
-#include <nsxlib/crystal/RFactor.h>
+#include <nsxlib/statistics/RFactor.h>
 #include <nsxlib/crystal/SpaceGroup.h>
 #include <nsxlib/crystal/SpaceGroupSymbols.h>
 #include <nsxlib/crystal/UnitCell.h>
@@ -104,7 +104,7 @@ void SpaceGroupDialog::evaluateSpaceGroups()
 
     _groups.clear();
 
-    qDebug() << "Evaluating space groups based on " << hkls.size() << " peaks";
+    qDebug() << "Evaluating " << symbols.size() << " space groups based on " << hkls.size() << " peaks";
 
     for (auto& symbol: symbols) {
 

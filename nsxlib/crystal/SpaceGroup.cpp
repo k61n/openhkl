@@ -283,6 +283,14 @@ bool SpaceGroup::isEquivalent(const Eigen::Vector3d& a, const Eigen::Vector3d& b
     const auto& elements = getGroupElements();
     const double eps = 1e-6;
 
+    // note: since rotation preserves the norm, we can reject early:
+    const double norm_a = a.squaredNorm();
+    const double norm_b = b.squaredNorm();
+
+    if (std::abs(norm_a-norm_b) > eps) {
+        return false;
+    }
+
     for (auto&& element : elements) {
         // todo(jonathan): check that this edit is correct!
         const auto rotation = element.getRotationPart();

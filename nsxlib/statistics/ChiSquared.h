@@ -2,7 +2,8 @@
  * nsxtool : Neutron Single Crystal analysis toolkit
  ------------------------------------------------------------------------------------------
  Copyright (C)
- 2012- Laurent C. Chapon Eric Pellegrini, Jonathan Fisher
+ 2017- Laurent C. Chapon, Eric Pellegrini, Jonathan Fisher
+
  Institut Laue-Langevin
  BP 156
  6, rue Jules Horowitz
@@ -10,6 +11,10 @@
  France
  chapon[at]ill.fr
  pellegrini[at]ill.fr
+
+ Forschungszentrum Juelich GmbH
+ 52425 Juelich
+ Germany
  j.fisher[at]fz-juelich.de
 
  This library is free software; you can redistribute it and/or
@@ -28,29 +33,23 @@
  *
  */
 
-#ifndef NSXLIB_PEAKCALC_H
-#define NSXLIB_PEAKCALC_H
-
-#include "../crystal/CrystalTypes.h"
-#include "../geometry/GeometryTypes.h"
-#include "../crystal/Intensity.h"
+#ifndef NSXLIB_CHISQUARED_H
+#define NSXLIB_CHISQUARED_H
 
 namespace nsx {
 
-struct PeakCalc {
+//! Class to handle chi-squared distribution
+class ChiSquared {
+public:
+    ChiSquared(double k);
 
-    PeakCalc(const Peak3D& peak);
-    PeakCalc();
-    PeakCalc(int h, int k, int l, double x,double y, double frame); 
-    ~PeakCalc() = default;
+    double pdf(double x) const;
+    double cdf(double x) const;
 
-    Intensity _intensity;
-    int _h,_k,_l;
-    double _x,_y,_frame;
-
-    sptrPeak3D averagePeaks(const Octree& tree, double distance, double min_axis=2.0);
+private:
+    double _k, _c;
 };
 
 } // end namespace nsx
 
-#endif // NSXLIB_PEAKCALC_H
+#endif // NSXLIB_CHISQUARED_H

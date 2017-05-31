@@ -507,7 +507,7 @@ std::vector<PeakCalc> DataSet::hasPeaks(const std::vector<Eigen::Vector3d>& hkls
 
         if (accept) {
             //peaks.emplace_back(PeakCalc(hkl[0],hkl[1],hkl[2],px,py,t));
-            peaks.emplace_back(hkl[0],hkl[1],hkl[2],px,py,t);
+            peaks.emplace_back(std::lround(hkl[0]),std::lround(hkl[1]),std::lround(hkl[2]),px,py,t);
         }
     }
     return peaks;

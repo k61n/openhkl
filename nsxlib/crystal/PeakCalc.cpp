@@ -47,9 +47,30 @@
 
 namespace nsx {
 
-PeakCalc::PeakCalc(double h,double k,double l, double x,double y, double frame):
-    _h(h),_k(k),_l(l),_x(x),_y(y),_frame(frame)
+PeakCalc::PeakCalc(int h, int k, int l, double x,double y, double frame):
+    _h(h),_k(k),_l(l),_x(x),_y(y),_frame(frame), _intensity()
 {
+}
+
+PeakCalc::PeakCalc(): _h(0), _k(0), _l(0), _x(0), _y(0), _frame(0), _intensity()
+{
+
+}
+
+PeakCalc::PeakCalc(const Peak3D& peak): _intensity()
+{
+    auto hkl = peak.getIntegerMillerIndices();
+    auto center = peak.getShape().getAABBCenter();
+
+    _h = hkl(0);
+    _k = hkl(1);
+    _l = hkl(2);
+
+    _x = center(0);
+    _y = center(1);
+    _frame = center(2);
+
+    _intensity = peak.getCorrectedIntensity();
 }
 
 sptrPeak3D PeakCalc::averagePeaks(const Octree& tree, double distance, double min_axis)

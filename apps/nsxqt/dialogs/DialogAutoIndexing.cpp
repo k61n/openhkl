@@ -149,7 +149,7 @@ void DialogAutoIndexing::buildSolutionsTable()
 
 void DialogAutoIndexing::selectSolution(int index)
 {
-    _unitCells[ui->unitCells->currentIndex()] = _solutions[index].first;
+    *_unitCells[ui->unitCells->currentIndex()] = *_solutions[index].first;
     QString solutionNumber = QString::number(index+1);
     QString selectedUnitCellName = ui->unitCells->currentText();
     QMessageBox::information(this, tr("NSXTool"),tr("Solution %1 set to %2 unit cell").arg(solutionNumber,selectedUnitCellName));

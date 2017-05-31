@@ -41,9 +41,13 @@
 #include "../crystal/CrystalTypes.h"
 #include "../crystal/Intensity.h"
 #include "../crystal/SpaceGroup.h"
+#include "../crystal/PeakCalc.h"
 
 namespace nsx {
+    class Peak3D;
+    using sptrPeak3D = std::shared_ptr<Peak3D>;
 
+//! Class to handle calculation of merged data
 class MergedPeak {
 
 public:
@@ -52,26 +56,37 @@ public:
     ~MergedPeak() = default;
 
     bool addPeak(const sptrPeak3D& peak);
+    bool addPeak(const PeakCalc& peak);
+
     Eigen::Vector3i getIndex() const;
-    const Intensity& getIntensity() const;
-    double chiSquared() const;
+    Intensity getIntensity() const;
+
     size_t redundancy() const;
     double std() const;
+    double chi2() const;
+    double pValue() const;
 
-    double d() const;
-    const PeakList& getPeaks() const;
+    const std::vector<PeakCalc>& getPeaks() const;
+
+    //! split the merged peak randomly into two, for calculation of CC
+    std::pair<MergedPeak, MergedPeak> split() const;
 
 private:
     void determineRepresentativeHKL();
     void update();
-
+    
     Eigen::Vector3i _hkl;
-    Intensity _intensity;
-    double _chiSquared, _std, _d;
-    PeakList _peaks;
+    Intensity _intensitySum;
+    double _squaredIntensitySum;
+    std::vector<PeakCalc> _peaks;
     SpaceGroup _grp;
     bool _friedel;
 };
+
+#ifndef SWIG
+bool operator<(const MergedPeak& p, const MergedPeak& q);
+#endif
+
 
 } // end namespace nsx
 

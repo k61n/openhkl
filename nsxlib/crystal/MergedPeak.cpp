@@ -24,7 +24,7 @@
 
  This library is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNUctest
  Lesser General Public License for more details.
 
  You should have received a copy of the GNU Lesser General Public
@@ -35,22 +35,29 @@
 
 #include <cmath>
 #include <stdexcept>
+#include <algorithm>
+#include <cstdlib>
 
-#include "../crystal/MergedPeak.h"
-#include "../crystal/Peak3D.h"
+#include "MergedPeak.h"
+#include "Peak3D.h"
+#include "../statistics/ChiSquared.h"
 
 namespace nsx {
 
 MergedPeak::MergedPeak(const SpaceGroup& grp, bool friedel):
-    _hkl(), _intensity(0.0, 0.0), _chiSquared(0.0), _std(0.0), _peaks(), _grp(grp), _friedel(friedel), _d(0.0)
+    _hkl(), _intensitySum(0.0, 0.0), _peaks(), _grp(grp), _friedel(friedel), _squaredIntensitySum(0.0)
 {
 }
 
-
 bool MergedPeak::addPeak(const sptrPeak3D& peak)
 {
+    return addPeak(PeakCalc(*peak));
+}
+
+bool MergedPeak::addPeak(const PeakCalc& peak)
+{
     auto hkl1 = _hkl.cast<double>();
-    auto hkl2 = peak->getIntegerMillerIndices().cast<double>();
+    auto hkl2 = Eigen::Vector3d(peak._h, peak._k, peak._l);
     // peak is not equivalent to one already on the list
     if (!_peaks.empty() && !_grp.isEquivalent(hkl1, hkl2, _friedel)) {
         return false;
@@ -59,9 +66,16 @@ bool MergedPeak::addPeak(const sptrPeak3D& peak)
     // add peak to list
     _peaks.emplace_back(peak);
 
-    // this was the first peak, so we have to update _hkl
-    _hkl = peak->getIntegerMillerIndices();
-    update();
+    // if this was the first peak, we have to update _hkl
+    if (_peaks.size() == 1) {
+        for (auto i = 0; i < 3; ++i) {
+            _hkl(i) = hkl2(i);
+        }
+        determineRepresentativeHKL();
+    }
+
+    _intensitySum += peak._intensity;
+    _squaredIntensitySum += std::pow(peak._intensity.getValue(), 2);
 
     return true;
 }
@@ -71,14 +85,9 @@ Eigen::Vector3i MergedPeak::getIndex() const
     return _hkl;
 }
 
-const Intensity &MergedPeak::getIntensity() const
+Intensity MergedPeak::getIntensity() const
 {
-    return _intensity;
-}
-
-double MergedPeak::chiSquared() const
-{
-    return _chiSquared;
+    return _intensitySum / _peaks.size();
 }
 
 size_t MergedPeak::redundancy() const
@@ -89,46 +98,33 @@ size_t MergedPeak::redundancy() const
 
 double MergedPeak::std() const
 {
-    return _std;
+    const double n = _peaks.size();
+    const double I = getIntensity().getValue() / _peaks.size();
+    const double var = (_squaredIntensitySum - n*I*I) / (n-1);
+    return std::sqrt(var);
 }
 
 void MergedPeak::determineRepresentativeHKL()
 {
     Eigen::Vector3d best_hkl = _hkl.cast<double>();
-
     std::vector<Eigen::Vector3d> equivs;
 
     for (auto&& g: _grp.getGroupElements()) {
         equivs.emplace_back(g.getRotationPart()*best_hkl);
-    }
 
-    auto num_nneg = [](const Eigen::Vector3d& v) -> int {
-        int neg = 0;
-
-        for (int i = 0; i < 3; ++i) {
-            if (v(i) >= 0) {
-                ++neg;
-            }
+        if (_friedel) {
+            equivs.emplace_back(-g.getRotationPart()*best_hkl);
         }
-        return neg;
-    };
+    }
 
     auto compare_fn = [=](const Eigen::Vector3d& a, const Eigen::Vector3d& b) -> bool {
         const double eps = 1e-5;
-        auto neg_a = num_nneg(a);
-        auto neg_b = num_nneg(b);
-
-        if (neg_a != neg_b) {
-            return neg_a > neg_b;
+        for (auto i = 0; i < 3; ++i) {
+            if (std::abs(a(i)-b(i)) > eps) {
+                return a(i) > b(i);
+            }
         }
-
-        if (std::abs(a(0)-b(0)) > eps) {
-            return a(0) > b(0);
-        }
-        if (std::abs(a(1)-b(1)) > eps) {
-            return a(1) > b(1);
-        }
-        return a(2) > b(2);
+        return false;
     };
 
     best_hkl = *std::min_element(equivs.begin(), equivs.end(), compare_fn);
@@ -138,51 +134,77 @@ void MergedPeak::determineRepresentativeHKL()
     }
 }
 
-void MergedPeak::update()
-{
-    determineRepresentativeHKL();
-
-    // update average intensity and error
-    _intensity = Intensity(0.0, 0.0);
-
-    double variance = 0.0;
-
-    for (auto&& peak: _peaks) {
-        _intensity += peak->getCorrectedIntensity();
-    }
-
-    _intensity = _intensity / _peaks.size();
-
-    // update chi2
-    // TODO(jonathan): check that this is correct!
-    _chiSquared = 0.0;
-    _std = 0.0;
-    _d = 0.0;
-
-    for (auto&& peak: _peaks) {
-        const double difference = peak->getCorrectedIntensity().getValue() - _intensity.getValue();
-        const double res2 = std::pow(difference, 2);
-        _chiSquared += res2 / _intensity.getValue();
-        _std += res2;
-        _d += 1.0 / peak->getQ().norm();
-    }
-
-    _d /= _peaks.size();
-
-    if (_peaks.size()>1) {
-        _std /= (_peaks.size()-1);
-    }
-    _std = std::sqrt(_std);
-}
-
-double MergedPeak::d() const
-{
-    return _d;
-}
-
-const PeakList& MergedPeak::getPeaks() const
+const std::vector<PeakCalc>& MergedPeak::getPeaks() const
 {
     return _peaks;
+}
+
+std::pair<MergedPeak, MergedPeak> MergedPeak::split() const
+{
+    // make copy of peak list
+    std::vector<size_t> random_idx(_peaks.size());
+
+    for (unsigned int j = 0; j < _peaks.size(); ++j) {
+        random_idx[j] = j;
+    }
+
+    // randomly reorder
+    std::random_shuffle(random_idx.begin(), random_idx.end());
+
+    unsigned int parity = std::rand()%2;
+
+    MergedPeak p1(_grp, _friedel), p2(_grp, _friedel);
+
+    for (unsigned int i = 0; i < _peaks.size(); ++i) {
+        auto idx = random_idx[i];
+        auto p = _peaks[idx];
+
+        if ((i%2) == parity) {
+            p1.addPeak(p);
+        }
+        else {
+            p2.addPeak(p);
+        }
+    }
+
+    return std::make_pair(p1, p2);
+}
+
+
+bool operator<(const MergedPeak& p, const MergedPeak& q)
+{
+    const Eigen::Vector3i& a = p.getIndex();
+    const Eigen::Vector3i& b = q.getIndex();
+
+    if (a(0) != b(0)) {
+        return a(0) < b(0);
+    }
+    if (a(1) != b(1)) {
+        return a(1) < b(1);
+    }
+    return a(2) < b(2);
+}
+
+double MergedPeak::chi2() const
+{
+    const double Iave = getIntensity().getValue();
+    double chi_sq = 0.0;
+
+    for (auto&& peak: _peaks) {
+        auto&& I = peak._intensity; 
+        const double z = (I.getValue() - Iave) / I.getSigma();
+        chi_sq += z*z;
+    }
+    return chi_sq;
+}
+
+double MergedPeak::pValue() const
+{
+    // todo: k or k-1?? need to check
+    const double k = redundancy();
+    const double x = chi2();
+    ChiSquared chi(k);
+    return chi.cdf(x);
 }
 
 } // end namespace nsx

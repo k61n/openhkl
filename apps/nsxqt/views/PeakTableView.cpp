@@ -56,6 +56,8 @@
 #include "models/CollectedPeaksModel.h"
 #include "PeakTableView.h"
 
+#include <QDebug>
+
 PeakTableView::PeakTableView(QWidget *parent)
 : QTableView(parent),
   _normalized(false),
@@ -439,8 +441,10 @@ void PeakTableView::updateUnitCell(const nsx::sptrUnitCell& unitCell)
 {
     QModelIndexList selectedPeaks = selectionModel()->selectedRows();
     if (selectedPeaks.empty()) {
+        qDebug() << "updateUnitCell(): no peaks selected!";
         return;
     }
+    qDebug() << "updating unit cell";
     auto peakModel = dynamic_cast<CollectedPeaksModel*>(model());
     peakModel->setUnitCell(unitCell, selectedPeaks);
 }

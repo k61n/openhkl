@@ -65,7 +65,7 @@ sptrUnitCell Sample::addUnitCell(std::shared_ptr<UnitCell> cell)
         cell = std::shared_ptr<UnitCell>(new UnitCell());
     }
     _cells.push_back(cell);
-    return _cells.back();
+    return cell;
 }
 
 sptrUnitCell Sample::getUnitCell(int i)

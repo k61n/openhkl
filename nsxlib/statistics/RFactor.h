@@ -2,7 +2,7 @@
  * nsxtool : Neutron Single Crystal analysis toolkit
  ------------------------------------------------------------------------------------------
  Copyright (C)
- 2012- Laurent C. Chapon Eric Pellegrini, Jonathan Fisher
+ 2016- Laurent C. Chapon, Eric Pellegrini, Jonathan Fisher
  Institut Laue-Langevin
  BP 156
  6, rue Jules Horowitz
@@ -28,29 +28,34 @@
  *
  */
 
-#ifndef NSXLIB_PEAKCALC_H
-#define NSXLIB_PEAKCALC_H
+#ifndef NSXLIB_RFACTOR_H
+#define NSXLIB_RFACTOR_H
+
+#include <vector>
+#include <set>
 
 #include "../crystal/CrystalTypes.h"
-#include "../geometry/GeometryTypes.h"
-#include "../crystal/Intensity.h"
 
 namespace nsx {
 
-struct PeakCalc {
+    class MergedData;
 
-    PeakCalc(const Peak3D& peak);
-    PeakCalc();
-    PeakCalc(int h, int k, int l, double x,double y, double frame); 
-    ~PeakCalc() = default;
+class RFactor {
+public:
+    RFactor(): _Rmerge(0.0), _Rmeas(0.0), _Rpim(0.0) {}
+    ~RFactor() {}
 
-    Intensity _intensity;
-    int _h,_k,_l;
-    double _x,_y,_frame;
+    void calculate(const MergedData& data);
 
-    sptrPeak3D averagePeaks(const Octree& tree, double distance, double min_axis=2.0);
+    double Rmerge() {return _Rmerge;}
+    double Rmeas() {return _Rmeas;}
+    double Rpim() {return _Rpim;}
+
+
+private:
+    double _Rmerge, _Rmeas, _Rpim;
 };
 
 } // end namespace nsx
 
-#endif // NSXLIB_PEAKCALC_H
+#endif // NSXLIB_RFACTOR_H

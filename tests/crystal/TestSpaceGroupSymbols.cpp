@@ -3,6 +3,7 @@
 
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 #include <boost/test/unit_test.hpp>
 
@@ -11,7 +12,12 @@
 
 BOOST_AUTO_TEST_CASE(Test_SpaceGroupSymbols)
 {
-    auto table=nsx::SpaceGroupSymbols::Instance();
+    nsx::SpaceGroupSymbols* spaceGroupSymbols = nsx::SpaceGroupSymbols::Instance();
+    std::vector<std::string> symbols = spaceGroupSymbols->getAllSymbols();
+
+    BOOST_CHECK_EQUAL(symbols.size(), 230);
+
+    auto table= nsx::SpaceGroupSymbols::Instance();
     std::string generators;
     bool test=table->getGenerators("P n m a",generators);
 
@@ -19,7 +25,6 @@ BOOST_AUTO_TEST_CASE(Test_SpaceGroupSymbols)
     // Check that string generator strings are OK s
     BOOST_CHECK(generators.compare(" -x+1/2,-y,z+1/2; -x,y+1/2,-z; -x,-y,-z")==0);
 
-    auto symbols = table->getAllSymbols();
 
     for (auto&& symbol: symbols) {
         try {

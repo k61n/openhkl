@@ -2,7 +2,8 @@
  * nsxtool : Neutron Single Crystal analysis toolkit
  ------------------------------------------------------------------------------------------
  Copyright (C)
- 2012- Laurent C. Chapon Eric Pellegrini, Jonathan Fisher
+ 2016- Laurent C. Chapon, Eric Pellegrini, Jonathan Fisher
+
  Institut Laue-Langevin
  BP 156
  6, rue Jules Horowitz
@@ -10,6 +11,10 @@
  France
  chapon[at]ill.fr
  pellegrini[at]ill.fr
+
+ Forschungszentrum Juelich GmbH
+ 52425 Juelich
+ Germany
  j.fisher[at]fz-juelich.de
 
  This library is free software; you can redistribute it and/or
@@ -28,29 +33,31 @@
  *
  */
 
-#ifndef NSXLIB_PEAKCALC_H
-#define NSXLIB_PEAKCALC_H
+#ifndef NSXLIB_CC_H
+#define NSXLIB_CC_H
 
-#include "../crystal/CrystalTypes.h"
-#include "../geometry/GeometryTypes.h"
-#include "../crystal/Intensity.h"
+#include "../crystal/MergedPeak.h"
 
 namespace nsx {
+    class MergedData;
 
-struct PeakCalc {
+//! Class to handle calculation of correlation coefficients (CChalf and CC*)
+class CC {
+public:
+    CC();
+    
+    void calculate(const std::vector<MergedPeak>& peaks);
+    void calculate(const MergedData& data);
 
-    PeakCalc(const Peak3D& peak);
-    PeakCalc();
-    PeakCalc(int h, int k, int l, double x,double y, double frame); 
-    ~PeakCalc() = default;
-
-    Intensity _intensity;
-    int _h,_k,_l;
-    double _x,_y,_frame;
-
-    sptrPeak3D averagePeaks(const Octree& tree, double distance, double min_axis=2.0);
+    double CChalf() const;
+    double CCstar() const;
+    unsigned int nPeaks() const;
+private:
+    double _CChalf;
+    double _CCstar;
+    unsigned int _nPeaks;
 };
 
 } // end namespace nsx
 
-#endif // NSXLIB_PEAKCALC_H
+#endif // NSXLIB_CC_H
