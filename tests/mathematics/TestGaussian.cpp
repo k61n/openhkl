@@ -5,14 +5,11 @@
 
 #include <nsxlib/mathematics/Gaussian.h>
 
-using namespace std;
-using namespace nsx;
-
 const double eps = 1e-10;
 
 int run_test()
 {
-    Gaussian g1(2.0, 1.0, 3.0);
+    nsx::Gaussian g1(2.0, 1.0, 3.0);
 
     BOOST_CHECK_CLOSE(g1.evaluate(1.0), 4.0, eps);
 

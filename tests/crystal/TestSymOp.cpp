@@ -8,39 +8,37 @@
 
 #include <nsxlib/crystal/SymOp.h>
 
-using namespace nsx;
-
 BOOST_AUTO_TEST_CASE(Test_SymOp)
 {
 
-    SymOp op1("x,y,z");
+    nsx::SymOp op1("x,y,z");
     BOOST_CHECK_EQUAL(op1.getAxisOrder(),1);
 
-    SymOp op2("-x+1/2,y,-z");
+    nsx::SymOp op2("-x+1/2,y,-z");
     BOOST_CHECK_EQUAL(op2.getAxisOrder(),2);
 
-    SymOp op3("y,-x-y,z");
+    nsx::SymOp op3("y,-x-y,z");
     BOOST_CHECK_EQUAL(op3.getAxisOrder(),3);
 
-    SymOp op4("y,-x,z");
+    nsx::SymOp op4("y,-x,z");
     BOOST_CHECK_EQUAL(op4.getAxisOrder(),4);
 
-    SymOp op6("x+y,-x,z");
+    nsx::SymOp op6("x+y,-x,z");
     BOOST_CHECK_EQUAL(op6.getAxisOrder(),6);
 
-    SymOp op7("-x,y,z");
+    nsx::SymOp op7("-x,y,z");
     BOOST_CHECK_EQUAL(op7.getAxisOrder(),-2);
 
-    SymOp op8("-y,x+y,-z");
+    nsx::SymOp op8("-y,x+y,-z");
     BOOST_CHECK_EQUAL(op8.getAxisOrder(),-3);
 
-    SymOp op9("-y,x,-z");
+    nsx::SymOp op9("-y,x,-z");
     BOOST_CHECK_EQUAL(op9.getAxisOrder(),-4);
 
-    SymOp op10("-x-y,x,-z");
+    nsx::SymOp op10("-x-y,x,-z");
     BOOST_CHECK_EQUAL(op10.getAxisOrder(),-6);
 
-    SymOp op11("x-y,x+2y,-3z");
+    nsx::SymOp op11("x-y,x+2y,-3z");
     BOOST_CHECK_THROW(op11.getAxisOrder(),std::runtime_error);
 
 }

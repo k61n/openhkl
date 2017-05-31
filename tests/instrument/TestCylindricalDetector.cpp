@@ -11,19 +11,17 @@
 #include <nsxlib/instrument/Gonio.h>
 #include <nsxlib/utils/Units.h>
 
-using namespace nsx;
-
 const double tolerance=1e-3;
 
 BOOST_AUTO_TEST_CASE(Test_Cylindrical_Detector)
 {
-    CylindricalDetector d("D19-detector");
-    d.setDistance(764*mm);
-    d.setAngularWidth(120.0*deg);
-    d.setHeight(40.0*cm);
+    nsx::CylindricalDetector d("D19-detector");
+    d.setDistance(764*nsx::mm);
+    d.setAngularWidth(120.0*nsx::deg);
+    d.setHeight(40.0*nsx::cm);
     d.setNPixels(640,256);
 
-    DetectorEvent ev1(d, 319.5, 127.5);
+    nsx::DetectorEvent ev1(d, 319.5, 127.5);
 
     // This should be the center of the detector at rest at (0,0.764,0)
     Eigen::Vector3d center=ev1.getPixelPosition();
@@ -39,22 +37,22 @@ BOOST_AUTO_TEST_CASE(Test_Cylindrical_Detector)
     BOOST_CHECK_SMALL(th2,tolerance);
 
     // Attach a gonio
-    std::shared_ptr<Gonio> g(new Gonio("gamma-arm"));
-    g->addRotation("gamma",Eigen::Vector3d(0,0,1),RotAxis::CW);
+    nsx::sptrGonio g(new nsx::Gonio("gamma-arm"));
+    g->addRotation("gamma",Eigen::Vector3d(0,0,1),nsx::RotAxis::CW);
     d.setGonio(g);
     // Put detector at 90 deg, event should point along x
 
-    DetectorEvent ev2(d, 319.5, 127.5, {90.0*deg});
+    nsx::DetectorEvent ev2(d, 319.5, 127.5, {90.0*nsx::deg});
     center=ev2.getPixelPosition();
     BOOST_CHECK_CLOSE(center[0],0.764,tolerance);
     BOOST_CHECK_SMALL(center[1],0.001);
     BOOST_CHECK_SMALL(center[2],0.001);
     ev2.getGammaNu(gamma,nu);
-    BOOST_CHECK_CLOSE(gamma,90*deg,tolerance);
+    BOOST_CHECK_CLOSE(gamma,90*nsx::deg,tolerance);
     BOOST_CHECK_SMALL(nu,0.001);
 
     th2 = ev2.get2Theta();
-    BOOST_CHECK_CLOSE(th2,90.0*deg,tolerance);
+    BOOST_CHECK_CLOSE(th2,90.0*nsx::deg,tolerance);
     // Scattering in the center of the detector with wavelength 2.0
     // should get kf = (0.5,0,0)
     Eigen::Vector3d kf=ev2.getKf(2.0);
@@ -70,15 +68,15 @@ BOOST_AUTO_TEST_CASE(Test_Cylindrical_Detector)
     // Check that detector receive an scattering vector at the right position
     double px, py,t;
     Eigen::Vector3d from(0,0,0);
-    d.receiveKf(px,py,kf,from,t,{90.0*deg});
+    d.receiveKf(px,py,kf,from,t,{90.0*nsx::deg});
     BOOST_CHECK_CLOSE(px,319.5,tolerance);
     BOOST_CHECK_CLOSE(py,127.5,tolerance);
 
-    d.receiveKf(px,py,Eigen::Vector3d(0.0,0.764,0.10),from,t,{0.0*deg});
+    d.receiveKf(px,py,Eigen::Vector3d(0.0,0.764,0.10),from,t,{0.0*nsx::deg});
     BOOST_CHECK_CLOSE(px,319.5,tolerance);
     BOOST_CHECK_CLOSE(py,191.25,tolerance);
 
-    d.receiveKf(px,py,Eigen::Vector3d(1,0,0),from,t,{90.0*deg});
+    d.receiveKf(px,py,Eigen::Vector3d(1,0,0),from,t,{90.0*nsx::deg});
     BOOST_CHECK_CLOSE(px,319.5,tolerance);
     BOOST_CHECK_CLOSE(py,127.5,tolerance);
 }

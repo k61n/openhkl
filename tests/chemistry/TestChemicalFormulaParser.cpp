@@ -10,9 +10,8 @@
 #include <boost/spirit/include/phoenix_fusion.hpp>
 #include <boost/test/unit_test.hpp>
 
+#include <nsxlib/chemistry/ChemistryTypes.h>
 #include <nsxlib/chemistry/ChemicalFormulaParser.h>
-
-using namespace nsx;
 
 const double tolerance=1.0e-9;
 
@@ -22,9 +21,9 @@ BOOST_AUTO_TEST_CASE(Test_ChemicalFormula_Parser)
     using boost::spirit::qi::blank;
     using boost::spirit::qi::phrase_parse;
 
-    isotopeContents isotopes;
+    nsx::isotopeContents isotopes;
 
-    ChemicalFormulaParser<std::string::iterator> parser;
+    nsx::ChemicalFormulaParser<std::string::iterator> parser;
 
     // Check pure isotopes
 

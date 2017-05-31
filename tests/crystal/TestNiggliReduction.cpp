@@ -5,11 +5,9 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/crystal/NiggliReduction.h>
+#include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/utils/Units.h>
-
-using namespace nsx;
 
 const double tolerance=1e-6;
 
@@ -19,10 +17,10 @@ BOOST_AUTO_TEST_CASE(Test_Niggli_Reduction)
     // o-----o-----o
     // |     |     |
     // o-----o-----o
-    UnitCell cell(2.0,sqrt(17.0),3.0,90*deg,90*deg,std::atan(1.0/4));
+    nsx::UnitCell cell(2.0,sqrt(17.0),3.0,90*nsx::deg,90*nsx::deg,std::atan(1.0/4));
     const Eigen::Matrix3d& g=cell.getMetricTensor();
 
-    NiggliReduction n(g,1e-3);
+    nsx::NiggliReduction n(g,1e-3);
     Eigen::Matrix3d gprime,P;
     n.reduce(gprime,P);
 
@@ -31,7 +29,7 @@ BOOST_AUTO_TEST_CASE(Test_Niggli_Reduction)
     BOOST_CHECK_CLOSE(cell.getA(),1.0,tolerance);
     BOOST_CHECK_CLOSE(cell.getB(),2.0,tolerance);
     BOOST_CHECK_CLOSE(cell.getC(),3.0,tolerance);
-    BOOST_CHECK_CLOSE(cell.getAlpha(),90*deg,tolerance);
-    BOOST_CHECK_CLOSE(cell.getBeta(),90*deg,tolerance);
-    BOOST_CHECK_CLOSE(cell.getGamma(),90*deg,tolerance);
+    BOOST_CHECK_CLOSE(cell.getAlpha(),90*nsx::deg,tolerance);
+    BOOST_CHECK_CLOSE(cell.getBeta(),90*nsx::deg,tolerance);
+    BOOST_CHECK_CLOSE(cell.getGamma(),90*nsx::deg,tolerance);
 }

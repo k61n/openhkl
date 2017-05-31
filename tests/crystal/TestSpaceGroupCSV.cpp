@@ -12,13 +12,10 @@
 #include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/utils/CSV.h>
 
-using namespace std;
-using namespace nsx;
-
 int run_test()
 {
-    ifstream csv_file;
-    SpaceGroupSymbols* table = SpaceGroupSymbols::Instance();
+    std::ifstream csv_file;
+    nsx::SpaceGroupSymbols* table = nsx::SpaceGroupSymbols::Instance();
     int num_rows = 0;
 
     std::map<std::string, int> counts;
@@ -28,7 +25,7 @@ int run_test()
     for (auto&& symbol: symbols)
         counts[symbol] = 0;
 
-    CSV csv_reader('\t', '#');
+    nsx::CSV csv_reader('\t', '#');
     std::vector<std::string> unrecognized_symbols;
 
     csv_file.open("crystallography.tsv", std::ifstream::in);
@@ -47,7 +44,7 @@ int run_test()
 
         BOOST_CHECK(row.size() == 8);
 
-        string sg, sgHall;
+        std::string sg, sgHall;
 
         sg = table->getReducedSymbol(row[0]);
         sgHall = row[1];

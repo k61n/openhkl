@@ -9,9 +9,7 @@
 #include <nsxlib/instrument/Axis.h>
 #include <nsxlib/utils/Units.h>
 
-using namespace nsx;
-
-class TestAxis: public Axis
+class TestAxis: public nsx::Axis
 {
 public:
     TestAxis(const std::string& label, bool physical);

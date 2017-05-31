@@ -19,25 +19,22 @@
 #include <nsxlib/utils/CSV.h>
 #include <nsxlib/utils/Units.h>
 
-using namespace std;
-using namespace nsx;
-
 const double niggli_tolerance = 1e-9;
 const double gruber_tolerance = 1e-5;
 
 int run_test()
 {
     // using vectord = vector<double>;
-    ofstream outfile;
+    std::ofstream outfile;
 
-    outfile.open("output.tsv", fstream::out);
+    outfile.open("output.tsv", std::fstream::out);
 
-    vector<int> failures(45, 0);
-    vector<int> counts(45, 0);
+    std::vector<int> failures(45, 0);
+    std::vector<int> counts(45, 0);
 
-    ifstream database;
-    database.open("crystallography.tsv", fstream::in);
-    CSV csv_reader('\t', '#');
+    std::ifstream database;
+    database.open("crystallography.tsv", std::fstream::in);
+    nsx::CSV csv_reader('\t', '#');
 
     BOOST_CHECK(database.is_open());
 
@@ -46,7 +43,7 @@ int run_test()
     total = 0;
     correct = 0;
 
-    string symbol;
+    std::string symbol;
     double a, b, c, alpha, beta, gamma;
 
     // read header row
@@ -54,7 +51,7 @@ int run_test()
 
     while ( !database.eof()) {
 
-        vector<string> row =  csv_reader.getRow(database);
+        std::vector<std::string> row =  csv_reader.getRow(database);
 
         if ( row.size() < 8)
             continue;
@@ -63,14 +60,14 @@ int run_test()
         a = atof(row[2].c_str());
         b = atof(row[3].c_str());
         c = atof(row[4].c_str());
-        alpha = atof(row[5].c_str()) * deg;
-        beta = atof(row[6].c_str()) * deg;
-        gamma = atof(row[7].c_str()) * deg;
+        alpha = atof(row[5].c_str()) * nsx::deg;
+        beta = atof(row[6].c_str()) * nsx::deg;
+        gamma = atof(row[7].c_str()) * nsx::deg;
 
         std::string bravais;
 
         try {
-            bravais = SpaceGroup(symbol).getBravaisTypeSymbol();
+            bravais = nsx::SpaceGroup(symbol).getBravaisTypeSymbol();
         }
         catch(...) {
             continue; // unknown space group
@@ -78,24 +75,24 @@ int run_test()
 
         ++total;
 
-        UnitCell niggliCell(a, b, c, alpha, beta, gamma);
-        UnitCell gruberCell(a, b, c, alpha, beta, gamma);
-        UnitCell cell;
+        nsx::UnitCell niggliCell(a, b, c, alpha, beta, gamma);
+        nsx::UnitCell gruberCell(a, b, c, alpha, beta, gamma);
+        nsx::UnitCell cell;
 
         cell.setParams(a, b, c, alpha, beta, gamma);
 
         // perform reduction using NiggliReduction class
         Eigen::Matrix3d niggli_g, niggli_P;
-        NiggliReduction niggli(niggliCell.getMetricTensor(), niggli_tolerance);
+        nsx::NiggliReduction niggli(niggliCell.getMetricTensor(), niggli_tolerance);
         niggli.reduce(niggli_g, niggli_P);
         niggliCell.transform(niggli_P);
         gruberCell.transform(niggli_P);
 
         // perform reduction using GruberReduction class
         Eigen::Matrix3d gruber_g, gruber_P;
-        LatticeCentring centering;
-        BravaisType bravaisType;
-        GruberReduction gruber(gruberCell.getMetricTensor(), gruber_tolerance);
+        nsx::LatticeCentring centering;
+        nsx::BravaisType bravaisType;
+        nsx::GruberReduction gruber(gruberCell.getMetricTensor(), gruber_tolerance);
 
         int condition;
 

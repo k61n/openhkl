@@ -11,12 +11,9 @@
 
 #include <nsxlib/mathematics/Minimizer.h>
 
-using namespace nsx;
-using namespace std;
-
 int run_test()
 {
-    std::unique_ptr<Minimizer> m_gsl;
+    std::unique_ptr<nsx::Minimizer> m_gsl;
 
     Eigen::VectorXd x_initial, x_gsl, y, wt;
 
@@ -57,7 +54,7 @@ int run_test()
         return 0;
     };
 
-    m_gsl = std::unique_ptr<Minimizer>(new Minimizer());
+    m_gsl = std::unique_ptr<nsx::Minimizer>(new nsx::Minimizer());
 
     m_gsl->initialize(nparams, nvalues);
     m_gsl->setParams(x_initial);

@@ -8,11 +8,9 @@
 #include <nsxlib/utils/UtilsTypes.h>
 #include <nsxlib/utils/LatticeConstraintParser.h>
 
-using namespace nsx;
-
 BOOST_AUTO_TEST_CASE(Test_LatticeConstraintParser)
 {
-    LatticeConstraintParser<std::string::iterator> parser;
+    nsx::LatticeConstraintParser<std::string::iterator> parser;
 
     nsx::ConstraintSet constraints;
 

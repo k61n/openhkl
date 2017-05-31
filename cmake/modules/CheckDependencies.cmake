@@ -108,7 +108,7 @@ if (BUILD_GSL)
 
     set (GSL_LIBRARIES gsl gslcblas)
 else()
-    find_package(GSL 2.0 REQUIRED)
+    find_package(GSL 2.3 REQUIRED)
     include_directories(SYSTEM ${GSL_INCLUDE_DIR})
 
     set(temp_string ${GSL_VERSION})

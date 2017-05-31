@@ -1,7 +1,5 @@
 stages:
   - ci
-  - build
-  - test
   - deploy
 
 # trusty pipeline
@@ -18,54 +16,22 @@ ci:trusty:
   tags:
     - ubuntu14.04
 
-build:trusty:
-  stage: build
-  script:
-    - ./build_server/debian/run_build.sh
-  allow_failure: false
-  only:
-    - triggers
-    - tags
-    - /^release/.*$/
-    - /^hotfix/.*$/
-    - develop
-  artifacts:
-    paths:
-    - build
-    expire_in: 1 day
-  tags:
-    - ubuntu14.04
-
-test:trusty:
-  stage: test
-  script:
-    - ./build_server/debian/run_tests.sh
-  allow_failure: false
-  only:
-    - triggers
-    - tags
-    - /^release/.*$/
-    - /^hotfix/.*$/
-    - develop
-  dependencies:
-    - build:trusty
-  tags:
-    - ubuntu14.04
-
 deploy:trusty:
   stage: deploy
   script:
+    - ./build_server/debian/run_build.sh
+    - ./build_server/debian/run_tests.sh
     - ./build_server/debian/run_deploy.sh
+  allow_failure: false
   only:
     - triggers
     - tags
+    - /^release/.*$/
+    - /^hotfix/.*$/
     - develop
-  when: on_success
-  dependencies:
-    - build:trusty
   artifacts:
     paths:
-    - nsxtool*deb
+    - ${CI_PROJECT_DIR}/build/nsxtool*deb
   tags:
     - ubuntu14.04
 
@@ -83,51 +49,19 @@ ci:osx:
   tags:
     - mac
 
-build:osx:
-  stage: build
-  script:
-    - ./build_server/osx/run_build.sh
-  allow_failure: false
-  only:
-    - triggers
-    - tags
-    - /^release/.*$/
-    - /^hotfix/.*$/
-    - develop
-  artifacts:
-    paths:
-    - build
-    expire_in: 1 day
-  tags:
-    - mac
-
-test:osx:
-  stage: test
-  script:
-    - ./build_server/osx/run_tests.sh
-  allow_failure: false
-  only:
-    - triggers
-    - tags
-    - /^release/.*$/
-    - /^hotfix/.*$/
-    - develop
-  dependencies:
-    - build:osx
-  tags:
-    - mac
-
 deploy:osx:
   stage: deploy
   script:
+    - ./build_server/osx/run_build.sh
+    - ./build_server/osx/run_tests.sh
     - ./build_server/osx/run_deploy.sh
+  allow_failure: false
   only:
     - triggers
     - tags
+    - /^release/.*$/
+    - /^hotfix/.*$/
     - develop
-  when: on_success
-  dependencies:
-    - build:osx
   artifacts:
     paths:
     - ${CI_PROJECT_DIR}/build/qmake-build/nsxtool*dmg
@@ -148,51 +82,19 @@ ci:windows:
   tags:
     - windows
 
-build:windows:
-  stage: build
-  script:
-    - .\\build_server\\windows\\run_build.bat
-  allow_failure: false
-  only:
-    - triggers
-    - tags
-    - /^release/.*$/
-    - /^hotfix/.*$/
-    - develop
-  artifacts:
-    paths:
-    - build
-    expire_in: 1 day
-  tags:
-    - windows
-
-test:windows:
-  stage: test
-  script:
-    - .\\build_server\\windows\\run_tests.bat
-  allow_failure: false
-  only:
-    - triggers
-    - tags
-    - /^release/.*$/
-    - /^hotfix/.*$/
-    - develop
-  dependencies:
-    - build:windows
-  tags:
-    - windows
-
 deploy:windows:
   stage: deploy
   script:
+    - .\\build_server\\windows\\run_build.bat
+    - .\\build_server\\windows\\run_tests.bat
     - .\\build_server\\windows\\run_deploy.bat
+  allow_failure: false
   only:
     - triggers
     - tags
+    - /^release/.*$/
+    - /^hotfix/.*$/
     - develop
-  when: on_success
-  dependencies:
-    - build:windows
   tags:
     - windows
 

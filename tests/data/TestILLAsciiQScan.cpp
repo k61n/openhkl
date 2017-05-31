@@ -1,7 +1,7 @@
 #define BOOST_TEST_MODULE "Test ILL Ascii QScan"
 #define BOOST_TEST_DYN_LINK
 
-#include <memory>
+#include <stdexcept>
 
 #include <boost/test/unit_test.hpp>
 
@@ -14,22 +14,20 @@
 #include <nsxlib/instrument/DiffractometerStore.h>
 #include <nsxlib/utils/Units.h>
 
-using namespace nsx;
-
 const double tolerance=1e-2;
 
 BOOST_AUTO_TEST_CASE(Test_ILL_Ascii_QScan)
 {
-    DataReaderFactory factory;
-    DiffractometerStore* ds;
-    std::shared_ptr<Diffractometer> diff;
-    std::shared_ptr<DataSet> dataf;
-    MetaData* meta;
+    nsx::DataReaderFactory factory;
+    nsx::DiffractometerStore* ds;
+    nsx::sptrDiffractometer diff;
+    nsx::sptrDataSet dataf;
+    nsx::MetaData* meta;
     Eigen::MatrixXi v;
 
     try {
-        ds = DiffractometerStore::Instance();
-        diff = std::shared_ptr<Diffractometer>(ds->buildDiffractometer("D9"));
+        ds = nsx::DiffractometerStore::Instance();
+        diff = nsx::sptrDiffractometer(ds->buildDiffractometer("D9"));
         dataf = factory.create("", "D9_QSCAN", diff);
         meta=dataf->getMetadata();
 
