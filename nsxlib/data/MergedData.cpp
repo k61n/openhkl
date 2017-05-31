@@ -55,7 +55,7 @@ bool MergedData::addPeak(const PeakCalc& peak)
     return true;
 }
 
-const std::set<nsx::MergedPeak> MergedData::getPeaks() const
+const MergedPeakSet& MergedData::getPeaks() const
 {
     return _peaks;
 }

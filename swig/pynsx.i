@@ -268,6 +268,11 @@ using sptrUnitCell = std::shared_ptr<nsx::UnitCell>;
 #include "data/DataSet.h"
 #include "data/PeakFinder.h"
 
+#include "data/MergedData.h"
+
+#include "statistics/CC.h"
+#include "statistics/RFactor.h"
+
 using namespace nsx;
 
 %}
@@ -412,10 +417,13 @@ namespace nsx {
 
 %include "data/DataSet.h"
 %include "data/PeakFinder.h"
+%include "data/MergedData.h"
 
 %template(vector_data) std::vector<std::shared_ptr<nsx::DataSet>>;
 %template(vector_peak) std::vector<std::shared_ptr<nsx::Peak3D>>;
-%template(set_peak) std::set<std::shared_ptr<nsx::Peak3D>>;
+
+%template(PeakSet) std::set<std::shared_ptr<nsx::Peak3D>>;
+%template(MergedPeakSet) std::set<nsx::MergedPeak>;
 
 
 
@@ -465,6 +473,7 @@ namespace nsx {
 %include "crystal/UnitCell.h"
 %include "crystal/ResolutionShell.h"
 %include "statistics/RFactor.h"
+%include "statistics/CC.h"
 %include "statistics/CC.h"
 %include "crystal/Peak3D.h"
 %include "crystal/PeakCalc.h"

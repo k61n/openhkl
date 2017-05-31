@@ -25,6 +25,7 @@ using sptrPeak3D   = std::shared_ptr<Peak3D>;
 using sptrUnitCell = std::shared_ptr<UnitCell>;
 
 using PeakSet    = std::set<sptrPeak3D>;
+using MergedPeakSet = std::set<MergedPeak>;
 
 using PeakList     = std::vector<sptrPeak3D>;
 using PeakCalcList = std::vector<PeakCalc>;
