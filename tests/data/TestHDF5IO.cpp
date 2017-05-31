@@ -52,5 +52,6 @@ BOOST_AUTO_TEST_CASE(Test_HDF5_IO)
     }
     catch(...) {
         BOOST_FAIL("saveHDF5() threw unknown exception");
+   
     }  
 }
