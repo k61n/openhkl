@@ -57,10 +57,70 @@ class TestNDTRee(unittest.TestCase):
         # shape = Ellipsoid3D(center, vals, vects)
 
         # self.assertAlmostEqual(tree.getCollisions(Shape).size(),8)
-        pass
+        
+        # todo : what to do with 'shape = nullptr'
+
+        # clear the list
+        # todo : shapes is not defined
+        # for shape in shapes():
+         #   del shape
+
+    def split_test(self):
+        Ellipsoid3D = nsx.Ellipsoid()
+        tree = np.array([(0,0,0),(50,50,50)])
+        tree.setMaxStorage(4)
+
+        vects = np.array([])
+        radius = 1.0
+        vals = np.array([radius,radius,radius])
+        test_set = IShape()
+        shapes = Ellipsoid3D()
+
+        shapes.emplace_back(Ellipsoid3D(np.array([(12.5,12.5,12.5),vals,vects])))
+        shapes.emplace_back(Ellipsoid3D(np.array([(12.5,12.5,37.5),vals,vects])))
+        shapes.emplace_back(Ellipsoid3D(np.array([(12.5,37.5,12.5),vals,vects])))
+        shapes.emplace_back(Ellipsoid3D(np.array([(12.5,37.5,37.5),vals,vects])))
+        shapes.emplace_back(Ellipsoid3D(np.array([(37.5,12.5,12.5),vals,vects])))
+        shapes.emplace_back(Ellipsoid3D(np.array([(37.5,12.5,37.5),vals,vects])))
+        shapes.emplace_back(Ellipsoid3D(np.array([(37.5,37.5,12.5),vals,vects])))
+        shapes.emplace_back(Ellipsoid3D(np.array([(37.5,37.5,37.5),vals,vects])))
+
+        for shape in shapes():
+            tree.addData(shape)
+
+        # check that it split properly
+        self.assertAlmostEqual([tree.numChambers(),8])
+
+        # check that the collisions with chambers make sense
+        for shape in shapes:
+            num_intercept = 0
+            for chamber in tree:
+                self.assertAlmostEqual([shape.intercept(chamber),chamber.intercept(shape)])        
+                if shape.intercept(chamber):
+                    num_intercept = num_intercept + 1
+
+            self.assertAlmostEqual([num_intercept,1])
 
 
+        # clear the list
+        for shape in shapes:
+            del shape
+    
+    def test_case(Test_NDTree):
+        # build up a NDTree with (0,0,0) as lower corner and (100,100,100) as upper corner
+        tree = np.array([(0,0,0),(100,100,100)])
+        # todo : the same line "tree.setMaxStrorage(4)" works in one method but not in other?
+        # tree.setMaxStorage(10)
 
+        np.random.uniform(0,50)
+        gen = np.random
+
+        bb = np.array([0.0,0.0,0.0])
+        maxStorage = 10
+        
+        i = 0
+        for i in range(0,maxStorage):
+            v1 = np.array([d1(gen),d2(gen),d3(gen)])
 
 if __name__ == '__main__':
     unittest.main()
