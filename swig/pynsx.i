@@ -444,10 +444,6 @@ namespace nsx {
 %include "mathematics/Minimizer.h"
 %include "mathematics/RNG.h"
 
-namespace nsx {
-    enum class BravaisType: char;
-    enum class LatticeCentring: char;
-}
 
 %include "utils/EigenToVector.h"
 //%include "utils/Types.h"
