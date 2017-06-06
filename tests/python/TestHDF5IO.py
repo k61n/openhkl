@@ -10,8 +10,6 @@ class TestHDF5IO(unittest.TestCase):
         # todo : can't convert std::shared_ptr<Diffractrometer>diff
         # todo : can't convert std::shared_ptr<DataSet>dataf
 
-        frames = np.array([]) 
-
        # todo : if I write code without 'try' thn it works  
        # try: 
         ds = nsx.DiffractometerStore()
@@ -21,11 +19,11 @@ class TestHDF5IO(unittest.TestCase):
         
 
         # todo : not sure I did correct conversion of push_back function
-        myList = []
+        frames = []
         i = 0
         for i in range(0,dataf.getNFrames()): 
             #frames.push_back(dataf.getFrame(i))
-            myList.append(i)
+            frames.append(dataf.getFrame(i))
         
         dataf.saveHDF5("D10_hdf5_example.h5")
         dataf.close()
@@ -40,8 +38,8 @@ class TestHDF5IO(unittest.TestCase):
         
         # todo: check if its right: used assertTrue for Boost_Check
         j=0
-        for j in range(0,dataf,getNFrames()):
-            self.assertTrue(dataf.getframe(j) == frames[j]
+        for j in range(0,dataf.getNFrames()):
+            self.assertTrue((dataf.getFrame(j) == frames[j]).all())
        
         dataf.close()
 

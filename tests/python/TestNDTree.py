@@ -120,7 +120,9 @@ class TestNDTRee(unittest.TestCase):
         
         i = 0
         for i in range(0,maxStorage):
-            v1 = np.array([d1(gen),d2(gen),d3(gen)])
+            # v1 = np.array([d1(gen),d1(gen),d1(gen)])
+            # v2 = np.array([d2(gen),d2(gen),d2(gen)])
+            pass
 
 if __name__ == '__main__':
     unittest.main()
