@@ -35,6 +35,7 @@
 %shared_ptr(nsx::TiffDataReader)
 %shared_ptr(nsx::Experiment)
 %shared_ptr(nsx::ProgressHandler)
+%shared_ptr(nsx::Basis)
 %shared_ptr(nsx::UnitCell)
 
 %{
@@ -242,11 +243,14 @@ using sptrMaterial = std::shared_ptr<nsx::Material>;
 #include "geometry/Blob3D.h"
 
 #include "crystal/FFTIndexing.h"
-#include "crystal/GruberReduction.h"
+
 #include "crystal/Peak3D.h"
 #include "crystal/SpaceGroup.h"
 
 #include "crystal/UnitCell.h"
+
+#include "crystal/GruberReduction.h"
+
 #include "crystal/PeakIntegrator.h"
 #include "crystal/Profile.h"
 #include "crystal/Intensity.h"
@@ -368,7 +372,7 @@ namespace boost { namespace property_tree {} }
 
 %include "chemistry/Material.h"
 
-%include "crystal/UnitCell.h"
+
 %template(scored_uc) std::pair<std::shared_ptr<nsx::UnitCell>, double>;
 %template(indexer_solutions) std::vector<std::pair<std::shared_ptr<nsx::UnitCell>,double>>;
 
@@ -394,7 +398,7 @@ namespace nsx {
 }
 
 %include "crystal/FFTIndexing.h"
-%include "crystal/GruberReduction.h"
+
 %include "crystal/Intensity.h"
 %include "crystal/Peak3D.h"
 
@@ -424,8 +428,7 @@ namespace nsx {
 
 %template(PeakSet) std::set<std::shared_ptr<nsx::Peak3D>>;
 %template(MergedPeakSet) std::set<nsx::MergedPeak>;
-
-
+%template(PeakCalcList) std::vector<nsx::PeakCalc>;
 
 
  //%include "chemistry/ChemicalFormulaParser.h"
@@ -440,6 +443,11 @@ namespace nsx {
 %include "mathematics/Round.h"
 %include "mathematics/Minimizer.h"
 %include "mathematics/RNG.h"
+
+namespace nsx {
+    enum class BravaisType: char;
+    enum class LatticeCentring: char;
+}
 
 %include "utils/EigenToVector.h"
 //%include "utils/Types.h"
@@ -466,7 +474,7 @@ namespace nsx {
 %include "crystal/PeakPredictor.h"
 %include "crystal/UBMinimizer.h"
 %include "crystal/SpaceGroupSymbols.h"
-
+%include "geometry/Basis.h"
 %include "crystal/Profile.h"
 %include "crystal/Intensity.h"
 %include "crystal/PeakIntegrator.h"
@@ -493,7 +501,7 @@ namespace nsx {
 %include "geometry/Triangle.h"
 
 %include "geometry/IShape.h"
-%include "geometry/Basis.h"
+
 %include "geometry/OBB.h"
 %include "geometry/Ellipsoid.h"
 %include "geometry/Face.h"

@@ -80,7 +80,7 @@ bool MergedPeak::addPeak(const PeakCalc& peak)
     return true;
 }
 
-Eigen::Vector3i MergedPeak::getIndex() const
+Eigen::RowVector3i MergedPeak::getIndex() const
 {
     return _hkl;
 }
@@ -173,8 +173,8 @@ std::pair<MergedPeak, MergedPeak> MergedPeak::split() const
 
 bool operator<(const MergedPeak& p, const MergedPeak& q)
 {
-    const Eigen::Vector3i& a = p.getIndex();
-    const Eigen::Vector3i& b = q.getIndex();
+    const auto& a = p.getIndex();
+    const auto& b = q.getIndex();
 
     if (a(0) != b(0)) {
         return a(0) < b(0);

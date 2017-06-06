@@ -41,9 +41,10 @@
 namespace nsx {
 
 //! Centering type of the Bravais lattice
-enum  class LatticeCentring : char  {P='P',A='A',B='B',C='C',I='I',F='F',R='R'};
+enum class LatticeCentring: char {P='P',A='A',B='B',C='C',I='I',F='F',R='R'};
+
 //! Bravais type
-enum  class BravaisType : char  {Triclinic='a',Monoclinic='m',Orthorhombic='o',Tetragonal='t',Hexagonal='h',Cubic='c',Trigonal='h'};
+enum class BravaisType: char {Triclinic='a',Monoclinic='m',Orthorhombic='o',Tetragonal='t',Hexagonal='h',Cubic='c',Trigonal='h'};
 
 /** @brief Class to define a crystallographic unit-cell.
  *
