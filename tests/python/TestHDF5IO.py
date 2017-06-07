@@ -11,7 +11,6 @@ class TestHDF5IO(unittest.TestCase):
         dataf = factory.create("","D10_ascii_example",diff)
         dataf.open()
         
-        # todo : not sure I did correct conversion of push_back function
         frames = []
         i = 0
         for i in range(0,dataf.getNFrames()): 
@@ -27,7 +26,7 @@ class TestHDF5IO(unittest.TestCase):
             self.assertTrue((dataf.getFrame(j) == frames[j]).all())
        
         dataf.close()
-                
+
 
 if __name__ == '__main__':
     unittest.main()

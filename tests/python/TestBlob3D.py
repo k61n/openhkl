@@ -1,11 +1,13 @@
 import pynsx as nsx
 import numpy as np
-import ctypes as c
+import math
 import unittest
+
+tolerance = 1e-5
 
 class TestBlob3D(unittest.TestCase):
        
-    def TestBlob(self):
+    def testBlob(self):
         
         blob = nsx.Blob3D()
         
@@ -15,11 +17,10 @@ class TestBlob3D(unittest.TestCase):
         sx2 = 2.0 
         sy2 = 3.0
         sz2 = 5.0
-        M_PI = 3.14
+        M_PI = math.pi
         prefactor = (1.0/pow(2.0*M_PI,1.5))/np.sqrt(sx2*sy2*sz2)
         tot =0.0
-        mass = 1
-        # todo: import value of "mass" unit in py
+
         for i in range(0,50):
             for j in range(0,50):
                 for k in range(0,50):
@@ -30,28 +31,28 @@ class TestBlob3D(unittest.TestCase):
         self.assertAlmostEqual(tot,1.0)
         self.assertAlmostEqual(tot,blob.getMass())
         
-        center = np.array([])
-        eigVal = np.array([])
-        eigVec = np.array([])
+        center = np.zeros(shape=(3,1), dtype=float)
+        eigVal = np.zeros(shape=(3,1), dtype=float)
+        eigVec = np.zeros(shape=(3,3), dtype=float)
 
         sigma1 = 0.682689492
     
         blob.toEllipsoid(sigma1,center,eigVal,eigVec)
 
-        #todo: check if center is ok 
-        self.assertAlmostEqual(center(0),c_x)
-        self.assertAlmostEqual(center(1),c_y)
-        self.assertAlmostEqual(center(2),c_z)
+        # check if center is ok 
+        self.assertAlmostEqual(center[0,0],c_x)
+        self.assertAlmostEqual(center[1,0],c_y)
+        self.assertAlmostEqual(center[2,0],c_z)
 
-        # todo: check if the semi_axes are ok 
-        self.assertAlmostEqual(eigVal(0),sqrt(sx2))
-        self.assertAlmostEqual(eigVal(1),sqrt(sy2))
-        self.assertAlmostEqual(eigVal(2),sqrt(sz2))
+        # check if the semi_axes are ok 
+        self.assertAlmostEqual(eigVal[0,0],np.sqrt(sx2))
+        self.assertAlmostEqual(eigVal[1,0],np.sqrt(sy2))
+        self.assertAlmostEqual(eigVal[2,0],np.sqrt(sz2))
     
-        # todo: check the eigenvectors 
-        self.assertAlmostEqual(((eigVec.col(0))(0)),1.0)
-        self.assertAlmostEqual(((eigVec.col(1))(1)),1.0)
-        self.assertAlmostEqual(((eigVec.col(2))(2)),1.0)
+        # check the eigenvectors 
+        self.assertAlmostEqual(abs(eigVec[0,0]),1.0)
+        self.assertAlmostEqual(abs(eigVec[1,1]),1.0)
+        self.assertAlmostEqual(abs(eigVec[2,2]),1.0)
         
 
 
