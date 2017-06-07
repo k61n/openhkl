@@ -72,7 +72,7 @@ PeakTableView::PeakTableView(QWidget *parent)
     sortByColumn(0, Qt::AscendingOrder);
     horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     //
-    setMinimumSize(800,400);
+    //setMinimumSize(800,400);
     setFocusPolicy(Qt::StrongFocus);
 
     auto delegate = new CollectedPeaksDelegate(this);
