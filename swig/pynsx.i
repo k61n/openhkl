@@ -37,6 +37,11 @@
 %shared_ptr(nsx::ProgressHandler)
 %shared_ptr(nsx::Basis)
 %shared_ptr(nsx::UnitCell)
+%shared_ptr(nsx::Component)
+%shared_ptr(nsx::Detector)
+%shared_ptr(nsx::MonoDetector)
+%shared_ptr(nsx::FlatDetector)
+%shared_ptr(nsx::CylindricalDetector)
 
 %{
 #define SWIG_FILE_WITH_INIT

@@ -32,10 +32,9 @@ BOOST_AUTO_TEST_CASE(Test_HDF5_IO)
 
         dataf->saveHDF5("D10_hdf5_example.h5");
         dataf->close();
-        dataf.reset();
-
+        
         // read data back in and check that it agrees!
-        auto dataf = factory.create("h5", "D10_hdf5_example.h5", diff);
+        dataf = factory.create("h5", "D10_hdf5_example.h5", diff);
 
         BOOST_ASSERT(dataf != nullptr);
 
