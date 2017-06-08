@@ -30,45 +30,6 @@ const double gruber_tolerance = 1e-4;
 const double niggli_tolerance = 1e-4;
 const double tolerance = 1e-6;
 
-Eigen::Matrix3d random_orthogonal_matrix()
-{
-    std::default_random_engine generator;
-    std::uniform_real_distribution<double> distribution(-1.0,1.0);
-
-    Eigen::Matrix3d A;
-
-    for (unsigned int i = 0; i < 3; ++i)
-        for ( unsigned int j = 0; j < 3; ++j)
-            A(i, j) = distribution(generator);
-
-    Eigen::HouseholderQR<Eigen::Matrix3d> QR(A);
-
-    return QR.householderQ();
-}
-
-nsx::UnitCell cell_from_params(double A, double B, double C, double D, double E, double F)
-{
-    double a = sqrt(A);
-    double b = sqrt(B);
-    double c = sqrt(C);
-
-    double alpha = acos(D / b / c);
-    double beta = acos(E / a / c);
-    double gamma = acos(F / a / b);
-
-    nsx::UnitCell cell(a, b, c, alpha, beta, gamma);
-    Eigen::Matrix3d g = cell.getMetricTensor();
-
-    BOOST_CHECK_CLOSE(g(0,0), A, tolerance);
-    BOOST_CHECK_CLOSE(g(1,1), B, tolerance);
-    BOOST_CHECK_CLOSE(g(2,2), C, tolerance);
-    BOOST_CHECK_CLOSE(g(1,2), D, tolerance);
-    BOOST_CHECK_CLOSE(g(0,2), E, tolerance);
-    BOOST_CHECK_CLOSE(g(0,1), F, tolerance);
-
-    return cell;
-}
-
 int run_test()
 {
     double A, B, C, D, E, F;

@@ -21,10 +21,10 @@ class TestGruberBravais(unittest.TestCase):
         # todo: QR code is not implemented in python
 
     # todo: cannot convert cell_from_paramas function into python
-    #def test_cell_from_parmas(A,B,C,D,E,F):
-     #   a = np.sqrt(A)
-     #   b = np.sqrt(B)
-     #   c = np.sqrt(C)
+    def test_cell_from_parmas(self):
+       a = np.sqrt(A)
+       b = np.sqrt(B)
+       c = np.sqrt(C)
         
      #   alpha = arccos(D/b/c) 
 

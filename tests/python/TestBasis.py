@@ -47,7 +47,7 @@ class TestBasis(unittest.TestCase):
         # todo :check x definition
         bsecond.rebaseToStandard();
         x = bsecond.toStandard(xsecond)
-        self.assertAlmostEqual([xrsecond(0),2.0])
+        self.assertAlmostEqual(xrsecond(0),2.0)
         self.assertAlmostEqual([xrsecond(1),-2.0])
         self.assertAlmostEqual([xrsecond(2),0])
 

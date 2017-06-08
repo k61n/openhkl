@@ -20,50 +20,50 @@ class TestComplexHull(unittest.TestCase):
              #       if(f.volumeSign(v) < 0)
               #          return False
                # return True
-    
-    def Test_ConvexHull():
-        CHullDouble = ConvexHall(dtype = double)
-       
+   
         # creates an empty convex HUll
-        chull = CHullDouble()
+        chull = nsx.ConvexHull()
         
         # todo : check if this below line is actually is analog of its c++ counterpart
-        # Checks that the hull can not be updated with 0 point to be processed
-        self.assertAlmostEqual([chull.updateHull(),0])
+        # Checks that the hull can not be updated with 0point to be processed
+        # todo: check exception throwing
+        #self.assertRaises(Exception, chull.updateHull())
+        
         
         # todo : check if its working - "chull.addVertex(vec1)", c++ code has "std::runtime_error"
         # todo : what is the analog of std::runtime_error to python
         # Fill it with three vertices to form a tetrahedron
-        vec1 = np.array([0,0,0])
+        vec1 = np.array([0,0,0], dtype=float)
         chull.addVertex(vec1)
         # Checks that the hull can not be updated with only 1 point to be processed
         # todo : what is conversion of BOOST_CHECK_THROW and NO_THROW
-        self.assertAlmostEqual([chull.updateHull(),0])
+        #self.assertAlmostEqual(chull.updateHull(),0)
                     
         # Fill it with three vertices to form a tetrahedron
-        vec2 =  np.array([10,0,0])
-        chull.addVertex([vec2])
+        vec2 =  np.array([10,0,0], dtype=float)
+        chull.addVertex(vec2)
         #Checks that the hull can not be updated with only 2 point to be processed
-        self.assertAlmostEqual([chull.updateHull(),0])
+        #self.assertAlmostEqual([chull.updateHull(),0])
 
-        vec3 = np.array([0,10,0])
-        chull.addVertex([vec3])
+        vec3 = np.array([0,10,0], dtype=float)
+        chull.addVertex(vec3)
         #Checks that the hull can not be updated with only 3 point to be processed
-        self.assertAlmostEqual([0,0,10])
+        #self.assertAlmostEqual([0,0,10])
 
-        vec4 = np.array([0,0,10])
-        chull.addVertex([vec3])
+        vec4 = np.array([0,0,10], dtype=float)
+        chull.addVertex(vec4)
         # Checks that with 4 vertices the hull can be built
-        self.assertAlmostEqual([chull.updateHull(),0])
+        chull.updateHull()
 
         faces = chull.getFaces()
         edges = chull.getEdges()
         vertices = chull.getVertices()
 
         #  todo : not working - BOOST_CHECK_EQUAL(vertices.size(),4);
-        self.assertAlmostEqual([vertices.size(),4])
-        self.assertAlmostEqual([edges.size(),6])
-        self.assertAlmostEqual([faces.size(),4])
+        # todo: update python bindings (AttributeError: 'SwigPyObject' object has no attribute 'size')
+        self.assertAlmostEqual(vertices.size(),4)
+        self.assertAlmostEqual(edges.size(),6)
+        self.assertAlmostEqual(faces.size(),4)
         
         # ! Checks that the hull satisfies the Euler conditions
         # todo : check if assertAlmostEqual is right conversion here
@@ -82,9 +82,9 @@ class TestComplexHull(unittest.TestCase):
         chull.updateHull()
 
         # Check that the number of vertices, edges and faces corresponds to a cube
-        self.assertAlmostEqual([vertices.size(),8])
-        self.assertAlmostEqual([edges.size(),18])
-        self.assertAlmostEqual([faces.size(),12])
+        self.assertAlmostEqual(vertices.size(),8)
+        self.assertAlmostEqual(edges.size(),18)
+        self.assertAlmostEqual(faces.size(),12)
         
         # ! Checks that the hull satisfies the Euler conditions
         self.assertAlmostEqual(checkEulerConditions())
