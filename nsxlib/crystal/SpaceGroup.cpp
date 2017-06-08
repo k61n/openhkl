@@ -240,6 +240,8 @@ void SpaceGroup::generateGroupElements()
 bool SpaceGroup::isExtinct(double h, double k, double l) const
 {
     // todo(jonathan): improve this routine? need a journal reference
+    // check that this produces results consistent with
+    // http://www.ccp14.ac.uk/ccp/web-mirrors/powdcell/a_v/v_1/powder/details/extinct.htm
     Eigen::Vector3d hkl(h,k,l);
     for (auto&& element : _groupElements) {
         if (element.hasTranslation()) {
