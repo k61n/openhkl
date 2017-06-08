@@ -36,8 +36,7 @@ class TestPeak3D(unittest.TestCase):
         
         g = nsx.Gonio("Gamma")
     
-        # todo : 
-        #g.addRotation("Gamma",np.array([0,0,1], dtype=float), 0)        
+        # todo : g.addRotation("Gamma",np.array([0,0,1], dtype=float), 0)        
         
         # argument error--d.setGonio(g)
         deg = 3.14/180.0
