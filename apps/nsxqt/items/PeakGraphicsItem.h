@@ -35,21 +35,12 @@ public:
     static void drawBackground(bool flag);
 
 private:
-    struct Ellipse {
-        double a, b, u, v, alpha;
-    };
-
-    static Ellipse calculateEllipse(const nsx::IShape& shape, int frame);
-    static void drawEllipse(QPainter& painter, Ellipse ellipse);
 
     //! Pointer to the Peak3D object
     nsx::sptrPeak3D _peak;
     //! (h,k,l) index visible in GraphicsScene
     static bool _labelVisible;
     static bool _drawBackground;
-
-    Ellipse _peakEllipse;
-    Ellipse _bkgEllipse;
 };
 
 #endif // NSXQT_PEAKGRAPHICSITEM_H

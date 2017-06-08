@@ -55,7 +55,6 @@
 #include "tree/ExperimentTree.h"
 #include "views/ProgressView.h"
 #include "views/PeakTableView.h"
-#include "views/ReciprocalSpaceViewer.h"
 
 #include "ui_MainWindow.h"
 #include "ui_ScaleDialog.h"
@@ -154,12 +153,10 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             QAction* import = menu->addAction("Import data");
             QAction* rawImport = menu->addAction("Import raw data...");
             QAction* findpeaks = menu->addAction("Peak finder");
-            QAction* rviewer = menu->addAction("Reciprocal space viewer");
             menu->popup(viewport()->mapToGlobal(point));
             connect(import, SIGNAL(triggered()), this, SLOT(importData()));
             connect(rawImport, SIGNAL(triggered()), this, SLOT(importRawData()));
             connect(findpeaks, &QAction::triggered, [=](){findPeaks(index);});
-            connect(rviewer, &QAction::triggered, [=](){viewReciprocalSpace(index);});
         }
         else if (dynamic_cast<PeakListItem*>(item))
         {
@@ -298,48 +295,6 @@ void ExperimentTree::importRawData()
 void ExperimentTree::findPeaks(const QModelIndex& index)
 {
     _session->findPeaks(index);
-}
-
-void ExperimentTree::viewReciprocalSpace(const QModelIndex& index)
-{
-    QStandardItem* item=_session->itemFromIndex(index);
-
-    TreeItem* titem=dynamic_cast<TreeItem*>(item);
-    if (!titem)
-        return;
-
-    auto expt(titem->getExperiment());
-
-    if (!expt)
-        return;
-
-    QStandardItem* ditem=_session->itemFromIndex(index);
-
-    nsx::DataList selectedNumors;
-    int nTotalNumors(_session->rowCount(ditem->index()));
-    selectedNumors.reserve(size_t(nTotalNumors));
-
-    for (auto i = 0; i < nTotalNumors; ++i) {
-        if (ditem->child(i)->checkState() == Qt::Checked) {
-            if (auto ptr = dynamic_cast<NumorItem*>(ditem->child(i)))
-                selectedNumors.push_back(ptr->getExperiment()->getData(ptr->text().toStdString()));
-        }
-    }
-
-    if (selectedNumors.empty()) {
-        qWarning() << "No numor selected for reciprocal viewer";
-        return;
-    }
-
-    try {
-        ReciprocalSpaceViewer* dialog = new ReciprocalSpaceViewer(expt);
-        dialog->setData(selectedNumors);
-        if (!dialog->exec())
-            return;
-    } catch(std::exception& e) {
-        qWarning()<<e.what();
-        return;
-    }
 }
 
 void ExperimentTree::onDoubleClick(const QModelIndex& index)

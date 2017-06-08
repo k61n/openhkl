@@ -18,86 +18,66 @@ std::map<std::string,ChemicalPropertyType> IsotopeDatabaseManager::PropertyTypes
 IsotopeDatabaseManager::IsotopeDatabaseManager()
 {
     // No file existence checking, the YAML database is part of the distribution
-    YAML::Node allIsotopeNodes = YAML::LoadFile(DatabasePath);
-    for (const auto& isotopeNode : allIsotopeNodes) {
-        _database.insert(std::make_pair(isotopeNode.first.as<std::string>(),Isotope(isotopeNode.second)));
+    YAML::Node database = YAML::LoadFile(DatabasePath);
+
+    for (const auto& propertyNode : database["Properties"]) {
+    	std::pair<std::string,std::string> prop = std::make_pair(propertyNode.second["type"].as<std::string>(),propertyNode.second["unit"].as<std::string>());
+    	_properties.insert(std::make_pair(propertyNode.first.as<std::string>(),prop));
     }
-}
 
-const IsotopeDatabaseManager::Isotope& IsotopeDatabaseManager::getIsotope(const std::string& name) const
-{
-    auto it=_database.find(name);
-    if (it == _database.end()) {
-        throw std::runtime_error("Isotope "+name+" not found in the database");
-    }
-    return it->second;
-}
-
-const std::map<std::string,IsotopeDatabaseManager::Isotope>& IsotopeDatabaseManager::database() const
-{
-    return _database;
-}
-
-IsotopeDatabaseManager::Isotope::Isotope(const YAML::Node& isotopeNode)
-{
     UnitsManager* um=UnitsManager::Instance();
 
-    for (const auto& propertyNode : isotopeNode) {
+    for (const auto& isotopeNode : database["Isotopes"]) {
+    	isotopeProperties props;
+        for (const auto& propertyNode : isotopeNode.second) {
 
-        std::string pname = propertyNode.first.as<std::string>();
-        const auto& pnode = propertyNode.second;
+        	std::string pname = propertyNode.first.as<std::string>();
 
-        if (pname.compare("name")==0) {
-            _name=pnode.as<std::string>();
-            continue;
+            switch (PropertyTypes[_properties[pname].first]) {
+
+            case ChemicalPropertyType::String:
+                props.insert(std::make_pair(pname,propertyNode.second.as<std::string>()));
+                break;
+            case ChemicalPropertyType::Int:
+                props.insert(std::make_pair(pname,propertyNode.second.as<int>()));
+                break;
+            case ChemicalPropertyType::Double:
+                props.insert(std::make_pair(pname,propertyNode.second.as<double>()*um->get(_properties[pname].second)));
+                break;
+            case ChemicalPropertyType::Complex:
+                props.insert(std::make_pair(pname,propertyNode.second.as<std::complex<double>>()*um->get(_properties[pname].second)));
+                break;
+            case ChemicalPropertyType::Bool:
+                props.insert(std::make_pair(pname,propertyNode.second.as<bool>()));
+                break;
+            }
         }
-
-        _types[pname] = pnode["type"].as<std::string>();
-        _units[pname] = pnode["unit"].as<std::string>();
-
-        switch (PropertyTypes[_types[pname]]) {
-
-        case ChemicalPropertyType::String:
-            _properties[pname] = pnode["value"].as<std::string>();
-            break;
-        case ChemicalPropertyType::Int:
-            _properties[pname] = pnode["value"].as<int>();
-            break;
-        case ChemicalPropertyType::Double:
-            _properties[pname] = pnode["value"].as<double>()*um->get(_units[pname]);
-            break;
-        case ChemicalPropertyType::Complex:
-            _properties[pname] = pnode["value"].as<std::complex<double>>()*um->get(_units[pname]);
-            break;
-        case ChemicalPropertyType::Bool:
-            _properties[pname] = pnode["value"].as<bool>();
-            break;
-        default:
-            throw std::runtime_error("unknown property type for "+pname+" property");
-        }
+        _isotopes.insert(std::make_pair(isotopeNode.first.as<std::string>(),props));
     }
 }
 
-const std::string& IsotopeDatabaseManager::Isotope::getName() const
-{
-    return _name;
+const std::map<std::string,std::pair<std::string,std::string>>& IsotopeDatabaseManager::properties() const {
+	return _properties;
 }
 
-bool IsotopeDatabaseManager::Isotope::hasProperty(const std::string& propertyName) const
+const std::map<std::string,isotopeProperties>& IsotopeDatabaseManager::isotopes() const
 {
-    auto it = _properties.find(propertyName);
-    return (it != _properties.end());
+    return _isotopes;
 }
 
-void IsotopeDatabaseManager::Isotope::print(std::ostream& os) const
-{
-    os<<"Isotope "<<_name<<" ["<<getProperty<int>("n_protons")<<","<<getProperty<int>("n_neutrons")<<"]";
+unsigned int IsotopeDatabaseManager::nIsotopes() const {
+	return _isotopes.size();
 }
 
-std::ostream& operator<<(std::ostream& os,const IsotopeDatabaseManager::Isotope& isotope)
+bool IsotopeDatabaseManager::hasProperty(const std::string& isotope, const std::string& property) const
 {
-    isotope.print(os);
-    return os;
+	auto iit = _isotopes.find(isotope);
+	if (iit == _isotopes.end())
+		return false;
+
+    auto pit = iit->second.find(property);
+
+    return (pit != iit->second.end());
 }
 
 } // end namespace nsx

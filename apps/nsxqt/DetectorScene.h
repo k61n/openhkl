@@ -80,8 +80,7 @@ public slots:
     void showPeakLabels(bool);
 
     void drawIntegrationRegion(bool);
-    //!
-    void showPeakCalcs(bool);
+
     void clearPeaks();
 
     void updateMasks(unsigned long frame);
@@ -116,7 +115,6 @@ private:
     SXGraphicsItem* _lastClickedGI;
     nsx::PeakCalcList _precalculatedPeaks;
 
-    bool _showPeakCalcs;
     bool _logarithmic;
     bool _drawIntegrationRegion;
     std::unique_ptr<ColorMap> _colormap;

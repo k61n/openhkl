@@ -39,7 +39,7 @@
 #include <nsxlib/utils/Units.h>
 
 #include "absorption/AbsorptionWidget.h"
-#include "chemistry/IsotopeDatabaseDialog.h"
+#include "dialogs/IsotopeDatabaseDialog.h"
 #include "DetectorScene.h"
 #include "ColorMap.h"
 #include "dialogs/DialogConvolve.h"
@@ -465,13 +465,6 @@ void MainWindow::on_actionConvert_to_HDF5_triggered()
 {
     NumorsConversionDialog* dlg=new NumorsConversionDialog();
     dlg->exec();
-}
-
-
-void MainWindow::on_actionShow_calculated_peak_positions_triggered(bool checked)
-{
-    _ui->_dview->getScene()->showPeakCalcs(checked);
-    _ui->_dview->getScene()->update();
 }
 
 void MainWindow::on_checkBox_AspectRatio_toggled(bool checked)

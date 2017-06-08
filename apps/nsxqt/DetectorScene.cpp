@@ -49,7 +49,6 @@ DetectorScene::DetectorScene(QObject *parent)
   _peakGraphicsItems(),
   _masks(),
   _lastClickedGI(nullptr),
-  _showPeakCalcs(false),
   _logarithmic(false),
   _colormap(new ColorMap()),
   _integrationRegion(nullptr),
@@ -70,7 +69,6 @@ void DetectorScene::changeFrame(size_t frame)
     }
     _currentFrameIndex = frame;
     updatePeaks();
-    showPeakCalcs(_showPeakCalcs);
     loadCurrentImage();
     updateMasks(frame);
 }
@@ -466,9 +464,11 @@ void DetectorScene::changeInteractionMode(int mode)
 
 void DetectorScene::loadCurrentImage(bool newimage)
 {
-    const unsigned int red = (128u << 24) | (255u << 16);
-    const unsigned int green = (128u << 24) | (255u << 8);
-    const unsigned int yellow = (128u << 24) | (255u << 16) | (255u << 8);
+    const unsigned int red =     (128u << 24) | (255u << 16);
+    const unsigned int green =   (128u << 24) | (255u << 8);
+    const unsigned int yellow =  (128u << 24) | (255u << 16) | (255u << 8);
+    const unsigned int purple =  (128u << 24) | (153u << 16) | ( 51u << 8) | (255u);
+    const unsigned int pink   =  (128u << 24) | (255u << 16) | (153u << 8) | (204u);
     const unsigned int transparent = 0;
 
     if (_currentData == nullptr) {
@@ -538,10 +538,10 @@ void DetectorScene::loadCurrentImage(bool newimage)
                     Eigen::Vector4d p(x, y, _currentFrameIndex, 1);
 
                     if (region.inRegion(p)) {
-                        region_img.setPixel(x, y, green);
+                        region_img.setPixel(x, y, peak->isSelected() ? (peak->isObserved() ? green : purple) : red);
                     }
                     if (region.inBackground(p) && (mask(y,x) == 0)) {
-                        region_img.setPixel(x, y, yellow);
+                        region_img.setPixel(x, y, peak->isSelected() ? (peak->isObserved() ? yellow : pink) : red);
                     }
                 }
             }
@@ -597,8 +597,8 @@ void DetectorScene::updatePeaks()
     auto& peaks = _currentData->getPeaks();
 
     for (auto&& peak : peaks) {
-        const Eigen::Vector3d& l = peak->getShape().getLower();
-        const Eigen::Vector3d& u = peak->getShape().getUpper();
+        const Eigen::Vector3d& l = peak->getIntegrationRegion().getBackground().getLower();
+        const Eigen::Vector3d& u = peak->getIntegrationRegion().getBackground().getUpper();
 
         if (_currentFrameIndex < l[2] || _currentFrameIndex > u[2]) {
             continue;
@@ -687,12 +687,16 @@ void DetectorScene::updateMasks(unsigned long frame)
 void DetectorScene::showPeakLabels(bool peaklabel)
 {
     if (!_peakGraphicsItems.empty()) {
-        const auto& it=_peakGraphicsItems.begin();
-        it->second->setLabelVisible(peaklabel);
+        for (const auto& p : _peakGraphicsItems)
+            p.second->setLabelVisible(peaklabel);
+//        const auto& it=_peakGraphicsItems.begin();
+//        it->second->setLabelVisible(peaklabel);
     }
     if (!_peakCalcs.empty()) {
-        const auto& it = _peakCalcs.begin();
-        (*it)->setLabelVisible(peaklabel);
+        for (auto p : _peakCalcs)
+            p->setLabelVisible(peaklabel);
+//        const auto& it = _peakCalcs.begin();
+//        (*it)->setLabelVisible(peaklabel);
     }
 }
 
@@ -710,40 +714,6 @@ void DetectorScene::drawIntegrationRegion(bool flag)
     }
     _drawIntegrationRegion = flag;
     redrawImage();
-}
-
-void DetectorScene::showPeakCalcs(bool flag)
-{
-    _showPeakCalcs = flag;
-
-    if (!flag) {
-//        for (auto&& p: _peakCalcs) {
-//            delete p;
-//        }
-        _peakCalcs.clear();
-        _precalculatedPeaks.clear();
-        return;
-    }
-    if (_precalculatedPeaks.empty()) {
-        updatePeakCalcs();
-    }
-    for (auto& peak: _peakCalcs) {
-        removeItem(peak);
-        //delete peak;
-    }
-    _peakCalcs.resize(0);
-
-    for (auto&& p: _precalculatedPeaks) {
-        if ( std::abs(_currentFrameIndex-p._frame) > 1.0) {
-            continue;
-        }
-        auto peak = new PeakCalcGraphicsItem(p);
-        peak->setVisible(flag);
-        peak->setFrame(_currentFrameIndex);
-        peak->setEnabled(false); // testing
-        addItem(peak);
-        _peakCalcs.push_back(peak);
-    }
 }
 
 void DetectorScene::setLogarithmic(bool checked)
