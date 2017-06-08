@@ -2,7 +2,7 @@ import pynsx as nsx
 import numpy as np
 import unittest
 
-class TestHDF5(unittest.TestCase):
+class TestWorkFlow(unittest.TestCase):
     
     def test(self):
         expt = nsx.Experiment('test', 'BioDiff2500')
