@@ -69,11 +69,11 @@ struct BuildElementFromNaturalIsotopes
 	bool operator()(isotopeContents &output, const std::string& elementSymbol) const
 	{
 	    IsotopeDatabaseManager* imgr=IsotopeDatabaseManager::Instance();
-		const auto& isotopeDatabase=imgr->database();
+		const auto& isotopeDatabase=imgr->isotopes();
 		for (const auto& isotope : isotopeDatabase) {
-			std::string symbolName = isotope.second.getProperty<std::string>("symbol");
+			std::string symbolName = imgr->getProperty<std::string>(isotope.first,"symbol");
 			if (symbolName == elementSymbol) {
-				output.insert(std::make_pair(isotope.second.getName(),isotope.second.getProperty<double>("natural_abundance")));
+				output.insert(std::make_pair(isotope.first,imgr->getProperty<double>(isotope.first,"natural_abundance")));
 			}
 		}
 		return true;
@@ -113,8 +113,7 @@ struct BuildElementFromIsotopeMixture {
 			if (p.second < 0.0 || p.second > 1.0) {
 				return false;
 			}
-			const auto& isotope = imgr->getIsotope(p.first);
-			std::string isotopeSymbol = isotope.getProperty<std::string>("symbol");
+			std::string isotopeSymbol = imgr->getProperty<std::string>(p.first,"symbol");
 			if (isotopeSymbol.compare(elementSymbol)!=0) {
 				return false;
 			}
@@ -238,10 +237,11 @@ struct ChemicalFormulaParser : boost::spirit::qi::grammar<Iterator,isotopeConten
 
     	// Define the isotope names and chemical symbols tokens
         IsotopeDatabaseManager* imgr=IsotopeDatabaseManager::Instance();
-		const auto& isotopeDatabase=imgr->database();
+		const auto& isotopeDatabase=imgr->isotopes();
 		for (const auto& isotope : isotopeDatabase) {
-			_isotopeToken.add(isotope.second.getName(),isotope.second.getName());
-			_elementToken.add(isotope.second.getProperty<std::string>("symbol"),isotope.second.getProperty<std::string>("symbol"));
+			_isotopeToken.add(isotope.first,isotope.first);
+			auto symbol = imgr->getProperty<std::string>(isotope.first,"symbol");
+			_elementToken.add(symbol,symbol);
 		}
 		//Add Deuterium and tritium symbols for H[2]
 		_isotopeToken.add("D","H[2]");

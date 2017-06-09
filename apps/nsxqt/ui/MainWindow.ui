@@ -1333,7 +1333,6 @@ border-radius: 4px;
       <string>&amp;Peak</string>
      </property>
      <addaction name="actionShow_labels"/>
-     <addaction name="actionShow_calculated_peak_positions"/>
      <addaction name="actionDraw_peak_integration_area"/>
     </widget>
     <widget class="QMenu" name="menuColor_map">
@@ -1352,7 +1351,6 @@ border-radius: 4px;
      <string>Che&amp;mistry</string>
     </property>
     <addaction name="action_display_isotopes_database"/>
-    <addaction name="action_add_element"/>
    </widget>
    <widget class="QMenu" name="menuUtils">
     <property name="title">

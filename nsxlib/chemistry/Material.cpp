@@ -52,10 +52,8 @@ double Material::molarMass() const
 
     double molarMass(0.0);
 
-    for (const auto& p : _isotopes) {
-        const auto& isotope=imgr->getIsotope(p.first);
-        molarMass += p.second*isotope.getProperty<double>("molar_mass");
-    }
+    for (const auto& p : _isotopes)
+        molarMass += p.second*imgr->getProperty<double>(p.first,"molar_mass");
 
     return molarMass;
 }
@@ -68,8 +66,7 @@ isotopeContents Material::massFractions() const
 
     double molarMass(0.0);
     for (const auto& p : _isotopes){
-        const auto& isotope=imgr->getIsotope(p.first);
-        massFractions.insert(std::make_pair(p.first,p.second*isotope.getProperty<double>("molar_mass")));
+        massFractions.insert(std::make_pair(p.first,p.second*imgr->getProperty<double>(p.first,"molar_mass")));
         molarMass += massFractions[p.first];
     }
 
@@ -87,9 +84,8 @@ isotopeContents Material::atomicNumberDensity() const
     isotopeContents nAtomsPerVolume;
 
     for (const auto& p : massFractions()) {
-        const auto& isotope=imgr->getIsotope(p.first);
         double massFraction(_massDensity*p.second);
-        double molarFraction = massFraction/isotope.getProperty<double>("molar_mass");
+        double molarFraction = massFraction/imgr->getProperty<double>(p.first,"molar_mass");
         nAtomsPerVolume.insert(std::make_pair(p.first,avogadro*molarFraction));
     }
 
@@ -102,8 +98,7 @@ double Material::muIncoherent() const
 
     double scatteringMuFactor=0.0;
     for (const auto& p : atomicNumberDensity()) {
-        const auto& isotope=imgr->getIsotope(p.first);
-        scatteringMuFactor+=p.second*isotope.getProperty<double>("xs_incoherent");
+        scatteringMuFactor+=p.second*imgr->getProperty<double>(p.first,"xs_incoherent");
     }
     return scatteringMuFactor;
 }
@@ -114,9 +109,8 @@ double Material::muAbsorption(double lambda) const
 
     double absorptionMuFactor=0.0;
     for (const auto& p : atomicNumberDensity()) {
-        const auto& isotope=imgr->getIsotope(p.first);
         double thermalWavelength(1.798*ang);
-        absorptionMuFactor+=p.second*isotope.getProperty<double>("xs_absorption")*lambda/thermalWavelength;
+        absorptionMuFactor+=p.second*imgr->getProperty<double>(p.first,"xs_absorption")*lambda/thermalWavelength;
     }
     return absorptionMuFactor;
 }

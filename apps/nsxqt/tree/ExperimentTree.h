@@ -35,7 +35,6 @@ public slots:
     void importData();
     void importRawData();
     void findPeaks(const QModelIndex& index);
-    void viewReciprocalSpace(const QModelIndex& index);
     void createNewExperiment();
     void onSingleClick(const QModelIndex& index);
     void absorptionCorrection();

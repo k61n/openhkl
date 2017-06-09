@@ -22,73 +22,38 @@ public:
 
     static std::map<std::string,ChemicalPropertyType> PropertyTypes;
 
-    class Isotope {
-
-    public:
-
-        Isotope()=delete;
-
-        Isotope(const Isotope& other)=default;
-
-        Isotope& operator=(const Isotope& other)=default;
-
-        Isotope(const YAML::Node& isotopeNode);
-
-        //! Destructor
-        ~Isotope()=default;
-
-        //! Returns the name of this Isotope
-        const std::string& getName() const;
-
-        template <typename T>
-        T getProperty(const std::string& propertyName) const;
-
-        bool hasProperty(const std::string& propertyName) const;
-
-        //! Print some informations about this Isotope on a stream
-        void print(std::ostream& os) const;
-
-    private:
-
-        //! The name of this Isotope
-        std::string _name;
-
-        std::map<std::string,boost::any> _properties;
-        std::map<std::string,std::string> _units;
-        std::map<std::string,std::string> _types;
-
-    };
-
-public:
-
     IsotopeDatabaseManager();
 
     ~IsotopeDatabaseManager()=default;
 
-    const Isotope& getIsotope(const std::string& name) const;
+    const std::map<std::string,isotopeProperties>& isotopes() const;
 
-    const std::map<std::string,Isotope>& database() const;
+    unsigned int nIsotopes() const;
+
+    template <typename T>
+    T getProperty(const std::string& isotope, const std::string& property) const;
+
+    bool hasProperty(const std::string& isotope, const std::string& property) const;
+
+    const std::map<std::string,std::pair<std::string,std::string>>& properties() const;
 
 private:
 
-    std::map<std::string,Isotope> _database;
+    std::map<std::string,isotopeProperties> _isotopes;
+
+    std::map<std::string,std::pair<std::string,std::string>> _properties;
+
+    std::map<std::string,std::string> _types;
 
     static const std::string DatabasePath;
 
 };
 
 template <typename T>
-T IsotopeDatabaseManager::Isotope::getProperty(const std::string& propertyName) const
+T IsotopeDatabaseManager::getProperty(const std::string& isotope, const std::string& property) const
 {
-    auto pit = _properties.find(propertyName);
-    if (pit == _properties.end())
-        throw std::runtime_error("Isotope "+_name+": unknown property name ("+propertyName+")");
-
-    return boost::any_cast<T>(pit->second);
+	return boost::any_cast<T>(_isotopes.at(isotope).at(property));
 }
-
-//! Overloads the operator<< with an Isotope object
-std::ostream& operator<<(std::ostream&,const IsotopeDatabaseManager::Isotope&);
 
 } // end namespace nsx
 

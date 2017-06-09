@@ -108,7 +108,6 @@
 #include "UnitCellItem.h"
 #include "views/PeakTableView.h"
 #include "views/ProgressView.h"
-#include "views/ReciprocalSpaceViewer.h"
 
 #include "ui_MainWindow.h"
 #include "ui_ScaleDialog.h"
