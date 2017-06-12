@@ -28,7 +28,7 @@ class TestGruberBravais(unittest.TestCase):
         
      #   alpha = arccos(D/b/c) 
 
-
+     
 
 if __name__ == '__main__':
     unittest.main()
