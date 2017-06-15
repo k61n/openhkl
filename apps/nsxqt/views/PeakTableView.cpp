@@ -33,6 +33,7 @@
 #include <set>
 
 #include <QContextMenuEvent>
+#include <QDebug>
 #include <QHeaderView>
 #include <QInputDialog>
 #include <QItemSelectionModel>
@@ -56,8 +57,6 @@
 #include "models/CollectedPeaksModel.h"
 #include "PeakTableView.h"
 
-#include <QDebug>
-
 PeakTableView::PeakTableView(QWidget *parent)
 : QTableView(parent),
   _normalized(false),
@@ -77,13 +76,15 @@ PeakTableView::PeakTableView(QWidget *parent)
 
     auto delegate = new CollectedPeaksDelegate(this);
     setItemDelegate(delegate);
-    QHeaderView* vertical = this->verticalHeader();
-    connect(vertical,SIGNAL(sectionClicked(int)),this,SLOT(plotSelectedPeak(int)));
 
+    this->verticalHeader()->setVisible(false);
+
+    connect(this,SIGNAL(clicked(const QModelIndex&)),this,SLOT(plotSelectedPeak(const QModelIndex&)));
 }
 
-void PeakTableView::plotSelectedPeak(int index)
+void PeakTableView::plotSelectedPeak(const QModelIndex& index)
 {
+    int idx = index.row();
     auto peaksModel = dynamic_cast<CollectedPeaksModel*>(model());
     if (peaksModel == nullptr) {
         return;
@@ -92,11 +93,42 @@ void PeakTableView::plotSelectedPeak(int index)
     if (peaks.empty()) {
         return;
     }
-    if (index < 0 || index >= peaks.size()) {
+    if (idx < 0 || idx >= peaks.size()) {
         return;
     }
-    nsx::sptrPeak3D peak=peaks[index];
+
+    nsx::sptrPeak3D peak=peaks[idx];
     emit plotPeak(peak);
+}
+
+void PeakTableView::keyPressEvent(QKeyEvent *event)
+{
+    QModelIndexList selected=selectedIndexes();
+    if (selected.isEmpty())
+        return;
+
+    auto peaksModel = dynamic_cast<CollectedPeaksModel*>(model());
+    if (peaksModel == nullptr) {
+        return;
+    }
+    auto peaks = peaksModel->getPeaks();
+    if (peaks.empty()) {
+        return;
+    }
+
+    // take last element
+    QModelIndex last=selected.last();
+    unsigned int index=last.row();
+    if (event->key() == Qt::Key_Up) {
+        --index;
+        if (index >= 0 && index < peaks.size())
+            emit plotPeak(peaks[index]);
+    } else if (event->key() == Qt::Key_Down) {
+        ++index;
+        if (index >= 0 && index < peaks.size())
+            emit plotPeak(peaks[index]);
+    }
+    QTableView::keyPressEvent(event);
 }
 
 void PeakTableView::contextMenuEvent(QContextMenuEvent* event)

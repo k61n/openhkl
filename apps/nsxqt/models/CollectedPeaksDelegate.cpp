@@ -1,6 +1,8 @@
 #include <QApplication>
 #include <QCheckBox>
 #include <QComboBox>
+#include <QKeyEvent>
+#include <QModelIndex>
 #include <QPainter>
 #include <QPixmap>
 
@@ -71,6 +73,14 @@ bool CollectedPeaksDelegate::editorEvent(QEvent *event, QAbstractItemModel *mode
         if (column == CollectedPeaksModel::Column::selected) {
             bool value  = model->data(index,Qt::CheckStateRole).toBool();
             model->setData(index, !value, Qt::CheckStateRole);
+        }
+    } else if (event->type() == QEvent::KeyPress) {
+        auto evt = dynamic_cast<QKeyEvent*>(event);
+        if (evt->key() == Qt::Key_Space) {
+            QModelIndex idx = model->index(index.row(),CollectedPeaksModel::Column::selected,QModelIndex());
+            auto value  = model->data(idx,Qt::CheckStateRole).toBool();
+            model->setData(idx, !value, Qt::CheckStateRole);
+            value  = model->data(idx,Qt::CheckStateRole).toBool();
         }
     }
     return QStyledItemDelegate::editorEvent(event,model,option,index);
