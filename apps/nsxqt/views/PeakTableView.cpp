@@ -77,6 +77,8 @@ PeakTableView::PeakTableView(QWidget *parent)
     auto delegate = new CollectedPeaksDelegate(this);
     setItemDelegate(delegate);
 
+    this->verticalHeader()->setVisible(false);
+
     connect(this,SIGNAL(clicked(const QModelIndex&)),this,SLOT(plotSelectedPeak(const QModelIndex&)));
 }
 

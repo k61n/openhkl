@@ -128,8 +128,8 @@ QVariant CollectedPeaksModel::headerData(int section, Qt::Orientation orientatio
         default:
             return QVariant();
         }
-    }
-    return QString("Peak");
+    } else
+        return QVariant();
 }
 
 QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
