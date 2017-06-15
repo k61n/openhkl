@@ -188,7 +188,6 @@ bool Peak3D::getMillerIndices(const UnitCell& uc, Eigen::RowVector3d& hkl, bool 
             hkl[2]=std::round(hkl[2]);
             return true;
         }
-        hkl = Eigen::Vector3d::Zero();
         return false;
     }
     return true;

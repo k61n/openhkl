@@ -60,6 +60,8 @@ public:
 
     QItemSelectionModel::SelectionFlags selectionCommand(const QModelIndex &index, const QEvent *event) const;
 
+    void keyPressEvent(QKeyEvent *event);
+
 signals:
     void plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&);
     void plotPeak(nsx::sptrPeak3D);
@@ -77,7 +79,7 @@ public slots:
     //! Search peaks with hkl matching part of the string. Text must represent h,k,l values separated by white spaces
     void showPeaksMatchingText(const QString& text);
     //! Plot selected peak
-    void plotSelectedPeak(int index);
+    void plotSelectedPeak(const QModelIndex& index);
 
     void clearSelectedPeaks();
     void selectAllPeaks();

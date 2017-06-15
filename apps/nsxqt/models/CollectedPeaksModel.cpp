@@ -180,6 +180,18 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
                 return QString("not set");
             }
         }
+    case Qt::ToolTipRole:
+        switch (column) {
+            case Column::h:
+                _peaks[row]->getMillerIndices(hkl, false);
+                return hkl[0];
+            case Column::k:
+                _peaks[row]->getMillerIndices(hkl, false);
+                return hkl[1];
+            case Column::l:
+                _peaks[row]->getMillerIndices(hkl, false);
+                return hkl[2];
+        }
     case Qt::CheckStateRole:
         if (column == Column::selected) {
             return _peaks[row]->isSelected();
@@ -290,27 +302,26 @@ bool CollectedPeaksModel::setData(const QModelIndex& index, const QVariant& valu
 
     if (role == Qt::CheckStateRole) {
         bool state = value.toBool();
-        if (column == Column::selected) {
+        if (column == Column::selected)
             _peaks[row]->setSelected(state);
-        }
     }
     else if (role == Qt::EditRole) {
         if (column == Column::unitCell) {
-            if (_cells.empty()) {
+            if (_cells.empty())
                 return false;
-            }
             int unitCellIndex = value.toInt();
             auto unitCell = _cells[unitCellIndex];
             _peaks[row]->addUnitCell(unitCell,true);
         }
     }
     emit dataChanged(index,index);
+    emit updateFrame();
     return true;
 }
 
 bool CollectedPeaksModel::indexIsValid(const QModelIndex& index) const
 {
-    return index.isValid() && index.row() < _peaks.size();
+    return index.isValid() && (index.row() < _peaks.size());
 }
 
 void CollectedPeaksModel::setUnitCells(const nsx::UnitCellList &cells)
