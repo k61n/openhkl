@@ -5,6 +5,7 @@ endif()
 # add project root directory to include path
 include_directories(
     ${CMAKE_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}
 )
 # Disable console on Windows
 if(WIN32)
