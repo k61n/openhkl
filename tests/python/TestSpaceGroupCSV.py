@@ -11,7 +11,11 @@ class TestSpaceGroupCSV(unittest.TestCase):
 
         counts = map
         symbols = table.getAllSymbols()
-        pass
+        for symbol in symbols:
+            # syntax error
+            #counts([symbol]) = 0
+            pass
+
 
 
 if __name__ == '__main__':
