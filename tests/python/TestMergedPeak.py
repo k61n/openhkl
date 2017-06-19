@@ -32,7 +32,19 @@ class TestMergedPeak(unittest.TestCase):
         # bravais_type = nsx.BravaisType()
         # todo: nsx has no attribute named "LatticeCentring"
         # centering = nsx.LatticeCentring()
+
+        # centering is not defined 
+        # match = gruber.reduce(P, centering, bravais_type)
         
+        # bravais_type and centering are not defined
+        # cell.setBravaisType(bravais_type)
+        # cell.setLatticeCentring(centering)
+
+        # todo : type mismatch between numpy and eigen objects
+        # cell.transform(P)
+
+        pass
+
 
 
 if __name__ == '__main__':
