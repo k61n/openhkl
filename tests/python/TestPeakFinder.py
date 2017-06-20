@@ -38,7 +38,7 @@ class TestPeakFinder(unittest.TestCase):
         self.assertTrue(peakFinder.getMinComponents() == 10)
 
         peakFinder.setThresholdValue(3.0)
-        self.assertAlmostEqual(peakFinder.getThresholdValue(), 3.0 , 1e-10) 
+        self.assertAlmostEqual(peakFinder.getThresholdValue(), 3.0 , delta=1e-10) 
         
         # error since 'numors' is not defined.
         #result = peakFinder.find(numors)

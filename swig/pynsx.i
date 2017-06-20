@@ -16,6 +16,7 @@
 %template(vector_1i) std::vector<int>;
 %template(vector_2i) std::vector<std::vector<int>>;
 %template(vector_string) std::vector<std::string>;
+//%template(DetectorState) std::vector<double>;
 
 %shared_ptr(nsx::Peak3D)
 %shared_ptr(nsx::Material)
@@ -42,6 +43,7 @@
 %shared_ptr(nsx::MonoDetector)
 %shared_ptr(nsx::FlatDetector)
 %shared_ptr(nsx::CylindricalDetector)
+%shared_ptr(nsx::Gonio)
 
 %{
 #define SWIG_FILE_WITH_INIT
