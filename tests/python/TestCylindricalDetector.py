@@ -27,7 +27,7 @@ class TestCylindricalDetector(unittest.TestCase):
         self.assertLess(center[2,0],tolerance)
 
         # should be center of the detector so gamma, nu =0 at rest
-         gamma = nsx.new_double()
+        gamma = nsx.new_double()
         nu = nsx.new_double()
         ev1.getGammaNu(gamma,nu)
         self.assertLess(nsx.get_value(gamma),tolerance)        
@@ -36,7 +36,7 @@ class TestCylindricalDetector(unittest.TestCase):
         self.assertLess(th2,tolerance)
 
         # attach a gonio
-         g = nsx.Gonio("gamma-arm")      
+        g = nsx.Gonio("gamma-arm")      
         g.addRotation("gamma",np.array([0,0,1], dtype=float), nsx.RotAxis.CW)
         d.setGonio(g)
 

@@ -5,6 +5,7 @@ import unittest
 
 class TestNDTRee(unittest.TestCase):
     def test(self):
+        # todo(Jonathan) take a close look here!!
 
         #todo : cant import 'using Ellipsoid3D = Ellipsoid<double, 3>'
         tree = np.array([(0,0,0),(100,100,100)]) 

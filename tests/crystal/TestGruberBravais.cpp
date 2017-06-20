@@ -113,7 +113,6 @@ int run_test()
         std::vector<double> p(test_case.second);
 
         for ( int i = 0; i < 10; ++i) {
-            double a, b, c, alpha, beta, gamma;
             double A, B, C, D, E, F;
 
             A = p[0]+distribution(generator);
@@ -123,14 +122,9 @@ int run_test()
             E = p[4]+distribution(generator);
             F = p[5]+distribution(generator);
 
-            a = std::sqrt(A);
-            b = std::sqrt(B);
-            c = std::sqrt(C);
-            alpha = std::acos(D / b / c);
-            beta = std::acos(E / a / c);
-            gamma = std::acos(F / a / b);
+            nsx::UnitCell cell;
+            cell.setABCDEF(A, B, C, D, E, F);
 
-            nsx::UnitCell cell(a, b, c, alpha, beta, gamma);
             Eigen::Matrix3d G = cell.getMetricTensor();
 
             Eigen::Matrix3d P, NG, NP;

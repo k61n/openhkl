@@ -23,7 +23,8 @@ class TestOBB3D(unittest.TestCase):
         x = 3.0 - var
 
         # todo : says "second" argument is missing in assertAlmostEqual
-        #self.assertAlmostEqual([lower[0], x, tolerance])
+        self.assertAlmostEqual(lower[0], x)
+        # todo(Prachi): continue from here...
         #self.assertAlmostEqual([lower[1], 4.0-var, tolerance ])
         #self.assertAlmostEqual([lower[2],6.0,tolerance])
         #self.assertAlmostEqual([upper[0],3.0+var,tolerance])
@@ -111,7 +112,9 @@ class TestOBB3D(unittest.TestCase):
         # point = np.array([0,0,0,1])
         # (wrong)sum = 0 ,dtype= double
         i=0
-        #for i in range(0,nSteps+1)
+        nSteps = 500
+        for i in range(nSteps+1):
+            pass
         #    point.x() = lower[0]+i*delta[0]
         #    for j=0 in range(0,nSteps+1)
         #        point.y() = lower[1] + j*delta[1]

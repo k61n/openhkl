@@ -20,14 +20,14 @@ class TestUnitCell(unittest.TestCase):
         cell = self.cell
         a,b,c,alpha = self.parameters
 
-        # todo: UnitCell.getA(), etc. not exported to python
-        # self.assertAlmostEqual(cell.getA(),a)
-        #self.assertAlmostEqual(cell.getB(),b)
-        #self.assertAlmostEqual(cell.getC(),c);
-        # todo: UnitCell.getAlpha() etc. not exported to python
-        #self.assertAlmostEqual(cell.getAlpha(),alpha);
-        #self.assertAlmostEqual(cell.getBeta(),alpha);
-        #self.assertAlmostEqual(cell.getGamma(),alpha);
+        
+        self.assertAlmostEqual(cell.getA(),a)
+        self.assertAlmostEqual(cell.getB(),b)
+        self.assertAlmostEqual(cell.getC(),c)
+        
+        self.assertAlmostEqual(cell.getAlpha(),alpha)
+        self.assertAlmostEqual(cell.getBeta(),alpha)
+        self.assertAlmostEqual(cell.getGamma(),alpha)
         
 
 if __name__ == '__main__':
