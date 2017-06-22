@@ -15,7 +15,7 @@ class TestSpaceGroupCSV(unittest.TestCase):
             # syntax error
             #counts([symbol]) = 0
             pass
-
+            
 
 
 if __name__ == '__main__':
