@@ -8,11 +8,11 @@ class TestOBB3D(unittest.TestCase):
     def test(self):
         tolerance = 1e-5
         tolerance_large = 1.0
-        # todo : test the construction of an OBB
+        # test the construction of an OBB
         center = np.array([3,4,7], dtype=float) 
         extent = np.array([np.sqrt(2),np.sqrt(2),1])   
         axis = np.array([(1,0,0),(0,1,0),(0,0,1)], dtype=float)
-        # todo : nsx has no atribute named-V -R  OBB
+        # nsx has no atribute named-V -R  OBB
         obb1 = nsx.OBB(center,extent,axis)
         lower = np.array([])
         lower = obb1.getLower()
@@ -22,59 +22,57 @@ class TestOBB3D(unittest.TestCase):
         var = np.sqrt(2)
         x = 3.0 - var
 
-        # todo : says "second" argument is missing in assertAlmostEqual
         self.assertAlmostEqual(lower[0], x)
-        # todo(Prachi): continue from here...
-        #self.assertAlmostEqual([lower[1], 4.0-var, tolerance ])
-        #self.assertAlmostEqual([lower[2],6.0,tolerance])
-        #self.assertAlmostEqual([upper[0],3.0+var,tolerance])
-        #self.assertAlmostEqual([upper[1],4.0+var,tolerance])
-        #self.assertAlmostEqual([upper[2],8.0,tolerance])
+        self.assertAlmostEqual(lower[1], 4.0-var, delta = tolerance)
+        self.assertAlmostEqual(lower[2],6.0,delta = tolerance)
+        self.assertAlmostEqual(upper[0],3.0+var,delta = tolerance)
+        self.assertAlmostEqual(upper[1],4.0+var,delta = tolerance)
+        self.assertAlmostEqual(upper[2],8.0,delta = tolerance)
 
-        # todo : test- the rotation of an OBB
+        # test- the rotation of an OBB
         r = np.array([(1,-1,0),(1,1,0),(0,0,1)],dtype=float)
         
-        # todo: obb1.rotate(r) doesnt work
+        # obb1.rotate(r) doesnt work
         obb1.rotate(r)
         lower = obb1.getLower()
         upper = obb1.getUpper()
         
-        #self.assertAlmostEqual([lower[0],1.0,tolerance])
-        #self.assertAlmostEqual([lower[1],2.0,tolerance])
-        #self.assertAlmostEqual([lower[2],6.0,tolerance])
-        #self.assertAlmostEqual([upper[0],5.0,tolerance])
-        #self.assertAlmostEqual([upper[1],6.0,tolerance])
-        #self.assertAlmostEqual([upper[2],8.0,tolerance])
+        self.assertAlmostEqual(lower[0],1.0,delta = tolerance)
+        self.assertAlmostEqual(lower[1],2.0,delta = tolerance)
+        self.assertAlmostEqual(lower[2],6.0,delta = tolerance)
+        self.assertAlmostEqual(upper[0],5.0,delta = tolerance)
+        self.assertAlmostEqual(upper[1],6.0,delta = tolerance)
+        self.assertAlmostEqual(upper[2],8.0,delta =tolerance)
 
 
-        # todo : test- the isotropic scaling of an OBB
+        # test- the isotropic scaling of an OBB
         center = np.array([3,2,4],dtype =float)
         extent = np.array([1,4,2],dtype = float)
         axis = np.array([(1,0,0),(0,1,0),(0,0,1)],dtype=float)
         
-        # todo : weird - declaring a a new instance of OBB is giving error
+        # weird - declaring a a new instance of OBB is giving error
         obb2 = nsx.OBB(center,extent,axis)
         obb2.scale(5)
         lower = obb2.getLower()
         upper = obb2.getUpper()
-        #self.assertAlmostEqual([lower[0],2.0,tolerance])
-        #self.assertAlmostEqual([lower[1],-18.0,tolerance])
-        #self.assertAlmostEqual([lower[2],-6.0,tolerance])
-        #self.assertAlmostEqual([upper[0],8.0,tolerance])
-        #self.assertAlmostEqual([upper[1],22.0,tolerance])
-        #self.assertAlmostEqual([upper[2],14.0,tolerance])
+        self.assertAlmostEqual(lower[0,0],-2.0,delta = tolerance)
+        self.assertAlmostEqual(lower[1],-18.0,delta = tolerance)
+        self.assertAlmostEqual(lower[2],-6.0,delta = tolerance)
+        self.assertAlmostEqual(upper[0],8.0,delta = tolerance)
+        self.assertAlmostEqual(upper[1],22.0,delta = tolerance)
+        self.assertAlmostEqual(upper[2],14.0,delta = tolerance)
 
-        # todo : test- the anisotropic scaling of an OBB
+        # test- the anisotropic scaling of an OBB
         center = np.array([2,2,1],dtype=float)
         extent = np.array([np.sqrt(2)/2, np.sqrt(2), 2],dtype=float)
         axis = np.array([(1,-1,0),(1,1,0),(0,0,1)],dtype=float) 
 
         
         obb3 = nsx.OBB(center,extent,axis)
-        # todo: scale function doesnt work
-        #obb3.scale(np.array([3,2,5]))
-        lower = obb3.getLower()
-        upper = obb3.getUpper()
+        obb3.scale(np.array((3,2,5))
+        # todo: lower = obb3.getLower() - syntax error
+        #lower = obb3.getLower()
+        #upper = obb3.getUpper()
         #self.assertAlmostEqual([lower[0],-1.5,tolerance])
         #self.assertAlmostEqual([lower[1],-1.5,tolerance])
         #self.assertAlmostEqual([lower[2],-9.0,tolerance])
@@ -82,11 +80,11 @@ class TestOBB3D(unittest.TestCase):
         #self.assertAlmostEqual([upper[1],5.5,tolerance])
         #self.assertAlmostEqual([upper[2],11.0,tolerance])
 
-        #todo: test the translation of an OBB
-        # todo : translate function doesnt work
-        #obb3.translate(np.array([-1,2,4]))
-        lower = obb3.getLower()
-        upper = obb3.getUpper()
+        # test the translation of an OBB
+        # translate function doesnt work
+        # obb3.translate(np.array([-1,2,4]))
+        #lower = obb3.getLower()
+        #upper = obb3.getUpper()
         #self.assertAlmostEqual([lower[0],-2.5,tolerance])
         #self.assertAlmostEqual([lower[1],0.5,tolerance])
         #self.assertAlmostEqual([lower[2],-5.0,tolerance])
