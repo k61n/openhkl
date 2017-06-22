@@ -30,33 +30,8 @@ UnitCell::UnitCell(double a, double b, double c, double alpha, double beta, doub
   _name("uc"),
   _hklTolerance(0.2)
 {
-    // b-matrix as defined by Busing-Levy paper
-    // b1, b2*cos(beta3),  b3*cos(beta2)
-    // 0 , b2*sin(beta3), -b3*sin(beta2)*cos(alpha1)
-    // 0,  0            ,  1/a3
-    // We use the contravariant basis in reciprocal space, so transpose this.
-
-    double ca=cos(alpha), cb=cos(beta), cc=cos(gamma);
-    double sa=sin(alpha), sb=sin(beta), sc=sin(gamma);
-    double volume=a*b*c*sqrt(1.0-ca*ca-cb*cb-cc*cc+2.0*ca*cb*cc);
-
-    double as=b*c*sa/volume;
-    double bs=a*c*sb/volume;
-    double cs=a*b*sc/volume;
-    double alphas=(cb*cc-ca)/(sb*sc);
-    double betas=(ca*cc-cb)/(sa*sc);
-    double gammas=(ca*cb-cc)/(sa*sb);
-
-    alphas=acos(alphas);
-    betas=acos(betas);
-    gammas=acos(gammas);
-
-    _B << as,0,0,
-          bs*cos(gammas),bs*sin(gammas),0,
-          cs*cos(betas),-cs*sin(betas)*ca,1.0/c;
-
-    _A=_B.inverse();
-    Basis::_reference=reference;
+	setParams(a,b,c,alpha,beta,gamma);
+	Basis::_reference=reference;
 }
 
 UnitCell::UnitCell(const UnitCell& other)

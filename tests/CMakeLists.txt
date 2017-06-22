@@ -35,6 +35,8 @@ add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
 
 configure_file(../resources/databases/isotopes.yaml isotopes.yaml COPYONLY)
 
+configure_file(crystal/lattices.dat lattices.dat COPYONLY)
+configure_file(crystal/niggli_lattices.dat niggli_lattices.dat COPYONLY)
 configure_file(crystal/CsOsO_15K.raf CsOsO_15K.raf COPYONLY)
 configure_file(crystal/CsOsO_15K.lpt CsOsO_15K.lpt COPYONLY)
 
