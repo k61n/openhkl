@@ -108,7 +108,7 @@ BOOST_AUTO_TEST_CASE(Test_OBB_3D)
     BOOST_CHECK_CLOSE(upper[1], 5.5,tolerance);
     BOOST_CHECK_CLOSE(upper[2],11.0,tolerance);
 
-    int nSteps(500);
+    const int nSteps(500);
     Eigen::Vector3d delta=(upper-lower)/nSteps;
     Eigen::Vector4d point(0,0,0,1);
     double sum(0.0);

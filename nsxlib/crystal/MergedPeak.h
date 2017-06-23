@@ -58,7 +58,7 @@ public:
     bool addPeak(const sptrPeak3D& peak);
     bool addPeak(const PeakCalc& peak);
 
-    Eigen::Vector3i getIndex() const;
+    Eigen::RowVector3i getIndex() const;
     Intensity getIntensity() const;
 
     size_t redundancy() const;

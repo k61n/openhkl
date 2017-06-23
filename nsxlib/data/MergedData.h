@@ -47,12 +47,12 @@ public:
 
     bool addPeak(const PeakCalc& peak);
 
-    const std::set<nsx::MergedPeak> getPeaks() const;
+    const MergedPeakSet& getPeaks() const;
     
 private:
       SpaceGroup _group;
       bool _friedel;
-      std::set<nsx::MergedPeak> _peaks;
+      MergedPeakSet _peaks;
 };
 
 } // end namespace nsx

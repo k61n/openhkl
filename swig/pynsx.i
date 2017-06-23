@@ -16,6 +16,7 @@
 %template(vector_1i) std::vector<int>;
 %template(vector_2i) std::vector<std::vector<int>>;
 %template(vector_string) std::vector<std::string>;
+//%template(DetectorState) std::vector<double>;
 
 %shared_ptr(nsx::Peak3D)
 %shared_ptr(nsx::Material)
@@ -35,7 +36,14 @@
 %shared_ptr(nsx::TiffDataReader)
 %shared_ptr(nsx::Experiment)
 %shared_ptr(nsx::ProgressHandler)
+%shared_ptr(nsx::Basis)
 %shared_ptr(nsx::UnitCell)
+%shared_ptr(nsx::Component)
+%shared_ptr(nsx::Detector)
+%shared_ptr(nsx::MonoDetector)
+%shared_ptr(nsx::FlatDetector)
+%shared_ptr(nsx::CylindricalDetector)
+%shared_ptr(nsx::Gonio)
 
 %{
 #define SWIG_FILE_WITH_INIT
@@ -242,11 +250,14 @@ using sptrMaterial = std::shared_ptr<nsx::Material>;
 #include "geometry/Blob3D.h"
 
 #include "crystal/FFTIndexing.h"
-#include "crystal/GruberReduction.h"
+
 #include "crystal/Peak3D.h"
 #include "crystal/SpaceGroup.h"
 
 #include "crystal/UnitCell.h"
+
+#include "crystal/GruberReduction.h"
+
 #include "crystal/PeakIntegrator.h"
 #include "crystal/Profile.h"
 #include "crystal/Intensity.h"
@@ -267,6 +278,11 @@ using sptrUnitCell = std::shared_ptr<nsx::UnitCell>;
 
 #include "data/DataSet.h"
 #include "data/PeakFinder.h"
+
+#include "data/MergedData.h"
+
+#include "statistics/CC.h"
+#include "statistics/RFactor.h"
 
 using namespace nsx;
 
@@ -294,8 +310,10 @@ using namespace nsx;
 // like to generate mappings for
 //%eigen_typemaps(Eigen::Vector3i)
 %eigen_typemaps(Eigen::Vector3d)
+%eigen_typemaps(Eigen::Vector4d)
 %eigen_typemaps(Eigen::RowVector3i)
 %eigen_typemaps(Eigen::RowVector3d)
+%eigen_typemaps(Eigen::RowVector4d)
 %eigen_typemaps(Eigen::Matrix3d)
 %eigen_typemaps(Eigen::VectorXd)
 %eigen_typemaps(Eigen::MatrixXd)
@@ -308,6 +326,8 @@ using namespace nsx;
 // Eigen::Dynamic, Eigen::Dynamic>. Not totally sure why that is.
 %eigen_typemaps(Eigen::Matrix<double, 3, 1>)
 %eigen_typemaps(Eigen::Matrix<double, 1, 3>)
+%eigen_typemaps(Eigen::Matrix<double, 4, 1>)
+%eigen_typemaps(Eigen::Matrix<double, 1, 4>)
 %eigen_typemaps(Eigen::Matrix<int, 3, 1>)
 %eigen_typemaps(Eigen::Matrix<int, 1, 3>)
 %eigen_typemaps(Eigen::Matrix<double, 3, 3>)
@@ -363,7 +383,7 @@ namespace boost { namespace property_tree {} }
 
 %include "chemistry/Material.h"
 
-%include "crystal/UnitCell.h"
+
 %template(scored_uc) std::pair<std::shared_ptr<nsx::UnitCell>, double>;
 %template(indexer_solutions) std::vector<std::pair<std::shared_ptr<nsx::UnitCell>,double>>;
 
@@ -389,7 +409,7 @@ namespace nsx {
 }
 
 %include "crystal/FFTIndexing.h"
-%include "crystal/GruberReduction.h"
+
 %include "crystal/Intensity.h"
 %include "crystal/Peak3D.h"
 
@@ -412,12 +432,14 @@ namespace nsx {
 
 %include "data/DataSet.h"
 %include "data/PeakFinder.h"
+%include "data/MergedData.h"
 
 %template(vector_data) std::vector<std::shared_ptr<nsx::DataSet>>;
 %template(vector_peak) std::vector<std::shared_ptr<nsx::Peak3D>>;
-%template(set_peak) std::set<std::shared_ptr<nsx::Peak3D>>;
 
-
+%template(PeakSet) std::set<std::shared_ptr<nsx::Peak3D>>;
+%template(MergedPeakSet) std::set<nsx::MergedPeak>;
+%template(PeakCalcList) std::vector<nsx::PeakCalc>;
 
 
  //%include "chemistry/ChemicalFormulaParser.h"
@@ -432,6 +454,7 @@ namespace nsx {
 %include "mathematics/Round.h"
 %include "mathematics/Minimizer.h"
 %include "mathematics/RNG.h"
+
 
 %include "utils/EigenToVector.h"
 //%include "utils/Types.h"
@@ -458,13 +481,14 @@ namespace nsx {
 %include "crystal/PeakPredictor.h"
 %include "crystal/UBMinimizer.h"
 %include "crystal/SpaceGroupSymbols.h"
-
+%include "geometry/Basis.h"
 %include "crystal/Profile.h"
 %include "crystal/Intensity.h"
 %include "crystal/PeakIntegrator.h"
 %include "crystal/UnitCell.h"
 %include "crystal/ResolutionShell.h"
 %include "statistics/RFactor.h"
+%include "statistics/CC.h"
 %include "statistics/CC.h"
 %include "crystal/Peak3D.h"
 %include "crystal/PeakCalc.h"
@@ -484,7 +508,7 @@ namespace nsx {
 %include "geometry/Triangle.h"
 
 %include "geometry/IShape.h"
-%include "geometry/Basis.h"
+
 %include "geometry/OBB.h"
 %include "geometry/Ellipsoid.h"
 %include "geometry/Face.h"
