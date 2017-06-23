@@ -45,13 +45,13 @@ class TestPeak3D(unittest.TestCase):
         peak.setDetectorEvent(event2)
         Q = peak.getQ()
         self.assertAlmostEqual(Q[0,0], 1)
-        self.assertAlmostEqual(Q[1,0], -1)
-        self.assertLess(Q[2,0],tolerance)    
+        self.assertAlmostEqual(Q[0,1], -1)
+        self.assertLess(Q[0,2],tolerance)    
 
         sample = nsx.Sample("sample")
-        b1 = nsx.sptrGonio(nsx.Gonio("Busing level convention"))
+        b1 = nsx.Gonio("Busing level convention")
         
-
+        #todo: complete test...
 
 
 

@@ -310,8 +310,10 @@ using namespace nsx;
 // like to generate mappings for
 //%eigen_typemaps(Eigen::Vector3i)
 %eigen_typemaps(Eigen::Vector3d)
+%eigen_typemaps(Eigen::Vector4d)
 %eigen_typemaps(Eigen::RowVector3i)
 %eigen_typemaps(Eigen::RowVector3d)
+%eigen_typemaps(Eigen::RowVector4d)
 %eigen_typemaps(Eigen::Matrix3d)
 %eigen_typemaps(Eigen::VectorXd)
 %eigen_typemaps(Eigen::MatrixXd)
@@ -324,6 +326,8 @@ using namespace nsx;
 // Eigen::Dynamic, Eigen::Dynamic>. Not totally sure why that is.
 %eigen_typemaps(Eigen::Matrix<double, 3, 1>)
 %eigen_typemaps(Eigen::Matrix<double, 1, 3>)
+%eigen_typemaps(Eigen::Matrix<double, 4, 1>)
+%eigen_typemaps(Eigen::Matrix<double, 1, 4>)
 %eigen_typemaps(Eigen::Matrix<int, 3, 1>)
 %eigen_typemaps(Eigen::Matrix<int, 1, 3>)
 %eigen_typemaps(Eigen::Matrix<double, 3, 3>)
