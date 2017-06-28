@@ -249,7 +249,7 @@ void Ellipsoid::rotate(const Eigen::Matrix3d& U)
 
 void Ellipsoid::scale(double value)
 {
-    _metric /= std::sqrt(value);
+    _metric /= value*value;
     this->scaleAABB(value);
 }
 
