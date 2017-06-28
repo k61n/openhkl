@@ -18,7 +18,8 @@ BOOST_AUTO_TEST_CASE(Test_Ellipsoid_3D)
             0,1,0,
             0,0,1;
     nsx::Ellipsoid e(center,semi_axes,eigV);
-
+    nsx::Ellipsoid f(center,semi_axes,eigV);
+    
     auto p = e.getAABBCenter();
 
     BOOST_CHECK_CLOSE(p(0), center(0), eps);
@@ -74,4 +75,41 @@ BOOST_AUTO_TEST_CASE(Test_Ellipsoid_3D)
     BOOST_CHECK_CLOSE(extents(2), 8, eps);
 
     BOOST_CHECK_CLOSE(e.getVolume(), 3*3*4 * M_PI * 4 / 3.0, eps);
+
+    const int N = 8;
+    const double dx = 4.5 / N;
+    Eigen::Matrix4d A = f.homogeneousMatrix();
+
+    int count = 0;
+
+    for (auto i = -N; i < N; ++i) {
+        for (auto j = -N; j < N; ++j) {
+            for (auto k = -N; k < N; ++k) {
+                Eigen::Vector4d u(center(0)+i*dx, center(1)+j*dx, center(2)+k*dx, 1.0);
+
+                BOOST_CHECK_EQUAL(f.isInside(u), u.dot(A*u) < 0.0);  
+
+                if (f.isInside(u)) {
+                    ++count;
+                }                         
+            }
+        }
+    }
+
+    BOOST_CHECK_CLOSE(count*dx*dx*dx, f.getVolume(), 0.1);
+
+    e = f;
+    shift << 6.1, 0, 0;
+    f.translate(shift);
+    BOOST_CHECK_EQUAL(e.collide(f), false);
+    BOOST_CHECK_EQUAL(f.collide(e), false);
+    f.translate(-shift/2);
+    BOOST_CHECK_EQUAL(e.collide(f), true);
+    BOOST_CHECK_EQUAL(f.collide(e), true);
+    f.translate(-shift/2);
+
+    BOOST_CHECK_CLOSE(f.getAABBCenter()[0], center(0), eps);
+    BOOST_CHECK_CLOSE(f.getAABBCenter()[1], center(1), eps);
+    BOOST_CHECK_CLOSE(f.getAABBCenter()[2], center(2), eps);
+
 }

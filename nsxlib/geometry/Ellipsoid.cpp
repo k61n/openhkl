@@ -12,8 +12,10 @@ Ellipsoid::Ellipsoid() : IShape()
 
 Ellipsoid::Ellipsoid(const Ellipsoid& rhs) : IShape()
  {
-    _eigenVal = rhs._eigenVal;
-    _TRSinv = rhs._TRSinv;
+    //_eigenVal = rhs._eigenVal;
+    //_TRSinv = rhs._TRSinv;
+    _center = rhs._center;
+    _metric = rhs._metric;
     updateAABB();
  }
 
@@ -21,8 +23,10 @@ Ellipsoid& Ellipsoid::operator=(const Ellipsoid& other)
 {
     if (this != &other) {
         IShape::operator=(other);
-        _eigenVal=other._eigenVal;
-        _TRSinv=other._TRSinv;
+        //_eigenVal = other._eigenVal;
+        //_TRSinv = other._TRSinv;
+        _metric = other._metric;
+        _center = other._center;
         updateAABB();
     }
     return *this;
@@ -34,47 +38,17 @@ IShape* Ellipsoid::clone() const
 }
 
 Ellipsoid::Ellipsoid(const Eigen::Vector3d& center, const Eigen::Vector3d& eigenvalues, const Eigen::Matrix3d& eigenvectors)
-: IShape(),
-  _eigenVal(eigenvalues)
+: IShape()
+//,  _eigenVal(eigenvalues)
 {
-    // Define the inverse scale matrix from the eigenvalues
-    Eigen::DiagonalMatrix<double,4> Sinv;
-    for (unsigned int i = 0; i < 3; ++i) {
-        Sinv.diagonal()[i] = 1.0/eigenvalues[i];
+    // new implementation below
+    Eigen::Matrix3d D = Eigen::Matrix3d::Identity();
+    for (auto i = 0; i < 3; ++i) {
+        D(i,i) = 1.0 / (eigenvalues[i] * eigenvalues[i]);
     }
-    Sinv.diagonal()[3]=1.0;
+    _metric = eigenvectors * D * eigenvectors.transpose();
+    _center = center;
 
-    // Now prepare the R^-1.T^-1 (rotation,translation)
-    _TRSinv = HomMatrix::Constant(0.0);
-    _TRSinv(3,3) = 1.0;
-
-    for (unsigned int i = 0; i < 3; ++i) {
-        _TRSinv.block(i,0,1,3) = eigenvectors.col(i).transpose().normalized();
-    }
-
-    // The translation part of the inverse transforation matrix is afected by rotation
-    // (see https://fr.wikipedia.org/wiki/Coordonn%C3%A9es_homog%C3%A8nes)
-    _TRSinv.block(0,3,3,1) = -_TRSinv.block(0,0,3,3)*center;
-
-    // Finally compute (TRS)^-1 by left-multiplying (TR)^-1 by S^-1
-    _TRSinv = Sinv*_TRSinv;
-    updateAABB();
-}
-
-
-Ellipsoid::Ellipsoid(const Eigen::Vector3d& center, const Eigen::Matrix3d& RSinv): IShape()
-{
-    Eigen::Vector3d t = -RSinv*center;
-    _TRSinv=HomMatrix::Constant(0.0);
-    _TRSinv(3,3) = 1.0;
-
-    for (unsigned int i = 0; i < 3; ++i) {
-        _TRSinv(i, 3) = t(i, 0);
-
-        for (unsigned int j = 0; j < 3; ++j) {
-            _TRSinv(i, j) = RSinv(i, j);
-        }
-    }
     updateAABB();
 }
 
@@ -101,88 +75,29 @@ bool Ellipsoid::collide(const AABB& aabb) const
  */
 
 bool Ellipsoid::collide(const Ellipsoid& other) const
-{
-    const Ellipsoid& eA = *this;
-    const Ellipsoid& eB = other;
+{ 
+    const auto& A = homogeneousMatrix();
+    const auto& B = other.homogeneousMatrix();
+    Eigen::Matrix4d M = A.inverse() * B;
 
-    const HomMatrix trsA = eA.getInverseTransformation();
-    const Eigen::Vector3d eigA = eA._eigenVal;
-    const HomMatrix trsB = eB.getInverseTransformation();
-    const Eigen::Vector3d eigB = eB._eigenVal;
-
-    Eigen::DiagonalMatrix<double,4> SA;
-    SA.diagonal() << eigA(0), eigA(1), eigA(2), 1.0;
-    Eigen::DiagonalMatrix<double,4> SB;
-    SB.diagonal() << eigB(0), eigB(1), eigB(2), 1.0;
-    // Recover the MA matrix
-    HomMatrix MA=SA*trsA;
-    MA.block(0,0,3,3).transposeInPlace();
-    MA.block(0,3,3,1)=-MA.block(0,0,3,3)*MA.block(0,3,3,1);
-    // Recover the MB^-1 matrix
-    HomMatrix B=SB*trsB;
-    // Define the characteristic matrix of B in its frame of reference.
-    SA.diagonal() << 1.0/std::pow(eigA(0),2), 1.0/std::pow(eigA(1),2), 1.0/std::pow(eigA(2),2), -1.0;
-    SB.diagonal() << 1.0/std::pow(eigB(0),2), 1.0/std::pow(eigB(1),2), 1.0/std::pow(eigB(2),2), -1.0;
-    // Calculate the [bij] matrix (reference to publication).
-    B=MA.transpose()*B.transpose()*SB*B*MA;
-    //
-
-    double ea=SA.diagonal()[0],eb=SA.diagonal()[1],ec=SA.diagonal()[2];
-    double ab=ea*eb, ac=ea*ec, bc= eb*ec;
-    double abc=ea*eb*ec;
-    double b12s=B(0,1)*B(0,1);
-    double b13s=B(0,2)*B(0,2);
-    double b14s=B(0,3)*B(0,3);
-    double b23s=B(1,2)*B(1,2);
-    double b24s=B(1,3)*B(1,3);
-    double b34s=B(2,3)*B(2,3);
-    double b2233=B(1,1)*B(2,2);
-    double termA=B(0,0)*bc+B(1,1)*ac+B(2,2)*ab;
-    double termB=(b2233-b23s)*ea+(B(0,0)*B(2,2)-b13s)*eb+(B(0,0)*B(1,1)-b12s)*ec;
-    double T4=-abc;
-    double T3=termA-B(3,3)*abc;
-    double T2 = termA*B(3,3)-termB-b34s*ab-b14s*bc-b24s*ac;
-    double tmp1=termB*B(3,3);
-    double tmp2=B(0,0)*(b2233+eb*b34s+ec*b24s-b23s);
-    double tmp3=B(1,1)*(ea*b34s+ec*b14s-b13s);
-    double tmp4=B(2,2)*(ea*b24s+eb*b14s-b12s);
-    double tmp5=B(2,3)*(ea*B(1,2)*B(1,3)+eb*B(0,2)*B(0,3))+ B(0,1)*(ec*B(0,3)*B(1,3)-B(0,2)*B(1,2));
-
-    tmp5+= tmp5;
-    double T1=-tmp1+tmp2+tmp3+tmp4-tmp5;
-    double T0 = (-B).determinant();
-    // Normalize the polynomial coeffs.
-    T3/=T4;T2/=T4;T1/=T4;T0/=T4;T4=1.0;
-    // Solve roots of the polynomial equation
-    HomMatrix companion;
-    companion << 0,0,0,-T0,
-                 1,0,0,-T1,
-                 0,1,0,-T2,
-                 0,0,1,-T3;
-    // Solve the eigenvalues problem
-    Eigen::ComplexEigenSolver<HomMatrix> solver;
-    solver.compute(companion);
-
-    const std::complex<double> val0 = solver.eigenvalues()(0);
-    const std::complex<double> val1 = solver.eigenvalues()(1);
-    const std::complex<double> val2 = solver.eigenvalues()(2);
-    const std::complex<double> val3 = solver.eigenvalues()(3);
+    Eigen::ComplexEigenSolver<Eigen::Matrix4d> solver(M);
+    const auto& val = solver.eigenvalues();
 
     // One of the root is always positive.
     // Check whether two of the roots are negative and distinct, in which case the Ellipse do not collide.
     int count=0;
     double sol[2];
-    if (std::fabs(imag(val0))< 1e-5 && real(val0)<0) {
-        sol[count++]=real(val0);
+    if (std::fabs(imag(val(0)))< 1e-5 && real(val(0))<0) {
+        sol[count++]=real(val(0));
     }
-    if (std::fabs(imag(val1))< 1e-5 && real(val1)<0) {
-        sol[count++]=real(val1);
+    if (std::fabs(imag(val(1)))< 1e-5 && real(val(1))<0) {
+        sol[count++]=real(val(1));
     }
-    if (std::fabs(imag(val2))< 1e-5 && real(val2)<0) {
-        sol[count++]=real(val2);
+    if (std::fabs(imag(val(2)))< 1e-5 && real(val(2))<0) {
+        sol[count++]=real(val(2));
     }
-    if (std::fabs(imag(val3))< 1e-5 && real(val3)<0) {
-        sol[count++]=real(val3);
+    if (std::fabs(imag(val(3)))< 1e-5 && real(val(3))<0) {
+        sol[count++]=real(val(3));
     }
     return (!(count==2 && std::fabs(sol[0]-sol[1])>1e-5));
 }
@@ -193,6 +108,7 @@ bool Ellipsoid::collide(const Ellipsoid& other) const
  *	Geometric Tools, LLC
  *	http://www.geometrictools.com
  */
+
 bool Ellipsoid::collide(const OBB& other) const
 {
     const Ellipsoid& ell = *this;
@@ -206,7 +122,7 @@ bool Ellipsoid::collide(const OBB& other) const
 
     // Construct the S matrice for the ellipsoid
     Eigen::DiagonalMatrix<double,4> ellS;
-    ellS.diagonal().segment(0,3) = ell._eigenVal;
+    ellS.diagonal().segment(0,3) = ell.eigenvalues();
     ellS.diagonal()[3] = 1.0;
 
     // Construct the S matrice for the OBB
@@ -317,142 +233,120 @@ bool Ellipsoid::collide(const OBB& other) const
     return true;
 }
 
+
 bool Ellipsoid::collide(const Sphere& other) const
 {
     return collideEllipsoidSphere(*this,other);
 }
 
-void Ellipsoid::rotate(const Eigen::Matrix3d& eigenvectors)
+
+void Ellipsoid::rotate(const Eigen::Matrix3d& U)
 {
-    // Reconstruct S
-    Eigen::DiagonalMatrix<double,4> S;
-    for (unsigned int i = 0; i < 3; ++i) {
-        S.diagonal()[i] = _eigenVal[i];
-    }
-    S.diagonal()[3] = 1.0;
-    _TRSinv=S*_TRSinv;
-
-    // Construct the inverse of the new rotation matrix
-    HomMatrix Rnewinv = HomMatrix::Zero();
-    Rnewinv(3,3) = 1.0;
-    for (unsigned int i = 0; i < 3; ++i) {
-        Rnewinv.block(i,0,1,3)=eigenvectors.col(i).transpose().normalized();
-    }
-    _TRSinv=Rnewinv*_TRSinv;
-
-    // Reconstruct Sinv
-    for (unsigned int i = 0; i < 3; ++i) {
-        S.diagonal()[i] = 1.0/_eigenVal[i];
-    }
-    S.diagonal()[3] = 1.0;
-
-    // Reconstruct the complete TRS inverse
-    _TRSinv = S*_TRSinv;
-
+    _metric = U * _metric * U.transpose();
     // Update the bounds of the AABB
     updateAABB();
 }
 
 void Ellipsoid::scale(double value)
 {
-    _eigenVal *= value;
-    Eigen::DiagonalMatrix<double,4> Sinv;
-    for (unsigned int i = 0; i < 3; ++i) {
-        Sinv.diagonal()[i] = 1.0/value;
-    }
-    Sinv.diagonal()[3] = 1.0;
-    _TRSinv = Sinv*_TRSinv;
+    _metric /= std::sqrt(value);
     this->scaleAABB(value);
-}
-
-void Ellipsoid::scale(const Eigen::Vector3d& v)
-{
-    _eigenVal = _eigenVal.cwiseProduct(v);
-    Eigen::DiagonalMatrix<double,4> Sinv;
-    for (unsigned int i = 0; i < 3; ++i) {
-        Sinv.diagonal()[i] = 1.0/v[i];
-    }
-    Sinv.diagonal()[3] = 1.0;
-    _TRSinv = Sinv*_TRSinv;
-    this->scaleAABB(v);
 }
 
 void Ellipsoid::translate(const Eigen::Vector3d& t)
 {
-    HomMatrix tinv = HomMatrix::Constant(0.0);
-    tinv.block(0,3,3,1) = -t;
-    for (unsigned int i = 0; i < 4; ++i) {
-        tinv(i,i) = 1.0;
-    }
-    tinv(3,3) = 1.0;
-    _TRSinv = _TRSinv*tinv;
+    _center += t;    
     this->translateAABB(t);
 }
 
 bool Ellipsoid::isInside(const HomVector& point) const
 {
-    auto&& x = _TRSinv * point;
-    return (x.squaredNorm() <= 2.0);
+    const double s = 1.0 / point(3);
+    Eigen::Vector3d u(point(0)*s, point(1)*s, point(2)*s);
+    u -= _center;
+    return u.transpose() * _metric * u < 1.0;
 }
 
 const HomMatrix& Ellipsoid::getInverseTransformation() const
 {
-    return _TRSinv;
+    // new implementation
+    Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(_metric);
+
+    auto&& eigenvalues = solver.eigenvalues();
+    auto&& eigenvectors = solver.eigenvectors();
+
+    // Define the inverse scale matrix from the eigenvalues
+    Eigen::DiagonalMatrix<double,4> Sinv;
+    static Eigen::Matrix4d TRSinv;
+    for (unsigned int i = 0; i < 3; ++i) {
+        Sinv.diagonal()[i] = std::sqrt(eigenvalues[i]);
+    }
+    Sinv.diagonal()[3]=1.0;
+
+    // Now prepare the R^-1.T^-1 (rotation,translation)
+    TRSinv = HomMatrix::Constant(0.0);
+    TRSinv(3,3) = 1.0;
+
+    for (unsigned int i = 0; i < 3; ++i) {
+        TRSinv.block(i,0,1,3) = eigenvectors.col(i).transpose().normalized();
+    }
+
+    // The translation part of the inverse transforation matrix is afected by rotation
+    // (see https://fr.wikipedia.org/wiki/Coordonn%C3%A9es_homog%C3%A8nes)
+    TRSinv.block(0,3,3,1) = -TRSinv.block(0,0,3,3)*_center;
+
+    // Finally compute (TRS)^-1 by left-multiplying (TR)^-1 by S^-1
+    TRSinv = Sinv*TRSinv;
+
+    return TRSinv;
 }
 
 void Ellipsoid::updateAABB()
 {
-    HomMatrix TRS = getInverseTransformation().inverse();
+    const auto& B = _metric.inverse();
+    Eigen::Vector3d a;
 
-    // See https://tavianator.com/exact-bounding-boxes-for-spheres-ellipsoids/ for details about how getting
-    // AABB efficiently from transformation matrix
-    // The width of the AABB in one direction is the norm of corresponding TRS matrix row
-    Eigen::Vector3d width = Eigen::Vector3d::Constant(0.0);
-    for (unsigned int i = 0; i < 3; ++i) {
-        for (unsigned int j = 0; j < 3; ++j) {
-            width[i] += TRS(i,j)*TRS(i,j);
-        }
-        width[i] = sqrt(width[i]);
+    for (auto i = 0; i < 3; ++i) {
+        a(i) = std::sqrt(B(i,i));
     }
-    // Update the upper and lower bound of the AABB from center +-width
-    _lowerBound=TRS.block(0,3,3,1)-width;
-    _upperBound=TRS.block(0,3,3,1)+width;
+    _lowerBound = _center - a;
+    _upperBound = _center + a;
 }
 
 bool Ellipsoid::rayIntersect(const Eigen::Vector3d& from, const Eigen::Vector3d& dir, double& t1, double& t2) const
 {
-    HomVector hFrom = _TRSinv * from.homogeneous();
-    HomVector hDir;
-    hDir.segment(0,3) = dir;
-    hDir[3] = 0.0;
-    hDir = _TRSinv*hDir;
-    Sphere sphere(Eigen::Vector3d::Zero(),1.0);
-    return sphere.rayIntersect(hFrom.segment(0,3),hDir.segment(0,3),t1,t2);
-}
+    auto&& d = dir;
+    auto&& a = from;
+    auto&& c = _center;
+    auto&& ac = a-c;
+    auto&& A = _metric;
 
-Eigen::Vector3d Ellipsoid::getCenter() const
-{
-    Eigen::Vector3d t;
-    Eigen::Matrix3d A;
+    const double alpha = d.dot(A*d);
+    const double beta = 2*d.dot(A*ac);
+    const double gamma = ac.dot(A*ac)-1.0;
 
-    for (int i = 0; i < 3; ++i) {
-        t(i,0) = _TRSinv(i, 3);
+    const double discr = beta*beta -4*alpha*gamma;
 
-        for (int j = 0; j < 3; ++j) {
-            A(i, j) = _TRSinv(i, j);
-        }
+    if (discr < 0) {
+        return false;
     }
-    t = -A.inverse()*t;
-    return t;
+
+    const double delta = std::sqrt(discr);
+
+    t1 = (-beta-delta)/(2*alpha);
+    t2 = (-beta+delta)/(2*alpha);
+
+    return !(t1 < 0 && t2 < 0);
 }
 
 Eigen::Matrix3d Ellipsoid::getRSinv() const
 {
     Eigen::Matrix3d A;
+    Eigen::Matrix4d TRSinv = getInverseTransformation();
 
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 3; ++j) {
-            A(i, j) = _TRSinv(i, j);
+            A(i, j) = TRSinv(i, j);
         }
     }
     return A;
@@ -480,16 +374,31 @@ bool collideEllipsoidSphere(const Ellipsoid& eA, const Sphere& s)
     return eA.collide(eB);
 }
 
-HomMatrix Ellipsoid::getTransformation() const
-{
-    return _TRSinv.inverse();
-}
-
 double Ellipsoid::getVolume() const
 {
     static constexpr double c = 4.0*M_PI / 3.0;
-    return c * _eigenVal.prod();
+    return c * std::pow(_metric.determinant(), -0.5);
+}
+
+Eigen::Matrix4d Ellipsoid::homogeneousMatrix() const
+{
+    Eigen::Matrix4d Q = Eigen::Matrix4d::Zero();
+    Q.block<3,3>(0, 0) = _metric;
+    Q.block<3,1>(0, 3) = -_metric * _center;
+    Q.block<1,3>(3,0) = (-_metric * _center).transpose();
+    Q(3,3) = _center.dot(_metric*_center)-1.0;
+    return Q;
+}
+
+Eigen::Vector3d Ellipsoid::eigenvalues() const
+{
+    Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(_metric);
+    Eigen::Vector3d vals = solver.eigenvalues();
+
+    for (auto i = 0; i < 3; ++i) {
+        vals(i) = 1.0 / std::sqrt(vals(i));
+    }
+    return vals;
 }
 
 } // end namespace nsx
-

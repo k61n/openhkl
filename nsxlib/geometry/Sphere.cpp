@@ -126,7 +126,7 @@ bool Sphere::rayIntersect(const Eigen::Vector3d& from, const Eigen::Vector3d& di
     double sdelta = sqrt(delta);
     t1 = 0.5*(-b - sdelta)/a;
     t2 = 0.5*(-b + sdelta)/a;
-    return true;
+    return true; // <<<--- totally wrong
 }
 
 bool collideSphereAABB(const Sphere& sphere, const AABB& aabb)
