@@ -68,7 +68,6 @@ public:
     bool collide(const Sphere& other) const;
     //! Return the inverse of the Mapping matrix (\f$ S^{-1}.R^{-1}.T^{-1} \f$)
     const HomMatrix& getInverseTransformation() const;
-    HomMatrix getTransformation() const;
 
     //! Check whether a point given as Homogeneous coordinate in the (D+1) dimension is Inside the Ellipsoid.
     bool isInside(const HomVector& vector) const;
