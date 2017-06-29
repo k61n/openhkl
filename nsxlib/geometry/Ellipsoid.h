@@ -49,6 +49,8 @@ public:
     Ellipsoid();
     //! Copy constructor
     Ellipsoid(const Ellipsoid&);
+    //! Construct directly from metric tensor
+    Ellipsoid(const Eigen::Vector3d& center, const Eigen::Matrix3d& metric);
     //! Construct a N-dimensional ellipsoid from its center, semi-axes, and eigenvectors ()
     Ellipsoid(const Eigen::Vector3d& center, const Eigen::Vector3d& eigenvalues, const Eigen::Matrix3d& eigenvectors);
     virtual ~Ellipsoid()=default; 

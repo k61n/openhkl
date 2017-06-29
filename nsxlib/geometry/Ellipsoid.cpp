@@ -37,6 +37,12 @@ IShape* Ellipsoid::clone() const
     return new Ellipsoid(*this);
 }
 
+Ellipsoid::Ellipsoid(const Eigen::Vector3d& center, const Eigen::Matrix3d& metric): IShape(),
+    _center(center), _metric(metric)
+{
+    updateAABB();
+}
+
 Ellipsoid::Ellipsoid(const Eigen::Vector3d& center, const Eigen::Vector3d& eigenvalues, const Eigen::Matrix3d& eigenvectors)
 : IShape()
 //,  _eigenVal(eigenvalues)
@@ -48,7 +54,6 @@ Ellipsoid::Ellipsoid(const Eigen::Vector3d& center, const Eigen::Vector3d& eigen
     }
     _metric = eigenvectors * D * eigenvectors.transpose();
     _center = center;
-
     updateAABB();
 }
 
