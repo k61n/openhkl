@@ -1,6 +1,5 @@
 #include "AABB.h"
 #include "Ellipsoid.h"
-#include "Sphere.h"
 
 namespace nsx {
 
@@ -80,16 +79,6 @@ bool AABB::collide(const Ellipsoid& other) const
     return collideAABBEllipsoid(*this,other);
 }
 
-bool AABB::collide(const OBB& other) const
-{
-    return collideAABBOBB(*this,other);
-}
-
-bool AABB::collide(const Sphere& other) const
-{
-    return collideAABBSphere(*this,other);
-}
-
 bool AABB::rayIntersect(const Eigen::Vector3d& from, const Eigen::Vector3d& dir, double& t1, double& t2) const
 {
     // Adapted from
@@ -139,16 +128,6 @@ bool collideAABBAABB(const AABB& a, const AABB& b)
 bool collideAABBEllipsoid(const AABB& aabb, const Ellipsoid& ell)
 {
     return collideEllipsoidAABB(ell,aabb);
-}
-
-bool collideAABBOBB(const AABB& aabb, const OBB& obb)
-{
-    return collideOBBAABB(obb,aabb);
-}
-
-bool collideAABBSphere(const AABB& aabb, const Sphere& sphere)
-{
-    return collideSphereAABB(sphere,aabb);
 }
 
 } // end namespace nsx

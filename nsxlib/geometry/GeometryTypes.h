@@ -21,8 +21,6 @@ class Ellipsoid;
 class Face;
 class IShape;
 class Octree;
-class OBB;
-class Sphere;
 class Triangle;
 class Vertex;
 

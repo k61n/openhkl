@@ -73,10 +73,6 @@ public:
     virtual bool collide(const AABB& rhs) const =0;
     //! Interface for Ellipsoid collisions
     virtual bool collide(const Ellipsoid& rhs) const =0;
-    //! Interface for OBB collisions
-    virtual bool collide(const OBB& rhs) const =0;
-    //! Interface for Sphere collisions
-    virtual bool collide(const Sphere& rhs) const =0;
 
     //! Check whether the bounding box of the shape contains the bounding box of the another shape
     bool contains(const IShape& other) const;

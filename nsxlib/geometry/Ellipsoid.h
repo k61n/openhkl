@@ -36,9 +36,6 @@
 
 #include "GeometryTypes.h"
 #include "IShape.h"
-//#include "AABB.h"
-//#include "OBB.h"
-//#include "Sphere.h"
 
 namespace nsx {
 
@@ -51,6 +48,8 @@ public:
     Ellipsoid(const Ellipsoid&);
     //! Construct directly from metric tensor
     Ellipsoid(const Eigen::Vector3d& center, const Eigen::Matrix3d& metric);
+    //! Constructor for a sphere
+    Ellipsoid(const Eigen::Vector3d& center, double radius);
     //! Construct a N-dimensional ellipsoid from its center, semi-axes, and eigenvectors ()
     Ellipsoid(const Eigen::Vector3d& center, const Eigen::Vector3d& eigenvalues, const Eigen::Matrix3d& eigenvectors);
     virtual ~Ellipsoid()=default; 
@@ -64,10 +63,6 @@ public:
     bool collide(const AABB& other) const;
     //! Return true if the ellipsoid intersects an ellipsoid.
     bool collide(const Ellipsoid& other) const;
-    //! Return true if the ellipsoid intersects an OBB.
-    bool collide(const OBB& other) const;
-    //! Return true if the ellipsoid intersects a Sphere.
-    bool collide(const Sphere& other) const;
     //! Return the inverse of the Mapping matrix (\f$ S^{-1}.R^{-1}.T^{-1} \f$)
     const HomMatrix& getInverseTransformation() const;
 
@@ -122,9 +117,6 @@ private:
 };
 
 bool collideEllipsoidAABB(const Ellipsoid&, const AABB&);
-//bool collideEllipsoidEllipsoid(const Ellipsoid&, const Ellipsoid&);
-//bool collideEllipsoidOBB(const Ellipsoid&, const OBB&);
-bool collideEllipsoidSphere(const Ellipsoid&, const Sphere&);
 
 } // end namespace nsx
 

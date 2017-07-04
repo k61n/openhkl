@@ -88,10 +88,6 @@ public:
     bool collide(const AABB& other) const override;
     //! Return true if the AABB intersects an ellipsoid.
     bool collide(const Ellipsoid& other) const override;
-    //! Return true if the AABB intersects an OBB.
-    bool collide(const OBB& other) const override;
-    //! Return true if the AABB intersects a Sphere.
-    bool collide(const Sphere& other) const override;
 
     //! Compute the intersection between the AABB and a given ray.
     //! Return true if an intersection was found, false otherwise.
@@ -101,7 +97,7 @@ public:
     bool rayIntersect(const Eigen::Vector3d& from, const Eigen::Vector3d& dir, double& t1, double& t2) const override;
 
 #ifndef SWIG
-    // Macro to ensure that an OBB object can be dynamically allocated.
+    // Macro to ensure that an AABB object can be dynamically allocated.
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 #endif
 
@@ -109,8 +105,6 @@ public:
 
 bool collideAABBAABB(const AABB&, const AABB&);
 bool collideAABBEllipsoid(const AABB&, const Ellipsoid&);
-bool collideAABBOBB(const AABB&, const OBB&);
-bool collideAABBSphere(const AABB&, const Sphere&);
 
 } // end namespace nsx
 

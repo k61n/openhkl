@@ -1,9 +1,8 @@
 #include <array>
 
+#include "AABB.h"
 #include "Ellipsoid.h"
 #include "GeometryTypes.h"
-#include "AABB.h"
-#include "OBB.h"
 
 namespace nsx {
 
@@ -46,14 +45,20 @@ Ellipsoid::Ellipsoid(const Eigen::Vector3d& center, const Eigen::Matrix3d& metri
 
 Ellipsoid::Ellipsoid(const Eigen::Vector3d& center, const Eigen::Vector3d& eigenvalues, const Eigen::Matrix3d& eigenvectors)
 : IShape()
-//,  _eigenVal(eigenvalues)
 {
-    // new implementation below
     Eigen::Matrix3d D = Eigen::Matrix3d::Identity();
     for (auto i = 0; i < 3; ++i) {
         D(i,i) = 1.0 / (eigenvalues[i] * eigenvalues[i]);
     }
     _metric = eigenvectors * D * eigenvectors.transpose();
+    _center = center;
+    updateAABB();
+}
+
+Ellipsoid::Ellipsoid(const Eigen::Vector3d& center, double radius)
+: IShape()
+{
+    _metric = Eigen::Matrix3d::Identity()/(radius*radius);
     _center = center;
     updateAABB();
 }
@@ -97,143 +102,6 @@ bool Ellipsoid::collide(const Ellipsoid& other) const
         sol[count++]=real(val(3));
     }
     return (!(count==2 && std::fabs(sol[0]-sol[1])>1e-5));
-}
-
-/** Based on the method described in:
- *  "Intersection of Box and Ellipsoid"
- *	Eberly, David.,
- *	Geometric Tools, LLC
- *	http://www.geometrictools.com
- */
-
-bool Ellipsoid::collide(const OBB& other) const
-{
-    const Ellipsoid& ell = *this;
-    const OBB& obb = other;
-
-    // Get the TRS inverse matrix of the ellipsoid
-    HomMatrix ellTRSinv=ell.getInverseTransformation();
-
-    // Get the TRS inverse matrix of the OBB
-    HomMatrix obbTRSinv=obb.getInverseTransformation();
-
-    // Construct the S matrice for the ellipsoid
-    Eigen::DiagonalMatrix<double,4> ellS;
-    ellS.diagonal().segment(0,3) = ell.eigenvalues();
-    ellS.diagonal()[3] = 1.0;
-
-    // Construct the S matrice for the OBB
-    Eigen::DiagonalMatrix<double,4> obbS;
-    obbS.diagonal().segment(0,3) = obb.getExtents();
-    obbS.diagonal()[3] = 1.0;
-
-    // Construct the (TR)^-1 matrices for the ellipsoid
-    HomMatrix ellTRinv(ellS*ellTRSinv);
-
-    // Construct the (TR)^-1 matrices for the OBB
-    HomMatrix obbTRinv(obbS*obbTRSinv);
-
-    // Construct the R^-1 matrix (non-homogeneous version) for the ellipsoid
-    Eigen::Matrix3d ellRinv=ellTRinv.block(0,0,3,3);
-
-    // Construct the R^-1 matrix (non-homogeneous version) for the obb
-    Eigen::Matrix3d obbRinv=obbTRinv.block(0,0,3,3);
-
-    // Construct T vector for the ellipsoid
-    Eigen::Vector3d ellT=-(ellRinv.transpose())*(ellTRinv.block(0,3,3,1));
-
-    // Construct T vector for the OBB
-    Eigen::Vector3d obbT=-(obbRinv.transpose())*(obbTRinv.block(0,3,3,1));
-
-    // Compute the D2 and M matrices (defined in p.2 of the documentation)
-    Eigen::DiagonalMatrix<double,3> D2;
-    for (unsigned int i=0;i<3;++i) {
-        D2.diagonal()[i] = 1.0/(ellS.diagonal()[i]*ellS.diagonal()[i]);
-    }
-
-    Eigen::Matrix3d M=(ellRinv.transpose())*D2*ellRinv;
-
-    /*
-     * Here actually starts the Minkowski sum of box and ellipsoid algorithm (defined in p.6 of the documentation)
-    */
-
-    // Compute the increase in extents for the OBB
-    Eigen::Vector3d L;
-    for (unsigned int i=0;i<3;++i) {
-        L(i)=sqrt((obbRinv.row(i)*(M.inverse())*(obbRinv.row(i).transpose()))(0,0));
-    }
-
-    // Transform the ellipsoid center to the OBB coordinate system
-    Eigen::Vector3d KmC=ellT-obbT;
-    Eigen::Vector3d x=obbRinv*KmC;
-
-    for (unsigned int i=0;i<3;++i) {
-        // The ellipsoid center is outside the OBB
-        if (std::abs(x(i))>(obbS.diagonal()[i]+L(i)))
-            return false;
-    }
-
-    Eigen::Vector3d s;
-    Eigen::Vector3d PmC = Eigen::Vector3d::Zero();
-    for (unsigned int i=0; i<3;++i) {
-        s(i) = (x(i) >= 0 ? 1 : -1);
-        PmC.array() += s(i)*obbS.diagonal()[i]*obbRinv.row(i).array();
-    }
-
-    Eigen::Vector3d Delta = KmC-PmC;
-    Eigen::Vector3d MDelta = M*Delta;
-    Eigen::Vector3d rsqr;
-
-    double r;
-    for (unsigned int i=0; i<3;++i) {
-        r=((ellRinv.row(i)*Delta)(0,0)/ellS.diagonal()[i]);
-        rsqr(i)=r*r;
-    }
-
-    Eigen::Vector3d UMD;
-    for (unsigned int i=0; i<3;++i)
-        UMD(i)=(obbRinv.row(i)*MDelta)(0,0);
-
-    Eigen::Matrix3d UMU;
-    Eigen::Vector3d product;
-
-    for (unsigned int i=0; i<3;++i) {
-        product << M*(obbRinv.row(i).transpose());
-        for (unsigned int j=i; j<3;++j) {
-            // Need to use template here for disambiguation of the triangularView method.
-            UMU.template triangularView<Eigen::Upper>().coeffRef(i,j)=(obbRinv.row(j)*product)(0,0);
-        }
-    }
-
-    // K is outside the elliptical cylinder <P,U2>
-    if ((s(0)*(UMD(0)*UMU(2,2)-UMD(2)*UMU(0,2)) > 0) &&
-        (s(1)*(UMD(1)*UMU(2,2)-UMD(2)*UMU(1,2)) > 0) &&
-        ((rsqr(0)+rsqr(1)) > 1.0)) {
-        return false;
-    }
-    // K is outside the elliptical cylinder <P,U1>
-    if ((s(0)*(UMD(0)*UMU(1,1)-UMD(1)*UMU(0,1)) > 0) &&
-        (s(2)*(UMD(2)*UMU(1,1)-UMD(1)*UMU(1,2)) > 0) &&
-        ((rsqr(0)+rsqr(2)) > 1.0)) {
-        return false;
-    }
-    // K is outside the elliptical cylinder <P,U0>
-    if ((s(1)*(UMD(1)*UMU(0,0)-UMD(0)*UMU(0,1)) > 0) &&
-            (s(2)*(UMD(2)*UMU(0,0)-UMD(0)*UMU(0,2)) > 0) &&
-            ((rsqr(1)+rsqr(2)) > 1.0)) {
-        return false;
-    }
-    // K is outside the ellipsoid at P
-    if (((s(0)*UMD(0))>0.0) && ((s(1)*UMD(1))>0.0) && ((s(2)*UMD(2))>0.0) && ((rsqr.sum())>1.0)) {
-        return false;
-    }
-    return true;
-}
-
-
-bool Ellipsoid::collide(const Sphere& other) const
-{
-    return collideEllipsoidSphere(*this,other);
 }
 
 
@@ -392,25 +260,12 @@ bool collideEllipsoidAABB(const Ellipsoid& ellipsoid, const AABB& aabb)
 
         for (auto j=0; j<2; ++j) {
             Eigen::Vector3d point = x0 + ((minmax[j]-nt_x0)/nt_Ainv_n)*Ainv_n;
-            if (ellipsoid.isInside(point))
+            if (ellipsoid.isInside(point) && aabb.isInsideAABB(point))
                 return true;
         }
     }
 
     return false;
-}
-
-/*
- * To compute the intersection between an ellipsoid and a sphere a little trick is done.
- * It consists in building up a ellipsoid from the input sphere and just checking for
- * the intersection between two ellipsoids
- */
-bool collideEllipsoidSphere(const Ellipsoid& eA, const Sphere& s)
-{
-    Eigen::Vector3d scale = Eigen::Vector3d::Constant(s.getRadius());
-    Eigen::Matrix3d rot = Eigen::Matrix3d::Identity();
-    Ellipsoid eB(s.getCenter(),scale,rot);
-    return eA.collide(eB);
 }
 
 double Ellipsoid::getVolume() const

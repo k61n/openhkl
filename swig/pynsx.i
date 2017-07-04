@@ -135,18 +135,13 @@ namespace property_tree=boost::property_tree;
 #include "crystal/GruberReduction.h"
 #include "crystal/SymOp.h"
 #include "geometry/Vertex.h"
-//#include "geometry/Blob2D.h"
-#include "geometry/Sphere.h"
 #include "geometry/Triangle.h"
 
 #include "geometry/IShape.h"
 #include "geometry/Basis.h"
-#include "geometry/OBB.h"
 #include "geometry/Ellipsoid.h"
 #include "geometry/Face.h"
 #include "geometry/MCAbsorption.h"
-//#include "geometry/ShapeUnion.h"
-//#include "geometry/NDTree.h"
 #include "geometry/ConvexHull.h"
 
 #include "geometry/BlobFinder.h"
@@ -244,8 +239,6 @@ using sptrMaterial = std::shared_ptr<nsx::Material>;
 #include "geometry/AABB.h"
 
 #include "geometry/Ellipsoid.h"
-#include "geometry/OBB.h"
-#include "geometry/Sphere.h"
 
 #include "geometry/Blob3D.h"
 
@@ -361,23 +354,9 @@ namespace boost { namespace property_tree {} }
 
 %include "geometry/IShape.h"
 
-
-//%typemap(out) AABB::vector = Eigen::Vector3d;
-//%typemap(out) Ellipsoid::vector = Eigen::Vector3d;
-//%typemap(out) OBB::vector = Eigen::Vector3d;
-//%typemap(out) Sphere::vector = Eigen::Vector3d;
-
-
 %include "geometry/AABB.h"
 
-
-%include "geometry/Sphere.h"
-
 %include "geometry/Ellipsoid.h"
-
-%include "geometry/OBB.h"
-
-%include "geometry/Sphere.h"
 
 %include "geometry/Blob3D.h"
 
@@ -503,18 +482,13 @@ namespace nsx {
 %include "crystal/GruberReduction.h"
 %include "crystal/SymOp.h"
 %include "geometry/Vertex.h"
-//%include "geometry/Blob2D.h"
-%include "geometry/Sphere.h"
 %include "geometry/Triangle.h"
 
 %include "geometry/IShape.h"
 
-%include "geometry/OBB.h"
 %include "geometry/Ellipsoid.h"
 %include "geometry/Face.h"
 %include "geometry/MCAbsorption.h"
-//%include "geometry/ShapeUnion.h"
-//%include "geometry/NDTree.h"
 %include "geometry/ConvexHull.h"
 %include "geometry/BlobFinder.h"
 %include "geometry/AABB.h"
@@ -528,10 +502,7 @@ namespace nsx {
 %include "data/IDataReader.h"
 %include "data/HDF5DataReader.h"
 %include "data/I16DataReader.h"
- //%include "data/BasicFrameIterator.h"
 %include "data/RawDataReader.h"
- //%include "data/ThreadedFrameIterator.h"
- //%include "data/IFrameIterator.h"
 %include "data/TiffDataReader.h"
 %include "data/blosc_filter.h"
 
