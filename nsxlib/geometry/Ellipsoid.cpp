@@ -1,8 +1,9 @@
+#include <array>
+
 #include "Ellipsoid.h"
 #include "GeometryTypes.h"
 #include "AABB.h"
 #include "OBB.h"
-
 
 namespace nsx {
 
@@ -69,15 +70,6 @@ bool Ellipsoid::collide(const AABB& aabb) const
 {
     return collideEllipsoidAABB(*this,aabb);
 }
-
-/** Based on the method described in:
- *  "Continuous Collision Detection for Ellipsoids"
- *	Choi, Yi-King; Jung-Woo Chang; Wenping Wang; Myung-Soo Kim; Elber, G.,
- *	Visualization and Computer Graphics, IEEE Transactions on , vol.15, no.2, pp.311,325, March-April 2009
- *  However, resolving the roots of the characteristic polynomial is
- *  done here using the diagonalization of the companion matrix, rather
- *  than using the Sturm's sequence
- */
 
 bool Ellipsoid::collide(const Ellipsoid& other) const
 { 
@@ -272,6 +264,12 @@ bool Ellipsoid::isInside(const HomVector& point) const
     return u.transpose() * _metric * u < 1.0;
 }
 
+bool Ellipsoid::isInside(const Eigen::Vector3d& point) const
+{
+    Eigen::Vector3d u = point - _center;
+    return u.transpose() * _metric * u <= 1.0;
+}
+
 const HomMatrix& Ellipsoid::getInverseTransformation() const
 {
     // new implementation
@@ -357,14 +355,50 @@ Eigen::Matrix3d Ellipsoid::getRSinv() const
     return A;
 }
 
-bool collideEllipsoidAABB(const Ellipsoid& ell, const AABB& aabb)
+const Eigen::Vector3d& Ellipsoid::center() const
 {
-    OBB obb(aabb);
-    return ell.collide(obb);
+    return _center;
 }
 
+const Eigen::Matrix3d& Ellipsoid::metric() const
+{
+    return _metric;
+}
 
+bool collideEllipsoidAABB(const Ellipsoid& ellipsoid, const AABB& aabb)
+{
+    // Cheap preliminary test. Is the center inside the ellipsoid ? If so, then they intersect.
+    if (ellipsoid.isInside(aabb.getAABBCenter())) {
+        return true;
+    }
 
+    auto&& Ainv = ellipsoid.metric().inverse();
+    auto&& x0 = ellipsoid.center();
+
+    const auto& lb = aabb.getLower();
+    const auto& ub = aabb.getUpper();
+
+    const std::array<Eigen::Vector3d,3> normals = {Eigen::Vector3d(1,0,0),Eigen::Vector3d(0,1,0),Eigen::Vector3d(0,0,1)};
+
+    for (auto i=0; i< 3; ++i) {
+
+        std::array<double,2> minmax = {lb[i],ub[i]};
+
+        const auto& n = normals[i];
+
+        double nt_Ainv_n = n.transpose() * Ainv * normals[i];
+        auto Ainv_n = Ainv * n;
+        auto nt_x0 = n.transpose()*x0;
+
+        for (auto j=0; j<2; ++j) {
+            Eigen::Vector3d point = x0 + ((minmax[j]-nt_x0)/nt_Ainv_n)*Ainv_n;
+            if (ellipsoid.isInside(point))
+                return true;
+        }
+    }
+
+    return false;
+}
 
 /*
  * To compute the intersection between an ellipsoid and a sphere a little trick is done.

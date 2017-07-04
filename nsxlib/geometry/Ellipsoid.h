@@ -71,8 +71,8 @@ public:
     //! Return the inverse of the Mapping matrix (\f$ S^{-1}.R^{-1}.T^{-1} \f$)
     const HomMatrix& getInverseTransformation() const;
 
-    //! Check whether a point given as Homogeneous coordinate in the (D+1) dimension is Inside the Ellipsoid.
     bool isInside(const HomVector& vector) const;
+    bool isInside(const Eigen::Vector3d& vector) const;
 
     //! Rotate the ellipsoid.
     void rotate(const Eigen::Matrix3d& U);
@@ -99,6 +99,10 @@ public:
 
     //! Return semiaxes of the ellipsoid
     Eigen::Vector3d eigenvalues() const;
+
+    const Eigen::Vector3d& center() const;
+
+    const Eigen::Matrix3d& metric() const;
 
 #ifndef SWIG
     // Macro to ensure that Ellipsoid can be dynamically allocated.

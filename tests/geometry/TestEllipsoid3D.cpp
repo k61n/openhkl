@@ -5,6 +5,7 @@
 
 #include <Eigen/Dense>
 
+#include <nsxlib/geometry/AABB.h>
 #include <nsxlib/geometry/Ellipsoid.h>
 
 const double eps = 1e-8;
@@ -112,4 +113,33 @@ BOOST_AUTO_TEST_CASE(Test_Ellipsoid_3D)
     BOOST_CHECK_CLOSE(f.getAABBCenter()[1], center(1), eps);
     BOOST_CHECK_CLOSE(f.getAABBCenter()[2], center(2), eps);
 
+    e.translate(-shift);
+
+    // AABB center at -18,-18,-18
+    nsx::AABB aabb(Eigen::Vector3d(-20,-20,-20),Eigen::Vector3d(-16,-16,-16));
+    BOOST_CHECK(!f.collide(aabb));
+
+    // AABB center at -16,-16,-16
+    aabb.translate(Eigen::Vector3d(2,2,2));
+    BOOST_CHECK(!f.collide(aabb));
+
+    // AABB center at 0,0,0
+    aabb.translate(Eigen::Vector3d(16,16,16));
+    BOOST_CHECK(!f.collide(aabb));
+
+    // AABB center at 10,10,10
+    aabb.translate(Eigen::Vector3d(10,10,10));
+    BOOST_CHECK(f.collide(aabb));
+
+    // AABB center at 12,10,10
+    aabb.translate(Eigen::Vector3d(2,0,0));
+    BOOST_CHECK(f.collide(aabb));
+
+    // AABB center at 14,10,10
+    aabb.translate(Eigen::Vector3d(2,0,0));
+    BOOST_CHECK(f.collide(aabb));
+
+    // AABB center at 16,10,10
+    aabb.translate(Eigen::Vector3d(2,0,0));
+    BOOST_CHECK(!f.collide(aabb));
 }
