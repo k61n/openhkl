@@ -45,11 +45,6 @@ void AABB::scale(const Eigen::Vector3d& v)
     scaleAABB(v);
 }
 
-void AABB::translate(const Eigen::Vector3d& t)
-{
-    translateAABB(t);
-}
-
 bool AABB::isInside(const Eigen::Vector3d& point) const
 {
     for(auto i=0; i<3; ++i) {
@@ -141,7 +136,7 @@ Eigen::Vector3d AABB::extents() const
     return _upperBound - _lowerBound;
 }
 
-void AABB::translateAABB(const Eigen::Vector3d& t)
+void AABB::translate(const Eigen::Vector3d& t)
 {
     _lowerBound+=t;
     _upperBound+=t;

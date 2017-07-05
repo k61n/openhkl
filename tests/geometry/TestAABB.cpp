@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE(Test_AABB3D)
     BOOST_CHECK(!(bb2.collide(bb)));
 
     // Translate and scale operations
-    bb.translateAABB(Eigen::Vector3d(1,2,3));
+    bb.translate(Eigen::Vector3d(1,2,3));
     Eigen::Vector3d lower=bb.lower();
     Eigen::Vector3d upper=bb.upper();
     BOOST_CHECK_CLOSE(lower[0], 1.0, tolerance);

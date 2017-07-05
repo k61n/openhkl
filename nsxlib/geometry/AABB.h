@@ -104,8 +104,6 @@ public:
     //! Return the extends of the bounding box of the shape
     Eigen::Vector3d extents() const;
 
-    //! Translate the bounding box
-    void translateAABB(const Eigen::Vector3d&);
     //! Scale by a constant factor
     void scaleAABB(double);
     //! Scale the bounding box
