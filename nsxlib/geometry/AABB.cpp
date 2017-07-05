@@ -53,10 +53,14 @@ bool AABB::collide(const Ellipsoid& ellipsoid) const
     return ellipsoid.collide(*this);
 }
 
-void AABB::setBounds(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub)
+void AABB::setLower(const Eigen::Vector3d& lower)
 {
-    _lowerBound = lb;
-    _upperBound = ub;
+    _lowerBound = lower;
+}
+
+void AABB::setUpper(const Eigen::Vector3d& upper)
+{
+    _upperBound = upper;
 }
 
 const Eigen::Vector3d& AABB::lower() const

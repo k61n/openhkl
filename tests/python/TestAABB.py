@@ -10,7 +10,8 @@ class TestAABB3D(unittest.TestCase):
         lb = np.array([0, 0, 0], dtype=float)
         ub = np.array([1, 2, 3], dtype=float)
         bb = nsx.AABB()
-        bb.setBounds(lb, ub)
+        bb.setLower(lb)
+        bb.setUpper(ub)
         center = bb.center()
         extents = bb.extents()
         

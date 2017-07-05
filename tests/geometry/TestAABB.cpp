@@ -14,7 +14,8 @@ const double tolerance=1e-5;
 BOOST_AUTO_TEST_CASE(Test_AABB3D)
 {
     nsx::AABB bb;
-    bb.setBounds(Eigen::Vector3d(0,0,0),Eigen::Vector3d(1,2,3));
+    bb.setLower(Eigen::Vector3d(0,0,0));
+    bb.setUpper(Eigen::Vector3d(1,2,3));
     Eigen::Vector3d center, extends;
     center=bb.center();
     extends=bb.extents();
@@ -34,10 +35,12 @@ BOOST_AUTO_TEST_CASE(Test_AABB3D)
     nsx::AABB bb2(Eigen::Vector3d(1,2,3),Eigen::Vector3d(2,3,4));
     BOOST_CHECK(bb2.collide(bb));
     // Second bounding box overlaps .
-    bb2.setBounds(Eigen::Vector3d(0.5,2,3),Eigen::Vector3d(2,3,4));
+    bb2.setLower(Eigen::Vector3d(0.5,2,3));
+    bb2.setUpper(Eigen::Vector3d(2,3,4));
     BOOST_CHECK(bb2.collide(bb));
     // No overlap
-    bb2.setBounds(Eigen::Vector3d(2,3,4),Eigen::Vector3d(4,5,6));
+    bb2.setLower(Eigen::Vector3d(2,3,4));
+    bb2.setUpper(Eigen::Vector3d(4,5,6));
     BOOST_CHECK(!(bb2.collide(bb)));
 
     // Translate and scale operations

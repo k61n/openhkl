@@ -78,13 +78,15 @@ public:
     //! Return true if the AABB intersects an ellipsoid.
     bool collide(const Ellipsoid& ellipsoid) const;
 
-    //! Set the lower and upper bounds of the shape bounding box
-    void setBounds(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub);
-
     //! Get a constant reference to the lower bound of the bounding box of the shape
     const Eigen::Vector3d& lower() const;
+    //! Set the lower bound of the ellipsoid
+    void setLower(const Eigen::Vector3d& lower);
+
     //! Get a constant reference to the upper bound of the bounding box of the shape
     const Eigen::Vector3d& upper() const;
+    //! Set the upper bound of the ellipsoid
+    void setUpper(const Eigen::Vector3d& upper);
 
     //! Return the center of the bounding box of the shape
     Eigen::Vector3d center() const;
