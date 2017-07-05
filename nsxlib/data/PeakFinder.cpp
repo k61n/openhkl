@@ -148,7 +148,7 @@ bool PeakFinder::find(DataList numors)
             }
 
             // peak's bounding box not completely contained in detector image
-            if (!dAABB.contains(p->getShape())) {
+            if (!dAABB.contains(p->getShape().aabb())) {
                 p->setSelected(false);
             }
 

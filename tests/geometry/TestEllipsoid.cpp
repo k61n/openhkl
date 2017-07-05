@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_CASE(Test_Ellipsoid_3D)
     BOOST_CHECK_CLOSE(extents(1), 6, eps);
     BOOST_CHECK_CLOSE(extents(2), 8, eps);
 
-    BOOST_CHECK_CLOSE(e.getVolume(), 3*3*4 * 4 * M_PI / 3.0, eps);
+    BOOST_CHECK_CLOSE(e.volume(), 3*3*4 * 4 * M_PI / 3.0, eps);
 
     Eigen::Vector3d shift(1,-1,2);
 
@@ -75,20 +75,19 @@ BOOST_AUTO_TEST_CASE(Test_Ellipsoid_3D)
     BOOST_CHECK_CLOSE(extents(1), 6, eps);
     BOOST_CHECK_CLOSE(extents(2), 8, eps);
 
-    BOOST_CHECK_CLOSE(e.getVolume(), 3*3*4 * M_PI * 4 / 3.0, eps);
+    BOOST_CHECK_CLOSE(e.volume(), 3*3*4 * M_PI * 4 / 3.0, eps);
 
     const int N = 8;
     const double dx = 4.5 / N;
-    Eigen::Matrix4d A = f.homogeneousMatrix();
 
     int count = 0;
 
     for (auto i = -N; i < N; ++i) {
         for (auto j = -N; j < N; ++j) {
             for (auto k = -N; k < N; ++k) {
-                Eigen::Vector4d u(center(0)+i*dx, center(1)+j*dx, center(2)+k*dx, 1.0);
+                Eigen::Vector3d u(center(0)+i*dx, center(1)+j*dx, center(2)+k*dx);
 
-                BOOST_CHECK_EQUAL(f.isInside(u), u.dot(A*u) < 0.0);  
+                BOOST_CHECK_EQUAL(f.isInside(u), (u-center).transpose() * f.metric() * (u-center) < 1.0);
 
                 if (f.isInside(u)) {
                     ++count;
@@ -97,7 +96,7 @@ BOOST_AUTO_TEST_CASE(Test_Ellipsoid_3D)
         }
     }
 
-    BOOST_CHECK_CLOSE(count*dx*dx*dx, f.getVolume(), 0.1);
+    BOOST_CHECK_CLOSE(count*dx*dx*dx, f.volume(), 0.1);
 
     e = f;
     shift << 6.1, 0, 0;

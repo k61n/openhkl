@@ -6,7 +6,7 @@
 
 namespace nsx {
 
-Ellipsoid::Ellipsoid() : AABB()
+Ellipsoid::Ellipsoid()
 {
 }
 
@@ -127,14 +127,6 @@ void Ellipsoid::translate(const Eigen::Vector3d& t)
     _center += t;    
 }
 
-bool Ellipsoid::isInside(const HomVector& point) const
-{
-    const double s = 1.0 / point(3);
-    Eigen::Vector3d u(point(0)*s, point(1)*s, point(2)*s);
-    u -= _center;
-    return u.transpose() * _metric * u < 1.0;
-}
-
 bool Ellipsoid::isInside(const Eigen::Vector3d& point) const
 {
     Eigen::Vector3d u = point - _center;
@@ -175,32 +167,6 @@ const HomMatrix& Ellipsoid::getInverseTransformation() const
     return TRSinv;
 }
 
-bool Ellipsoid::rayIntersect(const Eigen::Vector3d& from, const Eigen::Vector3d& dir, double& t1, double& t2) const
-{
-    auto&& d = dir;
-    auto&& a = from;
-    auto&& c = _center;
-    auto&& ac = a-c;
-    auto&& A = _metric;
-
-    const double alpha = d.dot(A*d);
-    const double beta = 2*d.dot(A*ac);
-    const double gamma = ac.dot(A*ac)-1.0;
-
-    const double discr = beta*beta -4*alpha*gamma;
-
-    if (discr < 0) {
-        return false;
-    }
-
-    const double delta = std::sqrt(discr);
-
-    t1 = (-beta-delta)/(2*alpha);
-    t2 = (-beta+delta)/(2*alpha);
-
-    return !(t1 < 0 && t2 < 0);
-}
-
 Eigen::Matrix3d Ellipsoid::getRSinv() const
 {
     Eigen::Matrix3d A;
@@ -224,7 +190,7 @@ const Eigen::Matrix3d& Ellipsoid::metric() const
     return _metric;
 }
 
-double Ellipsoid::getVolume() const
+double Ellipsoid::volume() const
 {
     static constexpr double c = 4.0*M_PI / 3.0;
     return c * std::pow(_metric.determinant(), -0.5);

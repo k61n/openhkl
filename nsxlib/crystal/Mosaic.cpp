@@ -77,16 +77,15 @@ double ellipsoids_overlap(const Ellipsoid& ell1,const Ellipsoid& ell2)
     for (int i=0;i<100000;++i)
         {
         Eigen::Vector3d point(d1(gen),d2(gen),d3(gen));
-        Eigen::Vector4d hpoint = point.homogeneous();
-        if (ell1.isInside(hpoint))
+        if (ell1.isInside(point))
                 {
             ++inside1;
-            if (ell2.isInside(hpoint))
+            if (ell2.isInside(point))
                 ++inside2;
         }
         }
 
-    double overlap = ell1.getVolume()*static_cast<double>(inside2)/static_cast<double>(inside1);
+    double overlap = ell1.volume()*static_cast<double>(inside2)/static_cast<double>(inside1);
 
     return overlap;
 }
@@ -101,7 +100,7 @@ Mosaic::Mosaic(const std::string& instr, double l, double dl, double dMonSam, do
 {
     // Set up the diffractometer
     DiffractometerStore* ds=DiffractometerStore::Instance();
-    _diffractometer = std::shared_ptr<Diffractometer>(ds->buildDiffractometer(instr));
+    _diffractometer = sptrDiffractometer(ds->buildDiffractometer(instr));
 }
 
 void Mosaic::setSample(Sample* sample)

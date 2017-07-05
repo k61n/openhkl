@@ -67,12 +67,6 @@ public:
     //! Assignment operator
     AABB& operator=(const AABB& other);
 
-    //! Scale isotropically the AABB.
-    void scale(double value);
-    //! Scale anisotropically the AABB.
-    void scale(const Eigen::Vector3d& scale);
-    //! Rotate the AABB.
-    void rotate(const Eigen::Matrix3d& eigenvectors);
     //! Translate the AABB.
     void translate(const Eigen::Vector3d& t);
 
@@ -83,13 +77,6 @@ public:
     bool collide(const AABB& aabb) const;
     //! Return true if the AABB intersects an ellipsoid.
     bool collide(const Ellipsoid& ellipsoid) const;
-
-    //! Compute the intersection between the AABB and a given ray.
-    //! Return true if an intersection was found, false otherwise.
-    //! If the return value is true the intersection "times" will be stored
-    //! in t1 and t2 in such a way that from + t1*dir and from + t2*dir are
-    //! the two intersection points between the ray and this shape.
-    bool rayIntersect(const Eigen::Vector3d& from, const Eigen::Vector3d& dir, double& t1, double& t2) const;
 
     //! Set the lower and upper bounds of the shape bounding box
     void setBounds(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub);
@@ -103,12 +90,6 @@ public:
     Eigen::Vector3d center() const;
     //! Return the extends of the bounding box of the shape
     Eigen::Vector3d extents() const;
-
-    //! Scale by a constant factor
-    void scaleAABB(double);
-    //! Scale the bounding box
-    void scaleAABB(const Eigen::Vector3d&);
-    void rotate(double angle,const Eigen::Vector3d& axis,Direction direction=Direction::CCW);
 
     //! Check whether the bounding box of the shape contains the bounding box of the another shape
     bool contains(const AABB& other) const;

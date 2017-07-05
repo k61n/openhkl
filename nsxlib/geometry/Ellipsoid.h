@@ -39,7 +39,7 @@
 
 namespace nsx {
 
-class Ellipsoid : public AABB {
+class Ellipsoid {
 
 public:
 
@@ -63,8 +63,7 @@ public:
     //! Return the inverse of the Mapping matrix (\f$ S^{-1}.R^{-1}.T^{-1} \f$)
     const HomMatrix& getInverseTransformation() const;
 
-    bool isInside(const HomVector& vector) const;
-    bool isInside(const Eigen::Vector3d& vector) const;
+    bool isInside(const Eigen::Vector3d& point) const;
 
     //! Rotate the ellipsoid.
     void rotate(const Eigen::Matrix3d& U);
@@ -72,19 +71,12 @@ public:
     void scale(double value);
     //! Translate the ellipsoid
     void translate(const Eigen::Vector3d& t);
-
-    //! Compute the intersection between the sphere and a given ray.
-    //! Return true if an intersection was found, false otherwise.
-    //! If the return value is true the intersection "times" will be stored
-    //! in t1 and t2 in such a way that from + t1*dir and from + t2*dir are
-    //! the two intersection points between the ray and this shape.
-    bool rayIntersect(const Eigen::Vector3d& from, const Eigen::Vector3d& dir, double& t1, double& t2) const;
     
     //! Return just the rotation and scaling matrix
     Eigen::Matrix3d getRSinv() const;
 
     //! Return the volume of the ellipsoid
-    double getVolume() const;
+    double volume() const;
 
     //! Return the homogenous matrix Q defining the ellipsoid
     Eigen::Matrix4d homogeneousMatrix() const;

@@ -50,31 +50,4 @@ BOOST_AUTO_TEST_CASE(Test_AABB3D)
     BOOST_CHECK_CLOSE(upper[0], 2.0, tolerance);
     BOOST_CHECK_CLOSE(upper[1], 4.0, tolerance);
     BOOST_CHECK_CLOSE(upper[2], 6.0, tolerance);
-    bb.scaleAABB(Eigen::Vector3d(1,2,3));
-    lower=bb.lower();
-    upper=bb.upper();
-    BOOST_CHECK_CLOSE(lower[0], 1.0, tolerance);
-    BOOST_CHECK_CLOSE(lower[1], 1.0, tolerance);
-    BOOST_CHECK_CLOSE(lower[2], 0.0, tolerance);
-    BOOST_CHECK_CLOSE(upper[0], 2.0, tolerance);
-    BOOST_CHECK_CLOSE(upper[1], 5.0, tolerance);
-    BOOST_CHECK_CLOSE(upper[2], 9.0, tolerance);
-    bb.scaleAABB(0.5);
-    lower=bb.lower();
-    upper=bb.upper();
-    BOOST_CHECK_CLOSE(lower[0], 1.25, tolerance);
-    BOOST_CHECK_CLOSE(lower[1], 2.0, tolerance);
-    BOOST_CHECK_CLOSE(lower[2], 2.25, tolerance);
-    BOOST_CHECK_CLOSE(upper[0], 1.75, tolerance);
-    BOOST_CHECK_CLOSE(upper[1], 4.0, tolerance);
-    BOOST_CHECK_CLOSE(upper[2], 6.75, tolerance);
-
-    // Test: (non-)intersection of the AABB with different rays
-
-    double t1,t2;
-    nsx::AABB bb3D;
-    bb3D.setBounds(Eigen::Vector3d(1,1,1),Eigen::Vector3d(3,3,3));
-    BOOST_CHECK(bb3D.rayIntersect(Eigen::Vector3d(-1,-1,-1),Eigen::Vector3d(1,1,1),t1,t2));
-    BOOST_CHECK_CLOSE(t1, 2.0, 1.0e-10);
-    BOOST_CHECK_CLOSE(t2, 4.0, 1.0e-10);
 }

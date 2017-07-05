@@ -77,7 +77,7 @@ PeakFit::PeakFit(sptrPeak3D peak): _peak(peak)
 
         for (unsigned int r = 0; r < nrows; ++r) {
             for (unsigned int c = 0; c < ncols; ++c) {
-                Eigen::Vector4d p(c+_colMin, r+_rowMin, i, 1);
+                Eigen::Vector3d p(c+_colMin, r+_rowMin, i);
                 _maskData[i-_frameBegin](r,c) = background.isInside(p) ? 1.0 : 0.0;
             }
         }
