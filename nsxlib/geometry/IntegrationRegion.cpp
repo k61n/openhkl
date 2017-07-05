@@ -79,8 +79,9 @@ const Ellipsoid& IntegrationRegion::getBackground() const
 
 void IntegrationRegion::updateMask(Eigen::MatrixXi& mask, double z) const
 {
-    auto lower = _background.getLower();
-    auto upper = _background.getUpper();
+    auto aabb = _background.aabb();
+    auto lower = aabb.lower();
+    auto upper = aabb.upper();
 
     if (z < lower[2] || z > upper[2]) {
         return;

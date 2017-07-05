@@ -11,8 +11,8 @@ class TestAABB3D(unittest.TestCase):
         ub = np.array([1, 2, 3], dtype=float)
         bb = nsx.AABB()
         bb.setBounds(lb, ub)
-        center = bb.getAABBCenter()
-        extents = bb.getAABBExtents()
+        center = bb.center()
+        extents = bb.extents()
         
         self.assertAlmostEqual(center[0], 0.5)
         self.assertAlmostEqual(center[1], 1.0)
@@ -27,8 +27,8 @@ class TestAABB3D(unittest.TestCase):
         ub = np.array([1, 2, 3], dtype=float)
         bb = nsx.AABB(lb, ub)
 
-        lb = bb.getLower();
-        ub = bb.getUpper();
+        lb = bb.lower();
+        ub = bb.upper();
 
         self.assertAlmostEqual(lb[0], -1)
         self.assertAlmostEqual(lb[1], -2)

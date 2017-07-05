@@ -95,6 +95,8 @@ public:
 
     const Eigen::Matrix3d& metric() const;
 
+    AABB aabb() const;
+
 #ifndef SWIG
     // Macro to ensure that Ellipsoid can be dynamically allocated.
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW

@@ -21,25 +21,25 @@ BOOST_AUTO_TEST_CASE(Test_Ellipsoid_3D)
     nsx::Ellipsoid e(center,semi_axes,eigV);
     nsx::Ellipsoid f(center,semi_axes,eigV);
     
-    auto p = e.getAABBCenter();
+    auto p = e.aabb().center();
 
     BOOST_CHECK_CLOSE(p(0), center(0), eps);
     BOOST_CHECK_CLOSE(p(1), center(1), eps);
     BOOST_CHECK_CLOSE(p(2), center(2), eps);
 
-    auto lower = e.getLower();
+    auto lower = e.aabb().lower();
 
     BOOST_CHECK_CLOSE(lower(0), -3+center(0), eps);
     BOOST_CHECK_CLOSE(lower(1), -3+center(1), eps);
     BOOST_CHECK_CLOSE(lower(2), -4+center(2), eps);
 
-    auto upper = e.getUpper();
+    auto upper = e.aabb().upper();
 
     BOOST_CHECK_CLOSE(upper(0), 3+center(0), eps);
     BOOST_CHECK_CLOSE(upper(1), 3+center(1), eps);
     BOOST_CHECK_CLOSE(upper(2), 4+center(2), eps);
 
-    auto extents = e.getAABBExtents();
+    auto extents = e.aabb().extents();
 
     BOOST_CHECK_CLOSE(extents(0), 6, eps);
     BOOST_CHECK_CLOSE(extents(1), 6, eps);
@@ -51,25 +51,25 @@ BOOST_AUTO_TEST_CASE(Test_Ellipsoid_3D)
 
     e.translate(shift);
 
-    p = e.getAABBCenter();
+    p = e.aabb().center();
 
     BOOST_CHECK_CLOSE(p(0), center(0)+shift(0), eps);
     BOOST_CHECK_CLOSE(p(1), center(1)+shift(1), eps);
     BOOST_CHECK_CLOSE(p(2), center(2)+shift(2), eps);
 
-    lower = e.getLower();
+    lower = e.aabb().lower();
 
     BOOST_CHECK_CLOSE(lower(0), -3+center(0)+shift(0), eps);
     BOOST_CHECK_CLOSE(lower(1), -3+center(1)+shift(1), eps);
     BOOST_CHECK_CLOSE(lower(2), -4+center(2)+shift(2), eps);
 
-    upper = e.getUpper();
+    upper = e.aabb().upper();
 
     BOOST_CHECK_CLOSE(upper(0), 3+center(0)+shift(0), eps);
     BOOST_CHECK_CLOSE(upper(1), 3+center(1)+shift(1), eps);
     BOOST_CHECK_CLOSE(upper(2), 4+center(2)+shift(2), eps);
 
-    extents = e.getAABBExtents();
+    extents = e.aabb().extents();
 
     BOOST_CHECK_CLOSE(extents(0), 6, eps);
     BOOST_CHECK_CLOSE(extents(1), 6, eps);
@@ -109,9 +109,11 @@ BOOST_AUTO_TEST_CASE(Test_Ellipsoid_3D)
     BOOST_CHECK_EQUAL(f.collide(e), true);
     f.translate(-shift/2);
 
-    BOOST_CHECK_CLOSE(f.getAABBCenter()[0], center(0), eps);
-    BOOST_CHECK_CLOSE(f.getAABBCenter()[1], center(1), eps);
-    BOOST_CHECK_CLOSE(f.getAABBCenter()[2], center(2), eps);
+    auto fCenter = f.aabb().center();
+
+    BOOST_CHECK_CLOSE(fCenter[0], center(0), eps);
+    BOOST_CHECK_CLOSE(fCenter[1], center(1), eps);
+    BOOST_CHECK_CLOSE(fCenter[2], center(2), eps);
 
     e.translate(-shift);
 

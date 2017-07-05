@@ -38,8 +38,6 @@ namespace nsx {
 PeakIntegrator::PeakIntegrator(const IntegrationRegion& region, const DataSet& data):
     _blob(),
     _region(region),
-    _lower(region.getBackground().getLower()),
-    _upper(region.getBackground().getUpper()),
     _data_start(),
     _data_end(),
     _start_x(),
@@ -50,8 +48,10 @@ PeakIntegrator::PeakIntegrator(const IntegrationRegion& region, const DataSet& d
     _dx(),
     _dy()
 {
-//    _data_start = std::lround((std::floor(_lower[2])));
-//    _data_end = std::lround((std::ceil(_upper[2])));
+
+    auto aabb = region.getBackground().aabb();
+    _lower = aabb.lower();
+    _upper = aabb.upper();
 
     _data_start = std::lround((std::ceil(_lower[2])));
     _data_end = std::lround((std::floor(_upper[2])));
@@ -250,8 +250,10 @@ void PeakIntegrator::end()
     }
 
     // testing
-    auto lb = _region.getRegion().getLower();
-    auto ub = _region.getRegion().getUpper();
+
+    auto aabb = _region.getRegion().aabb();
+    auto lb = aabb.lower();
+    auto ub = aabb.upper();
 
     double npx = (ub[0]-lb[0])*(ub[1]-lb[1]);
 

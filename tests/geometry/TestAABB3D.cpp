@@ -16,8 +16,8 @@ BOOST_AUTO_TEST_CASE(Test_AABB3D)
     nsx::AABB bb;
     bb.setBounds(Eigen::Vector3d(0,0,0),Eigen::Vector3d(1,2,3));
     Eigen::Vector3d center, extends;
-    center=bb.getAABBCenter();
-    extends=bb.getAABBExtents();
+    center=bb.center();
+    extends=bb.extents();
 
     BOOST_CHECK_CLOSE(center[0], 0.5, tolerance);
     BOOST_CHECK_CLOSE(center[1], 1.0, tolerance);
@@ -26,8 +26,6 @@ BOOST_AUTO_TEST_CASE(Test_AABB3D)
     BOOST_CHECK_CLOSE(extends[0], 1, tolerance);
     BOOST_CHECK_CLOSE(extends[1], 2, tolerance);
     BOOST_CHECK_CLOSE(extends[2], 3, tolerance);
-    // Check the volume of the box
-    BOOST_CHECK_CLOSE(bb.AABBVolume(),6,tolerance);
     // Check that a given point is inside
     BOOST_CHECK(bb.isInsideAABB(Eigen::Vector3d(center)));
     // Check that a given point is outside
@@ -44,8 +42,8 @@ BOOST_AUTO_TEST_CASE(Test_AABB3D)
 
     // Translate and scale operations
     bb.translateAABB(Eigen::Vector3d(1,2,3));
-    Eigen::Vector3d lower=bb.getLower();
-    Eigen::Vector3d upper=bb.getUpper();
+    Eigen::Vector3d lower=bb.lower();
+    Eigen::Vector3d upper=bb.upper();
     BOOST_CHECK_CLOSE(lower[0], 1.0, tolerance);
     BOOST_CHECK_CLOSE(lower[1], 2.0, tolerance);
     BOOST_CHECK_CLOSE(lower[2], 3.0, tolerance);
@@ -53,8 +51,8 @@ BOOST_AUTO_TEST_CASE(Test_AABB3D)
     BOOST_CHECK_CLOSE(upper[1], 4.0, tolerance);
     BOOST_CHECK_CLOSE(upper[2], 6.0, tolerance);
     bb.scaleAABB(Eigen::Vector3d(1,2,3));
-    lower=bb.getLower();
-    upper=bb.getUpper();
+    lower=bb.lower();
+    upper=bb.upper();
     BOOST_CHECK_CLOSE(lower[0], 1.0, tolerance);
     BOOST_CHECK_CLOSE(lower[1], 1.0, tolerance);
     BOOST_CHECK_CLOSE(lower[2], 0.0, tolerance);
@@ -62,8 +60,8 @@ BOOST_AUTO_TEST_CASE(Test_AABB3D)
     BOOST_CHECK_CLOSE(upper[1], 5.0, tolerance);
     BOOST_CHECK_CLOSE(upper[2], 9.0, tolerance);
     bb.scaleAABB(0.5);
-    lower=bb.getLower();
-    upper=bb.getUpper();
+    lower=bb.lower();
+    upper=bb.upper();
     BOOST_CHECK_CLOSE(lower[0], 1.25, tolerance);
     BOOST_CHECK_CLOSE(lower[1], 2.0, tolerance);
     BOOST_CHECK_CLOSE(lower[2], 2.25, tolerance);

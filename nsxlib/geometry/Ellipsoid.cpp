@@ -57,14 +57,14 @@ Ellipsoid::Ellipsoid(const Eigen::Vector3d& center, double radius)
 bool Ellipsoid::collide(const AABB& aabb) const
 {
     // Cheap preliminary test. Is the center inside the ellipsoid ? If so, then they intersect.
-    if (isInside(aabb.getAABBCenter())) {
+    if (isInside(aabb.center())) {
         return true;
     }
 
     auto&& Ainv = _metric.inverse();
 
-    const auto& lb = aabb.getLower();
-    const auto& ub = aabb.getUpper();
+    const auto& lb = aabb.lower();
+    const auto& ub = aabb.upper();
 
     const std::array<Eigen::Vector3d,3> normals = {Eigen::Vector3d(1,0,0),Eigen::Vector3d(0,1,0),Eigen::Vector3d(0,0,1)};
 
@@ -249,6 +249,20 @@ double Ellipsoid::getVolume() const
 {
     static constexpr double c = 4.0*M_PI / 3.0;
     return c * std::pow(_metric.determinant(), -0.5);
+}
+
+AABB Ellipsoid::aabb() const
+{
+    const auto& B = _metric.inverse();
+    Eigen::Vector3d a;
+
+    for (auto i = 0; i < 3; ++i) {
+        a(i) = std::sqrt(B(i,i));
+    }
+    Eigen::Vector3d lb(_center - a);
+    Eigen::Vector3d ub(_center + a);
+
+    return AABB(lb,ub);
 }
 
 Eigen::Matrix4d Ellipsoid::homogeneousMatrix() const

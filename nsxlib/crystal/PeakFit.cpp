@@ -50,8 +50,9 @@ PeakFit::PeakFit(sptrPeak3D peak): _peak(peak)
     IntegrationRegion region(peak->getShape());
     auto background = region.getBackground();
 
-    auto lower = background.getLower();
-    auto upper = background.getUpper();
+    auto aabb = background.aabb();
+    auto lower = aabb.lower();
+    auto upper = aabb.upper();
 
     _frameBegin = std::max(ifloor(lower(2)), 0);
     _frameEnd = std::min(static_cast<std::size_t>(iceil(upper(2))), _peak->getData()->getNFrames());
@@ -378,17 +379,20 @@ Eigen::VectorXd PeakFit::defaultParams() const
 
     bkg /= nbkg;
 
-    Eigen::Vector3d x0 = _peak->getShape().getAABBCenter();
+    // rough for now!!
+    auto shape = _peak->getShape();
+
+    auto aabb = shape.aabb();
+
+    Eigen::Vector3d x0 = aabb.center();
 
     double b0 = 0.0, b1 = 0.0;
     double c = maxIntensity()-bkg;
 
     double d00, d01, d02, d11, d12, d22;
 
-    // rough for now!!
-    auto shape = _peak->getShape();
-    Eigen::Vector3d lower = _peak->getShape().getLower();
-    Eigen::Vector3d upper  =_peak->getShape().getUpper();
+    Eigen::Vector3d lower = aabb.lower();
+    Eigen::Vector3d upper  = aabb.upper();
 
     Eigen::Matrix3d rs = shape.getRSinv();
     Eigen::Matrix3d a = 2.0 * rs.transpose()*rs;

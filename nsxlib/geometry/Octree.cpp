@@ -82,7 +82,7 @@ Octree::Octree(const Octree* parent, unsigned int sector):
     nullifyChildren();
 
     // Calculate the center of the current branch
-    Eigen::Vector3d center = parent->getAABBCenter();
+    Eigen::Vector3d center = parent->center();
 
     // The numbering of sub-voxels is encoded into bits of an int a follows:
     // ....... | dim[2] | dim[1] | dim[0]
@@ -96,7 +96,7 @@ Octree::Octree(const Octree* parent, unsigned int sector):
 void Octree::addData(const Ellipsoid* ellipsoid)
 {
     // Ellipsoid does not overlap with this branch
-    if (!this->intercept(*ellipsoid)) {
+    if (!this->collide((*ellipsoid).aabb())) {
         return;
     }
 
@@ -163,7 +163,7 @@ std::set<const Ellipsoid*> Octree::getCollisions(const Ellipsoid& given) const
     recursiveCollisions = [&given, &recursiveCollisions] (const Octree* tree, CollisionSet& collisions) -> void
     {
         // ellipsoid's box does not intercept tree
-        if (!tree->intercept(given)) {
+        if (!tree->collide(given.aabb())) {
             return;
         }
 

@@ -7,11 +7,6 @@ AABB::AABB()
 {
 }
 
-AABB::~AABB()
-{
-    
-}
-
 AABB::AABB(const AABB& other)
 {
     _lowerBound = other._lowerBound;
@@ -69,15 +64,6 @@ bool AABB::collide(const AABB& other) const
     return true;
 }
 
-bool AABB::intercept(const Ellipsoid& other) const
-{
-    for (unsigned int i = 0; i < 3; ++i) {
-        if (_upperBound(i) < other._lowerBound(i) || _lowerBound(i) > other._upperBound(i))
-            return false;
-    }
-    return true;
-}
-
 bool AABB::collide(const Ellipsoid& other) const
 {
     return other.collide(*this);
@@ -126,76 +112,28 @@ bool AABB::rayIntersect(const Eigen::Vector3d& from, const Eigen::Vector3d& dir,
 
 void AABB::setBounds(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub)
 {
-    for (unsigned int i=0;i<3;++i) {
-        if (lb(i)>ub(i))
-            throw std::invalid_argument("AABB: upper limit must be > lower limit");
-    }
     _lowerBound = lb;
     _upperBound = ub;
 }
 
-void AABB::setLower(const Eigen::Vector3d& lb)
-{
-    for (unsigned int i=0;i<3;++i) {
-        if (lb(i)>_upperBound(i))
-            throw std::invalid_argument("AABB: upper limit must be > lower limit");
-    }
-    _lowerBound = lb;
-}
-
-void AABB::setUpper(const Eigen::Vector3d& ub)
-{
-    for (unsigned int i=0;i<3;++i) {
-        if (_lowerBound(i)>ub(i))
-            throw std::invalid_argument("AABB: upper limit must be > lower limit");
-    }
-    _upperBound = ub;
-}
-
-const Eigen::Vector3d& AABB::getLower() const
+const Eigen::Vector3d& AABB::lower() const
 {
     return _lowerBound;
 }
 
-const Eigen::Vector3d& AABB::getUpper() const
+const Eigen::Vector3d& AABB::upper() const
 {
     return _upperBound;
 }
 
-double AABB::AABBVolume() const
+Eigen::Vector3d AABB::center() const
 {
-    return (_upperBound-_lowerBound).prod();
+    return (_lowerBound + _upperBound)*0.5;
 }
 
-Eigen::Vector3d AABB::getAABBCenter() const
+Eigen::Vector3d AABB::extents() const
 {
-    Eigen::Vector3d center((_lowerBound + _upperBound)*0.5);
-    return center;
-}
-
-Eigen::Vector3d AABB::getAABBExtents() const
-{
-    Eigen::Vector3d dim(_upperBound - _lowerBound);
-    return dim;
-}
-
-
-bool AABB::isInsideAABB(const std::initializer_list<double>& point) const
-{
-
-    if (point.size() != 3)
-        throw("AABB: invalid point size");
-
-    auto it = point.begin();
-    auto lbit = _lowerBound.data();
-    auto ubit = _upperBound.data();
-
-    for(; it!=point.end(); it++,lbit++,ubit++) {
-        if (*it < *lbit || *it > *ubit)
-            return false;
-    }
-
-    return true;
+    return _upperBound - _lowerBound;
 }
 
 bool AABB::isInsideAABB(const Eigen::Vector3d& point) const
@@ -236,16 +174,16 @@ void AABB::translateAABB(const Eigen::Vector3d& t)
 
 void AABB::scaleAABB(const Eigen::Vector3d& s)
 {
-    Eigen::Vector3d center=getAABBCenter();
-    _lowerBound=center+(_lowerBound-center).cwiseProduct(s);
-    _upperBound=center+(_upperBound-center).cwiseProduct(s);
+    Eigen::Vector3d c = center();
+    _lowerBound = c + (_lowerBound-c).cwiseProduct(s);
+    _upperBound = c + (_upperBound-c).cwiseProduct(s);
 }
 
 void AABB::scaleAABB(double s)
 {
-    Eigen::Vector3d center=getAABBCenter();
-    _lowerBound=center+(_lowerBound-center)*s;
-    _upperBound=center+(_upperBound-center)*s;
+    Eigen::Vector3d c = center();
+    _lowerBound = c + (_lowerBound-c)*s;
+    _upperBound = c + (_upperBound-c)*s;
 }
 
 void AABB::rotate(double angle,const Eigen::Vector3d& axis,Direction dir)

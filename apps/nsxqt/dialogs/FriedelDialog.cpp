@@ -98,8 +98,10 @@ void FriedelDialog::on_goodPairsButton_clicked()
             b->setSelected(true);
 
             // scaling factor
-            double z_a = a->getShape().getAABBCenter()[2];
-            double z_b = b->getShape().getAABBCenter()[2];
+            auto a_center = a->getShape().aabb().center();
+            auto b_center = b->getShape().aabb().center();
+            double z_a = a_center[2];
+            double z_b = b_center[2];
 
             if (z_a < z_b)
                 qDebug() << z_a << ", " << z_b << ": " << int_b / int_a;

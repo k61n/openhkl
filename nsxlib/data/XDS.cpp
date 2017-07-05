@@ -91,7 +91,7 @@ bool XDS::writeHeader(std::ostream &str) const
 bool XDS::writePeaks(std::ostream &str) const
 {
     for (auto&& peak: _peaks) {
-        auto&& center = peak->getShape().getAABBCenter();
+        auto&& center = peak->getShape().aabb().center();
         auto&& index = peak->getIntegerMillerIndices();
 
         const int h = index[0];

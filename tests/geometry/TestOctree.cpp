@@ -113,7 +113,7 @@ void split_test()
         unsigned int num_intercept = 0;
 
         for (auto&& chamber: tree) {
-            BOOST_CHECK_EQUAL(ellipsoid->collide(chamber), chamber.intercept(*ellipsoid));
+            BOOST_CHECK_EQUAL(ellipsoid->collide(chamber), chamber.collide((*ellipsoid).aabb()));
 
             if (ellipsoid->collide(chamber)) {
                 ++num_intercept;

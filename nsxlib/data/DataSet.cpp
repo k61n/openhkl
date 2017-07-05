@@ -687,8 +687,9 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
             continue;
         }
 
-        auto lb = new_shape.getLower();
-        auto ub = new_shape.getUpper();
+        auto aabb = new_shape.aabb();
+        auto lb = aabb.lower();
+        auto ub = aabb.upper();
 
         // not enough mass to determine ellipse
         if (std::isnan((ub-lb).squaredNorm())) {

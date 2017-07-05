@@ -515,8 +515,9 @@ void DetectorScene::loadCurrentImage(bool newimage)
 
         for (auto&& peak: _currentData->getPeaks()) {
             auto&& region = peak->getIntegrationRegion();
-            auto&& lower = region.getBackground().getLower();
-            auto&& upper = region.getBackground().getUpper();
+            auto aabb = region.getBackground().aabb();
+            auto&& lower = aabb.lower();
+            auto&& upper = aabb.upper();
 
             if (_currentFrameIndex < std::floor(lower[2])) {
                 continue;
@@ -597,8 +598,9 @@ void DetectorScene::updatePeaks()
     auto& peaks = _currentData->getPeaks();
 
     for (auto&& peak : peaks) {
-        const Eigen::Vector3d& l = peak->getIntegrationRegion().getBackground().getLower();
-        const Eigen::Vector3d& u = peak->getIntegrationRegion().getBackground().getUpper();
+        auto aabb = peak->getIntegrationRegion().getBackground().aabb();
+        const Eigen::Vector3d& l = aabb.lower();
+        const Eigen::Vector3d& u = aabb.upper();
 
         if (_currentFrameIndex < l[2] || _currentFrameIndex > u[2]) {
             continue;
@@ -669,8 +671,8 @@ void DetectorScene::updateMasks(unsigned long frame)
     _masks.clear();
 
     for (auto&& mask: _currentData->getMasks()) {
-        const Eigen::Vector3d lower(mask->getLower());
-        const Eigen::Vector3d upper(mask->getUpper());
+        const Eigen::Vector3d lower(mask->lower());
+        const Eigen::Vector3d upper(mask->upper());
 
         // mask is out of the frame
         if (frame > upper[2] || frame < lower[2]) {

@@ -62,7 +62,8 @@ public:
     //! Constructs a AABB object from two Eigen vectors representing respectively its lower and upper bound
     AABB(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub);
     //! Destructor
-    virtual ~AABB();
+    virtual ~AABB()=default;
+
     //! Assignment operator
     AABB& operator=(const AABB& other);
 
@@ -81,8 +82,6 @@ public:
     bool collide(const AABB& other) const;
     //! Return true if the AABB intersects an ellipsoid.
     bool collide(const Ellipsoid& other) const;
-    //! Return true if the AABB intersects an ellipsoid.
-    bool intercept(const Ellipsoid& other) const;
 
     //! Compute the intersection between the AABB and a given ray.
     //! Return true if an intersection was found, false otherwise.
@@ -93,24 +92,16 @@ public:
 
     //! Set the lower and upper bounds of the shape bounding box
     void setBounds(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub);
-    //! Set the lower bound of the shape bounding box
-    void setLower(const Eigen::Vector3d& lb);
-    //! Set the upper bound of the shape bounding box
-    void setUpper(const Eigen::Vector3d& lb);
 
     //! Get a constant reference to the lower bound of the bounding box of the shape
-    const Eigen::Vector3d& getLower() const;
+    const Eigen::Vector3d& lower() const;
     //! Get a constant reference to the upper bound of the bounding box of the shape
-    const Eigen::Vector3d& getUpper() const;
+    const Eigen::Vector3d& upper() const;
     //! Return the center of the bounding box of the shape
-    Eigen::Vector3d getAABBCenter() const;
+    Eigen::Vector3d center() const;
     //! Return the extends of the bounding box of the shape
-    Eigen::Vector3d getAABBExtents() const;
-    //! Returns the volume of the bounding box of the shape
-    double AABBVolume() const;
+    Eigen::Vector3d extents() const;
 
-    //! Check whether a given point is inside the AABB of the shape
-    bool isInsideAABB(const std::initializer_list<double>& point) const;
     //! Check whether a given point is inside the AABB of the shape
     bool isInsideAABB(const Eigen::Vector3d& point) const;
     //! Check whether a given Homogeneous vector is inside the AABB of the shape
