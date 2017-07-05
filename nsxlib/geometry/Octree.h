@@ -127,7 +127,7 @@ public:
     std::set<const Ellipsoid*> getCollisions(const Ellipsoid& given) const;
 
     //! Return true if the point is contained in any object of the octree
-    bool isInsideObject(const HomVector& vector);
+    bool isInsideObject(const Eigen::Vector3d& vector);
 
     //! Get the voxels of the tree
     void getVoxels(std::vector<AABB*>& voxels);

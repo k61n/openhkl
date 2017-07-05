@@ -438,7 +438,7 @@ bool DataSet::inMasked(const Eigen::Vector3d& point) const
 {
     // Loop over the defined masks and return true if one of them contains the point
     for (auto&& m : _masks) {
-        if (m->isInsideAABB(point)) {
+        if (m->isInside(point)) {
             return true;
         }
     }

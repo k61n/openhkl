@@ -27,9 +27,9 @@ BOOST_AUTO_TEST_CASE(Test_AABB3D)
     BOOST_CHECK_CLOSE(extends[1], 2, tolerance);
     BOOST_CHECK_CLOSE(extends[2], 3, tolerance);
     // Check that a given point is inside
-    BOOST_CHECK(bb.isInsideAABB(Eigen::Vector3d(center)));
+    BOOST_CHECK(bb.isInside(Eigen::Vector3d(center)));
     // Check that a given point is outside
-    BOOST_CHECK(!bb.isInsideAABB(Eigen::Vector3d(2,3,4)));
+    BOOST_CHECK(!bb.isInside(Eigen::Vector3d(2,3,4)));
     //A second bounding box, just touching
     nsx::AABB bb2(Eigen::Vector3d(1,2,3),Eigen::Vector3d(2,3,4));
     BOOST_CHECK(bb2.collide(bb));

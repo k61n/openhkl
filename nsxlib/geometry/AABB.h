@@ -77,11 +77,12 @@ public:
     void translate(const Eigen::Vector3d& t);
 
     //! Check whether a point given as Homogeneous coordinate is inside the AABB.
-    bool isInside(const HomVector& vector) const;
+    bool isInside(const Eigen::Vector3d& vector) const;
+
     //! Return true if the AABB intersects an ellipsoid.
-    bool collide(const AABB& other) const;
+    bool collide(const AABB& aabb) const;
     //! Return true if the AABB intersects an ellipsoid.
-    bool collide(const Ellipsoid& other) const;
+    bool collide(const Ellipsoid& ellipsoid) const;
 
     //! Compute the intersection between the AABB and a given ray.
     //! Return true if an intersection was found, false otherwise.
@@ -97,15 +98,12 @@ public:
     const Eigen::Vector3d& lower() const;
     //! Get a constant reference to the upper bound of the bounding box of the shape
     const Eigen::Vector3d& upper() const;
+
     //! Return the center of the bounding box of the shape
     Eigen::Vector3d center() const;
     //! Return the extends of the bounding box of the shape
     Eigen::Vector3d extents() const;
 
-    //! Check whether a given point is inside the AABB of the shape
-    bool isInsideAABB(const Eigen::Vector3d& point) const;
-    //! Check whether a given Homogeneous vector is inside the AABB of the shape
-    bool isInsideAABB(const HomVector& point) const;
     //! Translate the bounding box
     void translateAABB(const Eigen::Vector3d&);
     //! Scale by a constant factor

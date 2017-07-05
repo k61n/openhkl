@@ -10,48 +10,43 @@ Ellipsoid::Ellipsoid() : AABB()
 {
 }
 
-Ellipsoid::Ellipsoid(const Ellipsoid& rhs) : AABB()
+Ellipsoid::Ellipsoid(const Ellipsoid& other)
  {
-    _center = rhs._center;
-    _metric = rhs._metric;
-    updateAABB();
+    _center = other._center;
+    _metric = other._metric;
  }
 
 Ellipsoid& Ellipsoid::operator=(const Ellipsoid& other)
 {
     if (this != &other) {
-        AABB::operator=(other);
         _metric = other._metric;
         _center = other._center;
-        updateAABB();
     }
     return *this;
 }
 
-Ellipsoid::Ellipsoid(const Eigen::Vector3d& center, const Eigen::Matrix3d& metric): AABB(),
-    _center(center), _metric(metric)
+Ellipsoid::Ellipsoid(const Eigen::Vector3d& center, const Eigen::Matrix3d& metric)
+: _center(center),
+  _metric(metric)
 {
-    updateAABB();
 }
 
-Ellipsoid::Ellipsoid(const Eigen::Vector3d& center, const Eigen::Vector3d& eigenvalues, const Eigen::Matrix3d& eigenvectors)
-: AABB()
+Ellipsoid::Ellipsoid(const Eigen::Vector3d& center, const Eigen::Vector3d& radii, const Eigen::Matrix3d& axes)
 {
     Eigen::Matrix3d D = Eigen::Matrix3d::Identity();
     for (auto i = 0; i < 3; ++i) {
-        D(i,i) = 1.0 / (eigenvalues[i] * eigenvalues[i]);
+        D(i,i) = 1.0 / (radii[i] * radii[i]);
     }
-    _metric = eigenvectors * D * eigenvectors.transpose();
+
+    // By definition, we have A.U = U.D where A is the metric tensor, U is the matric of columned eigen-vectors and D the diagonal matrix of corresponding eigen values
+    _metric = axes * D * axes.transpose();
     _center = center;
-    updateAABB();
 }
 
 Ellipsoid::Ellipsoid(const Eigen::Vector3d& center, double radius)
-: AABB()
 {
     _metric = Eigen::Matrix3d::Identity()/(radius*radius);
     _center = center;
-    updateAABB();
 }
 
 bool Ellipsoid::collide(const AABB& aabb) const
@@ -80,7 +75,7 @@ bool Ellipsoid::collide(const AABB& aabb) const
 
         for (auto j=0; j<2; ++j) {
             Eigen::Vector3d point = _center + ((minmax[j]-nt_x0)/nt_Ainv_n)*Ainv_n;
-            if (isInside(point) && aabb.isInsideAABB(point))
+            if (aabb.isInside(point) && isInside(point))
                 return true;
         }
     }
@@ -120,20 +115,16 @@ bool Ellipsoid::collide(const Ellipsoid& other) const
 void Ellipsoid::rotate(const Eigen::Matrix3d& U)
 {
     _metric = U * _metric * U.transpose();
-    // Update the bounds of the AABB
-    updateAABB();
 }
 
 void Ellipsoid::scale(double value)
 {
     _metric /= value*value;
-    this->scaleAABB(value);
 }
 
 void Ellipsoid::translate(const Eigen::Vector3d& t)
 {
     _center += t;    
-    this->translateAABB(t);
 }
 
 bool Ellipsoid::isInside(const HomVector& point) const
@@ -182,18 +173,6 @@ const HomMatrix& Ellipsoid::getInverseTransformation() const
     TRSinv = Sinv*TRSinv;
 
     return TRSinv;
-}
-
-void Ellipsoid::updateAABB()
-{
-    const auto& B = _metric.inverse();
-    Eigen::Vector3d a;
-
-    for (auto i = 0; i < 3; ++i) {
-        a(i) = std::sqrt(B(i,i));
-    }
-    _lowerBound = _center - a;
-    _upperBound = _center + a;
 }
 
 bool Ellipsoid::rayIntersect(const Eigen::Vector3d& from, const Eigen::Vector3d& dir, double& t1, double& t2) const

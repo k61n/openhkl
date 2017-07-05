@@ -536,7 +536,7 @@ void DetectorScene::loadCurrentImage(bool newimage)
 
             for (auto x = xmin; x < xmax; ++x) {
                 for (auto y = 0; y < ymax; ++y) {
-                    Eigen::Vector4d p(x, y, _currentFrameIndex, 1);
+                    Eigen::Vector3d p(x, y, _currentFrameIndex);
 
                     if (region.inRegion(p)) {
                         region_img.setPixel(x, y, peak->isSelected() ? (peak->isObserved() ? green : purple) : red);

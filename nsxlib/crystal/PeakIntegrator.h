@@ -92,7 +92,7 @@ private:
     long _start_y;
     long _end_y;
 
-    Eigen::Vector4d _point1;
+    Eigen::Vector3d _point1;
 
     int _dx;
     int _dy;

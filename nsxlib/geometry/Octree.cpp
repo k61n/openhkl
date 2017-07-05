@@ -187,7 +187,7 @@ std::set<const Ellipsoid*> Octree::getCollisions(const Ellipsoid& given) const
     return collisions;
 }
 
-bool Octree::isInsideObject(const HomVector& vector)
+bool Octree::isInsideObject(const Eigen::Vector3d& vector)
 {
     // chamber's box does not intercept tree
     if (!isInside(vector)) {

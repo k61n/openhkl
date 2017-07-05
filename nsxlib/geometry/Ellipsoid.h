@@ -45,16 +45,17 @@ public:
 
     Ellipsoid();
     //! Copy constructor
-    Ellipsoid(const Ellipsoid&);
+    Ellipsoid(const Ellipsoid& other);
     //! Construct directly from metric tensor
     Ellipsoid(const Eigen::Vector3d& center, const Eigen::Matrix3d& metric);
     //! Constructor for a sphere
     Ellipsoid(const Eigen::Vector3d& center, double radius);
-    //! Construct a N-dimensional ellipsoid from its center, semi-axes, and eigenvectors ()
-    Ellipsoid(const Eigen::Vector3d& center, const Eigen::Vector3d& eigenvalues, const Eigen::Matrix3d& eigenvectors);
+    //! Construct a 3-dimensional ellipsoid from its center, radii, and principal axes ()
+    Ellipsoid(const Eigen::Vector3d& center, const Eigen::Vector3d& radii, const Eigen::Matrix3d& axes);
+    //! Destructor
     virtual ~Ellipsoid()=default; 
     //! Assignment
-    Ellipsoid& operator=(const Ellipsoid&);
+    Ellipsoid& operator=(const Ellipsoid& other);
     //! Return true if the ellipsoid intersects an aabb.
     bool collide(const AABB& other) const;
     //! Return true if the ellipsoid intersects an ellipsoid.
@@ -103,13 +104,7 @@ public:
 #endif
 
 private:
-    //HomMatrix _TRSinv;
-    // Method to update the closest fit AABB to the Ellipsoid
-    void updateAABB();
-    // EigenValues
-    //Eigen::Vector3d _eigenVal;
 
-    // new implementation
     Eigen::Matrix3d _metric;
     Eigen::Vector3d _center;
 };

@@ -50,23 +50,28 @@ void AABB::translate(const Eigen::Vector3d& t)
     translateAABB(t);
 }
 
-bool AABB::isInside(const HomVector& vector) const
+bool AABB::isInside(const Eigen::Vector3d& point) const
 {
-    return isInsideAABB(vector);
+    for(auto i=0; i<3; ++i) {
+        if (point(i) < _lowerBound(i) || point(i) > _upperBound(i))
+            return false;
+    }
+
+    return true;
 }
 
-bool AABB::collide(const AABB& other) const
+bool AABB::collide(const AABB& aabb) const
 {
     for (unsigned int i = 0; i < 3; ++i) {
-        if (_upperBound(i) < other._lowerBound(i) || _lowerBound(i) > other._upperBound(i))
+        if (_upperBound(i) < aabb._lowerBound(i) || _lowerBound(i) > aabb._upperBound(i))
             return false;
     }
     return true;
 }
 
-bool AABB::collide(const Ellipsoid& other) const
+bool AABB::collide(const Ellipsoid& ellipsoid) const
 {
-    return other.collide(*this);
+    return ellipsoid.collide(*this);
 }
 
 bool AABB::rayIntersect(const Eigen::Vector3d& from, const Eigen::Vector3d& dir, double& t1, double& t2) const
@@ -105,9 +110,9 @@ bool AABB::rayIntersect(const Eigen::Vector3d& from, const Eigen::Vector3d& dir,
 
     double midt = (t1+t2)/2.0;
 
-    Eigen::Vector3d halfvect = from + midt*dir;
+    Eigen::Vector3d mid_point = from + midt*dir;
 
-    return isInsideAABB(halfvect);
+    return isInside(mid_point);
 }
 
 void AABB::setBounds(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub)
@@ -134,36 +139,6 @@ Eigen::Vector3d AABB::center() const
 Eigen::Vector3d AABB::extents() const
 {
     return _upperBound - _lowerBound;
-}
-
-bool AABB::isInsideAABB(const Eigen::Vector3d& point) const
-{
-
-    auto it = point.data();
-    auto lbit = _lowerBound.data();
-    auto ubit = _upperBound.data();
-
-    for(unsigned int i=0; i<3; i++,lbit++,ubit++,it++) {
-        if (*it < *lbit || *it > *ubit)
-            return false;
-    }
-
-    return true;
-}
-
-bool AABB::isInsideAABB(const HomVector& point) const
-{
-
-    auto it = point.data();
-    auto lbit = _lowerBound.data();
-    auto ubit = _upperBound.data();
-
-    for(unsigned int i=0; i<3; i++,lbit++,ubit++,it++) {
-        if (*it < *lbit || *it > *ubit)
-            return false;
-    }
-
-    return true;
 }
 
 void AABB::translateAABB(const Eigen::Vector3d& t)
