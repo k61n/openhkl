@@ -34,7 +34,6 @@
 
 #include "../crystal/Peak3D.h"
 #include "../crystal/UnitCell.h"
-#include "../geometry/IShape.h"
 
 namespace nsx {
 

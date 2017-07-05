@@ -6,14 +6,12 @@
 
 namespace nsx {
 
-Ellipsoid::Ellipsoid() : IShape()
+Ellipsoid::Ellipsoid() : AABB()
 {
 }
 
-Ellipsoid::Ellipsoid(const Ellipsoid& rhs) : IShape()
+Ellipsoid::Ellipsoid(const Ellipsoid& rhs) : AABB()
  {
-    //_eigenVal = rhs._eigenVal;
-    //_TRSinv = rhs._TRSinv;
     _center = rhs._center;
     _metric = rhs._metric;
     updateAABB();
@@ -22,9 +20,7 @@ Ellipsoid::Ellipsoid(const Ellipsoid& rhs) : IShape()
 Ellipsoid& Ellipsoid::operator=(const Ellipsoid& other)
 {
     if (this != &other) {
-        IShape::operator=(other);
-        //_eigenVal = other._eigenVal;
-        //_TRSinv = other._TRSinv;
+        AABB::operator=(other);
         _metric = other._metric;
         _center = other._center;
         updateAABB();
@@ -32,19 +28,14 @@ Ellipsoid& Ellipsoid::operator=(const Ellipsoid& other)
     return *this;
 }
 
-IShape* Ellipsoid::clone() const
-{
-    return new Ellipsoid(*this);
-}
-
-Ellipsoid::Ellipsoid(const Eigen::Vector3d& center, const Eigen::Matrix3d& metric): IShape(),
+Ellipsoid::Ellipsoid(const Eigen::Vector3d& center, const Eigen::Matrix3d& metric): AABB(),
     _center(center), _metric(metric)
 {
     updateAABB();
 }
 
 Ellipsoid::Ellipsoid(const Eigen::Vector3d& center, const Eigen::Vector3d& eigenvalues, const Eigen::Matrix3d& eigenvectors)
-: IShape()
+: AABB()
 {
     Eigen::Matrix3d D = Eigen::Matrix3d::Identity();
     for (auto i = 0; i < 3; ++i) {
@@ -56,24 +47,45 @@ Ellipsoid::Ellipsoid(const Eigen::Vector3d& center, const Eigen::Vector3d& eigen
 }
 
 Ellipsoid::Ellipsoid(const Eigen::Vector3d& center, double radius)
-: IShape()
+: AABB()
 {
     _metric = Eigen::Matrix3d::Identity()/(radius*radius);
     _center = center;
     updateAABB();
 }
 
-bool Ellipsoid::collide(const IShape& other) const
-{
-    if (this->intercept(other)) {
-        return other.collide(*this);
-    }
-    return false;
-}
-
 bool Ellipsoid::collide(const AABB& aabb) const
 {
-    return collideEllipsoidAABB(*this,aabb);
+    // Cheap preliminary test. Is the center inside the ellipsoid ? If so, then they intersect.
+    if (isInside(aabb.getAABBCenter())) {
+        return true;
+    }
+
+    auto&& Ainv = _metric.inverse();
+
+    const auto& lb = aabb.getLower();
+    const auto& ub = aabb.getUpper();
+
+    const std::array<Eigen::Vector3d,3> normals = {Eigen::Vector3d(1,0,0),Eigen::Vector3d(0,1,0),Eigen::Vector3d(0,0,1)};
+
+    for (auto i=0; i< 3; ++i) {
+
+        std::array<double,2> minmax = {lb[i],ub[i]};
+
+        const auto& n = normals[i];
+
+        double nt_Ainv_n = n.transpose() * Ainv * normals[i];
+        auto Ainv_n = Ainv * n;
+        auto nt_x0 = n.transpose()*_center;
+
+        for (auto j=0; j<2; ++j) {
+            Eigen::Vector3d point = _center + ((minmax[j]-nt_x0)/nt_Ainv_n)*Ainv_n;
+            if (isInside(point) && aabb.isInsideAABB(point))
+                return true;
+        }
+    }
+
+    return false;
 }
 
 bool Ellipsoid::collide(const Ellipsoid& other) const
@@ -231,41 +243,6 @@ const Eigen::Vector3d& Ellipsoid::center() const
 const Eigen::Matrix3d& Ellipsoid::metric() const
 {
     return _metric;
-}
-
-bool collideEllipsoidAABB(const Ellipsoid& ellipsoid, const AABB& aabb)
-{
-    // Cheap preliminary test. Is the center inside the ellipsoid ? If so, then they intersect.
-    if (ellipsoid.isInside(aabb.getAABBCenter())) {
-        return true;
-    }
-
-    auto&& Ainv = ellipsoid.metric().inverse();
-    auto&& x0 = ellipsoid.center();
-
-    const auto& lb = aabb.getLower();
-    const auto& ub = aabb.getUpper();
-
-    const std::array<Eigen::Vector3d,3> normals = {Eigen::Vector3d(1,0,0),Eigen::Vector3d(0,1,0),Eigen::Vector3d(0,0,1)};
-
-    for (auto i=0; i< 3; ++i) {
-
-        std::array<double,2> minmax = {lb[i],ub[i]};
-
-        const auto& n = normals[i];
-
-        double nt_Ainv_n = n.transpose() * Ainv * normals[i];
-        auto Ainv_n = Ainv * n;
-        auto nt_x0 = n.transpose()*x0;
-
-        for (auto j=0; j<2; ++j) {
-            Eigen::Vector3d point = x0 + ((minmax[j]-nt_x0)/nt_Ainv_n)*Ainv_n;
-            if (ellipsoid.isInside(point) && aabb.isInsideAABB(point))
-                return true;
-        }
-    }
-
-    return false;
 }
 
 double Ellipsoid::getVolume() const

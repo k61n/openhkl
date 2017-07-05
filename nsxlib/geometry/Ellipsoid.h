@@ -35,11 +35,11 @@
 #include <Eigen/Eigenvalues>
 
 #include "GeometryTypes.h"
-#include "IShape.h"
+#include "AABB.h"
 
 namespace nsx {
 
-class Ellipsoid : public IShape {
+class Ellipsoid : public AABB {
 
 public:
 
@@ -55,10 +55,6 @@ public:
     virtual ~Ellipsoid()=default; 
     //! Assignment
     Ellipsoid& operator=(const Ellipsoid&);
-    //! Return a copy of this ellipsoid object
-    IShape* clone() const;
-    //! Return true if the ellipsoid intersects any kind of shape
-    bool collide(const IShape& other) const;
     //! Return true if the ellipsoid intersects an aabb.
     bool collide(const AABB& other) const;
     //! Return true if the ellipsoid intersects an ellipsoid.
@@ -115,8 +111,6 @@ private:
     Eigen::Matrix3d _metric;
     Eigen::Vector3d _center;
 };
-
-bool collideEllipsoidAABB(const Ellipsoid&, const AABB&);
 
 } // end namespace nsx
 

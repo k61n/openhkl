@@ -137,7 +137,6 @@ namespace property_tree=boost::property_tree;
 #include "geometry/Vertex.h"
 #include "geometry/Triangle.h"
 
-#include "geometry/IShape.h"
 #include "geometry/Basis.h"
 #include "geometry/Ellipsoid.h"
 #include "geometry/Face.h"
@@ -235,7 +234,6 @@ using sptrMaterial = std::shared_ptr<nsx::Material>;
 
 #include "geometry/Basis.h"
 
-#include "geometry/IShape.h"
 #include "geometry/AABB.h"
 
 #include "geometry/Ellipsoid.h"
@@ -351,8 +349,6 @@ namespace boost { namespace property_tree {} }
 %include "instrument/Component.h"
 %include "instrument/Monochromator.h"
 %include "instrument/Source.h"
-
-%include "geometry/IShape.h"
 
 %include "geometry/AABB.h"
 
@@ -483,8 +479,6 @@ namespace nsx {
 %include "crystal/SymOp.h"
 %include "geometry/Vertex.h"
 %include "geometry/Triangle.h"
-
-%include "geometry/IShape.h"
 
 %include "geometry/Ellipsoid.h"
 %include "geometry/Face.h"

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <unordered_map>
 
 #include "../data/DataSet.h"
 #include "../data/IFrameIterator.h"
@@ -385,7 +386,7 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, Equivalen
     }
 
     // Determine the AABB of the blobs
-    Shape3DMap boxes;
+    std::unordered_map<const Ellipsoid*,int> boxes;
     boxes.reserve(blobs.size());
 
     Eigen::Vector3d center,extents;
@@ -418,7 +419,7 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, Equivalen
         }
 
         auto ellipse = new Ellipsoid(center,extents,axis);
-        boxes.insert(Shape3DMap::value_type(ellipse, it->first));
+        boxes.insert(std::make_pair(ellipse, it->first));
         it++;
 
         // update progress handler
@@ -431,7 +432,7 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, Equivalen
         }
     }
 
-    Octree oct({0.0,0.0,0.0},{double(_ncols),double(_nrows),double(_nframes)});
+    Octree oct(Eigen::Vector3d(0.0,0.0,0.0),Eigen::Vector3d(double(_ncols),double(_nrows),double(_nframes)));
     oct.setMaxDepth(6);
     oct.setMaxStorage(6);
 

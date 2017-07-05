@@ -3,7 +3,7 @@
 
 namespace nsx {
 
-AABB::AABB() : IShape()
+AABB::AABB()
 {
 }
 
@@ -12,28 +12,26 @@ AABB::~AABB()
     
 }
 
-AABB::AABB(const AABB& other) : IShape(other)
+AABB::AABB(const AABB& other)
 {
+    _lowerBound = other._lowerBound;
+    _upperBound = other._upperBound;
 }
 
-AABB::AABB(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub) : IShape(lb,ub)
-{
-}
-
-AABB::AABB(const std::initializer_list<double>& lb, const std::initializer_list<double>& ub) : IShape(lb,ub)
+AABB::AABB(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub)
+: _lowerBound(lb),
+  _upperBound(ub)
 {
 }
 
 AABB& AABB::operator=(const AABB& other)
 {
-  if (this != &other)
-      IShape::operator=(other);
-  return *this;
-}
+  if (this != &other) {
+      _lowerBound = other._lowerBound;
+      _upperBound = other._upperBound;
 
-IShape* AABB::clone() const
-{
-    return new AABB(*this);
+  }
+  return *this;
 }
 
 void AABB::rotate(const Eigen::Matrix3d& eigenvectors)
@@ -44,39 +42,45 @@ void AABB::rotate(const Eigen::Matrix3d& eigenvectors)
 
 void AABB::scale(double value)
 {
-    IShape::scaleAABB(value);
+    scaleAABB(value);
 }
 
 void AABB::scale(const Eigen::Vector3d& v)
 {
-    IShape::scaleAABB(v);
+    scaleAABB(v);
 }
 
 void AABB::translate(const Eigen::Vector3d& t)
 {
-    IShape::translateAABB(t);
+    translateAABB(t);
 }
 
 bool AABB::isInside(const HomVector& vector) const
 {
-    return IShape::isInsideAABB(vector);
-}
-
-bool AABB::collide(const IShape& other) const
-{
-    if (this->intercept(other))
-        return other.collide(*this);
-    return false;
+    return isInsideAABB(vector);
 }
 
 bool AABB::collide(const AABB& other) const
 {
-    return collideAABBAABB(*this,other);
+    for (unsigned int i = 0; i < 3; ++i) {
+        if (_upperBound(i) < other._lowerBound(i) || _lowerBound(i) > other._upperBound(i))
+            return false;
+    }
+    return true;
+}
+
+bool AABB::intercept(const Ellipsoid& other) const
+{
+    for (unsigned int i = 0; i < 3; ++i) {
+        if (_upperBound(i) < other._lowerBound(i) || _lowerBound(i) > other._upperBound(i))
+            return false;
+    }
+    return true;
 }
 
 bool AABB::collide(const Ellipsoid& other) const
 {
-    return collideAABBEllipsoid(*this,other);
+    return other.collide(*this);
 }
 
 bool AABB::rayIntersect(const Eigen::Vector3d& from, const Eigen::Vector3d& dir, double& t1, double& t2) const
@@ -117,17 +121,164 @@ bool AABB::rayIntersect(const Eigen::Vector3d& from, const Eigen::Vector3d& dir,
 
     Eigen::Vector3d halfvect = from + midt*dir;
 
-    return IShape::isInsideAABB(halfvect);
+    return isInsideAABB(halfvect);
 }
 
-bool collideAABBAABB(const AABB& a, const AABB& b)
+void AABB::setBounds(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub)
 {
-    return a.collide(b);
+    for (unsigned int i=0;i<3;++i) {
+        if (lb(i)>ub(i))
+            throw std::invalid_argument("AABB: upper limit must be > lower limit");
+    }
+    _lowerBound = lb;
+    _upperBound = ub;
 }
 
-bool collideAABBEllipsoid(const AABB& aabb, const Ellipsoid& ell)
+void AABB::setLower(const Eigen::Vector3d& lb)
 {
-    return collideEllipsoidAABB(ell,aabb);
+    for (unsigned int i=0;i<3;++i) {
+        if (lb(i)>_upperBound(i))
+            throw std::invalid_argument("AABB: upper limit must be > lower limit");
+    }
+    _lowerBound = lb;
+}
+
+void AABB::setUpper(const Eigen::Vector3d& ub)
+{
+    for (unsigned int i=0;i<3;++i) {
+        if (_lowerBound(i)>ub(i))
+            throw std::invalid_argument("AABB: upper limit must be > lower limit");
+    }
+    _upperBound = ub;
+}
+
+const Eigen::Vector3d& AABB::getLower() const
+{
+    return _lowerBound;
+}
+
+const Eigen::Vector3d& AABB::getUpper() const
+{
+    return _upperBound;
+}
+
+double AABB::AABBVolume() const
+{
+    return (_upperBound-_lowerBound).prod();
+}
+
+Eigen::Vector3d AABB::getAABBCenter() const
+{
+    Eigen::Vector3d center((_lowerBound + _upperBound)*0.5);
+    return center;
+}
+
+Eigen::Vector3d AABB::getAABBExtents() const
+{
+    Eigen::Vector3d dim(_upperBound - _lowerBound);
+    return dim;
+}
+
+
+bool AABB::isInsideAABB(const std::initializer_list<double>& point) const
+{
+
+    if (point.size() != 3)
+        throw("AABB: invalid point size");
+
+    auto it = point.begin();
+    auto lbit = _lowerBound.data();
+    auto ubit = _upperBound.data();
+
+    for(; it!=point.end(); it++,lbit++,ubit++) {
+        if (*it < *lbit || *it > *ubit)
+            return false;
+    }
+
+    return true;
+}
+
+bool AABB::isInsideAABB(const Eigen::Vector3d& point) const
+{
+
+    auto it = point.data();
+    auto lbit = _lowerBound.data();
+    auto ubit = _upperBound.data();
+
+    for(unsigned int i=0; i<3; i++,lbit++,ubit++,it++) {
+        if (*it < *lbit || *it > *ubit)
+            return false;
+    }
+
+    return true;
+}
+
+bool AABB::isInsideAABB(const HomVector& point) const
+{
+
+    auto it = point.data();
+    auto lbit = _lowerBound.data();
+    auto ubit = _upperBound.data();
+
+    for(unsigned int i=0; i<3; i++,lbit++,ubit++,it++) {
+        if (*it < *lbit || *it > *ubit)
+            return false;
+    }
+
+    return true;
+}
+
+void AABB::translateAABB(const Eigen::Vector3d& t)
+{
+    _lowerBound+=t;
+    _upperBound+=t;
+}
+
+void AABB::scaleAABB(const Eigen::Vector3d& s)
+{
+    Eigen::Vector3d center=getAABBCenter();
+    _lowerBound=center+(_lowerBound-center).cwiseProduct(s);
+    _upperBound=center+(_upperBound-center).cwiseProduct(s);
+}
+
+void AABB::scaleAABB(double s)
+{
+    Eigen::Vector3d center=getAABBCenter();
+    _lowerBound=center+(_lowerBound-center)*s;
+    _upperBound=center+(_upperBound-center)*s;
+}
+
+void AABB::rotate(double angle,const Eigen::Vector3d& axis,Direction dir)
+{
+    if (dir==Direction::CW)
+        angle*=-1;
+    // Create the quaternion representing this rotation
+    double hc=cos(0.5*angle);
+    double hs=sin(0.5*angle);
+    double norm=axis.norm();
+    Eigen::Quaterniond temp(hc,axis(0)*hs/norm,axis(1)*hs/norm,axis(2)*hs/norm);
+    rotate(temp.toRotationMatrix());
+}
+
+bool AABB::contains(const AABB& other) const
+{
+    for (unsigned int i=0; i<3; ++i)
+    {
+        if (_lowerBound(i) >= other._lowerBound(i) || _upperBound(i) <= other._upperBound(i))
+            return false;
+    }
+    return true;
+}
+
+std::ostream& AABB::printSelf(std::ostream& os) const
+{
+      os<<"AABB --> "<<"lower bound: "<<_lowerBound<<" , upper bound: "<<_upperBound;
+      return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const AABB& aabb)
+{
+    return aabb.printSelf(os);
 }
 
 } // end namespace nsx

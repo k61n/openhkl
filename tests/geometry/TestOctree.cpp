@@ -23,18 +23,18 @@ void collision_test()
     auto vals = Eigen::Vector3d(radius, radius, radius);
     auto center = Eigen::Vector3d(0.0, 0.0, 0.0);
 
-    std::set<const nsx::IShape*> test_set;
+    std::set<const nsx::Ellipsoid*> test_set;
 
-    std::vector<nsx::Ellipsoid*> shapes;
+    std::vector<nsx::Ellipsoid*> ellipsoids;
 
     // lattice of non-intersecting spheres
     for (int i = 1; i < 20; ++i) {
         for (int j = 1; j < 20; ++j) {
             for (int k = 1; k < 20; ++k) {
                 center = Eigen::Vector3d(i, j, k);
-                auto shape = new nsx::Ellipsoid(center, vals, vects);
-                shapes.emplace_back(shape);
-                tree.addData(shape);
+                auto ellipsoid = new nsx::Ellipsoid(center, vals, vects);
+                ellipsoids.emplace_back(ellipsoid);
+                tree.addData(ellipsoid);
             }
         }
     }
@@ -43,8 +43,8 @@ void collision_test()
     unsigned int numChambers = 0;
     for (auto&& chamber: tree) {
         numChambers += 1;
-        for (auto&& shape: chamber.getData()) {
-            test_set.insert(shape);
+        for (auto&& ellipsoid: chamber.getData()) {
+            test_set.insert(ellipsoid);
         }
     }
 
@@ -58,19 +58,19 @@ void collision_test()
     // add some spheres which will intersect
     center = Eigen::Vector3d(1.5, 1.5, 1.5);
     vals = Eigen::Vector3d(radius, radius, radius);
-    auto shape = new nsx::Ellipsoid(center, vals, vects);
+    auto ellipsoid = new nsx::Ellipsoid(center, vals, vects);
 
 
-    BOOST_CHECK_EQUAL(tree.getCollisions(*shape).size(), 8);
-    shapes.emplace_back(shape);
-    tree.addData(shape);
+    BOOST_CHECK_EQUAL(tree.getCollisions(*ellipsoid).size(), 8);
+    ellipsoids.emplace_back(ellipsoid);
+    tree.addData(ellipsoid);
     BOOST_CHECK_EQUAL(tree.getCollisions().size(), 8);
 
-    shape = nullptr;
+    ellipsoid = nullptr;
 
     // clear the list
-    for(auto shape: shapes) {
-        delete shape;
+    for(auto ellipsoid: ellipsoids) {
+        delete ellipsoid;
     }
 }
 
@@ -83,21 +83,21 @@ void split_test()
     const double radius = 1.0;
     auto vals = Eigen::Vector3d(radius, radius, radius);
 
-    std::set<const nsx::IShape*> test_set;
+    std::set<const nsx::Ellipsoid*> test_set;
 
-    std::vector<nsx::Ellipsoid*> shapes;
+    std::vector<nsx::Ellipsoid*> ellipsoids;
 
-    shapes.emplace_back(new nsx::Ellipsoid(Eigen::Vector3d(12.5, 12.5, 12.5), vals, vects));
-    shapes.emplace_back(new nsx::Ellipsoid(Eigen::Vector3d(12.5, 12.5, 37.5), vals, vects));
-    shapes.emplace_back(new nsx::Ellipsoid(Eigen::Vector3d(12.5, 37.5, 12.5), vals, vects));
-    shapes.emplace_back(new nsx::Ellipsoid(Eigen::Vector3d(12.5, 37.5, 37.5), vals, vects));
-    shapes.emplace_back(new nsx::Ellipsoid(Eigen::Vector3d(37.5, 12.5, 12.5), vals, vects));
-    shapes.emplace_back(new nsx::Ellipsoid(Eigen::Vector3d(37.5, 12.5, 37.5), vals, vects));
-    shapes.emplace_back(new nsx::Ellipsoid(Eigen::Vector3d(37.5, 37.5, 12.5), vals, vects));
-    shapes.emplace_back(new nsx::Ellipsoid(Eigen::Vector3d(37.5, 37.5, 37.5), vals, vects));
+    ellipsoids.emplace_back(new nsx::Ellipsoid(Eigen::Vector3d(12.5, 12.5, 12.5), vals, vects));
+    ellipsoids.emplace_back(new nsx::Ellipsoid(Eigen::Vector3d(12.5, 12.5, 37.5), vals, vects));
+    ellipsoids.emplace_back(new nsx::Ellipsoid(Eigen::Vector3d(12.5, 37.5, 12.5), vals, vects));
+    ellipsoids.emplace_back(new nsx::Ellipsoid(Eigen::Vector3d(12.5, 37.5, 37.5), vals, vects));
+    ellipsoids.emplace_back(new nsx::Ellipsoid(Eigen::Vector3d(37.5, 12.5, 12.5), vals, vects));
+    ellipsoids.emplace_back(new nsx::Ellipsoid(Eigen::Vector3d(37.5, 12.5, 37.5), vals, vects));
+    ellipsoids.emplace_back(new nsx::Ellipsoid(Eigen::Vector3d(37.5, 37.5, 12.5), vals, vects));
+    ellipsoids.emplace_back(new nsx::Ellipsoid(Eigen::Vector3d(37.5, 37.5, 37.5), vals, vects));
 
-    for (auto&& shape: shapes) {
-        tree.addData(shape);
+    for (auto&& ellipsoid: ellipsoids) {
+        tree.addData(ellipsoid);
     }
 
     // check that it split properly
@@ -109,13 +109,13 @@ void split_test()
     }
 
     // check that the collisions with chambers make sense
-    for (auto&& shape: shapes) {
+    for (auto&& ellipsoid: ellipsoids) {
         unsigned int num_intercept = 0;
 
         for (auto&& chamber: tree) {
-            BOOST_CHECK_EQUAL(shape->intercept(chamber), chamber.intercept(*shape));
+            BOOST_CHECK_EQUAL(ellipsoid->collide(chamber), chamber.intercept(*ellipsoid));
 
-            if (shape->intercept(chamber)) {
+            if (ellipsoid->collide(chamber)) {
                 ++num_intercept;
             }
         }
@@ -124,8 +124,8 @@ void split_test()
     }
 
     // clear the list
-    for(auto shape: shapes) {
-        delete shape;
+    for(auto ellipsoid : ellipsoids) {
+        delete ellipsoid;
     }
 }
 
@@ -140,16 +140,19 @@ BOOST_AUTO_TEST_CASE(Test_NDTree)
     std::uniform_real_distribution<> d1(0,50), d2(50,100);
     std::mt19937 gen;
 
-    std::vector<nsx::AABB> bb;
-    bb.reserve(100);
+    std::vector<nsx::Ellipsoid> ellipsoids;
+    ellipsoids.reserve(100);
 
     for (unsigned int i=0;i<=maxStorage;++i) {
         Eigen::Vector3d v1(d1(gen),d1(gen),d1(gen));
-        Eigen::Vector3d v2(d2(gen),d2(gen),d2(gen));
-        bb.push_back(nsx::AABB(v1,v2));
+        Eigen::Matrix3d mat;
+        mat << 1,0,0,
+               0,1,0,
+               0,0,1;
+        ellipsoids.push_back(nsx::Ellipsoid(v1,mat));
         // Test: the root node has no children until it is not splitted
         BOOST_CHECK_EQUAL(tree.hasChildren(),false);
-        tree.addData(&bb[i]);
+        tree.addData(&ellipsoids[i]);
         if (i < maxStorage) {
             // Test: the root node has some data until it is not splitted
             BOOST_CHECK_EQUAL(tree.hasData(),true);
@@ -165,10 +168,10 @@ BOOST_AUTO_TEST_CASE(Test_NDTree)
     // Test: the root node does not have any data anymore once it has been splitted
     BOOST_CHECK_EQUAL(tree.hasData(),false);
 
-    std::vector<nsx::AABB>::const_iterator it1;
+    std::vector<nsx::Ellipsoid>::const_iterator it1;
 
     // Remove all the data stored in the NDTree
-    for (it1=bb.begin();it1!=bb.end();++it1) {
+    for (it1=ellipsoids.begin();it1!=ellipsoids.end();++it1) {
         tree.removeData(&(*it1));
     }
     // Test: the root node amd its children does not have any data anymore once all the data have been removed

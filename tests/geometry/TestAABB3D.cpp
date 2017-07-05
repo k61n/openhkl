@@ -34,13 +34,13 @@ BOOST_AUTO_TEST_CASE(Test_AABB3D)
     BOOST_CHECK(!bb.isInsideAABB(Eigen::Vector3d(2,3,4)));
     //A second bounding box, just touching
     nsx::AABB bb2(Eigen::Vector3d(1,2,3),Eigen::Vector3d(2,3,4));
-    BOOST_CHECK(bb2.intercept(bb));
+    BOOST_CHECK(bb2.collide(bb));
     // Second bounding box overlaps .
     bb2.setBounds(Eigen::Vector3d(0.5,2,3),Eigen::Vector3d(2,3,4));
-    BOOST_CHECK(bb2.intercept(bb));
+    BOOST_CHECK(bb2.collide(bb));
     // No overlap
     bb2.setBounds(Eigen::Vector3d(2,3,4),Eigen::Vector3d(4,5,6));
-    BOOST_CHECK(!(bb2.intercept(bb)));
+    BOOST_CHECK(!(bb2.collide(bb)));
 
     // Translate and scale operations
     bb.translateAABB(Eigen::Vector3d(1,2,3));
