@@ -118,6 +118,7 @@ BOOST_AUTO_TEST_CASE(Test_Ellipsoid_3D)
 
     // AABB center at -18,-18,-18
     nsx::AABB aabb(Eigen::Vector3d(-20,-20,-20),Eigen::Vector3d(-16,-16,-16));
+    std::cout << "ellipsoid aabb: " << f.aabb().lower().transpose() << " " << f.aabb().upper().transpose() << std::endl;
     BOOST_CHECK(!f.collide(aabb));
 
     // AABB center at -16,-16,-16

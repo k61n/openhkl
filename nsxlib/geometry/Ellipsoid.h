@@ -81,6 +81,9 @@ public:
     //! Return the homogenous matrix Q defining the ellipsoid
     Eigen::Matrix4d homogeneousMatrix() const;
 
+    //! Return the inverse of the homogenous matrix Q defining the ellipsoid
+    Eigen::Matrix4d homogeneousMatrixInverse() const;
+
     //! Return semiaxes of the ellipsoid
     Eigen::Vector3d eigenvalues() const;
 
@@ -88,7 +91,7 @@ public:
 
     const Eigen::Matrix3d& metric() const;
 
-    AABB aabb() const;
+    const AABB aabb() const;
 
 #ifndef SWIG
     // Macro to ensure that Ellipsoid can be dynamically allocated.
@@ -96,8 +99,8 @@ public:
 #endif
 
 private:
-
     Eigen::Matrix3d _metric;
+    Eigen::Matrix3d _inverseMetric;
     Eigen::Vector3d _center;
 };
 

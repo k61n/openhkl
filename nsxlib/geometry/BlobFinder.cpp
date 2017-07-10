@@ -111,7 +111,7 @@ Blob3DUMap BlobFinder::find(unsigned int begin, unsigned int end) {
     #pragma omp parallel
     {
         int loop_begin = -1;
-        int loop_end;
+        int loop_end = -1;
 
         std::unordered_map<int,Blob3D> local_blobs = {};
         EquivalenceList local_equivalences;
