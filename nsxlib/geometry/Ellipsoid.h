@@ -3,11 +3,15 @@
     ------------------------------------------------------------------------------------------
     Copyright (C)
     2012- Laurent C. Chapon Institut Laue-Langevin
+    2016- Laurent C. Chapon Eric Pellegrini, Jonathan Fisher
+    Institut Laue-Langevin
     BP 156
     6, rue Jules Horowitz
     38042 Grenoble Cedex 9
     France
     chapon[at]ill.fr
+    pellegrini[at]ill.fr
+    j.fisher[at]fz-juelich.de
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -59,7 +63,11 @@ public:
     //! Return true if the ellipsoid intersects an aabb.
     bool collide(const AABB& other) const;
     //! Return true if the ellipsoid intersects an ellipsoid.
-    bool collide(const Ellipsoid& other) const;
+    bool collide(const Ellipsoid& other) const;    
+    //! Return true if ellipsoid collides with segment from a to b
+    bool collideSegment(const Eigen::Vector3d& a, const Eigen::Vector3d& b) const;
+    //! Return true if ellipsoid collides with face o (o+a) (o+a+b) (o+n) with normal n
+    bool collideFace(const Eigen::Vector3d& o, const Eigen::Vector3d& a, const Eigen::Vector3d& b, const Eigen::Vector3d& n) const;
 
     bool isInside(const Eigen::Vector3d& point) const;
 

@@ -175,4 +175,20 @@ BOOST_AUTO_TEST_CASE(Test_Ellipsoid_3D)
     std::cout << Q.inverse() << std::endl;
     std::cout << "--------------" << std::endl;
     std::cout << QI << std::endl;
+
+    
+    nsx::AABB box(Eigen::Vector3d(0,0,0), Eigen::Vector3d(1,1,1));
+
+    Eigen::Matrix3d U;
+    U << 
+    -1, -1, 0,
+    20, 20, 0, 
+    0, 0, 1;
+
+    nsx::Ellipsoid el(Eigen::Vector3d(3, -3, 0), U.transpose()*U);
+
+    // this test fails with the old incorrect collision
+    BOOST_CHECK_EQUAL(el.aabb().collide(box), true);
+    BOOST_CHECK_EQUAL(box.collide(el), false);
+    BOOST_CHECK_EQUAL(el.collide(box), false);
 }
