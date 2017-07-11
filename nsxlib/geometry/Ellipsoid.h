@@ -35,69 +35,59 @@
 #include <Eigen/Eigenvalues>
 
 #include "GeometryTypes.h"
-#include "IShape.h"
-//#include "AABB.h"
-//#include "OBB.h"
-//#include "Sphere.h"
+#include "AABB.h"
 
 namespace nsx {
 
-class Ellipsoid : public IShape {
+class Ellipsoid {
 
 public:
 
     Ellipsoid();
     //! Copy constructor
-    Ellipsoid(const Ellipsoid&);
-    //! Construct from center and RS inverse matrix
-    Ellipsoid(const Eigen::Vector3d& center, const Eigen::Matrix3d& RSinv);
-    //! Construct a N-dimensional ellipsoid from its center, semi-axes, and eigenvectors ()
-    Ellipsoid(const Eigen::Vector3d& center, const Eigen::Vector3d& eigenvalues, const Eigen::Matrix3d& eigenvectors);
+    Ellipsoid(const Ellipsoid& other);
+    //! Construct directly from metric tensor
+    Ellipsoid(const Eigen::Vector3d& center, const Eigen::Matrix3d& metric);
+    //! Constructor for a sphere
+    Ellipsoid(const Eigen::Vector3d& center, double radius);
+    //! Construct a 3-dimensional ellipsoid from its center, radii, and principal axes ()
+    Ellipsoid(const Eigen::Vector3d& center, const Eigen::Vector3d& radii, const Eigen::Matrix3d& axes);
+    //! Destructor
     virtual ~Ellipsoid()=default; 
     //! Assignment
-    Ellipsoid& operator=(const Ellipsoid&);
-    //! Return a copy of this ellipsoid object
-    IShape* clone() const;
-    //! Return true if the ellipsoid intersects any kind of shape
-    bool collide(const IShape& other) const;
+    Ellipsoid& operator=(const Ellipsoid& other);
     //! Return true if the ellipsoid intersects an aabb.
     bool collide(const AABB& other) const;
     //! Return true if the ellipsoid intersects an ellipsoid.
     bool collide(const Ellipsoid& other) const;
-    //! Return true if the ellipsoid intersects an OBB.
-    bool collide(const OBB& other) const;
-    //! Return true if the ellipsoid intersects a Sphere.
-    bool collide(const Sphere& other) const;
-    //! Return the inverse of the Mapping matrix (\f$ S^{-1}.R^{-1}.T^{-1} \f$)
-    const HomMatrix& getInverseTransformation() const;
-    HomMatrix getTransformation() const;
 
-    //! Check whether a point given as Homogeneous coordinate in the (D+1) dimension is Inside the Ellipsoid.
-    bool isInside(const HomVector& vector) const;
+    bool isInside(const Eigen::Vector3d& point) const;
 
     //! Rotate the ellipsoid.
-    void rotate(const Eigen::Matrix3d& eigenvectors);
+    void rotate(const Eigen::Matrix3d& U);
     //! Scale isotropically the ellipsoid.
     void scale(double value);
-    //! Scale anisotropically the ellipsoid.
-    void scale(const Eigen::Vector3d& scale);
     //! Translate the ellipsoid
     void translate(const Eigen::Vector3d& t);
-
-    //! Compute the intersection between the sphere and a given ray.
-    //! Return true if an intersection was found, false otherwise.
-    //! If the return value is true the intersection "times" will be stored
-    //! in t1 and t2 in such a way that from + t1*dir and from + t2*dir are
-    //! the two intersection points between the ray and this shape.
-    bool rayIntersect(const Eigen::Vector3d& from, const Eigen::Vector3d& dir, double& t1, double& t2) const;
-
-    //! Return the center of the ellipse
-    Eigen::Vector3d getCenter() const;
-    //! Return just the rotation and scaling matrix
-    Eigen::Matrix3d getRSinv() const;
-
+    
     //! Return the volume of the ellipsoid
-    double getVolume() const;
+    double volume() const;
+
+    //! Return the homogenous matrix Q defining the ellipsoid
+    Eigen::Matrix4d homogeneousMatrix() const;
+
+    //! Return the inverse of the homogenous matrix Q defining the ellipsoid
+    Eigen::Matrix4d homogeneousMatrixInverse() const;
+
+    //! Return semiaxes of the ellipsoid
+    Eigen::Vector3d eigenvalues() const;
+
+    const Eigen::Vector3d& center() const;
+
+    const Eigen::Matrix3d& metric() const;
+    const Eigen::Matrix3d& inverseMetric() const;
+
+    const AABB& aabb() const;
 
 #ifndef SWIG
     // Macro to ensure that Ellipsoid can be dynamically allocated.
@@ -105,17 +95,12 @@ public:
 #endif
 
 private:
-    HomMatrix _TRSinv;
-    // Method to update the closest fit AABB to the Ellipsoid
     void updateAABB();
-    // EigenValues
-    Eigen::Vector3d _eigenVal;
+    Eigen::Matrix3d _metric;
+    Eigen::Matrix3d _inverseMetric;
+    Eigen::Vector3d _center;
+    AABB _aabb;
 };
-
-bool collideEllipsoidAABB(const Ellipsoid&, const AABB&);
-//bool collideEllipsoidEllipsoid(const Ellipsoid&, const Ellipsoid&);
-//bool collideEllipsoidOBB(const Ellipsoid&, const OBB&);
-bool collideEllipsoidSphere(const Ellipsoid&, const Sphere&);
 
 } // end namespace nsx
 

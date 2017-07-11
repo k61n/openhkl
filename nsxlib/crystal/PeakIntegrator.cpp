@@ -38,8 +38,6 @@ namespace nsx {
 PeakIntegrator::PeakIntegrator(const IntegrationRegion& region, const DataSet& data):
     _blob(),
     _region(region),
-    _lower(region.getBackground().getLower()),
-    _upper(region.getBackground().getUpper()),
     _data_start(),
     _data_end(),
     _start_x(),
@@ -50,8 +48,10 @@ PeakIntegrator::PeakIntegrator(const IntegrationRegion& region, const DataSet& d
     _dx(),
     _dy()
 {
-//    _data_start = std::lround((std::floor(_lower[2])));
-//    _data_end = std::lround((std::ceil(_upper[2])));
+
+    auto aabb = region.getBackground().aabb();
+    _lower = aabb.lower();
+    _upper = aabb.upper();
 
     _data_start = std::lround((std::ceil(_lower[2])));
     _data_end = std::lround((std::floor(_upper[2])));
@@ -132,7 +132,7 @@ void PeakIntegrator::step(const Eigen::MatrixXi& frame, size_t idx, const Eigen:
         for (unsigned int y = _start_y; y <= _end_y; ++y) {
             int intensity = frame(y, x);
 
-            _point1 << x, y, idx, 1;
+            _point1 << x, y, idx;
             const auto type = _region.classifyPoint(_point1);
 
             const bool inpeak = (type == PointType::REGION);
@@ -186,17 +186,12 @@ void PeakIntegrator::step(const Eigen::MatrixXi& frame, size_t idx, const Eigen:
 
     const double avgBkg = intensityBkg / pointsinbkg;
 
-    // commented out: no more per-frame background
-//    if (pointsinpeak > 0) {
-//        _projectionPeak[idx-_data_start] = intensityP-intensityBkg*pointsinpeak/pointsinbkg;
-//    }
-
     // update blob
     for (unsigned int x = _start_x; x <= _end_x; ++x) {
         for (unsigned int y = _start_y; y <= _end_y; ++y) {
             int intensity = frame(y, x);
 
-            _point1 << x, y, idx, 1;
+            _point1 << x, y, idx;
             const auto type = _region.classifyPoint(_point1);
 
             const bool inpeak = (type == PointType::REGION);
@@ -239,7 +234,7 @@ void PeakIntegrator::end()
     for (unsigned int idx = _data_start; idx <= _data_end; ++idx) {
         for (unsigned int x = _start_x; x <= _end_x; ++x) {
             for (unsigned int y = _start_y; y <= _end_y; ++y) {
-                _point1 << x, y, idx, 1;
+                _point1 << x, y, idx;
 
                 if (_region.inRegion(_point1)) {
                     const double bkg = _fitP(0) + _fitP(1)*x + _fitP(2)*y;
@@ -250,8 +245,10 @@ void PeakIntegrator::end()
     }
 
     // testing
-    auto lb = _region.getRegion().getLower();
-    auto ub = _region.getRegion().getUpper();
+
+    auto&& aabb = _region.getRegion().aabb();
+    auto lb = aabb.lower();
+    auto ub = aabb.upper();
 
     double npx = (ub[0]-lb[0])*(ub[1]-lb[1]);
 

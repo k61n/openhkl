@@ -79,8 +79,8 @@ public:
     using pointer = double*;
     using reference = double&;
 
-    //! Pair of AABB*
-    using collision_pair = std::pair<const IShape*,const IShape*>;
+    //! Pair of Ellipsoid*
+    using collision_pair = std::pair<const Ellipsoid*,const Ellipsoid*>;
 
     //! Move constructor
     Octree(Octree&& other);
@@ -94,9 +94,6 @@ public:
     //! Constructor from two Eigen3 vectors, throw invalid_argument if lb < ub
     Octree(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub);
 
-    //! Constructor from two initializer lists, throw invalid_argument if lb< ub
-    Octree(const std::initializer_list<double>& lb, const std::initializer_list<double>& ub);
-
     //! destructor
     ~Octree()=default;
 
@@ -105,7 +102,7 @@ public:
      * 2^D sub-Octree, unless _MAX_DEPTH is reached, in which case data will simply
      * be added to this leaf.
      */
-    void addData(const IShape* aabb);
+    void addData(const Ellipsoid* ellipsoid);
 
     //! Check whether the node has some children
     bool hasChildren() const;
@@ -127,22 +124,22 @@ public:
     std::set<collision_pair> getCollisions() const;
 
     //! Return collisions with a given shape
-    std::set<const IShape*> getCollisions(const IShape& given) const;
+    std::set<const Ellipsoid*> getCollisions(const Ellipsoid& given) const;
 
     //! Return true if the point is contained in any object of the octree
-    bool isInsideObject(const HomVector& vector);
+    bool isInsideObject(const Eigen::Vector3d& vector);
 
     //! Get the voxels of the tree
     void getVoxels(std::vector<AABB*>& voxels);
 
     //! Remove a data from the Octree
-    void removeData(const IShape* data);
+    void removeData(const Ellipsoid* data);
 
     iterator begin() const;
 
     iterator end() const;
 
-    const std::vector<const IShape*>& getData() const {return _data;}
+    const std::vector<const Ellipsoid*>& getData() const {return _data;}
 
     Octree(const Octree* parent, unsigned int i);
 
@@ -183,7 +180,7 @@ private:
     // Octree<T,D>* _children[getPow(D)];
 
     //! Vector of data object in this leaf
-    std::vector<const IShape*> _data;
+    std::vector<const Ellipsoid*> _data;
 
     //! Depth of this branch with respect to root node.
     unsigned int _depth;

@@ -37,8 +37,8 @@ QJsonObject NumorItem::toJson()
     obj["filename"] = QString(getData()->getFilename().c_str());
 
     for (auto&& mask: getData()->getMasks()) {
-        const Eigen::Vector3d lower(mask->getLower());
-        const Eigen::Vector3d upper(mask->getUpper());
+        const Eigen::Vector3d lower(mask->lower());
+        const Eigen::Vector3d upper(mask->upper());
 
         QJsonArray mask_obj;
         mask_obj.push_back(lower(0));

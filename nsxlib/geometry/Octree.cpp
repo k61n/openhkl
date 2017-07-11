@@ -26,6 +26,7 @@
  *
  */
 
+#include "Ellipsoid.h"
 #include "Octree.h"
 
 namespace nsx {
@@ -73,12 +74,6 @@ Octree::Octree(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub)
     nullifyChildren();
 }
 
-Octree::Octree(const std::initializer_list<double>& lb, const std::initializer_list<double>& ub):
-    AABB(lb,ub), _depth(0), _parent(nullptr)
-{
-    nullifyChildren();
-}
-
 Octree::Octree(const Octree* parent, unsigned int sector):
     AABB(), _depth(parent->_depth+1), _parent(parent), _idx(sector),
     _MAX_DEPTH(parent->_MAX_DEPTH),
@@ -87,31 +82,31 @@ Octree::Octree(const Octree* parent, unsigned int sector):
     nullifyChildren();
 
     // Calculate the center of the current branch
-    Eigen::Vector3d center = parent->getAABBCenter();
+    Eigen::Vector3d center = parent->center();
 
     // The numbering of sub-voxels is encoded into bits of an int a follows:
     // ....... | dim[2] | dim[1] | dim[0]
     for (unsigned int i=0; i<3; ++i) {
         bool b = (sector & _POWERS[i]);
-        this->AABB::_lowerBound(i) = (b ? center[i] : parent->AABB::_lowerBound(i));
-        this->AABB::_upperBound(i) = (b ? parent->AABB::_upperBound(i) : center(i));
+        _lowerBound(i) = (b ? center[i] : parent->_lowerBound(i));
+        _upperBound(i) = (b ? parent->_upperBound(i) : center(i));
     }
 }
 
-void Octree::addData(const IShape* shape)
+void Octree::addData(const Ellipsoid* ellipsoid)
 {
-    // AABB does not overlap with this branch
-    if (!this->intercept(*shape)) {
+    // Ellipsoid does not overlap with this branch
+    if (!this->collide((*ellipsoid).aabb())) {
         return;
     }
 
     // AABB overlap with this node
     if (hasChildren()) {
         for (auto&& child: _children) {
-            child.addData(shape);
+            child.addData(ellipsoid);
         }
     } else {
-        _data.push_back(shape);
+        _data.push_back(ellipsoid);
         if (_data.size() > _MAX_STORAGE) {
             split();
         }
@@ -130,11 +125,13 @@ bool Octree::hasData() const
 
 std::set<Octree::collision_pair> Octree::getCollisions() const
 {
+    using CollisionSet = std::set<const Ellipsoid*>;
+
     std::set<collision_pair> collisions;
 
     // loop over chambers of the ndtree
     for (auto&& chamber: *this) {
-        // loop over shapes in the chamber
+        // loop over ellipsoids in the chamber
         for (auto i = 0; i < chamber._data.size(); ++i) {
             for (auto j = i+1; j < chamber._data.size(); ++j) {
                 auto&& a = chamber._data[i];
@@ -155,16 +152,18 @@ std::set<Octree::collision_pair> Octree::getCollisions() const
     return collisions;
 }
 
-std::set<const IShape*> Octree::getCollisions(const IShape& given) const
+std::set<const Ellipsoid*> Octree::getCollisions(const Ellipsoid& given) const
 {
+    using CollisionSet = std::set<const Ellipsoid*>;
+
     CollisionSet collisions;
 
     std::function<void(const Octree*, CollisionSet&)> recursiveCollisions;
 
     recursiveCollisions = [&given, &recursiveCollisions] (const Octree* tree, CollisionSet& collisions) -> void
     {
-        // shape's box does not intercept tree
-        if (!tree->intercept(given)) {
+        // ellipsoid's box does not intercept tree
+        if (!tree->collide(given.aabb())) {
             return;
         }
 
@@ -177,9 +176,9 @@ std::set<const IShape*> Octree::getCollisions(const IShape& given) const
         }
 
         // otherwise, tree has no children
-        for (auto&& shape: tree->_data) {
-            if (shape->collide(given)) {
-                collisions.emplace(shape);
+        for (auto&& ellipsoid: tree->_data) {
+            if (ellipsoid->collide(given)) {
+                collisions.emplace(ellipsoid);
             }
         }
     };
@@ -188,9 +187,9 @@ std::set<const IShape*> Octree::getCollisions(const IShape& given) const
     return collisions;
 }
 
-bool Octree::isInsideObject(const HomVector& vector)
+bool Octree::isInsideObject(const Eigen::Vector3d& vector)
 {
-    // shape's box does not intercept tree
+    // chamber's box does not intercept tree
     if (!isInside(vector)) {
         return false;
     }
@@ -206,8 +205,8 @@ bool Octree::isInsideObject(const HomVector& vector)
     }
 
     // otherwise, tree has no children
-    for (auto&& shape: _data) {
-        if (shape->isInside(vector)) {
+    for (auto&& ellipsoid: _data) {
+        if (ellipsoid->isInside(vector)) {
             return true;
         }
     }
@@ -240,7 +239,7 @@ void Octree::printSelf(std::ostream& os) const
     }
 }
 
-void Octree::removeData(const IShape* data)
+void Octree::removeData(const Ellipsoid* data)
 {
     if (hasData()) {
         auto it = std::find(_data.begin(), _data.end(), data);

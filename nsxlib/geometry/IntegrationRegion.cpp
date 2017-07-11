@@ -47,23 +47,23 @@ const Ellipsoid &IntegrationRegion::getRegion() const
     return _region;
 }
 
-bool IntegrationRegion::inRegion(const Eigen::Vector4d &p) const
+bool IntegrationRegion::inRegion(const Eigen::Vector3d &p) const
 {
     return _region.isInside(p);
 }
 
-bool IntegrationRegion::inBackground(const Eigen::Vector4d &p) const
+bool IntegrationRegion::inBackground(const Eigen::Vector3d &p) const
 {
-    if(!_background.isInsideAABB(p)) {
+    if(!_background.aabb().isInside(p)) {
         return false;
     }
     // exclude if in peak
     return !inRegion(p);
 }
 
-PointType IntegrationRegion::classifyPoint(const Eigen::Vector4d &p) const
+PointType IntegrationRegion::classifyPoint(const Eigen::Vector3d &p) const
 {
-    if (!_background.isInsideAABB(p)) {
+    if (!_background.aabb().isInside(p)) {
         return PointType::EXCLUDED;
     }
     if (_region.isInside(p)) {
@@ -79,8 +79,9 @@ const Ellipsoid& IntegrationRegion::getBackground() const
 
 void IntegrationRegion::updateMask(Eigen::MatrixXi& mask, double z) const
 {
-    auto lower = _background.getLower();
-    auto upper = _background.getUpper();
+    auto aabb = _background.aabb();
+    auto lower = aabb.lower();
+    auto upper = aabb.upper();
 
     if (z < lower[2] || z > upper[2]) {
         return;
@@ -99,7 +100,7 @@ void IntegrationRegion::updateMask(Eigen::MatrixXi& mask, double z) const
 
     for (auto x = xmin; x < xmax; ++x) {
         for (auto y = ymin; y < ymax; ++y) {
-            Eigen::Vector4d p(x, y, z, 1.0);
+            Eigen::Vector3d p(x, y, z);
             if (inRegion(p)) {
                 mask(y, x) = 1;
             }

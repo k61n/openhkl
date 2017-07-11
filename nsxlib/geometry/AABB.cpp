@@ -1,154 +1,113 @@
 #include "AABB.h"
 #include "Ellipsoid.h"
-#include "Sphere.h"
 
 namespace nsx {
 
-AABB::AABB() : IShape()
+AABB::AABB()
 {
 }
 
-AABB::~AABB()
+AABB::AABB(const AABB& other)
 {
-    
+    _lowerBound = other._lowerBound;
+    _upperBound = other._upperBound;
 }
 
-AABB::AABB(const AABB& other) : IShape(other)
-{
-}
-
-AABB::AABB(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub) : IShape(lb,ub)
-{
-}
-
-AABB::AABB(const std::initializer_list<double>& lb, const std::initializer_list<double>& ub) : IShape(lb,ub)
+AABB::AABB(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub)
+: _lowerBound(lb),
+  _upperBound(ub)
 {
 }
 
 AABB& AABB::operator=(const AABB& other)
 {
-  if (this != &other)
-      IShape::operator=(other);
+  if (this != &other) {
+      _lowerBound = other._lowerBound;
+      _upperBound = other._upperBound;
+
+  }
   return *this;
 }
 
-IShape* AABB::clone() const
+bool AABB::isInside(const Eigen::Vector3d& point) const
 {
-    return new AABB(*this);
+    for(auto i=0; i<3; ++i) {
+        if (point(i) < _lowerBound(i) || point(i) > _upperBound(i))
+            return false;
+    }
+
+    return true;
 }
 
-void AABB::rotate(const Eigen::Matrix3d& eigenvectors)
+bool AABB::collide(const AABB& aabb) const
 {
-    _lowerBound=eigenvectors*_lowerBound;
-    _upperBound=eigenvectors*_upperBound;
+    for (unsigned int i = 0; i < 3; ++i) {
+        if (_upperBound(i) < aabb._lowerBound(i) || _lowerBound(i) > aabb._upperBound(i))
+            return false;
+    }
+    return true;
 }
 
-void AABB::scale(double value)
+bool AABB::collide(const Ellipsoid& ellipsoid) const
 {
-    IShape::scaleAABB(value);
+    return ellipsoid.collide(*this);
 }
 
-void AABB::scale(const Eigen::Vector3d& v)
+void AABB::setLower(const Eigen::Vector3d& lower)
 {
-    IShape::scaleAABB(v);
+    _lowerBound = lower;
+}
+
+void AABB::setUpper(const Eigen::Vector3d& upper)
+{
+    _upperBound = upper;
+}
+
+const Eigen::Vector3d& AABB::lower() const
+{
+    return _lowerBound;
+}
+
+const Eigen::Vector3d& AABB::upper() const
+{
+    return _upperBound;
+}
+
+Eigen::Vector3d AABB::center() const
+{
+    return (_lowerBound + _upperBound)*0.5;
+}
+
+Eigen::Vector3d AABB::extents() const
+{
+    return _upperBound - _lowerBound;
 }
 
 void AABB::translate(const Eigen::Vector3d& t)
 {
-    IShape::translateAABB(t);
+    _lowerBound+=t;
+    _upperBound+=t;
 }
 
-bool AABB::isInside(const HomVector& vector) const
+bool AABB::contains(const AABB& other) const
 {
-    return IShape::isInsideAABB(vector);
-}
-
-bool AABB::collide(const IShape& other) const
-{
-    if (this->intercept(other))
-        return other.collide(*this);
-    return false;
-}
-
-bool AABB::collide(const AABB& other) const
-{
-    return collideAABBAABB(*this,other);
-}
-
-bool AABB::collide(const Ellipsoid& other) const
-{
-    return collideAABBEllipsoid(*this,other);
-}
-
-bool AABB::collide(const OBB& other) const
-{
-    return collideAABBOBB(*this,other);
-}
-
-bool AABB::collide(const Sphere& other) const
-{
-    return collideAABBSphere(*this,other);
-}
-
-bool AABB::rayIntersect(const Eigen::Vector3d& from, const Eigen::Vector3d& dir, double& t1, double& t2) const
-{
-    // Adapted from
-    // See http://gamedev.stackexchange.com/questions/18436/most-efficient-aabb-vs-ray-collision-algorithms
-    // to get any values of t, negative or positive
-
-    // Check first the case of ray // to one the box axis
-    for (unsigned int i=0;i<3;++i)
+    for (unsigned int i=0; i<3; ++i)
     {
-        if (std::abs(dir[i])<1.0e-10)
-        {
-            if (from[i] < _lowerBound[i] || from[i] > _upperBound[i])
-                return false;
-        }
+        if (_lowerBound(i) >= other._lowerBound(i) || _upperBound(i) <= other._upperBound(i))
+            return false;
     }
-
-    // Keep track of t-values for every direction
-    std::vector<double> tvalues;
-    int nSlabs = 6;
-    tvalues.reserve(nSlabs);
-
-    // We test slabs in every direction
-    for (unsigned int i=0; i<3; i++)
-    {
-        double invdir=1.0/dir[i];
-        tvalues.push_back((_lowerBound[i] - from[i])*invdir);
-        tvalues.push_back((_upperBound[i] - from[i])*invdir);
-    }
-
-    std::sort(tvalues.begin(),tvalues.end());
-
-    t1 = tvalues[nSlabs/2 - 1];
-    t2 = tvalues[nSlabs/2];
-
-    double midt = (t1+t2)/2.0;
-
-    Eigen::Vector3d halfvect = from + midt*dir;
-
-    return IShape::isInsideAABB(halfvect);
+    return true;
 }
 
-bool collideAABBAABB(const AABB& a, const AABB& b)
+std::ostream& AABB::printSelf(std::ostream& os) const
 {
-    return a.collide(b);
+      os<<"AABB --> "<<"lower bound: "<<_lowerBound<<" , upper bound: "<<_upperBound;
+      return os;
 }
 
-bool collideAABBEllipsoid(const AABB& aabb, const Ellipsoid& ell)
+std::ostream& operator<<(std::ostream& os, const AABB& aabb)
 {
-    return collideEllipsoidAABB(ell,aabb);
-}
-
-bool collideAABBOBB(const AABB& aabb, const OBB& obb)
-{
-    return collideOBBAABB(obb,aabb);
-}
-
-bool collideAABBSphere(const AABB& aabb, const Sphere& sphere)
-{
-    return collideSphereAABB(sphere,aabb);
+    return aabb.printSelf(os);
 }
 
 } // end namespace nsx

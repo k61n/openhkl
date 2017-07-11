@@ -86,26 +86,26 @@ public:
 
   //! Print
   void printSelf(std::ostream& os) const;
-
-  //! Compute the intersection with a plane of equation \f$ax+by+cz+d=0\f$
-  bool intersectionWithPlane(double a, double b, double c, double d,
-                             Eigen::Vector3d& center, Eigen::Vector3d& semi_axes,
-                             Eigen::Vector3d& axis1, Eigen::Vector3d& axis2, double confidence) const;
+ 
 
 private:
-  //! Total mass=zeroth order momentum
-  double _m000;
+  //! Zeroth moment (total mass)
+  double _m0;
 
-  //! First moment= Sum of all weighted positions m_i.x_i, m_i.y_i, m_i.z_i
-  double _m100, _m010, _m001;
+  //! First moments
+  Eigen::Vector3d _m1;
 
-  //! Second moments
-  double _m200, _m020, _m002, _m110, _m101, _m011;
+  //! Second moments  
+  Eigen::Matrix3d _m2;
 
   //! Number of points contributing
   unsigned int _npoints;
-  double _minValue, _maxValue;
 
+  //! Minimum mass value
+  double _minValue;
+  
+  //! Maximum mass value
+   double _maxValue;
 };
 
 #ifndef SWIG

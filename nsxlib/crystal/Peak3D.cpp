@@ -163,7 +163,7 @@ void Peak3D::setShape(const Ellipsoid& peak)
         return;
     }
 
-    Eigen::Vector3d center = peak.getAABBCenter();
+    Eigen::Vector3d center = peak.aabb().center();
     const double f = std::min(center[2], double(getData()->getNFrames())-1.0001);
     const auto& state = data->getInterpolatedState(f);
 

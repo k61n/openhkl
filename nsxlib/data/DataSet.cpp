@@ -427,7 +427,7 @@ void DataSet::maskPeak(sptrPeak3D peak) const
     peak->setMasked(false);
     for (auto&& m : _masks) {
         // If the background of the peak intercept the mask, unselected the peak
-        if (m->intercept(peak->getShape())) {
+        if (m->collide(peak->getShape())) {
             peak->setMasked(true);
             break;
         }
@@ -438,7 +438,7 @@ bool DataSet::inMasked(const Eigen::Vector3d& point) const
 {
     // Loop over the defined masks and return true if one of them contains the point
     for (auto&& m : _masks) {
-        if (m->isInsideAABB(point)) {
+        if (m->isInside(point)) {
             return true;
         }
     }
@@ -566,11 +566,6 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
 
     peak_list.reserve(num_peaks);
 
-    auto getCovar = [](const Ellipsoid& ell) -> Eigen::Matrix3d {
-        auto&& rs = ell.getRSinv();
-        return rs.transpose()*rs;
-    };
-
 
     auto peakRadius = [](const Eigen::Matrix3d& shape) -> double {
         return std::pow(shape.determinant(), -1.0/6.0);
@@ -589,8 +584,8 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
             continue;
 
         }
-        double radius = peakRadius(getCovar(p->getShape()));
-        avg_peak_shape += getCovar(p->getShape());
+        double radius = peakRadius(p->getShape().metric());
+        avg_peak_shape += p->getShape().metric();
         avg_peak_radius += radius;
         peak_radius_std += radius*radius;
         ++num_good_peaks;
@@ -674,7 +669,7 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
         auto&& old_shape = peak->getShape();
         Eigen::RowVector3d hkl_old, hkl_new;
 
-        const double radius = peakRadius(getCovar(new_shape));
+        const double radius = peakRadius(new_shape.metric());
         const double volume = 4.0*M_PI/3.0 * radius*radius*radius;
 
         if (volume < 1.0) {
@@ -687,8 +682,9 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
             continue;
         }
 
-        auto lb = new_shape.getLower();
-        auto ub = new_shape.getUpper();
+        auto aabb = new_shape.aabb();
+        auto lb = aabb.lower();
+        auto ub = aabb.upper();
 
         // not enough mass to determine ellipse
         if (std::isnan((ub-lb).squaredNorm())) {

@@ -83,7 +83,7 @@ void ScaleDialog::buildPlot()
         double sigma, var = 0.0;
 
         for (auto&& p: peak_list) {
-            double frame = p->getShape().getAABBCenter()[2];
+            double frame = p->getShape().aabb().center()[2];
             double in = p->getScaledIntensity().getValue() * (a+b*frame);
             average += in;
             var += in*in;
@@ -100,9 +100,7 @@ void ScaleDialog::buildPlot()
         }
 
         for (auto&& p: peak_list) {
-
-
-            double x = p->getShape().getAABBCenter()[2]; // frame
+            double x = p->getShape().aabb().center()[2];
             double y = (p->getScaledIntensity().getValue() * (a+b*x) - average);
 
             xmin = x < xmin? x : xmin;
@@ -194,7 +192,7 @@ void ScaleDialog::calculateRFactors()
         // double sigma, var = 0.0;
 
         for (auto&& p: peak_list) {
-            double z = p->getShape().getAABBCenter()[2];
+            double z = p->getShape().aabb().center()[2];
             double in = p->getScaledIntensity().getValue()*getScale(z);
 
             if ( z > _numFrames)
@@ -223,7 +221,7 @@ void ScaleDialog::calculateRFactors()
         // double I_total = 0.0;
 
         for (auto&& p: peak_list) {
-            double z = p->getShape().getAABBCenter()[2];
+            double z = p->getShape().aabb().center()[2];
             double diff = std::fabs(p->getScaledIntensity().getValue()*getScale(z) - average);
             _Rmerge += diff;
             _Rmeas += Fmeas*diff;
@@ -256,7 +254,7 @@ void ScaleDialog::setScale()
 {
     for (auto& peak_list: _peaks) {
         for (auto& peak: peak_list) {
-            double z = peak->getShape().getAABBCenter()[2];
+            double z = peak->getShape().aabb().center()[2];
             peak->setScale(getScale(z));
         }
     }
@@ -279,14 +277,14 @@ void ScaleDialog::refineScale()
             double average = 0;
 
             for (nsx::Peak3D* peak: _peaks[i]) {
-                double z = peak->getShape().getAABBCenter()[2] ;
+                double z = peak->getShape().aabb().center()[2] ;
                 average += getScale(z) * peak->getScaledIntensity().getValue();
             }
 
             average /= _peaks[i].size();
 
             for (nsx::Peak3D* peak: _peaks[i]) {
-                double z = peak->getShape().getAABBCenter()[2];
+                double z = peak->getShape().aabb().center()[2];
                 residuals(idx++) = getScale(z) * peak->getScaledIntensity().getValue() - average;
             }
         }

@@ -44,9 +44,9 @@ public:
     IntegrationRegion(const Ellipsoid& region, double scale = 1.0, double bkg_scale = 3.0);
 
     const Ellipsoid& getRegion() const;
-    bool inRegion(const Eigen::Vector4d& p) const;
-    bool inBackground(const Eigen::Vector4d& p) const;
-    PointType classifyPoint(const Eigen::Vector4d& p) const;
+    bool inRegion(const Eigen::Vector3d& p) const;
+    bool inBackground(const Eigen::Vector3d& p) const;
+    PointType classifyPoint(const Eigen::Vector3d& p) const;
 
     const Ellipsoid& getBackground() const;
     void updateMask(Eigen::MatrixXi& mask, double z) const;

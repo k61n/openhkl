@@ -63,8 +63,9 @@ bool intersect(double p0, double p1, double p2, double u0, double u1, double u2,
 
 double ellipsoids_overlap(const Ellipsoid& ell1,const Ellipsoid& ell2)
 {
-    const Eigen::Vector3d& lb1 = ell1.getLower();
-    const Eigen::Vector3d& ub1 = ell1.getUpper();
+    auto aabb = ell1.aabb();
+    const Eigen::Vector3d& lb1 = aabb.lower();
+    const Eigen::Vector3d& ub1 = aabb.upper();
 
     std::default_random_engine gen;
     std::uniform_real_distribution<double> d1(lb1[0],ub1[0]);
@@ -76,16 +77,15 @@ double ellipsoids_overlap(const Ellipsoid& ell1,const Ellipsoid& ell2)
     for (int i=0;i<100000;++i)
         {
         Eigen::Vector3d point(d1(gen),d2(gen),d3(gen));
-        Eigen::Vector4d hpoint = point.homogeneous();
-        if (ell1.isInside(hpoint))
+        if (ell1.isInside(point))
                 {
             ++inside1;
-            if (ell2.isInside(hpoint))
+            if (ell2.isInside(point))
                 ++inside2;
         }
         }
 
-    double overlap = ell1.getVolume()*static_cast<double>(inside2)/static_cast<double>(inside1);
+    double overlap = ell1.volume()*static_cast<double>(inside2)/static_cast<double>(inside1);
 
     return overlap;
 }
@@ -100,7 +100,7 @@ Mosaic::Mosaic(const std::string& instr, double l, double dl, double dMonSam, do
 {
     // Set up the diffractometer
     DiffractometerStore* ds=DiffractometerStore::Instance();
-    _diffractometer = std::shared_ptr<Diffractometer>(ds->buildDiffractometer(instr));
+    _diffractometer = sptrDiffractometer(ds->buildDiffractometer(instr));
 }
 
 void Mosaic::setSample(Sample* sample)
@@ -358,10 +358,6 @@ bool Mosaic::run(std::vector<std::shared_ptr<DataSet>> datas, unsigned int n, do
             p.second.toEllipsoid(0.997,center1,eigenvalues1,eigenvectors1);
             Ellipsoid ellexp(center1,eigenvalues1,eigenvectors1);
             ellexp.translate(center-center1);
-            std::cout<<ellexp.getAABBExtents()<<std::endl;
-            std::cout<<ellmc.getAABBExtents()<<std::endl;
-            std::cout<<"exp = "<<ellexp.getVolume()<<std::endl;
-            std::cout<<"mc = "<<ellmc.getVolume()<<std::endl;
             overlap = ellipsoids_overlap(ellexp,ellmc);
         }
 

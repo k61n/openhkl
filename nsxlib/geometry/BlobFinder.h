@@ -41,7 +41,6 @@
 #include "../geometry/Blob3D.h"
 #include "../geometry/Ellipsoid.h"
 #include "../geometry/GeometryTypes.h"
-#include "../geometry/IShape.h"
 #include "../mathematics/MathematicsTypes.h"
 #include "../utils/UtilsTypes.h"
 

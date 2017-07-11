@@ -60,7 +60,7 @@ PeakCalc::PeakCalc(): _h(0), _k(0), _l(0), _x(0), _y(0), _frame(0), _intensity()
 PeakCalc::PeakCalc(const Peak3D& peak): _intensity()
 {
     auto hkl = peak.getIntegerMillerIndices();
-    auto center = peak.getShape().getAABBCenter();
+    auto center = peak.getShape().aabb().center();
 
     _h = hkl(0);
     _k = hkl(1);
@@ -97,8 +97,7 @@ sptrPeak3D PeakCalc::averagePeaks(const Octree& tree, double distance, double mi
         if (ell_peak == nullptr) {
             continue;
         }
-        const Eigen::Matrix3d peak_rs = ell_peak->getRSinv();
-        peak_shape += (peak_rs.transpose() * peak_rs).inverse();
+        peak_shape += ell_peak->inverseMetric();
         ++num_neighbors;
     }
 

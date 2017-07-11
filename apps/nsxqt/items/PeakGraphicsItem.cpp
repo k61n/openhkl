@@ -24,7 +24,7 @@ PeakGraphicsItem::PeakGraphicsItem(nsx::sptrPeak3D p):
     _peak(std::move(p))
 {
     if (_peak) {
-        Eigen::Vector3d c=_peak->getIntegrationRegion().getRegion().getAABBCenter();
+        Eigen::Vector3d c=_peak->getIntegrationRegion().getRegion().aabb().center();
         setPos(c[0], c[1]);
     }
     _pen.setWidth(2);
@@ -46,8 +46,9 @@ PeakGraphicsItem::PeakGraphicsItem(nsx::sptrPeak3D p):
 QRectF PeakGraphicsItem::boundingRect() const
 {
     auto bb = nsx::IntegrationRegion(_peak->getIntegrationRegion()).getBackground();
-    const Eigen::Vector3d& l = bb.getLower();
-    const Eigen::Vector3d& u = bb.getUpper();
+    const auto aabb = bb.aabb();
+    const Eigen::Vector3d& l = aabb.lower();
+    const Eigen::Vector3d& u = aabb.upper();
     qreal w=u[0]-l[0];
     qreal h=u[1]-l[1];
 
@@ -76,8 +77,9 @@ void PeakGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
     }
     _label->setVisible(_hovered || _labelVisible);
 
-    const Eigen::Vector3d& peak_l = _peak->getIntegrationRegion().getRegion().getLower();
-    const Eigen::Vector3d& peak_u = _peak->getIntegrationRegion().getRegion().getUpper();
+    const auto aabb = _peak->getIntegrationRegion().getRegion().aabb();
+    const Eigen::Vector3d& peak_l = aabb.lower();
+    const Eigen::Vector3d& peak_u = aabb.upper();
     qreal peak_w = peak_u[0]-peak_l[0];
     qreal peak_h = peak_u[1]-peak_l[1];
 
@@ -86,8 +88,9 @@ void PeakGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 
 void PeakGraphicsItem::setFrame(unsigned long frame)
 {
-    const Eigen::Vector3d& l = _peak->getIntegrationRegion().getBackground().getLower();
-    const Eigen::Vector3d& u = _peak->getIntegrationRegion().getBackground().getUpper();
+    const auto aabb = _peak->getIntegrationRegion().getBackground().aabb();
+    const Eigen::Vector3d& l = aabb.lower();
+    const Eigen::Vector3d& u = aabb.upper();
 
     if (frame>=l[2] && frame<=u[2]) {
         setVisible(true);
@@ -148,9 +151,10 @@ void PeakGraphicsItem::plot(SXPlot* plot)
 
     //Copy the data
     nsx::Ellipsoid background = _peak->getShape();
+    const auto aabb = background.aabb();
     background.scale(3.0);
-    double min=std::floor(background.getLower()[2]);
-    double max=std::ceil(background.getUpper()[2]);
+    double min=std::floor(aabb.lower()[2]);
+    double max=std::ceil(aabb.upper()[2]);
 
     if (min<0) {
         min=0;

@@ -42,7 +42,7 @@ namespace nsx {
 PeakRecord::PeakRecord(const Peak3D &other)
 {
     auto&& index = other.getIntegerMillerIndices();
-    auto&& center = other.getShape().getAABBCenter();
+    auto&& center = other.getShape().aabb().center();
 
     h = index[0];
     k = index[1];
