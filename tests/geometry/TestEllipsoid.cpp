@@ -144,4 +144,35 @@ BOOST_AUTO_TEST_CASE(Test_Ellipsoid_3D)
     // AABB center at 16,10,10
     aabb.translate(Eigen::Vector3d(2,0,0));
     BOOST_CHECK(!f.collide(aabb));
+
+    // test inverse homogeneous matrix
+    Eigen::Vector3d c(15.4, 12.2, 7.5);
+    Eigen::Matrix3d m;
+
+    m <<
+    16.0, 4.0, -1.0, 
+    4.0, 20.0, -3.0,
+    -1.0, -3.0, 10.0;
+
+    nsx::Ellipsoid g(c, m);
+
+    Eigen::Matrix4d Q = g.homogeneousMatrix();
+    Eigen::Matrix4d QI = g.homogeneousMatrixInverse();
+    Eigen::Matrix4d I = Eigen::Matrix4d::Identity();
+
+    Eigen::Matrix4d R = Q.inverse();
+    Eigen::Matrix4d S = QI.inverse();
+
+    const double eps = 1e-10;
+
+    BOOST_CHECK_SMALL((Q*R - I).norm(), eps);
+    BOOST_CHECK_SMALL((R*Q - I).norm(), eps);
+    BOOST_CHECK_SMALL((Q*QI - I).norm(), eps);
+    BOOST_CHECK_SMALL((QI*Q - I).norm(), eps);
+    BOOST_CHECK_SMALL((QI - R).norm(), eps);
+
+    std::cout << "--------------" << std::endl;
+    std::cout << Q.inverse() << std::endl;
+    std::cout << "--------------" << std::endl;
+    std::cout << QI << std::endl;
 }

@@ -106,29 +106,24 @@ bool Ellipsoid::collide(const Ellipsoid& other) const
         return false;
     }
 
-    const auto& A = homogeneousMatrix();
+    // get roots of characteristic equation
+    const auto& AI = homogeneousMatrixInverse();
     const auto& B = other.homogeneousMatrix();
-    Eigen::Matrix4d M = A.inverse() * B;
-
-    Eigen::ComplexEigenSolver<Eigen::Matrix4d> solver(M);
+    Eigen::ComplexEigenSolver<Eigen::Matrix4d> solver(AI*B);
     const auto& val = solver.eigenvalues();
-
-    // One of the root is always positive.
-    // Check whether two of the roots are negative and distinct, in which case the Ellipse do not collide.
-    int count=0;
+    
+    int count = 0;
     double sol[4];
-    if (std::fabs(imag(val(0)))< 1e-5 && real(val(0))<0) {
-        sol[count++]=real(val(0));
+    const double eps = 1e-5;
+
+    // count number of real negative roots
+    for (auto i = 0; i < 4; ++i) {
+        if (std::fabs(imag(val(i))) < eps && real(val(i)) < 0.0) {
+            sol[count++] = real(val(i));
+        }
     }
-    if (std::fabs(imag(val(1)))< 1e-5 && real(val(1))<0) {
-        sol[count++]=real(val(1));
-    }
-    if (std::fabs(imag(val(2)))< 1e-5 && real(val(2))<0) {
-        sol[count++]=real(val(2));
-    }
-    if (std::fabs(imag(val(3)))< 1e-5 && real(val(3))<0) {
-        sol[count++]=real(val(3));
-    }
+    // One of the root is always positive.
+    // Check whether two of the roots are negative and distinct, in which case the ellipsoids do not collide.
     return (!(count==2 && std::fabs(sol[0]-sol[1])>1e-5));
 }
 
