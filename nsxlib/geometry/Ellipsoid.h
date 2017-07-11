@@ -60,8 +60,6 @@ public:
     bool collide(const AABB& other) const;
     //! Return true if the ellipsoid intersects an ellipsoid.
     bool collide(const Ellipsoid& other) const;
-    //! Return the inverse of the Mapping matrix (\f$ S^{-1}.R^{-1}.T^{-1} \f$)
-    const HomMatrix& getInverseTransformation() const;
 
     bool isInside(const Eigen::Vector3d& point) const;
 
@@ -72,9 +70,6 @@ public:
     //! Translate the ellipsoid
     void translate(const Eigen::Vector3d& t);
     
-    //! Return just the rotation and scaling matrix
-    Eigen::Matrix3d getRSinv() const;
-
     //! Return the volume of the ellipsoid
     double volume() const;
 
@@ -90,8 +85,9 @@ public:
     const Eigen::Vector3d& center() const;
 
     const Eigen::Matrix3d& metric() const;
+    const Eigen::Matrix3d& inverseMetric() const;
 
-    const AABB aabb() const;
+    const AABB& aabb() const;
 
 #ifndef SWIG
     // Macro to ensure that Ellipsoid can be dynamically allocated.
@@ -99,9 +95,11 @@ public:
 #endif
 
 private:
+    void updateAABB();
     Eigen::Matrix3d _metric;
     Eigen::Matrix3d _inverseMetric;
     Eigen::Vector3d _center;
+    AABB _aabb;
 };
 
 } // end namespace nsx

@@ -15,6 +15,7 @@ Ellipsoid::Ellipsoid(const Ellipsoid& other)
     _center = other._center;
     _metric = other._metric;
     _inverseMetric = other._inverseMetric;
+    _aabb = other._aabb;
  }
 
 Ellipsoid& Ellipsoid::operator=(const Ellipsoid& other)
@@ -23,6 +24,7 @@ Ellipsoid& Ellipsoid::operator=(const Ellipsoid& other)
         _metric = other._metric;
         _inverseMetric = other._inverseMetric;
         _center = other._center;
+        _aabb = other._aabb;
     }
     return *this;
 }
@@ -30,9 +32,10 @@ Ellipsoid& Ellipsoid::operator=(const Ellipsoid& other)
 Ellipsoid::Ellipsoid(const Eigen::Vector3d& center, const Eigen::Matrix3d& metric)
 : _center(center),
   _metric(metric),
-  _inverseMetric(metric.inverse())
+  _inverseMetric(metric.inverse()),
+  _aabb()
 {
-
+    updateAABB();
 }
 
 Ellipsoid::Ellipsoid(const Eigen::Vector3d& center, const Eigen::Vector3d& radii, const Eigen::Matrix3d& axes)
@@ -46,6 +49,7 @@ Ellipsoid::Ellipsoid(const Eigen::Vector3d& center, const Eigen::Vector3d& radii
     _metric = axes * D * axes.transpose();
     _inverseMetric = _metric.inverse();
     _center = center;
+    updateAABB();
 }
 
 Ellipsoid::Ellipsoid(const Eigen::Vector3d& center, double radius)
@@ -53,6 +57,7 @@ Ellipsoid::Ellipsoid(const Eigen::Vector3d& center, double radius)
     _metric = Eigen::Matrix3d::Identity()/(radius*radius);
     _inverseMetric = _metric.inverse();
     _center = center;
+    updateAABB();
 }
 
 bool Ellipsoid::collide(const AABB& aabb) const
@@ -97,10 +102,9 @@ bool Ellipsoid::collide(const AABB& aabb) const
 bool Ellipsoid::collide(const Ellipsoid& other) const
 { 
     // quick test using AABB, also needed for numerical stability
-    if (!aabb().collide(other.aabb())) {
+    if (!_aabb.collide(other._aabb)) {
         return false;
     }
-
 
     const auto& A = homogeneousMatrix();
     const auto& B = other.homogeneousMatrix();
@@ -132,70 +136,26 @@ bool Ellipsoid::collide(const Ellipsoid& other) const
 void Ellipsoid::rotate(const Eigen::Matrix3d& U)
 {
     _metric = U * _metric * U.transpose();
+    updateAABB();
 }
 
 void Ellipsoid::scale(double value)
 {
     _metric /= value*value;
     _inverseMetric *= value*value;
+    updateAABB();
 }
 
 void Ellipsoid::translate(const Eigen::Vector3d& t)
 {
-    _center += t;  
+    _center += t;
+    updateAABB();  
 }
 
 bool Ellipsoid::isInside(const Eigen::Vector3d& point) const
 {
     Eigen::Vector3d u = point - _center;
-    return u.transpose() * _metric * u <= 1.0;
-}
-
-const HomMatrix& Ellipsoid::getInverseTransformation() const
-{
-    // new implementation
-    Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(_metric);
-
-    auto&& eigenvalues = solver.eigenvalues();
-    auto&& eigenvectors = solver.eigenvectors();
-
-    // Define the inverse scale matrix from the eigenvalues
-    Eigen::DiagonalMatrix<double,4> Sinv;
-    static Eigen::Matrix4d TRSinv;
-    for (unsigned int i = 0; i < 3; ++i) {
-        Sinv.diagonal()[i] = std::sqrt(eigenvalues[i]);
-    }
-    Sinv.diagonal()[3]=1.0;
-
-    // Now prepare the R^-1.T^-1 (rotation,translation)
-    TRSinv = HomMatrix::Constant(0.0);
-    TRSinv(3,3) = 1.0;
-
-    for (unsigned int i = 0; i < 3; ++i) {
-        TRSinv.block(i,0,1,3) = eigenvectors.col(i).transpose().normalized();
-    }
-
-    // The translation part of the inverse transforation matrix is afected by rotation
-    // (see https://fr.wikipedia.org/wiki/Coordonn%C3%A9es_homog%C3%A8nes)
-    TRSinv.block(0,3,3,1) = -TRSinv.block(0,0,3,3)*_center;
-
-    // Finally compute (TRS)^-1 by left-multiplying (TR)^-1 by S^-1
-    TRSinv = Sinv*TRSinv;
-
-    return TRSinv;
-}
-
-Eigen::Matrix3d Ellipsoid::getRSinv() const
-{
-    Eigen::Matrix3d A;
-    Eigen::Matrix4d TRSinv = getInverseTransformation();
-
-    for (int i = 0; i < 3; ++i) {
-        for (int j = 0; j < 3; ++j) {
-            A(i, j) = TRSinv(i, j);
-        }
-    }
-    return A;
+    return u.dot(_metric*u) <= 1.0;
 }
 
 const Eigen::Vector3d& Ellipsoid::center() const
@@ -214,17 +174,19 @@ double Ellipsoid::volume() const
     return c * std::pow(_metric.determinant(), -0.5);
 }
 
-const AABB Ellipsoid::aabb() const
+void Ellipsoid::updateAABB() 
 {
     Eigen::Vector3d a;
-
     for (auto i = 0; i < 3; ++i) {
         a(i) = std::sqrt(_inverseMetric(i,i));
     }
     Eigen::Vector3d lb(_center - a);
     Eigen::Vector3d ub(_center + a);
+    _aabb = AABB(lb, ub);
+}
 
-    return AABB(lb, ub);
+const AABB& Ellipsoid::aabb() const {
+    return _aabb;
 }
 
 Eigen::Matrix4d Ellipsoid::homogeneousMatrix() const
@@ -256,6 +218,11 @@ Eigen::Vector3d Ellipsoid::eigenvalues() const
         vals(i) = 1.0 / std::sqrt(vals(i));
     }
     return vals;
+}
+
+const Eigen::Matrix3d& Ellipsoid::inverseMetric() const
+{
+    return _inverseMetric;
 }
 
 } // end namespace nsx

@@ -97,8 +97,7 @@ sptrPeak3D PeakCalc::averagePeaks(const Octree& tree, double distance, double mi
         if (ell_peak == nullptr) {
             continue;
         }
-        const Eigen::Matrix3d peak_rs = ell_peak->getRSinv();
-        peak_shape += (peak_rs.transpose() * peak_rs).inverse();
+        peak_shape += ell_peak->inverseMetric();
         ++num_neighbors;
     }
 

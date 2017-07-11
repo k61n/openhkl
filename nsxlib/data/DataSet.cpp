@@ -566,11 +566,6 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
 
     peak_list.reserve(num_peaks);
 
-    auto getCovar = [](const Ellipsoid& ell) -> Eigen::Matrix3d {
-        auto&& rs = ell.getRSinv();
-        return rs.transpose()*rs;
-    };
-
 
     auto peakRadius = [](const Eigen::Matrix3d& shape) -> double {
         return std::pow(shape.determinant(), -1.0/6.0);
@@ -589,8 +584,8 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
             continue;
 
         }
-        double radius = peakRadius(getCovar(p->getShape()));
-        avg_peak_shape += getCovar(p->getShape());
+        double radius = peakRadius(p->getShape().metric());
+        avg_peak_shape += p->getShape().metric();
         avg_peak_radius += radius;
         peak_radius_std += radius*radius;
         ++num_good_peaks;
@@ -674,7 +669,7 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
         auto&& old_shape = peak->getShape();
         Eigen::RowVector3d hkl_old, hkl_new;
 
-        const double radius = peakRadius(getCovar(new_shape));
+        const double radius = peakRadius(new_shape.metric());
         const double volume = 4.0*M_PI/3.0 * radius*radius*radius;
 
         if (volume < 1.0) {

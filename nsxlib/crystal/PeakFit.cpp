@@ -394,8 +394,7 @@ Eigen::VectorXd PeakFit::defaultParams() const
     Eigen::Vector3d lower = aabb.lower();
     Eigen::Vector3d upper  = aabb.upper();
 
-    Eigen::Matrix3d rs = shape.getRSinv();
-    Eigen::Matrix3d a = 2.0 * rs.transpose()*rs;
+    Eigen::Matrix3d a = 2.0*shape.metric();
 
     d00 = a(0, 0);
     d11 = a(1, 1);
