@@ -96,6 +96,12 @@ bool Ellipsoid::collide(const AABB& aabb) const
 
 bool Ellipsoid::collide(const Ellipsoid& other) const
 { 
+    // quick test using AABB, also needed for numerical stability
+    if (!aabb().collide(other.aabb())) {
+        return false;
+    }
+
+
     const auto& A = homogeneousMatrix();
     const auto& B = other.homogeneousMatrix();
     Eigen::Matrix4d M = A.inverse() * B;

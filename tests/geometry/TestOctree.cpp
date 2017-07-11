@@ -74,6 +74,66 @@ void collision_test()
     }
 }
 
+void collision_test_2()
+{
+    nsx::Octree tree({0,0,0},{100,100,100});
+    auto vects = Eigen::Matrix3d::Identity();
+    const double radius = 0.55;
+    auto vals = Eigen::Vector3d(radius, radius, radius);
+    auto center = Eigen::Vector3d(0.0, 0.0, 0.0);
+
+    std::set<const nsx::Ellipsoid*> test_set;
+
+    std::vector<nsx::Ellipsoid*> ellipsoids;
+
+    const int N = 19;
+
+    // lattice of non-intersecting spheres
+    for (int i = 1; i < N+1; ++i) {
+        for (int j = 1; j < N+1; ++j) {
+            for (int k = 1; k < N+1; ++k) {
+                center = Eigen::Vector3d(i, j, k);
+                auto ellipsoid = new nsx::Ellipsoid(center, vals, vects);
+                ellipsoids.emplace_back(ellipsoid);
+                tree.addData(ellipsoid);
+            }
+        }
+    }
+
+    // check that the data was inserted correctly
+    unsigned int numChambers = 0;
+    for (auto&& chamber: tree) {
+        numChambers += 1;
+        for (auto&& ellipsoid: chamber.getData()) {
+            test_set.insert(ellipsoid);
+        }
+    }
+
+    BOOST_CHECK_EQUAL(numChambers, tree.numChambers());   
+    BOOST_CHECK_EQUAL(test_set.size(), N*N*N);
+
+    // check that they don't intersect!
+    BOOST_CHECK_EQUAL(tree.getCollisions().size(), 3*N*N*(N-1));
+
+    // add some spheres which will intersect
+    center = Eigen::Vector3d(1.5, 1.5, 1.5);
+    vals = Eigen::Vector3d(radius, radius, radius);
+    auto ellipsoid = new nsx::Ellipsoid(center, vals, vects);
+
+
+    BOOST_CHECK_EQUAL(tree.getCollisions(*ellipsoid).size(), 8);
+    ellipsoids.emplace_back(ellipsoid);
+    tree.addData(ellipsoid);
+    BOOST_CHECK_EQUAL(tree.getCollisions().size(), 3*N*N*(N-1)+8);
+
+    ellipsoid = nullptr;
+
+    // clear the list
+    for(auto ellipsoid: ellipsoids) {
+        delete ellipsoid;
+    }
+}
+
 void split_test()
 {
     nsx::Octree tree({0,0,0},{50,50,50});
@@ -113,7 +173,7 @@ void split_test()
         unsigned int num_intercept = 0;
 
         for (auto&& chamber: tree) {
-            BOOST_CHECK_EQUAL(ellipsoid->collide(chamber), chamber.collide((*ellipsoid).aabb()));
+            BOOST_CHECK_EQUAL(ellipsoid->collide(chamber), chamber.collide(*ellipsoid));
 
             if (ellipsoid->collide(chamber)) {
                 ++num_intercept;
@@ -178,6 +238,8 @@ BOOST_AUTO_TEST_CASE(Test_NDTree)
     BOOST_CHECK_EQUAL(tree.hasData(),false);
 
     collision_test();
+
+    collision_test_2();
 
     split_test();
 }
