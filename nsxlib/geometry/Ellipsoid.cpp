@@ -62,43 +62,45 @@ Ellipsoid::Ellipsoid(const Eigen::Vector3d& center, double radius)
 
 bool Ellipsoid::collide(const AABB& aabb) const
 {
+    // trivial check: center of ellipsoid is inside AABB
+    if (aabb.isInside(_center)) {
+        return true;
+    }
+
     const std::vector<Eigen::Vector3d> normals = {
         Eigen::Vector3d(1,0,0),
         Eigen::Vector3d(0,1,0),
         Eigen::Vector3d(0,0,1),
     };
 
-    const auto& lb = aabb.lower();
-    const auto& ub = aabb.upper();
+    const auto lb = aabb.lower();
+    const auto ub = aabb.upper();
+    const auto dx = ub-lb;
 
-    for (auto&& n: normals) {
-        
-        const Eigen::Vector3d dx = _inverseMetric*n;
-        const double dl = lb.dot(n);
-        const double du = ub.dot(n);
-        const double nAn = n.dot(dx);
-        const double den = std::sqrt(nAn);
+    // calculate vertices and check for collision with each of the 6 faces of the BB
+    for (int i = 0; i < 3; ++i) {
+        auto n0 = normals[i];
+        auto n1 = normals[(i+1)%3];
+        auto n2 = normals[(i+2)%3];
 
-        
-        const Eigen::Vector3d x1 = _center + dx/den;
-        const Eigen::Vector3d x2 = _center - dx/den;
+        auto a = n0 * n0.dot(dx);
+        auto b = n1 * n1.dot(dx);
 
-        const double e1 = x1.dot(n);
-        const double e2 = x2.dot(n);
-
-        const double min_d = e1 < e2 ? e1 : e2;
-        const double max_d = e1 > e2 ? e1 : e2;
-
-        if (max_d < dl) {
-            return false;
+        // check face touching lower bound of BB
+        if (collideFace(lb, a, b, n2)) {
+            return true;
         }
-        if (min_d > du) {
-            return false;
+        // check face touching upper bound of BB
+        if (collideFace(ub, -a, -b, n2)) {
+            return true;
         }
     }
-    return true;
+    return false;
 }
 
+// See Lemma 3 of "Continuous Collision Detection for Elliptic Disks"
+// by Choi, Wang, and Liu. The lemma is stated for ellipses but one can
+// easily check that the proof is valid for ellipsoids in all dimensions.
 bool Ellipsoid::collide(const Ellipsoid& other) const
 { 
     // quick test using AABB, also needed for numerical stability
@@ -110,21 +112,19 @@ bool Ellipsoid::collide(const Ellipsoid& other) const
     const auto& AI = homogeneousMatrixInverse();
     const auto& B = other.homogeneousMatrix();
     Eigen::ComplexEigenSolver<Eigen::Matrix4d> solver(AI*B);
-    const auto& val = solver.eigenvalues();
+    const auto& roots = solver.eigenvalues();
     
     int count = 0;
     double sol[4];
     const double eps = 1e-5;
 
-    // count number of real negative roots
+    // if there exists a real negative root then the ellipsoids are separated    
     for (auto i = 0; i < 4; ++i) {
-        if (std::fabs(imag(val(i))) < eps && real(val(i)) < 0.0) {
-            sol[count++] = real(val(i));
+        if (std::fabs(imag(roots(i))) < eps && real(roots(i)) < 0.0) {
+            return false;
         }
     }
-    // One of the root is always positive.
-    // Check whether two of the roots are negative and distinct, in which case the ellipsoids do not collide.
-    return (!(count==2 && std::fabs(sol[0]-sol[1])>1e-5));
+    return true;
 }
 
 
@@ -219,5 +219,75 @@ const Eigen::Matrix3d& Ellipsoid::inverseMetric() const
 {
     return _inverseMetric;
 }
+
+// this is a simple optimization problem: look for the minimum value
+// of (x-x0).dot(A(x-x0)) along the segment from a to b. Either this occurs at
+// one of the endpoints, or it occurs at a critical point of f(t) = (x(t)-x0).dot(A(x(t)-x0))
+// where x(t) = a + t(b-a).
+bool Ellipsoid::collideSegment(const Eigen::Vector3d& a, const Eigen::Vector3d& b) const
+{
+    if (isInside(a)) {
+        return true;
+    }
+    if (isInside(b)) {
+        return true;
+    }
+
+    // endpoints do not intersect ellipsoid, so now we look for the critical point
+    const Eigen::Vector3d ba = b-a;
+    const Eigen::Vector3d Aba = _metric*ba;
+    const double t = -(a-_center).dot(Aba) / ba.dot(Aba);
+
+    // critical point occurs outside the segment
+    if (t < 0 || t > 1) {
+        return false;
+    }
+    // critical point is inside the segment; check whether it is in the ellipsoid
+    return isInside(a + t*ba);
+}
+
+// this is a simple optimization problem: look for minimum value of (x-x0).dot(A(x-x0)) on
+// the speficied face. First find the critical point on the plane, and check whether it
+// is actually contained in the face. If not, then we have to check each of the segments
+// bounding the face.
+bool Ellipsoid::collideFace(const Eigen::Vector3d& o, const Eigen::Vector3d& a, const Eigen::Vector3d& b, const Eigen::Vector3d& n) const
+{
+    const double d = n.dot(o);
+    const double nAn = n.dot(_inverseMetric*n);
+    const double lagrange = (d-n.dot(_center)) / nAn;
+        
+    // ellipsoid does not even intersect the plane containing the face
+    if (lagrange*lagrange*nAn > 1.0) {
+        return false;
+    }
+
+    // x is the point where (x-x0).dot(A*(x-x0)) attains its minimum on the plane
+    const Eigen::Vector3d x(_center + lagrange*_inverseMetric*n);
+
+    // check that the point x is contained in the face
+    const double t = a.dot(x-o) / a.dot(a);
+    const double s = b.dot(x-o) / b.dot(b);
+
+    // minimum is in the face
+    if (t >= 0 &&  s >= 0 && t <= 1 && s <= 1) {
+        return true;
+    }
+
+    // last possible case: minimum is attained on some boundary segment
+    if (collideSegment(o, o+a)) {
+        return true;
+    }
+    if (collideSegment(o, o+b)) {
+        return true;
+    }
+    if (collideSegment(o+a, o+a+b)) {
+        return true;
+    }
+    if (collideSegment(o+b, o+a+b)) {
+        return true;
+    }
+    return false;
+}
+
 
 } // end namespace nsx

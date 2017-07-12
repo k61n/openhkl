@@ -98,6 +98,7 @@ public:
 
     std::ostream& printSelf(std::ostream& os) const;
 
+
 #ifndef SWIG
     // Macro to ensure that an AABB object can be dynamically allocated.
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
