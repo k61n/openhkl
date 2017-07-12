@@ -113,15 +113,13 @@ bool Ellipsoid::collide(const Ellipsoid& other) const
     double sol[4];
     const double eps = 1e-5;
 
-    // count number of real negative roots
+    // ellipsoids are separated if there exists a real negative root
     for (auto i = 0; i < 4; ++i) {
         if (std::fabs(imag(val(i))) < eps && real(val(i)) < 0.0) {
-            sol[count++] = real(val(i));
+            return false;
         }
     }
-    // One of the root is always positive.
-    // Check whether two of the roots are negative and distinct, in which case the ellipsoids do not collide.
-    return (!(count==2 && std::fabs(sol[0]-sol[1])>1e-5));
+    return true;
 }
 
 
