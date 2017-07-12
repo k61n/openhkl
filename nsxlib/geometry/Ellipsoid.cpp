@@ -77,7 +77,7 @@ bool Ellipsoid::collide(const AABB& aabb) const
     const auto ub = aabb.upper();
     const auto dx = ub-lb;
 
-    // calculate vertices and check for collision
+    // calculate vertices and check for collision with each of the 6 faces of the BB
     for (int i = 0; i < 3; ++i) {
         auto n0 = normals[i];
         auto n1 = normals[(i+1)%3];
@@ -86,9 +86,11 @@ bool Ellipsoid::collide(const AABB& aabb) const
         auto a = n0 * n0.dot(dx);
         auto b = n1 * n1.dot(dx);
 
+        // check face touching lower bound of BB
         if (collideFace(lb, a, b, n2)) {
             return true;
         }
+        // check face touching upper bound of BB
         if (collideFace(ub, -a, -b, n2)) {
             return true;
         }
@@ -218,6 +220,10 @@ const Eigen::Matrix3d& Ellipsoid::inverseMetric() const
     return _inverseMetric;
 }
 
+// this is a simple optimization problem: look for the minimum value
+// of (x-x0).dot(A(x-x0)) along the segment from a to b. Either this occurs at
+// one of the endpoints, or it occurs at a critical point of f(t) = (x(t)-x0).dot(A(x(t)-x0))
+// where x(t) = a + t(b-a).
 bool Ellipsoid::collideSegment(const Eigen::Vector3d& a, const Eigen::Vector3d& b) const
 {
     if (isInside(a)) {
@@ -226,16 +232,24 @@ bool Ellipsoid::collideSegment(const Eigen::Vector3d& a, const Eigen::Vector3d& 
     if (isInside(b)) {
         return true;
     }
+
+    // endpoints do not intersect ellipsoid, so now we look for the critical point
     const Eigen::Vector3d ba = b-a;
     const Eigen::Vector3d Aba = _metric*ba;
     const double t = -(a-_center).dot(Aba) / ba.dot(Aba);
 
+    // critical point occurs outside the segment
     if (t < 0 || t > 1) {
         return false;
     }
+    // critical point is inside the segment; check whether it is in the ellipsoid
     return isInside(a + t*ba);
 }
 
+// this is a simple optimization problem: look for minimum value of (x-x0).dot(A(x-x0)) on
+// the speficied face. First find the critical point on the plane, and check whether it
+// is actually contained in the face. If not, then we have to check each of the segments
+// bounding the face.
 bool Ellipsoid::collideFace(const Eigen::Vector3d& o, const Eigen::Vector3d& a, const Eigen::Vector3d& b, const Eigen::Vector3d& n) const
 {
     const double d = n.dot(o);
@@ -247,7 +261,7 @@ bool Ellipsoid::collideFace(const Eigen::Vector3d& o, const Eigen::Vector3d& a, 
         return false;
     }
 
-    // x is the point were (x-x0).dot(A*(x-x0)) attains its minimum on the plane
+    // x is the point where (x-x0).dot(A*(x-x0)) attains its minimum on the plane
     const Eigen::Vector3d x(_center + lagrange*_inverseMetric*n);
 
     // check that the point x is contained in the face
