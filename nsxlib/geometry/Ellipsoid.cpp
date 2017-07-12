@@ -232,7 +232,7 @@ bool Ellipsoid::collideSegment(const Eigen::Vector3d& a, const Eigen::Vector3d& 
     if (t < 0 || t > 1) {
         return false;
     }
-    return isInside(a + t*b);
+    return isInside(a + t*ba);
 }
 
 bool Ellipsoid::collideFace(const Eigen::Vector3d& o, const Eigen::Vector3d& a, const Eigen::Vector3d& b, const Eigen::Vector3d& n) const
