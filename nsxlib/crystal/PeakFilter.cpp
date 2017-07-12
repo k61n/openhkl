@@ -1,6 +1,7 @@
 #include <algorithm>
 
 #include "PeakFilter.h"
+#include "PeakValidator.h"
 
 namespace nsx {
 
@@ -17,22 +18,22 @@ PeakFilter::~PeakFilter()
 
 PeakSet PeakFilter::filter(const PeakSet& peaks) const
 {
-    PeakSet filteredPeaks;
+    PeakSet validated_peaks;
 
     for (auto peak : peaks) {
-        bool keepPeak = true;
+        bool is_valid = true;
         for (auto validator : _validators) {
             if (!validator->isValid(peak)) {
-                keepPeak = false;
+                is_valid = false;
                 break;
             }
         }
-        if (keepPeak) {
-            filteredPeaks.insert(peak);
+        if (is_valid) {
+            validated_peaks.insert(peak);
         }
     }
 
-    return filteredPeaks;
+    return validated_peaks;
 }
 
 void PeakFilter::addValidator(PeakValidator* validator) {

@@ -5,15 +5,15 @@
 
 namespace nsx {
 
-class SelectedPeakValidator : public PeakValidator {
+class PFactorPeakValidator : public PeakValidator {
 
 public:
 
     using PeakValidator::PeakValidator;
 
-    virtual ~SelectedPeakValidator()=default;
+    virtual ~PFactorPeakValidator()=default;
 
-    SelectedPeakValidator& operator=(const SelectedPeakValidator& other)=default;
+    PFactorPeakValidator& operator=(const PFactorPeakValidator& other)=default;
 
     virtual bool isValid(sptrPeak3D peak) const override;
 };
