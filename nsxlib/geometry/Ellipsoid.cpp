@@ -96,6 +96,9 @@ bool Ellipsoid::collide(const AABB& aabb) const
     return false;
 }
 
+// See Lemma 3 of "Continuous Collision Detection for Elliptic Disks"
+// by Choi, Wang, and Liu. The lemma is stated for ellipses but one can
+// easily check that the proof is valid for ellipsoids in all dimensions.
 bool Ellipsoid::collide(const Ellipsoid& other) const
 { 
     // quick test using AABB, also needed for numerical stability
@@ -107,15 +110,15 @@ bool Ellipsoid::collide(const Ellipsoid& other) const
     const auto& AI = homogeneousMatrixInverse();
     const auto& B = other.homogeneousMatrix();
     Eigen::ComplexEigenSolver<Eigen::Matrix4d> solver(AI*B);
-    const auto& val = solver.eigenvalues();
+    const auto& roots = solver.eigenvalues();
     
     int count = 0;
     double sol[4];
     const double eps = 1e-5;
 
-    // ellipsoids are separated if there exists a real negative root
+    // if there exists a real negative root then the ellipsoids are separated    
     for (auto i = 0; i < 4; ++i) {
-        if (std::fabs(imag(val(i))) < eps && real(val(i)) < 0.0) {
+        if (std::fabs(imag(roots(i))) < eps && real(roots(i)) < 0.0) {
             return false;
         }
     }
