@@ -753,13 +753,10 @@ void DataSet::removeDuplicatePeaks()
         }
     };
 
-    PeakList calculated_peaks;
-
     auto sample = getDiffractometer()->getSample();
     unsigned int ncrystals = static_cast<unsigned int>(sample->getNCrystals());
 
     for (unsigned int i = 0; i < ncrystals; ++i) {
-        SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
         auto cell = sample->getUnitCell(i);
 
         std::map<Eigen::RowVector3i, sptrPeak3D, compare_fn> hkls;

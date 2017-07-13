@@ -11,6 +11,8 @@ class PeakValidator {
 
 public:
 
+    PeakValidator();
+
     PeakValidator(const std::map<std::string,double>& parameters);
 
     PeakValidator(const PeakValidator& other)=default;
@@ -20,6 +22,12 @@ public:
     PeakValidator& operator=(const PeakValidator& other);
 
     virtual bool isValid(sptrPeak3D peak) const=0;
+
+    const std::map<std::string,double>& parameters() const;
+
+    virtual void setParameters(const std::map<std::string,double>& parameters);
+
+    virtual std::string description() const=0;
 
 protected:
 
