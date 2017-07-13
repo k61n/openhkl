@@ -13,15 +13,9 @@ IndexedPeakValidator::IndexedPeakValidator(const std::map<std::string,double>& p
 
 bool IndexedPeakValidator::isValid(sptrPeak3D peak) const
 {
-    for (int i = 0; i < peak->getData()->getDiffractometer()->getSample()->getNCrystals(); ++i) {
-        nsx::UnitCell cell = *peak->getData()->getDiffractometer()->getSample()->getUnitCell(i);
-        Eigen::RowVector3d hkl;
-        bool indexingSuccess = peak->getMillerIndices(cell,hkl,true);
-        if (indexingSuccess) {
-            return true;
-        }
-    }
-    return false;
+    nsx::UnitCell cell = *(peak->getActiveUnitCell());
+    Eigen::RowVector3d hkl;
+    return peak->getMillerIndices(cell,hkl,true);
 }
 
 } // end namespace nsx
