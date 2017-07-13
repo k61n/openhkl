@@ -24,4 +24,18 @@ std::string IPeakFilter::description() const
     return "";
 }
 
+PeakSet IPeakFilter::filter(const PeakSet& peaks) const
+{
+    PeakSet filtered_peaks;
+
+    for (auto&& peak : peaks)
+    {
+        if (valid(peak)) {
+            filtered_peaks.insert(peak);
+        }
+    }
+
+    return filtered_peaks;
+}
+
 } // end namespace nsx

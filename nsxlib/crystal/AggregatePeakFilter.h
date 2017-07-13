@@ -23,8 +23,6 @@ public:
 
     bool valid(sptrPeak3D peak) const override;
 
-    PeakSet filter(const PeakSet& peaks) const;
-
 private:
 
     std::vector<IPeakFilter*> _filters;

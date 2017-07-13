@@ -29,6 +29,8 @@ public:
 
     virtual std::string description() const;
 
+    PeakSet filter(const PeakSet& peaks) const;
+
 protected:
 
     std::map<std::string,double> _parameters;
