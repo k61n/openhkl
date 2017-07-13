@@ -1,5 +1,8 @@
 #pragma once
 
+#include <map>
+#include <string>
+
 #include "CrystalTypes.h"
 #include "PeakValidator.h"
 
@@ -9,7 +12,7 @@ class PFactorPeakValidator : public PeakValidator {
 
 public:
 
-    using PeakValidator::PeakValidator;
+    PFactorPeakValidator(const std::map<std::string,double>& parameters);
 
     virtual ~PFactorPeakValidator()=default;
 

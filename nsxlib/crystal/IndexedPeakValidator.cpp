@@ -7,6 +7,10 @@
 
 namespace nsx {
 
+IndexedPeakValidator::IndexedPeakValidator(const std::map<std::string,double>& parameters) : PeakValidator(parameters)
+{
+}
+
 bool IndexedPeakValidator::isValid(sptrPeak3D peak) const
 {
     for (int i = 0; i < peak->getData()->getDiffractometer()->getSample()->getNCrystals(); ++i) {
