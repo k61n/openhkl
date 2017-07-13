@@ -8,7 +8,7 @@ PeakValidator* SelectedPeakValidator::create(const std::map<std::string,double>&
     return new SelectedPeakValidator(parameters);
 }
 
-SelectedPeakValidator::SelectedPeakValidator()
+SelectedPeakValidator::SelectedPeakValidator() : PeakValidator()
 {
 }
 

@@ -8,6 +8,10 @@ PeakValidator* PFactorPeakValidator::create(const std::map<std::string,double>& 
     return new PFactorPeakValidator(parameters);
 }
 
+PFactorPeakValidator::PFactorPeakValidator() : PeakValidator()
+{
+}
+
 PFactorPeakValidator::PFactorPeakValidator(const std::map<std::string,double>& parameters) : PeakValidator(parameters)
 {
     _parameters["p-value"] = 0.8;
