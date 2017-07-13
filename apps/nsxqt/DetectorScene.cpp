@@ -48,6 +48,7 @@ DetectorScene::DetectorScene(QObject *parent)
   _image(nullptr),
   _peakGraphicsItems(),
   _masks(),
+  //_ellipse_masks(),
   _lastClickedGI(nullptr),
   _logarithmic(false),
   _colormap(new ColorMap()),
@@ -177,6 +178,8 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     CutterGraphicsItem* cutter(nullptr);
     MaskGraphicsItem* mask(nullptr);
+    MaskGraphicsItem* ellipse_mask(nullptr);
+    
     QPen pen1;
 
     // If no data is loaded, do nothing
@@ -229,6 +232,14 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             mask->setTo(event->lastScenePos());
             addItem(mask);
             _lastClickedGI=mask;
+            break;
+            //case of Ellipse mask mode
+        case ELLIPSE_MASK:
+            ellipse_mask = new MaskGraphicsItem(_currentData, new nsx::AABB);
+            ellipse_mask->setFrom(event->lastScenePos());
+            ellipse_mask->setTo(event->lastScenePos());
+            addItem(ellipse_mask);
+            _lastClickedGI=ellipse_mask;
             break;
         case INDEXING:
 #pragma warning "todo: implement this case"
@@ -327,6 +338,18 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
                 _currentData->maskPeaks();
                 update();
                 updateMasks(_currentFrameIndex);
+            /*else if (auto p=dynamic_cast<MaskGraphicsItem*>(_lastClickedGI)) {
+                // add a new ellipse mask
+                if (std::find(ellipse_masks.begin(), _ellipse_masks.end(), p) == _ellipse_masks.end()) {
+                    _currentData->addMask(p->getAABB());
+                    _lastClickedGI = nullptr;
+                    removeItem(p);
+//                    delete p;
+                }
+                _currentData->maskPeaks();
+                update();
+                updateMasks(_currentFrameIndex);    
+            */
             }
         }
     }
@@ -386,6 +409,10 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
             }
             // If the item is a mask graphics item, remove its corresponding mask from the data,
             // update the QList of mask graphics items and update the scene
+            else if (auto p = dynamic_cast<MaskGraphicsItem*>(item)) {
+                _currentData->removeMask(p->getAABB());
+                _masks.removeOne(p);
+            }
             else if (auto p = dynamic_cast<MaskGraphicsItem*>(item)) {
                 _currentData->removeMask(p->getAABB());
                 _masks.removeOne(p);
