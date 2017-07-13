@@ -19,10 +19,6 @@
 #include <nsxlib/crystal/GruberReduction.h>
 #include <nsxlib/crystal/NiggliReduction.h>
 #include <nsxlib/crystal/Peak3D.h>
-#include <nsxlib/crystal/MaskedPeakValidator.h>
-#include <nsxlib/crystal/IndexedPeakValidator.h>
-#include <nsxlib/crystal/SelectedPeakValidator.h>
-#include <nsxlib/crystal/PeakFilter.h>
 #include <nsxlib/crystal/SpaceGroup.h>
 #include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/data/IFrameIterator.h>
