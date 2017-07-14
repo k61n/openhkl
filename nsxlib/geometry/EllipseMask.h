@@ -29,28 +29,27 @@
  *
  */
 
-#ifndef NSXLIB_IMASK_H
-#define NSXLIB_IMASK_H
+#ifndef NSXLIB_ELLIPSEMASK_H
+#define NSXLIB_ELLIPSEMASK_H
 
-#include <cmath>
-
-#include <Eigen/Dense>
-#include <Eigen/Geometry>
-#include <Eigen/Eigenvalues>
-
-
+#include "IMask.h"
+#include "AABB.h"
+#include "Ellipsoid.h"
 
 namespace nsx {
 
-class Ellipsoid;
-
-class IMask {
+class EllipseMask: public IMask {
 
 public:
-    virtual ~IMask() {}
-    virtual bool collide(const Ellipsoid& e) = 0;
+    EllipseMask(const AABB& aabb, bool two_dim=true);
+    virtual ~EllipseMask() {}
+    bool collide(const Ellipsoid& e) override;
+
+private:
+    Ellipsoid _ellipsoid;
+    bool _2d;
 };
 
 } // end namespace nsx
 
-#endif // NSXLIB_IMASK_H
+#endif // NSXLIB_BOX2DMASK_H

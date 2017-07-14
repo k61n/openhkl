@@ -39,6 +39,7 @@
 #include "../crystal/CrystalTypes.h"
 #include "../data/DataTypes.h"
 #include "../geometry/GeometryTypes.h"
+#include "../geometry/IMask.h"
 #include "../instrument/InstrumentTypes.h"
 #include "../utils/UtilsTypes.h"
 
@@ -109,25 +110,22 @@ public:
     //ComponentState getInterpolatedState(std::shared_ptr<Component> component, double frame) const;
 
     //! Add a new mask to the data
-    void addMask(AABB* mask);
+    void addMask(IMask* mask);
 
     //! Add a new peak to the data
     void addPeak(const sptrPeak3D& peak);
 
     //! Remove a mask from the data, by reference
-    void removeMask(AABB* mask);
+    void removeMask(IMask* mask);
 
     //! Return the list of masks
-    const std::set<AABB*>& getMasks();
+    const std::set<IMask*>& getMasks();
 
     //! Remove a peak from the data
     bool removePeak(const sptrPeak3D& peak);
 
     //! Clear the peaks collected for this data
     void clearPeaks();
-
-    //! Return true if a given point (in detector space) belong to a mask
-    bool inMasked(const Eigen::Vector3d& point) const;
 
     //! Mask the peaks collected in the data with the masks defined up to now
     void maskPeaks() const;
@@ -185,7 +183,7 @@ protected:
     PeakSet _peaks;
     std::size_t _fileSize;
     //! The set of masks bound to the data
-    std::set<AABB*> _masks;
+    std::set<IMask*> _masks;
     double _background;
     FrameIteratorCallback _iteratorCallback;
     std::shared_ptr<IDataReader> _reader;

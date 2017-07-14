@@ -34,6 +34,7 @@
 
 #include "IMask.h"
 #include "AABB.h"
+#include "Ellipsoid.h"
 
 namespace nsx {
 
@@ -42,7 +43,7 @@ class BoxMask: public IMask {
 public:
     BoxMask(const AABB& aabb);
     virtual ~BoxMask() {}
-    bool inside(const Eigen::Vector3d& v);
+    bool collide(const Ellipsoid& e) override;
 
 private:
     AABB _aabb;

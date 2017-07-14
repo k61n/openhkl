@@ -2,7 +2,8 @@
 #define NSXQT_DETECTORSCENE_H
 
 #include <map>
-#include <list>
+#include <vector>
+#include <utility>
 
 #include <Eigen/Dense>
 
@@ -14,6 +15,7 @@
 #include <nsxlib/crystal/CrystalTypes.h>
 #include <nsxlib/crystal/PeakCalc.h>
 #include <nsxlib/data/DataTypes.h>
+#include <nsxlib/geometry/IMask.h>
 
 #include "items/PeakCalcGraphicsItem.h"
 
@@ -92,6 +94,10 @@ private:
     //! Create the text of the tooltip depending on Scene Mode.
     void createToolTipText(QGraphicsSceneMouseEvent*);
 
+    // find the iterator corresponding to given graphics item
+    std::vector<std::pair<QGraphicsItem*, nsx::IMask*>>::iterator findMask(QGraphicsItem* item);
+    
+
     nsx::sptrDataSet _currentData;
     unsigned long _currentFrameIndex;
     int _currentIntensity;
@@ -112,8 +118,7 @@ private:
     //! Contains peaks item of current data, reinitialized with new data set.
     std::map<nsx::sptrPeak3D,PeakGraphicsItem*> _peakGraphicsItems;
     std::vector<PeakCalcGraphicsItem*> _peakCalcs;
-    QList<MaskGraphicsItem*> _masks;
-    QList<EllipseMaskGraphicsItem*> _ellipse_masks;
+    std::vector<std::pair<QGraphicsItem*, nsx::IMask*>> _masks;
     
     SXGraphicsItem* _lastClickedGI;
     nsx::PeakCalcList _precalculatedPeaks;

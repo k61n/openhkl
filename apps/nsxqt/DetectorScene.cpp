@@ -14,6 +14,8 @@
 #include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/geometry/AABB.h>
+#include <nsxlib/geometry/BoxMask.h>
+#include <nsxlib/geometry/EllipseMask.h>
 #include <nsxlib/instrument/Detector.h>
 #include <nsxlib/instrument/DetectorEvent.h>
 #include <nsxlib/instrument/Diffractometer.h>
@@ -49,7 +51,6 @@ DetectorScene::DetectorScene(QObject *parent)
   _image(nullptr),
   _peakGraphicsItems(),
   _masks(),
-  _ellipse_masks(),
   _lastClickedGI(nullptr),
   _logarithmic(false),
   _colormap(new ColorMap()),
@@ -180,6 +181,7 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
     CutterGraphicsItem* cutter(nullptr);
     MaskGraphicsItem* mask(nullptr);
     EllipseMaskGraphicsItem* ellipse_mask(nullptr);
+    //_masks.emplace_back(new graphicsItem(nullptr));
     
     QPen pen1;
 
@@ -233,6 +235,7 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             mask->setTo(event->lastScenePos());
             addItem(mask);
             _lastClickedGI=mask;
+            _masks.emplace_back(mask, nullptr);
             break;
             //case of Ellipse mask mode
         case ELLIPSE_MASK:
@@ -241,6 +244,7 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             ellipse_mask->setTo(event->lastScenePos());
             addItem(ellipse_mask);
             _lastClickedGI=ellipse_mask;
+            _masks.emplace_back(ellipse_mask, nullptr);
             break;
         case INDEXING:
 #pragma warning "todo: implement this case"
@@ -331,33 +335,40 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             else if (auto p=dynamic_cast<MaskGraphicsItem*>(_lastClickedGI)) {
                 // add a new mask
                 qDebug() << "mouse release event> MaskGraphicsItem";
-                if (std::find(_masks.begin(), _masks.end(), p) == _masks.end()) {
-                    _currentData->addMask(p->getAABB());
+                auto it = findMask(p);
+                if (it != _masks.end()) {
+                    it->second = new nsx::BoxMask(*p->getAABB());
+                    _currentData->addMask(it->second);                    
                     _lastClickedGI = nullptr;
-                    removeItem(p);
-//                    delete p;
                 }
                 _currentData->maskPeaks();
                 update();
                 updateMasks(_currentFrameIndex);
             }else if (auto p=dynamic_cast<EllipseMaskGraphicsItem*>(_lastClickedGI)) {
                 qDebug() << "mouse release event> EllipseMaskGraphicsItem";
-                // add a new ellipse mask
-                #if 0
-                if (std::find(_ellipse_masks.begin(), _ellipse_masks.end(), p) == _ellipse_masks.end()) {
-                    _currentData->addMask(p->getAABB());
+                auto it = findMask(p);
+                if (it != _masks.end()) {
+                    it->second = new nsx::EllipseMask(*p->getAABB());
+                    _currentData->addMask(it->second);                    
                     _lastClickedGI = nullptr;
-                    removeItem(p);
-//                    delete p;
                 }
-                #endif
                 _currentData->maskPeaks();
                 update();
                 updateMasks(_currentFrameIndex);    
-            
             }
         }
     }
+    
+    #if 0
+    for(mask == _masks)
+    {
+        if(item == mask.first)
+        data->addMask(BoxMask);
+        mask.second = BoxMask; 
+
+    } 
+    #endif
+
 }
 
 void DetectorScene::wheelEvent(QGraphicsSceneWheelEvent* event)
@@ -415,12 +426,18 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
             // If the item is a mask graphics item, remove its corresponding mask from the data,
             // update the QList of mask graphics items and update the scene
             else if (auto p = dynamic_cast<MaskGraphicsItem*>(item)) {
-                _currentData->removeMask(p->getAABB());
-                _masks.removeOne(p);
+                auto it = findMask(p);
+                if (it != _masks.end()) {
+                    _currentData->removeMask(it->second);
+                    _masks.erase(it);
+                }
             }
             else if (auto p = dynamic_cast<EllipseMaskGraphicsItem*>(item)) {
-                _currentData->removeMask(p->getAABB());
-                _ellipse_masks.removeOne(p);
+                auto it = findMask(p);
+                if (it != _masks.end()) {
+                    _currentData->removeMask(it->second);
+                    _masks.erase(it);
+                }
             }
             if (p == _lastClickedGI) {
                 _lastClickedGI=nullptr;
@@ -695,27 +712,6 @@ void DetectorScene::clearPeaks()
 void DetectorScene::updateMasks(unsigned long frame)
 {
     _lastClickedGI = nullptr;
-
-    for (auto&& mask: _masks) {
-        removeItem(mask);
-//        delete mask;
-    }
-    _masks.clear();
-
-    for (auto&& mask: _currentData->getMasks()) {
-        const Eigen::Vector3d lower(mask->lower());
-        const Eigen::Vector3d upper(mask->upper());
-
-        // mask is out of the frame
-        if (frame > upper[2] || frame < lower[2]) {
-            continue;
-        }
-        auto maskItem = new MaskGraphicsItem(_currentData, mask);
-        maskItem->setFrom(QPointF(lower(0), lower(1)));
-        maskItem->setTo(QPointF(upper(0), upper(1)));
-        addItem(maskItem);
-        _masks.push_back(maskItem);
-    }
 }
 
 void DetectorScene::showPeakLabels(bool peaklabel)
@@ -775,4 +771,9 @@ void DetectorScene::resetScene()
     _masks.clear();
     _lastClickedGI = nullptr;
     _precalculatedPeaks.clear();
+}
+
+std::vector<std::pair<QGraphicsItem*, nsx::IMask*>>::iterator DetectorScene::findMask(QGraphicsItem* item)
+{
+    return std::find_if(_masks.begin(), _masks.end(), [item](const std::pair<QGraphicsItem*, nsx::IMask*>& x) {return x.first == item;});
 }

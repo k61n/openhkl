@@ -29,28 +29,28 @@
  *
  */
 
-#ifndef NSXLIB_IMASK_H
-#define NSXLIB_IMASK_H
 
-#include <cmath>
-
-#include <Eigen/Dense>
-#include <Eigen/Geometry>
-#include <Eigen/Eigenvalues>
-
+#include "EllipseMask.h"
+#include "Ellipsoid.h"
 
 
 namespace nsx {
 
-class Ellipsoid;
+EllipseMask::EllipseMask(const AABB& aabb, bool two_dim): _ellipsoid(), _2d(two_dim)
+{
+    auto center = aabb.center();
+    auto radii = 0.5 * (aabb.upper() - aabb.lower());
+    auto axes = Eigen::Matrix3d::Identity();
+    _ellipsoid = Ellipsoid(center, radii, axes);
+}
 
-class IMask {
-
-public:
-    virtual ~IMask() {}
-    virtual bool collide(const Ellipsoid& e) = 0;
-};
+bool EllipseMask::collide(const Ellipsoid& e)
+{
+    Ellipsoid f(e);
+    double shift = _ellipsoid.center()[2] - e.center()[2];
+    auto center = _ellipsoid.center();
+    f.translate({0.0, 0.0, shift});
+    return _ellipsoid.collide(f);
+}
 
 } // end namespace nsx
-
-#endif // NSXLIB_IMASK_H

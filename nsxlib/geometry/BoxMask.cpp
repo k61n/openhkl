@@ -31,6 +31,7 @@
 
 
 #include "BoxMask.h"
+#include "Ellipsoid.h"
 
 
 namespace nsx {
@@ -40,9 +41,9 @@ BoxMask::BoxMask(const AABB& aabb): _aabb(aabb)
 
 }
 
-bool BoxMask::inside(const Eigen::Vector3d& v)
+bool BoxMask::collide(const Ellipsoid& e)
 {
-    return _aabb.isInside(v);
+    return _aabb.collide(e);
 }
 
 } // end namespace nsx
