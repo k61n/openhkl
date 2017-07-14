@@ -28,6 +28,7 @@
 #include "items/CutSliceGraphicsItem.h"
 #include "items/CutLineGraphicsItem.h"
 #include "items/MaskGraphicsItem.h"
+#include "items/EllipseMaskGraphicsItem.h"
 
 // compile-time constant to determine whether to draw the peak masks
 static const bool g_drawMask = true;
@@ -48,7 +49,7 @@ DetectorScene::DetectorScene(QObject *parent)
   _image(nullptr),
   _peakGraphicsItems(),
   _masks(),
-  //_ellipse_masks(),
+  _ellipse_masks(),
   _lastClickedGI(nullptr),
   _logarithmic(false),
   _colormap(new ColorMap()),
@@ -178,7 +179,7 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     CutterGraphicsItem* cutter(nullptr);
     MaskGraphicsItem* mask(nullptr);
-    MaskGraphicsItem* ellipse_mask(nullptr);
+    EllipseMaskGraphicsItem* ellipse_mask(nullptr);
     
     QPen pen1;
 
@@ -235,7 +236,7 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             break;
             //case of Ellipse mask mode
         case ELLIPSE_MASK:
-            ellipse_mask = new MaskGraphicsItem(_currentData, new nsx::AABB);
+            ellipse_mask = new EllipseMaskGraphicsItem(_currentData, new nsx::AABB);
             ellipse_mask->setFrom(event->lastScenePos());
             ellipse_mask->setTo(event->lastScenePos());
             addItem(ellipse_mask);
@@ -329,6 +330,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             }
             else if (auto p=dynamic_cast<MaskGraphicsItem*>(_lastClickedGI)) {
                 // add a new mask
+                qDebug() << "mouse release event> MaskGraphicsItem";
                 if (std::find(_masks.begin(), _masks.end(), p) == _masks.end()) {
                     _currentData->addMask(p->getAABB());
                     _lastClickedGI = nullptr;
@@ -338,18 +340,21 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
                 _currentData->maskPeaks();
                 update();
                 updateMasks(_currentFrameIndex);
-            /*else if (auto p=dynamic_cast<MaskGraphicsItem*>(_lastClickedGI)) {
+            }else if (auto p=dynamic_cast<EllipseMaskGraphicsItem*>(_lastClickedGI)) {
+                qDebug() << "mouse release event> EllipseMaskGraphicsItem";
                 // add a new ellipse mask
-                if (std::find(ellipse_masks.begin(), _ellipse_masks.end(), p) == _ellipse_masks.end()) {
+                #if 0
+                if (std::find(_ellipse_masks.begin(), _ellipse_masks.end(), p) == _ellipse_masks.end()) {
                     _currentData->addMask(p->getAABB());
                     _lastClickedGI = nullptr;
                     removeItem(p);
 //                    delete p;
                 }
+                #endif
                 _currentData->maskPeaks();
                 update();
                 updateMasks(_currentFrameIndex);    
-            */
+            
             }
         }
     }
@@ -413,9 +418,9 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
                 _currentData->removeMask(p->getAABB());
                 _masks.removeOne(p);
             }
-            else if (auto p = dynamic_cast<MaskGraphicsItem*>(item)) {
+            else if (auto p = dynamic_cast<EllipseMaskGraphicsItem*>(item)) {
                 _currentData->removeMask(p->getAABB());
-                _masks.removeOne(p);
+                _ellipse_masks.removeOne(p);
             }
             if (p == _lastClickedGI) {
                 _lastClickedGI=nullptr;

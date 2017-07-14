@@ -40,5 +40,6 @@
         <file>resources/detectorAspectRatioOffIcon.png</file>
         <file>resources/slice3D.png</file>
         <file>resources/reciprocal_space.png</file>
+	<file>resources/ellipseIcon.png</file>
     </qresource>
 </RCC>

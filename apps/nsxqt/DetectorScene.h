@@ -24,6 +24,7 @@ class QGraphicsSceneWheelEvent;
 class PeakGraphicsItem;
 class CutterGraphicsItem;
 class MaskGraphicsItem;
+class EllipseMaskGraphicsItem;
 class PlottableGraphicsItem;
 class SXGraphicsItem;
 
@@ -112,6 +113,8 @@ private:
     std::map<nsx::sptrPeak3D,PeakGraphicsItem*> _peakGraphicsItems;
     std::vector<PeakCalcGraphicsItem*> _peakCalcs;
     QList<MaskGraphicsItem*> _masks;
+    QList<EllipseMaskGraphicsItem*> _ellipse_masks;
+    
     SXGraphicsItem* _lastClickedGI;
     nsx::PeakCalcList _precalculatedPeaks;
 
