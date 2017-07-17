@@ -20,6 +20,8 @@ public:
 
     virtual ~MaskedPeakFilter()=default;
 
+    virtual IPeakFilter* clone() const override;
+
     MaskedPeakFilter& operator=(const MaskedPeakFilter& other)=default;
 
     virtual bool valid(sptrPeak3D peak) const override;

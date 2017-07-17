@@ -8,6 +8,11 @@ IPeakFilter* MaskedPeakFilter::create(const std::map<std::string,double>& parame
     return new MaskedPeakFilter(parameters);
 }
 
+IPeakFilter* MaskedPeakFilter::clone() const
+{
+    return (new MaskedPeakFilter(*this));
+}
+
 MaskedPeakFilter::MaskedPeakFilter() : IPeakFilter()
 {
 }

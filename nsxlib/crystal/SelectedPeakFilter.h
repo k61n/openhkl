@@ -20,6 +20,8 @@ public:
 
     virtual ~SelectedPeakFilter()=default;
 
+    virtual IPeakFilter* clone() const override;
+
     SelectedPeakFilter& operator=(const SelectedPeakFilter& other)=default;
 
     virtual bool valid(sptrPeak3D peak) const override;

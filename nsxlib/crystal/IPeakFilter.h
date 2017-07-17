@@ -21,6 +21,8 @@ public:
 
     IPeakFilter& operator=(const IPeakFilter& other);
 
+    virtual IPeakFilter* clone() const=0;
+
     virtual bool valid(sptrPeak3D peak) const=0;
 
     const std::map<std::string,double>& parameters() const;

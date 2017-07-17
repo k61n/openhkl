@@ -13,6 +13,11 @@ IPeakFilter* IndexedPeakFilter::create(const std::map<std::string,double>& param
     return new IndexedPeakFilter(parameters);
 }
 
+IPeakFilter* IndexedPeakFilter::clone() const
+{
+    return (new IndexedPeakFilter(*this));
+}
+
 IndexedPeakFilter::IndexedPeakFilter() : IPeakFilter()
 {
 }

@@ -15,11 +15,13 @@ public:
 
     virtual ~AggregatePeakFilter();
 
-    AggregatePeakFilter(const AggregatePeakFilter& other)=delete;
+    AggregatePeakFilter(const AggregatePeakFilter& other);
 
     AggregatePeakFilter& operator=(const AggregatePeakFilter& other)=delete;
 
-    void addFilter(IPeakFilter* validator);
+    virtual IPeakFilter* clone() const override;
+
+    void addFilter(const IPeakFilter& filter);
 
     bool valid(sptrPeak3D peak) const override;
 

@@ -8,6 +8,11 @@ IPeakFilter* SelectedPeakFilter::create(const std::map<std::string,double>& para
     return new SelectedPeakFilter(parameters);
 }
 
+IPeakFilter* SelectedPeakFilter::clone() const
+{
+    return (new SelectedPeakFilter(*this));
+}
+
 SelectedPeakFilter::SelectedPeakFilter() : IPeakFilter()
 {
 }

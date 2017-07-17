@@ -8,6 +8,11 @@ IPeakFilter* PValuePeakFilter::create(const std::map<std::string,double>& parame
     return new PValuePeakFilter(parameters);
 }
 
+IPeakFilter* PValuePeakFilter::clone() const
+{
+    return (new PValuePeakFilter(*this));
+}
+
 PValuePeakFilter::PValuePeakFilter() : IPeakFilter()
 {
 }

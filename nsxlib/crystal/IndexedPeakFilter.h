@@ -22,6 +22,8 @@ public:
 
     IndexedPeakFilter& operator=(const IndexedPeakFilter& other)=default;
 
+    virtual IPeakFilter* clone() const override;
+
     virtual bool valid(sptrPeak3D peak) const override;
 
     virtual std::string description() const override;
