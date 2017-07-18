@@ -10,7 +10,7 @@
 
 namespace nsx {
 
-class PeakFilterFactory : public Factory<IPeakFilter,std::string,const std::map<std::string,double>&>, public Singleton<PeakFilterFactory,Constructor,Destructor>{
+class PeakFilterFactory : public Factory<IPeakFilter,std::string>, public Singleton<PeakFilterFactory,Constructor,Destructor>{
 
 private:
 

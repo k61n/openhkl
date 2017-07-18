@@ -12,7 +12,7 @@ class MaskedPeakFilter : public IPeakFilter {
 
 public:
 
-    static IPeakFilter* create(const std::map<std::string,double>& parameters);
+    static IPeakFilter* create();
 
     MaskedPeakFilter();
 

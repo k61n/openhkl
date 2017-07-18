@@ -8,9 +8,9 @@
 
 namespace nsx {
 
-IPeakFilter* IndexedPeakFilter::create(const std::map<std::string,double>& parameters)
+IPeakFilter* IndexedPeakFilter::create()
 {
-    return new IndexedPeakFilter(parameters);
+    return new IndexedPeakFilter();
 }
 
 IPeakFilter* IndexedPeakFilter::clone() const
@@ -29,9 +29,17 @@ IndexedPeakFilter::IndexedPeakFilter(const std::map<std::string,double>& paramet
 
 bool IndexedPeakFilter::valid(sptrPeak3D peak) const
 {
-    nsx::UnitCell cell = *(peak->getActiveUnitCell());
+    if (!_activated) {
+        return true;
+    }
+
+    auto cell = peak->getActiveUnitCell();
+    if (!cell) {
+        return true;
+    }
+
     Eigen::RowVector3d hkl;
-    return peak->getMillerIndices(cell,hkl,true);
+    return peak->getMillerIndices(*cell,hkl,true);
 }
 
 std::string IndexedPeakFilter::description() const

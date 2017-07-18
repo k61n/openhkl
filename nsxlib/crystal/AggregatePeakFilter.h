@@ -23,6 +23,8 @@ public:
 
     void addFilter(const IPeakFilter& filter);
 
+    std::vector<IPeakFilter*> filters();
+
     bool valid(sptrPeak3D peak) const override;
 
 private:

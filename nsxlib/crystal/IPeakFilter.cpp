@@ -2,11 +2,11 @@
 
 namespace nsx {
 
-IPeakFilter::IPeakFilter() : _parameters()
+IPeakFilter::IPeakFilter() : _parameters(), _activated(true)
 {
 }
 
-IPeakFilter::IPeakFilter(const std::map<std::string,double>& parameters) : _parameters(parameters)
+IPeakFilter::IPeakFilter(const std::map<std::string,double>& parameters) : _parameters(parameters), _activated(true)
 {
 }
 
@@ -36,6 +36,16 @@ PeakSet IPeakFilter::filter(const PeakSet& peaks) const
     }
 
     return filtered_peaks;
+}
+
+bool IPeakFilter::activated() const
+{
+    return _activated;
+}
+
+void IPeakFilter::setActivated(bool activated)
+{
+    _activated = activated;
 }
 
 } // end namespace nsx

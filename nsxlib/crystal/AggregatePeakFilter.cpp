@@ -29,8 +29,17 @@ IPeakFilter* AggregatePeakFilter::clone() const
     return (new AggregatePeakFilter(*this));
 }
 
+std::vector<IPeakFilter*> AggregatePeakFilter::filters()
+{
+    return _filters;
+}
+
 bool AggregatePeakFilter::valid(sptrPeak3D peak) const
 {
+    if (!_activated) {
+        return true;
+    }
+
     for (auto&& filter : _filters) {
         if (!filter->valid(peak)) {
             return false;

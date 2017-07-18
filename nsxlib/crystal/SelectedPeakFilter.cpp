@@ -3,9 +3,9 @@
 
 namespace nsx {
 
-IPeakFilter* SelectedPeakFilter::create(const std::map<std::string,double>& parameters)
+IPeakFilter* SelectedPeakFilter::create()
 {
-    return new SelectedPeakFilter(parameters);
+    return new SelectedPeakFilter();
 }
 
 IPeakFilter* SelectedPeakFilter::clone() const
@@ -24,6 +24,10 @@ SelectedPeakFilter::SelectedPeakFilter(const std::map<std::string,double>& param
 
 bool SelectedPeakFilter::valid(sptrPeak3D peak) const
 {
+    if (!_activated) {
+        return true;
+    }
+
     return (peak->isSelected());
 }
 

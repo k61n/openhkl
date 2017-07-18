@@ -3,9 +3,9 @@
 
 namespace nsx {
 
-IPeakFilter* MaskedPeakFilter::create(const std::map<std::string,double>& parameters)
+IPeakFilter* MaskedPeakFilter::create()
 {
-    return new MaskedPeakFilter(parameters);
+    return new MaskedPeakFilter();
 }
 
 IPeakFilter* MaskedPeakFilter::clone() const
@@ -24,6 +24,10 @@ MaskedPeakFilter::MaskedPeakFilter(const std::map<std::string,double>& parameter
 
 bool MaskedPeakFilter::valid(sptrPeak3D peak) const
 {
+    if (!_activated) {
+        return true;
+    }
+
     return !(peak->isMasked());
 }
 

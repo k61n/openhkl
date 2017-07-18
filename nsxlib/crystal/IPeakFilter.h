@@ -33,9 +33,15 @@ public:
 
     PeakSet filter(const PeakSet& peaks) const;
 
+    bool activated() const;
+
+    void setActivated(bool activated);
+
 protected:
 
     std::map<std::string,double> _parameters;
+
+    bool _activated;
 
 };
 

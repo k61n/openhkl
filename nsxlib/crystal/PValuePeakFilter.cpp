@@ -3,9 +3,9 @@
 
 namespace nsx {
 
-IPeakFilter* PValuePeakFilter::create(const std::map<std::string,double>& parameters)
+IPeakFilter* PValuePeakFilter::create()
 {
-    return new PValuePeakFilter(parameters);
+    return new PValuePeakFilter();
 }
 
 IPeakFilter* PValuePeakFilter::clone() const
@@ -15,15 +15,19 @@ IPeakFilter* PValuePeakFilter::clone() const
 
 PValuePeakFilter::PValuePeakFilter() : IPeakFilter()
 {
+    _parameters["p-value"] = 0.8;
 }
 
 PValuePeakFilter::PValuePeakFilter(const std::map<std::string,double>& parameters) : IPeakFilter(parameters)
 {
-    _parameters["p-value"] = 0.8;
 }
 
 bool PValuePeakFilter::valid(sptrPeak3D peak) const
 {
+    if (!_activated) {
+        return true;
+    }
+
     return peak->pValue() < _parameters.at("p-value");
 }
 
