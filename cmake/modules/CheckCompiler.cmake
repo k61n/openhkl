@@ -6,9 +6,14 @@ enable_language(C)
 
 # determine if compiler is GNU/clang variety
 if ( CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  set(COMPILER_IS_GNU TRUE)
+  set(COMPILER_IS_CLANG FALSE)
+  execute_process(COMMAND ${CMAKE_C_COMPILER} -dumpversion OUTPUT_VARIABLE GCC_VERSION)
   set(COMPILER_IS_GNU_OR_CLANG TRUE)
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   set(COMPILER_IS_GNU_OR_CLANG TRUE)
+  set(COMPILER_IS_GNU FALSE)
+  set(COMPILER_IS_CLANG TRUE)
 else()
     set(COMPILER_IS_GNU_OR_CLANG FALSE)
 endif()
@@ -51,9 +56,7 @@ endif()
 # special configuration for GNU/clang
 if(COMPILER_IS_GNU_OR_CLANG)
     add_compile_options(-Wall -Wextra -Wpedantic)
-    add_compile_options(-pthread)
-     # needed to ensure destructors are called correctly with forward declarations
-    add_compile_options(-Werror=delete-incomplete)
+    add_compile_options(-pthread)    
     add_definitions(-DEIGEN_FFTW_DEFAULT)
     add_definitions(-D_USE_MATH_DEFINES)
   elseif(COMPILER_IS_MSVC)
@@ -65,13 +68,25 @@ if(COMPILER_IS_GNU_OR_CLANG)
     add_definitions(/DNSXTOOL_EXPORT)
 endif()
 
-# optional optimized debug for GCC
-if(BUILD_OPTIMIZED_DEBUG)
-    if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-        add_compile_options(-Og)
-    else()
-        message(WARNING "BUILD_OPTIMIZED_DEBUG=ON has no effect on builds with ${CMAKE_CXX_COMPILER_ID}")
+# clang specific
+if(COMPILER_IS_CLANG)
+  add_compile_options(-Werror=delete-incomplete)
+endif()
+
+# gcc specific
+if(COMPILER_IS_GNU)
+  if (GCC_VERSION VERSION_GREATER 4.9)
+    add_compile_options(-Werror=delete-incomplete)
+    if (BUILD_OPTIMIZED_DEBUG)
+      add_compile_options(-Og)
     endif()
+  endif()
+endif()
+
+
+# optional optimized debug for GCC
+if(BUILD_OPTIMIZED_DEBUG AND NOT COMPILER_IS_GNU)
+  message(WARNING "BUILD_OPTIMIZED_DEBUG=ON has no effect on builds with ${CMAKE_CXX_COMPILER_ID}")
 endif()
 
 # code sanitizer
