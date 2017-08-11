@@ -27,13 +27,12 @@
  *
  */
 
-#ifndef NSXLIB_DIFFRACTOMETER_H
-#define NSXLIB_DIFFRACTOMETER_H
+#pragma once
 
 #include <map>
 #include <string>
 
-#include <boost/property_tree/ptree.hpp>
+#include "yaml-cpp/yaml.h"
 
 #include "../instrument/InstrumentTypes.h"
 
@@ -42,7 +41,7 @@ namespace nsx {
 class Diffractometer {
 public:
 
-    Diffractometer(const boost::property_tree::ptree& node);
+    Diffractometer(const YAML::Node& node);
 
     //! Constructs a diffractometer from another one
     Diffractometer(const Diffractometer& other);
@@ -100,5 +99,3 @@ protected:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_DIFFRACTOMETER_H

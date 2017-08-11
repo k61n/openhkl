@@ -26,12 +26,11 @@
  *
  */
 
-#ifndef NSXLIB_MONODETECTOR_H
-#define NSXLIB_MONODETECTOR_H
+#pragma once
 
 #include <string>
 
-#include <boost/property_tree/ptree.hpp>
+#include "yaml-cpp/yaml.h"
 
 #include "Detector.h"
 
@@ -51,7 +50,7 @@ public:
     //! Construct a MonoDetector with a given name
     MonoDetector(const std::string& name);
     //! Constructs a MonoDetector from a property tree node
-    MonoDetector(const boost::property_tree::ptree& node);
+    MonoDetector(const YAML::Node& node);
     // Destructor
     virtual ~MonoDetector()=0;
 
@@ -132,5 +131,3 @@ protected:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_MONODETECTOR_H

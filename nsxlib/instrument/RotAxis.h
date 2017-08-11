@@ -26,10 +26,9 @@
  *
  */
 
-#ifndef NSXLIB_ROTAXIS_H
-#define NSXLIB_ROTAXIS_H
+#pragma once
 
-#include <boost/property_tree/ptree.hpp>
+#include "yaml-cpp/yaml.h"
 
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
@@ -50,7 +49,7 @@ public:
 	enum Direction {CCW,CW};
 
 	//! Static constructor for a RotAxis
-	static Axis* create(const boost::property_tree::ptree& node);
+	static Axis* create(const YAML::Node& node);
 
 	//! Default constructor
 	RotAxis();
@@ -61,7 +60,7 @@ public:
 	//! Explicit
 	explicit RotAxis(const std::string& label, const Eigen::Vector3d& axis, Direction direction=CCW);
 	//! Construct a RotAxis from a property tree node.
-	RotAxis(const boost::property_tree::ptree& node);
+	RotAxis(const YAML::Node& node);
 	//! Assignment operator
 	RotAxis& operator=(const RotAxis& other);
 	//! Destructor
@@ -98,5 +97,3 @@ static const RotAxis AxisZCW=RotAxis("ZCW",Eigen::Vector3d(0,0,1),RotAxis::CW);
 static const RotAxis AxisZCCW=RotAxis("ZCCW",Eigen::Vector3d(0,0,1),RotAxis::CCW);
 
 } // end namespace nsx
-
-#endif // NSXLIB_ROTAXIS_H

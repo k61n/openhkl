@@ -8,7 +8,7 @@
 
 namespace nsx {
 
-Detector* FlatDetector::create(const boost::property_tree::ptree& node)
+Detector* FlatDetector::create(const YAML::Node& node)
 {
     return new FlatDetector(node);
 }
@@ -25,24 +25,23 @@ FlatDetector::FlatDetector(const std::string& name) : MonoDetector(name)
 {
 }
 
-FlatDetector::FlatDetector(const boost::property_tree::ptree& node) : MonoDetector(node)
+FlatDetector::FlatDetector(const YAML::Node& node) : MonoDetector(node)
 {
     UnitsManager* um=UnitsManager::Instance();
 
     // Set the detector width from the property tree node
-    const auto& widthNode = node.get_child("width");
-    double units=um->get(widthNode.get<std::string>("<xmlattr>.units"));
-    double width=widthNode.get_value<double>();
+    auto&& widthNode = node["width"];
+    double units = um->get(widthNode["units"].as<std::string>());
+    double width = widthNode["value"].as<double>();
     width *= units;
     setWidth(width);
 
     // Set the detector height from the property tree node
-    const auto& heightNode = node.get_child("height");
-    units=um->get(heightNode.get<std::string>("<xmlattr>.units"));
-    double height=heightNode.get_value<double>();
+    auto&& heightNode = node["height"];
+    units = um->get(heightNode["units"].as<std::string>());
+    double height = heightNode["value"].as<double>();
     height *= units;
     setHeight(height);
-
 }
 
 FlatDetector::~FlatDetector()

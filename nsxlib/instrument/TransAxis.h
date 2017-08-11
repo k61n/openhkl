@@ -26,10 +26,9 @@
  *
  */
 
-#ifndef NSXLIB_TRANSAXIS_H
-#define NSXLIB_TRANSAXIS_H
+#pragma once
 
-#include <boost/property_tree/ptree.hpp>
+#include "yaml-cpp/yaml.h"
 
 #include <Eigen/Geometry>
 
@@ -41,7 +40,7 @@ class TransAxis : public Axis {
 public:
 
 	//! Static constructor for a TransAxis
-	static Axis* create(const boost::property_tree::ptree& node);
+	static Axis* create(const YAML::Node& node);
 
 	//! Default constructor
 	TransAxis();
@@ -52,7 +51,7 @@ public:
 	//! Constructs a translation axis with a given label and axis
 	TransAxis(const std::string& label,const Eigen::Vector3d& axis);
 	//! Construct a TransAxis from a property tree node.
-	TransAxis(const boost::property_tree::ptree& node);
+	TransAxis(const YAML::Node& node);
 	// Destructor
 	~TransAxis();
 	//! Virtual copy constructor
@@ -65,5 +64,3 @@ public:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_TRANSAXIS_H

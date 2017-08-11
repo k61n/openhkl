@@ -49,26 +49,24 @@ MonoDetector::MonoDetector(const std::string& name)
 {
 }
 
-MonoDetector::MonoDetector(const boost::property_tree::ptree& node) : Detector(node)
+MonoDetector::MonoDetector(const YAML::Node& node) : Detector(node)
 {
     UnitsManager* um=UnitsManager::Instance();
 
     // Set the detector to sample distance from the property tree node
-    const auto& distanceNode = node.get_child("sample_distance");
-    double units=um->get(distanceNode.get<std::string>("<xmlattr>.units"));
-    double distance=distanceNode.get_value<double>();
+    auto&& distanceNode = node["sample_distance"];
+    double units=um->get(distanceNode["units"].as<std::string>());
+    double distance=distanceNode["value"].as<double>();
     distance *= units;
     setDistance(distance);
 
     // Set the detector number of pixels from the property tree node
-    const auto& nColsNode = node.get_child("ncols");
-    unsigned int nCols=nColsNode.get_value<unsigned int>();
-    const auto& nRowsNode = node.get_child("nrows");
-    unsigned int nRows=nRowsNode.get_value<unsigned int>();
+    unsigned int nCols = node["ncols"].as<unsigned int>();
+    unsigned int nRows = node["nrows"].as<unsigned int>();
     setNPixels(nCols,nRows);
 
-    _minCol = node.get<double>("origin_x",0.0);
-    _minRow = node.get<double>("origin_y",0.0);
+    _minCol = node["origin_x"] ? node["origin_x"].as<double>() : 0.0;
+    _minRow = node["origin_y"] ? node["origin_y"].as<double>() : 0.0;
 }
 
 MonoDetector::~MonoDetector()

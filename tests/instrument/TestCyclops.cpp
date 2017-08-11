@@ -1,4 +1,4 @@
-#define BOOST_TEST_MODULE "Test Cyclop"
+#define BOOST_TEST_MODULE "Test Cyclops"
 #define BOOST_TEST_DYN_LINK
 
 #include <boost/test/unit_test.hpp>
@@ -8,7 +8,7 @@
 #include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/instrument/DiffractometerStore.h>
 
-BOOST_AUTO_TEST_CASE(Test_Cyclop)
+BOOST_AUTO_TEST_CASE(Test_Cyclops)
 {
     auto ds = nsx::DiffractometerStore::Instance();
     auto cyclop = ds->buildDiffractometer("Cyclops");

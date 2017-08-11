@@ -1,10 +1,8 @@
 #include <iostream>
 
-#include <boost/foreach.hpp>
-#include <boost/optional.hpp>
-
 #include "Component.h"
 #include "Gonio.h"
+#include "../utils/YAMLType.h"
 
 namespace nsx {
 
@@ -20,29 +18,14 @@ Component::Component(const Component& other) : _name(other._name), _gonio(other.
 {
 }
 
-Component::Component(const boost::property_tree::ptree& node)
+Component::Component(const YAML::Node& node)
 {
     // Set the component name
-    _name = node.get<std::string>("name","");
+    _name = node["name"].as<std::string>();
 
-    // Set the component goniometer
-    boost::optional<const boost::property_tree::ptree&> goniometerNode = node.get_child_optional("goniometer");
-    if (!goniometerNode) {
-        _gonio = nullptr;
-    } else {
-        _gonio = sptrGonio(new Gonio(goniometerNode.get()));
-    }
+    _gonio = node["goniometer"] ? std::make_shared<Gonio>(Gonio(node["goniometer"])) : nullptr;
 
-    // Set the component position
-    boost::optional<const boost::property_tree::ptree&> positionNode = node.get_child_optional("position");
-    if (!positionNode) {
-        _position = Eigen::Vector3d::Zero();
-    } else {
-        double x = positionNode.get().get<double>("x");
-        double y = positionNode.get().get<double>("y");
-        double z = positionNode.get().get<double>("z");
-        _position = Eigen::Vector3d(x,y,z);
-    }
+    _position = node["position"] ? node["position"].as<Eigen::Vector3d>() : Eigen::Vector3d::Zero();
 }
 
 Component::~Component()

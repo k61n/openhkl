@@ -27,8 +27,7 @@
  *
  */
 
-#ifndef NSXLIB_DIFFRACTOMETERSTORE_H
-#define NSXLIB_DIFFRACTOMETERSTORE_H
+#pragma once
 
 #include <set>
 #include <string>
@@ -52,5 +51,3 @@ public:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_DIFFRACTOMETERSTORE_H

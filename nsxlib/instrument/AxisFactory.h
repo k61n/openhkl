@@ -27,12 +27,11 @@
  *
  */
 
-#ifndef NSXLIB_AXISFACTORY_H
-#define NSXLIB_AXISFACTORY_H
+#pragma once
 
 #include <string>
 
-#include <boost/property_tree/ptree.hpp>
+#include "yaml-cpp/yaml.h"
 
 #include "../kernel/Factory.h"
 #include "../kernel/Singleton.h"
@@ -40,7 +39,7 @@
 
 namespace nsx {
 
-class AxisFactory : public Factory<Axis,std::string,const boost::property_tree::ptree&>, public Singleton<AxisFactory,Constructor,Destructor> {
+class AxisFactory : public Factory<Axis,std::string,const YAML::Node&>, public Singleton<AxisFactory,Constructor,Destructor> {
 private:
     friend class Constructor<AxisFactory>;
     friend class Destructor<AxisFactory>;
@@ -49,5 +48,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_AXISFACTORY_H

@@ -45,13 +45,13 @@
 
 namespace nsx {
 
-Detector* Detector::create(const boost::property_tree::ptree& node)
+Detector* Detector::create(const YAML::Node& node)
 {
     // Create an instance of the detector factory
     DetectorFactory* detectorFactory=DetectorFactory::Instance();
 
     // Get the detector type
-    std::string detectorType=node.get<std::string>("<xmlattr>.type");
+    std::string detectorType = node["type"].as<std::string>();
 
     // Fetch the detector from the factory
     Detector* detector = detectorFactory->create(detectorType,node);
@@ -77,17 +77,16 @@ Detector::Detector(const std::string& name)
 {
 }
 
-Detector::Detector(const boost::property_tree::ptree& node)
+Detector::Detector(const YAML::Node& node)
 : Component(node)
 {
-    boost::optional<const boost::property_tree::ptree&> dataOrdernode=node.get_child_optional("data_ordering");
     // If data order is not defined assumed default
-    if (!dataOrdernode) {
+    if (!node["data_ordering"]) {
         _dataorder = DataOrder::BottomRightColMajor;
         return;
     }
 
-    std::string dataOrder=dataOrdernode.get().get_value<std::string>();
+    std::string dataOrder=node["data_ordering"].as<std::string>();
 
     if (dataOrder.compare("TopLeftColMajor")==0) {
         _dataorder=DataOrder::TopLeftColMajor;

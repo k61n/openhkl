@@ -26,13 +26,13 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-#ifndef NSXLIB_SAMPLE_H
-#define NSXLIB_SAMPLE_H
+
+#pragma once
 
 #include <string>
 #include <vector>
 
-#include <boost/property_tree/ptree.hpp>
+#include "yaml-cpp/yaml.h"
 
 #include "../chemistry/ChemistryTypes.h"
 #include "../crystal/CrystalTypes.h"
@@ -45,7 +45,7 @@ class Sample : public Component {
 public:
 
     //! Static constructor of a Sample from a property tree node
-    static Sample* create(const boost::property_tree::ptree& node);
+    static Sample* create(const YAML::Node& node);
 
     // Default constructor
     Sample();
@@ -54,7 +54,7 @@ public:
     //! Constructs a default sample with a given name
     Sample(const std::string& name);
     //! Constructs a sample from a property tree node
-    Sample(const boost::property_tree::ptree& node);
+    Sample(const YAML::Node& node);
     //! Virtual copy constructor
     Sample* clone() const;
     //! Destructor
@@ -98,5 +98,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_SAMPLE_H

@@ -26,8 +26,7 @@
  *
  */
 
-#ifndef NSXLIB_GONIO_H
-#define NSXLIB_GONIO_H
+#pragma once
 
 #include <map>
 #include <set>
@@ -35,7 +34,7 @@
 #include <vector>
 #include <utility>
 
-#include <boost/property_tree/ptree.hpp>
+#include "yaml-cpp/yaml.h"
 
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
@@ -65,7 +64,7 @@ public:
     //! Constructs a gonio with a given name
     Gonio(const std::string& name);
     //! Constructs a Gonio from a property tree node
-    Gonio(const boost::property_tree::ptree& node);
+    Gonio(const YAML::Node& node);
     //! Destructor
     ~Gonio();
 
@@ -139,5 +138,3 @@ public:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_GONIO_H

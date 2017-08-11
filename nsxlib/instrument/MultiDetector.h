@@ -27,24 +27,23 @@
  *
  */
 
-#ifndef NSXLIB_MULTIDETECTOR_H
-#define NSXLIB_MULTIDETECTOR_H
+#pragma once
 
 #include <string>
 #include <vector>
 
-#include <boost/property_tree/ptree.hpp>
+#include "yaml-cpp/yaml.h"
 
 #include "../kernel/Composite.h"
 #include "Detector.h"
 
 namespace nsx {
 
-class MultiDetector : public Composite<Detector,const boost::property_tree::ptree&> {
+class MultiDetector : public Composite<Detector,const YAML::Node&> {
 public:
 
-    //! Static constructor of a MultiDetector from a property tree node
-    static Detector* create(const boost::property_tree::ptree& node);
+    //! Static constructor of a MultiDetector from a yaml tree node
+    static Detector* create(const YAML::Node& node);
 
     //! Construct a MultiDetector
     MultiDetector();
@@ -52,8 +51,8 @@ public:
     MultiDetector(const MultiDetector& other);
     //! Construct a MultiDetector with a given name
     MultiDetector(const std::string& name);
-    //! Constructs a MultiDetector from a property tree node
-    MultiDetector(const boost::property_tree::ptree& node);
+    //! Constructs a MultiDetector from a yaml tree node
+    MultiDetector(const YAML::Node& node);
     //! Return a pointer to a copy of a MultiDetector
     Detector* clone() const;
     //! Destructor
@@ -98,5 +97,3 @@ public:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_MULTIDETECTOR_H
