@@ -1,0 +1,136 @@
+---
+instrument:
+    name: D10
+    detector:
+        name: flat
+        type: flat
+        sample_distance:
+            value: 488.0
+            units: mm
+        width:
+            value: 80.0
+            units: mm
+        height:
+            value: 80.0
+            units: mm
+        position: [0.0,0.0,0.0]
+        row_min: 0
+        col_min: 0
+        nrows: 32
+        ncols: 32
+        data_ordering: BottomRightColMajor
+        goniometer:
+            name: gamma-arm
+            axis:
+                - name: 2theta(gamma)
+                  type: rotation
+                  id: 1
+                  direction: [0.0,0.0,1.0]
+                  clockwise: false
+                  offset: 0.0
+                  physical: true
+                - name: y-offset
+                  type: translation
+                  direction: [0.0,1.0,0.0]
+                  offset: 0.0
+                  physical: false
+    sample:
+        name: sample
+        position: [0.0,0.0,0.0]
+        goniometer:
+            name: Euler cradle (BL)
+            axis:
+                - name: omega
+                  type: rotation
+                  id: 2
+                  direction: [0.0,0.0,1.0]
+                  clockwise: false
+                  offset: 0.0
+                  physical: true
+                - name: chi
+                  type: rotation
+                  id: 3
+                  direction: [0.0,1.0,0.0]
+                  clockwise: false
+                  offset: 0.0
+                  physical: true
+                - name: phi
+                  type: rotation
+                  id: 4
+                  direction: [0.0,0.0,1.0]
+                  clockwise: true
+                  offset: 0.0
+                  physical: true
+                - name: x-offset
+                  type: translation
+                  direction: [1.0,0.0,0.0]
+                  offset: 0.0
+                  physical: false
+                - name: y-offset
+                  type: translation
+                  direction: [0.0,1.0,0.0]
+                  offset: 0.0
+                  physical: false
+                - name: z-offset
+                  type: translation
+                  direction: [0.0,0.0,1.0]
+                  offset: 0.0
+                  physical: false
+    source:
+        name: monochromatic source
+        type: monochromatic
+        position: [0.0,0.0,0.0]
+        width:
+            value: 1.0
+            units: mm
+        height:
+            units: mm
+            value: 1.0
+        wavelength: 1.24
+        goniometer:
+            name: source-gonio
+            axis:
+                - name: om-mono
+                  type: rotation
+                  id: 8
+                  direction: [0.0,0.0,1.0]
+                  clockwise: true
+                  offset: 0.0
+                  physical: false
+                - name: chi-mono
+                  type: rotation
+                  id: 9
+                  direction: [0.0,1.0,0.0]
+                  clockwise: false
+                  offset: 0.0
+                  physical: false
+                - name: phi-mono
+                  type: rotation
+                  id: 10
+                  direction: [0.0,0.0,1.0]
+                  clockwise: true
+                  offset: 0.0
+                  physical: false
+                - name: x-mono
+                  type: translation
+                  id: 7
+                  direction: [1.0,0.0,0.0]
+                  offset: 0.0
+                  physical: false
+                - name: y-mono
+                  type: translation
+                  id: 6
+                  direction: [0.0,1.0,0.0]
+                  offset: 0.0
+                  physical: false
+        monochromator:
+            name: Cu(220)
+            width:
+                value: 60.0
+                units: mm
+            height:
+                value: 80.0
+                units: mm
+            wavelength: 0.8409
+            fwhm: 0.00901
+...

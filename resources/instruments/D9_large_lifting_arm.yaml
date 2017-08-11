@@ -1,0 +1,121 @@
+---
+instrument:
+    name: D9
+    detector:
+        name: banana
+        type: flat
+        sample_distance:
+            value: 368.0
+            units: mm
+        width:
+            value: 256.0
+            units: mm
+        height:
+           value: 256.0
+           units: mm
+        position: [0.0,0.0,0.0]
+        nrows: 128
+        ncols: 128
+        row_min: 0
+        col_min: 0
+        data_ordering: BottomRightColMajor
+        goniometer:
+            name: lifting-arm
+            axis:
+                - name: gamma-arm
+                  type: rotation
+                  id: 1
+                  direction: [0.0,0.0,1.0]
+                  clockwise: true
+                  offset: 0.0
+                  physical: true
+
+                - name: nu-arm
+                  type: rotation
+                  id: 3
+                  direction: [1.0,0.0,0.0]
+                  clockwise: false
+                  offset: 0.0
+                  physical: true
+
+                - name: x-offset
+                  type: translation
+                  direction: [1.0,0.0,0.0]
+                  offset: 0.0
+                  physical: false
+
+                - name: y-offset
+                  type: translation
+                  direction: [0.0,1.0,0.0]
+                  offset: 0.0
+                  physical: false
+
+                - name: z-offset
+                  type: translation
+                  direction: [0.0,0.0,1.0]
+                  offset: 0.0
+                  physical: false
+    sample:
+        name: sample
+        position: [0.0,0.0,0.0]
+        goniometer:
+            name: Euler cradle (BL)
+            axis:
+                - name: omega
+                  type: rotation
+                  id: 16
+                  direction: [0.0,0.0,1.0]
+                  clockwise: true
+                  offset: 0.0
+                  physical: true
+    source:
+        name: monochromatic source
+        position: [0.0,0.0,0.0]
+        width:
+            value: 1.0
+            units: mm
+        height:
+            value: 1.0
+            units: mm
+        wavelength: 1.24
+        goniometer:
+            name: source-gonio
+            axis:
+                - name: om-mono
+                  type: rotation
+                  id: 8
+                  direction: [0.0,0.0,1.0]
+                  clockwise: true
+                  offset: 0.0
+                  physical: true
+
+                - name: chi-mono
+                  type: rotation
+                  id: 9
+                  direction: [0.0,1.0,0.0]
+                  clockwise: false
+                  offset: 0.0
+                  physical: true
+
+                - name: phi-mono
+                  type: rotation
+                  id: 10
+                  direction: [0.0,0.0,1.0]
+                  clockwise: true
+                  offset: 0.0
+                  physical: true
+
+                - name: x-mono
+                  type: translation
+                  id: 7
+                  direction: [1.0,0.0,0.0]
+                  offset: 0.0
+                  physical: true
+
+                - name: y-mono
+                  type: translation
+                  id: 6
+                  direction: [0.0,1.0,0.0]
+                  offset: 0.0
+                  physical: true
+...
