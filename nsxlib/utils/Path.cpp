@@ -81,7 +81,7 @@ std::string Path::getApplicationDataPath()
     std::string match = "";
 
     for (auto&& path: possible_locations) {
-        std::string path_str = boost::filesystem::path(path + "/instruments/D19.xml").string();
+        std::string path_str = boost::filesystem::path(path + "/instruments/D19.yaml").string();
 
         std::ifstream file(path_str, std::ios_base::in);
         if ( file.good() ) {
