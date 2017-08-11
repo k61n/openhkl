@@ -2,7 +2,8 @@
 #define NSXQT_DETECTORSCENE_H
 
 #include <map>
-#include <list>
+#include <vector>
+#include <utility>
 
 #include <Eigen/Dense>
 
@@ -14,6 +15,7 @@
 #include <nsxlib/crystal/CrystalTypes.h>
 #include <nsxlib/crystal/PeakCalc.h>
 #include <nsxlib/data/DataTypes.h>
+#include <nsxlib/geometry/IMask.h>
 
 #include "items/PeakCalcGraphicsItem.h"
 
@@ -24,6 +26,7 @@ class QGraphicsSceneWheelEvent;
 class PeakGraphicsItem;
 class CutterGraphicsItem;
 class MaskGraphicsItem;
+class EllipseMaskGraphicsItem;
 class PlottableGraphicsItem;
 class SXGraphicsItem;
 
@@ -38,7 +41,7 @@ class DetectorScene : public QGraphicsScene
     Q_OBJECT
 
 public:
-    enum MODE {ZOOM=0, LINE=1, HORIZONTALSLICE=2, VERTICALSLICE=3, MASK=4,INDEXING=5};
+    enum MODE {ZOOM=0, LINE=1, HORIZONTALSLICE=2, VERTICALSLICE=3, MASK=4,ELLIPSE_MASK = 5,INDEXING=6};
     //! Which mode is the cursor diplaying
     enum CURSORMODE {THETA=0, GAMMA=1, DSPACING=2, PIXEL=3, HKL=4};
     explicit DetectorScene(QObject *parent = 0);
@@ -91,6 +94,10 @@ private:
     //! Create the text of the tooltip depending on Scene Mode.
     void createToolTipText(QGraphicsSceneMouseEvent*);
 
+    // find the iterator corresponding to given graphics item
+    std::vector<std::pair<QGraphicsItem*, nsx::IMask*>>::iterator findMask(QGraphicsItem* item);
+    
+
     nsx::sptrDataSet _currentData;
     unsigned long _currentFrameIndex;
     int _currentIntensity;
@@ -111,7 +118,8 @@ private:
     //! Contains peaks item of current data, reinitialized with new data set.
     std::map<nsx::sptrPeak3D,PeakGraphicsItem*> _peakGraphicsItems;
     std::vector<PeakCalcGraphicsItem*> _peakCalcs;
-    QList<MaskGraphicsItem*> _masks;
+    std::vector<std::pair<QGraphicsItem*, nsx::IMask*>> _masks;
+    
     SXGraphicsItem* _lastClickedGI;
     nsx::PeakCalcList _precalculatedPeaks;
 

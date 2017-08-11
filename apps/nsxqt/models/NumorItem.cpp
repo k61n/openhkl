@@ -4,6 +4,7 @@
 
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/geometry/AABB.h>
+#include <nsxlib/geometry/BoxMask.h>
 #include <nsxlib/instrument/Experiment.h>
 
 #include "models/NumorItem.h"
@@ -33,7 +34,8 @@ QJsonObject NumorItem::toJson()
 {
     QJsonObject obj;
     QJsonArray masks;
-
+    // todo(jonathan): reimplement this!
+#if 0
     obj["filename"] = QString(getData()->getFilename().c_str());
 
     for (auto&& mask: getData()->getMasks()) {
@@ -52,6 +54,7 @@ QJsonObject NumorItem::toJson()
     }
 
     obj["masks"] = masks;
+#endif
     return obj;
 }
 
@@ -75,7 +78,7 @@ void NumorItem::fromJson(const QJsonObject &obj)
         upper(1) = mask_arr[4].toDouble();
         upper(2) = mask_arr[5].toDouble();
 
-        getData()->addMask(new nsx::AABB(lower, upper));
+        getData()->addMask(new nsx::BoxMask(nsx::AABB(lower, upper)));
     }
 }
 

@@ -395,13 +395,13 @@ void DataSet::saveHDF5(const std::string& filename) //const
     // blosc_destroy();
 }
 
-void DataSet::addMask(AABB* mask)
+void DataSet::addMask(IMask* mask)
 {
     _masks.insert(mask);
     maskPeaks();
 }
 
-void DataSet::removeMask(AABB* mask)
+void DataSet::removeMask(IMask* mask)
 {
     auto&& p = _masks.find(mask);
     if (p != _masks.end()) {
@@ -410,7 +410,7 @@ void DataSet::removeMask(AABB* mask)
     maskPeaks();
 }
 
-const std::set<AABB*>& DataSet::getMasks()
+const std::set<IMask*>& DataSet::getMasks()
 {
     return _masks;
 }
@@ -432,18 +432,6 @@ void DataSet::maskPeak(sptrPeak3D peak) const
             break;
         }
     }
-}
-
-bool DataSet::inMasked(const Eigen::Vector3d& point) const
-{
-    // Loop over the defined masks and return true if one of them contains the point
-    for (auto&& m : _masks) {
-        if (m->isInside(point)) {
-            return true;
-        }
-    }
-    // No mask contains the point, return false
-    return false;
 }
 
 std::vector<PeakCalc> DataSet::hasPeaks(const std::vector<Eigen::Vector3d>& hkls, const Eigen::Matrix3d& BU)
