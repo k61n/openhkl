@@ -13,7 +13,6 @@ instrument:
         height:
            value: 64.0
            units: mm
-        position: [0.0,0.0,0.0]
         nrows: 195
         ncols: 487
         row_min: 0
@@ -27,18 +26,15 @@ instrument:
                   type: rotation
                   direction: [1.0,0.0,0.0]
                   clockwise: false
-                  offset: 0.0
                   physical: true
 
                 - name: gamma
                   type: rotation
                   direction: [0.0,0.0,1.0]
                   clockwise: false
-                  offset: 0.0
                   physical: true
     sample:
         name: sample
-        position: [0.0,0.0,0.0]
         goniometer:
             name: Kappa goniometer
             axis:
@@ -46,51 +42,51 @@ instrument:
                   type: rotation
                   direction: [1.0,0.0,0.0]
                   clockwise: false
-                  offset: 0.0
                   physical: true
 
                 - name: chi
                   type: rotation
                   direction: [0.0,1.0,0.0]
                   clockwise: false
-                  offset: 0.0
                   physical: true
 
                 - name: eta
                   type: rotation
                   direction: [1.0,0.0,0.0]
                   clockwise: false
-                  offset: 0.0
                   physical: true
 
                 - name: mu
                   type: rotation
                   direction: [0.0,0.0,1.0]
                   clockwise: false
-                  offset: 0.0
                   physical: true
     source:
         name: monochromatic source
-        position: [0.0,0.0,0.0]
-        width:
-            value: 1.0
-            units: mm
-        height:
-            value: 1.0
-            units: mm
-        wavelength: 1.24
+        monochromator:
+            name: Cu(220)
+            width:
+                value: 60.0
+                units: mm
+            height:
+                value: 80.0
+                units: mm
+            wavelength:
+                value: 1.24
+                units: ang
+            fwhm:
+                value: 0.00901
+                units: ang
         goniometer:
             name: source
             axis:
                 - name: x-offset
                   type: translation
                   direction: [1.0,0.0,0.0]
-                  offset: 0.0
                   physical: false
 
                 - name: y-offset
                   type: translation
                   direction: [0.0,1.0,0.0]
-                  offset: 0.0
                   physical: false
 ...

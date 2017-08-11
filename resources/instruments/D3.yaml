@@ -17,7 +17,6 @@ instrument:
         ncols: 32
         row_min: 0
         col_min: 0
-        position: [0.0,0.0,0.0]
         goniometer:
             name: gamma-arm
             axis:
@@ -25,11 +24,9 @@ instrument:
                   type: rotation
                   direction: [0.0,0.0,1.0]
                   clockwise: false
-                  offset: 0.0
                   physical: true
     sample:
         name: sample
-        position: [0.0,0.0,0.0]
         goniometer:
             name: Euler cradle (BL)
             axis:
@@ -37,38 +34,39 @@ instrument:
                   type: rotation
                   direction: [0.0,1.0,0.0]
                   clockwise: false
-                  offset: 0.0
                   physical: true
 
                 - name: phi
                   type: rotation
                   direction: [0.0,0.0,1.0]
                   clockwise: false
-                  offset: 0.0
                   physical: true
     source:
         name: monochromatic source
-        type: monochromatic
-        width:
-            value: 1.0
-            units: mm
-        height:
-            value: 1.0</height>
-            units: mm
-        wavelength: 1.24
-        position: [0.0,0.0,0.0]
+        monochromator:
+            name: mono
+            width:
+                value: 1.0
+                units: mm
+            height:
+                value: 1.0
+                units: mm
+            wavelength:
+                value: 1.24
+                units: ang
+            fwhm:
+                value: 0.00901
+                units: ang
         goniometer:
             name: source-gonio
             axis:
                 - name: x-offset
                   type: translation
                   direction: [1.0,0.0,0.0]
-                  offset: 0.0
                   physical: false
 
                 - name: y-offset
                   type: translation
                   direction: [0.0,1.0,0.0]
-                  offset: 0.0
                   physical: false
 ...

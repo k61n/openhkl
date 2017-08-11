@@ -3,6 +3,7 @@
 
 #include "Axis.h"
 #include "AxisFactory.h"
+#include "../utils/Units.h"
 #include "../utils/YAMLType.h"
 
 namespace nsx {
@@ -78,12 +79,33 @@ Axis::Axis(const YAML::Node& node)
 
 	_axis = axis;
 
-	_offset = node["offset"] ? node["offset"].as<double>() : 0.0;
+    UnitsManager* um = UnitsManager::Instance();
+
+	if (node["offset"]) {
+	    _offset = node["offset"]["value"].as<double>();
+        double units = um->get(node["offset"]["units"].as<std::string>());
+        _offset *=units;
+	} else {
+	    _offset = 0.0;
+	}
 
 	_offsetFixed = false;
 
-	_min = node["min"] ? node["min"].as<double>() : -std::numeric_limits<double>::infinity();
-	_max = node["max"] ? node["max"].as<double>() :  std::numeric_limits<double>::infinity();
+    if (node["min"]) {
+        _min = node["min"]["value"].as<double>();
+        double units = um->get(node["min"]["units"].as<std::string>());
+        _min *=units;
+    } else {
+        _min = -std::numeric_limits<double>::infinity();
+    }
+
+    if (node["max"]) {
+        _max = node["max"]["value"].as<double>();
+        double units = um->get(node["max"]["units"].as<std::string>());
+        _max *=units;
+    } else {
+        _max = std::numeric_limits<double>::infinity();
+    }
 
 	_physical = node["physical"].as<bool>();
 

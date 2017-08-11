@@ -17,7 +17,7 @@ instrument:
         ncols: 640
         row_min: 0
         col_min: 0
-        position: [0.0,0.0,0.0]
+        data_ordering: TopRightColMajor
         goniometer:
             name: gamma-arm
             axis:
@@ -26,30 +26,24 @@ instrument:
                   id: 1
                   direction: [0.0,0.0,1.0]
                   clockwise: true
-                  offset: 0.0
                   physical: true
 
                 - name: x-offset
                   type: translation
                   direction: [1.0,0.0,0.0]
-                  offset: 0.0
                   physical: false
 
                 - name: y-offset
                   type: translation
                   direction: [0.0,1.0,0.0]
-                  offset: 0.0
                   physical: false
 
                 - name: z-offset
                   type: translation
                   direction: [0.0,0.0,1.0]
-                  offset: 0.0
                   physical: false
-        data_ordering: TopRightColMajor
     sample:
         name: sample
-        position: [0.0,0.0,0.0]
         goniometer:
             name: Euler cradle (BL)
             axis:
@@ -58,7 +52,6 @@ instrument:
                   id: 2
                   direction: [0.0,0.0,1.0]
                   clockwise: true
-                  offset: 0.0
                   physical: true
 
                 - name: chi
@@ -66,7 +59,6 @@ instrument:
                   id: 3
                   direction: [0.0,1.0,0.0]
                   clockwise: false
-                  offset: 0.0
                   physical: true
 
                 - name: phi
@@ -74,37 +66,38 @@ instrument:
                   id: 4
                   direction: [0.0,0.0,1.0]
                   clockwise: true
-                  offset: 0.0
                   physical: true
 
                 - name: x-offset
                   type: translation
                   direction: [1.0,0.0,0.0]
-                  offset: 0.0
                   physical: false
 
                 - name: y-offset
                   type: translation
                   direction: [0.0,1.0,0.0]
-                  offset: 0.0
                   physical: false
 
                 - name: z-offset
                   type: translation
                   direction: [0.0,0.0,1.0]
-                  offset: 0.0
                   physical: false
     source:
         name: monochromatic source
-        type: monochromatic
-        width:
-            value: 1.0
-            units: mm
-        height:
-            value: 1.0
-            units: mm
-        wavelength: 1.24
-        position: [0.0,0.0,0.0]
+        monochromator:
+            name: mono
+            width:
+                value: 1.0
+                units: mm
+            height:
+                value: 1.0
+                units: mm
+            wavelength:
+                value: 1.24
+                units: ang
+            fwhm:
+                value: 0.00901
+                units: ang
         goniometer:
             name: source
             axis:
@@ -113,7 +106,6 @@ instrument:
                   id: 8
                   direction: [0.0,0.0,1.0]
                   clockwise: true
-                  offset: 0.0
                   physical: true
 
                 - name: chi-mono
@@ -121,7 +113,6 @@ instrument:
                   id: 9
                   direction: [0.0,1.0,0.0]
                   clockwise: false
-                  offset: 0.0
                   physical: true
 
                 - name: phi-mono
@@ -129,20 +120,17 @@ instrument:
                   id: 10
                   direction: [0.0,0.0,1.0]
                   clockwise: true
-                  offset: 0.0
                   physical: true
 
                 - name: x-mono
                   type: translation
                   id: 7
                   direction: [1.0,0.0,0.0]
-                  offset: 0.0
                   physical: true
 
                 - name: y-mono
                   type: translation
                   id: 6
                   direction: [0.0,1.0,0.0]
-                  offset: 0.0
                   physical: true
 ...

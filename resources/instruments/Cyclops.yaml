@@ -4,7 +4,6 @@ instrument:
     detector:
         name: octogonal-multidetector
         type: multidetector
-        position: [0.0,0.0,0.0]    
         row_min: 0
         col_min: 0
         detector:
@@ -29,7 +28,9 @@ instrument:
                       type: rotation
                       direction: [0.0,0.0,1.0]
                       clockwise: true
-                      offset: -180.0
+                      offset:
+                          value: -180.0
+                          units: deg
                       physical: false
         detector:
             name: panel2
@@ -53,7 +54,9 @@ instrument:
                       type: rotation
                       direction: [0.0,0.0,1.0]
                       clockwise: true
-                      offset: -135.0
+                      offset:
+                          value: -135.0
+                          units: deg
                       physical: false
         detector:
             name: panel3
@@ -77,7 +80,9 @@ instrument:
                       type: rotation
                       direction: [0.0,0.0,1.0]
                       clockwise: true
-                      offset: -90.0
+                      offset:
+                          value: -90.0
+                          units: deg
                       physical: false
         detector:
             name: panel4
@@ -101,7 +106,9 @@ instrument:
                       type: rotation
                       direction: [0.0,0.0,1.0]
                       clockwise: true
-                      offset: -45.0
+                      offset:
+                          value: -45.0
+                          units: deg
                       physical: false
         detector:
             name: panel5
@@ -125,7 +132,9 @@ instrument:
                       type: rotation
                       direction: [0.0,0.0,1.0]
                       clockwise: true
-                      offset: 0.0
+                      offset:
+                          value: 0.0
+                          units: deg
                       physical: false
         detector:
             name: panel6
@@ -149,7 +158,9 @@ instrument:
                       type: rotation
                       direction: [0.0,0.0,1.0]
                       clockwise: true
-                      offset: 45.0
+                      offset:
+                          value: 45.0
+                          units: deg
                       physical: false
         detector:
             name: panel7
@@ -173,7 +184,9 @@ instrument:
                       type: rotation
                       direction: [0.0,0.0,1.0]
                       clockwise: true
-                      offset: 90.0
+                      offset:
+                          value: 90.0
+                          units: deg
                       physical: false
         detector:
             name: panel8
@@ -197,11 +210,12 @@ instrument:
                       type: rotation
                       direction: [0.0,0.0,1.0]
                       clockwise: true
-                      offset: 135.0
+                      offset:
+                          value: 135.0
+                          units: deg                          
                       physical: false
     sample:
         name: sample
-        position: [0.0,0.0,0.0]
         goniometer: 
             name: Euler cradle (BL)
             axis: 
@@ -209,31 +223,33 @@ instrument:
                   type: rotation
                   direction: [0.0,0.0,1.0]
                   clockwise: false
-                  offset: 0.0
                   physical: true
     source:
         name: monochromatic source
-        type: monochromatic
-        position: [0.0,0.0,0.0]
-        width:
-            value: 1.0
-            units: mm
-        height:
-            units: mm
-            value: 1.0
-        wavelength: 1.24
+        monochromator:
+            name: mono
+            width:
+                value: 1.0
+                units: mm
+            height:
+                value: 1.0
+                units: mm
+            wavelength:
+                value: 1.24
+                units: ang
+            fwhm:
+                value: 0.00901
+                units: ang
         goniometer:
             name: source-gonio
             axis:
                 - name: x-offset
                   type: translation
                   direction: [1.0,0.0,0.0]
-                  offset: 0.0
                   physical: false
 
                 - name: y-offset
                   type: translation
                   direction: [0.0,1.0,0.0]
-                  offset: 0.0
                   physical: false
 ...

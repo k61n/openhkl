@@ -3,6 +3,7 @@
 #include "Component.h"
 #include "Gonio.h"
 #include "../utils/YAMLType.h"
+#include "../utils/Units.h"
 
 namespace nsx {
 
@@ -25,7 +26,16 @@ Component::Component(const YAML::Node& node)
 
     _gonio = node["goniometer"] ? std::make_shared<Gonio>(Gonio(node["goniometer"])) : nullptr;
 
-    _position = node["position"] ? node["position"].as<Eigen::Vector3d>() : Eigen::Vector3d::Zero();
+    UnitsManager* um = UnitsManager::Instance();
+
+    if (node["position"]) {
+        double units = um->get(node["offset"]["units"].as<std::string>());
+        _position = node["position"]["value"].as<Eigen::Vector3d>();
+        _position *= units;
+    } else {
+        _position = Eigen::Vector3d::Zero();
+    }
+
 }
 
 Component::~Component()

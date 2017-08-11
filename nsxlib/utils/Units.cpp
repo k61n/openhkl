@@ -11,6 +11,7 @@ std::unordered_map<std::string,double> UnitsManager::_unitsMap = {
         {"mm",mm  },
         {"um",um  },
         {"nm",nm  },
+        {"ang",ang},
         {"pm",pm  },
         {"fm",fm  },
         {"am",am  },

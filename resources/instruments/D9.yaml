@@ -13,7 +13,6 @@ instrument:
         height:
            value: 64.0
            units: mm
-        position: [0.0,0.0,0.0]
         nrows: 32
         ncols: 32
         row_min: 0
@@ -27,17 +26,14 @@ instrument:
                   id: 1
                   direction: [0.0,0.0,1.0]
                   clockwise: true
-                  offset: 0.0
                   physical: true
 
                 - name: y-offset
                   type: translation
                   direction: [0.0,1.0,0.0]
-                  offset: 0.0
                   physical: false
     sample:
         name: sample
-        position: [0.0,0.0,0.0]
         goniometer:
             name: Euler cradle (BL)
             axis:
@@ -46,7 +42,6 @@ instrument:
                   id: 2
                   direction: [0.0,0.0,1.0]
                   clockwise: true
-                  offset: 0.0
                   physical: true
 
                 - name: chi
@@ -54,7 +49,6 @@ instrument:
                   id: 3
                   direction: [0.0,1.0,0.0]
                   clockwise: false
-                  offset: 0.0
                   physical: true
 
                 - name: phi
@@ -62,69 +56,24 @@ instrument:
                   id: 4
                   direction: [0.0,0.0,1.0]
                   clockwise: true
-                  offset: 0.0
                   physical: true
 
                 - name: x-offset</name>
                   type: translation
                   direction: [1.0,0.0,0.0]
-                  offset: 0.0
                   physical: false
 
                 - name: y-offset
                   type: translation
                   direction: [0.0,1.0,0.0]
-                  offset: 0.0
                   physical: false
 
                 - name: z-offset
                   type: translation
                   direction: [0.0,0.0,1.0]
-                  offset: 0.0
                   physical: false
     source:
         name: monochromatic source
-        position: [0.0,0.0,0.0]
-        goniometer:
-            name: source
-            axis:
-                - name: om-mono
-                  type: rotation
-                  id: 8
-                  direction: [0.0,0.0,1.0]
-                  clockwise: true
-                  offset: 0.0
-                  physical: true
-
-                - name: chi-mono
-                  type: rotation
-                  id: 9
-                  direction: [0.0,1.0,0.0]
-                  clockwise: false
-                  offset: 0.0
-                  physical: true
-
-                - name: phi-mono
-                  type: rotation
-                  id: 10
-                  direction: [0.0,0.0,1.0]
-                  clockwise: true
-                  offset: 0.0
-                  physical: true
-
-                - name: x-mono
-                  type: translation
-                  id: 7
-                  direction: [1.0,0.0,0.0]
-                  offset: 0.0
-                  physical: true
-
-                - name: y-mono
-                  type: translation
-                  id: 6
-                  direction: [0.0,1.0,0.0]
-                  offset: 0.0
-                  physical: true
         monochromator:
             name: Cu(220)
             width:
@@ -133,6 +82,45 @@ instrument:
             height:
                 value: 80.0
                 units: mm
-            wavelength: 0.8409
-            fwhm: 0.00901
+            wavelength:
+                value: 0.8409
+                units: ang
+            fwhm:
+                value: 0.00901
+                units: ang
+        goniometer:
+            name: source
+            axis:
+                - name: om-mono
+                  type: rotation
+                  id: 8
+                  direction: [0.0,0.0,1.0]
+                  clockwise: true
+                  physical: true
+
+                - name: chi-mono
+                  type: rotation
+                  id: 9
+                  direction: [0.0,1.0,0.0]
+                  clockwise: false
+                  physical: true
+
+                - name: phi-mono
+                  type: rotation
+                  id: 10
+                  direction: [0.0,0.0,1.0]
+                  clockwise: true
+                  physical: true
+
+                - name: x-mono
+                  type: translation
+                  id: 7
+                  direction: [1.0,0.0,0.0]
+                  physical: true
+
+                - name: y-mono
+                  type: translation
+                  id: 6
+                  direction: [0.0,1.0,0.0]
+                  physical: true
 ...
