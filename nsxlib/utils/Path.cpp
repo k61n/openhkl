@@ -10,9 +10,9 @@
 namespace nsx {
 
 #ifdef _WIN32
-    extern const std::string std::string path_separator = "\\";
+    extern const std::string std::string g_path_separator = "\\";
 #else
-    extern const std::string path_separator = "/";
+    extern const std::string g_path_separator = "/";
 #endif
 
 int g_argc = 0;
@@ -22,6 +22,37 @@ void setArgv(int argc, char **argv)
 {
     g_argc = argc;
     g_argv = argv;
+}
+
+std::string homeDirectory()
+{
+    const char* home_envvar = getenv("HOME");
+
+    // Build the home directory from HOME environment variable
+    if (home_envvar) {
+        return std::string(home_envvar);
+    }
+    // If HOME is not defined (on Windows it may happen) define the home
+    // directory from USERPROFILE environment variable
+    else {
+        home_envvar = getenv("USERPROFILE");
+        if (home_envvar)
+            return std::string(home_envvar);
+        // If the USERPROFILE environment variable is not defined try to build
+        // a home directory from the HOMEDRIVE and HOMEPATH environment variable
+        else {
+            char const *hdrive = getenv("HOMEDRIVE");
+            char const *hpath = getenv("HOMEPATH");
+            if (hdrive && hpath) {
+                std::string home(hdrive);
+                home += g_path_separator;
+                home += hpath;
+                return home;
+            }
+        }
+    }
+    // Otherwise throw and error
+    throw std::runtime_error("The home directory could not be defined");
 }
 
 std::string Path::getHomeDirectory()

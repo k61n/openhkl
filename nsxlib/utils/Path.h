@@ -43,6 +43,8 @@ extern char** g_argv;
 
 void setArgv(int argc, char **argv);
 
+std::string homeDirectory();
+
 class Path : public Singleton<Path,Constructor,Destructor> {
 
 public:
