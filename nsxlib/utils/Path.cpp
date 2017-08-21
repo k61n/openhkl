@@ -18,6 +18,12 @@ namespace nsx {
 int g_argc = 0;
 char** g_argv = nullptr;
 
+void setArgv(int argc, char **argv)
+{
+    g_argc = argc;
+    g_argv = argv;
+}
+
 std::string Path::getHomeDirectory()
 {
     const char* home = getenv("HOME");

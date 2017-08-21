@@ -41,6 +41,8 @@ extern int g_argc;
 
 extern char** g_argv;
 
+void setArgv(int argc, char **argv);
+
 class Path : public Singleton<Path,Constructor,Destructor> {
 
 public:
