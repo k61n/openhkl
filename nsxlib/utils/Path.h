@@ -49,9 +49,6 @@ class Path : public Singleton<Path,Constructor,Destructor> {
 
 public:
 
-    //! Returns the path to HOME
-    static std::string getHomeDirectory();
-
     //! Returns the NSXTool application data path
     static std::string getApplicationDataPath();
 
