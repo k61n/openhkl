@@ -37,6 +37,10 @@ namespace nsx {
 
 extern const std::string g_path_separator;
 
+extern int g_argc;
+
+extern char** g_argv;
+
 class Path : public Singleton<Path,Constructor,Destructor> {
 
 public:

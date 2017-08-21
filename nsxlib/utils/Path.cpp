@@ -15,8 +15,8 @@ namespace nsx {
     extern const std::string path_separator = "/";
 #endif
 
-int Path::_argc = 0;
-char** Path::_argv = nullptr;
+int g_argc = 0;
+char** g_argv = nullptr;
 
 std::string Path::getHomeDirectory()
 {
@@ -68,8 +68,8 @@ std::string Path::getApplicationDataPath()
         possible_locations.insert(possible_locations.begin(), nsx_root_dir);
     }
     // add location of executable if possible
-    if ( _argc > 0 && _argv && _argv[0]) {
-        boost::filesystem::path p(_argv[0]);
+    if (g_argc > 0 && g_argv && g_argv[0]) {
+        boost::filesystem::path p(g_argv[0]);
         p.remove_filename();
         possible_locations.insert(possible_locations.begin(), p.string());
     }
@@ -121,8 +121,8 @@ std::string Path::getResourcesDir()
 
 void Path::setArgv(int argc, char **argv)
 {
-    _argc = argc;
-    _argv = argv;
+    g_argc = argc;
+    g_argv = argv;
 }
 
 } // end namespace nsx
