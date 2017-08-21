@@ -35,12 +35,11 @@
 
 namespace nsx {
 
+extern const std::string g_path_separator;
+
 class Path : public Singleton<Path,Constructor,Destructor> {
 
 public:
-
-    //! Expands a given path with the HOME directory. The input path must start with ~ other wise it is returned unchanged
-    static std::string expandUser(std::string path);
 
     //! Returns the path to HOME
     static std::string getHomeDirectory();
@@ -48,7 +47,7 @@ public:
     //! Returns the NSXTool application data path
     static std::string getApplicationDataPath();
 
-    //! Returns the path where the diffractomers XML defininition files are stored
+    //! Returns the path where the diffractometers XML definition files are stored
     static std::string getDiffractometersPath();
 
     static std::string getDataBasesPath(const std::string& database);

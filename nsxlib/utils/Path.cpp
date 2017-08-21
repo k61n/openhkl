@@ -9,6 +9,12 @@
 
 namespace nsx {
 
+#ifdef _WIN32
+    extern const std::string std::string path_separator = "\\";
+#else
+    extern const std::string path_separator = "/";
+#endif
+
 int Path::_argc = 0;
 char** Path::_argv = nullptr;
 
@@ -39,16 +45,6 @@ std::string Path::getHomeDirectory()
     }
     // Otherwise throw and error
     throw std::runtime_error("The home directory could not be defined");
-}
-
-std::string Path::expandUser(std::string path)
-{
-    // the path must start with ~ to be user expanded.
-    if (!path.empty() && path[0] == '~') {
-        std::string home(getHomeDirectory());
-        path.replace(0, 1, home);
-    }
-    return path;
 }
 
 std::string Path::getApplicationDataPath()
