@@ -109,8 +109,6 @@ std::string applicationDataPath()
     std::vector<std::string> d19_path = {"instruments","D19.yaml"};
 
     for (auto&& possible_path : possible_locations) {
-
-    for (auto&& path: possible_locations) {
         std::cout<<"path_sep"<<g_path_separator<<std::endl;
         std::cout<<"argc"<<g_argc<<std::endl;
 
@@ -128,30 +126,30 @@ std::string applicationDataPath()
     throw std::runtime_error("The application data directory could not be defined");
 }
 
-//std::string Path::getDiffractometersPath()
-//{
-//    boost::filesystem::path p(getResourcesDir());
-//    p /= "instruments";
-//    return p.string();
-//}
-//
-//std::string Path::getDataBasesPath(const std::string& database)
-//{
-//    boost::filesystem::path p(getResourcesDir());
-//    p /= "databases";
-//    p /= database;
-//    return p.string();
-//}
-//
-//std::string Path::getResourcesDir()
-//{
-//    static std::string resourcesDir;
-//
-//    if ( resourcesDir == "") {
-//        resourcesDir = applicationDataPath();
-//    }
-//    return boost::filesystem::path(resourcesDir).string();
-//}
+std::string Path::getDiffractometersPath()
+{
+    boost::filesystem::path p(getResourcesDir());
+    p /= "instruments";
+    return p.string();
+}
+
+std::string Path::getDataBasesPath(const std::string& database)
+{
+    boost::filesystem::path p(getResourcesDir());
+    p /= "databases";
+    p /= database;
+    return p.string();
+}
+
+std::string Path::getResourcesDir()
+{
+    static std::string resourcesDir;
+
+    if ( resourcesDir == "") {
+        resourcesDir = applicationDataPath();
+    }
+    return boost::filesystem::path(resourcesDir).string();
+}
 
 } // end namespace nsx
 

@@ -53,16 +53,16 @@ std::string homeDirectory();
 //! Returns the NSXTool application data path
 std::string applicationDataPath();
 
-//class Path : public Singleton<Path,Constructor,Destructor> {
-//
-//public:
-//
-//    //! Returns the path where the diffractometers XML definition files are stored
-//    static std::string getDiffractometersPath();
-//
-//    static std::string getDataBasesPath(const std::string& database);
-//
-//    static std::string getResourcesDir();
-//};
+class Path : public Singleton<Path,Constructor,Destructor> {
+
+public:
+
+    //! Returns the path where the diffractometers XML definition files are stored
+    static std::string getDiffractometersPath();
+
+    static std::string getDataBasesPath(const std::string& database);
+
+    static std::string getResourcesDir();
+};
 
 } // end namespace nsx
