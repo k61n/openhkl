@@ -23,36 +23,23 @@ Diffractometer::Diffractometer(const std::string& name) : _name(name), _detector
 {
 }
 
-Diffractometer::Diffractometer(const boost::property_tree::ptree& node)
+Diffractometer::Diffractometer(const YAML::Node& node)
 {
+    // Set the name of the diffractometer from the YAML node
+    _name = node["name"].as<std::string>();
 
-    std::string diffractometerName=node.get<std::string>("name");
-    this->setName(diffractometerName);
-
-    // Build the detector from its corresponding node
-    const auto& detectorNode = node.get_child("detector");
-    _detector = sptrDetector(Detector::create(detectorNode));
+    // Build the detector from its corresponding YAML node
+    _detector = sptrDetector(Detector::create(node["detector"]));
 
     // Build the sample from its corresponding node
-    const auto& sampleNode = node.get_child("sample");
-    _sample= sptrSample(Sample::create(sampleNode));
+    _sample= sptrSample(Sample::create(node["sample"]));
 
     // Build the source from its corresponding node
-    const auto& sourceNode = node.get_child("source");
-    _source= sptrSource(Source::create(sourceNode));
+    _source= sptrSource(Source::create(node["source"]));
 }
 
 Diffractometer::~Diffractometer()
 {
-    // no longer necessary to explicitly delete since we switched to smart pointers
-    /*
-    if (_detector)
-        delete _detector;
-    if (_sample)
-        delete _sample;
-    if (_source)
-        delete _source;
-    */
 }
 
 Diffractometer& Diffractometer::operator=(const Diffractometer& other)

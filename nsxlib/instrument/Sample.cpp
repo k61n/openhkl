@@ -10,7 +10,7 @@
 
 namespace nsx {
 
-Sample* Sample::create(const boost::property_tree::ptree& node)
+Sample* Sample::create(const YAML::Node& node)
 {
     return new Sample(node);
 }
@@ -27,7 +27,7 @@ Sample::Sample(const std::string& name): Component(name), _sampleShape()
 {
 }
 
-Sample::Sample(const boost::property_tree::ptree& node): Component(node)
+Sample::Sample(const YAML::Node& node): Component(node)
 {
 }
 
@@ -59,10 +59,10 @@ ConvexHull& Sample::getShape()
     return _sampleShape;
 }
 
-sptrUnitCell Sample::addUnitCell(std::shared_ptr<UnitCell> cell)
+sptrUnitCell Sample::addUnitCell(sptrUnitCell cell)
 {
     if (cell == nullptr) {
-        cell = std::shared_ptr<UnitCell>(new UnitCell());
+        cell = std::make_shared<UnitCell>(UnitCell());
     }
     _cells.push_back(cell);
     return cell;

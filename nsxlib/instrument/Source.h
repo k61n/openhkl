@@ -27,13 +27,12 @@
  *
  */
 
-#ifndef NSXLIB_SOURCE_H
-#define NSXLIB_SOURCE_H
+#pragma once
 
 #include <string>
 #include <vector>
 
-#include <boost/property_tree/ptree.hpp>
+#include "yaml-cpp/yaml.h"
 
 #include "../instrument/Component.h"
 #include "../instrument/Monochromator.h"
@@ -43,8 +42,8 @@ namespace nsx {
 class Source : public Component {
 public:
 
-	//! Static constructor of a monochromatic source from a property tree node
-	static Source* create(const boost::property_tree::ptree& node);
+	//! Static constructor of a monochromatic source from a yaml tree node
+	static Source* create(const YAML::Node& node);
 
 	// Default constructor
 	Source();
@@ -53,7 +52,7 @@ public:
 	//! Constructs a default source with a given name
 	Source(const std::string& name);
 	//! Constructs a source from a property tree node
-	Source(const boost::property_tree::ptree& node);
+	Source(const YAML::Node& node);
 	//! Virtual copy constructor
 	Source* clone() const;
 	//! Destructor
@@ -84,5 +83,3 @@ protected:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_SOURCE_H

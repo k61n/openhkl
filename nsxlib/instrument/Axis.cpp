@@ -3,16 +3,18 @@
 
 #include "Axis.h"
 #include "AxisFactory.h"
+#include "../utils/Units.h"
+#include "../utils/YAMLType.h"
 
 namespace nsx {
 
-Axis* Axis::create(const boost::property_tree::ptree& node)
+Axis* Axis::create(const YAML::Node& node)
 {
 	// Create an instance of the source factory
 	AxisFactory* axisFactory=AxisFactory::Instance();
 
 	// Get the axis type
-	std::string axisType=node.get<std::string>("<xmlattr>.type");
+	std::string axisType = node["type"].as<std::string>();
 
 	// Fetch the axis from the factory
 	Axis* axis = axisFactory->create(axisType,node);
@@ -68,28 +70,46 @@ Axis::Axis(const Axis& other)
 {
 }
 
-Axis::Axis(const boost::property_tree::ptree& node)
+Axis::Axis(const YAML::Node& node)
 {
-	_label=node.get<std::string>("name");
+	_label = node["name"] ? node["name"].as<std::string>() : "no name";
 
-	const auto& axisDirectionNode=node.get_child("direction");
-	double nx=axisDirectionNode.get<double>("x");
-	double ny=axisDirectionNode.get<double>("y");
-	double nz=axisDirectionNode.get<double>("z");
-
-	Eigen::Vector3d axis(nx,ny,nz);
+	Eigen::Vector3d axis = node["direction"].as<Eigen::Vector3d>();
 	axis.normalize();
 
-	_axis=axis;
+	_axis = axis;
 
-	_offset=node.get<double>("offset",0.0);
-	_offsetFixed=false;
+    UnitsManager* um = UnitsManager::Instance();
 
-	_min=node.get<double>("min",-std::numeric_limits<double>::infinity());
-	_max=node.get<double>("max", std::numeric_limits<double>::infinity());
-	_physical=node.get<bool>("physical");
+	if (node["offset"]) {
+	    _offset = node["offset"]["value"].as<double>();
+        double units = um->get(node["offset"]["units"].as<std::string>());
+        _offset *=units;
+	} else {
+	    _offset = 0.0;
+	}
 
-	_id=node.get<unsigned int>("id",0);
+	_offsetFixed = false;
+
+    if (node["min"]) {
+        _min = node["min"]["value"].as<double>();
+        double units = um->get(node["min"]["units"].as<std::string>());
+        _min *=units;
+    } else {
+        _min = -std::numeric_limits<double>::infinity();
+    }
+
+    if (node["max"]) {
+        _max = node["max"]["value"].as<double>();
+        double units = um->get(node["max"]["units"].as<std::string>());
+        _max *=units;
+    } else {
+        _max = std::numeric_limits<double>::infinity();
+    }
+
+	_physical = node["physical"].as<bool>();
+
+	_id = node["id"] ? node["id"].as<unsigned int>() : 0;
 }
 
 Axis& Axis::operator=(const Axis& other)

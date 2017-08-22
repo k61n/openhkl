@@ -4,7 +4,7 @@
 
 namespace nsx {
 
-Source* Source::create(const boost::property_tree::ptree& node)
+Source* Source::create(const YAML::Node& node)
 {
     // Fetch the source from the factory
     Source* source = new Source(node);
@@ -32,16 +32,17 @@ Source::Source(const std::string& name)
 {
 }
 
-Source::Source(const boost::property_tree::ptree& node)
+Source::Source(const YAML::Node& node)
 : Component(node),
   _selectedMonochromator(0)
 {
     // Loop over the "monochromator" nodes and add the corresponding pointer to Monochromator objects to the Source
-    for (const auto& v : node)
+    for (const auto& subnode : node)
     {
-        if (v.first.compare("monochromator")==0)
+        std::string subnodeName = subnode.first.as<std::string>();
+        if (subnodeName.compare("monochromator") == 0)
         {
-            Monochromator m(v.second);
+            Monochromator m(subnode.second);
             addMonochromator(m);
         }
     }

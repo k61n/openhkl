@@ -4,8 +4,8 @@
 #include <boost/filesystem.hpp>
 #include <boost/foreach.hpp>
 #include <boost/range/iterator_range.hpp>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
+
+#include "yaml-cpp/yaml.h"
 
 #include "../instrument/Diffractometer.h"
 #include "../instrument/DiffractometerStore.h"
@@ -22,18 +22,31 @@ sptrDiffractometer DiffractometerStore::buildDiffractometer(const std::string& n
 
     boost::filesystem::path diffractometersPath(Path::getDiffractometersPath());
     diffractometersPath/=name;
-    diffractometersPath+=".xml";
+    diffractometersPath+=".yaml";
 
-    boost::property_tree::ptree root;
+    YAML::Node instrumentDefinition;
+
     try {
-        boost::property_tree::xml_parser::read_xml(diffractometersPath.string(),root);
+        instrumentDefinition = YAML::LoadFile(diffractometersPath.string());
     }
-    catch (const std::runtime_error& error)	{
-        throw std::runtime_error(error.what());
+    catch (const std::exception& error)	{
+        throw std::runtime_error("Error when opening instrument definition file");
     }
 
-    const auto& instrumentNode=root.get_child("instrument");
-    sptrDiffractometer diffractometer(new Diffractometer(instrumentNode));
+    if (!instrumentDefinition["instrument"]) {
+        throw std::runtime_error("Invalid instrument definition: missing 'instrument root node'");
+    }
+
+    sptrDiffractometer diffractometer;
+
+    try {
+        diffractometer = std::make_shared<Diffractometer>(Diffractometer(instrumentDefinition["instrument"]));
+    }
+    catch (...)
+    {
+        throw std::runtime_error("Error when reading instrument definition file");
+    }
+
     return diffractometer;
 }
 

@@ -26,10 +26,9 @@
  *
  */
 
-#ifndef NSXLIB_CYLINDRICALDETECTOR_H
-#define NSXLIB_CYLINDRICALDETECTOR_H
+#pragma once
 
-#include <boost/property_tree/ptree.hpp>
+#include "yaml-cpp/yaml.h"
 
 #include "MonoDetector.h"
 
@@ -39,7 +38,7 @@ class CylindricalDetector : public MonoDetector {
 public:
 
 	//! Static constructor of a CylindricalDetector from a property tree node
-	static Detector* create(const boost::property_tree::ptree& node);
+	static Detector* create(const YAML::Node& node);
 
 	//! Construct a CylindricalDetector
 	CylindricalDetector();
@@ -48,7 +47,7 @@ public:
 	//! Constructs a CylindricalDetector with a given name
 	CylindricalDetector(const std::string& name);
 	//! Constructs a CylindricalDetector from a property tree node
-	CylindricalDetector(const boost::property_tree::ptree& node);
+	CylindricalDetector(const YAML::Node& node);
 	//! Return a pointer to a copy of a CylindricalDetector
 	Detector* clone() const;
 	//! Destructor
@@ -76,5 +75,3 @@ public:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_CYLINDRICALDETECTOR_H

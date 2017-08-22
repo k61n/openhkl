@@ -25,16 +25,14 @@ Gonio::Gonio(const Gonio& other) : _label(other._label)
         _axes.push_back(ax->clone());
 }
 
-Gonio::Gonio(const boost::property_tree::ptree& node)
+Gonio::Gonio(const YAML::Node& node)
 {
-
-    _label=node.get<std::string>("name","");
+    _label = node["name"] ? node["name"].as<std::string>() : "";
 
     // Set the axis of the detector goniometer from the XML node
-    for(const auto& v : node)
+    for(auto&& axisItem : node["axis"])
     {
-        if (v.first.compare("axis")==0)
-            addAxis(Axis::create(v.second));
+        addAxis(Axis::create(axisItem));
     }
 }
 

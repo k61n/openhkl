@@ -26,13 +26,12 @@
  *
  */
 
-#ifndef NSXLIB_COMPONENT_H
-#define NSXLIB_COMPONENT_H
+#pragma once
 
 #include <map>
 #include <string>
 
-#include <boost/property_tree/ptree.hpp>
+#include "yaml-cpp/yaml.h"
 
 #include <Eigen/Dense>
 
@@ -54,7 +53,7 @@ public:
     //! Constructs a component with a given name
     Component(const std::string& name);
     //! Construct a component from a property tree node
-    Component(const boost::property_tree::ptree& node);
+    Component(const YAML::Node& node);
     //! Virtual copy constructor
     virtual Component* clone() const=0;
     //! Destructor.
@@ -94,5 +93,3 @@ public:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_COMPONENT_H

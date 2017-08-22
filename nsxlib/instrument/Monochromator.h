@@ -5,12 +5,11 @@
  *      Author: pellegrini
  */
 
-#ifndef NSXLIB_MONOCHROMATOR_H
-#define NSXLIB_MONOCHROMATOR_H
+#pragma once
 
 #include <string>
 
-#include <boost/property_tree/ptree.hpp>
+#include "yaml-cpp/yaml.h"
 
 #include <Eigen/Dense>
 
@@ -28,7 +27,7 @@ public:
 
 	Monochromator(const Monochromator& other);
 
-	Monochromator(const boost::property_tree::ptree& node);
+	Monochromator(const YAML::Node& node);
 
 	Monochromator& operator=(const Monochromator& other);
 
@@ -98,5 +97,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_MONOCHROMATOR_H

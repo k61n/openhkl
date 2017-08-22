@@ -1,13 +1,11 @@
-#include "RotAxis.h"
-#include <boost/property_tree/xml_parser.hpp>
-#include <boost/property_tree/ptree.hpp>
-#include <iostream>
-#include <boost/foreach.hpp>
 #include <cmath>
+#include <iostream>
+
+#include "RotAxis.h"
 
 namespace nsx {
 
-Axis* RotAxis::create(const boost::property_tree::ptree& node)
+Axis* RotAxis::create(const YAML::Node& node)
 {
 	return new RotAxis(node);
 }
@@ -38,10 +36,10 @@ RotAxis& RotAxis::operator=(const RotAxis& other)
 	return *this;
 }
 
-RotAxis::RotAxis(const boost::property_tree::ptree& node) : Axis(node)
+RotAxis::RotAxis(const YAML::Node& node) : Axis(node)
 {
-	bool clockwise=node.get<bool>("clockwise");
-	_dir=clockwise ? RotAxis::Direction::CW : RotAxis::Direction::CCW;
+	bool clockwise=node["clockwise"].as<bool>();
+	_dir = clockwise ? RotAxis::Direction::CW : RotAxis::Direction::CCW;
 }
 
 RotAxis::~RotAxis()
@@ -78,12 +76,12 @@ Eigen::Transform<double,3,Eigen::Affine> RotAxis::getHomMatrix(double angle) con
 Eigen::Quaterniond RotAxis::getQuat(double angle) const
 {
 	//Apply offset first (offset in the same direction).
-	angle+=_offset;
+	angle += _offset;
 	if (_dir==RotAxis::CW)
 		angle*=-1;
 	// Create the quaternion representing this rotation
-	double hc=cos(0.5*angle);
-	double hs=sin(0.5*angle);
+	double hc = cos(0.5*angle);
+	double hs = sin(0.5*angle);
 	Eigen::Quaterniond temp(hc,_axis(0)*hs,_axis(1)*hs,_axis(2)*hs);
 	return temp;
 }

@@ -26,12 +26,11 @@
  *
  */
 
-#ifndef NSXLIB_AXIS_H
-#define NSXLIB_AXIS_H
+#pragma once
 
 #include <string>
 
-#include <boost/property_tree/ptree.hpp>
+#include "yaml-cpp/yaml.h"
 
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
@@ -50,7 +49,7 @@ class Axis {
 public:
 
 	//! Static constructor for an Axis
-	static Axis* create(const boost::property_tree::ptree& node);
+	static Axis* create(const YAML::Node& node);
 
 	//! Default constructor
 	Axis();
@@ -61,7 +60,7 @@ public:
 	//! Construct a labelized axis from a vector
 	Axis(const std::string& label, const Eigen::Vector3d& axis);
 	//! Construct an Axis from a property tree node.
-	Axis(const boost::property_tree::ptree& node);
+	Axis(const YAML::Node& node);
 	//! Assignment operator
 	Axis& operator=(const Axis& other);
 	//! Destructor
@@ -132,5 +131,3 @@ protected:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_AXIS_H

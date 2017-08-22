@@ -27,12 +27,11 @@
  *
  */
 
-#ifndef NSXLIB_DETECTORFACTORY_H
-#define NSXLIB_DETECTORFACTORY_H
+#pragma once
 
 #include <string>
 
-#include <boost/property_tree/ptree.hpp>
+#include "yaml-cpp/yaml.h"
 
 #include "Detector.h"
 #include "../kernel/Factory.h"
@@ -40,7 +39,7 @@
 
 namespace nsx {
 
-class DetectorFactory : public Factory<Detector,std::string,const boost::property_tree::ptree&>, public Singleton<DetectorFactory,Constructor,Destructor> {
+class DetectorFactory : public Factory<Detector,std::string,const YAML::Node&>, public Singleton<DetectorFactory,Constructor,Destructor> {
 private:
     friend class Constructor<DetectorFactory>;
     friend class Destructor<DetectorFactory>;
@@ -49,5 +48,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_DETECTORFACTORY_H

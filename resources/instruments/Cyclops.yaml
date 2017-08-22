@@ -1,0 +1,255 @@
+---
+instrument:
+    name: Cyclops
+    detector:
+        name: octogonal-multidetector
+        type: multidetector
+        row_min: 0
+        col_min: 0
+        detector:
+            name: panel1
+            type: flat
+            origin: [0,0]
+            sample_distance:
+                value: 200.38
+                units: mm
+            width:
+                value: 166.0
+                units: mm
+            height:
+                value: 415.0
+                units: mm
+            nrows: 2400
+            ncols: 960
+            goniometer:
+                name: panel1-gonio
+                axis:
+                    - name: z-tilt
+                      type: rotation
+                      direction: [0.0,0.0,1.0]
+                      clockwise: true
+                      offset:
+                          value: -180.0
+                          units: deg
+                      physical: false
+        detector:
+            name: panel2
+            type: flat
+            origin: [960,0]
+            sample_distance:
+                value: 200.38
+                units: mm
+            width:
+                value: 166.0
+                units: mm
+            height:
+                value: 415.0
+                units: mm
+            nrows: 2400
+            ncols: 960
+            goniometer:
+                name: panel2-gonio
+                axis:
+                    - name: z-tilt
+                      type: rotation
+                      direction: [0.0,0.0,1.0]
+                      clockwise: true
+                      offset:
+                          value: -135.0
+                          units: deg
+                      physical: false
+        detector:
+            name: panel3
+            type: flat
+            origin: [1920,0]
+            sample_distance:
+                value: 200.38
+                units: mm
+            width:
+                value: 166.0
+                units: mm
+            height:
+                value: 415.0
+                units: mm
+            nrows: 2400
+            ncols: 960
+            goniometer:
+                name: panel3-gonio
+                axis:
+                    - name: z-tilt
+                      type: rotation
+                      direction: [0.0,0.0,1.0]
+                      clockwise: true
+                      offset:
+                          value: -90.0
+                          units: deg
+                      physical: false
+        detector:
+            name: panel4
+            type: flat
+            origin: [2880,0]
+            sample_distance:
+                value: 200.38
+                units: mm
+            width:
+                value: 166.0
+                units: mm
+            height:
+                value: 415.0
+                units: mm
+            nrows: 2400
+            ncols: 960
+            goniometer:
+                name: panel4-gonio
+                axis:
+                    - name: z-tilt
+                      type: rotation
+                      direction: [0.0,0.0,1.0]
+                      clockwise: true
+                      offset:
+                          value: -45.0
+                          units: deg
+                      physical: false
+        detector:
+            name: panel5
+            type: flat
+            origin: [3840,0]
+            sample_distance:
+                value: 200.38
+                units: mm
+            width:
+                value: 166.0
+                units: mm
+            height:
+                value: 415.0
+                units: mm
+            nrows: 2400
+            ncols: 960
+            goniometer:
+                name: panel5-gonio
+                axis:
+                    - name: z-tilt
+                      type: rotation
+                      direction: [0.0,0.0,1.0]
+                      clockwise: true
+                      offset:
+                          value: 0.0
+                          units: deg
+                      physical: false
+        detector:
+            name: panel6
+            type: flat
+            origin: [4800,0]
+            sample_distance:
+                value: 200.38
+                units: mm
+            width:
+                value: 166.0
+                units: mm
+            height:
+                value: 415.0
+                units: mm
+            nrows: 2400
+            ncols: 960
+            goniometer:
+                name: panel6-gonio
+                axis:
+                    - name: z-tilt
+                      type: rotation
+                      direction: [0.0,0.0,1.0]
+                      clockwise: true
+                      offset:
+                          value: 45.0
+                          units: deg
+                      physical: false
+        detector:
+            name: panel7
+            type: flat
+            origin: [5760,0]
+            sample_distance:
+                value: 200.38
+                units: mm
+            width:
+                value: 166.0
+                units: mm
+            height:
+                value: 415.0
+                units: mm
+            nrows: 2400
+            ncols: 960
+            goniometer:
+                name: panel7-gonio
+                axis:
+                    - name: z-tilt
+                      type: rotation
+                      direction: [0.0,0.0,1.0]
+                      clockwise: true
+                      offset:
+                          value: 90.0
+                          units: deg
+                      physical: false
+        detector:
+            name: panel8
+            type: flat
+            origin: [6720,0]
+            sample_distance:
+                value: 200.38
+                units: mm
+            width:
+                value: 166.0
+                units: mm
+            height:
+                value: 415.0
+                units: mm
+            nrows: 2400
+            ncols: 960
+            goniometer:
+                name: panel8-gonio
+                axis:
+                    - name: z-tilt
+                      type: rotation
+                      direction: [0.0,0.0,1.0]
+                      clockwise: true
+                      offset:
+                          value: 135.0
+                          units: deg                          
+                      physical: false
+    sample:
+        name: sample
+        goniometer: 
+            name: Euler cradle (BL)
+            axis: 
+                - name: omega
+                  type: rotation
+                  direction: [0.0,0.0,1.0]
+                  clockwise: false
+                  physical: true
+    source:
+        name: monochromatic source
+        monochromator:
+            name: mono
+            width:
+                value: 1.0
+                units: mm
+            height:
+                value: 1.0
+                units: mm
+            wavelength:
+                value: 1.24
+                units: ang
+            fwhm:
+                value: 0.00901
+                units: ang
+        goniometer:
+            name: source-gonio
+            axis:
+                - name: x-offset
+                  type: translation
+                  direction: [1.0,0.0,0.0]
+                  physical: false
+
+                - name: y-offset
+                  type: translation
+                  direction: [0.0,1.0,0.0]
+                  physical: false
+...

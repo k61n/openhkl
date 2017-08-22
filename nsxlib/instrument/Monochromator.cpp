@@ -43,27 +43,34 @@ Monochromator::Monochromator(const Monochromator& other)
 {
 }
 
-Monochromator::Monochromator(const boost::property_tree::ptree& node)
+Monochromator::Monochromator(const YAML::Node& node)
 : _offset(0.0),
   _offsetFixed(true)
 {
-    _name=node.get<std::string>("name");
-    _wavelength=node.get<double>("wavelength");
-    _fwhm=node.get<double>("fwhm");
+    _name = node["name"].as<std::string>();
+
     UnitsManager* um=UnitsManager::Instance();
 
-    // Set the source slit width from the property tree node
-    const auto& widthNode = node.get_child("width");
-    double units=um->get(widthNode.get<std::string>("<xmlattr>.units"));
-    _width=widthNode.get_value<double>();
-    _width *= units;
+    // Set the source slit width from the yaml tree node
+    auto&& widthNode = node["width"];
+    _width = widthNode["value"].as<double>() * um->get(widthNode["units"].as<std::string>());
 
-    // Set the source slit height from the property tree node
-    const auto& heightNode = node.get_child("height");
-    units=um->get(heightNode.get<std::string>("<xmlattr>.units"));
-    _height=heightNode.get_value<double>();
-    _height *= units;
+    // Set the source slit height from the yaml tree node
+    auto&& heightNode = node["height"];
+    _height = heightNode["value"].as<double>() * um->get(heightNode["units"].as<std::string>());
 
+    auto&& wavelengthNode = node["wavelength"];
+    _wavelength = wavelengthNode["value"].as<double>() * um->get(wavelengthNode["units"].as<std::string>()) / nsx::ang;
+
+    auto&& fwhmNode = node["fwhm"];
+    _fwhm = fwhmNode["value"].as<double>() * um->get(fwhmNode["units"].as<std::string>()) / nsx::ang;
+
+    if (node["offset"]) {
+        auto&& offsetNode = node["offset"];
+        _offset = offsetNode["value"].as<double>() * um->get(offsetNode["units"].as<std::string>()) / nsx::ang;
+    } else {
+        _offset = 0.0;
+    }
 }
 
 Monochromator& Monochromator::operator=(const Monochromator& other)

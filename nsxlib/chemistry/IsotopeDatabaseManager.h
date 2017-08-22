@@ -1,5 +1,4 @@
-#ifndef NSXLIB_ISOTOPEDATABASEMANAGER_H
-#define NSXLIB_ISOTOPEDATABASEMANAGER_H
+#pragma once
 
 #include <map>
 #include <complex>
@@ -56,5 +55,3 @@ T IsotopeDatabaseManager::getProperty(const std::string& isotope, const std::str
 }
 
 } // end namespace nsx
-
-#endif // NSXLIB_ISOTOPEDATABASEMANAGER_H

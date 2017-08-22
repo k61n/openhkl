@@ -7,45 +7,46 @@
 #include "../instrument/Gonio.h"
 #include "../instrument/MonoDetector.h"
 #include "../instrument/MultiDetector.h"
+#include "../utils/YAMLType.h"
 
 namespace nsx {
 
-Detector* MultiDetector::create(const boost::property_tree::ptree& node)
+Detector* MultiDetector::create(const YAML::Node& node)
 {
     return new MultiDetector(node);
 }
 
-MultiDetector::MultiDetector() : Composite<Detector,const boost::property_tree::ptree&>()
+MultiDetector::MultiDetector() : Composite<Detector,const YAML::Node&>()
 {
 }
 
-MultiDetector::MultiDetector(const MultiDetector& other) : Composite<Detector,const boost::property_tree::ptree&>(other)
+MultiDetector::MultiDetector(const MultiDetector& other) : Composite<Detector,const YAML::Node&>(other)
 {
 
 }
 
-MultiDetector::MultiDetector(const std::string& name) : Composite<Detector,const boost::property_tree::ptree&>()
+MultiDetector::MultiDetector(const std::string& name) : Composite<Detector,const YAML::Node&>()
 {
     _name = name;
 }
 
-MultiDetector::MultiDetector(const boost::property_tree::ptree& node) : Composite<Detector,const boost::property_tree::ptree&>(node)
+MultiDetector::MultiDetector(const YAML::Node& node) : Composite<Detector,const YAML::Node&>(node)
 {
-    // Set each subdetector of the multi detector from the property tree "detector" subnodes
-    for (const auto& v : node)
+    // Set each subdetector of the multi detector from the yaml tree "detector" subnodes
+    for (const auto& subnode : node)
     {
-        if (v.first.compare("detector")==0)
+        std::string subnodeName = subnode.first.as<std::string>();
+        if (subnodeName.compare("detector")==0)
         {
             // Fetch the detector from the factory
-            MonoDetector* detector = dynamic_cast<MonoDetector*>(Detector::create(v.second));
+            MonoDetector* detector = dynamic_cast<MonoDetector*>(Detector::create(subnode.second));
 
             if (!detector)
                 throw std::runtime_error("NSXTool does not support nested multi detector.");
 
-            const auto& pixelOriginNode=v.second.get_child("origin");
-            double opx=pixelOriginNode.get<double>("pixel_x");
-            double opy=pixelOriginNode.get<double>("pixel_y");
-            detector->setOrigin(opx,opy);
+            auto&& pixelOriginNode = subnode.second["origin"];
+            Eigen::Vector2d origin_xy = pixelOriginNode.as<Eigen::Vector2d>();
+            detector->setOrigin(origin_xy[0],origin_xy[1]);
             add(detector);
         }
     }

@@ -64,8 +64,8 @@ void MCAbsorptionDialog::on_pushButton_run_pressed()
     nsx::MCAbsorption mca(mono.getWidth(),mono.getHeight(),-1.0);
     auto& hull=sample->getShape();
     if (!hull.checkEulerConditions()) {
-            QMessageBox::critical(this,"NSXTOOL","The sample shape (hull) is ill-defined");
-            return;
+        QMessageBox::critical(this,"NSXTOOL","The sample shape (hull) is ill-defined");
+        return;
     }
 
     mca.setSample(&hull,material->muIncoherent(),material->muAbsorption(mono.getWavelength()*nsx::ang));

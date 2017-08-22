@@ -35,13 +35,12 @@
  *
  */
 
-#ifndef NSXLIB_DETECTOR_H
-#define NSXLIB_DETECTOR_H
+#pragma once
 
 #include <string>
 #include <vector>
 
-#include <boost/property_tree/ptree.hpp>
+#include "yaml-cpp/yaml.h"
 
 #include <Eigen/Dense>
 
@@ -59,7 +58,7 @@ namespace nsx {
 class Detector: public Component {
 public:
     //! Static constructor of a Detector from a property tree node
-    static Detector* create(const boost::property_tree::ptree& node);
+    static Detector* create(const YAML::Node& node);
 
     //! Construct a Detector
     Detector();
@@ -68,7 +67,7 @@ public:
     //! Construct a Detector with a given name
     Detector(const std::string& name);
     //! Constructs a sample from a property tree node
-    Detector(const boost::property_tree::ptree& node);
+    Detector(const YAML::Node& node);
     //! Return a pointer to a copy of the Detector
     virtual Detector* clone() const=0;
     // Destructor
@@ -118,10 +117,9 @@ public:
 
     //!
     DataOrder getDataOrder() const {return _dataorder;}
+
 private:
     DataOrder _dataorder;
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_DETECTOR_H
