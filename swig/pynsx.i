@@ -170,7 +170,6 @@ namespace property_tree=boost::property_tree;
 #include "instrument/TransAxis.h"
 #include "instrument/Sample.h"
 #include "instrument/ComponentState.h"
-#include "instrument/DiffractometerStore.h"
 #include "instrument/FlatDetector.h"
 #include "instrument/Source.h"
 #include "instrument/InstrumentState.h"
@@ -256,7 +255,6 @@ using sptrMaterial = std::shared_ptr<nsx::Material>;
 using sptrUnitCell = std::shared_ptr<nsx::UnitCell>;
 
 #include "instrument/Diffractometer.h"
-#include "instrument/DiffractometerStore.h"
 
 #include "kernel/Singleton.h"
 
@@ -375,20 +373,14 @@ namespace boost { namespace property_tree {} }
 // %include "kernel/Factory.h"
 
 namespace nsx {
-   class DiffractometerStore;
    class DataReaderFactory; 
    struct tVector;
-   %template(DiffractometerStoreBase) Singleton<DiffractometerStore, Constructor, Destructor>;
-    //%template(DataReaderFactorySingletonBase) Singleton<DataReaderFactory, Constructor, Destructor>;
-    //%template(DataReaderFactoryFactoryBase) Factory<DataSet,std::string,std::string,std::shared_ptr<Diffractometer> >;
 }
 
 %include "crystal/FFTIndexing.h"
 
 %include "crystal/Intensity.h"
 %include "crystal/Peak3D.h"
-
-%include "instrument/DiffractometerStore.h"
 
 %include "imaging/ConstantKernel.h"
 %include "imaging/KernelFactory.h"
@@ -507,7 +499,6 @@ namespace nsx {
 %include "instrument/TransAxis.h"
 %include "instrument/Sample.h"
 %include "instrument/ComponentState.h"
-%include "instrument/DiffractometerStore.h"
 %include "instrument/FlatDetector.h"
 %include "instrument/Source.h"
 %include "instrument/InstrumentState.h"
