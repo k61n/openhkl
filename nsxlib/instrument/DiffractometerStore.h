@@ -45,9 +45,6 @@ public:
     DiffractometerStore();
 
     sptrDiffractometer buildDiffractometer(const std::string& name) const;
-
-    std::set<std::string> getDiffractometersList() const;
-
 };
 
 } // end namespace nsx

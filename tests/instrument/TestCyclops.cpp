@@ -6,12 +6,10 @@
 #include <nsxlib/instrument/Detector.h>
 #include <nsxlib/instrument/DetectorEvent.h>
 #include <nsxlib/instrument/Diffractometer.h>
-#include <nsxlib/instrument/DiffractometerStore.h>
 
 BOOST_AUTO_TEST_CASE(Test_Cyclops)
 {
-    auto ds = nsx::DiffractometerStore::Instance();
-    auto cyclop = ds->buildDiffractometer("Cyclops");
+    auto cyclop = nsx::Diffractometer::build("Cyclops");
     double g,nu;
     for (int i = 0; i < 7680; ++i) {
         for (int j = 0; j < 2400; ++j) {

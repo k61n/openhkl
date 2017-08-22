@@ -11,7 +11,7 @@
 #include <nsxlib/data/PeakFinder.h>
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/data/MetaData.h>
-#include <nsxlib/instrument/DiffractometerStore.h>
+#include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/utils/ProgressHandler.h>
 
 BOOST_AUTO_TEST_CASE(Test_PeakFinder)
@@ -19,8 +19,7 @@ BOOST_AUTO_TEST_CASE(Test_PeakFinder)
     nsx::DataList numors;
 
     nsx::DataReaderFactory factory;
-    auto ds = nsx::DiffractometerStore::Instance();
-    auto diff = nsx::sptrDiffractometer(ds->buildDiffractometer("D10"));
+    auto diff = nsx::Diffractometer::build("D10");
     auto dataf = factory.create("", "D10_ascii_example", diff);
     auto meta = dataf->getMetadata();
     nsx::PeakFinder peakFinder;

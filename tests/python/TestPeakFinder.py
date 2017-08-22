@@ -8,7 +8,6 @@ class TestPeakFinder(unittest.TestCase):
         # todo : nsx.DataList() doesnt work- says it doesnt exist in nsx
         # numors = nsx.DataList()
         factory = nsx.DataReaderFactory()
-        ds = nsx.DiffractometerStoreBase_Instance()
         # todo : the fuction below doesnt exist in nsx
         # diff = nsx.sptrDiffractrometer(ds.buildDiffractromerer("D10"))
         # todo : error in using 'factory.create("","D10_ascii_example",diff)'

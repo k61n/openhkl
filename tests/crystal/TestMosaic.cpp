@@ -11,7 +11,7 @@
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/geometry/ConvexHull.h>
 #include <nsxlib/geometry/Ellipsoid.h>
-#include <nsxlib/instrument/DiffractometerStore.h>
+#include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/instrument/Sample.h>
 #include <nsxlib/utils/Units.h>
 
@@ -37,13 +37,11 @@ int run_test()
 
     nsx::Mosaic mos("D9",0.8409,0.0000901,2.602,0.01);
 
-    nsx::DiffractometerStore* ds;
     nsx::sptrDiffractometer diff;
     nsx::sptrDataSet dataf;
     Eigen::MatrixXi v;
 
-    ds = nsx::DiffractometerStore::Instance();
-    diff = nsx::sptrDiffractometer(ds->buildDiffractometer("D9"));
+    diff = nsx::Diffractometer::build("D9");
     dataf = nsx::sptrDataSet(nsx::DataReaderFactory().create("hdf", "714898.hdf", diff));
 
     dataf->open();

@@ -7,22 +7,20 @@
 
 #include <Eigen/Dense>
 
-#include <nsxlib/instrument/DiffractometerStore.h>
 #include <nsxlib/data/DataReaderFactory.h>
 #include <nsxlib/data/DataSet.h>
+#include <nsxlib/instrument/Diffractometer.h>
 
 BOOST_AUTO_TEST_CASE(Test_HDF5_IO)
 {
     nsx::DataReaderFactory factory;
-    nsx::DiffractometerStore* ds;
     nsx::sptrDiffractometer diff;
     nsx::sptrDataSet dataf;
 
     std::vector<Eigen::MatrixXi> frames;
 
     try {
-        ds = nsx::DiffractometerStore::Instance();
-        diff = nsx::sptrDiffractometer(ds->buildDiffractometer("D10"));
+        diff = nsx::Diffractometer::build("D10");
         dataf = factory.create("", "D10_ascii_example", diff);
         dataf->open();
 

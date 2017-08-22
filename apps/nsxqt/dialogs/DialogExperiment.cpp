@@ -1,6 +1,10 @@
 #include <QComboBox>
+#include <QDir>
+#include <QFileInfo>
+#include <QString>
+#include <QStringList>
 
-#include <nsxlib/instrument/DiffractometerStore.h>
+#include <nsxlib/utils/Path.h>
 
 #include "DialogExperiment.h"
 #include "ui_ExperimentDialog.h"
@@ -12,12 +16,13 @@ DialogExperiment::DialogExperiment(QWidget *parent) : QDialog(parent), ui(new Ui
     // The instrument names will be inserted alphabetically
     ui->instrument->setInsertPolicy(QComboBox::InsertAlphabetically);
 
-    // Add the available instruments to the combo box
-    nsx::DiffractometerStore* ds = nsx::DiffractometerStore::Instance();
+    QDir diffractometersDirectory(QString::fromStdString(nsx::applicationDataPath()));
+    diffractometersDirectory.cd("instruments");
 
-    auto diffractometers=ds->getDiffractometersList();
-    for (const auto& d : diffractometers)
-        ui->instrument->addItem(QString::fromStdString(d));
+    QStringList diffractometerFiles = diffractometersDirectory.entryList({"*.yaml"}, QDir::Files, QDir::Name);
+
+    for (auto&& diffractometer : diffractometerFiles)
+        ui->instrument->addItem(QFileInfo(diffractometer).baseName());
 }
 
 DialogExperiment::~DialogExperiment()

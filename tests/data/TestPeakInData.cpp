@@ -3,21 +3,19 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include <nsxlib/instrument/DiffractometerStore.h>
 #include <nsxlib/data/DataReaderFactory.h>
 #include <nsxlib/data/DataSet.h>
+#include <nsxlib/instrument/Diffractometer.h>
 
 BOOST_AUTO_TEST_CASE(Test_Peak_Data)
 {
     nsx::DataReaderFactory factory;
-    nsx::DiffractometerStore* ds;
     nsx::sptrDiffractometer diff;
     nsx::sptrDataSet dataf;
     nsx::MetaData* metadata;
 
     try {
-        ds = nsx::DiffractometerStore::Instance();
-        diff = nsx::sptrDiffractometer(ds->buildDiffractometer("D9"));
+        diff = nsx::Diffractometer::build("D9");
         dataf = factory.create("", "D9_ascii_example", diff);
 
         dataf->open();

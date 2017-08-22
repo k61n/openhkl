@@ -20,7 +20,6 @@
 #include "../geometry/Triangle.h"
 #include "../instrument/Detector.h"
 #include "../instrument/Diffractometer.h"
-#include "../instrument/DiffractometerStore.h"
 #include "../instrument/Gonio.h"
 #include "../instrument/Sample.h"
 #include "../instrument/Source.h"
@@ -99,8 +98,7 @@ Mosaic::Mosaic(const std::string& instr, double l, double dl, double dMonSam, do
   _mu(mu*deg)
 {
     // Set up the diffractometer
-    DiffractometerStore* ds=DiffractometerStore::Instance();
-    _diffractometer = sptrDiffractometer(ds->buildDiffractometer(instr));
+    _diffractometer = Diffractometer::build(instr);
 }
 
 void Mosaic::setSample(Sample* sample)
