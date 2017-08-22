@@ -43,7 +43,6 @@
 #include "DetectorScene.h"
 #include "ColorMap.h"
 #include "dialogs/DialogConvolve.h"
-#include "dialogs/DialogExperiment.h"
 #include "dialogs/DialogIntegrate.h"
 #include "dialogs/NumorsConversionDialog.h"
 #include "dialogs/ResolutionCutoffDialog.h"
@@ -146,12 +145,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(_ui->experimentTree,SIGNAL(inspectWidget(QWidget*)),this,SLOT(setInspectorWidget(QWidget*)));
 
-    qDebug() << "The resources directory is " << nsx::Path().getResourcesDir().c_str();
-
     _progressHandler = nsx::sptrProgressHandler(new nsx::ProgressHandler());
     _peakFinder = nsx::sptrPeakFinder(new nsx::PeakFinder());
-
-
 
     for (auto&& action: _ui->menuColor_map->actions()) {
         _ui->menuColor_map->removeAction(action);

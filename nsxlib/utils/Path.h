@@ -29,23 +29,19 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include "../kernel/Singleton.h"
 
 namespace nsx {
 
-extern const std::string g_path_separator;
-
-extern int g_argc;
-
-extern char** g_argv;
-
+// left and right trim a given path
 std::string trim(const std::string& input_path);
 
-std::string removeFilename(const std::string& input_path);
+//! Get the directory name of a given path
+std::string dirname(const std::string& input_path);
 
-//! Pass (argc, argv) or running process to nsxlib
-void setArgv(int argc, char **argv);
+std::string buildPath(const std::string& root, const std::vector<std::string>& paths);
 
 //! Returns the home directory
 std::string homeDirectory();
@@ -53,16 +49,12 @@ std::string homeDirectory();
 //! Returns the NSXTool application data path
 std::string applicationDataPath();
 
-class Path : public Singleton<Path,Constructor,Destructor> {
+//! Pass argc of running process to nsxlib
+void setArgc(int argc);
 
-public:
+//! Set argv of running process to nsxlib
+void setArgv(char** argv);
 
-    //! Returns the path where the diffractometers XML definition files are stored
-    static std::string getDiffractometersPath();
-
-    static std::string getDataBasesPath(const std::string& database);
-
-    static std::string getResourcesDir();
-};
+std::string diffractometersPath();
 
 } // end namespace nsx

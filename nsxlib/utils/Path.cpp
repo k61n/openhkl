@@ -2,9 +2,6 @@
 #include <fstream>
 #include <numeric>
 #include <stdexcept>
-#include <iostream>
-
-#include <boost/filesystem.hpp>
 
 #include "Path.h"
 
@@ -13,14 +10,14 @@
 namespace nsx {
 
 #ifdef _WIN32
-    const std::string g_path_separator = "\\";
+    static const std::string g_path_separator = "\\";
 #else
-    const std::string g_path_separator = "/";
+    static const std::string g_path_separator = "/";
 #endif
 
-int g_argc = 100;
+static int g_argc = 0;
 
-char** g_argv = nullptr;
+static char** g_argv = nullptr;
 
 std::string trim(const std::string& input_path) {
 
@@ -31,7 +28,7 @@ std::string trim(const std::string& input_path) {
     return output_path;
 }
 
-std::string removeFilename(const std::string& input_path) {
+std::string dirname(const std::string& input_path) {
 
     std::string output_path = trim(input_path);
 
@@ -40,9 +37,13 @@ std::string removeFilename(const std::string& input_path) {
     return output_path;
 }
 
-void setArgv(int argc, char **argv)
+void setArgc(int argc)
 {
     g_argc = argc;
+}
+
+void setArgv(char **argv)
+{
     g_argv = argv;
 }
 
@@ -77,9 +78,18 @@ std::string homeDirectory()
     throw std::runtime_error("The home directory could not be defined");
 }
 
+std::string buildPath(const std::string& root, const std::vector<std::string>& paths)
+{
+    auto append_path = [](std::string base, std::string p){return base+g_path_separator+p;};
+
+    std::string path = std::accumulate(paths.begin(),paths.end(),root,append_path);
+
+    return path;
+}
+
 std::string applicationDataPath()
 {
-    std::vector<std::string> possible_locations = {
+    std::vector<std::string> possible_paths = {
         "",
         ".",
         "nsxtool",
@@ -93,60 +103,34 @@ std::string applicationDataPath()
 
     // if defined, it takes highest precedence
     if (nsx_root_dir) {
-        possible_locations.insert(possible_locations.begin(), nsx_root_dir);
+        possible_paths.insert(possible_paths.begin(), nsx_root_dir);
     }
 
     // add location of executable if possible
     if (g_argc > 0 && g_argv && g_argv[0]) {
-        std::string path = removeFilename(g_argv[0]);
-        possible_locations.insert(possible_locations.begin(), path);
+        std::string path = dirname(g_argv[0]);
+        possible_paths.insert(possible_paths.begin(), path);
     }
 
-    auto append_path = [](std::string base, std::string p){return base+g_path_separator+p;};
+    std::vector<std::string> d19_relative_path = {"instruments","D19.yaml"};
 
-    std::vector<std::string> d19_path = {"instruments","D19.yaml"};
+    for (auto&& path : possible_paths) {
+        std::string d19_file = buildPath(path,d19_relative_path);
 
-    for (auto&& possible_path : possible_locations) {
-        std::cout<<"path_sep"<<g_path_separator<<std::endl;
-        std::cout<<"argc"<<g_argc<<std::endl;
-
-        std::string path = std::accumulate(d19_path.begin(),d19_path.end(),possible_path,append_path);
-
-        std::cout<<"dsadsad"<<path<<std::endl;
-
-        std::ifstream file(path, std::ios_base::in);
+        std::ifstream file(d19_file, std::ios_base::in);
         if (file.good()) {
             file.close();
-            return removeFilename(path);
+            return path;
         }
     }
 
     throw std::runtime_error("The application data directory could not be defined");
 }
 
-std::string Path::getDiffractometersPath()
+std::string diffractometersPath()
 {
-    boost::filesystem::path p(getResourcesDir());
-    p /= "instruments";
-    return p.string();
-}
-
-std::string Path::getDataBasesPath(const std::string& database)
-{
-    boost::filesystem::path p(getResourcesDir());
-    p /= "databases";
-    p /= database;
-    return p.string();
-}
-
-std::string Path::getResourcesDir()
-{
-    static std::string resourcesDir;
-
-    if ( resourcesDir == "") {
-        resourcesDir = applicationDataPath();
-    }
-    return boost::filesystem::path(resourcesDir).string();
+    std::string path = applicationDataPath() + g_path_separator + "instruments";
+    return path;
 }
 
 } // end namespace nsx

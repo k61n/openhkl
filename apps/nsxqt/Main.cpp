@@ -9,9 +9,11 @@
 #include "MainWindow.h"
 #include "NSXQtApp.h"
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
-    nsx::setArgv(argc, argv);
+    nsx::setArgc(argc);
+    nsx::setArgv(argv);
+
     NSXQtApp a(argc, argv);
 
     // Ensure . is used rather than , for float and double boxes
