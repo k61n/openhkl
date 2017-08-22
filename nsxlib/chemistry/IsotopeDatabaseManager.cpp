@@ -7,8 +7,6 @@
 
 namespace nsx {
 
-const std::string IsotopeDatabaseManager::DatabasePath = Path::getDataBasesPath("isotopes.yaml");
-
 std::map<std::string,ChemicalPropertyType> IsotopeDatabaseManager::PropertyTypes = {{"string",ChemicalPropertyType::String},
                                                                       {"int",ChemicalPropertyType::Int},
                                                                       {"double",ChemicalPropertyType::Double},
@@ -17,8 +15,10 @@ std::map<std::string,ChemicalPropertyType> IsotopeDatabaseManager::PropertyTypes
 
 IsotopeDatabaseManager::IsotopeDatabaseManager()
 {
+    std::string databaseFile = buildPath(applicationDataPath(),{"databases","isotopes.yaml"});
+
     // No file existence checking, the YAML database is part of the distribution
-    YAML::Node database = YAML::LoadFile(DatabasePath);
+    YAML::Node database = YAML::LoadFile(databaseFile);
 
     for (const auto& propertyNode : database["Properties"]) {
     	std::pair<std::string,std::string> prop = std::make_pair(propertyNode.second["type"].as<std::string>(),propertyNode.second["unit"].as<std::string>());

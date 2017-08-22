@@ -43,9 +43,6 @@ private:
     std::map<std::string,std::pair<std::string,std::string>> _properties;
 
     std::map<std::string,std::string> _types;
-
-    static const std::string DatabasePath;
-
 };
 
 template <typename T>
