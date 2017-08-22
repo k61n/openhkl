@@ -12,13 +12,11 @@
 
 namespace nsx {
 
-//#ifdef _WIN32
-//    extern const std::string g_path_separator = "\\";
-//#else
-//    extern const std::string g_path_separator = "/";
-//#endif
-
-std::string g_path_separator = "toto";
+#ifdef _WIN32
+    const std::string g_path_separator = "\\";
+#else
+    const std::string g_path_separator = "/";
+#endif
 
 int g_argc = 100;
 

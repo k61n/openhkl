@@ -34,7 +34,7 @@
 
 namespace nsx {
 
-extern std::string g_path_separator;
+extern const std::string g_path_separator;
 
 extern int g_argc;
 
