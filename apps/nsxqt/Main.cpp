@@ -11,7 +11,7 @@
 
 int main(int argc, char *argv[])
 {
-    nsx::Path::setArgv(argc, argv);
+    nsx::setArgv(argc, argv);
     NSXQtApp a(argc, argv);
 
     // Ensure . is used rather than , for float and double boxes

@@ -26,8 +26,7 @@
  *
  */
 
-#ifndef NSXLIB_PATH_H
-#define NSXLIB_PATH_H
+#pragma once
 
 #include <string>
 
@@ -35,40 +34,35 @@
 
 namespace nsx {
 
-extern const std::string g_path_separator;
+extern std::string g_path_separator;
 
 extern int g_argc;
 
 extern char** g_argv;
 
+std::string trim(const std::string& input_path);
+
+std::string removeFilename(const std::string& input_path);
+
+//! Pass (argc, argv) or running process to nsxlib
 void setArgv(int argc, char **argv);
 
+//! Returns the home directory
 std::string homeDirectory();
 
-class Path : public Singleton<Path,Constructor,Destructor> {
+//! Returns the NSXTool application data path
+std::string applicationDataPath();
 
-public:
-
-    //! Returns the NSXTool application data path
-    static std::string getApplicationDataPath();
-
-    //! Returns the path where the diffractometers XML definition files are stored
-    static std::string getDiffractometersPath();
-
-    static std::string getDataBasesPath(const std::string& database);
-
-    static std::string getResourcesDir();
-
-    //! Pass (argc, argv) or running process to nsxlib
-    static void setArgv(int argc, char** argv);
-
-private:
-
-    static int _argc;
-
-    static char** _argv;
-};
+//class Path : public Singleton<Path,Constructor,Destructor> {
+//
+//public:
+//
+//    //! Returns the path where the diffractometers XML definition files are stored
+//    static std::string getDiffractometersPath();
+//
+//    static std::string getDataBasesPath(const std::string& database);
+//
+//    static std::string getResourcesDir();
+//};
 
 } // end namespace nsx
-
-#endif // NSXLIB_PATH_H
