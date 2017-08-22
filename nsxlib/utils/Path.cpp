@@ -106,7 +106,7 @@ std::string applicationDataPath()
 
     auto append_path = [](std::string base, std::string p){return base+g_path_separator+p;};
 
-    std::vector<std::string> d19_path = {"instruments","D19.xml"};
+    std::vector<std::string> d19_path = {"instruments","D19.yaml"};
 
     for (auto&& possible_path : possible_locations) {
 
