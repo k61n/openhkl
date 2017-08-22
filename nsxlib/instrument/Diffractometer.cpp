@@ -1,11 +1,45 @@
+#include "Diffractometer.h"
+
 #include "Detector.h"
 #include "DetectorFactory.h"
-#include "Diffractometer.h"
 #include "Gonio.h"
 #include "Sample.h"
 #include "Source.h"
 
+#include "../utils/Path.h"
+
 namespace nsx {
+
+sptrDiffractometer Diffractometer::build(const std::string& name)
+{
+
+    std::string diffractometerFile = buildPath(applicationDataPath(),{"instruments",name+".yaml"});
+
+    YAML::Node instrumentDefinition;
+
+    try {
+        instrumentDefinition = YAML::LoadFile(diffractometerFile);
+    }
+    catch (const std::exception& error) {
+        throw std::runtime_error("Error when opening instrument definition file");
+    }
+
+    if (!instrumentDefinition["instrument"]) {
+        throw std::runtime_error("Invalid instrument definition: missing 'instrument root node'");
+    }
+
+    sptrDiffractometer diffractometer;
+
+    try {
+        diffractometer = std::make_shared<Diffractometer>(Diffractometer(instrumentDefinition["instrument"]));
+    }
+    catch (...)
+    {
+        throw std::runtime_error("Error when reading instrument definition file");
+    }
+
+    return diffractometer;
+}
 
 Diffractometer::Diffractometer() : _name(""), _detector(nullptr), _sample(nullptr), _source(nullptr)
 {
