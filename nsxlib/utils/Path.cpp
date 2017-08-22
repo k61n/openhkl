@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <fstream>
+#include <mutex>
 #include <numeric>
 #include <stdexcept>
 
@@ -18,6 +19,9 @@ namespace nsx {
 static int g_argc = 0;
 
 static char** g_argv = nullptr;
+
+std::mutex g_argc_mutex;
+std::mutex g_argv_mutex;
 
 std::string trim(const std::string& input_path) {
 
@@ -39,11 +43,13 @@ std::string dirname(const std::string& input_path) {
 
 void setArgc(int argc)
 {
+    std::lock_guard<std::mutex> guard(g_argc_mutex);
     g_argc = argc;
 }
 
 void setArgv(char **argv)
 {
+    std::lock_guard<std::mutex> guard(g_argv_mutex);
     g_argv = argv;
 }
 
