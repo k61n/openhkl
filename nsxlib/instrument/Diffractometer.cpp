@@ -13,7 +13,7 @@ namespace nsx {
 sptrDiffractometer Diffractometer::build(const std::string& name)
 {
 
-    std::string diffractometerFile = buildPath(applicationDataPath(),{"instruments",name+".yaml"});
+    std::string diffractometerFile = buildPath(applicationDataPath(),{"instruments",name+".yml"});
 
     YAML::Node instrumentDefinition;
 
