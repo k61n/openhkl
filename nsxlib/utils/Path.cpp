@@ -23,7 +23,8 @@ static char** g_argv = nullptr;
 std::mutex g_argc_mutex;
 std::mutex g_argv_mutex;
 
-std::string trim(const std::string& input_path) {
+std::string trim(const std::string& input_path)
+{
 
     std::string output_path(input_path);
     output_path.erase(output_path.find_last_not_of(" \n\r\t")+1);
@@ -32,7 +33,8 @@ std::string trim(const std::string& input_path) {
     return output_path;
 }
 
-std::string dirname(const std::string& input_path) {
+std::string dirname(const std::string& input_path)
+{
 
     std::string output_path = trim(input_path);
 
@@ -118,7 +120,7 @@ std::string applicationDataPath()
         possible_paths.insert(possible_paths.begin(), path);
     }
 
-    std::vector<std::string> d19_relative_path = {"instruments","D19.yaml"};
+    std::vector<std::string> d19_relative_path = {"instruments","D19.yml"};
 
     for (auto&& path : possible_paths) {
         std::string d19_file = buildPath(path,d19_relative_path);

@@ -30,10 +30,9 @@ foreach(source_file ${test_sources})
 
 endforeach(source_file)
 
-#add_custom_target(check ALL COMMAND ${CMAKE_CTEST_COMMAND})
 add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
 
-configure_file(../resources/databases/isotopes.yaml isotopes.yaml COPYONLY)
+configure_file(../resources/databases/isotopes.yml isotopes.yml COPYONLY)
 
 configure_file(crystal/lattices.dat lattices.dat COPYONLY)
 configure_file(crystal/niggli_lattices.dat niggli_lattices.dat COPYONLY)
