@@ -43,12 +43,14 @@
 namespace nsx {
 
 class SpaceGroup {
+
+public:
+
+    static std::vector<SpaceGroupSymmetry> symmetry_table;
+
 public:
     //! Construct a space group from its IT symbol. Lookup in the IUCR table
-    SpaceGroup(const std::string& symbol);
-    //! Construct a space group from a string containing the generators given in the Jones notation and separated
-    //! by ";" characters
-    SpaceGroup(std::string symbol, std::string generators);
+    SpaceGroup(std::string symbol);
     //! Copy
     SpaceGroup(const SpaceGroup& other) = default;
     //! Assignment
@@ -56,7 +58,7 @@ public:
     //! Get the IT symbol for this space group
     const std::string& getSymbol() const;
     //! Get the string containing the generators (in the Jones notation), separated bt ";' character
-    const std::string& getGenerators() const;
+    const std::string& generators() const;
     //! Get a vector containing the Symmetry operations for this space group
     const SymOpList& getGroupElements() const;
     //! Determine whether a h,k,l reflection is forbidden
@@ -84,6 +86,7 @@ public:
     bool isFriedelEquivalent(double h1, double k1, double l1, double h2, double k2, double l2) const;
 
 private:
+
     void generateGroupElements();
 
     std::string _symbol;

@@ -12,7 +12,6 @@
 
 BOOST_AUTO_TEST_CASE(Test_SpaceGroup)
 {
-
     std::map<std::string,unsigned int> nElementsPerSpaceGroup=
     {
         {"P 1",         1},
@@ -246,6 +245,12 @@ BOOST_AUTO_TEST_CASE(Test_SpaceGroup)
         {"I m -3 m",   96},
         {"I a -3 d",   96},
     };
+
+    BOOST_CHECK_EQUAL(nsx::SpaceGroup::symmetry_table.size(), 230);
+
+    nsx::SpaceGroup sg_pnma("P n m a");
+    // Check that string generator strings are OK s
+    BOOST_CHECK(sg_pnma.generators().compare(" -x+1/2,-y,z+1/2; -x,y+1/2,-z; -x,-y,-z")==0);
 
     for (const auto& p : nElementsPerSpaceGroup)
     {
