@@ -11,7 +11,7 @@
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/data/MetaData.h>
 #include <nsxlib/instrument/ComponentState.h>
-#include <nsxlib/instrument/DiffractometerStore.h>
+#include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/utils/Units.h>
 
 const double tolerance=1e-2;
@@ -19,15 +19,13 @@ const double tolerance=1e-2;
 BOOST_AUTO_TEST_CASE(Test_ILL_Ascii_QScan)
 {
     nsx::DataReaderFactory factory;
-    nsx::DiffractometerStore* ds;
     nsx::sptrDiffractometer diff;
     nsx::sptrDataSet dataf;
     nsx::MetaData* meta;
     Eigen::MatrixXi v;
 
     try {
-        ds = nsx::DiffractometerStore::Instance();
-        diff = nsx::sptrDiffractometer(ds->buildDiffractometer("D9"));
+        diff = nsx::Diffractometer::build("D9");
         dataf = factory.create("", "D9_QSCAN", diff);
         meta=dataf->getMetadata();
 

@@ -39,6 +39,11 @@
 namespace nsx {
 
 class Diffractometer {
+
+public:
+
+    static sptrDiffractometer build(const std::string& name);
+
 public:
 
     Diffractometer(const YAML::Node& node);

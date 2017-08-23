@@ -1,18 +1,21 @@
 #include <iostream>
 
 #include <QDebug>
+#include <QDir>
 #include <QDirModel>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QMessageBox>
 #include <QModelIndex>
 #include <QModelIndexList>
+#include <QString>
+#include <QStringList>
 
 #include <nsxlib/data/DataReaderFactory.h>
-#include <nsxlib/instrument/Diffractometer.h>
-#include <nsxlib/instrument/DiffractometerStore.h>
-#include <nsxlib/instrument/InstrumentTypes.h>
 #include <nsxlib/data/DataSet.h>
+#include <nsxlib/instrument/Diffractometer.h>
+#include <nsxlib/instrument/InstrumentTypes.h>
+#include <nsxlib/utils/Path.h>
 
 #include "NumorsConversionDialog.h"
 #include "ui_NumorsConversionDialog.h"
@@ -26,10 +29,14 @@ NumorsConversionDialog::NumorsConversionDialog(QWidget *parent)
     // The instrument names will be inserted alphabetically
     ui->comboBox_diffractometers->setInsertPolicy(QComboBox::InsertAlphabetically);
 
+    QDir diffractometersDirectory(QString::fromStdString(nsx::applicationDataPath()));
+    diffractometersDirectory.cd("instruments");
+
+    QStringList diffractometerFiles = diffractometersDirectory.entryList({"*.yaml"}, QDir::Files, QDir::Name);
+
     // Add the available instruments to the combo box
-    nsx::DiffractometerStore* ds = nsx::DiffractometerStore::Instance();
-    for (const auto& diffractometer : ds->getDiffractometersList())
-        ui->comboBox_diffractometers->addItem(QString::fromStdString(diffractometer));
+    for (auto&& diffractometer : diffractometerFiles)
+        ui->comboBox_diffractometers->addItem(QFileInfo(diffractometer).baseName());
 
     QDirModel* model=new QDirModel();
     ui->treeView_inputFiles->setModel(model);
@@ -58,9 +65,8 @@ void NumorsConversionDialog::on_pushButton_convert_clicked()
     }
 
     nsx::DataReaderFactory dataFactory;
-    nsx::DiffractometerStore* ds=nsx::DiffractometerStore::Instance();
     std::string diffractometerName=ui->comboBox_diffractometers->currentText().toStdString();
-    auto diffractometer=nsx::sptrDiffractometer(ds->buildDiffractometer(diffractometerName));
+    auto diffractometer = nsx::Diffractometer::build(diffractometerName);
 
     auto model = dynamic_cast<QDirModel*>(ui->treeView_inputFiles->model());
     QModelIndexList indexes = ui->treeView_inputFiles->selectionModel()->selectedIndexes();

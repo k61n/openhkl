@@ -6,8 +6,7 @@ import unittest
 class TestHDF5IO(unittest.TestCase):
     def test(self):
         factory = nsx.DataReaderFactory()
-        ds = nsx.DiffractometerStore()
-        diff = ds.buildDiffractometer("D10")
+        diff = nsx.Diffractometer.build("D10")
         dataf = factory.create("","D10_ascii_example",diff)
         dataf.open()
         

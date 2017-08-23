@@ -26,45 +26,35 @@
  *
  */
 
-#ifndef NSXLIB_PATH_H
-#define NSXLIB_PATH_H
+#pragma once
 
 #include <string>
+#include <vector>
 
 #include "../kernel/Singleton.h"
 
 namespace nsx {
 
-class Path : public Singleton<Path,Constructor,Destructor> {
+// left and right trim a given path
+std::string trim(const std::string& input_path);
 
-public:
+//! Get the directory name of a given path
+std::string dirname(const std::string& input_path);
 
-    //! Expands a given path with the HOME directory. The input path must start with ~ other wise it is returned unchanged
-    static std::string expandUser(std::string path);
+std::string buildPath(const std::string& root, const std::vector<std::string>& paths);
 
-    //! Returns the path to HOME
-    static std::string getHomeDirectory();
+//! Returns the home directory
+std::string homeDirectory();
 
-    //! Returns the NSXTool application data path
-    static std::string getApplicationDataPath();
+//! Returns the NSXTool application data path
+std::string applicationDataPath();
 
-    //! Returns the path where the diffractomers XML defininition files are stored
-    static std::string getDiffractometersPath();
+//! Pass argc of running process to nsxlib
+void setArgc(int argc);
 
-    static std::string getDataBasesPath(const std::string& database);
+//! Set argv of running process to nsxlib
+void setArgv(char** argv);
 
-    static std::string getResourcesDir();
-
-    //! Pass (argc, argv) or running process to nsxlib
-    static void setArgv(int argc, char** argv);
-
-private:
-
-    static int _argc;
-
-    static char** _argv;
-};
+std::string diffractometersPath();
 
 } // end namespace nsx
-
-#endif // NSXLIB_PATH_H

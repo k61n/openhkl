@@ -8,7 +8,7 @@
 
 #include <Eigen/Dense>
 
-#include <nsxlib/instrument/DiffractometerStore.h>
+#include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/instrument/InstrumentState.h>
 #include <nsxlib/data/DataReaderFactory.h>
 #include <nsxlib/data/MetaData.h>
@@ -20,15 +20,13 @@ const double tolerance=1e-2;
 BOOST_AUTO_TEST_CASE(Test_ILL_Data)
 {
     nsx::DataReaderFactory factory;
-    nsx::DiffractometerStore* ds;
     nsx::sptrDiffractometer diff;
     nsx::sptrDataSet dataf;
     nsx::MetaData* meta;
     Eigen::MatrixXi v;
 
     try {
-        ds = nsx::DiffractometerStore::Instance();
-        diff = nsx::sptrDiffractometer(ds->buildDiffractometer("D10"));
+        diff = nsx::Diffractometer::build("D10");
         dataf = factory.create("", "D10_ascii_example", diff);
         meta=dataf->getMetadata();
 

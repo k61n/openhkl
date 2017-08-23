@@ -1,39 +1,82 @@
 #include <cstdlib>
 #include <fstream>
+#include <mutex>
+#include <numeric>
 #include <stdexcept>
 
-#include <boost/filesystem.hpp>
+#include "Path.h"
 
 #include "NSXConfig.h"
-#include "../utils/Path.h"
 
 namespace nsx {
 
-int Path::_argc = 0;
-char** Path::_argv = nullptr;
+#ifdef _WIN32
+    static const std::string g_path_separator = "\\";
+#else
+    static const std::string g_path_separator = "/";
+#endif
 
-std::string Path::getHomeDirectory()
+static int g_argc = 0;
+
+static char** g_argv = nullptr;
+
+std::mutex g_argc_mutex;
+std::mutex g_argv_mutex;
+
+std::string trim(const std::string& input_path) {
+
+    std::string output_path(input_path);
+    output_path.erase(output_path.find_last_not_of(" \n\r\t")+1);
+    output_path.erase(0,output_path.find_first_not_of(" \n\r\t"));
+
+    return output_path;
+}
+
+std::string dirname(const std::string& input_path) {
+
+    std::string output_path = trim(input_path);
+
+    output_path.erase(output_path.find_last_of(g_path_separator),output_path.size()-1);
+
+    return output_path;
+}
+
+void setArgc(int argc)
 {
-    const char* home = getenv("HOME");
+    std::lock_guard<std::mutex> guard(g_argc_mutex);
+    g_argc = argc;
+}
+
+void setArgv(char **argv)
+{
+    std::lock_guard<std::mutex> guard(g_argv_mutex);
+    g_argv = argv;
+}
+
+std::string homeDirectory()
+{
+    const char* home_envvar = getenv("HOME");
+
     // Build the home directory from HOME environment variable
-    if (home) {
-        return std::string(home);
+    if (home_envvar) {
+        return std::string(home_envvar);
     }
     // If HOME is not defined (on Windows it may happen) define the home
     // directory from USERPROFILE environment variable
     else {
-        home = getenv("USERPROFILE");
-        if (home)
-            return std::string(home);
+        home_envvar = getenv("USERPROFILE");
+        if (home_envvar)
+            return std::string(home_envvar);
         // If the USERPROFILE environment variable is not defined try to build
         // a home directory from the HOMEDRIVE and HOMEPATH environment variable
         else {
             char const *hdrive = getenv("HOMEDRIVE");
             char const *hpath = getenv("HOMEPATH");
             if (hdrive && hpath) {
-                boost::filesystem::path p(hdrive);
-                p/=hpath;
-                return p.string();
+                std::string home(hdrive);
+                home += g_path_separator;
+                home += hpath;
+                return home;
             }
         }
     }
@@ -41,92 +84,59 @@ std::string Path::getHomeDirectory()
     throw std::runtime_error("The home directory could not be defined");
 }
 
-std::string Path::expandUser(std::string path)
+std::string buildPath(const std::string& root, const std::vector<std::string>& paths)
 {
-    // the path must start with ~ to be user expanded.
-    if (!path.empty() && path[0] == '~') {
-        std::string home(getHomeDirectory());
-        path.replace(0, 1, home);
-    }
+    auto append_path = [](std::string base, std::string p){return base+g_path_separator+p;};
+
+    std::string path = std::accumulate(paths.begin(),paths.end(),root,append_path);
+
     return path;
 }
 
-std::string Path::getApplicationDataPath()
+std::string applicationDataPath()
 {
-    std::vector<std::string> possible_locations = {
+    std::vector<std::string> possible_paths = {
         "",
         ".",
         "nsxtool",
-        getHomeDirectory(),
-        getHomeDirectory() + "/nsxtool",
-        g_resourcesDir,
-        "/usr/share/nsxtool",
-        "/usr/local/share/nsxtool"
+        homeDirectory(),
+        homeDirectory() + g_path_separator + "nsxtool",
+        g_application_data_path
     };
 
     // check for environment variable NSX_ROOT_DIR
     const char* nsx_root_dir = getenv("NSX_ROOT_DIR");
 
     // if defined, it takes highest precedence
-    if ( nsx_root_dir) {
-        possible_locations.insert(possible_locations.begin(), nsx_root_dir);
+    if (nsx_root_dir) {
+        possible_paths.insert(possible_paths.begin(), nsx_root_dir);
     }
+
     // add location of executable if possible
-    if ( _argc > 0 && _argv && _argv[0]) {
-        boost::filesystem::path p(_argv[0]);
-        p.remove_filename();
-        possible_locations.insert(possible_locations.begin(), p.string());
+    if (g_argc > 0 && g_argv && g_argv[0]) {
+        std::string path = dirname(g_argv[0]);
+        possible_paths.insert(possible_paths.begin(), path);
     }
 
-    std::string match = "";
+    std::vector<std::string> d19_relative_path = {"instruments","D19.yaml"};
 
-    for (auto&& path: possible_locations) {
-        std::string path_str = boost::filesystem::path(path + "/instruments/D19.yaml").string();
+    for (auto&& path : possible_paths) {
+        std::string d19_file = buildPath(path,d19_relative_path);
 
-        std::ifstream file(path_str, std::ios_base::in);
-        if ( file.good() ) {
-            match = path;
-            break;
+        std::ifstream file(d19_file, std::ios_base::in);
+        if (file.good()) {
+            file.close();
+            return path;
         }
     }
 
-    // did not find a match
-    if ( match == "" ) {
-        throw std::runtime_error("The application data directory could not be defined");
-    }
-    return boost::filesystem::path(match).string();
+    throw std::runtime_error("The application data directory could not be defined");
 }
 
-
-std::string Path::getDiffractometersPath()
+std::string diffractometersPath()
 {
-    boost::filesystem::path p(getResourcesDir());
-    p /= "instruments";
-    return p.string();
-}
-
-std::string Path::getDataBasesPath(const std::string& database)
-{
-    boost::filesystem::path p(getResourcesDir());
-    p /= "databases";
-    p /= database;
-    return p.string();
-}
-
-std::string Path::getResourcesDir()
-{
-    static std::string resourcesDir;
-
-    if ( resourcesDir == "") {
-        resourcesDir = getApplicationDataPath();
-    }
-    return boost::filesystem::path(resourcesDir).string();
-}
-
-void Path::setArgv(int argc, char **argv)
-{
-    _argc = argc;
-    _argv = argv;
+    std::string path = applicationDataPath() + g_path_separator + "instruments";
+    return path;
 }
 
 } // end namespace nsx

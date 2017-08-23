@@ -6,7 +6,6 @@
 #include "../data/MetaData.h"
 #include "../instrument/Experiment.h"
 #include "../instrument/Diffractometer.h"
-#include "../instrument/DiffractometerStore.h"
 #include "../instrument/Monochromator.h"
 #include "../instrument/Source.h"
 
@@ -25,8 +24,7 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
   _diffractometerName(diffractometerName),
   _data()
 {
-    DiffractometerStore* ds=DiffractometerStore::Instance();
-    _diffractometer = sptrDiffractometer(ds->buildDiffractometer(diffractometerName));
+    _diffractometer = Diffractometer::build(diffractometerName);
 }
 
 Experiment::Experiment(const std::string& diffractometerName)
@@ -34,8 +32,7 @@ Experiment::Experiment(const std::string& diffractometerName)
   _diffractometerName(diffractometerName),
   _data()
 {
-    DiffractometerStore* ds=DiffractometerStore::Instance();
-    _diffractometer = sptrDiffractometer(ds->buildDiffractometer(diffractometerName));
+    _diffractometer = Diffractometer::build(diffractometerName);
 }
 
 Experiment::~Experiment()
