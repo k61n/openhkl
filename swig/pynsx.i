@@ -111,7 +111,6 @@ namespace property_tree=boost::property_tree;
 
 #include "crystal/PeakPredictor.h"
 #include "crystal/UBMinimizer.h"
-#include "crystal/SpaceGroupSymbols.h"
 #include "crystal/AutoIndexer.h"
 #include "crystal/Profile.h"
 #include "crystal/Intensity.h"
@@ -447,7 +446,6 @@ namespace nsx {
 %include "utils/ProgressHandler.h"
 %include "crystal/PeakPredictor.h"
 %include "crystal/UBMinimizer.h"
-%include "crystal/SpaceGroupSymbols.h"
 %include "geometry/Basis.h"
 %include "crystal/Profile.h"
 %include "crystal/Intensity.h"

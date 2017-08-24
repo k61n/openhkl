@@ -455,7 +455,7 @@ void UnitCell::setSpaceGroup(const std::string& symbol)
 
 std::string UnitCell::getSpaceGroup() const
 {
-    return _group.getSymbol();
+    return _group.symbol();
 }
 
 void UnitCell::setName(const std::string& name)

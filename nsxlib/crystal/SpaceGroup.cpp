@@ -28,14 +28,13 @@
  */
 
 #include <algorithm>
+#include <iterator>
 #include <stdexcept>
+#include <sstream>
 #include <vector>
-
-#include <boost/algorithm/string.hpp>
 
 #include "SpaceGroup.h"
 
-#include "../crystal/SpaceGroupSymbols.h"
 #include "../crystal/Peak3D.h"
 #include "../utils/StringIO.h"
 
@@ -275,19 +274,31 @@ std::vector<SpaceGroupSymmetry> SpaceGroup::symmetry_table =
     {"I a -3 d"," x+1/2,y+1/2,z+1/2; -x+1/2,-y,z+1/2; -x,y+1/2,-z+1/2; z,x,y; y+3/4,x+1/4,-z+1/4; -x,-y,-z"}
 };
 
+std::vector<std::string> SpaceGroup::symbols()
+{
+    std::vector<std::string> symbols;
+    symbols.reserve(symmetry_table.size());
+    auto get_symbol = [](const SpaceGroupSymmetry& s) -> std::string {return s.first;};
+    std::transform(symmetry_table.begin(),symmetry_table.end(),std::back_inserter(symbols),get_symbol);
+
+    return symbols;
+}
+
 SpaceGroup::SpaceGroup(std::string symbol)
 {
     symbol = compress(symbol);
     symbol = trim(symbol);
 
-    auto find_symbol = [&symbol](const std::pair<std::string,std::string>& s){return s.first.compare(symbol)==0;};
+    _symbol = std::move(symbol);
+
+    reduceSymbol();
+
+    auto find_symbol = [this](const std::pair<std::string,std::string>& s){return s.first.compare(this->_symbol)==0;};
     auto it = std::find_if(symmetry_table.begin(),symmetry_table.end(),find_symbol);
 
     if (it == symmetry_table.end()) {
-        throw std::runtime_error("Unknown space group: " + symbol);
+        throw std::runtime_error("Unknown space group: " + _symbol);
     }
-
-    _symbol = std::move(symbol);
 
     _generators = it->second;
 
@@ -304,7 +315,7 @@ SpaceGroup& SpaceGroup::operator=(const SpaceGroup& other)
     return *this;
 }
 
-char SpaceGroup::getBravaisType() const
+char SpaceGroup::bravaisType() const
 {
     std::vector<int> nrot(13,0);
     int nPureTrans(0);
@@ -361,19 +372,20 @@ double SpaceGroup::fractionExtinct(std::vector<std::array<double, 3> > hkl)
     return double(extinct) / double(total);
 }
 
-std::string SpaceGroup::getBravaisTypeSymbol() const
+std::string SpaceGroup::bravaisTypeSymbol() const
 {
     std::string bravais;
-    bravais += getBravaisType();
-    bravais += getSymbol()[0];
+    bravais += bravaisType();
+    bravais += _symbol[0];
+
     return bravais;
 }
 
-int SpaceGroup::getID() const
+int SpaceGroup::id() const
 {
-    SpaceGroupSymbols* sg = SpaceGroupSymbols::Instance();
-    auto&& full_symbol = sg->getFullSymbol(_symbol);
-    return sg->getID(full_symbol);
+    auto find_symbol = [this](const std::pair<std::string,std::string>& s){return s.first.compare(this->_symbol)==0;};
+    auto it = std::find_if(symmetry_table.begin(),symmetry_table.end(),find_symbol);
+    return std::distance(symmetry_table.begin(),it);
 }
 
 std::vector<PeakList> SpaceGroup::findEquivalences(const PeakList &peak_list, bool friedel) const
@@ -421,7 +433,7 @@ bool SpaceGroup::isCentrosymmetric() const
     return false;
 }
 
-const std::string& SpaceGroup::getSymbol() const
+const std::string& SpaceGroup::symbol() const
 {
     return _symbol;
 }
@@ -431,7 +443,7 @@ const std::string& SpaceGroup::generators() const
     return _generators;
 }
 
-const SymOpList& SpaceGroup::getGroupElements() const
+const SymOpList& SpaceGroup::groupElements() const
 {
     return _groupElements;
 }
@@ -440,8 +452,7 @@ void SpaceGroup::generateGroupElements()
 {
     _groupElements.clear();
     SymOpList generators;
-    std::vector<std::string> gens;
-    boost::split(gens, _generators, boost::is_any_of(";"));
+    std::vector<std::string> gens = split(_generators,";");
     generators.reserve(gens.size()+1);
     generators.emplace_back(SymOp(affineTransformation::Identity()));
 
@@ -512,7 +523,7 @@ bool SpaceGroup::isEquivalent(double h1, double k1, double l1, double h2, double
 
 bool SpaceGroup::isEquivalent(const Eigen::Vector3d& a, const Eigen::Vector3d& b, bool friedel) const
 {
-    const auto& elements = getGroupElements();
+    const auto& elements = groupElements();
     const double eps = 1e-6;
 
     // note: since rotation preserves the norm, we can reject early:
@@ -541,7 +552,7 @@ bool SpaceGroup::isEquivalent(const Eigen::Vector3d& a, const Eigen::Vector3d& b
 
 bool SpaceGroup::isFriedelEquivalent(double h1, double k1, double l1, double h2, double k2, double l2) const
 {
-    const auto& elements = getGroupElements();
+    const auto& elements = _groupElements;
     Eigen::Vector3d rotated;
     for (const auto& element : elements) {
         // todo(jonathan): check that this edit is correct!
@@ -557,6 +568,56 @@ bool SpaceGroup::isFriedelEquivalent(double h1, double k1, double l1, double h2,
         }
     }
     return false;
+}
+
+void SpaceGroup::reduceSymbol()
+{
+    // This is the only get when the separate 1 has to be kept
+    if (_symbol == "P 1")
+        return;
+    else if (_symbol == "P 3 1 m")
+        return;
+    else if (_symbol == "P 3 m 1")
+        return;
+    else if (_symbol == "P -3 1 m")
+        return;
+    else if (_symbol == "P -3 m 1")
+        return;
+    else if (_symbol == "P 3 1 c")
+        return;
+    else if (_symbol == "P 3 c 1")
+        return;
+    else if (_symbol == "P -3 1 c")
+        return;
+    else if (_symbol == "P -3 c 1")
+        return;
+    else if (_symbol == "P 32 2 1")
+        return;
+    else if (_symbol == "P 32 1 2")
+        return;
+    else if (_symbol == "P 31 1 2")
+        return;
+    else if (_symbol == "P 31 2 1")
+        return;
+    else if (_symbol == "P 3 1 2")
+        return;
+    else if (_symbol == "P 3 2 1")
+        return;
+
+    // Otherwise throw away every separate 1 to produce the short name for Bravais
+    // see https://en.wikipedia.org/wiki/List_of_space_groups
+    std::istringstream iss(_symbol);
+    std::string token;
+    std::vector<std::string> tokens;
+    while (std::getline(iss, token, ' '))
+    {
+        if (token.compare("1")==0)
+            continue;
+        tokens.push_back(token);
+    }
+
+    _symbol = join(tokens," ");
+
 }
 
 } // end namespace nsx

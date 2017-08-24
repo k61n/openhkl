@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE(Test_MergedPeak)
     cell.transform(P);
     BOOST_CHECK_EQUAL(cell.getBravaisTypeSymbol(), std::string("oP"));
 
-    cell.setSpaceGroup(group.getSymbol());
+    cell.setSpaceGroup(group.symbol());
 
     auto reflections = cell.generateReflectionsInShell(2.1, 50.0, 2.665);
     
@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE(Test_MergedPeak)
     auto peaks1 = data1.getPeaks();
     auto peaks2 = data2.getPeaks();
 
-    const int group_size = group.getGroupElements().size();
+    const int group_size = group.groupElements().size();
 
     BOOST_CHECK_EQUAL(peaks1.size(), 14493);
     BOOST_CHECK_EQUAL(peaks2.size(), 26897);
