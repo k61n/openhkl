@@ -43,22 +43,26 @@
 namespace nsx {
 
 class SpaceGroup {
+
+public:
+
+    static std::vector<SpaceGroupSymmetry> symmetry_table;
+
+    static std::vector<std::string> symbols();
+
 public:
     //! Construct a space group from its IT symbol. Lookup in the IUCR table
-    SpaceGroup(const std::string& symbol);
-    //! Construct a space group from a string containing the generators given in the Jones notation and separated
-    //! by ";" characters
-    SpaceGroup(std::string symbol, std::string generators);
+    SpaceGroup(std::string symbol);
     //! Copy
     SpaceGroup(const SpaceGroup& other) = default;
     //! Assignment
     SpaceGroup& operator=(const SpaceGroup& other);
     //! Get the IT symbol for this space group
-    const std::string& getSymbol() const;
+    const std::string& symbol() const;
     //! Get the string containing the generators (in the Jones notation), separated bt ";' character
-    const std::string& getGenerators() const;
+    const std::string& generators() const;
     //! Get a vector containing the Symmetry operations for this space group
-    const SymOpList& getGroupElements() const;
+    const SymOpList& groupElements() const;
     //! Determine whether a h,k,l reflection is forbidden
     bool isExtinct(double h, double k, double l) const;
     //! Return true if centrosymmetric
@@ -66,13 +70,13 @@ public:
     //! Print to a stream
     void print(std::ostream& os) const;
     //! Return the type of cell (triclinic, monoclinic ...)
-    char getBravaisType() const;
+    char bravaisType() const;
     //! Return the percentage of extinct reflections
     double fractionExtinct(std::vector<std::array<double, 3>> hkl);
     //! Return the Bravais type symbol
-    std::string getBravaisTypeSymbol() const;
+    std::string bravaisTypeSymbol() const;
     //! Return the ID of the space group
-    int getID() const;
+    int id() const;
     //! Find equivalences in a list of peaks
     std::vector<PeakList>
     findEquivalences(const PeakList& peak_list, bool friedel=true) const;
@@ -84,6 +88,9 @@ public:
     bool isFriedelEquivalent(double h1, double k1, double l1, double h2, double k2, double l2) const;
 
 private:
+
+    void reduceSymbol();
+
     void generateGroupElements();
 
     std::string _symbol;

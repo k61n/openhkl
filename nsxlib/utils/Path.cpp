@@ -7,6 +7,7 @@
 #include "Path.h"
 
 #include "NSXConfig.h"
+#include "StringIO.h"
 
 namespace nsx {
 
@@ -22,16 +23,6 @@ static char** g_argv = nullptr;
 
 std::mutex g_argc_mutex;
 std::mutex g_argv_mutex;
-
-std::string trim(const std::string& input_path)
-{
-
-    std::string output_path(input_path);
-    output_path.erase(output_path.find_last_not_of(" \n\r\t")+1);
-    output_path.erase(0,output_path.find_first_not_of(" \n\r\t"));
-
-    return output_path;
-}
 
 std::string dirname(const std::string& input_path)
 {

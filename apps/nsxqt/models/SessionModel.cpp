@@ -66,7 +66,6 @@
 #include <nsxlib/crystal/ResolutionShell.h>
 #include <nsxlib/statistics/RFactor.h>
 #include <nsxlib/crystal/SpaceGroup.h>
-#include <nsxlib/crystal/SpaceGroupSymbols.h>
 #include <nsxlib/data/DataReaderFactory.h>
 #include <nsxlib/data/MergedData.h>
 #include <nsxlib/data/PeakFinder.h>

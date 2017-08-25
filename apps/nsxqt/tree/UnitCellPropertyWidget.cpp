@@ -5,7 +5,7 @@
 #include <nsxlib/chemistry/ChemistryTypes.h>
 #include <nsxlib/chemistry/Material.h>
 #include <nsxlib/crystal/Peak3D.h>
-#include <nsxlib/crystal/SpaceGroupSymbols.h>
+#include <nsxlib/crystal/SpaceGroup.h>
 #include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/instrument/Gonio.h>
@@ -50,8 +50,7 @@ UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *par
 
     updateCellParameters(cell);
 
-    nsx::SpaceGroupSymbols* sgs=nsx::SpaceGroupSymbols::Instance();
-    std::vector<std::string> symbols=sgs->getAllSymbols();
+    auto&& symbols = nsx::SpaceGroup::symbols();
 
     for (const auto& symbol : symbols)
         ui->comboBox->addItem(QString::fromStdString(symbol));

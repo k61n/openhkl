@@ -92,7 +92,6 @@ Intensity MergedPeak::getIntensity() const
 
 size_t MergedPeak::redundancy() const
 {
-    //assert(_peaks.size() <= (_friedel ? 2:1) * _grp.getGroupElements().size());
     return _peaks.size();
 }
 
@@ -109,7 +108,7 @@ void MergedPeak::determineRepresentativeHKL()
     Eigen::Vector3d best_hkl = _hkl.cast<double>();
     std::vector<Eigen::Vector3d> equivs;
 
-    for (auto&& g: _grp.getGroupElements()) {
+    for (auto&& g: _grp.groupElements()) {
         equivs.emplace_back(g.getRotationPart()*best_hkl);
 
         if (_friedel) {

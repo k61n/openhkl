@@ -67,7 +67,7 @@ int run_test()
         std::string bravais;
 
         try {
-            bravais = nsx::SpaceGroup(symbol).getBravaisTypeSymbol();
+            bravais = nsx::SpaceGroup(symbol).bravaisTypeSymbol();
         }
         catch(...) {
             continue; // unknown space group

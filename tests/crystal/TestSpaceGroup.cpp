@@ -12,7 +12,6 @@
 
 BOOST_AUTO_TEST_CASE(Test_SpaceGroup)
 {
-
     std::map<std::string,unsigned int> nElementsPerSpaceGroup=
     {
         {"P 1",         1},
@@ -247,10 +246,16 @@ BOOST_AUTO_TEST_CASE(Test_SpaceGroup)
         {"I a -3 d",   96},
     };
 
+    BOOST_CHECK_EQUAL(nsx::SpaceGroup::symmetry_table.size(), 230);
+
+    nsx::SpaceGroup sg_pnma("P n m a");
+    // Check that string generator strings are OK s
+    BOOST_CHECK(sg_pnma.generators().compare(" -x+1/2,-y,z+1/2; -x,y+1/2,-z; -x,-y,-z")==0);
+
     for (const auto& p : nElementsPerSpaceGroup)
     {
         nsx::SpaceGroup sg(p.first);
-        BOOST_CHECK_EQUAL(sg.getGroupElements().size(),p.second);
+        BOOST_CHECK_EQUAL(sg.groupElements().size(),p.second);
     }
 
     // Test extinction conditions
@@ -279,37 +284,37 @@ BOOST_AUTO_TEST_CASE(Test_SpaceGroup)
     BOOST_CHECK(!sg2.isExtinct(2,-2,0));
 
     nsx::SpaceGroup sg3("I m -3 m");
-    BOOST_CHECK(sg3.getBravaisType()=='c');
+    BOOST_CHECK(sg3.bravaisType()=='c');
 
     nsx::SpaceGroup sg4("P n m a");
-    BOOST_CHECK(sg4.getBravaisType()=='o');
+    BOOST_CHECK(sg4.bravaisType()=='o');
 
     nsx::SpaceGroup sg5("F d -3 m");
-    BOOST_CHECK(sg5.getBravaisType()=='c');
+    BOOST_CHECK(sg5.bravaisType()=='c');
 
     nsx::SpaceGroup sg6("C 2/m");
-    BOOST_CHECK(sg6.getBravaisType()=='m');
+    BOOST_CHECK(sg6.bravaisType()=='m');
 
     nsx::SpaceGroup sg7("P 21/c");
-    BOOST_CHECK(sg7.getBravaisType()=='m');
+    BOOST_CHECK(sg7.bravaisType()=='m');
 
     nsx::SpaceGroup sg8("P 4 m m");
-    BOOST_CHECK(sg8.getBravaisType()=='t');
+    BOOST_CHECK(sg8.bravaisType()=='t');
 
     nsx::SpaceGroup sg9("P 4/m m m");
-    BOOST_CHECK(sg9.getBravaisType()=='t');
+    BOOST_CHECK(sg9.bravaisType()=='t');
 
     nsx::SpaceGroup sg10("P 63/m m c");
-    BOOST_CHECK(sg10.getBravaisType()=='h');
+    BOOST_CHECK(sg10.bravaisType()=='h');
 
     nsx::SpaceGroup sg11("P 3 2 1");
-    BOOST_CHECK(sg11.getBravaisType()=='h');
+    BOOST_CHECK(sg11.bravaisType()=='h');
 
     nsx::SpaceGroup sg12("P -1");
-    BOOST_CHECK(sg12.getBravaisType()=='a');
+    BOOST_CHECK(sg12.bravaisType()=='a');
 
     nsx::SpaceGroup sg13("R -3 c");
-    BOOST_CHECK(sg13.getBravaisType()=='h');
+    BOOST_CHECK(sg13.bravaisType()=='h');
 
     // Test extinction conditions
     nsx::SpaceGroup sg14("P 21 21 21");

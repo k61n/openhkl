@@ -20,7 +20,6 @@
 #include <nsxlib/crystal/Peak3D.h>
 #include <nsxlib/statistics/RFactor.h>
 #include <nsxlib/crystal/SpaceGroup.h>
-#include <nsxlib/crystal/SpaceGroupSymbols.h>
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/mathematics/Minimizer.h>
 #include <nsxlib/instrument/Sample.h>

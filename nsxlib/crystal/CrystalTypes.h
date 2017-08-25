@@ -33,6 +33,8 @@ using RecordList   = std::vector<PeakRecord>;
 using SymOpList    = std::vector<SymOp>;
 using UnitCellList = std::vector<sptrUnitCell>;
 
+using SpaceGroupSymmetry = std::pair<std::string,std::string>;
+
 using AutoIndexingSoluce = std::pair<UnitCell,double>;
 
 } // end namespace nsx

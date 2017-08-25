@@ -61,7 +61,7 @@ BOOST_AUTO_TEST_CASE(Test_CC)
     cell.transform(P);
     BOOST_CHECK_EQUAL(cell.getBravaisTypeSymbol(), std::string("oP"));
 
-    cell.setSpaceGroup(group.getSymbol());
+    cell.setSpaceGroup(group.symbol());
 
     auto reflections = cell.generateReflectionsInShell(2.1, 50.0, 2.665);
     
@@ -75,7 +75,7 @@ BOOST_AUTO_TEST_CASE(Test_CC)
 
     double I_sum = 0.0;
     double I2_sum = 0.0;
-    const double n = group.getGroupElements().size() * 2.0;
+    const double n = group.groupElements().size() * 2.0;
     unsigned int num_raw_peaks = 0;
 
     for(auto&& peak: data0.getPeaks()) {

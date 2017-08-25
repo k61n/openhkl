@@ -20,7 +20,6 @@
 #include <nsxlib/crystal/NiggliReduction.h>
 #include <nsxlib/crystal/Peak3D.h>
 #include <nsxlib/crystal/SpaceGroup.h>
-#include <nsxlib/crystal/SpaceGroupSymbols.h>
 #include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/data/IFrameIterator.h>
 #include <nsxlib/data/PeakFinder.h>

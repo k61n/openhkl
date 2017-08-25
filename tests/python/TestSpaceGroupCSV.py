@@ -6,11 +6,10 @@ import unittest
 class TestSpaceGroupCSV(unittest.TestCase):
 
     def test(self):
-        table = nsx.SpaceGroupSymbols()
         num_rows = 0
 
         counts = map
-        symbols = table.getAllSymbols()
+        symbols = nsx.SpaceGroup.symbols()
         for symbol in symbols:
             # syntax error
             #counts([symbol]) = 0

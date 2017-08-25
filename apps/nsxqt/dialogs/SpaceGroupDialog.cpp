@@ -20,7 +20,6 @@
 #include <nsxlib/crystal/Peak3D.h>
 #include <nsxlib/statistics/RFactor.h>
 #include <nsxlib/crystal/SpaceGroup.h>
-#include <nsxlib/crystal/SpaceGroupSymbols.h>
 #include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/instrument/Diffractometer.h>
@@ -61,8 +60,7 @@ std::string SpaceGroupDialog::getSelectedGroup()
 
 void SpaceGroupDialog::evaluateSpaceGroups()
 {
-    nsx::SpaceGroupSymbols* spaceGroupSymbols = nsx::SpaceGroupSymbols::Instance();
-    std::vector<std::string> symbols = spaceGroupSymbols->getAllSymbols();
+    auto&& symbols = nsx::SpaceGroup::symbols();
 
     std::vector<std::array<double, 3>> hkls;
     nsx::PeakList peak_list;
@@ -113,7 +111,7 @@ void SpaceGroupDialog::evaluateSpaceGroups()
 
         // space group not compatible with bravais type
         // todo: what about multiple crystals??
-        if (group.getBravaisTypeSymbol() != bravais)
+        if (group.bravaisTypeSymbol() != bravais)
             continue;
 
         std::tuple<std::string, double> entry;
@@ -138,7 +136,7 @@ void SpaceGroupDialog::evaluateSpaceGroups()
         nsx::SpaceGroup grp_a(std::get<0>(a)), grp_b(std::get<0>(b));
 
         // sort by group ID
-        return grp_a.getID() < grp_b.getID();
+        return grp_a.id() < grp_b.id();
     };
 
     std::sort(_groups.begin(), _groups.end(), compare_fn);
@@ -165,8 +163,8 @@ void SpaceGroupDialog::buildTable()
         nsx::SpaceGroup grp(symbol);
 
         QStandardItem* col0 = new QStandardItem(QString::fromStdString(symbol));
-        QStandardItem* col1 = new QStandardItem(QString::number(grp.getID()));
-        QStandardItem* col2 = new QStandardItem(QString::fromStdString(grp.getBravaisTypeSymbol()));
+        QStandardItem* col1 = new QStandardItem(QString::number(grp.id()));
+        QStandardItem* col2 = new QStandardItem(QString::fromStdString(grp.bravaisTypeSymbol()));
         QStandardItem* col3 = new QStandardItem(QString::number(agreement));
 
         model->setItem(row,0,col0);
