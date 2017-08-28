@@ -15,3 +15,4 @@ void StdStreamWrapper::print(const std::string& message)
 }
 
 } // end namespace nsx
+
