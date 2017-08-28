@@ -31,3 +31,4 @@ void AggregateStreamWrapper::addWrapper(IStreamWrapper* wrapper)
 }
 
 } // end namespace nsx
+
