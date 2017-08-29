@@ -37,7 +37,7 @@ Logger& Logger::operator<<(T&& x) {
     return *this;
 }
 
-AggregateStreamWrapper* getWrapper();
+AggregateStreamWrapper* wrapper();
 
 extern std::function<Logger()> debug;
 extern std::function<Logger()> info;
