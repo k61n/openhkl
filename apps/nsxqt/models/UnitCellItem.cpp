@@ -1,13 +1,11 @@
-#include <QDebug>
-
 #include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/instrument/Experiment.h>
 #include <nsxlib/instrument/Sample.h>
+#include <nsxlib/logger/Logger.h>
 
 #include "dialogs/DialogUnitCellParameters.h"
 #include "dialogs/DialogTransformationMatrix.h"
-#include "Logger.h"
 #include "models/UnitCellItem.h"
 #include "tree/UnitCellPropertyWidget.h"
 
@@ -41,7 +39,7 @@ nsx::sptrUnitCell UnitCellItem::getUnitCell()
 
 void UnitCellItem::info() const
 {
-    qDebug() << "" << *_cell;
+    nsx::debug() << "" << *_cell;
 }
 
 void UnitCellItem::openChangeUnitCellDialog()

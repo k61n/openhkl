@@ -3,7 +3,6 @@
 #include <iomanip>
 #include <limits>
 
-#include <QDebug>
 #include <QIcon>
 #include <QString>
 
@@ -11,6 +10,7 @@
 #include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/data/MetaData.h>
+#include <nsxlib/logger/Logger.h>
 
 #include "CollectedPeaksModel.h"
 #include "views/ProgressView.h"
@@ -335,7 +335,7 @@ void CollectedPeaksModel::sortEquivalents()
 
     // If no unit cell defined for the peak collection, return.
     if (ptrcell == nullptr) {
-        qCritical() << "No unit cell defined for the peaks";
+        nsx::error() << "No unit cell defined for the peaks";
         return;
     }
 
@@ -372,11 +372,11 @@ void CollectedPeaksModel::normalizeToMonitor(double factor)
 void CollectedPeaksModel::writeShelX(const std::string& filename, QModelIndexList indices)
 {
     if (filename.empty()) {
-        qCritical()<<"Empty filename";
+        nsx::error()<<"Empty filename";
         return;
     }
     if (_peaks.empty()) {
-        qCritical()<<"No peaks in the table";
+        nsx::error()<<"No peaks in the table";
         return;
     }
     if (indices.isEmpty()) {
@@ -387,7 +387,7 @@ void CollectedPeaksModel::writeShelX(const std::string& filename, QModelIndexLis
 
     std::fstream file(filename,std::ios::out);
     if (!file.is_open()) {
-        qCritical()<<"Error writing to this file, please check write permisions";
+        nsx::error()<<"Error writing to this file, please check write permisions";
         return;
     }
 
@@ -399,7 +399,7 @@ void CollectedPeaksModel::writeShelX(const std::string& filename, QModelIndexLis
         auto basis = peak->getActiveUnitCell();
 
         if (basis == nullptr) {
-            qCritical()<<QString("No unit cell defined for peak %1. It will not be written to ShelX file").arg(index.row()+1);
+            nsx::error()<<"No unit cell defined for peak " << index.row()+1 << ". It will not be written to ShelX file";
             continue;
         }
 
@@ -438,11 +438,11 @@ void CollectedPeaksModel::writeShelX(const std::string& filename, QModelIndexLis
 void CollectedPeaksModel::writeFullProf(const std::string& filename, QModelIndexList indices)
 {
     if (filename.empty()) {
-        qCritical()<<"Empty filename";
+        nsx::error()<<"Empty filename";
         return;
     }
     if (_peaks.empty()) {
-        qCritical()<<"No peaks in the table";
+        nsx::error()<<"No peaks in the table";
         return;
     }
     if (indices.isEmpty()) {
@@ -453,7 +453,7 @@ void CollectedPeaksModel::writeFullProf(const std::string& filename, QModelIndex
     std::fstream file(filename,std::ios::out);
 
     if (!file.is_open()) {
-        qCritical()<<"Error writing to this file, please check write permisions";
+        nsx::error()<<"Error writing to this file, please check write permisions";
         return;
     }
 
@@ -466,7 +466,7 @@ void CollectedPeaksModel::writeFullProf(const std::string& filename, QModelIndex
         auto peak = _peaks[index.row()];
         auto basis = peak->getActiveUnitCell();
         if (!basis) {
-            qCritical()<<QString("No unit cell defined for peak %1. It will not be written to FullProf file").arg(index.row()+1);
+            nsx::error()<<"No unit cell defined for peak " << index.row()+1 << ". It will not be written to FullProf file";
             continue;
         }
         if (peak->isSelected() && !peak->isMasked()) {
