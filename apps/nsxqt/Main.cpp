@@ -16,7 +16,7 @@
 
 int main(int argc, char* argv[])
 {
-    auto logfile = std::ofstream("nsxqt_log.txt");
+    std::ofstream logfile("nsxqt_log.txt");
     nsx::wrapper()->addWrapper(new nsx::StdStreamWrapper(logfile));
 
     nsx::setArgc(argc);
