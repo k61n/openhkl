@@ -19,7 +19,7 @@ DialogExperiment::DialogExperiment(QWidget *parent) : QDialog(parent), ui(new Ui
     QDir diffractometersDirectory(QString::fromStdString(nsx::applicationDataPath()));
     diffractometersDirectory.cd("instruments");
 
-    QStringList diffractometerFiles = diffractometersDirectory.entryList({"*.yaml"}, QDir::Files, QDir::Name);
+    QStringList diffractometerFiles = diffractometersDirectory.entryList({"*.yml"}, QDir::Files, QDir::Name);
 
     for (auto&& diffractometer : diffractometerFiles)
         ui->instrument->addItem(QFileInfo(diffractometer).baseName());

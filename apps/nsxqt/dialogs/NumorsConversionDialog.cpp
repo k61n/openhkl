@@ -32,7 +32,7 @@ NumorsConversionDialog::NumorsConversionDialog(QWidget *parent)
     QDir diffractometersDirectory(QString::fromStdString(nsx::applicationDataPath()));
     diffractometersDirectory.cd("instruments");
 
-    QStringList diffractometerFiles = diffractometersDirectory.entryList({"*.yaml"}, QDir::Files, QDir::Name);
+    QStringList diffractometerFiles = diffractometersDirectory.entryList({"*.yml"}, QDir::Files, QDir::Name);
 
     // Add the available instruments to the combo box
     for (auto&& diffractometer : diffractometerFiles)
