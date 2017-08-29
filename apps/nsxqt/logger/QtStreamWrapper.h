@@ -21,3 +21,4 @@ private:
     // The widget that will receive string messages
     QTextEdit* _notebook;
 };
+

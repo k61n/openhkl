@@ -20,3 +20,4 @@ void QtStreamWrapper::print(const std::string& message)
     os << message;
     _notebook->append(QString::fromStdString(os.str()));
 }
+
