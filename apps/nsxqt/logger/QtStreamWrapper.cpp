@@ -1,21 +1,16 @@
-/*
- * QtStreamWrapper.cpp
- *
- *  Created on: Aug 29, 2017
- *      Author: pellegrini
- */
+#include "QtStreamWrapper.h"
 
-#include <logger/QtStreamWrapper.h>
+#include <QDebug>
 
-namespace nsx {
-
-QtStreamWrapper::QtStreamWrapper() {
-    // TODO Auto-generated constructor stub
-
+QtStreamWrapper::QtStreamWrapper() : nsx::IStreamWrapper()
+{
 }
 
-QtStreamWrapper::~QtStreamWrapper() {
-    // TODO Auto-generated destructor stub
+QtStreamWrapper::~QtStreamWrapper()
+{
 }
 
-} /* namespace nsx */
+void QtStreamWrapper::print(const std::string& message)
+{
+    qDebug() << message.c_str();
+}
