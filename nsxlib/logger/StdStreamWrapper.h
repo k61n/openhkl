@@ -22,4 +22,4 @@ private:
     std::ostream& _stream;
 };
 
-} /* namespace nsx */
+} // end namespace nsx

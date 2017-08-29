@@ -14,4 +14,4 @@ void StdStreamWrapper::print(const std::string& message)
     _stream.flush();
 }
 
-} /* namespace nsx */
+} // end namespace nsx

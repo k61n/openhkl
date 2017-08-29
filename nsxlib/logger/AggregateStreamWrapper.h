@@ -23,4 +23,4 @@ private:
 
 };
 
-} /* namespace nsx */
+} // end namespace nsx
