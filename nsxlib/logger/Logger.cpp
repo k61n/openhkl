@@ -28,7 +28,7 @@ Logger::~Logger(){
 
 static AggregateStreamWrapper* g_wrapper = new AggregateStreamWrapper();
 
-AggregateStreamWrapper* getWrapper()
+AggregateStreamWrapper* wrapper()
 {
     return g_wrapper;
 }
