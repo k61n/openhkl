@@ -1,7 +1,6 @@
 #include <ctime>
 #include <vector>
 
-#include <QDebug>
 #include <QGraphicsSceneMouseEvent>
 #include <QKeyEvent>
 #include <QMenu>
@@ -22,6 +21,7 @@
 #include <nsxlib/instrument/Gonio.h>
 #include <nsxlib/instrument/Sample.h>
 #include <nsxlib/instrument/Source.h>
+#include <nsxlib/logger/Logger.h>
 #include <nsxlib/utils/Units.h>
 
 #include "ColorMap.h"
@@ -122,15 +122,6 @@ void DetectorScene::setData(const nsx::sptrDataSet& data, size_t frame)
 
 void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    // jmf debugging
-//    auto the_items = items();
-//    qDebug() << "graphics scene has " << the_items.size() << " items";
-
-//    for (auto&& item: the_items) {
-//        auto rect = item->boundingRect();
-//    }
-
-
     // If no data is loaded, do nothing
     if (!_currentData) {
         return;
@@ -334,7 +325,6 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             }
             else if (auto p=dynamic_cast<MaskGraphicsItem*>(_lastClickedGI)) {
                 // add a new mask
-                qDebug() << "mouse release event> MaskGraphicsItem";
                 auto it = findMask(p);
                 if (it != _masks.end()) {
                     it->second = new nsx::BoxMask(*p->getAABB());
@@ -345,7 +335,6 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
                 update();
                 updateMasks(_currentFrameIndex);
             }else if (auto p=dynamic_cast<EllipseMaskGraphicsItem*>(_lastClickedGI)) {
-                qDebug() << "mouse release event> EllipseMaskGraphicsItem";
                 auto it = findMask(p);
                 if (it != _masks.end()) {
                     it->second = new nsx::EllipseMask(*p->getAABB());
@@ -450,7 +439,7 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
         // Computes the new number of peaks, and if it changes log it
         nPeaksErased -= _peakGraphicsItems.size();
         if (nPeaksErased > 0) {
-            qDebug() << "Removed "<< nPeaksErased << " peaks";
+            nsx::info() << "Removed "<< nPeaksErased << " peaks";
         }
     }
 }
@@ -685,10 +674,10 @@ void DetectorScene::updatePeakCalcs()
             }
         }
     }
-    qDebug() << "number of calculated peaks " << _peakCalcs.size();
+    nsx::info() << "number of calculated peaks " << _peakCalcs.size();
     clock_t end = clock();
-    qDebug() << "ELAPSED TIME = " << static_cast<double>((end-start))/CLOCKS_PER_SEC;
-    qDebug() << "BSP tree depth = " << bspTreeDepth();
+    nsx::info() << "Elapsed time = " << static_cast<double>((end-start))/CLOCKS_PER_SEC;
+    nsx::info() << "BSP tree depth = " << bspTreeDepth();
 }
 
 void DetectorScene::redrawImage()

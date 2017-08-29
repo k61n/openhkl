@@ -6,13 +6,12 @@
 #include <nsxlib/instrument/Gonio.h>
 #include <nsxlib/instrument/Sample.h>
 #include <nsxlib/instrument/Source.h>
+#include <nsxlib/logger/Logger.h>
 #include <nsxlib/utils/Units.h>
 
-#include <QDebug>
 #include <QMessageBox>
 
 #include "../absorption/AbsorptionDialog.h"
-#include "Logger.h"
 #include "../models/SampleShapeItem.h"
 #include "../tree/SampleShapePropertyWidget.h"
 
@@ -53,7 +52,7 @@ void SampleShapePropertyWidget::on_pushButton_LoadMovie_clicked()
             hull.rotate(mat);
             //Convert to m
             hull.scale(nsx::mm);
-            qDebug() << "Coordinates of the Hull at rest:" << hull;
+            nsx::debug() << "Coordinates of the Hull at rest:" << hull;
             setHullProperties();
         }
     }

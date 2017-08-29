@@ -10,7 +10,6 @@
 #include <H5Exception.h>
 
 #include <QAbstractItemView>
-#include <QDebug>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QKeyEvent>
@@ -20,10 +19,10 @@
 #include <QModelIndexList>
 #include <QStandardItem>
 #include <QString>
-#include <QDebug>
 #include <QVector>
 
 #include <nsxlib/instrument/Experiment.h>
+#include <nsxlib/logger/Logger.h>
 
 #include "absorption/AbsorptionDialog.h"
 #include "absorption/MCAbsorptionDialog.h"
@@ -51,7 +50,6 @@
 #include "models/UnitCellItem.h"
 #include "opengl/GLWidget.h"
 #include "opengl/GLSphere.h"
-#include "Logger.h"
 #include "tree/ExperimentTree.h"
 #include "views/ProgressView.h"
 #include "views/PeakTableView.h"
@@ -116,12 +114,12 @@ void ExperimentTree::createNewExperiment()
 
         // If no experiment name is provided, pop up a warning
         if (dlg->getExperimentName().isEmpty()) {
-            qWarning() << "Empty experiment name";
+            nsx::error() << "Empty experiment name";
             return;
         }
     }
     catch(std::exception& e) {
-        qDebug() << "Runtime error: " << e.what();
+        nsx::error() << e.what();
         return;
     }
 
@@ -130,7 +128,7 @@ void ExperimentTree::createNewExperiment()
         _session->addExperiment(dlg->getExperimentName().toStdString(),dlg->getInstrumentName().toStdString());
     }
     catch(const std::runtime_error& e) {
-        qWarning() << e.what();
+        nsx::error() << e.what();
         return;
     }
 }
@@ -387,7 +385,7 @@ void ExperimentTree::computeRFactors()
 
 void ExperimentTree::findFriedelPairs()
 {
-    qDebug() << "findFriedelParis() is not yet implemented!";
+    nsx::error() << "findFriedelParis() is not yet implemented!";
     return;
 
 }

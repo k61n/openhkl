@@ -1,7 +1,3 @@
-// author: Jonathan Fisher
-// j.fisher@fz-juelich.de
-
-#include <QDebug>
 #include <QImage>
 #include <QList>
 #include <QGraphicsPixmapItem>
@@ -17,6 +13,7 @@
 #include <nsxlib/imaging/Convolver.h>
 #include <nsxlib/imaging/ImagingTypes.h>
 #include <nsxlib/imaging/ConvolutionKernel.h>
+#include <nsxlib/logger/Logger.h>
 #include <nsxlib/mathematics/MathematicsTypes.h>
 
 #include "ColorMap.h"
@@ -228,7 +225,7 @@ void DialogConvolve::on_maxCompBox_valueChanged(int arg1)
 void DialogConvolve::on_thresholdComboBox_currentIndexChanged(int index)
 {
     _peakFinder->setThresholdType(index);
-    qDebug() << "threshold type index is " << index;
+    nsx::info() << "threshold type index is " << index;
 }
 
 void DialogConvolve::parameterChanged(QStandardItem *item)

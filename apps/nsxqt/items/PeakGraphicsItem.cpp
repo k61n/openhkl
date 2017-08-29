@@ -1,6 +1,5 @@
 #include <Eigen/Dense>
 
-#include <QDebug>
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 #include <QWidget>

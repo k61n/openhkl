@@ -2,7 +2,6 @@
 #include <fstream>
 #include <sstream>
 
-#include <QDebug>
 #include <QDir>
 #include <QFileDialog>
 #include <QFileInfo>
@@ -13,6 +12,7 @@
 #include <nsxlib/instrument/Experiment.h>
 #include <nsxlib/instrument/RotAxis.h>
 #include <nsxlib/instrument/Gonio.h>
+#include <nsxlib/logger/Logger.h>
 
 #include "AbsorptionDialog.h"
 #include "CrystalScene.h"
@@ -134,8 +134,8 @@ void AbsorptionDialog::readInfoFile(const std::string &filename)
         // Load front image of the movie
         emit loadImage(QString::fromStdString(_imageList[0].second));
     }
-    qDebug() << "Absorption Correction file: " << QString::fromStdString(filename);
-    qDebug() << "Found:" << _imageList.size() << " images";
+    nsx::info() << "absorption correction file: " << filename;
+    nsx::info() << "found:" << _imageList.size() << " images";
     ui->button_calibrateDistance->setEnabled(true);
 }
 
