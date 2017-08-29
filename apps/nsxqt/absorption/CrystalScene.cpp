@@ -1,7 +1,6 @@
 #include <cmath>
 #include <sstream>
 
-#include <QDebug>
 #include <QGraphicsTextItem>
 #include <QMessageBox>
 #include <QMouseEvent>

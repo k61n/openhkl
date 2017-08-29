@@ -1,6 +1,3 @@
-#include <iostream>
-
-#include <QDebug>
 #include <QDir>
 #include <QDirModel>
 #include <QFileDialog>
@@ -15,6 +12,7 @@
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/instrument/InstrumentTypes.h>
+#include <nsxlib/logger/Logger.h>
 #include <nsxlib/utils/Path.h>
 
 #include "NumorsConversionDialog.h"
@@ -87,7 +85,7 @@ void NumorsConversionDialog::on_pushButton_convert_clicked()
                 data = dataFactory.create(extension,filename,diffractometer);
             }
             catch(std::exception& e) {
-                qCritical() << "Error when opening file " << filename.c_str() << e.what();
+                nsx::info() << "Error when opening file " << filename.c_str() << e.what();
                 ui->progressBar_conversion->setValue(++comp);
                 if (data) {
                     data.reset();
@@ -101,7 +99,7 @@ void NumorsConversionDialog::on_pushButton_convert_clicked()
             try {
                 data->saveHDF5(outputFilename.toStdString());
             } catch(...) {
-                qDebug() << "The filename " << filename.c_str() << " could not be saved. Maybe a permission problem.";
+                nsx::error() << "The filename " << filename.c_str() << " could not be saved. Maybe a permission problem.";
                 ui->progressBar_conversion->setValue(++comp);
                 data.reset();
                 continue;

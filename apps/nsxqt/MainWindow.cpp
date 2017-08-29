@@ -1,11 +1,11 @@
 #include <cmath>
+#include <fstream>
 #include <functional>
 #include <stdexcept>
 
 #include <Eigen/Dense>
 
 #include <QDateTime>
-#include <QDebug>
 #include <QDockWidget>
 #include <QFileDialog>
 #include <QGraphicsBlurEffect>
@@ -32,6 +32,9 @@
 #include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/instrument/Sample.h>
 #include <nsxlib/instrument/Source.h>
+#include <nsxlib/logger/AggregateStreamWrapper.h>
+#include <nsxlib/logger/Logger.h>
+#include <nsxlib/logger/StdStreamWrapper.h>
 #include <nsxlib/mathematics/MathematicsTypes.h>
 #include <nsxlib/utils/ProgressHandler.h>
 #include <nsxlib/utils/Path.h>
@@ -51,7 +54,7 @@
 #include "items/PeakGraphicsItem.h"
 #include "items/PlottableGraphicsItem.h"
 #include "JobHandler.h"
-#include "Logger.h"
+#include "logger/QtStreamWrapper.h"
 #include "models/CollectedPeaksModel.h"
 #include "models/SessionModel.h"
 #include "NoteBook.h"
@@ -83,10 +86,10 @@ MainWindow::MainWindow(QWidget *parent)
     QDateTime datetime=QDateTime::currentDateTime();
     this->setWindowTitle(QString("NSXTool version:")+ datetime.toString());
 
-    // Starting the logger of the main application
-    Logger::Instance()->setNoteBook(_ui->noteBook);
-    qInstallMessageHandler(customMessageHandler);
-    qDebug() << "[NSXTool log]" << QDateTime::currentDateTime().toString();
+    auto logfile = std::ofstream("nsxqt_log.txt");
+    nsx::getWrapper()->addWrapper(new nsx::StdStreamWrapper(logfile));
+    QtStreamWrapper* qt_wrapper = new QtStreamWrapper(_ui->noteBook);
+    nsx::getWrapper()->addWrapper(qt_wrapper);
 
     //
     _ui->frameFrame->setEnabled(false);
@@ -177,24 +180,24 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actionNew_session_triggered()
 {
-  qDebug() << "save session: not implemented yet";
+  nsx::error() << "save session: not implemented yet";
 }
 
 void MainWindow::saveSession(QString filename)
 {
     if (filename == "") {
-        qDebug() << "Must first save to file before selecting save";
+        nsx::info() << "Must first save to file before selecting save";
         return;
     }
 
-    qDebug() << "saving session to " << filename;
+    nsx::info() << "saving session to " << filename.toStdString();
 
     QJsonDocument doc(_session->toJsonObject());
 
     QFile savefile(filename);
 
     if ( !savefile.open(QIODevice::WriteOnly)) {
-        qDebug() << "couldn't open file for saving!";
+        nsx::error() << "couldn't open file for saving!";
         return;
     }
 
@@ -218,12 +221,12 @@ void MainWindow::on_actionLoad_session_triggered()
 {
     QString homeDir = nsx::homeDirectory().c_str();
     QString filename = QFileDialog::getOpenFileName(this, "Load session", homeDir, "Json document (*.json)", nullptr, QFileDialog::Option::DontUseNativeDialog);
-    qDebug() << "Loading session from file '" << filename << "'";
+    nsx::info() << "Loading session from file '" << filename.toStdString() << "'";
 
     QFile loadfile(filename);
 
     if ( !loadfile.open(QIODevice::ReadOnly)) {
-        qDebug() << "couldn't open file for loading!";
+        nsx::error() << "couldn't open file for loading!";
         return;
     }
 
@@ -236,7 +239,6 @@ void MainWindow::on_actionLoad_session_triggered()
 
 void MainWindow::on_actionAbout_triggered()
 {
-    qDebug() << "about triggered";
     // Show splash
     QImage splashScrImage(":/resources/splashScreen.png");
     QPixmap Logo;
@@ -486,8 +488,6 @@ void MainWindow::on_actionCompute_R_factors_triggered()
 
 void MainWindow::on_actionIntegrate_calculated_peaks_triggered()
 {
-//    emit integrateCalculatedPeaks();
-    qDebug() << "what triggered this?";
 }
 
 void MainWindow::on_actionPeak_fit_dialog_triggered()
@@ -555,7 +555,7 @@ void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
         }
     }
 
-    qDebug() << "Eliminated " << bad_peaks.size() << " out of " << total_peaks << " total peaks.";
+    nsx::info() << "Eliminated " << bad_peaks.size() << " out of " << total_peaks << " total peaks.";
     //_ui->_dview->getScene()->updatePeaks();
     _session->updatePeaks();
 }
@@ -577,18 +577,17 @@ void MainWindow::on_actionApply_resolution_cutoff_triggered()
 
 void MainWindow::on_actionWrite_log_file_triggered()
 {
-    qDebug() << "write log file triggered";
     _session->writeLog();
 }
 
 void MainWindow::on_actionReintegrate_peaks_triggered()
 {
-    qDebug() << "Reintegrating peaks...";
+    nsx::info() << "Reintegrating peaks...";
 
     auto dialog = new DialogIntegrate();
 
     if (!dialog->exec()) {
-        qDebug() << "Peak integration canceled.";
+        nsx::info() << "Peak integration canceled.";
         return;
     }
 
@@ -603,17 +602,15 @@ void MainWindow::on_actionReintegrate_peaks_triggered()
     }
 
     _session->updatePeaks();
-    qDebug() << "Done reintegrating peaks intensities";
+    nsx::info() << "Done reintegrating peaks intensities";
 }
 
 void MainWindow::on_actionFit_peak_profiles_triggered()
 {
-    qDebug() << "Fit peak profiles triggered";
     _session->peakFitDialog();
 }
 
 void MainWindow::on_actionAuto_assign_unit_cell_triggered()
 {
-    qDebug() << "Auto assign unit cell triggered";
     _session->autoAssignUnitCell();
 }

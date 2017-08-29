@@ -33,10 +33,10 @@
  *
  */
 
-#include <QDebug>
-
 #include "dialogs/DialogRawData.h"
 #include "ui_DialogRawData.h"
+
+#include <nsxlib/logger/Logger.h>
 
 DialogRawData::DialogRawData(QWidget *parent):
     QDialog(parent),
@@ -76,7 +76,7 @@ bool DialogRawData::rowMajor() {
     else if (selection == "Column major")
         return false;
     else {
-        qDebug() << "unrecognized data arrangement!!";
+        nsx::error() << "unrecognized data arrangement!!";
         return false;
     }
 }
@@ -93,7 +93,7 @@ int DialogRawData::bpp() {
         // 32-bit
         return 4;
     default:
-        qDebug() << "unrecognized data format!!";
+        nsx::error() << "unrecognized data format!!";
         return -1;
     }
 }

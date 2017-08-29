@@ -6,7 +6,6 @@
 
 #include <Eigen/Core>
 
-#include <QDebug>
 #include <QDoubleSpinBox>
 #include <QImage>
 #include <QList>
@@ -23,6 +22,7 @@
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/mathematics/Minimizer.h>
 #include <nsxlib/instrument/Sample.h>
+#include <nsxlib/logger/Logger.h>
 
 #include "externals/qcustomplot.h"
 
@@ -94,7 +94,7 @@ void ScaleDialog::buildPlot()
         sigma = std::sqrt(var);
 
         if (sigma > sigma_max*average) {
-            qDebug() << "skipping set of peaks because sigma_max is too large!";
+            nsx::info() << "skipping set of peaks because sigma_max is too large!";
             continue;
         }
 
@@ -210,7 +210,7 @@ void ScaleDialog::calculateRFactors()
         // that the average is less than zero
         //assert(average > 0.0);
         if (average < 0.0)
-            qDebug() << "warning: average intensity of reflections is negative";
+            nsx::warning() << "average intensity of reflections is negative";
 
         I_total += n*average;
 
@@ -232,9 +232,9 @@ void ScaleDialog::calculateRFactors()
     _Rmeas /= I_total;
     _Rpim /= I_total;
 
-    qDebug() << "R merge = " << _Rmerge;
-    qDebug() << "R meas  = " << _Rmeas;
-    qDebug() << "R pim   = " << _Rpim;
+    nsx::info() << "R merge = " << _Rmerge;
+    nsx::info() << "R meas  = " << _Rmeas;
+    nsx::info() << "R pim   = " << _Rpim;
 }
 
 void ScaleDialog::on_redrawButton_clicked()
@@ -293,7 +293,7 @@ void ScaleDialog::refineScale()
         return 0;
     };
 
-    qDebug() << "Refining scale using minimizer...";
+    nsx::info() << "Refining scale using minimizer...";
 
     nsx::Minimizer minimizer;
 
@@ -312,7 +312,7 @@ void ScaleDialog::refineScale()
 
     _scaleParams = minimizer.params();
 
-    qDebug() << "...done after " << minimizer.numIterations() << "iterations";
+    nsx::info() << "...done after " << minimizer.numIterations() << "iterations";
 }
 
 void ScaleDialog::on_pushButton_clicked()

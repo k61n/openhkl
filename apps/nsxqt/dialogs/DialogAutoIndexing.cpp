@@ -8,7 +8,6 @@
 #include <QItemSelectionModel>
 #include <QMessageBox>
 #include <QStandardItemModel>
-#include <QDebug>
 
 #include <nsxlib/crystal/AutoIndexer.h>
 #include <nsxlib/crystal/UnitCell.h>
@@ -16,6 +15,7 @@
 #include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/instrument/Experiment.h>
 #include <nsxlib/instrument/Sample.h>
+#include <nsxlib/logger/Logger.h>
 #include <nsxlib/utils/Units.h>
 #include <nsxlib/utils/ProgressHandler.h>
 
@@ -56,7 +56,7 @@ void DialogAutoIndexing::autoIndex()
     handler->setCallback([=]() {
        auto log = handler->getLog();
        for (auto&& msg: log) {
-           qDebug() << msg.c_str();
+           nsx::info() << msg.c_str();
        }
     });
 
@@ -89,7 +89,7 @@ void DialogAutoIndexing::autoIndex()
     params.gruberTolerance = ui->gruberTolerance->value();
 
     if (indexer.autoIndex(params) == false) {
-        qDebug() << "ERROR: failed to auto index!";
+        nsx::error() << "failed to auto index!";
         return;
     }
     _solutions = indexer.getSolutions();

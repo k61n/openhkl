@@ -33,7 +33,6 @@
 #include <set>
 
 #include <QContextMenuEvent>
-#include <QDebug>
 #include <QHeaderView>
 #include <QInputDialog>
 #include <QItemSelectionModel>
@@ -46,6 +45,7 @@
 #include <nsxlib/crystal/ResolutionShell.h>
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/data/MetaData.h>
+#include <nsxlib/logger/Logger.h>
 #include <nsxlib/utils/ProgressHandler.h>
 
 #include "dialogs/DialogAutoIndexing.h"
@@ -473,10 +473,10 @@ void PeakTableView::updateUnitCell(const nsx::sptrUnitCell& unitCell)
 {
     QModelIndexList selectedPeaks = selectionModel()->selectedRows();
     if (selectedPeaks.empty()) {
-        qDebug() << "updateUnitCell(): no peaks selected!";
+        nsx::error() << "no peaks selected!";
         return;
     }
-    qDebug() << "updating unit cell";
+    nsx::info() << "updating unit cell";
     auto peakModel = dynamic_cast<CollectedPeaksModel*>(model());
     peakModel->setUnitCell(unitCell, selectedPeaks);
 }

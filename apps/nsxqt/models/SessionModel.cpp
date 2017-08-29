@@ -44,7 +44,6 @@
 
 #include <QAbstractItemView>
 #include <QDate>
-#include <QDebug>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QKeyEvent>
@@ -75,6 +74,7 @@
 #include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/instrument/Sample.h>
 #include <nsxlib/instrument/Source.h>
+#include <nsxlib/logger/Logger.h>
 #include <nsxlib/utils/ProgressHandler.h>
 #include <nsxlib/statistics/CC.h>
 
@@ -91,7 +91,6 @@
 #include "dialogs/ScaleDialog.h"
 #include "dialogs/SpaceGroupDialog.h"
 #include "externals/qcustomplot.h"
-#include "Logger.h"
 #include "models/DataItem.h"
 #include "models/DetectorItem.h"
 #include "models/ExperimentItem.h"
@@ -148,12 +147,12 @@ void SessionModel::createNewExperiment()
 
         // If no experiment name is provided, pop up a warning
         if (dlg->getExperimentName().isEmpty()) {
-            qWarning() << "Empty experiment name";
+            nsx::error() << "Empty experiment name";
             return;
         }
     }
     catch(std::exception& e) {
-        qDebug() << "Runtime error: " << e.what();
+        nsx::debug() << "Runtime error: " << e.what();
         return;
     }
 
@@ -162,7 +161,7 @@ void SessionModel::createNewExperiment()
         addExperiment(dlg->getExperimentName().toStdString(),dlg->getInstrumentName().toStdString());
     }
     catch(const std::runtime_error& e) {
-        qWarning() << e.what();
+        nsx::error() << e.what();
         return;
     }
 }
@@ -311,18 +310,18 @@ void SessionModel::findSpaceGroup()
 void SessionModel::computeRFactors()
 {
     // todo: reimplement this method
-    qDebug() << "not currently implemented!";
+    nsx::debug() << "not currently implemented!";
 }
 
 void SessionModel::findFriedelPairs()
 {
-    qDebug() << "findFriedelParis() is not yet implemented!";
+    nsx::debug() << "findFriedelParis() is not yet implemented!";
     return;
 }
 
 void SessionModel::peakFitDialog()
 {
-    qDebug() << "peakFitDialog() triggered";
+    nsx::debug() << "peakFitDialog() triggered";
     PeakFitDialog* dialog = new PeakFitDialog(this, nullptr);
     dialog->exec();
 }
@@ -355,7 +354,7 @@ void SessionModel::findPeaks(const QModelIndex& index)
     }
 
     if (selectedNumors.empty()) {
-        qWarning()<<"No numors selected for finding peaks";
+        nsx::error()<<"No numors selected for finding peaks";
         return;
     }
 
@@ -370,12 +369,10 @@ void SessionModel::findPeaks(const QModelIndex& index)
             frame = selectedNumors[0]->getFrame(0);
         }
         catch(std::exception& e) {
-            qDebug() << "Peak search failed: cannot load frame: " << e.what();
+            nsx::debug() << "Peak search failed: cannot load frame: " << e.what();
             return;
         }
     }
-
-    // qDebug() << "Preview frame has dimensions" << frame.rows() << " " << frame.cols();
 
     // reset progress handler
     _progressHandler = nsx::sptrProgressHandler(new nsx::ProgressHandler);
@@ -397,7 +394,7 @@ void SessionModel::findPeaks(const QModelIndex& index)
     ui->_dview->getScene()->clearPeaks();
 
     size_t max = selectedNumors.size();
-    qWarning() << "Peak find algorithm: Searching peaks in " << max << " files";
+    nsx::info() << "Peak find algorithm: Searching peaks in " << max << " files";
 
     // create a pop-up window that will show the progress
     ProgressView* progressView = new ProgressView(nullptr);
@@ -413,8 +410,8 @@ void SessionModel::findPeaks(const QModelIndex& index)
             result = _peakFinder->find(selectedNumors);
         }
         catch(std::exception& e) {
-            qDebug() << "Caught exception during peak find: " << e.what();
-            qDebug() <<" Peak search aborted.";
+            nsx::debug() << "Caught exception during peak find: " << e.what();
+            nsx::debug() <<" Peak search aborted.";
             return false;
         }
         return result;
@@ -435,12 +432,12 @@ void SessionModel::findPeaks(const QModelIndex& index)
             //ui->_dview->getScene()->updatePeaks();
             updatePeaks();
 
-            qDebug() << "Peak search complete., found "
+            nsx::debug() << "Peak search complete., found "
                      << num_peaks
                      << " peaks.";
         }
         else {
-            qDebug() << "Peak search failed!";
+            nsx::debug() << "Peak search failed!";
         }
     };
 
@@ -453,7 +450,7 @@ void SessionModel::findPeaks(const QModelIndex& index)
 
 void SessionModel::incorporateCalculatedPeaks()
 {
-    qDebug() << "Incorporating missing peaks into current data set...";
+    nsx::debug() << "Incorporating missing peaks into current data set...";
 
     DialogCalculatedPeaks dialog;
 
@@ -479,7 +476,7 @@ void SessionModel::incorporateCalculatedPeaks()
     int observed_peaks = 0;
 
     for(auto numor: numors) {
-        qDebug() << "Finding missing peaks for numor " << ++current_numor << " of " << numors.size();
+        nsx::debug() << "Finding missing peaks for numor " << ++current_numor << " of " << numors.size();
 
         auto predictor = nsx::PeakPredictor();
 
@@ -495,8 +492,7 @@ void SessionModel::incorporateCalculatedPeaks()
         observed_peaks += numor->getPeaks().size();
     }
     updatePeaks();
-    qDebug() << "Done incorporating missing peaks.";
-    // qDebug() << "Q coverage = " << double(observed_peaks) / double(predicted_peaks) * 100.0 << "%";
+    nsx::debug() << "Done incorporating missing peaks.";
 }
 
 void SessionModel::applyResolutionCutoff(double dmin, double dmax)
@@ -505,7 +501,7 @@ void SessionModel::applyResolutionCutoff(double dmin, double dmax)
     double avg_d = 0;
     int num_peaks = 0;
 
-    qDebug() << "Applying resolution cutoff...";
+    nsx::debug() << "Applying resolution cutoff...";
 
     nsx::DataList numors = getSelectedNumors();
 
@@ -534,8 +530,8 @@ void SessionModel::applyResolutionCutoff(double dmin, double dmax)
 
     avg_d /= num_peaks;
 
-    qDebug() << "Done applying resolution cutoff. Removed " << num_removed << " peaks.";
-    qDebug() << "Average value of d for peaks is " << avg_d;
+    nsx::debug() << "Done applying resolution cutoff. Removed " << num_removed << " peaks.";
+    nsx::debug() << "Average value of d for peaks is " << avg_d;
 }
 
 
@@ -555,7 +551,7 @@ void SessionModel::writeLog()
     }
 
     if (!peaks.size()) {
-        qCritical() << "No peaks in the table";
+        nsx::error() << "No peaks in the table";
         return;
     }
 
@@ -567,19 +563,19 @@ void SessionModel::writeLog()
 
     if (dialog.writeUnmerged()) {
         if (!writeXDS(dialog.unmergedFilename(), peaks, false, friedel))
-            qCritical() << "Could not write unmerged data to " << dialog.unmergedFilename().c_str();
+            nsx::error() << "Could not write unmerged data to " << dialog.unmergedFilename().c_str();
     }
 
     if (dialog.writeMerged()) {
         if (!writeXDS(dialog.mergedFilename(), peaks, true, friedel))
-            qCritical() << "Could not write unmerged data to " << dialog.mergedFilename().c_str();
+            nsx::error() << "Could not write unmerged data to " << dialog.mergedFilename().c_str();
     }
 
     if (dialog.writeStatistics()) {
         if (!writeStatistics(dialog.statisticsFilename(),
                              peaks,
                              dialog.dmin(), dialog.dmax(), dialog.numShells(), friedel))
-            qCritical() << "Could not write statistics log to " << dialog.statisticsFilename().c_str();
+            nsx::error() << "Could not write statistics log to " << dialog.statisticsFilename().c_str();
     }
 }
 
@@ -589,14 +585,14 @@ bool SessionModel::writeNewShellX(std::string filename, const nsx::PeakList& pea
     std::vector<char> buf(1024, 0); // buffer for snprintf
 
     if (!file.is_open()) {
-        qCritical() << "Error writing to this file, please check write permisions";
+        nsx::error() << "Error writing to this file, please check write permisions";
         return false;
     }
 
     auto basis = peaks[0]->getActiveUnitCell();
 
     if (!basis) {
-        qCritical() << "No unit cell defined the peaks. No index can be defined.";
+        nsx::error() << "No unit cell defined the peaks. No index can be defined.";
         return false;
     }
 
@@ -608,7 +604,7 @@ bool SessionModel::writeNewShellX(std::string filename, const nsx::PeakList& pea
         auto currentBasis = peak->getActiveUnitCell();
 
         if (currentBasis != basis) {
-            qCritical() << "Not all the peaks have the same unit cell. Multi crystal not implement yet";
+            nsx::error() << "Not all the peaks have the same unit cell. Multi crystal not implement yet";
             return false;
         }
 
@@ -648,12 +644,12 @@ bool SessionModel::writeStatistics(std::string filename,
     Eigen::RowVector3d HKL(0.0, 0.0, 0.0);
 
     if (!file.is_open()) {
-        qCritical() << "Error writing to this file, please check write permisions";
+        nsx::error() << "Error writing to this file, please check write permisions";
         return false;
     }
 
     if (peaks.size() == 0) {
-        qCritical() << "No peaks to write to log!";
+        nsx::error() << "No peaks to write to log!";
         return false;
     }
 
@@ -664,7 +660,7 @@ bool SessionModel::writeStatistics(std::string filename,
 
     for (auto&& peak: peaks) {
         if (cell != peak->getActiveUnitCell()) {
-            qCritical() << "Only one unit cell is supported at this time!!";
+            nsx::error() << "Only one unit cell is supported at this time!!";
             return false;
         }
         // skip bad/masked peaks
@@ -724,7 +720,7 @@ bool SessionModel::writeStatistics(std::string filename,
 
         file << &buf[0] << std::endl;
 
-        qDebug() << "Finished logging shell " << i+1;
+        nsx::debug() << "Finished logging shell " << i+1;
     }
 
     file << "--------------------------------------------------------------------------------" << std::endl;
@@ -806,7 +802,7 @@ bool SessionModel::writeStatistics(std::string filename,
     file << "total peaks: " << total_peaks << std::endl;
     file << "  bad peaks: " << bad_peaks << std::endl;
 
-    qDebug() << "Done writing log file.";
+    nsx::debug() << "Done writing log file.";
 
     file.close();
     return true;
@@ -819,11 +815,11 @@ bool SessionModel::writeXDS(std::string filename, const nsx::PeakList& peaks, bo
     std::fstream file(filename, std::ios::out);
 
     if (!file.is_open()) {
-        qCritical() << "Could not open " << filename << " for writing.";
+        nsx::error() << "Could not open " << filename << " for writing.";
         return false;
     }
     bool result = xds.write(file);
-    qDebug() << "Done writing log file.";
+    nsx::debug() << "Done writing log file.";
     return result;
 }
 
@@ -873,5 +869,5 @@ void SessionModel::autoAssignUnitCell()
             }
         }
     }
-    qDebug() << "Done auto assigning unit cells";
+    nsx::debug() << "Done auto assigning unit cells";
 }
