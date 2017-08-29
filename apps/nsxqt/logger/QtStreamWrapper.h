@@ -1,11 +1,16 @@
 #pragma once
 
-namespace nsx {
+#include <nsxlib/logger/IStreamWrapper.h>
 
-class QtStreamWrapper {
+class QtStreamWrapper : public nsx::IStreamWrapper {
 public:
-    QtStreamWrapper();
-    virtual ~QtStreamWrapper();
-};
 
-} /* namespace nsx */
+    //! Constructor
+    QtStreamWrapper();
+
+    //! Destructor
+    virtual ~QtStreamWrapper();
+
+    //! Write a message to the stream
+    virtual void print(const std::string& message) override;
+};
