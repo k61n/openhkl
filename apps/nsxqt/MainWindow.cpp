@@ -86,10 +86,8 @@ MainWindow::MainWindow(QWidget *parent)
     QDateTime datetime=QDateTime::currentDateTime();
     this->setWindowTitle(QString("NSXTool version:")+ datetime.toString());
 
-    auto logfile = std::ofstream("nsxqt_log.txt");
-    nsx::getWrapper()->addWrapper(new nsx::StdStreamWrapper(logfile));
     QtStreamWrapper* qt_wrapper = new QtStreamWrapper(_ui->noteBook);
-    nsx::getWrapper()->addWrapper(qt_wrapper);
+    nsx::wrapper()->addWrapper(qt_wrapper);
 
     //
     _ui->frameFrame->setEnabled(false);
