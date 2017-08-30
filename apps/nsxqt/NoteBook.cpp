@@ -84,3 +84,8 @@ void NoteBook::write2pdf()
     printer.setOutputFileName(fileName);
     this->print(&printer);
 }
+
+void NoteBook::printLogMessage(const std::string& message)
+{
+    append(QString::fromStdString(message));
+}

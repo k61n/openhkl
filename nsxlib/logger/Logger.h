@@ -37,12 +37,16 @@ Logger& Logger::operator<<(T&& x) {
     return *this;
 }
 
-AggregateStreamWrapper* wrapper();
+std::string currentTime();
 
-extern std::function<Logger()> debug;
-extern std::function<Logger()> info;
-extern std::function<Logger()> warning;
-extern std::function<Logger()> error;
+Logger debug();
+void setDebug(std::function<Logger()> debug);
+
+Logger info();
+void setInfo(std::function<Logger()> info);
+
+Logger error();
+void setError(std::function<Logger()> error);
 
 } // end namespace nsx
 

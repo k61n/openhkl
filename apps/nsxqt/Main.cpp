@@ -16,9 +16,6 @@
 
 int main(int argc, char* argv[])
 {
-    std::ofstream logfile("nsxqt_log.txt");
-    nsx::wrapper()->addWrapper(new nsx::StdStreamWrapper(logfile));
-
     nsx::setArgc(argc);
     nsx::setArgv(argv);
 
@@ -27,6 +24,8 @@ int main(int argc, char* argv[])
     // Ensure . is used rather than , for float and double boxes
     QLocale::setDefault(QLocale::c());
     MainWindow w;
+
+    nsx::info()<<"NSXQt session started";
 
     w.showMaximized();
     w.show();

@@ -1,14 +1,21 @@
 #pragma once
 
+#include <string>
+
+#include <QObject>
+
 #include <nsxlib/logger/IStreamWrapper.h>
 
-class QTextEdit;
+class NoteBook;
 
-class QtStreamWrapper : public nsx::IStreamWrapper {
+class QtStreamWrapper : public QObject, public nsx::IStreamWrapper {
+
+    Q_OBJECT
+
 public:
 
     //! Constructor
-    QtStreamWrapper(QTextEdit* stream);
+    QtStreamWrapper(NoteBook* notebook);
 
     //! Destructor
     virtual ~QtStreamWrapper();
@@ -16,8 +23,7 @@ public:
     //! Write a message to the stream
     virtual void print(const std::string& message) override;
 
-private:
+signals:
 
-    // The widget that will receive string messages
-    QTextEdit* _notebook;
+    void sendLogMessage(const std::string& message);
 };

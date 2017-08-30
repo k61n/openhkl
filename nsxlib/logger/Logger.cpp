@@ -2,8 +2,10 @@
 
 #include <chrono>
 #include <ctime>
+#include <fstream>
 
 #include "AggregateStreamWrapper.h"
+#include "LogFileStreamWrapper.h"
 
 namespace nsx {
 
@@ -26,14 +28,7 @@ Logger::~Logger(){
     _wrap->print(_msg);
 }
 
-static AggregateStreamWrapper* g_wrapper = new AggregateStreamWrapper();
-
-AggregateStreamWrapper* wrapper()
-{
-    return g_wrapper;
-}
-
-auto current_time = []() -> std::string
+auto current_time() -> std::string
 {
     auto now = std::chrono::system_clock::now();
 
@@ -44,41 +39,77 @@ auto current_time = []() -> std::string
     return current_time;
 };
 
-auto debugLog() -> Logger
+std::string currentTime()
 {
-    auto initialize = [](Logger& log) {log << " -- DEBUG   " << current_time() << " -- ";};
+    return current_time();
+}
+
+auto debug_log() -> Logger
+{
+    auto initialize = [](Logger& log) {log << "DEBUG" << current_time() << "--";};
     auto finalize = [](Logger& log) {log << "\n";};
 
-    return Logger(g_wrapper, initialize, finalize);
-};
-std::function<Logger()> debug = debugLog;
+    AggregateStreamWrapper* wrapper = new AggregateStreamWrapper();
+    wrapper->addWrapper(new LogFileStreamWrapper("nsx_debug.txt"));
 
-auto infoLog() -> Logger
+    return Logger(wrapper, initialize, finalize);
+};
+
+auto info_log() -> Logger
 {
-    auto initialize = [](Logger& log) {log << " -- INFO    " << current_time() << " -- ";};
+    auto initialize = [](Logger& log) {log << "INFO " << current_time() << "--";};
     auto finalize = [](Logger& log) {log << "\n";};
 
-    return Logger(g_wrapper, initialize, finalize);
-};
-std::function<Logger()> info = infoLog;
+    AggregateStreamWrapper* wrapper = new AggregateStreamWrapper();
+    wrapper->addWrapper(new LogFileStreamWrapper("nsx_info.txt"));
 
-auto warningLog() -> Logger
+    return Logger(wrapper, initialize, finalize);
+};
+
+auto error_log() -> Logger
 {
-    auto initialize = [](Logger& log) {log << " -- WARNING " << current_time() << " -- ";};
+    auto initialize = [](Logger& log) {log << "ERROR" << current_time() << "--";};
     auto finalize = [](Logger& log) {log << "\n";};
 
-    return Logger(g_wrapper, initialize, finalize);
-};
-std::function<Logger()> warning = warningLog;
+    AggregateStreamWrapper* wrapper = new AggregateStreamWrapper();
+    wrapper->addWrapper(new LogFileStreamWrapper("nsx_error.txt"));
 
-auto errorLog() -> Logger
+    return Logger(wrapper, initialize, finalize);
+};
+
+static std::function<Logger()> g_debug = debug_log;
+static std::function<Logger()> g_info = info_log;
+static std::function<Logger()> g_error = error_log;
+
+Logger debug()
 {
-    auto initialize = [](Logger& log) {log << " -- ERROR   " << current_time() << " -- ";};
-    auto finalize = [](Logger& log) {log << "\n";};
+    return g_debug();
+}
 
-    return Logger(g_wrapper, initialize, finalize);
-};
-std::function<Logger()> error = errorLog;
+void setDebug(std::function<Logger()> debug)
+{
+    g_debug = debug;
+}
+
+Logger info()
+{
+    return g_info();
+}
+
+void setInfo(std::function<Logger()> info)
+{
+    g_info = info;
+}
+
+Logger error()
+{
+    return g_error();
+}
+
+void setError(std::function<Logger()> error)
+{
+    g_error = error;
+}
 
 } // end namespace nsx
 

@@ -384,9 +384,6 @@ void PeakTableView::showPeaksMatchingText(const QString& text)
     }
 
     bool okh=false,okk=false,okl=false;
-    double h=list[0].toDouble(&okh);
-    double k=list[1].toDouble(&okk);
-    double l=list[2].toDouble(&okl);
 
     if (!(okh && okk && okl)) {
         unsigned int row=0;
