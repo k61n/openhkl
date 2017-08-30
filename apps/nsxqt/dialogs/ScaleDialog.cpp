@@ -210,7 +210,7 @@ void ScaleDialog::calculateRFactors()
         // that the average is less than zero
         //assert(average > 0.0);
         if (average < 0.0)
-            nsx::warning() << "average intensity of reflections is negative";
+            nsx::info() << "average intensity of reflections is negative";
 
         I_total += n*average;
 

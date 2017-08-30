@@ -33,8 +33,9 @@ NumorsConversionDialog::NumorsConversionDialog(QWidget *parent)
     QStringList diffractometerFiles = diffractometersDirectory.entryList({"*.yml"}, QDir::Files, QDir::Name);
 
     // Add the available instruments to the combo box
-    for (auto&& diffractometer : diffractometerFiles)
+    for (auto&& diffractometer : diffractometerFiles) {
         ui->comboBox_diffractometers->addItem(QFileInfo(diffractometer).baseName());
+    }
 
     QDirModel* model=new QDirModel();
     ui->treeView_inputFiles->setModel(model);
@@ -58,7 +59,7 @@ void NumorsConversionDialog::on_pushButton_convert_clicked()
     QString outputDirectory=ui->lineEdit_outputDirectory->text();
     if (outputDirectory.isEmpty())
     {
-        QMessageBox::warning(this,"Output directorty",QString::fromStdString("Please enter an output directory."));
+        QMessageBox::warning(this,"Output directory",QString::fromStdString("Please enter an output directory."));
         return;
     }
 
@@ -85,7 +86,7 @@ void NumorsConversionDialog::on_pushButton_convert_clicked()
                 data = dataFactory.create(extension,filename,diffractometer);
             }
             catch(std::exception& e) {
-                nsx::info() << "Error when opening file " << filename.c_str() << e.what();
+                nsx::error() << "opening file " << filename.c_str() << e.what();
                 ui->progressBar_conversion->setValue(++comp);
                 if (data) {
                     data.reset();

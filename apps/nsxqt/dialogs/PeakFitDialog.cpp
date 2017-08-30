@@ -219,9 +219,6 @@ void PeakFitDialog::updatePlots()
         Iobs.push_back(obs);
         Ipred.push_back(pred);
         xs.push_back(x);
-
-        double average = 0.0;
-        double sigma, var = 0.0;
     }
 
     // do the QCP plotting

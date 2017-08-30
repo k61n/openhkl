@@ -33,8 +33,8 @@
 #include <nsxlib/instrument/Sample.h>
 #include <nsxlib/instrument/Source.h>
 #include <nsxlib/logger/AggregateStreamWrapper.h>
+#include <nsxlib/logger/LogFileStreamWrapper.h>
 #include <nsxlib/logger/Logger.h>
-#include <nsxlib/logger/StdStreamWrapper.h>
 #include <nsxlib/mathematics/MathematicsTypes.h>
 #include <nsxlib/utils/ProgressHandler.h>
 #include <nsxlib/utils/Path.h>
@@ -86,8 +86,32 @@ MainWindow::MainWindow(QWidget *parent)
     QDateTime datetime=QDateTime::currentDateTime();
     this->setWindowTitle(QString("NSXTool version:")+ datetime.toString());
 
-    QtStreamWrapper* qt_wrapper = new QtStreamWrapper(_ui->noteBook);
-    nsx::wrapper()->addWrapper(qt_wrapper);
+    auto info_log = [this]() -> nsx::Logger
+    {
+        auto initialize = [](nsx::Logger& log) {log << "INFO " << nsx::currentTime() << "--";};
+        auto finalize = [](nsx::Logger& log) {log << "\n";};
+
+        nsx::AggregateStreamWrapper* wrapper = new nsx::AggregateStreamWrapper();
+        wrapper->addWrapper(new nsx::LogFileStreamWrapper("nsx_info.txt"));
+        wrapper->addWrapper(new QtStreamWrapper(this->_ui->noteBook));
+
+        return nsx::Logger(wrapper, initialize, finalize);
+    };
+
+    auto error_log = [this]() -> nsx::Logger
+    {
+        auto initialize = [](nsx::Logger& log) {log << "ERROR" << nsx::currentTime() << "--";};
+        auto finalize = [](nsx::Logger& log) {log << "\n";};
+
+        nsx::AggregateStreamWrapper* wrapper = new nsx::AggregateStreamWrapper();
+        wrapper->addWrapper(new nsx::LogFileStreamWrapper("nsx_error.txt"));
+        wrapper->addWrapper(new QtStreamWrapper(this->_ui->noteBook));
+
+        return nsx::Logger(wrapper, initialize, finalize);
+    };
+
+    nsx::setInfo(info_log);
+    nsx::setError(error_log);
 
     //
     _ui->frameFrame->setEnabled(false);
@@ -505,11 +529,10 @@ void MainWindow::on_actionDraw_peak_integration_area_triggered(bool checked)
 
 void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
 {
-    //const double pmax = 2.873e-7; // corresponds to 5 sigma
-    // const double pmax = 3e-5; // corresponds to 4 sigma
+    Q_UNUSED(checked)
+
     const double pmax = 1e-3;
     int total_peaks = 0;
-    // int remaining_peaks = 0;
 
     nsx::DataList numors = _session->getSelectedNumors();
     nsx::PeakList bad_peaks;
@@ -560,6 +583,7 @@ void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
 
 void MainWindow::on_actionIncorporate_calculated_peaks_triggered(bool checked)
 {
+    Q_UNUSED(checked)
     emit incorporateCalculatedPeaks();
 }
 

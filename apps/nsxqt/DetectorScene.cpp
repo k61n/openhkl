@@ -568,12 +568,11 @@ void DetectorScene::loadCurrentImage(bool newimage)
             long xmin = std::max(0l, std::lround(std::floor(lower[0])));
             long ymin = std::max(0l, std::lround(std::floor(lower[1])));
 
-
             long xmax = std::min(long(_currentData->getNCols()), std::lround(std::ceil(upper[0]))+1);
             long ymax = std::min(long(_currentData->getNRows()), std::lround(std::ceil(upper[1]))+1);
 
             for (auto x = xmin; x < xmax; ++x) {
-                for (auto y = 0; y < ymax; ++y) {
+                for (auto y = ymin; y < ymax; ++y) {
                     Eigen::Vector3d p(x, y, _currentFrameIndex);
 
                     if (region.inRegion(p)) {
@@ -700,6 +699,7 @@ void DetectorScene::clearPeaks()
 
 void DetectorScene::updateMasks(unsigned long frame)
 {
+    Q_UNUSED(frame)
     _lastClickedGI = nullptr;
 }
 

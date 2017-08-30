@@ -6,8 +6,15 @@
 #include <QString>
 #include <QTextEdit>
 
-QtStreamWrapper::QtStreamWrapper(QTextEdit* notebook) : nsx::IStreamWrapper(), _notebook(notebook)
+#include <nsxlib/logger/AggregateStreamWrapper.h>
+#include <nsxlib/logger/Logger.h>
+#include <nsxlib/logger/LogFileStreamWrapper.h>
+
+#include "NoteBook.h"
+
+QtStreamWrapper::QtStreamWrapper(NoteBook* notebook) : nsx::IStreamWrapper()
 {
+    connect(this,SIGNAL(sendLogMessage(const std::string&)),notebook,SLOT(printLogMessage(const std::string&)));
 }
 
 QtStreamWrapper::~QtStreamWrapper()
@@ -18,6 +25,7 @@ void QtStreamWrapper::print(const std::string& message)
 {
     std::ostringstream os;
     os << message;
-    _notebook->append(QString::fromStdString(os.str()));
+
+    emit sendLogMessage(os.str());
 }
 
