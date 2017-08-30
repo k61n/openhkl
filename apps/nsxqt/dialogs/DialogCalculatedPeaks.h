@@ -18,6 +18,14 @@ public:
     double dMin();
     double dMax();
     double searchRadius();
+    double frameRadius();
+    double minimumRadius();
+    double minimumPeakDuration();
+    double peakScale();
+    double bkgScale();
+    
+    int minimumNeighbors();
+    
 
 private:
     Ui::DialogCalculatedPeaks *ui;
