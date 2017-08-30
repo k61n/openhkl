@@ -41,13 +41,20 @@
 
 namespace nsx {
 
-DetectorEvent::DetectorEvent(const Detector& detector, double x, double y, std::vector<double> values):
-    _detector(&detector), _x(x), _y(y), _values(std::move(values))
+DetectorEvent::DetectorEvent():
+    _detector(), _x(), _y(), _t(), _values()
 {
 
 }
 
-DetectorEvent::DetectorEvent(const DetectorEvent& rhs):_detector(rhs._detector),_x(rhs._x),_y(rhs._y),_values(rhs._values)
+
+DetectorEvent::DetectorEvent(const Detector* detector, double x, double y, double t, std::vector<double> values):
+    _detector(detector), _x(x), _y(y), _t(t), _values(std::move(values))
+{
+
+}
+
+DetectorEvent::DetectorEvent(const DetectorEvent& rhs):_detector(rhs._detector),_x(rhs._x),_y(rhs._y), _t(rhs._t), _values(rhs._values)
 {
 
 }
@@ -56,6 +63,7 @@ DetectorEvent::DetectorEvent(DetectorEvent&& other):
     _detector(other._detector),
     _x(other._x),
     _y(other._y),
+    _t(other._t),
     _values(std::move(other._values))
 {
 
@@ -66,6 +74,8 @@ DetectorEvent& DetectorEvent::operator=(const DetectorEvent& rhs)
     _detector = rhs._detector;
     _x = rhs._x;
     _y = rhs._y;
+    _t = rhs._t;
+    _values = rhs._values;
     return *this;
 }
 
@@ -124,5 +134,10 @@ Eigen::Vector3d DetectorEvent::getPixelPosition() const
     gonio->transformInPlace(v, _values);
     return v;
 }
+
+  Eigen::Vector3d DetectorEvent::detectorPosition() const
+  {
+      return {_x, _y, _t};
+  }
 
 } // end namespace nsx

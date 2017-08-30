@@ -303,9 +303,9 @@ std::ostream& operator<<(std::ostream& os,const UnitCell& uc)
     return os;
 }
 
-std::vector<Eigen::Vector3d> UnitCell::generateReflectionsInSphere(double dstarmax) const
+std::vector<Eigen::RowVector3d> UnitCell::generateReflectionsInSphere(double dstarmax) const
 {
-    std::vector<Eigen::Vector3d> hkls;
+    std::vector<Eigen::RowVector3d> hkls;
 
     // Get the bounding cube in h,k,l
     int hmax=std::ceil(dstarmax/_B.row(0).norm());
@@ -332,7 +332,7 @@ std::vector<Eigen::Vector3d> UnitCell::generateReflectionsInSphere(double dstarm
                     continue;
                 }
 
-                Eigen::Vector3d hkl(h,k,l);
+                Eigen::RowVector3d hkl(h,k,l);
                 auto q=toReciprocalStandard(hkl);
                 double norm=q.norm();
                 if (norm < dstarmax) {
@@ -344,14 +344,14 @@ std::vector<Eigen::Vector3d> UnitCell::generateReflectionsInSphere(double dstarm
     return hkls;
 }
 
-std::vector<Eigen::Vector3i> UnitCell::generateReflectionsInShell(double dmin, double dmax, double wavelength) const
+std::vector<Eigen::RowVector3d> UnitCell::generateReflectionsInShell(double dmin, double dmax, double wavelength) const
 {
     const Eigen::Vector3d b1(getReciprocalAVector());
     const Eigen::Vector3d b2(getReciprocalBVector());
     const Eigen::Vector3d b3(getReciprocalCVector());
     Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> eigen_solver;
     const Eigen::Matrix3d BTB(getReciprocalMetricTensor());
-    std::vector<Eigen::Vector3i> hkls;
+    std::vector<Eigen::RowVector3d> hkls;
 
     eigen_solver.compute(BTB);
     double b_min = std::sqrt(eigen_solver.eigenvalues().minCoeff());
@@ -391,7 +391,7 @@ std::vector<Eigen::Vector3i> UnitCell::generateReflectionsInShell(double dmin, d
                     continue;
                 }
 
-                hkls.emplace_back(Eigen::Vector3i(h, k, l));
+                hkls.emplace_back(Eigen::Vector3d(h, k, l));
             }
         }
     }

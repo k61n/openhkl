@@ -21,7 +21,7 @@ BOOST_AUTO_TEST_CASE(Test_Cylindrical_Detector)
     d.setHeight(40.0*nsx::cm);
     d.setNPixels(640,256);
 
-    nsx::DetectorEvent ev1(d, 319.5, 127.5);
+    nsx::DetectorEvent ev1(&d, 319.5, 127.5, 0.0, {});
 
     // This should be the center of the detector at rest at (0,0.764,0)
     Eigen::Vector3d center=ev1.getPixelPosition();
@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE(Test_Cylindrical_Detector)
     d.setGonio(g);
     // Put detector at 90 deg, event should point along x
 
-    nsx::DetectorEvent ev2(d, 319.5, 127.5, {90.0*nsx::deg});
+    nsx::DetectorEvent ev2(&d, 319.5, 127.5, 0.0, {90.0*nsx::deg});
     center=ev2.getPixelPosition();
     BOOST_CHECK_CLOSE(center[0],0.764,tolerance);
     BOOST_CHECK_SMALL(center[1],0.001);

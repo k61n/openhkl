@@ -17,7 +17,7 @@ class TestCylindricalDetector(unittest.TestCase):
         d.setHeight(40.0*cm)
         d.setNPixels(640,256)
 
-        ev1 = nsx.DetectorEvent(d,319.5,127.5)
+        ev1 = nsx.DetectorEvent(d,319.5,127.5, 0.0, [])
         # This should be the center of the detector at rest at (0,0.764,0)
         #vec3d = np.array([0,0,0], dtype=float)
         center = ev1.getPixelPosition()
@@ -41,7 +41,7 @@ class TestCylindricalDetector(unittest.TestCase):
         d.setGonio(g)
 
         # put detetctor at 90deg, event should point along x
-        ev2 = nsx.DetectorEvent(d,319.5,127.5,[90.0*deg]) 
+        ev2 = nsx.DetectorEvent(d,319.5,127.5, 0.0, [90.0*deg]) 
         center = ev2.getPixelPosition()
         self.assertAlmostEqual(center[0,0],0.764, delta=tolerance)
         self.assertLess(center[1,0],0.001)

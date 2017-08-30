@@ -49,10 +49,13 @@ namespace nsx {
 // Forward declaration of detector class
 class Detector;
 
+//! Class to register an event on a detector, recording the instrument state
 class DetectorEvent {
 public:
+    //! Default constructor (needed by Swig)
+    DetectorEvent();
     // Constructor
-    DetectorEvent(const Detector& detector, double x, double y, DetectorState values = {});
+    DetectorEvent(const Detector* detector, double x, double y, double t, DetectorState values);
     //! Copy constructor
     DetectorEvent(const DetectorEvent& other);
     //! Move constructor
@@ -102,13 +105,16 @@ public:
       */
      Eigen::Vector3d getPixelPosition() const;
 
+     //! Return the position on the detector (x, y, frame)
+     Eigen::Vector3d detectorPosition() const;
+
 private:
     //! Default constructor
     // DetectorEvent();
     // friend class Detector;
     const Detector* _detector;
     //! Position of the event on the detector
-    double _x, _y;
+    double _x, _y, _t;
     //! Setup of the detector Gonio
     std::vector<double> _values;
 };

@@ -102,9 +102,9 @@ public:
     //!
     std::string getBravaisTypeSymbol() const;
     //! Get a list of reflections sorted by their d* value in $\AA$ within a sphere defined by dstarmax
-    std::vector<Eigen::Vector3d> generateReflectionsInSphere(double dstarmax) const;
+    std::vector<Eigen::RowVector3d> generateReflectionsInSphere(double dstarmax) const;
     //! Get a list of reflections with d value in the range [dmin, dmax]
-    std::vector<Eigen::Vector3i> generateReflectionsInShell(double dmin, double dmax, double wavelength) const;
+    std::vector<Eigen::RowVector3d> generateReflectionsInShell(double dmin, double dmax, double wavelength) const;
     //! Return the angle in radians between two reflections h1,k1,l1 and h2,k2,l2
     double getAngle(double h1,double k1, double l1, double h2, double k2, double l2) const;
     //! Return the angle in radians between two reflections hkl1 and hkl2
