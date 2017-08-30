@@ -190,7 +190,8 @@ void DialogConvolve::on_filterComboBox_currentIndexChanged(int index)
     // need to update widgets with appropriate values
     ui->thresholdSpinBox->setValue(_peakFinder->getThresholdValue());
     ui->thresholdComboBox->setCurrentIndex(_peakFinder->getThresholdType());
-    ui->confidenceSpinBox->setValue(_peakFinder->confidence());
+    ui->integrationConfidenceSpinBox->setValue(_peakFinder->integrationConfidence());
+    ui->blobConfidenceSpinBox->setValue(_peakFinder->searchConfidence());
     ui->minCompBox->setValue(_peakFinder->getMinComponents());
     ui->maxCompBox->setValue(_peakFinder->getMaxComponents());
 
@@ -204,9 +205,14 @@ void DialogConvolve::on_thresholdSpinBox_valueChanged(double arg1)
     _peakFinder->setThresholdValue(arg1);
 }
 
-void DialogConvolve::on_confidenceSpinBox_valueChanged(double arg1)
+void DialogConvolve::on_blobConfidenceSpinBox_valueChanged(double arg1)
 {
-    _peakFinder->setConfidence(arg1);
+    _peakFinder->setSearchConfidence(arg1);
+}
+
+void DialogConvolve::on_integrationConfidenceSpinBox_valueChanged(double arg1)
+{
+    _peakFinder->setIntegrationConfidence(arg1);
 }
 
 void DialogConvolve::on_minCompBox_valueChanged(int arg1)

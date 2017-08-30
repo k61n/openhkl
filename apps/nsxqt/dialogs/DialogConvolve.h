@@ -45,7 +45,8 @@ private slots:
     void on_previewButton_clicked();
     void on_filterComboBox_currentIndexChanged(int index);
     void on_thresholdSpinBox_valueChanged(double arg1);
-    void on_confidenceSpinBox_valueChanged(double arg1);
+    void on_blobConfidenceSpinBox_valueChanged(double arg1);
+    void on_integrationConfidenceSpinBox_valueChanged(double arg1);
     void on_minCompBox_valueChanged(int arg1);
     void on_maxCompBox_valueChanged(int arg1);
     void on_thresholdComboBox_currentIndexChanged(int index);
