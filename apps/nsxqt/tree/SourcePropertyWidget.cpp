@@ -1,9 +1,8 @@
-#include <QDebug>
-
 #include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/instrument/Monochromator.h>
 #include <nsxlib/instrument/InstrumentTypes.h>
 #include <nsxlib/instrument/Source.h>
+#include <nsxlib/logger/Logger.h>
 #include <nsxlib/utils/Units.h>
 
 #include "models/SourceItem.h"
@@ -32,7 +31,7 @@ SourcePropertyWidget::SourcePropertyWidget(SourceItem* caller,QWidget *parent) :
         ui->doubleSpinBox_Width->setValue(mono.getWidth()/nsx::mm);
     }
     catch (std::exception& e) {
-        qCritical() << e.what();
+        nsx::error() << e.what();
     }
 }
 

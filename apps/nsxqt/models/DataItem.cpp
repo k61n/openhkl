@@ -1,4 +1,3 @@
-#include <QDebug>
 #include <QIcon>
 #include <QFileInfo>
 #include <QJsonArray>
@@ -10,6 +9,7 @@
 #include <nsxlib/data/RawDataReader.h>
 #include <nsxlib/data/IDataReader.h>
 #include <nsxlib/instrument/Experiment.h>
+#include <nsxlib/logger/Logger.h>
 
 #include "models/DataItem.h"
 #include "NumorItem.h"
@@ -39,11 +39,11 @@ NumorItem *DataItem::importData(nsx::sptrDataSet data)
         exp->addData(data);
     }
     catch(std::exception& e) {
-        qWarning() << "Error reading numor: " + filename + " " + QString(e.what());
+        nsx::error() << "Error reading numor:" << data->getFilename().c_str() << e.what();
         return nullptr;
     }
     catch(...)  {
-        qWarning() << "Error reading numor: " + filename + " reason not known:";
+        nsx::error() << "Error reading numor:" << data->getFilename().c_str() << " reason not known:";
         return nullptr;
     }
 
@@ -75,11 +75,11 @@ NumorItem* DataItem::importData(const std::string &filename_str)
         data_ptr = nsx::DataReaderFactory().create(extension, filename_str, exp->getDiffractometer());
     }
     catch(std::exception& e) {
-        qWarning() << "Error reading numor: " + filename + " " + QString(e.what());
+        nsx::error() << "Error reading numor:" << filename_str << e.what();
         return nullptr;
     }
     catch(...)  {
-        qWarning() << "Error reading numor: " + filename + " reason not known:";
+        nsx::error() << "Error reading numor:" << filename_str << "reason not known:";
         return nullptr;
     }
 
@@ -113,11 +113,11 @@ NumorItem *DataItem::importRawData(const std::vector<std::string> &filenames,
 
     }
     catch(std::exception& e) {
-        qWarning() << "Error reading numor: " + filename + " " + QString(e.what());
+        nsx::error() << "reading numor:" << filenames[0].c_str() << e.what();
         return nullptr;
     }
     catch(...)  {
-        qWarning() << "Error reading numor: " + filename + " reason not known:";
+        nsx::error() << "reading numor:" << filenames[0].c_str() << " reason not known:";
         return nullptr;
     }
 

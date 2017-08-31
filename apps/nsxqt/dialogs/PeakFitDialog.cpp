@@ -33,13 +33,13 @@
  *
  */
 
-#include <QDebug>
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
 
 #include "externals/qcustomplot.h"
 
 #include <nsxlib/data/DataSet.h>
+#include <nsxlib/logger/Logger.h>
 #include <nsxlib/mathematics/Minimizer.h>
 
 #include "ColorMap.h"
@@ -105,7 +105,7 @@ bool PeakFitDialog::changePeak()
 
     // could not find it in the list!
     if (!peak_found) {
-        qCritical() << "Peak with specified HKL not found!";
+        nsx::error() << "Peak with specified HKL not found!";
         _peakFit = nullptr;
         _peak = nullptr;
         return false;
@@ -219,9 +219,6 @@ void PeakFitDialog::updatePlots()
         Iobs.push_back(obs);
         Ipred.push_back(pred);
         xs.push_back(x);
-
-        double average = 0.0;
-        double sigma, var = 0.0;
     }
 
     // do the QCP plotting
@@ -269,17 +266,17 @@ void PeakFitDialog::on_frameScrollBar_valueChanged(int value)
 void PeakFitDialog::on_runFitButton_clicked()
 {
     if (!_peak || !_peakFit) {
-        qCritical() << "No peak selected for fitting!";
+        nsx::error() << "No peak selected for fitting!";
         return;
     }
 
     nsx::Minimizer min;
 
      if (_peakFit->fit(min) ) {
-        qDebug() << "Fit converged!";
+        nsx::info() << "Fit converged!";
     }
     else {
-        qDebug() << "Fit did not converge! " << min.getStatusStr();
+        nsx::info() << "Fit did not converge! " << min.getStatusStr();
     }
 
     _bestParams = min.params();

@@ -1,9 +1,6 @@
-// author: Jonathan Fisher
-// j.fisher@fz-juelich.de
-
-#include <QDebug>
 #include <QApplication>
 
+#include <nsxlib/logger/Logger.h>
 #include <nsxlib/utils/ProgressHandler.h>
 
 #include "ProgressView.h"
@@ -57,24 +54,16 @@ void ProgressView::updateProgress()
 
     int progress = _handler->getProgress();
 
-    /*
-    if ( progress > 0 && progress < 100 )
-        _dialog->show();
-    else
-        _dialog->hide();
-    */
-
-
     setLabelText(_handler->getStatus().c_str());
     setValue(progress);
 
     if ( progress < 0)
-        qDebug() << "Status:" << _handler->getStatus().c_str() << " " << _handler->getProgress();
+        nsx::info() << "Status:" << _handler->getStatus().c_str() << " " << _handler->getProgress();
 
     auto log = _handler->getLog();
 
     for (auto& msg: log)
-        qDebug() << msg.c_str();
+        nsx::info() << msg.c_str();
 }
 
 void ProgressView::abort()
@@ -87,6 +76,6 @@ void ProgressView::abort()
     // call update to flush ouput log etc.
     updateProgress();
 
-    qDebug() << "Job was aborted.";
+    nsx::info() << "Job was aborted.";
     _timer->stop();
 }

@@ -28,12 +28,11 @@
  *
  */
 
-#include <QDebug>
-
 #include "dialogs/FriedelDialog.h"
 #include "ui_FriedelDialog.h"
 
 #include <nsxlib/crystal/Peak3D.h>
+#include <nsxlib/logger/Logger.h>
 
 FriedelDialog::FriedelDialog(const std::vector<nsx::Peak3D*>& peaks, QWidget *parent) :
     QDialog(parent),
@@ -68,8 +67,7 @@ void FriedelDialog::findFriedelPairs()
     }
 
     double percent = 2.0 * _friedelPairs.size() * 100.0 / _peaks.size();
-    qDebug() << "Found " << _friedelPairs.size() << " Friedel pairs";
-    qDebug() << "   which accounts for " << percent << " percent of the peaks.";
+    nsx::info() << "Found " << _friedelPairs.size() << " Friedel pairs which accounts for " << percent << " percent of the peaks.";
 }
 
 void FriedelDialog::on_goodPairsButton_clicked()
@@ -97,18 +95,8 @@ void FriedelDialog::on_goodPairsButton_clicked()
             a->setSelected(true);
             b->setSelected(true);
 
-            // scaling factor
-            auto a_center = a->getShape().aabb().center();
-            auto b_center = b->getShape().aabb().center();
-            double z_a = a_center[2];
-            double z_b = b_center[2];
-
-            if (z_a < z_b)
-                qDebug() << z_a << ", " << z_b << ": " << int_b / int_a;
-            else
-                qDebug() << z_b << ", " << z_a << ": " << int_a / int_b;
         }
     }
 
-    qDebug() << "Selected " << count * 100.0 / _friedelPairs.size() << " good Friedel pairs.";
+    nsx::info() << "Selected " << count * 100.0 / _friedelPairs.size() << " good Friedel pairs.";
 }

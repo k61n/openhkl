@@ -6,7 +6,6 @@
 
 #include <Eigen/Core>
 
-#include <QDebug>
 #include <QImage>
 #include <QList>
 #include <QMessageBox>
@@ -24,6 +23,7 @@
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/instrument/Sample.h>
+#include <nsxlib/logger/Logger.h>
 
 #include "SpaceGroupDialog.h"
 #include "ui_SpaceGroupDialog.h"
@@ -67,11 +67,11 @@ void SpaceGroupDialog::evaluateSpaceGroups()
     std::vector<nsx::PeakList> peak_equivs;
 
     if ( _numors.size()  == 0) {
-        qDebug() << "Need at least one numor to find space group!";
+        nsx::error() << "Need at least one numor to find space group!";
         return;
     }
 
-    qDebug() << "Retrieving reflection list for space group calculation...";
+    nsx::info() << "Retrieving reflection list for space group calculation...";
 
     for (auto& numor: _numors) {
         auto peaks = numor->getPeaks();
@@ -88,7 +88,7 @@ void SpaceGroupDialog::evaluateSpaceGroups()
     }
 
     if (hkls.size() == 0) {
-        qDebug() << "Need to have indexed peaks in order to find space group!";
+        nsx::error() << "Need to have indexed peaks in order to find space group!";
         return;
     }
 
@@ -96,13 +96,13 @@ void SpaceGroupDialog::evaluateSpaceGroups()
     auto sample = _numors[0]->getDiffractometer()->getSample();
 
     if (!sample) {
-        qDebug() << "Need to have a sample in order to find space group!";
+        nsx::error() << "Need to have a sample in order to find space group!";
         return;
     }
 
     _groups.clear();
 
-    qDebug() << "Evaluating " << symbols.size() << " space groups based on " << hkls.size() << " peaks";
+    nsx::info() << "Evaluating " << symbols.size() << " space groups based on " << hkls.size() << " peaks";
 
     for (auto& symbol: symbols) {
 
@@ -141,7 +141,7 @@ void SpaceGroupDialog::evaluateSpaceGroups()
 
     std::sort(_groups.begin(), _groups.end(), compare_fn);
 
-    qDebug() << "Done evaluating space groups.";
+    nsx::info() << "Done evaluating space groups.";
 }
 
 void SpaceGroupDialog::buildTable()

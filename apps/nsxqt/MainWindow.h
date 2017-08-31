@@ -16,7 +16,6 @@
 #include <nsxlib/utils/UtilsTypes.h>
 
 #include "JobHandler.h"
-#include "Logger.h"
 #include "views/ProgressView.h"
 
 class QListWidgetItem;

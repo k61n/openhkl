@@ -12,7 +12,6 @@
 #include <nsxlib/utils/Units.h>
 
 #include "LatticeIndexer.h"
-#include "Logger.h"
 #include "models/SessionModel.h"
 #include "models/UnitCellItem.h"
 #include "tree/UnitCellPropertyWidget.h"

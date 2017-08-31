@@ -1,5 +1,4 @@
-#ifndef NSXQT_NOTEBOOK_H
-#define NSXQT_NOTEBOOK_H
+#pragma once
 
 #include <sstream>
 #include <string>
@@ -24,6 +23,10 @@ public:
     bool canInsertFromMimeData(const QMimeData* source) const;
     void insertFromMimeData(const QMimeData* source);
 
+public slots:
+
+    void printLogMessage(const std::string& message);
+
 private:
 
     void dropImage(const QUrl& url, const QImage& image);
@@ -34,4 +37,3 @@ public slots:
     void write2pdf();
 
 };
-#endif // NSXQT_NOTEBOOK_H
