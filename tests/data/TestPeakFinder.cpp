@@ -31,8 +31,11 @@ BOOST_AUTO_TEST_CASE(Test_PeakFinder)
     numors.push_back(dataf);
     peakFinder.setHandler(handler);
 
-    peakFinder.setConfidence(0.997);
-    BOOST_CHECK_CLOSE(peakFinder.confidence(), 0.997, 1e-10);
+    peakFinder.setSearchConfidence(0.997);
+    BOOST_CHECK_CLOSE(peakFinder.searchConfidence(), 0.997, 1e-10);
+
+    peakFinder.setIntegrationConfidence(0.997);
+    BOOST_CHECK_CLOSE(peakFinder.integrationConfidence(), 0.997, 1e-10);
 
     peakFinder.setMaxComponents(10000);
     BOOST_CHECK(peakFinder.getMaxComponents() == 10000);

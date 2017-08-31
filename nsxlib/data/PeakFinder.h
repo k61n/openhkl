@@ -8,6 +8,7 @@
 
 namespace nsx {
 
+//! Class to handle peak search in datasets
 class PeakFinder {
 
 public:
@@ -24,8 +25,11 @@ public:
     void setThresholdType(int type);
     int getThresholdType();
 
-    void setConfidence(double confidence);
-    double confidence() const;
+    void setIntegrationConfidence(double confidence);
+    double integrationConfidence() const;
+
+    void setSearchConfidence(double confidence);
+    double searchConfidence() const;
 
     void setMinComponents(int minComp);
     int getMinComponents();
@@ -48,7 +52,8 @@ private:
     double _thresholdValue;
     int _thresholdType;
 
-    double _confidence;
+    double _searchConfidence;
+    double _integrationConfidence;
     double _median;
 
     int _minComp;

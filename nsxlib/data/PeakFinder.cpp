@@ -24,7 +24,8 @@ PeakFinder::PeakFinder()
     // default values
     _thresholdValue = 3.0;
     _thresholdType = 0;
-    _confidence = nsx::getConfidence(3.0);
+    _integrationConfidence = nsx::getConfidence(3.0);
+    _searchConfidence = nsx::getConfidence(1.0);
     _median = 0;
     _minComp = 30;
     _maxComp = 10000;
@@ -60,7 +61,7 @@ bool PeakFinder::find(DataList numors)
             blob_finder.setThreshold(_thresholdValue);
             blob_finder.setMinComp(_minComp);
             blob_finder.setMaxComp(_maxComp);
-            blob_finder.setConfidence(_confidence);
+            blob_finder.setConfidence(_searchConfidence);
             blob_finder.setRelative(_thresholdType == 0);
 
             if ( _handler ) {
@@ -68,7 +69,7 @@ bool PeakFinder::find(DataList numors)
                 _handler->log("threshold value is " + std::to_string(_thresholdValue));
                 _handler->log("min comp is " + std::to_string(_minComp));
                 _handler->log("max comp is " + std::to_string(_maxComp));
-                _handler->log("confidence is " + std::to_string(_confidence));
+                _handler->log("search confidence is " + std::to_string(_searchConfidence));
                 _handler->log("relative threshold is " + std::to_string(_thresholdType == 0));
             }
 
@@ -166,7 +167,7 @@ bool PeakFinder::find(DataList numors)
             _handler->setStatus(("Integrating " + std::to_string(numor->getPeaks().size()) + " peaks...").c_str());
             _handler->setProgress(0);
         }
-        const double scale = getScale(_confidence);
+        const double scale = getScale(_integrationConfidence);
         numor->integratePeaks(scale, 2.0*scale, false, _handler);
         numor->close();
         //_ui->progressBar->setValue(++comp);
@@ -205,14 +206,24 @@ int PeakFinder::getThresholdType()
     return _thresholdType;
 }
 
-void PeakFinder::setConfidence(double confidence)
+void PeakFinder::setSearchConfidence(double confidence)
 {
-    _confidence = confidence;
+    _searchConfidence = confidence;
 }
 
-double PeakFinder::confidence() const
+double PeakFinder::searchConfidence() const
 {
-    return _confidence;
+    return _searchConfidence;
+}
+
+void PeakFinder::setIntegrationConfidence(double confidence)
+{
+    _integrationConfidence = confidence;
+}
+
+double PeakFinder::integrationConfidence() const
+{
+    return _integrationConfidence;
 }
 
 void PeakFinder::setMinComponents(int minComp)
