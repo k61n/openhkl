@@ -2,7 +2,7 @@
 
 namespace nsx {
 
-IStreamWrapper::IStreamWrapper() {
+IStreamWrapper::IStreamWrapper(std::function<std::string()> prefix, std::function<std::string()> suffix) : _prefix(prefix), _suffix(suffix) {
 }
 
 IStreamWrapper::~IStreamWrapper() {

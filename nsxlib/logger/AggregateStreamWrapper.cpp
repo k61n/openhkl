@@ -4,7 +4,10 @@
 
 namespace nsx {
 
-AggregateStreamWrapper::AggregateStreamWrapper() : _wrappers(), IStreamWrapper() {
+AggregateStreamWrapper::AggregateStreamWrapper(std::function<std::string()> prefix, std::function<std::string()> suffix)
+: IStreamWrapper(prefix,suffix),
+  _wrappers()
+{
 }
 
 AggregateStreamWrapper::~AggregateStreamWrapper()
@@ -27,6 +30,20 @@ void AggregateStreamWrapper::addWrapper(IStreamWrapper* wrapper)
 
     if (it == _wrappers.end()) {
         _wrappers.emplace_back(wrapper);
+    }
+}
+
+void AggregateStreamWrapper::printPrefix()
+{
+    for (auto w : _wrappers) {
+        w->printPrefix();
+    }
+}
+
+void AggregateStreamWrapper::printSuffix()
+{
+    for (auto w : _wrappers) {
+        w->printSuffix();
     }
 }
 

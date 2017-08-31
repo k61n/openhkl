@@ -11,7 +11,7 @@ class AggregateStreamWrapper;
 
 class Logger {
 public:
-    Logger(IStreamWrapper* wrap, std::function<void(Logger&)> initialize = nullptr, std::function<void(Logger&)> finalize = nullptr);
+    Logger(IStreamWrapper* wrapper);
 
     ~Logger();
 
@@ -20,13 +20,9 @@ public:
 
 private:
 
-    IStreamWrapper* _wrap;
+    IStreamWrapper* _wrapper;
 
     std::string _msg;
-
-    std::function<void(Logger&)> _initialize;
-
-    std::function<void(Logger&)> _finalize;
 };
 
 template<typename T>

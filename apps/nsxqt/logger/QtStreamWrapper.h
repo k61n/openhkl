@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sstream>
 #include <string>
 
 #include <QObject>
@@ -15,7 +16,7 @@ class QtStreamWrapper : public QObject, public nsx::IStreamWrapper {
 public:
 
     //! Constructor
-    QtStreamWrapper(NoteBook* notebook);
+    QtStreamWrapper(NoteBook* notebook, std::function<std::string()> prefix=nullptr, std::function<std::string()> suffix=nullptr);
 
     //! Destructor
     virtual ~QtStreamWrapper();
@@ -23,7 +24,15 @@ public:
     //! Write a message to the stream
     virtual void print(const std::string& message) override;
 
+    virtual void printPrefix() override;
+
+    virtual void printSuffix() override;
+
 signals:
 
     void sendLogMessage(const std::string& message);
+
+private:
+
+    std::ostringstream _os;
 };

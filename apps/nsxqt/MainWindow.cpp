@@ -86,30 +86,43 @@ MainWindow::MainWindow(QWidget *parent)
     QDateTime datetime=QDateTime::currentDateTime();
     this->setWindowTitle(QString("NSXTool version:")+ datetime.toString());
 
-    auto info_log = [this]() -> nsx::Logger
+    auto debug_log = [this]() -> nsx::Logger
     {
-        auto initialize = [](nsx::Logger& log) {log << "INFO " << nsx::currentTime() << "--";};
-        auto finalize = [](nsx::Logger& log) {log << "\n";};
+        auto initialize = []() -> std::string {return "[DEBUG] " + nsx::currentTime();};
+        auto finalize = []() -> std::string {return "\n";};
 
         nsx::AggregateStreamWrapper* wrapper = new nsx::AggregateStreamWrapper();
-        wrapper->addWrapper(new nsx::LogFileStreamWrapper("nsx_info.txt"));
-        wrapper->addWrapper(new QtStreamWrapper(this->_ui->noteBook));
+        wrapper->addWrapper(new nsx::LogFileStreamWrapper("nsx_debug.txt",initialize,finalize));
+        wrapper->addWrapper(new QtStreamWrapper(this->_ui->noteBook,initialize));
 
-        return nsx::Logger(wrapper, initialize, finalize);
+        return nsx::Logger(wrapper);
+    };
+
+    auto info_log = [this]() -> nsx::Logger
+    {
+        auto initialize = []() -> std::string {return "[INFO]  " + nsx::currentTime();};
+        auto finalize = []() -> std::string {return "\n";};
+
+        nsx::AggregateStreamWrapper* wrapper = new nsx::AggregateStreamWrapper();
+        wrapper->addWrapper(new nsx::LogFileStreamWrapper("nsx_info.txt",initialize,finalize));
+        wrapper->addWrapper(new QtStreamWrapper(this->_ui->noteBook,initialize));
+
+        return nsx::Logger(wrapper);
     };
 
     auto error_log = [this]() -> nsx::Logger
     {
-        auto initialize = [](nsx::Logger& log) {log << "ERROR" << nsx::currentTime() << "--";};
-        auto finalize = [](nsx::Logger& log) {log << "\n";};
+        auto initialize = []() -> std::string {return "[ERROR]" + nsx::currentTime();};
+        auto finalize = []() -> std::string {return "\n";};
 
         nsx::AggregateStreamWrapper* wrapper = new nsx::AggregateStreamWrapper();
-        wrapper->addWrapper(new nsx::LogFileStreamWrapper("nsx_error.txt"));
-        wrapper->addWrapper(new QtStreamWrapper(this->_ui->noteBook));
+        wrapper->addWrapper(new nsx::LogFileStreamWrapper("nsx_error.txt",initialize,finalize));
+        wrapper->addWrapper(new QtStreamWrapper(this->_ui->noteBook, initialize));
 
-        return nsx::Logger(wrapper, initialize, finalize);
+        return nsx::Logger(wrapper);
     };
 
+    nsx::setDebug(debug_log);
     nsx::setInfo(info_log);
     nsx::setError(error_log);
 
