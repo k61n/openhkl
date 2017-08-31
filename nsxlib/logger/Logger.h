@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include <ctime>
+#include <sstream>
 
 #include "IStreamWrapper.h"
 
