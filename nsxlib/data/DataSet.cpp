@@ -477,66 +477,61 @@ std::vector<DetectorEvent> DataSet::getEvents(const std::vector<Eigen::RowVector
     } 
 
     for (const Eigen::RowVector3d& q: qs) {
-        const bool sign = (q*rotMatrices[0] + ki).squaredNorm() > ki.squaredNorm();
-        int i = 0;
+        bool sign = (q*rotMatrices[0] + ki).squaredNorm() > ki.squaredNorm();
 
-        for (i = 1; i < scanSize; ++i) {
+        for (int i = 1; i < scanSize; ++i) {
             const Eigen::RowVector3d kf = q*rotMatrices[i] + ki;
             const bool new_sign = kf.squaredNorm() > ki.squaredNorm();
+
             if (sign != new_sign) {
-                break;
-            }
-        }
+                sign = new_sign;
 
-        // didn't find states satisfying Bragg condition
-        if (i == scanSize) {
-            continue;
-        }
-
-        const Eigen::RowVector3d kf0 = q*rotMatrices[i-1] + ki;
-        const Eigen::RowVector3d kf1 = q*rotMatrices[i] + ki;
-        //const Eigen::RowVector3d dkf = kf1-kf0;
-        const Eigen::RowVector3d dkf = q*(rotMatrices[i]-rotMatrices[i-1]);
-
-        const double a = dkf.squaredNorm();
-        const double b = 2 * kf0.dot(dkf);
-        const double c = kf0.squaredNorm() - ki.squaredNorm();
-        const double discr = b*b - 4*a*c;
-
-        double t = 0.5;
-        const int max_count = 100;
-        Eigen::RowVector3d kf;
+                const Eigen::RowVector3d kf0 = q*rotMatrices[i-1] + ki;
+                const Eigen::RowVector3d kf1 = q*rotMatrices[i] + ki;
+                //const Eigen::RowVector3d dkf = kf1-kf0;
+                const Eigen::RowVector3d dkf = q*(rotMatrices[i]-rotMatrices[i-1]);
         
-        for (int i = 0; i < max_count; ++i) {
-            kf = (1-t)*kf0 + t*kf1;
-            const double f = kf.squaredNorm() - ki.squaredNorm();
-            
-            if (std::fabs(f) < 1e-10) {
-                break;
+                const double a = dkf.squaredNorm();
+                const double b = 2 * kf0.dot(dkf);
+                const double c = kf0.squaredNorm() - ki.squaredNorm();
+                const double discr = b*b - 4*a*c;
+        
+                double t = 0.5;
+                const int max_count = 100;
+                Eigen::RowVector3d kf;
+                
+                for (int c = 0; c < max_count; ++c) {
+                    kf = (1-t)*kf0 + t*kf1;
+                    const double f = kf.squaredNorm() - ki.squaredNorm();
+                    
+                    if (std::fabs(f) < 1e-10) {
+                        break;
+                    }
+                    const double df = 2*dkf.dot(kf);
+                    t -= f/df;
+                }
+        
+                if (c == max_count || t < 0.0 || t > 1.0) {
+                    continue;
+                }
+        
+                t += i-1;
+                const InstrumentState& state = getInterpolatedState(t);
+        
+                //const ComponentState& dis = state.detector;
+                double px,py;
+                // If hit detector, new peak
+                //const ComponentState& cs=state.sample;
+                Eigen::Vector3d from=_diffractometer->getSample()->getPosition(state.sample.getValues());
+        
+                double time;
+                bool accept=_diffractometer->getDetector()->receiveKf(px,py,kf,from,time,state.detector.getValues());
+        
+                if (accept) {
+                    events.emplace_back(detector.get(), px, py, t, state.detector.getValues());
+                }
             }
-            const double df = 2*dkf.dot(kf);
-            t -= f/df;
-        }
-
-        if (i == max_count || t < 0.0 || t > 1.0) {
-            continue;
-        }
-
-        t += i-1;
-        const InstrumentState& state = getInterpolatedState(t);
-
-        //const ComponentState& dis = state.detector;
-        double px,py;
-        // If hit detector, new peak
-        //const ComponentState& cs=state.sample;
-        Eigen::Vector3d from=_diffractometer->getSample()->getPosition(state.sample.getValues());
-
-        double time;
-        bool accept=_diffractometer->getDetector()->receiveKf(px,py,kf,from,time,state.detector.getValues());
-
-        if (accept) {
-            events.emplace_back(detector.get(), px, py, t, state.detector.getValues());
-        }
+        }        
     }
     return events;
 }
