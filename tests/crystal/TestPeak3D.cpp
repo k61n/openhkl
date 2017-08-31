@@ -27,7 +27,7 @@ BOOST_AUTO_TEST_CASE(Test_Peak3D)
     d.setDimensions(80*nsx::mm,80*nsx::mm);
     d.setNPixels(32,32);
 
-    nsx::DetectorEvent event(d, 15.5, 15.5, {});
+    nsx::DetectorEvent event(&d, 15.5, 15.5, 0.0, {});
 
     nsx::sptrSource source(new nsx::Source);
 
@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(Test_Peak3D)
     g->addRotation("Gamma",Eigen::Vector3d(0,0,1),nsx::RotAxis::CW);
     d.setGonio(g);
 
-    nsx::DetectorEvent event2(d, 15.5,15.5,{90.0*nsx::deg});
+    nsx::DetectorEvent event2(&d, 15.5,15.5, 0.0, {90.0*nsx::deg});
     peak.setDetectorEvent(event2);
     Q=peak.getQ();
     BOOST_CHECK_CLOSE(Q[0],1,tolerance);

@@ -293,6 +293,7 @@ using namespace nsx;
 %template(vectorMatrixXd) std::vector<Eigen::MatrixXd>;
 %template(vectorVectorXd) std::vector<Eigen::VectorXd>;
 %template(vectorVector3d) std::vector<Eigen::Vector3d>;
+%template(vectorRowVector3d) std::vector<Eigen::RowVector3d>;
 
 // Since Eigen uses templates, we have to declare exactly which types we'd
 // like to generate mappings for
@@ -509,6 +510,9 @@ namespace nsx {
 
 //%include "instrument/DetectorState.h"
 %include "instrument/DetectorEvent.h"
+
+%template(vectorDetectorEvent) std::vector<nsx::DetectorEvent>;
+
 %include "instrument/Axis.h"
 %include "instrument/Experiment.h"
 

@@ -14,7 +14,7 @@ class TestFlatDetector(unittest.TestCase):
         d.setNPixels(32,32)        
 
         # this should be the center of the detector at rest at (0,0.764,0)
-        ev = nsx.DetectorEvent(d,15.5,15.5)
+        ev = nsx.DetectorEvent(d,15.5,15.5, 0.0, [])
         center = ev.getPixelPosition()
 
         self.assertLess(center[0][0],tolerance)
@@ -24,7 +24,7 @@ class TestFlatDetector(unittest.TestCase):
         gamma = nsx.new_double()
         nu = nsx.new_double()
  
-        ev2 = nsx.DetectorEvent(d,15.5,15.5)
+        ev2 = nsx.DetectorEvent(d,15.5,15.5, 0.0, [])
         ev2.getGammaNu(gamma,nu)
         self.assertLess(nsx.get_value(gamma),tolerance)
         self.assertLess(nsx.get_value(nu),tolerance)

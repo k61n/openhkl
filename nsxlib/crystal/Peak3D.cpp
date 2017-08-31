@@ -170,7 +170,7 @@ void Peak3D::setShape(const Ellipsoid& peak)
     setSampleState(ComponentState(state.sample));
 
     setDetectorEvent(DetectorEvent(
-       *data->getDiffractometer()->getDetector(), center[0], center[1], state.detector.getValues()));
+       data->getDiffractometer()->getDetector().get(), center[0], center[1], f, state.detector.getValues()));
 }
 
 bool Peak3D::getMillerIndices(const UnitCell& uc, Eigen::RowVector3d& hkl, bool applyUCTolerance) const

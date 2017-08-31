@@ -16,7 +16,7 @@ class TestPeak3D(unittest.TestCase):
         d.setDimensions(80*mm,80*mm)
         d.setNPixels(32,32)        
 
-        event = nsx.DetectorEvent(d,15.5, 15.5)
+        event = nsx.DetectorEvent(d,15.5, 15.5, 0.0, [])
 
         source = nsx.Source()
         mono = nsx.Monochromator("mono")
@@ -40,7 +40,7 @@ class TestPeak3D(unittest.TestCase):
         d.setGonio(g)
         
         deg = math.pi/180.0
-        event2 = nsx.DetectorEvent(d,15.5,15.5,[90.0*deg])
+        event2 = nsx.DetectorEvent(d,15.5,15.5, 0.0, [90.0*deg])
         
         peak.setDetectorEvent(event2)
         Q = peak.getQ()

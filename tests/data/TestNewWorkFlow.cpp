@@ -17,6 +17,7 @@
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/imaging/ConvolutionKernel.h>
 #include <nsxlib/imaging/KernelFactory.h>
+#include <nsxlib/instrument/DetectorEvent.h>
 #include <nsxlib/instrument/Experiment.h>
 #include <nsxlib/mathematics/ErfInv.h>
 #include <nsxlib/utils/Units.h>
@@ -122,6 +123,49 @@ int run_test()
 
     indexed_peaks = numIndexedPeaks();
     BOOST_CHECK(indexed_peaks > 600);
+
+    // get that DataSet::getEvents works properly
+    int i = 0;
+    for (auto peak: dataf->getPeaks()) {
+        if (!peak->isSelected() || peak->isMasked()) {
+            continue;
+        }
+
+        std::vector<Eigen::RowVector3d> q;
+        q.push_back(peak->getQ());
+        auto events = dataf->getEvents(q);
+
+        BOOST_CHECK(events.size() >= 1);
+
+        if (events.size() == 0) {
+            continue;
+        }
+
+        Eigen::Vector3d p0 = peak->getShape().center();
+        Eigen::Vector3d p1;
+
+        double diff = 1e200;
+
+        // q could cross Ewald sphere multiple times, so find best match
+        for (auto&& event: events) {
+            Eigen::Vector3d pnew = event.detectorPosition();
+            if ((pnew-p0).squaredNorm() < diff) {
+                diff = (pnew-p0).squaredNorm();
+                p1 = pnew;
+            }
+        }
+        
+        Eigen::RowVector3d q0 = dataf->getQ(p0);
+        Eigen::RowVector3d q1 = dataf->getQ(p1);
+
+        BOOST_CHECK_CLOSE(p0(0), p1(0), 3.0);
+        BOOST_CHECK_CLOSE(p0(1), p1(1), 3.0);
+        BOOST_CHECK_CLOSE(p0(2), p1(2), 3.0);
+
+        BOOST_CHECK_CLOSE(q0(0), q1(0), 1.0);
+        BOOST_CHECK_CLOSE(q0(1), q1(1), 1.0);
+        BOOST_CHECK_CLOSE(q0(2), q1(2), 1.0);
+    }
 
     return 0;
 }
