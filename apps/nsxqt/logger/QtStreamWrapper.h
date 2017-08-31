@@ -36,4 +36,3 @@ private:
 
     std::ostringstream _os;
 };
-

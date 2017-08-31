@@ -1,7 +1,6 @@
 #pragma once
 
-#include <chrono>
-#include <ctime>
+#include <functional>
 #include <sstream>
 
 #include "IStreamWrapper.h"

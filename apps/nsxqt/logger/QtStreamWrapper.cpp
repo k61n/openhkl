@@ -42,4 +42,3 @@ void QtStreamWrapper::printSuffix()
     emit sendLogMessage(_os.str());
     _os.clear();
 }
-

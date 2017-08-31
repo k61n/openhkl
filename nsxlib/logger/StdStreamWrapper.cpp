@@ -32,4 +32,3 @@ void StdStreamWrapper::printSuffix()
 }
 
 } // end namespace nsx
-
