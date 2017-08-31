@@ -167,8 +167,9 @@ bool PeakFinder::find(DataList numors)
             _handler->setStatus(("Integrating " + std::to_string(numor->getPeaks().size()) + " peaks...").c_str());
             _handler->setProgress(0);
         }
+
         const double scale = getScale(_integrationConfidence);
-        numor->integratePeaks(scale, 2.0*scale, false, _handler);
+        numor->integratePeaks(numor->getPeaks(), scale, 2.0*scale, false, _handler);
         numor->close();
         //_ui->progressBar->setValue(++comp);
         std::cout << "Found " << numor->getPeaks().size() << " peaks." << std::endl;

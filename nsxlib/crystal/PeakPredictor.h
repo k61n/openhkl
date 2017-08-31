@@ -45,10 +45,13 @@
 
 namespace nsx {
 
+//! Class to predict peak shapes based on observed peaks
 class PeakPredictor {
 public:
     PeakPredictor();
-    void addPredictedPeaks(sptrDataSet data);
+    PeakSet predictPeaks(sptrDataSet data, bool keepObserved);
+
+private:
     sptrPeak3D averagePeaks(const Octree& tree, const Eigen::Vector3d& center);
 
 public:
@@ -58,6 +61,7 @@ public:
     double _frameRadius;
     double _minimumRadius;
     double _minimumPeakDuration;
+    double _Isigma;
     
     int _minimumNeighbors;
     sptrProgressHandler _handler;

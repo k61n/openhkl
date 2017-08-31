@@ -51,8 +51,17 @@ QRectF PeakGraphicsItem::boundingRect() const
     qreal w=u[0]-l[0];
     qreal h=u[1]-l[1];
 
-    assert(w >= 0.0);
-    assert(h >= 0.0);
+    // currently debugging...
+
+    if (w < 0.0) {
+        //qDebug() << "width is less than zero!";
+        w = 0.0;
+    }
+
+    if (h < 0.0) {
+        //qDebug() << "height is less than zero!";
+        h = 0.0;
+    }
 
     return QRectF(-w/2.0,-h/2.0,w,h);
 }

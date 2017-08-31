@@ -23,7 +23,8 @@ public:
     double minimumPeakDuration();
     double peakScale();
     double bkgScale();
-    
+    double Isigma();
+
     int minimumNeighbors();
     
 

@@ -572,7 +572,7 @@ double DataSet::getBackgroundLevel(const sptrProgressHandler& progress)
     return _background;
 }
 
-void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_shape, const sptrProgressHandler& handler)
+void DataSet::integratePeaks(const PeakSet& peaks, double peak_scale, double bkg_scale, bool update_shape, const sptrProgressHandler& handler)
 {
     if (handler) {
         handler->setStatus(("Integrating " + std::to_string(getPeaks().size()) + " peaks...").c_str());
@@ -585,7 +585,7 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
 
     std::vector<integrated_peak> peak_list;
 
-    const size_t num_peaks = _peaks.size();
+    const size_t num_peaks = peaks.size();
 
     peak_list.reserve(num_peaks);
 
@@ -602,7 +602,7 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
     double peak_radius_std = 0.0;
 
 
-    for(auto&& p: _peaks) {
+    for(auto&& p: peaks) {
         if (p->isMasked() || !p->isSelected()) {
             continue;
 
@@ -628,7 +628,7 @@ void DataSet::integratePeaks(double peak_scale, double bkg_scale, bool update_sh
     std::cout << "avg radius: " << avg_peak_radius << std::endl;
     std::cout << "std. dev:   " << peak_radius_std << std::endl;
 
-    for (auto&& peak: _peaks ) {
+    for (auto&& peak: peaks ) {
         IntegrationRegion region(peak->getShape(), peak_scale, bkg_scale);
         PeakIntegrator integrator(region, *this);
         peak_list.emplace_back(peak, integrator);

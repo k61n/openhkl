@@ -475,7 +475,6 @@ void SessionModel::incorporateCalculatedPeaks()
         nsx::debug() << "Finding missing peaks for numor " << ++current_numor << " of " << numors.size();
 
         auto predictor = nsx::PeakPredictor();
-
         predictor._dmin = dialog.dMin();
         predictor._dmax = dialog.dMax();
         predictor._searchRadius = dialog.searchRadius();
@@ -484,11 +483,15 @@ void SessionModel::incorporateCalculatedPeaks()
         predictor._frameRadius = dialog.frameRadius();
         predictor._minimumRadius = dialog.minimumRadius();
         predictor._minimumPeakDuration = dialog.minimumPeakDuration();
+        predictor._Isigma = dialog.Isigma();
         predictor._handler = handler;
-
-        predictor.addPredictedPeaks(numor);
-        // numor->addPredictedPeaks(dmin, dmax, handler);
+        nsx::PeakSet predicted = predictor.predictPeaks(numor, false);
+        numor->integratePeaks(predicted, predictor._peakScale, predictor._bkgScale, false, handler);
         observed_peaks += numor->getPeaks().size();
+
+        for (auto peak: predicted) {
+            numor->addPeak(peak);
+        }
     }
     updatePeaks();
     nsx::debug() << "Done incorporating missing peaks.";

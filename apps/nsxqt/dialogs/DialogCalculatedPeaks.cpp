@@ -54,6 +54,11 @@ double DialogCalculatedPeaks::bkgScale()
     return ui->bkgScaleSpinBox->value();
 }
 
+double DialogCalculatedPeaks::Isigma()
+{
+    return ui->sigmaSpinBox->value();
+}
+
 int DialogCalculatedPeaks::minimumNeighbors()
 {
     return ui->neighborSpinBox->value();

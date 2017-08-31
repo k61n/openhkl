@@ -58,16 +58,18 @@ PeakPredictor::PeakPredictor():
     _bkgScale(6.0),
     _searchRadius(100.0),
     _frameRadius(5.0),
-    _minimumRadius(5.0),
-    _minimumPeakDuration(3.0),
+    _minimumRadius(2.0),
+    _minimumPeakDuration(1.0),
     _minimumNeighbors(10),
+    _Isigma(2.0),
     _handler(nullptr)
 {
 
 }
 
-void PeakPredictor::addPredictedPeaks(sptrDataSet data)
+PeakSet PeakPredictor::predictPeaks(sptrDataSet data, bool keepObserved)
 {
+
     class compare_fn {
     public:
         auto operator()(const Eigen::RowVector3i a, const Eigen::RowVector3i b) -> bool
@@ -87,7 +89,7 @@ void PeakPredictor::addPredictedPeaks(sptrDataSet data)
 
     auto& mono = data->getDiffractometer()->getSource()->getSelectedMonochromator();
     const double wavelength = mono.getWavelength();
-    PeakList calculated_peaks;
+    PeakSet calculated_peaks;
 
     auto sample = data->getDiffractometer()->getSample();
     unsigned int ncrystals = static_cast<unsigned int>(sample->getNCrystals());
@@ -112,8 +114,6 @@ void PeakPredictor::addPredictedPeaks(sptrDataSet data)
         predicted_peaks += predicted_hkls.size();
 
         PeakCalcList peaks = data->hasPeaks(hkls_double, UB);
-        calculated_peaks.reserve(peaks.size());
-
         int current_peak = 0;
 
         _handler->setStatus("Building set of previously found peaks...");
@@ -133,9 +133,18 @@ void PeakPredictor::addPredictedPeaks(sptrDataSet data)
         for (sptrPeak3D p: found_peaks) {
             found_hkls.insert(p->getIntegerMillerIndices());
 
+            // ignore deselected and masked peaks
             if (!p->isSelected() || p->isMasked()) {
                 continue;
             }
+
+            Intensity inten = p->getCorrectedIntensity();
+
+            // peak must have minimum I / sigma ratio
+            if (inten.getValue() / inten.getSigma() < _Isigma) {
+                continue;
+            }
+
             octree.addData(&p->getShape());
         }
 
@@ -172,7 +181,7 @@ void PeakPredictor::addPredictedPeaks(sptrDataSet data)
             new_peak->setObserved(false);
 
             #pragma omp critical
-            calculated_peaks.push_back(new_peak);
+            calculated_peaks.insert(new_peak);
 
             #pragma omp atomic
             ++done_peaks;
@@ -184,11 +193,7 @@ void PeakPredictor::addPredictedPeaks(sptrDataSet data)
             }
         }
     }
-    for (sptrPeak3D peak: calculated_peaks) {
-        data->addPeak(peak);
-    }
-    //qDebug() << "Integrating calculated peaks.";
-    data->integratePeaks(_peakScale, _bkgScale, false, _handler);
+    return calculated_peaks;
 }
 
 sptrPeak3D PeakPredictor::averagePeaks(const Octree& tree, const Eigen::Vector3d& center)
@@ -209,31 +214,39 @@ sptrPeak3D PeakPredictor::averagePeaks(const Octree& tree, const Eigen::Vector3d
         return nullptr;
     }
 
-    Eigen::Matrix3d avg_shape;
-    avg_shape.setZero();
+    Eigen::Matrix3d covariance;
+    covariance.setZero();
 
     for(auto p: neighbors) {
-        avg_shape += p->metric();
+        covariance += p->inverseMetric();
     }
+    covariance /= neighbors.size();
 
-    avg_shape /= neighbors.size();
 
     // scale factor for shape
     Eigen::Vector3d scale;
     Eigen::Vector3d min(_minimumRadius, _minimumRadius, _minimumPeakDuration);
 
     for (auto i = 0; i < 3; ++i) {
-        const double ratio = min(i)*min(i)*avg_shape(i,i);
-        scale(i) = ratio > 1 ? 1.0 / std::sqrt(ratio) : 1.0;
+        const double ratio = covariance(i,i) / min(i) / min(i);
+        scale(i) = ratio > 1 ? 1.0 : 1.0 / std::sqrt(ratio);
     }
 
     for (auto i = 0; i < 3; ++i) {
         for (auto j = 0; j < 3; ++j) {
-            avg_shape(i,j) *= scale(i)*scale(j);
+            covariance(i,j) *= scale(i)*scale(j);
         }
     }
+  
+    Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(covariance);
+    auto vals = solver.eigenvalues();
 
-    sptrPeak3D peak = std::make_shared<Peak3D>(Ellipsoid(center, avg_shape));
+    // something went wrong...
+    if (vals.minCoeff() < 1e-3 || vals.maxCoeff() > 100*_minimumRadius) {
+        return nullptr;
+    }
+
+    sptrPeak3D peak = std::make_shared<Peak3D>(Ellipsoid(center, covariance.inverse()));
 
     // An averaged peak is by definition not an observed peak but a calculated peak
     peak->setObserved(false);

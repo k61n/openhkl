@@ -81,10 +81,9 @@ class TestWorkFlow(unittest.TestCase):
 
         predictor._handler = nsx.ProgressHandler()
 
-        predictor.addPredictedPeaks(data)
-        predicted_peaks = len(data.getPeaks()) - num_peaks
+        predicted_peaks = predictor.predictPeaks(data, False)
 
-        self.assertTrue(predicted_peaks > 1700)
+        self.assertTrue(len(predicted_peaks) > 1700)
 
 
 if __name__ == '__main__':

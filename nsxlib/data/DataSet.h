@@ -163,7 +163,7 @@ public:
     double getBackgroundLevel(const sptrProgressHandler& progress);
 
     //! Integrate intensities of all peaks
-    void integratePeaks(double peak_scale = 3.0, double bkg_scale = 5.0, bool update_shape = false, const sptrProgressHandler& handler = nullptr);
+    void integratePeaks(const PeakSet& peaks, double peak_scale = 3.0, double bkg_scale = 5.0, bool update_shape = false, const sptrProgressHandler& handler = nullptr);
 
     //! Remove duplicates
     void removeDuplicatePeaks();

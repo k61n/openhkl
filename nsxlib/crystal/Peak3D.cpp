@@ -453,7 +453,7 @@ void Peak3D::updateIntegration(const PeakIntegrator& integrator)
     _intensity = integrator.getPeakIntensity();
 
     // fit peak profile
-    _profile.fit(_projectionPeak, 100);
+    //_profile.fit(_projectionPeak, 100);
 
     _integration = integrator;
 }

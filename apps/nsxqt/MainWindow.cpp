@@ -633,7 +633,7 @@ void MainWindow::on_actionReintegrate_peaks_triggered()
     nsx::DataList numors = _session->getSelectedNumors();
 
     for (auto&& numor: numors) {
-        numor->integratePeaks(peak_scale, bkg_scale, update_shape, _progressHandler);
+        numor->integratePeaks(numor->getPeaks(), peak_scale, bkg_scale, update_shape, _progressHandler);
     }
 
     _session->updatePeaks();
