@@ -21,17 +21,17 @@ public:
     bool _removeUnindexed;
     bool _removeMasked;
     bool _removeUnselected;
-    bool _removeMultiplyIndexed;
     bool _removeIsigma;
-    bool _removeSignificance;
+    bool _removePValue;
     bool _removeOverlapping;
     bool _removeDmin;
     bool _removeDmax;
+    bool _removeForbidden;
 
     double _Isigma;
     double _dmin;
     double _dmax;
-    double _significance;
+    double _pvalue;
 
 
 };

@@ -2,15 +2,31 @@
 
 #include "PeakFilter.h"
 #include "Peak3D.h"
+
+#include "../crystal/UnitCell.h"
+#include "../crystal/SpaceGroup.h"
 #include "../data/DataSet.h"
 #include "../geometry/Octree.h"
+#include "../instrument/Diffractometer.h"
+#include "../instrument/Sample.h"
 
 namespace {
 
 bool invalid(const nsx::PeakFilter& filter, nsx::sptrDataSet data, nsx::sptrPeak3D peak)
 {
     if (filter._removeUnindexed) {
-        // todo
+        auto cell = peak->getActiveUnitCell();
+
+        // no unit cell assigned:
+        if (!cell) {
+            return true;
+        }
+
+        // try to index
+        Eigen::RowVector3d hkl;
+        if (!peak->getMillerIndices(*cell, hkl)) {
+            return true;
+        }
     }
    
     if (filter._removeMasked) {
@@ -25,10 +41,6 @@ bool invalid(const nsx::PeakFilter& filter, nsx::sptrDataSet data, nsx::sptrPeak
         }
     }
 
-    if (filter._removeMultiplyIndexed) {
-        // todo
-    }
-
     if (filter._removeIsigma) {
         nsx::Intensity i = peak->getCorrectedIntensity();
         if (i.getValue() / i.getSigma() < filter._Isigma) {
@@ -36,13 +48,19 @@ bool invalid(const nsx::PeakFilter& filter, nsx::sptrDataSet data, nsx::sptrPeak
         }
     }
 
-    if (filter._removeSignificance) {
-        // todo
+    if (filter._removePValue) {
+        if (peak->pValue() < filter._pvalue) {
+            return true;
+        }
     }
 
-    if (filter._removeOverlapping) {
-        // note: this is a special case handled in PeakFilter::apply
-    }
+    // note: this is a special case handled in PeakFilter::apply
+    //if (filter._removeOverlapping) {
+    //}
+
+    // note: special case handled in PeakFilter::apply
+    //if (filter._removeForbidden) {
+    //}
 
     const double d = 1.0 / peak->getQ().norm();
 
@@ -121,11 +139,29 @@ int PeakFilter::apply(sptrDataSet data) const
     for (auto collision: collisions) {
         unsigned int i = collision.first - &ellipsoids[0];
         unsigned int j = collision.second - &ellipsoids[0];
-
         assert(i < npeaks && j < npeaks);
-
         data->removePeak(peaks[i]);
         data->removePeak(peaks[j]);
+    }
+
+    if (!_removeForbidden) {
+        return npeaks - data->getPeaks().size();
+    }
+
+    for (auto i = 0; data->getDiffractometer()->getSample()->getNCrystals(); ++i) {
+        auto cell = data->getDiffractometer()->getSample()->getUnitCell(i);
+        SpaceGroup group(cell->getSpaceGroup());
+
+        for (auto peak: peaks) {
+            if (peak->getActiveUnitCell() != cell) {
+                continue;
+            }
+
+            Eigen::RowVector3i hkl = peak->getIntegerMillerIndices();
+            if (group.isExtinct(hkl(0), hkl(1), hkl(2))) {
+                data->removePeak(peak);
+            }
+        }
     }
 
     return npeaks - data->getPeaks().size();
