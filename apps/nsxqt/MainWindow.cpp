@@ -544,17 +544,9 @@ void MainWindow::on_actionDraw_peak_integration_area_triggered(bool checked)
 
 void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
 {
-
-    const double pmax = 1e-3;
-    int total_peaks = 0;
-
     nsx::DataList numors = _session->getSelectedNumors();
-    nsx::PeakList bad_peaks;
-
     DialogPeakFilter* dlg = new DialogPeakFilter(numors, this);
     dlg->exec();
-
-    //_ui->_dview->getScene()->updatePeaks();
     _session->updatePeaks();
 }
 
