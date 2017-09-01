@@ -27,3 +27,39 @@ double DialogCalculatedPeaks::searchRadius()
 {
     return ui->radiusSpinBox->value();
 }
+
+
+double DialogCalculatedPeaks::frameRadius() 
+{
+    return ui->frameSpinBox->value();
+}
+
+double DialogCalculatedPeaks::minimumRadius()
+{
+    return ui->minRadiusSpinBox->value();
+}
+
+double DialogCalculatedPeaks::minimumPeakDuration()
+{
+    return ui->minDurationSpinBox->value();
+}
+
+double DialogCalculatedPeaks::peakScale()
+{
+    return ui->peakScaleSpinBox->value();
+}
+
+double DialogCalculatedPeaks::bkgScale()
+{
+    return ui->bkgScaleSpinBox->value();
+}
+
+double DialogCalculatedPeaks::Isigma()
+{
+    return ui->sigmaSpinBox->value();
+}
+
+int DialogCalculatedPeaks::minimumNeighbors()
+{
+    return ui->neighborSpinBox->value();
+}

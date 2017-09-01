@@ -36,18 +36,34 @@
 #ifndef NSXLIB_PEAKPREDICTOR_H
 #define NSXLIB_PEAKPREDICTOR_H
 
+#include "../crystal/CrystalTypes.h"
 #include "../data/DataTypes.h"
+#include "../geometry/GeometryTypes.h"
 #include "../utils/UtilsTypes.h"
+
+#include <Eigen/Core>
 
 namespace nsx {
 
+//! Class to predict peak shapes based on observed peaks
 class PeakPredictor {
 public:
+    PeakPredictor();
+    PeakSet predictPeaks(sptrDataSet data, bool keepObserved);
 
-    void addPredictedPeaks(sptrDataSet data);
+private:
+    sptrPeak3D averagePeaks(const Octree& tree, const Eigen::Vector3d& center);
 
 public:
-    double _dmin, _dmax, _searchRadius, _peakScale, _bkgScale;
+    double _dmin, _dmax;
+    double _peakScale, _bkgScale;
+    double _searchRadius;
+    double _frameRadius;
+    double _minimumRadius;
+    double _minimumPeakDuration;
+    double _Isigma;
+    
+    int _minimumNeighbors;
     sptrProgressHandler _handler;
 };
 

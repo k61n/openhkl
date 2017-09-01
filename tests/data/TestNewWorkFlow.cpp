@@ -119,7 +119,7 @@ int run_test()
 
     // reintegrate peaks
     const double scale = nsx::getScale(0.997);
-    dataf->integratePeaks(scale, 2.0*scale, true);
+    dataf->integratePeaks(dataf->getPeaks(), scale, 2.0*scale, true);
 
     indexed_peaks = numIndexedPeaks();
     BOOST_CHECK(indexed_peaks > 600);
