@@ -7,6 +7,7 @@
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/crystal/Peak3D.h>
 #include <nsxlib/crystal/PeakFilter.h>
+#include <nsxlib/logger/Logger.h>
 
 #include "ui_PeakFilterDialog.h"
 #include "DialogPeakFilter.h"
@@ -44,6 +45,12 @@ void DialogPeakFilter::accept()
     filter._dmin = _ui->spinBoxDmin->value();
     filter._dmax = _ui->spinBoxDmax->value();
     filter._significance = _ui->spinBoxSignificance->value();
+
+    for (auto dataset: _data) {
+        nsx::info() << "Filtering peaks in dataset " << dataset->getBasename();
+        int nremoved = filter.apply(dataset);
+        nsx::info() << "Removed " << nremoved << " peaks";
+    }
 
     QDialog::accept();
 }

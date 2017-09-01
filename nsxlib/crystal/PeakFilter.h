@@ -14,8 +14,8 @@ public:
     PeakFilter();
     ~PeakFilter();
 
-    void filter(sptrDataSet data) const;
-    bool invalid(sptrDataSet data, sptrPeak3D peak) const;
+    //! Apply the filter to the given data set. Returns the number of removed peaks
+    int apply(sptrDataSet data) const;
 
 public:
     bool _removeUnindexed;
