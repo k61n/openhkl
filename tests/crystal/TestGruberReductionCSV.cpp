@@ -83,7 +83,7 @@ int run_test()
 
         // perform reduction using NiggliReduction class
         Eigen::Matrix3d niggli_g, niggli_P;
-        nsx::NiggliReduction niggli(niggliCell.getMetricTensor(), niggli_tolerance);
+        nsx::NiggliReduction niggli(niggliCell.metric(), niggli_tolerance);
         niggli.reduce(niggli_g, niggli_P);
         niggliCell.transform(niggli_P);
         gruberCell.transform(niggli_P);
@@ -92,7 +92,7 @@ int run_test()
         Eigen::Matrix3d gruber_g, gruber_P;
         nsx::LatticeCentring centering;
         nsx::BravaisType bravaisType;
-        nsx::GruberReduction gruber(gruberCell.getMetricTensor(), gruber_tolerance);
+        nsx::GruberReduction gruber(gruberCell.metric(), gruber_tolerance);
 
         int condition;
 

@@ -3,6 +3,8 @@
 
 #include <boost/test/unit_test.hpp>
 
+#include <cmath>
+
 #include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/utils/Units.h>
 
@@ -15,17 +17,18 @@ BOOST_AUTO_TEST_CASE(Test_Unit_Cell)
     double c=3.44;
     double alpha=90*nsx::deg;
     nsx::UnitCell cell(a,b,c,alpha,alpha,alpha);
+    nsx::CellCharacter ch = cell.character();
 
-    BOOST_CHECK_CLOSE(cell.getA(),a,tolerance);
-    BOOST_CHECK_CLOSE(cell.getB(),b,tolerance);
-    BOOST_CHECK_CLOSE(cell.getC(),c,tolerance);
-    BOOST_CHECK_CLOSE(cell.getAlpha(),alpha,tolerance);
-    BOOST_CHECK_CLOSE(cell.getBeta(),alpha,tolerance);
-    BOOST_CHECK_CLOSE(cell.getGamma(),alpha,tolerance);
+    BOOST_CHECK_CLOSE(ch.a,a,tolerance);
+    BOOST_CHECK_CLOSE(ch.b,b,tolerance);
+    BOOST_CHECK_CLOSE(ch.c,c,tolerance);
+    BOOST_CHECK_CLOSE(ch.alpha,alpha,tolerance);
+    BOOST_CHECK_CLOSE(ch.beta,alpha,tolerance);
+    BOOST_CHECK_CLOSE(ch.gamma,alpha,tolerance);
 
-    BOOST_CHECK_CLOSE(cell.getVolume(),a*b*c,tolerance);
+    BOOST_CHECK_CLOSE(cell.volume(),a*b*c,tolerance);
 
-    const Eigen::Matrix3d& A=cell.getStandardM();
+    const Eigen::Matrix3d& A = cell.basis();
     BOOST_CHECK_CLOSE(A(0,0),a,tolerance);
     BOOST_CHECK_SMALL(A(1,0),tolerance);
     BOOST_CHECK_SMALL(A(2,0),tolerance);
@@ -36,7 +39,7 @@ BOOST_AUTO_TEST_CASE(Test_Unit_Cell)
     BOOST_CHECK_SMALL(A(1,2),tolerance);
     BOOST_CHECK_CLOSE(A(2,2),c,tolerance);
 
-    const Eigen::Matrix3d& B=cell.getReciprocalStandardM();
+    const Eigen::Matrix3d& B = cell.reciprocalBasis();
     BOOST_CHECK_CLOSE(B(0,0),1/a,tolerance);
     BOOST_CHECK_SMALL(B(1,0),tolerance);
     BOOST_CHECK_SMALL(B(2,0),tolerance);
@@ -48,7 +51,7 @@ BOOST_AUTO_TEST_CASE(Test_Unit_Cell)
     BOOST_CHECK_CLOSE(B(2,2),1/c,tolerance);
 
 
-    const Eigen::Matrix3d& G=cell.getMetricTensor();
+    const Eigen::Matrix3d& G=cell.metric();
     BOOST_CHECK_CLOSE(G(0,0),a*a,tolerance);
     BOOST_CHECK_SMALL(G(1,0),tolerance);
     BOOST_CHECK_SMALL(G(2,0),tolerance);
@@ -63,7 +66,9 @@ BOOST_AUTO_TEST_CASE(Test_Unit_Cell)
     cell.setBravaisType(nsx::BravaisType::Tetragonal);
     // Check angle calculations
     nsx::UnitCell cell4(10,10,10,90*nsx::deg,98*nsx::deg,90*nsx::deg);
-    BOOST_CHECK_CLOSE(cell4.getAngle(1,0,0,0,0,1),82.0*nsx::deg,tolerance);
+    auto q1 = cell4.fromIndex({1, 0, 0});
+    auto q2 = cell4.fromIndex({0, 0, 1});
+    BOOST_CHECK_CLOSE(std::acos(q1.dot(q2) / q1.norm() / q2.norm()),82.0*nsx::deg,tolerance);
 
     // Check equivalence
     cell4.setSpaceGroup("P 4/m m m");

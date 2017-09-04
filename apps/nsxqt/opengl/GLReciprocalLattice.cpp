@@ -49,9 +49,9 @@ void GLReciprocalLattice::GLCode()
 
     glBegin(GL_LINES);
 
-    auto aStarVector = _cell->getReciprocalAVector();
-    auto bStarVector = _cell->getReciprocalBVector();
-    auto cStarVector = _cell->getReciprocalCVector();
+    auto aStarVector = _cell->basis().row(0);
+    auto bStarVector = _cell->basis().row(1);
+    auto cStarVector = _cell->basis().row(2);
 
     double ax = aStarVector[0];
     double ay = aStarVector[1];

@@ -97,7 +97,7 @@ PeakSet PeakPredictor::predictPeaks(sptrDataSet data, bool keepObserved)
     for (unsigned int i = 0; i < ncrystals; ++i) {
         SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
         auto cell = sample->getUnitCell(i);
-        auto UB = cell->getReciprocalStandardM();
+        auto UB = cell->reciprocalBasis();
 
         _handler->setStatus("Calculating peak locations...");
 

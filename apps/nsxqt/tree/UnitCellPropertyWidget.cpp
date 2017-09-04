@@ -106,7 +106,7 @@ void UnitCellPropertyWidget::setMassDensity() const
     {
         double mm=material->molarMass();
         mm*=ui->spinBox_Z->value()/nsx::avogadro;
-        double volume=_unitCellItem->getUnitCell()->getVolume()*nsx::ang3;
+        double volume=_unitCellItem->getUnitCell()->volume()*nsx::ang3;
         material->setMassDensity(mm/volume);
     }
 }
@@ -114,12 +114,13 @@ void UnitCellPropertyWidget::setMassDensity() const
 
 void UnitCellPropertyWidget::updateCellParameters(nsx::sptrUnitCell cell)
 {
-    ui->doubleSpinBoxa->setValue(cell->getA());
-    ui->doubleSpinBoxb->setValue(cell->getB());
-    ui->doubleSpinBoxc->setValue(cell->getC());
-    ui->doubleSpinBoxalpha->setValue(cell->getAlpha()/nsx::deg);
-    ui->doubleSpinBoxbeta->setValue(cell->getBeta()/nsx::deg);
-    ui->doubleSpinBoxgamma->setValue(cell->getGamma()/nsx::deg);
+    nsx::CellCharacter ch = cell->character();
+    ui->doubleSpinBoxa->setValue(ch.a);
+    ui->doubleSpinBoxb->setValue(ch.b);
+    ui->doubleSpinBoxc->setValue(ch.c);
+    ui->doubleSpinBoxalpha->setValue(ch.alpha/nsx::deg);
+    ui->doubleSpinBoxbeta->setValue(ch.beta/nsx::deg);
+    ui->doubleSpinBoxgamma->setValue(ch.gamma/nsx::deg);
 }
 
 void UnitCellPropertyWidget::getLatticeParams()

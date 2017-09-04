@@ -30,9 +30,10 @@ void LatticeIndexer::updatePeaks()
 {
     auto& scene=ui->glScene->getScene();
     auto datav=_experiment->getData();
-    double amin=_cell->getReciprocalA();
-    double bmin=_cell->getReciprocalB();
-    double cmin=_cell->getReciprocalC();
+    nsx::CellCharacter ch = _cell->reciprocalCharacter();
+    double amin = ch.a;
+    double bmin = ch.b;
+    double cmin = ch.c;
     double min=std::min(amin,bmin);
     min=std::min(min,cmin);
 

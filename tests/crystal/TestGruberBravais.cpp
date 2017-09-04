@@ -125,7 +125,7 @@ int run_test()
             nsx::UnitCell cell;
             cell.setABCDEF(A, B, C, D, E, F);
 
-            Eigen::Matrix3d G = cell.getMetricTensor();
+            Eigen::Matrix3d G = cell.metric();
 
             Eigen::Matrix3d P, NG, NP;
 

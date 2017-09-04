@@ -26,32 +26,35 @@
  *
  */
 
-#ifndef NSXLIB_GRUBBERREDUCTION_H
-#define NSXLIB_GRUBBERREDUCTION_H
+#ifndef NSXLIB_NIGGLICHARACTER_H
+#define NSXLIB_NIGGLICHARACTER_H
 
-#include "NiggliCharacter.h"
-#include "UnitCell.h"
 #include <Eigen/Dense>
 #include <string>
 
 namespace nsx {
+    
+//! Centering type of the Bravais lattice
+enum  class LatticeCentring : char  {P='P',A='A',C='C',I='I',F='F',R='R'};
+//! Bravais type
+enum  class BravaisType : char  {Triclinic='a',Monoclinic='m',Orthorhombic='o',Tetragonal='t',Hexagonal='h',Cubic='c',Trigonal='h'};
 
-class GruberReduction
-{
-public:
-    //!! Construct algorithm with the metric tensor of the Cell, and a tolerance
-    GruberReduction(const Eigen::Matrix3d& g, double epsilon);
-    //! Find the conventional cell and output transformation matrix, centring type and Bravais lattice of the new cell.
-    //! Return value is the condition which matched (1-44)
-    int reduce(Eigen::Matrix3d& P, LatticeCentring& centring, BravaisType& bravais);
-    NiggliCharacter classify();
 
-private:
-    bool equal(double A,double B) const;
-    Eigen::Matrix3d _g;
-    double _epsilon;
+// todo: refactor into LatticeCharacter
+//! Structure to handle a Niggli character
+struct NiggliCharacter {
+    int number = 31; // number according to tables
+    bool typeI = true; // true if type I, else type II
+    std::string bravais = "aP"; // Bravais type
+    Eigen::MatrixXd C; // matrix of linear constraints
+    Eigen::Matrix3d P = Eigen::Matrix3d::Identity(); // transformation matrix
+    
+    // initialize the condition according to priority
+    // s = sign(D+E+F)
+    // t = sign(2D+F)
+    bool set(int priority, double s, double t);
 };
 
 } // end namespace nsx
 
-#endif // NSXLIB_GRUBBERREDUCTION_H
+#endif // NSXLIB_NIGGLICHARACTER_H

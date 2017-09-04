@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE(Test_CC)
     SpaceGroup group("P 21 21 2");
     UnitCell cell(a, b, c, alpha, beta, gamma);
  
-    Eigen::Matrix3d G = cell.getMetricTensor();
+    Eigen::Matrix3d G = cell.metric();
 
     Eigen::Matrix3d P;
 
