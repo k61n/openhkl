@@ -13,6 +13,7 @@ class Peak3D;
 class PeakCalc;
 class PeakIntegrator;
 class PeakRecord;
+class PeakValidator;
 class Profile;
 class SpaceGroup;
 class SpaceGroupSymbols;

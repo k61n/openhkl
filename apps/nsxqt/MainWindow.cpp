@@ -45,6 +45,8 @@
 #include "DetectorScene.h"
 #include "ColorMap.h"
 #include "dialogs/DialogConvolve.h"
+#include "dialogs/DialogPeakFilter.h"
+#include "dialogs/DialogExperiment.h"
 #include "dialogs/DialogIntegrate.h"
 #include "dialogs/NumorsConversionDialog.h"
 #include "dialogs/ResolutionCutoffDialog.h"
@@ -542,55 +544,9 @@ void MainWindow::on_actionDraw_peak_integration_area_triggered(bool checked)
 
 void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
 {
-    Q_UNUSED(checked)
-
-    const double pmax = 1e-3;
-    int total_peaks = 0;
-
     nsx::DataList numors = _session->getSelectedNumors();
-    nsx::PeakList bad_peaks;
-
-    for (nsx::sptrDataSet numor: numors) {
-
-        numor->removeDuplicatePeaks();
-
-        nsx::PeakSet& peaks = numor->getPeaks();
-
-        total_peaks += peaks.size();
-
-        for (auto it = peaks.begin(); it != peaks.end();) {
-            if ( (*it)->isMasked() || !(*it)->isSelected() ) {
-                bad_peaks.push_back(*it);
-                it = peaks.erase(it);
-            }
-            else if ((*it)->pValue() >= pmax) {
-                bad_peaks.push_back(*it);
-                it = peaks.erase(it);
-            }
-            else {
-                bool correctly_indexed = false;
-
-                for (int i = 0; i < numor->getDiffractometer()->getSample()->getNCrystals(); ++i) {
-                    nsx::UnitCell cell = *numor->getDiffractometer()->getSample()->getUnitCell(i);
-                    Eigen::RowVector3d hkl;
-                    bool indexingSuccess = (*it)->getMillerIndices(cell,hkl,true);
-                    if (indexingSuccess) {
-                        correctly_indexed = true;
-                        break;
-                    }
-                }
-                if (!correctly_indexed) {
-                    bad_peaks.push_back(*it);
-                    it = peaks.erase(it);
-                } else {
-                    ++it;
-                }
-            }
-        }
-    }
-
-    nsx::info() << "Eliminated " << bad_peaks.size() << " out of " << total_peaks << " total peaks.";
-    //_ui->_dview->getScene()->updatePeaks();
+    DialogPeakFilter* dlg = new DialogPeakFilter(numors, this);
+    dlg->exec();
     _session->updatePeaks();
 }
 
