@@ -230,7 +230,7 @@ BOOST_AUTO_TEST_CASE(Test_Unit_Cell)
     cell.setParams(55.03, 58.60, 66.89, 1.569, 1.57, 1.571);
     int num = cell.reduce(false, 1e-2, 5e-3);
     BOOST_CHECK_EQUAL(num, 32);
-    auto new_cell = cell.applyNiggliConstraints(1000.0);
+    auto new_cell = cell.applyNiggliConstraints();
     auto ch = new_cell.character();
 
     BOOST_CHECK_CLOSE(ch.a, 55.03, 1e-3);

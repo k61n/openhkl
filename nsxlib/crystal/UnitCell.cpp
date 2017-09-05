@@ -346,17 +346,38 @@ void UnitCell::setNiggli(const NiggliCharacter& niggli)
     _niggli = niggli;
 }
 
-UnitCell UnitCell::applyNiggliConstraints(double weight) const
+//! This method finds the unit cell closest to the given cell, which also satisfies the 
+//! symmetry constraints on the Niggli character (see e.g. tables 9.2.5.1 of volume A of the international tables).
+//! Since the constraints are _non-linear_ on the components of the basis matrix, we perform a change of coordinates
+//! into a system where the constraints are linear.
+//!
+//! We parameterize the basis matrix as U1 * U0 * R, where U1 is rotation, U0 is the orientation of the initial guess,
+//! and R is upper triangular. The upper triangular matrix R is parameterized by the 6 lattice character components
+//! A, B, C, D, E, F on which the constraints are linear. We construct the rotation matrix U1 from a unit quaternion,
+//! which is parameterized by 3 real numbers. So the total number of parameters is
+//! 3 quaterion components + 6 lattice characters - # constraints. 
+//!
+//! We further note that the factorization U = U1 * U0 is done for numerical stability (since we expect U1 to be small)
+//! and that we use quaternions to compute U1 also for numerical stability (and furthermore to guarantee that U1 is
+//! unitary, which is a non-linear constraint on its components).
+//!
+//! Given this parameterization and initial basis matrices A0, B0 = A0^{-1}, we perform a least-squares minimization to
+//! find A, B = A^{-1} such that the L2 matrix norms |A-A0|^2 and |B-B0|^2 are minimized.
+UnitCell UnitCell::applyNiggliConstraints() const
 {
     // no constraints for these cases to early return
     if (_niggli.number == 31 || _niggli.number == 44) {
         return *this;
     }
 
+    // matrix of Niggli character constraints, taken from the table 9.2.5.1
     Eigen::MatrixXd C = _niggli.C;
+    // note that we use NP to transform to the Niggli cell (in case we are currently a Gruber cell)
     Eigen::Matrix3d B0 = _NP*_B;
     Eigen::Matrix3d A0 = _A*_NP.inverse();
     
+    // geometric mean of side-lengths of unit cell & reciprocal unit cell
+    // we use these to scale the residuals in the fitting function below
     const double a = std::pow(std::fabs(A0.determinant()), 1.0/3.0);
     const double b = std::pow(std::fabs(B0.determinant()), 1.0/3.0);
 
@@ -381,6 +402,7 @@ UnitCell UnitCell::applyNiggliConstraints(double weight) const
     // get initial orientation matrix
     Eigen::Matrix3d U0 = UnitCell(niggliBasis()).orientation();
 
+    // helper routine to create a unit cell satisfying Niggli constraints
     auto new_uc = [=](const Eigen::VectorXd& x) {
         // lattice character
         Eigen::VectorXd ch(6);
@@ -401,6 +423,7 @@ UnitCell UnitCell::applyNiggliConstraints(double weight) const
     };
 
     // residuals used for least-squares fitting
+    // these are just the differences A-A0 and B-B0 as described above
     auto functor = [=](const Eigen::VectorXd& x, Eigen::VectorXd& residuals) -> int {
         UnitCell uc = new_uc(x);
         Eigen::Matrix3d A = uc.basis();
@@ -411,8 +434,7 @@ UnitCell UnitCell::applyNiggliConstraints(double weight) const
                 residuals(2*(3*i+j)+0) = (B(i,j) - _B(i, j)) / b;
                 residuals(2*(3*i+j)+1) = (A(i,j) - _A(i, j)) / a;
             }
-        }
- 
+        } 
         return 0;
     };
 
@@ -427,7 +449,7 @@ UnitCell UnitCell::applyNiggliConstraints(double weight) const
     Eigen::VectorXd ch(6);
     ch << G(0,0), G(1,1), G(2,2), G(1,2), G(0,2), G(0,1);
     
-    // get starting values
+    // get starting values: these are just the lattice character (components of metric tensor)
     auto y = (kernel.transpose()*kernel).inverse()*kernel.transpose()*ch;
     for (auto i = 0; i < nparams; ++i) {
         p(i) = i < 3 ? 0.0 : y(i-3);

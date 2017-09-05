@@ -122,7 +122,7 @@ public:
     Eigen::Matrix3d reciprocalNiggliBasis() const;
 
     //! Apply constraint from the Niggli character
-    UnitCell applyNiggliConstraints(double weight=20.0) const;
+    UnitCell applyNiggliConstraints() const;
 
     //! Return d of the Bragg condition for the given reflection
     double getD(int h, int k, int l);
