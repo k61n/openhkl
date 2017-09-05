@@ -27,7 +27,7 @@ option(NSX_SANITIZE "Compile with clang's -fsanitize (must also set NSX_SANITIZE
 option(NSX_TIDY "Add clang-tidy custom target" OFF)
 option(NSX_PYTHON "Generate Python bindings" ON)
 option(NSX_PYTHON3 "Force Python 3" ON)
-option(NSX_DOCS "Build documentation" ON)
+option(NSX_DOCS "Build documentation" OFF)
 
 ###########################################################################
 # Scripts controlling build setup and dependencies
