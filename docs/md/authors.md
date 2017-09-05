@@ -1,4 +1,4 @@
 Authors {#authors}
 ==============================================
 
-Laurent Chapon, Eric Pellegrini, Jonathan Fisher
+Laurent Chapon, Jonathan Fisher, Eric Pellegrini
