@@ -9,20 +9,33 @@
 
 int run_test() {
 
-    nsx::DirectVector v(1,0,0);
-    nsx::DirectVector v1(Eigen::Vector3d(1,0,0));
+    nsx::DirectVector dv1(1.0,2.0,3.0);
 
-    v += v1;
+    BOOST_CHECK_EQUAL(dv1(0),1.0);
+    BOOST_CHECK_EQUAL(dv1(1),2.0);
+    BOOST_CHECK_EQUAL(dv1(2),3.0);
 
-    std::cout<<v[0]<<std::endl;
-    std::cout<<v[1]<<std::endl;
-    std::cout<<v[2]<<std::endl;
+    nsx::DirectVector dv2(Eigen::Vector3d(5.0,-2.0,4.0));
 
-    v *= 10;
+    dv1 += dv2;
 
-    std::cout<<v[0]<<std::endl;
-    std::cout<<v[1]<<std::endl;
-    std::cout<<v[2]<<std::endl;
+    BOOST_CHECK_EQUAL(dv1(0),6.0);
+    BOOST_CHECK_EQUAL(dv1(1),0.0);
+    BOOST_CHECK_EQUAL(dv1(2),7.0);
+
+    dv1 *= 10;
+
+    BOOST_CHECK_EQUAL(dv1(0),60.0);
+    BOOST_CHECK_EQUAL(dv1(1),0.0);
+    BOOST_CHECK_EQUAL(dv1(2),70.0);
+
+    nsx::DirectVector dv3, dv4(1,0,-2), dv5(2,-7,4);
+
+    dv3 = dv4 + dv5;
+
+    BOOST_CHECK_EQUAL(dv3(0), 3.0);
+    BOOST_CHECK_EQUAL(dv3(1),-7.0);
+    BOOST_CHECK_EQUAL(dv3(2), 2.0);
 
     return 0;
 }

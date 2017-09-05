@@ -4,9 +4,12 @@
 
 namespace nsx {
 
-class DirectVector : public Eigen::Vector3d {
+class DirectVector : public Eigen::Vector3d
+{
 
 public:
+
+    DirectVector();
 
     DirectVector(const Eigen::Vector3d& vector);
 
@@ -14,9 +17,15 @@ public:
 
     virtual ~DirectVector();
 
+    DirectVector& operator=(const DirectVector& other);
+
+    DirectVector& operator+=(const Eigen::Vector3d& other)=delete;
+
     DirectVector& operator+=(const DirectVector& other);
 
-    DirectVector& operator*=(double factor);
+    DirectVector operator+(const Eigen::Vector3d& other)=delete;
+
+    DirectVector operator+(const DirectVector& other);
 
 };
 
