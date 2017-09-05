@@ -9,11 +9,7 @@ class ReciprocalVector : public Eigen::RowVector3d
 
 public:
 
-    ReciprocalVector();
-
-    ReciprocalVector(const Eigen::RowVector3d& vector);
-
-    ReciprocalVector(double x, double y, double z);
+    using Eigen::RowVector3d::RowVector3d;
 
     virtual ~ReciprocalVector();
 

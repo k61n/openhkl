@@ -6,18 +6,6 @@
 
 namespace nsx {
 
-ReciprocalVector::ReciprocalVector() : Eigen::RowVector3d()
-{
-}
-
-ReciprocalVector::ReciprocalVector(const Eigen::RowVector3d& vector) : Eigen::RowVector3d(vector)
-{
-}
-
-ReciprocalVector::ReciprocalVector(double x, double y, double z) : Eigen::RowVector3d(x,y,z)
-{
-}
-
 ReciprocalVector::~ReciprocalVector()
 {
 }

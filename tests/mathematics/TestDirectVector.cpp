@@ -15,7 +15,7 @@ int run_test() {
     BOOST_CHECK_EQUAL(dv1(1),2.0);
     BOOST_CHECK_EQUAL(dv1(2),3.0);
 
-    nsx::DirectVector dv2(Eigen::Vector3d(5.0,-2.0,4.0));
+    nsx::DirectVector dv2(5.0,-2.0,4.0);
 
     dv1 += dv2;
 
@@ -29,7 +29,7 @@ int run_test() {
     BOOST_CHECK_EQUAL(dv1(1),0.0);
     BOOST_CHECK_EQUAL(dv1(2),70.0);
 
-    nsx::DirectVector dv3, dv4(1,0,-2), dv5(2,-7,4);
+    nsx::DirectVector dv3, dv4(1.0,0.0,-2.0), dv5(2.0,-7.0,4.0);
 
     dv3 = dv4 + dv5;
 
