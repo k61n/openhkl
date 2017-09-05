@@ -33,7 +33,8 @@
 
 namespace nsx {
 
-/* !
+/**
+ * \class Blob3D
  * \brief Class Blob3D.
  * Blob3D are used to store region of interest in a 3D image.
  * A Blob is constructed by adding points in the image with coordinates x,y,z
@@ -46,10 +47,11 @@ namespace nsx {
  */
 class Blob3D {
 public:
-  //!Initialize an empty blob
+  
+  //! Initialize an empty blob
   Blob3D();
 
-  //!Initialize a blob with a point of mass m at x,y,z
+  //! Initialize a blob with a point of mass m at x,y,z
   Blob3D(double x, double y,double z, double m);
 
   //! Copy constructor

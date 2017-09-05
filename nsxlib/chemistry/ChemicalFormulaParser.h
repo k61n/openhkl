@@ -171,7 +171,7 @@ struct ValidateCompoundContents {
 
 };
 
-//! @Class: BuidMaterialFromCompounds.
+//! @class: BuidMaterialFromCompounds.
 //! Functor for building material from a list of chemical compounds and their associated molar ratio in the material.
 //! The isotope contents of the material is updated with the isotope contents
 //! of the chemical compound multiplied by its molar ratio

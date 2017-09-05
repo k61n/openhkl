@@ -110,7 +110,7 @@ public:
     //! Return the angle in radians between two reflections hkl1 and hkl2
     double getAngle(const Eigen::Vector3d& hkl1,const Eigen::Vector3d& hkl2) const;
     //! Get UB
-    //! Determine whether two reflections (h1,k1,l1) and (h2,k2,l2) are equivalent.
+    //! Determine whether two reflections \f$(h_1,k_1,l_1)\f$ and \f$(h_2,k_2,l_2)\f$ are equivalent.
     bool isEquivalent(double h1,double k1, double l1, double h2, double k2, double l2) const;
     //! Determine whether two reflections (h1,k1,l1) and (h2,k2,l2) are equivalent up to Friedel reflection.
     bool isFriedelEquivalent(double h1,double k1, double l1, double h2, double k2, double l2) const;
