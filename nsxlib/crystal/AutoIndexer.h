@@ -57,6 +57,8 @@ struct IndexerParameters {
         //Parameters() = default;
 };
 
+//! \class AutoIndexer
+//! Class to automatically index a set of peaks
 class AutoIndexer {
 
 public:

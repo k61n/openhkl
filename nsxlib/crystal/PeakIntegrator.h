@@ -43,10 +43,14 @@ namespace nsx {
 
 class DataSet;
 
+//! \class PeakIntegrator
+//! \breif This is a helper class to handle per-frame integration of a peak.
 class PeakIntegrator {
 public:
 
     PeakIntegrator() = default;
+
+    //! Create a PeakIntegrator instance from a given IntegrationRegion and DataSet.
     PeakIntegrator(const IntegrationRegion& region, const DataSet& data);
     ~PeakIntegrator() {}
 
