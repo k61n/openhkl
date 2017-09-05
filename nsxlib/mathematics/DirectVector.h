@@ -9,11 +9,7 @@ class DirectVector : public Eigen::Vector3d
 
 public:
 
-    DirectVector();
-
-    DirectVector(const Eigen::Vector3d& vector);
-
-    DirectVector(double x, double y, double z);
+    using Eigen::Vector3d::Vector3d;
 
     virtual ~DirectVector();
 
@@ -26,7 +22,6 @@ public:
     DirectVector operator+(const Eigen::Vector3d& other)=delete;
 
     DirectVector operator+(const DirectVector& other);
-
 };
 
 } // end namespace nsx
