@@ -40,33 +40,58 @@
 
 namespace nsx {
 
-
+    /*
     struct MillerIndex {
         // todo: think about this....
         const Eigen::RowVector3d hkl; // rounded
         const Eigen::RowVector3d delta_hkl; // error from raw hkl
         //bool commensurate(double tolerance) const;
         //Eigen::RowVector3d getIntegralIndex(double tolerance) const;
-    };
+    };*/
 
+    //! \brief Structure to encapsulate lattice cell character.
     struct CellCharacter {
-        double A, B, C, D, E, F;
-        double a, b, c, alpha, beta, gamma;
+        //! Lattice character \f$A = \mathbf{a} \cdot \mathbf{b}\f$
+        double A;
+        //! Lattice character \f$B = \mathbf{b} \cdot \mathbf{b}\f$
+        double B;
+        //! Lattice character \f$C = \mathbf{c} \cdot \mathbf{c}\f$
+        double C;
+        //! Lattice character \f$D = \mathbf{b} \cdot \mathbf{c}\f$
+        double D;
+        //! Lattice character \f$E = \mathbf{a} \cdot \mathbf{c}\f$
+        double E;
+        //! Lattice character \f$F = \mathbf{a} \cdot \mathbf{b}\f$
+        double F;
+        //! Lattice character \f$a = |\mathbf{a}|\f$
+        double a;
+        //! Lattice character \f$b = |\mathbf{b}|\f$
+        double b;
+        //! Lattice character \f$c = |\mathbf{c}|\f$
+        double c;
+        //! Lattice character \f$\alpha = \angle(\mathbf{b}, \mathbf{c})\f$
+        double alpha;
+        //! Lattice character \f$\beta = \angle(\mathbf{a}, \mathbf{c})\f$ 
+        double beta;
+        //! Lattice character \f$\gamma = \angle(\mathbf{a}, \mathbf{b})\f$
+        double gamma;
 
+        //! Default constructor: set all parameters to zero.
         CellCharacter();
+        //! Construct a lattice character from a given metric tensor $g$.
         CellCharacter(const Eigen::Matrix3d& g);
+        //! Construct a lattice character from the given metric components.
         CellCharacter(double A, double B, double C, double D, double E, double F);
     };
 
-/** @brief Class to define a crystallographic unit-cell.
- *
- * Provide functionalities to transform vectors of the direct lattice or reciprocal
- * lattice from unit-cell coordinates to a right-handed coordinates system.
- * The UnitCell is defined by the parameters a,b,c and angles alpha, beta, gamma.
- * The UnitCell parameters a,b,c are given in \f$ \AA \f$  and angle alpha, beta, gamma
- * are given in degrees.
- * The a axis is chosen as pointing along the x-direction, and the b-axis is in the xy-plane.
- */
+//! \brief Class to define a crystallographic unit-cell.
+//!
+//! Provide functionalities to transform vectors of the direct lattice or reciprocal
+//! lattice from unit-cell coordinates to a right-handed coordinates system.
+//! The UnitCell is defined by the parameters a,b,c and angles alpha, beta, gamma.
+//! The UnitCell parameters a,b,c are given in \f$ \AA \f$  and angle alpha, beta, gamma
+//! are given in degrees.
+//! The a axis is chosen as pointing along the x-direction, and the b-axis is in the xy-plane.
 class UnitCell 
 {
 public:
@@ -139,8 +164,9 @@ public:
     sptrMaterial getMaterial() const;
     //! Sets the Material for the unit cell
     void setMaterial(const sptrMaterial& material);
-    //! Set space group from its symbol
+    //! Set space group from its symbol.
     void setSpaceGroup(const std::string& symbol);
+    //! Return the space group symbol of the unit cell.
     std::string getSpaceGroup() const;
 
     // todo: should move name to GUI??
