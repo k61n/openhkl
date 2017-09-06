@@ -49,25 +49,38 @@ namespace nsx {
 
 //! Class to handle calculation of merged data
 class MergedPeak {
-
 public:
-    MergedPeak(const SpaceGroup& grp, bool friedel=false);
-    MergedPeak(const MergedPeak& other) = default;
-    ~MergedPeak() = default;
 
+    //! \brief Construct a merged peak with the given spacegroup. 
+    //!
+    //! The resulting peak has intensity given by the average intensity of the input peaks.
+    //! The parameter \p friedel
+    //! specifies whether to also include the Friedel relation \f$(h,k,l)\mapsto(-h,-k,-l)\f$,
+    //! if this is not already part of the space group symmetry.
+    MergedPeak(const SpaceGroup& grp, bool friedel=false);
+
+    //! Add a peak to the merged peak.
     bool addPeak(const sptrPeak3D& peak);
+
+    //! Add a peak to the merged peak.
     bool addPeak(const PeakCalc& peak);
 
+    //! Return a representative Miller index of the peak.
     Eigen::RowVector3i getIndex() const;
+
+    //! Return the merged intensity of the peak.
     Intensity getIntensity() const;
 
+    //! Return the redundancy (number of symmetry-equivalent observations) of the merged peak.
     size_t redundancy() const;
-    double std() const;
+
     //! Compute the chi-squared statistic of a merged peak.
     double chi2() const;
+
     //! Compute the p-value of the chi-squared statistic of the merged peak.
     double pValue() const;
 
+    //! Return vector of peaks used to compute the merged peak.
     const std::vector<PeakCalc>& getPeaks() const;
 
     //! split the merged peak randomly into two, for calculation of CC

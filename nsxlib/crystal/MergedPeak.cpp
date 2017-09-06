@@ -95,6 +95,7 @@ size_t MergedPeak::redundancy() const
     return _peaks.size();
 }
 
+#if 0
 double MergedPeak::std() const
 {
     const double n = _peaks.size();
@@ -102,6 +103,7 @@ double MergedPeak::std() const
     const double var = (_squaredIntensitySum - n*I*I) / (n-1);
     return std::sqrt(var);
 }
+#endif 
 
 void MergedPeak::determineRepresentativeHKL()
 {
