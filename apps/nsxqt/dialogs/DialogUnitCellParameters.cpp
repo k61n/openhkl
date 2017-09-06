@@ -15,12 +15,14 @@ DialogUnitCellParameters::DialogUnitCellParameters(nsx::sptrUnitCell unitCell, Q
     ui->labelBeta->setText(QString((QChar) 0x03B2));
     ui->labelGamma->setText(QString((QChar) 0x03B3));
 
-    ui->a->setValue(_unitCell->getA());
-    ui->b->setValue(_unitCell->getB());
-    ui->c->setValue(_unitCell->getC());
-    ui->alpha->setValue(_unitCell->getAlpha()/nsx::deg);
-    ui->beta->setValue(_unitCell->getBeta()/nsx::deg);
-    ui->gamma->setValue(_unitCell->getGamma()/nsx::deg);
+    nsx::CellCharacter ch = _unitCell->character();
+
+    ui->a->setValue(ch.a);
+    ui->b->setValue(ch.b);
+    ui->c->setValue(ch.c);
+    ui->alpha->setValue(ch.alpha/nsx::deg);
+    ui->beta->setValue(ch.beta/nsx::deg);
+    ui->gamma->setValue(ch.gamma/nsx::deg);
 
     connect(ui->buttonBox,SIGNAL(accepted()),this,SLOT(setUnitCellParameters()));
 }

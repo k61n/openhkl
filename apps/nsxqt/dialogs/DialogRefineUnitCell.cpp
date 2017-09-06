@@ -108,12 +108,13 @@ void DialogRefineUnitCell::setMinimizer()
 
 void DialogRefineUnitCell::setLatticeParams()
 {
-    ui->doubleSpinBoxa->setValue(_unitCell->getA());
-    ui->doubleSpinBoxb->setValue(_unitCell->getB());
-    ui->doubleSpinBoxc->setValue(_unitCell->getC());
-    ui->doubleSpinBoxalpha->setValue(_unitCell->getAlpha()/nsx::deg);
-    ui->doubleSpinBoxbeta->setValue(_unitCell->getBeta()/nsx::deg);
-    ui->doubleSpinBoxgamma->setValue(_unitCell->getGamma()/nsx::deg);
+    nsx::CellCharacter ch = _unitCell->character();
+    ui->doubleSpinBoxa->setValue(ch.a);
+    ui->doubleSpinBoxb->setValue(ch.b);
+    ui->doubleSpinBoxc->setValue(ch.c);
+    ui->doubleSpinBoxalpha->setValue(ch.alpha/nsx::deg);
+    ui->doubleSpinBoxbeta->setValue(ch.beta/nsx::deg);
+    ui->doubleSpinBoxgamma->setValue(ch.gamma/nsx::deg);
 }
 
 void DialogRefineUnitCell::setWavelength()
@@ -303,7 +304,7 @@ void DialogRefineUnitCell::refineParameters()
     ui->textEdit_Solution->setText(QString::fromStdString(os.str()));
     os.str("");
 
-    auto M=_unitCell->getReciprocalStandardM();
+    auto M=_unitCell->reciprocalBasis();
     _minimizer.setMinimizer(nsx::Minimizer());
     _minimizer.setStartingUBMatrix(M);
 
@@ -317,7 +318,7 @@ void DialogRefineUnitCell::refineParameters()
     const auto& solution=_minimizer.getSolution();
     os << solution;
 
-    _unitCell->setReciprocalVectors(solution._ub.row(0),solution._ub.row(1),solution._ub.row(2));
+    _unitCell->setReciprocalBasis(solution._ub);
 
     // calculate the new quality of the fit
     unsigned int total = 0, count = 0;

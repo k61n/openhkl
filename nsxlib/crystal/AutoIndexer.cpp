@@ -112,7 +112,11 @@ bool AutoIndexer::autoIndex(const IndexerParameters& _params)
                 Eigen::Vector3d& v3=tvects[k]._vect;
 
                 if (v1.dot(v2.cross(v3)) > 20.0) {
-                    auto cell = std::shared_ptr<UnitCell>(new UnitCell(UnitCell::fromDirectVectors(v1, v2, v3)));
+                    Eigen::Matrix3d basis;
+                    basis.col(0) = v1;
+                    basis.col(1) = v2;
+                    basis.col(2) = v3;
+                    auto cell = std::shared_ptr<UnitCell>(new UnitCell(basis));
                     newSolutions.push_back(std::make_pair(cell, 0.0));
                 }
             }
@@ -158,13 +162,13 @@ bool AutoIndexer::autoIndex(const IndexerParameters& _params)
         if (success < 10) {
             continue;
         }
-        Eigen::Matrix3d M = cell->getReciprocalStandardM();
+        Eigen::Matrix3d M = cell->reciprocalBasis();
         minimizer.setStartingUBMatrix(M);
         int ret = minimizer.run(100);
         if (ret == 1) {
             UBSolution sln = minimizer.getSolution();
             try {
-                cell = sptrUnitCell(new UnitCell(UnitCell::fromReciprocalVectors(sln._ub.row(0),sln._ub.row(1),sln._ub.row(2))));
+                cell = sptrUnitCell(new UnitCell(sln._ub, true));
                 cell->setReciprocalCovariance(sln._covub);
 
             } catch(std::exception& e) {
@@ -177,13 +181,13 @@ bool AutoIndexer::autoIndex(const IndexerParameters& _params)
             // cell.setName(selectedUnitCell->getName());
             cell->setHKLTolerance(_params.HKLTolerance);
 
-            NiggliReduction niggli(cell->getMetricTensor(), _params.niggliTolerance);
+            NiggliReduction niggli(cell->metric(), _params.niggliTolerance);
             Eigen::Matrix3d newg, P;
             niggli.reduce(newg, P);
             cell->transform(P);
 
             // use GruberReduction::reduce to get Bravais type
-            GruberReduction gruber(cell->getMetricTensor(), _params.gruberTolerance);
+            GruberReduction gruber(cell->metric(), _params.gruberTolerance);
             LatticeCentring c;
             BravaisType b;
 
@@ -242,7 +246,7 @@ bool AutoIndexer::autoIndex(const IndexerParameters& _params)
     std::sort(_solutions.begin(),_solutions.end(),[](const soluce& s1, const soluce& s2) -> bool
     {
         if (s1.second==s2.second)
-            return (s1.first->getVolume()<s2.first->getVolume());
+            return (s1.first->volume()<s2.first->volume());
         else
             return (s1.second>s2.second);
     }

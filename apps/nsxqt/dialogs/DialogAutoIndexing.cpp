@@ -121,17 +121,16 @@ void DialogAutoIndexing::buildSolutionsTable()
     for (unsigned int i=0;i<_solutions.size();++i) {
         auto& cell=_solutions[i].first;
         double quality=_solutions[i].second;
-        double a,b,c,alpha,beta,gamma;
-        double sa,sb,sc,salpha,sbeta,sgamma;
-        cell->getParameters(a,b,c,alpha,beta,gamma);
-        cell->getParametersSigmas(sa,sb,sc,salpha,sbeta,sgamma);
-        QStandardItem* col1=new QStandardItem(QString::number(a,'f',3) + "("+ QString::number(sa*1000,'f',0)+")");
-        QStandardItem* col2=new QStandardItem(QString::number(b,'f',3) + "("+ QString::number(sb*1000,'f',0)+")");
-        QStandardItem* col3=new QStandardItem(QString::number(c,'f',3) + "("+ QString::number(sc*1000,'f',0)+")");
-        QStandardItem* col4=new QStandardItem(QString::number(alpha/deg,'f',3)+ "("+ QString::number(salpha/deg*1000,'f',0)+")");
-        QStandardItem* col5=new QStandardItem(QString::number(beta/deg,'f',3)+"("+ QString::number(sbeta/deg*1000,'f',0)+")");
-        QStandardItem* col6=new QStandardItem(QString::number(gamma/deg,'f',3)+ "("+ QString::number(sgamma/deg*1000,'f',0)+")");
-        QStandardItem* col7=new QStandardItem(QString::number(cell->getVolume(),'f',3));
+        nsx::CellCharacter ch = cell->character();
+        nsx::CellCharacter sigma = cell->characterSigmas();
+
+        QStandardItem* col1=new QStandardItem(QString::number(ch.a,'f',3) + "("+ QString::number(sigma.a*1000,'f',0)+")");
+        QStandardItem* col2=new QStandardItem(QString::number(ch.b,'f',3) + "("+ QString::number(sigma.b*1000,'f',0)+")");
+        QStandardItem* col3=new QStandardItem(QString::number(ch.c,'f',3) + "("+ QString::number(sigma.c*1000,'f',0)+")");
+        QStandardItem* col4=new QStandardItem(QString::number(ch.alpha/deg,'f',3)+ "("+ QString::number(sigma.alpha/deg*1000,'f',0)+")");
+        QStandardItem* col5=new QStandardItem(QString::number(ch.beta/deg,'f',3)+"("+ QString::number(sigma.beta/deg*1000,'f',0)+")");
+        QStandardItem* col6=new QStandardItem(QString::number(ch.gamma/deg,'f',3)+ "("+ QString::number(sigma.gamma/deg*1000,'f',0)+")");
+        QStandardItem* col7=new QStandardItem(QString::number(cell->volume(),'f',3));
         QStandardItem* col8=new QStandardItem(QString::fromStdString(cell->getBravaisTypeSymbol()));
         QStandardItem* col9=new QStandardItem(QString::number(quality,'f',2)+"%");
         model->setItem(i,0,col1);

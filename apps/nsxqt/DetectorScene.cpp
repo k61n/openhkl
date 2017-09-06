@@ -658,13 +658,14 @@ void DetectorScene::updatePeakCalcs()
     }
     _precalculatedPeaks.clear();
     auto sample=_currentData->getDiffractometer()->getSample();
+    double wavelength = _currentData->getDiffractometer()->getSource()->getSelectedMonochromator().getWavelength();
     size_t ncrystals = sample->getNCrystals();
 
     if (ncrystals) {
         for (unsigned int i = 0; i < ncrystals; ++i) {
             nsx::SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
-            auto ub=sample->getUnitCell(i)->getReciprocalStandardM();
-            auto hkls=sample->getUnitCell(i)->generateReflectionsInSphere(1.5);
+            auto ub=sample->getUnitCell(i)->reciprocalBasis();
+            auto hkls=sample->getUnitCell(i)->generateReflectionsInShell(1.5, 100.0, wavelength);
             std::vector<nsx::PeakCalc> peaks=_currentData->hasPeaks(hkls,ub);
             _precalculatedPeaks.reserve(_precalculatedPeaks.size() + peaks.size());
 

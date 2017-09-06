@@ -48,17 +48,12 @@ QJsonObject SampleItem::toJson()
 
     for (unsigned int i = 0; i < sample->getNCrystals(); ++i) {
         auto cell = sample->getUnitCell(i);
-
-        Eigen::Vector3d v[3];
-        v[0] = cell->getAVector();
-        v[1] = cell->getBVector();
-        v[2] = cell->getCVector();
-
+        Eigen::Matrix3d A = cell->basis();
         QJsonArray params;
 
         for (int j = 0; j < 3; ++j)
             for (int k = 0; k < 3; ++k)
-                params.push_back(v[j][k]);
+                params.push_back(A(k, j));
 
         cells.push_back(params);
     }
@@ -82,7 +77,11 @@ void SampleItem::fromJson(const QJsonObject &obj)
                 v[i][j] = params[i*3+j].toDouble();
 
         auto cell = sample->addUnitCell();
-        cell->setLatticeVectors(v[0], v[1], v[2]);
+        Eigen::Matrix3d A;
+        A.col(0) = v[0];
+        A.col(1) = v[1];
+        A.col(2) = v[2];
+        cell->setBasis(A);
 
         appendRow(new UnitCellItem(_experiment, cell));
     }

@@ -18,16 +18,17 @@ class TestUnitCell(unittest.TestCase):
 
     def testParameters(self):
         cell = self.cell
+        ch = cell.character()
+        
         a,b,c,alpha = self.parameters
-
         
-        self.assertAlmostEqual(cell.getA(),a)
-        self.assertAlmostEqual(cell.getB(),b)
-        self.assertAlmostEqual(cell.getC(),c)
+        self.assertAlmostEqual(ch.a,a)
+        self.assertAlmostEqual(ch.b,b)
+        self.assertAlmostEqual(ch.c,c)
         
-        self.assertAlmostEqual(cell.getAlpha(),alpha)
-        self.assertAlmostEqual(cell.getBeta(),alpha)
-        self.assertAlmostEqual(cell.getGamma(),alpha)
+        self.assertAlmostEqual(ch.alpha,alpha)
+        self.assertAlmostEqual(ch.beta,alpha)
+        self.assertAlmostEqual(ch.gamma,alpha)
         
 
 if __name__ == '__main__':

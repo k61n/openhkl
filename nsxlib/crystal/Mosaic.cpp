@@ -169,10 +169,10 @@ bool Mosaic::run(std::vector<std::shared_ptr<DataSet>> datas, unsigned int n, do
         double znorm = zvect.norm();
         double znorm2 = znorm*znorm;
 
-        uc->setBU(ub.transpose());
+        uc->setReciprocalBasis(ub.transpose());
 
         // Get the U matrix (actually tU in NSXTool convention)
-        Eigen::Matrix3d umat = uc->getBusingLevyU();
+        Eigen::Matrix3d umat = uc->busingLevyU();
 
         // The convex hull of the sample is rotated by u
         ConvexHull& hull = _sample->getShape();

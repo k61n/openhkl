@@ -23,7 +23,7 @@ class TestMergedPeak(unittest.TestCase):
         group = nsx.SpaceGroup("P 21 21 21")
         cell = nsx.UnitCell(a, b,c,alpha,beta,gamma)
         G = np.array([(0,0,0),(0,0,0),(0,0,0)])
-        G = cell.getMetricTensor()
+        G = cell.metric()
         P = np.array([(0,0,0),(0,0,0),(0,0,0)])
 
         gruber =  nsx.GruberReduction(G,gruber_tolerance)

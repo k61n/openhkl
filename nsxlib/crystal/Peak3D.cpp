@@ -175,7 +175,7 @@ void Peak3D::setShape(const Ellipsoid& peak)
 
 bool Peak3D::getMillerIndices(const UnitCell& uc, Eigen::RowVector3d& hkl, bool applyUCTolerance) const
 {
-    hkl = uc.fromReciprocalStandard(getQ());
+    hkl = uc.index(getQ());
 
     if (applyUCTolerance) {
         double tolerance = uc.getHKLTolerance();
