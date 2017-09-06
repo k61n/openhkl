@@ -23,7 +23,7 @@ int run_test() {
     BOOST_CHECK_EQUAL(rv1(1),0.0);
     BOOST_CHECK_EQUAL(rv1(2),7.0);
 
-    rv1 *= 10;
+    rv1 *= 10.0;
 
     BOOST_CHECK_EQUAL(rv1(0),60.0);
     BOOST_CHECK_EQUAL(rv1(1),0.0);

@@ -1,10 +1,17 @@
-#pragma once
-
 #include <Eigen/Dense>
 
 #include "DirectMatrix.h"
+#include "DirectVector.h"
 
 namespace nsx {
+
+DirectMatrix::DirectMatrix() : Eigen::Matrix3d()
+{
+}
+
+DirectMatrix::DirectMatrix(const DirectMatrix& other) : Eigen::Matrix3d(other)
+{
+}
 
 DirectMatrix::DirectMatrix(const Eigen::Vector3d& col1, const Eigen::Vector3d& col2, const Eigen::Vector3d& col3)
 {
@@ -38,7 +45,7 @@ DirectMatrix DirectMatrix::operator+(const DirectMatrix& other)
 
 DirectVector DirectMatrix::operator*(const DirectVector& vector)
 {
-    return this->Eigen::Matrix3d::operator*(vector);
+    return (DirectVector)this->Eigen::Matrix3d::operator*(vector);
 }
 
 } // end namespace nsx
