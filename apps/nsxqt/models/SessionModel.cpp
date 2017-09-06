@@ -681,9 +681,10 @@ bool SessionModel::writeStatistics(std::string filename,
 
     std::vector<nsx::PeakList> all_equivs;
 
-    file << "          dmin       dmax       nobs redundancy     r_meas    r_merge      r_pim    CChalf    CC*" << std::endl;
+    file << "          dmax       dmin       nobs redundancy     r_meas    r_merge      r_pim    CChalf    CC*" << std::endl;
 
-    for (size_t i = 0; i < size_t(num_shells); ++i) {
+    // note: we print the shells in reverse order
+    for (int i = num_shells-1; i >= 0; --i) {
         const double d_lower = ds[i];
         const double d_upper = ds[i+1];
 
@@ -717,7 +718,7 @@ bool SessionModel::writeStatistics(std::string filename,
 
         std::snprintf(&buf[0], buf.size(),
                 "    %10.2f %10.2f %10d %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f",
-                d_lower, d_upper, int(shells[i].size()), redundancy,
+                d_upper, d_lower, int(shells[i].size()), redundancy,
                 rfactor.Rmeas(), rfactor.Rmerge(), rfactor.Rpim(), cc.CChalf(), cc.CCstar());
 
         file << &buf[0] << std::endl;
