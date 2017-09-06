@@ -184,6 +184,11 @@ bool operator<(const MergedPeak& p, const MergedPeak& q)
     return a(2) < b(2);
 }
 
+//! The merged intensity and error are computed as \f$I_{\mathrm{merge}} = N^{-1} \sum_i I_i\f$, 
+//! \f$\sigma_{\mathrm{merge}}^2 = N^{-2}\sum_i \sigma_i^2\f$.
+//! where \f$N\f$ is the redundancy of the reflection. This method computes the statistic
+//! \f[ \chi^2 = \frac{\sum_i (I_i-I_{\mathrm{merge}})^2}{N \sigma_{\mathrm{merge}}^2}, \f]
+//! which is approximately a chi-squared statistic with \f$N-1\f$ degrees of freedom.
 double MergedPeak::chi2() const
 {
     const double I_merge = getIntensity().getValue();
@@ -200,6 +205,10 @@ double MergedPeak::chi2() const
     return chi_sq;
 }
 
+//! This method returns the probability that a chi-squared random variable takes a value less than
+//! the computed value of MergedPeak::chi2(). A large p-value indicates that the computed variance
+//! is larger than the expected variance, indicating the possibility of a systematic error either 
+//! in the integrated intensities or in the computed error. 
 double MergedPeak::pValue() const
 {
     // todo: k or k-1?? need to check

@@ -63,7 +63,9 @@ public:
 
     size_t redundancy() const;
     double std() const;
+    //! Compute the chi-squared statistic of a merged peak.
     double chi2() const;
+    //! Compute the p-value of the chi-squared statistic of the merged peak.
     double pValue() const;
 
     const std::vector<PeakCalc>& getPeaks() const;
