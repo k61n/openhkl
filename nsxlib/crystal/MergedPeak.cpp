@@ -186,13 +186,16 @@ bool operator<(const MergedPeak& p, const MergedPeak& q)
 
 double MergedPeak::chi2() const
 {
-    const double Iave = getIntensity().getValue();
+    const double I_merge = getIntensity().getValue();
+    const double sigma_merge = getIntensity().getSigma();
+    const double N = redundancy();
+
     double chi_sq = 0.0;
 
     for (auto&& peak: _peaks) {
         auto&& I = peak._intensity; 
-        const double z = (I.getValue() - Iave) / I.getSigma();
-        chi_sq += z*z;
+        const double x = (I.getValue() - I_merge) / sigma_merge;
+        chi_sq += x*x/N;
     }
     return chi_sq;
 }
@@ -200,7 +203,7 @@ double MergedPeak::chi2() const
 double MergedPeak::pValue() const
 {
     // todo: k or k-1?? need to check
-    const double k = redundancy();
+    const double k = redundancy()-1;
     const double x = chi2();
     ChiSquared chi(k);
     return chi.cdf(x);
