@@ -700,9 +700,7 @@ bool SessionModel::writeStatistics(std::string filename,
         for (auto equiv: peak_equivs) {
 
             for (auto peak: equiv) {
-                auto peak_calc = nsx::PeakCalc(*peak);
-                merged_shell.addPeak(peak_calc);
-                merged.addPeak(peak_calc);
+                merged.addPeak(peak);
             }
 
             //if (new_peak.redundancy() > 0) {

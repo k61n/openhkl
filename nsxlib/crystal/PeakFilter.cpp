@@ -157,8 +157,7 @@ int PeakFilter::apply(sptrDataSet data) const
                 continue;
             }
 
-            PeakCalc pcalc(*peak);
-            merged.addPeak(pcalc);
+            merged.addPeak(peak);
 
             Eigen::RowVector3i hkl = peak->getIntegerMillerIndices();
             if (group.isExtinct(hkl(0), hkl(1), hkl(2))) {

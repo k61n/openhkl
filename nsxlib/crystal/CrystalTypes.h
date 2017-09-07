@@ -10,7 +10,6 @@ namespace nsx {
 
 class MergedPeak;
 class Peak3D;
-class PeakCalc;
 class PeakIntegrator;
 class PeakRecord;
 class PeakValidator;
@@ -29,7 +28,6 @@ using PeakSet    = std::set<sptrPeak3D>;
 using MergedPeakSet = std::set<MergedPeak>;
 
 using PeakList     = std::vector<sptrPeak3D>;
-using PeakCalcList = std::vector<PeakCalc>;
 using RecordList   = std::vector<PeakRecord>;
 using SymOpList    = std::vector<SymOp>;
 using UnitCellList = std::vector<sptrUnitCell>;

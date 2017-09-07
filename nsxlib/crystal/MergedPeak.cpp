@@ -51,13 +51,10 @@ MergedPeak::MergedPeak(const SpaceGroup& grp, bool friedel):
 
 bool MergedPeak::addPeak(const sptrPeak3D& peak)
 {
-    return addPeak(PeakCalc(*peak));
-}
-
-bool MergedPeak::addPeak(const PeakCalc& peak)
-{
     auto hkl1 = _hkl.cast<double>();
-    auto hkl2 = Eigen::Vector3d(peak._h, peak._k, peak._l);
+    Eigen::Vector3d hkl2 = peak->getIntegerMillerIndices().cast<double>();
+
+    
     // peak is not equivalent to one already on the list
     if (!_peaks.empty() && !_grp.isEquivalent(hkl1, hkl2, _friedel)) {
         return false;
@@ -74,8 +71,9 @@ bool MergedPeak::addPeak(const PeakCalc& peak)
         determineRepresentativeHKL();
     }
 
-    _intensitySum += peak._intensity;
-    _squaredIntensitySum += std::pow(peak._intensity.getValue(), 2);
+    Intensity I = peak->getCorrectedIntensity();
+    _intensitySum += I.getValue();;
+    _squaredIntensitySum += std::pow(I.getValue(), 2);
 
     return true;
 }
@@ -135,7 +133,7 @@ void MergedPeak::determineRepresentativeHKL()
     }
 }
 
-const std::vector<PeakCalc>& MergedPeak::getPeaks() const
+const std::vector<sptrPeak3D>& MergedPeak::getPeaks() const
 {
     return _peaks;
 }
@@ -205,7 +203,7 @@ double MergedPeak::chi2() const
     double chi_sq = 0.0;
 
     for (auto&& peak: _peaks) {
-        auto&& I = peak._intensity; 
+        auto&& I = peak->getCorrectedIntensity();
         const double x = (I.getValue() - I_merge) / sigma_merge;
         chi_sq += x*x/N;
     }

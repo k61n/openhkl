@@ -41,11 +41,8 @@
 #include "../crystal/CrystalTypes.h"
 #include "../crystal/Intensity.h"
 #include "../crystal/SpaceGroup.h"
-#include "../crystal/PeakCalc.h"
 
 namespace nsx {
-    class Peak3D;
-    using sptrPeak3D = std::shared_ptr<Peak3D>;
 
 //! Class to handle calculation of merged data
 class MergedPeak {
@@ -61,9 +58,6 @@ public:
 
     //! Add a peak to the merged peak.
     bool addPeak(const sptrPeak3D& peak);
-
-    //! Add a peak to the merged peak.
-    bool addPeak(const PeakCalc& peak);
 
     //! Return a representative Miller index of the peak.
     Eigen::RowVector3i getIndex() const;
@@ -81,7 +75,7 @@ public:
     double pValue() const;
 
     //! Return vector of peaks used to compute the merged peak.
-    const std::vector<PeakCalc>& getPeaks() const;
+    const std::vector<sptrPeak3D>& getPeaks() const;
 
     //! split the merged peak randomly into two, for calculation of CC
     std::pair<MergedPeak, MergedPeak> split() const;
@@ -93,7 +87,7 @@ private:
     Eigen::Vector3i _hkl;
     Intensity _intensitySum;
     double _squaredIntensitySum;
-    std::vector<PeakCalc> _peaks;
+    std::vector<sptrPeak3D> _peaks;
     SpaceGroup _grp;
     bool _friedel;
 };

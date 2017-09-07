@@ -154,7 +154,7 @@ public:
 
     //! Is the peak h,k,l in Bragg condition in this dataset. Return Peak pointer if true,
     //! otherwise nullptr.
-    PeakCalcList hasPeaks(const std::vector<Eigen::RowVector3d>& hkls,const Eigen::Matrix3d& UB);
+    PeakList hasPeaks(const std::vector<Eigen::RowVector3d>& hkls,const Eigen::Matrix3d& UB);
     
     //! Find the detector events corresponding to the given q vectors, if possible
     std::vector<DetectorEvent> getEvents(const std::vector<Eigen::RowVector3d>& qs) const;

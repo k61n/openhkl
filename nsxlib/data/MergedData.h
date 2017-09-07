@@ -45,7 +45,7 @@ class MergedData {
 public:
     MergedData(const SpaceGroup& grp, bool friedel);
 
-    bool addPeak(const PeakCalc& peak);
+    bool addPeak(const sptrPeak3D& peak);
 
     const MergedPeakSet& getPeaks() const;
     

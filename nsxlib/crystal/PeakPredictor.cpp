@@ -35,7 +35,6 @@
 
 #include "../crystal/CrystalTypes.h"
 #include "../crystal/Peak3D.h"
-#include "../crystal/PeakCalc.h"
 #include "../crystal/PeakPredictor.h"
 #include "../crystal/SpaceGroup.h"
 #include "../crystal/UnitCell.h"
@@ -113,7 +112,7 @@ PeakSet PeakPredictor::predictPeaks(sptrDataSet data, bool keepObserved)
 
         predicted_peaks += predicted_hkls.size();
 
-        PeakCalcList peaks = data->hasPeaks(hkls_double, UB);
+        PeakList peaks = data->hasPeaks(hkls_double, UB);
         int current_peak = 0;
 
         _handler->setStatus("Building set of previously found peaks...");
@@ -156,10 +155,12 @@ PeakSet PeakPredictor::predictPeaks(sptrDataSet data, bool keepObserved)
 
         #pragma omp parallel for
         for (size_t peak_id = 0; peak_id < peaks.size(); ++peak_id) {
-            PeakCalc& p = peaks[peak_id];
+            Peak3D& p = *peaks[peak_id];
+            p.linkData(data);
+            p.addUnitCell(cell, true);
             ++current_peak;
 
-            Eigen::RowVector3i hkl(int(std::lround(p._h)), int(std::lround(p._k)), int(std::lround(p._l)));
+            Eigen::RowVector3i hkl = p.getIntegerMillerIndices();
 
             // try to find this reflection in the list of peaks, skip if found
             if (std::find(found_hkls.begin(), found_hkls.end(), hkl) != found_hkls.end() ) {
@@ -168,7 +169,7 @@ PeakSet PeakPredictor::predictPeaks(sptrDataSet data, bool keepObserved)
 
             // now we must add it, calculating shape from nearest peaks
              // K is outside the ellipsoid at PsptrPeak3D
-            sptrPeak3D new_peak = averagePeaks(octree, Eigen::Vector3d(p._x, p._y, p._frame));
+            sptrPeak3D new_peak = averagePeaks(octree, p.getShape().center());
             //sptrPeak3D new_peak = p.averagePeaks(numor);
 
             if (!new_peak) {

@@ -222,6 +222,7 @@ private:
     double _pValue;
 
     Intensity _intensity;
+
 };
 
 } // end namespace nsx
