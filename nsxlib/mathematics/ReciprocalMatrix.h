@@ -9,15 +9,11 @@ class ReciprocalMatrix : public Eigen::Matrix3d
 
 public:
 
-    ReciprocalMatrix();
-
-    ReciprocalMatrix(const ReciprocalMatrix& other);
-
-    ReciprocalMatrix(const Eigen::Matrix3d& matrix);
+    using Eigen::Matrix3d::Matrix3d;
 
     ReciprocalMatrix(const Eigen::RowVector3d& row1, const Eigen::RowVector3d& row2, const Eigen::RowVector3d& row3);
 
-    virtual ~ReciprocalMatrix();
+    ~ReciprocalMatrix()=default;
 
     ReciprocalMatrix& operator=(const Eigen::Matrix3d& matrix);
 

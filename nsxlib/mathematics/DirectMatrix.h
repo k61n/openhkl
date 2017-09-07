@@ -11,15 +11,11 @@ class DirectMatrix : public Eigen::Matrix3d
 
 public:
 
-    DirectMatrix();
-
-    DirectMatrix(const DirectMatrix& other);
-
-    DirectMatrix(const Eigen::Matrix3d& matrix)=delete;
+    using Eigen::Matrix3d::Matrix3d;
 
     DirectMatrix(const Eigen::Vector3d& col1, const Eigen::Vector3d& col2, const Eigen::Vector3d& col3);
 
-    virtual ~DirectMatrix();
+    ~DirectMatrix()=default;
 
     DirectMatrix& operator=(const DirectMatrix& other);
 

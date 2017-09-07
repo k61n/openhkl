@@ -11,15 +11,9 @@ class DirectVector : public Eigen::Vector3d
 
 public:
 
-    DirectVector();
+    using Eigen::Vector3d::Vector3d;
 
-    DirectVector(const DirectVector& other);
-
-    DirectVector(const Eigen::Vector3d& other);
-
-    DirectVector(double x, double  y, double z);
-
-    virtual ~DirectVector();
+    ~DirectVector()=default;
 
     DirectVector& operator=(const Eigen::Vector3d& other);
 
