@@ -5,23 +5,11 @@
 
 namespace nsx {
 
-DirectMatrix::DirectMatrix() : Eigen::Matrix3d()
-{
-}
-
-DirectMatrix::DirectMatrix(const DirectMatrix& other) : Eigen::Matrix3d(other)
-{
-}
-
 DirectMatrix::DirectMatrix(const Eigen::Vector3d& col1, const Eigen::Vector3d& col2, const Eigen::Vector3d& col3)
 {
     this->col(0) = col1;
     this->col(1) = col2;
     this->col(2) = col3;
-}
-
-DirectMatrix::~DirectMatrix()
-{
 }
 
 DirectMatrix& DirectMatrix::operator=(const DirectMatrix& other)

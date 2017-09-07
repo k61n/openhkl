@@ -11,15 +11,9 @@ class ReciprocalVector : public Eigen::RowVector3d
 
 public:
 
-    ReciprocalVector();
+    using Eigen::RowVector3d::RowVector3d;
 
-    ReciprocalVector(const ReciprocalVector& other);
-
-    ReciprocalVector(const Eigen::RowVector3d& rvector);
-
-    ReciprocalVector(double rx, double  ry, double rz);
-
-    virtual ~ReciprocalVector();
+    ~ReciprocalVector()=default;
 
     ReciprocalVector& operator=(const Eigen::RowVector3d& rvector);
 
