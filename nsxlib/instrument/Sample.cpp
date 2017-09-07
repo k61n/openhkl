@@ -71,7 +71,7 @@ sptrUnitCell Sample::addUnitCell(sptrUnitCell cell)
 sptrUnitCell Sample::getUnitCell(int i)
 {
     if (i >= _cells.size()) {
-        throw std::runtime_error("Unit Cell not valid");
+        throw std::runtime_error("Unit Cell not valid, asked for index " + std::to_string(i) + " of " + std::to_string(_cells.size()));
     }
     return _cells[i];
 }

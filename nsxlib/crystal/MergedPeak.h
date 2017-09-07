@@ -86,7 +86,6 @@ private:
     
     Eigen::Vector3i _hkl;
     Intensity _intensitySum;
-    double _squaredIntensitySum;
     std::vector<sptrPeak3D> _peaks;
     SpaceGroup _grp;
     bool _friedel;

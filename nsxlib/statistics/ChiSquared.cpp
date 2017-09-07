@@ -35,24 +35,25 @@
 
 #include "ChiSquared.h"
 #include <cmath>
-#include <gsl/gsl_sf_gamma.h>
+#include <gsl/gsl_randist.h>
+#include <gsl/gsl_cdf.h>
 
 
 namespace nsx {
 
-ChiSquared::ChiSquared(double k): _k(k), _c(0.0)
+ChiSquared::ChiSquared(double k): _k(k)
 {
-    _c = std::pow(2.0, -_k/2) / gsl_sf_gamma(_k/2);
+
 }
 
 double ChiSquared::pdf(double x) const
 {
-    return _c * std::pow(x, _k/2-1.0) * std::exp(-x/2);
+    return gsl_ran_chisq_pdf(x, _k);
 }
 
 double ChiSquared::cdf(double x) const
 {
-    return gsl_sf_gamma_inc_P(_k/2, x/2);
+    return gsl_cdf_chisq_P(x, _k);
 }
     
 } // end namespace nsx

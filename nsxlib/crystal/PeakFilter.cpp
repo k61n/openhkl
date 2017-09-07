@@ -121,33 +121,27 @@ int PeakFilter::apply(sptrDataSet data) const
         }
     }
 
-    if (!_removeOverlapping) {
-        return npeaks - data->getPeaks().size();
+    if (_removeOverlapping) {
+        // build octree
+        Octree tree(lower, upper);
+
+        for (unsigned int i = 0; i < npeaks; ++i) {
+            tree.addData(&ellipsoids[i]);
+        }
+
+        collisions = tree.getCollisions();
+
+        // handle collisions below
+        for (auto collision: collisions) {
+            unsigned int i = collision.first - &ellipsoids[0];
+            unsigned int j = collision.second - &ellipsoids[0];
+            assert(i < npeaks && j < npeaks);
+            data->removePeak(peaks[i]);
+            data->removePeak(peaks[j]);
+        }
     }
 
-    // build octree
-    Octree tree(lower, upper);
-
-    for (unsigned int i = 0; i < npeaks; ++i) {
-        tree.addData(&ellipsoids[i]);
-    }
-
-    collisions = tree.getCollisions();
-
-    // handle collisions below
-    for (auto collision: collisions) {
-        unsigned int i = collision.first - &ellipsoids[0];
-        unsigned int j = collision.second - &ellipsoids[0];
-        assert(i < npeaks && j < npeaks);
-        data->removePeak(peaks[i]);
-        data->removePeak(peaks[j]);
-    }
-
-    if (!_removeForbidden) {
-        return npeaks - data->getPeaks().size();
-    }
-
-    for (auto i = 0; data->getDiffractometer()->getSample()->getNCrystals(); ++i) {
+    for (auto i = 0; i < data->getDiffractometer()->getSample()->getNCrystals(); ++i) {
         auto cell = data->getDiffractometer()->getSample()->getUnitCell(i);
         SpaceGroup group(cell->getSpaceGroup());
         MergedData merged(group, true);
@@ -160,25 +154,19 @@ int PeakFilter::apply(sptrDataSet data) const
             merged.addPeak(peak);
 
             Eigen::RowVector3i hkl = peak->getIntegerMillerIndices();
-            if (group.isExtinct(hkl(0), hkl(1), hkl(2))) {
+            if (_removeForbidden && group.isExtinct(hkl(0), hkl(1), hkl(2))) {
                 data->removePeak(peak);
             }
         }
 
-        if (!_removeMergedP) {
-            continue;
-        }
-
-        #if 0
         for (auto&& merged_peak: merged.getPeaks()) {
             // p value too high: reject peaks
-            if (merged_peak.pValue() > _mergedP) {
+            if (_removeMergedP && merged_peak.pValue() > _mergedP) {
                 for (auto&& p: merged_peak.getPeaks()) {
                     data->removePeak(p);
                 }
             }
         }
-        #endif
     }
 
     return npeaks - data->getPeaks().size();

@@ -47,7 +47,7 @@ public:
     double cdf(double x) const;
 
 private:
-    double _k, _c;
+    double _k;
 };
 
 } // end namespace nsx

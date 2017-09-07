@@ -45,7 +45,7 @@
 namespace nsx {
 
 MergedPeak::MergedPeak(const SpaceGroup& grp, bool friedel):
-    _hkl(), _intensitySum(0.0, 0.0), _peaks(), _grp(grp), _friedel(friedel), _squaredIntensitySum(0.0)
+    _hkl(), _intensitySum(0.0, 0.0), _peaks(), _grp(grp), _friedel(friedel)
 {
 }
 
@@ -71,10 +71,7 @@ bool MergedPeak::addPeak(const sptrPeak3D& peak)
         determineRepresentativeHKL();
     }
 
-    Intensity I = peak->getCorrectedIntensity();
-    _intensitySum += I.getValue();;
-    _squaredIntensitySum += std::pow(I.getValue(), 2);
-
+    _intensitySum += peak->getCorrectedIntensity();
     return true;
 }
 
@@ -92,16 +89,6 @@ size_t MergedPeak::redundancy() const
 {
     return _peaks.size();
 }
-
-#if 0
-double MergedPeak::std() const
-{
-    const double n = _peaks.size();
-    const double I = getIntensity().getValue() / _peaks.size();
-    const double var = (_squaredIntensitySum - n*I*I) / (n-1);
-    return std::sqrt(var);
-}
-#endif 
 
 void MergedPeak::determineRepresentativeHKL()
 {
