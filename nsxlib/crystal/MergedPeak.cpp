@@ -197,6 +197,11 @@ double MergedPeak::chi2() const
     const double sigma_merge = getIntensity().getSigma();
     const double N = redundancy();
 
+    // if there is no redundancy, we cannot compute chi2
+    if (N < 1.99) {
+        return 0.0;
+    }
+
     double chi_sq = 0.0;
 
     for (auto&& peak: _peaks) {
@@ -214,7 +219,13 @@ double MergedPeak::chi2() const
 double MergedPeak::pValue() const
 {
     // todo: k or k-1?? need to check
-    const double k = redundancy()-1;
+    const double k = redundancy()-1.0;
+
+    // if there is only one observation, we cannot compute a p-value
+    if (k < 0.9) {
+        return 0.0;
+    }
+
     const double x = chi2();
     ChiSquared chi(k);
     return chi.cdf(x);

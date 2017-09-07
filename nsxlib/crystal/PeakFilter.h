@@ -27,11 +27,13 @@ public:
     bool _removeDmin;
     bool _removeDmax;
     bool _removeForbidden;
+    bool _removeMergedP;
 
     double _Isigma;
     double _dmin;
     double _dmax;
     double _pvalue;
+    double _mergedP;
 
 
 };

@@ -6,6 +6,7 @@
 #include "../crystal/UnitCell.h"
 #include "../crystal/SpaceGroup.h"
 #include "../data/DataSet.h"
+#include "../data/MergedData.h"
 #include "../geometry/Octree.h"
 #include "../instrument/Diffractometer.h"
 #include "../instrument/Sample.h"
@@ -54,13 +55,11 @@ bool invalid(const nsx::PeakFilter& filter, nsx::sptrDataSet data, nsx::sptrPeak
         }
     }
 
-    // note: this is a special case handled in PeakFilter::apply
-    //if (filter._removeOverlapping) {
-    //}
+    // note: _removeOverlapping is a special case handled in PeakFilter::apply
 
-    // note: special case handled in PeakFilter::apply
-    //if (filter._removeForbidden) {
-    //}
+    // note: _removeForbidden is a special case handled in PeakFilter::apply
+
+    // note: merged peaks are handled separately    
 
     const double d = 1.0 / peak->getQ().norm();
 
@@ -151,17 +150,36 @@ int PeakFilter::apply(sptrDataSet data) const
     for (auto i = 0; data->getDiffractometer()->getSample()->getNCrystals(); ++i) {
         auto cell = data->getDiffractometer()->getSample()->getUnitCell(i);
         SpaceGroup group(cell->getSpaceGroup());
+        MergedData merged(group, true);
 
         for (auto peak: peaks) {
             if (peak->getActiveUnitCell() != cell) {
                 continue;
             }
 
+            PeakCalc pcalc(*peak);
+            merged.addPeak(pcalc);
+
             Eigen::RowVector3i hkl = peak->getIntegerMillerIndices();
             if (group.isExtinct(hkl(0), hkl(1), hkl(2))) {
                 data->removePeak(peak);
             }
         }
+
+        if (!_removeMergedP) {
+            continue;
+        }
+
+        #if 0
+        for (auto&& merged_peak: merged.getPeaks()) {
+            // p value too high: reject peaks
+            if (merged_peak.pValue() > _mergedP) {
+                for (auto&& p: merged_peak.getPeaks()) {
+                    data->removePeak(p);
+                }
+            }
+        }
+        #endif
     }
 
     return npeaks - data->getPeaks().size();

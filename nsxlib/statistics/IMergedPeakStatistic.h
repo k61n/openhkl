@@ -2,7 +2,7 @@
  * nsxtool : Neutron Single Crystal analysis toolkit
  ------------------------------------------------------------------------------------------
  Copyright (C)
- 2016- Laurent C. Chapon, Eric Pellegrini, Jonathan Fisher
+ 2017- Laurent C. Chapon, Eric Pellegrini, Jonathan Fisher
  Institut Laue-Langevin
  BP 156
  6, rue Jules Horowitz
@@ -28,35 +28,19 @@
  *
  */
 
-#ifndef NSXLIB_RFACTOR_H
-#define NSXLIB_RFACTOR_H
-
-#include <vector>
-#include <set>
+#pragma once
 
 #include "../crystal/CrystalTypes.h"
-#include "IMergedPeakStatistic.h"
 
 namespace nsx {
 
 class MergedData;
 
-class RFactor: public IMergedPeakStatistic {
+class IMergedPeakStatistic {
 public:
-    RFactor(): _Rmerge(0.0), _Rmeas(0.0), _Rpim(0.0) {}
-    ~RFactor() {}
-
-    void calculate(const MergedData& data);
-
-    double Rmerge() {return _Rmerge;}
-    double Rmeas() {return _Rmeas;}
-    double Rpim() {return _Rpim;}
-
-
-private:
-    double _Rmerge, _Rmeas, _Rpim;
+    virtual ~IMergedPeakStatistic() = default;
+    virtual void calculate(const MergedData& data) = 0;
+    double value() const;
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_RFACTOR_H
