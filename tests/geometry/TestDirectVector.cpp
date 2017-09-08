@@ -5,7 +5,7 @@
 
 #include <Eigen/Dense>
 
-#include <nsxlib/mathematics/DirectVector.h>
+#include <nsxlib/geometry/DirectVector.h>
 
 int run_test() {
 

@@ -3,7 +3,7 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include <nsxlib/mathematics/ReciprocalVector.h>
+#include <nsxlib/geometry/ReciprocalVector.h>
 
 int run_test() {
 
