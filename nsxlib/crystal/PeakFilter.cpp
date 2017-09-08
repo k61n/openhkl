@@ -83,16 +83,6 @@ bool invalid(const nsx::PeakFilter& filter, nsx::sptrDataSet data, nsx::sptrPeak
 
 namespace nsx {
 
-PeakFilter::PeakFilter()
-{
-
-}
-
-PeakFilter::~PeakFilter()
-{
-
-}
-
 int PeakFilter::apply(sptrDataSet data) const
 {
     std::vector<Ellipsoid> ellipsoids;
