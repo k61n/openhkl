@@ -3,9 +3,17 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include <nsxlib/mathematics/ReciprocalVector.h>
+#include <Eigen/Dense>
+
+#include <nsxlib/mathematics/DirectVector.h>
 
 int run_test() {
+
+    Eigen::Vector3d v1(1,2,3);
+
+    nsx::DirectVector dv1(v1);
+
+    Eigen::Vector3d v2 = v1 + static_cast<const Eigen::Vector3d&>(dv1);
 
     return 0;
 }

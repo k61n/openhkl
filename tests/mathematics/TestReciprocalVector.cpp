@@ -7,6 +7,12 @@
 
 int run_test() {
 
+    Eigen::RowVector3d v1(1,2,3);
+
+    nsx::ReciprocalVector rv1(v1);
+
+    Eigen::RowVector3d v2 = v1 + static_cast<const Eigen::RowVector3d&>(rv1);
+
     return 0;
 }
 
