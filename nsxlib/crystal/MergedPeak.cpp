@@ -38,9 +38,10 @@
 #include <algorithm>
 #include <cstdlib>
 
+#include <gsl/gsl_cdf.h>
+
 #include "MergedPeak.h"
 #include "Peak3D.h"
-#include "../statistics/ChiSquared.h"
 
 namespace nsx {
 
@@ -212,8 +213,7 @@ double MergedPeak::pValue() const
     }
 
     const double x = chi2();
-    ChiSquared chi(k);
-    return chi.cdf(x);
+    return gsl_cdf_chisq_P(x, k);
 }
 
 } // end namespace nsx
