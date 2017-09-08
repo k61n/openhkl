@@ -701,6 +701,7 @@ bool SessionModel::writeStatistics(std::string filename,
 
             for (auto peak: equiv) {
                 merged.addPeak(peak);
+                merged_shell.addPeak(peak);
             }
 
             //if (new_peak.redundancy() > 0) {
