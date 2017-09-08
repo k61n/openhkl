@@ -42,19 +42,29 @@ namespace nsx {
 
 //! convenience data structure for converting between named parameters and flattened arrays
 struct ProfileParams {
+    //! The total number of parameters (compile time constant).
     static const int nparams;
     //! Background value
     double background;
     //! x component of center of mass
     double x0;
+    //! y component of center of mass
     double y0;
+    //! z component of center of mass
     double z0;
+    //! Amplitude
     double A;
+    //! xx component of inverse covariance matrix
     double dxx;
+    //! xy component of inverse covariance matrix
     double dxy;
+    //! xz component of inverse covariance matrix
     double dxz;
+    //! yy component of inverse covariance matrix
     double dyy;
+    //! yz component of inverse covariance matrix
     double dyz;
+    //! zz component of inverse covariance matrix
     double dzz;
 
     //! Default constructor
@@ -62,6 +72,7 @@ struct ProfileParams {
     //! Initialize by guessing parameters from the given data points
     ProfileParams(const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const Eigen::ArrayXd& z, const Eigen::ArrayXd& I);
 
+    //! Pack the parameters into a flat array.
     Eigen::VectorXd pack() const
     {
         Eigen::VectorXd p(nparams);
@@ -69,6 +80,7 @@ struct ProfileParams {
         return p;
     }
 
+    //! Unpack the parameters from a flat array.
     void unpack(const Eigen::VectorXd& p)
     {
         assert(p.size() == nparams);
