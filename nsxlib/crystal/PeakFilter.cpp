@@ -50,7 +50,7 @@ bool invalid(const nsx::PeakFilter& filter, nsx::sptrDataSet data, nsx::sptrPeak
     }
 
     if (filter._removePValue) {
-        if (peak->pValue() < filter._pvalue) {
+        if (peak->pValue() > filter._pvalue) {
             return true;
         }
     }

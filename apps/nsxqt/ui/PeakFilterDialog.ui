@@ -34,7 +34,7 @@
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>451</width>
+     <width>455</width>
      <height>331</height>
     </rect>
    </property>
@@ -86,10 +86,10 @@
     <item row="5" column="2">
      <widget class="QDoubleSpinBox" name="spinBoxPValue">
       <property name="decimals">
-       <number>4</number>
+       <number>6</number>
       </property>
       <property name="singleStep">
-       <double>0.000100000000000</double>
+       <double>0.000001000000000</double>
       </property>
       <property name="value">
        <double>0.000100000000000</double>
