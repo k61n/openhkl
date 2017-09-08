@@ -41,5 +41,4 @@ private:
 
 //! Overload operator<< with ReciprocalVector type
 std::ostream& operator<<(std::ostream& os, const ReciprocalVector& rvector);
-
 } // end namespace nsx
