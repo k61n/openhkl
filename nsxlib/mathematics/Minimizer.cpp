@@ -44,6 +44,21 @@
 #include <gsl/gsl_multifit_nlinear.h>
 
 
+namespace {
+    // Helper class to wrap GSL data structures. Used only in implementation of Minimizer.
+    struct MinimizerGSL {
+        gsl_multifit_nlinear_workspace* workspace;
+        gsl_multifit_nlinear_fdf fdf;
+        gsl_multifit_nlinear_parameters fdfParams;
+        gsl_matrix *jacobian;
+        gsl_matrix* covariance;
+        int status, info;
+        gsl_vector* x;
+        gsl_vector* wt;
+    
+        MinimizerGSL(): workspace(nullptr), jacobian(nullptr), covariance(nullptr), x(nullptr), wt(nullptr) {};
+    };
+    }
 
 namespace nsx {
 
@@ -54,20 +69,6 @@ static void eigenFromGSL(const gsl_vector* in, Eigen::VectorXd& out);
 static void eigenFromGSL(const gsl_matrix* in, Eigen::MatrixXd& out);
 static void gslFromEigen(const Eigen::VectorXd& in, gsl_vector* out);
 static void gslFromEigen(const Eigen::MatrixXd& in, gsl_matrix* out);
-
-//! Helper class to wrap GSL data structures. Used only in implementation of Minimizer.
-struct MinimizerGSL {
-    gsl_multifit_nlinear_workspace* workspace;
-    gsl_multifit_nlinear_fdf fdf;
-    gsl_multifit_nlinear_parameters fdfParams;
-    gsl_matrix *jacobian;
-    gsl_matrix* covariance;
-    int status, info;
-    gsl_vector* x;
-    gsl_vector* wt;
-
-    MinimizerGSL(): workspace(nullptr), jacobian(nullptr), covariance(nullptr), x(nullptr), wt(nullptr) {};
-};
 
 Minimizer::Minimizer():
     _gsl(new MinimizerGSL),
@@ -84,13 +85,13 @@ Minimizer::Minimizer():
 
 Minimizer::~Minimizer()
 {
-    deinitialize();
+    cleanup();
     delete _gsl;
 }
 
 void Minimizer::initialize(int params, int values)
 {
-    deinitialize();
+    cleanup();
 
     _numParams = params;
     _numValues = values;
@@ -167,10 +168,10 @@ bool Minimizer::fit(int max_iter)
     return (_gsl->status == GSL_SUCCESS);
 }
 
-void Minimizer::deinitialize()
+void Minimizer::cleanup()
 {
     if (_gsl->workspace) {
-        //gsl_multifit_nlinear_free(_gsl->workspace);
+        gsl_multifit_nlinear_free(_gsl->workspace);
         _gsl->workspace = nullptr;
     }
 
@@ -181,7 +182,7 @@ void Minimizer::deinitialize()
 
     if (_gsl->jacobian) {
         // jacobian is part of the workspace, doesnt need to be freed
-        //gsl_matrix_free(_jacobian);
+        gsl_matrix_free(_gsl->jacobian);
         _gsl->jacobian = nullptr;
     }
 

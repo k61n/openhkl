@@ -41,47 +41,67 @@
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_vector.h>
 
+namespace {
+    class MinimizerGSL;
+}
+
 namespace nsx {
 
-class MinimizerGSL;
-
+//! \class Minimizer
+//! \brief Class to wrap the GSL non-linear least squares minimization routines.
+//! This class supports both numerical and analytic derivatives. 
 class Minimizer {
 public:
+    //! The signature of the function f which specifies the vector of residuals.
     using f_type = std::function<int(const Eigen::VectorXd&, Eigen::VectorXd&)>;
+    //! The signature of the function df which is the Jacobian of the residuals.
     using df_type = std::function<int(const Eigen::VectorXd&, Eigen::MatrixXd&)>;
 
+    //! Default construct: initializes parameters to reasonable default values.
     Minimizer();
+    //! Destructor: ensures that GSL internals are cleaned up.
     ~Minimizer();
 
+    //! Copy constructor is deleted, to avoid possibiliy of copying the GSL workspace.
     Minimizer(const Minimizer& other) = delete;
+    //! Assignmenrt operator is deleted, to avoid possibility of copying the GSL workspace.
     Minimizer& operator=(const Minimizer& other) = delete;
 
+    //! Initialize a GSL workspace with given number of parameters and values.
+    //! \param [in] params The number of parameters to fit.
+    //! \param [in] values The size of the residual vector.
     void initialize(int params, int values);
-    void deinitialize();
 
+    //! Return the GSL status string
     const char* getStatusStr();
+    //! Run the fitting routine with the specified maximum number of iterations.
     bool fit(int max_iter);
-
+    //! Return the variance-covariance matrix of the fit parameters.
     Eigen::MatrixXd covariance();
-
+    //! Set the relative tolerance in the fit parameters.
     void setxTol(double xtol);
+    //! Set the relative tolerance in the gradient (Jacobian).
     void setgTol(double gtol);
+    //! Set the relative tolerance in the residuals.
     void setfTol(double ftol);
-
+    //! Return the Jacobian matrix.
     Eigen::MatrixXd jacobian();
+    //! Return the values of the fit parameters.
     Eigen::VectorXd params();
-
+    //! Set the initial values of the fit parameters.
     void setParams(const Eigen::VectorXd& x);
+    //! Set the weights of the residuals.
     void setWeights(const Eigen::VectorXd& wt);
-
+    //! Return the number of iterations of the fit.
     int numIterations();
-
+    //! Set the function which computes the least-squares residuals.
     template <typename Fun_>
     void set_f(Fun_ functor)
     {
         _f = static_cast<f_type>(functor);
     }
-
+    //! Set the function computes the Jacobian of the residuals.
+    //! The default value is \p nullptr, in which case a numerical derivative is used instead.
     template <typename Fun_>
     void set_df(Fun_ functor)
     {
@@ -89,28 +109,45 @@ public:
     }
 
 private:
+    //! Clean up the GSL workspace and allocated vectors.
+    void cleanup();
     //! Private implementation details of the GSL wrapper
     MinimizerGSL* _gsl;
-
     //! GSL wrapper function. Static method because it needs access to private members
     static int gsl_f_wrapper(const gsl_vector*, void*, gsl_vector*);
     //! GSL wrapper function. Static method because it needs access to private members
     static int gsl_df_wrapper(const gsl_vector*, void*, gsl_matrix*);
-
+    //! Implementation detail: used to convert between Eigen and GSL vectors.
     Eigen::VectorXd _inputEigen;
+    //! Implementation detail: used to convert between Eigen and GSL vectors.
     Eigen::VectorXd _dfInputEigen;
+    //! Implementation detail: used to convert between Eigen and GSL vectors.
     Eigen::VectorXd _outputEigen;
+    //! Implementation detail: used to convert between Eigen and GSL vectors.
     Eigen::MatrixXd _dfOutputEigen;
-    Eigen::VectorXd _x, _wt;
-    Eigen::MatrixXd _jacobian, _covariance;
-
-    int _numValues, _numParams, _numIter;
-
+    //! Vector of fit parameters.
+    Eigen::VectorXd _x;
+    //! Vector of weights for the residuals.
+    Eigen::VectorXd _wt;
+    //! Jacobian matrix of the residual function.
+    Eigen::MatrixXd _jacobian;
+    //! Variance-covariance matrix of the fit parameters.
+    Eigen::MatrixXd _covariance;
+    //! Number of values in the fit, i.e. size of residual vector.
+    int _numValues;
+    //! Number of parameters to fit.
+    int _numParams;
+    //! Number of iterations used to fit.
+    int _numIter;
+    //! Relative tolerance of parameters.
     double _xtol;
+    //! Relative tolerance of gradient.
     double _gtol;
+    //! Relative tolerance of residuals.
     double _ftol;  
-
+    //! The function computing the residuals.
     f_type _f;
+    //! The function computing the analytic gradient.
     df_type _df;
 };
 
