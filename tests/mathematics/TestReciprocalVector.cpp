@@ -16,7 +16,7 @@ int run_test() {
     return 0;
 }
 
-BOOST_AUTO_TEST_CASE(Test_ErfInv)
+BOOST_AUTO_TEST_CASE(Test_ReciprocalVector)
 {
     BOOST_CHECK(run_test() == 0);
 }
