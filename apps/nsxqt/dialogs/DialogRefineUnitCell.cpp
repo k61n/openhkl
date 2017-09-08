@@ -305,7 +305,6 @@ void DialogRefineUnitCell::refineParameters()
     os.str("");
 
     auto M=_unitCell->reciprocalBasis();
-    _minimizer.setMinimizer(nsx::Minimizer());
     _minimizer.setStartingUBMatrix(M);
 
     int test = _minimizer.run(100);

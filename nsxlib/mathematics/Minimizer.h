@@ -33,32 +33,28 @@
  *
  */
 
-#ifndef NSXLIB_MINIMIZER_H
-#define NSXLIB_MINIMIZER_H
+#pragma once
 
 #include <functional>
+#include <Eigen/Dense>
 
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_vector.h>
-#include <gsl/gsl_blas.h>
-
-#if ((NSXTOOL_GSL_VERSION_MAJOR == 2) && (NSXTOOL_GSL_VERSION_MINOR >= 2) )
-#include <gsl/gsl_multifit_nlinear.h>
-#else
-#include <gsl/gsl_multifit_nlin.h>
-#endif
-
-#include <Eigen/Dense>
 
 namespace nsx {
+
+class MinimizerGSL;
 
 class Minimizer {
 public:
     using f_type = std::function<int(const Eigen::VectorXd&, Eigen::VectorXd&)>;
+    using df_type = std::function<int(const Eigen::VectorXd&, Eigen::MatrixXd&)>;
 
     Minimizer();
-
     ~Minimizer();
+
+    Minimizer(const Minimizer& other) = delete;
+    Minimizer& operator=(const Minimizer& other) = delete;
 
     void initialize(int params, int values);
     void deinitialize();
@@ -66,7 +62,7 @@ public:
     const char* getStatusStr();
     bool fit(int max_iter);
 
-    virtual Eigen::MatrixXd covariance();
+    Eigen::MatrixXd covariance();
 
     void setxTol(double xtol);
     void setgTol(double gtol);
@@ -86,48 +82,36 @@ public:
         _f = static_cast<f_type>(functor);
     }
 
+    template <typename Fun_>
+    void set_df(Fun_ functor)
+    {
+        _df = static_cast<df_type>(functor);
+    }
+
 private:
+    //! Private implementation details of the GSL wrapper
+    MinimizerGSL* _gsl;
+
+    //! GSL wrapper function. Static method because it needs access to private members
     static int gsl_f_wrapper(const gsl_vector*, void*, gsl_vector*);
-
-    static void eigenFromGSL(const gsl_vector* in, Eigen::VectorXd& out);
-    static void eigenFromGSL(const gsl_matrix* in, Eigen::MatrixXd& out);
-
-    static void gslFromEigen(const Eigen::VectorXd& in, gsl_vector* out);
-    static void gslFromEigen(const Eigen::MatrixXd& in, gsl_matrix* out);
-
-#if ((NSXTOOL_GSL_VERSION_MAJOR == 2) && (NSXTOOL_GSL_VERSION_MINOR >= 2) )
-    gsl_multifit_nlinear_workspace* _workspace;
-    gsl_multifit_nlinear_fdf _fdf;
-    gsl_multifit_nlinear_parameters _fdfParams;
-#else
-    gsl_multifit_fdfsolver* _workspace;
-    gsl_multifit_function_fdf _fdf;
-#endif
-
-    // gsl_vector *f;
-    gsl_matrix *_jacobian_gsl;
-    gsl_matrix* _covariance_gsl;
-
-    int _status, _info;
-
-    gsl_vector* _x_gsl;
-    gsl_vector* _wt_gsl;
+    //! GSL wrapper function. Static method because it needs access to private members
+    static int gsl_df_wrapper(const gsl_vector*, void*, gsl_matrix*);
 
     Eigen::VectorXd _inputEigen;
+    Eigen::VectorXd _dfInputEigen;
     Eigen::VectorXd _outputEigen;
+    Eigen::MatrixXd _dfOutputEigen;
+    Eigen::VectorXd _x, _wt;
+    Eigen::MatrixXd _jacobian, _covariance;
 
     int _numValues, _numParams, _numIter;
 
     double _xtol;
     double _gtol;
-    double _ftol;
-
-    Eigen::VectorXd _x,  _wt;
-    Eigen::MatrixXd _jacobian, _covariance;
+    double _ftol;  
 
     f_type _f;
+    df_type _df;
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_MINIMIZER_H

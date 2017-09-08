@@ -26,8 +26,7 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-#ifndef NSXLIB_UBMINIMIZER_H
-#define NSXLIB_UBMINIMIZER_H
+#pragma once
 
 #include <map>
 #include <ostream>
@@ -198,17 +197,10 @@ public:
      */
     const UBSolution& getSolution() const;
 
-    //! Set the minimizer
-    void setMinimizer(const Minimizer& minimizer);
-
 private:
     UBFunctor _functor;
     UBSolution _solution;
     std::map<unsigned int,double> _start;
-    Minimizer _minimizer;
-
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_UBMINIMIZER_H
