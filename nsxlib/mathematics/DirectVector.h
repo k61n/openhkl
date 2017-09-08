@@ -1,31 +1,37 @@
 #pragma once
 
-#include <Eigen/Dense>
+#include <iostream>
 
-#include "MathematicsTypes.h"
+#include <Eigen/Dense>
 
 namespace nsx {
 
-class DirectVector : public Eigen::Vector3d
+class DirectVector
 {
-
 public:
 
-    using Eigen::Vector3d::Vector3d;
+    //! Default constructor
+    DirectVector()=default;
+
+    //! Copy constructor
+    DirectVector(const DirectVector& other)=default;
+
+    //! Construct a DirectVector from an Eigen column vector
+    explicit DirectVector(const Eigen::Vector3d& dvector);
+
+    //! Assignment operator
+    DirectVector& operator=(const DirectVector& other)=default;
 
     ~DirectVector()=default;
 
-    DirectVector& operator=(const Eigen::Vector3d& other);
+    explicit operator const Eigen::Vector3d& () const;
 
-    DirectVector& operator=(const DirectVector& other);
+    void print(std::ostream& os) const;
 
-    DirectVector& operator+=(const Eigen::Vector3d& other)=delete;
-
-    DirectVector& operator+=(const DirectVector& other);
-
-    DirectVector operator+(const Eigen::Vector3d& other)=delete;
-
-    DirectVector operator+(const DirectVector& other);
+private:
+    Eigen::Vector3d _dvector;
 };
+
+std::ostream& operator<<(std::ostream& os, const DirectVector& dvector);
 
 } // end namespace nsx

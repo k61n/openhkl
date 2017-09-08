@@ -4,29 +4,24 @@
 
 namespace nsx {
 
-DirectVector& DirectVector::operator=(const Eigen::Vector3d& other)
+DirectVector::DirectVector(const Eigen::Vector3d& dvector) : _dvector(dvector)
 {
-    this->Eigen::Vector3d::operator=(other);
-    return *this;
 }
 
-DirectVector& DirectVector::operator=(const DirectVector& other)
+DirectVector::operator const Eigen::Vector3d& () const
 {
-    this->Eigen::Vector3d::operator=(other);
-    return *this;
+    return _dvector;
 }
 
-DirectVector& DirectVector::operator+=(const DirectVector& other)
+void DirectVector::print(std::ostream& os) const
 {
-    this->Eigen::Vector3d::operator+=(other);
-    return *this;
+    os << _dvector;
 }
 
-DirectVector DirectVector::operator+(const DirectVector& other)
+std::ostream& operator<<(std::ostream& os, const DirectVector& dvector)
 {
-    DirectVector result = *this;
-    result += other;
-    return result;
+    dvector.print(os);
+    return os;
 }
 
 } // end namespace nsx

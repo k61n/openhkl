@@ -1,36 +1,33 @@
 #pragma once
 
+#include <iostream>
+
 #include <Eigen/Dense>
 
 namespace nsx {
 
-class ReciprocalMatrix;
-
-class ReciprocalVector : public Eigen::RowVector3d
+class ReciprocalVector
 {
-
 public:
 
-    using Eigen::RowVector3d::RowVector3d;
+    ReciprocalVector()=default;
+
+    ReciprocalVector(const ReciprocalVector& other)=default;
+
+    explicit ReciprocalVector(const Eigen::RowVector3d& rvector);
+
+    ReciprocalVector& operator=(const ReciprocalVector& other)=default;
 
     ~ReciprocalVector()=default;
 
-    ReciprocalVector& operator=(const Eigen::RowVector3d& rvector);
+    explicit operator const Eigen::RowVector3d& () const;
 
-    ReciprocalVector& operator=(const ReciprocalVector& other);
+    void print(std::ostream& os) const;
 
-    ReciprocalVector& operator+=(const Eigen::RowVector3d& other)=delete;
-
-    ReciprocalVector& operator+=(const ReciprocalVector& other);
-
-    ReciprocalVector operator+(const Eigen::RowVector3d& other)=delete;
-
-    ReciprocalVector operator+(const ReciprocalVector& other);
-
-    ReciprocalVector& operator*=(double factor);
-
-    ReciprocalVector& operator*=(const ReciprocalMatrix& B);
-
+private:
+    Eigen::RowVector3d _rvector;
 };
+
+std::ostream& operator<<(std::ostream& os, const ReciprocalVector& rvector);
 
 } // end namespace nsx

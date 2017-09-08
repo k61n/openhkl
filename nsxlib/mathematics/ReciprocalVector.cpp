@@ -1,45 +1,27 @@
 #include <Eigen/Dense>
 
-#include "ReciprocalMatrix.h"
 #include "ReciprocalVector.h"
 
 namespace nsx {
 
-ReciprocalVector& ReciprocalVector::operator=(const Eigen::RowVector3d& other)
+ReciprocalVector::ReciprocalVector(const Eigen::RowVector3d& rvector) : _rvector(rvector)
 {
-    this->Eigen::RowVector3d::operator=(other);
-    return *this;
 }
 
-ReciprocalVector& ReciprocalVector::operator=(const ReciprocalVector& other)
+ReciprocalVector::operator const Eigen::RowVector3d& () const
 {
-    this->Eigen::RowVector3d::operator=(other);
-    return *this;
+    return _rvector;
 }
 
-ReciprocalVector& ReciprocalVector::operator+=(const ReciprocalVector& other)
+void ReciprocalVector::print(std::ostream& os) const
 {
-    this->Eigen::RowVector3d::operator+=(other);
-    return *this;
+    os << _rvector;
 }
 
-ReciprocalVector ReciprocalVector::operator+(const ReciprocalVector& other)
+std::ostream& operator<<(std::ostream& os, const ReciprocalVector& rvector)
 {
-    ReciprocalVector result = *this;
-    result += other;
-    return result;
-}
-
-ReciprocalVector& ReciprocalVector::operator*=(double factor)
-{
-    this->Eigen::RowVector3d::operator*=(factor);
-    return *this;
-}
-
-ReciprocalVector& ReciprocalVector::operator*=(const ReciprocalMatrix& B)
-{
-    this->Eigen::RowVector3d::operator*=(B);
-    return *this;
+    rvector.print(os);
+    return os;
 }
 
 } // end namespace nsx
