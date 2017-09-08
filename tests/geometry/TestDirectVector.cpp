@@ -15,6 +15,12 @@ int run_test() {
 
     Eigen::Vector3d v2 = v1 + static_cast<const Eigen::Vector3d&>(dv1);
 
+    double& x = dv1[0];
+
+    x = 100;
+
+    BOOST_CHECK_EQUAL(dv1[0],100);
+
     return 0;
 }
 

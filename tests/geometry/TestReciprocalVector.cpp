@@ -13,6 +13,12 @@ int run_test() {
 
     Eigen::RowVector3d v2 = v1 + static_cast<const Eigen::RowVector3d&>(rv1);
 
+    double& x = rv1[0];
+
+    x = 100;
+
+    BOOST_CHECK_EQUAL(rv1[0],100);
+
     return 0;
 }
 

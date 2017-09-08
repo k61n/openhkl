@@ -32,6 +32,12 @@ public:
     //! Cast operator to an Eigen column vector
     explicit operator const Eigen::Vector3d& () const;
 
+    //! Return a reference to an element of the vector
+    double& operator[](unsigned int index);
+
+    //! Return a reference to an element of the vector
+    double& operator()(unsigned int index);
+
     //! Print information about a DirectVector to a stream
     void print(std::ostream& os) const;
 
