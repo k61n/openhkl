@@ -140,6 +140,9 @@ public:
     //! for further analysis such as Monte-Carlo based absorption correction.
     std::vector<Triangle> createFaceCache(const Eigen::Matrix3d& rotation=Eigen::Matrix3d::Identity()) const;
 
+    //! Return whether a vertex is contained in the hull
+    bool contains(const Eigen::Vector3d& v) const;
+
 private:
 
     //! Initializes the hull. The initialization consists in defines two triangles with opposite orientations that will
@@ -188,9 +191,6 @@ private:
 
     //! Get AABB of the convex hull
     AABB getAABB() const;
-
-    //! Return whether a vertex is contained in the hull
-    bool constains(const Vertex& v) const;
 
 private:
 

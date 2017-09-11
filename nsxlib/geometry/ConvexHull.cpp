@@ -741,5 +741,16 @@ std::ostream& operator<<(std::ostream& os, const ConvexHull& chull)
     return os;
 }
 
+bool ConvexHull::contains(const Eigen::Vector3d& v) const {
+    Vertex point(v);
+    // check that it is in the convex hull
+    for (auto&& face : _faces) {
+        if (face->volumeSign(&point) < 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
 } // end namespace nsx
 
