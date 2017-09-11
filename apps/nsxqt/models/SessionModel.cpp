@@ -620,8 +620,8 @@ bool SessionModel::writeNewShellX(std::string filename, const nsx::PeakList& pea
         double lorentz = peak->getLorentzFactor();
         double trans = peak->getTransmission();
 
-        double intensity = peak->getCorrectedIntensity().getValue();
-        double sigma = peak->getCorrectedIntensity().getSigma();
+        double intensity = peak->getCorrectedIntensity().value();
+        double sigma = peak->getCorrectedIntensity().sigma();
 
         std::snprintf(&buf[0], buf.size(), "  %4ld %4ld %4ld %15.2f %10.2f", h, k, l, intensity, sigma);
         file << &buf[0] << std::endl;
@@ -778,8 +778,8 @@ bool SessionModel::writeStatistics(std::string filename,
         const int k = hkl[1];
         const int l = hkl[2];
 
-        const double intensity = peak.getIntensity().getValue();
-        const double sigma = peak.getIntensity().getSigma();
+        const double intensity = peak.getIntensity().value();
+        const double sigma = peak.getIntensity().sigma();
         const double d = 0.0; //peak.d();
         const int nobs = peak.redundancy();
         //const double std = peak.std();

@@ -148,7 +148,7 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     const Eigen::VectorXd& bkg=_peak->getBkgProjection();
 
     //const Eigen::VectorXd& totalSigma=_peak->getProjectionSigma();
-    const double totalSigma = _peak->getRawIntensity().getSigma();
+    const double totalSigma = _peak->getRawIntensity().sigma();
 
     // Transform to QDouble
     QVector<double> qx(int(total.size()));
@@ -194,8 +194,8 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     gamma/=nsx::deg;
     nu/=nsx::deg;
     info+=" "+QString(QChar(0x03B3))+","+QString(QChar(0x03BD))+":"+QString::number(gamma,'f',2)+","+QString::number(nu,'f',2)+"\n";
-    double intensity=_peak->getScaledIntensity().getValue();
-    double sI=_peak->getScaledIntensity().getSigma();
+    double intensity=_peak->getScaledIntensity().value();
+    double sI=_peak->getScaledIntensity().sigma();
     info+="Intensity ("+QString(QChar(0x03C3))+"I): "+QString::number(intensity)+" ("+QString::number(sI,'f',2)+")\n";
     double l=_peak->getLorentzFactor();
     info+="Cor. int. ("+QString(QChar(0x03C3))+"I): "+QString::number(intensity/l,'f',2)+" ("+QString::number(sI/l,'f',2)+")\n";

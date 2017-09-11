@@ -438,7 +438,7 @@ bool Peak3D::isObserved() const
 double Peak3D::getIOverSigmaI() const
 {
     //return _counts/_countsSigma;
-    return _intensity.getValue() / _intensity.getSigma();
+    return _intensity.value() / _intensity.sigma();
 }
 
 void Peak3D::updateIntegration(const PeakIntegrator& integrator)

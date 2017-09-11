@@ -53,12 +53,12 @@ Intensity::Intensity(const Intensity& other): _value(other._value), _sigma2(othe
     }
 }
 
-double Intensity::getValue() const
+double Intensity::value() const
 {
     return _value;
 }
 
-double Intensity::getSigma() const
+double Intensity::sigma() const
 {
     return std::sqrt(_sigma2);
 }
@@ -85,13 +85,6 @@ Intensity Intensity::operator/(double denominator) const
 {
     const double scale = 1.0 / denominator;
     return Intensity(scale*_value, scale*scale*_sigma2);
-}
-
-Intensity& Intensity::operator=(const Intensity &other)
-{
-    _value = other._value;
-    _sigma2 = other._sigma2;
-    return *this;
 }
 
 Intensity& Intensity::operator+=(const Intensity& other)

@@ -150,8 +150,8 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
         _peaks[row]->getMillerIndices(hkl, true);
         lorentzFactor = _peaks[row]->getLorentzFactor();
         transmissionFactor = _peaks[row]->getTransmission();
-        scaledIntensity=_peaks[row]->getCorrectedIntensity().getValue();
-        sigmaScaledIntensity=_peaks[row]->getCorrectedIntensity().getSigma();
+        scaledIntensity=_peaks[row]->getCorrectedIntensity().value();
+        sigmaScaledIntensity=_peaks[row]->getCorrectedIntensity().sigma();
 
         switch (column) {
         case Column::h:
@@ -241,14 +241,14 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
         break;
     case  Column::intensity:
         compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            return (p1->getCorrectedIntensity().getValue())
-                    > (p2->getCorrectedIntensity().getValue());
+            return (p1->getCorrectedIntensity().value())
+                    > (p2->getCorrectedIntensity().value());
         };
         break;
     case Column::sigmaIntensity:
         compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            return (p1->getCorrectedIntensity().getSigma())
-                    > (p2->getCorrectedIntensity().getSigma());
+            return (p1->getCorrectedIntensity().sigma())
+                    > (p2->getCorrectedIntensity().sigma());
         };
         break;
     case Column::transmission:
@@ -426,8 +426,8 @@ void CollectedPeaksModel::writeShelX(const std::string& filename, QModelIndexLis
             file << std::setw(4);
             file << hkl[2];
 
-            file << std::fixed << std::setw(8) << std::setprecision(2) << peak->getCorrectedIntensity().getValue();
-            file << std::fixed << std::setw(8) << std::setprecision(2) << peak->getCorrectedIntensity().getSigma() <<std::endl;
+            file << std::fixed << std::setw(8) << std::setprecision(2) << peak->getCorrectedIntensity().value();
+            file << std::fixed << std::setw(8) << std::setprecision(2) << peak->getCorrectedIntensity().sigma() <<std::endl;
         }
     }
     if (file.is_open()) {
@@ -478,8 +478,8 @@ void CollectedPeaksModel::writeFullProf(const std::string& filename, QModelIndex
             file << std::setprecision(0);
             file << std::setw(4);
             file << hkl[0] << std::setw(4) <<  hkl[1] << std::setw(4) << hkl[2];
-            file << std::fixed << std::setw(14) << std::setprecision(4) << peak->getCorrectedIntensity().getValue();
-            file << std::fixed << std::setw(14) << std::setprecision(4) << peak->getCorrectedIntensity().getSigma();
+            file << std::fixed << std::setw(14) << std::setprecision(4) << peak->getCorrectedIntensity().value();
+            file << std::fixed << std::setw(14) << std::setprecision(4) << peak->getCorrectedIntensity().sigma();
             file << std::setprecision(0) << std::setw(5) << 1  << std::endl;
         }
     }

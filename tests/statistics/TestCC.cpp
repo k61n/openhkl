@@ -95,7 +95,7 @@ BOOST_AUTO_TEST_CASE(Test_CC)
         PeakCalc p0(hkl(0), hkl(1), hkl(2), 0, 0, 0);
         PeakCalc p1(p0), p2(p0);
 
-        const double intensity = peak.getIntensity().getValue();
+        const double intensity = peak.getIntensity().value();
 
         for (auto&& raw_peak: peak.getPeaks()) {
             p1._intensity = intensity + error_dist(gen);

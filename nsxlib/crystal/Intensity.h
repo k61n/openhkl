@@ -1,58 +1,34 @@
-/*
- * nsxtool : Neutron Single Crystal analysis toolkit
- ------------------------------------------------------------------------------------------
- Copyright (C)
- 2017- Laurent C. Chapon, Eric Pellegrini, Jonathan Fisher
-
- Institut Laue-Langevin
- BP 156
- 6, rue Jules Horowitz
- 38042 Grenoble Cedex 9
- France
- chapon[at]ill.fr
- pellegrini[at]ill.fr
-
- Forschungszentrum Juelich GmbH
- 52425 Juelich
- Germany
- j.fisher[at]fz-juelich.de
-
- This library is free software; you can redistribute it and/or
- modify it under the terms of the GNU Lesser General Public
- License as published by the Free Software Foundation; either
- version 2.1 of the License, or (at your option) any later version.
-
- This library is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- Lesser General Public License for more details.
-
- You should have received a copy of the GNU Lesser General Public
- License along with this library; if not, write to the Free Software
- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- *
- */
-
-
-#ifndef NSXLIB_INTENSITY_H
-#define NSXLIB_INTENSITY_H
+#pragma once
 
 namespace nsx {
 
+//! \class Intensity
+//! \brief Class to store the intensity of a given peak alongside with its variance
 class Intensity {
 public:
+
+    //! Constructs an Intensity from its value and variance.
     Intensity(double value = 0.0, double sigma2 = 0.0);
+
+    //! Copy constructor.
     Intensity(const Intensity& other);
 
-    double getValue() const;
-    double getSigma() const;
+    //! Return the value of the Intensity
+    double value() const;
 
+    //! Return the standard deviation of the Intensity.
+    double sigma() const;
+
+    //! Returns the sum of two Intensity whose value and variance are summed.
     Intensity operator+(const Intensity& other) const;
+    //! Returns the difference between two Intensity whose value are subtracted and variance summed.
     Intensity operator-(const Intensity& other) const;
+    //! Scale the Intensity by a factor. This will multiply the value by the factor and the variance by the square of the factor.
     Intensity operator*(double scale) const;
+    //! Divide the Intensity by a factor. This will divide the value by the factor and the variance by the square of the factor.
     Intensity operator/(double denominator) const;
 
-    Intensity& operator=(const Intensity& other);
+    //! Increment an Intensity with another Intensity by summing up their respective value and variance.
     Intensity& operator+=(const Intensity& other);
 
 private:
@@ -61,5 +37,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_INTENSITY_H

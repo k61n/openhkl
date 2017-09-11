@@ -181,8 +181,8 @@ bool operator<(const MergedPeak& p, const MergedPeak& q)
 //! which is approximately a chi-squared statistic with \f$N-1\f$ degrees of freedom.
 double MergedPeak::chi2() const
 {
-    const double I_merge = getIntensity().getValue();
-    const double sigma_merge = getIntensity().getSigma();
+    const double I_merge = getIntensity().value();
+    const double sigma_merge = getIntensity().sigma();
     const double N = redundancy();
 
     // if there is no redundancy, we cannot compute chi2
@@ -194,7 +194,7 @@ double MergedPeak::chi2() const
 
     for (auto&& peak: _peaks) {
         auto&& I = peak->getCorrectedIntensity();
-        const double x = (I.getValue() - I_merge) / sigma_merge;
+        const double x = (I.value() - I_merge) / sigma_merge;
         chi_sq += x*x/N;
     }
     return chi_sq;

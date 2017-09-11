@@ -140,7 +140,7 @@ PeakSet PeakPredictor::predictPeaks(sptrDataSet data, bool keepObserved)
             Intensity inten = p->getCorrectedIntensity();
 
             // peak must have minimum I / sigma ratio
-            if (inten.getValue() / inten.getSigma() < _Isigma) {
+            if (inten.value() / inten.sigma() < _Isigma) {
                 continue;
             }
 

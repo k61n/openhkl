@@ -87,8 +87,8 @@ void FriedelDialog::on_goodPairsButton_clicked()
         if (a->isMasked() || b->isMasked())
             continue;
 
-        double int_a = a->getScaledIntensity().getValue();
-        double int_b = b->getScaledIntensity().getValue();
+        double int_a = a->getScaledIntensity().value();
+        double int_b = b->getScaledIntensity().value();
 
         if ( 2.0 * std::fabs(int_a-int_b) / (int_a+int_b) < threshold) {
             ++count;

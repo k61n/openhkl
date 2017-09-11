@@ -54,14 +54,14 @@ void RFactor::calculate(const MergedData& data)
             continue;
         }  
 
-        const double Iave = peak.getIntensity().getValue();
+        const double Iave = peak.getIntensity().value();
         const double Fmeas = std::sqrt(n / (n-1));
         const double Fpim = std::sqrt(1 / (n-1));
 
         I_total += std::fabs(Iave) * peak.redundancy();
 
         for (auto&& p: peak.getPeaks()) {
-            double diff = std::fabs(p->getCorrectedIntensity().getValue() - Iave);
+            double diff = std::fabs(p->getCorrectedIntensity().value() - Iave);
             _Rmerge += diff;
             _Rmeas += Fmeas*diff;
             _Rpim += Fpim*diff;
