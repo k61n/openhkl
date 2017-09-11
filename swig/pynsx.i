@@ -83,6 +83,7 @@ namespace property_tree=boost::property_tree;
 #include "mathematics/Minimizer.h"
 #include "mathematics/Round.h"
 #include "mathematics/RNG.h"
+#include "mathematics/Profile3d.h"
 
 #include "utils/EigenToVector.h"
 //#include "utils/Types.h"
@@ -420,6 +421,7 @@ namespace nsx {
 %include "mathematics/Round.h"
 %include "mathematics/Minimizer.h"
 %include "mathematics/RNG.h"
+%include "mathematics/Profile3d.h"
 
 
 %include "utils/EigenToVector.h"
