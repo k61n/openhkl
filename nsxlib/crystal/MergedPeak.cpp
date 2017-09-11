@@ -91,6 +91,8 @@ size_t MergedPeak::redundancy() const
     return _peaks.size();
 }
 
+//! The representative of the equivalences is defined as the one whose h,j and l are maximum
+//! E.g. the representative of (2,1,2),(1,-3,5),(-2,4,3),(4,0,5),(7,8-2),(2,6,-1) will be (7,8-2)
 void MergedPeak::determineRepresentativeHKL()
 {
     Eigen::Vector3d best_hkl = _hkl.cast<double>();

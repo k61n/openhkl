@@ -81,6 +81,8 @@ public:
     std::pair<MergedPeak, MergedPeak> split() const;
 
 private:
+
+    //! Update the hkl that represents the set of equivalences.
     void determineRepresentativeHKL();
     void update();
     
