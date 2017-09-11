@@ -8,8 +8,8 @@ ci:trusty:
   stage: ci
   script:
     - echo "ubuntu ci"
-#    - ./build_server/debian/run_build.sh
-#    - ./build_server/debian/run_tests.sh
+    - ./build_server/debian/run_build.sh
+    - ./build_server/debian/run_tests.sh
   allow_failure: false
   only:
     - /^feature/.*$/
@@ -42,8 +42,8 @@ ci:osx:
   stage: ci
   script:
     - echo "osx ci"
-#    - ./build_server/osx/run_build.sh
-#    - ./build_server/osx/run_tests.sh
+    - ./build_server/osx/run_build.sh
+    - ./build_server/osx/run_tests.sh
   allow_failure: false
   only:
     - /^feature/.*$/
@@ -75,11 +75,8 @@ deploy:osx:
 ci:windows:
   stage: ci
   script:
-    - echo "windows build"
-    - echo "windows tests"
     - cmd /k .\build_server\windows\run_build.bat
     - cmd /k .\build_server\windows\run_tests.bat
-    - echo "windows tests"
   allow_failure: false
   only:
     - /^feature/.*$/
@@ -90,9 +87,9 @@ ci:windows:
 deploy:windows:
   stage: deploy
   script:
-    - .\\build_server\\windows\\run_build.bat
-    - .\\build_server\\windows\\run_tests.bat
-    - .\\build_server\\windows\\run_deploy.bat
+    - cmd /k .\\build_server\\windows\\run_build.bat
+    - cmd /k .\\build_server\\windows\\run_tests.bat
+    - cmd /k .\\build_server\\windows\\run_deploy.bat
   allow_failure: false
   only:
     - triggers
