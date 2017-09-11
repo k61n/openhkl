@@ -3,6 +3,7 @@
 
 #include <nsxlib/crystal/CrystalTypes.h>
 #include <nsxlib/crystal/UBMinimizer.h>
+#include <nsxlib/crystal/UBSolution.h>
 #include <nsxlib/instrument/InstrumentTypes.h>
 
 #include <QDialog>
@@ -47,6 +48,7 @@ private:
     nsx::sptrUnitCell _unitCell;
     nsx::PeakList _peaks;
     nsx::UBMinimizer _minimizer;
+    nsx::UBSolution _solution;
 };
 
 #endif // NSXQT_DIALOGREFINEUNITCELL_H

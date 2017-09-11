@@ -81,28 +81,28 @@ void DialogRefineUnitCell::setMinimizer()
     auto source = diffractometer->getSource();
 
     // Set the UB minimizer with parameters
-    _minimizer.setDetector(detector);
-    _minimizer.setSample(sample);
-    _minimizer.setSource(source);
+    _solution.setDetector(detector);
+    _solution.setSample(sample);
+    _solution.setSource(source);
 
     int start=10;
 
     auto& mono = source->getSelectedMonochromator();
-    _minimizer.refineParameter(9,!mono.isOffsetFixed());
+    _solution.refineParameter(9,!mono.isOffsetFixed());
 
     int nSampleOffsets = sample->hasGonio() ? sample->getGonio()->getNAxes() : 0;
     for (int i = 0; i < nSampleOffsets; ++i) {
         auto axis=sample->getGonio()->getAxis(i);
-        _minimizer.refineParameter(start+i,!axis->hasOffsetFixed());
-        _minimizer.setStartingValue(start+i,axis->getOffset());
+        _solution.refineParameter(start+i,!axis->hasOffsetFixed());
+        _solution.setValue(start+i,axis->getOffset());
     }
 
     start += nSampleOffsets;
     int nDetectorOffsets = detector->hasGonio() ? detector->getGonio()->getNAxes() : 0;
     for (int i = 0; i < nDetectorOffsets; ++i) {
         auto axis=detector->getGonio()->getAxis(i);
-        _minimizer.refineParameter(start+i,!axis->hasOffsetFixed());
-        _minimizer.setStartingValue(start+i,axis->getOffset());
+        _solution.refineParameter(start+i,!axis->hasOffsetFixed());
+        _solution.setValue(start+i,axis->getOffset());
     }
 }
 
@@ -234,9 +234,14 @@ void DialogRefineUnitCell::setSolution(const nsx::UBSolution& solution)
     auto sample = _experiment->getDiffractometer()->getSample();
     int nAxesSample = sample->hasGonio() ? sample->getGonio()->getNAxes() : 0;
 
+    auto&& sampleOffsets = solution.sampleOffsets();
+    auto&& sigmaSampleOffsets = solution.sampleOffsets();
+    auto&& detectorOffsets = solution.detectorOffsets();
+    auto&& sigmaDetectorOffsets = solution.sigmaDetectorOffsets();
+
     for (int i = 0; i < nAxesSample; ++i) {
-        ui->tableWidget_Sample->item(i,1)->setData(Qt::EditRole, solution._sampleOffsets[i]);
-        ui->tableWidget_Sample->item(i,2)->setData(Qt::EditRole, solution._sigmaSampleOffsets[i]);
+        ui->tableWidget_Sample->item(i,1)->setData(Qt::EditRole, sampleOffsets[i]);
+        ui->tableWidget_Sample->item(i,2)->setData(Qt::EditRole, sigmaSampleOffsets[i]);
     }
 
     // Get the detector
@@ -244,15 +249,15 @@ void DialogRefineUnitCell::setSolution(const nsx::UBSolution& solution)
     int nAxesDet = detector->hasGonio() ? detector->getGonio()->getNAxes() : 0;
 
     for (int i = 0; i < nAxesDet; ++i) {
-        ui->tableWidget_Detector->item(i,1)->setData(Qt::EditRole, solution._detectorOffsets[i]);
-        ui->tableWidget_Detector->item(i,2)->setData(Qt::EditRole, solution._sigmaDetectorOffsets[i]);
+        ui->tableWidget_Detector->item(i,1)->setData(Qt::EditRole, detectorOffsets[i]);
+        ui->tableWidget_Detector->item(i,2)->setData(Qt::EditRole, sigmaDetectorOffsets[i]);
     }
     setLatticeParams();
 }
 
 void DialogRefineUnitCell::refineParameter(bool checked, int i)
 {
-    _minimizer.refineParameter(i, checked);
+    _solution.refineParameter(i, checked);
 }
 
 void DialogRefineUnitCell::cellSampleHasChanged(int i, int j)
@@ -265,7 +270,7 @@ void DialogRefineUnitCell::cellSampleHasChanged(int i, int j)
         double value = ui->tableWidget_Sample->item(i,j)->data(Qt::EditRole).toDouble();
         axis->setOffset(value);
         axis->setOffsetFixed(offsetFixed);
-        _minimizer.setStartingValue(10+i,value);
+        _solution.setValue(10+i,value);
     }
 }
 
@@ -283,7 +288,7 @@ void DialogRefineUnitCell::cellDetectorHasChanged(int i, int j)
         // Get the sample
         auto sample=_experiment->getDiffractometer()->getSample();
         int nAxesSample = sample->hasGonio() ? sample->getGonio()->getNAxes() : 0;
-        _minimizer.setStartingValue(10+nAxesSample+i,value);
+        _solution.setValue(10+nAxesSample+i,value);
     }
 }
 
@@ -304,20 +309,20 @@ void DialogRefineUnitCell::refineParameters()
     ui->textEdit_Solution->setText(QString::fromStdString(os.str()));
     os.str("");
 
-    auto M=_unitCell->reciprocalBasis();
-    _minimizer.setStartingUBMatrix(M);
+    //auto M=_unitCell->reciprocalBasis();
+    _solution.setCell(_unitCell);
 
-    int test = _minimizer.run(100);
+    int test = _minimizer.run(_solution, 100);
     if (test != 1) {
         ui->textEdit_Solution->setTextColor(QColor("red"));
         ui->textEdit_Solution->setText("No solution found within convergence criteria.");
         return; // why not change ?
     }
 
-    const auto& solution=_minimizer.getSolution();
+    const auto& solution=_minimizer.solution();
     os << solution;
 
-    _unitCell->setReciprocalBasis(solution._ub);
+    _unitCell->setReciprocalBasis(solution.ub());
 
     // calculate the new quality of the fit
     unsigned int total = 0, count = 0;

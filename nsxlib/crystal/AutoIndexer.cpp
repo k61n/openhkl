@@ -39,6 +39,7 @@
 #include "../crystal/NiggliReduction.h"
 #include "../crystal/Peak3D.h"
 #include "../crystal/UBMinimizer.h"
+#include "../crystal/UBSolution.h"
 #include "../instrument/Detector.h"
 #include "../instrument/Diffractometer.h"
 #include "../instrument/Experiment.h"
@@ -107,18 +108,34 @@ bool AutoIndexer::autoIndex(const IndexerParameters& _params)
     for (int i = 0; i < _params.nSolutions; ++i) {
         for (int j = i+1; j < _params.nSolutions; ++j) {
             for (int k = j+1; k < _params.nSolutions; ++k) {
-                Eigen::Vector3d& v1=tvects[i]._vect;
-                Eigen::Vector3d& v2=tvects[j]._vect;
-                Eigen::Vector3d& v3=tvects[k]._vect;
+                Eigen::Matrix3d A;
+                A.col(0) = tvects[i]._vect;
+                A.col(1) = tvects[j]._vect;
+                A.col(2) = tvects[k]._vect;
 
-                if (v1.dot(v2.cross(v3)) > 20.0) {
-                    Eigen::Matrix3d basis;
-                    basis.col(0) = v1;
-                    basis.col(1) = v2;
-                    basis.col(2) = v3;
-                    auto cell = std::shared_ptr<UnitCell>(new UnitCell(basis));
-                    newSolutions.push_back(std::make_pair(cell, 0.0));
+                auto cell = std::shared_ptr<UnitCell>(new UnitCell(A));
+                // todo: 20.0 should not be hard-coded
+                if (cell->volume() < 20.0) {                    
+                    continue;
                 }
+
+                bool equivalent = false;
+
+                // check to see if the cell is equivalent to a previous one
+                // todo: tolerance should not be hard-coded
+                for (auto solution: newSolutions) {
+                    if (cell->equivalent(*solution.first, 0.05)) {
+                        equivalent = true;
+                        break;
+                    }
+                }
+
+                // cell is equivalent to a previous one in the list
+                if (equivalent) {
+                    continue;
+                }
+
+                newSolutions.push_back(std::make_pair(cell, 0.0));
             }
         }
     }
@@ -127,25 +144,19 @@ bool AutoIndexer::autoIndex(const IndexerParameters& _params)
     for (int idx = 0; idx < newSolutions.size(); ++idx) {
 
         UBMinimizer minimizer;
-        minimizer.setSample(sample);
-        minimizer.setDetector(detector);
-        minimizer.setSource(source);
+
+        UBSolution ub_state;
+        ub_state.setSample(sample);
+        ub_state.setDetector(detector);
+        ub_state.setSource(source);
 
         auto cell = newSolutions[idx].first;
         cell->setHKLTolerance(_params.HKLTolerance);
 
         // Only the UB matrix parameters are used for fit
-        int nParameters = 10;
-
-        if (sample->hasGonio()) {
-            nParameters += sample->getGonio()->getNAxes();
-        }
-        if (detector->hasGonio()) {
-            nParameters += detector->getGonio()->getNAxes();
-        }
-
-        for (int i = 9; i < nParameters; ++i) {
-            minimizer.refineParameter(i,false);
+        for (int i = 0; i < ub_state.inputs(); ++i) {
+            const bool refine = (i < 9);
+            ub_state.refineParameter(i, refine);
         }
 
         int success = 0;
@@ -162,14 +173,19 @@ bool AutoIndexer::autoIndex(const IndexerParameters& _params)
         if (success < 10) {
             continue;
         }
-        Eigen::Matrix3d M = cell->reciprocalBasis();
-        minimizer.setStartingUBMatrix(M);
-        int ret = minimizer.run(100);
+
+        //ub_state._ub = cell->getReciprocalStandardM();
+        ub_state.setCell(cell);
+        ub_state.resetParameters();
+        ub_state.unzip(ub_state.zip());
+       
+        int ret = minimizer.run(ub_state, 100);
         if (ret == 1) {
-            UBSolution sln = minimizer.getSolution();
+            UBSolution sln = minimizer.solution();
             try {
-                cell = sptrUnitCell(new UnitCell(sln._ub, true));
-                cell->setReciprocalCovariance(sln._covub);
+                Eigen::Matrix3d ub = sln.ub();
+                cell = sptrUnitCell(new UnitCell(ub, true));
+                cell->setReciprocalCovariance(sln.covub());
 
             } catch(std::exception& e) {
                 if (_handler) {
@@ -178,32 +194,9 @@ bool AutoIndexer::autoIndex(const IndexerParameters& _params)
                 continue;
             }
 
-            // cell.setName(selectedUnitCell->getName());
             cell->setHKLTolerance(_params.HKLTolerance);
-
-            NiggliReduction niggli(cell->metric(), _params.niggliTolerance);
-            Eigen::Matrix3d newg, P;
-            niggli.reduce(newg, P);
-            cell->transform(P);
-
-            // use GruberReduction::reduce to get Bravais type
-            GruberReduction gruber(cell->metric(), _params.gruberTolerance);
-            LatticeCentring c;
-            BravaisType b;
-
-            try {
-                gruber.reduce(P,c,b);
-                cell->setLatticeCentring(c);
-                cell->setBravaisType(b);
-            }
-            catch(std::exception& e) {
-                //qDebug() << "Gruber reduction error:" << e.what();
-                //continue;
-            }
-
-            if (_params.niggliReduction == false) {
-                cell->transform(P);
-            }
+            cell->reduce(_params.niggliReduction, _params.niggliTolerance, _params.gruberTolerance);
+            //*cell = cell->applyNiggliConstraints(100.0);
 
             double score = 0.0;
             double maxscore = 0.0;
@@ -222,7 +215,7 @@ bool AutoIndexer::autoIndex(const IndexerParameters& _params)
             newSolutions[idx].first = cell;
             newSolutions[idx].second = score;
         }
-        minimizer.resetParameters();
+        //ub_state.resetParameters();
     }
 
     _solutions.clear();
