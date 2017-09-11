@@ -681,9 +681,10 @@ bool SessionModel::writeStatistics(std::string filename,
 
     std::vector<nsx::PeakList> all_equivs;
 
-    file << "          dmin       dmax       nobs redundancy     r_meas    r_merge      r_pim    CChalf    CC*" << std::endl;
+    file << "          dmax       dmin       nobs redundancy     r_meas    r_merge      r_pim    CChalf    CC*" << std::endl;
 
-    for (size_t i = 0; i < size_t(num_shells); ++i) {
+    // note: we print the shells in reverse order
+    for (int i = num_shells-1; i >= 0; --i) {
         const double d_lower = ds[i];
         const double d_upper = ds[i+1];
 
@@ -699,9 +700,8 @@ bool SessionModel::writeStatistics(std::string filename,
         for (auto equiv: peak_equivs) {
 
             for (auto peak: equiv) {
-                auto peak_calc = nsx::PeakCalc(*peak);
-                merged_shell.addPeak(peak_calc);
-                merged.addPeak(peak_calc);
+                merged.addPeak(peak);
+                merged_shell.addPeak(peak);
             }
 
             //if (new_peak.redundancy() > 0) {
@@ -717,7 +717,7 @@ bool SessionModel::writeStatistics(std::string filename,
 
         std::snprintf(&buf[0], buf.size(),
                 "    %10.2f %10.2f %10d %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f",
-                d_lower, d_upper, int(shells[i].size()), redundancy,
+                d_upper, d_lower, int(shells[i].size()), redundancy,
                 rfactor.Rmeas(), rfactor.Rmerge(), rfactor.Rpim(), cc.CChalf(), cc.CCstar());
 
         file << &buf[0] << std::endl;
@@ -764,7 +764,7 @@ bool SessionModel::writeStatistics(std::string filename,
 
     //std::sort(merged_peaks.begin(), merged_peaks.end(), compare_fn);
 
-    file << "   h    k    l            I        sigma   d   nobs       chi2             std            std/I  "
+    file << "   h    k    l            I        sigma    nobs       chi2             p  "
          << std::endl;
 
     unsigned int total_peaks = 0;
@@ -782,18 +782,16 @@ bool SessionModel::writeStatistics(std::string filename,
         const double sigma = peak.getIntensity().getSigma();
         const double d = 0.0; //peak.d();
         const int nobs = peak.redundancy();
-        const double std = peak.std();
-        const double rel_std = std / intensity;
+        //const double std = peak.std();
+        //const double rel_std = std / intensity;
 
-        std::snprintf(&buf[0], buf.size(), "  %4d %4d %4d %15.2f %10.2f %15.5f %3d %15.5f %15.5f",
-                      h, k, l, intensity, sigma, d, nobs, std, rel_std);
+        const double chi2 = peak.chi2();
+        const double p = peak.pValue();
+
+        std::snprintf(&buf[0], buf.size(), "  %4d %4d %4d %15.2f %10.2f %3d %15.5f %15.5f",
+                      h, k, l, intensity, sigma, nobs, chi2, p);
 
         file << &buf[0];
-
-        if (rel_std > 1.0) {
-            file << " ***** ";
-            ++bad_peaks;
-        }
 
         file << std::endl;
         ++total_peaks;

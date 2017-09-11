@@ -2,8 +2,7 @@
  * nsxtool : Neutron Single Crystal analysis toolkit
  ------------------------------------------------------------------------------------------
  Copyright (C)
- 2016- Laurent C. Chapon, Eric Pellegrini, Jonathan Fisher
-
+ 2017- Laurent C. Chapon, Eric Pellegrini, Jonathan Fisher
  Institut Laue-Langevin
  BP 156
  6, rue Jules Horowitz
@@ -11,10 +10,6 @@
  France
  chapon[at]ill.fr
  pellegrini[at]ill.fr
-
- Forschungszentrum Juelich GmbH
- 52425 Juelich
- Germany
  j.fisher[at]fz-juelich.de
 
  This library is free software; you can redistribute it and/or
@@ -33,26 +28,24 @@
  *
  */
 
-#include "ChiSquared.h"
-#include <cmath>
-#include <gsl/gsl_sf_gamma.h>
+#pragma once
 
+#include "../crystal/CrystalTypes.h"
 
 namespace nsx {
 
-ChiSquared::ChiSquared(double k): _k(k), _c(0.0)
-{
-    _c = std::pow(2.0, -_k/2) / gsl_sf_gamma(_k/2);
-}
 
-double ChiSquared::pdf(double x) const
-{
-    return _c * std::pow(x, _k/2-1.0) * std::exp(-x/2);
-}
+class MergedData;
 
-double ChiSquared::cdf(double x) const
-{
-    return gsl_sf_gamma_inc_P(_k/2, x/2);
-}
-    
+//! \class IMergedPeakStatistic
+//! \brief Interface for statistics of merged peaks (e.g. R factors, correlation coefficient, chi-squared).
+class IMergedPeakStatistic {
+public:
+    virtual ~IMergedPeakStatistic() = default;
+    //! Calculate the statistic on a given merged data set.
+    virtual void calculate(const MergedData& data) = 0;
+    //! Retrieve the value of the computed statistic.
+    double value() const;
+};
+
 } // end namespace nsx

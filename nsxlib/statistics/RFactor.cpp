@@ -61,7 +61,7 @@ void RFactor::calculate(const MergedData& data)
         I_total += std::fabs(Iave) * peak.redundancy();
 
         for (auto&& p: peak.getPeaks()) {
-            double diff = std::fabs(p._intensity.getValue() - Iave);
+            double diff = std::fabs(p->getCorrectedIntensity().getValue() - Iave);
             _Rmerge += diff;
             _Rmeas += Fmeas*diff;
             _Rpim += Fpim*diff;

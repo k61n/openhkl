@@ -8,7 +8,7 @@
 #include <QToolTip>
 
 #include <nsxlib/crystal/Peak3D.h>
-#include <nsxlib/crystal/PeakCalc.h>
+
 #include <nsxlib/crystal/SpaceGroup.h>
 #include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/data/DataSet.h>
@@ -649,37 +649,6 @@ void DetectorScene::updatePeaks()
     }
 }
 
-void DetectorScene::updatePeakCalcs()
-{
-    clock_t start = clock();
-
-    if (!_currentData) {
-        return;
-    }
-    _precalculatedPeaks.clear();
-    auto sample=_currentData->getDiffractometer()->getSample();
-    double wavelength = _currentData->getDiffractometer()->getSource()->getSelectedMonochromator().getWavelength();
-    size_t ncrystals = sample->getNCrystals();
-
-    if (ncrystals) {
-        for (unsigned int i = 0; i < ncrystals; ++i) {
-            nsx::SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
-            auto ub=sample->getUnitCell(i)->reciprocalBasis();
-            auto hkls=sample->getUnitCell(i)->generateReflectionsInShell(1.5, 100.0, wavelength);
-            std::vector<nsx::PeakCalc> peaks=_currentData->hasPeaks(hkls,ub);
-            _precalculatedPeaks.reserve(_precalculatedPeaks.size() + peaks.size());
-
-            for(auto&& p: peaks) {
-                _precalculatedPeaks.push_back(p);
-            }
-        }
-    }
-    nsx::info() << "number of calculated peaks " << _peakCalcs.size();
-    clock_t end = clock();
-    nsx::info() << "Elapsed time = " << static_cast<double>((end-start))/CLOCKS_PER_SEC;
-    nsx::info() << "BSP tree depth = " << bspTreeDepth();
-}
-
 void DetectorScene::redrawImage()
 {
     loadCurrentImage(false);
@@ -709,14 +678,6 @@ void DetectorScene::showPeakLabels(bool peaklabel)
     if (!_peakGraphicsItems.empty()) {
         for (const auto& p : _peakGraphicsItems)
             p.second->setLabelVisible(peaklabel);
-//        const auto& it=_peakGraphicsItems.begin();
-//        it->second->setLabelVisible(peaklabel);
-    }
-    if (!_peakCalcs.empty()) {
-        for (auto p : _peakCalcs)
-            p->setLabelVisible(peaklabel);
-//        const auto& it = _peakCalcs.begin();
-//        (*it)->setLabelVisible(peaklabel);
     }
 }
 
@@ -750,7 +711,6 @@ void DetectorScene::resetScene()
 {
     clearPeaks();
     clear();
-    updatePeakCalcs();
     updatePeaks();
     _currentData = nullptr;
     _currentFrameIndex = 0;
@@ -760,7 +720,6 @@ void DetectorScene::resetScene()
     _integrationRegion = nullptr;
     _masks.clear();
     _lastClickedGI = nullptr;
-    _precalculatedPeaks.clear();
 }
 
 std::vector<std::pair<QGraphicsItem*, nsx::IMask*>>::iterator DetectorScene::findMask(QGraphicsItem* item)

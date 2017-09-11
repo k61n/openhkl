@@ -1,0 +1,28 @@
+body {
+        background-color: #CCC;
+        color: black;
+        margin: 0;
+}
+
+div.contents {
+        margin-bottom: 10px;
+        padding: 12px;
+        margin-left: 100px;
+        margin-right: 100px;
+        /* width: 960px; */
+        background-color: white;
+        /* border-color: rgb(211, 1, 1); */
+        border-radius: 8px;
+}
+
+#titlearea {
+        background-color: white;
+}
+
+hr.footer {
+        display: none;
+}
+
+.footer {
+        background-color: #CCCCCC;
+}

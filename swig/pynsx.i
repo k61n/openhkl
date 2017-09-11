@@ -120,7 +120,7 @@ namespace property_tree=boost::property_tree;
 #include "statistics/RFactor.h"
 #include "statistics/CC.h"
 #include "crystal/Peak3D.h"
-#include "crystal/PeakCalc.h"
+
 
 #include "crystal/PeakRecord.h"
 #include "crystal/Mosaic.h"
@@ -406,7 +406,6 @@ namespace nsx {
 
 %template(PeakSet) std::set<std::shared_ptr<nsx::Peak3D>>;
 %template(MergedPeakSet) std::set<nsx::MergedPeak>;
-%template(PeakCalcList) std::vector<nsx::PeakCalc>;
 
 
  //%include "chemistry/ChemicalFormulaParser.h"
@@ -457,7 +456,7 @@ namespace nsx {
 %include "statistics/CC.h"
 %include "statistics/CC.h"
 %include "crystal/Peak3D.h"
-%include "crystal/PeakCalc.h"
+
 %include "crystal/PeakRecord.h"
 %include "crystal/Mosaic.h"
 %include "crystal/PeakFit.h"

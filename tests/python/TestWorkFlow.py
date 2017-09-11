@@ -1,6 +1,7 @@
 import pynsx as nsx
 import numpy as np
 import unittest
+import sys
 
 class TestWorkFlow(unittest.TestCase):
     
@@ -82,8 +83,7 @@ class TestWorkFlow(unittest.TestCase):
         predictor._handler = nsx.ProgressHandler()
 
         predicted_peaks = predictor.predictPeaks(data, False)
-
-        self.assertTrue(len(predicted_peaks) > 1700)
+        self.assertTrue(len(predicted_peaks) > 1600)
 
 
 if __name__ == '__main__':

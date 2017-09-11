@@ -29,7 +29,6 @@
  */
 
 #include "MergedData.h"
-#include "../crystal/PeakCalc.h"
 #include "../crystal/MergedPeak.h"
 
 namespace nsx {
@@ -38,7 +37,7 @@ MergedData::MergedData(const SpaceGroup& grp, bool friedel): _group(grp), _fried
 {      
 }
 
-bool MergedData::addPeak(const PeakCalc& peak)
+bool MergedData::addPeak(const sptrPeak3D& peak)
 {
     MergedPeak new_peak(_group, _friedel);
     new_peak.addPeak(peak);

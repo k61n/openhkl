@@ -38,26 +38,24 @@
 #include <algorithm>
 #include <cstdlib>
 
+#include <gsl/gsl_cdf.h>
+
 #include "MergedPeak.h"
 #include "Peak3D.h"
-#include "../statistics/ChiSquared.h"
 
 namespace nsx {
 
 MergedPeak::MergedPeak(const SpaceGroup& grp, bool friedel):
-    _hkl(), _intensitySum(0.0, 0.0), _peaks(), _grp(grp), _friedel(friedel), _squaredIntensitySum(0.0)
+    _hkl(), _intensitySum(0.0, 0.0), _peaks(), _grp(grp), _friedel(friedel)
 {
 }
 
 bool MergedPeak::addPeak(const sptrPeak3D& peak)
 {
-    return addPeak(PeakCalc(*peak));
-}
-
-bool MergedPeak::addPeak(const PeakCalc& peak)
-{
     auto hkl1 = _hkl.cast<double>();
-    auto hkl2 = Eigen::Vector3d(peak._h, peak._k, peak._l);
+    Eigen::Vector3d hkl2 = peak->getIntegerMillerIndices().cast<double>();
+
+    
     // peak is not equivalent to one already on the list
     if (!_peaks.empty() && !_grp.isEquivalent(hkl1, hkl2, _friedel)) {
         return false;
@@ -74,9 +72,7 @@ bool MergedPeak::addPeak(const PeakCalc& peak)
         determineRepresentativeHKL();
     }
 
-    _intensitySum += peak._intensity;
-    _squaredIntensitySum += std::pow(peak._intensity.getValue(), 2);
-
+    _intensitySum += peak->getCorrectedIntensity();
     return true;
 }
 
@@ -95,14 +91,8 @@ size_t MergedPeak::redundancy() const
     return _peaks.size();
 }
 
-double MergedPeak::std() const
-{
-    const double n = _peaks.size();
-    const double I = getIntensity().getValue() / _peaks.size();
-    const double var = (_squaredIntensitySum - n*I*I) / (n-1);
-    return std::sqrt(var);
-}
-
+//! The representative of the equivalences is defined as the one whose h,j and l are maximum
+//! E.g. the representative of (2,1,2),(1,-3,5),(-2,4,3),(4,0,5),(7,8-2),(2,6,-1) will be (7,8-2)
 void MergedPeak::determineRepresentativeHKL()
 {
     Eigen::Vector3d best_hkl = _hkl.cast<double>();
@@ -133,7 +123,7 @@ void MergedPeak::determineRepresentativeHKL()
     }
 }
 
-const std::vector<PeakCalc>& MergedPeak::getPeaks() const
+const std::vector<sptrPeak3D>& MergedPeak::getPeaks() const
 {
     return _peaks;
 }
@@ -184,26 +174,48 @@ bool operator<(const MergedPeak& p, const MergedPeak& q)
     return a(2) < b(2);
 }
 
+//! The merged intensity and error are computed as \f$I_{\mathrm{merge}} = N^{-1} \sum_i I_i\f$, 
+//! \f$\sigma_{\mathrm{merge}}^2 = N^{-2}\sum_i \sigma_i^2\f$.
+//! where \f$N\f$ is the redundancy of the reflection. This method computes the statistic
+//! \f[ \chi^2 = \frac{\sum_i (I_i-I_{\mathrm{merge}})^2}{N \sigma_{\mathrm{merge}}^2}, \f]
+//! which is approximately a chi-squared statistic with \f$N-1\f$ degrees of freedom.
 double MergedPeak::chi2() const
 {
-    const double Iave = getIntensity().getValue();
+    const double I_merge = getIntensity().getValue();
+    const double sigma_merge = getIntensity().getSigma();
+    const double N = redundancy();
+
+    // if there is no redundancy, we cannot compute chi2
+    if (N < 1.99) {
+        return 0.0;
+    }
+
     double chi_sq = 0.0;
 
     for (auto&& peak: _peaks) {
-        auto&& I = peak._intensity; 
-        const double z = (I.getValue() - Iave) / I.getSigma();
-        chi_sq += z*z;
+        auto&& I = peak->getCorrectedIntensity();
+        const double x = (I.getValue() - I_merge) / sigma_merge;
+        chi_sq += x*x/N;
     }
     return chi_sq;
 }
 
+//! This method returns the probability that a chi-squared random variable takes a value less than
+//! the computed value of MergedPeak::chi2(). A large p-value indicates that the computed variance
+//! is larger than the expected variance, indicating the possibility of a systematic error either 
+//! in the integrated intensities or in the computed error. 
 double MergedPeak::pValue() const
 {
     // todo: k or k-1?? need to check
-    const double k = redundancy();
+    const double k = redundancy()-1.0;
+
+    // if there is only one observation, we cannot compute a p-value
+    if (k < 0.9) {
+        return 0.0;
+    }
+
     const double x = chi2();
-    ChiSquared chi(k);
-    return chi.cdf(x);
+    return gsl_cdf_chisq_P(x, k);
 }
 
 } // end namespace nsx

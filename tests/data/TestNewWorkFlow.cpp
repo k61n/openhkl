@@ -12,13 +12,16 @@
 
 #include <nsxlib/crystal/AutoIndexer.h>
 #include <nsxlib/crystal/Peak3D.h>
+#include <nsxlib/crystal/PeakPredictor.h>
 #include <nsxlib/data/DataReaderFactory.h>
 #include <nsxlib/data/PeakFinder.h>
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/imaging/ConvolutionKernel.h>
 #include <nsxlib/imaging/KernelFactory.h>
 #include <nsxlib/instrument/DetectorEvent.h>
+#include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/instrument/Experiment.h>
+#include <nsxlib/instrument/Sample.h>
 #include <nsxlib/mathematics/ErfInv.h>
 #include <nsxlib/utils/Units.h>
 #include <nsxlib/utils/ProgressHandler.h>
@@ -117,6 +120,9 @@ int run_test()
         peak->addUnitCell(cell, true);
     }
 
+    // add cell to sample
+    dataf->getDiffractometer()->getSample()->addUnitCell(cell);
+
     // reintegrate peaks
     const double scale = nsx::getScale(0.997);
     dataf->integratePeaks(dataf->getPeaks(), scale, 2.0*scale, true);
@@ -166,6 +172,23 @@ int run_test()
         BOOST_CHECK_CLOSE(q0(1), q1(1), 1.0);
         BOOST_CHECK_CLOSE(q0(2), q1(2), 1.0);
     }
+
+
+    nsx::PeakPredictor predictor;
+    predictor._dmin = 2.1;
+    predictor._dmax = 50.0;
+    predictor._searchRadius = 200.0;
+    predictor._frameRadius = 5.0;
+    predictor._peakScale = 1.0;
+    predictor._bkgScale = 3.0;
+    predictor._minimumRadius = 5.0;
+    predictor._minimumNeighbors = 10;
+
+    predictor._handler = std::shared_ptr<nsx::ProgressHandler>(new nsx::ProgressHandler());
+    auto predicted_peaks = predictor.predictPeaks(dataf, false);
+
+    std::cout << "predicted_peaks: " << predicted_peaks.size() << std::endl;
+    BOOST_CHECK(predicted_peaks.size() > 1600);
 
     return 0;
 }

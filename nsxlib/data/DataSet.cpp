@@ -12,7 +12,6 @@
 #include "H5Cpp.h"
 
 #include "../crystal/Peak3D.h"
-#include "../crystal/PeakCalc.h"
 #include "../crystal/PeakIntegrator.h"
 #include "../crystal/SpaceGroup.h"
 #include "../crystal/UnitCell.h"
@@ -434,7 +433,7 @@ void DataSet::maskPeak(sptrPeak3D peak) const
     }
 }
 
-std::vector<PeakCalc> DataSet::hasPeaks(const std::vector<Eigen::RowVector3d>& hkls, const Eigen::Matrix3d& BU)
+PeakList DataSet::hasPeaks(const std::vector<Eigen::RowVector3d>& hkls, const Eigen::Matrix3d& BU)
 {
     std::vector<Eigen::RowVector3d> qs;
 
@@ -443,7 +442,7 @@ std::vector<PeakCalc> DataSet::hasPeaks(const std::vector<Eigen::RowVector3d>& h
     }
 
     std::vector<DetectorEvent> events = getEvents(qs);
-    std::vector<PeakCalc> peaks;
+    PeakList peaks;
     auto detector = getDiffractometer()->getDetector();
 
     Eigen::Matrix3d BUI = BU.inverse();
@@ -451,7 +450,11 @@ std::vector<PeakCalc> DataSet::hasPeaks(const std::vector<Eigen::RowVector3d>& h
     for (auto event: events) {
         Eigen::Vector3d p = event.detectorPosition();
         Eigen::RowVector3d hkl = getQ(p).transpose() * BUI;
-        peaks.emplace_back(std::lround(hkl[0]),std::lround(hkl[1]),std::lround(hkl[2]),p[0], p[1], p[2]);
+
+        sptrPeak3D peak(new Peak3D);
+        // this sets the center of the ellipse with a dummy value for radius
+        peak->setShape(Ellipsoid(p, 1.0));
+        peaks.emplace_back(peak);
     }
 
     return peaks;

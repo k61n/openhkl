@@ -13,11 +13,8 @@
 #include <QGraphicsPixmapItem>
 
 #include <nsxlib/crystal/CrystalTypes.h>
-#include <nsxlib/crystal/PeakCalc.h>
 #include <nsxlib/data/DataTypes.h>
 #include <nsxlib/geometry/IMask.h>
-
-#include "items/PeakCalcGraphicsItem.h"
 
 #include "ColorMap.h"
 
@@ -73,7 +70,7 @@ public slots:
     PeakGraphicsItem* findPeakGraphicsItem(const nsx::sptrPeak3D& peak);
 
     void updatePeaks();
-    void updatePeakCalcs();
+
     void redrawImage();
     //! Change interaction mode in the scene
     void changeInteractionMode(int);
@@ -117,11 +114,10 @@ private:
     QGraphicsPixmapItem* _image;
     //! Contains peaks item of current data, reinitialized with new data set.
     std::map<nsx::sptrPeak3D,PeakGraphicsItem*> _peakGraphicsItems;
-    std::vector<PeakCalcGraphicsItem*> _peakCalcs;
+
     std::vector<std::pair<QGraphicsItem*, nsx::IMask*>> _masks;
     
     SXGraphicsItem* _lastClickedGI;
-    nsx::PeakCalcList _precalculatedPeaks;
 
     bool _logarithmic;
     bool _drawIntegrationRegion;

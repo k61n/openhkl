@@ -33,8 +33,7 @@
  *
  */
 
-#ifndef NSXLIB_PEAKPREDICTOR_H
-#define NSXLIB_PEAKPREDICTOR_H
+#pragma once
 
 #include "../crystal/CrystalTypes.h"
 #include "../data/DataTypes.h"
@@ -45,28 +44,43 @@
 
 namespace nsx {
 
-//! Class to predict peak shapes based on observed peaks
+//! \class PeakPredictor
+//! \brief Class to predict peak shapes based on observed peaks.
 class PeakPredictor {
 public:
+    //! Default constructor: sets paramters to reasonable default values;
     PeakPredictor();
+    //! Return predicted peaks on a given data set. Parameter \p keepObserved determines whether to include
+    //! predictions for peaks which are already part of the data set.
     PeakSet predictPeaks(sptrDataSet data, bool keepObserved);
 
 private:
+    //! Return the average shape of peaks which are nearest to \p center.
     sptrPeak3D averagePeaks(const Octree& tree, const Eigen::Vector3d& center);
 
 public:
-    double _dmin, _dmax;
-    double _peakScale, _bkgScale;
+    //! Minimum d value used in prediction.
+    double _dmin;
+    //! Maximum d value used in prediction.
+    double _dmax;
+    //! Scale factor used for peak integration.
+    double _peakScale;
+    //! Scale factor used for background calculation.
+    double _bkgScale;
+    //! Radius (in detector coordinates) used to search for nearby peaks.
     double _searchRadius;
+    //! Number of nearby detector frames to search.
     double _frameRadius;
+    //! Minimum radius (in detector coordinates) of a calculated peak.
     double _minimumRadius;
+    //! Minimum number of frames for a calculated peak.
     double _minimumPeakDuration;
+    //! Minimum value of \f$I / \sigma_I\f$ to use for neighbor search.
     double _Isigma;
-    
+    //! Minimum number of nearby peaks to use for shape determination.
     int _minimumNeighbors;
+    //! Optional progress handler to monitor progress.
     sptrProgressHandler _handler;
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_PEAKPREDICTOR_H

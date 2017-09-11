@@ -40,11 +40,13 @@ void DialogPeakFilter::accept()
     filter._removeDmin = _ui->checkDmin->isChecked();
     filter._removeDmax = _ui->checkDmax->isChecked();
     filter._removeForbidden = _ui->checkSpaceGroup->isChecked();
+    filter._removeMergedP = _ui->checkBoxMergedP->isChecked();
 
     filter._Isigma = _ui->spinBoxIsigma->value();
     filter._dmin = _ui->spinBoxDmin->value();
     filter._dmax = _ui->spinBoxDmax->value();
     filter._pvalue = _ui->spinBoxPValue->value();
+    filter._mergedP = _ui->spinBoxMergedP->value();
 
     for (auto dataset: _data) {
         nsx::info() << "Filtering peaks in dataset " << dataset->getBasename();

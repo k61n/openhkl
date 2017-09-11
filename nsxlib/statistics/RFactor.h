@@ -35,12 +35,13 @@
 #include <set>
 
 #include "../crystal/CrystalTypes.h"
+#include "IMergedPeakStatistic.h"
 
 namespace nsx {
 
-    class MergedData;
+class MergedData;
 
-class RFactor {
+class RFactor: public IMergedPeakStatistic {
 public:
     RFactor(): _Rmerge(0.0), _Rmeas(0.0), _Rpim(0.0) {}
     ~RFactor() {}
