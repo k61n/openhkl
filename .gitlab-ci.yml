@@ -7,8 +7,8 @@ stages:
 ci:trusty:
   stage: ci
   script:
-    - ./build_server/debian/run_build.sh
-    - ./build_server/debian/run_tests.sh
+#    - ./build_server/debian/run_build.sh
+#    - ./build_server/debian/run_tests.sh
   allow_failure: false
   only:
     - /^feature/.*$/
@@ -40,8 +40,8 @@ deploy:trusty:
 ci:osx:
   stage: ci
   script:
-    - ./build_server/osx/run_build.sh
-    - ./build_server/osx/run_tests.sh
+#    - ./build_server/osx/run_build.sh
+#    - ./build_server/osx/run_tests.sh
   allow_failure: false
   only:
     - /^feature/.*$/
