@@ -1,2 +1,2 @@
 echo "WINDOWS BUILD"
-return 0
+exit 0
