@@ -44,7 +44,7 @@ bool invalid(const nsx::PeakFilter& filter, nsx::sptrDataSet data, nsx::sptrPeak
 
     if (filter._removeIsigma) {
         nsx::Intensity i = peak->getCorrectedIntensity();
-        if (i.getValue() / i.getSigma() < filter._Isigma) {
+        if (i.value() / i.sigma() < filter._Isigma) {
             return true;
         }
     }

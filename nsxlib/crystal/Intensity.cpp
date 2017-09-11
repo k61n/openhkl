@@ -53,12 +53,12 @@ Intensity::Intensity(const Intensity& other): _value(other._value), _sigma2(othe
     }
 }
 
-double Intensity::getValue() const
+double Intensity::value() const
 {
     return _value;
 }
 
-double Intensity::getSigma() const
+double Intensity::sigma() const
 {
     return std::sqrt(_sigma2);
 }

@@ -70,8 +70,8 @@ void CC::calculate(const std::vector<MergedPeak>& peaks)
         MergedPeak& p1 = split.first;
         MergedPeak& p2 = split.second;
 
-        const double I1 = p1.getIntensity().getValue();
-        const double I2 = p2.getIntensity().getValue();
+        const double I1 = p1.getIntensity().value();
+        const double I2 = p2.getIntensity().value();
 
         xx += I1*I1;
         xy += I1*I2;
