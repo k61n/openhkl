@@ -87,13 +87,6 @@ Intensity Intensity::operator/(double denominator) const
     return Intensity(scale*_value, scale*scale*_sigma2);
 }
 
-Intensity& Intensity::operator=(const Intensity &other)
-{
-    _value = other._value;
-    _sigma2 = other._sigma2;
-    return *this;
-}
-
 Intensity& Intensity::operator+=(const Intensity& other)
 {
     _value += other._value;
