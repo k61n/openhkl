@@ -35,7 +35,7 @@ signals:
     void cellUpdated(nsx::sptrUnitCell);
 
 private slots:
-    void refineParameter(bool checked, int i);
+    
     void cellSampleHasChanged(int i, int j);
     void cellDetectorHasChanged(int i, int j);
     void refineParameters();

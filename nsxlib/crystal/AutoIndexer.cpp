@@ -154,10 +154,10 @@ bool AutoIndexer::autoIndex(const IndexerParameters& _params)
         cell->setHKLTolerance(_params.HKLTolerance);
 
         // Only the UB matrix parameters are used for fit
-        for (int i = 0; i < ub_state.inputs(); ++i) {
-            const bool refine = (i < 9);
-            ub_state.refineParameter(i, refine);
-        }
+        //for (int i = 0; i < ub_state.inputs(); ++i) {
+        //    const bool refine = (i < 9);
+        //    ub_state.refineParameter(i, refine);
+        //}
 
         int success = 0;
         for (auto peak : _peaks) {

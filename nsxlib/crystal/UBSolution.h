@@ -50,9 +50,12 @@ public:
     //! @param value the value of the parameter to be fixed
     void setValue(unsigned int idx, double value);
 
-    //! @brief Set the offsets that will be fixed during the minization
-    //! @param idx the index of the offset (starting from 9)
-    void refineParameter(unsigned int idx, bool refine);
+    void refineSource(bool refine);
+    void refineSample(unsigned int idx, bool refine);
+    void refineDetector(unsigned int idx, bool refine);
+
+    //! Return the list of which parameters are held fixed during the fit.
+    std::vector<bool> fixedParameters() const;
 
     //! Return the covariance matrix of the refined parameters
     const Eigen::Matrix<double, 9, 9>& covub() const;
@@ -71,9 +74,6 @@ public:
 
     //! Set the detector
     void setDetector(sptrDetector detector);
-
-    //! Return the array specifying which parameters are fixed
-    const std::vector<bool> fixedParameters() const;
 
     //! Update the offsets and covariance matrix
     void update(const Eigen::VectorXd& x, const Eigen::MatrixXd& cov);
@@ -127,7 +127,12 @@ private:
     Eigen::VectorXd _sigmaDetectorOffsets;
     Eigen::VectorXd _sampleOffsets;
     Eigen::VectorXd _sigmaSampleOffsets;
-    std::vector<bool> _fixedParameters;
+    //std::vector<bool> _fixedParameters;
+    bool _refineSource;
+    bool _refineU;
+    bool _refineB;
+    std::vector<bool> _refineSample;
+    std::vector<bool> _refineDetector;
     friend std::ostream& operator<<(std::ostream& os, const UBSolution& solution);
     int _nSampleAxes;
     int _nDetectorAxes;

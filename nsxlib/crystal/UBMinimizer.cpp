@@ -120,7 +120,6 @@ int UBMinimizer::run(const UBSolution& initialState, unsigned int maxIter)
                 removeRow(JtJ, i-removed);
                 removed++;
             }
-
         }
         // The covariance matrix
         Eigen::MatrixXd covariance = JtJ.inverse();

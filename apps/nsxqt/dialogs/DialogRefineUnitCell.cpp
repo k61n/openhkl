@@ -63,7 +63,7 @@ DialogRefineUnitCell::DialogRefineUnitCell(nsx::sptrExperiment experiment,
     ui->labelgamma->setText(QString(QChar(0x03B3)));
 
     // Connect checkbox for wavelength refinement
-    connect(ui->checkBox_Wavelength,&QCheckBox::toggled,[=](bool checked){refineParameter(checked,9);});
+    connect(ui->checkBox_Wavelength,&QCheckBox::toggled,[&](bool checked){_solution.refineSource(checked);});
     connect(ui->pushButton_Refine,SIGNAL(clicked()),this,SLOT(refineParameters()));
     connect(ui->pushButton_Reset,SIGNAL(clicked()),this,SLOT(resetParameters()));
 }
@@ -88,12 +88,12 @@ void DialogRefineUnitCell::setMinimizer()
     int start=10;
 
     auto& mono = source->getSelectedMonochromator();
-    _solution.refineParameter(9,!mono.isOffsetFixed());
+    //_solution.refineParameter(9,!mono.isOffsetFixed());
 
     int nSampleOffsets = sample->hasGonio() ? sample->getGonio()->getNAxes() : 0;
     for (int i = 0; i < nSampleOffsets; ++i) {
         auto axis=sample->getGonio()->getAxis(i);
-        _solution.refineParameter(start+i,!axis->hasOffsetFixed());
+        _solution.refineSample(i,!axis->hasOffsetFixed());
         _solution.setValue(start+i,axis->getOffset());
     }
 
@@ -101,7 +101,7 @@ void DialogRefineUnitCell::setMinimizer()
     int nDetectorOffsets = detector->hasGonio() ? detector->getGonio()->getNAxes() : 0;
     for (int i = 0; i < nDetectorOffsets; ++i) {
         auto axis=detector->getGonio()->getAxis(i);
-        _solution.refineParameter(start+i,!axis->hasOffsetFixed());
+        _solution.refineDetector(i,!axis->hasOffsetFixed());
         _solution.setValue(start+i,axis->getOffset());
     }
 }
@@ -169,7 +169,7 @@ void DialogRefineUnitCell::setSampleOffsets()
         auto item3 = new QCheckBox(this);
         item3->setChecked(!axis->hasOffsetFixed());
         // Connect checkbox to fixing this parameter
-        connect(item3,&QCheckBox::toggled, [=](bool checked){refineParameter(checked,10+i);});
+        connect(item3,&QCheckBox::toggled, [&](bool checked){_solution.refineSample(i, checked);});
         ui->tableWidget_Sample->setCellWidget(i,3,item3);
     }
 }
@@ -224,7 +224,7 @@ void DialogRefineUnitCell::setDetectorOffsets()
         item3->setChecked(!axis->hasOffsetFixed());
         ui->tableWidget_Detector->setCellWidget(i, 3, item3);
         //Connect checkbox to fixing parameters
-        connect(item3,&QCheckBox::toggled, [=](bool checked){refineParameter(checked,10+i+nAxesSample);});
+        connect(item3,&QCheckBox::toggled, [&](bool checked){_solution.refineDetector(i, checked);});
     }
 }
 
@@ -253,11 +253,6 @@ void DialogRefineUnitCell::setSolution(const nsx::UBSolution& solution)
         ui->tableWidget_Detector->item(i,2)->setData(Qt::EditRole, sigmaDetectorOffsets[i]);
     }
     setLatticeParams();
-}
-
-void DialogRefineUnitCell::refineParameter(bool checked, int i)
-{
-    _solution.refineParameter(i, checked);
 }
 
 void DialogRefineUnitCell::cellSampleHasChanged(int i, int j)

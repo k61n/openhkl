@@ -60,29 +60,32 @@ void UBSolution::resetParameters()
     }
 }
 
-void UBSolution::refineParameter(unsigned int idx, bool refine)
+void UBSolution::refineSample(unsigned int idx, bool refine)
 {
-    if (!_detector || !_sample || !_source) {
-        throw std::runtime_error("A detector, sample and source must be specified prior to fixing parameters.");
+    if (!_sample) {
+        throw std::runtime_error("A sample must be specified prior to fixing parameters.");
     }
-    if (idx < 0 || idx >= static_cast<unsigned int>(inputs())) {
+
+    auto gonio = _sample->getGonio();
+
+    if (gonio == nullptr) {
+        return;
+    }
+
+    if (idx >= gonio->getNAxes()) {
         throw std::runtime_error("idx is out of range.");
     }
 
-    if (_fixedParameters.size() != inputs()) {
-        _fixedParameters.resize(inputs(), true);
-    }
-
-    bool fixed = !refine;
-    _fixedParameters[idx] = fixed;
+    _refineSample[idx] = refine;
 }
+
 
 UBSolution::UBSolution():
 _cell(nullptr), _detector(nullptr), _sample(nullptr), _source(nullptr), _covub(), 
  _sourceOffset(0),_sigmaSourceOffset(0), 
  _detectorOffsets(), _sigmaDetectorOffsets(),
  _sampleOffsets(), _sigmaSampleOffsets(),
- _fixedParameters(), _nSampleAxes(0), _nDetectorAxes(0), _niggliConstraint(false),
+  _nSampleAxes(0), _nDetectorAxes(0), _niggliConstraint(false),
  _uOffsets(), _character(6), _character0(6)
 {
 }
@@ -194,12 +197,18 @@ UBSolution& UBSolution::operator=(const UBSolution& other)
     _sigmaDetectorOffsets = other._sigmaDetectorOffsets;
     _sampleOffsets = other._sampleOffsets;
     _sigmaSampleOffsets = other._sigmaSampleOffsets;
-    _fixedParameters = other._fixedParameters;
+    
     _nSampleAxes = other._nSampleAxes;
     _nDetectorAxes = other._nDetectorAxes;
 
     _niggliConstraint = other._niggliConstraint;
     _niggliWeight = other._niggliWeight;
+
+    _refineSource = other._refineSource;
+    _refineSample = other._refineSample;
+    _refineDetector = other._refineDetector;
+    _refineU = other._refineU;
+    _refineB = other._refineB;
 
     return *this;
 }
@@ -244,36 +253,32 @@ void UBSolution::apply()
         throw std::runtime_error("A detector, sample and source must be specified prior to calculate residuals.");
     }
     // Parameter 9 is offset in wavelength
-    if (!_fixedParameters[9]) {
+    if (_refineSource) {
         auto& mono = _source->getSelectedMonochromator();
         mono.setOffset(_sourceOffset);            
     }
 
-    // Then n parameters for the detector
+    // Then n parameters for the sample
     auto sgonio=_sample->getGonio();
     if (sgonio) {
         for (unsigned int i = 0; i < sgonio->getNAxes(); ++i) {
-            int idx = 10 + i;
             // parameter is fixed: skip it
-            if (_fixedParameters[idx]) {
-                continue;
-            }            
-            auto ax = sgonio->getAxis(i);
-            ax->setOffset(_sampleOffsets[i]);
+            if (_refineSample[i]) {
+                auto ax = sgonio->getAxis(i);
+                ax->setOffset(_sampleOffsets[i]);
+            }
         }
     }
 
-    // finally, n parameters for the sample
+    // finally, n parameters for the detector
     auto dgonio=_detector->getGonio();
     if (dgonio)	{
         for (unsigned int i=0;i<dgonio->getNAxes();++i) {
-            int idx = 10 + _nSampleAxes + i;
             // parameter is fixed: skip it
-            if (_fixedParameters[idx]) {
-                continue;
-            }            
-            auto ax = sgonio->getAxis(i);
-            ax->setOffset(_detectorOffsets[i]);
+            if (_refineDetector[i]) {     
+                auto ax = sgonio->getAxis(i);
+                ax->setOffset(_detectorOffsets[i]);
+            }
         }
     }
 
@@ -289,12 +294,14 @@ void UBSolution::setSample(sptrSample sample)
     _nSampleAxes = _sample->hasGonio() ? _sample->getGonio()->getNAxes() : 0;    
 
     if (_nSampleAxes > 0) {
+        _refineSample.resize(_nSampleAxes);
         _sampleOffsets.resize(_nSampleAxes);
         _sigmaSampleOffsets.resize(_nSampleAxes);
 
         for (int i = 0; i < _nSampleAxes; ++i) {
             _sampleOffsets[i] = _sample->getGonio()->getAxis(i)->getOffset();
             _sigmaSampleOffsets[i] = 0.0;
+            _refineSample[i] = false;
         }
     }
 }
@@ -305,12 +312,14 @@ void UBSolution::setDetector(sptrDetector detector)
     _nDetectorAxes = _detector->hasGonio() ? _detector->getGonio()->getNAxes() : 0;
 
     if (_nDetectorAxes > 0) {
+        _refineDetector.resize(_nDetectorAxes);
         _detectorOffsets.resize(_nDetectorAxes);
         _sigmaDetectorOffsets.resize(_nDetectorAxes);
 
         for (int i = 0; i < _nDetectorAxes; ++i) {
             _detectorOffsets[i] = _detector->getGonio()->getAxis(i)->getOffset();
             _sigmaDetectorOffsets[i] = 0.0;
+            _refineDetector[i] = false;
         }
     }
 }
@@ -320,6 +329,7 @@ void UBSolution::setSource(sptrSource source)
     _source = source;
     _sourceOffset = _source->getSelectedMonochromator().getOffset();
     _sigmaSourceOffset = 0.0;
+    _refineSource = false;
 }
 
 const Eigen::VectorXd& UBSolution::sampleOffsets() const
@@ -340,11 +350,6 @@ const Eigen::VectorXd& UBSolution::sigmaSampleOffsets() const
 const Eigen::VectorXd& UBSolution::sigmaDetectorOffsets() const
 {
     return _sigmaDetectorOffsets;
-}
-
-const std::vector<bool> UBSolution::fixedParameters() const
-{
-    return _fixedParameters;
 }
 
 Eigen::Matrix3d UBSolution::ub() const
@@ -385,12 +390,13 @@ void UBSolution::update(const Eigen::VectorXd& x, const Eigen::MatrixXd& cov)
     assert(cov.cols() >= 9);
 
     _covub = cov.block(0,0,9,9);
+    auto fixed = fixedParameters();
 
-    auto get_sigma = [this, &cov] () -> double
+    auto get_sigma = [this, &cov, &fixed] () -> double
     {
         static unsigned int idx = 9;
 
-        if (_fixedParameters[idx]) {
+        if (fixed[idx]) {
             return 0.0;
         } else {
             const double sigma = std::sqrt(cov(idx, idx));
@@ -442,5 +448,41 @@ double UBSolution::niggliWeight() const
     return _niggliWeight;
 }
 
+std::vector<bool> UBSolution::fixedParameters() const
+{
+    std::vector<bool> fixed(inputs());
+
+    unsigned int idx = 0;
+
+    // UB components
+    for (int i = 0; i < 9; ++i) {
+        fixed[idx++] = false;
+    }
+
+    // wavelength
+    fixed[idx++] = !_refineSource;
+
+    // sample
+    for (auto i = 0; i < _refineSample.size(); ++i) {
+        fixed[idx++] = !_refineSample[i];
+    }
+
+    // detector
+    for (auto i = 0; i < _refineDetector.size(); ++i) {
+        fixed[idx++] = !_refineDetector[i];
+    }
+
+    return fixed;
+}
+
+void UBSolution::refineSource(bool refine)
+{
+    _refineSource = refine;
+}
+
+void UBSolution::refineDetector(unsigned int id, bool refine)
+{
+    _refineDetector[id] = refine;
+}
 
 } // end namespace nsx
