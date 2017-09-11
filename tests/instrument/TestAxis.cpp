@@ -52,6 +52,4 @@ BOOST_AUTO_TEST_CASE(Tests_Axis)
 
     axis.setOffset(2.0);
     BOOST_CHECK_EQUAL(axis.getOffset(),2.0);
-    axis.addOffset(1.0);
-    BOOST_CHECK_EQUAL(axis.getOffset(),3.0);
 }

@@ -40,16 +40,7 @@ BOOST_AUTO_TEST_CASE(Test_Sample)
 
     // Offseting one of the axis change center position
     auto g1=g->getAxis("chi");
-    g1->setOffsetFixed(false);
     g1->setOffset(10.0*nsx::deg);
-    center=state.getPosition();
-    BOOST_CHECK_SMALL(center[0],tolerance);
-    BOOST_CHECK_CLOSE(center[1],sin(10*nsx::deg),tolerance);
-    BOOST_CHECK_CLOSE(center[2],-cos(10*nsx::deg),tolerance);
-
-    // Set offset should have no effects if fixed
-    g1->setOffsetFixed(true);
-    g1->setOffset(30.0*nsx::deg);
     center=state.getPosition();
     BOOST_CHECK_SMALL(center[0],tolerance);
     BOOST_CHECK_CLOSE(center[1],sin(10*nsx::deg),tolerance);

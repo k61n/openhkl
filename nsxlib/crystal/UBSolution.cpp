@@ -60,34 +60,25 @@ void UBSolution::resetParameters()
     }
 }
 
-void UBSolution::refineSample(unsigned int idx, bool refine)
+void UBSolution::refineSample(unsigned int id, bool refine)
 {
-    if (!_sample) {
-        throw std::runtime_error("A sample must be specified prior to fixing parameters.");
+    if (id >= _nSampleAxes) {
+        throw std::runtime_error("id(" + std::to_string(id) + ") is out of range (" + std::to_string(_nSampleAxes) + ")");
     }
-
-    auto gonio = _sample->getGonio();
-
-    if (gonio == nullptr) {
-        return;
-    }
-
-    if (idx >= gonio->getNAxes()) {
-        throw std::runtime_error("idx is out of range.");
-    }
-
-    _refineSample[idx] = refine;
+    _refineSample[id] = refine;
 }
 
-
-UBSolution::UBSolution():
-_cell(nullptr), _detector(nullptr), _sample(nullptr), _source(nullptr), _covub(), 
- _sourceOffset(0),_sigmaSourceOffset(0), 
- _detectorOffsets(), _sigmaDetectorOffsets(),
- _sampleOffsets(), _sigmaSampleOffsets(),
-  _nSampleAxes(0), _nDetectorAxes(0), _niggliConstraint(false),
- _uOffsets(), _character(6), _character0(6)
+void UBSolution::refineSource(bool refine)
 {
+    _refineSource = refine;
+}
+
+void UBSolution::refineDetector(unsigned int id, bool refine)
+{
+    if (id >= _nDetectorAxes) {
+        throw std::runtime_error("id(" + std::to_string(id) + ") is out of range (" + std::to_string(_nDetectorAxes) + ")");
+    }
+    _refineDetector[id] = refine;
 }
 
 Eigen::VectorXd UBSolution::zip() const
@@ -165,52 +156,6 @@ void UBSolution::setValue(unsigned int idx, double value)
     Eigen::VectorXd x = zip();
     x(idx) = value;
     unzip(x);
-}
-
-UBSolution::UBSolution(const UBSolution& other): UBSolution()
-{
-    *this = other;
-}
-
-UBSolution& UBSolution::operator=(const UBSolution& other)
-{
-    if (this == &other) {
-        return *this;
-    }
-
-    _sample = other._sample;
-    _detector = other._detector;
-    _source = other._source;
-    _cell = other._cell;
-
-    _u0 = other._u0;
-    _uOffsets = other._uOffsets;
-    _character = other._character;
-    _character0 = other._character0;
-    _NP = other._NP;
-
-    _covub = other._covub;
-
-    _sourceOffset= other._sourceOffset;
-    _sigmaSourceOffset =other. _sigmaSourceOffset;
-    _detectorOffsets = other._detectorOffsets;
-    _sigmaDetectorOffsets = other._sigmaDetectorOffsets;
-    _sampleOffsets = other._sampleOffsets;
-    _sigmaSampleOffsets = other._sigmaSampleOffsets;
-    
-    _nSampleAxes = other._nSampleAxes;
-    _nDetectorAxes = other._nDetectorAxes;
-
-    _niggliConstraint = other._niggliConstraint;
-    _niggliWeight = other._niggliWeight;
-
-    _refineSource = other._refineSource;
-    _refineSample = other._refineSample;
-    _refineDetector = other._refineDetector;
-    _refineU = other._refineU;
-    _refineB = other._refineB;
-
-    return *this;
 }
 
 std::ostream& operator<<(std::ostream& os, const UBSolution& solution)
@@ -378,6 +323,7 @@ void UBSolution::setCell(sptrUnitCell cell)
     Eigen::Matrix3d A = cell->basis()*_NP.inverse();
     Eigen::Matrix3d G = A.transpose()*A;
 
+    _character0.resize(6);
     _character0 << G(0,0), G(1,1), G(2,2), G(1,2), G(0,2), G(0,1);
     _character = _character0;
 }
@@ -473,16 +419,6 @@ std::vector<bool> UBSolution::fixedParameters() const
     }
 
     return fixed;
-}
-
-void UBSolution::refineSource(bool refine)
-{
-    _refineSource = refine;
-}
-
-void UBSolution::refineDetector(unsigned int id, bool refine)
-{
-    _refineDetector[id] = refine;
 }
 
 } // end namespace nsx

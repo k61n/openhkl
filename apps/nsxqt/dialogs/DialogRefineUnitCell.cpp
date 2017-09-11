@@ -93,7 +93,7 @@ void DialogRefineUnitCell::setMinimizer()
     int nSampleOffsets = sample->hasGonio() ? sample->getGonio()->getNAxes() : 0;
     for (int i = 0; i < nSampleOffsets; ++i) {
         auto axis=sample->getGonio()->getAxis(i);
-        _solution.refineSample(i,!axis->hasOffsetFixed());
+        //_solution.refineSample(i,!axis->hasOffsetFixed());
         _solution.setValue(start+i,axis->getOffset());
     }
 
@@ -101,7 +101,7 @@ void DialogRefineUnitCell::setMinimizer()
     int nDetectorOffsets = detector->hasGonio() ? detector->getGonio()->getNAxes() : 0;
     for (int i = 0; i < nDetectorOffsets; ++i) {
         auto axis=detector->getGonio()->getAxis(i);
-        _solution.refineDetector(i,!axis->hasOffsetFixed());
+        //_solution.refineDetector(i,!axis->hasOffsetFixed());
         _solution.setValue(start+i,axis->getOffset());
     }
 }
@@ -167,9 +167,10 @@ void DialogRefineUnitCell::setSampleOffsets()
 
         // Set the fourth column of the table: the axis refinable state
         auto item3 = new QCheckBox(this);
-        item3->setChecked(!axis->hasOffsetFixed());
+        //item3->setChecked(!axis->hasOffsetFixed());
+        item3->setChecked(false);
         // Connect checkbox to fixing this parameter
-        connect(item3,&QCheckBox::toggled, [&](bool checked){_solution.refineSample(i, checked);});
+        connect(item3,&QCheckBox::toggled, [this, i](bool checked){_solution.refineSample(i, checked);});
         ui->tableWidget_Sample->setCellWidget(i,3,item3);
     }
 }
@@ -221,10 +222,11 @@ void DialogRefineUnitCell::setDetectorOffsets()
 
         // Set the fourth column of the table: the axis refinable state
         auto item3 = new QCheckBox(this);
-        item3->setChecked(!axis->hasOffsetFixed());
+        //item3->setChecked(!axis->hasOffsetFixed());
+        item3->setChecked(false);
         ui->tableWidget_Detector->setCellWidget(i, 3, item3);
         //Connect checkbox to fixing parameters
-        connect(item3,&QCheckBox::toggled, [&](bool checked){_solution.refineDetector(i, checked);});
+        connect(item3,&QCheckBox::toggled, [this,i](bool checked){_solution.refineDetector(i, checked);});
     }
 }
 
@@ -235,7 +237,7 @@ void DialogRefineUnitCell::setSolution(const nsx::UBSolution& solution)
     int nAxesSample = sample->hasGonio() ? sample->getGonio()->getNAxes() : 0;
 
     auto&& sampleOffsets = solution.sampleOffsets();
-    auto&& sigmaSampleOffsets = solution.sampleOffsets();
+    auto&& sigmaSampleOffsets = solution.sigmaSampleOffsets();
     auto&& detectorOffsets = solution.detectorOffsets();
     auto&& sigmaDetectorOffsets = solution.sigmaDetectorOffsets();
 
@@ -260,12 +262,13 @@ void DialogRefineUnitCell::cellSampleHasChanged(int i, int j)
     // A new offset has been entered
     if (j == 1) {
         auto axis = _experiment->getDiffractometer()->getSample()->getGonio()->getAxis(i);
-        bool offsetFixed = axis->hasOffsetFixed();
-        axis->setOffsetFixed(false);
+        //bool offsetFixed = axis->hasOffsetFixed();
+        //axis->setOffsetFixed(false);
         double value = ui->tableWidget_Sample->item(i,j)->data(Qt::EditRole).toDouble();
         axis->setOffset(value);
-        axis->setOffsetFixed(offsetFixed);
+        //axis->setOffsetFixed(offsetFixed);
         _solution.setValue(10+i,value);
+        //_solution.refineSample(i);
     }
 }
 
@@ -274,16 +277,17 @@ void DialogRefineUnitCell::cellDetectorHasChanged(int i, int j)
     // A new offset has been entered
     if (j==1) {
         auto axis=_experiment->getDiffractometer()->getDetector()->getGonio()->getAxis(i);
-        bool offsetFixed=axis->hasOffsetFixed();
-        axis->setOffsetFixed(false);
+        //bool offsetFixed=axis->hasOffsetFixed();
+        //axis->setOffsetFixed(false);
         double value=ui->tableWidget_Detector->item(i,j)->data(Qt::EditRole).toDouble();
         axis->setOffset(value);
-        axis->setOffsetFixed(offsetFixed);
+        //axis->setOffsetFixed(offsetFixed);
 
         // Get the sample
         auto sample=_experiment->getDiffractometer()->getSample();
         int nAxesSample = sample->hasGonio() ? sample->getGonio()->getNAxes() : 0;
         _solution.setValue(10+nAxesSample+i,value);
+        //_solution.refine
     }
 }
 

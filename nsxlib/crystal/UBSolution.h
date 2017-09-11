@@ -25,10 +25,10 @@ namespace nsx {
 //! Struct to store UB and offset refinement
 class UBSolution {
 public:
-    UBSolution(const UBSolution& other);
-    UBSolution();
+    //UBSolution(const UBSolution& other);
+    //UBSolution();
 
-    UBSolution& operator=(const UBSolution& ubsol);
+    //UBSolution& operator=(const UBSolution& ubsol);
 
     //! Apply solution to selected cell, sample, source, and detector
     void apply();
