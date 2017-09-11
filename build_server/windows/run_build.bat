@@ -1,1 +1,1 @@
-echo "WINDOWS BUILD
+echo "WINDOWS BUILD"
