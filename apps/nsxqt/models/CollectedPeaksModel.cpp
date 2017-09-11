@@ -115,6 +115,8 @@ QVariant CollectedPeaksModel::headerData(int section, Qt::Orientation orientatio
             return QString("intensity");
         case Column::sigmaIntensity:
             return QString(QChar(0x03C3))+"(intensity)";
+        case Column::i_over_sigmai:
+            return "intensity/" + QString(QChar(0x03C3))+"(intensity)";
         case Column::transmission:
             return QString("transmission");
         case Column::lorentzFactor:
@@ -164,6 +166,8 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
             return scaledIntensity;
         case Column::sigmaIntensity:
             return sigmaScaledIntensity;
+        case Column::i_over_sigmai:
+            return scaledIntensity/sigmaScaledIntensity;
         case Column::transmission:
             return transmissionFactor;
         case Column::lorentzFactor:
@@ -180,6 +184,7 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
                 return QString("not set");
             }
         }
+        break;
     case Qt::ToolTipRole:
         switch (column) {
             case Column::h:
@@ -192,6 +197,7 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
                 _peaks[row]->getMillerIndices(hkl, false);
                 return hkl[2];
         }
+        break;
     case Qt::CheckStateRole:
         if (column == Column::selected) {
             return _peaks[row]->isSelected();
@@ -232,7 +238,7 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
         };
         break;
     case Column::l:
-        compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
+        compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
             Eigen::RowVector3d hkl1,hkl2;
             p1->getMillerIndices(hkl1,true);
             p2->getMillerIndices(hkl2,true);
@@ -240,15 +246,21 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
         };
         break;
     case  Column::intensity:
-        compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
+        compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
             return (p1->getCorrectedIntensity().value())
                     > (p2->getCorrectedIntensity().value());
         };
         break;
     case Column::sigmaIntensity:
-        compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
+        compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
             return (p1->getCorrectedIntensity().sigma())
                     > (p2->getCorrectedIntensity().sigma());
+        };
+        break;
+    case Column::i_over_sigmai:
+        compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
+            return (p1->getCorrectedIntensity().value()/p1->getCorrectedIntensity().sigma())
+                    > (p2->getCorrectedIntensity().value()/p2->getCorrectedIntensity().sigma());
         };
         break;
     case Column::transmission:

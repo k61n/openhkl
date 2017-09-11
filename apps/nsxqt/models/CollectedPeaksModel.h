@@ -19,7 +19,7 @@ class CollectedPeaksModel : public QAbstractTableModel
     Q_OBJECT
 public:
 
-    enum Column {h,k,l,intensity,sigmaIntensity,transmission,lorentzFactor,numor,selected,unitCell,count};
+    enum Column {h,k,l,intensity,sigmaIntensity,i_over_sigmai,transmission,lorentzFactor,numor,selected,unitCell,count};
 
     explicit CollectedPeaksModel(nsx::sptrExperiment experiment,QObject* parent = 0);
 
