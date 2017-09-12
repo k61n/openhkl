@@ -142,6 +142,7 @@ namespace property_tree=boost::property_tree;
 #include "geometry/Face.h"
 #include "geometry/MCAbsorption.h"
 #include "geometry/ConvexHull.h"
+#include "geometry/BrillouinZone.h"
 
 #include "geometry/BlobFinder.h"
 
@@ -481,6 +482,7 @@ namespace nsx {
 %include "geometry/Edge.h"
 %include "geometry/Blob3D.h"
 %include "geometry/IntegrationRegion.h"
+%include "geometry/BrillouinZone.h"
 %include "data/XDS.h"
 %include "data/DataSet.h"
 %include "data/MetaData.h"
