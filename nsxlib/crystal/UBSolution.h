@@ -50,10 +50,6 @@ public:
     //! @param value the value of the parameter to be fixed
     void setValue(unsigned int idx, double value);
 
-    void refineSource(bool refine);
-    void refineSample(unsigned int idx, bool refine);
-    void refineDetector(unsigned int idx, bool refine);
-
     //! Return the list of which parameters are held fixed during the fit.
     std::vector<bool> fixedParameters() const;
 
@@ -103,7 +99,14 @@ public:
     //! Return the weight for the Niggli constraints
     double niggliWeight() const;
 
-      
+    //! Return nsx::FitParameters corresponding to UBSolution.
+    FitParameters fitParameters();
+
+    void refineSource(bool);
+    void refineSample(unsigned int, bool);
+    void refineDetector(unsigned int, bool);
+
+     
 
 private:
     bool _niggliConstraint;

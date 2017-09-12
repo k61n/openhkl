@@ -390,8 +390,10 @@ UnitCell UnitCell::applyNiggliConstraints() const
     Eigen::FullPivLU<Eigen::MatrixXd> lu(C);
     Eigen::MatrixXd kernel = lu.kernel();
 
+    Eigen::Vector3d x(nparams);
+
     // get rotation matrix from three parameters via quaternion
-    auto rotation = [](const Eigen::Vector3d& x) -> Eigen::Matrix3d {
+    auto rotation = [&]() -> Eigen::Matrix3d {
         const double d = 1.0 / std::sqrt(1 + x.squaredNorm());
         // quaternion representing rotation
         Eigen::Quaterniond q(d, d*x(0), d*x(1), d*x(2));
@@ -403,7 +405,7 @@ UnitCell UnitCell::applyNiggliConstraints() const
     Eigen::Matrix3d U0 = UnitCell(niggliBasis()).orientation();
 
     // helper routine to create a unit cell satisfying Niggli constraints
-    auto new_uc = [=](const Eigen::VectorXd& x) {
+    auto new_uc = [&]() {
         // lattice character
         Eigen::VectorXd ch(6);
         ch.setZero();        
@@ -416,7 +418,7 @@ UnitCell UnitCell::applyNiggliConstraints() const
         // set lattice parameters
         uc.setABCDEF(ch(0), ch(1), ch(2), ch(3), ch(4), ch(5));
         // rotation matrix
-        Eigen::Matrix3d U1 = rotation({x(0), x(1), x(2)});
+        Eigen::Matrix3d U1 = rotation();
         // rotate unit cell
         uc.setBasis(U1*U0*uc._A*_NP);
         return uc;
@@ -424,8 +426,8 @@ UnitCell UnitCell::applyNiggliConstraints() const
 
     // residuals used for least-squares fitting
     // these are just the differences A-A0 and B-B0 as described above
-    auto functor = [=](const Eigen::VectorXd& x, Eigen::VectorXd& residuals) -> int {
-        UnitCell uc = new_uc(x);
+    auto functor = [&](Eigen::VectorXd& residuals) -> int {
+        UnitCell uc = new_uc();
         Eigen::Matrix3d A = uc.basis();
         Eigen::Matrix3d B = uc.reciprocalBasis();
 
@@ -441,10 +443,10 @@ UnitCell UnitCell::applyNiggliConstraints() const
     nsx::Minimizer min;
 
     // starting parameters
-    Eigen::VectorXd p(nparams);
-    p.setZero();
+
 
     // lattice character
+    FitParameters params;
     Eigen::Matrix3d G = A0.transpose()*A0;
     Eigen::VectorXd ch(6);
     ch << G(0,0), G(1,1), G(2,2), G(1,2), G(0,2), G(0,1);
@@ -452,11 +454,11 @@ UnitCell UnitCell::applyNiggliConstraints() const
     // get starting values: these are just the lattice character (components of metric tensor)
     auto y = (kernel.transpose()*kernel).inverse()*kernel.transpose()*ch;
     for (auto i = 0; i < nparams; ++i) {
-        p(i) = i < 3 ? 0.0 : y(i-3);
+        x(i) = i < 3 ? 0.0 : y(i-3);
+        params.addParameter(&x(i));
     }
 
-    min.initialize(nparams, 9+9);
-    min.setParams(p);
+    min.initialize(params, 9+9);
     min.set_f(functor);
 
     min.setxTol(1e-6);
@@ -466,7 +468,7 @@ UnitCell UnitCell::applyNiggliConstraints() const
     if (!min.fit(100)) {
         throw std::runtime_error("ERROR: failed to apply Niggli constraints!");
     }
-    return new_uc(min.params());
+    return new_uc();
 }
 
 Eigen::RowVector3d UnitCell::index(const Eigen::RowVector3d& q) const

@@ -125,7 +125,6 @@ namespace property_tree=boost::property_tree;
 
 #include "crystal/PeakRecord.h"
 #include "crystal/Mosaic.h"
-#include "crystal/PeakFit.h"
 #include "crystal/FFTIndexing.h"
 
 #include "crystal/MergedPeak.h"
@@ -461,7 +460,6 @@ namespace nsx {
 
 %include "crystal/PeakRecord.h"
 %include "crystal/Mosaic.h"
-%include "crystal/PeakFit.h"
 %include "crystal/FFTIndexing.h"
 %include "crystal/MergedPeak.h"
 %include "crystal/Peak2D.h"

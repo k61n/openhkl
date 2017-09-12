@@ -10,23 +10,18 @@
 #include <Eigen/Dense>
 
 #include <nsxlib/mathematics/Minimizer.h>
+#include <nsxlib/utils/FitParameters.h>
 
 int run_test()
 {
-    std::unique_ptr<nsx::Minimizer> m_gsl;
-
-    Eigen::VectorXd x_initial, x_gsl, y, wt;
-
+    Eigen::VectorXd y, wt, x;
     int nparams = 3, nvalues = 40;
-
     const int num_points = 40;
     y.resize(num_points, 1);
     wt.resize(num_points, 1);
 
-    x_gsl.resize(3);
-    x_initial.resize(3);
-
-    x_initial << 4.0, 0.2, 0.5;
+    x.resize(3);
+    x << 4.0, 0.2, 0.5;
 
     for (int i = 0; i < nvalues; i++) {
         double t = i;
@@ -36,12 +31,12 @@ int run_test()
         y[i] = yi;
     }
 
-    auto residual_fn = [y] (const Eigen::VectorXd& p, Eigen::VectorXd& r) -> int {
+    auto residual_fn = [y, &x] (Eigen::VectorXd& r) -> int {
         int n = r.rows();
 
-        double A = p(0);
-        double lambda = p(1);
-        double b = p(2);
+        double A = x(0);
+        double lambda = x(1);
+        double b = x(2);
 
         size_t i;
 
@@ -53,21 +48,15 @@ int run_test()
         }
         return 0;
     };
+ 
+    nsx::FitParameters params;
+    params.addParameter(&x(0));
+    params.addParameter(&x(1));
+    params.addParameter(&x(2));
 
-    m_gsl = std::unique_ptr<nsx::Minimizer>(new nsx::Minimizer());
-
-    m_gsl->initialize(nparams, nvalues);
-    m_gsl->setParams(x_initial);
-    m_gsl->setWeights(wt);
-    m_gsl->set_f(residual_fn);
-    m_gsl->fit(200);
-    x_gsl = m_gsl->params();
-
-    BOOST_CHECK_CLOSE(x_gsl(0), 5.0, 1e-6);
-    BOOST_CHECK_CLOSE(x_gsl(1), 0.1, 1e-6);
-    BOOST_CHECK_CLOSE(x_gsl(2), 1.0, 1e-6);
-
-    Eigen::MatrixXd j_gsl;
+    BOOST_CHECK_CLOSE(x(0), 5.0, 1e-6);
+    BOOST_CHECK_CLOSE(x(1), 0.1, 1e-6);
+    BOOST_CHECK_CLOSE(x(2), 1.0, 1e-6);
 
     return 0;
 }

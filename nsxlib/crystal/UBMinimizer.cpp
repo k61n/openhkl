@@ -21,17 +21,15 @@
 
 namespace nsx {
 
-int UBMinimizer::residuals(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const
+int UBMinimizer::residuals(Eigen::VectorXd &fvec)
 {
-    UBSolution sln = _solution;
-    sln.unzip(x);
     const unsigned int npeaks = _peaks.size();
 
     // update the offsets
-    sln.apply();    
+    _solution.apply();    
 
     // get the UB matrix
-    Eigen::Matrix3d UB = sln.ub();
+    Eigen::Matrix3d UB = _solution.ub();
 
     //#pragma omp parallel for
     for (unsigned int i = 0; i < npeaks; ++i)	{
@@ -72,23 +70,20 @@ void UBMinimizer::clearPeaks()
     _peaks.clear();
 }
 
+
 int UBMinimizer::run(const UBSolution& initialState, unsigned int maxIter)
 {
     _solution = initialState;
-    _solution.unzip(_solution.zip());
-    _solution.apply();
-    int nParams = _solution.inputs();
-    Eigen::VectorXd params = _solution.zip();
+    FitParameters params = _solution.fitParameters();
     
-    auto functor = [this] (const Eigen::VectorXd& x, Eigen::VectorXd& r) -> int
+    auto functor = [this] (Eigen::VectorXd& r) -> int
     {
-        return this->residuals(x, r);
+        return this->residuals(r);
     };
 
     Minimizer minimizer;
 
-    minimizer.initialize(nParams, values());
-    minimizer.setParams(params);
+    minimizer.initialize(params, values());
     minimizer.set_f(functor);
 
     minimizer.setxTol(1e-10);
@@ -97,6 +92,8 @@ int UBMinimizer::run(const UBSolution& initialState, unsigned int maxIter)
 
     bool status = minimizer.fit(maxIter);
 
+    // todo...
+    #if 0
     if (status) {
         params = minimizer.params();
 
@@ -133,6 +130,7 @@ int UBMinimizer::run(const UBSolution& initialState, unsigned int maxIter)
     #ifndef NDEBUG
     std::cout << "status is " << minimizer.getStatusStr()
               << " after " << minimizer.numIterations() << " iterations" << std::endl;
+    #endif
     #endif
 
     return status;

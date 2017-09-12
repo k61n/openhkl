@@ -35,54 +35,42 @@
 
 #include "../mathematics/Profile3d.h"
 #include "../mathematics/Minimizer.h"
+#include "../utils/FitParameters.h"
 
 #include <iostream>
 
 // anonymous namespace for helper structures and routines
-namespace {
+namespace nsx {
 
-// convenience routine for computing the 3d profile. 
-// The return value is passed by non-const reference because this is what the minimizer expects.
-void profile_helper(Eigen::VectorXd& result, const Eigen::VectorXd& params, const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const Eigen::ArrayXd& z)
+void Profile3d::evaluateInPlace(Eigen::VectorXd& result, const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const Eigen::ArrayXd& z) const
 {
     const int n = result.size();
     assert(n == x.size());
     assert(n == y.size());
     assert(n == z.size());
 
-    // get the named parameters
-    nsx::ProfileParams p;
-    p.unpack(params);
-
     // get shifted coordinates
-    auto dx = x - p.x0;
-    auto dy = y - p.y0;
-    auto dz = z - p.z0;
+    auto dx = x - _c(0);
+    auto dy = y - _c(1);
+    auto dz = z - _c(2);
 
     // evaluate the argument of the exponential
-    auto arg = -0.5*(p.dxx*dx*dx + p.dyy*dy*dy + p.dzz*dz*dz + 2*p.dxy*dx*dy + 2*p.dxz*dx*dz + 2*p.dyz*dy*dz);
-    result.array() = p.background + p.A * arg.exp();
+    auto arg = -0.5*(_Dxx*dx*dx + _Dyy*dy*dy + _Dzz*dz*dz + 2*_Dxy*dx*dy + 2*_Dxz*dx*dz + 2*_Dyz*dy*dz);
+    result.array() = _background + _A * arg.exp();
 }
 
-// convenience routine for computing the Jacobian of the 3d profile. 
-// The return value is passed by non-const reference because this is what the minimizer expects.
-void jacobian_helper(Eigen::MatrixXd& result, const Eigen::VectorXd& params, const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const Eigen::ArrayXd& z)
+void Profile3d::jacobianInPlace(Eigen::MatrixXd& J, const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const Eigen::ArrayXd& z) const
 {
-    const int n = result.rows();
-
-    assert(result.cols() == params.size());
+    const int n = J.rows();
     assert(n == x.size());
     assert(n == y.size());
     assert(n == z.size());   
 
-    // get the named parameters
-    nsx::ProfileParams p;
-    p.unpack(params);
 
     // get shifted coordinates
-    auto dx = x - p.x0;
-    auto dy = y - p.y0;
-    auto dz = z - p.z0;
+    auto dx = x - _c(0);
+    auto dy = y - _c(1);
+    auto dz = z - _c(2);
 
     auto dxdx = dx*dx;
     auto dxdy = dx*dy;
@@ -92,42 +80,42 @@ void jacobian_helper(Eigen::MatrixXd& result, const Eigen::VectorXd& params, con
     auto dzdz = dz*dz;
 
     // evaluate the argument of the exponential
-    auto arg = -0.5*(p.dxx*dxdx + p.dyy*dydy + p.dzz*dzdz + 2*p.dxy*dxdy + 2*p.dxz*dxdz + 2*p.dyz*dydz);
+    auto arg = -0.5*(_Dxx*dxdx + _Dyy*dydy + _Dzz*dzdz + 2*_Dxy*dxdy + 2*_Dxz*dxdz + 2*_Dyz*dydz);
     // exponential
     auto e = arg.exp();
 
     // derivative wrt background
-    result.col(0).array() = 1;
+    J.col(0).array() = 1;
 
     // derivative wrt x0
-    result.col(1).array() = p.A*e * (p.dxx*dx + p.dxy*dy + p.dxz*dz);
+    J.col(1).array() = _A*e * (_Dxx*dx + _Dxy*dy + _Dxz*dz);
 
     // derivative wrt y0
-    result.col(2).array() = p.A*e * (p.dyy*dy + p.dxy*dx + p.dyz*dz);
+    J.col(2).array() = _A*e * (_Dyy*dy + _Dxy*dx + _Dyz*dz);
 
     // derivative wrt z0
-    result.col(3).array() = p.A*e * (p.dzz*dz + p.dxz*dx + p.dyz*dy);
+    J.col(3).array() = _A*e * (_Dzz*dz + _Dxz*dx + _Dyz*dy);
 
     // derivative wrt A
-    result.col(4).array() = e;
+    J.col(4).array() = e;
 
     // derivative wrt dxx
-    result.col(5).array() = -0.5*p.A*e*dxdx;
+    J.col(5).array() = -0.5*_A*e*dxdx;
 
     // derivative wrt dxy
-    result.col(6).array() = -p.A*e*dxdy;
+    J.col(6).array() = -_A*e*dxdy;
 
     // derivative wrt dxz
-    result.col(7).array() = -p.A*e*dxdz;
+    J.col(7).array() = -_A*e*dxdz;
 
     // derivative wrt dyy
-    result.col(8).array() = -0.5*p.A*e*dydy;
+    J.col(8).array() = -0.5*_A*e*dydy;
 
     // derivative wrt dyz
-    result.col(9).array() = -p.A*e*dydz;
+    J.col(9).array() = -_A*e*dydz;
 
     // derivative wrt dzz
-    result.col(10).array() = -0.5*p.A*e*dzdz;        
+    J.col(10).array() = -0.5*_A*e*dzdz;        
 }
 
 double pearson_helper(const Eigen::ArrayXd& pred, const Eigen::ArrayXd& obs)
@@ -144,23 +132,8 @@ double pearson_helper(const Eigen::ArrayXd& pred, const Eigen::ArrayXd& obs)
     return cov / (std_pred*std_obs);
 }
 
-} // end anonymous namespace
 
-namespace nsx {
-
-const int ProfileParams::nparams = 11;
-
-Profile3d::Profile3d(const ProfileParams& p): _params(p.nparams)
-{
-    _params = p.pack();
-}
-
-Profile3d::~Profile3d()
-{
-
-}
-
-ProfileParams::ProfileParams(const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const Eigen::ArrayXd& z, const Eigen::ArrayXd& I)
+Profile3d::Profile3d(const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const Eigen::ArrayXd& z, const Eigen::ArrayXd& I)
 {
     const int nvalues = I.size();
 
@@ -168,10 +141,9 @@ ProfileParams::ProfileParams(const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, c
     assert(y.size() == nvalues);
     assert(z.size() == nvalues);
 
-    background = I.mean();
-
+    _background = I.mean();
     const double avg_bkg = I.mean();
-    const double std_bkg = (I-background).sum() / (I.size()-1);
+    const double std_bkg = (I-_background).sum() / (I.size()-1);
 
     Eigen::ArrayXd strong_I = (I-avg_bkg);
 
@@ -181,7 +153,7 @@ ProfileParams::ProfileParams(const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, c
         }
     }
 
-    A = strong_I.maxCoeff();
+    _A = strong_I.maxCoeff();
     // estimate total mass of the profile
     const double mass = (strong_I).sum();
 
@@ -189,14 +161,14 @@ ProfileParams::ProfileParams(const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, c
     auto rho = strong_I / mass;
 
     // compute center of mass using distribution rho
-    x0 = (x*rho).sum();
-    y0 = (y*rho).sum();
-    z0 = (z*rho).sum();
+    _c(0) = (x*rho).sum();
+    _c(1) = (y*rho).sum();
+    _c(2) = (z*rho).sum();
 
     // shifted coordinates
-    auto dx = x-x0;
-    auto dy = y-y0;
-    auto dz = z-z0;
+    auto dx = x-_c(0);
+    auto dy = y-_c(1);
+    auto dz = z-_c(2);
     
     // covariance matrix
     double c00 = (dx*dx*rho).sum();
@@ -208,77 +180,74 @@ ProfileParams::ProfileParams(const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, c
 
     Eigen::Matrix3d C;
     C << c00, c01, c02, c01, c11, c12, c02, c12, c22;
-    Eigen::Matrix3d D = C.inverse();
-
-    // coefficient of inverse covariance matrix
-    dxx = D(0,0);
-    dxy = D(0,1);
-    dxz = D(0,2);
-    dyy = D(1,1);
-    dyz = D(1,2);
-    dzz = D(2,2);
+    Eigen::Matrix3d CI = C.inverse();
+    _Dxx = CI(0,0);
+    _Dxy = CI(0,1);
+    _Dxz = CI(0,2);
+    _Dyy = CI(1,1);
+    _Dyz = CI(1,2);
+    _Dzz = CI(2,2);
 }
 
-Eigen::ArrayXd Profile3d::profile(const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const Eigen::ArrayXd& z) const
+Eigen::ArrayXd Profile3d::evaluate(const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const Eigen::ArrayXd& z) const
 {
     const int n = x.size();
     assert(y.size() == n);
     assert(z.size() == n);
 
     Eigen::VectorXd result(n);
-    profile_helper(result, _params, x, y, z);
+    evaluateInPlace(result, x, y, z);
     return result.array();
 }
 
 Profile3d Profile3d::fit(const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const Eigen::ArrayXd& z, const Eigen::ArrayXd& I, int maxiter) const
 {
-    const int nparams = _params.size();
     const int nvalues = I.size();
     assert(x.size() == nvalues);
     assert(y.size() == nvalues);
     assert(z.size() == nvalues);
 
-    auto f = [&](const Eigen::VectorXd& params, Eigen::VectorXd& result) -> int
+    Profile3d result(*this);
+    FitParameters params;
+    params.addParameter(&result._background);
+    params.addParameter(&result._A);
+    params.addParameter(&result._c(0));
+    params.addParameter(&result._c(1));
+    params.addParameter(&result._c(2));
+    params.addParameter(&result._Dxx);
+    params.addParameter(&result._Dxy);
+    params.addParameter(&result._Dxz);
+    params.addParameter(&result._Dyy);
+    params.addParameter(&result._Dyz);
+    params.addParameter(&result._Dzz);
+    
+    auto f = [&](Eigen::VectorXd& residual) -> int
     {
         // compute profile with given parameters
-        profile_helper(result, params.array(), x, y, z);
+        result.evaluateInPlace(residual, x, y, z);
         // subtract observed intensity to get residuals
-        result -= I.matrix();
+        residual -= I.matrix();
         return 0;
     };
 
-    auto df = [&](const Eigen::VectorXd& params, Eigen::MatrixXd& result) -> int
+    auto df = [&](Eigen::MatrixXd& J) -> int
     {
-        jacobian_helper(result, params.array(), x, y, z);
+        result.jacobianInPlace(J, x, y, z);
         return 0;
     };
  
     Minimizer min;
-    min.initialize(nparams, nvalues);
-    min.setParams(_params);
+    min.initialize(params, nvalues);
     min.setWeights(I.sqrt().array());
     min.set_f(f);
     min.set_df(df);
     bool success = min.fit(maxiter);
 
-    ProfileParams p;
-    p.unpack(min.params());
-    Profile3d result(p);
-
-    Eigen::ArrayXd result_profile = result.profile(x, y, z);
-
+    Eigen::ArrayXd result_profile = result.evaluate(x, y, z);
     result._success = success;
     result._pearson = pearson_helper(result_profile, I);
 
     return result;
-}
-
-
-ProfileParams Profile3d::parameters() const
-{
-    ProfileParams p;
-    p.unpack(_params);
-    return p;
 }
 
 bool Profile3d::success() const
@@ -291,14 +260,14 @@ double Profile3d::pearson() const
     return _pearson;
 }
 
-double Profile3d::profile(Eigen::Vector3d p) const
+double Profile3d::evaluate(Eigen::Vector3d p) const
 {
     Eigen::ArrayXd x(1), y(1), z(1);
     Eigen::VectorXd result(1);
     x(0) = p(0);
     y(0) = p(1);
     z(0) = p(2);
-    profile_helper(result, _params, x, y, z);
+    evaluateInPlace(result, x, y, z);
     return result(0);
 }
 

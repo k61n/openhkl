@@ -86,7 +86,11 @@ public:
     int values() const;
 
     //! Compute the residuals given an input vector
-    int residuals(const Eigen::VectorXd& p, Eigen::VectorXd& r) const;
+    int residuals(Eigen::VectorXd& r);
+
+    void refineSource(bool refine);
+    void refineSample(unsigned int idx, bool refine);
+    void refineDetector(unsigned int idx, bool refine);
 
 private:
     UBSolution _solution;

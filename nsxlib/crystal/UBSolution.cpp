@@ -60,6 +60,7 @@ void UBSolution::resetParameters()
     }
 }
 
+#if 0
 void UBSolution::refineSample(unsigned int id, bool refine)
 {
     if (id >= _nSampleAxes) {
@@ -80,6 +81,7 @@ void UBSolution::refineDetector(unsigned int id, bool refine)
     }
     _refineDetector[id] = refine;
 }
+#endif
 
 Eigen::VectorXd UBSolution::zip() const
 {
@@ -419,6 +421,28 @@ std::vector<bool> UBSolution::fixedParameters() const
     }
 
     return fixed;
+}
+
+FitParameters UBSolution::fitParameters() 
+{
+    FitParameters params;
+    // todo!!!
+    return params;
+}
+
+void UBSolution::refineSource(bool refine)
+{
+    _refineSource = refine;
+}
+
+void UBSolution::refineSample(unsigned int id, bool refine)
+{
+    _refineSample[id] = refine;
+}
+
+void UBSolution::refineDetector(unsigned int id, bool refine)
+{
+    _refineDetector[id] = refine;
 }
 
 } // end namespace nsx
